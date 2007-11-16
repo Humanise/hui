@@ -1,0 +1,88 @@
+form.formula
+{
+	padding: 5px;
+	margin: 0px;
+}
+
+form.formula table.group
+{
+	border-spacing: 0px 4px;
+	width: 100%;
+}
+
+form.formula table.split
+{
+	border-spacing: 5px 0px;
+}
+
+form.formula table.group th
+{
+	text-align: right;
+	font-size: 9pt;
+	padding-right: 5px;
+	width: 1%;
+}
+
+form.formula .field
+{
+	border: 1px solid #ddd;
+	/*overflow: auto;*/
+}
+
+form.formula input.text
+{
+	border: none;
+	width: 100%;
+}
+
+form.formula fieldset
+{
+	border: 1px solid #ccc;
+	margin: 0px;
+	padding: 0px 8px 5px 6px;
+}
+
+form.formula fieldset legend
+{
+	font-size: 9pt;
+	color: #999;
+}
+
+form.formula a.button
+{
+	background: url('../gfx/button_highlighted.png') top left no-repeat;
+	color:#094100;
+	float: right;
+	font-size: 11pt;
+	height: 26px;
+	line-height: 24px;
+	cursor: pointer;
+}
+
+form.formula a.button span
+{
+	display: block;
+	background: url('../gfx/button_highlighted.png') 100% -26px no-repeat;
+	height: 26px;
+}
+
+form.formula a.button span span
+{
+	background: url('../gfx/button_highlighted.png') 0px -52px repeat-x;
+	margin: 0px 12px;
+}
+
+form.formula a.button:hover
+{
+	background: url('../gfx/button_highlighted.png') 0px -78px no-repeat;
+}
+
+form.formula a.button:hover span
+{
+	background: url('../gfx/button_highlighted.png') 100% -104px no-repeat;
+}
+
+form.formula a.button:hover span span
+{
+	background: url('../gfx/button_highlighted.png') 0px -130px repeat-x;
+}

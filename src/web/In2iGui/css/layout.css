@@ -1,0 +1,16 @@
+.horizontal
+{
+	overflow: hidden;
+}
+
+.horizontal_content
+{
+	float: left;
+	background: url('../gfx/line.gif') top left repeat-y;
+	height: 200px;
+}
+
+.horizontal_content_first
+{
+	background: none;
+}
