@@ -1,0 +1,182 @@
+.logout
+{
+	width: 34px;
+	height: 33px;
+	background: url('../gfx/logout.png');
+	position: fixed;
+	top: 10px;
+	right: 10px;
+	cursor: pointer;
+	z-index: 1;
+}
+div.logout:hover
+{
+	background: url('../gfx/logout_hover.png');
+}
+
+.private
+{
+	width: 34px;
+	height: 33px;
+	background: url('../gfx/private.png');
+	position: fixed;
+	top: 10px;
+	right: 50px;
+	cursor: pointer;
+	z-index: 1;
+}
+div.private:hover
+{
+	background: url('../gfx/private_hover.png');
+}
+
+.activate
+{
+	width: 34px;
+	height: 33px;
+	background: url('../../gfx/activator.png');
+	position: fixed;
+	top: 10px;
+	right: 90px;
+	cursor: pointer;
+	z-index: 1;
+}
+div.activate:hover
+{
+	background: url('../../gfx/activator_hover.png');
+}
+
+.deactivate
+{
+	width: 34px;
+	height: 33px;
+	background: url('../../gfx/deactivator.png');
+	position: fixed;
+	top: 10px;
+	right: 90px;
+	cursor: pointer;
+	z-index: 1;
+}
+
+div.deactivate:hover
+{
+	background: url('../../gfx/deactivator_hover.png');
+}
+
+body.editor_mode
+{
+	padding-top: 0px;
+}
+
+div.editor_toolbar
+{
+	height: 0px;
+	position: fixed;
+	background: url('../gfx/toolbar_bg.png') bottom;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	overflow: hidden;
+}
+
+div.editor_toolbar .divider
+{
+	float: left;
+	width: 5px;
+	height: 47px;
+	background: url('../gfx/toolbar_divider.png') top left no-repeat;
+	margin-top: 5px;
+}
+
+div.editor_toolbar .icon
+{
+	font-family: "Lucida Grande", sans-serif;
+	font-size: 11px;
+	float: left;
+	height: 10px;
+	padding: 40px 6px 0px 6px;
+	cursor: pointer;
+}
+
+
+div.editor_toolbar .deletepage
+{
+	background: url('../gfx/toolbar_deletepage.png') center 5px no-repeat;
+}
+
+div.editor_toolbar .deletepage:hover
+{
+	background-image: url('../gfx/toolbar_deletepage_hover.png');
+}
+
+
+div.editor_toolbar .addpage
+{
+	background: url('../gfx/toolbar_addpage.png') center 5px no-repeat;
+}
+
+div.editor_toolbar .addpage:hover
+{
+	background-image: url('../gfx/toolbar_addpage_hover.png');
+}
+
+
+div.editor_toolbar .changetemplate
+{
+	background: url('../gfx/toolbar_style.png') center 7px no-repeat;
+}
+
+div.editor_toolbar .changetemplate:hover
+{
+	background-image: url('../gfx/toolbar_style_hover.png');
+}
+
+
+div.editor_toolbar .addimage
+{
+	background: url('../gfx/toolbar_addimage.png') center 5px no-repeat;
+}
+
+div.editor_toolbar .addimage:hover
+{
+	background-image: url('../gfx/toolbar_addimage_hover.png');
+}
+
+
+div.editor_toolbar .style
+{
+	background: url('../gfx/toolbar_style.png') center 7px no-repeat;
+}
+
+div.editor_toolbar .style:hover
+{
+	background-image: url('../gfx/toolbar_style_hover.png');
+}
+
+
+/************************* Window ******************/
+
+.in2iwindow .chooser
+{
+	background-color: #b9bec6;
+	margin: 10px 10px 0px;
+	overflow: hidden;
+	padding: 5px 10px;
+}
+
+.in2iwindow .chooser .item
+{
+	background-image: url('../gfx/chooser_item_bg.png');
+	width: 96px;
+	height: 124px;
+	float: left;
+	margin: 10px 5px;
+}
+
+.in2iwindow .chooser .item div
+{
+	margin-left: 2px;
+	width: 92px;
+	height: 120px;
+	cursor: pointer;
+}

@@ -1,0 +1,65 @@
+@import url('elegant.css');
+@import url('simple.css');
+@import url('paper.css');
+@import url('viewer.css');
+
+.gallery .grid
+{
+	margin-top: 20px;
+	position: relative;
+	left: 50%;
+}
+
+.gallery .grid .hover
+{
+	background: #ddd;
+	background: url('hover.gif');
+}
+
+.gallery .grid .cell
+{
+	float: left;
+}
+
+.imagegallery_image_hover
+{
+	position: absolute;
+	padding: 4px;
+	background: rgb(0,0,0);
+	background: rgba(0,0,0,.5);
+	-moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+}
+
+.imagegallery_image_hover .delete
+{
+	height: 20px;
+	width: 20px;
+	cursor: pointer;
+	background: url('../../gfx/delete_small.png') no-repeat;
+}
+
+
+.in2iwindow .chooser .elegant, .in2iwindow .chooser .simple, .in2iwindow .chooser .paper
+{
+	float: left;
+	cursor: pointer;
+	width: 94px;
+	height: 82px;
+	margin: 10px 5px;
+}
+
+.in2iwindow .chooser .elegant
+{
+	background-image: url('../gfx/elegant/thumbnail.png');
+}
+
+.in2iwindow .chooser .simple
+{
+	background-image: url('../gfx/simple/thumbnail.png');
+}
+
+.in2iwindow .chooser .paper
+{
+	background-image: url('../gfx/paper/thumbnail.png');
+}

@@ -1,0 +1,11 @@
+@import url("widgets.css");
+
+.clear
+{
+	clear: both;
+}
+
+form
+{
+	margin: 0px;
+}

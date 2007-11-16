@@ -1,0 +1,52 @@
+.elegant .top
+{
+	height: 40px;
+	padding-left: 40px;
+	background: url('../gfx/elegant/frame_top_left.png') bottom left no-repeat;
+}
+
+.elegant .top div
+{
+	height: 40px;
+	padding-right: 40px;
+	background: url('../gfx/elegant/frame_top_right.png') bottom right no-repeat;
+}
+
+.elegant .top div div
+{
+	height: 40px;
+	background: url('../gfx/elegant/frame_top.png') bottom center repeat-x;
+}
+
+.elegant .bottom
+{
+	height: 40px;
+	padding-left: 40px;
+	background: url('../gfx/elegant/frame_bottom_left.png') bottom left no-repeat;
+}
+
+.elegant .bottom div
+{
+	height: 40px;
+	padding-right: 40px;
+	background: url('../gfx/elegant/frame_bottom_right.png') bottom right no-repeat;
+}
+
+.elegant .bottom div div
+{
+	height: 40px;
+	background: url('../gfx/elegant/frame_bottom.png') bottom center repeat-x;
+}
+
+
+.elegant .middle
+{
+	padding-left: 40px;
+	background: url('../gfx/elegant/frame_left.png') center left repeat-y;
+}
+
+.elegant .middle div
+{
+	padding-right: 40px;
+	background: url('../gfx/elegant/frame_right.png') center right repeat-y;
+}

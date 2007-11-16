@@ -1,0 +1,52 @@
+.simple .top
+{
+	height: 40px;
+	padding-left: 40px;
+	background: url('../gfx/simple/frame_top_left.png') bottom left no-repeat;
+}
+
+.simple .top div
+{
+	height: 40px;
+	padding-right: 40px;
+	background: url('../gfx/simple/frame_top_right.png') bottom right no-repeat;
+}
+
+.simple .top div div
+{
+	height: 40px;
+	background: url('../gfx/simple/frame_top_bg.png') bottom center repeat-x;
+}
+
+.simple .bottom
+{
+	height: 40px;
+	padding-left: 40px;
+	background: url('../gfx/simple/frame_bottom_left.png') top left no-repeat;
+}
+
+.simple .bottom div
+{
+	height: 40px;
+	padding-right: 40px;
+	background: url('../gfx/simple/frame_bottom_right.png') top right no-repeat;
+}
+
+.simple .bottom div div
+{
+	height: 40px;
+	background: url('../gfx/simple/frame_bottom_bg.png') top center repeat-x;
+}
+
+
+.simple .middle
+{
+	padding-left: 40px;
+	background: url('../gfx/simple/frame_left.png') center left repeat-y;
+}
+
+.simple .middle div
+{
+	padding-right: 40px;
+	background: url('../gfx/simple/frame_right.png') center right repeat-y;
+}

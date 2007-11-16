@@ -1,0 +1,40 @@
+body
+{
+	background: #eee;
+	padding: 0px;
+	margin: 0px;
+}
+
+.header
+{
+	font-family: Helvetica, Arial, sans-serif;
+	text-align: center;
+	padding: 10px;
+	font-size: 14pt;
+	line-height: 14pt;
+	color: #333;
+	height: 18px;
+	background: #fff;
+	border-bottom: 1px solid #ccc;
+}
+
+.header a
+{
+	text-decoration: none;
+	color: #3e5b66;
+}
+
+.header a.selected
+{
+	font-weight: bold;
+}
+
+.back
+{
+	font-family: Helvetica, Arial, sans-serif;
+	color: #888;
+	position: absolute;
+	margin-top: 12px;
+	margin-left: 16px;
+	font-size: 10pt;
+}
