@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="compile" name="OnlineObjects 2" basedir=".">
+
+    <target name="init">
+
+        <property location="./src" name="src"/>
+        <property location="/opt/local/share/java/tomcat5" name="server"/>
+        <property location="${server}/webapps/onlineobjects" name="build"/>
+    	
+        <property location="${build}/WEB-INF/classes" name="classes"/>
+        <property location="${build}/WEB-INF/lib" name="lib"/>
+    </target>
+	
+    <path id="classpath">
+        <fileset dir="${basedir}/src/web/WEB-INF/lib">
+            <include name="**/*.jar"/>
+        </fileset>
+		<pathelement location="${basedir}/src/web/WEB-INF/classes"/>
+		<pathelement location="${env.CATALINA_HOME}/common/lib/servlet-api.jar"/>
+    </path>
+
+	<target name="compile">
+        <javac
+            destdir="${basedir}/src/web/WEB-INF/classes"
+            debug="on">
+            <classpath refid="classpath"/>
+        	<src path="${basedir}/src/java"/>
+    	    <include name="dk/**"/>
+        </javac>
+	</target>
+
+    <target depends="init" name="xwg">
+    		<delete dir="${basedir}/src/web/XmlWebGui"></delete>
+		<copy todir="${basedir}/src/web/XmlWebGui">
+			<fileset dir="${gui}" excludes="**/CVS"/>
+		</copy>
+    </target>
+
+    <target depends="init" name="in2igui">
+    	<delete dir="${basedir}/src/web/In2iGui"></delete>
+		<copy todir="${basedir}/src/web/In2iGui">
+			<fileset dir="${in2igui}" excludes="**/CVS"/>
+		</copy>
+    </target>
+	
+	<target name="conf">
+		<copy tofile="${basedir}/src/web/WEB-INF/classes/log4j.properties" file="${basedir}/conf/log4j.properties" />
+        <copy tofile="${basedir}/src/web/WEB-INF/classes/hibernate.cfg.xml" file="${basedir}/conf/hibernate.cfg.xml" />
+	</target>
+
+    <target depends="init" name="deploy">
+    	<delete dir="/Users/jbm/Desktop/OnlineObjects"></delete>
+		<copy todir="/Users/jbm/Desktop/OnlineObjects">
+			<fileset dir="${basedir}/src/web" excludes="**/.DS_Store"/>
+		</copy>
+    </target>
+    
+	<target name="schema" description="Generates SQL" depends="conf,compile">
+		<taskdef name="hibernatetool" 
+		         classname="org.hibernate.tool.ant.HibernateToolTask" 
+		         classpathref="classpath" />
+		<mkdir dir="${basedir}/sql" />
+		<echo message="${doexport}" />
+		<hibernatetool destdir="${basedir}/sql">
+			<classpath>
+			  <path location="${basedir}/src/web/WEB-INF/classes"/>
+			 </classpath>
+			<annotationconfiguration 
+				configurationfile="${basedir}/src/web/WEB-INF/classes/hibernate.cfg.xml"/>
+			<hbm2ddl 
+				export="true" 
+				outputfilename="db.sql"
+				format="true"
+				drop="true"
+			/>
+		</hibernatetool>
+    	<delete dir="${basedir}/src/web/WEB-INF/storage"></delete>
+		<mkdir dir="${basedir}/src/web/WEB-INF/storage" />
+	</target>
+</project>
