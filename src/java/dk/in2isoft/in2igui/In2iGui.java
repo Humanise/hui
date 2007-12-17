@@ -21,7 +21,6 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.log4j.Logger;
 
-import dk.in2isoft.onlineobjects.core.ConfigurationException;
 import dk.in2isoft.onlineobjects.core.Core;
 
 public class In2iGui {
@@ -39,11 +38,7 @@ public class In2iGui {
 	private In2iGui() {
 		super();
 		log.info("In2iGui initialized");
-		try {
-			path = Core.getInstance().getConfiguration().getBaseDir();
-		} catch (ConfigurationException e) {
-			log.error("Could not get configuration", e);
-		}
+		path = Core.getInstance().getConfiguration().getBaseDir();
 	}
 
 	public static In2iGui getInstance() {

@@ -3,9 +3,6 @@ package dk.in2isoft.onlineobjects.apps;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.log4j.Logger;
-
-import dk.in2isoft.onlineobjects.core.ConfigurationException;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelFacade;
@@ -16,7 +13,7 @@ import dk.in2isoft.onlineobjects.ui.Request;
 
 public abstract class ApplicationController implements ModelEventListener {
 
-	private static Logger log = Logger.getLogger(ApplicationController.class); 
+	//private static Logger log = Logger.getLogger(ApplicationController.class); 
 	
 	private String name;
 	
@@ -46,12 +43,7 @@ public abstract class ApplicationController implements ModelEventListener {
 	
 	public File getFile(String... path) {
 		StringBuilder filePath = new StringBuilder();
-		try {
-			filePath.append(Core.getInstance().getConfiguration().getBaseDir());
-		} catch (ConfigurationException e) {
-			log.error("Unable to get configuration", e);
-			throw new IllegalStateException("Unable to get configuration",e);
-		}
+		filePath.append(Core.getInstance().getConfiguration().getBaseDir());
 		filePath.append(File.separator);
 		filePath.append("WEB-INF");
 		filePath.append(File.separator);

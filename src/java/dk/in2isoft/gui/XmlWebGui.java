@@ -20,7 +20,6 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.log4j.Logger;
 
-import dk.in2isoft.onlineobjects.core.ConfigurationException;
 import dk.in2isoft.onlineobjects.core.Core;
 
 public class XmlWebGui {
@@ -41,11 +40,7 @@ public class XmlWebGui {
 		super();
 		skin = "In2ition";
 		log.info("In2iGui initialized");
-		try {
-			path = Core.getInstance().getConfiguration().getBaseDir();
-		} catch (ConfigurationException e) {
-			log.error("Could not get configuration", e);
-		}
+		path = Core.getInstance().getConfiguration().getBaseDir();
 	}
 
 	public void display(String xmlData, String[] elements, HttpServletResponse response) throws IOException {
