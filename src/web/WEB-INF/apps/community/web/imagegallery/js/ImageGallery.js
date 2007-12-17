@@ -113,7 +113,7 @@ OO.ImageGallery.Viewer.prototype.buildImages = function() {
 		var image = this.gallery.images[i];
 		var holder = document.createElement('div');
 		holder.className = 'image';
-		holder.style.backgroundImage = 'url(\'../../../service/image/?id='+image.id+'&width=760&height=510\')';
+		holder.style.backgroundImage = 'url(\''+info.baseContext+'/service/image/?id='+image.id+'&width=760&height=510\')';
 		this.container.appendChild(holder);
 	};
 	this.content.appendChild(this.container);

@@ -25,4 +25,10 @@ public class EntityConverter {
 	protected Node generateSubXML(Entity entity) {
 		return null;
 	}
+
+	protected void addSimpleNode(Element parent, String name, String value, String namespace) {
+		Element element = new Element(name,namespace);
+		element.appendChild(new Text(value));
+		parent.appendChild(element);
+	}
 }

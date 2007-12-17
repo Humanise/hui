@@ -20,6 +20,6 @@ public class PrivateSpaceController {
 	
 	private void displayProfile(Request request) throws EndUserException, IOException {
 		Interface ui = new PrivateProfile(controller, request);
-		ui.render(request.getResponse());
+		ui.render(request.getRequest(),request.getResponse());
 	}
 }

@@ -1,8 +1,6 @@
 var controller = {
 	editedId : 0,
 	interfaceIsReady : function(gui) {
-		N2i.log(gui);
-		//In2iGui.dwrUpdate(CommunityTool.getProfileGuiData);
 		var delegate = {callback:function(person) {
 			givenName.setValue(person.givenName);
 			familyName.setValue(person.familyName);
@@ -10,6 +8,11 @@ var controller = {
 			nameSuffix.setValue(person.nameSuffix);
 		}};
 		CommunityTool.getUsersMainPerson(delegate);
+		
+		CommunityTool.getUsersMainPersonsAddresses(function(addresses) {
+			mails.addObjects(addresses);
+		});
+		this._refreshInvitation();
 	},
 	searchFieldChanged : function(searchField) {
 		this._search();
@@ -17,71 +20,54 @@ var controller = {
 	selectorSelectionChanged : function(selector) {
 		this._search();
 	},
-	listRowsWasOpened : function(list) {
-		var item = list.getFirstSelection();
-		this.editedId = item.uid;
-		if (item.kind=='person') {
-			var dlgt = {
-				onSuccess:function() {
-					editor.hide();
-					personEditor.show();
-				}
-			};
-			In2iGui.update('LoadPerson.php?id='+item.uid,dlgt);
-		} else {
-			var dlgt = {
-				onSuccess:function() {
-					personEditor.hide();
-					editor.show();
-				}
-			};
-			In2iGui.update('LoadObject.php?id='+item.uid,dlgt);
+	listRowsWasOpened$invitations : function(obj) {
+		N2i.log(obj);
+	},
+	toolbarIconWasClicked$newInvitation : function(icon) {
+		invitationFormula.reset();
+		invitationWindow.show();
+	},
+	toolbarIconWasClicked$test : function(icon) {
+		if (!this.alert) {
+			this.alert = In2iGui.Alert.create({variant:'smile'});
+			this.alert.setTitle('Invitationen er sendt!');
+			this.alert.setText('Personen vil modtage en email med oplysninger om hvordan de kan tilmelde sig OnlineObjects!');
+			var button = In2iGui.Button.create({text : 'Fantastisk!', name : 'myButton'});
+			this.alert.addButton(button);
 		}
+		this.alert.show();
 	},
-	toolbarIconWasClicked$newPerson : function(icon) {
-		this.editedId = null;
-		editor.hide();
-		personFormula.reset();
-		personEditor.show();
-	},
-	toolbarIconWasClicked$changeToIconView : function(icon) {
-		viewStack.change('iconView');
-	},
-	toolbarIconWasClicked$changeToListView : function(icon) {
-		viewStack.change('listView');
-	},
-	buttonWasClicked$editorSave : function() {
-		var delegate = {
-			onSuccess : function() {
-				editor.hide();
-				list.refresh();
-			}
-		}
-		var parms = formula.getValues();
-		parms.id = this.editedId;
-		var options = {method:'post',parameters:parms};
-		$get('UpdateObject.php',delegate,options);
+	buttonWasClicked$myButton : function() {
+		this.alert.hide();
 	},
 	buttonWasClicked$savePerson : function() {
 		var delegate = {
 			callback : function() {
-				alert('success');
 			}
 		}
+		var emails = mails.getObjects();
 		var person = {
 			givenName:givenName.getValue(),
 			familyName:familyName.getValue(),
 			namePrefix:namePrefix.getValue(),
 			nameSuffix:nameSuffix.getValue()
 		};
-		CommunityTool.updateUsersMainPerson(person,delegate);
+		CommunityTool.updateUsersMainPerson(person,emails,delegate);
+	},
+	buttonWasClicked$sendInvitation : function() {
+		var name = invitationName.getValue();
+		var emailAddress = invitationEmail.getValue();
+		var message = invitationMessage.getValue();
+		invitationWindow.hide();
+		var self = this;
+		CommunityTool.createInvitation(name,emailAddress,message,function(response) {
+			self._refreshInvitation();
+		});
 	},
 	
-	
-	
-	_search : function() {
-		var selected = selector.getValues();
-		//list.loadData("ListData.php?query="+search.getValue()+(selected.length>0 ? "&type="+selected[0] : ""));
-		In2iGui.dwrUpdate(CommunityTool.getProfileGuiData);
+	_refreshInvitation : function() {
+		CommunityTool.getInvitations(function(invites) {
+			invitations.setObjects(invites);
+		});
 	}
 }

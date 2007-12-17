@@ -30,7 +30,8 @@ public class ImageGalleryBuilder extends DocumentBuilder {
 		Element root = new Element("ImageGallery", NAMESPACE);
 		Element settings = new Element("settings", NAMESPACE);
 		settings.addAttribute(new Attribute("tiledColumns",String.valueOf(gallery.getTiledColumns())));
-		settings.addAttribute(new Attribute("tiledSize",String.valueOf(gallery.getTiledSize())));
+		settings.addAttribute(new Attribute("tiledWidth",String.valueOf(gallery.getTiledWidth())));
+		settings.addAttribute(new Attribute("tiledHeight",String.valueOf(gallery.getTiledHeight())));
 		settings.addAttribute(new Attribute("style",style));
 		root.appendChild(settings);
 		Element tiled = new Element("tiled", NAMESPACE);

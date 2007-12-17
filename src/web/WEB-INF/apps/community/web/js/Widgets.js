@@ -31,7 +31,7 @@ OO.Community.Message.prototype.show = function() {
 	this.build();
 	this.message.style.display='';
 	$ani(this.message,'opacity',1,200);
-	$ani(this.message,'margin-top','10px',200);
+	$ani(this.message,'margin-top','40px',600,{ease:N2i.Animation.elastic});
 }
 
 OO.Community.Message.prototype.hide = function() {
@@ -48,7 +48,7 @@ OO.Community.Message.buildButton = function(text,delegate) {
 	a.appendChild(span1);
 	span1.appendChild(span2);
 	span2.appendChild(document.createTextNode(text));
-	if (delegate.buttonWasClicked) {
+	if (delegate && delegate.buttonWasClicked) {
 		a.onclick=function() {
 			delegate.buttonWasClicked();
 		}

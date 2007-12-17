@@ -15,7 +15,7 @@
 </xsl:template>
 
 <xsl:template match="gui:horizontal/gui:content">
-	<div class="" style="width: {100 div count(../gui:content)}%;">
+	<div style="width: {100 div count(../gui:content)}%;">
 		<xsl:attribute name="class">
 			horizontal_content
 			<xsl:if test="position()=1">horizontal_content_first</xsl:if>

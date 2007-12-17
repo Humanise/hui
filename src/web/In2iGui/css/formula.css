@@ -4,6 +4,13 @@ form.formula
 	margin: 0px;
 }
 
+.formula_header
+{
+	color: #0077cd;
+	font-size: 16pt;
+	padding-bottom: 5px;
+}
+
 form.formula table.group
 {
 	border-spacing: 0px 4px;
@@ -17,6 +24,7 @@ form.formula table.split
 
 form.formula table.group th
 {
+	color: #666;
 	text-align: right;
 	font-size: 9pt;
 	padding-right: 5px;
@@ -85,4 +93,24 @@ form.formula a.button:hover span
 form.formula a.button:hover span span
 {
 	background: url('../gfx/button_highlighted.png') 0px -130px repeat-x;
+}
+
+/******************************* Object list **************************/
+
+.objectlist thead
+{
+	text-align: left;
+	font-size: 10pt;
+	color: #666;
+}
+
+.objectlist tbody input.text
+{
+	border: 1px solid #ddd;
+	border-color: #ccc #ddd #eee #ddd;
+	width: 100%;
+}
+.objectlist tbody td
+{
+	padding: 0px 4px 2px 0px;
 }

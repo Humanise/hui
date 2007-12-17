@@ -21,20 +21,27 @@ public class Core {
 	private ConversionFacade converter;
 	private StorageManager storage;
 	private Priviledged superUser = new SuperUser();
+	private boolean started;
 	
 	private Core() {
-		setupConfiguration();
-		ensureUsers();
-		storage = new StorageManager(baseDir);
+		try {
+			setupConfiguration();
+		} catch (ConfigurationException e) {
+			throw new ExceptionInInitializerError(e);
+		}
+		try {
+			ensureUsers();
+		} catch (ModelException e) {
+			throw new ExceptionInInitializerError(e);
+		}
+		started = true;
+		log.info("OnlineObjects started successfully!");
 	}
 	
-	private void setupConfiguration()
+	private void setupConfiguration() throws ConfigurationException
 	{
-		try {
-			this.config = new Configuration(baseDir);
-		} catch (ConfigurationException e) {
-			log.error("Could not init configuration",e);
-		}
+		this.config = new Configuration(baseDir);
+		storage = new StorageManager(config.getStorageDir());
 	}
 	
 	public static Core getInstance() {
@@ -56,13 +63,8 @@ public class Core {
 		}
 	}
 
-	public Configuration getConfiguration()
-	throws ConfigurationException {
-		if (config==null) {
-			throw new ConfigurationException("System not configured correctly");
-		} else {
-			return config;
-		}
+	public Configuration getConfiguration() {
+		return config;
 	}
 	
 	public ServletContext getServletContext() {
@@ -94,7 +96,7 @@ public class Core {
 		return storage;
 	}
 	
-	private void ensureUsers() {
+	private void ensureUsers() throws ModelException {
 		User publicUser = getModel().getUser("public");
 		if (publicUser==null) {
 			log.warn("No public user present!");
@@ -103,6 +105,7 @@ public class Core {
 			user.setName("Public user");
 			getModel().saveItem(user,superUser);
 			getModel().commit();
+			log.info("Public user created!");
 		}
 	}
 	
@@ -110,5 +113,9 @@ public class Core {
 		public long getIdentity() {
 			return -1;
 		}
+	}
+
+	public boolean isStarted() {
+		return started;
 	}
 }

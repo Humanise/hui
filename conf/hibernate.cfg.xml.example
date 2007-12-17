@@ -32,7 +32,7 @@
         <!--
         <property name="hbm2ddl.auto">create</property>
 		-->
-        <mapping resource="dk/in2isoft/onlineobjects/model/Item.hbm.xml"/>
+        <mapping resource="model.hbm.xml"/>
 
     </session-factory>
 

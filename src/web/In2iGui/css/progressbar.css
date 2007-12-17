@@ -1,0 +1,12 @@
+.in2igui_progressbar
+{
+	height: 24px;
+	border: 1px solid #ccc;
+}
+
+.in2igui_progressbar div
+{
+	height: 24px;
+	background: url('../gfx/progress_animation.gif');
+	width: 0%;
+}

@@ -30,7 +30,7 @@ doctype-system="http://www.w3.org/TR/html4/loose.dtd"/>
 				<script src="js/front.js" type="text/javascript" charset="utf-8"> </script>
 				<title>NetPlace</title>
 			</head>
-			<body>vzvvxcc
+			<body>
 				<div class="base">
 					<div class="right">
 						<div class="light_box signup">

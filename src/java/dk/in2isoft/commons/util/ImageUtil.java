@@ -20,7 +20,7 @@ public class ImageUtil extends AbstractCommandLineInterfaceUtil {
 		File folder = Core.getInstance().getStorage().getItemFolder(image);
 		File converted = new File(folder,"thumbnail-"+size+"x"+size+".jpg");
 		if (!converted.exists()) {
-			String cmd = "/opt/local/bin/convert -thumbnail "+size+"x"+size+" "+image.getImageFile().getAbsolutePath()+"[0] "+converted.getAbsolutePath();
+			String cmd = Core.getInstance().getConfiguration().getImageMagickPath()+"/convert -thumbnail "+size+"x"+size+" "+image.getImageFile().getAbsolutePath()+"[0] "+converted.getAbsolutePath();
 			execute(cmd);
 		}
 		return converted;
@@ -31,7 +31,7 @@ public class ImageUtil extends AbstractCommandLineInterfaceUtil {
 		File folder = Core.getInstance().getStorage().getItemFolder(image);
 		File converted = new File(folder,"thumbnail-"+width+"x"+height+".jpg");
 		if (!converted.exists()) {
-			String cmd = "/opt/local/bin/convert -thumbnail "+width+"x"+height+" "+image.getImageFile().getAbsolutePath()+"[0] "+converted.getAbsolutePath();
+			String cmd = Core.getInstance().getConfiguration().getImageMagickPath()+"/convert -thumbnail "+width+"x"+height+" "+image.getImageFile().getAbsolutePath()+"[0] "+converted.getAbsolutePath();
 			execute(cmd);
 		}
 		return converted;
@@ -41,7 +41,7 @@ public class ImageUtil extends AbstractCommandLineInterfaceUtil {
 		int[] dimensions = new int[] {0,0};
 		log.debug(file.getAbsolutePath());
 		log.debug("Exists: "+file.exists());
-		String cmd = "/opt/local/bin/identify -quiet -format \"%wx%h\" "+file.getAbsolutePath()+"[0]";
+		String cmd = Core.getInstance().getConfiguration().getImageMagickPath()+"/identify -quiet -format \"%wx%h\" "+file.getAbsolutePath()+"[0]";
 		String result = execute(cmd).trim();
 		Pattern pattern = Pattern.compile(".*\"([0-9]+)x([0-9]+)\"");
 		Matcher matcher = pattern.matcher(result);

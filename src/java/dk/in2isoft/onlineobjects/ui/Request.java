@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.ArrayUtils;
 
+import dk.in2isoft.commons.lang.LangUtil;
 import dk.in2isoft.onlineobjects.core.UserSession;
 
 public class Request {
@@ -14,25 +15,49 @@ public class Request {
 	private HttpServletRequest request;
 	private HttpServletResponse response;
 	private int level;
-	private String[] path;
+	private String[] fullPath;
+	private String[] localContext;
 	
 	public Request(HttpServletRequest request, HttpServletResponse response) {
 		super();
 		this.response = response;
 		this.request = request;
 		this.decodePath();
+		this.localContext = new String[] {};
+	}
+	
+	public void setLocalContext(String[] localContext) {
+		this.localContext = localContext;
+	}
+	
+	public String[] getLocalContext() {
+		return this.localContext;
+	}
+	
+	public String getLocalContextPath() {
+		String context = request.getContextPath();
+		if (localContext.length==0) {
+			return context;
+		} else {
+			return context+"/"+LangUtil.implode(localContext,"/");
+		}
 	}
 
 	private void decodePath() {
 		String context = request.getContextPath();
 		String uri = request.getRequestURI().substring(context.length() + 1);
-		String[] path = uri.split("/");
-		int level = path.length;
-		if (!uri.endsWith("/") || uri.length() == 0) {
-			level--;
+		if (uri.length()==0) {
+			this.level = 0;
+			this.fullPath = new String[]{};
+		} else {
+			String[] path = uri.split("/");
+			int level = path.length;
+			if (!uri.endsWith("/") || uri.length() == 0) {
+				level--;
+			}
+			this.level = level;
+			this.fullPath = path;
 		}
-		this.level = level;
-		this.path = path;
 	}
 	
 	public HttpServletRequest getRequest() {
@@ -51,12 +76,12 @@ public class Request {
 		return path.toString();
 	}
 
-	public String[] getPath() {
-		return path;
+	public String[] getFullPath() {
+		return fullPath;
 	}
 
-	public String[] getApplicationPath() {
-		return (String[]) ArrayUtils.subarray(path, 2, path.length+1);
+	public String[] getLocalPath() {
+		return (String[]) ArrayUtils.subarray(fullPath, this.localContext.length, fullPath.length);
 	}
 
 	public String getString(String key) {
@@ -112,5 +137,9 @@ public class Request {
 	public UserSession getSession() {
 		Object session = request.getSession().getAttribute(UserSession.SESSION_ATTRIBUTE);
 		return (UserSession) session;
+	}
+
+	public String getBaseContextPath() {
+		return request.getContextPath();
 	}
 }

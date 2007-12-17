@@ -1,6 +1,7 @@
 if (!OO) var OO = {};
 if (!OO.Community) OO.Community = {};
 
+
 OO.Community.Front = function() {
 	this.signupForm = $id('signup');
 	this.loginForm = $id('login');
@@ -9,6 +10,7 @@ OO.Community.Front = function() {
 	this.searchField = null;
 	this.setupSearch();
 	this.addBehavior();
+	this.loadData();
 }
 
 OO.Community.Front.prototype.setupSearch = function() {
@@ -23,7 +25,7 @@ OO.Community.Front.prototype.setupSearch = function() {
 			}
 		}
 	};
-	this.searchField = new N2i.Textfield('search_field',delegate);
+	this.searchField = new N2i.TextField('search_field',null,delegate);
 }
 
 OO.Community.Front.prototype.addBehavior = function() {
@@ -33,8 +35,8 @@ OO.Community.Front.prototype.addBehavior = function() {
 		var password = self.signupForm.password.value;
 		try {
 			var delegate = {
-	  			callback:function(data) { if (data==true) {self.userDidSignUp(username)} },
-	  			errorHandler:function(errorString, exception) { self.setSignUpMessage(errorString); }
+	  			callback:function() { self.userDidSignUp(username) },
+	  			errorHandler:function(errorString, exception) { N2i.log(exception);self.setSignUpMessage(errorString); }
 			};
 			CommunityTool.signUp(username,password,delegate);
 		} catch (e) {
@@ -116,6 +118,28 @@ OO.Community.Front.prototype.hideSearchBox = function(text) {
 	$ani('poster','opacity',1,1000);
 	$ani('poster','height','400px',1000);
 	$ani('search_field','margin-left','95px',1000);
+}
+
+OO.Community.Front.prototype.loadData = function() {
+	var self = this;
+	CommunityTool.getLatestImages(function(images) {self.buildImages(images)});
+}
+
+OO.Community.Front.prototype.buildImages = function(images) {
+	var container = $id('images_container');
+	var elements = [];
+	for (var i=0; i < images.length; i++) {
+		var image = images[i];
+		var width = Math.round(image.width/image.height*60);
+		var height = Math.round(image.height/Math.max(image.width,image.height)*60);
+		var thumb = N2i.create(
+			'div',
+			{'class':'thumbnail'},
+			{'width':(width)+'px','marginLeft': '600px','backgroundImage':'url("'+info.baseContext+'/service/image/?id='+image.id+'&thumbnail='+Math.max(width,height)+'")'}
+		);
+		container.appendChild(thumb);
+		$ani(thumb,'margin-left','0px',1000,{ease:N2i.Animation.fastSlow});
+	};
 }
 
 N2i.Event.addLoadListener(function() {

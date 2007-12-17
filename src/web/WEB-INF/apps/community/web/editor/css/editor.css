@@ -156,7 +156,7 @@ div.editor_toolbar .style:hover
 
 /************************* Window ******************/
 
-.in2iwindow .chooser
+.in2igui_panel .chooser
 {
 	background-color: #b9bec6;
 	margin: 10px 10px 0px;
@@ -164,7 +164,7 @@ div.editor_toolbar .style:hover
 	padding: 5px 10px;
 }
 
-.in2iwindow .chooser .item
+.in2igui_panel .chooser .item
 {
 	background-image: url('../gfx/chooser_item_bg.png');
 	width: 96px;
@@ -173,7 +173,7 @@ div.editor_toolbar .style:hover
 	margin: 10px 5px;
 }
 
-.in2iwindow .chooser .item div
+.in2igui_panel .chooser .item div
 {
 	margin-left: 2px;
 	width: 92px;

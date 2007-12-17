@@ -1,0 +1,123 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="dk.in2isoft.onlineobjects.model.Privilege" table="privilege">
+        <id name="id" column="id">
+            <generator class="increment"/>
+        </id>
+		<property name="object"/>
+		<property name="subject"/>
+		<property name="delete"/>
+		<property name="view"/>
+		<property name="alter"/>
+		<property name="reference"/>
+    </class>
+    <class name="dk.in2isoft.onlineobjects.model.Item" table="item">
+        <id name="id" column="id">
+            <generator class="increment"/>
+        </id>
+	    <property name="created"/>
+	    <joined-subclass name="dk.in2isoft.onlineobjects.model.Entity" table="entity">
+	        <key column="id"/>
+	        <property name="name"/>
+	        
+			<list name="properties" table="property">
+			    <key column="enity_id"/>
+			    <list-index column="sortOrder"/>
+			    <composite-element class="dk.in2isoft.onlineobjects.model.Property">
+			        <property name="key"/>
+			        <property name="value"/>
+			    </composite-element>
+			</list>
+			
+		    <joined-subclass name="dk.in2isoft.onlineobjects.model.User" table="`user`">
+		        <key column="id"/>
+		        <property name="username"/>
+		        <property name="password"/>
+		    </joined-subclass>
+	
+		    <joined-subclass name="dk.in2isoft.onlineobjects.model.Person" table="person">
+		        <key column="id"/>
+		        <property name="givenName"/>
+		        <property name="familyName"/>
+		        <property name="additionalName"/>
+		        <property name="namePrefix"/>
+		        <property name="nameSuffix"/>
+		        <property name="sex"/>
+		    </joined-subclass>
+		    
+		    <joined-subclass name="dk.in2isoft.onlineobjects.model.EmailAddress" table="emailaddress">
+		        <key column="id"/>
+		        <property name="address"/>
+		        <property name="context"/>
+		    </joined-subclass>
+		    
+		    <joined-subclass name="dk.in2isoft.onlineobjects.model.PhoneNumber" table="phonenumber">
+		        <key column="id"/>
+		        <property name="number"/>
+		        <property name="context"/>
+		    </joined-subclass>
+		    
+		    <joined-subclass name="dk.in2isoft.onlineobjects.model.Topic" table="topic">
+		        <key column="id"/>
+		    </joined-subclass>
+		    
+		    <joined-subclass name="dk.in2isoft.onlineobjects.model.WebSite" table="website">
+		        <key column="id"/>
+		    </joined-subclass>
+		    
+		    <joined-subclass name="dk.in2isoft.onlineobjects.model.Image" table="image">
+		        <key column="id"/>
+		        <property name="fileSize"/>
+		        <property name="contentType"/>
+		        <property name="width"/>
+		        <property name="height"/>
+		    </joined-subclass>
+		    
+		    <joined-subclass name="dk.in2isoft.onlineobjects.model.ImagePart" table="imagepart">
+		        <key column="id"/>
+		    </joined-subclass>
+		    
+		    <joined-subclass name="dk.in2isoft.onlineobjects.model.WebPage" table="webpage">
+		        <key column="id"/>
+		        <property name="title"/>
+		    </joined-subclass>
+		    
+		    <joined-subclass name="dk.in2isoft.onlineobjects.model.WebStructure" table="webstructure">
+		        <key column="id"/>
+		    </joined-subclass>
+		    
+		    <joined-subclass name="dk.in2isoft.onlineobjects.model.WebNode" table="webnode">
+		        <key column="id"/>
+		    </joined-subclass>
+		    
+		    <joined-subclass name="dk.in2isoft.onlineobjects.model.ImageGallery" table="imagegallery">
+		        <key column="id"/>
+		        <property name="tiledColumns"/>
+		        <property name="tiledWidth"/>
+		        <property name="tiledHeight"/>
+		    </joined-subclass>
+		    
+		    <joined-subclass name="dk.in2isoft.onlineobjects.model.Invitation" table="invitation">
+		        <key column="id"/>
+		        <property name="code"/>
+		        <property name="message"/>
+		        <property name="state"/>
+		    </joined-subclass>
+		    
+	    </joined-subclass>
+	    
+	    <joined-subclass name="dk.in2isoft.onlineobjects.model.Relation" table="relation">
+	        <key column="id"/>
+		    <property name="kind"/>
+		    <property name="position"/>
+	        <many-to-one name="superEntity" column="super_entity_id" not-null="true"/>
+	        <many-to-one name="subEntity" column="sub_entity_id" not-null="true"/>
+	    </joined-subclass>
+    
+    </class>
+
+</hibernate-mapping>

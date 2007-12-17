@@ -20,7 +20,7 @@ public class PrivateProfile extends AbstractInterface {
 	}
 	
 	public File getFile() {
-		return controller.getFile("gui","private","profile.gui.xml");
+		return controller.getFile("web","gui","private","profile.gui.xml");
 	}
 	
 }

@@ -1,0 +1,79 @@
+.in2igui_alert
+{
+	width: 500px;
+	border: 1px solid #efcf3a;
+	position: absolute;
+	top: 20%;
+	left: 50%;
+	margin-left: -250px;
+	margin-top: 0px;
+	background: #fefae1 url('../gfx/alert_large_bg.png') bottom left repeat-x;
+	display: none;
+	opacity: 0;
+}
+
+.in2igui_alert_body
+{
+	min-height: 120px;
+	padding: 13px 20px;
+	overflow: hidden;
+}
+
+.in2igui_alert .smile
+{
+	padding-left: 160px;
+	background: url('../gfx/smiley_large_smile.png') no-repeat scroll 10px 10px;
+}
+
+.in2igui_alert .gasp
+{
+	padding-left: 160px;
+	background: url('../gfx/smiley_large_smile.png') no-repeat scroll 10px 10px;
+}
+
+.in2igui_alert h1
+{
+	color:#55360F;
+	font-family:"Trebuchet MS";
+	font-size:16pt;
+	margin:0px 0px 10px;
+}
+
+in2igui_alert p
+{
+	color:#55360F;
+	font-family:"Trebuchet MS";
+	font-size:11pt;
+	margin:0px 0px 10px;
+}
+
+/************************ Override buttons ************************/
+
+
+
+.in2igui_alert .in2igui_button
+{
+	float: left;
+	background: url('../gfx/alert_button.png') top left no-repeat;
+	padding-left: 6px;
+	text-decoration: none;
+	color: #094100;
+	margin-right: 10px;
+	cursor: pointer;
+}
+.in2igui_alert .in2igui_button div
+{
+	display: block;
+	height: 28px;
+	background: url('../gfx/alert_button.png') 100% -28px no-repeat;
+	padding-right: 6px;
+}
+.in2igui_alert .in2igui_button div div
+{
+	display: block;
+	height: 23px;
+	background: url('../gfx/alert_button.png') 0px -56px repeat-x;
+	padding: 5px 5px 0px 5px;
+	font-family: "Trebuchet MS";
+	font-size: 11pt;
+}

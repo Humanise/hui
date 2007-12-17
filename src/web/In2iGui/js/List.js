@@ -2,6 +2,7 @@ In2iGui.List = function(element,options) {
 	this.element = $id(element);
 	this.source = options.source;
 	this.body = this.element.getElementsByTagName('tbody')[0];
+	this.columns = [];
 	this.rows = [];
 	this.selected = [];
 	this.navigation = $class('navigation',this.element)[0];
@@ -16,10 +17,14 @@ In2iGui.List = function(element,options) {
 	this.refresh();
 }
 
+In2iGui.List.prototype.registerColumn = function(column) {
+	this.columns.push(column);
+}
+
 In2iGui.List.prototype.getSelection = function() {
 	var items = [];
 	for (var i=0; i < this.selected.length; i++) {
-		items[items.length] = this.rows[this.selected[i]];
+		items.push(this.rows[this.selected[i]]);
 	};
 	return items;
 }
@@ -41,6 +46,7 @@ In2iGui.List.prototype.loadData = function(url) {
  * @private
  */
 In2iGui.List.prototype.refresh = function() {
+	if (!this.source) return;
 	var self = this;
 	var delegate = {
 		onSuccess:function(t) {
@@ -82,7 +88,7 @@ In2iGui.List.prototype.parse = function(doc) {
 		};
 		this.addRowBehavior(row,i);
 		this.body.appendChild(row);
-		this.rows[this.rows.length] = {uid:rows[i].getAttribute('uid'),kind:rows[i].getAttribute('kind'),index:i};
+		this.rows.push({uid:rows[i].getAttribute('uid'),kind:rows[i].getAttribute('kind'),index:i});
 	};
 }
 
@@ -119,6 +125,33 @@ In2iGui.List.prototype.buildNavigation = function(doc) {
 	}
 }
 
+/********************************** Update from objects *******************************/
+
+In2iGui.List.prototype.setObjects = function(objects) {
+	this.selected = [];
+	this.body.innerHTML='';
+	this.rows = [];
+	for (var i=0; i < objects.length; i++) {
+		var row = N2i.create('tr');
+		var obj = objects[i];
+		for (var j=0; j < this.columns.length; j++) {
+			var cell = N2i.create('td');
+			if (this.builder) {
+				cell.innerHTML = this.builder.buildColumn(this.columns[j],obj);
+			} else {
+				cell.innerHTML = obj[this.columns[j].key];
+			}
+			row.appendChild(cell);
+		};
+		this.body.appendChild(row);
+		this.addRowBehavior(row,i);
+		this.rows.push(obj);
+	};
+}
+
+/************************************* Behavior ***************************************/
+
+
 /**
  * @private
  */
@@ -135,7 +168,7 @@ In2iGui.List.prototype.addRowBehavior = function(row,index) {
 }
 
 In2iGui.List.prototype.changeSelection = function(indexes) {
-	var rows = this.body.childNodes;
+	var rows = this.body.getElementsByTagName('tr');
 	for (var i=0;i<this.selected.length;i++) {
 		N2i.Element.removeClassName(rows[this.selected[i]],'selected');
 	}

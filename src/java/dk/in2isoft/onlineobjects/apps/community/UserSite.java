@@ -3,41 +3,32 @@ package dk.in2isoft.onlineobjects.apps.community;
 import java.io.File;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
-import dk.in2isoft.onlineobjects.core.ConversionFacade;
+import nu.xom.Element;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelFacade;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.WebSite;
-import dk.in2isoft.onlineobjects.ui.XSLTInterface;
+import dk.in2isoft.onlineobjects.ui.XSLTInterfaceAdapter;
 
-public class UserSite extends XSLTInterface {
-	
-	private static Logger log = Logger.getLogger(UserSite.class);
-	
+public class UserSite extends XSLTInterfaceAdapter {
+
 	private File stylesheet;
-	private String data;
-	
-	public UserSite(CommunityController controller,User user) throws EndUserException {
-		super();
-		this.stylesheet = controller.getFile(new String[] {"xslt", "user.xsl"});
-		ModelFacade model = Core.getInstance().getModel();
-		ConversionFacade converter = Core.getInstance().getConverter();
 
-		WebSite site = getUsersWebsite(user, model);
-		
-		data = "<?xml version='1.0'?><page>"+
-		converter.generateXML(user).toXML()+
-		converter.generateXML(site).toXML()+
-		"</page>";
-		log.debug(data);
+	private User user;
+
+	private WebSite site;
+
+	public UserSite(CommunityController controller, User user) throws EndUserException {
+		super();
+		this.stylesheet = controller.getFile("xslt", "user.xsl");
+		this.user = user;
+		site = getUsersWebsite(user);
 	}
 
-	private WebSite getUsersWebsite(User user,ModelFacade model)
-	throws EndUserException {
+	private WebSite getUsersWebsite(User user) throws EndUserException {
+		ModelFacade model = Core.getInstance().getModel();
 		WebSite webSite = null;
 		List<Relation> userSubs = model.getSubRelations(user);
 		for (Relation relation : userSubs) {
@@ -45,21 +36,22 @@ public class UserSite extends XSLTInterface {
 				webSite = (WebSite) model.loadEntity(WebSite.class, relation.getSubEntity().getId());
 			}
 		}
-		if (webSite==null) {
-			throw new EndUserException("The user "+user.getUsername()+" has no website");
+		if (webSite == null) {
+			throw new EndUserException("The user " + user.getUsername() + " has no website");
 		} else {
 			return webSite;
 		}
-	}
-	
-	@Override
-	public String getData() {
-		return data;
 	}
 
 	@Override
 	public File getStylesheet() {
 		return stylesheet;
+	}
+
+	@Override
+	protected void buildContent(Element parent) {
+		parent.appendChild(convertToNode(user));
+		parent.appendChild(convertToNode(site));
 	}
 
 }

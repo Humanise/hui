@@ -200,7 +200,9 @@ OO.Editor.prototype.addPage = function() {
 
 OO.Editor.prototype.openTemplateWindow = function() {
 	if (!this.templateWindow) {
-		this.templateWindow = new N2i.Window(new OO.Editor.TemplateWindowDelegate(this));
+		this.templateWindow = In2iGui.Panel.create();
+		this.templateWindow.addDelegate(new OO.Editor.TemplatePanelDelegate(this));
+		//this.templateWindow = new N2i.Window(new OO.Editor.TemplateWindowDelegate(this));
 	}
 	this.templateWindow.show();
 }
@@ -219,22 +221,23 @@ OO.Editor.prototype.changeTemplate = function(key) {
 
 
 
-OO.Editor.TemplateWindowDelegate = function(editor) {
+OO.Editor.TemplatePanelDelegate = function(editor) {
 	this.editor = editor;
 	this.position = {top : 100,left: 200};
 	this.title='Skift skabelon';
 	this.chooser = new OO.Editor.Chooser({items:this.editor.templates},this);
+	this.updatePanel();
 }
 
-OO.Editor.TemplateWindowDelegate.prototype.getContent = function() {
+OO.Editor.TemplatePanelDelegate.prototype.updatePanel = function() {
 	var self = this;
-	this.body = document.createElement('div');
-	this.body.style.width='465px';
+	this.body = N2i.create('div',null,{'width':'465px'});
+
 	this.body.appendChild(this.chooser.getElement());
-	return this.body;
+	this.editor.templateWindow.addContent(this.body);
 }
 
-OO.Editor.TemplateWindowDelegate.prototype.chooserItemWasSelected = function(info) {
+OO.Editor.TemplatePanelDelegate.prototype.chooserItemWasSelected = function(info) {
 	this.editor.changeTemplate(info.key);
 }
 

@@ -67,7 +67,7 @@
   
   
   <session-config>
-    <session-timeout>15</session-timeout>
+    <session-timeout>150</session-timeout>
   </session-config>
   
   <!-- Establish the default MIME type mappings -->

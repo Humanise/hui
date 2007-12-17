@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<configuration>
+	<base-url>localhost:8080</base-url>
+	<integration>
+		<imagemagick>
+			<path>/usr/local/bin</path>
+		</imagemagick>
+		<graphviz>
+			<path>/usr/local/bin</path>
+		</graphviz>
+	</integration>
+	<mail>
+		<host>smtp.somewhere.com</host>
+		<username>me</username>
+		<password>mypass</password>
+	</mail>
+</configuration>

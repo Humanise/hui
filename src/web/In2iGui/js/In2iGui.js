@@ -17,6 +17,9 @@ N2i.Event.addLoadListener(function() {In2iGui.get().ignite();})
 
 In2iGui.prototype.ignite = function(id) {
 	N2i.log('ignite!');
+	if (dwr && dwr.engine && dwr.engine.setErrorHandler) {
+		dwr.engine.setErrorHandler(function(msg) {alert(msg)});
+	}
 	In2iGui.callSuperDelegates(this,'interfaceIsReady');
 }
 

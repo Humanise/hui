@@ -8,6 +8,7 @@ import java.io.PrintStream;
 import java.io.StringReader;
 import java.util.Hashtable;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
@@ -56,9 +57,10 @@ public class In2iGui {
 		this.path = path;
 	}
 
-	public void render(StreamSource source, OutputStream output) throws IOException {
+	public void render(StreamSource source, OutputStream output, String context) throws IOException {
 		try {
 			Transformer transformer = getTransformer();
+			transformer.setParameter("context", context);
 			transformer.transform(source, new StreamResult(output));
 		} catch (TransformerFactoryConfigurationError e) {
 			e.printStackTrace(new PrintStream(output));
@@ -74,24 +76,24 @@ public class In2iGui {
 		}
 	}
 
-	public void render(String xmlData, HttpServletResponse response) throws IOException {
+	public void render(String xmlData, HttpServletRequest request,HttpServletResponse response) throws IOException {
 		OutputStream stream = response.getOutputStream();
 		try {
 			response.setContentType("text/html");
 			response.setCharacterEncoding("UTF-8");
 			StringReader xmlReader = new StringReader("<?xml version=\"1.0\"?>" + xmlData);
-			render(new StreamSource(xmlReader), stream);
+			render(new StreamSource(xmlReader), stream, request.getContextPath());
 		} catch (TransformerFactoryConfigurationError e) {
 			e.printStackTrace(new PrintStream(stream));
 		}
 	}
 
-	public void render(File file, HttpServletResponse response) throws IOException {
+	public void render(File file, HttpServletRequest request,HttpServletResponse response) throws IOException {
 		OutputStream stream = response.getOutputStream();
 		try {
 			response.setContentType("text/html");
 			response.setCharacterEncoding("UTF-8");
-			render(new StreamSource(file), stream);
+			render(new StreamSource(file), stream, request.getContextPath());
 		} catch (TransformerFactoryConfigurationError e) {
 			e.printStackTrace(new PrintStream(stream));
 		}

@@ -23,7 +23,7 @@
 			<xsl:comment/>
 		</div></div></div>
 		<div class="tabbox_body">
-			<div style="width: {count(gui:tab)*592}px; height: 400px;">
+			<div style="width: {count(gui:tab)*592}px;">
 				<xsl:apply-templates/>
 			</div>
 		</div>

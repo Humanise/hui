@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Hashtable;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -48,24 +48,10 @@ public class XmlWebGui {
 		}
 	}
 
-	public void display(String xmlData, String[] elements, PrintWriter writer) {
+	public void display(String xmlData, String[] elements, HttpServletResponse response) throws IOException {
 		log.info("In2iGui-template-count: " + templates.size());
-		try {
-			StringReader xmlReader = new StringReader("<?xml version=\"1.0\"?>" + xmlData);
-			Transformer transformer = getTransformer(elements, skin, iconSet);
-			transformer.transform(new StreamSource(xmlReader), new StreamResult(writer));
-		} catch (TransformerFactoryConfigurationError e) {
-			e.printStackTrace(writer);
-		} catch (TransformerConfigurationException e) {
-			e.printStackTrace(writer);
-		} catch (TransformerException e) {
-			writer.write("<?xml version=\"1.0\"?><error><message>" + escape(e.getMessage()) + "</message><gui>"
-					+ xmlData + "</gui></error>");
-		}
-	}
-
-	public void display(String xmlData, String[] elements, OutputStream stream) {
-		log.info("In2iGui-template-count: " + templates.size());
+		response.setContentType("text/html");
+		OutputStream stream = response.getOutputStream();
 		try {
 			StringReader xmlReader = new StringReader("<?xml version=\"1.0\"?>" + xmlData);
 			Transformer transformer = getTransformer(elements, skin, iconSet);

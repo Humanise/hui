@@ -81,12 +81,14 @@ public class PageRenderer {
 		File frame = conf.getFile(new String[] {"WEB-INF","apps","community","web","templates",template,"xslt","stylesheet.xsl"});
 		Map<String, String> parameters = new HashMap<String, String>();
 
+		parameters.put("app-context", request.getLocalContextPath());
+		parameters.put("base-context", request.getBaseContextPath());
 		parameters.put("session-user-name", request.getSession().getUser().getUsername());
 		parameters.put("privilege-document-modify", String.valueOf(Core.getInstance().getSecurity().canModify(document, request.getSession())));
 		parameters.put("edit-mode",request.getBoolean("edit") ? "true" : "false");
 		
 		StringBuilder path = new StringBuilder();
-		int level = request.getPath().length;
+		int level = request.getFullPath().length;
 		for (int i = 0; i < level; i++) {
 			path.append("../");
 		}
@@ -97,7 +99,7 @@ public class PageRenderer {
 				request.getResponse().setContentType("text/xml");
 				request.getResponse().getWriter().write(root.toXML());
 			} else {
-				XSLTUtil.applyXSLT(root.toXML(), new File[] {pageStylesheet,stylesheet,frame}, request.getResponse().getOutputStream(),parameters);				
+				XSLTUtil.applyXSLT(root.toXML(), new File[] {pageStylesheet,stylesheet,frame}, request.getResponse(),parameters);				
 			}
 		} catch (IOException e) {
 			throw new EndUserException(e);

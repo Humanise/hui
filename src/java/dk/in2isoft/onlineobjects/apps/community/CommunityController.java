@@ -38,26 +38,31 @@ public class CommunityController extends ApplicationController {
 	private static Logger log = Logger.getLogger(CommunityController.class);
 
 	private PrivateSpaceController privateSpaceController;
+	private static CommunityDAO dao = new CommunityDAO();
 	
 	public CommunityController() {
 		super("community");
 		privateSpaceController = new PrivateSpaceController(this);
 	}
+	
+	public static CommunityDAO getDAO() {
+		return dao;
+	}
 
 	@Override
 	public void unknownRequest(Request request) throws IOException, EndUserException {
-		log.debug(request.getApplicationPath().length);
-		String[] path = request.getApplicationPath();
+		log.debug(request.getLocalPath().length);
+		String[] path = request.getLocalPath();
 		if (path.length >= 1) {
 			handleUserSite(request);
 		} else {
 			XSLTInterface ui = new FrontPage(this, request);
-			XSLTUtil.applyXSLT(ui, request.getResponse().getOutputStream());
+			XSLTUtil.applyXSLT(ui, request);
 		}
 	}
 
 	private void handleUserSite(Request request) throws IOException, EndUserException {
-		String[] path = request.getApplicationPath();
+		String[] path = request.getLocalPath();
 		String userName = path[0];
 		User siteUser = Core.getInstance().getModel().getUser(userName);
 		if (siteUser == null) {
@@ -215,8 +220,11 @@ public class CommunityController extends ApplicationController {
 		List<Entity> entities = getModel().listEntities();
 		
 		for (Entity entity : entities) {
-			sb.append(entity.getId()).append(" [shape=box,fontname=\"Verdana\",label=\"").append(getModel().getSubject(entity).getClass().getSimpleName())
-					.append("\\n").append(entity.getName()).append("\"];");
+			sb.append(entity.getId()).append(" [shape=box,fontname=\"Verdana\",label=\"").append(getModel().getSubject(entity).getClass().getSimpleName());
+			if (entity.getName()!=null && entity.getName().length()>0) {
+				sb.append("\\n").append(entity.getName());
+			}
+			sb.append("\"];");
 		}
 		sb.append("}");
 		try {
@@ -224,6 +232,10 @@ public class CommunityController extends ApplicationController {
 				String svg = GraphUtil.dotToSvg(sb.toString());
 				request.getResponse().setContentType("image/svg+xml");
 				request.getResponse().getWriter().print(svg);
+			} else if (request.getBoolean("xdot")) {
+				String dot = GraphUtil.dotToDot(sb.toString());
+				request.getResponse().setContentType("text/plain");
+				request.getResponse().getWriter().print(dot);
 			} else {
 				request.getResponse().setContentType("image/png");
 				GraphUtil.dotToPNG(sb.toString(), request.getResponse().getOutputStream());
@@ -231,5 +243,10 @@ public class CommunityController extends ApplicationController {
 		} catch (EndUserException e) {
 			log.error("", e);
 		}
+	}
+	
+	public void invitation(Request request) throws IOException, EndUserException {
+		XSLTInterface ui = new InvitationPage(this, request);
+		ui.display(request);
 	}
 }

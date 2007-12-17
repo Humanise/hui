@@ -12,12 +12,14 @@ public class ImageGallery extends Entity implements Document {
 	public static String NAMESPACE = Entity.NAMESPACE+"ImageGallery/";
 	
 	private int tiledColumns;
-	private int tiledSize;
+	private int tiledHeight;
+	private int tiledWidth;
 	
 	public ImageGallery() {
 		super();
 		this.tiledColumns = 3;
-		this.tiledSize = 150;
+		this.tiledWidth = 150;
+		this.tiledHeight = 100;
 	}
 
 	public String getType() {
@@ -36,15 +38,23 @@ public class ImageGallery extends Entity implements Document {
 		this.tiledColumns = tiledColumns;
 	}
 
-	public int getTiledSize() {
-		return tiledSize;
-	}
-
-	public void setTiledSize(int tiledSize) {
-		this.tiledSize = tiledSize;
-	}
-
 	public DocumentBuilder getBuilder() {
 		return new ImageGalleryBuilder(this);
+	}
+
+	public int getTiledHeight() {
+		return tiledHeight;
+	}
+
+	public void setTiledHeight(int tiledHeight) {
+		this.tiledHeight = tiledHeight;
+	}
+
+	public int getTiledWidth() {
+		return tiledWidth;
+	}
+
+	public void setTiledWidth(int tiledWidth) {
+		this.tiledWidth = tiledWidth;
 	}
 }

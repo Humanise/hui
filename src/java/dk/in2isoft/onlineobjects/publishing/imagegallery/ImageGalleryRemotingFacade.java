@@ -33,7 +33,7 @@ public class ImageGalleryRemotingFacade extends AbstractRemotingFacade {
 			for (Relation relation : relations) {
 				if (relation.getSubEntity().getId()==ids[i]) {
 					relation.setPosition(i+1);
-					getModel().saveItem(relation,getUserSession());
+					getModel().updateItem(relation,getUserSession());
 				}
 			}
 		}

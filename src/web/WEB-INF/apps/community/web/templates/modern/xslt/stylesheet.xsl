@@ -18,10 +18,10 @@ doctype-system="http://www.w3.org/TR/html4/loose.dtd"/>
 		<html>
 			<head>
 				<xsl:call-template name="p:head"/>
-				<link rel="stylesheet" href="../templates/modern/css/style.css" type="text/css" media="screen" title="front" charset="utf-8"/>
+				<link rel="stylesheet" href="{$app-context}/templates/modern/css/style.css" type="text/css" media="screen" title="front" charset="utf-8"/>
 			</head>
 			<body>
-				<a href="../" class="back">Back</a>
+				<a href="{$app-context}/" class="back">Back</a>
 				<div class="header">
 					<xsl:for-each select="p:context/p:nodes/e:Entity[@type='Item/Entity/WebNode']">
 						<xsl:if test="position()>1"> &#160; </xsl:if>

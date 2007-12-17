@@ -1,0 +1,12 @@
+body
+{
+	margin: 0px;
+	padding: 0px;
+	font-family: "New York", Georgia, "Palatino", serif;
+	border-top: 4px solid #edebd5;
+}
+
+.clear
+{
+	clear: both;
+}

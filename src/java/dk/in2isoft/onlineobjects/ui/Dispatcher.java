@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -37,11 +39,15 @@ public class Dispatcher implements Filter {
 	FilterConfig filterConfig;
 
 	private static Logger log = Logger.getLogger(Dispatcher.class);
+	private List<String> reserved = new ArrayList<String>();
 
 	static final Class<?>[] args = { Request.class };
 
 	public Dispatcher() {
-
+		reserved.add("XmlWebGui");
+		reserved.add("In2iGui");
+		reserved.add("dwr");
+		reserved.add("public");
 	}
 
 	public void doFilter(ServletRequest sRequest, ServletResponse sResponse, FilterChain chain) throws IOException,
@@ -54,35 +60,13 @@ public class Dispatcher implements Filter {
 			throw new ServletException(e);
 		}
 		Request req = new Request(request, response);
-		String[] path = req.getPath();
-		if (path[0].equals("XmlWebGui") || path[0].equals("In2iGui") || path[0].equals("dwr") || path[0].equals("public")) {
+		String[] path = req.getFullPath();
+		if (path.length > 0 && reserved.contains(path[0])) {
 			chain.doFilter(sRequest, sResponse);
-		} else if (path[0].equals("app") && path.length > 1) {
-			
-			ApplicationController controller = ApplicationManager.getInstance().getToolController(path[1]);
-			try {
-				if (controller == null) {
-					throw new EndUserException("No controller found!");
-				}
-				if (path.length > 2) {
-					try {
-						callTool(controller, path[2], req);
-					} catch (EndUserException e) {
-						if (!pushFile(path, response)) {
-							throw e;
-						}
-					}
-				} else {
-					controller.unknownRequest(req);
-				}
-			} catch (EndUserException e) {
-				try {
-					callTool(controller, "unknownRequest", req);
-				} catch (EndUserException ex) {
-					displayError(req, ex);
-				}
-			}
-		} else if (path[0].equals("service") && path.length > 1) {
+		} else if (path.length > 1 && path[0].equals("app")) {
+			req.setLocalContext((String[])ArrayUtils.subarray(path, 0, 2));
+			callApplication(path[1], req);
+		} else if (path.length > 1 && path[0].equals("service")) {
 			ServiceController controller = ServiceManager.getInstance().getServiceController(path[1]);
 			try {
 				if (controller == null) {
@@ -97,7 +81,7 @@ public class Dispatcher implements Filter {
 				displayError(req, e);
 			}
 		} else {
-			displayError(req, new EndUserException("Nothing to do: "+ArrayUtils.toString(path, "/")));
+			callApplication("community", req);
 		}
 		Core.getInstance().getModel().commit();
 	}
@@ -110,16 +94,39 @@ public class Dispatcher implements Filter {
 		}
 	}
 	
-	private void callTool(ApplicationController controller, String methodName, Request request) throws EndUserException {
+	private void callApplication(String application, Request request) throws IOException {
+		ApplicationController controller = ApplicationManager.getInstance().getToolController("community");
+		String[] path = request.getLocalPath();
+		try {
+			if (controller == null) {
+				throw new EndUserException("No controller found!");
+			}
+			if (path.length > 0) {
+				try {
+					callApplicationMethod(controller, path[0], request);
+				} catch (NoSuchMethodException e) {
+					String[] filePath = new String[] {"app","community"};
+					if (!pushFile((String[])ArrayUtils.addAll(filePath,path), request.getResponse())) {
+						controller.unknownRequest(request);
+					}
+				} catch (InvocationTargetException e) {
+					displayError(request, e);
+				}
+			} else {
+				controller.unknownRequest(request);
+			}
+		} catch (EndUserException e) {
+			displayError(request, e);
+		}
+		
+	}
+	
+	private void callApplicationMethod(ApplicationController controller, String methodName, Request request) throws EndUserException, InvocationTargetException, NoSuchMethodException {
 		try {
 			Method method = controller.getClass().getDeclaredMethod(methodName, args);
 			method.invoke(controller, new Object[] { request });
-		} catch (NoSuchMethodException e) {
-			throw new EndUserException(e);
 		} catch (IllegalAccessException e) {
 			throw new EndUserException(e);
-		} catch (InvocationTargetException e) {
-			throw new EndUserException(e.getCause());
 		}
 	}
 
@@ -144,11 +151,20 @@ public class Dispatcher implements Filter {
 		this.filterConfig = filterConfig;
 	}
 
-	private void displayError(Request request, EndUserException ex) {
+	private void displayError(Request request, Exception ex) {
 		try {
+			EndUserException e;
+			if (ex instanceof EndUserException) {
+				e = (EndUserException) ex;
+			} else if (ex.getCause() instanceof EndUserException) {
+				e = (EndUserException) ex.getCause();
+			}
+			else {
+				e = new EndUserException("Undocumented exception",ex);
+			}
 			log.error(ex.getMessage(), ex);
 			ErrorDisplayer gui = new ErrorDisplayer();
-			gui.setEndUSerException(ex);
+			gui.setEndUSerException(e);
 			gui.display(request);
 		} catch (EndUserException e) {
 

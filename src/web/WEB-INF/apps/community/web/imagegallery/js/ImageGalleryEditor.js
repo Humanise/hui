@@ -1,27 +1,36 @@
 OO.Editor.ImageGallery = function() {
-	this.imageSize=150;
+	this.imageWidth=null;
+	this.imageHeight=null;
 	this.columns = 3;
 	this.images = [];
 	this.tempImages = [];
 	this.cells = [];
 	this.cellDims = [];
-	this.grid = $class('grid')[0];
 	var self = this;
 	this.toolbarItems = [
-		{title:'Tilføj billede',action:function() {self.openAddImageWindow()},icon:'addimage'},
-		{title:'Skift ramme',action:function() {self.openStyleWindow()},icon:'style'}
+		{title:'Tilføj billede',action:function() {self.openAddImagePanel()},icon:'addimage'},
+		{title:'Skift ramme',action:function() {self.openStyleWindow()},icon:'style'},
+		{title:'Skift størrelse',action:function() {self.changeSize(200,200)},icon:'style'}
 	];
 }
 
+OO.Editor.ImageGallery.getInstance = function() {
+	if (!OO.Editor.ImageGallery.instance) {
+		OO.Editor.ImageGallery.instance = new OO.Editor.ImageGallery();
+	}
+	return OO.Editor.ImageGallery.instance;
+}
+
 OO.Editor.ImageGallery.prototype.activate = function() {
+	this.grid = $class('grid')[0];
 	if (!this.styleWindow) {
 		this.refreshImages();
 	}
 }
 
 OO.Editor.ImageGallery.prototype.deactivate = function() {
-	if (this.addImageWindow) {
-		this.addImageWindow.hide();
+	if (this.addImagePanel) {
+		this.addImagePanel.hide();
 	}
 	if (this.styleWindow) {
 		this.styleWindow.hide();
@@ -84,6 +93,15 @@ OO.Editor.ImageGallery.prototype.parseImages = function(images) {
 	this.tempImages = this.images.concat();
 }
 
+OO.Editor.ImageGallery.prototype.changeSize = function(width,height) {
+	this.imageWidth = width;
+	this.imageHeight = height;
+	for (var i=0; i < this.images.length; i++) {
+		this.images[i].rebuild();
+	};
+	this.updateImages();
+}
+
 OO.Editor.ImageGallery.prototype.changeStyle = function(style) {
 	OO.ImageGallery.getInstance().style = style;
 	for (var i=0; i < this.images.length; i++) {
@@ -96,8 +114,8 @@ OO.Editor.ImageGallery.prototype.updateImages = function(useTemp) {
 	var images = useTemp ? this.tempImages : this.images;
  	this.grid.innerHTML='';
 	this.grid.className='grid grid_'+this.columns;
-	this.grid.style.width=((this.imageSize+80)*this.columns)+'px';
-	this.grid.style.marginLeft=((this.imageSize+80)*this.columns/2*-1)+'px';
+	this.grid.style.width=((this.imageWidth+80)*this.columns)+'px';
+	this.grid.style.marginLeft=((this.imageWidth+80)*this.columns/2*-1)+'px';
 	var row;
 	for (var i=0; i < images.length; i++) {
 		if (i % this.columns == 0) {
@@ -107,8 +125,8 @@ OO.Editor.ImageGallery.prototype.updateImages = function(useTemp) {
 		var image = images[i];
 		var cell = document.createElement('div');
 		cell.className = 'cell';
-		cell.style.width = (this.imageSize+80)+'px';
-		cell.style.height = (this.imageSize+80)+'px';
+		cell.style.width = (this.imageWidth+80)+'px';
+		cell.style.height = (this.imageHeight+80)+'px';
 		cell.appendChild(image.getFrame());
 		row.appendChild(cell);
 	};
@@ -181,12 +199,8 @@ OO.Editor.ImageGallery.prototype.moveItemInArray = function(currentIndex,newInde
 	array.splice(newIndex, 0, removed[0]);
 }
 
-OO.Editor.ImageGallery.prototype.startUploadListener = function() {
-	this.listenToUpload();
-}
-
 OO.Editor.ImageGallery.prototype.uploadFailed = function() {
-	this.addImageWindowDelegate.reset();
+	this.addImagePanelDelegate.reset();
 	alert('Upload failed!');
 }
 
@@ -196,7 +210,7 @@ OO.Editor.ImageGallery.prototype.listenToUpload = function() {
 		callback:function(data) { 
 			if (data==null) return;
 				if (data.completed==false) {
-					self.addImageWindowDelegate.uploadChanged(data);
+					self.addImagePanelDelegate.uploadChanged(data);
 					if (data.error) {
 						self.uploadFailed(data);
 					} else {
@@ -204,7 +218,7 @@ OO.Editor.ImageGallery.prototype.listenToUpload = function() {
 					}
 				} else {
 					self.refreshImages();
-					self.addImageWindowDelegate.reset();
+					self.addImagePanelDelegate.reset();
 				}
 			},
 	  	errorHandler:function(errorString, exception) { alert(errorString); }
@@ -226,12 +240,13 @@ OO.Editor.ImageGallery.prototype.openStyleWindow = function() {
 }
 
 
-OO.Editor.ImageGallery.prototype.openAddImageWindow = function() {
-	if (!this.addImageWindow) {
-		this.addImageWindowDelegate = new OO.Editor.ImageGallery.AddImageWindowDelegate(this);
-		this.addImageWindow = new N2i.Window(this.addImageWindowDelegate);
+OO.Editor.ImageGallery.prototype.openAddImagePanel = function() {
+	if (!this.addImagePanel) {
+		this.addImagePanel = In2iGui.Panel.create();
+		this.addImagePanelDelegate = new OO.Editor.ImageGallery.AddImagePanelDelegate(this);
+		this.addImagePanel.addDelegate(this.addImagePanelDelegate);
 	}
-	this.addImageWindow.show();
+	this.addImagePanel.show();
 }
 
 OO.Editor.ImageGallery.prototype.deleteImage = function(image) {
@@ -276,67 +291,34 @@ OO.Editor.ImageGallery.StyleWindowDelegate.prototype.chooserItemWasSelected = fu
 
 /************************************ Add image delegate ***********************************/
 
-
-OO.Editor.ImageGallery.AddImageWindowDelegate = function(editor) {
+OO.Editor.ImageGallery.AddImagePanelDelegate = function(editor) {
 	this.editor = editor;
-	this.position = {left: 100, top: 100};
-	this.title='Tilføjelse af billede';
+	this.upload = In2iGui.Upload.create(
+		{action:'uploadImage',name:'file',parameters:[
+			{name:'contentId',value:info.content.id}
+		]}
+	);
+	this.upload.addDelegate(this);
+	this.updatePanel();
 }
 
-OO.Editor.ImageGallery.AddImageWindowDelegate.prototype.windowWillShow = function() {
-	this.progress.hide();
-	this.form.style.display='';
+OO.Editor.ImageGallery.AddImagePanelDelegate.prototype.updatePanel = function() {
+	var content = N2i.create('div',null,{'width':'280px','padding':'10px'});
+	content.appendChild(this.upload.getElement());
+	this.editor.addImagePanel.addContent(content);
 }
 
-OO.Editor.ImageGallery.AddImageWindowDelegate.prototype.reset = function() {
-	this.progress.hide();
-	this.form.style.display='';
+OO.Editor.ImageGallery.AddImagePanelDelegate.prototype.uploadDidSubmit = function() {
+	this.upload.startProgress();
+	this.editor.listenToUpload();
 }
 
-OO.Editor.ImageGallery.AddImageWindowDelegate.prototype.getContent = function() {
-	this.body = document.createElement('div');
-	this.body.style.width='300px';
-	this.body.style.height='60px';
-	this.body.style.paddingLeft='5px';
-	this.body.style.paddingRight='5px';
-	this.body.style.paddingTop='5px';
-	var html = '<form action="uploadImage" method="POST" enctype="multipart/form-data" target="upload">'+
-	'<input type="hidden" name="contentId" value="'+info.content.id+'"/>'+
-	'<input type="file" name="file"/>'+
-	'</form>'+
-	'<iframe name="upload" style="display: none;"/>'
-	this.body.innerHTML=html;
-	var self = this;
-	this.form = this.body.getElementsByTagName('form')[0];
-	this.chooser = this.body.getElementsByTagName('input')[1];
-	this.chooser = this.body.getElementsByTagName('input')[1];
-	this.chooser.onchange=function() {self.startUpload()};
-	var self = this;
-	this.progress = new OO.Community.Window.Progress();
-	this.progress.hide();
-	this.body.appendChild(this.progress.getBase());
-	this.body.appendChild(OO.Community.Window.buildSpace(10));
-	this.cancel = N2i.Window.buildButton('Luk',{buttonWasClicked:function() {self.cancelWasClicked()}});
-	this.body.appendChild(this.cancel);
-	return this.body;
+OO.Editor.ImageGallery.AddImagePanelDelegate.prototype.uploadChanged = function(data) {
+	this.upload.setProgress(data.value);
 }
 
-OO.Editor.ImageGallery.AddImageWindowDelegate.prototype.cancelWasClicked = function() {
-	this.form.reset();
-	this.editor.addImageWindow.hide();
-}
-
-OO.Editor.ImageGallery.AddImageWindowDelegate.prototype.startUpload = function() {
-	this.editor.startUploadListener();
-	this.form.submit();
-	this.form.reset();
-	this.form.style.display = 'none';
-	this.progress.reset();
-	this.progress.show();
-}
-
-OO.Editor.ImageGallery.AddImageWindowDelegate.prototype.uploadChanged = function(data) {
-	this.progress.setValue(data.value);
+OO.Editor.ImageGallery.AddImagePanelDelegate.prototype.reset = function(data) {
+	this.upload.endProgress();
 }
 
 
@@ -347,18 +329,18 @@ OO.Editor.ImageGallery.Image = function(image,index,editor) {
 	this.index = index;
 	this.image = image;
 	this.editor = editor;
-	
-	this.width = this.editor.imageSize;
-	this.height = this.editor.imageSize;
-	if (this.image.width>this.image.height) {
-		this.height = Math.round(this.editor.imageSize*(this.image.height/this.image.width));
-	} else if (this.image.height>this.image.width) {
-		this.width = Math.round(this.editor.imageSize*(this.image.width/this.image.height));
-	}
 	this.style = OO.ImageGallery.getInstance().style;
-	this.frame = this.build();
-	this.buildHover();
-	this.addBehavior();
+	this.rebuild();
+}
+
+OO.Editor.ImageGallery.Image.prototype.calculateSize = function() {
+	this.width = this.editor.imageWidth;
+	this.height = this.editor.imageHeight;
+	if (this.image.width/this.editor.imageWidth>this.image.height/this.editor.imageHeight) {
+		this.height = Math.round(this.editor.imageWidth*(this.image.height/this.image.width));
+	} else if (this.image.height/this.editor.imageHeight>this.image.width/this.editor.imageWidth) {
+		this.width = Math.round(this.editor.imageHeight*(this.image.width/this.image.height));
+	}
 }
 
 OO.Editor.ImageGallery.Image.prototype.setIndex = function(index) {
@@ -373,16 +355,31 @@ OO.Editor.ImageGallery.Image.prototype.setStyle = function(style) {
 	}
 }
 
+OO.Editor.ImageGallery.Image.prototype.rebuild = function() {
+	this.calculateSize();
+	this.frame = this.build();
+	if (this.dragger) {
+		this.dragger.parentNode.removeChild(this.dragger);
+		this.dragger = null;
+	}
+	if (this.hover) {
+		this.hover.parentNode.removeChild(this.hover);
+		this.hover = null;
+	}
+	this.buildHover();
+	this.addBehavior();
+}
+
 OO.Editor.ImageGallery.Image.prototype.build = function() {
 	var frame = document.createElement('div');
 	frame.className = 'image image_frame '+this.style;
-	frame.style.marginLeft = Math.round((this.editor.imageSize-this.width)/2)+'px';
-	frame.style.marginTop = Math.round((this.editor.imageSize-this.height)/2)+'px';
+	frame.style.marginLeft = Math.round((this.editor.imageWidth-this.width)/2)+'px';
+	frame.style.marginTop = Math.round((this.editor.imageHeight-this.height)/2)+'px';
 	frame.style.cssFloat='left';
 	frame.innerHTML=
 		'<div class="top"><div><div></div></div></div>'+
 		'<div class="middle"><div>'+
-		'<img id="image-'+this.image.id+'" src="../../../service/image/?id='+this.image.id+'&amp;thumbnail='+this.editor.imageSize+'" width="'+this.width+'" height="'+this.height+'"/>'+
+		'<img id="image-'+this.image.id+'" src="'+info.baseContext+'/service/image/?id='+this.image.id+'&amp;width='+this.editor.imageWidth+'&amp;height='+this.editor.imageWidth+'" width="'+this.width+'" height="'+this.height+'"/>'+
 		'</div></div>'+
 		'<div class="bottom"><div><div></div></div></div>';
 	return frame;
@@ -470,8 +467,8 @@ OO.Editor.ImageGallery.Image.prototype.endDrag = function(e) {
 	N2i.Event.removeListener(document,'mouseup',this.upListener);
 	var shouldReturn = this.editor.imageFinishedDragging(event,this);
 	var self = this;
-	$ani(this.dragger,'top',N2i.Element.getTop(this.frame)+'px',200);
-	$ani(this.dragger,'left',N2i.Element.getLeft(this.frame)+'px',200);
+	$ani(this.dragger,'top',N2i.Element.getTop(this.frame)+'px',400,{ease:N2i.Animation.elastic});
+	$ani(this.dragger,'left',N2i.Element.getLeft(this.frame)+'px',400,{ease:N2i.Animation.elastic});
 	$ani(this.frame,'opacity',1,400);
 	var ender = {onComplete:function() {
 		N2i.log(self.dragger);
@@ -487,5 +484,5 @@ OO.Editor.ImageGallery.Image.prototype.toString = function() {
 
 
 N2i.Event.addLoadListener(function() {
-	new OO.Editor(new OO.Editor.ImageGallery());
+	new OO.Editor(OO.Editor.ImageGallery.getInstance());
 });

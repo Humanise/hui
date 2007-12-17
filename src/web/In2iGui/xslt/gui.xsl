@@ -10,25 +10,27 @@
 
 <xsl:output encoding="UTF-8" doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"/>
 
-
-<xsl:variable name="context"><xsl:value-of select="/gui:gui/@context"/></xsl:variable>
+<xsl:param name="context"/>
 
 <xsl:template match="gui:gui">
 <html>
 <head>
 <title></title>
-<link rel="stylesheet" href="{$context}In2iGui/css/master.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
-<script src="{$context}XmlWebGui/Scripts/In2iScripts.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-<script src="{$context}XmlWebGui/Scripts/In2iRequest.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-<script src="{$context}XmlWebGui/Scripts/In2iScripts/In2iAnimation.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-<script src="{$context}In2iGui/js/In2iGui.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-<script src="{$context}In2iGui/js/Window.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-<script src="{$context}In2iGui/js/Formula.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-<script src="{$context}In2iGui/js/List.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-<script src="{$context}In2iGui/js/Icons.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-<script src="{$context}In2iGui/js/Tabs.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-<script src="{$context}In2iGui/js/ViewStack.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-<script src="{$context}In2iGui/js/Tabbox.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+<link rel="stylesheet" href="{$context}/In2iGui/css/master.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
+<script src="{$context}/In2iGui/lib/In2iScripts/In2iScripts.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+<script src="{$context}/In2iGui/lib/In2iScripts/In2iAnimation.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+<script src="{$context}/In2iGui/lib/In2iScripts/In2iInput.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+<script src="{$context}/In2iGui/js/In2iGui.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+<script src="{$context}/In2iGui/js/Window.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+<script src="{$context}/In2iGui/js/Formula.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+<script src="{$context}/In2iGui/js/List.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+<script src="{$context}/In2iGui/js/Icons.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+<script src="{$context}/In2iGui/js/Tabs.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+<script src="{$context}/In2iGui/js/ViewStack.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+<script src="{$context}/In2iGui/js/Tabbox.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+<script src="{$context}/In2iGui/js/ObjectList.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+<script src="{$context}/In2iGui/js/Alert.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+<script src="{$context}/In2iGui/js/Button.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 <xsl:for-each select="gui:controller">
 <script src="{@source}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 </xsl:for-each>
@@ -47,10 +49,10 @@
 
 <xsl:template name="dwr-setup">
 	<xsl:if test="gui:dwr">
-		<script src="{gui:dwr/@base}engine.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{gui:dwr/@base}util.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}{gui:dwr/@base}engine.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}{gui:dwr/@base}util.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<xsl:for-each select="gui:dwr/gui:interface">
-			<script src="{../@base}interface/{@name}.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+			<script src="{$context}{../@base}interface/{@name}.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		</xsl:for-each>
 		<script type="text/javascript">
 			dwr.engine.setErrorHandler(In2iGui.dwrErrorHandler);
@@ -92,7 +94,7 @@
 
 <xsl:template match="gui:sidebar/gui:selector">
 	<div class="sidebar_selector" id="{generate-id()}"><xsl:apply-templates/></div>
-	<script src="{$context}In2iGui/js/Sidebar.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+	<script src="{$context}/In2iGui/js/Sidebar.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Sidebar.Selector('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@source"/>');
 		with (<xsl:value-of select="generate-id()"/>_obj) {
@@ -107,7 +109,7 @@
 <xsl:template match="gui:sidebar/gui:selector/gui:item">
 	<div class="item" id="{generate-id()}">
 		<xsl:if test="@icon">
-		<xsl:attribute name="style">background-image: url('<xsl:value-of select="$context"/>In2iGui/icons/<xsl:value-of select="@icon"/>1.png');</xsl:attribute>
+		<xsl:attribute name="style">background-image: url('<xsl:value-of select="$context"/>/In2iGui/icons/<xsl:value-of select="@icon"/>1.png');</xsl:attribute>
 		</xsl:if>
 		<xsl:if test="@badge"><span><xsl:value-of select="@badge"/></span></xsl:if>
 		<xsl:value-of select="@title"/>
@@ -120,7 +122,7 @@
 		<xsl:comment/>
 		</div>
 	</div>
-	<script src="{$context}In2iGui/js/Browser.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+	<script src="{$context}/In2iGui/js/Browser.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Browser('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@source"/>');
 		<xsl:call-template name="gui:createobject"/>
@@ -156,6 +158,11 @@
 	</div>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.List('<xsl:value-of select="generate-id()"/>',{source:'<xsl:value-of select="@source"/>',windowSize:'<xsl:value-of select="gui:window/@size"/>'});
+		with (<xsl:value-of select="generate-id()"/>_obj) {
+			<xsl:for-each select="gui:column">
+				registerColumn({key:'<xsl:value-of select="@key"/>',title:'<xsl:value-of select="@title"/>'});
+			</xsl:for-each>
+		}
 		<xsl:call-template name="gui:createobject"/>
 	</script>
 </xsl:template>
@@ -237,7 +244,7 @@
 
 <xsl:template match="gui:view/gui:toolbar">
 	<tr class="toolbar"><td>
-	<script src="{$context}In2iGui/js/Toolbar.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+	<script src="{$context}/In2iGui/js/Toolbar.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 	<div class="toolbar"><xsl:apply-templates/></div>
 	</td></tr>
 </xsl:template>
@@ -245,7 +252,7 @@
 
 <xsl:template match="gui:toolbar/gui:icon">
 	<div class="toolbar_icon" id="{generate-id()}">
-		<div class="icon" style="background-image: url('{$context}In2iGui/icons/{@icon}2.png')"><xsl:comment/></div>
+		<div class="icon" style="background-image: url('{$context}/In2iGui/icons/{@icon}2.png')"><xsl:comment/></div>
 		<span><xsl:value-of select="@title"/></span>
 	</div>
 	<script type="text/javascript">
@@ -316,12 +323,16 @@
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula('<xsl:value-of select="generate-id()"/>');
 		with (<xsl:value-of select="generate-id()"/>_obj) {
-		<xsl:for-each select="descendant::gui:text">
+		<xsl:for-each select="descendant::gui:group/gui:text">
 			registerInput(<xsl:value-of select="generate-id()"/>_obj);
 		</xsl:for-each>
 		}
 		<xsl:call-template name="gui:createobject"/>
 	</script>
+</xsl:template>
+
+<xsl:template match="gui:formula//gui:header">
+	<div class="formula_header"><xsl:apply-templates/></div>
 </xsl:template>
 
 <xsl:template match="gui:formula//gui:group">
@@ -371,6 +382,30 @@
 		<xsl:call-template name="gui:createobject"/>
 	</script>
 </xsl:template>
-	
+
+
+<xsl:template match="gui:objectlist">
+	<table cellspacing="0" cellpadding="0" id="{generate-id()}" class="objectlist">
+		<thead>
+			<tr>
+				<xsl:for-each select="gui:textfield">
+					<th><xsl:value-of select="@label"/></th>
+				</xsl:for-each>
+			</tr>
+		</thead>
+		<tbody>
+		</tbody>
+	</table>
+	<script type="text/javascript">
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.ObjectList('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>');
+		<xsl:call-template name="gui:createobject"/>
+		with (<xsl:value-of select="generate-id()"/>_obj) {
+			<xsl:for-each select="gui:textfield">
+				registerTemplateItem('<xsl:value-of select="@key"/>','textfield');
+			</xsl:for-each>
+			ignite();
+		}
+	</script>
+</xsl:template>
 
 </xsl:stylesheet>

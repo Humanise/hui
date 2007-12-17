@@ -10,6 +10,6 @@ public class TestEntityReflection extends TestCase {
 	
 	public void testBasic() throws Exception {
 		Field field = ImageGallery.class.getDeclaredField("TYPE");
-		System.out.print(field.get(new ImageGallery()));
+		System.out.println(field.get(new ImageGallery()));
 	}
 }

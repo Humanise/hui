@@ -22,7 +22,7 @@ public abstract class Interface {
 		buildBody(request, gui);
 		gui.append("</xmlwebgui>");
 		XmlWebGui ui = new XmlWebGui();
-		ui.display(gui.toString(), components, request.getResponse().getOutputStream());
+		ui.display(gui.toString(), components, request.getResponse());
 	}
 
 	public abstract void buildBody(Request request, StringBuilder gui) throws EndUserException;
