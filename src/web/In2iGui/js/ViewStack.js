@@ -19,3 +19,4 @@ In2iGui.ViewStack.prototype.change = function(name) {
 		}
 	};
 }
+

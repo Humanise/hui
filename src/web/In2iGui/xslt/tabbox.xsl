@@ -6,8 +6,6 @@
     exclude-result-prefixes="gui"
     >
 
-<xsl:output encoding="UTF-8" doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"/>
-
 <xsl:template match="gui:tabbox">
 	<div class="tabbox" id="{generate-id()}">
 		<div class="tabbox_top"><div><div>
@@ -24,7 +22,7 @@
 		</div></div></div>
 		<div class="tabbox_body">
 			<div style="width: {count(gui:tab)*592}px;">
-				<xsl:apply-templates/>
+				<xsl:apply-templates select="gui:tab"/>
 			</div>
 		</div>
 		<div class="tabbox_bottom"><div><div><xsl:comment/></div></div></div>

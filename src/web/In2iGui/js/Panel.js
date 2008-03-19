@@ -15,11 +15,13 @@ In2iGui.Panel.prototype.addBehavior = function() {
 	var close = $class('close',this.titlebar)[0];
 	close.onclick = function() {self.hide()};
 	
-	this.element.onmouseover = function() {$ani(this,'opacity',1,200);}
-	this.element.onmouseout = function() {$ani(this,'opacity',.5,1000);}
+	//this.element.onmouseover = function() {$ani(this,'opacity',1,200);}
+	//this.element.onmouseout = function() {$ani(this,'opacity',.5,1000);}
 }
 
-In2iGui.Panel.create = function() {
+In2iGui.Panel.create = function(opts) {
+	var options = {name:null,title:'Panel'};
+	N2i.override(options,opts);
 	In2iGui.Panel.latestZindex++;
 	var element = N2i.create('div',
 		{'class':'in2igui_panel'},
@@ -27,7 +29,7 @@ In2iGui.Panel.create = function() {
 	);
 	
 	var html = '<div class="titlebar"><div><div>'+
-			'<div class="close"></div><strong>Dette er  titlen</strong>'+
+			'<div class="close"></div><strong>'+options.title+'</strong>'+
 		'</div></div></div>'+
 		'<div class="body"><div class="body"><div class="body"><div class="content"></div></div></div></div>'+
 		'<div class="bottom"><div><div></div></div></div>';
@@ -47,15 +49,13 @@ In2iGui.Panel.prototype.hide = function() {
 }
 
 In2iGui.Panel.prototype.addContent = function(node) {
-	N2i.log(node);
 	this.content.appendChild(node);
 }
 
 /************************************ Dragging **************************************/
 
 In2iGui.Panel.prototype.startDrag = function(e) {
-	In2iGui.Panel.latestZindex++;
-	this.element.style.zIndex=In2iGui.Panel.latestZindex;
+	this.element.style.zIndex=In2iGui.nextIndex();
 	var event = new N2i.Event(e);
 	this.dragState = {left:event.mouseLeft()-N2i.Element.getLeft(this.element),top:event.mouseTop()-N2i.Element.getTop(this.element)};
 	var self = this;
@@ -64,6 +64,7 @@ In2iGui.Panel.prototype.startDrag = function(e) {
 	N2i.Event.addListener(document,'mousemove',this.moveListener);
 	N2i.Event.addListener(document,'mouseup',this.upListener);
 	N2i.Event.stop(e);
+	document.body.onselectstart = function () { return false; };
 	return false;
 }
 
@@ -78,4 +79,7 @@ In2iGui.Panel.prototype.drag = function(e) {
 In2iGui.Panel.prototype.endDrag = function() {
 	N2i.Event.removeListener(document,'mousemove',this.moveListener);
 	N2i.Event.removeListener(document,'mouseup',this.upListener);
+	document.body.onselectstart = null;
 }
+
+

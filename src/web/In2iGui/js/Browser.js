@@ -53,14 +53,12 @@ In2iGui.Browser.prototype.display = function() {
 }
 
 In2iGui.Browser.prototype.ensureColumns = function(col) {
-	N2i.log(this.columns);
 	for (var i=col; i < this.columns.length; i++) {
 		this.contents.removeChild(this.columns[i]);
 		this.selections[i]=null;
 	};
 	this.columns.splice(col);
 	this.levels.splice(col);
-	N2i.log(this.columns);
 }
 
 
@@ -76,10 +74,10 @@ In2iGui.Browser.prototype.itemWasClick = function(tag) {
 	var row = tag.in2iGuiIndex;
 	var prev = this.selections[col];
 	var item = this.levels[col][row];
-	N2i.log(item);
 	this.changeSelection(col,row);
 	this.ensureColumns(col+1);
 	if (item.source) {
 		this.update(col+1,item.source);
 	}
 }
+

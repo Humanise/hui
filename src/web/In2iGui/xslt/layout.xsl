@@ -6,8 +6,6 @@
     exclude-result-prefixes="gui"
     >
 
-<xsl:output encoding="UTF-8" doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"/>
-
 <xsl:template match="gui:horizontal">
 	<div class="horizontal">
 		<xsl:apply-templates select="gui:content"/>
@@ -20,10 +18,43 @@
 			horizontal_content
 			<xsl:if test="position()=1">horizontal_content_first</xsl:if>
 		</xsl:attribute>
-		<div style="padding: 0px 15px;">
+		<div>
+			<xsl:if test="position()>1 and ../@space">
+				<xsl:attribute name="style">padding-left: <xsl:value-of select="../@space"/>px;</xsl:attribute>
+			</xsl:if>
+			<xsl:comment/>
 		<xsl:apply-templates/>
 		</div>
 	</div>
+</xsl:template>
+
+
+<xsl:template match="gui:split">
+<table class="split" cellpadding="0" cellspacing="0">
+<tr>
+	<xsl:apply-templates select="gui:sidebar"/>
+	<xsl:for-each select="gui:content">
+		<td class="split_content">
+			<xsl:apply-templates/>
+		</td>
+	</xsl:for-each>
+</tr>
+</table>
+</xsl:template>
+
+<xsl:template match="gui:split/gui:sidebar">
+	<td class="split_sidebar"><xsl:apply-templates/></td>
+</xsl:template>
+
+<xsl:template match="gui:overflow">
+<div class="overflow" id="{generate-id()}" style="height: {@height}px;">
+	<xsl:apply-templates/>
+</div>
+<xsl:if test="@resize">
+	<script type="text/javascript">
+	In2iGui.get().registerOverflow('<xsl:value-of select="generate-id()"/>',<xsl:value-of select="@resize"/>);
+	</script>
+</xsl:if>
 </xsl:template>
 
 </xsl:stylesheet>

@@ -37,6 +37,7 @@ In2iGui.Upload.prototype.setProgress = function(value) {
 
 In2iGui.Upload.prototype.endProgress = function() {
 	this.form.style.display='block';
+	this.form.reset();
 	this.progressBar.reset();
 	this.progressBar.hide();
 }
@@ -60,4 +61,5 @@ In2iGui.Upload.create = function(options) {
 	return new In2iGui.Upload(element);
 }
 
-//{action:'uploadImage',name:'file',parameters:[{name:'contentId',value:info.content.id}]}
+
+

@@ -1,0 +1,32 @@
+@import url('msie.css');
+
+.in2igui_window_bottom, .in2igui_window_bottom div, .in2igui_window .titlebar
+{
+	background-image: url('../gfx/window_bg.gif');
+}
+
+.in2igui_window_content 
+{
+	background-image: url('../gfx/window_bg_middle.gif');
+}
+
+form.in2igui_formula a.in2igui_button span
+{
+	width: 1%;
+}
+
+div.in2igui_list .navigation .selection div
+{
+	width: 1%;
+	white-space: nowrap;
+}
+
+div.in2igui_list .navigation .selection a
+{
+	float: none;
+}
+/*
+body, textarea
+{
+	font-family: "MS Sans Serif",sans-serif;
+}*/

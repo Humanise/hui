@@ -1,0 +1,107 @@
+.in2igui_window
+{
+	position: absolute;
+	top: 50px;
+	left: 300px;
+	display: none;
+	opacity: 0;
+}
+
+.in2igui_window .titlebar span
+{
+	background: #eee;
+	padding: 0px 6px;
+}
+
+.in2igui_window .titlebar
+{
+	background: url('../gfx/window_bg.png') top left no-repeat;
+	color:#004A80;
+	font-size:11pt;
+	height:28px;
+	line-height:34px;
+	padding: 0px 0px 0px 16px;
+	cursor: default;
+	text-align:center;
+}
+
+.in2igui_window .titlebar .titlebar
+{
+	background-position: right -28px;
+	padding: 0px 16px 0px 0px;
+}
+
+.in2igui_window .titlebar .titlebar .titlebar
+{
+	background-position: left -56px;
+	background-repeat: repeat-x;
+	padding: 0px;
+}
+
+.in2igui_window_content
+{
+	background: url('../gfx/window_bg_middle.png') top left repeat-y;
+	padding: 0px 0px 0px 9px;
+}
+
+.in2igui_window_content .in2igui_window_content
+{
+	background-position: top right;
+	padding: 0px 9px 0px 0px;
+}
+
+.in2igui_window_content .in2igui_window_content .in2igui_window_content
+{
+	padding: 0px;
+	background: #fff;
+}
+
+
+
+.in2igui_window_bottom
+{
+	background: url('../gfx/window_bg.png') left -84px no-repeat;
+	padding: 0px 0px 0px 16px;
+	font-size: 0px;
+	height: 14px;
+}
+
+.in2igui_window_bottom div
+{
+	background: url('../gfx/window_bg.png') right -98px no-repeat;
+	padding: 0px 16px 0px 0px;
+	height: 14px;
+}
+
+.in2igui_window_bottom div div
+{
+	background-position: left -112px;
+	background-repeat: repeat-x;
+	padding: 0px;
+}
+
+.in2igui_window .titlebar .titlebar
+{
+	background-position: right -28px;
+	padding: 0px 16px 0px 0px;
+}
+
+.in2igui_window .titlebar .titlebar .titlebar
+{
+	background-position: left -56px;
+	background-repeat: repeat-x;
+	padding: 0px;
+}
+
+
+.in2igui_window .close
+{
+	position: absolute;
+	cursor: pointer;
+	margin-left: 13px;
+	margin-top: 6px;
+}
+
+.floating_window
+{
+}

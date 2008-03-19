@@ -50,3 +50,5 @@ In2iGui.Tabbox.Tab = function(id,name) {
 	this.element = $id(id);
 	In2iGui.enableDelegating(this);
 }
+
+

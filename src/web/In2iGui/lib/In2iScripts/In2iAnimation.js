@@ -100,7 +100,8 @@ N2i.Animation.render = function(element) {
 					value = 'rgb('+red+','+green+','+blue+')';
 					obj.element.style[work.property]=value;
 				} else if (N2i.Animation.IE && work.property=='opacity') {
-					obj.element.style['filter']='alpha(opacity='+((work.from+(work.to-work.from)*v)*100)+')';
+					var opacity = (work.from+(work.to-work.from)*v);
+					obj.element.style['filter']='alpha(opacity='+(opacity*100)+')';
 				} else {
 					value = new String(work.from+(work.to-work.from)*v)+(work.unit!=null ? work.unit : '');
 					obj.element.style[work.property]=value;
@@ -487,3 +488,5 @@ N2i.Color = function(color_string) {
     }
 
 }
+
+

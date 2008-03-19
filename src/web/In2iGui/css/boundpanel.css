@@ -1,0 +1,165 @@
+.in2igui_boundpanel
+{
+	position: absolute;
+	font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+	top: 0px;
+	left: 0px;
+}
+
+.in2igui_boundpanel .arrow
+{
+	position: absolute;
+	width: 18px;
+	height: 32px;
+	z-index: 10;
+	margin-top: 17px;
+}
+
+.in2igui_boundpanel .arrow_left
+{
+	background: url('../gfx/bound_arrow_left.png');
+}
+
+.in2igui_boundpanel .arrow_right
+{
+	background: url('../gfx/bound_arrow_right.png');
+}
+
+.in2igui_boundpanel .content
+{
+	width: 200px;
+	overflow: hidden;
+}
+
+/* Top */
+
+.in2igui_boundpanel .top
+{
+	height: 8px;
+	padding-left: 10px;
+	background: url('../gfx/bound_top_left.png') top left no-repeat;
+}
+
+.in2igui_boundpanel .top div
+{
+	height: 8px;
+	padding-right: 10px;
+	background: url('../gfx/bound_top_right.png') top right no-repeat;
+}
+
+.in2igui_boundpanel .top div div
+{
+	height: 8px;
+	background: url('../gfx/bound_top.png') top left repeat-x;
+}
+
+/* body */
+
+.in2igui_boundpanel .body
+{
+	padding-left: 10px;
+	background: url('../gfx/bound_left.png') top left repeat-y;
+}
+
+.in2igui_boundpanel .body .body
+{
+	padding-left: 0px;
+	padding-right: 10px;
+	background: url('../gfx/bound_right.png') top right repeat-y;
+}
+
+.in2igui_boundpanel .body .body .body
+{
+	padding: 0px;
+	background: #f2f2f2;
+}
+
+/* Bottom */
+
+.in2igui_boundpanel .bottom
+{
+	height: 12px;
+	padding-left: 10px;
+	background: url('../gfx/bound_bottom_left.png') top left no-repeat;
+}
+
+.in2igui_boundpanel .bottom div
+{
+	height: 12px;
+	padding-right: 10px;
+	background: url('../gfx/bound_bottom_right.png') top right no-repeat;
+}
+
+.in2igui_boundpanel .bottom div div
+{
+	height: 12px;
+	background: url('../gfx/bound_bottom.png') top left repeat-x;
+}
+
+/****************************** Special button style ********************************/
+
+.in2igui_boundpanel .in2igui_button
+{
+	float: right;
+	height: 20px;
+	background: url('../gfx/bound_button_bg.png') 0px 0px repeat-x;
+	font-size: 9pt;
+	padding: 0px 8px;
+	line-height: 20px;
+	border-width: 0px 1px;
+	border-color: #c6c9cb;
+	border-style: solid;
+	cursor: pointer;
+	margin-left: 5px;
+}
+
+.in2igui_boundpanel span.in2igui_button:hover
+{
+	background: url('../gfx/bound_button_bg.png') 0px -20px repeat-x;
+}
+
+.in2igui_boundpanel .in2igui_button_highlighted
+{
+	background: url('../gfx/bound_button_bg.png') 0px -40px repeat-x;
+	border-color: #67b45e;
+}
+
+.in2igui_boundpanel span.in2igui_button_highlighted:hover
+{
+	background: url('../gfx/bound_button_bg.png') 0px -60px repeat-x;
+}
+
+/****************************** Special form style *********************************/
+
+.in2igui_boundpanel .in2igui_formula_text
+{
+	border:1px solid #DDDDDD;
+	font-size:10pt;
+	margin-left:-1px;
+	text-indent:1px;
+	width:100%;
+	font-family:"Lucida Sans Unicode","Lucida Grande",sans-serif;
+}
+
+.in2igui_boundpanel input.in2igui_formula_text
+{
+	height:18px;
+}
+
+.in2igui_boundpanel .in2igui_formula_group
+{
+	width: 100%;
+	border-spacing: 0;
+}
+
+.in2igui_boundpanel .in2igui_formula_group th
+{
+	text-align: left;
+}
+
+.in2igui_boundpanel .in2igui_formula_group label
+{
+	color:#0072BC;
+	font-size:10pt;
+	font-weight:normal;
+}

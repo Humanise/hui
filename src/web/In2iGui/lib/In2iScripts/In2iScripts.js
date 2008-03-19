@@ -24,11 +24,21 @@ function $class(className,parentElement) {
 	var children = ($id(parentElement) || document.body).getElementsByTagName('*');
 	var elements = [];
 	for (var i=0;i<children.length;i++) {
-		if (N2i.Element.hasClassName(children[i],className)) {
+		if (N2i.hasClass(children[i],className)) {
 			elements[elements.length] = children[i];
 		}
 	}
 	return elements;
+}
+
+function $firstClass(className,parentElement) {
+	var children = ($id(parentElement) || document.body).getElementsByTagName('*');
+	for (var i=0;i<children.length;i++) {
+		if (N2i.hasClass(children[i],className)) {
+			return children[i];
+		}
+	}
+	return null;
 }
 
 function $tag(name,parentElement) {
@@ -63,10 +73,10 @@ if (!Array.prototype.push) {
 
 ///////////////////////////////////////// Util //////////////////////////////////////
 
-N2i.override = function(orig,subj) {
-	if (subj) {
-		for (item in subj) {
-			orig[item] = subj[item];
+N2i.override = function(original,subject) {
+	if (subject) {
+		for (prop in subject) {
+			original[prop] = subject[prop];
 		}
 	}
 }
@@ -122,17 +132,17 @@ N2i.objToString = function (obj,level) {
 	return str;
 }
 
-N2i.isIE = function() {
-	return navigator.userAgent.indexOf('MSIE')!=-1;
-}
-
 /////////////////////////////////////// Element /////////////////////////////////////
 
 N2i.create = function(name,attributes,styles,properties) {
 	var element = document.createElement(name);
 	if (attributes) {
 		for (attribute in attributes) {
-			element.setAttribute(attribute,attributes[attribute]);
+			if (attribute=='class') {
+				element.className = attributes[attribute];
+			} else {
+				element.setAttribute(attribute,attributes[attribute]);
+			}
 		}
 	}
 	if (styles) {
@@ -148,11 +158,20 @@ N2i.create = function(name,attributes,styles,properties) {
 	return element;
 }
 
-N2i.Element = function() {
-	
+N2i.removeChildren = function(node) {
+	var children = node.childNodes;
+	for (var i = children.length - 1; i >= 0; i--){
+		node.removeChild(children[i]);
+	};
 }
 
-N2i.Element.removeClassName = function(element, className) {
+N2i.ELEMENT_NODE=1;
+N2i.ATTRIBUTE_NODE=2;
+N2i.TEXT_NODE=3;
+
+N2i.Element = {}
+
+N2i.Element.removeClassName = N2i.removeClass = function(element, className) {
 	element = $id(element);
 	if (!element) return;		
 
@@ -169,11 +188,11 @@ N2i.Element.removeClassName = function(element, className) {
 	element.className = newClassName;
 }
 
-N2i.Element.hasClassName = function(element, className) {
+N2i.Element.hasClassName = N2i.hasClass = function(element, className) {
 	element = $id(element);
 	if (!element) return;
-	
-	var a = element.className.split(' ');
+	alert
+	var a = element.className.split(/\s+/);
 	for (var i = 0; i < a.length; i++) {
 		if (a[i] == className) {
 			return true;
@@ -190,13 +209,29 @@ N2i.Element.addClassName = N2i.addClass = function(element, className) {
     element.className += ' ' + className;
 }
 
+N2i.toggleClass = function(element,className) {
+	if (N2i.hasClass(element,className)) {
+		N2i.removeClass(element,className);
+	} else {
+		N2i.addClass(element,className);
+	}
+}
+
+N2i.setClass = function(element,className,add) {
+	if (add) {
+		N2i.addClass(element,className);
+	} else {
+		N2i.removeClass(element,className);
+	}
+}
+
 
 N2i.Element.scrollTo = function(element) {
 	element = $id(element);
 	window.scrollTo(N2i.Element.getLeft(element), N2i.Element.getTop(element)-20);
 }
 
-N2i.Element.getLeft = function(element) {
+N2i.Element.getLeft = N2i.getLeft = function(element) {
     element = $id(element);
 	if (element) {
 		xPos = element.offsetLeft;
@@ -211,7 +246,7 @@ N2i.Element.getLeft = function(element) {
 }
 
 
-N2i.Element.getTop = function(element) {
+N2i.Element.getTop = N2i.getTop = function(element) {
     element = $id(element);
 	if (element) {
 		yPos = element.offsetTop;
@@ -230,7 +265,7 @@ N2i.Element.getTop = function(element) {
  * @param {Object} obj The element to analyze
  * @return {int} The width in pixels of the element
  */
-N2i.Element.getWidth = function(element) {
+N2i.Element.getWidth = N2i.getWidth = function(element) {
 	element = $id(element);
 	return element.offsetWidth;
 }
@@ -240,7 +275,7 @@ N2i.Element.getWidth = function(element) {
  * @param {Object} obj The element to analyze
  * @return {int} The height in pixels of the element
  */
-N2i.Element.getHeight = function(element) {
+N2i.Element.getHeight = N2i.getHeight = function(element) {
 	element = $id(element);
 	return element.offsetHeight;
 }
@@ -255,7 +290,7 @@ N2i.Element.getRect = function(element) {
 }
 
 
-N2i.Element.getStyle = function(element, style) {
+N2i.Element.getStyle = N2i.getStyle = function(element, style) {
 	element = $id(element);
 	var cameled = N2i.camelize(style);
 	var value = element.style[cameled];
@@ -271,6 +306,19 @@ N2i.Element.getStyle = function(element, style) {
 		if (N2i.Element.getStyle(element, 'position') == 'static') value = 'auto';
 	}
 	return value == 'auto' ? null : value;
+}
+
+N2i.setOpacity = function(element,opacity) {
+	if (N2i.isIE()) {
+			alert(opacity);
+		if (opacity==1) {
+			element.style['filter']=null;
+		} else {
+			element.style['filter']='alpha(opacity='+(opacity*100)+')';
+		}
+	} else {
+		element.style['opacity']=opacity;
+	}
 }
 
 ////////////////////////////////////// Window ////////////////////////////////
@@ -425,6 +473,11 @@ N2i.Event.prototype.mouseLeft = function() {
 }
 
 
+N2i.Event.prototype.isReturnKey = function() {
+	return this.event.keyCode==13;
+}
+
+
 /**
  * Get the cursors distance to the top of the document
  * @return {int} The distance of the cursor to the top of the document
@@ -521,6 +574,61 @@ N2i.Event.addLoadListener = function(delegate) {
 	}
 }
 
+N2i.Location = {};
+
+N2i.Location.getParameter = function(name) {
+	var parms = N2i.Location.getParameters();
+	for (var i=0; i < parms.length; i++) {
+		if (parms[i].name==name) {
+			return parms[i].value;
+		}
+	};
+	return null;
+}
+
+N2i.Location.setParameter = function(name,value) {
+	var parms = N2i.Location.getParameters();
+	var found = false;
+	for (var i=0; i < parms.length; i++) {
+		if (parms[i].name==name) {
+			parms[i].value=value;
+			found=true;
+			break;
+		}
+	};
+	if (!found) {
+		parms.push({name:name,value:value});
+	}
+	N2i.Location.setParameters(parms);
+}
+
+N2i.Location.setParameters = function(parms) {
+	var query = '';
+	for (var i=0; i < parms.length; i++) {
+		query+= i==0 ? '?' : '&';
+		query+=parms[i].name+'='+parms[i].value;
+	};
+	document.location.search=query;
+}
+
+N2i.Location.getBoolean = function(name) {
+	var value = N2i.Location.getParameter(name);
+	return (value=='true' || value=='1');
+}
+
+N2i.Location.getParameters = function() {
+	var items = document.location.search.substring(1).split('&');
+	var parsed = [];
+	for( var i = 0; i < items.length; i++) {
+		var item = items[i].split('=');
+		var name = unescape(item[0]).replace(/^\s*|\s*$/g,"");
+		var value = unescape(item[1]).replace(/^\s*|\s*$/g,"");
+		if (name) {
+			parsed.push({name:name,value:value});
+		}
+	};
+	return parsed;
+}
 
 /************************************* Request ******************************/
 
@@ -538,9 +646,18 @@ N2i.Request.prototype.request = function(url,options) {
 		try {
 			if (req.readyState == 4) {
 				if (req.status == 200) {
-					self.callDelegate('onSuccess');
+					if (req.responseXML && req.responseXML.documentElement) {
+						if (self.callDelegate('onXML',req.responseXML)) {
+							return;
+						}
+					} else {
+						if (self.callDelegate('onText',req.responseXML)) {
+							return;
+						}
+					}
+					self.callDelegate('onSuccess',req);
 				} else {
-					self.callDelegate('onFailure');
+					self.callDelegate('onFailure',req);
 				}
 			}
 		} catch (e) {
@@ -550,13 +667,14 @@ N2i.Request.prototype.request = function(url,options) {
 	var method = this.options.method.toUpperCase();
 	req.open(method, url, this.options.async);
 	var parameters = null;
+	var body = '';
     if (method=='POST' && this.options.parameters) {
-		parameters = this.buildPostBody(this.options.parameters);
-		req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-		req.setRequestHeader("Content-length", parameters.length);
+		body = this.buildPostBody(this.options.parameters);
+		req.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=utf-8");
+		req.setRequestHeader("Content-length", body.length);
 		req.setRequestHeader("Connection", "close");
 	}
-	req.send(this.buildPostBody(this.options.parameters));
+	req.send(body);
 }
 
 N2i.Request.prototype.buildPostBody = function(parameters) {
@@ -569,10 +687,12 @@ N2i.Request.prototype.buildPostBody = function(parameters) {
 	return output;
 }
 
-N2i.Request.prototype.callDelegate = function(method) {
+N2i.Request.prototype.callDelegate = function(method,variable) {
 	if (this.delegate && this.delegate[method]) {
-		this.delegate[method](this.transport);
+		this.delegate[method](variable);
+		return true;
 	}
+	return false;
 }
 
 N2i.Request.prototype.initTransport = function() {
@@ -625,31 +745,43 @@ N2i.Request.getActiveX = function() {
 
 
 
-N2i.Log = function() {
-	
+
+
+N2i.inArray = function(arr,value) {
+	for (var i=0; i < arr.length; i++) {
+		if (arr[i]==value) return true;
+	};
 }
 
-N2i.Log.ensure = function() {
-	if (!N2i.Log.log) {
-		N2i.Log.log = new N2i.Log.Logger();
+
+N2i.flipInArray = function(arr,value) {
+	if (N2i.inArray(arr,value)) {
+		N2i.removeFromArray(arr,value);
+	} else {
+		arr.push(value);
 	}
 }
 
-N2i.Log.debug = function(msg) {
-	N2i.Log.ensure();
-	N2i.Log.log.appendLine(msg);
+N2i.removeFromArray = function(arr,value) {
+	for (var i = arr.length - 1; i >= 0; i--){
+		if (arr[i]==value) {
+			arr.splice(i,1);
+		}
+	};
 }
 
-N2i.Log.Logger = function() {
-	this.data = document.createElement('textarea');
-	this.data.style.height='200px';
-	this.data.style.width='300px';
-	this.data.style.fontSize='9px';
-	document.body.appendChild(this.data);
-}
-
-N2i.Log.Logger.prototype.appendLine = function(msg) {
-	this.data.value=msg+"\n"+this.data.value;
+N2i.addToArray = function(arr,value) {
+	if (value.constructor==Array) {
+		for (var i=0; i < value.length; i++) {
+			if (!N2i.inArray(arr,value[i])) {
+				arr.push(value);
+			}
+		};
+	} else {
+		if (!N2i.inArray(arr,value)) {
+			arr.push(value);
+		}
+	}
 }
 
 
@@ -658,7 +790,7 @@ N2i.Browser = function() {
 	
 }
 
-N2i.Browser.isIE = function() {
+N2i.Browser.isIE = N2i.isIE = function() {
 	var ua = navigator.userAgent;
 	var opera = /opera [56789]|opera\/[56789]/i.test(ua);
 	var ie = !opera && /MSIE/.test(ua);
@@ -672,3 +804,5 @@ N2i.Browser.isIE = function() {
 N2i.Browser.isOpera = function() {
 	return /opera [56789]|opera\/[56789]/i.test(navigator.userAgent);
 }
+
+

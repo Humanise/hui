@@ -1,0 +1,66 @@
+div.toolbar
+{
+	height: 58px;
+	padding: 0px 4px;
+}
+
+div.toolbar .disabled
+{
+	opacity: 0.5;
+}
+
+div.toolbar_icon
+{
+	height: 51px;
+	float: left;
+	margin: 7px 6px 0px 6px;
+	font-size: 0px;
+	text-align: center;
+	cursor: pointer;
+}
+div.toolbar_icon div.icon
+{
+	height: 32px;
+	width: 32px;
+	margin: 0 auto 2px auto;
+}
+
+div.toolbar_icon div.overlay
+{
+	height: 32px;
+	width: 32px;
+	background: right bottom no-repeat;
+}
+
+
+div.toolbar_icon:hover div.icon
+{
+	background-position: 0px -32px;
+}
+
+div.toolbar_icon span
+{
+	font-size: 11px;
+	color: #345;
+}
+
+div.toolbar_search
+{
+	text-align: center;
+	height: 51px;
+	float: left;
+}
+
+div.toolbar_search input
+{
+	height: 16px;
+	border: 1px solid #ddd;
+	margin: 10px 0px 7px 0px;
+}
+
+div.toolbar_search span
+{
+	display: block;
+	font-size: 8pt;
+	color: #345;
+}

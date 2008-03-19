@@ -5,3 +5,4 @@ In2iGui.Icons = function(id,name,options) {
 	this.source = options.source;
 	In2iGui.enableDelegating(this);
 }
+

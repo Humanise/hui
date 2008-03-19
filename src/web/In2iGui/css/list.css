@@ -1,0 +1,119 @@
+div.in2igui_list
+{
+	/*padding-right: 10px;*/
+}
+
+div.in2igui_list table
+{
+	width: 100%;
+}
+
+div.in2igui_list table thead th
+{
+	text-align: left;
+	font-size: 9pt;
+	border-bottom: 1px solid #eee;
+	padding: 1px 3px;
+}
+
+div.in2igui_list table tbody td
+{
+	font-size: 9pt;
+	border-bottom: 1px solid #eee;
+	padding: 1px 3px;
+	vertical-align: top;
+}
+
+div.in2igui_list table tbody td .object
+{
+	overflow: hidden;
+	padding-bottom: 2px;
+}
+
+div.in2igui_list table tbody td .icon
+{
+	float: left;
+	width: 16px;
+	height: 16px;
+	margin-right: 3px;
+	background: 0px 0px no-repeat;
+}
+
+
+div.in2igui_list table tbody tr:hover
+{
+	background-color: #EBF0F7;
+	cursor: pointer;
+}
+
+div.in2igui_list table tbody tr:hover .icon
+{
+	background-position: 0px -16px;
+}
+
+div.in2igui_list table tbody tr.selected
+{
+	background-color: #3875d7;
+	color: #fff;
+}
+
+div.in2igui_list .window_number
+{
+	display: none;
+}
+
+div.in2igui_list .navigation
+{
+	height: 20px;
+	font-size: 9pt;
+	padding: 3px;
+}
+div.in2igui_list .navigation .count
+{
+	float: right;
+	color: #666;
+}
+
+div.in2igui_list .navigation .selection
+{
+	float: left;
+	height: 16px;
+	background: url('../gfx/list_selector.png')  no-repeat;
+	padding-left: 7px;
+}
+
+div.in2igui_list .navigation .selection div
+{
+	height: 16px;
+	background: url('../gfx/list_selector.png') 100% -16px no-repeat;
+	padding-right: 7px;
+}
+
+div.in2igui_list .navigation .selection div div
+{
+	padding: 0px 2px;
+	background-position: 0px -32px;
+	background-repeat: repeat-x;
+}
+
+div.in2igui_list .navigation .selection a
+{
+	cursor: pointer;
+	color: #666;
+	float: left;
+	height: 16px;
+	line-height: 16px;
+	padding: 0px 2px;
+}
+
+div.in2igui_list .navigation .selection a:hover
+{
+	background: #ccc;
+	color: #000;
+}
+
+div.in2igui_list .navigation .selection a.selected
+{
+	background: #3875D7;
+	color: #fff;
+}

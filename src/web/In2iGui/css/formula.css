@@ -1,116 +1,264 @@
-form.formula
+form.in2igui_formula
 {
-	padding: 5px;
+	padding: 0px;
 	margin: 0px;
+	overflow-x: auto;
 }
 
-.formula_header
+.in2igui_formula_header
 {
 	color: #0077cd;
 	font-size: 16pt;
 	padding-bottom: 5px;
 }
 
-form.formula table.group
+form.in2igui_formula table.group
 {
-	border-spacing: 0px 4px;
+	border-spacing: 4px 4px;
 	width: 100%;
 }
 
-form.formula table.split
+form.in2igui_formula table.group_above
+{
+	border-spacing: 2px;
+}
+
+form.in2igui_formula table.split
 {
 	border-spacing: 5px 0px;
 }
 
-form.formula table.group th
+form.in2igui_formula table.group label
 {
-	color: #666;
+	color: #004A80;
 	text-align: right;
-	font-size: 9pt;
-	padding-right: 5px;
-	width: 1%;
+	font-size: 12px;
+	line-height: 11px;
+	font-weight: normal;
 }
 
-form.formula .field
+form.in2igui_formula table.group th label
+{
+	font-size: 9pt;
+}
+
+form.in2igui_formula table.group th
+{
+	width: 1%;
+	vertical-align: top;
+	padding-right: 5px;
+	text-align: right;
+	line-height: 20px;
+}
+
+form.in2igui_formula .field
 {
 	border: 1px solid #ddd;
-	/*overflow: auto;*/
+	border-color: #bbb #ccc #eee;
 }
 
-form.formula input.text
+form.in2igui_formula input.text, form.in2igui_formula textarea
 {
 	border: none;
+	padding: 0px 0px;
+	margin: 0px;
+	font-size: 10pt;
+	text-indent: 2px;
 	width: 100%;
 }
 
-form.formula fieldset
+form.in2igui_formula fieldset
 {
 	border: 1px solid #ccc;
 	margin: 0px;
 	padding: 0px 8px 5px 6px;
 }
 
-form.formula fieldset legend
+form.in2igui_formula fieldset legend
 {
 	font-size: 9pt;
 	color: #999;
 }
 
-form.formula a.button
+/************************************** Buttons *********************************/
+
+.in2igui_formula_buttons
 {
-	background: url('../gfx/button_highlighted.png') top left no-repeat;
-	color:#094100;
+	overflow: hidden;
+	padding-bottom: 3px;
+}
+
+form.in2igui_formula a.in2igui_button
+{
+	background: url('../gfx/button.png') top left no-repeat;
+	color: #004a80;
 	float: right;
 	font-size: 11pt;
-	height: 26px;
-	line-height: 24px;
+	height: 28px;
+	line-height: 25px;
+	cursor: pointer;
+	margin-left: 10px;
+}
+
+form.in2igui_formula a.in2igui_button span
+{
+	background-image: url('../gfx/button.png');	
+	background-repeat: no-repeat;
+	display: block;
+	background-position: 100% -28px;
+	background-repeat: no-repeat;
+	height: 28px;
+}
+
+form.in2igui_formula a.in2igui_button_highlighted, form.in2igui_formula a.in2igui_button_highlighted span
+{
+	color: #094100;
+	background-image: url('../gfx/button_highlighted.png');
+	background-repeat: no-repeat;
+}
+
+form.in2igui_formula a.in2igui_button span span
+{
+	background-position: 0px -56px;
+	background-repeat: repeat-x;
+	margin: 0px 4px;
+	padding: 0px 6px;
+}
+
+form.in2igui_formula a.in2igui_button:hover
+{
+	background-position: 0px -84px;
+}
+
+form.in2igui_formula a.in2igui_button:hover span
+{
+	background-position: 100% -112px;
+}
+
+form.in2igui_formula a.in2igui_button:hover span span
+{
+	background-position: 0px -140px;
+	background-repeat: repeat-x;
+}
+
+form.in2igui_formula a.in2igui_button_disabled
+{
+	color: #666;
+	opacity: .5;
+	cursor: default;
+}
+
+form.in2igui_formula a.in2igui_button_disabled:hover
+{
+	background-position: top left;
+}
+
+form.in2igui_formula a.in2igui_button_disabled:hover span
+{
+	background-position: 100% -28px;
+}
+
+form.in2igui_formula a.in2igui_button_disabled:hover span span
+{
+	background-position: 0px -56px;
+}
+
+/******************************* Radio button **************************/
+
+form.in2igui_formula .radiobuttons
+{
+	overflow: hidden;
+}
+
+form.in2igui_formula .radiobutton
+{
+	overflow: hidden;
+	padding: 4px 0px 0px;
+	margin-right: 10px;
+	font-size: 10pt;
+	cursor: default;
+	color: #004A80;
+	float: left;
+}
+
+form.in2igui_formula .radiobutton .radio
+{
+	float: left;
+	background: url('../gfx/radiobutton.png') no-repeat;
+	width: 18px;
+	height: 18px;
+	margin-right: 3px;
 	cursor: pointer;
 }
 
-form.formula a.button span
+form.in2igui_formula .radiobuttons .selected .radio
 {
-	display: block;
-	background: url('../gfx/button_highlighted.png') 100% -26px no-repeat;
-	height: 26px;
+	background-position: 0px -18px;
 }
 
-form.formula a.button span span
+/******************************* Checkboxes **************************/
+
+form.in2igui_formula .checkboxes
 {
-	background: url('../gfx/button_highlighted.png') 0px -52px repeat-x;
-	margin: 0px 12px;
 }
 
-form.formula a.button:hover
+form.in2igui_formula .checkbox
 {
-	background: url('../gfx/button_highlighted.png') 0px -78px no-repeat;
+	overflow: hidden;
+	padding: 4px 0px 0px;
+	font-size: 10pt;
+	cursor: default;
+	color: #004A80;
 }
 
-form.formula a.button:hover span
+form.in2igui_formula .checkbox .check
 {
-	background: url('../gfx/button_highlighted.png') 100% -104px no-repeat;
+	float: left;
+	background: url('../gfx/checkbox.png') no-repeat;
+	width: 18px;
+	height: 18px;
+	margin-right: 3px;
+	cursor: pointer;
 }
 
-form.formula a.button:hover span span
+form.in2igui_formula .checked .check
 {
-	background: url('../gfx/button_highlighted.png') 0px -130px repeat-x;
+	background-position: 0px -18px;
 }
 
 /******************************* Object list **************************/
 
-.objectlist thead
+table.in2igui_objectlist
 {
-	text-align: left;
-	font-size: 10pt;
-	color: #666;
+	width: 100%;
 }
 
-.objectlist tbody input.text
+table.in2igui_objectlist thead th.in2igui_objectlist
 {
-	border: 1px solid #ddd;
+	text-align: left;
+	font-size: 9pt;
+	line-height: 9pt;
+	color: #666;
+	font-weight: normal;
+	padding-left: 4px;
+}
+
+table.in2igui_objectlist thead th.in2igui_objectlist1
+{
+	padding-left: 0px;	
+}
+
+.in2igui_objectlist tbody input.text
+{
 	border-color: #ccc #ddd #eee #ddd;
 	width: 100%;
 }
-.objectlist tbody td
+.in2igui_objectlist tbody td
 {
-	padding: 0px 4px 2px 0px;
+	padding: 0px 0px 2px 4px;
+}
+
+.in2igui_objectlist tbody td.first
+{
+	padding-left: 0px;
 }

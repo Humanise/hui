@@ -7,27 +7,30 @@ In2iGui.Toolbar = function(element) {
 In2iGui.Toolbar.Icon = function(id,name) {
 	this.id = id;
 	this.name = name;
+	this.enabled = true;
 	this.element = $id(id);
 	this.icon = $class('icon',this.element)[0];
 	In2iGui.enableDelegating(this);
 	this.addBehavior();
 }
 
-In2iGui.Toolbar.Icon.prototype.addBehavior = function() {
-	var self = this;
-	this.element.onmouseover = function() {
-		In2iGui.hoverOverBG(self.icon);
+In2iGui.Toolbar.Icon.prototype = {
+	addBehavior : function() {
+		var self = this;
+		this.element.onclick = function() {
+			self.wasClicked();
+		}
+	},
+	setEnabled : function(enabled) {
+		this.enabled = enabled;
+		N2i.setClass(this.element,'disabled',!this.enabled);
+	},
+	wasClicked : function() {
+		if (this.enabled) {
+			In2iGui.callDelegates(this,'toolbarIconWasClicked');
+			In2iGui.callDelegates(this,'click');
+		}
 	}
-	this.element.onmouseout = function() {
-		In2iGui.hoverOutBG(self.icon);
-	}
-	this.element.onclick = function() {
-		self.wasClicked();
-	}
-}
-
-In2iGui.Toolbar.Icon.prototype.wasClicked = function() {
-	In2iGui.callDelegates(this,'toolbarIconWasClicked');
 }
 
 
@@ -58,3 +61,6 @@ In2iGui.Toolbar.SearchField.prototype.fieldChanged = function() {
 		In2iGui.callDelegates(this,'searchFieldChanged');
 	}
 }
+
+
+

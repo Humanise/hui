@@ -2,23 +2,32 @@ In2iGui.Alert = function(elementOrId,name) {
 	this.element = $id(elementOrId);
 	this.name = name;
 	this.body = $class('in2igui_alert_body',this.element)[0];
+	this.variant = null;
 	var h1s = $tag('h1',this.element);
 	this.title = h1s.length>0 ? h1s[0] : null;
 	In2iGui.enableDelegating(this);
 }
 
 In2iGui.Alert.create = function(opts) {
-	var options = {title:'',text:'',name:null,variant:null};
+	var options = {title:'',text:'',name:null,variant:null,title:null};
 	N2i.override(options,opts);
 	
 	var element = N2i.create('div',{'class':'in2igui_alert'});
 	var body = N2i.create('div',{'class':'in2igui_alert_body'});
-	if (options.variant) {
-		N2i.addClass(body,options.variant);
-	}
 	element.appendChild(body);
 	document.body.appendChild(element);
-	return new In2iGui.Alert(element);
+	var obj = new In2iGui.Alert(element);
+	if (options.variant) {
+		obj.setVariant(options.variant);
+	}
+	if (options.title) {
+		obj.setTitle(options.title);
+	}
+	if (options.text) {
+		obj.setText(options.text);
+	}
+	
+	return obj;
 }
 
 In2iGui.Alert.prototype.show = function() {
@@ -48,6 +57,20 @@ In2iGui.Alert.prototype.setText = function(text) {
 	this.text.innerHTML = text;
 }
 
+In2iGui.Alert.prototype.setVariant = function(variant) {
+	if (this.variant) {
+		N2i.removeClass(this.body,this.variant);
+	}
+	this.variant = variant;
+	N2i.addClass(this.body,variant);
+}
+
+In2iGui.Alert.prototype.update = function(options) {
+	if (options.title) this.setTitle(options.title);
+	if (options.text) this.setText(options.text);
+	if (options.variant) this.setVariant(options.variant);
+}
+
 In2iGui.Alert.prototype.addButton = function(button) {
 	if (!this.buttons) {
 		this.buttons = N2i.create('div',{'class':'buttons'});
@@ -55,3 +78,4 @@ In2iGui.Alert.prototype.addButton = function(button) {
 	}
 	this.buttons.appendChild(button.getElement());
 }
+

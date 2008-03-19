@@ -30,3 +30,4 @@ In2iGui.ProgressBar.prototype.hide = function() {
 In2iGui.ProgressBar.prototype.show = function() {
 	this.element.style.display = 'block';
 }
+

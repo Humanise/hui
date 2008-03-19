@@ -1,3 +1,4 @@
+/*
 if (!N2i) var N2i = {};
 
 
@@ -88,7 +89,6 @@ N2i.Window.prototype.endDrag = function() {
 	N2i.Event.removeListener(document,'mouseup',this.upListener);
 }
 
-/** Utility methods **/
 
 N2i.Window.createButton = function(title) {
 	var a = document.createElement('a');
@@ -148,3 +148,4 @@ N2i.Window.createList = function(data,delegate) {
 	}
 	return table;
 }
+*/

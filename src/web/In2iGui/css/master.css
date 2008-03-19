@@ -1,16 +1,15 @@
-@import url('tabbox.css');
-@import url('formula.css');
-@import url('layout.css');
-@import url('alert.css');
-
 html,body
 {
 	height: 100%;
 	margin: 0px;
-	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
 	font-size: 11pt;
 	background: #e8ebf0 url('../gfx/bg.png') repeat-x;
 	overflow: auto;
+}
+
+body, textarea
+{
+	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
 }
 
 td
@@ -43,110 +42,6 @@ td.split_sidebar
 	vertical-align: top;
 }
 
-/************************* view *********************/
-
-table.view
-{
-	width: 100%;
-	height: 100%;
-}
-
-td.view_content
-{
-	vertical-align: top;
-}
-
-/*********************** sidebar ********************/
-
-.sidebar_selector .item
-{
-	background: 7px center no-repeat;
-	padding-left: 26px;
-	font-size: 9pt;
-	height: 20px;
-	line-height: 22px;
-}
-
-.sidebar_selector .item:hover
-{
-	background-color: #d4dce9;
-}
-
-.sidebar_selector .item span
-{
-	float: right;
-	line-height: 16px;
-	background: #A9B8CE;
-	height: 16px;
-	padding: 0px 2px;
-	margin: 2px 6px 0px 0px;
-	color: #fff;
-}
-
-.sidebar_selector div.selected, .sidebar_selector div.selected:hover
-{
-	background-color: #3875d7;
-	color: #fff;
-}
-
-/*********************** toolbar ********************/
-
-tr.toolbar
-{
-	height: 55px;
-}
-
-tr.toolbar td
-{
-}
-
-div.toolbar
-{
-	height: 54px;
-	background: #eee;
-	border-bottom: 1px solid #ddd;
-}
-div.toolbar_icon
-{
-	height: 51px;
-	float: left;
-	margin: 3px 4px 0px 4px;
-	font-size: 0px;
-	text-align: center;
-	cursor: default;
-}
-div.toolbar_icon div
-{
-	height: 32px;
-	width: 32px;
-	margin: 0 auto 2px auto;
-}
-div.toolbar_icon span
-{
-	font-size: 8pt;
-	color: #345;
-}
-
-div.toolbar_search
-{
-	text-align: center;
-	height: 51px;
-	float: left;
-}
-
-div.toolbar_search input
-{
-	height: 16px;
-	border: 1px solid #ddd;
-	margin: 10px 0px 7px 0px;
-}
-
-div.toolbar_search span
-{
-	display: block;
-	font-size: 8pt;
-	color: #345;
-}
 
 /*********************** browser ********************/
 div.browser
@@ -190,76 +85,6 @@ div.browser .column div.selected, div.browser .column div.selected:hover
 	color: #fff;
 }
 
-/************************* list **********************/
-
-div.list
-{
-	
-}
-
-div.list table
-{
-	width: 100%;
-}
-
-div.list table thead th
-{
-	text-align: left;
-	font-size: 9pt;
-	border-bottom: 1px solid #eee;
-	padding: 1px 3px;
-}
-
-div.list table tbody td
-{
-	font-size: 9pt;
-	border-bottom: 1px solid #eee;
-	padding: 1px 3px;
-}
-
-div.list table tbody tr:hover
-{
-	background-color: #eee;
-}
-
-div.list table tbody tr.selected
-{
-	background-color: #3875d7;
-	color: #fff;
-}
-
-div.list .navigation
-{
-	height: 20px;
-	font-size: 9pt;
-}
-div.list .navigation .count
-{
-	float: right;
-	color: #666;
-}
-div.list .navigation .window_number
-{
-	float: left;
-}
-
-div.list .navigation .window_number a
-{
-	padding: 0px 2px;
-	cursor: pointer;
-}
-
-div.list .navigation .window_number a:hover
-{
-	background: #ddd;
-}
-
-div.list .navigation .window_number a.selected
-{
-	background: #666;
-	color: #fff;
-}
-
 /************************** tabs ************************/
 
 .tabs_bar
@@ -280,6 +105,7 @@ div.list .navigation .window_number a.selected
 	margin-left: 2px;
 	line-height: 10pt;
 	background: #fff;
+	cursor: pointer;
 }
 
 
@@ -288,36 +114,7 @@ div.list .navigation .window_number a.selected
 .overflow
 {
 	overflow: auto;
+	overflow-x:hidden;
+	width: 100%;
 }
 
-/************************* window ************************/
-
-.window
-{
-	border: 1px solid #ddd;
-	background: #fff;
-}
-
-.window .titlebar
-{
-	text-align: center;
-	font-size: 9pt;
-	line-height: 20px;
-	height: 20px;
-	border-bottom: 1px solid #ddd;
-	background: #eee;
-}
-
-.window .titlebar .close
-{
-	position: absolute;
-	cursor: pointer;
-}
-
-.floating_window
-{
-	position: absolute;
-	top: 50px;
-	left: 300px;
-	display: none;
-}
