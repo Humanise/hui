@@ -6,20 +6,63 @@ OO.Editor = function(delegate) {
 	this.textEditors = [];
 	this.active = false;
 	this.buildActivator();
+	this.toolbarPadder = $class('toolbar_padder')[0];
 	this.toolbar = null;
 	this.templates = [
 		{key:'basic',title:'Basal',image:'../templates/basic/info/thumbnail.png'},
 		{key:'modern',title:'Moderne',image:'../templates/modern/info/thumbnail.png'},
 		{key:'cartoon',title:'Tegneserie',image:'../templates/cartoon/info/thumbnail.png'},
-		{key:'ocean',title:'Ocean',image:'../templates/ocean/info/thumbnail.png'}
+		{key:'ocean',title:'Ocean',image:'../templates/ocean/info/thumbnail.png'},
+		{key:'snow',title:'Snow',image:'../templates/snow/info/thumbnail.png'}
 	];
 	var self = this;
-	this.toolbarItems = [
-		{title:'Opret side',action:function() {self.addPage()},icon:'addpage'},
-		{title:'Slet side',action:function() {self.confirmDeletePage()},icon:'deletepage'},
-		{title:'Skift skabelon',action:function() {self.openTemplateWindow()},icon:'changetemplate'},
-		'divider'
-	];
+	var editmode = N2i.Location.getBoolean('edit');
+	if (editmode) {
+		this.activate(true);
+	}
+	In2iGui.get().addDelegate(this);
+	In2iGui.Editor.get().ignite();
+}
+
+OO.Editor.prototype = {
+	activate : function(instantly) {
+		this.active=true;
+		this.activator.className='deactivate';
+		N2i.Element.addClassName(document.body,'editor_mode');
+		this.buildToolBar();
+		$ani(this.toolbarPadder,'padding-top','58px',instantly ? 0 : 600,{ease:N2i.Animation.slowFastSlow});
+		this.toolbarRevealer.show(instantly);
+		this.enableWebNodeEditing();
+		this.delegate.activate();
+		In2iGui.Editor.get().activate();
+	},
+	deactivate : function() {
+		if (!this.active) return;
+		this.active=false;
+		this.activator.className='activate';
+		if (this.templatePanel) {
+			this.templatePanel.hide();
+		}
+		if (this.newPagePanel) {
+			this.newPagePanel.hide();
+		}
+		N2i.Element.removeClassName(document.body,'editor_mode');
+		$ani(this.toolbarPadder,'padding-top','0px',500,{ease:N2i.Animation.slowFastSlow});
+		this.toolbarRevealer.hide();
+		this.disableWebNodeEditing();
+		this.delegate.deactivate();
+		In2iGui.Editor.get().deactivate();
+	},
+
+
+	// Editor
+	partChanged : function(part) {
+		if (part.type=='header') {
+			Parts.updateHeaderPart(part.id,part.getValue());
+		} else if (part.type=='html') {
+			Parts.updateHtmlPart(part.id,part.getValue());
+		}
+	}
 }
 
 OO.Editor.prototype.buildActivator = function() {
@@ -59,14 +102,10 @@ OO.Editor.prototype.goPrivate = function() {
 
 OO.Editor.prototype.logOut = function() {
 	var self = this;
-	var delegate = {
-		callback:function(data) {
-			self.removeActivator();
-			self.deactivate();
-		},
-	  	errorHandler:function(errorString, exception) { alert(errorString); }
-	};
-	CoreSecurity.logOut(delegate);
+	CoreSecurity.logOut(function(data) {
+		self.removeActivator();
+		self.deactivate();
+	});
 }
 
 OO.Editor.prototype.toggle = function() {
@@ -100,191 +139,110 @@ OO.Editor.prototype.enableWebNodeEditing = function() {
 }
 
 OO.Editor.prototype.updateWebNode = function(id,name) {
-	var delegate = {
-		callback:function(data) {
-			// success
-		},
-	  	errorHandler:function(errorString, exception) { alert(errorString); }
-	};
-	CommunityTool.updateWebNode(id,name,delegate);
-}
-
-OO.Editor.prototype.activate = function() {
-	this.active=true;
-	this.activator.className='deactivate';
-	N2i.Element.addClassName(document.body,'editor_mode');
-	this.buildToolBar();
-	$ani(this.toolbar,'height','58px',300);
-	$ani(document.body,'padding-top','58px',300);
-	this.enableWebNodeEditing();
-	this.delegate.activate();
-}
-
-OO.Editor.prototype.deactivate = function() {
-	if (!this.active) return;
-	this.active=false;
-	this.activator.className='activate';
-	if (this.templateWindow) {
-		this.templateWindow.hide();
-	}
-	N2i.Element.removeClassName(document.body,'editor_mode');
-	$ani(this.toolbar,'height','0px',500);
-	$ani(document.body,'padding-top','0px',500);
-	this.disableWebNodeEditing();
-	this.delegate.deactivate();
+	CommunityTool.updateWebNode(id,name);
 }
 
 OO.Editor.prototype.buildToolBar = function() {
 	if (!this.toolbar) {
-		this.toolbar = document.createElement('div');
-		this.toolbar.className = 'editor_toolbar';
-		var bars = [this.toolbarItems,this.delegate.toolbarItems];
-		for (var i=0; i < bars.length; i++) {
-			var bar = bars[i]
-			for (var j=0; j < bar.length; j++) {
-				var item = bar[j];
-				if (item=='divider') {
-					var element = document.createElement('div');
-					element.className = 'divider';
-					this.toolbar.appendChild(element);
-				} else {
-					var element = document.createElement('div');
-					element.onclick = item.action;
-					element.appendChild(document.createTextNode(item.title));
-					element.className = 'icon '+item.icon;
-					this.toolbar.appendChild(element);
-				}
-			};
-		};
-		document.body.appendChild(this.toolbar);
+		this.toolbarRevealer = In2iGui.RevealingToolbar.create();
+		this.toolbar = this.toolbarRevealer.getToolbar();
+		this.toolbar.add(In2iGui.Toolbar.Icon.create('newPage',{icon:'common/page',overlay:'new','title':'Ny side'}));
+		this.toolbar.add(In2iGui.Toolbar.Icon.create('deletePage',{icon:'common/page',overlay:'delete','title':'Slet side'}));
+		this.toolbar.add(In2iGui.Toolbar.Icon.create('changeTemplate',{icon:'common/color','title':'Skift skabelon'}));
+		this.toolbar.addDivider();
+		this.delegate.addToToolbar(this.toolbar);
 	}
 }
 
-OO.Editor.prototype.confirmDeletePage = function() {
-	if (!this.confirmDeleteDialog) {
+OO.Editor.prototype.click$changeTemplate = function() {
+	this.openTemplateWindow();
+}
+
+
+OO.Editor.prototype.click$newPage = function() {
+	if (!this.newPagePanel) {
+		this.newPagePanel = In2iGui.Panel.create({title:'Ny side',padding:10});
+		this.newPagePicker = In2iGui.Picker.create('documentPicker',{title:'Vælg venligst typen af side der skal oprettes',itemWidth:90,itemHeight:120});
+		this.newPagePanel.add(this.newPagePicker);
 		var self = this;
-		this.confirmDeleteDialog = new OO.Community.Message();
-		this.confirmDeleteDialog.style='gasp';
-		var body = document.createElement('div');
-		body.appendChild(OO.Community.Message.buildHeader('Er du sikker på at du vil slette siden?'));
-		body.appendChild(OO.Community.Message.buildParagraph('Handlingen kan ikke fortydes.'));
-		var cancelButton = OO.Community.Message.buildButton('Nej, jeg fortryder',{buttonWasClicked:function() {self.confirmDeleteDialog.hide()}});
-		var deleteButton = OO.Community.Message.buildButton('Ja, slet siden',{buttonWasClicked:function() {self.deletePage()}});
-		body.appendChild(cancelButton);
-		body.appendChild(deleteButton);
-		this.confirmDeleteDialog.setContents(body);
+		var d = {callback:function(list) {
+			self.updateAndShowNewPagePicker(list);
+		}};
+		CommunityTool.getDocumentClasses(d);
+	} else {
+		this.newPagePanel.show();
 	}
-	this.confirmDeleteDialog.show();
 }
 
-OO.Editor.prototype.deletePage = function() {
-	var delegate = {
-		callback:function(data) {
-			document.location='.';
-		},
-	  	errorHandler:function(errorString, exception) { alert(errorString); }
+OO.Editor.prototype.updateAndShowNewPagePicker = function(list) {
+	for (var i=0; i < list.length; i++) {
+		list[i].image = OnlineObjects.appContext+'/documents/'+list[i].simpleName+'/thumbnail.png';
 	};
-	CommunityTool.deleteWebPage(info.page.id,delegate);
+	this.newPagePicker.setObjects(list);
+	this.newPagePanel.show();
 }
 
-OO.Editor.prototype.addPage = function() {
-	var delegate = {
-		callback:function(pageId) {
-			document.location='./?id='+pageId;
-		},
-	  	errorHandler:function(errorString, exception) { alert(errorString); }
-	};
-	CommunityTool.createWebPage(info.site.id,delegate);
+OO.Editor.prototype.selectionChanged$documentPicker = function(picker) {
+	var obj = picker.getSelection();
+	CommunityTool.createWebPage(OnlineObjects.site.id,obj.simpleName,function(pageId) {
+		document.location='./?id='+pageId+'&edit=true';
+	});
+}
+
+OO.Editor.prototype.click$deletePage = function() {
+	In2iGui.get().confirm('confirmDeletePage',{
+		title:'Er du sikker på at du vil slette siden?',
+		text:'Handlingen kan ikke fortrydes og siden kan ikke genskabes',
+		ok:'Ja, slet siden',
+		cancel:'Nej, jeg fortryder',
+		highlighted:'cancel',variant:'gasp'
+	});
+}
+
+OO.Editor.prototype.ok$confirmDeletePage = function() {
+	CommunityTool.deleteWebPage(OnlineObjects.page.id,function() {
+		document.location='.?edit=true';
+	});
 }
 
 
 OO.Editor.prototype.openTemplateWindow = function() {
-	if (!this.templateWindow) {
-		this.templateWindow = In2iGui.Panel.create();
-		this.templateWindow.addDelegate(new OO.Editor.TemplatePanelDelegate(this));
-		//this.templateWindow = new N2i.Window(new OO.Editor.TemplateWindowDelegate(this));
+	if (!this.templatePanel) {
+		this.templatePanel = In2iGui.Panel.create({title:'Skift skabelon',padding:10});
+		this.templatePicker = In2iGui.Picker.create('templatePicker',{itemWidth:92,itemHeight:120});
+		this.templatePicker.setObjects(this.templates);
+		this.templatePanel.add(this.templatePicker);
 	}
-	this.templateWindow.show();
+	this.templatePanel.show();
 }
 
-OO.Editor.prototype.changeTemplate = function(key) {
-	var delegate = {
-		callback:function(data) {
-			document.location=document.location;
-		},
-	  	errorHandler:function(errorString, exception) { alert(errorString); }
+OO.Editor.prototype.selectionChanged$templatePicker = function(picker) {
+	var obj = picker.getSelection();
+	CommunityTool.changePageTemplate(OnlineObjects.page.id,obj.key,
+		function(data) {
+			N2i.Location.setParameter('edit',true);
+		}
+	);
+}
+
+/*********************** Utilities **********************/
+
+OO.Editor.getEntityProperty = function(entity,key) {
+	for (var i=0; i < entity.properties.length; i++) {
+		if (entity.properties[i].key==key) {
+			return entity.properties[i].value;
+		}
 	};
-	CommunityTool.changePageTemplate(info.page.id,key,delegate);
+	return null;
 }
 
-/************************* Template window deleagte *********************/
-
-
-
-OO.Editor.TemplatePanelDelegate = function(editor) {
-	this.editor = editor;
-	this.position = {top : 100,left: 200};
-	this.title='Skift skabelon';
-	this.chooser = new OO.Editor.Chooser({items:this.editor.templates},this);
-	this.updatePanel();
+OO.Editor.setEntityProperty = function(entity,key,value) {
+	for (var i=0; i < entity.properties.length; i++) {
+		if (entity.properties[i].key==key) {
+			entity.properties[i].value=value;
+		}
+	};
 }
-
-OO.Editor.TemplatePanelDelegate.prototype.updatePanel = function() {
-	var self = this;
-	this.body = N2i.create('div',null,{'width':'465px'});
-
-	this.body.appendChild(this.chooser.getElement());
-	this.editor.templateWindow.addContent(this.body);
-}
-
-OO.Editor.TemplatePanelDelegate.prototype.chooserItemWasSelected = function(info) {
-	this.editor.changeTemplate(info.key);
-}
-
-/************************* Template window deleagte *********************/
-
-OO.Editor.Chooser = function(options,delegate) {
-	this.element = null;
-	this.delegate = delegate || {};
-	this.options = options || {};
-}
-
-OO.Editor.Chooser.prototype.getElement = function() {
-	if (!this.element) {
-		var self = this;
-		this.element = document.createElement('div');
-		this.element.className='chooser';
-		for (var i=0; i < this.options.items.length; i++) {
-			var info = this.options.items[i];
-			var item = document.createElement('div');
-			if (info.image) {
-				item.className='item';
-				var inner = document.createElement('div');
-				inner.style.backgroundImage='url(\''+info.image+'\')';
-				inner.ooEditorChooserInfo = info;
-				inner.onclick = function() {
-					self.itemWasClicked(this.ooEditorChooserInfo);
-				}
-				item.appendChild(inner);				
-			} else if (info.className) {
-				item.className=info.className;
-				item.ooEditorChooserInfo = info;
-				item.onclick = function() {
-					self.itemWasClicked(this.ooEditorChooserInfo);
-				}
-			}
-			this.element.appendChild(item);
-		};
-	}
-	return this.element;
-}
-
-OO.Editor.Chooser.prototype.itemWasClicked = function(info) {
-	if (this.delegate.chooserItemWasSelected) {
-		this.delegate.chooserItemWasSelected(info);
-	}
-}
-
 
 /*********************** Text editor **********************/
 
@@ -299,24 +257,42 @@ OO.Editor.TextEditor = function(element,delegate) {
 }
 
 OO.Editor.TextEditor.prototype.activate = function() {
-	var field = document.createElement('input');
-	field.style.width=(N2i.Element.getWidth(this.element)+30)+'px';
+	this.field = document.createElement('input');
+	this.field.style.width=(N2i.Element.getWidth(this.element)+30)+'px';
 	this.element.style.display='none';
-	field.value = this.element.innerHTML;
-	this.element.parentNode.insertBefore(field,this.element);
-	field.focus();
-	field.select();
-	var element = this.element;
-	var delegate = this.delegate;
-	field.onblur = function() {
-		var value = field.value;
-		element.innerHTML = value;
-		field.style.display='none';
-		element.style.display='';
-		field.parentNode.removeChild(field);
-		if (delegate.textChanged) {
-			delegate.textChanged(element,value);
+	this.field.value = this.element.innerHTML;
+	var fontSize = N2i.getStyle(this.element,'font-size');
+	if (fontSize) {
+		this.field.style.fontSize = fontSize;
+	}
+	var color = N2i.getStyle(this.element,'color');
+	if (color) {
+		this.field.style.color = color;
+	}
+	// TODO: Move more styles over
+	this.element.parentNode.insertBefore(this.field,this.element);
+	this.field.focus();
+	this.field.select();
+	var self = this;
+	this.field.onblur = function() {
+		self.deactivate();
+	}
+	this.field.onkeydown = function(e) {
+		if (new N2i.Event(e).isReturnKey()) {
+			self.deactivate();
 		}
+	}
+}
+
+OO.Editor.TextEditor.prototype.deactivate = function() {
+	var value = this.field.value;
+	this.element.innerHTML = value;
+	this.field.style.display='none';
+	this.element.style.display='';
+	this.field.parentNode.removeChild(this.field);
+	delete(this.field);
+	if (this.delegate.textChanged) {
+		this.delegate.textChanged(this.element,value);
 	}
 }
 

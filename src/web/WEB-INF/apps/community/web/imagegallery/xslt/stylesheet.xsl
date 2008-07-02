@@ -4,6 +4,7 @@
  xmlns:e="http://uri.onlineobjects.com/model/Item/Entity/"
  xmlns:u="http://uri.onlineobjects.com/model/Item/Entity/User/"
  xmlns:i="http://uri.onlineobjects.com/model/Item/Entity/Image/"
+ xmlns:h="http://uri.onlineobjects.com/model/Item/Entity/HeaderPart/"
  xmlns:p="http://uri.onlineobjects.com/publishing/WebPage/"
  xmlns:ig="http://uri.onlineobjects.com/publishing/Document/ImageGallery/"
  exclude-result-prefixes="e u p i ig"
@@ -18,6 +19,8 @@ doctype-system="http://www.w3.org/TR/html4/loose.dtd"/>
 	
 	<xsl:template name="p:content-editor-head">
 		<link rel="stylesheet" href="{$base-context}/In2iGui/css/progressbar.css" type="text/css" media="screen" title="front" charset="utf-8"/>
+		<script src="{$base-context}/dwr/interface/ImageGalleryDocument.js" type="text/javascript" charset="utf-8"></script>
+		<script src="{$base-context}/dwr/interface/Parts.js" type="text/javascript" charset="utf-8"></script>
 		<script src="{$base-context}/In2iGui/js/ProgressBar.js" type="text/javascript" charset="utf-8"></script>
 		<script src="{$base-context}/In2iGui/js/Upload.js" type="text/javascript" charset="utf-8"></script>
 		<script src="{$app-context}/imagegallery/js/ImageGalleryEditor.js" type="text/javascript" charset="utf-8"></script>
@@ -25,6 +28,7 @@ doctype-system="http://www.w3.org/TR/html4/loose.dtd"/>
 			with (OO.Editor.ImageGallery.getInstance()) {
 				imageHeight = <xsl:value-of select="//ig:ImageGallery/ig:settings/@tiledHeight"/>;
 				imageWidth = <xsl:value-of select="//ig:ImageGallery/ig:settings/@tiledWidth"/>;
+				style = '<xsl:value-of select="//ig:ImageGallery/ig:settings/@style"/>';
 			}
 		</script>
 	</xsl:template>
@@ -32,17 +36,22 @@ doctype-system="http://www.w3.org/TR/html4/loose.dtd"/>
 	<xsl:template match="ig:ImageGallery">
 		<div>
 			<div class="gallery">
+				<!--<div class="part partHeader"><h1>Test</h1></div>-->
 				<xsl:apply-templates/>
 			</div>
 		</div>
-		<xsl:if test="$edit-mode='false'">
 		<script type="text/javascript" charset="utf-8">
-			OO.ImageGallery.getInstance().style='<xsl:value-of select="//ig:ImageGallery/ig:settings/@style"/>';
+			with(OO.ImageGallery.getInstance()) {
+			style='<xsl:value-of select="//ig:ImageGallery/ig:settings/@style"/>';
 			<xsl:for-each select="//i:Image">
-				OO.ImageGallery.getInstance().addImage(<xsl:value-of select="../@id"/>);
+				addImage(<xsl:value-of select="../@id"/>,<xsl:value-of select="i:width"/>,<xsl:value-of select="i:height"/>);
 			</xsl:for-each>
+			}
 		</script>
-		</xsl:if>
+	</xsl:template>
+	
+	<xsl:template match="e:Entity[h:HeaderPart]">
+		<div class="part partHeader" id="part-{@id}"><h1><xsl:apply-templates/></h1></div>
 	</xsl:template>
 
 	<xsl:template match="ig:tiled">
@@ -66,7 +75,7 @@ doctype-system="http://www.w3.org/TR/html4/loose.dtd"/>
 	</xsl:template>
 	
 	<xsl:template match="e:Entity[i:Image]" name="ig:image">
-			<xsl:apply-templates select="i:Image"/>
+		<xsl:apply-templates select="i:Image"/>
 	</xsl:template>
 	
 	<xsl:template match="i:Image">
@@ -92,12 +101,12 @@ doctype-system="http://www.w3.org/TR/html4/loose.dtd"/>
 			</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
-		<div class="image image_frame {//ig:ImageGallery/ig:settings/@style}" style="float: left; margin-left: {(number($tiledWidth)-number($width)) div 2}px;margin-top: {(number($tiledHeight)-number($height)) div 2}px;">
-			<div class="top"><div><div></div></div></div>
+		<div class="image image_frame {//ig:ImageGallery/ig:settings/@style}" style="float: left; margin-left: {(number($tiledWidth)-number($width)) div 2}px;margin-top: {(number($tiledHeight)-number($height)) div 2}px; width: {$width+80}px;">
+			<div class="top"><div><div><xsl:comment/></div></div></div>
 			<div class="middle"><div>
 			<img src="{$base-context}/service/image/?id={../@id}&amp;width={$tiledWidth}&amp;height={$tiledHeight}" style="width: {$width}px;height: {$height}px;" id="image-{../@id}"/>
 			</div></div>
-			<div class="bottom"><div><div></div></div></div>
+			<div class="bottom"><div><div><xsl:comment/></div></div></div>
 		</div>
 	</xsl:template>
 

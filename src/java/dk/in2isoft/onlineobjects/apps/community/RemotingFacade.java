@@ -11,24 +11,32 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 
+import dk.in2isoft.in2igui.data.ListData;
+import dk.in2isoft.in2igui.data.ListDataRow;
 import dk.in2isoft.in2igui.data.TextFieldData;
 import dk.in2isoft.in2igui.data.WidgetData;
 import dk.in2isoft.onlineobjects.apps.ApplicationSession;
+import dk.in2isoft.onlineobjects.core.AbstractModelQuery;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.IllegalRequestException;
+import dk.in2isoft.onlineobjects.core.ModelException;
 import dk.in2isoft.onlineobjects.core.ModelFacade;
 import dk.in2isoft.onlineobjects.core.ModelQuery;
 import dk.in2isoft.onlineobjects.core.Priviledged;
+import dk.in2isoft.onlineobjects.core.SimpleModelQuery;
 import dk.in2isoft.onlineobjects.model.EmailAddress;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.Invitation;
+import dk.in2isoft.onlineobjects.model.Item;
 import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.WebNode;
 import dk.in2isoft.onlineobjects.model.WebPage;
+import dk.in2isoft.onlineobjects.model.util.ModelClassInfo;
 import dk.in2isoft.onlineobjects.model.util.WebModelUtil;
+import dk.in2isoft.onlineobjects.publishing.Document;
 import dk.in2isoft.onlineobjects.ui.AbstractRemotingFacade;
 import dk.in2isoft.onlineobjects.ui.AsynchronousProcessDescriptor;
 
@@ -44,22 +52,19 @@ public class RemotingFacade extends AbstractRemotingFacade {
 		CommunityController.getDAO().signUpFromInvitation(getUserSession(), code, username, password);
 	}
 	
-	public long createWebPage(long webSiteId) throws EndUserException {
-		return WebModelUtil.createWebPageOnSite(webSiteId, getUserSession());
+	public long createWebPage(long webSiteId,String template) throws EndUserException {
+		log.info("New page with template: "+template);
+		Class<?> docClass = getModel().getModelClass(template);
+		return WebModelUtil.createWebPageOnSite(webSiteId, docClass, getUserSession());
 	}
 
 	public boolean deleteWebPage(long id) throws EndUserException {
-		ModelFacade model = getModel();
-		WebPage page = (WebPage) model.loadEntity(WebPage.class, id);
-		if (page == null) {
-			throw new EndUserException("The page does not exist");
-		}
-		List<Entity> nodes = model.getSuperEntities(page, WebNode.class);
-		for (Entity node : nodes) {
-			model.deleteEntity(node);
-		}
-		model.deleteEntity(page);
+		WebModelUtil.deleteWebPage(id,getUserSession());
 		return true;
+	}
+	
+	public Collection<ModelClassInfo> getDocumentClasses() {
+		return getModel().getClassInfo(Document.class);
 	}
 
 	public boolean updateWebNode(long id, String name) throws EndUserException {
@@ -159,14 +164,14 @@ public class RemotingFacade extends AbstractRemotingFacade {
 		if (names.length>1) {
 			person.setFamilyName(names[names.length-1]);
 		}
-		getModel().saveItem(person, getUserSession());
+		getModel().createItem(person, getUserSession());
 		
 		EmailAddress email = new EmailAddress();
 		email.setAddress(emailAddress);
-		getModel().saveItem(email, getUserSession());
+		getModel().createItem(email, getUserSession());
 		
 		Relation personEmail = new Relation(person,email);
-		getModel().saveItem(personEmail, getUserSession());
+		getModel().createItem(personEmail, getUserSession());
 		
 		CommunityDAO dao = CommunityController.getDAO();
 		Invitation invitation = dao.createInvitation(getUserSession(), person, message);
@@ -195,9 +200,9 @@ public class RemotingFacade extends AbstractRemotingFacade {
 			EmailAddress address = adresses[i];
 			if (address.getAddress() != null && address.getAddress().length() > 0) {
 				if (address.isNew()) {
-					getModel().saveItem(address, priviledged);
+					getModel().createItem(address, priviledged);
 					Relation personAddress = new Relation(person, address);
-					getModel().saveItem(personAddress, priviledged);
+					getModel().createItem(personAddress, priviledged);
 				} else {
 					// Reload the address
 					EmailAddress reloaded = (EmailAddress) getModel().loadEntity(EmailAddress.class, address.getId());
@@ -212,8 +217,50 @@ public class RemotingFacade extends AbstractRemotingFacade {
 		for (Iterator<Entity> i = existing.iterator(); i.hasNext();) {
 			Entity exist = i.next();
 			if (!found.contains(exist.getId())) {
-				getModel().deleteEntity(exist);
+				getModel().deleteEntity(exist,priviledged);
 			}
+		}
+	}
+
+	public ListData listPersons() throws EndUserException {
+		ListData list = new ListData();
+		AbstractModelQuery query = new SimpleModelQuery(Person.class).setPriviledged(getUserSession());
+		List<Item> persons = getModel().search(query);
+		
+		for (Iterator<Item> i = persons.iterator(); i.hasNext();) {
+			ListDataRow row = new ListDataRow();
+			Person person = (Person) i.next();
+			row.addColumn("id", person.getId());
+			row.addColumn("name", person.getName());
+			EmailAddress email = (EmailAddress) getModel().getFirstSubEntity(person, EmailAddress.class);
+			if (email!=null) {
+				row.addColumn("email", email.getAddress());
+			}
+			list.addRow(row);
+		}
+		return list;
+	}
+	
+	public Person loadPerson(long id) throws ModelException {
+		return getModel().loadEntity(Person.class, id);
+	}
+	
+	public void savePerson(Person dummy) throws EndUserException {
+		Person person;
+		if (dummy.getId()>0) {
+			person = getModel().loadEntity(Person.class, dummy.getId());
+		} else {
+			person = new Person();
+		}
+		person.setGivenName(dummy.getGivenName());
+		person.setAdditionalName(dummy.getAdditionalName());
+		person.setFamilyName(dummy.getFamilyName());
+		person.setNamePrefix(dummy.getNamePrefix());
+		person.setNameSuffix(dummy.getNameSuffix());
+		if (person.getId()>0) {
+			getModel().updateItem(person, getUserSession());
+		} else {
+			getModel().createItem(person, getUserSession());
 		}
 	}
 }

@@ -48,7 +48,6 @@ public class Base extends SimpleWindow {
         );
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void listUsers(StringBuilder gui) throws ModelException {
 		ModelFacade model = Core.getInstance().getModel();
         List<Entity> result = model.searchEntities(new ModelQuery(User.class));

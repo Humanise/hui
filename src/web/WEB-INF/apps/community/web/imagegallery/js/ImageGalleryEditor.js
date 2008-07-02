@@ -1,6 +1,7 @@
 OO.Editor.ImageGallery = function() {
 	this.imageWidth=null;
 	this.imageHeight=null;
+	this.style=null;
 	this.columns = 3;
 	this.images = [];
 	this.tempImages = [];
@@ -10,8 +11,11 @@ OO.Editor.ImageGallery = function() {
 	this.toolbarItems = [
 		{title:'Tilføj billede',action:function() {self.openAddImagePanel()},icon:'addimage'},
 		{title:'Skift ramme',action:function() {self.openStyleWindow()},icon:'style'},
-		{title:'Skift størrelse',action:function() {self.changeSize(200,200)},icon:'style'}
+		{title:'Mindre',action:function() {self.smaller()},icon:'style'},
+		{title:'Større',action:function() {self.bigger()},icon:'style'}
 	];
+	In2iGui.get().addDelegate(this);
+	In2iGui.Editor.get().addPartController('header','Overskrift',In2iGui.Editor.Header);
 }
 
 OO.Editor.ImageGallery.getInstance = function() {
@@ -21,64 +25,56 @@ OO.Editor.ImageGallery.getInstance = function() {
 	return OO.Editor.ImageGallery.instance;
 }
 
-OO.Editor.ImageGallery.prototype.activate = function() {
-	this.grid = $class('grid')[0];
-	if (!this.styleWindow) {
-		this.refreshImages();
+OO.Editor.ImageGallery.prototype = {
+	activate : function() {
+		this.grid = $class('grid')[0];
+		if (!this.styleWindow) {
+			this.refreshImages();
+		}
+	},
+	deactivate : function() {
+		if (this.addImagePanel) {
+			this.addImagePanel.hide();
+		}
+		if (this.styleWindow) {
+			this.styleWindow.hide();
+		}
+		this.hideImageEditorPanel();
+		OO.ImageGallery.getInstance().rebuild();
+	},
+	isActive : function() {
+		return this.editor.active;
+	},
+	addToToolbar : function(toolbar) {
+		toolbar.add(In2iGui.Toolbar.Icon.create('changeFrame',{icon:'common/color','title':'Skift ramme'}));
+		toolbar.add(In2iGui.Toolbar.Icon.create('addImage',{icon:'common/image','overlay':'new','title':'Tilføj billede'}));
+		toolbar.add(In2iGui.Toolbar.Icon.create('increaseSize',{icon:'common/image','overlay':'new','title':'Større'}));
+		toolbar.add(In2iGui.Toolbar.Icon.create('decreaseSize',{icon:'common/image','overlay':'new','title':'Mindre'}));
+	},
+	click$changeFrame : function() {
+		this.openStyleWindow();
+	},
+	setEditor : function(editor) {
+		this.editor = editor;
+	},
+	saveImagePositions : function() {
+		OO.ImageGallery.getInstance().clearImages();
+		var ids = [];
+		for (var i=0; i < this.images.length; i++) {
+			ids[ids.length]=this.images[i].image.id;
+			OO.ImageGallery.getInstance().addImage(this.images[i].image.id);
+		};
+		ImageGalleryDocument.updateImagePositions(OnlineObjects.content.id,ids);
+	},
+	refreshImages : function() {
+		var self = this;
+		ImageGalleryDocument.listImages(OnlineObjects.content.id,
+			function(data) {
+				self.parseImages(data);
+				self.updateImages()
+			}
+		);
 	}
-}
-
-OO.Editor.ImageGallery.prototype.deactivate = function() {
-	if (this.addImagePanel) {
-		this.addImagePanel.hide();
-	}
-	if (this.styleWindow) {
-		this.styleWindow.hide();
-	}
-	OO.ImageGallery.getInstance().rebuild();
-}
-
-OO.Editor.ImageGallery.prototype.isActive = function() {
-	return this.editor.active;
-}
-
-OO.Editor.ImageGallery.prototype.buildToolBar = function() {
-	this.toolbar = document.createElement('div');
-	this.toolbar.className = 'editor_toolbar';
-	document.body.appendChild(this.toolbar);
-}
-
-OO.Editor.ImageGallery.prototype.setEditor = function(editor) {
-	this.editor = editor;
-}
-
-
-OO.Editor.ImageGallery.prototype.saveImagePositions = function() {
-	OO.ImageGallery.getInstance().clearImages();
-	var ids = [];
-	for (var i=0; i < this.images.length; i++) {
-		ids[ids.length]=this.images[i].image.id;
-		OO.ImageGallery.getInstance().addImage(this.images[i].image.id);
-	};
-	var self = this;
-	var delegate = {
-		callback:function(data) {},
-	  	errorHandler:function(errorString, exception) { alert(errorString); }
-	};
-	ImageGalleryDocument.updateImagePsitions(info.content.id,ids,delegate);
-}
-
-
-OO.Editor.ImageGallery.prototype.refreshImages = function() {
-	var self = this;
-	var delegate = {
-		callback:function(data) {
-			self.parseImages(data);
-			self.updateImages()
-		},
-	  	errorHandler:function(errorString, exception) { alert(errorString); }
-	};
-	ImageGalleryDocument.listImages(info.content.id,delegate);
 }
 
 OO.Editor.ImageGallery.prototype.parseImages = function(images) {
@@ -93,26 +89,33 @@ OO.Editor.ImageGallery.prototype.parseImages = function(images) {
 	this.tempImages = this.images.concat();
 }
 
-OO.Editor.ImageGallery.prototype.changeSize = function(width,height) {
-	this.imageWidth = width;
-	this.imageHeight = height;
+OO.Editor.ImageGallery.prototype.click$increaseSize = function() {
+	if (this.imageWidth+20>300) return;
+	this.imageWidth+=20;
+	this.imageHeight+=20;
 	for (var i=0; i < this.images.length; i++) {
 		this.images[i].rebuild();
 	};
 	this.updateImages();
+	ImageGalleryDocument.updateImageSize(OnlineObjects.content.id,this.imageWidth,this.imageHeight);
 }
 
-OO.Editor.ImageGallery.prototype.changeStyle = function(style) {
-	OO.ImageGallery.getInstance().style = style;
+OO.Editor.ImageGallery.prototype.click$decreaseSize = function() {
+	if (this.imageWidth-20<100) return;
+	this.imageWidth-=20;
+	this.imageHeight-=20;
 	for (var i=0; i < this.images.length; i++) {
-		this.images[i].setStyle(style);
+		this.images[i].rebuild();
 	};
-	ImageGalleryDocument.changeFrameStyle(info.content.id,style);
+	this.updateImages();
+	ImageGalleryDocument.updateImageSize(OnlineObjects.content.id,this.imageWidth,this.imageHeight);
 }
 
 OO.Editor.ImageGallery.prototype.updateImages = function(useTemp) {
 	var images = useTemp ? this.tempImages : this.images;
- 	this.grid.innerHTML='';
+	for (var i = this.grid.childNodes.length - 1; i >= 0; i--){
+		this.grid.removeChild(this.grid.childNodes[i]);
+	};
 	this.grid.className='grid grid_'+this.columns;
 	this.grid.style.width=((this.imageWidth+80)*this.columns)+'px';
 	this.grid.style.marginLeft=((this.imageWidth+80)*this.columns/2*-1)+'px';
@@ -138,7 +141,12 @@ OO.Editor.ImageGallery.prototype.registerCells = function() {
 	this.cellDims = [];
 	for (var i=0; i < this.cells.length; i++) {
 		var cell = this.cells[i];
-		this.cellDims[this.cellDims.length] = {left: N2i.Element.getLeft(cell),right: N2i.Element.getLeft(cell)+N2i.Element.getWidth(cell),top: N2i.Element.getTop(cell),bottom: N2i.Element.getTop(cell)+N2i.Element.getHeight(cell)};
+		this.cellDims[this.cellDims.length] = {
+			left: N2i.Element.getLeft(cell),
+			right: N2i.Element.getLeft(cell)+N2i.Element.getWidth(cell),
+			top: N2i.Element.getTop(cell),
+			bottom: N2i.Element.getTop(cell)+N2i.Element.getHeight(cell)
+		};
 	};
 }
 
@@ -171,12 +179,11 @@ OO.Editor.ImageGallery.prototype.getCell = function(top,left) {
 	return null;
 }
 
-OO.Editor.ImageGallery.prototype.imageFinishedDragging = function(event,image) {
-	if (this.latestHilitedCell!=null) {
-		N2i.Element.removeClassName(this.cells[this.latestHilitedCell],'hover');
-		this.latestHilitedCell=null;
+OO.Editor.ImageGallery.prototype.imageFinishedDragging = function(event,image,changed) {
+	this.latestHilitedCell=null;
+	if (changed) {
+		this.saveImagePositions();
 	}
-	this.saveImagePositions();
 }
 
 OO.Editor.ImageGallery.prototype.changeImageOrder = function(currentIndex,newIndex,interchange,useTemp) {
@@ -201,7 +208,7 @@ OO.Editor.ImageGallery.prototype.moveItemInArray = function(currentIndex,newInde
 
 OO.Editor.ImageGallery.prototype.uploadFailed = function() {
 	this.addImagePanelDelegate.reset();
-	alert('Upload failed!');
+	In2iGui.get().showAlert({variant:'gasp',title:'Det lykkedes ikke at tilføje billedet.',text:'Det kan skyldes at filen ikke er et understøttet format?'})
 }
 
 OO.Editor.ImageGallery.prototype.listenToUpload = function() {
@@ -209,82 +216,153 @@ OO.Editor.ImageGallery.prototype.listenToUpload = function() {
 	var delegate = {
 		callback:function(data) { 
 			if (data==null) return;
-				if (data.completed==false) {
-					self.addImagePanelDelegate.uploadChanged(data);
-					if (data.error) {
-						self.uploadFailed(data);
-					} else {
-						self.listenToUpload();
-					}
+			if (data.completed==false) {
+				self.addImagePanelDelegate.uploadChanged(data);
+				if (data.error) {
+					self.uploadFailed(data);
 				} else {
-					self.refreshImages();
-					self.addImagePanelDelegate.reset();
+					self.listenToUpload();
 				}
-			},
-	  	errorHandler:function(errorString, exception) { alert(errorString); }
-	};
-	window.setTimeout(
-		function() {
-			CommunityTool.getProcess('imageUpload',delegate);
+			} else {
+				self.refreshImages();
+				self.addImagePanelDelegate.reset();
+			}
 		}
-		,500
-	);
+	};
+	window.setTimeout(function() {
+		CommunityTool.getProcess('imageUpload',delegate);
+	},500);
 }
 
 
 OO.Editor.ImageGallery.prototype.openStyleWindow = function() {
 	if (!this.styleWindow) {
-		this.styleWindow = new N2i.Window(new OO.Editor.ImageGallery.StyleWindowDelegate(this));
+		this.styleWindow = In2iGui.Panel.create({title:'Skift ramme',padding:10});
+		this.stylePicker = In2iGui.Picker.create('framePicker',{title:'Vælg den ny ramme',itemWidth:90,itemHeight:80});
+		this.stylePicker.setObjects([
+			{key:'elegant',title:'Elegant',image:OnlineObjects.appContext+'/documents/ImageGallery/frames/elegant/thumbnail.png'},
+			{key:'paper',title:'Papir',image:OnlineObjects.appContext+'/documents/ImageGallery/frames/paper/thumbnail.png'},
+			{key:'simple',title:'Simpel',image:OnlineObjects.appContext+'/documents/ImageGallery/frames/simple/thumbnail.png'}
+		])
+		this.styleWindow.add(this.stylePicker);
 	}
 	this.styleWindow.show();
 }
 
+OO.Editor.ImageGallery.prototype.selectionChanged$framePicker = function(picker) {
+	var obj = picker.getSelection();
+	OO.ImageGallery.getInstance().style = obj.key;
+	for (var i=0; i < this.images.length; i++) {
+		this.images[i].setStyle(obj.key);
+	};
+	ImageGalleryDocument.changeFrameStyle(OnlineObjects.content.id,obj.key);
+}
 
-OO.Editor.ImageGallery.prototype.openAddImagePanel = function() {
+
+OO.Editor.ImageGallery.prototype.click$addImage = function() {
 	if (!this.addImagePanel) {
-		this.addImagePanel = In2iGui.Panel.create();
+		this.addImagePanel = In2iGui.Panel.create({title:'Tilføj billede'});
 		this.addImagePanelDelegate = new OO.Editor.ImageGallery.AddImagePanelDelegate(this);
 		this.addImagePanel.addDelegate(this.addImagePanelDelegate);
 	}
 	this.addImagePanel.show();
 }
 
+OO.Editor.ImageGallery.prototype.ok$confirmDeleteImage = function() {
+	var self = this;
+	ImageGalleryDocument.deleteImage(this.imageToDelete.image.id,OnlineObjects.content.id,
+		function(data) { 
+			self.refreshImages();
+		}
+	);
+	this.hideImageEditorPanel();
+}
+
 OO.Editor.ImageGallery.prototype.deleteImage = function(image) {
-	if (confirm('Er du sikker på at du vil slette billedet?')) {
+	this.imageToDelete = image;
+	In2iGui.get().confirm('confirmDeleteImage',{
+		title:'Er du sikker på at du vil slette billedet?',
+		variant:'gasp',
+		ok:'Ja, slet billedet',
+		cancel:'Nej, jeg fortryder',
+		highlighted:'ok'
+	});
+}
+
+OO.Editor.ImageGallery.prototype.showImageEditorPanel = function(photo) {
+	this.latestEditedImage = photo.image;
+	var panel = this.getImageEditorPanel();
+	In2iGui.get('imageEditorTitle').setValue(photo.image.name || '');
+	var desc = OO.Editor.getEntityProperty(photo.image,'image.description');
+	In2iGui.get('imageEditorDescription').setValue(desc || '');
+	panel.position(photo.frame.getElementsByTagName('img')[0]);
+	panel.show();
+}
+
+OO.Editor.ImageGallery.prototype.hideImageEditorPanel = function() {
+	if (this.imageEditorPanel) this.imageEditorPanel.hide();
+}
+
+OO.Editor.ImageGallery.prototype.saveImageEditorPanel = function() {
+	var title = In2iGui.get('imageEditorTitle').getValue();
+	var desc = In2iGui.get('imageEditorDescription').getValue();
+	var image = this.latestEditedImage;
+	var self = this;
+
+	ImageGalleryDocument.updateImage(image.id,title,desc,
+		function() {
+			image.name = title;
+			OO.Editor.setEntityProperty(image,'image.description',desc);
+			self.hideImageEditorPanel();
+		}
+	);
+}
+
+OO.Editor.ImageGallery.prototype.getImageEditorPanel = function() {
+	if (!this.imageEditorPanel) {
+		var panel = In2iGui.BoundPanel.create({top:'50px',left:'50px'});
+		var formula = In2iGui.Formula.create();
+		panel.addWidget(formula);
+		var group = In2iGui.Formula.Group.create();
+		formula.addContent(group.getElement());
+
+		var title = In2iGui.Formula.Text.create({label:'Titel',name:'imageEditorTitle'});
+		group.addWidget(title);
+		var desc = In2iGui.Formula.Text.create({label:'Beskrivelse',lines:6,name:'imageEditorDescription'});
+		group.addWidget(desc);
+
+		panel.addNode(N2i.create('div',null,{height:'5px'}));
+
+		var save = In2iGui.Button.create('saveImageEditor',{text:'Gem',highlighted:true});
+		panel.addWidget(save);
+		var cancel = In2iGui.Button.create('cancelImageEditor',{text:'Annuller'});
+		panel.addWidget(cancel);
+		this.imageEditorPanel = panel;
+		this.imageEditorDelegate = new OO.Editor.ImageGallery.ImageEditorDelegate(this);
 		var self = this;
-		var delegate = {
-			callback:function(data) { 
-				self.refreshImages();
+		In2iGui.get().addDelegate({
+			buttonWasClicked$cancelImageEditor : function() {
+				self.hideImageEditorPanel();
 			},
-	  		errorHandler:function(errorString, exception) { N2i.log(exception);alert('adsa'+errorString); }
-		};
+			buttonWasClicked$saveImageEditor : function() {
+				self.saveImageEditorPanel();
+			}
+		});
 	}
-	ImageGalleryDocument.deleteImage(image.image.id,info.content.id,delegate);
+	return this.imageEditorPanel;
 }
 
-/***************************** Style window delegate ***************************/
+/***************************** Image Editor delegate ***************************/
 
-OO.Editor.ImageGallery.StyleWindowDelegate = function(editor) {
+OO.Editor.ImageGallery.ImageEditorDelegate = function(editor) {
 	this.editor = editor;
-	this.position = {top : 100,left: 200};
-	this.title='Skift ramme';
-	this.styles = [
-		{key:'elegant',title:'Elegant',className:'elegant'},
-		{key:'paper',title:'Papir',className:'paper'},
-		{key:'simple',title:'Simpel',className:'simple'}
-	];
-	this.chooser = new OO.Editor.Chooser({items:this.styles},this);
+	In2iGui.get().addDelegate(this);
 }
 
-OO.Editor.ImageGallery.StyleWindowDelegate.prototype.getContent = function() {
-	this.body = document.createElement('div');
-	this.body.style.width='355px';
-	this.body.appendChild(this.chooser.getElement());
-	return this.body;
-}
-
-OO.Editor.ImageGallery.StyleWindowDelegate.prototype.chooserItemWasSelected = function(info) {
-	this.editor.changeStyle(info.key);
+OO.Editor.ImageGallery.ImageEditorDelegate.prototype = {
+	buttonWasClicked$cancelImageEditor : function() {
+		this.editor.hideImageEditorPanel();
+	}
 }
 
 
@@ -295,7 +373,7 @@ OO.Editor.ImageGallery.AddImagePanelDelegate = function(editor) {
 	this.editor = editor;
 	this.upload = In2iGui.Upload.create(
 		{action:'uploadImage',name:'file',parameters:[
-			{name:'contentId',value:info.content.id}
+			{name:'contentId',value:OnlineObjects.content.id}
 		]}
 	);
 	this.upload.addDelegate(this);
@@ -329,7 +407,7 @@ OO.Editor.ImageGallery.Image = function(image,index,editor) {
 	this.index = index;
 	this.image = image;
 	this.editor = editor;
-	this.style = OO.ImageGallery.getInstance().style;
+	this.style = OO.Editor.ImageGallery.getInstance().style;
 	this.rebuild();
 }
 
@@ -376,10 +454,11 @@ OO.Editor.ImageGallery.Image.prototype.build = function() {
 	frame.style.marginLeft = Math.round((this.editor.imageWidth-this.width)/2)+'px';
 	frame.style.marginTop = Math.round((this.editor.imageHeight-this.height)/2)+'px';
 	frame.style.cssFloat='left';
+	frame.style.width=(this.width+80)+'px';
 	frame.innerHTML=
 		'<div class="top"><div><div></div></div></div>'+
-		'<div class="middle"><div>'+
-		'<img id="image-'+this.image.id+'" src="'+info.baseContext+'/service/image/?id='+this.image.id+'&amp;width='+this.editor.imageWidth+'&amp;height='+this.editor.imageWidth+'" width="'+this.width+'" height="'+this.height+'"/>'+
+		'<div class="middle"><div style="width:'+this.width+'px">'+
+		'<img id="image-'+this.image.id+'" src="'+OnlineObjects.baseContext+'/service/image/?id='+this.image.id+'&amp;width='+this.editor.imageWidth+'&amp;height='+this.editor.imageWidth+'" width="'+this.width+'" height="'+this.height+'"/>'+
 		'</div></div>'+
 		'<div class="bottom"><div><div></div></div></div>';
 	return frame;
@@ -440,19 +519,27 @@ OO.Editor.ImageGallery.Image.prototype.startDrag = function(e) {
 	this.dragger.style.top=this.startTop+'px';
 	this.dragger.style.marginTop='';
 	this.dragger.style.marginLeft='';
+	this.dragger.style.display='none';
 	document.body.appendChild(this.dragger);
 	var self = this;
 	this.moveListener = function(e) {self.drag(e)};
 	this.upListener = function(e) {self.endDrag(e)};
 	N2i.Event.addListener(document,'mousemove',this.moveListener);
 	N2i.Event.addListener(document,'mouseup',this.upListener);
-	$ani(this.dragger,'opacity',1,0);
-	this.dragger.style.display='';
-	$ani(this.frame,'opacity',.2,500);
-	this.drag(e);
+	//this.drag(e);
+	this.hasDragged = false;
 }
 
 OO.Editor.ImageGallery.Image.prototype.drag = function(e) {
+	if (!this.hasDragged) {
+		$ani(this.dragger,'opacity',1,0);
+		this.dragger.style.display='';
+		if (!N2i.isIE()) {
+			$ani(this.frame,'opacity',.2,500);
+		}
+		this.editor.hideImageEditorPanel();
+	}
+	this.hasDragged = true;
 	var event = new N2i.Event(e);
 	this.dragger.style.right = 'auto';
 	this.dragger.style.top = (event.mouseTop()-this.dragState.top)+'px';
@@ -465,16 +552,24 @@ OO.Editor.ImageGallery.Image.prototype.endDrag = function(e) {
 	var event = new N2i.Event(e);
 	N2i.Event.removeListener(document,'mousemove',this.moveListener);
 	N2i.Event.removeListener(document,'mouseup',this.upListener);
-	var shouldReturn = this.editor.imageFinishedDragging(event,this);
+	var shouldReturn = this.editor.imageFinishedDragging(event,this,this.hasDragged);
 	var self = this;
 	$ani(this.dragger,'top',N2i.Element.getTop(this.frame)+'px',400,{ease:N2i.Animation.elastic});
 	$ani(this.dragger,'left',N2i.Element.getLeft(this.frame)+'px',400,{ease:N2i.Animation.elastic});
-	$ani(this.frame,'opacity',1,400);
 	var ender = {onComplete:function() {
-		N2i.log(self.dragger);
 		self.dragger.style.display='none';
 	}}
-	$ani(this.dragger,'opacity',1,200,ender);
+	if (!N2i.isIE()) {
+		$ani(this.frame,'opacity',1,400);
+		$ani(this.dragger,'opacity',1,200,ender);
+	} else {
+		window.setTimeout(function() {
+		self.dragger.style.display='none';
+	},200);
+	}
+	if (!this.hasDragged) {
+		this.editor.showImageEditorPanel(this);
+	}
 }
 
 OO.Editor.ImageGallery.Image.prototype.toString = function() {

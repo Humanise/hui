@@ -1,15 +1,19 @@
 package dk.in2isoft.onlineobjects.model.util;
 
+import java.util.List;
+
 import dk.in2isoft.onlineobjects.core.Core;
+import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelException;
 import dk.in2isoft.onlineobjects.core.ModelFacade;
 import dk.in2isoft.onlineobjects.core.Priviledged;
-import dk.in2isoft.onlineobjects.model.ImageGallery;
+import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.WebNode;
 import dk.in2isoft.onlineobjects.model.WebPage;
 import dk.in2isoft.onlineobjects.model.WebSite;
+import dk.in2isoft.onlineobjects.publishing.DocumentBuilder;
 
 public class WebModelUtil {
 	
@@ -46,7 +50,7 @@ public class WebModelUtil {
 		return page;
 	}
 	
-	public static long createWebPageOnSite(long webSiteId, Priviledged priviledged) throws ModelException {
+	public static long createWebPageOnSite(long webSiteId, Class<?> clazz, Priviledged priviledged) throws EndUserException {
 		ModelFacade model = Core.getInstance().getModel();
 		WebSite site = (WebSite) model.loadEntity(WebSite.class, webSiteId);
 		
@@ -54,31 +58,50 @@ public class WebModelUtil {
 		WebPage page = new WebPage();
 		page.setName("My new page");
 		page.setTitle("My new page");
-		model.saveItem(page,priviledged);
+		model.createItem(page,priviledged);
 		
 		// Create a web node
 		WebNode node = new WebNode();
 		node.setName("My new page");
-		model.saveItem(node,priviledged);
+		model.createItem(node,priviledged);
 		
 		// Create a relation between node and page
 		Relation nodePageRelation = new Relation(node,page);
-		model.saveItem(nodePageRelation,priviledged);
+		model.createItem(nodePageRelation,priviledged);
 		
 		// Create a relation between site and node
 		Relation siteNode2Relation = new Relation(site,node);
-		model.saveItem(siteNode2Relation,priviledged);
-
-		// Create an image gallery
-		ImageGallery gallery = new ImageGallery();
-		gallery.setName("My new image gallery");
-		model.saveItem(gallery,priviledged);
+		model.createItem(siteNode2Relation,priviledged);
+		
+		Entity document = DocumentBuilder.getBuilder(clazz).create(priviledged); 
 		
 		// Set gallery as content of page
-		Relation pageGalleryRelation = new Relation(page,gallery);
-		pageGalleryRelation.setKind(Relation.KIND_WEB_CONTENT);
-		model.saveItem(pageGalleryRelation,priviledged);
+		Relation pageDocumentRelation = new Relation(page,document);
+		pageDocumentRelation.setKind(Relation.KIND_WEB_CONTENT);
+		model.createItem(pageDocumentRelation,priviledged);
 		return node.getId();
 		
+	}
+	
+	public static void deleteWebPage(long pageId,Priviledged privileged) throws EndUserException {
+		ModelFacade model = Core.getInstance().getModel();
+		WebPage page = (WebPage) model.loadEntity(WebPage.class, pageId);
+		if (page == null) {
+			throw new EndUserException("The page does not exist");
+		}
+
+		// Delete Nodes
+		List<Entity> nodes = model.getSuperEntities(page, WebNode.class);
+		for (Entity node : nodes) {
+			model.deleteEntity(node,privileged);
+		}
+
+		// Delete page content
+		List<Entity> contents = model.getSubEntities(page, Relation.KIND_WEB_CONTENT, privileged);
+		for (Entity content : contents) {
+			model.deleteEntity(content, privileged);
+		}
+		
+		model.deleteEntity(page,privileged);
 	}
 }

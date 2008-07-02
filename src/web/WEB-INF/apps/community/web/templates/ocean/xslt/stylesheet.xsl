@@ -23,7 +23,7 @@ doctype-system="http://www.w3.org/TR/html4/loose.dtd"/>
 			<body>
 				<div class="body">
 				<div class="gut"><div class="gut"><div class="gut">
-				<div class="inner_body">
+				<div class="inner_body"><div class="toolbar_padder">
 				<a href="{$app-context}/" class="back">Back</a>
 				<div class="header">
 					<xsl:for-each select="p:context/p:nodes/e:Entity[@type='Item/Entity/WebNode']">
@@ -40,7 +40,7 @@ doctype-system="http://www.w3.org/TR/html4/loose.dtd"/>
 					</xsl:for-each>
 				</div>
 				<xsl:apply-templates select="p:content"/>
-				</div>
+				</div></div>
 				</div></div></div>
 				</div>
 				<div class="footer"></div>

@@ -92,7 +92,7 @@ public class KnowledgebaseController extends ApplicationController {
 		Topic topic = getToolSession(request).getEditedTopic();
 		topic.setName(request.getString("name"));
 		if (topic.isNew()) {
-			getModel().saveItem(topic,request.getSession());			
+			getModel().createItem(topic,request.getSession());			
 		} else {
 			getModel().updateItem(topic,request.getSession());
 		}

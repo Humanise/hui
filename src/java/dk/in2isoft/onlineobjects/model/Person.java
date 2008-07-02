@@ -78,7 +78,7 @@ public class Person extends Entity {
 	}
 
 	private void updateName() {
-		setName(LangUtil.concatWords(new String[] {namePrefix, givenName,familyName,additionalName,nameSuffix}));
+		setName(LangUtil.concatWords(new String[] {namePrefix, givenName,additionalName,familyName,nameSuffix}));
 	}
 
 	public Boolean getSex() {

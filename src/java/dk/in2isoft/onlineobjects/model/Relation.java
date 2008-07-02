@@ -11,6 +11,15 @@ public class Relation extends Item {
 	public static final String KIND_INIVATION_INVITER = "invitation.inviter";
 	public static final String KIND_INIVATION_INVITED = "invitation.invited";
 	
+	public static final String KIND_SOCIAL_FRIEND = "social.friend";
+	
+	public static final String KIND_FAMILY_PARENT = "family.parent";
+	public static final String KIND_FAMILY_PARENT_MOTHER = "family.parent.mother";
+	public static final String KIND_FAMILY_PARENT_FATHER = "family.parent.father";
+	public static final String KIND_FAMILY_SIBLING = "family.sibling";
+	public static final String KIND_FAMILY_SIBLING_BROTHER = "family.sibling.brother";
+	public static final String KIND_FAMILY_SIBLING_SISTER = "family.sibling.sister";
+	
 	private Entity superEntity;
 
 	private Entity subEntity;

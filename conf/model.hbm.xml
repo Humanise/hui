@@ -20,6 +20,7 @@
             <generator class="increment"/>
         </id>
 	    <property name="created"/>
+	    <property name="updated"/>
 	    <joined-subclass name="dk.in2isoft.onlineobjects.model.Entity" table="entity">
 	        <key column="id"/>
 	        <property name="name"/>
@@ -29,7 +30,7 @@
 			    <list-index column="sortOrder"/>
 			    <composite-element class="dk.in2isoft.onlineobjects.model.Property">
 			        <property name="key"/>
-			        <property name="value"/>
+			        <property name="value" length="4000"/>
 			    </composite-element>
 			</list>
 			
@@ -81,6 +82,16 @@
 		        <key column="id"/>
 		    </joined-subclass>
 		    
+		    <joined-subclass name="dk.in2isoft.onlineobjects.model.HeaderPart" table="headerpart">
+		        <key column="id"/>
+		        <property name="text" length="4000"/>
+		    </joined-subclass>
+		    
+		    <joined-subclass name="dk.in2isoft.onlineobjects.model.HtmlPart" table="htmlpart">
+		        <key column="id"/>
+		        <property name="html" length="4000"/>
+		    </joined-subclass>
+		    
 		    <joined-subclass name="dk.in2isoft.onlineobjects.model.WebPage" table="webpage">
 		        <key column="id"/>
 		        <property name="title"/>
@@ -99,6 +110,11 @@
 		        <property name="tiledColumns"/>
 		        <property name="tiledWidth"/>
 		        <property name="tiledHeight"/>
+		    </joined-subclass>
+		    
+		    <joined-subclass name="dk.in2isoft.onlineobjects.model.CompoundDocument" table="compounddocument">
+		        <key column="id"/>
+			    <property name="structure" length="4000"/>
 		    </joined-subclass>
 		    
 		    <joined-subclass name="dk.in2isoft.onlineobjects.model.Invitation" table="invitation">

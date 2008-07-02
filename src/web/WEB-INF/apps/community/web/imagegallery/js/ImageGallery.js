@@ -4,6 +4,7 @@ OO.ImageGallery = function() {
 	this.images = [];
 	this.style = 'elegant';
 	this.viewer = null;
+	this.dirty = false;
 }
 
 OO.ImageGallery.getInstance = function() {
@@ -13,49 +14,51 @@ OO.ImageGallery.getInstance = function() {
 	return OO.ImageGallery.instance;
 }
 
-OO.ImageGallery.prototype.clearImages = function() {
-	this.images = [];
-}
-
-OO.ImageGallery.prototype.addImage = function(id) {
-	this.images[this.images.length] = {id:id};
-}
-
-OO.ImageGallery.prototype.rebuild = function() {
-	if (this.viewer) {
-		this.viewer.destroy();
-	}
-	this.viewer = null;
-	this.addBehaviour();
-}
-
-OO.ImageGallery.prototype.ignite = function() {
-	this.addBehaviour();
-}
-
-OO.ImageGallery.prototype.addBehaviour = function() {
-	var self = this;
-	for (var i=0; i < this.images.length; i++) {
-		var tag = $id('image-'+this.images[i].id);
-		tag.imageGalleryIndex = i;
-		tag.onclick = function() {
-			self.imageWasClicked(this.imageGalleryIndex);
+OO.ImageGallery.prototype = {
+	
+	clearImages : function() {
+		this.images = [];
+		this.dirty = true;
+	},
+	addImage : function(id,width,height) {
+		this.images.push({id:id,width:width,height:height});
+		this.dirty = true;
+	},
+	rebuild : function() {
+		this.addBehaviour();
+	},
+	ignite : function() {
+		this.addBehaviour();
+	},
+	addBehaviour : function() {
+		var self = this;
+		for (var i=0; i < this.images.length; i++) {
+			var tag = $id('image-'+this.images[i].id);
+			tag.imageGalleryIndex = i;
+			tag.onclick = function() {
+				self.imageWasClicked(this.imageGalleryIndex);
+			}
+		};
+	},
+	imageWasClicked : function(index) {
+		this.getViewer().show(index);
+	},
+	getViewer : function() {
+		if (!this.viewer) {
+			this.viewer = In2iGui.ImageViewer.create();
+			this.viewer.addDelegate(this);
 		}
-	};
-}
-
-OO.ImageGallery.prototype.imageWasClicked = function(index) {
-	this.getViewer().show(index);
-}
-
-OO.ImageGallery.prototype.getViewer = function() {
-	if (!this.viewer) {
-		this.viewer = new OO.ImageGallery.Viewer(this);
+		if (this.dirty) {
+			this.viewer.clearImages();
+			this.viewer.addImages(this.images);
+			this.dirty = false;
+		}
+		return this.viewer;
+	},
+	resolveImageUrl : function(image,width,height) {
+		return OnlineObjects.baseContext+'/service/image/?id='+image.id+'&width='+width+'&height='+height;
 	}
-	return this.viewer;
 }
-
-
 
 /**************************** Viewer ****************************/
 
@@ -113,7 +116,7 @@ OO.ImageGallery.Viewer.prototype.buildImages = function() {
 		var image = this.gallery.images[i];
 		var holder = document.createElement('div');
 		holder.className = 'image';
-		holder.style.backgroundImage = 'url(\''+info.baseContext+'/service/image/?id='+image.id+'&width=760&height=510\')';
+		holder.style.backgroundImage = 'url(\''+OnlineObjects.baseContext+'/service/image/?id='+image.id+'&width=760&height=510\')';
 		this.container.appendChild(holder);
 	};
 	this.content.appendChild(this.container);
@@ -146,7 +149,7 @@ OO.ImageGallery.Viewer.prototype.move = function(dir) {
 	 	this.currentImage = 0;
 		flip = true
 	}
-	$ani(this.content,'scrollLeft',this.currentImage*this.width,flip ? 300 : 300);
+	$ani(this.content,'scrollLeft',this.currentImage*this.width,flip ? 600 : 600,{ease:N2i.Animation.slowFastSlow});
 }
 
 OO.ImageGallery.Viewer.prototype.show = function(index) {

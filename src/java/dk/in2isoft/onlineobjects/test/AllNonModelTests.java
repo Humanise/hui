@@ -13,6 +13,7 @@ public class AllNonModelTests {
 		suite.addTestSuite(TestConversionFacade.class);
 		suite.addTestSuite(TestEntityReflection.class);
 		suite.addTestSuite(TestLangUtil.class);
+		suite.addTestSuite(TestModelInfo.class);
 		//$JUnit-END$
 		return suite;
 	}

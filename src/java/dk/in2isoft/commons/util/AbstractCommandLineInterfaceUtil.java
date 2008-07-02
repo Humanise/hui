@@ -4,11 +4,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 
+import org.apache.log4j.Logger;
+
 import dk.in2isoft.onlineobjects.core.EndUserException;
 
 public abstract class AbstractCommandLineInterfaceUtil {
 
-	protected static String execute(String cmd) throws EndUserException {
+	private static Logger log = Logger.getLogger(AbstractCommandLineInterfaceUtil.class);
+	
+	protected synchronized static String execute(String cmd) throws EndUserException {
 		Process p;
 		try {
 			p = Runtime.getRuntime().exec(cmd,new String[] {"PATH=/opt/local/bin:/opt/local/sbin:/bin:/sbin:/usr/bin:/usr/local/bin:/usr/sbin"});
@@ -16,10 +20,12 @@ public abstract class AbstractCommandLineInterfaceUtil {
 			return getResult(p);
 		} catch (IOException e) {
 			throw new EndUserException(e);
+		} catch (InterruptedException e) {
+			throw new EndUserException(e);
 		}
 	}
 
-	private static void checkError(Process p) throws EndUserException, IOException {
+	private static void checkError(Process p) throws EndUserException, IOException, InterruptedException {
 		InputStream s = p.getErrorStream();
 		int c;
 		StringWriter sw = new StringWriter();
@@ -27,7 +33,10 @@ public abstract class AbstractCommandLineInterfaceUtil {
 			sw.write(c);
 		}
 		if (sw.getBuffer().length()>0) {
-			throw new EndUserException(sw.toString());
+			log.warn(sw.getBuffer().toString());
+			if (p.waitFor()!=0) {
+				throw new EndUserException(sw.toString());				
+			}
 		}
 		
 	}

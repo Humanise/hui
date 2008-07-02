@@ -26,21 +26,28 @@
 				<link rel="stylesheet" href="{$app-context}/css/base.css" type="text/css" media="screen" charset="utf-8"/>
 				<link rel="stylesheet" href="{$app-context}/css/front.css" type="text/css" media="screen" title="front" charset="utf-8"/>
 				<link rel="stylesheet" href="{$app-context}/css/invitation.css" type="text/css" media="screen" title="front" charset="utf-8"/>
+				<xsl:comment><![CDATA[[if lt IE 7]>
+					<link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$app-context"/><![CDATA[/css/invitation_ie6.css"> </link>
+				<![endif]]]></xsl:comment>
+				<link rel="stylesheet" href="{$base-context}/In2iGui/css/alert.css" type="text/css" media="screen" title="front" charset="utf-8"/>
 				<script type="text/javascript" charset="utf-8">
-					var info = {
+					var OnlineObjects = {
 						baseContext:'<xsl:value-of select="$base-context"/>',
 						appContext:'<xsl:value-of select="$app-context"/>'
 					}
 				</script>
-				<script type='text/javascript' src='{$base-context}/dwr/interface/CoreSecurity.js'></script>
-				<script type='text/javascript' src='{$base-context}/dwr/interface/CommunityTool.js'></script>
-  				<script type='text/javascript' src='{$base-context}/dwr/engine.js'></script>
-  				<script type='text/javascript' src='{$base-context}/dwr/util.js'></script>
-				<script src="{$base-context}/In2iGui/lib/In2iScripts/In2iScripts.js" type="text/javascript" charset="utf-8"></script>
-				<script src="{$base-context}/In2iGui/lib/In2iScripts/In2iAnimation.js" type="text/javascript" charset="utf-8"></script>
-				<script src="{$base-context}/In2iGui/lib/In2iScripts/In2iInput.js" type="text/javascript" charset="utf-8"> </script>
-				<script src="{$app-context}/js/Widgets.js" type="text/javascript" charset="utf-8"> </script>
-				<script src="{$app-context}/js/invitation.js" type="text/javascript" charset="utf-8"> </script>
+				<script type='text/javascript' src='{$base-context}/dwr/interface/CoreSecurity.js'><xsl:comment/></script>
+				<script type='text/javascript' src='{$base-context}/dwr/interface/CommunityTool.js'><xsl:comment/></script>
+  				<script type='text/javascript' src='{$base-context}/dwr/engine.js'><xsl:comment/></script>
+				<script src="{$base-context}/In2iGui/lib/prototype.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+				<script src="{$base-context}/In2iGui/lib/In2iScripts/In2iScripts.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+				<script src="{$base-context}/In2iGui/lib/In2iScripts/In2iAnimation.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+				<script src="{$base-context}/In2iGui/lib/In2iScripts/In2iInput.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+				<script src="{$base-context}/In2iGui/js/In2iGui.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+				<script src="{$base-context}/In2iGui/js/Alert.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+				<script src="{$base-context}/In2iGui/js/Button.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+				<script src="{$app-context}/js/Widgets.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+				<script src="{$app-context}/js/invitation.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 				<title>OnlineObjects invitation</title>
 			</head>
 			<body>
@@ -73,21 +80,21 @@
 	<xsl:template match="p:error[@key='accepted']">
 		<div class="base">
 		<h1>Invitation til OnlineObjects</h1>
-		<p>Denne invitation er allerede blevet accepteret.</p>
+		<p>Denne invitation er allerede blevet accepteret. <a href="http://www.in2isoft.dk/kontakt/">Kontakt os venligst</a> hvis du mener det er en fejl.</p>
 		</div>
 	</xsl:template>
 	
 	<xsl:template match="p:error[@key='notfound']">
 		<div class="base">
 		<h1>Invitation ikke fundet</h1>
-		<p>Det var desværre ikke muligt at finde invitationen. Den er muligvis blevet fjernet efter den er blevet afsendt. Kontakt os venligst hvis du mener det er en fejl.</p>
+		<p>Det var desværre ikke muligt at finde invitationen. Den er muligvis blevet fjernet efter den er blevet afsendt. <a href="http://www.in2isoft.dk/kontakt/">Kontakt os venligst</a> hvis du mener det er en fejl.</p>
 		</div>
 	</xsl:template>
 	
 	<xsl:template match="p:error">
 		<div class="base">
 		<h1>Invitation ikke fundet</h1>
-		<p>Det var desværre ikke muligt at finde invitationen.</p>
+		<p>Det var desværre ikke muligt at finde invitationen. <a href="http://www.in2isoft.dk/kontakt/">Kontakt os venligst</a> hvis du mener det er en fejl.</p>
 		</div>
 	</xsl:template>
 </xsl:stylesheet>

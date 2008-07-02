@@ -8,6 +8,7 @@ import dk.in2isoft.onlineobjects.core.EndUserException;
 
 public class Image extends Entity {
 
+	public static final String PROPERTY_DESCRIPTION = "item.enity.image.description";
 	public static String TYPE = Entity.TYPE+"/Image";
 	public static String NAMESPACE = Entity.NAMESPACE+"Image/";
 	
@@ -22,6 +23,11 @@ public class Image extends Entity {
 
 	public String getType() {
 		return TYPE;
+	}
+	
+	@Override
+	public String getNamespace() {
+		return NAMESPACE;
 	}
 
 	public String getIcon() {

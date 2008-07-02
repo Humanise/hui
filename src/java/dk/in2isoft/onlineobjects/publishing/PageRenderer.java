@@ -16,7 +16,7 @@ import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelFacade;
 import dk.in2isoft.onlineobjects.model.Entity;
-import dk.in2isoft.onlineobjects.model.ImageGallery;
+import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.WebNode;
 import dk.in2isoft.onlineobjects.model.WebPage;
 import dk.in2isoft.onlineobjects.model.WebSite;
@@ -37,7 +37,8 @@ public class PageRenderer {
 		ModelFacade model = Core.getInstance().getModel();
 		ConversionFacade converter = Core.getInstance().getConverter();
 		// Get the page content
-		ImageGallery document = (ImageGallery)model.getFirstSubRelation(page, ImageGallery.TYPE, ImageGallery.class);
+		Entity document = model.getSubEntities(page, Relation.KIND_WEB_CONTENT, request.getSession()).iterator().next();
+		//ImageGallery document = (ImageGallery)model.getFirstSubRelation(page, ImageGallery.TYPE, ImageGallery.class);
 		if (document==null) {
 			throw new EndUserException("The page does not have a document!");
 		}
@@ -69,7 +70,7 @@ public class PageRenderer {
 		// Append content
 		Element content = new Element("content", NAMESPACE);
 		content.addAttribute(new Attribute("id",String.valueOf(document.getId())));
-		content.appendChild(document.getBuilder().build());
+		content.appendChild(DocumentBuilder.getBuilder(document.getClass()).build((Document)document));
 		root.appendChild(content);
 		Configuration conf = Core.getInstance().getConfiguration();
 		
@@ -77,23 +78,11 @@ public class PageRenderer {
 		if (template==null) template = "basic";
 		
 		File pageStylesheet = conf.getFile(new String[] {"WEB-INF","apps","community","xslt","page.xsl"});
-		File stylesheet = conf.getFile(new String[] {"WEB-INF","apps","community","web","imagegallery","xslt","stylesheet.xsl"});
+		File stylesheet = conf.getFile(new String[] {"WEB-INF","apps","community","web","documents",document.getClass().getSimpleName(),"xslt","stylesheet.xsl"});
 		File frame = conf.getFile(new String[] {"WEB-INF","apps","community","web","templates",template,"xslt","stylesheet.xsl"});
-		Map<String, String> parameters = new HashMap<String, String>();
 
-		parameters.put("app-context", request.getLocalContextPath());
-		parameters.put("base-context", request.getBaseContextPath());
-		parameters.put("session-user-name", request.getSession().getUser().getUsername());
+		Map<String, String> parameters = buildParameters(request);
 		parameters.put("privilege-document-modify", String.valueOf(Core.getInstance().getSecurity().canModify(document, request.getSession())));
-		parameters.put("edit-mode",request.getBoolean("edit") ? "true" : "false");
-		
-		StringBuilder path = new StringBuilder();
-		int level = request.getFullPath().length;
-		for (int i = 0; i < level; i++) {
-			path.append("../");
-		}
-		parameters.put("path-application", path.toString());
-		parameters.put("path-core", path.toString());
 		try {
 			if (request.getBoolean("viewsource")) {
 				request.getResponse().setContentType("text/xml");
@@ -104,5 +93,29 @@ public class PageRenderer {
 		} catch (IOException e) {
 			throw new EndUserException(e);
 		}
+	}
+	
+	public static Map<String, String> buildParameters(Request request) {
+		Configuration conf = Core.getInstance().getConfiguration();
+		Map<String, String> parameters = new HashMap<String, String>();
+		String devmode = String.valueOf(conf.getDevelopmentMode());
+		if (request.getBoolean("nodev")) {
+			devmode="false";
+		}
+
+		parameters.put("app-context", request.getLocalContextPath());
+		parameters.put("base-context", request.getBaseContextPath());
+		parameters.put("session-user-name", request.getSession().getUser().getUsername());
+		parameters.put("development-mode", devmode);
+		parameters.put("edit-mode",request.getBoolean("edit") ? "true" : "false");
+		
+		StringBuilder path = new StringBuilder();
+		int level = request.getFullPath().length;
+		for (int i = 0; i < level; i++) {
+			path.append("../");
+		}
+		parameters.put("path-application", path.toString());
+		parameters.put("path-core", path.toString());
+		return parameters;
 	}
 }

@@ -2,6 +2,7 @@ package dk.in2isoft.onlineobjects.apps.community;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.fileupload.FileUploadException;
@@ -51,37 +52,44 @@ public class CommunityController extends ApplicationController {
 
 	@Override
 	public void unknownRequest(Request request) throws IOException, EndUserException {
-		log.debug(request.getLocalPath().length);
-		String[] path = request.getLocalPath();
-		if (path.length >= 1) {
+		log.debug(Arrays.toString(request.getLocalPath()));
+		if (request.testLocalPathStart(new String[] {null})) {
 			handleUserSite(request);
 		} else {
 			XSLTInterface ui = new FrontPage(this, request);
 			XSLTUtil.applyXSLT(ui, request);
 		}
 	}
+	
+	public void invitation(Request request) throws IOException, EndUserException {
+		XSLTInterface ui = new InvitationPage(this, request);
+		ui.display(request);
+	}
 
 	private void handleUserSite(Request request) throws IOException, EndUserException {
-		String[] path = request.getLocalPath();
-		String userName = path[0];
+		String userName = request.getLocalPath()[0];
 		User siteUser = Core.getInstance().getModel().getUser(userName);
 		if (siteUser == null) {
 			throw new EndUserException("The user does not excist!");
 		}
-		if (path.length == 2 && path[1].equals("uploadImage")) {
+		if (request.testLocalPathFull(null,"uploadImage")) {
 			uploadImage(request,siteUser);
-		} else if (path.length == 2 && path[1].equals("private")) {
-			handlePrivate(siteUser, request);
+		} else if (request.testLocalPathStart(null,"private")) {
+			if (siteUser.getId()!=request.getSession().getUser().getId()) {
+				throw new SecurityException("User cannot access this private site");
+			}
+			if (request.testLocalPathFull(null,"private")) {
+				request.redirect("settings.gui");
+			} else if (request.testLocalPathFull(null,"private","persons.gui")) {
+				privateSpaceController.displayPersons(request);
+			} else if (request.testLocalPathFull(null,"private","images.gui")) {
+				privateSpaceController.displayImages(request);
+			} else if (request.testLocalPathFull(null,"private","settings.gui")) {
+				privateSpaceController.displaySettings(request);
+			}
 		} else {
 			displayUserPage(siteUser, request);
 		}
-	}
-
-	private void handlePrivate(User siteUser, Request request) throws IOException,EndUserException {
-		if (siteUser.getId()!=request.getSession().getUser().getId()) {
-			throw new SecurityException("User cannot access this private site");
-		}
-		privateSpaceController.dispatch(request);
 	}
 
 	private void displayUserPage(User user, Request request) throws EndUserException {
@@ -160,6 +168,7 @@ public class CommunityController extends ApplicationController {
 			process.setError(true);
 			throw new EndUserException(e);
 		}
+		getModel().commit();
 		process.setCompleted(true);
 	}
 
@@ -171,7 +180,7 @@ public class CommunityController extends ApplicationController {
 		File file = item.getStoreLocation();
 		int[] dimensions = ImageUtil.getImageDimensions(file);
 		Image image = new Image();
-		getModel().saveItem(image,request.getSession());
+		getModel().createItem(image,request.getSession());
 		image.setName(item.getName());
 		image.changeImageFile(file, dimensions[0],dimensions[1], item.getContentType());
 		log.debug("width:" + image.getWidth());
@@ -179,7 +188,7 @@ public class CommunityController extends ApplicationController {
 		getModel().updateItem(image,request.getSession());
 		Relation relation = new Relation(gallery, image);
 		relation.setPosition(getMaxImagePosition(gallery) + 1);
-		getModel().saveItem(relation,request.getSession());
+		getModel().createItem(relation,request.getSession());
 	}
 
 	private float getMaxImagePosition(Entity gallery) throws EndUserException {
@@ -220,7 +229,7 @@ public class CommunityController extends ApplicationController {
 		List<Entity> entities = getModel().listEntities();
 		
 		for (Entity entity : entities) {
-			sb.append(entity.getId()).append(" [shape=box,fontname=\"Verdana\",label=\"").append(getModel().getSubject(entity).getClass().getSimpleName());
+			sb.append(entity.getId()).append(" [shape=box,fontname=\"Verdana\",label=\"").append(entity.getClass().getSimpleName());
 			if (entity.getName()!=null && entity.getName().length()>0) {
 				sb.append("\\n").append(entity.getName());
 			}
@@ -243,10 +252,5 @@ public class CommunityController extends ApplicationController {
 		} catch (EndUserException e) {
 			log.error("", e);
 		}
-	}
-	
-	public void invitation(Request request) throws IOException, EndUserException {
-		XSLTInterface ui = new InvitationPage(this, request);
-		ui.display(request);
 	}
 }

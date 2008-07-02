@@ -1,98 +1,262 @@
 @import url('public.css');
 
+body
+{
+	background: #fff url('../gfx/sky_bg.png') repeat-x;
+	border: none;
+}
+
 .base
 {
 	width: 800px;
 	margin: 0 auto;
 }
 
-.header
+div.head
 {
-	border-bottom: 1px solid #cdcdcd;
-	height: 75px;
+	background: url('../gfx/globe.png') center bottom no-repeat;
+	height: 280px;
 }
 
-.header h1
+div.head div.clouds
 {
+	background: url('../gfx/clouds.png') center bottom no-repeat;
+	height: 100%;
+}
+
+div.head h1
+{
+	text-align: center;
 	color: #AAAAAA;
-	font-size: 32pt;
+	font-size: 42pt;
 	font-weight: normal;
 	margin: 0px;
-	padding-left: 10px;
-	padding-top: 10px;
+	padding-top: 130px;
+	letter-spacing: 3px;
 }
 
-.header .user
+/************************************ Search ******************************/
+
+div.search
 {
-	color: #666666;
-	float: right;
-	font-size: 10pt;
-	margin-top: 10px;
-	width: 200px;
+	background: url('../gfx/front/search.png') left top repeat-x;
+	height: 47px;
+	width: 300px;
+	margin: 0 auto;
+	margin-top: 20px;
 }
+
+div.inner_search
+{
+	background: url('../gfx/front/search.png') left -47px no-repeat;
+	height: 47px;
+	padding-left: 40px;
+}
+
+div.search form
+{
+	background: url('../gfx/front/search.png') right -94px no-repeat;
+	height: 47px;
+	padding: 0px 40px 0px 0px;
+	margin: 0px;
+}
+
+div.search input.text
+{
+	border: none;
+	background: none;
+}
+
+div.user
+{
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	color: #aaddff;
+	font-size: 10pt;
+	padding: 10px;
+}
+
+/********************************** Info ***********************************/
+
+div.info
+{
+	overflow: hidden;
+	background: url('../gfx/front/line_light.gif') 33.33% top repeat-y;
+	margin: 10px 0px;
+}
+
+div.inner_info
+{
+	background: url('../gfx/front/line_light.gif') 66.66% top repeat-y;
+	overflow: hidden;
+}
+
+div.info div.column
+{
+	float: left;
+	width: 33.33%;
+}
+
+div.info h2
+{
+	font-weight: normal;
+	color: #6ac1ff;
+	margin: 0px;
+	font-size: 14pt;
+	padding: 0px 15px;
+	letter-spacing: 1px;
+}
+
+div.info p
+{
+	color: #666;
+	font-size: 10pt;
+	padding: 0px 15px;
+	margin: 10px 0px 0px;
+	line-height: 14pt;
+}
+
+div.info p strong
+{
+	color: #333;
+}
+
+div.cloud
+{
+	text-align: center;
+	line-height: 24px;
+	padding: 0px 10px;
+}
+
+a.tag
+{
+	color: #ddd;
+	padding: 0px 1px;
+	white-space: nowrap;
+}
+
+a.tag span
+{
+	color: #666;
+}
+
+a.tag:hover span,a.tag:hover span
+{
+	color: #3366FF;
+}
+
+a.tag-1
+{
+	font-size: 10px;
+}
+
+a.tag-2
+{
+	font-size: 14px;
+}
+
+a.tag-3
+{
+	font-size: 17px;
+}
+
+a.tag-4
+{
+	font-size: 19px;
+}
+
+a.tag-5
+{
+	font-size: 22px;
+}
+
+/****************************** Footer ********************************/
 
 .footer
 {
-	border-top: 1px solid #cdcdcd;
+	border-top: 1px solid #eee;
 	text-align: center;
 	font-size: 10pt;
-	color: #ddd;
-	padding-top: 3px;
+	color: #999;
+	padding-top: 10px;
+	height: 30px;
+	margin-top: 30px;
 }
 
-.body
+.footer a span
+{
+	color: #666;
+}
+
+/****************************** Body **********************************/
+
+div.body
 {
 	overflow: hidden;
 	margin: 10px 0px;
-	background: url('../gfx/front/line.gif') 580px 0px repeat-y;
+	background: url('../gfx/front/line_light.gif') 66.66% 0px repeat-y;
 }
 
-.left
+div.body div.left
 {
-	width: 560px;
+	width: 66.66%;
+}
+
+div.body div.right
+{
+	width: 33.33%;
+	float: right;
+}
+
+div.body div.right h2
+{
+	font-weight: normal;
+	color: #6ac1ff;
+	margin: 0px;
+	font-size: 14pt;
+	padding: 0px 15px;
+	letter-spacing: 1px;
 }
 
 /********************************* Sidebar ****************************/
 
-.right
+form
 {
-	width: 200px;
-	float: right;
-	padding: 10px 0px 20px;
-	
+	padding: 0px 15px 15px 15px;
 }
 
-.right h2
-{
-	font-size: 13pt;
-	font-weight: normal;
-	color: #999;
-	margin: 0px;
-}
-
-.right input.text
+form input.text, textarea
 {
 	border: 1px solid #999;
 	border-color: #ccc #ddd #eee #ddd;
-	width: 180px;
+	width: 100%;
 	text-indent: 3px;
 	font-size: 11pt;
 }
 
-.right .divider
-{
-	border: none;
-	border-bottom: 1px solid #ddd;
-	width: 180px;
-	margin: 20px 0px;
-}
-
-.right label
+form label
 {
 	display: block;
-	font-size: 9pt;
+	font-size: 12pt;
+	line-height: 20px;
 	color: #666;
 	margin-top: 10px;
+}
+
+form input.submit
+{
+	margin-top: 10px;
+	float: right;
+}
+
+hr
+{
+	background: #eee;
+	color: #eee;
+	border: none;
+	height: 1px;
+	margin: 30px 0px;
 }
 
 /********************************** Sections *****************************/
@@ -101,18 +265,20 @@
 {
 	background: url('../gfx/front/line_light.gif') center repeat-x;
 	height: 24px;
+	margin-right: 15px;
 }
 
-.section_head h2
+div.section_head h2
 {
 	margin: 0px;
 	margin-left: 10px;
 	font-weight: normal;
 	font-size: 13pt;
-	color: #808080;
+	color: #6AC1FF;
 	float: left;
 	background: #fff;
 	padding: 0px 2px;
+	letter-spacing: 1px;
 }
 
 .section_body
@@ -123,11 +289,11 @@
 
 .section_body .thumbnail
 {
+	border: 1px solid #ddd;
+	float: left;
 	height: 60px;
 	background: center center no-repeat;
-	float: left;
 	padding: 4px;
-	border: 1px solid #ddd;
 	margin-right: 10px;
 }
 
@@ -135,6 +301,7 @@
 {
 	width: 30000px;
 	height: 70px;
+	padding-left: 15px;
 }
 
 
@@ -142,32 +309,11 @@
 
 
 
-.signup
-{
-}
-
-
-.login
-{
-	margin-top: 15px;
-}
 
 input.hidden
 {
 	position: absolute;
-	visibility: hidden;
-	left: 0px;
+	left: -1000px;
 	top: 0px;
-}
-
-
-.search input
-{
-	border: 1px solid #ddd;
-	color: #aaa;
-	font-size: 12pt;
-	height: 26px;
-	padding-top: 4px;
-	text-indent: 4px;
-	margin-left: 95px;
+	width: 0px;
 }

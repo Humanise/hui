@@ -39,7 +39,6 @@ public class Base extends SimpleWindow {
 		gui.append("</content>" + "</list>");
 	}
 
-	@SuppressWarnings("unchecked")
 	private void listUsers(StringBuilder gui) throws ModelException {
 		ModelFacade model = Core.getInstance().getModel();
 		List<Entity> result = model.listEntities(Person.class);

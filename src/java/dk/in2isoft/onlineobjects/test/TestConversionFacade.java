@@ -12,7 +12,7 @@ public class TestConversionFacade extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		Core.setup("/Users/jbm/Projekter/OnlineObjects/OnlineObjects2/src/web/", null);
+		Core.getInstance().start("/Users/jbm/Documents/workspace/OnlineObjectsAtGoogle/src/web/", null);
 	}
 
 	public void test() {

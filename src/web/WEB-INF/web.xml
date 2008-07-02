@@ -13,7 +13,21 @@
   </context-param>
   
   <!-- Filters -->
-  
+
+  <filter>
+    <filter-name>Compress</filter-name>
+    <filter-class>dk.in2isoft.onlineobjects.ui.GZIPFilter</filter-class>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>Compress</filter-name>
+    <url-pattern>*.js</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>Compress</filter-name>
+    <url-pattern>*.css</url-pattern>
+  </filter-mapping>
+
   <filter>
     <filter-name>ui.dispatcher</filter-name>
     <filter-class>dk.in2isoft.onlineobjects.ui.Dispatcher</filter-class>
@@ -22,7 +36,6 @@
     <filter-name>ui.dispatcher</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
-  
   <!-- Servlets -->
   
   <servlet>

@@ -2,11 +2,20 @@
     alter table "user" 
         drop constraint FK36EBCBE94A3D71;
 
+    alter table compounddocument 
+        drop constraint FK2E80BFC6E94A3D71;
+
     alter table emailaddress 
         drop constraint FK5CF248D8E94A3D71;
 
     alter table entity 
         drop constraint FKB29DE3E3165C5561;
+
+    alter table headerpart 
+        drop constraint FK75EB3800E94A3D71;
+
+    alter table htmlpart 
+        drop constraint FKEBF39E1EE94A3D71;
 
     alter table image 
         drop constraint FK5FAA95BE94A3D71;
@@ -55,9 +64,15 @@
 
     drop table "user";
 
+    drop table compounddocument;
+
     drop table emailaddress;
 
     drop table entity;
+
+    drop table headerpart;
+
+    drop table htmlpart;
 
     drop table image;
 
@@ -96,6 +111,12 @@
         primary key (id)
     );
 
+    create table compounddocument (
+        id int8 not null,
+        structure varchar(4000),
+        primary key (id)
+    );
+
     create table emailaddress (
         id int8 not null,
         address varchar(255),
@@ -106,6 +127,18 @@
     create table entity (
         id int8 not null,
         name varchar(255),
+        primary key (id)
+    );
+
+    create table headerpart (
+        id int8 not null,
+        text varchar(4000),
+        primary key (id)
+    );
+
+    create table htmlpart (
+        id int8 not null,
+        html varchar(4000),
         primary key (id)
     );
 
@@ -142,6 +175,7 @@
     create table item (
         id int8 not null,
         created timestamp,
+        updated timestamp,
         primary key (id)
     );
 
@@ -177,7 +211,7 @@
     create table property (
         enity_id int8 not null,
         key varchar(255),
-        value varchar(255),
+        value varchar(4000),
         sortOrder int4 not null,
         primary key (enity_id, sortOrder)
     );
@@ -222,6 +256,11 @@
         foreign key (id) 
         references entity;
 
+    alter table compounddocument 
+        add constraint FK2E80BFC6E94A3D71 
+        foreign key (id) 
+        references entity;
+
     alter table emailaddress 
         add constraint FK5CF248D8E94A3D71 
         foreign key (id) 
@@ -231,6 +270,16 @@
         add constraint FKB29DE3E3165C5561 
         foreign key (id) 
         references item;
+
+    alter table headerpart 
+        add constraint FK75EB3800E94A3D71 
+        foreign key (id) 
+        references entity;
+
+    alter table htmlpart 
+        add constraint FKEBF39E1EE94A3D71 
+        foreign key (id) 
+        references entity;
 
     alter table image 
         add constraint FK5FAA95BE94A3D71 

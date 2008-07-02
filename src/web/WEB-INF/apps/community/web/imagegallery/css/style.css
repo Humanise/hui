@@ -3,9 +3,14 @@
 @import url('paper.css');
 @import url('viewer.css');
 
+.gallery .partHeader h1
+{
+	text-align: center;
+}
+
 .gallery .grid
 {
-	margin-top: 20px;
+	margin-top: 10px;
 	position: relative;
 	left: 50%;
 }
@@ -25,10 +30,6 @@
 {
 	position: absolute;
 	padding: 4px;
-	background: rgb(0,0,0);
-	background: rgba(0,0,0,.5);
-	-moz-border-radius: 4px;
-    -webkit-border-radius: 4px;
 }
 
 .imagegallery_image_hover .delete
@@ -40,7 +41,7 @@
 }
 
 
-.in2iwindow .chooser .elegant, .in2iwindow .chooser .simple, .in2iwindow .chooser .paper
+.in2igui_panel .chooser .elegant, .in2igui_panel .chooser .simple, .in2igui_panel .chooser .paper
 {
 	float: left;
 	cursor: pointer;
@@ -49,17 +50,17 @@
 	margin: 10px 5px;
 }
 
-.in2iwindow .chooser .elegant
+.in2igui_panel .chooser .elegant
 {
 	background-image: url('../gfx/elegant/thumbnail.png');
 }
 
-.in2iwindow .chooser .simple
+.in2igui_panel .chooser .simple
 {
 	background-image: url('../gfx/simple/thumbnail.png');
 }
 
-.in2iwindow .chooser .paper
+.in2igui_panel .chooser .paper
 {
 	background-image: url('../gfx/paper/thumbnail.png');
 }

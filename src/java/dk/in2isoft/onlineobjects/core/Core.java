@@ -24,18 +24,6 @@ public class Core {
 	private boolean started;
 	
 	private Core() {
-		try {
-			setupConfiguration();
-		} catch (ConfigurationException e) {
-			throw new ExceptionInInitializerError(e);
-		}
-		try {
-			ensureUsers();
-		} catch (ModelException e) {
-			throw new ExceptionInInitializerError(e);
-		}
-		started = true;
-		log.info("OnlineObjects started successfully!");
 	}
 	
 	private void setupConfiguration() throws ConfigurationException
@@ -51,8 +39,10 @@ public class Core {
 		return instance;
 	}
 	
-	public static void setup(String basePath,ServletContext context)
-	throws IllegalStateException {
+	public void start(String basePath,ServletContext context) {
+		if (started) {
+			throw new IllegalStateException("System allready started!");
+		}
 		File dir = new File(basePath);
 		if (!dir.exists()) {
 			throw new IllegalStateException("Invalid base path provided");
@@ -61,6 +51,18 @@ public class Core {
 			Core.baseDir = dir;
 			Core.context = context;
 		}
+		try {
+			setupConfiguration();
+		} catch (ConfigurationException e) {
+			throw new ExceptionInInitializerError(e);
+		}
+		try {
+			ensureUsers();
+		} catch (ModelException e) {
+			throw new ExceptionInInitializerError(e);
+		}
+		started = true;
+		log.info("OnlineObjects started successfully!");
 	}
 
 	public Configuration getConfiguration() {
@@ -103,7 +105,7 @@ public class Core {
 			User user = new User();
 			user.setUsername(SecurityController.PUBLIC_USERNAME);
 			user.setName("Public user");
-			getModel().saveItem(user,superUser);
+			getModel().createItem(user,superUser);
 			getModel().commit();
 			log.info("Public user created!");
 		}

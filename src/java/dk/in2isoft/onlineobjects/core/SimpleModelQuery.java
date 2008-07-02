@@ -7,8 +7,13 @@ public class SimpleModelQuery extends AbstractModelQuery {
 		this.clazz = clazz;
 	}
 	
-	public AbstractModelQuery addLimitation(String property,Object value) {
+	public SimpleModelQuery addLimitation(String property,Object value) {
 		limitations.add(new ModelPropertyLimitation(property,value));
+		return this;
+	}
+	
+	public SimpleModelQuery setPriviledged(Priviledged priviledged) {
+		this.priviledged = priviledged;
 		return this;
 	}
 }

@@ -11,6 +11,7 @@ OO.Community.Front = function() {
 	this.setupSearch();
 	this.addBehavior();
 	this.loadData();
+	//$ani($$('.head')[0],'height','200px',2000,{delay:10000});
 }
 
 OO.Community.Front.prototype.setupSearch = function() {
@@ -30,6 +31,7 @@ OO.Community.Front.prototype.setupSearch = function() {
 
 OO.Community.Front.prototype.addBehavior = function() {
 	var self = this;
+	if (this.signupForm) {
 	this.signupForm.onsubmit = function() {
 		var username = self.signupForm.username.value;
 		var password = self.signupForm.password.value;
@@ -43,6 +45,7 @@ OO.Community.Front.prototype.addBehavior = function() {
 			self.displayError(e);
 		}
 		return false;
+	}
 	}
 	this.loginForm.onsubmit = function() {
 		var username = self.loginForm.username.value;
@@ -67,31 +70,29 @@ OO.Community.Front.prototype.addBehavior = function() {
 }
 
 OO.Community.Front.prototype.userDidSignUp = function(username) {
-	if (!this.signedUpMessage) {
-		this.signedUpMessage = new OO.Community.Message();
-		var body = document.createElement('div');
-		body.appendChild(OO.Community.Message.buildHeader('Du er nu oprettet som bruger...'));
-		body.appendChild(OO.Community.Message.buildParagraph('Du vil modtage en e-mail hvor du skal bekræfte at du er dig. Indtil dette er gjort kan du frit anvende dit nye websted i op til 7 dage.'));
-		this.signedUpButton = OO.Community.Message.buildButton('Gå til mit ny websted :-)');
-		body.appendChild(this.signedUpButton);
-		this.signedUpMessage.setContents(body);
-	}
-	this.signedUpButton.href=username+'/';
-	this.signedUpMessage.show();
+	var msg = In2iGui.Alert.create(null,{
+		variant: 'smile',
+		title: 'Du er nu oprettet som bruger...',
+		text: 'Du vil modtage en e-mail hvor du skal bekræfte at du er dig. Indtil dette er gjort kan du frit anvende dit nye websted i op til 7 dage.'
+	});
+	var button = In2iGui.Button.create(null,{text : 'Gå til mit ny websted :-)!'});
+	button.addDelegate({buttonWasClicked:function(){
+		document.location=username+'/';
+	}});
+	msg.addButton(button);
+	msg.show();
 }
 
 OO.Community.Front.prototype.userDidLogIn = function(username) {
-	if (!this.logInMessage) {
-		this.logInMessage = new OO.Community.Message();
-		var body = document.createElement('div');
-		body.appendChild(OO.Community.Message.buildHeader('Du er nu logget ind!'));
-		body.appendChild(OO.Community.Message.buildParagraph('...og vil blive taget til dit websted om få sekunder.'));
-		this.logInMessage.setContents(body);
-	}
-	this.logInMessage.show();
+	var msg = In2iGui.Alert.create(null,{
+		variant: 'smile',
+		title: 'Du er nu logget ind!',
+		text: '...og vil blive taget til dit website med det samme.'
+	});
+	msg.show();
 	window.setTimeout(function() {
 		document.location=username+'/';
-	},2000);
+	},1000);
 }
 
 OO.Community.Front.prototype.setSignUpMessage = function(text) {
@@ -135,7 +136,7 @@ OO.Community.Front.prototype.buildImages = function(images) {
 		var thumb = N2i.create(
 			'div',
 			{'class':'thumbnail'},
-			{'width':(width)+'px','marginLeft': '600px','backgroundImage':'url("'+info.baseContext+'/service/image/?id='+image.id+'&thumbnail='+Math.max(width,height)+'")'}
+			{'width':(width)+'px','marginLeft': '600px','backgroundImage':'url("'+OnlineObjects.baseContext+'/service/image/?id='+image.id+'&thumbnail='+Math.max(width,height)+'")'}
 		);
 		container.appendChild(thumb);
 		$ani(thumb,'margin-left','0px',1000,{ease:N2i.Animation.fastSlow});

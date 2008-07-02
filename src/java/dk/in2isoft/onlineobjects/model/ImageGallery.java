@@ -39,7 +39,7 @@ public class ImageGallery extends Entity implements Document {
 	}
 
 	public DocumentBuilder getBuilder() {
-		return new ImageGalleryBuilder(this);
+		return new ImageGalleryBuilder();
 	}
 
 	public int getTiledHeight() {

@@ -6,7 +6,9 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -24,6 +26,7 @@ import org.apache.log4j.Logger;
 
 import com.oreilly.servlet.ServletUtils;
 
+import dk.in2isoft.in2igui.In2iGui;
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
 import dk.in2isoft.onlineobjects.apps.ApplicationManager;
 import dk.in2isoft.onlineobjects.core.ConfigurationException;
@@ -39,19 +42,34 @@ public class Dispatcher implements Filter {
 	FilterConfig filterConfig;
 
 	private static Logger log = Logger.getLogger(Dispatcher.class);
+
 	private List<String> reserved = new ArrayList<String>();
 
+	private boolean simulateDelay = false;
+
 	static final Class<?>[] args = { Request.class };
+
+	static final Map<String, String> mimeTypes = new HashMap<String, String>();
 
 	public Dispatcher() {
 		reserved.add("XmlWebGui");
 		reserved.add("In2iGui");
-		reserved.add("dwr");
 		reserved.add("public");
+
+		mimeTypes.put("html", "text/html");
+		mimeTypes.put("htm", "text/html");
+		mimeTypes.put("xhtml", "application/xhtml+xml");
+		mimeTypes.put("js", "text/javascript");
+		mimeTypes.put("css", "text/css");
+		mimeTypes.put("png", "image/png");
+		mimeTypes.put("gif", "image/gif");
+		mimeTypes.put("jpg", "image/jpeg");
+		mimeTypes.put("jpeg", "image/jpeg");
 	}
 
 	public void doFilter(ServletRequest sRequest, ServletResponse sResponse, FilterChain chain) throws IOException,
 			ServletException {
+
 		HttpServletRequest request = (HttpServletRequest) sRequest;
 		HttpServletResponse response = (HttpServletResponse) sResponse;
 		try {
@@ -59,13 +77,34 @@ public class Dispatcher implements Filter {
 		} catch (SecurityException e) {
 			throw new ServletException(e);
 		}
+		boolean shouldCommit = false;
 		Request req = new Request(request, response);
+		if (req.isSet("username") && req.isSet("password")) {
+			Core.getInstance().getSecurity().changeUser(req.getSession(), req.getString("username"),
+					req.getString("password"));
+		}
 		String[] path = req.getFullPath();
-		if (path.length > 0 && reserved.contains(path[0])) {
+		if (path.length > 0 && path[0].equals("dwr")) {
+			if (simulateDelay) {
+				delay(path.toString());
+			}
+			chain.doFilter(sRequest, sResponse);
+			shouldCommit = true;
+		} else if (path.length > 0 && path[0].equals("In2iGui")) {
+			StringBuilder file = new StringBuilder();
+			file.append(In2iGui.getInstance().getPath());
+			for (int i = 1; i < path.length; i++) {
+				file.append(File.separatorChar);
+				file.append(path[i]);
+			}
+			push(response, new File(file.toString()));
+			// chain.doFilter(sRequest, sResponse);
+		} else if (path.length > 0 && reserved.contains(path[0])) {
 			chain.doFilter(sRequest, sResponse);
 		} else if (path.length > 1 && path[0].equals("app")) {
-			req.setLocalContext((String[])ArrayUtils.subarray(path, 0, 2));
+			req.setLocalContext((String[]) ArrayUtils.subarray(path, 0, 2));
 			callApplication(path[1], req);
+			shouldCommit = true;
 		} else if (path.length > 1 && path[0].equals("service")) {
 			ServiceController controller = ServiceManager.getInstance().getServiceController(path[1]);
 			try {
@@ -80,20 +119,23 @@ public class Dispatcher implements Filter {
 			} catch (EndUserException e) {
 				displayError(req, e);
 			}
+			shouldCommit = true;
 		} else {
 			callApplication("community", req);
+			shouldCommit = true;
 		}
-		Core.getInstance().getModel().commit();
+		if (shouldCommit) {
+			Core.getInstance().getModel().commit();
+		}
 	}
 
-	private void ensureSession(HttpServletRequest request)
-	throws dk.in2isoft.onlineobjects.core.SecurityException {
+	private void ensureSession(HttpServletRequest request) throws dk.in2isoft.onlineobjects.core.SecurityException {
 		HttpSession session = request.getSession();
-		if (session.getAttribute(UserSession.SESSION_ATTRIBUTE)==null) {
+		if (session.getAttribute(UserSession.SESSION_ATTRIBUTE) == null) {
 			session.setAttribute(UserSession.SESSION_ATTRIBUTE, new UserSession());
 		}
 	}
-	
+
 	private void callApplication(String application, Request request) throws IOException {
 		ApplicationController controller = ApplicationManager.getInstance().getToolController("community");
 		String[] path = request.getLocalPath();
@@ -105,8 +147,8 @@ public class Dispatcher implements Filter {
 				try {
 					callApplicationMethod(controller, path[0], request);
 				} catch (NoSuchMethodException e) {
-					String[] filePath = new String[] {"app","community"};
-					if (!pushFile((String[])ArrayUtils.addAll(filePath,path), request.getResponse())) {
+					String[] filePath = new String[] { "app", "community" };
+					if (!pushFile((String[]) ArrayUtils.addAll(filePath, path), request.getResponse())) {
 						controller.unknownRequest(request);
 					}
 				} catch (InvocationTargetException e) {
@@ -118,10 +160,11 @@ public class Dispatcher implements Filter {
 		} catch (EndUserException e) {
 			displayError(request, e);
 		}
-		
+
 	}
-	
-	private void callApplicationMethod(ApplicationController controller, String methodName, Request request) throws EndUserException, InvocationTargetException, NoSuchMethodException {
+
+	private void callApplicationMethod(ApplicationController controller, String methodName, Request request)
+			throws EndUserException, InvocationTargetException, NoSuchMethodException {
 		try {
 			Method method = controller.getClass().getDeclaredMethod(methodName, args);
 			method.invoke(controller, new Object[] { request });
@@ -158,9 +201,8 @@ public class Dispatcher implements Filter {
 				e = (EndUserException) ex;
 			} else if (ex.getCause() instanceof EndUserException) {
 				e = (EndUserException) ex.getCause();
-			}
-			else {
-				e = new EndUserException("Undocumented exception",ex);
+			} else {
+				e = new EndUserException("Undocumented exception", ex);
 			}
 			log.error(ex.getMessage(), ex);
 			ErrorDisplayer gui = new ErrorDisplayer();
@@ -190,7 +232,7 @@ public class Dispatcher implements Filter {
 			filePath.append(path[i]);
 		}
 		File file = new File(filePath.toString());
-		//log.info(file.getAbsolutePath());
+		// log.info(file.getAbsolutePath());
 		if (file.exists()) {
 			try {
 				push(response, file);
@@ -215,12 +257,13 @@ public class Dispatcher implements Filter {
 		} else {
 			response.setDateHeader("Last-Modified", file.lastModified());
 		}
-		// if (contentType!=null && contentType.length()>0) {
-		// response.setContentType(contentType);
-		// }
+		String mimeType = getMimeType(file);
 		response.setContentLength((int) file.length());
 		try {
 			ServletOutputStream out = response.getOutputStream();
+			if (mimeType != null) {
+				response.setContentType(mimeType);
+			}
 			ServletUtils.returnFile(file.getPath(), out);
 		} catch (FileNotFoundException e) {
 			try {
@@ -232,6 +275,27 @@ public class Dispatcher implements Filter {
 				response.getWriter().print("File: " + file.getPath() + " not found!");
 			} catch (IOException ignore) {
 			}
+		}
+	}
+
+	private String getMimeType(File file) {
+		String name = file.getName();
+		int pos = name.lastIndexOf(".");
+		if (pos != -1) {
+			String ext = name.substring(pos + 1);
+			return mimeTypes.get(ext);
+		} else {
+			return null;
+		}
+	}
+
+	private void delay(String path) {
+		// long delay:
+		try {
+			log.info("Waiting before serving of:" + path);
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			log.debug("ignored exception", e);
 		}
 	}
 }

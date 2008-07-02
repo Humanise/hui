@@ -7,6 +7,7 @@ body
 {
 	padding: 0px;
 	margin: 0px;
+	background: #fff;
 }
 
 .footer
@@ -81,4 +82,13 @@ body
 	margin-top: 12px;
 	margin-left: 16px;
 	font-size: 10pt;
+}
+
+div.part_header h1
+{
+	margin: 0px;
+	font-family: "Trebuchet MS", Helvetica, sans-serif;
+	font-size: 16pt;
+	color: #0066AA;
+	text-align: center;
 }

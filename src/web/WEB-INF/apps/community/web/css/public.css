@@ -10,3 +10,19 @@ body
 {
 	clear: both;
 }
+
+a.link
+{
+	color: #ccc;
+}
+
+a.link span
+{
+	color: #3366FF;
+}
+
+
+a.link:hover, a.link:hover span
+{
+	color: #0033aa;
+}

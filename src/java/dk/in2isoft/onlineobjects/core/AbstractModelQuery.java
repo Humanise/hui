@@ -6,6 +6,7 @@ import java.util.List;
 public abstract class AbstractModelQuery {
 	protected Class<?> clazz;
 	protected List<ModelPropertyLimitation> limitations = new ArrayList<ModelPropertyLimitation>();
+	protected Priviledged priviledged;
 	
 	public Class<?> getClazz() {
 		return clazz;
@@ -13,5 +14,9 @@ public abstract class AbstractModelQuery {
 	
 	public List<ModelPropertyLimitation> getLimitations() {
 		return limitations;
+	}
+	
+	public Priviledged getPriviledged() {
+		return priviledged;
 	}
 }

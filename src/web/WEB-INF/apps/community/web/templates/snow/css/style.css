@@ -1,0 +1,70 @@
+html, body
+{
+	height: 100%;
+}
+
+body
+{
+	padding: 0px;
+	margin: 0px;
+	background: #fff;
+}
+
+.body
+{
+	background: url('../gfx/sign.png') 20px bottom no-repeat;
+	overflow: hidden;
+	min-height: 100%;
+}
+
+
+.inner_body
+{
+	background: url('../gfx/mountains.png') left top repeat-x;
+	min-height: 100%;
+	overflow: hidden;
+}
+
+.header
+{
+	font-family: "Trebuchet MS", Helvetica, sans-serif;
+	text-align: center;
+	padding: 10px;
+	font-size: 14pt;
+	line-height: 16pt;
+	color: #333;
+	height: 40px;
+}
+
+.header input
+{
+	font-family: "Trebuchet MS", Helvetica, sans-serif;
+	text-align: center;
+	border: none;
+	color: #fff;
+}
+
+.header a
+{
+	text-decoration: none;
+	color: #fff;
+	padding: 1px 5px 1px;
+}
+
+.header a.selected
+{
+	font-weight: bold;
+}
+
+.back
+{
+	font-family: "Trebuchet MS", Helvetica, sans-serif;
+	color: #23a;
+	background: #fff;
+	text-decoration: none;
+	position: absolute;
+	padding: 1px 4px;
+	margin-top: 12px;
+	margin-left: 16px;
+	font-size: 10pt;
+}

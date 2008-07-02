@@ -33,8 +33,6 @@ OO.Community.InvitationPage.prototype = {
 		}
 		if (!error) {
 			this.signUp(code,username,password1);
-		} else {
-
 		}
 	},
 	
@@ -53,14 +51,31 @@ OO.Community.InvitationPage.prototype = {
 		var self = this;
 		var delegate = {
   			callback:function() { self.userDidSignUp(username) },
-  			errorHandler:function(errorString, exception) { alert(errorString); }
+  			errorHandler:function(errorString, exception) { self.errorOccurred(errorString); }
 		};
 		CommunityTool.signUpFromInvitation(code,username,password,delegate);
 	},
 	
+	errorOccurred : function(error) {
+		In2iGui.get().showAlert({
+			variant: 'gasp',
+			title: 'Der skete en fejl!',
+			text: 'Fejlbesked: '+error
+		});
+	},
+	
 	userDidSignUp : function(username) {
-		alert('Du er nu oprettet som bruger og vil blive taget til dit nye websted!');
-		document.location=info.appContext+'/'+username+'/';
+		var msg = In2iGui.Alert.create(null,{
+			variant: 'smile',
+			title: 'Du er nu oprettet som bruger...',
+			text: 'Du vil modtage en e-mail hvor du skal bekræfte at du er dig. Indtil dette er gjort kan du frit anvende dit nye websted i op til 7 dage.'
+		});
+		var button = In2iGui.Button.create(null,{text : 'Gå til mit ny websted :-)!'});
+		button.addDelegate({buttonWasClicked:function(){
+			document.location=OnlineObjects.appContext+'/'+username+'/';
+		}});
+		msg.addButton(button);
+		msg.show();
 	}
 }
 

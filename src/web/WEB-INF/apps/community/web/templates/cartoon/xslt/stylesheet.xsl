@@ -22,7 +22,7 @@ doctype-system="http://www.w3.org/TR/html4/loose.dtd"/>
 			</head>
 			<body>
 				<div class="body">
-				<div class="inner_body">
+				<div class="inner_body toolbar_padder">
 				<a href="{$app-context}/" class="back">Back</a>
 				<div class="header">
 					<xsl:for-each select="p:context/p:nodes/e:Entity[@type='Item/Entity/WebNode']">

@@ -79,7 +79,7 @@ public class Configuration {
 		return config.getString("mail.password");
 	}
 	
-	public File getFile(String[] path) {
+	public File getFile(String... path) {
 		StringBuilder name = new StringBuilder();
 		name.append(baseDir.getAbsolutePath());
 		for (int i = 0; i < path.length; i++) {
@@ -91,5 +91,13 @@ public class Configuration {
 
 	public File getStorageDir() {
 		return storageDir;
+	}
+
+	public String getAlternativeIn2iGuiPath() {
+		return config.getString("development.in2igui.path",null);
+	}
+
+	public boolean getDevelopmentMode() {
+		return config.getBoolean("development.development-mode",false);
 	}
 }

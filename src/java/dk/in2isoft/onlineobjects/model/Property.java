@@ -1,6 +1,8 @@
 package dk.in2isoft.onlineobjects.model;
 
 public class Property extends Item {
+	
+	public static final String KEY_COMMON_TAG = "common.tag";
 
 	private String key;
 	private String value;

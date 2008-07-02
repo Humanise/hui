@@ -1,5 +1,7 @@
 package dk.in2isoft.onlineobjects.ui;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.directwebremoting.WebContextFactory;
 
 import dk.in2isoft.onlineobjects.core.Core;
@@ -15,5 +17,13 @@ public abstract class AbstractRemotingFacade {
 	
 	protected ModelFacade getModel() {
 		return Core.getInstance().getModel();
+	}
+	
+	protected Request getRequest() {
+		return new Request(WebContextFactory.get().getHttpServletRequest(),WebContextFactory.get().getHttpServletResponse());
+	}
+	
+	protected HttpServletRequest getHttpRequest() {
+		return WebContextFactory.get().getHttpServletRequest();
 	}
 }

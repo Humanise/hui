@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gui xmlns="uri:In2iGui" state="persons" title="Images">
+	<dwr base="/dwr/">
+		<interface name="CoreSecurity"/>
+		<interface name="CommunityTool"/>
+	</dwr>
+	<controller name="controller" source="../../gui/private/controller.js"/>
+	<controller name="imagesController" source="../../gui/private/images.js"/>
+	<view>
+		<toolbar>
+			<icon icon="common/settings" title="Indstillinger" name="toolSettings"/>
+			<divider/>
+			<icon icon="common/person" title="Personer" name="toolPersons"/>
+			<icon icon="common/image" title="Billeder" selected="true" name="toolImages"/>
+			<divider/>
+			<icon icon="common/close" title="Tilbage til website" name="close"/>
+		</toolbar>
+		<content pad="20">
+			<view style="box">
+				<toolbar>
+					<icon icon="common/image" overlay="new" title="Tilføj billede" name="newImage"/>
+				</toolbar>
+				<content>
+					<split>
+						<sidebar>
+							<selection value="all">
+								<item icon="common/image" title="Alle billeder" value="all"/>
+							</selection>
+						</sidebar>
+						<content height="400">
+							<list name="personList" state="persons">
+								<column title="Navn" key="name"/>
+								<column title="E-mail" key="email"/>
+								<column title="Telefon" key="phone"/>
+							</list>
+							<list name="invitationList" state="invitations">
+								<column title="Dato" key="created"/>
+								<column title="Inviteret" key="person"/>
+								<column title="Status" key="state"/>
+							</list>
+						</content>
+					</split>
+				</content>
+				<foot>
+					
+				</foot>
+			</view>
+		</content>
+	</view>
+	<window floating="true" name="imageWindow" title="Nyt billede" width="300">
+		<formula name="invitationFormula">
+			<group>
+				<text label="Navn" key="name"/>
+				<text label="E-mail" key="email"/>
+				<text label="Besked" key="message" lines="10"/>
+				<button title="Send" highlighted="true" name="sendInvitation"/>
+			</group>
+		</formula>
+	</window>
+</gui>

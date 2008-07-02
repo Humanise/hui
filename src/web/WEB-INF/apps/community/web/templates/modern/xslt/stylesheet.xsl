@@ -21,6 +21,7 @@ doctype-system="http://www.w3.org/TR/html4/loose.dtd"/>
 				<link rel="stylesheet" href="{$app-context}/templates/modern/css/style.css" type="text/css" media="screen" title="front" charset="utf-8"/>
 			</head>
 			<body>
+				<div class="toolbar_padder">
 				<a href="{$app-context}/" class="back">Back</a>
 				<div class="header">
 					<xsl:for-each select="p:context/p:nodes/e:Entity[@type='Item/Entity/WebNode']">
@@ -37,6 +38,7 @@ doctype-system="http://www.w3.org/TR/html4/loose.dtd"/>
 					</xsl:for-each>
 				</div>
 				<xsl:apply-templates select="p:content"/>
+				</div>
 			</body>
 		</html>
 	</xsl:template>

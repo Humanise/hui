@@ -83,6 +83,36 @@ public class Request {
 	public String[] getLocalPath() {
 		return (String[]) ArrayUtils.subarray(fullPath, this.localContext.length, fullPath.length);
 	}
+	
+	public boolean testLocalPathStart(String... path) {
+		String[] localPath = getLocalPath();
+		if (path.length>localPath.length) {
+			return false;
+		}
+		for (int i = 0; i < path.length; i++) {
+			if (path[i]!=null && !path[i].equals(localPath[i])) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public boolean testLocalPathFull(String... path) {
+		String[] localPath = getLocalPath();
+		if (path.length!=localPath.length) {
+			return false;
+		}
+		for (int i = 0; i < path.length; i++) {
+			if (path[i]!=null && !path[i].equals(localPath[i])) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public boolean isSet(String key) {
+		return getString(key).length()>0;
+	}
 
 	public String getString(String key) {
 		String value = request.getParameter(key);

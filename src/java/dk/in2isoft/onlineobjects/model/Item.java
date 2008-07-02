@@ -13,6 +13,7 @@ public class Item {
 	
 	private long id;
 	private Date created;
+	private Date updated;
 
 	public Item() {
 	}
@@ -76,5 +77,13 @@ public class Item {
 
 	public void setCreated(Date created) {
 		this.created = created;
+	}
+
+	public Date getUpdated() {
+		return updated;
+	}
+
+	public void setUpdated(Date updated) {
+		this.updated = updated;
 	}
 }

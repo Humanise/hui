@@ -17,6 +17,7 @@ import dk.in2isoft.onlineobjects.core.ModelFacade;
 import dk.in2isoft.onlineobjects.core.SimpleModelQuery;
 import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.model.EmailAddress;
+import dk.in2isoft.onlineobjects.model.ImageGallery;
 import dk.in2isoft.onlineobjects.model.Invitation;
 import dk.in2isoft.onlineobjects.model.Item;
 import dk.in2isoft.onlineobjects.model.Person;
@@ -34,17 +35,17 @@ public class CommunityDAO extends AbstractDAO {
 		Invitation invitation = new Invitation();
 		invitation.setCode(LangUtil.generateRandomString(40));
 		invitation.setMessage(message);
-		model.saveItem(invitation, session);
+		model.createItem(invitation, session);
 
 		// Create relation from user to invitation
 		Relation userInvitation = new Relation(user, invitation);
 		userInvitation.setKind(Relation.KIND_INIVATION_INVITER);
-		model.saveItem(userInvitation, session);
+		model.createItem(userInvitation, session);
 
 		// Create relation from invitation to person
 		Relation invitationPerson = new Relation(invitation, invited);
 		invitationPerson.setKind(Relation.KIND_INIVATION_INVITED);
-		model.saveItem(invitationPerson, session);
+		model.createItem(invitationPerson, session);
 
 		return invitation;
 	}
@@ -68,11 +69,9 @@ public class CommunityDAO extends AbstractDAO {
 			email.addTo(mail.getAddress(), person.getName());
 			email.setFrom("jonasmunk@mac.com", "Jonas Munk");
 			email.setSubject("Invitation til OnlineObjects");
-			email
-					.setMsg("Hej "
-							+ person.getName()
-							+ ".\nDu er blevet inviteret til at blive ny bruger på OnlineObjects. Klik på følgende link: http://"
-							+ config.getBaseUrl() + "/invitation?code=" + invitation.getCode());
+			email.setMsg("Hej " + person.getName() + ".\n\n"
+					+ "Du er blevet inviteret til at blive bruger af OnlineObjects. Klik på følgende link: http://"
+					+ config.getBaseUrl() + "/invitation?code=" + invitation.getCode());
 			email.send();
 		} catch (EmailException e) {
 			throw new EndUserException(e);
@@ -95,7 +94,7 @@ public class CommunityDAO extends AbstractDAO {
 		}
 		Invitation invitation = (Invitation) invitations.get(0);
 		if (!Invitation.STATE_ACTIVE.equals(invitation.getState())) {
-			throw new EndUserException("The invitation is not active. The state is: "+invitation.getState());
+			throw new EndUserException("The invitation is not active. The state is: " + invitation.getState());
 		}
 		User user = getModel().getUser(username);
 		if (user != null) {
@@ -106,20 +105,20 @@ public class CommunityDAO extends AbstractDAO {
 		user = new User();
 		user.setUsername(username);
 		user.setPassword(password);
-		getModel().saveItem(user, session);
-		
+		getModel().createItem(user, session);
+
 		// Create relation between user and invitation
-		Relation invitaionUserRelation = new Relation(invitation,user);
+		Relation invitaionUserRelation = new Relation(invitation, user);
 		invitaionUserRelation.setKind(Relation.KIND_INIVATION_INVITED);
-		getModel().saveItem(invitaionUserRelation, session);
+		getModel().createItem(invitaionUserRelation, session);
 
 		// Log in as new user
 		Core.getInstance().getSecurity().changeUser(session, username, password);
-		
+
 		// Grant user access to self and relation
 		getModel().grantFullPrivileges(user, session);
 		getModel().grantFullPrivileges(invitaionUserRelation, session);
-		
+
 		// Get person from invitation
 		Person person = (Person) getModel().getFirstSubEntity(invitation, Person.class);
 		Person newPerson = new Person();
@@ -127,35 +126,37 @@ public class CommunityDAO extends AbstractDAO {
 		// Create copy of person
 		newPerson.setGivenName(person.getGivenName());
 		newPerson.setFamilyName(person.getFamilyName());
-		getModel().saveItem(newPerson, session);
-		
+		getModel().createItem(newPerson, session);
+
 		EmailAddress mail = (EmailAddress) getModel().getFirstSubEntity(person, EmailAddress.class);
-		
+
 		// Create copy of mail
 		EmailAddress newMail = new EmailAddress();
 		newMail.setAddress(mail.getAddress());
-		getModel().saveItem(newMail, session);
-		
+		getModel().createItem(newMail, session);
+
 		// Link copied person to copied mail
-		Relation personMailRelation = new Relation(newPerson,newMail);
-		getModel().saveItem(personMailRelation, session);
-		
+		Relation personMailRelation = new Relation(newPerson, newMail);
+		getModel().createItem(personMailRelation, session);
+
 		// Create relation between user and person
 		Relation userPersonRelation = new Relation(user, newPerson);
 		userPersonRelation.setKind(Relation.KIND_SYSTEM_USER_SELF);
-		getModel().saveItem(userPersonRelation, session);
+		getModel().createItem(userPersonRelation, session);
 
 		// Create a web site
 		WebSite site = new WebSite();
 		site.setName(person.getName());
-		getModel().saveItem(site, session);
+		getModel().createItem(site, session);
 
 		// Create relation between user and web site
 		Relation userSiteRelation = new Relation(user, site);
-		getModel().saveItem(userSiteRelation, session);
+		getModel().createItem(userSiteRelation, session);
 
-		WebModelUtil.createWebPageOnSite(site.getId(), session);
-		
+		WebModelUtil.createWebPageOnSite(site.getId(), ImageGallery.class, session);
+
+		// TODO: Is it OK to give the new user access to the invitation?
+		getModel().grantFullPrivileges(invitation, session);
 		// Set state of invitation to accepted
 		invitation.setState(Invitation.STATE_ACCEPTED);
 		getModel().updateItem(invitation, session);
@@ -180,30 +181,30 @@ public class CommunityDAO extends AbstractDAO {
 		user = new User();
 		user.setUsername(username);
 		user.setPassword(password);
-		model.saveItem(user, session);
+		model.createItem(user, session);
 
 		Core.getInstance().getSecurity().changeUser(session, username, password);
 
 		// Create a person
 		Person person = new Person();
 		person.setName(username);
-		model.saveItem(person, session);
+		model.createItem(person, session);
 
 		// Create relation between user and person
 		Relation userPersonRelation = new Relation(user, person);
 		userPersonRelation.setKind(Relation.KIND_SYSTEM_USER_SELF);
-		model.saveItem(userPersonRelation, session);
+		model.createItem(userPersonRelation, session);
 
 		// Create a web site
 		WebSite site = new WebSite();
 		site.setName(username);
-		model.saveItem(site, session);
+		model.createItem(site, session);
 
 		// Create relation between user and web site
 		Relation userSiteRelation = new Relation(user, site);
-		model.saveItem(userSiteRelation, session);
-		
-		WebModelUtil.createWebPageOnSite(site.getId(), session);
+		model.createItem(userSiteRelation, session);
+
+		WebModelUtil.createWebPageOnSite(site.getId(),ImageGallery.class, session);
 
 	}
 }

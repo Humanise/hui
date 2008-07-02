@@ -3,7 +3,9 @@ package dk.in2isoft.commons.xml;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -11,6 +13,7 @@ import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -20,6 +23,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 
 import dk.in2isoft.onlineobjects.core.EndUserException;
@@ -27,11 +31,12 @@ import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.ui.XSLTInterface;
 
 public class XSLTUtil {
+	
+	private static Logger log = Logger.getLogger(XSLTUtil.class);
 
-	private static void applyXSLT(Source xml, Source xslt, OutputStream output, Map<String, String> parameters)
+	private static void applyXSLT(Source xml, Source xslt, Result output, Map<String, String> parameters)
 			throws EndUserException {
 		try {
-
 			TransformerFactory tFactory = TransformerFactory.newInstance();
 			Transformer transformer = tFactory.newTransformer(xslt);
 			if (parameters != null) {
@@ -40,8 +45,7 @@ public class XSLTUtil {
 					transformer.setParameter(element.getKey(), element.getValue());
 				}
 			}
-			StreamResult scrResult = new StreamResult(output);
-			transformer.transform(xml, scrResult);
+			transformer.transform(xml, output);
 		} catch (TransformerConfigurationException e) {
 			throw new EndUserException(e);
 		} catch (TransformerException e) {
@@ -54,27 +58,33 @@ public class XSLTUtil {
 			throws EndUserException {
 		StringReader xmlReader = new StringReader(xmlData);
 		StreamSource xmlSource = new StreamSource(xmlReader);
-		applyXSLT(xmlSource, xslt, output, parameters);
+		OutputStreamWriter out;
+		try {
+			out = new OutputStreamWriter(output, "UTF8");
+		} catch (UnsupportedEncodingException e) {
+			throw new EndUserException(e);
+		}
+		applyXSLT(xmlSource, xslt, new StreamResult(out), parameters);
 
 	}
 
 	private static void applyXSLT(Document doc, Source xslt, OutputStream output, Map<String, String> parameters)
 			throws EndUserException {
 		Source xmlSource = new DOMSource(doc.getDocumentElement());
-		applyXSLT(xmlSource, xslt, output, parameters);
+		applyXSLT(xmlSource, xslt, new StreamResult(output), parameters);
 	}
-
-	public static void applyXSLT(Document doc, File xsltFile, OutputStream output, Map<String, String> parameters)
+	
+	private static void applyXSLT(String xmlData, File[] xsltFile, OutputStream output, Map<String, String> parameters)
 			throws EndUserException {
-		applyXSLT(doc, new StreamSource(xsltFile), output, parameters);
+		StringReader xslReader = new StringReader(buildXSLT(xsltFile,parameters));
+		applyXSLT(xmlData, new StreamSource(xslReader), output, parameters);
 	}
-
-	public static void applyXSLT(String xmlData, File[] xsltFile, OutputStream output, Map<String, String> parameters)
-			throws EndUserException {
+	
+	private static String buildXSLT(File[] xsltFile, Map<String, String> parameters) {
 		StringBuilder xsl = new StringBuilder();
-		xsl.append("<?xml version='1.0' encoding='ISO-8859-1'?>");
+		xsl.append("<?xml version='1.0' encoding='UTF-8'?>");
 		xsl.append("<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='1.0'>");
-		xsl.append("<xsl:output method='html' encoding='ISO-8859-1' indent='no'/>");
+		xsl.append("<xsl:output method='xml' encoding='UTF-8' indent='no'/>");
 		for (Iterator<String> iter = parameters.keySet().iterator(); iter.hasNext();) {
 			String key = iter.next();
 			xsl.append("<xsl:param name='").append(key).append("'/>");
@@ -83,13 +93,13 @@ public class XSLTUtil {
 			xsl.append("<xsl:include href='").append(xsltFile[i].toURI()).append("'/>");
 		}
 		xsl.append("</xsl:stylesheet>");
-		StringReader xslReader = new StringReader(xsl.toString());
-		applyXSLT(xmlData, new StreamSource(xslReader), output, parameters);
+		return xsl.toString();
 	}
 
 	public static void applyXSLT(String xmlData, File xsltFile, OutputStream output, Map<String, String> parameters)
 			throws EndUserException {
-		applyXSLT(xmlData, new StreamSource(xsltFile), output, parameters);
+		StringReader xslReader = new StringReader(buildXSLT(new File[] {xsltFile},parameters));
+		applyXSLT(xmlData, new StreamSource(xslReader), output, parameters);
 	}
 
 	public static void applyXSLT(String xmlData, File xsltFile, HttpServletResponse response,
@@ -113,7 +123,7 @@ public class XSLTUtil {
 		} else {
 			response.setContentType("text/html");
 		}
-		XSLTUtil.applyXSLT(ui.getData(), ui.getStylesheet(), response.getOutputStream(), parameters);
+		applyXSLT(ui.getData(), new StreamSource(ui.getStylesheet()), response.getOutputStream(), parameters);
 	}
 
 	public static void applyXSLT(String xmlData, File[] xsltFile, HttpServletResponse response,
@@ -124,10 +134,7 @@ public class XSLTUtil {
 
 	private static boolean isXhtmlCapable(HttpServletRequest request) {
 		String accept = request.getHeader("Accept");
-		if (accept == null) {
-			return false;
-		} else {
-			return accept.indexOf("application/xhtml+xml") != -1;
-		}
+		log.info("Accept: "+accept);
+		return (accept != null && accept.indexOf("application/xhtml+xml")!=-1);
 	}
 }

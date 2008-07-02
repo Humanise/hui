@@ -6,10 +6,7 @@
  xmlns:i="http://uri.onlineobjects.com/model/Item/Entity/Image/"
  xmlns:p="http://uri.onlineobjects.com/publishing/WebPage/"
  exclude-result-prefixes="e u p i"
->
-	<xsl:output encoding="UTF-8" indent="yes" method="html" omit-xml-declaration="yes" doctype-public="-//W3C//DTD HTML 4.01 Transitional//EN" 
-doctype-system="http://www.w3.org/TR/html4/loose.dtd"/>
-	
+>	
 	<xsl:template match="/">
 		<xsl:apply-templates select="p:WebPage"/>
 	</xsl:template>
@@ -17,10 +14,11 @@ doctype-system="http://www.w3.org/TR/html4/loose.dtd"/>
 	<xsl:template match="p:WebPage">
 		<html>
 			<head>
-				<xsl:call-template name="p:head"/>
 				<link rel="stylesheet" href="{$app-context}/templates/basic/css/style.css" type="text/css" media="screen" title="front" charset="utf-8"/>
+				<xsl:call-template name="p:head"/>
 			</head>
 			<body>
+				<div class="toolbar_padder">
 				<a href="{$app-context}/" class="back">Tilbage</a>
 				<div class="header">
 					<xsl:for-each select="p:context/p:nodes/e:Entity[@type='Item/Entity/WebNode']">
@@ -37,6 +35,7 @@ doctype-system="http://www.w3.org/TR/html4/loose.dtd"/>
 					</xsl:for-each>
 				</div>
 				<xsl:apply-templates select="p:content"/>
+				</div>
 			</body>
 		</html>
 	</xsl:template>

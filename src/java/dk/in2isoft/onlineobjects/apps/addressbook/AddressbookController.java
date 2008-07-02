@@ -64,7 +64,7 @@ public class AddressbookController extends ApplicationController {
 		} else if (sex.equals("female")) {
 			p.setSex(false);
 		}
-		getModel().saveItem(p,request.getSession());
+		getModel().createItem(p,request.getSession());
 		request.redirect(".");
 	}
 
@@ -86,7 +86,7 @@ public class AddressbookController extends ApplicationController {
 	public void deletePerson(Request request)
 	throws IOException,EndUserException {
 		Person person = (Person)getModel().loadEntity(Person.class,request.getLong("id"));
-		getModel().deleteItem(person);
+		getModel().deleteEntity(person,request.getSession());
 		request.redirect(".");
 	}
 
@@ -135,19 +135,19 @@ public class AddressbookController extends ApplicationController {
 			person.setNamePrefix(card.getNamePrefix());
 			person.setNameSuffix(card.getNameSuffix());
 			person.getProperties().add(new Property("social.jobtitle",card.getTitle()));
-			getModel().saveItem(person,session);
+			getModel().createItem(person,session);
 			for (Iterator<VCardEmail> iterator = card.getEmails().iterator(); iterator.hasNext();) {
 				VCardEmail mail = iterator.next();
 				EmailAddress email = new EmailAddress();
 				email.setAddress(mail.getAddress());
-				getModel().saveItem(email,session);
+				getModel().createItem(email,session);
 				getModel().createRelation(person, email,session);
 			}
 			for (Iterator<VCardPhone> iterator = card.getPhones().iterator(); iterator.hasNext();) {
 				VCardPhone phone = iterator.next();
 				PhoneNumber number = new PhoneNumber();
 				number.setNumber(phone.getNumber());
-				getModel().saveItem(number,session);
+				getModel().createItem(number,session);
 				getModel().createRelation(person, number,session);
 			}
 		}

@@ -21,11 +21,13 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.log4j.Logger;
 
+import dk.in2isoft.onlineobjects.core.Configuration;
 import dk.in2isoft.onlineobjects.core.Core;
 
 public class In2iGui {
 
 	private String path = "";
+	private boolean developmentMode;
 
 	private static Hashtable<String, Templates> templates = new Hashtable<String, Templates>();
 
@@ -38,7 +40,12 @@ public class In2iGui {
 	private In2iGui() {
 		super();
 		log.info("In2iGui initialized");
-		path = Core.getInstance().getConfiguration().getBaseDir();
+		Configuration config = Core.getInstance().getConfiguration();
+		developmentMode = config.getDevelopmentMode();
+		path = config.getAlternativeIn2iGuiPath();
+		if (path==null) {
+			path = config.getFile("In2iGui").getAbsolutePath();
+		}
 	}
 
 	public static In2iGui getInstance() {
@@ -47,15 +54,16 @@ public class In2iGui {
 		}
 		return instance;
 	}
-
-	public void setPath(String path) {
-		this.path = path;
+	
+	public String getPath() {
+		return path;
 	}
 
-	public void render(StreamSource source, OutputStream output, String context) throws IOException {
+	public void render(StreamSource source, OutputStream output, String context,boolean devMode) throws IOException {
 		try {
 			Transformer transformer = getTransformer();
 			transformer.setParameter("context", context);
+			transformer.setParameter("dev", devMode);
 			transformer.transform(source, new StreamResult(output));
 		} catch (TransformerFactoryConfigurationError e) {
 			e.printStackTrace(new PrintStream(output));
@@ -70,25 +78,41 @@ public class In2iGui {
 			}
 		}
 	}
+	
+	private void setHeaders(HttpServletRequest request, HttpServletResponse response) {
+		String accept = request.getHeader("Accept");
+		if (accept!=null && accept.indexOf("application/xhtml+xml")!=-1) {
+			response.setContentType("application/xhtml+xml");
+		} else {
+			response.setContentType("text/html");
+		}
+		response.setCharacterEncoding("UTF-8");
+	}
 
 	public void render(String xmlData, HttpServletRequest request,HttpServletResponse response) throws IOException {
+		setHeaders(request, response);
 		OutputStream stream = response.getOutputStream();
 		try {
-			response.setContentType("text/html");
-			response.setCharacterEncoding("UTF-8");
+			boolean devMode = developmentMode;
 			StringReader xmlReader = new StringReader("<?xml version=\"1.0\"?>" + xmlData);
-			render(new StreamSource(xmlReader), stream, request.getContextPath());
+			if ("true".equals(request.getParameter("nodev"))) {
+				devMode=false;
+			}
+			render(new StreamSource(xmlReader), stream, request.getContextPath(),devMode);
 		} catch (TransformerFactoryConfigurationError e) {
 			e.printStackTrace(new PrintStream(stream));
 		}
 	}
 
 	public void render(File file, HttpServletRequest request,HttpServletResponse response) throws IOException {
+		setHeaders(request, response);
 		OutputStream stream = response.getOutputStream();
 		try {
-			response.setContentType("text/html");
-			response.setCharacterEncoding("UTF-8");
-			render(new StreamSource(file), stream, request.getContextPath());
+			boolean devMode = developmentMode;
+			if ("true".equals(request.getParameter("nodev"))) {
+				devMode=false;
+			}
+			render(new StreamSource(file), stream, request.getContextPath(),devMode);
 		} catch (TransformerFactoryConfigurationError e) {
 			e.printStackTrace(new PrintStream(stream));
 		}
@@ -99,11 +123,11 @@ public class In2iGui {
 		String key = "c";
 		Templates temp = (Templates) templates.get(key);
 		if (temp == null) {
-			StringBuffer xslString = new StringBuffer();
+			StringBuilder xslString = new StringBuilder();
 			xslString.append("<?xml version='1.0' encoding='UTF-8'?>").append(
 					"<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='1.0'>").append(
-					"<xsl:output method='xml' indent='no' encoding='UTF-8'/>").append("<xsl:include href='").append(
-					path).append("/In2iGui/xslt/gui.xsl'/>").append(
+					"<xsl:output method='xml' indent='no' encoding='UTF-8'/><xsl:param name='dev'/><xsl:param name='context'/>").append("<xsl:include href='").append(
+					path).append("/xslt/gui.xsl'/>").append(
 					"<xsl:template match='/'><xsl:apply-templates/></xsl:template>").append("</xsl:stylesheet>");
 			StringReader xslReader = new StringReader(xslString.toString());
 			temp = tFactory.newTemplates(new StreamSource(xslReader));
