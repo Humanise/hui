@@ -290,11 +290,14 @@ OO.Editor.ImageGallery.prototype.deleteImage = function(image) {
 }
 
 OO.Editor.ImageGallery.prototype.showImageEditorPanel = function(photo) {
-	this.latestEditedImage = photo.image;
+	N2i.log(photo.image);
+	this.latestEditedPhoto = photo;
 	var panel = this.getImageEditorPanel();
 	In2iGui.get('imageEditorTitle').setValue(photo.image.name || '');
 	var desc = OO.Editor.getEntityProperty(photo.image,'image.description');
 	In2iGui.get('imageEditorDescription').setValue(desc || '');
+	var tags = OO.Editor.getEntityProperties(photo.image,'common.tag');
+	In2iGui.get('imageEditorTags').setValue(tags);
 	panel.position(photo.frame.getElementsByTagName('img')[0]);
 	panel.show();
 }
@@ -306,13 +309,13 @@ OO.Editor.ImageGallery.prototype.hideImageEditorPanel = function() {
 OO.Editor.ImageGallery.prototype.saveImageEditorPanel = function() {
 	var title = In2iGui.get('imageEditorTitle').getValue();
 	var desc = In2iGui.get('imageEditorDescription').getValue();
-	var image = this.latestEditedImage;
+	var tags = In2iGui.get('imageEditorTags').getValue();
+	var photo = this.latestEditedPhoto;
 	var self = this;
 
-	ImageGalleryDocument.updateImage(image.id,title,desc,
-		function() {
-			image.name = title;
-			OO.Editor.setEntityProperty(image,'image.description',desc);
+	ImageGalleryDocument.updateImage(photo.image.id,title,desc,tags,
+		function(newImage) {
+			photo.image = newImage;
 			self.hideImageEditorPanel();
 		}
 	);
@@ -322,47 +325,35 @@ OO.Editor.ImageGallery.prototype.getImageEditorPanel = function() {
 	if (!this.imageEditorPanel) {
 		var panel = In2iGui.BoundPanel.create({top:'50px',left:'50px'});
 		var formula = In2iGui.Formula.create();
-		panel.addWidget(formula);
+		panel.add(formula);
 		var group = In2iGui.Formula.Group.create();
 		formula.addContent(group.getElement());
 
-		var title = In2iGui.Formula.Text.create({label:'Titel',name:'imageEditorTitle'});
-		group.addWidget(title);
-		var desc = In2iGui.Formula.Text.create({label:'Beskrivelse',lines:6,name:'imageEditorDescription'});
-		group.addWidget(desc);
+		var title = In2iGui.Formula.Text.create('imageEditorTitle',{label:'Titel'});
+		group.add(title);
+		var desc = In2iGui.Formula.Text.create('imageEditorDescription',{label:'Beskrivelse',lines:4});
+		group.add(desc);
+		var tags = In2iGui.Formula.Tokens.create('imageEditorTags',{label:'Nøgleord'});
+		group.add(tags);
 
 		panel.addNode(N2i.create('div',null,{height:'5px'}));
 
 		var save = In2iGui.Button.create('saveImageEditor',{text:'Gem',highlighted:true});
-		panel.addWidget(save);
+		panel.add(save);
 		var cancel = In2iGui.Button.create('cancelImageEditor',{text:'Annuller'});
-		panel.addWidget(cancel);
+		panel.add(cancel);
 		this.imageEditorPanel = panel;
-		this.imageEditorDelegate = new OO.Editor.ImageGallery.ImageEditorDelegate(this);
 		var self = this;
 		In2iGui.get().addDelegate({
-			buttonWasClicked$cancelImageEditor : function() {
+			click$cancelImageEditor : function() {
 				self.hideImageEditorPanel();
 			},
-			buttonWasClicked$saveImageEditor : function() {
+			click$saveImageEditor : function() {
 				self.saveImageEditorPanel();
 			}
 		});
 	}
 	return this.imageEditorPanel;
-}
-
-/***************************** Image Editor delegate ***************************/
-
-OO.Editor.ImageGallery.ImageEditorDelegate = function(editor) {
-	this.editor = editor;
-	In2iGui.get().addDelegate(this);
-}
-
-OO.Editor.ImageGallery.ImageEditorDelegate.prototype = {
-	buttonWasClicked$cancelImageEditor : function() {
-		this.editor.hideImageEditorPanel();
-	}
 }
 
 

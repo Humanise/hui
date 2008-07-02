@@ -72,7 +72,7 @@ OO.Community.InvitationPage.prototype = {
 		});
 		var button = In2iGui.Button.create(null,{text : 'Gå til mit ny websted :-)!'});
 		button.addDelegate({buttonWasClicked:function(){
-			document.location=OnlineObjects.appContext+'/'+username+'/';
+			document.location=OnlineObjects.appContext+'/'+username+'/site/';
 		}});
 		msg.addButton(button);
 		msg.show();

@@ -60,7 +60,7 @@
 		<div class="base">
 		<h1>Invitation til OnlineObjects</h1>
 		<p>Hej <xsl:value-of select="p:invited/e:Entity[@type='Item/Entity/Person']/e:name"/>.</p>
-		<p><a href="{$app-context}/{p:inviter/e:Entity/u:User/u:username}/"><xsl:value-of select="p:inviter/e:Entity[@type='Item/Entity/Person']/e:name"/></a> har inviteret dig til at blive bruger af OnlineObjects. Systemet kan anvendes til at lave hjemmesider og dele information.</p>
+		<p><a href="{$app-context}/{p:inviter/e:Entity/u:User/u:username}/site/"><xsl:value-of select="p:inviter/e:Entity[@type='Item/Entity/Person']/e:name"/></a> har inviteret dig til at blive bruger af OnlineObjects. Systemet kan anvendes til at lave hjemmesider og dele information.</p>
 		<p><xsl:value-of select="p:inviter/e:Entity/ps:Person/ps:givenName"/> har følgende besked til Dem...</p>
 		<blockquote>"<xsl:value-of select="p:message"/>"</blockquote>
 		<p>Bliv bruger med det samme ved at udfylde følgende...</p>

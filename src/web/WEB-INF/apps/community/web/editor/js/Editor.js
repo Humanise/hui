@@ -9,11 +9,11 @@ OO.Editor = function(delegate) {
 	this.toolbarPadder = $class('toolbar_padder')[0];
 	this.toolbar = null;
 	this.templates = [
-		{key:'basic',title:'Basal',image:'../templates/basic/info/thumbnail.png'},
-		{key:'modern',title:'Moderne',image:'../templates/modern/info/thumbnail.png'},
-		{key:'cartoon',title:'Tegneserie',image:'../templates/cartoon/info/thumbnail.png'},
-		{key:'ocean',title:'Ocean',image:'../templates/ocean/info/thumbnail.png'},
-		{key:'snow',title:'Snow',image:'../templates/snow/info/thumbnail.png'}
+		{key:'basic',title:'Basal',image:OnlineObjects.appContext+'/templates/basic/info/thumbnail.png'},
+		{key:'modern',title:'Moderne',image:OnlineObjects.appContext+'/templates/modern/info/thumbnail.png'},
+		{key:'cartoon',title:'Tegneserie',image:OnlineObjects.appContext+'/templates/cartoon/info/thumbnail.png'},
+		{key:'ocean',title:'Ocean',image:OnlineObjects.appContext+'/templates/ocean/info/thumbnail.png'},
+		{key:'snow',title:'Snow',image:OnlineObjects.appContext+'/templates/snow/info/thumbnail.png'}
 	];
 	var self = this;
 	var editmode = N2i.Location.getBoolean('edit');
@@ -242,6 +242,16 @@ OO.Editor.setEntityProperty = function(entity,key,value) {
 			entity.properties[i].value=value;
 		}
 	};
+}
+
+OO.Editor.getEntityProperties = function(entity,key) {
+	var values = [];
+	for (var i=0; i < entity.properties.length; i++) {
+		if (entity.properties[i].key==key) {
+			values.push(entity.properties[i].value);
+		}
+	};
+	return values;
 }
 
 /*********************** Text editor **********************/

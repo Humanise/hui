@@ -50,21 +50,17 @@ OO.Community.Front.prototype.addBehavior = function() {
 	this.loginForm.onsubmit = function() {
 		var username = self.loginForm.username.value;
 		var password = self.loginForm.password.value;
-		//try {
-			var delegate = {
-	  			callback:function(data) {
-					if (data==true) {
-						self.userDidLogIn(username);
-					} else {
-						self.setLogInMessage('Kunne ikke logge ind!')
-					}
-				},
-	  			errorHandler:function(errorString, exception) { self.setLogInMessage(errorString); }
-			};
-			CoreSecurity.changeUser(username,password,delegate);
-		//} catch (e) {
-		//	self.displayError(e);
-		//}
+		var delegate = {
+  			callback:function(data) {
+				if (data==true) {
+					self.userDidLogIn(username);
+				} else {
+					self.setLogInMessage('Kunne ikke logge ind!')
+				}
+			},
+  			errorHandler:function(errorString, exception) { self.setLogInMessage(errorString); }
+		};
+		CoreSecurity.changeUser(username,password,delegate);
 		return false;
 	}
 }
@@ -77,7 +73,7 @@ OO.Community.Front.prototype.userDidSignUp = function(username) {
 	});
 	var button = In2iGui.Button.create(null,{text : 'Gå til mit ny websted :-)!'});
 	button.addDelegate({buttonWasClicked:function(){
-		document.location=username+'/';
+		document.location=username+'/site/';
 	}});
 	msg.addButton(button);
 	msg.show();
@@ -91,7 +87,7 @@ OO.Community.Front.prototype.userDidLogIn = function(username) {
 	});
 	msg.show();
 	window.setTimeout(function() {
-		document.location=username+'/';
+		document.location=''+username+'/site/';
 	},1000);
 }
 

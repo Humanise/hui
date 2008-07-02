@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 public class Item {
 
@@ -54,6 +55,18 @@ public class Item {
 			}
 		}
 		return null;
+	}
+	
+	public void overrideProperties(String key,List<?> values) {
+		for (Iterator<Property> iter = properties.iterator(); iter.hasNext();) {
+			Property property = iter.next();
+			if (key.equals(property.getKey())) {
+				iter.remove();
+			}
+		}
+		for (Object value : values) {
+			properties.add(new Property(key,value.toString()));
+		}
 	}
 
 	public void overrideFirstProperty(String key, String value) {

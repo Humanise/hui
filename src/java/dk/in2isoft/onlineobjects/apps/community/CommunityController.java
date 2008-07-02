@@ -87,7 +87,7 @@ public class CommunityController extends ApplicationController {
 			} else if (request.testLocalPathFull(null,"private","settings.gui")) {
 				privateSpaceController.displaySettings(request);
 			}
-		} else {
+		} else if (request.testLocalPathFull(null,"site")) {
 			displayUserPage(siteUser, request);
 		}
 	}

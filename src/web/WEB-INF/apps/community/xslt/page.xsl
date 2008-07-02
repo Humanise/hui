@@ -45,7 +45,7 @@
 			};
 		</script>
 		<xsl:if test="$privilege-document-modify='true'">
-			<link rel="stylesheet" href="../editor/css/editor.css" type="text/css" media="screen" title="front" charset="utf-8"/>
+			<link rel="stylesheet" href="{$app-context}/editor/css/editor.css" type="text/css" media="screen" title="front" charset="utf-8"/>
 			<script src="{$app-context}/editor/js/Editor.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 			<!--<script src="{$app-context}/js/Window.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>-->
 			<script src="{$base-context}/dwr/engine.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>

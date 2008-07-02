@@ -17,6 +17,20 @@
 		<xsl:apply-templates/>
 	</xsl:template>
 	
+	<xsl:template name="scripts">
+		<script type="text/javascript" charset="utf-8">
+			var OnlineObjects = {
+				baseContext:'<xsl:value-of select="$base-context"/>',
+				appContext:'<xsl:value-of select="$app-context"/>'
+			}
+		</script>
+		<script type='text/javascript' src='{$base-context}/dwr/interface/CoreSecurity.js'><xsl:comment/></script>
+		<script type='text/javascript' src='{$base-context}/dwr/interface/CommunityTool.js'><xsl:comment/></script>
+		<script type='text/javascript' src='{$base-context}/dwr/engine.js'><xsl:comment/></script>
+		<script src="{$base-context}/In2iGui/js/minimized.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$app-context}/js/front.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+	</xsl:template>
+	
 	<xsl:template match="p:page">
 		<html xmlns="http://www.w3.org/1999/xhtml">
 			<head>
@@ -27,17 +41,6 @@
 					<link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$app-context"/><![CDATA[/css/front_ie6.css"> </link>
 				<![endif]]]></xsl:comment>
 				<link rel="stylesheet" href="{$base-context}/In2iGui/css/minimized.css" type="text/css" media="screen" title="front" charset="utf-8"/>
-				<script type="text/javascript" charset="utf-8">
-					var OnlineObjects = {
-						baseContext:'<xsl:value-of select="$base-context"/>',
-						appContext:'<xsl:value-of select="$app-context"/>'
-					}
-				</script>
-				<script type='text/javascript' src='{$base-context}/dwr/interface/CoreSecurity.js'><xsl:comment/></script>
-				<script type='text/javascript' src='{$base-context}/dwr/interface/CommunityTool.js'><xsl:comment/></script>
-  				<script type='text/javascript' src='{$base-context}/dwr/engine.js'><xsl:comment/></script>
-				<script src="{$base-context}/In2iGui/js/minimized.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-				<script src="{$app-context}/js/front.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 				<title>OnlineObjects</title>
 			</head>
 			<body>
@@ -172,6 +175,7 @@
 							&#160;·&#160;<a href="http://jigsaw.w3.org/css-validator/validator?uri=http%3A%2F%2Fcommunity.onlineobjects.com%2F&amp;warning=1&amp;profile=css3&amp;usermedium=all" class="link"><span>CSS 2.1</span></a>
 					</div>
 				</div>
+				<xsl:call-template name="scripts"/>
 			</body>
 		</html>
 	</xsl:template>

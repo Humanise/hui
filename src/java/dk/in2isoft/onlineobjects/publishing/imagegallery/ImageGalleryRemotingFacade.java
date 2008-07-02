@@ -1,5 +1,6 @@
 package dk.in2isoft.onlineobjects.publishing.imagegallery;
 
+import java.util.Arrays;
 import java.util.List;
 
 import dk.in2isoft.onlineobjects.core.EndUserException;
@@ -9,6 +10,7 @@ import dk.in2isoft.onlineobjects.core.SecurityException;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.ImageGallery;
+import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.ui.AbstractRemotingFacade;
 
@@ -49,7 +51,7 @@ public class ImageGalleryRemotingFacade extends AbstractRemotingFacade {
 		}
 	}
 	
-	public void updateImage(long imageId,String title,String description) throws EndUserException {
+	public Image updateImage(long imageId,String title,String description,String[] tags) throws EndUserException {
 		if (title==null || title.trim().length()==0) {
 			throw new EndUserException("Cannot set title of image to null");
 		}
@@ -59,7 +61,9 @@ public class ImageGalleryRemotingFacade extends AbstractRemotingFacade {
 		}
 		image.setName(title);
 		image.overrideFirstProperty(Image.PROPERTY_DESCRIPTION, description);
+		image.overrideProperties(Property.KEY_COMMON_TAG, Arrays.asList(tags));
 		getModel().updateItem(image, getUserSession());
+		return image;
 	}
 	
 	public void deleteImage(long imageId,long imageGalleryId) throws EndUserException {

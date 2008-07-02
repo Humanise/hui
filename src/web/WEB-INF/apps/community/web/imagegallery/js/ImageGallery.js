@@ -61,7 +61,7 @@ OO.ImageGallery.prototype = {
 }
 
 /**************************** Viewer ****************************/
-
+/*
 OO.ImageGallery.Viewer = function(gallery) {
 	this.currentImage = 0;
 	this.width = 800;
@@ -159,7 +159,7 @@ OO.ImageGallery.Viewer.prototype.show = function(index) {
 	this.content.scrollLeft=this.currentImage*this.width;
 	$ani(this.base,'opacity',1,200);
 }
-
+*/
 N2i.Event.addLoadListener(function() {
 	OO.ImageGallery.getInstance().ignite();
 });
