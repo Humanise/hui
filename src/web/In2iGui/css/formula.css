@@ -1,0 +1,257 @@
+form.in2igui_formula
+{
+	padding: 0px;
+	margin: 0px;
+	overflow-x: auto;
+}
+
+.in2igui_formula_header
+{
+	color: #0077cd;
+	font-size: 13pt;
+	padding-bottom: 5px;
+}
+
+form.in2igui_formula table.group
+{
+	border-spacing: 4px 4px;
+	width: 100%;
+}
+
+form.in2igui_formula table.group_above
+{
+	border-spacing: 2px;
+}
+
+
+form.in2igui_formula table.split
+{
+	border-spacing: 5px 0px;
+}
+
+form.in2igui_formula table.group label
+{
+	color: #004A80;
+	text-align: right;
+	font-size: 12px;
+	line-height: 11px;
+	font-weight: normal;
+}
+
+form.in2igui_formula table.group_above label
+{
+	display: block;
+	text-align: left;
+	line-height: 15px;
+}
+
+form.in2igui_formula table.group th label
+{
+	font-size: 9pt;
+}
+
+form.in2igui_formula table.group th
+{
+	width: 1%;
+	vertical-align: top;
+	padding-right: 5px;
+	text-align: right;
+	line-height: 20px;
+	white-space: nowrap;
+}
+
+form.in2igui_formula div.in2igui_field
+{
+	border: 1px solid #ddd;
+	border-color: #bbb #ccc #ddd;
+	font-size: 0;
+}
+
+form.in2igui_formula div.in2igui_longfield, form.in2igui_formula select
+{
+	border: 1px solid #ddd;
+	border-color: #eee #eee #ddd;
+}
+
+form.in2igui_formula .in2igui_formula_text
+{
+	border: none;
+	padding: 1px 0px;
+	margin: 0px;
+	font-size: 10pt;
+	width: 100%;
+}
+
+form.in2igui_formula fieldset
+{
+	border: 1px solid #ccc;
+	margin: 0px;
+	padding: 0px 8px 5px 6px;
+}
+
+form.in2igui_formula fieldset legend
+{
+	font-size: 9pt;
+	color: #999;
+}
+
+/************************************** Buttons *********************************/
+
+.in2igui_formula_buttons
+{
+	overflow: hidden;
+	padding-bottom: 3px;
+}
+
+form.in2igui_formula a.in2igui_button
+{
+	float: right;
+	margin-left: 10px;
+}
+
+/******************************* Radio button **************************/
+
+form.in2igui_formula .radiobuttons
+{
+	overflow: hidden;
+}
+
+form.in2igui_formula .radiobutton
+{
+	overflow: hidden;
+	padding: 4px 0px 0px;
+	margin-right: 10px;
+	font-size: 10pt;
+	cursor: default;
+	color: #004A80;
+	float: left;
+}
+
+form.in2igui_formula .radiobutton .radio
+{
+	float: left;
+	background: url('../gfx/radiobutton.png') no-repeat;
+	width: 18px;
+	height: 18px;
+	margin-right: 3px;
+	cursor: pointer;
+}
+
+form.in2igui_formula .radiobuttons .selected .radio
+{
+	background-position: 0px -18px;
+}
+
+/******************************* Checkboxes **************************/
+
+form.in2igui_formula .checkboxes
+{
+}
+
+form.in2igui_formula .checkbox
+{
+	overflow: hidden;
+	padding: 4px 0px 0px;
+	font-size: 10pt;
+	cursor: default;
+	color: #004A80;
+}
+
+form.in2igui_formula .checkbox .check
+{
+	float: left;
+	background: url('../gfx/checkbox.png') no-repeat;
+	width: 18px;
+	height: 18px;
+	margin-right: 3px;
+	cursor: pointer;
+}
+
+form.in2igui_formula .checked .check
+{
+	background-position: 0px -18px;
+}
+
+/******************************* Object list **************************/
+
+table.in2igui_objectlist
+{
+	width: 100%;
+}
+
+table.in2igui_objectlist thead th.in2igui_objectlist
+{
+	text-align: left;
+	font-size: 9pt;
+	line-height: 9pt;
+	color: #666;
+	font-weight: normal;
+	padding-left: 4px;
+}
+
+table.in2igui_objectlist thead th.in2igui_objectlist1
+{
+	padding-left: 0px;	
+}
+
+.in2igui_objectlist tbody input.text
+{
+	border-color: #ccc #ddd #eee #ddd;
+	width: 100%;
+}
+.in2igui_objectlist tbody td
+{
+	padding: 0px 0px 2px 4px;
+}
+
+.in2igui_objectlist tbody td.first
+{
+	padding-left: 0px;
+}
+
+/******************************** Tokens *************************/
+
+div.in2igui_tokens
+{
+	overflow: hidden;
+	padding-top: 3px;
+}
+
+input.in2igui_tokens_token
+{
+	border: 1px solid #ddd;
+	width: 50px;
+	margin-right: 5px;
+	margin-bottom: 5px;
+	float: left;
+	padding: 1px 0px;
+}
+
+
+
+/************************* Override for dark window *******************/
+
+
+
+div.in2igui_window_dark form.in2igui_formula table.group label
+{
+	color: #fff;
+}
+
+div.in2igui_window_dark .in2igui_formula_text
+{
+	background: #222;
+	color: #fff;
+}
+
+div.in2igui_window_dark div.in2igui_field, div.in2igui_window_dark div.in2igui_longfield
+{
+	border: 1px solid #444;
+}
+
+div.in2igui_window_dark input.in2igui_tokens_token
+{
+	background: #222;
+	border: 1px solid #444;
+	color: #fff;
+}

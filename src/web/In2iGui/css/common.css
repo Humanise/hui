@@ -1,0 +1,19 @@
+.in2igui_curtain
+{
+	width: 100%;
+	background: #000;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+}
+
+.in2igui_dragproxy
+{
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	background: left top no-repeat;
+	padding-left: 18px;
+	height: 16px;
+	font-size: 9pt;
+}

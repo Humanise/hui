@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+	"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<title>alert</title>
+	<link charset="utf-8" title="front" media="screen" type="text/css" href="../../css/dev.css" rel="stylesheet" />
+	<!--[if lt IE 7]>
+		<link rel="stylesheet" type="text/css" href="../../css/msie6.css"> </link>
+	<![endif]-->
+	<!--[if IE 7]>
+		<link rel="stylesheet" type="text/css" href="../../css/msie7.css"> </link>
+	<![endif]-->
+	<script charset="utf-8" type="text/javascript" src="../../lib/prototype.js"></script>
+	<script charset="utf-8" type="text/javascript" src="../../lib/In2iScripts/In2iScripts.js"></script>
+	<script charset="utf-8" type="text/javascript" src="../../lib/In2iScripts/In2iInput.js"></script>
+	<script charset="utf-8" type="text/javascript" src="../../lib/In2iScripts/In2iAnimation.js"></script>
+	<script charset="utf-8" type="text/javascript" src="../../js/In2iGui.js"></script>
+	<script charset="utf-8" type="text/javascript" src="../../js/Window.js"></script>
+	<script charset="utf-8" type="text/javascript" src="../../js/Alert.js"></script>
+	<script charset="utf-8" type="text/javascript" src="../../js/Button.js"></script>
+</head>
+
+<body>
+	<button onclick="test1()">Test 1</button>
+<script type="text/javascript" charset="utf-8">
+		var normal = In2iGui.Window.create(null);
+		normal.add(new Element('div',{style:'width: 200px; height: 200px;'}));
+		normal.show();
+		
+		var light = In2iGui.Window.create(null,{variant:'light'});
+		light.add(new Element('div',{style:'width: 200px; height: 200px;'}));
+		light.show();
+		
+		var dark = In2iGui.Window.create(null,{variant:'dark'});
+		dark.add(new Element('div',{style:'width: 200px; height: 200px;'}));
+		dark.show();
+</script>
+
+</body>
+</html>

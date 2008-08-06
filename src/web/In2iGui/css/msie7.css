@@ -1,0 +1,22 @@
+@import url('msie.css');
+
+body, html
+{
+	overflow-y: auto;
+	overflow-x: auto;
+}
+
+td.view_toolbar
+{
+	height: 58px;
+}
+
+table.in2igui_calendar_weekview div.in2igui_calendar_event
+{
+	width: 17.8%;
+}
+
+div.in2igui_toolbar_icon div.in2igui_icon
+{
+	margin: 0px;
+}

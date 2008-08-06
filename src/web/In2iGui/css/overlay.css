@@ -1,0 +1,31 @@
+div.in2igui_overlay
+{
+	display: none;
+	position: absolute;
+	height: 46px;
+	background: url('../gfx/overlay2.png') left top no-repeat;
+	padding-left: 8px;
+}
+
+div.in2igui_inner_overlay
+{
+	background: url('../gfx/overlay2.png') right -46px no-repeat;
+	padding-right: 8px;
+	height: 46px;
+}
+
+div.in2igui_inner_overlay div.in2igui_inner_overlay
+{
+	background: url('../gfx/overlay2.png') left -92px repeat-x;
+	padding: 0px;
+}
+
+div.in2igui_overlay_icon
+{
+	display: block;
+	width: 32px;
+	height: 32px;
+	float: left;
+	margin: 6px 1px 0px;
+}
+

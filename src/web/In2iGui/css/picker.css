@@ -1,0 +1,89 @@
+
+.in2igui_picker
+{
+	background: #b9bec6;
+}
+
+.in2igui_picker_top, .in2igui_picker_top div
+{
+	font-size: 1px;
+	height: 4px;
+	background: url('../gfx/picker_bg.png') left -8px repeat-x;
+}
+
+.in2igui_picker_top div
+{
+	background: url('../gfx/picker_bg.png') left 0px no-repeat;
+}
+
+.in2igui_picker_top div div
+{
+	background: url('../gfx/picker_bg.png') right -4px no-repeat;
+}
+
+.in2igui_picker_bottom, .in2igui_picker_bottom div
+{
+	font-size: 1px;
+	height: 4px;
+	background: url('../gfx/picker_bg.png') left -20px repeat-x;
+}
+
+.in2igui_picker_bottom div
+{
+	background: url('../gfx/picker_bg.png') left -12px no-repeat;
+}
+
+.in2igui_picker_bottom div div
+{
+	background: url('../gfx/picker_bg.png') right -16px no-repeat;
+}
+
+.in2igui_picker_middle
+{
+	background: url('../gfx/picker_bg_middle.png') 0px 0px repeat-y;
+}
+
+.in2igui_picker_middle .in2igui_picker_middle
+{
+	background: url('../gfx/picker_bg_middle.png') right 0px repeat-y;
+	padding: 0px 3px;
+}
+
+.in2igui_picker_middle .in2igui_picker_middle .in2igui_picker_middle
+{
+	background: #b9bec6;
+	padding: 3px;
+}
+
+.in2igui_picker_title
+{
+	font-size: 10pt;
+	color: #2c3a52;
+	padding: 2px 10px;
+	text-align: center;
+}
+
+
+
+.in2igui_picker_container
+{
+	overflow: hidden;
+}
+
+.in2igui_picker_item
+{
+	float: left;
+	background: center center no-repeat;
+	cursor: pointer;
+}
+
+.in2igui_picker_item:hover
+{
+	background-color: #9da3ad;
+}
+
+.in2igui_picker_item_selected, .in2igui_picker_item_selected:hover
+{
+	background-color: #3875D7;
+}
+

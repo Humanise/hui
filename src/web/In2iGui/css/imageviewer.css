@@ -1,0 +1,106 @@
+.in2igui_imageviewer
+{
+	width: 510px;
+	height: 410px;
+	/*border: 1px solid #eee;*/
+	background: #fff;
+	position: absolute;
+	left: 50%;
+	margin-left: -250px;
+	top: 100px;
+}
+
+.in2igui_imageviewer_viewer
+{
+	width: 500px;
+	height: 360px;
+	margin: 5px 0px 0px;
+	overflow: hidden;
+}
+
+.in2igui_imageviewer_inner_viewer
+{
+}
+
+.in2igui_imageviewer_status
+{
+	position: absolute;
+	color: #666;
+	margin-top: 26px;
+	margin-left: 5px;
+	font: 10pt "Lucida Grande", "Lucida Sans Unicode", Verdana, sans-serif;
+}
+
+.in2igui_imageviewer_image
+{
+	float: left;
+	background: url('../gfx/spinner.gif') center center no-repeat;
+}
+
+.in2igui_imageviewer_image_error, .in2igui_imageviewer_image_abort
+{
+	background: url('../gfx/sad_mac.png') center center no-repeat;
+}
+
+.in2igui_imageviewer_controller
+{
+	margin-top: 7px;
+	height: 30px;
+	margin-left:200px;
+	width: 115px;
+}
+
+.in2igui_imageviewer_previous
+{
+	float: left;
+	width: 35px;
+	height: 31px;
+	background: url('../gfx/imageviewer_controls.png') left top no-repeat;
+	margin-right: 5px;
+}
+
+.in2igui_imageviewer_previous:hover
+{
+	background-position: -35px 0px;
+}
+
+.in2igui_imageviewer_next
+{
+	float: left;
+	width: 35px;
+	height: 31px;
+	background: url('../gfx/imageviewer_controls.png') left -31px no-repeat;
+}
+
+.in2igui_imageviewer_next:hover
+{
+	background-position: -35px -31px;
+}
+
+.in2igui_imageviewer_play
+{
+	float: left;
+	width: 35px;
+	height: 31px;
+	background: url('../gfx/imageviewer_controls.png') left -62px no-repeat;
+	margin-right: 5px;
+}
+
+.in2igui_imageviewer_play:hover
+{
+	background-position: -35px -62px;
+}
+
+.in2igui_imageviewer_pause
+{
+	float: left;
+	width: 35px;
+	height: 31px;
+	background: url('../gfx/imageviewer_controls.png') left -93px no-repeat;
+	margin-right: 5px;
+}
+
+.in2igui_imageviewer_pause:hover
+{
+	background-position: -35px -93px;
+}

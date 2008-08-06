@@ -1,0 +1,25 @@
+.horizontal
+{
+	overflow: hidden;
+}
+
+.horizontal_content
+{
+	float: left;
+	/*background: url('../gfx/line.gif') top left repeat-y;*/
+}
+
+.horizontal_content_first
+{
+	background: none;
+}
+
+.in2igui_horizontal_flexible
+{
+	width: 100%;
+}
+
+.in2igui_horizontal_flexible_content
+{
+	vertical-align: top;
+}

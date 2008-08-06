@@ -1,0 +1,62 @@
+.in2igui_selection .item
+{
+	background: 7px center no-repeat;
+	font-size: 9pt;
+	height: 20px;
+	line-height: 22px;
+}
+
+.in2igui_selection .item .icon
+{
+	float: left;
+	width: 16px;
+	height: 16px;
+	margin: 2px 3px 0px 5px;
+}
+
+.in2igui_selection .item:hover
+{
+	background-color: #d4dce9;
+	cursor: pointer;
+}
+
+.in2igui_selection .item:hover .icon
+{
+	background-position: 0px -16px;
+}
+
+.in2igui_selection .item span
+{
+	float: right;
+	line-height: 16px;
+	background: #A9B8CE;
+	height: 16px;
+	padding: 0px 2px;
+	margin: 2px 6px 0px 0px;
+	color: #fff;
+}
+
+.in2igui_selection div.selected, .in2igui_selection div.selected:hover
+{
+	background-color: #3875d7;
+	color: #fff;
+}
+
+.in2igui_selection .title
+{
+	background: url('../gfx/selection_separator.png') 3px 9px repeat-x;
+	color:#334455;
+	font-size:13px;
+	margin:3px 5px;
+	padding-left:16px;
+}
+.in2igui_selection .title span
+{
+	background: #EBF0F7;
+	padding: 0px 3px;
+}
+
+.in2igui_selection div.in2igui_drop, .in2igui_selection div.in2igui_drop:hover
+{
+	background-color: #779cd6;
+}

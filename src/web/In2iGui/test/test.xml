@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="setup.xsl"?>
+<gui xmlns="uri:In2iGui" pad="10" title="System">
+	<controller name="controller" source="controller.js"/>
+	<view style="box">
+		<toolbar>
+			<icon icon="common/user" title="Ny bruger" name="newUser" overlay="new"/>
+			<icon icon="common/folder" title="Ny gruppe" name="newGroup" overlay="new"/>
+			<icon icon="common/folder" title="Ny type" name="newType" overlay="new"/>
+			<icon icon="common/color" title="Vis farvevælger" name="showPicker"/>
+		</toolbar>
+		<content>
+			<split>
+				<sidebar>
+					<selection value="user" name="selector">
+						<item icon="common/person" title="Brugere" value="user"/>
+						<item icon="common/folder" title="Database" value="database"/>
+						<item icon="common/person" title="Alle objekter" value="object"/>
+					</selection>
+				</sidebar>
+				<content>
+					<overflow height="300" resize="-115">
+						<list name="list"/>
+					</overflow>
+				</content>
+			</split>
+		</content>
+		<foot>
+			
+		</foot>
+	</view>
+	<window name="userEditor" width="300" title="Bruger" pad="5">
+		<formula name="userFormula">
+			<group>
+				<text name="userName" label="Name:"/>
+				<text name="userUsername" label="Brugernavn:"/>
+				<text name="userPassword" label="Kodeord:"/>
+				<text name="userEmail" label="E-mail:"/>
+				<text name="userNote" label="Notat:" lines="6"/>
+				<checkbox name="userInternalAccess" label="Intern adgang:"/>
+				<checkbox name="userExternalAccess" label="Ekstern adgang:"/>
+				<checkbox name="userAdministrator" label="Administrator:"/>
+				<buttons>
+					<button name="saveUser" title="Gem" highlighted="true"/>
+					<button name="deleteUser" title="Slet"/>
+					<button name="cancelUser" title="Annuller"/>
+				</buttons>
+			</group>
+		</formula>
+	</window>
+	<window name="test" width="300" title="Bruger" pad="5">
+		<richtext height="200" name="testRichText"/>
+	</window>
+	<window name="picker" width="300" title="Bruger" pad="5">
+		<richtext height="200" name="testRichText"/>
+	</window>
+</gui>

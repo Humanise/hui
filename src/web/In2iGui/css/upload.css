@@ -1,0 +1,47 @@
+div.in2igui_upload form
+{
+	margin: 0px;
+}
+
+/************************* Multi upload *************************/
+
+div.in2igui_multiupload
+{
+	overflow: hidden;
+}
+
+div.in2igui_multiupload div.in2igui_buttons
+{
+	padding: 5px 5px 0px 5px;
+}
+
+div.in2igui_multiupload_items
+{
+	overflow: auto;
+	max-height: 200px;
+	padding: 0px 5px 5px 5px;
+}
+
+div.in2igui_multiupload_item
+{
+	font-size: 8pt;
+	padding-top: 5px;
+}
+
+div.in2igui_multiupload_item_error
+{
+	font-size: 9pt;
+	padding-top: 5px;
+	color: #f00;
+}
+
+div.in2igui_multiupload_item_error a
+{
+	float: right;
+}
+
+div.in2igui_multiupload_item_error em
+{
+	color: #666;
+	font-size: 9px;
+}

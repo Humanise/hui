@@ -1,0 +1,25 @@
+.in2igui_menu
+{
+	display: none;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	background: #fff;
+	border: 1px solid #ddd;
+	font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+	min-width: 120px;
+}
+
+.in2igui_menu_item
+{
+	font-size: 12px;
+	line-height: 18px;
+	padding: 0px 4px;
+	cursor: pointer;
+}
+
+.in2igui_menu_item:hover
+{
+	background-color: #3875d7;
+	color: #fff;
+}

@@ -1,0 +1,29 @@
+div.in2igui_toolbar_icon div.in2igui_icon
+{
+	margin: 0px;
+}
+
+div.toolbar .disabled /*, form.in2igui_formula a.in2igui_button_disabled*/
+{
+	filter:alpha(opacity=50);
+}
+
+form.in2igui_formula input.text, form.in2igui_formula textarea
+{
+	text-indent: 0px;
+}
+
+form.in2igui_formula table.group label
+{
+	line-height: 16px;
+}
+
+table.in2igui_objectlist thead th.in2igui_objectlist
+{
+	line-height: 11pt;
+}
+
+form.in2igui_formula .checkbox 
+{
+	padding: 2px 0px;
+}
