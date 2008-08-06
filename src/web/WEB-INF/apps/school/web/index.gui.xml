@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gui xmlns="uri:In2iGui" title="Elevskema">
+	<dwr base="/dwr/">
+		<interface name="CoreSecurity"/>
+		<interface name="AppSchool"/>
+	</dwr>
+	<controller name="controller" source="index.js"/>
+	<view>
+		<toolbar>
+			<icon icon="common/user" title="Skift bruger" name="changeUser" overlay="change"/>
+			<icon icon="common/object" title="Vis testdata" name="test"/>
+		</toolbar>
+		<content>
+			<overflow resize="-58">
+			<calendar name="calendar"/>
+			</overflow>
+		</content>
+	</view>
+	<window width="300" title="Skift bruger" name="userWindow">
+		<space all="5">
+		<formula name="userFormula">
+			<group>
+				<text label="Brugernavn" key="username"/>
+				<buttons>
+					<button highlighted="true" title="Log ind" name="logIn"></button>
+				</buttons>
+			</group>
+		</formula>
+		</space>
+	</window>
+</gui>

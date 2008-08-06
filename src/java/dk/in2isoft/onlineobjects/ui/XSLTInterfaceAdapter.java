@@ -17,6 +17,11 @@ public abstract class XSLTInterfaceAdapter extends XSLTInterface {
 	public final org.w3c.dom.Document getData() {
 		return DOMConverter.convert(build(),new DOMImplementationImpl());
 	}
+	
+	@Override
+	public final Document getDocument() {
+		return build();
+	}
 
 	private Document build() {
 		Element page = new Element("page",NAMESPACE_PAGE);
@@ -39,7 +44,7 @@ public abstract class XSLTInterfaceAdapter extends XSLTInterface {
 		return new Element(name,NAMESPACE_PAGE);
 	}
 
-	protected Element create(Element parent, String name) {
+	protected Element createPageNode(Element parent, String name) {
 		Element element = new Element(name,NAMESPACE_PAGE);
 		parent.appendChild(element);
 		return element;

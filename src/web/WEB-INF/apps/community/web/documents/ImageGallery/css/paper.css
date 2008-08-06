@@ -1,0 +1,53 @@
+.paper .top
+{
+	height: 40px;
+	padding-left: 40px;
+	background: url('../frames/paper/frame_top_left.png') bottom left no-repeat;
+}
+
+.paper .top div
+{
+	height: 40px;
+	padding-right: 40px;
+	background: url('../frames/paper/frame_top_right.png') bottom right no-repeat;
+}
+
+.paper .top div div
+{
+	height: 40px;
+	background: url('../frames/paper/frame_top.png') bottom center repeat-x;
+}
+
+.paper .bottom
+{
+	height: 40px;
+	padding-left: 40px;
+	background: url('../frames/paper/frame_bottom_left.png') bottom left no-repeat;
+}
+
+.paper .bottom div
+{
+	height: 40px;
+	padding-right: 98px;
+	background: url('../frames/paper/frame_bottom_right.png') bottom right no-repeat;
+}
+
+.paper .bottom div div
+{
+	height: 40px;
+	padding: 0px;
+	background: url('../frames/paper/frame_bottom.png') bottom center repeat-x;
+}
+
+
+.paper .middle
+{
+	padding-left: 40px;
+	background: url('../frames/paper/frame_left.png') center left repeat-y;
+}
+
+.paper .middle div
+{
+	padding-right: 40px;
+	background: url('../frames/paper/frame_right.png') bottom right repeat-y;
+}

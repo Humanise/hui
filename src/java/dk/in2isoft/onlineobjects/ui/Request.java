@@ -46,6 +46,9 @@ public class Request {
 	private void decodePath() {
 		String context = request.getContextPath();
 		String uri = request.getRequestURI().substring(context.length() + 1);
+		if (uri.indexOf( ";jsessionid=" ) != -1) {
+			uri = uri.substring(0, uri.indexOf( ";jsessionid=" ));
+		}
 		if (uri.length()==0) {
 			this.level = 0;
 			this.fullPath = new String[]{};
@@ -167,6 +170,10 @@ public class Request {
 	public UserSession getSession() {
 		Object session = request.getSession().getAttribute(UserSession.SESSION_ATTRIBUTE);
 		return (UserSession) session;
+	}
+	
+	public boolean isUser(String username) {
+		return username.equals(getSession().getUser().getUsername());
 	}
 
 	public String getBaseContextPath() {

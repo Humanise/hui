@@ -58,7 +58,7 @@ OO.Community.InvitationPage.prototype = {
 	
 	errorOccurred : function(error) {
 		In2iGui.get().showAlert({
-			variant: 'gasp',
+			emotion: 'gasp',
 			title: 'Der skete en fejl!',
 			text: 'Fejlbesked: '+error
 		});
@@ -66,7 +66,7 @@ OO.Community.InvitationPage.prototype = {
 	
 	userDidSignUp : function(username) {
 		var msg = In2iGui.Alert.create(null,{
-			variant: 'smile',
+			emotion: 'smile',
 			title: 'Du er nu oprettet som bruger...',
 			text: 'Du vil modtage en e-mail hvor du skal bekræfte at du er dig. Indtil dette er gjort kan du frit anvende dit nye websted i op til 7 dage.'
 		});

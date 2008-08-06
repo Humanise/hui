@@ -19,6 +19,9 @@ public class Relation extends Item {
 	public static final String KIND_FAMILY_SIBLING = "family.sibling";
 	public static final String KIND_FAMILY_SIBLING_BROTHER = "family.sibling.brother";
 	public static final String KIND_FAMILY_SIBLING_SISTER = "family.sibling.sister";
+
+	public static final String KIND_EVENT_ATTENDEE = "event.attendee";
+	public static final String KIND_EVENT_ORGANIZER = "event.organizer";
 	
 	private Entity superEntity;
 
@@ -68,4 +71,10 @@ public class Relation extends Item {
 		this.superEntity = superEntity;
 	}
 
+	@Override
+	public String toString() {
+		return super.toString()+" : "+this.superEntity.toString()+" --> "+this.subEntity.toString()+" ["+this.kind+"]";
+	}
+
+	
 }

@@ -23,9 +23,12 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import nu.xom.Serializer;
+
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 
+import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.ui.XSLTInterface;
@@ -42,7 +45,8 @@ public class XSLTUtil {
 			if (parameters != null) {
 				for (Iterator<Entry<String, String>> iter = parameters.entrySet().iterator(); iter.hasNext();) {
 					Entry<String, String> element = iter.next();
-					transformer.setParameter(element.getKey(), element.getValue());
+					String value = element.getValue()!=null ? element.getValue() : "";
+					transformer.setParameter(element.getKey(), value);
 				}
 			}
 			transformer.transform(xml, output);
@@ -113,17 +117,29 @@ public class XSLTUtil {
 	}
 
 	public static void applyXSLT(XSLTInterface ui, Request request) throws EndUserException, IOException {
+		if (request.getBoolean("source")) {
+			writeSource(ui,request);
+			return;
+		}
 		HttpServletResponse response = request.getResponse();
 		Map<String, String> parameters = new HashMap<String, String>();
 		parameters.put("app-context", request.getLocalContextPath());
 		parameters.put("base-context", request.getBaseContextPath());
 		parameters.put("user-name", request.getSession().getUser().getUsername());
+		parameters.put("development-mode", String.valueOf(Core.getInstance().getConfiguration().getDevelopmentMode()));
 		if (isXhtmlCapable(request.getRequest())) {
 			response.setContentType("application/xhtml+xml");
 		} else {
 			response.setContentType("text/html");
 		}
-		applyXSLT(ui.getData(), new StreamSource(ui.getStylesheet()), response.getOutputStream(), parameters);
+		Document data = ui.getData();
+		applyXSLT(data, new StreamSource(ui.getStylesheet()), response.getOutputStream(), parameters);
+	}
+
+	private static void writeSource(XSLTInterface ui, Request request) throws IOException {
+		request.getResponse().setContentType("text/xml");
+		Serializer serializer = new Serializer(request.getResponse().getOutputStream());
+		serializer.write(ui.getDocument());
 	}
 
 	public static void applyXSLT(String xmlData, File[] xsltFile, HttpServletResponse response,

@@ -1,0 +1,85 @@
+package dk.in2isoft.onlineobjects.importing;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.ProgressListener;
+import org.apache.commons.fileupload.disk.DiskFileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.log4j.Logger;
+
+import dk.in2isoft.commons.util.ImageUtil;
+import dk.in2isoft.onlineobjects.apps.ApplicationSession;
+import dk.in2isoft.onlineobjects.core.Core;
+import dk.in2isoft.onlineobjects.core.EndUserException;
+import dk.in2isoft.onlineobjects.core.SecurityException;
+import dk.in2isoft.onlineobjects.model.Image;
+import dk.in2isoft.onlineobjects.ui.AsynchronousProcessDescriptor;
+import dk.in2isoft.onlineobjects.ui.Request;
+
+public class Importer {
+	
+	private static Logger log = Logger.getLogger(Importer.class);
+	
+	@SuppressWarnings("unchecked")
+	public void importMultipart(Request request) throws IOException, EndUserException {
+		// boolean isMultipart =
+		ApplicationSession session = request.getSession().getToolSession("community");
+		final AsynchronousProcessDescriptor process = session.createAsynchronousProcessDescriptor("imageUpload");
+		if (!ServletFileUpload.isMultipartContent(request.getRequest())) {
+			process.setError(true);
+			throw new SecurityException("The request is not multi-part!");
+		}
+		DiskFileItemFactory factory = new DiskFileItemFactory();
+		factory.setSizeThreshold(0);
+		
+		ServletFileUpload upload = new ServletFileUpload(factory);
+		ProgressListener progressListener = new ProgressListener() {
+			public void update(long pBytesRead, long pContentLength, int pItems) {
+				if (pContentLength == -1) {
+					process.setValue(0);
+				} else {
+					process.setValue((float) pBytesRead / (float) pContentLength);
+				}
+
+			}
+		};
+		upload.setProgressListener(progressListener);
+
+		// Parse the request
+		try {
+			List<DiskFileItem> items = upload.parseRequest(request.getRequest());
+			for (DiskFileItem item : items) {
+				if (!item.isFormField()) {
+					try {
+						processFile(item, request);
+					} catch (Exception e) {
+						process.setError(true);
+						throw new EndUserException(e);
+					}
+				}
+			}
+		} catch (FileUploadException e) {
+			process.setError(true);
+			throw new EndUserException(e);
+		}
+		process.setCompleted(true);
+	}
+
+	private void processFile(DiskFileItem item, Request request) throws IOException, EndUserException {
+		
+		File file = item.getStoreLocation();
+		int[] dimensions = ImageUtil.getImageDimensions(file);
+		Image image = new Image();
+		Core.getInstance().getModel().createItem(image,request.getSession());
+		image.setName(item.getName());
+		image.changeImageFile(file, dimensions[0],dimensions[1], item.getContentType());
+		log.debug("width:" + image.getWidth());
+		log.debug("height:" + image.getHeight());
+		Core.getInstance().getModel().updateItem(image,request.getSession());
+		Core.getInstance().getModel().commit();
+	}
+}

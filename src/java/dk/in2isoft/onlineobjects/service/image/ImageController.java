@@ -29,6 +29,7 @@ public class ImageController extends ServiceController {
 		int thumbnail = request.getInt("thumbnail");
 		int width = request.getInt("width");
 		int height = request.getInt("height");
+		boolean cropped = request.getBoolean("cropped");
 		Image image = (Image) Core.getInstance().getModel().loadEntity(Image.class, id);
 		if (image == null) {
 			throw new EndUserException("Could not load image with id=" + id);
@@ -39,7 +40,11 @@ public class ImageController extends ServiceController {
 			file = ImageUtil.getThumbnail(image, thumbnail);
 			mime = "image/jpeg";
 		} else if (width>0 && height>0) {
-			file = ImageUtil.getThumbnail(image, width, height);
+			if (cropped) {
+				file = ImageUtil.getCroppedThumbnail(image, width, height);
+			} else {
+				file = ImageUtil.getThumbnail(image, width, height);
+			}
 			mime = "image/jpeg";
 		}
 		FilePusher pusher = new FilePusher(file);

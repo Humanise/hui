@@ -23,13 +23,7 @@ public class Person extends Entity {
 	}
 
 	public String getIcon() {
-		if (sex==null) {
-			return "Element/Person";
-		} else if (sex) {
-			return "Role/Male";
-		} else {
-			return "Role/Female";
-		}
+		return "common/person";
 	}
 	
 	public String getGivenName() {

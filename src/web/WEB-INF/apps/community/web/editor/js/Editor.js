@@ -97,7 +97,7 @@ OO.Editor.prototype.removeActivator = function() {
 }
 
 OO.Editor.prototype.goPrivate = function() {
-	document.location='./private/';
+	document.location='../private/';
 }
 
 OO.Editor.prototype.logOut = function() {
@@ -148,7 +148,7 @@ OO.Editor.prototype.buildToolBar = function() {
 		this.toolbar = this.toolbarRevealer.getToolbar();
 		this.toolbar.add(In2iGui.Toolbar.Icon.create('newPage',{icon:'common/page',overlay:'new','title':'Ny side'}));
 		this.toolbar.add(In2iGui.Toolbar.Icon.create('deletePage',{icon:'common/page',overlay:'delete','title':'Slet side'}));
-		this.toolbar.add(In2iGui.Toolbar.Icon.create('changeTemplate',{icon:'common/color','title':'Skift skabelon'}));
+		this.toolbar.add(In2iGui.Toolbar.Icon.create('changeTemplate',{icon:'common/page',overlay:'change','title':'Skift skabelon'}));
 		this.toolbar.addDivider();
 		this.delegate.addToToolbar(this.toolbar);
 	}
@@ -161,7 +161,7 @@ OO.Editor.prototype.click$changeTemplate = function() {
 
 OO.Editor.prototype.click$newPage = function() {
 	if (!this.newPagePanel) {
-		this.newPagePanel = In2iGui.Panel.create({title:'Ny side',padding:10});
+		this.newPagePanel = In2iGui.Window.create(null,{title:'Ny side',padding:10,variant:'dark'});
 		this.newPagePicker = In2iGui.Picker.create('documentPicker',{title:'Vælg venligst typen af side der skal oprettes',itemWidth:90,itemHeight:120});
 		this.newPagePanel.add(this.newPagePicker);
 		var self = this;
@@ -195,7 +195,7 @@ OO.Editor.prototype.click$deletePage = function() {
 		text:'Handlingen kan ikke fortrydes og siden kan ikke genskabes',
 		ok:'Ja, slet siden',
 		cancel:'Nej, jeg fortryder',
-		highlighted:'cancel',variant:'gasp'
+		highlighted:'cancel',emotion:'gasp'
 	});
 }
 
@@ -208,7 +208,7 @@ OO.Editor.prototype.ok$confirmDeletePage = function() {
 
 OO.Editor.prototype.openTemplateWindow = function() {
 	if (!this.templatePanel) {
-		this.templatePanel = In2iGui.Panel.create({title:'Skift skabelon',padding:10});
+		this.templatePanel = In2iGui.Window.create(null,{title:'Skift skabelon',variant:'dark'});
 		this.templatePicker = In2iGui.Picker.create('templatePicker',{itemWidth:92,itemHeight:120});
 		this.templatePicker.setObjects(this.templates);
 		this.templatePanel.add(this.templatePicker);

@@ -9,6 +9,6 @@ var controller = {
 		document.location='images.gui';
 	},
 	click$close : function(icon) {
-		document.location='../';
+		document.location='../site/';
 	}
 }

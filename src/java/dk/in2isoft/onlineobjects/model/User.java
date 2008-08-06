@@ -1,6 +1,8 @@
 package dk.in2isoft.onlineobjects.model;
 
-public class User extends Entity {
+import dk.in2isoft.onlineobjects.core.Priviledged;
+
+public class User extends Entity implements Priviledged {
 
 	private static String ICON = "Element/User";
 	public static String TYPE = "Entity/User";
@@ -31,8 +33,10 @@ public class User extends Entity {
 	}
 
 	public void setUsername(String username) {
+		if (name==null || name.equals(this.username)) {
+			this.name = username;			
+		}
 		this.username = username;
-		this.name = username;
 	}
 
 	public String getPassword() {
@@ -41,5 +45,9 @@ public class User extends Entity {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public long getIdentity() {
+		return getId();
 	}
 }

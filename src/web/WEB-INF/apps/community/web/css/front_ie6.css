@@ -3,12 +3,41 @@ body
 	text-align: center;
 }
 
-.base
+div.root
 {
 	text-align: left;
+	height: 100%;
 }
 
 #images_container
 {
 	width: 10px;
+}
+
+
+
+div.thumbnails, div.profile
+{
+	overflow: hidden;
+	height: 1%;
+}
+
+div.head div.clouds
+{
+	text-align: center;
+}
+
+#users_container
+{
+	display: none;
+}
+
+div.content, div.info, div.inner_info
+{
+	height: 1%;
+}
+
+div.cloud
+{
+	height: 80px;
 }

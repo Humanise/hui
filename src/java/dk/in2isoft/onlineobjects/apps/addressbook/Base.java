@@ -45,7 +45,7 @@ public class Base extends SimpleWindow {
 		for (Entity e : result) {
 			List<Relation> relations = Core.getInstance().getModel().getSubRelations(e);
 			gui.append("<row link='editPerson?id=" + e.getId() + "'>" + "<cell>" + "<icon icon='" + e.getIcon() + "'/>"
-					+ "<text>" + escape(e.getName()) + "<break/>" + escape(e.getProperty("social.jobtitle"))
+					+ "<text>" + escape(e.getName()) + "<break/>" + escape(e.getPropertyValue("social.jobtitle"))
 					+ "</text></cell><cell>");
 			listEmails(relations, gui);
 			gui.append("</cell><cell>");

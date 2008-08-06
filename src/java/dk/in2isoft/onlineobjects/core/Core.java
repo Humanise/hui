@@ -12,18 +12,20 @@ public class Core {
 
 	private static Logger log = Logger.getLogger(Core.class);
 	private static Core instance;
-	private static File baseDir;
-	private static ServletContext context;
+	private File baseDir;
+	private ServletContext context;
 	
 	private Configuration config;
 	private ModelFacade model;
 	private SecurityController security;
 	private ConversionFacade converter;
 	private StorageManager storage;
+	private Scheduler scheduler;
 	private Priviledged superUser = new SuperUser();
 	private boolean started;
 	
 	private Core() {
+		scheduler = new Scheduler();
 	}
 	
 	private void setupConfiguration() throws ConfigurationException
@@ -39,7 +41,7 @@ public class Core {
 		return instance;
 	}
 	
-	public void start(String basePath,ServletContext context) {
+	public void start(String basePath,ServletContext context) throws ConfigurationException, ModelException {
 		if (started) {
 			throw new IllegalStateException("System allready started!");
 		}
@@ -48,19 +50,11 @@ public class Core {
 			throw new IllegalStateException("Invalid base path provided");
 		} else {
 			log.info("OnlineObjects started at basePath: "+basePath);
-			Core.baseDir = dir;
-			Core.context = context;
+			this.baseDir = dir;
+			this.context = context;
 		}
-		try {
-			setupConfiguration();
-		} catch (ConfigurationException e) {
-			throw new ExceptionInInitializerError(e);
-		}
-		try {
-			ensureUsers();
-		} catch (ModelException e) {
-			throw new ExceptionInInitializerError(e);
-		}
+		setupConfiguration();
+		ensureUsers();
 		started = true;
 		log.info("OnlineObjects started successfully!");
 	}
@@ -98,8 +92,12 @@ public class Core {
 		return storage;
 	}
 	
+	public Scheduler getScheduler() {
+		return scheduler;
+	}
+	
 	private void ensureUsers() throws ModelException {
-		User publicUser = getModel().getUser("public");
+		User publicUser = getModel().getUser(SecurityController.PUBLIC_USERNAME);
 		if (publicUser==null) {
 			log.warn("No public user present!");
 			User user = new User();
@@ -108,6 +106,17 @@ public class Core {
 			getModel().createItem(user,superUser);
 			getModel().commit();
 			log.info("Public user created!");
+		}
+		User adminUser = getModel().getUser(SecurityController.ADMIN_USERNAME);
+		if (adminUser==null) {
+			log.warn("No admin user present!");
+			User user = new User();
+			user.setUsername(SecurityController.ADMIN_USERNAME);
+			user.setPassword("changeme");
+			user.setName("Administrator");
+			getModel().createItem(user,superUser);
+			getModel().commit();
+			log.info("Administrator created!");
 		}
 	}
 	

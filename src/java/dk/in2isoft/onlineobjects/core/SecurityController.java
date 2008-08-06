@@ -6,7 +6,8 @@ import dk.in2isoft.onlineobjects.model.User;
 
 public class SecurityController {
 	
-	public static String PUBLIC_USERNAME = "public";
+	public static final String ADMIN_USERNAME = "admin";
+	public static final String PUBLIC_USERNAME = "public";
 	
 	protected SecurityController() {
 		

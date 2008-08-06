@@ -4,9 +4,20 @@
         "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 
+    <class name="dk.in2isoft.onlineobjects.model.Property" table="property">
+        <id name="id" column="id">
+            <generator class="sequence">
+            	<param name="sequence">property_id_sequence</param>
+             </generator>
+        </id>
+		<property name="key"/>
+		<property name="value" length="4000"/>
+	</class>
     <class name="dk.in2isoft.onlineobjects.model.Privilege" table="privilege">
         <id name="id" column="id">
-            <generator class="increment"/>
+            <generator class="sequence">
+            	<param name="sequence">privilege_id_sequence</param>
+             </generator>
         </id>
 		<property name="object"/>
 		<property name="subject"/>
@@ -17,7 +28,9 @@
     </class>
     <class name="dk.in2isoft.onlineobjects.model.Item" table="item">
         <id name="id" column="id">
-            <generator class="increment"/>
+            <generator class="sequence">
+            	<param name="sequence">item_id_sequence</param>
+             </generator>
         </id>
 	    <property name="created"/>
 	    <property name="updated"/>
@@ -25,13 +38,10 @@
 	        <key column="id"/>
 	        <property name="name"/>
 	        
-			<list name="properties" table="property">
+			<list name="properties" table="property" cascade="all-delete-orphan" lazy="false">
 			    <key column="enity_id"/>
-			    <list-index column="sortOrder"/>
-			    <composite-element class="dk.in2isoft.onlineobjects.model.Property">
-			        <property name="key"/>
-			        <property name="value" length="4000"/>
-			    </composite-element>
+			    <list-index column="sortorder"/>
+			    <one-to-many class="dk.in2isoft.onlineobjects.model.Property"/>
 			</list>
 			
 		    <joined-subclass name="dk.in2isoft.onlineobjects.model.User" table="`user`">
@@ -122,6 +132,13 @@
 		        <property name="code"/>
 		        <property name="message"/>
 		        <property name="state"/>
+		    </joined-subclass>
+		    
+		    <joined-subclass name="dk.in2isoft.onlineobjects.model.Event" table="event">
+		        <key column="id"/>
+		        <property name="startTime"/>
+		        <property name="endTime"/>
+		        <property name="location"/>
 		    </joined-subclass>
 		    
 	    </joined-subclass>

@@ -1,5 +1,8 @@
 package dk.in2isoft.commons.lang;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.validator.EmailValidator;
+
 public class LangUtil {
 
 	// private static Logger log = Logger.getLogger(LangUtil.class);
@@ -68,5 +71,34 @@ public class LangUtil {
 			pw[i] = (char) c;
 		}
 		return new String(pw);
+	}
+
+	public static boolean isDefined(String str) {
+		return (str!=null && str.trim().length()>0);
+	}
+	
+	public static boolean isWellFormedEmail(String email) {
+		return EmailValidator.getInstance().isValid(email);
+	}
+
+	public static boolean isDefined(String[] words) {
+		return words != null && words.length > 0;
+	}
+
+	public static String[] getWords(String query) {
+		return query.trim().split("\\W+");
+	}
+
+	public static String[] combine(Object... strings) {
+		String[] combined = {};
+		for (int i = 0; i < strings.length; i++) {
+			Object obj = strings[i];
+			if (obj instanceof String[]) {
+				combined = (String[]) ArrayUtils.addAll(combined, (Object[]) strings[i]);
+			} else {
+				combined = (String[]) ArrayUtils.add(combined, obj.toString());
+			}
+		}
+		return combined;
 	}
 }

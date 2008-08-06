@@ -1,0 +1,40 @@
+@import url('elegant.css');
+@import url('simple.css');
+@import url('paper.css');
+
+.gallery .partHeader h1
+{
+	text-align: center;
+}
+
+.gallery .grid
+{
+	margin-top: 10px;
+	position: relative;
+	left: 50%;
+}
+
+.gallery .grid .hover
+{
+	background: #ddd;
+	background: url('hover.gif');
+}
+
+.gallery .grid .cell
+{
+	float: left;
+}
+
+.imagegallery_image_hover
+{
+	position: absolute;
+	padding: 4px;
+}
+
+.imagegallery_image_hover .delete
+{
+	height: 20px;
+	width: 20px;
+	cursor: pointer;
+	background: url('../../gfx/delete_small.png') no-repeat;
+}

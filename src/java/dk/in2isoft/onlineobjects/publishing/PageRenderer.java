@@ -42,6 +42,19 @@ public class PageRenderer {
 		if (document==null) {
 			throw new EndUserException("The page does not have a document!");
 		}
+		DocumentBuilder builder = DocumentBuilder.getBuilder(document.getClass());
+		
+		if (request.isSet("feed") && builder instanceof FeedBuilder) {
+			//String format = request.getString("feed");
+			FeedBuilder source = (FeedBuilder) builder;
+			try {
+				FeedWriter writer = new FeedWriter(request.getResponse());
+				source.buildFeed((Document) document, writer);
+			} catch (IOException e) {
+				throw new EndUserException(e);
+			}
+			return;
+		}
 		
 		// Get the website
 		WebSite site = WebModelUtil.getWebSiteOfPage(page);
@@ -60,8 +73,8 @@ public class PageRenderer {
 		context.appendChild(converter.generateXML(node));
 		
 		Element nodes = new Element("nodes", NAMESPACE);
-		List<Entity> rootNodes = model.getSubEntities(site, WebNode.class);
-		for (Iterator<Entity> iter = rootNodes.iterator(); iter.hasNext();) {
+		List<WebNode> rootNodes = model.getSubEntities(site, WebNode.class);
+		for (Iterator<WebNode> iter = rootNodes.iterator(); iter.hasNext();) {
 			WebNode subNode = (WebNode) iter.next();
 			nodes.appendChild(converter.generateXML(subNode));
 		}
@@ -70,11 +83,11 @@ public class PageRenderer {
 		// Append content
 		Element content = new Element("content", NAMESPACE);
 		content.addAttribute(new Attribute("id",String.valueOf(document.getId())));
-		content.appendChild(DocumentBuilder.getBuilder(document.getClass()).build((Document)document));
+		content.appendChild(builder.build((Document)document));
 		root.appendChild(content);
 		Configuration conf = Core.getInstance().getConfiguration();
 		
-		String template = page.getProperty(WebPage.PROPERTY_TEMPLATE);
+		String template = page.getPropertyValue(WebPage.PROPERTY_TEMPLATE);
 		if (template==null) template = "basic";
 		
 		File pageStylesheet = conf.getFile(new String[] {"WEB-INF","apps","community","xslt","page.xsl"});

@@ -11,6 +11,9 @@
     alter table entity 
         drop constraint FKB29DE3E3165C5561;
 
+    alter table event 
+        drop constraint FK5C6729AE94A3D71;
+
     alter table headerpart 
         drop constraint FK75EB3800E94A3D71;
 
@@ -70,6 +73,8 @@
 
     drop table entity;
 
+    drop table event;
+
     drop table headerpart;
 
     drop table htmlpart;
@@ -104,6 +109,12 @@
 
     drop table webstructure;
 
+    drop sequence item_id_sequence;
+
+    drop sequence privilege_id_sequence;
+
+    drop sequence property_id_sequence;
+
     create table "user" (
         id int8 not null,
         username varchar(255),
@@ -127,6 +138,14 @@
     create table entity (
         id int8 not null,
         name varchar(255),
+        primary key (id)
+    );
+
+    create table event (
+        id int8 not null,
+        startTime timestamp,
+        endTime timestamp,
+        location varchar(255),
         primary key (id)
     );
 
@@ -209,11 +228,12 @@
     );
 
     create table property (
-        enity_id int8 not null,
+        id int8 not null,
         key varchar(255),
         value varchar(4000),
-        sortOrder int4 not null,
-        primary key (enity_id, sortOrder)
+        enity_id int8,
+        sortorder int4,
+        primary key (id)
     );
 
     create table relation (
@@ -270,6 +290,11 @@
         add constraint FKB29DE3E3165C5561 
         foreign key (id) 
         references item;
+
+    alter table event 
+        add constraint FK5C6729AE94A3D71 
+        foreign key (id) 
+        references entity;
 
     alter table headerpart 
         add constraint FK75EB3800E94A3D71 
@@ -355,3 +380,9 @@
         add constraint FKDE88E09FE94A3D71 
         foreign key (id) 
         references entity;
+
+    create sequence item_id_sequence;
+
+    create sequence privilege_id_sequence;
+
+    create sequence property_id_sequence;

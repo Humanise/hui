@@ -16,6 +16,8 @@ public abstract class XSLTInterface {
 	
 	public abstract Document getData();
 	
+	public abstract nu.xom.Document getDocument();
+
 	public void display(Request request) throws IOException, EndUserException {
 		XSLTUtil.applyXSLT(this, request);
 	}

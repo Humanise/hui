@@ -13,8 +13,6 @@ import dk.in2isoft.onlineobjects.model.Entity;
 
 public class CompoundDocumentBuilder extends DocumentBuilder {
 
-
-
 	public CompoundDocumentBuilder() {
 		super();
 	}

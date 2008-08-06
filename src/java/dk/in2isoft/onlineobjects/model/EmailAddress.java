@@ -22,7 +22,7 @@ public class EmailAddress extends Entity {
 	}
 
 	public String getIcon() {
-		return "Element/EmailAddress";
+		return "common/email";
 	}
 
 	public String getAddress() {

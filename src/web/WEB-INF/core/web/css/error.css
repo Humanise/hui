@@ -1,0 +1,35 @@
+body
+{
+	font-family: Georgia, "Palatino", serif;
+	text-align: center;
+}
+
+div.body
+{
+	text-align: left;
+	width: 450px;
+	margin: 20px auto;
+	background: url('../gfx/error.png') top left no-repeat;
+	padding-left: 150px;
+}
+
+h1
+{
+	font-weight: normal;
+	margin: 0px 0px 10px;
+}
+
+textarea
+{
+	width: 100%;
+	height: 200px;
+}
+
+textarea:focus
+{
+	position: absolute;
+	padding: 0px;
+	border-width: 1px 0px 1px 0px;
+	left: 0px;
+	height: 400px;
+}

@@ -37,6 +37,17 @@ public class ImageUtil extends AbstractCommandLineInterfaceUtil {
 		return converted;
 	}
 	
+	public static File getCroppedThumbnail(Image image,int width,int height) throws EndUserException {
+		File folder = Core.getInstance().getStorage().getItemFolder(image);
+		File converted = new File(folder,"thumbnail-"+width+"x"+height+"cropped.jpg");
+		if (!converted.exists()) {
+			//String cmd = Core.getInstance().getConfiguration().getImageMagickPath()+"/convert "+image.getImageFile().getAbsolutePath()+" -thumbnail "+width+"x"+height+"< -gravity center -extent "+width+"x"+height+" +repage "+converted.getAbsolutePath();
+			String cmd = Core.getInstance().getConfiguration().getImageMagickPath()+"/convert -size "+(width*3)+"x"+(height*3)+" "+image.getImageFile().getAbsolutePath()+" -thumbnail x"+(height*2)+"   -resize "+(width*2)+"x<   -resize 50% -gravity center -crop "+width+"x"+height+"+0+0  +repage "+converted.getAbsolutePath();
+			execute(cmd);
+		}
+		return converted;
+	}
+	
 	public static int[] getImageDimensions(File file) throws EndUserException {
 		int[] dimensions = new int[] {0,0};
 		log.debug(file.getAbsolutePath());

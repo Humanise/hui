@@ -3,13 +3,6 @@
 body
 {
 	background: #fff url('../gfx/sky_bg.png') repeat-x;
-	border: none;
-}
-
-.base
-{
-	width: 800px;
-	margin: 0 auto;
 }
 
 div.head
@@ -35,6 +28,7 @@ div.head h1
 	letter-spacing: 3px;
 }
 
+
 /************************************ Search ******************************/
 
 div.search
@@ -50,14 +44,13 @@ div.inner_search
 {
 	background: url('../gfx/front/search.png') left -47px no-repeat;
 	height: 47px;
-	padding-left: 40px;
+	padding-left: 43px;
 }
 
 div.search form
 {
 	background: url('../gfx/front/search.png') right -94px no-repeat;
 	height: 47px;
-	padding: 0px 40px 0px 0px;
 	margin: 0px;
 }
 
@@ -65,37 +58,30 @@ div.search input.text
 {
 	border: none;
 	background: none;
+	padding: 7px 0px 0px 0px;
+	color: #666;
+	width: 100%;
+	font-size: 11pt;
 }
-
-div.user
-{
-	position: absolute;
-	top: 0px;
-	right: 0px;
-	color: #aaddff;
-	font-size: 10pt;
-	padding: 10px;
-}
-
 /********************************** Info ***********************************/
 
 div.info
 {
 	overflow: hidden;
-	background: url('../gfx/front/line_light.gif') 33.33% top repeat-y;
-	margin: 10px 0px;
+	background: url('../gfx/front/line_light.gif') 33% top repeat-y;
+	margin: 10px 0px 20px;
 }
 
 div.inner_info
 {
-	background: url('../gfx/front/line_light.gif') 66.66% top repeat-y;
+	background: url('../gfx/front/line_light.gif') 66% top repeat-y;
 	overflow: hidden;
 }
 
 div.info div.column
 {
 	float: left;
-	width: 33.33%;
+	width: 33%;
 }
 
 div.info h2
@@ -122,11 +108,14 @@ div.info p strong
 	color: #333;
 }
 
+/***************************************** Cloud ********************************/
+
 div.cloud
 {
 	text-align: center;
 	line-height: 24px;
 	padding: 0px 10px;
+	min-height: 80px;
 }
 
 a.tag
@@ -171,45 +160,28 @@ a.tag-5
 	font-size: 22px;
 }
 
-/****************************** Footer ********************************/
-
-.footer
-{
-	border-top: 1px solid #eee;
-	text-align: center;
-	font-size: 10pt;
-	color: #999;
-	padding-top: 10px;
-	height: 30px;
-	margin-top: 30px;
-}
-
-.footer a span
-{
-	color: #666;
-}
-
 /****************************** Body **********************************/
 
-div.body
+
+div.content
 {
+	background: url('../gfx/front/line_light.gif') 66% 0px repeat-y;
 	overflow: hidden;
-	margin: 10px 0px;
-	background: url('../gfx/front/line_light.gif') 66.66% 0px repeat-y;
 }
 
-div.body div.left
+div.content div.left
 {
-	width: 66.66%;
+	width: 66%;
+	float: left;
 }
 
-div.body div.right
+div.content div.right
 {
-	width: 33.33%;
-	float: right;
+	width: 33%;
+	float: left;
 }
 
-div.body div.right h2
+div.content div.right h2
 {
 	font-weight: normal;
 	color: #6ac1ff;
@@ -221,12 +193,12 @@ div.body div.right h2
 
 /********************************* Sidebar ****************************/
 
-form
+form.formula
 {
 	padding: 0px 15px 15px 15px;
 }
 
-form input.text, textarea
+form.formula input.text, textarea
 {
 	border: 1px solid #999;
 	border-color: #ccc #ddd #eee #ddd;
@@ -235,7 +207,7 @@ form input.text, textarea
 	font-size: 11pt;
 }
 
-form label
+form.formula label
 {
 	display: block;
 	font-size: 12pt;
@@ -244,7 +216,7 @@ form label
 	margin-top: 10px;
 }
 
-form input.submit
+form.formula input.submit
 {
 	margin-top: 10px;
 	float: right;
@@ -285,9 +257,10 @@ div.section_head h2
 {
 	overflow: hidden;
 	height: 80px;
+	margin-right: 15px;
 }
 
-.section_body .thumbnail
+#images_container .thumbnail
 {
 	border: 1px solid #ddd;
 	float: left;
@@ -299,21 +272,39 @@ div.section_head h2
 
 #images_container
 {
-	width: 30000px;
+	width: 3000px;
 	height: 70px;
 	padding-left: 15px;
 }
 
-
-
-
-
-
-
-input.hidden
+#users_container
 {
-	position: absolute;
-	left: -1000px;
-	top: 0px;
-	width: 0px;
+	padding-left: 15px;
+	width: 3000px;
+	height: 70px;
 }
+
+div.user
+{
+	height: 62px;
+	float: left;
+	margin-right: 15px;
+	font-size: 10pt;
+}
+
+div.user .thumbnail
+{
+	height: 60px;
+	width: 50px;
+	border: 1px solid #ddd;
+	margin-right: 10px;
+	background: url('../gfx/user.png') center center no-repeat;
+	float: left;
+}
+
+
+
+
+
+
+

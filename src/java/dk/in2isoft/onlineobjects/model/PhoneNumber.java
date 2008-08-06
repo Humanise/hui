@@ -22,7 +22,7 @@ public class PhoneNumber extends Entity {
 	}
 
 	public String getIcon() {
-		return "Element/PhoneNumber";
+		return "common/phone";
 	}
 
 	public String getNumber() {

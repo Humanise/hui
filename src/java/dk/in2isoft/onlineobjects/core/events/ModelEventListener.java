@@ -7,5 +7,7 @@ public interface ModelEventListener {
 	public void itemWasCreated(Item item);
 
 	public void itemWasUpdated(Item item);
+
+	public void itemWasDeleted(Item item);
 	
 }

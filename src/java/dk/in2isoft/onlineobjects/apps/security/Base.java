@@ -6,8 +6,7 @@ import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelException;
 import dk.in2isoft.onlineobjects.core.ModelFacade;
-import dk.in2isoft.onlineobjects.core.ModelQuery;
-import dk.in2isoft.onlineobjects.model.Entity;
+import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.ui.SimpleWindow;
 
@@ -50,11 +49,10 @@ public class Base extends SimpleWindow {
 	
 	private void listUsers(StringBuilder gui) throws ModelException {
 		ModelFacade model = Core.getInstance().getModel();
-        List<Entity> result = model.searchEntities(new ModelQuery(User.class));
-        for (Entity e : result) {
-        	User user = (User) e;
+        List<User> result = model.search(new Query<User>(User.class));
+        for (User user : result) {
     		gui.append(
-		    "<row link='editUser?id="+e.getId()+"'>"+
+		    "<row link='editUser?id="+user.getId()+"'>"+
 	        "<cell>"+
 	        "<icon icon='"+user.getIcon()+"'/>"+
 	        "<text>"+escape(user.getName())+"</text></cell>"+

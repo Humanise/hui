@@ -46,8 +46,11 @@ var personsController = {
 	click$savePerson : function() {
 		var person = personFormula.getValues();
 		person.id=this.activePerson;
+		
+		var emails = personEmails.getValue();
+		var phones = personPhones.getValue();
 		var self = this;
-		CommunityTool.savePerson(person,function() {
+		CommunityTool.savePerson(person,emails,phones,function() {
 			self.refreshPersonList();
 			personFormula.reset();
 			personWindow.hide();
@@ -58,7 +61,9 @@ var personsController = {
 		personFormula.reset();
 		personWindow.show();
 		CommunityTool.loadPerson(id,function(person) {
-			personFormula.setValues(person);
+			personFormula.setValues(person.person);
+			personEmails.setValue(person.emails);
+			personPhones.setValue(person.phones);
 		});
 	},
 	
@@ -91,7 +96,7 @@ var personsController = {
 	showInvitationProgress : function() {
 		if (!this.inviteProgress) {
 			this.inviteProgress = In2iGui.Alert.create(null,{
-				variant: 'gasp',
+				emotion: 'gasp',
 				title: 'Sender invitation...',
 				text: 'Vent venligst mens invitationen sendes.'
 			});
@@ -102,7 +107,7 @@ var personsController = {
 	invitationFailed : function(errorString) {
 		this.inviteProgress.hide();
 		In2iGui.get().showAlert({
-			variant: 'gasp',
+			emotion: 'gasp',
 			title: 'Invitationen kunne ikke afsendes',
 			text: 'Der skete følgende fejl: '+errorString
 		});
@@ -112,9 +117,9 @@ var personsController = {
 		this.inviteProgress.hide();
 		if (!this.inviteSentAlert) {
 			this.inviteSentAlert = In2iGui.Alert.create(null,{
-				variant: 'smile',
+				emotion: 'smile',
 				title: 'Invitationen er sendt!',
-				text: 'Personen vil modtage en email med oplysninger om hvordan de kan tilmelde sig OnlineObjects!'
+				text: 'Personen vil modtage en email med oplysninger om hvordan han/hun kan tilmelde sig OnlineObjects!'
 			});
 			var button = In2iGui.Button.create('inviteSentOK',{text : 'Fantastisk!'});
 			this.inviteSentAlert.addButton(button);

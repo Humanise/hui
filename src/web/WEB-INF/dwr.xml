@@ -1,17 +1,23 @@
 <!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 2.0//EN" "http://www.getahead.ltd.uk/dwr//dwr20.dtd">
 <dwr>
   <allow>
-    <create creator="new" javascript="JDate">
-      <param name="class" value="java.util.Date"/>
-    </create>
     <create creator="new" javascript="CoreSecurity" scope="application">
       <param name="class" value="dk.in2isoft.onlineobjects.remoting.SecurityRemotingFacade"/>
+    </create>
+    <create creator="new" javascript="Common" scope="application">
+      <param name="class" value="dk.in2isoft.onlineobjects.remoting.CommonRemotingFacade"/>
     </create>
     <create creator="new" javascript="Desktop" scope="application">
       <param name="class" value="dk.in2isoft.onlineobjects.apps.desktop.RemotingFacade"/>
     </create>
     <create creator="new" javascript="CommunityTool" scope="application">
       <param name="class" value="dk.in2isoft.onlineobjects.apps.community.RemotingFacade"/>
+    </create>
+    <create creator="new" javascript="AppSchool" scope="application">
+      <param name="class" value="dk.in2isoft.onlineobjects.apps.school.SchoolRemotingFacade"/>
+    </create>
+    <create creator="new" javascript="AppSetup" scope="application">
+      <param name="class" value="dk.in2isoft.onlineobjects.apps.setup.SetupRemotingFacade"/>
     </create>
     <create creator="new" javascript="ImageGalleryDocument" scope="application">
       <param name="class" value="dk.in2isoft.onlineobjects.publishing.imagegallery.ImageGalleryRemotingFacade"/>
@@ -29,5 +35,8 @@
     <convert converter="bean" match="dk.in2isoft.onlineobjects.ui.AsynchronousProcessDescriptor"/>
     <convert converter="bean" match="dk.in2isoft.onlineobjects.model.*"/>
     <convert converter="bean" match="dk.in2isoft.in2igui.data.*"/>
+    <convert match="java.lang.Exception" converter="exception">
+    	<param name='exclude' value='stackTrace'/>
+    </convert>
   </allow>
 </dwr>

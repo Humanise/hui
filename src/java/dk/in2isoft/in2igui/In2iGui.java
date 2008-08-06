@@ -6,7 +6,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.StringReader;
-import java.util.Hashtable;
+import java.util.NoSuchElementException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,6 +19,9 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.pool.ObjectPool;
+import org.apache.commons.pool.PoolableObjectFactory;
+import org.apache.commons.pool.impl.StackObjectPool;
 import org.apache.log4j.Logger;
 
 import dk.in2isoft.onlineobjects.core.Configuration;
@@ -26,16 +29,15 @@ import dk.in2isoft.onlineobjects.core.Core;
 
 public class In2iGui {
 
-	private String path = "";
-	private boolean developmentMode;
-
-	private static Hashtable<String, Templates> templates = new Hashtable<String, Templates>();
-
-	private static TransformerFactory tFactory = TransformerFactory.newInstance();
-
 	private static Logger log = Logger.getLogger(In2iGui.class);
 
 	private static In2iGui instance;
+
+	private String path = "";
+	private boolean developmentMode;
+	private ObjectPool pool;
+
+	private Templates templates;
 
 	private In2iGui() {
 		super();
@@ -46,6 +48,26 @@ public class In2iGui {
 		if (path==null) {
 			path = config.getFile("In2iGui").getAbsolutePath();
 		}
+		pool = new StackObjectPool(new PoolableObjectFactory() {
+
+			public void activateObject(Object arg0) throws Exception {
+			}
+
+			public void destroyObject(Object arg0) throws Exception {
+			}
+
+			public Object makeObject() throws Exception {
+				return createTransformer(false);
+			}
+
+			public void passivateObject(Object arg0) throws Exception {
+			}
+
+			public boolean validateObject(Object arg0) {
+				return true;
+			}
+			
+		});
 	}
 
 	public static In2iGui getInstance() {
@@ -59,9 +81,14 @@ public class In2iGui {
 		return path;
 	}
 
-	public void render(StreamSource source, OutputStream output, String context,boolean devMode) throws IOException {
+	private void render(StreamSource source, OutputStream output, String context,boolean devMode) throws IOException {
+		Transformer transformer = null;;
 		try {
-			Transformer transformer = getTransformer();
+			if (devMode) {
+				transformer = createTransformer(true);
+			} else {
+				transformer = (Transformer) pool.borrowObject();
+			}
 			transformer.setParameter("context", context);
 			transformer.setParameter("dev", devMode);
 			transformer.transform(source, new StreamResult(output));
@@ -75,6 +102,20 @@ public class In2iGui {
 						+ "</message></error>");
 			} catch (IOException ex) {
 				log.error(ex.getMessage(), ex);
+			}
+		} catch (NoSuchElementException e) {
+			e.printStackTrace();
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (!devMode && transformer!=null) {
+				try {
+					pool.returnObject(transformer);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -118,22 +159,21 @@ public class In2iGui {
 		}
 	}
 
-	private Transformer getTransformer() throws TransformerFactoryConfigurationError, TransformerConfigurationException {
-		log.info("In2iGui-template-count: " + templates.size());
-		String key = "c";
-		Templates temp = (Templates) templates.get(key);
-		if (temp == null) {
+	private Transformer createTransformer(boolean newTemplates) throws TransformerFactoryConfigurationError, TransformerConfigurationException {
+		if (templates == null || newTemplates) {
 			StringBuilder xslString = new StringBuilder();
 			xslString.append("<?xml version='1.0' encoding='UTF-8'?>").append(
 					"<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='1.0'>").append(
-					"<xsl:output method='xml' indent='no' encoding='UTF-8'/><xsl:param name='dev'/><xsl:param name='context'/>").append("<xsl:include href='").append(
-					path).append("/xslt/gui.xsl'/>").append(
+					"<xsl:output method='xml' indent='no' encoding='UTF-8'/>").append(
+					"<xsl:param name='dev'/><xsl:param name='context'/>").append(
+					"<xsl:include href='").append(path).append("/xslt/gui.xsl'/>").append(
 					"<xsl:template match='/'><xsl:apply-templates/></xsl:template>").append("</xsl:stylesheet>");
 			StringReader xslReader = new StringReader(xslString.toString());
-			temp = tFactory.newTemplates(new StreamSource(xslReader));
-			//templates.put(key, temp);
-			log.info("New template!");
+			TransformerFactory factory = TransformerFactory.newInstance();
+			templates = factory.newTemplates(new StreamSource(xslReader));
+			log.info("New templates!");
 		}
-		return temp.newTransformer();
+		log.info("New transformer!");
+		return templates.newTransformer();
 	}
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gui xmlns="uri:In2iGui" state="persons" title="Images">
 	<dwr base="/dwr/">
-		<interface name="CoreSecurity"/>
+		<interface name="Common"/>
 		<interface name="CommunityTool"/>
 	</dwr>
 	<controller name="controller" source="../../gui/private/controller.js"/>
@@ -18,7 +18,11 @@
 		<content pad="20">
 			<view style="box">
 				<toolbar>
-					<icon icon="common/image" overlay="new" title="Tilføj billede" name="newImage"/>
+					<icon icon="common/image" overlay="new" title="Tilføj billeder" name="newImage"/>
+					<divider/>
+					<icon icon="common/object" title="Lysbilledshow" name="slideShow"/>
+					<icon icon="common/delete" title="Slet" name="deleteSelectedImage"/>
+					<search title="Søgning"/>
 				</toolbar>
 				<content>
 					<split>
@@ -27,17 +31,10 @@
 								<item icon="common/image" title="Alle billeder" value="all"/>
 							</selection>
 						</sidebar>
-						<content height="400">
-							<list name="personList" state="persons">
-								<column title="Navn" key="name"/>
-								<column title="E-mail" key="email"/>
-								<column title="Telefon" key="phone"/>
-							</list>
-							<list name="invitationList" state="invitations">
-								<column title="Dato" key="created"/>
-								<column title="Inviteret" key="person"/>
-								<column title="Status" key="state"/>
-							</list>
+						<content>
+							<overflow resize="-190">
+							<gallery name="imageGallery" state="persons"/>
+							</overflow>
 						</content>
 					</split>
 				</content>
@@ -47,14 +44,23 @@
 			</view>
 		</content>
 	</view>
-	<window floating="true" name="imageWindow" title="Nyt billede" width="300">
-		<formula name="invitationFormula">
-			<group>
-				<text label="Navn" key="name"/>
-				<text label="E-mail" key="email"/>
-				<text label="Besked" key="message" lines="10"/>
-				<button title="Send" highlighted="true" name="sendInvitation"/>
-			</group>
-		</formula>
+	<window name="newImageWindow" title="Nyt billede" width="300" variant="dark">
+		<multiupload name="imageUpload" url="images/upload.action"/>
+	</window>
+	<window name="imageWindow" title="Egenskaber" width="300" variant="dark">
+		<space all="5">
+			<formula name="imageFormula">
+				<group>
+					<text label="Navn" key="name"/>
+					<text label="Beskrivelse" key="description" lines="6"/>
+					<tokens label="Nøgleord" key="tags"/>
+					<buttons>
+						<button title="Gem" highlighted="true" name="saveImage"/>
+						<button title="Annuller" name="cancelImage"/>
+						<button title="Slet" name="deleteImage"/>
+					</buttons>
+				</group>
+			</formula>
+		</space>
 	</window>
 </gui>

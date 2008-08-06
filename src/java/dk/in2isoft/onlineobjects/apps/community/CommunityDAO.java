@@ -1,6 +1,7 @@
 package dk.in2isoft.onlineobjects.apps.community;
 
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.SimpleEmail;
@@ -11,16 +12,18 @@ import dk.in2isoft.onlineobjects.core.AbstractModelQuery;
 import dk.in2isoft.onlineobjects.core.Configuration;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
+import dk.in2isoft.onlineobjects.core.EntitylistSynchronizer;
 import dk.in2isoft.onlineobjects.core.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.ModelException;
 import dk.in2isoft.onlineobjects.core.ModelFacade;
-import dk.in2isoft.onlineobjects.core.SimpleModelQuery;
+import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.model.EmailAddress;
+import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.ImageGallery;
 import dk.in2isoft.onlineobjects.model.Invitation;
-import dk.in2isoft.onlineobjects.model.Item;
 import dk.in2isoft.onlineobjects.model.Person;
+import dk.in2isoft.onlineobjects.model.PhoneNumber;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.WebSite;
@@ -70,12 +73,30 @@ public class CommunityDAO extends AbstractDAO {
 			email.setFrom("jonasmunk@mac.com", "Jonas Munk");
 			email.setSubject("Invitation til OnlineObjects");
 			email.setMsg("Hej " + person.getName() + ".\n\n"
-					+ "Du er blevet inviteret til at blive bruger af OnlineObjects. Klik på følgende link: http://"
+					+ "Du er blevet inviteret til at blive bruger af OnlineObjects. Klik p√• f√∏lgende link: http://"
 					+ config.getBaseUrl() + "/invitation?code=" + invitation.getCode());
 			email.send();
 		} catch (EmailException e) {
 			throw new EndUserException(e);
 		}
+	}
+	
+	public void sendFeedback(String emailAddress,String message) throws EndUserException {
+
+		Configuration config = Core.getInstance().getConfiguration();
+		try {
+			SimpleEmail email = new SimpleEmail();
+			email.setHostName(config.getMailHost());
+			email.setAuthentication(config.getMailUsername(), config.getMailPassword());
+			email.addTo("jonasmunk@mac.com", "Jonas Munk");
+			email.setFrom("jonasmunk@mac.com", "Jonas Munk");
+			email.setSubject("OnlineObjects feedback");
+			email.setMsg("Email: "+emailAddress+"\n\n"+message);
+			email.send();
+		} catch (EmailException e) {
+			throw new EndUserException(e);
+		}
+		
 	}
 
 	public void signUpFromInvitation(UserSession session, String code, String username, String password)
@@ -87,12 +108,12 @@ public class CommunityDAO extends AbstractDAO {
 			throw new IllegalRequestException("Password is null");
 		}
 
-		AbstractModelQuery query = new SimpleModelQuery(Invitation.class).addLimitation(Invitation.FIELD_CODE, code);
-		List<Item> invitations = getModel().search(query);
+		AbstractModelQuery<Invitation> query = new Query<Invitation>(Invitation.class).withFieldValue(Invitation.FIELD_CODE, code);
+		List<Invitation> invitations = getModel().search(query);
 		if (invitations.size() == 0) {
 			throw new EndUserException("Could not find invitation with code: " + code);
 		}
-		Invitation invitation = (Invitation) invitations.get(0);
+		Invitation invitation = invitations.get(0);
 		if (!Invitation.STATE_ACTIVE.equals(invitation.getState())) {
 			throw new EndUserException("The invitation is not active. The state is: " + invitation.getState());
 		}
@@ -205,6 +226,51 @@ public class CommunityDAO extends AbstractDAO {
 		model.createItem(userSiteRelation, session);
 
 		WebModelUtil.createWebPageOnSite(site.getId(),ImageGallery.class, session);
+	}
 
+	
+	public void updateDummyEmailAddresses(Entity parent,List<EmailAddress> addresses, UserSession session) throws EndUserException {
+		
+		List<EmailAddress> existing = getModel().getSubEntities(parent, EmailAddress.class);
+		EntitylistSynchronizer<EmailAddress> sync = new EntitylistSynchronizer<EmailAddress>(existing,addresses);
+		
+		for (Entry<EmailAddress, EmailAddress> entry : sync.getUpdated().entrySet()) {
+			EmailAddress original = entry.getKey();
+			EmailAddress dummy = entry.getValue();
+			original.setAddress(dummy.getAddress());
+			original.setContext(dummy.getContext());
+		}
+		
+		for (EmailAddress emailAddress : sync.getNew()) {
+			getModel().createItem(emailAddress, session);
+			getModel().createRelation(parent, emailAddress, session);
+		}
+		
+		for (EmailAddress emailAddress : sync.getDeleted()) {
+			getModel().deleteEntity(emailAddress, session);
+		}
+	}
+
+	
+	public void updateDummyPhoneNumbers(Entity parent,List<PhoneNumber> phones, UserSession session) throws EndUserException {
+		
+		List<PhoneNumber> existing = getModel().getSubEntities(parent, PhoneNumber.class);
+		EntitylistSynchronizer<PhoneNumber> sync = new EntitylistSynchronizer<PhoneNumber>(existing,phones);
+		
+		for (Entry<PhoneNumber, PhoneNumber> entry : sync.getUpdated().entrySet()) {
+			PhoneNumber original = entry.getKey();
+			PhoneNumber dummy = entry.getValue();
+			original.setNumber(dummy.getNumber());
+			original.setContext(dummy.getContext());
+		}
+		
+		for (PhoneNumber number : sync.getNew()) {
+			getModel().createItem(number, session);
+			getModel().createRelation(parent, number, session);
+		}
+		
+		for (PhoneNumber number : sync.getDeleted()) {
+			getModel().deleteEntity(number, session);
+		}
 	}
 }

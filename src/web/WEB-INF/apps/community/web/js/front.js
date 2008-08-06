@@ -5,140 +5,195 @@ if (!OO.Community) OO.Community = {};
 OO.Community.Front = function() {
 	this.signupForm = $id('signup');
 	this.loginForm = $id('login');
-	this.poster = $id('poster');
-	this.searchInput = $id('search_field');
-	this.searchField = null;
-	this.setupSearch();
+	this.images = [];
+	this.searchField = new In2iGui.TextField('search_field','searchField');
+	this.searchField.addDelegate(this);
 	this.addBehavior();
-	this.loadData();
-	//$ani($$('.head')[0],'height','200px',2000,{delay:10000});
+	this.search();
 }
 
-OO.Community.Front.prototype.setupSearch = function() {
-	var self = this;
-	var delegate = {
-		placeholder:'Live søgning!',
-		valueDidChange: function(field) {
-			if (field.getValue().length>2) {
-				self.showSearchBox();
-			} else {
-				self.hideSearchBox();
+OO.Community.Front.prototype = {
+	valueChanged$searchField : function(field) {
+		this.search(field.getValue());
+	},
+	setSearch : function(str) {
+		this.searchField.setValue(str);
+		this.search(str);
+	},
+	search : function(query) {
+		var self = this;
+		CommunityTool.getLatestImages(query,function(images) {self.buildImages(images)});
+		CommunityTool.getTagCloud(query,function(tags) {self.buildTags(tags)});
+		CommunityTool.searchUsers(query,function(users) {self.buildUsers(users)});
+	},
+	buildTags : function(tags) {
+		var self = this;
+		tags = new Hash(tags);
+		var cloud = $('tags_container');
+		cloud.update();
+		tags.each(function(entry) {
+			var element = new Element('a').addClassName('tag tag-'+Math.round(5*entry.value));
+			element.insert(new Element('span').update(entry.key));
+			element.href='#';
+			element.observe('click',function() {self.setSearch(entry.key)});
+			cloud.insert(element);
+			cloud.insert(new Element('span').insert(' '));
+		});
+	},
+	buildImages : function(images) {
+		this.dirtyImages = true;
+		this.images = images;
+		var container = $('images_container');
+		container.update();
+		var self = this;
+		images.each(function(image,index) {
+			var width = Math.round(image.width/image.height*60);
+			var height = Math.round(image.height/Math.max(image.width,image.height)*60);
+			var thumb = new Element('div').addClassName('thumbnail').setStyle({
+				width:width+'px',opacity:0,'backgroundImage':'url("'+OnlineObjects.baseContext+'/service/image/?id='+image.id+'&thumbnail='+Math.max(width,height)+'")'
+			});
+			thumb.observe('click',function() {
+				self.imageWasClicked(index);
+			});
+			$ani(thumb,'opacity',1,1000,{ease:N2i.Animation.slowFast,delay:Math.random()*1000});
+			container.insert(thumb);
+		});
+	},
+	buildUsers : function(users) {
+		var container = $('users_container');
+		container.update();
+		users.each(function(user) {
+			var element = new Element('div').addClassName('user');
+			element.insert(new Element('div').addClassName('thumbnail'));
+			var link = new Element('a').addClassName('link');
+			link.href=OnlineObjects.appContext+'/'+user.username+'/';
+			link.insert(new Element('span').update(user.name));
+			element.insert(link);
+			container.insert(element);
+		});
+	},
+	imageWasClicked : function(index) {
+		this.getViewer().show(index);
+	},
+	getViewer : function() {
+		if (!this.viewer) {
+			this.viewer = In2iGui.ImageViewer.create();
+			this.viewer.addDelegate(this);
+		}
+		if (this.dirtyImages) {
+			this.viewer.clearImages();
+			this.viewer.addImages(this.images);
+			this.dirtyImages = false;
+		}
+		return this.viewer;
+	},
+	resolveImageUrl : function(image,width,height) {
+		return OnlineObjects.baseContext+'/service/image/?id='+image.id+'&width='+width+'&height='+height;
+	},
+	addBehavior : function() {
+		var self = this;
+		if (this.signupForm) {
+			this.signupForm.onsubmit = function() {
+				var username = this.username.value;
+				var password = this.password.value;
+				try {
+					var delegate = {
+			  			callback:function() { self.userDidSignUp(username) },
+			  			errorHandler:function(errorString, exception) { N2i.log(exception);self.setSignUpMessage(errorString); }
+					};
+					CommunityTool.signUp(username,password,delegate);
+				} catch (e) {
+					self.displayError(e);
+				}
+				return false;
 			}
 		}
-	};
-	this.searchField = new N2i.TextField('search_field',null,delegate);
-}
-
-OO.Community.Front.prototype.addBehavior = function() {
-	var self = this;
-	if (this.signupForm) {
-	this.signupForm.onsubmit = function() {
-		var username = self.signupForm.username.value;
-		var password = self.signupForm.password.value;
-		try {
+		this.loginForm.onsubmit = function() {
+			if (Prototype.Browser.IE) {
+				In2iGui.get().alert({
+					title:'Internet Explorer er ikke understøttet',
+					text:'Vi arbejder hårdt på at få systemet til at virke med Internet Explorer 7. '+
+					'Indtil videre kan De anvende Firefox eller Safari. Vi vil iøvrigt anbefale at '+
+					'anvende en af disse browsere da de er hurtigere og mere stabile end InternetExplorer.',
+					emotion:'gasp'
+				});
+				return false;
+			}
+			var username = self.loginForm.username.value;
+			var password = self.loginForm.password.value;
 			var delegate = {
-	  			callback:function() { self.userDidSignUp(username) },
-	  			errorHandler:function(errorString, exception) { N2i.log(exception);self.setSignUpMessage(errorString); }
+	  			callback:function(data) {
+					if (data==true) {
+						self.userDidLogIn(username);
+					} else {
+						self.setLogInMessage('Kunne ikke logge ind!')
+					}
+				},
+	  			errorHandler:function(errorString, exception) { self.setLogInMessage(errorString); }
 			};
-			CommunityTool.signUp(username,password,delegate);
-		} catch (e) {
-			self.displayError(e);
+			CoreSecurity.changeUser(username,password,delegate);
+			return false;
 		}
-		return false;
-	}
-	}
-	this.loginForm.onsubmit = function() {
-		var username = self.loginForm.username.value;
-		var password = self.loginForm.password.value;
-		var delegate = {
-  			callback:function(data) {
-				if (data==true) {
-					self.userDidLogIn(username);
-				} else {
-					self.setLogInMessage('Kunne ikke logge ind!')
+		$('feedbackForm').onsubmit=function() {
+			In2iGui.get().alert({
+				title:'Din besked er ved at blive sendt',
+				text:'Du får en besked om lidt med resultatet...',
+				emotion:'smile'
+			});
+			var form = this;
+			var delegate = {
+	  			callback:function() {
+					In2iGui.get().alert({
+						title:'Din besked er afsendt!',
+						text:'Vi vil svare hurtigst muligt :-)',
+						emotion:'smile'
+					});
+					form.reset();
+				},
+	  			errorHandler:function(errorString, exception) {
+					In2iGui.get().alert({title:'Beskeden kunne ikke sendes!',text:errorString,emotion:'gasp'});
+					N2i.log(exception);
 				}
-			},
-  			errorHandler:function(errorString, exception) { self.setLogInMessage(errorString); }
+			};
+			CommunityTool.sendFeedback(form['email'].value,form['message'].value,delegate);
+			return false;
 		};
-		CoreSecurity.changeUser(username,password,delegate);
-		return false;
+	},
+	userDidSignUp : function(username) {
+		var msg = In2iGui.Alert.create(null,{
+			emotion: 'smile',
+			title: 'Du er nu oprettet som bruger...',
+			text: 'Du vil modtage en e-mail hvor du skal bekræfte at du er dig. Indtil dette er gjort kan du frit anvende dit nye websted i op til 7 dage.'
+		});
+		var button = In2iGui.Button.create(null,{text : 'Gå til mit ny websted :-)!'});
+		button.addDelegate({buttonWasClicked:function(){
+			document.location=username+'/site/';
+		}});
+		msg.addButton(button);
+		msg.show();
+	},
+	userDidLogIn : function(username) {
+		var msg = In2iGui.Alert.create(null,{
+			emotion: 'smile',
+			title: 'Du er nu logget ind!',
+			text: '...og vil blive taget til dit website med det samme.'
+		});
+		msg.show();
+		window.setTimeout(function() {
+			document.location=''+username+'/site/';
+		},1000);
+	},
+	setSignUpMessage : function(text) {
+		var message = $class('response',this.signupForm)[0];
+		message.innerHTML=text;
+	},
+	setLogInMessage : function(text) {
+		var message = $class('response',this.loginForm)[0];
+		message.innerHTML=text;
+	},
+	displayError : function(text) {
+		alert(text);
 	}
 }
 
-OO.Community.Front.prototype.userDidSignUp = function(username) {
-	var msg = In2iGui.Alert.create(null,{
-		variant: 'smile',
-		title: 'Du er nu oprettet som bruger...',
-		text: 'Du vil modtage en e-mail hvor du skal bekræfte at du er dig. Indtil dette er gjort kan du frit anvende dit nye websted i op til 7 dage.'
-	});
-	var button = In2iGui.Button.create(null,{text : 'Gå til mit ny websted :-)!'});
-	button.addDelegate({buttonWasClicked:function(){
-		document.location=username+'/site/';
-	}});
-	msg.addButton(button);
-	msg.show();
-}
-
-OO.Community.Front.prototype.userDidLogIn = function(username) {
-	var msg = In2iGui.Alert.create(null,{
-		variant: 'smile',
-		title: 'Du er nu logget ind!',
-		text: '...og vil blive taget til dit website med det samme.'
-	});
-	msg.show();
-	window.setTimeout(function() {
-		document.location=''+username+'/site/';
-	},1000);
-}
-
-OO.Community.Front.prototype.setSignUpMessage = function(text) {
-	var message = $class('response',this.signupForm)[0];
-	message.innerHTML=text;
-}
-
-OO.Community.Front.prototype.setLogInMessage = function(text) {
-	var message = $class('response',this.loginForm)[0];
-	message.innerHTML=text;
-}
-
-OO.Community.Front.prototype.displayError = function(text) {
-	alert(text);
-}
-
-OO.Community.Front.prototype.showSearchBox = function(text) {
-	$ani('poster','opacity',0,1000);
-	$ani('poster','height','0px',1000);
-	$ani('search_field','margin-left','0px',1000);
-}
-
-OO.Community.Front.prototype.hideSearchBox = function(text) {
-	$ani('poster','opacity',1,1000);
-	$ani('poster','height','400px',1000);
-	$ani('search_field','margin-left','95px',1000);
-}
-
-OO.Community.Front.prototype.loadData = function() {
-	var self = this;
-	CommunityTool.getLatestImages(function(images) {self.buildImages(images)});
-}
-
-OO.Community.Front.prototype.buildImages = function(images) {
-	var container = $id('images_container');
-	var elements = [];
-	for (var i=0; i < images.length; i++) {
-		var image = images[i];
-		var width = Math.round(image.width/image.height*60);
-		var height = Math.round(image.height/Math.max(image.width,image.height)*60);
-		var thumb = N2i.create(
-			'div',
-			{'class':'thumbnail'},
-			{'width':(width)+'px','marginLeft': '600px','backgroundImage':'url("'+OnlineObjects.baseContext+'/service/image/?id='+image.id+'&thumbnail='+Math.max(width,height)+'")'}
-		);
-		container.appendChild(thumb);
-		$ani(thumb,'margin-left','0px',1000,{ease:N2i.Animation.fastSlow});
-	};
-}
-
-N2i.Event.addLoadListener(function() {
-	new OO.Community.Front();
-})
+document.observe('dom:loaded', function() {new OO.Community.Front();});

@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItem;
@@ -20,10 +22,14 @@ import dk.in2isoft.onlineobjects.apps.ApplicationSession;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.IllegalRequestException;
+import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SecurityException;
+import dk.in2isoft.onlineobjects.importing.Importer;
 import dk.in2isoft.onlineobjects.model.Entity;
+import dk.in2isoft.onlineobjects.model.Event;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.ImageGallery;
+import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.WebPage;
@@ -39,13 +45,14 @@ public class CommunityController extends ApplicationController {
 	private static Logger log = Logger.getLogger(CommunityController.class);
 
 	private PrivateSpaceController privateSpaceController;
+
 	private static CommunityDAO dao = new CommunityDAO();
-	
+
 	public CommunityController() {
 		super("community");
 		privateSpaceController = new PrivateSpaceController(this);
 	}
-	
+
 	public static CommunityDAO getDAO() {
 		return dao;
 	}
@@ -53,46 +60,61 @@ public class CommunityController extends ApplicationController {
 	@Override
 	public void unknownRequest(Request request) throws IOException, EndUserException {
 		log.debug(Arrays.toString(request.getLocalPath()));
-		if (request.testLocalPathStart(new String[] {null})) {
-			handleUserSite(request);
+		if (request.testLocalPathStart(new String[] { null })) {
+			handleUser(request);
 		} else {
 			XSLTInterface ui = new FrontPage(this, request);
 			XSLTUtil.applyXSLT(ui, request);
 		}
 	}
-	
+
 	public void invitation(Request request) throws IOException, EndUserException {
 		XSLTInterface ui = new InvitationPage(this, request);
 		ui.display(request);
 	}
 
-	private void handleUserSite(Request request) throws IOException, EndUserException {
+	private void handleUser(Request request) throws IOException, EndUserException {
 		String userName = request.getLocalPath()[0];
 		User siteUser = Core.getInstance().getModel().getUser(userName);
 		if (siteUser == null) {
 			throw new EndUserException("The user does not excist!");
 		}
-		if (request.testLocalPathFull(null,"uploadImage")) {
-			uploadImage(request,siteUser);
-		} else if (request.testLocalPathStart(null,"private")) {
-			if (siteUser.getId()!=request.getSession().getUser().getId()) {
+		if (request.testLocalPathFull(null, "site", "uploadImage")) {
+			if (siteUser.getId() != request.getSession().getUser().getId()) {
 				throw new SecurityException("User cannot access this private site");
 			}
-			if (request.testLocalPathFull(null,"private")) {
+			uploadImage(request);
+		} else if (request.testLocalPathStart(null, "private")) {
+			if (siteUser.getId() != request.getSession().getUser().getId()) {
+				throw new SecurityException("User cannot access this private site");
+			}
+			if (request.testLocalPathFull(null, "private")) {
 				request.redirect("settings.gui");
-			} else if (request.testLocalPathFull(null,"private","persons.gui")) {
+			} else if (request.testLocalPathFull(null, "private", "persons.gui")) {
 				privateSpaceController.displayPersons(request);
-			} else if (request.testLocalPathFull(null,"private","images.gui")) {
+			} else if (request.testLocalPathFull(null, "private", "images.gui")) {
 				privateSpaceController.displayImages(request);
-			} else if (request.testLocalPathFull(null,"private","settings.gui")) {
+			} else if (request.testLocalPathFull(null, "private", "images", "upload.action")) {
+				importImage(request);
+				request.getResponse().setStatus(HttpServletResponse.SC_OK);
+			} else if (request.testLocalPathFull(null, "private", "settings.gui")) {
 				privateSpaceController.displaySettings(request);
 			}
-		} else if (request.testLocalPathFull(null,"site")) {
-			displayUserPage(siteUser, request);
+		} else if (request.testLocalPathFull(null, "site")) {
+			displayUserSite(siteUser, request);
+		} else if (request.testLocalPathFull(new String[] { null })) {
+			XSLTInterface ui = new UserProfilePage(this, siteUser, request);
+			XSLTUtil.applyXSLT(ui, request);
 		}
 	}
 
-	private void displayUserPage(User user, Request request) throws EndUserException {
+	private void importImage(Request request) throws IOException, EndUserException {
+		new Importer().importMultipart(request);
+		request.getResponse().setStatus(HttpServletResponse.SC_OK);
+		request.getResponse().getWriter().write("OK");
+	}
+
+	private void displayUserSite(User user, Request request) throws EndUserException {
 		WebSite site = WebModelUtil.getUsersWebSite(user);
 		if (site == null) {
 			throw new EndUserException("The user does not have a web site!");
@@ -111,7 +133,7 @@ public class CommunityController extends ApplicationController {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void uploadImage(Request request,User siteUser) throws IOException, EndUserException {
+	private void uploadImage(Request request) throws IOException, EndUserException {
 		// boolean isMultipart =
 		ApplicationSession session = request.getSession().getToolSession("community");
 		final AsynchronousProcessDescriptor process = session.createAsynchronousProcessDescriptor("imageUpload");
@@ -119,14 +141,9 @@ public class CommunityController extends ApplicationController {
 			process.setError(true);
 			throw new SecurityException("The request is not multi-part!");
 		}
-
-		if (request.getSession().getUser().getId() != siteUser.getId()) {
-			process.setError(true);
-			throw new SecurityException("The authenticated user does not have access to this site!");
-		}
 		DiskFileItemFactory factory = new DiskFileItemFactory();
 		factory.setSizeThreshold(0);
-		
+
 		ServletFileUpload upload = new ServletFileUpload(factory);
 		ProgressListener progressListener = new ProgressListener() {
 			public void update(long pBytesRead, long pContentLength, int pItems) {
@@ -172,7 +189,8 @@ public class CommunityController extends ApplicationController {
 		process.setCompleted(true);
 	}
 
-	private void processFile(DiskFileItem item, long imageGalleryId, Request request) throws IOException, EndUserException {
+	private void processFile(DiskFileItem item, long imageGalleryId, Request request) throws IOException,
+			EndUserException {
 		Entity gallery = getModel().loadEntity(ImageGallery.class, imageGalleryId);
 		if (gallery == null) {
 			throw new EndUserException("Could not load gallery with ID=" + imageGalleryId);
@@ -180,15 +198,15 @@ public class CommunityController extends ApplicationController {
 		File file = item.getStoreLocation();
 		int[] dimensions = ImageUtil.getImageDimensions(file);
 		Image image = new Image();
-		getModel().createItem(image,request.getSession());
+		getModel().createItem(image, request.getSession());
 		image.setName(item.getName());
-		image.changeImageFile(file, dimensions[0],dimensions[1], item.getContentType());
+		image.changeImageFile(file, dimensions[0], dimensions[1], item.getContentType());
 		log.debug("width:" + image.getWidth());
 		log.debug("height:" + image.getHeight());
-		getModel().updateItem(image,request.getSession());
+		getModel().updateItem(image, request.getSession());
 		Relation relation = new Relation(gallery, image);
 		relation.setPosition(getMaxImagePosition(gallery) + 1);
-		getModel().createItem(relation,request.getSession());
+		getModel().createItem(relation, request.getSession());
 	}
 
 	private float getMaxImagePosition(Entity gallery) throws EndUserException {
@@ -210,10 +228,12 @@ public class CommunityController extends ApplicationController {
 		sb.append("digraph finite_state_machine {");
 		sb.append("graph [");
 		sb.append("normalize=true, outputorder=edgesfirst, overlap=false, pack=false");
-		sb.append(",packmode=\"node\", sep=\"0.8\", splines=true, size=\"14,10\"");
+		sb.append(",packmode=\"node\", sep=\"0.6\", splines=true, size=\"14,10\"");
 		sb.append("]");
 
-		List<Relation> relations = getModel().listRelations();
+		Query<Relation> rq = Query.ofType(Relation.class).withPaging(0, 1200);
+		List<Relation> relations = getModel().search(rq);
+		// List<Relation> relations = getModel().listRelations();
 		for (Relation relation : relations) {
 			Entity sub = relation.getSubEntity();
 			Entity supr = relation.getSuperEntity();
@@ -226,14 +246,31 @@ public class CommunityController extends ApplicationController {
 			}
 			sb.append("\" ];");
 		}
-		List<Entity> entities = getModel().listEntities();
-		
-		for (Entity entity : entities) {
-			sb.append(entity.getId()).append(" [shape=box,fontname=\"Verdana\",label=\"").append(entity.getClass().getSimpleName());
-			if (entity.getName()!=null && entity.getName().length()>0) {
-				sb.append("\\n").append(entity.getName());
+		{
+			Query<Person> q = Query.ofType(Person.class).withPaging(0, 200);
+			List<Person> entities = getModel().search(q);
+
+			for (Entity entity : entities) {
+				sb.append(entity.getId()).append(" [shape=box,fontname=\"Verdana\",label=\"").append(
+						entity.getClass().getSimpleName());
+				if (entity.getName() != null && entity.getName().length() > 0) {
+					sb.append("\\n").append(entity.getName());
+				}
+				sb.append("\"];");
 			}
-			sb.append("\"];");
+		}
+		{
+			Query<Event> q = Query.ofType(Event.class).withPaging(0, 200);
+			List<Event> entities = getModel().search(q);
+
+			for (Entity entity : entities) {
+				sb.append(entity.getId()).append(" [shape=box,fontname=\"Verdana\",label=\"").append(
+						entity.getClass().getSimpleName());
+				if (entity.getName() != null && entity.getName().length() > 0) {
+					sb.append("\\n").append(entity.getName());
+				}
+				sb.append("\"];");
+			}
 		}
 		sb.append("}");
 		try {

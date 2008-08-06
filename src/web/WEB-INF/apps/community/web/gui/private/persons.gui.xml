@@ -29,7 +29,8 @@
 								<item icon="common/letter" title="Invitationer" value="invitations"/>
 							</selection>
 						</sidebar>
-						<content height="400">
+						<content>
+							<overflow resize="-190">
 							<list name="personList" state="persons">
 								<column title="Navn" key="name"/>
 								<column title="E-mail" key="email"/>
@@ -40,6 +41,7 @@
 								<column title="Inviteret" key="person"/>
 								<column title="Status" key="state"/>
 							</list>
+							</overflow>
 						</content>
 					</split>
 				</content>
@@ -49,26 +51,66 @@
 			</view>
 		</content>
 	</view>
-	<window name="personWindow" title="Person">
-		<space all="5">
-		<formula name="personFormula">
-			<group>
-				<text label="Præfiks" key="namePrefix"/>
-				<text label="Fornavn" key="givenName"/>
-				<text label="Mellemnavn" key="additionalName"/>
-				<text label="Efternavn" key="familyName"/>
-				<text label="Postfiks" key="nameSuffix"/>
-				
-				<objectlist name="mails">
-					<text label="E-post" key="address"/>
-					<text label="Kontekst" key="context"/>
-				</objectlist>
-				<space height="5"/>
-				<buttons>
-					<button title="Gem" highlighted="true" name="savePerson"/>
-					<button title="Annuller" name="cancelPerson"/>
-				</buttons>
-			</group>
+	<window name="personWindow" title="Person" width="500">
+		<space all="10">
+		<formula name="personFormula">			
+			<horizontal space="10">
+				<content>
+					<group labels="above">
+						<text label="Fornavn" key="givenName"/>
+					</group>
+				</content>
+				<content>
+					<group labels="above">
+						<text label="Mellemnavn" key="additionalName"/>
+					</group>
+				</content>
+				<content>
+					<group labels="above">
+						<text label="Efternavn" key="familyName"/>
+					</group>
+				</content>
+			</horizontal>
+			<horizontal space="10">
+				<content>
+					<group labels="above">
+						<text label="Præfiks" key="namePrefix"/>
+					</group>
+				</content>
+				<content>
+					<group labels="above">
+						<text label="Postfiks" key="nameSuffix"/>
+					</group>
+				</content>
+			</horizontal>
+			<space height="10"/>
+			<horizontal space="10">
+				<content>
+					<group labels="above">
+						<custom>
+						<objectlist name="personEmails">
+							<text label="E-mail" key="address"/>
+							<text label="Kontekst" key="context"/>
+						</objectlist>
+						</custom>
+					</group>
+				</content>
+				<content>
+					<group labels="above">
+						<custom>
+						<objectlist name="personPhones">
+							<text label="Telefonnummer" key="number"/>
+							<text label="Kontekst" key="context"/>
+						</objectlist>
+						</custom>
+					</group>
+				</content>
+			</horizontal>
+			<space height="10"/>
+			<buttons>
+				<button title="Gem" highlighted="true" name="savePerson"/>
+				<button title="Annuller" name="cancelPerson"/>
+			</buttons>
 		</formula>
 		</space>
 	</window>

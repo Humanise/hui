@@ -16,7 +16,12 @@ public class SystemLoader extends HttpServlet {
         String basePath=getServletContext().getRealPath("/");
         log.info("System loader is ignitet");
         log.info("The servlet-context-name is: "+getServletContext().getServletContextName());
-        Core.getInstance().start(basePath,getServletContext());
-        // Create the core so its ready for action
+        try {
+			Core.getInstance().start(basePath,getServletContext());
+		} catch (ConfigurationException e) {
+			log.error(e.getMessage(),e);
+		} catch (ModelException e) {
+			log.error(e.getMessage(),e);
+		}
     }
 }

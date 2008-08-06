@@ -25,5 +25,5 @@ var settingsController = {
 			nameSuffix:nameSuffix.getValue()
 		};
 		CommunityTool.updateUsersMainPerson(person,emails,delegate);
-	},
+	}
 }

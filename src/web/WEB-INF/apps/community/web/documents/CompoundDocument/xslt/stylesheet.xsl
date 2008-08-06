@@ -7,7 +7,7 @@
  xmlns:h="http://uri.onlineobjects.com/model/Item/Entity/HeaderPart/"
  xmlns:p="http://uri.onlineobjects.com/publishing/WebPage/"
  xmlns:doc="http://uri.onlineobjects.com/publishing/Document/CompoundDocument/"
- exclude-result-prefixes="e u p i ig doc h"
+ exclude-result-prefixes="e u p i doc h"
 >	
 	<xsl:output encoding="UTF-8" method="xml" omit-xml-declaration="yes"/>
 	

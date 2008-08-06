@@ -2,7 +2,7 @@
 {
 	width: 34px;
 	height: 33px;
-	background: url('../gfx/logout.png');
+	background: url('../gfx/controls.png') 0px -198px;
 	position: fixed;
 	top: 10px;
 	right: 10px;
@@ -11,14 +11,14 @@
 }
 div.logout:hover
 {
-	background: url('../gfx/logout_hover.png');
+	background-position: 0px -231px;
 }
 
 .private
 {
 	width: 34px;
 	height: 33px;
-	background: url('../gfx/private.png');
+	background: url('../gfx/controls.png') 0px -132px;
 	position: fixed;
 	top: 10px;
 	right: 50px;
@@ -27,14 +27,14 @@ div.logout:hover
 }
 div.private:hover
 {
-	background: url('../gfx/private_hover.png');
+	background-position: 0px -165px;
 }
 
 .activate
 {
 	width: 34px;
 	height: 33px;
-	background: url('../../gfx/activator.png');
+	background: url('../gfx/controls.png');
 	position: fixed;
 	top: 10px;
 	right: 90px;
@@ -43,14 +43,14 @@ div.private:hover
 }
 div.activate:hover
 {
-	background: url('../../gfx/activator_hover.png');
+	background-position: 0px -33px;
 }
 
 .deactivate
 {
 	width: 34px;
 	height: 33px;
-	background: url('../../gfx/deactivator.png');
+	background: url('../gfx/controls.png') 0px -66px;
 	position: fixed;
 	top: 10px;
 	right: 90px;
@@ -60,7 +60,7 @@ div.activate:hover
 
 div.deactivate:hover
 {
-	background: url('../../gfx/deactivator_hover.png');
+	background-position: 0px -99px;
 }
 
 body.editor_mode

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <xsl:stylesheet version="1.0"
+	xmlns="http://www.w3.org/1999/xhtml"
  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
  xmlns:p="http://uri.onlineobjects.com/page/"
  xmlns:e="http://uri.onlineobjects.com/model/Item/Entity/"
@@ -60,17 +61,17 @@
 		<div class="base">
 		<h1>Invitation til OnlineObjects</h1>
 		<p>Hej <xsl:value-of select="p:invited/e:Entity[@type='Item/Entity/Person']/e:name"/>.</p>
-		<p><a href="{$app-context}/{p:inviter/e:Entity/u:User/u:username}/site/"><xsl:value-of select="p:inviter/e:Entity[@type='Item/Entity/Person']/e:name"/></a> har inviteret dig til at blive bruger af OnlineObjects. Systemet kan anvendes til at lave hjemmesider og dele information.</p>
+		<p><a href="{$app-context}/{p:inviter/e:Entity/u:User/u:username}/site/"><xsl:value-of select="p:inviter/e:Entity[@type='Item/Entity/Person']/e:name"/><xsl:comment/></a> har inviteret dig til at blive bruger af OnlineObjects. Systemet kan anvendes til at lave hjemmesider og dele information.</p>
 		<p><xsl:value-of select="p:inviter/e:Entity/ps:Person/ps:givenName"/> har følgende besked til Dem...</p>
 		<blockquote>"<xsl:value-of select="p:message"/>"</blockquote>
 		<p>Bliv bruger med det samme ved at udfylde følgende...</p>
 		<form id="formula">
 			<input type="hidden" name="code" value="{p:code}"/>
-			<label>Brugernavn <span id="username_error"></span></label>
+			<label>Brugernavn <span id="username_error"><xsl:comment/></span></label>
 			<input name="username" type="text" class="text" value=""/>
-			<label>Kodeord <span id="password1_error"></span></label>
+			<label>Kodeord <span id="password1_error"><xsl:comment/></span></label>
 			<input name="password1" type="password" class="password" value=""/>
-			<label>Kodeord igen <span id="password2_error"></span></label>
+			<label>Kodeord igen <span id="password2_error"><xsl:comment/></span></label>
 			<input name="password2" type="password" class="password" value=""/>
 			<input type="submit" class="submit" value="Tilmeld"/>
 		</form>

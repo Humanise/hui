@@ -3,6 +3,10 @@ package dk.in2isoft.onlineobjects.core;
 import java.io.File;
 import java.net.URL;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.TransformerFactory;
+
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.log4j.Logger;
 
@@ -18,6 +22,7 @@ public class Configuration {
 	public Configuration(File baseDir)
 	throws ConfigurationException {
 		this.baseDir = baseDir;
+		testSetup();
 		try {
 	        URL url = this.getClass().getClassLoader().getResource("onlineobjects.cfg.xml");
 			config = new XMLConfiguration(url);
@@ -41,6 +46,12 @@ public class Configuration {
 		} else if (!tempDir.canWrite()) {
 			throw new ConfigurationException("Can not write to the temporary directory");
 		}
+	}
+	
+	public void testSetup() {
+		log.info("Document builder factory: "+DocumentBuilderFactory.newInstance().getClass().getName());
+		log.info("Transformer factory: "+TransformerFactory.newInstance().getClass().getName());
+		log.info("SAX parser factory: "+SAXParserFactory.newInstance().getClass().getName());
 	}
 
 	public String getBaseUrl() {

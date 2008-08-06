@@ -7,7 +7,6 @@ import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelException;
 import dk.in2isoft.onlineobjects.core.ModelFacade;
 import dk.in2isoft.onlineobjects.core.SecurityException;
-import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.ImageGallery;
 import dk.in2isoft.onlineobjects.model.Property;
@@ -19,11 +18,11 @@ public class ImageGalleryRemotingFacade extends AbstractRemotingFacade {
 
 	//private static Logger log = Logger.getLogger(ImageGalleryRemotingFacade.class);
 
-	public List<Entity> listImages(long galleryId)
+	public List<Image> listImages(long galleryId)
 	throws EndUserException {
 		ModelFacade model = getModel();
 		ImageGallery gallery = model.loadEntity(ImageGallery.class, galleryId);
-		List<Entity> subs = model.getSubEntities(gallery, Image.class);
+		List<Image> subs = model.getSubEntities(gallery, Image.class);
 		return subs;
 	}
 

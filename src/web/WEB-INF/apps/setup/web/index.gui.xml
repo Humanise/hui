@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gui xmlns="uri:In2iGui" title="Indstillinger">
+	<dwr base="/dwr/">
+		<interface name="AppSetup"/>
+	</dwr>
+	<controller name="mainController" source="main.js"/>
+	<controller name="controller" source="index.js"/>
+	<view>
+		<toolbar>
+			<icon icon="common/settings" title="Indstillinger" selected="true" name="toolSettings"/>
+			<divider/>
+			<icon icon="common/folder" title="Job" name="toolScheduler"/>
+			<icon icon="common/user" title="Brugere" name="toolUsers" disabled="true"/>
+			<icon icon="common/object" title="Objekter" name="toolModel" disabled="true"/>
+		</toolbar>
+		<content>
+			<space height="20"/>
+			<box width="600">
+				<formula name="formula">
+					<space all="10">
+						<horizontal space="20">
+							<content>
+								<space all="1"/>
+							</content>
+							<content>
+								<header>Skift adgangskode</header>
+								<group labels="above">
+									<password label="Adgangskode" name="password1"/>
+									<password label="Gentag adgangskode" name="password2"/>
+									<buttons>
+									<button title="Skift" name="changePassword"/>
+									</buttons>
+								</group>
+							</content>
+						</horizontal>
+					</space>
+				</formula>
+			</box>
+		</content>
+	</view>
+</gui>

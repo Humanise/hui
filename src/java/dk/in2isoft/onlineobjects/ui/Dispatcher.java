@@ -26,10 +26,10 @@ import org.apache.log4j.Logger;
 
 import com.oreilly.servlet.ServletUtils;
 
+import dk.in2isoft.commons.xml.XSLTUtil;
 import dk.in2isoft.in2igui.In2iGui;
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
 import dk.in2isoft.onlineobjects.apps.ApplicationManager;
-import dk.in2isoft.onlineobjects.core.ConfigurationException;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.SecurityException;
@@ -65,6 +65,7 @@ public class Dispatcher implements Filter {
 		mimeTypes.put("gif", "image/gif");
 		mimeTypes.put("jpg", "image/jpeg");
 		mimeTypes.put("jpeg", "image/jpeg");
+		mimeTypes.put("swf", "application/x-shockwave-flash");
 	}
 
 	public void doFilter(ServletRequest sRequest, ServletResponse sResponse, FilterChain chain) throws IOException,
@@ -84,12 +85,25 @@ public class Dispatcher implements Filter {
 					req.getString("password"));
 		}
 		String[] path = req.getFullPath();
+		/*
+		 * log.info("path: "+Arrays.toString(path));
+		 * log.info("uri: "+request.getRequestURI());
+		 * log.info("url: "+request.getRequestURL());
+		 * log.info("user: "+req.getSession().getUser().getName());
+		 */
 		if (path.length > 0 && path[0].equals("dwr")) {
 			if (simulateDelay) {
 				delay(path.toString());
 			}
 			chain.doFilter(sRequest, sResponse);
 			shouldCommit = true;
+		} else if (path.length > 0 && path[0].equals("core")) {
+			String[] filePath = new String[] { "core", "web" };
+			if (!pushCoreFile((String[]) ArrayUtils.addAll(filePath, ArrayUtils.subarray(path, 1, path.length)),
+					response)) {
+				displayError(req, new EndUserException("Not found"));
+			}
+
 		} else if (path.length > 0 && path[0].equals("In2iGui")) {
 			StringBuilder file = new StringBuilder();
 			file.append(In2iGui.getInstance().getPath());
@@ -97,7 +111,12 @@ public class Dispatcher implements Filter {
 				file.append(File.separatorChar);
 				file.append(path[i]);
 			}
-			push(response, new File(file.toString()));
+			File fileObj = new File(file.toString());
+			if (fileObj.exists()) {
+				push(response, fileObj);
+			} else {
+				response.sendError(HttpServletResponse.SC_NOT_FOUND);
+			}
 			// chain.doFilter(sRequest, sResponse);
 		} else if (path.length > 0 && reserved.contains(path[0])) {
 			chain.doFilter(sRequest, sResponse);
@@ -130,6 +149,7 @@ public class Dispatcher implements Filter {
 	}
 
 	private void ensureSession(HttpServletRequest request) throws dk.in2isoft.onlineobjects.core.SecurityException {
+		// log.info("Session valid: "+request.isRequestedSessionIdValid());
 		HttpSession session = request.getSession();
 		if (session.getAttribute(UserSession.SESSION_ATTRIBUTE) == null) {
 			session.setAttribute(UserSession.SESSION_ATTRIBUTE, new UserSession());
@@ -137,7 +157,7 @@ public class Dispatcher implements Filter {
 	}
 
 	private void callApplication(String application, Request request) throws IOException {
-		ApplicationController controller = ApplicationManager.getInstance().getToolController("community");
+		ApplicationController controller = ApplicationManager.getInstance().getToolController(application);
 		String[] path = request.getLocalPath();
 		try {
 			if (controller == null) {
@@ -147,7 +167,7 @@ public class Dispatcher implements Filter {
 				try {
 					callApplicationMethod(controller, path[0], request);
 				} catch (NoSuchMethodException e) {
-					String[] filePath = new String[] { "app", "community" };
+					String[] filePath = new String[] { "app", application };
 					if (!pushFile((String[]) ArrayUtils.addAll(filePath, path), request.getResponse())) {
 						controller.unknownRequest(request);
 					}
@@ -160,7 +180,6 @@ public class Dispatcher implements Filter {
 		} catch (EndUserException e) {
 			displayError(request, e);
 		}
-
 	}
 
 	private void callApplicationMethod(ApplicationController controller, String methodName, Request request)
@@ -195,27 +214,41 @@ public class Dispatcher implements Filter {
 	}
 
 	private void displayError(Request request, Exception ex) {
+		log.error(ex.toString(), ex);
+		ErrorRenderer renderer = new ErrorRenderer(ex);
 		try {
-			EndUserException e;
-			if (ex instanceof EndUserException) {
-				e = (EndUserException) ex;
-			} else if (ex.getCause() instanceof EndUserException) {
-				e = (EndUserException) ex.getCause();
-			} else {
-				e = new EndUserException("Undocumented exception", ex);
-			}
-			log.error(ex.getMessage(), ex);
-			ErrorDisplayer gui = new ErrorDisplayer();
-			gui.setEndUSerException(e);
-			gui.display(request);
+			XSLTUtil.applyXSLT(renderer, request);
 		} catch (EndUserException e) {
-
+			log.error(e.toString(), e);
 		} catch (IOException e) {
-
+			log.error(e.toString(), e);
 		}
 	}
 
-	private boolean pushFile(String[] path, HttpServletResponse response) throws ConfigurationException {
+	private boolean pushCoreFile(String[] path, HttpServletResponse response) {
+		boolean success = false;
+		StringBuilder filePath = new StringBuilder();
+		filePath.append(Core.getInstance().getConfiguration().getBaseDir());
+		filePath.append(File.separator);
+		filePath.append("WEB-INF");
+		for (int i = 0; i < path.length; i++) {
+			filePath.append(File.separator);
+			filePath.append(path[i]);
+		}
+		File file = new File(filePath.toString());
+		// log.info(file.getAbsolutePath());
+		if (file.exists()) {
+			try {
+				push(response, file);
+				success = true;
+			} catch (Exception e) {
+				log.error(e.toString(), e);
+			}
+		}
+		return success;
+	}
+
+	private boolean pushFile(String[] path, HttpServletResponse response) {
 		boolean success = false;
 		StringBuilder filePath = new StringBuilder();
 		filePath.append(Core.getInstance().getConfiguration().getBaseDir());
@@ -244,7 +277,8 @@ public class Dispatcher implements Filter {
 		return success;
 	}
 
-	public void push(HttpServletResponse response, File file) throws FileNotFoundException, IOException {
+	public void push(HttpServletResponse response, File file) throws IOException {
+
 		if (!true) {
 			// Set to expire far in the past.
 			response.setHeader("Expires", "Sat, 6 May 1995 12:00:00 GMT");
