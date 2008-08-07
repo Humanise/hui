@@ -17,6 +17,7 @@ import org.apache.log4j.Logger;
 import dk.in2isoft.commons.util.GraphUtil;
 import dk.in2isoft.commons.util.ImageUtil;
 import dk.in2isoft.commons.xml.XSLTUtil;
+import dk.in2isoft.in2igui.FileBasedInterface;
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
 import dk.in2isoft.onlineobjects.apps.ApplicationSession;
 import dk.in2isoft.onlineobjects.core.Core;
@@ -60,7 +61,10 @@ public class CommunityController extends ApplicationController {
 	@Override
 	public void unknownRequest(Request request) throws IOException, EndUserException {
 		log.debug(Arrays.toString(request.getLocalPath()));
-		if (request.testLocalPathStart(new String[] { null })) {
+		if (request.testLocalPathStart("iphone")) {
+			FileBasedInterface ui = new FileBasedInterface(getFile("iphone","index.gui.xml"));
+			ui.render(request.getRequest(), request.getResponse());
+		} else if (request.testLocalPathStart(new String[] { null })) {
 			handleUser(request);
 		} else {
 			XSLTInterface ui = new FrontPage(this, request);

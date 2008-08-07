@@ -33,6 +33,11 @@
 		<script type='text/javascript' src='{$base-context}/dwr/interface/CommunityTool.js'><xsl:comment/></script>
 		<script type='text/javascript' src='{$base-context}/dwr/engine.js'><xsl:comment/></script>
 		<script src="{$app-context}/js/front.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<xsl:if test="$development-mode='true'">
+			<script type='text/javascript'>
+			OO.Community.Front.allowIE = true;
+			</script>
+		</xsl:if>
 	</xsl:template>
 	
 	<xsl:template match="p:page">
@@ -147,6 +152,7 @@
 						Designet og udviklet af <a href="http://www.in2isoft.dk/" class="link"><span>In2iSoft</span></a>
    						&#160;·&#160;<a href="http://validator.w3.org/check?uri=referer" class="link"><span>XHTML 1.0 Strict</span></a>
 						&#160;·&#160;<a href="http://jigsaw.w3.org/css-validator/validator?uri=http%3A%2F%2Fcommunity.onlineobjects.com%2F&amp;warning=1&amp;profile=css3&amp;usermedium=all" class="link"><span>CSS 2.1</span></a>
+   						&#160;·&#160;<a href="iphone/" class="link"><span>iPhone version</span></a>
 				</div>
 				<xsl:call-template name="scripts"/>
 			</body>

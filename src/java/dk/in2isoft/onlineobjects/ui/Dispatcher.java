@@ -266,7 +266,7 @@ public class Dispatcher implements Filter {
 		}
 		File file = new File(filePath.toString());
 		// log.info(file.getAbsolutePath());
-		if (file.exists()) {
+		if (file.exists() && !file.isDirectory()) {
 			try {
 				push(response, file);
 				success = true;
@@ -300,15 +300,7 @@ public class Dispatcher implements Filter {
 			}
 			ServletUtils.returnFile(file.getPath(), out);
 		} catch (FileNotFoundException e) {
-			try {
-				response.getWriter().print("File: " + file.getPath() + " not found!");
-			} catch (IOException ignore) {
-			}
-		} catch (IOException e) {
-			try {
-				response.getWriter().print("File: " + file.getPath() + " not found!");
-			} catch (IOException ignore) {
-			}
+			throw new IOException("File: " + file.getPath() + " not found!");
 		}
 	}
 

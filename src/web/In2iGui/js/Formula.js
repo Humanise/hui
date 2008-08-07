@@ -1,7 +1,7 @@
 In2iGui.Formula = function(id,name) {
 	this.id = id;
 	this.name = name;
-	this.element = $id(id);
+	this.element = $(id);
 	this.inputs = [];
 	this.children = [];
 	this.addBehavior();
@@ -60,34 +60,40 @@ In2iGui.Formula.prototype = {
 		}
 	},
 	addContent : function(node) {
-		this.element.appendChild(node);
+		this.element.insert(node);
+	},
+	add : function(widget) {
+		this.element.insert(widget.getElement());
 	}
 }
 
 /********************** Group **********************/
 
 
-In2iGui.Formula.Group = function(elementOrId,name,opts) {
+In2iGui.Formula.Group = function(elementOrId,name,options) {
 	this.name = name;
 	this.element = $(elementOrId);
-	this.options = {above:true};
-	N2i.override(this.options,opts);
+	this.body = this.element.select('tbody')[0];
+	this.options = N2i.override({above:true},options);
 	In2iGui.extend(this);
 }
 
-In2iGui.Formula.Group.create = function(name,opts) {
-	var options = {};
-	N2i.override(options,opts);
+In2iGui.Formula.Group.create = function(name,options) {
+	options = N2i.override({above:true},options);
 	var element = new Element('table',
 		{'class':'in2igui_formula_group'}
 	);
+	if (options.above) {
+		element.addClassName('in2igui_formula_group_above');
+	}
+	element.insert(new Element('tbody'));
 	return new In2iGui.Formula.Group(element,name,options);
 }
 
 In2iGui.Formula.Group.prototype = {
 	add : function(widget) {
 		var tr = new Element('tr');
-		this.element.insert(tr);
+		this.body.insert(tr);
 		var label = widget.getLabel();
 		if (label) {
 			var th = new Element('th');
@@ -97,8 +103,8 @@ In2iGui.Formula.Group.prototype = {
 		var td = new Element('td');
 		td.insert(widget.getElement());
 		if (this.options.above) {
-			var tr = new Element('tr');
-			this.element.insert(tr);
+			tr = new Element('tr');
+			this.body.insert(tr);
 		}
 		tr.insert(td);
 	}

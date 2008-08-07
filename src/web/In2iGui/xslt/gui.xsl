@@ -8,6 +8,7 @@
     >
 
 
+<xsl:include href="iphone.xsl"/>
 <xsl:include href="tabbox.xsl"/>
 <xsl:include href="layout.xsl"/>
 <xsl:include href="formula.xsl"/>

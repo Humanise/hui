@@ -1,7 +1,8 @@
 html
 {
-	min-height: 100%;
+	height: 100%;
 }
+
 body.in2igui
 {
 	margin: 0px;

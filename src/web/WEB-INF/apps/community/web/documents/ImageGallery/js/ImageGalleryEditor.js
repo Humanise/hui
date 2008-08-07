@@ -297,7 +297,7 @@ OO.Editor.ImageGallery.prototype = {
 			var formula = In2iGui.Formula.create();
 			panel.add(formula);
 			var group = In2iGui.Formula.Group.create();
-			formula.addContent(group.getElement());
+			formula.add(group);
 
 			var title = In2iGui.Formula.Text.create('imageEditorTitle',{label:'Titel'});
 			group.add(title);

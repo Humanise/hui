@@ -7213,6 +7213,11 @@ In2iGui.latestIndex=500;
 In2iGui.latestPanelIndex=1000;
 In2iGui.latestAlertIndex=1500;
 
+In2iGui.browser = {};
+In2iGui.browser.msie7 = navigator.userAgent.indexOf('MSIE 7')!=-1;
+In2iGui.browser.webkit = navigator.userAgent.indexOf('WebKit')!=-1;
+In2iGui.browser.gecko = !In2iGui.browser.webkit && navigator.userAgent.indexOf('Gecko')!=-1;
+
 In2iGui.get = function(name) {
 	if (!In2iGui.instance) {
 		In2iGui.instance = new In2iGui();
@@ -7833,6 +7838,7 @@ In2iGui.Window.prototype = {
 		var self = this;
 		this.close.observe('click',function() {self.hide();});
 		this.titlebar.onmousedown = function(e) {self.startDrag(e);return false;};
+		this.titlebar.observe('touchstart',function(e) {self.startDrag(e);return false;});
 	},
 	setTitle : function(title) {
 		this.title.update(title);
@@ -7918,7 +7924,7 @@ In2iGui.Window.prototype = {
 /* EOF */In2iGui.Formula = function(id,name) {
 	this.id = id;
 	this.name = name;
-	this.element = $id(id);
+	this.element = $(id);
 	this.inputs = [];
 	this.children = [];
 	this.addBehavior();
@@ -7977,34 +7983,40 @@ In2iGui.Formula.prototype = {
 		}
 	},
 	addContent : function(node) {
-		this.element.appendChild(node);
+		this.element.insert(node);
+	},
+	add : function(widget) {
+		this.element.insert(widget.getElement());
 	}
 }
 
 /********************** Group **********************/
 
 
-In2iGui.Formula.Group = function(elementOrId,name,opts) {
+In2iGui.Formula.Group = function(elementOrId,name,options) {
 	this.name = name;
 	this.element = $(elementOrId);
-	this.options = {above:true};
-	N2i.override(this.options,opts);
+	this.body = this.element.select('tbody')[0];
+	this.options = N2i.override({above:true},options);
 	In2iGui.extend(this);
 }
 
-In2iGui.Formula.Group.create = function(name,opts) {
-	var options = {};
-	N2i.override(options,opts);
+In2iGui.Formula.Group.create = function(name,options) {
+	options = N2i.override({above:true},options);
 	var element = new Element('table',
 		{'class':'in2igui_formula_group'}
 	);
+	if (options.above) {
+		element.addClassName('in2igui_formula_group_above');
+	}
+	element.insert(new Element('tbody'));
 	return new In2iGui.Formula.Group(element,name,options);
 }
 
 In2iGui.Formula.Group.prototype = {
 	add : function(widget) {
 		var tr = new Element('tr');
-		this.element.insert(tr);
+		this.body.insert(tr);
 		var label = widget.getLabel();
 		if (label) {
 			var th = new Element('th');
@@ -8014,8 +8026,8 @@ In2iGui.Formula.Group.prototype = {
 		var td = new Element('td');
 		td.insert(widget.getElement());
 		if (this.options.above) {
-			var tr = new Element('tr');
-			this.element.insert(tr);
+			tr = new Element('tr');
+			this.body.insert(tr);
 		}
 		tr.insert(td);
 	}
@@ -10579,6 +10591,7 @@ In2iGui.Editor.prototype = {
 	reloadParts : function(parts,row,column) {
 		var self = this;
 		parts.each(function(element,partIndex) {
+			if (!element) return;
 			var match = element.className.match(/part_([\w]+)/i);
 			if (match && match[1]) {
 				var handler = self.getPartController(match[1]);
@@ -10906,6 +10919,7 @@ In2iGui.Editor.Html = function(element,row,column,position) {
 In2iGui.Editor.Html.prototype = {
 	activate : function() {
 		this.value = this.element.innerHTML;
+		if (Prototype.Browser.IE) return;
 		var height = this.element.getHeight();
 		this.element.update('');
 		this.editor = In2iGui.RichText.create(null,{autoHideToolbar:false});
@@ -10922,6 +10936,7 @@ In2iGui.Editor.Html.prototype = {
 	},
 	save : function() {
 		this.deactivate();
+		if (Prototype.Browser.IE) return;
 		var value = this.editor.value;
 		if (value!=this.value) {
 			this.value = value;
@@ -10930,7 +10945,9 @@ In2iGui.Editor.Html.prototype = {
 		this.element.innerHTML = this.value;
 	},
 	deactivate : function() {
-		this.editor.deactivate();
+		if (!Prototype.Browser.IE) {
+			this.editor.deactivate();
+		}
 		In2iGui.Editor.get().partDidDeacivate(this);
 	},
 	richTextDidChange : function() {

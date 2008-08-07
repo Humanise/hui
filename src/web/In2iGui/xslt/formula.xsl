@@ -27,13 +27,13 @@
 </xsl:template>
 
 <xsl:template match="gui:formula//gui:group">
-	<table class="group">
+	<table class="in2igui_formula_group">
 		<xsl:apply-templates/>
 	</table>
 </xsl:template>
 
 <xsl:template match="gui:formula//gui:group[@labels='above']">
-	<table class="group group_above">
+	<table class="in2igui_formula_group in2igui_formula_group_above">
 		<xsl:apply-templates/>
 	</table>
 </xsl:template>

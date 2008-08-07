@@ -1,7 +1,8 @@
 html
 {
-	min-height: 100%;
+	height: 100%;
 }
+
 body.in2igui
 {
 	margin: 0px;
@@ -475,6 +476,7 @@ div.in2igui_infoview_click:hover
 	padding: 0px;
 	margin: 0px;
 	overflow-x: auto;
+	min-height: 100px;
 }
 
 .in2igui_formula_header
@@ -484,13 +486,13 @@ div.in2igui_infoview_click:hover
 	padding-bottom: 5px;
 }
 
-form.in2igui_formula table.group
+table.in2igui_formula_group
 {
 	border-spacing: 4px 4px;
 	width: 100%;
 }
 
-form.in2igui_formula table.group_above
+table.in2igui_formula_group_above
 {
 	border-spacing: 2px;
 }
@@ -501,7 +503,7 @@ form.in2igui_formula table.split
 	border-spacing: 5px 0px;
 }
 
-form.in2igui_formula table.group label
+table.in2igui_formula_group label
 {
 	color: #004A80;
 	text-align: right;
@@ -510,19 +512,19 @@ form.in2igui_formula table.group label
 	font-weight: normal;
 }
 
-form.in2igui_formula table.group_above label
+table.in2igui_formula_group_above label
 {
 	display: block;
 	text-align: left;
 	line-height: 15px;
 }
 
-form.in2igui_formula table.group th label
+table.in2igui_formula_group th label
 {
 	font-size: 9pt;
 }
 
-form.in2igui_formula table.group th
+table.in2igui_formula_group th
 {
 	width: 1%;
 	vertical-align: top;
@@ -705,7 +707,7 @@ input.in2igui_tokens_token
 
 
 
-div.in2igui_window_dark form.in2igui_formula table.group label
+div.in2igui_window_dark table.in2igui_formula_group label
 {
 	color: #fff;
 }

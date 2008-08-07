@@ -11,6 +11,11 @@ In2iGui.latestIndex=500;
 In2iGui.latestPanelIndex=1000;
 In2iGui.latestAlertIndex=1500;
 
+In2iGui.browser = {};
+In2iGui.browser.msie7 = navigator.userAgent.indexOf('MSIE 7')!=-1;
+In2iGui.browser.webkit = navigator.userAgent.indexOf('WebKit')!=-1;
+In2iGui.browser.gecko = !In2iGui.browser.webkit && navigator.userAgent.indexOf('Gecko')!=-1;
+
 In2iGui.get = function(name) {
 	if (!In2iGui.instance) {
 		In2iGui.instance = new In2iGui();

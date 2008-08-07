@@ -72,6 +72,7 @@ In2iGui.Editor.prototype = {
 	reloadParts : function(parts,row,column) {
 		var self = this;
 		parts.each(function(element,partIndex) {
+			if (!element) return;
 			var match = element.className.match(/part_([\w]+)/i);
 			if (match && match[1]) {
 				var handler = self.getPartController(match[1]);
@@ -399,6 +400,7 @@ In2iGui.Editor.Html = function(element,row,column,position) {
 In2iGui.Editor.Html.prototype = {
 	activate : function() {
 		this.value = this.element.innerHTML;
+		if (Prototype.Browser.IE) return;
 		var height = this.element.getHeight();
 		this.element.update('');
 		this.editor = In2iGui.RichText.create(null,{autoHideToolbar:false});
@@ -415,6 +417,7 @@ In2iGui.Editor.Html.prototype = {
 	},
 	save : function() {
 		this.deactivate();
+		if (Prototype.Browser.IE) return;
 		var value = this.editor.value;
 		if (value!=this.value) {
 			this.value = value;
@@ -423,7 +426,9 @@ In2iGui.Editor.Html.prototype = {
 		this.element.innerHTML = this.value;
 	},
 	deactivate : function() {
-		this.editor.deactivate();
+		if (!Prototype.Browser.IE) {
+			this.editor.deactivate();
+		}
 		In2iGui.Editor.get().partDidDeacivate(this);
 	},
 	richTextDidChange : function() {

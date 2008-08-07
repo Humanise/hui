@@ -32,6 +32,7 @@ In2iGui.Window.prototype = {
 		var self = this;
 		this.close.observe('click',function() {self.hide();});
 		this.titlebar.onmousedown = function(e) {self.startDrag(e);return false;};
+		this.titlebar.observe('touchstart',function(e) {self.startDrag(e);return false;});
 	},
 	setTitle : function(title) {
 		this.title.update(title);

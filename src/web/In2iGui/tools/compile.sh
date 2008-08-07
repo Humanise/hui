@@ -10,5 +10,12 @@ java -jar yuicompressor-2.2.4.jar ../lib/prototype.js --charset UTF-8 -o ../lib/
 java -jar yuicompressor-2.2.4.jar ../js/combined.js --charset UTF-8 -o ../js/minimized.js
 java -jar yuicompressor-2.2.4.jar ${CSS_PATH}combined.css --charset UTF-8 -o ${CSS_PATH}minimized.css
 
+
 #java -jar jsdoc-toolkit/jsrun.jar jsdoc-toolkit/app/run.js -a -t=jsdoc-toolkit/templates/jsdoc ../js/combined.js 
 perl jsdoc/jsdoc.pl -d ../docs ../js/combined.js
+
+#iphone 
+java -jar yuicompressor-2.2.4.jar ../iphone/css/iphone.css --charset UTF-8 -o ../iphone/css/iphone.min.css
+
+cat ../lib/In2iScripts/In2iScripts.js ../lib/prototype.js ../js/In2iGui.js ../iphone/js/In2iPhone.js > ../iphone/js/combined.js
+java -jar yuicompressor-2.2.4.jar ../iphone/js/combined.js --charset UTF-8 -o ../iphone/js/minimized.js

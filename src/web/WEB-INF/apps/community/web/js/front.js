@@ -109,12 +109,12 @@ OO.Community.Front.prototype = {
 			}
 		}
 		this.loginForm.onsubmit = function() {
-			if (Prototype.Browser.IE) {
+			if (!In2iGui.browser.gecko && !In2iGui.browser.webkit && !In2iGui.browser.msie7) {
 				In2iGui.get().alert({
-					title:'Internet Explorer er ikke understøttet',
-					text:'Vi arbejder hårdt på at få systemet til at virke med Internet Explorer 7. '+
-					'Indtil videre kan De anvende Firefox eller Safari. Vi vil iøvrigt anbefale at '+
-					'anvende en af disse browsere da de er hurtigere og mere stabile end InternetExplorer.',
+					title:'Den webbrowser De anvender er ikke understøttet.',
+					text:''+
+					'De kan anvende enten Internet Explorer 7, Firefox 2+ eller Safari 3+. Vi vil iøvrigt anbefale at '+
+					'anvende enten FireFox eller Safari da disse er hurtigere og mere stabile end InternetExplorer.',
 					emotion:'gasp'
 				});
 				return false;

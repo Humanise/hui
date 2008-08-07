@@ -82,12 +82,14 @@ OO.Editor.prototype.buildActivator = function() {
 	};
 	document.body.appendChild(this.logout);
 	
-	this.private = document.createElement('div');
-	this.private.className='private';
-	this.private.onclick = function() {
-		self.goPrivate()
-	};
-	document.body.appendChild(this.private);
+	if (In2iGui.browser.gecko || In2iGui.browser.webkit) {
+		this.private = document.createElement('div');
+		this.private.className='private';
+		this.private.onclick = function() {
+			self.goPrivate()
+		};
+		document.body.appendChild(this.private);
+	}
 }
 
 OO.Editor.prototype.removeActivator = function() {
