@@ -2,6 +2,8 @@ package dk.in2isoft.onlineobjects.pipes;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Map;
 
 public class PipelineContext {
@@ -33,6 +35,10 @@ public class PipelineContext {
 		pipeline.info(stage, msg);
 	}
 
+	public void debug(PipelineStage stage, String msg) {
+		pipeline.debug(stage, msg);
+	}
+
 	public void forwardMappedLineKeys(String[] keys) {
 		PipelineStage next = pipeline.getNextStage(index);
 		try {
@@ -41,8 +47,17 @@ public class PipelineContext {
 			e.printStackTrace();
 		}
 	}
+	
+	public void forwardResultSet(ResultSet rs) throws SQLException {
+		PipelineStage next = pipeline.getNextStage(index);
+		next.receiveResultSet(rs);
+	}
 
 	public void warn(PipelineStage stage, String msg) {
 		pipeline.warn(stage, msg);
+	}
+
+	public void error(Exception e) {
+		pipeline.error(e);
 	}
 }

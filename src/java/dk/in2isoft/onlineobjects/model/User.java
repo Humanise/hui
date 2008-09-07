@@ -5,7 +5,7 @@ import dk.in2isoft.onlineobjects.core.Priviledged;
 public class User extends Entity implements Priviledged {
 
 	private static String ICON = "Element/User";
-	public static String TYPE = "Entity/User";
+	public static String TYPE = Entity.TYPE+"/User";
 	public static String NAMESPACE = Entity.NAMESPACE+"User/";
 	
 	private String username;

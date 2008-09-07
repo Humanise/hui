@@ -30,7 +30,7 @@ public class EntityWindow extends Window {
 			"<dt>Last name:</dt><dd>"+p.getFamilyName()+"</dd>"+
 			"</dl><ul>");
 			try {
-				List<Relation> subRelations = Core.getInstance().getModel().getSubRelations(p);
+				List<Relation> subRelations = Core.getInstance().getModel().getChildRelations(p);
 				for (Iterator<Relation> iter = subRelations.iterator(); iter.hasNext();) {
 					Relation element = iter.next();
 					html.append("<li>"+element.getSubEntity().getClass().getCanonicalName()+"</li>");
@@ -54,14 +54,14 @@ public class EntityWindow extends Window {
 			props.add(new WindowProperty("Name",entity.getName()));
 		}
 		try {
-			List<Relation> subRelations = Core.getInstance().getModel().getSubRelations(entity);
+			List<Relation> subRelations = Core.getInstance().getModel().getChildRelations(entity);
 			for (Iterator<Relation> iter = subRelations.iterator(); iter.hasNext();) {
 				Relation element = iter.next();
 				WindowProperty prop = new WindowProperty(getBadge(element.getSubEntity()),element.getSubEntity().getName());
 				prop.setEntityId(element.getSubEntity().getId());
 				props.add(prop);
 			}
-			List<Relation> superRelations = Core.getInstance().getModel().getSuperRelations(entity);
+			List<Relation> superRelations = Core.getInstance().getModel().getParentRelations(entity);
 			for (Iterator<Relation> iter = superRelations.iterator(); iter.hasNext();) {
 				Relation element = iter.next();
 				WindowProperty prop = new WindowProperty(getBadge(element.getSuperEntity()),element.getSuperEntity().getName());

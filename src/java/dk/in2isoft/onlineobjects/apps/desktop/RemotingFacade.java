@@ -29,7 +29,7 @@ public class RemotingFacade extends AbstractRemotingFacade {
 	public Window getEntityWindow(Long id) {
 		try {
 			ModelFacade model = Core.getInstance().getModel();
-			Entity entity = model.loadEntity(Entity.class,id);
+			Entity entity = model.get(Entity.class,id);
 			return new EntityWindow(entity);
 		} catch (ModelException e) {
 			return null;

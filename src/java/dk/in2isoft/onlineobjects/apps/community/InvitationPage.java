@@ -5,7 +5,6 @@ import java.util.List;
 
 import nu.xom.Attribute;
 import nu.xom.Element;
-import dk.in2isoft.onlineobjects.core.AbstractModelQuery;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelFacade;
@@ -37,18 +36,18 @@ public class InvitationPage extends XSLTInterfaceAdapter {
 
 		ModelFacade model = Core.getInstance().getModel();
 		String code = request.getString("code");
-		AbstractModelQuery<Invitation> query = new Query<Invitation>(Invitation.class).withFieldValue("code", code);
+		Query<Invitation> query = new Query<Invitation>(Invitation.class).withFieldValue("code", code);
 		List<Invitation> items = model.search(query);
 		if (items.size() > 0) {
 			invitation = items.get(0);
 			// Get inviter
-			inviterUser = (User) model.getFirstSuperEntity(invitation, User.class);
+			inviterUser = (User) model.getParent(invitation, User.class);
 			// Get person of inviter
-			inviterPerson = (Person) model.getFirstSubEntity(inviterUser, Person.class);
+			inviterPerson = (Person) model.getChild(inviterUser, Person.class);
 			// Get invited
-			person = (Person) model.getFirstSubEntity(invitation, Person.class);
+			person = (Person) model.getChild(invitation, Person.class);
 			// Get mail of invited
-			email = (EmailAddress) model.getFirstSubEntity(person, EmailAddress.class);
+			email = (EmailAddress) model.getChild(person, EmailAddress.class);
 		}
 	}
 

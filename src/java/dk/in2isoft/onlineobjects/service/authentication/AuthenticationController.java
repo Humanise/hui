@@ -1,55 +1,48 @@
 package dk.in2isoft.onlineobjects.service.authentication;
 
-import java.io.File;
 import java.io.IOException;
 
-import dk.in2isoft.commons.http.FilePusher;
-import dk.in2isoft.commons.util.ImageUtil;
+import org.apache.log4j.Logger;
+
+import dk.in2isoft.commons.lang.LangUtil;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
-import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.service.ServiceController;
 import dk.in2isoft.onlineobjects.ui.Request;
 
 public class AuthenticationController extends ServiceController {
 
-	// private static Logger log = Logger.getLogger(ImageController.class);
+	private static Logger log = Logger.getLogger(AuthenticationController.class);
 
 	public AuthenticationController() {
-		super();
+		super("authentication");
 	}
 
 	@Override
 	public void unknownRequest(Request request) throws IOException, EndUserException {
-		process(request);
+		new LoginPage(this,request).display(request);
 	}
 
-	private void process(Request request) throws IOException, EndUserException {
-		long id = request.getLong("id");
-		int thumbnail = request.getInt("thumbnail");
-		int width = request.getInt("width");
-		int height = request.getInt("height");
-		boolean cropped = request.getBoolean("cropped");
-		Image image = (Image) Core.getInstance().getModel().loadEntity(Image.class, id);
-		if (image == null) {
-			throw new EndUserException("Could not load image with id=" + id);
-		}
-		File file = image.getImageFile();
-		String mime = image.getContentType();
-		if (thumbnail > 0) {
-			file = ImageUtil.getThumbnail(image, thumbnail);
-			mime = "image/jpeg";
-		} else if (width>0 && height>0) {
-			if (cropped) {
-				file = ImageUtil.getCroppedThumbnail(image, width, height);
+	public void authenticate(Request request) throws IOException, EndUserException {
+		String username = request.getString("username");
+		String password = request.getString("password");
+		String redirect = request.getString("redirect");
+		boolean success = Core.getInstance().getSecurity().changeUser(request.getSession(), username, password);
+		log.debug(success);
+		if (success) {
+			if (LangUtil.isDefined(redirect)) {
+				request.redirectFromBase(redirect);
 			} else {
-				file = ImageUtil.getThumbnail(image, width, height);
+				request.redirect(".?action=loggedIn");
 			}
-			mime = "image/jpeg";
+		} else {
+			request.redirect(".?action=invalidLogin&redirect="+redirect);
 		}
-		FilePusher pusher = new FilePusher(file);
-		pusher.setClientSideCaching(true);
-		pusher.push(request.getResponse(), mime);
 	}
+	
 
+	public void logout(Request request) throws IOException, EndUserException {
+		Core.getInstance().getSecurity().logOut(request.getSession());
+		request.redirect(".?action=loggedOut");
+	}
 }

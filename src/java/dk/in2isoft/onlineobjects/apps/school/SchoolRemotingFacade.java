@@ -9,6 +9,8 @@ import java.util.Locale;
 
 import org.apache.commons.lang.time.DateFormatUtils;
 
+import com.google.common.collect.Lists;
+
 import dk.in2isoft.in2igui.data.EventData;
 import dk.in2isoft.in2igui.data.InfoViewData;
 import dk.in2isoft.in2igui.data.ObjectData;
@@ -27,12 +29,12 @@ public class SchoolRemotingFacade extends AbstractRemotingFacade {
 
 	public Collection<EventData> getEvents(Date from, Date to) throws EndUserException {
 		User user = getUserSession().getUser();
-		Person person = getModel().getFirstSubRelation(user, Relation.KIND_SYSTEM_USER_SELF, Person.class);
+		Person person = getModel().getChild(user, Relation.KIND_SYSTEM_USER_SELF, Person.class);
 		if (person==null) {
 			throw new EndUserException("The current user does not have a person");
 		}
 		
-		Collection<EventData> data = new ArrayList<EventData>();
+		Collection<EventData> data = Lists.newArrayList();
 		Query<Event> query = Query.ofType(Event.class).withFieldValueMoreThan(Event.FIELD_STARTTIME, from).withFieldValueLessThan(Event.FIELD_ENDTIME, to).withChild(person);
 		List<Event> list = getModel().search(query);
 		for (Event event : list) {
@@ -41,7 +43,16 @@ public class SchoolRemotingFacade extends AbstractRemotingFacade {
 			eventData.setStartTime(event.getStartTime());
 			eventData.setEndTime(event.getEndTime());
 			eventData.setText(event.getName());
-			eventData.setLocation(event.getLocation());
+			String location = event.getLocation();
+			/*Person organizer = getModel().getFirstSubRelation(event,Relation.KIND_EVENT_ORGANIZER, Person.class);
+			if (organizer!=null) {
+				User orgUser = getModel().getFirstSuperRelation(organizer,Relation.KIND_SYSTEM_USER_SELF, User.class);
+				if (orgUser!=null) {
+					location+=" ("+orgUser.getUsername()+")";
+				}
+			}*/
+			eventData.setLocation(location);
+			
 			data.add(eventData);
 		}
 		return data;
@@ -53,17 +64,17 @@ public class SchoolRemotingFacade extends AbstractRemotingFacade {
 	
 	public InfoViewData getEventInfo(long id) throws ModelException {
 		InfoViewData data = new InfoViewData();
-		Event event = getModel().loadEntity(Event.class, id);
+		Event event = getModel().get(Event.class, id);
 		data.addHeader(event.getName());
 		
 		data.addProperty("Start:",formatDate(event.getStartTime()));
 		data.addProperty("Slut:",formatDate(event.getEndTime()));
 		data.addProperty("Lokation:",event.getLocation());
-		
-		List<Entity> organizers = getModel().getSubEntities(event, Relation.KIND_EVENT_ORGANIZER, getUserSession());
+
+		List<Entity> organizers = getModel().getChildren(event, Relation.KIND_EVENT_ORGANIZER);
 		data.addObjects("Underviser:", convertToObject(organizers));
 
-		List<Entity> attendees = getModel().getSubEntities(event, Relation.KIND_EVENT_ATTENDEE, getUserSession());
+		List<Entity> attendees = getModel().getChildren(event, Relation.KIND_EVENT_ATTENDEE);
 		data.addObjects("Elever:", convertToObject(attendees));
 		
 		return data;
@@ -78,7 +89,7 @@ public class SchoolRemotingFacade extends AbstractRemotingFacade {
 	}
 
 	public Collection<EventData> getEntityHistory(Date from, Date to) {
-		Collection<EventData> data = new ArrayList<EventData>();
+		Collection<EventData> data = Lists.newArrayList();
 		Query<Entity> query = new Query<Entity>(Entity.class).withCreatedFrom(from).withCreatedTo(to);
 		List<Entity> list = getModel().search(query);
 		for (Entity entity : list) {
@@ -95,9 +106,9 @@ public class SchoolRemotingFacade extends AbstractRemotingFacade {
 	}
 	
 	public boolean changeToUserOfPerson(long id) throws ModelException {
-		Person person = getModel().loadEntity(Person.class, id);
+		Person person = getModel().get(Person.class, id);
 		if (person!=null) {
-			User user = getModel().getFirstSuperRelation(person, Relation.KIND_SYSTEM_USER_SELF, User.class);
+			User user = getModel().getParent(person, Relation.KIND_SYSTEM_USER_SELF, User.class);
 			if (user!=null) {
 				return Core.getInstance().getSecurity().changeUser(getUserSession(), user.getUsername(), user.getPassword());
 			}

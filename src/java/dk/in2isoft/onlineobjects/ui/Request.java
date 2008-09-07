@@ -17,6 +17,8 @@ public class Request {
 	private int level;
 	private String[] fullPath;
 	private String[] localContext;
+	private String baseContext;
+	private String relativePath;
 	
 	public Request(HttpServletRequest request, HttpServletResponse response) {
 		super();
@@ -28,6 +30,10 @@ public class Request {
 	
 	public void setLocalContext(String[] localContext) {
 		this.localContext = localContext;
+	}
+	
+	public String getBaseContext() {
+		return this.baseContext;
 	}
 	
 	public String[] getLocalContext() {
@@ -44,8 +50,8 @@ public class Request {
 	}
 
 	private void decodePath() {
-		String context = request.getContextPath();
-		String uri = request.getRequestURI().substring(context.length() + 1);
+		baseContext = request.getContextPath();
+		String uri = request.getRequestURI().substring(baseContext.length() + 1);
 		if (uri.indexOf( ";jsessionid=" ) != -1) {
 			uri = uri.substring(0, uri.indexOf( ";jsessionid=" ));
 		}
@@ -61,6 +67,11 @@ public class Request {
 			this.level = level;
 			this.fullPath = path;
 		}
+		StringBuilder path = new StringBuilder();
+		for (int i = 0; i < level; i++) {
+			path.append("../");
+		}
+		relativePath = path.toString();
 	}
 	
 	public HttpServletRequest getRequest() {
@@ -72,11 +83,7 @@ public class Request {
 	}
 	
 	public String getRelativePath() {
-		StringBuilder path = new StringBuilder();
-		for (int i = 0; i < level; i++) {
-			path.append("../");
-		}
-		return path.toString();
+		return relativePath;
 	}
 
 	public String[] getFullPath() {
@@ -178,5 +185,10 @@ public class Request {
 
 	public String getBaseContextPath() {
 		return request.getContextPath();
+	}
+
+	public void redirectFromBase(String redirect)
+	throws IOException {
+		redirect(baseContext+redirect);
 	}
 }

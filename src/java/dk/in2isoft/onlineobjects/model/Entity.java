@@ -11,6 +11,7 @@ public class Entity extends Item {
 
 	public static String NAMESPACE = Item.NAMESPACE+"Entity/";
 	public static String TYPE = Item.TYPE+"/Entity";
+	public static final String FIELD_NAME = "name";
 	
 	protected String name;
 	private Collection<Property> properties = new ArrayList<Property>();
@@ -108,5 +109,9 @@ public class Entity extends Item {
 		if (!found) {
 			properties.add(new Property(key,value));
 		}
+	}
+
+	public void addProperty(String key, String value) {
+		properties.add(new Property(key,value));
 	}
 }

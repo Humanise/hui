@@ -6,20 +6,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.Query;
+import org.hibernate.Session;
+
 import dk.in2isoft.onlineobjects.model.Entity;
 
-public abstract class AbstractModelQuery<T> {
+public abstract class AbstractModelQuery<T> implements ModelQuery {
 	protected Class<T> clazz;
 	protected List<ModelPropertyLimitation> limitations = new ArrayList<ModelPropertyLimitation>();
-	protected Map<String,Object> properties = new HashMap<String, Object>();
+	protected Map<String,Object> customProperties = new HashMap<String, Object>();
 	protected Priviledged priviledged;
 	protected String[] words;
 	protected int pageSize;
 	protected int pageNumber;
 	protected Date createdFrom;
 	protected Date createdTo;
-	public Entity parent;
-	public Entity child;
+	protected Entity parent;
+	protected String parentKind;
+	protected Entity child;
+	protected String childKind;
 
 	public Class<T> getClazz() {
 		return clazz;
@@ -54,7 +59,7 @@ public abstract class AbstractModelQuery<T> {
 	}
 
 	public Map<String, Object> getCustomProperties() {
-		return properties;
+		return customProperties;
 	}
 	
 	public Entity getParent() {
@@ -64,5 +69,7 @@ public abstract class AbstractModelQuery<T> {
 	public Entity getChild() {
 		return child;
 	}
+
+	abstract public Query createItemQuery(Session session);
 	
 }

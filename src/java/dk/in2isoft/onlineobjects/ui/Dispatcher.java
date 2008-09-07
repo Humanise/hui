@@ -6,9 +6,10 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -24,16 +25,20 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import com.oreilly.servlet.ServletUtils;
 
 import dk.in2isoft.commons.xml.XSLTUtil;
 import dk.in2isoft.in2igui.In2iGui;
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
-import dk.in2isoft.onlineobjects.apps.ApplicationManager;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.SecurityException;
 import dk.in2isoft.onlineobjects.core.UserSession;
+import dk.in2isoft.onlineobjects.model.Application;
 import dk.in2isoft.onlineobjects.service.ServiceController;
 import dk.in2isoft.onlineobjects.service.ServiceManager;
 
@@ -49,23 +54,49 @@ public class Dispatcher implements Filter {
 
 	static final Class<?>[] args = { Request.class };
 
-	static final Map<String, String> mimeTypes = new HashMap<String, String>();
+	private final ImmutableMap<String, String> mimeTypes;
+
+	private List<Application> apps = Lists.newArrayList();
+	private Multimap<String, Pattern> mappings;
 
 	public Dispatcher() {
 		reserved.add("XmlWebGui");
 		reserved.add("In2iGui");
 		reserved.add("public");
-
-		mimeTypes.put("html", "text/html");
-		mimeTypes.put("htm", "text/html");
-		mimeTypes.put("xhtml", "application/xhtml+xml");
-		mimeTypes.put("js", "text/javascript");
-		mimeTypes.put("css", "text/css");
-		mimeTypes.put("png", "image/png");
-		mimeTypes.put("gif", "image/gif");
-		mimeTypes.put("jpg", "image/jpeg");
-		mimeTypes.put("jpeg", "image/jpeg");
-		mimeTypes.put("swf", "application/x-shockwave-flash");
+		mimeTypes = new ImmutableMap.Builder<String,String>()
+			.put("html", "text/html")
+			.put("htm", "text/html")
+			.put("xhtml", "application/xhtml+xml")
+			.put("js", "text/javascript")
+			.put("css", "text/css")
+			.put("png", "image/png")
+			.put("gif", "image/gif")
+			.put("jpg", "image/jpeg")
+			.put("jpeg", "image/jpeg")
+			.put("swf", "application/x-shockwave-flash")
+			.build();
+		{
+			Application app = new Application();
+			app.setName("setup");
+			app.addProperty(Application.PROPERTY_URL_MAPPING, "http://setup\\.onlineobjects\\.com:9090.*");
+			apps.add(app);
+		}
+		{
+			Application app = new Application();
+			app.setName("community");
+			app.addProperty(Application.PROPERTY_URL_MAPPING, "http://[a-z0-9_\\.]*jojo\\.dk:9090.*");
+			app.addProperty(Application.PROPERTY_URL_MAPPING, ".*");
+			apps.add(app);
+		}
+		
+		mappings = Multimaps.newLinkedHashMultimap();
+		
+		for (Application app : apps) {
+			for (String reg : app.getPropertyValues(Application.PROPERTY_URL_MAPPING)) {
+				Pattern p  = Pattern.compile(reg);
+				mappings.put("community", p);
+			}
+		}
 	}
 
 	public void doFilter(ServletRequest sRequest, ServletResponse sResponse, FilterChain chain) throws IOException,
@@ -125,6 +156,7 @@ public class Dispatcher implements Filter {
 			callApplication(path[1], req);
 			shouldCommit = true;
 		} else if (path.length > 1 && path[0].equals("service")) {
+			req.setLocalContext((String[]) ArrayUtils.subarray(path, 0, 2));
 			ServiceController controller = ServiceManager.getInstance().getServiceController(path[1]);
 			try {
 				if (controller == null) {
@@ -140,12 +172,31 @@ public class Dispatcher implements Filter {
 			}
 			shouldCommit = true;
 		} else {
-			callApplication("community", req);
-			shouldCommit = true;
+			String appName = resolveMapping(req);
+			log.debug(appName);
+			if (appName == null) {
+				displayError(req, new EndUserException("Not found"));
+			} else {
+				callApplication(appName, req);
+				shouldCommit = true;
+			}
 		}
 		if (shouldCommit) {
 			Core.getInstance().getModel().commit();
 		}
+	}
+	
+	private String resolveMapping(Request request) {
+		String url = request.getRequest().getRequestURL().toString();
+		log.debug(url);
+		for (Entry<String, Pattern> mapping : mappings.entries()) {
+			Pattern pattern = mapping.getValue();
+			Matcher matcher = pattern.matcher(url);
+			if (matcher.matches()) {
+				return mapping.getKey();
+			}
+		}
+		return null;
 	}
 
 	private void ensureSession(HttpServletRequest request) throws dk.in2isoft.onlineobjects.core.SecurityException {
@@ -157,7 +208,7 @@ public class Dispatcher implements Filter {
 	}
 
 	private void callApplication(String application, Request request) throws IOException {
-		ApplicationController controller = ApplicationManager.getInstance().getToolController(application);
+		ApplicationController controller = Core.getInstance().getApplicationManager().getController(application);
 		String[] path = request.getLocalPath();
 		try {
 			if (controller == null) {

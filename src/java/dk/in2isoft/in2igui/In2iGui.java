@@ -70,7 +70,7 @@ public class In2iGui {
 		});
 	}
 
-	public static In2iGui getInstance() {
+	public static synchronized In2iGui getInstance() {
 		if (instance == null) {
 			instance = new In2iGui();
 		}

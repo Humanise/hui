@@ -1,59 +1,48 @@
 package dk.in2isoft.onlineobjects.test.model;
 
-
 import java.util.Iterator;
-import java.util.List;
-
-import junit.framework.TestCase;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.persister.entity.EntityPersister;
+
 import dk.in2isoft.onlineobjects.junk.HibernateUtil;
-import dk.in2isoft.onlineobjects.model.Entity;
-import dk.in2isoft.onlineobjects.model.Person;
-import dk.in2isoft.onlineobjects.model.Relation;
+import dk.in2isoft.onlineobjects.test.AbstractTestCase;
 
-public class TestHibernate extends TestCase {
-	
+public class TestHibernate extends AbstractTestCase {
+
 	private static Logger log = Logger.getLogger(TestHibernate.class);
-	
-	public void testSomething() {
-		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 
-		session.beginTransaction();
-
-		Person p = new Person();
-		p.setGivenName("Jonas");
-		p.setFamilyName("Munk");
-		assertEquals(p.getName(),"Jonas Munk");
-		
-		Entity e = new Entity();
-		e.setName("a");
-		
-		log.info(e);
-		Relation r = new Relation(p,e);
-		
-		session.save(p);
-		session.save(e);
-		session.save(r);
-		
-		session.getTransaction().commit();
-	}
-	
 	@SuppressWarnings("unchecked")
-	public void testListEvents() {
-		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+	public void testModelClasses() throws Exception {
+		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+		Map<Object, Object> metadata = sessionFactory.getAllClassMetadata();
+		for (Iterator<Object> i = metadata.values().iterator(); i.hasNext();) {
+			EntityPersister persister = (EntityPersister) i.next();
+			String className = persister.getClassMetadata().getEntityName();
+			Class<?> clazz = Class.forName(className);
+			log.info(clazz + " with super " + clazz.getSuperclass());
+			assertTrue(true);
+		}
+	}
 
-		session.beginTransaction();
-
-        List<Entity> result = session.createQuery("from Entity").list();
-
-		//assertEquals(result.size(),2);
-        Iterator<Entity> i = result.iterator();
-        while (i.hasNext()) {
-        		Entity e = i.next();
-        		System.out.println(e.getName());
-        }
-		session.getTransaction().commit();
+	@SuppressWarnings("unchecked")
+	public void testSelectAnything() throws Exception {
+		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+		Map<Object, Object> metadata = sessionFactory.getAllClassMetadata();
+		for (Iterator<Object> i = metadata.values().iterator(); i.hasNext();) {
+			Session session = sessionFactory.openSession();
+			try {
+				EntityPersister persister = (EntityPersister) i.next();
+				String className = persister.getClassMetadata().getEntityName();
+				log.info(className);
+				session.createQuery("from " + className + " c").list();
+				assertTrue(true);
+			} finally {
+				session.close();
+			}
+		}
 	}
 }

@@ -42,6 +42,9 @@ public class XSLTUtil {
 		try {
 			TransformerFactory tFactory = TransformerFactory.newInstance();
 			Transformer transformer = tFactory.newTransformer(xslt);
+			if (transformer==null) {
+				throw new EndUserException("No tranformer");
+			}
 			if (parameters != null) {
 				for (Iterator<Entry<String, String>> iter = parameters.entrySet().iterator(); iter.hasNext();) {
 					Entry<String, String> element = iter.next();
@@ -123,7 +126,7 @@ public class XSLTUtil {
 		}
 		HttpServletResponse response = request.getResponse();
 		Map<String, String> parameters = new HashMap<String, String>();
-		parameters.put("app-context", request.getLocalContextPath());
+		parameters.put("local-context", request.getLocalContextPath());
 		parameters.put("base-context", request.getBaseContextPath());
 		parameters.put("user-name", request.getSession().getUser().getUsername());
 		parameters.put("development-mode", String.valueOf(Core.getInstance().getConfiguration().getDevelopmentMode()));
@@ -150,7 +153,7 @@ public class XSLTUtil {
 
 	private static boolean isXhtmlCapable(HttpServletRequest request) {
 		String accept = request.getHeader("Accept");
-		log.info("Accept: "+accept);
+		log.debug("Accept: "+accept);
 		return (accept != null && accept.indexOf("application/xhtml+xml")!=-1);
 	}
 }

@@ -1,7 +1,7 @@
 package dk.in2isoft.onlineobjects.junk;
 
-import org.hibernate.*;
-import org.hibernate.cfg.*;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
 
 public class HibernateUtil {
 
@@ -21,5 +21,6 @@ public class HibernateUtil {
     public static SessionFactory getSessionFactory() {
         return sessionFactory;
     }
+
 
 }

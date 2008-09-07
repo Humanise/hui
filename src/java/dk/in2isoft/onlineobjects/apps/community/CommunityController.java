@@ -195,7 +195,7 @@ public class CommunityController extends ApplicationController {
 
 	private void processFile(DiskFileItem item, long imageGalleryId, Request request) throws IOException,
 			EndUserException {
-		Entity gallery = getModel().loadEntity(ImageGallery.class, imageGalleryId);
+		Entity gallery = getModel().get(ImageGallery.class, imageGalleryId);
 		if (gallery == null) {
 			throw new EndUserException("Could not load gallery with ID=" + imageGalleryId);
 		}
@@ -214,7 +214,8 @@ public class CommunityController extends ApplicationController {
 	}
 
 	private float getMaxImagePosition(Entity gallery) throws EndUserException {
-		List<Relation> relations = getModel().getSubRelations(gallery);
+		// TODO : Consider only images (URGENT)
+		List<Relation> relations = getModel().getChildRelations(gallery);
 		if (relations.size() > 0) {
 			return relations.get(relations.size() - 1).getPosition();
 		} else {

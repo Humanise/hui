@@ -8,11 +8,11 @@ import dk.in2isoft.onlineobjects.ui.AbstractRemotingFacade;
 public class CommonRemotingFacade extends AbstractRemotingFacade {
 
 	public Entity getEntity(long id) throws ModelException {
-		return getModel().loadEntity(Entity.class, id);
+		return getModel().get(Entity.class, id);
 	}
 	
 	public void deleteEntity(long id) throws ModelException, SecurityException {
-		Entity entity = getModel().loadEntity(Entity.class, id);
+		Entity entity = getModel().get(Entity.class, id);
 		getModel().deleteEntity(entity, getUserSession());
 	}
 }

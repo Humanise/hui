@@ -9,7 +9,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import nu.xom.Builder;
 import nu.xom.Document;
@@ -19,17 +18,22 @@ import nu.xom.ParsingException;
 import nu.xom.ValidityException;
 
 import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.proxy.AbstractLazyInitializer;
 import org.hibernate.proxy.HibernateProxy;
 
+import com.google.common.collect.Lists;
+
 import dk.in2isoft.commons.lang.LangUtil;
 import dk.in2isoft.onlineobjects.core.events.EventManager;
+import dk.in2isoft.onlineobjects.junk.HibernateUtil;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Item;
 import dk.in2isoft.onlineobjects.model.Privilege;
@@ -45,6 +49,7 @@ public class ModelFacade {
 	private static final SessionFactory sessionFactory;
 
 	private Collection<ModelClassInfo> modelClassInfo;
+	private List<Class<?>> classes = Lists.newArrayList(); 
 
 	static {
 		try {
@@ -87,6 +92,20 @@ public class ModelFacade {
 		} catch (ClassNotFoundException e) {
 			log.error("Could not load model info", e);
 		}
+		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+		Map<Object, Object> metadata = sessionFactory.getAllClassMetadata();
+		for (Iterator<Object> i = metadata.values().iterator(); i.hasNext();) {
+			EntityPersister persister = (EntityPersister) i.next();
+			String className = persister.getClassMetadata().getEntityName();
+			Class<?> clazz;
+			try {
+				clazz = Class.forName(className);
+				log.info(clazz + " with super " + clazz.getSuperclass());
+				classes.add(clazz);
+			} catch (ClassNotFoundException e) {
+				log.error("Could not find model class: "+className);
+			}
+		}
 
 	}
 
@@ -108,47 +127,24 @@ public class ModelFacade {
 		Session session = sessionFactory.getCurrentSession();
 		if (!session.getTransaction().isActive()) {
 			session.beginTransaction();
-			log.info("Begin transaction!");
+			log.debug("Begin transaction!");
 		}
 		return session;
 	}
 
-	public Session openSession() {
-		return sessionFactory.openSession();
+	public void addToSession(Item item) {
+		getSession().merge(item);
 	}
 
 	public void commit() {
 		Session session = sessionFactory.getCurrentSession();
 		Transaction tx = session.getTransaction();
 		if (tx.isActive()) {
+			getSession().flush();
+			getSession().clear();
 			tx.commit();
-			log.info("Commit transaction!");
+			log.debug("Commit transaction!");
 		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<Entity> listEntities() {
-
-		List<Entity> result = getSession().createQuery("from Entity").list();
-		unpackEntities(result);
-		return result;
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<Relation> listRelations() {
-
-		List<Relation> result = getSession().createQuery("from Relation").list();
-		unpackRelations(result);
-		return result;
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<Entity> listEntities(Class className) {
-
-		List<Entity> result = getSession().createQuery("from " + className.getSimpleName()).list();
-		unpackEntities(result);
-
-		return result;
 	}
 
 	public void createItem(Item item, Priviledged priviledged) throws ModelException {
@@ -168,34 +164,51 @@ public class ModelFacade {
 	}
 
 	public void deleteEntity(Entity entity, Priviledged priviledged) throws ModelException, SecurityException {
-		List<Relation> subs = getSubRelations(entity);
-		for (Relation relation : subs) {
-			deleteItem(relation, priviledged);
-		}
-		List<Relation> supers = getSuperRelations(entity);
-		for (Relation relation : supers) {
-			deleteItem(relation, priviledged);
-		}
+		/*
+		 * List<Relation> relations = getRelations(entity); for (Relation
+		 * relation : relations) { deleteItem(relation, priviledged); }
+		 */
+		removeAllRelations(entity);
 		deleteItem(entity, priviledged);
 	}
 
-	private void deleteItem(Item item, Priviledged priviledged) throws SecurityException {
+	private void removeAllRelations(Entity entity) {
+		Session session = getSession();
+		{
+			String hql = "delete Privilege p where p.object in (select relation.id from Relation relation where relation.superEntity=:entity or relation.subEntity=:entity)";
+			Query q = session.createQuery(hql);
+			q.setEntity("entity", entity);
+			int count = q.executeUpdate();
+			log.info("Deleting relation privileges for: " + entity.getClass().getName() + "; count: " + count);
+		}
+		{
+			String hql = "delete Relation relation where relation.superEntity=:entity or relation.subEntity=:entity)";
+			Query q = session.createQuery(hql);
+			q.setEntity("entity", entity);
+			int count = q.executeUpdate();
+			log.info("Deleting relations for: " + entity.getClass().getName() + "; count: " + count);
+		}
+	}
+
+	private void deleteItem(Item item, Priviledged priviledged) throws SecurityException, ModelException {
 		Privilege privilege = getPriviledge(item, priviledged);
 		if (privilege == null || !privilege.isDelete()) {
 			throw new SecurityException("Privilieged=" + priviledged.getIdentity() + " cannot delete Item="
 					+ item.getId());
 		}
-		removePrivileges(item, priviledged);
-		getSession().delete(item);
+		removeAllPrivileges(item);
+		try {
+			getSession().delete(item);
+		} catch (HibernateException e) {
+			log.error(e.getMessage(), e);
+			throw new ModelException(e);
+		}
 		EventManager.getInstance().fireItemWasDeleted(item);
 	}
 
-	public void updateItem(Item item, Priviledged priviledged) throws SecurityException, ModelException {
-		updateItem(item, priviledged, getSession());
-	}
-
-	public void updateItem(Item item, Priviledged priviledged, Session session) throws SecurityException,
+	public void updateItem(Item item, Priviledged priviledged) throws SecurityException,
 			ModelException {
+		Session session = getSession();
 		if (item.getId() != priviledged.getIdentity()) {
 			Privilege privilege = getPriviledge(item, priviledged, session);
 			if (privilege == null || !privilege.isAlter()) {
@@ -209,8 +222,8 @@ public class ModelFacade {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Entity loadEntitys(Class entityClass, Long id) throws ModelException {
-		Entity entity = (Entity) getSession().get(entityClass, id);
+	public <T extends Entity> T get(Class<T> entityClass, Long id) throws ModelException {
+		T entity = (T) getSession().get(entityClass, id);
 		if (entity != null) {
 			return entity;
 		} else {
@@ -218,79 +231,81 @@ public class ModelFacade {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	public <T extends Entity> T loadEntity(Class<T> type, Long id) throws ModelException {
-		return (T) loadEntitys(type, id);
-	}
-
-	public void createRelation(Entity superEntity, Entity subEntity, Priviledged priviledged) throws ModelException {
-		Relation relation = new Relation(superEntity, subEntity);
+	public void createRelation(Entity parent, Entity child, Priviledged priviledged) throws ModelException {
+		Relation relation = new Relation(parent, child);
 		createItem(relation, priviledged);
 	}
 
-	public void createRelation(Entity superEntity, Entity subEntity, String kind, Priviledged priviledged)
+	public void createRelation(Entity parent, Entity child, String kind, Priviledged priviledged)
 			throws ModelException {
-		Relation relation = new Relation(superEntity, subEntity);
+		Relation relation = new Relation(parent, child);
 		relation.setKind(kind);
 		createItem(relation, priviledged);
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Relation> getSubRelations(Entity entity) throws ModelException {
-		String hql = "from Relation as relation where relation.superEntity=? order by relation.position";
+	public List<Relation> getRelations(Entity entity) throws ModelException {
+		String hql = "from Relation as relation where relation.superEntity=:entity or relation.subEntity=:entity order by relation.position";
 		Query q = getSession().createQuery(hql);
-		q.setEntity(0, entity);
+		q.setEntity("entity", entity);
 		List<Relation> result = q.list();
 		return result;
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> List<T> getSubEntities(Entity entity, Class<T> classObj) throws ModelException {
-		StringBuilder hql = new StringBuilder();
-		hql
-				.append("select entity from ")
-				.append(classObj.getCanonicalName())
-				.append(
-						" as entity, Relation as relation where relation.subEntity.id=entity.id and relation.superEntity.id=:id order by relation.position");
-		Query q = getSession().createQuery(hql.toString());
-		q.setLong("id", entity.getId());
-		List<T> subEntities = q.list();
-		for (int i = 0; i < subEntities.size(); i++) {
-			subEntities.set(i, getSubject(subEntities.get(i)));
+	public List<Relation> getChildRelations(Entity entity) throws ModelException {
+		String hql = "from Relation as relation where relation.superEntity=? order by relation.position";
+		Query q = getSession().createQuery(hql);
+		q.setEntity(0, entity);
+		List<Relation> result = q.list();
+		for (int i = 0; i < result.size(); i++) {
+			result.set(i, getSubject(result.get(i)));
 		}
-		return subEntities;
+		return result;
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Entity> getSuperEntities(Entity entity, Class classObj) throws ModelException {
-		Session session = getSession();
-		StringBuilder hql = new StringBuilder();
-		hql
-				.append("select entity from ")
-				.append(classObj.getCanonicalName())
-				.append(
-						" as entity, Relation as relation where relation.superEntity.id=entity.id and relation.subEntity.id=:id order by relation.position");
-		Query q = session.createQuery(hql.toString());
-		q.setLong("id", entity.getId());
-		List<Entity> superEntities = q.list();
-		for (int i = 0; i < superEntities.size(); i++) {
-			superEntities.set(i, getSubject(superEntities.get(i)));
+	public List<Relation> getChildRelations(Entity entity, Class clazz) throws ModelException {
+		String hql = "select relation from Relation as relation,"+clazz.getName()+" child where relation.superEntity=:entity and relation.subEntity=child order by relation.position";
+		Query q = getSession().createQuery(hql);
+		q.setEntity("entity", entity);
+		List<Relation> result = q.list();
+		for (int i = 0; i < result.size(); i++) {
+			result.set(i, getSubject(result.get(i)));
 		}
-		return superEntities;
+		return result;
 	}
 
-	public Entity getFirstSuperEntity(Entity entity, Class<?> classObj) throws ModelException {
-		List<Entity> supers = getSuperEntities(entity, classObj);
-		if (supers.size() > 0) {
+	public <T> List<T> getParents(Entity entity, Class<T> classObj) throws ModelException {
+		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.ofType(classObj);
+		q.withChild(entity);
+		return search(q);
+	}
+
+	public <T extends Entity> T getParent(Entity entity, Class<T> classObj) throws ModelException {
+		return getParent(entity, null, classObj);
+	}
+
+	public <T extends Entity> T getParent(Entity entity, String kind, Class<T> classObj) throws ModelException {
+		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.ofType(classObj);
+		q.withChild(entity,kind).withPaging(0, 1);
+		List<T> supers = search(q);
+		if (!supers.isEmpty()) {
 			return supers.get(0);
 		} else {
 			return null;
 		}
 	}
 
-	public <T extends Entity> T getFirstSubEntity(Entity entity, Class<T> classObj) throws ModelException {
-		List<T> supers = getSubEntities(entity, classObj);
-		if (supers.size() > 0) {
+	public <T extends Entity> T getChild(Entity entity, Class<T> classObj) throws ModelException {
+		return getChild(entity, null, classObj);
+	}
+
+	public <T extends Entity> T getChild(Entity entity, String kind, Class<T> classObj) throws ModelException {
+		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.ofType(classObj);
+		q.withParent(entity,kind).withPaging(0, 1);
+		List<T> supers = search(q);
+		if (!supers.isEmpty()) {
 			return supers.get(0);
 		} else {
 			return null;
@@ -298,43 +313,7 @@ public class ModelFacade {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends Entity> T getFirstSubRelation(Entity entity, String type, Class<T> classObj)
-			throws ModelException {
-		Session session = getSession();
-		StringBuilder hql = new StringBuilder("select sub from ");
-		hql.append(classObj.getName()).append(" as sub,");
-		hql.append("Relation as relation,");
-		hql.append(entity.getClass().getName()).append(" as super");
-		hql.append(" where relation.superEntity.id=super.id and relation.subEntity.id=sub.id and super.id=:id");
-		Query q = session.createQuery(hql.toString());
-		q.setLong("id", entity.getId());
-		List<Entity> list = q.list();
-		if (list.size() > 0) {
-			return (T) getSubject(list.get(0));
-		}
-		return null;
-	}
-
-	@SuppressWarnings("unchecked")
-	public <T extends Entity> T getFirstSuperRelation(Entity entity, String type, Class<T> classObj)
-			throws ModelException {
-		Session session = getSession();
-		StringBuilder hql = new StringBuilder("select super from ");
-		hql.append(classObj.getName()).append(" as super,");
-		hql.append("Relation as relation,");
-		hql.append(entity.getClass().getName()).append(" as sub");
-		hql.append(" where relation.superEntity.id=super.id and relation.subEntity.id=sub.id and sub.id=:id");
-		Query q = session.createQuery(hql.toString());
-		q.setLong("id", entity.getId());
-		List<Entity> list = q.list();
-		if (list.size() > 0) {
-			return (T) getSubject(list.get(0));
-		}
-		return null;
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<Relation> getSuperRelations(Entity entity) throws ModelException {
+	public List<Relation> getParentRelations(Entity entity) throws ModelException {
 		Session session = getSession();
 		Query q = session.createQuery("from Relation as relation where relation.subEntity=?");
 		q.setEntity(0, entity);
@@ -383,124 +362,21 @@ public class ModelFacade {
 		}
 	}
 
-	private void unpackEntities(List<Entity> list) {
-		for (int i = 0; i < list.size(); i++) {
-			list.set(i, getSubject(list.get(i)));
-		}
+	@SuppressWarnings("unchecked")
+	public List<Long> listIds(IdQuery query) {
+		Query q = query.createIdQuery(getSession());
+		List<Long> items = q.list();
+		return items;
 	}
 
-	private void unpackRelations(List<Relation> list) {
-		for (int i = 0; i < list.size(); i++) {
-			list.set(i, getSubject(list.get(i)));
-		}
-	}
-
-	public <T> List<T> search(AbstractModelQuery<T> query) {
-		return search(query, getSession());
+	public <T> Results<T> scroll(ItemQuery<T> query) {
+		Query q = query.createItemQuery(getSession());
+		return new Results<T>(q.scroll());
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> List<T> search(AbstractModelQuery<T> query, Session session) {
-		Priviledged priviledged = query.getPriviledged();
-		StringBuilder hql = new StringBuilder("select distinct obj from ");
-		hql.append(query.getClazz().getName());
-		hql.append(" as obj");
-		if (priviledged != null) {
-			hql.append(",").append(Privilege.class.getName()).append(" as priv");
-		}
-		if (query.getParent() != null) {
-			hql.append(",").append(Relation.class.getName()).append(" as parentRelation");
-		}
-		if (query.getChild() != null) {
-			hql.append(",").append(Relation.class.getName()).append(" as childRelation");
-		}
-		if (LangUtil.isDefined(query.getWords()) && Entity.class.isAssignableFrom(query.getClazz())
-				|| query.getCustomProperties().size() > 0) {
-			hql.append(" left join obj.properties as p");
-		}
-		if (query.getParent() != null) {
-			// TODO is this necessary
-			hql.append(" left join parentRelation.superEntity as parentSuper");
-			hql.append(" left join parentRelation.subEntity as parentSub");
-		}
-		if (query.getChild() != null) {
-			// TODO is this necessary
-			hql.append(" left join childRelation.superEntity as childSuper");
-			hql.append(" left join childRelation.subEntity as childSub");
-		}
-		hql.append(" where obj.id>0");
-		if (LangUtil.isDefined(query.getWords())) {
-			for (int i = 0; i < query.getWords().length; i++) {
-				hql.append(" and (lower(obj.name) like lower(:word" + i + ") or lower(p.value) like lower(:word" + i
-						+ "))");
-			}
-		}
-		if (query.getCustomProperties().size() > 0) {
-			hql.append(" and p.key=:propertyKey and p.value=:propertyValue");
-		}
-		if (query.getLimitations().size() > 0) {
-			for (ModelPropertyLimitation limit : query.getLimitations()) {
-				hql.append(" and ").append(limit.getProperty());
-				hql.append(limit.getComparison());
-				hql.append(":").append(limit.getProperty());
-			}
-		}
-		if (query.getParent() != null) {
-			hql.append(" and parentSuper.id=:parent and parentSub.id=obj.id");
-		}
-		if (query.getChild() != null) {
-			hql.append(" and childSuper.id=obj.id and childSub.id=:child");
-		}
-		if (priviledged != null) {
-			hql.append(" and obj.id = priv.object and priv.subject=").append(priviledged.getIdentity());
-		}
-		if (query.getCreatedFrom() != null) {
-			hql.append(" and obj.created>=:createdFrom");
-		}
-		if (query.getCreatedTo() != null) {
-			hql.append(" and obj.created<=:createdTo");
-		}
-		if (Entity.class.isAssignableFrom(query.getClazz())) {
-			hql.append(" order by obj.name");
-		}
-		Query q = session.createQuery(hql.toString());
-		if (query.getPageSize() > 0) {
-			q.setMaxResults(query.getPageSize());
-			q.setFirstResult(query.getPageNumber() * query.getPageSize());
-		}
-		for (Iterator<ModelPropertyLimitation> i = query.getLimitations().iterator(); i.hasNext();) {
-			ModelPropertyLimitation limit = i.next();
-			Object value = limit.getValue();
-			if (value instanceof Date) {
-				q.setDate(limit.getProperty(), (Date) limit.getValue());
-			} else {
-				q.setString(limit.getProperty(), limit.getValue().toString());
-			}
-		}
-		if (LangUtil.isDefined(query.getWords())) {
-			for (int i = 0; i < query.getWords().length; i++) {
-				String word = query.getWords()[i];
-				q.setString("word" + i, "%" + word + "%");
-			}
-		}
-		if (query.getCustomProperties().size() > 0) {
-			// TODO: more than one property
-			Entry<String, Object> entry = query.getCustomProperties().entrySet().iterator().next();
-			q.setString("propertyKey", entry.getKey());
-			q.setString("propertyValue", entry.getValue().toString());
-		}
-		if (query.getCreatedFrom() != null) {
-			q.setDate("createdFrom", query.getCreatedFrom());
-		}
-		if (query.getCreatedTo() != null) {
-			q.setDate("createdTo", query.getCreatedTo());
-		}
-		if (query.getParent() != null) {
-			q.setLong("parent", query.getParent().getId());
-		}
-		if (query.getChild() != null) {
-			q.setLong("child", query.getChild().getId());
-		}
+	public <T> List<T> search(ItemQuery<T> query) {
+		Query q = query.createItemQuery(getSession());
 		List<T> items = q.list();
 		for (int i = 0; i < items.size(); i++) {
 			T item = items.get(i);
@@ -518,31 +394,37 @@ public class ModelFacade {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	public void removePrivileges(Item item, Priviledged priviledged) {
+	private void removeAllPrivileges(Item item) {
 		Session session = getSession();
-		String hql = "from Privilege p where p.subject = :id or p.object = :id";
+		String hql = "delete Privilege p where p.object = :id";
 		Query q = session.createQuery(hql);
 		q.setLong("id", item.getId());
-		List<Privilege> privileges = q.list();
-		log.info("Deleting privileges for: " + item.getClass().getName() + "; count: " + privileges.size());
-		for (Iterator<Privilege> i = privileges.iterator(); i.hasNext();) {
-			Privilege privilege = i.next();
-			session.delete(privilege);
-		}
-
+		int count = q.executeUpdate();
+		log.info("Deleting privileges for: " + item.getClass().getName() + "; count: " + count);
 	}
 
-	public List<Entity> getSubEntities(Entity item, String relationKind, Priviledged priviledged) throws ModelException {
-		List<Entity> entities = new ArrayList<Entity>();
-		List<Relation> relations = getSubRelations(item);
-		for (Relation relation : relations) {
-			if (relationKind.equals(relation.getKind())) {
-				entities.add(relation.getSubEntity());
-			}
-		}
-		unpackEntities(entities);
-		return entities;
+	public List<Entity> getChildren(Entity item, String relationKind, Priviledged priviledged) throws ModelException {
+		dk.in2isoft.onlineobjects.core.Query<Entity> q = dk.in2isoft.onlineobjects.core.Query.ofType(Entity.class);
+		q.withPriviledged(priviledged).withParent(item,relationKind);
+		return search(q);
+	}
+
+	public List<Entity> getChildren(Entity item, String relationKind) throws ModelException {
+		dk.in2isoft.onlineobjects.core.Query<Entity> q = dk.in2isoft.onlineobjects.core.Query.ofType(Entity.class);
+		q.withParent(item,relationKind);
+		return search(q);
+	}
+
+	public <T> List<T> getChildren(Entity entity, Class<T> classObj) throws ModelException {
+		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.ofType(classObj);
+		q.withParent(entity);
+		return search(q);
+	}
+
+	public <T> List<T> getChildrenOrdered(Entity entity, Class<T> classObj) throws ModelException {
+		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.ofType(classObj);
+		q.withParent(entity).inPosition();
+		return search(q);
 	}
 
 	public Class<?> getModelClass(String simpleName) throws ModelException {
@@ -617,11 +499,12 @@ public class ModelFacade {
 	 *         <code>object</code> as-is if not proxied by Hibernate
 	 */
 	@SuppressWarnings("unchecked")
-	private <T> T getSubject(T obj) {
+	public static <T> T getSubject(T obj) {
 		// XXX The below "fix" is needed by Hibernate 3.0.5, please check if it
 		// is needed in future versions
 		// Fixed so that initialized objects actually are instance of their
 		// correct class and not just Content
+
 		if (obj instanceof HibernateProxy)
 			obj = (T) ((AbstractLazyInitializer) ((HibernateProxy) obj).getHibernateLazyInitializer())
 					.getImplementation();

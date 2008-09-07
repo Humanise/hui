@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.joda.time.Period;
+import org.joda.time.format.ISOPeriodFormat;
 
 public class Pipeline {
 	private List<PipelineStage> stages = new ArrayList<PipelineStage>();
@@ -16,10 +18,13 @@ public class Pipeline {
 	}
 	
 	public void run() {
+		long start = System.currentTimeMillis();
 		stages.get(0).run();
 		for (PipelineStage stage : stages) {
 			stage.cleanUp();
 		}
+		Period period = new Period(start,System.currentTimeMillis());
+		log.info("Pipline completed: "+ISOPeriodFormat.standard().print(period));
 	}
 
 	PipelineContext createNextContext(PipelineContext pipelineContext) {
@@ -36,5 +41,13 @@ public class Pipeline {
 		
 	public void info(PipelineStage stage, String msg) {
 		log.info(stage.getClass().getSimpleName()+" : "+msg);
+	}
+		
+	public void debug(PipelineStage stage, String msg) {
+		log.debug(stage.getClass().getSimpleName()+" : "+msg);
+	}
+
+	public void error(Exception e) {
+		log.error(e.getMessage(), e);
 	}
 }

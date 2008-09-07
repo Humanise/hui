@@ -82,7 +82,7 @@ public class KnowledgebaseController extends ApplicationController {
 	}
 
 	public void editTopic(Request request) throws IOException, EndUserException {
-		Topic topic = (Topic) getModel().loadEntity(Topic.class,request.getLong("id"));
+		Topic topic = (Topic) getModel().get(Topic.class,request.getLong("id"));
 		getToolSession(request).setEditedTopic(topic);
 		Interface gui = new TopicEditor(topic);
 		gui.display(request);

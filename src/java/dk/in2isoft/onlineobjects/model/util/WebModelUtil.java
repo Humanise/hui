@@ -20,39 +20,42 @@ public class WebModelUtil {
 	public static WebPage getWebSiteFrontPage(WebSite site) throws ModelException {
 		ModelFacade model = Core.getInstance().getModel();
 		WebPage page = null;
-		WebNode node = (WebNode) model.getFirstSubRelation(site, WebNode.TYPE, WebNode.class);
+		WebNode node = model.getChild(site, WebNode.class);
 		if (node!=null) {
-			page = (WebPage) model.getFirstSubRelation(node, WebPage.TYPE, WebPage.class);
+			page = model.getChild(node, WebPage.class);
 		}
 		return page;
 	}
 
 	public static WebSite getUsersWebSite(User user) throws ModelException {
 		ModelFacade model = Core.getInstance().getModel();
-		WebSite site = (WebSite) model.getFirstSubRelation(user, WebSite.TYPE, WebSite.class);
+		WebSite site = model.getChild(user, WebSite.class);
 		return site;
 	}
 	
 	public static WebSite getWebSiteOfPage(WebPage page) throws ModelException {
 		ModelFacade model = Core.getInstance().getModel();
-		WebNode node = (WebNode) model.getFirstSuperRelation(page, WebNode.TYPE, WebNode.class);
-		WebSite site = (WebSite) model.getFirstSuperRelation(node, WebSite.TYPE, WebSite.class);
+		WebNode node = model.getParent(page, WebNode.class);
+		if (node==null) {
+			return null;
+		}
+		WebSite site = model.getParent(node, WebSite.class);
 		return site;
 	}
 
 	public static WebPage getPageForWebNode(long id) throws ModelException {
 		WebPage page = null;
 		ModelFacade model = Core.getInstance().getModel();
-		WebNode node = (WebNode) model.loadEntity(WebNode.class, id);
+		WebNode node = model.get(WebNode.class, id);
 		if (node!=null) {
-			page = (WebPage) model.getFirstSubRelation(node, WebPage.TYPE, WebPage.class);
+			page = model.getChild(node, WebPage.class);
 		}
 		return page;
 	}
 	
 	public static long createWebPageOnSite(long webSiteId, Class<?> clazz, Priviledged priviledged) throws EndUserException {
 		ModelFacade model = Core.getInstance().getModel();
-		WebSite site = (WebSite) model.loadEntity(WebSite.class, webSiteId);
+		WebSite site = model.get(WebSite.class, webSiteId);
 		
 		// Create a web page
 		WebPage page = new WebPage();
@@ -65,8 +68,18 @@ public class WebModelUtil {
 		node.setName("My new page");
 		model.createItem(node,priviledged);
 		
+		// Update positions of nodes
+		List<Relation> relations = model.getChildRelations(site,WebNode.class);
+		int position = 1;
+		for (Relation relation : relations) {
+			relation.setPosition(position);
+			model.updateItem(relation, priviledged);
+			position++;
+		}
+		
 		// Create a relation between node and page
 		Relation nodePageRelation = new Relation(node,page);
+		nodePageRelation.setPosition(1);
 		model.createItem(nodePageRelation,priviledged);
 		
 		// Create a relation between site and node
@@ -79,25 +92,26 @@ public class WebModelUtil {
 		Relation pageDocumentRelation = new Relation(page,document);
 		pageDocumentRelation.setKind(Relation.KIND_WEB_CONTENT);
 		model.createItem(pageDocumentRelation,priviledged);
+		
 		return node.getId();
 		
 	}
 	
 	public static void deleteWebPage(long pageId,Priviledged privileged) throws EndUserException {
 		ModelFacade model = Core.getInstance().getModel();
-		WebPage page = (WebPage) model.loadEntity(WebPage.class, pageId);
+		WebPage page = (WebPage) model.get(WebPage.class, pageId);
 		if (page == null) {
 			throw new EndUserException("The page does not exist");
 		}
 
 		// Delete Nodes
-		List<Entity> nodes = model.getSuperEntities(page, WebNode.class);
-		for (Entity node : nodes) {
+		List<WebNode> nodes = model.getParents(page, WebNode.class);
+		for (WebNode node : nodes) {
 			model.deleteEntity(node,privileged);
 		}
 
 		// Delete page content
-		List<Entity> contents = model.getSubEntities(page, Relation.KIND_WEB_CONTENT, privileged);
+		List<Entity> contents = model.getChildren(page, Relation.KIND_WEB_CONTENT, privileged);
 		for (Entity content : contents) {
 			model.deleteEntity(content, privileged);
 		}

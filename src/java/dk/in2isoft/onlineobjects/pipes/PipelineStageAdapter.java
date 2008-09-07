@@ -2,6 +2,8 @@ package dk.in2isoft.onlineobjects.pipes;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Map;
 
 public abstract class PipelineStageAdapter implements PipelineStage {
@@ -23,7 +25,9 @@ public abstract class PipelineStageAdapter implements PipelineStage {
 		throw new UnsupportedOperationException("This stage does not support mapped lines");
 	}
 	
-	
+	public void receiveResultSet(ResultSet rs) throws SQLException {
+		throw new UnsupportedOperationException("This stage does not support result sets");
+	}
 
 	public void receiveMappedLineKeys(String[] keys) throws IOException {
 		throw new UnsupportedOperationException("This stage does not support mapped lines");

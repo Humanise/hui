@@ -1,31 +1,26 @@
 package dk.in2isoft.onlineobjects.apps;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import dk.in2isoft.onlineobjects.model.Application;
+
 public class ApplicationManager {
 
-	private static ApplicationManager instance;
 	private static Logger log = Logger.getLogger(ApplicationManager.class);
 	
 	private Map<String, ApplicationController> controllers;
 
-	private ApplicationManager() {
+	public ApplicationManager() {
 		super();
 		this.controllers = new HashMap<String, ApplicationController>();
 	}
 
-	public static ApplicationManager getInstance() {
-		if (instance == null) {
-			instance = new ApplicationManager();
-		}
-		return instance;
-	}
-
-	public ApplicationController getToolController(String toolName) {
+	public ApplicationController getController(String toolName) {
 		if (controllers.containsKey(toolName)) {
 			return controllers.get(toolName);
 		} else {
@@ -58,5 +53,15 @@ public class ApplicationManager {
 			log.warn(e);
 		}
 		return controller;
+	}
+
+	public void registerApplications(List<Application> apps) {
+		for (Application application : apps) {
+			registerApplication(application);
+		}
+	}
+
+	public void registerApplication(Application application) {
+		getController(application.getName());
 	}
 }

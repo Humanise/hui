@@ -18,7 +18,7 @@ public class OoconverterController extends ServiceController {
 	//private static Logger log = Logger.getLogger(OoconverterController.class);
 	
 	public OoconverterController() {
-		super();
+		super("ooconverter");
 	}
 
 	@Override

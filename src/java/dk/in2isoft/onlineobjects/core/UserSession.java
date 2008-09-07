@@ -6,7 +6,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
-import dk.in2isoft.onlineobjects.apps.ApplicationManager;
 import dk.in2isoft.onlineobjects.apps.ApplicationSession;
 import dk.in2isoft.onlineobjects.model.User;
 
@@ -45,7 +44,7 @@ public class UserSession implements Priviledged {
 		if (this.toolSessions.containsKey(toolName)) {
 			return toolSessions.get(toolName);
 		} else {
-			ApplicationController ctrl = ApplicationManager.getInstance().getToolController(toolName);
+			ApplicationController ctrl = Core.getInstance().getApplicationManager().getController(toolName);
 			ApplicationSession session = ctrl.createToolSession();
 			if (session != null) {
 				toolSessions.put(toolName, session);

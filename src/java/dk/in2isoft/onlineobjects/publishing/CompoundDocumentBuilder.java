@@ -35,7 +35,7 @@ public class CompoundDocumentBuilder extends DocumentBuilder {
 		for (int i = 0; i < sections.size(); i++) {
 			Element section = (Element) sections.get(i);
 			long id = Long.valueOf(section.getAttribute("part-id").getValue());
-			Entity part = Core.getInstance().getModel().loadEntity(Entity.class, id);
+			Entity part = Core.getInstance().getModel().get(Entity.class, id);
 			if (part!=null) {
 				Node partNode = Core.getInstance().getConverter().generateXML(part);
 				section.appendChild(partNode);

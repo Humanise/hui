@@ -30,10 +30,10 @@ public class UserSite extends XSLTInterfaceAdapter {
 	private WebSite getUsersWebsite(User user) throws EndUserException {
 		ModelFacade model = Core.getInstance().getModel();
 		WebSite webSite = null;
-		List<Relation> userSubs = model.getSubRelations(user);
+		List<Relation> userSubs = model.getChildRelations(user);
 		for (Relation relation : userSubs) {
 			if (relation.getSubEntity().getType().equals(WebSite.TYPE)) {
-				webSite = (WebSite) model.loadEntity(WebSite.class, relation.getSubEntity().getId());
+				webSite = (WebSite) model.get(WebSite.class, relation.getSubEntity().getId());
 			}
 		}
 		if (webSite == null) {

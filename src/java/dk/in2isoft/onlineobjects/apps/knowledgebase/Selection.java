@@ -4,6 +4,7 @@ import java.util.List;
 
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
+import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Topic;
 import dk.in2isoft.onlineobjects.ui.Interface;
@@ -28,7 +29,7 @@ public class Selection extends Interface {
 	}
 
 	private void buildHierarchy(StringBuilder gui) {
-		List<Entity> topics = Core.getInstance().getModel().listEntities(Topic.class);
+		List<Topic> topics = Core.getInstance().getModel().search(Query.ofType(Topic.class));
 		for (Entity entity : topics) {
 			gui.append("<element title='");
 			gui.append(escape(entity.getName()));

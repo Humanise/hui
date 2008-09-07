@@ -8,7 +8,6 @@ import org.apache.commons.mail.SimpleEmail;
 
 import dk.in2isoft.commons.lang.LangUtil;
 import dk.in2isoft.onlineobjects.core.AbstractDAO;
-import dk.in2isoft.onlineobjects.core.AbstractModelQuery;
 import dk.in2isoft.onlineobjects.core.Configuration;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
@@ -55,11 +54,11 @@ public class CommunityDAO extends AbstractDAO {
 
 	public void sendInvitation(Invitation invitation) throws EndUserException {
 		ModelFacade model = Core.getInstance().getModel();
-		Person person = (Person) model.getFirstSubEntity(invitation, Person.class);
+		Person person = (Person) model.getChild(invitation, Person.class);
 		if (person == null) {
 			throw new EndUserException("The invitation does not have a person associated");
 		}
-		EmailAddress mail = (EmailAddress) model.getFirstSubEntity(person, EmailAddress.class);
+		EmailAddress mail = (EmailAddress) model.getChild(person, EmailAddress.class);
 		if (mail == null) {
 			throw new EndUserException("The person does not have an email");
 		}
@@ -108,7 +107,7 @@ public class CommunityDAO extends AbstractDAO {
 			throw new IllegalRequestException("Password is null");
 		}
 
-		AbstractModelQuery<Invitation> query = new Query<Invitation>(Invitation.class).withFieldValue(Invitation.FIELD_CODE, code);
+		Query<Invitation> query = new Query<Invitation>(Invitation.class).withFieldValue(Invitation.FIELD_CODE, code);
 		List<Invitation> invitations = getModel().search(query);
 		if (invitations.size() == 0) {
 			throw new EndUserException("Could not find invitation with code: " + code);
@@ -141,7 +140,7 @@ public class CommunityDAO extends AbstractDAO {
 		getModel().grantFullPrivileges(invitaionUserRelation, session);
 
 		// Get person from invitation
-		Person person = (Person) getModel().getFirstSubEntity(invitation, Person.class);
+		Person person = (Person) getModel().getChild(invitation, Person.class);
 		Person newPerson = new Person();
 
 		// Create copy of person
@@ -149,7 +148,7 @@ public class CommunityDAO extends AbstractDAO {
 		newPerson.setFamilyName(person.getFamilyName());
 		getModel().createItem(newPerson, session);
 
-		EmailAddress mail = (EmailAddress) getModel().getFirstSubEntity(person, EmailAddress.class);
+		EmailAddress mail = (EmailAddress) getModel().getChild(person, EmailAddress.class);
 
 		// Create copy of mail
 		EmailAddress newMail = new EmailAddress();
@@ -231,7 +230,7 @@ public class CommunityDAO extends AbstractDAO {
 	
 	public void updateDummyEmailAddresses(Entity parent,List<EmailAddress> addresses, UserSession session) throws EndUserException {
 		
-		List<EmailAddress> existing = getModel().getSubEntities(parent, EmailAddress.class);
+		List<EmailAddress> existing = getModel().getChildren(parent, EmailAddress.class);
 		EntitylistSynchronizer<EmailAddress> sync = new EntitylistSynchronizer<EmailAddress>(existing,addresses);
 		
 		for (Entry<EmailAddress, EmailAddress> entry : sync.getUpdated().entrySet()) {
@@ -254,7 +253,7 @@ public class CommunityDAO extends AbstractDAO {
 	
 	public void updateDummyPhoneNumbers(Entity parent,List<PhoneNumber> phones, UserSession session) throws EndUserException {
 		
-		List<PhoneNumber> existing = getModel().getSubEntities(parent, PhoneNumber.class);
+		List<PhoneNumber> existing = getModel().getChildren(parent, PhoneNumber.class);
 		EntitylistSynchronizer<PhoneNumber> sync = new EntitylistSynchronizer<PhoneNumber>(existing,phones);
 		
 		for (Entry<PhoneNumber, PhoneNumber> entry : sync.getUpdated().entrySet()) {

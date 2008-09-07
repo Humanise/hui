@@ -45,12 +45,12 @@ public class ImageGalleryBuilder extends DocumentBuilder implements FeedBuilder 
 		settings.addAttribute(new Attribute("style", style));
 		root.appendChild(settings);
 
-		HeaderPart header = getModel().getFirstSubEntity(gallery, HeaderPart.class);
+		HeaderPart header = getModel().getChild(gallery, HeaderPart.class);
 		if (header != null) {
 			root.appendChild(converter.generateXML(header));
 		}
 
-		HtmlPart html = getModel().getFirstSubEntity(gallery, HtmlPart.class);
+		HtmlPart html = getModel().getChild(gallery, HtmlPart.class);
 		if (html != null) {
 			root.appendChild(converter.generateXML(html));
 		}
@@ -59,7 +59,7 @@ public class ImageGalleryBuilder extends DocumentBuilder implements FeedBuilder 
 		root.appendChild(tiled);
 		Element row = new Element("row", NAMESPACE);
 		int columns = gallery.getTiledColumns();
-		List<Image> images = getModel().getSubEntities(gallery, Image.class);
+		List<Image> images = getModel().getChildrenOrdered(gallery, Image.class);
 		for (int i = 0; i < images.size(); i++) {
 			if (i % columns == 0) {
 				row = new Element("row", NAMESPACE);
@@ -97,7 +97,7 @@ public class ImageGalleryBuilder extends DocumentBuilder implements FeedBuilder 
 
 	public void buildFeed(Document document, FeedWriter writer) throws EndUserException {
 		ImageGallery gallery = (ImageGallery) document;
-		List<Image> images = getModel().getSubEntities(gallery, Image.class);
+		List<Image> images = getModel().getChildren(gallery, Image.class);
 		try {
 			writer.startFeed();
 			writer.startChannel(gallery.getName(),Core.getInstance().getConfiguration().getBaseUrl());

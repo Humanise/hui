@@ -21,15 +21,15 @@ public class ImageGalleryRemotingFacade extends AbstractRemotingFacade {
 	public List<Image> listImages(long galleryId)
 	throws EndUserException {
 		ModelFacade model = getModel();
-		ImageGallery gallery = model.loadEntity(ImageGallery.class, galleryId);
-		List<Image> subs = model.getSubEntities(gallery, Image.class);
+		ImageGallery gallery = model.get(ImageGallery.class, galleryId);
+		List<Image> subs = model.getChildrenOrdered(gallery, Image.class);
 		return subs;
 	}
 
 	public void updateImageSize(long galleryId, int width, int height)
 	throws EndUserException {
 		ModelFacade model = getModel();
-		ImageGallery gallery = model.loadEntity(ImageGallery.class, galleryId);
+		ImageGallery gallery = model.get(ImageGallery.class, galleryId);
 		gallery.setTiledWidth(width);
 		gallery.setTiledHeight(height);
 		model.updateItem(gallery, getUserSession());
@@ -38,8 +38,8 @@ public class ImageGalleryRemotingFacade extends AbstractRemotingFacade {
 	public void updateImagePositions(long galleryId,long[] ids)
 	throws ModelException, SecurityException {
 		ModelFacade model = getModel();
-		ImageGallery gallery = model.loadEntity(ImageGallery.class, galleryId);
-		List<Relation> relations = getModel().getSubRelations(gallery);
+		ImageGallery gallery = model.get(ImageGallery.class, galleryId);
+		List<Relation> relations = getModel().getChildRelations(gallery);
 		for (int i=0;i<ids.length;i++) {
 			for (Relation relation : relations) {
 				if (relation.getSubEntity().getId()==ids[i]) {
@@ -54,7 +54,7 @@ public class ImageGalleryRemotingFacade extends AbstractRemotingFacade {
 		if (title==null || title.trim().length()==0) {
 			throw new EndUserException("Cannot set title of image to null");
 		}
-		Image image = (Image) getModel().loadEntity(Image.class, imageId);
+		Image image = (Image) getModel().get(Image.class, imageId);
 		if (image==null) {
 			throw new EndUserException("Image with id="+imageId+" does not exist");
 		}
@@ -67,7 +67,7 @@ public class ImageGalleryRemotingFacade extends AbstractRemotingFacade {
 	
 	public void deleteImage(long imageId,long imageGalleryId) throws EndUserException {
 		ModelFacade model = getModel();
-		Image image = (Image) model.loadEntity(Image.class, imageId);
+		Image image = (Image) model.get(Image.class, imageId);
 		if (image==null) {
 			throw new EndUserException("The image does not exist");
 		}
@@ -76,7 +76,7 @@ public class ImageGalleryRemotingFacade extends AbstractRemotingFacade {
 	
 	public void changeFrameStyle(long galleryId,String style) throws EndUserException {
 		ModelFacade model = getModel();
-		ImageGallery gallery = (ImageGallery) model.loadEntity(ImageGallery.class, galleryId);
+		ImageGallery gallery = (ImageGallery) model.get(ImageGallery.class, galleryId);
 		gallery.overrideFirstProperty(ImageGallery.PROPERTY_FRAMESTYLE,style);
 		model.updateItem(gallery,getUserSession());
 	}

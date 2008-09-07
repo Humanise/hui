@@ -40,7 +40,7 @@ public class UserProfilePage extends XSLTInterfaceAdapter {
 		appendEntity(profile,user);
 		try {
 			ModelFacade model = Core.getInstance().getModel();
-			Person person = (Person) model.getFirstSubRelation(user, Relation.KIND_SYSTEM_USER_SELF, Person.class);
+			Person person = model.getChild(user, Relation.KIND_SYSTEM_USER_SELF, Person.class);
 			appendEntity(profile, person);
 
 			Element images = createPageNode(parent,"images");			

@@ -48,7 +48,7 @@ public class AddressbookController extends ApplicationController {
 
 	public void editPerson(Request request)
 	throws IOException,EndUserException {
-		Person person = (Person)getModel().loadEntity(Person.class,request.getLong("id"));
+		Person person = (Person)getModel().get(Person.class,request.getLong("id"));
 		Interface gui = new EditPerson(person);
 		gui.display(request);
 	}
@@ -70,7 +70,7 @@ public class AddressbookController extends ApplicationController {
 
 	public void updatePerson(Request request)
 	throws IOException,EndUserException {
-		Person person = (Person)getModel().loadEntity(Person.class,request.getLong("id"));
+		Person person = (Person)getModel().get(Person.class,request.getLong("id"));
 		person.setGivenName(request.getString("firstName"));
 		person.setFamilyName(request.getString("lastName"));
 		String sex = request.getString("sex");
@@ -85,7 +85,7 @@ public class AddressbookController extends ApplicationController {
 
 	public void deletePerson(Request request)
 	throws IOException,EndUserException {
-		Person person = (Person)getModel().loadEntity(Person.class,request.getLong("id"));
+		Person person = (Person)getModel().get(Person.class,request.getLong("id"));
 		getModel().deleteEntity(person,request.getSession());
 		request.redirect(".");
 	}

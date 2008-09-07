@@ -17,7 +17,7 @@ public class WebrendererController extends ServiceController {
 	//private static Logger log = Logger.getLogger(WebrendererController.class);
 	
 	public WebrendererController() {
-		super();
+		super("webrenderer");
 	}
 
 	@Override

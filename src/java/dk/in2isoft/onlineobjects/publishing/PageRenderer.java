@@ -37,7 +37,7 @@ public class PageRenderer {
 		ModelFacade model = Core.getInstance().getModel();
 		ConversionFacade converter = Core.getInstance().getConverter();
 		// Get the page content
-		Entity document = model.getSubEntities(page, Relation.KIND_WEB_CONTENT, request.getSession()).iterator().next();
+		Entity document = model.getChild(page, Relation.KIND_WEB_CONTENT, Entity.class);
 		//ImageGallery document = (ImageGallery)model.getFirstSubRelation(page, ImageGallery.TYPE, ImageGallery.class);
 		if (document==null) {
 			throw new EndUserException("The page does not have a document!");
@@ -69,11 +69,11 @@ public class PageRenderer {
 		Element context = new Element("context", NAMESPACE);
 		context.appendChild(converter.generateXML(site));
 		
-		WebNode node = (WebNode)model.getFirstSuperEntity(page,WebNode.class);
+		WebNode node = (WebNode)model.getParent(page,WebNode.class);
 		context.appendChild(converter.generateXML(node));
 		
 		Element nodes = new Element("nodes", NAMESPACE);
-		List<WebNode> rootNodes = model.getSubEntities(site, WebNode.class);
+		List<WebNode> rootNodes = model.getChildren(site, WebNode.class);
 		for (Iterator<WebNode> iter = rootNodes.iterator(); iter.hasNext();) {
 			WebNode subNode = (WebNode) iter.next();
 			nodes.appendChild(converter.generateXML(subNode));
@@ -92,10 +92,11 @@ public class PageRenderer {
 		
 		File pageStylesheet = conf.getFile(new String[] {"WEB-INF","apps","community","xslt","page.xsl"});
 		File stylesheet = conf.getFile(new String[] {"WEB-INF","apps","community","web","documents",document.getClass().getSimpleName(),"xslt","stylesheet.xsl"});
-		File frame = conf.getFile(new String[] {"WEB-INF","apps","community","web","templates",template,"xslt","stylesheet.xsl"});
+		File frame = conf.getFile(new String[] {"WEB-INF","apps","community","web","layouts","horizontal.xsl"});
 
 		Map<String, String> parameters = buildParameters(request);
 		parameters.put("privilege-document-modify", String.valueOf(Core.getInstance().getSecurity().canModify(document, request.getSession())));
+		parameters.put("page-design",template);
 		try {
 			if (request.getBoolean("viewsource")) {
 				request.getResponse().setContentType("text/xml");
@@ -116,7 +117,7 @@ public class PageRenderer {
 			devmode="false";
 		}
 
-		parameters.put("app-context", request.getLocalContextPath());
+		parameters.put("local-context", request.getLocalContextPath());
 		parameters.put("base-context", request.getBaseContextPath());
 		parameters.put("session-user-name", request.getSession().getUser().getUsername());
 		parameters.put("development-mode", devmode);

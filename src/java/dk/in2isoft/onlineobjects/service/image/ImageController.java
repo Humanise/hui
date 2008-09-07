@@ -16,7 +16,7 @@ public class ImageController extends ServiceController {
 	// private static Logger log = Logger.getLogger(ImageController.class);
 
 	public ImageController() {
-		super();
+		super("image");
 	}
 
 	@Override
@@ -30,7 +30,7 @@ public class ImageController extends ServiceController {
 		int width = request.getInt("width");
 		int height = request.getInt("height");
 		boolean cropped = request.getBoolean("cropped");
-		Image image = (Image) Core.getInstance().getModel().loadEntity(Image.class, id);
+		Image image = (Image) Core.getInstance().getModel().get(Image.class, id);
 		if (image == null) {
 			throw new EndUserException("Could not load image with id=" + id);
 		}

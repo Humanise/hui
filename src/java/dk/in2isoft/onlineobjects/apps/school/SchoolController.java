@@ -23,8 +23,20 @@ public class SchoolController extends ApplicationController {
 		Scheduler scheduler = Core.getInstance().getScheduler();
 		String trigger = getConfig().getString("synchronization.trigger");
 		JobDataMap map = new JobDataMap();
+
 		String url = getConfig().getString("synchronization.url");
+		String serverName = getConfig().getString("synchronization.database.server-name");
+		Integer portNumber = getConfig().getInt("synchronization.database.port-number",0);
+		System.out.println(portNumber);
+		String databaseName = getConfig().getString("synchronization.database.database-name");
+		String user = getConfig().getString("synchronization.database.user");
+		String password= getConfig().getString("synchronization.database.password");
 		map.put(UserAndEventSynchronizer.CONFIG_URL, url);
+		map.put(UserAndEventSynchronizer.CONFIG_SERVERNAME, serverName);
+		map.put(UserAndEventSynchronizer.CONFIG_PORTNUMBER, portNumber);
+		map.put(UserAndEventSynchronizer.CONFIG_DATABASENAME, databaseName);
+		map.put(UserAndEventSynchronizer.CONFIG_USER, user);
+		map.put(UserAndEventSynchronizer.CONFIG_PASSWORD, password);
 		scheduler.addJob(JOB_SYNCHRONIZER,"school",UserAndEventSynchronizer.class,trigger,map);
 	}
 	

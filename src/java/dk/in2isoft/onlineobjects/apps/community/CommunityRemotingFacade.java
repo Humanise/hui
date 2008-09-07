@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 
 import dk.in2isoft.commons.lang.LangUtil;
+import dk.in2isoft.in2igui.data.FormulaData;
 import dk.in2isoft.in2igui.data.ListData;
 import dk.in2isoft.in2igui.data.ListDataRow;
 import dk.in2isoft.in2igui.data.TextFieldData;
@@ -40,9 +41,9 @@ import dk.in2isoft.onlineobjects.publishing.Document;
 import dk.in2isoft.onlineobjects.ui.AbstractRemotingFacade;
 import dk.in2isoft.onlineobjects.ui.AsynchronousProcessDescriptor;
 
-public class RemotingFacade extends AbstractRemotingFacade {
+public class CommunityRemotingFacade extends AbstractRemotingFacade {
 
-	private static Logger log = Logger.getLogger(RemotingFacade.class);
+	private static Logger log = Logger.getLogger(CommunityRemotingFacade.class);
 
 	public void signUp(String username, String password) throws EndUserException {
 		CommunityController.getDAO().signUp(getUserSession(),username,password);
@@ -69,7 +70,7 @@ public class RemotingFacade extends AbstractRemotingFacade {
 
 	public boolean updateWebNode(long id, String name) throws EndUserException {
 		ModelFacade model = getModel();
-		WebNode node = model.loadEntity(WebNode.class, id);
+		WebNode node = model.get(WebNode.class, id);
 		node.setName(name);
 		model.updateItem(node, getUserSession());
 		return true;
@@ -92,13 +93,13 @@ public class RemotingFacade extends AbstractRemotingFacade {
 
 	public void changePageTemplate(long pageId, String template) throws EndUserException {
 		ModelFacade model = getModel();
-		WebPage page = model.loadEntity(WebPage.class, pageId);
+		WebPage page = model.get(WebPage.class, pageId);
 		page.overrideFirstProperty(WebPage.PROPERTY_TEMPLATE, template);
 		model.updateItem(page, getUserSession());
 	}
 
 	public Collection<WidgetData> getProfileGuiData() throws EndUserException {
-		List<Person> persons = getModel().getSubEntities(getUserSession().getUser(), Person.class);
+		List<Person> persons = getModel().getChildren(getUserSession().getUser(), Person.class);
 		if (persons.size() > 0) {
 			Person person = persons.get(0);
 			Collection<WidgetData> list = new ArrayList<WidgetData>();
@@ -115,7 +116,7 @@ public class RemotingFacade extends AbstractRemotingFacade {
 
 	public List<Map<String, Object>> getInvitations() throws EndUserException {
 		List<Map<String, Object>> invites = new ArrayList<Map<String, Object>>();
-		List<Invitation> invitations = getModel().getSubEntities(getUserSession().getUser(), Invitation.class);
+		List<Invitation> invitations = getModel().getChildren(getUserSession().getUser(), Invitation.class);
 		
 		for (Iterator<Invitation> i = invitations.iterator(); i.hasNext();) {
 			Map<String, Object> row = new HashMap<String, Object>();
@@ -125,9 +126,9 @@ public class RemotingFacade extends AbstractRemotingFacade {
 			row.put("created", created.toString("d/M-yyyy HH:mm"));
 			row.put("code", invitation.getCode());
 			row.put("state", invitation.getState());
-			Person invited = (Person) getModel().getFirstSubEntity(invitation, Person.class);
+			Person invited = (Person) getModel().getChild(invitation, Person.class);
 			row.put("person", invited.getName());
-			EmailAddress email = (EmailAddress) getModel().getFirstSubEntity(invited, EmailAddress.class);
+			EmailAddress email = (EmailAddress) getModel().getChild(invited, EmailAddress.class);
 			row.put("email", email.getAddress());
 			invites.add(row);
 		}
@@ -135,7 +136,7 @@ public class RemotingFacade extends AbstractRemotingFacade {
 	}
 
 	public Person getUsersMainPerson() throws EndUserException {
-		List<Person> persons = getModel().getSubEntities(getUserSession().getUser(), Person.class);
+		List<Person> persons = getModel().getChildren(getUserSession().getUser(), Person.class);
 		if (persons.size() > 0) {
 			return (Person) persons.get(0);
 		} else {
@@ -145,7 +146,7 @@ public class RemotingFacade extends AbstractRemotingFacade {
 
 	public List<EmailAddress> getUsersMainPersonsAddresses() throws EndUserException {
 		Person person = getUsersMainPerson();
-		List<EmailAddress> addresses = getModel().getSubEntities(person, EmailAddress.class);
+		List<EmailAddress> addresses = getModel().getChildren(person, EmailAddress.class);
 		return addresses;
 	}
 
@@ -222,9 +223,9 @@ public class RemotingFacade extends AbstractRemotingFacade {
 			row.addColumn("id", person.getId());
 			row.addColumn("name", person.getName());
 
-			List<EmailAddress> email = getModel().getSubEntities(person, EmailAddress.class);
+			List<EmailAddress> email = getModel().getChildren(person, EmailAddress.class);
 			row.addColumn("email", email);
-			List<PhoneNumber> phones = getModel().getSubEntities(person, PhoneNumber.class);
+			List<PhoneNumber> phones = getModel().getChildren(person, PhoneNumber.class);
 			row.addColumn("phone", phones);
 			list.addRow(row);
 		}
@@ -250,18 +251,18 @@ public class RemotingFacade extends AbstractRemotingFacade {
 	
 	public Map<String,Object> loadPerson(long id) throws ModelException {
 		Map<String,Object> data = new HashMap<String, Object>();
-		Person person = getModel().loadEntity(Person.class, id);
+		Person person = getModel().get(Person.class, id);
 		data.put("person", person);
-		List<EmailAddress> emails = getModel().getSubEntities(person, EmailAddress.class);
+		List<EmailAddress> emails = getModel().getChildren(person, EmailAddress.class);
 		data.put("emails", emails);
-		List<PhoneNumber> phones = getModel().getSubEntities(person, PhoneNumber.class);
+		List<PhoneNumber> phones = getModel().getChildren(person, PhoneNumber.class);
 		data.put("phones", phones);
 		return data;
 	}
 	
 	public Map<String,Object> getImage(long id) throws ModelException {
 		Map<String,Object> data = new HashMap<String, Object>();
-		Image image = getModel().loadEntity(Image.class, id);
+		Image image = getModel().get(Image.class, id);
 		data.put("image", image);
 		data.put("name", image.getName());
 		data.put("description", image.getPropertyValue(Image.PROPERTY_DESCRIPTION));
@@ -270,7 +271,7 @@ public class RemotingFacade extends AbstractRemotingFacade {
 	}
 	
 	public void updateImage(long id,String name,String description, List<String> tags) throws EndUserException {
-		Image image = getModel().loadEntity(Image.class, id);
+		Image image = getModel().get(Image.class, id);
 		image.setName(name);
 		image.overrideFirstProperty(Image.PROPERTY_DESCRIPTION, description);
 		image.overrideProperties(Property.KEY_COMMON_TAG, tags);
@@ -280,7 +281,7 @@ public class RemotingFacade extends AbstractRemotingFacade {
 	public void savePerson(Person dummy,List<EmailAddress> addresses,List<PhoneNumber> phones) throws EndUserException {
 		Person person;
 		if (dummy.getId()>0) {
-			person = getModel().loadEntity(Person.class, dummy.getId());
+			person = getModel().get(Person.class, dummy.getId());
 		} else {
 			person = new Person();
 		}
@@ -310,5 +311,22 @@ public class RemotingFacade extends AbstractRemotingFacade {
 			throw new EndUserException("The message is empty!");
 		}
 		CommunityController.getDAO().sendFeedback(emailAddress, message);
+	}
+
+	public FormulaData getPageInfo(long pageId) throws EndUserException {
+		ModelFacade model = getModel();
+		WebPage page = model.get(WebPage.class, pageId);
+		FormulaData data = new FormulaData();
+		data.addValue("title", page.getName());
+		data.addValue("tags", page.getPropertyValues(Property.KEY_COMMON_TAG));
+		return data;
+	}
+
+	public void savePageInfo(long pageId,String title,List<String> tags) throws EndUserException {
+		ModelFacade model = getModel();
+		WebPage page = model.get(WebPage.class, pageId);
+		page.setName(title);
+		page.overrideProperties(Property.KEY_COMMON_TAG, tags);
+		model.updateItem(page, getUserSession());
 	}
 }

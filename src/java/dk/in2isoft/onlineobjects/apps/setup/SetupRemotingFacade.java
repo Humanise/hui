@@ -1,5 +1,6 @@
 package dk.in2isoft.onlineobjects.apps.setup;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -9,9 +10,11 @@ import dk.in2isoft.in2igui.data.ListData;
 import dk.in2isoft.in2igui.data.ListDataRow;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
+import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.Scheduler;
 import dk.in2isoft.onlineobjects.core.SecurityController;
 import dk.in2isoft.onlineobjects.core.SecurityException;
+import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.ui.AbstractRemotingFacade;
 
@@ -50,6 +53,21 @@ public class SetupRemotingFacade extends AbstractRemotingFacade {
 			row.addColumn("group", group);
 			boolean running = scheduler.isRunning(name, group);
 			row.addColumn("status", running ? "Kører" : "Venter");
+			list.add(row);
+		}
+		return list;
+	}
+	
+	public ListData listEntities() throws SecurityException {
+		checkUser();
+		ListData list = new ListData();
+		Query<Entity> query = Query.ofType(Entity.class).withPaging(0, 50);
+		List<Entity> data = getModel().search(query);
+		for (Entity entity : data) {
+			ListDataRow row = new ListDataRow();
+			row.addColumn("icon", entity.getIcon());
+			row.addColumn("name", entity.getName());
+			row.addColumn("type", entity.getType());
 			list.add(row);
 		}
 		return list;
