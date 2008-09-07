@@ -141,14 +141,18 @@
 		        <property name="location"/>
 		    </joined-subclass>
 		    
+		    <joined-subclass name="dk.in2isoft.onlineobjects.model.Application" table="application">
+		        <key column="id"/>
+		    </joined-subclass>
+		    
 	    </joined-subclass>
 	    
 	    <joined-subclass name="dk.in2isoft.onlineobjects.model.Relation" table="relation">
 	        <key column="id"/>
 		    <property name="kind"/>
 		    <property name="position"/>
-	        <many-to-one name="superEntity" column="super_entity_id" not-null="true"/>
-	        <many-to-one name="subEntity" column="sub_entity_id" not-null="true"/>
+	        <many-to-one name="superEntity" column="super_entity_id" not-null="true" lazy="false" fetch="join"/>
+	        <many-to-one name="subEntity" column="sub_entity_id" not-null="true" lazy="false" fetch="join"/>
 	    </joined-subclass>
     
     </class>
