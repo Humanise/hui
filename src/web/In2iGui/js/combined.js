@@ -9550,7 +9550,7 @@ In2iGui.Buttons.prototype = {
 }
 
 /* EOF */In2iGui.Selection = function(id,name,source) {
-	this.element = $id(id);
+	this.element = $(id);
 	this.name = name;
 	this.items = [];
 	this.sources = [];
@@ -9561,7 +9561,9 @@ In2iGui.Buttons.prototype = {
 }
 
 In2iGui.Selection.create = function(name,options) {
+	options = N2i.override({width:0},options);
 	var e = new Element('div',{'class':'in2igui_selection'});
+	if (options.width>0) e.setStyle({width:options.width+'px'});
 	return new In2iGui.Selection(e,name,options);
 }
 
@@ -9614,6 +9616,31 @@ In2iGui.Selection.prototype = {
 		N2i.addListener(element,'mouseover',In2iGui.dropOverListener);
 		N2i.addListener(element,'mouseout',In2iGui.dropOutListener);
 	},
+	
+	setItems : function(items) {
+		var self = this;
+		items.each(function(item) {
+			self.items.push(item);
+			var node = new Element('div',{'class':'item'});
+			node.in2iGuiValue = item.value;
+			item.element = node;
+			self.element.insert(node);
+			if (item.icon) {
+				var img = new Element('div',{'class':'icon'}).setStyle({'backgroundImage' : 'url('+In2iGui.getIconUrl(item.icon,1)+')'});
+				node.insert(img);
+			}
+			node.insert(item.title);
+			node.observe('click',function() {
+				self.itemWasClicked(node);
+			});
+			node.observe('dblclick',function() {
+				self.itemWasDoubleClicked(node);
+				return false;
+			});
+		});
+	},
+	
+	// Events
 	itemWasClicked : function(item) {
 		this.changeValue(item.in2iGuiValue);
 	},
@@ -12026,7 +12053,7 @@ In2iGui.Columns.prototype = {
 		var children = this.body.childElements();
 		N2i.log(children.length-1);
 		for (var i=children.length-1;i<index;i++) {
-			this.body.insert(new Element('td'));
+			this.body.insert(new Element('td',{'class':'in2igui_columns_column'}));
 			N2i.log('insert');
 		}
 		N2i.log(this.body);
