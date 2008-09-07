@@ -195,6 +195,11 @@ function asd() {
     </tr>
     
     <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="In2iGui.Columns.html">In2iGui.Columns</a></b></td>
+    <td>&nbsp;</td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
     <td width="15%"><b><a href="In2iGui.Toolbar.html">In2iGui.Toolbar</a></b></td>
     <td>&nbsp;</td>
     </tr>
@@ -246,6 +251,11 @@ function asd() {
     
     <tr bgcolor="white" class="TableRowColor">
     <td width="15%"><b><a href="In2iGui.ObjectList.Object.html">In2iGui.ObjectList.Object</a></b></td>
+    <td>&nbsp;</td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="In2iGui.Buttons.html">In2iGui.Buttons</a></b></td>
     <td>&nbsp;</td>
     </tr>
     
@@ -370,6 +380,11 @@ function asd() {
     <td>&nbsp;</td>
     </tr>
     
+    <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="In2iGui.Toolbar.Badge.html">In2iGui.Toolbar.Badge</a></b></td>
+    <td>&nbsp;</td>
+    </tr>
+    
     </table>
     <hr/> 
 
@@ -486,35 +501,6 @@ N2i.log = <span class="reserved">function</span>(obj) {
 	try {
 		console.log(obj);
 	} catch (ignore) {};
-}
-
-N2i.objToString = <span class="reserved">function</span> (obj,level) {
-	var str = <span class="literal">''</span>;
-	level = level | 0;
-	level+=2;
-	<span class="reserved">if</span> (typeof(obj)==<span class="literal">'object'</span>) {
-		str+=<span class="literal">'{'</span>;
-		<span class="reserved">for</span> (var prop in obj) {
-			var value = obj[prop];
-			<span class="reserved">if</span> (value==null) {
-				value=<span class="literal">'null'</span>;
-			} <span class="reserved">else</span> <span class="reserved">if</span> (typeof(value)==<span class="literal">'string'</span>) {
-				value = <span class="literal">'\'</span><span class="literal">'+value+'</span>\<span class="literal">''</span>;
-			} <span class="reserved">else</span> <span class="reserved">if</span> (typeof(value)==<span class="literal">'object'</span>) {
-				value = N2i.objToString(value,level);
-			}
-			str+=<span class="literal">'\n'</span>;
-			<span class="reserved">for</span> (var i=0;i&lt;level;i++) {
-				str+=<span class="literal">' '</span>;
-			}
-			str+=prop+<span class="literal">' : '</span>+value;
-		}
-		str+=<span class="literal">'\n}'</span>;
-	}
-	<span class="reserved">else</span> {
-		str=obj;
-	}
-	<span class="reserved">return</span> str;
 }
 
 N2i.escapeHTML = <span class="reserved">function</span>(str) {
@@ -1252,7 +1238,32 @@ N2i.isIE = <span class="reserved">function</span>() {
 	<span class="reserved">return</span> ie;
 }
 
-<span class="comment">/*  Prototype JavaScript framework, version 1.6.0.2
+<span class="comment">////////////////////////////////////////////// Cookie ///////////////////////////////////////////</span>
+
+N2i.Cookie = {
+	set : <span class="reserved">function</span>(name,value,days) {
+		<span class="reserved">if</span> (days) {
+			var date = new Date();
+			date.setTime(date.getTime()+(days*24*60*60*1000));
+			var expires = <span class="literal">"; expires="</span>+date.toGMTString();
+		}
+		<span class="reserved">else</span> var expires = <span class="literal">""</span>;
+		document.cookie = name+<span class="literal">"="</span>+value+expires+<span class="literal">"; path=/"</span>;
+	},
+	get : <span class="reserved">function</span>(name) {
+		var nameEQ = name + <span class="literal">"="</span>;
+		var ca = document.cookie.split(<span class="literal">';'</span>);
+		<span class="reserved">for</span>(var i=0;i &lt; ca.length;i++) {
+			var c = ca[i];
+			<span class="reserved">while</span> (c.charAt(0)==<span class="literal">' '</span>) c = c.substring(1,c.length);
+			<span class="reserved">if</span> (c.indexOf(nameEQ) == 0) <span class="reserved">return</span> c.substring(nameEQ.length,c.length);
+		}
+		<span class="reserved">return</span> null;
+	},
+	clear : <span class="reserved">function</span>(name) {
+		<span class="reserved">this</span>.set(name,<span class="literal">""</span>,-1);
+	}
+}<span class="comment">/*  Prototype JavaScript framework, version 1.6.0.2
  *  (c) 2005-2008 Sam Stephenson
  *
  *  Prototype is freely distributable under the terms of an MIT-style license.
@@ -6203,7 +6214,20 @@ N2i.Animation.slowFastSlow = <span class="reserved">function</span>(val) {
 	<span class="reserved">return</span> -1*Math.pow(Math.cos((Math.PI/2)*Math.pow(val,a)),Math.pow(Math.PI,b))+1;
 }
 
+N2i.Animation.elasticIn = <span class="reserved">function</span>(n) {
+	<span class="reserved">if</span>(n==0){ <span class="reserved">return</span> 0; }
+	<span class="reserved">if</span>(n==1){ <span class="reserved">return</span> 1; }
+	var p = .3;
+	var s = p/4;
+	n = n - 1;
+	<span class="reserved">return</span> -1 * Math.pow(2,10*n) * Math.sin((n-s)*(2*Math.PI)/p);
+}
 
+N2i.Animation.backOut = <span class="reserved">function</span>(n) {
+	n = n - 1;
+	var s = 1.70158;
+	<span class="reserved">return</span> Math.pow(n, 2) * ((s + 1) * n + s) + 1;
+}
 
 N2i.Animation.bounce = <span class="reserved">function</span>(t) {
 	<span class="reserved">if</span> (t &lt; (1/2.75)) {
@@ -6671,7 +6695,202 @@ N2i.Color = <span class="reserved">function</span>(color_string) {
 }
 
 
-<span class="reserved">if</span> (!N2i) {var N2i = {};}
+N2i.ease = {
+	
+	linear: <span class="reserved">function</span>(<span class="comment">/* Decimal? */</span>n){
+		<span class="comment">// summary: A linear easing function</span>
+		<span class="reserved">return</span> n;
+	},
+
+	quadIn: <span class="reserved">function</span>(<span class="comment">/* Decimal? */</span>n){
+		<span class="reserved">return</span> Math.pow(n, 2);
+	},
+
+	quadOut: <span class="reserved">function</span>(<span class="comment">/* Decimal? */</span>n){
+		<span class="reserved">return</span> n * (n-2) * -1;
+	},
+
+	quadInOut: <span class="reserved">function</span>(<span class="comment">/* Decimal? */</span>n){
+		n=n*2;
+		<span class="reserved">if</span>(n&lt;1){ <span class="reserved">return</span> Math.pow(n, 2) / 2; }
+		<span class="reserved">return</span> -1 * ((--n)*(n-2) - 1) / 2;
+	},
+
+	cubicIn: <span class="reserved">function</span>(<span class="comment">/* Decimal? */</span>n){
+		<span class="reserved">return</span> Math.pow(n, 3);
+	},
+
+	cubicOut: <span class="reserved">function</span>(<span class="comment">/* Decimal? */</span>n){
+		<span class="reserved">return</span> Math.pow(n-1, 3) + 1;
+	},
+
+	cubicInOut: <span class="reserved">function</span>(<span class="comment">/* Decimal? */</span>n){
+		n=n*2;
+		<span class="reserved">if</span>(n&lt;1){ <span class="reserved">return</span> Math.pow(n, 3) / 2; }
+		n-=2;
+		<span class="reserved">return</span> (Math.pow(n, 3) + 2) / 2;
+	},
+
+	quartIn: <span class="reserved">function</span>(<span class="comment">/* Decimal? */</span>n){
+		<span class="reserved">return</span> Math.pow(n, 4);
+	},
+
+	quartOut: <span class="reserved">function</span>(<span class="comment">/* Decimal? */</span>n){
+		<span class="reserved">return</span> -1 * (Math.pow(n-1, 4) - 1);
+	},
+
+	quartInOut: <span class="reserved">function</span>(<span class="comment">/* Decimal? */</span>n){
+		n=n*2;
+		<span class="reserved">if</span>(n&lt;1){ <span class="reserved">return</span> Math.pow(n, 4) / 2; }
+		n-=2;
+		<span class="reserved">return</span> -1/2 * (Math.pow(n, 4) - 2);
+	},
+
+	quintIn: <span class="reserved">function</span>(<span class="comment">/* Decimal? */</span>n){
+		<span class="reserved">return</span> Math.pow(n, 5);
+	},
+
+	quintOut: <span class="reserved">function</span>(<span class="comment">/* Decimal? */</span>n){
+		<span class="reserved">return</span> Math.pow(n-1, 5) + 1;
+	},
+
+	quintInOut: <span class="reserved">function</span>(<span class="comment">/* Decimal? */</span>n){
+		n=n*2;
+		<span class="reserved">if</span>(n&lt;1){ <span class="reserved">return</span> Math.pow(n, 5) / 2; };
+		n-=2;
+		<span class="reserved">return</span> (Math.pow(n, 5) + 2) / 2;
+	},
+
+	sineIn: <span class="reserved">function</span>(<span class="comment">/* Decimal? */</span>n){
+		<span class="reserved">return</span> -1 * Math.cos(n * (Math.PI/2)) + 1;
+	},
+
+	sineOut: <span class="reserved">function</span>(<span class="comment">/* Decimal? */</span>n){
+		<span class="reserved">return</span> Math.sin(n * (Math.PI/2));
+	},
+
+	sineInOut: <span class="reserved">function</span>(<span class="comment">/* Decimal? */</span>n){
+		<span class="reserved">return</span> -1 * (Math.cos(Math.PI*n) - 1) / 2;
+	},
+
+	expoIn: <span class="reserved">function</span>(<span class="comment">/* Decimal? */</span>n){
+		<span class="reserved">return</span> (n==0) ? 0 : Math.pow(2, 10 * (n - 1));
+	},
+
+	expoOut: <span class="reserved">function</span>(<span class="comment">/* Decimal? */</span>n){
+		<span class="reserved">return</span> (n==1) ? 1 : (-1 * Math.pow(2, -10 * n) + 1);
+	},
+
+	expoInOut: <span class="reserved">function</span>(<span class="comment">/* Decimal? */</span>n){
+		<span class="reserved">if</span>(n==0){ <span class="reserved">return</span> 0; }
+		<span class="reserved">if</span>(n==1){ <span class="reserved">return</span> 1; }
+		n = n*2;
+		<span class="reserved">if</span>(n&lt;1){ <span class="reserved">return</span> Math.pow(2, 10 * (n-1)) / 2; }
+		--n;
+		<span class="reserved">return</span> (-1 * Math.pow(2, -10 * n) + 2) / 2;
+	},
+
+	circIn: <span class="reserved">function</span>(<span class="comment">/* Decimal? */</span>n){
+		<span class="reserved">return</span> -1 * (Math.sqrt(1 - Math.pow(n, 2)) - 1);
+	},
+
+	circOut: <span class="reserved">function</span>(<span class="comment">/* Decimal? */</span>n){
+		n = n-1;
+		<span class="reserved">return</span> Math.sqrt(1 - Math.pow(n, 2));
+	},
+
+	circInOut: <span class="reserved">function</span>(<span class="comment">/* Decimal? */</span>n){
+		n = n*2;
+		<span class="reserved">if</span>(n&lt;1){ <span class="reserved">return</span> -1/2 * (Math.sqrt(1 - Math.pow(n, 2)) - 1); }
+		n-=2;
+		<span class="reserved">return</span> 1/2 * (Math.sqrt(1 - Math.pow(n, 2)) + 1);
+	},
+
+	backIn: <span class="reserved">function</span>(<span class="comment">/* Decimal? */</span>n){
+		var s = 1.70158;
+		<span class="reserved">return</span> Math.pow(n, 2) * ((s+1)*n - s);
+	},
+
+	backOut: <span class="reserved">function</span>(<span class="comment">/* Decimal? */</span>n){
+		<span class="comment">// summary: an easing function that pops past the range briefly, and </span>
+		<span class="comment">// 	slowly comes back. </span>
+		n = n - 1;
+		var s = 1.70158;
+		<span class="reserved">return</span> Math.pow(n, 2) * ((s + 1) * n + s) + 1;
+	},
+
+	backInOut: <span class="reserved">function</span>(<span class="comment">/* Decimal? */</span>n){
+		var s = 1.70158 * 1.525;
+		n = n*2;
+		<span class="reserved">if</span>(n &lt; 1){ <span class="reserved">return</span> (Math.pow(n, 2)*((s+1)*n - s))/2; }
+		n-=2;
+		<span class="reserved">return</span> (Math.pow(n, 2)*((s+1)*n + s) + 2)/2;
+	},
+
+	elasticIn: <span class="reserved">function</span>(<span class="comment">/* Decimal? */</span>n){
+		<span class="reserved">if</span>(n==0){ <span class="reserved">return</span> 0; }
+		<span class="reserved">if</span>(n==1){ <span class="reserved">return</span> 1; }
+		var p = .3;
+		var s = p/4;
+		n = n - 1;
+		<span class="reserved">return</span> -1 * Math.pow(2,10*n) * Math.sin((n-s)*(2*Math.PI)/p);
+	},
+
+	elasticOut: <span class="reserved">function</span>(<span class="comment">/* Decimal? */</span>n){
+		<span class="comment">// summary: An easing function that elasticly snaps around the target value, near the end of the Animation</span>
+		<span class="reserved">if</span>(n==0) <span class="reserved">return</span> 0;
+		<span class="reserved">if</span>(n==1) <span class="reserved">return</span> 1;
+		var p = .3;
+		var s = p/4;
+		<span class="reserved">return</span> Math.pow(2,-10*n) * Math.sin((n-s)*(2*Math.PI)/p) + 1;
+	},
+
+	elasticInOut: <span class="reserved">function</span>(<span class="comment">/* Decimal? */</span>n){
+		<span class="comment">// summary: An easing function that elasticly snaps around the value, near the beginning and end of the Animation		</span>
+		<span class="reserved">if</span>(n==0) <span class="reserved">return</span> 0;
+		n = n*2;
+		<span class="reserved">if</span>(n==2) <span class="reserved">return</span> 1;
+		var p = .3*1.5;
+		var s = p/4;
+		<span class="reserved">if</span>(n&lt;1){
+			n-=1;
+			<span class="reserved">return</span> -.5*(Math.pow(2,10*n) * Math.sin((n-s)*(2*Math.PI)/p));
+		}
+		n-=1;
+		<span class="reserved">return</span> .5*(Math.pow(2,-10*n) * Math.sin((n-s)*(2*Math.PI)/p)) + 1;
+	},
+
+	bounceIn: <span class="reserved">function</span>(<span class="comment">/* Decimal? */</span>n){
+		<span class="comment">// summary: An easing function that "bounces" near the beginning of an Animation</span>
+		<span class="reserved">return</span> (1 - N2i.ease.bounceOut(1-n)); <span class="comment">// Decimal</span>
+	},
+
+	bounceOut: <span class="reserved">function</span>(<span class="comment">/* Decimal? */</span>n){
+		<span class="comment">// summary: An easing function that "bounces" near the end of an Animation</span>
+		var s=7.5625;
+		var p=2.75;
+		var l; 
+		<span class="reserved">if</span>(n &lt; (1 / p)){
+			l = s*Math.pow(n, 2);
+		}<span class="reserved">else</span> <span class="reserved">if</span>(n &lt; (2 / p)){
+			n -= (1.5 / p);
+			l = s * Math.pow(n, 2) + .75;
+		}<span class="reserved">else</span> <span class="reserved">if</span>(n &lt; (2.5 / p)){
+			n -= (2.25 / p);
+			l = s * Math.pow(n, 2) + .9375;
+		}<span class="reserved">else</span>{
+			n -= (2.625 / p);
+			l = s * Math.pow(n, 2) + .984375;
+		}
+		<span class="reserved">return</span> l;
+	},
+
+	bounceInOut: <span class="reserved">function</span>(<span class="comment">/* Decimal? */</span>n){
+		<span class="comment">// summary: An easing function that "bounces" at the beginning and end of the Animation</span>
+		<span class="reserved">if</span>(n&lt;0.5){ <span class="reserved">return</span> N2i.ease.bounceIn(n*2) / 2; }
+		<span class="reserved">return</span> (N2i.ease.bounceOut(n*2-1) / 2) + 0.5; <span class="comment">// Decimal</span>
+	}
+};<span class="reserved">if</span> (!N2i) {var N2i = {};}
 
 N2i.TextField = <span class="reserved">function</span>(field,options,delegate) {
 	<span class="reserved">this</span>.field = $id(field);
@@ -7198,11 +7417,10 @@ Date.<span class="reserved">prototype</span>.getDayOfYear = <span class="reserve
 
 Date.<span class="reserved">prototype</span>.getWeekOfYear = <span class="reserved">function</span>() {
     <span class="comment">// Skip to Thursday of this week</span>
-    var now = <span class="reserved">this</span>.getDayOfYear() + (4 - <span class="reserved">this</span>.getDay());
+    var now = <span class="reserved">this</span>.getDayOfYear() + (5 - <span class="reserved">this</span>.getDay());
     <span class="comment">// Find the first Thursday of the year</span>
     var jan1 = new Date(<span class="reserved">this</span>.getFullYear(), 0, 1);
-    var then = (7 - jan1.getDay() + 4);
-    <span class="comment">//document.write(then);</span>
+    var then = (5 - jan1.getDay());
     <span class="reserved">return</span> String.leftPad(((now - then) / 7) + 1, 2, <span class="literal">"0"</span>);
 }
 
@@ -8151,39 +8369,6 @@ In2iGui.InfoView.prototype = {
 	}
 }
 
-/////////////////////////////// Cookie /////////////////////////////////
-
-var Cookie = {
-	set: function(name,value,seconds){
-		if(seconds){
-			var d = new Date();
-			d.setTime(d.getTime() + (seconds * 1000));
-			var expiry = '</span>; expires=<span class="literal">' + d.toGMTString();
-		}else
-			var expiry = '</span><span class="literal">';
-		//Cookie.notify('</span>set<span class="literal">',name,value);
-		document.cookie = name + "=" + value + expiry + "; path=/";
-	},
-	get: function(name){
-		//Cookie.notify('</span>get<span class="literal">',name);
-		var nameEQ = name + "=";
-		var ca = document.cookie.split('</span>;<span class="literal">');
-		for(var i = 0; i &lt; ca.length; i++){
-			var c = ca[i];
-			while(c.charAt(0) == '</span> <span class="literal">')
-				c = c.substring(1,c.length);
-			if(c.indexOf(nameEQ) == 0)
-				return c.substring(nameEQ.length,c.length);
-		}
-		return null;
-	},
-	unset: function(name){
-		//Cookie.notify('</span>unset<span class="literal">',name);
-		Cookie.set(name,'</span><span class="literal">',-1);
-	}
-};
-//Event.extend(Cookie);
-
 /* EOF */
 In2iGui.Window = function(element,name) {
 	this.element = $(element);
@@ -8191,7 +8376,8 @@ In2iGui.Window = function(element,name) {
 	this.close = this.element.select('</span>.close<span class="literal">')[0];
 	this.titlebar = this.element.select('</span>.titlebar<span class="literal">')[0];
 	this.title = this.titlebar.select('</span>.title<span class="literal">')[0];
-	this.content = this.element.select('</span>.in2igui_window_content<span class="literal">')[2];
+	this.content = this.element.select('</span>.in2igui_window_body<span class="literal">')[0];
+	this.visible = false;
 	In2iGui.extend(this);
 	this.addBehavior();
 }
@@ -8203,7 +8389,7 @@ In2iGui.Window.create = function(name,options) {
 	var element = new Element('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_window<span class="literal">'+(options.variant ? '</span> in2igui_window_<span class="literal">'+options.variant : '</span><span class="literal">')});
 	element.update('</span>&lt;div class=<span class="literal">"close"</span>&gt;&lt;/div&gt;<span class="literal">'+
 		'</span>&lt;div class=<span class="literal">"titlebar"</span>&gt;&lt;div class=<span class="literal">"titlebar"</span>&gt;&lt;div class=<span class="literal">"titlebar"</span>&gt;&lt;span&gt;<span class="literal">'+options.title+'</span>&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;<span class="literal">'+
-		'</span>&lt;div class=<span class="literal">"in2igui_window_content"</span>&gt;&lt;div class=<span class="literal">"in2igui_window_content"</span>&gt;&lt;div class=<span class="literal">"in2igui_window_content"</span> style=<span class="literal">"'+
+		'</span>&lt;div class=<span class="literal">"in2igui_window_content"</span>&gt;&lt;div class=<span class="literal">"in2igui_window_content"</span>&gt;&lt;div class=<span class="literal">"in2igui_window_body"</span> style=<span class="literal">"'+
 		(options.width ? 'width:'+options.width+'px;':'')+
 		(options.padding ? 'padding:'+options.padding+'px;':'')+
 		'"</span>&gt;<span class="literal">'+
@@ -8225,6 +8411,7 @@ In2iGui.Window.prototype = {
 		this.title.update(title);
 	},
 	show : function() {
+		if (this.visible) return;
 		this.element.setStyle({
 			zIndex : In2iGui.nextPanelIndex(), visibility : '</span>hidden<span class="literal">', display : '</span>block<span class="literal">'
 		})
@@ -8235,13 +8422,19 @@ In2iGui.Window.prototype = {
 		if (!N2i.isIE()) {
 			$ani(this.element,'</span>opacity<span class="literal">',1,0);
 		}
+		this.visible = true;
+	},
+	toggle : function() {
+		(this.visible ? this.hide() : this.show() );
 	},
 	hide : function() {
+		if (!this.visible) return;
 		if (!N2i.isIE()) {
 			$ani(this.element,'</span>opacity<span class="literal">',0,200,{hideOnComplete:true});
 		} else {
 			this.element.setStyle({display:'</span>none<span class="literal">'});
 		}
+		this.visible = false;
 	},
 	add : function(widgetOrNode) {
 		if (widgetOrNode.getElement) {
@@ -8312,13 +8505,11 @@ In2iGui.Window.prototype = {
 	In2iGui.enableDelegating(this);
 }
 
-In2iGui.Formula.create = function(opts) {
-	var options = {name:null};
-	N2i.override(options,opts);
-	var element = N2i.create('</span>form<span class="literal">',
+In2iGui.Formula.create = function(name) {
+	var e = new Element('</span>form<span class="literal">',
 		{'</span>class<span class="literal">':'</span>in2igui_formula<span class="literal">'}
 	);
-	return new In2iGui.Formula(element,options.name);
+	return new In2iGui.Formula(e,name);
 }
 
 In2iGui.Formula.prototype = {
@@ -8336,7 +8527,6 @@ In2iGui.Formula.prototype = {
 		this.inputs[this.inputs.length] = obj;
 	},
 	registerChild : function(obj) {
-		alert(obj);
 		this.children.push(obj);
 	},
 	getValues : function() {
@@ -8367,7 +8557,13 @@ In2iGui.Formula.prototype = {
 		this.element.insert(node);
 	},
 	add : function(widget) {
+		widget.parent = this;
 		this.element.insert(widget.getElement());
+	},
+	createGroup : function(options) {
+		var g = In2iGui.Formula.Group.create(null,options);
+		this.add(g);
+		return g;
 	}
 }
 
@@ -8379,6 +8575,7 @@ In2iGui.Formula.Group = function(elementOrId,name,options) {
 	this.element = $(elementOrId);
 	this.body = this.element.select('</span>tbody<span class="literal">')[0];
 	this.options = N2i.override({above:true},options);
+	this.parent = null;
 	In2iGui.extend(this);
 }
 
@@ -8411,6 +8608,18 @@ In2iGui.Formula.Group.prototype = {
 			this.body.insert(tr);
 		}
 		tr.insert(td);
+		if (this.parent) {
+			this.parent.registerInput(widget);
+		}
+	},
+	createButtons : function(options) {
+		var tr = new Element('</span>tr<span class="literal">');
+		this.body.insert(tr);
+		var td = new Element('</span>td<span class="literal">',{colspan:this.options.above?1:2});
+		tr.insert(td);
+		var b = In2iGui.Buttons.create(null,options);
+		td.insert(b.getElement());
+		return b;
 	}
 }
 
@@ -8425,9 +8634,8 @@ In2iGui.Formula.Text = function(element,name,options) {
 	In2iGui.extend(this);
 }
 
-In2iGui.Formula.Text.create = function(name,opts) {
-	var options = {lines:1};
-	N2i.override(options,opts);
+In2iGui.Formula.Text.create = function(name,options) {
+	options = N2i.override({lines:1},options);
 	if (options.lines&gt;1) {
 		var input = N2i.create('</span>textarea<span class="literal">',
 			{'</span>class<span class="literal">':'</span>in2igui_formula_text<span class="literal">','</span>rows<span class="literal">':options.lines}
@@ -9254,7 +9462,8 @@ In2iGui.List.prototype.windowNumberWasClicked = function(tag) {
 /* EOF */In2iGui.Tabs = function(id,name) {
 	this.id = id;
 	this.name = name;
-	this.element = $id(id);
+	this.element = $(id);
+	this.bar = this.element.select('</span>.in2igui_tabs_bar<span class="literal">')[0];
 	this.activeTab = 0;
 	this.tabs = [];
 	this.addBehavior();
@@ -9268,7 +9477,7 @@ In2iGui.Tabs.prototype.registerTab = function(obj) {
 
 In2iGui.Tabs.prototype.addBehavior = function() {
 	var self = this;
-	var tabs = $class('</span>in2igui_tabs_bar<span class="literal">',this.element)[0].getElementsByTagName('</span>span<span class="literal">');
+	var tabs = this.bar.select('</span>li<span class="literal">');
 	for (var i=0; i &lt; tabs.length; i++) {
 		tabs[i].in2iGuiIndex = i;
 		tabs[i].onclick = function() {
@@ -9294,8 +9503,8 @@ In2iGui.Tabs.Tab = function(id,name) {
 	this.id = id;
 	this.name = name;
 	this.parent = null;
-	this.element = $id(id+'</span>_content<span class="literal">');
-	this.tab = $id(id+'</span>_tab<span class="literal">');
+	this.element = $(id+'</span>_content<span class="literal">');
+	this.tab = $(id+'</span>_tab<span class="literal">');
 	In2iGui.enableDelegating(this);
 }
 
@@ -9559,7 +9768,11 @@ In2iGui.ObjectList.Select.prototype = {
 	}
 }
 
-/* EOF */In2iGui.Alert = function(element,name) {
+/* EOF *//**
+ * An alert that can be
+ * @constructor
+ */
+In2iGui.Alert = function(element,name) {
 	this.element = $id(element);
 	this.name = name;
 	this.body = $firstClass('</span>in2igui_alert_body<span class="literal">',this.element);
@@ -9570,6 +9783,10 @@ In2iGui.ObjectList.Select.prototype = {
 	In2iGui.extend(this);
 }
 
+/**
+ * Creates a new instance of an alert
+ * @static
+ */
 In2iGui.Alert.create = function(name,options) {
 	var opts = {title:'</span><span class="literal">',text:'</span><span class="literal">',emotion:null,variant:null,title:null};
 	N2i.override(opts,options);
@@ -9652,10 +9869,10 @@ In2iGui.Alert.prototype = {
 
 /* EOF */In2iGui.Button = function(id,name) {
 	this.name = name;
-	this.element = $id(id);
+	this.element = $(id);
 	this.inner = this.element.getElementsByTagName('</span>span<span class="literal">')[1];
 	this.enabled = true;
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 	this.addBehavior();
 }
 
@@ -9682,9 +9899,6 @@ In2iGui.Button.create = function(name,opts) {
 }
 
 In2iGui.Button.prototype = {
-	getElement : function() {
-		return this.element;
-	},
 	addBehavior : function() {
 		var self = this;
 		this.element.onclick = function() {
@@ -9712,6 +9926,25 @@ In2iGui.Button.prototype = {
 	}
 }
 
+In2iGui.Buttons = function(id,name) {
+	this.name = name;
+	this.element = $(id);
+	In2iGui.extend(this);
+}
+
+In2iGui.Buttons.create = function(name,options) {
+	options = N2i.override({top:0},options);
+	var e = new Element('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_buttons<span class="literal">'});
+	if (options.top&gt;0) e.setStyle({paddingTop:options.top+'</span>px<span class="literal">'});
+	return new In2iGui.Buttons(e,name);
+}
+
+In2iGui.Buttons.prototype = {
+	add : function(widget) {
+		this.element.insert(widget.getElement());
+	}
+}
+
 /* EOF */In2iGui.Selection = function(id,name,source) {
 	this.element = $id(id);
 	this.name = name;
@@ -9719,69 +9952,70 @@ In2iGui.Button.prototype = {
 	this.sources = [];
 	this.value = null;
 	this.selected = [];
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 	var self = this;
 }
 
-In2iGui.Selection.prototype.getValue = function() {
-	return this.value;
+In2iGui.Selection.create = function(name,options) {
+	var e = new Element('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_selection<span class="literal">'});
+	return new In2iGui.Selection(e,name,options);
 }
 
-In2iGui.Selection.prototype.getSelection = function() {
-	for (var i=0; i &lt; this.items.length; i++) {
-		if (this.items[i].value == this.value) {
-			return this.items[i];
+In2iGui.Selection.prototype = {
+	getValue : function() {
+		return this.value;
+	},
+	getSelection : function() {
+		for (var i=0; i &lt; this.items.length; i++) {
+			if (this.items[i].value == this.value) {
+				return this.items[i];
+			}
+		};
+		for (var i=0; i &lt; this.sources.length; i++) {
+			var item = this.sources[i].getSelection();
+			if (item) return item;
+		};
+	},
+	changeValue : function(value) {
+		this.value = value;
+		for (var i=0; i &lt; this.items.length; i++) {
+			var item = this.items[i];
+			N2i.setClass(item.element,'</span>selected<span class="literal">',(item.value==value));
+		};
+		for (var i=0; i &lt; this.sources.length; i++) {
+			var source = this.sources[i];
+			source.updateUI();
+		};
+		In2iGui.callDelegates(this,'</span>selectorSelectionChanged<span class="literal">');
+		In2iGui.callDelegates(this,'</span>selectionChanged<span class="literal">',this.value);
+	},
+	registerSource : function(source) {
+		source.selection = this;
+		this.sources.push(source);
+	},
+	registerItem : function(id,title,icon,badge,value,kind) {
+		var element = $id(id);
+		element.in2iGuiValue = value;
+		this.items.push({id:id,title:title,icon:icon,badge:badge,element:element,value:value,kind:kind});
+		var self = this;
+		element.onclick = function() {
+			self.itemWasClicked(this);
 		}
-	};
-	for (var i=0; i &lt; this.sources.length; i++) {
-		var item = this.sources[i].getSelection();
-		if (item) return item;
-	};
-}
-
-In2iGui.Selection.prototype.changeValue = function(value) {
-	this.value = value;
-	for (var i=0; i &lt; this.items.length; i++) {
-		var item = this.items[i];
-		N2i.setClass(item.element,'</span>selected<span class="literal">',(item.value==value));
-	};
-	for (var i=0; i &lt; this.sources.length; i++) {
-		var source = this.sources[i];
-		source.updateUI();
-	};
-	In2iGui.callDelegates(this,'</span>selectorSelectionChanged<span class="literal">');
-	In2iGui.callDelegates(this,'</span>selectionChanged<span class="literal">',this.value);
-}
-
-In2iGui.Selection.prototype.registerSource = function(source) {
-	source.selection = this;
-	this.sources.push(source);
-}
-
-In2iGui.Selection.prototype.registerItem = function(id,title,icon,badge,value,kind) {
-	var element = $id(id);
-	element.in2iGuiValue = value;
-	this.items.push({id:id,title:title,icon:icon,badge:badge,element:element,value:value,kind:kind});
-	var self = this;
-	element.onclick = function() {
-		self.itemWasClicked(this);
+		element.ondblclick = function() {
+			self.itemWasDoubleClicked();
+			return false;
+		}
+		element.dropInfo = {kind:kind,controller:this};
+		N2i.addClass(element,'</span>droppable<span class="literal">');
+		N2i.addListener(element,'</span>mouseover<span class="literal">',In2iGui.dropOverListener);
+		N2i.addListener(element,'</span>mouseout<span class="literal">',In2iGui.dropOutListener);
+	},
+	itemWasClicked : function(item) {
+		this.changeValue(item.in2iGuiValue);
+	},
+	itemWasDoubleClicked : function() {
+		In2iGui.callDelegates(this,'</span>selectorObjectWasOpened<span class="literal">');
 	}
-	element.ondblclick = function() {
-		self.itemWasDoubleClicked();
-		return false;
-	}
-	element.dropInfo = {kind:kind,controller:this};
-	N2i.addClass(element,'</span>droppable<span class="literal">');
-	N2i.addListener(element,'</span>mouseover<span class="literal">',In2iGui.dropOverListener);
-	N2i.addListener(element,'</span>mouseout<span class="literal">',In2iGui.dropOutListener);
-}
-
-In2iGui.Selection.prototype.itemWasClicked = function(item) {
-	this.changeValue(item.in2iGuiValue);
-}
-
-In2iGui.Selection.prototype.itemWasDoubleClicked = function() {
-	In2iGui.callDelegates(this,'</span>selectorObjectWasOpened<span class="literal">');
 }
 
 /******************************** Source ****************************/
@@ -9928,10 +10162,10 @@ In2iGui.RevealingToolbar.prototype = {
 
 /** @constructor */
 In2iGui.Toolbar.Icon = function(id,name) {
-	this.element = $id(id);
+	this.element = $(id);
 	this.name = name;
-	this.enabled = true;
-	this.icon = $firstClass('</span>icon<span class="literal">',this.element);
+	this.enabled = !this.element.hasClassName('</span>in2igui_toolbar_icon_disabled<span class="literal">');
+	this.icon = this.element.select('</span>.in2igui_icon<span class="literal">')[0];
 	In2iGui.extend(this);
 	this.addBehavior();
 }
@@ -10005,6 +10239,26 @@ In2iGui.Toolbar.SearchField.prototype = {
 			this.value=this.field.value;
 			In2iGui.callDelegates(this,'</span>valueChanged<span class="literal">');
 		}
+	}
+}
+
+
+/***************** Badge ***************/
+
+In2iGui.Toolbar.Badge = function(element,name) {
+	this.element = $(element);
+	this.name = name;
+	this.label = this.element.select('</span>strong<span class="literal">')[0];
+	this.text = this.element.select('</span>span<span class="literal">')[0];
+	In2iGui.enableDelegating(this);
+}
+
+In2iGui.Toolbar.Badge.prototype = {
+	setLabel : function(str) {
+		this.label.update(str);
+	},
+	setText : function(str) {
+		this.text.update(str);
 	}
 }
 
@@ -10417,6 +10671,9 @@ In2iGui.RichText.prototype = {
 		this.value = value;
 		this.document.body.innerHTML = value;
 	},
+	getValue : function() {
+		return this.value;
+	},
 	deactivate : function() {
 		if (this.colorPicker) this.colorPicker.hide();
 	},
@@ -10433,7 +10690,7 @@ In2iGui.RichText.prototype = {
 				div.in2iguiRichTextAction = actions[i];
 				div.onclick = div.ondblclick = function(e) {return self.actionWasClicked(this.in2iguiRichTextAction,e);}
 				var img = new Element('</span>img<span class="literal">');
-				img.src=In2iGui.context+'</span>In2iGui/gfx/trans.png<span class="literal">';
+				img.src=In2iGui.context+'</span>/In2iGui/gfx/trans.png<span class="literal">';
 				if (actions[i].icon) {
 					div.setStyle({'</span>backgroundImage<span class="literal">':'</span>url(<span class="literal">'+In2iGui.getIconUrl(actions[i].icon,1)+'</span>)<span class="literal">'});
 				}
@@ -10510,7 +10767,7 @@ In2iGui.RichText.prototype = {
 	},
 	showColorPicker : function() {
 		if (!this.colorPicker) {
-			var panel = In2iGui.Panel.create();
+			var panel = In2iGui.Window.create(null,{variant:'</span>dark<span class="literal">'});
 			var picker = In2iGui.ColorPicker.create();
 			picker.addDelegate(this);
 			panel.add(picker);
@@ -10720,7 +10977,7 @@ In2iGui.ImageViewer.prototype = {
 				$ani(this.viewer,'</span>scrollLeft<span class="literal">',this.index*(this.width+10),Math.min(num*300,2000),{ease:N2i.Animation.slowFastSlow});				
 			} else {
 				var end = this.index==0 || this.index==this.images.length-1;
-				var ease = (user ? (end ? N2i.Animation.bounce : N2i.Animation.elastic) : N2i.Animation.slowFastSlow);
+				var ease = (user ? (end ? N2i.Animation.bounce : N2i.Animation.elastic) : N2i.ease.backInOut);
 				$ani(this.viewer,'</span>scrollLeft<span class="literal">',this.index*(this.width+10),(end ? 800 : 1200),{ease:ease});
 			}
 		} else {
@@ -10833,8 +11090,7 @@ In2iGui.ImageViewer.prototype = {
 
 /* EOF */
 In2iGui.Picker = function(element,name,options) {
-	this.options = {itemWidth:100,itemHeight:150};
-	N2i.override(this.options,options);
+	this.options = N2i.override({itemWidth:100,itemHeight:150},options);
 	this.element = $id(element);
 	this.name = name;
 	this.container = $firstClass('</span>in2igui_picker_container<span class="literal">',this.element);
@@ -10845,14 +11101,17 @@ In2iGui.Picker = function(element,name,options) {
 }
 
 In2iGui.Picker.create = function(name,options) {
-	options = options || {};
-	var element = N2i.create('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_picker<span class="literal">'});
-	element.innerHTML='</span>&lt;div class=<span class="literal">"in2igui_picker_top"</span>&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;<span class="literal">'+
-	'</span>&lt;div class=<span class="literal">"in2igui_picker_middle"</span>&gt;&lt;div class=<span class="literal">"in2igui_picker_middle"</span>&gt;&lt;div class=<span class="literal">"in2igui_picker_middle"</span>&gt;<span class="literal">'+
+	options = N2i.override({shadow:true},options);
+	var element = new Element('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_picker<span class="literal">'});
+	element.update('</span>&lt;div class=<span class="literal">"in2igui_picker_top"</span>&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;<span class="literal">'+
+	'</span>&lt;div class=<span class="literal">"in2igui_picker_middle"</span>&gt;&lt;div class=<span class="literal">"in2igui_picker_middle"</span>&gt;<span class="literal">'+
 	(options.title ? '</span>&lt;div class=<span class="literal">"in2igui_picker_title"</span>&gt;<span class="literal">'+options.title+'</span>&lt;/div&gt;<span class="literal">' : '</span><span class="literal">')+
 	'</span>&lt;div class=<span class="literal">"in2igui_picker_container"</span>&gt;&lt;/div&gt;<span class="literal">'+
-	'</span>&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;<span class="literal">'+
-	'</span>&lt;div class=<span class="literal">"in2igui_picker_bottom"</span>&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;<span class="literal">';
+	'</span>&lt;/div&gt;&lt;/div&gt;<span class="literal">'+
+	'</span>&lt;div class=<span class="literal">"in2igui_picker_bottom"</span>&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;<span class="literal">');
+	if (options.shadow==true) {
+		element.addClassName('</span>in2igui_picker_shadow<span class="literal">')
+	}
 	return new In2iGui.Picker(element,name,options);
 }
 
@@ -10869,15 +11128,15 @@ In2iGui.Picker.prototype = {
 		this.updateSelection();
 	},
 	updateUI : function() {
-		this.container.style.width=(this.objects.length*(this.options.itemWidth+10))+'</span>px<span class="literal">';
+		this.container.style.width=(this.objects.length*(this.options.itemWidth+14))+'</span>px<span class="literal">';
 		this.container.style.height=(this.options.itemHeight+10)+'</span>px<span class="literal">';
 		for (var i=0; i &lt; this.objects.length; i++) {
-			var item = N2i.create('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_picker_item<span class="literal">'},
-				{
-				width:(this.options.itemWidth+10)+'</span>px<span class="literal">',
-				height:(this.options.itemHeight+10)+'</span>px<span class="literal">',
-				backgroundImage:'</span>url(<span class="literal">'+this.objects[i].image+'</span>)<span class="literal">'
-				}
+			var item = new Element('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_picker_item<span class="literal">'});
+			item.update(
+				'</span>&lt;div class=<span class="literal">"in2igui_picker_item_middle"</span>&gt;&lt;div class=<span class="literal">"in2igui_picker_item_middle"</span>&gt;<span class="literal">'+
+				'</span>&lt;div style=<span class="literal">"width:'+this.options.itemWidth+'px;height:'+this.options.itemHeight+'px;background-image:url(\''+this.objects[i].image+'\')"</span>&gt;&lt;/div&gt;<span class="literal">'+
+				'</span>&lt;/div&gt;&lt;/div&gt;<span class="literal">'+
+				'</span>&lt;div class=<span class="literal">"in2igui_picker_item_bottom"</span>&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;<span class="literal">'
 			);
 			item.in2iguiIndex = i;
 			var self = this;
@@ -11054,7 +11313,18 @@ In2iGui.Editor.prototype = {
 		this.hoveredPart = part;
 		part.element.addClassName('</span>in2igui_editor_part_hover<span class="literal">');
 		var self = this;
-		this.partControlTimer = window.setTimeout(function() {self.showPartControls()},500);
+		this.partControlTimer = window.setTimeout(function() {self.showPartControls()},200);
+	},
+	blurPart : function(e) {
+		window.clearTimeout(this.partControlTimer);
+		if (!this.active) return;
+		if (this.partControls &amp;&amp; !In2iGui.isWithin(e,this.partControls.element)) {
+			this.hidePartControls();
+			this.hoveredPart.element.removeClassName('</span>in2igui_editor_part_hover<span class="literal">');
+		}
+		if (!this.partControls) {
+			this.hoveredPart.element.removeClassName('</span>in2igui_editor_part_hover<span class="literal">');			
+		}
 	},
 	showPartEditControls : function() {
 		if (!this.partEditControls) {
@@ -11073,7 +11343,10 @@ In2iGui.Editor.prototype = {
 			this.partControls.addIcon('</span>delete<span class="literal">','</span>common/delete<span class="literal">');
 			var self = this;
 			this.partControls.getElement().observe('</span>mouseout<span class="literal">',function(e) {
-				self.blurPart(e);
+				self.blurControls(e);
+			});
+			this.partControls.getElement().observe('</span>mouseover<span class="literal">',function(e) {
+				self.hoverControls(e);
 			});
 			this.partControls.addDelegate(this);
 		}
@@ -11083,6 +11356,15 @@ In2iGui.Editor.prototype = {
 			this.partControls.showIcons(['</span>new<span class="literal">','</span>delete<span class="literal">']);
 		}
 		this.partControls.showAtElement(this.hoveredPart.element,{'</span>horizontal<span class="literal">':'</span>right<span class="literal">'});
+	},
+	hoverControls : function(e) {
+		this.hoveredPart.element.addClassName('</span>in2igui_editor_part_hover<span class="literal">');
+	},
+	blurControls : function(e) {
+		this.hoveredPart.element.removeClassName('</span>in2igui_editor_part_hover<span class="literal">');
+		if (!In2iGui.isWithin(e,this.hoveredPart.element)) {
+			this.hidePartControls();
+		}
 	},
 	iconWasClicked$In2iGuiEditorPartActions : function(key,event) {
 		if (key=='</span>delete<span class="literal">') {
@@ -11100,16 +11382,7 @@ In2iGui.Editor.prototype = {
 			this.savePart(this.activePart);
 		}
 	},
-	blurPart : function(e) {
-		window.clearTimeout(this.partControlTimer);
-		if (!this.active) return;
-		if (!In2iGui.isWithin(e,this.hoveredPart.element)) {
-			N2i.log('</span>not within!<span class="literal">')
-			this.hidePartControls();
-		}
-	},
 	hidePartControls : function() {
-		this.hoveredPart.element.removeClassName('</span>in2igui_editor_part_hover<span class="literal">');
 		if (this.partControls) {
 			this.partControls.hide();
 		}
@@ -11153,7 +11426,6 @@ In2iGui.Editor.prototype = {
 		In2iGui.callDelegates(part,'</span>partChanged<span class="literal">');
 	},
 	deletePart : function(part) {
-		In2iGui.get().confirm('</span>cofirmDeletePart<span class="literal">',{title:'</span>Er du sikker på at du vil slette?<span class="literal">'});
 		In2iGui.callDelegates(part,'</span>deletePart<span class="literal">');
 		this.partControls.hide();
 	},
@@ -11556,7 +11828,7 @@ In2iGui.MultiUpload.prototype = {
 		var loc = new String(document.location);
 		var url = loc.slice(0,loc.lastIndexOf('</span>/<span class="literal">')+1);
 		url += this.options.url;
-		var session = Cookie.get('</span>JSESSIONID<span class="literal">');
+		var session = N2i.Cookie.get('</span>JSESSIONID<span class="literal">');
 		if (session) {
 			url+='</span>;jsessionid=<span class="literal">'+session;
 		}
@@ -11880,10 +12152,13 @@ In2iGui.Calendar.prototype = {
 		this.toolbar.add(this.datePickerButton);
 		
 		var time = this.body.select('</span>.time<span class="literal">')[0];
-		for (var i=this.options.startHour; i &lt; this.options.endHour; i++) {
+		for (var i=this.options.startHour; i &lt;= this.options.endHour; i++) {
 			var node = new Element('</span>div<span class="literal">').update('</span>&lt;span&gt;&lt;em&gt;<span class="literal">'+i+'</span>:00&lt;/em&gt;&lt;/span&gt;<span class="literal">');
 			if (i==this.options.startHour) {
 				node.addClassName('</span>first<span class="literal">');
+			}
+			if (i==this.options.endHour) {
+				node.addClassName('</span>last<span class="literal">');
 			}
 			time.insert(node);
 		};
@@ -12079,50 +12354,81 @@ In2iGui.DatePicker.prototype = {
 		this.viewDate = new Date(this.value.getTime());
 		this.viewDate.setDate(1);
 		this.updateUI();
-		In2iGui.callDelegates(this,'</span>dateChanged',<span class="reserved">this</span>.value);
+		In2iGui.callDelegates(this,'</span>dateChanged<span class="literal">',this.value);
 	},
-	indexToDate : <span class="reserved">function</span>(index) {
-		var first = <span class="reserved">this</span>.viewDate.getDay();
-		var days = <span class="reserved">this</span>.viewDate.getDaysInMonth();
-		var previousDays = <span class="reserved">this</span>.getPreviousMonth().getDaysInMonth();
-		<span class="reserved">if</span> (index&lt;first) {
-			var date = <span class="reserved">this</span>.getPreviousMonth();
+	indexToDate : function(index) {
+		var first = this.viewDate.getDay();
+		var days = this.viewDate.getDaysInMonth();
+		var previousDays = this.getPreviousMonth().getDaysInMonth();
+		if (index&lt;first) {
+			var date = this.getPreviousMonth();
 			date.setDate(previousDays-first+index+1);
-			<span class="reserved">return</span> date;
-		} <span class="reserved">else</span> <span class="reserved">if</span> (index&gt;first+days-1) {
-			var date = <span class="reserved">this</span>.getPreviousMonth();
+			return date;
+		} else if (index&gt;first+days-1) {
+			var date = this.getPreviousMonth();
 			date.setDate(index-first-days+1);
-			<span class="reserved">return</span> date;
+			return date;
 			cell.update(i-first-days+1);
-		} <span class="reserved">else</span> {
-			var date = new Date(<span class="reserved">this</span>.viewDate.getTime());
+		} else {
+			var date = new Date(this.viewDate.getTime());
 			date.setDate(index+1-first);
-			<span class="reserved">return</span> date;
+			return date;
 		}
 	}
 }
 
 Date.monthNames =
-   [<span class="literal">"Januar"</span>,
-    <span class="literal">"Februar"</span>,
-    <span class="literal">"Marts"</span>,
-    <span class="literal">"April"</span>,
-    <span class="literal">"Maj"</span>,
-    <span class="literal">"Juni"</span>,
-    <span class="literal">"Juli"</span>,
-    <span class="literal">"August"</span>,
-    <span class="literal">"September"</span>,
-    <span class="literal">"Oktober"</span>,
-    <span class="literal">"November"</span>,
-    <span class="literal">"December"</span>];
+   ["Januar",
+    "Februar",
+    "Marts",
+    "April",
+    "Maj",
+    "Juni",
+    "Juli",
+    "August",
+    "September",
+    "Oktober",
+    "November",
+    "December"];
 Date.dayNames =
-   [<span class="literal">"Søndag"</span>,
-    <span class="literal">"Mandag"</span>,
-    <span class="literal">"Tirsdag"</span>,
-    <span class="literal">"Onsdag"</span>,
-    <span class="literal">"Torsdag"</span>,
-    <span class="literal">"Fredag"</span>,
-    <span class="literal">"Lørdag"</span>];
+   ["Søndag",
+    "Mandag",
+    "Tirsdag",
+    "Onsdag",
+    "Torsdag",
+    "Fredag",
+    "Lørdag"];
+
+/* EOF */In2iGui.Columns = function(id,name,options) {
+	this.name = name;
+	this.options = options || {};
+	this.element = $(id);
+	this.body = this.element.select('</span>tr<span class="literal">')[0];
+	In2iGui.extend(this);
+}
+
+In2iGui.Columns.create = function(name,options) {
+	var e = new Element('</span>table<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_columns<span class="literal">'}).insert(new Element('</span>tbody<span class="literal">').insert(new Element('</span>tr<span class="literal">')));
+	return new In2iGui.Columns(e,name,options);
+}
+
+In2iGui.Columns.prototype = {
+	addToColumn : function(index,widget) {
+		var c = this.ensureColumn(index);
+		N2i.log(c);
+		c.insert(widget.getElement());
+	},
+	ensureColumn : function(index) {
+		var children = this.body.childElements();
+		N2i.log(children.length-1);
+		for (var i=children.length-1;i&lt;index;i++) {
+			this.body.insert(new Element('</span>td<span class="literal">'));
+			N2i.log('</span>insert');
+		}
+		N2i.log(<span class="reserved">this</span>.body);
+		<span class="reserved">return</span> <span class="reserved">this</span>.body.childElements()[index];
+	}
+}
 
 <span class="comment">/* EOF */</span></pre>
 	<hr>
@@ -12182,6 +12488,6 @@ Date.dayNames =
 <font size="-1">
 
 </font>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Fri Aug  8 00:51:17 2008</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Sat Sep  6 19:41:11 2008</div>
 </body>
 </html>

@@ -1,3 +1,7 @@
+/**
+ * An alert that can be
+ * @constructor
+ */
 In2iGui.Alert = function(element,name) {
 	this.element = $id(element);
 	this.name = name;
@@ -9,6 +13,10 @@ In2iGui.Alert = function(element,name) {
 	In2iGui.extend(this);
 }
 
+/**
+ * Creates a new instance of an alert
+ * @static
+ */
 In2iGui.Alert.create = function(name,options) {
 	var opts = {title:'',text:'',emotion:null,variant:null,title:null};
 	N2i.override(opts,options);

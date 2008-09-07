@@ -100,6 +100,9 @@ In2iGui.RichText.prototype = {
 		this.value = value;
 		this.document.body.innerHTML = value;
 	},
+	getValue : function() {
+		return this.value;
+	},
 	deactivate : function() {
 		if (this.colorPicker) this.colorPicker.hide();
 	},
@@ -116,7 +119,7 @@ In2iGui.RichText.prototype = {
 				div.in2iguiRichTextAction = actions[i];
 				div.onclick = div.ondblclick = function(e) {return self.actionWasClicked(this.in2iguiRichTextAction,e);}
 				var img = new Element('img');
-				img.src=In2iGui.context+'In2iGui/gfx/trans.png';
+				img.src=In2iGui.context+'/In2iGui/gfx/trans.png';
 				if (actions[i].icon) {
 					div.setStyle({'backgroundImage':'url('+In2iGui.getIconUrl(actions[i].icon,1)+')'});
 				}
@@ -193,7 +196,7 @@ In2iGui.RichText.prototype = {
 	},
 	showColorPicker : function() {
 		if (!this.colorPicker) {
-			var panel = In2iGui.Panel.create();
+			var panel = In2iGui.Window.create(null,{variant:'dark'});
 			var picker = In2iGui.ColorPicker.create();
 			picker.addDelegate(this);
 			panel.add(picker);

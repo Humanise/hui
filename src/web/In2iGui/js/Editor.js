@@ -154,7 +154,18 @@ In2iGui.Editor.prototype = {
 		this.hoveredPart = part;
 		part.element.addClassName('in2igui_editor_part_hover');
 		var self = this;
-		this.partControlTimer = window.setTimeout(function() {self.showPartControls()},500);
+		this.partControlTimer = window.setTimeout(function() {self.showPartControls()},200);
+	},
+	blurPart : function(e) {
+		window.clearTimeout(this.partControlTimer);
+		if (!this.active) return;
+		if (this.partControls && !In2iGui.isWithin(e,this.partControls.element)) {
+			this.hidePartControls();
+			this.hoveredPart.element.removeClassName('in2igui_editor_part_hover');
+		}
+		if (!this.partControls) {
+			this.hoveredPart.element.removeClassName('in2igui_editor_part_hover');			
+		}
 	},
 	showPartEditControls : function() {
 		if (!this.partEditControls) {
@@ -173,7 +184,10 @@ In2iGui.Editor.prototype = {
 			this.partControls.addIcon('delete','common/delete');
 			var self = this;
 			this.partControls.getElement().observe('mouseout',function(e) {
-				self.blurPart(e);
+				self.blurControls(e);
+			});
+			this.partControls.getElement().observe('mouseover',function(e) {
+				self.hoverControls(e);
 			});
 			this.partControls.addDelegate(this);
 		}
@@ -183,6 +197,15 @@ In2iGui.Editor.prototype = {
 			this.partControls.showIcons(['new','delete']);
 		}
 		this.partControls.showAtElement(this.hoveredPart.element,{'horizontal':'right'});
+	},
+	hoverControls : function(e) {
+		this.hoveredPart.element.addClassName('in2igui_editor_part_hover');
+	},
+	blurControls : function(e) {
+		this.hoveredPart.element.removeClassName('in2igui_editor_part_hover');
+		if (!In2iGui.isWithin(e,this.hoveredPart.element)) {
+			this.hidePartControls();
+		}
 	},
 	iconWasClicked$In2iGuiEditorPartActions : function(key,event) {
 		if (key=='delete') {
@@ -200,16 +223,7 @@ In2iGui.Editor.prototype = {
 			this.savePart(this.activePart);
 		}
 	},
-	blurPart : function(e) {
-		window.clearTimeout(this.partControlTimer);
-		if (!this.active) return;
-		if (!In2iGui.isWithin(e,this.hoveredPart.element)) {
-			N2i.log('not within!')
-			this.hidePartControls();
-		}
-	},
 	hidePartControls : function() {
-		this.hoveredPart.element.removeClassName('in2igui_editor_part_hover');
 		if (this.partControls) {
 			this.partControls.hide();
 		}
@@ -253,7 +267,6 @@ In2iGui.Editor.prototype = {
 		In2iGui.callDelegates(part,'partChanged');
 	},
 	deletePart : function(part) {
-		In2iGui.get().confirm('cofirmDeletePart',{title:'Er du sikker på at du vil slette?'});
 		In2iGui.callDelegates(part,'deletePart');
 		this.partControls.hide();
 	},

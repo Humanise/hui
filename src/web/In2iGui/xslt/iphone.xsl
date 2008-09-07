@@ -53,10 +53,22 @@
 </html>
 </xsl:template>
 
+
+<xsl:template match="i:pages">
+	<div class="pages">
+		<xsl:apply-templates select="i:page"/>
+	</div>
+</xsl:template>
+
 <xsl:template match="i:page">
-	<div class="page">
+	<div id="{generate-id()}">
+		<xsl:attribute name="class">page <xsl:if test="position()>1"> hidden_right</xsl:if></xsl:attribute>
 		<xsl:apply-templates/>
 	</div>
+	<script type="text/javascript">
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iPhone.Page('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>');
+		<xsl:call-template name="gui:createobject"/>
+	</script>
 </xsl:template>
 
 <xsl:template match="i:header">
@@ -85,7 +97,7 @@
 		</strong>
 		</a>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iPhone.Button('<xsl:value-of select="generate-id()"/>');
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iPhone.Button('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>');
 		<xsl:call-template name="gui:createobject"/>
 	</script>
 </xsl:template>

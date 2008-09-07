@@ -107,35 +107,6 @@ N2i.log = function(obj) {
 	} catch (ignore) {};
 }
 
-N2i.objToString = function (obj,level) {
-	var str = '';
-	level = level | 0;
-	level+=2;
-	if (typeof(obj)=='object') {
-		str+='{';
-		for (var prop in obj) {
-			var value = obj[prop];
-			if (value==null) {
-				value='null';
-			} else if (typeof(value)=='string') {
-				value = '\''+value+'\'';
-			} else if (typeof(value)=='object') {
-				value = N2i.objToString(value,level);
-			}
-			str+='\n';
-			for (var i=0;i<level;i++) {
-				str+=' ';
-			}
-			str+=prop+' : '+value;
-		}
-		str+='\n}';
-	}
-	else {
-		str=obj;
-	}
-	return str;
-}
-
 N2i.escapeHTML = function(str) {
     var div = document.createElement('div');
     var text = document.createTextNode(str);
@@ -871,3 +842,29 @@ N2i.isIE = function() {
 	return ie;
 }
 
+////////////////////////////////////////////// Cookie ///////////////////////////////////////////
+
+N2i.Cookie = {
+	set : function(name,value,days) {
+		if (days) {
+			var date = new Date();
+			date.setTime(date.getTime()+(days*24*60*60*1000));
+			var expires = "; expires="+date.toGMTString();
+		}
+		else var expires = "";
+		document.cookie = name+"="+value+expires+"; path=/";
+	},
+	get : function(name) {
+		var nameEQ = name + "=";
+		var ca = document.cookie.split(';');
+		for(var i=0;i < ca.length;i++) {
+			var c = ca[i];
+			while (c.charAt(0)==' ') c = c.substring(1,c.length);
+			if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+		}
+		return null;
+	},
+	clear : function(name) {
+		this.set(name,"",-1);
+	}
+}

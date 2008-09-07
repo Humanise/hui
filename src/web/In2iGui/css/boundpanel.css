@@ -139,7 +139,7 @@
 
 /****************************** Special form style *********************************/
 
-.in2igui_boundpanel form.in2igui_formula .in2igui_field
+div.in2igui_boundpanel div.in2igui_field, div.in2igui_boundpanel input.in2igui_tokens_token
 {
 	border: 1px solid #DDDDDD;
 }
@@ -178,5 +178,4 @@
 	font-size:10pt;
 	font-weight:normal;
 	line-height:14px;
-	padding-top:4px;
 }

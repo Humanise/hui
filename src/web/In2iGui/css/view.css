@@ -1,6 +1,7 @@
 table.in2igui_view
 {
 	width: 100%;
+	height: 100%;
 }
 
 tr.view_toolbar
@@ -51,6 +52,11 @@ td.view_content_box
 	border-style: solid;
 	border-color: #bbbbbb;
 	border-width: 0px 1px;
+	background: #fff;
+}
+
+td.view_content_background
+{
 	background: #fff;
 }
 

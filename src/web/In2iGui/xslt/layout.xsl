@@ -92,4 +92,25 @@
 </xsl:if>
 </xsl:template>
 
+<xsl:template match="gui:box">
+	<div class="in2igui_box">
+		<xsl:if test="@width"><xsl:attribute name="style">width: <xsl:value-of select="@width"/>px;</xsl:attribute></xsl:if>
+		<div class="in2igui_box_top"><div><div><xsl:comment/></div></div></div>
+		<div class="in2igui_box_middle"><div class="in2igui_box_middle">
+			<xsl:if test="@title or gui:toolbar">
+				<div class="in2igui_box_header">
+					<xsl:attribute name="class">in2igui_box_header<xsl:if test="gui:toolbar"> in2igui_box_header_toolbar</xsl:if></xsl:attribute>
+					<xsl:apply-templates select="gui:toolbar"/>
+					<strong class="in2igui_box_title"><xsl:value-of select="@title"/></strong>
+				</div>
+			</xsl:if>
+			<div class="in2igui_box_body">
+				<xsl:if test="@padding"><xsl:attribute name="style">padding: <xsl:value-of select="@padding"/>px;</xsl:attribute></xsl:if>
+				<xsl:apply-templates select="child::*[not(name()='toolbar')]"/>
+			</div>
+		</div></div>
+		<div class="in2igui_box_bottom"><div><div><xsl:comment/></div></div></div>
+	</div>
+</xsl:template>
+
 </xsl:stylesheet>

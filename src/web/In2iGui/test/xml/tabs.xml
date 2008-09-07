@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="setup.xsl"?>
+<gui xmlns="uri:In2iGui" pad="10" title="Box">
+	<box width="400" title="Title with toolbar">
+		<toolbar>
+			<icon icon="common/color" title="Hep hey!" selected="true" action="alert(0)"/>
+			<icon icon="common/settings" title="Hep hey!"/>
+			<icon icon="common/settings" title="Hep hey!" disabled="true"/>
+		</toolbar>
+		<tabs>
+			<tab title="Dette er en test" padding="10">
+				<formula>
+					<group>
+						<text label="Brugernavn:"/>
+						<text label="Kodeord:"/>
+						<text label="Notat:" lines="6"/>
+						<checkbox label="Intern adgang:"/>
+						<checkbox label="Ekstern adgang:"/>
+						<tokens label="Tokens:"/>
+					</group>
+				</formula>
+			</tab>
+			<tab title="Dette er en test">
+			</tab>
+		</tabs>
+		<buttons padding="10" top="0">
+			<button title="Gem" highlighted="true"/>
+			<button title="Slet"/>
+			<button title="Annuller"/>
+		</buttons>
+	</box>
+</gui>

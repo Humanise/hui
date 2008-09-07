@@ -301,9 +301,19 @@
 <xsl:template match="gui:group/gui:buttons">
 	<tr>
 		<td colspan="2">
-			<xsl:apply-templates/>
+			<xsl:call-template name="gui:buttons"/>
 		</td>
 	</tr>
+</xsl:template>
+
+<xsl:template match="gui:buttons" name="gui:buttons">
+	<div class="in2igui_buttons">
+		<xsl:attribute name="style">
+			<xsl:if test="@padding">padding:<xsl:value-of select="@padding"/>px;</xsl:if>
+			<xsl:if test="@top">padding-top:<xsl:value-of select="@top"/>px;</xsl:if>
+		</xsl:attribute>
+		<xsl:apply-templates/>
+	</div>
 </xsl:template>
 
 <xsl:template match="gui:buttons/gui:button">

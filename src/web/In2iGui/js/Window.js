@@ -4,7 +4,8 @@ In2iGui.Window = function(element,name) {
 	this.close = this.element.select('.close')[0];
 	this.titlebar = this.element.select('.titlebar')[0];
 	this.title = this.titlebar.select('.title')[0];
-	this.content = this.element.select('.in2igui_window_content')[2];
+	this.content = this.element.select('.in2igui_window_body')[0];
+	this.visible = false;
 	In2iGui.extend(this);
 	this.addBehavior();
 }
@@ -16,7 +17,7 @@ In2iGui.Window.create = function(name,options) {
 	var element = new Element('div',{'class':'in2igui_window'+(options.variant ? ' in2igui_window_'+options.variant : '')});
 	element.update('<div class="close"></div>'+
 		'<div class="titlebar"><div class="titlebar"><div class="titlebar"><span>'+options.title+'</span></div></div></div>'+
-		'<div class="in2igui_window_content"><div class="in2igui_window_content"><div class="in2igui_window_content" style="'+
+		'<div class="in2igui_window_content"><div class="in2igui_window_content"><div class="in2igui_window_body" style="'+
 		(options.width ? 'width:'+options.width+'px;':'')+
 		(options.padding ? 'padding:'+options.padding+'px;':'')+
 		'">'+
@@ -38,6 +39,7 @@ In2iGui.Window.prototype = {
 		this.title.update(title);
 	},
 	show : function() {
+		if (this.visible) return;
 		this.element.setStyle({
 			zIndex : In2iGui.nextPanelIndex(), visibility : 'hidden', display : 'block'
 		})
@@ -48,13 +50,19 @@ In2iGui.Window.prototype = {
 		if (!N2i.isIE()) {
 			$ani(this.element,'opacity',1,0);
 		}
+		this.visible = true;
+	},
+	toggle : function() {
+		(this.visible ? this.hide() : this.show() );
 	},
 	hide : function() {
+		if (!this.visible) return;
 		if (!N2i.isIE()) {
 			$ani(this.element,'opacity',0,200,{hideOnComplete:true});
 		} else {
 			this.element.setStyle({display:'none'});
 		}
+		this.visible = false;
 	},
 	add : function(widgetOrNode) {
 		if (widgetOrNode.getElement) {

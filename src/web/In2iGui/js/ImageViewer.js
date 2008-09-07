@@ -177,7 +177,7 @@ In2iGui.ImageViewer.prototype = {
 				$ani(this.viewer,'scrollLeft',this.index*(this.width+10),Math.min(num*300,2000),{ease:N2i.Animation.slowFastSlow});				
 			} else {
 				var end = this.index==0 || this.index==this.images.length-1;
-				var ease = (user ? (end ? N2i.Animation.bounce : N2i.Animation.elastic) : N2i.Animation.slowFastSlow);
+				var ease = (user ? (end ? N2i.Animation.bounce : N2i.Animation.elastic) : N2i.ease.backInOut);
 				$ani(this.viewer,'scrollLeft',this.index*(this.width+10),(end ? 800 : 1200),{ease:ease});
 			}
 		} else {

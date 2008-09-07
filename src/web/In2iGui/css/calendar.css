@@ -76,6 +76,17 @@ table.in2igui_calendar_weekview td.time div.first span
 	margin-top: -2px;
 }
 
+table.in2igui_calendar_weekview td.time div.last
+{
+	height: auto;
+}
+
+table.in2igui_calendar_weekview td.time div.last span
+{
+	margin-top: -13px;
+	line-height: 12px;
+}
+
 table.in2igui_calendar_weekview td.time em
 {
 	background: #fff;
@@ -85,7 +96,7 @@ table.in2igui_calendar_weekview td.time em
 table.in2igui_calendar_weekview td.day
 {
 	background-image: url('../gfx/calendar_bg.gif');
-	border-right:1px solid #DDDDDD;
+	border-right: 1px solid #DDDDDD;
 	vertical-align:top;
 	width: 18%;
 }

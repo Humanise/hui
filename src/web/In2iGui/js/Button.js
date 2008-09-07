@@ -1,9 +1,9 @@
 In2iGui.Button = function(id,name) {
 	this.name = name;
-	this.element = $id(id);
+	this.element = $(id);
 	this.inner = this.element.getElementsByTagName('span')[1];
 	this.enabled = true;
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 	this.addBehavior();
 }
 
@@ -30,9 +30,6 @@ In2iGui.Button.create = function(name,opts) {
 }
 
 In2iGui.Button.prototype = {
-	getElement : function() {
-		return this.element;
-	},
 	addBehavior : function() {
 		var self = this;
 		this.element.onclick = function() {
@@ -57,6 +54,25 @@ In2iGui.Button.prototype = {
 	},
 	setText : function(text) {
 		this.inner.innerHTML = text;
+	}
+}
+
+In2iGui.Buttons = function(id,name) {
+	this.name = name;
+	this.element = $(id);
+	In2iGui.extend(this);
+}
+
+In2iGui.Buttons.create = function(name,options) {
+	options = N2i.override({top:0},options);
+	var e = new Element('div',{'class':'in2igui_buttons'});
+	if (options.top>0) e.setStyle({paddingTop:options.top+'px'});
+	return new In2iGui.Buttons(e,name);
+}
+
+In2iGui.Buttons.prototype = {
+	add : function(widget) {
+		this.element.insert(widget.getElement());
 	}
 }
 

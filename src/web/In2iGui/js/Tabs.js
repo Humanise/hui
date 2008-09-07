@@ -1,7 +1,8 @@
 In2iGui.Tabs = function(id,name) {
 	this.id = id;
 	this.name = name;
-	this.element = $id(id);
+	this.element = $(id);
+	this.bar = this.element.select('.in2igui_tabs_bar')[0];
 	this.activeTab = 0;
 	this.tabs = [];
 	this.addBehavior();
@@ -15,7 +16,7 @@ In2iGui.Tabs.prototype.registerTab = function(obj) {
 
 In2iGui.Tabs.prototype.addBehavior = function() {
 	var self = this;
-	var tabs = $class('in2igui_tabs_bar',this.element)[0].getElementsByTagName('span');
+	var tabs = this.bar.select('li');
 	for (var i=0; i < tabs.length; i++) {
 		tabs[i].in2iGuiIndex = i;
 		tabs[i].onclick = function() {
@@ -41,8 +42,8 @@ In2iGui.Tabs.Tab = function(id,name) {
 	this.id = id;
 	this.name = name;
 	this.parent = null;
-	this.element = $id(id+'_content');
-	this.tab = $id(id+'_tab');
+	this.element = $(id+'_content');
+	this.tab = $(id+'_tab');
 	In2iGui.enableDelegating(this);
 }
 

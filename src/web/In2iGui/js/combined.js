@@ -107,35 +107,6 @@ N2i.log = function(obj) {
 	} catch (ignore) {};
 }
 
-N2i.objToString = function (obj,level) {
-	var str = '';
-	level = level | 0;
-	level+=2;
-	if (typeof(obj)=='object') {
-		str+='{';
-		for (var prop in obj) {
-			var value = obj[prop];
-			if (value==null) {
-				value='null';
-			} else if (typeof(value)=='string') {
-				value = '\''+value+'\'';
-			} else if (typeof(value)=='object') {
-				value = N2i.objToString(value,level);
-			}
-			str+='\n';
-			for (var i=0;i<level;i++) {
-				str+=' ';
-			}
-			str+=prop+' : '+value;
-		}
-		str+='\n}';
-	}
-	else {
-		str=obj;
-	}
-	return str;
-}
-
 N2i.escapeHTML = function(str) {
     var div = document.createElement('div');
     var text = document.createTextNode(str);
@@ -871,7 +842,32 @@ N2i.isIE = function() {
 	return ie;
 }
 
-/*  Prototype JavaScript framework, version 1.6.0.2
+////////////////////////////////////////////// Cookie ///////////////////////////////////////////
+
+N2i.Cookie = {
+	set : function(name,value,days) {
+		if (days) {
+			var date = new Date();
+			date.setTime(date.getTime()+(days*24*60*60*1000));
+			var expires = "; expires="+date.toGMTString();
+		}
+		else var expires = "";
+		document.cookie = name+"="+value+expires+"; path=/";
+	},
+	get : function(name) {
+		var nameEQ = name + "=";
+		var ca = document.cookie.split(';');
+		for(var i=0;i < ca.length;i++) {
+			var c = ca[i];
+			while (c.charAt(0)==' ') c = c.substring(1,c.length);
+			if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+		}
+		return null;
+	},
+	clear : function(name) {
+		this.set(name,"",-1);
+	}
+}/*  Prototype JavaScript framework, version 1.6.0.2
  *  (c) 2005-2008 Sam Stephenson
  *
  *  Prototype is freely distributable under the terms of an MIT-style license.
@@ -5822,7 +5818,20 @@ N2i.Animation.slowFastSlow = function(val) {
 	return -1*Math.pow(Math.cos((Math.PI/2)*Math.pow(val,a)),Math.pow(Math.PI,b))+1;
 }
 
+N2i.Animation.elasticIn = function(n) {
+	if(n==0){ return 0; }
+	if(n==1){ return 1; }
+	var p = .3;
+	var s = p/4;
+	n = n - 1;
+	return -1 * Math.pow(2,10*n) * Math.sin((n-s)*(2*Math.PI)/p);
+}
 
+N2i.Animation.backOut = function(n) {
+	n = n - 1;
+	var s = 1.70158;
+	return Math.pow(n, 2) * ((s + 1) * n + s) + 1;
+}
 
 N2i.Animation.bounce = function(t) {
 	if (t < (1/2.75)) {
@@ -6290,7 +6299,202 @@ N2i.Color = function(color_string) {
 }
 
 
-if (!N2i) {var N2i = {};}
+N2i.ease = {
+	
+	linear: function(/* Decimal? */n){
+		// summary: A linear easing function
+		return n;
+	},
+
+	quadIn: function(/* Decimal? */n){
+		return Math.pow(n, 2);
+	},
+
+	quadOut: function(/* Decimal? */n){
+		return n * (n-2) * -1;
+	},
+
+	quadInOut: function(/* Decimal? */n){
+		n=n*2;
+		if(n<1){ return Math.pow(n, 2) / 2; }
+		return -1 * ((--n)*(n-2) - 1) / 2;
+	},
+
+	cubicIn: function(/* Decimal? */n){
+		return Math.pow(n, 3);
+	},
+
+	cubicOut: function(/* Decimal? */n){
+		return Math.pow(n-1, 3) + 1;
+	},
+
+	cubicInOut: function(/* Decimal? */n){
+		n=n*2;
+		if(n<1){ return Math.pow(n, 3) / 2; }
+		n-=2;
+		return (Math.pow(n, 3) + 2) / 2;
+	},
+
+	quartIn: function(/* Decimal? */n){
+		return Math.pow(n, 4);
+	},
+
+	quartOut: function(/* Decimal? */n){
+		return -1 * (Math.pow(n-1, 4) - 1);
+	},
+
+	quartInOut: function(/* Decimal? */n){
+		n=n*2;
+		if(n<1){ return Math.pow(n, 4) / 2; }
+		n-=2;
+		return -1/2 * (Math.pow(n, 4) - 2);
+	},
+
+	quintIn: function(/* Decimal? */n){
+		return Math.pow(n, 5);
+	},
+
+	quintOut: function(/* Decimal? */n){
+		return Math.pow(n-1, 5) + 1;
+	},
+
+	quintInOut: function(/* Decimal? */n){
+		n=n*2;
+		if(n<1){ return Math.pow(n, 5) / 2; };
+		n-=2;
+		return (Math.pow(n, 5) + 2) / 2;
+	},
+
+	sineIn: function(/* Decimal? */n){
+		return -1 * Math.cos(n * (Math.PI/2)) + 1;
+	},
+
+	sineOut: function(/* Decimal? */n){
+		return Math.sin(n * (Math.PI/2));
+	},
+
+	sineInOut: function(/* Decimal? */n){
+		return -1 * (Math.cos(Math.PI*n) - 1) / 2;
+	},
+
+	expoIn: function(/* Decimal? */n){
+		return (n==0) ? 0 : Math.pow(2, 10 * (n - 1));
+	},
+
+	expoOut: function(/* Decimal? */n){
+		return (n==1) ? 1 : (-1 * Math.pow(2, -10 * n) + 1);
+	},
+
+	expoInOut: function(/* Decimal? */n){
+		if(n==0){ return 0; }
+		if(n==1){ return 1; }
+		n = n*2;
+		if(n<1){ return Math.pow(2, 10 * (n-1)) / 2; }
+		--n;
+		return (-1 * Math.pow(2, -10 * n) + 2) / 2;
+	},
+
+	circIn: function(/* Decimal? */n){
+		return -1 * (Math.sqrt(1 - Math.pow(n, 2)) - 1);
+	},
+
+	circOut: function(/* Decimal? */n){
+		n = n-1;
+		return Math.sqrt(1 - Math.pow(n, 2));
+	},
+
+	circInOut: function(/* Decimal? */n){
+		n = n*2;
+		if(n<1){ return -1/2 * (Math.sqrt(1 - Math.pow(n, 2)) - 1); }
+		n-=2;
+		return 1/2 * (Math.sqrt(1 - Math.pow(n, 2)) + 1);
+	},
+
+	backIn: function(/* Decimal? */n){
+		var s = 1.70158;
+		return Math.pow(n, 2) * ((s+1)*n - s);
+	},
+
+	backOut: function(/* Decimal? */n){
+		// summary: an easing function that pops past the range briefly, and 
+		// 	slowly comes back. 
+		n = n - 1;
+		var s = 1.70158;
+		return Math.pow(n, 2) * ((s + 1) * n + s) + 1;
+	},
+
+	backInOut: function(/* Decimal? */n){
+		var s = 1.70158 * 1.525;
+		n = n*2;
+		if(n < 1){ return (Math.pow(n, 2)*((s+1)*n - s))/2; }
+		n-=2;
+		return (Math.pow(n, 2)*((s+1)*n + s) + 2)/2;
+	},
+
+	elasticIn: function(/* Decimal? */n){
+		if(n==0){ return 0; }
+		if(n==1){ return 1; }
+		var p = .3;
+		var s = p/4;
+		n = n - 1;
+		return -1 * Math.pow(2,10*n) * Math.sin((n-s)*(2*Math.PI)/p);
+	},
+
+	elasticOut: function(/* Decimal? */n){
+		// summary: An easing function that elasticly snaps around the target value, near the end of the Animation
+		if(n==0) return 0;
+		if(n==1) return 1;
+		var p = .3;
+		var s = p/4;
+		return Math.pow(2,-10*n) * Math.sin((n-s)*(2*Math.PI)/p) + 1;
+	},
+
+	elasticInOut: function(/* Decimal? */n){
+		// summary: An easing function that elasticly snaps around the value, near the beginning and end of the Animation		
+		if(n==0) return 0;
+		n = n*2;
+		if(n==2) return 1;
+		var p = .3*1.5;
+		var s = p/4;
+		if(n<1){
+			n-=1;
+			return -.5*(Math.pow(2,10*n) * Math.sin((n-s)*(2*Math.PI)/p));
+		}
+		n-=1;
+		return .5*(Math.pow(2,-10*n) * Math.sin((n-s)*(2*Math.PI)/p)) + 1;
+	},
+
+	bounceIn: function(/* Decimal? */n){
+		// summary: An easing function that "bounces" near the beginning of an Animation
+		return (1 - N2i.ease.bounceOut(1-n)); // Decimal
+	},
+
+	bounceOut: function(/* Decimal? */n){
+		// summary: An easing function that "bounces" near the end of an Animation
+		var s=7.5625;
+		var p=2.75;
+		var l; 
+		if(n < (1 / p)){
+			l = s*Math.pow(n, 2);
+		}else if(n < (2 / p)){
+			n -= (1.5 / p);
+			l = s * Math.pow(n, 2) + .75;
+		}else if(n < (2.5 / p)){
+			n -= (2.25 / p);
+			l = s * Math.pow(n, 2) + .9375;
+		}else{
+			n -= (2.625 / p);
+			l = s * Math.pow(n, 2) + .984375;
+		}
+		return l;
+	},
+
+	bounceInOut: function(/* Decimal? */n){
+		// summary: An easing function that "bounces" at the beginning and end of the Animation
+		if(n<0.5){ return N2i.ease.bounceIn(n*2) / 2; }
+		return (N2i.ease.bounceOut(n*2-1) / 2) + 0.5; // Decimal
+	}
+};if (!N2i) {var N2i = {};}
 
 N2i.TextField = function(field,options,delegate) {
 	this.field = $id(field);
@@ -6817,11 +7021,10 @@ Date.prototype.getDayOfYear = function() {
 
 Date.prototype.getWeekOfYear = function() {
     // Skip to Thursday of this week
-    var now = this.getDayOfYear() + (4 - this.getDay());
+    var now = this.getDayOfYear() + (5 - this.getDay());
     // Find the first Thursday of the year
     var jan1 = new Date(this.getFullYear(), 0, 1);
-    var then = (7 - jan1.getDay() + 4);
-    //document.write(then);
+    var then = (5 - jan1.getDay());
     return String.leftPad(((now - then) / 7) + 1, 2, "0");
 }
 
@@ -7770,39 +7973,6 @@ In2iGui.InfoView.prototype = {
 	}
 }
 
-/////////////////////////////// Cookie /////////////////////////////////
-
-var Cookie = {
-	set: function(name,value,seconds){
-		if(seconds){
-			var d = new Date();
-			d.setTime(d.getTime() + (seconds * 1000));
-			var expiry = '; expires=' + d.toGMTString();
-		}else
-			var expiry = '';
-		//Cookie.notify('set',name,value);
-		document.cookie = name + "=" + value + expiry + "; path=/";
-	},
-	get: function(name){
-		//Cookie.notify('get',name);
-		var nameEQ = name + "=";
-		var ca = document.cookie.split(';');
-		for(var i = 0; i < ca.length; i++){
-			var c = ca[i];
-			while(c.charAt(0) == ' ')
-				c = c.substring(1,c.length);
-			if(c.indexOf(nameEQ) == 0)
-				return c.substring(nameEQ.length,c.length);
-		}
-		return null;
-	},
-	unset: function(name){
-		//Cookie.notify('unset',name);
-		Cookie.set(name,'',-1);
-	}
-};
-//Event.extend(Cookie);
-
 /* EOF */
 In2iGui.Window = function(element,name) {
 	this.element = $(element);
@@ -7810,7 +7980,8 @@ In2iGui.Window = function(element,name) {
 	this.close = this.element.select('.close')[0];
 	this.titlebar = this.element.select('.titlebar')[0];
 	this.title = this.titlebar.select('.title')[0];
-	this.content = this.element.select('.in2igui_window_content')[2];
+	this.content = this.element.select('.in2igui_window_body')[0];
+	this.visible = false;
 	In2iGui.extend(this);
 	this.addBehavior();
 }
@@ -7822,7 +7993,7 @@ In2iGui.Window.create = function(name,options) {
 	var element = new Element('div',{'class':'in2igui_window'+(options.variant ? ' in2igui_window_'+options.variant : '')});
 	element.update('<div class="close"></div>'+
 		'<div class="titlebar"><div class="titlebar"><div class="titlebar"><span>'+options.title+'</span></div></div></div>'+
-		'<div class="in2igui_window_content"><div class="in2igui_window_content"><div class="in2igui_window_content" style="'+
+		'<div class="in2igui_window_content"><div class="in2igui_window_content"><div class="in2igui_window_body" style="'+
 		(options.width ? 'width:'+options.width+'px;':'')+
 		(options.padding ? 'padding:'+options.padding+'px;':'')+
 		'">'+
@@ -7844,6 +8015,7 @@ In2iGui.Window.prototype = {
 		this.title.update(title);
 	},
 	show : function() {
+		if (this.visible) return;
 		this.element.setStyle({
 			zIndex : In2iGui.nextPanelIndex(), visibility : 'hidden', display : 'block'
 		})
@@ -7854,13 +8026,19 @@ In2iGui.Window.prototype = {
 		if (!N2i.isIE()) {
 			$ani(this.element,'opacity',1,0);
 		}
+		this.visible = true;
+	},
+	toggle : function() {
+		(this.visible ? this.hide() : this.show() );
 	},
 	hide : function() {
+		if (!this.visible) return;
 		if (!N2i.isIE()) {
 			$ani(this.element,'opacity',0,200,{hideOnComplete:true});
 		} else {
 			this.element.setStyle({display:'none'});
 		}
+		this.visible = false;
 	},
 	add : function(widgetOrNode) {
 		if (widgetOrNode.getElement) {
@@ -7931,13 +8109,11 @@ In2iGui.Window.prototype = {
 	In2iGui.enableDelegating(this);
 }
 
-In2iGui.Formula.create = function(opts) {
-	var options = {name:null};
-	N2i.override(options,opts);
-	var element = N2i.create('form',
+In2iGui.Formula.create = function(name) {
+	var e = new Element('form',
 		{'class':'in2igui_formula'}
 	);
-	return new In2iGui.Formula(element,options.name);
+	return new In2iGui.Formula(e,name);
 }
 
 In2iGui.Formula.prototype = {
@@ -7955,7 +8131,6 @@ In2iGui.Formula.prototype = {
 		this.inputs[this.inputs.length] = obj;
 	},
 	registerChild : function(obj) {
-		alert(obj);
 		this.children.push(obj);
 	},
 	getValues : function() {
@@ -7986,7 +8161,13 @@ In2iGui.Formula.prototype = {
 		this.element.insert(node);
 	},
 	add : function(widget) {
+		widget.parent = this;
 		this.element.insert(widget.getElement());
+	},
+	createGroup : function(options) {
+		var g = In2iGui.Formula.Group.create(null,options);
+		this.add(g);
+		return g;
 	}
 }
 
@@ -7998,6 +8179,7 @@ In2iGui.Formula.Group = function(elementOrId,name,options) {
 	this.element = $(elementOrId);
 	this.body = this.element.select('tbody')[0];
 	this.options = N2i.override({above:true},options);
+	this.parent = null;
 	In2iGui.extend(this);
 }
 
@@ -8030,6 +8212,18 @@ In2iGui.Formula.Group.prototype = {
 			this.body.insert(tr);
 		}
 		tr.insert(td);
+		if (this.parent) {
+			this.parent.registerInput(widget);
+		}
+	},
+	createButtons : function(options) {
+		var tr = new Element('tr');
+		this.body.insert(tr);
+		var td = new Element('td',{colspan:this.options.above?1:2});
+		tr.insert(td);
+		var b = In2iGui.Buttons.create(null,options);
+		td.insert(b.getElement());
+		return b;
 	}
 }
 
@@ -8044,9 +8238,8 @@ In2iGui.Formula.Text = function(element,name,options) {
 	In2iGui.extend(this);
 }
 
-In2iGui.Formula.Text.create = function(name,opts) {
-	var options = {lines:1};
-	N2i.override(options,opts);
+In2iGui.Formula.Text.create = function(name,options) {
+	options = N2i.override({lines:1},options);
 	if (options.lines>1) {
 		var input = N2i.create('textarea',
 			{'class':'in2igui_formula_text','rows':options.lines}
@@ -8873,7 +9066,8 @@ In2iGui.List.prototype.windowNumberWasClicked = function(tag) {
 /* EOF */In2iGui.Tabs = function(id,name) {
 	this.id = id;
 	this.name = name;
-	this.element = $id(id);
+	this.element = $(id);
+	this.bar = this.element.select('.in2igui_tabs_bar')[0];
 	this.activeTab = 0;
 	this.tabs = [];
 	this.addBehavior();
@@ -8887,7 +9081,7 @@ In2iGui.Tabs.prototype.registerTab = function(obj) {
 
 In2iGui.Tabs.prototype.addBehavior = function() {
 	var self = this;
-	var tabs = $class('in2igui_tabs_bar',this.element)[0].getElementsByTagName('span');
+	var tabs = this.bar.select('li');
 	for (var i=0; i < tabs.length; i++) {
 		tabs[i].in2iGuiIndex = i;
 		tabs[i].onclick = function() {
@@ -8913,8 +9107,8 @@ In2iGui.Tabs.Tab = function(id,name) {
 	this.id = id;
 	this.name = name;
 	this.parent = null;
-	this.element = $id(id+'_content');
-	this.tab = $id(id+'_tab');
+	this.element = $(id+'_content');
+	this.tab = $(id+'_tab');
 	In2iGui.enableDelegating(this);
 }
 
@@ -9178,7 +9372,11 @@ In2iGui.ObjectList.Select.prototype = {
 	}
 }
 
-/* EOF */In2iGui.Alert = function(element,name) {
+/* EOF *//**
+ * An alert that can be
+ * @constructor
+ */
+In2iGui.Alert = function(element,name) {
 	this.element = $id(element);
 	this.name = name;
 	this.body = $firstClass('in2igui_alert_body',this.element);
@@ -9189,6 +9387,10 @@ In2iGui.ObjectList.Select.prototype = {
 	In2iGui.extend(this);
 }
 
+/**
+ * Creates a new instance of an alert
+ * @static
+ */
 In2iGui.Alert.create = function(name,options) {
 	var opts = {title:'',text:'',emotion:null,variant:null,title:null};
 	N2i.override(opts,options);
@@ -9271,10 +9473,10 @@ In2iGui.Alert.prototype = {
 
 /* EOF */In2iGui.Button = function(id,name) {
 	this.name = name;
-	this.element = $id(id);
+	this.element = $(id);
 	this.inner = this.element.getElementsByTagName('span')[1];
 	this.enabled = true;
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 	this.addBehavior();
 }
 
@@ -9301,9 +9503,6 @@ In2iGui.Button.create = function(name,opts) {
 }
 
 In2iGui.Button.prototype = {
-	getElement : function() {
-		return this.element;
-	},
 	addBehavior : function() {
 		var self = this;
 		this.element.onclick = function() {
@@ -9331,6 +9530,25 @@ In2iGui.Button.prototype = {
 	}
 }
 
+In2iGui.Buttons = function(id,name) {
+	this.name = name;
+	this.element = $(id);
+	In2iGui.extend(this);
+}
+
+In2iGui.Buttons.create = function(name,options) {
+	options = N2i.override({top:0},options);
+	var e = new Element('div',{'class':'in2igui_buttons'});
+	if (options.top>0) e.setStyle({paddingTop:options.top+'px'});
+	return new In2iGui.Buttons(e,name);
+}
+
+In2iGui.Buttons.prototype = {
+	add : function(widget) {
+		this.element.insert(widget.getElement());
+	}
+}
+
 /* EOF */In2iGui.Selection = function(id,name,source) {
 	this.element = $id(id);
 	this.name = name;
@@ -9338,69 +9556,70 @@ In2iGui.Button.prototype = {
 	this.sources = [];
 	this.value = null;
 	this.selected = [];
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 	var self = this;
 }
 
-In2iGui.Selection.prototype.getValue = function() {
-	return this.value;
+In2iGui.Selection.create = function(name,options) {
+	var e = new Element('div',{'class':'in2igui_selection'});
+	return new In2iGui.Selection(e,name,options);
 }
 
-In2iGui.Selection.prototype.getSelection = function() {
-	for (var i=0; i < this.items.length; i++) {
-		if (this.items[i].value == this.value) {
-			return this.items[i];
+In2iGui.Selection.prototype = {
+	getValue : function() {
+		return this.value;
+	},
+	getSelection : function() {
+		for (var i=0; i < this.items.length; i++) {
+			if (this.items[i].value == this.value) {
+				return this.items[i];
+			}
+		};
+		for (var i=0; i < this.sources.length; i++) {
+			var item = this.sources[i].getSelection();
+			if (item) return item;
+		};
+	},
+	changeValue : function(value) {
+		this.value = value;
+		for (var i=0; i < this.items.length; i++) {
+			var item = this.items[i];
+			N2i.setClass(item.element,'selected',(item.value==value));
+		};
+		for (var i=0; i < this.sources.length; i++) {
+			var source = this.sources[i];
+			source.updateUI();
+		};
+		In2iGui.callDelegates(this,'selectorSelectionChanged');
+		In2iGui.callDelegates(this,'selectionChanged',this.value);
+	},
+	registerSource : function(source) {
+		source.selection = this;
+		this.sources.push(source);
+	},
+	registerItem : function(id,title,icon,badge,value,kind) {
+		var element = $id(id);
+		element.in2iGuiValue = value;
+		this.items.push({id:id,title:title,icon:icon,badge:badge,element:element,value:value,kind:kind});
+		var self = this;
+		element.onclick = function() {
+			self.itemWasClicked(this);
 		}
-	};
-	for (var i=0; i < this.sources.length; i++) {
-		var item = this.sources[i].getSelection();
-		if (item) return item;
-	};
-}
-
-In2iGui.Selection.prototype.changeValue = function(value) {
-	this.value = value;
-	for (var i=0; i < this.items.length; i++) {
-		var item = this.items[i];
-		N2i.setClass(item.element,'selected',(item.value==value));
-	};
-	for (var i=0; i < this.sources.length; i++) {
-		var source = this.sources[i];
-		source.updateUI();
-	};
-	In2iGui.callDelegates(this,'selectorSelectionChanged');
-	In2iGui.callDelegates(this,'selectionChanged',this.value);
-}
-
-In2iGui.Selection.prototype.registerSource = function(source) {
-	source.selection = this;
-	this.sources.push(source);
-}
-
-In2iGui.Selection.prototype.registerItem = function(id,title,icon,badge,value,kind) {
-	var element = $id(id);
-	element.in2iGuiValue = value;
-	this.items.push({id:id,title:title,icon:icon,badge:badge,element:element,value:value,kind:kind});
-	var self = this;
-	element.onclick = function() {
-		self.itemWasClicked(this);
+		element.ondblclick = function() {
+			self.itemWasDoubleClicked();
+			return false;
+		}
+		element.dropInfo = {kind:kind,controller:this};
+		N2i.addClass(element,'droppable');
+		N2i.addListener(element,'mouseover',In2iGui.dropOverListener);
+		N2i.addListener(element,'mouseout',In2iGui.dropOutListener);
+	},
+	itemWasClicked : function(item) {
+		this.changeValue(item.in2iGuiValue);
+	},
+	itemWasDoubleClicked : function() {
+		In2iGui.callDelegates(this,'selectorObjectWasOpened');
 	}
-	element.ondblclick = function() {
-		self.itemWasDoubleClicked();
-		return false;
-	}
-	element.dropInfo = {kind:kind,controller:this};
-	N2i.addClass(element,'droppable');
-	N2i.addListener(element,'mouseover',In2iGui.dropOverListener);
-	N2i.addListener(element,'mouseout',In2iGui.dropOutListener);
-}
-
-In2iGui.Selection.prototype.itemWasClicked = function(item) {
-	this.changeValue(item.in2iGuiValue);
-}
-
-In2iGui.Selection.prototype.itemWasDoubleClicked = function() {
-	In2iGui.callDelegates(this,'selectorObjectWasOpened');
 }
 
 /******************************** Source ****************************/
@@ -9547,10 +9766,10 @@ In2iGui.RevealingToolbar.prototype = {
 
 /** @constructor */
 In2iGui.Toolbar.Icon = function(id,name) {
-	this.element = $id(id);
+	this.element = $(id);
 	this.name = name;
-	this.enabled = true;
-	this.icon = $firstClass('icon',this.element);
+	this.enabled = !this.element.hasClassName('in2igui_toolbar_icon_disabled');
+	this.icon = this.element.select('.in2igui_icon')[0];
 	In2iGui.extend(this);
 	this.addBehavior();
 }
@@ -9624,6 +9843,26 @@ In2iGui.Toolbar.SearchField.prototype = {
 			this.value=this.field.value;
 			In2iGui.callDelegates(this,'valueChanged');
 		}
+	}
+}
+
+
+/***************** Badge ***************/
+
+In2iGui.Toolbar.Badge = function(element,name) {
+	this.element = $(element);
+	this.name = name;
+	this.label = this.element.select('strong')[0];
+	this.text = this.element.select('span')[0];
+	In2iGui.enableDelegating(this);
+}
+
+In2iGui.Toolbar.Badge.prototype = {
+	setLabel : function(str) {
+		this.label.update(str);
+	},
+	setText : function(str) {
+		this.text.update(str);
 	}
 }
 
@@ -10036,6 +10275,9 @@ In2iGui.RichText.prototype = {
 		this.value = value;
 		this.document.body.innerHTML = value;
 	},
+	getValue : function() {
+		return this.value;
+	},
 	deactivate : function() {
 		if (this.colorPicker) this.colorPicker.hide();
 	},
@@ -10052,7 +10294,7 @@ In2iGui.RichText.prototype = {
 				div.in2iguiRichTextAction = actions[i];
 				div.onclick = div.ondblclick = function(e) {return self.actionWasClicked(this.in2iguiRichTextAction,e);}
 				var img = new Element('img');
-				img.src=In2iGui.context+'In2iGui/gfx/trans.png';
+				img.src=In2iGui.context+'/In2iGui/gfx/trans.png';
 				if (actions[i].icon) {
 					div.setStyle({'backgroundImage':'url('+In2iGui.getIconUrl(actions[i].icon,1)+')'});
 				}
@@ -10129,7 +10371,7 @@ In2iGui.RichText.prototype = {
 	},
 	showColorPicker : function() {
 		if (!this.colorPicker) {
-			var panel = In2iGui.Panel.create();
+			var panel = In2iGui.Window.create(null,{variant:'dark'});
 			var picker = In2iGui.ColorPicker.create();
 			picker.addDelegate(this);
 			panel.add(picker);
@@ -10339,7 +10581,7 @@ In2iGui.ImageViewer.prototype = {
 				$ani(this.viewer,'scrollLeft',this.index*(this.width+10),Math.min(num*300,2000),{ease:N2i.Animation.slowFastSlow});				
 			} else {
 				var end = this.index==0 || this.index==this.images.length-1;
-				var ease = (user ? (end ? N2i.Animation.bounce : N2i.Animation.elastic) : N2i.Animation.slowFastSlow);
+				var ease = (user ? (end ? N2i.Animation.bounce : N2i.Animation.elastic) : N2i.ease.backInOut);
 				$ani(this.viewer,'scrollLeft',this.index*(this.width+10),(end ? 800 : 1200),{ease:ease});
 			}
 		} else {
@@ -10452,8 +10694,7 @@ In2iGui.ImageViewer.prototype = {
 
 /* EOF */
 In2iGui.Picker = function(element,name,options) {
-	this.options = {itemWidth:100,itemHeight:150};
-	N2i.override(this.options,options);
+	this.options = N2i.override({itemWidth:100,itemHeight:150},options);
 	this.element = $id(element);
 	this.name = name;
 	this.container = $firstClass('in2igui_picker_container',this.element);
@@ -10464,14 +10705,17 @@ In2iGui.Picker = function(element,name,options) {
 }
 
 In2iGui.Picker.create = function(name,options) {
-	options = options || {};
-	var element = N2i.create('div',{'class':'in2igui_picker'});
-	element.innerHTML='<div class="in2igui_picker_top"><div><div></div></div></div>'+
-	'<div class="in2igui_picker_middle"><div class="in2igui_picker_middle"><div class="in2igui_picker_middle">'+
+	options = N2i.override({shadow:true},options);
+	var element = new Element('div',{'class':'in2igui_picker'});
+	element.update('<div class="in2igui_picker_top"><div><div></div></div></div>'+
+	'<div class="in2igui_picker_middle"><div class="in2igui_picker_middle">'+
 	(options.title ? '<div class="in2igui_picker_title">'+options.title+'</div>' : '')+
 	'<div class="in2igui_picker_container"></div>'+
-	'</div></div></div>'+
-	'<div class="in2igui_picker_bottom"><div><div></div></div></div>';
+	'</div></div>'+
+	'<div class="in2igui_picker_bottom"><div><div></div></div></div>');
+	if (options.shadow==true) {
+		element.addClassName('in2igui_picker_shadow')
+	}
 	return new In2iGui.Picker(element,name,options);
 }
 
@@ -10488,15 +10732,15 @@ In2iGui.Picker.prototype = {
 		this.updateSelection();
 	},
 	updateUI : function() {
-		this.container.style.width=(this.objects.length*(this.options.itemWidth+10))+'px';
+		this.container.style.width=(this.objects.length*(this.options.itemWidth+14))+'px';
 		this.container.style.height=(this.options.itemHeight+10)+'px';
 		for (var i=0; i < this.objects.length; i++) {
-			var item = N2i.create('div',{'class':'in2igui_picker_item'},
-				{
-				width:(this.options.itemWidth+10)+'px',
-				height:(this.options.itemHeight+10)+'px',
-				backgroundImage:'url('+this.objects[i].image+')'
-				}
+			var item = new Element('div',{'class':'in2igui_picker_item'});
+			item.update(
+				'<div class="in2igui_picker_item_middle"><div class="in2igui_picker_item_middle">'+
+				'<div style="width:'+this.options.itemWidth+'px;height:'+this.options.itemHeight+'px;background-image:url(\''+this.objects[i].image+'\')"></div>'+
+				'</div></div>'+
+				'<div class="in2igui_picker_item_bottom"><div><div></div></div></div>'
 			);
 			item.in2iguiIndex = i;
 			var self = this;
@@ -10673,7 +10917,18 @@ In2iGui.Editor.prototype = {
 		this.hoveredPart = part;
 		part.element.addClassName('in2igui_editor_part_hover');
 		var self = this;
-		this.partControlTimer = window.setTimeout(function() {self.showPartControls()},500);
+		this.partControlTimer = window.setTimeout(function() {self.showPartControls()},200);
+	},
+	blurPart : function(e) {
+		window.clearTimeout(this.partControlTimer);
+		if (!this.active) return;
+		if (this.partControls && !In2iGui.isWithin(e,this.partControls.element)) {
+			this.hidePartControls();
+			this.hoveredPart.element.removeClassName('in2igui_editor_part_hover');
+		}
+		if (!this.partControls) {
+			this.hoveredPart.element.removeClassName('in2igui_editor_part_hover');			
+		}
 	},
 	showPartEditControls : function() {
 		if (!this.partEditControls) {
@@ -10692,7 +10947,10 @@ In2iGui.Editor.prototype = {
 			this.partControls.addIcon('delete','common/delete');
 			var self = this;
 			this.partControls.getElement().observe('mouseout',function(e) {
-				self.blurPart(e);
+				self.blurControls(e);
+			});
+			this.partControls.getElement().observe('mouseover',function(e) {
+				self.hoverControls(e);
 			});
 			this.partControls.addDelegate(this);
 		}
@@ -10702,6 +10960,15 @@ In2iGui.Editor.prototype = {
 			this.partControls.showIcons(['new','delete']);
 		}
 		this.partControls.showAtElement(this.hoveredPart.element,{'horizontal':'right'});
+	},
+	hoverControls : function(e) {
+		this.hoveredPart.element.addClassName('in2igui_editor_part_hover');
+	},
+	blurControls : function(e) {
+		this.hoveredPart.element.removeClassName('in2igui_editor_part_hover');
+		if (!In2iGui.isWithin(e,this.hoveredPart.element)) {
+			this.hidePartControls();
+		}
 	},
 	iconWasClicked$In2iGuiEditorPartActions : function(key,event) {
 		if (key=='delete') {
@@ -10719,16 +10986,7 @@ In2iGui.Editor.prototype = {
 			this.savePart(this.activePart);
 		}
 	},
-	blurPart : function(e) {
-		window.clearTimeout(this.partControlTimer);
-		if (!this.active) return;
-		if (!In2iGui.isWithin(e,this.hoveredPart.element)) {
-			N2i.log('not within!')
-			this.hidePartControls();
-		}
-	},
 	hidePartControls : function() {
-		this.hoveredPart.element.removeClassName('in2igui_editor_part_hover');
 		if (this.partControls) {
 			this.partControls.hide();
 		}
@@ -10772,7 +11030,6 @@ In2iGui.Editor.prototype = {
 		In2iGui.callDelegates(part,'partChanged');
 	},
 	deletePart : function(part) {
-		In2iGui.get().confirm('cofirmDeletePart',{title:'Er du sikker på at du vil slette?'});
 		In2iGui.callDelegates(part,'deletePart');
 		this.partControls.hide();
 	},
@@ -11175,7 +11432,7 @@ In2iGui.MultiUpload.prototype = {
 		var loc = new String(document.location);
 		var url = loc.slice(0,loc.lastIndexOf('/')+1);
 		url += this.options.url;
-		var session = Cookie.get('JSESSIONID');
+		var session = N2i.Cookie.get('JSESSIONID');
 		if (session) {
 			url+=';jsessionid='+session;
 		}
@@ -11499,10 +11756,13 @@ In2iGui.Calendar.prototype = {
 		this.toolbar.add(this.datePickerButton);
 		
 		var time = this.body.select('.time')[0];
-		for (var i=this.options.startHour; i < this.options.endHour; i++) {
+		for (var i=this.options.startHour; i <= this.options.endHour; i++) {
 			var node = new Element('div').update('<span><em>'+i+':00</em></span>');
 			if (i==this.options.startHour) {
 				node.addClassName('first');
+			}
+			if (i==this.options.endHour) {
+				node.addClassName('last');
 			}
 			time.insert(node);
 		};
@@ -11742,5 +12002,36 @@ Date.dayNames =
     "Torsdag",
     "Fredag",
     "Lørdag"];
+
+/* EOF */In2iGui.Columns = function(id,name,options) {
+	this.name = name;
+	this.options = options || {};
+	this.element = $(id);
+	this.body = this.element.select('tr')[0];
+	In2iGui.extend(this);
+}
+
+In2iGui.Columns.create = function(name,options) {
+	var e = new Element('table',{'class':'in2igui_columns'}).insert(new Element('tbody').insert(new Element('tr')));
+	return new In2iGui.Columns(e,name,options);
+}
+
+In2iGui.Columns.prototype = {
+	addToColumn : function(index,widget) {
+		var c = this.ensureColumn(index);
+		N2i.log(c);
+		c.insert(widget.getElement());
+	},
+	ensureColumn : function(index) {
+		var children = this.body.childElements();
+		N2i.log(children.length-1);
+		for (var i=children.length-1;i<index;i++) {
+			this.body.insert(new Element('td'));
+			N2i.log('insert');
+		}
+		N2i.log(this.body);
+		return this.body.childElements()[index];
+	}
+}
 
 /* EOF */

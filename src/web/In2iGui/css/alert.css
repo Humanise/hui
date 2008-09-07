@@ -108,7 +108,7 @@ div.in2igui_alert a.in2igui_button:hover span span
 	background-position: 0px -140px;
 }
 
-div.in2igui_alert span.in2igui_button_highlighted, div.in2igui_alert span.in2igui_button_highlighted span, div.in2igui_alert span.in2igui_button_highlighted span span
+div.in2igui_alert a.in2igui_button_highlighted, div.in2igui_alert a.in2igui_button_highlighted span, div.in2igui_alert a.in2igui_button_highlighted span span
 {
 	color: #094100;
 	background-image: url('../gfx/alert_button_highlighted.png');

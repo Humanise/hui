@@ -8,13 +8,11 @@ In2iGui.Formula = function(id,name) {
 	In2iGui.enableDelegating(this);
 }
 
-In2iGui.Formula.create = function(opts) {
-	var options = {name:null};
-	N2i.override(options,opts);
-	var element = N2i.create('form',
+In2iGui.Formula.create = function(name) {
+	var e = new Element('form',
 		{'class':'in2igui_formula'}
 	);
-	return new In2iGui.Formula(element,options.name);
+	return new In2iGui.Formula(e,name);
 }
 
 In2iGui.Formula.prototype = {
@@ -32,7 +30,6 @@ In2iGui.Formula.prototype = {
 		this.inputs[this.inputs.length] = obj;
 	},
 	registerChild : function(obj) {
-		alert(obj);
 		this.children.push(obj);
 	},
 	getValues : function() {
@@ -63,7 +60,13 @@ In2iGui.Formula.prototype = {
 		this.element.insert(node);
 	},
 	add : function(widget) {
+		widget.parent = this;
 		this.element.insert(widget.getElement());
+	},
+	createGroup : function(options) {
+		var g = In2iGui.Formula.Group.create(null,options);
+		this.add(g);
+		return g;
 	}
 }
 
@@ -75,6 +78,7 @@ In2iGui.Formula.Group = function(elementOrId,name,options) {
 	this.element = $(elementOrId);
 	this.body = this.element.select('tbody')[0];
 	this.options = N2i.override({above:true},options);
+	this.parent = null;
 	In2iGui.extend(this);
 }
 
@@ -107,6 +111,18 @@ In2iGui.Formula.Group.prototype = {
 			this.body.insert(tr);
 		}
 		tr.insert(td);
+		if (this.parent) {
+			this.parent.registerInput(widget);
+		}
+	},
+	createButtons : function(options) {
+		var tr = new Element('tr');
+		this.body.insert(tr);
+		var td = new Element('td',{colspan:this.options.above?1:2});
+		tr.insert(td);
+		var b = In2iGui.Buttons.create(null,options);
+		td.insert(b.getElement());
+		return b;
 	}
 }
 
@@ -121,9 +137,8 @@ In2iGui.Formula.Text = function(element,name,options) {
 	In2iGui.extend(this);
 }
 
-In2iGui.Formula.Text.create = function(name,opts) {
-	var options = {lines:1};
-	N2i.override(options,opts);
+In2iGui.Formula.Text.create = function(name,options) {
+	options = N2i.override({lines:1},options);
 	if (options.lines>1) {
 		var input = N2i.create('textarea',
 			{'class':'in2igui_formula_text','rows':options.lines}

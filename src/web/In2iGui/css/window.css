@@ -37,18 +37,14 @@
 
 .in2igui_window_content
 {
-	background: url('../gfx/window_grey_middle.png') top left repeat-y;
+	background: url('../gfx/window_grey_middle_right.png') right top repeat-y;
+	padding-right: 8px;
 }
 
 .in2igui_window_content .in2igui_window_content
 {
-	background-position: top right;
-}
-
-.in2igui_window_content .in2igui_window_content .in2igui_window_content
-{
-	background: #fff;
-	margin: 0 8px;
+	background: url('../gfx/window_grey_middle.png') top left repeat-y;
+	padding: 0px 0px 0px 8px;
 }
 
 
@@ -114,6 +110,11 @@ div.in2igui_window_light div.in2igui_window_bottom
 
 div.in2igui_window_light div.in2igui_window_content
 {
+	background-image: url('../gfx/window_light_middle_right.png');
+}
+
+div.in2igui_window_light div.in2igui_window_content div.in2igui_window_content
+{
 	background-image: url('../gfx/window_light_middle.png');
 }
 
@@ -137,18 +138,10 @@ div.in2igui_window_dark div.in2igui_window_bottom
 
 div.in2igui_window_dark div.in2igui_window_content
 {
-	background: url('../gfx/window_dark_middle_right.png') right top repeat-y;
-	padding-right: 8px;
+	background-image: url('../gfx/window_dark_middle_right.png');
 }
 
 div.in2igui_window_dark div.in2igui_window_content div.in2igui_window_content
 {
-	background: url('../gfx/window_dark_middle.png');
-	padding: 0px;
-}
-
-div.in2igui_window_dark div.in2igui_window_content div.in2igui_window_content div.in2igui_window_content
-{
-	background: none;
-	margin-right: 0;
+	background-image: url('../gfx/window_dark_middle.png');
 }

@@ -36,7 +36,17 @@
 	color: #fff;
 }
 
-.in2igui_selection div.selected, .in2igui_selection div.selected:hover
+div.in2igui_window_dark .in2igui_selection div.item
+{
+	color: #fff;
+}
+
+div.in2igui_window_dark div.in2igui_selection div.item:hover
+{
+	background: #000;
+}
+
+div.in2igui_selection div.selected, div.in2igui_selection div.selected:hover
 {
 	background-color: #3875d7;
 	color: #fff;

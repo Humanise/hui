@@ -3,7 +3,7 @@ form.in2igui_formula
 	padding: 0px;
 	margin: 0px;
 	overflow-x: auto;
-	min-height: 100px;
+	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
 }
 
 .in2igui_formula_header
@@ -21,9 +21,8 @@ table.in2igui_formula_group
 
 table.in2igui_formula_group_above
 {
-	border-spacing: 2px;
+	border-spacing: 0px;
 }
-
 
 form.in2igui_formula table.split
 {
@@ -33,7 +32,6 @@ form.in2igui_formula table.split
 table.in2igui_formula_group label
 {
 	color: #004A80;
-	text-align: right;
 	font-size: 12px;
 	line-height: 11px;
 	font-weight: normal;
@@ -41,8 +39,6 @@ table.in2igui_formula_group label
 
 table.in2igui_formula_group_above label
 {
-	display: block;
-	text-align: left;
 	line-height: 15px;
 }
 
@@ -55,10 +51,20 @@ table.in2igui_formula_group th
 {
 	width: 1%;
 	vertical-align: top;
-	padding-right: 5px;
+	padding: 0px 5px 0px 0px;
 	text-align: right;
-	line-height: 20px;
+	line-height: 14px;
 	white-space: nowrap;
+}
+
+table.in2igui_formula_group_above th
+{
+	text-align: left;
+}
+
+table.in2igui_formula_group_above div.in2igui_field, table.in2igui_formula_group_above div.in2igui_tokens
+{
+	margin-bottom: 5px;
 }
 
 form.in2igui_formula div.in2igui_field
@@ -66,6 +72,8 @@ form.in2igui_formula div.in2igui_field
 	border: 1px solid #ddd;
 	border-color: #bbb #ccc #ddd;
 	font-size: 0;
+	background: #fff;
+	-moz-border-radius: 3px;
 }
 
 form.in2igui_formula div.in2igui_longfield, form.in2igui_formula select
@@ -81,6 +89,8 @@ form.in2igui_formula .in2igui_formula_text
 	margin: 0px;
 	font-size: 10pt;
 	width: 100%;
+	text-indent:2px;
+	background: transparent;
 }
 
 form.in2igui_formula fieldset
@@ -101,13 +111,13 @@ form.in2igui_formula fieldset legend
 .in2igui_formula_buttons
 {
 	overflow: hidden;
-	padding-bottom: 3px;
 }
 
 form.in2igui_formula a.in2igui_button
 {
 	float: right;
 	margin-left: 10px;
+	margin-right: 0px;
 }
 
 /******************************* Radio button **************************/
@@ -152,7 +162,7 @@ form.in2igui_formula .checkboxes
 form.in2igui_formula .checkbox
 {
 	overflow: hidden;
-	padding: 4px 0px 0px;
+	padding: 2px 0px 0px;
 	font-size: 10pt;
 	cursor: default;
 	color: #004A80;
@@ -215,12 +225,13 @@ table.in2igui_objectlist thead th.in2igui_objectlist1
 div.in2igui_tokens
 {
 	overflow: hidden;
-	padding-top: 3px;
 }
 
 input.in2igui_tokens_token
 {
-	border: 1px solid #ddd;
+	border-color:#BBBBBB #CCCCCC #DDDDDD;
+	border-style:solid;
+	border-width:1px;
 	width: 50px;
 	margin-right: 5px;
 	margin-bottom: 5px;
@@ -230,13 +241,27 @@ input.in2igui_tokens_token
 
 
 
-/************************* Override for dark window *******************/
+/************************* Override for windows *******************/
 
+
+div.in2igui_window table.in2igui_formula_group label
+{
+	color: #000;
+	background: rgb(191,193,196);
+	padding: 0px 2px;
+}
+
+div.in2igui_window_light table.in2igui_formula_group label
+{
+	color: #004A80;
+	background: rgb(229,229,229);
+}
 
 
 div.in2igui_window_dark table.in2igui_formula_group label
 {
 	color: #fff;
+	background: none;
 }
 
 div.in2igui_window_dark .in2igui_formula_text

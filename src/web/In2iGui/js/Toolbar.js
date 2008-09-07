@@ -66,10 +66,10 @@ In2iGui.RevealingToolbar.prototype = {
 
 /** @constructor */
 In2iGui.Toolbar.Icon = function(id,name) {
-	this.element = $id(id);
+	this.element = $(id);
 	this.name = name;
-	this.enabled = true;
-	this.icon = $firstClass('icon',this.element);
+	this.enabled = !this.element.hasClassName('in2igui_toolbar_icon_disabled');
+	this.icon = this.element.select('.in2igui_icon')[0];
 	In2iGui.extend(this);
 	this.addBehavior();
 }
@@ -143,6 +143,26 @@ In2iGui.Toolbar.SearchField.prototype = {
 			this.value=this.field.value;
 			In2iGui.callDelegates(this,'valueChanged');
 		}
+	}
+}
+
+
+/***************** Badge ***************/
+
+In2iGui.Toolbar.Badge = function(element,name) {
+	this.element = $(element);
+	this.name = name;
+	this.label = this.element.select('strong')[0];
+	this.text = this.element.select('span')[0];
+	In2iGui.enableDelegating(this);
+}
+
+In2iGui.Toolbar.Badge.prototype = {
+	setLabel : function(str) {
+		this.label.update(str);
+	},
+	setText : function(str) {
+		this.text.update(str);
 	}
 }
 

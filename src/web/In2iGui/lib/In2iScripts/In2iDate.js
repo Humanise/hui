@@ -299,11 +299,10 @@ Date.prototype.getDayOfYear = function() {
 
 Date.prototype.getWeekOfYear = function() {
     // Skip to Thursday of this week
-    var now = this.getDayOfYear() + (4 - this.getDay());
+    var now = this.getDayOfYear() + (5 - this.getDay());
     // Find the first Thursday of the year
     var jan1 = new Date(this.getFullYear(), 0, 1);
-    var then = (7 - jan1.getDay() + 4);
-    //document.write(then);
+    var then = (5 - jan1.getDay());
     return String.leftPad(((now - then) / 7) + 1, 2, "0");
 }
 

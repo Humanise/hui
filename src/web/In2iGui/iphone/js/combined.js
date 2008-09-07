@@ -107,35 +107,6 @@ N2i.log = function(obj) {
 	} catch (ignore) {};
 }
 
-N2i.objToString = function (obj,level) {
-	var str = '';
-	level = level | 0;
-	level+=2;
-	if (typeof(obj)=='object') {
-		str+='{';
-		for (var prop in obj) {
-			var value = obj[prop];
-			if (value==null) {
-				value='null';
-			} else if (typeof(value)=='string') {
-				value = '\''+value+'\'';
-			} else if (typeof(value)=='object') {
-				value = N2i.objToString(value,level);
-			}
-			str+='\n';
-			for (var i=0;i<level;i++) {
-				str+=' ';
-			}
-			str+=prop+' : '+value;
-		}
-		str+='\n}';
-	}
-	else {
-		str=obj;
-	}
-	return str;
-}
-
 N2i.escapeHTML = function(str) {
     var div = document.createElement('div');
     var text = document.createTextNode(str);
@@ -871,7 +842,32 @@ N2i.isIE = function() {
 	return ie;
 }
 
-/*  Prototype JavaScript framework, version 1.6.0.2
+////////////////////////////////////////////// Cookie ///////////////////////////////////////////
+
+N2i.Cookie = {
+	set : function(name,value,days) {
+		if (days) {
+			var date = new Date();
+			date.setTime(date.getTime()+(days*24*60*60*1000));
+			var expires = "; expires="+date.toGMTString();
+		}
+		else var expires = "";
+		document.cookie = name+"="+value+expires+"; path=/";
+	},
+	get : function(name) {
+		var nameEQ = name + "=";
+		var ca = document.cookie.split(';');
+		for(var i=0;i < ca.length;i++) {
+			var c = ca[i];
+			while (c.charAt(0)==' ') c = c.substring(1,c.length);
+			if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+		}
+		return null;
+	},
+	clear : function(name) {
+		this.set(name,"",-1);
+	}
+}/*  Prototype JavaScript framework, version 1.6.0.2
  *  (c) 2005-2008 Sam Stephenson
  *
  *  Prototype is freely distributable under the terms of an MIT-style license.
@@ -5661,66 +5657,76 @@ In2iGui.InfoView.prototype = {
 	}
 }
 
-/////////////////////////////// Cookie /////////////////////////////////
-
-var Cookie = {
-	set: function(name,value,seconds){
-		if(seconds){
-			var d = new Date();
-			d.setTime(d.getTime() + (seconds * 1000));
-			var expiry = '; expires=' + d.toGMTString();
-		}else
-			var expiry = '';
-		//Cookie.notify('set',name,value);
-		document.cookie = name + "=" + value + expiry + "; path=/";
-	},
-	get: function(name){
-		//Cookie.notify('get',name);
-		var nameEQ = name + "=";
-		var ca = document.cookie.split(';');
-		for(var i = 0; i < ca.length; i++){
-			var c = ca[i];
-			while(c.charAt(0) == ' ')
-				c = c.substring(1,c.length);
-			if(c.indexOf(nameEQ) == 0)
-				return c.substring(nameEQ.length,c.length);
-		}
-		return null;
-	},
-	unset: function(name){
-		//Cookie.notify('unset',name);
-		Cookie.set(name,'',-1);
-	}
-};
-//Event.extend(Cookie);
-
 /* EOF */
 var In2iPhone = {};
 
-In2iPhone.addTouchBehavior = function(element) {
+In2iPhone.addTouchBehavior = function(element,delegate) {
 	element.ontouchstart=function() {
-		if (this.hasClassName('disabled')) return;
-		this.addClassName('touched');
+		if (element.hasClassName('disabled')) return;
+		element.touchEnded=false;
+		element.touchCanceled = false;
+		element.touchTimer = window.setTimeout(function() {
+			if (element.touchEnded) return;
+			element.addClassName('touched');
+			element.touched=true;
+		},100);
 	};
 	//=element.ontouchcancel
-	//=element.ontouchmove
+	element.ontouchmove = function() {
+		element.touchCanceled = true;
+		window.clearTimeout(element.touchTimer);
+		if (element.touched) return false;
+		//this.style.color='red';
+		//this.removeClassName('touched');
+		//return false;
+	}
 	element.ontouchend=function() {
+		element.touchEnded=true;
 		if (this.hasClassName('disabled')) return;
-		this.removeClassName('touched');
+		if (!element.touched) {
+			element.addClassName('touched');
+		};
+		window.setTimeout(function() {
+			element.removeClassName('touched');
+		},100);
+		if (!element.touchCanceled) {
+			delegate.elementWasTouched();
+		}
+		element.touched=false;
+		element.touchCanceled = false;
 	};
 }
 
 In2iPhone.Button = function(element,name,options) {
 	this.element = $(element);
-	In2iPhone.addTouchBehavior(this.element);
+	this.name = name;
+	In2iGui.extend(this);
+	In2iPhone.addTouchBehavior(this.element,this);
+}
+
+In2iPhone.Button.prototype = {
+	elementWasTouched : function() {
+		In2iGui.callDelegates(this,'click');
+	}
+}
+
+In2iPhone.Page = function(element,name,options) {
+	this.element = $(element);
 	this.name = name;
 	In2iGui.extend(this);
 }
 
-In2iPhone.Button.prototype = {
-	addBehavior : function() {
-		this.element.observe('touchstart',function() {
-			this.addClassName('touched');
-		});
+In2iPhone.Page.prototype = {
+	showLeft : function() {
+		this.element.removeClassName('hidden_left');	
+	},
+	hideLeft : function() {
+		this.element.addClassName('hidden_left');
+	},
+	showRight : function() {
+		this.element.removeClassName('hidden_right');	
+	},
+	hideRight : function() {
+		this.element.addClassName('hidden_right');
 	}
 }

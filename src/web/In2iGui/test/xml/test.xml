@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:In2iGui" pad="10" title="System">
-	<controller name="controller" source="controller.js"/>
+	<controller name="controller" source="test.js"/>
 	<view style="box">
 		<toolbar>
-			<icon icon="common/user" title="Ny bruger" name="newUser" overlay="new"/>
+			<icon icon="common/user" title="Ny bruger" name="newUser" overlay="new" selected="true"/>
 			<icon icon="common/folder" title="Ny gruppe" name="newGroup" overlay="new"/>
 			<icon icon="common/folder" title="Ny type" name="newType" overlay="new"/>
 			<icon icon="common/color" title="Vis farvevælger" name="showPicker"/>

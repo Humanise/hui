@@ -101,10 +101,13 @@ In2iGui.Calendar.prototype = {
 		this.toolbar.add(this.datePickerButton);
 		
 		var time = this.body.select('.time')[0];
-		for (var i=this.options.startHour; i < this.options.endHour; i++) {
+		for (var i=this.options.startHour; i <= this.options.endHour; i++) {
 			var node = new Element('div').update('<span><em>'+i+':00</em></span>');
 			if (i==this.options.startHour) {
 				node.addClassName('first');
+			}
+			if (i==this.options.endHour) {
+				node.addClassName('last');
 			}
 			time.insert(node);
 		};

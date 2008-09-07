@@ -89,7 +89,7 @@ In2iGui.MultiUpload.prototype = {
 		var loc = new String(document.location);
 		var url = loc.slice(0,loc.lastIndexOf('/')+1);
 		url += this.options.url;
-		var session = Cookie.get('JSESSIONID');
+		var session = N2i.Cookie.get('JSESSIONID');
 		if (session) {
 			url+=';jsessionid='+session;
 		}

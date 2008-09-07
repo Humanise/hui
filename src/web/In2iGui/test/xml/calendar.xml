@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="setup.xsl"?>
+<gui xmlns="uri:In2iGui" pad="10" title="System">
+	<controller name="controller" source="controller.js"/>
+	<view style="box">
+		<toolbar>
+			<icon icon="common/user" title="Ny bruger" name="newUser" overlay="new"/>
+			<icon icon="common/folder" title="Ny gruppe" name="newGroup" overlay="new"/>
+			<icon icon="common/folder" title="Ny type" name="newType" overlay="new"/>
+			<icon icon="common/color" title="Vis farvevælger" name="showPicker"/>
+		</toolbar>
+		<content>
+			<split>
+				<sidebar>
+					<selection value="user" name="selector">
+						<item icon="common/person" title="Brugere" value="user"/>
+						<item icon="common/folder" title="Database" value="database"/>
+						<item icon="common/person" title="Alle objekter" value="object"/>
+					</selection>
+				</sidebar>
+				<content>
+					<overflow resize="-115">
+						<calendar name="calendar" endHour="17" startHour="7"/>
+					</overflow>
+				</content>
+			</split>
+		</content>
+		<foot>
+			
+		</foot>
+	</view>
+</gui>
