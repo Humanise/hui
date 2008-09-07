@@ -13,7 +13,7 @@
 	<xsl:output encoding="UTF-8" method="xml" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"/>
 
 
-	<xsl:param name="app-context"/>
+	<xsl:param name="local-context"/>
 	<xsl:param name="base-context"/>
 
 	<xsl:template match="/">
@@ -24,21 +24,21 @@
 		<html xmlns="http://www.w3.org/1999/xhtml">
 			<head>
 				<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-				<link rel="stylesheet" href="{$app-context}/css/base.css" type="text/css" media="screen" charset="utf-8"/>
-				<link rel="stylesheet" href="{$app-context}/css/front.css" type="text/css" media="screen" title="front" charset="utf-8"/>
-				<link rel="stylesheet" href="{$app-context}/css/invitation.css" type="text/css" media="screen" title="front" charset="utf-8"/>
+				<link rel="stylesheet" href="{$local-context}/css/base.css" type="text/css" media="screen" charset="utf-8"/>
+				<link rel="stylesheet" href="{$local-context}/css/front.css" type="text/css" media="screen" title="front" charset="utf-8"/>
+				<link rel="stylesheet" href="{$local-context}/css/invitation.css" type="text/css" media="screen" title="front" charset="utf-8"/>
 				<xsl:comment><![CDATA[[if lt IE 7]>
-					<link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$app-context"/><![CDATA[/css/invitation_ie6.css"> </link>
+					<link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$local-context"/><![CDATA[/css/invitation_ie6.css"> </link>
 				<![endif]]]></xsl:comment>
 				<link rel="stylesheet" href="{$base-context}/In2iGui/css/alert.css" type="text/css" media="screen" title="front" charset="utf-8"/>
 				<script type="text/javascript" charset="utf-8">
 					var OnlineObjects = {
 						baseContext:'<xsl:value-of select="$base-context"/>',
-						appContext:'<xsl:value-of select="$app-context"/>'
+						appContext:'<xsl:value-of select="$local-context"/>'
 					}
 				</script>
 				<script type='text/javascript' src='{$base-context}/dwr/interface/CoreSecurity.js'><xsl:comment/></script>
-				<script type='text/javascript' src='{$base-context}/dwr/interface/CommunityTool.js'><xsl:comment/></script>
+				<script type='text/javascript' src='{$base-context}/dwr/interface/AppCommunity.js'><xsl:comment/></script>
   				<script type='text/javascript' src='{$base-context}/dwr/engine.js'><xsl:comment/></script>
 				<script src="{$base-context}/In2iGui/lib/prototype.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 				<script src="{$base-context}/In2iGui/lib/In2iScripts/In2iScripts.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
@@ -47,8 +47,8 @@
 				<script src="{$base-context}/In2iGui/js/In2iGui.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 				<script src="{$base-context}/In2iGui/js/Alert.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 				<script src="{$base-context}/In2iGui/js/Button.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-				<script src="{$app-context}/js/Widgets.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-				<script src="{$app-context}/js/invitation.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+				<script src="{$local-context}/js/Widgets.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+				<script src="{$local-context}/js/invitation.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 				<title>OnlineObjects invitation</title>
 			</head>
 			<body>
@@ -61,7 +61,7 @@
 		<div class="base">
 		<h1>Invitation til OnlineObjects</h1>
 		<p>Hej <xsl:value-of select="p:invited/e:Entity[@type='Item/Entity/Person']/e:name"/>.</p>
-		<p><a href="{$app-context}/{p:inviter/e:Entity/u:User/u:username}/site/"><xsl:value-of select="p:inviter/e:Entity[@type='Item/Entity/Person']/e:name"/><xsl:comment/></a> har inviteret dig til at blive bruger af OnlineObjects. Systemet kan anvendes til at lave hjemmesider og dele information.</p>
+		<p><a href="{$local-context}/{p:inviter/e:Entity/u:User/u:username}/site/"><xsl:value-of select="p:inviter/e:Entity[@type='Item/Entity/Person']/e:name"/><xsl:comment/></a> har inviteret dig til at blive bruger af OnlineObjects. Systemet kan anvendes til at lave hjemmesider og dele information.</p>
 		<p><xsl:value-of select="p:inviter/e:Entity/ps:Person/ps:givenName"/> har følgende besked til Dem...</p>
 		<blockquote>"<xsl:value-of select="p:message"/>"</blockquote>
 		<p>Bliv bruger med det samme ved at udfylde følgende...</p>

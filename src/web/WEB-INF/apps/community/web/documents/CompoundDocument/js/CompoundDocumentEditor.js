@@ -45,8 +45,12 @@ OO.Editor.CompoundDocument.prototype = {
 		this.editor = editor;
 	},
 	deletePart : function(part) {
+		this.partToDelete = part;
+		In2iGui.get().confirm('cofirmDeletePart',{title:'Er du sikker på at du vil slette?',ok:'Ja, slet',cancel:'Nej, jeg fotryder',highlighted:'cancel',emotion:'gasp'});
+	},
+	ok$cofirmDeletePart : function() {
 		var self = this;
-		CompoundDocumentDocument.removePart(OnlineObjects.content.id,part.id,function() {
+		CompoundDocumentDocument.removePart(OnlineObjects.content.id,this.partToDelete.id,function() {
 			self.updateAll();
 		});
 	},

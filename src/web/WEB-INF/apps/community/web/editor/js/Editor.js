@@ -9,11 +9,12 @@ OO.Editor = function(delegate) {
 	this.toolbarPadder = $class('toolbar_padder')[0];
 	this.toolbar = null;
 	this.templates = [
-		{key:'basic',title:'Basal',image:OnlineObjects.appContext+'/templates/basic/info/thumbnail.png'},
-		{key:'modern',title:'Moderne',image:OnlineObjects.appContext+'/templates/modern/info/thumbnail.png'},
-		{key:'cartoon',title:'Tegneserie',image:OnlineObjects.appContext+'/templates/cartoon/info/thumbnail.png'},
-		{key:'ocean',title:'Ocean',image:OnlineObjects.appContext+'/templates/ocean/info/thumbnail.png'},
-		{key:'snow',title:'Snow',image:OnlineObjects.appContext+'/templates/snow/info/thumbnail.png'}
+		{key:'basic',title:'Basal',image:OnlineObjects.appContext+'/designs/basic/info/thumbnail.png'},
+		{key:'modern',title:'Moderne',image:OnlineObjects.appContext+'/designs/modern/info/thumbnail.png'},
+		{key:'cartoon',title:'Tegneserie',image:OnlineObjects.appContext+'/designs/cartoon/info/thumbnail.png'},
+		{key:'ocean',title:'Ocean',image:OnlineObjects.appContext+'/designs/ocean/info/thumbnail.png'},
+		{key:'snow',title:'Snow',image:OnlineObjects.appContext+'/designs/snow/info/thumbnail.png'}/*,
+		{key:'beach',title:'Beach',image:OnlineObjects.appContext+'/designs/beach/info/thumbnail.png'}*/
 	];
 	var self = this;
 	var editmode = N2i.Location.getBoolean('edit');
@@ -56,50 +57,51 @@ OO.Editor.prototype = {
 
 
 	// Editor
+	
 	partChanged : function(part) {
 		if (part.type=='header') {
 			Parts.updateHeaderPart(part.id,part.getValue());
 		} else if (part.type=='html') {
 			Parts.updateHtmlPart(part.id,part.getValue());
 		}
-	}
-}
-
-OO.Editor.prototype.buildActivator = function() {
-	var self = this;
+	},
 	
-	this.activator = document.createElement('div');
-	this.activator.className='activate';
-	this.activator.onclick = function() {
-		self.toggle()
-	};
-	document.body.appendChild(this.activator);
+	// Activator
 	
-	this.logout = document.createElement('div');
-	this.logout.className='logout';
-	this.logout.onclick = function() {
-		self.logOut();
-	};
-	document.body.appendChild(this.logout);
+	buildActivator : function() {
+		var self = this;
 	
-	if (In2iGui.browser.gecko || In2iGui.browser.webkit) {
-		this.private = document.createElement('div');
-		this.private.className='private';
-		this.private.onclick = function() {
-			self.goPrivate()
+		this.activator = document.createElement('div');
+		this.activator.className='activate';
+		this.activator.onclick = function() {
+			self.toggle()
 		};
-		document.body.appendChild(this.private);
+		document.body.appendChild(this.activator);
+	
+		this.logout = document.createElement('div');
+		this.logout.className='logout';
+		this.logout.onclick = function() {
+			self.logOut();
+		};
+		document.body.appendChild(this.logout);
+	
+		if (In2iGui.browser.gecko || In2iGui.browser.webkit) {
+			this.private = document.createElement('div');
+			this.private.className='private';
+			this.private.onclick = function() {
+				self.goPrivate()
+			};
+			document.body.appendChild(this.private);
+		}
+	},
+	removeActivator : function() {
+		this.activator.style.display = 'none';
+		this.logout.style.display = 'none';
+		this.private.style.display = 'none';
+	},
+	goPrivate : function() {
+		document.location='../private/';
 	}
-}
-
-OO.Editor.prototype.removeActivator = function() {
-	this.activator.style.display = 'none';
-	this.logout.style.display = 'none';
-	this.private.style.display = 'none';
-}
-
-OO.Editor.prototype.goPrivate = function() {
-	document.location='../private/';
 }
 
 OO.Editor.prototype.logOut = function() {
@@ -141,7 +143,7 @@ OO.Editor.prototype.enableWebNodeEditing = function() {
 }
 
 OO.Editor.prototype.updateWebNode = function(id,name) {
-	CommunityTool.updateWebNode(id,name);
+	AppCommunity.updateWebNode(id,name);
 }
 
 OO.Editor.prototype.buildToolBar = function() {
@@ -150,7 +152,9 @@ OO.Editor.prototype.buildToolBar = function() {
 		this.toolbar = this.toolbarRevealer.getToolbar();
 		this.toolbar.add(In2iGui.Toolbar.Icon.create('newPage',{icon:'common/page',overlay:'new','title':'Ny side'}));
 		this.toolbar.add(In2iGui.Toolbar.Icon.create('deletePage',{icon:'common/page',overlay:'delete','title':'Slet side'}));
-		this.toolbar.add(In2iGui.Toolbar.Icon.create('changeTemplate',{icon:'common/page',overlay:'change','title':'Skift skabelon'}));
+		this.toolbar.addDivider();
+		this.toolbar.add(In2iGui.Toolbar.Icon.create('pageProperties',{icon:'common/info','title':'Info'}));
+		this.toolbar.add(In2iGui.Toolbar.Icon.create('changeTemplate',{icon:'common/design','title':'Skift design'}));
 		this.toolbar.addDivider();
 		this.delegate.addToToolbar(this.toolbar);
 	}
@@ -158,6 +162,38 @@ OO.Editor.prototype.buildToolBar = function() {
 
 OO.Editor.prototype.click$changeTemplate = function() {
 	this.openTemplateWindow();
+}
+
+OO.Editor.prototype.click$pageProperties = function() {
+	if (!this.infoWindow) {
+		var w = In2iGui.Window.create(null,{title:'Sidens egenskaber',padding:5,variant:'dark',width:250});
+		var f = In2iGui.Formula.create('pageInfoForm');
+		w.add(f);
+		var g = f.createGroup({above:true});
+		g.add(In2iGui.Formula.Text.create(null,{label:'Titel',key:'title'}));
+		g.add(In2iGui.Formula.Tokens.create(null,{label:'Nøgleord',key:'tags'}));
+		var b = g.createButtons({top:10});
+		b.add(In2iGui.Button.create('savePageInfo',{text:'Gem',highlighted:true}));
+		b.add(In2iGui.Button.create('cancelPageInfo',{text:'Annuller'}));
+		this.infoWindow = w;
+	}
+	var self = this;
+	AppCommunity.getPageInfo(OnlineObjects.page.id,function(data) {
+		In2iGui.get('pageInfoForm').setValues(data);
+		self.infoWindow.show();
+	});
+}
+
+OO.Editor.prototype.click$cancelPageInfo = function() {
+	this.infoWindow.hide();
+}
+
+OO.Editor.prototype.click$savePageInfo = function() {
+	var form = In2iGui.get('pageInfoForm');
+	var data = form.getValues();
+	AppCommunity.savePageInfo(OnlineObjects.page.id,data.title,data.tags);
+	form.reset();
+	this.infoWindow.hide();
 }
 
 
@@ -170,7 +206,7 @@ OO.Editor.prototype.click$newPage = function() {
 		var d = {callback:function(list) {
 			self.updateAndShowNewPagePicker(list);
 		}};
-		CommunityTool.getDocumentClasses(d);
+		AppCommunity.getDocumentClasses(d);
 	} else {
 		this.newPagePanel.show();
 	}
@@ -186,7 +222,7 @@ OO.Editor.prototype.updateAndShowNewPagePicker = function(list) {
 
 OO.Editor.prototype.selectionChanged$documentPicker = function(picker) {
 	var obj = picker.getSelection();
-	CommunityTool.createWebPage(OnlineObjects.site.id,obj.simpleName,function(pageId) {
+	AppCommunity.createWebPage(OnlineObjects.site.id,obj.simpleName,function(pageId) {
 		document.location='./?id='+pageId+'&edit=true';
 	});
 }
@@ -202,7 +238,7 @@ OO.Editor.prototype.click$deletePage = function() {
 }
 
 OO.Editor.prototype.ok$confirmDeletePage = function() {
-	CommunityTool.deleteWebPage(OnlineObjects.page.id,function() {
+	AppCommunity.deleteWebPage(OnlineObjects.page.id,function() {
 		document.location='.?edit=true';
 	});
 }
@@ -210,19 +246,24 @@ OO.Editor.prototype.ok$confirmDeletePage = function() {
 
 OO.Editor.prototype.openTemplateWindow = function() {
 	if (!this.templatePanel) {
-		this.templatePanel = In2iGui.Window.create(null,{title:'Skift skabelon',variant:'dark'});
-		this.templatePicker = In2iGui.Picker.create('templatePicker',{itemWidth:92,itemHeight:120});
-		this.templatePicker.setObjects(this.templates);
-		this.templatePanel.add(this.templatePicker);
+		this.templatePanel = In2iGui.Window.create(null,{title:'Skift design',variant:'dark'});
+		var c = In2iGui.Columns.create();
+		var tp = In2iGui.Picker.create('templatePicker',{itemWidth:92,itemHeight:120});
+		tp.setObjects(this.templates);
+		c.addToColumn(0,In2iGui.Selection.create());
+		c.addToColumn(1,tp);
+		this.templatePanel.add(c);
 	}
 	this.templatePanel.show();
 }
 
 OO.Editor.prototype.selectionChanged$templatePicker = function(picker) {
 	var obj = picker.getSelection();
-	CommunityTool.changePageTemplate(OnlineObjects.page.id,obj.key,
+	var path = OnlineObjects.appContext+'/designs/'+obj.key+'/css/style.css';
+	$('pageDesign').setAttribute('href',path);
+	AppCommunity.changePageTemplate(OnlineObjects.page.id,obj.key,
 		function(data) {
-			N2i.Location.setParameter('edit',true);
+			//N2i.Location.setParameter('edit',true);
 		}
 	);
 }

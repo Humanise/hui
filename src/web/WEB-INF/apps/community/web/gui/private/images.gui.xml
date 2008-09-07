@@ -2,7 +2,7 @@
 <gui xmlns="uri:In2iGui" state="persons" title="Images">
 	<dwr base="/dwr/">
 		<interface name="Common"/>
-		<interface name="CommunityTool"/>
+		<interface name="AppCommunity"/>
 	</dwr>
 	<controller name="controller" source="../../gui/private/controller.js"/>
 	<controller name="imagesController" source="../../gui/private/images.js"/>
@@ -12,8 +12,9 @@
 			<divider/>
 			<icon icon="common/person" title="Personer" name="toolPersons"/>
 			<icon icon="common/image" title="Billeder" selected="true" name="toolImages"/>
-			<divider/>
-			<icon icon="common/close" title="Tilbage til website" name="close"/>
+			<right>
+				<icon icon="common/close" title="Tilbage til website" name="close"/>
+			</right>
 		</toolbar>
 		<content pad="20">
 			<view style="box">

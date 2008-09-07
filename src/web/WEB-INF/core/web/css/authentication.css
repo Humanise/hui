@@ -1,0 +1,64 @@
+@import url('common.css');
+
+h1
+{
+	margin: 0px;
+	padding-top: 10px;
+	font-size: 20pt;
+	color: #37e;
+	letter-spacing: 1px;
+}
+
+p
+{
+	margin: 10px 0px 0px;
+	color: #999;
+	font-size: 11pt;
+}
+
+p.user
+{
+	margin: 0px;
+	letter-spacing: 1px;
+}
+
+p.links
+{
+	letter-spacing: 0px;
+	font-size: 8pt;
+	font-family: Verdana;
+}
+
+p.message
+{
+	margin: 10px 0px 0px;
+	overflow: hidden;
+	padding-right: 20px;
+}
+
+p.message strong
+{
+	color: #55360f;
+	background: #feeab4 url('../gfx/message.png') left top repeat-x;
+	border: 1px solid #efdd8b;
+	padding: 2px 8px;
+	font-size: 9pt;
+	line-height: 16px;
+	float: left;
+	font-weight: normal;
+}
+
+form
+{
+	margin: 0px;
+	padding-bottom: 10px;
+}
+
+label
+{
+	display: block;
+	font-size: 10pt;
+	letter-spacing: 1px;
+	margin-top: 10px;
+	color: #333;
+}

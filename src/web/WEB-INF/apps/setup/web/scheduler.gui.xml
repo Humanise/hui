@@ -9,9 +9,9 @@
 		<toolbar>
 			<icon icon="common/settings" title="Indstillinger" name="toolSettings" />
 			<divider/>
-			<icon icon="common/folder" title="Job" name="toolScheduler" selected="true"/>
+			<icon icon="common/time" title="Job" name="toolScheduler" selected="true"/>
+			<icon icon="common/object" title="Model" name="toolModel"/>
 			<icon icon="common/user" title="Brugere" name="toolUsers" disabled="true"/>
-			<icon icon="common/object" title="Objekter" name="toolModel" disabled="true"/>
 		</toolbar>
 		<content pad="10">
 			<view style="box">

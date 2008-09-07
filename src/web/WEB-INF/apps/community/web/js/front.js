@@ -22,9 +22,9 @@ OO.Community.Front.prototype = {
 	},
 	search : function(query) {
 		var self = this;
-		CommunityTool.getLatestImages(query,function(images) {self.buildImages(images)});
-		CommunityTool.getTagCloud(query,function(tags) {self.buildTags(tags)});
-		CommunityTool.searchUsers(query,function(users) {self.buildUsers(users)});
+		AppCommunity.getLatestImages(query,function(images) {self.buildImages(images)});
+		AppCommunity.getTagCloud(query,function(tags) {self.buildTags(tags)});
+		AppCommunity.searchUsers(query,function(users) {self.buildUsers(users)});
 	},
 	buildTags : function(tags) {
 		var self = this;
@@ -101,7 +101,7 @@ OO.Community.Front.prototype = {
 			  			callback:function() { self.userDidSignUp(username) },
 			  			errorHandler:function(errorString, exception) { N2i.log(exception);self.setSignUpMessage(errorString); }
 					};
-					CommunityTool.signUp(username,password,delegate);
+					AppCommunity.signUp(username,password,delegate);
 				} catch (e) {
 					self.displayError(e);
 				}
@@ -155,7 +155,7 @@ OO.Community.Front.prototype = {
 					N2i.log(exception);
 				}
 			};
-			CommunityTool.sendFeedback(form['email'].value,form['message'].value,delegate);
+			AppCommunity.sendFeedback(form['email'].value,form['message'].value,delegate);
 			return false;
 		};
 	},

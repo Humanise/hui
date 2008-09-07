@@ -41,8 +41,10 @@ OO.Editor.ImageGallery.prototype = {
 		return this.editor.active;
 	},
 	addToToolbar : function(toolbar) {
-		toolbar.add(In2iGui.Toolbar.Icon.create('changeFrame',{icon:'common/frame',overlay:'change','title':'Skift ramme'}));
 		toolbar.add(In2iGui.Toolbar.Icon.create('addImage',{icon:'common/image','overlay':'new','title':'Tilføj billede'}));
+		//toolbar.add(In2iGui.Toolbar.Icon.create('addImages',{icon:'common/image','overlay':'new','title':'Tilføj billeder'}));
+		toolbar.addDivider();
+		toolbar.add(In2iGui.Toolbar.Icon.create('changeFrame',{icon:'common/frame','title':'Skift ramme'}));
 		toolbar.add(In2iGui.Toolbar.Icon.create('increaseSize',{icon:'common/larger','title':'Større'}));
 		toolbar.add(In2iGui.Toolbar.Icon.create('decreaseSize',{icon:'common/smaller','title':'Mindre'}));
 	},
@@ -212,13 +214,13 @@ OO.Editor.ImageGallery.prototype = {
 			}
 		};
 		window.setTimeout(function() {
-			CommunityTool.getProcess('imageUpload',delegate);
+			AppCommunity.getProcess('imageUpload',delegate);
 		},500);
 	},
 	openStyleWindow : function() {
 		if (!this.styleWindow) {
 			this.styleWindow = In2iGui.Window.create(null,{title:'Skift ramme',variant:'dark'});
-			this.stylePicker = In2iGui.Picker.create('framePicker',{title:'Vælg den ny ramme',itemWidth:90,itemHeight:80});
+			this.stylePicker = In2iGui.Picker.create('framePicker',{title:'Vælg den ny ramme',itemWidth:90,itemHeight:90,shadow:false});
 			this.stylePicker.setObjects([
 				{key:'elegant',title:'Elegant',image:OnlineObjects.appContext+'/documents/ImageGallery/frames/elegant/thumbnail.png'},
 				{key:'paper',title:'Papir',image:OnlineObjects.appContext+'/documents/ImageGallery/frames/paper/thumbnail.png'},
@@ -450,7 +452,7 @@ OO.Editor.ImageGallery.Image.prototype = {
 			e.stop();
 		});
 		this.frame.onmouseover = function(e) {
-			if (!self.editor.isActive()) return;
+			//if (!self.editor.isActive()) return;
 			self.hover.style.display='';
 			$ani(self.hover,'opacity',1,200);
 		}

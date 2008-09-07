@@ -96,3 +96,21 @@ body
 	margin-left: 16px;
 	font-size: 10pt;
 }
+
+div.part_header h1
+{
+	margin: 0px;
+	font-family: "Trebuchet MS", Helvetica, sans-serif;
+	font-size: 16pt;
+	color: #fff;
+	text-align: center;
+}
+
+div.part_html
+{
+	font-family: "Trebuchet MS", Helvetica, sans-serif;
+	text-align: center;
+	font-size: 11pt;
+	color: #fff;
+	margin-top: 5px;
+}

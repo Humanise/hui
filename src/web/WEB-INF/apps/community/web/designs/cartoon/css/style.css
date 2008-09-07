@@ -10,19 +10,32 @@ body
 	background: #fff;
 }
 
-.body
+.footer
 {
-	background: url('../gfx/sign.png') 20px bottom no-repeat;
-	overflow: hidden;
-	min-height: 100%;
+	position: relative;
+	margin-top: -90px;
+	background: #fff url('../gfx/hills.png') center bottom repeat-x;
+	height: 90px;
 }
 
+.body
+{
+	background: url('../gfx/bg.png') top left repeat-x;
+	min-height: 100%;
+	position: relative;
+}
 
 .inner_body
 {
-	background: url('../gfx/mountains.png') left top repeat-x;
-	min-height: 100%;
+	background: url('../gfx/sun.png') top left no-repeat;
 	overflow: hidden;
+	padding-bottom: 90px;
+	min-height:105px;
+}
+
+* html .body
+{
+	height: 100%;
 }
 
 .header
@@ -40,14 +53,16 @@ body
 {
 	font-family: "Trebuchet MS", Helvetica, sans-serif;
 	text-align: center;
+	background: #fff;
 	border: none;
-	color: #fff;
+	color: #ffba00;
 }
 
 .header a
 {
 	text-decoration: none;
-	color: #fff;
+	color: #ffba00;
+	background: #fff;
 	padding: 1px 5px 1px;
 }
 
@@ -67,4 +82,22 @@ body
 	margin-top: 12px;
 	margin-left: 16px;
 	font-size: 10pt;
+}
+
+div.part_header h1
+{
+	margin: 0px;
+	font-family: "Trebuchet MS", Helvetica, sans-serif;
+	font-size: 16pt;
+	color: #0066AA;
+	text-align: center;
+}
+
+div.part_html
+{
+	font-family: "Trebuchet MS", Helvetica, sans-serif;
+	text-align: center;
+	font-size: 11pt;
+	color: #666;
+	margin-top: 5px;
 }

@@ -8,7 +8,7 @@ var imagesController = {
 	
 	itemOpened$imageGallery : function(object) {
 		this.imageId = object.id;
-		CommunityTool.getImage(object.id,function(image) {
+		AppCommunity.getImage(object.id,function(image) {
 			N2i.log(image);
 			imageFormula.setValues(image);
 			imageWindow.show();
@@ -23,7 +23,7 @@ var imagesController = {
 	click$saveImage : function() {
 		var values = imageFormula.getValues();
 		var self = this;
-		CommunityTool.updateImage(this.imageId,values.name,values.description,values.tags,function() {
+		AppCommunity.updateImage(this.imageId,values.name,values.description,values.tags,function() {
 			self.refreshImageGallery();
 			imageFormula.reset();
 			imageWindow.hide();
@@ -64,7 +64,7 @@ var imagesController = {
 	///////////// Image gallery //////////
 	
 	refreshImageGallery : function() {
-		CommunityTool.listImages(function(list) {
+		AppCommunity.listImages(function(list) {
 			imageGallery.setObjects(list);
 		});
 	},

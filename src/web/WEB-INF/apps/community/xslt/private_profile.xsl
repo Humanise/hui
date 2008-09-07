@@ -20,7 +20,7 @@ doctype-system="http://www.w3.org/TR/html4/loose.dtd"/>
 				<link rel="stylesheet" href="css/base.css" type="text/css" media="screen" charset="utf-8"/>
 				<link rel="stylesheet" href="css/front.css" type="text/css" media="screen" title="front" charset="utf-8"/>
 				<script type='text/javascript' src='../../dwr/interface/CoreSecurity.js'></script>
-				<script type='text/javascript' src='../../dwr/interface/CommunityTool.js'></script>
+				<script type='text/javascript' src='../../dwr/interface/AppCommunity.js'></script>
   				<script type='text/javascript' src='../../dwr/engine.js'></script>
   				<script type='text/javascript' src='../../dwr/util.js'></script>
 				<script src="../../XmlWebGui/Scripts/In2iScripts.js" type="text/javascript" charset="utf-8"></script>

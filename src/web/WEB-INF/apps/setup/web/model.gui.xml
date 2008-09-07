@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gui xmlns="uri:In2iGui" title="Indstillinger">
+	<dwr base="/dwr/">
+		<interface name="AppSetup"/>
+	</dwr>
+	<controller name="mainController" source="main.js"/>
+	<controller name="controller" source="model.js"/>
+	<view>
+		<toolbar>
+			<icon icon="common/settings" title="Indstillinger" name="toolSettings" />
+			<divider/>
+			<icon icon="common/time" title="Job" name="toolScheduler"/>
+			<icon icon="common/object" title="Model" name="toolModel" selected="true"/>
+			<icon icon="common/user" title="Brugere" name="toolUsers" disabled="true"/>
+		</toolbar>
+		<content background="true">
+			<split>
+				<sidebar>
+					<selection value="persons">
+						<item icon="common/person" title="Alle personer" value="persons"/>
+						<item icon="common/letter" title="Invitationer" value="invitations"/>
+					</selection>
+				</sidebar>
+				<content>
+					<overflow resize="-58">
+						<list name="list">
+							<column title="Navn" key="name"/>
+							<column title="Type" key="type"/>
+							<column title="Oprettet" key="created"/>
+							<column title="Opdateret" key="updated"/>
+						</list>
+					</overflow>
+				</content>
+			</split>
+		</content>
+	</view>
+</gui>

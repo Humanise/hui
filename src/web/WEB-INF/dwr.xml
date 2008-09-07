@@ -10,8 +10,8 @@
     <create creator="new" javascript="Desktop" scope="application">
       <param name="class" value="dk.in2isoft.onlineobjects.apps.desktop.RemotingFacade"/>
     </create>
-    <create creator="new" javascript="CommunityTool" scope="application">
-      <param name="class" value="dk.in2isoft.onlineobjects.apps.community.RemotingFacade"/>
+    <create creator="new" javascript="AppCommunity" scope="application">
+      <param name="class" value="dk.in2isoft.onlineobjects.apps.community.CommunityRemotingFacade"/>
     </create>
     <create creator="new" javascript="AppSchool" scope="application">
       <param name="class" value="dk.in2isoft.onlineobjects.apps.school.SchoolRemotingFacade"/>

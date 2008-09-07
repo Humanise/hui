@@ -20,13 +20,13 @@ var personsController = {
 	},
 	
 	refreshPersonList : function() {
-		CommunityTool.listPersons(function(list) {
+		AppCommunity.listPersons(function(list) {
 			personList.setObjects(list);
 		});
 	},
 	
 	refreshInvitationList : function() {
-		CommunityTool.getInvitations(function(invites) {
+		AppCommunity.getInvitations(function(invites) {
 			invitationList.setObjects(invites);
 		});
 	},
@@ -50,7 +50,7 @@ var personsController = {
 		var emails = personEmails.getValue();
 		var phones = personPhones.getValue();
 		var self = this;
-		CommunityTool.savePerson(person,emails,phones,function() {
+		AppCommunity.savePerson(person,emails,phones,function() {
 			self.refreshPersonList();
 			personFormula.reset();
 			personWindow.hide();
@@ -60,7 +60,7 @@ var personsController = {
 		this.activePerson = id;
 		personFormula.reset();
 		personWindow.show();
-		CommunityTool.loadPerson(id,function(person) {
+		AppCommunity.loadPerson(id,function(person) {
 			personFormula.setValues(person.person);
 			personEmails.setValue(person.emails);
 			personPhones.setValue(person.phones);
@@ -78,7 +78,7 @@ var personsController = {
 		invitationWindow.hide();
 		this.showInvitationProgress();
 		var self = this;
-		CommunityTool.createInvitation(form.name,form.email,form.message,{
+		AppCommunity.createInvitation(form.name,form.email,form.message,{
 			callback: function() {
 				self.invitationWasSent();
 			},

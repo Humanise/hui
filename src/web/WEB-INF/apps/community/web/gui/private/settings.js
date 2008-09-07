@@ -1,14 +1,14 @@
 var settingsController = {
 	editedId : 0,
 	interfaceIsReady : function(gui) {
-		CommunityTool.getUsersMainPerson(function(person) {
+		AppCommunity.getUsersMainPerson(function(person) {
 			givenName.setValue(person.givenName);
 			familyName.setValue(person.familyName);
 			namePrefix.setValue(person.namePrefix);
 			nameSuffix.setValue(person.nameSuffix);
 		});
 		
-		CommunityTool.getUsersMainPersonsAddresses(function(addresses) {
+		AppCommunity.getUsersMainPersonsAddresses(function(addresses) {
 			mails.addObjects(addresses);
 		});
 	},
@@ -24,6 +24,6 @@ var settingsController = {
 			namePrefix:namePrefix.getValue(),
 			nameSuffix:nameSuffix.getValue()
 		};
-		CommunityTool.updateUsersMainPerson(person,emails,delegate);
+		AppCommunity.updateUsersMainPerson(person,emails,delegate);
 	}
 }

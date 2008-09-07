@@ -18,12 +18,12 @@ doctype-system="http://www.w3.org/TR/html4/loose.dtd"/>
 		<html>
 			<head>
 				<xsl:call-template name="p:head"/>
-				<link rel="stylesheet" href="{$app-context}/templates/snow/css/style.css" type="text/css" media="screen" title="front" charset="utf-8"/>
+				<link rel="stylesheet" href="{$local-context}/templates/snow/css/style.css" type="text/css" media="screen" title="front" charset="utf-8"/>
 			</head>
 			<body>
 				<div class="body">
 				<div class="inner_body"><div class="toolbar_padder">
-				<a href="{$app-context}/" class="back">Tilbage</a>
+				<a href="{$local-context}/" class="back">Tilbage</a>
 				<div class="header">
 					<xsl:for-each select="p:context/p:nodes/e:Entity[@type='Item/Entity/WebNode']">
 						<xsl:if test="position()>1"> &#160; </xsl:if>

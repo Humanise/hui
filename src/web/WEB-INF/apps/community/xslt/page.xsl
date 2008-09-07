@@ -16,7 +16,7 @@
 		<title>
 			<xsl:value-of select="p:context/e:Entity[@type='Item/Entity/WebSite']/e:name"/>
 		</title>
-		<link rel="stylesheet" href="{$app-context}/css/common.css" type="text/css" media="screen" title="front" charset="utf-8"/>
+		<link rel="stylesheet" href="{$local-context}/css/common.css" type="text/css" media="screen" title="front" charset="utf-8"/>
 		<xsl:choose>
 			<xsl:when test="$development-mode='true'">
 				<link rel="stylesheet" href="{$base-context}/In2iGui/css/dev.css" type="text/css" media="screen" title="front" charset="utf-8"/>
@@ -38,6 +38,8 @@
 				<script src="{$base-context}/In2iGui/js/Menu.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 				<script src="{$base-context}/In2iGui/js/ColorPicker.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 				<script src="{$base-context}/In2iGui/js/Overlay.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+				<script src="{$base-context}/In2iGui/js/Layout.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+				<script src="{$base-context}/In2iGui/js/Selection.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 			</xsl:when>
 			<xsl:otherwise>
 				<link rel="stylesheet" href="{$base-context}/In2iGui/css/minimized.css" type="text/css" media="screen" title="front" charset="utf-8"/>
@@ -58,16 +60,16 @@
 				site:{id:<xsl:value-of select="p:context/e:Entity[@type='Item/Entity/WebSite']/@id"/>},
 				privilege:{modify:<xsl:value-of select="$privilege-document-modify"/>},
 				baseContext:'<xsl:value-of select="$base-context"/>',
-				appContext:'<xsl:value-of select="$app-context"/>'
+				appContext:'<xsl:value-of select="$local-context"/>'
 			};
 		</script>
 		<xsl:if test="$privilege-document-modify='true'">
-			<link rel="stylesheet" href="{$app-context}/editor/css/editor.css" type="text/css" media="screen" title="front" charset="utf-8"/>
-			<script src="{$app-context}/editor/js/Editor.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-			<!--<script src="{$app-context}/js/Window.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>-->
+			<link rel="stylesheet" href="{$local-context}/editor/css/editor.css" type="text/css" media="screen" title="front" charset="utf-8"/>
+			<script src="{$local-context}/editor/js/Editor.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+			<!--<script src="{$local-context}/js/Window.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>-->
 			<script src="{$base-context}/dwr/engine.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 			<script src="{$base-context}/dwr/interface/CoreSecurity.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-			<script src="{$base-context}/dwr/interface/CommunityTool.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+			<script src="{$base-context}/dwr/interface/AppCommunity.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 			<xsl:call-template name="p:content-editor-head"/>
 		</xsl:if>
 		<xsl:call-template name="p:content-head"/>

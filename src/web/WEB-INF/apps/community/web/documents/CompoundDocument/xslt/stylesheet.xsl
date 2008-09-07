@@ -14,13 +14,13 @@
 	<xsl:include href="../../../../xslt/parts.xsl"/>
 	
 	<xsl:template name="p:content-head">
-		<link rel="stylesheet" href="{$app-context}/documents/CompoundDocument/css/style.css" type="text/css" media="screen" title="front" charset="utf-8"/>
+		<link rel="stylesheet" href="{$local-context}/documents/CompoundDocument/css/style.css" type="text/css" media="screen" title="front" charset="utf-8"/>
 	</xsl:template>
 	
 	<xsl:template name="p:content-editor-head">
 		<script src="{$base-context}/dwr/interface/CompoundDocumentDocument.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$base-context}/dwr/interface/Parts.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$app-context}/documents/CompoundDocument/js/CompoundDocumentEditor.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$local-context}/documents/CompoundDocument/js/CompoundDocumentEditor.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 	</xsl:template>
 	
 	<xsl:template match="doc:CompoundDocument">

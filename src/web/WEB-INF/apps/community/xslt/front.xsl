@@ -10,7 +10,7 @@
 
 	<xsl:output encoding="UTF-8" method="xml" indent="no" doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"/>
 
-	<xsl:param name="app-context"/>
+	<xsl:param name="local-context"/>
 	<xsl:param name="base-context"/>
 	<xsl:param name="user-name"/>
 	<xsl:param name="development-mode"/>
@@ -26,13 +26,13 @@
 		<script type="text/javascript" charset="utf-8">
 			var OnlineObjects = {
 				baseContext:'<xsl:value-of select="$base-context"/>',
-				appContext:'<xsl:value-of select="$app-context"/>'
+				appContext:'<xsl:value-of select="$local-context"/>'
 			}
 		</script>
 		<script type='text/javascript' src='{$base-context}/dwr/interface/CoreSecurity.js'><xsl:comment/></script>
-		<script type='text/javascript' src='{$base-context}/dwr/interface/CommunityTool.js'><xsl:comment/></script>
+		<script type='text/javascript' src='{$base-context}/dwr/interface/AppCommunity.js'><xsl:comment/></script>
 		<script type='text/javascript' src='{$base-context}/dwr/engine.js'><xsl:comment/></script>
-		<script src="{$app-context}/js/front.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$local-context}/js/front.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<xsl:if test="$development-mode='true'">
 			<script type='text/javascript'>
 			OO.Community.Front.allowIE = true;
@@ -45,10 +45,10 @@
 			<head>
 				<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 				<title>OnlineObjects</title>
-				<link rel="stylesheet" href="{$app-context}/css/base.css" type="text/css" media="screen" charset="utf-8"/>
-				<link rel="stylesheet" href="{$app-context}/css/front.css" type="text/css" media="screen" title="front" charset="utf-8"/>
+				<link rel="stylesheet" href="{$local-context}/css/base.css" type="text/css" media="screen" charset="utf-8"/>
+				<link rel="stylesheet" href="{$local-context}/css/front.css" type="text/css" media="screen" title="front" charset="utf-8"/>
 				<xsl:comment><![CDATA[[if lt IE 7]>
-					<link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$app-context"/><![CDATA[/css/front_ie6.css"> </link>
+					<link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$local-context"/><![CDATA[/css/front_ie6.css"> </link>
 				<![endif]]]></xsl:comment>
 				<xsl:call-template name="in2igui-css"/>
 			</head>

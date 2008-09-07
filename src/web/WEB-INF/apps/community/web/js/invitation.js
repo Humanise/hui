@@ -53,7 +53,7 @@ OO.Community.InvitationPage.prototype = {
   			callback:function() { self.userDidSignUp(username) },
   			errorHandler:function(errorString, exception) { self.errorOccurred(errorString); }
 		};
-		CommunityTool.signUpFromInvitation(code,username,password,delegate);
+		AppCommunity.signUpFromInvitation(code,username,password,delegate);
 	},
 	
 	errorOccurred : function(error) {

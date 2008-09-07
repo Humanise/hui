@@ -7,20 +7,23 @@
 	<controller name="controller" source="index.js"/>
 	<view>
 		<toolbar>
+			<badge label="Bruger:" icon="common/user" name="userInfo"/>
+			<divider/>
 			<icon icon="common/user" title="Skift bruger" name="changeUser" overlay="change"/>
-			<icon icon="common/object" title="Vis testdata" name="test"/>
+			<!--<icon icon="common/search" title="Vis testdata" name="test"/>-->
 		</toolbar>
-		<content>
+		<content background="true">
 			<overflow resize="-58">
-			<calendar name="calendar"/>
+			<calendar name="calendar" endHour="17"/>
 			</overflow>
 		</content>
 	</view>
-	<window width="300" title="Skift bruger" name="userWindow">
+	<window width="300" title="Skift bruger" name="userWindow" variant="dark">
 		<space all="5">
 		<formula name="userFormula">
 			<group>
-				<text label="Brugernavn" key="username"/>
+				<text label="Brugernavn:" key="username"/>
+				<space height="5"/>
 				<buttons>
 					<button highlighted="true" title="Log ind" name="logIn"></button>
 				</buttons>
