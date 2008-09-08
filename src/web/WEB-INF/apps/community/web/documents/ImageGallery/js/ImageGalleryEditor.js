@@ -417,7 +417,7 @@ OO.Editor.ImageGallery.Image.prototype = {
 		frame.style.width=(this.width+80)+'px';
 		frame.innerHTML=
 			'<div class="top"><div><div></div></div></div>'+
-			'<div class="middle"><div style="width:'+this.width+'px">'+
+			'<div class="middle"><div style="width:'+this.width+'px; height:'+this.height+'px">'+
 			'<img id="image-'+this.image.id+'" src="'+OnlineObjects.baseContext+'/service/image/?id='+this.image.id+'&amp;width='+this.editor.imageWidth+'&amp;height='+this.editor.imageWidth+'" width="'+this.width+'" height="'+this.height+'"/>'+
 			'</div></div>'+
 			'<div class="bottom"><div><div></div></div></div>';

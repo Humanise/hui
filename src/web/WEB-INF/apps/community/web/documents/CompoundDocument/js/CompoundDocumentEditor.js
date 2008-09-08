@@ -20,7 +20,7 @@ OO.Editor.CompoundDocument.prototype = {
 	addToToolbar : function(toolbar) {
 		toolbar.add(In2iGui.Toolbar.Icon.create('addPart',{icon:'common/new','title':'Tilføj del'}));
 		toolbar.add(In2iGui.Toolbar.Icon.create('addRow',{icon:'layout/row',overlay:'new','title':'Tilføj række'}));
-		toolbar.add(In2iGui.Toolbar.Icon.create('reload',{icon:'common/color','title':'Genindlæs'}));
+		toolbar.add(In2iGui.Toolbar.Icon.create('reload',{icon:'common/refresh','title':'Genindlæs'}));
 	},
 	click$addRow : function() {
 		var self = this;

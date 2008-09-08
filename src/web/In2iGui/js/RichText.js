@@ -1,12 +1,11 @@
-In2iGui.RichText = function(id,name,opts) {
+In2iGui.RichText = function(id,name,options) {
 	this.element = $id(id);
-	this.options = {debug:false,value:'',autoHideToolbar:true};
-	N2i.override(this.options,opts);
+	this.options = N2i.override({debug:false,value:'',autoHideToolbar:true,style:'font-family: sans-serif;'},options);
 	this.iframe = this.element.getElementsByTagName('iframe')[0];
 	this.toolbar = $firstClass('in2igui_richtext_toolbar',this.element);
 	this.toolbarContent = $firstClass('in2igui_richtext_toolbar_content',this.element);
 	this.value = this.options.value;
-	this.document;
+	this.document = null;
 	this.buildToolbar();
 	this.ignite();
 	In2iGui.extend(this);
@@ -72,7 +71,7 @@ In2iGui.RichText.prototype = {
 		this.document.designMode='on';
 		
 		this.document.open();
-		this.document.write('<html><head><style>body{margin:0px}</style></head><body>'+this.value+'</body></html>');
+		this.document.write('<html><head><style>body{margin:0px;'+this.options.style+'}</style></head><body>'+this.value+'</body></html>');
 		this.document.close();
 		
 		this.document.body.style.minHeight='100%';

@@ -10198,16 +10198,20 @@ In2iGui.Toolbar.Icon = function(id,name) {
 }
 
 In2iGui.Toolbar.Icon.create = function(name,options) {
-	var element = N2i.create('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_toolbar_icon<span class="literal">'});
-	var icon = N2i.create('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_icon<span class="literal">'},{'</span>backgroundImage<span class="literal">':'</span>url(<span class="literal">'+In2iGui.getIconUrl(options.icon,2)+'</span>)<span class="literal">'});
+	var element = new Element('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_toolbar_icon<span class="literal">'});
+	var icon = new Element('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_icon<span class="literal">'}).setStyle({'</span>backgroundImage<span class="literal">':'</span>url(<span class="literal">'+In2iGui.getIconUrl(options.icon,2)+'</span>)<span class="literal">'});
+	var inner = new Element('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_toolbar_inner_icon<span class="literal">'});
+	var innerest = new Element('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_toolbar_inner_icon<span class="literal">'});
+	element.insert(inner);
+	inner.insert(innerest);
 	var title = N2i.create('</span>span<span class="literal">');
 	title.innerHTML=options.title;
 	if (options.overlay) {
 		var overlay = N2i.create('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_icon_overlay<span class="literal">'},{'</span>backgroundImage<span class="literal">':'</span>url(<span class="literal">'+In2iGui.getIconUrl('</span>overlay/<span class="literal">'+options.overlay,2)+'</span>)<span class="literal">'});
-		icon.appendChild(overlay);
+		icon.insert(overlay);
 	}
-	element.appendChild(icon);
-	element.appendChild(title);
+	innerest.insert(icon);
+	innerest.insert(title);
 	return new In2iGui.Toolbar.Icon(element,name,options);
 }
 
@@ -10596,15 +10600,14 @@ In2iGui.Panel.prototype = {
 }
 
 /* EOF */
-In2iGui.RichText = function(id,name,opts) {
+In2iGui.RichText = function(id,name,options) {
 	this.element = $id(id);
-	this.options = {debug:false,value:'</span><span class="literal">',autoHideToolbar:true};
-	N2i.override(this.options,opts);
+	this.options = N2i.override({debug:false,value:'</span><span class="literal">',autoHideToolbar:true,style:'</span>font-family: sans-serif;<span class="literal">'},options);
 	this.iframe = this.element.getElementsByTagName('</span>iframe<span class="literal">')[0];
 	this.toolbar = $firstClass('</span>in2igui_richtext_toolbar<span class="literal">',this.element);
 	this.toolbarContent = $firstClass('</span>in2igui_richtext_toolbar_content<span class="literal">',this.element);
 	this.value = this.options.value;
-	this.document;
+	this.document = null;
 	this.buildToolbar();
 	this.ignite();
 	In2iGui.extend(this);
@@ -10670,7 +10673,7 @@ In2iGui.RichText.prototype = {
 		this.document.designMode='</span>on<span class="literal">';
 		
 		this.document.open();
-		this.document.write('</span>&lt;html&gt;&lt;head&gt;&lt;style&gt;body{margin:0px}&lt;/style&gt;&lt;/head&gt;&lt;body&gt;<span class="literal">'+this.value+'</span>&lt;/body&gt;&lt;/html&gt;<span class="literal">');
+		this.document.write('</span>&lt;html&gt;&lt;head&gt;&lt;style&gt;body{margin:0px;<span class="literal">'+this.options.style+'</span>}&lt;/style&gt;&lt;/head&gt;&lt;body&gt;<span class="literal">'+this.value+'</span>&lt;/body&gt;&lt;/html&gt;<span class="literal">');
 		this.document.close();
 		
 		this.document.body.style.minHeight='</span>100%<span class="literal">';
@@ -11588,7 +11591,7 @@ In2iGui.Editor.Header.prototype = {
 ////////////////////////////////// Html editor ////////////////////////////////
 
 In2iGui.Editor.Html = function(element,row,column,position) {
-	this.element = $id(element);
+	this.element = $(element);
 	this.row = row;
 	this.column = column;
 	this.position = position;
@@ -11602,13 +11605,23 @@ In2iGui.Editor.Html.prototype = {
 		if (Prototype.Browser.IE) return;
 		var height = this.element.getHeight();
 		this.element.update('</span><span class="literal">');
-		this.editor = In2iGui.RichText.create(null,{autoHideToolbar:false});
+		var style = this.getStyle();
+		this.editor = In2iGui.RichText.create(null,{autoHideToolbar:false,style:style});
 		this.editor.setHeight(height);
 		this.element.appendChild(this.editor.getElement());
 		this.editor.addDelegate(this);
 		this.editor.ignite();
 		this.editor.setValue(this.value);
 		this.editor.focus();
+	},
+	getStyle : function() {
+		var style = '</span><span class="literal">';
+		style+='</span>text-align:<span class="literal">'+N2i.getStyle(this.element,'</span>text-align<span class="literal">')+'</span>;<span class="literal">';
+		style+='</span>font-family:<span class="literal">'+N2i.getStyle(this.element,'</span>font-family<span class="literal">')+'</span>;<span class="literal">';
+		style+='</span>font-size:<span class="literal">'+N2i.getStyle(this.element,'</span>font-size<span class="literal">')+'</span>;<span class="literal">';
+		style+='</span>font-weight:<span class="literal">'+N2i.getStyle(this.element,'</span>font-weight<span class="literal">')+'</span>;<span class="literal">';
+		style+='</span>color:<span class="literal">'+N2i.getStyle(this.element,'</span>color<span class="literal">')+'</span>;<span class="literal">';
+		return style;
 	},
 	cancel : function() {
 		this.deactivate();
@@ -12515,6 +12528,6 @@ In2iGui.Columns.prototype = {
 <font size="-1">
 
 </font>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Sun Sep  7 23:30:30 2008</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Mon Sep  8 22:14:06 2008</div>
 </body>
 </html>

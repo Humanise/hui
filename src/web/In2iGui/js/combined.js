@@ -9802,16 +9802,20 @@ In2iGui.Toolbar.Icon = function(id,name) {
 }
 
 In2iGui.Toolbar.Icon.create = function(name,options) {
-	var element = N2i.create('div',{'class':'in2igui_toolbar_icon'});
-	var icon = N2i.create('div',{'class':'in2igui_icon'},{'backgroundImage':'url('+In2iGui.getIconUrl(options.icon,2)+')'});
+	var element = new Element('div',{'class':'in2igui_toolbar_icon'});
+	var icon = new Element('div',{'class':'in2igui_icon'}).setStyle({'backgroundImage':'url('+In2iGui.getIconUrl(options.icon,2)+')'});
+	var inner = new Element('div',{'class':'in2igui_toolbar_inner_icon'});
+	var innerest = new Element('div',{'class':'in2igui_toolbar_inner_icon'});
+	element.insert(inner);
+	inner.insert(innerest);
 	var title = N2i.create('span');
 	title.innerHTML=options.title;
 	if (options.overlay) {
 		var overlay = N2i.create('div',{'class':'in2igui_icon_overlay'},{'backgroundImage':'url('+In2iGui.getIconUrl('overlay/'+options.overlay,2)+')'});
-		icon.appendChild(overlay);
+		icon.insert(overlay);
 	}
-	element.appendChild(icon);
-	element.appendChild(title);
+	innerest.insert(icon);
+	innerest.insert(title);
 	return new In2iGui.Toolbar.Icon(element,name,options);
 }
 
@@ -10200,15 +10204,14 @@ In2iGui.Panel.prototype = {
 }
 
 /* EOF */
-In2iGui.RichText = function(id,name,opts) {
+In2iGui.RichText = function(id,name,options) {
 	this.element = $id(id);
-	this.options = {debug:false,value:'',autoHideToolbar:true};
-	N2i.override(this.options,opts);
+	this.options = N2i.override({debug:false,value:'',autoHideToolbar:true,style:'font-family: sans-serif;'},options);
 	this.iframe = this.element.getElementsByTagName('iframe')[0];
 	this.toolbar = $firstClass('in2igui_richtext_toolbar',this.element);
 	this.toolbarContent = $firstClass('in2igui_richtext_toolbar_content',this.element);
 	this.value = this.options.value;
-	this.document;
+	this.document = null;
 	this.buildToolbar();
 	this.ignite();
 	In2iGui.extend(this);
@@ -10274,7 +10277,7 @@ In2iGui.RichText.prototype = {
 		this.document.designMode='on';
 		
 		this.document.open();
-		this.document.write('<html><head><style>body{margin:0px}</style></head><body>'+this.value+'</body></html>');
+		this.document.write('<html><head><style>body{margin:0px;'+this.options.style+'}</style></head><body>'+this.value+'</body></html>');
 		this.document.close();
 		
 		this.document.body.style.minHeight='100%';
@@ -11192,7 +11195,7 @@ In2iGui.Editor.Header.prototype = {
 ////////////////////////////////// Html editor ////////////////////////////////
 
 In2iGui.Editor.Html = function(element,row,column,position) {
-	this.element = $id(element);
+	this.element = $(element);
 	this.row = row;
 	this.column = column;
 	this.position = position;
@@ -11206,13 +11209,23 @@ In2iGui.Editor.Html.prototype = {
 		if (Prototype.Browser.IE) return;
 		var height = this.element.getHeight();
 		this.element.update('');
-		this.editor = In2iGui.RichText.create(null,{autoHideToolbar:false});
+		var style = this.getStyle();
+		this.editor = In2iGui.RichText.create(null,{autoHideToolbar:false,style:style});
 		this.editor.setHeight(height);
 		this.element.appendChild(this.editor.getElement());
 		this.editor.addDelegate(this);
 		this.editor.ignite();
 		this.editor.setValue(this.value);
 		this.editor.focus();
+	},
+	getStyle : function() {
+		var style = '';
+		style+='text-align:'+N2i.getStyle(this.element,'text-align')+';';
+		style+='font-family:'+N2i.getStyle(this.element,'font-family')+';';
+		style+='font-size:'+N2i.getStyle(this.element,'font-size')+';';
+		style+='font-weight:'+N2i.getStyle(this.element,'font-weight')+';';
+		style+='color:'+N2i.getStyle(this.element,'color')+';';
+		return style;
 	},
 	cancel : function() {
 		this.deactivate();

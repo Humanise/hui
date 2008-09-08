@@ -75,16 +75,20 @@ In2iGui.Toolbar.Icon = function(id,name) {
 }
 
 In2iGui.Toolbar.Icon.create = function(name,options) {
-	var element = N2i.create('div',{'class':'in2igui_toolbar_icon'});
-	var icon = N2i.create('div',{'class':'in2igui_icon'},{'backgroundImage':'url('+In2iGui.getIconUrl(options.icon,2)+')'});
+	var element = new Element('div',{'class':'in2igui_toolbar_icon'});
+	var icon = new Element('div',{'class':'in2igui_icon'}).setStyle({'backgroundImage':'url('+In2iGui.getIconUrl(options.icon,2)+')'});
+	var inner = new Element('div',{'class':'in2igui_toolbar_inner_icon'});
+	var innerest = new Element('div',{'class':'in2igui_toolbar_inner_icon'});
+	element.insert(inner);
+	inner.insert(innerest);
 	var title = N2i.create('span');
 	title.innerHTML=options.title;
 	if (options.overlay) {
 		var overlay = N2i.create('div',{'class':'in2igui_icon_overlay'},{'backgroundImage':'url('+In2iGui.getIconUrl('overlay/'+options.overlay,2)+')'});
-		icon.appendChild(overlay);
+		icon.insert(overlay);
 	}
-	element.appendChild(icon);
-	element.appendChild(title);
+	innerest.insert(icon);
+	innerest.insert(title);
 	return new In2iGui.Toolbar.Icon(element,name,options);
 }
 
