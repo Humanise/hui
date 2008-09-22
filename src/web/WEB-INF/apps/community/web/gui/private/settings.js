@@ -13,10 +13,6 @@ var settingsController = {
 		});
 	},
 	buttonWasClicked$savePerson : function() {
-		var delegate = {
-			callback : function() {
-			}
-		}
 		var emails = mails.getObjects();
 		var person = {
 			givenName:givenName.getValue(),
@@ -24,6 +20,9 @@ var settingsController = {
 			namePrefix:namePrefix.getValue(),
 			nameSuffix:nameSuffix.getValue()
 		};
-		AppCommunity.updateUsersMainPerson(person,emails,delegate);
+		savePerson.setEnabled(false);
+		AppCommunity.updateUsersMainPerson(person,emails,function() {
+			savePerson.setEnabled(true);
+		});
 	}
 }

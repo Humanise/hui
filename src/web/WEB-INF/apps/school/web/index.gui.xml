@@ -23,8 +23,7 @@
 		<formula name="userFormula">
 			<group>
 				<text label="Brugernavn:" key="username"/>
-				<space height="5"/>
-				<buttons>
+				<buttons top="10">
 					<button highlighted="true" title="Log ind" name="logIn"></button>
 				</buttons>
 			</group>

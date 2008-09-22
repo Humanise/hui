@@ -3,6 +3,7 @@ body
 	background: #eee;
 	padding: 0px;
 	margin: 0px;
+	min-height:100%;
 }
 
 .header

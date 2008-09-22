@@ -90,6 +90,7 @@
 						&#160;·&#160;<a href="http://jigsaw.w3.org/css-validator/validator?uri=http%3A%2F%2Fcommunity.onlineobjects.com%2F&amp;warning=1&amp;profile=css3&amp;usermedium=all" class="link"><span>CSS 2.1</span></a>
 				</div>
 				<xsl:call-template name="scripts"/>
+				<xsl:call-template name="analytics"/>
 			</body>
 		</html>
 	</xsl:template>

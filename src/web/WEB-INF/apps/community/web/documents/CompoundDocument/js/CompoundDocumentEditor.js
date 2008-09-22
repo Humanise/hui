@@ -46,7 +46,7 @@ OO.Editor.CompoundDocument.prototype = {
 	},
 	deletePart : function(part) {
 		this.partToDelete = part;
-		In2iGui.get().confirm('cofirmDeletePart',{title:'Er du sikker på at du vil slette?',ok:'Ja, slet',cancel:'Nej, jeg fotryder',highlighted:'cancel',emotion:'gasp'});
+		In2iGui.get().confirm('cofirmDeletePart',{title:'Er du sikker på at du vil slette afsnittet?',text:'Handlingen kan ikke fortrydes',ok:'Ja, slet',cancel:'Nej, jeg fotryder',highlighted:'cancel',emotion:'gasp',modal:true});
 	},
 	ok$cofirmDeletePart : function() {
 		var self = this;

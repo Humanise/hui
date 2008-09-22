@@ -20,8 +20,10 @@
 		<xsl:choose>
 			<xsl:when test="$development-mode='true'">
 				<link rel="stylesheet" href="{$base-context}/In2iGui/css/dev.css" type="text/css" media="screen" title="front" charset="utf-8"/>
+				<script src="{$base-context}/In2iGui/lib/swfupload/swfupload.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 				<script src="{$base-context}/In2iGui/lib/prototype.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 				<script src="{$base-context}/In2iGui/lib/In2iScripts/In2iScripts.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+				<script src="{$base-context}/In2iGui/lib/In2iScripts/In2iAnimation.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 				<script src="{$base-context}/In2iGui/lib/In2iScripts/In2iAnimation.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 				<script src="{$base-context}/In2iGui/js/In2iGui.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 				<script src="{$base-context}/In2iGui/js/Toolbar.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
@@ -55,7 +57,7 @@
 		<script type="text/javascript" charset="utf-8">
 			In2iGui.context = '<xsl:value-of select="$base-context"/>';
 			var OnlineObjects = {
-				page:{id:<xsl:value-of select="@id"/>},
+				page:{id:<xsl:value-of select="@id"/>,design:'<xsl:value-of select="$page-design"/>'},
 				content:{id:<xsl:value-of select="p:content/@id"/>},
 				site:{id:<xsl:value-of select="p:context/e:Entity[@type='Item/Entity/WebSite']/@id"/>},
 				privilege:{modify:<xsl:value-of select="$privilege-document-modify"/>},
@@ -73,5 +75,16 @@
 			<xsl:call-template name="p:content-editor-head"/>
 		</xsl:if>
 		<xsl:call-template name="p:content-head"/>
+	</xsl:template>
+	
+	<xsl:template name="p:analytics">
+		<script type="text/javascript">
+		var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+		document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+		</script>
+		<script type="text/javascript">
+		var pageTracker = _gat._getTracker("UA-420000-3");
+		pageTracker._trackPageview();
+		</script>
 	</xsl:template>
 </xsl:stylesheet>

@@ -15,7 +15,11 @@
 
 	<xsl:param name="local-context"/>
 	<xsl:param name="base-context"/>
+	<xsl:param name="user-name"/>
+	<xsl:param name="development-mode"/>
 
+	<xsl:include href="util.xsl"/>
+	
 	<xsl:template match="/">
 		<xsl:apply-templates/>
 	</xsl:template>
@@ -53,6 +57,7 @@
 			</head>
 			<body>
 				<xsl:apply-templates/>
+				<xsl:call-template name="analytics"/>
 			</body>
 		</html>
 	</xsl:template>

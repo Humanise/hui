@@ -2,6 +2,7 @@ body
 {
 	padding: 0px;
 	margin: 0px;
+	min-height:100%;
 }
 
 .header
@@ -16,6 +17,7 @@ body
 	height: 43px;
 	text-transform: uppercase;
 	border-bottom: 1px solid #ddd;
+	margin-bottom: 20px;
 }
 
 .header input
@@ -60,16 +62,10 @@ div.part_header h1
 div.part_html
 {
 	font-family: Georgia,Times,serif;
-	text-align: center;
 	font-size: 11pt;
 }
 
 div.gallery div.part_header h1, div.gallery div.part_html
 {
 	text-align: center;
-}
-
-div.gallery div.part_header
-{
-	margin: 10px 0px 0px;
 }

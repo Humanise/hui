@@ -8,13 +8,28 @@ OO.Editor = function(delegate) {
 	this.buildActivator();
 	this.toolbarPadder = $class('toolbar_padder')[0];
 	this.toolbar = null;
-	this.templates = [
-		{key:'basic',title:'Basal',image:OnlineObjects.appContext+'/designs/basic/info/thumbnail.png'},
-		{key:'modern',title:'Moderne',image:OnlineObjects.appContext+'/designs/modern/info/thumbnail.png'},
-		{key:'cartoon',title:'Tegneserie',image:OnlineObjects.appContext+'/designs/cartoon/info/thumbnail.png'},
-		{key:'ocean',title:'Ocean',image:OnlineObjects.appContext+'/designs/ocean/info/thumbnail.png'},
-		{key:'snow',title:'Snow',image:OnlineObjects.appContext+'/designs/snow/info/thumbnail.png'}/*,
-		{key:'beach',title:'Beach',image:OnlineObjects.appContext+'/designs/beach/info/thumbnail.png'}*/
+	this.templates = {
+		all : [
+			{value:'basic',title:'Basal',image:OnlineObjects.appContext+'/designs/basic/info/thumbnail.png'},
+			{value:'modern',title:'Moderne',image:OnlineObjects.appContext+'/designs/modern/info/thumbnail.png'},
+			{value:'cartoon',title:'Tegneserie',image:OnlineObjects.appContext+'/designs/cartoon/info/thumbnail.png'},
+			{value:'ocean',title:'Ocean',image:OnlineObjects.appContext+'/designs/ocean/info/thumbnail.png'},
+			{value:'snow',title:'Snow',image:OnlineObjects.appContext+'/designs/snow/info/thumbnail.png'}
+		],
+		simple : [
+			{value:'basic',title:'Basal',image:OnlineObjects.appContext+'/designs/basic/info/thumbnail.png'},
+			{value:'modern',title:'Moderne',image:OnlineObjects.appContext+'/designs/modern/info/thumbnail.png'}
+		],
+		holliday : [
+			{value:'cartoon',title:'Tegneserie',image:OnlineObjects.appContext+'/designs/cartoon/info/thumbnail.png'},
+			{value:'ocean',title:'Ocean',image:OnlineObjects.appContext+'/designs/ocean/info/thumbnail.png'},
+			{value:'snow',title:'Snow',image:OnlineObjects.appContext+'/designs/snow/info/thumbnail.png'}
+		]
+	};
+	this.templateCategories = [
+		{title:'Alle',icon:'common/color',value:'all'},
+		{title:'Simple',icon:'common/color',value:'simple'},
+		{title:'Ferie',icon:'common/color',value:'holliday'}
 	];
 	var self = this;
 	var editmode = N2i.Location.getBoolean('edit');
@@ -101,49 +116,81 @@ OO.Editor.prototype = {
 	},
 	goPrivate : function() {
 		document.location='../private/';
-	}
-}
-
-OO.Editor.prototype.logOut = function() {
-	var self = this;
-	CoreSecurity.logOut(function(data) {
-		self.removeActivator();
-		self.deactivate();
-	});
-}
-
-OO.Editor.prototype.toggle = function() {
-	if (this.active) {
-		this.deactivate();
-	} else {
-		this.activate();
-	}
-}
-
-OO.Editor.prototype.disableWebNodeEditing = function() {
-	for (var i=0; i < this.textEditors.length; i++) {
-		this.textEditors[i].destroy();
-	};
-	this.textEditors = [];
-}
-
-OO.Editor.prototype.enableWebNodeEditing = function() {
-	this.webnodes = $class('webnode');
-	var self = this;
-	for (var i=0; i < this.webnodes.length; i++) {
-		var delegate = {
-			textChanged : function(element,value) {
-				var id = element.id.split('-')[1];
-				self.updateWebNode(id,value);
-			}
+	},
+	
+	// Actions
+	
+	logOut : function() {
+		var self = this;
+		CoreSecurity.logOut(function(data) {
+			self.removeActivator();
+			self.deactivate();
+		});
+	},
+	toggle : function() {
+		if (this.active) {
+			this.deactivate();
+		} else {
+			this.activate();
 		}
-		var editor = new OO.Editor.TextEditor(this.webnodes[i],delegate);
-		this.textEditors[this.textEditors.length] = editor;
-	};
-}
-
-OO.Editor.prototype.updateWebNode = function(id,name) {
-	AppCommunity.updateWebNode(id,name);
+	},
+	
+	// Web nodes
+	
+	disableWebNodeEditing : function() {
+		for (var i=0; i < this.textEditors.length; i++) {
+			this.textEditors[i].destroy();
+		};
+		this.textEditors = [];
+	},
+	
+	enableWebNodeEditing : function() {
+		this.webnodes = $class('webnode');
+		var self = this;
+		for (var i=0; i < this.webnodes.length; i++) {
+			var delegate = {
+				textChanged : function(element,value) {
+					var id = element.id.split('-')[1];
+					self.updateWebNode(id,value);
+				}
+			}
+			var editor = new OO.Editor.TextEditor(this.webnodes[i],delegate);
+			this.textEditors[this.textEditors.length] = editor;
+		};
+	},
+	
+	updateWebNode : function(id,name) {
+		AppCommunity.updateWebNode(id,name);
+	},
+	
+	// Templates
+	
+	openTemplateWindow : function() {
+		if (!this.templatePanel) {
+			var category = this.templateCategories[0].value;
+			this.templatePanel = In2iGui.Window.create(null,{title:'Skift design',variant:'dark'});
+			var c = In2iGui.Columns.create();
+			var s = In2iGui.Selection.create('templateCategories');
+			s.setObjects(this.templateCategories);
+			s.setValue(category);
+			var tp = In2iGui.Picker.create('templatePicker',{itemWidth:92,itemHeight:120,itemsVisible:4});
+			tp.setObjects(this.templates[category]);
+			tp.setValue(OnlineObjects.page.design);
+			c.addToColumn(0,s);
+			c.addToColumn(1,tp);
+			c.setColumnWidth(0,120);
+			this.templatePanel.add(c);
+		}
+		this.templatePanel.show();
+	},
+	selectionChanged$templatePicker : function(value) {
+		var path = OnlineObjects.appContext+'/designs/'+value+'/css/style.css';
+		$('pageDesign').setAttribute('href',path);
+		AppCommunity.changePageTemplate(OnlineObjects.page.id,value);
+	},
+	selectionChanged$templateCategories : function(value) {
+		In2iGui.get('templatePicker').setObjects(this.templates[value]);
+	}
 }
 
 OO.Editor.prototype.buildToolBar = function() {
@@ -199,14 +246,13 @@ OO.Editor.prototype.click$savePageInfo = function() {
 
 OO.Editor.prototype.click$newPage = function() {
 	if (!this.newPagePanel) {
-		this.newPagePanel = In2iGui.Window.create(null,{title:'Ny side',padding:10,variant:'dark'});
-		this.newPagePicker = In2iGui.Picker.create('documentPicker',{title:'Vælg venligst typen af side der skal oprettes',itemWidth:90,itemHeight:120});
+		this.newPagePanel = In2iGui.Window.create(null,{title:'Ny side',padding:0,variant:'dark'});
+		this.newPagePicker = In2iGui.Picker.create('documentPicker',{title:'Vælg venligst typen af side der skal oprettes',itemWidth:90,itemHeight:120,valueProperty:'simpleName'});
 		this.newPagePanel.add(this.newPagePicker);
 		var self = this;
-		var d = {callback:function(list) {
+		AppCommunity.getDocumentClasses(function(list) {
 			self.updateAndShowNewPagePicker(list);
-		}};
-		AppCommunity.getDocumentClasses(d);
+		});
 	} else {
 		this.newPagePanel.show();
 	}
@@ -220,9 +266,8 @@ OO.Editor.prototype.updateAndShowNewPagePicker = function(list) {
 	this.newPagePanel.show();
 }
 
-OO.Editor.prototype.selectionChanged$documentPicker = function(picker) {
-	var obj = picker.getSelection();
-	AppCommunity.createWebPage(OnlineObjects.site.id,obj.simpleName,function(pageId) {
+OO.Editor.prototype.selectionChanged$documentPicker = function(value) {
+	AppCommunity.createWebPage(OnlineObjects.site.id,value,function(pageId) {
 		document.location='./?id='+pageId+'&edit=true';
 	});
 }
@@ -241,31 +286,6 @@ OO.Editor.prototype.ok$confirmDeletePage = function() {
 	AppCommunity.deleteWebPage(OnlineObjects.page.id,function() {
 		document.location='.?edit=true';
 	});
-}
-
-
-OO.Editor.prototype.openTemplateWindow = function() {
-	if (!this.templatePanel) {
-		this.templatePanel = In2iGui.Window.create(null,{title:'Skift design',variant:'dark'});
-		var c = In2iGui.Columns.create();
-		var tp = In2iGui.Picker.create('templatePicker',{itemWidth:92,itemHeight:120});
-		tp.setObjects(this.templates);
-		c.addToColumn(0,In2iGui.Selection.create());
-		c.addToColumn(1,tp);
-		this.templatePanel.add(c);
-	}
-	this.templatePanel.show();
-}
-
-OO.Editor.prototype.selectionChanged$templatePicker = function(picker) {
-	var obj = picker.getSelection();
-	var path = OnlineObjects.appContext+'/designs/'+obj.key+'/css/style.css';
-	$('pageDesign').setAttribute('href',path);
-	AppCommunity.changePageTemplate(OnlineObjects.page.id,obj.key,
-		function(data) {
-			//N2i.Location.setParameter('edit',true);
-		}
-	);
 }
 
 /*********************** Utilities **********************/

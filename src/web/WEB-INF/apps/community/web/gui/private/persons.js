@@ -119,9 +119,9 @@ var personsController = {
 			this.inviteSentAlert = In2iGui.Alert.create(null,{
 				emotion: 'smile',
 				title: 'Invitationen er sendt!',
-				text: 'Personen vil modtage en email med oplysninger om hvordan han/hun kan tilmelde sig OnlineObjects!'
+				text: 'Personen vil modtage en email med oplysninger om hvordan han/hun kan tilmelde sig!'
 			});
-			var button = In2iGui.Button.create('inviteSentOK',{text : 'Fantastisk!'});
+			var button = In2iGui.Button.create('inviteSentOK',{text : 'OK'});
 			this.inviteSentAlert.addButton(button);
 		}
 		this.inviteSentAlert.show();

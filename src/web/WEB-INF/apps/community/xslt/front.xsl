@@ -155,6 +155,7 @@
    						&#160;·&#160;<a href="iphone/" class="link"><span>iPhone version</span></a>
 				</div>
 				<xsl:call-template name="scripts"/>
+				<xsl:call-template name="analytics"/>
 			</body>
 		</html>
 	</xsl:template>

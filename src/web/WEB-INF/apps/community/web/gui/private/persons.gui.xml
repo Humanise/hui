@@ -115,13 +115,15 @@
 		</formula>
 		</space>
 	</window>
-	<window floating="true" name="invitationWindow" title="Ny invitation" width="300">
+	<window floating="true" name="invitationWindow" title="Ny invitation" width="300" padding="5">
 		<formula name="invitationFormula">
 			<group>
 				<text label="Navn" key="name"/>
 				<text label="E-mail" key="email"/>
 				<text label="Besked" key="message" lines="10"/>
-				<button title="Send" highlighted="true" name="sendInvitation"/>
+				<buttons top="10">
+					<button title="Send" highlighted="true" name="sendInvitation"/>
+				</buttons>
 			</group>
 		</formula>
 	</window>

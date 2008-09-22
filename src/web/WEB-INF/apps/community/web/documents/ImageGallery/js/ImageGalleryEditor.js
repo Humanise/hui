@@ -31,6 +31,9 @@ OO.Editor.ImageGallery.prototype = {
 		if (this.addImagePanel) {
 			this.addImagePanel.hide();
 		}
+		if (this.addImagesWindow) {
+			this.addImagesWindow.hide();
+		}
 		if (this.styleWindow) {
 			this.styleWindow.hide();
 		}
@@ -42,14 +45,14 @@ OO.Editor.ImageGallery.prototype = {
 	},
 	addToToolbar : function(toolbar) {
 		toolbar.add(In2iGui.Toolbar.Icon.create('addImage',{icon:'common/image','overlay':'new','title':'Tilføj billede'}));
-		//toolbar.add(In2iGui.Toolbar.Icon.create('addImages',{icon:'common/image','overlay':'new','title':'Tilføj billeder'}));
+		toolbar.add(In2iGui.Toolbar.Icon.create('addImages',{icon:'common/image','overlay':'new','title':'Tilføj billeder'}));
 		toolbar.addDivider();
 		toolbar.add(In2iGui.Toolbar.Icon.create('changeFrame',{icon:'common/frame','title':'Skift ramme'}));
 		toolbar.add(In2iGui.Toolbar.Icon.create('increaseSize',{icon:'common/larger','title':'Større'}));
 		toolbar.add(In2iGui.Toolbar.Icon.create('decreaseSize',{icon:'common/smaller','title':'Mindre'}));
 	},
 	click$changeFrame : function() {
-		this.openStyleWindow();
+		this.openFrameWindow();
 	},
 	setEditor : function(editor) {
 		this.editor = editor;
@@ -191,6 +194,9 @@ OO.Editor.ImageGallery.prototype = {
 		var removed = array.splice(currentIndex, 1);
 		array.splice(newIndex, 0, removed[0]);
 	},
+	
+	// Upload
+	
 	uploadFailed : function() {
 		this.addImagePanelDelegate.reset();
 		In2iGui.get().showAlert({emotion:'gasp',title:'Det lykkedes ikke at tilføje billedet.',text:'Det kan skyldes at filen ikke er et understøttet format?'})
@@ -217,27 +223,6 @@ OO.Editor.ImageGallery.prototype = {
 			AppCommunity.getProcess('imageUpload',delegate);
 		},500);
 	},
-	openStyleWindow : function() {
-		if (!this.styleWindow) {
-			this.styleWindow = In2iGui.Window.create(null,{title:'Skift ramme',variant:'dark'});
-			this.stylePicker = In2iGui.Picker.create('framePicker',{title:'Vælg den ny ramme',itemWidth:90,itemHeight:90,shadow:false});
-			this.stylePicker.setObjects([
-				{key:'elegant',title:'Elegant',image:OnlineObjects.appContext+'/documents/ImageGallery/frames/elegant/thumbnail.png'},
-				{key:'paper',title:'Papir',image:OnlineObjects.appContext+'/documents/ImageGallery/frames/paper/thumbnail.png'},
-				{key:'simple',title:'Simpel',image:OnlineObjects.appContext+'/documents/ImageGallery/frames/simple/thumbnail.png'}
-			])
-			this.styleWindow.add(this.stylePicker);
-		}
-		this.styleWindow.show();
-	},
-	selectionChanged$framePicker : function(picker) {
-		var obj = picker.getSelection();
-		OO.ImageGallery.getInstance().style = obj.key;
-		for (var i=0; i < this.images.length; i++) {
-			this.images[i].setStyle(obj.key);
-		};
-		ImageGalleryDocument.changeFrameStyle(OnlineObjects.content.id,obj.key);
-	},
 	click$addImage : function() {
 		if (!this.addImagePanel) {
 			this.addImagePanel = In2iGui.Window.create(null,{title:'Tilføj billede',variant:'dark',padding:5});
@@ -245,6 +230,44 @@ OO.Editor.ImageGallery.prototype = {
 			this.addImagePanel.add(this.addImagePanelDelegate.getUploader());
 		}
 		this.addImagePanel.show();
+	},
+	
+	// Multi upload
+	click$addImages : function() {
+		if (!this.addImagesWindow) {
+			var w = In2iGui.Window.create(null,{title:'Tilføj billede',variant:'dark',padding:5});
+			var u = In2iGui.MultiUpload.create('multiUpload',{url:'uploadImage',parameters:{'contentId':OnlineObjects.content.id}});
+			w.add(u);
+			this.addImagesWindow = w;
+		}
+		this.addImagesWindow.show();
+	},
+	uploadDidComplete$multiUpload : function() {
+		this.refreshImages();
+	},
+	
+	
+	// Style
+	openFrameWindow : function() {
+		if (!this.styleWindow) {
+			this.styleWindow = In2iGui.Window.create(null,{title:'Skift ramme',variant:'dark'});
+			var p = In2iGui.Picker.create('framePicker',{title:'Vælg billedernes ramme',itemWidth:90,itemHeight:90,shadow:false});
+			p.setObjects([
+				{value:'elegant',title:'Elegant',image:OnlineObjects.appContext+'/documents/ImageGallery/frames/elegant/thumbnail.png'},
+				{value:'paper',title:'Papir',image:OnlineObjects.appContext+'/documents/ImageGallery/frames/paper/thumbnail.png'},
+				{value:'simple',title:'Simpel',image:OnlineObjects.appContext+'/documents/ImageGallery/frames/simple/thumbnail.png'}
+			]);
+			p.setValue(this.style);
+			this.styleWindow.add(p);
+		}
+		this.styleWindow.show();
+	},
+	selectionChanged$framePicker : function(value) {
+		OO.ImageGallery.getInstance().style = value;
+		for (var i=0; i < this.images.length; i++) {
+			this.images[i].setStyle(value);
+		};
+		ImageGalleryDocument.changeFrameStyle(OnlineObjects.content.id,value);
 	},
 	ok$confirmDeleteImage : function() {
 		var self = this;
@@ -262,7 +285,8 @@ OO.Editor.ImageGallery.prototype = {
 			emotion:'gasp',
 			ok:'Ja, slet billedet',
 			cancel:'Nej, jeg fortryder',
-			highlighted:'ok'
+			highlighted:'ok',
+			modal:true
 		});
 	},
 	showImageEditorPanel : function(photo) {
@@ -452,7 +476,7 @@ OO.Editor.ImageGallery.Image.prototype = {
 			e.stop();
 		});
 		this.frame.onmouseover = function(e) {
-			//if (!self.editor.isActive()) return;
+			if (!self.editor.isActive()) return;
 			self.hover.style.display='';
 			$ani(self.hover,'opacity',1,200);
 		}

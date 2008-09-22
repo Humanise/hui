@@ -1,4 +1,4 @@
-.logout
+div.logout
 {
 	width: 34px;
 	height: 33px;
@@ -9,51 +9,54 @@
 	cursor: pointer;
 	z-index: 1;
 }
+
 div.logout:hover
 {
 	background-position: 0px -231px;
 }
 
-.private
+div.private
 {
 	width: 34px;
 	height: 33px;
 	background: url('../gfx/controls.png') 0px -132px;
 	position: fixed;
 	top: 10px;
-	right: 50px;
+	right: 90px;
 	cursor: pointer;
 	z-index: 1;
 }
+
 div.private:hover
 {
 	background-position: 0px -165px;
 }
 
-.activate
+div.activate
 {
 	width: 34px;
 	height: 33px;
 	background: url('../gfx/controls.png');
 	position: fixed;
 	top: 10px;
-	right: 90px;
+	right: 50px;
 	cursor: pointer;
 	z-index: 1;
 }
+
 div.activate:hover
 {
 	background-position: 0px -33px;
 }
 
-.deactivate
+div.deactivate
 {
 	width: 34px;
 	height: 33px;
 	background: url('../gfx/controls.png') 0px -66px;
 	position: fixed;
 	top: 10px;
-	right: 90px;
+	right: 50px;
 	cursor: pointer;
 	z-index: 1;
 }
@@ -66,32 +69,4 @@ div.deactivate:hover
 body.editor_mode
 {
 	padding-top: 0px;
-}
-
-
-/************************* Window ******************/
-
-.in2igui_panel .chooser
-{
-	background-color: #b9bec6;
-	margin: 10px 10px 0px;
-	overflow: hidden;
-	padding: 5px 10px;
-}
-
-.in2igui_panel .chooser .item
-{
-	background-image: url('../gfx/chooser_item_bg.png');
-	width: 96px;
-	height: 124px;
-	float: left;
-	margin: 10px 5px;
-}
-
-.in2igui_panel .chooser .item div
-{
-	margin-left: 2px;
-	width: 92px;
-	height: 120px;
-	cursor: pointer;
 }

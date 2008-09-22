@@ -21,7 +21,7 @@
 				<toolbar>
 					<icon icon="common/image" overlay="new" title="Tilføj billeder" name="newImage"/>
 					<divider/>
-					<icon icon="common/object" title="Lysbilledshow" name="slideShow"/>
+					<icon icon="common/play" title="Lysbilledshow" name="slideShow"/>
 					<icon icon="common/delete" title="Slet" name="deleteSelectedImage"/>
 					<search title="Søgning"/>
 				</toolbar>
@@ -34,7 +34,7 @@
 						</sidebar>
 						<content>
 							<overflow resize="-190">
-							<gallery name="imageGallery" state="persons"/>
+								<gallery name="imageGallery" state="persons"/>
 							</overflow>
 						</content>
 					</split>

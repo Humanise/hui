@@ -20,6 +20,7 @@
 	padding: 0px;
 	height: 20px;
 	border: 1px solid transparent;
+	_border: none;
 	vertical-align: top;
 }
 
