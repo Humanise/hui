@@ -49,12 +49,12 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 		CommunityController.getDAO().signUp(getUserSession(),username,password);
 	}
 	
-	public void signUpFromInvitation(String code,String username, String password) throws EndUserException {
+	public void signUpFromInvitation(String code, String username, String password) throws EndUserException {
 		CommunityController.getDAO().signUpFromInvitation(getUserSession(), code, username, password);
 	}
 	
 	public long createWebPage(long webSiteId,String template) throws EndUserException {
-		log.info("New page with template: "+template);
+		log.debug("New page with template: "+template);
 		Class<?> docClass = getModel().getModelClass(template);
 		return WebModelUtil.createWebPageOnSite(webSiteId, docClass, getUserSession());
 	}

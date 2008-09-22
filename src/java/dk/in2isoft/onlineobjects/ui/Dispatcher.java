@@ -268,6 +268,7 @@ public class Dispatcher implements Filter {
 		log.error(ex.toString(), ex);
 		ErrorRenderer renderer = new ErrorRenderer(ex);
 		try {
+			request.getResponse().setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			XSLTUtil.applyXSLT(renderer, request);
 		} catch (EndUserException e) {
 			log.error(e.toString(), e);

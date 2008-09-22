@@ -100,7 +100,6 @@ public class CommunityController extends ApplicationController {
 				privateSpaceController.displayImages(request);
 			} else if (request.testLocalPathFull(null, "private", "images", "upload.action")) {
 				importImage(request);
-				request.getResponse().setStatus(HttpServletResponse.SC_OK);
 			} else if (request.testLocalPathFull(null, "private", "settings.gui")) {
 				privateSpaceController.displaySettings(request);
 			}
@@ -175,6 +174,9 @@ public class CommunityController extends ApplicationController {
 					}
 				}
 			}
+			if (imageGalleryId==0) {
+				imageGalleryId = request.getInt("contentId");
+			}
 			for (DiskFileItem item : items) {
 				if (!item.isFormField()) {
 					try {
@@ -191,6 +193,8 @@ public class CommunityController extends ApplicationController {
 		}
 		getModel().commit();
 		process.setCompleted(true);
+		request.getResponse().setStatus(HttpServletResponse.SC_OK);
+		request.getResponse().getWriter().write("OK");
 	}
 
 	private void processFile(DiskFileItem item, long imageGalleryId, Request request) throws IOException,
