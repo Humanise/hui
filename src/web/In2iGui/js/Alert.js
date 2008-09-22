@@ -2,7 +2,8 @@
  * An alert that can be
  * @constructor
  */
-In2iGui.Alert = function(element,name) {
+In2iGui.Alert = function(element,name,options) {
+	this.options = N2i.override({modal:false},options);
 	this.element = $id(element);
 	this.name = name;
 	this.body = $firstClass('in2igui_alert_body',this.element);
@@ -18,8 +19,7 @@ In2iGui.Alert = function(element,name) {
  * @static
  */
 In2iGui.Alert.create = function(name,options) {
-	var opts = {title:'',text:'',emotion:null,variant:null,title:null};
-	N2i.override(opts,options);
+	options = N2i.override({title:'',text:'',emotion:null,variant:null,title:null},options);
 	
 	var element = N2i.create('div',{'class':'in2igui_alert'});
 	var body = N2i.create('div',{'class':'in2igui_alert_body'});
@@ -27,18 +27,18 @@ In2iGui.Alert.create = function(name,options) {
 	var content = N2i.create('div',{'class':'in2igui_alert_content'});
 	body.appendChild(content);
 	document.body.appendChild(element);
-	var obj = new In2iGui.Alert(element,name);
-	if (opts.variant) {
-		obj.setVariant(opts.variant);
+	var obj = new In2iGui.Alert(element,name,options);
+	if (options.variant) {
+		obj.setVariant(options.variant);
 	}
-	if (opts.emotion) {
-		obj.setEmotion(opts.emotion);
+	if (options.emotion) {
+		obj.setEmotion(options.emotion);
 	}
-	if (opts.title) {
-		obj.setTitle(opts.title);
+	if (options.title) {
+		obj.setTitle(options.title);
 	}
-	if (opts.text) {
-		obj.setText(opts.text);
+	if (options.text) {
+		obj.setText(options.text);
 	}
 	
 	return obj;
@@ -46,7 +46,12 @@ In2iGui.Alert.create = function(name,options) {
 
 In2iGui.Alert.prototype = {
 	show : function() {
-		this.element.style.zIndex=In2iGui.nextAlertIndex();
+		var zIndex = In2iGui.nextAlertIndex();
+		if (this.options.modal) {
+			In2iGui.showCurtain(this,zIndex);
+			zIndex++;
+		}
+		this.element.style.zIndex=zIndex;
 		this.element.style.display='block';
 		this.element.style.top=(N2i.Window.getScrollTop()+100)+'px';
 		$ani(this.element,'opacity',1,200);
@@ -55,6 +60,7 @@ In2iGui.Alert.prototype = {
 	hide : function() {
 		$ani(this.element,'opacity',0,200,{hideOnComplete:true});
 		$ani(this.element,'margin-top','0px',200);
+		In2iGui.hideCurtain(this);
 	},
 	setTitle : function(text) {
 		if (!this.title) {

@@ -12,12 +12,7 @@
 		<xsl:apply-templates/>
 	</form>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula('<xsl:value-of select="generate-id()"/>');		
-		with (<xsl:value-of select="generate-id()"/>_obj) {
-		<xsl:for-each select="descendant::gui:group/gui:text | descendant::gui:group/gui:password | descendant::gui:group/gui:datetime | descendant::gui:group/gui:checkboxes | descendant::gui:group/gui:checkbox | descendant::gui:group/gui:radiobuttons | descendant::gui:group/gui:imagepicker | descendant::gui:objectlist | descendant::gui:tokens">
-			registerInput(<xsl:value-of select="generate-id()"/>_obj);
-		</xsl:for-each>
-		}
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula('<xsl:value-of select="generate-id()"/>');
 		<xsl:call-template name="gui:createobject"/>
 	</script>
 </xsl:template>
@@ -56,7 +51,7 @@
 
 <xsl:template match="gui:group[@labels='above']/gui:custom">
 	<tr><td>
-			<label><xsl:value-of select="@label"/></label>
+			<xsl:if test="@label"><label><xsl:value-of select="@label"/></label></xsl:if>
 			<xsl:apply-templates/>
 	</td></tr>
 </xsl:template>
@@ -64,7 +59,6 @@
 <!-- Text -->
 
 <xsl:template match="gui:group/gui:text">
-	<param name="parent"/>
 	<tr>
 		<th><label><xsl:value-of select="@label"/></label></th>
 		<td><xsl:call-template name="gui:text"/></td>
@@ -72,7 +66,6 @@
 </xsl:template>
 
 <xsl:template match="gui:group[@labels='above']/gui:text">
-	<param name="parent"/>
 	<tr><td>
 		<label><xsl:value-of select="@label"/></label>
 		<xsl:call-template name="gui:text"/>
@@ -83,7 +76,8 @@
 	<xsl:choose>
 		<xsl:when test="@lines>1">
 			<div class="in2igui_field in2igui_longfield" id="{generate-id()}">
-			<textarea class="in2igui_formula_text" rows="{@lines}"/>
+			<textarea class="in2igui_formula_text" rows="{@lines}"><xsl:text>
+</xsl:text></textarea>
 			</div>
 		</xsl:when>
 		<xsl:otherwise>
@@ -103,8 +97,10 @@
 <xsl:template match="gui:group/gui:password">
 	<tr>
 		<xsl:if test="../@labels='above'">
+			<td>
 			<label><xsl:value-of select="@label"/></label>
 			<xsl:call-template name="gui:password"/>
+			</td>
 		</xsl:if>
 		<xsl:if test="not(../@labels='above')">
 			<th><label><xsl:value-of select="@label"/></label></th>
@@ -226,21 +222,18 @@
 
 <xsl:template match="gui:group[@labels='above']/gui:checkbox">
 	<tr><td>
-		<label><xsl:value-of select="@label"/></label>
-		<xsl:call-template name="gui:checkboxes"/>
+		<label style="float: left; line-height: 21px; padding-right: 5px; height: 24px;"><xsl:value-of select="@label"/></label>
+		<xsl:call-template name="gui:checkbox"/>
 	</td></tr>
 </xsl:template>
 
 <xsl:template name="gui:checkbox">
 	<div id="{generate-id()}">
 		<xsl:attribute name="class">
-			<xsl:text>checkbox</xsl:text>
-			<xsl:if test="@value='true'"> checked</xsl:if>
+			<xsl:text>in2igui_checkbox</xsl:text>
+			<xsl:if test="@value='true'"> in2igui_checkbox_selected</xsl:if>
 		</xsl:attribute>
-		<div class="check"><xsl:comment/></div>
-	</div>
-	<div class="checkboxes">
-		<xsl:apply-templates/>
+		<div><xsl:comment/></div>
 	</div>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.Checkbox('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>',{'value':'<xsl:value-of select="@value"/>'});
@@ -265,11 +258,11 @@
 </xsl:template>
 
 <xsl:template name="gui:checkboxes">
-	<div class="checkboxes" id="{generate-id()}">
+	<div class="in2igui_checkboxes" id="{generate-id()}">
 		<xsl:apply-templates/>
 	</div>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.Checkboxes('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>');
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.Checkboxes('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>',{key:'<xsl:value-of select="@key"/>'});
 		with (<xsl:value-of select="generate-id()"/>_obj) {
 			<xsl:for-each select="gui:source">
 				registerSource(<xsl:value-of select="generate-id()"/>_obj);
@@ -394,8 +387,8 @@
 </xsl:template>
 
 <xsl:template name="gui:tokens">
-	<div class="in2igui_tokens" id="{generate-id()}" tabindex="0">
-		
+	<div class="in2igui_tokens" id="{generate-id()}">
+		<xsl:comment/>
 	</div>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.Tokens(

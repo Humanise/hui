@@ -96,7 +96,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 </head>
 <body class="in2igui">
 	<xsl:choose>
-		<xsl:when test="@pad"><div style="padding: {@pad}px;" class="fullheight"><xsl:apply-templates/></div></xsl:when>
+		<xsl:when test="@pad"><div style="padding: {@pad}px;"><xsl:apply-templates/></div></xsl:when>
 		<xsl:otherwise><xsl:apply-templates/></xsl:otherwise>
 	</xsl:choose>
 </body>
@@ -150,15 +150,15 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 
 <xsl:template match="gui:selection/gui:item">
 	<div id="{generate-id()}">
-		<xsl:attribute name="class">item<xsl:if test="@value=../@value"> selected</xsl:if></xsl:attribute>
+		<xsl:attribute name="class">in2igui_selection_item<xsl:if test="@value=../@value"> selected</xsl:if></xsl:attribute>
+		<span>
 		<xsl:if test="@icon">
-		<div class="icon">
 		<xsl:attribute name="style">background-image: url('<xsl:value-of select="$context"/>/In2iGui/icons/<xsl:value-of select="@icon"/>1.png');</xsl:attribute>
-		<xsl:comment/>
-		</div>
+		<xsl:attribute name="class">in2igui_icon</xsl:attribute>
 		</xsl:if>
-		<xsl:if test="@badge"><span><xsl:value-of select="@badge"/></span></xsl:if>
+		<xsl:if test="@badge"><em><xsl:value-of select="@badge"/></em></xsl:if>
 		<xsl:value-of select="@title"/>
+		</span>
 	</div>
 </xsl:template>
 
@@ -453,7 +453,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 
 
 <xsl:template match="gui:gallery">
-	<div class="in2igui_gallery" id="{generate-id()}"><xsl:comment/></div>
+	<div class="in2igui_gallery" id="{generate-id()}"><xsl:comment/>&#160;</div>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Gallery('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>');
 		<xsl:call-template name="gui:createobject"/>

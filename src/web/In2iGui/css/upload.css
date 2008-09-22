@@ -8,6 +8,7 @@ div.in2igui_upload form
 div.in2igui_multiupload
 {
 	overflow: hidden;
+	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
 }
 
 div.in2igui_multiupload div.in2igui_buttons

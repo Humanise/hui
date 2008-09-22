@@ -31,7 +31,7 @@ In2iGui.Selection.prototype = {
 			if (item) return item;
 		};
 	},
-	changeValue : function(value) {
+	setValue : function(value) {
 		this.value = value;
 		for (var i=0; i < this.items.length; i++) {
 			var item = this.items[i];
@@ -41,6 +41,9 @@ In2iGui.Selection.prototype = {
 			var source = this.sources[i];
 			source.updateUI();
 		};
+	},
+	changeValue : function(value) {
+		this.setValue(value);
 		In2iGui.callDelegates(this,'selectorSelectionChanged');
 		In2iGui.callDelegates(this,'selectionChanged',this.value);
 	},
@@ -54,7 +57,7 @@ In2iGui.Selection.prototype = {
 		this.items.push({id:id,title:title,icon:icon,badge:badge,element:element,value:value,kind:kind});
 		var self = this;
 		element.onclick = function() {
-			self.itemWasClicked(this);
+			self.itemWasClicked(value);
 		}
 		element.ondblclick = function() {
 			self.itemWasDoubleClicked();
@@ -66,32 +69,31 @@ In2iGui.Selection.prototype = {
 		N2i.addListener(element,'mouseout',In2iGui.dropOutListener);
 	},
 	
-	setItems : function(items) {
+	setObjects : function(items) {
 		var self = this;
 		items.each(function(item) {
 			self.items.push(item);
-			var node = new Element('div',{'class':'item'});
-			node.in2iGuiValue = item.value;
+			var node = new Element('div',{'class':'in2igui_selection_item'});
 			item.element = node;
 			self.element.insert(node);
+			var inner = new Element('span').update(item.title);
 			if (item.icon) {
-				var img = new Element('div',{'class':'icon'}).setStyle({'backgroundImage' : 'url('+In2iGui.getIconUrl(item.icon,1)+')'});
-				node.insert(img);
+				inner.setStyle({'backgroundImage' : 'url('+In2iGui.getIconUrl(item.icon,1)+')'}).addClassName('in2igui_icon');
 			}
-			node.insert(item.title);
+			node.insert(inner);
 			node.observe('click',function() {
-				self.itemWasClicked(node);
+				self.changeValue(item.value);
 			});
 			node.observe('dblclick',function() {
-				self.itemWasDoubleClicked(node);
+				self.itemWasDoubleClicked();
 				return false;
 			});
 		});
 	},
 	
 	// Events
-	itemWasClicked : function(item) {
-		this.changeValue(item.in2iGuiValue);
+	itemWasClicked : function(value) {
+		this.changeValue(value);
 	},
 	itemWasDoubleClicked : function() {
 		In2iGui.callDelegates(this,'selectorObjectWasOpened');
@@ -101,7 +103,7 @@ In2iGui.Selection.prototype = {
 /******************************** Source ****************************/
 
 In2iGui.Selection.Source = function(id,name,options) {
-	this.element = $id(id);
+	this.element = $(id);
 	this.name = name;
 	this.selection = null;
 	this.options = options;
@@ -111,67 +113,62 @@ In2iGui.Selection.Source = function(id,name,options) {
 	N2i.Event.addLoadListener(function() {self.refresh()});
 }
 
-In2iGui.Selection.Source.prototype.refresh = function() {
-	var self = this;
-	$get(this.options.url,{onSuccess:function(t) {self.updateSource(t.responseXML)}});
+In2iGui.Selection.Source.prototype = {
+	refresh : function() {
+		var self = this;
+		new Ajax.Request(this.options.url, {onSuccess:function(t) {self.updateSource(t.responseXML)}});
+	},
+	updateSource : function(doc) {
+		this.items = [];
+		N2i.removeChildren(this.element);
+		var self = this;
+		var items = doc.getElementsByTagName('item');
+		for (var i=0; i < items.length; i++) {
+			var item = items[i];
+			var node = new Element('div',{'class':'in2igui_selection_item'});
+			var inner = new Element('span');
+			var title = item.getAttribute('title');
+			var badge = item.getAttribute('badge');
+			var icon = item.getAttribute('icon');
+			var value = item.getAttribute('value');
+			var kind = item.getAttribute('kind');
+			if (icon) {
+				inner.setStyle({'backgroundImage' : 'url('+In2iGui.getIconUrl(icon,1)+')'}).addClassName('in2igui_icon');
+			}
+			node.insert(inner.insert(title));
+			this.element.insert(node);
+			node.onclick = function() {
+				self.itemWasClicked(value);
+			}
+			node.ondblclick = function() {
+				self.itemWasDoubleClicked();
+				return false;
+			}
+			var info = {title:title,icon:icon,badge:badge,kind:kind,element:node,value:value};
+			node.dragDropInfo = info;
+			this.items.push(info);
+		};
+		this.updateUI();
+	},
+	itemWasClicked : function(value) {
+		this.selection.changeValue(value);
+	},
+	itemWasDoubleClicked : function(node) {
+		this.selection.itemWasDoubleClicked();
+	},
+	getSelection : function() {
+		for (var i=0; i < this.items.length; i++) {
+			if (this.items[i].value == this.selection.value) {
+				return this.items[i];
+			}
+		};
+		return null;
+	},
+	updateUI : function() {
+		for (var i=0; i < this.items.length; i++) {
+			var item = this.items[i];
+			N2i.setClass(item.element,'selected',(item.value==this.selection.value));
+		};
+	}
 }
-
-In2iGui.Selection.Source.prototype.updateSource = function(doc) {
-	this.items = [];
-	N2i.removeChildren(this.element);
-	var self = this;
-	var items = doc.getElementsByTagName('item');
-	for (var i=0; i < items.length; i++) {
-		var item = items[i];
-		var node = N2i.create('div',{'class':'item'});
-		var title = item.getAttribute('title');
-		var badge = item.getAttribute('badge');
-		var icon = item.getAttribute('icon');
-		var value = item.getAttribute('value');
-		var kind = item.getAttribute('kind');
-		if (icon) {
-			var img = N2i.create('div',{'class':'icon'},{'backgroundImage' : 'url('+In2iGui.getIconUrl(icon,1)+')'});
-			node.appendChild(img);
-		}
-		node.appendChild(document.createTextNode(title));
-		this.element.appendChild(node);
-		node.in2iGuiValue = value;
-		node.onclick = function() {
-			self.itemWasClicked(this);
-		}
-		node.ondblclick = function() {
-			self.itemWasDoubleClicked(this);
-			return false;
-		}
-		var info = {title:title,icon:icon,badge:badge,kind:kind,element:node,value:value};
-		node.dragDropInfo = info;
-		this.items.push(info);
-	};
-	this.updateUI();
-}
-
-In2iGui.Selection.Source.prototype.itemWasClicked = function(node) {
-	this.selection.changeValue(node.in2iGuiValue);
-}
-
-In2iGui.Selection.Source.prototype.itemWasDoubleClicked = function(node) {
-	this.selection.itemWasDoubleClicked();
-}
-
-In2iGui.Selection.Source.prototype.getSelection = function() {
-	for (var i=0; i < this.items.length; i++) {
-		if (this.items[i].value == this.selection.value) {
-			return this.items[i];
-		}
-	};
-	return null;
-}
-
-In2iGui.Selection.Source.prototype.updateUI = function() {
-	for (var i=0; i < this.items.length; i++) {
-		var item = this.items[i];
-		N2i.setClass(item.element,'selected',(item.value==this.selection.value));
-	};
-}
-
 /* EOF */

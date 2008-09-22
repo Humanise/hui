@@ -14,17 +14,21 @@ In2iGui.Columns.create = function(name,options) {
 In2iGui.Columns.prototype = {
 	addToColumn : function(index,widget) {
 		var c = this.ensureColumn(index);
-		N2i.log(c);
 		c.insert(widget.getElement());
+	},
+	setColumnStyle : function(index,style) {
+		var c = this.ensureColumn(index);
+		c.setStyle(style);
+	},
+	setColumnWidth : function(index,width) {
+		var c = this.ensureColumn(index);
+		c.setStyle({width:width+'px'});
 	},
 	ensureColumn : function(index) {
 		var children = this.body.childElements();
-		N2i.log(children.length-1);
 		for (var i=children.length-1;i<index;i++) {
 			this.body.insert(new Element('td',{'class':'in2igui_columns_column'}));
-			N2i.log('insert');
 		}
-		N2i.log(this.body);
 		return this.body.childElements()[index];
 	}
 }

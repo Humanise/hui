@@ -2,10 +2,10 @@ In2iGui.Formula = function(id,name) {
 	this.id = id;
 	this.name = name;
 	this.element = $(id);
-	this.inputs = [];
+	//this.inputs = [];
 	this.children = [];
 	this.addBehavior();
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 }
 
 In2iGui.Formula.create = function(name) {
@@ -27,40 +27,44 @@ In2iGui.Formula.prototype = {
 		return this.element;
 	},
 	registerInput : function(obj) {
-		this.inputs[this.inputs.length] = obj;
+		alert('Deprecated!');
 	},
 	registerChild : function(obj) {
 		this.children.push(obj);
 	},
 	getValues : function() {
 		var data = {};
-		for (var i=0; i < this.inputs.length; i++) {
-			if (this.inputs[i].options.key) {
-				data[this.inputs[i].options.key] = this.inputs[i].getValue();
-			} else if (this.inputs[i].name) {
-				data[this.inputs[i].name] = this.inputs[i].getValue();
+		var d = In2iGui.get().getDescendants(this);
+		for (var i=0; i < d.length; i++) {
+			if (d[i].options&& d[i].options.key && d[i].getValue) {
+				data[d[i].options.key] = d[i].getValue();
+			} else if (d[i].name && d[i].getValue) {
+				data[d[i].name] = d[i].getValue();
 			}
 		};
 		return data;
 	},
 	setValues : function(values) {
-		for (var i=0; i < this.inputs.length; i++) {
-			var key = this.inputs[i].options.key;
-			if (key && values[key]) {
-				this.inputs[i].setValue(values[key]);
+		var d = In2iGui.get().getDescendants(this);
+		for (var i=0; i < d.length; i++) {
+			if (d[i].options && d[i].options.key) {
+				var key = d[i].options.key;
+				if (key && values[key]) {
+					d[i].setValue(values[key]);
+				}
 			}
 		}
 	},
 	reset : function() {
-		for (var i=0; i < this.inputs.length; i++) {
-			this.inputs[i].reset();
+		var d = In2iGui.get().getDescendants(this);
+		for (var i=0; i < d.length; i++) {
+			if (d[i].reset) d[i].reset();
 		}
 	},
 	addContent : function(node) {
 		this.element.insert(node);
 	},
 	add : function(widget) {
-		widget.parent = this;
 		this.element.insert(widget.getElement());
 	},
 	createGroup : function(options) {
@@ -78,7 +82,6 @@ In2iGui.Formula.Group = function(elementOrId,name,options) {
 	this.element = $(elementOrId);
 	this.body = this.element.select('tbody')[0];
 	this.options = N2i.override({above:true},options);
-	this.parent = null;
 	In2iGui.extend(this);
 }
 
@@ -111,9 +114,6 @@ In2iGui.Formula.Group.prototype = {
 			this.body.insert(tr);
 		}
 		tr.insert(td);
-		if (this.parent) {
-			this.parent.registerInput(widget);
-		}
 	},
 	createButtons : function(options) {
 		var tr = new Element('tr');
@@ -196,7 +196,7 @@ In2iGui.Formula.DateTime = function(elementOrId,name,options) {
 	this.options = options;
 	this.value = null;
 	this.element = $id(elementOrId);
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 	this.addBehavior();
 }
 
@@ -279,7 +279,7 @@ In2iGui.Formula.Select = function(elementOrId,name,options) {
 	this.options = options;
 	this.element = $id(elementOrId);
 	this.value = null;
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 	this.refresh();
 }
 
@@ -336,7 +336,7 @@ In2iGui.Formula.Radiobuttons = function(id,name,options) {
 	this.radios = [];
 	this.value = options.value;
 	this.defaultValue = this.value;
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 }
 
 In2iGui.Formula.Radiobuttons.prototype = {
@@ -374,16 +374,16 @@ In2iGui.Formula.Radiobuttons.prototype = {
 /********************************* Checkboxes ****************************/
 
 In2iGui.Formula.Checkbox = function(id,name,options) {
-	this.element = $id(id);
+	this.element = $(id);
 	this.name = name;
 	this.value = options.value=='true';
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 	this.addBehavior();
 }
 
 In2iGui.Formula.Checkbox.prototype = {
 	addBehavior : function() {
-		var control = $firstClass('check',this.element);
+		var control = this.element.select('div')[0];
 		var self = this;
 		control.onclick = function() {self.click()};
 	},
@@ -392,7 +392,7 @@ In2iGui.Formula.Checkbox.prototype = {
 		this.updateUI();
 	},
 	updateUI : function() {
-		N2i.setClass(this.element,'checked',this.value);
+		N2i.setClass(this.element,'in2igui_checkbox_selected',this.value);
 	},
 	setValue : function(value) {
 		this.value = value;
@@ -408,16 +408,21 @@ In2iGui.Formula.Checkbox.prototype = {
 
 /********************************* Checkboxes ****************************/
 
-In2iGui.Formula.Checkboxes = function(id,name) {
+In2iGui.Formula.Checkboxes = function(id,name,options) {
+	this.options = options;
 	this.element = $id(id);
 	this.name = name;
 	this.checkboxes = [];
 	this.sources = [];
 	this.values = [];
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 }
 
 In2iGui.Formula.Checkboxes.prototype = {
+	getValue : function() {
+		return this.values;
+	},
+	/** @deprecated */
 	getValues : function() {
 		return this.values;
 	},
@@ -435,10 +440,14 @@ In2iGui.Formula.Checkboxes.prototype = {
 		};
 		this.values=newValues;
 	},
-	setValues : function(values) {
+	setValue : function(values) {
 		this.values=values;
 		this.checkValues();
 		this.updateUI();
+	},
+	/** @deprecated */
+	setValues : function(values) {
+		this.setValue(values);
 	},
 	flipValue : function(value) {
 		N2i.flipInArray(this.values,value);
@@ -475,9 +484,10 @@ In2iGui.Formula.Checkboxes.Source = function(id,name,options) {
 	this.parent = null;
 	this.options = options;
 	this.checkboxes = [];
-	In2iGui.enableDelegating(this);
-	var self = this;
-	N2i.Event.addLoadListener(function() {self.refresh()});
+	In2iGui.extend(this);
+	this.refresh();
+	//var self = this;
+	//N2i.Event.addLoadListener(function() {self.refresh()});
 }
 
 In2iGui.Formula.Checkboxes.Source.prototype = {
@@ -492,10 +502,10 @@ In2iGui.Formula.Checkboxes.Source.prototype = {
 		var items = doc.getElementsByTagName('checkbox');
 		for (var i=0; i < items.length; i++) {
 			var item = items[i];
-			var node = N2i.create('div',{'class':'checkbox'});
+			var node = N2i.create('div',{'class':'in2igui_checkbox'});
 			var label = item.getAttribute('label');
 			var value = item.getAttribute('value');
-			var check = N2i.create('div',{'class':'check'});
+			var check = N2i.create('div');
 			node.appendChild(check);
 			node.appendChild(document.createTextNode(label));
 			this.element.appendChild(node);
@@ -517,7 +527,7 @@ In2iGui.Formula.Checkboxes.Source.prototype = {
 	updateUI : function() {
 		for (var i=0; i < this.checkboxes.length; i++) {
 			var item = this.checkboxes[i];
-			N2i.setClass(item.element,'checked',N2i.inArray(this.parent.values,item.value));
+			N2i.setClass(item.element,'in2igui_checkbox_selected',N2i.inArray(this.parent.values,item.value));
 		};
 	},
 	hasValue : function(value) {

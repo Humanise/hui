@@ -64,7 +64,7 @@ table.in2igui_formula_group_above th
 
 table.in2igui_formula_group_above div.in2igui_field, table.in2igui_formula_group_above div.in2igui_tokens
 {
-	margin-bottom: 5px;
+	margin-bottom: 2px;
 }
 
 form.in2igui_formula div.in2igui_field
@@ -74,9 +74,10 @@ form.in2igui_formula div.in2igui_field
 	font-size: 0;
 	background: #fff;
 	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
 }
 
-form.in2igui_formula div.in2igui_longfield, form.in2igui_formula select
+form.in2igui_formula select
 {
 	border: 1px solid #ddd;
 	border-color: #eee #eee #ddd;
@@ -84,7 +85,7 @@ form.in2igui_formula div.in2igui_longfield, form.in2igui_formula select
 
 form.in2igui_formula .in2igui_formula_text
 {
-	border: none;
+	border: 0px;
 	padding: 1px 0px;
 	margin: 0px;
 	font-size: 10pt;
@@ -155,20 +156,20 @@ form.in2igui_formula .radiobuttons .selected .radio
 
 /******************************* Checkboxes **************************/
 
-form.in2igui_formula .checkboxes
+form.in2igui_checkboxes
 {
 }
 
-form.in2igui_formula .checkbox
+div.in2igui_checkbox
 {
 	overflow: hidden;
-	padding: 2px 0px 0px;
+	padding: 2px 5px 0px 0px;
 	font-size: 10pt;
 	cursor: default;
 	color: #004A80;
 }
 
-form.in2igui_formula .checkbox .check
+div.in2igui_checkbox div
 {
 	float: left;
 	background: url('../gfx/checkbox.png') no-repeat;
@@ -178,7 +179,7 @@ form.in2igui_formula .checkbox .check
 	cursor: pointer;
 }
 
-form.in2igui_formula .checked .check
+div.in2igui_checkbox_selected div
 {
 	background-position: 0px -18px;
 }
@@ -195,7 +196,7 @@ table.in2igui_objectlist thead th.in2igui_objectlist
 	text-align: left;
 	font-size: 9pt;
 	line-height: 9pt;
-	color: #666;
+	color: #000;
 	font-weight: normal;
 	padding-left: 4px;
 }
@@ -237,6 +238,8 @@ input.in2igui_tokens_token
 	margin-bottom: 5px;
 	float: left;
 	padding: 1px 0px;
+	-moz-border-radius: 2px;
+	-webkit-border-radius: 2px;
 }
 
 
@@ -264,9 +267,13 @@ div.in2igui_window_dark table.in2igui_formula_group label
 	background: none;
 }
 
-div.in2igui_window_dark .in2igui_formula_text
+div.in2igui_window_dark div.in2igui_field
 {
 	background: #222;
+}
+
+div.in2igui_window_dark .in2igui_formula_text
+{
 	color: #fff;
 }
 

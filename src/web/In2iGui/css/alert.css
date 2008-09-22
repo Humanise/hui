@@ -18,6 +18,7 @@ div.in2igui_alert_body
 	min-height: 135px;
 	padding: 13px 15px;
 	overflow: hidden;
+	text-align: left;
 }
 
 div.in2igui_alert_content

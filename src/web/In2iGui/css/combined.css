@@ -203,9 +203,9 @@ a.in2igui_button
 	background: url('../gfx/button.png') top left no-repeat;
 	color: #004a80;
 	float: left;
-	font-size: 14px;
+	font-size: 12px;
 	height: 28px;
-	line-height: 25px;
+	line-height: 24px;
 	cursor: pointer;
 	text-decoration: none;
 	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
@@ -219,6 +219,7 @@ a.in2igui_button span
 	background-position: 100% -28px;
 	background-repeat: no-repeat;
 	height: 28px;
+	float: left;
 }
 
 a.in2igui_button_highlighted, a.in2igui_button_highlighted span
@@ -507,7 +508,7 @@ table.in2igui_formula_group_above th
 
 table.in2igui_formula_group_above div.in2igui_field, table.in2igui_formula_group_above div.in2igui_tokens
 {
-	margin-bottom: 5px;
+	margin-bottom: 2px;
 }
 
 form.in2igui_formula div.in2igui_field
@@ -517,9 +518,10 @@ form.in2igui_formula div.in2igui_field
 	font-size: 0;
 	background: #fff;
 	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
 }
 
-form.in2igui_formula div.in2igui_longfield, form.in2igui_formula select
+form.in2igui_formula select
 {
 	border: 1px solid #ddd;
 	border-color: #eee #eee #ddd;
@@ -527,7 +529,7 @@ form.in2igui_formula div.in2igui_longfield, form.in2igui_formula select
 
 form.in2igui_formula .in2igui_formula_text
 {
-	border: none;
+	border: 0px;
 	padding: 1px 0px;
 	margin: 0px;
 	font-size: 10pt;
@@ -598,20 +600,20 @@ form.in2igui_formula .radiobuttons .selected .radio
 
 /******************************* Checkboxes **************************/
 
-form.in2igui_formula .checkboxes
+form.in2igui_checkboxes
 {
 }
 
-form.in2igui_formula .checkbox
+div.in2igui_checkbox
 {
 	overflow: hidden;
-	padding: 2px 0px 0px;
+	padding: 2px 5px 0px 0px;
 	font-size: 10pt;
 	cursor: default;
 	color: #004A80;
 }
 
-form.in2igui_formula .checkbox .check
+div.in2igui_checkbox div
 {
 	float: left;
 	background: url('../gfx/checkbox.png') no-repeat;
@@ -621,7 +623,7 @@ form.in2igui_formula .checkbox .check
 	cursor: pointer;
 }
 
-form.in2igui_formula .checked .check
+div.in2igui_checkbox_selected div
 {
 	background-position: 0px -18px;
 }
@@ -638,7 +640,7 @@ table.in2igui_objectlist thead th.in2igui_objectlist
 	text-align: left;
 	font-size: 9pt;
 	line-height: 9pt;
-	color: #666;
+	color: #000;
 	font-weight: normal;
 	padding-left: 4px;
 }
@@ -680,6 +682,8 @@ input.in2igui_tokens_token
 	margin-bottom: 5px;
 	float: left;
 	padding: 1px 0px;
+	-moz-border-radius: 2px;
+	-webkit-border-radius: 2px;
 }
 
 
@@ -707,9 +711,13 @@ div.in2igui_window_dark table.in2igui_formula_group label
 	background: none;
 }
 
-div.in2igui_window_dark .in2igui_formula_text
+div.in2igui_window_dark div.in2igui_field
 {
 	background: #222;
+}
+
+div.in2igui_window_dark .in2igui_formula_text
+{
 	color: #fff;
 }
 
@@ -885,6 +893,7 @@ div.in2igui_alert_body
 	min-height: 135px;
 	padding: 13px 15px;
 	overflow: hidden;
+	text-align: left;
 }
 
 div.in2igui_alert_content
@@ -1631,34 +1640,44 @@ div.in2igui_list .navigation .selection a.selected
 {
 	background: #3875D7;
 	color: #fff;
-}.in2igui_selection .item
+}div.in2igui_selection
+{
+	font-family: 'Lucida Grande','Verdana',sans-serif;
+}
+
+.in2igui_selection_item
 {
 	background: 7px center no-repeat;
 	font-size: 9pt;
 	height: 20px;
-	line-height: 22px;
+	padding: 0px 10px 0px 6px;
 }
 
-.in2igui_selection .item .icon
+div.in2igui_selection_item span
 {
 	float: left;
-	width: 16px;
 	height: 16px;
-	margin: 2px 3px 0px 5px;
+	margin-top: 2px;
 }
 
-.in2igui_selection .item:hover
+div.in2igui_selection_item span.in2igui_icon
+{
+	padding-left: 20px;
+	background: left top no-repeat;
+}
+
+.in2igui_selection_item:hover
 {
 	background-color: #d4dce9;
 	cursor: pointer;
 }
 
-.in2igui_selection .item:hover .icon
+.in2igui_selection_item:hover .icon
 {
 	background-position: 0px -16px;
 }
 
-.in2igui_selection .item span
+.in2igui_selection_item em
 {
 	float: right;
 	line-height: 16px;
@@ -1667,16 +1686,6 @@ div.in2igui_list .navigation .selection a.selected
 	padding: 0px 2px;
 	margin: 2px 6px 0px 0px;
 	color: #fff;
-}
-
-div.in2igui_window_dark .in2igui_selection div.item
-{
-	color: #fff;
-}
-
-div.in2igui_window_dark div.in2igui_selection div.item:hover
-{
-	background: #000;
 }
 
 div.in2igui_selection div.selected, div.in2igui_selection div.selected:hover
@@ -1702,6 +1711,37 @@ div.in2igui_selection div.selected, div.in2igui_selection div.selected:hover
 .in2igui_selection div.in2igui_drop, .in2igui_selection div.in2igui_drop:hover
 {
 	background-color: #779cd6;
+}
+
+
+/********************** Dark ************************/
+
+div.in2igui_window_dark div.in2igui_selection
+{
+	border-left: 1px solid #404040;
+	border-right: 1px solid #404040;
+}
+
+div.in2igui_window_dark div.in2igui_selection_item
+{
+	color: #fff;
+	background: url('../gfx/selection_dark.png');
+	height: 24px;
+}
+
+div.in2igui_window_dark div.in2igui_selection_item:hover
+{
+	background: url('../gfx/selection_dark.png') left -24px;
+}
+
+div.in2igui_window_dark div.in2igui_selection div.selected, div.in2igui_window_dark div.in2igui_selection div.selected:hover
+{
+	background: #3875d7;
+}
+
+div.in2igui_window_dark .in2igui_selection_item span
+{
+	margin-top: 4px;
 }.in2igui_imagepicker
 {
 	width: 52px;
@@ -2239,8 +2279,9 @@ div.in2igui_boundpanel div.in2igui_field, div.in2igui_boundpanel input.in2igui_t
 	padding: 0px 3px 0px 6px;
 }
 
-.in2igui_picker_title
+div.in2igui_picker_title
 {
+	font-family: 'Lucida Grande','Verdana',sans-serif;
 	font-size: 10pt;
 	color: #2c3a52;
 	padding: 2px 10px;
@@ -2427,6 +2468,7 @@ div.in2igui_upload form
 div.in2igui_multiupload
 {
 	overflow: hidden;
+	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
 }
 
 div.in2igui_multiupload div.in2igui_buttons

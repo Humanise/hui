@@ -203,9 +203,9 @@ a.in2igui_button
 	background: url('../gfx/button.png') top left no-repeat;
 	color: #004a80;
 	float: left;
-	font-size: 14px;
+	font-size: 12px;
 	height: 28px;
-	line-height: 25px;
+	line-height: 24px;
 	cursor: pointer;
 	text-decoration: none;
 	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
@@ -219,6 +219,7 @@ a.in2igui_button span
 	background-position: 100% -28px;
 	background-repeat: no-repeat;
 	height: 28px;
+	float: left;
 }
 
 a.in2igui_button_highlighted, a.in2igui_button_highlighted span

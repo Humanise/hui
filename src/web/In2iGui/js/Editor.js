@@ -80,7 +80,7 @@ In2iGui.Editor.prototype = {
 					var part = new handler.controller(element,row,column,partIndex);
 					part.type=match[1];
 					element.observe('click',function() {
-						//self.editPart(part);
+						self.editPart(part);
 					});
 					element.observe('mouseover',function(e) {
 						self.hoverPart(part);
@@ -122,6 +122,7 @@ In2iGui.Editor.prototype = {
 	},
 	
 	contextColumn : function(column,rowIndex,columnIndex,e) {
+		if (!this.active || this.activePart) return;
 		if (!this.columnMenu) {
 			var menu = In2iGui.Menu.create('In2iGuiEditorColumnMenu');
 			menu.addItem('Slet kolonne','removeColumn');
@@ -236,6 +237,7 @@ In2iGui.Editor.prototype = {
 	editPart : function(part) {
 		if (!this.active || this.activePart) return;
 		if (this.activePart) this.activePart.deactivate();
+		this.hoveredPart.element.removeClassName('in2igui_editor_part_hover');
 		this.activePart = part;
 		this.showPartEditControls();
 		part.element.addClassName('in2igui_editor_part_active');

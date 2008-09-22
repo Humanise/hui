@@ -516,6 +516,11 @@ N2i.Color = function(color_string) {
 
 
 N2i.ease = {
+	slowFastSlow : function(val) {
+		var a = 1.6;
+		var b = 1.4;
+		return -1*Math.pow(Math.cos((Math.PI/2)*Math.pow(val,a)),Math.pow(Math.PI,b))+1;
+	},
 	
 	linear: function(/* Decimal? */n){
 		// summary: A linear easing function

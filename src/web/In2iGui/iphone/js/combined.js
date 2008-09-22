@@ -5088,6 +5088,7 @@ Object.extend(Element.ClassNames.prototype, Enumerable);
 /*--------------------------------------------------------------------------*/
 
 Element.addMethods();function In2iGui() {
+	this.domLoaded = false;
 	this.overflows = [];
 	this.delegates = [];
 	this.objects = new Hash();
@@ -5101,6 +5102,8 @@ In2iGui.latestPanelIndex=1000;
 In2iGui.latestAlertIndex=1500;
 
 In2iGui.browser = {};
+In2iGui.browser.opera = /opera [56789]|opera\/[56789]/i.test(navigator.userAgent);
+In2iGui.browser.msie = !In2iGui.browser.opera && /MSIE/.test(navigator.userAgent);
 In2iGui.browser.msie7 = navigator.userAgent.indexOf('MSIE 7')!=-1;
 In2iGui.browser.webkit = navigator.userAgent.indexOf('WebKit')!=-1;
 In2iGui.browser.gecko = !In2iGui.browser.webkit && navigator.userAgent.indexOf('Gecko')!=-1;
@@ -5131,6 +5134,7 @@ In2iGui.prototype = {
 				dwr.engine.setErrorHandler(In2iGui.dwrErrorhandler);
 			}
 		}
+		this.domLoaded = true;
 		this.resize();
 		In2iGui.callSuperDelegates(this,'interfaceIsReady');
 	},
@@ -5222,6 +5226,19 @@ In2iGui.prototype = {
 				else obj.hide();
 			}
 		});
+	},
+	getDescendants : function(widget) {
+		var desc = [];
+		var d = widget.getElement().descendants();
+		var self = this;
+		d.each(function(node) {
+			self.objects.values().each(function(obj) {
+				if (obj.getElement()==node) {
+					desc.push(obj);
+				}
+			})
+		});
+		return desc;
 	}
 }
 

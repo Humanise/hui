@@ -36,6 +36,11 @@ div.in2igui_alert div.in2igui_buttons
 	overflow: hidden;
 	height: 1%;
 }
+
+div.in2igui_alert_body
+{
+	height: 1%;
+}
 /*
 body, textarea
 {

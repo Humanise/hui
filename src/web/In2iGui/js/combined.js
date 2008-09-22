@@ -6300,6 +6300,11 @@ N2i.Color = function(color_string) {
 
 
 N2i.ease = {
+	slowFastSlow : function(val) {
+		var a = 1.6;
+		var b = 1.4;
+		return -1*Math.pow(Math.cos((Math.PI/2)*Math.pow(val,a)),Math.pow(Math.PI,b))+1;
+	},
 	
 	linear: function(/* Decimal? */n){
 		// summary: A linear easing function
@@ -7404,6 +7409,7 @@ replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
 
 
 function In2iGui() {
+	this.domLoaded = false;
 	this.overflows = [];
 	this.delegates = [];
 	this.objects = new Hash();
@@ -7417,6 +7423,8 @@ In2iGui.latestPanelIndex=1000;
 In2iGui.latestAlertIndex=1500;
 
 In2iGui.browser = {};
+In2iGui.browser.opera = /opera [56789]|opera\/[56789]/i.test(navigator.userAgent);
+In2iGui.browser.msie = !In2iGui.browser.opera && /MSIE/.test(navigator.userAgent);
 In2iGui.browser.msie7 = navigator.userAgent.indexOf('MSIE 7')!=-1;
 In2iGui.browser.webkit = navigator.userAgent.indexOf('WebKit')!=-1;
 In2iGui.browser.gecko = !In2iGui.browser.webkit && navigator.userAgent.indexOf('Gecko')!=-1;
@@ -7447,6 +7455,7 @@ In2iGui.prototype = {
 				dwr.engine.setErrorHandler(In2iGui.dwrErrorhandler);
 			}
 		}
+		this.domLoaded = true;
 		this.resize();
 		In2iGui.callSuperDelegates(this,'interfaceIsReady');
 	},
@@ -7538,6 +7547,19 @@ In2iGui.prototype = {
 				else obj.hide();
 			}
 		});
+	},
+	getDescendants : function(widget) {
+		var desc = [];
+		var d = widget.getElement().descendants();
+		var self = this;
+		d.each(function(node) {
+			self.objects.values().each(function(obj) {
+				if (obj.getElement()==node) {
+					desc.push(obj);
+				}
+			})
+		});
+		return desc;
 	}
 }
 
@@ -8103,10 +8125,10 @@ In2iGui.Window.prototype = {
 	this.id = id;
 	this.name = name;
 	this.element = $(id);
-	this.inputs = [];
+	//this.inputs = [];
 	this.children = [];
 	this.addBehavior();
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 }
 
 In2iGui.Formula.create = function(name) {
@@ -8128,40 +8150,44 @@ In2iGui.Formula.prototype = {
 		return this.element;
 	},
 	registerInput : function(obj) {
-		this.inputs[this.inputs.length] = obj;
+		alert('Deprecated!');
 	},
 	registerChild : function(obj) {
 		this.children.push(obj);
 	},
 	getValues : function() {
 		var data = {};
-		for (var i=0; i < this.inputs.length; i++) {
-			if (this.inputs[i].options.key) {
-				data[this.inputs[i].options.key] = this.inputs[i].getValue();
-			} else if (this.inputs[i].name) {
-				data[this.inputs[i].name] = this.inputs[i].getValue();
+		var d = In2iGui.get().getDescendants(this);
+		for (var i=0; i < d.length; i++) {
+			if (d[i].options&& d[i].options.key && d[i].getValue) {
+				data[d[i].options.key] = d[i].getValue();
+			} else if (d[i].name && d[i].getValue) {
+				data[d[i].name] = d[i].getValue();
 			}
 		};
 		return data;
 	},
 	setValues : function(values) {
-		for (var i=0; i < this.inputs.length; i++) {
-			var key = this.inputs[i].options.key;
-			if (key && values[key]) {
-				this.inputs[i].setValue(values[key]);
+		var d = In2iGui.get().getDescendants(this);
+		for (var i=0; i < d.length; i++) {
+			if (d[i].options && d[i].options.key) {
+				var key = d[i].options.key;
+				if (key && values[key]) {
+					d[i].setValue(values[key]);
+				}
 			}
 		}
 	},
 	reset : function() {
-		for (var i=0; i < this.inputs.length; i++) {
-			this.inputs[i].reset();
+		var d = In2iGui.get().getDescendants(this);
+		for (var i=0; i < d.length; i++) {
+			if (d[i].reset) d[i].reset();
 		}
 	},
 	addContent : function(node) {
 		this.element.insert(node);
 	},
 	add : function(widget) {
-		widget.parent = this;
 		this.element.insert(widget.getElement());
 	},
 	createGroup : function(options) {
@@ -8179,7 +8205,6 @@ In2iGui.Formula.Group = function(elementOrId,name,options) {
 	this.element = $(elementOrId);
 	this.body = this.element.select('tbody')[0];
 	this.options = N2i.override({above:true},options);
-	this.parent = null;
 	In2iGui.extend(this);
 }
 
@@ -8212,9 +8237,6 @@ In2iGui.Formula.Group.prototype = {
 			this.body.insert(tr);
 		}
 		tr.insert(td);
-		if (this.parent) {
-			this.parent.registerInput(widget);
-		}
 	},
 	createButtons : function(options) {
 		var tr = new Element('tr');
@@ -8297,7 +8319,7 @@ In2iGui.Formula.DateTime = function(elementOrId,name,options) {
 	this.options = options;
 	this.value = null;
 	this.element = $id(elementOrId);
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 	this.addBehavior();
 }
 
@@ -8380,7 +8402,7 @@ In2iGui.Formula.Select = function(elementOrId,name,options) {
 	this.options = options;
 	this.element = $id(elementOrId);
 	this.value = null;
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 	this.refresh();
 }
 
@@ -8437,7 +8459,7 @@ In2iGui.Formula.Radiobuttons = function(id,name,options) {
 	this.radios = [];
 	this.value = options.value;
 	this.defaultValue = this.value;
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 }
 
 In2iGui.Formula.Radiobuttons.prototype = {
@@ -8475,16 +8497,16 @@ In2iGui.Formula.Radiobuttons.prototype = {
 /********************************* Checkboxes ****************************/
 
 In2iGui.Formula.Checkbox = function(id,name,options) {
-	this.element = $id(id);
+	this.element = $(id);
 	this.name = name;
 	this.value = options.value=='true';
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 	this.addBehavior();
 }
 
 In2iGui.Formula.Checkbox.prototype = {
 	addBehavior : function() {
-		var control = $firstClass('check',this.element);
+		var control = this.element.select('div')[0];
 		var self = this;
 		control.onclick = function() {self.click()};
 	},
@@ -8493,7 +8515,7 @@ In2iGui.Formula.Checkbox.prototype = {
 		this.updateUI();
 	},
 	updateUI : function() {
-		N2i.setClass(this.element,'checked',this.value);
+		N2i.setClass(this.element,'in2igui_checkbox_selected',this.value);
 	},
 	setValue : function(value) {
 		this.value = value;
@@ -8509,16 +8531,21 @@ In2iGui.Formula.Checkbox.prototype = {
 
 /********************************* Checkboxes ****************************/
 
-In2iGui.Formula.Checkboxes = function(id,name) {
+In2iGui.Formula.Checkboxes = function(id,name,options) {
+	this.options = options;
 	this.element = $id(id);
 	this.name = name;
 	this.checkboxes = [];
 	this.sources = [];
 	this.values = [];
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 }
 
 In2iGui.Formula.Checkboxes.prototype = {
+	getValue : function() {
+		return this.values;
+	},
+	/** @deprecated */
 	getValues : function() {
 		return this.values;
 	},
@@ -8536,10 +8563,14 @@ In2iGui.Formula.Checkboxes.prototype = {
 		};
 		this.values=newValues;
 	},
-	setValues : function(values) {
+	setValue : function(values) {
 		this.values=values;
 		this.checkValues();
 		this.updateUI();
+	},
+	/** @deprecated */
+	setValues : function(values) {
+		this.setValue(values);
 	},
 	flipValue : function(value) {
 		N2i.flipInArray(this.values,value);
@@ -8576,9 +8607,10 @@ In2iGui.Formula.Checkboxes.Source = function(id,name,options) {
 	this.parent = null;
 	this.options = options;
 	this.checkboxes = [];
-	In2iGui.enableDelegating(this);
-	var self = this;
-	N2i.Event.addLoadListener(function() {self.refresh()});
+	In2iGui.extend(this);
+	this.refresh();
+	//var self = this;
+	//N2i.Event.addLoadListener(function() {self.refresh()});
 }
 
 In2iGui.Formula.Checkboxes.Source.prototype = {
@@ -8593,10 +8625,10 @@ In2iGui.Formula.Checkboxes.Source.prototype = {
 		var items = doc.getElementsByTagName('checkbox');
 		for (var i=0; i < items.length; i++) {
 			var item = items[i];
-			var node = N2i.create('div',{'class':'checkbox'});
+			var node = N2i.create('div',{'class':'in2igui_checkbox'});
 			var label = item.getAttribute('label');
 			var value = item.getAttribute('value');
-			var check = N2i.create('div',{'class':'check'});
+			var check = N2i.create('div');
 			node.appendChild(check);
 			node.appendChild(document.createTextNode(label));
 			this.element.appendChild(node);
@@ -8618,7 +8650,7 @@ In2iGui.Formula.Checkboxes.Source.prototype = {
 	updateUI : function() {
 		for (var i=0; i < this.checkboxes.length; i++) {
 			var item = this.checkboxes[i];
-			N2i.setClass(item.element,'checked',N2i.inArray(this.parent.values,item.value));
+			N2i.setClass(item.element,'in2igui_checkbox_selected',N2i.inArray(this.parent.values,item.value));
 		};
 	},
 	hasValue : function(value) {
@@ -8704,12 +8736,12 @@ In2iGui.Formula.Tokens.prototype = {
 	this.state = options.state;
 	
 	this.source = options.source;
-	this.head = this.element.getElementsByTagName('thead')[0];
-	this.body = this.element.getElementsByTagName('tbody')[0];
+	this.head = this.element.select('thead')[0];
+	this.body = this.element.select('tbody')[0];
 	this.columns = [];
 	this.rows = [];
 	this.selected = [];
-	this.navigation = $class('navigation',this.element)[0];
+	this.navigation = this.element.select('.navigation')[0];
 	this.count = $class('count',this.navigation)[0];
 	this.windowSize = $class('window_size',this.navigation)[0];
 	this.windowNumber = $firstClass('window_number',this.navigation);
@@ -8962,7 +8994,7 @@ In2iGui.List.prototype.buildNavigation = function(doc) {
 
 In2iGui.List.prototype.setObjects = function(objects) {
 	this.selected = [];
-	this.body.innerHTML='';
+	this.body.update();
 	this.rows = [];
 	for (var i=0; i < objects.length; i++) {
 		var row = new Element('tr');
@@ -8989,7 +9021,7 @@ In2iGui.List.prototype.setObjects = function(objects) {
 			}
 			row.insert(cell);
 		};
-		this.body.appendChild(row);
+		this.body.insert(row);
 		this.addRowBehavior(row,i);
 		this.rows.push(obj);
 	};
@@ -9376,7 +9408,8 @@ In2iGui.ObjectList.Select.prototype = {
  * An alert that can be
  * @constructor
  */
-In2iGui.Alert = function(element,name) {
+In2iGui.Alert = function(element,name,options) {
+	this.options = N2i.override({modal:false},options);
 	this.element = $id(element);
 	this.name = name;
 	this.body = $firstClass('in2igui_alert_body',this.element);
@@ -9392,8 +9425,7 @@ In2iGui.Alert = function(element,name) {
  * @static
  */
 In2iGui.Alert.create = function(name,options) {
-	var opts = {title:'',text:'',emotion:null,variant:null,title:null};
-	N2i.override(opts,options);
+	options = N2i.override({title:'',text:'',emotion:null,variant:null,title:null},options);
 	
 	var element = N2i.create('div',{'class':'in2igui_alert'});
 	var body = N2i.create('div',{'class':'in2igui_alert_body'});
@@ -9401,18 +9433,18 @@ In2iGui.Alert.create = function(name,options) {
 	var content = N2i.create('div',{'class':'in2igui_alert_content'});
 	body.appendChild(content);
 	document.body.appendChild(element);
-	var obj = new In2iGui.Alert(element,name);
-	if (opts.variant) {
-		obj.setVariant(opts.variant);
+	var obj = new In2iGui.Alert(element,name,options);
+	if (options.variant) {
+		obj.setVariant(options.variant);
 	}
-	if (opts.emotion) {
-		obj.setEmotion(opts.emotion);
+	if (options.emotion) {
+		obj.setEmotion(options.emotion);
 	}
-	if (opts.title) {
-		obj.setTitle(opts.title);
+	if (options.title) {
+		obj.setTitle(options.title);
 	}
-	if (opts.text) {
-		obj.setText(opts.text);
+	if (options.text) {
+		obj.setText(options.text);
 	}
 	
 	return obj;
@@ -9420,7 +9452,12 @@ In2iGui.Alert.create = function(name,options) {
 
 In2iGui.Alert.prototype = {
 	show : function() {
-		this.element.style.zIndex=In2iGui.nextAlertIndex();
+		var zIndex = In2iGui.nextAlertIndex();
+		if (this.options.modal) {
+			In2iGui.showCurtain(this,zIndex);
+			zIndex++;
+		}
+		this.element.style.zIndex=zIndex;
 		this.element.style.display='block';
 		this.element.style.top=(N2i.Window.getScrollTop()+100)+'px';
 		$ani(this.element,'opacity',1,200);
@@ -9429,6 +9466,7 @@ In2iGui.Alert.prototype = {
 	hide : function() {
 		$ani(this.element,'opacity',0,200,{hideOnComplete:true});
 		$ani(this.element,'margin-top','0px',200);
+		In2iGui.hideCurtain(this);
 	},
 	setTitle : function(text) {
 		if (!this.title) {
@@ -9582,7 +9620,7 @@ In2iGui.Selection.prototype = {
 			if (item) return item;
 		};
 	},
-	changeValue : function(value) {
+	setValue : function(value) {
 		this.value = value;
 		for (var i=0; i < this.items.length; i++) {
 			var item = this.items[i];
@@ -9592,6 +9630,9 @@ In2iGui.Selection.prototype = {
 			var source = this.sources[i];
 			source.updateUI();
 		};
+	},
+	changeValue : function(value) {
+		this.setValue(value);
 		In2iGui.callDelegates(this,'selectorSelectionChanged');
 		In2iGui.callDelegates(this,'selectionChanged',this.value);
 	},
@@ -9605,7 +9646,7 @@ In2iGui.Selection.prototype = {
 		this.items.push({id:id,title:title,icon:icon,badge:badge,element:element,value:value,kind:kind});
 		var self = this;
 		element.onclick = function() {
-			self.itemWasClicked(this);
+			self.itemWasClicked(value);
 		}
 		element.ondblclick = function() {
 			self.itemWasDoubleClicked();
@@ -9617,32 +9658,31 @@ In2iGui.Selection.prototype = {
 		N2i.addListener(element,'mouseout',In2iGui.dropOutListener);
 	},
 	
-	setItems : function(items) {
+	setObjects : function(items) {
 		var self = this;
 		items.each(function(item) {
 			self.items.push(item);
-			var node = new Element('div',{'class':'item'});
-			node.in2iGuiValue = item.value;
+			var node = new Element('div',{'class':'in2igui_selection_item'});
 			item.element = node;
 			self.element.insert(node);
+			var inner = new Element('span').update(item.title);
 			if (item.icon) {
-				var img = new Element('div',{'class':'icon'}).setStyle({'backgroundImage' : 'url('+In2iGui.getIconUrl(item.icon,1)+')'});
-				node.insert(img);
+				inner.setStyle({'backgroundImage' : 'url('+In2iGui.getIconUrl(item.icon,1)+')'}).addClassName('in2igui_icon');
 			}
-			node.insert(item.title);
+			node.insert(inner);
 			node.observe('click',function() {
-				self.itemWasClicked(node);
+				self.changeValue(item.value);
 			});
 			node.observe('dblclick',function() {
-				self.itemWasDoubleClicked(node);
+				self.itemWasDoubleClicked();
 				return false;
 			});
 		});
 	},
 	
 	// Events
-	itemWasClicked : function(item) {
-		this.changeValue(item.in2iGuiValue);
+	itemWasClicked : function(value) {
+		this.changeValue(value);
 	},
 	itemWasDoubleClicked : function() {
 		In2iGui.callDelegates(this,'selectorObjectWasOpened');
@@ -9652,7 +9692,7 @@ In2iGui.Selection.prototype = {
 /******************************** Source ****************************/
 
 In2iGui.Selection.Source = function(id,name,options) {
-	this.element = $id(id);
+	this.element = $(id);
 	this.name = name;
 	this.selection = null;
 	this.options = options;
@@ -9662,69 +9702,64 @@ In2iGui.Selection.Source = function(id,name,options) {
 	N2i.Event.addLoadListener(function() {self.refresh()});
 }
 
-In2iGui.Selection.Source.prototype.refresh = function() {
-	var self = this;
-	$get(this.options.url,{onSuccess:function(t) {self.updateSource(t.responseXML)}});
+In2iGui.Selection.Source.prototype = {
+	refresh : function() {
+		var self = this;
+		new Ajax.Request(this.options.url, {onSuccess:function(t) {self.updateSource(t.responseXML)}});
+	},
+	updateSource : function(doc) {
+		this.items = [];
+		N2i.removeChildren(this.element);
+		var self = this;
+		var items = doc.getElementsByTagName('item');
+		for (var i=0; i < items.length; i++) {
+			var item = items[i];
+			var node = new Element('div',{'class':'in2igui_selection_item'});
+			var inner = new Element('span');
+			var title = item.getAttribute('title');
+			var badge = item.getAttribute('badge');
+			var icon = item.getAttribute('icon');
+			var value = item.getAttribute('value');
+			var kind = item.getAttribute('kind');
+			if (icon) {
+				inner.setStyle({'backgroundImage' : 'url('+In2iGui.getIconUrl(icon,1)+')'}).addClassName('in2igui_icon');
+			}
+			node.insert(inner.insert(title));
+			this.element.insert(node);
+			node.onclick = function() {
+				self.itemWasClicked(value);
+			}
+			node.ondblclick = function() {
+				self.itemWasDoubleClicked();
+				return false;
+			}
+			var info = {title:title,icon:icon,badge:badge,kind:kind,element:node,value:value};
+			node.dragDropInfo = info;
+			this.items.push(info);
+		};
+		this.updateUI();
+	},
+	itemWasClicked : function(value) {
+		this.selection.changeValue(value);
+	},
+	itemWasDoubleClicked : function(node) {
+		this.selection.itemWasDoubleClicked();
+	},
+	getSelection : function() {
+		for (var i=0; i < this.items.length; i++) {
+			if (this.items[i].value == this.selection.value) {
+				return this.items[i];
+			}
+		};
+		return null;
+	},
+	updateUI : function() {
+		for (var i=0; i < this.items.length; i++) {
+			var item = this.items[i];
+			N2i.setClass(item.element,'selected',(item.value==this.selection.value));
+		};
+	}
 }
-
-In2iGui.Selection.Source.prototype.updateSource = function(doc) {
-	this.items = [];
-	N2i.removeChildren(this.element);
-	var self = this;
-	var items = doc.getElementsByTagName('item');
-	for (var i=0; i < items.length; i++) {
-		var item = items[i];
-		var node = N2i.create('div',{'class':'item'});
-		var title = item.getAttribute('title');
-		var badge = item.getAttribute('badge');
-		var icon = item.getAttribute('icon');
-		var value = item.getAttribute('value');
-		var kind = item.getAttribute('kind');
-		if (icon) {
-			var img = N2i.create('div',{'class':'icon'},{'backgroundImage' : 'url('+In2iGui.getIconUrl(icon,1)+')'});
-			node.appendChild(img);
-		}
-		node.appendChild(document.createTextNode(title));
-		this.element.appendChild(node);
-		node.in2iGuiValue = value;
-		node.onclick = function() {
-			self.itemWasClicked(this);
-		}
-		node.ondblclick = function() {
-			self.itemWasDoubleClicked(this);
-			return false;
-		}
-		var info = {title:title,icon:icon,badge:badge,kind:kind,element:node,value:value};
-		node.dragDropInfo = info;
-		this.items.push(info);
-	};
-	this.updateUI();
-}
-
-In2iGui.Selection.Source.prototype.itemWasClicked = function(node) {
-	this.selection.changeValue(node.in2iGuiValue);
-}
-
-In2iGui.Selection.Source.prototype.itemWasDoubleClicked = function(node) {
-	this.selection.itemWasDoubleClicked();
-}
-
-In2iGui.Selection.Source.prototype.getSelection = function() {
-	for (var i=0; i < this.items.length; i++) {
-		if (this.items[i].value == this.selection.value) {
-			return this.items[i];
-		}
-	};
-	return null;
-}
-
-In2iGui.Selection.Source.prototype.updateUI = function() {
-	for (var i=0; i < this.items.length; i++) {
-		var item = this.items[i];
-		N2i.setClass(item.element,'selected',(item.value==this.selection.value));
-	};
-}
-
 /* EOF */
 /** @constructor */
 In2iGui.Toolbar = function(element,name,options) {
@@ -10611,7 +10646,7 @@ In2iGui.ImageViewer.prototype = {
 				$ani(this.viewer,'scrollLeft',this.index*(this.width+10),Math.min(num*300,2000),{ease:N2i.Animation.slowFastSlow});				
 			} else {
 				var end = this.index==0 || this.index==this.images.length-1;
-				var ease = (user ? (end ? N2i.Animation.bounce : N2i.Animation.elastic) : N2i.ease.backInOut);
+				var ease = (end ? N2i.Animation.bounce : N2i.Animation.elastic);
 				$ani(this.viewer,'scrollLeft',this.index*(this.width+10),(end ? 800 : 1200),{ease:ease});
 			}
 		} else {
@@ -10724,13 +10759,16 @@ In2iGui.ImageViewer.prototype = {
 
 /* EOF */
 In2iGui.Picker = function(element,name,options) {
-	this.options = N2i.override({itemWidth:100,itemHeight:150},options);
-	this.element = $id(element);
+	this.options = N2i.override({itemWidth:100,itemHeight:150,itemsVisible:3,valueProperty:'value'},options);
+	this.element = $(element);
 	this.name = name;
-	this.container = $firstClass('in2igui_picker_container',this.element);
-	this.title = $firstClass('in2igui_picker_title',this.element);
+	this.container = this.element.select('.in2igui_picker_container')[0];
+	this.content = this.element.select('.in2igui_picker_content')[0];
+	this.title = this.element.select('in2igui_picker_title')[0];
 	this.objects = [];
 	this.selected = null;
+	this.value = null;
+	this.addBehavior();
 	In2iGui.extend(this);
 }
 
@@ -10740,7 +10778,7 @@ In2iGui.Picker.create = function(name,options) {
 	element.update('<div class="in2igui_picker_top"><div><div></div></div></div>'+
 	'<div class="in2igui_picker_middle"><div class="in2igui_picker_middle">'+
 	(options.title ? '<div class="in2igui_picker_title">'+options.title+'</div>' : '')+
-	'<div class="in2igui_picker_container"></div>'+
+	'<div class="in2igui_picker_container"><div class="in2igui_picker_content"></div></div>'+
 	'</div></div>'+
 	'<div class="in2igui_picker_bottom"><div><div></div></div></div>');
 	if (options.shadow==true) {
@@ -10750,44 +10788,86 @@ In2iGui.Picker.create = function(name,options) {
 }
 
 In2iGui.Picker.prototype = {
+	addBehavior : function() {
+		var self = this;
+		this.content.observe('mousedown',function(e) {
+			self.startDrag(e);
+			return false;
+		});
+	},
 	setObjects : function(objects) {
-		this.objects = objects;
+		this.selected = null;
+		this.objects = objects || [];
 		this.updateUI();
 	},
-	getSelection : function() {
-		return this.selected==null ? null : this.objects[this.selected];
+	setValue : function(value) {
+		this.value = value;
+		this.updateSelection();
 	},
 	reset : function() {
-		this.selected = null;
+		this.value = null;
 		this.updateSelection();
 	},
 	updateUI : function() {
-		this.container.style.width=(this.objects.length*(this.options.itemWidth+14))+'px';
+		var self = this;
+		this.content.update();
+		this.container.scrollLeft=0;
+		this.container.setStyle({width:this.options.itemsVisible*(this.options.itemWidth+14)+'px'});
 		this.container.style.height=(this.options.itemHeight+10)+'px';
-		for (var i=0; i < this.objects.length; i++) {
+		this.content.style.width=(this.objects.length*(this.options.itemWidth+14))+'px';
+		this.content.style.height=(this.options.itemHeight+10)+'px';
+		this.objects.each(function(object,i) {
 			var item = new Element('div',{'class':'in2igui_picker_item'});
+			if (self.value!=null && object[self.options.valueProperty]==self.value) item.addClassName('in2igui_picker_item_selected');
 			item.update(
 				'<div class="in2igui_picker_item_middle"><div class="in2igui_picker_item_middle">'+
-				'<div style="width:'+this.options.itemWidth+'px;height:'+this.options.itemHeight+'px;background-image:url(\''+this.objects[i].image+'\')"></div>'+
+				'<div style="width:'+self.options.itemWidth+'px;height:'+self.options.itemHeight+'px;background-image:url(\''+object.image+'\')"></div>'+
 				'</div></div>'+
 				'<div class="in2igui_picker_item_bottom"><div><div></div></div></div>'
 			);
-			item.in2iguiIndex = i;
-			var self = this;
-			item.onclick = function() {self.selectionChanged(this.in2iguiIndex)};
-			this.container.appendChild(item);
-		};
+			item.observe('mouseup',function() {self.selectionChanged(object[self.options.valueProperty])});
+			self.content.insert(item);			
+		});
 	},
 	updateSelection : function() {
-		var children = this.container.childNodes;
+		var children = this.content.childNodes;
 		for (var i=0; i < children.length; i++) {
-			N2i.setClass(children[i],'in2igui_picker_item_selected',i==this.selected);
+			N2i.setClass(children[i],'in2igui_picker_item_selected',this.value!=null && this.objects[i][this.options.valueProperty]==this.value);
 		};
 	},
-	selectionChanged : function(index) {
-		this.selected = index;
+	selectionChanged : function(value) {
+		if (this.dragging) return;
+		if (this.value==value) return;
+		this.value = value;
 		this.updateSelection();
-		In2iGui.callDelegates(this,'selectionChanged');
+		In2iGui.callDelegates(this,'selectionChanged',value);
+	},
+	
+	// Dragging
+	startDrag : function(e) {
+		Event.stop(e);
+		var self = this;
+		this.dragX = Event.pointerX(e);
+		this.dragScroll = this.container.scrollLeft;
+		In2iGui.Picker.mousemove = function(e) {self.drag(e);return false;}
+		In2iGui.Picker.mouseup = In2iGui.Picker.mousedown = function(e) {self.endDrag(e);return false;}
+		window.document.observe('mousemove',In2iGui.Picker.mousemove);
+		window.document.observe('mouseup',In2iGui.Picker.mouseup);
+		window.document.observe('mousedown',In2iGui.Picker.mouseup);
+	},
+	drag : function(e) {
+		this.dragging = true;
+		Event.stop(e);
+		this.container.scrollLeft=this.dragX-e.pointerX()+this.dragScroll;
+	},
+	endDrag : function(e) {
+		this.dragging = false;
+		Event.stop(e);
+		window.document.stopObserving('mousemove',In2iGui.Picker.mousemove);
+		window.document.stopObserving('mouseup',In2iGui.Picker.mouseup);
+		window.document.stopObserving('mousedown',In2iGui.Picker.mouseup);
+		var size = (this.options.itemWidth+14);
+		$ani(this.container,'scrollLeft',Math.round(this.container.scrollLeft/size)*size,500,{ease:N2i.ease.bounceOut});
 	}
 }
 
@@ -10873,7 +10953,7 @@ In2iGui.Editor.prototype = {
 					var part = new handler.controller(element,row,column,partIndex);
 					part.type=match[1];
 					element.observe('click',function() {
-						//self.editPart(part);
+						self.editPart(part);
 					});
 					element.observe('mouseover',function(e) {
 						self.hoverPart(part);
@@ -10915,6 +10995,7 @@ In2iGui.Editor.prototype = {
 	},
 	
 	contextColumn : function(column,rowIndex,columnIndex,e) {
+		if (!this.active || this.activePart) return;
 		if (!this.columnMenu) {
 			var menu = In2iGui.Menu.create('In2iGuiEditorColumnMenu');
 			menu.addItem('Slet kolonne','removeColumn');
@@ -11029,6 +11110,7 @@ In2iGui.Editor.prototype = {
 	editPart : function(part) {
 		if (!this.active || this.activePart) return;
 		if (this.activePart) this.activePart.deactivate();
+		this.hoveredPart.element.removeClassName('in2igui_editor_part_hover');
 		this.activePart = part;
 		this.showPartEditControls();
 		part.element.addClassName('in2igui_editor_part_active');
@@ -11382,6 +11464,7 @@ In2iGui.Overlay.prototype = {
 
 /* EOF */
 In2iGui.Upload = function(element,name,options) {
+	this.options = N2i.override({parameters:[]},options);
 	this.element = $(element);
 	this.name = name;
 	this.file = $class('file',this.element)[0];
@@ -11396,7 +11479,8 @@ In2iGui.Upload.create = function(name,options) {
 	var element = new Element('div',{'class':'in2igui_upload'});
 	var form = new Element('form',{'action':options.action, 'method':'post', 'enctype':'multipart/form-data','encoding':'multipart/form-data','target':'upload'});
 	for (var i=0; i < options.parameters.length; i++) {
-		var hidden = new Element('input',{'type':'hidden','name':options.parameters[i].name,'value':options.parameters[i].value});
+		var hidden = new Element('input',{'type':'hidden','name':options.parameters[i].name});
+		hidden.setValue(options.parameters[i].value);
 		form.insert(hidden);
 	};
 	var file = N2i.create('input',{'type':'file','class':'file','name':options.name});
@@ -11419,6 +11503,11 @@ In2iGui.Upload.prototype = {
 		this.element.appendChild(this.progressBar.getElement());
 	},
 	submit : function() {
+		// IE: set value of parms again since they disappear
+		var p = this.options.parameters;
+		for (var i=0; i < p.length; i++) {
+			this.form[p[i].name].value=p[i].value;
+		};
 		this.form.submit();
 		In2iGui.callDelegates(this,'uploadDidSubmit');
 	},
@@ -11446,27 +11535,45 @@ In2iGui.Upload.prototype = {
 
 
 In2iGui.MultiUpload = function(element,name,options) {
-	this.options = {url:''};
-	N2i.override(this.options,options);
+	this.options = N2i.override({url:'',parameters:{}},options);
 	this.element = $(element);
 	this.itemContainer = this.element.select('.in2igui_multiupload_items')[0];
 
 	this.name = name;
 	this.items = [];
 	this.busy = false;
+	this.loaded = false;
 
 	this.button = this.element.select('.in2igui_button')[0];
 	In2iGui.extend(this);
 	this.addBehavior();
 }
 
+In2iGui.MultiUpload.create = function(name,options) {
+	var element = new Element('div',{'class':'in2igui_multiupload'});
+	element.update('<div class="in2igui_buttons">'+
+		'<a href="javascript:void(0)" class="in2igui_button"><span><span>Vælg billeder...</span></span></a>'+
+		'</div>'+
+		'<div class="in2igui_multiupload_items"><xsl:comment/></div>'+
+	'</div>');
+	return new In2iGui.MultiUpload(element,name,options);
+}
+
 In2iGui.MultiUpload.prototype = {
 	addBehavior : function() {
 		var self = this;
 		this.button.observe('click',function() {
+			if (!self.loaded) {
+				N2i.log('Not loaded yet!');
+				return;
+			}
 			self.loader.selectFiles();
 		});
-		document.observe('dom:loaded', function() {self.createLoader()});
+		if (In2iGui.get().domLoaded) {
+			this.createLoader();			
+		} else {
+			document.observe('dom:loaded', function() {self.createLoader()});
+		}
 	},
 	createLoader : function() {
 		var loc = new String(document.location);
@@ -11483,8 +11590,9 @@ In2iGui.MultiUpload.prototype = {
 			file_size_limit : "20480",
 			file_upload_limit : 100,
 			debug : true,
-			
-			swfupload_loaded_handler : function() {self.loaded()},
+			post_params : this.options.parameters,
+
+			swfupload_loaded_handler : function() {self.flashLoaded()},
 			file_queued_handler : function(file) {self.fileQueued(file)},
 			file_queue_error_handler : function(file, error, message) {self.fileQueueError(file, error, message)},
 			file_dialog_complete_handler : function() {self.fileDialogComplete()},
@@ -11496,9 +11604,8 @@ In2iGui.MultiUpload.prototype = {
 			queue_complete_handler : function() {self.queueComplete()},
 		
 			// SWFObject settings
-			swfupload_pre_load_handler : function() {},
-			swfupload_load_failed_handler : function() {}
-
+			swfupload_pre_load_handler : function() {alert('swfupload_pre_load_handler!')},
+			swfupload_load_failed_handler : function() {alert('swfupload_load_failed_handler!')}
 		});
 	},
 	startNextUpload : function() {
@@ -11513,8 +11620,8 @@ In2iGui.MultiUpload.prototype = {
 	
 	//////////////////// Events //////////////
 	
-	loaded : function() {
-		
+	flashLoaded : function() {
+		this.loaded = true;
 	},
 	fileQueued : function(file) {
 		var item = new In2iGui.MultiUpload.Item(file);
@@ -11551,7 +11658,7 @@ In2iGui.MultiUpload.prototype = {
 		In2iGui.callDelegates(this,'uploadDidComplete',file);
 	},
 	queueComplete : function() {
-		
+		In2iGui.callDelegates(this,'uploadDidCompleteQueue',file);
 	}
 }
 
@@ -12059,17 +12166,21 @@ In2iGui.Columns.create = function(name,options) {
 In2iGui.Columns.prototype = {
 	addToColumn : function(index,widget) {
 		var c = this.ensureColumn(index);
-		N2i.log(c);
 		c.insert(widget.getElement());
+	},
+	setColumnStyle : function(index,style) {
+		var c = this.ensureColumn(index);
+		c.setStyle(style);
+	},
+	setColumnWidth : function(index,width) {
+		var c = this.ensureColumn(index);
+		c.setStyle({width:width+'px'});
 	},
 	ensureColumn : function(index) {
 		var children = this.body.childElements();
-		N2i.log(children.length-1);
 		for (var i=children.length-1;i<index;i++) {
 			this.body.insert(new Element('td',{'class':'in2igui_columns_column'}));
-			N2i.log('insert');
 		}
-		N2i.log(this.body);
 		return this.body.childElements()[index];
 	}
 }

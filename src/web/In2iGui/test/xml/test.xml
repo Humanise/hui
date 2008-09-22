@@ -16,6 +16,8 @@
 						<item icon="common/person" title="Brugere" value="user"/>
 						<item icon="common/folder" title="Database" value="database"/>
 						<item icon="common/person" title="Alle objekter" value="object"/>
+						<title>Hey</title>
+						<source url="selection_source.xml"/>
 					</selection>
 				</sidebar>
 				<content>

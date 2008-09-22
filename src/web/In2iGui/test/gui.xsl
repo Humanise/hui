@@ -88,7 +88,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 </head>
 <body class="in2igui">
 	<xsl:choose>
-		<xsl:when test="@pad"><div style="padding: {@pad}px;" class="fullheight"><xsl:apply-templates/></div></xsl:when>
+		<xsl:when test="@pad"><div style="padding: {@pad}px;"><xsl:apply-templates/></div></xsl:when>
 		<xsl:otherwise><xsl:apply-templates/></xsl:otherwise>
 	</xsl:choose>
 </body>

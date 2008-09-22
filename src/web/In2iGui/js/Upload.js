@@ -1,4 +1,5 @@
 In2iGui.Upload = function(element,name,options) {
+	this.options = N2i.override({parameters:[]},options);
 	this.element = $(element);
 	this.name = name;
 	this.file = $class('file',this.element)[0];
@@ -13,7 +14,8 @@ In2iGui.Upload.create = function(name,options) {
 	var element = new Element('div',{'class':'in2igui_upload'});
 	var form = new Element('form',{'action':options.action, 'method':'post', 'enctype':'multipart/form-data','encoding':'multipart/form-data','target':'upload'});
 	for (var i=0; i < options.parameters.length; i++) {
-		var hidden = new Element('input',{'type':'hidden','name':options.parameters[i].name,'value':options.parameters[i].value});
+		var hidden = new Element('input',{'type':'hidden','name':options.parameters[i].name});
+		hidden.setValue(options.parameters[i].value);
 		form.insert(hidden);
 	};
 	var file = N2i.create('input',{'type':'file','class':'file','name':options.name});
@@ -36,6 +38,11 @@ In2iGui.Upload.prototype = {
 		this.element.appendChild(this.progressBar.getElement());
 	},
 	submit : function() {
+		// IE: set value of parms again since they disappear
+		var p = this.options.parameters;
+		for (var i=0; i < p.length; i++) {
+			this.form[p[i].name].value=p[i].value;
+		};
 		this.form.submit();
 		In2iGui.callDelegates(this,'uploadDidSubmit');
 	},
@@ -63,27 +70,45 @@ In2iGui.Upload.prototype = {
 
 
 In2iGui.MultiUpload = function(element,name,options) {
-	this.options = {url:''};
-	N2i.override(this.options,options);
+	this.options = N2i.override({url:'',parameters:{}},options);
 	this.element = $(element);
 	this.itemContainer = this.element.select('.in2igui_multiupload_items')[0];
 
 	this.name = name;
 	this.items = [];
 	this.busy = false;
+	this.loaded = false;
 
 	this.button = this.element.select('.in2igui_button')[0];
 	In2iGui.extend(this);
 	this.addBehavior();
 }
 
+In2iGui.MultiUpload.create = function(name,options) {
+	var element = new Element('div',{'class':'in2igui_multiupload'});
+	element.update('<div class="in2igui_buttons">'+
+		'<a href="javascript:void(0)" class="in2igui_button"><span><span>Vælg billeder...</span></span></a>'+
+		'</div>'+
+		'<div class="in2igui_multiupload_items"><xsl:comment/></div>'+
+	'</div>');
+	return new In2iGui.MultiUpload(element,name,options);
+}
+
 In2iGui.MultiUpload.prototype = {
 	addBehavior : function() {
 		var self = this;
 		this.button.observe('click',function() {
+			if (!self.loaded) {
+				N2i.log('Not loaded yet!');
+				return;
+			}
 			self.loader.selectFiles();
 		});
-		document.observe('dom:loaded', function() {self.createLoader()});
+		if (In2iGui.get().domLoaded) {
+			this.createLoader();			
+		} else {
+			document.observe('dom:loaded', function() {self.createLoader()});
+		}
 	},
 	createLoader : function() {
 		var loc = new String(document.location);
@@ -100,8 +125,9 @@ In2iGui.MultiUpload.prototype = {
 			file_size_limit : "20480",
 			file_upload_limit : 100,
 			debug : true,
-			
-			swfupload_loaded_handler : function() {self.loaded()},
+			post_params : this.options.parameters,
+
+			swfupload_loaded_handler : function() {self.flashLoaded()},
 			file_queued_handler : function(file) {self.fileQueued(file)},
 			file_queue_error_handler : function(file, error, message) {self.fileQueueError(file, error, message)},
 			file_dialog_complete_handler : function() {self.fileDialogComplete()},
@@ -113,9 +139,8 @@ In2iGui.MultiUpload.prototype = {
 			queue_complete_handler : function() {self.queueComplete()},
 		
 			// SWFObject settings
-			swfupload_pre_load_handler : function() {},
-			swfupload_load_failed_handler : function() {}
-
+			swfupload_pre_load_handler : function() {alert('swfupload_pre_load_handler!')},
+			swfupload_load_failed_handler : function() {alert('swfupload_load_failed_handler!')}
 		});
 	},
 	startNextUpload : function() {
@@ -130,8 +155,8 @@ In2iGui.MultiUpload.prototype = {
 	
 	//////////////////// Events //////////////
 	
-	loaded : function() {
-		
+	flashLoaded : function() {
+		this.loaded = true;
 	},
 	fileQueued : function(file) {
 		var item = new In2iGui.MultiUpload.Item(file);
@@ -168,7 +193,7 @@ In2iGui.MultiUpload.prototype = {
 		In2iGui.callDelegates(this,'uploadDidComplete',file);
 	},
 	queueComplete : function() {
-		
+		In2iGui.callDelegates(this,'uploadDidCompleteQueue',file);
 	}
 }
 

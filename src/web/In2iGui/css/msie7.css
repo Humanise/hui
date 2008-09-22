@@ -11,6 +11,11 @@ td.view_toolbar
 	height: 58px;
 }
 
+table.in2igui_view
+{
+	height: auto;
+}
+
 table.in2igui_calendar_weekview div.in2igui_calendar_event
 {
 	width: 17.8%;
@@ -19,4 +24,19 @@ table.in2igui_calendar_weekview div.in2igui_calendar_event
 div.in2igui_toolbar_icon div.in2igui_icon
 {
 	margin: 0px;
+}
+
+div.in2igui_window_content
+{
+	height: 1%;
+}
+
+.in2igui_picker_item_selected, .in2igui_picker_item_selected:hover
+{
+	background-color: #3875D7;
+}
+
+div.in2igui_box_body
+{
+	height: 1%;
 }

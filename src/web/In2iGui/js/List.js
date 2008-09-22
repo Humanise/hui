@@ -4,12 +4,12 @@ In2iGui.List = function(element,name,options) {
 	this.state = options.state;
 	
 	this.source = options.source;
-	this.head = this.element.getElementsByTagName('thead')[0];
-	this.body = this.element.getElementsByTagName('tbody')[0];
+	this.head = this.element.select('thead')[0];
+	this.body = this.element.select('tbody')[0];
 	this.columns = [];
 	this.rows = [];
 	this.selected = [];
-	this.navigation = $class('navigation',this.element)[0];
+	this.navigation = this.element.select('.navigation')[0];
 	this.count = $class('count',this.navigation)[0];
 	this.windowSize = $class('window_size',this.navigation)[0];
 	this.windowNumber = $firstClass('window_number',this.navigation);
@@ -262,7 +262,7 @@ In2iGui.List.prototype.buildNavigation = function(doc) {
 
 In2iGui.List.prototype.setObjects = function(objects) {
 	this.selected = [];
-	this.body.innerHTML='';
+	this.body.update();
 	this.rows = [];
 	for (var i=0; i < objects.length; i++) {
 		var row = new Element('tr');
@@ -289,7 +289,7 @@ In2iGui.List.prototype.setObjects = function(objects) {
 			}
 			row.insert(cell);
 		};
-		this.body.appendChild(row);
+		this.body.insert(row);
 		this.addRowBehavior(row,i);
 		this.rows.push(obj);
 	};

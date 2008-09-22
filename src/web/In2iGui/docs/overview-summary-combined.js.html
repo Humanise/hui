@@ -6696,6 +6696,11 @@ N2i.Color = <span class="reserved">function</span>(color_string) {
 
 
 N2i.ease = {
+	slowFastSlow : <span class="reserved">function</span>(val) {
+		var a = 1.6;
+		var b = 1.4;
+		<span class="reserved">return</span> -1*Math.pow(Math.cos((Math.PI/2)*Math.pow(val,a)),Math.pow(Math.PI,b))+1;
+	},
 	
 	linear: <span class="reserved">function</span>(<span class="comment">/* Decimal? */</span>n){
 		<span class="comment">// summary: A linear easing function</span>
@@ -7800,6 +7805,7 @@ replace(/(?:^|:|,)(?:\s*\[)+/g, '</span><span class="literal">'))) {
 
 
 function In2iGui() {
+	this.domLoaded = false;
 	this.overflows = [];
 	this.delegates = [];
 	this.objects = new Hash();
@@ -7813,6 +7819,8 @@ In2iGui.latestPanelIndex=1000;
 In2iGui.latestAlertIndex=1500;
 
 In2iGui.browser = {};
+In2iGui.browser.opera = /opera [56789]|opera\/[56789]/i.test(navigator.userAgent);
+In2iGui.browser.msie = !In2iGui.browser.opera &amp;&amp; /MSIE/.test(navigator.userAgent);
 In2iGui.browser.msie7 = navigator.userAgent.indexOf('</span>MSIE 7<span class="literal">')!=-1;
 In2iGui.browser.webkit = navigator.userAgent.indexOf('</span>WebKit<span class="literal">')!=-1;
 In2iGui.browser.gecko = !In2iGui.browser.webkit &amp;&amp; navigator.userAgent.indexOf('</span>Gecko<span class="literal">')!=-1;
@@ -7843,6 +7851,7 @@ In2iGui.prototype = {
 				dwr.engine.setErrorHandler(In2iGui.dwrErrorhandler);
 			}
 		}
+		this.domLoaded = true;
 		this.resize();
 		In2iGui.callSuperDelegates(this,'</span>interfaceIsReady<span class="literal">');
 	},
@@ -7934,6 +7943,19 @@ In2iGui.prototype = {
 				else obj.hide();
 			}
 		});
+	},
+	getDescendants : function(widget) {
+		var desc = [];
+		var d = widget.getElement().descendants();
+		var self = this;
+		d.each(function(node) {
+			self.objects.values().each(function(obj) {
+				if (obj.getElement()==node) {
+					desc.push(obj);
+				}
+			})
+		});
+		return desc;
 	}
 }
 
@@ -8499,10 +8521,10 @@ In2iGui.Window.prototype = {
 	this.id = id;
 	this.name = name;
 	this.element = $(id);
-	this.inputs = [];
+	//this.inputs = [];
 	this.children = [];
 	this.addBehavior();
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 }
 
 In2iGui.Formula.create = function(name) {
@@ -8524,40 +8546,44 @@ In2iGui.Formula.prototype = {
 		return this.element;
 	},
 	registerInput : function(obj) {
-		this.inputs[this.inputs.length] = obj;
+		alert('</span>Deprecated!<span class="literal">');
 	},
 	registerChild : function(obj) {
 		this.children.push(obj);
 	},
 	getValues : function() {
 		var data = {};
-		for (var i=0; i &lt; this.inputs.length; i++) {
-			if (this.inputs[i].options.key) {
-				data[this.inputs[i].options.key] = this.inputs[i].getValue();
-			} else if (this.inputs[i].name) {
-				data[this.inputs[i].name] = this.inputs[i].getValue();
+		var d = In2iGui.get().getDescendants(this);
+		for (var i=0; i &lt; d.length; i++) {
+			if (d[i].options&amp;&amp; d[i].options.key &amp;&amp; d[i].getValue) {
+				data[d[i].options.key] = d[i].getValue();
+			} else if (d[i].name &amp;&amp; d[i].getValue) {
+				data[d[i].name] = d[i].getValue();
 			}
 		};
 		return data;
 	},
 	setValues : function(values) {
-		for (var i=0; i &lt; this.inputs.length; i++) {
-			var key = this.inputs[i].options.key;
-			if (key &amp;&amp; values[key]) {
-				this.inputs[i].setValue(values[key]);
+		var d = In2iGui.get().getDescendants(this);
+		for (var i=0; i &lt; d.length; i++) {
+			if (d[i].options &amp;&amp; d[i].options.key) {
+				var key = d[i].options.key;
+				if (key &amp;&amp; values[key]) {
+					d[i].setValue(values[key]);
+				}
 			}
 		}
 	},
 	reset : function() {
-		for (var i=0; i &lt; this.inputs.length; i++) {
-			this.inputs[i].reset();
+		var d = In2iGui.get().getDescendants(this);
+		for (var i=0; i &lt; d.length; i++) {
+			if (d[i].reset) d[i].reset();
 		}
 	},
 	addContent : function(node) {
 		this.element.insert(node);
 	},
 	add : function(widget) {
-		widget.parent = this;
 		this.element.insert(widget.getElement());
 	},
 	createGroup : function(options) {
@@ -8575,7 +8601,6 @@ In2iGui.Formula.Group = function(elementOrId,name,options) {
 	this.element = $(elementOrId);
 	this.body = this.element.select('</span>tbody<span class="literal">')[0];
 	this.options = N2i.override({above:true},options);
-	this.parent = null;
 	In2iGui.extend(this);
 }
 
@@ -8608,9 +8633,6 @@ In2iGui.Formula.Group.prototype = {
 			this.body.insert(tr);
 		}
 		tr.insert(td);
-		if (this.parent) {
-			this.parent.registerInput(widget);
-		}
 	},
 	createButtons : function(options) {
 		var tr = new Element('</span>tr<span class="literal">');
@@ -8693,7 +8715,7 @@ In2iGui.Formula.DateTime = function(elementOrId,name,options) {
 	this.options = options;
 	this.value = null;
 	this.element = $id(elementOrId);
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 	this.addBehavior();
 }
 
@@ -8776,7 +8798,7 @@ In2iGui.Formula.Select = function(elementOrId,name,options) {
 	this.options = options;
 	this.element = $id(elementOrId);
 	this.value = null;
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 	this.refresh();
 }
 
@@ -8833,7 +8855,7 @@ In2iGui.Formula.Radiobuttons = function(id,name,options) {
 	this.radios = [];
 	this.value = options.value;
 	this.defaultValue = this.value;
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 }
 
 In2iGui.Formula.Radiobuttons.prototype = {
@@ -8871,16 +8893,16 @@ In2iGui.Formula.Radiobuttons.prototype = {
 /********************************* Checkboxes ****************************/
 
 In2iGui.Formula.Checkbox = function(id,name,options) {
-	this.element = $id(id);
+	this.element = $(id);
 	this.name = name;
 	this.value = options.value=='</span>true<span class="literal">';
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 	this.addBehavior();
 }
 
 In2iGui.Formula.Checkbox.prototype = {
 	addBehavior : function() {
-		var control = $firstClass('</span>check<span class="literal">',this.element);
+		var control = this.element.select('</span>div<span class="literal">')[0];
 		var self = this;
 		control.onclick = function() {self.click()};
 	},
@@ -8889,7 +8911,7 @@ In2iGui.Formula.Checkbox.prototype = {
 		this.updateUI();
 	},
 	updateUI : function() {
-		N2i.setClass(this.element,'</span>checked<span class="literal">',this.value);
+		N2i.setClass(this.element,'</span>in2igui_checkbox_selected<span class="literal">',this.value);
 	},
 	setValue : function(value) {
 		this.value = value;
@@ -8905,16 +8927,21 @@ In2iGui.Formula.Checkbox.prototype = {
 
 /********************************* Checkboxes ****************************/
 
-In2iGui.Formula.Checkboxes = function(id,name) {
+In2iGui.Formula.Checkboxes = function(id,name,options) {
+	this.options = options;
 	this.element = $id(id);
 	this.name = name;
 	this.checkboxes = [];
 	this.sources = [];
 	this.values = [];
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 }
 
 In2iGui.Formula.Checkboxes.prototype = {
+	getValue : function() {
+		return this.values;
+	},
+	/** @deprecated */
 	getValues : function() {
 		return this.values;
 	},
@@ -8932,10 +8959,14 @@ In2iGui.Formula.Checkboxes.prototype = {
 		};
 		this.values=newValues;
 	},
-	setValues : function(values) {
+	setValue : function(values) {
 		this.values=values;
 		this.checkValues();
 		this.updateUI();
+	},
+	/** @deprecated */
+	setValues : function(values) {
+		this.setValue(values);
 	},
 	flipValue : function(value) {
 		N2i.flipInArray(this.values,value);
@@ -8972,9 +9003,10 @@ In2iGui.Formula.Checkboxes.Source = function(id,name,options) {
 	this.parent = null;
 	this.options = options;
 	this.checkboxes = [];
-	In2iGui.enableDelegating(this);
-	var self = this;
-	N2i.Event.addLoadListener(function() {self.refresh()});
+	In2iGui.extend(this);
+	this.refresh();
+	//var self = this;
+	//N2i.Event.addLoadListener(function() {self.refresh()});
 }
 
 In2iGui.Formula.Checkboxes.Source.prototype = {
@@ -8989,10 +9021,10 @@ In2iGui.Formula.Checkboxes.Source.prototype = {
 		var items = doc.getElementsByTagName('</span>checkbox<span class="literal">');
 		for (var i=0; i &lt; items.length; i++) {
 			var item = items[i];
-			var node = N2i.create('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>checkbox<span class="literal">'});
+			var node = N2i.create('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_checkbox<span class="literal">'});
 			var label = item.getAttribute('</span>label<span class="literal">');
 			var value = item.getAttribute('</span>value<span class="literal">');
-			var check = N2i.create('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>check<span class="literal">'});
+			var check = N2i.create('</span>div<span class="literal">');
 			node.appendChild(check);
 			node.appendChild(document.createTextNode(label));
 			this.element.appendChild(node);
@@ -9014,7 +9046,7 @@ In2iGui.Formula.Checkboxes.Source.prototype = {
 	updateUI : function() {
 		for (var i=0; i &lt; this.checkboxes.length; i++) {
 			var item = this.checkboxes[i];
-			N2i.setClass(item.element,'</span>checked<span class="literal">',N2i.inArray(this.parent.values,item.value));
+			N2i.setClass(item.element,'</span>in2igui_checkbox_selected<span class="literal">',N2i.inArray(this.parent.values,item.value));
 		};
 	},
 	hasValue : function(value) {
@@ -9100,12 +9132,12 @@ In2iGui.Formula.Tokens.prototype = {
 	this.state = options.state;
 	
 	this.source = options.source;
-	this.head = this.element.getElementsByTagName('</span>thead<span class="literal">')[0];
-	this.body = this.element.getElementsByTagName('</span>tbody<span class="literal">')[0];
+	this.head = this.element.select('</span>thead<span class="literal">')[0];
+	this.body = this.element.select('</span>tbody<span class="literal">')[0];
 	this.columns = [];
 	this.rows = [];
 	this.selected = [];
-	this.navigation = $class('</span>navigation<span class="literal">',this.element)[0];
+	this.navigation = this.element.select('</span>.navigation<span class="literal">')[0];
 	this.count = $class('</span>count<span class="literal">',this.navigation)[0];
 	this.windowSize = $class('</span>window_size<span class="literal">',this.navigation)[0];
 	this.windowNumber = $firstClass('</span>window_number<span class="literal">',this.navigation);
@@ -9358,7 +9390,7 @@ In2iGui.List.prototype.buildNavigation = function(doc) {
 
 In2iGui.List.prototype.setObjects = function(objects) {
 	this.selected = [];
-	this.body.innerHTML='</span><span class="literal">';
+	this.body.update();
 	this.rows = [];
 	for (var i=0; i &lt; objects.length; i++) {
 		var row = new Element('</span>tr<span class="literal">');
@@ -9385,7 +9417,7 @@ In2iGui.List.prototype.setObjects = function(objects) {
 			}
 			row.insert(cell);
 		};
-		this.body.appendChild(row);
+		this.body.insert(row);
 		this.addRowBehavior(row,i);
 		this.rows.push(obj);
 	};
@@ -9772,7 +9804,8 @@ In2iGui.ObjectList.Select.prototype = {
  * An alert that can be
  * @constructor
  */
-In2iGui.Alert = function(element,name) {
+In2iGui.Alert = function(element,name,options) {
+	this.options = N2i.override({modal:false},options);
 	this.element = $id(element);
 	this.name = name;
 	this.body = $firstClass('</span>in2igui_alert_body<span class="literal">',this.element);
@@ -9788,8 +9821,7 @@ In2iGui.Alert = function(element,name) {
  * @static
  */
 In2iGui.Alert.create = function(name,options) {
-	var opts = {title:'</span><span class="literal">',text:'</span><span class="literal">',emotion:null,variant:null,title:null};
-	N2i.override(opts,options);
+	options = N2i.override({title:'</span><span class="literal">',text:'</span><span class="literal">',emotion:null,variant:null,title:null},options);
 	
 	var element = N2i.create('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_alert<span class="literal">'});
 	var body = N2i.create('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_alert_body<span class="literal">'});
@@ -9797,18 +9829,18 @@ In2iGui.Alert.create = function(name,options) {
 	var content = N2i.create('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_alert_content<span class="literal">'});
 	body.appendChild(content);
 	document.body.appendChild(element);
-	var obj = new In2iGui.Alert(element,name);
-	if (opts.variant) {
-		obj.setVariant(opts.variant);
+	var obj = new In2iGui.Alert(element,name,options);
+	if (options.variant) {
+		obj.setVariant(options.variant);
 	}
-	if (opts.emotion) {
-		obj.setEmotion(opts.emotion);
+	if (options.emotion) {
+		obj.setEmotion(options.emotion);
 	}
-	if (opts.title) {
-		obj.setTitle(opts.title);
+	if (options.title) {
+		obj.setTitle(options.title);
 	}
-	if (opts.text) {
-		obj.setText(opts.text);
+	if (options.text) {
+		obj.setText(options.text);
 	}
 	
 	return obj;
@@ -9816,7 +9848,12 @@ In2iGui.Alert.create = function(name,options) {
 
 In2iGui.Alert.prototype = {
 	show : function() {
-		this.element.style.zIndex=In2iGui.nextAlertIndex();
+		var zIndex = In2iGui.nextAlertIndex();
+		if (this.options.modal) {
+			In2iGui.showCurtain(this,zIndex);
+			zIndex++;
+		}
+		this.element.style.zIndex=zIndex;
 		this.element.style.display='</span>block<span class="literal">';
 		this.element.style.top=(N2i.Window.getScrollTop()+100)+'</span>px<span class="literal">';
 		$ani(this.element,'</span>opacity<span class="literal">',1,200);
@@ -9825,6 +9862,7 @@ In2iGui.Alert.prototype = {
 	hide : function() {
 		$ani(this.element,'</span>opacity<span class="literal">',0,200,{hideOnComplete:true});
 		$ani(this.element,'</span>margin-top<span class="literal">','</span>0px<span class="literal">',200);
+		In2iGui.hideCurtain(this);
 	},
 	setTitle : function(text) {
 		if (!this.title) {
@@ -9978,7 +10016,7 @@ In2iGui.Selection.prototype = {
 			if (item) return item;
 		};
 	},
-	changeValue : function(value) {
+	setValue : function(value) {
 		this.value = value;
 		for (var i=0; i &lt; this.items.length; i++) {
 			var item = this.items[i];
@@ -9988,6 +10026,9 @@ In2iGui.Selection.prototype = {
 			var source = this.sources[i];
 			source.updateUI();
 		};
+	},
+	changeValue : function(value) {
+		this.setValue(value);
 		In2iGui.callDelegates(this,'</span>selectorSelectionChanged<span class="literal">');
 		In2iGui.callDelegates(this,'</span>selectionChanged<span class="literal">',this.value);
 	},
@@ -10001,7 +10042,7 @@ In2iGui.Selection.prototype = {
 		this.items.push({id:id,title:title,icon:icon,badge:badge,element:element,value:value,kind:kind});
 		var self = this;
 		element.onclick = function() {
-			self.itemWasClicked(this);
+			self.itemWasClicked(value);
 		}
 		element.ondblclick = function() {
 			self.itemWasDoubleClicked();
@@ -10013,32 +10054,31 @@ In2iGui.Selection.prototype = {
 		N2i.addListener(element,'</span>mouseout<span class="literal">',In2iGui.dropOutListener);
 	},
 	
-	setItems : function(items) {
+	setObjects : function(items) {
 		var self = this;
 		items.each(function(item) {
 			self.items.push(item);
-			var node = new Element('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>item<span class="literal">'});
-			node.in2iGuiValue = item.value;
+			var node = new Element('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_selection_item<span class="literal">'});
 			item.element = node;
 			self.element.insert(node);
+			var inner = new Element('</span>span<span class="literal">').update(item.title);
 			if (item.icon) {
-				var img = new Element('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>icon<span class="literal">'}).setStyle({'</span>backgroundImage<span class="literal">' : '</span>url(<span class="literal">'+In2iGui.getIconUrl(item.icon,1)+'</span>)<span class="literal">'});
-				node.insert(img);
+				inner.setStyle({'</span>backgroundImage<span class="literal">' : '</span>url(<span class="literal">'+In2iGui.getIconUrl(item.icon,1)+'</span>)<span class="literal">'}).addClassName('</span>in2igui_icon<span class="literal">');
 			}
-			node.insert(item.title);
+			node.insert(inner);
 			node.observe('</span>click<span class="literal">',function() {
-				self.itemWasClicked(node);
+				self.changeValue(item.value);
 			});
 			node.observe('</span>dblclick<span class="literal">',function() {
-				self.itemWasDoubleClicked(node);
+				self.itemWasDoubleClicked();
 				return false;
 			});
 		});
 	},
 	
 	// Events
-	itemWasClicked : function(item) {
-		this.changeValue(item.in2iGuiValue);
+	itemWasClicked : function(value) {
+		this.changeValue(value);
 	},
 	itemWasDoubleClicked : function() {
 		In2iGui.callDelegates(this,'</span>selectorObjectWasOpened<span class="literal">');
@@ -10048,7 +10088,7 @@ In2iGui.Selection.prototype = {
 /******************************** Source ****************************/
 
 In2iGui.Selection.Source = function(id,name,options) {
-	this.element = $id(id);
+	this.element = $(id);
 	this.name = name;
 	this.selection = null;
 	this.options = options;
@@ -10058,69 +10098,64 @@ In2iGui.Selection.Source = function(id,name,options) {
 	N2i.Event.addLoadListener(function() {self.refresh()});
 }
 
-In2iGui.Selection.Source.prototype.refresh = function() {
-	var self = this;
-	$get(this.options.url,{onSuccess:function(t) {self.updateSource(t.responseXML)}});
+In2iGui.Selection.Source.prototype = {
+	refresh : function() {
+		var self = this;
+		new Ajax.Request(this.options.url, {onSuccess:function(t) {self.updateSource(t.responseXML)}});
+	},
+	updateSource : function(doc) {
+		this.items = [];
+		N2i.removeChildren(this.element);
+		var self = this;
+		var items = doc.getElementsByTagName('</span>item<span class="literal">');
+		for (var i=0; i &lt; items.length; i++) {
+			var item = items[i];
+			var node = new Element('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_selection_item<span class="literal">'});
+			var inner = new Element('</span>span<span class="literal">');
+			var title = item.getAttribute('</span>title<span class="literal">');
+			var badge = item.getAttribute('</span>badge<span class="literal">');
+			var icon = item.getAttribute('</span>icon<span class="literal">');
+			var value = item.getAttribute('</span>value<span class="literal">');
+			var kind = item.getAttribute('</span>kind<span class="literal">');
+			if (icon) {
+				inner.setStyle({'</span>backgroundImage<span class="literal">' : '</span>url(<span class="literal">'+In2iGui.getIconUrl(icon,1)+'</span>)<span class="literal">'}).addClassName('</span>in2igui_icon<span class="literal">');
+			}
+			node.insert(inner.insert(title));
+			this.element.insert(node);
+			node.onclick = function() {
+				self.itemWasClicked(value);
+			}
+			node.ondblclick = function() {
+				self.itemWasDoubleClicked();
+				return false;
+			}
+			var info = {title:title,icon:icon,badge:badge,kind:kind,element:node,value:value};
+			node.dragDropInfo = info;
+			this.items.push(info);
+		};
+		this.updateUI();
+	},
+	itemWasClicked : function(value) {
+		this.selection.changeValue(value);
+	},
+	itemWasDoubleClicked : function(node) {
+		this.selection.itemWasDoubleClicked();
+	},
+	getSelection : function() {
+		for (var i=0; i &lt; this.items.length; i++) {
+			if (this.items[i].value == this.selection.value) {
+				return this.items[i];
+			}
+		};
+		return null;
+	},
+	updateUI : function() {
+		for (var i=0; i &lt; this.items.length; i++) {
+			var item = this.items[i];
+			N2i.setClass(item.element,'</span>selected<span class="literal">',(item.value==this.selection.value));
+		};
+	}
 }
-
-In2iGui.Selection.Source.prototype.updateSource = function(doc) {
-	this.items = [];
-	N2i.removeChildren(this.element);
-	var self = this;
-	var items = doc.getElementsByTagName('</span>item<span class="literal">');
-	for (var i=0; i &lt; items.length; i++) {
-		var item = items[i];
-		var node = N2i.create('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>item<span class="literal">'});
-		var title = item.getAttribute('</span>title<span class="literal">');
-		var badge = item.getAttribute('</span>badge<span class="literal">');
-		var icon = item.getAttribute('</span>icon<span class="literal">');
-		var value = item.getAttribute('</span>value<span class="literal">');
-		var kind = item.getAttribute('</span>kind<span class="literal">');
-		if (icon) {
-			var img = N2i.create('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>icon<span class="literal">'},{'</span>backgroundImage<span class="literal">' : '</span>url(<span class="literal">'+In2iGui.getIconUrl(icon,1)+'</span>)<span class="literal">'});
-			node.appendChild(img);
-		}
-		node.appendChild(document.createTextNode(title));
-		this.element.appendChild(node);
-		node.in2iGuiValue = value;
-		node.onclick = function() {
-			self.itemWasClicked(this);
-		}
-		node.ondblclick = function() {
-			self.itemWasDoubleClicked(this);
-			return false;
-		}
-		var info = {title:title,icon:icon,badge:badge,kind:kind,element:node,value:value};
-		node.dragDropInfo = info;
-		this.items.push(info);
-	};
-	this.updateUI();
-}
-
-In2iGui.Selection.Source.prototype.itemWasClicked = function(node) {
-	this.selection.changeValue(node.in2iGuiValue);
-}
-
-In2iGui.Selection.Source.prototype.itemWasDoubleClicked = function(node) {
-	this.selection.itemWasDoubleClicked();
-}
-
-In2iGui.Selection.Source.prototype.getSelection = function() {
-	for (var i=0; i &lt; this.items.length; i++) {
-		if (this.items[i].value == this.selection.value) {
-			return this.items[i];
-		}
-	};
-	return null;
-}
-
-In2iGui.Selection.Source.prototype.updateUI = function() {
-	for (var i=0; i &lt; this.items.length; i++) {
-		var item = this.items[i];
-		N2i.setClass(item.element,'</span>selected<span class="literal">',(item.value==this.selection.value));
-	};
-}
-
 /* EOF */
 /** @constructor */
 In2iGui.Toolbar = function(element,name,options) {
@@ -11007,7 +11042,7 @@ In2iGui.ImageViewer.prototype = {
 				$ani(this.viewer,'</span>scrollLeft<span class="literal">',this.index*(this.width+10),Math.min(num*300,2000),{ease:N2i.Animation.slowFastSlow});				
 			} else {
 				var end = this.index==0 || this.index==this.images.length-1;
-				var ease = (user ? (end ? N2i.Animation.bounce : N2i.Animation.elastic) : N2i.ease.backInOut);
+				var ease = (end ? N2i.Animation.bounce : N2i.Animation.elastic);
 				$ani(this.viewer,'</span>scrollLeft<span class="literal">',this.index*(this.width+10),(end ? 800 : 1200),{ease:ease});
 			}
 		} else {
@@ -11120,13 +11155,16 @@ In2iGui.ImageViewer.prototype = {
 
 /* EOF */
 In2iGui.Picker = function(element,name,options) {
-	this.options = N2i.override({itemWidth:100,itemHeight:150},options);
-	this.element = $id(element);
+	this.options = N2i.override({itemWidth:100,itemHeight:150,itemsVisible:3,valueProperty:'</span>value<span class="literal">'},options);
+	this.element = $(element);
 	this.name = name;
-	this.container = $firstClass('</span>in2igui_picker_container<span class="literal">',this.element);
-	this.title = $firstClass('</span>in2igui_picker_title<span class="literal">',this.element);
+	this.container = this.element.select('</span>.in2igui_picker_container<span class="literal">')[0];
+	this.content = this.element.select('</span>.in2igui_picker_content<span class="literal">')[0];
+	this.title = this.element.select('</span>in2igui_picker_title<span class="literal">')[0];
 	this.objects = [];
 	this.selected = null;
+	this.value = null;
+	this.addBehavior();
 	In2iGui.extend(this);
 }
 
@@ -11136,7 +11174,7 @@ In2iGui.Picker.create = function(name,options) {
 	element.update('</span>&lt;div class=<span class="literal">"in2igui_picker_top"</span>&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;<span class="literal">'+
 	'</span>&lt;div class=<span class="literal">"in2igui_picker_middle"</span>&gt;&lt;div class=<span class="literal">"in2igui_picker_middle"</span>&gt;<span class="literal">'+
 	(options.title ? '</span>&lt;div class=<span class="literal">"in2igui_picker_title"</span>&gt;<span class="literal">'+options.title+'</span>&lt;/div&gt;<span class="literal">' : '</span><span class="literal">')+
-	'</span>&lt;div class=<span class="literal">"in2igui_picker_container"</span>&gt;&lt;/div&gt;<span class="literal">'+
+	'</span>&lt;div class=<span class="literal">"in2igui_picker_container"</span>&gt;&lt;div class=<span class="literal">"in2igui_picker_content"</span>&gt;&lt;/div&gt;&lt;/div&gt;<span class="literal">'+
 	'</span>&lt;/div&gt;&lt;/div&gt;<span class="literal">'+
 	'</span>&lt;div class=<span class="literal">"in2igui_picker_bottom"</span>&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;<span class="literal">');
 	if (options.shadow==true) {
@@ -11146,44 +11184,86 @@ In2iGui.Picker.create = function(name,options) {
 }
 
 In2iGui.Picker.prototype = {
+	addBehavior : function() {
+		var self = this;
+		this.content.observe('</span>mousedown<span class="literal">',function(e) {
+			self.startDrag(e);
+			return false;
+		});
+	},
 	setObjects : function(objects) {
-		this.objects = objects;
+		this.selected = null;
+		this.objects = objects || [];
 		this.updateUI();
 	},
-	getSelection : function() {
-		return this.selected==null ? null : this.objects[this.selected];
+	setValue : function(value) {
+		this.value = value;
+		this.updateSelection();
 	},
 	reset : function() {
-		this.selected = null;
+		this.value = null;
 		this.updateSelection();
 	},
 	updateUI : function() {
-		this.container.style.width=(this.objects.length*(this.options.itemWidth+14))+'</span>px<span class="literal">';
+		var self = this;
+		this.content.update();
+		this.container.scrollLeft=0;
+		this.container.setStyle({width:this.options.itemsVisible*(this.options.itemWidth+14)+'</span>px<span class="literal">'});
 		this.container.style.height=(this.options.itemHeight+10)+'</span>px<span class="literal">';
-		for (var i=0; i &lt; this.objects.length; i++) {
+		this.content.style.width=(this.objects.length*(this.options.itemWidth+14))+'</span>px<span class="literal">';
+		this.content.style.height=(this.options.itemHeight+10)+'</span>px<span class="literal">';
+		this.objects.each(function(object,i) {
 			var item = new Element('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_picker_item<span class="literal">'});
+			if (self.value!=null &amp;&amp; object[self.options.valueProperty]==self.value) item.addClassName('</span>in2igui_picker_item_selected<span class="literal">');
 			item.update(
 				'</span>&lt;div class=<span class="literal">"in2igui_picker_item_middle"</span>&gt;&lt;div class=<span class="literal">"in2igui_picker_item_middle"</span>&gt;<span class="literal">'+
-				'</span>&lt;div style=<span class="literal">"width:'+this.options.itemWidth+'px;height:'+this.options.itemHeight+'px;background-image:url(\''+this.objects[i].image+'\')"</span>&gt;&lt;/div&gt;<span class="literal">'+
+				'</span>&lt;div style=<span class="literal">"width:'+self.options.itemWidth+'px;height:'+self.options.itemHeight+'px;background-image:url(\''+object.image+'\')"</span>&gt;&lt;/div&gt;<span class="literal">'+
 				'</span>&lt;/div&gt;&lt;/div&gt;<span class="literal">'+
 				'</span>&lt;div class=<span class="literal">"in2igui_picker_item_bottom"</span>&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;<span class="literal">'
 			);
-			item.in2iguiIndex = i;
-			var self = this;
-			item.onclick = function() {self.selectionChanged(this.in2iguiIndex)};
-			this.container.appendChild(item);
-		};
+			item.observe('</span>mouseup<span class="literal">',function() {self.selectionChanged(object[self.options.valueProperty])});
+			self.content.insert(item);			
+		});
 	},
 	updateSelection : function() {
-		var children = this.container.childNodes;
+		var children = this.content.childNodes;
 		for (var i=0; i &lt; children.length; i++) {
-			N2i.setClass(children[i],'</span>in2igui_picker_item_selected<span class="literal">',i==this.selected);
+			N2i.setClass(children[i],'</span>in2igui_picker_item_selected<span class="literal">',this.value!=null &amp;&amp; this.objects[i][this.options.valueProperty]==this.value);
 		};
 	},
-	selectionChanged : function(index) {
-		this.selected = index;
+	selectionChanged : function(value) {
+		if (this.dragging) return;
+		if (this.value==value) return;
+		this.value = value;
 		this.updateSelection();
-		In2iGui.callDelegates(this,'</span>selectionChanged<span class="literal">');
+		In2iGui.callDelegates(this,'</span>selectionChanged<span class="literal">',value);
+	},
+	
+	// Dragging
+	startDrag : function(e) {
+		Event.stop(e);
+		var self = this;
+		this.dragX = Event.pointerX(e);
+		this.dragScroll = this.container.scrollLeft;
+		In2iGui.Picker.mousemove = function(e) {self.drag(e);return false;}
+		In2iGui.Picker.mouseup = In2iGui.Picker.mousedown = function(e) {self.endDrag(e);return false;}
+		window.document.observe('</span>mousemove<span class="literal">',In2iGui.Picker.mousemove);
+		window.document.observe('</span>mouseup<span class="literal">',In2iGui.Picker.mouseup);
+		window.document.observe('</span>mousedown<span class="literal">',In2iGui.Picker.mouseup);
+	},
+	drag : function(e) {
+		this.dragging = true;
+		Event.stop(e);
+		this.container.scrollLeft=this.dragX-e.pointerX()+this.dragScroll;
+	},
+	endDrag : function(e) {
+		this.dragging = false;
+		Event.stop(e);
+		window.document.stopObserving('</span>mousemove<span class="literal">',In2iGui.Picker.mousemove);
+		window.document.stopObserving('</span>mouseup<span class="literal">',In2iGui.Picker.mouseup);
+		window.document.stopObserving('</span>mousedown<span class="literal">',In2iGui.Picker.mouseup);
+		var size = (this.options.itemWidth+14);
+		$ani(this.container,'</span>scrollLeft<span class="literal">',Math.round(this.container.scrollLeft/size)*size,500,{ease:N2i.ease.bounceOut});
 	}
 }
 
@@ -11269,7 +11349,7 @@ In2iGui.Editor.prototype = {
 					var part = new handler.controller(element,row,column,partIndex);
 					part.type=match[1];
 					element.observe('</span>click<span class="literal">',function() {
-						//self.editPart(part);
+						self.editPart(part);
 					});
 					element.observe('</span>mouseover<span class="literal">',function(e) {
 						self.hoverPart(part);
@@ -11311,6 +11391,7 @@ In2iGui.Editor.prototype = {
 	},
 	
 	contextColumn : function(column,rowIndex,columnIndex,e) {
+		if (!this.active || this.activePart) return;
 		if (!this.columnMenu) {
 			var menu = In2iGui.Menu.create('</span>In2iGuiEditorColumnMenu<span class="literal">');
 			menu.addItem('</span>Slet kolonne<span class="literal">','</span>removeColumn<span class="literal">');
@@ -11425,6 +11506,7 @@ In2iGui.Editor.prototype = {
 	editPart : function(part) {
 		if (!this.active || this.activePart) return;
 		if (this.activePart) this.activePart.deactivate();
+		this.hoveredPart.element.removeClassName('</span>in2igui_editor_part_hover<span class="literal">');
 		this.activePart = part;
 		this.showPartEditControls();
 		part.element.addClassName('</span>in2igui_editor_part_active<span class="literal">');
@@ -11778,6 +11860,7 @@ In2iGui.Overlay.prototype = {
 
 /* EOF */
 In2iGui.Upload = function(element,name,options) {
+	this.options = N2i.override({parameters:[]},options);
 	this.element = $(element);
 	this.name = name;
 	this.file = $class('</span>file<span class="literal">',this.element)[0];
@@ -11792,7 +11875,8 @@ In2iGui.Upload.create = function(name,options) {
 	var element = new Element('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_upload<span class="literal">'});
 	var form = new Element('</span>form<span class="literal">',{'</span>action<span class="literal">':options.action, '</span>method<span class="literal">':'</span>post<span class="literal">', '</span>enctype<span class="literal">':'</span>multipart/form-data<span class="literal">','</span>encoding<span class="literal">':'</span>multipart/form-data<span class="literal">','</span>target<span class="literal">':'</span>upload<span class="literal">'});
 	for (var i=0; i &lt; options.parameters.length; i++) {
-		var hidden = new Element('</span>input<span class="literal">',{'</span>type<span class="literal">':'</span>hidden<span class="literal">','</span>name<span class="literal">':options.parameters[i].name,'</span>value<span class="literal">':options.parameters[i].value});
+		var hidden = new Element('</span>input<span class="literal">',{'</span>type<span class="literal">':'</span>hidden<span class="literal">','</span>name<span class="literal">':options.parameters[i].name});
+		hidden.setValue(options.parameters[i].value);
 		form.insert(hidden);
 	};
 	var file = N2i.create('</span>input<span class="literal">',{'</span>type<span class="literal">':'</span>file<span class="literal">','</span>class<span class="literal">':'</span>file<span class="literal">','</span>name<span class="literal">':options.name});
@@ -11815,6 +11899,11 @@ In2iGui.Upload.prototype = {
 		this.element.appendChild(this.progressBar.getElement());
 	},
 	submit : function() {
+		// IE: set value of parms again since they disappear
+		var p = this.options.parameters;
+		for (var i=0; i &lt; p.length; i++) {
+			this.form[p[i].name].value=p[i].value;
+		};
 		this.form.submit();
 		In2iGui.callDelegates(this,'</span>uploadDidSubmit<span class="literal">');
 	},
@@ -11842,27 +11931,45 @@ In2iGui.Upload.prototype = {
 
 
 In2iGui.MultiUpload = function(element,name,options) {
-	this.options = {url:'</span><span class="literal">'};
-	N2i.override(this.options,options);
+	this.options = N2i.override({url:'</span><span class="literal">',parameters:{}},options);
 	this.element = $(element);
 	this.itemContainer = this.element.select('</span>.in2igui_multiupload_items<span class="literal">')[0];
 
 	this.name = name;
 	this.items = [];
 	this.busy = false;
+	this.loaded = false;
 
 	this.button = this.element.select('</span>.in2igui_button<span class="literal">')[0];
 	In2iGui.extend(this);
 	this.addBehavior();
 }
 
+In2iGui.MultiUpload.create = function(name,options) {
+	var element = new Element('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_multiupload<span class="literal">'});
+	element.update('</span>&lt;div class=<span class="literal">"in2igui_buttons"</span>&gt;<span class="literal">'+
+		'</span>&lt;a href=<span class="literal">"javascript:void(0)"</span> class=<span class="literal">"in2igui_button"</span>&gt;&lt;span&gt;&lt;span&gt;Vælg billeder...&lt;/span&gt;&lt;/span&gt;&lt;/a&gt;<span class="literal">'+
+		'</span>&lt;/div&gt;<span class="literal">'+
+		'</span>&lt;div class=<span class="literal">"in2igui_multiupload_items"</span>&gt;&lt;xsl:comment/&gt;&lt;/div&gt;<span class="literal">'+
+	'</span>&lt;/div&gt;<span class="literal">');
+	return new In2iGui.MultiUpload(element,name,options);
+}
+
 In2iGui.MultiUpload.prototype = {
 	addBehavior : function() {
 		var self = this;
 		this.button.observe('</span>click<span class="literal">',function() {
+			if (!self.loaded) {
+				N2i.log('</span>Not loaded yet!<span class="literal">');
+				return;
+			}
 			self.loader.selectFiles();
 		});
-		document.observe('</span>dom:loaded<span class="literal">', function() {self.createLoader()});
+		if (In2iGui.get().domLoaded) {
+			this.createLoader();			
+		} else {
+			document.observe('</span>dom:loaded<span class="literal">', function() {self.createLoader()});
+		}
 	},
 	createLoader : function() {
 		var loc = new String(document.location);
@@ -11879,8 +11986,9 @@ In2iGui.MultiUpload.prototype = {
 			file_size_limit : "20480",
 			file_upload_limit : 100,
 			debug : true,
-			
-			swfupload_loaded_handler : function() {self.loaded()},
+			post_params : this.options.parameters,
+
+			swfupload_loaded_handler : function() {self.flashLoaded()},
 			file_queued_handler : function(file) {self.fileQueued(file)},
 			file_queue_error_handler : function(file, error, message) {self.fileQueueError(file, error, message)},
 			file_dialog_complete_handler : function() {self.fileDialogComplete()},
@@ -11892,9 +12000,8 @@ In2iGui.MultiUpload.prototype = {
 			queue_complete_handler : function() {self.queueComplete()},
 		
 			// SWFObject settings
-			swfupload_pre_load_handler : function() {},
-			swfupload_load_failed_handler : function() {}
-
+			swfupload_pre_load_handler : function() {alert('</span>swfupload_pre_load_handler!<span class="literal">')},
+			swfupload_load_failed_handler : function() {alert('</span>swfupload_load_failed_handler!<span class="literal">')}
 		});
 	},
 	startNextUpload : function() {
@@ -11909,8 +12016,8 @@ In2iGui.MultiUpload.prototype = {
 	
 	//////////////////// Events //////////////
 	
-	loaded : function() {
-		
+	flashLoaded : function() {
+		this.loaded = true;
 	},
 	fileQueued : function(file) {
 		var item = new In2iGui.MultiUpload.Item(file);
@@ -11947,7 +12054,7 @@ In2iGui.MultiUpload.prototype = {
 		In2iGui.callDelegates(this,'</span>uploadDidComplete<span class="literal">',file);
 	},
 	queueComplete : function() {
-		
+		In2iGui.callDelegates(this,'</span>uploadDidCompleteQueue<span class="literal">',file);
 	}
 }
 
@@ -12455,17 +12562,21 @@ In2iGui.Columns.create = function(name,options) {
 In2iGui.Columns.prototype = {
 	addToColumn : function(index,widget) {
 		var c = this.ensureColumn(index);
-		N2i.log(c);
 		c.insert(widget.getElement());
+	},
+	setColumnStyle : function(index,style) {
+		var c = this.ensureColumn(index);
+		c.setStyle(style);
+	},
+	setColumnWidth : function(index,width) {
+		var c = this.ensureColumn(index);
+		c.setStyle({width:width+'</span>px<span class="literal">'});
 	},
 	ensureColumn : function(index) {
 		var children = this.body.childElements();
-		N2i.log(children.length-1);
 		for (var i=children.length-1;i&lt;index;i++) {
-			this.body.insert(new Element('</span>td<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_columns_column<span class="literal">'}));
-			N2i.log('</span>insert');
+			this.body.insert(new Element('</span>td<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_columns_column'}));
 		}
-		N2i.log(<span class="reserved">this</span>.body);
 		<span class="reserved">return</span> <span class="reserved">this</span>.body.childElements()[index];
 	}
 }
@@ -12528,6 +12639,6 @@ In2iGui.Columns.prototype = {
 <font size="-1">
 
 </font>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Mon Sep  8 22:14:06 2008</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Mon Sep 22 21:31:03 2008</div>
 </body>
 </html>

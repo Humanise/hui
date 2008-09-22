@@ -30,7 +30,6 @@
 </head>
 
 <body>
-	<button onclick="test1()">Test 1</button>
 <script type="text/javascript" charset="utf-8">
 	var items = [
 		{title:'Basal',icon:'common/color',	     value:'basic'},
@@ -48,15 +47,16 @@
 		{key:'snow',title:'Snow',image:'../gfx/thumbnail.png'},
 		{key:'beach',title:'Beach',image:'../gfx/thumbnail.png'}
 	];
-		var win = In2iGui.Window.create(null,{variant:'dark'});
+		var win = In2iGui.Window.create(null,{variant:'dark',padding:5});
 		var cols = In2iGui.Columns.create();
 		win.add(cols);
 		var s = In2iGui.Selection.create(null,{width:100});
-		s.setItems(items);
+		s.setObjects(items);
 		cols.addToColumn(0,s);
 		var picker = In2iGui.Picker.create('templatePicker',{itemWidth:92,itemHeight:120});
 		picker.setObjects(objects);
 		cols.addToColumn(1,picker);
+		cols.setColumnStyle(0,{'paddingRight':'10px'});
 		win.show();
 </script>
 

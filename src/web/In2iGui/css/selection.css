@@ -1,31 +1,41 @@
-.in2igui_selection .item
+div.in2igui_selection
+{
+	font-family: 'Lucida Grande','Verdana',sans-serif;
+}
+
+.in2igui_selection_item
 {
 	background: 7px center no-repeat;
 	font-size: 9pt;
 	height: 20px;
-	line-height: 22px;
+	padding: 0px 10px 0px 6px;
 }
 
-.in2igui_selection .item .icon
+div.in2igui_selection_item span
 {
 	float: left;
-	width: 16px;
 	height: 16px;
-	margin: 2px 3px 0px 5px;
+	margin-top: 2px;
 }
 
-.in2igui_selection .item:hover
+div.in2igui_selection_item span.in2igui_icon
+{
+	padding-left: 20px;
+	background: left top no-repeat;
+}
+
+.in2igui_selection_item:hover
 {
 	background-color: #d4dce9;
 	cursor: pointer;
 }
 
-.in2igui_selection .item:hover .icon
+.in2igui_selection_item:hover .icon
 {
 	background-position: 0px -16px;
 }
 
-.in2igui_selection .item span
+.in2igui_selection_item em
 {
 	float: right;
 	line-height: 16px;
@@ -34,16 +44,6 @@
 	padding: 0px 2px;
 	margin: 2px 6px 0px 0px;
 	color: #fff;
-}
-
-div.in2igui_window_dark .in2igui_selection div.item
-{
-	color: #fff;
-}
-
-div.in2igui_window_dark div.in2igui_selection div.item:hover
-{
-	background: #000;
 }
 
 div.in2igui_selection div.selected, div.in2igui_selection div.selected:hover
@@ -69,4 +69,35 @@ div.in2igui_selection div.selected, div.in2igui_selection div.selected:hover
 .in2igui_selection div.in2igui_drop, .in2igui_selection div.in2igui_drop:hover
 {
 	background-color: #779cd6;
+}
+
+
+/********************** Dark ************************/
+
+div.in2igui_window_dark div.in2igui_selection
+{
+	border-left: 1px solid #404040;
+	border-right: 1px solid #404040;
+}
+
+div.in2igui_window_dark div.in2igui_selection_item
+{
+	color: #fff;
+	background: url('../gfx/selection_dark.png');
+	height: 24px;
+}
+
+div.in2igui_window_dark div.in2igui_selection_item:hover
+{
+	background: url('../gfx/selection_dark.png') left -24px;
+}
+
+div.in2igui_window_dark div.in2igui_selection div.selected, div.in2igui_window_dark div.in2igui_selection div.selected:hover
+{
+	background: #3875d7;
+}
+
+div.in2igui_window_dark .in2igui_selection_item span
+{
+	margin-top: 4px;
 }
