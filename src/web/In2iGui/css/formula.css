@@ -15,7 +15,7 @@ form.in2igui_formula
 
 table.in2igui_formula_group
 {
-	border-spacing: 4px 4px;
+	border-spacing: 0px 4px;
 	width: 100%;
 }
 
@@ -250,7 +250,7 @@ input.in2igui_tokens_token
 div.in2igui_window table.in2igui_formula_group label
 {
 	color: #000;
-	background: rgb(191,193,196);
+	background: rgb(231,231,231);
 	padding: 0px 2px;
 }
 

@@ -451,7 +451,7 @@ In2iGui.jsonResponse = function(t,key) {
 	if (!t.responseXML || !t.responseXML.documentElement) {
 		var str = t.responseText.replace(/^\s+|\s+$/g, '');
 		if (str.length>0) {
-			var json = JSON.parse(t.responseText)
+			var json = t.responseText.evalJSON(true);
 		} else {
 			json = '';
 		}
@@ -469,7 +469,7 @@ In2iGui.json = function(data,url,delegateOrKey) {
 	}
 	var options = {method:'POST',parameters:{}};
 	for (key in data) {
-		options.parameters[key]=JSON.stringify(data[key])
+		options.parameters[key]=Object.toJSON(data[key])
 	}
 	$get(url,delegate,options)
 }

@@ -123,7 +123,7 @@ In2iGui.Selection.Source.prototype = {
 		N2i.removeChildren(this.element);
 		var self = this;
 		var items = doc.getElementsByTagName('item');
-		for (var i=0; i < items.length; i++) {
+		for (var i=0, len=items.length; i < len; ++i) {
 			var item = items[i];
 			var node = new Element('div',{'class':'in2igui_selection_item'});
 			var inner = new Element('span');
@@ -135,11 +135,12 @@ In2iGui.Selection.Source.prototype = {
 			if (icon) {
 				inner.setStyle({'backgroundImage' : 'url('+In2iGui.getIconUrl(icon,1)+')'}).addClassName('in2igui_icon');
 			}
+			node.in2iGuiIndex = i;
 			node.insert(inner.insert(title));
 			this.element.insert(node);
-			node.onclick = function() {
-				self.itemWasClicked(value);
-			}
+			node.observe('click',function() {
+				self.itemWasClicked(self.items[this.in2iGuiIndex].value);
+			});
 			node.ondblclick = function() {
 				self.itemWasDoubleClicked();
 				return false;
