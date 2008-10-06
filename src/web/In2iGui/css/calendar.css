@@ -1,5 +1,7 @@
 div.in2igui_calendar
 {
+	overflow-x: hidden;
+	width: 100%;
 }
 
 div.in2igui_calendar_busy div.in2igui_toolbar
@@ -23,6 +25,7 @@ table.in2igui_calendar_weekview
 {
 	background: #fff;
 	width: 100%;
+	-webkit-box-sizing: border-box;
 }
 
 table.in2igui_calendar_weekview th
@@ -99,6 +102,7 @@ table.in2igui_calendar_weekview td.day
 	border-right: 1px solid #DDDDDD;
 	vertical-align:top;
 	width: 18%;
+	-webkit-box-sizing: border-box;
 }
 
 table.in2igui_calendar_weekview div.in2igui_calendar_event

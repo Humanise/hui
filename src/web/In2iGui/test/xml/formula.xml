@@ -2,11 +2,12 @@
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:In2iGui" pad="10" title="Formula">
 	<controller name="controller" source="formula.js"/>
-	<box width="400" title="Title with toolbar">
+	<box width="600" title="Title with toolbar">
 		<toolbar>
-			<icon icon="common/color" title="Hep hey!" selected="true" action="alert(0)"/>
+			<icon icon="common/color" title="Hep hey!" selected="true"/>
 			<icon icon="common/folder" title="Show values" name="showValues"/>
 			<icon icon="common/settings" title="Hep hey!" disabled="true"/>
+			<icon icon="common/folder" title="Show window" action="win.show();"/>
 		</toolbar>
 		<tabs>
 			<tab title="Formula 1" padding="10">
@@ -14,13 +15,31 @@
 					<group labels="above">
 						<text label="Brugernavn:" key="username"/>
 						<password label="Kodeord:" key="password"/>
-						<text label="Notat:" lines="6"/>
-						<checkbox label="Intern adgang:"/>
-						<checkbox label="Ekstern adgang:"/>
-						<checkboxes label="Grupper:" key="groups">
-							<source url="source_checkboxes.xml"/>
+						<text label="Notat:" lines="6" key="note"/>
+						<datetime label="Date (secs):" key="date-seconds" return-type="seconds"/>
+						<datetime label="Date:" key="date"/>
+						<select label="Select:" key="select" source="source_items.xml"/>
+						<checkbox label="Internal access:" key="internal"/>
+						<checkbox label="External access:" key="external"/>
+						<checkboxes label="Groups:" key="groups">
+							<source url="source_items.xml"/>
 						</checkboxes>
-						<tokens label="Tokens:"/>
+						<tokens label="Tokens:" key="tokens"/>
+						<radiobuttons label="Radios:" key="radios">
+							<radiobutton label="Lorem" value="lorem"/>
+							<radiobutton label="Ipsum" value="ipsum"/>
+							<radiobutton label="Dolor" value="dolor"/>
+						</radiobuttons>
+						<custom label="Object list:">
+							<objectlist key="objectlist">
+								<text key="email" label="E-mail"/>
+								<select key="context" label="Context">
+									<option value="home" label="Home"/>
+									<option value="work" label="Work"/>
+									<option value="school" label="School"/>
+								</select>
+							</objectlist>
+						</custom>
 						<buttons top="10">
 							<button title="Gem" highlighted="true"/>
 							<button title="Slet"/>
@@ -29,15 +48,36 @@
 					</group>
 				</formula>
 			</tab>
-			<tab title="Formula 2">
+			<tab title="Formula 2" padding="10">
 				<formula name="formula2">
 					<group>
 						<text label="Brugernavn:" key="username"/>
 						<password label="Kodeord:" key="password"/>
-						<text label="Notat:" lines="6"/>
-						<checkbox label="Intern adgang:"/>
-						<checkbox label="Ekstern adgang:"/>
-						<tokens label="Tokens:"/>
+						<text label="Notat:" lines="6" key="note"/>
+						<datetime label="Date (secs):" key="date-seconds" return-type="seconds"/>
+						<datetime label="Date:" key="date"/>
+						<select label="Select:" key="select" source="source_items.xml"/>
+						<checkbox label="Internal access:" key="internal"/>
+						<checkbox label="External access:" key="external"/>
+						<checkboxes label="Groups:" key="groups">
+							<source url="source_items.xml"/>
+						</checkboxes>
+						<tokens label="Tokens:" key="tokens"/>
+						<radiobuttons label="Radios:" key="radios">
+							<radiobutton label="Lorem" value="lorem"/>
+							<radiobutton label="Ipsum" value="ipsum"/>
+							<radiobutton label="Dolor" value="dolor"/>
+						</radiobuttons>
+						<custom label="Object list:">
+							<objectlist key="objectlist">
+								<text key="email" label="E-mail"/>
+								<select key="context" label="Context">
+									<option value="home" label="Home"/>
+									<option value="work" label="Work"/>
+									<option value="school" label="School"/>
+								</select>
+							</objectlist>
+						</custom>
 						<buttons top="10">
 							<button title="Gem" highlighted="true"/>
 							<button title="Slet"/>
@@ -48,4 +88,42 @@
 			</tab>
 		</tabs>
 	</box>
+	<window name="win" width="400" padding="10">
+		<formula name="formula2">
+			<group>
+				<text label="Brugernavn:" key="username"/>
+				<password label="Kodeord:" key="password"/>
+				<text label="Notat:" lines="6" key="note"/>
+				<datetime label="Date (secs):" key="date-seconds" return-type="seconds"/>
+				<datetime label="Date:" key="date"/>
+				<select label="Select:" key="select" source="source_items.xml"/>
+				<checkbox label="Internal access:" key="internal"/>
+				<checkbox label="External access:" key="external"/>
+				<checkboxes label="Groups:" key="groups">
+					<source url="source_items.xml"/>
+				</checkboxes>
+				<tokens label="Tokens:" key="tokens"/>
+				<radiobuttons label="Radios:" key="radios">
+					<radiobutton label="Lorem" value="lorem"/>
+					<radiobutton label="Ipsum" value="ipsum"/>
+					<radiobutton label="Dolor" value="dolor"/>
+				</radiobuttons>
+				<custom label="Object list:">
+					<objectlist key="objectlist">
+						<text key="email" label="E-mail"/>
+						<select key="context" label="Context">
+							<option value="home" label="Home"/>
+							<option value="work" label="Work"/>
+							<option value="school" label="School"/>
+						</select>
+					</objectlist>
+				</custom>
+				<buttons top="10">
+					<button title="Normal" action="win.setVariant(null)"/>
+					<button title="Dark" action="win.setVariant('dark')"/>
+					<button title="Light" action="win.setVariant('light')"/>
+				</buttons>
+			</group>
+		</formula>
+	</window>
 </gui>

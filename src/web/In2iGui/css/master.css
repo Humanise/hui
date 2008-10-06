@@ -61,14 +61,20 @@ table.split
 td.split_content
 {
 	vertical-align: top;
+	width: 100%;
+	background: #fff;
 }
 
 td.split_sidebar
 {
 	background: #EBF0F7;
-	width: 200px;
 	border-right: 1px solid #bbb;
 	vertical-align: top;
+}
+
+div.split_sidebar
+{
+	width: 200px;
 }
 
 
@@ -175,17 +181,6 @@ div.in2igui_tabs_bar li.in2igui_tabs_selected span span
 }
 
 
-/************************ overflow **********************/
-
-.in2igui_overflow
-{
-	overflow: auto;
-	overflow-x:hidden;
-	width: 100%;
-	position: relative;
-}
-
-
 /******************************** Buttons ****************************/
 
 div.in2igui_buttons
@@ -205,7 +200,7 @@ a.in2igui_button
 	float: left;
 	font-size: 12px;
 	height: 28px;
-	line-height: 24px;
+	line-height: 25px;
 	cursor: pointer;
 	text-decoration: none;
 	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
@@ -338,4 +333,37 @@ div.in2igui_infoview_click:hover
 {
 	cursor: pointer;
 	text-decoration: underline;
+}
+
+/**************************************** Dock **************************************/
+
+table.in2igui_dock
+{
+	height: 100%;
+	width: 100%;
+}
+
+table.in2igui_dock thead td
+{
+	height: 58px;
+	padding: 0px 5px;
+	background: url('../gfx/toolbar_bg.png') repeat-x;
+}
+
+table.in2igui_dock div.in2igui_toolbar
+{
+	overflow: hidden;
+}
+
+table.in2igui_dock tbody td
+{
+	font-size: 0px;
+}
+
+table.in2igui_dock iframe
+{
+	height: 100%;
+	width: 100%;
+	border: none;
+	font-size: 0px;
 }

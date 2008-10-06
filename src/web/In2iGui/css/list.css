@@ -149,6 +149,7 @@ div.in2igui_list .navigation .selection a
 	margin-top: 4px;
 	line-height: 16px;
 	padding: 0px 2px;
+	-webkit-border-radius: 2px;
 }
 
 div.in2igui_list .navigation .selection a:hover

@@ -13,8 +13,11 @@ OO.Editor = function(delegate) {
 			{value:'basic',title:'Basal',image:OnlineObjects.appContext+'/designs/basic/info/thumbnail.png'},
 			{value:'modern',title:'Moderne',image:OnlineObjects.appContext+'/designs/modern/info/thumbnail.png'},
 			{value:'cartoon',title:'Tegneserie',image:OnlineObjects.appContext+'/designs/cartoon/info/thumbnail.png'},
-			{value:'ocean',title:'Ocean',image:OnlineObjects.appContext+'/designs/ocean/info/thumbnail.png'},
-			{value:'snow',title:'Snow',image:OnlineObjects.appContext+'/designs/snow/info/thumbnail.png'}
+			{value:'ocean',title:'Dykker',image:OnlineObjects.appContext+'/designs/ocean/info/thumbnail.png'},
+			{value:'beach',title:'Strand',image:OnlineObjects.appContext+'/designs/beach/info/thumbnail.jpg'},
+			{value:'snow',title:'Snow',image:OnlineObjects.appContext+'/designs/snow/info/thumbnail.png'},
+			{value:'babygirl',title:'Baby (pige)',image:OnlineObjects.appContext+'/designs/babygirl/info/thumbnail.png'},
+			{value:'babyboy',title:'Baby (dreng)',image:OnlineObjects.appContext+'/designs/babyboy/info/thumbnail.png'}
 		],
 		simple : [
 			{value:'basic',title:'Basal',image:OnlineObjects.appContext+'/designs/basic/info/thumbnail.png'},
@@ -22,14 +25,20 @@ OO.Editor = function(delegate) {
 		],
 		holliday : [
 			{value:'cartoon',title:'Tegneserie',image:OnlineObjects.appContext+'/designs/cartoon/info/thumbnail.png'},
-			{value:'ocean',title:'Ocean',image:OnlineObjects.appContext+'/designs/ocean/info/thumbnail.png'},
+			{value:'ocean',title:'Dykker',image:OnlineObjects.appContext+'/designs/ocean/info/thumbnail.png'},
+			{value:'beach',title:'Strand',image:OnlineObjects.appContext+'/designs/beach/info/thumbnail.jpg'},
 			{value:'snow',title:'Snow',image:OnlineObjects.appContext+'/designs/snow/info/thumbnail.png'}
+		],
+		'event' : [
+			{value:'babygirl',title:'Baby (pige)',image:OnlineObjects.appContext+'/designs/babygirl/info/thumbnail.png'},
+			{value:'babyboy',title:'Baby (dreng)',image:OnlineObjects.appContext+'/designs/babyboy/info/thumbnail.png'}
 		]
 	};
 	this.templateCategories = [
 		{title:'Alle',icon:'common/color',value:'all'},
 		{title:'Simple',icon:'common/color',value:'simple'},
-		{title:'Ferie',icon:'common/color',value:'holliday'}
+		{title:'Ferie',icon:'common/color',value:'holliday'},
+		{title:'Begivenhed',icon:'common/color',value:'event'}
 	];
 	var self = this;
 	var editmode = N2i.Location.getBoolean('edit');

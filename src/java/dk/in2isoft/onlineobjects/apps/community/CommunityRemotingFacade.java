@@ -45,8 +45,8 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 
 	private static Logger log = Logger.getLogger(CommunityRemotingFacade.class);
 
-	public void signUp(String username, String password) throws EndUserException {
-		CommunityController.getDAO().signUp(getUserSession(),username,password);
+	public void signUp(String username, String password, String name, String email) throws EndUserException {
+		CommunityController.getDAO().signUp(getUserSession(),username,password,name,email);
 	}
 	
 	public void signUpFromInvitation(String code, String username, String password) throws EndUserException {

@@ -182,23 +182,28 @@ public class CommunityDAO extends AbstractDAO {
 		getModel().updateItem(invitation, session);
 	}
 
-	public void signUp(UserSession session, String username, String password) throws EndUserException {
+	public void signUp(UserSession session, String username, String password, String fullName, String email) throws EndUserException {
 
-		if (username == null || username.length() == 0) {
-			throw new IllegalRequestException("Username is null");
+		if (!LangUtil.isDefined(username)) {
+			throw new IllegalRequestException("Username is not provided");
 		}
-		if (password == null || password.length() == 0) {
-			throw new IllegalRequestException("Password is null");
+		if (!LangUtil.isDefined(password)) {
+			throw new IllegalRequestException("Password is not provided");
+		}
+		if (!LangUtil.isDefined(fullName)) {
+			throw new IllegalRequestException("Name is not provided");
+		}
+		if (!LangUtil.isDefined(email)) {
+			throw new IllegalRequestException("Email is not provided");
 		}
 		ModelFacade model = getModel();
-		User user = model.getUser(username);
-		if (user != null) {
+		User existing = model.getUser(username);
+		if (existing != null) {
 			throw new EndUserException("User allready exists");
-
 		}
 
 		// Create a user
-		user = new User();
+		User user = new User();
 		user.setUsername(username);
 		user.setPassword(password);
 		model.createItem(user, session);
@@ -207,13 +212,19 @@ public class CommunityDAO extends AbstractDAO {
 
 		// Create a person
 		Person person = new Person();
-		person.setName(username);
+		person.setFullName(fullName);
 		model.createItem(person, session);
+		
+		// Create email
+		EmailAddress emailAddress = new EmailAddress();
+		emailAddress.setAddress(email);
+		model.createItem(emailAddress, session);
+		
+		// Create relation between person and email
+		model.createRelation(person, emailAddress, session);
 
 		// Create relation between user and person
-		Relation userPersonRelation = new Relation(user, person);
-		userPersonRelation.setKind(Relation.KIND_SYSTEM_USER_SELF);
-		model.createItem(userPersonRelation, session);
+		model.createRelation(user, person, Relation.KIND_SYSTEM_USER_SELF, session);
 
 		// Create a web site
 		WebSite site = new WebSite();
@@ -221,8 +232,7 @@ public class CommunityDAO extends AbstractDAO {
 		model.createItem(site, session);
 
 		// Create relation between user and web site
-		Relation userSiteRelation = new Relation(user, site);
-		model.createItem(userSiteRelation, session);
+		model.createRelation(user, site,session);
 
 		WebModelUtil.createWebPageOnSite(site.getId(),ImageGallery.class, session);
 	}

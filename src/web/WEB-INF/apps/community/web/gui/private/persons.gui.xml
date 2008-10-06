@@ -52,8 +52,7 @@
 			</view>
 		</content>
 	</view>
-	<window name="personWindow" title="Person" width="500">
-		<space all="10">
+	<window name="personWindow" title="Person" width="500" pad="5">
 		<formula name="personFormula">			
 			<horizontal space="10">
 				<content>
@@ -107,13 +106,11 @@
 					</group>
 				</content>
 			</horizontal>
-			<space height="10"/>
-			<buttons>
+			<buttons top="5">
 				<button title="Gem" highlighted="true" name="savePerson"/>
 				<button title="Annuller" name="cancelPerson"/>
 			</buttons>
 		</formula>
-		</space>
 	</window>
 	<window floating="true" name="invitationWindow" title="Ny invitation" width="300" padding="5">
 		<formula name="invitationFormula">

@@ -50,6 +50,10 @@ In2iPhone.Button.prototype = {
 	}
 }
 
+In2iPhone.goToPage = function(page) {
+	
+}
+
 In2iPhone.Page = function(element,name,options) {
 	this.element = $(element);
 	this.name = name;

@@ -1,0 +1,71 @@
+body
+{
+	padding: 0px;
+	margin: 0px;
+	min-height:100%;
+	background: url('../gfx/bg2.jpg');
+}
+
+.header
+{
+	font-family: Georgia,Times,serif;
+	text-align: center;
+	padding: 0px 10px;
+	font-size: 14pt;
+	line-height: 50px;
+	color: #333;
+	height: 67px;
+	text-transform: uppercase;
+	margin-bottom: 20px;
+	background: url('../gfx/header.png') repeat-x;
+}
+
+.header input
+{
+	font-family:Georgia,Times,serif;
+	text-align: center;
+	font-size: 14pt;
+	text-transform: uppercase;
+	color: #333;
+	border: none;
+}
+
+.header a
+{
+	text-decoration: none;
+	color: #333;
+}
+
+.header a.selected
+{
+	color: #46a;
+}
+
+.back
+{
+	font-family: Georgia,Times,serif;
+	color: #3e5b66;
+	position: absolute;
+	margin-top: 17px;
+	margin-left: 17px;
+}
+
+div.part_header h1
+{
+	font-family: Georgia,Times,serif;
+	font-size: 18pt;
+	margin: 0px;
+	color: #333;
+	font-weight: normal;
+}
+
+div.part_html
+{
+	font-family: Georgia,Times,serif;
+	font-size: 11pt;
+}
+
+div.gallery div.part_header h1, div.gallery div.part_html
+{
+	text-align: center;
+}

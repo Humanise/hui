@@ -1,9 +1,10 @@
-In2iGui.Selection = function(id,name,source) {
+In2iGui.Selection = function(id,name,options) {
+	this.options = N2i.override({value:null},options);
 	this.element = $(id);
 	this.name = name;
 	this.items = [];
 	this.sources = [];
-	this.value = null;
+	this.value = this.options.value;
 	this.selected = [];
 	In2iGui.extend(this);
 	var self = this;
@@ -52,7 +53,7 @@ In2iGui.Selection.prototype = {
 		this.sources.push(source);
 	},
 	registerItem : function(id,title,icon,badge,value,kind) {
-		var element = $id(id);
+		var element = $(id);
 		element.in2iGuiValue = value;
 		this.items.push({id:id,title:title,icon:icon,badge:badge,element:element,value:value,kind:kind});
 		var self = this;
@@ -63,7 +64,7 @@ In2iGui.Selection.prototype = {
 			self.itemWasDoubleClicked();
 			return false;
 		}
-		element.dropInfo = {kind:kind,controller:this};
+		element.dragDropInfo = {kind:kind,value:value};
 		N2i.addClass(element,'droppable');
 		N2i.addListener(element,'mouseover',In2iGui.dropOverListener);
 		N2i.addListener(element,'mouseout',In2iGui.dropOutListener);

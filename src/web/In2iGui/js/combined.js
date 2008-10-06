@@ -867,7 +867,21 @@ N2i.Cookie = {
 	clear : function(name) {
 		this.set(name,"",-1);
 	}
-}/*  Prototype JavaScript framework, version 1.6.0.2
+}
+
+N2i.getFrameDocument = function(frame) {
+    if (frame.contentDocument) {
+        return frame.contentDocument;
+    } else if (frame.contentWindow) {
+        return frame.contentWindow.document;
+    } else if (frame.document) {
+        return frame.document;
+    } else {
+		alert(frame.contentDocument);
+	}
+}
+
+/* EOF *//*  Prototype JavaScript framework, version 1.6.0.2
  *  (c) 2005-2008 Sam Stephenson
  *
  *  Prototype is freely distributable under the terms of an MIT-style license.
@@ -5910,7 +5924,11 @@ N2i.Animation.render = function(element) {
 					obj.element.style[work.property]=value;
 				} else if (N2i.Animation.IE && work.property=='opacity') {
 					var opacity = (work.from+(work.to-work.from)*v);
-					obj.element.style['filter']='alpha(opacity='+(opacity*100)+')';
+					if (opacity==1) {
+						obj.element.style['filter']='';
+					} else {
+						obj.element.style['filter']='alpha(opacity='+(opacity*100)+')';
+					}
 				} else {
 					value = new String(work.from+(work.to-work.from)*v)+(work.unit!=null ? work.unit : '');
 					obj.element.style[work.property]=value;
@@ -7410,7 +7428,7 @@ replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
 
 function In2iGui() {
 	this.domLoaded = false;
-	this.overflows = [];
+	this.overflows = null;
 	this.delegates = [];
 	this.objects = new Hash();
 	this.addBehavior();
@@ -7423,7 +7441,7 @@ In2iGui.latestPanelIndex=1000;
 In2iGui.latestAlertIndex=1500;
 
 In2iGui.browser = {};
-In2iGui.browser.opera = /opera [56789]|opera\/[56789]/i.test(navigator.userAgent);
+In2iGui.browser.opera = /opera/i.test(navigator.userAgent);
 In2iGui.browser.msie = !In2iGui.browser.opera && /MSIE/.test(navigator.userAgent);
 In2iGui.browser.msie7 = navigator.userAgent.indexOf('MSIE 7')!=-1;
 In2iGui.browser.webkit = navigator.userAgent.indexOf('WebKit')!=-1;
@@ -7485,13 +7503,20 @@ In2iGui.prototype = {
 		return pad;
 	},
 	resize : function(id) {
+		if (!this.overflows) return;
 		var height = N2i.Window.getInnerHeight();
-		for (var i=0; i < this.overflows.length; i++) {
-			this.overflows[i].element.style.height = height+this.overflows[i].diff+'px';
-		};
+		this.overflows.each(function(overflow) {
+			if (In2iGui.browser.webkit || In2iGui.browser.gecko) {
+				overflow.element.style.display='none';
+				overflow.element.style.width = overflow.element.parentNode.clientWidth+'px';
+				overflow.element.style.display='';
+			}
+			overflow.element.style.height = height+overflow.diff+'px';
+		});
 	},
 	registerOverflow : function(id,diff) {
-		var overflow = $id(id);
+		if (!this.overflows) this.overflows=[];
+		var overflow = $(id);
 		this.overflows.push({element:overflow,diff:diff});
 	},
 	alert : function(options) {
@@ -7636,7 +7661,7 @@ In2iGui.positionAtElement = function(element,target,options) {
 }
 
 
-/* ********************** Frag drop ******************* */
+/* ********************** Drag drop ******************* */
 
 In2iGui.getDragProxy = function() {
 	if (!In2iGui.dragProxy) {
@@ -7659,7 +7684,7 @@ In2iGui.startDrag = function(e,element,options) {
 		proxy.style.backgroundImage = 'url('+In2iGui.getIconUrl(info.icon,1)+')';
 	}
 	In2iGui.startDragPos = {top:event.mouseTop(),left:event.mouseLeft()};
-	proxy.innerHTML = info.title;
+	proxy.innerHTML = '<span>'+info.title+'</span>' || '###';
 	In2iGui.dragging = true;
 }
 
@@ -7718,9 +7743,10 @@ In2iGui.dragEndListener = function(event) {
 		In2iGui.callDelegatesDrop(In2iGui.dragInfo,In2iGui.latestDropTarget.dragDropInfo);
 		In2iGui.dragProxy.style.display='none';
 	} else {
-		$ani(In2iGui.dragProxy,'left',In2iGui.startDragPos.left+'px',300,{ease:N2i.Animation.fastSlow});
-		$ani(In2iGui.dragProxy,'top',In2iGui.startDragPos.top+'px',300,{ease:N2i.Animation.fastSlow,hideOnComplete:true});
+		$ani(In2iGui.dragProxy,'left',(In2iGui.startDragPos.left+10)+'px',300,{ease:N2i.Animation.fastSlow});
+		$ani(In2iGui.dragProxy,'top',(In2iGui.startDragPos.top-5)+'px',300,{ease:N2i.Animation.fastSlow,hideOnComplete:true});
 	}
+	In2iGui.latestDropTarget=null;
 }
 
 In2iGui.dropOverListener = function(event) {
@@ -7861,7 +7887,7 @@ In2iGui.jsonResponse = function(t,key) {
 	if (!t.responseXML || !t.responseXML.documentElement) {
 		var str = t.responseText.replace(/^\s+|\s+$/g, '');
 		if (str.length>0) {
-			var json = JSON.parse(t.responseText)
+			var json = t.responseText.evalJSON(true);
 		} else {
 			json = '';
 		}
@@ -7879,11 +7905,22 @@ In2iGui.json = function(data,url,delegateOrKey) {
 	}
 	var options = {method:'POST',parameters:{}};
 	for (key in data) {
-		options.parameters[key]=JSON.stringify(data[key])
+		options.parameters[key]=Object.toJSON(data[key])
 	}
 	$get(url,delegate,options)
 }
 
+In2iGui.parseItems = function(doc) {
+	var out = [];
+	var items = doc.getElementsByTagName('item');
+	for (var i=0; i < items.length; i++) {
+		var item = items[i];
+		var title = item.getAttribute('title');
+		var value = item.getAttribute('value');
+		out.push({title:title,value:value});
+	}
+	return out;
+}
 
 ///////////////////////////////////// Common text field ////////////////////////
 
@@ -8009,9 +8046,7 @@ In2iGui.Window = function(element,name) {
 }
 
 In2iGui.Window.create = function(name,options) {
-	N2i.log(options);
 	options = N2i.override({title:'Window'},options);
-	N2i.log(options);
 	var element = new Element('div',{'class':'in2igui_window'+(options.variant ? ' in2igui_window_'+options.variant : '')});
 	element.update('<div class="close"></div>'+
 		'<div class="titlebar"><div class="titlebar"><div class="titlebar"><span>'+options.title+'</span></div></div></div>'+
@@ -8032,6 +8067,9 @@ In2iGui.Window.prototype = {
 		this.close.observe('click',function() {self.hide();});
 		this.titlebar.onmousedown = function(e) {self.startDrag(e);return false;};
 		this.titlebar.observe('touchstart',function(e) {self.startDrag(e);return false;});
+		this.element.observe('mousedown',function() {
+			self.element.style.zIndex=In2iGui.nextPanelIndex();
+		})
 	},
 	setTitle : function(title) {
 		this.title.update(title);
@@ -8069,12 +8107,19 @@ In2iGui.Window.prototype = {
 			this.content.insert(widgetOrNode);
 		}
 	},
+	setVariant : function(variant) {
+		this.element.removeClassName('in2igui_window_dark');
+		this.element.removeClassName('in2igui_window_light');
+		if (variant=='dark' || variant=='light') {
+			this.element.addClassName('in2igui_window_'+variant);
+		}
+	},
 
 ////////////////////////////// Dragging ////////////////////////////////
 
 	startDrag : function(e) {
-		this.element.style.zIndex=In2iGui.nextPanelIndex();
 		var event = new N2i.Event(e);
+		this.element.style.zIndex=In2iGui.nextPanelIndex();
 		this.dragState = {left:event.mouseLeft()-N2i.Element.getLeft(this.element),top:event.mouseTop()-N2i.Element.getTop(this.element)};
 		this.latestPosition = {left: this.dragState.left, top:this.dragState.top};
 		this.latestTime = new Date().getMilliseconds();
@@ -8316,19 +8361,15 @@ In2iGui.Formula.DateTime = function(elementOrId,name,options) {
 	this.outputFormat = 'd-m-Y H:i:s';
 	//this.id = id;
 	this.name = name;
-	this.options = options;
+	this.options = N2i.override({returnType:null},options);
 	this.value = null;
-	this.element = $id(elementOrId);
+	this.element = $(elementOrId);
 	In2iGui.extend(this);
 	this.addBehavior();
 }
 
-In2iGui.Formula.DateTime.create = function(name,opts) {
-	var options = {};
-	N2i.override(options,opts);
-	var element = N2i.create('input',
-		{'class':'in2igui_formula_text'}
-	);
+In2iGui.Formula.DateTime.create = function(name,options) {
+	var element = new Element('input',{'class':'in2igui_formula_text'});
 	return new In2iGui.Formula.DateTime(element,name,options);
 }
 
@@ -8358,6 +8399,8 @@ In2iGui.Formula.DateTime.prototype = {
 	setValue : function(value) {
 		if (!value) {
 			this.value = null;
+		} else if (value.constructor==Date) {
+			this.value = value;
 		} else {
 			this.value = new Date();
 			this.value.setTime(parseInt(value)*1000);
@@ -8374,7 +8417,10 @@ In2iGui.Formula.DateTime.prototype = {
 		this.updateUI();
 	},
 	getValue : function() {
-		return (this.value!=null ? Math.round(this.value.getTime()/1000) : null);
+		if (this.value!=null && this.options.returnType=='seconds') {
+			return Math.round(this.value.getTime()/1000);
+		}
+		return this.value;
 	},
 	getElement : function() {
 		return this.element;
@@ -8397,10 +8443,10 @@ In2iGui.Formula.DateTime.prototype = {
 
 /************************************* Select *******************************/
 
-In2iGui.Formula.Select = function(elementOrId,name,options) {
+In2iGui.Formula.Select = function(id,name,options) {
 	this.name = name;
 	this.options = options;
-	this.element = $id(elementOrId);
+	this.element = $(id);
 	this.value = null;
 	In2iGui.extend(this);
 	this.refresh();
@@ -8410,7 +8456,7 @@ In2iGui.Formula.Select.prototype = {
 	refresh : function() {
 		if (this.options.source) {
 			var self = this;
-			$get(this.options.source,{onSuccess:function(t) {self.update(t.responseXML)}});
+			new Ajax.Request(this.options.source, {onSuccess: function(t) {self.update(t.responseXML)}});
 		}
 	},
 	update : function(doc) {
@@ -8454,7 +8500,8 @@ In2iGui.Formula.Select.prototype = {
 /********************************* Radio buttons ****************************/
 
 In2iGui.Formula.Radiobuttons = function(id,name,options) {
-	this.element = $id(id);
+	this.options = options;
+	this.element = $(id);
 	this.name = name;
 	this.radios = [];
 	this.value = options.value;
@@ -8470,7 +8517,7 @@ In2iGui.Formula.Radiobuttons.prototype = {
 	updateUI : function() {
 		for (var i=0; i < this.radios.length; i++) {
 			var radio = this.radios[i];
-			N2i.setClass(radio.id,'selected',radio.value==this.value);
+			N2i.setClass(radio.id,'in2igui_selected',radio.value==this.value);
 		};
 	},
 	setValue : function(value) {
@@ -8485,7 +8532,7 @@ In2iGui.Formula.Radiobuttons.prototype = {
 	},
 	registerRadiobutton : function(radio) {
 		this.radios.push(radio);
-		var element = $id(radio.id);
+		var element = $(radio.id);
 		var self = this;
 		element.onclick = function() {
 			self.setValue(radio.value);
@@ -8498,6 +8545,7 @@ In2iGui.Formula.Radiobuttons.prototype = {
 
 In2iGui.Formula.Checkbox = function(id,name,options) {
 	this.element = $(id);
+	this.options = options;
 	this.name = name;
 	this.value = options.value=='true';
 	In2iGui.extend(this);
@@ -8533,7 +8581,7 @@ In2iGui.Formula.Checkbox.prototype = {
 
 In2iGui.Formula.Checkboxes = function(id,name,options) {
 	this.options = options;
-	this.element = $id(id);
+	this.element = $(id);
 	this.name = name;
 	this.checkboxes = [];
 	this.sources = [];
@@ -8602,50 +8650,37 @@ In2iGui.Formula.Checkboxes.prototype = {
 /******************************** Source ****************************/
 
 In2iGui.Formula.Checkboxes.Source = function(id,name,options) {
-	this.element = $id(id);
+	this.element = $(id);
 	this.name = name;
 	this.parent = null;
 	this.options = options;
 	this.checkboxes = [];
 	In2iGui.extend(this);
 	this.refresh();
-	//var self = this;
-	//N2i.Event.addLoadListener(function() {self.refresh()});
 }
 
 In2iGui.Formula.Checkboxes.Source.prototype = {
 	refresh : function() {
 		var self = this;
-		$get(this.options.url,{onSuccess:function(t) {self.update(t.responseXML)}});
+		new Ajax.Request(this.options.url, {onSuccess: function(t) {self.update(t.responseXML)}});
 	},
 	update : function(doc) {
 		this.checkboxes = [];
-		N2i.removeChildren(this.element);
+		this.element.update();
 		var self = this;
-		var items = doc.getElementsByTagName('checkbox');
-		for (var i=0; i < items.length; i++) {
-			var item = items[i];
-			var node = N2i.create('div',{'class':'in2igui_checkbox'});
-			var label = item.getAttribute('label');
-			var value = item.getAttribute('value');
-			var check = N2i.create('div');
-			node.appendChild(check);
-			node.appendChild(document.createTextNode(label));
-			this.element.appendChild(node);
-			node.in2iGuiValue = value;
-			node.onclick = function() {
-				self.itemWasClicked(this);
-			}
-			this.checkboxes.push({label:label,element:node,value:value});
-		};
-		if (items.length==0) {
-			//this.element.innerHTML='&nbsp;';
-		}
+		var items = In2iGui.parseItems(doc);
+		items.each(function(item) {
+			var node = new Element('div',{'class':'in2igui_checkbox'});
+			node.insert(new Element('div')).insert(item.title);
+			node.observe('click',function() {self.itemWasClicked(item)})
+			self.element.insert(node);
+			self.checkboxes.push({title:item.title,element:node,value:item.value});
+		})
 		this.parent.checkValues();
 		this.updateUI();
 	},
-	itemWasClicked : function(node) {
-		this.parent.flipValue(node.in2iGuiValue);
+	itemWasClicked : function(item) {
+		this.parent.flipValue(item.value);
 	},
 	updateUI : function() {
 		for (var i=0; i < this.checkboxes.length; i++) {
@@ -8784,6 +8819,9 @@ In2iGui.List.prototype = {
 		this.parameters[key]=value;
 	},
 	loadData : function(url) {
+		this.setSource(url);
+	},
+	setSource : function(url) {
 		this.source = url;
 		this.selected = [];
 		this.sortKey = null;
@@ -8797,12 +8835,6 @@ In2iGui.List.prototype = {
  */
 	refresh : function() {
 		if (!this.source) return;
-		var self = this;
-		var delegate = {
-			onSuccess:function(t) {
-				self.parse(t.responseXML);
-			}
-		};
 		var url = this.source;
 		if (this.window.number) {
 			url+=url.indexOf('?')==-1 ? '?' : '&';
@@ -8824,7 +8856,16 @@ In2iGui.List.prototype = {
 			url+=url.indexOf('?')==-1 ? '?' : '&';
 			url+=key+'='+this.parameters[key];
 		}
-		$get(url,delegate);
+		var self = this;
+		new Ajax.Request(url,{
+			onSuccess:function(r) {
+				if (r.responseXML) {
+					self.parse(r.responseXML);
+				} else if (r.responseText) {
+					self.setObjects(r.responseText.evalJSON());
+				}
+			}
+		});
 	},
 	sort : function(index) {
 		var key = this.columns[index].key;
@@ -8884,15 +8925,17 @@ In2iGui.List.prototype = {
 		for (var i=0; i < rows.length; i++) {
 			var cells = rows[i].getElementsByTagName('cell');
 			var row = document.createElement('tr');
-			var info = {uid:rows[i].getAttribute('uid'),kind:rows[i].getAttribute('kind'),icon:rows[i].getAttribute('icon'),title:rows[i].getAttribute('title'),index:i};
-			row.dragDropInfo = info;
+			var icon = rows[i].getAttribute('icon');
+			var title = rows[i].getAttribute('title');
 			for (var j=0; j < cells.length; j++) {
-				//var text = null;
-				var cell = document.createElement('td');
-				this.parseCell(cells[j],cell);
-				//cell.appendChild(document.createTextNode(' '));
-				row.appendChild(cell);
+				var td = document.createElement('td');
+				this.parseCell(cells[j],td);
+				row.appendChild(td);
+				if (!title) title = cells[j].innerText;
+				if (!icon && cells[j].getAttribute('icon')) icon = cells[j].getAttribute('icon');
 			};
+			var info = {id:rows[i].getAttribute('id'),kind:rows[i].getAttribute('kind'),icon:icon,title:title,index:i};
+			row.dragDropInfo = info;
 			this.addRowBehavior(row,i);
 			this.body.appendChild(row);
 			this.rows.push(info);
@@ -9228,11 +9271,10 @@ In2iGui.Tabbox.Tab = function(id,name) {
 
 /* EOF */
 In2iGui.ObjectList = function(id,name,options) {
-	this.options = {key:null};
-	N2i.override(this.options,options);
+	this.options = N2i.override({key:null},options);
 	this.name = name;
-	this.element = $id(id);
-	this.body = this.element.getElementsByTagName('tbody')[0];
+	this.element = $(id);
+	this.body = this.element.select('tbody')[0];
 	this.template = [];
 	this.objects = [];
 	In2iGui.extend(this);
@@ -9240,7 +9282,7 @@ In2iGui.ObjectList = function(id,name,options) {
 
 In2iGui.ObjectList.prototype = {
 	ignite : function() {
-		this.addObject({id:0});
+		this.addObject({});
 	},
 	addObject : function(data,addToEnd) {
 		if (this.objects.length==0 || addToEnd) {
@@ -9262,7 +9304,7 @@ In2iGui.ObjectList.prototype = {
 			element.parentNode.removeChild(element);
 		};
 		this.objects = [];
-		this.addObject({id:0});
+		this.addObject({});
 	},
 	addObjects : function(data) {
 		for (var i=0; i < data.length; i++) {
@@ -9480,7 +9522,7 @@ In2iGui.Alert.prototype = {
 			this.text = N2i.create('p');
 			this.content.appendChild(this.text);
 		}
-		this.text.innerHTML = text;
+		this.text.innerHTML = text || '';
 	},
 	/** @deprecated */
 	setVariant : function(variant) {
@@ -9587,12 +9629,13 @@ In2iGui.Buttons.prototype = {
 	}
 }
 
-/* EOF */In2iGui.Selection = function(id,name,source) {
+/* EOF */In2iGui.Selection = function(id,name,options) {
+	this.options = N2i.override({value:null},options);
 	this.element = $(id);
 	this.name = name;
 	this.items = [];
 	this.sources = [];
-	this.value = null;
+	this.value = this.options.value;
 	this.selected = [];
 	In2iGui.extend(this);
 	var self = this;
@@ -9641,7 +9684,7 @@ In2iGui.Selection.prototype = {
 		this.sources.push(source);
 	},
 	registerItem : function(id,title,icon,badge,value,kind) {
-		var element = $id(id);
+		var element = $(id);
 		element.in2iGuiValue = value;
 		this.items.push({id:id,title:title,icon:icon,badge:badge,element:element,value:value,kind:kind});
 		var self = this;
@@ -9652,7 +9695,7 @@ In2iGui.Selection.prototype = {
 			self.itemWasDoubleClicked();
 			return false;
 		}
-		element.dropInfo = {kind:kind,controller:this};
+		element.dragDropInfo = {kind:kind,value:value};
 		N2i.addClass(element,'droppable');
 		N2i.addListener(element,'mouseover',In2iGui.dropOverListener);
 		N2i.addListener(element,'mouseout',In2iGui.dropOutListener);
@@ -9712,7 +9755,7 @@ In2iGui.Selection.Source.prototype = {
 		N2i.removeChildren(this.element);
 		var self = this;
 		var items = doc.getElementsByTagName('item');
-		for (var i=0; i < items.length; i++) {
+		for (var i=0, len=items.length; i < len; ++i) {
 			var item = items[i];
 			var node = new Element('div',{'class':'in2igui_selection_item'});
 			var inner = new Element('span');
@@ -9724,11 +9767,12 @@ In2iGui.Selection.Source.prototype = {
 			if (icon) {
 				inner.setStyle({'backgroundImage' : 'url('+In2iGui.getIconUrl(icon,1)+')'}).addClassName('in2igui_icon');
 			}
+			node.in2iGuiIndex = i;
 			node.insert(inner.insert(title));
 			this.element.insert(node);
-			node.onclick = function() {
-				self.itemWasClicked(value);
-			}
+			node.observe('click',function() {
+				self.itemWasClicked(self.items[this.in2iGuiIndex].value);
+			});
 			node.ondblclick = function() {
 				self.itemWasDoubleClicked();
 				return false;
@@ -10817,7 +10861,7 @@ In2iGui.Picker.prototype = {
 		this.content.style.width=(this.objects.length*(this.options.itemWidth+14))+'px';
 		this.content.style.height=(this.options.itemHeight+10)+'px';
 		this.objects.each(function(object,i) {
-			var item = new Element('div',{'class':'in2igui_picker_item'});
+			var item = new Element('div',{'class':'in2igui_picker_item',title:object.title});
 			if (self.value!=null && object[self.options.valueProperty]==self.value) item.addClassName('in2igui_picker_item_selected');
 			item.update(
 				'<div class="in2igui_picker_item_middle"><div class="in2igui_picker_item_middle">'+
@@ -11451,8 +11495,12 @@ In2iGui.Overlay.prototype = {
 	showAtElement : function(element,options) {
 		In2iGui.positionAtElement(this.element,element,options);
 		if (this.visible) return;
-		this.element.setStyle({'display':'block','opacity':0});
-		$ani(this.element,'opacity',1,300);
+		if (In2iGui.browser.msie) {
+			this.element.setStyle({'display':'block'});
+		} else {
+			this.element.setStyle({'display':'block','opacity':0});
+			$ani(this.element,'opacity',1,300);
+		}
 		this.visible = true;
 		return;
 	},
@@ -12182,6 +12230,25 @@ In2iGui.Columns.prototype = {
 			this.body.insert(new Element('td',{'class':'in2igui_columns_column'}));
 		}
 		return this.body.childElements()[index];
+	}
+}
+
+/* EOF *//**
+ * A dock
+ * @constructor
+ */
+In2iGui.Dock = function(element,name,options) {
+	this.options = N2i.override({modal:false},options);
+	this.element = $(element);
+	this.iframe = this.element.select('iframe')[0];
+	this.name = name;
+	In2iGui.extend(this);
+	In2iGui.get().registerOverflow(this.iframe,-58);
+}
+
+In2iGui.Dock.prototype = {
+	setUrl : function(url) {
+		N2i.getFrameDocument(this.iframe).location.href=url;
 	}
 }
 

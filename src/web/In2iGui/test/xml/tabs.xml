@@ -20,7 +20,7 @@
 					</group>
 				</formula>
 			</tab>
-			<tab title="Dette er en test">
+			<tab title="Dette er en test" padding="10">
 			</tab>
 		</tabs>
 		<buttons padding="10" top="0">

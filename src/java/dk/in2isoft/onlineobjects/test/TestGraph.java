@@ -1,5 +1,7 @@
 package dk.in2isoft.onlineobjects.test;
 
+import java.io.ByteArrayOutputStream;
+
 import org.apache.log4j.Logger;
 
 import dk.in2isoft.commons.util.GraphUtil;
@@ -29,7 +31,8 @@ public class TestGraph extends TestCase {
 			   	"LR_8 -> LR_6 [ label = \"S(b)\" ];"+
 			   	"LR_8 -> LR_5 [ label = \"S(a)\" ];"+
 			   "}";
-		String svg = GraphUtil.dotToSvg(dot);
-		log.debug(svg);
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		GraphUtil.dotToSVG(dot,stream);
+		log.debug(stream.toString());
 	}
 }

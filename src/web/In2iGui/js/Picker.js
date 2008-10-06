@@ -58,7 +58,7 @@ In2iGui.Picker.prototype = {
 		this.content.style.width=(this.objects.length*(this.options.itemWidth+14))+'px';
 		this.content.style.height=(this.options.itemHeight+10)+'px';
 		this.objects.each(function(object,i) {
-			var item = new Element('div',{'class':'in2igui_picker_item'});
+			var item = new Element('div',{'class':'in2igui_picker_item',title:object.title});
 			if (self.value!=null && object[self.options.valueProperty]==self.value) item.addClassName('in2igui_picker_item_selected');
 			item.update(
 				'<div class="in2igui_picker_item_middle"><div class="in2igui_picker_item_middle">'+

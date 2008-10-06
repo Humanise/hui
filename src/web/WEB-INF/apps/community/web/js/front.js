@@ -96,12 +96,14 @@ OO.Community.Front.prototype = {
 			this.signupForm.onsubmit = function() {
 				var username = this.username.value;
 				var password = this.password.value;
+				var name = this.name.value;
+				var email = this.email.value;
 				try {
 					var delegate = {
 			  			callback:function() { self.userDidSignUp(username) },
 			  			errorHandler:function(errorString, exception) { N2i.log(exception);self.setSignUpMessage(errorString); }
 					};
-					AppCommunity.signUp(username,password,delegate);
+					AppCommunity.signUp(username,password,name,email,delegate);
 				} catch (e) {
 					self.displayError(e);
 				}

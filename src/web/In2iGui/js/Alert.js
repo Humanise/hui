@@ -74,7 +74,7 @@ In2iGui.Alert.prototype = {
 			this.text = N2i.create('p');
 			this.content.appendChild(this.text);
 		}
-		this.text.innerHTML = text;
+		this.text.innerHTML = text || '';
 	},
 	/** @deprecated */
 	setVariant : function(variant) {

@@ -43,8 +43,12 @@ In2iGui.Overlay.prototype = {
 	showAtElement : function(element,options) {
 		In2iGui.positionAtElement(this.element,element,options);
 		if (this.visible) return;
-		this.element.setStyle({'display':'block','opacity':0});
-		$ani(this.element,'opacity',1,300);
+		if (In2iGui.browser.msie) {
+			this.element.setStyle({'display':'block'});
+		} else {
+			this.element.setStyle({'display':'block','opacity':0});
+			$ani(this.element,'opacity',1,300);
+		}
 		this.visible = true;
 		return;
 	},

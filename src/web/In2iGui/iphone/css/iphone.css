@@ -1,52 +1,70 @@
 html
 {
-	height:100%;
+	min-height:100%;
 	overflow: hidden;
 }
 
 body
 {
 	font-family: sans-serif;
-	background: url('../gfx/pinstripes.png');
+	background: url('../gfx/pinstripes.png') fixed;
 	margin: 0px;
 	padding: 0px;
-	min-height: 100%;
+	overflow: hidden;
+}
+
+div.pages
+{
+	overflow: hidden;
+}
+
+div.pages_content
+{
 	overflow: hidden;
 }
 
 div.page
 {
-	padding: 10px;
-	position: absolute;
-	width: 100%;
-	min-height: 100%;
+	float: left;
+	width: 320px;
+	min-height: 460px;
 	-webkit-box-sizing: border-box;
-	background: url('../gfx/pinstripes.png');
  	-webkit-transition-property: margin-left;
-  	-webkit-transition-duration: .5s;
+  	-webkit-transition-duration: 0.5s;
 }
 
 div.page.hidden_left
 {
-	margin-left: -100%;
+	margin-left: -320px;
 }
 
 div.page.hidden_right
 {
-	margin-left: 100%;
+	/*margin-left: 100%;*/
 }
+
+/************************* text *************************/
 
 h1.header
 {
 	color: rgb(76,86,108);
     text-shadow: rgba(255, 255, 255, 0.6) 0px 1px 0;
-	margin: 0px 0px 5px;
+	margin: 10px 0px 5px;
 	font-size: 12pt;
 	text-align: center;
 }
 
+div.toolbar
+{
+	height: 43px;
+	background: url('../gfx/toolbar.png') repeat-x;
+}
+
+/*************************************** Buttons *************************************/
+
 a.button
 {
+	margin: 0px 10px;
 	display: block;
 	background: #fff;
 	border: 1.5px solid #999;
@@ -70,10 +88,16 @@ a.button strong
 	height: 44px;
 }
 
+div.buttonlist
+{
+	padding: 0px 10px;
+}
+
 div.buttonlist a.button
 {
 	-webkit-border-radius: 0px;
 	border-bottom-width: 0px;
+	margin: 0px;
 }
 
 div.buttonlist a.button:last-of-type

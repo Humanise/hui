@@ -68,7 +68,8 @@ div.in2igui_selection div.selected, div.in2igui_selection div.selected:hover
 
 .in2igui_selection div.in2igui_drop, .in2igui_selection div.in2igui_drop:hover
 {
-	background-color: #779cd6;
+	background: #779cd6 url('../gfx/hover_bg.png');
+	-webkit-border-radius: 4px;
 }
 
 

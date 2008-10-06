@@ -15,7 +15,6 @@ form.in2igui_formula
 
 table.in2igui_formula_group
 {
-	border-spacing: 0px 4px;
 	width: 100%;
 }
 
@@ -33,13 +32,13 @@ table.in2igui_formula_group label
 {
 	color: #004A80;
 	font-size: 12px;
-	line-height: 11px;
 	font-weight: normal;
 }
 
 table.in2igui_formula_group_above label
 {
 	line-height: 15px;
+	display: block;
 }
 
 table.in2igui_formula_group th label
@@ -75,12 +74,15 @@ form.in2igui_formula div.in2igui_field
 	background: #fff;
 	-moz-border-radius: 3px;
 	-webkit-border-radius: 3px;
+	margin-bottom: 5px;
 }
 
 form.in2igui_formula select
 {
-	border: 1px solid #ddd;
-	border-color: #eee #eee #ddd;
+	/*border: 1px solid #ddd;
+	border-color: #eee #eee #ddd;*/
+	font-size: 9pt;
+	margin: 0px 0px 5px;
 }
 
 form.in2igui_formula .in2igui_formula_text
@@ -123,15 +125,15 @@ form.in2igui_formula a.in2igui_button
 
 /******************************* Radio button **************************/
 
-form.in2igui_formula .radiobuttons
+div.in2igui_radiobuttons
 {
 	overflow: hidden;
+	margin-bottom: 5px;
 }
 
-form.in2igui_formula .radiobutton
+div.in2igui_radiobutton
 {
 	overflow: hidden;
-	padding: 4px 0px 0px;
 	margin-right: 10px;
 	font-size: 10pt;
 	cursor: default;
@@ -139,7 +141,7 @@ form.in2igui_formula .radiobutton
 	float: left;
 }
 
-form.in2igui_formula .radiobutton .radio
+div.in2igui_radiobutton div
 {
 	float: left;
 	background: url('../gfx/radiobutton.png') no-repeat;
@@ -149,24 +151,32 @@ form.in2igui_formula .radiobutton .radio
 	cursor: pointer;
 }
 
-form.in2igui_formula .radiobuttons .selected .radio
+div.in2igui_radiobuttons div.in2igui_selected div
 {
 	background-position: 0px -18px;
 }
 
 /******************************* Checkboxes **************************/
 
-form.in2igui_checkboxes
-{
-}
 
 div.in2igui_checkbox
 {
 	overflow: hidden;
 	padding: 2px 5px 0px 0px;
+	margin-bottom: 5px;
 	font-size: 10pt;
 	cursor: default;
 	color: #004A80;
+}
+
+div.in2igui_checkboxes div.in2igui_checkbox
+{
+	margin-bottom: 2px;
+}
+
+div.in2igui_checkboxes
+{
+	margin-bottom: 5px;
 }
 
 div.in2igui_checkbox div
@@ -188,20 +198,21 @@ div.in2igui_checkbox_selected div
 
 table.in2igui_objectlist
 {
+	margin-top: 1px;
 	width: 100%;
 }
 
-table.in2igui_objectlist thead th.in2igui_objectlist
+table.in2igui_objectlist th.in2igui_objectlist
 {
 	text-align: left;
 	font-size: 9pt;
-	line-height: 9pt;
-	color: #000;
+	line-height: 12pt;
+	color: #004A80;
 	font-weight: normal;
 	padding-left: 4px;
 }
 
-table.in2igui_objectlist thead th.in2igui_objectlist1
+table.in2igui_objectlist th.in2igui_objectlist1
 {
 	padding-left: 0px;	
 }
@@ -214,6 +225,7 @@ table.in2igui_objectlist thead th.in2igui_objectlist1
 .in2igui_objectlist tbody td
 {
 	padding: 0px 0px 2px 4px;
+	vertical-align: top;
 }
 
 .in2igui_objectlist tbody td.first
@@ -249,7 +261,6 @@ input.in2igui_tokens_token
 
 div.in2igui_window table.in2igui_formula_group label
 {
-	color: #000;
 	background: rgb(231,231,231);
 	padding: 0px 2px;
 }
@@ -261,7 +272,7 @@ div.in2igui_window_light table.in2igui_formula_group label
 }
 
 
-div.in2igui_window_dark table.in2igui_formula_group label
+div.in2igui_window_dark table.in2igui_formula_group label, div.in2igui_window_dark div.in2igui_checkbox, div.in2igui_window_dark div.in2igui_radiobutton, div.in2igui_window_dark th.in2igui_objectlist
 {
 	color: #fff;
 	background: none;

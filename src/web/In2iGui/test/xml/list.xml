@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="setup.xsl"?>
+<gui xmlns="uri:In2iGui" title="System">
+	<controller name="controller" source="list.js"/>
+	<view>
+		<toolbar>
+			<icon icon="common/refresh" title="Refresh" action="list.refresh()"/>
+			<divider/>
+			<icon icon="common/user" title="List users" action="list.setSource('data/list_users.xml')"/>
+			<icon icon="common/color" title="List icons" action="list.setSource('data/list_icons.xml')"/>
+		</toolbar>
+		<content>
+			<split>
+				<sidebar>
+					<selection value="user" name="selector">
+						<item icon="common/person" title="Brugere" value="user"/>
+						<item icon="common/folder" title="Database" value="database" kind="folder"/>
+						<item icon="common/person" title="Alle objekter" value="object"/>
+						<title>Hey</title>
+						<source url="data/source_items.xml"/>
+					</selection>
+				</sidebar>
+				<content>
+					<overflow height="300" resize="-58">
+						<list name="list"/>
+					</overflow>
+				</content>
+			</split>
+		</content>
+	</view>
+</gui>

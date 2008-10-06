@@ -1,6 +1,9 @@
 package dk.in2isoft.onlineobjects.model;
 
+import org.apache.commons.lang.StringUtils;
+
 import dk.in2isoft.commons.lang.LangUtil;
+import dk.in2isoft.onlineobjects.core.IllegalRequestException;
 
 public class Person extends Entity {
 
@@ -69,6 +72,20 @@ public class Person extends Entity {
 	public void setNameSuffix(String nameSuffix) {
 		this.nameSuffix = nameSuffix;
 		updateName();
+	}
+	
+	public void setFullName(String fullName) {
+		String[] names = StringUtils.split(fullName);
+		if (names==null || names.length==0) {
+			setGivenName(null);
+			setFamilyName(null);
+		}
+		if (names.length>0) {
+			setGivenName(names[0]);
+		}
+		if (names.length>1) {
+			setFamilyName(names[names.length-1]);
+		}
 	}
 
 	private void updateName() {

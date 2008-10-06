@@ -1,18 +1,13 @@
-In2iGui.Canvas = function() {
-	
-}
-
 In2iGui.Graphviz = function(element,name,options) {
 		this.maxXdotVersion = 1.2;
 		this.systemScale = 4/3;
 		this.scale = 1;
 		this.padding = 8;
-		this.element = $id(element);
-		this.texts = $firstClass('in2igui_graphviz_texts',this.element);
-		this.canvas = $tag('canvas',this.element)[0];
+		this.element = $(element);
+		this.texts = this.element.select('.in2igui_graphviz_texts')[0];
+		this.canvas = this.element.select('canvas')[0];
 		this.ctx = this.canvas.getContext('2d');
 		
-		//this.ctx=$id('graph_canvas').getContext('2d');
 		this.images = {};
 		this.numImages = 0;
 		this.numImagesFinished = 0;
@@ -34,6 +29,10 @@ In2iGui.Graphviz.prototype = {
 	load: function(url) {
 		var self = this;
 		$get(url,{onSuccess:function(t) {self.parse(t)}});
+	},
+	zoom : function(zoom) {
+		this.scale=this.scale*zoom;
+		this.draw();
 	},
 	parse: function(request) {
 		this.xdotversion = false;
@@ -64,20 +63,20 @@ In2iGui.Graphviz.prototype = {
 					}
 					line += lines[i++];
 				}
-//				In2iGui.Graphviz.debug(line);
+				// In2iGui.Graphviz.debug(line);
 				matches = line.match(/^(.*?)\s*{$/);
 				if (matches) {
 					container_stack.push(matches[1]);
-//					In2iGui.Graphviz.debug('begin container ' + container_stack.last());
+					// In2iGui.Graphviz.debug('begin container ' + container_stack.last());
 				} else if ('}' == line) {
-//					In2iGui.Graphviz.debug('end container ' + container_stack.last());
+					// In2iGui.Graphviz.debug('end container ' + container_stack.last());
 					container_stack.pop();
 				} else {
-//					matches = line.match(/^(".*?[^\\]"|\S+?)\s+\[(.+)\];$/);
+					// matches = line.match(/^(".*?[^\\]"|\S+?)\s+\[(.+)\];$/);
 					matches = line.match(/^(.*?)\s+\[(.+)\];$/);
 					if (matches) {
 						is_graph = ('graph' == matches[1]);
-//						entity = this.unescape(matches[1]);
+						// entity = this.unescape(matches[1]);
 						entity = matches[1];
 						params = matches[2];
 						do {
@@ -86,7 +85,7 @@ In2iGui.Graphviz.prototype = {
 								params = params.substr(matches[0].length);
 								param_name = matches[1];
 								param_value = this.unescape(matches[2]);
-//								In2iGui.Graphviz.debug(param_name + ' ' + param_value);
+// In2iGui.Graphviz.debug(param_name + ' ' + param_value);
 								if (is_graph && 1 == container_stack.length) {
 									switch (param_name) {
 										case 'bb':

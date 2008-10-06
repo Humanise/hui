@@ -78,11 +78,15 @@
 </xsl:template>
 
 <xsl:template match="gui:split/gui:sidebar">
-	<td class="split_sidebar"><xsl:apply-templates/></td>
+	<td class="split_sidebar"><div class="split_sidebar"><xsl:apply-templates/></div></td>
 </xsl:template>
 
 <xsl:template match="gui:overflow">
-<div class="in2igui_overflow" id="{generate-id()}" style="height: {@height}px;">
+<div class="in2igui_overflow" id="{generate-id()}">
+	<xsl:attribute name="style">
+		 <xsl:if test="@height">height: <xsl:value-of select="@height"/>px;</xsl:if>
+		 <xsl:if test="@width">width: <xsl:value-of select="@width"/>px;</xsl:if>
+	</xsl:attribute>
 	<xsl:apply-templates/>
 </div>
 <xsl:if test="@resize">

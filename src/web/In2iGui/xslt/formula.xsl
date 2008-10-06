@@ -136,11 +136,11 @@
 </xsl:template>
 
 <xsl:template name="gui:datetime">
-	<div class="field">
-	<input type="text" class="text" id="{generate-id()}"/>
+	<div class="in2igui_field">
+	<input type="text" class="in2igui_formula_text" id="{generate-id()}"/>
 	</div>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.DateTime('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>');
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.DateTime('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>',{key:'<xsl:value-of select="@key"/>',returnType:'<xsl:value-of select="@return-type"/>'});
 		<xsl:call-template name="gui:createobject"/>
 	</script>
 </xsl:template>
@@ -166,7 +166,7 @@
 	<xsl:apply-templates/>
 	</select>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.Select('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>',{source:'<xsl:value-of select="@source"/>'});
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.Select('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>',{key:'<xsl:value-of select="@key"/>',source:'<xsl:value-of select="@source"/>'});
 		<xsl:call-template name="gui:createobject"/>
 	</script>
 </xsl:template>
@@ -190,11 +190,11 @@
 </xsl:template>
 
 <xsl:template name="gui:radiobuttons">
-	<div class="radiobuttons" id="{generate-id()}">
+	<div class="in2igui_radiobuttons" id="{generate-id()}">
 		<xsl:apply-templates/>
 	</div>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.Radiobuttons('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>',{'value':'<xsl:value-of select="@value"/>'});
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.Radiobuttons('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>',{'value':'<xsl:value-of select="@value"/>','key':'<xsl:value-of select="@key"/>'});
 		with (<xsl:value-of select="generate-id()"/>_obj) {
 			<xsl:for-each select="gui:radiobutton">
 				registerRadiobutton({id:'<xsl:value-of select="generate-id()"/>','value':'<xsl:value-of select="@value"/>'});
@@ -206,8 +206,8 @@
 
 <xsl:template match="gui:radiobuttons/gui:radiobutton">
 	<div id="{generate-id()}">
-		<xsl:attribute name="class">radiobutton <xsl:if test="@value=../@value">selected</xsl:if></xsl:attribute>
-		<div class="radio"><xsl:comment/></div><xsl:value-of select="@label"/>
+		<xsl:attribute name="class">in2igui_radiobutton <xsl:if test="@value=../@value">in2igui_selected</xsl:if></xsl:attribute>
+		<div><xsl:comment/></div><xsl:value-of select="@label"/>
 	</div>
 </xsl:template>
 
@@ -236,7 +236,7 @@
 		<div><xsl:comment/></div>
 	</div>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.Checkbox('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>',{'value':'<xsl:value-of select="@value"/>'});
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.Checkbox('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>',{'key':'<xsl:value-of select="@key"/>','value':'<xsl:value-of select="@value"/>'});
 		<xsl:call-template name="gui:createobject"/>
 	</script>
 </xsl:template>
@@ -286,14 +286,18 @@
 
 <xsl:template match="gui:formula/gui:buttons">
 	<div class="in2igui_formula_buttons">
-		<xsl:if test="@pad"><xsl:attribute name="style">padding: <xsl:value-of select="@pad"/>px;</xsl:attribute></xsl:if>
+		<xsl:attribute name="style">
+		<xsl:if test="@padding">padding:<xsl:value-of select="@padding"/>px;</xsl:if>
+		<xsl:if test="@pad">padding: <xsl:value-of select="@pad"/>px;</xsl:if>
+		<xsl:if test="@top">padding-top:<xsl:value-of select="@top"/>px;</xsl:if>
+		</xsl:attribute>
 		<xsl:apply-templates/>
 	</div>
 </xsl:template>
 
 <xsl:template match="gui:group/gui:buttons">
 	<tr>
-		<td colspan="2">
+		<td colspan="2" style="border-spacing: 0px;">
 			<xsl:call-template name="gui:buttons"/>
 		</td>
 	</tr>
@@ -309,26 +313,25 @@
 	</div>
 </xsl:template>
 
-<xsl:template match="gui:buttons/gui:button">
+<xsl:template match="gui:buttons/gui:button" name="gui:button">
 	<a id="{generate-id()}">
 		<xsl:attribute name="class">in2igui_button<xsl:if test="@highlighted='true'"> in2igui_button_highlighted</xsl:if></xsl:attribute>
 		<span><span><xsl:value-of select="@title"/></span></span></a>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Button('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>');
+		<xsl:if test="@action">
+			<xsl:value-of select="generate-id()"/>_obj.addDelegate({click:function() {<xsl:value-of select="@action"/>}});
+		</xsl:if>
 		<xsl:call-template name="gui:createobject"/>
 	</script>
 </xsl:template>
 
 <xsl:template match="gui:group/gui:button">
 	<tr>
-		<td colspan="2"><a id="{generate-id()}">
-			<xsl:attribute name="class">in2igui_button<xsl:if test="@highlighted='true'"> in2igui_button_highlighted</xsl:if></xsl:attribute>
-			<span><span><xsl:value-of select="@title"/></span></span></a></td>
+		<td colspan="2">
+			<xsl:call-template name="gui:button"/>
+		</td>
 	</tr>
-	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Button('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>');
-		<xsl:call-template name="gui:createobject"/>
-	</script>
 </xsl:template>
 
 
@@ -353,9 +356,7 @@
 </xsl:template>
 
 <xsl:template name="gui:imagepicker">
-	<div class="in2igui_imagepicker" id="{generate-id()}" tabindex="0">
-		
-	</div>
+	<div class="in2igui_imagepicker" id="{generate-id()}" tabindex="0"><xsl:comment/></div>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.ImagePicker(
 			'<xsl:value-of select="generate-id()"/>',
@@ -429,7 +430,7 @@
 		</tbody>
 	</table>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.ObjectList('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>');
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.ObjectList('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>',{key:'<xsl:value-of select="@key"/>'});
 		<xsl:call-template name="gui:createobject"/>
 		with (<xsl:value-of select="generate-id()"/>_obj) {
 			<xsl:apply-templates select="gui:text | gui:select"/>

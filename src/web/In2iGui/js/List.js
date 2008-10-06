@@ -52,6 +52,9 @@ In2iGui.List.prototype = {
 		this.parameters[key]=value;
 	},
 	loadData : function(url) {
+		this.setSource(url);
+	},
+	setSource : function(url) {
 		this.source = url;
 		this.selected = [];
 		this.sortKey = null;
@@ -65,12 +68,6 @@ In2iGui.List.prototype = {
  */
 	refresh : function() {
 		if (!this.source) return;
-		var self = this;
-		var delegate = {
-			onSuccess:function(t) {
-				self.parse(t.responseXML);
-			}
-		};
 		var url = this.source;
 		if (this.window.number) {
 			url+=url.indexOf('?')==-1 ? '?' : '&';
@@ -92,7 +89,16 @@ In2iGui.List.prototype = {
 			url+=url.indexOf('?')==-1 ? '?' : '&';
 			url+=key+'='+this.parameters[key];
 		}
-		$get(url,delegate);
+		var self = this;
+		new Ajax.Request(url,{
+			onSuccess:function(r) {
+				if (r.responseXML) {
+					self.parse(r.responseXML);
+				} else if (r.responseText) {
+					self.setObjects(r.responseText.evalJSON());
+				}
+			}
+		});
 	},
 	sort : function(index) {
 		var key = this.columns[index].key;
@@ -152,15 +158,17 @@ In2iGui.List.prototype = {
 		for (var i=0; i < rows.length; i++) {
 			var cells = rows[i].getElementsByTagName('cell');
 			var row = document.createElement('tr');
-			var info = {uid:rows[i].getAttribute('uid'),kind:rows[i].getAttribute('kind'),icon:rows[i].getAttribute('icon'),title:rows[i].getAttribute('title'),index:i};
-			row.dragDropInfo = info;
+			var icon = rows[i].getAttribute('icon');
+			var title = rows[i].getAttribute('title');
 			for (var j=0; j < cells.length; j++) {
-				//var text = null;
-				var cell = document.createElement('td');
-				this.parseCell(cells[j],cell);
-				//cell.appendChild(document.createTextNode(' '));
-				row.appendChild(cell);
+				var td = document.createElement('td');
+				this.parseCell(cells[j],td);
+				row.appendChild(td);
+				if (!title) title = cells[j].innerText;
+				if (!icon && cells[j].getAttribute('icon')) icon = cells[j].getAttribute('icon');
 			};
+			var info = {id:rows[i].getAttribute('id'),kind:rows[i].getAttribute('kind'),icon:icon,title:title,index:i};
+			row.dragDropInfo = info;
 			this.addRowBehavior(row,i);
 			this.body.appendChild(row);
 			this.rows.push(info);

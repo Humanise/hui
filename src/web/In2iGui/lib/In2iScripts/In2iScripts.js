@@ -868,3 +868,17 @@ N2i.Cookie = {
 		this.set(name,"",-1);
 	}
 }
+
+N2i.getFrameDocument = function(frame) {
+    if (frame.contentDocument) {
+        return frame.contentDocument;
+    } else if (frame.contentWindow) {
+        return frame.contentWindow.document;
+    } else if (frame.document) {
+        return frame.document;
+    } else {
+		alert(frame.contentDocument);
+	}
+}
+
+/* EOF */

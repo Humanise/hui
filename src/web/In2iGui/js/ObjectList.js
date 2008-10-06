@@ -1,9 +1,8 @@
 In2iGui.ObjectList = function(id,name,options) {
-	this.options = {key:null};
-	N2i.override(this.options,options);
+	this.options = N2i.override({key:null},options);
 	this.name = name;
-	this.element = $id(id);
-	this.body = this.element.getElementsByTagName('tbody')[0];
+	this.element = $(id);
+	this.body = this.element.select('tbody')[0];
 	this.template = [];
 	this.objects = [];
 	In2iGui.extend(this);
@@ -11,7 +10,7 @@ In2iGui.ObjectList = function(id,name,options) {
 
 In2iGui.ObjectList.prototype = {
 	ignite : function() {
-		this.addObject({id:0});
+		this.addObject({});
 	},
 	addObject : function(data,addToEnd) {
 		if (this.objects.length==0 || addToEnd) {
@@ -33,7 +32,7 @@ In2iGui.ObjectList.prototype = {
 			element.parentNode.removeChild(element);
 		};
 		this.objects = [];
-		this.addObject({id:0});
+		this.addObject({});
 	},
 	addObjects : function(data) {
 		for (var i=0; i < data.length; i++) {

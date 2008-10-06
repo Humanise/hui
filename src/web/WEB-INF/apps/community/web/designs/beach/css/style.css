@@ -1,4 +1,110 @@
+html
+{
+	height: 100%;
+}
+
 body
 {
+	min-height: 100%;
+	padding: 0px;
+	margin: 0px;
 	background: url('../gfx/sand.jpg');
+}
+
+div.body
+{
+	background: url('../gfx/header.jpg') top left repeat-x;
+	height: 100%;
+}
+
+.inner_body
+{
+	background: url('../gfx/surface.png') left 76px repeat-x;
+	height: 100%;
+}
+
+
+.gut
+{
+	background: url('../gfx/bubbles.jpg') 45% 205px no-repeat;
+	height: 100%;
+}
+
+.gut .gut
+{
+	background: url('../gfx/shell.png') 95% 60% no-repeat;
+}
+
+.gut .gut .gut
+{
+	background: url('../gfx/foot.png') 5% 95% no-repeat;
+}
+
+* html .body
+{
+	height: 100%;
+}
+
+.header
+{
+	font-family: "Trebuchet MS", Helvetica, sans-serif;
+	text-align: center;
+	padding: 10px;
+	font-size: 14pt;
+	line-height: 16pt;
+	color: #333;
+	height: 40px;
+}
+
+.header input
+{
+	font-family: "Trebuchet MS", Helvetica, sans-serif;
+	text-align: center;
+	background-color: #fff;
+	border: none;
+	color: #005599;
+}
+
+.header a
+{
+	background-color: #fff;
+	color: #005599;
+	padding: 1px 5px;
+	text-decoration: none;
+}
+
+.header a.selected
+{
+	font-weight: bold;
+}
+
+.back
+{
+	font-family: "Trebuchet MS", Helvetica, sans-serif;
+	color: #23a;
+	background: #fff;
+	text-decoration: none;
+	position: absolute;
+	padding: 1px 4px;
+	margin-top: 12px;
+	margin-left: 16px;
+	font-size: 10pt;
+}
+
+div.part_header h1
+{
+	margin: 0px;
+	font-family: "Trebuchet MS", Helvetica, sans-serif;
+	font-size: 16pt;
+	color: #005599;
+	text-align: center;
+}
+
+div.part_html
+{
+	font-family: "Trebuchet MS", Helvetica, sans-serif;
+	text-align: center;
+	font-size: 11pt;
+	color: #005599;
+	margin-top: 5px;
 }

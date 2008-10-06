@@ -14,6 +14,9 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
 
+import com.google.common.collect.Lists;
+
+import dk.in2isoft.commons.lang.LangUtil;
 import dk.in2isoft.commons.util.GraphUtil;
 import dk.in2isoft.commons.util.ImageUtil;
 import dk.in2isoft.commons.xml.XSLTUtil;
@@ -27,10 +30,8 @@ import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SecurityException;
 import dk.in2isoft.onlineobjects.importing.Importer;
 import dk.in2isoft.onlineobjects.model.Entity;
-import dk.in2isoft.onlineobjects.model.Event;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.ImageGallery;
-import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.WebPage;
@@ -62,7 +63,7 @@ public class CommunityController extends ApplicationController {
 	public void unknownRequest(Request request) throws IOException, EndUserException {
 		log.debug(Arrays.toString(request.getLocalPath()));
 		if (request.testLocalPathStart("iphone")) {
-			FileBasedInterface ui = new FileBasedInterface(getFile("iphone","index.gui.xml"));
+			FileBasedInterface ui = new FileBasedInterface(getFile("iphone", "index.gui.xml"));
 			ui.render(request.getRequest(), request.getResponse());
 		} else if (request.testLocalPathStart(new String[] { null })) {
 			handleUser(request);
@@ -174,7 +175,7 @@ public class CommunityController extends ApplicationController {
 					}
 				}
 			}
-			if (imageGalleryId==0) {
+			if (imageGalleryId == 0) {
 				imageGalleryId = request.getInt("contentId");
 			}
 			for (DiskFileItem item : items) {
@@ -234,15 +235,18 @@ public class CommunityController extends ApplicationController {
 
 	public void model(Request request) throws IOException, EndUserException {
 		StringBuilder sb = new StringBuilder();
-		sb.append("digraph finite_state_machine {");
-		sb.append("graph [");
-		sb.append("normalize=true, outputorder=edgesfirst, overlap=false, pack=false");
-		sb.append(",packmode=\"node\", sep=\"0.6\", splines=true, size=\"14,10\"");
-		sb.append("]");
+		sb.append("digraph {");
+		sb.append("graph[normalize=true,packMode=\"node\",pad=1]");
+		//sb.append("graph [");
+		// sb.append(
+		// "normalize=true, outputorder=edgesfirst, overlap=false, pack=false");
+		// sb.append(
+		// ",packmode=\"node\", sep=\"0.6\", splines=true, size=\"14,10\"");
+		//sb.append("]");
+		List<Long> added = Lists.newArrayList();
 
-		Query<Relation> rq = Query.ofType(Relation.class).withPaging(0, 1200);
+		Query<Relation> rq = Query.ofType(Relation.class).withPaging(0, 100);
 		List<Relation> relations = getModel().search(rq);
-		// List<Relation> relations = getModel().listRelations();
 		for (Relation relation : relations) {
 			Entity sub = relation.getSubEntity();
 			Entity supr = relation.getSuperEntity();
@@ -255,48 +259,45 @@ public class CommunityController extends ApplicationController {
 			}
 			sb.append("\" ];");
 		}
-		{
-			Query<Person> q = Query.ofType(Person.class).withPaging(0, 200);
-			List<Person> entities = getModel().search(q);
-
-			for (Entity entity : entities) {
-				sb.append(entity.getId()).append(" [shape=box,fontname=\"Verdana\",label=\"").append(
-						entity.getClass().getSimpleName());
-				if (entity.getName() != null && entity.getName().length() > 0) {
-					sb.append("\\n").append(entity.getName());
+		for (Relation relation : relations) {
+			Entity child = relation.getSubEntity();
+			if (!added.contains(child.getId())) {
+				sb.append(child.getId()).append(" [shape=box,fontname=\"Arial\",label=\"").append(
+						child.getClass().getSimpleName());
+				if (child.getName() != null && child.getName().length() > 0) {
+					sb.append("\\n").append(child.getName());
 				}
 				sb.append("\"];");
+				added.add(child.getId());
 			}
-		}
-		{
-			Query<Event> q = Query.ofType(Event.class).withPaging(0, 200);
-			List<Event> entities = getModel().search(q);
-
-			for (Entity entity : entities) {
-				sb.append(entity.getId()).append(" [shape=box,fontname=\"Verdana\",label=\"").append(
-						entity.getClass().getSimpleName());
-				if (entity.getName() != null && entity.getName().length() > 0) {
-					sb.append("\\n").append(entity.getName());
+			Entity parent = relation.getSuperEntity();
+			if (!added.contains(parent.getId())) {
+				sb.append(parent.getId()).append(" [shape=box,fontname=\"Arial\",label=\"").append(
+						parent.getClass().getSimpleName());
+				if (parent.getName() != null && parent.getName().length() > 0) {
+					sb.append("\\n").append(parent.getName());
 				}
 				sb.append("\"];");
+				added.add(parent.getId());
 			}
 		}
 		sb.append("}");
-		try {
-			if (request.getBoolean("svg")) {
-				String svg = GraphUtil.dotToSvg(sb.toString());
-				request.getResponse().setContentType("image/svg+xml");
-				request.getResponse().getWriter().print(svg);
-			} else if (request.getBoolean("xdot")) {
-				String dot = GraphUtil.dotToDot(sb.toString());
-				request.getResponse().setContentType("text/plain");
-				request.getResponse().getWriter().print(dot);
-			} else {
-				request.getResponse().setContentType("image/png");
-				GraphUtil.dotToPNG(sb.toString(), request.getResponse().getOutputStream());
-			}
-		} catch (EndUserException e) {
-			log.error("", e);
+		String algorithm = request.getString("algorithm");
+		if (!LangUtil.isDefined(algorithm)) {
+			algorithm = "dot";
+		}
+		if (request.getBoolean("svg")) {
+			request.getResponse().setContentType("image/svg+xml");
+			GraphUtil.convert(sb.toString(), algorithm, "svg", request.getResponse().getOutputStream());
+		} else if (request.getBoolean("xdot")) {
+			request.getResponse().setContentType("text/plain");
+			GraphUtil.convert(sb.toString(), algorithm, "xdot", request.getResponse().getOutputStream());
+		} else if (request.getBoolean("jpg")) {
+			request.getResponse().setContentType("image/jpeg");
+			GraphUtil.convert(sb.toString(), algorithm, "jpg", request.getResponse().getOutputStream());
+		} else {
+			request.getResponse().setContentType("image/png");
+			GraphUtil.convert(sb.toString(), algorithm, "png", request.getResponse().getOutputStream());
 		}
 	}
 }

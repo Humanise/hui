@@ -44,7 +44,7 @@
 
 <xsl:template match="gui:view/gui:foot">
 	<tr class="view_foot"><td>
-		foot!
+		<xsl:comment/>
 	</td></tr>
 </xsl:template>
 

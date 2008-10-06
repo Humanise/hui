@@ -867,7 +867,21 @@ N2i.Cookie = {
 	clear : function(name) {
 		this.set(name,"",-1);
 	}
-}/*  Prototype JavaScript framework, version 1.6.0.2
+}
+
+N2i.getFrameDocument = function(frame) {
+    if (frame.contentDocument) {
+        return frame.contentDocument;
+    } else if (frame.contentWindow) {
+        return frame.contentWindow.document;
+    } else if (frame.document) {
+        return frame.document;
+    } else {
+		alert(frame.contentDocument);
+	}
+}
+
+/* EOF *//*  Prototype JavaScript framework, version 1.6.0.2
  *  (c) 2005-2008 Sam Stephenson
  *
  *  Prototype is freely distributable under the terms of an MIT-style license.
@@ -5089,7 +5103,7 @@ Object.extend(Element.ClassNames.prototype, Enumerable);
 
 Element.addMethods();function In2iGui() {
 	this.domLoaded = false;
-	this.overflows = [];
+	this.overflows = null;
 	this.delegates = [];
 	this.objects = new Hash();
 	this.addBehavior();
@@ -5102,7 +5116,7 @@ In2iGui.latestPanelIndex=1000;
 In2iGui.latestAlertIndex=1500;
 
 In2iGui.browser = {};
-In2iGui.browser.opera = /opera [56789]|opera\/[56789]/i.test(navigator.userAgent);
+In2iGui.browser.opera = /opera/i.test(navigator.userAgent);
 In2iGui.browser.msie = !In2iGui.browser.opera && /MSIE/.test(navigator.userAgent);
 In2iGui.browser.msie7 = navigator.userAgent.indexOf('MSIE 7')!=-1;
 In2iGui.browser.webkit = navigator.userAgent.indexOf('WebKit')!=-1;
@@ -5164,13 +5178,20 @@ In2iGui.prototype = {
 		return pad;
 	},
 	resize : function(id) {
+		if (!this.overflows) return;
 		var height = N2i.Window.getInnerHeight();
-		for (var i=0; i < this.overflows.length; i++) {
-			this.overflows[i].element.style.height = height+this.overflows[i].diff+'px';
-		};
+		this.overflows.each(function(overflow) {
+			if (In2iGui.browser.webkit || In2iGui.browser.gecko) {
+				overflow.element.style.display='none';
+				overflow.element.style.width = overflow.element.parentNode.clientWidth+'px';
+				overflow.element.style.display='';
+			}
+			overflow.element.style.height = height+overflow.diff+'px';
+		});
 	},
 	registerOverflow : function(id,diff) {
-		var overflow = $id(id);
+		if (!this.overflows) this.overflows=[];
+		var overflow = $(id);
 		this.overflows.push({element:overflow,diff:diff});
 	},
 	alert : function(options) {
@@ -5315,7 +5336,7 @@ In2iGui.positionAtElement = function(element,target,options) {
 }
 
 
-/* ********************** Frag drop ******************* */
+/* ********************** Drag drop ******************* */
 
 In2iGui.getDragProxy = function() {
 	if (!In2iGui.dragProxy) {
@@ -5338,7 +5359,7 @@ In2iGui.startDrag = function(e,element,options) {
 		proxy.style.backgroundImage = 'url('+In2iGui.getIconUrl(info.icon,1)+')';
 	}
 	In2iGui.startDragPos = {top:event.mouseTop(),left:event.mouseLeft()};
-	proxy.innerHTML = info.title;
+	proxy.innerHTML = '<span>'+info.title+'</span>' || '###';
 	In2iGui.dragging = true;
 }
 
@@ -5397,9 +5418,10 @@ In2iGui.dragEndListener = function(event) {
 		In2iGui.callDelegatesDrop(In2iGui.dragInfo,In2iGui.latestDropTarget.dragDropInfo);
 		In2iGui.dragProxy.style.display='none';
 	} else {
-		$ani(In2iGui.dragProxy,'left',In2iGui.startDragPos.left+'px',300,{ease:N2i.Animation.fastSlow});
-		$ani(In2iGui.dragProxy,'top',In2iGui.startDragPos.top+'px',300,{ease:N2i.Animation.fastSlow,hideOnComplete:true});
+		$ani(In2iGui.dragProxy,'left',(In2iGui.startDragPos.left+10)+'px',300,{ease:N2i.Animation.fastSlow});
+		$ani(In2iGui.dragProxy,'top',(In2iGui.startDragPos.top-5)+'px',300,{ease:N2i.Animation.fastSlow,hideOnComplete:true});
 	}
+	In2iGui.latestDropTarget=null;
 }
 
 In2iGui.dropOverListener = function(event) {
@@ -5540,7 +5562,7 @@ In2iGui.jsonResponse = function(t,key) {
 	if (!t.responseXML || !t.responseXML.documentElement) {
 		var str = t.responseText.replace(/^\s+|\s+$/g, '');
 		if (str.length>0) {
-			var json = JSON.parse(t.responseText)
+			var json = t.responseText.evalJSON(true);
 		} else {
 			json = '';
 		}
@@ -5558,11 +5580,22 @@ In2iGui.json = function(data,url,delegateOrKey) {
 	}
 	var options = {method:'POST',parameters:{}};
 	for (key in data) {
-		options.parameters[key]=JSON.stringify(data[key])
+		options.parameters[key]=Object.toJSON(data[key])
 	}
 	$get(url,delegate,options)
 }
 
+In2iGui.parseItems = function(doc) {
+	var out = [];
+	var items = doc.getElementsByTagName('item');
+	for (var i=0; i < items.length; i++) {
+		var item = items[i];
+		var title = item.getAttribute('title');
+		var value = item.getAttribute('value');
+		out.push({title:title,value:value});
+	}
+	return out;
+}
 
 ///////////////////////////////////// Common text field ////////////////////////
 
@@ -5725,6 +5758,10 @@ In2iPhone.Button.prototype = {
 	elementWasTouched : function() {
 		In2iGui.callDelegates(this,'click');
 	}
+}
+
+In2iPhone.goToPage = function(page) {
+	
 }
 
 In2iPhone.Page = function(element,name,options) {

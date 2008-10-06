@@ -13,7 +13,9 @@
 
 	<head>
 	<title><xsl:value-of select="@title"/></title>
-	<meta name="viewport" content="width=320, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+	<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta names="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 	<xsl:choose>
 		<xsl:when test="$dev='true'">
 			<link rel="stylesheet" href="{$context}/In2iGui/iphone/css/iphone.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
@@ -56,7 +58,9 @@
 
 <xsl:template match="i:pages">
 	<div class="pages">
-		<xsl:apply-templates select="i:page"/>
+		<div style="width: {count(i:page)*100}%" class="pages_content">
+			<xsl:apply-templates select="i:page"/>
+		</div>
 	</div>
 </xsl:template>
 
@@ -75,6 +79,12 @@
 	<h1 class="header">
 		<xsl:value-of select="."/>
 	</h1>
+</xsl:template>
+
+<xsl:template match="i:toolbar">
+	<div class="toolbar">
+		<xsl:apply-templates/><xsl:comment/>
+	</div>
 </xsl:template>
 
 

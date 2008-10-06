@@ -6,9 +6,17 @@ var controller = {
 	buildUsers : function(users) {
 		
 	},
-	click$frontLogon : function() {
+	click$frontLogin : function() {
 		front.hideLeft();
 		users.showRight();
+	},
+	click$frontUsers : function() {
+		front.hideLeft();
+		users.showRight();
+	},
+	click$usersBack : function() {
+		front.showLeft();
+		users.hideRight();
 	},
 	click$usersBack : function() {
 		front.showLeft();

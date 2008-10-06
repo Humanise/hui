@@ -61,14 +61,20 @@ table.split
 td.split_content
 {
 	vertical-align: top;
+	width: 100%;
+	background: #fff;
 }
 
 td.split_sidebar
 {
 	background: #EBF0F7;
-	width: 200px;
 	border-right: 1px solid #bbb;
 	vertical-align: top;
+}
+
+div.split_sidebar
+{
+	width: 200px;
 }
 
 
@@ -175,17 +181,6 @@ div.in2igui_tabs_bar li.in2igui_tabs_selected span span
 }
 
 
-/************************ overflow **********************/
-
-.in2igui_overflow
-{
-	overflow: auto;
-	overflow-x:hidden;
-	width: 100%;
-	position: relative;
-}
-
-
 /******************************** Buttons ****************************/
 
 div.in2igui_buttons
@@ -205,7 +200,7 @@ a.in2igui_button
 	float: left;
 	font-size: 12px;
 	height: 28px;
-	line-height: 24px;
+	line-height: 25px;
 	cursor: pointer;
 	text-decoration: none;
 	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
@@ -338,7 +333,40 @@ div.in2igui_infoview_click:hover
 {
 	cursor: pointer;
 	text-decoration: underline;
-}.in2igui_curtain
+}
+
+/**************************************** Dock **************************************/
+
+table.in2igui_dock
+{
+	height: 100%;
+	width: 100%;
+}
+
+table.in2igui_dock thead td
+{
+	height: 58px;
+	padding: 0px 5px;
+	background: url('../gfx/toolbar_bg.png') repeat-x;
+}
+
+table.in2igui_dock div.in2igui_toolbar
+{
+	overflow: hidden;
+}
+
+table.in2igui_dock tbody td
+{
+	font-size: 0px;
+}
+
+table.in2igui_dock iframe
+{
+	height: 100%;
+	width: 100%;
+	border: none;
+	font-size: 0px;
+}div.in2igui_curtain
 {
 	width: 100%;
 	background: #000;
@@ -347,7 +375,7 @@ div.in2igui_infoview_click:hover
 	left: 0px;
 }
 
-.in2igui_dragproxy
+div.in2igui_dragproxy
 {
 	position: absolute;
 	top: 0px;
@@ -356,6 +384,12 @@ div.in2igui_infoview_click:hover
 	padding-left: 18px;
 	height: 16px;
 	font-size: 9pt;
+}
+
+div.in2igui_dragproxy span
+{
+	padding: 1px 3px;
+	background: rgba(255,255,255,.8);
 }.tabbox
 {
 	width: 600px;
@@ -459,7 +493,6 @@ div.in2igui_infoview_click:hover
 
 table.in2igui_formula_group
 {
-	border-spacing: 4px 4px;
 	width: 100%;
 }
 
@@ -477,13 +510,13 @@ table.in2igui_formula_group label
 {
 	color: #004A80;
 	font-size: 12px;
-	line-height: 11px;
 	font-weight: normal;
 }
 
 table.in2igui_formula_group_above label
 {
 	line-height: 15px;
+	display: block;
 }
 
 table.in2igui_formula_group th label
@@ -519,12 +552,15 @@ form.in2igui_formula div.in2igui_field
 	background: #fff;
 	-moz-border-radius: 3px;
 	-webkit-border-radius: 3px;
+	margin-bottom: 5px;
 }
 
 form.in2igui_formula select
 {
-	border: 1px solid #ddd;
-	border-color: #eee #eee #ddd;
+	/*border: 1px solid #ddd;
+	border-color: #eee #eee #ddd;*/
+	font-size: 9pt;
+	margin: 0px 0px 5px;
 }
 
 form.in2igui_formula .in2igui_formula_text
@@ -567,15 +603,15 @@ form.in2igui_formula a.in2igui_button
 
 /******************************* Radio button **************************/
 
-form.in2igui_formula .radiobuttons
+div.in2igui_radiobuttons
 {
 	overflow: hidden;
+	margin-bottom: 5px;
 }
 
-form.in2igui_formula .radiobutton
+div.in2igui_radiobutton
 {
 	overflow: hidden;
-	padding: 4px 0px 0px;
 	margin-right: 10px;
 	font-size: 10pt;
 	cursor: default;
@@ -583,7 +619,7 @@ form.in2igui_formula .radiobutton
 	float: left;
 }
 
-form.in2igui_formula .radiobutton .radio
+div.in2igui_radiobutton div
 {
 	float: left;
 	background: url('../gfx/radiobutton.png') no-repeat;
@@ -593,24 +629,32 @@ form.in2igui_formula .radiobutton .radio
 	cursor: pointer;
 }
 
-form.in2igui_formula .radiobuttons .selected .radio
+div.in2igui_radiobuttons div.in2igui_selected div
 {
 	background-position: 0px -18px;
 }
 
 /******************************* Checkboxes **************************/
 
-form.in2igui_checkboxes
-{
-}
 
 div.in2igui_checkbox
 {
 	overflow: hidden;
 	padding: 2px 5px 0px 0px;
+	margin-bottom: 5px;
 	font-size: 10pt;
 	cursor: default;
 	color: #004A80;
+}
+
+div.in2igui_checkboxes div.in2igui_checkbox
+{
+	margin-bottom: 2px;
+}
+
+div.in2igui_checkboxes
+{
+	margin-bottom: 5px;
 }
 
 div.in2igui_checkbox div
@@ -632,20 +676,21 @@ div.in2igui_checkbox_selected div
 
 table.in2igui_objectlist
 {
+	margin-top: 1px;
 	width: 100%;
 }
 
-table.in2igui_objectlist thead th.in2igui_objectlist
+table.in2igui_objectlist th.in2igui_objectlist
 {
 	text-align: left;
 	font-size: 9pt;
-	line-height: 9pt;
-	color: #000;
+	line-height: 12pt;
+	color: #004A80;
 	font-weight: normal;
 	padding-left: 4px;
 }
 
-table.in2igui_objectlist thead th.in2igui_objectlist1
+table.in2igui_objectlist th.in2igui_objectlist1
 {
 	padding-left: 0px;	
 }
@@ -658,6 +703,7 @@ table.in2igui_objectlist thead th.in2igui_objectlist1
 .in2igui_objectlist tbody td
 {
 	padding: 0px 0px 2px 4px;
+	vertical-align: top;
 }
 
 .in2igui_objectlist tbody td.first
@@ -693,8 +739,7 @@ input.in2igui_tokens_token
 
 div.in2igui_window table.in2igui_formula_group label
 {
-	color: #000;
-	background: rgb(191,193,196);
+	background: rgb(231,231,231);
 	padding: 0px 2px;
 }
 
@@ -705,7 +750,7 @@ div.in2igui_window_light table.in2igui_formula_group label
 }
 
 
-div.in2igui_window_dark table.in2igui_formula_group label
+div.in2igui_window_dark table.in2igui_formula_group label, div.in2igui_window_dark div.in2igui_checkbox, div.in2igui_window_dark div.in2igui_radiobutton, div.in2igui_window_dark th.in2igui_objectlist
 {
 	color: #fff;
 	background: none;
@@ -731,7 +776,18 @@ div.in2igui_window_dark input.in2igui_tokens_token
 	background: #222;
 	border: 1px solid #444;
 	color: #fff;
-}.horizontal
+}/************************ overflow **********************/
+
+.in2igui_overflow
+{
+	overflow: auto;
+	width: 100%;
+	position: relative;
+}
+
+
+
+.horizontal
 {
 	overflow: hidden;
 }
@@ -1628,6 +1684,7 @@ div.in2igui_list .navigation .selection a
 	margin-top: 4px;
 	line-height: 16px;
 	padding: 0px 2px;
+	-webkit-border-radius: 2px;
 }
 
 div.in2igui_list .navigation .selection a:hover
@@ -1710,7 +1767,8 @@ div.in2igui_selection div.selected, div.in2igui_selection div.selected:hover
 
 .in2igui_selection div.in2igui_drop, .in2igui_selection div.in2igui_drop:hover
 {
-	background-color: #779cd6;
+	background: #779cd6 url('../gfx/hover_bg.png');
+	-webkit-border-radius: 4px;
 }
 
 
@@ -2544,6 +2602,8 @@ div.in2igui_gallery_item_selected, div.in2igui_gallery_item_selected:hover
 	-moz-border-radius: 5px;
 }div.in2igui_calendar
 {
+	overflow-x: hidden;
+	width: 100%;
 }
 
 div.in2igui_calendar_busy div.in2igui_toolbar
@@ -2567,6 +2627,7 @@ table.in2igui_calendar_weekview
 {
 	background: #fff;
 	width: 100%;
+	-webkit-box-sizing: border-box;
 }
 
 table.in2igui_calendar_weekview th
@@ -2643,6 +2704,7 @@ table.in2igui_calendar_weekview td.day
 	border-right: 1px solid #DDDDDD;
 	vertical-align:top;
 	width: 18%;
+	-webkit-box-sizing: border-box;
 }
 
 table.in2igui_calendar_weekview div.in2igui_calendar_event

@@ -1,15 +1,15 @@
 package dk.in2isoft.commons.util;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+
+import com.google.common.collect.ImmutableList;
 
 import dk.in2isoft.onlineobjects.core.ConfigurationException;
 import dk.in2isoft.onlineobjects.core.Core;
@@ -18,82 +18,44 @@ import dk.in2isoft.onlineobjects.core.EndUserException;
 public class GraphUtil extends AbstractCommandLineInterfaceUtil {
 
 	private static Logger log = Logger.getLogger(GraphUtil.class);
-	
+	private static final ImmutableList<String> formats = ImmutableList.of("png","jpg","xdot","svg");
+	private static final ImmutableList<String> algorithms = ImmutableList.of("circo","dot","fdp","neato","twopi");
+
 	private static String getCommand(String name) throws ConfigurationException {
-		return Core.getInstance().getConfiguration().getGraphvizPath()+"/"+name;
+		return Core.getInstance().getConfiguration().getGraphvizPath() + "/" + name;
 	}
 
-	public static String dotToSvg(String dot) throws EndUserException {
-		log.debug(dot);
-		StringBuilder result = new StringBuilder();
-		try {
-			File svgFile = File.createTempFile(GraphUtil.class.getCanonicalName(), ".svg");
-			File dotFile = File.createTempFile(GraphUtil.class.getCanonicalName(), ".dot");
-			FileUtils.writeStringToFile(dotFile, dot, "UTF-8");
-			String cmd = getCommand("fdp")+"  -Tsvg " + dotFile.getCanonicalPath() + " -o "
-					+ svgFile.getCanonicalPath();
-			execute(cmd);
+	public static void dotToSVG(String dot, OutputStream out) throws EndUserException {
+		convert(dot, "dot", "svg", out);
+	}
 
-			BufferedReader in = new BufferedReader(new FileReader(svgFile));
-			String str;
-			while ((str = in.readLine()) != null) {
-				result.append(str);
-			}
-			in.close();
-			return result.toString();
-		} catch (IOException e) {
-			throw new EndUserException(e);
+	public static void dotToXDOT(String dot, OutputStream out) throws EndUserException {
+		convert(dot, "dot", "png", out);
+	}
+
+	public static void dotToPNG(String dot, OutputStream out) throws EndUserException {
+		convert(dot, "dot", "png", out);
+	}
+
+	public static void dotToJPG(String dot, OutputStream out) throws EndUserException {
+		convert(dot, "dot", "png", out);
+	}
+
+	public static void convert(String dot, String algorithm, String format, OutputStream out) throws EndUserException {
+		if (!formats.contains(format) || !algorithms.contains(algorithm)) {
+			throw new EndUserException("Format/algorithm not supported: "+format+"/"+algorithm);
 		}
-	}
-
-	public static String dotToDot(String dot) throws EndUserException {
-		log.debug(dot);
-		StringBuilder result = new StringBuilder();
 		try {
-			File svgFile = File.createTempFile(GraphUtil.class.getCanonicalName(), ".svg");
+			File file = File.createTempFile(GraphUtil.class.getCanonicalName(), "."+format);
 			File dotFile = File.createTempFile(GraphUtil.class.getCanonicalName(), ".dot");
 			FileUtils.writeStringToFile(dotFile, dot, "UTF-8");
-			String cmd = getCommand("neato")+" -Txdot " + dotFile.getCanonicalPath() + " -o "
-					+ svgFile.getCanonicalPath();
+			String cmd = getCommand(algorithm) + "  -T"+format+" " + dotFile.getCanonicalPath() + " -o " + file.getCanonicalPath();
+			log.debug(cmd);
 			execute(cmd);
-
-			BufferedReader in = new BufferedReader(new FileReader(svgFile));
-			String str;
-			while ((str = in.readLine()) != null) {
-				result.append(str);
-				result.append("\n");
-			}
-			in.close();
-			return result.toString();
-		} catch (IOException e) {
-			throw new EndUserException(e);
-		}
-	}
-
-	public static String dotToPNG(String dot, OutputStream out) throws EndUserException {
-		StringBuilder result = new StringBuilder();
-		try {
-			File png = File.createTempFile(GraphUtil.class.getCanonicalName(), ".png");
-			File dotFile = File.createTempFile(GraphUtil.class.getCanonicalName(), ".dot");
-			FileUtils.writeStringToFile(dotFile, dot, "UTF-8");
-			String cmd = getCommand("fdp")+"  -Tpng " + dotFile.getCanonicalPath() + " -o " + png.getCanonicalPath();
-			execute(cmd);
-			BufferedInputStream buf = null;
-			try {
-				buf = new BufferedInputStream(new FileInputStream(png));
-				int readBytes = 0;
-				while ((readBytes = buf.read()) != -1) {
-					out.write(readBytes);
-				}
-			} catch (IOException ioe) {
-				throw new EndUserException(ioe.getMessage());
-			} finally {
-				if (out != null)
-					out.close();
-				if (buf != null)
-					buf.close();
-			}
-			return result.toString();
+			FileInputStream input = new FileInputStream(file);
+			IOUtils.copy(input, out);
+			input.close();
+			file.delete();
 		} catch (IOException e) {
 			throw new EndUserException(e);
 		}

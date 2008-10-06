@@ -72,22 +72,6 @@
 					<div class="body">
 					<div class="content">
 						<div class="left">
-							<!--
-							<h2>Tilmelding</h2>
-							<form action="signup" method="get" accept-charset="utf-8" id="signup">
-								<div class="response"><xsl:text> </xsl:text></div>
-								<label>Brugernavn</label>
-								<input type="text" name="username" value="" class="text"/>
-								<label>Kodeord</label>
-								<input type="password" name="password" value="" class="text"/>
-								<label>Navn</label>
-								<input type="text" name="name" value="" class="text"/>
-								<label>E-post</label>
-								<input type="text" name="email" value="" class="text"/>
-								<input type="submit" value="Tilmeld" class="submit hidden"/>
-							</form>
-							<div class="divider"><xsl:comment/></div>
-							-->
 							<div class="section">
 								<div class="section_head"><h2>Fotografier</h2></div>
 								<div class="section_body"><div id="images_container"><xsl:comment/></div></div>
@@ -113,6 +97,22 @@
 								<input type="submit" value="Log ind" class="submit"/>
 								</div>
 							</form>
+							<!--
+							<hr/>
+							<h2>Tilmelding</h2>
+							<form action="signup" method="get" accept-charset="utf-8" id="signup" class="formula">
+								<div class="response"><xsl:text> </xsl:text></div>
+								<label>Brugernavn</label>
+								<input type="text" name="username" value="" class="text"/>
+								<label>Kodeord</label>
+								<input type="password" name="password" value="" class="text"/>
+								<label>Navn</label>
+								<input type="text" name="name" value="" class="text"/>
+								<label>E-post</label>
+								<input type="text" name="email" value="" class="text"/>
+								<input type="submit" value="Tilmeld"/>
+							</form>
+							-->
 						</div>
 					</div>
 					<hr/>

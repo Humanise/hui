@@ -193,19 +193,15 @@ In2iGui.Formula.DateTime = function(elementOrId,name,options) {
 	this.outputFormat = 'd-m-Y H:i:s';
 	//this.id = id;
 	this.name = name;
-	this.options = options;
+	this.options = N2i.override({returnType:null},options);
 	this.value = null;
-	this.element = $id(elementOrId);
+	this.element = $(elementOrId);
 	In2iGui.extend(this);
 	this.addBehavior();
 }
 
-In2iGui.Formula.DateTime.create = function(name,opts) {
-	var options = {};
-	N2i.override(options,opts);
-	var element = N2i.create('input',
-		{'class':'in2igui_formula_text'}
-	);
+In2iGui.Formula.DateTime.create = function(name,options) {
+	var element = new Element('input',{'class':'in2igui_formula_text'});
 	return new In2iGui.Formula.DateTime(element,name,options);
 }
 
@@ -235,6 +231,8 @@ In2iGui.Formula.DateTime.prototype = {
 	setValue : function(value) {
 		if (!value) {
 			this.value = null;
+		} else if (value.constructor==Date) {
+			this.value = value;
 		} else {
 			this.value = new Date();
 			this.value.setTime(parseInt(value)*1000);
@@ -251,7 +249,10 @@ In2iGui.Formula.DateTime.prototype = {
 		this.updateUI();
 	},
 	getValue : function() {
-		return (this.value!=null ? Math.round(this.value.getTime()/1000) : null);
+		if (this.value!=null && this.options.returnType=='seconds') {
+			return Math.round(this.value.getTime()/1000);
+		}
+		return this.value;
 	},
 	getElement : function() {
 		return this.element;
@@ -274,10 +275,10 @@ In2iGui.Formula.DateTime.prototype = {
 
 /************************************* Select *******************************/
 
-In2iGui.Formula.Select = function(elementOrId,name,options) {
+In2iGui.Formula.Select = function(id,name,options) {
 	this.name = name;
 	this.options = options;
-	this.element = $id(elementOrId);
+	this.element = $(id);
 	this.value = null;
 	In2iGui.extend(this);
 	this.refresh();
@@ -287,7 +288,7 @@ In2iGui.Formula.Select.prototype = {
 	refresh : function() {
 		if (this.options.source) {
 			var self = this;
-			$get(this.options.source,{onSuccess:function(t) {self.update(t.responseXML)}});
+			new Ajax.Request(this.options.source, {onSuccess: function(t) {self.update(t.responseXML)}});
 		}
 	},
 	update : function(doc) {
@@ -331,7 +332,8 @@ In2iGui.Formula.Select.prototype = {
 /********************************* Radio buttons ****************************/
 
 In2iGui.Formula.Radiobuttons = function(id,name,options) {
-	this.element = $id(id);
+	this.options = options;
+	this.element = $(id);
 	this.name = name;
 	this.radios = [];
 	this.value = options.value;
@@ -347,7 +349,7 @@ In2iGui.Formula.Radiobuttons.prototype = {
 	updateUI : function() {
 		for (var i=0; i < this.radios.length; i++) {
 			var radio = this.radios[i];
-			N2i.setClass(radio.id,'selected',radio.value==this.value);
+			N2i.setClass(radio.id,'in2igui_selected',radio.value==this.value);
 		};
 	},
 	setValue : function(value) {
@@ -362,7 +364,7 @@ In2iGui.Formula.Radiobuttons.prototype = {
 	},
 	registerRadiobutton : function(radio) {
 		this.radios.push(radio);
-		var element = $id(radio.id);
+		var element = $(radio.id);
 		var self = this;
 		element.onclick = function() {
 			self.setValue(radio.value);
@@ -375,6 +377,7 @@ In2iGui.Formula.Radiobuttons.prototype = {
 
 In2iGui.Formula.Checkbox = function(id,name,options) {
 	this.element = $(id);
+	this.options = options;
 	this.name = name;
 	this.value = options.value=='true';
 	In2iGui.extend(this);
@@ -410,7 +413,7 @@ In2iGui.Formula.Checkbox.prototype = {
 
 In2iGui.Formula.Checkboxes = function(id,name,options) {
 	this.options = options;
-	this.element = $id(id);
+	this.element = $(id);
 	this.name = name;
 	this.checkboxes = [];
 	this.sources = [];
@@ -479,50 +482,37 @@ In2iGui.Formula.Checkboxes.prototype = {
 /******************************** Source ****************************/
 
 In2iGui.Formula.Checkboxes.Source = function(id,name,options) {
-	this.element = $id(id);
+	this.element = $(id);
 	this.name = name;
 	this.parent = null;
 	this.options = options;
 	this.checkboxes = [];
 	In2iGui.extend(this);
 	this.refresh();
-	//var self = this;
-	//N2i.Event.addLoadListener(function() {self.refresh()});
 }
 
 In2iGui.Formula.Checkboxes.Source.prototype = {
 	refresh : function() {
 		var self = this;
-		$get(this.options.url,{onSuccess:function(t) {self.update(t.responseXML)}});
+		new Ajax.Request(this.options.url, {onSuccess: function(t) {self.update(t.responseXML)}});
 	},
 	update : function(doc) {
 		this.checkboxes = [];
-		N2i.removeChildren(this.element);
+		this.element.update();
 		var self = this;
-		var items = doc.getElementsByTagName('checkbox');
-		for (var i=0; i < items.length; i++) {
-			var item = items[i];
-			var node = N2i.create('div',{'class':'in2igui_checkbox'});
-			var label = item.getAttribute('label');
-			var value = item.getAttribute('value');
-			var check = N2i.create('div');
-			node.appendChild(check);
-			node.appendChild(document.createTextNode(label));
-			this.element.appendChild(node);
-			node.in2iGuiValue = value;
-			node.onclick = function() {
-				self.itemWasClicked(this);
-			}
-			this.checkboxes.push({label:label,element:node,value:value});
-		};
-		if (items.length==0) {
-			//this.element.innerHTML='&nbsp;';
-		}
+		var items = In2iGui.parseItems(doc);
+		items.each(function(item) {
+			var node = new Element('div',{'class':'in2igui_checkbox'});
+			node.insert(new Element('div')).insert(item.title);
+			node.observe('click',function() {self.itemWasClicked(item)})
+			self.element.insert(node);
+			self.checkboxes.push({title:item.title,element:node,value:item.value});
+		})
 		this.parent.checkValues();
 		this.updateUI();
 	},
-	itemWasClicked : function(node) {
-		this.parent.flipValue(node.in2iGuiValue);
+	itemWasClicked : function(item) {
+		this.parent.flipValue(item.value);
 	},
 	updateUI : function() {
 		for (var i=0; i < this.checkboxes.length; i++) {

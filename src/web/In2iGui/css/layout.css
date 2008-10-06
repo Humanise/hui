@@ -1,3 +1,14 @@
+/************************ overflow **********************/
+
+.in2igui_overflow
+{
+	overflow: auto;
+	width: 100%;
+	position: relative;
+}
+
+
+
 .horizontal
 {
 	overflow: hidden;

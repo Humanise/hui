@@ -11,9 +11,7 @@ In2iGui.Window = function(element,name) {
 }
 
 In2iGui.Window.create = function(name,options) {
-	N2i.log(options);
 	options = N2i.override({title:'Window'},options);
-	N2i.log(options);
 	var element = new Element('div',{'class':'in2igui_window'+(options.variant ? ' in2igui_window_'+options.variant : '')});
 	element.update('<div class="close"></div>'+
 		'<div class="titlebar"><div class="titlebar"><div class="titlebar"><span>'+options.title+'</span></div></div></div>'+
@@ -34,6 +32,9 @@ In2iGui.Window.prototype = {
 		this.close.observe('click',function() {self.hide();});
 		this.titlebar.onmousedown = function(e) {self.startDrag(e);return false;};
 		this.titlebar.observe('touchstart',function(e) {self.startDrag(e);return false;});
+		this.element.observe('mousedown',function() {
+			self.element.style.zIndex=In2iGui.nextPanelIndex();
+		})
 	},
 	setTitle : function(title) {
 		this.title.update(title);
@@ -71,12 +72,19 @@ In2iGui.Window.prototype = {
 			this.content.insert(widgetOrNode);
 		}
 	},
+	setVariant : function(variant) {
+		this.element.removeClassName('in2igui_window_dark');
+		this.element.removeClassName('in2igui_window_light');
+		if (variant=='dark' || variant=='light') {
+			this.element.addClassName('in2igui_window_'+variant);
+		}
+	},
 
 ////////////////////////////// Dragging ////////////////////////////////
 
 	startDrag : function(e) {
-		this.element.style.zIndex=In2iGui.nextPanelIndex();
 		var event = new N2i.Event(e);
+		this.element.style.zIndex=In2iGui.nextPanelIndex();
 		this.dragState = {left:event.mouseLeft()-N2i.Element.getLeft(this.element),top:event.mouseTop()-N2i.Element.getTop(this.element)};
 		this.latestPosition = {left: this.dragState.left, top:this.dragState.top};
 		this.latestTime = new Date().getMilliseconds();
