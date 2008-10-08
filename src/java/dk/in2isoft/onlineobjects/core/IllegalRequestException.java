@@ -6,22 +6,22 @@ public class IllegalRequestException extends EndUserException {
 
 	public IllegalRequestException() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
-	public IllegalRequestException(String arg0) {
-		super(arg0);
-		// TODO Auto-generated constructor stub
+	public IllegalRequestException(String message, String code) {
+		super(message,code);
 	}
 
-	public IllegalRequestException(String arg0, Throwable arg1) {
-		super(arg0, arg1);
-		// TODO Auto-generated constructor stub
+	public IllegalRequestException(String message) {
+		super(message);
 	}
 
-	public IllegalRequestException(Throwable arg0) {
-		super(arg0);
-		// TODO Auto-generated constructor stub
+	public IllegalRequestException(String message, Throwable throwable) {
+		super(message, throwable);
+	}
+
+	public IllegalRequestException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

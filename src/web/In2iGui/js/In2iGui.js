@@ -91,18 +91,25 @@ In2iGui.prototype = {
 		var overflow = $(id);
 		this.overflows.push({element:overflow,diff:diff});
 	},
-	alert : function(options) {
+	alert : function(options,callBack) {
 		if (!this.alertBox) {
 			this.alertBox = In2iGui.Alert.create(null,options);
-			var button = In2iGui.Button.create(null,{text : 'OK'});
-			button.addDelegate({click:function(){
-				In2iGui.get().alertBox.hide();
-			}});
-			this.alertBox.addButton(button);
+			this.alertBoxButton = In2iGui.Button.create('in2iGuiAlertBoxButton',{text : 'OK'});
+			this.alertBoxButton.addDelegate(this);
+			this.alertBox.addButton(this.alertBoxButton);
 		} else {
 			this.alertBox.update(options);
 		}
+		this.alertBoxCallBack = callBack;
+		this.alertBoxButton.setText(options.button ? options.button : 'OK')
 		this.alertBox.show();
+	},
+	click$in2iGuiAlertBoxButton : function() {
+		In2iGui.get().alertBox.hide();
+		if (this.alertBoxCallBack) {
+			this.alertBoxCallBack();
+			this.alertBoxCallBack = null;
+		}
 	},
 	/** @deprecated */
 	showAlert : function(options) {
@@ -524,8 +531,12 @@ In2iGui.TextField.prototype = {
 		return this.value;
 	},
 	setValue : function(value) {
+		if (value==undefined || value==null) value='';
 		this.value = value;
 		this.element.value = value;
+	},
+	isEmpty : function() {
+		return this.value=='';
 	}
 }
 
@@ -603,5 +614,19 @@ In2iGui.InfoView.prototype = {
 		};
 	}
 }
+
+
+/********************************* Prototype extensions **************************/
+
+Element.addMethods({
+	setClassName : function(element,name,set) {
+		if (set) {
+			element.addClassName(name);
+		} else {
+			element.removeClassName(name);
+		}
+		return element;
+	}
+});
 
 /* EOF */

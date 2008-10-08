@@ -89,30 +89,37 @@
 							<h2>Log ind</h2>
 							<form action="login" method="get" accept-charset="utf-8" id="login" class="formula">
 								<div>
-								<div class="response"><xsl:text> </xsl:text></div>
-								<label>Brugernavn</label>
-								<input type="text" name="username" value="" class="text"/>
-								<label>Adgangskode</label>
-								<input type="password" name="password" value="" class="text"/>
-								<input type="submit" value="Log ind" class="submit"/>
+									<p class="response"><xsl:text> </xsl:text></p>
+									<label>Brugernavn</label>
+									<input type="text" name="username" value="" class="text"/>
+									<label>Adgangskode</label>
+									<input type="password" name="password" value="" class="text"/>
+									<input type="submit" value="Log ind" class="submit"/>
 								</div>
 							</form>
-							<!--
 							<hr/>
 							<h2>Tilmelding</h2>
 							<form action="signup" method="get" accept-charset="utf-8" id="signup" class="formula">
-								<div class="response"><xsl:text> </xsl:text></div>
-								<label>Brugernavn</label>
-								<input type="text" name="username" value="" class="text"/>
-								<label>Kodeord</label>
-								<input type="password" name="password" value="" class="text"/>
-								<label>Navn</label>
-								<input type="text" name="name" value="" class="text"/>
-								<label>E-post</label>
-								<input type="text" name="email" value="" class="text"/>
-								<input type="submit" value="Tilmeld"/>
+								<div>
+									<p class="response"><xsl:text> </xsl:text></p>
+									<span class="error" id="username_error"><xsl:comment/></span>
+									<label>Brugernavn</label>
+									<input type="text" name="abc" value="" class="text"/>
+									<p class="hint">Kun små bogstaver og/eller tal</p>
+									<span class="error" id="password_error"><xsl:comment/></span>
+									<label>Kodeord</label>
+									<input type="password" name="def" value="" class="text"/>
+									<span class="error" id="name_error"><xsl:comment/></span>
+									<label>Navn</label>
+									<input type="text" name="name" value="" class="text"/>
+									<p class="hint">F.eks: Jens Petersen</p>
+									<span class="error" id="email_error"><xsl:comment/></span>
+									<label>E-post</label>
+									<input type="text" name="email" value="" class="text"/>
+									<p class="hint">F.eks: jens@mail.dk</p>
+									<input type="submit" value="Tilmeld" class="submit"/>
+								</div>
 							</form>
-							-->
 						</div>
 					</div>
 					<hr/>

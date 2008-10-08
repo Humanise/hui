@@ -3,6 +3,7 @@ package dk.in2isoft.onlineobjects.apps.community;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.SimpleEmail;
 
@@ -185,21 +186,27 @@ public class CommunityDAO extends AbstractDAO {
 	public void signUp(UserSession session, String username, String password, String fullName, String email) throws EndUserException {
 
 		if (!LangUtil.isDefined(username)) {
-			throw new IllegalRequestException("Username is not provided");
+			throw new IllegalRequestException("Username is not provided","noUsername");
+		}
+		if (!StringUtils.containsOnly(username, "abcdefghijklmnopqrstuvwxyz0123456789")) {
+			throw new IllegalRequestException("Username contains invalid characters","invalidUsername");
 		}
 		if (!LangUtil.isDefined(password)) {
-			throw new IllegalRequestException("Password is not provided");
+			throw new IllegalRequestException("Password is not provided","noPassword");
 		}
 		if (!LangUtil.isDefined(fullName)) {
-			throw new IllegalRequestException("Name is not provided");
+			throw new IllegalRequestException("Name is not provided","noName");
 		}
 		if (!LangUtil.isDefined(email)) {
-			throw new IllegalRequestException("Email is not provided");
+			throw new IllegalRequestException("Email is not provided","noEmail");
+		}
+		if (!LangUtil.isWellFormedEmail(email)) {
+			throw new IllegalRequestException("The email address is invalid","invalidEmail");
 		}
 		ModelFacade model = getModel();
 		User existing = model.getUser(username);
 		if (existing != null) {
-			throw new EndUserException("User allready exists");
+			throw new EndUserException("User allready exists","userExists");
 		}
 
 		// Create a user

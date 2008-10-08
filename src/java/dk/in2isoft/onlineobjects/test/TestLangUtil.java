@@ -2,6 +2,7 @@ package dk.in2isoft.onlineobjects.test;
 
 import java.util.Arrays;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import dk.in2isoft.commons.lang.LangUtil;
@@ -33,6 +34,7 @@ public class TestLangUtil extends TestCase {
 		assertFalse(LangUtil.isWellFormedEmail("xx"));
 		assertFalse(LangUtil.isWellFormedEmail("xx.jb_0m@atira.00"));
 		assertFalse(LangUtil.isWellFormedEmail("xx.jb_0m@atira."));
+		assertTrue(StringUtils.containsOnly("abc", "abcdefghijklmnopqrstuvwxyz0123456789"));
 	}
 	
 	public void testSplitWords() {

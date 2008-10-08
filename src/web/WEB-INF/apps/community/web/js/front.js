@@ -3,13 +3,13 @@ if (!OO.Community) OO.Community = {};
 
 
 OO.Community.Front = function() {
-	this.signupForm = $id('signup');
-	this.loginForm = $id('login');
+	this.loginForm = $('login');
 	this.images = [];
 	this.searchField = new In2iGui.TextField('search_field','searchField');
 	this.searchField.addDelegate(this);
 	this.addBehavior();
 	this.search();
+	new OO.Community.Front.SignUp();
 }
 
 OO.Community.Front.prototype = {
@@ -92,31 +92,12 @@ OO.Community.Front.prototype = {
 	},
 	addBehavior : function() {
 		var self = this;
-		if (this.signupForm) {
-			this.signupForm.onsubmit = function() {
-				var username = this.username.value;
-				var password = this.password.value;
-				var name = this.name.value;
-				var email = this.email.value;
-				try {
-					var delegate = {
-			  			callback:function() { self.userDidSignUp(username) },
-			  			errorHandler:function(errorString, exception) { N2i.log(exception);self.setSignUpMessage(errorString); }
-					};
-					AppCommunity.signUp(username,password,name,email,delegate);
-				} catch (e) {
-					self.displayError(e);
-				}
-				return false;
-			}
-		}
 		this.loginForm.onsubmit = function() {
 			if (!In2iGui.browser.gecko && !In2iGui.browser.webkit && !In2iGui.browser.msie7) {
 				In2iGui.get().alert({
 					title:'Den webbrowser De anvender er ikke understøttet.',
 					text:''+
-					'De kan anvende enten Internet Explorer 7, Firefox 2+ eller Safari 3+. Vi vil iøvrigt anbefale at '+
-					'anvende enten FireFox eller Safari da disse er hurtigere og mere stabile end InternetExplorer.',
+					'De kan anvende enten Internet Explorer 7, Firefox 2+ eller Safari 3+.',
 					emotion:'gasp'
 				});
 				return false;
@@ -161,19 +142,6 @@ OO.Community.Front.prototype = {
 			return false;
 		};
 	},
-	userDidSignUp : function(username) {
-		var msg = In2iGui.Alert.create(null,{
-			emotion: 'smile',
-			title: 'Du er nu oprettet som bruger...',
-			text: 'Du vil modtage en e-mail hvor du skal bekræfte at du er dig. Indtil dette er gjort kan du frit anvende dit nye websted i op til 7 dage.'
-		});
-		var button = In2iGui.Button.create(null,{text : 'Gå til mit ny websted :-)!'});
-		button.addDelegate({buttonWasClicked:function(){
-			document.location=username+'/site/';
-		}});
-		msg.addButton(button);
-		msg.show();
-	},
 	userDidLogIn : function(username) {
 		var msg = In2iGui.Alert.create(null,{
 			emotion: 'smile',
@@ -195,6 +163,108 @@ OO.Community.Front.prototype = {
 	},
 	displayError : function(text) {
 		alert(text);
+	}
+}
+
+/**************************************** Sign up handler *************************************/
+
+OO.Community.Front.SignUp = function() {
+	this.form = $('signup');
+	this.username = new In2iGui.TextField(this.form.abc);
+	this.password = new In2iGui.TextField(this.form.def);
+	this.name = new In2iGui.TextField(this.form.name);
+	this.email = new In2iGui.TextField(this.form.email);
+	this.addBehavior();
+}
+
+OO.Community.Front.SignUp.prototype = {
+	addBehavior : function() {
+		var self = this;
+		this.form.onsubmit=function() {
+			self.submit();
+			return false;
+		};
+	},
+	submit : function() {
+		if (!In2iGui.browser.gecko && !In2iGui.browser.webkit && !In2iGui.browser.msie7) {
+			In2iGui.get().alert({
+				title:'Den webbrowser De anvender er ikke understøttet.',
+				text:''+
+				'De kan anvende enten Internet Explorer 7, Firefox 2+ eller Safari 3+.',
+				emotion:'gasp'
+			});
+			return false;
+		}
+		var username = this.username.getValue();
+		var password = this.password.getValue();
+		var name = this.name.getValue();
+		var email = this.email.getValue();
+		var valid = true;
+		if (this.username.isEmpty()) {
+			valid = false;
+			this.username.element.addClassName('error');
+			$id('username_error').update('Skal udfyldes');
+		} else {
+			this.username.element.removeClassName('error');
+			$id('username_error').update('');
+		}
+		if (this.password.isEmpty()) {
+			valid = false;
+			this.password.element.addClassName('error');
+			$id('password_error').update('Skal udfyldes');
+		} else {
+			this.password.element.removeClassName('error');
+			$id('password_error').update('');
+		}
+		if (this.name.isEmpty()) {
+			valid = false;
+			this.name.element.addClassName('error');
+			$id('name_error').update('Skal udfyldes');
+		} else {
+			this.name.element.removeClassName('error');
+			$id('name_error').update('');
+		}
+		if (this.email.isEmpty()) {
+			valid = false;
+			this.email.element.addClassName('error');
+			$id('email_error').update('Skal udfyldes');
+		} else {
+			this.email.element.removeClassName('error');
+			$id('email_error').update('');
+		}
+		if (!valid) {
+			return false;
+		}
+		var self = this;
+		AppCommunity.signUp(username,password,name,email,{
+			callback :function() { self.userDidSignUp(username) },
+			errorHandler :function(msg,e) { self.handleFailure(e) }
+		});
+		return false;
+	},
+	handleFailure : function(e) {
+		if (e.code=='userExists') {
+			this.username.element.addClassName('error');
+			$id('username_error').update('Navnet er optaget');
+		} else if (e.code=='invalidUsername') {
+			this.username.element.addClassName('error');
+			$id('username_error').update('Navnet er ikke validt');
+		} else if (e.code=='invalidEmail') {
+			this.email.element.addClassName('error');
+			$id('email_error').update('Adressen er ikke valid');
+		}
+	},
+	userDidSignUp : function(username) {
+		this.username.setValue();
+		this.password.setValue();
+		this.name.setValue();
+		this.email.setValue();
+		In2iGui.get().alert({
+			emotion: 'smile',
+			title: 'Du er nu oprettet som bruger...',
+			text: '...og der er oprettet et websted til dig',
+			button: 'Gå til mit nye websted :-)!'
+		},function() {document.location=username+'/site/?edit=true'});
 	}
 }
 

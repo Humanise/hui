@@ -21,11 +21,11 @@ In2iGui.Alert = function(element,name,options) {
 In2iGui.Alert.create = function(name,options) {
 	options = N2i.override({title:'',text:'',emotion:null,variant:null,title:null},options);
 	
-	var element = N2i.create('div',{'class':'in2igui_alert'});
-	var body = N2i.create('div',{'class':'in2igui_alert_body'});
-	element.appendChild(body);
-	var content = N2i.create('div',{'class':'in2igui_alert_content'});
-	body.appendChild(content);
+	var element = new Element('div',{'class':'in2igui_alert'});
+	var body = new Element('div',{'class':'in2igui_alert_body'});
+	element.insert(body);
+	var content = new Element('div',{'class':'in2igui_alert_content'});
+	body.insert(content);
 	document.body.appendChild(element);
 	var obj = new In2iGui.Alert(element,name,options);
 	if (options.variant) {

@@ -7519,18 +7519,25 @@ In2iGui.prototype = {
 		var overflow = $(id);
 		this.overflows.push({element:overflow,diff:diff});
 	},
-	alert : function(options) {
+	alert : function(options,callBack) {
 		if (!this.alertBox) {
 			this.alertBox = In2iGui.Alert.create(null,options);
-			var button = In2iGui.Button.create(null,{text : 'OK'});
-			button.addDelegate({click:function(){
-				In2iGui.get().alertBox.hide();
-			}});
-			this.alertBox.addButton(button);
+			this.alertBoxButton = In2iGui.Button.create('in2iGuiAlertBoxButton',{text : 'OK'});
+			this.alertBoxButton.addDelegate(this);
+			this.alertBox.addButton(this.alertBoxButton);
 		} else {
 			this.alertBox.update(options);
 		}
+		this.alertBoxCallBack = callBack;
+		this.alertBoxButton.setText(options.button ? options.button : 'OK')
 		this.alertBox.show();
+	},
+	click$in2iGuiAlertBoxButton : function() {
+		In2iGui.get().alertBox.hide();
+		if (this.alertBoxCallBack) {
+			this.alertBoxCallBack();
+			this.alertBoxCallBack = null;
+		}
 	},
 	/** @deprecated */
 	showAlert : function(options) {
@@ -7952,8 +7959,12 @@ In2iGui.TextField.prototype = {
 		return this.value;
 	},
 	setValue : function(value) {
+		if (value==undefined || value==null) value='';
 		this.value = value;
 		this.element.value = value;
+	},
+	isEmpty : function() {
+		return this.value=='';
 	}
 }
 
@@ -8031,6 +8042,20 @@ In2iGui.InfoView.prototype = {
 		};
 	}
 }
+
+
+/********************************* Prototype extensions **************************/
+
+Element.addMethods({
+	setClassName : function(element,name,set) {
+		if (set) {
+			element.addClassName(name);
+		} else {
+			element.removeClassName(name);
+		}
+		return element;
+	}
+});
 
 /* EOF */
 In2iGui.Window = function(element,name) {
@@ -9471,11 +9496,11 @@ In2iGui.Alert = function(element,name,options) {
 In2iGui.Alert.create = function(name,options) {
 	options = N2i.override({title:'',text:'',emotion:null,variant:null,title:null},options);
 	
-	var element = N2i.create('div',{'class':'in2igui_alert'});
-	var body = N2i.create('div',{'class':'in2igui_alert_body'});
-	element.appendChild(body);
-	var content = N2i.create('div',{'class':'in2igui_alert_content'});
-	body.appendChild(content);
+	var element = new Element('div',{'class':'in2igui_alert'});
+	var body = new Element('div',{'class':'in2igui_alert_body'});
+	element.insert(body);
+	var content = new Element('div',{'class':'in2igui_alert_content'});
+	body.insert(content);
 	document.body.appendChild(element);
 	var obj = new In2iGui.Alert(element,name,options);
 	if (options.variant) {

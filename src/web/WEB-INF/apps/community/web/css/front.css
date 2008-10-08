@@ -196,6 +196,7 @@ div.content div.right h2
 form.formula
 {
 	padding: 0px 15px 15px 15px;
+	overflow: hidden;
 }
 
 form.formula input.text, textarea
@@ -207,19 +208,47 @@ form.formula input.text, textarea
 	font-size: 11pt;
 }
 
+form.formula input.error
+{
+	background: #fee;
+	border-color: #eaa #ebb #ecc #ebb;
+}
+
 form.formula label
 {
 	display: block;
 	font-size: 12pt;
 	line-height: 20px;
 	color: #666;
-	margin-top: 10px;
+	padding-top: 10px;
 }
 
 form.formula input.submit
 {
 	margin-top: 10px;
 	float: right;
+}
+
+form.formula span.error
+{
+	float: right;
+	color: #f00;
+	font-size: 9pt;
+	margin-top: 13px;
+}
+
+form.formula p.hint
+{
+	color: #999;
+	font-size: 9pt;
+	margin: 0px;
+}
+
+form.formula p.response
+{
+	font-size: 9pt;
+	color: red;
+	margin: 0px;
 }
 
 hr
@@ -229,6 +258,11 @@ hr
 	border: none;
 	height: 1px;
 	margin: 30px 0px;
+}
+
+div.right hr
+{
+	margin: 10px 15px;
 }
 
 /********************************** Sections *****************************/
