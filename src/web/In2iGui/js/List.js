@@ -10,10 +10,10 @@ In2iGui.List = function(element,name,options) {
 	this.rows = [];
 	this.selected = [];
 	this.navigation = this.element.select('.navigation')[0];
-	this.count = $class('count',this.navigation)[0];
-	this.windowSize = $class('window_size',this.navigation)[0];
-	this.windowNumber = $firstClass('window_number',this.navigation);
-	this.windowNumberBody = $firstClass('window_number_body',this.navigation);
+	this.count = this.navigation.select('.count')[0];
+	this.windowSize = this.navigation.select('.window_size')[0];
+	this.windowNumber = this.navigation.select('.window_number')[0];
+	this.windowNumberBody = this.navigation.select('.window_number_body')[0];
 	this.parameters = {};
 	this.sortKey = null;
 	this.sortDirection = null;
@@ -22,7 +22,7 @@ In2iGui.List = function(element,name,options) {
 	if (options.windowSize!='') {
 		this.window.size = parseInt(options.windowSize);
 	}
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 	this.refresh();
 }
 
@@ -93,7 +93,9 @@ In2iGui.List.prototype = {
 		new Ajax.Request(url,{
 			onSuccess:function(r) {
 				if (r.responseXML) {
+					try {
 					self.parse(r.responseXML);
+					} catch (e) {N2i.log(e)}
 				} else if (r.responseText) {
 					self.setObjects(r.responseText.evalJSON());
 				}
@@ -115,11 +117,11 @@ In2iGui.List.prototype = {
 	parse : function(doc) {
 		this.parseWindow(doc);
 		this.buildNavigation();
-		N2i.removeChildren(this.body);
-		N2i.removeChildren(this.head);
+		this.body.update();
+		this.head.update();
 		this.rows = [];
 		this.columns = [];
-		var headTr = N2i.create('tr');
+		var headTr = new Element('tr');
 		var sort = doc.getElementsByTagName('sort');
 		this.sortKey=null;
 		this.sortDirection=null;
@@ -130,7 +132,7 @@ In2iGui.List.prototype = {
 		var headers = doc.getElementsByTagName('header');
 		for (var i=0; i < headers.length; i++) {
 			var className = '';
-			var th = N2i.create('th');
+			var th = new Element('th');
 			var width = headers[i].getAttribute('width');
 			var key = headers[i].getAttribute('key');
 			var sortable = headers[i].getAttribute('sortable')=='true';
@@ -147,7 +149,7 @@ In2iGui.List.prototype = {
 				className+=' sort_'+this.sortDirection;
 			}
 			th.className=className;
-			var span = N2i.create('span');
+			var span = new Element('span');
 			th.appendChild(span);
 			span.appendChild(document.createTextNode(headers[i].getAttribute('title')));
 			headTr.appendChild(th);
@@ -157,20 +159,20 @@ In2iGui.List.prototype = {
 		var rows = doc.getElementsByTagName('row');
 		for (var i=0; i < rows.length; i++) {
 			var cells = rows[i].getElementsByTagName('cell');
-			var row = document.createElement('tr');
+			var row = new Element('tr');
 			var icon = rows[i].getAttribute('icon');
 			var title = rows[i].getAttribute('title');
 			for (var j=0; j < cells.length; j++) {
-				var td = document.createElement('td');
+				var td = new Element('td');
 				this.parseCell(cells[j],td);
-				row.appendChild(td);
+				row.insert(td);
 				if (!title) title = cells[j].innerText;
 				if (!icon && cells[j].getAttribute('icon')) icon = cells[j].getAttribute('icon');
 			};
 			var info = {id:rows[i].getAttribute('id'),kind:rows[i].getAttribute('kind'),icon:icon,title:title,index:i};
 			row.dragDropInfo = info;
 			this.addRowBehavior(row,i);
-			this.body.appendChild(row);
+			this.body.insert(row);
 			this.rows.push(info);
 		};
 	}
@@ -195,25 +197,25 @@ In2iGui.List.prototype.filter = function(str) {
 
 In2iGui.List.prototype.parseCell = function(node,cell) {
 	if (node.getAttribute('icon')!=null) {
-		var icon = N2i.create('div',{'class':'icon'},{'backgroundImage':'url("'+In2iGui.getIconUrl(node.getAttribute('icon'),1)+'")'});
-		cell.appendChild(icon);
+		var icon = new Element('div',{'class':'icon'}).setStyle({'backgroundImage':'url("'+In2iGui.getIconUrl(node.getAttribute('icon'),1)+'")'});
+		cell.insert(icon);
 	}
 	for (var i=0; i < node.childNodes.length; i++) {
 		var child = node.childNodes[i];
 		if (child.nodeType==N2i.TEXT_NODE && child.nodeValue.length>0) {
-			cell.appendChild(document.createTextNode(this.filter(child.nodeValue)));
+			cell.appendChild(document.createTextNode(child.nodeValue));
 		} else if (child.nodeType==N2i.ELEMENT_NODE && child.nodeName=='break') {
-			cell.appendChild(N2i.create('br'));
+			cell.insert(new Element('br'));
 		} else if (child.nodeType==N2i.ELEMENT_NODE && child.nodeName=='object') {
-			var obj = N2i.create('div',{'class':'object'});
+			var obj = new Element('div',{'class':'object'});
 			if (child.getAttribute('icon')!=null) {
-				var icon = N2i.create('div',{'class':'icon'},{'backgroundImage':'url("'+In2iGui.getIconUrl(child.getAttribute('icon'),1)+'")'});
-				obj.appendChild(icon);
+				var icon = new Element('div',{'class':'icon'}).setStyle({'backgroundImage':'url("'+In2iGui.getIconUrl(child.getAttribute('icon'),1)+'")'});
+				obj.insert(icon);
 			}
 			if (child.firstChild && child.firstChild.nodeType==N2i.TEXT_NODE && child.firstChild.nodeValue.length>0) {
 				obj.appendChild(document.createTextNode(child.firstChild.nodeValue));
 			}
-			cell.appendChild(obj);
+			cell.insert(obj);
 		}
 	};
 }
@@ -242,10 +244,10 @@ In2iGui.List.prototype.buildNavigation = function(doc) {
 		this.navigation.style.display='none';
 		return;
 	}
-	this.navigation.style.display='block';
-	var from = ((this.window.number-1)*this.window.size+1);
-	this.count.innerHTML = '<span><span>'+from+'-'+Math.min((this.window.number)*this.window.size,this.window.total)+'/'+this.window.total+'</span></span>';
-	this.windowNumberBody.innerHTML = '';
+		this.navigation.style.display='block';
+		var from = ((this.window.number-1)*this.window.size+1);
+		this.count.update('<span><span>'+from+'-'+Math.min((this.window.number)*this.window.size,this.window.total)+'/'+this.window.total+'</span></span>');
+		this.windowNumberBody.update();
 	if (pages<2) {
 		this.windowNumber.style.display='none';	
 	} else {
