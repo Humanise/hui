@@ -1800,13 +1800,13 @@ div.in2igui_window_dark div.in2igui_selection div.selected, div.in2igui_window_d
 div.in2igui_window_dark .in2igui_selection_item span
 {
 	margin-top: 4px;
-}.in2igui_imagepicker
+}div.in2igui_imagepicker
 {
 	width: 52px;
 	height: 52px;
 	border: 1px solid #ddd;
 	cursor: pointer;
-	background: center center no-repeat;
+	background: #fff center center no-repeat;
 	margin-top: 2px;
 }
 

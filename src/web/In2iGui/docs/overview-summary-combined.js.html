@@ -9178,10 +9178,10 @@ In2iGui.Formula.Tokens.prototype = {
 	this.rows = [];
 	this.selected = [];
 	this.navigation = this.element.select('</span>.navigation<span class="literal">')[0];
-	this.count = $class('</span>count<span class="literal">',this.navigation)[0];
-	this.windowSize = $class('</span>window_size<span class="literal">',this.navigation)[0];
-	this.windowNumber = $firstClass('</span>window_number<span class="literal">',this.navigation);
-	this.windowNumberBody = $firstClass('</span>window_number_body<span class="literal">',this.navigation);
+	this.count = this.navigation.select('</span>.count<span class="literal">')[0];
+	this.windowSize = this.navigation.select('</span>.window_size<span class="literal">')[0];
+	this.windowNumber = this.navigation.select('</span>.window_number<span class="literal">')[0];
+	this.windowNumberBody = this.navigation.select('</span>.window_number_body<span class="literal">')[0];
 	this.parameters = {};
 	this.sortKey = null;
 	this.sortDirection = null;
@@ -9190,7 +9190,7 @@ In2iGui.Formula.Tokens.prototype = {
 	if (options.windowSize!='</span><span class="literal">') {
 		this.window.size = parseInt(options.windowSize);
 	}
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 	this.refresh();
 }
 
@@ -9261,7 +9261,9 @@ In2iGui.List.prototype = {
 		new Ajax.Request(url,{
 			onSuccess:function(r) {
 				if (r.responseXML) {
+					try {
 					self.parse(r.responseXML);
+					} catch (e) {N2i.log(e)}
 				} else if (r.responseText) {
 					self.setObjects(r.responseText.evalJSON());
 				}
@@ -9283,11 +9285,11 @@ In2iGui.List.prototype = {
 	parse : function(doc) {
 		this.parseWindow(doc);
 		this.buildNavigation();
-		N2i.removeChildren(this.body);
-		N2i.removeChildren(this.head);
+		this.body.update();
+		this.head.update();
 		this.rows = [];
 		this.columns = [];
-		var headTr = N2i.create('</span>tr<span class="literal">');
+		var headTr = new Element('</span>tr<span class="literal">');
 		var sort = doc.getElementsByTagName('</span>sort<span class="literal">');
 		this.sortKey=null;
 		this.sortDirection=null;
@@ -9298,7 +9300,7 @@ In2iGui.List.prototype = {
 		var headers = doc.getElementsByTagName('</span>header<span class="literal">');
 		for (var i=0; i &lt; headers.length; i++) {
 			var className = '</span><span class="literal">';
-			var th = N2i.create('</span>th<span class="literal">');
+			var th = new Element('</span>th<span class="literal">');
 			var width = headers[i].getAttribute('</span>width<span class="literal">');
 			var key = headers[i].getAttribute('</span>key<span class="literal">');
 			var sortable = headers[i].getAttribute('</span>sortable<span class="literal">')=='</span>true<span class="literal">';
@@ -9315,7 +9317,7 @@ In2iGui.List.prototype = {
 				className+='</span> sort_<span class="literal">'+this.sortDirection;
 			}
 			th.className=className;
-			var span = N2i.create('</span>span<span class="literal">');
+			var span = new Element('</span>span<span class="literal">');
 			th.appendChild(span);
 			span.appendChild(document.createTextNode(headers[i].getAttribute('</span>title<span class="literal">')));
 			headTr.appendChild(th);
@@ -9325,20 +9327,20 @@ In2iGui.List.prototype = {
 		var rows = doc.getElementsByTagName('</span>row<span class="literal">');
 		for (var i=0; i &lt; rows.length; i++) {
 			var cells = rows[i].getElementsByTagName('</span>cell<span class="literal">');
-			var row = document.createElement('</span>tr<span class="literal">');
+			var row = new Element('</span>tr<span class="literal">');
 			var icon = rows[i].getAttribute('</span>icon<span class="literal">');
 			var title = rows[i].getAttribute('</span>title<span class="literal">');
 			for (var j=0; j &lt; cells.length; j++) {
-				var td = document.createElement('</span>td<span class="literal">');
+				var td = new Element('</span>td<span class="literal">');
 				this.parseCell(cells[j],td);
-				row.appendChild(td);
+				row.insert(td);
 				if (!title) title = cells[j].innerText;
 				if (!icon &amp;&amp; cells[j].getAttribute('</span>icon<span class="literal">')) icon = cells[j].getAttribute('</span>icon<span class="literal">');
 			};
 			var info = {id:rows[i].getAttribute('</span>id<span class="literal">'),kind:rows[i].getAttribute('</span>kind<span class="literal">'),icon:icon,title:title,index:i};
 			row.dragDropInfo = info;
 			this.addRowBehavior(row,i);
-			this.body.appendChild(row);
+			this.body.insert(row);
 			this.rows.push(info);
 		};
 	}
@@ -9363,25 +9365,25 @@ In2iGui.List.prototype.filter = function(str) {
 
 In2iGui.List.prototype.parseCell = function(node,cell) {
 	if (node.getAttribute('</span>icon<span class="literal">')!=null) {
-		var icon = N2i.create('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>icon<span class="literal">'},{'</span>backgroundImage<span class="literal">':'</span>url(<span class="literal">"'+In2iGui.getIconUrl(node.getAttribute('icon'),1)+'"</span>)<span class="literal">'});
-		cell.appendChild(icon);
+		var icon = new Element('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>icon<span class="literal">'}).setStyle({'</span>backgroundImage<span class="literal">':'</span>url(<span class="literal">"'+In2iGui.getIconUrl(node.getAttribute('icon'),1)+'"</span>)<span class="literal">'});
+		cell.insert(icon);
 	}
 	for (var i=0; i &lt; node.childNodes.length; i++) {
 		var child = node.childNodes[i];
 		if (child.nodeType==N2i.TEXT_NODE &amp;&amp; child.nodeValue.length&gt;0) {
-			cell.appendChild(document.createTextNode(this.filter(child.nodeValue)));
+			cell.appendChild(document.createTextNode(child.nodeValue));
 		} else if (child.nodeType==N2i.ELEMENT_NODE &amp;&amp; child.nodeName=='</span>break<span class="literal">') {
-			cell.appendChild(N2i.create('</span>br<span class="literal">'));
+			cell.insert(new Element('</span>br<span class="literal">'));
 		} else if (child.nodeType==N2i.ELEMENT_NODE &amp;&amp; child.nodeName=='</span>object<span class="literal">') {
-			var obj = N2i.create('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>object<span class="literal">'});
+			var obj = new Element('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>object<span class="literal">'});
 			if (child.getAttribute('</span>icon<span class="literal">')!=null) {
-				var icon = N2i.create('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>icon<span class="literal">'},{'</span>backgroundImage<span class="literal">':'</span>url(<span class="literal">"'+In2iGui.getIconUrl(child.getAttribute('icon'),1)+'"</span>)<span class="literal">'});
-				obj.appendChild(icon);
+				var icon = new Element('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>icon<span class="literal">'}).setStyle({'</span>backgroundImage<span class="literal">':'</span>url(<span class="literal">"'+In2iGui.getIconUrl(child.getAttribute('icon'),1)+'"</span>)<span class="literal">'});
+				obj.insert(icon);
 			}
 			if (child.firstChild &amp;&amp; child.firstChild.nodeType==N2i.TEXT_NODE &amp;&amp; child.firstChild.nodeValue.length&gt;0) {
 				obj.appendChild(document.createTextNode(child.firstChild.nodeValue));
 			}
-			cell.appendChild(obj);
+			cell.insert(obj);
 		}
 	};
 }
@@ -9410,10 +9412,10 @@ In2iGui.List.prototype.buildNavigation = function(doc) {
 		this.navigation.style.display='</span>none<span class="literal">';
 		return;
 	}
-	this.navigation.style.display='</span>block<span class="literal">';
-	var from = ((this.window.number-1)*this.window.size+1);
-	this.count.innerHTML = '</span>&lt;span&gt;&lt;span&gt;<span class="literal">'+from+'</span>-<span class="literal">'+Math.min((this.window.number)*this.window.size,this.window.total)+'</span>/<span class="literal">'+this.window.total+'</span>&lt;/span&gt;&lt;/span&gt;<span class="literal">';
-	this.windowNumberBody.innerHTML = '</span><span class="literal">';
+		this.navigation.style.display='</span>block<span class="literal">';
+		var from = ((this.window.number-1)*this.window.size+1);
+		this.count.update('</span>&lt;span&gt;&lt;span&gt;<span class="literal">'+from+'</span>-<span class="literal">'+Math.min((this.window.number)*this.window.size,this.window.total)+'</span>/<span class="literal">'+this.window.total+'</span>&lt;/span&gt;&lt;/span&gt;<span class="literal">');
+		this.windowNumberBody.update();
 	if (pages&lt;2) {
 		this.windowNumber.style.display='</span>none<span class="literal">';	
 	} else {
@@ -12711,6 +12713,6 @@ In2iGui.Dock.<span class="reserved">prototype</span> = {
 <font size="-1">
 
 </font>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Mon Oct  6 23:40:02 2008</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Wed Oct  8 22:14:50 2008</div>
 </body>
 </html>
