@@ -3,7 +3,7 @@
  * A bootstrap script that creates some basic required objects
  * for loading other scripts.
  * @author Michael Mathews, micmath@gmail.com
- * @version $Id: run.js 554 2008-04-01 00:12:25Z micmath $
+ * @version $Id$
  */
 
 /**

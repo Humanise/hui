@@ -125,10 +125,10 @@ In2iGui.Editor.prototype = {
 		if (!this.active || this.activePart) return;
 		if (!this.columnMenu) {
 			var menu = In2iGui.Menu.create('In2iGuiEditorColumnMenu');
-			menu.addItem('Slet kolonne','removeColumn');
-			menu.addItem('Tilføj kolonne','addColumn');
+			menu.addItem({title:'Slet kolonne',value:'removeColumn'});
+			menu.addItem({title:'Tilføj kolonne',value:'addColumn'});
 			this.partControllers.each(function(item) {
-				menu.addItem(item.title,item.key);
+				menu.addItem({title:item.title,value:item.key});
 			});
 			this.columnMenu = menu;
 			menu.addDelegate(this);
@@ -276,7 +276,7 @@ In2iGui.Editor.prototype = {
 		if (!this.newPartMenu) {
 			var menu = In2iGui.Menu.create('In2iGuiEditorNewPartMenu');
 			this.partControllers.each(function(item) {
-				menu.addItem(item.title,item.key);
+				menu.addItem({title:item.title,value:item.key});
 			});
 			menu.addDelegate(this);
 			this.newPartMenu=menu;

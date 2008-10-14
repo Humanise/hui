@@ -500,6 +500,12 @@ In2iGui.parseItems = function(doc) {
 	return out;
 }
 
+/////////////////////////////////////// Localization //////////////////////////////////
+
+In2iGui.localize = function(loc) {
+	alert(Object.toJSON(loc));
+}
+
 ///////////////////////////////////// Common text field ////////////////////////
 
 In2iGui.TextField = function(id,name,options) {

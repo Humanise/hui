@@ -1,7 +1,7 @@
 /**
 	@overview
-	@date $Date: 2008-08-02 09:25:54 +0100 (Sat, 02 Aug 2008) $
-	@version $Revision: 668 $ 
+	@date $Date$
+	@version $Revision$ 
 	@location $HeadURL: https://jsdoc-toolkit.googlecode.com/svn/tags/jsdoc_toolkit-2.0.2/jsdoc-toolkit/app/lib/JSDOC.js $
 	@name whateverFilename.js
  */

@@ -89,7 +89,9 @@
 	<script src="{$context}/In2iGui/lib/swfobject.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 	<script src="{$context}/In2iGui/ext/FlashChart.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 </xsl:if>
-
+<xsl:for-each select="gui:localize[@source]">
+	<script src="{@source}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+</xsl:for-each>
 <xsl:for-each select="gui:controller[@source]">
 	<script src="{@source}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 </xsl:for-each>
