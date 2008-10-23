@@ -46,3 +46,9 @@ div.in2igui_multiupload_item_error em
 	color: #666;
 	font-size: 9px;
 }
+
+div.in2igui_multiupload object
+{
+	position: absolute;
+	margin-left: -108px;
+}

@@ -5,6 +5,7 @@ In2iGui.Overlay = function(element,name,options) {
 	this.icons = new Hash();
 	this.visible = false;
 	In2iGui.extend(this);
+	this.addBehavior();
 }
 
 In2iGui.Overlay.create = function(name,options) {
@@ -15,6 +16,20 @@ In2iGui.Overlay.create = function(name,options) {
 }
 
 In2iGui.Overlay.prototype = {
+	addBehavior : function() {
+		var self = this;
+		this.hider = function(e) {
+			if (self.boundElement) {
+				if (In2iGui.isWithin(e,self.boundElement) || In2iGui.isWithin(e,self.element)) return;
+				// TODO: should be unreg'ed but it fails
+				//self.boundElement.stopObserving(self.hider);
+				self.boundElement.removeClassName('in2igui_overlay_bound');
+				self.boundElement = null;
+				self.hide();
+			}
+		}
+		this.element.observe('mouseout',this.hider);
+	},
 	addIcon : function(key,icon) {
 		var self = this;
 		var element = new Element('div').addClassName('in2igui_overlay_icon');
@@ -50,6 +65,11 @@ In2iGui.Overlay.prototype = {
 			$ani(this.element,'opacity',1,300);
 		}
 		this.visible = true;
+		if (options.autoHide) {
+			this.boundElement = element;
+			element.observe('mouseout',this.hider);
+			element.addClassName('in2igui_overlay_bound');
+		}
 		return;
 	},
 	hide : function() {

@@ -5,16 +5,28 @@ div.in2igui_menu
 	top: 0px;
 	left: 0px;
 	background: #fff;
-	border: 1px solid #ccc;
+	background: rgba(255,255,255,.95);
+	border: 1px solid #bbb;
 	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-webkit-box-shadow: 0px 3px 5px #999;
+	-moz-box-shadow: 0px 3px 5px #999;
 	font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
 	min-width: 120px;
 	padding: 4px 0px;
 }
 
+
+div.in2igui_menu_divider
+{
+	font-size: 0px;
+	border-top: 1px solid #ddd;
+	margin: 3px 0px;
+}
+
 div.in2igui_menu_item
 {
-	font-size: 12px;
+	font-size: 13px;
 	line-height: 18px;
 	padding: 0px 8px;
 	cursor: pointer;

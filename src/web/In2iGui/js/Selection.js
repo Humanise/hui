@@ -3,7 +3,7 @@ In2iGui.Selection = function(id,name,options) {
 	this.element = $(id);
 	this.name = name;
 	this.items = [];
-	this.sources = [];
+	this.subItems = [];
 	this.value = this.options.value;
 	this.selected = [];
 	In2iGui.extend(this);
@@ -27,8 +27,8 @@ In2iGui.Selection.prototype = {
 				return this.items[i];
 			}
 		};
-		for (var i=0; i < this.sources.length; i++) {
-			var item = this.sources[i].getSelection();
+		for (var i=0; i < this.subItems.length; i++) {
+			var item = this.subItems[i].getSelection();
 			if (item) return item;
 		};
 	},
@@ -38,9 +38,8 @@ In2iGui.Selection.prototype = {
 			var item = this.items[i];
 			N2i.setClass(item.element,'selected',(item.value==value));
 		};
-		for (var i=0; i < this.sources.length; i++) {
-			var source = this.sources[i];
-			source.updateUI();
+		for (var i=0; i < this.subItems.length; i++) {
+			this.subItems[i].updateUI();
 		};
 	},
 	changeValue : function(value) {
@@ -48,9 +47,9 @@ In2iGui.Selection.prototype = {
 		In2iGui.callDelegates(this,'selectorSelectionChanged');
 		In2iGui.callDelegates(this,'selectionChanged',this.value);
 	},
-	registerSource : function(source) {
-		source.selection = this;
-		this.sources.push(source);
+	registerItems : function(items) {
+		items.selection = this;
+		this.subItems.push(items);
 	},
 	registerItem : function(id,title,icon,badge,value,kind) {
 		var element = $(id);
@@ -101,43 +100,41 @@ In2iGui.Selection.prototype = {
 	}
 }
 
-/******************************** Source ****************************/
+/******************************** Items ****************************/
 
-In2iGui.Selection.Source = function(id,name,options) {
+In2iGui.Selection.Items = function(id,name,options) {
 	this.element = $(id);
 	this.name = name;
 	this.selection = null;
-	this.options = options;
+	this.options = N2i.override({source:null},options);
 	this.items = [];
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 	var self = this;
-	N2i.Event.addLoadListener(function() {self.refresh()});
+	if (this.options.source) {
+		this.options.source.addDelegate(this);
+	}
+	//N2i.Event.addLoadListener(function() {self.refresh()});
 }
 
-In2iGui.Selection.Source.prototype = {
+In2iGui.Selection.Items.prototype = {
 	refresh : function() {
-		var self = this;
-		new Ajax.Request(this.options.url, {onSuccess:function(t) {self.updateSource(t.responseXML)}});
+		if (this.options.source) {
+			this.options.source.refresh();
+		}
 	},
-	updateSource : function(doc) {
+	itemsLoaded : function(items) {
 		this.items = [];
 		N2i.removeChildren(this.element);
 		var self = this;
-		var items = doc.getElementsByTagName('item');
 		for (var i=0, len=items.length; i < len; ++i) {
 			var item = items[i];
 			var node = new Element('div',{'class':'in2igui_selection_item'});
 			var inner = new Element('span');
-			var title = item.getAttribute('title');
-			var badge = item.getAttribute('badge');
-			var icon = item.getAttribute('icon');
-			var value = item.getAttribute('value');
-			var kind = item.getAttribute('kind');
-			if (icon) {
-				inner.setStyle({'backgroundImage' : 'url('+In2iGui.getIconUrl(icon,1)+')'}).addClassName('in2igui_icon');
+			if (item.icon) {
+				inner.setStyle({'backgroundImage' : 'url('+In2iGui.getIconUrl(item.icon,1)+')'}).addClassName('in2igui_icon');
 			}
 			node.in2iGuiIndex = i;
-			node.insert(inner.insert(title));
+			node.insert(inner.insert(item.title));
 			this.element.insert(node);
 			node.observe('click',function() {
 				self.itemWasClicked(self.items[this.in2iGuiIndex].value);
@@ -146,7 +143,7 @@ In2iGui.Selection.Source.prototype = {
 				self.itemWasDoubleClicked();
 				return false;
 			}
-			var info = {title:title,icon:icon,badge:badge,kind:kind,element:node,value:value};
+			var info = {title:item.title,icon:item.icon,badge:item.badge,kind:item.kind,element:node,value:item.value};
 			node.dragDropInfo = info;
 			this.items.push(info);
 		};

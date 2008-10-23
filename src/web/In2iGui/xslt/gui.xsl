@@ -133,6 +133,13 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 	</xsl:if>
 </xsl:template>
 
+<xsl:template match="gui:source">
+<script type="text/javascript">
+	var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Source(null,'<xsl:value-of select="@name"/>',{url:'<xsl:value-of select="@url"/>'});
+	<xsl:call-template name="gui:createobject"/>
+</script>
+</xsl:template>
+
 <xsl:template match="gui:dock">
 <table class="in2igui_dock" id="{generate-id()}">
 	<tbody>
@@ -163,6 +170,9 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 			<xsl:for-each select="gui:source">
 				registerSource(<xsl:value-of select="generate-id()"/>_obj);
 			</xsl:for-each>
+			<xsl:for-each select="gui:items">
+				registerItems(<xsl:value-of select="generate-id()"/>_obj);
+			</xsl:for-each>
 		}
 		<xsl:call-template name="gui:createobject"/>
 	</script>
@@ -180,6 +190,16 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 		<xsl:value-of select="@title"/>
 		</span>
 	</div>
+</xsl:template>
+
+<xsl:template match="gui:selection/gui:items">
+	<div id="{generate-id()}">
+		<xsl:comment/>
+	</div>
+	<script type="text/javascript">
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Selection.Items('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>',{source:<xsl:value-of select="@source"/>});
+		<xsl:call-template name="gui:createobject"/>
+	</script>
 </xsl:template>
 
 <xsl:template match="gui:selection/gui:source">

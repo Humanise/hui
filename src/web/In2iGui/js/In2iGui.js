@@ -10,6 +10,7 @@ In2iGui.latestObjectIndex=0;
 In2iGui.latestIndex=500;
 In2iGui.latestPanelIndex=1000;
 In2iGui.latestAlertIndex=1500;
+In2iGui.latestTopIndex=2000;
 
 In2iGui.browser = {};
 In2iGui.browser.opera = /opera/i.test(navigator.userAgent);
@@ -153,15 +154,18 @@ In2iGui.prototype = {
 	},
 	getDescendants : function(widget) {
 		var desc = [];
-		var d = widget.getElement().descendants();
-		var self = this;
-		d.each(function(node) {
-			self.objects.values().each(function(obj) {
-				if (obj.getElement()==node) {
-					desc.push(obj);
-				}
-			})
-		});
+		var e = widget.getElement();
+		if (e) {
+			var d = e.descendants();
+			var self = this;
+			d.each(function(node) {
+				self.objects.values().each(function(obj) {
+					if (obj.getElement()==node) {
+						desc.push(obj);
+					}
+				})
+			});
+		}
 		return desc;
 	}
 }
@@ -179,11 +183,16 @@ In2iGui.nextAlertIndex = function() {
 	In2iGui.latestAlertIndex++;
 	return 	In2iGui.latestAlertIndex;
 }
+In2iGui.nextTopIndex = function() {
+	In2iGui.latestTopIndex++;
+	return 	In2iGui.latestTopIndex;
+}
 
 In2iGui.isWithin = function(e,element) {
+	Event.extend(e);
 	var offset = element.cumulativeOffset();
 	var dims = element.getDimensions();
-	return e.pointerX()>=offset.left && e.pointerX()<offset.left+dims.width && e.pointerY()>offset.top && e.pointerY()<offset.top+dims.height;
+	return e.pointerX()>offset.left && e.pointerX()<offset.left+dims.width && e.pointerY()>offset.top && e.pointerY()<offset.top+dims.height;
 }
 
 In2iGui.getIconUrl = function(icon,size) {
@@ -211,6 +220,10 @@ In2iGui.hideCurtain = function(widget) {
 	if (widget.curtain) {
 		$ani(widget.curtain,'opacity',0,200,{hideOnComplete:true});
 	}
+}
+
+In2iGui.onDomReady = function(func) {
+	document.observe('dom:loaded', func);
 }
 
 //////////////////////////// Positioning /////////////////////////////
@@ -413,7 +426,17 @@ In2iGui.callSuperDelegates = function(obj,method,value,event) {
 	return result;
 }
 
-/******************** Data *****************/
+////////////////////////////// Bindings ///////////////////////////
+
+In2iGui.fireValueChange = function(obj,name,value) {
+	
+}
+
+In2iGui.bind = function(fromObj,fromProperty,toObj,toProperty) {
+	
+}
+
+//////////////////////////////// Data /////////////////////////////
 
 In2iGui.dwrUpdate = function() {
 	var func = arguments[0];
@@ -495,9 +518,36 @@ In2iGui.parseItems = function(doc) {
 		var item = items[i];
 		var title = item.getAttribute('title');
 		var value = item.getAttribute('value');
-		out.push({title:title,value:value});
+		var icon = item.getAttribute('icon');
+		var kind = item.getAttribute('kind');
+		out.push({title:title,value:value,icon:icon,kind:kind});
 	}
 	return out;
+}
+
+In2iGui.Source = function(id,name,options) {
+	this.options = N2i.override({url:null},options);
+	In2iGui.extend(this);
+	var self = this;
+	In2iGui.onDomReady(function() {self.refresh()});
+}
+
+In2iGui.Source.prototype = {
+	refresh : function() {
+		var self = this;
+		new Ajax.Request(this.options.url, {onSuccess: function(t) {self.parse(t)}});
+	},
+	parse : function(t) {
+		if (t.responseXML) {
+			this.parseXML(t.responseXML);
+		}
+	},
+	parseXML : function(doc) {
+		if (doc.documentElement.tagName=='items') {
+			var data = In2iGui.parseItems(doc);
+			In2iGui.callDelegates(this,'itemsLoaded',data);
+		}
+	}
 }
 
 /////////////////////////////////////// Localization //////////////////////////////////
@@ -509,8 +559,7 @@ In2iGui.localize = function(loc) {
 ///////////////////////////////////// Common text field ////////////////////////
 
 In2iGui.TextField = function(id,name,options) {
-	this.options = {};
-	N2i.override(this.options,options);
+	this.options = N2i.override({},options);
 	this.element = $(id);
 	this.element.setAttribute('autocomplete','off');
 	this.value = this.element.value;

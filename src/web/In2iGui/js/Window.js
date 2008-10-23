@@ -11,9 +11,9 @@ In2iGui.Window = function(element,name) {
 }
 
 In2iGui.Window.create = function(name,options) {
-	options = N2i.override({title:'Window'},options);
+	options = N2i.override({title:'Window',close:true},options);
 	var element = new Element('div',{'class':'in2igui_window'+(options.variant ? ' in2igui_window_'+options.variant : '')});
-	element.update('<div class="close"></div>'+
+	element.update((options.close ? '<div class="close"></div>' : '')+
 		'<div class="titlebar"><div class="titlebar"><div class="titlebar"><span>'+options.title+'</span></div></div></div>'+
 		'<div class="in2igui_window_content"><div class="in2igui_window_content"><div class="in2igui_window_body" style="'+
 		(options.width ? 'width:'+options.width+'px;':'')+
@@ -29,7 +29,7 @@ In2iGui.Window.create = function(name,options) {
 In2iGui.Window.prototype = {
 	addBehavior : function() {
 		var self = this;
-		this.close.observe('click',function() {self.hide();});
+		if (this.close) this.close.observe('click',function() {self.hide();});
 		this.titlebar.onmousedown = function(e) {self.startDrag(e);return false;};
 		this.titlebar.observe('touchstart',function(e) {self.startDrag(e);return false;});
 		this.element.observe('mousedown',function() {
@@ -42,7 +42,7 @@ In2iGui.Window.prototype = {
 	show : function() {
 		if (this.visible) return;
 		this.element.setStyle({
-			zIndex : In2iGui.nextPanelIndex(), visibility : 'hidden', display : 'block'
+			zIndex : In2iGui.nextPanelIndex(), visibility : 'hidden', display : 'block', top: (N2i.Window.getScrollTop()+40)+'px'
 		})
 		var width = this.element.clientWidth;
 		this.element.setStyle({

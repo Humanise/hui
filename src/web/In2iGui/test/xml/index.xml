@@ -20,6 +20,7 @@
 			<icon icon="common/folder" title="Selection" action="dock.setUrl('../html/selection.html')"/>
 			<icon icon="common/folder" title="Window" action="dock.setUrl('../html/window.html')"/>
 			<icon icon="common/folder" title="Menu" action="dock.setUrl('../html/menu.html')"/>
+			<icon icon="common/folder" title="Upload" action="dock.setUrl('../html/upload.html')"/>
 		</toolbar>
 	</dock>
 </gui>

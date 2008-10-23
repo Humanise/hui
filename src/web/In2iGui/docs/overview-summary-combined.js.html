@@ -7831,10 +7831,9 @@ function In2iGui() {
 	this.domLoaded = false;
 	this.overflows = null;
 	this.delegates = [];
-	this.objects = new Hash();
+	this.objects = $H();
 	this.addBehavior();
 }
-
 In2iGui.latestObjectIndex=0;
 
 In2iGui.latestIndex=500;
@@ -8328,6 +8327,12 @@ In2iGui.parseItems = function(doc) {
 		out.push({title:title,value:value});
 	}
 	return out;
+}
+
+/////////////////////////////////////// Localization //////////////////////////////////
+
+In2iGui.localize = function(loc) {
+	alert(Object.toJSON(loc));
 }
 
 ///////////////////////////////////// Common text field ////////////////////////
@@ -11470,10 +11475,10 @@ In2iGui.Editor.prototype = {
 		if (!this.active || this.activePart) return;
 		if (!this.columnMenu) {
 			var menu = In2iGui.Menu.create('</span>In2iGuiEditorColumnMenu<span class="literal">');
-			menu.addItem('</span>Slet kolonne<span class="literal">','</span>removeColumn<span class="literal">');
-			menu.addItem('</span>Tilføj kolonne<span class="literal">','</span>addColumn<span class="literal">');
+			menu.addItem({title:'</span>Slet kolonne<span class="literal">',value:'</span>removeColumn<span class="literal">'});
+			menu.addItem({title:'</span>Tilføj kolonne<span class="literal">',value:'</span>addColumn<span class="literal">'});
 			this.partControllers.each(function(item) {
-				menu.addItem(item.title,item.key);
+				menu.addItem({title:item.title,value:item.key});
 			});
 			this.columnMenu = menu;
 			menu.addDelegate(this);
@@ -11621,7 +11626,7 @@ In2iGui.Editor.prototype = {
 		if (!this.newPartMenu) {
 			var menu = In2iGui.Menu.create('</span>In2iGuiEditorNewPartMenu<span class="literal">');
 			this.partControllers.each(function(item) {
-				menu.addItem(item.title,item.key);
+				menu.addItem({title:item.title,value:item.key});
 			});
 			menu.addDelegate(this);
 			this.newPartMenu=menu;
@@ -11811,11 +11816,12 @@ In2iGui.Editor.Html.prototype = {
 
 /* EOF */
 In2iGui.Menu = function(element,name,options) {
-	this.options = {};
-	N2i.override(this.options,options);
-	this.element = $id(element);
+	this.options = N2i.override({},options);
+	this.element = $(element);
 	this.name = name;
 	this.value = null;
+	this.subMenus = [];
+	this.visible = false;
 	In2iGui.extend(this);
 	this.addBehavior();
 }
@@ -11833,14 +11839,29 @@ In2iGui.Menu.prototype = {
 		var self = this;
 		this.hider = function() {self.hide();}
 	},
-	addItem : function(title,value) {
+	addItem : function(item) {
 		var self = this;
-		var item = new Element('</span>div<span class="literal">').addClassName('</span>in2igui_menu_item<span class="literal">').update(title);
-		item.observe('</span>click<span class="literal">',function(e) {
-			self.itemWasClicked(value);
-			e.stop();
-		})
-		this.element.insert(item);
+		var element = new Element('</span>div<span class="literal">').addClassName('</span>in2igui_menu_item<span class="literal">').update(item.title);
+		element.observe('</span>mouseup<span class="literal">',function(e) {
+			self.itemWasClicked(item.value);
+			Event.stop(e);
+		});
+		if (item.children) {
+			var sub = In2iGui.Menu.create();
+			sub.addItems(item.children);
+			element.observe('</span>mouseover<span class="literal">',function(e) {
+				sub.showAtElement(element,e,'</span>horizontal<span class="literal">');
+			});
+			sub.addDelegate({itemWasClicked:function(value) {self.itemWasClicked(value)}});
+			self.subMenus.push(sub);
+			element.addClassName('</span>in2igui_menu_item_children<span class="literal">');
+		}
+		this.element.insert(element);
+	},
+	addItems : function(items) {
+		for (var i=0; i &lt; items.length; i++) {
+			this.addItem(items[i]);
+		};
 	},
 	getValue : function() {
 		return this.value;
@@ -11848,25 +11869,47 @@ In2iGui.Menu.prototype = {
 	itemWasClicked : function(value) {
 		this.value = value;
 		In2iGui.callDelegates(this,'</span>itemWasClicked<span class="literal">',value);
+		In2iGui.callDelegates(this,'</span>select<span class="literal">',value);
 		this.hide();
 	},
 	showAtPointer : function(event) {
 		this.showAtPoint({'</span>top<span class="literal">':event.pointerY(),'</span>left<span class="literal">':event.pointerX()});
 		event.stop();
 	},
-	showAtElement : function(element) {
-		this.showAtPoint(element.cumulativeOffset());
+	showAtElement : function(element,event,position) {
+		if (event) Event.stop(event);
+		var point = element.cumulativeOffset();
+		if (position=='</span>horizontal<span class="literal">') {
+			point.left += element.getWidth();
+		} else if (position=='</span>vertical<span class="literal">') {
+			point.top += element.getHeight();
+		}
+		this.showAtPoint(point);
 	},
 	showAtPoint : function(pos) {
 		var innerWidth = N2i.Window.getInnerWidth();
-		this.element.setStyle({'</span>display<span class="literal">':'</span>block<span class="literal">','</span>visibility<span class="literal">':'</span>hidden<span class="literal">'});
+		if (!this.visible) {
+			this.element.setStyle({'</span>display<span class="literal">':'</span>block<span class="literal">','</span>visibility<span class="literal">':'</span>hidden<span class="literal">',opacity:0});
+		}
 		var width = this.element.getWidth();
 		this.element.setStyle({'</span>top<span class="literal">':pos.top+'</span>px<span class="literal">','</span>left<span class="literal">':Math.min(pos.left,innerWidth-width-20)+'</span>px<span class="literal">','</span>visibility<span class="literal">':'</span>visible<span class="literal">'});
-		this.addHider();
+		if (!this.visible) {
+			$ani(this.element,'</span>opacity<span class="literal">',1,200);
+			this.addHider();
+			this.visible = true;
+		}
 	},
 	hide : function() {
-		this.element.setStyle({'</span>display<span class="literal">':'</span>none<span class="literal">'});
+		if (!this.visible) return;
+		var self = this;
+		$ani(this.element,'</span>opacity<span class="literal">',0,200,{onComplete:function() {
+			self.element.setStyle({'</span>display<span class="literal">':'</span>none<span class="literal">'});
+		}})
 		this.removeHider();
+		for (var i=0; i &lt; this.subMenus.length; i++) {
+			this.subMenus[i].hide();
+		};
+		this.visible = false;
 	},
 	addHider : function() {
 		Element.observe(document.body,'</span>click<span class="literal">',this.hider);
@@ -12738,6 +12781,6 @@ In2iGui.Dock.<span class="reserved">prototype</span> = {
 <font size="-1">
 
 </font>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Wed Oct  8 23:20:46 2008</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Wed Oct 15 19:48:53 2008</div>
 </body>
 </html>

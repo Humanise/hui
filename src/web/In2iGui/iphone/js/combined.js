@@ -5105,10 +5105,9 @@ Element.addMethods();function In2iGui() {
 	this.domLoaded = false;
 	this.overflows = null;
 	this.delegates = [];
-	this.objects = new Hash();
+	this.objects = $H();
 	this.addBehavior();
 }
-
 In2iGui.latestObjectIndex=0;
 
 In2iGui.latestIndex=500;
@@ -5602,6 +5601,12 @@ In2iGui.parseItems = function(doc) {
 		out.push({title:title,value:value});
 	}
 	return out;
+}
+
+/////////////////////////////////////// Localization //////////////////////////////////
+
+In2iGui.localize = function(loc) {
+	alert(Object.toJSON(loc));
 }
 
 ///////////////////////////////////// Common text field ////////////////////////

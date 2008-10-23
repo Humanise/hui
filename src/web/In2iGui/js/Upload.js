@@ -11,13 +11,16 @@ In2iGui.Upload = function(element,name,options) {
 }
 
 In2iGui.Upload.create = function(name,options) {
+	options = options | {};
 	var element = new Element('div',{'class':'in2igui_upload'});
-	var form = new Element('form',{'action':options.action, 'method':'post', 'enctype':'multipart/form-data','encoding':'multipart/form-data','target':'upload'});
-	for (var i=0; i < options.parameters.length; i++) {
-		var hidden = new Element('input',{'type':'hidden','name':options.parameters[i].name});
-		hidden.setValue(options.parameters[i].value);
-		form.insert(hidden);
-	};
+	var form = new Element('form',{'action':options.action | '', 'method':'post', 'enctype':'multipart/form-data','encoding':'multipart/form-data','target':'upload'});
+	if (options.parameters) {
+		for (var i=0; i < options.parameters.length; i++) {
+			var hidden = new Element('input',{'type':'hidden','name':options.parameters[i].name});
+			hidden.setValue(options.parameters[i].value);
+			form.insert(hidden);
+		};
+	}
 	var file = N2i.create('input',{'type':'file','class':'file','name':options.name});
 	form.insert(file);
 	element.insert(form);
@@ -86,7 +89,7 @@ In2iGui.MultiUpload = function(element,name,options) {
 
 In2iGui.MultiUpload.create = function(name,options) {
 	var element = new Element('div',{'class':'in2igui_multiupload'});
-	element.update('<div class="in2igui_buttons">'+
+	element.update('<div class="in2igui_buttons"><div class="in2igui_upload_placeholder"></div>'+
 		'<a href="javascript:void(0)" class="in2igui_button"><span><span>Vælg billeder...</span></span></a>'+
 		'</div>'+
 		'<div class="in2igui_multiupload_items"><xsl:comment/></div>'+
@@ -97,17 +100,10 @@ In2iGui.MultiUpload.create = function(name,options) {
 In2iGui.MultiUpload.prototype = {
 	addBehavior : function() {
 		var self = this;
-		this.button.observe('click',function() {
-			if (!self.loaded) {
-				N2i.log('Not loaded yet!');
-				return;
-			}
-			self.loader.selectFiles();
-		});
 		if (In2iGui.get().domLoaded) {
 			this.createLoader();			
 		} else {
-			document.observe('dom:loaded', function() {self.createLoader()});
+			In2iGui.onDomLoaded(function() {self.createLoader()});
 		}
 	},
 	createLoader : function() {
@@ -118,14 +114,20 @@ In2iGui.MultiUpload.prototype = {
 		if (session) {
 			url+=';jsessionid='+session;
 		}
+		var size = this.button.getDimensions();
+		size = {width:108,height:28};
 		var self = this;
 		this.loader = new SWFUpload({
 			upload_url : url,
-			flash_url : In2iGui.context+"/In2iGui/lib/swfupload/swfupload_f8.swf",
+			flash_url : In2iGui.context+"/In2iGui/lib/swfupload/swfupload.swf",
 			file_size_limit : "20480",
 			file_upload_limit : 100,
 			debug : true,
 			post_params : this.options.parameters,
+			button_placeholder_id : 'x',
+			button_placeholder : this.element.select('.in2igui_upload_placeholder')[0],
+			button_width : size.width,
+			button_height : size.height,
 
 			swfupload_loaded_handler : function() {self.flashLoaded()},
 			file_queued_handler : function(file) {self.fileQueued(file)},

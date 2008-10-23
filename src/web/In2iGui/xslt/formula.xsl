@@ -264,20 +264,20 @@
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.Checkboxes('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>',{key:'<xsl:value-of select="@key"/>'});
 		with (<xsl:value-of select="generate-id()"/>_obj) {
-			<xsl:for-each select="gui:source">
-				registerSource(<xsl:value-of select="generate-id()"/>_obj);
+			<xsl:for-each select="gui:items">
+				registerItems(<xsl:value-of select="generate-id()"/>_obj);
 			</xsl:for-each>
 		}
 		<xsl:call-template name="gui:createobject"/>
 	</script>
 </xsl:template>
 
-<xsl:template match="gui:checkboxes/gui:source">
+<xsl:template match="gui:checkboxes/gui:items">
 	<div id="{generate-id()}">
 		<xsl:comment/>
 	</div>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.Checkboxes.Source('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>',{url:'<xsl:value-of select="@url"/>'});
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.Checkboxes.Items('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>',{source:<xsl:value-of select="@source"/>});
 		<xsl:call-template name="gui:createobject"/>
 	</script>
 </xsl:template>

@@ -560,6 +560,7 @@ form.in2igui_formula select
 	border-color: #eee #eee #ddd;*/
 	font-size: 9pt;
 	margin: 0px 0px 5px;
+	width: 100%;
 }
 
 form.in2igui_formula .in2igui_formula_text
@@ -2460,30 +2461,55 @@ div.in2igui_overlay_icon:hover
 .in2igui_editor_column_hover
 {
 	border: 1px dashed #3875d7;
-}.in2igui_menu
+}div.in2igui_menu
 {
 	display: none;
 	position: absolute;
 	top: 0px;
 	left: 0px;
 	background: #fff;
-	border: 1px solid #ddd;
+	background: rgba(255,255,255,.95);
+	border: 1px solid #bbb;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-webkit-box-shadow: 0px 3px 5px #999;
+	-moz-box-shadow: 0px 3px 5px #999;
 	font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
 	min-width: 120px;
+	padding: 4px 0px;
 }
 
-.in2igui_menu_item
+
+div.in2igui_menu_divider
 {
-	font-size: 12px;
-	line-height: 18px;
-	padding: 0px 4px;
-	cursor: pointer;
+	font-size: 0px;
+	border-top: 1px solid #ddd;
+	margin: 3px 0px;
 }
 
-.in2igui_menu_item:hover
+div.in2igui_menu_item
+{
+	font-size: 13px;
+	line-height: 18px;
+	padding: 0px 8px;
+	cursor: pointer;
+	height: 18px;
+}
+
+div.in2igui_menu_item:hover
 {
 	background-color: #3875d7;
 	color: #fff;
+}
+
+div.in2igui_menu_item_children
+{
+	background: url('../gfx/menu_arrow.png') right top no-repeat;
+}
+
+div.in2igui_menu_item_children:hover
+{
+	background: #3875d7 url('../gfx/menu_arrow.png') right -18px no-repeat;
 }div.in2igui_overlay
 {
 	display: none;

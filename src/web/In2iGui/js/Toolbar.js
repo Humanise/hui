@@ -118,11 +118,11 @@ In2iGui.Toolbar.Icon.prototype = {
 /***************** Search field ***************/
 
 In2iGui.Toolbar.SearchField = function(element,name) {
-	this.element = $id(element);
+	this.element = $(element);
 	this.name = name;
-	this.field = this.element.getElementsByTagName('input')[0];
+	this.field = this.element.select('input')[0];
 	this.value = this.field.value;
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 	this.addBehavior();
 }
 
@@ -146,6 +146,7 @@ In2iGui.Toolbar.SearchField.prototype = {
 		if (this.field.value!=this.value) {
 			this.value=this.field.value;
 			In2iGui.callDelegates(this,'valueChanged');
+			In2iGui.fireValueChange(this,'value',this.value);
 		}
 	}
 }

@@ -82,6 +82,7 @@ form.in2igui_formula select
 	border-color: #eee #eee #ddd;*/
 	font-size: 9pt;
 	margin: 0px 0px 5px;
+	width: 100%;
 }
 
 form.in2igui_formula .in2igui_formula_text
