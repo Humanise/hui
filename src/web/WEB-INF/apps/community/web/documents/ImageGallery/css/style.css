@@ -1,3 +1,8 @@
+.gallery
+{
+	overflow: hidden;
+}
+
 .gallery .partHeader h1
 {
 	text-align: center;

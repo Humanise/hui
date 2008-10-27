@@ -58,10 +58,15 @@ public class SetupRemotingFacade extends AbstractRemotingFacade {
 		return list;
 	}
 	
-	public ListData listEntities() throws SecurityException {
+	public ListData listEntities(String clazz) throws SecurityException {
 		checkUser();
 		ListData list = new ListData();
-		Query<Entity> query = Query.ofType(Entity.class).withPaging(0, 50);
+		Class<?> className = Entity.class;
+		try {
+			className = Class.forName(clazz);
+		} catch (ClassNotFoundException e) {
+		}
+		Query<Entity> query = (Query<Entity>) Query.ofType(className).withPaging(0, 50);
 		List<Entity> data = getModel().search(query);
 		for (Entity entity : data) {
 			ListDataRow row = new ListDataRow();

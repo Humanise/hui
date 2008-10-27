@@ -31,8 +31,8 @@ OO.Editor.ImageGallery.prototype = {
 		if (this.addImagePanel) {
 			this.addImagePanel.hide();
 		}
-		if (this.addImagesWindow) {
-			this.addImagesWindow.hide();
+		if (this.addImagesPanel) {
+			this.addImagesPanel.hide();
 		}
 		if (this.styleWindow) {
 			this.styleWindow.hide();
@@ -234,13 +234,26 @@ OO.Editor.ImageGallery.prototype = {
 	
 	// Multi upload
 	click$addImages : function() {
-		if (!this.addImagesWindow) {
-			var w = In2iGui.Window.create(null,{title:'Tilføj billede',variant:'dark',padding:5});
+		if (!this.addImagesPanel) {
+			//var w = In2iGui.Window.create(null,{title:'Tilføj billede',variant:'dark',padding:5});
 			var u = In2iGui.MultiUpload.create('multiUpload',{url:'uploadImage',parameters:{'contentId':OnlineObjects.content.id}});
-			w.add(u);
-			this.addImagesWindow = w;
+			//w.add(u);
+			var box = In2iGui.Box.create(null,{title:'Tilføj billeder',width:400,padding:10,absolute:true,modal:true});
+			box.add('<div class="in2igui_text"><h1>Vælg billeder på din computer</h1><p>Du kan vælge en eller flere billedfiler på din lokale computer...</p></div>');
+			box.add(u);
+			var buttons = In2iGui.Buttons.create();
+			var upload = In2iGui.Button.create('cancelAddImages',{title:'Vælg billeder...',highlighted:true});
+			u.setButton(upload);
+			buttons.add(upload);
+			buttons.add(In2iGui.Button.create('cancelAddImages',{title:'Afslut'}));
+			box.add(buttons);
+			box.addToDocument();
+			this.addImagesPanel = box;
 		}
-		this.addImagesWindow.show();
+		this.addImagesPanel.show();
+	},
+	click$cancelAddImages : function() {
+		this.addImagesPanel.hide();
 	},
 	uploadDidComplete$multiUpload : function() {
 		this.refreshImages();
@@ -322,22 +335,14 @@ OO.Editor.ImageGallery.prototype = {
 			var panel = In2iGui.BoundPanel.create({top:'50px',left:'50px'});
 			var formula = In2iGui.Formula.create();
 			panel.add(formula);
-			var group = In2iGui.Formula.Group.create();
-			formula.add(group);
+			var group = In2iGui.Formula.createGroup();
 
-			var title = In2iGui.Formula.Text.create('imageEditorTitle',{label:'Titel'});
-			group.add(title);
-			var desc = In2iGui.Formula.Text.create('imageEditorDescription',{label:'Beskrivelse',lines:4});
-			group.add(desc);
-			var tags = In2iGui.Formula.Tokens.create('imageEditorTags',{label:'Nøgleord'});
-			group.add(tags);
-
-			panel.add(N2i.create('div',null,{height:'5px'}));
-
-			var save = In2iGui.Button.create('saveImageEditor',{text:'Gem',highlighted:true});
-			panel.add(save);
-			var cancel = In2iGui.Button.create('cancelImageEditor',{text:'Annuller'});
-			panel.add(cancel);
+			group.add(In2iGui.Formula.Text.create('imageEditorTitle',{label:'Titel'}));
+			group.add(In2iGui.Formula.Text.create('imageEditorDescription',{label:'Beskrivelse',lines:4}));
+			group.add(In2iGui.Formula.Tokens.create('imageEditorTags',{label:'Nøgleord'}));
+			panel.add(new Element('div').setStyle({'height':'5px'}));
+			panel.add(In2iGui.Button.create('saveImageEditor',{text:'Gem',highlighted:true}));
+			panel.add(In2iGui.Button.create('cancelImageEditor',{text:'Annuller'}));
 			this.imageEditorPanel = panel;
 			var self = this;
 			In2iGui.get().addDelegate({

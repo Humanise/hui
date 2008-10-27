@@ -50,6 +50,7 @@ public class ModelFacade {
 
 	private Collection<ModelClassInfo> modelClassInfo;
 	private List<Class<?>> classes = Lists.newArrayList(); 
+	private List<Class<?>> entityClasses = Lists.newArrayList(); 
 
 	static {
 		try {
@@ -101,6 +102,9 @@ public class ModelFacade {
 			try {
 				clazz = Class.forName(className);
 				log.info(clazz + " with super " + clazz.getSuperclass());
+				if (clazz.getSuperclass().equals(Entity.class)) {
+					entityClasses.add(clazz);
+				}
 				classes.add(clazz);
 			} catch (ClassNotFoundException e) {
 				log.error("Could not find model class: "+className);
@@ -433,6 +437,10 @@ public class ModelFacade {
 		} catch (ClassNotFoundException e) {
 			throw new ModelException("Could not find class with simple name=" + simpleName);
 		}
+	}
+	
+	public Collection<Class<?>> getEntityClasses() {
+		return entityClasses;
 	}
 
 	@SuppressWarnings("unchecked")

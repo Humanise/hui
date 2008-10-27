@@ -77,6 +77,7 @@
 		<script src="{$context}/In2iGui/js/Calendar.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/Layout.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/Dock.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/In2iGui/js/Box.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 	</xsl:when>
 	<xsl:otherwise>
 		<script src="{$context}/In2iGui/js/minimized.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
@@ -197,7 +198,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 		<xsl:comment/>
 	</div>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Selection.Items('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>',{source:<xsl:value-of select="@source"/>});
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Selection.Items('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>'<xsl:if test="@source">,{source:<xsl:value-of select="@source"/>}</xsl:if>);
 		<xsl:call-template name="gui:createobject"/>
 	</script>
 </xsl:template>

@@ -14,8 +14,8 @@
 	<xsl:template match="p:WebPage">
 		<html>
 			<head>
-				<link rel="stylesheet" id="pageDesign" href="{$local-context}/designs/{$page-design}/css/style.css" type="text/css" media="screen" title="front" charset="utf-8"/>
 				<xsl:call-template name="p:head"/>
+				<link rel="stylesheet" id="pageDesign" href="{$local-context}/designs/{$page-design}/css/style.css" type="text/css" media="screen" title="front" charset="utf-8"/>
 			</head>
 			<body>
 				<div class="body">

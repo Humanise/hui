@@ -26,6 +26,9 @@ In2iGui.Button.create = function(name,opts) {
 	if (options.text && options.text.length>0) {
 		element3.insert(options.text);
 	}
+	if (options.title && options.title.length>0) {
+		element3.insert(options.title);
+	}
 	return new In2iGui.Button(element,name);
 }
 

@@ -1,8 +1,3 @@
-html
-{
-	height: 100%;
-}
-
 body.in2igui
 {
 	margin: 0px;
@@ -18,6 +13,7 @@ body.in2igui, textarea
 	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
 }
 
+/* TODO: remove these */
 td
 {
 	padding: 0px;
@@ -45,6 +41,25 @@ a.in2igui_link span
 a.in2igui_link:hover, a.in2igui_link:hover span
 {
 	color: #0033aa;
+}
+
+/*********************** text **********************/
+
+div.in2igui_text
+{
+	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+}
+
+div.in2igui_text h1
+{
+	margin: 0px;
+	font-size: 12pt;
+}
+
+div.in2igui_text p
+{
+	font-size: 9pt;
+	margin: 5px 0px;
 }
 
 /************************* Split ********************/

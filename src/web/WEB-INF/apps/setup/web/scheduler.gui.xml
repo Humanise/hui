@@ -3,16 +3,8 @@
 	<dwr base="/dwr/">
 		<interface name="AppSetup"/>
 	</dwr>
-	<controller name="mainController" source="main.js"/>
 	<controller name="controller" source="scheduler.js"/>
 	<view>
-		<toolbar>
-			<icon icon="common/settings" title="Indstillinger" name="toolSettings" />
-			<divider/>
-			<icon icon="common/time" title="Job" name="toolScheduler" selected="true"/>
-			<icon icon="common/object" title="Model" name="toolModel"/>
-			<icon icon="common/user" title="Brugere" name="toolUsers" disabled="true"/>
-		</toolbar>
 		<content pad="10">
 			<view style="box">
 				<toolbar>

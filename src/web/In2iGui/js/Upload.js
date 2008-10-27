@@ -82,7 +82,6 @@ In2iGui.MultiUpload = function(element,name,options) {
 	this.busy = false;
 	this.loaded = false;
 
-	this.button = this.element.select('.in2igui_button')[0];
 	In2iGui.extend(this);
 	this.addBehavior();
 }
@@ -90,7 +89,6 @@ In2iGui.MultiUpload = function(element,name,options) {
 In2iGui.MultiUpload.create = function(name,options) {
 	var element = new Element('div',{'class':'in2igui_multiupload'});
 	element.update('<div class="in2igui_buttons"><div class="in2igui_upload_placeholder"></div>'+
-		'<a href="javascript:void(0)" class="in2igui_button"><span><span>Vælg billeder...</span></span></a>'+
 		'</div>'+
 		'<div class="in2igui_multiupload_items"><xsl:comment/></div>'+
 	'</div>');
@@ -114,8 +112,8 @@ In2iGui.MultiUpload.prototype = {
 		if (session) {
 			url+=';jsessionid='+session;
 		}
-		var size = this.button.getDimensions();
-		size = {width:108,height:28};
+		//var size = this.button.getDimensions();
+		var size = {width:108,height:28};
 		var self = this;
 		this.loader = new SWFUpload({
 			upload_url : url,
@@ -144,6 +142,15 @@ In2iGui.MultiUpload.prototype = {
 			swfupload_pre_load_handler : function() {alert('swfupload_pre_load_handler!')},
 			swfupload_load_failed_handler : function() {alert('swfupload_load_failed_handler!')}
 		});
+	},
+	setButton : function(widget) {
+		this.button = widget;
+		if (this.button) {
+			var m = this.element.select('object')[0].remove();
+			m.setStyle({width:'108px','marginLeft':'-108px',position:'absolute'});
+			widget.getElement().insert(m);
+			return;
+		}
 	},
 	startNextUpload : function() {
 		this.loader.startUpload();

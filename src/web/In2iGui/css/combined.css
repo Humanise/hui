@@ -1,15 +1,8 @@
-html
-{
-	height: 100%;
-}
-
 body.in2igui
 {
 	margin: 0px;
 	font-size: 11pt;
-	background: #e8ebf0 url('../gfx/bg.png') repeat-x;
 	background: #d8dadd url('../gfx/bg2.png') repeat-x;
-	/*background: #DAE0E9;*/
 	overflow: auto;
 	min-height: 100%;
 	height: 100%;
@@ -20,6 +13,7 @@ body.in2igui, textarea
 	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
 }
 
+/* TODO: remove these */
 td
 {
 	padding: 0px;
@@ -2588,6 +2582,12 @@ div.in2igui_multiupload_item_error em
 {
 	color: #666;
 	font-size: 9px;
+}
+
+div.in2igui_multiupload object
+{
+	position: absolute;
+	margin-left: -108px;
 }div.in2igui_progressbar
 {
 	height: 24px;
