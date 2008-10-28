@@ -163,7 +163,11 @@ public class Dispatcher implements Filter {
 					throw new EndUserException("No controller found!");
 				}
 				if (path.length > 2) {
-					callService(controller, path[2], req);
+					try {
+						callService(controller, path[2], req);
+					} catch (NoSuchMethodException e) {
+						controller.unknownRequest(req);
+					}
 				} else {
 					controller.unknownRequest(req);
 				}
@@ -243,12 +247,10 @@ public class Dispatcher implements Filter {
 		}
 	}
 
-	private void callService(ServiceController controller, String methodName, Request request) throws EndUserException {
+	private void callService(ServiceController controller, String methodName, Request request) throws EndUserException, NoSuchMethodException {
 		try {
 			Method method = controller.getClass().getDeclaredMethod(methodName, args);
 			method.invoke(controller, new Object[] { request });
-		} catch (NoSuchMethodException e) {
-			throw new EndUserException(e);
 		} catch (IllegalAccessException e) {
 			throw new EndUserException(e);
 		} catch (InvocationTargetException e) {

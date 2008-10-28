@@ -5833,13 +5833,18 @@ N2i.ease = {
 		if(n<0.5){ return N2i.ease.bounceIn(n*2) / 2; }
 		return (N2i.ease.bounceOut(n*2-1) / 2) + 0.5; // Decimal
 	}
-};function In2iGui() {
+};/**
+ * @constructor
+ * The base class of the In2iGui framework
+ */
+function In2iGui() {
 	this.domLoaded = false;
 	this.overflows = null;
 	this.delegates = [];
 	this.objects = $H();
 	this.addBehavior();
 }
+
 In2iGui.latestObjectIndex=0;
 
 In2iGui.latestIndex=500;
@@ -5854,6 +5859,13 @@ In2iGui.browser.msie7 = navigator.userAgent.indexOf('MSIE 7')!=-1;
 In2iGui.browser.webkit = navigator.userAgent.indexOf('WebKit')!=-1;
 In2iGui.browser.gecko = !In2iGui.browser.webkit && navigator.userAgent.indexOf('Gecko')!=-1;
 
+/*!
+ @function FunctionName
+ This is a comment about FunctionName.
+*/
+/**
+ * Gets the one instance of In2iGui
+ */
 In2iGui.get = function(name) {
 	if (!In2iGui.instance) {
 		In2iGui.instance = new In2iGui();
@@ -6005,6 +6017,8 @@ In2iGui.prototype = {
 	}
 }
 
+///////////////////////////////// Indexes /////////////////////////////
+
 In2iGui.nextIndex = function() {
 	In2iGui.latestIndex++;
 	return 	In2iGui.latestIndex;
@@ -6023,16 +6037,7 @@ In2iGui.nextTopIndex = function() {
 	return 	In2iGui.latestTopIndex;
 }
 
-In2iGui.isWithin = function(e,element) {
-	Event.extend(e);
-	var offset = element.cumulativeOffset();
-	var dims = element.getDimensions();
-	return e.pointerX()>offset.left && e.pointerX()<offset.left+dims.width && e.pointerY()>offset.top && e.pointerY()<offset.top+dims.height;
-}
-
-In2iGui.getIconUrl = function(icon,size) {
-	return In2iGui.context+'/In2iGui/icons/'+icon+size+'.png';
-}
+///////////////////////////////// Curtain /////////////////////////////
 
 In2iGui.showCurtain = function(widget,zIndex) {
 	if (!widget.curtain) {
@@ -6055,6 +6060,17 @@ In2iGui.hideCurtain = function(widget) {
 	if (widget.curtain) {
 		$ani(widget.curtain,'opacity',0,200,{hideOnComplete:true});
 	}
+}
+
+In2iGui.isWithin = function(e,element) {
+	Event.extend(e);
+	var offset = element.cumulativeOffset();
+	var dims = element.getDimensions();
+	return e.pointerX()>offset.left && e.pointerX()<offset.left+dims.width && e.pointerY()>offset.top && e.pointerY()<offset.top+dims.height;
+}
+
+In2iGui.getIconUrl = function(icon,size) {
+	return In2iGui.context+'/In2iGui/icons/'+icon+size+'.png';
 }
 
 In2iGui.onDomReady = function(func) {
@@ -6087,7 +6103,7 @@ In2iGui.positionAtElement = function(element,target,options) {
 }
 
 
-/* ********************** Drag drop ******************* */
+//////////////////////////////// Drag drop //////////////////////////////
 
 In2iGui.getDragProxy = function() {
 	if (!In2iGui.dragProxy) {
@@ -6189,7 +6205,7 @@ In2iGui.dropOutListener = function(event) {
 
 /* ****************** Delegating *************** */
 
-In2iGui.extend = In2iGui.enableDelegating = function(obj) {
+In2iGui.extend = function(obj) {
 	if (!obj.name) {
 		In2iGui.latestObjectIndex++;
 		obj.name = 'unnamed'+In2iGui.latestObjectIndex;

@@ -3,14 +3,14 @@
 <HTML>
 <HEAD>
 <TITLE>
-In2iGui.ViewStack
+In2iGui.Box
 </TITLE>
 <LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
 </HEAD>
 <SCRIPT>
 function asd()
 {
-parent.document.title="In2iGui.ViewStack";
+parent.document.title="In2iGui.Box";
 }
 </SCRIPT>
 <BODY BGCOLOR="white" onload="asd();">
@@ -41,13 +41,13 @@ parent.document.title="In2iGui.ViewStack";
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="In2iGui.Upload.html"><B>PREV CLASS</B></A><!-- 
+&nbsp;<A HREF="In2iGui.BoundPanel.html"><B>PREV CLASS</B></A><!-- 
    NEXT CLASS 
 -->
-&nbsp;<A HREF="In2iGui.Window.html"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="In2iGui.Button.html"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="index.html" TARGET="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="In2iGui.ViewStack.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="In2iGui.Box.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;
 <SCRIPT>
   <!--
@@ -72,10 +72,10 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <HR>
 
 <!-- ======== START OF CLASS DATA ======== -->
-<H2>Class In2iGui.ViewStack</H2>
+<H2>Class In2iGui.Box</H2>
 <PRE>Object
    |
-   +--<b>In2iGui.ViewStack</b>
+   +--<b>In2iGui.Box</b>
 </PRE>
 
 
@@ -83,7 +83,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <DL>
    <!-- Class definition -->
    <DT>class 
-   <B>In2iGui.ViewStack</B>
+   <B>In2iGui.Box</B>
    
 
 </DL>
@@ -119,9 +119,9 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <TD>
       <CODE>
 	 <B>
-	    <A HREF="In2iGui.ViewStack.html#In2iGui.ViewStack()">In2iGui.ViewStack</A> 
+	    <A HREF="In2iGui.Box.html#In2iGui.Box()">In2iGui.Box</A> 
 	 </B>
-	 (id,name,options)
+	 (element,name,options)
       </CODE>
       <BR>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -153,7 +153,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#change">change</A></B>(name)
+	       <A HREF="#add">add</A></B>(widget)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -170,7 +170,41 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#registerContent">registerContent</A></B>(id,name)
+	       <A HREF="#addToDocument">addToDocument</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;void</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#hide">hide</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;void</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#show">show</A></B>()
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -203,9 +237,9 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    </TR>
 </TABLE>
 
-<A NAME="In2iGui.ViewStack()"><!-- --></A><H3>
-In2iGui.ViewStack</H3>
-<PRE><B>In2iGui.ViewStack</B>(id,name,options)</PRE>
+<A NAME="In2iGui.Box()"><!-- --></A><H3>
+In2iGui.Box</H3>
+<PRE><B>In2iGui.Box</B>(element,name,options)</PRE>
 
 
 
@@ -238,9 +272,9 @@ In2iGui.ViewStack</H3>
 
 <!-- One single method detail entry -->
 
-   <A NAME="change"><!-- --></A>
-   <H3>change</H3>
-   <PRE>void <B>change</B>(name)</PRE>
+   <A NAME="add"><!-- --></A>
+   <H3>add</H3>
+   <PRE>void <B>add</B>(widget)</PRE>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -254,9 +288,41 @@ In2iGui.ViewStack</H3>
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
 
-   <A NAME="registerContent"><!-- --></A>
-   <H3>registerContent</H3>
-   <PRE>void <B>registerContent</B>(id,name)</PRE>
+   <A NAME="addToDocument"><!-- --></A>
+   <H3>addToDocument</H3>
+   <PRE>void <B>addToDocument</B>()</PRE>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="hide"><!-- --></A>
+   <H3>hide</H3>
+   <PRE>void <B>hide</B>()</PRE>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="show"><!-- --></A>
+   <H3>show</H3>
+   <PRE>void <B>show</B>()</PRE>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -302,13 +368,13 @@ In2iGui.ViewStack</H3>
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="In2iGui.Upload.html"><B>PREV CLASS</B></A><!-- 
+&nbsp;<A HREF="In2iGui.BoundPanel.html"><B>PREV CLASS</B></A><!-- 
    NEXT CLASS 
 -->
-&nbsp;<A HREF="In2iGui.Window.html"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="In2iGui.Button.html"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="index.html" TARGET="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="In2iGui.ViewStack.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="In2iGui.Box.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;
 <SCRIPT>
   <!--

@@ -6,7 +6,7 @@ In2iGui.Tabs = function(id,name) {
 	this.activeTab = 0;
 	this.tabs = [];
 	this.addBehavior();
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 }
 
 In2iGui.Tabs.prototype.registerTab = function(obj) {
@@ -44,7 +44,7 @@ In2iGui.Tabs.Tab = function(id,name) {
 	this.parent = null;
 	this.element = $(id+'_content');
 	this.tab = $(id+'_tab');
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 }
 
 In2iGui.Tabs.Tab.prototype = {

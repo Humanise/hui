@@ -88,8 +88,7 @@ In2iGui.MultiUpload = function(element,name,options) {
 
 In2iGui.MultiUpload.create = function(name,options) {
 	var element = new Element('div',{'class':'in2igui_multiupload'});
-	element.update('<div class="in2igui_buttons"><div class="in2igui_upload_placeholder"></div>'+
-		'</div>'+
+	element.update('<div class="in2igui_upload_placeholder"></div>'+
 		'<div class="in2igui_multiupload_items"><xsl:comment/></div>'+
 	'</div>');
 	return new In2iGui.MultiUpload(element,name,options);

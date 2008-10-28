@@ -7,6 +7,8 @@ OO.Editor.ImageGallery = function() {
 	this.tempImages = [];
 	this.cells = [];
 	this.cellDims = [];
+	this.imagesLoaded = false;
+	this.busy = false;
 	var self = this;
 	In2iGui.get().addDelegate(this);
 	In2iGui.Editor.get().addPartController('header','Overskrift',In2iGui.Editor.Header);
@@ -22,8 +24,8 @@ OO.Editor.ImageGallery.getInstance = function() {
 
 OO.Editor.ImageGallery.prototype = {
 	activate : function() {
-		this.grid = $class('grid')[0];
-		if (!this.styleWindow) {
+		this.grid = $$('.grid')[0];
+		if (!this.imagesLoaded) {
 			this.refreshImages();
 		}
 	},
@@ -67,11 +69,16 @@ OO.Editor.ImageGallery.prototype = {
 		ImageGalleryDocument.updateImagePositions(OnlineObjects.content.id,ids);
 	},
 	refreshImages : function() {
+		this.busy=true;
+		In2iGui.showMessage('Indlæser billeder...');
 		var self = this;
 		ImageGalleryDocument.listImages(OnlineObjects.content.id,
 			function(data) {
 				self.parseImages(data);
-				self.updateImages()
+				self.updateImages();
+				self.imagesLoaded = true;
+				In2iGui.hideMessage();
+				self.busy=false;
 			}
 		);
 	},
@@ -335,7 +342,7 @@ OO.Editor.ImageGallery.prototype = {
 			var panel = In2iGui.BoundPanel.create({top:'50px',left:'50px'});
 			var formula = In2iGui.Formula.create();
 			panel.add(formula);
-			var group = In2iGui.Formula.createGroup();
+			var group = formula.createGroup();
 
 			group.add(In2iGui.Formula.Text.create('imageEditorTitle',{label:'Titel'}));
 			group.add(In2iGui.Formula.Text.create('imageEditorDescription',{label:'Beskrivelse',lines:4}));
@@ -481,7 +488,7 @@ OO.Editor.ImageGallery.Image.prototype = {
 			e.stop();
 		});
 		this.frame.onmouseover = function(e) {
-			if (!self.editor.isActive()) return;
+			if (!self.editor.isActive() || self.editor.busy) return;
 			self.hover.style.display='';
 			$ani(self.hover,'opacity',1,200);
 		}

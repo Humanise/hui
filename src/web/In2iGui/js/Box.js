@@ -40,11 +40,15 @@ In2iGui.Box.prototype = {
 		}
 		e.setStyle({display:'block',visibility:'hidden'});
 		var w = e.getWidth();
-		e.setStyle({'marginLeft':(w/-2)+'px',top:(N2i.Window.getScrollTop()+80)+'px'});
+		var top = (N2i.Window.getInnerHeight()-e.getHeight())/2+N2i.Window.getScrollTop();
+		e.setStyle({'marginLeft':(w/-2)+'px',top:top+'px'});
 		e.setStyle({display:'block',visibility:'visible'});
 	},
 	hide : function() {
 		In2iGui.hideCurtain(this);
 		this.element.setStyle({display:'none'});
+	},
+	curtainWasClicked : function() {
+		In2iGui.callDelegates(this,'boxCurtainWasClicked');
 	}
 }

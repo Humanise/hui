@@ -7,7 +7,7 @@ In2iGui.Tabbox = function(id,name) {
 	this.tabs = [];
 	this.addBehavior();
 	this.updateGUI();
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 }
 
 In2iGui.Tabbox.prototype.registerTab = function(obj) {
@@ -48,7 +48,7 @@ In2iGui.Tabbox.Tab = function(id,name) {
 	this.id = id;
 	this.name = name;
 	this.element = $id(id);
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 }
 
 /* EOF */

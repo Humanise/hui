@@ -2,6 +2,10 @@ package dk.in2isoft.onlineobjects.service.image;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.log4j.Logger;
 
 import dk.in2isoft.commons.http.FilePusher;
 import dk.in2isoft.commons.util.ImageUtil;
@@ -13,23 +17,64 @@ import dk.in2isoft.onlineobjects.ui.Request;
 
 public class ImageController extends ServiceController {
 
-	// private static Logger log = Logger.getLogger(ImageController.class);
+	private Pattern idPattern;
+	private Pattern widthPattern;
+	private Pattern heightPattern;
+	private Pattern thumbnailPattern;
+
+	private static Logger log = Logger.getLogger(ImageController.class);
 
 	public ImageController() {
 		super("image");
+		idPattern = Pattern.compile("id([0-9]+)");
+		widthPattern = Pattern.compile("width([0-9]+)");
+		heightPattern = Pattern.compile("height([0-9]+)");
+		thumbnailPattern = Pattern.compile("thumbnail([0-9]+)");
 	}
 
 	@Override
 	public void unknownRequest(Request request) throws IOException, EndUserException {
-		process(request);
+		String[] path = request.getLocalPath();
+		log.debug(request.getRequest());
+		if (path.length>0) {
+			String subject = path[path.length-1];
+			long id = Long.valueOf(match(idPattern,subject));
+			int width = parseInt(match(widthPattern,subject));
+			int height = parseInt(match(heightPattern,subject));
+			int thumbnail = parseInt(match(thumbnailPattern,subject));
+			boolean cropped = subject.indexOf("cropped")!=-1;
+			process(request,id,thumbnail,width,height,cropped);
+		} else {
+			long id = request.getLong("id");
+			int thumbnail = request.getInt("thumbnail");
+			int width = request.getInt("width");
+			int height = request.getInt("height");
+			boolean cropped = request.getBoolean("cropped");
+			process(request,id,thumbnail,width,height,cropped);
+		}
+	}
+	
+	private int parseInt(String str) {
+		if (str==null) {
+			return 0;
+		} else {
+			return Integer.valueOf(str);
+		}
 	}
 
-	private void process(Request request) throws IOException, EndUserException {
-		long id = request.getLong("id");
-		int thumbnail = request.getInt("thumbnail");
-		int width = request.getInt("width");
-		int height = request.getInt("height");
-		boolean cropped = request.getBoolean("cropped");
+	private String match(Pattern pattern, String subject) {
+		Matcher matcher = pattern.matcher(subject);
+		if (matcher.find()) {
+			for (int i = 0; i <= matcher.groupCount(); i++) {
+				if (i==1) {
+					return matcher.group(i);
+				}
+			}
+		}
+		return null;
+	}
+
+	private void process(Request request, long id, int thumbnail, int width, int height, boolean cropped) throws IOException, EndUserException {		
 		Image image = (Image) Core.getInstance().getModel().get(Image.class, id);
 		if (image == null) {
 			throw new EndUserException("Could not load image with id=" + id);
@@ -39,7 +84,7 @@ public class ImageController extends ServiceController {
 		if (thumbnail > 0) {
 			file = ImageUtil.getThumbnail(image, thumbnail);
 			mime = "image/jpeg";
-		} else if (width>0 && height>0) {
+		} else if (width > 0 && height > 0) {
 			if (cropped) {
 				file = ImageUtil.getCroppedThumbnail(image, width, height);
 			} else {

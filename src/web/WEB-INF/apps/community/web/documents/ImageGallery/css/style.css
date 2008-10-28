@@ -90,6 +90,7 @@
 {
 	padding-left: 40px;
 	background: url('../gfx/frame_elegant.png') left -240px no-repeat;
+	font-size: 0px;
 }
 
 .elegant .middle div
@@ -149,6 +150,7 @@
 {
 	padding-left: 40px;
 	background: url('../gfx/frame_simple.png') left -240px no-repeat;
+	font-size: 0px;
 }
 
 .simple .middle div
@@ -211,6 +213,7 @@
 {
 	padding-left: 40px;
 	background: url('../gfx/frame_paper.png') left -240px repeat-y;
+	font-size: 0px;
 }
 
 .paper .middle div

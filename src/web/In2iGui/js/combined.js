@@ -7560,6 +7560,10 @@ replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
 }
 
 
+/**
+ * @constructor
+ * The base class of the In2iGui framework
+ */
 function In2iGui() {
 	this.domLoaded = false;
 	this.overflows = null;
@@ -7567,6 +7571,7 @@ function In2iGui() {
 	this.objects = $H();
 	this.addBehavior();
 }
+
 In2iGui.latestObjectIndex=0;
 
 In2iGui.latestIndex=500;
@@ -7581,6 +7586,13 @@ In2iGui.browser.msie7 = navigator.userAgent.indexOf('MSIE 7')!=-1;
 In2iGui.browser.webkit = navigator.userAgent.indexOf('WebKit')!=-1;
 In2iGui.browser.gecko = !In2iGui.browser.webkit && navigator.userAgent.indexOf('Gecko')!=-1;
 
+/*!
+ @function FunctionName
+ This is a comment about FunctionName.
+*/
+/**
+ * Gets the one instance of In2iGui
+ */
 In2iGui.get = function(name) {
 	if (!In2iGui.instance) {
 		In2iGui.instance = new In2iGui();
@@ -7732,6 +7744,8 @@ In2iGui.prototype = {
 	}
 }
 
+///////////////////////////////// Indexes /////////////////////////////
+
 In2iGui.nextIndex = function() {
 	In2iGui.latestIndex++;
 	return 	In2iGui.latestIndex;
@@ -7750,16 +7764,7 @@ In2iGui.nextTopIndex = function() {
 	return 	In2iGui.latestTopIndex;
 }
 
-In2iGui.isWithin = function(e,element) {
-	Event.extend(e);
-	var offset = element.cumulativeOffset();
-	var dims = element.getDimensions();
-	return e.pointerX()>offset.left && e.pointerX()<offset.left+dims.width && e.pointerY()>offset.top && e.pointerY()<offset.top+dims.height;
-}
-
-In2iGui.getIconUrl = function(icon,size) {
-	return In2iGui.context+'/In2iGui/icons/'+icon+size+'.png';
-}
+///////////////////////////////// Curtain /////////////////////////////
 
 In2iGui.showCurtain = function(widget,zIndex) {
 	if (!widget.curtain) {
@@ -7782,6 +7787,17 @@ In2iGui.hideCurtain = function(widget) {
 	if (widget.curtain) {
 		$ani(widget.curtain,'opacity',0,200,{hideOnComplete:true});
 	}
+}
+
+In2iGui.isWithin = function(e,element) {
+	Event.extend(e);
+	var offset = element.cumulativeOffset();
+	var dims = element.getDimensions();
+	return e.pointerX()>offset.left && e.pointerX()<offset.left+dims.width && e.pointerY()>offset.top && e.pointerY()<offset.top+dims.height;
+}
+
+In2iGui.getIconUrl = function(icon,size) {
+	return In2iGui.context+'/In2iGui/icons/'+icon+size+'.png';
 }
 
 In2iGui.onDomReady = function(func) {
@@ -7814,7 +7830,7 @@ In2iGui.positionAtElement = function(element,target,options) {
 }
 
 
-/* ********************** Drag drop ******************* */
+//////////////////////////////// Drag drop //////////////////////////////
 
 In2iGui.getDragProxy = function() {
 	if (!In2iGui.dragProxy) {
@@ -7916,7 +7932,7 @@ In2iGui.dropOutListener = function(event) {
 
 /* ****************** Delegating *************** */
 
-In2iGui.extend = In2iGui.enableDelegating = function(obj) {
+In2iGui.extend = function(obj) {
 	if (!obj.name) {
 		In2iGui.latestObjectIndex++;
 		obj.name = 'unnamed'+In2iGui.latestObjectIndex;
@@ -9384,7 +9400,7 @@ In2iGui.List.prototype.windowNumberWasClicked = function(tag) {
 	this.name = name;
 	this.element = $id(id);
 	this.source = options.source;
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 }
 
 /* EOF */In2iGui.Tabs = function(id,name) {
@@ -9395,7 +9411,7 @@ In2iGui.List.prototype.windowNumberWasClicked = function(tag) {
 	this.activeTab = 0;
 	this.tabs = [];
 	this.addBehavior();
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 }
 
 In2iGui.Tabs.prototype.registerTab = function(obj) {
@@ -9433,7 +9449,7 @@ In2iGui.Tabs.Tab = function(id,name) {
 	this.parent = null;
 	this.element = $(id+'_content');
 	this.tab = $(id+'_tab');
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 }
 
 In2iGui.Tabs.Tab.prototype = {
@@ -9448,7 +9464,7 @@ In2iGui.Tabs.Tab.prototype = {
 	this.name = name;
 	this.element = $id(id);
 	this.contents = [];
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 }
 
 In2iGui.ViewStack.prototype.registerContent = function(id,name) {
@@ -9474,7 +9490,7 @@ In2iGui.ViewStack.prototype.change = function(name) {
 	this.tabs = [];
 	this.addBehavior();
 	this.updateGUI();
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 }
 
 In2iGui.Tabbox.prototype.registerTab = function(obj) {
@@ -9515,7 +9531,7 @@ In2iGui.Tabbox.Tab = function(id,name) {
 	this.id = id;
 	this.name = name;
 	this.element = $id(id);
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 }
 
 /* EOF */
@@ -9827,6 +9843,9 @@ In2iGui.Button.create = function(name,opts) {
 	}
 	if (options.text && options.text.length>0) {
 		element3.insert(options.text);
+	}
+	if (options.title && options.title.length>0) {
+		element3.insert(options.title);
 	}
 	return new In2iGui.Button(element,name);
 }
@@ -10211,7 +10230,7 @@ In2iGui.Toolbar.Badge = function(element,name) {
 	this.name = name;
 	this.label = this.element.select('strong')[0];
 	this.text = this.element.select('span')[0];
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 }
 
 In2iGui.Toolbar.Badge.prototype = {
@@ -10231,7 +10250,7 @@ In2iGui.Toolbar.Badge.prototype = {
 	this.images = [];
 	this.object = null;
 	this.thumbnailsLoaded = false;
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 	this.addBehavior();
 }
 
@@ -10451,7 +10470,7 @@ In2iGui.BoundPanel.prototype = {
 	this.titlebar = $class('titlebar',this.element)[0];
 	this.content=$class('content',this.element)[0];
 	this.close = $class('close',this.element)[0];
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 	this.addBehavior();
 }
 
@@ -10777,7 +10796,7 @@ In2iGui.RichText.stopEvent = function(e) {
 	this.name = name;
 	this.images = [];
 	this.addBehavior();
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 }
 
 In2iGui.ImageViewer.create = function(name,opts) {
@@ -11937,7 +11956,6 @@ In2iGui.MultiUpload = function(element,name,options) {
 	this.busy = false;
 	this.loaded = false;
 
-	this.button = this.element.select('.in2igui_button')[0];
 	In2iGui.extend(this);
 	this.addBehavior();
 }
@@ -11945,7 +11963,6 @@ In2iGui.MultiUpload = function(element,name,options) {
 In2iGui.MultiUpload.create = function(name,options) {
 	var element = new Element('div',{'class':'in2igui_multiupload'});
 	element.update('<div class="in2igui_buttons"><div class="in2igui_upload_placeholder"></div>'+
-		'<a href="javascript:void(0)" class="in2igui_button"><span><span>Vælg billeder...</span></span></a>'+
 		'</div>'+
 		'<div class="in2igui_multiupload_items"><xsl:comment/></div>'+
 	'</div>');
@@ -11969,8 +11986,8 @@ In2iGui.MultiUpload.prototype = {
 		if (session) {
 			url+=';jsessionid='+session;
 		}
-		var size = this.button.getDimensions();
-		size = {width:108,height:28};
+		//var size = this.button.getDimensions();
+		var size = {width:108,height:28};
 		var self = this;
 		this.loader = new SWFUpload({
 			upload_url : url,
@@ -11999,6 +12016,15 @@ In2iGui.MultiUpload.prototype = {
 			swfupload_pre_load_handler : function() {alert('swfupload_pre_load_handler!')},
 			swfupload_load_failed_handler : function() {alert('swfupload_load_failed_handler!')}
 		});
+	},
+	setButton : function(widget) {
+		this.button = widget;
+		if (this.button) {
+			var m = this.element.select('object')[0].remove();
+			m.setStyle({width:'108px','marginLeft':'-108px',position:'absolute'});
+			widget.getElement().insert(m);
+			return;
+		}
 	},
 	startNextUpload : function() {
 		this.loader.startUpload();
@@ -12596,4 +12622,53 @@ In2iGui.Dock.prototype = {
 	}
 }
 
-/* EOF */
+/* EOF */In2iGui.Box = function(element,name,options) {
+	this.options = N2i.override({},options);
+	this.name = name;
+	this.element = $(element);
+	this.body = this.element.select('.in2igui_box_body')[0];
+	In2iGui.extend(this);
+}
+
+In2iGui.Box.create = function(name,options) {
+	options = N2i.override({},options);
+	var e = new Element('div',{'class':'in2igui_box'});
+	if (options.width) e.setStyle({width:options.width+'px'});
+	if (options.absolute) e.addClassName('in2igui_box_absolute');
+	e.update('<div class="in2igui_box_top"><div><div></div></div></div>'+
+		'<div class="in2igui_box_middle"><div class="in2igui_box_middle">'+
+		(options.title ? '<div class="in2igui_box_header"><strong class="in2igui_box_title">'+options.title+'</strong></div>' : '')+
+		'<div class="in2igui_box_body"'+(options.padding ? ' style="padding: '+options.padding+'px;"' : '')+'></div>'+
+		'</div></div>'+
+		'<div class="in2igui_box_bottom"><div><div></div></div></div>');
+	return new In2iGui.Box(e,name,options);
+}
+
+In2iGui.Box.prototype = {
+	addToDocument : function() {
+		document.body.appendChild(this.element);
+	},
+	add : function(widget) {
+		if (widget.getElement) {
+			this.body.insert(widget.getElement());
+		} else {
+			this.body.insert(widget);
+		}
+	},
+	show : function() {
+		var e = this.element;
+		if (this.options.modal) {
+			var index = In2iGui.nextPanelIndex();
+			e.style.zIndex=index+1;
+			In2iGui.showCurtain(this,index);
+		}
+		e.setStyle({display:'block',visibility:'hidden'});
+		var w = e.getWidth();
+		e.setStyle({'marginLeft':(w/-2)+'px',top:(N2i.Window.getScrollTop()+80)+'px'});
+		e.setStyle({display:'block',visibility:'visible'});
+	},
+	hide : function() {
+		In2iGui.hideCurtain(this);
+		this.element.setStyle({display:'none'});
+	}
+}

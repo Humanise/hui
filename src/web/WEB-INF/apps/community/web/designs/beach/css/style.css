@@ -1,10 +1,12 @@
 html
 {
 	min-height: 100%;
+	height: 100%;
 }
 
 body
 {
+	height: 100%;
 	min-height: 100%;
 	padding: 0px;
 	margin: 0px;
@@ -20,24 +22,22 @@ div.body
 .inner_body
 {
 	background: url('../gfx/surface.png') left 76px repeat-x;
-	height: 100%;
 }
 
 
 .gut
 {
-	background: url('../gfx/bubbles.jpg') 45% 205px no-repeat;
 	height: 100%;
 }
 
 .gut .gut
 {
-	background: url('../gfx/shell.png') 95% 60% no-repeat;
+	background: url('../gfx/shell.png') 95% 40% no-repeat;
 }
 
 .gut .gut .gut
 {
-	background: url('../gfx/foot.png') 5% 95% no-repeat;
+	background: url('../gfx/foot.png') 5% 75% no-repeat;
 }
 
 * html .body

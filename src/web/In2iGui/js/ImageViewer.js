@@ -1,14 +1,14 @@
 In2iGui.ImageViewer = function(element,name,options) {
-	this.options = {maxWidth:800,maxHeight:600};
-	N2i.override(this.options,options);
-	this.element = $id(element);
-	this.viewer = $firstClass('in2igui_imageviewer_viewer',this.element);
-	this.innerViewer = $firstClass('in2igui_imageviewer_inner_viewer',this.element);
-	this.status = $firstClass('in2igui_imageviewer_status',this.element);
-	this.previousControl = $firstClass('in2igui_imageviewer_previous',this.element);
-	this.controller = $firstClass('in2igui_imageviewer_controller',this.element);
-	this.nextControl = $firstClass('in2igui_imageviewer_next',this.element);
-	this.playControl = $firstClass('in2igui_imageviewer_play',this.element);
+	this.options = N2i.override({maxWidth:800,maxHeight:600},options);
+	this.element = $(element);
+	this.box = this.options.box;
+	this.viewer = this.element.select('.in2igui_imageviewer_viewer')[0];
+	this.innerViewer = this.element.select('.in2igui_imageviewer_inner_viewer')[0];
+	this.status = this.element.select('.in2igui_imageviewer_status')[0];
+	this.previousControl = this.element.select('.in2igui_imageviewer_previous')[0];
+	this.controller = this.element.select('.in2igui_imageviewer_controller')[0];
+	this.nextControl = this.element.select('.in2igui_imageviewer_next')[0];
+	this.playControl = this.element.select('.in2igui_imageviewer_play')[0];
 	this.dirty = false;
 	this.width = 600;
 	this.height = 460;
@@ -16,25 +16,25 @@ In2iGui.ImageViewer = function(element,name,options) {
 	this.playing=false;
 	this.name = name;
 	this.images = [];
+	this.box.addDelegate(this);
 	this.addBehavior();
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 }
 
-In2iGui.ImageViewer.create = function(name,opts) {
-	var options = {name:null,top:'0px',left:'0px'};
-	N2i.override(options,opts);
-	var element = N2i.create('div',
-		{'class':'in2igui_imageviewer'},
-		{'display':'none'}
-	);
-	element.innerHTML = '<div class="in2igui_imageviewer_viewer"><div class="in2igui_imageviewer_inner_viewer"></div></div>'+
+In2iGui.ImageViewer.create = function(name,options) {
+	options = options || {};
+	var element = new Element('div',{'class':'in2igui_imageviewer'});
+	element.update('<div class="in2igui_imageviewer_viewer"><div class="in2igui_imageviewer_inner_viewer"></div></div>'+
 	'<div class="in2igui_imageviewer_status"></div>'+
 	'<div class="in2igui_imageviewer_controller">'+
 	'<a class="in2igui_imageviewer_previous"></a>'+
 	'<a class="in2igui_imageviewer_play"></a>'+
 	'<a class="in2igui_imageviewer_next"></a>'+
-	'</div>';
-	document.body.appendChild(element);
+	'</div>');
+	var box = In2iGui.Box.create(null,{absolute:true,modal:true});
+	box.add(element);
+	box.addToDocument();
+	options.box=box;
 	return new In2iGui.ImageViewer(element,name,options);
 }
 
@@ -100,17 +100,7 @@ In2iGui.ImageViewer.prototype = {
 		};
 		newHeight = Math.round(Math.min(newHeight,maxHeight));
 		newWidth = Math.round(Math.min(newWidth,maxWidth));
-		/*
 		
-			alert(min);
-			alert(newWidth/newHeight);
-		if (newHeight>max) {
-			newWidth = newHeight*max;
-		}
-		if (newWidth/newHeight>min) {
-			newHeight = newWidth/min;
-		}
-		*/
 		if (newWidth!=this.width || newHeight!=this.height) {
 			this.width = newWidth;
 			this.height = newHeight;
@@ -129,29 +119,20 @@ In2iGui.ImageViewer.prototype = {
 		this.index = index || 0;
 		this.calculateSize();
 		this.updateUI();
-		var curtainIndex = In2iGui.nextPanelIndex();
-		this.element.style.zIndex=In2iGui.nextPanelIndex();
-		this.element.style.width=(this.width+10)+'px';
-		this.element.style.height=(this.height+50)+'px';
-		this.element.style.marginLeft='-'+Math.round((this.width+10)/2)+'px';
-		this.element.style.top=Math.round((N2i.Window.getInnerHeight()-(this.height+50))/2)+N2i.Window.getScrollTop()+'px';
-		this.viewer.style.width=(this.width+10)+'px';
-		this.viewer.style.height=this.height+'px';
-		this.innerViewer.style.width=((this.width+10)*this.images.length)+'px';
-		this.innerViewer.style.height=this.height+'px';
-		this.controller.style.marginLeft=((this.width-115)/2+5)+'px';
-		this.element.style.display='block';
+		this.element.setStyle({width:(this.width+10)+'px',height:(this.height+50)+'px'});
+		this.viewer.setStyle({width:(this.width+10)+'px',height:this.height+'px'});
+		this.innerViewer.setStyle({width:((this.width+10)*this.images.length)+'px',height:this.height+'px'});
+		this.controller.setStyle({marginLeft:((this.width-115)/2+5)+'px'});
 		this.goToImage(false,0,false);
-		In2iGui.showCurtain(this,curtainIndex);
+		this.box.show();
 		N2i.addListener(document,'keydown',this.keyListener);
 	},
 	hide: function(index) {
 		this.pause();
-		In2iGui.hideCurtain(this);
-		this.element.style.display='none';
+		this.box.hide();
 		N2i.removeListener(document,'keydown',this.keyListener);
 	},
-	curtainWasClicked : function() {
+	boxCurtainWasClicked : function() {
 		this.hide();
 	},
 	updateUI : function() {
@@ -164,7 +145,6 @@ In2iGui.ImageViewer.prototype = {
 				
 				var url = this.resolveImageUrl(this.images[i]);
 				url = url.replace(/&amp;/g,'&');
-				//element.style.backgroundImage="url('"+url+"')";
 				this.innerViewer.appendChild(element);
 			};
 			this.dirty = false;

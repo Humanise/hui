@@ -159,7 +159,7 @@ In2iGui.Toolbar.Badge = function(element,name) {
 	this.name = name;
 	this.label = this.element.select('strong')[0];
 	this.text = this.element.select('span')[0];
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 }
 
 In2iGui.Toolbar.Badge.prototype = {

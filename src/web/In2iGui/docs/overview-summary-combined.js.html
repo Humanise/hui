@@ -120,6 +120,11 @@ function asd() {
     </tr>
     
     <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="In2iGui.Selection.Items.html">In2iGui.Selection.Items</a></b></td>
+    <td>&nbsp;</td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
     <td width="15%"><b><a href="In2iGui.DatePicker.html">In2iGui.DatePicker</a></b></td>
     <td>&nbsp;</td>
     </tr>
@@ -146,11 +151,6 @@ function asd() {
     
     <tr bgcolor="white" class="TableRowColor">
     <td width="15%"><b><a href="In2iGui.Toolbar.SearchField.html">In2iGui.Toolbar.SearchField</a></b></td>
-    <td>&nbsp;</td>
-    </tr>
-    
-    <tr bgcolor="white" class="TableRowColor">
-    <td width="15%"><b><a href="In2iGui.Selection.Source.html">In2iGui.Selection.Source</a></b></td>
     <td>&nbsp;</td>
     </tr>
     
@@ -211,11 +211,6 @@ function asd() {
     
     <tr bgcolor="white" class="TableRowColor">
     <td width="15%"><b><a href="In2iGui.BoundPanel.html">In2iGui.BoundPanel</a></b></td>
-    <td>&nbsp;</td>
-    </tr>
-    
-    <tr bgcolor="white" class="TableRowColor">
-    <td width="15%"><b><a href="In2iGui.Formula.Checkboxes.Source.html">In2iGui.Formula.Checkboxes.Source</a></b></td>
     <td>&nbsp;</td>
     </tr>
     
@@ -285,6 +280,11 @@ function asd() {
     </tr>
     
     <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="In2iGui.Box.html">In2iGui.Box</a></b></td>
+    <td>&nbsp;</td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
     <td width="15%"><b><a href="In2iGui.InfoView.html">In2iGui.InfoView</a></b></td>
     <td>&nbsp;</td>
     </tr>
@@ -326,6 +326,11 @@ function asd() {
     </tr>
     
     <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="In2iGui.Formula.Checkboxes.Items.html">In2iGui.Formula.Checkboxes.Items</a></b></td>
+    <td>&nbsp;</td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
     <td width="15%"><b><a href="In2iGui.Tabs.html">In2iGui.Tabs</a></b></td>
     <td>&nbsp;</td>
     </tr>
@@ -341,6 +346,11 @@ function asd() {
     </tr>
     
     <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="In2iGui.ProgressBar.html">In2iGui.ProgressBar</a></b></td>
+    <td>&nbsp;</td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
     <td width="15%"><b><a href="In2iGui.Tabbox.html">In2iGui.Tabbox</a></b></td>
     <td>&nbsp;</td>
     </tr>
@@ -352,11 +362,6 @@ function asd() {
     
     <tr bgcolor="white" class="TableRowColor">
     <td width="15%"><b><a href="In2iGui.RichText.html">In2iGui.RichText</a></b></td>
-    <td>&nbsp;</td>
-    </tr>
-    
-    <tr bgcolor="white" class="TableRowColor">
-    <td width="15%"><b><a href="In2iGui.ProgressBar.html">In2iGui.ProgressBar</a></b></td>
     <td>&nbsp;</td>
     </tr>
     
@@ -382,6 +387,11 @@ function asd() {
     
     <tr bgcolor="white" class="TableRowColor">
     <td width="15%"><b><a href="In2iGui.Editor.Header.html">In2iGui.Editor.Header</a></b></td>
+    <td>&nbsp;</td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="In2iGui.Source.html">In2iGui.Source</a></b></td>
     <td>&nbsp;</td>
     </tr>
     
@@ -5503,19 +5513,22 @@ Object.extend(Element.ClassNames.<span class="reserved">prototype</span>, Enumer
 <span class="comment">/*--------------------------------------------------------------------------*/</span>
 
 Element.addMethods();<span class="comment">/**
- * SWFUpload v2.1.0 by Jacob Roberts, Feb 2008, http://www.swfupload.org, http://swfupload.googlecode.com, http://www.swfupload.org
- * -------- -------- -------- -------- -------- -------- -------- --------
- * SWFUpload is (c) 2006 Lars Huring, Olov Nilz�n and Mammon Media and is released under the MIT License:
+ * SWFUpload: http://www.swfupload.org, http://swfupload.googlecode.com
+ *
+ * mmSWFUpload 1.0: Flash upload dialog - http://profandesign.se/swfupload/,  http://www.vinterwebb.se/
+ *
+ * SWFUpload is (c) 2006-2007 Lars Huring, Olov Nilz�n and Mammon Media and is released under the MIT License:
  * http://www.opensource.org/licenses/mit-license.php
  *
- * See Changelog.txt for version history
+ * SWFUpload 2 is (c) 2007-2008 Jake Roberts and is released under the MIT License:
+ * http://www.opensource.org/licenses/mit-license.php
  *
  */</span>
 
 
-<span class="comment">/* *********** */</span>
-<span class="comment">/* Constructor */</span>
-<span class="comment">/* *********** */</span>
+<span class="comment">/* ******************* */</span>
+<span class="comment">/* Constructor &amp; Init  */</span>
+<span class="comment">/* ******************* */</span>
 
 var SWFUpload = <span class="reserved">function</span> (settings) {
 	<span class="reserved">this</span>.initSWFUpload(settings);
@@ -5547,7 +5560,7 @@ SWFUpload.<span class="reserved">prototype</span>.initSWFUpload = <span class="r
 <span class="comment">/* *************** */</span>
 SWFUpload.instances = {};
 SWFUpload.movieCount = 0;
-SWFUpload.version = <span class="literal">"2.1.0"</span>;
+SWFUpload.version = <span class="literal">"2.2.0 Alpha"</span>;
 SWFUpload.QUEUE_ERROR = {
 	QUEUE_LIMIT_EXCEEDED	  		: -100,
 	FILE_EXCEEDS_SIZE_LIMIT  		: -110,
@@ -5573,7 +5586,11 @@ SWFUpload.FILE_STATUS = {
 	COMPLETE	 : -4,
 	CANCELLED	 : -5
 };
-
+SWFUpload.BUTTON_ACTION = {
+	SELECT_FILE  : -100,
+	SELECT_FILES : -110,
+	START_UPLOAD : -120
+};
 
 <span class="comment">/* ******************** */</span>
 <span class="comment">/* Instance Members  */</span>
@@ -5601,9 +5618,21 @@ SWFUpload.<span class="reserved">prototype</span>.initSettings = <span class="re
 	<span class="reserved">this</span>.ensureDefault(<span class="literal">"file_queue_limit"</span>, 0);
 
 	<span class="comment">// Flash Settings</span>
-	<span class="reserved">this</span>.ensureDefault(<span class="literal">"flash_url"</span>, <span class="literal">"swfupload_f9.swf"</span>);
-	<span class="reserved">this</span>.ensureDefault(<span class="literal">"flash_color"</span>, <span class="literal">"#FFFFFF"</span>);
-
+	<span class="reserved">this</span>.ensureDefault(<span class="literal">"flash_url"</span>, <span class="literal">"swfupload.swf"</span>);
+	<span class="reserved">this</span>.ensureDefault(<span class="literal">"prevent_swf_caching"</span>, true);
+	
+	<span class="comment">// Button Settings</span>
+	<span class="reserved">this</span>.ensureDefault(<span class="literal">"button_image_url"</span>, <span class="literal">""</span>);
+	<span class="reserved">this</span>.ensureDefault(<span class="literal">"button_width"</span>, 1);
+	<span class="reserved">this</span>.ensureDefault(<span class="literal">"button_height"</span>, 1);
+	<span class="reserved">this</span>.ensureDefault(<span class="literal">"button_text"</span>, <span class="literal">""</span>);
+	<span class="reserved">this</span>.ensureDefault(<span class="literal">"button_text_style"</span>, <span class="literal">"color: #000000; font-size: 16pt;"</span>);
+	<span class="reserved">this</span>.ensureDefault(<span class="literal">"button_text_top_padding"</span>, 0);
+	<span class="reserved">this</span>.ensureDefault(<span class="literal">"button_text_left_padding"</span>, 0);
+	<span class="reserved">this</span>.ensureDefault(<span class="literal">"button_action"</span>, SWFUpload.BUTTON_ACTION.SELECT_FILES);
+	<span class="reserved">this</span>.ensureDefault(<span class="literal">"button_disabled"</span>, false);
+	<span class="reserved">this</span>.ensureDefault(<span class="literal">"button_placeholder_id"</span>, null);
+	
 	<span class="comment">// Debug Settings</span>
 	<span class="reserved">this</span>.ensureDefault(<span class="literal">"debug"</span>, false);
 	<span class="reserved">this</span>.settings.debug_enabled = <span class="reserved">this</span>.settings.debug;	<span class="comment">// Here to maintain v2 API</span>
@@ -5622,21 +5651,32 @@ SWFUpload.<span class="reserved">prototype</span>.initSettings = <span class="re
 	<span class="reserved">this</span>.ensureDefault(<span class="literal">"upload_success_handler"</span>, null);
 	<span class="reserved">this</span>.ensureDefault(<span class="literal">"upload_complete_handler"</span>, null);
 	
-	<span class="reserved">this</span>.ensureDefault(<span class="literal">"debug_handler"</span>, <span class="reserved">function</span>(msg) {
-		N2i.log(msg)
-	});
+	<span class="reserved">this</span>.ensureDefault(<span class="literal">"debug_handler"</span>, <span class="reserved">function</span>(msg) {N2i.log(msg)});
 
 	<span class="reserved">this</span>.ensureDefault(<span class="literal">"custom_settings"</span>, {});
 
 	<span class="comment">// Other settings</span>
 	<span class="reserved">this</span>.customSettings = <span class="reserved">this</span>.settings.custom_settings;
 	
+	<span class="comment">// Update the flash url if needed</span>
+	<span class="reserved">if</span> (<span class="reserved">this</span>.settings.prevent_swf_caching) {
+		<span class="reserved">this</span>.settings.flash_url = <span class="reserved">this</span>.settings.flash_url + <span class="literal">"?swfuploadrnd="</span> + Math.floor(Math.random() * 999999999);
+	}
+	
 	delete <span class="reserved">this</span>.ensureDefault;
 };
 
-<span class="comment">// Private: loadFlash generates the HTML tag for the Flash</span>
-<span class="comment">// It then adds the flash to the body</span>
 SWFUpload.<span class="reserved">prototype</span>.loadFlash = <span class="reserved">function</span> () {
+	<span class="reserved">if</span> (<span class="reserved">this</span>.settings.button_placeholder_id !== <span class="literal">""</span>) {
+		<span class="reserved">this</span>.replaceWithFlash();
+	} <span class="reserved">else</span> {
+		<span class="reserved">this</span>.appendFlash();
+	}
+};
+
+<span class="comment">// Private: appendFlash gets the HTML tag for the Flash</span>
+<span class="comment">// It then appends the flash to the body</span>
+SWFUpload.<span class="reserved">prototype</span>.appendFlash = <span class="reserved">function</span> () {
 	var targetElement, container;
 
 	<span class="comment">// Make sure an element with the ID we are going to use doesn't already exist</span>
@@ -5653,27 +5693,43 @@ SWFUpload.<span class="reserved">prototype</span>.loadFlash = <span class="reser
 
 	<span class="comment">// Append the container and load the flash</span>
 	container = document.createElement(<span class="literal">"div"</span>);
-	container.style.top = <span class="literal">"-100px"</span>;
-	container.style.left = <span class="literal">"-100px"</span>;
-	container.style.position = <span class="literal">"absolute"</span>;
+	container.style.width = <span class="literal">"1px"</span>;
+	container.style.height = <span class="literal">"1px"</span>;
+	container.style.overflow = <span class="literal">"hidden"</span>;
 
 	targetElement.appendChild(container);
-	<span class="reserved">if</span> (N2i.isIE()) {
-		container.innerHTML = <span class="reserved">this</span>.getFlashHTML();	<span class="comment">// Using innerHTML is non-standard but the only sensible way to dynamically add Flash in IE (and maybe other browsers)</span>
-	} <span class="reserved">else</span> {
-		var object = N2i.create(<span class="literal">'object'</span>,{id:<span class="reserved">this</span>.movieName,data:<span class="reserved">this</span>.settings.flash_url},{width:<span class="literal">'1px'</span>,height:<span class="literal">'1px'</span>});
-		object.appendChild(N2i.create(<span class="literal">'param'</span>,{name:<span class="literal">'movie'</span>,value:<span class="reserved">this</span>.settings.flash_url}));
-		object.appendChild(N2i.create(<span class="literal">'param'</span>,{name:<span class="literal">'flashvars'</span>,value: <span class="reserved">this</span>.getFlashVars()}));
-		container.appendChild(object);
+	container.innerHTML = <span class="reserved">this</span>.getFlashHTML();	<span class="comment">// Using innerHTML is non-standard but the only sensible way to dynamically add Flash in IE (and maybe other browsers)</span>
+};
+
+<span class="comment">// Private: replaceWithFlash replaces the button_placeholder element with the flash movie.</span>
+SWFUpload.<span class="reserved">prototype</span>.replaceWithFlash = <span class="reserved">function</span> () {
+	var targetElement, tempParent;
+
+	<span class="comment">// Make sure an element with the ID we are going to use doesn't already exist</span>
+	<span class="reserved">if</span> (document.getElementById(<span class="reserved">this</span>.movieName) !== null) {
+		throw <span class="literal">"ID "</span> + <span class="reserved">this</span>.movieName + <span class="literal">" is already in use. The Flash Object could not be added"</span>;
 	}
+	<span class="comment">// Get the element where we will be placing the flash movie</span>
+	targetElement = <span class="reserved">this</span>.settings.button_placeholder || document.getElementById(<span class="reserved">this</span>.settings.button_placeholder_id);
+
+	<span class="reserved">if</span> (targetElement == undefined) {
+		throw <span class="literal">"Could not find the placeholder element."</span>;
+	}
+
+	<span class="comment">// Append the container and load the flash</span>
+	tempParent = document.createElement(<span class="literal">"div"</span>);
+	tempParent.innerHTML = <span class="reserved">this</span>.getFlashHTML();	<span class="comment">// Using innerHTML is non-standard but the only sensible way to dynamically add Flash in IE (and maybe other browsers)</span>
+	targetElement.parentNode.replaceChild(tempParent.firstChild, targetElement);
 };
 
 <span class="comment">// Private: getFlashHTML generates the object tag needed to embed the flash in to the document</span>
 SWFUpload.<span class="reserved">prototype</span>.getFlashHTML = <span class="reserved">function</span> () {
+	var transparent = <span class="reserved">this</span>.settings.button_image_url === <span class="literal">""</span> ? true : false;
+	
 	<span class="comment">// Flash Satay object syntax: http://www.alistapart.com/articles/flashsatay</span>
-	<span class="reserved">return</span> [<span class="literal">'&lt;object id="'</span>, <span class="reserved">this</span>.movieName, <span class="literal">'" type="application/x-shockwave-flash" data="'</span>, <span class="reserved">this</span>.settings.flash_url, <span class="literal">'" width="1" height="1" style="-moz-user-focus: ignore;"&gt;'</span>,
+	<span class="reserved">return</span> [<span class="literal">'&lt;object id="'</span>, <span class="reserved">this</span>.movieName, <span class="literal">'" type="application/x-shockwave-flash" data="'</span>, <span class="reserved">this</span>.settings.flash_url, <span class="literal">'" width="'</span>, <span class="reserved">this</span>.settings.button_width, <span class="literal">'" height="'</span>, <span class="reserved">this</span>.settings.button_height, <span class="literal">'" class="swfupload"&gt;'</span>,
+				<span class="literal">'&lt;param name="wmode" value="'</span>, transparent ? <span class="literal">"transparent"</span> : <span class="literal">"window"</span>, <span class="literal">'" /&gt;'</span>,
 				<span class="literal">'&lt;param name="movie" value="'</span>, <span class="reserved">this</span>.settings.flash_url, <span class="literal">'" /&gt;'</span>,
-				<span class="literal">'&lt;param name="bgcolor" value="'</span>, <span class="reserved">this</span>.settings.flash_color, <span class="literal">'" /&gt;'</span>,
 				<span class="literal">'&lt;param name="quality" value="high" /&gt;'</span>,
 				<span class="literal">'&lt;param name="menu" value="false" /&gt;'</span>,
 				<span class="literal">'&lt;param name="allowScriptAccess" value="always" /&gt;'</span>,
@@ -5689,17 +5745,27 @@ SWFUpload.<span class="reserved">prototype</span>.getFlashVars = <span class="re
 
 	<span class="comment">// Build the parameter string</span>
 	<span class="reserved">return</span> [<span class="literal">"movieName="</span>, encodeURIComponent(<span class="reserved">this</span>.movieName),
-			<span class="literal">"&amp;uploadURL="</span>, encodeURIComponent(<span class="reserved">this</span>.settings.upload_url),
-			<span class="literal">"&amp;useQueryString="</span>, encodeURIComponent(<span class="reserved">this</span>.settings.use_query_string),
-			<span class="literal">"&amp;requeueOnError="</span>, encodeURIComponent(<span class="reserved">this</span>.settings.requeue_on_error),
-			<span class="literal">"&amp;params="</span>, encodeURIComponent(paramString),
-			<span class="literal">"&amp;filePostName="</span>, encodeURIComponent(<span class="reserved">this</span>.settings.file_post_name),
-			<span class="literal">"&amp;fileTypes="</span>, encodeURIComponent(<span class="reserved">this</span>.settings.file_types),
-			<span class="literal">"&amp;fileTypesDescription="</span>, encodeURIComponent(<span class="reserved">this</span>.settings.file_types_description),
-			<span class="literal">"&amp;fileSizeLimit="</span>, encodeURIComponent(<span class="reserved">this</span>.settings.file_size_limit),
-			<span class="literal">"&amp;fileUploadLimit="</span>, encodeURIComponent(<span class="reserved">this</span>.settings.file_upload_limit),
-			<span class="literal">"&amp;fileQueueLimit="</span>, encodeURIComponent(<span class="reserved">this</span>.settings.file_queue_limit),
-			<span class="literal">"&amp;debugEnabled="</span>, encodeURIComponent(<span class="reserved">this</span>.settings.debug_enabled)].join(<span class="literal">""</span>);
+			<span class="literal">"&amp;amp;uploadURL="</span>, encodeURIComponent(<span class="reserved">this</span>.settings.upload_url),
+			<span class="literal">"&amp;amp;useQueryString="</span>, encodeURIComponent(<span class="reserved">this</span>.settings.use_query_string),
+			<span class="literal">"&amp;amp;requeueOnError="</span>, encodeURIComponent(<span class="reserved">this</span>.settings.requeue_on_error),
+			<span class="literal">"&amp;amp;params="</span>, encodeURIComponent(paramString),
+			<span class="literal">"&amp;amp;filePostName="</span>, encodeURIComponent(<span class="reserved">this</span>.settings.file_post_name),
+			<span class="literal">"&amp;amp;fileTypes="</span>, encodeURIComponent(<span class="reserved">this</span>.settings.file_types),
+			<span class="literal">"&amp;amp;fileTypesDescription="</span>, encodeURIComponent(<span class="reserved">this</span>.settings.file_types_description),
+			<span class="literal">"&amp;amp;fileSizeLimit="</span>, encodeURIComponent(<span class="reserved">this</span>.settings.file_size_limit),
+			<span class="literal">"&amp;amp;fileUploadLimit="</span>, encodeURIComponent(<span class="reserved">this</span>.settings.file_upload_limit),
+			<span class="literal">"&amp;amp;fileQueueLimit="</span>, encodeURIComponent(<span class="reserved">this</span>.settings.file_queue_limit),
+			<span class="literal">"&amp;amp;debugEnabled="</span>, encodeURIComponent(<span class="reserved">this</span>.settings.debug_enabled),
+			<span class="literal">"&amp;amp;buttonImageURL="</span>, encodeURIComponent(<span class="reserved">this</span>.settings.button_image_url),
+			<span class="literal">"&amp;amp;buttonWidth="</span>, encodeURIComponent(<span class="reserved">this</span>.settings.button_width),
+			<span class="literal">"&amp;amp;buttonHeight="</span>, encodeURIComponent(<span class="reserved">this</span>.settings.button_height),
+			<span class="literal">"&amp;amp;buttonText="</span>, encodeURIComponent(<span class="reserved">this</span>.settings.button_text),
+			<span class="literal">"&amp;amp;buttonTextTopPadding="</span>, encodeURIComponent(<span class="reserved">this</span>.settings.button_text_top_padding),
+			<span class="literal">"&amp;amp;buttonTextLeftPadding="</span>, encodeURIComponent(<span class="reserved">this</span>.settings.button_text_left_padding),
+			<span class="literal">"&amp;amp;buttonTextStyle="</span>, encodeURIComponent(<span class="reserved">this</span>.settings.button_text_style),
+			<span class="literal">"&amp;amp;buttonAction="</span>, encodeURIComponent(<span class="reserved">this</span>.settings.button_action),
+			<span class="literal">"&amp;amp;buttonDisabled="</span>, encodeURIComponent(<span class="reserved">this</span>.settings.button_disabled)
+		].join(<span class="literal">""</span>);
 };
 
 <span class="comment">// Public: getMovieElement retrieves the DOM reference to the Flash element added by SWFUpload</span>
@@ -5712,13 +5778,14 @@ SWFUpload.<span class="reserved">prototype</span>.getMovieElement = <span class=
 	<span class="reserved">if</span> (<span class="reserved">this</span>.movieElement === null) {
 		throw <span class="literal">"Could not find Flash element"</span>;
 	}
+	
 	<span class="reserved">return</span> <span class="reserved">this</span>.movieElement;
 };
 
 <span class="comment">// Private: buildParamString takes the name/value pairs in the post_params setting object</span>
 <span class="comment">// and joins them up in to a string formatted "name=value&amp;amp;name=value"</span>
 SWFUpload.<span class="reserved">prototype</span>.buildParamString = <span class="reserved">function</span> () {
-	var postParams = <span class="reserved">this</span>.settings.post_params;
+	var postParams = <span class="reserved">this</span>.settings.post_params; 
 	var paramStringPairs = [];
 
 	<span class="reserved">if</span> (typeof(postParams) === <span class="literal">"object"</span>) {
@@ -5729,7 +5796,7 @@ SWFUpload.<span class="reserved">prototype</span>.buildParamString = <span class
 		}
 	}
 
-	<span class="reserved">return</span> paramStringPairs.join(<span class="literal">"&amp;"</span>);
+	<span class="reserved">return</span> paramStringPairs.join(<span class="literal">"&amp;amp;"</span>);
 };
 
 <span class="comment">// Public: Used to remove a SWFUpload instance from the page. This method strives to remove</span>
@@ -5747,11 +5814,11 @@ SWFUpload.<span class="reserved">prototype</span>.destroy = <span class="reserve
 		} catch (ex) {
 		}
 		
-		<span class="reserved">if</span> (movieElement != undefined &amp;&amp; movieElement.parentNode != undefined &amp;&amp; typeof(movieElement.parentNode.removeChild) === <span class="literal">"function"</span>) {
+		<span class="reserved">if</span> (movieElement != undefined &amp;&amp; movieElement.parentNode != undefined &amp;&amp; typeof movieElement.parentNode.removeChild === <span class="literal">"function"</span>) {
 			var container = movieElement.parentNode;
 			<span class="reserved">if</span> (container != undefined) {
 				container.removeChild(movieElement);
-				<span class="reserved">if</span> (container.parentNode != undefined &amp;&amp; typeof(container.parentNode.removeChild) === <span class="literal">"function"</span>) {
+				<span class="reserved">if</span> (container.parentNode != undefined &amp;&amp; typeof container.parentNode.removeChild === <span class="literal">"function"</span>) {
 					container.parentNode.removeChild(container);
 				}
 			}
@@ -5766,6 +5833,8 @@ SWFUpload.<span class="reserved">prototype</span>.destroy = <span class="reserve
 		delete <span class="reserved">this</span>.customSettings;
 		delete <span class="reserved">this</span>.eventQueue;
 		delete <span class="reserved">this</span>.movieName;
+		
+		delete window[<span class="reserved">this</span>.movieName];
 		
 		<span class="reserved">return</span> true;
 	} catch (ex1) {
@@ -5784,30 +5853,43 @@ SWFUpload.<span class="reserved">prototype</span>.displayDebugInfo = <span class
 			<span class="literal">"Version: "</span>, SWFUpload.version, <span class="literal">"\n"</span>,
 			<span class="literal">"Movie Name: "</span>, <span class="reserved">this</span>.movieName, <span class="literal">"\n"</span>,
 			<span class="literal">"Settings:\n"</span>,
-			<span class="literal">"\t"</span>, <span class="literal">"upload_url:             "</span>, <span class="reserved">this</span>.settings.upload_url, <span class="literal">"\n"</span>,
-			<span class="literal">"\t"</span>, <span class="literal">"use_query_string:       "</span>, <span class="reserved">this</span>.settings.use_query_string.toString(), <span class="literal">"\n"</span>,
-			<span class="literal">"\t"</span>, <span class="literal">"file_post_name:         "</span>, <span class="reserved">this</span>.settings.file_post_name, <span class="literal">"\n"</span>,
-			<span class="literal">"\t"</span>, <span class="literal">"post_params:            "</span>, <span class="reserved">this</span>.settings.post_params.toString(), <span class="literal">"\n"</span>,
-			<span class="literal">"\t"</span>, <span class="literal">"file_types:             "</span>, <span class="reserved">this</span>.settings.file_types, <span class="literal">"\n"</span>,
-			<span class="literal">"\t"</span>, <span class="literal">"file_types_description: "</span>, <span class="reserved">this</span>.settings.file_types_description, <span class="literal">"\n"</span>,
-			<span class="literal">"\t"</span>, <span class="literal">"file_size_limit:        "</span>, <span class="reserved">this</span>.settings.file_size_limit, <span class="literal">"\n"</span>,
-			<span class="literal">"\t"</span>, <span class="literal">"file_upload_limit:      "</span>, <span class="reserved">this</span>.settings.file_upload_limit, <span class="literal">"\n"</span>,
-			<span class="literal">"\t"</span>, <span class="literal">"file_queue_limit:       "</span>, <span class="reserved">this</span>.settings.file_queue_limit, <span class="literal">"\n"</span>,
-			<span class="literal">"\t"</span>, <span class="literal">"flash_url:              "</span>, <span class="reserved">this</span>.settings.flash_url, <span class="literal">"\n"</span>,
-			<span class="literal">"\t"</span>, <span class="literal">"flash_color:            "</span>, <span class="reserved">this</span>.settings.flash_color, <span class="literal">"\n"</span>,
-			<span class="literal">"\t"</span>, <span class="literal">"debug:                  "</span>, <span class="reserved">this</span>.settings.debug.toString(), <span class="literal">"\n"</span>,
-			<span class="literal">"\t"</span>, <span class="literal">"custom_settings:        "</span>, <span class="reserved">this</span>.settings.custom_settings.toString(), <span class="literal">"\n"</span>,
+			<span class="literal">"\t"</span>, <span class="literal">"upload_url:               "</span>, <span class="reserved">this</span>.settings.upload_url, <span class="literal">"\n"</span>,
+			<span class="literal">"\t"</span>, <span class="literal">"flash_url:                "</span>, <span class="reserved">this</span>.settings.flash_url, <span class="literal">"\n"</span>,
+			<span class="literal">"\t"</span>, <span class="literal">"use_query_string:         "</span>, <span class="reserved">this</span>.settings.use_query_string.toString(), <span class="literal">"\n"</span>,
+			<span class="literal">"\t"</span>, <span class="literal">"file_post_name:           "</span>, <span class="reserved">this</span>.settings.file_post_name, <span class="literal">"\n"</span>,
+			<span class="literal">"\t"</span>, <span class="literal">"post_params:              "</span>, <span class="reserved">this</span>.settings.post_params.toString(), <span class="literal">"\n"</span>,
+			<span class="literal">"\t"</span>, <span class="literal">"file_types:               "</span>, <span class="reserved">this</span>.settings.file_types, <span class="literal">"\n"</span>,
+			<span class="literal">"\t"</span>, <span class="literal">"file_types_description:   "</span>, <span class="reserved">this</span>.settings.file_types_description, <span class="literal">"\n"</span>,
+			<span class="literal">"\t"</span>, <span class="literal">"file_size_limit:          "</span>, <span class="reserved">this</span>.settings.file_size_limit, <span class="literal">"\n"</span>,
+			<span class="literal">"\t"</span>, <span class="literal">"file_upload_limit:        "</span>, <span class="reserved">this</span>.settings.file_upload_limit, <span class="literal">"\n"</span>,
+			<span class="literal">"\t"</span>, <span class="literal">"file_queue_limit:         "</span>, <span class="reserved">this</span>.settings.file_queue_limit, <span class="literal">"\n"</span>,
+			<span class="literal">"\t"</span>, <span class="literal">"debug:                    "</span>, <span class="reserved">this</span>.settings.debug.toString(), <span class="literal">"\n"</span>,
+
+			<span class="literal">"\t"</span>, <span class="literal">"prevent_swf_caching:      "</span>, <span class="reserved">this</span>.settings.prevent_swf_caching.toString(), <span class="literal">"\n"</span>,
+
+			<span class="literal">"\t"</span>, <span class="literal">"button_placeholder_id:    "</span>, <span class="reserved">this</span>.settings.button_placeholder_id.toString(), <span class="literal">"\n"</span>,
+			<span class="literal">"\t"</span>, <span class="literal">"button_image_url:         "</span>, <span class="reserved">this</span>.settings.button_image_url.toString(), <span class="literal">"\n"</span>,
+			<span class="literal">"\t"</span>, <span class="literal">"button_width:             "</span>, <span class="reserved">this</span>.settings.button_width.toString(), <span class="literal">"\n"</span>,
+			<span class="literal">"\t"</span>, <span class="literal">"button_height:            "</span>, <span class="reserved">this</span>.settings.button_height.toString(), <span class="literal">"\n"</span>,
+			<span class="literal">"\t"</span>, <span class="literal">"button_text:              "</span>, <span class="reserved">this</span>.settings.button_text.toString(), <span class="literal">"\n"</span>,
+			<span class="literal">"\t"</span>, <span class="literal">"button_text_style:        "</span>, <span class="reserved">this</span>.settings.button_text_style.toString(), <span class="literal">"\n"</span>,
+			<span class="literal">"\t"</span>, <span class="literal">"button_text_top_padding:  "</span>, <span class="reserved">this</span>.settings.button_text_top_padding.toString(), <span class="literal">"\n"</span>,
+			<span class="literal">"\t"</span>, <span class="literal">"button_text_left_padding: "</span>, <span class="reserved">this</span>.settings.button_text_left_padding.toString(), <span class="literal">"\n"</span>,
+			<span class="literal">"\t"</span>, <span class="literal">"button_action:            "</span>, <span class="reserved">this</span>.settings.button_action.toString(), <span class="literal">"\n"</span>,
+			<span class="literal">"\t"</span>, <span class="literal">"button_disabled:          "</span>, <span class="reserved">this</span>.settings.button_disabled.toString(), <span class="literal">"\n"</span>,
+
+			<span class="literal">"\t"</span>, <span class="literal">"custom_settings:          "</span>, <span class="reserved">this</span>.settings.custom_settings.toString(), <span class="literal">"\n"</span>,
 			<span class="literal">"Event Handlers:\n"</span>,
-			<span class="literal">"\t"</span>, <span class="literal">"swfupload_loaded_handler assigned:  "</span>, (typeof(<span class="reserved">this</span>.settings.swfupload_loaded_handler) === <span class="literal">"function"</span>).toString(), <span class="literal">"\n"</span>,
-			<span class="literal">"\t"</span>, <span class="literal">"file_dialog_start_handler assigned: "</span>, (typeof(<span class="reserved">this</span>.settings.file_dialog_start_handler) === <span class="literal">"function"</span>).toString(), <span class="literal">"\n"</span>,
-			<span class="literal">"\t"</span>, <span class="literal">"file_queued_handler assigned:       "</span>, (typeof(<span class="reserved">this</span>.settings.file_queued_handler) === <span class="literal">"function"</span>).toString(), <span class="literal">"\n"</span>,
-			<span class="literal">"\t"</span>, <span class="literal">"file_queue_error_handler assigned:  "</span>, (typeof(<span class="reserved">this</span>.settings.file_queue_error_handler) === <span class="literal">"function"</span>).toString(), <span class="literal">"\n"</span>,
-			<span class="literal">"\t"</span>, <span class="literal">"upload_start_handler assigned:      "</span>, (typeof(<span class="reserved">this</span>.settings.upload_start_handler) === <span class="literal">"function"</span>).toString(), <span class="literal">"\n"</span>,
-			<span class="literal">"\t"</span>, <span class="literal">"upload_progress_handler assigned:   "</span>, (typeof(<span class="reserved">this</span>.settings.upload_progress_handler) === <span class="literal">"function"</span>).toString(), <span class="literal">"\n"</span>,
-			<span class="literal">"\t"</span>, <span class="literal">"upload_error_handler assigned:      "</span>, (typeof(<span class="reserved">this</span>.settings.upload_error_handler) === <span class="literal">"function"</span>).toString(), <span class="literal">"\n"</span>,
-			<span class="literal">"\t"</span>, <span class="literal">"upload_success_handler assigned:    "</span>, (typeof(<span class="reserved">this</span>.settings.upload_success_handler) === <span class="literal">"function"</span>).toString(), <span class="literal">"\n"</span>,
-			<span class="literal">"\t"</span>, <span class="literal">"upload_complete_handler assigned:   "</span>, (typeof(<span class="reserved">this</span>.settings.upload_complete_handler) === <span class="literal">"function"</span>).toString(), <span class="literal">"\n"</span>,
-			<span class="literal">"\t"</span>, <span class="literal">"debug_handler assigned:             "</span>, (typeof(<span class="reserved">this</span>.settings.debug_handler) === <span class="literal">"function"</span>).toString(), <span class="literal">"\n"</span>
+			<span class="literal">"\t"</span>, <span class="literal">"swfupload_loaded_handler assigned:  "</span>, (typeof <span class="reserved">this</span>.settings.swfupload_loaded_handler === <span class="literal">"function"</span>).toString(), <span class="literal">"\n"</span>,
+			<span class="literal">"\t"</span>, <span class="literal">"file_dialog_start_handler assigned: "</span>, (typeof <span class="reserved">this</span>.settings.file_dialog_start_handler === <span class="literal">"function"</span>).toString(), <span class="literal">"\n"</span>,
+			<span class="literal">"\t"</span>, <span class="literal">"file_queued_handler assigned:       "</span>, (typeof <span class="reserved">this</span>.settings.file_queued_handler === <span class="literal">"function"</span>).toString(), <span class="literal">"\n"</span>,
+			<span class="literal">"\t"</span>, <span class="literal">"file_queue_error_handler assigned:  "</span>, (typeof <span class="reserved">this</span>.settings.file_queue_error_handler === <span class="literal">"function"</span>).toString(), <span class="literal">"\n"</span>,
+			<span class="literal">"\t"</span>, <span class="literal">"upload_start_handler assigned:      "</span>, (typeof <span class="reserved">this</span>.settings.upload_start_handler === <span class="literal">"function"</span>).toString(), <span class="literal">"\n"</span>,
+			<span class="literal">"\t"</span>, <span class="literal">"upload_progress_handler assigned:   "</span>, (typeof <span class="reserved">this</span>.settings.upload_progress_handler === <span class="literal">"function"</span>).toString(), <span class="literal">"\n"</span>,
+			<span class="literal">"\t"</span>, <span class="literal">"upload_error_handler assigned:      "</span>, (typeof <span class="reserved">this</span>.settings.upload_error_handler === <span class="literal">"function"</span>).toString(), <span class="literal">"\n"</span>,
+			<span class="literal">"\t"</span>, <span class="literal">"upload_success_handler assigned:    "</span>, (typeof <span class="reserved">this</span>.settings.upload_success_handler === <span class="literal">"function"</span>).toString(), <span class="literal">"\n"</span>,
+			<span class="literal">"\t"</span>, <span class="literal">"upload_complete_handler assigned:   "</span>, (typeof <span class="reserved">this</span>.settings.upload_complete_handler === <span class="literal">"function"</span>).toString(), <span class="literal">"\n"</span>,
+			<span class="literal">"\t"</span>, <span class="literal">"debug_handler assigned:             "</span>, (typeof <span class="reserved">this</span>.settings.debug_handler === <span class="literal">"function"</span>).toString(), <span class="literal">"\n"</span>
 		].join(<span class="literal">""</span>)
 	);
 };
@@ -5841,36 +5923,32 @@ SWFUpload.<span class="reserved">prototype</span>.getSetting = <span class="rese
 SWFUpload.<span class="reserved">prototype</span>.callFlash = <span class="reserved">function</span> (functionName, argumentArray) {
 	argumentArray = argumentArray || [];
 	
-	var self = <span class="reserved">this</span>;
-	var callFunction = <span class="reserved">function</span> () {
-		var movieElement = self.getMovieElement();
-		var returnValue;
-		<span class="reserved">if</span> (typeof(movieElement[functionName]) == <span class="literal">"function"</span>) {
-			<span class="comment">// We have to go through all this if/else stuff because the Flash functions don't have apply() and only accept the exact number of arguments.</span>
-			<span class="reserved">if</span> (argumentArray.length === 0) {
-				returnValue = movieElement[functionName]();
-			} <span class="reserved">else</span> <span class="reserved">if</span> (argumentArray.length === 1) {
-				returnValue = movieElement[functionName](argumentArray[0]);
-			} <span class="reserved">else</span> <span class="reserved">if</span> (argumentArray.length === 2) {
-				returnValue = movieElement[functionName](argumentArray[0], argumentArray[1]);
-			} <span class="reserved">else</span> <span class="reserved">if</span> (argumentArray.length === 3) {
-				returnValue = movieElement[functionName](argumentArray[0], argumentArray[1], argumentArray[2]);
-			} <span class="reserved">else</span> {
-				throw <span class="literal">"Too many arguments"</span>;
-			}
-			
-			<span class="comment">// Unescape file post param values</span>
-			<span class="reserved">if</span> (returnValue != undefined &amp;&amp; typeof(returnValue.post) === <span class="literal">"object"</span>) {
-				returnValue = self.unescapeFilePostParams(returnValue);
-			}
-			
-			<span class="reserved">return</span> returnValue;
+	var movieElement = <span class="reserved">this</span>.getMovieElement();
+	var returnValue;
+
+	<span class="reserved">if</span> (typeof movieElement[functionName] === <span class="literal">"function"</span>) {
+		<span class="comment">// We have to go through all this if/else stuff because the Flash functions don't have apply() and only accept the exact number of arguments.</span>
+		<span class="reserved">if</span> (argumentArray.length === 0) {
+			returnValue = movieElement[functionName]();
+		} <span class="reserved">else</span> <span class="reserved">if</span> (argumentArray.length === 1) {
+			returnValue = movieElement[functionName](argumentArray[0]);
+		} <span class="reserved">else</span> <span class="reserved">if</span> (argumentArray.length === 2) {
+			returnValue = movieElement[functionName](argumentArray[0], argumentArray[1]);
+		} <span class="reserved">else</span> <span class="reserved">if</span> (argumentArray.length === 3) {
+			returnValue = movieElement[functionName](argumentArray[0], argumentArray[1], argumentArray[2]);
 		} <span class="reserved">else</span> {
-			throw <span class="literal">"Invalid function name"</span>;
+			throw <span class="literal">"Too many arguments"</span>;
 		}
-	};
-	
-	<span class="reserved">return</span> callFunction();
+		
+		<span class="comment">// Unescape file post param values</span>
+		<span class="reserved">if</span> (returnValue != undefined &amp;&amp; typeof returnValue.post === <span class="literal">"object"</span>) {
+			returnValue = <span class="reserved">this</span>.unescapeFilePostParams(returnValue);
+		}
+		
+		<span class="reserved">return</span> returnValue;
+	} <span class="reserved">else</span> {
+		throw <span class="literal">"Invalid function name: "</span> + functionName;
+	}
 };
 
 
@@ -5881,7 +5959,7 @@ SWFUpload.<span class="reserved">prototype</span>.callFlash = <span class="reser
    ***************************** */</span>
 
 <span class="comment">// Public: selectFile causes a File Selection Dialog window to appear.  This</span>
-<span class="comment">// dialog only allows 1 file to be selected.</span>
+<span class="comment">// dialog only allows 1 file to be selected. WARNING: this function does not work in Flash Player 10</span>
 SWFUpload.<span class="reserved">prototype</span>.selectFile = <span class="reserved">function</span> () {
 	<span class="reserved">this</span>.callFlash(<span class="literal">"SelectFile"</span>);
 };
@@ -5890,7 +5968,7 @@ SWFUpload.<span class="reserved">prototype</span>.selectFile = <span class="rese
 <span class="comment">// dialog allows the user to select any number of files</span>
 <span class="comment">// Flash Bug Warning: Flash limits the number of selectable files based on the combined length of the file names.</span>
 <span class="comment">// If the selection name length is too long the dialog will fail in an unpredictable manner.  There is no work-around</span>
-<span class="comment">// for this bug.</span>
+<span class="comment">// for this bug.  WARNING: this function does not work in Flash Player 10</span>
 SWFUpload.<span class="reserved">prototype</span>.selectFiles = <span class="reserved">function</span> () {
 	<span class="reserved">this</span>.callFlash(<span class="literal">"SelectFiles"</span>);
 };
@@ -6032,6 +6110,56 @@ SWFUpload.<span class="reserved">prototype</span>.setDebugEnabled = <span class=
 	<span class="reserved">this</span>.callFlash(<span class="literal">"SetDebugEnabled"</span>, [debugEnabled]);
 };
 
+<span class="comment">// Public: setButtonImageURL loads a button image sprite</span>
+SWFUpload.<span class="reserved">prototype</span>.setButtonImageURL = <span class="reserved">function</span> (buttonImageURL) {
+	<span class="reserved">if</span> (buttonImageURL == undefined) {
+		buttonImageURL = <span class="literal">""</span>;
+	}
+	
+	<span class="reserved">this</span>.settings.button_image_url = buttonImageURL;
+	<span class="reserved">this</span>.callFlash(<span class="literal">"SetButtonImageURL"</span>, [buttonImageURL]);
+};
+
+<span class="comment">// Public: setButtonDimensions resizes the Flash Movie and button</span>
+SWFUpload.<span class="reserved">prototype</span>.setButtonDimensions = <span class="reserved">function</span> (width, height) {
+	<span class="reserved">this</span>.settings.button_width = width;
+	<span class="reserved">this</span>.settings.button_height = height;
+	
+	var movie = <span class="reserved">this</span>.getMovieElement();
+	<span class="reserved">if</span> (movie != undefined) {
+		movie.style.width = width + <span class="literal">"px"</span>;
+		movie.style.height = height + <span class="literal">"px"</span>;
+	}
+	
+	<span class="reserved">this</span>.callFlash(<span class="literal">"SetButtonDimensions"</span>, [width, height]);
+};
+<span class="comment">// Public: setButtonText Changes the text overlaid on the button</span>
+SWFUpload.<span class="reserved">prototype</span>.setButtonText = <span class="reserved">function</span> (html) {
+	<span class="reserved">this</span>.settings.button_text = html;
+	<span class="reserved">this</span>.callFlash(<span class="literal">"SetButtonText"</span>, [html]);
+};
+<span class="comment">// Public: setButtonTextPadding changes the top and left padding of the text overlay</span>
+SWFUpload.<span class="reserved">prototype</span>.setButtonTextPadding = <span class="reserved">function</span> (left, top) {
+	<span class="reserved">this</span>.settings.button_text_top_padding = top;
+	<span class="reserved">this</span>.settings.button_text_left_padding = left;
+	<span class="reserved">this</span>.callFlash(<span class="literal">"SetButtonTextPadding"</span>, [left, top]);
+};
+
+<span class="comment">// Public: setButtonTextStyle changes the CSS used to style the HTML/Text overlaid on the button</span>
+SWFUpload.<span class="reserved">prototype</span>.setButtonTextStyle = <span class="reserved">function</span> (css) {
+	<span class="reserved">this</span>.settings.button_text_style = css;
+	<span class="reserved">this</span>.callFlash(<span class="literal">"SetButtonTextStyle"</span>, [css]);
+};
+<span class="comment">// Public: setButtonDisabled disables/enables the button</span>
+SWFUpload.<span class="reserved">prototype</span>.setButtonDisabled = <span class="reserved">function</span> (isDisabled) {
+	<span class="reserved">this</span>.settings.button_disabled = isDisabled;
+	<span class="reserved">this</span>.callFlash(<span class="literal">"SetButtonDisabled"</span>, [isDisabled]);
+};
+<span class="comment">// Public: setButtonAction sets the action that occurs when the button is clicked</span>
+SWFUpload.<span class="reserved">prototype</span>.setButtonAction = <span class="reserved">function</span> (buttonAction) {
+	<span class="reserved">this</span>.settings.button_action = buttonAction;
+	<span class="reserved">this</span>.callFlash(<span class="literal">"SetButtonAction"</span>, [buttonAction]);
+};
 
 <span class="comment">/* *******************************
 	Flash Event Interfaces
@@ -6056,7 +6184,7 @@ SWFUpload.<span class="reserved">prototype</span>.queueEvent = <span class="rese
 	}
 	
 	var self = <span class="reserved">this</span>;
-	<span class="reserved">if</span> (typeof(<span class="reserved">this</span>.settings[handlerName]) === <span class="literal">"function"</span>) {
+	<span class="reserved">if</span> (typeof <span class="reserved">this</span>.settings[handlerName] === <span class="literal">"function"</span>) {
 		<span class="comment">// Queue the event</span>
 		<span class="reserved">this</span>.eventQueue.push(<span class="reserved">function</span> () {
 			<span class="reserved">this</span>.settings[handlerName].apply(<span class="reserved">this</span>, argumentArray);
@@ -6083,7 +6211,7 @@ SWFUpload.<span class="reserved">prototype</span>.executeNextEvent = <span class
 	}
 };
 
-<span class="comment">// Private: unescapeFileParams is part of a workaround for a flash bug where objects passed through ExternalInterfance cannot have</span>
+<span class="comment">// Private: unescapeFileParams is part of a workaround for a flash bug where objects passed through ExternalInterface cannot have</span>
 <span class="comment">// properties that contain characters that are not valid for JavaScript identifiers. To work around this</span>
 <span class="comment">// the Flash Component escapes the parameter names and we must unescape again before passing them along.</span>
 SWFUpload.<span class="reserved">prototype</span>.unescapeFilePostParams = <span class="reserved">function</span> (file) {
@@ -6097,7 +6225,7 @@ SWFUpload.<span class="reserved">prototype</span>.unescapeFilePostParams = <span
 				uk = k;
 				var match;
 				<span class="reserved">while</span> ((match = reg.exec(uk)) !== null) {
-					uk = uk.replace(match[0], String.fromCharCode(parseInt(<span class="literal">"0x"</span>+match[1], 16)));
+					uk = uk.replace(match[0], String.fromCharCode(parseInt(<span class="literal">"0x"</span> + match[1], 16)));
 				}
 				unescapedPost[uk] = file.post[k];
 			}
@@ -6112,8 +6240,13 @@ SWFUpload.<span class="reserved">prototype</span>.unescapeFilePostParams = <span
 SWFUpload.<span class="reserved">prototype</span>.flashReady = <span class="reserved">function</span> () {
 	<span class="comment">// Check that the movie element is loaded correctly with its ExternalInterface methods defined</span>
 	var movieElement = <span class="reserved">this</span>.getMovieElement();
-	<span class="reserved">if</span> (typeof(movieElement.StartUpload) !== <span class="literal">"function"</span>) {
+	<span class="reserved">if</span> (typeof movieElement.StartUpload !== <span class="literal">"function"</span>) {
 		throw <span class="literal">"ExternalInterface methods failed to initialize."</span>;
+	}
+
+	<span class="comment">// Fix IE Flash/Form bug</span>
+	<span class="reserved">if</span> (window[<span class="reserved">this</span>.movieName] == undefined) {
+		window[<span class="reserved">this</span>.movieName] = movieElement;
 	}
 	
 	<span class="reserved">this</span>.queueEvent(<span class="literal">"swfupload_loaded_handler"</span>);
@@ -6152,7 +6285,7 @@ SWFUpload.<span class="reserved">prototype</span>.uploadStart = <span class="res
 
 SWFUpload.<span class="reserved">prototype</span>.returnUploadStart = <span class="reserved">function</span> (file) {
 	var returnValue;
-	<span class="reserved">if</span> (typeof(<span class="reserved">this</span>.settings.upload_start_handler) === <span class="literal">"function"</span>) {
+	<span class="reserved">if</span> (typeof <span class="reserved">this</span>.settings.upload_start_handler === <span class="literal">"function"</span>) {
 		file = <span class="reserved">this</span>.unescapeFilePostParams(file);
 		returnValue = <span class="reserved">this</span>.settings.upload_start_handler.call(<span class="reserved">this</span>, file);
 	} <span class="reserved">else</span> <span class="reserved">if</span> (<span class="reserved">this</span>.settings.upload_start_handler != undefined) {
@@ -6195,7 +6328,7 @@ SWFUpload.<span class="reserved">prototype</span>.uploadComplete = <span class="
 <span class="comment">/* Called by SWFUpload JavaScript and Flash functions when debug is enabled. By default it writes messages to the
    internal debug console.  You can override this event and have messages written where you want. */</span>
 SWFUpload.<span class="reserved">prototype</span>.debug = <span class="reserved">function</span> (message) {
-	<span class="reserved">this</span>.queueEvent(<span class="literal">"debug_handler"</span>, message);
+	N2i.log(message);
 };
 <span class="reserved">if</span> (!N2i) {var N2i = {};}
 
@@ -6723,6 +6856,17 @@ N2i.ease = {
 		var a = 1.6;
 		var b = 1.4;
 		<span class="reserved">return</span> -1*Math.pow(Math.cos((Math.PI/2)*Math.pow(val,a)),Math.pow(Math.PI,b))+1;
+	},
+	bounce : <span class="reserved">function</span>(t) {
+		<span class="reserved">if</span> (t &lt; (1/2.75)) {
+			<span class="reserved">return</span> 7.5625*t*t;
+		} <span class="reserved">else</span> <span class="reserved">if</span> (t &lt; (2/2.75)) {
+			<span class="reserved">return</span> (7.5625*(t-=(1.5/2.75))*t + .75);
+		} <span class="reserved">else</span> <span class="reserved">if</span> (t &lt; (2.5/2.75)) {
+			<span class="reserved">return</span> (7.5625*(t-=(2.25/2.75))*t + .9375);
+		} <span class="reserved">else</span> {
+			<span class="reserved">return</span> (7.5625*(t-=(2.625/2.75))*t + .984375);
+		}
 	},
 	
 	linear: <span class="reserved">function</span>(<span class="comment">/* Decimal? */</span>n){
@@ -7827,6 +7971,10 @@ replace(/(?:^|:|,)(?:\s*\[)+/g, '</span><span class="literal">'))) {
 }
 
 
+/**
+ * @constructor
+ * The base class of the In2iGui framework
+ */
 function In2iGui() {
 	this.domLoaded = false;
 	this.overflows = null;
@@ -7834,11 +7982,13 @@ function In2iGui() {
 	this.objects = $H();
 	this.addBehavior();
 }
+
 In2iGui.latestObjectIndex=0;
 
 In2iGui.latestIndex=500;
 In2iGui.latestPanelIndex=1000;
 In2iGui.latestAlertIndex=1500;
+In2iGui.latestTopIndex=2000;
 
 In2iGui.browser = {};
 In2iGui.browser.opera = /opera/i.test(navigator.userAgent);
@@ -7847,6 +7997,9 @@ In2iGui.browser.msie7 = navigator.userAgent.indexOf('</span>MSIE 7<span class="l
 In2iGui.browser.webkit = navigator.userAgent.indexOf('</span>WebKit<span class="literal">')!=-1;
 In2iGui.browser.gecko = !In2iGui.browser.webkit &amp;&amp; navigator.userAgent.indexOf('</span>Gecko<span class="literal">')!=-1;
 
+/**
+ * Gets the one instance of In2iGui
+ */
 In2iGui.get = function(name) {
 	if (!In2iGui.instance) {
 		In2iGui.instance = new In2iGui();
@@ -7982,18 +8135,23 @@ In2iGui.prototype = {
 	},
 	getDescendants : function(widget) {
 		var desc = [];
-		var d = widget.getElement().descendants();
-		var self = this;
-		d.each(function(node) {
-			self.objects.values().each(function(obj) {
-				if (obj.getElement()==node) {
-					desc.push(obj);
-				}
-			})
-		});
+		var e = widget.getElement();
+		if (e) {
+			var d = e.descendants();
+			var self = this;
+			d.each(function(node) {
+				self.objects.values().each(function(obj) {
+					if (obj.getElement()==node) {
+						desc.push(obj);
+					}
+				})
+			});
+		}
 		return desc;
 	}
 }
+
+///////////////////////////////// Indexes /////////////////////////////
 
 In2iGui.nextIndex = function() {
 	In2iGui.latestIndex++;
@@ -8008,16 +8166,12 @@ In2iGui.nextAlertIndex = function() {
 	In2iGui.latestAlertIndex++;
 	return 	In2iGui.latestAlertIndex;
 }
-
-In2iGui.isWithin = function(e,element) {
-	var offset = element.cumulativeOffset();
-	var dims = element.getDimensions();
-	return e.pointerX()&gt;=offset.left &amp;&amp; e.pointerX()&lt;offset.left+dims.width &amp;&amp; e.pointerY()&gt;offset.top &amp;&amp; e.pointerY()&lt;offset.top+dims.height;
+In2iGui.nextTopIndex = function() {
+	In2iGui.latestTopIndex++;
+	return 	In2iGui.latestTopIndex;
 }
 
-In2iGui.getIconUrl = function(icon,size) {
-	return In2iGui.context+'</span>/In2iGui/icons/<span class="literal">'+icon+size+'</span>.png<span class="literal">';
-}
+///////////////////////////////// Curtain /////////////////////////////
 
 In2iGui.showCurtain = function(widget,zIndex) {
 	if (!widget.curtain) {
@@ -8040,6 +8194,21 @@ In2iGui.hideCurtain = function(widget) {
 	if (widget.curtain) {
 		$ani(widget.curtain,'</span>opacity<span class="literal">',0,200,{hideOnComplete:true});
 	}
+}
+
+In2iGui.isWithin = function(e,element) {
+	Event.extend(e);
+	var offset = element.cumulativeOffset();
+	var dims = element.getDimensions();
+	return e.pointerX()&gt;offset.left &amp;&amp; e.pointerX()&lt;offset.left+dims.width &amp;&amp; e.pointerY()&gt;offset.top &amp;&amp; e.pointerY()&lt;offset.top+dims.height;
+}
+
+In2iGui.getIconUrl = function(icon,size) {
+	return In2iGui.context+'</span>/In2iGui/icons/<span class="literal">'+icon+size+'</span>.png<span class="literal">';
+}
+
+In2iGui.onDomReady = function(func) {
+	document.observe('</span>dom:loaded<span class="literal">', func);
 }
 
 //////////////////////////// Positioning /////////////////////////////
@@ -8068,7 +8237,7 @@ In2iGui.positionAtElement = function(element,target,options) {
 }
 
 
-/* ********************** Drag drop ******************* */
+//////////////////////////////// Drag drop //////////////////////////////
 
 In2iGui.getDragProxy = function() {
 	if (!In2iGui.dragProxy) {
@@ -8170,7 +8339,7 @@ In2iGui.dropOutListener = function(event) {
 
 /* ****************** Delegating *************** */
 
-In2iGui.extend = In2iGui.enableDelegating = function(obj) {
+In2iGui.extend = function(obj) {
 	if (!obj.name) {
 		In2iGui.latestObjectIndex++;
 		obj.name = '</span>unnamed<span class="literal">'+In2iGui.latestObjectIndex;
@@ -8242,7 +8411,17 @@ In2iGui.callSuperDelegates = function(obj,method,value,event) {
 	return result;
 }
 
-/******************** Data *****************/
+////////////////////////////// Bindings ///////////////////////////
+
+In2iGui.fireValueChange = function(obj,name,value) {
+	
+}
+
+In2iGui.bind = function(fromObj,fromProperty,toObj,toProperty) {
+	
+}
+
+//////////////////////////////// Data /////////////////////////////
 
 In2iGui.dwrUpdate = function() {
 	var func = arguments[0];
@@ -8324,9 +8503,36 @@ In2iGui.parseItems = function(doc) {
 		var item = items[i];
 		var title = item.getAttribute('</span>title<span class="literal">');
 		var value = item.getAttribute('</span>value<span class="literal">');
-		out.push({title:title,value:value});
+		var icon = item.getAttribute('</span>icon<span class="literal">');
+		var kind = item.getAttribute('</span>kind<span class="literal">');
+		out.push({title:title,value:value,icon:icon,kind:kind});
 	}
 	return out;
+}
+
+In2iGui.Source = function(id,name,options) {
+	this.options = N2i.override({url:null},options);
+	In2iGui.extend(this);
+	var self = this;
+	In2iGui.onDomReady(function() {self.refresh()});
+}
+
+In2iGui.Source.prototype = {
+	refresh : function() {
+		var self = this;
+		new Ajax.Request(this.options.url, {onSuccess: function(t) {self.parse(t)}});
+	},
+	parse : function(t) {
+		if (t.responseXML) {
+			this.parseXML(t.responseXML);
+		}
+	},
+	parseXML : function(doc) {
+		if (doc.documentElement.tagName=='</span>items<span class="literal">') {
+			var data = In2iGui.parseItems(doc);
+			In2iGui.callDelegates(this,'</span>itemsLoaded<span class="literal">',data);
+		}
+	}
 }
 
 /////////////////////////////////////// Localization //////////////////////////////////
@@ -8338,8 +8544,7 @@ In2iGui.localize = function(loc) {
 ///////////////////////////////////// Common text field ////////////////////////
 
 In2iGui.TextField = function(id,name,options) {
-	this.options = {};
-	N2i.override(this.options,options);
+	this.options = N2i.override({},options);
 	this.element = $(id);
 	this.element.setAttribute('</span>autocomplete<span class="literal">','</span>off<span class="literal">');
 	this.value = this.element.value;
@@ -8477,9 +8682,9 @@ In2iGui.Window = function(element,name) {
 }
 
 In2iGui.Window.create = function(name,options) {
-	options = N2i.override({title:'</span>Window<span class="literal">'},options);
+	options = N2i.override({title:'</span>Window<span class="literal">',close:true},options);
 	var element = new Element('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_window<span class="literal">'+(options.variant ? '</span> in2igui_window_<span class="literal">'+options.variant : '</span><span class="literal">')});
-	element.update('</span>&lt;div class=<span class="literal">"close"</span>&gt;&lt;/div&gt;<span class="literal">'+
+	element.update((options.close ? '</span>&lt;div class=<span class="literal">"close"</span>&gt;&lt;/div&gt;<span class="literal">' : '</span><span class="literal">')+
 		'</span>&lt;div class=<span class="literal">"titlebar"</span>&gt;&lt;div class=<span class="literal">"titlebar"</span>&gt;&lt;div class=<span class="literal">"titlebar"</span>&gt;&lt;span&gt;<span class="literal">'+options.title+'</span>&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;<span class="literal">'+
 		'</span>&lt;div class=<span class="literal">"in2igui_window_content"</span>&gt;&lt;div class=<span class="literal">"in2igui_window_content"</span>&gt;&lt;div class=<span class="literal">"in2igui_window_body"</span> style=<span class="literal">"'+
 		(options.width ? 'width:'+options.width+'px;':'')+
@@ -8495,7 +8700,7 @@ In2iGui.Window.create = function(name,options) {
 In2iGui.Window.prototype = {
 	addBehavior : function() {
 		var self = this;
-		this.close.observe('</span>click<span class="literal">',function() {self.hide();});
+		if (this.close) this.close.observe('</span>click<span class="literal">',function() {self.hide();});
 		this.titlebar.onmousedown = function(e) {self.startDrag(e);return false;};
 		this.titlebar.observe('</span>touchstart<span class="literal">',function(e) {self.startDrag(e);return false;});
 		this.element.observe('</span>mousedown<span class="literal">',function() {
@@ -8508,7 +8713,7 @@ In2iGui.Window.prototype = {
 	show : function() {
 		if (this.visible) return;
 		this.element.setStyle({
-			zIndex : In2iGui.nextPanelIndex(), visibility : '</span>hidden<span class="literal">', display : '</span>block<span class="literal">'
+			zIndex : In2iGui.nextPanelIndex(), visibility : '</span>hidden<span class="literal">', display : '</span>block<span class="literal">', top: (N2i.Window.getScrollTop()+40)+'</span>px<span class="literal">'
 		})
 		var width = this.element.clientWidth;
 		this.element.setStyle({
@@ -8700,11 +8905,14 @@ In2iGui.Formula.Group.prototype = {
 	add : function(widget) {
 		var tr = new Element('</span>tr<span class="literal">');
 		this.body.insert(tr);
-		var label = widget.getLabel();
-		if (label) {
-			var th = new Element('</span>th<span class="literal">');
-			th.insert(new Element('</span>label<span class="literal">').insert(label));
-			tr.insert(th);
+		N2i.log(widget);
+		if (widget.getLabel) {
+			var label = widget.getLabel();
+			if (label) {
+				var th = new Element('</span>th<span class="literal">');
+				th.insert(new Element('</span>label<span class="literal">').insert(label));
+				tr.insert(th);
+			}
 		}
 		var td = new Element('</span>td<span class="literal">');
 		td.insert(widget.getElement());
@@ -8792,7 +9000,7 @@ In2iGui.Formula.DateTime = function(elementOrId,name,options) {
 	this.outputFormat = '</span>d-m-Y H:i:s<span class="literal">';
 	//this.id = id;
 	this.name = name;
-	this.options = N2i.override({returnType:null},options);
+	this.options = N2i.override({returnType:null,label:null},options);
 	this.value = null;
 	this.element = $(elementOrId);
 	In2iGui.extend(this);
@@ -8857,11 +9065,7 @@ In2iGui.Formula.DateTime.prototype = {
 		return this.element;
 	},
 	getLabel : function() {
-		if (!this.label) {
-			this.label = N2i.create('</span>label<span class="literal">');
-			this.label.innerHTML = this.options.label;
-		}
-		return this.label;
+		return this.options.label;
 	},
 	updateUI : function() {
 		if (this.value) {
@@ -8876,14 +9080,28 @@ In2iGui.Formula.DateTime.prototype = {
 
 In2iGui.Formula.Select = function(id,name,options) {
 	this.name = name;
-	this.options = options;
+	N2i.log(options);
+	this.options = N2i.override({label:null},options);
 	this.element = $(id);
-	this.value = null;
+	this.value = this.options.value || null;
+	this.invalidValue = false;
 	In2iGui.extend(this);
+	this.addBehavior();
 	this.refresh();
 }
 
+In2iGui.Formula.Select.create = function(name,options) {
+	var e = new Element('</span>select<span class="literal">');
+	return new In2iGui.Formula.Select(e,name,options);
+}
+
 In2iGui.Formula.Select.prototype = {
+	addBehavior : function() {
+		var self = this;
+		this.element.observe('</span>change<span class="literal">',function() {
+			self.valueMightChange();
+		});
+	},
 	refresh : function() {
 		if (this.options.source) {
 			var self = this;
@@ -8902,6 +9120,12 @@ In2iGui.Formula.Select.prototype = {
 		};
 		this.setValue(this.value);
 	},
+	valueMightChange : function() {
+		if (this.element.value!=this.value) {
+			this.value=this.element.value;
+			In2iGui.callDelegates(this,'</span>valueDidChange<span class="literal">',this.value);
+		}
+	},
 	reset : function() {
 		this.element.selectedIndex = 0;
 		this.value = null;
@@ -8912,18 +9136,26 @@ In2iGui.Formula.Select.prototype = {
 			if (this.element.options[i].value==value) {
 				this.element.selectedIndex = i;
 				this.value = value;
+				if (this.invalidValue) {
+					this.element.firstDescendant().remove();
+				}
 				return;
 			}
 		};
-		if (this.element.options.length==0) {
-			this.value = null;
+		if (this.invalidValue) {
+			this.element.firstDescendant().value=value;
 		} else {
-			this.element.selectedIndex = 0;
-			this.value = this.element.options[0].value;
+			this.element.insert({top:new Element('</span>option<span class="literal">',{value:value})});
+			this.invalidValue = true;
 		}
+		this.element.selectedIndex=0;
+		this.value = value;
 	},
 	getValue : function(value) {
 		return this.element.value;
+	},
+	getLabel : function() {
+		return this.options.label;
 	}
 }
 
@@ -9016,6 +9248,7 @@ In2iGui.Formula.Checkboxes = function(id,name,options) {
 	this.name = name;
 	this.checkboxes = [];
 	this.sources = [];
+	this.subItems = [];
 	this.values = [];
 	In2iGui.extend(this);
 }
@@ -9033,8 +9266,8 @@ In2iGui.Formula.Checkboxes.prototype = {
 		for (var i=0; i &lt; this.values.length; i++) {
 			var value = this.values[i];
 			var found = false;
-			for (var j=0; j &lt; this.sources.length; j++) {
-				found = found || this.sources[j].hasValue(value);
+			for (var j=0; j &lt; this.subItems.length; j++) {
+				found = found || this.subItems[j].hasValue(value);
 			};
 			if (found) {
 				newValues.push(value);
@@ -9057,13 +9290,13 @@ In2iGui.Formula.Checkboxes.prototype = {
 		this.updateUI();
 	},
 	updateUI : function() {
-		for (var i=0; i &lt; this.sources.length; i++) {
-			this.sources[i].updateUI();
+		for (var i=0; i &lt; this.subItems.length; i++) {
+			this.subItems[i].updateUI();
 		};
 	},
 	refresh : function() {
-		for (var i=0; i &lt; this.sources.length; i++) {
-			this.sources[i].refresh();
+		for (var i=0; i &lt; this.subItems.length; i++) {
+			this.subItems[i].refresh();
 		};
 	},
 	reset : function() {
@@ -9073,33 +9306,39 @@ In2iGui.Formula.Checkboxes.prototype = {
 		source.parent = this;
 		this.sources.push(source);
 	},
+	registerItems : function(items) {
+		items.parent = this;
+		this.subItems.push(items);
+	},
 	itemWasClicked : function(item) {
 		this.changeValue(item.in2iGuiValue);
 	}
 }
 
-/******************************** Source ****************************/
+/******************************** Checkbox items ****************************/
 
-In2iGui.Formula.Checkboxes.Source = function(id,name,options) {
+In2iGui.Formula.Checkboxes.Items = function(id,name,options) {
 	this.element = $(id);
 	this.name = name;
 	this.parent = null;
 	this.options = options;
 	this.checkboxes = [];
 	In2iGui.extend(this);
-	this.refresh();
+	if (this.options.source) {
+		this.options.source.addDelegate(this);
+	}
 }
 
-In2iGui.Formula.Checkboxes.Source.prototype = {
+In2iGui.Formula.Checkboxes.Items.prototype = {
 	refresh : function() {
-		var self = this;
-		new Ajax.Request(this.options.url, {onSuccess: function(t) {self.update(t.responseXML)}});
+		if (this.options.source) {
+			this.options.source.refresh();
+		}
 	},
-	update : function(doc) {
+	itemsLoaded : function(items) {
 		this.checkboxes = [];
 		this.element.update();
 		var self = this;
-		var items = In2iGui.parseItems(doc);
 		items.each(function(item) {
 			var node = new Element('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_checkbox<span class="literal">'});
 			node.insert(new Element('</span>div<span class="literal">')).insert(item.title);
@@ -9568,7 +9807,7 @@ In2iGui.List.prototype.windowNumberWasClicked = function(tag) {
 	this.name = name;
 	this.element = $id(id);
 	this.source = options.source;
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 }
 
 /* EOF */In2iGui.Tabs = function(id,name) {
@@ -9579,7 +9818,7 @@ In2iGui.List.prototype.windowNumberWasClicked = function(tag) {
 	this.activeTab = 0;
 	this.tabs = [];
 	this.addBehavior();
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 }
 
 In2iGui.Tabs.prototype.registerTab = function(obj) {
@@ -9617,7 +9856,7 @@ In2iGui.Tabs.Tab = function(id,name) {
 	this.parent = null;
 	this.element = $(id+'</span>_content<span class="literal">');
 	this.tab = $(id+'</span>_tab<span class="literal">');
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 }
 
 In2iGui.Tabs.Tab.prototype = {
@@ -9632,7 +9871,7 @@ In2iGui.Tabs.Tab.prototype = {
 	this.name = name;
 	this.element = $id(id);
 	this.contents = [];
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 }
 
 In2iGui.ViewStack.prototype.registerContent = function(id,name) {
@@ -9658,7 +9897,7 @@ In2iGui.ViewStack.prototype.change = function(name) {
 	this.tabs = [];
 	this.addBehavior();
 	this.updateGUI();
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 }
 
 In2iGui.Tabbox.prototype.registerTab = function(obj) {
@@ -9699,7 +9938,7 @@ In2iGui.Tabbox.Tab = function(id,name) {
 	this.id = id;
 	this.name = name;
 	this.element = $id(id);
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 }
 
 /* EOF */
@@ -10012,6 +10251,9 @@ In2iGui.Button.create = function(name,opts) {
 	if (options.text &amp;&amp; options.text.length&gt;0) {
 		element3.insert(options.text);
 	}
+	if (options.title &amp;&amp; options.title.length&gt;0) {
+		element3.insert(options.title);
+	}
 	return new In2iGui.Button(element,name);
 }
 
@@ -10067,7 +10309,7 @@ In2iGui.Buttons.prototype = {
 	this.element = $(id);
 	this.name = name;
 	this.items = [];
-	this.sources = [];
+	this.subItems = [];
 	this.value = this.options.value;
 	this.selected = [];
 	In2iGui.extend(this);
@@ -10091,8 +10333,8 @@ In2iGui.Selection.prototype = {
 				return this.items[i];
 			}
 		};
-		for (var i=0; i &lt; this.sources.length; i++) {
-			var item = this.sources[i].getSelection();
+		for (var i=0; i &lt; this.subItems.length; i++) {
+			var item = this.subItems[i].getSelection();
 			if (item) return item;
 		};
 	},
@@ -10102,9 +10344,8 @@ In2iGui.Selection.prototype = {
 			var item = this.items[i];
 			N2i.setClass(item.element,'</span>selected<span class="literal">',(item.value==value));
 		};
-		for (var i=0; i &lt; this.sources.length; i++) {
-			var source = this.sources[i];
-			source.updateUI();
+		for (var i=0; i &lt; this.subItems.length; i++) {
+			this.subItems[i].updateUI();
 		};
 	},
 	changeValue : function(value) {
@@ -10112,9 +10353,9 @@ In2iGui.Selection.prototype = {
 		In2iGui.callDelegates(this,'</span>selectorSelectionChanged<span class="literal">');
 		In2iGui.callDelegates(this,'</span>selectionChanged<span class="literal">',this.value);
 	},
-	registerSource : function(source) {
-		source.selection = this;
-		this.sources.push(source);
+	registerItems : function(items) {
+		items.selection = this;
+		this.subItems.push(items);
 	},
 	registerItem : function(id,title,icon,badge,value,kind) {
 		var element = $(id);
@@ -10165,43 +10406,41 @@ In2iGui.Selection.prototype = {
 	}
 }
 
-/******************************** Source ****************************/
+/******************************** Items ****************************/
 
-In2iGui.Selection.Source = function(id,name,options) {
+In2iGui.Selection.Items = function(id,name,options) {
 	this.element = $(id);
 	this.name = name;
 	this.selection = null;
-	this.options = options;
+	this.options = N2i.override({source:null},options);
 	this.items = [];
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 	var self = this;
-	N2i.Event.addLoadListener(function() {self.refresh()});
+	if (this.options.source) {
+		this.options.source.addDelegate(this);
+	}
+	//N2i.Event.addLoadListener(function() {self.refresh()});
 }
 
-In2iGui.Selection.Source.prototype = {
+In2iGui.Selection.Items.prototype = {
 	refresh : function() {
-		var self = this;
-		new Ajax.Request(this.options.url, {onSuccess:function(t) {self.updateSource(t.responseXML)}});
+		if (this.options.source) {
+			this.options.source.refresh();
+		}
 	},
-	updateSource : function(doc) {
+	itemsLoaded : function(items) {
 		this.items = [];
 		N2i.removeChildren(this.element);
 		var self = this;
-		var items = doc.getElementsByTagName('</span>item<span class="literal">');
 		for (var i=0, len=items.length; i &lt; len; ++i) {
 			var item = items[i];
 			var node = new Element('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_selection_item<span class="literal">'});
 			var inner = new Element('</span>span<span class="literal">');
-			var title = item.getAttribute('</span>title<span class="literal">');
-			var badge = item.getAttribute('</span>badge<span class="literal">');
-			var icon = item.getAttribute('</span>icon<span class="literal">');
-			var value = item.getAttribute('</span>value<span class="literal">');
-			var kind = item.getAttribute('</span>kind<span class="literal">');
-			if (icon) {
-				inner.setStyle({'</span>backgroundImage<span class="literal">' : '</span>url(<span class="literal">'+In2iGui.getIconUrl(icon,1)+'</span>)<span class="literal">'}).addClassName('</span>in2igui_icon<span class="literal">');
+			if (item.icon) {
+				inner.setStyle({'</span>backgroundImage<span class="literal">' : '</span>url(<span class="literal">'+In2iGui.getIconUrl(item.icon,1)+'</span>)<span class="literal">'}).addClassName('</span>in2igui_icon<span class="literal">');
 			}
 			node.in2iGuiIndex = i;
-			node.insert(inner.insert(title));
+			node.insert(inner.insert(item.title));
 			this.element.insert(node);
 			node.observe('</span>click<span class="literal">',function() {
 				self.itemWasClicked(self.items[this.in2iGuiIndex].value);
@@ -10210,7 +10449,7 @@ In2iGui.Selection.Source.prototype = {
 				self.itemWasDoubleClicked();
 				return false;
 			}
-			var info = {title:title,icon:icon,badge:badge,kind:kind,element:node,value:value};
+			var info = {title:item.title,icon:item.icon,badge:item.badge,kind:item.kind,element:node,value:item.value};
 			node.dragDropInfo = info;
 			this.items.push(info);
 		};
@@ -10357,11 +10596,11 @@ In2iGui.Toolbar.Icon.prototype = {
 /***************** Search field ***************/
 
 In2iGui.Toolbar.SearchField = function(element,name) {
-	this.element = $id(element);
+	this.element = $(element);
 	this.name = name;
-	this.field = this.element.getElementsByTagName('</span>input<span class="literal">')[0];
+	this.field = this.element.select('</span>input<span class="literal">')[0];
 	this.value = this.field.value;
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 	this.addBehavior();
 }
 
@@ -10385,6 +10624,7 @@ In2iGui.Toolbar.SearchField.prototype = {
 		if (this.field.value!=this.value) {
 			this.value=this.field.value;
 			In2iGui.callDelegates(this,'</span>valueChanged<span class="literal">');
+			In2iGui.fireValueChange(this,'</span>value<span class="literal">',this.value);
 		}
 	}
 }
@@ -10397,7 +10637,7 @@ In2iGui.Toolbar.Badge = function(element,name) {
 	this.name = name;
 	this.label = this.element.select('</span>strong<span class="literal">')[0];
 	this.text = this.element.select('</span>span<span class="literal">')[0];
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 }
 
 In2iGui.Toolbar.Badge.prototype = {
@@ -10417,7 +10657,7 @@ In2iGui.Toolbar.Badge.prototype = {
 	this.images = [];
 	this.object = null;
 	this.thumbnailsLoaded = false;
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 	this.addBehavior();
 }
 
@@ -10637,7 +10877,7 @@ In2iGui.BoundPanel.prototype = {
 	this.titlebar = $class('</span>titlebar<span class="literal">',this.element)[0];
 	this.content=$class('</span>content<span class="literal">',this.element)[0];
 	this.close = $class('</span>close<span class="literal">',this.element)[0];
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 	this.addBehavior();
 }
 
@@ -10963,7 +11203,7 @@ In2iGui.RichText.stopEvent = function(e) {
 	this.name = name;
 	this.images = [];
 	this.addBehavior();
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 }
 
 In2iGui.ImageViewer.create = function(name,opts) {
@@ -11816,7 +12056,7 @@ In2iGui.Editor.Html.prototype = {
 
 /* EOF */
 In2iGui.Menu = function(element,name,options) {
-	this.options = N2i.override({},options);
+	this.options = N2i.override({autoHide:false,parentElement:null},options);
 	this.element = $(element);
 	this.name = name;
 	this.value = null;
@@ -11837,22 +12077,40 @@ In2iGui.Menu.create = function(name,options) {
 In2iGui.Menu.prototype = {
 	addBehavior : function() {
 		var self = this;
-		this.hider = function() {self.hide();}
+		this.hider = function() {
+			self.hide();
+		}
+		if (this.options.autoHide) {
+			var x = function(e) {
+				if (!In2iGui.isWithin(e,self.element) &amp;&amp; (!self.options.parentElement || !In2iGui.isWithin(e,self.options.parentElement))) {
+					if (!self.isSubMenuVisible()) {
+						self.hide();
+					}
+				}
+			};
+			this.element.observe('</span>mouseout<span class="literal">',x);
+			if (this.options.parentElement) {
+				this.options.parentElement.observe('</span>mouseout<span class="literal">',x);
+			}
+		}
+	},
+	addDivider : function() {
+		this.element.insert(new Element('</span>div<span class="literal">').addClassName('</span>in2igui_menu_divider<span class="literal">'));
 	},
 	addItem : function(item) {
 		var self = this;
 		var element = new Element('</span>div<span class="literal">').addClassName('</span>in2igui_menu_item<span class="literal">').update(item.title);
-		element.observe('</span>mouseup<span class="literal">',function(e) {
+		element.observe('</span>click<span class="literal">',function(e) {
 			self.itemWasClicked(item.value);
 			Event.stop(e);
 		});
 		if (item.children) {
-			var sub = In2iGui.Menu.create();
+			var sub = In2iGui.Menu.create(null,{autoHide:true,parentElement:element});
 			sub.addItems(item.children);
 			element.observe('</span>mouseover<span class="literal">',function(e) {
 				sub.showAtElement(element,e,'</span>horizontal<span class="literal">');
 			});
-			sub.addDelegate({itemWasClicked:function(value) {self.itemWasClicked(value)}});
+			//sub.addDelegate({itemWasClicked:function(value) {self.itemWasClicked(value)}});
 			self.subMenus.push(sub);
 			element.addClassName('</span>in2igui_menu_item_children<span class="literal">');
 		}
@@ -11860,7 +12118,11 @@ In2iGui.Menu.prototype = {
 	},
 	addItems : function(items) {
 		for (var i=0; i &lt; items.length; i++) {
-			this.addItem(items[i]);
+			if (items[i]==null) {
+				this.addDivider();
+			} else {
+				this.addItem(items[i]);
+			}
 		};
 	},
 	getValue : function() {
@@ -11873,11 +12135,16 @@ In2iGui.Menu.prototype = {
 		this.hide();
 	},
 	showAtPointer : function(event) {
+		if (event) {
+			Event.stop(event);
+			//if (event.type!='</span>click<span class="literal">') this.ignoreNextClick=true;
+		}
 		this.showAtPoint({'</span>top<span class="literal">':event.pointerY(),'</span>left<span class="literal">':event.pointerX()});
-		event.stop();
 	},
 	showAtElement : function(element,event,position) {
-		if (event) Event.stop(event);
+		if (event) {
+			Event.stop(event);
+		}
 		var point = element.cumulativeOffset();
 		if (position=='</span>horizontal<span class="literal">') {
 			point.left += element.getWidth();
@@ -11888,11 +12155,15 @@ In2iGui.Menu.prototype = {
 	},
 	showAtPoint : function(pos) {
 		var innerWidth = N2i.Window.getInnerWidth();
+		var innerHeight = N2i.Window.getInnerHeight();
+		var scrollTop = N2i.Window.getScrollTop();
+		var scrollLeft = N2i.Window.getScrollLeft();
 		if (!this.visible) {
 			this.element.setStyle({'</span>display<span class="literal">':'</span>block<span class="literal">','</span>visibility<span class="literal">':'</span>hidden<span class="literal">',opacity:0});
 		}
 		var width = this.element.getWidth();
-		this.element.setStyle({'</span>top<span class="literal">':pos.top+'</span>px<span class="literal">','</span>left<span class="literal">':Math.min(pos.left,innerWidth-width-20)+'</span>px<span class="literal">','</span>visibility<span class="literal">':'</span>visible<span class="literal">'});
+		var height = this.element.getHeight();
+		this.element.setStyle({'</span>top<span class="literal">':Math.min(pos.top,innerHeight-height-20+scrollTop)+'</span>px<span class="literal">','</span>left<span class="literal">':Math.min(pos.left,innerWidth-width-20+scrollLeft)+'</span>px<span class="literal">','</span>visibility<span class="literal">':'</span>visible<span class="literal">',zIndex:In2iGui.nextTopIndex()});
 		if (!this.visible) {
 			$ani(this.element,'</span>opacity<span class="literal">',1,200);
 			this.addHider();
@@ -11911,6 +12182,12 @@ In2iGui.Menu.prototype = {
 		};
 		this.visible = false;
 	},
+	isSubMenuVisible : function() {
+		for (var i=0; i &lt; this.subMenus.length; i++) {
+			if (this.subMenus[i].visible) return true;
+		};
+		return false;
+	},
 	addHider : function() {
 		Element.observe(document.body,'</span>click<span class="literal">',this.hider);
 	},
@@ -11928,6 +12205,7 @@ In2iGui.Menu.prototype = {
 	this.icons = new Hash();
 	this.visible = false;
 	In2iGui.extend(this);
+	this.addBehavior();
 }
 
 In2iGui.Overlay.create = function(name,options) {
@@ -11938,110 +12216,132 @@ In2iGui.Overlay.create = function(name,options) {
 }
 
 In2iGui.Overlay.prototype = {
-	addIcon : function(key,icon) {
+	addBehavior : function() {
 		var self = this;
-		var element = new Element('</span>div<span class="literal">').addClassName('</span>in2igui_overlay_icon<span class="literal">');
-		element.setStyle({'</span>backgroundImage<span class="literal">':'</span>url(<span class="literal">'+In2iGui.getIconUrl(icon,2)+'</span>)<span class="literal">'});
-		element.observe('</span>click<span class="literal">',function(e) {
+		this.hider = function(e) {
+			if (self.boundElement) {
+				if (In2iGui.isWithin(e,self.boundElement) || In2iGui.isWithin(e,self.element)) return;
+				// TODO: should be unreg'</span>ed but it fails
+				<span class="comment">//self.boundElement.stopObserving(self.hider);</span>
+				self.boundElement.removeClassName(<span class="literal">'in2igui_overlay_bound'</span>);
+				self.boundElement = null;
+				self.hide();
+			}
+		}
+		<span class="reserved">this</span>.element.observe(<span class="literal">'mouseout'</span>,<span class="reserved">this</span>.hider);
+	},
+	addIcon : <span class="reserved">function</span>(key,icon) {
+		var self = <span class="reserved">this</span>;
+		var element = new Element(<span class="literal">'div'</span>).addClassName(<span class="literal">'in2igui_overlay_icon'</span>);
+		element.setStyle({<span class="literal">'backgroundImage'</span>:<span class="literal">'url('</span>+In2iGui.getIconUrl(icon,2)+<span class="literal">')'</span>});
+		element.observe(<span class="literal">'click'</span>,<span class="reserved">function</span>(e) {
 			self.iconWasClicked(key,e);
 		});
-		this.icons.set(key,element);
-		this.content.insert(element);
+		<span class="reserved">this</span>.icons.set(key,element);
+		<span class="reserved">this</span>.content.insert(element);
 	},
-	hideIcons : function(keys) {
-		var self = this;
-		keys.each(function(key) {
+	hideIcons : <span class="reserved">function</span>(keys) {
+		var self = <span class="reserved">this</span>;
+		keys.each(<span class="reserved">function</span>(key) {
 			self.icons.get(key).hide();
 		});
 	},
-	showIcons : function(keys) {
-		var self = this;
-		keys.each(function(key) {
+	showIcons : <span class="reserved">function</span>(keys) {
+		var self = <span class="reserved">this</span>;
+		keys.each(<span class="reserved">function</span>(key) {
 			self.icons.get(key).show();
 		});
 	},
-	iconWasClicked : function(key,e) {
-		In2iGui.callDelegates(this,'</span>iconWasClicked<span class="literal">',key,e);
+	iconWasClicked : <span class="reserved">function</span>(key,e) {
+		In2iGui.callDelegates(<span class="reserved">this</span>,<span class="literal">'iconWasClicked'</span>,key,e);
 	},
-	showAtElement : function(element,options) {
-		In2iGui.positionAtElement(this.element,element,options);
-		if (this.visible) return;
-		if (In2iGui.browser.msie) {
-			this.element.setStyle({'</span>display<span class="literal">':'</span>block<span class="literal">'});
-		} else {
-			this.element.setStyle({'</span>display<span class="literal">':'</span>block<span class="literal">','</span>opacity<span class="literal">':0});
-			$ani(this.element,'</span>opacity<span class="literal">',1,300);
+	showAtElement : <span class="reserved">function</span>(element,options) {
+		In2iGui.positionAtElement(<span class="reserved">this</span>.element,element,options);
+		<span class="reserved">if</span> (<span class="reserved">this</span>.visible) <span class="reserved">return</span>;
+		<span class="reserved">if</span> (In2iGui.browser.msie) {
+			<span class="reserved">this</span>.element.setStyle({<span class="literal">'display'</span>:<span class="literal">'block'</span>});
+		} <span class="reserved">else</span> {
+			<span class="reserved">this</span>.element.setStyle({<span class="literal">'display'</span>:<span class="literal">'block'</span>,<span class="literal">'opacity'</span>:0});
+			$ani(<span class="reserved">this</span>.element,<span class="literal">'opacity'</span>,1,300);
 		}
-		this.visible = true;
-		return;
+		<span class="reserved">this</span>.visible = true;
+		<span class="reserved">if</span> (options.autoHide) {
+			<span class="reserved">this</span>.boundElement = element;
+			element.observe(<span class="literal">'mouseout'</span>,<span class="reserved">this</span>.hider);
+			element.addClassName(<span class="literal">'in2igui_overlay_bound'</span>);
+		}
+		<span class="reserved">return</span>;
 	},
-	hide : function() {
-		this.element.setStyle({'</span>display<span class="literal">':'</span>none<span class="literal">'});
-		this.visible = false;
+	hide : <span class="reserved">function</span>() {
+		<span class="reserved">this</span>.element.setStyle({<span class="literal">'display'</span>:<span class="literal">'none'</span>});
+		<span class="reserved">this</span>.visible = false;
 	}
 }
 
-/* EOF */
-In2iGui.Upload = function(element,name,options) {
-	this.options = N2i.override({parameters:[]},options);
-	this.element = $(element);
-	this.name = name;
-	this.file = $class('</span>file<span class="literal">',this.element)[0];
-	this.form = $tag('</span>form<span class="literal">',this.element)[0];
-	In2iGui.extend(this);
-	this.loader = null;
-	this.addBehavior();
-	this.createProgressBar();
+<span class="comment">/* EOF */</span>
+In2iGui.Upload = <span class="reserved">function</span>(element,name,options) {
+	<span class="reserved">this</span>.options = N2i.override({parameters:[]},options);
+	<span class="reserved">this</span>.element = $(element);
+	<span class="reserved">this</span>.name = name;
+	<span class="reserved">this</span>.file = $class(<span class="literal">'file'</span>,<span class="reserved">this</span>.element)[0];
+	<span class="reserved">this</span>.form = $tag(<span class="literal">'form'</span>,<span class="reserved">this</span>.element)[0];
+	In2iGui.extend(<span class="reserved">this</span>);
+	<span class="reserved">this</span>.loader = null;
+	<span class="reserved">this</span>.addBehavior();
+	<span class="reserved">this</span>.createProgressBar();
 }
 
-In2iGui.Upload.create = function(name,options) {
-	var element = new Element('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_upload<span class="literal">'});
-	var form = new Element('</span>form<span class="literal">',{'</span>action<span class="literal">':options.action, '</span>method<span class="literal">':'</span>post<span class="literal">', '</span>enctype<span class="literal">':'</span>multipart/form-data<span class="literal">','</span>encoding<span class="literal">':'</span>multipart/form-data<span class="literal">','</span>target<span class="literal">':'</span>upload<span class="literal">'});
-	for (var i=0; i &lt; options.parameters.length; i++) {
-		var hidden = new Element('</span>input<span class="literal">',{'</span>type<span class="literal">':'</span>hidden<span class="literal">','</span>name<span class="literal">':options.parameters[i].name});
-		hidden.setValue(options.parameters[i].value);
-		form.insert(hidden);
-	};
-	var file = N2i.create('</span>input<span class="literal">',{'</span>type<span class="literal">':'</span>file<span class="literal">','</span>class<span class="literal">':'</span>file<span class="literal">','</span>name<span class="literal">':options.name});
+In2iGui.Upload.create = <span class="reserved">function</span>(name,options) {
+	options = options | {};
+	var element = new Element(<span class="literal">'div'</span>,{<span class="literal">'class'</span>:<span class="literal">'in2igui_upload'</span>});
+	var form = new Element(<span class="literal">'form'</span>,{<span class="literal">'action'</span>:options.action | <span class="literal">''</span>, <span class="literal">'method'</span>:<span class="literal">'post'</span>, <span class="literal">'enctype'</span>:<span class="literal">'multipart/form-data'</span>,<span class="literal">'encoding'</span>:<span class="literal">'multipart/form-data'</span>,<span class="literal">'target'</span>:<span class="literal">'upload'</span>});
+	<span class="reserved">if</span> (options.parameters) {
+		<span class="reserved">for</span> (var i=0; i &lt; options.parameters.length; i++) {
+			var hidden = new Element(<span class="literal">'input'</span>,{<span class="literal">'type'</span>:<span class="literal">'hidden'</span>,<span class="literal">'name'</span>:options.parameters[i].name});
+			hidden.setValue(options.parameters[i].value);
+			form.insert(hidden);
+		};
+	}
+	var file = N2i.create(<span class="literal">'input'</span>,{<span class="literal">'type'</span>:<span class="literal">'file'</span>,<span class="literal">'class'</span>:<span class="literal">'file'</span>,<span class="literal">'name'</span>:options.name});
 	form.insert(file);
 	element.insert(form);
-	element.insert(new Element('</span>iframe<span class="literal">',{name:'</span>upload<span class="literal">',id:'</span>upload<span class="literal">'}).setStyle({display:'</span>none<span class="literal">'}));
-	return new In2iGui.Upload(element,name,options);
+	element.insert(new Element(<span class="literal">'iframe'</span>,{name:<span class="literal">'upload'</span>,id:<span class="literal">'upload'</span>}).setStyle({display:<span class="literal">'none'</span>}));
+	<span class="reserved">return</span> new In2iGui.Upload(element,name,options);
 }
 
-In2iGui.Upload.prototype = {
-	addBehavior : function() {
-		var self = this;
-		this.file.onchange = function() {
+In2iGui.Upload.<span class="reserved">prototype</span> = {
+	addBehavior : <span class="reserved">function</span>() {
+		var self = <span class="reserved">this</span>;
+		<span class="reserved">this</span>.file.onchange = <span class="reserved">function</span>() {
 			self.submit();
 		}
 	},
-	createProgressBar : function() {
-		this.progressBar = In2iGui.ProgressBar.create();
-		this.progressBar.hide();
-		this.element.appendChild(this.progressBar.getElement());
+	createProgressBar : <span class="reserved">function</span>() {
+		<span class="reserved">this</span>.progressBar = In2iGui.ProgressBar.create();
+		<span class="reserved">this</span>.progressBar.hide();
+		<span class="reserved">this</span>.element.appendChild(<span class="reserved">this</span>.progressBar.getElement());
 	},
-	submit : function() {
-		// IE: set value of parms again since they disappear
-		var p = this.options.parameters;
-		for (var i=0; i &lt; p.length; i++) {
-			this.form[p[i].name].value=p[i].value;
+	submit : <span class="reserved">function</span>() {
+		<span class="comment">// IE: set value of parms again since they disappear</span>
+		var p = <span class="reserved">this</span>.options.parameters;
+		<span class="reserved">for</span> (var i=0; i &lt; p.length; i++) {
+			<span class="reserved">this</span>.form[p[i].name].value=p[i].value;
 		};
-		this.form.submit();
-		In2iGui.callDelegates(this,'</span>uploadDidSubmit<span class="literal">');
+		<span class="reserved">this</span>.form.submit();
+		In2iGui.callDelegates(<span class="reserved">this</span>,<span class="literal">'uploadDidSubmit'</span>);
 	},
-	startProgress : function() {
-		this.form.style.display='</span>none<span class="literal">';
-		this.progressBar.show();
+	startProgress : <span class="reserved">function</span>() {
+		<span class="reserved">this</span>.form.style.display=<span class="literal">'none'</span>;
+		<span class="reserved">this</span>.progressBar.show();
 	},
-	setProgress : function(value) {
-		this.progressBar.setValue(value);
+	setProgress : <span class="reserved">function</span>(value) {
+		<span class="reserved">this</span>.progressBar.setValue(value);
 	},
-	endProgress : function() {
-		this.form.style.display='</span>block<span class="literal">';
-		this.form.reset();
-		this.progressBar.reset();
-		this.progressBar.hide();
+	endProgress : <span class="reserved">function</span>() {
+		<span class="reserved">this</span>.form.style.display=<span class="literal">'block'</span>;
+		<span class="reserved">this</span>.form.reset();
+		<span class="reserved">this</span>.progressBar.reset();
+		<span class="reserved">this</span>.progressBar.hide();
 	}
 }
 
@@ -12049,669 +12349,675 @@ In2iGui.Upload.prototype = {
 
 
 
-//////////////////////////////////////// Mulit-upload ////////////////////////////////////////
+<span class="comment">//////////////////////////////////////// Mulit-upload ////////////////////////////////////////</span>
 
 
 
-In2iGui.MultiUpload = function(element,name,options) {
-	this.options = N2i.override({url:'</span><span class="literal">',parameters:{}},options);
-	this.element = $(element);
-	this.itemContainer = this.element.select('</span>.in2igui_multiupload_items<span class="literal">')[0];
+In2iGui.MultiUpload = <span class="reserved">function</span>(element,name,options) {
+	<span class="reserved">this</span>.options = N2i.override({url:<span class="literal">''</span>,parameters:{}},options);
+	<span class="reserved">this</span>.element = $(element);
+	<span class="reserved">this</span>.itemContainer = <span class="reserved">this</span>.element.select(<span class="literal">'.in2igui_multiupload_items'</span>)[0];
 
-	this.name = name;
-	this.items = [];
-	this.busy = false;
-	this.loaded = false;
+	<span class="reserved">this</span>.name = name;
+	<span class="reserved">this</span>.items = [];
+	<span class="reserved">this</span>.busy = false;
+	<span class="reserved">this</span>.loaded = false;
 
-	this.button = this.element.select('</span>.in2igui_button<span class="literal">')[0];
-	In2iGui.extend(this);
-	this.addBehavior();
+	In2iGui.extend(<span class="reserved">this</span>);
+	<span class="reserved">this</span>.addBehavior();
 }
 
-In2iGui.MultiUpload.create = function(name,options) {
-	var element = new Element('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_multiupload<span class="literal">'});
-	element.update('</span>&lt;div class=<span class="literal">"in2igui_buttons"</span>&gt;<span class="literal">'+
-		'</span>&lt;a href=<span class="literal">"javascript:void(0)"</span> class=<span class="literal">"in2igui_button"</span>&gt;&lt;span&gt;&lt;span&gt;Vælg billeder...&lt;/span&gt;&lt;/span&gt;&lt;/a&gt;<span class="literal">'+
-		'</span>&lt;/div&gt;<span class="literal">'+
-		'</span>&lt;div class=<span class="literal">"in2igui_multiupload_items"</span>&gt;&lt;xsl:comment/&gt;&lt;/div&gt;<span class="literal">'+
-	'</span>&lt;/div&gt;<span class="literal">');
-	return new In2iGui.MultiUpload(element,name,options);
+In2iGui.MultiUpload.create = <span class="reserved">function</span>(name,options) {
+	var element = new Element(<span class="literal">'div'</span>,{<span class="literal">'class'</span>:<span class="literal">'in2igui_multiupload'</span>});
+	element.update(<span class="literal">'&lt;div class="in2igui_buttons"&gt;&lt;div class="in2igui_upload_placeholder"&gt;&lt;/div&gt;'</span>+
+		<span class="literal">'&lt;/div&gt;'</span>+
+		<span class="literal">'&lt;div class="in2igui_multiupload_items"&gt;&lt;xsl:comment/&gt;&lt;/div&gt;'</span>+
+	<span class="literal">'&lt;/div&gt;'</span>);
+	<span class="reserved">return</span> new In2iGui.MultiUpload(element,name,options);
 }
 
-In2iGui.MultiUpload.prototype = {
-	addBehavior : function() {
-		var self = this;
-		this.button.observe('</span>click<span class="literal">',function() {
-			if (!self.loaded) {
-				N2i.log('</span>Not loaded yet!<span class="literal">');
-				return;
-			}
-			self.loader.selectFiles();
-		});
-		if (In2iGui.get().domLoaded) {
-			this.createLoader();			
-		} else {
-			document.observe('</span>dom:loaded<span class="literal">', function() {self.createLoader()});
+In2iGui.MultiUpload.<span class="reserved">prototype</span> = {
+	addBehavior : <span class="reserved">function</span>() {
+		var self = <span class="reserved">this</span>;
+		<span class="reserved">if</span> (In2iGui.get().domLoaded) {
+			<span class="reserved">this</span>.createLoader();			
+		} <span class="reserved">else</span> {
+			In2iGui.onDomLoaded(<span class="reserved">function</span>() {self.createLoader()});
 		}
 	},
-	createLoader : function() {
+	createLoader : <span class="reserved">function</span>() {
 		var loc = new String(document.location);
-		var url = loc.slice(0,loc.lastIndexOf('</span>/<span class="literal">')+1);
-		url += this.options.url;
-		var session = N2i.Cookie.get('</span>JSESSIONID<span class="literal">');
-		if (session) {
-			url+='</span>;jsessionid=<span class="literal">'+session;
+		var url = loc.slice(0,loc.lastIndexOf(<span class="literal">'/'</span>)+1);
+		url += <span class="reserved">this</span>.options.url;
+		var session = N2i.Cookie.get(<span class="literal">'JSESSIONID'</span>);
+		<span class="reserved">if</span> (session) {
+			url+=<span class="literal">';jsessionid='</span>+session;
 		}
-		var self = this;
-		this.loader = new SWFUpload({
+		<span class="comment">//var size = this.button.getDimensions();</span>
+		var size = {width:108,height:28};
+		var self = <span class="reserved">this</span>;
+		<span class="reserved">this</span>.loader = new SWFUpload({
 			upload_url : url,
-			flash_url : In2iGui.context+"/In2iGui/lib/swfupload/swfupload_f8.swf",
-			file_size_limit : "20480",
+			flash_url : In2iGui.context+<span class="literal">"/In2iGui/lib/swfupload/swfupload.swf"</span>,
+			file_size_limit : <span class="literal">"20480"</span>,
 			file_upload_limit : 100,
 			debug : true,
-			post_params : this.options.parameters,
+			post_params : <span class="reserved">this</span>.options.parameters,
+			button_placeholder_id : <span class="literal">'x'</span>,
+			button_placeholder : <span class="reserved">this</span>.element.select(<span class="literal">'.in2igui_upload_placeholder'</span>)[0],
+			button_width : size.width,
+			button_height : size.height,
 
-			swfupload_loaded_handler : function() {self.flashLoaded()},
-			file_queued_handler : function(file) {self.fileQueued(file)},
-			file_queue_error_handler : function(file, error, message) {self.fileQueueError(file, error, message)},
-			file_dialog_complete_handler : function() {self.fileDialogComplete()},
-			upload_start_handler : function() {self.uploadStart()},
-			upload_progress_handler : function(file,complete,total) {self.uploadProgress(file,complete,total)},
-			upload_error_handler : function(file, error, message) {self.uploadError(file, error, message)},
-			upload_success_handler : function(file,data) {self.uploadSuccess(file,data)},
-			upload_complete_handler : function(file) {self.uploadComplete(file)},
-			queue_complete_handler : function() {self.queueComplete()},
+			swfupload_loaded_handler : <span class="reserved">function</span>() {self.flashLoaded()},
+			file_queued_handler : <span class="reserved">function</span>(file) {self.fileQueued(file)},
+			file_queue_error_handler : <span class="reserved">function</span>(file, error, message) {self.fileQueueError(file, error, message)},
+			file_dialog_complete_handler : <span class="reserved">function</span>() {self.fileDialogComplete()},
+			upload_start_handler : <span class="reserved">function</span>() {self.uploadStart()},
+			upload_progress_handler : <span class="reserved">function</span>(file,complete,total) {self.uploadProgress(file,complete,total)},
+			upload_error_handler : <span class="reserved">function</span>(file, error, message) {self.uploadError(file, error, message)},
+			upload_success_handler : <span class="reserved">function</span>(file,data) {self.uploadSuccess(file,data)},
+			upload_complete_handler : <span class="reserved">function</span>(file) {self.uploadComplete(file)},
+			queue_complete_handler : <span class="reserved">function</span>() {self.queueComplete()},
 		
-			// SWFObject settings
-			swfupload_pre_load_handler : function() {alert('</span>swfupload_pre_load_handler!<span class="literal">')},
-			swfupload_load_failed_handler : function() {alert('</span>swfupload_load_failed_handler!<span class="literal">')}
+			<span class="comment">// SWFObject settings</span>
+			swfupload_pre_load_handler : <span class="reserved">function</span>() {alert(<span class="literal">'swfupload_pre_load_handler!'</span>)},
+			swfupload_load_failed_handler : <span class="reserved">function</span>() {alert(<span class="literal">'swfupload_load_failed_handler!'</span>)}
 		});
 	},
-	startNextUpload : function() {
-		this.loader.startUpload();
+	setButton : <span class="reserved">function</span>(widget) {
+		<span class="reserved">this</span>.button = widget;
+		<span class="reserved">if</span> (<span class="reserved">this</span>.button) {
+			var m = <span class="reserved">this</span>.element.select(<span class="literal">'object'</span>)[0].remove();
+			m.setStyle({width:<span class="literal">'108px'</span>,<span class="literal">'marginLeft'</span>:<span class="literal">'-108px'</span>,position:<span class="literal">'absolute'</span>});
+			widget.getElement().insert(m);
+			<span class="reserved">return</span>;
+		}
 	},
-	addError : function(error,file) {
-		var element = new Element('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_multiupload_item_error<span class="literal">'});
-		element.insert(new Element('</span>a<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_link<span class="literal">'}).update('</span>&lt;span&gt;Fjern&lt;/span&gt;<span class="literal">').observe('</span>click<span class="literal">',function() {this.parentNode.remove(); return false;}));
-		element.insert('</span>&lt;strong&gt;<span class="literal">'+In2iGui.MultiUpload.errors[error]+'</span>&lt;/strong&gt;&lt;br/&gt;&lt;em&gt;<span class="literal">'+file.name+'</span>&lt;/em&gt;<span class="literal">');
-		this.itemContainer.insert(element);
+	startNextUpload : <span class="reserved">function</span>() {
+		<span class="reserved">this</span>.loader.startUpload();
+	},
+	addError : <span class="reserved">function</span>(error,file) {
+		var element = new Element(<span class="literal">'div'</span>,{<span class="literal">'class'</span>:<span class="literal">'in2igui_multiupload_item_error'</span>});
+		element.insert(new Element(<span class="literal">'a'</span>,{<span class="literal">'class'</span>:<span class="literal">'in2igui_link'</span>}).update(<span class="literal">'&lt;span&gt;Fjern&lt;/span&gt;'</span>).observe(<span class="literal">'click'</span>,<span class="reserved">function</span>() {<span class="reserved">this</span>.parentNode.remove(); <span class="reserved">return</span> false;}));
+		element.insert(<span class="literal">'&lt;strong&gt;'</span>+In2iGui.MultiUpload.errors[error]+<span class="literal">'&lt;/strong&gt;&lt;br/&gt;&lt;em&gt;'</span>+file.name+<span class="literal">'&lt;/em&gt;'</span>);
+		<span class="reserved">this</span>.itemContainer.insert(element);
 	},
 	
-	//////////////////// Events //////////////
+	<span class="comment">//////////////////// Events //////////////</span>
 	
-	flashLoaded : function() {
-		this.loaded = true;
+	flashLoaded : <span class="reserved">function</span>() {
+		<span class="reserved">this</span>.loaded = true;
 	},
-	fileQueued : function(file) {
+	fileQueued : <span class="reserved">function</span>(file) {
 		var item = new In2iGui.MultiUpload.Item(file);
-		this.items[file.index] = item;
-		this.itemContainer.insert(item.element);
+		<span class="reserved">this</span>.items[file.index] = item;
+		<span class="reserved">this</span>.itemContainer.insert(item.element);
 	},
-	fileQueueError : function(file, error, message) {
-		this.addError(error,file);
+	fileQueueError : <span class="reserved">function</span>(file, error, message) {
+		<span class="reserved">this</span>.addError(error,file);
 	},
-	fileDialogComplete : function() {
-		this.startNextUpload();
+	fileDialogComplete : <span class="reserved">function</span>() {
+		<span class="reserved">this</span>.startNextUpload();
 	},
-	uploadStart : function() {
+	uploadStart : <span class="reserved">function</span>() {
 		
 	},
-	uploadProgress : function(file,complete,total) {
-		this.items[file.index].updateProgress(complete,total);
+	uploadProgress : <span class="reserved">function</span>(file,complete,total) {
+		<span class="reserved">this</span>.items[file.index].updateProgress(complete,total);
 	},
-	uploadError : function(file, error, message) {
-		if (file) {
-			this.items[file.index].update(file);
+	uploadError : <span class="reserved">function</span>(file, error, message) {
+		<span class="reserved">if</span> (file) {
+			<span class="reserved">this</span>.items[file.index].update(file);
 		}
-		this.addError(error,file);
+		<span class="reserved">this</span>.addError(error,file);
 	},
-	uploadSuccess : function(file,data) {
-		this.items[file.index].updateProgress(file.size,file.size);
+	uploadSuccess : <span class="reserved">function</span>(file,data) {
+		<span class="reserved">this</span>.items[file.index].updateProgress(file.size,file.size);
 	},
-	uploadComplete : function(file) {
-		this.startNextUpload();
-		var self = this;
-		window.setTimeout(function() {
+	uploadComplete : <span class="reserved">function</span>(file) {
+		<span class="reserved">this</span>.startNextUpload();
+		var self = <span class="reserved">this</span>;
+		window.setTimeout(<span class="reserved">function</span>() {
 			self.items[file.index].hide();
 		},100);
-		In2iGui.callDelegates(this,'</span>uploadDidComplete<span class="literal">',file);
+		In2iGui.callDelegates(<span class="reserved">this</span>,<span class="literal">'uploadDidComplete'</span>,file);
 	},
-	queueComplete : function() {
-		In2iGui.callDelegates(this,'</span>uploadDidCompleteQueue<span class="literal">',file);
+	queueComplete : <span class="reserved">function</span>() {
+		In2iGui.callDelegates(<span class="reserved">this</span>,<span class="literal">'uploadDidCompleteQueue'</span>,file);
 	}
 }
 
-In2iGui.MultiUpload.Item = function(file) {
-	this.element = new Element('</span>div<span class="literal">').addClassName('</span>in2igui_multiupload_item<span class="literal">');
-	this.info = new Element('</span>strong<span class="literal">');
-	this.progress = In2iGui.ProgressBar.create();
-	this.element.insert(this.progress.getElement());
-	this.element.insert(this.info);
-	this.update(file);
+In2iGui.MultiUpload.Item = <span class="reserved">function</span>(file) {
+	<span class="reserved">this</span>.element = new Element(<span class="literal">'div'</span>).addClassName(<span class="literal">'in2igui_multiupload_item'</span>);
+	<span class="reserved">this</span>.info = new Element(<span class="literal">'strong'</span>);
+	<span class="reserved">this</span>.progress = In2iGui.ProgressBar.create();
+	<span class="reserved">this</span>.element.insert(<span class="reserved">this</span>.progress.getElement());
+	<span class="reserved">this</span>.element.insert(<span class="reserved">this</span>.info);
+	<span class="reserved">this</span>.update(file);
 }
 
-In2iGui.MultiUpload.Item.prototype = {
-	update : function(file) {
-		this.info.update(file.name);
+In2iGui.MultiUpload.Item.<span class="reserved">prototype</span> = {
+	update : <span class="reserved">function</span>(file) {
+		<span class="reserved">this</span>.info.update(file.name);
 	},
-	updateProgress : function(complete,total) {
-		this.progress.setValue(complete/total);
+	updateProgress : <span class="reserved">function</span>(complete,total) {
+		<span class="reserved">this</span>.progress.setValue(complete/total);
 	},
-	hide : function() {
-		this.element.hide();
+	hide : <span class="reserved">function</span>() {
+		<span class="reserved">this</span>.element.hide();
 	}
 }
 
-if (window.SWFUpload) {
+<span class="reserved">if</span> (window.SWFUpload) {
 In2iGui.MultiUpload.errors = {};
-In2iGui.MultiUpload.errors[SWFUpload.QUEUE_ERROR.QUEUE_LIMIT_EXCEEDED]			= '</span>Der er <span class="reserved">for</span> mange filer i køen<span class="literal">';
-In2iGui.MultiUpload.errors[SWFUpload.QUEUE_ERROR.FILE_EXCEEDS_SIZE_LIMIT]		= '</span>Filen er <span class="reserved">for</span> stor<span class="literal">';
-In2iGui.MultiUpload.errors[SWFUpload.QUEUE_ERROR.ZERO_BYTE_FILE]				= '</span>Filen er tom<span class="literal">';
-In2iGui.MultiUpload.errors[SWFUpload.QUEUE_ERROR.INVALID_FILETYPE]				= '</span>Filens type er ikke understøttet<span class="literal">';
-In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.HTTP_ERROR]					= '</span>Der skete en netværksfejl<span class="literal">';
-In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.MISSING_UPLOAD_URL]			= '</span>Upload-adressen findes ikke<span class="literal">';
-In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.IO_ERROR]						= '</span>Der skete en IO-fejl<span class="literal">';
-In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.SECURITY_ERROR]				= '</span>Der skete en sikkerhedsfejl<span class="literal">';
-In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.UPLOAD_LIMIT_EXCEEDED]			= '</span>Upload-størrelsen er overskredet<span class="literal">';
-In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.UPLOAD_FAILED]				= '</span>Upload af filen fejlede<span class="literal">';
-In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.SPECIFIED_FILE_ID_NOT_FOUND]	= '</span>Filens id kunne ikke findes<span class="literal">';
-In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.FILE_VALIDATION_FAILED]		= '</span>Validering af filen fejlede<span class="literal">';
-In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.FILE_CANCELLED]				= '</span>Filen blev afbrudt<span class="literal">';
-In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.UPLOAD_STOPPED]				= '</span>Upload af filen blev stoppet<span class="literal">';
+In2iGui.MultiUpload.errors[SWFUpload.QUEUE_ERROR.QUEUE_LIMIT_EXCEEDED]			= <span class="literal">'Der er for mange filer i køen'</span>;
+In2iGui.MultiUpload.errors[SWFUpload.QUEUE_ERROR.FILE_EXCEEDS_SIZE_LIMIT]		= <span class="literal">'Filen er for stor'</span>;
+In2iGui.MultiUpload.errors[SWFUpload.QUEUE_ERROR.ZERO_BYTE_FILE]				= <span class="literal">'Filen er tom'</span>;
+In2iGui.MultiUpload.errors[SWFUpload.QUEUE_ERROR.INVALID_FILETYPE]				= <span class="literal">'Filens type er ikke understøttet'</span>;
+In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.HTTP_ERROR]					= <span class="literal">'Der skete en netværksfejl'</span>;
+In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.MISSING_UPLOAD_URL]			= <span class="literal">'Upload-adressen findes ikke'</span>;
+In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.IO_ERROR]						= <span class="literal">'Der skete en IO-fejl'</span>;
+In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.SECURITY_ERROR]				= <span class="literal">'Der skete en sikkerhedsfejl'</span>;
+In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.UPLOAD_LIMIT_EXCEEDED]			= <span class="literal">'Upload-størrelsen er overskredet'</span>;
+In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.UPLOAD_FAILED]				= <span class="literal">'Upload af filen fejlede'</span>;
+In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.SPECIFIED_FILE_ID_NOT_FOUND]	= <span class="literal">'Filens id kunne ikke findes'</span>;
+In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.FILE_VALIDATION_FAILED]		= <span class="literal">'Validering af filen fejlede'</span>;
+In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.FILE_CANCELLED]				= <span class="literal">'Filen blev afbrudt'</span>;
+In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.UPLOAD_STOPPED]				= <span class="literal">'Upload af filen blev stoppet'</span>;
 }
-/* EOF */In2iGui.ProgressBar = function(element,name) {
-	this.element = $(element);
-	this.indicator = this.element.firstDescendant();
-	this.name = name;
-	In2iGui.extend(this);
+<span class="comment">/* EOF */</span>In2iGui.ProgressBar = <span class="reserved">function</span>(element,name) {
+	<span class="reserved">this</span>.element = $(element);
+	<span class="reserved">this</span>.indicator = <span class="reserved">this</span>.element.firstDescendant();
+	<span class="reserved">this</span>.name = name;
+	In2iGui.extend(<span class="reserved">this</span>);
 }
 
-In2iGui.ProgressBar.create = function(name) {
-	var element = new Element('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_progressbar<span class="literal">'}).insert(N2i.create('</span>div<span class="literal">'));
-	return new In2iGui.ProgressBar(element,name);
+In2iGui.ProgressBar.create = <span class="reserved">function</span>(name) {
+	var element = new Element(<span class="literal">'div'</span>,{<span class="literal">'class'</span>:<span class="literal">'in2igui_progressbar'</span>}).insert(N2i.create(<span class="literal">'div'</span>));
+	<span class="reserved">return</span> new In2iGui.ProgressBar(element,name);
 }
 	
-In2iGui.ProgressBar.prototype = {
-	setValue : function(value) {
-		$ani(this.indicator,'</span>width<span class="literal">',(value*100)+'</span>%<span class="literal">',value==1 ? 10 : 200);
+In2iGui.ProgressBar.<span class="reserved">prototype</span> = {
+	setValue : <span class="reserved">function</span>(value) {
+		$ani(<span class="reserved">this</span>.indicator,<span class="literal">'width'</span>,(value*100)+<span class="literal">'%'</span>,value==1 ? 10 : 200);
 	},
-	reset : function() {
-		this.indicator.style.width='</span>0%<span class="literal">';
+	reset : <span class="reserved">function</span>() {
+		<span class="reserved">this</span>.indicator.style.width=<span class="literal">'0%'</span>;
 	},
-	hide : function() {
-		this.element.style.display = '</span>none<span class="literal">';
+	hide : <span class="reserved">function</span>() {
+		<span class="reserved">this</span>.element.style.display = <span class="literal">'none'</span>;
 	},
-	show : function() {
-		this.element.style.display = '</span>block<span class="literal">';
+	show : <span class="reserved">function</span>() {
+		<span class="reserved">this</span>.element.style.display = <span class="literal">'block'</span>;
 	}
 }
 
-/* EOF */In2iGui.Gallery = function(id,name,options) {
-	this.id = id;
-	this.name = name;
-	this.options = options || {};
-	this.element = $(id);
-	this.objects = [];
-	this.nodes = [];
-	this.selected = new Hash();
-	this.width = 100;
-	this.height = 100;
-	In2iGui.extend(this);
+<span class="comment">/* EOF */</span>In2iGui.Gallery = <span class="reserved">function</span>(id,name,options) {
+	<span class="reserved">this</span>.id = id;
+	<span class="reserved">this</span>.name = name;
+	<span class="reserved">this</span>.options = options || {};
+	<span class="reserved">this</span>.element = $(id);
+	<span class="reserved">this</span>.objects = [];
+	<span class="reserved">this</span>.nodes = [];
+	<span class="reserved">this</span>.selected = new Hash();
+	<span class="reserved">this</span>.width = 100;
+	<span class="reserved">this</span>.height = 100;
+	In2iGui.extend(<span class="reserved">this</span>);
 }
 
-In2iGui.Gallery.prototype = {
-	setObjects : function(objects) {
-		this.objects = objects;
-		this.render();
+In2iGui.Gallery.<span class="reserved">prototype</span> = {
+	setObjects : <span class="reserved">function</span>(objects) {
+		<span class="reserved">this</span>.objects = objects;
+		<span class="reserved">this</span>.render();
 	},
-	getObjects : function() {
-		return this.objects;
+	getObjects : <span class="reserved">function</span>() {
+		<span class="reserved">return</span> <span class="reserved">this</span>.objects;
 	},
-	render : function() {
-		this.nodes = [];
-		this.element.update();
-		var self = this;
-		this.objects.each(function(object,i) {
+	render : <span class="reserved">function</span>() {
+		<span class="reserved">this</span>.nodes = [];
+		<span class="reserved">this</span>.element.update();
+		var self = <span class="reserved">this</span>;
+		<span class="reserved">this</span>.objects.each(<span class="reserved">function</span>(object,i) {
 			var url = self.resolveImageUrl(object);
-			url = url.replace(/&amp;amp;/,'</span>&amp;<span class="literal">');
-			if (object.height&lt;object.width) {
+			url = url.replace(/&amp;amp;/,<span class="literal">'&amp;'</span>);
+			<span class="reserved">if</span> (object.height&lt;object.width) {
 				var top = (self.height-(self.height*object.height/object.width))/2;
-			} else {
+			} <span class="reserved">else</span> {
 				var top = 0;
 			}
-			var img = new Element('</span>img<span class="literal">',{src:url}).setStyle({margin:top+'</span>px auto 0px<span class="literal">'});
-			var item = new Element('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_gallery_item<span class="literal">'}).setStyle({'</span>width<span class="literal">':self.width+'</span>px<span class="literal">','</span>height<span class="literal">':self.height+'</span>px<span class="literal">'}).insert(img);
-			item.observe('</span>click<span class="literal">',function() {
+			var img = new Element(<span class="literal">'img'</span>,{src:url}).setStyle({margin:top+<span class="literal">'px auto 0px'</span>});
+			var item = new Element(<span class="literal">'div'</span>,{<span class="literal">'class'</span>:<span class="literal">'in2igui_gallery_item'</span>}).setStyle({<span class="literal">'width'</span>:self.width+<span class="literal">'px'</span>,<span class="literal">'height'</span>:self.height+<span class="literal">'px'</span>}).insert(img);
+			item.observe(<span class="literal">'click'</span>,<span class="reserved">function</span>() {
 				self.itemClicked(i);
 			});
-			item.observe('</span>dblclick<span class="literal">',function() {
+			item.observe(<span class="literal">'dblclick'</span>,<span class="reserved">function</span>() {
 				self.itemDoubleClicked(i);
 			});
 			self.element.insert(item);
 			self.nodes.push(item);
 		});
 	},
-	updateUI : function() {
-		var self = this;
-		this.objects.each(function(object,i) {
-			if (self.selected.get(i)) {
-				self.nodes[i].addClassName('</span>in2igui_gallery_item_selected<span class="literal">');
-			} else {
-				self.nodes[i].removeClassName('</span>in2igui_gallery_item_selected<span class="literal">');
+	updateUI : <span class="reserved">function</span>() {
+		var self = <span class="reserved">this</span>;
+		<span class="reserved">this</span>.objects.each(<span class="reserved">function</span>(object,i) {
+			<span class="reserved">if</span> (self.selected.get(i)) {
+				self.nodes[i].addClassName(<span class="literal">'in2igui_gallery_item_selected'</span>);
+			} <span class="reserved">else</span> {
+				self.nodes[i].removeClassName(<span class="literal">'in2igui_gallery_item_selected'</span>);
 			}
 		});
 	},
-	resolveImageUrl : function(img) {
-		for (var i=0; i &lt; this.delegates.length; i++) {
-			if (this.delegates[i].resolveImageUrl) {
-				return this.delegates[i].resolveImageUrl(img,this.width,this.height);
+	resolveImageUrl : <span class="reserved">function</span>(img) {
+		<span class="reserved">for</span> (var i=0; i &lt; <span class="reserved">this</span>.delegates.length; i++) {
+			<span class="reserved">if</span> (<span class="reserved">this</span>.delegates[i].resolveImageUrl) {
+				<span class="reserved">return</span> <span class="reserved">this</span>.delegates[i].resolveImageUrl(img,<span class="reserved">this</span>.width,<span class="reserved">this</span>.height);
 			}
 		};
-		return '</span><span class="literal">';
+		<span class="reserved">return</span> <span class="literal">''</span>;
 	},
-	itemClicked : function(index) {
-		this.selected = new Hash();
-		this.selected.set(index,true);
-		this.updateUI();
+	itemClicked : <span class="reserved">function</span>(index) {
+		<span class="reserved">this</span>.selected = new Hash();
+		<span class="reserved">this</span>.selected.set(index,true);
+		<span class="reserved">this</span>.updateUI();
 	},
-	itemDoubleClicked : function(index) {
-		In2iGui.callDelegates(this,'</span>itemOpened<span class="literal">',this.objects[index]);
+	itemDoubleClicked : <span class="reserved">function</span>(index) {
+		In2iGui.callDelegates(<span class="reserved">this</span>,<span class="literal">'itemOpened'</span>,<span class="reserved">this</span>.objects[index]);
 	}
 }
 
-/* EOF */In2iGui.Calendar = function(id,name,options) {
-	this.name = name;
-	this.options = {startHour:7,endHour:24};
-	N2i.override(this.options,options);
-	this.element = $(id);
-	this.head = $(this.element.getElementsByTagName('</span>thead<span class="literal">')[0]);
-	this.body = $(this.element.getElementsByTagName('</span>tbody<span class="literal">')[0]);
-	this.date = new Date();
-	In2iGui.extend(this);
-	this.buildUI();
-	this.updateUI();
+<span class="comment">/* EOF */</span>In2iGui.Calendar = <span class="reserved">function</span>(id,name,options) {
+	<span class="reserved">this</span>.name = name;
+	<span class="reserved">this</span>.options = {startHour:7,endHour:24};
+	N2i.override(<span class="reserved">this</span>.options,options);
+	<span class="reserved">this</span>.element = $(id);
+	<span class="reserved">this</span>.head = $(<span class="reserved">this</span>.element.getElementsByTagName(<span class="literal">'thead'</span>)[0]);
+	<span class="reserved">this</span>.body = $(<span class="reserved">this</span>.element.getElementsByTagName(<span class="literal">'tbody'</span>)[0]);
+	<span class="reserved">this</span>.date = new Date();
+	In2iGui.extend(<span class="reserved">this</span>);
+	<span class="reserved">this</span>.buildUI();
+	<span class="reserved">this</span>.updateUI();
 }
 
-In2iGui.Calendar.prototype = {
-	getFirstDay : function() {
-		var date = new Date(this.date.getTime());
+In2iGui.Calendar.<span class="reserved">prototype</span> = {
+	getFirstDay : <span class="reserved">function</span>() {
+		var date = new Date(<span class="reserved">this</span>.date.getTime());
 		date.setDate(date.getDate()-date.getDay()+1);
 		date.setHours(0);
 		date.setMinutes(0);
 		date.setSeconds(0);
-		return date;
+		<span class="reserved">return</span> date;
 	},
-	getLastDay : function() {
-		var date = new Date(this.date.getTime());
+	getLastDay : <span class="reserved">function</span>() {
+		var date = new Date(<span class="reserved">this</span>.date.getTime());
 		date.setDate(date.getDate()-date.getDay()+7);
 		date.setHours(23);
 		date.setMinutes(59);
 		date.setSeconds(59);
-		return date;
+		<span class="reserved">return</span> date;
 	},
-	clearEvents : function() {
-		this.events = [];
-		var nodes = this.element.select('</span>.in2igui_calendar_event<span class="literal">');
-		nodes.each(function(node) {
+	clearEvents : <span class="reserved">function</span>() {
+		<span class="reserved">this</span>.events = [];
+		var nodes = <span class="reserved">this</span>.element.select(<span class="literal">'.in2igui_calendar_event'</span>);
+		nodes.each(<span class="reserved">function</span>(node) {
 			node.remove();
 		});
-		this.hideEventViewer();
+		<span class="reserved">this</span>.hideEventViewer();
 	},
-	setEvents : function(events) {
-		this.setBusy(false);
-		this.clearEvents();
-		this.events = events;
-		var self = this;
-		var pixels = (this.options.endHour-this.options.startHour)*40;
-		this.events.each(function(event) {
-			var day = self.body.select('</span>.day<span class="literal">')[event.startTime.getDay()-1];
-			var node = new Element('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_calendar_event<span class="literal">'});
+	setEvents : <span class="reserved">function</span>(events) {
+		<span class="reserved">this</span>.setBusy(false);
+		<span class="reserved">this</span>.clearEvents();
+		<span class="reserved">this</span>.events = events;
+		var self = <span class="reserved">this</span>;
+		var pixels = (<span class="reserved">this</span>.options.endHour-<span class="reserved">this</span>.options.startHour)*40;
+		<span class="reserved">this</span>.events.each(<span class="reserved">function</span>(event) {
+			var day = self.body.select(<span class="literal">'.day'</span>)[event.startTime.getDay()-1];
+			var node = new Element(<span class="literal">'div'</span>,{<span class="literal">'class'</span>:<span class="literal">'in2igui_calendar_event'</span>});
 			var top = ((event.startTime.getHours()*60+event.startTime.getMinutes())/60-self.options.startHour)*40-1;
 			var height = (event.endTime.getTime()-event.startTime.getTime())/1000/60/60*40+1;
 			var height = Math.min(pixels-top,height);
-			node.setStyle({'</span>marginTop<span class="literal">':top+'</span>px<span class="literal">','</span>height<span class="literal">':height+'</span>px<span class="literal">'});
-			var content = new Element('</span>div<span class="literal">');
-			content.insert(new Element('</span>p<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_calendar_event_time<span class="literal">'}).update(event.startTime.dateFormat('</span>H:i<span class="literal">')));
-			content.insert(new Element('</span>p<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_calendar_event_text<span class="literal">'}).update(event.text));
-			if (event.location) {
-				content.insert(new Element('</span>p<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_calendar_event_location<span class="literal">'}).update(event.location));
+			node.setStyle({<span class="literal">'marginTop'</span>:top+<span class="literal">'px'</span>,<span class="literal">'height'</span>:height+<span class="literal">'px'</span>});
+			var content = new Element(<span class="literal">'div'</span>);
+			content.insert(new Element(<span class="literal">'p'</span>,{<span class="literal">'class'</span>:<span class="literal">'in2igui_calendar_event_time'</span>}).update(event.startTime.dateFormat(<span class="literal">'H:i'</span>)));
+			content.insert(new Element(<span class="literal">'p'</span>,{<span class="literal">'class'</span>:<span class="literal">'in2igui_calendar_event_text'</span>}).update(event.text));
+			<span class="reserved">if</span> (event.location) {
+				content.insert(new Element(<span class="literal">'p'</span>,{<span class="literal">'class'</span>:<span class="literal">'in2igui_calendar_event_location'</span>}).update(event.location));
 			}
 			day.insert(node.insert(content));
-			node.observe('</span>click<span class="literal">',function() {
-				self.eventWasClicked(event,this);
+			node.observe(<span class="literal">'click'</span>,<span class="reserved">function</span>() {
+				self.eventWasClicked(event,<span class="reserved">this</span>);
 			});
 		});
 	},
-	eventWasClicked : function(event,node) {
-		this.showEvent(event,node);
+	eventWasClicked : <span class="reserved">function</span>(event,node) {
+		<span class="reserved">this</span>.showEvent(event,node);
 	},
-	setBusy : function(busy) {
-		if (busy) {
-			this.element.addClassName('</span>in2igui_calendar_busy<span class="literal">');
-		} else {
-			this.element.removeClassName('</span>in2igui_calendar_busy<span class="literal">');
+	setBusy : <span class="reserved">function</span>(busy) {
+		<span class="reserved">if</span> (busy) {
+			<span class="reserved">this</span>.element.addClassName(<span class="literal">'in2igui_calendar_busy'</span>);
+		} <span class="reserved">else</span> {
+			<span class="reserved">this</span>.element.removeClassName(<span class="literal">'in2igui_calendar_busy'</span>);
 		}
 	},
-	updateUI : function() {
-		var first = this.getFirstDay();
-		var x = this.head.select('</span>.time<span class="literal">')[0];
-		x.update('</span>&lt;div&gt;Uge <span class="literal">'+this.date.getWeekOfYear()+'</span> <span class="literal">'+this.date.getFullYear()+'</span>&lt;/div&gt;<span class="literal">');
+	updateUI : <span class="reserved">function</span>() {
+		var first = <span class="reserved">this</span>.getFirstDay();
+		var x = <span class="reserved">this</span>.head.select(<span class="literal">'.time'</span>)[0];
+		x.update(<span class="literal">'&lt;div&gt;Uge '</span>+<span class="reserved">this</span>.date.getWeekOfYear()+<span class="literal">' '</span>+<span class="reserved">this</span>.date.getFullYear()+<span class="literal">'&lt;/div&gt;'</span>);
 		
-		var days = this.head.select('</span>.day<span class="literal">');
-		for (var i=0; i &lt; days.length; i++) {
+		var days = <span class="reserved">this</span>.head.select(<span class="literal">'.day'</span>);
+		<span class="reserved">for</span> (var i=0; i &lt; days.length; i++) {
 			var date = new Date(first.getTime());
 			date.setDate(date.getDate()+i);
-			days[i].update(date.dateFormat('</span>l \\d. d M<span class="literal">'))
+			days[i].update(date.dateFormat(<span class="literal">'l \\d. d M'</span>))
 		};
 	},
-	buildUI : function() {
-		var bar = this.element.select('</span>.in2igui_calendar_bar<span class="literal">')[0];
-		this.toolbar = In2iGui.Toolbar.create(null,{labels:false});
-		bar.insert(this.toolbar.getElement());
-		var previous = In2iGui.Button.create('</span>in2iguiCalendarPrevious<span class="literal">',{text:'</span><span class="literal">',icon:'</span>monochrome/previous<span class="literal">'});
-		previous.addDelegate(this);
-		this.toolbar.add(previous);
-		var today = In2iGui.Button.create('</span>in2iguiCalendarToday<span class="literal">',{text:'</span>Idag<span class="literal">'});
-		today.addDelegate(this);
-		this.toolbar.add(today);
-		var next = In2iGui.Button.create('</span>in2iguiCalendarNext<span class="literal">',{text:'</span><span class="literal">',icon:'</span>monochrome/next<span class="literal">'});
-		next.addDelegate(this);
-		this.toolbar.add(next);
-		this.datePickerButton = In2iGui.Button.create('</span>in2iguiCalendarDatePicker<span class="literal">',{text:'</span>Vælg dato...<span class="literal">'});
-		this.datePickerButton.addDelegate(this);
-		this.toolbar.add(this.datePickerButton);
+	buildUI : <span class="reserved">function</span>() {
+		var bar = <span class="reserved">this</span>.element.select(<span class="literal">'.in2igui_calendar_bar'</span>)[0];
+		<span class="reserved">this</span>.toolbar = In2iGui.Toolbar.create(null,{labels:false});
+		bar.insert(<span class="reserved">this</span>.toolbar.getElement());
+		var previous = In2iGui.Button.create(<span class="literal">'in2iguiCalendarPrevious'</span>,{text:<span class="literal">''</span>,icon:<span class="literal">'monochrome/previous'</span>});
+		previous.addDelegate(<span class="reserved">this</span>);
+		<span class="reserved">this</span>.toolbar.add(previous);
+		var today = In2iGui.Button.create(<span class="literal">'in2iguiCalendarToday'</span>,{text:<span class="literal">'Idag'</span>});
+		today.addDelegate(<span class="reserved">this</span>);
+		<span class="reserved">this</span>.toolbar.add(today);
+		var next = In2iGui.Button.create(<span class="literal">'in2iguiCalendarNext'</span>,{text:<span class="literal">''</span>,icon:<span class="literal">'monochrome/next'</span>});
+		next.addDelegate(<span class="reserved">this</span>);
+		<span class="reserved">this</span>.toolbar.add(next);
+		<span class="reserved">this</span>.datePickerButton = In2iGui.Button.create(<span class="literal">'in2iguiCalendarDatePicker'</span>,{text:<span class="literal">'Vælg dato...'</span>});
+		<span class="reserved">this</span>.datePickerButton.addDelegate(<span class="reserved">this</span>);
+		<span class="reserved">this</span>.toolbar.add(<span class="reserved">this</span>.datePickerButton);
 		
-		var time = this.body.select('</span>.time<span class="literal">')[0];
-		for (var i=this.options.startHour; i &lt;= this.options.endHour; i++) {
-			var node = new Element('</span>div<span class="literal">').update('</span>&lt;span&gt;&lt;em&gt;<span class="literal">'+i+'</span>:00&lt;/em&gt;&lt;/span&gt;<span class="literal">');
-			if (i==this.options.startHour) {
-				node.addClassName('</span>first<span class="literal">');
+		var time = <span class="reserved">this</span>.body.select(<span class="literal">'.time'</span>)[0];
+		<span class="reserved">for</span> (var i=<span class="reserved">this</span>.options.startHour; i &lt;= <span class="reserved">this</span>.options.endHour; i++) {
+			var node = new Element(<span class="literal">'div'</span>).update(<span class="literal">'&lt;span&gt;&lt;em&gt;'</span>+i+<span class="literal">':00&lt;/em&gt;&lt;/span&gt;'</span>);
+			<span class="reserved">if</span> (i==<span class="reserved">this</span>.options.startHour) {
+				node.addClassName(<span class="literal">'first'</span>);
 			}
-			if (i==this.options.endHour) {
-				node.addClassName('</span>last<span class="literal">');
+			<span class="reserved">if</span> (i==<span class="reserved">this</span>.options.endHour) {
+				node.addClassName(<span class="literal">'last'</span>);
 			}
 			time.insert(node);
 		};
 	},
-	click$in2iguiCalendarPrevious : function() {
-		var date = new Date(this.date.getTime());
-		date.setDate(this.date.getDate()-7);
-		this.setDate(date);
+	click$in2iguiCalendarPrevious : <span class="reserved">function</span>() {
+		var date = new Date(<span class="reserved">this</span>.date.getTime());
+		date.setDate(<span class="reserved">this</span>.date.getDate()-7);
+		<span class="reserved">this</span>.setDate(date);
 	},
-	click$in2iguiCalendarNext : function() {
-		var date = new Date(this.date.getTime());
-		date.setDate(this.date.getDate()+7);
-		this.setDate(date);
+	click$in2iguiCalendarNext : <span class="reserved">function</span>() {
+		var date = new Date(<span class="reserved">this</span>.date.getTime());
+		date.setDate(<span class="reserved">this</span>.date.getDate()+7);
+		<span class="reserved">this</span>.setDate(date);
 	},
-	click$in2iguiCalendarToday : function() {
-		this.setDate(new Date());
+	click$in2iguiCalendarToday : <span class="reserved">function</span>() {
+		<span class="reserved">this</span>.setDate(new Date());
 	},
-	setDate: function(date) {
-		this.date = new Date(date.getTime());
-		this.updateUI();
-		this.refresh();
-		if (this.datePicker) {
-			this.datePicker.setValue(this.date);
+	setDate: <span class="reserved">function</span>(date) {
+		<span class="reserved">this</span>.date = new Date(date.getTime());
+		<span class="reserved">this</span>.updateUI();
+		<span class="reserved">this</span>.refresh();
+		<span class="reserved">if</span> (<span class="reserved">this</span>.datePicker) {
+			<span class="reserved">this</span>.datePicker.setValue(<span class="reserved">this</span>.date);
 		}
 	},
-	click$in2iguiCalendarDatePicker : function() {
-		this.showDatePicker();
+	click$in2iguiCalendarDatePicker : <span class="reserved">function</span>() {
+		<span class="reserved">this</span>.showDatePicker();
 	},
-	refresh : function() {
-		this.clearEvents();
-		this.setBusy(true);
-		var info = {'</span>startTime<span class="literal">':this.getFirstDay(),'</span>endTime<span class="literal">':this.getLastDay()};
-		In2iGui.callDelegates(this,'</span>calendarSpanChanged<span class="literal">',info);
+	refresh : <span class="reserved">function</span>() {
+		<span class="reserved">this</span>.clearEvents();
+		<span class="reserved">this</span>.setBusy(true);
+		var info = {<span class="literal">'startTime'</span>:<span class="reserved">this</span>.getFirstDay(),<span class="literal">'endTime'</span>:<span class="reserved">this</span>.getLastDay()};
+		In2iGui.callDelegates(<span class="reserved">this</span>,<span class="literal">'calendarSpanChanged'</span>,info);
 	},
 	
-	////////////////////////////////// Date picker ///////////////////////////
-	showDatePicker : function() {
-		if (!this.datePickerPanel) {
-			this.datePickerPanel = In2iGui.BoundPanel.create();
-			this.datePicker = In2iGui.DatePicker.create('</span>in2iguiCalendarDatePicker<span class="literal">',{value:this.date});
-			this.datePicker.addDelegate(this);
-			this.datePickerPanel.add(this.datePicker);
-			this.datePickerPanel.addSpace(5);
-			var button = In2iGui.Button.create('</span>in2iguiCalendarDatePickerClose<span class="literal">',{text:'</span>Luk<span class="literal">'});
-			button.addDelegate(this);
-			this.datePickerPanel.add(button);
+	<span class="comment">////////////////////////////////// Date picker ///////////////////////////</span>
+	showDatePicker : <span class="reserved">function</span>() {
+		<span class="reserved">if</span> (!<span class="reserved">this</span>.datePickerPanel) {
+			<span class="reserved">this</span>.datePickerPanel = In2iGui.BoundPanel.create();
+			<span class="reserved">this</span>.datePicker = In2iGui.DatePicker.create(<span class="literal">'in2iguiCalendarDatePicker'</span>,{value:<span class="reserved">this</span>.date});
+			<span class="reserved">this</span>.datePicker.addDelegate(<span class="reserved">this</span>);
+			<span class="reserved">this</span>.datePickerPanel.add(<span class="reserved">this</span>.datePicker);
+			<span class="reserved">this</span>.datePickerPanel.addSpace(5);
+			var button = In2iGui.Button.create(<span class="literal">'in2iguiCalendarDatePickerClose'</span>,{text:<span class="literal">'Luk'</span>});
+			button.addDelegate(<span class="reserved">this</span>);
+			<span class="reserved">this</span>.datePickerPanel.add(button);
 		}
-		this.datePickerPanel.position(this.datePickerButton.getElement());
-		this.datePickerPanel.show();
+		<span class="reserved">this</span>.datePickerPanel.position(<span class="reserved">this</span>.datePickerButton.getElement());
+		<span class="reserved">this</span>.datePickerPanel.show();
 	},
-	click$in2iguiCalendarDatePickerClose : function() {
-		this.datePickerPanel.hide();
+	click$in2iguiCalendarDatePickerClose : <span class="reserved">function</span>() {
+		<span class="reserved">this</span>.datePickerPanel.hide();
 	},
-	dateChanged$in2iguiCalendarDatePicker : function(date) {
-		this.setDate(date);
+	dateChanged$in2iguiCalendarDatePicker : <span class="reserved">function</span>(date) {
+		<span class="reserved">this</span>.setDate(date);
 	},
 	
-	//////////////////////////////// Event viewer //////////////////////////////
+	<span class="comment">//////////////////////////////// Event viewer //////////////////////////////</span>
 	
-	showEvent : function(event,node) {
-		if (!this.eventViewerPanel) {
-			this.eventViewerPanel = In2iGui.BoundPanel.create({width:270,padding: 3});
-			this.eventInfo = In2iGui.InfoView.create(null,{height:240,clickObjects:true});
-			this.eventViewerPanel.add(this.eventInfo);
-			this.eventViewerPanel.addSpace(5);
-			var button = In2iGui.Button.create('</span>in2iguiCalendarEventClose<span class="literal">',{text:'</span>Luk<span class="literal">'});
-			button.addDelegate(this);
-			this.eventViewerPanel.add(button);
+	showEvent : <span class="reserved">function</span>(event,node) {
+		<span class="reserved">if</span> (!<span class="reserved">this</span>.eventViewerPanel) {
+			<span class="reserved">this</span>.eventViewerPanel = In2iGui.BoundPanel.create({width:270,padding: 3});
+			<span class="reserved">this</span>.eventInfo = In2iGui.InfoView.create(null,{height:240,clickObjects:true});
+			<span class="reserved">this</span>.eventViewerPanel.add(<span class="reserved">this</span>.eventInfo);
+			<span class="reserved">this</span>.eventViewerPanel.addSpace(5);
+			var button = In2iGui.Button.create(<span class="literal">'in2iguiCalendarEventClose'</span>,{text:<span class="literal">'Luk'</span>});
+			button.addDelegate(<span class="reserved">this</span>);
+			<span class="reserved">this</span>.eventViewerPanel.add(button);
 		}
-		this.eventInfo.clear();
-		this.eventInfo.setBusy(true);
-		this.eventViewerPanel.position(node);
-		this.eventViewerPanel.show();
-		In2iGui.callDelegates(this,'</span>requestEventInfo<span class="literal">',event);
-		return;
+		<span class="reserved">this</span>.eventInfo.clear();
+		<span class="reserved">this</span>.eventInfo.setBusy(true);
+		<span class="reserved">this</span>.eventViewerPanel.position(node);
+		<span class="reserved">this</span>.eventViewerPanel.show();
+		In2iGui.callDelegates(<span class="reserved">this</span>,<span class="literal">'requestEventInfo'</span>,event);
+		<span class="reserved">return</span>;
 	},
-	updateEventInfo : function(event,data) {
-		this.eventInfo.setBusy(false);
-		this.eventInfo.update(data);
+	updateEventInfo : <span class="reserved">function</span>(event,data) {
+		<span class="reserved">this</span>.eventInfo.setBusy(false);
+		<span class="reserved">this</span>.eventInfo.update(data);
 	},
-	click$in2iguiCalendarEventClose : function() {
-		this.hideEventViewer();
+	click$in2iguiCalendarEventClose : <span class="reserved">function</span>() {
+		<span class="reserved">this</span>.hideEventViewer();
 	},
-	hideEventViewer : function() {
-		if (this.eventViewerPanel) {
-			this.eventViewerPanel.hide();
+	hideEventViewer : <span class="reserved">function</span>() {
+		<span class="reserved">if</span> (<span class="reserved">this</span>.eventViewerPanel) {
+			<span class="reserved">this</span>.eventViewerPanel.hide();
 		}
 	}
 }
 
 
-/********************** Date picker ***************/
+<span class="comment">/********************** Date picker ***************/</span>
 
-In2iGui.DatePicker = function(id,name,options) {
-	this.name = name;
-	this.element = $(id);
-	this.options = {};
-	N2i.override(this.options,options);
-	this.cells = [];
-	this.title = this.element.select('</span>strong<span class="literal">')[0];
-	this.today = new Date();
-	this.value = this.options.value ? new Date(this.options.value.getTime()) : new Date();
-	this.viewDate = new Date(this.value.getTime());
-	this.viewDate.setDate(1);
-	In2iGui.extend(this);
-	this.addBehavior();
-	this.updateUI();
+In2iGui.DatePicker = <span class="reserved">function</span>(id,name,options) {
+	<span class="reserved">this</span>.name = name;
+	<span class="reserved">this</span>.element = $(id);
+	<span class="reserved">this</span>.options = {};
+	N2i.override(<span class="reserved">this</span>.options,options);
+	<span class="reserved">this</span>.cells = [];
+	<span class="reserved">this</span>.title = <span class="reserved">this</span>.element.select(<span class="literal">'strong'</span>)[0];
+	<span class="reserved">this</span>.today = new Date();
+	<span class="reserved">this</span>.value = <span class="reserved">this</span>.options.value ? new Date(<span class="reserved">this</span>.options.value.getTime()) : new Date();
+	<span class="reserved">this</span>.viewDate = new Date(<span class="reserved">this</span>.value.getTime());
+	<span class="reserved">this</span>.viewDate.setDate(1);
+	In2iGui.extend(<span class="reserved">this</span>);
+	<span class="reserved">this</span>.addBehavior();
+	<span class="reserved">this</span>.updateUI();
 }
 
-In2iGui.DatePicker.create = function(name,options) {
-	var element = new Element('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_datepicker<span class="literal">'});
-	element.insert('</span>&lt;div class=<span class="literal">"in2igui_datepicker_header"</span>&gt;&lt;a class=<span class="literal">"in2igui_datepicker_next"</span>&gt;&lt;/a&gt;&lt;a class=<span class="literal">"in2igui_datepicker_previous"</span>&gt;&lt;/a&gt;&lt;strong&gt;&lt;/strong&gt;&lt;/div&gt;<span class="literal">');
-	var table = new Element('</span>table<span class="literal">');
-	var head = new Element('</span>tr<span class="literal">');
-	table.insert(new Element('</span>thead<span class="literal">').insert(head));
-	for (var i=0;i&lt;7;i++) {
-		head.insert(new Element('</span>th<span class="literal">').update(Date.dayNames[i].substring(0,3)));
+In2iGui.DatePicker.create = <span class="reserved">function</span>(name,options) {
+	var element = new Element(<span class="literal">'div'</span>,{<span class="literal">'class'</span>:<span class="literal">'in2igui_datepicker'</span>});
+	element.insert(<span class="literal">'&lt;div class="in2igui_datepicker_header"&gt;&lt;a class="in2igui_datepicker_next"&gt;&lt;/a&gt;&lt;a class="in2igui_datepicker_previous"&gt;&lt;/a&gt;&lt;strong&gt;&lt;/strong&gt;&lt;/div&gt;'</span>);
+	var table = new Element(<span class="literal">'table'</span>);
+	var head = new Element(<span class="literal">'tr'</span>);
+	table.insert(new Element(<span class="literal">'thead'</span>).insert(head));
+	<span class="reserved">for</span> (var i=0;i&lt;7;i++) {
+		head.insert(new Element(<span class="literal">'th'</span>).update(Date.dayNames[i].substring(0,3)));
 	}
-	var body = new Element('</span>tbody<span class="literal">');
+	var body = new Element(<span class="literal">'tbody'</span>);
 	table.insert(body);
-	for (var i=0;i&lt;6;i++) {
-		var row = new Element('</span>tr<span class="literal">');
-		for (var j=0;j&lt;7;j++) {
-			var cell = new Element('</span>td<span class="literal">');
+	<span class="reserved">for</span> (var i=0;i&lt;6;i++) {
+		var row = new Element(<span class="literal">'tr'</span>);
+		<span class="reserved">for</span> (var j=0;j&lt;7;j++) {
+			var cell = new Element(<span class="literal">'td'</span>);
 			row.insert(cell);
 		}
 		body.insert(row);
 	}
 	element.insert(table);
-	return new In2iGui.DatePicker(element,name,options);
+	<span class="reserved">return</span> new In2iGui.DatePicker(element,name,options);
 }
 
-In2iGui.DatePicker.prototype = {
-	addBehavior : function() {
-		var self = this;
-		this.cells = this.element.select('</span>td<span class="literal">');
-		this.cells.each(function(cell,index) {
-			cell.observe('</span>mousedown<span class="literal">',function() {self.selectCell(index)});
+In2iGui.DatePicker.<span class="reserved">prototype</span> = {
+	addBehavior : <span class="reserved">function</span>() {
+		var self = <span class="reserved">this</span>;
+		<span class="reserved">this</span>.cells = <span class="reserved">this</span>.element.select(<span class="literal">'td'</span>);
+		<span class="reserved">this</span>.cells.each(<span class="reserved">function</span>(cell,index) {
+			cell.observe(<span class="literal">'mousedown'</span>,<span class="reserved">function</span>() {self.selectCell(index)});
 		})
-		this.element.select('</span>.in2igui_datepicker_next<span class="literal">')[0].observe('</span>mousedown<span class="literal">',function() {self.next()});
-		this.element.select('</span>.in2igui_datepicker_previous<span class="literal">')[0].observe('</span>mousedown<span class="literal">',function() {self.previous()});
+		<span class="reserved">this</span>.element.select(<span class="literal">'.in2igui_datepicker_next'</span>)[0].observe(<span class="literal">'mousedown'</span>,<span class="reserved">function</span>() {self.next()});
+		<span class="reserved">this</span>.element.select(<span class="literal">'.in2igui_datepicker_previous'</span>)[0].observe(<span class="literal">'mousedown'</span>,<span class="reserved">function</span>() {self.previous()});
 	},
-	setValue : function(date) {
-		this.value = new Date(date.getTime());
-		this.viewDate = new Date(date.getTime());
-		this.viewDate.setDate(1);
-		this.updateUI();
+	setValue : <span class="reserved">function</span>(date) {
+		<span class="reserved">this</span>.value = new Date(date.getTime());
+		<span class="reserved">this</span>.viewDate = new Date(date.getTime());
+		<span class="reserved">this</span>.viewDate.setDate(1);
+		<span class="reserved">this</span>.updateUI();
 	},
-	updateUI : function() {
-		this.title.update(this.viewDate.dateFormat('</span>F Y<span class="literal">'));
-		var isSelectedYear =  this.value.getFullYear()==this.viewDate.getFullYear();
-		var month = this.viewDate.getMonth();
-		for (var i=0; i &lt; this.cells.length; i++) {
-			var date = this.indexToDate(i);
-			var cell = this.cells[i];
-			if (date.getMonth()&lt;month) {
-				cell.className = '</span>in2igui_datepicker_dimmed<span class="literal">';
-			} else if (date.getMonth()&gt;month) {
-				cell.className = '</span>in2igui_datepicker_dimmed<span class="literal">';
-			} else {
-				cell.className = '</span><span class="literal">';
+	updateUI : <span class="reserved">function</span>() {
+		<span class="reserved">this</span>.title.update(<span class="reserved">this</span>.viewDate.dateFormat(<span class="literal">'F Y'</span>));
+		var isSelectedYear =  <span class="reserved">this</span>.value.getFullYear()==<span class="reserved">this</span>.viewDate.getFullYear();
+		var month = <span class="reserved">this</span>.viewDate.getMonth();
+		<span class="reserved">for</span> (var i=0; i &lt; <span class="reserved">this</span>.cells.length; i++) {
+			var date = <span class="reserved">this</span>.indexToDate(i);
+			var cell = <span class="reserved">this</span>.cells[i];
+			<span class="reserved">if</span> (date.getMonth()&lt;month) {
+				cell.className = <span class="literal">'in2igui_datepicker_dimmed'</span>;
+			} <span class="reserved">else</span> <span class="reserved">if</span> (date.getMonth()&gt;month) {
+				cell.className = <span class="literal">'in2igui_datepicker_dimmed'</span>;
+			} <span class="reserved">else</span> {
+				cell.className = <span class="literal">''</span>;
 			}
-			if (date.getDate()==this.value.getDate() &amp;&amp; date.getMonth()==this.value.getMonth() &amp;&amp; isSelectedYear) {
-				cell.addClassName('</span>in2igui_datepicker_selected<span class="literal">');
+			<span class="reserved">if</span> (date.getDate()==<span class="reserved">this</span>.value.getDate() &amp;&amp; date.getMonth()==<span class="reserved">this</span>.value.getMonth() &amp;&amp; isSelectedYear) {
+				cell.addClassName(<span class="literal">'in2igui_datepicker_selected'</span>);
 			}
-			if (date.getDate()==this.today.getDate() &amp;&amp; date.getMonth()==this.today.getMonth() &amp;&amp; date.getFullYear()==this.today.getFullYear()) {
-				cell.addClassName('</span>in2igui_datepicker_today<span class="literal">');
+			<span class="reserved">if</span> (date.getDate()==<span class="reserved">this</span>.today.getDate() &amp;&amp; date.getMonth()==<span class="reserved">this</span>.today.getMonth() &amp;&amp; date.getFullYear()==<span class="reserved">this</span>.today.getFullYear()) {
+				cell.addClassName(<span class="literal">'in2igui_datepicker_today'</span>);
 			}
 			cell.update(date.getDate());
 		};
 	},
-	getPreviousMonth : function() {
-		var previous = new Date(this.viewDate.getTime());
+	getPreviousMonth : <span class="reserved">function</span>() {
+		var previous = new Date(<span class="reserved">this</span>.viewDate.getTime());
 		previous.setMonth(previous.getMonth()-1);
-		return previous;
+		<span class="reserved">return</span> previous;
 	},
-	getNextMonth : function() {
-		var previous = new Date(this.viewDate.getTime());
+	getNextMonth : <span class="reserved">function</span>() {
+		var previous = new Date(<span class="reserved">this</span>.viewDate.getTime());
 		previous.setMonth(previous.getMonth()+1);
-		return previous;
+		<span class="reserved">return</span> previous;
 	},
-	////////////////// Events ///////////////
-	previous : function() {
-		this.viewDate = this.getPreviousMonth();
-		this.updateUI();
+	<span class="comment">////////////////// Events ///////////////</span>
+	previous : <span class="reserved">function</span>() {
+		<span class="reserved">this</span>.viewDate = <span class="reserved">this</span>.getPreviousMonth();
+		<span class="reserved">this</span>.updateUI();
 	},
-	next : function() {
-		this.viewDate = this.getNextMonth();
-		this.updateUI();
+	next : <span class="reserved">function</span>() {
+		<span class="reserved">this</span>.viewDate = <span class="reserved">this</span>.getNextMonth();
+		<span class="reserved">this</span>.updateUI();
 	},
-	selectCell : function(index) {
-		this.value = this.indexToDate(index);
-		this.viewDate = new Date(this.value.getTime());
-		this.viewDate.setDate(1);
-		this.updateUI();
-		In2iGui.callDelegates(this,'</span>dateChanged<span class="literal">',this.value);
+	selectCell : <span class="reserved">function</span>(index) {
+		<span class="reserved">this</span>.value = <span class="reserved">this</span>.indexToDate(index);
+		<span class="reserved">this</span>.viewDate = new Date(<span class="reserved">this</span>.value.getTime());
+		<span class="reserved">this</span>.viewDate.setDate(1);
+		<span class="reserved">this</span>.updateUI();
+		In2iGui.callDelegates(<span class="reserved">this</span>,<span class="literal">'dateChanged'</span>,<span class="reserved">this</span>.value);
 	},
-	indexToDate : function(index) {
-		var first = this.viewDate.getDay();
-		var days = this.viewDate.getDaysInMonth();
-		var previousDays = this.getPreviousMonth().getDaysInMonth();
-		if (index&lt;first) {
-			var date = this.getPreviousMonth();
+	indexToDate : <span class="reserved">function</span>(index) {
+		var first = <span class="reserved">this</span>.viewDate.getDay();
+		var days = <span class="reserved">this</span>.viewDate.getDaysInMonth();
+		var previousDays = <span class="reserved">this</span>.getPreviousMonth().getDaysInMonth();
+		<span class="reserved">if</span> (index&lt;first) {
+			var date = <span class="reserved">this</span>.getPreviousMonth();
 			date.setDate(previousDays-first+index+1);
-			return date;
-		} else if (index&gt;first+days-1) {
-			var date = this.getPreviousMonth();
+			<span class="reserved">return</span> date;
+		} <span class="reserved">else</span> <span class="reserved">if</span> (index&gt;first+days-1) {
+			var date = <span class="reserved">this</span>.getPreviousMonth();
 			date.setDate(index-first-days+1);
-			return date;
+			<span class="reserved">return</span> date;
 			cell.update(i-first-days+1);
-		} else {
-			var date = new Date(this.viewDate.getTime());
+		} <span class="reserved">else</span> {
+			var date = new Date(<span class="reserved">this</span>.viewDate.getTime());
 			date.setDate(index+1-first);
-			return date;
+			<span class="reserved">return</span> date;
 		}
 	}
 }
 
 Date.monthNames =
-   ["Januar",
-    "Februar",
-    "Marts",
-    "April",
-    "Maj",
-    "Juni",
-    "Juli",
-    "August",
-    "September",
-    "Oktober",
-    "November",
-    "December"];
+   [<span class="literal">"Januar"</span>,
+    <span class="literal">"Februar"</span>,
+    <span class="literal">"Marts"</span>,
+    <span class="literal">"April"</span>,
+    <span class="literal">"Maj"</span>,
+    <span class="literal">"Juni"</span>,
+    <span class="literal">"Juli"</span>,
+    <span class="literal">"August"</span>,
+    <span class="literal">"September"</span>,
+    <span class="literal">"Oktober"</span>,
+    <span class="literal">"November"</span>,
+    <span class="literal">"December"</span>];
 Date.dayNames =
-   ["Søndag",
-    "Mandag",
-    "Tirsdag",
-    "Onsdag",
-    "Torsdag",
-    "Fredag",
-    "Lørdag"];
+   [<span class="literal">"Søndag"</span>,
+    <span class="literal">"Mandag"</span>,
+    <span class="literal">"Tirsdag"</span>,
+    <span class="literal">"Onsdag"</span>,
+    <span class="literal">"Torsdag"</span>,
+    <span class="literal">"Fredag"</span>,
+    <span class="literal">"Lørdag"</span>];
 
-/* EOF */In2iGui.Columns = function(id,name,options) {
-	this.name = name;
-	this.options = options || {};
-	this.element = $(id);
-	this.body = this.element.select('</span>tr<span class="literal">')[0];
-	In2iGui.extend(this);
+<span class="comment">/* EOF */</span>In2iGui.Columns = <span class="reserved">function</span>(id,name,options) {
+	<span class="reserved">this</span>.name = name;
+	<span class="reserved">this</span>.options = options || {};
+	<span class="reserved">this</span>.element = $(id);
+	<span class="reserved">this</span>.body = <span class="reserved">this</span>.element.select(<span class="literal">'tr'</span>)[0];
+	In2iGui.extend(<span class="reserved">this</span>);
 }
 
-In2iGui.Columns.create = function(name,options) {
-	var e = new Element('</span>table<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_columns<span class="literal">'}).insert(new Element('</span>tbody<span class="literal">').insert(new Element('</span>tr<span class="literal">')));
-	return new In2iGui.Columns(e,name,options);
+In2iGui.Columns.create = <span class="reserved">function</span>(name,options) {
+	var e = new Element(<span class="literal">'table'</span>,{<span class="literal">'class'</span>:<span class="literal">'in2igui_columns'</span>}).insert(new Element(<span class="literal">'tbody'</span>).insert(new Element(<span class="literal">'tr'</span>)));
+	<span class="reserved">return</span> new In2iGui.Columns(e,name,options);
 }
 
-In2iGui.Columns.prototype = {
-	addToColumn : function(index,widget) {
-		var c = this.ensureColumn(index);
+In2iGui.Columns.<span class="reserved">prototype</span> = {
+	addToColumn : <span class="reserved">function</span>(index,widget) {
+		var c = <span class="reserved">this</span>.ensureColumn(index);
 		c.insert(widget.getElement());
 	},
-	setColumnStyle : function(index,style) {
-		var c = this.ensureColumn(index);
+	setColumnStyle : <span class="reserved">function</span>(index,style) {
+		var c = <span class="reserved">this</span>.ensureColumn(index);
 		c.setStyle(style);
 	},
-	setColumnWidth : function(index,width) {
-		var c = this.ensureColumn(index);
-		c.setStyle({width:width+'</span>px<span class="literal">'});
+	setColumnWidth : <span class="reserved">function</span>(index,width) {
+		var c = <span class="reserved">this</span>.ensureColumn(index);
+		c.setStyle({width:width+<span class="literal">'px'</span>});
 	},
-	ensureColumn : function(index) {
-		var children = this.body.childElements();
-		for (var i=children.length-1;i&lt;index;i++) {
-			this.body.insert(new Element('</span>td<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_columns_column<span class="literal">'}));
+	ensureColumn : <span class="reserved">function</span>(index) {
+		var children = <span class="reserved">this</span>.body.childElements();
+		<span class="reserved">for</span> (var i=children.length-1;i&lt;index;i++) {
+			<span class="reserved">this</span>.body.insert(new Element(<span class="literal">'td'</span>,{<span class="literal">'class'</span>:<span class="literal">'in2igui_columns_column'</span>}));
 		}
-		return this.body.childElements()[index];
+		<span class="reserved">return</span> <span class="reserved">this</span>.body.childElements()[index];
 	}
 }
 
-/* EOF *//**
+<span class="comment">/* EOF */</span><span class="comment">/**
  * A dock
- * @constructor
- */
-In2iGui.Dock = function(element,name,options) {
-	this.options = N2i.override({modal:false},options);
-	this.element = $(element);
-	this.iframe = this.element.select('</span>iframe')[0];
+ * <span class="attrib">@constructor</span>
+ */</span>
+In2iGui.Dock = <span class="reserved">function</span>(element,name,options) {
+	<span class="reserved">this</span>.options = N2i.override({modal:false},options);
+	<span class="reserved">this</span>.element = $(element);
+	<span class="reserved">this</span>.iframe = <span class="reserved">this</span>.element.select(<span class="literal">'iframe'</span>)[0];
 	<span class="reserved">this</span>.name = name;
 	In2iGui.extend(<span class="reserved">this</span>);
 	In2iGui.get().registerOverflow(<span class="reserved">this</span>.iframe,-58);
@@ -12723,7 +13029,56 @@ In2iGui.Dock.<span class="reserved">prototype</span> = {
 	}
 }
 
-<span class="comment">/* EOF */</span></pre>
+<span class="comment">/* EOF */</span>In2iGui.Box = <span class="reserved">function</span>(element,name,options) {
+	<span class="reserved">this</span>.options = N2i.override({},options);
+	<span class="reserved">this</span>.name = name;
+	<span class="reserved">this</span>.element = $(element);
+	<span class="reserved">this</span>.body = <span class="reserved">this</span>.element.select(<span class="literal">'.in2igui_box_body'</span>)[0];
+	In2iGui.extend(<span class="reserved">this</span>);
+}
+
+In2iGui.Box.create = <span class="reserved">function</span>(name,options) {
+	options = N2i.override({},options);
+	var e = new Element(<span class="literal">'div'</span>,{<span class="literal">'class'</span>:<span class="literal">'in2igui_box'</span>});
+	<span class="reserved">if</span> (options.width) e.setStyle({width:options.width+<span class="literal">'px'</span>});
+	<span class="reserved">if</span> (options.absolute) e.addClassName(<span class="literal">'in2igui_box_absolute'</span>);
+	e.update(<span class="literal">'&lt;div class="in2igui_box_top"&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;'</span>+
+		<span class="literal">'&lt;div class="in2igui_box_middle"&gt;&lt;div class="in2igui_box_middle"&gt;'</span>+
+		(options.title ? <span class="literal">'&lt;div class="in2igui_box_header"&gt;&lt;strong class="in2igui_box_title"&gt;'</span>+options.title+<span class="literal">'&lt;/strong&gt;&lt;/div&gt;'</span> : <span class="literal">''</span>)+
+		<span class="literal">'&lt;div class="in2igui_box_body"'</span>+(options.padding ? <span class="literal">' style="padding: '</span>+options.padding+<span class="literal">'px;"'</span> : <span class="literal">''</span>)+<span class="literal">'&gt;&lt;/div&gt;'</span>+
+		<span class="literal">'&lt;/div&gt;&lt;/div&gt;'</span>+
+		<span class="literal">'&lt;div class="in2igui_box_bottom"&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;'</span>);
+	<span class="reserved">return</span> new In2iGui.Box(e,name,options);
+}
+
+In2iGui.Box.<span class="reserved">prototype</span> = {
+	addToDocument : <span class="reserved">function</span>() {
+		document.body.appendChild(<span class="reserved">this</span>.element);
+	},
+	add : <span class="reserved">function</span>(widget) {
+		<span class="reserved">if</span> (widget.getElement) {
+			<span class="reserved">this</span>.body.insert(widget.getElement());
+		} <span class="reserved">else</span> {
+			<span class="reserved">this</span>.body.insert(widget);
+		}
+	},
+	show : <span class="reserved">function</span>() {
+		var e = <span class="reserved">this</span>.element;
+		<span class="reserved">if</span> (<span class="reserved">this</span>.options.modal) {
+			var index = In2iGui.nextPanelIndex();
+			e.style.zIndex=index+1;
+			In2iGui.showCurtain(<span class="reserved">this</span>,index);
+		}
+		e.setStyle({display:<span class="literal">'block'</span>,visibility:<span class="literal">'hidden'</span>});
+		var w = e.getWidth();
+		e.setStyle({<span class="literal">'marginLeft'</span>:(w/-2)+<span class="literal">'px'</span>,top:(N2i.Window.getScrollTop()+80)+<span class="literal">'px'</span>});
+		e.setStyle({display:<span class="literal">'block'</span>,visibility:<span class="literal">'visible'</span>});
+	},
+	hide : <span class="reserved">function</span>() {
+		In2iGui.hideCurtain(<span class="reserved">this</span>);
+		<span class="reserved">this</span>.element.setStyle({display:<span class="literal">'none'</span>});
+	}
+}</pre>
 	<hr>
 
 
@@ -12781,6 +13136,6 @@ In2iGui.Dock.<span class="reserved">prototype</span> = {
 <font size="-1">
 
 </font>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Wed Oct 15 19:48:53 2008</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Mon Oct 27 19:02:21 2008</div>
 </body>
 </html>

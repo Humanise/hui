@@ -1,3 +1,7 @@
+/**
+ * @constructor
+ * The base class of the In2iGui framework
+ */
 function In2iGui() {
 	this.domLoaded = false;
 	this.overflows = null;
@@ -5,6 +9,7 @@ function In2iGui() {
 	this.objects = $H();
 	this.addBehavior();
 }
+
 In2iGui.latestObjectIndex=0;
 
 In2iGui.latestIndex=500;
@@ -19,6 +24,9 @@ In2iGui.browser.msie7 = navigator.userAgent.indexOf('MSIE 7')!=-1;
 In2iGui.browser.webkit = navigator.userAgent.indexOf('WebKit')!=-1;
 In2iGui.browser.gecko = !In2iGui.browser.webkit && navigator.userAgent.indexOf('Gecko')!=-1;
 
+/**
+ * Gets the one instance of In2iGui
+ */
 In2iGui.get = function(name) {
 	if (!In2iGui.instance) {
 		In2iGui.instance = new In2iGui();
@@ -170,6 +178,8 @@ In2iGui.prototype = {
 	}
 }
 
+///////////////////////////////// Indexes /////////////////////////////
+
 In2iGui.nextIndex = function() {
 	In2iGui.latestIndex++;
 	return 	In2iGui.latestIndex;
@@ -188,16 +198,7 @@ In2iGui.nextTopIndex = function() {
 	return 	In2iGui.latestTopIndex;
 }
 
-In2iGui.isWithin = function(e,element) {
-	Event.extend(e);
-	var offset = element.cumulativeOffset();
-	var dims = element.getDimensions();
-	return e.pointerX()>offset.left && e.pointerX()<offset.left+dims.width && e.pointerY()>offset.top && e.pointerY()<offset.top+dims.height;
-}
-
-In2iGui.getIconUrl = function(icon,size) {
-	return In2iGui.context+'/In2iGui/icons/'+icon+size+'.png';
-}
+///////////////////////////////// Curtain /////////////////////////////
 
 In2iGui.showCurtain = function(widget,zIndex) {
 	if (!widget.curtain) {
@@ -220,6 +221,38 @@ In2iGui.hideCurtain = function(widget) {
 	if (widget.curtain) {
 		$ani(widget.curtain,'opacity',0,200,{hideOnComplete:true});
 	}
+}
+
+//////////////////////////////// Message //////////////////////////////
+
+In2iGui.showMessage = function(msg) {
+	if (!In2iGui.message) {
+		In2iGui.message = new Element('div',{'class':'in2igui_message'}).update('<div><div></div></div>');
+		document.body.appendChild(In2iGui.message);
+	}
+	In2iGui.message.select('div')[1].update(msg);
+	In2iGui.message.setStyle({'display':'block',zIndex:In2iGui.nextTopIndex(),opacity:0});
+	In2iGui.message.setStyle({marginLeft:(In2iGui.message.getWidth()/-2)+'px',marginTop:N2i.Window.getScrollTop()+'px'});
+	$ani(In2iGui.message,'opacity',1,300);
+}
+
+In2iGui.hideMessage = function() {
+	if (In2iGui.message) {
+		$ani(In2iGui.message,'opacity',0,300,{hideOnComplete:true});
+	}
+}
+
+/////////////////////////////// Utilities /////////////////////////////
+
+In2iGui.isWithin = function(e,element) {
+	Event.extend(e);
+	var offset = element.cumulativeOffset();
+	var dims = element.getDimensions();
+	return e.pointerX()>offset.left && e.pointerX()<offset.left+dims.width && e.pointerY()>offset.top && e.pointerY()<offset.top+dims.height;
+}
+
+In2iGui.getIconUrl = function(icon,size) {
+	return In2iGui.context+'/In2iGui/icons/'+icon+size+'.png';
 }
 
 In2iGui.onDomReady = function(func) {
@@ -252,7 +285,7 @@ In2iGui.positionAtElement = function(element,target,options) {
 }
 
 
-/* ********************** Drag drop ******************* */
+//////////////////////////////// Drag drop //////////////////////////////
 
 In2iGui.getDragProxy = function() {
 	if (!In2iGui.dragProxy) {
@@ -354,7 +387,7 @@ In2iGui.dropOutListener = function(event) {
 
 /* ****************** Delegating *************** */
 
-In2iGui.extend = In2iGui.enableDelegating = function(obj) {
+In2iGui.extend = function(obj) {
 	if (!obj.name) {
 		In2iGui.latestObjectIndex++;
 		obj.name = 'unnamed'+In2iGui.latestObjectIndex;
@@ -525,6 +558,8 @@ In2iGui.parseItems = function(doc) {
 	return out;
 }
 
+////////////////////////////////// Source ///////////////////////////
+
 In2iGui.Source = function(id,name,options) {
 	this.options = N2i.override({url:null},options);
 	In2iGui.extend(this);
@@ -593,6 +628,8 @@ In2iGui.TextField.prototype = {
 		return this.value=='';
 	}
 }
+
+////////////////////////////////////// Info view /////////////////////////////
 
 In2iGui.InfoView = function(id,name,options) {
 	this.options = {clickObjects:false};

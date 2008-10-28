@@ -3,7 +3,7 @@ In2iGui.Icons = function(id,name,options) {
 	this.name = name;
 	this.element = $id(id);
 	this.source = options.source;
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 }
 
 /* EOF */

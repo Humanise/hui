@@ -46,8 +46,8 @@ div.in2igui_box_absolute
 {
 	display: none;
 	position: absolute;
-	top: 80px;
 	left: 50%;
+	top: 0px;
 }
 
 div.in2igui_box_top

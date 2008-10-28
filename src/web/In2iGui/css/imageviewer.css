@@ -1,13 +1,6 @@
 .in2igui_imageviewer
 {
-	width: 510px;
-	height: 410px;
-	/*border: 1px solid #eee;*/
 	background: #fff;
-	position: absolute;
-	left: 50%;
-	margin-left: -250px;
-	top: 100px;
 }
 
 .in2igui_imageviewer_viewer

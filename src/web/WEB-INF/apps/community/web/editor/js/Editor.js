@@ -58,8 +58,11 @@ OO.Editor.prototype = {
 		$ani(this.toolbarPadder,'padding-top','58px',instantly ? 0 : 600,{ease:N2i.Animation.slowFastSlow});
 		this.toolbarRevealer.show(instantly);
 		this.enableWebNodeEditing();
-		this.delegate.activate();
-		In2iGui.Editor.get().activate();
+		var self = this;
+		window.setTimeout(function() {
+			self.delegate.activate();
+			In2iGui.Editor.get().activate();
+		},700);
 	},
 	deactivate : function() {
 		if (!this.active) return;

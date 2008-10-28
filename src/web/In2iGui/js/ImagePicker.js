@@ -6,7 +6,7 @@ In2iGui.ImagePicker = function(id,name,options) {
 	this.images = [];
 	this.object = null;
 	this.thumbnailsLoaded = false;
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 	this.addBehavior();
 }
 

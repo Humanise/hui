@@ -30,13 +30,21 @@ OO.ImageGallery.prototype = {
 	ignite : function() {
 		this.addBehaviour();
 	},
+	isActiveEditor : function() {
+		if (OO.Editor && OO.Editor.ImageGallery) {
+			return OO.Editor.ImageGallery.getInstance().isActive();
+		}
+		return false;
+	},
 	addBehaviour : function() {
 		var self = this;
 		for (var i=0; i < this.images.length; i++) {
 			var tag = $id('image-'+this.images[i].id);
 			tag.imageGalleryIndex = i;
 			tag.onclick = function() {
-				self.imageWasClicked(this.imageGalleryIndex);
+				if (!self.isActiveEditor()) {
+					self.imageWasClicked(this.imageGalleryIndex);
+				}
 			}
 		};
 	},

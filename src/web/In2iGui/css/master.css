@@ -62,6 +62,34 @@ div.in2igui_text p
 	margin: 5px 0px;
 }
 
+/*********************** message **********************/
+
+div.in2igui_message
+{
+	position: absolute;
+	top: 40%;
+	left: 50%;
+	height: 46px;
+	background: url('../gfx/overlay2.png') left top no-repeat;
+	padding-left: 8px;
+	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+	line-height: 46px;
+	color: #fff;
+}
+
+div.in2igui_message div
+{
+	background: url('../gfx/overlay2.png') right -46px no-repeat;
+	padding-right: 8px;
+	height: 46px;
+}
+
+div.in2igui_message div div
+{
+	background: url('../gfx/overlay2.png') left -92px repeat-x;
+	padding: 0px 10px;
+}
+
 /************************* Split ********************/
 
 table.split

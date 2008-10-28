@@ -8,7 +8,7 @@ In2iGui.Sidebar.Selector = function(id,source) {
 	this.element = $id(id);
 	this.items = [];
 	this.selected = [];
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 	this.addBehavior();
 }
 

@@ -3,7 +3,7 @@ In2iGui.ViewStack = function(id,name,options) {
 	this.name = name;
 	this.element = $id(id);
 	this.contents = [];
-	In2iGui.enableDelegating(this);
+	In2iGui.extend(this);
 }
 
 In2iGui.ViewStack.prototype.registerContent = function(id,name) {

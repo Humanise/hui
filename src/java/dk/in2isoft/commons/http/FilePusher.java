@@ -41,6 +41,7 @@ public class FilePusher {
         else {
             response.setDateHeader("Last-Modified", file.lastModified());
             response.setDateHeader("Expires", System.currentTimeMillis()+1000*60*30);
+            response.setDateHeader("Date", System.currentTimeMillis());
         }
         if (contentType!=null && contentType.length()>0) {
             response.setContentType(contentType);

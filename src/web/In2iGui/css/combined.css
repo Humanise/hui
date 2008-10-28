@@ -43,6 +43,25 @@ a.in2igui_link:hover, a.in2igui_link:hover span
 	color: #0033aa;
 }
 
+/*********************** text **********************/
+
+div.in2igui_text
+{
+	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+}
+
+div.in2igui_text h1
+{
+	margin: 0px;
+	font-size: 12pt;
+}
+
+div.in2igui_text p
+{
+	font-size: 9pt;
+	margin: 5px 0px;
+}
+
 /************************* Split ********************/
 
 table.split
@@ -814,6 +833,14 @@ div.in2igui_box
 	margin: 0 auto;
 }
 
+div.in2igui_box_absolute
+{
+	display: none;
+	position: absolute;
+	top: 80px;
+	left: 50%;
+}
+
 div.in2igui_box_top
 {
 	height: 5px;
@@ -879,6 +906,7 @@ div.in2igui_box_header
 	background: url('../gfx/box_toolbar.png') left top repeat-x;
 	border: 1px solid #b6c1d0;
 	border-width: 0px 1px;
+	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
 }
 
 strong.in2igui_box_title
@@ -2550,7 +2578,7 @@ div.in2igui_multiupload
 
 div.in2igui_multiupload div.in2igui_buttons
 {
-	padding: 5px 5px 0px 5px;
+	padding: 5px 0px 0px 0px;
 }
 
 div.in2igui_multiupload_items
