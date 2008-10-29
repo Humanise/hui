@@ -236,7 +236,7 @@ In2iGui.showMessage = function(msg) {
 	$ani(In2iGui.message,'opacity',1,300);
 }
 
-In2iGui.hideMessage = function() {
+In2iGui.hideMessage = function() {
 	if (In2iGui.message) {
 		$ani(In2iGui.message,'opacity',0,300,{hideOnComplete:true});
 	}

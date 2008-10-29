@@ -5859,10 +5859,6 @@ In2iGui.browser.msie7 = navigator.userAgent.indexOf('MSIE 7')!=-1;
 In2iGui.browser.webkit = navigator.userAgent.indexOf('WebKit')!=-1;
 In2iGui.browser.gecko = !In2iGui.browser.webkit && navigator.userAgent.indexOf('Gecko')!=-1;
 
-/*!
- @function FunctionName
- This is a comment about FunctionName.
-*/
 /**
  * Gets the one instance of In2iGui
  */
@@ -6061,6 +6057,27 @@ In2iGui.hideCurtain = function(widget) {
 		$ani(widget.curtain,'opacity',0,200,{hideOnComplete:true});
 	}
 }
+
+//////////////////////////////// Message //////////////////////////////
+
+In2iGui.showMessage = function(msg) {
+	if (!In2iGui.message) {
+		In2iGui.message = new Element('div',{'class':'in2igui_message'}).update('<div><div></div></div>');
+		document.body.appendChild(In2iGui.message);
+	}
+	In2iGui.message.select('div')[1].update(msg);
+	In2iGui.message.setStyle({'display':'block',zIndex:In2iGui.nextTopIndex(),opacity:0});
+	In2iGui.message.setStyle({marginLeft:(In2iGui.message.getWidth()/-2)+'px',marginTop:N2i.Window.getScrollTop()+'px'});
+	$ani(In2iGui.message,'opacity',1,300);
+}
+
+In2iGui.hideMessage = function() {
+	if (In2iGui.message) {
+		$ani(In2iGui.message,'opacity',0,300,{hideOnComplete:true});
+	}
+}
+
+/////////////////////////////// Utilities /////////////////////////////
 
 In2iGui.isWithin = function(e,element) {
 	Event.extend(e);
@@ -6376,6 +6393,8 @@ In2iGui.parseItems = function(doc) {
 	return out;
 }
 
+////////////////////////////////// Source ///////////////////////////
+
 In2iGui.Source = function(id,name,options) {
 	this.options = N2i.override({url:null},options);
 	In2iGui.extend(this);
@@ -6444,6 +6463,8 @@ In2iGui.TextField.prototype = {
 		return this.value=='';
 	}
 }
+
+////////////////////////////////////// Info view /////////////////////////////
 
 In2iGui.InfoView = function(id,name,options) {
 	this.options = {clickObjects:false};

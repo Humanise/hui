@@ -62,6 +62,34 @@ div.in2igui_text p
 	margin: 5px 0px;
 }
 
+/*********************** message **********************/
+
+div.in2igui_message
+{
+	position: absolute;
+	top: 40%;
+	left: 50%;
+	height: 46px;
+	background: url('../gfx/overlay2.png') left top no-repeat;
+	padding-left: 8px;
+	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+	line-height: 46px;
+	color: #fff;
+}
+
+div.in2igui_message div
+{
+	background: url('../gfx/overlay2.png') right -46px no-repeat;
+	padding-right: 8px;
+	height: 46px;
+}
+
+div.in2igui_message div div
+{
+	background: url('../gfx/overlay2.png') left -92px repeat-x;
+	padding: 0px 10px;
+}
+
 /************************* Split ********************/
 
 table.split
@@ -837,8 +865,8 @@ div.in2igui_box_absolute
 {
 	display: none;
 	position: absolute;
-	top: 80px;
 	left: 50%;
+	top: 0px;
 }
 
 div.in2igui_box_top
@@ -2203,14 +2231,8 @@ div.in2igui_boundpanel div.in2igui_field, div.in2igui_boundpanel input.in2igui_t
 	margin: 5px 2px 0px;
 }.in2igui_imageviewer
 {
-	width: 510px;
-	height: 410px;
-	/*border: 1px solid #eee;*/
 	background: #fff;
-	position: absolute;
-	left: 50%;
-	margin-left: -250px;
-	top: 100px;
+	font: 10pt "Lucida Grande", "Lucida Sans Unicode", Verdana, sans-serif;
 }
 
 .in2igui_imageviewer_viewer
@@ -2231,7 +2253,6 @@ div.in2igui_boundpanel div.in2igui_field, div.in2igui_boundpanel input.in2igui_t
 	color: #666;
 	margin-top: 26px;
 	margin-left: 5px;
-	font: 10pt "Lucida Grande", "Lucida Sans Unicode", Verdana, sans-serif;
 }
 
 .in2igui_imageviewer_image
@@ -2308,6 +2329,16 @@ div.in2igui_boundpanel div.in2igui_field, div.in2igui_boundpanel input.in2igui_t
 	background-position: -35px -93px;
 }
 
+div.in2igui_imageviewer_text
+{
+	height: 20px;
+	line-height: 20px;
+	margin-left: 2px;
+	margin-top: -22px;
+	padding: 0 5px;
+	position: absolute;
+	background: #fff;
+}
 .in2igui_picker
 {
 	background: #b9bec6;
