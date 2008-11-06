@@ -10715,7 +10715,7 @@ In2iGui.RichText.stopEvent = function(e) {
 }
 
 /* EOF */In2iGui.ImageViewer = function(element,name,options) {
-	this.options = N2i.override({maxWidth:800,maxHeight:600},options);
+	this.options = N2i.override({maxWidth:800,maxHeight:600,perimeter:100,sizeSnap:100},options);
 	this.element = $(element);
 	this.box = this.options.box;
 	this.viewer = this.element.select('.in2igui_imageviewer_viewer')[0];
@@ -10799,11 +10799,12 @@ In2iGui.ImageViewer.prototype = {
 		}
 	},	
 	calculateSize : function() {
-		var newWidth = N2i.Window.getInnerWidth()-100;
-		newWidth = Math.floor(newWidth/100)*100;
+		var snap = this.options.sizeSnap;
+		var newWidth = N2i.Window.getInnerWidth()-this.options.perimeter;
+		newWidth = Math.floor(newWidth/snap)*snap;
 		newWidth = Math.min(newWidth,this.options.maxWidth);
-		var newHeight = N2i.Window.getInnerHeight()-100;
-		newHeight = Math.floor(newHeight/100)*100;
+		var newHeight = N2i.Window.getInnerHeight()-this.options.perimeter;
+		newHeight = Math.floor(newHeight/snap)*snap;
 		newHeight = Math.min(newHeight,this.options.maxHeight);
 		var maxWidth = 0;
 		var maxHeight = 0;
