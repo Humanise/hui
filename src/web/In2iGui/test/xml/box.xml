@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:In2iGui" pad="10" title="Box">
-	<box width="400" padding="10" title="Title with toolbar">
+	<box width="400" padding="10" title="Title with toolbar" variant="textured">
 		<toolbar>
 			<icon icon="common/color" title="Hep hey!" selected="true" action="alert(0)"/>
 			<icon icon="common/folder" title="Hep hey!"/>
@@ -23,7 +23,7 @@
 			</group>
 		</formula>
 	</box>
-	<box width="400" padding="10" title="Title with no toolbar">
+	<box width="400" padding="10" title="Title with no toolbar" variant="textured">
 		<formula>
 			<group>
 				<text label="Brugernavn:"/>
@@ -40,7 +40,7 @@
 			</group>
 		</formula>
 	</box>
-	<box width="400" padding="10">
+	<box width="400" padding="10" variant="textured">
 		<formula>
 			<group>
 				<text label="Brugernavn:"/>

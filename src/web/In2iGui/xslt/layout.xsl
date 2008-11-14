@@ -97,7 +97,11 @@
 </xsl:template>
 
 <xsl:template match="gui:box">
-	<div class="in2igui_box">
+	<div>
+		<xsl:attribute name="class">
+			<xsl:text>in2igui_box</xsl:text>
+			<xsl:if test="@variant"><xsl:text> in2igui_box_</xsl:text><xsl:value-of select="@variant"/></xsl:if>
+		</xsl:attribute>
 		<xsl:if test="@width"><xsl:attribute name="style">width: <xsl:value-of select="@width"/>px;</xsl:attribute></xsl:if>
 		<div class="in2igui_box_top"><div><div><xsl:comment/></div></div></div>
 		<div class="in2igui_box_middle"><div class="in2igui_box_middle">

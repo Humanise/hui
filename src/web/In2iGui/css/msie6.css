@@ -41,8 +41,8 @@ div.in2igui_alert_body
 {
 	height: 1%;
 }
-/*
-body, textarea
+
+div.in2igui_box_top, div.in2igui_box_top div, div.in2igui_box_top div div, div.in2igui_box_bottom, div.in2igui_box_bottom div, div.in2igui_box_bottom div div, div.in2igui_box_middle, div.in2igui_box_middle div.in2igui_box_middle
 {
-	font-family: "MS Sans Serif",sans-serif;
-}*/
+	background: none;
+}

@@ -10838,11 +10838,11 @@ In2iGui.ImageViewer.prototype = {
 		this.index = index || 0;
 		this.calculateSize();
 		this.updateUI();
-		var space = this.shouldShowController() ? 50 : 5;
+		var space = this.shouldShowController() ? 50 : 10;
 		this.element.setStyle({width:(this.width+10)+'px',height:(this.height+space)+'px'});
 		this.viewer.setStyle({width:(this.width+10)+'px',height:this.height+'px'});
 		this.innerViewer.setStyle({width:((this.width+10)*this.images.length)+'px',height:this.height+'px'});
-		this.controller.setStyle({marginLeft:((this.width-115)/2+5)+'px'});
+		this.controller.setStyle({paddingLeft:((this.width-115)/2+5)+'px'});
 		this.box.show();
 		this.goToImage(false,0,false);
 		N2i.addListener(document,'keydown',this.keyListener);

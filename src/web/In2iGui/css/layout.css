@@ -104,9 +104,14 @@ div.in2igui_box_middle div.in2igui_box_middle
 
 div.in2igui_box_body
 {
+	padding: 0px;
+	background: #fff;
+}
+
+div.in2igui_box_textured div.in2igui_box_body
+{
 	background: #f3f3f3;
 	border: 1px solid #fff;
-	padding: 0px;
 }
 
 div.in2igui_box_header

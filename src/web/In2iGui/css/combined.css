@@ -923,9 +923,14 @@ div.in2igui_box_middle div.in2igui_box_middle
 
 div.in2igui_box_body
 {
+	padding: 0px;
+	background: #fff;
+}
+
+div.in2igui_box_textured div.in2igui_box_body
+{
 	background: #f3f3f3;
 	border: 1px solid #fff;
-	padding: 0px;
 }
 
 div.in2igui_box_header
@@ -2233,13 +2238,14 @@ div.in2igui_boundpanel div.in2igui_field, div.in2igui_boundpanel input.in2igui_t
 {
 	background: #fff;
 	font: 10pt "Lucida Grande", "Lucida Sans Unicode", Verdana, sans-serif;
+	text-align: left;
 }
 
 .in2igui_imageviewer_viewer
 {
 	width: 500px;
 	height: 360px;
-	margin: 5px 0px 0px;
+	padding: 5px 0px 0px;
 	overflow: hidden;
 }
 
@@ -2268,9 +2274,8 @@ div.in2igui_boundpanel div.in2igui_field, div.in2igui_boundpanel input.in2igui_t
 
 .in2igui_imageviewer_controller
 {
-	margin-top: 7px;
+	padding-top: 7px;
 	height: 30px;
-	margin-left:200px;
 	width: 115px;
 }
 
@@ -2332,11 +2337,11 @@ div.in2igui_boundpanel div.in2igui_field, div.in2igui_boundpanel input.in2igui_t
 div.in2igui_imageviewer_text
 {
 	height: 20px;
+	position: absolute;
 	line-height: 20px;
 	margin-left: 2px;
 	margin-top: -22px;
 	padding: 0 5px;
-	position: absolute;
 	background: #fff;
 }
 .in2igui_picker
