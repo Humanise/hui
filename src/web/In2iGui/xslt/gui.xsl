@@ -43,6 +43,7 @@
 
 <xsl:choose>
 	<xsl:when test="$dev='true'">
+		<script src="{$context}/In2iGui/lib/swfobject.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/lib/swfupload/swfupload.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<!--
 		<script src="{$context}/In2iGui/lib/swfupload/swfupload.cookies.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
@@ -136,8 +137,18 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 
 <xsl:template match="gui:source">
 <script type="text/javascript">
-	var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Source(null,'<xsl:value-of select="@name"/>',{url:'<xsl:value-of select="@url"/>'});
+	var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Source(null,'<xsl:value-of select="@name"/>',{
+		<xsl:choose>
+			<xsl:when test="@url">url:'<xsl:value-of select="@url"/>'</xsl:when>
+			<xsl:when test="@dwr">dwr:'<xsl:value-of select="@dwr"/>'</xsl:when>
+		</xsl:choose>
+	});
 	<xsl:call-template name="gui:createobject"/>
+	with (<xsl:value-of select="generate-id()"/>_obj) {
+		<xsl:for-each select="gui:parameter">
+			addParameter({key:'<xsl:value-of select="@key"/>',value:'<xsl:value-of select="@value"/>'})
+		</xsl:for-each>
+	}
 </script>
 </xsl:template>
 
@@ -250,7 +261,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 		<xsl:if test="@state and @state!=//gui:gui/@state">
 			<xsl:attribute name="style">display:none</xsl:attribute>
 		</xsl:if>
-		<div class="navigation"><span class="window_size"/><div class="selection window_number"><div><div class="window_number_body"><xsl:comment/></div></div></div><span class="count"/></div>
+		<div class="navigation"><span class="window_size"/><div class="selection window_page"><div><div class="window_page_body"><xsl:comment/></div></div></div><span class="count"/></div>
 		<table cellspacing="0" cellpadding="0">
 			<thead>
 				<tr>
@@ -261,7 +272,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 		</table>
 	</div>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.List('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>',{source:'<xsl:value-of select="@source"/>',state:'<xsl:value-of select="@state"/>',windowSize:'<xsl:value-of select="gui:window/@size"/>'});
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.List('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>',{url:'<xsl:value-of select="@url"/>',<xsl:if test="@source">source:<xsl:value-of select="@source"/>,</xsl:if>state:'<xsl:value-of select="@state"/>',windowSize:'<xsl:value-of select="gui:window/@size"/>'});
 		with (<xsl:value-of select="generate-id()"/>_obj) {
 			<xsl:for-each select="gui:column">
 				registerColumn({key:'<xsl:value-of select="@key"/>',title:'<xsl:value-of select="@title"/>'});
@@ -449,28 +460,12 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 <!-- Upload -->
 
 <xsl:template match="gui:upload">
-	<div class="upload" id="{generate-id()}">
-		<form target="{generate-id()}_iframe" method="post" enctype="multipart/form-data">
-			<input type="file" class="file"/>
-		</form>
-		<iframe name="{generate-id()}_iframe" style="display: none;"><xsl:comment/></iframe>
-		<a id="{generate-id()}_button" href="#">Vælg</a>
+	<div class="in2igui_upload" id="{generate-id()}">
+		<div class="in2igui_upload_placeholder"><xsl:comment/></div>
+		<div class="in2igui_upload_items"><xsl:comment/></div>
 	</div>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Upload('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>');
-		<xsl:call-template name="gui:createobject"/>
-	</script>
-</xsl:template>
-
-<xsl:template match="gui:multiupload">
-	<div class="in2igui_multiupload" id="{generate-id()}">
-		<div class="in2igui_buttons">
-		<a href="#" class="in2igui_button"><span><span>Vælg billeder...</span></span></a>
-		</div>
-		<div class="in2igui_multiupload_items"><xsl:comment/></div>
-	</div>
-	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.MultiUpload('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>',{'url':'<xsl:value-of select="@url"/>'});
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Upload('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>',{url:'<xsl:value-of select="@url"/>',button:'<xsl:value-of select="@button"/>'});
 		<xsl:call-template name="gui:createobject"/>
 	</script>
 </xsl:template>

@@ -1,7 +1,7 @@
 In2iGui.Tabbox = function(id,name) {
 	this.id = id;
 	this.name = name;
-	this.element = $id(id);
+	this.element = $(id);
 	this.panes = $class('tab',$class('tabbox_top',this.element)[0]);
 	this.activeTab = 0;
 	this.tabs = [];
@@ -47,7 +47,7 @@ In2iGui.Tabbox.prototype.updateGUI = function() {
 In2iGui.Tabbox.Tab = function(id,name) {
 	this.id = id;
 	this.name = name;
-	this.element = $id(id);
+	this.element = $(id);
 	In2iGui.extend(this);
 }
 

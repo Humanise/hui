@@ -135,6 +135,11 @@ function asd() {
     </tr>
     
     <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="In2iGui.Upload.Item.html">In2iGui.Upload.Item</a></b></td>
+    <td>&nbsp;</td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
     <td width="15%"><b><a href="N2i.Preloader.html">N2i.Preloader</a></b></td>
     <td>&nbsp;</td>
     </tr>
@@ -170,11 +175,6 @@ function asd() {
     </tr>
     
     <tr bgcolor="white" class="TableRowColor">
-    <td width="15%"><b><a href="In2iGui.MultiUpload.Item.html">In2iGui.MultiUpload.Item</a></b></td>
-    <td>&nbsp;</td>
-    </tr>
-    
-    <tr bgcolor="white" class="TableRowColor">
     <td width="15%"><b><a href="In2iGui.List.html">In2iGui.List</a></b></td>
     <td>&nbsp;</td>
     </tr>
@@ -186,11 +186,6 @@ function asd() {
     
     <tr bgcolor="white" class="TableRowColor">
     <td width="15%"><b><a href="In2iGui.Button.html">In2iGui.Button</a></b></td>
-    <td>&nbsp;</td>
-    </tr>
-    
-    <tr bgcolor="white" class="TableRowColor">
-    <td width="15%"><b><a href="In2iGui.MultiUpload.html">In2iGui.MultiUpload</a></b></td>
     <td>&nbsp;</td>
     </tr>
     
@@ -256,11 +251,6 @@ function asd() {
     
     <tr bgcolor="white" class="TableRowColor">
     <td width="15%"><b><a href="In2iGui.Buttons.html">In2iGui.Buttons</a></b></td>
-    <td>&nbsp;</td>
-    </tr>
-    
-    <tr bgcolor="white" class="TableRowColor">
-    <td width="15%"><b><a href="In2iGui.Panel.html">In2iGui.Panel</a></b></td>
     <td>&nbsp;</td>
     </tr>
     
@@ -5512,7 +5502,11 @@ Object.extend(Element.ClassNames.<span class="reserved">prototype</span>, Enumer
 
 <span class="comment">/*--------------------------------------------------------------------------*/</span>
 
-Element.addMethods();<span class="comment">/**
+Element.addMethods();<span class="comment">/*	SWFObject v2.0 &lt;http://code.google.com/p/swfobject/&gt;
+	Copyright (c) 2007 Geoff Stearns, Michael Williams, and Bobby van der Sluis
+	This software is released under the MIT License &lt;http://www.opensource.org/licenses/mit-license.php&gt;
+*/</span>
+var swfobject=<span class="reserved">function</span>(){var Z=<span class="literal">"undefined"</span>,P=<span class="literal">"object"</span>,B=<span class="literal">"Shockwave Flash"</span>,h=<span class="literal">"ShockwaveFlash.ShockwaveFlash"</span>,W=<span class="literal">"application/x-shockwave-flash"</span>,K=<span class="literal">"SWFObjectExprInst"</span>,G=window,g=document,N=navigator,f=[],H=[],Q=null,L=null,T=null,S=false,C=false;var a=<span class="reserved">function</span>(){var l=typeof g.getElementById!=Z&amp;&amp;typeof g.getElementsByTagName!=Z&amp;&amp;typeof g.createElement!=Z&amp;&amp;typeof g.appendChild!=Z&amp;&amp;typeof g.replaceChild!=Z&amp;&amp;typeof g.removeChild!=Z&amp;&amp;typeof g.cloneNode!=Z,t=[0,0,0],n=null;<span class="reserved">if</span>(typeof N.plugins!=Z&amp;&amp;typeof N.plugins[B]==P){n=N.plugins[B].description;<span class="reserved">if</span>(n){n=n.replace(/^.*\s+(\S+\s+\S+$)/,<span class="literal">"$1"</span>);t[0]=parseInt(n.replace(/^(.*)\..*$/,<span class="literal">"$1"</span>),10);t[1]=parseInt(n.replace(/^.*\.(.*)\s.*$/,<span class="literal">"$1"</span>),10);t[2]=/r/.test(n)?parseInt(n.replace(/^.*r(.*)$/,<span class="literal">"$1"</span>),10):0}}<span class="reserved">else</span>{<span class="reserved">if</span>(typeof G.ActiveXObject!=Z){var o=null,s=false;try{o=new ActiveXObject(h+<span class="literal">".7"</span>)}catch(k){try{o=new ActiveXObject(h+<span class="literal">".6"</span>);t=[6,0,21];o.AllowScriptAccess=<span class="literal">"always"</span>}catch(k){<span class="reserved">if</span>(t[0]==6){s=true}}<span class="reserved">if</span>(!s){try{o=new ActiveXObject(h)}catch(k){}}}<span class="reserved">if</span>(!s&amp;&amp;o){try{n=o.GetVariable(<span class="literal">"$version"</span>);<span class="reserved">if</span>(n){n=n.split(<span class="literal">" "</span>)[1].split(<span class="literal">","</span>);t=[parseInt(n[0],10),parseInt(n[1],10),parseInt(n[2],10)]}}catch(k){}}}}var v=N.userAgent.toLowerCase(),j=N.platform.toLowerCase(),r=/webkit/.test(v)?parseFloat(v.replace(/^.*webkit\/(\d+(\.\d+)?).*$/,<span class="literal">"$1"</span>)):false,i=false,q=j?/win/.test(j):/win/.test(v),m=j?/mac/.test(j):/mac/.test(v);<span class="comment">/*<span class="attrib">@cc_on</span> i=true;<span class="attrib">@if</span>(<span class="attrib">@_win32</span>)q=true;<span class="attrib">@elif</span>(<span class="attrib">@_mac</span>)m=true;<span class="attrib">@end</span>@*/</span><span class="reserved">return</span>{w3cdom:l,pv:t,webkit:r,ie:i,win:q,mac:m}}();var e=<span class="reserved">function</span>(){<span class="reserved">if</span>(!a.w3cdom){<span class="reserved">return</span> }J(I);<span class="reserved">if</span>(a.ie&amp;&amp;a.win){try{g.write(<span class="literal">"&lt;script id=__ie_ondomload defer=true src=//:&gt;&lt;\/script&gt;"</span>);var i=c(<span class="literal">"__ie_ondomload"</span>);<span class="reserved">if</span>(i){i.onreadystatechange=<span class="reserved">function</span>(){<span class="reserved">if</span>(<span class="reserved">this</span>.readyState==<span class="literal">"complete"</span>){<span class="reserved">this</span>.parentNode.removeChild(<span class="reserved">this</span>);V()}}}}catch(j){}}<span class="reserved">if</span>(a.webkit&amp;&amp;typeof g.readyState!=Z){Q=setInterval(<span class="reserved">function</span>(){<span class="reserved">if</span>(/loaded|complete/.test(g.readyState)){V()}},10)}<span class="reserved">if</span>(typeof g.addEventListener!=Z){g.addEventListener(<span class="literal">"DOMContentLoaded"</span>,V,null)}M(V)}();<span class="reserved">function</span> V(){<span class="reserved">if</span>(S){<span class="reserved">return</span> }<span class="reserved">if</span>(a.ie&amp;&amp;a.win){var m=Y(<span class="literal">"span"</span>);try{var l=g.getElementsByTagName(<span class="literal">"body"</span>)[0].appendChild(m);l.parentNode.removeChild(l)}catch(n){<span class="reserved">return</span> }}S=true;<span class="reserved">if</span>(Q){clearInterval(Q);Q=null}var j=f.length;<span class="reserved">for</span>(var k=0;k&lt;j;k++){f[k]()}}<span class="reserved">function</span> J(i){<span class="reserved">if</span>(S){i()}<span class="reserved">else</span>{f[f.length]=i}}<span class="reserved">function</span> M(j){<span class="reserved">if</span>(typeof G.addEventListener!=Z){G.addEventListener(<span class="literal">"load"</span>,j,false)}<span class="reserved">else</span>{<span class="reserved">if</span>(typeof g.addEventListener!=Z){g.addEventListener(<span class="literal">"load"</span>,j,false)}<span class="reserved">else</span>{<span class="reserved">if</span>(typeof G.attachEvent!=Z){G.attachEvent(<span class="literal">"onload"</span>,j)}<span class="reserved">else</span>{<span class="reserved">if</span>(typeof G.onload==<span class="literal">"function"</span>){var i=G.onload;G.onload=<span class="reserved">function</span>(){i();j()}}<span class="reserved">else</span>{G.onload=j}}}}}<span class="reserved">function</span> I(){var l=H.length;<span class="reserved">for</span>(var j=0;j&lt;l;j++){var m=H[j].id;<span class="reserved">if</span>(a.pv[0]&gt;0){var k=c(m);<span class="reserved">if</span>(k){H[j].width=k.getAttribute(<span class="literal">"width"</span>)?k.getAttribute(<span class="literal">"width"</span>):<span class="literal">"0"</span>;H[j].height=k.getAttribute(<span class="literal">"height"</span>)?k.getAttribute(<span class="literal">"height"</span>):<span class="literal">"0"</span>;<span class="reserved">if</span>(O(H[j].swfVersion)){<span class="reserved">if</span>(a.webkit&amp;&amp;a.webkit&lt;312){U(k)}X(m,true)}<span class="reserved">else</span>{<span class="reserved">if</span>(H[j].expressInstall&amp;&amp;!C&amp;&amp;O(<span class="literal">"6.0.65"</span>)&amp;&amp;(a.win||a.mac)){D(H[j])}<span class="reserved">else</span>{d(k)}}}}<span class="reserved">else</span>{X(m,true)}}}<span class="reserved">function</span> U(m){var k=m.getElementsByTagName(P)[0];<span class="reserved">if</span>(k){var p=Y(<span class="literal">"embed"</span>),r=k.attributes;<span class="reserved">if</span>(r){var o=r.length;<span class="reserved">for</span>(var n=0;n&lt;o;n++){<span class="reserved">if</span>(r[n].nodeName.toLowerCase()==<span class="literal">"data"</span>){p.setAttribute(<span class="literal">"src"</span>,r[n].nodeValue)}<span class="reserved">else</span>{p.setAttribute(r[n].nodeName,r[n].nodeValue)}}}var q=k.childNodes;<span class="reserved">if</span>(q){var s=q.length;<span class="reserved">for</span>(var l=0;l&lt;s;l++){<span class="reserved">if</span>(q[l].nodeType==1&amp;&amp;q[l].nodeName.toLowerCase()==<span class="literal">"param"</span>){p.setAttribute(q[l].getAttribute(<span class="literal">"name"</span>),q[l].getAttribute(<span class="literal">"value"</span>))}}}m.parentNode.replaceChild(p,m)}}<span class="reserved">function</span> F(i){<span class="reserved">if</span>(a.ie&amp;&amp;a.win&amp;&amp;O(<span class="literal">"8.0.0"</span>)){G.attachEvent(<span class="literal">"onunload"</span>,<span class="reserved">function</span>(){var k=c(i);<span class="reserved">if</span>(k){<span class="reserved">for</span>(var j in k){<span class="reserved">if</span>(typeof k[j]==<span class="literal">"function"</span>){k[j]=<span class="reserved">function</span>(){}}}k.parentNode.removeChild(k)}})}}<span class="reserved">function</span> D(j){C=true;var o=c(j.id);<span class="reserved">if</span>(o){<span class="reserved">if</span>(j.altContentId){var l=c(j.altContentId);<span class="reserved">if</span>(l){L=l;T=j.altContentId}}<span class="reserved">else</span>{L=b(o)}<span class="reserved">if</span>(!(/%$/.test(j.width))&amp;&amp;parseInt(j.width,10)&lt;310){j.width=<span class="literal">"310"</span>}<span class="reserved">if</span>(!(/%$/.test(j.height))&amp;&amp;parseInt(j.height,10)&lt;137){j.height=<span class="literal">"137"</span>}g.title=g.title.slice(0,47)+<span class="literal">" - Flash Player Installation"</span>;var n=a.ie&amp;&amp;a.win?<span class="literal">"ActiveX"</span>:<span class="literal">"PlugIn"</span>,k=g.title,m=<span class="literal">"MMredirectURL="</span>+G.location+<span class="literal">"&amp;MMplayerType="</span>+n+<span class="literal">"&amp;MMdoctitle="</span>+k,p=j.id;<span class="reserved">if</span>(a.ie&amp;&amp;a.win&amp;&amp;o.readyState!=4){var i=Y(<span class="literal">"div"</span>);p+=<span class="literal">"SWFObjectNew"</span>;i.setAttribute(<span class="literal">"id"</span>,p);o.parentNode.insertBefore(i,o);o.style.display=<span class="literal">"none"</span>;G.attachEvent(<span class="literal">"onload"</span>,<span class="reserved">function</span>(){o.parentNode.removeChild(o)})}R({data:j.expressInstall,id:K,width:j.width,height:j.height},{flashvars:m},p)}}<span class="reserved">function</span> d(j){<span class="reserved">if</span>(a.ie&amp;&amp;a.win&amp;&amp;j.readyState!=4){var i=Y(<span class="literal">"div"</span>);j.parentNode.insertBefore(i,j);i.parentNode.replaceChild(b(j),i);j.style.display=<span class="literal">"none"</span>;G.attachEvent(<span class="literal">"onload"</span>,<span class="reserved">function</span>(){j.parentNode.removeChild(j)})}<span class="reserved">else</span>{j.parentNode.replaceChild(b(j),j)}}<span class="reserved">function</span> b(n){var m=Y(<span class="literal">"div"</span>);<span class="reserved">if</span>(a.win&amp;&amp;a.ie){m.innerHTML=n.innerHTML}<span class="reserved">else</span>{var k=n.getElementsByTagName(P)[0];<span class="reserved">if</span>(k){var o=k.childNodes;<span class="reserved">if</span>(o){var j=o.length;<span class="reserved">for</span>(var l=0;l&lt;j;l++){<span class="reserved">if</span>(!(o[l].nodeType==1&amp;&amp;o[l].nodeName.toLowerCase()==<span class="literal">"param"</span>)&amp;&amp;!(o[l].nodeType==8)){m.appendChild(o[l].cloneNode(true))}}}}}<span class="reserved">return</span> m}<span class="reserved">function</span> R(AE,AC,q){var p,t=c(q);<span class="reserved">if</span>(typeof AE.id==Z){AE.id=q}<span class="reserved">if</span>(a.ie&amp;&amp;a.win){var AD=<span class="literal">""</span>;<span class="reserved">for</span>(var z in AE){<span class="reserved">if</span>(AE[z]!=Object.<span class="reserved">prototype</span>[z]){<span class="reserved">if</span>(z==<span class="literal">"data"</span>){AC.movie=AE[z]}<span class="reserved">else</span>{<span class="reserved">if</span>(z.toLowerCase()==<span class="literal">"styleclass"</span>){AD+=<span class="literal">' class="'</span>+AE[z]+<span class="literal">'"'</span>}<span class="reserved">else</span>{<span class="reserved">if</span>(z!=<span class="literal">"classid"</span>){AD+=<span class="literal">" "</span>+z+<span class="literal">'="'</span>+AE[z]+<span class="literal">'"'</span>}}}}}var AB=<span class="literal">""</span>;<span class="reserved">for</span>(var y in AC){<span class="reserved">if</span>(AC[y]!=Object.<span class="reserved">prototype</span>[y]){AB+=<span class="literal">'&lt;param name="'</span>+y+<span class="literal">'" value="'</span>+AC[y]+<span class="literal">'" /&gt;'</span>}}t.outerHTML=<span class="literal">'&lt;object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"'</span>+AD+<span class="literal">"&gt;"</span>+AB+<span class="literal">"&lt;/object&gt;"</span>;F(AE.id);p=c(AE.id)}<span class="reserved">else</span>{<span class="reserved">if</span>(a.webkit&amp;&amp;a.webkit&lt;312){var AA=Y(<span class="literal">"embed"</span>);AA.setAttribute(<span class="literal">"type"</span>,W);<span class="reserved">for</span>(var x in AE){<span class="reserved">if</span>(AE[x]!=Object.<span class="reserved">prototype</span>[x]){<span class="reserved">if</span>(x==<span class="literal">"data"</span>){AA.setAttribute(<span class="literal">"src"</span>,AE[x])}<span class="reserved">else</span>{<span class="reserved">if</span>(x.toLowerCase()==<span class="literal">"styleclass"</span>){AA.setAttribute(<span class="literal">"class"</span>,AE[x])}<span class="reserved">else</span>{<span class="reserved">if</span>(x!=<span class="literal">"classid"</span>){AA.setAttribute(x,AE[x])}}}}}<span class="reserved">for</span>(var w in AC){<span class="reserved">if</span>(AC[w]!=Object.<span class="reserved">prototype</span>[w]){<span class="reserved">if</span>(w!=<span class="literal">"movie"</span>){AA.setAttribute(w,AC[w])}}}t.parentNode.replaceChild(AA,t);p=AA}<span class="reserved">else</span>{var s=Y(P);s.setAttribute(<span class="literal">"type"</span>,W);<span class="reserved">for</span>(var v in AE){<span class="reserved">if</span>(AE[v]!=Object.<span class="reserved">prototype</span>[v]){<span class="reserved">if</span>(v.toLowerCase()==<span class="literal">"styleclass"</span>){s.setAttribute(<span class="literal">"class"</span>,AE[v])}<span class="reserved">else</span>{<span class="reserved">if</span>(v!=<span class="literal">"classid"</span>){s.setAttribute(v,AE[v])}}}}<span class="reserved">for</span>(var u in AC){<span class="reserved">if</span>(AC[u]!=Object.<span class="reserved">prototype</span>[u]&amp;&amp;u!=<span class="literal">"movie"</span>){E(s,u,AC[u])}}t.parentNode.replaceChild(s,t);p=s}}<span class="reserved">return</span> p}<span class="reserved">function</span> E(k,i,j){var l=Y(<span class="literal">"param"</span>);l.setAttribute(<span class="literal">"name"</span>,i);l.setAttribute(<span class="literal">"value"</span>,j);k.appendChild(l)}<span class="reserved">function</span> c(i){<span class="reserved">return</span> g.getElementById(i)}<span class="reserved">function</span> Y(i){<span class="reserved">return</span> g.createElement(i)}<span class="reserved">function</span> O(k){var j=a.pv,i=k.split(<span class="literal">"."</span>);i[0]=parseInt(i[0],10);i[1]=parseInt(i[1],10);i[2]=parseInt(i[2],10);<span class="reserved">return</span>(j[0]&gt;i[0]||(j[0]==i[0]&amp;&amp;j[1]&gt;i[1])||(j[0]==i[0]&amp;&amp;j[1]==i[1]&amp;&amp;j[2]&gt;=i[2]))?true:false}<span class="reserved">function</span> A(m,j){<span class="reserved">if</span>(a.ie&amp;&amp;a.mac){<span class="reserved">return</span> }var l=g.getElementsByTagName(<span class="literal">"head"</span>)[0],k=Y(<span class="literal">"style"</span>);k.setAttribute(<span class="literal">"type"</span>,<span class="literal">"text/css"</span>);k.setAttribute(<span class="literal">"media"</span>,<span class="literal">"screen"</span>);<span class="reserved">if</span>(!(a.ie&amp;&amp;a.win)&amp;&amp;typeof g.createTextNode!=Z){k.appendChild(g.createTextNode(m+<span class="literal">" {"</span>+j+<span class="literal">"}"</span>))}l.appendChild(k);<span class="reserved">if</span>(a.ie&amp;&amp;a.win&amp;&amp;typeof g.styleSheets!=Z&amp;&amp;g.styleSheets.length&gt;0){var i=g.styleSheets[g.styleSheets.length-1];<span class="reserved">if</span>(typeof i.addRule==P){i.addRule(m,j)}}}<span class="reserved">function</span> X(k,i){var j=i?<span class="literal">"visible"</span>:<span class="literal">"hidden"</span>;<span class="reserved">if</span>(S){c(k).style.visibility=j}<span class="reserved">else</span>{A(<span class="literal">"#"</span>+k,<span class="literal">"visibility:"</span>+j)}}<span class="reserved">return</span>{registerObject:<span class="reserved">function</span>(l,i,k){<span class="reserved">if</span>(!a.w3cdom||!l||!i){<span class="reserved">return</span> }var j={};j.id=l;j.swfVersion=i;j.expressInstall=k?k:false;H[H.length]=j;X(l,false)},getObjectById:<span class="reserved">function</span>(l){var i=null;<span class="reserved">if</span>(a.w3cdom&amp;&amp;S){var j=c(l);<span class="reserved">if</span>(j){var k=j.getElementsByTagName(P)[0];<span class="reserved">if</span>(!k||(k&amp;&amp;typeof j.SetVariable!=Z)){i=j}<span class="reserved">else</span>{<span class="reserved">if</span>(typeof k.SetVariable!=Z){i=k}}}}<span class="reserved">return</span> i},embedSWF:<span class="reserved">function</span>(n,u,r,t,j,m,k,p,s){<span class="reserved">if</span>(!a.w3cdom||!n||!u||!r||!t||!j){<span class="reserved">return</span> }r+=<span class="literal">""</span>;t+=<span class="literal">""</span>;<span class="reserved">if</span>(O(j)){X(u,false);var q=(typeof s==P)?s:{};q.data=n;q.width=r;q.height=t;var o=(typeof p==P)?p:{};<span class="reserved">if</span>(typeof k==P){<span class="reserved">for</span>(var l in k){<span class="reserved">if</span>(k[l]!=Object.<span class="reserved">prototype</span>[l]){<span class="reserved">if</span>(typeof o.flashvars!=Z){o.flashvars+=<span class="literal">"&amp;"</span>+l+<span class="literal">"="</span>+k[l]}<span class="reserved">else</span>{o.flashvars=l+<span class="literal">"="</span>+k[l]}}}}J(<span class="reserved">function</span>(){R(q,o,u);<span class="reserved">if</span>(q.id==u){X(u,true)}})}<span class="reserved">else</span>{<span class="reserved">if</span>(m&amp;&amp;!C&amp;&amp;O(<span class="literal">"6.0.65"</span>)&amp;&amp;(a.win||a.mac)){X(u,false);J(<span class="reserved">function</span>(){var i={};i.id=i.altContentId=u;i.width=r;i.height=t;i.expressInstall=m;D(i)})}}},getFlashPlayerVersion:<span class="reserved">function</span>(){<span class="reserved">return</span>{major:a.pv[0],minor:a.pv[1],release:a.pv[2]}},hasFlashPlayerVersion:O,createSWF:<span class="reserved">function</span>(k,j,i){<span class="reserved">if</span>(a.w3cdom&amp;&amp;S){<span class="reserved">return</span> R(k,j,i)}<span class="reserved">else</span>{<span class="reserved">return</span> undefined}},createCSS:<span class="reserved">function</span>(j,i){<span class="reserved">if</span>(a.w3cdom){A(j,i)}},addDomLoadEvent:J,addLoadEvent:M,getQueryParamValue:<span class="reserved">function</span>(m){var l=g.location.search||g.location.hash;<span class="reserved">if</span>(m==null){<span class="reserved">return</span> l}<span class="reserved">if</span>(l){var k=l.substring(1).split(<span class="literal">"&amp;"</span>);<span class="reserved">for</span>(var j=0;j&lt;k.length;j++){<span class="reserved">if</span>(k[j].substring(0,k[j].indexOf(<span class="literal">"="</span>))==m){<span class="reserved">return</span> k[j].substring((k[j].indexOf(<span class="literal">"="</span>)+1))}}}<span class="reserved">return</span><span class="literal">""</span>},expressInstallCallback:<span class="reserved">function</span>(){<span class="reserved">if</span>(C&amp;&amp;L){var i=c(K);<span class="reserved">if</span>(i){i.parentNode.replaceChild(L,i);<span class="reserved">if</span>(T){X(T,true);<span class="reserved">if</span>(a.ie&amp;&amp;a.win){L.style.display=<span class="literal">"block"</span>}}L=null;T=null;C=false}}}}}();<span class="comment">/**
  * SWFUpload: http://www.swfupload.org, http://swfupload.googlecode.com
  *
  * mmSWFUpload 1.0: Flash upload dialog - http://profandesign.se/swfupload/,  http://www.vinterwebb.se/
@@ -7971,6 +7965,8 @@ replace(/(?:^|:|,)(?:\s*\[)+/g, '</span><span class="literal">'))) {
 }
 
 
+var in2igui = {};
+
 /**
  * @constructor
  * The base class of the In2iGui framework
@@ -7989,6 +7985,7 @@ In2iGui.latestIndex=500;
 In2iGui.latestPanelIndex=1000;
 In2iGui.latestAlertIndex=1500;
 In2iGui.latestTopIndex=2000;
+In2iGui.toolTips = {};
 
 In2iGui.browser = {};
 In2iGui.browser.opera = /opera/i.test(navigator.userAgent);
@@ -8196,6 +8193,52 @@ In2iGui.hideCurtain = function(widget) {
 	}
 }
 
+//////////////////////////////// Message //////////////////////////////
+
+in2igui.showMessage = function(msg) {
+	if (!In2iGui.message) {
+		In2iGui.message = new Element('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_message<span class="literal">'}).update('</span>&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;<span class="literal">');
+		document.body.appendChild(In2iGui.message);
+	}
+	In2iGui.message.select('</span>div<span class="literal">')[1].update(msg);
+	In2iGui.message.setStyle({'</span>display<span class="literal">':'</span>block<span class="literal">',zIndex:In2iGui.nextTopIndex(),opacity:0});
+	In2iGui.message.setStyle({marginLeft:(In2iGui.message.getWidth()/-2)+'</span>px<span class="literal">',marginTop:N2i.Window.getScrollTop()+'</span>px<span class="literal">'});
+	$ani(In2iGui.message,'</span>opacity<span class="literal">',1,300);
+}
+
+in2igui.hideMessage = function() {
+	if (In2iGui.message) {
+		$ani(In2iGui.message,'</span>opacity<span class="literal">',0,300,{hideOnComplete:true});
+	}
+}
+
+in2igui.showToolTip = function(options) {
+	var key = options.key || '</span>common<span class="literal">';
+	var t = In2iGui.toolTips[key];
+	if (!t) {
+		t = new Element('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_tooltip<span class="literal">'}).update('</span>&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;<span class="literal">');
+		document.body.appendChild(t);
+		In2iGui.toolTips[key] = t;
+	}
+	var n = $(options.element);
+	var pos = n.cumulativeOffset();
+	t.select('</span>div<span class="literal">')[1].update(options.text);
+	if (t.style.display=='</span>none<span class="literal">') t.setStyle({opacity:0});
+	t.setStyle({'</span>display<span class="literal">':'</span>block<span class="literal">',zIndex:In2iGui.nextTopIndex()});
+	t.setStyle({left:(pos.left-t.getWidth()+4)+'</span>px<span class="literal">',top:(N2i.Window.getScrollTop()+pos.top+2-(t.getHeight()/2)+(n.getHeight()/2))+'</span>px<span class="literal">'});
+	$ani(t,'</span>opacity<span class="literal">',1,300);
+}
+
+in2igui.hideToolTip = function(options) {
+	var key = options.key || '</span>common<span class="literal">';
+	var t = In2iGui.toolTips[key];
+	if (t) {
+		$ani(t,'</span>opacity<span class="literal">',0,300,{hideOnComplete:true});
+	}
+}
+
+/////////////////////////////// Utilities /////////////////////////////
+
 In2iGui.isWithin = function(e,element) {
 	Event.extend(e);
 	var offset = element.cumulativeOffset();
@@ -8209,6 +8252,19 @@ In2iGui.getIconUrl = function(icon,size) {
 
 In2iGui.onDomReady = function(func) {
 	document.observe('</span>dom:loaded<span class="literal">', func);
+}
+
+/////////////////////////////// Animation /////////////////////////////
+
+in2igui.fadeIn = function(node,time) {
+	if (node.style.display=='</span>none<span class="literal">') {
+		node.setStyle({opacity:0,display:'</span><span class="literal">'});
+	}
+	$ani(node,'</span>opacity<span class="literal">',1,time);
+}
+
+in2igui.fadeOut = function(node,time) {
+	$ani(node,'</span>opacity<span class="literal">',0,time,{hideOnComplete:true});
 }
 
 //////////////////////////// Positioning /////////////////////////////
@@ -8354,6 +8410,9 @@ In2iGui.extend = function(obj) {
 			return this.element;
 		}
 	}
+	if (!obj.valueForProperty) {
+		obj.valueForProperty = function(p) {return this[p]};
+	}
 }
 
 In2iGui.callDelegatesDrop = function(dragged,dropped) {
@@ -8413,12 +8472,24 @@ In2iGui.callSuperDelegates = function(obj,method,value,event) {
 
 ////////////////////////////// Bindings ///////////////////////////
 
-In2iGui.fireValueChange = function(obj,name,value) {
-	
+In2iGui.firePropertyChange = function(obj,name,value) {
+	In2iGui.callDelegates(obj,'</span>propertyChanged<span class="literal">',{property:name,value:value});
 }
 
-In2iGui.bind = function(fromObj,fromProperty,toObj,toProperty) {
-	
+In2iGui.bind = function(expression,delegate) {
+	if (expression.charAt(0)=='</span>@<span class="literal">') {
+		var pair = expression.substring(1).split('</span>.<span class="literal">');
+		var obj = eval(pair[0]);
+		obj.addDelegate({
+			propertyChanged : function(prop) {
+				if (prop.property==pair[1]) {
+					delegate(prop.value);
+				}
+			}
+		});
+		return obj.valueForProperty(pair[1]);
+	}
+	return expression;
 }
 
 //////////////////////////////// Data /////////////////////////////
@@ -8510,58 +8581,159 @@ In2iGui.parseItems = function(doc) {
 	return out;
 }
 
+////////////////////////////////// Source ///////////////////////////
+
 In2iGui.Source = function(id,name,options) {
-	this.options = N2i.override({url:null},options);
+	this.options = N2i.override({url:null,dwr:null},options);
+	this.parameters = [];
 	In2iGui.extend(this);
+	this.busy=false;
 	var self = this;
-	In2iGui.onDomReady(function() {self.refresh()});
+	In2iGui.onDomReady(function() {self.init()});
 }
 
 In2iGui.Source.prototype = {
-	refresh : function() {
+	init : function() {
 		var self = this;
-		new Ajax.Request(this.options.url, {onSuccess: function(t) {self.parse(t)}});
+		this.parameters.each(function(parm) {
+			parm.value = In2iGui.bind(parm.value,function(value) {
+				self.changeParameter(parm.key,value);
+			});
+		})
+		this.refresh();
+	},
+	refresh : function() {
+		if (this.busy) {
+			this.pendingRefresh = true;
+			return;
+		}
+		this.pendingRefresh = false;
+		var self = this;
+		if (this.options.url) {
+			this.busy=true;
+			In2iGui.callDelegates(this,'</span>sourceIsBusy<span class="literal">',data);
+			new Ajax.Request(this.options.url, {onSuccess: function(t) {self.parse(t)}});
+		} else if (this.options.dwr) {
+			var pair = this.options.dwr.split('</span>.<span class="literal">');
+			var facade = eval(pair[0]);
+			var method = pair[1];
+			var args = facade[method].argumentNames();
+			for (var i=0; i &lt; args.length; i++) {
+				if (this.parameters[i])
+					args[i]=this.parameters[i].value || null;
+			};
+			args[args.length-1]=function(r) {self.parseDWR(r)};
+			this.busy=true;
+			In2iGui.callDelegates(this,'</span>sourceIsBusy<span class="literal">');
+			facade[method].apply(facade,args);
+		}
+	},
+	end : function() {
+		In2iGui.callDelegates(this,'</span>sourceIsNotBusy<span class="literal">');
+		this.busy=false;
+		if (this.pendingRefresh) {
+			this.refresh();
+		}
 	},
 	parse : function(t) {
 		if (t.responseXML) {
 			this.parseXML(t.responseXML);
 		}
+		this.end();
 	},
 	parseXML : function(doc) {
 		if (doc.documentElement.tagName=='</span>items<span class="literal">') {
 			var data = In2iGui.parseItems(doc);
 			In2iGui.callDelegates(this,'</span>itemsLoaded<span class="literal">',data);
 		}
+	},
+	parseDWR : function(data) {
+		In2iGui.callDelegates(this,'</span>objectsLoaded<span class="literal">',data);
+		this.end();
+	},
+	addParameter : function(parm) {
+		this.parameters.push(parm);
+	},
+	changeParameter : function(key,value) {
+		this.parameters.each(function(p) {
+			if (p.key==key) p.value=value;
+		})
+		this.refresh();
 	}
 }
 
 /////////////////////////////////////// Localization //////////////////////////////////
 
 In2iGui.localize = function(loc) {
-	alert(Object.toJSON(loc));
+	//alert(Object.toJSON(loc));
 }
 
 ///////////////////////////////////// Common text field ////////////////////////
 
 In2iGui.TextField = function(id,name,options) {
-	this.options = N2i.override({},options);
+	this.options = N2i.override({placeholder:null,placeholderElement:null},options);
 	this.element = $(id);
 	this.element.setAttribute('</span>autocomplete<span class="literal">','</span>off<span class="literal">');
 	this.value = this.element.value;
+	this.isPassword = this.element.type=='</span>password<span class="literal">';
 	this.name = name;
 	In2iGui.extend(this);
 	this.addBehavior();
+	this.checkPlaceholder();
 }
 
 In2iGui.TextField.prototype = {
 	addBehavior : function() {
 		var self = this;
-		this.element.observe('</span>keyup<span class="literal">',function() {
+		var e = this.element;
+		var p = this.options.placeholderElement;
+		e.observe('</span>keyup<span class="literal">',function() {
 			self.keyDidStrike();
 		});
+		e.observe('</span>focus<span class="literal">',function() {
+			if (p &amp;&amp; e.value=='</span><span class="literal">') {
+				in2igui.fadeOut(p,0);
+			}
+			if (e.value==self.options.placeholder) {
+				e.value='</span><span class="literal">';
+				e.removeClassName('</span>in2igui_placeholder<span class="literal">');
+				if (self.isPassword &amp;&amp; !In2iGui.browser.msie) {
+					e.type='</span>password<span class="literal">';
+					if (In2iGui.browser.webkit) {
+						e.select();
+					}
+				}
+			}
+			e.select();
+		});
+		this.element.observe('</span>blur<span class="literal">',function() {
+			self.checkPlaceholder();
+		});
+		if (p) {
+			p.setStyle({cursor:'</span>text<span class="literal">'}).observe('</span>mousedown<span class="literal">',function() {self.element.focus()}).observe('</span>click<span class="literal">',function() {self.element.focus()});
+		}
+	},
+	checkPlaceholder : function() {
+		if (this.options.placeholderElement &amp;&amp; this.value=='</span><span class="literal">') {
+			in2igui.fadeIn(this.options.placeholderElement,200);
+		}
+		if (this.options.placeholder &amp;&amp; this.value=='</span><span class="literal">') {
+			if (!this.isPassword || !In2iGui.browser.msie) {
+				this.element.value=this.options.placeholder;
+				this.element.addClassName('</span>in2igui_placeholder<span class="literal">');
+			}
+			if (this.isPassword &amp;&amp; !In2iGui.browser.msie) {
+				this.element.type='</span>text<span class="literal">';
+			}
+		} else {
+			this.element.removeClassName('</span>in2igui_placeholder<span class="literal">');
+			if (this.isPassword &amp;&amp; !In2iGui.browser.msie) {
+				this.element.type='</span>password<span class="literal">';
+			}
+		}
 	},
 	keyDidStrike : function() {
-		if (this.value!=this.element.value) {
+		if (this.value!=this.element.value &amp;&amp; this.element.value!=this.options.placeholder) {
 			this.value = this.element.value;
 			In2iGui.callDelegates(this,'</span>valueChanged<span class="literal">');
 		}
@@ -8576,8 +8748,26 @@ In2iGui.TextField.prototype = {
 	},
 	isEmpty : function() {
 		return this.value=='</span><span class="literal">';
+	},
+	isBlank : function() {
+		return this.value.strip()=='</span><span class="literal">';
+	},
+	focus : function() {
+		this.element.focus();
+	},
+	setError : function(error) {
+		var isError = error ? true : false;
+		this.element.setClassName('</span>in2igui_field_error<span class="literal">',isError);
+		if (typeof(error) == '</span>string<span class="literal">') {
+			in2igui.showToolTip({text:error,element:this.element,key:this.name});
+		}
+		if (!isError) {
+			in2igui.hideToolTip({key:this.name});
+		}
 	}
 }
+
+////////////////////////////////////// Info view /////////////////////////////
 
 In2iGui.InfoView = function(id,name,options) {
 	this.options = {clickObjects:false};
@@ -9436,11 +9626,14 @@ In2iGui.Formula.Tokens.prototype = {
 }
 
 /* EOF */In2iGui.List = function(element,name,options) {
+	this.options = N2i.override({url:null,source:null},options);
 	this.element = $(element);
 	this.name = name;
 	this.state = options.state;
-	
-	this.source = options.source;
+	if (this.options.source) {
+		this.options.source.addDelegate(this);
+	}
+	this.url = options.url;
 	this.head = this.element.select('</span>thead<span class="literal">')[0];
 	this.body = this.element.select('</span>tbody<span class="literal">')[0];
 	this.columns = [];
@@ -9489,10 +9682,10 @@ In2iGui.List.prototype = {
 		this.parameters[key]=value;
 	},
 	loadData : function(url) {
-		this.setSource(url);
+		this.setUrl(url);
 	},
-	setSource : function(url) {
-		this.source = url;
+	setUrl : function(url) {
+		this.url = url;
 		this.selected = [];
 		this.sortKey = null;
 		this.sortDirection = null;
@@ -9500,12 +9693,12 @@ In2iGui.List.prototype = {
 		this.refresh();
 	},
 
-/**
- * @private
- */
+	/**
+	 * @private
+	 */
 	refresh : function() {
-		if (!this.source) return;
-		var url = this.source;
+		if (!this.url) return;
+		var url = this.url;
 		if (this.window.number) {
 			url+=url.indexOf('</span>?<span class="literal">')==-1 ? '</span>?<span class="literal">' : '</span>&amp;<span class="literal">';
 			url+='</span>windowNumber=<span class="literal">'+this.window.number;
@@ -9612,6 +9805,16 @@ In2iGui.List.prototype = {
 			this.body.insert(row);
 			this.rows.push(info);
 		};
+	},
+	
+	objectsLoaded : function(data) {
+		this.setObjects(data);
+	},
+	sourceIsBusy : function() {
+		this.element.addClassName('</span>in2igui_list_busy<span class="literal">');
+	},
+	sourceIsNotBusy : function() {
+		this.element.removeClassName('</span>in2igui_list_busy<span class="literal">');
 	}
 };
 
@@ -9792,6 +9995,7 @@ In2iGui.List.prototype.rowDown = function(index) {
  */
 In2iGui.List.prototype.rowDoubleClick = function(index) {
 	In2iGui.callDelegates(this,'</span>listRowsWasOpened<span class="literal">');
+	In2iGui.callDelegates(this,'</span>listRowWasOpened<span class="literal">',this.getFirstSelection());
 }
 
 /**
@@ -9799,6 +10003,7 @@ In2iGui.List.prototype.rowDoubleClick = function(index) {
  */
 In2iGui.List.prototype.windowNumberWasClicked = function(tag) {
 	this.window.number = tag.in2GuiNumber;
+	In2iGui.firePropertyChange(this,'</span>state<span class="literal">',{page:this.window.number});
 	this.refresh();
 }
 
@@ -10352,6 +10557,7 @@ In2iGui.Selection.prototype = {
 		this.setValue(value);
 		In2iGui.callDelegates(this,'</span>selectorSelectionChanged<span class="literal">');
 		In2iGui.callDelegates(this,'</span>selectionChanged<span class="literal">',this.value);
+		In2iGui.firePropertyChange(this,'</span>value<span class="literal">',this.value);
 	},
 	registerItems : function(items) {
 		items.selection = this;
@@ -10427,6 +10633,9 @@ In2iGui.Selection.Items.prototype = {
 		if (this.options.source) {
 			this.options.source.refresh();
 		}
+	},
+	objectsLoaded : function(objects) {
+		this.itemsLoaded(objects);
 	},
 	itemsLoaded : function(items) {
 		this.items = [];
@@ -10624,7 +10833,7 @@ In2iGui.Toolbar.SearchField.prototype = {
 		if (this.field.value!=this.value) {
 			this.value=this.field.value;
 			In2iGui.callDelegates(this,'</span>valueChanged<span class="literal">');
-			In2iGui.fireValueChange(this,'</span>value<span class="literal">',this.value);
+			In2iGui.firePropertyChange(this,'</span>value<span class="literal">',this.value);
 		}
 	}
 }
@@ -10872,91 +11081,7 @@ In2iGui.BoundPanel.prototype = {
 	}
 }
 
-/* EOF */In2iGui.Panel = function(element,name) {
-	this.element = $(element);
-	this.titlebar = $class('</span>titlebar<span class="literal">',this.element)[0];
-	this.content=$class('</span>content<span class="literal">',this.element)[0];
-	this.close = $class('</span>close<span class="literal">',this.element)[0];
-	In2iGui.extend(this);
-	this.addBehavior();
-}
-
-In2iGui.Panel.create = function(opts) {
-	var options = {name:null,title:'</span>Panel<span class="literal">'};
-	N2i.override(options,opts);
-	var element = N2i.create('</span>div<span class="literal">',
-		{'</span>class<span class="literal">':'</span>in2igui_panel<span class="literal">'},
-		{'</span>display<span class="literal">':'</span>none<span class="literal">','</span>top<span class="literal">':'</span>100px<span class="literal">','</span>left<span class="literal">':'</span>100px<span class="literal">'}
-	);
-	
-	var html = '</span>&lt;div class=<span class="literal">"titlebar"</span>&gt;&lt;div&gt;&lt;div&gt;<span class="literal">'+
-			'</span>&lt;div class=<span class="literal">"close"</span>&gt;&lt;/div&gt;&lt;strong&gt;<span class="literal">'+options.title+'</span>&lt;/strong&gt;<span class="literal">'+
-		'</span>&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;<span class="literal">'+
-		'</span>&lt;div class=<span class="literal">"body"</span>&gt;&lt;div class=<span class="literal">"body"</span>&gt;&lt;div class=<span class="literal">"body"</span>&gt;&lt;div class=<span class="literal">"content"</span><span class="literal">'+
-		(options.padding ? '</span> style=<span class="literal">"padding: '+options.padding+'px; padding-bottom: 0px;"</span><span class="literal">' : '</span><span class="literal">')+
-		'</span>&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;<span class="literal">'+
-		'</span>&lt;div class=<span class="literal">"bottom"</span>&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;<span class="literal">';
-	element.innerHTML=html;
-	document.body.appendChild(element);
-	return new In2iGui.Panel(element);
-}
-
-In2iGui.Panel.prototype = {
-	addBehavior : function() {
-		var self = this;
-		this.titlebar.onmousedown = function(e) {self.startDrag(e);return false;};
-		var close = $class('</span>close<span class="literal">',this.titlebar)[0];
-		close.onclick = function() {self.hide()};
-	},
-	show : function() {
-		this.element.setStyle({
-			zIndex : In2iGui.nextPanelIndex(), visibility : '</span>hidden<span class="literal">', display : '</span>block<span class="literal">'
-		})
-		var width = this.element.clientWidth;
-		this.element.setStyle({
-			width : width+'</span>px<span class="literal">' , visibility : '</span>visible<span class="literal">'
-		});
-	},
-	hide : function() {
-		this.element.style.display='</span>none<span class="literal">';
-	},
-	add : function(widget) {
-		this.content.appendChild(widget.getElement());
-	},
-	addContent : function(node) {
-		this.content.appendChild(node);
-	},
-	startDrag : function(e) {
-		this.element.style.zIndex=In2iGui.nextPanelIndex();
-		var event = new N2i.Event(e);
-		this.dragState = {left:event.mouseLeft()-N2i.Element.getLeft(this.element),top:event.mouseTop()-N2i.Element.getTop(this.element)};
-		var self = this;
-		this.moveListener = function(e) {self.drag(e)};
-		this.upListener = function(e) {self.endDrag(e)};
-		N2i.Event.addListener(document,'</span>mousemove<span class="literal">',this.moveListener);
-		N2i.Event.addListener(document,'</span>mouseup<span class="literal">',this.upListener);
-		N2i.Event.stop(e);
-		document.body.onselectstart = function () { return false; };
-		return false;
-	},
-
-	drag : function(e) {
-		var event = new N2i.Event(e);
-		this.element.style.right = '</span>auto<span class="literal">';
-		this.element.style.top = (event.mouseTop()-this.dragState.top)+'</span>px<span class="literal">';
-		this.element.style.left = (event.mouseLeft()-this.dragState.left)+'</span>px<span class="literal">';
-		return false;
-	},
-
-	endDrag : function() {
-		N2i.Event.removeListener(document,'</span>mousemove<span class="literal">',this.moveListener);
-		N2i.Event.removeListener(document,'</span>mouseup<span class="literal">',this.upListener);
-		document.body.onselectstart = null;
-	}
-}
-
-/* EOF */
-In2iGui.RichText = function(id,name,options) {
+/* EOF */In2iGui.RichText = function(id,name,options) {
 	this.element = $id(id);
 	this.options = N2i.override({debug:false,value:'</span><span class="literal">',autoHideToolbar:true,style:'</span>font-family: sans-serif;<span class="literal">'},options);
 	this.iframe = this.element.getElementsByTagName('</span>iframe<span class="literal">')[0];
@@ -11062,6 +11187,7 @@ In2iGui.RichText.prototype = {
 	},
 	deactivate : function() {
 		if (this.colorPicker) this.colorPicker.hide();
+		if (this.toolbar) this.toolbar.style.display='</span>none<span class="literal">';
 	},
 	
 	buildToolbar : function() {
@@ -11185,16 +11311,17 @@ In2iGui.RichText.stopEvent = function(e) {
 }
 
 /* EOF */In2iGui.ImageViewer = function(element,name,options) {
-	this.options = {maxWidth:800,maxHeight:600};
-	N2i.override(this.options,options);
-	this.element = $id(element);
-	this.viewer = $firstClass('</span>in2igui_imageviewer_viewer<span class="literal">',this.element);
-	this.innerViewer = $firstClass('</span>in2igui_imageviewer_inner_viewer<span class="literal">',this.element);
-	this.status = $firstClass('</span>in2igui_imageviewer_status<span class="literal">',this.element);
-	this.previousControl = $firstClass('</span>in2igui_imageviewer_previous<span class="literal">',this.element);
-	this.controller = $firstClass('</span>in2igui_imageviewer_controller<span class="literal">',this.element);
-	this.nextControl = $firstClass('</span>in2igui_imageviewer_next<span class="literal">',this.element);
-	this.playControl = $firstClass('</span>in2igui_imageviewer_play<span class="literal">',this.element);
+	this.options = N2i.override({maxWidth:800,maxHeight:600,perimeter:100,sizeSnap:100},options);
+	this.element = $(element);
+	this.box = this.options.box;
+	this.viewer = this.element.select('</span>.in2igui_imageviewer_viewer<span class="literal">')[0];
+	this.innerViewer = this.element.select('</span>.in2igui_imageviewer_inner_viewer<span class="literal">')[0];
+	this.status = this.element.select('</span>.in2igui_imageviewer_status<span class="literal">')[0];
+	this.previousControl = this.element.select('</span>.in2igui_imageviewer_previous<span class="literal">')[0];
+	this.controller = this.element.select('</span>.in2igui_imageviewer_controller<span class="literal">')[0];
+	this.nextControl = this.element.select('</span>.in2igui_imageviewer_next<span class="literal">')[0];
+	this.playControl = this.element.select('</span>.in2igui_imageviewer_play<span class="literal">')[0];
+	this.text = this.element.select('</span>.in2igui_imageviewer_text<span class="literal">')[0];
 	this.dirty = false;
 	this.width = 600;
 	this.height = 460;
@@ -11202,25 +11329,26 @@ In2iGui.RichText.stopEvent = function(e) {
 	this.playing=false;
 	this.name = name;
 	this.images = [];
+	this.box.addDelegate(this);
 	this.addBehavior();
 	In2iGui.extend(this);
 }
 
-In2iGui.ImageViewer.create = function(name,opts) {
-	var options = {name:null,top:'</span>0px<span class="literal">',left:'</span>0px<span class="literal">'};
-	N2i.override(options,opts);
-	var element = N2i.create('</span>div<span class="literal">',
-		{'</span>class<span class="literal">':'</span>in2igui_imageviewer<span class="literal">'},
-		{'</span>display<span class="literal">':'</span>none<span class="literal">'}
-	);
-	element.innerHTML = '</span>&lt;div class=<span class="literal">"in2igui_imageviewer_viewer"</span>&gt;&lt;div class=<span class="literal">"in2igui_imageviewer_inner_viewer"</span>&gt;&lt;/div&gt;&lt;/div&gt;<span class="literal">'+
+In2iGui.ImageViewer.create = function(name,options) {
+	options = options || {};
+	var element = new Element('</span>div<span class="literal">',{'</span>class<span class="literal">':'</span>in2igui_imageviewer<span class="literal">'});
+	element.update('</span>&lt;div class=<span class="literal">"in2igui_imageviewer_viewer"</span>&gt;&lt;div class=<span class="literal">"in2igui_imageviewer_inner_viewer"</span>&gt;&lt;/div&gt;&lt;/div&gt;<span class="literal">'+
+	'</span>&lt;div class=<span class="literal">"in2igui_imageviewer_text"</span>&gt;&lt;/div&gt;<span class="literal">'+
 	'</span>&lt;div class=<span class="literal">"in2igui_imageviewer_status"</span>&gt;&lt;/div&gt;<span class="literal">'+
 	'</span>&lt;div class=<span class="literal">"in2igui_imageviewer_controller"</span>&gt;<span class="literal">'+
 	'</span>&lt;a class=<span class="literal">"in2igui_imageviewer_previous"</span>&gt;&lt;/a&gt;<span class="literal">'+
 	'</span>&lt;a class=<span class="literal">"in2igui_imageviewer_play"</span>&gt;&lt;/a&gt;<span class="literal">'+
 	'</span>&lt;a class=<span class="literal">"in2igui_imageviewer_next"</span>&gt;&lt;/a&gt;<span class="literal">'+
-	'</span>&lt;/div&gt;<span class="literal">';
-	document.body.appendChild(element);
+	'</span>&lt;/div&gt;<span class="literal">');
+	var box = In2iGui.Box.create(null,{absolute:true,modal:true});
+	box.add(element);
+	box.addToDocument();
+	options.box=box;
 	return new In2iGui.ImageViewer(element,name,options);
 }
 
@@ -11267,11 +11395,12 @@ In2iGui.ImageViewer.prototype = {
 		}
 	},	
 	calculateSize : function() {
-		var newWidth = N2i.Window.getInnerWidth()-100;
-		newWidth = Math.floor(newWidth/100)*100;
+		var snap = this.options.sizeSnap;
+		var newWidth = N2i.Window.getInnerWidth()-this.options.perimeter;
+		newWidth = Math.floor(newWidth/snap)*snap;
 		newWidth = Math.min(newWidth,this.options.maxWidth);
-		var newHeight = N2i.Window.getInnerHeight()-100;
-		newHeight = Math.floor(newHeight/100)*100;
+		var newHeight = N2i.Window.getInnerHeight()-this.options.perimeter;
+		newHeight = Math.floor(newHeight/snap)*snap;
 		newHeight = Math.min(newHeight,this.options.maxHeight);
 		var maxWidth = 0;
 		var maxHeight = 0;
@@ -11286,17 +11415,7 @@ In2iGui.ImageViewer.prototype = {
 		};
 		newHeight = Math.round(Math.min(newHeight,maxHeight));
 		newWidth = Math.round(Math.min(newWidth,maxWidth));
-		/*
 		
-			alert(min);
-			alert(newWidth/newHeight);
-		if (newHeight&gt;max) {
-			newWidth = newHeight*max;
-		}
-		if (newWidth/newHeight&gt;min) {
-			newHeight = newWidth/min;
-		}
-		*/
 		if (newWidth!=this.width || newHeight!=this.height) {
 			this.width = newWidth;
 			this.height = newHeight;
@@ -11315,29 +11434,21 @@ In2iGui.ImageViewer.prototype = {
 		this.index = index || 0;
 		this.calculateSize();
 		this.updateUI();
-		var curtainIndex = In2iGui.nextPanelIndex();
-		this.element.style.zIndex=In2iGui.nextPanelIndex();
-		this.element.style.width=(this.width+10)+'</span>px<span class="literal">';
-		this.element.style.height=(this.height+50)+'</span>px<span class="literal">';
-		this.element.style.marginLeft='</span>-<span class="literal">'+Math.round((this.width+10)/2)+'</span>px<span class="literal">';
-		this.element.style.top=Math.round((N2i.Window.getInnerHeight()-(this.height+50))/2)+N2i.Window.getScrollTop()+'</span>px<span class="literal">';
-		this.viewer.style.width=(this.width+10)+'</span>px<span class="literal">';
-		this.viewer.style.height=this.height+'</span>px<span class="literal">';
-		this.innerViewer.style.width=((this.width+10)*this.images.length)+'</span>px<span class="literal">';
-		this.innerViewer.style.height=this.height+'</span>px<span class="literal">';
-		this.controller.style.marginLeft=((this.width-115)/2+5)+'</span>px<span class="literal">';
-		this.element.style.display='</span>block<span class="literal">';
+		var space = this.shouldShowController() ? 50 : 10;
+		this.element.setStyle({width:(this.width+10)+'</span>px<span class="literal">',height:(this.height+space)+'</span>px<span class="literal">'});
+		this.viewer.setStyle({width:(this.width+10)+'</span>px<span class="literal">',height:this.height+'</span>px<span class="literal">'});
+		this.innerViewer.setStyle({width:((this.width+10)*this.images.length)+'</span>px<span class="literal">',height:this.height+'</span>px<span class="literal">'});
+		this.controller.setStyle({paddingLeft:((this.width-115)/2+5)+'</span>px<span class="literal">'});
+		this.box.show();
 		this.goToImage(false,0,false);
-		In2iGui.showCurtain(this,curtainIndex);
 		N2i.addListener(document,'</span>keydown<span class="literal">',this.keyListener);
 	},
 	hide: function(index) {
 		this.pause();
-		In2iGui.hideCurtain(this);
-		this.element.style.display='</span>none<span class="literal">';
+		this.box.hide();
 		N2i.removeListener(document,'</span>keydown<span class="literal">',this.keyListener);
 	},
-	curtainWasClicked : function() {
+	boxCurtainWasClicked : function() {
 		this.hide();
 	},
 	updateUI : function() {
@@ -11350,12 +11461,19 @@ In2iGui.ImageViewer.prototype = {
 				
 				var url = this.resolveImageUrl(this.images[i]);
 				url = url.replace(/&amp;amp;/g,'</span>&amp;<span class="literal">');
-				//element.style.backgroundImage="url('</span><span class="literal">"+url+"</span><span class="literal">')";
 				this.innerViewer.appendChild(element);
 			};
+			if (this.shouldShowController()) {
+				this.controller.show();
+			} else {
+				this.controller.hide();
+			}
 			this.dirty = false;
 			this.preload();
 		}
+	},
+	shouldShowController : function() {
+		return this.images.length&gt;1;
 	},
 	goToImage : function(animate,num,user) {	
 		if (animate) {
@@ -11364,10 +11482,17 @@ In2iGui.ImageViewer.prototype = {
 			} else {
 				var end = this.index==0 || this.index==this.images.length-1;
 				var ease = (end ? N2i.Animation.bounce : N2i.Animation.elastic);
+				if (!user) ease = N2i.Animation.slowFastSlow;
 				$ani(this.viewer,'</span>scrollLeft<span class="literal">',this.index*(this.width+10),(end ? 800 : 1200),{ease:ease});
 			}
 		} else {
 			this.viewer.scrollLeft=this.index*(this.width+10);
+		}
+		var text = this.images[this.index].text;
+		if (text) {
+			this.text.update(text).show();			
+		} else {
+			this.text.update().hide();
 		}
 	},
 	clearImages : function() {
@@ -11754,7 +11879,7 @@ In2iGui.Editor.prototype = {
 			this.hidePartControls();
 			this.hoveredPart.element.removeClassName('</span>in2igui_editor_part_hover<span class="literal">');
 		}
-		if (!this.partControls) {
+		if (!this.partControls &amp;&amp; this.hoveredPart) {
 			this.hoveredPart.element.removeClassName('</span>in2igui_editor_part_hover<span class="literal">');			
 		}
 	},
@@ -12041,8 +12166,9 @@ In2iGui.Editor.Html.prototype = {
 		this.element.innerHTML = this.value;
 	},
 	deactivate : function() {
-		if (!Prototype.Browser.IE) {
+		if (this.editor) {
 			this.editor.deactivate();
+			this.element.innerHTML = this.value;
 		}
 		In2iGui.Editor.get().partDidDeacivate(this);
 	},
@@ -12280,48 +12406,74 @@ In2iGui.Overlay.prototype = {
 
 <span class="comment">/* EOF */</span>
 In2iGui.Upload = <span class="reserved">function</span>(element,name,options) {
-	<span class="reserved">this</span>.options = N2i.override({parameters:[]},options);
+	<span class="reserved">this</span>.options = N2i.override({url:<span class="literal">''</span>,parameters:{}},options);
 	<span class="reserved">this</span>.element = $(element);
+	<span class="reserved">this</span>.itemContainer = <span class="reserved">this</span>.element.select(<span class="literal">'.in2igui_upload_items'</span>)[0];
 	<span class="reserved">this</span>.name = name;
-	<span class="reserved">this</span>.file = $class(<span class="literal">'file'</span>,<span class="reserved">this</span>.element)[0];
-	<span class="reserved">this</span>.form = $tag(<span class="literal">'form'</span>,<span class="reserved">this</span>.element)[0];
+	<span class="reserved">this</span>.items = [];
+	<span class="reserved">this</span>.busy = false;
+	<span class="reserved">this</span>.loaded = false;
+	<span class="reserved">this</span>.flashMode = swfobject.hasFlashPlayerVersion(<span class="literal">"8"</span>);
 	In2iGui.extend(<span class="reserved">this</span>);
-	<span class="reserved">this</span>.loader = null;
 	<span class="reserved">this</span>.addBehavior();
-	<span class="reserved">this</span>.createProgressBar();
 }
 
 In2iGui.Upload.create = <span class="reserved">function</span>(name,options) {
-	options = options | {};
 	var element = new Element(<span class="literal">'div'</span>,{<span class="literal">'class'</span>:<span class="literal">'in2igui_upload'</span>});
-	var form = new Element(<span class="literal">'form'</span>,{<span class="literal">'action'</span>:options.action | <span class="literal">''</span>, <span class="literal">'method'</span>:<span class="literal">'post'</span>, <span class="literal">'enctype'</span>:<span class="literal">'multipart/form-data'</span>,<span class="literal">'encoding'</span>:<span class="literal">'multipart/form-data'</span>,<span class="literal">'target'</span>:<span class="literal">'upload'</span>});
-	<span class="reserved">if</span> (options.parameters) {
-		<span class="reserved">for</span> (var i=0; i &lt; options.parameters.length; i++) {
-			var hidden = new Element(<span class="literal">'input'</span>,{<span class="literal">'type'</span>:<span class="literal">'hidden'</span>,<span class="literal">'name'</span>:options.parameters[i].name});
-			hidden.setValue(options.parameters[i].value);
-			form.insert(hidden);
-		};
-	}
-	var file = N2i.create(<span class="literal">'input'</span>,{<span class="literal">'type'</span>:<span class="literal">'file'</span>,<span class="literal">'class'</span>:<span class="literal">'file'</span>,<span class="literal">'name'</span>:options.name});
-	form.insert(file);
-	element.insert(form);
-	element.insert(new Element(<span class="literal">'iframe'</span>,{name:<span class="literal">'upload'</span>,id:<span class="literal">'upload'</span>}).setStyle({display:<span class="literal">'none'</span>}));
+	element.update(<span class="literal">'&lt;div class="in2igui_upload_placeholder"&gt;&lt;/div&gt;'</span>+
+		<span class="literal">'&lt;div class="in2igui_upload_items"&gt;&lt;xsl:comment/&gt;&lt;/div&gt;'</span>+
+	<span class="literal">'&lt;/div&gt;'</span>);
 	<span class="reserved">return</span> new In2iGui.Upload(element,name,options);
 }
 
 In2iGui.Upload.<span class="reserved">prototype</span> = {
 	addBehavior : <span class="reserved">function</span>() {
 		var self = <span class="reserved">this</span>;
-		<span class="reserved">this</span>.file.onchange = <span class="reserved">function</span>() {
-			self.submit();
+		<span class="reserved">if</span> (!<span class="reserved">this</span>.flashMode) {
+			<span class="reserved">this</span>.createIframeVersion();
+			<span class="reserved">return</span>;
+		}
+		<span class="reserved">if</span> (In2iGui.get().domLoaded) {
+			<span class="reserved">this</span>.createFlashVersion();			
+		} <span class="reserved">else</span> {
+			In2iGui.onDomLoaded(<span class="reserved">function</span>() {self.createFlashVersion()});
 		}
 	},
-	createProgressBar : <span class="reserved">function</span>() {
+	
+	<span class="comment">/////////////////////////// Iframe //////////////////////////</span>
+	
+	createIframeVersion : <span class="reserved">function</span>() {
+		var container = new Element(<span class="literal">'div'</span>,{<span class="literal">'class'</span>:<span class="literal">'in2igui_upload'</span>});
+		var form = new Element(<span class="literal">'form'</span>,{<span class="literal">'action'</span>:<span class="reserved">this</span>.options.url || <span class="literal">''</span>, <span class="literal">'method'</span>:<span class="literal">'post'</span>, <span class="literal">'enctype'</span>:<span class="literal">'multipart/form-data'</span>,<span class="literal">'encoding'</span>:<span class="literal">'multipart/form-data'</span>,<span class="literal">'target'</span>:<span class="literal">'upload'</span>});
+		<span class="reserved">if</span> (<span class="reserved">this</span>.options.parameters) {
+			$H(<span class="reserved">this</span>.options.parameters).each(<span class="reserved">function</span>(pair) {
+				var hidden = new Element(<span class="literal">'input'</span>,{<span class="literal">'type'</span>:<span class="literal">'hidden'</span>,<span class="literal">'name'</span>:pair.key});
+				hidden.setValue(pair.value);
+				form.insert(hidden);
+			});
+		}
+		var file = new Element(<span class="literal">'input'</span>,{<span class="literal">'type'</span>:<span class="literal">'file'</span>,<span class="literal">'class'</span>:<span class="literal">'file'</span>,<span class="literal">'name'</span>:<span class="reserved">this</span>.options.name});
+		var self = <span class="reserved">this</span>;
+		file.onchange = <span class="reserved">function</span>() {self.iframeSubmit()}
+		form.insert(file);
+		container.insert(form);
+		var iframe = new Element(<span class="literal">'iframe'</span>,{name:<span class="literal">'upload'</span>,id:<span class="literal">'upload'</span>}).setStyle({display:<span class="literal">'none'</span>});
+		iframe.observe(<span class="literal">'load'</span>,<span class="reserved">function</span>() {self.iframeUploadComplete()});
+		container.insert(iframe);
 		<span class="reserved">this</span>.progressBar = In2iGui.ProgressBar.create();
 		<span class="reserved">this</span>.progressBar.hide();
-		<span class="reserved">this</span>.element.appendChild(<span class="reserved">this</span>.progressBar.getElement());
+		container.insert(<span class="reserved">this</span>.progressBar.getElement());
+		<span class="reserved">this</span>.form = form;
+		<span class="reserved">this</span>.element.insert(container);
 	},
-	submit : <span class="reserved">function</span>() {
+	iframeUploadComplete : <span class="reserved">function</span>() {
+		<span class="reserved">if</span> (!<span class="reserved">this</span>.uploading) <span class="reserved">return</span>;
+		<span class="reserved">this</span>.uploading = false;
+		<span class="reserved">this</span>.form.reset();
+		In2iGui.callDelegates(<span class="reserved">this</span>,<span class="literal">'uploadDidCompleteQueue'</span>);
+	},
+	iframeSubmit : <span class="reserved">function</span>() {
+		<span class="reserved">this</span>.uploading = true;
 		<span class="comment">// IE: set value of parms again since they disappear</span>
 		var p = <span class="reserved">this</span>.options.parameters;
 		<span class="reserved">for</span> (var i=0; i &lt; p.length; i++) {
@@ -12342,50 +12494,11 @@ In2iGui.Upload.<span class="reserved">prototype</span> = {
 		<span class="reserved">this</span>.form.reset();
 		<span class="reserved">this</span>.progressBar.reset();
 		<span class="reserved">this</span>.progressBar.hide();
-	}
-}
-
-
-
-
-
-<span class="comment">//////////////////////////////////////// Mulit-upload ////////////////////////////////////////</span>
-
-
-
-In2iGui.MultiUpload = <span class="reserved">function</span>(element,name,options) {
-	<span class="reserved">this</span>.options = N2i.override({url:<span class="literal">''</span>,parameters:{}},options);
-	<span class="reserved">this</span>.element = $(element);
-	<span class="reserved">this</span>.itemContainer = <span class="reserved">this</span>.element.select(<span class="literal">'.in2igui_multiupload_items'</span>)[0];
-
-	<span class="reserved">this</span>.name = name;
-	<span class="reserved">this</span>.items = [];
-	<span class="reserved">this</span>.busy = false;
-	<span class="reserved">this</span>.loaded = false;
-
-	In2iGui.extend(<span class="reserved">this</span>);
-	<span class="reserved">this</span>.addBehavior();
-}
-
-In2iGui.MultiUpload.create = <span class="reserved">function</span>(name,options) {
-	var element = new Element(<span class="literal">'div'</span>,{<span class="literal">'class'</span>:<span class="literal">'in2igui_multiupload'</span>});
-	element.update(<span class="literal">'&lt;div class="in2igui_buttons"&gt;&lt;div class="in2igui_upload_placeholder"&gt;&lt;/div&gt;'</span>+
-		<span class="literal">'&lt;/div&gt;'</span>+
-		<span class="literal">'&lt;div class="in2igui_multiupload_items"&gt;&lt;xsl:comment/&gt;&lt;/div&gt;'</span>+
-	<span class="literal">'&lt;/div&gt;'</span>);
-	<span class="reserved">return</span> new In2iGui.MultiUpload(element,name,options);
-}
-
-In2iGui.MultiUpload.<span class="reserved">prototype</span> = {
-	addBehavior : <span class="reserved">function</span>() {
-		var self = <span class="reserved">this</span>;
-		<span class="reserved">if</span> (In2iGui.get().domLoaded) {
-			<span class="reserved">this</span>.createLoader();			
-		} <span class="reserved">else</span> {
-			In2iGui.onDomLoaded(<span class="reserved">function</span>() {self.createLoader()});
-		}
 	},
-	createLoader : <span class="reserved">function</span>() {
+	
+	<span class="comment">/////////////////////////// Flash //////////////////////////</span>
+	
+	createFlashVersion : <span class="reserved">function</span>() {
 		var loc = new String(document.location);
 		var url = loc.slice(0,loc.lastIndexOf(<span class="literal">'/'</span>)+1);
 		url += <span class="reserved">this</span>.options.url;
@@ -12417,7 +12530,6 @@ In2iGui.MultiUpload.<span class="reserved">prototype</span> = {
 			upload_error_handler : <span class="reserved">function</span>(file, error, message) {self.uploadError(file, error, message)},
 			upload_success_handler : <span class="reserved">function</span>(file,data) {self.uploadSuccess(file,data)},
 			upload_complete_handler : <span class="reserved">function</span>(file) {self.uploadComplete(file)},
-			queue_complete_handler : <span class="reserved">function</span>() {self.queueComplete()},
 		
 			<span class="comment">// SWFObject settings</span>
 			swfupload_pre_load_handler : <span class="reserved">function</span>() {alert(<span class="literal">'swfupload_pre_load_handler!'</span>)},
@@ -12426,7 +12538,7 @@ In2iGui.MultiUpload.<span class="reserved">prototype</span> = {
 	},
 	setButton : <span class="reserved">function</span>(widget) {
 		<span class="reserved">this</span>.button = widget;
-		<span class="reserved">if</span> (<span class="reserved">this</span>.button) {
+		<span class="reserved">if</span> (<span class="reserved">this</span>.button &amp;&amp; <span class="reserved">this</span>.flashMode) {
 			var m = <span class="reserved">this</span>.element.select(<span class="literal">'object'</span>)[0].remove();
 			m.setStyle({width:<span class="literal">'108px'</span>,<span class="literal">'marginLeft'</span>:<span class="literal">'-108px'</span>,position:<span class="literal">'absolute'</span>});
 			widget.getElement().insert(m);
@@ -12437,9 +12549,9 @@ In2iGui.MultiUpload.<span class="reserved">prototype</span> = {
 		<span class="reserved">this</span>.loader.startUpload();
 	},
 	addError : <span class="reserved">function</span>(error,file) {
-		var element = new Element(<span class="literal">'div'</span>,{<span class="literal">'class'</span>:<span class="literal">'in2igui_multiupload_item_error'</span>});
+		var element = new Element(<span class="literal">'div'</span>,{<span class="literal">'class'</span>:<span class="literal">'in2igui_upload_item_error'</span>});
 		element.insert(new Element(<span class="literal">'a'</span>,{<span class="literal">'class'</span>:<span class="literal">'in2igui_link'</span>}).update(<span class="literal">'&lt;span&gt;Fjern&lt;/span&gt;'</span>).observe(<span class="literal">'click'</span>,<span class="reserved">function</span>() {<span class="reserved">this</span>.parentNode.remove(); <span class="reserved">return</span> false;}));
-		element.insert(<span class="literal">'&lt;strong&gt;'</span>+In2iGui.MultiUpload.errors[error]+<span class="literal">'&lt;/strong&gt;&lt;br/&gt;&lt;em&gt;'</span>+file.name+<span class="literal">'&lt;/em&gt;'</span>);
+		element.insert(<span class="literal">'&lt;strong&gt;'</span>+In2iGui.Upload.errors[error]+<span class="literal">'&lt;/strong&gt;&lt;br/&gt;&lt;em&gt;'</span>+file.name+<span class="literal">'&lt;/em&gt;'</span>);
 		<span class="reserved">this</span>.itemContainer.insert(element);
 	},
 	
@@ -12449,7 +12561,7 @@ In2iGui.MultiUpload.<span class="reserved">prototype</span> = {
 		<span class="reserved">this</span>.loaded = true;
 	},
 	fileQueued : <span class="reserved">function</span>(file) {
-		var item = new In2iGui.MultiUpload.Item(file);
+		var item = new In2iGui.Upload.Item(file);
 		<span class="reserved">this</span>.items[file.index] = item;
 		<span class="reserved">this</span>.itemContainer.insert(item.element);
 	},
@@ -12481,14 +12593,17 @@ In2iGui.MultiUpload.<span class="reserved">prototype</span> = {
 			self.items[file.index].hide();
 		},100);
 		In2iGui.callDelegates(<span class="reserved">this</span>,<span class="literal">'uploadDidComplete'</span>,file);
+		<span class="reserved">if</span> (<span class="reserved">this</span>.loader.getStats().files_queued==0) {
+			<span class="reserved">this</span>.queueComplete();
+		}
 	},
 	queueComplete : <span class="reserved">function</span>() {
-		In2iGui.callDelegates(<span class="reserved">this</span>,<span class="literal">'uploadDidCompleteQueue'</span>,file);
+		In2iGui.callDelegates(<span class="reserved">this</span>,<span class="literal">'uploadDidCompleteQueue'</span>);
 	}
 }
 
-In2iGui.MultiUpload.Item = <span class="reserved">function</span>(file) {
-	<span class="reserved">this</span>.element = new Element(<span class="literal">'div'</span>).addClassName(<span class="literal">'in2igui_multiupload_item'</span>);
+In2iGui.Upload.Item = <span class="reserved">function</span>(file) {
+	<span class="reserved">this</span>.element = new Element(<span class="literal">'div'</span>).addClassName(<span class="literal">'in2igui_upload_item'</span>);
 	<span class="reserved">this</span>.info = new Element(<span class="literal">'strong'</span>);
 	<span class="reserved">this</span>.progress = In2iGui.ProgressBar.create();
 	<span class="reserved">this</span>.element.insert(<span class="reserved">this</span>.progress.getElement());
@@ -12496,7 +12611,7 @@ In2iGui.MultiUpload.Item = <span class="reserved">function</span>(file) {
 	<span class="reserved">this</span>.update(file);
 }
 
-In2iGui.MultiUpload.Item.<span class="reserved">prototype</span> = {
+In2iGui.Upload.Item.<span class="reserved">prototype</span> = {
 	update : <span class="reserved">function</span>(file) {
 		<span class="reserved">this</span>.info.update(file.name);
 	},
@@ -12509,21 +12624,21 @@ In2iGui.MultiUpload.Item.<span class="reserved">prototype</span> = {
 }
 
 <span class="reserved">if</span> (window.SWFUpload) {
-In2iGui.MultiUpload.errors = {};
-In2iGui.MultiUpload.errors[SWFUpload.QUEUE_ERROR.QUEUE_LIMIT_EXCEEDED]			= <span class="literal">'Der er for mange filer i køen'</span>;
-In2iGui.MultiUpload.errors[SWFUpload.QUEUE_ERROR.FILE_EXCEEDS_SIZE_LIMIT]		= <span class="literal">'Filen er for stor'</span>;
-In2iGui.MultiUpload.errors[SWFUpload.QUEUE_ERROR.ZERO_BYTE_FILE]				= <span class="literal">'Filen er tom'</span>;
-In2iGui.MultiUpload.errors[SWFUpload.QUEUE_ERROR.INVALID_FILETYPE]				= <span class="literal">'Filens type er ikke understøttet'</span>;
-In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.HTTP_ERROR]					= <span class="literal">'Der skete en netværksfejl'</span>;
-In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.MISSING_UPLOAD_URL]			= <span class="literal">'Upload-adressen findes ikke'</span>;
-In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.IO_ERROR]						= <span class="literal">'Der skete en IO-fejl'</span>;
-In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.SECURITY_ERROR]				= <span class="literal">'Der skete en sikkerhedsfejl'</span>;
-In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.UPLOAD_LIMIT_EXCEEDED]			= <span class="literal">'Upload-størrelsen er overskredet'</span>;
-In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.UPLOAD_FAILED]				= <span class="literal">'Upload af filen fejlede'</span>;
-In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.SPECIFIED_FILE_ID_NOT_FOUND]	= <span class="literal">'Filens id kunne ikke findes'</span>;
-In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.FILE_VALIDATION_FAILED]		= <span class="literal">'Validering af filen fejlede'</span>;
-In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.FILE_CANCELLED]				= <span class="literal">'Filen blev afbrudt'</span>;
-In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.UPLOAD_STOPPED]				= <span class="literal">'Upload af filen blev stoppet'</span>;
+In2iGui.Upload.errors = {};
+In2iGui.Upload.errors[SWFUpload.QUEUE_ERROR.QUEUE_LIMIT_EXCEEDED]			= <span class="literal">'Der er for mange filer i køen'</span>;
+In2iGui.Upload.errors[SWFUpload.QUEUE_ERROR.FILE_EXCEEDS_SIZE_LIMIT]		= <span class="literal">'Filen er for stor'</span>;
+In2iGui.Upload.errors[SWFUpload.QUEUE_ERROR.ZERO_BYTE_FILE]				= <span class="literal">'Filen er tom'</span>;
+In2iGui.Upload.errors[SWFUpload.QUEUE_ERROR.INVALID_FILETYPE]				= <span class="literal">'Filens type er ikke understøttet'</span>;
+In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.HTTP_ERROR]					= <span class="literal">'Der skete en netværksfejl'</span>;
+In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.MISSING_UPLOAD_URL]			= <span class="literal">'Upload-adressen findes ikke'</span>;
+In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.IO_ERROR]						= <span class="literal">'Der skete en IO-fejl'</span>;
+In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.SECURITY_ERROR]				= <span class="literal">'Der skete en sikkerhedsfejl'</span>;
+In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.UPLOAD_LIMIT_EXCEEDED]		= <span class="literal">'Upload-størrelsen er overskredet'</span>;
+In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.UPLOAD_FAILED]				= <span class="literal">'Upload af filen fejlede'</span>;
+In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.SPECIFIED_FILE_ID_NOT_FOUND]	= <span class="literal">'Filens id kunne ikke findes'</span>;
+In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.FILE_VALIDATION_FAILED]		= <span class="literal">'Validering af filen fejlede'</span>;
+In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.FILE_CANCELLED]				= <span class="literal">'Filen blev afbrudt'</span>;
+In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.UPLOAD_STOPPED]				= <span class="literal">'Upload af filen blev stoppet'</span>;
 }
 <span class="comment">/* EOF */</span>In2iGui.ProgressBar = <span class="reserved">function</span>(element,name) {
 	<span class="reserved">this</span>.element = $(element);
@@ -13071,12 +13186,16 @@ In2iGui.Box.<span class="reserved">prototype</span> = {
 		}
 		e.setStyle({display:<span class="literal">'block'</span>,visibility:<span class="literal">'hidden'</span>});
 		var w = e.getWidth();
-		e.setStyle({<span class="literal">'marginLeft'</span>:(w/-2)+<span class="literal">'px'</span>,top:(N2i.Window.getScrollTop()+80)+<span class="literal">'px'</span>});
+		var top = (N2i.Window.getInnerHeight()-e.getHeight())/2+N2i.Window.getScrollTop();
+		e.setStyle({<span class="literal">'marginLeft'</span>:(w/-2)+<span class="literal">'px'</span>,top:top+<span class="literal">'px'</span>});
 		e.setStyle({display:<span class="literal">'block'</span>,visibility:<span class="literal">'visible'</span>});
 	},
 	hide : <span class="reserved">function</span>() {
 		In2iGui.hideCurtain(<span class="reserved">this</span>);
 		<span class="reserved">this</span>.element.setStyle({display:<span class="literal">'none'</span>});
+	},
+	curtainWasClicked : <span class="reserved">function</span>() {
+		In2iGui.callDelegates(<span class="reserved">this</span>,<span class="literal">'boxCurtainWasClicked'</span>);
 	}
 }</pre>
 	<hr>
@@ -13136,6 +13255,6 @@ In2iGui.Box.<span class="reserved">prototype</span> = {
 <font size="-1">
 
 </font>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Mon Oct 27 19:02:21 2008</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Tue Nov 18 21:38:57 2008</div>
 </body>
 </html>

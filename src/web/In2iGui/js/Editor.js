@@ -164,7 +164,7 @@ In2iGui.Editor.prototype = {
 			this.hidePartControls();
 			this.hoveredPart.element.removeClassName('in2igui_editor_part_hover');
 		}
-		if (!this.partControls) {
+		if (!this.partControls && this.hoveredPart) {
 			this.hoveredPart.element.removeClassName('in2igui_editor_part_hover');			
 		}
 	},
@@ -451,8 +451,9 @@ In2iGui.Editor.Html.prototype = {
 		this.element.innerHTML = this.value;
 	},
 	deactivate : function() {
-		if (!Prototype.Browser.IE) {
+		if (this.editor) {
 			this.editor.deactivate();
+			this.element.innerHTML = this.value;
 		}
 		In2iGui.Editor.get().partDidDeacivate(this);
 	},

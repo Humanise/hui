@@ -4,10 +4,10 @@
  */
 In2iGui.Alert = function(element,name,options) {
 	this.options = N2i.override({modal:false},options);
-	this.element = $id(element);
+	this.element = $(element);
 	this.name = name;
-	this.body = $firstClass('in2igui_alert_body',this.element);
-	this.content = $firstClass('in2igui_alert_content',this.element);
+	this.body = this.element.select('.in2igui_alert_body')[0];
+	this.content = this.element.select('.in2igui_alert_content')[0];
 	this.emotion = null;
 	var h1s = $tag('h1',this.element);
 	this.title = h1s.length>0 ? h1s[0] : null;

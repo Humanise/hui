@@ -1,6 +1,6 @@
 In2iGui.Browser = function(element,source) {
-	this.element = $id(element);
-	this.contents = $class('contents',this.element)[0];
+	this.element = $(element);
+	this.contents = this.element.select('.contents')[0];
 	this.source = source;
 	this.levels = [];
 	this.selections = [];

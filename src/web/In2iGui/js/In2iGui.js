@@ -1,3 +1,5 @@
+var in2igui = {};
+
 /**
  * @constructor
  * The base class of the In2iGui framework
@@ -16,6 +18,7 @@ In2iGui.latestIndex=500;
 In2iGui.latestPanelIndex=1000;
 In2iGui.latestAlertIndex=1500;
 In2iGui.latestTopIndex=2000;
+In2iGui.toolTips = {};
 
 In2iGui.browser = {};
 In2iGui.browser.opera = /opera/i.test(navigator.userAgent);
@@ -225,20 +228,61 @@ In2iGui.hideCurtain = function(widget) {
 
 //////////////////////////////// Message //////////////////////////////
 
-In2iGui.showMessage = function(msg) {
+in2igui.showMessage = function(msg) {
 	if (!In2iGui.message) {
 		In2iGui.message = new Element('div',{'class':'in2igui_message'}).update('<div><div></div></div>');
 		document.body.appendChild(In2iGui.message);
 	}
 	In2iGui.message.select('div')[1].update(msg);
-	In2iGui.message.setStyle({'display':'block',zIndex:In2iGui.nextTopIndex(),opacity:0});
+	In2iGui.message.setStyle({'display':'block',zIndex:In2iGui.nextTopIndex()});
+	if (!In2iGui.browser.msie) {
+		In2iGui.message.setStyle({opacity:0});
+	}
 	In2iGui.message.setStyle({marginLeft:(In2iGui.message.getWidth()/-2)+'px',marginTop:N2i.Window.getScrollTop()+'px'});
-	$ani(In2iGui.message,'opacity',1,300);
+	if (!In2iGui.browser.msie) {
+		$ani(In2iGui.message,'opacity',1,300);
+	}
 }
 
-In2iGui.hideMessage = function() {
+in2igui.hideMessage = function() {
 	if (In2iGui.message) {
-		$ani(In2iGui.message,'opacity',0,300,{hideOnComplete:true});
+		if (!In2iGui.browser.msie) {
+			$ani(In2iGui.message,'opacity',0,300,{hideOnComplete:true});
+		} else {
+			In2iGui.message.setStyle({display:'none'});
+		}
+	}
+}
+
+in2igui.showToolTip = function(options) {
+	var key = options.key || 'common';
+	var t = In2iGui.toolTips[key];
+	if (!t) {
+		t = new Element('div',{'class':'in2igui_tooltip'}).update('<div><div></div></div>').setStyle({display:'none'});
+		document.body.appendChild(t);
+		In2iGui.toolTips[key] = t;
+	}
+	t.onclick = function() {in2igui.hideToolTip(options)};
+	var n = $(options.element);
+	var pos = n.cumulativeOffset();
+	t.select('div')[1].update(options.text);
+	if (t.style.display=='none' && !In2iGui.browser.msie) t.setStyle({opacity:0});
+	t.setStyle({'display':'block',zIndex:In2iGui.nextTopIndex()});
+	t.setStyle({left:(pos.left-t.getWidth()+4)+'px',top:(pos.top+2-(t.getHeight()/2)+(n.getHeight()/2))+'px'});
+	if (!In2iGui.browser.msie) {
+		$ani(t,'opacity',1,300);
+	}
+}
+
+in2igui.hideToolTip = function(options) {
+	var key = options ? options.key || 'common' : 'common';
+	var t = In2iGui.toolTips[key];
+	if (t) {
+		if (!In2iGui.browser.msie) {
+			$ani(t,'opacity',0,300,{hideOnComplete:true});
+		} else {
+			t.setStyle({display:'none'});
+		}
 	}
 }
 
@@ -257,6 +301,19 @@ In2iGui.getIconUrl = function(icon,size) {
 
 In2iGui.onDomReady = function(func) {
 	document.observe('dom:loaded', func);
+}
+
+/////////////////////////////// Animation /////////////////////////////
+
+in2igui.fadeIn = function(node,time) {
+	if (node.style.display=='none') {
+		node.setStyle({opacity:0,display:''});
+	}
+	$ani(node,'opacity',1,time);
+}
+
+in2igui.fadeOut = function(node,time) {
+	$ani(node,'opacity',0,time,{hideOnComplete:true});
 }
 
 //////////////////////////// Positioning /////////////////////////////
@@ -402,6 +459,9 @@ In2iGui.extend = function(obj) {
 			return this.element;
 		}
 	}
+	if (!obj.valueForProperty) {
+		obj.valueForProperty = function(p) {return this[p]};
+	}
 }
 
 In2iGui.callDelegatesDrop = function(dragged,dropped) {
@@ -461,12 +521,24 @@ In2iGui.callSuperDelegates = function(obj,method,value,event) {
 
 ////////////////////////////// Bindings ///////////////////////////
 
-In2iGui.fireValueChange = function(obj,name,value) {
-	
+In2iGui.firePropertyChange = function(obj,name,value) {
+	In2iGui.callDelegates(obj,'propertyChanged',{property:name,value:value});
 }
 
-In2iGui.bind = function(fromObj,fromProperty,toObj,toProperty) {
-	
+In2iGui.bind = function(expression,delegate) {
+	if (expression.charAt(0)=='@') {
+		var pair = expression.substring(1).split('.');
+		var obj = eval(pair[0]);
+		obj.addDelegate({
+			propertyChanged : function(prop) {
+				if (prop.property==pair[1]) {
+					delegate(prop.value);
+				}
+			}
+		});
+		return obj.valueForProperty(pair[1]);
+	}
+	return expression;
 }
 
 //////////////////////////////// Data /////////////////////////////
@@ -561,57 +633,156 @@ In2iGui.parseItems = function(doc) {
 ////////////////////////////////// Source ///////////////////////////
 
 In2iGui.Source = function(id,name,options) {
-	this.options = N2i.override({url:null},options);
+	this.options = N2i.override({url:null,dwr:null},options);
+	this.parameters = [];
 	In2iGui.extend(this);
+	this.busy=false;
 	var self = this;
-	In2iGui.onDomReady(function() {self.refresh()});
+	In2iGui.onDomReady(function() {self.init()});
 }
 
 In2iGui.Source.prototype = {
-	refresh : function() {
+	init : function() {
 		var self = this;
-		new Ajax.Request(this.options.url, {onSuccess: function(t) {self.parse(t)}});
+		this.parameters.each(function(parm) {
+			parm.value = In2iGui.bind(parm.value,function(value) {
+				self.changeParameter(parm.key,value);
+			});
+		})
+		this.refresh();
+	},
+	refresh : function() {
+		if (this.busy) {
+			this.pendingRefresh = true;
+			return;
+		}
+		this.pendingRefresh = false;
+		var self = this;
+		if (this.options.url) {
+			this.busy=true;
+			In2iGui.callDelegates(this,'sourceIsBusy',data);
+			new Ajax.Request(this.options.url, {onSuccess: function(t) {self.parse(t)}});
+		} else if (this.options.dwr) {
+			var pair = this.options.dwr.split('.');
+			var facade = eval(pair[0]);
+			var method = pair[1];
+			var args = facade[method].argumentNames();
+			for (var i=0; i < args.length; i++) {
+				if (this.parameters[i])
+					args[i]=this.parameters[i].value || null;
+			};
+			args[args.length-1]=function(r) {self.parseDWR(r)};
+			this.busy=true;
+			In2iGui.callDelegates(this,'sourceIsBusy');
+			facade[method].apply(facade,args);
+		}
+	},
+	end : function() {
+		In2iGui.callDelegates(this,'sourceIsNotBusy');
+		this.busy=false;
+		if (this.pendingRefresh) {
+			this.refresh();
+		}
 	},
 	parse : function(t) {
 		if (t.responseXML) {
 			this.parseXML(t.responseXML);
 		}
+		this.end();
 	},
 	parseXML : function(doc) {
 		if (doc.documentElement.tagName=='items') {
 			var data = In2iGui.parseItems(doc);
 			In2iGui.callDelegates(this,'itemsLoaded',data);
 		}
+	},
+	parseDWR : function(data) {
+		In2iGui.callDelegates(this,'objectsLoaded',data);
+		this.end();
+	},
+	addParameter : function(parm) {
+		this.parameters.push(parm);
+	},
+	changeParameter : function(key,value) {
+		this.parameters.each(function(p) {
+			if (p.key==key) p.value=value;
+		})
+		this.refresh();
 	}
 }
 
 /////////////////////////////////////// Localization //////////////////////////////////
 
 In2iGui.localize = function(loc) {
-	alert(Object.toJSON(loc));
+	//alert(Object.toJSON(loc));
 }
 
 ///////////////////////////////////// Common text field ////////////////////////
 
 In2iGui.TextField = function(id,name,options) {
-	this.options = N2i.override({},options);
+	this.options = N2i.override({placeholder:null,placeholderElement:null},options);
 	this.element = $(id);
 	this.element.setAttribute('autocomplete','off');
 	this.value = this.element.value;
+	this.isPassword = this.element.type=='password';
 	this.name = name;
 	In2iGui.extend(this);
 	this.addBehavior();
+	this.checkPlaceholder();
 }
 
 In2iGui.TextField.prototype = {
 	addBehavior : function() {
 		var self = this;
-		this.element.observe('keyup',function() {
+		var e = this.element;
+		var p = this.options.placeholderElement;
+		e.observe('keyup',function() {
 			self.keyDidStrike();
 		});
+		e.observe('focus',function() {
+			if (p && e.value=='') {
+				in2igui.fadeOut(p,0);
+			}
+			if (e.value==self.options.placeholder) {
+				e.value='';
+				e.removeClassName('in2igui_placeholder');
+				if (self.isPassword && !In2iGui.browser.msie) {
+					e.type='password';
+					if (In2iGui.browser.webkit) {
+						e.select();
+					}
+				}
+			}
+			e.select();
+		});
+		this.element.observe('blur',function() {
+			self.checkPlaceholder();
+		});
+		if (p) {
+			p.setStyle({cursor:'text'}).observe('mousedown',function() {self.element.focus()}).observe('click',function() {self.element.focus()});
+		}
+	},
+	checkPlaceholder : function() {
+		if (this.options.placeholderElement && this.value=='') {
+			in2igui.fadeIn(this.options.placeholderElement,200);
+		}
+		if (this.options.placeholder && this.value=='') {
+			if (!this.isPassword || !In2iGui.browser.msie) {
+				this.element.value=this.options.placeholder;
+				this.element.addClassName('in2igui_placeholder');
+			}
+			if (this.isPassword && !In2iGui.browser.msie) {
+				this.element.type='text';
+			}
+		} else {
+			this.element.removeClassName('in2igui_placeholder');
+			if (this.isPassword && !In2iGui.browser.msie) {
+				this.element.type='password';
+			}
+		}
 	},
 	keyDidStrike : function() {
-		if (this.value!=this.element.value) {
+		if (this.value!=this.element.value && this.element.value!=this.options.placeholder) {
 			this.value = this.element.value;
 			In2iGui.callDelegates(this,'valueChanged');
 		}
@@ -626,6 +797,22 @@ In2iGui.TextField.prototype = {
 	},
 	isEmpty : function() {
 		return this.value=='';
+	},
+	isBlank : function() {
+		return this.value.strip()=='';
+	},
+	focus : function() {
+		this.element.focus();
+	},
+	setError : function(error) {
+		var isError = error ? true : false;
+		this.element.setClassName('in2igui_field_error',isError);
+		if (typeof(error) == 'string') {
+			in2igui.showToolTip({text:error,element:this.element,key:this.name});
+		}
+		if (!isError) {
+			in2igui.hideToolTip({key:this.name});
+		}
 	}
 }
 

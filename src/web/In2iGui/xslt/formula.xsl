@@ -285,14 +285,7 @@
 <!-- Buttons -->
 
 <xsl:template match="gui:formula/gui:buttons">
-	<div class="in2igui_formula_buttons">
-		<xsl:attribute name="style">
-		<xsl:if test="@padding">padding:<xsl:value-of select="@padding"/>px;</xsl:if>
-		<xsl:if test="@pad">padding: <xsl:value-of select="@pad"/>px;</xsl:if>
-		<xsl:if test="@top">padding-top:<xsl:value-of select="@top"/>px;</xsl:if>
-		</xsl:attribute>
-		<xsl:apply-templates/>
-	</div>
+	<xsl:call-template name="gui:buttons"/>
 </xsl:template>
 
 <xsl:template match="gui:group/gui:buttons">
@@ -309,12 +302,14 @@
 			<xsl:if test="@padding">padding:<xsl:value-of select="@padding"/>px;</xsl:if>
 			<xsl:if test="@top">padding-top:<xsl:value-of select="@top"/>px;</xsl:if>
 		</xsl:attribute>
-		<xsl:apply-templates/>
+		<div class="in2igui_buttons_body">
+			<xsl:apply-templates/>
+		</div>
 	</div>
 </xsl:template>
 
 <xsl:template match="gui:buttons/gui:button" name="gui:button">
-	<a id="{generate-id()}">
+	<a id="{generate-id()}" href="#">
 		<xsl:attribute name="class">in2igui_button<xsl:if test="@highlighted='true'"> in2igui_button_highlighted</xsl:if></xsl:attribute>
 		<span><span><xsl:value-of select="@title"/></span></span></a>
 	<script type="text/javascript">

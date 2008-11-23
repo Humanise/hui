@@ -11,7 +11,7 @@ In2iGui.Button.create = function(name,opts) {
 	var options = {text:'',highlighted:false};
 	N2i.override(options,opts);
 	var className = 'in2igui_button'+(options.highlighted ? ' in2igui_button_highlighted' : '');
-	var element = new Element('a',{'class':className});
+	var element = new Element('a',{'class':className,href:'#'});
 	var element2 = new Element('span');
 	element.appendChild(element2);
 	var element3 = new Element('span');
@@ -43,6 +43,7 @@ In2iGui.Button.prototype = {
 		if (this.enabled) {
 			In2iGui.callDelegates(this,'buttonWasClicked'); // deprecated
 			In2iGui.callDelegates(this,'click');
+			In2iGui.callDelegates(this,'onClick');
 		}
 	},
 	setEnabled : function(enabled) {
@@ -63,6 +64,7 @@ In2iGui.Button.prototype = {
 In2iGui.Buttons = function(id,name) {
 	this.name = name;
 	this.element = $(id);
+	this.body = this.element.select('.in2igui_buttons_body')[0];
 	In2iGui.extend(this);
 }
 
@@ -70,12 +72,13 @@ In2iGui.Buttons.create = function(name,options) {
 	options = N2i.override({top:0},options);
 	var e = new Element('div',{'class':'in2igui_buttons'});
 	if (options.top>0) e.setStyle({paddingTop:options.top+'px'});
+	e.insert(new Element('div',{'class':'in2igui_buttons_body'}));
 	return new In2iGui.Buttons(e,name);
 }
 
 In2iGui.Buttons.prototype = {
 	add : function(widget) {
-		this.element.insert(widget.getElement());
+		this.body.insert(widget.getElement());
 	}
 }
 

@@ -1,11 +1,11 @@
 In2iGui.Sidebar = function(element) {
-	this.element = $id(element);
+	this.element = $(element);
 }
 
 /***************** Icon ***************/
 
 In2iGui.Sidebar.Selector = function(id,source) {
-	this.element = $id(id);
+	this.element = $(id);
 	this.items = [];
 	this.selected = [];
 	In2iGui.extend(this);
@@ -25,7 +25,7 @@ In2iGui.Sidebar.Selector.prototype.getValues = function() {
 }
 
 In2iGui.Sidebar.Selector.prototype.registerItem = function(id,title,icon,badge,value,selected) {
-	var element = $id(id);
+	var element = $(id);
 	var index = this.items.length;
 	element.in2iGuiIndex = index;
 	this.items[index] = {id:id,title:title,icon:icon,badge:badge,element:element,value:value};

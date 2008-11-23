@@ -1,7 +1,7 @@
 
 /** @constructor */
 In2iGui.Toolbar = function(element,name,options) {
-	this.element = $id(element);
+	this.element = $(element);
 	this.name = name;
 	In2iGui.extend(this);
 }
@@ -29,7 +29,7 @@ In2iGui.Toolbar.prototype = {
 
 /** @constructor */
 In2iGui.RevealingToolbar = function(element,name,options) {
-	this.element = $id(element);
+	this.element = $(element);
 	this.name = name;
 	In2iGui.extend(this);
 }
@@ -146,7 +146,7 @@ In2iGui.Toolbar.SearchField.prototype = {
 		if (this.field.value!=this.value) {
 			this.value=this.field.value;
 			In2iGui.callDelegates(this,'valueChanged');
-			In2iGui.fireValueChange(this,'value',this.value);
+			In2iGui.firePropertyChange(this,'value',this.value);
 		}
 	}
 }

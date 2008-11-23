@@ -46,6 +46,7 @@ In2iGui.Selection.prototype = {
 		this.setValue(value);
 		In2iGui.callDelegates(this,'selectorSelectionChanged');
 		In2iGui.callDelegates(this,'selectionChanged',this.value);
+		In2iGui.firePropertyChange(this,'value',this.value);
 	},
 	registerItems : function(items) {
 		items.selection = this;
@@ -121,6 +122,9 @@ In2iGui.Selection.Items.prototype = {
 		if (this.options.source) {
 			this.options.source.refresh();
 		}
+	},
+	objectsLoaded : function(objects) {
+		this.itemsLoaded(objects);
 	},
 	itemsLoaded : function(items) {
 		this.items = [];

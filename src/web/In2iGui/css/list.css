@@ -3,6 +3,11 @@ div.in2igui_list
 	/*padding-right: 10px;*/
 }
 
+div.in2igui_list_busy .navigation
+{
+	opacity: 0.5;
+}
+
 div.in2igui_list table
 {
 	width: 100%;
@@ -95,7 +100,7 @@ div.in2igui_list table tbody tr.selected
 	color: #fff;
 }
 
-div.in2igui_list .window_number
+div.in2igui_list .window_page
 {
 	display: none;
 }

@@ -1,46 +1,72 @@
 In2iGui.Upload = function(element,name,options) {
-	this.options = N2i.override({parameters:[]},options);
+	this.options = N2i.override({url:'',parameters:{}},options);
 	this.element = $(element);
+	this.itemContainer = this.element.select('.in2igui_upload_items')[0];
 	this.name = name;
-	this.file = $class('file',this.element)[0];
-	this.form = $tag('form',this.element)[0];
+	this.items = [];
+	this.busy = false;
+	this.loaded = false;
+	this.flashMode = swfobject.hasFlashPlayerVersion("8");
 	In2iGui.extend(this);
-	this.loader = null;
 	this.addBehavior();
-	this.createProgressBar();
 }
 
 In2iGui.Upload.create = function(name,options) {
-	options = options | {};
 	var element = new Element('div',{'class':'in2igui_upload'});
-	var form = new Element('form',{'action':options.action | '', 'method':'post', 'enctype':'multipart/form-data','encoding':'multipart/form-data','target':'upload'});
-	if (options.parameters) {
-		for (var i=0; i < options.parameters.length; i++) {
-			var hidden = new Element('input',{'type':'hidden','name':options.parameters[i].name});
-			hidden.setValue(options.parameters[i].value);
-			form.insert(hidden);
-		};
-	}
-	var file = N2i.create('input',{'type':'file','class':'file','name':options.name});
-	form.insert(file);
-	element.insert(form);
-	element.insert(new Element('iframe',{name:'upload',id:'upload'}).setStyle({display:'none'}));
+	element.update('<div class="in2igui_upload_placeholder"></div>'+
+		'<div class="in2igui_upload_items"></div>'+
+	'</div>');
 	return new In2iGui.Upload(element,name,options);
 }
 
 In2iGui.Upload.prototype = {
 	addBehavior : function() {
 		var self = this;
-		this.file.onchange = function() {
-			self.submit();
+		if (!this.flashMode) {
+			this.createIframeVersion();
+			return;
+		}
+		if (In2iGui.get().domLoaded) {
+			this.createFlashVersion();			
+		} else {
+			In2iGui.onDomReady(function() {self.createFlashVersion()});
 		}
 	},
-	createProgressBar : function() {
+	
+	/////////////////////////// Iframe //////////////////////////
+	
+	createIframeVersion : function() {
+		var container = new Element('div',{'class':'in2igui_upload'});
+		var form = new Element('form',{'action':this.options.url || '', 'method':'post', 'enctype':'multipart/form-data','encoding':'multipart/form-data','target':'upload'});
+		if (this.options.parameters) {
+			$H(this.options.parameters).each(function(pair) {
+				var hidden = new Element('input',{'type':'hidden','name':pair.key});
+				hidden.setValue(pair.value);
+				form.insert(hidden);
+			});
+		}
+		var file = new Element('input',{'type':'file','class':'file','name':this.options.name});
+		var self = this;
+		file.onchange = function() {self.iframeSubmit()}
+		form.insert(file);
+		container.insert(form);
+		var iframe = new Element('iframe',{name:'upload',id:'upload'}).setStyle({display:'none'});
+		iframe.observe('load',function() {self.iframeUploadComplete()});
+		container.insert(iframe);
 		this.progressBar = In2iGui.ProgressBar.create();
 		this.progressBar.hide();
-		this.element.appendChild(this.progressBar.getElement());
+		container.insert(this.progressBar.getElement());
+		this.form = form;
+		this.element.insert(container);
 	},
-	submit : function() {
+	iframeUploadComplete : function() {
+		if (!this.uploading) return;
+		this.uploading = false;
+		this.form.reset();
+		In2iGui.callDelegates(this,'uploadDidCompleteQueue');
+	},
+	iframeSubmit : function() {
+		this.uploading = true;
 		// IE: set value of parms again since they disappear
 		var p = this.options.parameters;
 		for (var i=0; i < p.length; i++) {
@@ -61,49 +87,11 @@ In2iGui.Upload.prototype = {
 		this.form.reset();
 		this.progressBar.reset();
 		this.progressBar.hide();
-	}
-}
-
-
-
-
-
-//////////////////////////////////////// Mulit-upload ////////////////////////////////////////
-
-
-
-In2iGui.MultiUpload = function(element,name,options) {
-	this.options = N2i.override({url:'',parameters:{}},options);
-	this.element = $(element);
-	this.itemContainer = this.element.select('.in2igui_multiupload_items')[0];
-
-	this.name = name;
-	this.items = [];
-	this.busy = false;
-	this.loaded = false;
-
-	In2iGui.extend(this);
-	this.addBehavior();
-}
-
-In2iGui.MultiUpload.create = function(name,options) {
-	var element = new Element('div',{'class':'in2igui_multiupload'});
-	element.update('<div class="in2igui_upload_placeholder"></div>'+
-		'<div class="in2igui_multiupload_items"><xsl:comment/></div>'+
-	'</div>');
-	return new In2iGui.MultiUpload(element,name,options);
-}
-
-In2iGui.MultiUpload.prototype = {
-	addBehavior : function() {
-		var self = this;
-		if (In2iGui.get().domLoaded) {
-			this.createLoader();			
-		} else {
-			In2iGui.onDomLoaded(function() {self.createLoader()});
-		}
 	},
-	createLoader : function() {
+	
+	/////////////////////////// Flash //////////////////////////
+	
+	createFlashVersion : function() {
 		var loc = new String(document.location);
 		var url = loc.slice(0,loc.lastIndexOf('/')+1);
 		url += this.options.url;
@@ -135,16 +123,18 @@ In2iGui.MultiUpload.prototype = {
 			upload_error_handler : function(file, error, message) {self.uploadError(file, error, message)},
 			upload_success_handler : function(file,data) {self.uploadSuccess(file,data)},
 			upload_complete_handler : function(file) {self.uploadComplete(file)},
-			queue_complete_handler : function() {self.queueComplete()},
 		
 			// SWFObject settings
 			swfupload_pre_load_handler : function() {alert('swfupload_pre_load_handler!')},
 			swfupload_load_failed_handler : function() {alert('swfupload_load_failed_handler!')}
 		});
+		if (this.options.button) {
+			this.setButton(In2iGui.get(this.options.button));
+		}
 	},
 	setButton : function(widget) {
 		this.button = widget;
-		if (this.button) {
+		if (this.button && this.flashMode) {
 			var m = this.element.select('object')[0].remove();
 			m.setStyle({width:'108px','marginLeft':'-108px',position:'absolute'});
 			widget.getElement().insert(m);
@@ -155,9 +145,9 @@ In2iGui.MultiUpload.prototype = {
 		this.loader.startUpload();
 	},
 	addError : function(error,file) {
-		var element = new Element('div',{'class':'in2igui_multiupload_item_error'});
+		var element = new Element('div',{'class':'in2igui_upload_item_error'});
 		element.insert(new Element('a',{'class':'in2igui_link'}).update('<span>Fjern</span>').observe('click',function() {this.parentNode.remove(); return false;}));
-		element.insert('<strong>'+In2iGui.MultiUpload.errors[error]+'</strong><br/><em>'+file.name+'</em>');
+		element.insert('<strong>'+In2iGui.Upload.errors[error]+'</strong><br/><em>'+file.name+'</em>');
 		this.itemContainer.insert(element);
 	},
 	
@@ -167,7 +157,7 @@ In2iGui.MultiUpload.prototype = {
 		this.loaded = true;
 	},
 	fileQueued : function(file) {
-		var item = new In2iGui.MultiUpload.Item(file);
+		var item = new In2iGui.Upload.Item(file);
 		this.items[file.index] = item;
 		this.itemContainer.insert(item.element);
 	},
@@ -199,14 +189,17 @@ In2iGui.MultiUpload.prototype = {
 			self.items[file.index].hide();
 		},100);
 		In2iGui.callDelegates(this,'uploadDidComplete',file);
+		if (this.loader.getStats().files_queued==0) {
+			this.queueComplete();
+		}
 	},
 	queueComplete : function() {
-		In2iGui.callDelegates(this,'uploadDidCompleteQueue',file);
+		In2iGui.callDelegates(this,'uploadDidCompleteQueue');
 	}
 }
 
-In2iGui.MultiUpload.Item = function(file) {
-	this.element = new Element('div').addClassName('in2igui_multiupload_item');
+In2iGui.Upload.Item = function(file) {
+	this.element = new Element('div').addClassName('in2igui_upload_item');
 	this.info = new Element('strong');
 	this.progress = In2iGui.ProgressBar.create();
 	this.element.insert(this.progress.getElement());
@@ -214,7 +207,7 @@ In2iGui.MultiUpload.Item = function(file) {
 	this.update(file);
 }
 
-In2iGui.MultiUpload.Item.prototype = {
+In2iGui.Upload.Item.prototype = {
 	update : function(file) {
 		this.info.update(file.name);
 	},
@@ -227,20 +220,20 @@ In2iGui.MultiUpload.Item.prototype = {
 }
 
 if (window.SWFUpload) {
-In2iGui.MultiUpload.errors = {};
-In2iGui.MultiUpload.errors[SWFUpload.QUEUE_ERROR.QUEUE_LIMIT_EXCEEDED]			= 'Der er for mange filer i køen';
-In2iGui.MultiUpload.errors[SWFUpload.QUEUE_ERROR.FILE_EXCEEDS_SIZE_LIMIT]		= 'Filen er for stor';
-In2iGui.MultiUpload.errors[SWFUpload.QUEUE_ERROR.ZERO_BYTE_FILE]				= 'Filen er tom';
-In2iGui.MultiUpload.errors[SWFUpload.QUEUE_ERROR.INVALID_FILETYPE]				= 'Filens type er ikke understøttet';
-In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.HTTP_ERROR]					= 'Der skete en netværksfejl';
-In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.MISSING_UPLOAD_URL]			= 'Upload-adressen findes ikke';
-In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.IO_ERROR]						= 'Der skete en IO-fejl';
-In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.SECURITY_ERROR]				= 'Der skete en sikkerhedsfejl';
-In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.UPLOAD_LIMIT_EXCEEDED]			= 'Upload-størrelsen er overskredet';
-In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.UPLOAD_FAILED]				= 'Upload af filen fejlede';
-In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.SPECIFIED_FILE_ID_NOT_FOUND]	= 'Filens id kunne ikke findes';
-In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.FILE_VALIDATION_FAILED]		= 'Validering af filen fejlede';
-In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.FILE_CANCELLED]				= 'Filen blev afbrudt';
-In2iGui.MultiUpload.errors[SWFUpload.UPLOAD_ERROR.UPLOAD_STOPPED]				= 'Upload af filen blev stoppet';
+In2iGui.Upload.errors = {};
+In2iGui.Upload.errors[SWFUpload.QUEUE_ERROR.QUEUE_LIMIT_EXCEEDED]			= 'Der er for mange filer i køen';
+In2iGui.Upload.errors[SWFUpload.QUEUE_ERROR.FILE_EXCEEDS_SIZE_LIMIT]		= 'Filen er for stor';
+In2iGui.Upload.errors[SWFUpload.QUEUE_ERROR.ZERO_BYTE_FILE]				= 'Filen er tom';
+In2iGui.Upload.errors[SWFUpload.QUEUE_ERROR.INVALID_FILETYPE]				= 'Filens type er ikke understøttet';
+In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.HTTP_ERROR]					= 'Der skete en netværksfejl';
+In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.MISSING_UPLOAD_URL]			= 'Upload-adressen findes ikke';
+In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.IO_ERROR]						= 'Der skete en IO-fejl';
+In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.SECURITY_ERROR]				= 'Der skete en sikkerhedsfejl';
+In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.UPLOAD_LIMIT_EXCEEDED]		= 'Upload-størrelsen er overskredet';
+In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.UPLOAD_FAILED]				= 'Upload af filen fejlede';
+In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.SPECIFIED_FILE_ID_NOT_FOUND]	= 'Filens id kunne ikke findes';
+In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.FILE_VALIDATION_FAILED]		= 'Validering af filen fejlede';
+In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.FILE_CANCELLED]				= 'Filen blev afbrudt';
+In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.UPLOAD_STOPPED]				= 'Upload af filen blev stoppet';
 }
 /* EOF */

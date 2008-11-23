@@ -1,5 +1,5 @@
 In2iGui.RichText = function(id,name,options) {
-	this.element = $id(id);
+	this.element = $(id);
 	this.options = N2i.override({debug:false,value:'',autoHideToolbar:true,style:'font-family: sans-serif;'},options);
 	this.iframe = this.element.getElementsByTagName('iframe')[0];
 	this.toolbar = $firstClass('in2igui_richtext_toolbar',this.element);
@@ -36,7 +36,7 @@ In2iGui.RichText.actions = [
 ];
 
 In2iGui.RichText.replaceInput = function(options) {
-	var input = $id(options.input);
+	var input = $(options.input);
 	input.style.display='none';
 	options.value = input.value;
 	var obj = In2iGui.RichText.create(options);
@@ -104,6 +104,7 @@ In2iGui.RichText.prototype = {
 	},
 	deactivate : function() {
 		if (this.colorPicker) this.colorPicker.hide();
+		if (this.toolbar) this.toolbar.style.display='none';
 	},
 	
 	buildToolbar : function() {
@@ -162,7 +163,7 @@ In2iGui.RichText.prototype = {
 	documentChanged : function() {
 		this.value = this.document.body.innerHTML;
 		if (this.options.input) {
-			$id(this.options.input).value=this.value;
+			$(this.options.input).value=this.value;
 		}
 	},
 	

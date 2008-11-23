@@ -1,6 +1,7 @@
 var controller = {
 	dragDrop : [
-		{drag:'user',drop:'folder'}
+		{drag:'user',drop:'folder'},
+		{drag:'icon',drop:'folder'}
 	],
 	interfaceIsReady : function() {
 		this.loadUser();
@@ -10,5 +11,11 @@ var controller = {
 	},
 	drop$user$folder : function(dragged,target) {
 		In2iGui.get().alert({text:Object.toJSON(dragged)+' was dropped on '+Object.toJSON(target)});
+	},
+	drop$icon$folder : function(dragged,target) {
+		In2iGui.get().alert({text:Object.toJSON(dragged)+' was dropped on '+Object.toJSON(target)});
+	},
+	onRowOpen$list : function(info) {
+		alert(Object.toJSON(info))
 	}
 }

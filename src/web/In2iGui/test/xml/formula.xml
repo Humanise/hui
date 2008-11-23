@@ -121,7 +121,7 @@
 				<buttons top="10">
 					<button title="Normal" action="win.setVariant(null)"/>
 					<button title="Dark" action="win.setVariant('dark')"/>
-					<button title="Light" action="win.setVariant('light')"/>
+					<button title="Light" action="win.setVariant('light')" highlighted="true"/>
 				</buttons>
 			</group>
 		</formula>

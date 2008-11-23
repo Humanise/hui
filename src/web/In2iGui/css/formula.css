@@ -111,15 +111,14 @@ form.in2igui_formula fieldset legend
 
 /************************************** Buttons *********************************/
 
-.in2igui_formula_buttons
+form.in2igui_formula div.in2igui_buttons_body
 {
-	overflow: hidden;
+	float: right;
 }
 
 form.in2igui_formula a.in2igui_button
 {
-	float: right;
-	margin-left: 10px;
+	margin-left: 2px;
 	margin-right: 0px;
 }
 

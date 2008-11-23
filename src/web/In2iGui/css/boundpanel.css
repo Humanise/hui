@@ -97,7 +97,7 @@
 }
 
 /****************************** Special button style ********************************/
-
+/*
 .in2igui_boundpanel a.in2igui_button
 {
 	float: right;
@@ -136,7 +136,7 @@
 {
 	background: url('../gfx/bound_button_bg.png') 0px -60px repeat-x;
 }
-
+*/
 /****************************** Special form style *********************************/
 
 div.in2igui_boundpanel div.in2igui_field, div.in2igui_boundpanel input.in2igui_tokens_token
