@@ -1161,6 +1161,8 @@ div.in2igui_alert a.in2igui_button
 	margin-right: 0px;
 	cursor: pointer;
 	white-space: nowrap;
+	height: 28px;
+	line-height: 28px;
 }
 
 div.in2igui_alert a.in2igui_button span
@@ -1694,7 +1696,7 @@ div.in2igui_window_dark div.in2igui_window_content div.in2igui_window_content
 	/*padding-right: 10px;*/
 }
 
-div.in2igui_list_busy
+div.in2igui_list_busy .navigation
 {
 	opacity: 0.5;
 }
@@ -1791,7 +1793,7 @@ div.in2igui_list table tbody tr.selected
 	color: #fff;
 }
 
-div.in2igui_list .window_number
+div.in2igui_list .window_page
 {
 	display: none;
 }

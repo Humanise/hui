@@ -6558,6 +6558,7 @@ In2iGui.TextField = function(id,name,options) {
 	this.options = N2i.override({placeholder:null,placeholderElement:null},options);
 	this.element = $(id);
 	this.element.setAttribute('autocomplete','off');
+	N2i.log(this.element.name+': '+this.element.focused);
 	this.value = this.element.value;
 	this.isPassword = this.element.type=='password';
 	this.name = name;

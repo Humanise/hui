@@ -7,6 +7,7 @@ In2iGui.List = function(element,name,options) {
 		this.options.source.addDelegate(this);
 	}
 	this.url = options.url;
+	this.table = this.element.select('table')[0];
 	this.head = this.element.select('thead')[0];
 	this.body = this.element.select('tbody')[0];
 	this.columns = [];
@@ -326,7 +327,8 @@ In2iGui.List.prototype.buildHeaders = function(headers) {
 
 In2iGui.List.prototype.buildRows = function(rows) {
 	var self = this;
-	this.body.update();
+	this.body.remove();
+	this.body = new Element('tbody');
 	this.rows = [];
 	if (!rows) return;
 	rows.each(function(r,i) {
@@ -352,6 +354,7 @@ In2iGui.List.prototype.buildRows = function(rows) {
 		self.addRowBehavior(tr,i);
 		self.rows.push(info);
 	})
+	this.table.insert(this.body);
 }
 
 

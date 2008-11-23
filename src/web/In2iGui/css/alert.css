@@ -74,6 +74,8 @@ div.in2igui_alert a.in2igui_button
 	margin-right: 0px;
 	cursor: pointer;
 	white-space: nowrap;
+	height: 28px;
+	line-height: 28px;
 }
 
 div.in2igui_alert a.in2igui_button span
