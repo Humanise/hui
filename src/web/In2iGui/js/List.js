@@ -66,7 +66,10 @@ In2iGui.List.prototype = {
 		this.window.page = 0;
 		this.refresh();
 	},
-
+	resetState : function() {
+		this.window = {size:null,page:0,total:0};
+		In2iGui.firePropertyChange(this,'state',this.window);
+	},
 	/**
 	 * @private
 	 */
@@ -327,8 +330,8 @@ In2iGui.List.prototype.buildHeaders = function(headers) {
 
 In2iGui.List.prototype.buildRows = function(rows) {
 	var self = this;
-	this.body.remove();
-	this.body = new Element('tbody');
+	this.body.update();
+	//this.body = new Element('tbody');
 	this.rows = [];
 	if (!rows) return;
 	rows.each(function(r,i) {
@@ -354,7 +357,7 @@ In2iGui.List.prototype.buildRows = function(rows) {
 		self.addRowBehavior(tr,i);
 		self.rows.push(info);
 	})
-	this.table.insert(this.body);
+	//this.table.insert(this.body);
 }
 
 
@@ -454,7 +457,7 @@ In2iGui.List.prototype.rowDoubleClick = function(index) {
  */
 In2iGui.List.prototype.windowPageWasClicked = function(tag) {
 	this.window.page = tag.in2GuiPage;
-	In2iGui.firePropertyChange(this,'state',{page:this.window.page});
+	In2iGui.firePropertyChange(this,'state',this.window);
 	this.refresh();
 }
 

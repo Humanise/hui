@@ -44,8 +44,9 @@ In2iGui.Selection.prototype = {
 	},
 	changeValue : function(value) {
 		this.setValue(value);
-		In2iGui.callDelegates(this,'selectorSelectionChanged');
-		In2iGui.callDelegates(this,'selectionChanged',this.value);
+		In2iGui.callDelegates(this,'selectorSelectionChanged'); // deprecated
+		In2iGui.callDelegates(this,'selectionChanged',this.value); // deprecated
+		In2iGui.callDelegates(this,'onSelectionChange',this.value);
 		In2iGui.firePropertyChange(this,'value',this.value);
 	},
 	registerItems : function(items) {

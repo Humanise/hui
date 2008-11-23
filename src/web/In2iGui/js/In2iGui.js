@@ -707,7 +707,11 @@ In2iGui.Source.prototype = {
 		this.parameters.each(function(p) {
 			if (p.key==key) p.value=value;
 		})
-		this.refresh();
+		var self = this;
+		window.clearTimeout(this.paramDelay);
+		this.paramDelay = window.setTimeout(function() {
+			this.refresh();
+		}.bind(this),100)
 	}
 }
 
