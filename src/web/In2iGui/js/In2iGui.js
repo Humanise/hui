@@ -725,15 +725,18 @@ In2iGui.localize = function(loc) {
 
 In2iGui.TextField = function(id,name,options) {
 	this.options = N2i.override({placeholder:null,placeholderElement:null},options);
-	this.element = $(id);
+	var e = this.element = $(id);
 	this.element.setAttribute('autocomplete','off');
-	N2i.log(this.element.name+': '+this.element.focused);
 	this.value = this.element.value;
 	this.isPassword = this.element.type=='password';
 	this.name = name;
 	In2iGui.extend(this);
 	this.addBehavior();
+	if (this.options.placeholderElement && this.value!='') {
+		in2igui.fadeOut(this.options.placeholderElement,0);
+	}
 	this.checkPlaceholder();
+	if (e==document.activeElement) this.focused();
 }
 
 In2iGui.TextField.prototype = {
@@ -741,31 +744,31 @@ In2iGui.TextField.prototype = {
 		var self = this;
 		var e = this.element;
 		var p = this.options.placeholderElement;
-		e.observe('keyup',function() {
-			self.keyDidStrike();
-		});
-		e.observe('focus',function() {
-			if (p && e.value=='') {
-				in2igui.fadeOut(p,0);
-			}
-			if (e.value==self.options.placeholder) {
-				e.value='';
-				e.removeClassName('in2igui_placeholder');
-				if (self.isPassword && !In2iGui.browser.msie) {
-					e.type='password';
-					if (In2iGui.browser.webkit) {
-						e.select();
-					}
+		e.observe('keyup',this.keyDidStrike.bind(this));
+		e.observe('focus',this.focused.bind(this));
+		e.observe('blur',this.checkPlaceholder.bind(this));
+		if (p) {
+			p.setStyle({cursor:'text'});
+			p.observe('mousedown',this.focus.bind(this)).observe('click',this.focus.bind(this));
+		}
+	},
+	focused : function() {
+		var e = this.element;
+		var p = this.options.placeholderElement;
+		if (p && e.value=='') {
+			in2igui.fadeOut(p,0);
+		}
+		if (e.value==this.options.placeholder) {
+			e.value='';
+			e.removeClassName('in2igui_placeholder');
+			if (this.isPassword && !In2iGui.browser.msie) {
+				e.type='password';
+				if (In2iGui.browser.webkit) {
+					e.select();
 				}
 			}
-			e.select();
-		});
-		this.element.observe('blur',function() {
-			self.checkPlaceholder();
-		});
-		if (p) {
-			p.setStyle({cursor:'text'}).observe('mousedown',function() {self.element.focus()}).observe('click',function() {self.element.focus()});
 		}
+		e.select();		
 	},
 	checkPlaceholder : function() {
 		if (this.options.placeholderElement && this.value=='') {

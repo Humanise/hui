@@ -37,6 +37,7 @@ In2iGui.Button.prototype = {
 		var self = this;
 		this.element.onclick = function() {
 			self.clicked();
+			return false;
 		}
 	},
 	clicked : function() {

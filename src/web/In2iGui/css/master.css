@@ -104,6 +104,7 @@ div.in2igui_tooltip
 	color: #433909;
 	font-size: 9pt;
 	opacity: 0;
+	cursor: default;
 }
 
 div.in2igui_tooltip div

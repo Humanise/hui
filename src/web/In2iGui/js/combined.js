@@ -8273,7 +8273,11 @@ In2iGui.Source.prototype = {
 		this.parameters.each(function(p) {
 			if (p.key==key) p.value=value;
 		})
-		this.refresh();
+		var self = this;
+		window.clearTimeout(this.paramDelay);
+		this.paramDelay = window.setTimeout(function() {
+			this.refresh();
+		}.bind(this),100)
 	}
 }
 
@@ -8287,15 +8291,18 @@ In2iGui.localize = function(loc) {
 
 In2iGui.TextField = function(id,name,options) {
 	this.options = N2i.override({placeholder:null,placeholderElement:null},options);
-	this.element = $(id);
+	var e = this.element = $(id);
 	this.element.setAttribute('autocomplete','off');
-	N2i.log(this.element.name+': '+this.element.focused);
 	this.value = this.element.value;
 	this.isPassword = this.element.type=='password';
 	this.name = name;
 	In2iGui.extend(this);
 	this.addBehavior();
+	if (this.options.placeholderElement && this.value!='') {
+		in2igui.fadeOut(this.options.placeholderElement,0);
+	}
 	this.checkPlaceholder();
+	if (e==document.activeElement) this.focused();
 }
 
 In2iGui.TextField.prototype = {
@@ -8303,31 +8310,31 @@ In2iGui.TextField.prototype = {
 		var self = this;
 		var e = this.element;
 		var p = this.options.placeholderElement;
-		e.observe('keyup',function() {
-			self.keyDidStrike();
-		});
-		e.observe('focus',function() {
-			if (p && e.value=='') {
-				in2igui.fadeOut(p,0);
-			}
-			if (e.value==self.options.placeholder) {
-				e.value='';
-				e.removeClassName('in2igui_placeholder');
-				if (self.isPassword && !In2iGui.browser.msie) {
-					e.type='password';
-					if (In2iGui.browser.webkit) {
-						e.select();
-					}
+		e.observe('keyup',this.keyDidStrike.bind(this));
+		e.observe('focus',this.focused.bind(this));
+		e.observe('blur',this.checkPlaceholder.bind(this));
+		if (p) {
+			p.setStyle({cursor:'text'});
+			p.observe('mousedown',this.focus.bind(this)).observe('click',this.focus.bind(this));
+		}
+	},
+	focused : function() {
+		var e = this.element;
+		var p = this.options.placeholderElement;
+		if (p && e.value=='') {
+			in2igui.fadeOut(p,0);
+		}
+		if (e.value==this.options.placeholder) {
+			e.value='';
+			e.removeClassName('in2igui_placeholder');
+			if (this.isPassword && !In2iGui.browser.msie) {
+				e.type='password';
+				if (In2iGui.browser.webkit) {
+					e.select();
 				}
 			}
-			e.select();
-		});
-		this.element.observe('blur',function() {
-			self.checkPlaceholder();
-		});
-		if (p) {
-			p.setStyle({cursor:'text'}).observe('mousedown',function() {self.element.focus()}).observe('click',function() {self.element.focus()});
 		}
+		e.select();		
 	},
 	checkPlaceholder : function() {
 		if (this.options.placeholderElement && this.value=='') {
@@ -9309,7 +9316,10 @@ In2iGui.List.prototype = {
 		this.window.page = 0;
 		this.refresh();
 	},
-
+	resetState : function() {
+		this.window = {size:null,page:0,total:0};
+		In2iGui.firePropertyChange(this,'state',this.window);
+	},
 	/**
 	 * @private
 	 */
@@ -9570,8 +9580,8 @@ In2iGui.List.prototype.buildHeaders = function(headers) {
 
 In2iGui.List.prototype.buildRows = function(rows) {
 	var self = this;
-	this.body.remove();
-	this.body = new Element('tbody');
+	this.body.update();
+	//this.body = new Element('tbody');
 	this.rows = [];
 	if (!rows) return;
 	rows.each(function(r,i) {
@@ -9597,7 +9607,7 @@ In2iGui.List.prototype.buildRows = function(rows) {
 		self.addRowBehavior(tr,i);
 		self.rows.push(info);
 	})
-	this.table.insert(this.body);
+	//this.table.insert(this.body);
 }
 
 
@@ -9697,7 +9707,7 @@ In2iGui.List.prototype.rowDoubleClick = function(index) {
  */
 In2iGui.List.prototype.windowPageWasClicked = function(tag) {
 	this.window.page = tag.in2GuiPage;
-	In2iGui.firePropertyChange(this,'state',{page:this.window.page});
+	In2iGui.firePropertyChange(this,'state',this.window);
 	this.refresh();
 }
 
@@ -10161,6 +10171,7 @@ In2iGui.Button.prototype = {
 		var self = this;
 		this.element.onclick = function() {
 			self.clicked();
+			return false;
 		}
 	},
 	clicked : function() {
@@ -10252,8 +10263,9 @@ In2iGui.Selection.prototype = {
 	},
 	changeValue : function(value) {
 		this.setValue(value);
-		In2iGui.callDelegates(this,'selectorSelectionChanged');
-		In2iGui.callDelegates(this,'selectionChanged',this.value);
+		In2iGui.callDelegates(this,'selectorSelectionChanged'); // deprecated
+		In2iGui.callDelegates(this,'selectionChanged',this.value); // deprecated
+		In2iGui.callDelegates(this,'onSelectionChange',this.value);
 		In2iGui.firePropertyChange(this,'value',this.value);
 	},
 	registerItems : function(items) {
