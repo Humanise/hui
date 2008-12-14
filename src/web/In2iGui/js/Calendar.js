@@ -1,7 +1,7 @@
 In2iGui.Calendar = function(id,name,options) {
 	this.name = name;
 	this.options = {startHour:7,endHour:24};
-	N2i.override(this.options,options);
+	n2i.override(this.options,options);
 	this.element = $(id);
 	this.head = $(this.element.getElementsByTagName('thead')[0]);
 	this.body = $(this.element.getElementsByTagName('tbody')[0]);
@@ -205,7 +205,7 @@ In2iGui.DatePicker = function(id,name,options) {
 	this.name = name;
 	this.element = $(id);
 	this.options = {};
-	N2i.override(this.options,options);
+	n2i.override(this.options,options);
 	this.cells = [];
 	this.title = this.element.select('strong')[0];
 	this.today = new Date();

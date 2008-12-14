@@ -81,12 +81,12 @@ In2iGui.Formula.Group = function(elementOrId,name,options) {
 	this.name = name;
 	this.element = $(elementOrId);
 	this.body = this.element.select('tbody')[0];
-	this.options = N2i.override({above:true},options);
+	this.options = n2i.override({above:true},options);
 	In2iGui.extend(this);
 }
 
 In2iGui.Formula.Group.create = function(name,options) {
-	options = N2i.override({above:true},options);
+	options = n2i.override({above:true},options);
 	var element = new Element('table',
 		{'class':'in2igui_formula_group'}
 	);
@@ -101,7 +101,6 @@ In2iGui.Formula.Group.prototype = {
 	add : function(widget) {
 		var tr = new Element('tr');
 		this.body.insert(tr);
-		N2i.log(widget);
 		if (widget.getLabel) {
 			var label = widget.getLabel();
 			if (label) {
@@ -134,24 +133,24 @@ In2iGui.Formula.Group.prototype = {
 In2iGui.Formula.Text = function(element,name,options) {
 	this.name = name;
 	this.options = {label:null,key:null};
-	N2i.override(this.options,options);
+	n2i.override(this.options,options);
 	this.element = $(element);
 	this.input = this.element.select('.in2igui_formula_text')[0];
 	In2iGui.extend(this);
 }
 
 In2iGui.Formula.Text.create = function(name,options) {
-	options = N2i.override({lines:1},options);
+	options = n2i.override({lines:1},options);
 	if (options.lines>1) {
-		var input = N2i.create('textarea',
+		var input = new Element('textarea',
 			{'class':'in2igui_formula_text','rows':options.lines}
 		);
 	} else {
-		var input = N2i.create('input',
+		var input = new Element('input',
 			{'class':'in2igui_formula_text'}
 		);		
 	}
-	var element = N2i.create('div',{'class':'in2igui_field'});
+	var element = new Element('div',{'class':'in2igui_field'});
 	element.appendChild(input);
 	return new In2iGui.Formula.Text(element,name,options);
 }
@@ -185,7 +184,7 @@ In2iGui.Formula.Text.prototype = {
 		return this.options.label;
 	},
 	isEmpty : function() {
-		return N2i.isEmpty(this.input.value);
+		return n2i.isEmpty(this.input.value);
 	}
 }
 
@@ -196,7 +195,7 @@ In2iGui.Formula.DateTime = function(elementOrId,name,options) {
 	this.outputFormat = 'd-m-Y H:i:s';
 	//this.id = id;
 	this.name = name;
-	this.options = N2i.override({returnType:null,label:null},options);
+	this.options = n2i.override({returnType:null,label:null},options);
 	this.value = null;
 	this.element = $(elementOrId);
 	In2iGui.extend(this);
@@ -276,8 +275,7 @@ In2iGui.Formula.DateTime.prototype = {
 
 In2iGui.Formula.Select = function(id,name,options) {
 	this.name = name;
-	N2i.log(options);
-	this.options = N2i.override({label:null},options);
+	this.options = n2i.override({label:null},options);
 	this.element = $(id);
 	this.value = this.options.value || null;
 	this.invalidValue = false;
@@ -376,7 +374,7 @@ In2iGui.Formula.Radiobuttons.prototype = {
 	updateUI : function() {
 		for (var i=0; i < this.radios.length; i++) {
 			var radio = this.radios[i];
-			N2i.setClass(radio.id,'in2igui_selected',radio.value==this.value);
+			$(radio.id).setClassName('in2igui_selected',radio.value==this.value);
 		};
 	},
 	setValue : function(value) {
@@ -422,7 +420,7 @@ In2iGui.Formula.Checkbox.prototype = {
 		this.updateUI();
 	},
 	updateUI : function() {
-		N2i.setClass(this.element,'in2igui_checkbox_selected',this.value);
+		this.element.setClassName('in2igui_checkbox_selected',this.value);
 	},
 	setValue : function(value) {
 		this.value = value;
@@ -481,7 +479,7 @@ In2iGui.Formula.Checkboxes.prototype = {
 		this.setValue(values);
 	},
 	flipValue : function(value) {
-		N2i.flipInArray(this.values,value);
+		n2i.flipInArray(this.values,value);
 		this.checkValues();
 		this.updateUI();
 	},
@@ -551,7 +549,7 @@ In2iGui.Formula.Checkboxes.Items.prototype = {
 	updateUI : function() {
 		for (var i=0; i < this.checkboxes.length; i++) {
 			var item = this.checkboxes[i];
-			N2i.setClass(item.element,'in2igui_checkbox_selected',N2i.inArray(this.parent.values,item.value));
+			item.element.setClassName('in2igui_checkbox_selected',this.parent.values.indexOf(item.value)!=-1);
 		};
 	},
 	hasValue : function(value) {
@@ -568,7 +566,7 @@ In2iGui.Formula.Checkboxes.Items.prototype = {
 
 In2iGui.Formula.Tokens = function(element,name,options) {
 	this.options = {label:null,key:null};
-	N2i.override(this.options,options);
+	n2i.override(this.options,options);
 	this.element = $(element);
 	this.name = name;
 	this.value = [''];

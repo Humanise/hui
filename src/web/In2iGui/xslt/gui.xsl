@@ -49,9 +49,10 @@
 		<script src="{$context}/In2iGui/lib/swfupload/swfupload.cookies.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		-->
 		<script src="{$context}/In2iGui/lib/prototype.min.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/lib/In2iScripts/In2iScripts.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/In2iGui/lib/n2i.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+<!--		<script src="{$context}/In2iGui/lib/In2iScripts/In2iScripts.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/lib/In2iScripts/In2iAnimation.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/lib/In2iScripts/In2iInput.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/In2iGui/lib/In2iScripts/In2iInput.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>-->
 		<script src="{$context}/In2iGui/lib/In2iScripts/In2iDate.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/lib/json2.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/In2iGui.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
@@ -79,6 +80,7 @@
 		<script src="{$context}/In2iGui/js/Layout.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/Dock.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/Box.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/In2iGui/lib/wysihat.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 	</xsl:when>
 	<xsl:otherwise>
 		<script src="{$context}/In2iGui/js/minimized.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
@@ -111,6 +113,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 <body class="in2igui">
 	<xsl:choose>
 		<xsl:when test="@pad"><div style="padding: {@pad}px;"><xsl:apply-templates/></div></xsl:when>
+		<xsl:when test="@padding"><div style="padding: {@padding}px;"><xsl:apply-templates/></div></xsl:when>
 		<xsl:otherwise><xsl:apply-templates/></xsl:otherwise>
 	</xsl:choose>
 </body>

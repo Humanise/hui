@@ -13,19 +13,39 @@ div.in2igui_upload_items
 {
 	overflow: auto;
 	max-height: 200px;
-	padding: 0px 5px 5px 5px;
+	background: #fff;
+	border: 1px solid #ccc;
 }
 
 div.in2igui_upload_item
 {
 	font-size: 8pt;
-	padding-top: 5px;
+	overflow: hidden;
+	padding: 3px 5px;
+	color: #666;
+}
+
+div.in2igui_upload_item_alt
+{
+	background: #EDF3FE;
+}
+
+div.in2igui_upload_item_content
+{
+	margin-left: 36px;
+	padding-top: 2px;
+}
+
+div.in2igui_upload_item span.in2igui_icon_2
+{
+	float:left;
+	height:32px;
+	width:32px;
 }
 
 div.in2igui_upload_item_error
 {
-	font-size: 9pt;
-	padding-top: 5px;
+	/*background: #fde;*/
 	color: #f00;
 }
 
@@ -34,10 +54,19 @@ div.in2igui_upload_item_error a
 	float: right;
 }
 
-div.in2igui_upload_item_error em
+div.in2igui_upload_item strong
 {
-	color: #666;
+	line-height: 11px;
 	font-size: 9px;
+	float: left;
+}
+
+div.in2igui_upload_item em
+{
+	line-height: 11px;
+	font-size: 9px;
+	float: right;
+	font-style: normal;
 }
 
 div.in2igui_upload object

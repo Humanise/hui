@@ -50,7 +50,7 @@ In2iGui.Tabs.Tab = function(id,name) {
 In2iGui.Tabs.Tab.prototype = {
 	setActive : function(active) {
 		this.element.style.display = (active ? 'block' : 'none');
-		N2i.setClass(this.tab,'in2igui_tabs_selected',active);
+		this.tab.setClassName('in2igui_tabs_selected',active);
 	}
 }
 

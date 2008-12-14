@@ -58,11 +58,11 @@ In2iGui.Overlay.prototype = {
 	showAtElement : function(element,options) {
 		In2iGui.positionAtElement(this.element,element,options);
 		if (this.visible) return;
-		if (In2iGui.browser.msie) {
+		if (n2i.browser.msie) {
 			this.element.setStyle({'display':'block'});
 		} else {
 			this.element.setStyle({'display':'block','opacity':0});
-			$ani(this.element,'opacity',1,300);
+			n2i.ani(this.element,'opacity',1,300);
 		}
 		this.visible = true;
 		if (options.autoHide) {

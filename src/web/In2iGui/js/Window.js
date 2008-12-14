@@ -11,7 +11,7 @@ In2iGui.Window = function(element,name) {
 }
 
 In2iGui.Window.create = function(name,options) {
-	options = N2i.override({title:'Window',close:true},options);
+	options = n2i.override({title:'Window',close:true},options);
 	var element = new Element('div',{'class':'in2igui_window'+(options.variant ? ' in2igui_window_'+options.variant : '')});
 	element.update((options.close ? '<div class="close"></div>' : '')+
 		'<div class="titlebar"><div class="titlebar"><div class="titlebar"><span>'+options.title+'</span></div></div></div>'+
@@ -29,7 +29,7 @@ In2iGui.Window.create = function(name,options) {
 In2iGui.Window.prototype = {
 	addBehavior : function() {
 		var self = this;
-		if (this.close) this.close.observe('click',function() {self.hide();});
+		if (this.close) this.close.observe('click',function(e) {self.hide();}).observe('mousedown',function(e) {e.stop();});
 		this.titlebar.onmousedown = function(e) {self.startDrag(e);return false;};
 		this.titlebar.observe('touchstart',function(e) {self.startDrag(e);return false;});
 		this.element.observe('mousedown',function() {
@@ -42,24 +42,25 @@ In2iGui.Window.prototype = {
 	show : function() {
 		if (this.visible) return;
 		this.element.setStyle({
-			zIndex : In2iGui.nextPanelIndex(), visibility : 'hidden', display : 'block', top: (N2i.Window.getScrollTop()+40)+'px'
+			zIndex : In2iGui.nextPanelIndex(), visibility : 'hidden', display : 'block', top: (n2i.getScrollTop+40)+'px'
 		})
 		var width = this.element.clientWidth;
 		this.element.setStyle({
 			width : width+'px' , visibility : 'visible'
 		});
-		if (!N2i.isIE()) {
-			$ani(this.element,'opacity',1,0);
+		if (!n2i.browser.msie) {
+			n2i.ani(this.element,'opacity',1,0);
 		}
 		this.visible = true;
+		In2iGui.callDescendants(this,'parentShown');
 	},
 	toggle : function() {
 		(this.visible ? this.hide() : this.show() );
 	},
 	hide : function() {
 		if (!this.visible) return;
-		if (!N2i.isIE()) {
-			$ani(this.element,'opacity',0,200,{hideOnComplete:true});
+		if (!n2i.browser.msie) {
+			n2i.ani(this.element,'opacity',0,200,{hideOnComplete:true});
 		} else {
 			this.element.setStyle({display:'none'});
 		}
@@ -83,17 +84,18 @@ In2iGui.Window.prototype = {
 ////////////////////////////// Dragging ////////////////////////////////
 
 	startDrag : function(e) {
-		var event = new N2i.Event(e);
+		var event = Event.extend(e);
 		this.element.style.zIndex=In2iGui.nextPanelIndex();
-		this.dragState = {left:event.mouseLeft()-N2i.Element.getLeft(this.element),top:event.mouseTop()-N2i.Element.getTop(this.element)};
+		var pos = this.element.cumulativeOffset();
+		this.dragState = {left:event.pointerX()-pos.left,top:event.pointerY()-pos.top};
 		this.latestPosition = {left: this.dragState.left, top:this.dragState.top};
 		this.latestTime = new Date().getMilliseconds();
 		var self = this;
 		this.moveListener = function(e) {self.drag(e)};
 		this.upListener = function(e) {self.endDrag(e)};
-		N2i.Event.addListener(document,'mousemove',this.moveListener);
-		N2i.Event.addListener(document,'mouseup',this.upListener);
-		N2i.Event.stop(e);
+		Event.observe(document,'mousemove',this.moveListener);
+		Event.observe(document,'mouseup',this.upListener);
+		e.stop();
 		document.body.onselectstart = function () { return false; };
 		return false;
 	},
@@ -106,28 +108,19 @@ In2iGui.Window.prototype = {
 		this.latestPosition = {'top':top,'left':left};
 	},
 	drag : function(e) {
-		var event = new N2i.Event(e);
+		var event = Event.extend(e);
 		this.element.style.right = 'auto';
-		var top = (event.mouseTop()-this.dragState.top);
-		var left = (event.mouseLeft()-this.dragState.left);
+		var top = (event.pointerY()-this.dragState.top);
+		var left = (event.pointerX()-this.dragState.left);
 		this.element.style.top = Math.max(top,0)+'px';
 		this.element.style.left = Math.max(left,0)+'px';
 		//this.calc(top,left);
 		return false;
 	},
 	endDrag : function(e) {
-		N2i.Event.removeListener(document,'mousemove',this.moveListener);
-		N2i.Event.removeListener(document,'mouseup',this.upListener);
+		Event.stopObserving(document,'mousemove',this.moveListener);
+		Event.stopObserving(document,'mouseup',this.upListener);
 		document.body.onselectstart = null;
-		/*
-		var func = N2i.Animation.fastSlow;
-		var newTop = parseInt(this.element.style.top)-this.b*10;
-		var newLeft = parseInt(this.element.style.left)-this.a*10;
-		if (newTop<0) {newTop=0; func=N2i.Animation.bounce};
-		if (newLeft<0) {newLeft=0; func=N2i.Animation.bounce};
-		$ani(this.element,'top',newTop+'px',1000,{ease:func});
-		$ani(this.element,'left',newLeft+'px',1000,{ease:func});
-		*/
 	}
 }
 

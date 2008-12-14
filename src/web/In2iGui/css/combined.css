@@ -420,12 +420,12 @@ a.in2igui_button_disabled:hover
 
 a.in2igui_button_disabled:hover span
 {
-	background-position: 100% -28px;
+	background-position: 100% -30px;
 }
 
 a.in2igui_button_disabled:hover span span
 {
-	background-position: 0px -56px;
+	background-position: 0px -60px;
 }
 
 
@@ -1595,6 +1595,10 @@ div.in2igui_toolbar_badge_icon
 	padding: 0px 0px 0px 8px;
 }
 
+div.in2igui_window_body
+{
+	overflow: hidden;
+}
 
 
 .in2igui_window_bottom
@@ -1729,18 +1733,18 @@ div.in2igui_list table thead th span
 div.in2igui_list th.sortable:hover
 {
 	cursor: pointer;
-	background: url('../gfx/list_header.png') left -22px repeat-x;
+	background: url('../gfx/list_header.png') left -21px repeat-x;
 }
 
 div.in2igui_list th.sort_ascending, div.in2igui_list th.sort_descending
 {
-	background: url('../gfx/list_header.png') left -44px repeat-x;
+	background: url('../gfx/list_header.png') left -42px repeat-x;
 	color: #000;
 }
 
 div.in2igui_list th.sort_ascending:hover, div.in2igui_list th.sort_descending:hover
 {
-	background: url('../gfx/list_header.png') left -66px repeat-x;
+	background: url('../gfx/list_header.png') left -63px repeat-x;
 }
 
 div.in2igui_list th.sort_ascending span
@@ -2280,18 +2284,19 @@ div.in2igui_boundpanel div.in2igui_field, div.in2igui_boundpanel input.in2igui_t
 {
 	height: 16px;
 	background: url('../gfx/panel_bottom.png') bottom left repeat-x;
-}.in2igui_richtext
+}div.in2igui_richtext
 {
 	border: 1px solid #ddd;
 	border-color: #eee #eee #ddd;
+	font-size:0;
 }
 
-.in2igui_richtext iframe
+div.in2igui_richtext iframe
 {
 	width: 100%;
 }
 
-.in2igui_richtext_toolbar
+div.in2igui_richtext_toolbar
 {
 	position: absolute;
 	height: 30px;
@@ -2303,20 +2308,20 @@ div.in2igui_boundpanel div.in2igui_field, div.in2igui_boundpanel input.in2igui_t
 	display: none;
 }
 
-.in2igui_richtext_inner_toolbar
+div.in2igui_richtext_inner_toolbar
 {
 	padding-right: 6px;
 	background: url('../gfx/floatbar.png') right -30px no-repeat;
 	height: 30px;
 }
 
-.in2igui_richtext_toolbar_content
+div.in2igui_richtext_toolbar_content
 {
 	background: url('../gfx/floatbar.png') left -60px repeat-x;
 	height: 30px;
 }
 
-.in2igui_richtext_toolbar .action
+div.in2igui_richtext_toolbar .action
 {
 	float: left;
 	width: 16px;
@@ -2325,18 +2330,18 @@ div.in2igui_boundpanel div.in2igui_field, div.in2igui_boundpanel input.in2igui_t
 	margin: 5px 1px 0px 1px;
 }
 
-.in2igui_richtext_toolbar .action:hover
+div.in2igui_richtext_toolbar .action:hover
 {
 	background-position: left -16px;
 }
 
-.in2igui_richtext_toolbar .action img
+div.in2igui_richtext_toolbar .action img
 {
 	width: 16px;
 	height: 16px;
 }
 
-.in2igui_richtext_divider
+div.in2igui_richtext_divider
 {
 	float: left;
 	border-left: 1px solid #bbb;
@@ -2723,19 +2728,39 @@ div.in2igui_upload_items
 {
 	overflow: auto;
 	max-height: 200px;
-	padding: 0px 5px 5px 5px;
+	background: #fff;
+	border: 1px solid #ccc;
 }
 
 div.in2igui_upload_item
 {
 	font-size: 8pt;
-	padding-top: 5px;
+	overflow: hidden;
+	padding: 3px 5px;
+	color: #666;
+}
+
+div.in2igui_upload_item_alt
+{
+	background: #EDF3FE;
+}
+
+div.in2igui_upload_item_content
+{
+	margin-left: 36px;
+	padding-top: 2px;
+}
+
+div.in2igui_upload_item span.in2igui_icon_2
+{
+	float:left;
+	height:32px;
+	width:32px;
 }
 
 div.in2igui_upload_item_error
 {
-	font-size: 9pt;
-	padding-top: 5px;
+	/*background: #fde;*/
 	color: #f00;
 }
 
@@ -2744,10 +2769,19 @@ div.in2igui_upload_item_error a
 	float: right;
 }
 
-div.in2igui_upload_item_error em
+div.in2igui_upload_item strong
 {
-	color: #666;
+	line-height: 11px;
 	font-size: 9px;
+	float: left;
+}
+
+div.in2igui_upload_item em
+{
+	line-height: 11px;
+	font-size: 9px;
+	float: right;
+	font-style: normal;
 }
 
 div.in2igui_upload object
@@ -2756,15 +2790,35 @@ div.in2igui_upload object
 	margin-left: -108px;
 }div.in2igui_progressbar
 {
-	height: 24px;
+	height: 22px;
 	border: 1px solid #ccc;
+	border-width: 0px 1px;
+	background: #fff;
 }
 
 div.in2igui_progressbar div
 {
-	height: 24px;
+	height: 22px;
 	background: url('../gfx/progress_animation.gif');
 	width: 0%;
+}
+
+div.in2igui_progressbar_small
+{
+	background: url('../gfx/progress_bg.png');
+	height: 14px;
+}
+
+div.in2igui_progressbar_small div
+{
+	background: url('../gfx/progress_animation_small.gif');
+	height: 14px;
+}
+
+div.in2igui_progressbar_small_waiting
+{
+	background: url('../gfx/progress_animation_small_indeterminate.gif');
+	height: 14px;
 }div.in2igui_gallery_item
 {
 	float: left;

@@ -19,7 +19,7 @@ In2iGui.Toolbar.prototype = {
 		this.element.appendChild(widget.getElement());
 	},
 	addDivider : function() {
-		this.element.appendChild(N2i.create('div',{'class':'in2igui_divider'}));
+		this.element.appendChild(new Element('div',{'class':'in2igui_divider'}));
 	}
 }
 
@@ -35,7 +35,7 @@ In2iGui.RevealingToolbar = function(element,name,options) {
 }
 
 In2iGui.RevealingToolbar.create = function(name,options) {
-	var element = N2i.create('div',{'class':'in2igui_revealing_toolbar'},{'display':'none'});
+	var element = new Element('div',{'class':'in2igui_revealing_toolbar'}).setStyle({'display':'none'});
 	document.body.appendChild(element);
 	var rev = new In2iGui.RevealingToolbar(element,name,options);
 	var toolbar = In2iGui.Toolbar.create();
@@ -53,10 +53,10 @@ In2iGui.RevealingToolbar.prototype = {
 	},
 	show : function(instantly) {
 		this.element.style.display='';
-		$ani(this.element,'height','58px',instantly ? 0 : 600,{ease:N2i.Animation.slowFastSlow});
+		n2i.ani(this.element,'height','58px',instantly ? 0 : 600,{ease:n2i.ease.slowFastSlow});
 	},
 	hide : function() {
-		$ani(this.element,'height','0px',500,{ease:N2i.Animation.slowFastSlow,hideOnComplete:true});
+		n2i.ani(this.element,'height','0px',500,{ease:n2i.ease.slowFastSlow,hideOnComplete:true});
 	}
 }
 
@@ -81,10 +81,10 @@ In2iGui.Toolbar.Icon.create = function(name,options) {
 	var innerest = new Element('div',{'class':'in2igui_toolbar_inner_icon'});
 	element.insert(inner);
 	inner.insert(innerest);
-	var title = N2i.create('span');
+	var title = new Element('span');
 	title.innerHTML=options.title;
 	if (options.overlay) {
-		var overlay = N2i.create('div',{'class':'in2igui_icon_overlay'},{'backgroundImage':'url('+In2iGui.getIconUrl('overlay/'+options.overlay,2)+')'});
+		var overlay = new Element('div',{'class':'in2igui_icon_overlay'}).setStyle({'backgroundImage':'url('+In2iGui.getIconUrl('overlay/'+options.overlay,2)+')'});
 		icon.insert(overlay);
 	}
 	innerest.insert(icon);
@@ -103,7 +103,7 @@ In2iGui.Toolbar.Icon.prototype = {
 	/** Sets wether the icon should be enabled */
 	setEnabled : function(enabled) {
 		this.enabled = enabled;
-		N2i.setClass(this.element,'in2igui_toolbar_icon_disabled',!this.enabled);
+		this.element.setClassName('in2igui_toolbar_icon_disabled',!this.enabled);
 	},
 	/** @private */
 	wasClicked : function() {
@@ -136,10 +136,10 @@ In2iGui.Toolbar.SearchField.prototype = {
 			self.fieldChanged();
 		}
 		this.field.onfocus = function() {
-			$ani(this,'width','120px',500,{ease:N2i.Animation.slowFastSlow});
+			n2i.ani(this,'width','120px',500,{ease:n2i.ease.slowFastSlow});
 		}
 		this.field.onblur = function() {
-			$ani(this,'width','80px',500,{ease:N2i.Animation.slowFastSlow});
+			n2i.ani(this,'width','80px',500,{ease:n2i.ease.slowFastSlow});
 		}
 	},
 	fieldChanged : function() {

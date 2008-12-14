@@ -1,5 +1,5 @@
 In2iGui.Upload = function(element,name,options) {
-	this.options = N2i.override({url:'',parameters:{}},options);
+	this.options = n2i.override({url:'',parameters:{}},options);
 	this.element = $(element);
 	this.itemContainer = this.element.select('.in2igui_upload_items')[0];
 	this.name = name;
@@ -89,13 +89,17 @@ In2iGui.Upload.prototype = {
 		this.progressBar.hide();
 	},
 	
+	parentShown : function() {
+		this.updateButtonPosition();
+	},
+	
 	/////////////////////////// Flash //////////////////////////
 	
 	createFlashVersion : function() {
 		var loc = new String(document.location);
 		var url = loc.slice(0,loc.lastIndexOf('/')+1);
 		url += this.options.url;
-		var session = N2i.Cookie.get('JSESSIONID');
+		var session = n2i.cookie.get('JSESSIONID');
 		if (session) {
 			url+=';jsessionid='+session;
 		}
@@ -141,6 +145,15 @@ In2iGui.Upload.prototype = {
 			return;
 		}
 	},
+	updateButtonPosition : function() {
+		if (this.button) {
+			var f = this.button.element.select('object')[0];
+			if (f) {
+				var w = this.button.element.getWidth();
+				f.setStyle({width:w+'px','marginLeft':'-'+w+'px',position:'absolute'})
+			}
+		}
+	},
 	startNextUpload : function() {
 		this.loader.startUpload();
 	},
@@ -177,7 +190,7 @@ In2iGui.Upload.prototype = {
 		if (file) {
 			this.items[file.index].update(file);
 		}
-		this.addError(error,file);
+		//this.addError(error,file);
 	},
 	uploadSuccess : function(file,data) {
 		this.items[file.index].updateProgress(file.size,file.size);
@@ -186,7 +199,7 @@ In2iGui.Upload.prototype = {
 		this.startNextUpload();
 		var self = this;
 		window.setTimeout(function() {
-			self.items[file.index].hide();
+			//self.items[file.index].hide();
 		},100);
 		In2iGui.callDelegates(this,'uploadDidComplete',file);
 		if (this.loader.getStats().files_queued==0) {
@@ -200,16 +213,30 @@ In2iGui.Upload.prototype = {
 
 In2iGui.Upload.Item = function(file) {
 	this.element = new Element('div').addClassName('in2igui_upload_item');
+	if (file.index % 2 == 1) {
+		this.element.addClassName('in2igui_upload_item_alt')
+	}
+	this.content = new Element('div').addClassName('in2igui_upload_item_content');
+	this.icon = In2iGui.createIcon('file/generic',2);
+	this.element.insert(this.icon);
+	this.element.insert(this.content);
 	this.info = new Element('strong');
-	this.progress = In2iGui.ProgressBar.create();
-	this.element.insert(this.progress.getElement());
-	this.element.insert(this.info);
+	this.status = new Element('em');
+	this.progress = In2iGui.ProgressBar.create({small:true});
+	this.content.insert(this.progress.getElement());
+	this.content.insert(this.info);
+	this.content.insert(this.status);
 	this.update(file);
 }
 
 In2iGui.Upload.Item.prototype = {
 	update : function(file) {
+		this.status.update(In2iGui.Upload.status[file.filestatus]);
 		this.info.update(file.name);
+		if (file.filestatus==SWFUpload.FILE_STATUS.ERROR) {
+			this.element.addClassName('in2igui_upload_item_error');
+			this.progress.hide();
+		}
 	},
 	updateProgress : function(complete,total) {
 		this.progress.setValue(complete/total);
@@ -220,20 +247,29 @@ In2iGui.Upload.Item.prototype = {
 }
 
 if (window.SWFUpload) {
-In2iGui.Upload.errors = {};
-In2iGui.Upload.errors[SWFUpload.QUEUE_ERROR.QUEUE_LIMIT_EXCEEDED]			= 'Der er for mange filer i køen';
-In2iGui.Upload.errors[SWFUpload.QUEUE_ERROR.FILE_EXCEEDS_SIZE_LIMIT]		= 'Filen er for stor';
-In2iGui.Upload.errors[SWFUpload.QUEUE_ERROR.ZERO_BYTE_FILE]				= 'Filen er tom';
-In2iGui.Upload.errors[SWFUpload.QUEUE_ERROR.INVALID_FILETYPE]				= 'Filens type er ikke understøttet';
-In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.HTTP_ERROR]					= 'Der skete en netværksfejl';
-In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.MISSING_UPLOAD_URL]			= 'Upload-adressen findes ikke';
-In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.IO_ERROR]						= 'Der skete en IO-fejl';
-In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.SECURITY_ERROR]				= 'Der skete en sikkerhedsfejl';
-In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.UPLOAD_LIMIT_EXCEEDED]		= 'Upload-størrelsen er overskredet';
-In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.UPLOAD_FAILED]				= 'Upload af filen fejlede';
-In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.SPECIFIED_FILE_ID_NOT_FOUND]	= 'Filens id kunne ikke findes';
-In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.FILE_VALIDATION_FAILED]		= 'Validering af filen fejlede';
-In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.FILE_CANCELLED]				= 'Filen blev afbrudt';
-In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.UPLOAD_STOPPED]				= 'Upload af filen blev stoppet';
+(function(){
+	var e = In2iGui.Upload.errors = {};
+	e[SWFUpload.QUEUE_ERROR.QUEUE_LIMIT_EXCEEDED]			= 'Der er for mange filer i køen';
+	e[SWFUpload.QUEUE_ERROR.FILE_EXCEEDS_SIZE_LIMIT]		= 'Filen er for stor';
+	e[SWFUpload.QUEUE_ERROR.ZERO_BYTE_FILE]				= 'Filen er tom';
+	e[SWFUpload.QUEUE_ERROR.INVALID_FILETYPE]				= 'Filens type er ikke understøttet';
+	e[SWFUpload.UPLOAD_ERROR.HTTP_ERROR]					= 'Der skete en netværksfejl';
+	e[SWFUpload.UPLOAD_ERROR.MISSING_UPLOAD_URL]			= 'Upload-adressen findes ikke';
+	e[SWFUpload.UPLOAD_ERROR.IO_ERROR]						= 'Der skete en IO-fejl';
+	e[SWFUpload.UPLOAD_ERROR.SECURITY_ERROR]				= 'Der skete en sikkerhedsfejl';
+	e[SWFUpload.UPLOAD_ERROR.UPLOAD_LIMIT_EXCEEDED]		= 'Upload-størrelsen er overskredet';
+	e[SWFUpload.UPLOAD_ERROR.UPLOAD_FAILED]				= 'Upload af filen fejlede';
+	e[SWFUpload.UPLOAD_ERROR.SPECIFIED_FILE_ID_NOT_FOUND]	= 'Filens id kunne ikke findes';
+	e[SWFUpload.UPLOAD_ERROR.FILE_VALIDATION_FAILED]		= 'Validering af filen fejlede';
+	e[SWFUpload.UPLOAD_ERROR.FILE_CANCELLED]				= 'Filen blev afbrudt';
+	e[SWFUpload.UPLOAD_ERROR.UPLOAD_STOPPED]				= 'Upload af filen blev stoppet';
+	e[SWFUpload.UPLOAD_ERROR.UPLOAD_STOPPED]				= 'Upload af filen blev stoppet';
+	var s = In2iGui.Upload.status = {};
+	s[SWFUpload.FILE_STATUS.QUEUED] = 'Filen er i kø';
+	s[SWFUpload.FILE_STATUS.IN_PROGRESS] = 'Filen er i gang';
+	s[SWFUpload.FILE_STATUS.ERROR] = 'Filen gav fejl';
+	s[SWFUpload.FILE_STATUS.COMPLETE] = 'Filen er færdig';
+	s[SWFUpload.FILE_STATUS.CANCELLED] = 'Filen er afbrudt';
+}())
 }
 /* EOF */

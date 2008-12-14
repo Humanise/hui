@@ -9,7 +9,7 @@ In2iGui.Button = function(id,name) {
 
 In2iGui.Button.create = function(name,opts) {
 	var options = {text:'',highlighted:false};
-	N2i.override(options,opts);
+	n2i.override(options,opts);
 	var className = 'in2igui_button'+(options.highlighted ? ' in2igui_button_highlighted' : '');
 	var element = new Element('a',{'class':className,href:'#'});
 	var element2 = new Element('span');
@@ -52,10 +52,10 @@ In2iGui.Button.prototype = {
 		this.updateUI();
 	},
 	setHighlighted : function(highlighted) {
-		N2i.setClass(this.element,'in2igui_button_highlighted',highlighted);
+		this.element.setClassName('in2igui_button_highlighted',highlighted);
 	},
 	updateUI : function() {
-		N2i.setClass(this.element,'in2igui_button_disabled',!this.enabled);
+		this.element.setClassName('in2igui_button_disabled',!this.enabled);
 	},
 	setText : function(text) {
 		this.inner.innerHTML = text;
@@ -70,7 +70,7 @@ In2iGui.Buttons = function(id,name) {
 }
 
 In2iGui.Buttons.create = function(name,options) {
-	options = N2i.override({top:0},options);
+	options = n2i.override({top:0},options);
 	var e = new Element('div',{'class':'in2igui_buttons'});
 	if (options.top>0) e.setStyle({paddingTop:options.top+'px'});
 	e.insert(new Element('div',{'class':'in2igui_buttons_body'}));

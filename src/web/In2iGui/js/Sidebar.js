@@ -30,7 +30,7 @@ In2iGui.Sidebar.Selector.prototype.registerItem = function(id,title,icon,badge,v
 	element.in2iGuiIndex = index;
 	this.items[index] = {id:id,title:title,icon:icon,badge:badge,element:element,value:value};
 	if (selected=='true') {
-		N2i.Element.addClassName(element,'selected');
+		element.addClassName('selected');
 		this.selected[this.selected.length] = index;
 	}
 	var self = this;
@@ -45,11 +45,11 @@ In2iGui.Sidebar.Selector.prototype.itemWasClicked = function(item) {
 
 In2iGui.Sidebar.Selector.prototype.setSelection = function(ids) {
 	for (var i=0; i < this.selected.length; i++) {
-		N2i.Element.removeClassName(this.items[this.selected[i]].element,'selected');
+		this.items[this.selected[i]].element.removeClassName('selected');
 	};
 	this.selected = ids;
 	for (var i=0; i < this.selected.length; i++) {
-		N2i.Element.addClassName(this.items[this.selected[i]].element,'selected');
+		this.items[this.selected[i]].element.addClassName('selected');
 	};
 	In2iGui.callDelegates(this,'selectorSelectionChanged');
 }

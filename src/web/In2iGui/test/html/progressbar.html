@@ -25,15 +25,27 @@
 </head>
 
 <body>
-	<button onclick="test1()">Simple upload</button>
+	
+	<button onclick="showProgress()">Large</button>
+	<button onclick="showProgress(true)">Small</button>
+	
+	
 	<script type="text/javascript" charset="utf-8">
-		function test1() {
+		function showProgress(small) {
 			var win = In2iGui.Window.create(null,{width:300});
-			var up = In2iGui.Upload.create();
-			win.add(up);
-			var b = In2iGui.Button.create(null,{text:'Choose files'});
-			up.setButton(b);
-			win.add(b);
+			var bar = In2iGui.ProgressBar.create({small:small});
+			var g = In2iGui.Buttons.create();
+			var b = In2iGui.Button.create(null,{text:'Random'});
+			b.addDelegate({click:function(){bar.setValue(Math.random())}});
+			var b2 = In2iGui.Button.create(null,{text:'Reset'});
+			b2.addDelegate({click:function(){bar.reset()}});
+			var b3 = In2iGui.Button.create(null,{text:'Wait'});
+			b3.addDelegate({click:function(){bar.setWaiting()}});
+			g.add(b);
+			g.add(b2);
+			g.add(b3);
+			win.add(bar);
+			win.add(g);
 			win.show();
 		}
 	</script>

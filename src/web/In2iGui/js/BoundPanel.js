@@ -8,11 +8,9 @@ In2iGui.BoundPanel = function(element,name) {
 
 In2iGui.BoundPanel.create = function(opts) {
 	var options = {name:null,top:'0px',left:'0px'};
-	N2i.override(options,opts);
-	var element = N2i.create('div',
-		{'class':'in2igui_boundpanel'},
-		{'display':'none','zIndex':In2iGui.nextPanelIndex(),'top':options.top,'left':options.left}
-	);
+	n2i.override(options,opts);
+	var element = new Element('div',
+		{'class':'in2igui_boundpanel'}).setStyle({'display':'none','zIndex':In2iGui.nextPanelIndex(),'top':options.top,'left':options.left});
 	
 	var html = 
 		'<div class="arrow"></div>'+
@@ -36,8 +34,8 @@ In2iGui.BoundPanel.create = function(opts) {
 In2iGui.BoundPanel.prototype = {
 	show : function() {
 		if (!this.visible) {
-			if (!N2i.isIE()) {
-				N2i.setOpacity(this.element,0);
+			if (!n2i.browser.msie) {
+				n2i.setOpacity(this.element,0);
 			}
 			if (this.relativePosition=='left') {
 				this.element.style.marginLeft='30px';
@@ -53,19 +51,19 @@ In2iGui.BoundPanel.prototype = {
 			});
 			this.element.style.marginTop='0px';
 			this.element.style.display='block';
-			if (!N2i.isIE()) {
-				$ani(this.element,'opacity',1,400,{ease:N2i.Animation.fastSlow});
+			if (!n2i.browser.msie) {
+				n2i.ani(this.element,'opacity',1,400,{ease:n2i.ease.fastSlow});
 			}
-			$ani(this.element,'margin-left','0px',800,{ease:N2i.Animation.bounce});
+			n2i.ani(this.element,'margin-left','0px',800,{ease:n2i.ease.bounce});
 		}
 		this.element.style.zIndex = In2iGui.nextPanelIndex();
 		this.visible=true;
 	},
 	hide : function() {
-		if (N2i.isIE()) {
+		if (n2i.browser.msie) {
 			this.element.style.display='none';
 		} else {
-			$ani(this.element,'opacity',0,300,{ease:N2i.Animation.slowFast,hideOnComplete:true});
+			n2i.ani(this.element,'opacity',0,300,{ease:n2i.ease.slowFast,hideOnComplete:true});
 		}
 		this.visible=false;
 	},
@@ -83,13 +81,13 @@ In2iGui.BoundPanel.prototype = {
 		if (this.element.style.display=='none') {
 			this.element.style.visibility='hidden';
 			this.element.style.display='block';
-			var width = N2i.getWidth(this.element);
-			var height = N2i.getHeight(this.element);
+			var width = this.element.getWidth();
+			var height = this.element.getHeight();
 			this.element.style.display='none';
 			this.element.style.visibility='';
 		} else {
-			var width = N2i.getWidth(this.element);
-			var height = N2i.getHeight(this.element);
+			var width = this.element.getWidth();
+			var height = this.element.getHeight();
 		}
 		return {width:width,height:height};
 	},
@@ -98,11 +96,11 @@ In2iGui.BoundPanel.prototype = {
 		var offset = node.cumulativeOffset();
 		var scrollOffset = node.cumulativeScrollOffset();
 		var dims = this.getDimensions();
-		var winWidth = N2i.Window.getInnerWidth();
-		var nodeLeft = offset.left-scrollOffset.left+N2i.Window.getScrollLeft();
-		var nodeWidth = N2i.getWidth(node);
-		var nodeHeight = N2i.getHeight(node);
-		var nodeTop = offset.top-scrollOffset.top+N2i.Window.getScrollTop();
+		var winWidth = n2i.getInnerWidth();
+		var nodeLeft = offset.left-scrollOffset.left+n2i.getScrollLeft();
+		var nodeWidth = node.getWidth();
+		var nodeHeight = node.getHeight();
+		var nodeTop = offset.top-scrollOffset.top+n2i.getScrollTop();
 		if ((nodeLeft+nodeWidth/2)/winWidth<.5) {
 			this.relativePosition='left';
 			var left = nodeLeft+nodeWidth+10;
@@ -118,8 +116,8 @@ In2iGui.BoundPanel.prototype = {
 		this.arrow.style.marginTop = (dims.height-32)/2+Math.min(0,nodeTop+(nodeHeight-dims.height)/2)+'px';
 		this.arrow.style.marginLeft = arrowLeft+'px';
 		if (this.visible) {
-			$ani(this.element,'top',top+'px',500,{ease:N2i.Animation.fastSlow});
-			$ani(this.element,'left',left+'px',500,{ease:N2i.Animation.fastSlow});
+			n2i.ani(this.element,'top',top+'px',500,{ease:n2i.ease.fastSlow});
+			n2i.ani(this.element,'left',left+'px',500,{ease:n2i.ease.fastSlow});
 		} else {
 			this.element.style.top=top+'px';
 			this.element.style.left=left+'px';

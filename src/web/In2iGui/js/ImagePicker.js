@@ -1,8 +1,7 @@
 In2iGui.ImagePicker = function(id,name,options) {
-	this.id = id;
 	this.name = name;
 	this.options = options || {};
-	this.element = $id(id);
+	this.element = $(id);
 	this.images = [];
 	this.object = null;
 	this.thumbnailsLoaded = false;
@@ -40,8 +39,8 @@ In2iGui.ImagePicker.prototype = {
 		if (!this.picker) {
 			var self = this;
 			this.picker = In2iGui.BoundPanel.create();
-			this.content = N2i.create('div',{'class':'in2igui_imagepicker_thumbs'});
-			var buttons = N2i.create('div',{'class':'in2igui_imagepicker_buttons'});
+			this.content = new Element('div',{'class':'in2igui_imagepicker_thumbs'});
+			var buttons = new Element('div',{'class':'in2igui_imagepicker_buttons'});
 			var close = In2iGui.Button.create(null,{text:'Luk',highlighted:true});
 			close.addDelegate({
 				click:function() {self.hidePicker()}
@@ -68,20 +67,20 @@ In2iGui.ImagePicker.prototype = {
 	updateImages : function() {
 		var self = this;
 		var delegate = {
-			onXML:function(doc) {
-				self.parse(doc);
+			onSuccess:function(t) {
+				self.parse(t.responseXML);
 			}
 		};
-		$get(this.options.source,delegate);
+		new Ajax.Request(this.options.source,delegate);
 	},
 	parse : function(doc) {
-		N2i.removeChildren(this.content);
+		this.content.update();
 		var images = doc.getElementsByTagName('image');
 		var self = this;
 		for (var i=0; i < images.length && i<50; i++) {
 			var id = images[i].getAttribute('id');
 			var url = '../../../util/images/?id='+id+'&maxwidth=48&maxheight=48&format=jpg';
-			var thumb = N2i.create('div',{'class':'in2igui_imagepicker_thumbnail'},{'backgroundImage':'url('+url+')'});
+			var thumb = new Element('div',{'class':'in2igui_imagepicker_thumbnail'}).setStyle({'backgroundImage':'url('+url+')'});
 			thumb.in2iguiObject = {'id':id};
 			thumb.onclick = function() {
 				self.setObject(this.in2iguiObject);

@@ -3,13 +3,13 @@
  * @constructor
  */
 In2iGui.Alert = function(element,name,options) {
-	this.options = N2i.override({modal:false},options);
+	this.options = n2i.override({modal:false},options);
 	this.element = $(element);
 	this.name = name;
 	this.body = this.element.select('.in2igui_alert_body')[0];
 	this.content = this.element.select('.in2igui_alert_content')[0];
 	this.emotion = null;
-	var h1s = $tag('h1',this.element);
+	var h1s = this.element.select('h1');
 	this.title = h1s.length>0 ? h1s[0] : null;
 	In2iGui.extend(this);
 }
@@ -19,7 +19,7 @@ In2iGui.Alert = function(element,name,options) {
  * @static
  */
 In2iGui.Alert.create = function(name,options) {
-	options = N2i.override({title:'',text:'',emotion:null,variant:null,title:null},options);
+	options = n2i.override({title:'',text:'',emotion:null,variant:null,title:null},options);
 	
 	var element = new Element('div',{'class':'in2igui_alert'});
 	var body = new Element('div',{'class':'in2igui_alert_body'});
@@ -53,25 +53,25 @@ In2iGui.Alert.prototype = {
 		}
 		this.element.style.zIndex=zIndex;
 		this.element.style.display='block';
-		this.element.style.top=(N2i.Window.getScrollTop()+100)+'px';
-		$ani(this.element,'opacity',1,200);
-		$ani(this.element,'margin-top','40px',600,{ease:N2i.Animation.elastic});
+		this.element.style.top=(n2i.getScrollTop()+100)+'px';
+		n2i.ani(this.element,'opacity',1,200);
+		n2i.ani(this.element,'margin-top','40px',600,{ease:n2i.ease.elastic});
 	},
 	hide : function() {
-		$ani(this.element,'opacity',0,200,{hideOnComplete:true});
-		$ani(this.element,'margin-top','0px',200);
+		n2i.ani(this.element,'opacity',0,200,{hideOnComplete:true});
+		n2i.ani(this.element,'margin-top','0px',200);
 		In2iGui.hideCurtain(this);
 	},
 	setTitle : function(text) {
 		if (!this.title) {
-			this.title = N2i.create('h1');
+			this.title = new Element('h1');
 			this.content.appendChild(this.title);
 		}
 		this.title.innerHTML = text;
 	},
 	setText : function(text) {
 		if (!this.text) {
-			this.text = N2i.create('p');
+			this.text = new Element('p');
 			this.content.appendChild(this.text);
 		}
 		this.text.innerHTML = text || '';
@@ -82,10 +82,10 @@ In2iGui.Alert.prototype = {
 	},
 	setEmotion : function(emotion) {
 		if (this.emotion) {
-			N2i.removeClass(this.body,this.emotion);
+			this.body.removeClassName(this.emotion);
 		}
 		this.emotion = emotion;
-		N2i.addClass(this.body,emotion);
+		this.body.addClassName(emotion);
 	},
 	update : function(options) {
 		options = options || {};
@@ -96,7 +96,7 @@ In2iGui.Alert.prototype = {
 	},
 	addButton : function(button) {
 		if (!this.buttons) {
-			this.buttons = N2i.create('div',{'class':'in2igui_buttons'});
+			this.buttons = new Element('div',{'class':'in2igui_buttons'});
 			this.body.appendChild(this.buttons);
 		}
 		this.buttons.appendChild(button.getElement());

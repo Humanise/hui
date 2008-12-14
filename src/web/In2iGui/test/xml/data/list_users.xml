@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <list>
-	<window total="50" size="10" number="1"/>
+	<window total="50" size="10" page="1"/>
 	<headers>
 		<header title="Titel" width="30" sortable="true"/>
 		<header title="Notat" width="50"/>

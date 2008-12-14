@@ -420,12 +420,12 @@ a.in2igui_button_disabled:hover
 
 a.in2igui_button_disabled:hover span
 {
-	background-position: 100% -28px;
+	background-position: 100% -30px;
 }
 
 a.in2igui_button_disabled:hover span span
 {
-	background-position: 0px -56px;
+	background-position: 0px -60px;
 }
 
 

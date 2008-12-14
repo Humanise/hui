@@ -1,5 +1,5 @@
 In2iGui.ImageViewer = function(element,name,options) {
-	this.options = N2i.override({maxWidth:800,maxHeight:600,perimeter:100,sizeSnap:100},options);
+	this.options = n2i.override({maxWidth:800,maxHeight:600,perimeter:100,sizeSnap:100},options);
 	this.element = $(element);
 	this.box = this.options.box;
 	this.viewer = this.element.select('.in2igui_imageviewer_viewer')[0];
@@ -59,14 +59,13 @@ In2iGui.ImageViewer.prototype = {
 			self.next(false);
 		}
 		this.keyListener = function(e) {
-			var event = new N2i.Event(e);
-			if (event.isRightKey()) {
+			if (n2i.isRightKey(e)) {
 				self.next(true);
-			} else if (event.isLeftKey()) {
+			} else if (n2i.isLeftKey(e)) {
 				self.previous(true);
-			} else if (event.isEscapeKey()) {
+			} else if (n2i.isEscapeKey(e)) {
 				self.hide();
-			} else if (event.isReturnKey()) {
+			} else if (n2i.isReturnKey(e)) {
 				self.playOrPause();
 			}
 		}
@@ -84,22 +83,18 @@ In2iGui.ImageViewer.prototype = {
 	},	
 	calculateSize : function() {
 		var snap = this.options.sizeSnap;
-		var newWidth = N2i.Window.getInnerWidth()-this.options.perimeter;
+		var newWidth = n2i.getInnerWidth()-this.options.perimeter;
 		newWidth = Math.floor(newWidth/snap)*snap;
 		newWidth = Math.min(newWidth,this.options.maxWidth);
-		var newHeight = N2i.Window.getInnerHeight()-this.options.perimeter;
+		var newHeight = n2i.getInnerHeight()-this.options.perimeter;
 		newHeight = Math.floor(newHeight/snap)*snap;
 		newHeight = Math.min(newHeight,this.options.maxHeight);
 		var maxWidth = 0;
 		var maxHeight = 0;
 		for (var i=0; i < this.images.length; i++) {
-			N2i.log('********************');
-			N2i.log({width:newWidth,height:newHeight});
-			N2i.log(this.images[i]);
 			var dims = this.getLargestSize({width:newWidth,height:newHeight},this.images[i]);
 			maxWidth = Math.max(maxWidth,dims.width);
 			maxHeight = Math.max(maxHeight,dims.height);
-			N2i.log(dims);
 		};
 		newHeight = Math.round(Math.min(newHeight,maxHeight));
 		newWidth = Math.round(Math.min(newWidth,maxWidth));
@@ -129,12 +124,12 @@ In2iGui.ImageViewer.prototype = {
 		this.controller.setStyle({paddingLeft:((this.width-115)/2+5)+'px'});
 		this.box.show();
 		this.goToImage(false,0,false);
-		N2i.addListener(document,'keydown',this.keyListener);
+		Event.observe(document,'keydown',this.keyListener);
 	},
 	hide: function(index) {
 		this.pause();
 		this.box.hide();
-		N2i.removeListener(document,'keydown',this.keyListener);
+		Event.stopObserving(document,'keydown',this.keyListener);
 	},
 	boxCurtainWasClicked : function() {
 		this.hide();
@@ -145,7 +140,7 @@ In2iGui.ImageViewer.prototype = {
 			for (var i=0; i < this.images.length; i++) {
 				var url = this.resolveImageUrl(this.images[i]);
 				url = url.replace(/&amp;/,'&');
-				var element = N2i.create('div',{'class':'in2igui_imageviewer_image'},{'width':(this.width+10)+'px','height':this.height+'px'});
+				var element = new Element('div',{'class':'in2igui_imageviewer_image'}).setStyle({'width':(this.width+10)+'px','height':this.height+'px'});
 				
 				var url = this.resolveImageUrl(this.images[i]);
 				url = url.replace(/&amp;/g,'&');
@@ -166,12 +161,12 @@ In2iGui.ImageViewer.prototype = {
 	goToImage : function(animate,num,user) {	
 		if (animate) {
 			if (num>1) {
-				$ani(this.viewer,'scrollLeft',this.index*(this.width+10),Math.min(num*300,2000),{ease:N2i.Animation.slowFastSlow});				
+				n2i.ani(this.viewer,'scrollLeft',this.index*(this.width+10),Math.min(num*300,2000),{ease:n2i.ease.slowFastSlow});				
 			} else {
 				var end = this.index==0 || this.index==this.images.length-1;
-				var ease = (end ? N2i.Animation.bounce : N2i.Animation.elastic);
-				if (!user) ease = N2i.Animation.slowFastSlow;
-				$ani(this.viewer,'scrollLeft',this.index*(this.width+10),(end ? 800 : 1200),{ease:ease});
+				var ease = (end ? n2i.ease.bounce : n2i.ease.elastic);
+				if (!user) ease = n2i.ease.slowFastSlow;
+				n2i.ani(this.viewer,'scrollLeft',this.index*(this.width+10),(end ? 800 : 1200),{ease:ease});
 			}
 		} else {
 			this.viewer.scrollLeft=this.index*(this.width+10);
@@ -252,14 +247,14 @@ In2iGui.ImageViewer.prototype = {
 		this.resetPlay();
 	},
 	preload : function() {
-		var guiLoader = new N2i.Preloader();
+		var guiLoader = new n2i.Preloader();
 		guiLoader.addImages(In2iGui.context+'In2iGui/gfx/imageviewer_controls.png');
 		var self = this;
 		guiLoader.setDelegate({allImagesDidLoad:function() {self.preloadImages()}});
 		guiLoader.load();
 	},
 	preloadImages : function() {
-		this.loader = new N2i.Preloader();
+		this.loader = new n2i.Preloader();
 		this.loader.setDelegate(this);
 		for (var i=0; i < this.images.length; i++) {
 			this.loader.addImages(this.resolveImageUrl(this.images[i]));
@@ -276,14 +271,14 @@ In2iGui.ImageViewer.prototype = {
 		var url = this.resolveImageUrl(this.images[index]);
 		url = url.replace(/&amp;/g,'&');
 		this.innerViewer.childNodes[index].style.backgroundImage="url('"+url+"')";
-		N2i.setClass(this.innerViewer.childNodes[index],'in2igui_imageviewer_image_abort',false);
-		N2i.setClass(this.innerViewer.childNodes[index],'in2igui_imageviewer_image_error',false);
+		Element.setClassName(this.innerViewer.childNodes[index],'in2igui_imageviewer_image_abort',false);
+		Element.setClassName(this.innerViewer.childNodes[index],'in2igui_imageviewer_image_error',false);
 	},
 	imageDidGiveError : function(loaded,total,index) {
-		N2i.setClass(this.innerViewer.childNodes[index],'in2igui_imageviewer_image_error',true);
+		Element.setClassName(this.innerViewer.childNodes[index],'in2igui_imageviewer_image_error',true);
 	},
 	imageDidAbort : function(loaded,total,index) {
-		N2i.setClass(this.innerViewer.childNodes[index],'in2igui_imageviewer_image_abort',true);
+		Element.setClassName(this.innerViewer.childNodes[index],'in2igui_imageviewer_image_abort',true);
 	}
 }
 

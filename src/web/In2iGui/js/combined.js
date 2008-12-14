@@ -1,887 +1,4 @@
-/**
- * Base
- */
-var N2i = {};
-
-/**
- * @todo Maybe improve performace
- */
-function $id() {
-	var elements = new Array();
-
-	for (var i = 0; i < arguments.length; i++) {
-		var element = arguments[i];
-		if (typeof element == 'string') {
-			element = document.getElementById(element);
-		}
-		if (arguments.length == 1) {
-			return element;			
-		}
-		elements.push(element);
-	}
-
-	return elements;
-}
-
-function $class(className,parentElement) {
-	var children = ($id(parentElement) || document.body).getElementsByTagName('*');
-	var elements = [];
-	for (var i=0;i<children.length;i++) {
-		if (N2i.hasClass(children[i],className)) {
-			elements[elements.length] = children[i];
-		}
-	}
-	return elements;
-}
-
-function $firstClass(className,parentElement) {
-	var children = ($id(parentElement) || document.body).getElementsByTagName('*');
-	for (var i=0;i<children.length;i++) {
-		if (N2i.hasClass(children[i],className)) {
-			return children[i];
-		}
-	}
-	return null;
-}
-
-function $tag(name,parentElement) {
-	parentElement = parentElement ? $id(parentElement) : document.body;
-	return parentElement.getElementsByTagName(name);
-}
-
-function $ani(element,style,value,duration,delegate) {
-	if (N2i.Animation) {
-		N2i.Animation.get(element).animate(null,value,style,duration,delegate);
-	}
-}
-
-function $get(url,delegate,options) {
-	var req = new N2i.Request(delegate);
-	req.request(url,options);
-}
-
-/**
- * Implement push on array if not implemented
- */
-if (!Array.prototype.push) {
-	Array.prototype.push = function() {
-		var startLength = this.length;
-		for (var i = 0; i < arguments.length; i++) {
-			this[startLength + i] = arguments[i];
-		}
-		return this.length;
-	}
-}
-
-
-///////////////////////////////////////// Util //////////////////////////////////////
-
-N2i.override = function(original,subject) {
-	if (subject) {
-		for (prop in subject) {
-			original[prop] = subject[prop];
-		}
-	}
-	return original;
-}
-
-N2i.camelize = function(str) {
-    var oStringList = str.split('-');
-    if (oStringList.length == 1) return oStringList[0];
-
-    var camelizedString = str.indexOf('-') == 0
-      ? oStringList[0].charAt(0).toUpperCase() + oStringList[0].substring(1)
-      : oStringList[0];
-
-    for (var i = 1, len = oStringList.length; i < len; i++) {
-      var s = oStringList[i];
-      camelizedString += s.charAt(0).toUpperCase() + s.substring(1);
-    }
-
-    return camelizedString;
-}
-
-N2i.log = function(obj) {
-	try {
-		console.log(obj);
-	} catch (ignore) {};
-}
-
-N2i.escapeHTML = function(str) {
-    var div = document.createElement('div');
-    var text = document.createTextNode(str);
-    div.appendChild(text);
-    return div.innerHTML;
-}
-
-/////////////////////////////////////// Element /////////////////////////////////////
-
-N2i.create = function(name,attributes,styles,properties) {
-	var element = document.createElement(name);
-	if (attributes) {
-		for (attribute in attributes) {
-			if (attribute=='class') {
-				element.className = attributes[attribute];
-			} else {
-				element.setAttribute(attribute,attributes[attribute]);
-			}
-		}
-	}
-	if (styles) {
-		for (style in styles) {
-			element.style[style] = styles[style];
-		}
-	}
-	if (properties) {
-		for (property in properties) {
-			element[property] = properties[property];
-		}
-	}
-	return element;
-}
-
-N2i.removeChildren = function(node) {
-	var children = node.childNodes;
-	for (var i = children.length - 1; i >= 0; i--){
-		node.removeChild(children[i]);
-	};
-}
-
-N2i.ELEMENT_NODE=1;
-N2i.ATTRIBUTE_NODE=2;
-N2i.TEXT_NODE=3;
-
-N2i.Element = {}
-
-N2i.Element.removeClassName = N2i.removeClass = function(element, className) {
-	element = $id(element);
-	if (!element) return;		
-
-	var newClassName = '';
-	var a = element.className.split(/\s+/);
-	for (var i = 0; i < a.length; i++) {
-		if (a[i] != className) {
-			if (i > 0) {
-				newClassName += ' ';				
-			}
-			newClassName += a[i];
-		}
-	}
-	element.className = newClassName;
-}
-
-N2i.Element.hasClassName = N2i.hasClass = function(element, className) {
-	element = $id(element);
-	if (!element) return;
-	var a = element.className.split(/\s+/);
-	for (var i = 0; i < a.length; i++) {
-		if (a[i] == className) {
-			return true;
-		}
-	}
-	return false;
-}
-
-N2i.Element.addClassName = N2i.addClass = function(element, className) {
-    element = $id(element);
-	if (!element) return;
-	
-    N2i.Element.removeClassName(element, className);
-    element.className += ' ' + className;
-}
-
-N2i.toggleClass = function(element,className) {
-	if (N2i.hasClass(element,className)) {
-		N2i.removeClass(element,className);
-	} else {
-		N2i.addClass(element,className);
-	}
-}
-
-N2i.setClass = function(element,className,add) {
-	if (add) {
-		N2i.addClass(element,className);
-	} else {
-		N2i.removeClass(element,className);
-	}
-}
-
-
-N2i.Element.scrollTo = function(element) {
-	element = $id(element);
-	window.scrollTo(N2i.Element.getLeft(element), N2i.Element.getTop(element)-20);
-}
-
-N2i.Element.getLeft = N2i.getLeft = function(element) {
-    element = $id(element);
-	if (element) {
-		xPos = element.offsetLeft;
-		tempEl = element.offsetParent;
-		while (tempEl != null) {
-			xPos += tempEl.offsetLeft;
-			tempEl = tempEl.offsetParent;
-		}
-		return xPos;
-	}
-	else return 0;
-}
-
-
-N2i.Element.getTop = N2i.getTop = function(element) {
-    element = $id(element);
-	if (element) {
-		yPos = element.offsetTop;
-		tempEl = element.offsetParent;
-		while (tempEl != null) {
-			yPos += tempEl.offsetTop;
-			tempEl = tempEl.offsetParent;
-		}
-		return yPos;
-	}
-	else return 0;
-}
-
-/**
- * Finds an elements width as displayed by the browser
- * @param {Object} obj The element to analyze
- * @return {int} The width in pixels of the element
- */
-N2i.Element.getWidth = N2i.getWidth = function(element) {
-	element = $id(element);
-	return element.offsetWidth;
-}
-
-/**
- * Finds an elements height as displayed by the browser
- * @param {Object} obj The element to analyze
- * @return {int} The height in pixels of the element
- */
-N2i.Element.getHeight = N2i.getHeight = function(element) {
-	element = $id(element);
-	return element.offsetHeight;
-}
-
-N2i.Element.getRect = function(element) {
-	return {
-		left:	N2i.Element.getLeft(element),
-		top:	N2i.Element.getTop(element),
-		width:	N2i.Element.getWidth(element),
-		height:	N2i.Element.getHeight(element)
-	};
-}
-
-
-N2i.Element.getStyle = N2i.getStyle = function(element, style) {
-	element = $id(element);
-	var cameled = N2i.camelize(style);
-	var value = element.style[cameled];
-	if (!value) {
-		if (document.defaultView && document.defaultView.getComputedStyle) {
-			var css = document.defaultView.getComputedStyle(element, null);
-			value = css ? css.getPropertyValue(style) : null;
-		} else if (element.currentStyle) {
-			value = element.currentStyle[cameled];
-		}
-	}
-	if (window.opera && ['left', 'top', 'right', 'bottom'].include(style)) {
-		if (N2i.Element.getStyle(element, 'position') == 'static') value = 'auto';
-	}
-	return value == 'auto' ? null : value;
-}
-
-N2i.setOpacity = function(element,opacity) {
-	if (N2i.isIE()) {
-		if (opacity==1) {
-			element.style['filter']=null;
-		} else {
-			element.style['filter']='alpha(opacity='+(opacity*100)+')';
-		}
-	} else {
-		element.style['opacity']=opacity;
-	}
-}
-
-N2i.getDocumentHeight = function() {
-	if (window.scrollMaxY && window.innerHeight) {
-		return window.scrollMaxY+window.innerHeight;
-	} else {
-		return Math.max(document.body.clientHeight,document.documentElement.clientHeight,document.documentElement.scrollHeight);
-	}
-}
-
-////////////////////////////////////// Window ////////////////////////////////
-
-
-N2i.Window = function() {}
-
-/**
- * Finds how far the window has scrolled from the top
- * @return {int} The number of pixels the window is scrolled from the top
- */
-N2i.Window.getScrollTop = function() {
-	var x,y;
-	if (self.pageYOffset) // all except Explorer
-	{
-		y = self.pageYOffset;
-	}
-	else if (document.documentElement && document.documentElement.scrollTop)
-		// Explorer 6 Strict
-	{
-		y = document.documentElement.scrollTop;
-	}
-	else if (document.body) // all other Explorers
-	{
-		y = document.body.scrollTop;
-	}
-	return y;
-}
-
-/**
- * Finds how far the window has scrolled from the left
- * @return {int} The number of pixels the window is scrolled from the left
- */
-N2i.Window.getScrollLeft = function() {
-	var x;
-	if (self.pageYOffset) // all except Explorer
-	{
-		x = self.pageXOffset;
-	}
-	else if (document.documentElement && document.documentElement.scrollTop)
-		// Explorer 6 Strict
-	{
-		x = document.documentElement.scrollLeft;
-	}
-	else if (document.body) // all other Explorers
-	{
-		x = document.body.scrollLeft;
-	}
-	return x;
-}
-
-
-/**
- * Finds how much the window is scrolled
- * @return {Object} An object with left,top
- */
-N2i.Window.getScrollPosition = function() {
-	return {
-		left:	N2i.Window.getScrollLeft(),
-		top:	N2i.Window.getScrollTop()
-	};
-}
-
-/**
- * Finds the height of the windows visible view of the document
- * @return {int} The height of the windows view of the document in pixels
- */
-N2i.Window.getInnerHeight = function() {
-	var y;
-	if (self.innerHeight) // all except Explorer
-	{
-		y = self.innerHeight;
-	}
-	else if (document.documentElement && document.documentElement.clientHeight)
-		// Explorer 6 Strict Mode
-	{
-		y = document.documentElement.clientHeight;
-	}
-	else if (document.body) // other Explorers
-	{
-		y = document.body.clientHeight;
-	}
-	return y;
-}
-
-/**
- * Finds the width of the windows visible view of the document
- * @return {int} The width of the windows view of the document in pixels
- */
-N2i.Window.getInnerWidth = function() {
-	var x;
-	if (self.innerHeight) // all except Explorer
-	{
-		x = self.innerWidth;
-	}
-	else if (document.documentElement && document.documentElement.clientHeight)
-		// Explorer 6 Strict Mode
-	{
-		x = document.documentElement.clientWidth;
-	}
-	else if (document.body) // other Explorers
-	{
-		x = document.body.clientWidth;
-	}
-	return x;
-}
-
-
-/**
- * Finds the dimensions of the visible area of the document
- * @return {Object} An object with left,top,width,height
- */
-N2i.Window.getDocumentRect = function() {
-	return {
-		left:	0,
-		top:	0,
-		width:	N2i.Window.getInnerWidth(),
-		height:	N2i.Window.getInnerHeight()
-	};
-}
-
-////////////////////////////////////// Event /////////////////////////////////
-
-/**
- * Creates a new In2iEvent object from an event
- * @class A wrapper for an event
- * @constructor
- */
-N2i.Event = function(event) {
-    if (!event) {
-		this.event = window.event;
-	} else {
-		this.event=event;
-	}
-}
-
-N2i.Event.prototype = {
-	mouseLeft : function() {
-	    var left = 0;
-		if (this.event) {
-		    if (this.event.pageX) {
-			    left = this.event.pageX;
-		    } else if (this.event.clientX) {
-			    left = this.event.clientX + document.body.scrollLeft;
-		    }
-		}
-	    return left;
-	},
-	mouseTop : function() {
-	    var top = 0;
-		if (this.event) {
-		    if (this.event.pageY) {
-			    top = this.event.pageY;
-		    } else if (this.event.clientY) {
-			    top = this.event.clientY + document.body.scrollTop;
-		    }
-		}
-	    return top;
-	},
-	getTarget : function() {
-		return this.event.target != null ? this.event.target : this.event.srcElement;
-	},
-	isReturnKey : function() {
-		return this.event.keyCode==13;
-	},
-	isRightKey : function() {
-		return this.event.keyCode==39;
-	},
-	isLeftKey : function() {
-		return this.event.keyCode==37;
-	},
-	isEscapeKey : function() {
-		return this.event.keyCode==27;
-	},
-	isSpaceKey : function() {
-		N2i.log(this.event.keyCode);
-		return this.event.keyCode==32;
-	},
-	stop : function() {
-//		this.event.returnValue = false;
-//		N2i.Event.stop(this.event);
-	}
-}
-
-
-N2i.Event.addListener = N2i.addListener = function(el,type,listener,useCapture) {
-	el = $id(el);
-	if(document.addEventListener) {
-		// W3C DOM Level 2 Events - used by Mozilla, Opera and Safari
-		if(!useCapture) {useCapture = false;} else {useCapture = true;} {
-			el.addEventListener(type,listener,useCapture);
-		}
-	} else {
-		// MS implementation - used by Internet Explorer
-		el.attachEvent('on'+type, listener);
-	}
-}
-
-N2i.Event.removeListener = N2i.removeListener = function(el,type,listener,useCapture) {
-	el = $id(el);
-	if(document.removeEventListener) {
-		// W3C DOM Level 2 Events - used by Mozilla, Opera and Safari
-		if(!useCapture) {useCapture = false;} else {useCapture = true;} {
-			el.removeEventListener(type,listener,useCapture);
-		}
-	} else {
-		// MS implementation - used by Internet Explorer
-		el.detachEvent('on'+type, listener);
-	}
-}
-
-N2i.Event.stop = function(e) {
-	if (!e) var e = window.event;
-	e.cancelBubble = true;
-	if (e.stopPropagation) e.stopPropagation();
-}
-
-N2i.Event.addLoadListener = N2i.addLoadListener = function(delegate) {
-	if(typeof window.addEventListener != 'undefined')
-	{
-		//.. gecko, safari, konqueror and standard
-		window.addEventListener('load', delegate, false);
-	}
-	else if(typeof document.addEventListener != 'undefined')
-	{
-		//.. opera 7
-		document.addEventListener('load', delegate, false);
-	}
-	else if(typeof window.attachEvent != 'undefined')
-	{
-		//.. win/ie
-		window.attachEvent('onload', delegate);
-	}
-
-	//** remove this condition to degrade older browsers
-	else
-	{
-		//.. mac/ie5 and anything else that gets this far
-	
-		//if there's an existing onload function
-		if(typeof window.onload == 'function')
-		{
-			//store it
-			var existing = window.onload;
-		
-			//add new onload handler
-			window.onload = function()
-			{
-				//call existing onload function
-				existing();
-			
-				//call delegate onload function
-				delegate();
-			};
-		}
-		else
-		{
-			//setup onload function
-			window.onload = delegate;
-		}
-	}
-}
-
-N2i.Location = {};
-
-N2i.Location.getParameter = function(name) {
-	var parms = N2i.Location.getParameters();
-	for (var i=0; i < parms.length; i++) {
-		if (parms[i].name==name) {
-			return parms[i].value;
-		}
-	};
-	return null;
-}
-
-N2i.Location.setParameter = function(name,value) {
-	var parms = N2i.Location.getParameters();
-	var found = false;
-	for (var i=0; i < parms.length; i++) {
-		if (parms[i].name==name) {
-			parms[i].value=value;
-			found=true;
-			break;
-		}
-	};
-	if (!found) {
-		parms.push({name:name,value:value});
-	}
-	N2i.Location.setParameters(parms);
-}
-
-N2i.Location.setParameters = function(parms) {
-	var query = '';
-	for (var i=0; i < parms.length; i++) {
-		query+= i==0 ? '?' : '&';
-		query+=parms[i].name+'='+parms[i].value;
-	};
-	document.location.search=query;
-}
-
-N2i.Location.getBoolean = function(name) {
-	var value = N2i.Location.getParameter(name);
-	return (value=='true' || value=='1');
-}
-
-N2i.Location.getParameters = function() {
-	var items = document.location.search.substring(1).split('&');
-	var parsed = [];
-	for( var i = 0; i < items.length; i++) {
-		var item = items[i].split('=');
-		var name = unescape(item[0]).replace(/^\s*|\s*$/g,"");
-		var value = unescape(item[1]).replace(/^\s*|\s*$/g,"");
-		if (name) {
-			parsed.push({name:name,value:value});
-		}
-	};
-	return parsed;
-}
-
-/************************************* Request ******************************/
-
-N2i.Request = function(delegate) {
-	this.delegate = delegate;
-	this.options = {method:'GET',async:true};
-}
-
-N2i.Request.prototype.request = function(url,options) {
-	N2i.override(this.options,options);
-	this.initTransport();
-	var req = this.transport;
-	var self = this;
-	req.onreadystatechange = function() {
-		try {
-			if (req.readyState == 4) {
-				if (req.status == 200) {
-					if (req.responseXML && req.responseXML.documentElement) {
-						if (self.callDelegate('onXML',req.responseXML)) {
-							return;
-						}
-					} else {
-						if (self.callDelegate('onText',req.responseXML)) {
-							return;
-						}
-					}
-					self.callDelegate('onSuccess',req);
-				} else {
-					self.callDelegate('onFailure',req);
-				}
-			}
-		} catch (e) {
-			N2i.log(e);
-		}
-	};
-	var method = this.options.method.toUpperCase();
-	req.open(method, url, this.options.async);
-	var parameters = null;
-	var body = '';
-    if (method=='POST' && this.options.parameters) {
-		body = this.buildPostBody(this.options.parameters);
-		req.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=utf-8");
-		req.setRequestHeader("Content-length", body.length);
-		req.setRequestHeader("Connection", "close");
-	}
-	req.send(body);
-}
-
-N2i.Request.prototype.buildPostBody = function(parameters) {
-	if (!parameters) return null;
-	var output = '';
-	for (param in parameters) {
-		if (output.length>0) output+='&';
-		output+=encodeURIComponent(param)+'='+encodeURIComponent(parameters[param]);
-	}
-	return output;
-}
-
-N2i.Request.prototype.callDelegate = function(method,variable) {
-	if (this.delegate && this.delegate[method]) {
-		this.delegate[method](variable);
-		return true;
-	}
-	return false;
-}
-
-N2i.Request.prototype.initTransport = function() {
-	this.transport = N2i.Request.createTransport();
-}
-
-N2i.Request.createTransport = function() {
-	try {
-		if (window.XMLHttpRequest) {
-			var req = new XMLHttpRequest();
-			if (req.readyState == null) {
-				req.readyState = 1;
-				req.addEventListener("load", function () {
-					req.readyState = 4;
-					if (typeof req.onreadystatechange == "function")
-						req.onreadystatechange();
-				}, false);
-			}
-			return req;
-		}
-		else if (window.ActiveXObject) {
-			return N2i.Request.getActiveX();
-		} else {
-			// Could not create transport
-			this.delegate.onError(this);
-		}
-	}
-	catch (ex) {
-		if (this.delegate.onError) {
-			this.delegate.onError(this,ex);
-		}
-	}
-}
-
-N2i.Request.getActiveX = function() {
-	var prefixes = ["MSXML2", "Microsoft", "MSXML", "MSXML3"];
-	var o;
-	for (var i = 0; i < prefixes.length; i++) {
-		try {
-			// try to create the objects
-			o = new ActiveXObject(prefixes[i] + ".XmlHttp");
-			return o;
-		}
-		catch (ex) {};
-	}
-	
-	throw new Error("Could not find an installed XML parser");
-}
-
-N2i.Preloader = function(options) {
-	this.options = options || {};
-	this.delegate = {};
-	this.images = [];
-	this.loaded = 0;
-}
-
-N2i.Preloader.prototype = {
-	addImages : function(imageOrImages) {
-		if (typeof(imageOrImages)=='object') {
-			for (var i=0; i < imageOrImages.length; i++) {
-				this.images.push(imageOrImages[i]);
-			};
-		} else {
-			this.images.push(imageOrImages);
-		}
-	},
-	setDelegate : function(d) {
-		this.delegate = d;
-	},
-	load : function() {
-		var self = this;
-		this.obs = [];
-		for (var i=0; i < this.images.length; i++) {
-			var img = new Image();
-			img.n2iPreloaderIndex = i;
-			img.onload = function() {self.imageChanged(this.n2iPreloaderIndex,'imageDidLoad')};
-			img.onerror = function() {self.imageChanged(this.n2iPreloaderIndex,'imageDidGiveError')};
-			img.onabort = function() {self.imageChanged(this.n2iPreloaderIndex,'imageDidAbort')};
-			img.src = (this.options.context ? this.options.context : '')+this.images[i];
-			this.obs.push(img);
-		};
-	},
-	imageChanged : function(index,method) {
-		this.loaded++;
-		if (this.delegate[method]) {
-			this.delegate[method](this.loaded,this.images.length,index);
-		}
-		if (this.loaded==this.images.length && this.delegate.allImagesDidLoad) {
-			this.delegate.allImagesDidLoad();
-		}
-	}
-}
-
-///////////////////////////////////// Strings /////////////////////////////////////
-
-N2i.trim = function(str) {
-	if (!str) return str;
-	return str.replace(/^[\s\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000]+|[\s\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000]+$/g, '');
-}
-
-N2i.isEmpty = function(str) {
-	if (str==null || typeof(str)=='undefined') return true;
-	return N2i.trim(str).length==0;
-}
-
-///////////////////////////////////// Arrays /////////////////////////////////////
-
-N2i.inArray = function(arr,value) {
-	for (var i=0; i < arr.length; i++) {
-		if (arr[i]==value) return true;
-	};
-}
-
-
-N2i.flipInArray = function(arr,value) {
-	if (N2i.inArray(arr,value)) {
-		N2i.removeFromArray(arr,value);
-	} else {
-		arr.push(value);
-	}
-}
-
-N2i.removeFromArray = function(arr,value) {
-	for (var i = arr.length - 1; i >= 0; i--){
-		if (arr[i]==value) {
-			arr.splice(i,1);
-		}
-	};
-}
-
-N2i.addToArray = function(arr,value) {
-	if (value.constructor==Array) {
-		for (var i=0; i < value.length; i++) {
-			if (!N2i.inArray(arr,value[i])) {
-				arr.push(value);
-			}
-		};
-	} else {
-		if (!N2i.inArray(arr,value)) {
-			arr.push(value);
-		}
-	}
-}
-
-/////////////////////////////////////////////// Browsers //////////////////////////////////////
-
-N2i.isIE = function() {
-	var ua = navigator.userAgent;
-	var opera = /opera [56789]|opera\/[56789]/i.test(ua);
-	var ie = !opera && /MSIE/.test(ua);
-	return ie;
-}
-
-////////////////////////////////////////////// Cookie ///////////////////////////////////////////
-
-N2i.Cookie = {
-	set : function(name,value,days) {
-		if (days) {
-			var date = new Date();
-			date.setTime(date.getTime()+(days*24*60*60*1000));
-			var expires = "; expires="+date.toGMTString();
-		}
-		else var expires = "";
-		document.cookie = name+"="+value+expires+"; path=/";
-	},
-	get : function(name) {
-		var nameEQ = name + "=";
-		var ca = document.cookie.split(';');
-		for(var i=0;i < ca.length;i++) {
-			var c = ca[i];
-			while (c.charAt(0)==' ') c = c.substring(1,c.length);
-			if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-		}
-		return null;
-	},
-	clear : function(name) {
-		this.set(name,"",-1);
-	}
-}
-
-N2i.getFrameDocument = function(frame) {
-    if (frame.contentDocument) {
-        return frame.contentDocument;
-    } else if (frame.contentWindow) {
-        return frame.contentWindow.document;
-    } else if (frame.document) {
-        return frame.document;
-    } else {
-		alert(frame.contentDocument);
-	}
-}
-
-/* EOF *//*  Prototype JavaScript framework, version 1.6.0.2
+/*  Prototype JavaScript framework, version 1.6.0.2
  *  (c) 2005-2008 Sam Stephenson
  *
  *  Prototype is freely distributable under the terms of an MIT-style license.
@@ -5101,7 +4218,993 @@ Object.extend(Element.ClassNames.prototype, Enumerable);
 
 /*--------------------------------------------------------------------------*/
 
-Element.addMethods();/*	SWFObject v2.0 <http://code.google.com/p/swfobject/>
+Element.addMethods();var n2i = {
+	browser : {}
+}
+
+n2i.browser.opera = /opera/i.test(navigator.userAgent);
+n2i.browser.msie = !n2i.browser.opera && /MSIE/.test(navigator.userAgent);
+n2i.browser.msie7 = navigator.userAgent.indexOf('MSIE 7')!=-1;
+n2i.browser.webkit = navigator.userAgent.indexOf('WebKit')!=-1;
+n2i.browser.gecko = !n2i.browser.webkit && navigator.userAgent.indexOf('Gecko')!=-1;
+
+n2i.ELEMENT_NODE=1;
+n2i.ATTRIBUTE_NODE=2;
+n2i.TEXT_NODE=3;
+
+n2i.log = function(obj) {
+	try {
+		console.log(obj);
+	} catch (ignore) {};
+}
+
+n2i.camelize = function(str) {
+    var oStringList = str.split('-');
+    if (oStringList.length == 1) return oStringList[0];
+
+    var camelizedString = str.indexOf('-') == 0
+      ? oStringList[0].charAt(0).toUpperCase() + oStringList[0].substring(1)
+      : oStringList[0];
+
+    for (var i = 1, len = oStringList.length; i < len; i++) {
+      var s = oStringList[i];
+      camelizedString += s.charAt(0).toUpperCase() + s.substring(1);
+    }
+
+    return camelizedString;
+}
+
+n2i.override = function(original,subject) {
+	if (subject) {
+		for (prop in subject) {
+			original[prop] = subject[prop];
+		}
+	}
+	return original;
+}
+
+n2i.trim = function(str) {
+	if (!str) return str;
+	return str.replace(/^[\s\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000]+|[\s\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000]+$/g, '');
+}
+
+n2i.escapeHTML = function(str) {
+    var div = document.createElement('div');
+    var text = document.createTextNode(str);
+    div.appendChild(text);
+    return div.innerHTML;
+}
+
+n2i.isEmpty = function(str) {
+	if (str==null || typeof(str)=='undefined') return true;
+	return n2i.trim(str).length==0;
+}
+
+n2i.isDefined = function(obj) {
+	return obj!=null && typeof(obj)!='undefined';
+}
+
+n2i.inArray = function(arr,value) {
+	for (var i=0; i < arr.length; i++) {
+		if (arr[i]==value) return true;
+	};
+}
+
+
+n2i.flipInArray = function(arr,value) {
+	if (n2i.inArray(arr,value)) {
+		n2i.removeFromArray(arr,value);
+	} else {
+		arr.push(value);
+	}
+}
+
+n2i.removeFromArray = function(arr,value) {
+	for (var i = arr.length - 1; i >= 0; i--){
+		if (arr[i]==value) {
+			arr.splice(i,1);
+		}
+	};
+}
+
+n2i.addToArray = function(arr,value) {
+	if (value.constructor==Array) {
+		for (var i=0; i < value.length; i++) {
+			if (!n2i.inArray(arr,value[i])) {
+				arr.push(value);
+			}
+		};
+	} else {
+		if (!n2i.inArray(arr,value)) {
+			arr.push(value);
+		}
+	}
+}
+
+/********************* Style ********************/
+
+n2i.getStyle = function(element, style) {
+	element = $(element);
+	var cameled = n2i.camelize(style);
+	var value = element.style[cameled];
+	if (!value) {
+		if (document.defaultView && document.defaultView.getComputedStyle) {
+			var css = document.defaultView.getComputedStyle(element, null);
+			value = css ? css.getPropertyValue(style) : null;
+		} else if (element.currentStyle) {
+			value = element.currentStyle[cameled];
+		}
+	}
+	if (window.opera && ['left', 'top', 'right', 'bottom'].include(style)) {
+		if (n2i.getStyle(element, 'position') == 'static') value = 'auto';
+	}
+	return value == 'auto' ? null : value;
+}
+
+n2i.setOpacity = function(element,opacity) {
+	if (n2i.browser.msie) {
+		if (opacity==1) {
+			element.style['filter']=null;
+		} else {
+			element.style['filter']='alpha(opacity='+(opacity*100)+')';
+		}
+	} else {
+		element.style['opacity']=opacity;
+	}
+}
+
+n2i.copyStyle = function(source,target,styles) {
+	styles.each(function(s) {
+		target.style[s] = source.getStyle(s);
+	});
+}
+
+/************************ Events ***********************/
+
+n2i.isReturnKey = function(e) {
+	return e.keyCode==13;
+}
+n2i.isRightKey = function(e) {
+	return e.keyCode==39;
+}
+n2i.isLeftKey = function(e) {
+	return e.keyCode==37;
+}
+n2i.isEscapeKey = function(e) {
+	return e.keyCode==27;
+}
+n2i.isSpaceKey = function(e) {
+	return e.keyCode==32;
+}
+
+/************************ Frames ***********************/
+
+n2i.getFrameDocument = function(frame) {
+    if (frame.contentDocument) {
+        return frame.contentDocument;
+    } else if (frame.contentWindow) {
+        return frame.contentWindow.document;
+    } else if (frame.document) {
+        return frame.document;
+    }
+}
+
+/************************* Position **********************/
+
+n2i.getScrollTop = function() {
+	if (self.pageYOffset) {
+		return self.pageYOffset;
+	} else if (document.documentElement && document.documentElement.scrollTop) {
+		return document.documentElement.scrollTop;
+	} else if (document.body) {
+		return document.body.scrollTop;
+	}
+}
+
+n2i.getScrollLeft = function() {
+	if (self.pageYOffset) {
+		return self.pageXOffset;
+	} else if (document.documentElement && document.documentElement.scrollTop) {
+		return document.documentElement.scrollLeft;
+	} else if (document.body) {
+		return document.body.scrollLeft;
+	}
+}
+
+n2i.getInnerHeight = function() {
+	var y;
+	if (self.innerHeight) {
+		return self.innerHeight;
+	} else if (document.documentElement && document.documentElement.clientHeight) {
+		return document.documentElement.clientHeight;
+	} else if (document.body) {
+		return document.body.clientHeight;
+	}
+}
+
+n2i.getInnerWidth = function() {
+	if (self.innerHeight) {
+		return self.innerWidth;
+	} else if (document.documentElement && document.documentElement.clientHeight) {
+		return document.documentElement.clientWidth;
+	} else if (document.body) {
+		return document.body.clientWidth;
+	}
+}
+
+n2i.getDocumentHeight = function() {
+	if (window.scrollMaxY && window.innerHeight) {
+		return window.scrollMaxY+window.innerHeight;
+	} else {
+		return Math.max(document.body.clientHeight,document.documentElement.clientHeight,document.documentElement.scrollHeight);
+	}
+}
+
+n2i.Preloader = function(options) {
+	this.options = options || {};
+	this.delegate = {};
+	this.images = [];
+	this.loaded = 0;
+}
+
+n2i.Preloader.prototype = {
+	addImages : function(imageOrImages) {
+		if (typeof(imageOrImages)=='object') {
+			for (var i=0; i < imageOrImages.length; i++) {
+				this.images.push(imageOrImages[i]);
+			};
+		} else {
+			this.images.push(imageOrImages);
+		}
+	},
+	setDelegate : function(d) {
+		this.delegate = d;
+	},
+	load : function() {
+		var self = this;
+		this.obs = [];
+		for (var i=0; i < this.images.length; i++) {
+			var img = new Image();
+			img.n2iPreloaderIndex = i;
+			img.onload = function() {self.imageChanged(this.n2iPreloaderIndex,'imageDidLoad')};
+			img.onerror = function() {self.imageChanged(this.n2iPreloaderIndex,'imageDidGiveError')};
+			img.onabort = function() {self.imageChanged(this.n2iPreloaderIndex,'imageDidAbort')};
+			img.src = (this.options.context ? this.options.context : '')+this.images[i];
+			this.obs.push(img);
+		};
+	},
+	imageChanged : function(index,method) {
+		this.loaded++;
+		if (this.delegate[method]) {
+			this.delegate[method](this.loaded,this.images.length,index);
+		}
+		if (this.loaded==this.images.length && this.delegate.allImagesDidLoad) {
+			this.delegate.allImagesDidLoad();
+		}
+	}
+}
+
+n2i.cookie = {
+	set : function(name,value,days) {
+		if (days) {
+			var date = new Date();
+			date.setTime(date.getTime()+(days*24*60*60*1000));
+			var expires = "; expires="+date.toGMTString();
+		}
+		else var expires = "";
+		document.cookie = name+"="+value+expires+"; path=/";
+	},
+	get : function(name) {
+		var nameEQ = name + "=";
+		var ca = document.cookie.split(';');
+		for(var i=0;i < ca.length;i++) {
+			var c = ca[i];
+			while (c.charAt(0)==' ') c = c.substring(1,c.length);
+			if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+		}
+		return null;
+	},
+	clear : function(name) {
+		this.set(name,"",-1);
+	}
+}
+
+n2i.URL = function(url) {
+	this.url = url || '';
+}
+
+n2i.URL.prototype = {
+	addParameter : function(key,value) {
+		this.url+=this.url.indexOf('?')!=-1 ? '&' : '?';
+		this.url+=key+'='+(n2i.isDefined(value) ? value : '');
+	},
+	toString : function() {
+		return this.url;
+	}
+}
+
+/****************************** Animation *********************/
+
+
+n2i.ani = function(element,style,value,duration,delegate) {
+	n2i.animation.get(element).animate(null,value,style,duration,delegate);
+}
+
+n2i.animation = {
+	objects : {},
+	running : false,
+	latestId : 0,
+	get : function(element) {
+		element = $(element);
+		if (!element.n2iAnimationId) element.n2iAnimationId = this.latestId++;
+		if (!this.objects[element.n2iAnimationId]) {
+			this.objects[element.n2iAnimationId] = new n2i.animation.Item(element);
+		}
+		return this.objects[element.n2iAnimationId];
+	},
+	start : function() {
+		if (!this.running) {
+			n2i.animation.render();
+		}
+	}
+};
+
+n2i.animation.render = function(element) {
+	this.running = true;
+	var next = false;
+	var stamp = new Date().getTime();
+	for (id in this.objects) {
+		var obj = this.objects[id];
+		if (obj.work) {
+			for (var i=0; i < obj.work.length; i++) {
+				var work = obj.work[i];
+				if (work.finished) continue;
+				var place = (stamp-work.start)/(work.end-work.start);
+				if (place<0) {
+					next=true;
+					continue;
+				}
+				else if (isNaN(place)) place = 1;
+				else if (place>1) place=1;
+				else if (place<1) next=true;
+				var v = place;
+				if (work.delegate && work.delegate.ease) {
+					v = work.delegate.ease(v);
+				}
+				var value = null;
+				if (!work.css) {
+					obj.element[work.property] = Math.round(work.from+(work.to-work.from)*v);
+				} else if (work.to.red!=null) {
+					var red = Math.round(work.from.red+(work.to.red-work.from.red)*v);
+					var green = Math.round(work.from.green+(work.to.green-work.from.green)*v);
+					var blue = Math.round(work.from.blue+(work.to.blue-work.from.blue)*v);
+					value = 'rgb('+red+','+green+','+blue+')';
+					obj.element.style[work.property]=value;
+				} else if (n2i.browser.IE && work.property=='opacity') {
+					var opacity = (work.from+(work.to-work.from)*v);
+					if (opacity==1) {
+						obj.element.style['filter']='';
+					} else {
+						obj.element.style['filter']='alpha(opacity='+(opacity*100)+')';
+					}
+				} else {
+					value = new String(work.from+(work.to-work.from)*v)+(work.unit!=null ? work.unit : '');
+					obj.element.style[work.property]=value;
+				}
+				if (place==1) {
+					work.finished = true;
+					if (work.delegate && work.delegate.onComplete) {
+						work.delegate.onComplete();
+					} else if (work.delegate && work.delegate.hideOnComplete) {
+						obj.element.style.display='none';
+					}
+				}
+			};
+		}
+	}
+	if (next) {
+		window.setTimeout(function() {
+			n2i.animation.render();
+		},0);
+	} else {
+		this.running = false;
+	}
+	//window.status = this.running;
+}
+
+n2i.animation.parseStyle = function(value) {
+	var parsed = {type:null,value:null,unit:null};
+	var match;
+	if (!isNaN(value)) {
+		parsed.value=parseFloat(value);
+	} else if (match=value.match(/([\-]?[0-9\.]+)(px|pt|%)/)) {
+		parsed.type = 'length';
+		parsed.value = parseFloat(match[1]);
+		parsed.unit = match[2];
+	} else if (match=value.match(/rgb\(([0-9]+),[ ]?([0-9]+),[ ]?([0-9]+)\)/)) {
+		parsed.type = 'color';
+		parsed.value = {
+			red:parseInt(match[1]),
+			green:parseInt(match[2]),
+			blue:parseInt(match[3])
+		};
+	} else {
+		var color = new n2i.Color(value);
+		if (color.ok) {
+			parsed.value = {
+				red:color.r,
+				green:color.g,
+				blue:color.b
+			};
+		}
+	}
+	return parsed;
+}
+
+/********************************* Item **********************************/
+
+n2i.animation.Item = function(element) {
+	this.element = element;
+	this.work = [];
+}
+
+n2i.animation.Item.prototype.animate = function(from,to,property,duration,delegate) {
+	var css = true;
+	if (property=='scrollLeft') {
+		css = false;
+	}
+	
+	var work = this.getWork(css ? n2i.camelize(property) : property);
+	work.delegate = delegate;
+	work.finished = false;
+	work.css = css;
+	if (from!=null) {
+		work.from = from;
+	} else if (work.css && n2i.browser.IE && property=='opacity') {
+		work.from = this.getIEOpacity(this.element);
+	} else if (work.css) {
+		var style = n2i.getStyle(this.element,property);
+		var parsedStyle = n2i.animation.parseStyle(style);
+		work.from = parsedStyle.value;
+	} else {
+		work.from = this.element[property];
+	}
+	if (work.css) {
+		var parsed = n2i.animation.parseStyle(to);
+		work.to = parsed.value;
+		work.unit = parsed.unit;
+	} else {
+		work.to = to;
+		work.unit = null;
+	}
+	work.start = new Date().getTime();
+	if (delegate && delegate.delay) work.start+=delegate.delay;
+	work.end = work.start+duration;
+	n2i.animation.start();
+}
+
+n2i.animation.Item.prototype.getIEOpacity = function(element) {
+	var filter = n2i.getStyle(element,'filter').toLowerCase();
+	var match;
+	if (match = filter.match(/opacity=([0-9]+)/)) {
+		return parseFloat(match[1])/100;
+	} else {
+		return 1;
+	}
+}
+
+n2i.animation.Item.prototype.getWork = function(property) {
+	for (var i=0; i < this.work.length; i++) {
+		if (this.work[i].property==property) {
+			return this.work[i];
+		}
+	};
+	var work = {property:property};
+	this.work[this.work.length] = work;
+	return work;
+}
+
+/************************************** Loop **********************************/
+
+n2i.animation.Loop = function(recipe) {
+	this.recipe = recipe;
+	this.position = -1;
+	this.running = false;
+}
+
+n2i.animation.Loop.prototype.next = function() {
+	this.position++;
+	if (this.position>=this.recipe.length) {
+		this.position = 0;
+	}
+	var item = this.recipe[this.position];
+	if (typeof(item)=='function') {
+		item();
+	} else if (item.element) {
+		n2i.ani(item.element,item.property,item.value,item.duration,{ease:item.ease});
+	}
+	var self = this;
+	var time = item.duration || 0;
+	window.setTimeout(function() {self.next()},time);
+}
+
+n2i.animation.Loop.prototype.start = function() {
+	this.running=true;
+	this.next();
+}
+
+n2i.Color = function(color_string) {
+    this.ok = false;
+
+    // strip any leading #
+    if (color_string.charAt(0) == '#') { // remove # if any
+        color_string = color_string.substr(1,6);
+    }
+
+    color_string = color_string.replace(/ /g,'');
+    color_string = color_string.toLowerCase();
+
+    // before getting into regexps, try simple matches
+    // and overwrite the input
+    var simple_colors = {
+        aliceblue: 'f0f8ff',
+        antiquewhite: 'faebd7',
+        aqua: '00ffff',
+        aquamarine: '7fffd4',
+        azure: 'f0ffff',
+        beige: 'f5f5dc',
+        bisque: 'ffe4c4',
+        black: '000000',
+        blanchedalmond: 'ffebcd',
+        blue: '0000ff',
+        blueviolet: '8a2be2',
+        brown: 'a52a2a',
+        burlywood: 'deb887',
+        cadetblue: '5f9ea0',
+        chartreuse: '7fff00',
+        chocolate: 'd2691e',
+        coral: 'ff7f50',
+        cornflowerblue: '6495ed',
+        cornsilk: 'fff8dc',
+        crimson: 'dc143c',
+        cyan: '00ffff',
+        darkblue: '00008b',
+        darkcyan: '008b8b',
+        darkgoldenrod: 'b8860b',
+        darkgray: 'a9a9a9',
+        darkgreen: '006400',
+        darkkhaki: 'bdb76b',
+        darkmagenta: '8b008b',
+        darkolivegreen: '556b2f',
+        darkorange: 'ff8c00',
+        darkorchid: '9932cc',
+        darkred: '8b0000',
+        darksalmon: 'e9967a',
+        darkseagreen: '8fbc8f',
+        darkslateblue: '483d8b',
+        darkslategray: '2f4f4f',
+        darkturquoise: '00ced1',
+        darkviolet: '9400d3',
+        deeppink: 'ff1493',
+        deepskyblue: '00bfff',
+        dimgray: '696969',
+        dodgerblue: '1e90ff',
+        feldspar: 'd19275',
+        firebrick: 'b22222',
+        floralwhite: 'fffaf0',
+        forestgreen: '228b22',
+        fuchsia: 'ff00ff',
+        gainsboro: 'dcdcdc',
+        ghostwhite: 'f8f8ff',
+        gold: 'ffd700',
+        goldenrod: 'daa520',
+        gray: '808080',
+        green: '008000',
+        greenyellow: 'adff2f',
+        honeydew: 'f0fff0',
+        hotpink: 'ff69b4',
+        indianred : 'cd5c5c',
+        indigo : '4b0082',
+        ivory: 'fffff0',
+        khaki: 'f0e68c',
+        lavender: 'e6e6fa',
+        lavenderblush: 'fff0f5',
+        lawngreen: '7cfc00',
+        lemonchiffon: 'fffacd',
+        lightblue: 'add8e6',
+        lightcoral: 'f08080',
+        lightcyan: 'e0ffff',
+        lightgoldenrodyellow: 'fafad2',
+        lightgrey: 'd3d3d3',
+        lightgreen: '90ee90',
+        lightpink: 'ffb6c1',
+        lightsalmon: 'ffa07a',
+        lightseagreen: '20b2aa',
+        lightskyblue: '87cefa',
+        lightslateblue: '8470ff',
+        lightslategray: '778899',
+        lightsteelblue: 'b0c4de',
+        lightyellow: 'ffffe0',
+        lime: '00ff00',
+        limegreen: '32cd32',
+        linen: 'faf0e6',
+        magenta: 'ff00ff',
+        maroon: '800000',
+        mediumaquamarine: '66cdaa',
+        mediumblue: '0000cd',
+        mediumorchid: 'ba55d3',
+        mediumpurple: '9370d8',
+        mediumseagreen: '3cb371',
+        mediumslateblue: '7b68ee',
+        mediumspringgreen: '00fa9a',
+        mediumturquoise: '48d1cc',
+        mediumvioletred: 'c71585',
+        midnightblue: '191970',
+        mintcream: 'f5fffa',
+        mistyrose: 'ffe4e1',
+        moccasin: 'ffe4b5',
+        navajowhite: 'ffdead',
+        navy: '000080',
+        oldlace: 'fdf5e6',
+        olive: '808000',
+        olivedrab: '6b8e23',
+        orange: 'ffa500',
+        orangered: 'ff4500',
+        orchid: 'da70d6',
+        palegoldenrod: 'eee8aa',
+        palegreen: '98fb98',
+        paleturquoise: 'afeeee',
+        palevioletred: 'd87093',
+        papayawhip: 'ffefd5',
+        peachpuff: 'ffdab9',
+        peru: 'cd853f',
+        pink: 'ffc0cb',
+        plum: 'dda0dd',
+        powderblue: 'b0e0e6',
+        purple: '800080',
+        red: 'ff0000',
+        rosybrown: 'bc8f8f',
+        royalblue: '4169e1',
+        saddlebrown: '8b4513',
+        salmon: 'fa8072',
+        sandybrown: 'f4a460',
+        seagreen: '2e8b57',
+        seashell: 'fff5ee',
+        sienna: 'a0522d',
+        silver: 'c0c0c0',
+        skyblue: '87ceeb',
+        slateblue: '6a5acd',
+        slategray: '708090',
+        snow: 'fffafa',
+        springgreen: '00ff7f',
+        steelblue: '4682b4',
+        tan: 'd2b48c',
+        teal: '008080',
+        thistle: 'd8bfd8',
+        tomato: 'ff6347',
+        turquoise: '40e0d0',
+        violet: 'ee82ee',
+        violetred: 'd02090',
+        wheat: 'f5deb3',
+        white: 'ffffff',
+        whitesmoke: 'f5f5f5',
+        yellow: 'ffff00',
+        yellowgreen: '9acd32'
+    };
+    for (var key in simple_colors) {
+        if (color_string == key) {
+            color_string = simple_colors[key];
+        }
+    }
+    // emd of simple type-in colors
+
+    // array of color definition objects
+    var color_defs = [
+        {
+            re: /^rgb\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})\)$/,
+            example: ['rgb(123, 234, 45)', 'rgb(255,234,245)'],
+            process: function (bits){
+                return [
+                    parseInt(bits[1]),
+                    parseInt(bits[2]),
+                    parseInt(bits[3])
+                ];
+            }
+        },
+        {
+            re: /^(\w{2})(\w{2})(\w{2})$/,
+            example: ['#00ff00', '336699'],
+            process: function (bits){
+                return [
+                    parseInt(bits[1], 16),
+                    parseInt(bits[2], 16),
+                    parseInt(bits[3], 16)
+                ];
+            }
+        },
+        {
+            re: /^(\w{1})(\w{1})(\w{1})$/,
+            example: ['#fb0', 'f0f'],
+            process: function (bits){
+                return [
+                    parseInt(bits[1] + bits[1], 16),
+                    parseInt(bits[2] + bits[2], 16),
+                    parseInt(bits[3] + bits[3], 16)
+                ];
+            }
+        }
+    ];
+
+    // search through the definitions to find a match
+    for (var i = 0; i < color_defs.length; i++) {
+        var re = color_defs[i].re;
+        var processor = color_defs[i].process;
+        var bits = re.exec(color_string);
+        if (bits) {
+            channels = processor(bits);
+            this.r = channels[0];
+            this.g = channels[1];
+            this.b = channels[2];
+            this.ok = true;
+        }
+
+    }
+
+    // validate/cleanup values
+    this.r = (this.r < 0 || isNaN(this.r)) ? 0 : ((this.r > 255) ? 255 : this.r);
+    this.g = (this.g < 0 || isNaN(this.g)) ? 0 : ((this.g > 255) ? 255 : this.g);
+    this.b = (this.b < 0 || isNaN(this.b)) ? 0 : ((this.b > 255) ? 255 : this.b);
+
+    // some getters
+    this.toRGB = function () {
+        return 'rgb(' + this.r + ', ' + this.g + ', ' + this.b + ')';
+    }
+    this.toHex = function () {
+        var r = this.r.toString(16);
+        var g = this.g.toString(16);
+        var b = this.b.toString(16);
+        if (r.length == 1) r = '0' + r;
+        if (g.length == 1) g = '0' + g;
+        if (b.length == 1) b = '0' + b;
+        return '#' + r + g + b;
+    }
+
+}
+
+
+n2i.ease = {
+	slowFastSlow : function(val) {
+		var a = 1.6;
+		var b = 1.4;
+		return -1*Math.pow(Math.cos((Math.PI/2)*Math.pow(val,a)),Math.pow(Math.PI,b))+1;
+	},
+	fastSlow : function(val) {
+		var a = .5;
+		var b = .7
+		return -1*Math.pow(Math.cos((Math.PI/2)*Math.pow(val,a)),Math.pow(Math.PI,b))+1;
+	},
+	elastic : function(t) {
+		return 1 - n2i.ease.elastic2(1-t);
+	},
+
+	elastic2 : function (t, a, p) {
+		if (t<=0 || t>=1) return t;
+		if (!p) p=0.45;
+		var s;
+		if (!a || a < 1) {
+			a=1;
+			s=p/4;
+		} else {
+			s = p/(2*Math.PI) * Math.asin (1/a);
+		}
+		return -(a*Math.pow(2,10*(t-=1)) * Math.sin( (t-s)*(2*Math.PI)/p ));
+	},
+	bounce : function(t) {
+		if (t < (1/2.75)) {
+			return 7.5625*t*t;
+		} else if (t < (2/2.75)) {
+			return (7.5625*(t-=(1.5/2.75))*t + .75);
+		} else if (t < (2.5/2.75)) {
+			return (7.5625*(t-=(2.25/2.75))*t + .9375);
+		} else {
+			return (7.5625*(t-=(2.625/2.75))*t + .984375);
+		}
+	},
+	
+	linear: function(/* Decimal? */n){
+		// summary: A linear easing function
+		return n;
+	},
+
+	quadIn: function(/* Decimal? */n){
+		return Math.pow(n, 2);
+	},
+
+	quadOut: function(/* Decimal? */n){
+		return n * (n-2) * -1;
+	},
+
+	quadInOut: function(/* Decimal? */n){
+		n=n*2;
+		if(n<1){ return Math.pow(n, 2) / 2; }
+		return -1 * ((--n)*(n-2) - 1) / 2;
+	},
+
+	cubicIn: function(/* Decimal? */n){
+		return Math.pow(n, 3);
+	},
+
+	cubicOut: function(/* Decimal? */n){
+		return Math.pow(n-1, 3) + 1;
+	},
+
+	cubicInOut: function(/* Decimal? */n){
+		n=n*2;
+		if(n<1){ return Math.pow(n, 3) / 2; }
+		n-=2;
+		return (Math.pow(n, 3) + 2) / 2;
+	},
+
+	quartIn: function(/* Decimal? */n){
+		return Math.pow(n, 4);
+	},
+
+	quartOut: function(/* Decimal? */n){
+		return -1 * (Math.pow(n-1, 4) - 1);
+	},
+
+	quartInOut: function(/* Decimal? */n){
+		n=n*2;
+		if(n<1){ return Math.pow(n, 4) / 2; }
+		n-=2;
+		return -1/2 * (Math.pow(n, 4) - 2);
+	},
+
+	quintIn: function(/* Decimal? */n){
+		return Math.pow(n, 5);
+	},
+
+	quintOut: function(/* Decimal? */n){
+		return Math.pow(n-1, 5) + 1;
+	},
+
+	quintInOut: function(/* Decimal? */n){
+		n=n*2;
+		if(n<1){ return Math.pow(n, 5) / 2; };
+		n-=2;
+		return (Math.pow(n, 5) + 2) / 2;
+	},
+
+	sineIn: function(/* Decimal? */n){
+		return -1 * Math.cos(n * (Math.PI/2)) + 1;
+	},
+
+	sineOut: function(/* Decimal? */n){
+		return Math.sin(n * (Math.PI/2));
+	},
+
+	sineInOut: function(/* Decimal? */n){
+		return -1 * (Math.cos(Math.PI*n) - 1) / 2;
+	},
+
+	expoIn: function(/* Decimal? */n){
+		return (n==0) ? 0 : Math.pow(2, 10 * (n - 1));
+	},
+
+	expoOut: function(/* Decimal? */n){
+		return (n==1) ? 1 : (-1 * Math.pow(2, -10 * n) + 1);
+	},
+
+	expoInOut: function(/* Decimal? */n){
+		if(n==0){ return 0; }
+		if(n==1){ return 1; }
+		n = n*2;
+		if(n<1){ return Math.pow(2, 10 * (n-1)) / 2; }
+		--n;
+		return (-1 * Math.pow(2, -10 * n) + 2) / 2;
+	},
+
+	circIn: function(/* Decimal? */n){
+		return -1 * (Math.sqrt(1 - Math.pow(n, 2)) - 1);
+	},
+
+	circOut: function(/* Decimal? */n){
+		n = n-1;
+		return Math.sqrt(1 - Math.pow(n, 2));
+	},
+
+	circInOut: function(/* Decimal? */n){
+		n = n*2;
+		if(n<1){ return -1/2 * (Math.sqrt(1 - Math.pow(n, 2)) - 1); }
+		n-=2;
+		return 1/2 * (Math.sqrt(1 - Math.pow(n, 2)) + 1);
+	},
+
+	backIn: function(/* Decimal? */n){
+		var s = 1.70158;
+		return Math.pow(n, 2) * ((s+1)*n - s);
+	},
+
+	backOut: function(/* Decimal? */n){
+		// summary: an easing function that pops past the range briefly, and 
+		// 	slowly comes back. 
+		n = n - 1;
+		var s = 1.70158;
+		return Math.pow(n, 2) * ((s + 1) * n + s) + 1;
+	},
+
+	backInOut: function(/* Decimal? */n){
+		var s = 1.70158 * 1.525;
+		n = n*2;
+		if(n < 1){ return (Math.pow(n, 2)*((s+1)*n - s))/2; }
+		n-=2;
+		return (Math.pow(n, 2)*((s+1)*n + s) + 2)/2;
+	},
+
+	elasticIn: function(/* Decimal? */n){
+		if(n==0){ return 0; }
+		if(n==1){ return 1; }
+		var p = .3;
+		var s = p/4;
+		n = n - 1;
+		return -1 * Math.pow(2,10*n) * Math.sin((n-s)*(2*Math.PI)/p);
+	},
+
+	elasticOut: function(/* Decimal? */n){
+		// summary: An easing function that elasticly snaps around the target value, near the end of the Animation
+		if(n==0) return 0;
+		if(n==1) return 1;
+		var p = .3;
+		var s = p/4;
+		return Math.pow(2,-10*n) * Math.sin((n-s)*(2*Math.PI)/p) + 1;
+	},
+
+	elasticInOut: function(/* Decimal? */n){
+		// summary: An easing function that elasticly snaps around the value, near the beginning and end of the Animation		
+		if(n==0) return 0;
+		n = n*2;
+		if(n==2) return 1;
+		var p = .3*1.5;
+		var s = p/4;
+		if(n<1){
+			n-=1;
+			return -.5*(Math.pow(2,10*n) * Math.sin((n-s)*(2*Math.PI)/p));
+		}
+		n-=1;
+		return .5*(Math.pow(2,-10*n) * Math.sin((n-s)*(2*Math.PI)/p)) + 1;
+	},
+
+	bounceIn: function(/* Decimal? */n){
+		// summary: An easing function that "bounces" near the beginning of an Animation
+		return (1 - n2i.ease.bounceOut(1-n)); // Decimal
+	},
+
+	bounceOut: function(/* Decimal? */n){
+		// summary: An easing function that "bounces" near the end of an Animation
+		var s=7.5625;
+		var p=2.75;
+		var l; 
+		if(n < (1 / p)){
+			l = s*Math.pow(n, 2);
+		}else if(n < (2 / p)){
+			n -= (1.5 / p);
+			l = s * Math.pow(n, 2) + .75;
+		}else if(n < (2.5 / p)){
+			n -= (2.25 / p);
+			l = s * Math.pow(n, 2) + .9375;
+		}else{
+			n -= (2.625 / p);
+			l = s * Math.pow(n, 2) + .984375;
+		}
+		return l;
+	},
+
+	bounceInOut: function(/* Decimal? */n){
+		// summary: An easing function that "bounces" at the beginning and end of the Animation
+		if(n<0.5){ return n2i.ease.bounceIn(n*2) / 2; }
+		return (n2i.ease.bounceOut(n*2-1) / 2) + 0.5; // Decimal
+	}
+};/*	SWFObject v2.0 <http://code.google.com/p/swfobject/>
 	Copyright (c) 2007 Geoff Stearns, Michael Williams, and Bobby van der Sluis
 	This software is released under the MIT License <http://www.opensource.org/licenses/mit-license.php>
 */
@@ -5244,7 +5347,7 @@ SWFUpload.prototype.initSettings = function () {
 	this.ensureDefault("upload_success_handler", null);
 	this.ensureDefault("upload_complete_handler", null);
 	
-	this.ensureDefault("debug_handler", function(msg) {N2i.log(msg)});
+	this.ensureDefault("debug_handler", function(msg) {n2i.log(msg)});
 
 	this.ensureDefault("custom_settings", {});
 
@@ -5921,966 +6024,8 @@ SWFUpload.prototype.uploadComplete = function (file) {
 /* Called by SWFUpload JavaScript and Flash functions when debug is enabled. By default it writes messages to the
    internal debug console.  You can override this event and have messages written where you want. */
 SWFUpload.prototype.debug = function (message) {
-	N2i.log(message);
+	n2i.log(message);
 };
-if (!N2i) {var N2i = {};}
-
-/**
- * @class
- */
-N2i.Animation = {
-	objects : {},
-	running : false,
-	latestId : 0,
-	IE : navigator.userAgent.indexOf('MSIE')!=-1
-};
-
-N2i.Animation.loco = function(val) {
-	return Math.sin(3*val*Math.PI-Math.PI/2)*.5+.5;
-}
-
-N2i.Animation.ease = function(val) {
-	return Math.sin(val*Math.PI-Math.PI/2)*.5+.5;
-}
-
-N2i.Animation.func2 = function(val) {
-	return (-1*Math.pow((val-1),2))+1;
-}
-
-N2i.Animation.fastSlow = function(val) {
-	var a = .5;
-	var b = .7
-	return -1*Math.pow(Math.cos((Math.PI/2)*Math.pow(val,a)),Math.pow(Math.PI,b))+1;
-}
-
-N2i.Animation.slowFastSlow = function(val) {
-	var a = 1.6;
-	var b = 1.4;
-	return -1*Math.pow(Math.cos((Math.PI/2)*Math.pow(val,a)),Math.pow(Math.PI,b))+1;
-}
-
-N2i.Animation.elasticIn = function(n) {
-	if(n==0){ return 0; }
-	if(n==1){ return 1; }
-	var p = .3;
-	var s = p/4;
-	n = n - 1;
-	return -1 * Math.pow(2,10*n) * Math.sin((n-s)*(2*Math.PI)/p);
-}
-
-N2i.Animation.backOut = function(n) {
-	n = n - 1;
-	var s = 1.70158;
-	return Math.pow(n, 2) * ((s + 1) * n + s) + 1;
-}
-
-N2i.Animation.bounce = function(t) {
-	if (t < (1/2.75)) {
-		return 7.5625*t*t;
-	} else if (t < (2/2.75)) {
-		return (7.5625*(t-=(1.5/2.75))*t + .75);
-	} else if (t < (2.5/2.75)) {
-		return (7.5625*(t-=(2.25/2.75))*t + .9375);
-	} else {
-		return (7.5625*(t-=(2.625/2.75))*t + .984375);
-	}
-}
-
-N2i.Animation.elastic = function(t) {
-	return 1 - N2i.Animation.elastic2(1-t);
-}
-
-N2i.Animation.elastic2 = function (t, a, p) {
-	if (t<=0 || t>=1) return t;
-	if (!p) p=0.45;
-	var s;
-	if (!a || a < 1) {
-		a=1;
-		s=p/4;
-	} else {
-		s = p/(2*Math.PI) * Math.asin (1/a);
-	}
-	return -(a*Math.pow(2,10*(t-=1)) * Math.sin( (t-s)*(2*Math.PI)/p ));
-}
-
-N2i.Animation.get = function(element) {
-	element = $id(element);
-	if (!element.n2iAnimationId) element.n2iAnimationId = this.latestId++;
-	if (!this.objects[element.n2iAnimationId]) {
-		this.objects[element.n2iAnimationId] = new N2i.Animation.Item(element);
-	}
-	return this.objects[element.n2iAnimationId];
-}
-
-N2i.Animation.start = function() {
-	if (!this.running) {
-		N2i.Animation.render();
-	}
-}
-
-N2i.Animation.render = function(element) {
-	this.running = true;
-	var next = false;
-	var stamp = new Date().getTime();
-	for (id in this.objects) {
-		var obj = this.objects[id];
-		if (obj.work) {
-			for (var i=0; i < obj.work.length; i++) {
-				var work = obj.work[i];
-				if (work.finished) continue;
-				var place = (stamp-work.start)/(work.end-work.start);
-				if (place<0) {
-					next=true;
-					continue;
-				}
-				else if (isNaN(place)) place = 1;
-				else if (place>1) place=1;
-				else if (place<1) next=true;
-				var v = place;
-				if (work.delegate && work.delegate.ease) {
-					v = work.delegate.ease(v);
-				}
-				var value = null;
-				if (!work.css) {
-					obj.element[work.property] = Math.round(work.from+(work.to-work.from)*v);
-				} else if (work.to.red!=null) {
-					var red = Math.round(work.from.red+(work.to.red-work.from.red)*v);
-					var green = Math.round(work.from.green+(work.to.green-work.from.green)*v);
-					var blue = Math.round(work.from.blue+(work.to.blue-work.from.blue)*v);
-					value = 'rgb('+red+','+green+','+blue+')';
-					obj.element.style[work.property]=value;
-				} else if (N2i.Animation.IE && work.property=='opacity') {
-					var opacity = (work.from+(work.to-work.from)*v);
-					if (opacity==1) {
-						obj.element.style['filter']='';
-					} else {
-						obj.element.style['filter']='alpha(opacity='+(opacity*100)+')';
-					}
-				} else {
-					value = new String(work.from+(work.to-work.from)*v)+(work.unit!=null ? work.unit : '');
-					obj.element.style[work.property]=value;
-				}
-				if (place==1) {
-					work.finished = true;
-					if (work.delegate && work.delegate.onComplete) {
-						work.delegate.onComplete();
-					} else if (work.delegate && work.delegate.hideOnComplete) {
-						obj.element.style.display='none';
-					}
-				}
-			};
-		}
-	}
-	if (next) {
-		window.setTimeout(function() {
-			N2i.Animation.render();
-		},0);
-	} else {
-		this.running = false;
-	}
-	//window.status = this.running;
-}
-
-N2i.Animation.parseStyle = function(value) {
-	var parsed = {type:null,value:null,unit:null};
-	var match;
-	if (!isNaN(value)) {
-		parsed.value=parseFloat(value);
-	} else if (match=value.match(/([\-]?[0-9\.]+)(px|pt|%)/)) {
-		parsed.type = 'length';
-		parsed.value = parseFloat(match[1]);
-		parsed.unit = match[2];
-	} else if (match=value.match(/rgb\(([0-9]+),[ ]?([0-9]+),[ ]?([0-9]+)\)/)) {
-		parsed.type = 'color';
-		parsed.value = {
-			red:parseInt(match[1]),
-			green:parseInt(match[2]),
-			blue:parseInt(match[3])
-		};
-	} else {
-		var color = new N2i.Color(value);
-		if (color.ok) {
-			parsed.value = {
-				red:color.r,
-				green:color.g,
-				blue:color.b
-			};
-		}
-	}
-	return parsed;
-}
-
-/********************************* Item **********************************/
-
-N2i.Animation.Item = function(element) {
-	this.element = element;
-	this.work = [];
-}
-
-N2i.Animation.Item.prototype.animate = function(from,to,property,duration,delegate) {
-	var css = true;
-	if (property=='scrollLeft') {
-		css = false;
-	}
-	
-	var work = this.getWork(css ? N2i.camelize(property) : property);
-	work.delegate = delegate;
-	work.finished = false;
-	work.css = css;
-	if (from!=null) {
-		work.from = from;
-	} else if (work.css && N2i.Animation.IE && property=='opacity') {
-		work.from = this.getIEOpacity(this.element);
-	} else if (work.css) {
-		var style = N2i.Element.getStyle(this.element,property);
-		var parsedStyle = N2i.Animation.parseStyle(style);
-		work.from = parsedStyle.value;
-	} else {
-		work.from = this.element[property];
-	}
-	if (work.css) {
-		var parsed = N2i.Animation.parseStyle(to);
-		work.to = parsed.value;
-		work.unit = parsed.unit;
-	} else {
-		work.to = to;
-		work.unit = null;
-	}
-	work.start = new Date().getTime();
-	if (delegate && delegate.delay) work.start+=delegate.delay;
-	work.end = work.start+duration;
-	N2i.Animation.start();
-}
-
-N2i.Animation.Item.prototype.getIEOpacity = function(element) {
-	var filter = N2i.Element.getStyle(element,'filter').toLowerCase();
-	var match;
-	if (match = filter.match(/opacity=([0-9]+)/)) {
-		return parseFloat(match[1])/100;
-	} else {
-		return 1;
-	}
-}
-
-N2i.Animation.Item.prototype.getWork = function(property) {
-	for (var i=0; i < this.work.length; i++) {
-		if (this.work[i].property==property) {
-			return this.work[i];
-		}
-	};
-	var work = {property:property};
-	this.work[this.work.length] = work;
-	return work;
-}
-
-/************************************** Loop **********************************/
-
-N2i.Animation.Loop = function(recipe) {
-	this.recipe = recipe;
-	this.position = -1;
-	this.running = false;
-}
-
-N2i.Animation.Loop.prototype.next = function() {
-	this.position++;
-	if (this.position>=this.recipe.length) {
-		this.position = 0;
-	}
-	var item = this.recipe[this.position];
-	if (typeof(item)=='function') {
-		item();
-	} else if (item.element) {
-		$ani(item.element,item.property,item.value,item.duration,{ease:item.ease});
-	}
-	var self = this;
-	var time = item.duration || 0;
-	window.setTimeout(function() {self.next()},time);
-}
-
-N2i.Animation.Loop.prototype.start = function() {
-	this.running=true;
-	this.next();
-}
-
-/************************************** Color *********************************/
-
-
-N2i.Color = function(color_string) {
-    this.ok = false;
-
-    // strip any leading #
-    if (color_string.charAt(0) == '#') { // remove # if any
-        color_string = color_string.substr(1,6);
-    }
-
-    color_string = color_string.replace(/ /g,'');
-    color_string = color_string.toLowerCase();
-
-    // before getting into regexps, try simple matches
-    // and overwrite the input
-    var simple_colors = {
-        aliceblue: 'f0f8ff',
-        antiquewhite: 'faebd7',
-        aqua: '00ffff',
-        aquamarine: '7fffd4',
-        azure: 'f0ffff',
-        beige: 'f5f5dc',
-        bisque: 'ffe4c4',
-        black: '000000',
-        blanchedalmond: 'ffebcd',
-        blue: '0000ff',
-        blueviolet: '8a2be2',
-        brown: 'a52a2a',
-        burlywood: 'deb887',
-        cadetblue: '5f9ea0',
-        chartreuse: '7fff00',
-        chocolate: 'd2691e',
-        coral: 'ff7f50',
-        cornflowerblue: '6495ed',
-        cornsilk: 'fff8dc',
-        crimson: 'dc143c',
-        cyan: '00ffff',
-        darkblue: '00008b',
-        darkcyan: '008b8b',
-        darkgoldenrod: 'b8860b',
-        darkgray: 'a9a9a9',
-        darkgreen: '006400',
-        darkkhaki: 'bdb76b',
-        darkmagenta: '8b008b',
-        darkolivegreen: '556b2f',
-        darkorange: 'ff8c00',
-        darkorchid: '9932cc',
-        darkred: '8b0000',
-        darksalmon: 'e9967a',
-        darkseagreen: '8fbc8f',
-        darkslateblue: '483d8b',
-        darkslategray: '2f4f4f',
-        darkturquoise: '00ced1',
-        darkviolet: '9400d3',
-        deeppink: 'ff1493',
-        deepskyblue: '00bfff',
-        dimgray: '696969',
-        dodgerblue: '1e90ff',
-        feldspar: 'd19275',
-        firebrick: 'b22222',
-        floralwhite: 'fffaf0',
-        forestgreen: '228b22',
-        fuchsia: 'ff00ff',
-        gainsboro: 'dcdcdc',
-        ghostwhite: 'f8f8ff',
-        gold: 'ffd700',
-        goldenrod: 'daa520',
-        gray: '808080',
-        green: '008000',
-        greenyellow: 'adff2f',
-        honeydew: 'f0fff0',
-        hotpink: 'ff69b4',
-        indianred : 'cd5c5c',
-        indigo : '4b0082',
-        ivory: 'fffff0',
-        khaki: 'f0e68c',
-        lavender: 'e6e6fa',
-        lavenderblush: 'fff0f5',
-        lawngreen: '7cfc00',
-        lemonchiffon: 'fffacd',
-        lightblue: 'add8e6',
-        lightcoral: 'f08080',
-        lightcyan: 'e0ffff',
-        lightgoldenrodyellow: 'fafad2',
-        lightgrey: 'd3d3d3',
-        lightgreen: '90ee90',
-        lightpink: 'ffb6c1',
-        lightsalmon: 'ffa07a',
-        lightseagreen: '20b2aa',
-        lightskyblue: '87cefa',
-        lightslateblue: '8470ff',
-        lightslategray: '778899',
-        lightsteelblue: 'b0c4de',
-        lightyellow: 'ffffe0',
-        lime: '00ff00',
-        limegreen: '32cd32',
-        linen: 'faf0e6',
-        magenta: 'ff00ff',
-        maroon: '800000',
-        mediumaquamarine: '66cdaa',
-        mediumblue: '0000cd',
-        mediumorchid: 'ba55d3',
-        mediumpurple: '9370d8',
-        mediumseagreen: '3cb371',
-        mediumslateblue: '7b68ee',
-        mediumspringgreen: '00fa9a',
-        mediumturquoise: '48d1cc',
-        mediumvioletred: 'c71585',
-        midnightblue: '191970',
-        mintcream: 'f5fffa',
-        mistyrose: 'ffe4e1',
-        moccasin: 'ffe4b5',
-        navajowhite: 'ffdead',
-        navy: '000080',
-        oldlace: 'fdf5e6',
-        olive: '808000',
-        olivedrab: '6b8e23',
-        orange: 'ffa500',
-        orangered: 'ff4500',
-        orchid: 'da70d6',
-        palegoldenrod: 'eee8aa',
-        palegreen: '98fb98',
-        paleturquoise: 'afeeee',
-        palevioletred: 'd87093',
-        papayawhip: 'ffefd5',
-        peachpuff: 'ffdab9',
-        peru: 'cd853f',
-        pink: 'ffc0cb',
-        plum: 'dda0dd',
-        powderblue: 'b0e0e6',
-        purple: '800080',
-        red: 'ff0000',
-        rosybrown: 'bc8f8f',
-        royalblue: '4169e1',
-        saddlebrown: '8b4513',
-        salmon: 'fa8072',
-        sandybrown: 'f4a460',
-        seagreen: '2e8b57',
-        seashell: 'fff5ee',
-        sienna: 'a0522d',
-        silver: 'c0c0c0',
-        skyblue: '87ceeb',
-        slateblue: '6a5acd',
-        slategray: '708090',
-        snow: 'fffafa',
-        springgreen: '00ff7f',
-        steelblue: '4682b4',
-        tan: 'd2b48c',
-        teal: '008080',
-        thistle: 'd8bfd8',
-        tomato: 'ff6347',
-        turquoise: '40e0d0',
-        violet: 'ee82ee',
-        violetred: 'd02090',
-        wheat: 'f5deb3',
-        white: 'ffffff',
-        whitesmoke: 'f5f5f5',
-        yellow: 'ffff00',
-        yellowgreen: '9acd32'
-    };
-    for (var key in simple_colors) {
-        if (color_string == key) {
-            color_string = simple_colors[key];
-        }
-    }
-    // emd of simple type-in colors
-
-    // array of color definition objects
-    var color_defs = [
-        {
-            re: /^rgb\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})\)$/,
-            example: ['rgb(123, 234, 45)', 'rgb(255,234,245)'],
-            process: function (bits){
-                return [
-                    parseInt(bits[1]),
-                    parseInt(bits[2]),
-                    parseInt(bits[3])
-                ];
-            }
-        },
-        {
-            re: /^(\w{2})(\w{2})(\w{2})$/,
-            example: ['#00ff00', '336699'],
-            process: function (bits){
-                return [
-                    parseInt(bits[1], 16),
-                    parseInt(bits[2], 16),
-                    parseInt(bits[3], 16)
-                ];
-            }
-        },
-        {
-            re: /^(\w{1})(\w{1})(\w{1})$/,
-            example: ['#fb0', 'f0f'],
-            process: function (bits){
-                return [
-                    parseInt(bits[1] + bits[1], 16),
-                    parseInt(bits[2] + bits[2], 16),
-                    parseInt(bits[3] + bits[3], 16)
-                ];
-            }
-        }
-    ];
-
-    // search through the definitions to find a match
-    for (var i = 0; i < color_defs.length; i++) {
-        var re = color_defs[i].re;
-        var processor = color_defs[i].process;
-        var bits = re.exec(color_string);
-        if (bits) {
-            channels = processor(bits);
-            this.r = channels[0];
-            this.g = channels[1];
-            this.b = channels[2];
-            this.ok = true;
-        }
-
-    }
-
-    // validate/cleanup values
-    this.r = (this.r < 0 || isNaN(this.r)) ? 0 : ((this.r > 255) ? 255 : this.r);
-    this.g = (this.g < 0 || isNaN(this.g)) ? 0 : ((this.g > 255) ? 255 : this.g);
-    this.b = (this.b < 0 || isNaN(this.b)) ? 0 : ((this.b > 255) ? 255 : this.b);
-
-    // some getters
-    this.toRGB = function () {
-        return 'rgb(' + this.r + ', ' + this.g + ', ' + this.b + ')';
-    }
-    this.toHex = function () {
-        var r = this.r.toString(16);
-        var g = this.g.toString(16);
-        var b = this.b.toString(16);
-        if (r.length == 1) r = '0' + r;
-        if (g.length == 1) g = '0' + g;
-        if (b.length == 1) b = '0' + b;
-        return '#' + r + g + b;
-    }
-
-}
-
-
-N2i.ease = {
-	slowFastSlow : function(val) {
-		var a = 1.6;
-		var b = 1.4;
-		return -1*Math.pow(Math.cos((Math.PI/2)*Math.pow(val,a)),Math.pow(Math.PI,b))+1;
-	},
-	bounce : function(t) {
-		if (t < (1/2.75)) {
-			return 7.5625*t*t;
-		} else if (t < (2/2.75)) {
-			return (7.5625*(t-=(1.5/2.75))*t + .75);
-		} else if (t < (2.5/2.75)) {
-			return (7.5625*(t-=(2.25/2.75))*t + .9375);
-		} else {
-			return (7.5625*(t-=(2.625/2.75))*t + .984375);
-		}
-	},
-	
-	linear: function(/* Decimal? */n){
-		// summary: A linear easing function
-		return n;
-	},
-
-	quadIn: function(/* Decimal? */n){
-		return Math.pow(n, 2);
-	},
-
-	quadOut: function(/* Decimal? */n){
-		return n * (n-2) * -1;
-	},
-
-	quadInOut: function(/* Decimal? */n){
-		n=n*2;
-		if(n<1){ return Math.pow(n, 2) / 2; }
-		return -1 * ((--n)*(n-2) - 1) / 2;
-	},
-
-	cubicIn: function(/* Decimal? */n){
-		return Math.pow(n, 3);
-	},
-
-	cubicOut: function(/* Decimal? */n){
-		return Math.pow(n-1, 3) + 1;
-	},
-
-	cubicInOut: function(/* Decimal? */n){
-		n=n*2;
-		if(n<1){ return Math.pow(n, 3) / 2; }
-		n-=2;
-		return (Math.pow(n, 3) + 2) / 2;
-	},
-
-	quartIn: function(/* Decimal? */n){
-		return Math.pow(n, 4);
-	},
-
-	quartOut: function(/* Decimal? */n){
-		return -1 * (Math.pow(n-1, 4) - 1);
-	},
-
-	quartInOut: function(/* Decimal? */n){
-		n=n*2;
-		if(n<1){ return Math.pow(n, 4) / 2; }
-		n-=2;
-		return -1/2 * (Math.pow(n, 4) - 2);
-	},
-
-	quintIn: function(/* Decimal? */n){
-		return Math.pow(n, 5);
-	},
-
-	quintOut: function(/* Decimal? */n){
-		return Math.pow(n-1, 5) + 1;
-	},
-
-	quintInOut: function(/* Decimal? */n){
-		n=n*2;
-		if(n<1){ return Math.pow(n, 5) / 2; };
-		n-=2;
-		return (Math.pow(n, 5) + 2) / 2;
-	},
-
-	sineIn: function(/* Decimal? */n){
-		return -1 * Math.cos(n * (Math.PI/2)) + 1;
-	},
-
-	sineOut: function(/* Decimal? */n){
-		return Math.sin(n * (Math.PI/2));
-	},
-
-	sineInOut: function(/* Decimal? */n){
-		return -1 * (Math.cos(Math.PI*n) - 1) / 2;
-	},
-
-	expoIn: function(/* Decimal? */n){
-		return (n==0) ? 0 : Math.pow(2, 10 * (n - 1));
-	},
-
-	expoOut: function(/* Decimal? */n){
-		return (n==1) ? 1 : (-1 * Math.pow(2, -10 * n) + 1);
-	},
-
-	expoInOut: function(/* Decimal? */n){
-		if(n==0){ return 0; }
-		if(n==1){ return 1; }
-		n = n*2;
-		if(n<1){ return Math.pow(2, 10 * (n-1)) / 2; }
-		--n;
-		return (-1 * Math.pow(2, -10 * n) + 2) / 2;
-	},
-
-	circIn: function(/* Decimal? */n){
-		return -1 * (Math.sqrt(1 - Math.pow(n, 2)) - 1);
-	},
-
-	circOut: function(/* Decimal? */n){
-		n = n-1;
-		return Math.sqrt(1 - Math.pow(n, 2));
-	},
-
-	circInOut: function(/* Decimal? */n){
-		n = n*2;
-		if(n<1){ return -1/2 * (Math.sqrt(1 - Math.pow(n, 2)) - 1); }
-		n-=2;
-		return 1/2 * (Math.sqrt(1 - Math.pow(n, 2)) + 1);
-	},
-
-	backIn: function(/* Decimal? */n){
-		var s = 1.70158;
-		return Math.pow(n, 2) * ((s+1)*n - s);
-	},
-
-	backOut: function(/* Decimal? */n){
-		// summary: an easing function that pops past the range briefly, and 
-		// 	slowly comes back. 
-		n = n - 1;
-		var s = 1.70158;
-		return Math.pow(n, 2) * ((s + 1) * n + s) + 1;
-	},
-
-	backInOut: function(/* Decimal? */n){
-		var s = 1.70158 * 1.525;
-		n = n*2;
-		if(n < 1){ return (Math.pow(n, 2)*((s+1)*n - s))/2; }
-		n-=2;
-		return (Math.pow(n, 2)*((s+1)*n + s) + 2)/2;
-	},
-
-	elasticIn: function(/* Decimal? */n){
-		if(n==0){ return 0; }
-		if(n==1){ return 1; }
-		var p = .3;
-		var s = p/4;
-		n = n - 1;
-		return -1 * Math.pow(2,10*n) * Math.sin((n-s)*(2*Math.PI)/p);
-	},
-
-	elasticOut: function(/* Decimal? */n){
-		// summary: An easing function that elasticly snaps around the target value, near the end of the Animation
-		if(n==0) return 0;
-		if(n==1) return 1;
-		var p = .3;
-		var s = p/4;
-		return Math.pow(2,-10*n) * Math.sin((n-s)*(2*Math.PI)/p) + 1;
-	},
-
-	elasticInOut: function(/* Decimal? */n){
-		// summary: An easing function that elasticly snaps around the value, near the beginning and end of the Animation		
-		if(n==0) return 0;
-		n = n*2;
-		if(n==2) return 1;
-		var p = .3*1.5;
-		var s = p/4;
-		if(n<1){
-			n-=1;
-			return -.5*(Math.pow(2,10*n) * Math.sin((n-s)*(2*Math.PI)/p));
-		}
-		n-=1;
-		return .5*(Math.pow(2,-10*n) * Math.sin((n-s)*(2*Math.PI)/p)) + 1;
-	},
-
-	bounceIn: function(/* Decimal? */n){
-		// summary: An easing function that "bounces" near the beginning of an Animation
-		return (1 - N2i.ease.bounceOut(1-n)); // Decimal
-	},
-
-	bounceOut: function(/* Decimal? */n){
-		// summary: An easing function that "bounces" near the end of an Animation
-		var s=7.5625;
-		var p=2.75;
-		var l; 
-		if(n < (1 / p)){
-			l = s*Math.pow(n, 2);
-		}else if(n < (2 / p)){
-			n -= (1.5 / p);
-			l = s * Math.pow(n, 2) + .75;
-		}else if(n < (2.5 / p)){
-			n -= (2.25 / p);
-			l = s * Math.pow(n, 2) + .9375;
-		}else{
-			n -= (2.625 / p);
-			l = s * Math.pow(n, 2) + .984375;
-		}
-		return l;
-	},
-
-	bounceInOut: function(/* Decimal? */n){
-		// summary: An easing function that "bounces" at the beginning and end of the Animation
-		if(n<0.5){ return N2i.ease.bounceIn(n*2) / 2; }
-		return (N2i.ease.bounceOut(n*2-1) / 2) + 0.5; // Decimal
-	}
-};if (!N2i) {var N2i = {};}
-
-N2i.TextField = function(field,options,delegate) {
-	this.field = $id(field);
-	this.value = this.field.value;
-	this.options = options || {};
-	this.delegate = delegate || {};
-	if (this.options.placeholder && this.field.value=='') {
-		this.field.value=this.options.placeholder;
-	}
-	this.addBehaviour();
-}
-
-N2i.TextField.prototype.addBehaviour = function() {
-	var self = this;
-	this.field.onfocus = function() {
-		self.onfocus();
-	}
-	this.field.onblur = function() {
-		self.blur();
-	}
-	this.field.onkeydown = this.field.onkeyup = this.field.onkeypress = function() {
-		self.key();
-	}
-}
-
-N2i.TextField.prototype.setDelegate = function(delegate) {
-	this.delegate = delegate || {};
-}
-
-N2i.TextField.prototype.setEnabled = function(enabled) {
-	this.field.disabled = !enabled;
-}
-
-N2i.TextField.prototype.getValue = function() {
-	return this.value;
-}
-
-N2i.TextField.prototype.setValue = function(value) {
-	value = value || '';
-	this.value = this.field.value = value;
-}
-
-N2i.TextField.prototype.focus = function() {
-	this.field.focus();
-}
-
-N2i.TextField.prototype.onfocus = function() {
-	if (this.field.value==this.options.placeholder) {
-		this.field.value='';
-	}
-}
-
-N2i.TextField.prototype.blur = function() {
-	if (this.field.value=='' && this.options.placeholder) {
-		this.field.value=this.options.placeholder;
-	}
-}
-
-N2i.TextField.prototype.key = function() {
-	if (this.value != this.field.value) {
-		this.value = this.field.value;
-		if (this.delegate.valueDidChange) {
-			this.delegate.valueDidChange(this);
-		}
-	}
-}
-
-/********************** Date *******************/
-
-N2i.DateField = function(field,options,delegate) {
-	this.field = $id(field);
-	this.value = this.field.value;
-	this.date = null;
-	this.inputFormats = ['d-m-Y','d-m-Y','d-m-Y','d-m-Y','d-m','d/m','d','m-d-Y','m-d-Y','m-d-Y','m-d-Y','m-d','m/d'];
-	this.outputFormat = 'd-m-Y';
-	this.delegate = delegate || {};
-	this.options = options || {};
-	if (this.options.placeholder && this.field.value=='') {
-		this.field.value=this.options.placeholder;
-	}
-	this.addBehaviour();
-	this.check();
-}
-
-N2i.DateField.prototype.setDelegate = function(delegate) {
-	this.delegate = delegate || {};
-}
-
-N2i.DateField.prototype.setEnabled = function(enabled) {
-	this.field.disabled = !enabled;
-}
-
-N2i.DateField.prototype.setDate = function(date) {
-	this.date = date;
-	this.field.value = this.date.dateFormat(this.outputFormat);
-	this.value = this.field.value;
-}
-
-N2i.DateField.prototype.getDate = function() {
-	return this.date;
-}
-
-N2i.DateField.prototype.addBehaviour = function() {
-	var self = this;
-	this.field.onfocus = function() {
-		self.focus();
-	}
-	this.field.onblur = function() {
-		self.blur();
-	}
-	this.field.onkeydown = this.field.onkeyup = this.field.onkeypress = function() {
-		self.key();
-	}
-}
-
-N2i.DateField.prototype.check = function() {
-	var parsed = null;
-	for (var i=0; i < this.inputFormats.length && parsed==null; i++) {
-		parsed = Date.parseDate(this.value,	this.inputFormats[i]);
-	};
-	if (parsed) {
-		this.date = parsed;
-	}
-	if (this.date==null) {
-		this.field.value = '';
-	} else {
-		this.field.value = this.date.dateFormat(this.outputFormat);
-	}
-	this.value = this.field.value;
-}
-
-N2i.DateField.prototype.getValue = function() {
-	return this.value;
-}
-
-N2i.DateField.prototype.focus = function() {
-	if (this.field.value==this.options.placeholder) {
-		this.field.value='';
-	}
-}
-
-N2i.DateField.prototype.blur = function() {
-	this.check();
-	if (this.field.value=='' && this.options.placeholder) {
-		this.field.value=this.options.placeholder;
-	}
-}
-
-N2i.DateField.prototype.key = function() {
-	if (this.value != this.field.value) {
-		this.value = this.field.value;
-		if (this.options.valueDidChange) {
-			this.options.valueDidChange(this);
-		}
-	}
-}
-
-/********************** Date time *******************/
-
-N2i.DateTimeField = function(field,delegate) {
-	this.field = $id(field);
-	this.value = this.field.value;
-	this.date = null;
-	this.inputFormats = ['d-m-Y H:i:s','d-m-Y H:i','d-m-Y H','d-m-Y','d-m','d/m'];
-	this.outputFormat = 'd-m-Y H:i:s';
-	this.delegate = delegate || {};
-	if (this.delegate.placeholder && this.field.value=='') {
-		this.field.value=this.delegate.placeholder;
-	}
-	this.addBehaviour();
-	this.check();
-}
-
-N2i.DateTimeField.prototype.addBehaviour = function() {
-	var self = this;
-	this.field.onfocus = function() {
-		self.focus();
-	}
-	this.field.onblur = function() {
-		self.blur();
-	}
-	this.field.onkeydown = this.field.onkeyup = this.field.onkeypress = function() {
-		self.key();
-	}
-}
-
-N2i.DateTimeField.prototype.check = function() {
-	var parsed = null;
-	for (var i=0; i < this.inputFormats.length && parsed==null; i++) {
-		parsed = Date.parseDate(this.value,	this.inputFormats[i]);
-	};
-	if (parsed) {
-		this.date = parsed;
-	}
-	this.field.value = this.date.dateFormat(this.outputFormat);
-	this.value = this.field.value;
-}
-
-N2i.DateTimeField.prototype.getValue = function() {
-	return this.value;
-}
-
-N2i.DateTimeField.prototype.focus = function() {
-	if (this.field.value==this.delegate.placeholder) {
-		this.field.value='';
-	}
-}
-
-N2i.DateTimeField.prototype.blur = function() {
-	this.check();
-	if (this.field.value=='' && this.delegate.placeholder) {
-		this.field.value=this.delegate.placeholder;
-	}
-}
-
-N2i.DateTimeField.prototype.key = function() {
-	if (this.value != this.field.value) {
-		this.value = this.field.value;
-		if (this.delegate.valueDidChange) {
-			this.delegate.valueDidChange(this);
-		}
-	}
-}
-
-
 /*
  * Copyright (C) 2004 Baron Schwartz <baron at sequent dot org>
  *
@@ -7610,8 +6755,8 @@ In2iGui.get = function(name) {
 document.observe('dom:loaded', function() {In2iGui.get().ignite();});
 
 In2iGui.dwrErrorhandler = function(msg,e) {
-	N2i.log(msg);
-	N2i.log(e);
+	n2i.log(msg);
+	n2i.log(e);
 	In2iGui.get().showAlert({title:'An unexpected error occurred!',text:msg,emotion:'gasp'});
 }
 
@@ -7628,7 +6773,7 @@ In2iGui.prototype = {
 	},
 	addBehavior : function(id) {
 		var self = this;
-		N2i.Event.addListener(window,'resize',function() {
+		Event.observe(window,'resize',function() {
 			self.resize();
 		});
 	},
@@ -7637,25 +6782,25 @@ In2iGui.prototype = {
 	},
 	getTopPad : function(element) {
 		var pad = 0;
-		var all = parseInt(N2i.getStyle(element,'padding'));
-		var top = parseInt(N2i.getStyle(element,'padding-top'));
+		var all = parseInt(n2i.getStyle(element,'padding'));
+		var top = parseInt(n2i.getStyle(element,'padding-top'));
 		if (all) pad+=all;
 		if (top) pad+=top;
 		return pad;
 	},
 	getBottomPad : function(element) {
 		var pad = 0;
-		var all = parseInt(N2i.getStyle(element,'padding'));
-		var bottom = parseInt(N2i.getStyle(element,'padding-bottom'));
+		var all = parseInt(n2i.getStyle(element,'padding'));
+		var bottom = parseInt(n2i.getStyle(element,'padding-bottom'));
 		if (all) pad+=all;
 		if (bottom) pad+=bottom;
 		return pad;
 	},
 	resize : function(id) {
 		if (!this.overflows) return;
-		var height = N2i.Window.getInnerHeight();
+		var height = n2i.getInnerHeight();
 		this.overflows.each(function(overflow) {
-			if (In2iGui.browser.webkit || In2iGui.browser.gecko) {
+			if (n2i.browser.webkit || n2i.browser.gecko) {
 				overflow.element.style.display='none';
 				overflow.element.style.width = overflow.element.parentNode.clientWidth+'px';
 				overflow.element.style.display='';
@@ -7744,7 +6889,7 @@ In2iGui.prototype = {
 			});
 		}
 		return desc;
-	}
+	},
 }
 
 ///////////////////////////////// Indexes /////////////////////////////
@@ -7771,7 +6916,7 @@ In2iGui.nextTopIndex = function() {
 
 In2iGui.showCurtain = function(widget,zIndex) {
 	if (!widget.curtain) {
-		widget.curtain = N2i.create('div',{'class':'in2igui_curtain'},{'z-index':'none'});
+		widget.curtain = new Element('div',{'class':'in2igui_curtain'}).setStyle({'z-index':'none'});
 		widget.curtain.onclick = function() {
 			if (widget.curtainWasClicked) {
 				widget.curtainWasClicked();
@@ -7779,16 +6924,16 @@ In2iGui.showCurtain = function(widget,zIndex) {
 		}
 		document.body.appendChild(widget.curtain);
 	}
-	widget.curtain.style.height=N2i.getDocumentHeight()+'px';
+	widget.curtain.style.height=n2i.getDocumentHeight()+'px';
 	widget.curtain.style.zIndex=zIndex;
-	N2i.setOpacity(widget.curtain,0);
+	n2i.setOpacity(widget.curtain,0);
 	widget.curtain.style.display='block';
-	$ani(widget.curtain,'opacity',.5,1000,{ease:N2i.Animation.slowFastSlow});
+	n2i.ani(widget.curtain,'opacity',.5,1000,{ease:n2i.ease.slowFastSlow});
 }
 
 In2iGui.hideCurtain = function(widget) {
 	if (widget.curtain) {
-		$ani(widget.curtain,'opacity',0,200,{hideOnComplete:true});
+		n2i.ani(widget.curtain,'opacity',0,200,{hideOnComplete:true});
 	}
 }
 
@@ -7804,16 +6949,16 @@ in2igui.showMessage = function(msg) {
 	if (!In2iGui.browser.msie) {
 		In2iGui.message.setStyle({opacity:0});
 	}
-	In2iGui.message.setStyle({marginLeft:(In2iGui.message.getWidth()/-2)+'px',marginTop:N2i.Window.getScrollTop()+'px'});
+	In2iGui.message.setStyle({marginLeft:(In2iGui.message.getWidth()/-2)+'px',marginTop:n2i.getScrollTop()+'px'});
 	if (!In2iGui.browser.msie) {
-		$ani(In2iGui.message,'opacity',1,300);
+		n2i.ani(In2iGui.message,'opacity',1,300);
 	}
 }
 
 in2igui.hideMessage = function() {
 	if (In2iGui.message) {
 		if (!In2iGui.browser.msie) {
-			$ani(In2iGui.message,'opacity',0,300,{hideOnComplete:true});
+			n2i.ani(In2iGui.message,'opacity',0,300,{hideOnComplete:true});
 		} else {
 			In2iGui.message.setStyle({display:'none'});
 		}
@@ -7836,7 +6981,7 @@ in2igui.showToolTip = function(options) {
 	t.setStyle({'display':'block',zIndex:In2iGui.nextTopIndex()});
 	t.setStyle({left:(pos.left-t.getWidth()+4)+'px',top:(pos.top+2-(t.getHeight()/2)+(n.getHeight()/2))+'px'});
 	if (!In2iGui.browser.msie) {
-		$ani(t,'opacity',1,300);
+		n2i.ani(t,'opacity',1,300);
 	}
 }
 
@@ -7845,7 +6990,7 @@ in2igui.hideToolTip = function(options) {
 	var t = In2iGui.toolTips[key];
 	if (t) {
 		if (!In2iGui.browser.msie) {
-			$ani(t,'opacity',0,300,{hideOnComplete:true});
+			n2i.ani(t,'opacity',0,300,{hideOnComplete:true});
 		} else {
 			t.setStyle({display:'none'});
 		}
@@ -7865,6 +7010,11 @@ In2iGui.getIconUrl = function(icon,size) {
 	return In2iGui.context+'/In2iGui/icons/'+icon+size+'.png';
 }
 
+In2iGui.createIcon = function(icon,size) {
+	
+	return new Element('span',{'class':'in2igui_icon in2igui_icon_'+size}).setStyle({'backgroundImage':'url('+In2iGui.getIconUrl(icon,size)+')'});
+}
+
 In2iGui.onDomReady = function(func) {
 	document.observe('dom:loaded', func);
 }
@@ -7875,11 +7025,11 @@ in2igui.fadeIn = function(node,time) {
 	if (node.style.display=='none') {
 		node.setStyle({opacity:0,display:''});
 	}
-	$ani(node,'opacity',1,time);
+	n2i.ani(node,'opacity',1,time);
 }
 
 in2igui.fadeOut = function(node,time) {
-	$ani(node,'opacity',0,time,{hideOnComplete:true});
+	n2i.ani(node,'opacity',0,time,{hideOnComplete:true});
 }
 
 //////////////////////////// Positioning /////////////////////////////
@@ -7912,7 +7062,7 @@ In2iGui.positionAtElement = function(element,target,options) {
 
 In2iGui.getDragProxy = function() {
 	if (!In2iGui.dragProxy) {
-		In2iGui.dragProxy = N2i.create('div',{'class':'in2igui_dragproxy'},{'display':'none'});
+		In2iGui.dragProxy = new Element('div',{'class':'in2igui_dragproxy'}).setStyle({'display':'none'});
 		document.body.appendChild(In2iGui.dragProxy);
 	}
 	return In2iGui.dragProxy;
@@ -7922,15 +7072,15 @@ In2iGui.startDrag = function(e,element,options) {
 	var info = element.dragDropInfo;
 	In2iGui.dropTypes = In2iGui.findDropTypes(info);
 	if (!In2iGui.dropTypes) return;
-	var event = new N2i.Event(e);
+	var event = Event.extend(e);
 	var proxy = In2iGui.getDragProxy();
-	N2i.addListener(document.body,'mousemove',In2iGui.dragListener);
-	N2i.addListener(document.body,'mouseup',In2iGui.dragEndListener);
+	Event.observe(document.body,'mousemove',In2iGui.dragListener);
+	Event.observe(document.body,'mouseup',In2iGui.dragEndListener);
 	In2iGui.dragInfo = info;
 	if (info.icon) {
 		proxy.style.backgroundImage = 'url('+In2iGui.getIconUrl(info.icon,1)+')';
 	}
-	In2iGui.startDragPos = {top:event.mouseTop(),left:event.mouseLeft()};
+	In2iGui.startDragPos = {top:event.pointerY(),left:event.pointerX()};
 	proxy.innerHTML = '<span>'+info.title+'</span>' || '###';
 	In2iGui.dragging = true;
 }
@@ -7953,19 +7103,19 @@ In2iGui.findDropTypes = function(drag) {
 }
 
 In2iGui.dragListener = function(e) {
-	var event = new N2i.Event(e);
-	In2iGui.dragProxy.style.left = (event.mouseLeft()+10)+'px';
-	In2iGui.dragProxy.style.top = event.mouseTop()+'px';
+	var event = Event.extend(e);
+	In2iGui.dragProxy.style.left = (event.pointerX()+10)+'px';
+	In2iGui.dragProxy.style.top = event.pointerY()+'px';
 	In2iGui.dragProxy.style.display='block';
-	var target = In2iGui.findDropTarget(event.getTarget());
+	var target = In2iGui.findDropTarget(event.element());
 	if (target && In2iGui.dropTypes[target.dragDropInfo['kind']]) {
 		if (In2iGui.latestDropTarget) {
-			N2i.removeClass(In2iGui.latestDropTarget,'in2igui_drop');
+			In2iGui.latestDropTarget.removeClassName('in2igui_drop');
 		}
-		N2i.addClass(target,'in2igui_drop');
+		target.addClassName('in2igui_drop');
 		In2iGui.latestDropTarget = target;
 	} else if (In2iGui.latestDropTarget) {
-		N2i.removeClass(In2iGui.latestDropTarget,'in2igui_drop');
+		In2iGui.latestDropTarget.removeClassName('in2igui_drop');
 		In2iGui.latestDropTarget = null;
 	}
 	return false;
@@ -7982,16 +7132,16 @@ In2iGui.findDropTarget = function(node) {
 }
 
 In2iGui.dragEndListener = function(event) {
-	N2i.removeListener(document.body,'mousemove',In2iGui.dragListener);
-	N2i.removeListener(document.body,'mouseup',In2iGui.dragEndListener);
+	Event.stopObserving(document.body,'mousemove',In2iGui.dragListener);
+	Event.stopObserving(document.body,'mouseup',In2iGui.dragEndListener);
 	In2iGui.dragging = false;
 	if (In2iGui.latestDropTarget) {
-		N2i.removeClass(In2iGui.latestDropTarget,'in2igui_drop');
+		In2iGui.latestDropTarget.removeClassName('in2igui_drop');
 		In2iGui.callDelegatesDrop(In2iGui.dragInfo,In2iGui.latestDropTarget.dragDropInfo);
 		In2iGui.dragProxy.style.display='none';
 	} else {
-		$ani(In2iGui.dragProxy,'left',(In2iGui.startDragPos.left+10)+'px',300,{ease:N2i.Animation.fastSlow});
-		$ani(In2iGui.dragProxy,'top',(In2iGui.startDragPos.top-5)+'px',300,{ease:N2i.Animation.fastSlow,hideOnComplete:true});
+		n2i.ani(In2iGui.dragProxy,'left',(In2iGui.startDragPos.left+10)+'px',200,{ease:n2i.ease.fastSlow});
+		n2i.ani(In2iGui.dragProxy,'top',(In2iGui.startDragPos.top-5)+'px',200,{ease:n2i.ease.fastSlow,hideOnComplete:true});
 	}
 	In2iGui.latestDropTarget=null;
 }
@@ -8018,7 +7168,10 @@ In2iGui.extend = function(obj) {
 	In2iGui.get().objects.set(obj.name,obj);
 	obj.delegates = [];
 	obj.addDelegate = function(delegate) {
-		this.delegates[this.delegates.length] = delegate;
+		n2i.addToArray(this.delegates,delegate);
+	}
+	obj.removeDelegate = function(delegate) {
+		n2i.removeFromArray(this.delegates,delegate);
 	}
 	if (!obj.getElement) {
 		obj.getElement = function() {
@@ -8038,6 +7191,16 @@ In2iGui.callDelegatesDrop = function(dragged,dropped) {
 			gui.delegates[i]['drop$'+dragged.kind+'$'+dropped.kind](dragged,dropped);
 		}
 	}
+}
+
+In2iGui.callDescendants = function(obj,method,value,event) {
+	if (typeof(value)=='undefined') value=obj;
+	var d = In2iGui.get().getDescendants(obj);
+	d.each(function(child) {
+		if (child[method]) {
+			thisResult = child[method](value,event);
+		}
+	});
 }
 
 In2iGui.callDelegates = function(obj,method,value,event) {
@@ -8095,14 +7258,15 @@ In2iGui.bind = function(expression,delegate) {
 	if (expression.charAt(0)=='@') {
 		var pair = expression.substring(1).split('.');
 		var obj = eval(pair[0]);
+		var p = pair.slice(1).join('.');
 		obj.addDelegate({
 			propertyChanged : function(prop) {
-				if (prop.property==pair[1]) {
+				if (prop.property==p) {
 					delegate(prop.value);
 				}
 			}
 		});
-		return obj.valueForProperty(pair[1]);
+		return obj.valueForProperty(p);
 	}
 	return expression;
 }
@@ -8170,16 +7334,16 @@ In2iGui.jsonResponse = function(t,key) {
 }
 
 In2iGui.json = function(data,url,delegateOrKey) {
+	var options = {method:'post',parameters:{}};
 	if (typeof(delegateOrKey)=='string') {
-		delegate = {onSuccess:function(t) {In2iGui.jsonResponse(t,delegateOrKey)}}
+		options.onSuccess=function(t) {In2iGui.jsonResponse(t,delegateOrKey)};
 	} else {
 		delegate = delegateOrKey;
 	}
-	var options = {method:'POST',parameters:{}};
 	for (key in data) {
 		options.parameters[key]=Object.toJSON(data[key])
 	}
-	$get(url,delegate,options)
+	new Ajax.Request(url,options)
 }
 
 In2iGui.parseItems = function(doc) {
@@ -8199,7 +7363,7 @@ In2iGui.parseItems = function(doc) {
 ////////////////////////////////// Source ///////////////////////////
 
 In2iGui.Source = function(id,name,options) {
-	this.options = N2i.override({url:null,dwr:null},options);
+	this.options = n2i.override({url:null,dwr:null},options);
 	this.parameters = [];
 	In2iGui.extend(this);
 	this.busy=false;
@@ -8218,6 +7382,7 @@ In2iGui.Source.prototype = {
 		this.refresh();
 	},
 	refresh : function() {
+		if (this.delegates.length==0) return;
 		if (this.busy) {
 			this.pendingRefresh = true;
 			return;
@@ -8225,9 +7390,13 @@ In2iGui.Source.prototype = {
 		this.pendingRefresh = false;
 		var self = this;
 		if (this.options.url) {
+			var url = new n2i.URL(this.options.url);
+			this.parameters.each(function(p) {
+				url.addParameter(p.key,p.value);
+			});
 			this.busy=true;
-			In2iGui.callDelegates(this,'sourceIsBusy',data);
-			new Ajax.Request(this.options.url, {onSuccess: function(t) {self.parse(t)}});
+			In2iGui.callDelegates(this,'sourceIsBusy');
+			new Ajax.Request(url.toString(), {onSuccess: function(t) {self.parse(t)}});
 		} else if (this.options.dwr) {
 			var pair = this.options.dwr.split('.');
 			var facade = eval(pair[0]);
@@ -8260,6 +7429,8 @@ In2iGui.Source.prototype = {
 		if (doc.documentElement.tagName=='items') {
 			var data = In2iGui.parseItems(doc);
 			In2iGui.callDelegates(this,'itemsLoaded',data);
+		} else if (doc.documentElement.tagName=='list') {
+			In2iGui.callDelegates(this,'listLoaded',doc);
 		}
 	},
 	parseDWR : function(data) {
@@ -8290,7 +7461,7 @@ In2iGui.localize = function(loc) {
 ///////////////////////////////////// Common text field ////////////////////////
 
 In2iGui.TextField = function(id,name,options) {
-	this.options = N2i.override({placeholder:null,placeholderElement:null},options);
+	this.options = n2i.override({placeholder:null,placeholderElement:null},options);
 	var e = this.element = $(id);
 	this.element.setAttribute('autocomplete','off');
 	this.value = this.element.value;
@@ -8394,7 +7565,7 @@ In2iGui.TextField.prototype = {
 
 In2iGui.InfoView = function(id,name,options) {
 	this.options = {clickObjects:false};
-	N2i.override(this.options,options);
+	n2i.override(this.options,options);
 	this.element = $(id);
 	this.body = this.element.select('tbody')[0];
 	this.name = name;
@@ -8495,7 +7666,7 @@ In2iGui.Window = function(element,name) {
 }
 
 In2iGui.Window.create = function(name,options) {
-	options = N2i.override({title:'Window',close:true},options);
+	options = n2i.override({title:'Window',close:true},options);
 	var element = new Element('div',{'class':'in2igui_window'+(options.variant ? ' in2igui_window_'+options.variant : '')});
 	element.update((options.close ? '<div class="close"></div>' : '')+
 		'<div class="titlebar"><div class="titlebar"><div class="titlebar"><span>'+options.title+'</span></div></div></div>'+
@@ -8513,7 +7684,7 @@ In2iGui.Window.create = function(name,options) {
 In2iGui.Window.prototype = {
 	addBehavior : function() {
 		var self = this;
-		if (this.close) this.close.observe('click',function() {self.hide();});
+		if (this.close) this.close.observe('click',function(e) {self.hide();}).observe('mousedown',function(e) {e.stop();});
 		this.titlebar.onmousedown = function(e) {self.startDrag(e);return false;};
 		this.titlebar.observe('touchstart',function(e) {self.startDrag(e);return false;});
 		this.element.observe('mousedown',function() {
@@ -8526,24 +7697,25 @@ In2iGui.Window.prototype = {
 	show : function() {
 		if (this.visible) return;
 		this.element.setStyle({
-			zIndex : In2iGui.nextPanelIndex(), visibility : 'hidden', display : 'block', top: (N2i.Window.getScrollTop()+40)+'px'
+			zIndex : In2iGui.nextPanelIndex(), visibility : 'hidden', display : 'block', top: (n2i.getScrollTop+40)+'px'
 		})
 		var width = this.element.clientWidth;
 		this.element.setStyle({
 			width : width+'px' , visibility : 'visible'
 		});
-		if (!N2i.isIE()) {
-			$ani(this.element,'opacity',1,0);
+		if (!n2i.browser.msie) {
+			n2i.ani(this.element,'opacity',1,0);
 		}
 		this.visible = true;
+		In2iGui.callDescendants(this,'parentShown');
 	},
 	toggle : function() {
 		(this.visible ? this.hide() : this.show() );
 	},
 	hide : function() {
 		if (!this.visible) return;
-		if (!N2i.isIE()) {
-			$ani(this.element,'opacity',0,200,{hideOnComplete:true});
+		if (!n2i.browser.msie) {
+			n2i.ani(this.element,'opacity',0,200,{hideOnComplete:true});
 		} else {
 			this.element.setStyle({display:'none'});
 		}
@@ -8567,17 +7739,18 @@ In2iGui.Window.prototype = {
 ////////////////////////////// Dragging ////////////////////////////////
 
 	startDrag : function(e) {
-		var event = new N2i.Event(e);
+		var event = Event.extend(e);
 		this.element.style.zIndex=In2iGui.nextPanelIndex();
-		this.dragState = {left:event.mouseLeft()-N2i.Element.getLeft(this.element),top:event.mouseTop()-N2i.Element.getTop(this.element)};
+		var pos = this.element.cumulativeOffset();
+		this.dragState = {left:event.pointerX()-pos.left,top:event.pointerY()-pos.top};
 		this.latestPosition = {left: this.dragState.left, top:this.dragState.top};
 		this.latestTime = new Date().getMilliseconds();
 		var self = this;
 		this.moveListener = function(e) {self.drag(e)};
 		this.upListener = function(e) {self.endDrag(e)};
-		N2i.Event.addListener(document,'mousemove',this.moveListener);
-		N2i.Event.addListener(document,'mouseup',this.upListener);
-		N2i.Event.stop(e);
+		Event.observe(document,'mousemove',this.moveListener);
+		Event.observe(document,'mouseup',this.upListener);
+		e.stop();
 		document.body.onselectstart = function () { return false; };
 		return false;
 	},
@@ -8590,28 +7763,19 @@ In2iGui.Window.prototype = {
 		this.latestPosition = {'top':top,'left':left};
 	},
 	drag : function(e) {
-		var event = new N2i.Event(e);
+		var event = Event.extend(e);
 		this.element.style.right = 'auto';
-		var top = (event.mouseTop()-this.dragState.top);
-		var left = (event.mouseLeft()-this.dragState.left);
+		var top = (event.pointerY()-this.dragState.top);
+		var left = (event.pointerX()-this.dragState.left);
 		this.element.style.top = Math.max(top,0)+'px';
 		this.element.style.left = Math.max(left,0)+'px';
 		//this.calc(top,left);
 		return false;
 	},
 	endDrag : function(e) {
-		N2i.Event.removeListener(document,'mousemove',this.moveListener);
-		N2i.Event.removeListener(document,'mouseup',this.upListener);
+		Event.stopObserving(document,'mousemove',this.moveListener);
+		Event.stopObserving(document,'mouseup',this.upListener);
 		document.body.onselectstart = null;
-		/*
-		var func = N2i.Animation.fastSlow;
-		var newTop = parseInt(this.element.style.top)-this.b*10;
-		var newLeft = parseInt(this.element.style.left)-this.a*10;
-		if (newTop<0) {newTop=0; func=N2i.Animation.bounce};
-		if (newLeft<0) {newLeft=0; func=N2i.Animation.bounce};
-		$ani(this.element,'top',newTop+'px',1000,{ease:func});
-		$ani(this.element,'left',newLeft+'px',1000,{ease:func});
-		*/
 	}
 }
 
@@ -8698,12 +7862,12 @@ In2iGui.Formula.Group = function(elementOrId,name,options) {
 	this.name = name;
 	this.element = $(elementOrId);
 	this.body = this.element.select('tbody')[0];
-	this.options = N2i.override({above:true},options);
+	this.options = n2i.override({above:true},options);
 	In2iGui.extend(this);
 }
 
 In2iGui.Formula.Group.create = function(name,options) {
-	options = N2i.override({above:true},options);
+	options = n2i.override({above:true},options);
 	var element = new Element('table',
 		{'class':'in2igui_formula_group'}
 	);
@@ -8718,7 +7882,6 @@ In2iGui.Formula.Group.prototype = {
 	add : function(widget) {
 		var tr = new Element('tr');
 		this.body.insert(tr);
-		N2i.log(widget);
 		if (widget.getLabel) {
 			var label = widget.getLabel();
 			if (label) {
@@ -8751,24 +7914,24 @@ In2iGui.Formula.Group.prototype = {
 In2iGui.Formula.Text = function(element,name,options) {
 	this.name = name;
 	this.options = {label:null,key:null};
-	N2i.override(this.options,options);
+	n2i.override(this.options,options);
 	this.element = $(element);
 	this.input = this.element.select('.in2igui_formula_text')[0];
 	In2iGui.extend(this);
 }
 
 In2iGui.Formula.Text.create = function(name,options) {
-	options = N2i.override({lines:1},options);
+	options = n2i.override({lines:1},options);
 	if (options.lines>1) {
-		var input = N2i.create('textarea',
+		var input = new Element('textarea',
 			{'class':'in2igui_formula_text','rows':options.lines}
 		);
 	} else {
-		var input = N2i.create('input',
+		var input = new Element('input',
 			{'class':'in2igui_formula_text'}
 		);		
 	}
-	var element = N2i.create('div',{'class':'in2igui_field'});
+	var element = new Element('div',{'class':'in2igui_field'});
 	element.appendChild(input);
 	return new In2iGui.Formula.Text(element,name,options);
 }
@@ -8802,7 +7965,7 @@ In2iGui.Formula.Text.prototype = {
 		return this.options.label;
 	},
 	isEmpty : function() {
-		return N2i.isEmpty(this.input.value);
+		return n2i.isEmpty(this.input.value);
 	}
 }
 
@@ -8813,7 +7976,7 @@ In2iGui.Formula.DateTime = function(elementOrId,name,options) {
 	this.outputFormat = 'd-m-Y H:i:s';
 	//this.id = id;
 	this.name = name;
-	this.options = N2i.override({returnType:null,label:null},options);
+	this.options = n2i.override({returnType:null,label:null},options);
 	this.value = null;
 	this.element = $(elementOrId);
 	In2iGui.extend(this);
@@ -8893,8 +8056,7 @@ In2iGui.Formula.DateTime.prototype = {
 
 In2iGui.Formula.Select = function(id,name,options) {
 	this.name = name;
-	N2i.log(options);
-	this.options = N2i.override({label:null},options);
+	this.options = n2i.override({label:null},options);
 	this.element = $(id);
 	this.value = this.options.value || null;
 	this.invalidValue = false;
@@ -8993,7 +8155,7 @@ In2iGui.Formula.Radiobuttons.prototype = {
 	updateUI : function() {
 		for (var i=0; i < this.radios.length; i++) {
 			var radio = this.radios[i];
-			N2i.setClass(radio.id,'in2igui_selected',radio.value==this.value);
+			$(radio.id).setClassName('in2igui_selected',radio.value==this.value);
 		};
 	},
 	setValue : function(value) {
@@ -9039,7 +8201,7 @@ In2iGui.Formula.Checkbox.prototype = {
 		this.updateUI();
 	},
 	updateUI : function() {
-		N2i.setClass(this.element,'in2igui_checkbox_selected',this.value);
+		this.element.setClassName('in2igui_checkbox_selected',this.value);
 	},
 	setValue : function(value) {
 		this.value = value;
@@ -9098,7 +8260,7 @@ In2iGui.Formula.Checkboxes.prototype = {
 		this.setValue(values);
 	},
 	flipValue : function(value) {
-		N2i.flipInArray(this.values,value);
+		n2i.flipInArray(this.values,value);
 		this.checkValues();
 		this.updateUI();
 	},
@@ -9168,7 +8330,7 @@ In2iGui.Formula.Checkboxes.Items.prototype = {
 	updateUI : function() {
 		for (var i=0; i < this.checkboxes.length; i++) {
 			var item = this.checkboxes[i];
-			N2i.setClass(item.element,'in2igui_checkbox_selected',N2i.inArray(this.parent.values,item.value));
+			item.element.setClassName('in2igui_checkbox_selected',this.parent.values.indexOf(item.value)!=-1);
 		};
 	},
 	hasValue : function(value) {
@@ -9185,7 +8347,7 @@ In2iGui.Formula.Checkboxes.Items.prototype = {
 
 In2iGui.Formula.Tokens = function(element,name,options) {
 	this.options = {label:null,key:null};
-	N2i.override(this.options,options);
+	n2i.override(this.options,options);
 	this.element = $(element);
 	this.name = name;
 	this.value = [''];
@@ -9249,7 +8411,7 @@ In2iGui.Formula.Tokens.prototype = {
 }
 
 /* EOF */In2iGui.List = function(element,name,options) {
-	this.options = N2i.override({url:null,source:null},options);
+	this.options = n2i.override({url:null,source:null},options);
 	this.element = $(element);
 	this.name = name;
 	this.state = options.state;
@@ -9277,7 +8439,7 @@ In2iGui.Formula.Tokens.prototype = {
 		this.window.size = parseInt(options.windowSize);
 	}
 	In2iGui.extend(this);
-	this.refresh();
+	if (this.url) this.refresh();
 }
 
 In2iGui.List.prototype = {
@@ -9308,6 +8470,14 @@ In2iGui.List.prototype = {
 	loadData : function(url) {
 		this.setUrl(url);
 	},
+	setSource : function(source) {
+		if (this.options.source!=source) {
+			this.options.source.removeDelegate(this);
+			source.addDelegate(this);
+			this.options.source = source;
+			source.refresh();
+		}
+	},
 	setUrl : function(url) {
 		this.url = url;
 		this.selected = [];
@@ -9320,10 +8490,20 @@ In2iGui.List.prototype = {
 		this.window = {size:null,page:0,total:0};
 		In2iGui.firePropertyChange(this,'state',this.window);
 	},
+	valueForProperty : function(p) {
+		if (p=='window.page') return this.window.page;
+		else if (p=='sort.key') return this.sortKey;
+		else if (p=='sort.direction') return (this.sortDirection || 'ascending');
+		else return this[p];
+	},
 	/**
 	 * @private
 	 */
 	refresh : function() {
+		if (this.options.source) {
+			this.options.source.refresh();
+			return;
+		}
 		if (!this.url) return;
 		var url = this.url;
 		if (typeof(this.window.page)=='number') {
@@ -9351,8 +8531,8 @@ In2iGui.List.prototype = {
 			onSuccess:function(r) {
 				if (r.responseXML) {
 					try {
-					self.parse(r.responseXML);
-					} catch (e) {N2i.log(e)}
+					self.listLoaded(r.responseXML);
+					} catch (e) {n2i.log(e)}
 				} else if (r.responseText) {
 					var json = r.responseText.evalJSON();
 					if (json.list==true) {
@@ -9368,6 +8548,9 @@ In2iGui.List.prototype = {
 		var key = this.columns[index].key;
 		if (key==this.sortKey) {
 			this.sortDirection = this.sortDirection=='ascending' ? 'descending' : 'ascending';
+			In2iGui.firePropertyChange(this,'sort.direction',this.sortDirection);
+		} else {
+			In2iGui.firePropertyChange(this,'sort.key',key);
 		}
 		this.sortKey = key;
 		this.refresh();
@@ -9376,7 +8559,7 @@ In2iGui.List.prototype = {
 	/**
 	 * @private
 	 */
-	parse : function(doc) {
+	listLoaded : function(doc) {
 		this.parseWindow(doc);
 		this.buildNavigation();
 		this.body.update();
@@ -9478,17 +8661,17 @@ In2iGui.List.prototype.parseCell = function(node,cell) {
 	}
 	for (var i=0; i < node.childNodes.length; i++) {
 		var child = node.childNodes[i];
-		if (child.nodeType==N2i.TEXT_NODE && child.nodeValue.length>0) {
+		if (child.nodeType==n2i.TEXT_NODE && child.nodeValue.length>0) {
 			cell.appendChild(document.createTextNode(child.nodeValue));
-		} else if (child.nodeType==N2i.ELEMENT_NODE && child.nodeName=='break') {
+		} else if (child.nodeType==n2i.ELEMENT_NODE && child.nodeName=='break') {
 			cell.insert(new Element('br'));
-		} else if (child.nodeType==N2i.ELEMENT_NODE && child.nodeName=='object') {
+		} else if (child.nodeType==n2i.ELEMENT_NODE && child.nodeName=='object') {
 			var obj = new Element('div',{'class':'object'});
 			if (child.getAttribute('icon')!=null) {
 				var icon = new Element('div',{'class':'icon'}).setStyle({'backgroundImage':'url("'+In2iGui.getIconUrl(child.getAttribute('icon'),1)+'")'});
 				obj.insert(icon);
 			}
-			if (child.firstChild && child.firstChild.nodeType==N2i.TEXT_NODE && child.firstChild.nodeValue.length>0) {
+			if (child.firstChild && child.firstChild.nodeType==n2i.TEXT_NODE && child.firstChild.nodeValue.length>0) {
 				obj.appendChild(document.createTextNode(child.firstChild.nodeValue));
 			}
 			cell.insert(obj);
@@ -9516,7 +8699,6 @@ In2iGui.List.prototype.parseWindow = function(doc) {
 In2iGui.List.prototype.buildNavigation = function() {
 	var self = this;
 	var pages = this.window.size>0 ? Math.ceil(this.window.total/this.window.size) : 0;
-	N2i.log(this.window);
 	if (pages<2) {
 		this.navigation.style.display='none';
 		return;
@@ -9678,10 +8860,10 @@ In2iGui.List.prototype.addRowBehavior = function(row,index) {
 In2iGui.List.prototype.changeSelection = function(indexes) {
 	var rows = this.body.getElementsByTagName('tr');
 	for (var i=0;i<this.selected.length;i++) {
-		N2i.Element.removeClassName(rows[this.selected[i]],'selected');
+		rows[this.selected[i]].removeClassName('selected');
 	}
 	for (var i=0;i<indexes.length;i++) {
-		N2i.Element.addClassName(rows[indexes[i]],'selected');
+		rows[indexes[i]].addClassName('selected');
 	}
 	this.selected = indexes
 }
@@ -9708,6 +8890,7 @@ In2iGui.List.prototype.rowDoubleClick = function(index) {
 In2iGui.List.prototype.windowPageWasClicked = function(tag) {
 	this.window.page = tag.in2GuiPage;
 	In2iGui.firePropertyChange(this,'state',this.window);
+	In2iGui.firePropertyChange(this,'window.page',this.window.page);
 	this.refresh();
 }
 
@@ -9771,7 +8954,7 @@ In2iGui.Tabs.Tab = function(id,name) {
 In2iGui.Tabs.Tab.prototype = {
 	setActive : function(active) {
 		this.element.style.display = (active ? 'block' : 'none');
-		N2i.setClass(this.tab,'in2igui_tabs_selected',active);
+		this.tab.setClassName('in2igui_tabs_selected',active);
 	}
 }
 
@@ -9797,62 +8980,8 @@ In2iGui.ViewStack.prototype.change = function(name) {
 	};
 }
 
-/* EOF */In2iGui.Tabbox = function(id,name) {
-	this.id = id;
-	this.name = name;
-	this.element = $(id);
-	this.panes = $class('tab',$class('tabbox_top',this.element)[0]);
-	this.activeTab = 0;
-	this.tabs = [];
-	this.addBehavior();
-	this.updateGUI();
-	In2iGui.extend(this);
-}
-
-In2iGui.Tabbox.prototype.registerTab = function(obj) {
-	this.tabs[this.tabs.length] = obj;
-}
-
-In2iGui.Tabbox.prototype.addBehavior = function() {
-	var self = this;
-	var tabs = $class('tabbox_top',this.element)[0].getElementsByTagName('a');
-	for (var i=0; i < tabs.length; i++) {
-		tabs[i].in2iGuiIndex = i;
-		tabs[i].onclick = function() {
-			self.tabWasClicked(this);
-		}
-	};
-}
-
-In2iGui.Tabbox.prototype.tabWasClicked = function(tag) {
-	this.activeTab = tag.in2iGuiIndex;
-	this.updateGUI();
-}
-
-In2iGui.Tabbox.prototype.updateGUI = function() {
-	var body = $class('tabbox_body',this.element)[0];
-	$ani(body,'scrollLeft',this.activeTab*592,700,{ease:N2i.Animation.slowFastSlow});
-	for (var i=0; i < this.panes.length; i++) {
-		if (i==this.activeTab) {
-			N2i.Element.addClassName(this.panes[i],'tab_selected');
-		} else {
-			N2i.Element.removeClassName(this.panes[i],'tab_selected');
-		}
-	};
-}
-
-//////////////////////////////////// Tab ////////////////////////////////
-
-In2iGui.Tabbox.Tab = function(id,name) {
-	this.id = id;
-	this.name = name;
-	this.element = $(id);
-	In2iGui.extend(this);
-}
-
-/* EOF */
-In2iGui.ObjectList = function(id,name,options) {
-	this.options = N2i.override({key:null},options);
+/* EOF */In2iGui.ObjectList = function(id,name,options) {
+	this.options = n2i.override({key:null},options);
 	this.name = name;
 	this.element = $(id);
 	this.body = this.element.select('tbody')[0];
@@ -9971,14 +9100,14 @@ In2iGui.ObjectList.Text.prototype = {
 		return new In2iGui.ObjectList.Text(this.key);
 	},
 	getElement : function() {
-		var input = N2i.create('input',{'class':'in2igui_formula_text'});
-		var field = N2i.create('div',{'class':'in2igui_field'});
+		var input = new Element('input',{'class':'in2igui_formula_text'});
+		var field = new Element('div',{'class':'in2igui_field'});
 		field.appendChild(input);
-		this.wrapper = new N2i.TextField(input);
-		this.wrapper.setDelegate(this);
+		this.wrapper = new In2iGui.TextField(input);
+		this.wrapper.addDelegate(this);
 		return field;
 	},
-	valueDidChange : function(field) {
+	valueChanged : function(field) {
 		this.value = field.getValue();
 		this.object.valueDidChange();
 	},
@@ -10006,7 +9135,7 @@ In2iGui.ObjectList.Select.prototype = {
 		return copy;
 	},
 	getElement : function() {
-		this.select = N2i.create('select');
+		this.select = new Element('select');
 		for (var i=0; i < this.options.length; i++) {
 			this.select.options[this.select.options.length] = new Option(this.options[i].label,this.options[i].value);
 		};
@@ -10032,13 +9161,13 @@ In2iGui.ObjectList.Select.prototype = {
  * @constructor
  */
 In2iGui.Alert = function(element,name,options) {
-	this.options = N2i.override({modal:false},options);
+	this.options = n2i.override({modal:false},options);
 	this.element = $(element);
 	this.name = name;
 	this.body = this.element.select('.in2igui_alert_body')[0];
 	this.content = this.element.select('.in2igui_alert_content')[0];
 	this.emotion = null;
-	var h1s = $tag('h1',this.element);
+	var h1s = this.element.select('h1');
 	this.title = h1s.length>0 ? h1s[0] : null;
 	In2iGui.extend(this);
 }
@@ -10048,7 +9177,7 @@ In2iGui.Alert = function(element,name,options) {
  * @static
  */
 In2iGui.Alert.create = function(name,options) {
-	options = N2i.override({title:'',text:'',emotion:null,variant:null,title:null},options);
+	options = n2i.override({title:'',text:'',emotion:null,variant:null,title:null},options);
 	
 	var element = new Element('div',{'class':'in2igui_alert'});
 	var body = new Element('div',{'class':'in2igui_alert_body'});
@@ -10082,25 +9211,25 @@ In2iGui.Alert.prototype = {
 		}
 		this.element.style.zIndex=zIndex;
 		this.element.style.display='block';
-		this.element.style.top=(N2i.Window.getScrollTop()+100)+'px';
-		$ani(this.element,'opacity',1,200);
-		$ani(this.element,'margin-top','40px',600,{ease:N2i.Animation.elastic});
+		this.element.style.top=(n2i.getScrollTop()+100)+'px';
+		n2i.ani(this.element,'opacity',1,200);
+		n2i.ani(this.element,'margin-top','40px',600,{ease:n2i.ease.elastic});
 	},
 	hide : function() {
-		$ani(this.element,'opacity',0,200,{hideOnComplete:true});
-		$ani(this.element,'margin-top','0px',200);
+		n2i.ani(this.element,'opacity',0,200,{hideOnComplete:true});
+		n2i.ani(this.element,'margin-top','0px',200);
 		In2iGui.hideCurtain(this);
 	},
 	setTitle : function(text) {
 		if (!this.title) {
-			this.title = N2i.create('h1');
+			this.title = new Element('h1');
 			this.content.appendChild(this.title);
 		}
 		this.title.innerHTML = text;
 	},
 	setText : function(text) {
 		if (!this.text) {
-			this.text = N2i.create('p');
+			this.text = new Element('p');
 			this.content.appendChild(this.text);
 		}
 		this.text.innerHTML = text || '';
@@ -10111,10 +9240,10 @@ In2iGui.Alert.prototype = {
 	},
 	setEmotion : function(emotion) {
 		if (this.emotion) {
-			N2i.removeClass(this.body,this.emotion);
+			this.body.removeClassName(this.emotion);
 		}
 		this.emotion = emotion;
-		N2i.addClass(this.body,emotion);
+		this.body.addClassName(emotion);
 	},
 	update : function(options) {
 		options = options || {};
@@ -10125,7 +9254,7 @@ In2iGui.Alert.prototype = {
 	},
 	addButton : function(button) {
 		if (!this.buttons) {
-			this.buttons = N2i.create('div',{'class':'in2igui_buttons'});
+			this.buttons = new Element('div',{'class':'in2igui_buttons'});
 			this.body.appendChild(this.buttons);
 		}
 		this.buttons.appendChild(button.getElement());
@@ -10143,7 +9272,7 @@ In2iGui.Alert.prototype = {
 
 In2iGui.Button.create = function(name,opts) {
 	var options = {text:'',highlighted:false};
-	N2i.override(options,opts);
+	n2i.override(options,opts);
 	var className = 'in2igui_button'+(options.highlighted ? ' in2igui_button_highlighted' : '');
 	var element = new Element('a',{'class':className,href:'#'});
 	var element2 = new Element('span');
@@ -10186,10 +9315,10 @@ In2iGui.Button.prototype = {
 		this.updateUI();
 	},
 	setHighlighted : function(highlighted) {
-		N2i.setClass(this.element,'in2igui_button_highlighted',highlighted);
+		this.element.setClassName('in2igui_button_highlighted',highlighted);
 	},
 	updateUI : function() {
-		N2i.setClass(this.element,'in2igui_button_disabled',!this.enabled);
+		this.element.setClassName('in2igui_button_disabled',!this.enabled);
 	},
 	setText : function(text) {
 		this.inner.innerHTML = text;
@@ -10204,7 +9333,7 @@ In2iGui.Buttons = function(id,name) {
 }
 
 In2iGui.Buttons.create = function(name,options) {
-	options = N2i.override({top:0},options);
+	options = n2i.override({top:0},options);
 	var e = new Element('div',{'class':'in2igui_buttons'});
 	if (options.top>0) e.setStyle({paddingTop:options.top+'px'});
 	e.insert(new Element('div',{'class':'in2igui_buttons_body'}));
@@ -10218,7 +9347,7 @@ In2iGui.Buttons.prototype = {
 }
 
 /* EOF */In2iGui.Selection = function(id,name,options) {
-	this.options = N2i.override({value:null},options);
+	this.options = n2i.override({value:null},options);
 	this.element = $(id);
 	this.name = name;
 	this.items = [];
@@ -10230,7 +9359,7 @@ In2iGui.Buttons.prototype = {
 }
 
 In2iGui.Selection.create = function(name,options) {
-	options = N2i.override({width:0},options);
+	options = n2i.override({width:0},options);
 	var e = new Element('div',{'class':'in2igui_selection'});
 	if (options.width>0) e.setStyle({width:options.width+'px'});
 	return new In2iGui.Selection(e,name,options);
@@ -10255,11 +9384,11 @@ In2iGui.Selection.prototype = {
 		this.value = value;
 		for (var i=0; i < this.items.length; i++) {
 			var item = this.items[i];
-			N2i.setClass(item.element,'selected',(item.value==value));
+			item.element.setClassName('selected',(item.value==value));
 		};
-		for (var i=0; i < this.subItems.length; i++) {
-			this.subItems[i].updateUI();
-		};
+		this.subItems.each(function(sub) {
+			sub.updateUI();
+		});
 	},
 	changeValue : function(value) {
 		this.setValue(value);
@@ -10285,9 +9414,9 @@ In2iGui.Selection.prototype = {
 			return false;
 		}
 		element.dragDropInfo = {kind:kind,value:value};
-		N2i.addClass(element,'droppable');
-		N2i.addListener(element,'mouseover',In2iGui.dropOverListener);
-		N2i.addListener(element,'mouseout',In2iGui.dropOutListener);
+		element.addClassName('droppable');
+		element.observe('mouseover',In2iGui.dropOverListener);
+		element.observe('mouseout',In2iGui.dropOutListener);
 	},
 	
 	setObjects : function(items) {
@@ -10326,15 +9455,15 @@ In2iGui.Selection.prototype = {
 In2iGui.Selection.Items = function(id,name,options) {
 	this.element = $(id);
 	this.name = name;
+	this.value = null;
 	this.selection = null;
-	this.options = N2i.override({source:null},options);
+	this.options = n2i.override({source:null},options);
 	this.items = [];
 	In2iGui.extend(this);
 	var self = this;
 	if (this.options.source) {
 		this.options.source.addDelegate(this);
 	}
-	//N2i.Event.addLoadListener(function() {self.refresh()});
 }
 
 In2iGui.Selection.Items.prototype = {
@@ -10348,7 +9477,7 @@ In2iGui.Selection.Items.prototype = {
 	},
 	itemsLoaded : function(items) {
 		this.items = [];
-		N2i.removeChildren(this.element);
+		this.element.update();
 		var self = this;
 		for (var i=0, len=items.length; i < len; ++i) {
 			var item = items[i];
@@ -10388,10 +9517,15 @@ In2iGui.Selection.Items.prototype = {
 		return null;
 	},
 	updateUI : function() {
-		for (var i=0; i < this.items.length; i++) {
-			var item = this.items[i];
-			N2i.setClass(item.element,'selected',(item.value==this.selection.value));
-		};
+		var newValue = null;
+		this.items.each(function(item) {
+			if (item.value==this.selection.value) newValue=item.value;
+			item.element.setClassName('selected',(item.value==this.selection.value));
+		}.bind(this));
+		if (this.value!=newValue) {
+			this.value=newValue;
+			In2iGui.firePropertyChange(this,'value',this.value);
+		}
 	}
 }
 /* EOF */
@@ -10415,7 +9549,7 @@ In2iGui.Toolbar.prototype = {
 		this.element.appendChild(widget.getElement());
 	},
 	addDivider : function() {
-		this.element.appendChild(N2i.create('div',{'class':'in2igui_divider'}));
+		this.element.appendChild(new Element('div',{'class':'in2igui_divider'}));
 	}
 }
 
@@ -10431,7 +9565,7 @@ In2iGui.RevealingToolbar = function(element,name,options) {
 }
 
 In2iGui.RevealingToolbar.create = function(name,options) {
-	var element = N2i.create('div',{'class':'in2igui_revealing_toolbar'},{'display':'none'});
+	var element = new Element('div',{'class':'in2igui_revealing_toolbar'}).setStyle({'display':'none'});
 	document.body.appendChild(element);
 	var rev = new In2iGui.RevealingToolbar(element,name,options);
 	var toolbar = In2iGui.Toolbar.create();
@@ -10449,10 +9583,10 @@ In2iGui.RevealingToolbar.prototype = {
 	},
 	show : function(instantly) {
 		this.element.style.display='';
-		$ani(this.element,'height','58px',instantly ? 0 : 600,{ease:N2i.Animation.slowFastSlow});
+		n2i.ani(this.element,'height','58px',instantly ? 0 : 600,{ease:n2i.ease.slowFastSlow});
 	},
 	hide : function() {
-		$ani(this.element,'height','0px',500,{ease:N2i.Animation.slowFastSlow,hideOnComplete:true});
+		n2i.ani(this.element,'height','0px',500,{ease:n2i.ease.slowFastSlow,hideOnComplete:true});
 	}
 }
 
@@ -10477,10 +9611,10 @@ In2iGui.Toolbar.Icon.create = function(name,options) {
 	var innerest = new Element('div',{'class':'in2igui_toolbar_inner_icon'});
 	element.insert(inner);
 	inner.insert(innerest);
-	var title = N2i.create('span');
+	var title = new Element('span');
 	title.innerHTML=options.title;
 	if (options.overlay) {
-		var overlay = N2i.create('div',{'class':'in2igui_icon_overlay'},{'backgroundImage':'url('+In2iGui.getIconUrl('overlay/'+options.overlay,2)+')'});
+		var overlay = new Element('div',{'class':'in2igui_icon_overlay'}).setStyle({'backgroundImage':'url('+In2iGui.getIconUrl('overlay/'+options.overlay,2)+')'});
 		icon.insert(overlay);
 	}
 	innerest.insert(icon);
@@ -10499,7 +9633,7 @@ In2iGui.Toolbar.Icon.prototype = {
 	/** Sets wether the icon should be enabled */
 	setEnabled : function(enabled) {
 		this.enabled = enabled;
-		N2i.setClass(this.element,'in2igui_toolbar_icon_disabled',!this.enabled);
+		this.element.setClassName('in2igui_toolbar_icon_disabled',!this.enabled);
 	},
 	/** @private */
 	wasClicked : function() {
@@ -10532,10 +9666,10 @@ In2iGui.Toolbar.SearchField.prototype = {
 			self.fieldChanged();
 		}
 		this.field.onfocus = function() {
-			$ani(this,'width','120px',500,{ease:N2i.Animation.slowFastSlow});
+			n2i.ani(this,'width','120px',500,{ease:n2i.ease.slowFastSlow});
 		}
 		this.field.onblur = function() {
-			$ani(this,'width','80px',500,{ease:N2i.Animation.slowFastSlow});
+			n2i.ani(this,'width','80px',500,{ease:n2i.ease.slowFastSlow});
 		}
 	},
 	fieldChanged : function() {
@@ -10568,10 +9702,9 @@ In2iGui.Toolbar.Badge.prototype = {
 }
 
 /* EOF */In2iGui.ImagePicker = function(id,name,options) {
-	this.id = id;
 	this.name = name;
 	this.options = options || {};
-	this.element = $id(id);
+	this.element = $(id);
 	this.images = [];
 	this.object = null;
 	this.thumbnailsLoaded = false;
@@ -10609,8 +9742,8 @@ In2iGui.ImagePicker.prototype = {
 		if (!this.picker) {
 			var self = this;
 			this.picker = In2iGui.BoundPanel.create();
-			this.content = N2i.create('div',{'class':'in2igui_imagepicker_thumbs'});
-			var buttons = N2i.create('div',{'class':'in2igui_imagepicker_buttons'});
+			this.content = new Element('div',{'class':'in2igui_imagepicker_thumbs'});
+			var buttons = new Element('div',{'class':'in2igui_imagepicker_buttons'});
 			var close = In2iGui.Button.create(null,{text:'Luk',highlighted:true});
 			close.addDelegate({
 				click:function() {self.hidePicker()}
@@ -10637,20 +9770,20 @@ In2iGui.ImagePicker.prototype = {
 	updateImages : function() {
 		var self = this;
 		var delegate = {
-			onXML:function(doc) {
-				self.parse(doc);
+			onSuccess:function(t) {
+				self.parse(t.responseXML);
 			}
 		};
-		$get(this.options.source,delegate);
+		new Ajax.Request(this.options.source,delegate);
 	},
 	parse : function(doc) {
-		N2i.removeChildren(this.content);
+		this.content.update();
 		var images = doc.getElementsByTagName('image');
 		var self = this;
 		for (var i=0; i < images.length && i<50; i++) {
 			var id = images[i].getAttribute('id');
 			var url = '../../../util/images/?id='+id+'&maxwidth=48&maxheight=48&format=jpg';
-			var thumb = N2i.create('div',{'class':'in2igui_imagepicker_thumbnail'},{'backgroundImage':'url('+url+')'});
+			var thumb = new Element('div',{'class':'in2igui_imagepicker_thumbnail'}).setStyle({'backgroundImage':'url('+url+')'});
 			thumb.in2iguiObject = {'id':id};
 			thumb.onclick = function() {
 				self.setObject(this.in2iguiObject);
@@ -10671,11 +9804,9 @@ In2iGui.ImagePicker.prototype = {
 
 In2iGui.BoundPanel.create = function(opts) {
 	var options = {name:null,top:'0px',left:'0px'};
-	N2i.override(options,opts);
-	var element = N2i.create('div',
-		{'class':'in2igui_boundpanel'},
-		{'display':'none','zIndex':In2iGui.nextPanelIndex(),'top':options.top,'left':options.left}
-	);
+	n2i.override(options,opts);
+	var element = new Element('div',
+		{'class':'in2igui_boundpanel'}).setStyle({'display':'none','zIndex':In2iGui.nextPanelIndex(),'top':options.top,'left':options.left});
 	
 	var html = 
 		'<div class="arrow"></div>'+
@@ -10699,8 +9830,8 @@ In2iGui.BoundPanel.create = function(opts) {
 In2iGui.BoundPanel.prototype = {
 	show : function() {
 		if (!this.visible) {
-			if (!N2i.isIE()) {
-				N2i.setOpacity(this.element,0);
+			if (!n2i.browser.msie) {
+				n2i.setOpacity(this.element,0);
 			}
 			if (this.relativePosition=='left') {
 				this.element.style.marginLeft='30px';
@@ -10716,19 +9847,19 @@ In2iGui.BoundPanel.prototype = {
 			});
 			this.element.style.marginTop='0px';
 			this.element.style.display='block';
-			if (!N2i.isIE()) {
-				$ani(this.element,'opacity',1,400,{ease:N2i.Animation.fastSlow});
+			if (!n2i.browser.msie) {
+				n2i.ani(this.element,'opacity',1,400,{ease:n2i.ease.fastSlow});
 			}
-			$ani(this.element,'margin-left','0px',800,{ease:N2i.Animation.bounce});
+			n2i.ani(this.element,'margin-left','0px',800,{ease:n2i.ease.bounce});
 		}
 		this.element.style.zIndex = In2iGui.nextPanelIndex();
 		this.visible=true;
 	},
 	hide : function() {
-		if (N2i.isIE()) {
+		if (n2i.browser.msie) {
 			this.element.style.display='none';
 		} else {
-			$ani(this.element,'opacity',0,300,{ease:N2i.Animation.slowFast,hideOnComplete:true});
+			n2i.ani(this.element,'opacity',0,300,{ease:n2i.ease.slowFast,hideOnComplete:true});
 		}
 		this.visible=false;
 	},
@@ -10746,13 +9877,13 @@ In2iGui.BoundPanel.prototype = {
 		if (this.element.style.display=='none') {
 			this.element.style.visibility='hidden';
 			this.element.style.display='block';
-			var width = N2i.getWidth(this.element);
-			var height = N2i.getHeight(this.element);
+			var width = this.element.getWidth();
+			var height = this.element.getHeight();
 			this.element.style.display='none';
 			this.element.style.visibility='';
 		} else {
-			var width = N2i.getWidth(this.element);
-			var height = N2i.getHeight(this.element);
+			var width = this.element.getWidth();
+			var height = this.element.getHeight();
 		}
 		return {width:width,height:height};
 	},
@@ -10761,11 +9892,11 @@ In2iGui.BoundPanel.prototype = {
 		var offset = node.cumulativeOffset();
 		var scrollOffset = node.cumulativeScrollOffset();
 		var dims = this.getDimensions();
-		var winWidth = N2i.Window.getInnerWidth();
-		var nodeLeft = offset.left-scrollOffset.left+N2i.Window.getScrollLeft();
-		var nodeWidth = N2i.getWidth(node);
-		var nodeHeight = N2i.getHeight(node);
-		var nodeTop = offset.top-scrollOffset.top+N2i.Window.getScrollTop();
+		var winWidth = n2i.getInnerWidth();
+		var nodeLeft = offset.left-scrollOffset.left+n2i.getScrollLeft();
+		var nodeWidth = node.getWidth();
+		var nodeHeight = node.getHeight();
+		var nodeTop = offset.top-scrollOffset.top+n2i.getScrollTop();
 		if ((nodeLeft+nodeWidth/2)/winWidth<.5) {
 			this.relativePosition='left';
 			var left = nodeLeft+nodeWidth+10;
@@ -10781,8 +9912,8 @@ In2iGui.BoundPanel.prototype = {
 		this.arrow.style.marginTop = (dims.height-32)/2+Math.min(0,nodeTop+(nodeHeight-dims.height)/2)+'px';
 		this.arrow.style.marginLeft = arrowLeft+'px';
 		if (this.visible) {
-			$ani(this.element,'top',top+'px',500,{ease:N2i.Animation.fastSlow});
-			$ani(this.element,'left',left+'px',500,{ease:N2i.Animation.fastSlow});
+			n2i.ani(this.element,'top',top+'px',500,{ease:n2i.ease.fastSlow});
+			n2i.ani(this.element,'left',left+'px',500,{ease:n2i.ease.fastSlow});
 		} else {
 			this.element.style.top=top+'px';
 			this.element.style.left=left+'px';
@@ -10791,11 +9922,14 @@ In2iGui.BoundPanel.prototype = {
 }
 
 /* EOF */In2iGui.RichText = function(id,name,options) {
-	this.element = $(id);
-	this.options = N2i.override({debug:false,value:'',autoHideToolbar:true,style:'font-family: sans-serif;'},options);
-	this.iframe = this.element.getElementsByTagName('iframe')[0];
-	this.toolbar = $firstClass('in2igui_richtext_toolbar',this.element);
-	this.toolbarContent = $firstClass('in2igui_richtext_toolbar_content',this.element);
+	var e = this.element = $(id);
+	this.options = n2i.override({debug:false,value:'',autoHideToolbar:true,style:'font-family: sans-serif;'},options);
+	this.textarea = new Element('textarea');
+	e.insert(this.textarea);
+	this.editor = WysiHat.Editor.attach(this.textarea);
+	this.editor.setAttribute('frameborder','0');
+	this.toolbar = e.select('.in2igui_richtext_toolbar')[0];
+	this.toolbarContent = e.select('.in2igui_richtext_toolbar_content')[0];
 	this.value = this.options.value;
 	this.document = null;
 	this.buildToolbar();
@@ -10837,47 +9971,39 @@ In2iGui.RichText.replaceInput = function(options) {
 }
 
 In2iGui.RichText.create = function(name,options) {
-	var base = N2i.create('div',{'class':'in2igui_richtext'});
-	var toolbar = N2i.create('div',{'class':'in2igui_richtext_toolbar'});
-	base.appendChild(toolbar);
-	var iframe = N2i.create('iframe',{frameborder:0});
-	base.appendChild(iframe);
-	toolbar.innerHTML='<div class="in2igui_richtext_inner_toolbar"><div class="in2igui_richtext_toolbar_content"></div></div>';
+	var base = new Element('div',{'class':'in2igui_richtext'});
+	base.update('<div class="in2igui_richtext_toolbar"><div class="in2igui_richtext_inner_toolbar"><div class="in2igui_richtext_toolbar_content"></div></div></div>');
 	return new In2iGui.RichText(base,name,options);
 }
 
 In2iGui.RichText.prototype = {
-	ignite : function() {
-		this.setupIframe();
-	},
 	isCompatible : function() {
 	    var agt=navigator.userAgent.toLowerCase();
 		return true;
 		return (agt.indexOf('msie 6')>-1 || agt.indexOf('msie 7')>-1 || (agt.indexOf('gecko')>-1 && agt.indexOf('safari')<0));
 	},
-	setupIframe : function() {
+	ignite : function() {
 		var self = this;
-		if (!this.iframe.contentWindow) return;
-		this.window = this.iframe.contentWindow;
-		this.document = this.iframe.contentDocument || this.window.document;
-		this.document.designMode='on';
-		
-		this.document.open();
-		this.document.write('<html><head><style>body{margin:0px;'+this.options.style+'}</style></head><body>'+this.value+'</body></html>');
-		this.document.close();
-		
-		this.document.body.style.minHeight='100%';
-		this.document.documentElement.style.cursor='text';
-		this.document.documentElement.style.minHeight='100%';
-		
-		this.window.onkeypress=function() {self.documentChanged()};
-		
-		N2i.Event.addListener(this.window,'focus',function() {self.documentFocused()});
-		N2i.Event.addListener(this.window,'blur',function() {self.documentBlurred()});
-		N2i.Event.addListener(this.window,'keyup',function() {self.documentChanged()});
+		this.editor.observe("wysihat:loaded", function(event) {
+			this.editor.setStyle(this.options.style);
+			this.editor.setRawContent(this.value);
+			this.window = this.editor.getWindow();
+			this.document = this.editor.getDocument();
+			if (this.document.body) {
+				this.document.body.style.minHeight='100%';
+				this.document.body.style.margin='0';
+				this.document.documentElement.style.cursor='text';
+				this.document.documentElement.style.minHeight='100%';
+			}
+			Event.observe(this.window,'focus',function() {self.documentFocused()});
+			Event.observe(this.window,'blur',function() {self.documentBlurred()});
+     	}.bind(this));
+		this.editor.observe("wysihat:change", function(event) {
+        	this.documentChanged();
+     	}.bind(this));
 	},
 	setHeight : function(height) {
-		this.iframe.style.height=height+'px';
+		this.editor.style.height=height+'px';
 	},
 	focus : function() {
 		try { // TODO : May only work in gecko
@@ -10885,11 +10011,11 @@ In2iGui.RichText.prototype = {
 			r.selectNodeContents(this.document.body);
 			this.window.getSelection().addRange(r);
 		} catch (ignore) {}
-		this.window.focus();
+		if (this.window)this.window.focus();
 	},
 	setValue : function(value) {
 		this.value = value;
-		this.document.body.innerHTML = value;
+		this.editor.setRawContent(this.value);
 	},
 	getValue : function() {
 		return this.value;
@@ -10900,15 +10026,17 @@ In2iGui.RichText.prototype = {
 	},
 	
 	buildToolbar : function() {
+		this.toolbar.onmousedown = function() {this.toolbarMouseDown=true}.bind(this);
+		this.toolbar.onmouseup = function() {this.toolbarMouseDown=false}.bind(this);
 		var self = this;
 		var actions = In2iGui.RichText.actions;
 		for (var i=0; i < actions.length; i++) {
 			if (actions[i]==null) {
-				this.toolbarContent.appendChild(N2i.create('div',{'class':'in2igui_richtext_divider'}));
+				this.toolbarContent.insert(new Element('div',{'class':'in2igui_richtext_divider'}));
 			} else {
 				var div = new Element('div').addClassName('action action_'+actions[i].key);
 				div.title=actions[i].key;
-				div.in2iguiRichTextAction = actions[i];
+				div.in2iguiRichTextAction = actions[i]
 				div.onclick = div.ondblclick = function(e) {return self.actionWasClicked(this.in2iguiRichTextAction,e);}
 				var img = new Element('img');
 				img.src=In2iGui.context+'/In2iGui/gfx/trans.png';
@@ -10921,39 +10049,39 @@ In2iGui.RichText.prototype = {
 			}
 		};
 	},
-	
 	documentFocused : function() {
-		if (N2i.isIE()) {
+		if (n2i.browser.msie) {
 			this.toolbar.style.display='block';
 			return;
 		}
 		if (this.toolbar.style.display!='block') {
 			this.toolbar.style.marginTop='-40px';
-			N2i.setOpacity(this.toolbar,0);
+			n2i.setOpacity(this.toolbar,0);
 			this.toolbar.style.display='block';
-			$ani(this.toolbar,'opacity',1,300);
-			$ani(this.toolbar,'margin-top','-32px',300);
+			n2i.ani(this.toolbar,'opacity',1,300);
+			n2i.ani(this.toolbar,'margin-top','-32px',300);
 		}
 	},
 	
 	documentBlurred : function() {
+		if (this.toolbarMouseDown) return;
 		if (this.options.autoHideToolbar) {
-			if (N2i.isIE()) {
+			if (n2i.browser.msie) {
 				var self = this;
 				window.setTimeout(function() {
 					self.toolbar.style.display='none';
 				},100);
 				return;
 			}
-			$ani(this.toolbar,'opacity',0,300,{hideOnComplete:true});
-			$ani(this.toolbar,'margin-top','-40px',300);
+			n2i.ani(this.toolbar,'opacity',0,300,{hideOnComplete:true});
+			n2i.ani(this.toolbar,'margin-top','-40px',300);
 		}
 		this.documentChanged();
 		In2iGui.callDelegates(this,'richTextDidChange');
 	},
 	
 	documentChanged : function() {
-		this.value = this.document.body.innerHTML;
+		this.value = this.editor.content();
 		if (this.options.input) {
 			$(this.options.input).value=this.value;
 		}
@@ -10961,9 +10089,6 @@ In2iGui.RichText.prototype = {
 	
 	disabler : function(e) {
 		var evt = e ? e : window.event; 
-		//if (evt.stopPropagation) {
-		//	evt.stopPropagation();
-		//}
 		if (evt.returnValue) {
 			evt.returnValue = false;
 		} else if (evt.preventDefault) {
@@ -10979,11 +10104,10 @@ In2iGui.RichText.prototype = {
 			this.execCommand(action);
 		}
 		this.document.body.focus();
-		this.documentChanged();
 		return false;
 	},
 	execCommand : function(action) {
-		this.document.execCommand(action.cmd,false,action.value);
+		this.editor.execCommand(action.cmd,false,action.value);
 		this.documentChanged();
 	},
 	showColorPicker : function() {
@@ -11020,7 +10144,7 @@ In2iGui.RichText.stopEvent = function(e) {
 }
 
 /* EOF */In2iGui.ImageViewer = function(element,name,options) {
-	this.options = N2i.override({maxWidth:800,maxHeight:600,perimeter:100,sizeSnap:100},options);
+	this.options = n2i.override({maxWidth:800,maxHeight:600,perimeter:100,sizeSnap:100},options);
 	this.element = $(element);
 	this.box = this.options.box;
 	this.viewer = this.element.select('.in2igui_imageviewer_viewer')[0];
@@ -11080,14 +10204,13 @@ In2iGui.ImageViewer.prototype = {
 			self.next(false);
 		}
 		this.keyListener = function(e) {
-			var event = new N2i.Event(e);
-			if (event.isRightKey()) {
+			if (n2i.isRightKey(e)) {
 				self.next(true);
-			} else if (event.isLeftKey()) {
+			} else if (n2i.isLeftKey(e)) {
 				self.previous(true);
-			} else if (event.isEscapeKey()) {
+			} else if (n2i.isEscapeKey(e)) {
 				self.hide();
-			} else if (event.isReturnKey()) {
+			} else if (n2i.isReturnKey(e)) {
 				self.playOrPause();
 			}
 		}
@@ -11105,22 +10228,18 @@ In2iGui.ImageViewer.prototype = {
 	},	
 	calculateSize : function() {
 		var snap = this.options.sizeSnap;
-		var newWidth = N2i.Window.getInnerWidth()-this.options.perimeter;
+		var newWidth = n2i.getInnerWidth()-this.options.perimeter;
 		newWidth = Math.floor(newWidth/snap)*snap;
 		newWidth = Math.min(newWidth,this.options.maxWidth);
-		var newHeight = N2i.Window.getInnerHeight()-this.options.perimeter;
+		var newHeight = n2i.getInnerHeight()-this.options.perimeter;
 		newHeight = Math.floor(newHeight/snap)*snap;
 		newHeight = Math.min(newHeight,this.options.maxHeight);
 		var maxWidth = 0;
 		var maxHeight = 0;
 		for (var i=0; i < this.images.length; i++) {
-			N2i.log('********************');
-			N2i.log({width:newWidth,height:newHeight});
-			N2i.log(this.images[i]);
 			var dims = this.getLargestSize({width:newWidth,height:newHeight},this.images[i]);
 			maxWidth = Math.max(maxWidth,dims.width);
 			maxHeight = Math.max(maxHeight,dims.height);
-			N2i.log(dims);
 		};
 		newHeight = Math.round(Math.min(newHeight,maxHeight));
 		newWidth = Math.round(Math.min(newWidth,maxWidth));
@@ -11150,12 +10269,12 @@ In2iGui.ImageViewer.prototype = {
 		this.controller.setStyle({paddingLeft:((this.width-115)/2+5)+'px'});
 		this.box.show();
 		this.goToImage(false,0,false);
-		N2i.addListener(document,'keydown',this.keyListener);
+		Event.observe(document,'keydown',this.keyListener);
 	},
 	hide: function(index) {
 		this.pause();
 		this.box.hide();
-		N2i.removeListener(document,'keydown',this.keyListener);
+		Event.stopObserving(document,'keydown',this.keyListener);
 	},
 	boxCurtainWasClicked : function() {
 		this.hide();
@@ -11166,7 +10285,7 @@ In2iGui.ImageViewer.prototype = {
 			for (var i=0; i < this.images.length; i++) {
 				var url = this.resolveImageUrl(this.images[i]);
 				url = url.replace(/&amp;/,'&');
-				var element = N2i.create('div',{'class':'in2igui_imageviewer_image'},{'width':(this.width+10)+'px','height':this.height+'px'});
+				var element = new Element('div',{'class':'in2igui_imageviewer_image'}).setStyle({'width':(this.width+10)+'px','height':this.height+'px'});
 				
 				var url = this.resolveImageUrl(this.images[i]);
 				url = url.replace(/&amp;/g,'&');
@@ -11187,12 +10306,12 @@ In2iGui.ImageViewer.prototype = {
 	goToImage : function(animate,num,user) {	
 		if (animate) {
 			if (num>1) {
-				$ani(this.viewer,'scrollLeft',this.index*(this.width+10),Math.min(num*300,2000),{ease:N2i.Animation.slowFastSlow});				
+				n2i.ani(this.viewer,'scrollLeft',this.index*(this.width+10),Math.min(num*300,2000),{ease:n2i.ease.slowFastSlow});				
 			} else {
 				var end = this.index==0 || this.index==this.images.length-1;
-				var ease = (end ? N2i.Animation.bounce : N2i.Animation.elastic);
-				if (!user) ease = N2i.Animation.slowFastSlow;
-				$ani(this.viewer,'scrollLeft',this.index*(this.width+10),(end ? 800 : 1200),{ease:ease});
+				var ease = (end ? n2i.ease.bounce : n2i.ease.elastic);
+				if (!user) ease = n2i.ease.slowFastSlow;
+				n2i.ani(this.viewer,'scrollLeft',this.index*(this.width+10),(end ? 800 : 1200),{ease:ease});
 			}
 		} else {
 			this.viewer.scrollLeft=this.index*(this.width+10);
@@ -11273,14 +10392,14 @@ In2iGui.ImageViewer.prototype = {
 		this.resetPlay();
 	},
 	preload : function() {
-		var guiLoader = new N2i.Preloader();
+		var guiLoader = new n2i.Preloader();
 		guiLoader.addImages(In2iGui.context+'In2iGui/gfx/imageviewer_controls.png');
 		var self = this;
 		guiLoader.setDelegate({allImagesDidLoad:function() {self.preloadImages()}});
 		guiLoader.load();
 	},
 	preloadImages : function() {
-		this.loader = new N2i.Preloader();
+		this.loader = new n2i.Preloader();
 		this.loader.setDelegate(this);
 		for (var i=0; i < this.images.length; i++) {
 			this.loader.addImages(this.resolveImageUrl(this.images[i]));
@@ -11297,20 +10416,20 @@ In2iGui.ImageViewer.prototype = {
 		var url = this.resolveImageUrl(this.images[index]);
 		url = url.replace(/&amp;/g,'&');
 		this.innerViewer.childNodes[index].style.backgroundImage="url('"+url+"')";
-		N2i.setClass(this.innerViewer.childNodes[index],'in2igui_imageviewer_image_abort',false);
-		N2i.setClass(this.innerViewer.childNodes[index],'in2igui_imageviewer_image_error',false);
+		Element.setClassName(this.innerViewer.childNodes[index],'in2igui_imageviewer_image_abort',false);
+		Element.setClassName(this.innerViewer.childNodes[index],'in2igui_imageviewer_image_error',false);
 	},
 	imageDidGiveError : function(loaded,total,index) {
-		N2i.setClass(this.innerViewer.childNodes[index],'in2igui_imageviewer_image_error',true);
+		Element.setClassName(this.innerViewer.childNodes[index],'in2igui_imageviewer_image_error',true);
 	},
 	imageDidAbort : function(loaded,total,index) {
-		N2i.setClass(this.innerViewer.childNodes[index],'in2igui_imageviewer_image_abort',true);
+		Element.setClassName(this.innerViewer.childNodes[index],'in2igui_imageviewer_image_abort',true);
 	}
 }
 
 /* EOF */
 In2iGui.Picker = function(element,name,options) {
-	this.options = N2i.override({itemWidth:100,itemHeight:150,itemsVisible:3,valueProperty:'value'},options);
+	this.options = n2i.override({itemWidth:100,itemHeight:150,itemsVisible:3,valueProperty:'value'},options);
 	this.element = $(element);
 	this.name = name;
 	this.container = this.element.select('.in2igui_picker_container')[0];
@@ -11324,7 +10443,7 @@ In2iGui.Picker = function(element,name,options) {
 }
 
 In2iGui.Picker.create = function(name,options) {
-	options = N2i.override({shadow:true},options);
+	options = n2i.override({shadow:true},options);
 	var element = new Element('div',{'class':'in2igui_picker'});
 	element.update('<div class="in2igui_picker_top"><div><div></div></div></div>'+
 	'<div class="in2igui_picker_middle"><div class="in2igui_picker_middle">'+
@@ -11383,7 +10502,7 @@ In2iGui.Picker.prototype = {
 	updateSelection : function() {
 		var children = this.content.childNodes;
 		for (var i=0; i < children.length; i++) {
-			N2i.setClass(children[i],'in2igui_picker_item_selected',this.value!=null && this.objects[i][this.options.valueProperty]==this.value);
+			Element.setClassName(children[i],'in2igui_picker_item_selected',this.value!=null && this.objects[i][this.options.valueProperty]==this.value);
 		};
 	},
 	selectionChanged : function(value) {
@@ -11418,7 +10537,7 @@ In2iGui.Picker.prototype = {
 		window.document.stopObserving('mouseup',In2iGui.Picker.mouseup);
 		window.document.stopObserving('mousedown',In2iGui.Picker.mouseup);
 		var size = (this.options.itemWidth+14);
-		$ani(this.container,'scrollLeft',Math.round(this.container.scrollLeft/size)*size,500,{ease:N2i.ease.bounceOut});
+		n2i.ani(this.container,'scrollLeft',Math.round(this.container.scrollLeft/size)*size,500,{ease:n2i.ease.bounceOut});
 	}
 }
 
@@ -11441,7 +10560,7 @@ In2iGui.Editor.get = function() {
 }
 
 In2iGui.Editor.prototype = {
-	ignite : function(options) {
+	ignite : function() {
 		this.reload();
 	},
 	addPartController : function(key,title,controller) {
@@ -11470,6 +10589,7 @@ In2iGui.Editor.prototype = {
 			});
 		});
 		var parts = $$('.part');
+		
 		this.parts.each(function(part) {
 			var i = parts.indexOf(part.element);
 			if (i!=-1) delete(parts[i]);
@@ -11762,6 +10882,11 @@ In2iGui.Editor.dragEndListener = function(event) {
 	In2iGui.Editor.dragElement=null;
 }
 
+In2iGui.Editor.getPartId = function(element) {
+	var m = element.id.match(/part\-([\d]+)/i);
+	if (m && m.length>0) return m[1];
+}
+
 ////////////////////////////////// Header editor ////////////////////////////////
 
 In2iGui.Editor.Header = function(element,row,column,position) {
@@ -11769,8 +10894,8 @@ In2iGui.Editor.Header = function(element,row,column,position) {
 	this.row = row;
 	this.column = column;
 	this.position = position;
-	this.id = this.element.id.match(/part\-([\d]+)/i)[1];
-	this.header = $tag('*',this.element)[0];
+	this.id = In2iGui.Editor.getPartId(this.element);
+	this.header = this.element.firstDescendant();
 	this.field = null;
 }
 
@@ -11784,15 +10909,11 @@ In2iGui.Editor.Header.prototype = {
 		this.element.insertBefore(this.field,this.header);
 		this.field.focus();
 		this.field.select();
-		var self = this;
-		this.field.onblur = function() {
-			//self.deactivate();
-		}
-		this.field.onkeydown = function(e) {
-			if (new N2i.Event(e).isReturnKey()) {
-				self.save();
+		this.field.observe('keydown',function(e) {
+			if (e.keyCode==Event.KEY_RETURN) {
+				this.save();
 			}
-		}
+		}.bind(this));
 	},
 	save : function() {
 		var value = this.field.value;
@@ -11812,13 +10933,8 @@ In2iGui.Editor.Header.prototype = {
 		In2iGui.Editor.get().partDidDeacivate(this);
 	},
 	updateFieldStyle : function() {
-		this.field.style.width=N2i.getWidth(this.header)+'px';
-		this.field.style.height=N2i.getHeight(this.header)+'px';
-		this.field.style.fontSize=N2i.getStyle(this.header,'font-size');
-		this.field.style.fontWeight=N2i.getStyle(this.header,'font-weight');
-		this.field.style.fontFamily=N2i.getStyle(this.header,'font-family');
-		this.field.style.textAlign=N2i.getStyle(this.header,'text-align');
-		this.field.style.color=N2i.getStyle(this.header,'color');
+		this.field.setStyle({width:this.header.getWidth()+'px',height:this.header.getHeight()+'px'});
+		n2i.copyStyle(this.header,this.field,['fontSize','marginTop','fontWeight','fontFamily','textAlign','color','fontStyle']);
 	},
 	getValue : function() {
 		return this.value;
@@ -11832,14 +10948,14 @@ In2iGui.Editor.Html = function(element,row,column,position) {
 	this.row = row;
 	this.column = column;
 	this.position = position;
-	this.id = this.element.id.match(/part\-([\d]+)/i)[1];
+	this.id = In2iGui.Editor.getPartId(this.element);
 	this.field = null;
 }
 
 In2iGui.Editor.Html.prototype = {
 	activate : function() {
 		this.value = this.element.innerHTML;
-		if (Prototype.Browser.IE) return;
+		//if (Prototype.Browser.IE) return;
 		var height = this.element.getHeight();
 		this.element.update('');
 		var style = this.getStyle();
@@ -11853,11 +10969,11 @@ In2iGui.Editor.Html.prototype = {
 	},
 	getStyle : function() {
 		var style = '';
-		style+='text-align:'+N2i.getStyle(this.element,'text-align')+';';
-		style+='font-family:'+N2i.getStyle(this.element,'font-family')+';';
-		style+='font-size:'+N2i.getStyle(this.element,'font-size')+';';
-		style+='font-weight:'+N2i.getStyle(this.element,'font-weight')+';';
-		style+='color:'+N2i.getStyle(this.element,'color')+';';
+		style+='text-align:'+n2i.getStyle(this.element,'text-align')+';';
+		style+='font-family:'+n2i.getStyle(this.element,'font-family')+';';
+		style+='font-size:'+n2i.getStyle(this.element,'font-size')+';';
+		style+='font-weight:'+n2i.getStyle(this.element,'font-weight')+';';
+		style+='color:'+n2i.getStyle(this.element,'color')+';';
 		return style;
 	},
 	cancel : function() {
@@ -11866,7 +10982,7 @@ In2iGui.Editor.Html.prototype = {
 	},
 	save : function() {
 		this.deactivate();
-		if (Prototype.Browser.IE) return;
+		if (n2i.browser.msie) return;
 		var value = this.editor.value;
 		if (value!=this.value) {
 			this.value = value;
@@ -11891,7 +11007,7 @@ In2iGui.Editor.Html.prototype = {
 
 /* EOF */
 In2iGui.Menu = function(element,name,options) {
-	this.options = N2i.override({autoHide:false,parentElement:null},options);
+	this.options = n2i.override({autoHide:false,parentElement:null},options);
 	this.element = $(element);
 	this.name = name;
 	this.value = null;
@@ -11989,10 +11105,10 @@ In2iGui.Menu.prototype = {
 		this.showAtPoint(point);
 	},
 	showAtPoint : function(pos) {
-		var innerWidth = N2i.Window.getInnerWidth();
-		var innerHeight = N2i.Window.getInnerHeight();
-		var scrollTop = N2i.Window.getScrollTop();
-		var scrollLeft = N2i.Window.getScrollLeft();
+		var innerWidth = n2i.getInnerWidth();
+		var innerHeight = n2i.getInnerHeight();
+		var scrollTop = n2i.getScrollTop();
+		var scrollLeft = n2i.getScrollLeft();
 		if (!this.visible) {
 			this.element.setStyle({'display':'block','visibility':'hidden',opacity:0});
 		}
@@ -12000,7 +11116,7 @@ In2iGui.Menu.prototype = {
 		var height = this.element.getHeight();
 		this.element.setStyle({'top':Math.min(pos.top,innerHeight-height-20+scrollTop)+'px','left':Math.min(pos.left,innerWidth-width-20+scrollLeft)+'px','visibility':'visible',zIndex:In2iGui.nextTopIndex()});
 		if (!this.visible) {
-			$ani(this.element,'opacity',1,200);
+			n2i.ani(this.element,'opacity',1,200);
 			this.addHider();
 			this.visible = true;
 		}
@@ -12008,7 +11124,7 @@ In2iGui.Menu.prototype = {
 	hide : function() {
 		if (!this.visible) return;
 		var self = this;
-		$ani(this.element,'opacity',0,200,{onComplete:function() {
+		n2i.ani(this.element,'opacity',0,200,{onComplete:function() {
 			self.element.setStyle({'display':'none'});
 		}})
 		this.removeHider();
@@ -12093,11 +11209,11 @@ In2iGui.Overlay.prototype = {
 	showAtElement : function(element,options) {
 		In2iGui.positionAtElement(this.element,element,options);
 		if (this.visible) return;
-		if (In2iGui.browser.msie) {
+		if (n2i.browser.msie) {
 			this.element.setStyle({'display':'block'});
 		} else {
 			this.element.setStyle({'display':'block','opacity':0});
-			$ani(this.element,'opacity',1,300);
+			n2i.ani(this.element,'opacity',1,300);
 		}
 		this.visible = true;
 		if (options.autoHide) {
@@ -12115,7 +11231,7 @@ In2iGui.Overlay.prototype = {
 
 /* EOF */
 In2iGui.Upload = function(element,name,options) {
-	this.options = N2i.override({url:'',parameters:{}},options);
+	this.options = n2i.override({url:'',parameters:{}},options);
 	this.element = $(element);
 	this.itemContainer = this.element.select('.in2igui_upload_items')[0];
 	this.name = name;
@@ -12205,13 +11321,17 @@ In2iGui.Upload.prototype = {
 		this.progressBar.hide();
 	},
 	
+	parentShown : function() {
+		this.updateButtonPosition();
+	},
+	
 	/////////////////////////// Flash //////////////////////////
 	
 	createFlashVersion : function() {
 		var loc = new String(document.location);
 		var url = loc.slice(0,loc.lastIndexOf('/')+1);
 		url += this.options.url;
-		var session = N2i.Cookie.get('JSESSIONID');
+		var session = n2i.cookie.get('JSESSIONID');
 		if (session) {
 			url+=';jsessionid='+session;
 		}
@@ -12257,6 +11377,15 @@ In2iGui.Upload.prototype = {
 			return;
 		}
 	},
+	updateButtonPosition : function() {
+		if (this.button) {
+			var f = this.button.element.select('object')[0];
+			if (f) {
+				var w = this.button.element.getWidth();
+				f.setStyle({width:w+'px','marginLeft':'-'+w+'px',position:'absolute'})
+			}
+		}
+	},
 	startNextUpload : function() {
 		this.loader.startUpload();
 	},
@@ -12293,7 +11422,7 @@ In2iGui.Upload.prototype = {
 		if (file) {
 			this.items[file.index].update(file);
 		}
-		this.addError(error,file);
+		//this.addError(error,file);
 	},
 	uploadSuccess : function(file,data) {
 		this.items[file.index].updateProgress(file.size,file.size);
@@ -12302,7 +11431,7 @@ In2iGui.Upload.prototype = {
 		this.startNextUpload();
 		var self = this;
 		window.setTimeout(function() {
-			self.items[file.index].hide();
+			//self.items[file.index].hide();
 		},100);
 		In2iGui.callDelegates(this,'uploadDidComplete',file);
 		if (this.loader.getStats().files_queued==0) {
@@ -12316,16 +11445,30 @@ In2iGui.Upload.prototype = {
 
 In2iGui.Upload.Item = function(file) {
 	this.element = new Element('div').addClassName('in2igui_upload_item');
+	if (file.index % 2 == 1) {
+		this.element.addClassName('in2igui_upload_item_alt')
+	}
+	this.content = new Element('div').addClassName('in2igui_upload_item_content');
+	this.icon = In2iGui.createIcon('file/generic',2);
+	this.element.insert(this.icon);
+	this.element.insert(this.content);
 	this.info = new Element('strong');
-	this.progress = In2iGui.ProgressBar.create();
-	this.element.insert(this.progress.getElement());
-	this.element.insert(this.info);
+	this.status = new Element('em');
+	this.progress = In2iGui.ProgressBar.create({small:true});
+	this.content.insert(this.progress.getElement());
+	this.content.insert(this.info);
+	this.content.insert(this.status);
 	this.update(file);
 }
 
 In2iGui.Upload.Item.prototype = {
 	update : function(file) {
+		this.status.update(In2iGui.Upload.status[file.filestatus]);
 		this.info.update(file.name);
+		if (file.filestatus==SWFUpload.FILE_STATUS.ERROR) {
+			this.element.addClassName('in2igui_upload_item_error');
+			this.progress.hide();
+		}
 	},
 	updateProgress : function(complete,total) {
 		this.progress.setValue(complete/total);
@@ -12336,39 +11479,62 @@ In2iGui.Upload.Item.prototype = {
 }
 
 if (window.SWFUpload) {
-In2iGui.Upload.errors = {};
-In2iGui.Upload.errors[SWFUpload.QUEUE_ERROR.QUEUE_LIMIT_EXCEEDED]			= 'Der er for mange filer i køen';
-In2iGui.Upload.errors[SWFUpload.QUEUE_ERROR.FILE_EXCEEDS_SIZE_LIMIT]		= 'Filen er for stor';
-In2iGui.Upload.errors[SWFUpload.QUEUE_ERROR.ZERO_BYTE_FILE]				= 'Filen er tom';
-In2iGui.Upload.errors[SWFUpload.QUEUE_ERROR.INVALID_FILETYPE]				= 'Filens type er ikke understøttet';
-In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.HTTP_ERROR]					= 'Der skete en netværksfejl';
-In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.MISSING_UPLOAD_URL]			= 'Upload-adressen findes ikke';
-In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.IO_ERROR]						= 'Der skete en IO-fejl';
-In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.SECURITY_ERROR]				= 'Der skete en sikkerhedsfejl';
-In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.UPLOAD_LIMIT_EXCEEDED]		= 'Upload-størrelsen er overskredet';
-In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.UPLOAD_FAILED]				= 'Upload af filen fejlede';
-In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.SPECIFIED_FILE_ID_NOT_FOUND]	= 'Filens id kunne ikke findes';
-In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.FILE_VALIDATION_FAILED]		= 'Validering af filen fejlede';
-In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.FILE_CANCELLED]				= 'Filen blev afbrudt';
-In2iGui.Upload.errors[SWFUpload.UPLOAD_ERROR.UPLOAD_STOPPED]				= 'Upload af filen blev stoppet';
+(function(){
+	var e = In2iGui.Upload.errors = {};
+	e[SWFUpload.QUEUE_ERROR.QUEUE_LIMIT_EXCEEDED]			= 'Der er for mange filer i køen';
+	e[SWFUpload.QUEUE_ERROR.FILE_EXCEEDS_SIZE_LIMIT]		= 'Filen er for stor';
+	e[SWFUpload.QUEUE_ERROR.ZERO_BYTE_FILE]				= 'Filen er tom';
+	e[SWFUpload.QUEUE_ERROR.INVALID_FILETYPE]				= 'Filens type er ikke understøttet';
+	e[SWFUpload.UPLOAD_ERROR.HTTP_ERROR]					= 'Der skete en netværksfejl';
+	e[SWFUpload.UPLOAD_ERROR.MISSING_UPLOAD_URL]			= 'Upload-adressen findes ikke';
+	e[SWFUpload.UPLOAD_ERROR.IO_ERROR]						= 'Der skete en IO-fejl';
+	e[SWFUpload.UPLOAD_ERROR.SECURITY_ERROR]				= 'Der skete en sikkerhedsfejl';
+	e[SWFUpload.UPLOAD_ERROR.UPLOAD_LIMIT_EXCEEDED]		= 'Upload-størrelsen er overskredet';
+	e[SWFUpload.UPLOAD_ERROR.UPLOAD_FAILED]				= 'Upload af filen fejlede';
+	e[SWFUpload.UPLOAD_ERROR.SPECIFIED_FILE_ID_NOT_FOUND]	= 'Filens id kunne ikke findes';
+	e[SWFUpload.UPLOAD_ERROR.FILE_VALIDATION_FAILED]		= 'Validering af filen fejlede';
+	e[SWFUpload.UPLOAD_ERROR.FILE_CANCELLED]				= 'Filen blev afbrudt';
+	e[SWFUpload.UPLOAD_ERROR.UPLOAD_STOPPED]				= 'Upload af filen blev stoppet';
+	e[SWFUpload.UPLOAD_ERROR.UPLOAD_STOPPED]				= 'Upload af filen blev stoppet';
+	var s = In2iGui.Upload.status = {};
+	s[SWFUpload.FILE_STATUS.QUEUED] = 'Filen er i kø';
+	s[SWFUpload.FILE_STATUS.IN_PROGRESS] = 'Filen er i gang';
+	s[SWFUpload.FILE_STATUS.ERROR] = 'Filen gav fejl';
+	s[SWFUpload.FILE_STATUS.COMPLETE] = 'Filen er færdig';
+	s[SWFUpload.FILE_STATUS.CANCELLED] = 'Filen er afbrudt';
+}())
 }
-/* EOF */In2iGui.ProgressBar = function(element,name) {
+/* EOF */(function() {
+
+var p = In2iGui.ProgressBar = function(element,name,o) {
+	this.options = o || {};
 	this.element = $(element);
 	this.indicator = this.element.firstDescendant();
 	this.name = name;
 	In2iGui.extend(this);
 }
 
-In2iGui.ProgressBar.create = function(name) {
-	var element = new Element('div',{'class':'in2igui_progressbar'}).insert(N2i.create('div'));
-	return new In2iGui.ProgressBar(element,name);
+p.create = function(o) {
+	o = o || {};
+	var element = new Element('div',{'class':'in2igui_progressbar'}).insert(new Element('div'));
+	if (o.small) element.addClassName('in2igui_progressbar_small');
+	return new In2iGui.ProgressBar(element,o.name,o);
 }
+
+p.WAITING = 'in2igui_progressbar_small_waiting';
 	
-In2iGui.ProgressBar.prototype = {
+p.prototype = {
 	setValue : function(value) {
-		$ani(this.indicator,'width',(value*100)+'%',value==1 ? 10 : 200);
+		if (this.waiting) this.element.removeClassName(p.WAITING);
+		n2i.ani(this.indicator,'width',(value*100)+'%',value==1 ? 10 : 200);
+	},
+	setWaiting : function() {
+		this.waiting = true;
+		this.indicator.setStyle({width:0});
+		this.element.addClassName(p.WAITING);
 	},
 	reset : function() {
+		if (this.waiting) this.element.removeClassName(p.WAITING);
 		this.indicator.style.width='0%';
 	},
 	hide : function() {
@@ -12378,6 +11544,8 @@ In2iGui.ProgressBar.prototype = {
 		this.element.style.display = 'block';
 	}
 }
+
+}());
 
 /* EOF */In2iGui.Gallery = function(id,name,options) {
 	this.id = id;
@@ -12455,7 +11623,7 @@ In2iGui.Gallery.prototype = {
 /* EOF */In2iGui.Calendar = function(id,name,options) {
 	this.name = name;
 	this.options = {startHour:7,endHour:24};
-	N2i.override(this.options,options);
+	n2i.override(this.options,options);
 	this.element = $(id);
 	this.head = $(this.element.getElementsByTagName('thead')[0]);
 	this.body = $(this.element.getElementsByTagName('tbody')[0]);
@@ -12659,7 +11827,7 @@ In2iGui.DatePicker = function(id,name,options) {
 	this.name = name;
 	this.element = $(id);
 	this.options = {};
-	N2i.override(this.options,options);
+	n2i.override(this.options,options);
 	this.cells = [];
 	this.title = this.element.select('strong')[0];
 	this.today = new Date();
@@ -12842,7 +12010,7 @@ In2iGui.Columns.prototype = {
  * @constructor
  */
 In2iGui.Dock = function(element,name,options) {
-	this.options = N2i.override({modal:false},options);
+	this.options = n2i.override({modal:false},options);
 	this.element = $(element);
 	this.iframe = this.element.select('iframe')[0];
 	this.name = name;
@@ -12852,12 +12020,12 @@ In2iGui.Dock = function(element,name,options) {
 
 In2iGui.Dock.prototype = {
 	setUrl : function(url) {
-		N2i.getFrameDocument(this.iframe).location.href=url;
+		n2i.getFrameDocument(this.iframe).location.href=url;
 	}
 }
 
 /* EOF */In2iGui.Box = function(element,name,options) {
-	this.options = N2i.override({},options);
+	this.options = n2i.override({},options);
 	this.name = name;
 	this.element = $(element);
 	this.body = this.element.select('.in2igui_box_body')[0];
@@ -12865,7 +12033,7 @@ In2iGui.Dock.prototype = {
 }
 
 In2iGui.Box.create = function(name,options) {
-	options = N2i.override({},options);
+	options = n2i.override({},options);
 	var e = new Element('div',{'class':'in2igui_box'});
 	if (options.width) e.setStyle({width:options.width+'px'});
 	if (options.absolute) e.addClassName('in2igui_box_absolute');
@@ -12898,7 +12066,7 @@ In2iGui.Box.prototype = {
 		}
 		e.setStyle({display:'block',visibility:'hidden'});
 		var w = e.getWidth();
-		var top = (N2i.Window.getInnerHeight()-e.getHeight())/2+N2i.Window.getScrollTop();
+		var top = (n2i.getInnerHeight()-e.getHeight())/2+n2i.getScrollTop();
 		e.setStyle({'marginLeft':(w/-2)+'px',top:top+'px'});
 		e.setStyle({display:'block',visibility:'visible'});
 	},

@@ -1,6 +1,6 @@
 
 In2iGui.Menu = function(element,name,options) {
-	this.options = N2i.override({autoHide:false,parentElement:null},options);
+	this.options = n2i.override({autoHide:false,parentElement:null},options);
 	this.element = $(element);
 	this.name = name;
 	this.value = null;
@@ -98,10 +98,10 @@ In2iGui.Menu.prototype = {
 		this.showAtPoint(point);
 	},
 	showAtPoint : function(pos) {
-		var innerWidth = N2i.Window.getInnerWidth();
-		var innerHeight = N2i.Window.getInnerHeight();
-		var scrollTop = N2i.Window.getScrollTop();
-		var scrollLeft = N2i.Window.getScrollLeft();
+		var innerWidth = n2i.getInnerWidth();
+		var innerHeight = n2i.getInnerHeight();
+		var scrollTop = n2i.getScrollTop();
+		var scrollLeft = n2i.getScrollLeft();
 		if (!this.visible) {
 			this.element.setStyle({'display':'block','visibility':'hidden',opacity:0});
 		}
@@ -109,7 +109,7 @@ In2iGui.Menu.prototype = {
 		var height = this.element.getHeight();
 		this.element.setStyle({'top':Math.min(pos.top,innerHeight-height-20+scrollTop)+'px','left':Math.min(pos.left,innerWidth-width-20+scrollLeft)+'px','visibility':'visible',zIndex:In2iGui.nextTopIndex()});
 		if (!this.visible) {
-			$ani(this.element,'opacity',1,200);
+			n2i.ani(this.element,'opacity',1,200);
 			this.addHider();
 			this.visible = true;
 		}
@@ -117,7 +117,7 @@ In2iGui.Menu.prototype = {
 	hide : function() {
 		if (!this.visible) return;
 		var self = this;
-		$ani(this.element,'opacity',0,200,{onComplete:function() {
+		n2i.ani(this.element,'opacity',0,200,{onComplete:function() {
 			self.element.setStyle({'display':'none'});
 		}})
 		this.removeHider();

@@ -17,7 +17,7 @@ In2iGui.Editor.get = function() {
 }
 
 In2iGui.Editor.prototype = {
-	ignite : function(options) {
+	ignite : function() {
 		this.reload();
 	},
 	addPartController : function(key,title,controller) {
@@ -46,6 +46,7 @@ In2iGui.Editor.prototype = {
 			});
 		});
 		var parts = $$('.part');
+		
 		this.parts.each(function(part) {
 			var i = parts.indexOf(part.element);
 			if (i!=-1) delete(parts[i]);
@@ -338,6 +339,11 @@ In2iGui.Editor.dragEndListener = function(event) {
 	In2iGui.Editor.dragElement=null;
 }
 
+In2iGui.Editor.getPartId = function(element) {
+	var m = element.id.match(/part\-([\d]+)/i);
+	if (m && m.length>0) return m[1];
+}
+
 ////////////////////////////////// Header editor ////////////////////////////////
 
 In2iGui.Editor.Header = function(element,row,column,position) {
@@ -345,8 +351,8 @@ In2iGui.Editor.Header = function(element,row,column,position) {
 	this.row = row;
 	this.column = column;
 	this.position = position;
-	this.id = this.element.id.match(/part\-([\d]+)/i)[1];
-	this.header = $tag('*',this.element)[0];
+	this.id = In2iGui.Editor.getPartId(this.element);
+	this.header = this.element.firstDescendant();
 	this.field = null;
 }
 
@@ -360,15 +366,11 @@ In2iGui.Editor.Header.prototype = {
 		this.element.insertBefore(this.field,this.header);
 		this.field.focus();
 		this.field.select();
-		var self = this;
-		this.field.onblur = function() {
-			//self.deactivate();
-		}
-		this.field.onkeydown = function(e) {
-			if (new N2i.Event(e).isReturnKey()) {
-				self.save();
+		this.field.observe('keydown',function(e) {
+			if (e.keyCode==Event.KEY_RETURN) {
+				this.save();
 			}
-		}
+		}.bind(this));
 	},
 	save : function() {
 		var value = this.field.value;
@@ -388,13 +390,8 @@ In2iGui.Editor.Header.prototype = {
 		In2iGui.Editor.get().partDidDeacivate(this);
 	},
 	updateFieldStyle : function() {
-		this.field.style.width=N2i.getWidth(this.header)+'px';
-		this.field.style.height=N2i.getHeight(this.header)+'px';
-		this.field.style.fontSize=N2i.getStyle(this.header,'font-size');
-		this.field.style.fontWeight=N2i.getStyle(this.header,'font-weight');
-		this.field.style.fontFamily=N2i.getStyle(this.header,'font-family');
-		this.field.style.textAlign=N2i.getStyle(this.header,'text-align');
-		this.field.style.color=N2i.getStyle(this.header,'color');
+		this.field.setStyle({width:this.header.getWidth()+'px',height:this.header.getHeight()+'px'});
+		n2i.copyStyle(this.header,this.field,['fontSize','marginTop','fontWeight','fontFamily','textAlign','color','fontStyle']);
 	},
 	getValue : function() {
 		return this.value;
@@ -408,14 +405,14 @@ In2iGui.Editor.Html = function(element,row,column,position) {
 	this.row = row;
 	this.column = column;
 	this.position = position;
-	this.id = this.element.id.match(/part\-([\d]+)/i)[1];
+	this.id = In2iGui.Editor.getPartId(this.element);
 	this.field = null;
 }
 
 In2iGui.Editor.Html.prototype = {
 	activate : function() {
 		this.value = this.element.innerHTML;
-		if (Prototype.Browser.IE) return;
+		//if (Prototype.Browser.IE) return;
 		var height = this.element.getHeight();
 		this.element.update('');
 		var style = this.getStyle();
@@ -429,11 +426,11 @@ In2iGui.Editor.Html.prototype = {
 	},
 	getStyle : function() {
 		var style = '';
-		style+='text-align:'+N2i.getStyle(this.element,'text-align')+';';
-		style+='font-family:'+N2i.getStyle(this.element,'font-family')+';';
-		style+='font-size:'+N2i.getStyle(this.element,'font-size')+';';
-		style+='font-weight:'+N2i.getStyle(this.element,'font-weight')+';';
-		style+='color:'+N2i.getStyle(this.element,'color')+';';
+		style+='text-align:'+n2i.getStyle(this.element,'text-align')+';';
+		style+='font-family:'+n2i.getStyle(this.element,'font-family')+';';
+		style+='font-size:'+n2i.getStyle(this.element,'font-size')+';';
+		style+='font-weight:'+n2i.getStyle(this.element,'font-weight')+';';
+		style+='color:'+n2i.getStyle(this.element,'color')+';';
 		return style;
 	},
 	cancel : function() {
@@ -442,7 +439,7 @@ In2iGui.Editor.Html.prototype = {
 	},
 	save : function() {
 		this.deactivate();
-		if (Prototype.Browser.IE) return;
+		if (n2i.browser.msie) return;
 		var value = this.editor.value;
 		if (value!=this.value) {
 			this.value = value;

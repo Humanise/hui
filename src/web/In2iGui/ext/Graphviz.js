@@ -7,7 +7,7 @@ In2iGui.Graphviz = function(element,name,options) {
 		this.texts = this.element.select('.in2igui_graphviz_texts')[0];
 		this.canvas = this.element.select('canvas')[0];
 		this.ctx = this.canvas.getContext('2d');
-		
+
 		this.images = {};
 		this.numImages = 0;
 		this.numImagesFinished = 0;
@@ -15,10 +15,10 @@ In2iGui.Graphviz = function(element,name,options) {
 }
 
 In2iGui.Graphviz.create = function(name,options) {
-	var element = N2i.create('div',{'class':'in2igui_graphviz'});
-	var texts = N2i.create('div',{'class':'in2igui_graphviz_texts'},{'position':'relative'});
+	var element = new Element('div',{'class':'in2igui_graphviz'});
+	var texts = new Element('div',{'class':'in2igui_graphviz_texts'}).setStyle({'position':'relative'});
 	element.appendChild(texts);
-	element.appendChild(N2i.create('canvas'));
+	element.appendChild(new Element('canvas'));
 	return new In2iGui.Graphviz(element,name,options);
 }
 
@@ -28,7 +28,7 @@ In2iGui.Graphviz.prototype = {
 	},
 	load: function(url) {
 		var self = this;
-		$get(url,{onSuccess:function(t) {self.parse(t)}});
+		new Ajax.Request(url,{onSuccess:function(t) {self.parse(t)}});
 	},
 	zoom : function(zoom) {
 		this.scale=this.scale*zoom;
@@ -263,7 +263,7 @@ In2iGui.Graphviz.prototype = {
 							var str = tokenizer.takeString();
 							if (!redraw_canvas && !str.match(/^\s*$/)) {
 //								In2iGui.Graphviz.debug('draw text ' + str + ' ' + x + ' ' + y + ' ' + text_align + ' ' + text_width);
-								str = N2i.escapeHTML(str);
+								str = n2i.escapeHTML(str);
 								do {
 									matches = str.match(/ ( +)/);
 									if (matches) {
@@ -468,7 +468,7 @@ In2iGui.Graphviz.Image.prototype = {
 }
 
 In2iGui.Graphviz.debug = function(str) {
-	N2i.log(str);
+	n2i.log(str);
 }
 
 

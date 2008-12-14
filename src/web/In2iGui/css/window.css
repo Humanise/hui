@@ -47,6 +47,10 @@
 	padding: 0px 0px 0px 8px;
 }
 
+div.in2igui_window_body
+{
+	overflow: hidden;
+}
 
 
 .in2igui_window_bottom

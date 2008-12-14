@@ -1,5 +1,5 @@
 In2iGui.ObjectList = function(id,name,options) {
-	this.options = N2i.override({key:null},options);
+	this.options = n2i.override({key:null},options);
 	this.name = name;
 	this.element = $(id);
 	this.body = this.element.select('tbody')[0];
@@ -118,14 +118,14 @@ In2iGui.ObjectList.Text.prototype = {
 		return new In2iGui.ObjectList.Text(this.key);
 	},
 	getElement : function() {
-		var input = N2i.create('input',{'class':'in2igui_formula_text'});
-		var field = N2i.create('div',{'class':'in2igui_field'});
+		var input = new Element('input',{'class':'in2igui_formula_text'});
+		var field = new Element('div',{'class':'in2igui_field'});
 		field.appendChild(input);
-		this.wrapper = new N2i.TextField(input);
-		this.wrapper.setDelegate(this);
+		this.wrapper = new In2iGui.TextField(input);
+		this.wrapper.addDelegate(this);
 		return field;
 	},
-	valueDidChange : function(field) {
+	valueChanged : function(field) {
 		this.value = field.getValue();
 		this.object.valueDidChange();
 	},
@@ -153,7 +153,7 @@ In2iGui.ObjectList.Select.prototype = {
 		return copy;
 	},
 	getElement : function() {
-		this.select = N2i.create('select');
+		this.select = new Element('select');
 		for (var i=0; i < this.options.length; i++) {
 			this.select.options[this.select.options.length] = new Option(this.options[i].label,this.options[i].value);
 		};

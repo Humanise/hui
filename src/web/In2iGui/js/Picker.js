@@ -1,6 +1,6 @@
 
 In2iGui.Picker = function(element,name,options) {
-	this.options = N2i.override({itemWidth:100,itemHeight:150,itemsVisible:3,valueProperty:'value'},options);
+	this.options = n2i.override({itemWidth:100,itemHeight:150,itemsVisible:3,valueProperty:'value'},options);
 	this.element = $(element);
 	this.name = name;
 	this.container = this.element.select('.in2igui_picker_container')[0];
@@ -14,7 +14,7 @@ In2iGui.Picker = function(element,name,options) {
 }
 
 In2iGui.Picker.create = function(name,options) {
-	options = N2i.override({shadow:true},options);
+	options = n2i.override({shadow:true},options);
 	var element = new Element('div',{'class':'in2igui_picker'});
 	element.update('<div class="in2igui_picker_top"><div><div></div></div></div>'+
 	'<div class="in2igui_picker_middle"><div class="in2igui_picker_middle">'+
@@ -73,7 +73,7 @@ In2iGui.Picker.prototype = {
 	updateSelection : function() {
 		var children = this.content.childNodes;
 		for (var i=0; i < children.length; i++) {
-			N2i.setClass(children[i],'in2igui_picker_item_selected',this.value!=null && this.objects[i][this.options.valueProperty]==this.value);
+			Element.setClassName(children[i],'in2igui_picker_item_selected',this.value!=null && this.objects[i][this.options.valueProperty]==this.value);
 		};
 	},
 	selectionChanged : function(value) {
@@ -108,7 +108,7 @@ In2iGui.Picker.prototype = {
 		window.document.stopObserving('mouseup',In2iGui.Picker.mouseup);
 		window.document.stopObserving('mousedown',In2iGui.Picker.mouseup);
 		var size = (this.options.itemWidth+14);
-		$ani(this.container,'scrollLeft',Math.round(this.container.scrollLeft/size)*size,500,{ease:N2i.ease.bounceOut});
+		n2i.ani(this.container,'scrollLeft',Math.round(this.container.scrollLeft/size)*size,500,{ease:n2i.ease.bounceOut});
 	}
 }
 

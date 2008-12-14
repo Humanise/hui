@@ -1,5 +1,5 @@
 In2iGui.Selection = function(id,name,options) {
-	this.options = N2i.override({value:null},options);
+	this.options = n2i.override({value:null},options);
 	this.element = $(id);
 	this.name = name;
 	this.items = [];
@@ -11,7 +11,7 @@ In2iGui.Selection = function(id,name,options) {
 }
 
 In2iGui.Selection.create = function(name,options) {
-	options = N2i.override({width:0},options);
+	options = n2i.override({width:0},options);
 	var e = new Element('div',{'class':'in2igui_selection'});
 	if (options.width>0) e.setStyle({width:options.width+'px'});
 	return new In2iGui.Selection(e,name,options);
@@ -36,11 +36,11 @@ In2iGui.Selection.prototype = {
 		this.value = value;
 		for (var i=0; i < this.items.length; i++) {
 			var item = this.items[i];
-			N2i.setClass(item.element,'selected',(item.value==value));
+			item.element.setClassName('selected',(item.value==value));
 		};
-		for (var i=0; i < this.subItems.length; i++) {
-			this.subItems[i].updateUI();
-		};
+		this.subItems.each(function(sub) {
+			sub.updateUI();
+		});
 	},
 	changeValue : function(value) {
 		this.setValue(value);
@@ -66,9 +66,9 @@ In2iGui.Selection.prototype = {
 			return false;
 		}
 		element.dragDropInfo = {kind:kind,value:value};
-		N2i.addClass(element,'droppable');
-		N2i.addListener(element,'mouseover',In2iGui.dropOverListener);
-		N2i.addListener(element,'mouseout',In2iGui.dropOutListener);
+		element.addClassName('droppable');
+		element.observe('mouseover',In2iGui.dropOverListener);
+		element.observe('mouseout',In2iGui.dropOutListener);
 	},
 	
 	setObjects : function(items) {
@@ -107,15 +107,15 @@ In2iGui.Selection.prototype = {
 In2iGui.Selection.Items = function(id,name,options) {
 	this.element = $(id);
 	this.name = name;
+	this.value = null;
 	this.selection = null;
-	this.options = N2i.override({source:null},options);
+	this.options = n2i.override({source:null},options);
 	this.items = [];
 	In2iGui.extend(this);
 	var self = this;
 	if (this.options.source) {
 		this.options.source.addDelegate(this);
 	}
-	//N2i.Event.addLoadListener(function() {self.refresh()});
 }
 
 In2iGui.Selection.Items.prototype = {
@@ -129,7 +129,7 @@ In2iGui.Selection.Items.prototype = {
 	},
 	itemsLoaded : function(items) {
 		this.items = [];
-		N2i.removeChildren(this.element);
+		this.element.update();
 		var self = this;
 		for (var i=0, len=items.length; i < len; ++i) {
 			var item = items[i];
@@ -169,10 +169,15 @@ In2iGui.Selection.Items.prototype = {
 		return null;
 	},
 	updateUI : function() {
-		for (var i=0; i < this.items.length; i++) {
-			var item = this.items[i];
-			N2i.setClass(item.element,'selected',(item.value==this.selection.value));
-		};
+		var newValue = null;
+		this.items.each(function(item) {
+			if (item.value==this.selection.value) newValue=item.value;
+			item.element.setClassName('selected',(item.value==this.selection.value));
+		}.bind(this));
+		if (this.value!=newValue) {
+			this.value=newValue;
+			In2iGui.firePropertyChange(this,'value',this.value);
+		}
 	}
 }
 /* EOF */

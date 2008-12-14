@@ -35,18 +35,18 @@ div.in2igui_list table thead th span
 div.in2igui_list th.sortable:hover
 {
 	cursor: pointer;
-	background: url('../gfx/list_header.png') left -22px repeat-x;
+	background: url('../gfx/list_header.png') left -21px repeat-x;
 }
 
 div.in2igui_list th.sort_ascending, div.in2igui_list th.sort_descending
 {
-	background: url('../gfx/list_header.png') left -44px repeat-x;
+	background: url('../gfx/list_header.png') left -42px repeat-x;
 	color: #000;
 }
 
 div.in2igui_list th.sort_ascending:hover, div.in2igui_list th.sort_descending:hover
 {
-	background: url('../gfx/list_header.png') left -66px repeat-x;
+	background: url('../gfx/list_header.png') left -63px repeat-x;
 }
 
 div.in2igui_list th.sort_ascending span

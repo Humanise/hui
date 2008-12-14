@@ -10,15 +10,13 @@ In2iGui.ColorPicker = function(id,name,options) {
 }
 
 In2iGui.ColorPicker.create = function(name,options) {
-	var element = new Element('div').addClassName('in2igui_colorpicker');
-	var content = new Element('div').addClassName('in2igui_colorpicker_content');
-	element.insert(content);
-	var innerContent = new Element('div').addClassName('in2igui_colorpicker_inner_content');
-	content.insert(innerContent);
-	var page1 = new Element('div').addClassName('in2igui_colorpicker_page').addClassName('in2igui_colorpicker_wheel1');
-	var page2 = new Element('div').addClassName('in2igui_colorpicker_page').addClassName('in2igui_colorpicker_wheel2');
-	innerContent.insert(page1);
-	innerContent.insert(page2);
+	var element = new Element('div',{'class':'in2igui_colorpicker'});
+	element.update(
+		'<div class="in2igui_colorpicker_content"><div class="in2igui_colorpicker_inner_content">'+
+		'<div class="in2igui_colorpicker_page in2igui_colorpicker_wheel1"></div>'+
+		'<div class="in2igui_colorpicker_page in2igui_colorpicker_wheel2"></div>'+
+		'</div></div>'
+	);
 	return new In2iGui.ColorPicker(element,name,options);
 }
 
@@ -28,7 +26,11 @@ In2iGui.ColorPicker.prototype = {
 		this.wheel1.observe('mousemove',function(e) {
 			self.hoverWheel1(e);
 		})
+		this.wheel1.observe('mousedown',function(e) {
+			e.stop();
+		})
 		this.wheel1.observe('click',function(e) {
+			e.stop();
 			self.pickColor();
 		})
 	},

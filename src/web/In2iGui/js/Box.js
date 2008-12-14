@@ -1,5 +1,5 @@
 In2iGui.Box = function(element,name,options) {
-	this.options = N2i.override({},options);
+	this.options = n2i.override({},options);
 	this.name = name;
 	this.element = $(element);
 	this.body = this.element.select('.in2igui_box_body')[0];
@@ -7,7 +7,7 @@ In2iGui.Box = function(element,name,options) {
 }
 
 In2iGui.Box.create = function(name,options) {
-	options = N2i.override({},options);
+	options = n2i.override({},options);
 	var e = new Element('div',{'class':'in2igui_box'});
 	if (options.width) e.setStyle({width:options.width+'px'});
 	if (options.absolute) e.addClassName('in2igui_box_absolute');
@@ -40,7 +40,7 @@ In2iGui.Box.prototype = {
 		}
 		e.setStyle({display:'block',visibility:'hidden'});
 		var w = e.getWidth();
-		var top = (N2i.Window.getInnerHeight()-e.getHeight())/2+N2i.Window.getScrollTop();
+		var top = (n2i.getInnerHeight()-e.getHeight())/2+n2i.getScrollTop();
 		e.setStyle({'marginLeft':(w/-2)+'px',top:top+'px'});
 		e.setStyle({display:'block',visibility:'visible'});
 	},

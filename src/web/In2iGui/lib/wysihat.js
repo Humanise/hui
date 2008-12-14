@@ -15,7 +15,6 @@ WysiHat.Editor = {
     return WysiHat.iFrame.create(textarea, function(editArea) {
       var document = editArea.getDocument();
       var window = editArea.getWindow();
-
       editArea.load();
 
       Event.observe(window, 'focus', function(event) { editArea.focus(); });
@@ -54,7 +53,8 @@ WysiHat.Editor = {
         event.target.save();
       });
 
-      editArea.focus();
+        editArea.fire("wysihat:loaded"); // HACK
+      //editArea.focus(); HACK!
     });
   }
 };

@@ -1,9 +1,12 @@
 In2iGui.RichText = function(id,name,options) {
-	this.element = $(id);
-	this.options = N2i.override({debug:false,value:'',autoHideToolbar:true,style:'font-family: sans-serif;'},options);
-	this.iframe = this.element.getElementsByTagName('iframe')[0];
-	this.toolbar = $firstClass('in2igui_richtext_toolbar',this.element);
-	this.toolbarContent = $firstClass('in2igui_richtext_toolbar_content',this.element);
+	var e = this.element = $(id);
+	this.options = n2i.override({debug:false,value:'',autoHideToolbar:true,style:'font-family: sans-serif;'},options);
+	this.textarea = new Element('textarea');
+	e.insert(this.textarea);
+	this.editor = WysiHat.Editor.attach(this.textarea);
+	this.editor.setAttribute('frameborder','0');
+	this.toolbar = e.select('.in2igui_richtext_toolbar')[0];
+	this.toolbarContent = e.select('.in2igui_richtext_toolbar_content')[0];
 	this.value = this.options.value;
 	this.document = null;
 	this.buildToolbar();
@@ -45,47 +48,39 @@ In2iGui.RichText.replaceInput = function(options) {
 }
 
 In2iGui.RichText.create = function(name,options) {
-	var base = N2i.create('div',{'class':'in2igui_richtext'});
-	var toolbar = N2i.create('div',{'class':'in2igui_richtext_toolbar'});
-	base.appendChild(toolbar);
-	var iframe = N2i.create('iframe',{frameborder:0});
-	base.appendChild(iframe);
-	toolbar.innerHTML='<div class="in2igui_richtext_inner_toolbar"><div class="in2igui_richtext_toolbar_content"></div></div>';
+	var base = new Element('div',{'class':'in2igui_richtext'});
+	base.update('<div class="in2igui_richtext_toolbar"><div class="in2igui_richtext_inner_toolbar"><div class="in2igui_richtext_toolbar_content"></div></div></div>');
 	return new In2iGui.RichText(base,name,options);
 }
 
 In2iGui.RichText.prototype = {
-	ignite : function() {
-		this.setupIframe();
-	},
 	isCompatible : function() {
 	    var agt=navigator.userAgent.toLowerCase();
 		return true;
 		return (agt.indexOf('msie 6')>-1 || agt.indexOf('msie 7')>-1 || (agt.indexOf('gecko')>-1 && agt.indexOf('safari')<0));
 	},
-	setupIframe : function() {
+	ignite : function() {
 		var self = this;
-		if (!this.iframe.contentWindow) return;
-		this.window = this.iframe.contentWindow;
-		this.document = this.iframe.contentDocument || this.window.document;
-		this.document.designMode='on';
-		
-		this.document.open();
-		this.document.write('<html><head><style>body{margin:0px;'+this.options.style+'}</style></head><body>'+this.value+'</body></html>');
-		this.document.close();
-		
-		this.document.body.style.minHeight='100%';
-		this.document.documentElement.style.cursor='text';
-		this.document.documentElement.style.minHeight='100%';
-		
-		this.window.onkeypress=function() {self.documentChanged()};
-		
-		N2i.Event.addListener(this.window,'focus',function() {self.documentFocused()});
-		N2i.Event.addListener(this.window,'blur',function() {self.documentBlurred()});
-		N2i.Event.addListener(this.window,'keyup',function() {self.documentChanged()});
+		this.editor.observe("wysihat:loaded", function(event) {
+			this.editor.setStyle(this.options.style);
+			this.editor.setRawContent(this.value);
+			this.window = this.editor.getWindow();
+			this.document = this.editor.getDocument();
+			if (this.document.body) {
+				this.document.body.style.minHeight='100%';
+				this.document.body.style.margin='0';
+				this.document.documentElement.style.cursor='text';
+				this.document.documentElement.style.minHeight='100%';
+			}
+			Event.observe(this.window,'focus',function() {self.documentFocused()});
+			Event.observe(this.window,'blur',function() {self.documentBlurred()});
+     	}.bind(this));
+		this.editor.observe("wysihat:change", function(event) {
+        	this.documentChanged();
+     	}.bind(this));
 	},
 	setHeight : function(height) {
-		this.iframe.style.height=height+'px';
+		this.editor.style.height=height+'px';
 	},
 	focus : function() {
 		try { // TODO : May only work in gecko
@@ -93,11 +88,11 @@ In2iGui.RichText.prototype = {
 			r.selectNodeContents(this.document.body);
 			this.window.getSelection().addRange(r);
 		} catch (ignore) {}
-		this.window.focus();
+		if (this.window)this.window.focus();
 	},
 	setValue : function(value) {
 		this.value = value;
-		this.document.body.innerHTML = value;
+		this.editor.setRawContent(this.value);
 	},
 	getValue : function() {
 		return this.value;
@@ -108,15 +103,17 @@ In2iGui.RichText.prototype = {
 	},
 	
 	buildToolbar : function() {
+		this.toolbar.onmousedown = function() {this.toolbarMouseDown=true}.bind(this);
+		this.toolbar.onmouseup = function() {this.toolbarMouseDown=false}.bind(this);
 		var self = this;
 		var actions = In2iGui.RichText.actions;
 		for (var i=0; i < actions.length; i++) {
 			if (actions[i]==null) {
-				this.toolbarContent.appendChild(N2i.create('div',{'class':'in2igui_richtext_divider'}));
+				this.toolbarContent.insert(new Element('div',{'class':'in2igui_richtext_divider'}));
 			} else {
 				var div = new Element('div').addClassName('action action_'+actions[i].key);
 				div.title=actions[i].key;
-				div.in2iguiRichTextAction = actions[i];
+				div.in2iguiRichTextAction = actions[i]
 				div.onclick = div.ondblclick = function(e) {return self.actionWasClicked(this.in2iguiRichTextAction,e);}
 				var img = new Element('img');
 				img.src=In2iGui.context+'/In2iGui/gfx/trans.png';
@@ -129,39 +126,39 @@ In2iGui.RichText.prototype = {
 			}
 		};
 	},
-	
 	documentFocused : function() {
-		if (N2i.isIE()) {
+		if (n2i.browser.msie) {
 			this.toolbar.style.display='block';
 			return;
 		}
 		if (this.toolbar.style.display!='block') {
 			this.toolbar.style.marginTop='-40px';
-			N2i.setOpacity(this.toolbar,0);
+			n2i.setOpacity(this.toolbar,0);
 			this.toolbar.style.display='block';
-			$ani(this.toolbar,'opacity',1,300);
-			$ani(this.toolbar,'margin-top','-32px',300);
+			n2i.ani(this.toolbar,'opacity',1,300);
+			n2i.ani(this.toolbar,'margin-top','-32px',300);
 		}
 	},
 	
 	documentBlurred : function() {
+		if (this.toolbarMouseDown) return;
 		if (this.options.autoHideToolbar) {
-			if (N2i.isIE()) {
+			if (n2i.browser.msie) {
 				var self = this;
 				window.setTimeout(function() {
 					self.toolbar.style.display='none';
 				},100);
 				return;
 			}
-			$ani(this.toolbar,'opacity',0,300,{hideOnComplete:true});
-			$ani(this.toolbar,'margin-top','-40px',300);
+			n2i.ani(this.toolbar,'opacity',0,300,{hideOnComplete:true});
+			n2i.ani(this.toolbar,'margin-top','-40px',300);
 		}
 		this.documentChanged();
 		In2iGui.callDelegates(this,'richTextDidChange');
 	},
 	
 	documentChanged : function() {
-		this.value = this.document.body.innerHTML;
+		this.value = this.editor.content();
 		if (this.options.input) {
 			$(this.options.input).value=this.value;
 		}
@@ -169,9 +166,6 @@ In2iGui.RichText.prototype = {
 	
 	disabler : function(e) {
 		var evt = e ? e : window.event; 
-		//if (evt.stopPropagation) {
-		//	evt.stopPropagation();
-		//}
 		if (evt.returnValue) {
 			evt.returnValue = false;
 		} else if (evt.preventDefault) {
@@ -187,11 +181,10 @@ In2iGui.RichText.prototype = {
 			this.execCommand(action);
 		}
 		this.document.body.focus();
-		this.documentChanged();
 		return false;
 	},
 	execCommand : function(action) {
-		this.document.execCommand(action.cmd,false,action.value);
+		this.editor.execCommand(action.cmd,false,action.value);
 		this.documentChanged();
 	},
 	showColorPicker : function() {

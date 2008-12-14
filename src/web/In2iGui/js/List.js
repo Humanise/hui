@@ -1,5 +1,5 @@
 In2iGui.List = function(element,name,options) {
-	this.options = N2i.override({url:null,source:null},options);
+	this.options = n2i.override({url:null,source:null},options);
 	this.element = $(element);
 	this.name = name;
 	this.state = options.state;
@@ -27,7 +27,7 @@ In2iGui.List = function(element,name,options) {
 		this.window.size = parseInt(options.windowSize);
 	}
 	In2iGui.extend(this);
-	this.refresh();
+	if (this.url) this.refresh();
 }
 
 In2iGui.List.prototype = {
@@ -58,6 +58,14 @@ In2iGui.List.prototype = {
 	loadData : function(url) {
 		this.setUrl(url);
 	},
+	setSource : function(source) {
+		if (this.options.source!=source) {
+			this.options.source.removeDelegate(this);
+			source.addDelegate(this);
+			this.options.source = source;
+			source.refresh();
+		}
+	},
 	setUrl : function(url) {
 		this.url = url;
 		this.selected = [];
@@ -70,10 +78,20 @@ In2iGui.List.prototype = {
 		this.window = {size:null,page:0,total:0};
 		In2iGui.firePropertyChange(this,'state',this.window);
 	},
+	valueForProperty : function(p) {
+		if (p=='window.page') return this.window.page;
+		else if (p=='sort.key') return this.sortKey;
+		else if (p=='sort.direction') return (this.sortDirection || 'ascending');
+		else return this[p];
+	},
 	/**
 	 * @private
 	 */
 	refresh : function() {
+		if (this.options.source) {
+			this.options.source.refresh();
+			return;
+		}
 		if (!this.url) return;
 		var url = this.url;
 		if (typeof(this.window.page)=='number') {
@@ -101,8 +119,8 @@ In2iGui.List.prototype = {
 			onSuccess:function(r) {
 				if (r.responseXML) {
 					try {
-					self.parse(r.responseXML);
-					} catch (e) {N2i.log(e)}
+					self.listLoaded(r.responseXML);
+					} catch (e) {n2i.log(e)}
 				} else if (r.responseText) {
 					var json = r.responseText.evalJSON();
 					if (json.list==true) {
@@ -118,6 +136,9 @@ In2iGui.List.prototype = {
 		var key = this.columns[index].key;
 		if (key==this.sortKey) {
 			this.sortDirection = this.sortDirection=='ascending' ? 'descending' : 'ascending';
+			In2iGui.firePropertyChange(this,'sort.direction',this.sortDirection);
+		} else {
+			In2iGui.firePropertyChange(this,'sort.key',key);
 		}
 		this.sortKey = key;
 		this.refresh();
@@ -126,7 +147,7 @@ In2iGui.List.prototype = {
 	/**
 	 * @private
 	 */
-	parse : function(doc) {
+	listLoaded : function(doc) {
 		this.parseWindow(doc);
 		this.buildNavigation();
 		this.body.update();
@@ -228,17 +249,17 @@ In2iGui.List.prototype.parseCell = function(node,cell) {
 	}
 	for (var i=0; i < node.childNodes.length; i++) {
 		var child = node.childNodes[i];
-		if (child.nodeType==N2i.TEXT_NODE && child.nodeValue.length>0) {
+		if (child.nodeType==n2i.TEXT_NODE && child.nodeValue.length>0) {
 			cell.appendChild(document.createTextNode(child.nodeValue));
-		} else if (child.nodeType==N2i.ELEMENT_NODE && child.nodeName=='break') {
+		} else if (child.nodeType==n2i.ELEMENT_NODE && child.nodeName=='break') {
 			cell.insert(new Element('br'));
-		} else if (child.nodeType==N2i.ELEMENT_NODE && child.nodeName=='object') {
+		} else if (child.nodeType==n2i.ELEMENT_NODE && child.nodeName=='object') {
 			var obj = new Element('div',{'class':'object'});
 			if (child.getAttribute('icon')!=null) {
 				var icon = new Element('div',{'class':'icon'}).setStyle({'backgroundImage':'url("'+In2iGui.getIconUrl(child.getAttribute('icon'),1)+'")'});
 				obj.insert(icon);
 			}
-			if (child.firstChild && child.firstChild.nodeType==N2i.TEXT_NODE && child.firstChild.nodeValue.length>0) {
+			if (child.firstChild && child.firstChild.nodeType==n2i.TEXT_NODE && child.firstChild.nodeValue.length>0) {
 				obj.appendChild(document.createTextNode(child.firstChild.nodeValue));
 			}
 			cell.insert(obj);
@@ -266,7 +287,6 @@ In2iGui.List.prototype.parseWindow = function(doc) {
 In2iGui.List.prototype.buildNavigation = function() {
 	var self = this;
 	var pages = this.window.size>0 ? Math.ceil(this.window.total/this.window.size) : 0;
-	N2i.log(this.window);
 	if (pages<2) {
 		this.navigation.style.display='none';
 		return;
@@ -428,10 +448,10 @@ In2iGui.List.prototype.addRowBehavior = function(row,index) {
 In2iGui.List.prototype.changeSelection = function(indexes) {
 	var rows = this.body.getElementsByTagName('tr');
 	for (var i=0;i<this.selected.length;i++) {
-		N2i.Element.removeClassName(rows[this.selected[i]],'selected');
+		rows[this.selected[i]].removeClassName('selected');
 	}
 	for (var i=0;i<indexes.length;i++) {
-		N2i.Element.addClassName(rows[indexes[i]],'selected');
+		rows[indexes[i]].addClassName('selected');
 	}
 	this.selected = indexes
 }
@@ -458,6 +478,7 @@ In2iGui.List.prototype.rowDoubleClick = function(index) {
 In2iGui.List.prototype.windowPageWasClicked = function(tag) {
 	this.window.page = tag.in2GuiPage;
 	In2iGui.firePropertyChange(this,'state',this.window);
+	In2iGui.firePropertyChange(this,'window.page',this.window.page);
 	this.refresh();
 }
 
