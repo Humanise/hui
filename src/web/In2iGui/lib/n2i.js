@@ -101,6 +101,14 @@ n2i.addToArray = function(arr,value) {
 	}
 }
 
+n2i.scrollTo = function(element) {
+	element = $(element);
+	if (element) {
+		var pos = element.cumulativeOffset();
+		window.scrollTo(pos.left, pos.top-50);
+	}
+}
+
 /********************* Style ********************/
 
 n2i.getStyle = function(element, style) {

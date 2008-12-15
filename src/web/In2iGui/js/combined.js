@@ -4321,6 +4321,14 @@ n2i.addToArray = function(arr,value) {
 	}
 }
 
+n2i.scrollTo = function(element) {
+	element = $(element);
+	if (element) {
+		var pos = element.cumulativeOffset();
+		window.scrollTo(pos.left, pos.top-50);
+	}
+}
+
 /********************* Style ********************/
 
 n2i.getStyle = function(element, style) {
@@ -8956,28 +8964,6 @@ In2iGui.Tabs.Tab.prototype = {
 		this.element.style.display = (active ? 'block' : 'none');
 		this.tab.setClassName('in2igui_tabs_selected',active);
 	}
-}
-
-/* EOF */In2iGui.ViewStack = function(id,name,options) {
-	this.id = id;
-	this.name = name;
-	this.element = $(id);
-	this.contents = [];
-	In2iGui.extend(this);
-}
-
-In2iGui.ViewStack.prototype.registerContent = function(id,name) {
-	this.contents[this.contents.length] = {element:$(id),name:name};
-}
-
-In2iGui.ViewStack.prototype.change = function(name) {
-	for (var i=0; i < this.contents.length; i++) {
-		if (this.contents[i].name==name) {
-			this.contents[i].element.style.display='block';
-		} else {
-			this.contents[i].element.style.display='none';
-		}
-	};
 }
 
 /* EOF */In2iGui.ObjectList = function(id,name,options) {

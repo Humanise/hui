@@ -61,8 +61,6 @@
 		<script src="{$context}/In2iGui/js/List.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/Icons.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/Tabs.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/ViewStack.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/Tabbox.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/ObjectList.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/Alert.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/Button.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
@@ -229,19 +227,6 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 
 <xsl:template match="gui:selection/gui:title">
 	<div class="title"><span><xsl:value-of select="."/></span></div>
-</xsl:template>
-	
-<xsl:template match="gui:browser">
-	<div class="browser" id="{generate-id()}">
-		<div class="contents">
-		<xsl:comment/>
-		</div>
-	</div>
-	<script src="{$context}/In2iGui/js/Browser.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Browser('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@source"/>');
-		<xsl:call-template name="gui:createobject"/>
-	</script>
 </xsl:template>
 
 
