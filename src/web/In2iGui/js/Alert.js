@@ -54,7 +54,7 @@ In2iGui.Alert.prototype = {
 		this.element.style.zIndex=zIndex;
 		this.element.style.display='block';
 		this.element.style.top=(n2i.getScrollTop()+100)+'px';
-		n2i.ani(this.element,'opacity',1,200);
+		n2i.ani(this.element,'opacity',1,2000);
 		n2i.ani(this.element,'margin-top','40px',600,{ease:n2i.ease.elastic});
 	},
 	hide : function() {

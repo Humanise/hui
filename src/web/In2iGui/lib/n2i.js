@@ -368,7 +368,7 @@ n2i.animation.render = function(element) {
 					var blue = Math.round(work.from.blue+(work.to.blue-work.from.blue)*v);
 					value = 'rgb('+red+','+green+','+blue+')';
 					obj.element.style[work.property]=value;
-				} else if (n2i.browser.IE && work.property=='opacity') {
+				} else if (n2i.browser.msie && work.property=='opacity') {
 					var opacity = (work.from+(work.to-work.from)*v);
 					if (opacity==1) {
 						obj.element.style['filter']='';
@@ -403,7 +403,9 @@ n2i.animation.render = function(element) {
 n2i.animation.parseStyle = function(value) {
 	var parsed = {type:null,value:null,unit:null};
 	var match;
-	if (!isNaN(value)) {
+	if (!n2i.isDefined(value)) {
+		return parsed;
+	} else if (!isNaN(value)) {
 		parsed.value=parseFloat(value);
 	} else if (match=value.match(/([\-]?[0-9\.]+)(px|pt|%)/)) {
 		parsed.type = 'length';
@@ -448,7 +450,7 @@ n2i.animation.Item.prototype.animate = function(from,to,property,duration,delega
 	work.css = css;
 	if (from!=null) {
 		work.from = from;
-	} else if (work.css && n2i.browser.IE && property=='opacity') {
+	} else if (work.css && n2i.browser.msie && property=='opacity') {
 		work.from = this.getIEOpacity(this.element);
 	} else if (work.css) {
 		var style = n2i.getStyle(this.element,property);
