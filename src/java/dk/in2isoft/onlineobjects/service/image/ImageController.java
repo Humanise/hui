@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
-
 import dk.in2isoft.commons.http.FilePusher;
 import dk.in2isoft.commons.util.ImageUtil;
 import dk.in2isoft.onlineobjects.core.Core;
@@ -22,8 +20,6 @@ public class ImageController extends ServiceController {
 	private Pattern heightPattern;
 	private Pattern thumbnailPattern;
 
-	private static Logger log = Logger.getLogger(ImageController.class);
-
 	public ImageController() {
 		super("image");
 		idPattern = Pattern.compile("id([0-9]+)");
@@ -35,7 +31,6 @@ public class ImageController extends ServiceController {
 	@Override
 	public void unknownRequest(Request request) throws IOException, EndUserException {
 		String[] path = request.getLocalPath();
-		log.debug(request.getRequest());
 		if (path.length>0) {
 			String subject = path[path.length-1];
 			long id = Long.valueOf(match(idPattern,subject));
@@ -75,22 +70,25 @@ public class ImageController extends ServiceController {
 	}
 
 	private void process(Request request, long id, int thumbnail, int width, int height, boolean cropped) throws IOException, EndUserException {		
-		Image image = (Image) Core.getInstance().getModel().get(Image.class, id);
-		if (image == null) {
-			throw new EndUserException("Could not load image with id=" + id);
-		}
-		File file = image.getImageFile();
-		String mime = image.getContentType();
+		File file;
+		String mime;
 		if (thumbnail > 0) {
-			file = ImageUtil.getThumbnail(image, thumbnail);
+			file = ImageUtil.getThumbnail(id, thumbnail);
 			mime = "image/jpeg";
 		} else if (width > 0 && height > 0) {
 			if (cropped) {
-				file = ImageUtil.getCroppedThumbnail(image, width, height);
+				file = ImageUtil.getCroppedThumbnail(id, width, height);
 			} else {
-				file = ImageUtil.getThumbnail(image, width, height);
+				file = ImageUtil.getThumbnail(id, width, height);
 			}
 			mime = "image/jpeg";
+		} else {
+			Image image = (Image) Core.getInstance().getModel().get(Image.class, id);
+			if (image == null) {
+				throw new EndUserException("Could not load image with id=" + id);
+			}
+			file = image.getImageFile();
+			mime = image.getContentType();
 		}
 		FilePusher pusher = new FilePusher(file);
 		pusher.setClientSideCaching(true);

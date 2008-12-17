@@ -27,6 +27,9 @@ OO.Editor.ImageGallery.prototype = {
 		this.grid = $$('.grid')[0];
 		if (!this.imagesLoaded) {
 			this.refreshImages();
+			if (n2i.location.getBoolean('firstRun')) {
+				this.click$addImages();
+			}
 		}
 	},
 	deactivate : function() {
@@ -46,7 +49,6 @@ OO.Editor.ImageGallery.prototype = {
 		return this.editor.active;
 	},
 	addToToolbar : function(toolbar) {
-		toolbar.add(In2iGui.Toolbar.Icon.create('addImage',{icon:'common/image','overlay':'new','title':'Tilføj billede'}));
 		toolbar.add(In2iGui.Toolbar.Icon.create('addImages',{icon:'common/image','overlay':'new','title':'Tilføj billeder'}));
 		toolbar.addDivider();
 		toolbar.add(In2iGui.Toolbar.Icon.create('changeFrame',{icon:'common/frame','title':'Skift ramme'}));
@@ -60,101 +62,98 @@ OO.Editor.ImageGallery.prototype = {
 		this.editor = editor;
 	},
 	saveImagePositions : function() {
-		OO.ImageGallery.getInstance().clearImages();
+		var ig = OO.ImageGallery.getInstance();
+		ig.clearImages();
 		var ids = [];
-		for (var i=0; i < this.images.length; i++) {
-			ids[ids.length]=this.images[i].image.id;
-			OO.ImageGallery.getInstance().addImage(this.images[i].image.id);
-		};
+		this.images.each(function(img) {
+			ids.push(img.image.id);
+			ig.addImage(img.image.id);			
+		});
 		ImageGalleryDocument.updateImagePositions(OnlineObjects.content.id,ids);
 	},
 	refreshImages : function() {
 		this.busy=true;
-		In2iGui.showMessage('Indlæser billeder...');
-		var self = this;
+		in2igui.showMessage('Indlæser billeder...');
 		ImageGalleryDocument.listImages(OnlineObjects.content.id,
 			function(data) {
-				self.parseImages(data);
-				self.updateImages();
-				self.imagesLoaded = true;
-				In2iGui.hideMessage();
-				self.busy=false;
-			}
+				this.parseImages(data);
+				this.updateImages();
+				this.imagesLoaded = true;
+				in2igui.hideMessage();
+				this.busy=false;
+			}.bind(this)
 		);
 	},
 	parseImages : function(images) {
 		OO.ImageGallery.getInstance().clearImages();
 		this.images = [];
-		for (var i=0; i < images.length; i++) {
-			var image = images[i];
+		images.each(function(image,i) {
 			var imageCtrl = new OO.Editor.ImageGallery.Image(image,i,this);
-			this.images[this.images.length] = imageCtrl;
-			OO.ImageGallery.getInstance().addImage(image.id);
-		};
+			this.images.push(imageCtrl);
+			OO.ImageGallery.getInstance().addImage(image.id);			
+		}.bind(this));
 		this.tempImages = this.images.concat();
 	},
 	click$increaseSize : function() {
 		if (this.imageWidth+20>300) return;
 		this.imageWidth+=20;
 		this.imageHeight+=20;
-		for (var i=0; i < this.images.length; i++) {
-			this.images[i].rebuild();
-		};
-		this.updateImages();
-		ImageGalleryDocument.updateImageSize(OnlineObjects.content.id,this.imageWidth,this.imageHeight);
+		this.rebuildSize();
 	},
 	click$decreaseSize : function() {
 		if (this.imageWidth-20<100) return;
 		this.imageWidth-=20;
 		this.imageHeight-=20;
-		for (var i=0; i < this.images.length; i++) {
-			this.images[i].rebuild();
-		};
+		this.rebuildSize();
+	},
+	rebuildSize : function() {
+		this.images.each(function(image) {
+			image.rebuild();
+		});
 		this.updateImages();
 		ImageGalleryDocument.updateImageSize(OnlineObjects.content.id,this.imageWidth,this.imageHeight);
 	},
 	updateImages : function(useTemp) {
 		var images = useTemp ? this.tempImages : this.images;
+		//this.grid.update(); // TODO Maybe IE doesn't like this
 		for (var i = this.grid.childNodes.length - 1; i >= 0; i--){
 			this.grid.removeChild(this.grid.childNodes[i]);
 		};
 		this.grid.className='grid grid_'+this.columns;
-		this.grid.style.width=((this.imageWidth+80)*this.columns)+'px';
-		this.grid.style.marginLeft=((this.imageWidth+80)*this.columns/2*-1)+'px';
+		this.grid.setStyle(
+			{width:((this.imageWidth+80)*this.columns)+'px',
+			 marginLeft:((this.imageWidth+80)*this.columns/2*-1)+'px'});
 		var row;
-		for (var i=0; i < images.length; i++) {
+		this.images.each(function(img,i) {
 			if (i % this.columns == 0) {
-				row = document.createElement('div');
+				row = new Element('div');
 				this.grid.appendChild(row);
 			}
-			var image = images[i];
-			var cell = document.createElement('div');
-			cell.className = 'cell';
-			cell.style.width = (this.imageWidth+80)+'px';
-			cell.style.height = (this.imageHeight+80)+'px';
-			cell.appendChild(image.getFrame());
-			row.appendChild(cell);
-		};
+			var cell = new Element('div',{'class':'cell'});
+			cell.setStyle({width:(this.imageWidth+80)+'px',height:(this.imageHeight+80)+'px'});
+			cell.insert(img.frame);
+			row.insert(cell);			
+		}.bind(this))
 		this.registerCells();
 	},
 	registerCells : function() {
-		this.cells = $class('cell',this.grid);
+		this.cells = this.grid.select('.cell');
 		this.cellDims = [];
-		for (var i=0; i < this.cells.length; i++) {
-			var cell = this.cells[i];
-			this.cellDims[this.cellDims.length] = {
-				left: N2i.Element.getLeft(cell),
-				right: N2i.Element.getLeft(cell)+N2i.Element.getWidth(cell),
-				top: N2i.Element.getTop(cell),
-				bottom: N2i.Element.getTop(cell)+N2i.Element.getHeight(cell)
-			};
-		};
+		this.cells.each(function(cell) {
+			var pos = cell.cumulativeOffset();
+			this.cellDims.push({
+				left: pos.left,
+				right: pos.left+cell.getWidth(),
+				top: pos.top,
+				bottom: pos.top+cell.getHeight()
+			});
+		}.bind(this));
 	},
 	imageWasDragged : function(top,left,index) {
 		var found = false;
-		for (var i=0; i < this.cellDims.length; i++) {
+		for (var i = this.cellDims.length - 1; i >= 0; i--){
 			var cell = this.cellDims[i];
-			if ((left>=cell.left && left<=cell.right && top>=cell.top && top<=cell.bottom && i!=index) ) {
+			if (i!=index && left>=cell.left && left<=cell.right && top>=cell.top && top<=cell.bottom) {
 				if (i!=this.latestHilitedCell) {
 					this.latestHilitedCell = i;
 					this.changeImageOrder(index,i,false,false);
@@ -169,12 +168,12 @@ OO.Editor.ImageGallery.prototype = {
 		return found;
 	},
 	getCell : function(top,left) {
-		for (var i=0; i < this.cellDims.length; i++) {
+		for (var i = this.cellDims.length - 1; i >= 0; i--){
 			var cell = this.cellDims[i];
 			if ((left>=cell.left && left<=cell.right && top>=cell.top && top<=cell.bottom) ) {
 				return i;
 			}
-		}
+		};
 		return null;
 	},
 	imageFinishedDragging : function(event,image,changed) {
@@ -202,54 +201,17 @@ OO.Editor.ImageGallery.prototype = {
 		array.splice(newIndex, 0, removed[0]);
 	},
 	
-	// Upload
-	
-	uploadFailed : function() {
-		this.addImagePanelDelegate.reset();
-		In2iGui.get().showAlert({emotion:'gasp',title:'Det lykkedes ikke at tilføje billedet.',text:'Det kan skyldes at filen ikke er et understøttet format?'})
-	},
-	listenToUpload : function() {
-		var self = this;
-		var delegate = {
-			callback:function(data) { 
-				if (data==null) return;
-				if (data.completed==false) {
-					self.addImagePanelDelegate.uploadChanged(data);
-					if (data.error) {
-						self.uploadFailed(data);
-					} else {
-						self.listenToUpload();
-					}
-				} else {
-					self.refreshImages();
-					self.addImagePanelDelegate.reset();
-				}
-			}
-		};
-		window.setTimeout(function() {
-			AppCommunity.getProcess('imageUpload',delegate);
-		},500);
-	},
-	click$addImage : function() {
-		if (!this.addImagePanel) {
-			this.addImagePanel = In2iGui.Window.create(null,{title:'Tilføj billede',variant:'dark',padding:5});
-			this.addImagePanelDelegate = new OO.Editor.ImageGallery.AddImagePanelDelegate(this);
-			this.addImagePanel.add(this.addImagePanelDelegate.getUploader());
-		}
-		this.addImagePanel.show();
-	},
-	
 	// Multi upload
 	click$addImages : function() {
 		if (!this.addImagesPanel) {
 			//var w = In2iGui.Window.create(null,{title:'Tilføj billede',variant:'dark',padding:5});
-			var u = In2iGui.MultiUpload.create('multiUpload',{url:'uploadImage',parameters:{'contentId':OnlineObjects.content.id}});
+			var u = In2iGui.Upload.create('upload',{url:'uploadImage',parameters:{'contentId':OnlineObjects.content.id}});
 			//w.add(u);
 			var box = In2iGui.Box.create(null,{title:'Tilføj billeder',width:400,padding:10,absolute:true,modal:true});
 			box.add('<div class="in2igui_text"><h1>Vælg billeder på din computer</h1><p>Du kan vælge en eller flere billedfiler på din lokale computer...</p></div>');
 			box.add(u);
 			var buttons = In2iGui.Buttons.create();
-			var upload = In2iGui.Button.create('cancelAddImages',{title:'Vælg billeder...',highlighted:true});
+			var upload = In2iGui.Button.create(null,{title:'Vælg billeder...',highlighted:true});
 			u.setButton(upload);
 			buttons.add(upload);
 			buttons.add(In2iGui.Button.create('cancelAddImages',{title:'Afslut'}));
@@ -262,8 +224,11 @@ OO.Editor.ImageGallery.prototype = {
 	click$cancelAddImages : function() {
 		this.addImagesPanel.hide();
 	},
-	uploadDidComplete$multiUpload : function() {
+	uploadDidCompleteQueue$upload : function() {
 		this.refreshImages();
+		if (n2i.location.getBoolean('firstRun')) {
+			this.addImagesPanel.hide();
+		}
 	},
 	
 	
@@ -347,9 +312,11 @@ OO.Editor.ImageGallery.prototype = {
 			group.add(In2iGui.Formula.Text.create('imageEditorTitle',{label:'Titel'}));
 			group.add(In2iGui.Formula.Text.create('imageEditorDescription',{label:'Beskrivelse',lines:4}));
 			group.add(In2iGui.Formula.Tokens.create('imageEditorTags',{label:'Nøgleord'}));
-			panel.add(new Element('div').setStyle({'height':'5px'}));
-			panel.add(In2iGui.Button.create('saveImageEditor',{text:'Gem',highlighted:true}));
-			panel.add(In2iGui.Button.create('cancelImageEditor',{text:'Annuller'}));
+			var buttons = In2iGui.Buttons.create();
+			buttons.add(In2iGui.Button.create('deleteImageEditor',{text:'Slet'}));
+			buttons.add(In2iGui.Button.create('cancelImageEditor',{text:'Annuller'}));
+			buttons.add(In2iGui.Button.create('saveImageEditor',{text:'Gem',highlighted:true}));
+			group.add(buttons);
 			this.imageEditorPanel = panel;
 			var self = this;
 			In2iGui.get().addDelegate({
@@ -358,41 +325,13 @@ OO.Editor.ImageGallery.prototype = {
 				},
 				click$saveImageEditor : function() {
 					self.saveImageEditorPanel();
+				},
+				click$deleteImageEditor : function() {
+					self.deleteImage(self.latestEditedPhoto);
 				}
 			});
 		}
 		return this.imageEditorPanel;
-	}
-}
-
-
-
-/************************************ Add image delegate ***********************************/
-
-OO.Editor.ImageGallery.AddImagePanelDelegate = function(editor) {
-	this.editor = editor;
-	this.upload = In2iGui.Upload.create(null,
-		{action:'uploadImage',name:'file',parameters:[
-			{name:'contentId',value:OnlineObjects.content.id}
-		]}
-	);
-	this.upload.addDelegate(this);
-}
-
-
-OO.Editor.ImageGallery.AddImagePanelDelegate.prototype = {
-	getUploader : function() {
-		return this.upload;
-	},
-	uploadDidSubmit : function() {
-		this.upload.startProgress();
-		this.editor.listenToUpload();
-	},
-	uploadChanged : function(data) {
-		this.upload.setProgress(data.value);
-	},
-	reset : function(data) {
-		this.upload.endProgress();
 	}
 }
 
@@ -405,7 +344,7 @@ OO.Editor.ImageGallery.Image = function(image,index,editor) {
 	this.image = image;
 	this.editor = editor;
 	this.img = null;
-	this.style = OO.Editor.ImageGallery.getInstance().style;
+	this.style = editor.style;
 	this.rebuild();
 }
 
@@ -436,86 +375,44 @@ OO.Editor.ImageGallery.Image.prototype = {
 			this.dragger.parentNode.removeChild(this.dragger);
 			this.dragger = null;
 		}
-		if (this.hover) {
-			this.hover.parentNode.removeChild(this.hover);
-			this.hover = null;
-		}
 		this.img = this.frame.select('img')[0];
-		this.buildHover();
 		this.addBehavior();
 	},
 	build : function() {
-		var frame = new Element('div');
-		frame.className = 'image image_frame '+this.style;
-		frame.style.marginLeft = Math.round((this.editor.imageWidth-this.width)/2)+'px';
-		frame.style.marginTop = Math.round((this.editor.imageHeight-this.height)/2)+'px';
-		frame.style.cssFloat='left';
-		frame.style.width=(this.width+80)+'px';
-		frame.innerHTML=
+		var frame = new Element('div',{'class':'image image_frame '+this.style});
+		frame.setStyle({
+			marginLeft : Math.round((this.editor.imageWidth-this.width)/2)+'px',
+			marginTop : Math.round((this.editor.imageHeight-this.height)/2)+'px',
+			cssFloat : 'left',
+			width : (this.width+80)+'px'
+		})
+		frame.update(
 			'<div class="top"><div><div></div></div></div>'+
 			'<div class="middle"><div style="width:'+this.width+'px; height:'+this.height+'px">'+
 			'<img id="image-'+this.image.id+'" src="'+OnlineObjects.baseContext+'/service/image/?id='+this.image.id+'&amp;width='+this.editor.imageWidth+'&amp;height='+this.editor.imageWidth+'" width="'+this.width+'" height="'+this.height+'"/>'+
 			'</div></div>'+
-			'<div class="bottom"><div><div></div></div></div>';
+			'<div class="bottom"><div><div></div></div></div>');
 		return frame;
-	},
-	buildHover : function() {
-		this.hover = document.createElement('div');
-		this.hover.className='imagegallery_image_hover';
-		this.hover.style.display='none';
-		this.hover.style.marginLeft=(10+this.width)+'px';
-		this.hover.style.marginTop=(10+this.height)+'px';
-		this.hover.style.opacity='0';
-		this.deleteButton = document.createElement('div');
-		this.deleteButton.className='delete';
-		this.hover.appendChild(this.deleteButton);
-		this.frame.insertBefore(this.hover,this.frame.firstChild);
 	},
 	getFrame : function() {
 		return this.frame;
 	},
 	addBehavior : function() {
 		var self = this;
-		/*
-		this.frame.onmousedown = function(e) {
-			if (!self.editor.isActive()) return;
-			self.startDrag(e);
-			return false;
-		}*/
 		this.frame.observe('mousedown',function(e) {
 			if (!self.editor.isActive()) return;
 			self.startDrag(e);
 			e.stop();
 		});
-		this.frame.onmouseover = function(e) {
-			if (!self.editor.isActive() || self.editor.busy) return;
-			self.hover.style.display='';
-			$ani(self.hover,'opacity',1,200);
-		}
-		this.frame.onmouseout = function(e) {
-			if (!self.editor.isActive()) return;
-			$ani(self.hover,'opacity',0,200,{onComplete:function() {self.hover.style.display='none'}});
-		}
-		this.deleteButton.onmousedown = function(e) {
-			if (!self.editor.isActive()) return;
-			N2i.Event.stop(e);
-		}
-		this.deleteButton.onclick = function(e) {
-			if (!self.editor.isActive()) return;
-			N2i.Event.stop(e);
-			self.editor.deleteImage(self);
-		}
 		this.img.ondragstart = function() {return false}
 	},
 	startDrag : function(e) {
-		this.startLeft = N2i.Element.getLeft(this.frame);
-		this.startTop = N2i.Element.getTop(this.frame);
-		var event = new N2i.Event(e);
-		this.dragState = {left:event.mouseLeft()-N2i.Element.getLeft(this.frame),top:event.mouseTop()-N2i.Element.getTop(this.frame)};
+		var pos = this.frame.cumulativeOffset();
+		this.dragState = {left:e.pointerX()-pos.left,top:e.pointerY()-pos.top};
 		if (!this.dragger) this.dragger = this.build();
 		this.dragger.style.position='absolute';
-		this.dragger.style.left=this.startLeft+'px';
-		this.dragger.style.top=this.startTop+'px';
+		this.dragger.style.left=pos.left+'px';
+		this.dragger.style.top=pos.top+'px';
 		this.dragger.style.marginTop='';
 		this.dragger.style.marginLeft='';
 		this.dragger.style.display='none';
@@ -524,44 +421,43 @@ OO.Editor.ImageGallery.Image.prototype = {
 		document.body.onselectstart = function () { return false; };
 		this.moveListener = function(e) {self.drag(e)};
 		this.upListener = function(e) {self.endDrag(e)};
-		N2i.Event.addListener(document,'mousemove',this.moveListener);
-		N2i.Event.addListener(document,'mouseup',this.upListener);
+		Event.observe(document,'mousemove',this.moveListener);
+		Event.observe(document,'mouseup',this.upListener);
 		//this.drag(e);
 		this.hasDragged = false;
 	},
 	drag : function(e) {
 		if (!this.hasDragged) {
-			if (!N2i.isIE()) {
-				$ani(this.dragger,'opacity',1,0);
+			if (!n2i.browser.msie) {
+				n2i.animate(this.dragger,'opacity',1,0);
 			}
 			this.dragger.style.display='';
-			if (!N2i.isIE()) {
-				$ani(this.frame,'opacity',.2,500);
+			if (!n2i.browser.msie) {
+				n2i.animate(this.frame,'opacity',.2,500);
 			}
 			this.editor.hideImageEditorPanel();
+			this.hasDragged = true;
 		}
-		this.hasDragged = true;
-		var event = new N2i.Event(e);
 		this.dragger.style.right = 'auto';
-		this.dragger.style.top = (event.mouseTop()-this.dragState.top)+'px';
-		this.dragger.style.left = (event.mouseLeft()-this.dragState.left)+'px';
-		var found = this.editor.imageWasDragged(event.mouseTop(),event.mouseLeft(),this.index);
+		this.dragger.style.top = (e.pointerY()-this.dragState.top)+'px';
+		this.dragger.style.left = (e.pointerX()-this.dragState.left)+'px';
+		var found = this.editor.imageWasDragged(e.pointerY(),e.pointerX(),this.index);
 		return false;
 	},
 	endDrag : function(e) {
-		var event = new N2i.Event(e);
-		N2i.Event.removeListener(document,'mousemove',this.moveListener);
-		N2i.Event.removeListener(document,'mouseup',this.upListener);
-		var shouldReturn = this.editor.imageFinishedDragging(event,this,this.hasDragged);
+		Event.stopObserving(document,'mousemove',this.moveListener);
+		Event.stopObserving(document,'mouseup',this.upListener);
+		var shouldReturn = this.editor.imageFinishedDragging(e,this,this.hasDragged);
+		var pos = this.frame.cumulativeOffset();
 		var self = this;
-		$ani(this.dragger,'top',N2i.Element.getTop(this.frame)+'px',400,{ease:N2i.Animation.elastic});
-		$ani(this.dragger,'left',N2i.Element.getLeft(this.frame)+'px',400,{ease:N2i.Animation.elastic});
+		n2i.animate(this.dragger,'top',pos.top+'px',400,{ease:n2i.ease.elastic});
+		n2i.animate(this.dragger,'left',pos.left+'px',400,{ease:n2i.ease.elastic});
 		var ender = {onComplete:function() {
 			self.dragger.style.display='none';
 		}}
-		if (!N2i.isIE()) {
-			$ani(this.frame,'opacity',1,400);
-			$ani(this.dragger,'opacity',1,200,ender);
+		if (!n2i.browser.msie) {
+			n2i.animate(this.frame,'opacity',1,400);
+			n2i.animate(this.dragger,'opacity',1,200,ender);
 		} else {
 			window.setTimeout(function() {
 			self.dragger.style.display='none';
@@ -577,6 +473,6 @@ OO.Editor.ImageGallery.Image.prototype = {
 	}
 }
 
-document.observe('dom:loaded',function() {
+In2iGui.onDomReady(function() {
 	new OO.Editor(OO.Editor.ImageGallery.getInstance());
 });

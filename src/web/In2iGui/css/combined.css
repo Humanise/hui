@@ -718,6 +718,13 @@ form.in2igui_formula .in2igui_formula_text
 	background: transparent;
 }
 
+form.in2igui_formula textarea.in2igui_formula_text
+{
+	text-indent: 0;
+	line-height: 16px;
+	padding: 0px;
+}
+
 form.in2igui_formula fieldset
 {
 	border: 1px solid #ccc;

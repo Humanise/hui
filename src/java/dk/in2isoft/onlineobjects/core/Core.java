@@ -141,8 +141,8 @@ public class Core {
 	}
 
 	private void ensureApplications() throws ModelException {
-		Query<Application> query = Query.ofType(Application.class);
-		List<Application> apps = getModel().search(query);
+		Query<Application> query = Query.of(Application.class);
+		List<Application> apps = getModel().list(query);
 		applicationManager.registerApplications(apps);
 		boolean found = false;
 		for (Application application : apps) {
@@ -165,6 +165,10 @@ public class Core {
 	private class SuperUser implements Priviledged {
 		public long getIdentity() {
 			return -1;
+		}
+
+		public boolean isSuper() {
+			return true;
 		}
 	}
 

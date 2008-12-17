@@ -55,6 +55,7 @@ doctype-system="http://www.w3.org/TR/html4/loose.dtd"/>
 		<xsl:variable name="tiledWidth" select="//ig:ImageGallery/ig:settings/@tiledWidth"/>
 		<div class="grid grid_3" style="width: {($tiledWidth+80)*3}px; margin-left: -{($tiledWidth+80)*1.5}px;">
 			<xsl:apply-templates/>
+			<xsl:comment/>
 		</div>
 	</xsl:template>
 

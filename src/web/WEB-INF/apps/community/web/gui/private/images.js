@@ -9,7 +9,7 @@ var imagesController = {
 	itemOpened$imageGallery : function(object) {
 		this.imageId = object.id;
 		AppCommunity.getImage(object.id,function(image) {
-			N2i.log(image);
+			n2i.log(image);
 			imageFormula.setValues(image);
 			imageWindow.show();
 		})
@@ -45,7 +45,7 @@ var imagesController = {
 		newImageWindow.show();
 	},
 	
-	uploadDidComplete : function() {
+	uploadDidCompleteQueue : function() {
 		this.refreshImageGallery();
 	},
 	

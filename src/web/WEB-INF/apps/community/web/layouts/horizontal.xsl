@@ -21,15 +21,15 @@
 				<div class="body">
 					<div class="gut"><div class="gut"><div class="gut">
 					<div class="inner_body toolbar_padder">
-						<a href="{$local-context}/" class="back">Tilbage</a>
+						<a href="http://{$base-domain-context}/" class="back">Tilbage</a>
 						<div class="header">
 							<xsl:for-each select="p:context/p:nodes/e:Entity[@type='Item/Entity/WebNode']">
 								<xsl:if test="position()>1"> · </xsl:if>
 								<a href="?id={@id}" id="item-{@id}">
 									<xsl:attribute name="class">
-										webnode
+										<xsl:text>webnode</xsl:text>
 										<xsl:if test="@id=//p:context/e:Entity[@type='Item/Entity/WebNode']/@id">
-											selected
+											<xsl:text> selected</xsl:text>
 										</xsl:if>
 									</xsl:attribute>
 									<xsl:value-of select="e:name"/>

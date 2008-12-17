@@ -15,7 +15,7 @@ public class WebSite extends Entity {
 	}
 
 	public String getIcon() {
-		return "Basic/Internet";
+		return "common/internet";
 	}
 
 	@Override

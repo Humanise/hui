@@ -4363,7 +4363,8 @@ n2i.setOpacity = function(element,opacity) {
 
 n2i.copyStyle = function(source,target,styles) {
 	styles.each(function(s) {
-		target.style[s] = source.getStyle(s);
+		var r = source.getStyle(s);
+		if (r) target.style[s] = source.getStyle(s);
 	});
 }
 
@@ -4517,6 +4518,8 @@ n2i.cookie = {
 	}
 }
 
+/********************** URL/Location *********************/
+
 n2i.URL = function(url) {
 	this.url = url || '';
 }
@@ -4531,10 +4534,62 @@ n2i.URL.prototype = {
 	}
 }
 
+n2i.location = {
+	getParameter : function(name) {
+		var parms = n2i.location.getParameters();
+		for (var i=0; i < parms.length; i++) {
+			if (parms[i].name==name) {
+				return parms[i].value;
+			}
+		};
+		return null;
+	},
+	setParameter : function(name,value) {
+		var parms = n2i.location.getParameters();
+		var found = false;
+		for (var i=0; i < parms.length; i++) {
+			if (parms[i].name==name) {
+				parms[i].value=value;
+				found=true;
+				break;
+			}
+		};
+		if (!found) {
+			parms.push({name:name,value:value});
+		}
+		n2i.location.setParameters(parms);
+	},
+	setParameters : function(parms) {
+		var query = '';
+		for (var i=0; i < parms.length; i++) {
+			query+= i==0 ? '?' : '&';
+			query+=parms[i].name+'='+parms[i].value;
+		};
+		document.location.search=query;
+	},
+	getBoolean : function(name) {
+		var value = n2i.location.getParameter(name);
+		return (value=='true' || value=='1');
+	},
+	getParameters : function() {
+		var items = document.location.search.substring(1).split('&');
+		var parsed = [];
+		for( var i = 0; i < items.length; i++) {
+			var item = items[i].split('=');
+			var name = unescape(item[0]).replace(/^\s*|\s*$/g,"");
+			var value = unescape(item[1]).replace(/^\s*|\s*$/g,"");
+			if (name) {
+				parsed.push({name:name,value:value});
+			}
+		};
+		return parsed;
+	}	
+};
+
 /****************************** Animation *********************/
 
 
-n2i.ani = function(element,style,value,duration,delegate) {
+n2i.ani = n2i.animate = function(element,style,value,duration,delegate) {
 	n2i.animation.get(element).animate(null,value,style,duration,delegate);
 }
 

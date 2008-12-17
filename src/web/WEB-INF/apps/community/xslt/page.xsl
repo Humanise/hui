@@ -20,14 +20,13 @@
 		<xsl:choose>
 			<xsl:when test="$development-mode='true'">
 				<link rel="stylesheet" href="{$base-context}/In2iGui/css/dev.css" type="text/css" media="screen" title="front" charset="utf-8"/>
+				<script src="{$base-context}/In2iGui/lib/swfobject.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 				<script src="{$base-context}/In2iGui/lib/swfupload/swfupload.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 				<script src="{$base-context}/In2iGui/lib/prototype.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-				<script src="{$base-context}/In2iGui/lib/In2iScripts/In2iScripts.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-				<script src="{$base-context}/In2iGui/lib/In2iScripts/In2iAnimation.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-				<script src="{$base-context}/In2iGui/lib/In2iScripts/In2iAnimation.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+				<script src="{$base-context}/In2iGui/lib/wysihat.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+				<script src="{$base-context}/In2iGui/lib/n2i.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 				<script src="{$base-context}/In2iGui/js/In2iGui.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 				<script src="{$base-context}/In2iGui/js/Toolbar.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-				<script src="{$base-context}/In2iGui/js/Panel.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 				<script src="{$base-context}/In2iGui/js/Window.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 				<script src="{$base-context}/In2iGui/js/BoundPanel.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 				<script src="{$base-context}/In2iGui/js/Formula.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
@@ -69,7 +68,6 @@
 		<xsl:if test="$privilege-document-modify='true'">
 			<link rel="stylesheet" href="{$local-context}/editor/css/editor.css" type="text/css" media="screen" title="front" charset="utf-8"/>
 			<script src="{$local-context}/editor/js/Editor.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-			<!--<script src="{$local-context}/js/Window.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>-->
 			<script src="{$base-context}/dwr/engine.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 			<script src="{$base-context}/dwr/interface/CoreSecurity.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 			<script src="{$base-context}/dwr/interface/AppCommunity.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>

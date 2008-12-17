@@ -39,7 +39,7 @@ OO.ImageGallery.prototype = {
 	addBehaviour : function() {
 		var self = this;
 		for (var i=0; i < this.images.length; i++) {
-			var tag = $id('image-'+this.images[i].id);
+			var tag = $('image-'+this.images[i].id);
 			tag.imageGalleryIndex = i;
 			tag.onclick = function() {
 				if (!self.isActiveEditor()) {

@@ -150,7 +150,7 @@ public class SynchronizerStage extends PipelineStageAdapter {
 				// If no cached student is found
 				Query<Person> query = new Query<Person>(Person.class).withCustomProperty("sync.remote.id", easyEvent
 						.getRemoteStudentId());
-				List<Person> students = model.search(query);
+				List<Person> students = model.list(query);
 				if (students.size() > 0) {
 					student = students.get(0);
 				}
@@ -212,7 +212,7 @@ public class SynchronizerStage extends PipelineStageAdapter {
 					} else {
 						Query<Person> query = new Query<Person>(Person.class).withCustomProperty("sync.remote.id", easyEvent
 								.getTeacherInitials());
-						List<Person> teachers = model.search(query);
+						List<Person> teachers = model.list(query);
 						if (teachers.size() > 0) {
 							teacher = teachers.get(0);
 						} else {
@@ -297,7 +297,7 @@ public class SynchronizerStage extends PipelineStageAdapter {
 		} else {
 			ModelFacade model = Core.getInstance().getModel();
 			Query<Event> eventQuery = new Query<Event>(Event.class).withCustomProperty("sync.remote.id", remoteEventId);
-			List<Event> events = model.search(eventQuery);
+			List<Event> events = model.list(eventQuery);
 			Event event = null;
 			if (events.size() > 0) {
 				event = events.get(0);
@@ -354,12 +354,12 @@ public class SynchronizerStage extends PipelineStageAdapter {
 		context.info(this, "Searching for events to delete");
 		ModelFacade model = Core.getInstance().getModel();
 		model.commit();
-		Query<Event> query = Query.ofType(Event.class).withPriviledged(publicUser).withFieldValueLessThan("updated", startTime).withFieldValueMoreThan(
+		Query<Event> query = Query.of(Event.class).withPriviledged(publicUser).withFieldValueLessThan("updated", startTime).withFieldValueMoreThan(
 				"starttime", startTime);
 		if (maxDelete>0) {
 			query.withPaging(0, maxDelete);
 		}
-		List<Event> ids = model.search(query);
+		List<Event> ids = model.list(query);
 		int size = ids.size();
 		context.info(this, "Starting deleting events: " + size);
 		int num = 0;

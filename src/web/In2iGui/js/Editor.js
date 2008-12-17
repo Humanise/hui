@@ -439,7 +439,6 @@ In2iGui.Editor.Html.prototype = {
 	},
 	save : function() {
 		this.deactivate();
-		if (n2i.browser.msie) return;
 		var value = this.editor.value;
 		if (value!=this.value) {
 			this.value = value;

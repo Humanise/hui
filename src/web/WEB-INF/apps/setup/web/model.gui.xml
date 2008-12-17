@@ -6,23 +6,31 @@
 	</dwr>
 	<controller name="mainController" source="main.js"/>
 	<controller name="controller" source="model.js"/>
+	<source name="listSource" dwr="AppSetup.listEntities2">
+		<parameter key="state" value="@list.state"/>
+		<parameter key="type" value="@selection.value"/>
+		<parameter key="search" value="@search.value"/>
+	</source>
+	<source name="classSource" dwr="Common.getClasses"/>
 	<view>
 		<content pad="10">
 			<view style="box">
 				<toolbar>
-					<search/>
+					<search name="search"/>
 				</toolbar>
 				<content background="true">
 					<split>
 						<sidebar>
-							<selection value="all" name="selection">
-								<item icon="common/object" title="Alle klasser" value="all"/>
-								<items name="classes"/>
+							<overflow resize="-108">
+							<selection value="dk.in2isoft.onlineobjects.model.Entity" name="selection">
+								<item icon="common/object" title="Alle klasser" value="dk.in2isoft.onlineobjects.model.Entity"/>
+								<items name="classes" source="classSource"/>
 							</selection>
+							</overflow>
 						</sidebar>
 						<content>
 							<overflow resize="-108">
-								<list name="list">
+								<list name="list" source="listSource">
 									<column title="Navn" key="name"/>
 									<column title="Type" key="type"/>
 									<column title="Oprettet" key="created"/>
@@ -36,4 +44,23 @@
 			</view>
 		</content>
 	</view>
+	<window name="entityEditor" width="300">
+		<formula name="entityFormula">
+			<group>
+				<text label="Name:" key="name"/>
+			</group>
+		</formula>
+	</window>
+	<window name="userEditor" title="User" padding="5" width="300">
+		<formula name="userFormula">
+			<group>
+				<text label="Username:" key="username"/>
+				<password label="Password:" key="password"/>
+			</group>
+			<buttons>
+				<button title="Delete" name="deleteUser"/>
+				<button title="Update" name="saveUser" highlighted="true"/>
+			</buttons>
+		</formula>
+	</window>
 </gui>

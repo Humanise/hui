@@ -11,9 +11,12 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
 import dk.in2isoft.commons.lang.LangUtil;
 import dk.in2isoft.in2igui.data.FormulaData;
-import dk.in2isoft.in2igui.data.ListData;
+import dk.in2isoft.in2igui.data.ListObjects;
 import dk.in2isoft.in2igui.data.ListDataRow;
 import dk.in2isoft.in2igui.data.TextFieldData;
 import dk.in2isoft.in2igui.data.WidgetData;
@@ -88,7 +91,7 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 	}
 
 	public List<Entity> search(String query) {
-		return getModel().search(new Query<Entity>(Entity.class).withWords(query));
+		return getModel().list(new Query<Entity>(Entity.class).withWords(query));
 	}
 
 	public void changePageTemplate(long pageId, String template) throws EndUserException {
@@ -176,13 +179,21 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 		dao.sendInvitation(invitation);
 		return invitation;
 	}
-
-	public List<Image> getLatestImages(String query) throws Exception {
-		return getModel().search(new Query<Image>(Image.class).withWords(query).withPaging(0, 10));
+	
+	public Map<String,Object> getLatest(String query) throws EndUserException {
+		HashMap<String,Object> map = Maps.newHashMap();
+		map.put("images", getLatestImages(query));
+		map.put("users", searchUsers2(query));
+		map.put("tags", getTagCloud(query));
+		return map;
 	}
 
-	public List<User> searchUsers(String query) throws Exception {
-		List<User> users = getModel().search(new Query<User>(User.class).withWords(query).withPaging(0, 10));
+	public List<Image> getLatestImages(String query) {
+		return getModel().list(new Query<Image>(Image.class).withWords(query).orderByCreated().descending().withPaging(0, 10));
+	}
+
+	public List<User> searchUsers(String query) {
+		List<User> users = getModel().list(new Query<User>(User.class).withWords(query).withPaging(0, 10));
 		for (Iterator<User> i = users.iterator(); i.hasNext();) {
 			User user = i.next();
 			if (user.getUsername().equals("public") || user.getUsername().equals("admin")) {
@@ -190,6 +201,22 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 			}
 		}
 		return users;
+	}
+
+	public Collection<Map<String,Entity>> searchUsers2(String query) throws ModelException {
+		List<Map<String,Entity>> result = Lists.newArrayList(); 
+		List<User> users = getModel().list(Query.of(User.class).withWords(query).withPaging(0, 10));
+		for (Iterator<User> i = users.iterator(); i.hasNext();) {
+			User user = i.next();
+			if (!user.getUsername().equals("public") && !user.getUsername().equals("admin")) {
+				Map<String,Entity> map = Maps.newHashMap();
+				Person person = getModel().getChild(user, null, Person.class);
+				map.put("user", user);
+				map.put("person", person);
+				result.add(map);
+			}
+		}
+		return result;
 	}
 
 	public List<Property> getLatestTags() throws EndUserException {
@@ -214,10 +241,10 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 		dao.updateDummyEmailAddresses(person, adresses, getUserSession());
 	}
 
-	public ListData listPersons() throws EndUserException {
-		ListData list = new ListData();
+	public ListObjects listPersons() throws EndUserException {
+		ListObjects list = new ListObjects();
 		Query<Person> query = new Query<Person>(Person.class).withPriviledged(getUserSession());
-		List<Person> persons = getModel().search(query);
+		List<Person> persons = getModel().list(query);
 		for (Person person : persons) {
 			ListDataRow row = new ListDataRow();
 			row.addColumn("id", person.getId());
@@ -232,10 +259,10 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 		return list;
 	}
 
-	public ListData listImages() throws EndUserException {
-		ListData list = new ListData();
+	public ListObjects listImages() throws EndUserException {
+		ListObjects list = new ListObjects();
 		Query<Image> query = new Query<Image>(Image.class).withPriviledged(getUserSession());
-		List<Image> persons = getModel().search(query);
+		List<Image> persons = getModel().list(query);
 		
 		for (Image image : persons) {
 			ListDataRow row = new ListDataRow();

@@ -42,7 +42,7 @@ public class Base extends SimpleWindow {
 
 	private void listUsers(StringBuilder gui) throws ModelException {
 		ModelFacade model = Core.getInstance().getModel();
-		List<Person> result = model.search(Query.ofType(Person.class));
+		List<Person> result = model.list(Query.of(Person.class));
 		for (Entity e : result) {
 			List<Relation> relations = Core.getInstance().getModel().getChildRelations(e);
 			gui.append("<row link='editPerson?id=" + e.getId() + "'>" + "<cell>" + "<icon icon='" + e.getIcon() + "'/>"

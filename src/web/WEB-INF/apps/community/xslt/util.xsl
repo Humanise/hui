@@ -23,13 +23,10 @@
 		<xsl:choose>
 			<xsl:when test="$development-mode='true'">
 				<script src="{$base-context}/In2iGui/lib/prototype.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-				<script src="{$base-context}/In2iGui/lib/In2iScripts/In2iScripts.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-				<script src="{$base-context}/In2iGui/lib/In2iScripts/In2iInput.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-				<script src="{$base-context}/In2iGui/lib/In2iScripts/In2iAnimation.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+				<script src="{$base-context}/In2iGui/lib/n2i.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 				<script src="{$base-context}/In2iGui/lib/swfupload/swfupload.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 				<script src="{$base-context}/In2iGui/js/In2iGui.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 				<script src="{$base-context}/In2iGui/js/Toolbar.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-				<script src="{$base-context}/In2iGui/js/Panel.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 				<script src="{$base-context}/In2iGui/js/BoundPanel.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 				<script src="{$base-context}/In2iGui/js/Formula.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 				<script src="{$base-context}/In2iGui/js/Alert.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
@@ -41,6 +38,7 @@
 				<script src="{$base-context}/In2iGui/js/Menu.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 				<script src="{$base-context}/In2iGui/js/ColorPicker.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 				<script src="{$base-context}/In2iGui/js/Overlay.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+				<script src="{$base-context}/In2iGui/js/Box.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 			</xsl:when>
 			<xsl:otherwise>
 				<script src="{$base-context}/In2iGui/js/minimized.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
@@ -56,6 +54,27 @@
 			pageTracker._trackPageview();
 			</script>
 		</xsl:if>
+	</xsl:template>
+	
+	<xsl:template name="chrome-top">
+		<div class="chrome_top">
+			<div class="chrome_top">
+				<div class="chrome_top">
+					<ul class="navigation">
+						<li><a href="{$base-context}/" class="home"><span>Forside</span></a></li>
+						<!--
+						<li><a href="{$local-context}/images/"><span>Billeder</span></a></li>
+						<li><a href="{$local-context}/index/"><span>Indeks</span></a></li>
+						-->
+					</ul>
+					<xsl:if test="$user-name!='public'">
+					<div class="login_info">
+						Bruger: <xsl:value-of select="$user-name"/><xsl:text> </xsl:text><a href="#" class="link" id="logOut"><span>Log ud</span></a>
+					</div>
+					</xsl:if>
+				</div>
+			</div>
+		</div>
 	</xsl:template>
 	
 </xsl:stylesheet>

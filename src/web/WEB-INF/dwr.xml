@@ -33,7 +33,9 @@
     <convert converter="bean" match="dk.in2isoft.onlineobjects.apps.desktop.EntityWindow"/>
     <convert converter="bean" match="dk.in2isoft.onlineobjects.apps.desktop.WindowProperty"/>
     <convert converter="bean" match="dk.in2isoft.onlineobjects.ui.AsynchronousProcessDescriptor"/>
-    <convert converter="bean" match="dk.in2isoft.onlineobjects.model.*"/>
+    <convert converter="bean" match="dk.in2isoft.onlineobjects.model.*">
+    	<param name="exclude" value="getImageFile"/>
+    </convert>
     <convert converter="bean" match="dk.in2isoft.in2igui.data.*"/>
     <convert match="java.lang.Exception" converter="exception">
     	<param name='exclude' value='stackTrace'/>

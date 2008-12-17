@@ -29,7 +29,7 @@ public class Selection extends Interface {
 	}
 
 	private void buildHierarchy(StringBuilder gui) {
-		List<Topic> topics = Core.getInstance().getModel().search(Query.ofType(Topic.class));
+		List<Topic> topics = Core.getInstance().getModel().list(Query.of(Topic.class));
 		for (Entity entity : topics) {
 			gui.append("<element title='");
 			gui.append(escape(entity.getName()));

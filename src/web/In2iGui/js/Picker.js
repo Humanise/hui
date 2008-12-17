@@ -86,7 +86,7 @@ In2iGui.Picker.prototype = {
 	
 	// Dragging
 	startDrag : function(e) {
-		Event.stop(e);
+		e.stop();
 		var self = this;
 		this.dragX = Event.pointerX(e);
 		this.dragScroll = this.container.scrollLeft;

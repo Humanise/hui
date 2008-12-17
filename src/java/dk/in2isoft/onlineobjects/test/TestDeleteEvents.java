@@ -13,7 +13,7 @@ public class TestDeleteEvents extends AbstractTestCase {
 	
 	public void test1() throws SQLException, ModelException, SecurityException {
 		User publicUser = getPublicUser();
-		Query<Event> query = Query.ofType(Event.class).withPaging(0, 100).withPriviledged(publicUser);
+		Query<Event> query = Query.of(Event.class).withPaging(0, 100).withPriviledged(publicUser);
 		List<Long> ids = getModel().listIds(query);
 		info("Size: "+ids.size());
 		int num = 0;

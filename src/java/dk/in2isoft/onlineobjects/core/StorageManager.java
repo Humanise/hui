@@ -26,7 +26,11 @@ public class StorageManager {
 	}
 	
 	public File getItemFolder(Item item) {
-		File folder = new File(items,String.valueOf(item.getId()));
+		return getItemFolder(item.getId());
+	}
+	
+	public File getItemFolder(long id) {
+		File folder = new File(items,String.valueOf(id));
 		if (!folder.exists()) {
 			if (!folder.mkdirs()) {
 				throw new IllegalStateException("Could not create items diractory in storage!");

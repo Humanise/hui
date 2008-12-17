@@ -42,7 +42,7 @@ In2iGui.Window.prototype = {
 	show : function() {
 		if (this.visible) return;
 		this.element.setStyle({
-			zIndex : In2iGui.nextPanelIndex(), visibility : 'hidden', display : 'block', top: (n2i.getScrollTop+40)+'px'
+			zIndex : In2iGui.nextPanelIndex(), visibility : 'hidden', display : 'block', top: (n2i.getScrollTop()+40)+'px'
 		})
 		var width = this.element.clientWidth;
 		this.element.setStyle({
@@ -84,7 +84,7 @@ In2iGui.Window.prototype = {
 ////////////////////////////// Dragging ////////////////////////////////
 
 	startDrag : function(e) {
-		var event = Event.extend(e);
+		var event = Event.extend(e || window.event);
 		this.element.style.zIndex=In2iGui.nextPanelIndex();
 		var pos = this.element.cumulativeOffset();
 		this.dragState = {left:event.pointerX()-pos.left,top:event.pointerY()-pos.top};
@@ -95,7 +95,7 @@ In2iGui.Window.prototype = {
 		this.upListener = function(e) {self.endDrag(e)};
 		Event.observe(document,'mousemove',this.moveListener);
 		Event.observe(document,'mouseup',this.upListener);
-		e.stop();
+		event.stop();
 		document.body.onselectstart = function () { return false; };
 		return false;
 	},

@@ -40,7 +40,8 @@ public class FilePusher {
         }
         else {
             response.setDateHeader("Last-Modified", file.lastModified());
-            response.setDateHeader("Expires", System.currentTimeMillis()+1000*60*30);
+            response.setDateHeader("Expires", System.currentTimeMillis()+1000*60*300);
+            response.setHeader("Cache-Control","max-age=2592000");
             response.setDateHeader("Date", System.currentTimeMillis());
         }
         if (contentType!=null && contentType.length()>0) {

@@ -1,0 +1,391 @@
+body,html
+{
+	height: 100%;
+}
+
+body
+{
+	margin: 0px;
+	padding: 0px;
+	font-family: Arial,Helvetica,sans-serif;
+	background: #f5f5f5;
+}
+
+/************************* Common **********************/
+
+.clear
+{
+	clear: both;
+}
+
+form
+{
+	margin: 0px;
+}
+
+img
+{
+	border: 0px;
+}
+
+a.link
+{
+	color: #ccc;
+}
+
+a.link span
+{
+	color: #3366FF;
+}
+
+a.link:hover, a.link:hover span
+{
+	color: #0033aa;
+}
+
+/************************** Layout ********************/
+
+div.root
+{
+	width: 800px;
+	margin: 0 auto;
+	min-height: 100%;
+	position: relative;
+}
+
+/**************************** Chrome ************************/
+
+div.chrome
+{
+	padding: 20px 0px 40px;
+}
+
+div.chrome_top
+{
+	height: 44px;
+	background: url('../gfx/chrome.png') repeat-x;
+}
+
+div.chrome_top div.chrome_top
+{
+	background: url('../gfx/chrome.png') left -44px no-repeat;
+}
+
+div.chrome_top div.chrome_top div.chrome_top
+{
+	height: 44px;
+	background: url('../gfx/chrome.png') right -88px no-repeat;
+}
+
+div.chrome_bottom
+{
+	height: 10px;
+	background: url('../gfx/chrome.png') left -132px repeat-x;
+}
+
+div.chrome_bottom div
+{
+	height: 10px;
+	background: url('../gfx/chrome.png') left -142px no-repeat;
+}
+
+div.chrome_bottom div div
+{
+	background: url('../gfx/chrome.png') right -152px no-repeat;
+}
+
+div.chrome_middle
+{
+	background: #fff url('../gfx/chrome_middle.png') 571px top repeat-y;
+}
+
+div.chrome_middle div.chrome_middle
+{
+	padding: 0px 6px;
+	background: url('../gfx/chrome_middle.png') -229px top repeat-y;
+}
+
+/**************************** Content ************************/
+
+div.content
+{
+	overflow: hidden;
+}
+
+div.content_left
+{
+	float: left;
+	width: 565px;
+}
+
+div.content_right
+{
+	float: left;
+	width: 193px;
+	padding: 10px 15px;
+}
+
+/****************************** Sidebar **************************/
+
+div.content_right h2
+{
+	font-weight: normal;
+	margin: 0px;
+	font-size: 14pt;
+	color: #025ab0;
+}
+
+div.content_right label
+{
+	position: absolute;
+	color:#666666;
+	font-size:9pt;
+	margin-top: 4px;
+	margin-left: 5px;
+}
+
+div.content_right span.hint
+{
+	display: block;
+	font-size: 8pt;
+	color: #aaa;
+	padding-left: 2px;
+}
+
+div.content_right span.error
+{
+	color: red;
+	font-size: 8pt;
+	display: block;
+	padding-left: 2px;
+}
+
+div.content_right p
+{
+	margin: 5px 0px 0px;
+}
+
+div.content_right p.response
+{
+	color:red;
+	font-size: 9pt;
+}
+
+div.content_right p.buttons
+{
+	text-align: right;
+}
+
+div.content_right form
+{
+	margin-bottom: 50px;
+}
+
+div.content_right form input.submit
+{
+	position: absolute;
+	left: -100px;
+	top: -100px;
+}
+
+/************************** Sidebar button *********************/
+
+a.sidebar_button
+{
+	display: inline-block;
+	height: 22px;
+	line-height: 22px;
+	background: url('../gfx/sidebar_button.png') repeat-x;
+	font-size: 9pt;
+	text-decoration: none;
+	color: #000;
+	letter-spacing: .5px;
+	cursor: pointer;
+}
+
+a.sidebar_button span
+{
+	display: inline-block;
+	height: 22px;
+	background: url('../gfx/sidebar_button.png') left -22px no-repeat;
+}
+
+a.sidebar_button span span
+{
+	background: url('../gfx/sidebar_button.png') right -44px no-repeat;
+	padding: 0px 15px;
+}
+
+a.sidebar_button:hover, a.sidebar_button:focus
+{
+	background-position: left -66px;
+}
+
+a.sidebar_button:hover span, a.sidebar_button:focus span
+{
+	background-position: left -88px;
+}
+
+a.sidebar_button:hover span span, a.sidebar_button:focus span span
+{
+	background-position: right -110px;
+}
+
+a.sidebar_button:active
+{
+	background-position: left -132px;
+}
+
+a.sidebar_button:active span
+{
+	background-position: left -154px;
+}
+
+a.sidebar_button:active span span
+{
+	background-position: right -176px;
+}
+
+/****************************** Field **************************/
+
+span.field
+{
+	display: block;
+	height: 22px;
+	background: url('../gfx/field.png') left top no-repeat;
+	font-size: 0px;
+}
+
+span.field span
+{
+	display: block;
+	height: 22px;
+	background: url('../gfx/field.png') right -22px no-repeat;
+}
+
+span.field span span
+{
+	margin: 0px 3px;
+	background: url('../gfx/field.png') left -44px repeat-x;
+}
+
+span.field input
+{
+	background: none;
+	border: 0px;
+	margin: 0px;
+	width: 100%;
+	padding: 0px;
+	display: inline-block;
+	font-size: 10pt;
+	padding-top: 2px;
+	line-height: 20px;
+}
+
+div.content_right input.in2igui_placeholder
+{
+	color: #666;
+	font-size: 9pt;
+	padding-top: 3px;
+}
+
+/*************************** Navigation ********************************/
+
+ul.navigation
+{
+	float: left;
+	list-style: none;
+	margin: 6px 0px 0px 6px;
+	padding: 0px;
+}
+
+ul.navigation li
+{
+	float: left;
+}
+
+ul.navigation a
+{
+	display: block;
+	height: 38px;
+	text-decoration: none;
+	color: #ddd;
+	line-height: 37px;
+	padding: 0px 10px;
+}
+
+ul.navigation a span
+{
+	text-decoration: none;
+	color: #333;
+}
+
+ul.navigation a:hover
+{
+	text-decoration: underline;
+}
+
+ul.navigation a.home
+{
+	background: url('../gfx/logo.png') no-repeat center center;
+	width: 115px;
+}
+
+ul.navigation a.home:hover
+{
+	text-decoration: none;
+}
+
+ul.navigation a.home span
+{
+	visibility: hidden;
+}
+
+/***************************** Search *******************************/
+
+#search
+{
+	float: right;
+	display: none;
+}
+
+#search input
+{
+	margin: 14px 12px 0px 0px;
+	border: 1px solid #ddd;
+	font-size: 12px;
+	height: 16px;
+}
+
+/****************************** User ********************************/
+
+div.login_info
+{
+	float: right;
+	font-size: 9pt;
+	margin: 13px 20px 0px 0px;
+	height: 22px;
+	line-height: 22px;
+	padding-left: 26px;
+	background: url('../gfx/user_mini.png') left center no-repeat;
+}
+
+/****************************** Footer ********************************/
+
+.footer
+{
+	text-align: center;
+	font-size: 10pt;
+	color: #999;
+	padding-top: 10px;
+	height: 30px;
+	margin-top: 30px;
+	position: relative;
+	width: 800px;
+	margin: -41px auto 0;
+}
+
+.footer a span
+{
+	color: #666;
+}

@@ -75,6 +75,6 @@ OO.Editor.CompoundDocument.prototype = {
 	}
 }
 
-N2i.addLoadListener(function() {
+In2iGui.onDomReady(function() {
 	new OO.Editor(OO.Editor.CompoundDocument.getInstance());
 });

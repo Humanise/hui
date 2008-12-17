@@ -28,6 +28,7 @@ public class CommonRemotingFacade extends AbstractRemotingFacade {
 			ItemData data = new ItemData();
 			data.setValue(clazz.getCanonicalName());
 			data.setTitle(clazz.getSimpleName());
+			data.setIcon("common/folder");
 			items.add(data);
 		}
 		return items;

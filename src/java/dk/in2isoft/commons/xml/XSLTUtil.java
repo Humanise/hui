@@ -127,6 +127,8 @@ public class XSLTUtil {
 		HttpServletResponse response = request.getResponse();
 		Map<String, String> parameters = new HashMap<String, String>();
 		parameters.put("local-context", request.getLocalContextPath());
+		parameters.put("base-domain-context", request.getBaseDomainContext());
+		parameters.put("domain-is-ip", String.valueOf(request.isIP()));
 		parameters.put("base-context", request.getBaseContextPath());
 		parameters.put("user-name", request.getSession().getUser().getUsername());
 		parameters.put("development-mode", String.valueOf(Core.getInstance().getConfiguration().getDevelopmentMode()));

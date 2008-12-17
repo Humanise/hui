@@ -37,7 +37,7 @@ public class InvitationPage extends XSLTInterfaceAdapter {
 		ModelFacade model = Core.getInstance().getModel();
 		String code = request.getString("code");
 		Query<Invitation> query = new Query<Invitation>(Invitation.class).withFieldValue("code", code);
-		List<Invitation> items = model.search(query);
+		List<Invitation> items = model.list(query);
 		if (items.size() > 0) {
 			invitation = items.get(0);
 			// Get inviter

@@ -11,7 +11,7 @@ body
 	font-family:Georgia,Times,serif;
 	text-align: center;
 	padding: 0px 10px;
-	font-size: 14pt;
+	font-size: 12pt;
 	line-height: 40px;
 	color: #333;
 	height: 43px;
@@ -50,9 +50,15 @@ body
 	margin-left: 17px;
 }
 
+div.part_header, div.part_html
+{
+	width: 60%;
+	margin: 0 auto;
+	font-family: Georgia,Times,serif;
+}
+
 div.part_header h1
 {
-	font-family: Georgia,Times,serif;
 	font-size: 18pt;
 	margin: 0px;
 	color: #333;
@@ -61,7 +67,6 @@ div.part_header h1
 
 div.part_html
 {
-	font-family: Georgia,Times,serif;
 	font-size: 11pt;
 }
 

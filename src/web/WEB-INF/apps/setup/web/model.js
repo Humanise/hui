@@ -1,19 +1,39 @@
 var controller = {
+	userId:0,
+	
 	interfaceIsReady : function() {
-		this.refreshList();
-		Common.getClasses(function(data) {
-			classes.itemsLoaded(data);
-		})
 	},
-	click$refresh : function() {
-		this.refreshList();
+	listRowWasOpened : function(row) {
+		if (row.kind=='user') {
+			this.loadUser(row);
+		} else {
+			entityFormula.setValues(row);
+			entityEditor.show();
+		}
 	},
-	refreshList : function() {
-		AppSetup.listEntities(selection.getValue(),function(data) {
-			list.setObjects(data);
+	loadUser : function(row) {
+		this.userId = row.id;
+		Common.getEntity(row.id,function(user) {
+			userFormula.setValues(user);
+			userEditor.show();
 		});
 	},
-	selectionChanged : function() {
-		this.refreshList();
+	onClick$saveUser : function() {
+		var values = userFormula.getValues();
+		AppSetup.updateUser(this.userId,values.username,values.password,function() {
+			userFormula.reset();
+			userEditor.hide();
+			listSource.refresh();
+		});
+	},
+	onClick$deleteUser : function() {
+		AppSetup.deleteUser(this.userId,function() {
+			userFormula.reset();
+			userEditor.hide();
+			listSource.refresh();
+		});
+	},
+	onSelectionChange$selection : function() {
+		list.resetState();
 	}
 }

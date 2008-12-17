@@ -59,13 +59,13 @@ public class WebModelUtil {
 		
 		// Create a web page
 		WebPage page = new WebPage();
-		page.setName("My new page");
-		page.setTitle("My new page");
+		page.setName("Min side");
+		page.setTitle("Min side");
 		model.createItem(page,priviledged);
 		
 		// Create a web node
 		WebNode node = new WebNode();
-		node.setName("My new page");
+		node.setName("Min side");
 		model.createItem(node,priviledged);
 		
 		// Update positions of nodes

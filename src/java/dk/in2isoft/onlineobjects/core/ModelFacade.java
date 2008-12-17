@@ -18,6 +18,7 @@ import nu.xom.ParsingException;
 import nu.xom.ValidityException;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.ScrollableResults;
@@ -168,10 +169,6 @@ public class ModelFacade {
 	}
 
 	public void deleteEntity(Entity entity, Priviledged priviledged) throws ModelException, SecurityException {
-		/*
-		 * List<Relation> relations = getRelations(entity); for (Relation
-		 * relation : relations) { deleteItem(relation, priviledged); }
-		 */
 		removeAllRelations(entity);
 		deleteItem(entity, priviledged);
 	}
@@ -195,10 +192,8 @@ public class ModelFacade {
 	}
 
 	private void deleteItem(Item item, Priviledged priviledged) throws SecurityException, ModelException {
-		Privilege privilege = getPriviledge(item, priviledged);
-		if (privilege == null || !privilege.isDelete()) {
-			throw new SecurityException("Privilieged=" + priviledged.getIdentity() + " cannot delete Item="
-					+ item.getId());
+		if (!canDelete(item, priviledged)) {
+			throw new SecurityException("Privilieged=" + priviledged + " cannot delete Item=" + item);
 		}
 		removeAllPrivileges(item);
 		try {
@@ -212,17 +207,47 @@ public class ModelFacade {
 
 	public void updateItem(Item item, Priviledged priviledged) throws SecurityException,
 			ModelException {
-		Session session = getSession();
-		if (item.getId() != priviledged.getIdentity()) {
-			Privilege privilege = getPriviledge(item, priviledged, session);
-			if (privilege == null || !privilege.isAlter()) {
-				throw new SecurityException("Privilieged=" + priviledged.getIdentity() + " cannot alter Item="
-						+ item.getId());
-			}
+		if (!canUpdate(item, priviledged)) {
+			throw new SecurityException("Privilieged=" + priviledged + " cannot update Item=" + item);
 		}
+		Session session = getSession();
 		item.setUpdated(new Date());
 		session.update(item);
 		EventManager.getInstance().fireItemWasUpdated(item);
+	}
+	
+	private boolean canUpdate(Item item, Priviledged priviledged) {
+		if (priviledged.isSuper()) {
+			return true;
+		}
+		if (item.getId() == priviledged.getIdentity()) {
+			return true;
+		}
+		Privilege privilege = getPriviledge(item, priviledged, getSession());
+		if (privilege != null && privilege.isAlter()) {
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean canDelete(Item item, Priviledged priviledged) {
+		if (item instanceof User) {
+			User user = (User) item;
+			if (SecurityController.ADMIN_USERNAME.equals(user.getUsername())) {
+				return false;
+			}
+		}
+		if (priviledged.isSuper()) {
+			return true;
+		}
+		if (item.getId() == priviledged.getIdentity()) {
+			return false;
+		}
+		Privilege privilege = getPriviledge(item, priviledged, getSession());
+		if (privilege != null && privilege.isDelete()) {
+			return true;
+		}
+		return false;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -281,9 +306,9 @@ public class ModelFacade {
 	}
 
 	public <T> List<T> getParents(Entity entity, Class<T> classObj) throws ModelException {
-		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.ofType(classObj);
+		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.of(classObj);
 		q.withChild(entity);
-		return search(q);
+		return list(q);
 	}
 
 	public <T extends Entity> T getParent(Entity entity, Class<T> classObj) throws ModelException {
@@ -291,9 +316,9 @@ public class ModelFacade {
 	}
 
 	public <T extends Entity> T getParent(Entity entity, String kind, Class<T> classObj) throws ModelException {
-		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.ofType(classObj);
+		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.of(classObj);
 		q.withChild(entity,kind).withPaging(0, 1);
-		List<T> supers = search(q);
+		List<T> supers = list(q);
 		if (!supers.isEmpty()) {
 			return supers.get(0);
 		} else {
@@ -306,9 +331,9 @@ public class ModelFacade {
 	}
 
 	public <T extends Entity> T getChild(Entity entity, String kind, Class<T> classObj) throws ModelException {
-		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.ofType(classObj);
+		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.of(classObj);
 		q.withParent(entity,kind).withPaging(0, 1);
-		List<T> supers = search(q);
+		List<T> supers = list(q);
 		if (!supers.isEmpty()) {
 			return supers.get(0);
 		} else {
@@ -327,7 +352,7 @@ public class ModelFacade {
 
 	public User getUser(String username) {
 		Session session = getSession();
-		Query q = session.createQuery("from User as user where lower(user.username)=lower(?)");
+		Query q = session.createQuery("from User as user left join fetch user.properties where lower(user.username)=lower(?)");
 		q.setString(0, username);
 		User user = (User) q.uniqueResult();
 		if (user != null) {
@@ -379,14 +404,32 @@ public class ModelFacade {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> List<T> search(ItemQuery<T> query) {
+	public <T> List<T> list(ItemQuery<T> query) {
 		Query q = query.createItemQuery(getSession());
+		q.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		List<T> items = q.list();
 		for (int i = 0; i < items.size(); i++) {
 			T item = items.get(i);
 			items.set(i, getSubject(item));
 		}
+		log.debug("items: "+items.size());
 		return items;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> SearchResult<T> search(ItemQuery<T> query) {
+		Query cq = query.createCountQuery(getSession());
+		List list = cq.list();
+		Object next = list.iterator().next();
+		Long count = (Long) next;
+		Query q = query.createItemQuery(getSession());
+		q.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		List<T> items = q.list();
+		for (int i = 0; i < items.size(); i++) {
+			T item = items.get(i);
+			items.set(i, getSubject(item));
+		}
+		return new SearchResult<T>(items,count.intValue());
 	}
 
 	public void grantFullPrivileges(Item item, Priviledged priviledged) {
@@ -408,27 +451,27 @@ public class ModelFacade {
 	}
 
 	public List<Entity> getChildren(Entity item, String relationKind, Priviledged priviledged) throws ModelException {
-		dk.in2isoft.onlineobjects.core.Query<Entity> q = dk.in2isoft.onlineobjects.core.Query.ofType(Entity.class);
+		dk.in2isoft.onlineobjects.core.Query<Entity> q = dk.in2isoft.onlineobjects.core.Query.of(Entity.class);
 		q.withPriviledged(priviledged).withParent(item,relationKind);
-		return search(q);
+		return list(q);
 	}
 
 	public List<Entity> getChildren(Entity item, String relationKind) throws ModelException {
-		dk.in2isoft.onlineobjects.core.Query<Entity> q = dk.in2isoft.onlineobjects.core.Query.ofType(Entity.class);
+		dk.in2isoft.onlineobjects.core.Query<Entity> q = dk.in2isoft.onlineobjects.core.Query.of(Entity.class);
 		q.withParent(item,relationKind);
-		return search(q);
+		return list(q);
 	}
 
 	public <T> List<T> getChildren(Entity entity, Class<T> classObj) throws ModelException {
-		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.ofType(classObj);
+		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.of(classObj);
 		q.withParent(entity);
-		return search(q);
+		return list(q);
 	}
 
 	public <T> List<T> getChildrenOrdered(Entity entity, Class<T> classObj) throws ModelException {
-		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.ofType(classObj);
+		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.of(classObj);
 		q.withParent(entity).inPosition();
-		return search(q);
+		return list(q);
 	}
 
 	public Class<?> getModelClass(String simpleName) throws ModelException {

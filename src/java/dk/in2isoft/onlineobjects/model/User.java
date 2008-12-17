@@ -1,10 +1,10 @@
 package dk.in2isoft.onlineobjects.model;
 
 import dk.in2isoft.onlineobjects.core.Priviledged;
+import dk.in2isoft.onlineobjects.core.SecurityController;
 
 public class User extends Entity implements Priviledged {
 
-	private static String ICON = "Element/User";
 	public static String TYPE = Entity.TYPE+"/User";
 	public static String NAMESPACE = Entity.NAMESPACE+"User/";
 	
@@ -20,7 +20,7 @@ public class User extends Entity implements Priviledged {
 	}
 
 	public String getIcon() {
-		return ICON;
+		return "common/user";
 	}
 
 	@Override
@@ -49,5 +49,9 @@ public class User extends Entity implements Priviledged {
 
 	public long getIdentity() {
 		return getId();
+	}
+
+	public boolean isSuper() {
+		return SecurityController.ADMIN_USERNAME.equals(username);
 	}
 }

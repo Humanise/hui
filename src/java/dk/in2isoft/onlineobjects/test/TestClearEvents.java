@@ -15,7 +15,7 @@ public class TestClearEvents extends AbstractTestCase {
 
 		Priviledged publicUser = Core.getInstance().getModel().getUser("public");
 		
-		List<Event> events = getModel().search(new Query<Event>(Event.class).withCustomProperty("sync.remote.source", "EASY"));
+		List<Event> events = getModel().list(new Query<Event>(Event.class).withCustomProperty("sync.remote.source", "EASY"));
 		for (Event event : events) {
 			getModel().deleteEntity(event, publicUser);
 		}

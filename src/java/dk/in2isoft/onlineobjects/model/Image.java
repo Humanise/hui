@@ -31,7 +31,7 @@ public class Image extends Entity {
 	}
 
 	public String getIcon() {
-		return "Element/Image";
+		return "common/image";
 	}
 	
 	public String getContentType() {

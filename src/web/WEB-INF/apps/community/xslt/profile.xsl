@@ -14,6 +14,7 @@
 
 	<xsl:param name="local-context"/>
 	<xsl:param name="base-context"/>
+	<xsl:param name="base-domain-context"/>
 	<xsl:param name="user-name"/>
 	<xsl:param name="development-mode"/>
 
@@ -28,12 +29,14 @@
 		<script type="text/javascript" charset="utf-8">
 			var OnlineObjects = {
 				baseContext:'<xsl:value-of select="$base-context"/>',
+				baseDomainContext:'<xsl:value-of select="$base-domain-context"/>',
 				appContext:'<xsl:value-of select="$local-context"/>'
 			}
 		</script>
 		<script type='text/javascript' src='{$base-context}/dwr/interface/CoreSecurity.js'><xsl:comment/></script>
 		<script type='text/javascript' src='{$base-context}/dwr/interface/AppCommunity.js'><xsl:comment/></script>
 		<script type='text/javascript' src='{$base-context}/dwr/engine.js'><xsl:comment/></script>
+		<script src="{$local-context}/js/community.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 	</xsl:template>
 	
 	<xsl:template match="p:page">
@@ -41,8 +44,8 @@
 			<head>
 				<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 				<title>OnlineObjects</title>
-				<link rel="stylesheet" href="{$local-context}/css/base.css" type="text/css" media="screen" charset="utf-8"/>
-				<link rel="stylesheet" href="{$local-context}/css/profile.css" type="text/css" media="screen" title="front" charset="utf-8"/>
+				<link rel="stylesheet" href="{$local-context}/css/shared.css" type="text/css" media="screen" charset="utf-8"/>
+				<link rel="stylesheet" href="{$local-context}/css/profile.css" type="text/css" media="screen" charset="utf-8"/>
 				<xsl:comment><![CDATA[[if lt IE 7]>
 					<link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$local-context"/><![CDATA[/css/front_ie6.css"> </link>
 				<![endif]]]></xsl:comment>
@@ -50,44 +53,30 @@
 			</head>
 			<body>
 				<div class="root">
-					<div style="height: 10px"><xsl:comment/></div>
-					<div class="navigation">
-						<div class="inner_navigation">
-							<div class="inner_navigation">
-								<a href="../" class="logo"><span>OnlineObjects</span></a>
-								<!--
-								<ul>
-									<li><a href="../images.html">Billeder</a></li>
-									<li><a href="../map.html">Kort</a></li>
-									<li><a href="../map.html">Søgning</a></li>
-								</ul>
-							-->
+					<div class="chrome">
+						<xsl:call-template name="chrome-top"/>
+						<div class="chrome_middle">
+							<div class="chrome_middle">
+								<div class="content">
+									<div class="content_left">
+										<xsl:apply-templates select="p:profile"/>
+										<xsl:apply-templates select="p:images"/>
+									</div>
+								</div>
 							</div>
+						</div>
+						<div class="chrome_bottom">
+							<div><div><xsl:comment/></div></div>
 						</div>
 					</div>
 					<div class="body">
-						<div class="box">
-							<div class="box_top_bar"><div class="box_top_bar"><div class="box_top_bar">
-								<a href="../" class="first">Forside</a>
-								<a href=".">
-									<xsl:call-template name="userName"/>
-								</a>
-								<div class="right">
-									<span class="profile"><xsl:value-of select="$user-name"/></span>
-								</div>
-							</div></div></div>
-							<div class="box_middle">
-								<xsl:apply-templates select="p:profile"/>
-								<xsl:apply-templates select="p:images"/>
-							</div>
-							<div class="box_bottom"><div class="box_bottom"><div class="box_bottom"><xsl:comment/></div></div></div>
-						</div>
 					</div>
 				</div>
 				<div class="footer">
 						Designet og udviklet af <a href="http://www.in2isoft.dk/" class="link"><span>In2iSoft</span></a>
    						&#160;·&#160;<a href="http://validator.w3.org/check?uri=referer" class="link"><span>XHTML 1.0 Strict</span></a>
 						&#160;·&#160;<a href="http://jigsaw.w3.org/css-validator/validator?uri=http%3A%2F%2Fcommunity.onlineobjects.com%2F&amp;warning=1&amp;profile=css3&amp;usermedium=all" class="link"><span>CSS 2.1</span></a>
+   						&#160;·&#160;<a href="iphone/" class="link"><span>iPhone version</span></a>
 				</div>
 				<xsl:call-template name="scripts"/>
 				<xsl:call-template name="analytics"/>
@@ -114,7 +103,7 @@
 				<xsl:call-template name="userName"/>
 			</h1>
 			<p><span class="label">Brugernavn: </span><xsl:value-of select="//user:username"/></p>
-			<p><a href="site/" class="link link_next"><span>Hjemmeside</span></a></p>
+			<p><a href="http://{//user:username}.{$base-domain-context}/" class="link link_next"><span>Hjemmeside</span></a></p>
 			</div>
 		</div>
 	</xsl:template>
@@ -133,7 +122,7 @@
 	
 	<xsl:template match="p:images/e:Entity">
 		<div class="thumbnail">
-		<a href="{$base-context}/service/image/?id={@id}"><img src="{$base-context}/service/image/?id={@id}&amp;width=60&amp;height=60&amp;cropped=true"/></a>
+		<a href="{$base-context}/service/image/?id={@id}"><img src="{$base-context}/service/image/id{@id}width60height60cropped.jpg" style="width: 60px; height: 60px;"/></a>
 		</div>
 	</xsl:template>
 

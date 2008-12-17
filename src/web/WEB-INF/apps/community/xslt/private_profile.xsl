@@ -25,7 +25,6 @@ doctype-system="http://www.w3.org/TR/html4/loose.dtd"/>
   				<script type='text/javascript' src='../../dwr/util.js'></script>
 				<script src="../../XmlWebGui/Scripts/In2iScripts.js" type="text/javascript" charset="utf-8"></script>
 				<script src="../../XmlWebGui/Scripts/In2iScripts/In2iAnimation.js" type="text/javascript" charset="utf-8"></script>
-				<script src="js/In2iInput.js" type="text/javascript" charset="utf-8"> </script>
 				<script src="js/Widgets.js" type="text/javascript" charset="utf-8"> </script>
 				<script src="js/front.js" type="text/javascript" charset="utf-8"> </script>
 				<title>NetPlace</title>

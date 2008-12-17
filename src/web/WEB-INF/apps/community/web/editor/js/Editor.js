@@ -6,7 +6,7 @@ OO.Editor = function(delegate) {
 	this.textEditors = [];
 	this.active = false;
 	this.buildActivator();
-	this.toolbarPadder = $class('toolbar_padder')[0];
+	this.toolbarPadder = $$('.toolbar_padder')[0];
 	this.toolbar = null;
 	this.templates = {
 		all : [
@@ -41,7 +41,7 @@ OO.Editor = function(delegate) {
 		{title:'Begivenhed',icon:'common/color',value:'event'}
 	];
 	var self = this;
-	var editmode = N2i.Location.getBoolean('edit');
+	var editmode = n2i.location.getBoolean('edit');
 	if (editmode) {
 		this.activate(true);
 	}
@@ -53,9 +53,9 @@ OO.Editor.prototype = {
 	activate : function(instantly) {
 		this.active=true;
 		this.activator.className='deactivate';
-		N2i.Element.addClassName(document.body,'editor_mode');
+		Element.addClassName(document.body,'editor_mode');
 		this.buildToolBar();
-		$ani(this.toolbarPadder,'padding-top','58px',instantly ? 0 : 600,{ease:N2i.Animation.slowFastSlow});
+		n2i.animate(this.toolbarPadder,'padding-top','58px',instantly ? 0 : 600,{ease:n2i.ease.slowFastSlow});
 		this.toolbarRevealer.show(instantly);
 		this.enableWebNodeEditing();
 		var self = this;
@@ -74,8 +74,8 @@ OO.Editor.prototype = {
 		if (this.newPagePanel) {
 			this.newPagePanel.hide();
 		}
-		N2i.Element.removeClassName(document.body,'editor_mode');
-		$ani(this.toolbarPadder,'padding-top','0px',500,{ease:N2i.Animation.slowFastSlow});
+		Element.removeClassName(document.body,'editor_mode');
+		n2i.animate(this.toolbarPadder,'padding-top','0px',500,{ease:n2i.ease.slowFastSlow});
 		this.toolbarRevealer.hide();
 		this.disableWebNodeEditing();
 		this.delegate.deactivate();
@@ -157,7 +157,7 @@ OO.Editor.prototype = {
 	},
 	
 	enableWebNodeEditing : function() {
-		this.webnodes = $class('webnode');
+		this.webnodes = $$('.webnode');
 		var self = this;
 		for (var i=0; i < this.webnodes.length; i++) {
 			var delegate = {
@@ -177,6 +177,9 @@ OO.Editor.prototype = {
 	
 	// Templates
 	
+	click$changeTemplate : function() {
+		this.openTemplateWindow();
+	},
 	openTemplateWindow : function() {
 		if (!this.templatePanel) {
 			var category = this.templateCategories[0].value;
@@ -202,25 +205,23 @@ OO.Editor.prototype = {
 	},
 	selectionChanged$templateCategories : function(value) {
 		In2iGui.get('templatePicker').setObjects(this.templates[value]);
+	},
+	
+	// Toolbar
+	
+	buildToolBar : function() {
+		if (!this.toolbar) {
+			this.toolbarRevealer = In2iGui.RevealingToolbar.create();
+			var t = this.toolbar = this.toolbarRevealer.getToolbar();
+			t.add(In2iGui.Toolbar.Icon.create('newPage',{icon:'common/page',overlay:'new','title':'Ny side'}));
+			t.add(In2iGui.Toolbar.Icon.create('deletePage',{icon:'common/page',overlay:'delete','title':'Slet side'}));
+			t.addDivider();
+			t.add(In2iGui.Toolbar.Icon.create('pageProperties',{icon:'common/info','title':'Info'}));
+			t.add(In2iGui.Toolbar.Icon.create('changeTemplate',{icon:'common/design','title':'Skift design'}));
+			t.addDivider();
+			this.delegate.addToToolbar(t);
+		}
 	}
-}
-
-OO.Editor.prototype.buildToolBar = function() {
-	if (!this.toolbar) {
-		this.toolbarRevealer = In2iGui.RevealingToolbar.create();
-		this.toolbar = this.toolbarRevealer.getToolbar();
-		this.toolbar.add(In2iGui.Toolbar.Icon.create('newPage',{icon:'common/page',overlay:'new','title':'Ny side'}));
-		this.toolbar.add(In2iGui.Toolbar.Icon.create('deletePage',{icon:'common/page',overlay:'delete','title':'Slet side'}));
-		this.toolbar.addDivider();
-		this.toolbar.add(In2iGui.Toolbar.Icon.create('pageProperties',{icon:'common/info','title':'Info'}));
-		this.toolbar.add(In2iGui.Toolbar.Icon.create('changeTemplate',{icon:'common/design','title':'Skift design'}));
-		this.toolbar.addDivider();
-		this.delegate.addToToolbar(this.toolbar);
-	}
-}
-
-OO.Editor.prototype.click$changeTemplate = function() {
-	this.openTemplateWindow();
 }
 
 OO.Editor.prototype.click$pageProperties = function() {
@@ -232,8 +233,8 @@ OO.Editor.prototype.click$pageProperties = function() {
 		g.add(In2iGui.Formula.Text.create(null,{label:'Titel',key:'title'}));
 		g.add(In2iGui.Formula.Tokens.create(null,{label:'Nøgleord',key:'tags'}));
 		var b = g.createButtons({top:10});
-		b.add(In2iGui.Button.create('savePageInfo',{text:'Gem',highlighted:true}));
 		b.add(In2iGui.Button.create('cancelPageInfo',{text:'Annuller'}));
+		b.add(In2iGui.Button.create('savePageInfo',{text:'Gem',highlighted:true}));
 		this.infoWindow = w;
 	}
 	var self = this;
@@ -332,41 +333,29 @@ OO.Editor.getEntityProperties = function(entity,key) {
 /*********************** Text editor **********************/
 
 OO.Editor.TextEditor = function(element,delegate) {
-	this.element=element;
+	this.element=$(element);
 	this.delegate=delegate || {};
-	var self = this;
 	this.element.onclick = function() {
-		self.activate();
+		this.activate();
 		return false;
-	}
+	}.bind(this);
 }
 
 OO.Editor.TextEditor.prototype.activate = function() {
-	this.field = document.createElement('input');
-	this.field.style.width=(N2i.Element.getWidth(this.element)+30)+'px';
+	var field = this.field = new Element('input');
+	field.setStyle({width:(this.element.getWidth()+30)+'px',textAlign:'center'});
 	this.element.style.display='none';
 	this.field.value = this.element.innerHTML;
-	var fontSize = N2i.getStyle(this.element,'font-size');
-	if (fontSize) {
-		this.field.style.fontSize = fontSize;
-	}
-	var color = N2i.getStyle(this.element,'color');
-	if (color) {
-		this.field.style.color = color;
-	}
-	// TODO: Move more styles over
-	this.element.parentNode.insertBefore(this.field,this.element);
-	this.field.focus();
-	this.field.select();
-	var self = this;
-	this.field.onblur = function() {
-		self.deactivate();
-	}
-	this.field.onkeydown = function(e) {
-		if (new N2i.Event(e).isReturnKey()) {
-			self.deactivate();
+	n2i.copyStyle(this.element,field,['fontSize','color','backgroundColor','lineHeight','fontFamily','border']);
+	this.element.parentNode.insertBefore(field,this.element);
+	field.focus();
+	field.select();
+	this.field.onblur = this.deactivate.bind(this);
+	this.field.observe('keydown',function(e) {
+		if (n2i.isReturnKey(e)) {
+			this.deactivate();
 		}
-	}
+	}.bind(this));
 }
 
 OO.Editor.TextEditor.prototype.deactivate = function() {

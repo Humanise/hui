@@ -45,7 +45,7 @@ public class UserProfilePage extends XSLTInterfaceAdapter {
 
 			Element images = createPageNode(parent,"images");			
 			Query<Image> query = new Query<Image>(Image.class).withPriviledged(user);
-			List<Image> search = model.search(query);
+			List<Image> search = model.list(query);
 			for (Image image : search) {
 				appendEntity(images, image);
 			}

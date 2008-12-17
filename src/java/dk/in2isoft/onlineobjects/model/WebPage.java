@@ -19,7 +19,7 @@ public class WebPage extends Entity {
 	}
 
 	public String getIcon() {
-		return "Template/Generic";
+		return "common/page";
 	}
 
 	public String getTitle() {

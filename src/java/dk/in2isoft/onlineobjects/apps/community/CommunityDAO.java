@@ -109,7 +109,7 @@ public class CommunityDAO extends AbstractDAO {
 		}
 
 		Query<Invitation> query = new Query<Invitation>(Invitation.class).withFieldValue(Invitation.FIELD_CODE, code);
-		List<Invitation> invitations = getModel().search(query);
+		List<Invitation> invitations = getModel().list(query);
 		if (invitations.size() == 0) {
 			throw new EndUserException("Could not find invitation with code: " + code);
 		}
@@ -235,13 +235,23 @@ public class CommunityDAO extends AbstractDAO {
 
 		// Create a web site
 		WebSite site = new WebSite();
-		site.setName(username);
+		site.setName(buildWebSiteTitle(fullName));
 		model.createItem(site, session);
 
 		// Create relation between user and web site
 		model.createRelation(user, site,session);
 
 		WebModelUtil.createWebPageOnSite(site.getId(),ImageGallery.class, session);
+	}
+	
+	private String buildWebSiteTitle(String fullName) {
+		fullName = fullName.trim();
+		if (fullName.endsWith("s")) {
+			fullName+="'";
+		} else {
+			fullName+="'s";			
+		}
+		return fullName+" hjemmeside";
 	}
 
 	

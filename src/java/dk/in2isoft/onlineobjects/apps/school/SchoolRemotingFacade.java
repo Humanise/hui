@@ -35,8 +35,8 @@ public class SchoolRemotingFacade extends AbstractRemotingFacade {
 		}
 		
 		Collection<EventData> data = Lists.newArrayList();
-		Query<Event> query = Query.ofType(Event.class).withFieldValueMoreThan(Event.FIELD_STARTTIME, from).withFieldValueLessThan(Event.FIELD_ENDTIME, to).withChild(person);
-		List<Event> list = getModel().search(query);
+		Query<Event> query = Query.of(Event.class).withFieldValueMoreThan(Event.FIELD_STARTTIME, from).withFieldValueLessThan(Event.FIELD_ENDTIME, to).withChild(person);
+		List<Event> list = getModel().list(query);
 		for (Event event : list) {
 			EventData eventData = new EventData();
 			eventData.setId(event.getId());
@@ -91,7 +91,7 @@ public class SchoolRemotingFacade extends AbstractRemotingFacade {
 	public Collection<EventData> getEntityHistory(Date from, Date to) {
 		Collection<EventData> data = Lists.newArrayList();
 		Query<Entity> query = new Query<Entity>(Entity.class).withCreatedFrom(from).withCreatedTo(to);
-		List<Entity> list = getModel().search(query);
+		List<Entity> list = getModel().list(query);
 		for (Entity entity : list) {
 			EventData event = new EventData();
 			event.setStartTime(entity.getCreated());

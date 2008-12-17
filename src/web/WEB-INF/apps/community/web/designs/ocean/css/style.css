@@ -45,6 +45,7 @@ body
 .gut .gut .gut
 {
 	background: url('../gfx/yellow_fish.png') 5% 95% no-repeat;
+	min-height: 500px;
 }
 
 * html .body
@@ -57,7 +58,7 @@ body
 	font-family: "Trebuchet MS", Helvetica, sans-serif;
 	text-align: center;
 	padding: 10px;
-	font-size: 14pt;
+	font-size: 12pt;
 	line-height: 16pt;
 	color: #333;
 	height: 40px;

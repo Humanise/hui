@@ -63,6 +63,7 @@ public class Dispatcher implements Filter {
 		reserved.add("XmlWebGui");
 		reserved.add("In2iGui");
 		reserved.add("public");
+		reserved.add("faces");
 		mimeTypes = new ImmutableMap.Builder<String,String>()
 			.put("html", "text/html")
 			.put("htm", "text/html")
@@ -98,10 +99,16 @@ public class Dispatcher implements Filter {
 			}
 		}
 	}
-
+	
+	private void fixCookieScope(Request request) {
+		String baseDomain = request.getBaseDomain();
+		if (baseDomain!=null) {
+			request.getResponse().setHeader("Set-Cookie", "JSESSIONID="+request.getRequest().getSession().getId()+";domain=."+baseDomain);
+		}
+	}
+	
 	public void doFilter(ServletRequest sRequest, ServletResponse sResponse, FilterChain chain) throws IOException,
 			ServletException {
-
 		HttpServletRequest request = (HttpServletRequest) sRequest;
 		HttpServletResponse response = (HttpServletResponse) sResponse;
 		try {
@@ -111,18 +118,13 @@ public class Dispatcher implements Filter {
 		}
 		boolean shouldCommit = false;
 		Request req = new Request(request, response);
+		fixCookieScope(req);
 		if (req.isSet("username") && req.isSet("password")) {
 			Core.getInstance().getSecurity().changeUser(req.getSession(), req.getString("username"),
 					req.getString("password"));
 		}
 		String[] path = req.getFullPath();
-		/*
-		 * log.info("path: "+Arrays.toString(path));
-		 * log.info("uri: "+request.getRequestURI());
-		 * log.info("url: "+request.getRequestURL());
-		 * log.info("user: "+req.getSession().getUser().getName());
-		 */
-		if (path.length > 0 && path[0].equals("dwr")) {
+		if (path.length > 0 && (path[0].equals("dwr") || path[0].equals("webdav"))) {
 			if (simulateDelay) {
 				delay(path.toString());
 			}
@@ -192,7 +194,6 @@ public class Dispatcher implements Filter {
 	
 	private String resolveMapping(Request request) {
 		String url = request.getRequest().getRequestURL().toString();
-		log.debug(url);
 		for (Entry<String, Pattern> mapping : mappings.entries()) {
 			Pattern pattern = mapping.getValue();
 			Matcher matcher = pattern.matcher(url);
@@ -220,11 +221,12 @@ public class Dispatcher implements Filter {
 			}
 			if (path.length > 0) {
 				try {
-					callApplicationMethod(controller, path[0], request);
-				} catch (NoSuchMethodException e) {
-					String[] filePath = new String[] { "app", application };
-					if (!pushFile((String[]) ArrayUtils.addAll(filePath, path), request.getResponse())) {
-						controller.unknownRequest(request);
+					boolean called = callApplicationMethod(controller, path[0], request);
+					if (!called) {
+						String[] filePath = new String[] { "app", application };
+						if (!pushFile((String[]) ArrayUtils.addAll(filePath, path), request.getResponse())) {
+							controller.unknownRequest(request);
+						}
 					}
 				} catch (InvocationTargetException e) {
 					displayError(request, e);
@@ -237,13 +239,18 @@ public class Dispatcher implements Filter {
 		}
 	}
 
-	private void callApplicationMethod(ApplicationController controller, String methodName, Request request)
-			throws EndUserException, InvocationTargetException, NoSuchMethodException {
+	private boolean callApplicationMethod(ApplicationController controller, String methodName, Request request)
+			throws EndUserException, InvocationTargetException {
 		try {
 			Method method = controller.getClass().getDeclaredMethod(methodName, args);
+			boolean accessible = method.isAccessible();
+			if (!accessible) return false;
 			method.invoke(controller, new Object[] { request });
+			return true;
 		} catch (IllegalAccessException e) {
-			throw new EndUserException(e);
+			return false;
+		} catch (NoSuchMethodException e) {
+			return false;
 		}
 	}
 

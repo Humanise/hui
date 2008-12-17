@@ -2,7 +2,6 @@ package dk.in2isoft.onlineobjects.apps.community;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -61,14 +60,16 @@ public class CommunityController extends ApplicationController {
 
 	@Override
 	public void unknownRequest(Request request) throws IOException, EndUserException {
-		log.debug(Arrays.toString(request.getLocalPath()));
-		if (request.testLocalPathStart("iphone")) {
+		String subDomain = request.getSubDomain();
+		if (LangUtil.isDefined(subDomain) && !"www".equals(subDomain)) {
+			handleUser(request);
+		} else if (request.testLocalPathStart("iphone")) {
 			FileBasedInterface ui = new FileBasedInterface(getFile("iphone", "index.gui.xml"));
 			ui.render(request.getRequest(), request.getResponse());
 		} else if (request.testLocalPathStart(new String[] { null })) {
 			handleUser(request);
 		} else {
-			XSLTInterface ui = new FrontPage(this, request);
+			XSLTInterface ui = new HomePage(this, request);
 			XSLTUtil.applyXSLT(ui, request);
 		}
 	}
@@ -79,36 +80,51 @@ public class CommunityController extends ApplicationController {
 	}
 
 	private void handleUser(Request request) throws IOException, EndUserException {
-		String userName = request.getLocalPath()[0];
-		User siteUser = Core.getInstance().getModel().getUser(userName);
-		if (siteUser == null) {
-			throw new EndUserException("The user does not excist!");
-		}
-		if (request.testLocalPathFull(null, "site", "uploadImage")) {
-			if (siteUser.getId() != request.getSession().getUser().getId()) {
-				throw new SecurityException("User cannot access this private site");
+		String subDomain = request.getSubDomain();
+		if (LangUtil.isDefined(subDomain) && !"www".equals(subDomain)) {
+			User siteUser = Core.getInstance().getModel().getUser(subDomain);
+			if (siteUser == null) {
+				throw new EndUserException("The user does not excist!");
 			}
-			uploadImage(request);
-		} else if (request.testLocalPathStart(null, "private")) {
-			if (siteUser.getId() != request.getSession().getUser().getId()) {
-				throw new SecurityException("User cannot access this private site");
+			if (request.testLocalPathFull("uploadImage")) {
+				if (siteUser.getId() != request.getSession().getUser().getId()) {
+					throw new SecurityException("User cannot access this private site");
+				}
+				uploadImage(request);
+			} else {
+				displayUserSite(siteUser, request);
 			}
-			if (request.testLocalPathFull(null, "private")) {
-				request.redirect("settings.gui");
-			} else if (request.testLocalPathFull(null, "private", "persons.gui")) {
-				privateSpaceController.displayPersons(request);
-			} else if (request.testLocalPathFull(null, "private", "images.gui")) {
-				privateSpaceController.displayImages(request);
-			} else if (request.testLocalPathFull(null, "private", "images", "upload.action")) {
-				importImage(request);
-			} else if (request.testLocalPathFull(null, "private", "settings.gui")) {
-				privateSpaceController.displaySettings(request);
+		} else {
+			User siteUser = Core.getInstance().getModel().getUser(request.getLocalPath()[0]);
+			if (siteUser == null) {
+				throw new EndUserException("The user does not excist!");
 			}
-		} else if (request.testLocalPathFull(null, "site")) {
-			displayUserSite(siteUser, request);
-		} else if (request.testLocalPathFull(new String[] { null })) {
-			XSLTInterface ui = new UserProfilePage(this, siteUser, request);
-			XSLTUtil.applyXSLT(ui, request);
+			if (request.testLocalPathFull(null, "site", "uploadImage")) {
+				if (siteUser.getId() != request.getSession().getUser().getId()) {
+					throw new SecurityException("User cannot access this private site");
+				}
+				uploadImage(request);
+			} else if (request.testLocalPathStart(null, "private")) {
+				if (siteUser.getId() != request.getSession().getUser().getId()) {
+					throw new SecurityException("User cannot access this private site");
+				}
+				if (request.testLocalPathFull(null, "private")) {
+					request.redirect("settings.gui");
+				} else if (request.testLocalPathFull(null, "private", "persons.gui")) {
+					privateSpaceController.displayPersons(request);
+				} else if (request.testLocalPathFull(null, "private", "images.gui")) {
+					privateSpaceController.displayImages(request);
+				} else if (request.testLocalPathFull(null, "private", "images", "upload.action")) {
+					importImage(request);
+				} else if (request.testLocalPathFull(null, "private", "settings.gui")) {
+					privateSpaceController.displaySettings(request);
+				}
+			} else if (request.testLocalPathFull(null, "site")) {
+				displayUserSite(siteUser, request);
+			} else if (request.testLocalPathFull(new String[] { null })) {
+				XSLTInterface ui = new UserProfilePage(this, siteUser, request);
+				XSLTUtil.applyXSLT(ui, request);
+			}
 		}
 	}
 
@@ -237,16 +253,16 @@ public class CommunityController extends ApplicationController {
 		StringBuilder sb = new StringBuilder();
 		sb.append("digraph {");
 		sb.append("graph[normalize=true,packMode=\"node\",pad=1]");
-		//sb.append("graph [");
+		// sb.append("graph [");
 		// sb.append(
 		// "normalize=true, outputorder=edgesfirst, overlap=false, pack=false");
 		// sb.append(
 		// ",packmode=\"node\", sep=\"0.6\", splines=true, size=\"14,10\"");
-		//sb.append("]");
+		// sb.append("]");
 		List<Long> added = Lists.newArrayList();
 
-		Query<Relation> rq = Query.ofType(Relation.class).withPaging(0, 100);
-		List<Relation> relations = getModel().search(rq);
+		Query<Relation> rq = Query.of(Relation.class).withPaging(0, 100);
+		List<Relation> relations = getModel().list(rq);
 		for (Relation relation : relations) {
 			Entity sub = relation.getSubEntity();
 			Entity supr = relation.getSuperEntity();

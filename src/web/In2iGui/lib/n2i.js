@@ -143,7 +143,8 @@ n2i.setOpacity = function(element,opacity) {
 
 n2i.copyStyle = function(source,target,styles) {
 	styles.each(function(s) {
-		target.style[s] = source.getStyle(s);
+		var r = source.getStyle(s);
+		if (r) target.style[s] = source.getStyle(s);
 	});
 }
 

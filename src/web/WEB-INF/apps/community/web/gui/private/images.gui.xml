@@ -46,7 +46,12 @@
 		</content>
 	</view>
 	<window name="newImageWindow" title="Nyt billede" width="300" variant="dark">
-		<multiupload name="imageUpload" url="images/upload.action"/>
+		<upload name="imageUpload" url="images/upload.action" button="imageUploadButton"/>
+		<formula name="imageFormula">
+			<group>
+				<button name="imageUploadButton" title="Vælg billeder"/>
+			</group>
+		</formula>
 	</window>
 	<window name="imageWindow" title="Egenskaber" width="300" variant="dark">
 		<space all="5">

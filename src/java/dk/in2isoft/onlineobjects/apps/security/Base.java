@@ -49,7 +49,7 @@ public class Base extends SimpleWindow {
 	
 	private void listUsers(StringBuilder gui) throws ModelException {
 		ModelFacade model = Core.getInstance().getModel();
-        List<User> result = model.search(new Query<User>(User.class));
+        List<User> result = model.list(new Query<User>(User.class));
         for (User user : result) {
     		gui.append(
 		    "<row link='editUser?id="+user.getId()+"'>"+

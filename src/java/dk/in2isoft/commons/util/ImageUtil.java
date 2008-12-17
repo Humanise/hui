@@ -14,6 +14,21 @@ public class ImageUtil extends AbstractCommandLineInterfaceUtil {
 	
 	private static Logger log = Logger.getLogger(ImageUtil.class);
 
+	public static File getThumbnail(long id,int size)
+	throws EndUserException {
+		File folder = Core.getInstance().getStorage().getItemFolder(id);
+		File original = new File(folder,"original");
+		if (!original.isFile()) {
+			throw new EndUserException("The image with id="+id+" does not exist");
+		}
+		File converted = new File(folder,"thumbnail-"+size+"x"+size+".jpg");
+		if (!converted.exists()) {
+			String cmd = Core.getInstance().getConfiguration().getImageMagickPath()+"/convert -thumbnail "+size+"x"+size+" "+original.getAbsolutePath()+"[0] "+converted.getAbsolutePath();
+			execute(cmd);
+		}
+		return converted;
+		
+	}
 	
 	public static File getThumbnail(Image image,int size)
 	throws EndUserException {
@@ -26,23 +41,31 @@ public class ImageUtil extends AbstractCommandLineInterfaceUtil {
 		return converted;
 	}
 	
-	public static File getThumbnail(Image image,int width, int height)
+	public static File getThumbnail(long id,int width, int height)
 	throws EndUserException {
-		File folder = Core.getInstance().getStorage().getItemFolder(image);
+		File folder = Core.getInstance().getStorage().getItemFolder(id);
+		File original = new File(folder,"original");
+		if (!original.isFile()) {
+			throw new EndUserException("The image with id="+id+" does not exist");
+		}
 		File converted = new File(folder,"thumbnail-"+width+"x"+height+".jpg");
 		if (!converted.exists()) {
-			String cmd = Core.getInstance().getConfiguration().getImageMagickPath()+"/convert -thumbnail "+width+"x"+height+" "+image.getImageFile().getAbsolutePath()+"[0] "+converted.getAbsolutePath();
+			String cmd = Core.getInstance().getConfiguration().getImageMagickPath()+"/convert -thumbnail "+width+"x"+height+" "+original.getAbsolutePath()+"[0] "+converted.getAbsolutePath();
 			execute(cmd);
 		}
 		return converted;
 	}
 	
-	public static File getCroppedThumbnail(Image image,int width,int height) throws EndUserException {
-		File folder = Core.getInstance().getStorage().getItemFolder(image);
+	public static File getCroppedThumbnail(long id,int width,int height) throws EndUserException {
+		File folder = Core.getInstance().getStorage().getItemFolder(id);
+		File original = new File(folder,"original");
+		if (!original.isFile()) {
+			throw new EndUserException("The image with id="+id+" does not exist");
+		}
 		File converted = new File(folder,"thumbnail-"+width+"x"+height+"cropped.jpg");
 		if (!converted.exists()) {
 			//String cmd = Core.getInstance().getConfiguration().getImageMagickPath()+"/convert "+image.getImageFile().getAbsolutePath()+" -thumbnail "+width+"x"+height+"< -gravity center -extent "+width+"x"+height+" +repage "+converted.getAbsolutePath();
-			String cmd = Core.getInstance().getConfiguration().getImageMagickPath()+"/convert -size "+(width*3)+"x"+(height*3)+" "+image.getImageFile().getAbsolutePath()+" -thumbnail x"+(height*2)+"   -resize "+(width*2)+"x<   -resize 50% -gravity center -crop "+width+"x"+height+"+0+0  +repage "+converted.getAbsolutePath();
+			String cmd = Core.getInstance().getConfiguration().getImageMagickPath()+"/convert -size "+(width*3)+"x"+(height*3)+" "+original.getAbsolutePath()+" -thumbnail x"+(height*2)+"   -resize "+(width*2)+"x<   -resize 50% -gravity center -crop "+width+"x"+height+"+0+0  +repage "+converted.getAbsolutePath();
 			execute(cmd);
 		}
 		return converted;

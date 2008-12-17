@@ -6,7 +6,6 @@ html
 
 body
 {
-	height: 100%;
 	min-height: 100%;
 	padding: 0px;
 	margin: 0px;
@@ -38,6 +37,7 @@ div.body
 .gut .gut .gut
 {
 	background: url('../gfx/foot.png') 5% 75% no-repeat;
+	min-height: 500px;
 }
 
 * html .body
@@ -50,7 +50,7 @@ div.body
 	font-family: "Trebuchet MS", Helvetica, sans-serif;
 	text-align: center;
 	padding: 10px;
-	font-size: 14pt;
+	font-size: 12pt;
 	line-height: 16pt;
 	color: #333;
 	height: 40px;

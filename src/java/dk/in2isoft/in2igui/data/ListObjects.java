@@ -2,7 +2,7 @@ package dk.in2isoft.in2igui.data;
 
 import java.util.ArrayList;
 
-public class ListData extends ArrayList<ListDataRow> {
+public class ListObjects extends ArrayList<ListDataRow> {
 
 	private static final long serialVersionUID = 1L;
 

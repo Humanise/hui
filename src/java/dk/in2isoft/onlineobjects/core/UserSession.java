@@ -56,4 +56,15 @@ public class UserSession implements Priviledged {
 	public static UserSession getUserSession(HttpServletRequest request) {
 		return (UserSession) request.getSession().getAttribute(SESSION_ATTRIBUTE);
 	}
+
+	public boolean isSuper() {
+		return (user==null ? false : user.isSuper());
+	}
+
+	@Override
+	public String toString() {
+		return "User session for user:"+user;
+	}
+	
+	
 }

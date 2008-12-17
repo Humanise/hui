@@ -3,7 +3,6 @@ package dk.in2isoft.onlineobjects.model;
 import org.apache.commons.lang.StringUtils;
 
 import dk.in2isoft.commons.lang.LangUtil;
-import dk.in2isoft.onlineobjects.core.IllegalRequestException;
 
 public class Person extends Entity {
 
