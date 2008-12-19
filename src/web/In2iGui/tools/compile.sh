@@ -17,6 +17,9 @@ cat ${JS_LIB_PATH}prototype.js ${JS_LIB_PATH}n2i.js ${JS_PATH}In2iGui.js > ${JS_
 echo "Concatenating site scripts"
 cat ${JS_LIB_PATH}prototype.js ${JS_LIB_PATH}n2i.js ${JS_PATH}In2iGui.js ${JS_PATH}ImageViewer.js ${JS_PATH}Box.js > ${JS_PATH}combined.site.js
 
+echo "Concatenating site scripts (no prototype)"
+cat ${JS_LIB_PATH}n2i.js ${JS_PATH}In2iGui.js ${JS_PATH}ImageViewer.js ${JS_PATH}Box.js > ${JS_PATH}combined.site.noproto.js
+
 
 echo "Compressing prototype"
 java -jar yuicompressor-2.2.4.jar ../lib/prototype.js --charset UTF-8 -o ../lib/prototype.min.js
@@ -26,5 +29,7 @@ echo "Compressing basic scripts"
 java -jar yuicompressor-2.2.4.jar ${JS_PATH}combined.basic.js --charset UTF-8 -o ${JS_PATH}minimized.basic.js
 echo "Compressing site scripts"
 java -jar yuicompressor-2.2.4.jar ${JS_PATH}combined.site.js --charset UTF-8 -o ${JS_PATH}minimized.site.js
+echo "Compressing site scripts"
+java -jar yuicompressor-2.2.4.jar ${JS_PATH}combined.site.noproto.js --charset UTF-8 -o ${JS_PATH}minimized.site.noproto.js
 echo "Compressing css"
 java -jar yuicompressor-2.2.4.jar ${CSS_PATH}combined.css --charset UTF-8 -o ${CSS_PATH}minimized.css

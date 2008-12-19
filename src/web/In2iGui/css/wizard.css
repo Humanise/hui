@@ -1,0 +1,63 @@
+table.in2igui_wizard, td.in2igui_wizard
+{
+	width: 100%;
+	border-spacing: 0;
+	border-collapse: collapse;
+}
+
+td.in2igui_wizard
+{
+	background: #fff;
+	border: 1px solid #ccc;
+	vertical-align: top;
+	height: 200px;
+	padding: 10px;
+}
+
+th.in2igui_wizard
+{
+	width: 1%;
+	text-align: left;
+	vertical-align: top;
+	padding-right: 10px;
+}
+
+ul.in2igui_wizard
+{
+	list-style: none;
+	margin: 0px;
+	padding: 0px;
+	font-size: 12px;
+	border-top: 1px solid #ddd;
+	border-bottom: 1px solid #fff;
+}
+
+ul.in2igui_wizard a
+{
+	display: block;
+	border-top: 1px solid #fff;
+	border-bottom: 1px solid #ddd;
+	padding: 0px 20px 0px 5px;
+	font-weight: normal;
+	white-space: nowrap;
+	height: 30px;
+	line-height: 30px;
+	text-decoration: none;
+	color: #333;
+}
+
+ul.in2igui_wizard span
+{
+	vertical-align: middle;
+}
+
+ul.in2igui_wizard span.in2igui_icon_1
+{
+	margin: -2px 3px 0px 0px;
+}
+
+ul.in2igui_wizard a.in2igui_selected
+{
+	background-color: #3875d7;
+	color: #fff;
+}

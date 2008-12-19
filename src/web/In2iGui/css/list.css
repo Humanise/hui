@@ -109,6 +109,7 @@ div.in2igui_list .navigation
 {
 	display: none;
 	background: url('../gfx/list_navigation.png');
+	border-bottom: 1px solid #ccc;
 	height: 26px;
 	padding: 0px 3px;
 }

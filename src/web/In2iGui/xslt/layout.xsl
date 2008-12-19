@@ -97,10 +97,11 @@
 </xsl:template>
 
 <xsl:template match="gui:box">
-	<div>
+	<div id="{generate-id()}">
 		<xsl:attribute name="class">
 			<xsl:text>in2igui_box</xsl:text>
 			<xsl:if test="@variant"><xsl:text> in2igui_box_</xsl:text><xsl:value-of select="@variant"/></xsl:if>
+			<xsl:if test="@absolute='true'"><xsl:text> in2igui_box_absolute</xsl:text></xsl:if>
 		</xsl:attribute>
 		<xsl:if test="@width"><xsl:attribute name="style">width: <xsl:value-of select="@width"/>px;</xsl:attribute></xsl:if>
 		<div class="in2igui_box_top"><div><div><xsl:comment/></div></div></div>
@@ -119,6 +120,48 @@
 		</div></div>
 		<div class="in2igui_box_bottom"><div><div><xsl:comment/></div></div></div>
 	</div>
+	<script type="text/javascript">
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Box('<xsl:value-of select="generate-id()"/>',null,{
+			<xsl:if test="@modal='true'">modal:true</xsl:if>
+		});
+		<xsl:call-template name="gui:createobject"/>
+	</script>
 </xsl:template>
 
+<xsl:template match="gui:wizard">
+	<div class="in2igui_wizard" id="{generate-id()}">
+		<table class="in2igui_wizard"><tr>
+			<th class="in2igui_wizard">
+				<ul class="in2igui_wizard">
+				<xsl:for-each select="gui:step">
+					<li>
+						<a href="#">
+						<xsl:if test="position()=1">
+							<xsl:attribute name="class">in2igui_selected</xsl:attribute>
+						</xsl:if>
+						<xsl:if test="@icon"><span class="in2igui_icon_1" style="background-image: url('{$context}/In2iGui/icons/{@icon}1.png');')"><xsl:comment/></span></xsl:if>
+						<span><xsl:value-of select="@title"/></span>
+						</a>
+					</li>
+				</xsl:for-each>
+				</ul>
+			</th>
+			<td class="in2igui_wizard">
+				<xsl:apply-templates/>
+			</td>
+			</tr>
+		</table>
+	</div>
+	<script type="text/javascript">
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Wizard({element:'<xsl:value-of select="generate-id()"/>'});
+		<xsl:call-template name="gui:createobject"/>
+	</script>
+</xsl:template>
+
+<xsl:template match="gui:wizard/gui:step">
+	<div class="in2igui_wizard_step">
+		<xsl:if test="position()!=1"><xsl:attribute name="style">display: none;</xsl:attribute></xsl:if>
+		<xsl:apply-templates/>
+	</div>
+</xsl:template>
 </xsl:stylesheet>

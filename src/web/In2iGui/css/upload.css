@@ -15,6 +15,7 @@ div.in2igui_upload_items
 	max-height: 200px;
 	background: #fff;
 	border: 1px solid #ccc;
+	display: none;
 }
 
 div.in2igui_upload_item

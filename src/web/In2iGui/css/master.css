@@ -62,6 +62,16 @@ div.in2igui_text p
 	margin: 5px 0px;
 }
 
+/************************* icons **********************/
+
+span.in2igui_icon_1
+{
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	vertical-align: middle;
+}
+
 /*********************** message **********************/
 
 div.in2igui_message
@@ -258,9 +268,19 @@ div.in2igui_buttons
 	overflow: hidden;
 }
 
+div.in2igui_buttons_right div.in2igui_buttons_body
+{
+	float: right;
+}
+
 div.in2igui_buttons a.in2igui_button
 {
 	margin-right: 5px;
+}
+
+div.in2igui_buttons_right a.in2igui_button
+{
+	margin: 0px 0px 0px 5px;
 }
 
 a.in2igui_button

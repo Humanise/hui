@@ -92,6 +92,13 @@ In2iGui.Upload.prototype = {
 	parentShown : function() {
 		this.updateButtonPosition();
 	},
+	clear : function() {
+		this.items.each(function(item) {
+			item.destroy();
+		});
+		this.items = [];
+		this.itemContainer.hide();
+	},
 	
 	/////////////////////////// Flash //////////////////////////
 	
@@ -173,6 +180,7 @@ In2iGui.Upload.prototype = {
 		var item = new In2iGui.Upload.Item(file);
 		this.items[file.index] = item;
 		this.itemContainer.insert(item.element);
+		this.itemContainer.setStyle({display:'block'});
 	},
 	fileQueueError : function(file, error, message) {
 		this.addError(error,file);
@@ -243,6 +251,9 @@ In2iGui.Upload.Item.prototype = {
 	},
 	hide : function() {
 		this.element.hide();
+	},
+	destroy : function() {
+		this.element.remove();
 	}
 }
 

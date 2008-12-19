@@ -1,5 +1,11 @@
 In2iGui.ImageViewer = function(element,name,options) {
-	this.options = n2i.override({maxWidth:800,maxHeight:600,perimeter:100,sizeSnap:100},options);
+	this.options = n2i.override({
+		maxWidth:800,maxHeight:600,perimeter:100,sizeSnap:100,
+		ease:n2i.ease.elastic,
+		easeEnd:n2i.ease.bounce,
+		easeAuto:n2i.ease.slowFastSlow,
+		easeReturn:n2i.ease.slowFastSlow,transition:1200,transitionEnd:800,transitionReturn:300
+		},options);
 	this.element = $(element);
 	this.box = this.options.box;
 	this.viewer = this.element.select('.in2igui_imageviewer_viewer')[0];
@@ -161,12 +167,12 @@ In2iGui.ImageViewer.prototype = {
 	goToImage : function(animate,num,user) {	
 		if (animate) {
 			if (num>1) {
-				n2i.ani(this.viewer,'scrollLeft',this.index*(this.width+10),Math.min(num*300,2000),{ease:n2i.ease.slowFastSlow});				
+				n2i.ani(this.viewer,'scrollLeft',this.index*(this.width+10),Math.min(num*this.options.transitionReturn,2000),{ease:this.options.easeReturn});				
 			} else {
 				var end = this.index==0 || this.index==this.images.length-1;
-				var ease = (end ? n2i.ease.bounce : n2i.ease.elastic);
-				if (!user) ease = n2i.ease.slowFastSlow;
-				n2i.ani(this.viewer,'scrollLeft',this.index*(this.width+10),(end ? 800 : 1200),{ease:ease});
+				var ease = (end ? this.options.easeEnd : this.options.ease);
+				if (!user) ease = this.options.easeAuto;
+				n2i.ani(this.viewer,'scrollLeft',this.index*(this.width+10),(end ? this.options.transitionEnd : this.options.transition),{ease:ease});
 			}
 		} else {
 			this.viewer.scrollLeft=this.index*(this.width+10);

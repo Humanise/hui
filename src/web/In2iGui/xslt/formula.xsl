@@ -297,7 +297,13 @@
 </xsl:template>
 
 <xsl:template match="gui:buttons" name="gui:buttons">
-	<div class="in2igui_buttons">
+	<div class="">
+		<xsl:attribute name="class">
+			<xsl:text>in2igui_buttons</xsl:text>
+			<xsl:if test="@align='right'">
+				<xsl:text> in2igui_buttons_right</xsl:text>
+			</xsl:if>
+		</xsl:attribute>
 		<xsl:attribute name="style">
 			<xsl:if test="@padding">padding:<xsl:value-of select="@padding"/>px;</xsl:if>
 			<xsl:if test="@top">padding-top:<xsl:value-of select="@top"/>px;</xsl:if>

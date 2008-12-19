@@ -32,8 +32,13 @@
 			var up = In2iGui.Upload.create();
 			win.add(up);
 			var b = In2iGui.Button.create(null,{text:'Choose files'});
+			var clear = In2iGui.Button.create(null,{text:'Clear'});
+			clear.addDelegate({click:function() {
+				up.clear();
+			}});
 			up.setButton(b);
 			win.add(b);
+			win.add(clear);
 			win.show();
 		}
 	</script>

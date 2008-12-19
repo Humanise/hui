@@ -78,7 +78,9 @@
 		<script src="{$context}/In2iGui/js/Layout.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/Dock.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/Box.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/In2iGui/js/Wizard.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/lib/wysihat.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/In2iGui/lib/Picker.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 	</xsl:when>
 	<xsl:otherwise>
 		<script src="{$context}/In2iGui/js/minimized.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
@@ -559,4 +561,18 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 	</script>
 </xsl:template>
 
+<!-- Picker -->
+
+<xsl:template match="gui:picker">
+	<div class="in2igui_picker" id="{generate-id()}">
+		<div class="in2igui_picker_top"><div><div></div></div></div>
+		<div class="in2igui_picker_middle"><div class="in2igui_picker_middle">
+			<xsl:if test="@title">
+				<div class="in2igui_picker_title"><xsl:value-of select="@title"/></div>
+			</xsl:if>
+		<div class="in2igui_picker_container"><div class="in2igui_picker_content"><xsl:comment/></div></div>
+		</div></div>
+		<div class="in2igui_picker_bottom"><div><div></div></div></div>
+	</div>
+	</xsl:template>
 </xsl:stylesheet>

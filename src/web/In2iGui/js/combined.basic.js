@@ -4218,7 +4218,8 @@ Object.extend(Element.ClassNames.prototype, Enumerable);
 
 /*--------------------------------------------------------------------------*/
 
-Element.addMethods();var n2i = {
+Element.addMethods();
+var n2i = {
 	browser : {}
 }
 
@@ -5449,7 +5450,7 @@ In2iGui.prototype = {
 			});
 		}
 		return desc;
-	},
+	}
 }
 
 ///////////////////////////////// Indexes /////////////////////////////
