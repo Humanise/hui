@@ -11668,10 +11668,10 @@ In2iGui.ImageViewer.prototype = {
 }
 
 /* EOF */
-In2iGui.Picker = function(element,name,options) {
-	this.options = n2i.override({itemWidth:100,itemHeight:150,itemsVisible:3,valueProperty:'value'},options);
-	this.element = $(element);
-	this.name = name;
+In2iGui.Picker = function(o) {
+	o = this.options = n2i.override({itemWidth:100,itemHeight:150,itemsVisible:3,valueProperty:'value'},o);
+	this.element = $(o.element);
+	this.name = o.name;
 	this.container = this.element.select('.in2igui_picker_container')[0];
 	this.content = this.element.select('.in2igui_picker_content')[0];
 	this.title = this.element.select('in2igui_picker_title')[0];
@@ -11682,19 +11682,21 @@ In2iGui.Picker = function(element,name,options) {
 	In2iGui.extend(this);
 }
 
-In2iGui.Picker.create = function(name,options) {
-	options = n2i.override({shadow:true},options);
+In2iGui.Picker.create = function(name,o) {
+	o = n2i.override({shadow:true},o);
 	var element = new Element('div',{'class':'in2igui_picker'});
 	element.update('<div class="in2igui_picker_top"><div><div></div></div></div>'+
 	'<div class="in2igui_picker_middle"><div class="in2igui_picker_middle">'+
-	(options.title ? '<div class="in2igui_picker_title">'+options.title+'</div>' : '')+
+	(o.title ? '<div class="in2igui_picker_title">'+o.title+'</div>' : '')+
 	'<div class="in2igui_picker_container"><div class="in2igui_picker_content"></div></div>'+
 	'</div></div>'+
 	'<div class="in2igui_picker_bottom"><div><div></div></div></div>');
-	if (options.shadow==true) {
+	if (o.shadow==true) {
 		element.addClassName('in2igui_picker_shadow')
 	}
-	return new In2iGui.Picker(element,name,options);
+	o.name = name;
+	o.element = element;
+	return new In2iGui.Picker(o);
 }
 
 In2iGui.Picker.prototype = {
@@ -12563,6 +12565,13 @@ In2iGui.Upload.prototype = {
 	parentShown : function() {
 		this.updateButtonPosition();
 	},
+	clear : function() {
+		this.items.each(function(item) {
+			item.destroy();
+		});
+		this.items = [];
+		this.itemContainer.hide();
+	},
 	
 	/////////////////////////// Flash //////////////////////////
 	
@@ -12644,6 +12653,7 @@ In2iGui.Upload.prototype = {
 		var item = new In2iGui.Upload.Item(file);
 		this.items[file.index] = item;
 		this.itemContainer.insert(item.element);
+		this.itemContainer.setStyle({display:'block'});
 	},
 	fileQueueError : function(file, error, message) {
 		this.addError(error,file);
@@ -12714,6 +12724,9 @@ In2iGui.Upload.Item.prototype = {
 	},
 	hide : function() {
 		this.element.hide();
+	},
+	destroy : function() {
+		this.element.remove();
 	}
 }
 

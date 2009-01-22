@@ -46,3 +46,8 @@ div.in2igui_box_top, div.in2igui_box_top div, div.in2igui_box_top div div, div.i
 {
 	background: none;
 }
+
+.in2igui_imageviewer_controller
+{
+	width: auto;
+}
