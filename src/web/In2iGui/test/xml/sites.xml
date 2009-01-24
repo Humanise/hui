@@ -4,6 +4,7 @@
 	<controller name="controller" source="list.js"/>
 	<source name="itemsSource" url="data/source_items.xml"/>
 	<source name="listSource" url="data/list_icons.xml"/>
+	<source name="languagesSource" url="data/items_languages.xml"/>
 	<view>
 		<toolbar>
 			<icon icon="common/page" title="Opret side" overlay="new" action="newPage.show()"/>
@@ -42,10 +43,18 @@
 	</view>
 	<window name="newPage" width="300" title="Ny side" padding="5">
 		<formula>
-			<group labels="above">
+			<group labels="besides">
 				<text label="Titel:"/>
-				<select label="Titel:"/>
-				<buttons>
+				<text label="Beskrivelse:" lines="6"/>
+				<text label="Sti:"/>
+				<text label="Nøgleord:"/>
+				<datetime label="Dato:"/>
+				<dropdown label="Sprog:" source="languagesSource"/>
+				<dropdown label="Design:" source="languagesSource"/>
+				<dropdown label="Opsætning:" source="languagesSource"/>
+				<checkbox label="Inaktiv:"/>
+				<checkbox label="Søgbar:"/>
+				<buttons top="10">
 				<button title="Annuller"/>
 				<button title="Gem" highlighted="true"/>
 				</buttons>

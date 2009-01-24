@@ -41,9 +41,12 @@
 			b2.addDelegate({click:function(){bar.reset()}});
 			var b3 = In2iGui.Button.create(null,{text:'Wait'});
 			b3.addDelegate({click:function(){bar.setWaiting()}});
+			var b4 = In2iGui.Button.create(null,{text:'Complete'});
+			b4.addDelegate({click:function(){bar.setValue(1)}});
 			g.add(b);
 			g.add(b2);
 			g.add(b3);
+			g.add(b4);
 			win.add(bar);
 			win.add(g);
 			win.show();

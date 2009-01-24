@@ -678,8 +678,9 @@ table.in2igui_formula_group label
 
 table.in2igui_formula_group_above label
 {
-	line-height: 15px;
+	line-height: 13px;
 	display: block;
+	padding-left: 2px;
 }
 
 table.in2igui_formula_group th label
@@ -693,7 +694,7 @@ table.in2igui_formula_group th
 	vertical-align: top;
 	padding: 0px 5px 0px 0px;
 	text-align: right;
-	line-height: 14px;
+	line-height: 20px;
 	white-space: nowrap;
 }
 
@@ -702,28 +703,20 @@ table.in2igui_formula_group_above th
 	text-align: left;
 }
 
-table.in2igui_formula_group_above div.in2igui_field, table.in2igui_formula_group_above div.in2igui_tokens
+table.in2igui_formula_group_above div.in2igui_tokens
 {
 	margin-bottom: 2px;
 }
 
 form.in2igui_formula div.in2igui_field
 {
-	border: 1px solid #ddd;
-	border-color: #bbb #ccc #ddd;
 	font-size: 0;
-	background: #fff;
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	margin-bottom: 5px;
 }
 
 form.in2igui_formula select
 {
-	/*border: 1px solid #ddd;
-	border-color: #eee #eee #ddd;*/
 	font-size: 9pt;
-	margin: 0px 0px 5px;
+	margin: 0;
 	width: 100%;
 }
 
@@ -732,10 +725,17 @@ form.in2igui_formula .in2igui_formula_text
 	border: 0px;
 	padding: 1px 0px;
 	margin: 0px;
-	font-size: 10pt;
+	margin-top: -1px;
+	font-size: 9pt;
 	width: 100%;
-	text-indent:2px;
 	background: transparent;
+	font-family: Verdana,sans-serif;
+	outline: none;
+}
+
+form.in2igui_formula input.in2igui_formula_text
+{
+	height: 15px;
 }
 
 form.in2igui_formula textarea.in2igui_formula_text
@@ -743,6 +743,7 @@ form.in2igui_formula textarea.in2igui_formula_text
 	text-indent: 0;
 	line-height: 16px;
 	padding: 0px;
+	margin: 0;
 }
 
 form.in2igui_formula fieldset
@@ -756,6 +757,224 @@ form.in2igui_formula fieldset legend
 {
 	font-size: 9pt;
 	color: #999;
+}
+
+/*************************************** Field **********************************/
+
+span.in2igui_field_top, span.in2igui_field_top span
+{
+	display: block;
+	font-size: 0;
+	background: url('../gfx/field.png') left -5px no-repeat;
+	height: 5px;
+}
+
+span.in2igui_field_top span
+{
+	background-position: 100% -10px;
+}
+
+span.in2igui_field_top span span
+{
+	background-position: 0 0;
+	background-repeat: repeat;
+	margin: 0 5px;
+}
+
+span.in2igui_field_bottom, span.in2igui_field_bottom span
+{
+	display: block;
+	font-size: 0;
+	background: url('../gfx/field.png') 0 -19px no-repeat;
+	height: 4px;
+}
+
+span.in2igui_field_bottom span
+{
+	background-position: 100% -23px;
+	background-repeat: no-repeat;
+}
+
+span.in2igui_field_bottom span span
+{
+	background-position: 0 -15px;
+	background-repeat: repeat-x;
+	margin: 0 5px;
+}
+
+span.in2igui_field_middle
+{
+	display: block;
+	background: url('../gfx/field.png') 0 -27px no-repeat;
+}
+
+span.in2igui_field_middle span.in2igui_field_middle
+{
+	display: block;
+	background: url('../gfx/field.png') 100% -427px no-repeat;
+}
+
+span.in2igui_field_content
+{
+	display: block;
+	margin: 0 5px;
+	background: #fff;
+}
+
+div.in2igui_field_focused span.in2igui_field_top
+{
+	background-position: 0 -832px;
+}
+
+div.in2igui_field_focused span.in2igui_field_top span
+{
+	background-position: 100% -837px;
+}
+
+div.in2igui_field_focused span.in2igui_field_top span span
+{
+	background-position: 100% -827px;
+}
+
+div.in2igui_field_focused span.in2igui_field_bottom
+{
+	background-position: 0 -846px;
+}
+
+div.in2igui_field_focused span.in2igui_field_bottom span
+{
+	background-position: 100% -850px;
+}
+
+div.in2igui_field_focused span.in2igui_field_bottom span span
+{
+	background-position: 100% -842px;
+}
+
+div.in2igui_field_focused span.in2igui_field_middle
+{
+	background-position: 0 -854px;
+}
+
+div.in2igui_field_focused span.in2igui_field_middle span.in2igui_field_middle
+{
+	background-position: 100% -1254px;
+}
+
+/************************************* Drop down ********************************/
+
+a.in2igui_dropdown
+{
+	display: block;
+	height: 26px;
+	background: url('../gfx/dropdown.png') -19px top no-repeat;
+	outline: none;
+	text-decoration: none;
+	color: #333;
+	font-size: 13px;
+	line-height: 26px;
+}
+
+a.in2igui_dropdown span
+{
+	display: block;
+	height: 26px;
+	background: url('../gfx/dropdown.png') right -52px no-repeat;
+}
+
+a.in2igui_dropdown span span
+{
+	margin: 0 25px 0 6px;
+	background: url('../gfx/dropdown.png') left -26px repeat-x;
+	padding-left: 2px;
+}
+
+a.in2igui_dropdown:hover
+{
+	background-position: -19px -156px;
+}
+
+a.in2igui_dropdown:hover span
+{
+	background-position: right -208px;
+}
+
+a.in2igui_dropdown:hover span span
+{
+	background-position: left -182px;
+}
+
+a.in2igui_dropdown_focused
+{
+	background-position: -19px -78px;
+}
+
+a.in2igui_dropdown_focused span
+{
+	background-position: right -130px;
+}
+
+a.in2igui_dropdown_focused span span
+{
+	background-position: left -104px;
+}
+
+a.in2igui_dropdown_focused:hover
+{
+	background-position: -19px -234px;
+}
+
+a.in2igui_dropdown_focused:hover span
+{
+	background-position: right -286px;
+}
+
+a.in2igui_dropdown_focused:hover span span
+{
+	background-position: left -260px;
+}
+
+a.in2igui_dropdown strong
+{
+	display: block;
+	overflow: hidden;
+	font-weight: normal;
+	height: 26px;
+	width: 100%;
+}
+
+div.in2igui_dropdown_selector
+{
+	position: absolute;
+	display: none;
+	top: 0;
+	left: 0;
+	background: #fff;
+	border: 1px solid #ddd;
+	font-size: 12px;
+	-webkit-box-shadow: 0px 3px 5px #999;
+	-webkit-border: none;
+}
+
+div.in2igui_dropdown_selector a
+{
+	padding: 2px 5px;
+	display: block;
+	text-decoration: none;
+	color: #333;
+}
+
+div.in2igui_dropdown_selector a.in2igui_selected
+{
+	background: #eee;
+	color: #000;
+	font-weight: bold;
+}
+
+div.in2igui_dropdown_selector a:hover
+{
+	background-color: #3875d7;
+	color: #fff;
 }
 
 /************************************** Buttons *********************************/
@@ -807,39 +1026,73 @@ div.in2igui_radiobuttons div.in2igui_selected div
 /******************************* Checkboxes **************************/
 
 
-div.in2igui_checkbox
+a.in2igui_checkbox
 {
 	overflow: hidden;
-	padding: 2px 5px 0px 0px;
-	margin-bottom: 5px;
+	padding: 1px 5px 0px 0px;
 	font-size: 10pt;
-	cursor: default;
+	line-height: 20px;
+	cursor: pointer;
 	color: #004A80;
-}
-
-div.in2igui_checkboxes div.in2igui_checkbox
-{
-	margin-bottom: 2px;
+	display: inline-block;
+	outline: none;
+	text-decoration: none;
 }
 
 div.in2igui_checkboxes
 {
 	margin-bottom: 5px;
+	font-size: 0;
 }
 
-div.in2igui_checkbox div
+a.in2igui_checkbox span
 {
 	float: left;
-	background: url('../gfx/checkbox.png') no-repeat;
-	width: 18px;
-	height: 18px;
-	margin-right: 3px;
-	cursor: pointer;
+	width: 20px;
+	height: 20px;
+	margin-right: 2px;
 }
 
-div.in2igui_checkbox_selected div
+a.in2igui_checkbox span span
 {
-	background-position: 0px -18px;
+	background: url('../gfx/checkbox.png') no-repeat;
+	margin: 0;
+}
+
+a.in2igui_checkbox:hover span span
+{
+	background-position: 0 -20px;
+}
+
+a.in2igui_checkbox:active span span
+{
+	background-position: 0 -40px;
+}
+
+a.in2igui_checkbox_focused
+{
+	text-shadow: #3366ff 0px 0px 2px;
+	color: #002244;
+}
+
+a.in2igui_checkbox_focused span
+{
+	background: url('../gfx/checkbox.png') 0 -120px no-repeat;
+}
+
+a.in2igui_checkbox_selected span span
+{
+	background-position: 0px -60px;
+}
+
+a.in2igui_checkbox_selected:hover span span
+{
+	background-position: 0px -80px;
+}
+
+a.in2igui_checkbox_selected:active span span
+{
+	background-position: 0px -100px;
 }
 
 /******************************* Object list **************************/
@@ -854,7 +1107,7 @@ table.in2igui_objectlist th.in2igui_objectlist
 {
 	text-align: left;
 	font-size: 9pt;
-	line-height: 12pt;
+	line-height: 13px;
 	color: #004A80;
 	font-weight: normal;
 	padding-left: 4px;
@@ -862,7 +1115,7 @@ table.in2igui_objectlist th.in2igui_objectlist
 
 table.in2igui_objectlist th.in2igui_objectlist1
 {
-	padding-left: 0px;	
+	padding-left: 2px;
 }
 
 .in2igui_objectlist tbody input.text
@@ -872,7 +1125,7 @@ table.in2igui_objectlist th.in2igui_objectlist1
 }
 .in2igui_objectlist tbody td
 {
-	padding: 0px 0px 2px 4px;
+	padding: 0px 0px 0px 2px;
 	vertical-align: top;
 }
 
@@ -926,19 +1179,19 @@ div.in2igui_window_dark table.in2igui_formula_group label, div.in2igui_window_da
 	background: none;
 }
 
-div.in2igui_window_dark div.in2igui_field
-{
-	background: #222;
-}
-
 div.in2igui_window_dark .in2igui_formula_text
 {
 	color: #fff;
 }
 
-div.in2igui_window_dark div.in2igui_field, div.in2igui_window_dark div.in2igui_longfield
+div.in2igui_window_dark div.in2igui_field span
 {
-	border: 1px solid #444;
+	background-image: url('../gfx/field_dark.png');
+}
+
+div.in2igui_window_dark span.in2igui_field_middle
+{
+	background-color: #222222;
 }
 
 div.in2igui_window_dark input.in2igui_tokens_token
@@ -2127,68 +2380,12 @@ div.in2igui_window_dark .in2igui_selection_item span
 	background: url('../gfx/bound_bottom.png') top left repeat-x;
 }
 
-/****************************** Special button style ********************************/
-/*
-.in2igui_boundpanel a.in2igui_button
-{
-	float: right;
-	height: 20px;
-	background: url('../gfx/bound_button_bg.png') 0px 0px repeat-x;
-	font-size: 9pt;
-	padding: 0px 8px;
-	line-height: 20px;
-	border-width: 0px 1px;
-	border-color: #c6c9cb;
-	border-style: solid;
-	cursor: pointer;
-	margin-left: 5px;
-}
 
-.in2igui_boundpanel a.in2igui_button span
-{
-	background: none;
-	display: inline;
-	margin: 0px;
-	padding: 0px;
-}
-
-.in2igui_boundpanel a.in2igui_button:hover
-{
-	background: url('../gfx/bound_button_bg.png') 0px -20px repeat-x;
-}
-
-.in2igui_boundpanel a.in2igui_button_highlighted
-{
-	background: url('../gfx/bound_button_bg.png') 0px -40px repeat-x;
-	border-color: #67b45e;
-}
-
-.in2igui_boundpanel a.in2igui_button_highlighted:hover
-{
-	background: url('../gfx/bound_button_bg.png') 0px -60px repeat-x;
-}
-*/
 /****************************** Special form style *********************************/
 
-div.in2igui_boundpanel div.in2igui_field, div.in2igui_boundpanel input.in2igui_tokens_token
+div.in2igui_boundpanel input.in2igui_tokens_token
 {
 	border: 1px solid #DDDDDD;
-}
-
-.in2igui_boundpanel .in2igui_formula_text
-{
-	margin: 0px;
-	padding: 1px 0px;
-	border: none;
-	font-size:10pt;
-	text-indent:1px;
-	width:100%;
-	font-family:"Lucida Sans Unicode","Lucida Grande",sans-serif;
-}
-
-.in2igui_boundpanel input.in2igui_formula_text
-{
-	height:18px;
 }
 
 .in2igui_boundpanel .in2igui_formula_group
@@ -2661,6 +2858,11 @@ div.in2igui_overlay_icon:hover
 .in2igui_editor_column_hover
 {
 	border: 1px dashed #3875d7;
+}
+
+.in2igui_editor_column_edit
+{
+	outline: 2px dashed #3875d7 !important;
 }div.in2igui_menu
 {
 	display: none;
@@ -2745,6 +2947,7 @@ div.in2igui_upload
 {
 	overflow: hidden;
 	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+	font-size: 0;
 }
 
 div.in2igui_upload div.in2igui_buttons
@@ -2817,6 +3020,14 @@ div.in2igui_upload object
 {
 	position: absolute;
 	margin-left: -108px;
+}
+
+div.in2igui_upload_status
+{
+	color: #999999;
+	font-size: 11px;
+	line-height: 15px;
+	padding-left: 1px;
 }div.in2igui_progressbar
 {
 	height: 22px;
@@ -2848,6 +3059,11 @@ div.in2igui_progressbar_small_waiting
 {
 	background: url('../gfx/progress_animation_small_indeterminate.gif');
 	height: 14px;
+}
+
+div.in2igui_progressbar_small_complete div
+{
+	background: url('../gfx/progress_bg.png') left -14px;
 }div.in2igui_gallery_item
 {
 	float: left;

@@ -1,10 +1,10 @@
 In2iGui.ImageViewer = function(element,name,options) {
 	this.options = n2i.override({
 		maxWidth:800,maxHeight:600,perimeter:100,sizeSnap:100,
-		ease:n2i.ease.elastic,
+		ease:n2i.ease.slowFastSlow,
 		easeEnd:n2i.ease.bounce,
 		easeAuto:n2i.ease.slowFastSlow,
-		easeReturn:n2i.ease.slowFastSlow,transition:1200,transitionEnd:800,transitionReturn:300
+		easeReturn:n2i.ease.cubicInOut,transition:400,transitionEnd:1000,transitionReturn:300
 		},options);
 	this.element = $(element);
 	this.box = this.options.box;

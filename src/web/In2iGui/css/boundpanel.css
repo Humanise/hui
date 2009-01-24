@@ -96,68 +96,12 @@
 	background: url('../gfx/bound_bottom.png') top left repeat-x;
 }
 
-/****************************** Special button style ********************************/
-/*
-.in2igui_boundpanel a.in2igui_button
-{
-	float: right;
-	height: 20px;
-	background: url('../gfx/bound_button_bg.png') 0px 0px repeat-x;
-	font-size: 9pt;
-	padding: 0px 8px;
-	line-height: 20px;
-	border-width: 0px 1px;
-	border-color: #c6c9cb;
-	border-style: solid;
-	cursor: pointer;
-	margin-left: 5px;
-}
 
-.in2igui_boundpanel a.in2igui_button span
-{
-	background: none;
-	display: inline;
-	margin: 0px;
-	padding: 0px;
-}
-
-.in2igui_boundpanel a.in2igui_button:hover
-{
-	background: url('../gfx/bound_button_bg.png') 0px -20px repeat-x;
-}
-
-.in2igui_boundpanel a.in2igui_button_highlighted
-{
-	background: url('../gfx/bound_button_bg.png') 0px -40px repeat-x;
-	border-color: #67b45e;
-}
-
-.in2igui_boundpanel a.in2igui_button_highlighted:hover
-{
-	background: url('../gfx/bound_button_bg.png') 0px -60px repeat-x;
-}
-*/
 /****************************** Special form style *********************************/
 
-div.in2igui_boundpanel div.in2igui_field, div.in2igui_boundpanel input.in2igui_tokens_token
+div.in2igui_boundpanel input.in2igui_tokens_token
 {
 	border: 1px solid #DDDDDD;
-}
-
-.in2igui_boundpanel .in2igui_formula_text
-{
-	margin: 0px;
-	padding: 1px 0px;
-	border: none;
-	font-size:10pt;
-	text-indent:1px;
-	width:100%;
-	font-family:"Lucida Sans Unicode","Lucida Grande",sans-serif;
-}
-
-.in2igui_boundpanel input.in2igui_formula_text
-{
-	height:18px;
 }
 
 .in2igui_boundpanel .in2igui_formula_group

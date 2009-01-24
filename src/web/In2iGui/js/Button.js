@@ -2,32 +2,32 @@ In2iGui.Button = function(id,name) {
 	this.name = name;
 	this.element = $(id);
 	this.inner = this.element.getElementsByTagName('span')[1];
-	this.enabled = true;
+	this.enabled = !this.element.hasClassName('in2igui_button_disabled');
 	In2iGui.extend(this);
 	this.addBehavior();
 }
 
-In2iGui.Button.create = function(name,opts) {
-	var options = {text:'',highlighted:false};
-	n2i.override(options,opts);
-	var className = 'in2igui_button'+(options.highlighted ? ' in2igui_button_highlighted' : '');
+In2iGui.Button.create = function(name,o) {
+	var o = n2i.override({text:'',highlighted:false,enabled:true},o);
+	var className = 'in2igui_button'+(o.highlighted ? ' in2igui_button_highlighted' : '');
+	if (!o.enabled) className+=' in2igui_button_disabled';
 	var element = new Element('a',{'class':className,href:'#'});
 	var element2 = new Element('span');
 	element.appendChild(element2);
 	var element3 = new Element('span');
 	element2.appendChild(element3);
-	if (options.icon) {
-		var icon = new Element('em',{'class':'in2igui_button_icon'}).setStyle({'backgroundImage':'url('+In2iGui.getIconUrl(options.icon,1)+')'});
-		if (!options.text || options.text.length==0) {
+	if (o.icon) {
+		var icon = new Element('em',{'class':'in2igui_button_icon'}).setStyle({'backgroundImage':'url('+In2iGui.getIconUrl(o.icon,1)+')'});
+		if (!o.text || o.text.length==0) {
 			icon.addClassName('in2igui_button_icon_notext');
 		}
 		element3.insert(icon);
 	}
-	if (options.text && options.text.length>0) {
-		element3.insert(options.text);
+	if (o.text && o.text.length>0) {
+		element3.insert(o.text);
 	}
-	if (options.title && options.title.length>0) {
-		element3.insert(options.title);
+	if (o.title && o.title.length>0) {
+		element3.insert(o.title);
 	}
 	return new In2iGui.Button(element,name);
 }
@@ -69,10 +69,10 @@ In2iGui.Buttons = function(id,name) {
 	In2iGui.extend(this);
 }
 
-In2iGui.Buttons.create = function(name,options) {
-	options = n2i.override({top:0},options);
+In2iGui.Buttons.create = function(name,o) {
+	o = n2i.override({top:0},o);
 	var e = new Element('div',{'class':'in2igui_buttons'});
-	if (options.top>0) e.setStyle({paddingTop:options.top+'px'});
+	if (o.top>0) e.setStyle({paddingTop:o.top+'px'});
 	e.insert(new Element('div',{'class':'in2igui_buttons_body'}));
 	return new In2iGui.Buttons(e,name);
 }

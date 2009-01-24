@@ -62,7 +62,7 @@ In2iGui.Overlay.prototype = {
 			this.element.setStyle({'display':'block'});
 		} else {
 			this.element.setStyle({'display':'block','opacity':0});
-			n2i.ani(this.element,'opacity',1,300);
+			n2i.ani(this.element,'opacity',1,150);
 		}
 		this.visible = true;
 		if (options.autoHide) {

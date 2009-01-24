@@ -119,14 +119,13 @@ In2iGui.ObjectList.Text.prototype = {
 	},
 	getElement : function() {
 		var input = new Element('input',{'class':'in2igui_formula_text'});
-		var field = new Element('div',{'class':'in2igui_field'});
-		field.appendChild(input);
+		var field = In2iGui.wrapInField(input);
 		this.wrapper = new In2iGui.TextField(input);
 		this.wrapper.addDelegate(this);
 		return field;
 	},
-	valueChanged : function(field) {
-		this.value = field.getValue();
+	valueChanged : function(value) {
+		this.value = value;
 		this.object.valueDidChange();
 	},
 	getValue : function() {

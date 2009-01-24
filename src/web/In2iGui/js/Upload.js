@@ -1,8 +1,20 @@
-In2iGui.Upload = function(element,name,options) {
-	this.options = n2i.override({url:'',parameters:{}},options);
-	this.element = $(element);
+/**
+ * @class
+ *
+ * Options
+ * {url:'',parameters:{}}
+ *
+ * Events:
+ * uploadDidCompleteQueue
+ * uploadDidStartQueue
+ * uploadDidComplete(file)
+ */
+In2iGui.Upload = function(o) {
+	o = this.options = n2i.override({url:'',parameters:{}},o);
+	this.element = $(o.element);
 	this.itemContainer = this.element.select('.in2igui_upload_items')[0];
-	this.name = name;
+	this.status = this.element.select('.in2igui_upload_status')[0];
+	this.name = o.name;
 	this.items = [];
 	this.busy = false;
 	this.loaded = false;
@@ -11,12 +23,14 @@ In2iGui.Upload = function(element,name,options) {
 	this.addBehavior();
 }
 
-In2iGui.Upload.create = function(name,options) {
-	var element = new Element('div',{'class':'in2igui_upload'});
-	element.update('<div class="in2igui_upload_placeholder"></div>'+
+In2iGui.Upload.create = function(o) {
+	o = o || {};
+	o.element = new Element('div',{'class':'in2igui_upload'});
+	o.element.update('<div class="in2igui_upload_placeholder"></div>'+
 		'<div class="in2igui_upload_items"></div>'+
+		'<div class="in2igui_upload_status"></div>'+
 	'</div>');
-	return new In2iGui.Upload(element,name,options);
+	return new In2iGui.Upload(o);
 }
 
 In2iGui.Upload.prototype = {
@@ -63,7 +77,7 @@ In2iGui.Upload.prototype = {
 		if (!this.uploading) return;
 		this.uploading = false;
 		this.form.reset();
-		In2iGui.callDelegates(this,'uploadDidCompleteQueue');
+		this.fire('uploadDidCompleteQueue');
 	},
 	iframeSubmit : function() {
 		this.uploading = true;
@@ -73,7 +87,7 @@ In2iGui.Upload.prototype = {
 			this.form[p[i].name].value=p[i].value;
 		};
 		this.form.submit();
-		In2iGui.callDelegates(this,'uploadDidSubmit');
+		this.fire('uploadDidSubmit');
 	},
 	startProgress : function() {
 		this.form.style.display='none';
@@ -93,11 +107,14 @@ In2iGui.Upload.prototype = {
 		this.updateButtonPosition();
 	},
 	clear : function() {
-		this.items.each(function(item) {
-			item.destroy();
-		});
+		for (var i=0; i < this.items.length; i++) {
+			if (this.items[i]) {
+				this.items[i].destroy();
+			}
+		};
 		this.items = [];
 		this.itemContainer.hide();
+		this.status.update();
 	},
 	
 	/////////////////////////// Flash //////////////////////////
@@ -126,7 +143,7 @@ In2iGui.Upload.prototype = {
 			button_height : size.height,
 
 			swfupload_loaded_handler : function() {self.flashLoaded()},
-			file_queued_handler : function(file) {self.fileQueued(file)},
+			file_queued_handler : self.fileQueued.bind(self),
 			file_queue_error_handler : function(file, error, message) {self.fileQueueError(file, error, message)},
 			file_dialog_complete_handler : function() {self.fileDialogComplete()},
 			upload_start_handler : function() {self.uploadStart()},
@@ -189,33 +206,40 @@ In2iGui.Upload.prototype = {
 		this.startNextUpload();
 	},
 	uploadStart : function() {
-		
+		if (!this.busy) {
+			this.fire('uploadDidStartQueue');
+		}
+		this.busy = true;
 	},
 	uploadProgress : function(file,complete,total) {
+		this.updateStatus();
 		this.items[file.index].updateProgress(complete,total);
 	},
 	uploadError : function(file, error, message) {
 		if (file) {
 			this.items[file.index].update(file);
 		}
-		//this.addError(error,file);
 	},
 	uploadSuccess : function(file,data) {
 		this.items[file.index].updateProgress(file.size,file.size);
 	},
 	uploadComplete : function(file) {
+		this.items[file.index].update(file);
 		this.startNextUpload();
 		var self = this;
-		window.setTimeout(function() {
-			//self.items[file.index].hide();
-		},100);
-		In2iGui.callDelegates(this,'uploadDidComplete',file);
+		this.fire('uploadDidComplete',file);
 		if (this.loader.getStats().files_queued==0) {
-			this.queueComplete();
+			this.fire('uploadDidCompleteQueue');
 		}
+		this.updateStatus();
+		this.busy = false;
 	},
-	queueComplete : function() {
-		In2iGui.callDelegates(this,'uploadDidCompleteQueue');
+	
+	/// Status ///
+	updateStatus : function() {
+		var s = this.loader.getStats();
+		this.status.update('Status: '+Math.round(s.successful_uploads/this.items.length*100)+'%');
+		n2i.log(s);
 	}
 }
 

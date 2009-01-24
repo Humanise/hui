@@ -29,7 +29,13 @@ In2iGui.Window.create = function(name,options) {
 In2iGui.Window.prototype = {
 	addBehavior : function() {
 		var self = this;
-		if (this.close) this.close.observe('click',function(e) {self.hide();}).observe('mousedown',function(e) {e.stop();});
+		if (this.close) {
+			this.close.observe('click',function(e) {
+				this.hide();
+				this.fire('userClosedWindow');
+			}.bind(this)
+			).observe('mousedown',function(e) {e.stop();});
+		}
 		this.titlebar.onmousedown = function(e) {self.startDrag(e);return false;};
 		this.titlebar.observe('touchstart',function(e) {self.startDrag(e);return false;});
 		this.element.observe('mousedown',function() {

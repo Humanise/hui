@@ -2,6 +2,7 @@
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:In2iGui" pad="10" title="Formula">
 	<controller name="controller" source="formula.js"/>
+	<source name="itemsSource" url="data/source_items.xml"/>
 	<box width="600" title="Title with toolbars" variant="textured">
 		<toolbar>
 			<icon icon="common/color" title="Hep hey!" selected="true"/>
@@ -13,16 +14,21 @@
 			<tab title="Formula 1" padding="10">
 				<formula name="formula1">
 					<group labels="above">
+						<dropdown label="Template:" key="template" value="2">
+							<item title="Lorem inpsum" value="1"/>
+							<item title="Consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua" value="2"/>
+							<item title="Ut enim ad minim veniam" value="3"/>
+							<item title="Excepteur sint occaecat" value="4"/>
+						</dropdown>
 						<text label="Brugernavn:" key="username"/>
-						<password label="Kodeord:" key="password"/>
+						<text secret="true" label="Kodeord:" key="password"/>
 						<text label="Notat:" lines="6" key="note"/>
 						<datetime label="Date (secs):" key="date-seconds" return-type="seconds"/>
 						<datetime label="Date:" key="date"/>
-						<select label="Select:" key="select" source="source_items.xml"/>
 						<checkbox label="Internal access:" key="internal"/>
 						<checkbox label="External access:" key="external"/>
 						<checkboxes label="Groups:" key="groups">
-							<source url="source_items.xml"/>
+							<items source="itemsSource"/>
 						</checkboxes>
 						<tokens label="Tokens:" key="tokens"/>
 						<radiobuttons label="Radios:" key="radios">
@@ -51,12 +57,12 @@
 			<tab title="Formula 2" padding="10">
 				<formula name="formula2">
 					<group>
+						<dropdown label="Template:" key="template" source="itemsSource" value="c"/>
 						<text label="Brugernavn:" key="username"/>
 						<password label="Kodeord:" key="password"/>
 						<text label="Notat:" lines="6" key="note"/>
 						<datetime label="Date (secs):" key="date-seconds" return-type="seconds"/>
 						<datetime label="Date:" key="date"/>
-						<select label="Select:" key="select" source="source_items.xml"/>
 						<checkbox label="Internal access:" key="internal"/>
 						<checkbox label="External access:" key="external"/>
 						<checkboxes label="Groups:" key="groups">
@@ -91,12 +97,12 @@
 	<window name="win" width="400" padding="10">
 		<formula name="formula2">
 			<group>
+				<dropdown label="Template:" key="template" source="itemsSource" value="c"/>
 				<text label="Brugernavn:" key="username"/>
 				<password label="Kodeord:" key="password"/>
 				<text label="Notat:" lines="6" key="note"/>
 				<datetime label="Date (secs):" key="date-seconds" return-type="seconds"/>
 				<datetime label="Date:" key="date"/>
-				<select label="Select:" key="select" source="source_items.xml"/>
 				<checkbox label="Internal access:" key="internal"/>
 				<checkbox label="External access:" key="external"/>
 				<checkboxes label="Groups:" key="groups">

@@ -16,11 +16,14 @@ p.create = function(o) {
 }
 
 p.WAITING = 'in2igui_progressbar_small_waiting';
+p.COMPLETE = 'in2igui_progressbar_small_complete';
 	
 p.prototype = {
 	setValue : function(value) {
-		if (this.waiting) this.element.removeClassName(p.WAITING);
-		n2i.ani(this.indicator,'width',(value*100)+'%',value==1 ? 10 : 200);
+		var el = this.element;
+		if (this.waiting) el.removeClassName(p.WAITING);
+		el.setClassName(p.COMPLETE,value==1);
+		n2i.ani(this.indicator,'width',(value*100)+'%',200);
 	},
 	setWaiting : function() {
 		this.waiting = true;
@@ -28,7 +31,9 @@ p.prototype = {
 		this.element.addClassName(p.WAITING);
 	},
 	reset : function() {
-		if (this.waiting) this.element.removeClassName(p.WAITING);
+		var el = this.element;
+		if (this.waiting) el.removeClassName(p.WAITING);
+		el.removeClassName(p.COMPLETE);
 		this.indicator.style.width='0%';
 	},
 	hide : function() {

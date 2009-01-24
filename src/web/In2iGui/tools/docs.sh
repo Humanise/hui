@@ -10,6 +10,6 @@ ${DIR}/compile.sh
 
 #java -jar jsdoc-toolkit/jsrun.jar jsdoc-toolkit/app/run.js -a -t=jsdoc-toolkit/templates/jsdoc ${JS_PATH}combined.js 
 echo "Documenting"
-perl jsdoc/jsdoc.pl -d ${DIR}/../docs ${JS_PATH}combined.js
+perl jsdoc/jsdoc.pl -d ${DIR}/../api ${JS_PATH}combined.js
 
 #java -Xmx256m -jar jsdoc-toolkit/jsrun.jar jsdoc-toolkit/app/run.js -a -t=jsdoc-toolkit/templates/jsdoc -d=../docs2 ${JS_PATH}combined.js 

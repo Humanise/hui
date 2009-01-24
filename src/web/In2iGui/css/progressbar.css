@@ -30,3 +30,8 @@ div.in2igui_progressbar_small_waiting
 	background: url('../gfx/progress_animation_small_indeterminate.gif');
 	height: 14px;
 }
+
+div.in2igui_progressbar_small_complete div
+{
+	background: url('../gfx/progress_bg.png') left -14px;
+}

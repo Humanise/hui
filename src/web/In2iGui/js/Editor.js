@@ -1,5 +1,5 @@
 
-In2iGui.Editor = function(element,name,options) {
+In2iGui.Editor = function() {
 	this.name = 'In2iGuiEditor';
 	this.parts = [];
 	this.rows = [];
@@ -7,6 +7,7 @@ In2iGui.Editor = function(element,name,options) {
 	this.activePart = null;
 	this.active = false;
 	this.dragProxy = null;
+	In2iGui.extend(this);
 }
 
 In2iGui.Editor.get = function() {
@@ -126,8 +127,10 @@ In2iGui.Editor.prototype = {
 		if (!this.active || this.activePart) return;
 		if (!this.columnMenu) {
 			var menu = In2iGui.Menu.create('In2iGuiEditorColumnMenu');
+			menu.addItem({title:'Rediger kolonne',value:'editColumn'});
 			menu.addItem({title:'Slet kolonne',value:'removeColumn'});
 			menu.addItem({title:'Tilføj kolonne',value:'addColumn'});
+			menu.addDivider();
 			this.partControllers.each(function(item) {
 				menu.addItem({title:item.title,value:item.key});
 			});
@@ -140,15 +143,65 @@ In2iGui.Editor.prototype = {
 	},
 	itemWasClicked$In2iGuiEditorColumnMenu : function(value) {
 		if (value=='removeColumn') {
-			In2iGui.callDelegates(this,'removeColumn',{'row':this.hoveredRow,'column':this.hoveredColumnIndex});
+			this.fire('removeColumn',{'row':this.hoveredRow,'column':this.hoveredColumnIndex});
+		} else if (value=='editColumn') {
+			this.editColumn(this.hoveredRow,this.hoveredColumnIndex);
 		} else if (value=='addColumn') {
-			In2iGui.callDelegates(this,'addColumn',{'row':this.hoveredRow,'position':this.hoveredColumnIndex+1});
+			this.fire('addColumn',{'row':this.hoveredRow,'position':this.hoveredColumnIndex+1});
 		} else {
-			In2iGui.callDelegates(this,'addPart',{'row':this.hoveredRow,'column':this.hoveredColumnIndex,'position':0,type:value});
+			this.fire('addPart',{'row':this.hoveredRow,'column':this.hoveredColumnIndex,'position':0,type:value});
 		}
 	},
 	
+	///////////////////// Column editor //////////////////////
 	
+	editColumn : function(rowIndex,columnIndex) {
+		this.closeColumn();
+		var c = this.activeColumn = $$('.row')[rowIndex].select('.column')[columnIndex];
+		c.addClassName('in2igui_editor_column_edit');
+		this.showColumnWindow();
+		this.columnEditorForm.setValues({width:c.getStyle('width'),paddingLeft:c.getStyle('padding-left')});
+	},
+	closeColumn : function() {
+		if (this.activeColumn) {
+			this.activeColumn.removeClassName('in2igui_editor_column_edit');
+		}
+	},
+	showColumnWindow : function() {
+		if (!this.columnEditor) {
+			var w = this.columnEditor = In2iGui.Window.create('columnEditor',{title:'Rediger kolonne'});
+			var f = this.columnEditorForm = In2iGui.Formula.create();
+			var g = f.createGroup();
+			var width = In2iGui.Formula.Text.create(null,{label:'Bredde',key:'width'});
+			width.addDelegate({valueChanged:function(v) {this.changeColumnWidth(v)}.bind(this)})
+			g.add(width);
+			var marginLeft = In2iGui.Formula.Text.create(null,{label:'Venstremargen',key:'left'});
+			marginLeft.addDelegate({valueChanged:function(v) {this.changeColumnLeftMargin(v)}.bind(this)})
+			g.add(marginLeft);
+			var marginRight = In2iGui.Formula.Text.create(null,{label:'Højremargen',key:'right'});
+			marginRight.addDelegate({valueChanged:this.changeColumnRightMargin.bind(this)})
+			g.add(marginRight);
+			w.add(f);
+			w.addDelegate(this);
+		}
+		this.columnEditor.show();
+	},
+	userClosedWindow$columnEditor : function() {
+		this.closeColumn();
+		var values = this.columnEditorForm.getValues();
+		values.row=this.hoveredRow;
+		values.column=this.hoveredColumnIndex;
+		this.fire('updateColumn',values);
+	},
+	changeColumnWidth : function(width) {
+		this.activeColumn.setStyle({'width':width});
+	},
+	changeColumnLeftMargin : function(margin) {
+		this.activeColumn.setStyle({'paddingLeft':margin});
+	},
+	changeColumnRightMargin : function(margin) {
+		this.activeColumn.setStyle({'paddingRight':margin});
+	},
 	///////////////////////// Parts //////////////////////////
 	
 	hoverPart : function(part,event) {
@@ -246,12 +299,50 @@ In2iGui.Editor.prototype = {
 		window.clearTimeout(this.partControlTimer);
 		this.hidePartControls();
 		this.blurColumn();
+		this.showPartEditor();
+	},
+	showPartEditor : function() {
+		if (!this.partEditor) {
+			var w = this.partEditor = In2iGui.Window.create(null,{padding:5,title:'Afstande',close:false,variant:'dark'});
+			var f = this.partEditorForm = In2iGui.Formula.create();
+			f.buildGroup({above:false},[
+				{type:'Text',options:{label:'Top',key:'top'}},
+				{type:'Text',options:{label:'Bottom',key:'bottom'}},
+				{type:'Text',options:{label:'Left',key:'left'}},
+				{type:'Text',options:{label:'Right',key:'right'}}
+			]);
+			w.add(f);
+			f.addDelegate({valuesChanged:this.updatePartProperties.bind(this)});
+		}
+		var e = this.activePart.element;
+		this.partEditorForm.setValues({
+			top: e.getStyle('marginTop'),
+			bottom: e.getStyle('marginBottom'),
+			left: e.getStyle('marginLeft'),
+			right: e.getStyle('marginRight')
+		});
+		this.partEditor.show();
+	},
+	updatePartProperties : function(values) {
+		this.activePart.element.setStyle({
+			marginTop:values.top,
+			marginBottom:values.bottom,
+			marginLeft:values.left,
+			marginRight:values.right
+		});
+		this.activePart.properties = values;
+		n2i.log(values);
+	},
+	hidePartEditor : function() {
+		if (this.partEditor) this.partEditor.hide();
 	},
 	cancelPart : function(part) {
 		part.cancel();
+		this.hidePartEditor();
 	},
 	savePart : function(part) {
 		part.save();
+		this.hidePartEditor();
 	},
 	getEditorForElement : function(element) {
 		for (var i=0; i < this.parts.length; i++) {
@@ -415,7 +506,7 @@ In2iGui.Editor.Html.prototype = {
 		//if (Prototype.Browser.IE) return;
 		var height = this.element.getHeight();
 		this.element.update('');
-		var style = this.getStyle();
+		var style = this.buildStyle();
 		this.editor = In2iGui.RichText.create(null,{autoHideToolbar:false,style:style});
 		this.editor.setHeight(height);
 		this.element.appendChild(this.editor.getElement());
@@ -424,14 +515,14 @@ In2iGui.Editor.Html.prototype = {
 		this.editor.setValue(this.value);
 		this.editor.focus();
 	},
-	getStyle : function() {
-		var style = '';
-		style+='text-align:'+n2i.getStyle(this.element,'text-align')+';';
-		style+='font-family:'+n2i.getStyle(this.element,'font-family')+';';
-		style+='font-size:'+n2i.getStyle(this.element,'font-size')+';';
-		style+='font-weight:'+n2i.getStyle(this.element,'font-weight')+';';
-		style+='color:'+n2i.getStyle(this.element,'color')+';';
-		return style;
+	buildStyle : function() {
+		return {
+			'textAlign':n2i.getStyle(this.element,'text-align')
+			,'fontFamily':n2i.getStyle(this.element,'font-family')
+			,'fontSize':n2i.getStyle(this.element,'font-size')
+			,'fontWeight':n2i.getStyle(this.element,'font-weight')
+			,'color':n2i.getStyle(this.element,'color')
+		}
 	},
 	cancel : function() {
 		this.deactivate();

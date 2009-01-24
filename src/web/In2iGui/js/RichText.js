@@ -9,6 +9,7 @@ In2iGui.RichText = function(id,name,options) {
 	this.toolbarContent = e.select('.in2igui_richtext_toolbar_content')[0];
 	this.value = this.options.value;
 	this.document = null;
+	this.ignited = false;
 	this.buildToolbar();
 	this.ignite();
 	In2iGui.extend(this);
@@ -72,8 +73,10 @@ In2iGui.RichText.prototype = {
 				this.document.documentElement.style.cursor='text';
 				this.document.documentElement.style.minHeight='100%';
 			}
+			Element.setStyle(this.document.body,this.options.style);
 			Event.observe(this.window,'focus',function() {self.documentFocused()});
 			Event.observe(this.window,'blur',function() {self.documentBlurred()});
+			this.ignited = true;
      	}.bind(this));
 		this.editor.observe("wysihat:change", function(event) {
         	this.documentChanged();

@@ -71,6 +71,16 @@ In2iGui.Formula.prototype = {
 		var g = In2iGui.Formula.Group.create(null,options);
 		this.add(g);
 		return g;
+	},
+	buildGroup : function(options,recipe) {
+		var g = this.createGroup(options);
+		recipe.each(function(item) {
+			var w = In2iGui.Formula[item.type].create(null,item.options);
+			g.add(w);
+		});
+	},
+	childValueChanged : function(value) {
+		this.fire('valuesChanged',this.getValues());
 	}
 }
 
@@ -132,11 +142,12 @@ In2iGui.Formula.Group.prototype = {
 
 In2iGui.Formula.Text = function(element,name,options) {
 	this.name = name;
-	this.options = {label:null,key:null};
-	n2i.override(this.options,options);
+	this.options = n2i.override({label:null,key:null},options);
 	this.element = $(element);
 	this.input = this.element.select('.in2igui_formula_text')[0];
+	this.value = this.input.value;
 	In2iGui.extend(this);
+	this.addBehavior();
 }
 
 In2iGui.Formula.Text.create = function(name,options) {
@@ -150,12 +161,21 @@ In2iGui.Formula.Text.create = function(name,options) {
 			{'class':'in2igui_formula_text'}
 		);		
 	}
-	var element = new Element('div',{'class':'in2igui_field'});
-	element.appendChild(input);
-	return new In2iGui.Formula.Text(element,name,options);
+	var e = In2iGui.wrapInField(input);
+	return new In2iGui.Formula.Text(e,name,options);
 }
 
 In2iGui.Formula.Text.prototype = {
+	addBehavior : function() {
+		In2iGui.addFocusClass({element:this.input,classElement:this.element,'class':'in2igui_field_focused'});
+		this.input.observe('keyup',this.valueMightHaveChanged.bind(this));
+	},
+	valueMightHaveChanged : function() {
+		if (this.input.value==this.value) return;
+		this.value=this.input.value;
+		In2iGui.callAncestors(this,'childValueChanged',this.input.value);
+		this.fire('valueChanged',this.input.value);
+	},
 	updateFromNode : function(node) {
 		if (node.firstChild) {
 			this.setValue(node.firstChild.nodeValue);
@@ -175,6 +195,7 @@ In2iGui.Formula.Text.prototype = {
 		this.setValue('');
 	},
 	setValue : function(value) {
+		this.value = value;
 		this.input.value = value;
 	},
 	getValue : function() {
@@ -190,29 +211,22 @@ In2iGui.Formula.Text.prototype = {
 
 /********************** Dat time ***********************/
 
-In2iGui.Formula.DateTime = function(elementOrId,name,options) {
+In2iGui.Formula.DateTime = function(o) {
 	this.inputFormats = ['d-m-Y','d/m-Y','d/m/Y','d-m-Y H:i:s','d/m-Y H:i:s','d/m/Y H:i:s','d-m-Y H:i','d/m-Y H:i','d/m/Y H:i','d-m-Y H','d/m-Y H','d/m/Y H','d-m','d/m','d','Y','m-d-Y','m-d','m/d'];
 	this.outputFormat = 'd-m-Y H:i:s';
-	//this.id = id;
-	this.name = name;
-	this.options = n2i.override({returnType:null,label:null},options);
+	this.name = o.name;
+	this.element = $(o.element);
+	this.input = this.element.select('input')[0];
+	this.options = n2i.override({returnType:null,label:null},o);
 	this.value = null;
-	this.element = $(elementOrId);
 	In2iGui.extend(this);
 	this.addBehavior();
 }
 
-In2iGui.Formula.DateTime.create = function(name,options) {
-	var element = new Element('input',{'class':'in2igui_formula_text'});
-	return new In2iGui.Formula.DateTime(element,name,options);
-}
-
 In2iGui.Formula.DateTime.prototype = {
 	addBehavior : function() {
-		var self = this;
-		this.element.onblur = function() {
-			self.check();
-		}
+		In2iGui.addFocusClass({element:this.input,classElement:this.element,'class':'in2igui_field_focused'});
+		this.input.observe('blur',this.check.bind(this));
 	},
 	updateFromNode : function(node) {
 		if (node.firstChild) {
@@ -225,7 +239,7 @@ In2iGui.Formula.DateTime.prototype = {
 		this.setValue(data.value);
 	},
 	focus : function() {
-		try {this.element.focus();} catch (ignore) {}
+		try {this.input.focus();} catch (ignore) {}
 	},
 	reset : function() {
 		this.setValue('');
@@ -242,7 +256,7 @@ In2iGui.Formula.DateTime.prototype = {
 		this.updateUI();
 	},
 	check : function() {
-		var str = this.element.value;
+		var str = this.input.value;
 		var parsed = null;
 		for (var i=0; i < this.inputFormats.length && parsed==null; i++) {
 			parsed = Date.parseDate(str,this.inputFormats[i]);
@@ -264,10 +278,118 @@ In2iGui.Formula.DateTime.prototype = {
 	},
 	updateUI : function() {
 		if (this.value) {
-			this.element.value = this.value.dateFormat(this.outputFormat);
+			this.input.value = this.value.dateFormat(this.outputFormat);
 		} else {
-			this.element.value = ''
+			this.input.value = ''
 		}
+	}
+}
+
+/************************************* DropDown *******************************/
+
+In2iGui.Formula.DropDown = function(o) {
+	this.name = o.name;
+	var e = this.element = $(o.element);
+	this.inner = e.select('strong')[0];
+	this.options = n2i.override({label:null},o);
+	this.items = [];
+	this.index = -1;
+	this.value = this.options.value || null;
+	this.dirty = true;
+	In2iGui.extend(this);
+	this.addBehavior();
+	if (this.options.source) {
+		this.options.source.addDelegate(this);
+	}
+}
+
+In2iGui.Formula.DropDown.prototype = {
+	addBehavior : function() {
+		In2iGui.addFocusClass({element:this.element,'class':'in2igui_dropdown_focused'});
+		this.element.observe('click',this.clicked.bind(this));
+		this.element.observe('blur',this.hideSelector.bind(this));
+	},
+	updateUI : function() {
+		if (this.items[this.index]) {
+			this.inner.update(this.items[this.index].title);
+		}
+		if (!this.selector) return;
+		this.selector.select('a').each(function(a,i) {
+			if (this.index==i) {
+				a.addClassName('in2igui_selected');
+			}
+			else a.className='';
+		}.bind(this));
+	},
+	clicked : function(e) {
+		e.stop();
+		this.buildSelector();
+		var el = this.element,s=this.selector;
+		el.focus();
+		if (!this.items) return;
+		In2iGui.positionAtElement(s,el,{vertical:'bottomOutside',top:-2,left:2});
+		s.setStyle({display:'block',width:(el.getWidth()-5)+'px',zIndex:In2iGui.nextTopIndex()});
+	},
+	getValue : function(value) {
+		return this.value;
+	},
+	getLabel : function() {
+		return this.options.label;
+	},
+	refresh : function() {
+		if (this.options.source) {
+			this.options.source.refresh();
+		}
+	},
+	addItem : function(item) {
+		this.items.push(item);
+		this.dirty = true;
+		this.updateIndex();
+		this.updateUI();
+	},
+	setItems : function(items) {
+		this.items = items;
+		this.dirty = true;
+		this.index = -1;
+		this.updateIndex();
+		this.updateUI();
+	},
+	updateIndex : function() {
+		this.items.each(function(item,i) {
+			if (item.value==this.value) this.index=i;
+		}.bind(this));
+	},
+	itemsLoaded : function(items) {
+		this.setItems(items);
+	},
+	hideSelector : function() {
+		if (!this.selector) return;
+		this.selector.hide();
+	},
+	buildSelector : function() {
+		if (!this.dirty || !this.items) return;
+		if (!this.selector) {
+			this.selector = new Element('div',{'class':'in2igui_dropdown_selector'});
+			document.body.appendChild(this.selector);
+		} else {
+			this.selector.update();
+		}
+		var self = this;
+		this.items.each(function(item,i) {
+			var e = new Element('a',{href:'#'}).update(item.title).observe('mousedown',function(e) {
+				e.stop();
+				self.itemClicked(item,i);
+			})
+			if (i==self.index) e.addClassName('in2igui_selected');
+			self.selector.insert(e);
+		});
+		this.dirty = false;
+	},
+	itemClicked : function(item,index) {
+		this.index = index;
+		this.value = this.items[index].value;
+		this.updateUI();
+		this.hideSelector();
 	}
 }
 
@@ -402,6 +524,7 @@ In2iGui.Formula.Radiobuttons.prototype = {
 
 In2iGui.Formula.Checkbox = function(id,name,options) {
 	this.element = $(id);
+	this.control = this.element.select('span')[0];
 	this.options = options;
 	this.name = name;
 	this.value = options.value=='true';
@@ -411,11 +534,12 @@ In2iGui.Formula.Checkbox = function(id,name,options) {
 
 In2iGui.Formula.Checkbox.prototype = {
 	addBehavior : function() {
-		var control = this.element.select('div')[0];
-		var self = this;
-		control.onclick = function() {self.click()};
+		In2iGui.addFocusClass({element:this.element,'class':'in2igui_checkbox_focused'});
+		this.element.observe('click',this.click.bind(this));
 	},
-	click : function() {
+	click : function(e) {
+		e.stop();
+		this.element.focus();
 		this.value = !this.value;
 		this.updateUI();
 	},
@@ -534,9 +658,10 @@ In2iGui.Formula.Checkboxes.Items.prototype = {
 		this.element.update();
 		var self = this;
 		items.each(function(item) {
-			var node = new Element('div',{'class':'in2igui_checkbox'});
-			node.insert(new Element('div')).insert(item.title);
-			node.observe('click',function() {self.itemWasClicked(item)})
+			var node = new Element('a',{'class':'in2igui_checkbox',href:'#'}).update(
+				'<span><span></span></span>'+item.title
+			).observe('click',function(e) {e.stop();node.focus();self.itemWasClicked(item)});
+			In2iGui.addFocusClass({element:node,'class':'in2igui_checkbox_focused'});
 			self.element.insert(node);
 			self.checkboxes.push({title:item.title,element:node,value:item.value});
 		})

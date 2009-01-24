@@ -2,6 +2,7 @@ div.in2igui_upload
 {
 	overflow: hidden;
 	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+	font-size: 0;
 }
 
 div.in2igui_upload div.in2igui_buttons
@@ -74,4 +75,12 @@ div.in2igui_upload object
 {
 	position: absolute;
 	margin-left: -108px;
+}
+
+div.in2igui_upload_status
+{
+	color: #999999;
+	font-size: 11px;
+	line-height: 15px;
+	padding-left: 1px;
 }

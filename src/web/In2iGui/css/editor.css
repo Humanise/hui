@@ -43,3 +43,8 @@ div.in2igui_overlay_icon:hover
 {
 	border: 1px dashed #3875d7;
 }
+
+.in2igui_editor_column_edit
+{
+	outline: 2px dashed #3875d7 !important;
+}
