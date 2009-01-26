@@ -1,3 +1,6 @@
+/**
+ @constructor
+ */
 In2iGui.ImageViewer = function(element,name,options) {
 	this.options = n2i.override({
 		maxWidth:800,maxHeight:600,perimeter:100,sizeSnap:100,
@@ -47,6 +50,7 @@ In2iGui.ImageViewer.create = function(name,options) {
 }
 
 In2iGui.ImageViewer.prototype = {
+	/** @private */
 	addBehavior : function() {
 		var self = this;
 		this.nextControl.onclick = function() {
@@ -76,6 +80,7 @@ In2iGui.ImageViewer.prototype = {
 			}
 		}
 	},
+	/** @private */
 	getLargestSize : function(canvas,image) {
 		if (image.width<=canvas.width && image.height<=canvas.height) {
 			return {width:image.width,height:image.height};
@@ -86,7 +91,8 @@ In2iGui.ImageViewer.prototype = {
 		} else {
 			return {width:canvas.width,height:canvas.height};
 		}
-	},	
+	},
+	/** @private */
 	calculateSize : function() {
 		var snap = this.options.sizeSnap;
 		var newWidth = n2i.getInnerWidth()-this.options.perimeter;
@@ -137,9 +143,11 @@ In2iGui.ImageViewer.prototype = {
 		this.box.hide();
 		Event.stopObserving(document,'keydown',this.keyListener);
 	},
+	/** @private */
 	boxCurtainWasClicked : function() {
 		this.hide();
 	},
+	/** @private */
 	updateUI : function() {
 		if (this.dirty) {
 			this.innerViewer.innerHTML='';
@@ -161,9 +169,11 @@ In2iGui.ImageViewer.prototype = {
 			this.preload();
 		}
 	},
+	/** @private */
 	shouldShowController : function() {
 		return this.images.length>1;
 	},
+	/** @private */
 	goToImage : function(animate,num,user) {	
 		if (animate) {
 			if (num>1) {
@@ -197,6 +207,7 @@ In2iGui.ImageViewer.prototype = {
 		this.images.push(img);
 		this.dirty = true;
 	},
+	/** @private */
 	resolveImageUrl : function(img) {
 		for (var i=0; i < this.delegates.length; i++) {
 			if (this.delegates[i].resolveImageUrl) {
@@ -252,6 +263,7 @@ In2iGui.ImageViewer.prototype = {
 		this.goToImage(true,num,user);
 		this.resetPlay();
 	},
+	/** @private */
 	preload : function() {
 		var guiLoader = new n2i.Preloader();
 		guiLoader.addImages(In2iGui.context+'In2iGui/gfx/imageviewer_controls.png');
@@ -259,6 +271,7 @@ In2iGui.ImageViewer.prototype = {
 		guiLoader.setDelegate({allImagesDidLoad:function() {self.preloadImages()}});
 		guiLoader.load();
 	},
+	/** @private */
 	preloadImages : function() {
 		this.loader = new n2i.Preloader();
 		this.loader.setDelegate(this);
@@ -269,9 +282,11 @@ In2iGui.ImageViewer.prototype = {
 		this.status.style.display='';
 		this.loader.load();
 	},
+	/** @private */
 	allImagesDidLoad : function() {
 		this.status.style.display='none';
 	},
+	/** @private */
 	imageDidLoad : function(loaded,total,index) {
 		this.status.innerHTML = Math.round(loaded/total*100)+'%';
 		var url = this.resolveImageUrl(this.images[index]);
@@ -280,9 +295,11 @@ In2iGui.ImageViewer.prototype = {
 		Element.setClassName(this.innerViewer.childNodes[index],'in2igui_imageviewer_image_abort',false);
 		Element.setClassName(this.innerViewer.childNodes[index],'in2igui_imageviewer_image_error',false);
 	},
+	/** @private */
 	imageDidGiveError : function(loaded,total,index) {
 		Element.setClassName(this.innerViewer.childNodes[index],'in2igui_imageviewer_image_error',true);
 	},
+	/** @private */
 	imageDidAbort : function(loaded,total,index) {
 		Element.setClassName(this.innerViewer.childNodes[index],'in2igui_imageviewer_image_abort',true);
 	}

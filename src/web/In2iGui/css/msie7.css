@@ -41,11 +41,6 @@ div.in2igui_box_body
 	height: 1%;
 }
 
-form.in2igui_formula input.in2igui_formula_text
-{
-	width: expression(this.parentNode.clientWidth-5  +"px");
-}
-
 textarea.in2igui_formula_text
 {
 	overflow-y: auto;

@@ -7,9 +7,7 @@
     exclude-result-prefixes="gui"
     >
 
-
 <xsl:include href="iphone.xsl"/>
-<xsl:include href="tabbox.xsl"/>
 <xsl:include href="layout.xsl"/>
 <xsl:include href="formula.xsl"/>
 <xsl:include href="view.xsl"/>
@@ -50,9 +48,6 @@
 		-->
 		<script src="{$context}/In2iGui/lib/prototype.min.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/lib/n2i.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-<!--		<script src="{$context}/In2iGui/lib/In2iScripts/In2iScripts.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/lib/In2iScripts/In2iAnimation.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/lib/In2iScripts/In2iInput.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>-->
 		<script src="{$context}/In2iGui/lib/In2iScripts/In2iDate.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/lib/json2.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/In2iGui.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
@@ -112,7 +107,6 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 </head>
 <body class="in2igui">
 	<xsl:choose>
-		<xsl:when test="@pad"><div style="padding: {@pad}px;"><xsl:apply-templates/></div></xsl:when>
 		<xsl:when test="@padding"><div style="padding: {@padding}px;"><xsl:apply-templates/></div></xsl:when>
 		<xsl:otherwise><xsl:apply-templates/></xsl:otherwise>
 	</xsl:choose>
@@ -134,16 +128,16 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 
 <xsl:template name="gui:createobject">
 	<xsl:if test="@name and @name!=''">
-		var <xsl:value-of select="@name"/> = <xsl:value-of select="generate-id()"/>_obj;
+		window['<xsl:value-of select="@name"/>'] = <xsl:value-of select="generate-id()"/>_obj;
 	</xsl:if>
 </xsl:template>
 
 <xsl:template match="gui:source">
 <script type="text/javascript">
-	var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Source(null,'<xsl:value-of select="@name"/>',{
+	var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Source({name:'<xsl:value-of select="@name"/>'
 		<xsl:choose>
-			<xsl:when test="@url">url:'<xsl:value-of select="@url"/>'</xsl:when>
-			<xsl:when test="@dwr">dwr:'<xsl:value-of select="@dwr"/>'</xsl:when>
+			<xsl:when test="@url">,url:'<xsl:value-of select="@url"/>'</xsl:when>
+			<xsl:when test="@dwr">,dwr:'<xsl:value-of select="@dwr"/>'</xsl:when>
 		</xsl:choose>
 	});
 	<xsl:call-template name="gui:createobject"/>
@@ -435,7 +429,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 		<div class="close"><xsl:comment/></div>
 		<div class="titlebar"><div class="titlebar"><div class="titlebar"><span><xsl:value-of select="@title"/></span></div></div></div>
 		<div class="in2igui_window_content"><div class="in2igui_window_content"><div class="in2igui_window_body">
- 			<xsl:attribute name="style"><xsl:if test="@width">width: <xsl:value-of select="@width"/>px;</xsl:if><xsl:if test="@pad">padding: <xsl:value-of select="@pad"/>px;</xsl:if><xsl:if test="@padding">padding: <xsl:value-of select="@padding"/>px;</xsl:if></xsl:attribute>
+ 			<xsl:attribute name="style"><xsl:if test="@width">width: <xsl:value-of select="@width"/>px;</xsl:if><xsl:if test="@padding">padding: <xsl:value-of select="@padding"/>px;</xsl:if></xsl:attribute>
 			<xsl:apply-templates/>
 		</div></div></div>
 		<div class="in2igui_window_bottom"><div class="in2igui_window_bottom"><div class="in2igui_window_bottom"><xsl:comment/></div></div></div>

@@ -1,5 +1,6 @@
-
+/* @@namespace */
 var n2i = {
+	/* @@namespace */
 	browser : {}
 }
 
@@ -13,12 +14,14 @@ n2i.ELEMENT_NODE=1;
 n2i.ATTRIBUTE_NODE=2;
 n2i.TEXT_NODE=3;
 
+/** Log something */
 n2i.log = function(obj) {
 	try {
 		console.log(obj);
 	} catch (ignore) {};
 }
 
+/** Make a string camelized */
 n2i.camelize = function(str) {
     var oStringList = str.split('-');
     if (oStringList.length == 1) return oStringList[0];
@@ -44,6 +47,7 @@ n2i.override = function(original,subject) {
 	return original;
 }
 
+/** Trim whitespace including unicode chars */
 n2i.trim = function(str) {
 	if (!str) return str;
 	return str.replace(/^[\s\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000]+|[\s\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000]+$/g, '');
@@ -230,6 +234,7 @@ n2i.getDocumentHeight = function() {
 	}
 }
 
+/** @constructor */
 n2i.Preloader = function(options) {
 	this.options = options || {};
 	this.delegate = {};
@@ -274,6 +279,7 @@ n2i.Preloader.prototype = {
 	}
 }
 
+/* @namespace */
 n2i.cookie = {
 	set : function(name,value,days) {
 		if (days) {
@@ -315,6 +321,7 @@ n2i.URL.prototype = {
 	}
 }
 
+/* @namespace */
 n2i.location = {
 	getParameter : function(name) {
 		var parms = n2i.location.getParameters();
@@ -374,6 +381,7 @@ n2i.ani = n2i.animate = function(element,style,value,duration,delegate) {
 	n2i.animation.get(element).animate(null,value,style,duration,delegate);
 }
 
+/* @namespace */
 n2i.animation = {
 	objects : {},
 	running : false,

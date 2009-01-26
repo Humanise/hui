@@ -89,7 +89,9 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 </DL>
    
    <P>
-   <I>Defined in <a href='overview-summary-combined.js.html'>combined.js</a></I><BR/><BR/>
+   <BR/>This is a formula
+  
+<BR/><I>Defined in <a href='overview-summary-combined.js.html'>combined.js</a></I><BR/><BR/>
    </P>
    
    <HR>
@@ -185,7 +187,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 <B>
 	    <A HREF="In2iGui.Formula.html#In2iGui.Formula()">In2iGui.Formula</A> 
 	 </B>
-	 (id,name)
+	 (o)
       </CODE>
       <BR>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -221,41 +223,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;void</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#addBehavior">addBehavior</A></B>()
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;void</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#addContent">addContent</A></B>(node)
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 
+	 Adds a widget to the form
       </TD>
    </TR>
 
@@ -272,24 +240,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;void</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#childValueChanged">childValueChanged</A></B>(value)
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 
+	 Builds and adds a new group according to a recipe
       </TD>
    </TR>
 
@@ -306,24 +257,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;Object</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#getElement">getElement</A></B>()
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 
+	 Creates a new form group and adds it to the form
       </TD>
    </TR>
 
@@ -340,41 +274,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;void</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#registerChild">registerChild</A></B>(obj)
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;void</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#registerInput">registerInput</A></B>(obj)
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 
+	 Returns a map of all values of descendants
       </TD>
    </TR>
 
@@ -391,7 +291,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 
+	 Resets all descendants
       </TD>
    </TR>
 
@@ -405,6 +305,23 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 <CODE>
 	    <B>
 	       <A HREF="#setValues">setValues</A></B>(values)
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns a map of all values of descendants
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&lt;static&gt;&nbsp;Object</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#create">create</A></B>(o)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -439,7 +356,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 
 <A NAME="In2iGui.Formula()"><!-- --></A><H3>
 In2iGui.Formula</H3>
-<PRE><B>In2iGui.Formula</B>(id,name)</PRE>
+<PRE><B>In2iGui.Formula</B>(o)</PRE>
 
 
 
@@ -476,37 +393,7 @@ In2iGui.Formula</H3>
    <H3>add</H3>
    <PRE>void <B>add</B>(widget)</PRE>
    
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="addBehavior"><!-- --></A>
-   <H3>addBehavior</H3>
-   <PRE>void <B>addBehavior</B>()</PRE>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="addContent"><!-- --></A>
-   <H3>addContent</H3>
-   <PRE>void <B>addContent</B>(node)</PRE>
+      <UL>Adds a widget to the form</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -524,21 +411,7 @@ In2iGui.Formula</H3>
    <H3>buildGroup</H3>
    <PRE>void <B>buildGroup</B>(options,recipe)</PRE>
    
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="childValueChanged"><!-- --></A>
-   <H3>childValueChanged</H3>
-   <PRE>void <B>childValueChanged</B>(value)</PRE>
+      <UL>Builds and adds a new group according to a recipe</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -556,27 +429,20 @@ In2iGui.Formula</H3>
    <H3>createGroup</H3>
    <PRE>Object <B>createGroup</B>(options)</PRE>
    
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="getElement"><!-- --></A>
-   <H3>getElement</H3>
-   <PRE>Object <B>getElement</B>()</PRE>
+      <UL>Creates a new form group and adds it to the form</UL>
    
 
    <!-- METHOD PARAMETERS START -->
    
    <!-- METHOD PARAMETERS END -->
 
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        {'In2iGui.Formula.Group'} group 
+        </UL>
+   </UL>
    
 
    <!-- ADDITIONAL ATTRIBUTES START -->
@@ -588,37 +454,7 @@ In2iGui.Formula</H3>
    <H3>getValues</H3>
    <PRE>Object <B>getValues</B>()</PRE>
    
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="registerChild"><!-- --></A>
-   <H3>registerChild</H3>
-   <PRE>void <B>registerChild</B>(obj)</PRE>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="registerInput"><!-- --></A>
-   <H3>registerInput</H3>
-   <PRE>void <B>registerInput</B>(obj)</PRE>
+      <UL>Returns a map of all values of descendants</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -636,6 +472,8 @@ In2iGui.Formula</H3>
    <H3>reset</H3>
    <PRE>void <B>reset</B>()</PRE>
    
+      <UL>Resets all descendants</UL>
+   
 
    <!-- METHOD PARAMETERS START -->
    
@@ -651,6 +489,24 @@ In2iGui.Formula</H3>
    <A NAME="setValues"><!-- --></A>
    <H3>setValues</H3>
    <PRE>void <B>setValues</B>(values)</PRE>
+   
+      <UL>Returns a map of all values of descendants</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="create"><!-- --></A>
+   <H3>create</H3>
+   <PRE>&lt;static&gt; Object <B>create</B>(o)</PRE>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -730,6 +586,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <FONT SIZE="-1">
 
 </FONT>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Sat Jan 24 17:46:05 2009</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Sun Jan 25 18:27:09 2009</div>
 </BODY>
 </HTML>

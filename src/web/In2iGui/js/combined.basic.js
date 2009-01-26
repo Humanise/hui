@@ -4218,8 +4218,9 @@ Object.extend(Element.ClassNames.prototype, Enumerable);
 
 /*--------------------------------------------------------------------------*/
 
-Element.addMethods();
+Element.addMethods();/* @@namespace */
 var n2i = {
+	/* @@namespace */
 	browser : {}
 }
 
@@ -4233,12 +4234,14 @@ n2i.ELEMENT_NODE=1;
 n2i.ATTRIBUTE_NODE=2;
 n2i.TEXT_NODE=3;
 
+/** Log something */
 n2i.log = function(obj) {
 	try {
 		console.log(obj);
 	} catch (ignore) {};
 }
 
+/** Make a string camelized */
 n2i.camelize = function(str) {
     var oStringList = str.split('-');
     if (oStringList.length == 1) return oStringList[0];
@@ -4264,6 +4267,7 @@ n2i.override = function(original,subject) {
 	return original;
 }
 
+/** Trim whitespace including unicode chars */
 n2i.trim = function(str) {
 	if (!str) return str;
 	return str.replace(/^[\s\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000]+|[\s\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000]+$/g, '');
@@ -5273,8 +5277,8 @@ n2i.ease = {
 };var in2igui = {};
 
 /**
- * @constructor
- * The base class of the In2iGui framework
+  The base class of the In2iGui framework
+  @constructor
  */
 function In2iGui() {
 	this.domLoaded = false;
@@ -5285,7 +5289,6 @@ function In2iGui() {
 }
 
 In2iGui.latestObjectIndex=0;
-
 In2iGui.latestIndex=500;
 In2iGui.latestPanelIndex=1000;
 In2iGui.latestAlertIndex=1500;
@@ -5299,9 +5302,7 @@ In2iGui.browser.msie7 = navigator.userAgent.indexOf('MSIE 7')!=-1;
 In2iGui.browser.webkit = navigator.userAgent.indexOf('WebKit')!=-1;
 In2iGui.browser.gecko = !In2iGui.browser.webkit && navigator.userAgent.indexOf('Gecko')!=-1;
 
-/**
- * Gets the one instance of In2iGui
- */
+/** Gets the one instance of In2iGui */
 In2iGui.get = function(name) {
 	if (!In2iGui.instance) {
 		In2iGui.instance = new In2iGui();
@@ -5322,24 +5323,25 @@ In2iGui.dwrErrorhandler = function(msg,e) {
 }
 
 In2iGui.prototype = {
-	ignite : function(id) {
+	/** @private */
+	ignite : function() {
 		if (window.dwr) {
 			if (dwr && dwr.engine && dwr.engine.setErrorHandler) {
 				dwr.engine.setErrorHandler(In2iGui.dwrErrorhandler);
 			}
 		}
 		this.domLoaded = true;
+		In2iGui.domReady = true;
 		this.resize();
 		In2iGui.callSuperDelegates(this,'interfaceIsReady');
 	},
-	addBehavior : function(id) {
-		var self = this;
-		Event.observe(window,'resize',function() {
-			self.resize();
-		});
+	/** @private */
+	addBehavior : function() {
+		Event.observe(window,'resize',this.resize.bind(this));
 	},
+	/** Adds a global delegate */
 	addDelegate : function(delegate) {
-		this.delegates[this.delegates.length] = delegate;
+		this.delegates.push(delegate);
 	},
 	getTopPad : function(element) {
 		var pad = 0;
@@ -5592,6 +5594,7 @@ In2iGui.createIcon = function(icon,size) {
 }
 
 In2iGui.onDomReady = function(func) {
+	if (In2iGui.domReady) return func();
 	if (n2i.browser.gecko && document.baseURI.endsWith('xml')) {
 		window.setTimeout(func,1000);
 		return;
@@ -5977,10 +5980,13 @@ In2iGui.parseItems = function(doc) {
 
 ////////////////////////////////// Source ///////////////////////////
 
-In2iGui.Source = function(id,name,options) {
-	this.options = n2i.override({url:null,dwr:null},options);
+In2iGui.Source = function(o) {
+	this.options = n2i.override({url:null,dwr:null},o);
+	this.name = o.name;
+	this.data = null;
 	this.parameters = [];
 	In2iGui.extend(this);
+	if (o.delegate) this.addDelegate(o.delegate);
 	this.busy=false;
 	In2iGui.onDomReady(this.init.bind(this));
 }
@@ -6041,13 +6047,15 @@ In2iGui.Source.prototype = {
 	},
 	parseXML : function(doc) {
 		if (doc.documentElement.tagName=='items') {
-			this.fire('itemsLoaded',In2iGui.parseItems(doc));
+			this.data = In2iGui.parseItems(doc);
+			this.fire('itemsLoaded',this.data);
 		} else if (doc.documentElement.tagName=='list') {
 			this.fire('listLoaded',doc);
 		}
 	},
 	parseDWR : function(data) {
-		In2iGui.callDelegates(this,'objectsLoaded',data);
+		this.data = data;
+		this.fire('objectsLoaded',data);
 		this.end();
 	},
 	addParameter : function(parm) {

@@ -103,7 +103,10 @@
 			<xsl:if test="@variant"><xsl:text> in2igui_box_</xsl:text><xsl:value-of select="@variant"/></xsl:if>
 			<xsl:if test="@absolute='true'"><xsl:text> in2igui_box_absolute</xsl:text></xsl:if>
 		</xsl:attribute>
-		<xsl:if test="@width"><xsl:attribute name="style">width: <xsl:value-of select="@width"/>px;</xsl:attribute></xsl:if>
+		<xsl:attribute name="style">
+		<xsl:if test="@width">width: <xsl:value-of select="@width"/>px;</xsl:if>
+		<xsl:if test="@top">margin-top: <xsl:value-of select="@top"/>px;</xsl:if>
+		</xsl:attribute>
 		<div class="in2igui_box_top"><div><div><xsl:comment/></div></div></div>
 		<div class="in2igui_box_middle"><div class="in2igui_box_middle">
 			<xsl:if test="@title or gui:toolbar">

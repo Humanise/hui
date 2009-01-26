@@ -117,6 +117,11 @@ form.in2igui_formula fieldset legend
 	color: #999;
 }
 
+div.in2igui_formula_item
+{
+	padding-bottom: 5px;
+}
+
 /*************************************** Field **********************************/
 
 span.in2igui_field_top, span.in2igui_field_top span
@@ -547,9 +552,9 @@ div.in2igui_window_dark div.in2igui_field span
 	background-image: url('../gfx/field_dark.png');
 }
 
-div.in2igui_window_dark span.in2igui_field_middle
+div.in2igui_window_dark div.in2igui_field span.in2igui_field_content
 {
-	background-color: #222222;
+	background: #222222;
 }
 
 div.in2igui_window_dark input.in2igui_tokens_token

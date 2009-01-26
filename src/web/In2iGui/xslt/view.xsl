@@ -23,7 +23,7 @@
 <xsl:template match="gui:view/gui:content">
 	<tr><td>
 		<xsl:attribute name="class">view_content<xsl:if test="../@style='box'"> view_content_box</xsl:if><xsl:if test="@background='true'"> view_content_background</xsl:if></xsl:attribute>
-		<xsl:if test="@pad"><xsl:attribute name="style">padding: <xsl:value-of select="@pad"/>px;</xsl:attribute></xsl:if>
+		<xsl:if test="@padding"><xsl:attribute name="style">padding: <xsl:value-of select="@padding"/>px;</xsl:attribute></xsl:if>
 		<xsl:apply-templates/>
 	</td></tr>
 </xsl:template>

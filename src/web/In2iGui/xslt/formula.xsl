@@ -12,8 +12,13 @@
 		<xsl:apply-templates/>
 	</form>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula('<xsl:value-of select="generate-id()"/>');
-		<xsl:call-template name="gui:createobject"/>
+		(function() {
+			var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula({
+				element:'<xsl:value-of select="generate-id()"/>',
+				name:'<xsl:value-of select="@name"/>'
+			});
+			<xsl:call-template name="gui:createobject"/>		
+		}());
 	</script>
 </xsl:template>
 
@@ -61,14 +66,14 @@
 <xsl:template match="gui:group/gui:text">
 	<tr>
 		<th><label><xsl:value-of select="@label"/></label></th>
-		<td><xsl:call-template name="gui:text"/></td>
+		<td><div class="in2igui_formula_item"><xsl:call-template name="gui:text"/></div></td>
 	</tr>
 </xsl:template>
 
 <xsl:template match="gui:group[@labels='above']/gui:text">
 	<tr><td>
 		<label><xsl:value-of select="@label"/></label>
-		<xsl:call-template name="gui:text"/>
+		<div class="in2igui_formula_item"><xsl:call-template name="gui:text"/></div>
 	</td></tr>
 </xsl:template>
 
@@ -105,14 +110,14 @@
 <xsl:template match="gui:group/gui:datetime">
 	<tr>
 		<th><label><xsl:value-of select="@label"/></label></th>
-		<td><xsl:call-template name="gui:datetime"/></td>
+		<td><div class="in2igui_formula_item"><xsl:call-template name="gui:datetime"/></div></td>
 	</tr>
 </xsl:template>
 
 <xsl:template match="gui:group[@labels='above']/gui:datetime">
 	<tr><td>
 		<label><xsl:value-of select="@label"/></label>
-		<xsl:call-template name="gui:datetime"/>
+		<div class="in2igui_formula_item"><xsl:call-template name="gui:datetime"/></div>
 	</td></tr>
 </xsl:template>
 
@@ -166,14 +171,14 @@
 <xsl:template match="gui:group/gui:dropdown">
 	<tr>
 		<th><label><xsl:value-of select="@label"/></label></th>
-		<td><xsl:call-template name="gui:dropdown"/></td>
+		<td><div class="in2igui_formula_item"><xsl:call-template name="gui:dropdown"/></div></td>
 	</tr>
 </xsl:template>
 
 <xsl:template match="gui:group[@labels='above']/gui:dropdown">
 	<tr><td>
 		<label><xsl:value-of select="@label"/></label>
-		<xsl:call-template name="gui:dropdown"/>
+		<div class="in2igui_formula_item"><xsl:call-template name="gui:dropdown"/></div>
 	</td></tr>
 </xsl:template>
 
@@ -187,12 +192,14 @@
 			,name:'<xsl:value-of select="@name"/>'
 			,key:'<xsl:value-of select="@key"/>'
 			,value:'<xsl:value-of select="@value"/>'
-			<xsl:if test="@source">,source:<xsl:value-of select="@source"/></xsl:if>});
-			with(<xsl:value-of select="generate-id()"/>_obj) {
-				<xsl:for-each select="gui:item">
-					addItem({title:'<xsl:value-of select="@title"/>',value:'<xsl:value-of select="@value"/>'});
-				</xsl:for-each>
-			}
+			<xsl:if test="@source">,source:<xsl:value-of select="@source"/></xsl:if>
+			<xsl:if test="@url">,url:'<xsl:value-of select="@url"/>'</xsl:if>
+		});
+		with(<xsl:value-of select="generate-id()"/>_obj) {
+			<xsl:for-each select="gui:item">
+				addItem({title:'<xsl:value-of select="@title"/>',value:'<xsl:value-of select="@value"/>'});
+			</xsl:for-each>
+		}
 		<xsl:call-template name="gui:createobject"/>
 	</script>
 </xsl:template>
@@ -204,14 +211,14 @@
 <xsl:template match="gui:group/gui:radiobuttons">
 	<tr>
 		<th><label><xsl:value-of select="@label"/></label></th>
-		<td><xsl:call-template name="gui:radiobuttons"/></td>
+		<td><div class="in2igui_formula_item"><xsl:call-template name="gui:radiobuttons"/></div></td>
 	</tr>
 </xsl:template>
 
 <xsl:template match="gui:group[@labels='above']/gui:radiobuttons">
 	<tr><td>
 		<label><xsl:value-of select="@label"/></label>
-		<xsl:call-template name="gui:radiobuttons"/>
+		<div class="in2igui_formula_item"><xsl:call-template name="gui:radiobuttons"/></div>
 	</td></tr>
 </xsl:template>
 
@@ -272,14 +279,14 @@
 <xsl:template match="gui:group/gui:checkboxes">
 	<tr>
 		<th><label><xsl:value-of select="@label"/></label></th>
-		<td><xsl:call-template name="gui:checkboxes"/></td>
+		<td><div class="in2igui_formula_item"><xsl:call-template name="gui:checkboxes"/></div></td>
 	</tr>
 </xsl:template>
 
 <xsl:template match="gui:group[@labels='above']/gui:checkboxes">
 	<tr><td>
 		<label><xsl:value-of select="@label"/></label>
-		<xsl:call-template name="gui:checkboxes"/>
+		<div class="in2igui_formula_item"><xsl:call-template name="gui:checkboxes"/></div>
 	</td></tr>
 </xsl:template>
 

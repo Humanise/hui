@@ -1,37 +1,30 @@
-In2iGui.Formula = function(id,name) {
-	this.id = id;
-	this.name = name;
-	this.element = $(id);
-	//this.inputs = [];
-	this.children = [];
+/**
+ * @class
+ * This is a formula
+ */
+In2iGui.Formula = function(o) {
+	this.element = $(o.element);
+	this.name = o.name;
 	this.addBehavior();
 	In2iGui.extend(this);
 }
 
-In2iGui.Formula.create = function(name) {
-	var e = new Element('form',
-		{'class':'in2igui_formula'}
-	);
-	return new In2iGui.Formula(e,name);
+/** @static Creates a new formula */
+In2iGui.Formula.create = function(o) {
+	o = o || {};
+	o.element = new Element('form',{'class':'in2igui_formula'});
+	return new In2iGui.Formula(o);
 }
 
 In2iGui.Formula.prototype = {
+	/** @private */
 	addBehavior : function() {
-		var self = this;
 		this.element.onsubmit=function() {
-			In2iGui.callDelegates(self,'submit');
+			this.fire('submit');
 			return false
-		};
+		}.bind(this);
 	},
-	getElement : function() {
-		return this.element;
-	},
-	registerInput : function(obj) {
-		alert('Deprecated!');
-	},
-	registerChild : function(obj) {
-		this.children.push(obj);
-	},
+	/** Returns a map of all values of descendants */
 	getValues : function() {
 		var data = {};
 		var d = In2iGui.get().getDescendants(this);
@@ -44,6 +37,7 @@ In2iGui.Formula.prototype = {
 		};
 		return data;
 	},
+	/** Returns a map of all values of descendants */
 	setValues : function(values) {
 		var d = In2iGui.get().getDescendants(this);
 		for (var i=0; i < d.length; i++) {
@@ -55,23 +49,26 @@ In2iGui.Formula.prototype = {
 			}
 		}
 	},
+	/** Resets all descendants */
 	reset : function() {
 		var d = In2iGui.get().getDescendants(this);
 		for (var i=0; i < d.length; i++) {
 			if (d[i].reset) d[i].reset();
 		}
 	},
-	addContent : function(node) {
-		this.element.insert(node);
-	},
+	/** Adds a widget to the form */
 	add : function(widget) {
 		this.element.insert(widget.getElement());
 	},
+	/** Creates a new form group and adds it to the form
+	 * @returns {'In2iGui.Formula.Group'} group
+	 */
 	createGroup : function(options) {
 		var g = In2iGui.Formula.Group.create(null,options);
 		this.add(g);
 		return g;
 	},
+	/** Builds and adds a new group according to a recipe */
 	buildGroup : function(options,recipe) {
 		var g = this.createGroup(options);
 		recipe.each(function(item) {
@@ -79,12 +76,13 @@ In2iGui.Formula.prototype = {
 			g.add(w);
 		});
 	},
+	/** @private */
 	childValueChanged : function(value) {
 		this.fire('valuesChanged',this.getValues());
 	}
 }
 
-/********************** Group **********************/
+///////////////////////// Group //////////////////////////
 
 
 In2iGui.Formula.Group = function(elementOrId,name,options) {
@@ -120,7 +118,7 @@ In2iGui.Formula.Group.prototype = {
 			}
 		}
 		var td = new Element('td');
-		td.insert(widget.getElement());
+		td.insert(new Element('div',{'class':'in2igui_formula_item'}).insert(widget.getElement()));
 		if (this.options.above) {
 			tr = new Element('tr');
 			this.body.insert(tr);
@@ -292,15 +290,27 @@ In2iGui.Formula.DropDown = function(o) {
 	var e = this.element = $(o.element);
 	this.inner = e.select('strong')[0];
 	this.options = n2i.override({label:null},o);
-	this.items = [];
+	this.items = o.items || [];
 	this.index = -1;
 	this.value = this.options.value || null;
 	this.dirty = true;
 	In2iGui.extend(this);
 	this.addBehavior();
-	if (this.options.source) {
-		this.options.source.addDelegate(this);
+	this.updateIndex();
+	this.updateUI();
+	if (this.options.url) {
+		this.options.source = new In2iGui.Source({url:this.options.url,delegate:this});
+	} else if (this.options.source) {
+		this.options.source.addDelegate(this);	
 	}
+}
+
+In2iGui.Formula.DropDown.create = function(o) {
+	o = o || {};
+	o.element = new Element('a',{'class':'in2igui_dropdown',href:'#'}).update(
+		'<span><span><strong></strong></span></span>'
+	);
+	return new In2iGui.Formula.DropDown(o);
 }
 
 In2iGui.Formula.DropDown.prototype = {
@@ -308,6 +318,11 @@ In2iGui.Formula.DropDown.prototype = {
 		In2iGui.addFocusClass({element:this.element,'class':'in2igui_dropdown_focused'});
 		this.element.observe('click',this.clicked.bind(this));
 		this.element.observe('blur',this.hideSelector.bind(this));
+	},
+	updateIndex : function() {
+		this.items.each(function(item,i) {
+			if (item.value==this.value) this.index=i;
+		}.bind(this));
 	},
 	updateUI : function() {
 		if (this.items[this.index]) {
@@ -353,11 +368,6 @@ In2iGui.Formula.DropDown.prototype = {
 		this.index = -1;
 		this.updateIndex();
 		this.updateUI();
-	},
-	updateIndex : function() {
-		this.items.each(function(item,i) {
-			if (item.value==this.value) this.index=i;
-		}.bind(this));
 	},
 	itemsLoaded : function(items) {
 		this.setItems(items);

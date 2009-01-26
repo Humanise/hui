@@ -4218,8 +4218,9 @@ Object.extend(Element.ClassNames.prototype, Enumerable);
 
 /*--------------------------------------------------------------------------*/
 
-Element.addMethods();
+Element.addMethods();/* @@namespace */
 var n2i = {
+	/* @@namespace */
 	browser : {}
 }
 
@@ -4233,12 +4234,14 @@ n2i.ELEMENT_NODE=1;
 n2i.ATTRIBUTE_NODE=2;
 n2i.TEXT_NODE=3;
 
+/** Log something */
 n2i.log = function(obj) {
 	try {
 		console.log(obj);
 	} catch (ignore) {};
 }
 
+/** Make a string camelized */
 n2i.camelize = function(str) {
     var oStringList = str.split('-');
     if (oStringList.length == 1) return oStringList[0];
@@ -4264,6 +4267,7 @@ n2i.override = function(original,subject) {
 	return original;
 }
 
+/** Trim whitespace including unicode chars */
 n2i.trim = function(str) {
 	if (!str) return str;
 	return str.replace(/^[\s\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000]+|[\s\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000]+$/g, '');
@@ -5273,8 +5277,8 @@ n2i.ease = {
 };var in2igui = {};
 
 /**
- * @constructor
- * The base class of the In2iGui framework
+  The base class of the In2iGui framework
+  @constructor
  */
 function In2iGui() {
 	this.domLoaded = false;
@@ -5285,7 +5289,6 @@ function In2iGui() {
 }
 
 In2iGui.latestObjectIndex=0;
-
 In2iGui.latestIndex=500;
 In2iGui.latestPanelIndex=1000;
 In2iGui.latestAlertIndex=1500;
@@ -5299,9 +5302,7 @@ In2iGui.browser.msie7 = navigator.userAgent.indexOf('MSIE 7')!=-1;
 In2iGui.browser.webkit = navigator.userAgent.indexOf('WebKit')!=-1;
 In2iGui.browser.gecko = !In2iGui.browser.webkit && navigator.userAgent.indexOf('Gecko')!=-1;
 
-/**
- * Gets the one instance of In2iGui
- */
+/** Gets the one instance of In2iGui */
 In2iGui.get = function(name) {
 	if (!In2iGui.instance) {
 		In2iGui.instance = new In2iGui();
@@ -5322,24 +5323,25 @@ In2iGui.dwrErrorhandler = function(msg,e) {
 }
 
 In2iGui.prototype = {
-	ignite : function(id) {
+	/** @private */
+	ignite : function() {
 		if (window.dwr) {
 			if (dwr && dwr.engine && dwr.engine.setErrorHandler) {
 				dwr.engine.setErrorHandler(In2iGui.dwrErrorhandler);
 			}
 		}
 		this.domLoaded = true;
+		In2iGui.domReady = true;
 		this.resize();
 		In2iGui.callSuperDelegates(this,'interfaceIsReady');
 	},
-	addBehavior : function(id) {
-		var self = this;
-		Event.observe(window,'resize',function() {
-			self.resize();
-		});
+	/** @private */
+	addBehavior : function() {
+		Event.observe(window,'resize',this.resize.bind(this));
 	},
+	/** Adds a global delegate */
 	addDelegate : function(delegate) {
-		this.delegates[this.delegates.length] = delegate;
+		this.delegates.push(delegate);
 	},
 	getTopPad : function(element) {
 		var pad = 0;
@@ -5592,6 +5594,7 @@ In2iGui.createIcon = function(icon,size) {
 }
 
 In2iGui.onDomReady = function(func) {
+	if (In2iGui.domReady) return func();
 	if (n2i.browser.gecko && document.baseURI.endsWith('xml')) {
 		window.setTimeout(func,1000);
 		return;
@@ -5977,10 +5980,13 @@ In2iGui.parseItems = function(doc) {
 
 ////////////////////////////////// Source ///////////////////////////
 
-In2iGui.Source = function(id,name,options) {
-	this.options = n2i.override({url:null,dwr:null},options);
+In2iGui.Source = function(o) {
+	this.options = n2i.override({url:null,dwr:null},o);
+	this.name = o.name;
+	this.data = null;
 	this.parameters = [];
 	In2iGui.extend(this);
+	if (o.delegate) this.addDelegate(o.delegate);
 	this.busy=false;
 	In2iGui.onDomReady(this.init.bind(this));
 }
@@ -6041,13 +6047,15 @@ In2iGui.Source.prototype = {
 	},
 	parseXML : function(doc) {
 		if (doc.documentElement.tagName=='items') {
-			this.fire('itemsLoaded',In2iGui.parseItems(doc));
+			this.data = In2iGui.parseItems(doc);
+			this.fire('itemsLoaded',this.data);
 		} else if (doc.documentElement.tagName=='list') {
 			this.fire('listLoaded',doc);
 		}
 	},
 	parseDWR : function(data) {
-		In2iGui.callDelegates(this,'objectsLoaded',data);
+		this.data = data;
+		this.fire('objectsLoaded',data);
 		this.end();
 	},
 	addParameter : function(parm) {
@@ -6266,6 +6274,9 @@ Element.addMethods({
 });
 
 /* EOF */
+/**
+ @constructor
+ */
 In2iGui.ImageViewer = function(element,name,options) {
 	this.options = n2i.override({
 		maxWidth:800,maxHeight:600,perimeter:100,sizeSnap:100,
@@ -6315,6 +6326,7 @@ In2iGui.ImageViewer.create = function(name,options) {
 }
 
 In2iGui.ImageViewer.prototype = {
+	/** @private */
 	addBehavior : function() {
 		var self = this;
 		this.nextControl.onclick = function() {
@@ -6344,6 +6356,7 @@ In2iGui.ImageViewer.prototype = {
 			}
 		}
 	},
+	/** @private */
 	getLargestSize : function(canvas,image) {
 		if (image.width<=canvas.width && image.height<=canvas.height) {
 			return {width:image.width,height:image.height};
@@ -6354,7 +6367,8 @@ In2iGui.ImageViewer.prototype = {
 		} else {
 			return {width:canvas.width,height:canvas.height};
 		}
-	},	
+	},
+	/** @private */
 	calculateSize : function() {
 		var snap = this.options.sizeSnap;
 		var newWidth = n2i.getInnerWidth()-this.options.perimeter;
@@ -6405,9 +6419,11 @@ In2iGui.ImageViewer.prototype = {
 		this.box.hide();
 		Event.stopObserving(document,'keydown',this.keyListener);
 	},
+	/** @private */
 	boxCurtainWasClicked : function() {
 		this.hide();
 	},
+	/** @private */
 	updateUI : function() {
 		if (this.dirty) {
 			this.innerViewer.innerHTML='';
@@ -6429,9 +6445,11 @@ In2iGui.ImageViewer.prototype = {
 			this.preload();
 		}
 	},
+	/** @private */
 	shouldShowController : function() {
 		return this.images.length>1;
 	},
+	/** @private */
 	goToImage : function(animate,num,user) {	
 		if (animate) {
 			if (num>1) {
@@ -6465,6 +6483,7 @@ In2iGui.ImageViewer.prototype = {
 		this.images.push(img);
 		this.dirty = true;
 	},
+	/** @private */
 	resolveImageUrl : function(img) {
 		for (var i=0; i < this.delegates.length; i++) {
 			if (this.delegates[i].resolveImageUrl) {
@@ -6520,6 +6539,7 @@ In2iGui.ImageViewer.prototype = {
 		this.goToImage(true,num,user);
 		this.resetPlay();
 	},
+	/** @private */
 	preload : function() {
 		var guiLoader = new n2i.Preloader();
 		guiLoader.addImages(In2iGui.context+'In2iGui/gfx/imageviewer_controls.png');
@@ -6527,6 +6547,7 @@ In2iGui.ImageViewer.prototype = {
 		guiLoader.setDelegate({allImagesDidLoad:function() {self.preloadImages()}});
 		guiLoader.load();
 	},
+	/** @private */
 	preloadImages : function() {
 		this.loader = new n2i.Preloader();
 		this.loader.setDelegate(this);
@@ -6537,9 +6558,11 @@ In2iGui.ImageViewer.prototype = {
 		this.status.style.display='';
 		this.loader.load();
 	},
+	/** @private */
 	allImagesDidLoad : function() {
 		this.status.style.display='none';
 	},
+	/** @private */
 	imageDidLoad : function(loaded,total,index) {
 		this.status.innerHTML = Math.round(loaded/total*100)+'%';
 		var url = this.resolveImageUrl(this.images[index]);
@@ -6548,9 +6571,11 @@ In2iGui.ImageViewer.prototype = {
 		Element.setClassName(this.innerViewer.childNodes[index],'in2igui_imageviewer_image_abort',false);
 		Element.setClassName(this.innerViewer.childNodes[index],'in2igui_imageviewer_image_error',false);
 	},
+	/** @private */
 	imageDidGiveError : function(loaded,total,index) {
 		Element.setClassName(this.innerViewer.childNodes[index],'in2igui_imageviewer_image_error',true);
 	},
+	/** @private */
 	imageDidAbort : function(loaded,total,index) {
 		Element.setClassName(this.innerViewer.childNodes[index],'in2igui_imageviewer_image_abort',true);
 	}
