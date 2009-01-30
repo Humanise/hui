@@ -4454,6 +4454,7 @@ n2i.getDocumentHeight = function() {
 	}
 }
 
+/** @constructor */
 n2i.Preloader = function(options) {
 	this.options = options || {};
 	this.delegate = {};
@@ -4498,6 +4499,7 @@ n2i.Preloader.prototype = {
 	}
 }
 
+/* @namespace */
 n2i.cookie = {
 	set : function(name,value,days) {
 		if (days) {
@@ -4539,6 +4541,7 @@ n2i.URL.prototype = {
 	}
 }
 
+/* @namespace */
 n2i.location = {
 	getParameter : function(name) {
 		var parms = n2i.location.getParameters();
@@ -4598,6 +4601,7 @@ n2i.ani = n2i.animate = function(element,style,value,duration,delegate) {
 	n2i.animation.get(element).animate(null,value,style,duration,delegate);
 }
 
+/* @namespace */
 n2i.animation = {
 	objects : {},
 	running : false,
@@ -4803,6 +4807,9 @@ n2i.animation.Loop.prototype.start = function() {
 	this.next();
 }
 
+/**
+	@constructor
+*/
 n2i.Color = function(color_string) {
     this.ok = false;
 
@@ -5281,26 +5288,29 @@ n2i.ease = {
   @constructor
  */
 function In2iGui() {
+	/** {boolean} Is true when the DOM is loaded
 	this.domLoaded = false;
+	/** @private */
 	this.overflows = null;
+	/** @private */
 	this.delegates = [];
+	/** @private */
 	this.objects = $H();
 	this.addBehavior();
 }
 
+/** @private */
 In2iGui.latestObjectIndex=0;
+/** @private */
 In2iGui.latestIndex=500;
+/** @private */
 In2iGui.latestPanelIndex=1000;
+/** @private */
 In2iGui.latestAlertIndex=1500;
+/** @private */
 In2iGui.latestTopIndex=2000;
+/** @private */
 In2iGui.toolTips = {};
-
-In2iGui.browser = {};
-In2iGui.browser.opera = /opera/i.test(navigator.userAgent);
-In2iGui.browser.msie = !In2iGui.browser.opera && /MSIE/.test(navigator.userAgent);
-In2iGui.browser.msie7 = navigator.userAgent.indexOf('MSIE 7')!=-1;
-In2iGui.browser.webkit = navigator.userAgent.indexOf('WebKit')!=-1;
-In2iGui.browser.gecko = !In2iGui.browser.webkit && navigator.userAgent.indexOf('Gecko')!=-1;
 
 /** Gets the one instance of In2iGui */
 In2iGui.get = function(name) {
@@ -5316,18 +5326,16 @@ In2iGui.get = function(name) {
 
 document.observe('dom:loaded', function() {In2iGui.get().ignite();});
 
-In2iGui.dwrErrorhandler = function(msg,e) {
-	n2i.log(msg);
-	n2i.log(e);
-	In2iGui.get().showAlert({title:'An unexpected error occurred!',text:msg,emotion:'gasp'});
-}
-
 In2iGui.prototype = {
 	/** @private */
 	ignite : function() {
 		if (window.dwr) {
 			if (dwr && dwr.engine && dwr.engine.setErrorHandler) {
-				dwr.engine.setErrorHandler(In2iGui.dwrErrorhandler);
+				dwr.engine.setErrorHandler(function(msg,e) {
+					n2i.log(msg);
+					n2i.log(e);
+					In2iGui.get().showAlert({title:'An unexpected error occurred!',text:msg,emotion:'gasp'});
+				});
 			}
 		}
 		this.domLoaded = true;
@@ -5359,7 +5367,8 @@ In2iGui.prototype = {
 		if (bottom) pad+=bottom;
 		return pad;
 	},
-	resize : function(id) {
+	/** @private */
+	resize : function() {
 		if (!this.overflows) return;
 		var height = n2i.getInnerHeight();
 		this.overflows.each(function(overflow) {
@@ -5376,6 +5385,7 @@ In2iGui.prototype = {
 		var overflow = $(id);
 		this.overflows.push({element:overflow,diff:diff});
 	},
+	/** @private */
 	alert : function(options,callBack) {
 		if (!this.alertBox) {
 			this.alertBox = In2iGui.Alert.create(null,options);
@@ -5389,6 +5399,7 @@ In2iGui.prototype = {
 		this.alertBoxButton.setText(options.button ? options.button : 'OK')
 		this.alertBox.show();
 	},
+	/*@private */
 	click$in2iGuiAlertBoxButton : function() {
 		In2iGui.get().alertBox.hide();
 		if (this.alertBoxCallBack) {
@@ -5453,6 +5464,10 @@ In2iGui.prototype = {
 		}
 		return desc;
 	},
+	/** Gets all ancestors of a widget
+		@param {Widget} A widget
+		@returns {Array} An array of all ancestors
+	*/
 	getAncestors : function(widget) {
 		var desc = [];
 		var e = widget.getElement();
@@ -5517,25 +5532,29 @@ In2iGui.hideCurtain = function(widget) {
 
 //////////////////////////////// Message //////////////////////////////
 
-in2igui.showMessage = function(msg) {
+In2iGui.alert = function(o) {
+	In2iGui.get().alert(o);
+}
+
+In2iGui.showMessage = function(msg) {
 	if (!In2iGui.message) {
 		In2iGui.message = new Element('div',{'class':'in2igui_message'}).update('<div><div></div></div>');
 		document.body.appendChild(In2iGui.message);
 	}
 	In2iGui.message.select('div')[1].update(msg);
 	In2iGui.message.setStyle({'display':'block',zIndex:In2iGui.nextTopIndex()});
-	if (!In2iGui.browser.msie) {
+	if (!n2i.browser.msie) {
 		In2iGui.message.setStyle({opacity:0});
 	}
 	In2iGui.message.setStyle({marginLeft:(In2iGui.message.getWidth()/-2)+'px',marginTop:n2i.getScrollTop()+'px'});
-	if (!In2iGui.browser.msie) {
+	if (!n2i.browser.msie) {
 		n2i.ani(In2iGui.message,'opacity',1,300);
 	}
 }
 
-in2igui.hideMessage = function() {
+In2iGui.hideMessage = function() {
 	if (In2iGui.message) {
-		if (!In2iGui.browser.msie) {
+		if (!n2i.browser.msie) {
 			n2i.ani(In2iGui.message,'opacity',0,300,{hideOnComplete:true});
 		} else {
 			In2iGui.message.setStyle({display:'none'});
@@ -5543,7 +5562,7 @@ in2igui.hideMessage = function() {
 	}
 }
 
-in2igui.showToolTip = function(options) {
+In2iGui.showToolTip = function(options) {
 	var key = options.key || 'common';
 	var t = In2iGui.toolTips[key];
 	if (!t) {
@@ -5551,23 +5570,23 @@ in2igui.showToolTip = function(options) {
 		document.body.appendChild(t);
 		In2iGui.toolTips[key] = t;
 	}
-	t.onclick = function() {in2igui.hideToolTip(options)};
+	t.onclick = function() {In2iGui.hideToolTip(options)};
 	var n = $(options.element);
 	var pos = n.cumulativeOffset();
 	t.select('div')[1].update(options.text);
-	if (t.style.display=='none' && !In2iGui.browser.msie) t.setStyle({opacity:0});
+	if (t.style.display=='none' && !n2i.browser.msie) t.setStyle({opacity:0});
 	t.setStyle({'display':'block',zIndex:In2iGui.nextTopIndex()});
 	t.setStyle({left:(pos.left-t.getWidth()+4)+'px',top:(pos.top+2-(t.getHeight()/2)+(n.getHeight()/2))+'px'});
-	if (!In2iGui.browser.msie) {
+	if (!n2i.browser.msie) {
 		n2i.ani(t,'opacity',1,300);
 	}
 }
 
-in2igui.hideToolTip = function(options) {
+In2iGui.hideToolTip = function(options) {
 	var key = options ? options.key || 'common' : 'common';
 	var t = In2iGui.toolTips[key];
 	if (t) {
-		if (!In2iGui.browser.msie) {
+		if (!n2i.browser.msie) {
 			n2i.ani(t,'opacity',0,300,{hideOnComplete:true});
 		} else {
 			t.setStyle({display:'none'});
@@ -5623,14 +5642,14 @@ In2iGui.addFocusClass = function(o) {
 
 /////////////////////////////// Animation /////////////////////////////
 
-in2igui.fadeIn = function(node,time) {
+In2iGui.fadeIn = function(node,time) {
 	if (node.style.display=='none') {
 		node.setStyle({opacity:0,display:''});
 	}
 	n2i.ani(node,'opacity',1,time);
 }
 
-in2igui.fadeOut = function(node,time) {
+In2iGui.fadeOut = function(node,time) {
 	n2i.ani(node,'opacity',0,time,{hideOnComplete:true});
 }
 
@@ -6091,7 +6110,7 @@ In2iGui.TextField = function(id,name,options) {
 	In2iGui.extend(this);
 	this.addBehavior();
 	if (this.options.placeholderElement && this.value!='') {
-		in2igui.fadeOut(this.options.placeholderElement,0);
+		In2iGui.fadeOut(this.options.placeholderElement,0);
 	}
 	this.checkPlaceholder();
 	if (e==document.activeElement) this.focused();
@@ -6114,14 +6133,14 @@ In2iGui.TextField.prototype = {
 		var e = this.element;
 		var p = this.options.placeholderElement;
 		if (p && e.value=='') {
-			in2igui.fadeOut(p,0);
+			In2iGui.fadeOut(p,0);
 		}
 		if (e.value==this.options.placeholder) {
 			e.value='';
 			e.removeClassName('in2igui_placeholder');
-			if (this.isPassword && !In2iGui.browser.msie) {
+			if (this.isPassword && !n2i.browser.msie) {
 				e.type='password';
-				if (In2iGui.browser.webkit) {
+				if (n2i.browser.webkit) {
 					e.select();
 				}
 			}
@@ -6130,19 +6149,19 @@ In2iGui.TextField.prototype = {
 	},
 	checkPlaceholder : function() {
 		if (this.options.placeholderElement && this.value=='') {
-			in2igui.fadeIn(this.options.placeholderElement,200);
+			In2iGui.fadeIn(this.options.placeholderElement,200);
 		}
 		if (this.options.placeholder && this.value=='') {
-			if (!this.isPassword || !In2iGui.browser.msie) {
+			if (!this.isPassword || !n2i.browser.msie) {
 				this.element.value=this.options.placeholder;
 				this.element.addClassName('in2igui_placeholder');
 			}
-			if (this.isPassword && !In2iGui.browser.msie) {
+			if (this.isPassword && !n2i.browser.msie) {
 				this.element.type='text';
 			}
 		} else {
 			this.element.removeClassName('in2igui_placeholder');
-			if (this.isPassword && !In2iGui.browser.msie) {
+			if (this.isPassword && !n2i.browser.msie) {
 				this.element.type='password';
 			}
 		}
@@ -6174,10 +6193,10 @@ In2iGui.TextField.prototype = {
 		var isError = error ? true : false;
 		this.element.setClassName('in2igui_field_error',isError);
 		if (typeof(error) == 'string') {
-			in2igui.showToolTip({text:error,element:this.element,key:this.name});
+			In2iGui.showToolTip({text:error,element:this.element,key:this.name});
 		}
 		if (!isError) {
-			in2igui.hideToolTip({key:this.name});
+			In2iGui.hideToolTip({key:this.name});
 		}
 	}
 }

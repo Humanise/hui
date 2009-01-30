@@ -587,6 +587,9 @@ n2i.animation.Loop.prototype.start = function() {
 	this.next();
 }
 
+/**
+	@constructor
+*/
 n2i.Color = function(color_string) {
     this.ok = false;
 

@@ -7,10 +7,10 @@
 			<space height="5"/>
 			<group>
 				<text label="Brugernavn:"/>
-				<text label="Kodeord:"/>
+				<text label="Kodeord:" secret="true"/>
 				<buttons top="5">
 					<button title="Annuller"/>
-					<button title="Log in" highlighted="true"/>
+					<button title="Log in" highlighted="true" action="In2iGui.get().alert({title:'The user does not exist',emotion:'gasp',button:'Hey!'});"/>
 				</buttons>
 			</group>
 		</formula>
