@@ -8580,6 +8580,22 @@ In2iGui.callSuperDelegates = function(obj,method,value,event) {
 	return result;
 }
 
+In2iGui.resolveImageUrl = function(widget,img,width,height) {
+	for (var i=0; i < widget.delegates.length; i++) {
+		if (widget.delegates[i].resolveImageUrl) {
+			return widget.delegates[i].resolveImageUrl(img,width,height);
+		}
+	};
+	var gui = In2iGui.get();
+	for (var i=0; i < gui.delegates.length; i++) {
+		var delegate = gui.delegates[i];
+		if (delegate.resolveImageUrl) {
+			return delegate.resolveImageUrl(img,width,height);
+		}
+	}
+	return null;
+}
+
 ////////////////////////////// Bindings ///////////////////////////
 
 In2iGui.firePropertyChange = function(obj,name,value) {
@@ -8665,8 +8681,9 @@ In2iGui.jsonResponse = function(t,key) {
 	}
 }
 
+/** @deprecated */
 In2iGui.json = function(data,url,delegateOrKey) {
-	var options = {method:'post',parameters:{}};
+	var options = {method:'post',parameters:{},onException:function(e) {throw e}};
 	if (typeof(delegateOrKey)=='string') {
 		options.onSuccess=function(t) {In2iGui.jsonResponse(t,delegateOrKey)};
 	} else {
@@ -8676,6 +8693,14 @@ In2iGui.json = function(data,url,delegateOrKey) {
 		options.parameters[key]=Object.toJSON(data[key])
 	}
 	new Ajax.Request(url,options)
+}
+
+In2iGui.request = function(options) {
+	options = n2i.override({method:'post',parameters:{}},options);
+	if (options.successEvent) {
+		options.onSuccess=function(t) {In2iGui.jsonResponse(t,options.successEvent)};
+	}
+	new Ajax.Request(options.url,options);
 }
 
 In2iGui.parseItems = function(doc) {
@@ -9308,8 +9333,13 @@ In2iGui.Formula.Text.prototype = {
 	},
 	focus : function() {
 		try {
-			this.element.focus();
-		} catch (ignore) {}
+			this.input.focus();
+		} catch (e) {}
+	},
+	select : function() {
+		try {
+			this.input.select();
+		} catch (e) {}
 	},
 	reset : function() {
 		this.setValue('');
@@ -9442,6 +9472,7 @@ In2iGui.Formula.DropDown.prototype = {
 		this.element.observe('blur',this.hideSelector.bind(this));
 	},
 	updateIndex : function() {
+		this.index=-1;
 		this.items.each(function(item,i) {
 			if (item.value==this.value) this.index=i;
 		}.bind(this));
@@ -9449,6 +9480,8 @@ In2iGui.Formula.DropDown.prototype = {
 	updateUI : function() {
 		if (this.items[this.index]) {
 			this.inner.update(this.items[this.index].title);
+		} else {
+			this.inner.update();
 		}
 		if (!this.selector) return;
 		this.selector.select('a').each(function(a,i) {
@@ -9469,6 +9502,14 @@ In2iGui.Formula.DropDown.prototype = {
 	},
 	getValue : function(value) {
 		return this.value;
+	},
+	setValue : function(value) {
+		this.value = value;
+		this.updateIndex();
+		this.updateUI();
+	},
+	reset : function() {
+		this.setValue(null);
 	},
 	getLabel : function() {
 		return this.options.label;
@@ -10036,6 +10077,7 @@ In2iGui.List.prototype = {
 	 * @private
 	 */
 	listLoaded : function(doc) {
+		this.selected = [];
 		this.parseWindow(doc);
 		this.buildNavigation();
 		this.body.update();
@@ -11154,10 +11196,14 @@ In2iGui.Toolbar.Badge.prototype = {
 	}
 }
 
-/* EOF */In2iGui.ImagePicker = function(id,name,options) {
-	this.name = name;
-	this.options = options || {};
-	this.element = $(id);
+/* EOF *//**
+	Used to choose an image
+	@constructor
+*/
+In2iGui.ImagePicker = function(o) {
+	this.name = o.name;
+	this.options = o || {};
+	this.element = $(o.element);
 	this.images = [];
 	this.object = null;
 	this.thumbnailsLoaded = false;
@@ -11166,11 +11212,9 @@ In2iGui.Toolbar.Badge.prototype = {
 }
 
 In2iGui.ImagePicker.prototype = {
+	/** @private */
 	addBehavior : function() {
-		var self = this;
-		this.element.onclick = function() {
-			self.showPicker();
-		}
+		this.element.onclick = this.showPicker.bind(this);
 	},
 	setObject : function(obj) {
 		this.object = obj;
@@ -11183,6 +11227,7 @@ In2iGui.ImagePicker.prototype = {
 		this.object = null;
 		this.updateUI();
 	},
+	/** @private */
 	updateUI : function() {
 		if (this.object==null) {
 			this.element.style.backgroundImage='';
@@ -11191,6 +11236,7 @@ In2iGui.ImagePicker.prototype = {
 			this.element.style.backgroundImage='url('+url+')';
 		}
 	},
+	/** @private */
 	showPicker : function() {
 		if (!this.picker) {
 			var self = this;
@@ -11217,9 +11263,11 @@ In2iGui.ImagePicker.prototype = {
 			this.thumbnailsLoaded = true;
 		}
 	},
+	/** @private */
 	hidePicker : function() {
 		this.picker.hide();
 	},
+	/** @private */
 	updateImages : function() {
 		var self = this;
 		var delegate = {
@@ -11229,13 +11277,15 @@ In2iGui.ImagePicker.prototype = {
 		};
 		new Ajax.Request(this.options.source,delegate);
 	},
+	/** @private */
 	parse : function(doc) {
 		this.content.update();
 		var images = doc.getElementsByTagName('image');
 		var self = this;
 		for (var i=0; i < images.length && i<50; i++) {
 			var id = images[i].getAttribute('id');
-			var url = '../../../util/images/?id='+id+'&maxwidth=48&maxheight=48&format=jpg';
+			var img = {id:images[i].getAttribute('id')};
+			var url = In2iGui.resolveImageUrl(this,img,48,48);
 			var thumb = new Element('div',{'class':'in2igui_imagepicker_thumbnail'}).setStyle({'backgroundImage':'url('+url+')'});
 			thumb.in2iguiObject = {'id':id};
 			thumb.onclick = function() {
@@ -11753,12 +11803,7 @@ In2iGui.ImageViewer.prototype = {
 		if (this.dirty) {
 			this.innerViewer.innerHTML='';
 			for (var i=0; i < this.images.length; i++) {
-				var url = this.resolveImageUrl(this.images[i]);
-				url = url.replace(/&amp;/,'&');
 				var element = new Element('div',{'class':'in2igui_imageviewer_image'}).setStyle({'width':(this.width+10)+'px','height':this.height+'px'});
-				
-				var url = this.resolveImageUrl(this.images[i]);
-				url = url.replace(/&amp;/g,'&');
 				this.innerViewer.appendChild(element);
 			};
 			if (this.shouldShowController()) {
@@ -11807,15 +11852,6 @@ In2iGui.ImageViewer.prototype = {
 	addImage : function(img) {
 		this.images.push(img);
 		this.dirty = true;
-	},
-	/** @private */
-	resolveImageUrl : function(img) {
-		for (var i=0; i < this.delegates.length; i++) {
-			if (this.delegates[i].resolveImageUrl) {
-				return this.delegates[i].resolveImageUrl(img,this.width,this.height);
-			}
-		};
-		return null;
 	},
 	play : function() {
 		if (!this.interval) {
@@ -11877,7 +11913,8 @@ In2iGui.ImageViewer.prototype = {
 		this.loader = new n2i.Preloader();
 		this.loader.setDelegate(this);
 		for (var i=0; i < this.images.length; i++) {
-			this.loader.addImages(this.resolveImageUrl(this.images[i]));
+			var url = In2iGui.resolveImageUrl(this,this.images[i],this.width,this.height);
+			this.loader.addImages(url);
 		};
 		this.status.innerHTML = '0%';
 		this.status.style.display='';
@@ -11890,7 +11927,7 @@ In2iGui.ImageViewer.prototype = {
 	/** @private */
 	imageDidLoad : function(loaded,total,index) {
 		this.status.innerHTML = Math.round(loaded/total*100)+'%';
-		var url = this.resolveImageUrl(this.images[index]);
+		var url = In2iGui.resolveImageUrl(this,this.images[index],this.width,this.height);
 		url = url.replace(/&amp;/g,'&');
 		this.innerViewer.childNodes[index].style.backgroundImage="url('"+url+"')";
 		Element.setClassName(this.innerViewer.childNodes[index],'in2igui_imageviewer_image_abort',false);

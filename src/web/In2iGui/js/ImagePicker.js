@@ -1,7 +1,11 @@
-In2iGui.ImagePicker = function(id,name,options) {
-	this.name = name;
-	this.options = options || {};
-	this.element = $(id);
+/**
+	Used to choose an image
+	@constructor
+*/
+In2iGui.ImagePicker = function(o) {
+	this.name = o.name;
+	this.options = o || {};
+	this.element = $(o.element);
 	this.images = [];
 	this.object = null;
 	this.thumbnailsLoaded = false;
@@ -10,11 +14,9 @@ In2iGui.ImagePicker = function(id,name,options) {
 }
 
 In2iGui.ImagePicker.prototype = {
+	/** @private */
 	addBehavior : function() {
-		var self = this;
-		this.element.onclick = function() {
-			self.showPicker();
-		}
+		this.element.onclick = this.showPicker.bind(this);
 	},
 	setObject : function(obj) {
 		this.object = obj;
@@ -27,6 +29,7 @@ In2iGui.ImagePicker.prototype = {
 		this.object = null;
 		this.updateUI();
 	},
+	/** @private */
 	updateUI : function() {
 		if (this.object==null) {
 			this.element.style.backgroundImage='';
@@ -35,6 +38,7 @@ In2iGui.ImagePicker.prototype = {
 			this.element.style.backgroundImage='url('+url+')';
 		}
 	},
+	/** @private */
 	showPicker : function() {
 		if (!this.picker) {
 			var self = this;
@@ -61,9 +65,11 @@ In2iGui.ImagePicker.prototype = {
 			this.thumbnailsLoaded = true;
 		}
 	},
+	/** @private */
 	hidePicker : function() {
 		this.picker.hide();
 	},
+	/** @private */
 	updateImages : function() {
 		var self = this;
 		var delegate = {
@@ -73,13 +79,15 @@ In2iGui.ImagePicker.prototype = {
 		};
 		new Ajax.Request(this.options.source,delegate);
 	},
+	/** @private */
 	parse : function(doc) {
 		this.content.update();
 		var images = doc.getElementsByTagName('image');
 		var self = this;
 		for (var i=0; i < images.length && i<50; i++) {
 			var id = images[i].getAttribute('id');
-			var url = '../../../util/images/?id='+id+'&maxwidth=48&maxheight=48&format=jpg';
+			var img = {id:images[i].getAttribute('id')};
+			var url = In2iGui.resolveImageUrl(this,img,48,48);
 			var thumb = new Element('div',{'class':'in2igui_imagepicker_thumbnail'}).setStyle({'backgroundImage':'url('+url+')'});
 			thumb.in2iguiObject = {'id':id};
 			thumb.onclick = function() {

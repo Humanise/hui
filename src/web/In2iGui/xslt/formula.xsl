@@ -356,6 +356,9 @@
 		<xsl:if test="@action">
 			<xsl:value-of select="generate-id()"/>_obj.addDelegate({click:function() {<xsl:value-of select="@action"/>}});
 		</xsl:if>
+		<xsl:if test="@url">
+			<xsl:value-of select="generate-id()"/>_obj.addDelegate({click:function() {document.location='<xsl:value-of select="@url"/>'}});
+		</xsl:if>
 		<xsl:call-template name="gui:createobject"/>
 	</script>
 </xsl:template>
@@ -392,11 +395,11 @@
 <xsl:template name="gui:imagepicker">
 	<div class="in2igui_imagepicker" id="{generate-id()}" tabindex="0"><xsl:comment/></div>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.ImagePicker(
-			'<xsl:value-of select="generate-id()"/>',
-			'<xsl:value-of select="@name"/>',
-			{'source':'<xsl:value-of select="@source"/>'}
-			);
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.ImagePicker({
+			element:'<xsl:value-of select="generate-id()"/>',
+			name:'<xsl:value-of select="@name"/>',
+			source:'<xsl:value-of select="@source"/>'
+		});
 		<xsl:call-template name="gui:createobject"/>
 	</script>
 </xsl:template>

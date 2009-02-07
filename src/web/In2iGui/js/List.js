@@ -148,6 +148,7 @@ In2iGui.List.prototype = {
 	 * @private
 	 */
 	listLoaded : function(doc) {
+		this.selected = [];
 		this.parseWindow(doc);
 		this.buildNavigation();
 		this.body.update();

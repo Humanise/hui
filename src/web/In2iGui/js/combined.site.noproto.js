@@ -1665,6 +1665,22 @@ In2iGui.callSuperDelegates = function(obj,method,value,event) {
 	return result;
 }
 
+In2iGui.resolveImageUrl = function(widget,img,width,height) {
+	for (var i=0; i < widget.delegates.length; i++) {
+		if (widget.delegates[i].resolveImageUrl) {
+			return widget.delegates[i].resolveImageUrl(img,width,height);
+		}
+	};
+	var gui = In2iGui.get();
+	for (var i=0; i < gui.delegates.length; i++) {
+		var delegate = gui.delegates[i];
+		if (delegate.resolveImageUrl) {
+			return delegate.resolveImageUrl(img,width,height);
+		}
+	}
+	return null;
+}
+
 ////////////////////////////// Bindings ///////////////////////////
 
 In2iGui.firePropertyChange = function(obj,name,value) {
@@ -1750,8 +1766,9 @@ In2iGui.jsonResponse = function(t,key) {
 	}
 }
 
+/** @deprecated */
 In2iGui.json = function(data,url,delegateOrKey) {
-	var options = {method:'post',parameters:{}};
+	var options = {method:'post',parameters:{},onException:function(e) {throw e}};
 	if (typeof(delegateOrKey)=='string') {
 		options.onSuccess=function(t) {In2iGui.jsonResponse(t,delegateOrKey)};
 	} else {
@@ -1761,6 +1778,14 @@ In2iGui.json = function(data,url,delegateOrKey) {
 		options.parameters[key]=Object.toJSON(data[key])
 	}
 	new Ajax.Request(url,options)
+}
+
+In2iGui.request = function(options) {
+	options = n2i.override({method:'post',parameters:{}},options);
+	if (options.successEvent) {
+		options.onSuccess=function(t) {In2iGui.jsonResponse(t,options.successEvent)};
+	}
+	new Ajax.Request(options.url,options);
 }
 
 In2iGui.parseItems = function(doc) {
@@ -2227,12 +2252,7 @@ In2iGui.ImageViewer.prototype = {
 		if (this.dirty) {
 			this.innerViewer.innerHTML='';
 			for (var i=0; i < this.images.length; i++) {
-				var url = this.resolveImageUrl(this.images[i]);
-				url = url.replace(/&amp;/,'&');
 				var element = new Element('div',{'class':'in2igui_imageviewer_image'}).setStyle({'width':(this.width+10)+'px','height':this.height+'px'});
-				
-				var url = this.resolveImageUrl(this.images[i]);
-				url = url.replace(/&amp;/g,'&');
 				this.innerViewer.appendChild(element);
 			};
 			if (this.shouldShowController()) {
@@ -2281,15 +2301,6 @@ In2iGui.ImageViewer.prototype = {
 	addImage : function(img) {
 		this.images.push(img);
 		this.dirty = true;
-	},
-	/** @private */
-	resolveImageUrl : function(img) {
-		for (var i=0; i < this.delegates.length; i++) {
-			if (this.delegates[i].resolveImageUrl) {
-				return this.delegates[i].resolveImageUrl(img,this.width,this.height);
-			}
-		};
-		return null;
 	},
 	play : function() {
 		if (!this.interval) {
@@ -2351,7 +2362,8 @@ In2iGui.ImageViewer.prototype = {
 		this.loader = new n2i.Preloader();
 		this.loader.setDelegate(this);
 		for (var i=0; i < this.images.length; i++) {
-			this.loader.addImages(this.resolveImageUrl(this.images[i]));
+			var url = In2iGui.resolveImageUrl(this,this.images[i],this.width,this.height);
+			this.loader.addImages(url);
 		};
 		this.status.innerHTML = '0%';
 		this.status.style.display='';
@@ -2364,7 +2376,7 @@ In2iGui.ImageViewer.prototype = {
 	/** @private */
 	imageDidLoad : function(loaded,total,index) {
 		this.status.innerHTML = Math.round(loaded/total*100)+'%';
-		var url = this.resolveImageUrl(this.images[index]);
+		var url = In2iGui.resolveImageUrl(this,this.images[index],this.width,this.height);
 		url = url.replace(/&amp;/g,'&');
 		this.innerViewer.childNodes[index].style.backgroundImage="url('"+url+"')";
 		Element.setClassName(this.innerViewer.childNodes[index],'in2igui_imageviewer_image_abort',false);

@@ -186,8 +186,13 @@ In2iGui.Formula.Text.prototype = {
 	},
 	focus : function() {
 		try {
-			this.element.focus();
-		} catch (ignore) {}
+			this.input.focus();
+		} catch (e) {}
+	},
+	select : function() {
+		try {
+			this.input.select();
+		} catch (e) {}
 	},
 	reset : function() {
 		this.setValue('');
@@ -320,6 +325,7 @@ In2iGui.Formula.DropDown.prototype = {
 		this.element.observe('blur',this.hideSelector.bind(this));
 	},
 	updateIndex : function() {
+		this.index=-1;
 		this.items.each(function(item,i) {
 			if (item.value==this.value) this.index=i;
 		}.bind(this));
@@ -327,6 +333,8 @@ In2iGui.Formula.DropDown.prototype = {
 	updateUI : function() {
 		if (this.items[this.index]) {
 			this.inner.update(this.items[this.index].title);
+		} else {
+			this.inner.update();
 		}
 		if (!this.selector) return;
 		this.selector.select('a').each(function(a,i) {
@@ -347,6 +355,14 @@ In2iGui.Formula.DropDown.prototype = {
 	},
 	getValue : function(value) {
 		return this.value;
+	},
+	setValue : function(value) {
+		this.value = value;
+		this.updateIndex();
+		this.updateUI();
+	},
+	reset : function() {
+		this.setValue(null);
 	},
 	getLabel : function() {
 		return this.options.label;

@@ -5885,6 +5885,22 @@ In2iGui.callSuperDelegates = function(obj,method,value,event) {
 	return result;
 }
 
+In2iGui.resolveImageUrl = function(widget,img,width,height) {
+	for (var i=0; i < widget.delegates.length; i++) {
+		if (widget.delegates[i].resolveImageUrl) {
+			return widget.delegates[i].resolveImageUrl(img,width,height);
+		}
+	};
+	var gui = In2iGui.get();
+	for (var i=0; i < gui.delegates.length; i++) {
+		var delegate = gui.delegates[i];
+		if (delegate.resolveImageUrl) {
+			return delegate.resolveImageUrl(img,width,height);
+		}
+	}
+	return null;
+}
+
 ////////////////////////////// Bindings ///////////////////////////
 
 In2iGui.firePropertyChange = function(obj,name,value) {
@@ -5970,8 +5986,9 @@ In2iGui.jsonResponse = function(t,key) {
 	}
 }
 
+/** @deprecated */
 In2iGui.json = function(data,url,delegateOrKey) {
-	var options = {method:'post',parameters:{}};
+	var options = {method:'post',parameters:{},onException:function(e) {throw e}};
 	if (typeof(delegateOrKey)=='string') {
 		options.onSuccess=function(t) {In2iGui.jsonResponse(t,delegateOrKey)};
 	} else {
@@ -5981,6 +5998,14 @@ In2iGui.json = function(data,url,delegateOrKey) {
 		options.parameters[key]=Object.toJSON(data[key])
 	}
 	new Ajax.Request(url,options)
+}
+
+In2iGui.request = function(options) {
+	options = n2i.override({method:'post',parameters:{}},options);
+	if (options.successEvent) {
+		options.onSuccess=function(t) {In2iGui.jsonResponse(t,options.successEvent)};
+	}
+	new Ajax.Request(options.url,options);
 }
 
 In2iGui.parseItems = function(doc) {
