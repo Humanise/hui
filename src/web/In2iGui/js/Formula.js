@@ -20,9 +20,12 @@ In2iGui.Formula.prototype = {
 	/** @private */
 	addBehavior : function() {
 		this.element.onsubmit=function() {
-			this.fire('submit');
-			return false
+			this.submit();
+			return false;
 		}.bind(this);
+	},
+	submit : function() {
+		this.fire('submit');
 	},
 	/** Returns a map of all values of descendants */
 	getValues : function() {
@@ -169,10 +172,15 @@ In2iGui.Formula.Text.create = function(options) {
 In2iGui.Formula.Text.prototype = {
 	addBehavior : function() {
 		In2iGui.addFocusClass({element:this.input,classElement:this.element,'class':'in2igui_field_focused'});
-		this.input.observe('keyup',this.valueMightHaveChanged.bind(this));
+		this.input.observe('keyup',this.onKeyUp.bind(this));
 	},
-	valueMightHaveChanged : function() {
-		if (this.input.value==this.value) return;
+	onKeyUp : function(e) {
+		if (e.keyCode===Event.KEY_RETURN) {
+			var form = In2iGui.get().getAncestor(this,'in2igui_formula');
+			if (form) {form.submit();}
+			return;
+		}
+		if (this.input.value==this.value) {return;}
 		this.value=this.input.value;
 		In2iGui.callAncestors(this,'childValueChanged',this.input.value);
 		this.fire('valueChanged',this.input.value);

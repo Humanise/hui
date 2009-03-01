@@ -4,13 +4,17 @@ In2iGui.Box = function(element,name,options) {
 	this.element = $(element);
 	this.body = this.element.select('.in2igui_box_body')[0];
 	In2iGui.extend(this);
-}
+};
 
 In2iGui.Box.create = function(name,options) {
 	options = n2i.override({},options);
 	var e = new Element('div',{'class':'in2igui_box'});
-	if (options.width) e.setStyle({width:options.width+'px'});
-	if (options.absolute) e.addClassName('in2igui_box_absolute');
+	if (options.width) {
+		e.setStyle({width:options.width+'px'});
+	}
+	if (options.absolute) {
+		e.addClassName('in2igui_box_absolute');
+	}
 	e.update('<div class="in2igui_box_top"><div><div></div></div></div>'+
 		'<div class="in2igui_box_middle"><div class="in2igui_box_middle">'+
 		(options.title ? '<div class="in2igui_box_header"><strong class="in2igui_box_title">'+options.title+'</strong></div>' : '')+
@@ -18,7 +22,7 @@ In2iGui.Box.create = function(name,options) {
 		'</div></div>'+
 		'<div class="in2igui_box_bottom"><div><div></div></div></div>');
 	return new In2iGui.Box(e,name,options);
-}
+};
 
 In2iGui.Box.prototype = {
 	addToDocument : function() {
@@ -51,4 +55,4 @@ In2iGui.Box.prototype = {
 	curtainWasClicked : function() {
 		In2iGui.callDelegates(this,'boxCurtainWasClicked');
 	}
-}
+};
