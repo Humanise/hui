@@ -8084,7 +8084,7 @@ In2iGui.prototype = {
 	alert : function(options,callBack) {
 		if (!this.alertBox) {
 			this.alertBox = In2iGui.Alert.create(null,options);
-			this.alertBoxButton = In2iGui.Button.create('in2iGuiAlertBoxButton',{text : 'OK'});
+			this.alertBoxButton = In2iGui.Button.create({name:'in2iGuiAlertBoxButton',text : 'OK'});
 			this.alertBoxButton.addDelegate(this);
 			this.alertBox.addButton(this.alertBoxButton);
 		} else {
@@ -8110,14 +8110,14 @@ In2iGui.prototype = {
 		var alert = In2iGui.get(name);
 		if (!alert) {
 			alert = In2iGui.Alert.create(name,options);
-			var cancel = In2iGui.Button.create(name+'_cancel',{text : options.cancel || 'Cancel',highlighted:options.highlighted=='cancel'});
+			var cancel = In2iGui.Button.create({name:name+'_cancel',text : options.cancel || 'Cancel',highlighted:options.highlighted=='cancel'});
 			cancel.addDelegate({buttonWasClicked:function(){
 				In2iGui.get(name).hide();
 				In2iGui.callDelegates(In2iGui.get(name),'cancel');
 			}});
 			alert.addButton(cancel);
 		
-			var ok = In2iGui.Button.create(name+'_ok',{text : options.ok || 'OK',highlighted:options.highlighted=='ok'});
+			var ok = In2iGui.Button.create({name:name+'_ok',text : options.ok || 'OK',highlighted:options.highlighted=='ok'});
 			ok.addDelegate({buttonWasClicked:function(){
 				In2iGui.get(name).hide();
 				In2iGui.callDelegates(In2iGui.get(name),'ok');
@@ -8544,6 +8544,8 @@ In2iGui.callDelegates = function(obj,method,value,event) {
 			var thisResult = null;
 			if (obj.name && delegate[method+'$'+obj.name]) {
 				thisResult = delegate[method+'$'+obj.name](value,event);
+			} else if ('$'+obj.name && delegate[method+'$'+obj.name]) {
+				thisResult = delegate['$'+method+'$'+obj.name](value,event);
 			} else if (obj.kind && delegate[method+'$'+obj.kind]) {
 				thisResult = delegate[method+'$'+obj.kind](value,event);
 			} else if (delegate[method]) {
@@ -8566,7 +8568,9 @@ In2iGui.callSuperDelegates = function(obj,method,value,event) {
 	for (var i=0; i < gui.delegates.length; i++) {
 		var delegate = gui.delegates[i];
 		var thisResult = null;
-		if (obj.name && delegate[method+'$'+obj.name]) {
+		if (obj.name && delegate['$'+method+'$'+obj.name]) {
+			thisResult = delegate['$'+method+'$'+obj.name](value,event);
+		} else if (obj.name && delegate[method+'$'+obj.name]) {
 			thisResult = delegate[method+'$'+obj.name](value,event);
 		} else if (obj.kind && delegate[method+'$'+obj.kind]) {
 			thisResult = delegate[method+'$'+obj.kind](value,event);
@@ -9190,7 +9194,7 @@ In2iGui.Formula.prototype = {
 		for (var i=0; i < d.length; i++) {
 			if (d[i].options && d[i].options.key) {
 				var key = d[i].options.key;
-				if (key && values[key]) {
+				if (key && values[key]!=undefined) {
 					d[i].setValue(values[key]);
 				}
 			}
@@ -9215,13 +9219,16 @@ In2iGui.Formula.prototype = {
 		this.add(g);
 		return g;
 	},
-	/** Builds and adds a new group according to a recipe */
+	/** Builds and adds a new group according to a recipe
+	 * @returns {'In2iGui.Formula.Group'} group
+	 */
 	buildGroup : function(options,recipe) {
 		var g = this.createGroup(options);
 		recipe.each(function(item) {
-			var w = In2iGui.Formula[item.type].create(null,item.options);
+			var w = In2iGui.Formula[item.type].create(item.options);
 			g.add(w);
 		});
+		return g;
 	},
 	/** @private */
 	childValueChanged : function(value) {
@@ -9277,7 +9284,7 @@ In2iGui.Formula.Group.prototype = {
 		this.body.insert(tr);
 		var td = new Element('td',{colspan:this.options.above?1:2});
 		tr.insert(td);
-		var b = In2iGui.Buttons.create(null,options);
+		var b = In2iGui.Buttons.create(options);
 		td.insert(b.getElement());
 		return b;
 	}
@@ -9285,17 +9292,17 @@ In2iGui.Formula.Group.prototype = {
 
 /********************** Text ***********************/
 
-In2iGui.Formula.Text = function(element,name,options) {
-	this.name = name;
-	this.options = n2i.override({label:null,key:null},options);
-	this.element = $(element);
+In2iGui.Formula.Text = function(o) {
+	this.options = n2i.override({label:null,key:null},o);
+	this.name = o.name;
+	this.element = $(o.element);
 	this.input = this.element.select('.in2igui_formula_text')[0];
 	this.value = this.input.value;
 	In2iGui.extend(this);
 	this.addBehavior();
 }
 
-In2iGui.Formula.Text.create = function(name,options) {
+In2iGui.Formula.Text.create = function(options) {
 	options = n2i.override({lines:1},options);
 	if (options.lines>1) {
 		var input = new Element('textarea',
@@ -9306,8 +9313,8 @@ In2iGui.Formula.Text.create = function(name,options) {
 			{'class':'in2igui_formula_text'}
 		);		
 	}
-	var e = In2iGui.wrapInField(input);
-	return new In2iGui.Formula.Text(e,name,options);
+	options.element = In2iGui.wrapInField(input);
+	return new In2iGui.Formula.Text(options);
 }
 
 In2iGui.Formula.Text.prototype = {
@@ -9862,19 +9869,19 @@ In2iGui.Formula.Checkboxes.Items.prototype = {
 
 /**************************** Token ************************/
 
-In2iGui.Formula.Tokens = function(element,name,options) {
-	this.options = {label:null,key:null};
-	n2i.override(this.options,options);
-	this.element = $(element);
-	this.name = name;
+In2iGui.Formula.Tokens = function(o) {
+	this.options = n2i.override({label:null,key:null},o);
+	this.element = $(o.element);
+	this.name = o.name;
 	this.value = [''];
 	In2iGui.extend(this);
 	this.updateUI();
 }
 
-In2iGui.Formula.Tokens.create = function(name,opts) {
-	var element = new Element('div').addClassName('in2igui_tokens');
-	return new In2iGui.Formula.Tokens(element,name,opts);
+In2iGui.Formula.Tokens.create = function(o) {
+	o = o || {};
+	o.element = new Element('div').addClassName('in2igui_tokens');
+	return new In2iGui.Formula.Tokens(o);
 }
 
 In2iGui.Formula.Tokens.prototype = {
@@ -9900,14 +9907,16 @@ In2iGui.Formula.Tokens.prototype = {
 	},
 	updateUI : function() {
 		this.element.update();
-		var self = this;
 		this.value.each(function(value,i) {
 			var input = new Element('input').addClassName('in2igui_tokens_token');
+			if (this.options.width) {
+				input.setStyle({width:this.options.width+'px'});
+			}
 			input.value = value;
 			input.in2iguiIndex = i;
-			self.element.insert(input);
-			input.observe('keyup',function() {self.inputChanged(input,i)});
-		});
+			this.element.insert(input);
+			input.observe('keyup',function() {this.inputChanged(input,i)}.bind(this));
+		}.bind(this));
 	},
 	/** @private */
 	inputChanged : function(input,index) {
@@ -9919,6 +9928,9 @@ In2iGui.Formula.Tokens.prototype = {
 	/** @private */
 	addField : function() {
 		var input = new Element('input').addClassName('in2igui_tokens_token');
+		if (this.options.width) {
+			input.setStyle({width:this.options.width+'px'});
+		}
 		var i = this.value.length;
 		this.value.push('');
 		this.element.insert(input);
@@ -10476,14 +10488,35 @@ In2iGui.Tabs.Tab.prototype = {
 	}
 }
 
-/* EOF */In2iGui.ObjectList = function(id,name,options) {
-	this.options = n2i.override({key:null},options);
-	this.name = name;
-	this.element = $(id);
+/* EOF */In2iGui.ObjectList = function(o) {
+	this.options = n2i.override({key:null},o);
+	this.name = o.name;
+	this.element = $(o.element);
 	this.body = this.element.select('tbody')[0];
 	this.template = [];
 	this.objects = [];
 	In2iGui.extend(this);
+}
+
+In2iGui.ObjectList.create = function(o) {
+	o=o || {};
+	var e = o.element = new Element('table',{'class':'in2igui_objectlist',cellpadding:'0',cellspacing:'0'});
+	if (o.template) {
+		var head = '<thead><tr>';
+		o.template.each(function(item) {
+			head+='<th>'+(item.label || '')+'</th>';
+		});
+		head+='</tr></thead>';
+		e.insert(head);
+	}
+	e.insert(new Element('tbody'));
+	var list = new In2iGui.ObjectList(o);
+	if (o.template) {
+		o.template.each(function(item) {
+			list.registerTemplateItem(new In2iGui.ObjectList.Text(item.key));
+		});
+	}
+	return list;
 }
 
 In2iGui.ObjectList.prototype = {
@@ -10541,6 +10574,9 @@ In2iGui.ObjectList.prototype = {
 		if (obj.index>=this.objects.length-1) {
 			this.addObject({},true);
 		}
+	},
+	getLabel : function() {
+		return this.options.label;
 	}
 }
 
@@ -10756,20 +10792,20 @@ In2iGui.Alert.prototype = {
 	}
 }
 
-/* EOF */In2iGui.Button = function(id,name) {
-	this.name = name;
-	this.element = $(id);
+/* EOF */In2iGui.Button = function(o) {
+	this.name = o.name;
+	this.element = $(o.element);
 	this.inner = this.element.getElementsByTagName('span')[1];
 	this.enabled = !this.element.hasClassName('in2igui_button_disabled');
 	In2iGui.extend(this);
 	this.addBehavior();
 }
 
-In2iGui.Button.create = function(name,o) {
+In2iGui.Button.create = function(o) {
 	var o = n2i.override({text:'',highlighted:false,enabled:true},o);
 	var className = 'in2igui_button'+(o.highlighted ? ' in2igui_button_highlighted' : '');
 	if (!o.enabled) className+=' in2igui_button_disabled';
-	var element = new Element('a',{'class':className,href:'#'});
+	var element = o.element = new Element('a',{'class':className,href:'#'});
 	var element2 = new Element('span');
 	element.appendChild(element2);
 	var element3 = new Element('span');
@@ -10787,7 +10823,7 @@ In2iGui.Button.create = function(name,o) {
 	if (o.title && o.title.length>0) {
 		element3.insert(o.title);
 	}
-	return new In2iGui.Button(element,name);
+	return new In2iGui.Button(o);
 }
 
 In2iGui.Button.prototype = {
@@ -11243,11 +11279,11 @@ In2iGui.ImagePicker.prototype = {
 			this.picker = In2iGui.BoundPanel.create();
 			this.content = new Element('div',{'class':'in2igui_imagepicker_thumbs'});
 			var buttons = new Element('div',{'class':'in2igui_imagepicker_buttons'});
-			var close = In2iGui.Button.create(null,{text:'Luk',highlighted:true});
+			var close = In2iGui.Button.create({text:'Luk',highlighted:true});
 			close.addDelegate({
 				click:function() {self.hidePicker()}
 			});
-			var remove = In2iGui.Button.create(null,{text:'Fjern'});
+			var remove = In2iGui.Button.create({text:'Fjern'});
 			remove.addDelegate({
 				click:function() {self.setObject(null);self.hidePicker()}
 			});
@@ -11297,35 +11333,35 @@ In2iGui.ImagePicker.prototype = {
 	}
 }
 
-/* EOF */In2iGui.BoundPanel = function(element,name) {
-	this.element = $(element);
+/* EOF */In2iGui.BoundPanel = function(o) {
+	this.element = $(o.element);
+	this.name = o.name;
 	this.visible = false;
 	this.content=this.element.select('.content')[0];
 	this.arrow=this.element.select('.arrow')[0];
 	In2iGui.extend(this);
 }
 
-In2iGui.BoundPanel.create = function(opts) {
-	var options = {name:null,top:'0px',left:'0px'};
-	n2i.override(options,opts);
-	var element = new Element('div',
-		{'class':'in2igui_boundpanel'}).setStyle({'display':'none','zIndex':In2iGui.nextPanelIndex(),'top':options.top,'left':options.left});
+In2iGui.BoundPanel.create = function(o) {
+	var o = n2i.override({name:null,top:'0px',left:'0px'},o);
+	var element = o.element = new Element('div',
+		{'class':'in2igui_boundpanel'}).setStyle({'display':'none','zIndex':In2iGui.nextPanelIndex(),'top':o.top,'left':o.left});
 	
 	var html = 
 		'<div class="arrow"></div>'+
 		'<div class="top"><div><div></div></div></div>'+
 		'<div class="body"><div class="body"><div class="body"><div class="content" style="';
-	if (options.width) {
-		html+='width:'+options.width+'px;';
+	if (o.width) {
+		html+='width:'+o.width+'px;';
 	}
-	if (options.padding) {
-		html+='padding:'+options.padding+'px;';
+	if (o.padding) {
+		html+='padding:'+o.padding+'px;';
 	}
 	html+='"></div></div></div></div>'+
 		'<div class="bottom"><div><div></div></div></div>';
 	element.innerHTML=html;
 	document.body.appendChild(element);
-	return new In2iGui.BoundPanel(element);
+	return new In2iGui.BoundPanel(o);
 }
 
 /********************************* Public methods ***********************************/
@@ -12233,13 +12269,13 @@ In2iGui.Editor.prototype = {
 			var w = this.columnEditor = In2iGui.Window.create('columnEditor',{title:'Rediger kolonne'});
 			var f = this.columnEditorForm = In2iGui.Formula.create();
 			var g = f.createGroup();
-			var width = In2iGui.Formula.Text.create(null,{label:'Bredde',key:'width'});
+			var width = In2iGui.Formula.Text.create({label:'Bredde',key:'width'});
 			width.addDelegate({valueChanged:function(v) {this.changeColumnWidth(v)}.bind(this)})
 			g.add(width);
-			var marginLeft = In2iGui.Formula.Text.create(null,{label:'Venstremargen',key:'left'});
+			var marginLeft = In2iGui.Formula.Text.create({label:'Venstremargen',key:'left'});
 			marginLeft.addDelegate({valueChanged:function(v) {this.changeColumnLeftMargin(v)}.bind(this)})
 			g.add(marginLeft);
-			var marginRight = In2iGui.Formula.Text.create(null,{label:'Højremargen',key:'right'});
+			var marginRight = In2iGui.Formula.Text.create({label:'Højremargen',key:'right'});
 			marginRight.addDelegate({valueChanged:this.changeColumnRightMargin.bind(this)})
 			g.add(marginRight);
 			w.add(f);
@@ -12850,7 +12886,7 @@ In2iGui.Overlay.prototype = {
  * uploadDidComplete(file)
  */
 In2iGui.Upload = function(o) {
-	o = this.options = n2i.override({url:'',parameters:{}},o);
+	o = this.options = n2i.override({url:'',parameters:{},maxItems:50,maxSize:"20480",types:"*.*"},o);
 	this.element = $(o.element);
 	this.itemContainer = this.element.select('.in2igui_upload_items')[0];
 	this.status = this.element.select('.in2igui_upload_status')[0];
@@ -12973,8 +13009,9 @@ In2iGui.Upload.prototype = {
 		this.loader = new SWFUpload({
 			upload_url : url,
 			flash_url : In2iGui.context+"/In2iGui/lib/swfupload/swfupload.swf",
-			file_size_limit : "20480",
-			file_upload_limit : 100,
+			file_size_limit : this.options.maxSize,
+			file_upload_limit : this.options.maxItems,
+			file_types : this.options.types,
 			debug : true,
 			post_params : this.options.parameters,
 			button_placeholder_id : 'x',
@@ -13024,7 +13061,10 @@ In2iGui.Upload.prototype = {
 	addError : function(error,file) {
 		var element = new Element('div',{'class':'in2igui_upload_item_error'});
 		element.insert(new Element('a',{'class':'in2igui_link'}).update('<span>Fjern</span>').observe('click',function() {this.parentNode.remove(); return false;}));
-		element.insert('<strong>'+In2iGui.Upload.errors[error]+'</strong><br/><em>'+file.name+'</em>');
+		element.insert('<strong>'+In2iGui.Upload.errors[error]+'</strong>');
+		if (file) {
+			element.insert('<br/><em>'+file.name+'</em>');
+		}
 		this.itemContainer.insert(element);
 	},
 	
@@ -13369,16 +13409,16 @@ In2iGui.Calendar.prototype = {
 		var bar = this.element.select('.in2igui_calendar_bar')[0];
 		this.toolbar = In2iGui.Toolbar.create(null,{labels:false});
 		bar.insert(this.toolbar.getElement());
-		var previous = In2iGui.Button.create('in2iguiCalendarPrevious',{text:'',icon:'monochrome/previous'});
+		var previous = In2iGui.Button.create({name:'in2iguiCalendarPrevious',text:'',icon:'monochrome/previous'});
 		previous.addDelegate(this);
 		this.toolbar.add(previous);
-		var today = In2iGui.Button.create('in2iguiCalendarToday',{text:'Idag'});
+		var today = In2iGui.Button.create({name:'in2iguiCalendarToday',text:'Idag'});
 		today.addDelegate(this);
 		this.toolbar.add(today);
-		var next = In2iGui.Button.create('in2iguiCalendarNext',{text:'',icon:'monochrome/next'});
+		var next = In2iGui.Button.create({name:'in2iguiCalendarNext',text:'',icon:'monochrome/next'});
 		next.addDelegate(this);
 		this.toolbar.add(next);
-		this.datePickerButton = In2iGui.Button.create('in2iguiCalendarDatePicker',{text:'Vælg dato...'});
+		this.datePickerButton = In2iGui.Button.create({name:'in2iguiCalendarDatePicker',text:'Vælg dato...'});
 		this.datePickerButton.addDelegate(this);
 		this.toolbar.add(this.datePickerButton);
 		
@@ -13433,7 +13473,7 @@ In2iGui.Calendar.prototype = {
 			this.datePicker.addDelegate(this);
 			this.datePickerPanel.add(this.datePicker);
 			this.datePickerPanel.addSpace(5);
-			var button = In2iGui.Button.create('in2iguiCalendarDatePickerClose',{text:'Luk'});
+			var button = In2iGui.Button.create({name:'in2iguiCalendarDatePickerClose',text:'Luk'});
 			button.addDelegate(this);
 			this.datePickerPanel.add(button);
 		}
@@ -13455,7 +13495,7 @@ In2iGui.Calendar.prototype = {
 			this.eventInfo = In2iGui.InfoView.create(null,{height:240,clickObjects:true});
 			this.eventViewerPanel.add(this.eventInfo);
 			this.eventViewerPanel.addSpace(5);
-			var button = In2iGui.Button.create('in2iguiCalendarEventClose',{text:'Luk'});
+			var button = In2iGui.Button.create({name:'in2iguiCalendarEventClose',text:'Luk'});
 			button.addDelegate(this);
 			this.eventViewerPanel.add(button);
 		}

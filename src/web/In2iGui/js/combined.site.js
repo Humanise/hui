@@ -5389,7 +5389,7 @@ In2iGui.prototype = {
 	alert : function(options,callBack) {
 		if (!this.alertBox) {
 			this.alertBox = In2iGui.Alert.create(null,options);
-			this.alertBoxButton = In2iGui.Button.create('in2iGuiAlertBoxButton',{text : 'OK'});
+			this.alertBoxButton = In2iGui.Button.create({name:'in2iGuiAlertBoxButton',text : 'OK'});
 			this.alertBoxButton.addDelegate(this);
 			this.alertBox.addButton(this.alertBoxButton);
 		} else {
@@ -5415,14 +5415,14 @@ In2iGui.prototype = {
 		var alert = In2iGui.get(name);
 		if (!alert) {
 			alert = In2iGui.Alert.create(name,options);
-			var cancel = In2iGui.Button.create(name+'_cancel',{text : options.cancel || 'Cancel',highlighted:options.highlighted=='cancel'});
+			var cancel = In2iGui.Button.create({name:name+'_cancel',text : options.cancel || 'Cancel',highlighted:options.highlighted=='cancel'});
 			cancel.addDelegate({buttonWasClicked:function(){
 				In2iGui.get(name).hide();
 				In2iGui.callDelegates(In2iGui.get(name),'cancel');
 			}});
 			alert.addButton(cancel);
 		
-			var ok = In2iGui.Button.create(name+'_ok',{text : options.ok || 'OK',highlighted:options.highlighted=='ok'});
+			var ok = In2iGui.Button.create({name:name+'_ok',text : options.ok || 'OK',highlighted:options.highlighted=='ok'});
 			ok.addDelegate({buttonWasClicked:function(){
 				In2iGui.get(name).hide();
 				In2iGui.callDelegates(In2iGui.get(name),'ok');
@@ -5849,6 +5849,8 @@ In2iGui.callDelegates = function(obj,method,value,event) {
 			var thisResult = null;
 			if (obj.name && delegate[method+'$'+obj.name]) {
 				thisResult = delegate[method+'$'+obj.name](value,event);
+			} else if ('$'+obj.name && delegate[method+'$'+obj.name]) {
+				thisResult = delegate['$'+method+'$'+obj.name](value,event);
 			} else if (obj.kind && delegate[method+'$'+obj.kind]) {
 				thisResult = delegate[method+'$'+obj.kind](value,event);
 			} else if (delegate[method]) {
@@ -5871,7 +5873,9 @@ In2iGui.callSuperDelegates = function(obj,method,value,event) {
 	for (var i=0; i < gui.delegates.length; i++) {
 		var delegate = gui.delegates[i];
 		var thisResult = null;
-		if (obj.name && delegate[method+'$'+obj.name]) {
+		if (obj.name && delegate['$'+method+'$'+obj.name]) {
+			thisResult = delegate['$'+method+'$'+obj.name](value,event);
+		} else if (obj.name && delegate[method+'$'+obj.name]) {
 			thisResult = delegate[method+'$'+obj.name](value,event);
 		} else if (obj.kind && delegate[method+'$'+obj.kind]) {
 			thisResult = delegate[method+'$'+obj.kind](value,event);

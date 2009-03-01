@@ -87,16 +87,16 @@ In2iGui.Calendar.prototype = {
 		var bar = this.element.select('.in2igui_calendar_bar')[0];
 		this.toolbar = In2iGui.Toolbar.create(null,{labels:false});
 		bar.insert(this.toolbar.getElement());
-		var previous = In2iGui.Button.create('in2iguiCalendarPrevious',{text:'',icon:'monochrome/previous'});
+		var previous = In2iGui.Button.create({name:'in2iguiCalendarPrevious',text:'',icon:'monochrome/previous'});
 		previous.addDelegate(this);
 		this.toolbar.add(previous);
-		var today = In2iGui.Button.create('in2iguiCalendarToday',{text:'Idag'});
+		var today = In2iGui.Button.create({name:'in2iguiCalendarToday',text:'Idag'});
 		today.addDelegate(this);
 		this.toolbar.add(today);
-		var next = In2iGui.Button.create('in2iguiCalendarNext',{text:'',icon:'monochrome/next'});
+		var next = In2iGui.Button.create({name:'in2iguiCalendarNext',text:'',icon:'monochrome/next'});
 		next.addDelegate(this);
 		this.toolbar.add(next);
-		this.datePickerButton = In2iGui.Button.create('in2iguiCalendarDatePicker',{text:'Vælg dato...'});
+		this.datePickerButton = In2iGui.Button.create({name:'in2iguiCalendarDatePicker',text:'Vælg dato...'});
 		this.datePickerButton.addDelegate(this);
 		this.toolbar.add(this.datePickerButton);
 		
@@ -151,7 +151,7 @@ In2iGui.Calendar.prototype = {
 			this.datePicker.addDelegate(this);
 			this.datePickerPanel.add(this.datePicker);
 			this.datePickerPanel.addSpace(5);
-			var button = In2iGui.Button.create('in2iguiCalendarDatePickerClose',{text:'Luk'});
+			var button = In2iGui.Button.create({name:'in2iguiCalendarDatePickerClose',text:'Luk'});
 			button.addDelegate(this);
 			this.datePickerPanel.add(button);
 		}
@@ -173,7 +173,7 @@ In2iGui.Calendar.prototype = {
 			this.eventInfo = In2iGui.InfoView.create(null,{height:240,clickObjects:true});
 			this.eventViewerPanel.add(this.eventInfo);
 			this.eventViewerPanel.addSpace(5);
-			var button = In2iGui.Button.create('in2iguiCalendarEventClose',{text:'Luk'});
+			var button = In2iGui.Button.create({name:'in2iguiCalendarEventClose',text:'Luk'});
 			button.addDelegate(this);
 			this.eventViewerPanel.add(button);
 		}

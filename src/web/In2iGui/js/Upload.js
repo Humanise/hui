@@ -10,7 +10,7 @@
  * uploadDidComplete(file)
  */
 In2iGui.Upload = function(o) {
-	o = this.options = n2i.override({url:'',parameters:{}},o);
+	o = this.options = n2i.override({url:'',parameters:{},maxItems:50,maxSize:"20480",types:"*.*"},o);
 	this.element = $(o.element);
 	this.itemContainer = this.element.select('.in2igui_upload_items')[0];
 	this.status = this.element.select('.in2igui_upload_status')[0];
@@ -133,8 +133,9 @@ In2iGui.Upload.prototype = {
 		this.loader = new SWFUpload({
 			upload_url : url,
 			flash_url : In2iGui.context+"/In2iGui/lib/swfupload/swfupload.swf",
-			file_size_limit : "20480",
-			file_upload_limit : 100,
+			file_size_limit : this.options.maxSize,
+			file_upload_limit : this.options.maxItems,
+			file_types : this.options.types,
 			debug : true,
 			post_params : this.options.parameters,
 			button_placeholder_id : 'x',
@@ -184,7 +185,10 @@ In2iGui.Upload.prototype = {
 	addError : function(error,file) {
 		var element = new Element('div',{'class':'in2igui_upload_item_error'});
 		element.insert(new Element('a',{'class':'in2igui_link'}).update('<span>Fjern</span>').observe('click',function() {this.parentNode.remove(); return false;}));
-		element.insert('<strong>'+In2iGui.Upload.errors[error]+'</strong><br/><em>'+file.name+'</em>');
+		element.insert('<strong>'+In2iGui.Upload.errors[error]+'</strong>');
+		if (file) {
+			element.insert('<br/><em>'+file.name+'</em>');
+		}
 		this.itemContainer.insert(element);
 	},
 	

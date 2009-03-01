@@ -1,32 +1,32 @@
-In2iGui.BoundPanel = function(element,name) {
-	this.element = $(element);
+In2iGui.BoundPanel = function(o) {
+	this.element = $(o.element);
+	this.name = o.name;
 	this.visible = false;
 	this.content=this.element.select('.content')[0];
 	this.arrow=this.element.select('.arrow')[0];
 	In2iGui.extend(this);
 }
 
-In2iGui.BoundPanel.create = function(opts) {
-	var options = {name:null,top:'0px',left:'0px'};
-	n2i.override(options,opts);
-	var element = new Element('div',
-		{'class':'in2igui_boundpanel'}).setStyle({'display':'none','zIndex':In2iGui.nextPanelIndex(),'top':options.top,'left':options.left});
+In2iGui.BoundPanel.create = function(o) {
+	var o = n2i.override({name:null,top:'0px',left:'0px'},o);
+	var element = o.element = new Element('div',
+		{'class':'in2igui_boundpanel'}).setStyle({'display':'none','zIndex':In2iGui.nextPanelIndex(),'top':o.top,'left':o.left});
 	
 	var html = 
 		'<div class="arrow"></div>'+
 		'<div class="top"><div><div></div></div></div>'+
 		'<div class="body"><div class="body"><div class="body"><div class="content" style="';
-	if (options.width) {
-		html+='width:'+options.width+'px;';
+	if (o.width) {
+		html+='width:'+o.width+'px;';
 	}
-	if (options.padding) {
-		html+='padding:'+options.padding+'px;';
+	if (o.padding) {
+		html+='padding:'+o.padding+'px;';
 	}
 	html+='"></div></div></div></div>'+
 		'<div class="bottom"><div><div></div></div></div>';
 	element.innerHTML=html;
 	document.body.appendChild(element);
-	return new In2iGui.BoundPanel(element);
+	return new In2iGui.BoundPanel(o);
 }
 
 /********************************* Public methods ***********************************/

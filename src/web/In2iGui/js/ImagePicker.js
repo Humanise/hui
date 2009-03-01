@@ -45,11 +45,11 @@ In2iGui.ImagePicker.prototype = {
 			this.picker = In2iGui.BoundPanel.create();
 			this.content = new Element('div',{'class':'in2igui_imagepicker_thumbs'});
 			var buttons = new Element('div',{'class':'in2igui_imagepicker_buttons'});
-			var close = In2iGui.Button.create(null,{text:'Luk',highlighted:true});
+			var close = In2iGui.Button.create({text:'Luk',highlighted:true});
 			close.addDelegate({
 				click:function() {self.hidePicker()}
 			});
-			var remove = In2iGui.Button.create(null,{text:'Fjern'});
+			var remove = In2iGui.Button.create({text:'Fjern'});
 			remove.addDelegate({
 				click:function() {self.setObject(null);self.hidePicker()}
 			});

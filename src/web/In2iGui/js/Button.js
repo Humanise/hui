@@ -1,17 +1,17 @@
-In2iGui.Button = function(id,name) {
-	this.name = name;
-	this.element = $(id);
+In2iGui.Button = function(o) {
+	this.name = o.name;
+	this.element = $(o.element);
 	this.inner = this.element.getElementsByTagName('span')[1];
 	this.enabled = !this.element.hasClassName('in2igui_button_disabled');
 	In2iGui.extend(this);
 	this.addBehavior();
 }
 
-In2iGui.Button.create = function(name,o) {
+In2iGui.Button.create = function(o) {
 	var o = n2i.override({text:'',highlighted:false,enabled:true},o);
 	var className = 'in2igui_button'+(o.highlighted ? ' in2igui_button_highlighted' : '');
 	if (!o.enabled) className+=' in2igui_button_disabled';
-	var element = new Element('a',{'class':className,href:'#'});
+	var element = o.element = new Element('a',{'class':className,href:'#'});
 	var element2 = new Element('span');
 	element.appendChild(element2);
 	var element3 = new Element('span');
@@ -29,7 +29,7 @@ In2iGui.Button.create = function(name,o) {
 	if (o.title && o.title.length>0) {
 		element3.insert(o.title);
 	}
-	return new In2iGui.Button(element,name);
+	return new In2iGui.Button(o);
 }
 
 In2iGui.Button.prototype = {

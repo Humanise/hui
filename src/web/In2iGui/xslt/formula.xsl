@@ -100,7 +100,7 @@
 		</xsl:otherwise>
 	</xsl:choose>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.Text('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>',{'key':'<xsl:value-of select="@key"/>'});
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.Text({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>',key:'<xsl:value-of select="@key"/>'});
 		<xsl:call-template name="gui:createobject"/>
 	</script>
 </xsl:template>
@@ -352,7 +352,10 @@
 		<xsl:attribute name="class">in2igui_button<xsl:if test="@highlighted='true'"> in2igui_button_highlighted</xsl:if></xsl:attribute>
 		<span><span><xsl:value-of select="@title"/></span></span></a>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Button('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>');
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Button({
+			element:'<xsl:value-of select="generate-id()"/>'
+			<xsl:if test="@name">,name:'<xsl:value-of select="@name"/>'</xsl:if>
+		});
 		<xsl:if test="@action">
 			<xsl:value-of select="generate-id()"/>_obj.addDelegate({click:function() {<xsl:value-of select="@action"/>}});
 		</xsl:if>
@@ -467,7 +470,9 @@
 		</tbody>
 	</table>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.ObjectList('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>',{key:'<xsl:value-of select="@key"/>'});
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.ObjectList({element:'<xsl:value-of select="generate-id()"/>'
+			<xsl:if test="@name">,'<xsl:value-of select="@name"/>'</xsl:if>
+			,key:'<xsl:value-of select="@key"/>'});
 		<xsl:call-template name="gui:createobject"/>
 		with (<xsl:value-of select="generate-id()"/>_obj) {
 			<xsl:apply-templates select="gui:text | gui:select"/>

@@ -29,7 +29,7 @@
 	In2iGui.onDomReady(function() {
 		var normal = In2iGui.Window.create(null,{width:'300'});
 		var editor = In2iGui.RichText.create()
-		var button = In2iGui.Button.create(null,{text:'View source'})
+		var button = In2iGui.Button.create({text:'View source'})
 		button.addDelegate({click:function() {
 			alert(editor.getValue())
 		}});

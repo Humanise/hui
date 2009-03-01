@@ -1,3 +1,7 @@
+/**
+	Used to get a geografical location
+	@constructor
+*/
 In2iGui.LocationPicker = function(o) {
 	this.name = o.name;
 	this.options = o.options || {};
@@ -7,11 +11,8 @@ In2iGui.LocationPicker = function(o) {
 }
 
 In2iGui.LocationPicker.prototype = {
+	/** @private */
 	addBehavior : function() {
-		var self = this;
-		this.element.onclick = function() {
-			self.showPicker();
-		}
 	}
 }
 

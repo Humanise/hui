@@ -43,7 +43,7 @@ In2iGui.Formula.prototype = {
 		for (var i=0; i < d.length; i++) {
 			if (d[i].options && d[i].options.key) {
 				var key = d[i].options.key;
-				if (key && values[key]) {
+				if (key && values[key]!=undefined) {
 					d[i].setValue(values[key]);
 				}
 			}
@@ -68,13 +68,16 @@ In2iGui.Formula.prototype = {
 		this.add(g);
 		return g;
 	},
-	/** Builds and adds a new group according to a recipe */
+	/** Builds and adds a new group according to a recipe
+	 * @returns {'In2iGui.Formula.Group'} group
+	 */
 	buildGroup : function(options,recipe) {
 		var g = this.createGroup(options);
 		recipe.each(function(item) {
-			var w = In2iGui.Formula[item.type].create(null,item.options);
+			var w = In2iGui.Formula[item.type].create(item.options);
 			g.add(w);
 		});
+		return g;
 	},
 	/** @private */
 	childValueChanged : function(value) {
@@ -130,7 +133,7 @@ In2iGui.Formula.Group.prototype = {
 		this.body.insert(tr);
 		var td = new Element('td',{colspan:this.options.above?1:2});
 		tr.insert(td);
-		var b = In2iGui.Buttons.create(null,options);
+		var b = In2iGui.Buttons.create(options);
 		td.insert(b.getElement());
 		return b;
 	}
@@ -138,17 +141,17 @@ In2iGui.Formula.Group.prototype = {
 
 /********************** Text ***********************/
 
-In2iGui.Formula.Text = function(element,name,options) {
-	this.name = name;
-	this.options = n2i.override({label:null,key:null},options);
-	this.element = $(element);
+In2iGui.Formula.Text = function(o) {
+	this.options = n2i.override({label:null,key:null},o);
+	this.name = o.name;
+	this.element = $(o.element);
 	this.input = this.element.select('.in2igui_formula_text')[0];
 	this.value = this.input.value;
 	In2iGui.extend(this);
 	this.addBehavior();
 }
 
-In2iGui.Formula.Text.create = function(name,options) {
+In2iGui.Formula.Text.create = function(options) {
 	options = n2i.override({lines:1},options);
 	if (options.lines>1) {
 		var input = new Element('textarea',
@@ -159,8 +162,8 @@ In2iGui.Formula.Text.create = function(name,options) {
 			{'class':'in2igui_formula_text'}
 		);		
 	}
-	var e = In2iGui.wrapInField(input);
-	return new In2iGui.Formula.Text(e,name,options);
+	options.element = In2iGui.wrapInField(input);
+	return new In2iGui.Formula.Text(options);
 }
 
 In2iGui.Formula.Text.prototype = {
@@ -715,19 +718,19 @@ In2iGui.Formula.Checkboxes.Items.prototype = {
 
 /**************************** Token ************************/
 
-In2iGui.Formula.Tokens = function(element,name,options) {
-	this.options = {label:null,key:null};
-	n2i.override(this.options,options);
-	this.element = $(element);
-	this.name = name;
+In2iGui.Formula.Tokens = function(o) {
+	this.options = n2i.override({label:null,key:null},o);
+	this.element = $(o.element);
+	this.name = o.name;
 	this.value = [''];
 	In2iGui.extend(this);
 	this.updateUI();
 }
 
-In2iGui.Formula.Tokens.create = function(name,opts) {
-	var element = new Element('div').addClassName('in2igui_tokens');
-	return new In2iGui.Formula.Tokens(element,name,opts);
+In2iGui.Formula.Tokens.create = function(o) {
+	o = o || {};
+	o.element = new Element('div').addClassName('in2igui_tokens');
+	return new In2iGui.Formula.Tokens(o);
 }
 
 In2iGui.Formula.Tokens.prototype = {
@@ -753,14 +756,16 @@ In2iGui.Formula.Tokens.prototype = {
 	},
 	updateUI : function() {
 		this.element.update();
-		var self = this;
 		this.value.each(function(value,i) {
 			var input = new Element('input').addClassName('in2igui_tokens_token');
+			if (this.options.width) {
+				input.setStyle({width:this.options.width+'px'});
+			}
 			input.value = value;
 			input.in2iguiIndex = i;
-			self.element.insert(input);
-			input.observe('keyup',function() {self.inputChanged(input,i)});
-		});
+			this.element.insert(input);
+			input.observe('keyup',function() {this.inputChanged(input,i)}.bind(this));
+		}.bind(this));
 	},
 	/** @private */
 	inputChanged : function(input,index) {
@@ -772,6 +777,9 @@ In2iGui.Formula.Tokens.prototype = {
 	/** @private */
 	addField : function() {
 		var input = new Element('input').addClassName('in2igui_tokens_token');
+		if (this.options.width) {
+			input.setStyle({width:this.options.width+'px'});
+		}
 		var i = this.value.length;
 		this.value.push('');
 		this.element.insert(input);

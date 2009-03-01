@@ -1,11 +1,32 @@
-In2iGui.ObjectList = function(id,name,options) {
-	this.options = n2i.override({key:null},options);
-	this.name = name;
-	this.element = $(id);
+In2iGui.ObjectList = function(o) {
+	this.options = n2i.override({key:null},o);
+	this.name = o.name;
+	this.element = $(o.element);
 	this.body = this.element.select('tbody')[0];
 	this.template = [];
 	this.objects = [];
 	In2iGui.extend(this);
+}
+
+In2iGui.ObjectList.create = function(o) {
+	o=o || {};
+	var e = o.element = new Element('table',{'class':'in2igui_objectlist',cellpadding:'0',cellspacing:'0'});
+	if (o.template) {
+		var head = '<thead><tr>';
+		o.template.each(function(item) {
+			head+='<th>'+(item.label || '')+'</th>';
+		});
+		head+='</tr></thead>';
+		e.insert(head);
+	}
+	e.insert(new Element('tbody'));
+	var list = new In2iGui.ObjectList(o);
+	if (o.template) {
+		o.template.each(function(item) {
+			list.registerTemplateItem(new In2iGui.ObjectList.Text(item.key));
+		});
+	}
+	return list;
 }
 
 In2iGui.ObjectList.prototype = {
@@ -63,6 +84,9 @@ In2iGui.ObjectList.prototype = {
 		if (obj.index>=this.objects.length-1) {
 			this.addObject({},true);
 		}
+	},
+	getLabel : function() {
+		return this.options.label;
 	}
 }
 

@@ -78,7 +78,7 @@ form.in2igui_formula select
 	width: 100%;
 }
 
-form.in2igui_formula .in2igui_formula_text
+.in2igui_formula_text
 {
 	border: 0px;
 	padding: 1px 0px;
@@ -91,12 +91,12 @@ form.in2igui_formula .in2igui_formula_text
 	outline: none;
 }
 
-form.in2igui_formula input.in2igui_formula_text
+input.in2igui_formula_text
 {
 	height: 15px;
 }
 
-form.in2igui_formula textarea.in2igui_formula_text
+textarea.in2igui_formula_text
 {
 	text-indent: 0;
 	line-height: 16px;
@@ -466,7 +466,7 @@ table.in2igui_objectlist
 	width: 100%;
 }
 
-table.in2igui_objectlist th.in2igui_objectlist
+table.in2igui_objectlist th
 {
 	text-align: left;
 	font-size: 9pt;
@@ -502,6 +502,8 @@ table.in2igui_objectlist th.in2igui_objectlist1
 div.in2igui_tokens
 {
 	overflow: hidden;
+	padding-left:3px;
+	padding-top:3px;
 }
 
 input.in2igui_tokens_token

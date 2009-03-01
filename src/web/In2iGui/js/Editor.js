@@ -172,13 +172,13 @@ In2iGui.Editor.prototype = {
 			var w = this.columnEditor = In2iGui.Window.create('columnEditor',{title:'Rediger kolonne'});
 			var f = this.columnEditorForm = In2iGui.Formula.create();
 			var g = f.createGroup();
-			var width = In2iGui.Formula.Text.create(null,{label:'Bredde',key:'width'});
+			var width = In2iGui.Formula.Text.create({label:'Bredde',key:'width'});
 			width.addDelegate({valueChanged:function(v) {this.changeColumnWidth(v)}.bind(this)})
 			g.add(width);
-			var marginLeft = In2iGui.Formula.Text.create(null,{label:'Venstremargen',key:'left'});
+			var marginLeft = In2iGui.Formula.Text.create({label:'Venstremargen',key:'left'});
 			marginLeft.addDelegate({valueChanged:function(v) {this.changeColumnLeftMargin(v)}.bind(this)})
 			g.add(marginLeft);
-			var marginRight = In2iGui.Formula.Text.create(null,{label:'Højremargen',key:'right'});
+			var marginRight = In2iGui.Formula.Text.create({label:'Højremargen',key:'right'});
 			marginRight.addDelegate({valueChanged:this.changeColumnRightMargin.bind(this)})
 			g.add(marginRight);
 			w.add(f);
