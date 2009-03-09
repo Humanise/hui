@@ -1,5 +1,6 @@
 package dk.in2isoft.onlineobjects.apps.community;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -16,11 +17,14 @@ import dk.in2isoft.onlineobjects.core.EntitylistSynchronizer;
 import dk.in2isoft.onlineobjects.core.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.ModelException;
 import dk.in2isoft.onlineobjects.core.ModelFacade;
+import dk.in2isoft.onlineobjects.core.Priviledged;
 import dk.in2isoft.onlineobjects.core.Query;
+import dk.in2isoft.onlineobjects.core.SecurityException;
 import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.model.EmailAddress;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.ImageGallery;
+import dk.in2isoft.onlineobjects.model.InternetAddress;
 import dk.in2isoft.onlineobjects.model.Invitation;
 import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.PhoneNumber;
@@ -255,7 +259,15 @@ public class CommunityDAO extends AbstractDAO {
 	}
 
 	
-	public void updateDummyEmailAddresses(Entity parent,List<EmailAddress> addresses, UserSession session) throws EndUserException {
+	public void updateDummyEmailAddresses(Entity parent,List<EmailAddress> addresses, Priviledged session) throws EndUserException {
+		
+		// Remove empty addresses
+		for (Iterator<EmailAddress> i = addresses.iterator(); i.hasNext();) {
+			EmailAddress emailAddress = i.next();
+			if (!LangUtil.isDefined(emailAddress.getAddress())) {
+				i.remove();
+			}
+		}
 		
 		List<EmailAddress> existing = getModel().getChildren(parent, EmailAddress.class);
 		EntitylistSynchronizer<EmailAddress> sync = new EntitylistSynchronizer<EmailAddress>(existing,addresses);
@@ -278,8 +290,15 @@ public class CommunityDAO extends AbstractDAO {
 	}
 
 	
-	public void updateDummyPhoneNumbers(Entity parent,List<PhoneNumber> phones, UserSession session) throws EndUserException {
-		
+	public void updateDummyPhoneNumbers(Entity parent,List<PhoneNumber> phones, Priviledged priviledged) throws EndUserException {
+
+		// Remove empty addresses
+		for (Iterator<PhoneNumber> i = phones.iterator(); i.hasNext();) {
+			PhoneNumber number = i.next();
+			if (!LangUtil.isDefined(number.getNumber())) {
+				i.remove();
+			}
+		}
 		List<PhoneNumber> existing = getModel().getChildren(parent, PhoneNumber.class);
 		EntitylistSynchronizer<PhoneNumber> sync = new EntitylistSynchronizer<PhoneNumber>(existing,phones);
 		
@@ -291,12 +310,41 @@ public class CommunityDAO extends AbstractDAO {
 		}
 		
 		for (PhoneNumber number : sync.getNew()) {
-			getModel().createItem(number, session);
-			getModel().createRelation(parent, number, session);
+			getModel().createItem(number, priviledged);
+			getModel().createRelation(parent, number, priviledged);
 		}
 		
 		for (PhoneNumber number : sync.getDeleted()) {
-			getModel().deleteEntity(number, session);
+			getModel().deleteEntity(number, priviledged);
+		}
+	}
+
+	public void updateDummyInternetAddresses(Entity parent, List<InternetAddress> urls, Priviledged priviledged) throws ModelException, SecurityException {
+
+		// Remove empty addresses
+		for (Iterator<InternetAddress> i = urls.iterator(); i.hasNext();) {
+			InternetAddress address = i.next();
+			if (!LangUtil.isDefined(address.getAddress())) {
+				i.remove();
+			}
+		}
+		List<InternetAddress> existing = getModel().getChildren(parent, InternetAddress.class);
+		EntitylistSynchronizer<InternetAddress> sync = new EntitylistSynchronizer<InternetAddress>(existing,urls);
+		
+		for (Entry<InternetAddress, InternetAddress> entry : sync.getUpdated().entrySet()) {
+			InternetAddress original = entry.getKey();
+			InternetAddress dummy = entry.getValue();
+			original.setAddress(dummy.getAddress());
+			original.setContext(dummy.getContext());
+		}
+		
+		for (InternetAddress number : sync.getNew()) {
+			getModel().createItem(number, priviledged);
+			getModel().createRelation(parent, number, priviledged);
+		}
+		
+		for (InternetAddress number : sync.getDeleted()) {
+			getModel().deleteEntity(number, priviledged);
 		}
 	}
 }

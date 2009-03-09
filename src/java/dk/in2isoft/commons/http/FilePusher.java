@@ -1,13 +1,14 @@
 package dk.in2isoft.commons.http;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import com.oreilly.servlet.ServletUtils;
+import org.apache.commons.io.IOUtils;
 
 public class FilePusher {
     
@@ -52,8 +53,10 @@ public class FilePusher {
             response.setHeader("Content-Disposition","attachment; filename=\"" + file.getName() + "\"");
         }
         try {
+        	FileInputStream input = new FileInputStream(file);
             ServletOutputStream out = response.getOutputStream();
-            ServletUtils.returnFile(file.getPath(), out);
+            IOUtils.copy(input, out);
+            input.close();
         }
         catch (FileNotFoundException e) {
             try {

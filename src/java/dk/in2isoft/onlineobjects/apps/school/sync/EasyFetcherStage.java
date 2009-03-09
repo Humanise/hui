@@ -34,7 +34,7 @@ public class EasyFetcherStage extends PipelineStageAdapter {
 			context.info(this, "Opening connection");
 			con = ds.getConnection();
 			context.info(this, "Connection opened");
-			String SQL = "SELECT * FROM [easy].[dbo].[elevskema] where DATO>DATEADD(day,-1,GETDATE()) and DATO<DATEADD(month,1,GETDATE()) order by SKEMABEG_ID desc,PERS_ID desc";
+			String SQL = "SELECT * FROM [easy].[dbo].[elevskema] where DATO>DATEADD(day,-1,GETDATE()) and DATO<DATEADD(day,14,GETDATE()) order by SKEMABEG_ID desc,PERS_ID desc";
 			stmt = con.createStatement();
 			stmt.setMaxRows(maxRows);
 			context.info(this, "Executing query");

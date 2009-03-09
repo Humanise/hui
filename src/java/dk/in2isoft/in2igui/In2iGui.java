@@ -136,8 +136,10 @@ public class In2iGui {
 		try {
 			boolean devMode = developmentMode;
 			StringReader xmlReader = new StringReader("<?xml version=\"1.0\"?>" + xmlData);
-			if ("true".equals(request.getParameter("nodev"))) {
+			if ("false".equals(request.getParameter("dev"))) {
 				devMode=false;
+			} else if ("true".equals(request.getParameter("dev"))) {
+				devMode=true;
 			}
 			render(new StreamSource(xmlReader), stream, request.getContextPath(),devMode);
 		} catch (TransformerFactoryConfigurationError e) {

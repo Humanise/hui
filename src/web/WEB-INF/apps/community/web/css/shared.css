@@ -1,4 +1,4 @@
-body,html
+body
 {
 	height: 100%;
 }
@@ -43,6 +43,14 @@ a.link:hover, a.link:hover span
 	color: #0033aa;
 }
 
+h1.header
+{
+	margin: 0 0 10px;
+	font-weight: normal;
+	font-size: 16pt;
+	color: #666;
+}
+
 /************************** Layout ********************/
 
 div.root
@@ -81,6 +89,7 @@ div.chrome_bottom
 {
 	height: 10px;
 	background: url('../gfx/chrome.png') left -132px repeat-x;
+	font-size: 0;
 }
 
 div.chrome_bottom div
@@ -97,12 +106,85 @@ div.chrome_bottom div div
 div.chrome_middle
 {
 	background: #fff url('../gfx/chrome_middle.png') 571px top repeat-y;
+	_height: 1%;
 }
 
 div.chrome_middle div.chrome_middle
 {
 	padding: 0px 6px;
 	background: url('../gfx/chrome_middle.png') -229px top repeat-y;
+}
+
+/**************************** Search *************************/
+
+form.chrome_search
+{
+	float: right;
+	background: url('../gfx/search.png') left top repeat-x;
+	height: 21px;
+	margin: 14px 16px 0px 0px;
+}
+
+form.chrome_search div
+{
+	background: url('../gfx/search.png') left -21px no-repeat;
+	height: 21px;
+	float: left;
+}
+
+form.chrome_search div div
+{
+	background-position: right -42px;
+	padding: 0px 0px 0px 20px;
+}
+
+form.chrome_search input
+{
+	border: 0px;
+	background: none;
+	width: 100px;
+	font-family: Verdana,sans-serif;
+	font-size: 11px;
+	margin-top: 2px;
+}
+
+form.chrome_search_dirty
+{
+	background-position: left -63px;
+}
+
+form.chrome_search_dirty div
+{
+	background-position: left -84px;
+}
+
+form.chrome_search_dirty div div
+{
+	background-position: right -105px;
+}
+
+form.chrome_search div.reset
+{
+	display: none;
+	width: 20px;
+	height: 21px;
+	background: url('../gfx/search.png') left -126px no-repeat;
+	position: absolute;
+	left: 50%;
+	margin-left: 363px;
+}
+
+form.chrome_search_dirty div.reset
+{
+	display: block;
+}
+
+/************************* Search result *********************/
+
+#chrome_search_result
+{
+	overflow: hidden;
+	display: none;
 }
 
 /**************************** Content ************************/
@@ -122,7 +204,24 @@ div.content_right
 {
 	float: left;
 	width: 193px;
-	padding: 10px 15px;
+	padding: 0px 15px;
+	overflow: hidden;
+}
+
+div.content_right_busy
+{
+	background: url('../gfx/sidebar_spinner.gif') 185px 8px no-repeat;
+}
+
+div.content_right_body
+{
+	padding-top: 10px;
+}
+
+div.content_body
+{
+	padding: 15px;
+	overflow: hidden;
 }
 
 /****************************** Sidebar **************************/
@@ -186,6 +285,23 @@ div.content_right form input.submit
 	position: absolute;
 	left: -100px;
 	top: -100px;
+}
+
+/**************************** User info ************************/
+
+#userinfo
+{
+	font-size: 10pt;
+	margin-bottom: 20px;
+}
+#userinfo div.thumbnail
+{
+	height: 55px;
+	width: 50px;
+	margin-right: 10px;
+	border: 1px solid #ddd;
+	background: #fff url('../gfx/user.png') center center no-repeat;
+	float: left;
 }
 
 /************************** Sidebar button *********************/
@@ -306,29 +422,43 @@ ul.navigation li
 
 ul.navigation a
 {
-	display: block;
-	height: 38px;
+	float: left;
+	height: 34px;
 	text-decoration: none;
 	color: #ddd;
-	line-height: 37px;
-	padding: 0px 10px;
+	padding: 4px 2px 0;
+	cursor: pointer;
 }
 
 ul.navigation a span
 {
 	text-decoration: none;
 	color: #333;
+	height: 29px;
+	float: left;
+	line-height: 29px;
 }
 
-ul.navigation a:hover
+ul.navigation a span span
 {
-	text-decoration: underline;
+	padding: 0px 10px;
+}
+
+ul.navigation a:hover span
+{
+	background: url('../gfx/top_tab.png') left -58px no-repeat;
+}
+
+ul.navigation a:hover span span
+{
+	background: url('../gfx/top_tab.png') right -87px no-repeat;
 }
 
 ul.navigation a.home
 {
-	background: url('../gfx/logo.png') no-repeat center center;
-	width: 115px;
+	background: url('../gfx/logo.png') no-repeat 14px center;
+	width: 120px;
+	padding-left: 20px;
 }
 
 ul.navigation a.home:hover
@@ -341,20 +471,198 @@ ul.navigation a.home span
 	visibility: hidden;
 }
 
-/***************************** Search *******************************/
-
-#search
+ul.navigation a.selected
 {
-	float: right;
-	display: none;
+	
 }
 
-#search input
+ul.navigation a.selected span
 {
-	margin: 14px 12px 0px 0px;
-	border: 1px solid #ddd;
+	color: #fff;
+	background: url('../gfx/top_tab.png') left 0 no-repeat;
+}
+
+ul.navigation a.selected span span
+{
+	background: url('../gfx/top_tab.png') right -29px no-repeat;
+}
+
+/***************************** Tabs *******************************/
+
+ul.tabs
+{
+	height: 30px;
+	margin: 0;
+	padding: 0 9px;
+	background: url('../gfx/tabs.png');
+	list-style: none;
+	font-size: 16px;
+	line-height: 29px;
+}
+
+ul.tabs *
+{
+	background: url('../gfx/tabs.png');
+	float: left;
+	height: 30px;
+}
+
+ul.tabs li
+{
+	background-position: 0 -30px;
+	margin-left: 4px;
+}
+
+ul.tabs a
+{
+	background-position: 100% -60px;
+	padding: 0 10px;
+	color: #666;
+	text-decoration: none;
+}
+
+ul.tabs li:hover
+{
+	background-position: 0 -90px;
+}
+
+ul.tabs li:hover a
+{
+	background-position: 100% -120px;
+	color: #000;
+}
+
+ul.tabs li.highlighted
+{
+	background-position: 0 -150px;
+}
+
+ul.tabs li.highlighted a
+{
+	background-position: 100% -180px;
+}
+
+div.tabs_content
+{
+	padding: 15px;
+}
+
+/***************************** Search *******************************/
+
+#chrome_search_result ul
+{
+	list-style: none;
+	margin: 0;
+	padding: 0;
 	font-size: 12px;
-	height: 16px;
+}
+
+#chrome_search_result li
+{
+	overflow: hidden;
+	padding: 5px 0;
+}
+
+#chrome_search_result li.user div.thumbnail
+{
+	height: 45px;
+	width: 40px;
+	margin-right: 10px;
+	border: 1px solid #ddd;
+	background: #fff url('../gfx/user.png') center center no-repeat;
+	float: left;
+}
+
+#chrome_search_result li.user p.username
+{
+	color: #666;
+}
+
+#chrome_search_result li.user p.website
+{
+	margin-top: 5px;
+}
+
+#chrome_search_result p
+{
+	margin: 0;
+}
+
+div.chrome_result_group
+{
+	padding: 10px 0;
+}
+
+div.chrome_result_group h2
+{
+	font-size: 14pt;
+	font-weight: normal;
+	margin: 0 0 5px;
+	color: #999;
+}
+
+/****************************** List ********************************/
+
+div.oo_list_navigator
+{
+	overflow: hidden;
+	font-size: 0;
+}
+
+div.oo_list_navigator a
+{
+	text-decoration: none;
+	color: #333;
+	font-size: 13px;
+	padding: 1px 4px;
+}
+
+div.oo_list_navigator a:hover
+{
+	background: #ddd;
+}
+
+div.oo_list_navigator a.oo_selected
+{
+	background: #aaa;
+	color: #fff;
+}
+
+ol.oo_list_result
+{
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	font-size: 10pt;
+}
+
+ol.oo_list_result li
+{
+	padding: 3px 5px;
+	border-bottom: 1px solid #eee;
+}
+
+ol.oo_gallery
+{
+	padding: 5px 13px 10px;
+	font-size: 0;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	overflow: hidden;
+}
+
+ol.oo_gallery li
+{
+	float: left;
+}
+
+ol.oo_gallery a
+{
+	display: inline-block;
+	border: 1px solid #ddd;
+	padding: 4px;
+	margin: 10px 10px 0 0;
 }
 
 /****************************** User ********************************/

@@ -3,6 +3,7 @@ package dk.in2isoft.onlineobjects.apps.community;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -52,6 +53,9 @@ public class CommunityController extends ApplicationController {
 	public CommunityController() {
 		super("community");
 		privateSpaceController = new PrivateSpaceController(this);
+		addJsfMatcher("<username>/images.html", "/jsf/community/user/images.xhtml");
+		addJsfMatcher("<username>", "/jsf/community/user/index.xhtml");
+		addJsfMatcher("", "/jsf/community/index.xhtml");
 	}
 
 	public static CommunityDAO getDAO() {
@@ -104,6 +108,11 @@ public class CommunityController extends ApplicationController {
 					throw new SecurityException("User cannot access this private site");
 				}
 				uploadImage(request);
+			} else if (request.testLocalPathFull(null, "uploadProfileImage")) {
+				if (siteUser.getId() != request.getSession().getUser().getId()) {
+					throw new SecurityException("User cannot access this private site");
+				}
+				uploadProfileImage(request);
 			} else if (request.testLocalPathStart(null, "private")) {
 				if (siteUser.getId() != request.getSession().getUser().getId()) {
 					throw new SecurityException("User cannot access this private site");
@@ -150,6 +159,31 @@ public class CommunityController extends ApplicationController {
 		}
 		PageRenderer renderer = new PageRenderer(page);
 		renderer.render(request);
+	}
+
+	private void uploadProfileImage(Request request) throws EndUserException, IOException {
+		new ImageUpload().upload(request, new ImageUploadDelegate() {
+
+			public void handleFile(File file, String name,String contentType,Map<String, String> parameters, Request request) throws EndUserException {
+				Entity user = request.getSession().getUser();
+
+				int[] dimensions = ImageUtil.getImageDimensions(file);
+				Image image = new Image();
+				getModel().createItem(image, request.getSession());
+				image.setName(name);
+				image.changeImageFile(file, dimensions[0], dimensions[1], contentType);
+				getModel().updateItem(image, request.getSession());
+				
+				List<Relation> list = getModel().getChildRelations(user,Image.class,Relation.KIND_SYSTEM_USER_IMAGE);
+				for (Relation relation : list) {
+					log.debug("Removing existing image: "+relation);
+					getModel().deleteRelation(relation, request.getSession());
+				}
+				
+				getModel().createRelation(user , image, Relation.KIND_SYSTEM_USER_IMAGE, request.getSession());
+				log.debug("Image is set!");
+			}
+		});
 	}
 
 	@SuppressWarnings("unchecked")

@@ -145,6 +145,10 @@ public class Request {
 	public String[] getLocalPath() {
 		return (String[]) ArrayUtils.subarray(fullPath, this.localContext.length, fullPath.length);
 	}
+	
+	public String getLocalPathAsString() {
+		return StringUtils.join(getLocalPath(),"/");
+	}
 
 	public boolean testLocalPathStart(String... path) {
 		String[] localPath = getLocalPath();

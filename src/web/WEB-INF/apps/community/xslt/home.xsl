@@ -81,7 +81,7 @@
 											<div class="section_body"><div id="images_container"><xsl:comment/></div></div>
 										</div>
 										<div class="section">
-											<div class="section_head"><h2>Mennesker</h2></div>
+											<div class="section_head"><h2>Brugere</h2></div>
 											<div class="section_body"><div id="users_container"><xsl:comment/></div></div>
 										</div>
 										<div class="section">

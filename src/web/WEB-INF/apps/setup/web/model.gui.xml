@@ -13,17 +13,17 @@
 	</source>
 	<source name="classSource" dwr="Common.getClasses"/>
 	<view>
-		<content pad="10">
+		<content padding="10">
 			<view style="box">
 				<toolbar>
-					<search name="search"/>
+					<search name="search" title="Search"/>
 				</toolbar>
 				<content background="true">
 					<split>
 						<sidebar>
 							<overflow resize="-108">
 							<selection value="dk.in2isoft.onlineobjects.model.Entity" name="selection">
-								<item icon="common/object" title="Alle klasser" value="dk.in2isoft.onlineobjects.model.Entity"/>
+								<item icon="common/object" title="All classes" value="dk.in2isoft.onlineobjects.model.Entity"/>
 								<items name="classes" source="classSource"/>
 							</selection>
 							</overflow>
@@ -31,10 +31,8 @@
 						<content>
 							<overflow resize="-108">
 								<list name="list" source="listSource">
-									<column title="Navn" key="name"/>
+									<column title="Name" key="name"/>
 									<column title="Type" key="type"/>
-									<column title="Oprettet" key="created"/>
-									<column title="Opdateret" key="updated"/>
 								</list>
 							</overflow>
 						</content>
@@ -55,7 +53,7 @@
 		<formula name="userFormula">
 			<group>
 				<text label="Username:" key="username"/>
-				<password label="Password:" key="password"/>
+				<text secret="true" label="Password:" key="password"/>
 			</group>
 			<buttons>
 				<button title="Delete" name="deleteUser"/>

@@ -97,14 +97,17 @@ div.part_header h1
 	font-family: "Trebuchet MS", Helvetica, sans-serif;
 	font-size: 16pt;
 	color: #005599;
-	text-align: center;
 }
 
 div.part_html
 {
 	font-family: "Trebuchet MS", Helvetica, sans-serif;
-	text-align: center;
 	font-size: 11pt;
 	color: #005599;
 	margin-top: 5px;
+}
+
+div.gallery div.part_header h1, div.gallery div.part_html
+{
+	text-align: center;
 }

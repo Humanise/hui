@@ -6088,7 +6088,7 @@ In2iGui.List.prototype.buildRows = function(rows) {
 				icon = icon || c.icon;
 			}
 			if (c.text) {
-				td.insert(c.text);
+				td.insert(c.text.escapeHTML());
 				title = title || c.text;
 			}
 			tr.insert(td);
@@ -6106,6 +6106,7 @@ In2iGui.List.prototype.buildRows = function(rows) {
 /********************************** Update from objects legacy *******************************/
 
 In2iGui.List.prototype.setObjects = function(objects) {
+	alert(0)
 	this.selected = [];
 	this.body.update();
 	this.rows = [];

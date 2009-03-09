@@ -87,9 +87,9 @@ OO.Editor.prototype = {
 	
 	partChanged : function(part) {
 		if (part.type=='header') {
-			Parts.updateHeaderPart(part.id,part.getValue());
+			Parts.updateHeaderPart(part.id,part.getValue(),part.properties);
 		} else if (part.type=='html') {
-			Parts.updateHtmlPart(part.id,part.getValue());
+			Parts.updateHtmlPart(part.id,part.getValue(),part.properties);
 		}
 	},
 	
@@ -112,7 +112,7 @@ OO.Editor.prototype = {
 		};
 		document.body.appendChild(this.logout);
 	
-		if (In2iGui.browser.gecko || In2iGui.browser.webkit) {
+		if (n2i.browser.gecko || n2i.browser.webkit) {
 			this.private = document.createElement('div');
 			this.private.className='private';
 			this.private.onclick = function() {
@@ -227,14 +227,14 @@ OO.Editor.prototype = {
 OO.Editor.prototype.click$pageProperties = function() {
 	if (!this.infoWindow) {
 		var w = In2iGui.Window.create(null,{title:'Sidens egenskaber',padding:5,variant:'dark',width:250});
-		var f = In2iGui.Formula.create('pageInfoForm');
+		var f = In2iGui.Formula.create({name:'pageInfoForm'});
 		w.add(f);
 		var g = f.createGroup({above:true});
-		g.add(In2iGui.Formula.Text.create(null,{label:'Titel',key:'title'}));
-		g.add(In2iGui.Formula.Tokens.create(null,{label:'Nøgleord',key:'tags'}));
+		g.add(In2iGui.Formula.Text.create({label:'Titel',key:'title'}));
+		g.add(In2iGui.Formula.Tokens.create({label:'Nøgleord',key:'tags'}));
 		var b = g.createButtons({top:10});
-		b.add(In2iGui.Button.create('cancelPageInfo',{text:'Annuller'}));
-		b.add(In2iGui.Button.create('savePageInfo',{text:'Gem',highlighted:true}));
+		b.add(In2iGui.Button.create({name:'cancelPageInfo',text:'Annuller'}));
+		b.add(In2iGui.Button.create({name:'savePageInfo',text:'Gem',highlighted:true}));
 		this.infoWindow = w;
 	}
 	var self = this;

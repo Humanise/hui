@@ -18,7 +18,7 @@ public class SetupController extends ApplicationController {
 	public void unknownRequest(Request request)
 	throws IOException,EndUserException {
 		if (!request.isUser(SecurityController.ADMIN_USERNAME)) {
-			request.redirectFromBase("/service/authentication/?redirect=/app/setup/&action=appAccessDenied");
+			request.redirectFromBase("/service/authentication/?redirect=/app/setup/&action=appAccessDenied&faultyuser="+request.getSession().getUser().getUsername());
 		} else if (!showGui(request)) {
 			Interface gui = new Base();
 			gui.display(request);

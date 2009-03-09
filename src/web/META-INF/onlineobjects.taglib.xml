@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<facelet-taglib>
+  <namespace>http://www.onlineobjects.com/jsf</namespace>
+  <tag>
+    <tag-name>list</tag-name>
+    <component>
+      <component-type>onlineobjects.list</component-type>
+      <renderer-type>onlineobjects.list</renderer-type>
+    </component>
+  </tag>
+</facelet-taglib>

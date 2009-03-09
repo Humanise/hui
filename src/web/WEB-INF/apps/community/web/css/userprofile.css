@@ -43,10 +43,11 @@ div.profile_image
 	float: left;
 }
 
-div.profile
+div.profile_image_photo
 {
-	padding: 20px;
-	overflow: hidden;
+	width: 90px;
+	height: 105px;
+	margin: 5px 0 0 5px;
 }
 
 div.profile_info
@@ -55,11 +56,20 @@ div.profile_info
 }
 
 
-div.profile_info h1
+div.profile h1
 {
 	margin: 0px;
 	font-weight: normal;
 	font-size: 16pt;
+}
+
+div.profile h2
+{
+	margin: 0px;
+	font-weight: normal;
+	font-size: 16pt;
+	margin: 0;
+	color: #999;
 }
 
 div.profile_info p
@@ -71,4 +81,42 @@ div.profile_info p
 div.profile_info p span.label
 {
 	color: #999;
+}
+
+#profileInfo ul.icons
+{
+	list-style: none;
+	margin: 0 0 10px;
+	padding: 0;
+	font-size: 10pt;
+}
+
+#profileInfo ul.icons li
+{
+	padding-left: 24px;
+	height: 20px;
+}
+
+#profileInfo li.mail
+{
+	background: url('../gfx/dimmed_icons.png') -2px -100px no-repeat;
+}
+
+#profileInfo li.url
+{
+	background: url('../gfx/dimmed_icons.png') -2px -2px no-repeat;
+}
+
+#profileInfo li.phone
+{
+	background: url('../gfx/dimmed_icons.png') -2px -50px no-repeat;
+}
+
+div.profile p.resume
+{
+	color:#333333;
+	font-family: Georgia, 'Palatino','Times', serif;
+	font-size:11pt;
+	font-style:italic;
+	margin-bottom:20px;
 }

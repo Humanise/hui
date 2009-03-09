@@ -36,7 +36,7 @@
     <convert converter="bean" match="dk.in2isoft.onlineobjects.model.*">
     	<param name="exclude" value="getImageFile"/>
     </convert>
-    <convert converter="bean" match="dk.in2isoft.in2igui.data.*"/>
+    <convert converter="bean" match="dk.in2isoft.*"/>
     <convert match="java.lang.Exception" converter="exception">
     	<param name='exclude' value='stackTrace'/>
     </convert>

@@ -16,8 +16,8 @@ import com.google.common.collect.Maps;
 
 import dk.in2isoft.commons.lang.LangUtil;
 import dk.in2isoft.in2igui.data.FormulaData;
-import dk.in2isoft.in2igui.data.ListObjects;
 import dk.in2isoft.in2igui.data.ListDataRow;
+import dk.in2isoft.in2igui.data.ListObjects;
 import dk.in2isoft.in2igui.data.TextFieldData;
 import dk.in2isoft.in2igui.data.WidgetData;
 import dk.in2isoft.onlineobjects.apps.ApplicationSession;
@@ -25,8 +25,10 @@ import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.ModelException;
 import dk.in2isoft.onlineobjects.core.ModelFacade;
+import dk.in2isoft.onlineobjects.core.Pair;
 import dk.in2isoft.onlineobjects.core.Priviledged;
 import dk.in2isoft.onlineobjects.core.Query;
+import dk.in2isoft.onlineobjects.core.UserQuery;
 import dk.in2isoft.onlineobjects.model.EmailAddress;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Image;
@@ -117,6 +119,22 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 		}
 	}
 
+	public UserProfileInfo getUserProfile() throws EndUserException {
+		Person person = getModel().getChild(getUserSession().getUser(), Person.class);
+		if (person==null) {
+			throw new EndUserException("The user does not have a person!");
+		}
+		return UserProfileInfoUtil.build(person,getUserSession());
+	}
+	
+	public void updateUserProfile(UserProfileInfo info) throws EndUserException {
+		Person person = getModel().getChild(getUserSession().getUser(), Person.class);
+		if (person==null) {
+			throw new EndUserException("The user does not have a person!");
+		}
+		UserProfileInfoUtil.save(info, person, getUserSession());
+	}
+
 	public List<Map<String, Object>> getInvitations() throws EndUserException {
 		List<Map<String, Object>> invites = new ArrayList<Map<String, Object>>();
 		List<Invitation> invitations = getModel().getChildren(getUserSession().getUser(), Invitation.class);
@@ -205,16 +223,13 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 
 	public Collection<Map<String,Entity>> searchUsers2(String query) throws ModelException {
 		List<Map<String,Entity>> result = Lists.newArrayList(); 
-		List<User> users = getModel().list(Query.of(User.class).withWords(query).withPaging(0, 10));
-		for (Iterator<User> i = users.iterator(); i.hasNext();) {
-			User user = i.next();
-			if (!user.getUsername().equals("public") && !user.getUsername().equals("admin")) {
-				Map<String,Entity> map = Maps.newHashMap();
-				Person person = getModel().getChild(user, null, Person.class);
-				map.put("user", user);
-				map.put("person", person);
-				result.add(map);
-			}
+		List<Pair<User, Person>> pairs = getModel().searchPairs(new UserQuery().withWords(query).withPaging(0, 10)).getResult();
+		for (Pair<User, Person> entry : pairs) {
+			Map<String,Entity> map = Maps.newHashMap();
+			map.put("user", entry.getKey());
+			map.put("person", entry.getValue());
+			result.add(map);
+			
 		}
 		return result;
 	}

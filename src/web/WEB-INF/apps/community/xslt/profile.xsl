@@ -60,6 +60,10 @@
 								<div class="content">
 									<div class="content_left">
 										<xsl:apply-templates select="p:profile"/>
+										<ul class="tabs">
+											<li class="highlighted"><a>Overblik</a></li>
+											<li><a>Billeder</a></li>
+										</ul>
 										<xsl:apply-templates select="p:images"/>
 									</div>
 								</div>
@@ -110,7 +114,6 @@
 	
 	<xsl:template match="p:images">
 		<xsl:if test="e:Entity">
-		<hr/>
 		<div class="images">
 			<h2>Billeder</h2>
 			<div class="thumbnails"><xsl:comment/>

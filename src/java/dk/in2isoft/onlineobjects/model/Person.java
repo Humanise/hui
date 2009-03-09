@@ -87,6 +87,10 @@ public class Person extends Entity {
 		}
 	}
 
+	public String getFullName() {
+		return LangUtil.concatWords(new String[] {givenName,additionalName,familyName});
+	}
+
 	private void updateName() {
 		setName(LangUtil.concatWords(new String[] {namePrefix, givenName,additionalName,familyName,nameSuffix}));
 	}

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<facelet-taglib>
+  <namespace>http://www.in2isoft.dk/in2igui</namespace>
+  <tag>
+    <tag-name>button</tag-name>
+    <component>
+      <component-type>in2igui.button</component-type>
+      <renderer-type>in2igui.button</renderer-type>
+    </component>
+  </tag>
+</facelet-taglib>

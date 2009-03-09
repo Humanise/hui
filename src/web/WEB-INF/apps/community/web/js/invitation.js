@@ -70,7 +70,7 @@ OO.Community.InvitationPage.prototype = {
 			title: 'Du er nu oprettet som bruger...',
 			text: 'Du vil modtage en e-mail hvor du skal bekræfte at du er dig. Indtil dette er gjort kan du frit anvende dit nye websted i op til 7 dage.'
 		});
-		var button = In2iGui.Button.create(null,{text : 'Gå til mit ny websted :-)!'});
+		var button = In2iGui.Button.create({text : 'Gå til mit ny websted :-)!'});
 		button.addDelegate({buttonWasClicked:function(){
 			document.location=OnlineObjects.appContext+'/'+username+'/site/';
 		}});

@@ -66,6 +66,12 @@
 		        <property name="context"/>
 		    </joined-subclass>
 		    
+		    <joined-subclass name="dk.in2isoft.onlineobjects.model.InternetAddress" table="internetaddress">
+		        <key column="id"/>
+		        <property name="address"/>
+		        <property name="context"/>
+		    </joined-subclass>
+		    
 		    <joined-subclass name="dk.in2isoft.onlineobjects.model.PhoneNumber" table="phonenumber">
 		        <key column="id"/>
 		        <property name="number"/>

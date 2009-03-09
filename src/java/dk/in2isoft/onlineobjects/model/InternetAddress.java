@@ -5,7 +5,8 @@ public class InternetAddress extends Entity {
 	public static String TYPE = Entity.TYPE+"/InternetAddress";
 	public static String NAMESPACE = Entity.NAMESPACE+"InternetAddress/";
 	
-	private String url;
+	private String address;
+	private String context;
 
 	public InternetAddress() {
 		super();
@@ -15,15 +16,19 @@ public class InternetAddress extends Entity {
 		return TYPE;
 	}
 
-	public String getIcon() {
-		return "Element/EmailAddress";
+	public void setAddress(String address) {
+		this.address = address;
 	}
 
-	public String getUrl() {
-		return url;
+	public String getAddress() {
+		return address;
 	}
 
-	public void setAddress(String url) {
-		this.url = url;
+	public void setContext(String context) {
+		this.context = context;
+	}
+
+	public String getContext() {
+		return context;
 	}
 }

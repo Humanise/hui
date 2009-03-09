@@ -71,18 +71,18 @@ public class SchoolRemotingFacade extends AbstractRemotingFacade {
 		data.addProperty("Slut:",formatDate(event.getEndTime()));
 		data.addProperty("Lokation:",event.getLocation());
 
-		List<Entity> organizers = getModel().getChildren(event, Relation.KIND_EVENT_ORGANIZER);
+		List<Person> organizers = getModel().getChildren(event, Relation.KIND_EVENT_ORGANIZER,Person.class);
 		data.addObjects("Underviser:", convertToObject(organizers));
 
-		List<Entity> attendees = getModel().getChildren(event, Relation.KIND_EVENT_ATTENDEE);
+		List<Person> attendees = getModel().getChildren(event, Relation.KIND_EVENT_ATTENDEE,Person.class);
 		data.addObjects("Elever:", convertToObject(attendees));
 		
 		return data;
 	}
 	
-	private Collection<ObjectData> convertToObject(List<Entity> entities) {
+	private Collection<ObjectData> convertToObject(List<? extends Entity> attendees) {
 		Collection<ObjectData> objects = new ArrayList<ObjectData>();
-		for (Entity entity : entities) {
+		for (Entity entity : attendees) {
 			objects.add(new ObjectData(entity.getId(),entity.getName()));
 		}
 		return objects;

@@ -84,13 +84,14 @@ public class Entity extends Item {
 		return props;
 	}
 	
-	public void overrideProperties(String key,List<String> values) {
+	public void overrideProperties(String key,Collection<String> values) {
 		for (Iterator<Property> iter = properties.iterator(); iter.hasNext();) {
 			Property property = iter.next();
 			if (key.equals(property.getKey())) {
 				iter.remove();
 			}
 		}
+		if (values==null) return;
 		for (Object value : values) {
 			properties.add(new Property(key,value.toString()));
 		}

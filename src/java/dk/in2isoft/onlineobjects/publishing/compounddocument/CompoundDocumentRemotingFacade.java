@@ -12,6 +12,9 @@ import nu.xom.Elements;
 import nu.xom.Node;
 import nu.xom.Nodes;
 import nu.xom.XPathContext;
+
+import org.apache.commons.lang.StringUtils;
+
 import dk.in2isoft.commons.xml.XSLTUtil;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
@@ -98,6 +101,35 @@ public class CompoundDocumentRemotingFacade extends AbstractRemotingFacade {
 			column.insertChild(section, position);
 			document.setStructure(structure.toXML());
 			getModel().updateItem(document, getUserSession());
+		}
+	}
+
+	public void updateColumn(long documentId, int row, int columnIndex, String width, String left, String right) throws EndUserException {
+		CompoundDocument document = getModel().get(CompoundDocument.class, documentId);
+		Document structure = document.getStructureDocument();
+		XPathContext context = new XPathContext("doc", CompoundDocument.CONTENT_NAMESPACE);
+		Nodes columns = structure.query("//doc:row[position()=" + (row + 1) + "]/doc:column[position()="
+				+ (columnIndex + 1) + "]", context);
+		if (columns.size() == 0) {
+			throw new EndUserException("The column does not exists");
+		} else {
+			Element column = (Element) columns.get(0);
+			setAttribute(column, "width", width);
+			setAttribute(column, "left", left);
+			setAttribute(column, "right", right);
+			document.setStructure(structure.toXML());
+			getModel().updateItem(document, getUserSession());
+		}
+	}
+	
+	private void setAttribute(Element element, String name, String value) {
+		Attribute attribute = element.getAttribute(name);
+		if (StringUtils.isBlank(value) && attribute!=null) {
+			element.removeAttribute(attribute);
+		} else if (attribute!=null) {
+			attribute.setValue(value);
+		} else {
+			element.addAttribute(new Attribute(name,value));
 		}
 	}
 	

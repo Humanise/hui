@@ -8,6 +8,7 @@ public class Relation extends Item {
 	public static final String KIND_WEB_CONTENT = "web.content";
 	public static final String KIND_WEB_PRIMARY = "web.primary";
 	public static final String KIND_SYSTEM_USER_SELF = "system.user.self";
+	public static final String KIND_SYSTEM_USER_IMAGE = "system.user.image";
 	public static final String KIND_INIVATION_INVITER = "invitation.inviter";
 	public static final String KIND_INIVATION_INVITED = "invitation.invited";
 	

@@ -18,7 +18,6 @@ OO.Editor.CompoundDocument.prototype = {
 	deactivate : function() {
 	},
 	addToToolbar : function(toolbar) {
-		toolbar.add(In2iGui.Toolbar.Icon.create('addPart',{icon:'common/new','title':'Tilføj del'}));
 		toolbar.add(In2iGui.Toolbar.Icon.create('addRow',{icon:'layout/row',overlay:'new','title':'Tilføj række'}));
 		toolbar.add(In2iGui.Toolbar.Icon.create('reload',{icon:'common/refresh','title':'Genindlæs'}));
 	},
@@ -27,9 +26,6 @@ OO.Editor.CompoundDocument.prototype = {
 		CompoundDocumentDocument.addRow(OnlineObjects.content.id,function() {
 			self.updateAll();
 		});
-	},
-	click$addPart : function() {
-		this.addPart$In2iGuiEditor({row:0,column:0,position:0,type:'header'});
 	},
 	updateAll : function() {
 		var self = this;
@@ -72,6 +68,18 @@ OO.Editor.CompoundDocument.prototype = {
 		CompoundDocumentDocument.addColumn(OnlineObjects.content.id,info.row,info.position,function() {
 			self.updateAll();
 		});
+	},
+	updateColumn$In2iGuiEditor : function(info) {
+		var self = this;
+		CompoundDocumentDocument.updateColumn(
+			OnlineObjects.content.id,
+			info.row,
+			info.column,
+			info.width,
+			info.left,
+			info.right,
+			this.updateAll.bind(this)
+		);
 	}
 }
 

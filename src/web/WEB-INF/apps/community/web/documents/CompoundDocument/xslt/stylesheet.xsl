@@ -44,7 +44,9 @@
 	<xsl:template match="doc:column">
 		<td class="column">
 			<xsl:attribute name="style">
-				<xsl:text>width:</xsl:text><xsl:value-of select="100 div count(../doc:column)"/><xsl:text>%;</xsl:text>
+				<xsl:if test="@width"><xsl:text>width:</xsl:text><xsl:value-of select="@width"/><xsl:text>;</xsl:text></xsl:if>
+				<xsl:if test="@left"><xsl:text>padding-left:</xsl:text><xsl:value-of select="@left"/><xsl:text>;</xsl:text></xsl:if>
+				<xsl:if test="@right"><xsl:text>padding-right:</xsl:text><xsl:value-of select="@right"/><xsl:text>;</xsl:text></xsl:if>
 			</xsl:attribute>
 			<xsl:apply-templates/>
 		</td>

@@ -191,6 +191,10 @@ public class ModelFacade {
 		}
 	}
 
+	public void deleteRelation(Relation relation, Priviledged priviledged) throws SecurityException, ModelException {
+		deleteItem(relation, priviledged);
+	}
+
 	private void deleteItem(Item item, Priviledged priviledged) throws SecurityException, ModelException {
 		if (!canDelete(item, priviledged)) {
 			throw new SecurityException("Privilieged=" + priviledged + " cannot delete Item=" + item);
@@ -298,6 +302,19 @@ public class ModelFacade {
 		String hql = "select relation from Relation as relation,"+clazz.getName()+" child where relation.superEntity=:entity and relation.subEntity=child order by relation.position";
 		Query q = getSession().createQuery(hql);
 		q.setEntity("entity", entity);
+		List<Relation> result = q.list();
+		for (int i = 0; i < result.size(); i++) {
+			result.set(i, getSubject(result.get(i)));
+		}
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Relation> getChildRelations(Entity entity, Class clazz,String relationKind) throws ModelException {
+		String hql = "select relation from Relation as relation,"+clazz.getName()+" child where relation.superEntity=:entity and relation.subEntity=child and relation.kind=:kind order by relation.position";
+		Query q = getSession().createQuery(hql);
+		q.setEntity("entity", entity);
+		q.setString("kind", relationKind);
 		List<Relation> result = q.list();
 		for (int i = 0; i < result.size(); i++) {
 			result.set(i, getSubject(result.get(i)));
@@ -432,6 +449,22 @@ public class ModelFacade {
 		return new SearchResult<T>(items,count.intValue());
 	}
 
+	@SuppressWarnings("unchecked")
+	public <T,U> PairSearchResult<T,U> searchPairs(PairQuery<T,U> query) {
+		Query cq = query.createCountQuery(getSession());
+		List list = cq.list();
+		Object next = list.iterator().next();
+		Long count = (Long) next;
+		Query q = query.createItemQuery(getSession());
+		//q.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		List<Pair<T, U>> map = new ArrayList<Pair<T, U>>();
+		for (Iterator i = q.iterate(); i.hasNext();) {
+			Object[] object = (Object[]) i.next();
+			map.add(new Pair((T)getSubject(object[0]), (U)getSubject(object[1])));
+		}
+		return new PairSearchResult<T,U>(map,count.intValue());
+	}
+
 	public void grantFullPrivileges(Item item, Priviledged priviledged) {
 		Session session = getSession();
 		Privilege privilege = getPriviledge(item.getId(), priviledged.getIdentity());
@@ -456,8 +489,17 @@ public class ModelFacade {
 		return list(q);
 	}
 
+	/**
+	 * Performance warning!
+	 */
 	public List<Entity> getChildren(Entity item, String relationKind) throws ModelException {
 		dk.in2isoft.onlineobjects.core.Query<Entity> q = dk.in2isoft.onlineobjects.core.Query.of(Entity.class);
+		q.withParent(item,relationKind);
+		return list(q);
+	}
+
+	public <T> List<T> getChildren(Entity item, String relationKind, Class<T> classObj) throws ModelException {
+		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.of(classObj);
 		q.withParent(item,relationKind);
 		return list(q);
 	}

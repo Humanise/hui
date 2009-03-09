@@ -121,7 +121,7 @@ var personsController = {
 				title: 'Invitationen er sendt!',
 				text: 'Personen vil modtage en email med oplysninger om hvordan han/hun kan tilmelde sig!'
 			});
-			var button = In2iGui.Button.create('inviteSentOK',{text : 'OK'});
+			var button = In2iGui.Button.create({name:'inviteSentOK',text : 'OK'});
 			this.inviteSentAlert.addButton(button);
 		}
 		this.inviteSentAlert.show();

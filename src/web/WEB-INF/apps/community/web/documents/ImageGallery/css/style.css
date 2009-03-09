@@ -27,6 +27,11 @@
 	_text-align: center;
 }
 
+body.editor_mode .gallery .image
+{
+	cursor: move;
+}
+
 .imagegallery_image_hover
 {
 	position: absolute;

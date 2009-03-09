@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:oo="http://www.onlineobjects.com/jsf" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core">
+	<ui:composition template="chrome.xhtml">
+		<ui:param name="top" value="images"/>
+		<ui:define name="body">
+			<div class="content_body">
+				<h1 class="header">Billeder</h1>
+				<script type="text/javascript" charset="utf-8">
+					var gallery = new oo.community.Gallery();
+				</script>
+				<oo:list model="#{images.imageList}" var="image" gallery="true">
+					<a href="#{base.baseContext}/service/image/id#{image.id}.jpg" id="image_#{image.id}">
+						<img src="#{base.baseContext}/service/image/id#{image.id}thumbnail68cropped.jpg" width="68" height="68"/>
+					</a>
+					<script type="text/javascript" charset="utf-8">
+						gallery.registerImage({id:#{image.id},width:#{image.width},height:#{image.height}},'image_#{image.id}')
+					</script>
+				</oo:list>
+			</div>
+		</ui:define>
+	</ui:composition>
+</html>

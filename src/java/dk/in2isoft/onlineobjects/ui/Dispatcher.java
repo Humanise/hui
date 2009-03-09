@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletRequest;
@@ -57,6 +58,7 @@ public class Dispatcher implements Filter {
 	private final ImmutableMap<String, String> mimeTypes;
 
 	private List<Application> apps = Lists.newArrayList();
+
 	private Multimap<String, Pattern> mappings;
 
 	public Dispatcher() {
@@ -64,18 +66,10 @@ public class Dispatcher implements Filter {
 		reserved.add("In2iGui");
 		reserved.add("public");
 		reserved.add("faces");
-		mimeTypes = new ImmutableMap.Builder<String,String>()
-			.put("html", "text/html")
-			.put("htm", "text/html")
-			.put("xhtml", "application/xhtml+xml")
-			.put("js", "text/javascript")
-			.put("css", "text/css")
-			.put("png", "image/png")
-			.put("gif", "image/gif")
-			.put("jpg", "image/jpeg")
-			.put("jpeg", "image/jpeg")
-			.put("swf", "application/x-shockwave-flash")
-			.build();
+		mimeTypes = new ImmutableMap.Builder<String, String>().put("html", "text/html").put("htm", "text/html").put(
+				"xhtml", "application/xhtml+xml").put("js", "text/javascript").put("css", "text/css").put("png",
+				"image/png").put("gif", "image/gif").put("jpg", "image/jpeg").put("jpeg", "image/jpeg").put("swf",
+				"application/x-shockwave-flash").build();
 		{
 			Application app = new Application();
 			app.setName("setup");
@@ -89,24 +83,25 @@ public class Dispatcher implements Filter {
 			app.addProperty(Application.PROPERTY_URL_MAPPING, ".*");
 			apps.add(app);
 		}
-		
+
 		mappings = Multimaps.newLinkedHashMultimap();
-		
+
 		for (Application app : apps) {
 			for (String reg : app.getPropertyValues(Application.PROPERTY_URL_MAPPING)) {
-				Pattern p  = Pattern.compile(reg);
+				Pattern p = Pattern.compile(reg);
 				mappings.put("community", p);
 			}
 		}
 	}
-	
+
 	private void fixCookieScope(Request request) {
 		String baseDomain = request.getBaseDomain();
-		if (baseDomain!=null) {
-			request.getResponse().setHeader("Set-Cookie", "JSESSIONID="+request.getRequest().getSession().getId()+";domain=."+baseDomain);
+		if (baseDomain != null) {
+			request.getResponse().setHeader("Set-Cookie",
+					"JSESSIONID=" + request.getRequest().getSession().getId() + ";domain=." + baseDomain);
 		}
 	}
-	
+
 	public void doFilter(ServletRequest sRequest, ServletResponse sResponse, FilterChain chain) throws IOException,
 			ServletException {
 		HttpServletRequest request = (HttpServletRequest) sRequest;
@@ -118,23 +113,35 @@ public class Dispatcher implements Filter {
 		}
 		boolean shouldCommit = false;
 		Request req = new Request(request, response);
-		fixCookieScope(req);
+		//fixCookieScope(req);
 		if (req.isSet("username") && req.isSet("password")) {
 			Core.getInstance().getSecurity().changeUser(req.getSession(), req.getString("username"),
 					req.getString("password"));
 		}
 		String[] path = req.getFullPath();
 		if (path.length > 0 && (path[0].equals("dwr") || path[0].equals("webdav"))) {
-			if (simulateDelay) {
-				delay(path.toString());
+			if (path.length>1 && path[1].equals("call") && simulateDelay) {
+				delay(request.getRequestURL().toString());
 			}
 			chain.doFilter(sRequest, sResponse);
 			shouldCommit = true;
+		} else if (req.getLocalPathAsString().indexOf("javax.faces.resource") != -1) {
+			String localPath = req.getLocalPathAsString();
+			int index = localPath.indexOf("javax.faces.resource");
+			String substring = localPath.substring(index);
+			// log.debug("/faces/"+substring);
+			RequestDispatcher requestDispatcher = filterConfig.getServletContext().getRequestDispatcher(
+					"/faces/" + substring);
+			requestDispatcher.forward(request, sResponse);
 		} else if (path.length > 0 && path[0].equals("core")) {
 			String[] filePath = new String[] { "core", "web" };
 			if (!pushCoreFile((String[]) ArrayUtils.addAll(filePath, ArrayUtils.subarray(path, 1, path.length)),
 					response)) {
-				displayError(req, new EndUserException("Not found"));
+				RequestDispatcher dispatcher = filterConfig.getServletContext().getRequestDispatcher(
+						"/faces/community/home.xhtml");
+				dispatcher.forward(request, response);
+				// chain.doFilter(request, response);
+				// displayError(req, new EndUserException("Not found"));
 			}
 
 		} else if (path.length > 0 && path[0].equals("In2iGui")) {
@@ -152,11 +159,16 @@ public class Dispatcher implements Filter {
 			}
 			// chain.doFilter(sRequest, sResponse);
 		} else if (path.length > 0 && reserved.contains(path[0])) {
+			if ("faces".equals(path[0])) {
+				sResponse.setContentType("Content-Type: text/html; charset=UTF-8;");
+			}
 			chain.doFilter(sRequest, sResponse);
 		} else if (path.length > 1 && path[0].equals("app")) {
 			req.setLocalContext((String[]) ArrayUtils.subarray(path, 0, 2));
 			callApplication(path[1], req);
 			shouldCommit = true;
+
+			/** If it is a service */
 		} else if (path.length > 1 && path[0].equals("service")) {
 			req.setLocalContext((String[]) ArrayUtils.subarray(path, 0, 2));
 			ServiceController controller = ServiceManager.getInstance().getServiceController(path[1]);
@@ -177,9 +189,9 @@ public class Dispatcher implements Filter {
 				displayError(req, e);
 			}
 			shouldCommit = true;
+			/** If it is a service */
 		} else {
 			String appName = resolveMapping(req);
-			log.debug(appName);
 			if (appName == null) {
 				displayError(req, new EndUserException("Not found"));
 			} else {
@@ -191,7 +203,7 @@ public class Dispatcher implements Filter {
 			Core.getInstance().getModel().commit();
 		}
 	}
-	
+
 	private String resolveMapping(Request request) {
 		String url = request.getRequest().getRequestURL().toString();
 		for (Entry<String, Pattern> mapping : mappings.entries()) {
@@ -219,22 +231,31 @@ public class Dispatcher implements Filter {
 			if (controller == null) {
 				throw new EndUserException("No controller found!");
 			}
-			if (path.length > 0) {
-				try {
-					boolean called = callApplicationMethod(controller, path[0], request);
-					if (!called) {
-						String[] filePath = new String[] { "app", application };
-						if (!pushFile((String[]) ArrayUtils.addAll(filePath, path), request.getResponse())) {
-							controller.unknownRequest(request);
-						}
-					}
-				} catch (InvocationTargetException e) {
-					displayError(request, e);
-				}
+			RequestDispatcher dispatcher = controller.getDispatcher(request, filterConfig.getServletContext());
+			if (dispatcher != null) {
+				request.getResponse().setContentType("text/html");
+				request.getResponse().setCharacterEncoding("UTF-8");
+				dispatcher.include(request.getRequest(), request.getResponse());
 			} else {
-				controller.unknownRequest(request);
+				if (path.length > 0) {
+					try {
+						boolean called = callApplicationMethod(controller, path[0], request);
+						if (!called) {
+							String[] filePath = new String[] { "app", application };
+							if (!pushFile((String[]) ArrayUtils.addAll(filePath, path), request.getResponse())) {
+								controller.unknownRequest(request);
+							}
+						}
+					} catch (InvocationTargetException e) {
+						displayError(request, e);
+					}
+				} else {
+					controller.unknownRequest(request);
+				}
 			}
 		} catch (EndUserException e) {
+			displayError(request, e);
+		} catch (ServletException e) {
 			displayError(request, e);
 		}
 	}
@@ -244,7 +265,8 @@ public class Dispatcher implements Filter {
 		try {
 			Method method = controller.getClass().getDeclaredMethod(methodName, args);
 			boolean accessible = method.isAccessible();
-			if (!accessible) return false;
+			if (!accessible)
+				return false;
 			method.invoke(controller, new Object[] { request });
 			return true;
 		} catch (IllegalAccessException e) {
@@ -254,7 +276,8 @@ public class Dispatcher implements Filter {
 		}
 	}
 
-	private void callService(ServiceController controller, String methodName, Request request) throws EndUserException, NoSuchMethodException {
+	private void callService(ServiceController controller, String methodName, Request request) throws EndUserException,
+			NoSuchMethodException {
 		try {
 			Method method = controller.getClass().getDeclaredMethod(methodName, args);
 			method.invoke(controller, new Object[] { request });

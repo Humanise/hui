@@ -18,8 +18,8 @@
 							<content>
 								<header>Skift adgangskode</header>
 								<group labels="above">
-									<password label="Adgangskode" name="password1"/>
-									<password label="Gentag adgangskode" name="password2"/>
+									<text secret="true" label="Adgangskode" name="password1"/>
+									<text secret="true" label="Gentag adgangskode" name="password2"/>
 									<buttons>
 									<button title="Skift" name="changePassword"/>
 									</buttons>

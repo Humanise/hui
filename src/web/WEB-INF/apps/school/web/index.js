@@ -1,6 +1,6 @@
 var controller = {
 	interfaceIsReady : function() {
-		var sticky = N2i.Cookie.get('calendarUser');
+		var sticky = n2i.cookie.get('calendarUser');
 		if (sticky) {
 			this.changeUser(sticky);
 		} else {
@@ -37,7 +37,7 @@ var controller = {
 				calendar.refresh();
 				userWindow.hide();
 				self.updateUser();
-				N2i.Cookie.set('calendarUser',username,90);
+				n2i.cookie.set('calendarUser',username,90);
 			} else {
 				In2iGui.get().alert({title:'Brugeren findes desværre ikke!',text:'Prøv venligst igen...',emotion:'gasp'});
 			}

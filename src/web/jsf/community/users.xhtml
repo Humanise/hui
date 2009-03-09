@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:oo="http://www.onlineobjects.com/jsf" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core">
+	<ui:composition template="chrome.xhtml">
+		<ui:param name="top" value="users"/>
+		<ui:define name="body">
+			<div class="content_body">
+				<h1 class="header">Brugere</h1>
+				<oo:list model="#{users.userList}" var="pair">
+					<a class="link" href="#{base.localContext}/#{pair.key.username}/"><span>#{pair.value.fullName}</span></a>
+				</oo:list>
+			</div>
+		</ui:define>
+	</ui:composition>
+</html>
