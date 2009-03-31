@@ -47,6 +47,7 @@ In2iGui.Box.prototype = {
 		var top = (n2i.getInnerHeight()-e.getHeight())/2+n2i.getScrollTop();
 		e.setStyle({'marginLeft':(w/-2)+'px',top:top+'px'});
 		e.setStyle({display:'block',visibility:'visible'});
+		In2iGui.callVisible(this);
 	},
 	hide : function() {
 		In2iGui.hideCurtain(this);

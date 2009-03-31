@@ -45,6 +45,8 @@ In2iGui.Button.prototype = {
 			In2iGui.callDelegates(this,'buttonWasClicked'); // deprecated
 			In2iGui.callDelegates(this,'click');
 			In2iGui.callDelegates(this,'onClick');
+		} else {
+			this.element.blur();
 		}
 	},
 	setEnabled : function(enabled) {

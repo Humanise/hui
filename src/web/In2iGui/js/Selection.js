@@ -1,80 +1,119 @@
-In2iGui.Selection = function(id,name,options) {
+/**
+ * @constructor
+ * @param {Object} options The options : {value:null}
+ */
+In2iGui.Selection = function(options) {
 	this.options = n2i.override({value:null},options);
-	this.element = $(id);
-	this.name = name;
+	this.element = $(options.element);
+	this.name = options.name;
 	this.items = [];
 	this.subItems = [];
-	this.value = this.options.value;
-	this.selected = [];
+	this.selection=null;
+	if (this.options.value!=null) {
+		this.selection = {value:this.options.value};
+	}
 	In2iGui.extend(this);
-	var self = this;
 }
 
-In2iGui.Selection.create = function(name,options) {
+/**
+ * Creates a new selection widget
+ * @param {Object} options The options : {width:0}
+ */
+In2iGui.Selection.create = function(options) {
 	options = n2i.override({width:0},options);
-	var e = new Element('div',{'class':'in2igui_selection'});
+	var e = options.element = new Element('div',{'class':'in2igui_selection'});
 	if (options.width>0) e.setStyle({width:options.width+'px'});
-	return new In2iGui.Selection(e,name,options);
+	return new In2iGui.Selection(options);
 }
 
 In2iGui.Selection.prototype = {
+	/** Get the selected item
+	 * @returns {Object} The selected item, null if no selection */
 	getValue : function() {
-		return this.value;
+		return this.selection;
 	},
-	getSelection : function() {
+	/** Set the selected item
+	 * @param {Object} value The selected item */
+	setValue : function(value) {
+		var item = this.getSelectionWithValue(value);
+		if (item===null) {
+			this.selection = null;
+		} else {
+			this.selection = item;
+			this.kind=item.kind;
+		}
+		this.updateUI();
+		this._fireChange();
+	},
+	/** @private */
+	getSelectionWithValue : function(value) {
 		for (var i=0; i < this.items.length; i++) {
-			if (this.items[i].value == this.value) {
+			if (this.items[i].value==value) {
 				return this.items[i];
 			}
 		};
 		for (var i=0; i < this.subItems.length; i++) {
-			var item = this.subItems[i].getSelection();
-			if (item) return item;
+			var items = this.subItems[i].items;
+			for (var j=0; j < items.length; j++) {
+				if (items[j].value==value) {
+					return items[j];
+				}
+			};
 		};
+		return null;
 	},
-	setValue : function(value) {
-		this.value = value;
-		for (var i=0; i < this.items.length; i++) {
-			var item = this.items[i];
-			item.element.setClassName('selected',(item.value==value));
-		};
+	/** Set the value to null */
+	reset : function() {
+		this.setValue(null);
+	},
+	/** @private */
+	updateUI : function() {
+		this.items.each(function(item) {
+			item.element.setClassName('in2igui_selected',this.isSelection(item));
+		}.bind(this));
 		this.subItems.each(function(sub) {
 			sub.updateUI();
 		});
 	},
-	changeValue : function(value) {
-		this.setValue(value);
-		In2iGui.callDelegates(this,'selectorSelectionChanged'); // deprecated
-		In2iGui.callDelegates(this,'selectionChanged',this.value); // deprecated
-		In2iGui.callDelegates(this,'onSelectionChange',this.value);
-		In2iGui.firePropertyChange(this,'value',this.value);
+	/** @private */
+	changeSelection : function(item) {
+		this.selection = item;
+		this.updateUI();
+		this._fireChange();
 	},
+	/** @private */
+	_fireChange : function() {
+		this.fire('selectionChanged',this.selection);
+		this.fireProperty('value',this.selection ? this.selection.value : null);
+		this.fireProperty('kind',this.selection ? this.selection.kind : null);
+	},
+	/** @private */
 	registerItems : function(items) {
-		items.selection = this;
+		items.parent = this;
 		this.subItems.push(items);
 	},
+	/** @private */
 	registerItem : function(id,title,icon,badge,value,kind) {
 		var element = $(id);
-		element.in2iGuiValue = value;
-		this.items.push({id:id,title:title,icon:icon,badge:badge,element:element,value:value,kind:kind});
-		var self = this;
-		element.onclick = function() {
-			self.itemWasClicked(value);
-		}
-		element.ondblclick = function() {
-			self.itemWasDoubleClicked();
-			return false;
-		}
-		element.dragDropInfo = {kind:kind,value:value};
-		element.addClassName('droppable');
-		element.observe('mouseover',In2iGui.dropOverListener);
-		element.observe('mouseout',In2iGui.dropOutListener);
+		var item = {id:id,title:title,icon:icon,badge:badge,element:element,value:value,kind:kind};
+		this.items.push(item);
+		this.addItemBehavior(element,item);
 	},
-	
+	/** @private */
+	addItemBehavior : function(node,item) {
+		node.observe('click',function() {
+			this.itemWasClicked(item);
+		}.bind(this));
+		node.observe('dblclick',function() {
+			this.itemWasDoubleClicked(item);
+		}.bind(this));
+		node.dragDropInfo = item;
+	},
+	/** Untested!! */
 	setObjects : function(items) {
-		var self = this;
+		this.items = [];
 		items.each(function(item) {
-			self.items.push(item);
+			this.items.push(item);
 			var node = new Element('div',{'class':'in2igui_selection_item'});
 			item.element = node;
 			self.element.insert(node);
@@ -84,100 +123,152 @@ In2iGui.Selection.prototype = {
 			}
 			node.insert(inner);
 			node.observe('click',function() {
-				self.changeValue(item.value);
-			});
-			node.observe('dblclick',function() {
-				self.itemWasDoubleClicked();
-				return false;
-			});
-		});
+				this.itemWasClicked(item);
+			}.bind(this));
+			node.observe('dblclick',function(e) {
+				this.itemWasDoubleClicked(item);
+				e.stop();
+			}.bind(this));
+		}.bind(this));
+	},
+	/** @private */
+	isSelection : function(item) {
+		if (this.selection===null) {
+			return false;
+		}
+		var selected = item.value==this.selection.value;
+		if (this.selection.kind) {
+			selected = selected && item.kind==this.selection.kind;
+		}
+		return selected;
 	},
 	
-	// Events
-	itemWasClicked : function(value) {
-		this.changeValue(value);
+	/** @private */
+	itemWasClicked : function(item) {
+		this.changeSelection(item);
 	},
-	itemWasDoubleClicked : function() {
-		In2iGui.callDelegates(this,'selectorObjectWasOpened');
+	/** @private */
+	itemWasDoubleClicked : function(item) {
+		this.fire('selectionWasOpened',item);
 	}
 }
 
-/******************************** Items ****************************/
+/////////////////////////// Items ///////////////////////////
 
-In2iGui.Selection.Items = function(id,name,options) {
-	this.element = $(id);
-	this.name = name;
-	this.value = null;
-	this.selection = null;
+/**
+ * @constructor
+ * A group of items loaded from a source
+ * @param {Object} options The options : {element,name,source}
+ */
+In2iGui.Selection.Items = function(options) {
 	this.options = n2i.override({source:null},options);
+	this.element = $(options.element);
+	this.name = options.name;
+	this.parent = null;
 	this.items = [];
 	In2iGui.extend(this);
-	var self = this;
 	if (this.options.source) {
 		this.options.source.addDelegate(this);
 	}
 }
 
 In2iGui.Selection.Items.prototype = {
+	/**
+	 * Refresh the underlying source
+	 */
 	refresh : function() {
 		if (this.options.source) {
 			this.options.source.refresh();
 		}
 	},
-	objectsLoaded : function(objects) {
+	/** @private */
+	$objectsLoaded : function(objects) {
 		this.itemsLoaded(objects);
 	},
-	itemsLoaded : function(items) {
+	/** @private */
+	$itemsLoaded : function(items) {
 		this.items = [];
 		this.element.update();
-		var self = this;
-		for (var i=0, len=items.length; i < len; ++i) {
-			var item = items[i];
-			var node = new Element('div',{'class':'in2igui_selection_item'});
-			var inner = new Element('span');
+		this.buildLevel(this.element,items,0);
+		this.parent.updateUI();
+	},
+	/** @private */
+	buildLevel : function(parent,items,inc) {
+		if (!items) return;
+		var hierarchical = this.isHierarchy(items);
+		var open = inc==0;
+		var level = new Element('div',{'class':'in2igui_selection_level'}).setStyle({display:open ? 'block' : 'none'});
+		parent.insert(level);
+		items.each(function(item) {
+			var hasChildren = item.children && item.children.length>0;
+			var left = inc*16+6;
+			if (!hierarchical && inc>0 || hierarchical && !hasChildren) left+=13;
+			var node = new Element('div',{'class':'in2igui_selection_item'}).setStyle({paddingLeft:left+'px'})
+			if (item.badge) {
+				node.insert(new Element('strong',{'class':'in2igui_selection_badge'}).update(item.badge));
+			}
+			if (hierarchical && hasChildren) {
+				var self = this;
+				node.insert(new Element('span',{'class':'in2igui_disclosure'}).observe('click',function(e) {
+					e.stop();
+					self.toggle(this);
+				}));
+			}
+			var inner = new Element('span',{'class':'in2igui_selection_label'});
 			if (item.icon) {
-				inner.setStyle({'backgroundImage' : 'url('+In2iGui.getIconUrl(item.icon,1)+')'}).addClassName('in2igui_icon');
+				node.insert(new Element('span',{'class':'in2igui_icon_1'}).setStyle({'backgroundImage' : 'url('+In2iGui.getIconUrl(item.icon,1)+')'}));
 			}
-			node.in2iGuiIndex = i;
 			node.insert(inner.insert(item.title));
-			this.element.insert(node);
-			node.observe('click',function() {
-				self.itemWasClicked(self.items[this.in2iGuiIndex].value);
-			});
-			node.ondblclick = function() {
-				self.itemWasDoubleClicked();
-				return false;
-			}
+			node.observe('click',function(e) {
+				this.parent.itemWasClicked(item);
+			}.bind(this));
+			node.observe('dblclick',function(e) {
+				this.parent.itemWasDoubleClicked(item);
+			}.bind(this));
+			level.insert(node);
 			var info = {title:item.title,icon:item.icon,badge:item.badge,kind:item.kind,element:node,value:item.value};
 			node.dragDropInfo = info;
 			this.items.push(info);
+			this.buildLevel(level,item.children,inc+1);
+		}.bind(this));
+	},
+	/** @private */
+	toggle : function(node) {
+		if (node.hasClassName('in2igui_disclosure_open')) {
+			node.parentNode.next().hide();
+			node.removeClassName('in2igui_disclosure_open');
+		} else {
+			node.parentNode.next().show();
+			node.addClassName('in2igui_disclosure_open');
+		}
+	},
+	/** @private */
+	isHierarchy : function(items) {
+		for (var i=0; i < items.length; i++) {
+			if (items[i].children && items[i].children.length>0) {
+				return true;
+			}
 		};
-		this.updateUI();
+		return false;
 	},
-	itemWasClicked : function(value) {
-		this.selection.changeValue(value);
-	},
-	itemWasDoubleClicked : function(node) {
-		this.selection.itemWasDoubleClicked();
-	},
-	getSelection : function() {
+	/** Get the selection of this items group
+	 * @returns {Object} The selected item or null */
+	getValue : function() {
+		if (this.parent.selection==null) {
+			return null;
+		}
 		for (var i=0; i < this.items.length; i++) {
-			if (this.items[i].value == this.selection.value) {
+			if (this.items[i].value == this.parent.selection.value) {
 				return this.items[i];
 			}
 		};
 		return null;
 	},
+	/** @private */
 	updateUI : function() {
-		var newValue = null;
 		this.items.each(function(item) {
-			if (item.value==this.selection.value) newValue=item.value;
-			item.element.setClassName('selected',(item.value==this.selection.value));
+			item.element.setClassName('in2igui_selected',this.parent.isSelection(item));
 		}.bind(this));
-		if (this.value!=newValue) {
-			this.value=newValue;
-			In2iGui.firePropertyChange(this,'value',this.value);
-		}
 	}
 }
 /* EOF */

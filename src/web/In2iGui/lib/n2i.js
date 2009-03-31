@@ -1,6 +1,6 @@
-/* @@namespace */
+/** @namespace */
 var n2i = {
-	/* @@namespace */
+	/** @namespace */
 	browser : {}
 }
 
@@ -66,7 +66,7 @@ n2i.isEmpty = function(str) {
 }
 
 n2i.isDefined = function(obj) {
-	return obj!=null && typeof(obj)!='undefined';
+	return obj!==null && typeof(obj)!=='undefined';
 }
 
 n2i.inArray = function(arr,value) {
@@ -114,7 +114,21 @@ n2i.scrollTo = function(element) {
 	}
 }
 
-/********************* Style ********************/
+////////////////////// DOM ////////////////////
+
+n2i.dom = {
+	isElement : function(n,name) {
+		return n.nodeType==n2i.ELEMENT_NODE && (name===undefined ? true : n.nodeName==name);
+	},
+	isDefinedText : function(node) {
+		return node.nodeType==n2i.TEXT_NODE && node.nodeValue.length>0;
+	},
+	addText : function(node,text) {
+		node.appendChild(document.createTextNode(text));
+	}
+}
+
+///////////////////// Style ///////////////////
 
 n2i.getStyle = function(element, style) {
 	element = $(element);
@@ -234,6 +248,8 @@ n2i.getDocumentHeight = function() {
 	}
 }
 
+//////////////////////////// Preloader /////////////////////////
+
 /** @constructor */
 n2i.Preloader = function(options) {
 	this.options = options || {};
@@ -305,7 +321,7 @@ n2i.cookie = {
 	}
 }
 
-/********************** URL/Location *********************/
+///////////////////////// URL/Location /////////////////////
 
 n2i.URL = function(url) {
 	this.url = url || '';
@@ -374,7 +390,7 @@ n2i.location = {
 	}	
 };
 
-/****************************** Animation *********************/
+/////////////////////////// Animation ///////////////////////////
 
 
 n2i.ani = n2i.animate = function(element,style,value,duration,delegate) {

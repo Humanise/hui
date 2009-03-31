@@ -52,6 +52,16 @@ In2iGui.Formula.prototype = {
 			}
 		}
 	},
+	/** Sets focus in the first found child */
+	focus : function() {
+		var d = In2iGui.get().getDescendants(this);
+		for (var i=0; i < d.length; i++) {
+			if (d[i].focus) {
+				d[i].focus();
+				return;
+			}
+		}
+	},
 	/** Resets all descendants */
 	reset : function() {
 		var d = In2iGui.get().getDescendants(this);
@@ -91,6 +101,10 @@ In2iGui.Formula.prototype = {
 ///////////////////////// Group //////////////////////////
 
 
+/**
+ * A form group
+ * @constructor
+ */
 In2iGui.Formula.Group = function(elementOrId,name,options) {
 	this.name = name;
 	this.element = $(elementOrId);
@@ -99,6 +113,7 @@ In2iGui.Formula.Group = function(elementOrId,name,options) {
 	In2iGui.extend(this);
 }
 
+/** Creates a new form group */
 In2iGui.Formula.Group.create = function(name,options) {
 	options = n2i.override({above:true},options);
 	var element = new Element('table',
@@ -142,8 +157,12 @@ In2iGui.Formula.Group.prototype = {
 	}
 }
 
-/********************** Text ***********************/
+///////////////////////// Text /////////////////////////
 
+/**
+ * A text fields
+ * @constructor
+ */
 In2iGui.Formula.Text = function(o) {
 	this.options = n2i.override({label:null,key:null},o);
 	this.name = o.name;
@@ -223,8 +242,12 @@ In2iGui.Formula.Text.prototype = {
 	}
 }
 
-/********************** Dat time ***********************/
+/////////////////////////// Date time /////////////////////////
 
+/**
+ * A date and time field
+ * @constructor
+ */
 In2iGui.Formula.DateTime = function(o) {
 	this.inputFormats = ['d-m-Y','d/m-Y','d/m/Y','d-m-Y H:i:s','d/m-Y H:i:s','d/m/Y H:i:s','d-m-Y H:i','d/m-Y H:i','d/m/Y H:i','d-m-Y H','d/m-Y H','d/m/Y H','d-m','d/m','d','Y','m-d-Y','m-d','m/d'];
 	this.outputFormat = 'd-m-Y H:i:s';
@@ -299,8 +322,12 @@ In2iGui.Formula.DateTime.prototype = {
 	}
 }
 
-/************************************* DropDown *******************************/
+////////////////////////// DropDown ///////////////////////////
 
+/**
+ * A drop down selector
+ * @constructor
+ */
 In2iGui.Formula.DropDown = function(o) {
 	this.name = o.name;
 	var e = this.element = $(o.element);
@@ -362,7 +389,7 @@ In2iGui.Formula.DropDown.prototype = {
 		el.focus();
 		if (!this.items) return;
 		In2iGui.positionAtElement(s,el,{vertical:'bottomOutside',top:-2,left:2});
-		s.setStyle({display:'block',width:(el.getWidth()-5)+'px',zIndex:In2iGui.nextTopIndex()});
+		s.setStyle({display:'block',width:(el.getWidth()-5)+'px',zIndex:In2iGui.nextTopIndex(),maxHeight:'200px'});
 	},
 	getValue : function(value) {
 		return this.value;
@@ -430,8 +457,13 @@ In2iGui.Formula.DropDown.prototype = {
 	}
 }
 
-/************************************* Select *******************************/
+////////////////////////////// Select ////////////////////////////////
 
+/**
+ * A select box
+ * @constructor
+ * @deprecated
+ */
 In2iGui.Formula.Select = function(id,name,options) {
 	this.name = name;
 	this.options = n2i.override({label:null},options);
@@ -513,7 +545,7 @@ In2iGui.Formula.Select.prototype = {
 }
 
 
-/********************************* Radio buttons ****************************/
+//////////////////////////// Radio buttons ////////////////////////////
 
 In2iGui.Formula.Radiobuttons = function(id,name,options) {
 	this.options = options;
@@ -557,8 +589,12 @@ In2iGui.Formula.Radiobuttons.prototype = {
 }
 
 
-/********************************* Checkboxes ****************************/
+///////////////////////////// Checkbox /////////////////////////////////
 
+/**
+ * A check box
+ * @constructor
+ */
 In2iGui.Formula.Checkbox = function(id,name,options) {
 	this.element = $(id);
 	this.control = this.element.select('span')[0];
@@ -595,8 +631,12 @@ In2iGui.Formula.Checkbox.prototype = {
 	}
 }
 
-/********************************* Checkboxes ****************************/
+/////////////////////////// Checkboxes ////////////////////////////////
 
+/**
+ * Multiple checkboxes
+ * @constructor
+ */
 In2iGui.Formula.Checkboxes = function(id,name,options) {
 	this.options = options;
 	this.element = $(id);
@@ -670,8 +710,12 @@ In2iGui.Formula.Checkboxes.prototype = {
 	}
 }
 
-/******************************** Checkbox items ****************************/
+/////////////////////// Checkbox items ///////////////////
 
+/**
+ * Check box items
+ * @constructor
+ */
 In2iGui.Formula.Checkboxes.Items = function(id,name,options) {
 	this.element = $(id);
 	this.name = name;
@@ -724,8 +768,12 @@ In2iGui.Formula.Checkboxes.Items.prototype = {
 	}
 }
 
-/**************************** Token ************************/
+///////////////////////// Tokens //////////////////////////////
 
+/**
+ * A tokens component
+ * @constructor
+ */
 In2iGui.Formula.Tokens = function(o) {
 	this.options = n2i.override({label:null,key:null},o);
 	this.element = $(o.element);

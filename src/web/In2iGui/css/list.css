@@ -26,6 +26,7 @@ div.in2igui_list table thead th
 	background: url('../gfx/list_header.png') repeat-x;
 	cursor: default;
 	padding: 0px 5px;
+	font-weight: normal;
 }
 div.in2igui_list table thead th span
 {

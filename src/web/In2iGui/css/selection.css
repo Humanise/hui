@@ -1,21 +1,49 @@
 div.in2igui_selection
 {
 	font-family: 'Lucida Grande','Verdana',sans-serif;
+	padding: 5px 0px;
 }
 
 .in2igui_selection_item
 {
 	background: 7px center no-repeat;
 	font-size: 9pt;
-	height: 20px;
-	padding: 0px 10px 0px 6px;
+	min-height: 18px;
+	padding: 1px 5px 1px 6px;
+	overflow: hidden;
 }
 
-div.in2igui_selection_item span
+div.in2igui_selection span.in2igui_disclosure
 {
-	float: left;
-	height: 16px;
+	margin-right: 2px;
+}
+
+div.in2igui_selection_item span.in2igui_selection_label
+{
+	margin: 0 0 0 1px;
+	padding: 1px 3px;
+	vertical-align: middle;
+}
+
+strong.in2igui_selection_badge
+{
+	float: right;
+	background: #8697ba;
+	color: #fff;
+	font-size: 11px;
+	padding: 0 5px;
+	-moz-border-radius: 8px;
+	-webkit-border-radius: 7px;
+	min-width: 10px;
+	text-align: center;
+	height: 14px;
 	margin-top: 2px;
+}
+
+div.in2igui_selection div.in2igui_selected strong.in2igui_selection_badge
+{
+	background: #fff;
+	color: #3875d7;
 }
 
 div.in2igui_selection_item span.in2igui_icon
@@ -26,6 +54,12 @@ div.in2igui_selection_item span.in2igui_icon
 
 .in2igui_selection_item:hover
 {
+	background-color: #eee;
+	cursor: pointer;
+}
+
+div.split_sidebar .in2igui_selection_item:hover
+{
 	background-color: #d4dce9;
 	cursor: pointer;
 }
@@ -35,21 +69,18 @@ div.in2igui_selection_item span.in2igui_icon
 	background-position: 0px -16px;
 }
 
-.in2igui_selection_item em
-{
-	float: right;
-	line-height: 16px;
-	background: #A9B8CE;
-	height: 16px;
-	padding: 0px 2px;
-	margin: 2px 6px 0px 0px;
-	color: #fff;
-}
-
-div.in2igui_selection div.selected, div.in2igui_selection div.selected:hover
+div.split_sidebar div.in2igui_selection div.in2igui_selected, div.split_sidebar div.in2igui_selection div.in2igui_selected:hover
 {
 	background-color: #3875d7;
 	color: #fff;
+}
+
+div.in2igui_wizard div.in2igui_selection div.in2igui_selected span.in2igui_selection_label
+{
+	background-color: #3875d7;
+	color: #fff;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
 }
 
 .in2igui_selection .title
@@ -93,7 +124,7 @@ div.in2igui_window_dark div.in2igui_selection_item:hover
 	background: url('../gfx/selection_dark.png') left -24px;
 }
 
-div.in2igui_window_dark div.in2igui_selection div.selected, div.in2igui_window_dark div.in2igui_selection div.selected:hover
+div.in2igui_window_dark div.in2igui_selection div.in2igui_selected, div.in2igui_window_dark div.in2igui_selection div.in2igui_selected:hover
 {
 	background: #3875d7;
 }

@@ -4218,9 +4218,9 @@ Object.extend(Element.ClassNames.prototype, Enumerable);
 
 /*--------------------------------------------------------------------------*/
 
-Element.addMethods();/* @@namespace */
+Element.addMethods();/** @namespace */
 var n2i = {
-	/* @@namespace */
+	/** @namespace */
 	browser : {}
 }
 
@@ -4286,7 +4286,7 @@ n2i.isEmpty = function(str) {
 }
 
 n2i.isDefined = function(obj) {
-	return obj!=null && typeof(obj)!='undefined';
+	return obj!==null && typeof(obj)!=='undefined';
 }
 
 n2i.inArray = function(arr,value) {
@@ -4334,7 +4334,21 @@ n2i.scrollTo = function(element) {
 	}
 }
 
-/********************* Style ********************/
+////////////////////// DOM ////////////////////
+
+n2i.dom = {
+	isElement : function(n,name) {
+		return n.nodeType==n2i.ELEMENT_NODE && (name===undefined ? true : n.nodeName==name);
+	},
+	isDefinedText : function(node) {
+		return node.nodeType==n2i.TEXT_NODE && node.nodeValue.length>0;
+	},
+	addText : function(node,text) {
+		node.appendChild(document.createTextNode(text));
+	}
+}
+
+///////////////////// Style ///////////////////
 
 n2i.getStyle = function(element, style) {
 	element = $(element);
@@ -4454,6 +4468,8 @@ n2i.getDocumentHeight = function() {
 	}
 }
 
+//////////////////////////// Preloader /////////////////////////
+
 /** @constructor */
 n2i.Preloader = function(options) {
 	this.options = options || {};
@@ -4525,7 +4541,7 @@ n2i.cookie = {
 	}
 }
 
-/********************** URL/Location *********************/
+///////////////////////// URL/Location /////////////////////
 
 n2i.URL = function(url) {
 	this.url = url || '';
@@ -4594,7 +4610,7 @@ n2i.location = {
 	}	
 };
 
-/****************************** Animation *********************/
+/////////////////////////// Animation ///////////////////////////
 
 
 n2i.ani = n2i.animate = function(element,style,value,duration,delegate) {
@@ -5288,7 +5304,7 @@ n2i.ease = {
   @constructor
  */
 function In2iGui() {
-	/** {boolean} Is true when the DOM is loaded
+	/** {boolean} Is true when the DOM is loaded */
 	this.domLoaded = false;
 	/** @private */
 	this.overflows = null;
@@ -5300,15 +5316,15 @@ function In2iGui() {
 }
 
 /** @private */
-In2iGui.latestObjectIndex=0;
+In2iGui.latestObjectIndex = 0;
 /** @private */
-In2iGui.latestIndex=500;
+In2iGui.latestIndex = 500;
 /** @private */
-In2iGui.latestPanelIndex=1000;
+In2iGui.latestPanelIndex = 1000;
 /** @private */
-In2iGui.latestAlertIndex=1500;
+In2iGui.latestAlertIndex = 1500;
 /** @private */
-In2iGui.latestTopIndex=2000;
+In2iGui.latestTopIndex = 2000;
 /** @private */
 In2iGui.toolTips = {};
 
@@ -5322,9 +5338,11 @@ In2iGui.get = function(name) {
 	} else {
 		return In2iGui.instance;
 	}
-}
+};
 
-document.observe('dom:loaded', function() {In2iGui.get().ignite();});
+document.observe('dom:loaded', function () {
+	In2iGui.get().ignite();
+});
 
 In2iGui.prototype = {
 	/** @private */
@@ -5340,6 +5358,11 @@ In2iGui.prototype = {
 		}
 		this.domLoaded = true;
 		In2iGui.domReady = true;
+		if (window.in2iguiDeferred) {
+			window.in2iguiDeferred.each(function(func) {
+				func();
+			}.bind(window));
+		}
 		this.resize();
 		In2iGui.callSuperDelegates(this,'interfaceIsReady');
 	},
@@ -5352,24 +5375,24 @@ In2iGui.prototype = {
 		this.delegates.push(delegate);
 	},
 	getTopPad : function(element) {
-		var pad = 0;
-		var all = parseInt(n2i.getStyle(element,'padding'));
-		var top = parseInt(n2i.getStyle(element,'padding-top'));
-		if (all) pad+=all;
-		if (top) pad+=top;
-		return pad;
+		var all,top;
+		all = parseInt(n2i.getStyle(element,'padding'),10);
+		top = parseInt(n2i.getStyle(element,'padding-top'),10);
+		if (all) {return all;}
+		if (top) {return top;}
+		return 0;
 	},
 	getBottomPad : function(element) {
-		var pad = 0;
-		var all = parseInt(n2i.getStyle(element,'padding'));
-		var bottom = parseInt(n2i.getStyle(element,'padding-bottom'));
-		if (all) pad+=all;
-		if (bottom) pad+=bottom;
-		return pad;
+		var all,bottom;
+		all = parseInt(n2i.getStyle(element,'padding'),10);
+		bottom = parseInt(n2i.getStyle(element,'padding-bottom'),10);
+		if (all) {return all;}
+		if (bottom) {return bottom;}
+		return 0;
 	},
 	/** @private */
 	resize : function() {
-		if (!this.overflows) return;
+		if (!this.overflows) {return;}
 		var height = n2i.getInnerHeight();
 		this.overflows.each(function(overflow) {
 			if (n2i.browser.webkit || n2i.browser.gecko) {
@@ -5381,12 +5404,12 @@ In2iGui.prototype = {
 		});
 	},
 	registerOverflow : function(id,diff) {
-		if (!this.overflows) this.overflows=[];
+		if (!this.overflows) {this.overflows=[];}
 		var overflow = $(id);
 		this.overflows.push({element:overflow,diff:diff});
 	},
 	/** @private */
-	alert : function(options,callBack) {
+	alert : function(options) {
 		if (!this.alertBox) {
 			this.alertBox = In2iGui.Alert.create(null,options);
 			this.alertBoxButton = In2iGui.Button.create({name:'in2iGuiAlertBoxButton',text : 'OK'});
@@ -5395,11 +5418,11 @@ In2iGui.prototype = {
 		} else {
 			this.alertBox.update(options);
 		}
-		this.alertBoxCallBack = callBack;
-		this.alertBoxButton.setText(options.button ? options.button : 'OK')
+		this.alertBoxCallBack = options.onOK;
+		this.alertBoxButton.setText(options.button ? options.button : 'OK');
 		this.alertBox.show();
 	},
-	/*@private */
+	/** @private */
 	click$in2iGuiAlertBoxButton : function() {
 		In2iGui.get().alertBox.hide();
 		if (this.alertBoxCallBack) {
@@ -5407,25 +5430,28 @@ In2iGui.prototype = {
 			this.alertBoxCallBack = null;
 		}
 	},
-	/** @deprecated */
-	showAlert : function(options) {
-		this.alert(options);
-	},
-	confirm : function(name,options) {
+	confirm : function(options) {
+		var name = options.name || 'in2iguiConfirm';
 		var alert = In2iGui.get(name);
 		if (!alert) {
 			alert = In2iGui.Alert.create(name,options);
-			var cancel = In2iGui.Button.create({name:name+'_cancel',text : options.cancel || 'Cancel',highlighted:options.highlighted=='cancel'});
+			var cancel = In2iGui.Button.create({name:name+'_cancel',text : options.cancel || 'Cancel',highlighted:options.highlighted==='cancel'});
 			cancel.addDelegate({buttonWasClicked:function(){
-				In2iGui.get(name).hide();
-				In2iGui.callDelegates(In2iGui.get(name),'cancel');
+				alert.hide();
+				if (options.onCancel) {
+					options.onCancel();
+				}
+				In2iGui.callDelegates(alert,'cancel');
 			}});
 			alert.addButton(cancel);
 		
-			var ok = In2iGui.Button.create({name:name+'_ok',text : options.ok || 'OK',highlighted:options.highlighted=='ok'});
+			var ok = In2iGui.Button.create({name:name+'_ok',text : options.ok || 'OK',highlighted:options.highlighted==='ok'});
 			ok.addDelegate({buttonWasClicked:function(){
-				In2iGui.get(name).hide();
-				In2iGui.callDelegates(In2iGui.get(name),'ok');
+				alert.hide();
+				if (options.onOK) {
+					options.onOK();
+				}
+				In2iGui.callDelegates(alert,'ok');
 			}});
 			alert.addButton(ok);
 		} else {
@@ -5434,32 +5460,30 @@ In2iGui.prototype = {
 			In2iGui.get(name+'_ok').setHighlighted(options.highlighted=='ok');
 			In2iGui.get(name+'_cancel').setText(options.ok || 'cancel');
 			In2iGui.get(name+'_cancel').setHighlighted(options.highlighted=='cancel');
-			if (options.cancel) In2iGui.get(name+'_cancel').setText(options.cancel);
+			if (options.cancel) {In2iGui.get(name+'_cancel').setText(options.cancel);}
 		}
 		alert.show();
 	},
 	changeState : function(state) {
-		if (this.state==state) return;
+		if (this.state==state) {return;}
 		var objects = this.objects.values();
 		objects.each(function(obj) {
 			if (obj.state) {
-				if (obj.state==state) obj.show();
-				else obj.hide();
+				if (obj.state==state) {obj.show();}
+				else {obj.hide();}
 			}
 		});
 	},
 	getDescendants : function(widget) {
-		var desc = [];
-		var e = widget.getElement();
+		var desc = [],e = widget.getElement(),self = this;
 		if (e) {
 			var d = e.descendants();
-			var self = this;
 			d.each(function(node) {
 				self.objects.values().each(function(obj) {
 					if (obj.getElement()==node) {
 						desc.push(obj);
 					}
-				})
+				});
 			});
 		}
 		return desc;
@@ -5478,32 +5502,43 @@ In2iGui.prototype = {
 					if (obj.getElement()==node) {
 						desc.push(obj);
 					}
-				})
+				});
 			}.bind(this));
 		}
 		return desc;
+	},
+	getAncestor : function(widget,cls) {
+		var a = this.getAncestors(widget);
+		for (var i=0; i < a.length; i++) {
+			if (a[0].getElement().hasClassName(cls)) {
+				return a[0];
+			}
+		};
+		return null;
 	}
-}
+};
 
 ///////////////////////////////// Indexes /////////////////////////////
 
 In2iGui.nextIndex = function() {
 	In2iGui.latestIndex++;
 	return 	In2iGui.latestIndex;
-}
+};
 
 In2iGui.nextPanelIndex = function() {
 	In2iGui.latestPanelIndex++;
 	return 	In2iGui.latestPanelIndex;
-}
+};
+
 In2iGui.nextAlertIndex = function() {
 	In2iGui.latestAlertIndex++;
 	return 	In2iGui.latestAlertIndex;
-}
+};
+
 In2iGui.nextTopIndex = function() {
 	In2iGui.latestTopIndex++;
 	return 	In2iGui.latestTopIndex;
-}
+};
 
 ///////////////////////////////// Curtain /////////////////////////////
 
@@ -5514,43 +5549,51 @@ In2iGui.showCurtain = function(widget,zIndex) {
 			if (widget.curtainWasClicked) {
 				widget.curtainWasClicked();
 			}
-		}
+		};
 		document.body.appendChild(widget.curtain);
 	}
 	widget.curtain.style.height=n2i.getDocumentHeight()+'px';
 	widget.curtain.style.zIndex=zIndex;
 	n2i.setOpacity(widget.curtain,0);
 	widget.curtain.style.display='block';
-	n2i.ani(widget.curtain,'opacity',.5,1000,{ease:n2i.ease.slowFastSlow});
-}
+	n2i.ani(widget.curtain,'opacity',0.5,1000,{ease:n2i.ease.slowFastSlow});
+};
 
 In2iGui.hideCurtain = function(widget) {
 	if (widget.curtain) {
 		n2i.ani(widget.curtain,'opacity',0,200,{hideOnComplete:true});
 	}
-}
+};
 
 //////////////////////////////// Message //////////////////////////////
 
 In2iGui.alert = function(o) {
 	In2iGui.get().alert(o);
-}
+};
 
-In2iGui.showMessage = function(msg) {
+In2iGui.showMessage = function(options) {
+	if (typeof(options)=='string') {
+		// TODO: Backwards compatibility
+		options={text:options};
+	}
 	if (!In2iGui.message) {
 		In2iGui.message = new Element('div',{'class':'in2igui_message'}).update('<div><div></div></div>');
+		if (!n2i.browser.msie) {
+			In2iGui.message.setStyle({opacity:0});
+		}
 		document.body.appendChild(In2iGui.message);
 	}
-	In2iGui.message.select('div')[1].update(msg);
+	In2iGui.message.select('div')[1].update(options.text);
 	In2iGui.message.setStyle({'display':'block',zIndex:In2iGui.nextTopIndex()});
-	if (!n2i.browser.msie) {
-		In2iGui.message.setStyle({opacity:0});
-	}
 	In2iGui.message.setStyle({marginLeft:(In2iGui.message.getWidth()/-2)+'px',marginTop:n2i.getScrollTop()+'px'});
 	if (!n2i.browser.msie) {
 		n2i.ani(In2iGui.message,'opacity',1,300);
 	}
-}
+	window.clearTimeout(In2iGui.messageTimer);
+	if (options.duration) {
+		In2iGui.messageTimer = window.setTimeout(In2iGui.hideMessage,options.duration);
+	}
+};
 
 In2iGui.hideMessage = function() {
 	if (In2iGui.message) {
@@ -5560,7 +5603,7 @@ In2iGui.hideMessage = function() {
 			In2iGui.message.setStyle({display:'none'});
 		}
 	}
-}
+};
 
 In2iGui.showToolTip = function(options) {
 	var key = options.key || 'common';
@@ -5570,17 +5613,17 @@ In2iGui.showToolTip = function(options) {
 		document.body.appendChild(t);
 		In2iGui.toolTips[key] = t;
 	}
-	t.onclick = function() {In2iGui.hideToolTip(options)};
+	t.onclick = function() {In2iGui.hideToolTip(options);};
 	var n = $(options.element);
 	var pos = n.cumulativeOffset();
 	t.select('div')[1].update(options.text);
-	if (t.style.display=='none' && !n2i.browser.msie) t.setStyle({opacity:0});
+	if (t.style.display=='none' && !n2i.browser.msie) {t.setStyle({opacity:0});}
 	t.setStyle({'display':'block',zIndex:In2iGui.nextTopIndex()});
 	t.setStyle({left:(pos.left-t.getWidth()+4)+'px',top:(pos.top+2-(t.getHeight()/2)+(n.getHeight()/2))+'px'});
 	if (!n2i.browser.msie) {
 		n2i.ani(t,'opacity',1,300);
 	}
-}
+};
 
 In2iGui.hideToolTip = function(options) {
 	var key = options ? options.key || 'common' : 'common';
@@ -5592,7 +5635,7 @@ In2iGui.hideToolTip = function(options) {
 			t.setStyle({display:'none'});
 		}
 	}
-}
+};
 
 /////////////////////////////// Utilities /////////////////////////////
 
@@ -5601,25 +5644,24 @@ In2iGui.isWithin = function(e,element) {
 	var offset = element.cumulativeOffset();
 	var dims = element.getDimensions();
 	return e.pointerX()>offset.left && e.pointerX()<offset.left+dims.width && e.pointerY()>offset.top && e.pointerY()<offset.top+dims.height;
-}
+};
 
 In2iGui.getIconUrl = function(icon,size) {
 	return In2iGui.context+'/In2iGui/icons/'+icon+size+'.png';
-}
+};
 
 In2iGui.createIcon = function(icon,size) {
-	
 	return new Element('span',{'class':'in2igui_icon in2igui_icon_'+size}).setStyle({'backgroundImage':'url('+In2iGui.getIconUrl(icon,size)+')'});
-}
+};
 
 In2iGui.onDomReady = function(func) {
-	if (In2iGui.domReady) return func();
+	if (In2iGui.domReady) {return func();}
 	if (n2i.browser.gecko && document.baseURI.endsWith('xml')) {
 		window.setTimeout(func,1000);
 		return;
 	}
 	document.observe('dom:loaded', func);
-}
+};
 
 In2iGui.wrapInField = function(e) {
 	var w = new Element('div',{'class':'in2igui_field'}).update(
@@ -5629,7 +5671,7 @@ In2iGui.wrapInField = function(e) {
 	);
 	w.select('span.in2igui_field_content')[0].insert(e);
 	return w;
-}
+};
 
 In2iGui.addFocusClass = function(o) {
 	var ce = o.classElement || o.element, c = o['class'];
@@ -5638,7 +5680,7 @@ In2iGui.addFocusClass = function(o) {
 	}).observe('blur',function() {
 		ce.removeClassName(c);
 	});
-}
+};
 
 /////////////////////////////// Animation /////////////////////////////
 
@@ -5647,11 +5689,11 @@ In2iGui.fadeIn = function(node,time) {
 		node.setStyle({opacity:0,display:''});
 	}
 	n2i.ani(node,'opacity',1,time);
-}
+};
 
 In2iGui.fadeOut = function(node,time) {
 	n2i.ani(node,'opacity',0,time,{hideOnComplete:true});
-}
+};
 
 //////////////////////////// Positioning /////////////////////////////
 
@@ -5679,7 +5721,7 @@ In2iGui.positionAtElement = function(element,target,options) {
 	if (origDisplay=='none') {
 		element.setStyle({'visibility':'visible','display':'none'});
 	}
-}
+};
 
 
 //////////////////////////////// Drag drop //////////////////////////////
@@ -5690,13 +5732,12 @@ In2iGui.getDragProxy = function() {
 		document.body.appendChild(In2iGui.dragProxy);
 	}
 	return In2iGui.dragProxy;
-}
+};
 
 In2iGui.startDrag = function(e,element,options) {
 	var info = element.dragDropInfo;
 	In2iGui.dropTypes = In2iGui.findDropTypes(info);
 	if (!In2iGui.dropTypes) return;
-	var event = Event.extend(e);
 	var proxy = In2iGui.getDragProxy();
 	Event.observe(document.body,'mousemove',In2iGui.dragListener);
 	Event.observe(document.body,'mouseup',In2iGui.dragEndListener);
@@ -5704,10 +5745,11 @@ In2iGui.startDrag = function(e,element,options) {
 	if (info.icon) {
 		proxy.style.backgroundImage = 'url('+In2iGui.getIconUrl(info.icon,1)+')';
 	}
-	In2iGui.startDragPos = {top:event.pointerY(),left:event.pointerX()};
+	In2iGui.startDragPos = {top:Event.pointerY(e),left:Event.pointerX(e)};
 	proxy.innerHTML = '<span>'+info.title+'</span>' || '###';
 	In2iGui.dragging = true;
-}
+	document.body.onselectstart = function () { return false; };
+};
 
 In2iGui.findDropTypes = function(drag) {
 	var gui = In2iGui.get();
@@ -5724,7 +5766,7 @@ In2iGui.findDropTypes = function(drag) {
 		}
 	}
 	return drops;
-}
+};
 
 In2iGui.dragListener = function(e) {
 	var event = Event.extend(e);
@@ -5743,7 +5785,7 @@ In2iGui.dragListener = function(e) {
 		In2iGui.latestDropTarget = null;
 	}
 	return false;
-}
+};
 
 In2iGui.findDropTarget = function(node) {
 	while (node) {
@@ -5753,7 +5795,7 @@ In2iGui.findDropTarget = function(node) {
 		node = node.parentNode;
 	}
 	return null;
-}
+};
 
 In2iGui.dragEndListener = function(event) {
 	Event.stopObserving(document.body,'mousemove',In2iGui.dragListener);
@@ -5768,21 +5810,22 @@ In2iGui.dragEndListener = function(event) {
 		n2i.ani(In2iGui.dragProxy,'top',(In2iGui.startDragPos.top-5)+'px',200,{ease:n2i.ease.fastSlow,hideOnComplete:true});
 	}
 	In2iGui.latestDropTarget=null;
-}
+	document.body.onselectstart=null;
+};
 
 In2iGui.dropOverListener = function(event) {
 	if (In2iGui.dragging) {
 		//this.style.backgroundColor='#3875D7';
 	}
-}
+};
 
 In2iGui.dropOutListener = function(event) {
 	if (In2iGui.dragging) {
 		//this.style.backgroundColor='';
 	}
-}
+};
 
-/* ****************** Delegating *************** */
+//////////////////// Delegating ////////////////////
 
 In2iGui.extend = function(obj) {
 	if (!obj.name) {
@@ -5800,6 +5843,9 @@ In2iGui.extend = function(obj) {
 	obj.fire = function(method,value,event) {
 		In2iGui.callDelegates(this,method,value,event);
 	}
+	obj.fireProperty = function(key,value) {
+		In2iGui.firePropertyChange(this,key,value);
+	}
 	if (!obj.getElement) {
 		obj.getElement = function() {
 			return this.element;
@@ -5808,17 +5854,17 @@ In2iGui.extend = function(obj) {
 	if (!obj.valueForProperty) {
 		obj.valueForProperty = function(p) {return this[p]};
 	}
-}
+};
 
 In2iGui.callDelegatesDrop = function(dragged,dropped) {
 	var gui = In2iGui.get();
 	var result = null;
 	for (var i=0; i < gui.delegates.length; i++) {
-		if (gui.delegates[i]['drop$'+dragged.kind+'$'+dropped.kind]) {
-			gui.delegates[i]['drop$'+dragged.kind+'$'+dropped.kind](dragged,dropped);
+		if (gui.delegates[i]['$drop$'+dragged.kind+'$'+dropped.kind]) {
+			gui.delegates[i]['$drop$'+dragged.kind+'$'+dropped.kind](dragged,dropped);
 		}
 	}
-}
+};
 
 In2iGui.callAncestors = function(obj,method,value,event) {
 	if (typeof(value)=='undefined') value=obj;
@@ -5828,7 +5874,7 @@ In2iGui.callAncestors = function(obj,method,value,event) {
 			thisResult = child[method](value,event);
 		}
 	});
-}
+};
 
 In2iGui.callDescendants = function(obj,method,value,event) {
 	if (typeof(value)=='undefined') value=obj;
@@ -5838,6 +5884,14 @@ In2iGui.callDescendants = function(obj,method,value,event) {
 			thisResult = child[method](value,event);
 		}
 	});
+};
+
+In2iGui.callVisible = function(widget) {
+	In2iGui.callDescendants(widget,'$visibilityChanged');
+}
+
+In2iGui.addDelegate = function(d) {
+	In2iGui.get().addDelegate(d);
 }
 
 In2iGui.callDelegates = function(obj,method,value,event) {
@@ -5847,7 +5901,9 @@ In2iGui.callDelegates = function(obj,method,value,event) {
 		for (var i=0; i < obj.delegates.length; i++) {
 			var delegate = obj.delegates[i];
 			var thisResult = null;
-			if (obj.name && delegate[method+'$'+obj.name]) {
+			if (obj.name && delegate['$'+method+'$'+obj.name]) {
+				thisResult = delegate['$'+method+'$'+obj.name](value,event);
+			} else if (obj.name && delegate[method+'$'+obj.name]) {
 				thisResult = delegate[method+'$'+obj.name](value,event);
 			} else if ('$'+obj.name && delegate[method+'$'+obj.name]) {
 				thisResult = delegate['$'+method+'$'+obj.name](value,event);
@@ -5855,6 +5911,8 @@ In2iGui.callDelegates = function(obj,method,value,event) {
 				thisResult = delegate[method+'$'+obj.kind](value,event);
 			} else if (delegate[method]) {
 				thisResult = delegate[method](value,event);
+			} else if (delegate['$'+method]) {
+				thisResult = delegate['$'+method](value,event);
 			}
 			if (result==null && thisResult!=null && typeof(thisResult)!='undefined') {
 				result = thisResult;
@@ -5864,7 +5922,7 @@ In2iGui.callDelegates = function(obj,method,value,event) {
 	var superResult = In2iGui.callSuperDelegates(obj,method,value,event);
 	if (result==null && superResult!=null) result = superResult;
 	return result;
-}
+};
 
 In2iGui.callSuperDelegates = function(obj,method,value,event) {
 	if (typeof(value)=='undefined') value=obj;
@@ -5881,13 +5939,15 @@ In2iGui.callSuperDelegates = function(obj,method,value,event) {
 			thisResult = delegate[method+'$'+obj.kind](value,event);
 		} else if (delegate[method]) {
 			thisResult = delegate[method](value,event);
+		} else if (delegate['$'+method]) {
+			thisResult = delegate['$'+method](value,event);
 		}
 		if (result==null && thisResult!=null && typeof(thisResult)!='undefined') {
 			result = thisResult;
 		}
 	};
 	return result;
-}
+};
 
 In2iGui.resolveImageUrl = function(widget,img,width,height) {
 	for (var i=0; i < widget.delegates.length; i++) {
@@ -5903,13 +5963,13 @@ In2iGui.resolveImageUrl = function(widget,img,width,height) {
 		}
 	}
 	return null;
-}
+};
 
 ////////////////////////////// Bindings ///////////////////////////
 
 In2iGui.firePropertyChange = function(obj,name,value) {
 	In2iGui.callDelegates(obj,'propertyChanged',{property:name,value:value});
-}
+};
 
 In2iGui.bind = function(expression,delegate) {
 	if (expression.charAt(0)=='@') {
@@ -5926,7 +5986,7 @@ In2iGui.bind = function(expression,delegate) {
 		return obj.valueForProperty(p);
 	}
 	return expression;
-}
+};
 
 //////////////////////////////// Data /////////////////////////////
 
@@ -5943,7 +6003,7 @@ In2iGui.dwrUpdate = function() {
 	} else {
 		alert('Too many parameters');
 	}
-}
+};
 
 In2iGui.handleDwrUpdate = function(data) {
 	var gui = In2iGui.get();
@@ -5952,14 +6012,14 @@ In2iGui.handleDwrUpdate = function(data) {
 			gui.objects.get(data[i].name).updateFromObject(data[i]);
 		}
 	};
-}
+};
 
 In2iGui.update = function(url,delegate) {
 	var dlgt = {
 		onSuccess:function(t) {In2iGui.handleUpdate(t,delegate)}
 	}
 	$get(url,dlgt);
-}
+};
 
 In2iGui.handleUpdate = function(t,delegate) {
 	var gui = In2iGui.get();
@@ -5974,8 +6034,9 @@ In2iGui.handleUpdate = function(t,delegate) {
 		}
 	};
 	delegate.onSuccess();
-}
+};
 
+/** @private */
 In2iGui.jsonResponse = function(t,key) {
 	if (!t.responseXML || !t.responseXML.documentElement) {
 		var str = t.responseText.replace(/^\s+|\s+$/g, '');
@@ -5988,7 +6049,7 @@ In2iGui.jsonResponse = function(t,key) {
 	} else {
 		In2iGui.callDelegates(t,'success$'+key)
 	}
-}
+};
 
 /** @deprecated */
 In2iGui.json = function(data,url,delegateOrKey) {
@@ -6001,29 +6062,72 @@ In2iGui.json = function(data,url,delegateOrKey) {
 	for (key in data) {
 		options.parameters[key]=Object.toJSON(data[key])
 	}
-	new Ajax.Request(url,options)
-}
+	new Ajax.Request(url,options);
+};
+
+In2iGui.jsonRequest = function(o) {
+	var options = {method:'post',parameters:{},onException:function(e) {throw e}};
+	if (typeof(o.event)=='string') {
+		options.onSuccess=function(t) {In2iGui.jsonResponse(t,o.event)};
+	} else {
+		delegate = delegateOrKey;
+	}
+	for (key in o.parameters) {
+		options.parameters[key]=Object.toJSON(o.parameters[key])
+	}
+	new Ajax.Request(o.url,options)
+};
 
 In2iGui.request = function(options) {
 	options = n2i.override({method:'post',parameters:{}},options);
-	if (options.successEvent) {
-		options.onSuccess=function(t) {In2iGui.jsonResponse(t,options.successEvent)};
+	if (options.jsonParameters) {
+		for (key in options.jsonParameters) {
+			options.parameters[key]=Object.toJSON(options.jsonParameters[key])
+		}
 	}
+	options.onSuccess=function(t) {
+		if (options.successEvent) {
+			In2iGui.jsonResponse(t,options.successEvent);
+		} else if (t.responseXML && t.responseXML.documentElement.nodeName!='parsererror' && options.onXML) {
+			options.onXML(t.responseXML);
+		} else if (options.onJSON) {
+			var str = t.responseText.replace(/^\s+|\s+$/g, '');
+			if (str.length>0) {
+				var json = t.responseText.evalJSON(true);
+			} else {
+				var json = null;
+			}
+			options.onJSON(json);
+		}
+	};
+	options.onException = function(t,e) {n2i.log(e)};
 	new Ajax.Request(options.url,options);
-}
+};
 
 In2iGui.parseItems = function(doc) {
+	var root = doc.documentElement;
 	var out = [];
-	var items = doc.getElementsByTagName('item');
-	for (var i=0; i < items.length; i++) {
-		var item = items[i];
-		var title = item.getAttribute('title');
-		var value = item.getAttribute('value');
-		var icon = item.getAttribute('icon');
-		var kind = item.getAttribute('kind');
-		out.push({title:title,value:value,icon:icon,kind:kind});
-	}
+	In2iGui.parseSubItems(root,out);
 	return out;
+};
+
+In2iGui.parseSubItems = function(parent,array) {
+	var children = parent.childNodes;
+	for (var i=0; i < children.length; i++) {
+		var node = children[i];
+		if (node.nodeType==1 && node.nodeName=='item') {
+			var sub = [];
+			In2iGui.parseSubItems(node,sub);
+			array.push({
+				title:node.getAttribute('title'),
+				value:node.getAttribute('value'),
+				icon:node.getAttribute('icon'),
+				kind:node.getAttribute('kind'),
+				badge:node.getAttribute('badge'),
+				children:sub
+			});
+		}
+	};
 }
 
 ////////////////////////////////// Source ///////////////////////////
@@ -6037,7 +6141,7 @@ In2iGui.Source = function(o) {
 	if (o.delegate) this.addDelegate(o.delegate);
 	this.busy=false;
 	In2iGui.onDomReady(this.init.bind(this));
-}
+};
 
 In2iGui.Source.prototype = {
 	init : function() {
@@ -6228,7 +6332,7 @@ In2iGui.TextField.prototype = {
 			In2iGui.hideToolTip({key:this.name});
 		}
 	}
-}
+};
 
 ////////////////////////////////////// Info view /////////////////////////////
 

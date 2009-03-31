@@ -1,6 +1,6 @@
 
 In2iGui.Picker = function(o) {
-	o = this.options = n2i.override({itemWidth:100,itemHeight:150,itemsVisible:3,valueProperty:'value'},o);
+	o = this.options = n2i.override({itemWidth:100,itemHeight:150,itemsVisible:null,shadow:true,valueProperty:'value'},o);
 	this.element = $(o.element);
 	this.name = o.name;
 	this.container = this.element.select('.in2igui_picker_container')[0];
@@ -47,6 +47,9 @@ In2iGui.Picker.prototype = {
 		this.value = value;
 		this.updateSelection();
 	},
+	getValue : function() {
+		return this.value;
+	},
 	reset : function() {
 		this.value = null;
 		this.updateSelection();
@@ -55,8 +58,12 @@ In2iGui.Picker.prototype = {
 		var self = this;
 		this.content.update();
 		this.container.scrollLeft=0;
-		this.container.setStyle({width:this.options.itemsVisible*(this.options.itemWidth+14)+'px'});
-		this.container.style.height=(this.options.itemHeight+10)+'px';
+		if (this.options.itemsVisible) {
+			var width = this.options.itemsVisible*(this.options.itemWidth+14);
+		} else {
+			var width = this.container.clientWidth;
+		}
+		this.container.setStyle({width:width+'px',height:(this.options.itemHeight+10)+'px'});
 		this.content.style.width=(this.objects.length*(this.options.itemWidth+14))+'px';
 		this.content.style.height=(this.options.itemHeight+10)+'px';
 		this.objects.each(function(object,i) {
@@ -83,7 +90,7 @@ In2iGui.Picker.prototype = {
 		if (this.value==value) return;
 		this.value = value;
 		this.updateSelection();
-		In2iGui.callDelegates(this,'selectionChanged',value);
+		this.fire('selectionChanged',value);
 	},
 	
 	// Dragging
@@ -111,6 +118,10 @@ In2iGui.Picker.prototype = {
 		window.document.stopObserving('mousedown',In2iGui.Picker.mouseup);
 		var size = (this.options.itemWidth+14);
 		n2i.ani(this.container,'scrollLeft',Math.round(this.container.scrollLeft/size)*size,500,{ease:n2i.ease.bounceOut});
+	},
+	$visibilityChanged : function() {
+		this.container.setStyle({display:'none'});
+		this.container.setStyle({width:(this.element.getWidth()-12)+'px',display:'block'});
 	}
 }
 

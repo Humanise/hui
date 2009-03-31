@@ -471,7 +471,7 @@
 	</table>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.ObjectList({element:'<xsl:value-of select="generate-id()"/>'
-			<xsl:if test="@name">,'<xsl:value-of select="@name"/>'</xsl:if>
+			<xsl:if test="@name">,name:'<xsl:value-of select="@name"/>'</xsl:if>
 			,key:'<xsl:value-of select="@key"/>'});
 		<xsl:call-template name="gui:createobject"/>
 		with (<xsl:value-of select="generate-id()"/>_obj) {

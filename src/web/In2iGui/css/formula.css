@@ -317,6 +317,8 @@ div.in2igui_dropdown_selector
 	font-size: 12px;
 	-webkit-box-shadow: 0px 3px 5px #999;
 	-webkit-border: none;
+	-moz-box-shadow: 0px 3px 5px #999;
+	overflow: auto;
 }
 
 div.in2igui_dropdown_selector a
@@ -359,6 +361,7 @@ div.in2igui_radiobuttons
 {
 	overflow: hidden;
 	margin-bottom: 5px;
+	padding-top: 4px;
 }
 
 div.in2igui_radiobutton
@@ -469,7 +472,7 @@ table.in2igui_objectlist
 table.in2igui_objectlist th
 {
 	text-align: left;
-	font-size: 9pt;
+	font-size: 11px;
 	line-height: 13px;
 	color: #004A80;
 	font-weight: normal;

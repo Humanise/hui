@@ -1,3 +1,8 @@
+html.in2igui
+{
+	height: 100%;
+}
+
 body.in2igui
 {
 	margin: 0px;
@@ -12,7 +17,13 @@ body.in2igui, textarea
 {
 	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
 }
-
+/*
+div.in2igui_body
+{
+	-moz-box-sizing: border-box;
+	height: 100%;
+}
+*/
 /* TODO: remove these */
 td
 {
@@ -70,6 +81,35 @@ span.in2igui_icon_1
 	width: 16px;
 	height: 16px;
 	vertical-align: middle;
+}
+
+/************************* disclosure **********************/
+
+span.in2igui_disclosure
+{
+	display: inline-block;
+	width: 11px;
+	height: 11px;
+	vertical-align: middle;
+	background: url('../gfx/disclosure.png');
+	font-size: 0;
+	line-height: 0;
+	cursor: default;
+}
+
+span.in2igui_disclosure:hover
+{
+	background-position: 0 -11px;
+}
+
+span.in2igui_disclosure_open
+{
+	background-position: 0 -22px;
+}
+
+span.in2igui_disclosure_open:hover
+{
+	background-position: 0 -33px;
 }
 
 /*********************** message **********************/
@@ -505,11 +545,23 @@ table.in2igui_dock
 {
 	height: 100%;
 	width: 100%;
+	border-collapse: collapse;
 }
 
 table.in2igui_dock thead td
 {
 	height: 58px;
+	padding: 0px 5px;
+	background: url('../gfx/toolbar_bg.png') repeat-x;
+}
+
+table.in2igui_dock tfoot.in2igui_dock_tabs td
+{
+	height: 78px;
+}
+
+table.in2igui_dock tfoot td div.in2igui_toolbar
+{
 	padding: 0px 5px;
 	background: url('../gfx/toolbar_bg.png') repeat-x;
 }

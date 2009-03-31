@@ -112,7 +112,7 @@ div.in2igui_toolbar_icon_disabled:hover div.in2igui_icon
 div.in2igui_toolbar_search
 {
 	height: 51px;
-	float: right;
+	float: left;
 }
 
 .in2igui_toolbar_search .in2igui_searchfield

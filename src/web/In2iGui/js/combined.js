@@ -4218,9 +4218,9 @@ Object.extend(Element.ClassNames.prototype, Enumerable);
 
 /*--------------------------------------------------------------------------*/
 
-Element.addMethods();/* @@namespace */
+Element.addMethods();/** @namespace */
 var n2i = {
-	/* @@namespace */
+	/** @namespace */
 	browser : {}
 }
 
@@ -4286,7 +4286,7 @@ n2i.isEmpty = function(str) {
 }
 
 n2i.isDefined = function(obj) {
-	return obj!=null && typeof(obj)!='undefined';
+	return obj!==null && typeof(obj)!=='undefined';
 }
 
 n2i.inArray = function(arr,value) {
@@ -4334,7 +4334,21 @@ n2i.scrollTo = function(element) {
 	}
 }
 
-/********************* Style ********************/
+////////////////////// DOM ////////////////////
+
+n2i.dom = {
+	isElement : function(n,name) {
+		return n.nodeType==n2i.ELEMENT_NODE && (name===undefined ? true : n.nodeName==name);
+	},
+	isDefinedText : function(node) {
+		return node.nodeType==n2i.TEXT_NODE && node.nodeValue.length>0;
+	},
+	addText : function(node,text) {
+		node.appendChild(document.createTextNode(text));
+	}
+}
+
+///////////////////// Style ///////////////////
 
 n2i.getStyle = function(element, style) {
 	element = $(element);
@@ -4454,6 +4468,8 @@ n2i.getDocumentHeight = function() {
 	}
 }
 
+//////////////////////////// Preloader /////////////////////////
+
 /** @constructor */
 n2i.Preloader = function(options) {
 	this.options = options || {};
@@ -4525,7 +4541,7 @@ n2i.cookie = {
 	}
 }
 
-/********************** URL/Location *********************/
+///////////////////////// URL/Location /////////////////////
 
 n2i.URL = function(url) {
 	this.url = url || '';
@@ -4594,7 +4610,7 @@ n2i.location = {
 	}	
 };
 
-/****************************** Animation *********************/
+/////////////////////////// Animation ///////////////////////////
 
 
 n2i.ani = n2i.animate = function(element,style,value,duration,delegate) {
@@ -7983,7 +7999,7 @@ var in2igui = {};
   @constructor
  */
 function In2iGui() {
-	/** {boolean} Is true when the DOM is loaded
+	/** {boolean} Is true when the DOM is loaded */
 	this.domLoaded = false;
 	/** @private */
 	this.overflows = null;
@@ -7995,15 +8011,15 @@ function In2iGui() {
 }
 
 /** @private */
-In2iGui.latestObjectIndex=0;
+In2iGui.latestObjectIndex = 0;
 /** @private */
-In2iGui.latestIndex=500;
+In2iGui.latestIndex = 500;
 /** @private */
-In2iGui.latestPanelIndex=1000;
+In2iGui.latestPanelIndex = 1000;
 /** @private */
-In2iGui.latestAlertIndex=1500;
+In2iGui.latestAlertIndex = 1500;
 /** @private */
-In2iGui.latestTopIndex=2000;
+In2iGui.latestTopIndex = 2000;
 /** @private */
 In2iGui.toolTips = {};
 
@@ -8017,9 +8033,11 @@ In2iGui.get = function(name) {
 	} else {
 		return In2iGui.instance;
 	}
-}
+};
 
-document.observe('dom:loaded', function() {In2iGui.get().ignite();});
+document.observe('dom:loaded', function () {
+	In2iGui.get().ignite();
+});
 
 In2iGui.prototype = {
 	/** @private */
@@ -8035,6 +8053,11 @@ In2iGui.prototype = {
 		}
 		this.domLoaded = true;
 		In2iGui.domReady = true;
+		if (window.in2iguiDeferred) {
+			window.in2iguiDeferred.each(function(func) {
+				func();
+			}.bind(window));
+		}
 		this.resize();
 		In2iGui.callSuperDelegates(this,'interfaceIsReady');
 	},
@@ -8047,24 +8070,24 @@ In2iGui.prototype = {
 		this.delegates.push(delegate);
 	},
 	getTopPad : function(element) {
-		var pad = 0;
-		var all = parseInt(n2i.getStyle(element,'padding'));
-		var top = parseInt(n2i.getStyle(element,'padding-top'));
-		if (all) pad+=all;
-		if (top) pad+=top;
-		return pad;
+		var all,top;
+		all = parseInt(n2i.getStyle(element,'padding'),10);
+		top = parseInt(n2i.getStyle(element,'padding-top'),10);
+		if (all) {return all;}
+		if (top) {return top;}
+		return 0;
 	},
 	getBottomPad : function(element) {
-		var pad = 0;
-		var all = parseInt(n2i.getStyle(element,'padding'));
-		var bottom = parseInt(n2i.getStyle(element,'padding-bottom'));
-		if (all) pad+=all;
-		if (bottom) pad+=bottom;
-		return pad;
+		var all,bottom;
+		all = parseInt(n2i.getStyle(element,'padding'),10);
+		bottom = parseInt(n2i.getStyle(element,'padding-bottom'),10);
+		if (all) {return all;}
+		if (bottom) {return bottom;}
+		return 0;
 	},
 	/** @private */
 	resize : function() {
-		if (!this.overflows) return;
+		if (!this.overflows) {return;}
 		var height = n2i.getInnerHeight();
 		this.overflows.each(function(overflow) {
 			if (n2i.browser.webkit || n2i.browser.gecko) {
@@ -8076,12 +8099,12 @@ In2iGui.prototype = {
 		});
 	},
 	registerOverflow : function(id,diff) {
-		if (!this.overflows) this.overflows=[];
+		if (!this.overflows) {this.overflows=[];}
 		var overflow = $(id);
 		this.overflows.push({element:overflow,diff:diff});
 	},
 	/** @private */
-	alert : function(options,callBack) {
+	alert : function(options) {
 		if (!this.alertBox) {
 			this.alertBox = In2iGui.Alert.create(null,options);
 			this.alertBoxButton = In2iGui.Button.create({name:'in2iGuiAlertBoxButton',text : 'OK'});
@@ -8090,11 +8113,11 @@ In2iGui.prototype = {
 		} else {
 			this.alertBox.update(options);
 		}
-		this.alertBoxCallBack = callBack;
-		this.alertBoxButton.setText(options.button ? options.button : 'OK')
+		this.alertBoxCallBack = options.onOK;
+		this.alertBoxButton.setText(options.button ? options.button : 'OK');
 		this.alertBox.show();
 	},
-	/*@private */
+	/** @private */
 	click$in2iGuiAlertBoxButton : function() {
 		In2iGui.get().alertBox.hide();
 		if (this.alertBoxCallBack) {
@@ -8102,25 +8125,28 @@ In2iGui.prototype = {
 			this.alertBoxCallBack = null;
 		}
 	},
-	/** @deprecated */
-	showAlert : function(options) {
-		this.alert(options);
-	},
-	confirm : function(name,options) {
+	confirm : function(options) {
+		var name = options.name || 'in2iguiConfirm';
 		var alert = In2iGui.get(name);
 		if (!alert) {
 			alert = In2iGui.Alert.create(name,options);
-			var cancel = In2iGui.Button.create({name:name+'_cancel',text : options.cancel || 'Cancel',highlighted:options.highlighted=='cancel'});
+			var cancel = In2iGui.Button.create({name:name+'_cancel',text : options.cancel || 'Cancel',highlighted:options.highlighted==='cancel'});
 			cancel.addDelegate({buttonWasClicked:function(){
-				In2iGui.get(name).hide();
-				In2iGui.callDelegates(In2iGui.get(name),'cancel');
+				alert.hide();
+				if (options.onCancel) {
+					options.onCancel();
+				}
+				In2iGui.callDelegates(alert,'cancel');
 			}});
 			alert.addButton(cancel);
 		
-			var ok = In2iGui.Button.create({name:name+'_ok',text : options.ok || 'OK',highlighted:options.highlighted=='ok'});
+			var ok = In2iGui.Button.create({name:name+'_ok',text : options.ok || 'OK',highlighted:options.highlighted==='ok'});
 			ok.addDelegate({buttonWasClicked:function(){
-				In2iGui.get(name).hide();
-				In2iGui.callDelegates(In2iGui.get(name),'ok');
+				alert.hide();
+				if (options.onOK) {
+					options.onOK();
+				}
+				In2iGui.callDelegates(alert,'ok');
 			}});
 			alert.addButton(ok);
 		} else {
@@ -8129,32 +8155,30 @@ In2iGui.prototype = {
 			In2iGui.get(name+'_ok').setHighlighted(options.highlighted=='ok');
 			In2iGui.get(name+'_cancel').setText(options.ok || 'cancel');
 			In2iGui.get(name+'_cancel').setHighlighted(options.highlighted=='cancel');
-			if (options.cancel) In2iGui.get(name+'_cancel').setText(options.cancel);
+			if (options.cancel) {In2iGui.get(name+'_cancel').setText(options.cancel);}
 		}
 		alert.show();
 	},
 	changeState : function(state) {
-		if (this.state==state) return;
+		if (this.state==state) {return;}
 		var objects = this.objects.values();
 		objects.each(function(obj) {
 			if (obj.state) {
-				if (obj.state==state) obj.show();
-				else obj.hide();
+				if (obj.state==state) {obj.show();}
+				else {obj.hide();}
 			}
 		});
 	},
 	getDescendants : function(widget) {
-		var desc = [];
-		var e = widget.getElement();
+		var desc = [],e = widget.getElement(),self = this;
 		if (e) {
 			var d = e.descendants();
-			var self = this;
 			d.each(function(node) {
 				self.objects.values().each(function(obj) {
 					if (obj.getElement()==node) {
 						desc.push(obj);
 					}
-				})
+				});
 			});
 		}
 		return desc;
@@ -8173,32 +8197,43 @@ In2iGui.prototype = {
 					if (obj.getElement()==node) {
 						desc.push(obj);
 					}
-				})
+				});
 			}.bind(this));
 		}
 		return desc;
+	},
+	getAncestor : function(widget,cls) {
+		var a = this.getAncestors(widget);
+		for (var i=0; i < a.length; i++) {
+			if (a[0].getElement().hasClassName(cls)) {
+				return a[0];
+			}
+		};
+		return null;
 	}
-}
+};
 
 ///////////////////////////////// Indexes /////////////////////////////
 
 In2iGui.nextIndex = function() {
 	In2iGui.latestIndex++;
 	return 	In2iGui.latestIndex;
-}
+};
 
 In2iGui.nextPanelIndex = function() {
 	In2iGui.latestPanelIndex++;
 	return 	In2iGui.latestPanelIndex;
-}
+};
+
 In2iGui.nextAlertIndex = function() {
 	In2iGui.latestAlertIndex++;
 	return 	In2iGui.latestAlertIndex;
-}
+};
+
 In2iGui.nextTopIndex = function() {
 	In2iGui.latestTopIndex++;
 	return 	In2iGui.latestTopIndex;
-}
+};
 
 ///////////////////////////////// Curtain /////////////////////////////
 
@@ -8209,43 +8244,51 @@ In2iGui.showCurtain = function(widget,zIndex) {
 			if (widget.curtainWasClicked) {
 				widget.curtainWasClicked();
 			}
-		}
+		};
 		document.body.appendChild(widget.curtain);
 	}
 	widget.curtain.style.height=n2i.getDocumentHeight()+'px';
 	widget.curtain.style.zIndex=zIndex;
 	n2i.setOpacity(widget.curtain,0);
 	widget.curtain.style.display='block';
-	n2i.ani(widget.curtain,'opacity',.5,1000,{ease:n2i.ease.slowFastSlow});
-}
+	n2i.ani(widget.curtain,'opacity',0.5,1000,{ease:n2i.ease.slowFastSlow});
+};
 
 In2iGui.hideCurtain = function(widget) {
 	if (widget.curtain) {
 		n2i.ani(widget.curtain,'opacity',0,200,{hideOnComplete:true});
 	}
-}
+};
 
 //////////////////////////////// Message //////////////////////////////
 
 In2iGui.alert = function(o) {
 	In2iGui.get().alert(o);
-}
+};
 
-In2iGui.showMessage = function(msg) {
+In2iGui.showMessage = function(options) {
+	if (typeof(options)=='string') {
+		// TODO: Backwards compatibility
+		options={text:options};
+	}
 	if (!In2iGui.message) {
 		In2iGui.message = new Element('div',{'class':'in2igui_message'}).update('<div><div></div></div>');
+		if (!n2i.browser.msie) {
+			In2iGui.message.setStyle({opacity:0});
+		}
 		document.body.appendChild(In2iGui.message);
 	}
-	In2iGui.message.select('div')[1].update(msg);
+	In2iGui.message.select('div')[1].update(options.text);
 	In2iGui.message.setStyle({'display':'block',zIndex:In2iGui.nextTopIndex()});
-	if (!n2i.browser.msie) {
-		In2iGui.message.setStyle({opacity:0});
-	}
 	In2iGui.message.setStyle({marginLeft:(In2iGui.message.getWidth()/-2)+'px',marginTop:n2i.getScrollTop()+'px'});
 	if (!n2i.browser.msie) {
 		n2i.ani(In2iGui.message,'opacity',1,300);
 	}
-}
+	window.clearTimeout(In2iGui.messageTimer);
+	if (options.duration) {
+		In2iGui.messageTimer = window.setTimeout(In2iGui.hideMessage,options.duration);
+	}
+};
 
 In2iGui.hideMessage = function() {
 	if (In2iGui.message) {
@@ -8255,7 +8298,7 @@ In2iGui.hideMessage = function() {
 			In2iGui.message.setStyle({display:'none'});
 		}
 	}
-}
+};
 
 In2iGui.showToolTip = function(options) {
 	var key = options.key || 'common';
@@ -8265,17 +8308,17 @@ In2iGui.showToolTip = function(options) {
 		document.body.appendChild(t);
 		In2iGui.toolTips[key] = t;
 	}
-	t.onclick = function() {In2iGui.hideToolTip(options)};
+	t.onclick = function() {In2iGui.hideToolTip(options);};
 	var n = $(options.element);
 	var pos = n.cumulativeOffset();
 	t.select('div')[1].update(options.text);
-	if (t.style.display=='none' && !n2i.browser.msie) t.setStyle({opacity:0});
+	if (t.style.display=='none' && !n2i.browser.msie) {t.setStyle({opacity:0});}
 	t.setStyle({'display':'block',zIndex:In2iGui.nextTopIndex()});
 	t.setStyle({left:(pos.left-t.getWidth()+4)+'px',top:(pos.top+2-(t.getHeight()/2)+(n.getHeight()/2))+'px'});
 	if (!n2i.browser.msie) {
 		n2i.ani(t,'opacity',1,300);
 	}
-}
+};
 
 In2iGui.hideToolTip = function(options) {
 	var key = options ? options.key || 'common' : 'common';
@@ -8287,7 +8330,7 @@ In2iGui.hideToolTip = function(options) {
 			t.setStyle({display:'none'});
 		}
 	}
-}
+};
 
 /////////////////////////////// Utilities /////////////////////////////
 
@@ -8296,25 +8339,24 @@ In2iGui.isWithin = function(e,element) {
 	var offset = element.cumulativeOffset();
 	var dims = element.getDimensions();
 	return e.pointerX()>offset.left && e.pointerX()<offset.left+dims.width && e.pointerY()>offset.top && e.pointerY()<offset.top+dims.height;
-}
+};
 
 In2iGui.getIconUrl = function(icon,size) {
 	return In2iGui.context+'/In2iGui/icons/'+icon+size+'.png';
-}
+};
 
 In2iGui.createIcon = function(icon,size) {
-	
 	return new Element('span',{'class':'in2igui_icon in2igui_icon_'+size}).setStyle({'backgroundImage':'url('+In2iGui.getIconUrl(icon,size)+')'});
-}
+};
 
 In2iGui.onDomReady = function(func) {
-	if (In2iGui.domReady) return func();
+	if (In2iGui.domReady) {return func();}
 	if (n2i.browser.gecko && document.baseURI.endsWith('xml')) {
 		window.setTimeout(func,1000);
 		return;
 	}
 	document.observe('dom:loaded', func);
-}
+};
 
 In2iGui.wrapInField = function(e) {
 	var w = new Element('div',{'class':'in2igui_field'}).update(
@@ -8324,7 +8366,7 @@ In2iGui.wrapInField = function(e) {
 	);
 	w.select('span.in2igui_field_content')[0].insert(e);
 	return w;
-}
+};
 
 In2iGui.addFocusClass = function(o) {
 	var ce = o.classElement || o.element, c = o['class'];
@@ -8333,7 +8375,7 @@ In2iGui.addFocusClass = function(o) {
 	}).observe('blur',function() {
 		ce.removeClassName(c);
 	});
-}
+};
 
 /////////////////////////////// Animation /////////////////////////////
 
@@ -8342,11 +8384,11 @@ In2iGui.fadeIn = function(node,time) {
 		node.setStyle({opacity:0,display:''});
 	}
 	n2i.ani(node,'opacity',1,time);
-}
+};
 
 In2iGui.fadeOut = function(node,time) {
 	n2i.ani(node,'opacity',0,time,{hideOnComplete:true});
-}
+};
 
 //////////////////////////// Positioning /////////////////////////////
 
@@ -8374,7 +8416,7 @@ In2iGui.positionAtElement = function(element,target,options) {
 	if (origDisplay=='none') {
 		element.setStyle({'visibility':'visible','display':'none'});
 	}
-}
+};
 
 
 //////////////////////////////// Drag drop //////////////////////////////
@@ -8385,13 +8427,12 @@ In2iGui.getDragProxy = function() {
 		document.body.appendChild(In2iGui.dragProxy);
 	}
 	return In2iGui.dragProxy;
-}
+};
 
 In2iGui.startDrag = function(e,element,options) {
 	var info = element.dragDropInfo;
 	In2iGui.dropTypes = In2iGui.findDropTypes(info);
 	if (!In2iGui.dropTypes) return;
-	var event = Event.extend(e);
 	var proxy = In2iGui.getDragProxy();
 	Event.observe(document.body,'mousemove',In2iGui.dragListener);
 	Event.observe(document.body,'mouseup',In2iGui.dragEndListener);
@@ -8399,10 +8440,11 @@ In2iGui.startDrag = function(e,element,options) {
 	if (info.icon) {
 		proxy.style.backgroundImage = 'url('+In2iGui.getIconUrl(info.icon,1)+')';
 	}
-	In2iGui.startDragPos = {top:event.pointerY(),left:event.pointerX()};
+	In2iGui.startDragPos = {top:Event.pointerY(e),left:Event.pointerX(e)};
 	proxy.innerHTML = '<span>'+info.title+'</span>' || '###';
 	In2iGui.dragging = true;
-}
+	document.body.onselectstart = function () { return false; };
+};
 
 In2iGui.findDropTypes = function(drag) {
 	var gui = In2iGui.get();
@@ -8419,7 +8461,7 @@ In2iGui.findDropTypes = function(drag) {
 		}
 	}
 	return drops;
-}
+};
 
 In2iGui.dragListener = function(e) {
 	var event = Event.extend(e);
@@ -8438,7 +8480,7 @@ In2iGui.dragListener = function(e) {
 		In2iGui.latestDropTarget = null;
 	}
 	return false;
-}
+};
 
 In2iGui.findDropTarget = function(node) {
 	while (node) {
@@ -8448,7 +8490,7 @@ In2iGui.findDropTarget = function(node) {
 		node = node.parentNode;
 	}
 	return null;
-}
+};
 
 In2iGui.dragEndListener = function(event) {
 	Event.stopObserving(document.body,'mousemove',In2iGui.dragListener);
@@ -8463,21 +8505,22 @@ In2iGui.dragEndListener = function(event) {
 		n2i.ani(In2iGui.dragProxy,'top',(In2iGui.startDragPos.top-5)+'px',200,{ease:n2i.ease.fastSlow,hideOnComplete:true});
 	}
 	In2iGui.latestDropTarget=null;
-}
+	document.body.onselectstart=null;
+};
 
 In2iGui.dropOverListener = function(event) {
 	if (In2iGui.dragging) {
 		//this.style.backgroundColor='#3875D7';
 	}
-}
+};
 
 In2iGui.dropOutListener = function(event) {
 	if (In2iGui.dragging) {
 		//this.style.backgroundColor='';
 	}
-}
+};
 
-/* ****************** Delegating *************** */
+//////////////////// Delegating ////////////////////
 
 In2iGui.extend = function(obj) {
 	if (!obj.name) {
@@ -8495,6 +8538,9 @@ In2iGui.extend = function(obj) {
 	obj.fire = function(method,value,event) {
 		In2iGui.callDelegates(this,method,value,event);
 	}
+	obj.fireProperty = function(key,value) {
+		In2iGui.firePropertyChange(this,key,value);
+	}
 	if (!obj.getElement) {
 		obj.getElement = function() {
 			return this.element;
@@ -8503,17 +8549,17 @@ In2iGui.extend = function(obj) {
 	if (!obj.valueForProperty) {
 		obj.valueForProperty = function(p) {return this[p]};
 	}
-}
+};
 
 In2iGui.callDelegatesDrop = function(dragged,dropped) {
 	var gui = In2iGui.get();
 	var result = null;
 	for (var i=0; i < gui.delegates.length; i++) {
-		if (gui.delegates[i]['drop$'+dragged.kind+'$'+dropped.kind]) {
-			gui.delegates[i]['drop$'+dragged.kind+'$'+dropped.kind](dragged,dropped);
+		if (gui.delegates[i]['$drop$'+dragged.kind+'$'+dropped.kind]) {
+			gui.delegates[i]['$drop$'+dragged.kind+'$'+dropped.kind](dragged,dropped);
 		}
 	}
-}
+};
 
 In2iGui.callAncestors = function(obj,method,value,event) {
 	if (typeof(value)=='undefined') value=obj;
@@ -8523,7 +8569,7 @@ In2iGui.callAncestors = function(obj,method,value,event) {
 			thisResult = child[method](value,event);
 		}
 	});
-}
+};
 
 In2iGui.callDescendants = function(obj,method,value,event) {
 	if (typeof(value)=='undefined') value=obj;
@@ -8533,6 +8579,14 @@ In2iGui.callDescendants = function(obj,method,value,event) {
 			thisResult = child[method](value,event);
 		}
 	});
+};
+
+In2iGui.callVisible = function(widget) {
+	In2iGui.callDescendants(widget,'$visibilityChanged');
+}
+
+In2iGui.addDelegate = function(d) {
+	In2iGui.get().addDelegate(d);
 }
 
 In2iGui.callDelegates = function(obj,method,value,event) {
@@ -8542,7 +8596,9 @@ In2iGui.callDelegates = function(obj,method,value,event) {
 		for (var i=0; i < obj.delegates.length; i++) {
 			var delegate = obj.delegates[i];
 			var thisResult = null;
-			if (obj.name && delegate[method+'$'+obj.name]) {
+			if (obj.name && delegate['$'+method+'$'+obj.name]) {
+				thisResult = delegate['$'+method+'$'+obj.name](value,event);
+			} else if (obj.name && delegate[method+'$'+obj.name]) {
 				thisResult = delegate[method+'$'+obj.name](value,event);
 			} else if ('$'+obj.name && delegate[method+'$'+obj.name]) {
 				thisResult = delegate['$'+method+'$'+obj.name](value,event);
@@ -8550,6 +8606,8 @@ In2iGui.callDelegates = function(obj,method,value,event) {
 				thisResult = delegate[method+'$'+obj.kind](value,event);
 			} else if (delegate[method]) {
 				thisResult = delegate[method](value,event);
+			} else if (delegate['$'+method]) {
+				thisResult = delegate['$'+method](value,event);
 			}
 			if (result==null && thisResult!=null && typeof(thisResult)!='undefined') {
 				result = thisResult;
@@ -8559,7 +8617,7 @@ In2iGui.callDelegates = function(obj,method,value,event) {
 	var superResult = In2iGui.callSuperDelegates(obj,method,value,event);
 	if (result==null && superResult!=null) result = superResult;
 	return result;
-}
+};
 
 In2iGui.callSuperDelegates = function(obj,method,value,event) {
 	if (typeof(value)=='undefined') value=obj;
@@ -8576,13 +8634,15 @@ In2iGui.callSuperDelegates = function(obj,method,value,event) {
 			thisResult = delegate[method+'$'+obj.kind](value,event);
 		} else if (delegate[method]) {
 			thisResult = delegate[method](value,event);
+		} else if (delegate['$'+method]) {
+			thisResult = delegate['$'+method](value,event);
 		}
 		if (result==null && thisResult!=null && typeof(thisResult)!='undefined') {
 			result = thisResult;
 		}
 	};
 	return result;
-}
+};
 
 In2iGui.resolveImageUrl = function(widget,img,width,height) {
 	for (var i=0; i < widget.delegates.length; i++) {
@@ -8598,13 +8658,13 @@ In2iGui.resolveImageUrl = function(widget,img,width,height) {
 		}
 	}
 	return null;
-}
+};
 
 ////////////////////////////// Bindings ///////////////////////////
 
 In2iGui.firePropertyChange = function(obj,name,value) {
 	In2iGui.callDelegates(obj,'propertyChanged',{property:name,value:value});
-}
+};
 
 In2iGui.bind = function(expression,delegate) {
 	if (expression.charAt(0)=='@') {
@@ -8621,7 +8681,7 @@ In2iGui.bind = function(expression,delegate) {
 		return obj.valueForProperty(p);
 	}
 	return expression;
-}
+};
 
 //////////////////////////////// Data /////////////////////////////
 
@@ -8638,7 +8698,7 @@ In2iGui.dwrUpdate = function() {
 	} else {
 		alert('Too many parameters');
 	}
-}
+};
 
 In2iGui.handleDwrUpdate = function(data) {
 	var gui = In2iGui.get();
@@ -8647,14 +8707,14 @@ In2iGui.handleDwrUpdate = function(data) {
 			gui.objects.get(data[i].name).updateFromObject(data[i]);
 		}
 	};
-}
+};
 
 In2iGui.update = function(url,delegate) {
 	var dlgt = {
 		onSuccess:function(t) {In2iGui.handleUpdate(t,delegate)}
 	}
 	$get(url,dlgt);
-}
+};
 
 In2iGui.handleUpdate = function(t,delegate) {
 	var gui = In2iGui.get();
@@ -8669,8 +8729,9 @@ In2iGui.handleUpdate = function(t,delegate) {
 		}
 	};
 	delegate.onSuccess();
-}
+};
 
+/** @private */
 In2iGui.jsonResponse = function(t,key) {
 	if (!t.responseXML || !t.responseXML.documentElement) {
 		var str = t.responseText.replace(/^\s+|\s+$/g, '');
@@ -8683,7 +8744,7 @@ In2iGui.jsonResponse = function(t,key) {
 	} else {
 		In2iGui.callDelegates(t,'success$'+key)
 	}
-}
+};
 
 /** @deprecated */
 In2iGui.json = function(data,url,delegateOrKey) {
@@ -8696,29 +8757,72 @@ In2iGui.json = function(data,url,delegateOrKey) {
 	for (key in data) {
 		options.parameters[key]=Object.toJSON(data[key])
 	}
-	new Ajax.Request(url,options)
-}
+	new Ajax.Request(url,options);
+};
+
+In2iGui.jsonRequest = function(o) {
+	var options = {method:'post',parameters:{},onException:function(e) {throw e}};
+	if (typeof(o.event)=='string') {
+		options.onSuccess=function(t) {In2iGui.jsonResponse(t,o.event)};
+	} else {
+		delegate = delegateOrKey;
+	}
+	for (key in o.parameters) {
+		options.parameters[key]=Object.toJSON(o.parameters[key])
+	}
+	new Ajax.Request(o.url,options)
+};
 
 In2iGui.request = function(options) {
 	options = n2i.override({method:'post',parameters:{}},options);
-	if (options.successEvent) {
-		options.onSuccess=function(t) {In2iGui.jsonResponse(t,options.successEvent)};
+	if (options.jsonParameters) {
+		for (key in options.jsonParameters) {
+			options.parameters[key]=Object.toJSON(options.jsonParameters[key])
+		}
 	}
+	options.onSuccess=function(t) {
+		if (options.successEvent) {
+			In2iGui.jsonResponse(t,options.successEvent);
+		} else if (t.responseXML && t.responseXML.documentElement.nodeName!='parsererror' && options.onXML) {
+			options.onXML(t.responseXML);
+		} else if (options.onJSON) {
+			var str = t.responseText.replace(/^\s+|\s+$/g, '');
+			if (str.length>0) {
+				var json = t.responseText.evalJSON(true);
+			} else {
+				var json = null;
+			}
+			options.onJSON(json);
+		}
+	};
+	options.onException = function(t,e) {n2i.log(e)};
 	new Ajax.Request(options.url,options);
-}
+};
 
 In2iGui.parseItems = function(doc) {
+	var root = doc.documentElement;
 	var out = [];
-	var items = doc.getElementsByTagName('item');
-	for (var i=0; i < items.length; i++) {
-		var item = items[i];
-		var title = item.getAttribute('title');
-		var value = item.getAttribute('value');
-		var icon = item.getAttribute('icon');
-		var kind = item.getAttribute('kind');
-		out.push({title:title,value:value,icon:icon,kind:kind});
-	}
+	In2iGui.parseSubItems(root,out);
 	return out;
+};
+
+In2iGui.parseSubItems = function(parent,array) {
+	var children = parent.childNodes;
+	for (var i=0; i < children.length; i++) {
+		var node = children[i];
+		if (node.nodeType==1 && node.nodeName=='item') {
+			var sub = [];
+			In2iGui.parseSubItems(node,sub);
+			array.push({
+				title:node.getAttribute('title'),
+				value:node.getAttribute('value'),
+				icon:node.getAttribute('icon'),
+				kind:node.getAttribute('kind'),
+				badge:node.getAttribute('badge'),
+				children:sub
+			});
+		}
+	};
 }
 
 ////////////////////////////////// Source ///////////////////////////
@@ -8732,7 +8836,7 @@ In2iGui.Source = function(o) {
 	if (o.delegate) this.addDelegate(o.delegate);
 	this.busy=false;
 	In2iGui.onDomReady(this.init.bind(this));
-}
+};
 
 In2iGui.Source.prototype = {
 	init : function() {
@@ -8923,7 +9027,7 @@ In2iGui.TextField.prototype = {
 			In2iGui.hideToolTip({key:this.name});
 		}
 	}
-}
+};
 
 ////////////////////////////////////// Info view /////////////////////////////
 
@@ -9171,9 +9275,12 @@ In2iGui.Formula.prototype = {
 	/** @private */
 	addBehavior : function() {
 		this.element.onsubmit=function() {
-			this.fire('submit');
-			return false
+			this.submit();
+			return false;
 		}.bind(this);
+	},
+	submit : function() {
+		this.fire('submit');
 	},
 	/** Returns a map of all values of descendants */
 	getValues : function() {
@@ -9197,6 +9304,16 @@ In2iGui.Formula.prototype = {
 				if (key && values[key]!=undefined) {
 					d[i].setValue(values[key]);
 				}
+			}
+		}
+	},
+	/** Sets focus in the first found child */
+	focus : function() {
+		var d = In2iGui.get().getDescendants(this);
+		for (var i=0; i < d.length; i++) {
+			if (d[i].focus) {
+				d[i].focus();
+				return;
 			}
 		}
 	},
@@ -9239,6 +9356,10 @@ In2iGui.Formula.prototype = {
 ///////////////////////// Group //////////////////////////
 
 
+/**
+ * A form group
+ * @constructor
+ */
 In2iGui.Formula.Group = function(elementOrId,name,options) {
 	this.name = name;
 	this.element = $(elementOrId);
@@ -9247,6 +9368,7 @@ In2iGui.Formula.Group = function(elementOrId,name,options) {
 	In2iGui.extend(this);
 }
 
+/** Creates a new form group */
 In2iGui.Formula.Group.create = function(name,options) {
 	options = n2i.override({above:true},options);
 	var element = new Element('table',
@@ -9290,8 +9412,12 @@ In2iGui.Formula.Group.prototype = {
 	}
 }
 
-/********************** Text ***********************/
+///////////////////////// Text /////////////////////////
 
+/**
+ * A text fields
+ * @constructor
+ */
 In2iGui.Formula.Text = function(o) {
 	this.options = n2i.override({label:null,key:null},o);
 	this.name = o.name;
@@ -9320,10 +9446,15 @@ In2iGui.Formula.Text.create = function(options) {
 In2iGui.Formula.Text.prototype = {
 	addBehavior : function() {
 		In2iGui.addFocusClass({element:this.input,classElement:this.element,'class':'in2igui_field_focused'});
-		this.input.observe('keyup',this.valueMightHaveChanged.bind(this));
+		this.input.observe('keyup',this.onKeyUp.bind(this));
 	},
-	valueMightHaveChanged : function() {
-		if (this.input.value==this.value) return;
+	onKeyUp : function(e) {
+		if (e.keyCode===Event.KEY_RETURN) {
+			var form = In2iGui.get().getAncestor(this,'in2igui_formula');
+			if (form) {form.submit();}
+			return;
+		}
+		if (this.input.value==this.value) {return;}
 		this.value=this.input.value;
 		In2iGui.callAncestors(this,'childValueChanged',this.input.value);
 		this.fire('valueChanged',this.input.value);
@@ -9366,8 +9497,12 @@ In2iGui.Formula.Text.prototype = {
 	}
 }
 
-/********************** Dat time ***********************/
+/////////////////////////// Date time /////////////////////////
 
+/**
+ * A date and time field
+ * @constructor
+ */
 In2iGui.Formula.DateTime = function(o) {
 	this.inputFormats = ['d-m-Y','d/m-Y','d/m/Y','d-m-Y H:i:s','d/m-Y H:i:s','d/m/Y H:i:s','d-m-Y H:i','d/m-Y H:i','d/m/Y H:i','d-m-Y H','d/m-Y H','d/m/Y H','d-m','d/m','d','Y','m-d-Y','m-d','m/d'];
 	this.outputFormat = 'd-m-Y H:i:s';
@@ -9442,8 +9577,12 @@ In2iGui.Formula.DateTime.prototype = {
 	}
 }
 
-/************************************* DropDown *******************************/
+////////////////////////// DropDown ///////////////////////////
 
+/**
+ * A drop down selector
+ * @constructor
+ */
 In2iGui.Formula.DropDown = function(o) {
 	this.name = o.name;
 	var e = this.element = $(o.element);
@@ -9505,7 +9644,7 @@ In2iGui.Formula.DropDown.prototype = {
 		el.focus();
 		if (!this.items) return;
 		In2iGui.positionAtElement(s,el,{vertical:'bottomOutside',top:-2,left:2});
-		s.setStyle({display:'block',width:(el.getWidth()-5)+'px',zIndex:In2iGui.nextTopIndex()});
+		s.setStyle({display:'block',width:(el.getWidth()-5)+'px',zIndex:In2iGui.nextTopIndex(),maxHeight:'200px'});
 	},
 	getValue : function(value) {
 		return this.value;
@@ -9573,8 +9712,13 @@ In2iGui.Formula.DropDown.prototype = {
 	}
 }
 
-/************************************* Select *******************************/
+////////////////////////////// Select ////////////////////////////////
 
+/**
+ * A select box
+ * @constructor
+ * @deprecated
+ */
 In2iGui.Formula.Select = function(id,name,options) {
 	this.name = name;
 	this.options = n2i.override({label:null},options);
@@ -9656,7 +9800,7 @@ In2iGui.Formula.Select.prototype = {
 }
 
 
-/********************************* Radio buttons ****************************/
+//////////////////////////// Radio buttons ////////////////////////////
 
 In2iGui.Formula.Radiobuttons = function(id,name,options) {
 	this.options = options;
@@ -9700,8 +9844,12 @@ In2iGui.Formula.Radiobuttons.prototype = {
 }
 
 
-/********************************* Checkboxes ****************************/
+///////////////////////////// Checkbox /////////////////////////////////
 
+/**
+ * A check box
+ * @constructor
+ */
 In2iGui.Formula.Checkbox = function(id,name,options) {
 	this.element = $(id);
 	this.control = this.element.select('span')[0];
@@ -9738,8 +9886,12 @@ In2iGui.Formula.Checkbox.prototype = {
 	}
 }
 
-/********************************* Checkboxes ****************************/
+/////////////////////////// Checkboxes ////////////////////////////////
 
+/**
+ * Multiple checkboxes
+ * @constructor
+ */
 In2iGui.Formula.Checkboxes = function(id,name,options) {
 	this.options = options;
 	this.element = $(id);
@@ -9813,8 +9965,12 @@ In2iGui.Formula.Checkboxes.prototype = {
 	}
 }
 
-/******************************** Checkbox items ****************************/
+/////////////////////// Checkbox items ///////////////////
 
+/**
+ * Check box items
+ * @constructor
+ */
 In2iGui.Formula.Checkboxes.Items = function(id,name,options) {
 	this.element = $(id);
 	this.name = name;
@@ -9867,8 +10023,12 @@ In2iGui.Formula.Checkboxes.Items.prototype = {
 	}
 }
 
-/**************************** Token ************************/
+///////////////////////// Tokens //////////////////////////////
 
+/**
+ * A tokens component
+ * @constructor
+ */
 In2iGui.Formula.Tokens = function(o) {
 	this.options = n2i.override({label:null,key:null},o);
 	this.element = $(o.element);
@@ -10055,22 +10215,10 @@ In2iGui.List.prototype = {
 			url+=url.indexOf('?')==-1 ? '?' : '&';
 			url+=key+'='+this.parameters[key];
 		}
-		var self = this;
-		new Ajax.Request(url,{
-			onSuccess:function(r) {
-				if (r.responseXML) {
-					try {
-					self.listLoaded(r.responseXML);
-					} catch (e) {n2i.log(e)}
-				} else if (r.responseText) {
-					var json = r.responseText.evalJSON();
-					if (json.list==true) {
-						self.setData(json);
-					} else {
-						self.setObjects(json);
-					}
-				}
-			}
+		In2iGui.request({
+			url:url,
+			onJSON : this.objectsLoaded.bind(this),
+			onXML : this.listLoaded.bind(this)
 		});
 	},
 	sort : function(index) {
@@ -10082,7 +10230,6 @@ In2iGui.List.prototype = {
 			In2iGui.firePropertyChange(this,'sort.key',key);
 		}
 		this.sortKey = key;
-		this.refresh();
 	},
 
 	/**
@@ -10131,6 +10278,7 @@ In2iGui.List.prototype = {
 			this.columns.push({'key':key,'sortable':sortable,'width':width});
 		};
 		this.head.appendChild(headTr);
+		var frag = document.createDocumentFragment();
 		var rows = doc.getElementsByTagName('row');
 		for (var i=0; i < rows.length; i++) {
 			var cells = rows[i].getElementsByTagName('cell');
@@ -10147,9 +10295,12 @@ In2iGui.List.prototype = {
 			var info = {id:rows[i].getAttribute('id'),kind:rows[i].getAttribute('kind'),icon:icon,title:title,index:i};
 			row.dragDropInfo = info;
 			this.addRowBehavior(row,i);
-			this.body.insert(row);
+			frag.appendChild(row);
+			//this.body.insert(row);
 			this.rows.push(info);
 		};
+		this.body.appendChild(frag);
+		this.fire('selectionReset');
 	},
 	
 	objectsLoaded : function(data) {
@@ -10158,31 +10309,32 @@ In2iGui.List.prototype = {
 		} else {
 			this.setData(data);
 		}
+		this.fire('selectionReset');
 	},
 	sourceIsBusy : function() {
 		this.element.addClassName('in2igui_list_busy');
 	},
 	sourceIsNotBusy : function() {
 		this.element.removeClassName('in2igui_list_busy');
+	},
+	
+	filter : function(str) {
+		var len = 20;
+		var regex = new RegExp("[\\w]{"+len+",}","g");
+		var match = regex.exec(str);
+		if (match) {
+			for (var i=0; i < match.length; i++) {
+				var rep = '';
+				for (var j=0; j < match[i].length; j++) {
+					rep+=match[i][j];
+					if ((j+1)%len==0) rep+='\u200B';
+				};
+				str = str.replace(match[i],rep);
+			};
+		}
+		return str;
 	}
 };
-
-In2iGui.List.prototype.filter = function(str) {
-	var len = 20;
-	var regex = new RegExp("[\\w]{"+len+",}","g");
-	var match = regex.exec(str);
-	if (match) {
-		for (var i=0; i < match.length; i++) {
-			var rep = '';
-			for (var j=0; j < match[i].length; j++) {
-				rep+=match[i][j];
-				if ((j+1)%len==0) rep+='\u200B';
-			};
-			str = str.replace(match[i],rep);
-		};
-	}
-	return str;
-}
 
 In2iGui.List.prototype.parseCell = function(node,cell) {
 	if (node.getAttribute('icon')!=null) {
@@ -10191,15 +10343,14 @@ In2iGui.List.prototype.parseCell = function(node,cell) {
 	}
 	for (var i=0; i < node.childNodes.length; i++) {
 		var child = node.childNodes[i];
-		if (child.nodeType==n2i.TEXT_NODE && child.nodeValue.length>0) {
-			cell.appendChild(document.createTextNode(child.nodeValue));
-		} else if (child.nodeType==n2i.ELEMENT_NODE && child.nodeName=='break') {
+		if (n2i.dom.isDefinedText(child)) {
+			n2i.dom.addText(cell,child.nodeValue);
+		} else if (n2i.dom.isElement(child,'break')) {
 			cell.insert(new Element('br'));
-		} else if (child.nodeType==n2i.ELEMENT_NODE && child.nodeName=='object') {
+		} else if (n2i.dom.isElement(child,'object')) {
 			var obj = new Element('div',{'class':'object'});
-			if (child.getAttribute('icon')!=null) {
-				var icon = new Element('div',{'class':'icon'}).setStyle({'backgroundImage':'url("'+In2iGui.getIconUrl(child.getAttribute('icon'),1)+'")'});
-				obj.insert(icon);
+			if (child.getAttribute('icon')) {
+				obj.insert(In2iGui.createIcon(child.getAttribute('icon'),1));
 			}
 			if (child.firstChild && child.firstChild.nodeType==n2i.TEXT_NODE && child.firstChild.nodeValue.length>0) {
 				obj.appendChild(document.createTextNode(child.firstChild.nodeValue));
@@ -10271,30 +10422,30 @@ In2iGui.List.prototype.setData = function(data) {
 },
 
 In2iGui.List.prototype.buildHeaders = function(headers) {
-	var self = this;
 	this.head.update();
 	this.columns = [];
 	var tr = new Element('tr');
 	this.head.insert(tr);
 	headers.each(function(h,i) {
 		var th = new Element('th');
-		var style = {};
-		if (h.width) th.setStyle({width:h.width+'%'});
+		if (h.width) {
+			th.setStyle({width:h.width+'%'});
+		}
 		if (h.sortable) {
-			th.observe('click',function() {self.sort(i)});
+			th.observe('click',function() {this.sort(i)}.bind(this));
 			th.addClassName('sortable');
 		}
 		th.insert(new Element('span').update(h.title));
 		tr.insert(th);
-		self.columns.push(h);
-	});
+		this.columns.push(h);
+	}.bind(this));
 }
 
 In2iGui.List.prototype.buildRows = function(rows) {
 	var self = this;
 	this.body.update();
-	//this.body = new Element('tbody');
 	this.rows = [];
+	//var frag = document.createDocumentFragment();
 	if (!rows) return;
 	rows.each(function(r,i) {
 		var tr = new Element('tr');
@@ -10308,7 +10459,7 @@ In2iGui.List.prototype.buildRows = function(rows) {
 				icon = icon || c.icon;
 			}
 			if (c.text) {
-				td.insert(c.text.escapeHTML());
+				td.insert(c.text);
 				title = title || c.text;
 			}
 			tr.insert(td);
@@ -10316,17 +10467,14 @@ In2iGui.List.prototype.buildRows = function(rows) {
 		self.body.insert(tr);
 		var info = {id:r.id,kind:r.kind,icon:icon,title:title,index:i};
 		tr.dragDropInfo = info;
-		self.addRowBehavior(tr,i);
 		self.rows.push(info);
-	})
-	//this.table.insert(this.body);
+	});
 }
 
 
 /********************************** Update from objects legacy *******************************/
 
 In2iGui.List.prototype.setObjects = function(objects) {
-	alert(0)
 	this.selected = [];
 	this.body.update();
 	this.rows = [];
@@ -10396,7 +10544,8 @@ In2iGui.List.prototype.changeSelection = function(indexes) {
 	for (var i=0;i<indexes.length;i++) {
 		rows[indexes[i]].addClassName('selected');
 	}
-	this.selected = indexes
+	this.selected = indexes;
+	this.fire('selectionChanged',this.rows[indexes[0]]);
 }
 
 /**
@@ -10422,7 +10571,7 @@ In2iGui.List.prototype.windowPageWasClicked = function(tag) {
 	this.window.page = tag.in2GuiPage;
 	In2iGui.firePropertyChange(this,'state',this.window);
 	In2iGui.firePropertyChange(this,'window.page',this.window.page);
-	this.refresh();
+	//this.refresh();
 }
 
 /* EOF */In2iGui.Icons = function(id,name,options) {
@@ -10840,6 +10989,8 @@ In2iGui.Button.prototype = {
 			In2iGui.callDelegates(this,'buttonWasClicked'); // deprecated
 			In2iGui.callDelegates(this,'click');
 			In2iGui.callDelegates(this,'onClick');
+		} else {
+			this.element.blur();
 		}
 	},
 	setEnabled : function(enabled) {
@@ -10878,83 +11029,122 @@ In2iGui.Buttons.prototype = {
 	}
 }
 
-/* EOF */In2iGui.Selection = function(id,name,options) {
+/* EOF *//**
+ * @constructor
+ * @param {Object} options The options : {value:null}
+ */
+In2iGui.Selection = function(options) {
 	this.options = n2i.override({value:null},options);
-	this.element = $(id);
-	this.name = name;
+	this.element = $(options.element);
+	this.name = options.name;
 	this.items = [];
 	this.subItems = [];
-	this.value = this.options.value;
-	this.selected = [];
+	this.selection=null;
+	if (this.options.value!=null) {
+		this.selection = {value:this.options.value};
+	}
 	In2iGui.extend(this);
-	var self = this;
 }
 
-In2iGui.Selection.create = function(name,options) {
+/**
+ * Creates a new selection widget
+ * @param {Object} options The options : {width:0}
+ */
+In2iGui.Selection.create = function(options) {
 	options = n2i.override({width:0},options);
-	var e = new Element('div',{'class':'in2igui_selection'});
+	var e = options.element = new Element('div',{'class':'in2igui_selection'});
 	if (options.width>0) e.setStyle({width:options.width+'px'});
-	return new In2iGui.Selection(e,name,options);
+	return new In2iGui.Selection(options);
 }
 
 In2iGui.Selection.prototype = {
+	/** Get the selected item
+	 * @returns {Object} The selected item, null if no selection */
 	getValue : function() {
-		return this.value;
+		return this.selection;
 	},
-	getSelection : function() {
+	/** Set the selected item
+	 * @param {Object} value The selected item */
+	setValue : function(value) {
+		var item = this.getSelectionWithValue(value);
+		if (item===null) {
+			this.selection = null;
+		} else {
+			this.selection = item;
+			this.kind=item.kind;
+		}
+		this.updateUI();
+		this._fireChange();
+	},
+	/** @private */
+	getSelectionWithValue : function(value) {
 		for (var i=0; i < this.items.length; i++) {
-			if (this.items[i].value == this.value) {
+			if (this.items[i].value==value) {
 				return this.items[i];
 			}
 		};
 		for (var i=0; i < this.subItems.length; i++) {
-			var item = this.subItems[i].getSelection();
-			if (item) return item;
+			var items = this.subItems[i].items;
+			for (var j=0; j < items.length; j++) {
+				if (items[j].value==value) {
+					return items[j];
+				}
+			};
 		};
+		return null;
 	},
-	setValue : function(value) {
-		this.value = value;
-		for (var i=0; i < this.items.length; i++) {
-			var item = this.items[i];
-			item.element.setClassName('selected',(item.value==value));
-		};
+	/** Set the value to null */
+	reset : function() {
+		this.setValue(null);
+	},
+	/** @private */
+	updateUI : function() {
+		this.items.each(function(item) {
+			item.element.setClassName('in2igui_selected',this.isSelection(item));
+		}.bind(this));
 		this.subItems.each(function(sub) {
 			sub.updateUI();
 		});
 	},
-	changeValue : function(value) {
-		this.setValue(value);
-		In2iGui.callDelegates(this,'selectorSelectionChanged'); // deprecated
-		In2iGui.callDelegates(this,'selectionChanged',this.value); // deprecated
-		In2iGui.callDelegates(this,'onSelectionChange',this.value);
-		In2iGui.firePropertyChange(this,'value',this.value);
+	/** @private */
+	changeSelection : function(item) {
+		this.selection = item;
+		this.updateUI();
+		this._fireChange();
 	},
+	/** @private */
+	_fireChange : function() {
+		this.fire('selectionChanged',this.selection);
+		this.fireProperty('value',this.selection ? this.selection.value : null);
+		this.fireProperty('kind',this.selection ? this.selection.kind : null);
+	},
+	/** @private */
 	registerItems : function(items) {
-		items.selection = this;
+		items.parent = this;
 		this.subItems.push(items);
 	},
+	/** @private */
 	registerItem : function(id,title,icon,badge,value,kind) {
 		var element = $(id);
-		element.in2iGuiValue = value;
-		this.items.push({id:id,title:title,icon:icon,badge:badge,element:element,value:value,kind:kind});
-		var self = this;
-		element.onclick = function() {
-			self.itemWasClicked(value);
-		}
-		element.ondblclick = function() {
-			self.itemWasDoubleClicked();
-			return false;
-		}
-		element.dragDropInfo = {kind:kind,value:value};
-		element.addClassName('droppable');
-		element.observe('mouseover',In2iGui.dropOverListener);
-		element.observe('mouseout',In2iGui.dropOutListener);
+		var item = {id:id,title:title,icon:icon,badge:badge,element:element,value:value,kind:kind};
+		this.items.push(item);
+		this.addItemBehavior(element,item);
 	},
-	
+	/** @private */
+	addItemBehavior : function(node,item) {
+		node.observe('click',function() {
+			this.itemWasClicked(item);
+		}.bind(this));
+		node.observe('dblclick',function() {
+			this.itemWasDoubleClicked(item);
+		}.bind(this));
+		node.dragDropInfo = item;
+	},
+	/** Untested!! */
 	setObjects : function(items) {
-		var self = this;
+		this.items = [];
 		items.each(function(item) {
-			self.items.push(item);
+			this.items.push(item);
 			var node = new Element('div',{'class':'in2igui_selection_item'});
 			item.element = node;
 			self.element.insert(node);
@@ -10964,100 +11154,152 @@ In2iGui.Selection.prototype = {
 			}
 			node.insert(inner);
 			node.observe('click',function() {
-				self.changeValue(item.value);
-			});
-			node.observe('dblclick',function() {
-				self.itemWasDoubleClicked();
-				return false;
-			});
-		});
+				this.itemWasClicked(item);
+			}.bind(this));
+			node.observe('dblclick',function(e) {
+				this.itemWasDoubleClicked(item);
+				e.stop();
+			}.bind(this));
+		}.bind(this));
+	},
+	/** @private */
+	isSelection : function(item) {
+		if (this.selection===null) {
+			return false;
+		}
+		var selected = item.value==this.selection.value;
+		if (this.selection.kind) {
+			selected = selected && item.kind==this.selection.kind;
+		}
+		return selected;
 	},
 	
-	// Events
-	itemWasClicked : function(value) {
-		this.changeValue(value);
+	/** @private */
+	itemWasClicked : function(item) {
+		this.changeSelection(item);
 	},
-	itemWasDoubleClicked : function() {
-		In2iGui.callDelegates(this,'selectorObjectWasOpened');
+	/** @private */
+	itemWasDoubleClicked : function(item) {
+		this.fire('selectionWasOpened',item);
 	}
 }
 
-/******************************** Items ****************************/
+/////////////////////////// Items ///////////////////////////
 
-In2iGui.Selection.Items = function(id,name,options) {
-	this.element = $(id);
-	this.name = name;
-	this.value = null;
-	this.selection = null;
+/**
+ * @constructor
+ * A group of items loaded from a source
+ * @param {Object} options The options : {element,name,source}
+ */
+In2iGui.Selection.Items = function(options) {
 	this.options = n2i.override({source:null},options);
+	this.element = $(options.element);
+	this.name = options.name;
+	this.parent = null;
 	this.items = [];
 	In2iGui.extend(this);
-	var self = this;
 	if (this.options.source) {
 		this.options.source.addDelegate(this);
 	}
 }
 
 In2iGui.Selection.Items.prototype = {
+	/**
+	 * Refresh the underlying source
+	 */
 	refresh : function() {
 		if (this.options.source) {
 			this.options.source.refresh();
 		}
 	},
-	objectsLoaded : function(objects) {
+	/** @private */
+	$objectsLoaded : function(objects) {
 		this.itemsLoaded(objects);
 	},
-	itemsLoaded : function(items) {
+	/** @private */
+	$itemsLoaded : function(items) {
 		this.items = [];
 		this.element.update();
-		var self = this;
-		for (var i=0, len=items.length; i < len; ++i) {
-			var item = items[i];
-			var node = new Element('div',{'class':'in2igui_selection_item'});
-			var inner = new Element('span');
+		this.buildLevel(this.element,items,0);
+		this.parent.updateUI();
+	},
+	/** @private */
+	buildLevel : function(parent,items,inc) {
+		if (!items) return;
+		var hierarchical = this.isHierarchy(items);
+		var open = inc==0;
+		var level = new Element('div',{'class':'in2igui_selection_level'}).setStyle({display:open ? 'block' : 'none'});
+		parent.insert(level);
+		items.each(function(item) {
+			var hasChildren = item.children && item.children.length>0;
+			var left = inc*16+6;
+			if (!hierarchical && inc>0 || hierarchical && !hasChildren) left+=13;
+			var node = new Element('div',{'class':'in2igui_selection_item'}).setStyle({paddingLeft:left+'px'})
+			if (item.badge) {
+				node.insert(new Element('strong',{'class':'in2igui_selection_badge'}).update(item.badge));
+			}
+			if (hierarchical && hasChildren) {
+				var self = this;
+				node.insert(new Element('span',{'class':'in2igui_disclosure'}).observe('click',function(e) {
+					e.stop();
+					self.toggle(this);
+				}));
+			}
+			var inner = new Element('span',{'class':'in2igui_selection_label'});
 			if (item.icon) {
-				inner.setStyle({'backgroundImage' : 'url('+In2iGui.getIconUrl(item.icon,1)+')'}).addClassName('in2igui_icon');
+				node.insert(new Element('span',{'class':'in2igui_icon_1'}).setStyle({'backgroundImage' : 'url('+In2iGui.getIconUrl(item.icon,1)+')'}));
 			}
-			node.in2iGuiIndex = i;
 			node.insert(inner.insert(item.title));
-			this.element.insert(node);
-			node.observe('click',function() {
-				self.itemWasClicked(self.items[this.in2iGuiIndex].value);
-			});
-			node.ondblclick = function() {
-				self.itemWasDoubleClicked();
-				return false;
-			}
+			node.observe('click',function(e) {
+				this.parent.itemWasClicked(item);
+			}.bind(this));
+			node.observe('dblclick',function(e) {
+				this.parent.itemWasDoubleClicked(item);
+			}.bind(this));
+			level.insert(node);
 			var info = {title:item.title,icon:item.icon,badge:item.badge,kind:item.kind,element:node,value:item.value};
 			node.dragDropInfo = info;
 			this.items.push(info);
+			this.buildLevel(level,item.children,inc+1);
+		}.bind(this));
+	},
+	/** @private */
+	toggle : function(node) {
+		if (node.hasClassName('in2igui_disclosure_open')) {
+			node.parentNode.next().hide();
+			node.removeClassName('in2igui_disclosure_open');
+		} else {
+			node.parentNode.next().show();
+			node.addClassName('in2igui_disclosure_open');
+		}
+	},
+	/** @private */
+	isHierarchy : function(items) {
+		for (var i=0; i < items.length; i++) {
+			if (items[i].children && items[i].children.length>0) {
+				return true;
+			}
 		};
-		this.updateUI();
+		return false;
 	},
-	itemWasClicked : function(value) {
-		this.selection.changeValue(value);
-	},
-	itemWasDoubleClicked : function(node) {
-		this.selection.itemWasDoubleClicked();
-	},
-	getSelection : function() {
+	/** Get the selection of this items group
+	 * @returns {Object} The selected item or null */
+	getValue : function() {
+		if (this.parent.selection==null) {
+			return null;
+		}
 		for (var i=0; i < this.items.length; i++) {
-			if (this.items[i].value == this.selection.value) {
+			if (this.items[i].value == this.parent.selection.value) {
 				return this.items[i];
 			}
 		};
 		return null;
 	},
+	/** @private */
 	updateUI : function() {
-		var newValue = null;
 		this.items.each(function(item) {
-			if (item.value==this.selection.value) newValue=item.value;
-			item.element.setClassName('selected',(item.value==this.selection.value));
+			item.element.setClassName('in2igui_selected',this.parent.isSelection(item));
 		}.bind(this));
-		if (this.value!=newValue) {
-			this.value=newValue;
-			In2iGui.firePropertyChange(this,'value',this.value);
-		}
 	}
 }
 /* EOF */
@@ -11982,7 +12224,7 @@ In2iGui.ImageViewer.prototype = {
 
 /* EOF */
 In2iGui.Picker = function(o) {
-	o = this.options = n2i.override({itemWidth:100,itemHeight:150,itemsVisible:3,valueProperty:'value'},o);
+	o = this.options = n2i.override({itemWidth:100,itemHeight:150,itemsVisible:null,shadow:true,valueProperty:'value'},o);
 	this.element = $(o.element);
 	this.name = o.name;
 	this.container = this.element.select('.in2igui_picker_container')[0];
@@ -12029,6 +12271,9 @@ In2iGui.Picker.prototype = {
 		this.value = value;
 		this.updateSelection();
 	},
+	getValue : function() {
+		return this.value;
+	},
 	reset : function() {
 		this.value = null;
 		this.updateSelection();
@@ -12037,8 +12282,12 @@ In2iGui.Picker.prototype = {
 		var self = this;
 		this.content.update();
 		this.container.scrollLeft=0;
-		this.container.setStyle({width:this.options.itemsVisible*(this.options.itemWidth+14)+'px'});
-		this.container.style.height=(this.options.itemHeight+10)+'px';
+		if (this.options.itemsVisible) {
+			var width = this.options.itemsVisible*(this.options.itemWidth+14);
+		} else {
+			var width = this.container.clientWidth;
+		}
+		this.container.setStyle({width:width+'px',height:(this.options.itemHeight+10)+'px'});
 		this.content.style.width=(this.objects.length*(this.options.itemWidth+14))+'px';
 		this.content.style.height=(this.options.itemHeight+10)+'px';
 		this.objects.each(function(object,i) {
@@ -12065,7 +12314,7 @@ In2iGui.Picker.prototype = {
 		if (this.value==value) return;
 		this.value = value;
 		this.updateSelection();
-		In2iGui.callDelegates(this,'selectionChanged',value);
+		this.fire('selectionChanged',value);
 	},
 	
 	// Dragging
@@ -12093,6 +12342,10 @@ In2iGui.Picker.prototype = {
 		window.document.stopObserving('mousedown',In2iGui.Picker.mouseup);
 		var size = (this.options.itemWidth+14);
 		n2i.ani(this.container,'scrollLeft',Math.round(this.container.scrollLeft/size)*size,500,{ease:n2i.ease.bounceOut});
+	},
+	$visibilityChanged : function() {
+		this.container.setStyle({display:'none'});
+		this.container.setStyle({width:(this.element.getWidth()-12)+'px',display:'block'});
 	}
 }
 
@@ -13708,18 +13961,22 @@ In2iGui.Columns.prototype = {
 
 /* EOF *//**
  * A dock
+ * @param {Object} The options
  * @constructor
  */
-In2iGui.Dock = function(element,name,options) {
-	this.options = n2i.override({modal:false},options);
-	this.element = $(element);
+In2iGui.Dock = function(options) {
+	this.options = options;
+	this.element = $(options.element);
 	this.iframe = this.element.select('iframe')[0];
-	this.name = name;
+	this.name = options.name;
 	In2iGui.extend(this);
-	In2iGui.get().registerOverflow(this.iframe,-58);
+	In2iGui.get().registerOverflow(this.iframe,-94);
 }
 
 In2iGui.Dock.prototype = {
+	/** Change the url of the iframe
+	 * @param {String} url The url to change the iframe to
+	 */
 	setUrl : function(url) {
 		n2i.getFrameDocument(this.iframe).location.href=url;
 	}
@@ -13731,13 +13988,17 @@ In2iGui.Dock.prototype = {
 	this.element = $(element);
 	this.body = this.element.select('.in2igui_box_body')[0];
 	In2iGui.extend(this);
-}
+};
 
 In2iGui.Box.create = function(name,options) {
 	options = n2i.override({},options);
 	var e = new Element('div',{'class':'in2igui_box'});
-	if (options.width) e.setStyle({width:options.width+'px'});
-	if (options.absolute) e.addClassName('in2igui_box_absolute');
+	if (options.width) {
+		e.setStyle({width:options.width+'px'});
+	}
+	if (options.absolute) {
+		e.addClassName('in2igui_box_absolute');
+	}
 	e.update('<div class="in2igui_box_top"><div><div></div></div></div>'+
 		'<div class="in2igui_box_middle"><div class="in2igui_box_middle">'+
 		(options.title ? '<div class="in2igui_box_header"><strong class="in2igui_box_title">'+options.title+'</strong></div>' : '')+
@@ -13745,7 +14006,7 @@ In2iGui.Box.create = function(name,options) {
 		'</div></div>'+
 		'<div class="in2igui_box_bottom"><div><div></div></div></div>');
 	return new In2iGui.Box(e,name,options);
-}
+};
 
 In2iGui.Box.prototype = {
 	addToDocument : function() {
@@ -13770,6 +14031,7 @@ In2iGui.Box.prototype = {
 		var top = (n2i.getInnerHeight()-e.getHeight())/2+n2i.getScrollTop();
 		e.setStyle({'marginLeft':(w/-2)+'px',top:top+'px'});
 		e.setStyle({display:'block',visibility:'visible'});
+		In2iGui.callVisible(this);
 	},
 	hide : function() {
 		In2iGui.hideCurtain(this);
@@ -13778,4 +14040,62 @@ In2iGui.Box.prototype = {
 	curtainWasClicked : function() {
 		In2iGui.callDelegates(this,'boxCurtainWasClicked');
 	}
+};/**
+ * @constructor
+ * A wizard with a number of steps
+ */
+In2iGui.Wizard = function(o) {
+	/** @private */
+	this.options = o || {};
+	/** @private */
+	this.element = $(o.element);
+	/** @private */
+	this.name = o.name;
+	/** @private */
+	this.container = this.element.select('.in2igui_wizard_steps')[0];
+	/** @private */
+	this.steps = this.element.select('.in2igui_wizard_step');
+	/** @private */
+	this.anchors = this.element.select('ul.in2igui_wizard a');
+	/** @private */
+	this.selected = 0;
+	In2iGui.extend(this);
+	this.addBehavior();
 }
+	
+In2iGui.Wizard.prototype = {
+	/** @private */
+	addBehavior : function() {
+		this.anchors.each(function(node,i) {
+			node.observe('mousedown',function(e) {e.stop();this.goToStep(i)}.bind(this));
+		}.bind(this));
+	},
+	/** Goes to the step with the index */
+	goToStep : function(index) {
+		var c = this.container;
+		c.setStyle({height:c.getHeight()+'px'})
+		this.anchors[this.selected].removeClassName('in2igui_selected');
+		this.steps[this.selected].hide();
+		this.anchors[index].addClassName('in2igui_selected');
+		this.steps[index].show();
+		this.selected=index;
+		n2i.ani(c,'height',this.steps[index].getHeight()+'px',500,{ease:n2i.ease.slowFastSlow,onComplete:function() {
+			c.setStyle({height:''});
+		}});
+		In2iGui.callVisible(this);
+	},
+	/** Goes to the next step */
+	next : function() {
+		if (this.selected<this.steps.length-1) {
+			this.goToStep(this.selected+1);
+		}
+	},
+	/** Goes to the previous step */
+	previous : function() {
+		if (this.selected>0) {
+			this.goToStep(this.selected-1);
+		}
+	}
+}
+
+/* EOF */

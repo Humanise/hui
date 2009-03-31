@@ -85,6 +85,8 @@
 <div class="in2igui_overflow" id="{generate-id()}">
 	<xsl:attribute name="style">
 		 <xsl:if test="@height">height: <xsl:value-of select="@height"/>px;</xsl:if>
+		 <xsl:if test="@max-height">max-height: <xsl:value-of select="@max-height"/>px;</xsl:if>
+		 <xsl:if test="@min-height">min-height: <xsl:value-of select="@min-height"/>px;</xsl:if>
 		 <xsl:if test="@width">width: <xsl:value-of select="@width"/>px;</xsl:if>
 	</xsl:attribute>
 	<xsl:apply-templates/>
@@ -150,21 +152,33 @@
 				</ul>
 			</th>
 			<td class="in2igui_wizard">
-				<xsl:apply-templates/>
+				<div class="in2igui_wizard_steps">
+				<xsl:for-each select="gui:step">
+					<div>
+						<xsl:attribute name="class">
+							<xsl:text>in2igui_wizard_step</xsl:text>
+							<xsl:if test="@frame='true'"><xsl:text> in2igui_wizard_step_frame</xsl:text></xsl:if>
+						</xsl:attribute>
+						<xsl:attribute name="style">
+						<xsl:if test="@padding">
+							<xsl:text>padding: </xsl:text><xsl:value-of select="@padding"/><xsl:text>px;</xsl:text>
+						</xsl:if>
+						<xsl:if test="position()!=1"><xsl:text>display: none;</xsl:text></xsl:if>
+						</xsl:attribute>
+						<xsl:apply-templates/>
+					</div>
+				</xsl:for-each>
+				</div>
 			</td>
 			</tr>
 		</table>
 	</div>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Wizard({element:'<xsl:value-of select="generate-id()"/>'});
-		<xsl:call-template name="gui:createobject"/>
+		(function() {
+			var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Wizard({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>'});
+			<xsl:call-template name="gui:createobject"/>
+		})();
 	</script>
 </xsl:template>
 
-<xsl:template match="gui:wizard/gui:step">
-	<div class="in2igui_wizard_step">
-		<xsl:if test="position()!=1"><xsl:attribute name="style">display: none;</xsl:attribute></xsl:if>
-		<xsl:apply-templates/>
-	</div>
-</xsl:template>
 </xsl:stylesheet>

@@ -6,6 +6,11 @@ body, html
 	overflow-x: auto;
 }
 
+div.in2igui_body
+{
+	zoom: 1;
+}
+
 td.view_toolbar
 {
 	height: 58px;
@@ -24,6 +29,21 @@ table.in2igui_calendar_weekview div.in2igui_calendar_event
 div.in2igui_toolbar_icon div.in2igui_icon
 {
 	margin: 0px;
+}
+
+div.in2igui_toolbar_icon_disabled
+{
+	/*filter: alpha(opacity = 50);*/
+}
+
+div.in2igui_toolbar_icon_disabled div.in2igui_icon
+{
+	background-position: 0 -64px;
+}
+
+div.in2igui_toolbar_icon_disabled span
+{
+	color: #999;
 }
 
 div.in2igui_window_content
@@ -47,6 +67,11 @@ textarea.in2igui_formula_text
 }
 
 span.in2igui_field_content
+{
+	zoom: 1;
+}
+
+div.in2igui_list
 {
 	zoom: 1;
 }
