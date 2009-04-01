@@ -33,7 +33,7 @@ var controller = {
 			listSource.refresh();
 		});
 	},
-	onSelectionChange$selection : function() {
+	selectionChanged$selection : function() {
 		list.resetState();
 	}
 }
