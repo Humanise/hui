@@ -246,6 +246,13 @@ In2iGui.List.prototype.parseCell = function(node,cell) {
 			n2i.dom.addText(cell,child.nodeValue);
 		} else if (n2i.dom.isElement(child,'break')) {
 			cell.insert(new Element('br'));
+		} else if (n2i.dom.isElement(child,'line')) {
+			n2i.log(child);
+			var line = new Element('p',{'class':'in2igui_list_line'}).insert(n2i.dom.getNodeText(child));
+			if (child.getAttribute('dimmed')=='true') {
+				line.addClassName('in2igui_list_dimmed')
+			}
+			cell.insert(line);
 		} else if (n2i.dom.isElement(child,'object')) {
 			var obj = new Element('div',{'class':'object'});
 			if (child.getAttribute('icon')) {

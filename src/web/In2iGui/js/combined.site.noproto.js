@@ -125,6 +125,16 @@ n2i.dom = {
 	},
 	addText : function(node,text) {
 		node.appendChild(document.createTextNode(text));
+	},
+	getNodeText : function(node) {
+		var txt = '';
+		var c = node.childNodes;
+		for (var i=0; i < c.length; i++) {
+			if (c[i].nodeType==n2i.TEXT_NODE && c[i].nodeValue!=null) {
+				txt+=c[i].nodeValue;
+			}
+		};
+		return txt;
 	}
 }
 
@@ -1983,6 +1993,8 @@ In2iGui.Source.prototype = {
 			this.fire('itemsLoaded',this.data);
 		} else if (doc.documentElement.tagName=='list') {
 			this.fire('listLoaded',doc);
+		} else if (doc.documentElement.tagName=='articles') {
+			this.fire('articlesLoaded',doc);
 		}
 	},
 	parseDWR : function(data) {

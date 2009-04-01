@@ -83,6 +83,14 @@ span.in2igui_icon_1
 	vertical-align: middle;
 }
 
+span.in2igui_icon_2
+{
+	display: inline-block;
+	width: 32px;
+	height: 32px;
+	vertical-align: middle;
+}
+
 /************************* disclosure **********************/
 
 span.in2igui_disclosure

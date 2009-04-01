@@ -904,6 +904,8 @@ In2iGui.Source.prototype = {
 			this.fire('itemsLoaded',this.data);
 		} else if (doc.documentElement.tagName=='list') {
 			this.fire('listLoaded',doc);
+		} else if (doc.documentElement.tagName=='articles') {
+			this.fire('articlesLoaded',doc);
 		}
 	},
 	parseDWR : function(data) {

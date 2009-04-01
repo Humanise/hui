@@ -28,6 +28,7 @@ div.in2igui_list table thead th
 	padding: 0px 5px;
 	font-weight: normal;
 }
+
 div.in2igui_list table thead th span
 {
 	display: block;
@@ -169,4 +170,15 @@ div.in2igui_list .navigation .selection a.selected
 {
 	background: #3875D7;
 	color: #fff;
+}
+
+p.in2igui_list_line
+{
+	margin: 0;
+}
+
+p.in2igui_list_dimmed
+{
+	font-size: 9px;
+	color: #999;
 }

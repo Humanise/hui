@@ -4345,6 +4345,16 @@ n2i.dom = {
 	},
 	addText : function(node,text) {
 		node.appendChild(document.createTextNode(text));
+	},
+	getNodeText : function(node) {
+		var txt = '';
+		var c = node.childNodes;
+		for (var i=0; i < c.length; i++) {
+			if (c[i].nodeType==n2i.TEXT_NODE && c[i].nodeValue!=null) {
+				txt+=c[i].nodeValue;
+			}
+		};
+		return txt;
 	}
 }
 
@@ -8898,6 +8908,8 @@ In2iGui.Source.prototype = {
 			this.fire('itemsLoaded',this.data);
 		} else if (doc.documentElement.tagName=='list') {
 			this.fire('listLoaded',doc);
+		} else if (doc.documentElement.tagName=='articles') {
+			this.fire('articlesLoaded',doc);
 		}
 	},
 	parseDWR : function(data) {
@@ -10347,6 +10359,13 @@ In2iGui.List.prototype.parseCell = function(node,cell) {
 			n2i.dom.addText(cell,child.nodeValue);
 		} else if (n2i.dom.isElement(child,'break')) {
 			cell.insert(new Element('br'));
+		} else if (n2i.dom.isElement(child,'line')) {
+			n2i.log(child);
+			var line = new Element('p',{'class':'in2igui_list_line'}).insert(n2i.dom.getNodeText(child));
+			if (child.getAttribute('dimmed')=='true') {
+				line.addClassName('in2igui_list_dimmed')
+			}
+			cell.insert(line);
 		} else if (n2i.dom.isElement(child,'object')) {
 			var obj = new Element('div',{'class':'object'});
 			if (child.getAttribute('icon')) {
@@ -14095,6 +14114,37 @@ In2iGui.Wizard.prototype = {
 		if (this.selected>0) {
 			this.goToStep(this.selected-1);
 		}
+	}
+}
+
+/* EOF */In2iGui.Articles = function(o) {
+	this.options = o;
+	this.name = o.name;
+	this.element = $(o.element);
+	if (o.source) {
+		o.source.addDelegate(this);
+	}
+}
+
+In2iGui.Articles.prototype = {
+	$articlesLoaded : function(doc) {
+		var a = doc.getElementsByTagName('article');
+		for (var i=0; i < a.length; i++) {
+			var e = new Element('div',{'class':'in2igui_article'});
+			var c = a[i].childNodes;
+			for (var j=0; j < c.length; j++) {
+				if (n2i.dom.isElement(c[j],'title')) {
+					e.insert(new Element('h2').update(n2i.dom.getNodeText(c[j])));
+				} else if (n2i.dom.isElement(c[j],'paragraph')) {
+					var p = new Element('p').update(n2i.dom.getNodeText(c[j]));
+					if (c[j].getAttribute('dimmed')==='true') {
+						p.addClassName('in2igui_dimmed');
+					}
+					e.insert(p);
+				}
+			};
+			this.element.insert(e);
+		};
 	}
 }
 

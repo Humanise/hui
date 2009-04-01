@@ -78,6 +78,7 @@
 		<script src="{$context}/In2iGui/js/Dock.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/Box.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/Wizard.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/In2iGui/js/Articles.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/lib/wysihat.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 	</xsl:when>
 	<xsl:otherwise>
@@ -175,7 +176,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 	</xsl:if>
 	<tbody>
 		<tr><td>
-			<iframe src="{@url}" frameborder="0"/>
+			<iframe src="{@url}" frameborder="0" name="{@frame-name}"/>
 		</td></tr>
 	</tbody>
 </table>
@@ -618,9 +619,24 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 			<xsl:value-of select="generate-id()"/>_obj.setObjects(items);
 		})();
 	</script>
-	</xsl:template>
+</xsl:template>
 
-	<xsl:template match="html:html">
-		<xsl:copy-of select="child::*|child::text()"/>
-	</xsl:template>
+<xsl:template match="html:html">
+	<xsl:copy-of select="child::*|child::text()"/>
+</xsl:template>
+
+
+<!-- Gallery -->
+
+<xsl:template match="gui:articles">
+	<div class="in2igui_articles" id="{generate-id()}"><xsl:comment/></div>
+	<script type="text/javascript">
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Articles({
+			element:'<xsl:value-of select="generate-id()"/>',
+			name:'<xsl:value-of select="@name"/>'
+			<xsl:if test="@source">,source:<xsl:value-of select="@source"/></xsl:if>
+		});
+		<xsl:call-template name="gui:createobject"/>
+	</script>
+</xsl:template>
 </xsl:stylesheet>

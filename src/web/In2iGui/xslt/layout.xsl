@@ -20,13 +20,39 @@
 	</div>
 </xsl:template>
 
-<xsl:template match="gui:horizontal">
+<xsl:template match="gui:columns">
+	<table cellspacing="0" cellpadding="0" class="in2igui_columns">
+		<tr>
+			<xsl:apply-templates select="gui:column"/>
+		</tr>
+	</table>
+</xsl:template>
+
+<xsl:template match="gui:columns/gui:column">
+	<td class="in2igui_columns_column">
+		<xsl:if test="(position()>1 and ../@space) or @width">
+			<xsl:attribute name="style">
+				<xsl:if test="../@space">padding-left: <xsl:value-of select="../@space"/>px;</xsl:if>
+				<xsl:if test="@width">width: <xsl:value-of select="@width"/>;</xsl:if>
+			</xsl:attribute>
+		</xsl:if>
+		<xsl:apply-templates/>
+	</td>
+</xsl:template>
+
+<xsl:template match="gui:header">
+	<h2 class="in2igui_header">
+		<xsl:if test="@icon"><span class="in2igui_icon_2" style="background-image: url('{$context}/In2iGui/icons/{@icon}2.png')"><xsl:comment/></span></xsl:if>
+		<xsl:apply-templates/></h2>
+</xsl:template>
+
+<xsl:template match="gui:horizontal"><!-- Deprecated -->
 	<div class="horizontal">
 		<xsl:apply-templates select="gui:content"/>
 	</div>
 </xsl:template>
 
-<xsl:template match="gui:horizontal/gui:content">
+<xsl:template match="gui:horizontal/gui:content"><!-- Deprecated -->
 	<div style="width: {100 div count(../gui:content)}%;">
 		<xsl:attribute name="class">
 			horizontal_content
@@ -43,7 +69,7 @@
 	</div>
 </xsl:template>
 
-<xsl:template match="gui:horizontal[@flexible='true']">
+<xsl:template match="gui:horizontal[@flexible='true']"><!-- Deprecated -->
 	<table cellspacing="0" cellpadding="0" class="in2igui_horizontal_flexible">
 		<tr>
 			<xsl:apply-templates select="gui:content"/>
@@ -51,7 +77,7 @@
 	</table>
 </xsl:template>
 
-<xsl:template match="gui:horizontal[@flexible='true']/gui:content">
+<xsl:template match="gui:horizontal[@flexible='true']/gui:content"><!-- Deprecated -->
 	<td class="in2igui_horizontal_flexible_content">
 		<xsl:if test="(position()>1 and ../@space) or @width">
 			<xsl:attribute name="style">

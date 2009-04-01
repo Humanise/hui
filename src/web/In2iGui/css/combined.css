@@ -83,6 +83,14 @@ span.in2igui_icon_1
 	vertical-align: middle;
 }
 
+span.in2igui_icon_2
+{
+	display: inline-block;
+	width: 32px;
+	height: 32px;
+	vertical-align: middle;
+}
+
 /************************* disclosure **********************/
 
 span.in2igui_disclosure
@@ -1300,9 +1308,30 @@ div.in2igui_window_dark input.in2igui_tokens_token
 
 /******************** Columns *********************/
 
+table.in2igui_columns
+{
+	border-spacing: 0;
+	width: 100%;
+	table-layout: fixed; 
+}
+
 td.in2igui_columns_column
 {
 	vertical-align: top;
+}
+
+/******************** Header *********************/
+
+h2.in2igui_header
+{
+	font-weight: normal;
+	margin: 0;
+	color: #666;
+}
+
+h2.in2igui_header span.in2igui_icon_2
+{
+	margin-right: 3px;
 }div.in2igui_alert
 {
 	width: 500px;
@@ -1943,6 +1972,7 @@ div.in2igui_list table thead th
 	padding: 0px 5px;
 	font-weight: normal;
 }
+
 div.in2igui_list table thead th span
 {
 	display: block;
@@ -2084,6 +2114,17 @@ div.in2igui_list .navigation .selection a.selected
 {
 	background: #3875D7;
 	color: #fff;
+}
+
+p.in2igui_list_line
+{
+	margin: 0;
+}
+
+p.in2igui_list_dimmed
+{
+	font-size: 9px;
+	color: #999;
 }div.in2igui_selection
 {
 	font-family: 'Lucida Grande','Verdana',sans-serif;
@@ -3484,4 +3525,26 @@ div.in2igui_box_rounded div.in2igui_box_body
 	background: #fff;
 	padding: 1px 0;
 	overflow: hidden;
+}div.in2igui_articles div.in2igui_article
+{
+	padding: 5px 0;
+}
+
+div.in2igui_article h2
+{
+	margin: 0;
+	font-weight: normal;
+	font-size: 14px;
+}
+
+div.in2igui_article p
+{
+	font-size: 11px;
+	margin: 0;
+	color: #333;
+}
+
+div.in2igui_article p.in2igui_dimmed
+{
+	color: #999;
 }
