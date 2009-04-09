@@ -8063,11 +8063,6 @@ In2iGui.prototype = {
 		}
 		this.domLoaded = true;
 		In2iGui.domReady = true;
-		if (window.in2iguiDeferred) {
-			window.in2iguiDeferred.each(function(func) {
-				func();
-			}.bind(window));
-		}
 		this.resize();
 		In2iGui.callSuperDelegates(this,'interfaceIsReady');
 	},
@@ -9133,9 +9128,9 @@ Element.addMethods({
 });
 
 /* EOF */
-In2iGui.Window = function(element,name) {
-	this.element = $(element);
-	this.name = name;
+In2iGui.Window = function(options) {
+	this.element = $(options.element);
+	this.name = options.name;
 	this.close = this.element.select('.close')[0];
 	this.titlebar = this.element.select('.titlebar')[0];
 	this.title = this.titlebar.select('.title')[0];
@@ -9145,9 +9140,9 @@ In2iGui.Window = function(element,name) {
 	this.addBehavior();
 }
 
-In2iGui.Window.create = function(name,options) {
+In2iGui.Window.create = function(options) {
 	options = n2i.override({title:'Window',close:true},options);
-	var element = new Element('div',{'class':'in2igui_window'+(options.variant ? ' in2igui_window_'+options.variant : '')});
+	var element = options.element = new Element('div',{'class':'in2igui_window'+(options.variant ? ' in2igui_window_'+options.variant : '')});
 	element.update((options.close ? '<div class="close"></div>' : '')+
 		'<div class="titlebar"><div class="titlebar"><div class="titlebar"><span>'+options.title+'</span></div></div></div>'+
 		'<div class="in2igui_window_content"><div class="in2igui_window_content"><div class="in2igui_window_body" style="'+
@@ -9158,7 +9153,7 @@ In2iGui.Window.create = function(name,options) {
 		'<div class="in2igui_window_bottom"><div class="in2igui_window_bottom"><div class="in2igui_window_bottom"></div></div></div>'+
 		'</div>');
 	document.body.appendChild(element);
-	return new In2iGui.Window(element,name);
+	return new In2iGui.Window(options);
 }
 
 In2iGui.Window.prototype = {
@@ -9299,7 +9294,7 @@ In2iGui.Formula.prototype = {
 		var data = {};
 		var d = In2iGui.get().getDescendants(this);
 		for (var i=0; i < d.length; i++) {
-			if (d[i].options&& d[i].options.key && d[i].getValue) {
+			if (d[i].options && d[i].options.key && d[i].getValue) {
 				data[d[i].options.key] = d[i].getValue();
 			} else if (d[i].name && d[i].getValue) {
 				data[d[i].name] = d[i].getValue();
@@ -9451,6 +9446,9 @@ In2iGui.Formula.Text.create = function(options) {
 			{'class':'in2igui_formula_text'}
 		);		
 	}
+	if (options.value!==undefined) {
+		input.value=options.value;
+	}
 	options.element = In2iGui.wrapInField(input);
 	return new In2iGui.Formula.Text(options);
 }
@@ -9589,6 +9587,85 @@ In2iGui.Formula.DateTime.prototype = {
 	}
 }
 
+/////////////////////////// Number /////////////////////////
+
+/**
+ * A date and time field
+ * @constructor
+ */
+In2iGui.Formula.Number = function(o) {
+	this.options = n2i.override({min:0,max:1000,value:null,decimals:0,allowNull:false},o);	
+	this.name = o.name;
+	var e = this.element = $(o.element);
+	this.input = e.select('input')[0];
+	this.up = e.select('.in2igui_number_up')[0];
+	this.down = e.select('.in2igui_number_down')[0];
+	this.value = this.options.value;
+	In2iGui.extend(this);
+	this.addBehavior();
+}
+
+In2iGui.Formula.Number.prototype = {
+	addBehavior : function() {
+		var e = this.element;
+		this.input.observe('focus',function() {e.addClassName('in2igui_number_focused')});
+		this.input.observe('blur',this.blurEvent.bind(this));
+		this.input.observe('keyup',this.keyEvent.bind(this));
+		//this.input.observe('keypress',this.keyEvent.bind(this));
+		this.up.observe('mousedown',this.upEvent.bind(this));
+		this.down.observe('mousedown',this.downEvent.bind(this));
+	},
+	blurEvent : function() {
+		this.element.removeClassName('in2igui_number_focused');
+		this.input.value = this.value;
+	},
+	keyEvent : function(e) {
+		if (e.keyCode==Event.KEY_UP) {
+			e.stop();
+			this.upEvent();
+		} else if (e.keyCode==Event.KEY_DOWN) {
+			this.downEvent();
+		} else {
+			/*var chr = String.fromCharCode(e.keyCode);
+			//n2i.log(chr);
+			if (!/\d/.test(chr)) {
+				//n2i.log(e);
+				//n2i.log(e.keyIdentifier!=="Meta");
+				//if (e.keyIdentifier!=="Meta") {
+					e.stop();
+				//}
+				return;
+			}*/
+			var parsed = parseInt(this.input.value,10);
+			n2i.log(this.input.value);
+			n2i.log(parsed);
+			if (!isNaN(parsed)) {
+				this.setLocalValue(parsed);
+			}
+		}
+	},
+	downEvent : function() {
+		if (this.value===null) {
+			this.setValue(this.options.min);
+		} else {
+			this.setValue(this.value-1);
+		}
+	},
+	upEvent : function() {
+		this.setValue(this.value+1);
+	},
+	getValue : function() {
+		return this.value;
+	},
+	setValue : function(value) {
+		this.setLocalValue(value);
+		this.input.value = this.value;
+	},
+	setLocalValue : function(value) {
+		this.value = Math.min(Math.max(value,this.options.min),this.options.max);
+	}
+}
+
 ////////////////////////// DropDown ///////////////////////////
 
 /**
@@ -9718,9 +9795,13 @@ In2iGui.Formula.DropDown.prototype = {
 	},
 	itemClicked : function(item,index) {
 		this.index = index;
+		var changed = this.value!=this.items[index].value;
 		this.value = this.items[index].value;
 		this.updateUI();
 		this.hideSelector();
+		if (changed) {
+			this.fire('valueChanged',this.value);
+		}
 	}
 }
 
@@ -10108,6 +10189,74 @@ In2iGui.Formula.Tokens.prototype = {
 		this.element.insert(input);
 		var self = this;
 		input.observe('keyup',function() {self.inputChanged(input,i)});
+	}
+}
+
+/////////////////////////// Style length /////////////////////////
+
+/**
+ * A date and time field
+ * @constructor
+ */
+In2iGui.Formula.StyleLength = function(o) {
+	this.options = n2i.override({value:null,min:0,max:1000,units:['px','pt','em','%'],allowNull:false},o);	
+	this.name = o.name;
+	var e = this.element = $(o.element);
+	this.input = e.select('input')[0];
+	this.up = e.select('.in2igui_style_length_up')[0];
+	this.down = e.select('.in2igui_style_length_down')[0];
+	this.value = this.options.value;
+	In2iGui.extend(this);
+	this.addBehavior();
+}
+
+In2iGui.Formula.StyleLength.prototype = {
+	addBehavior : function() {
+		var e = this.element;
+		this.input.observe('focus',function() {e.addClassName('in2igui_number_focused')});
+		this.input.observe('blur',this.blurEvent.bind(this));
+		this.input.observe('keyup',this.keyEvent.bind(this));
+		this.up.observe('mousedown',this.upEvent.bind(this));
+		this.down.observe('mousedown',this.downEvent.bind(this));
+	},
+	blurEvent : function() {
+		this.element.removeClassName('in2igui_number_focused');
+		this.input.value = this.value;
+	},
+	keyEvent : function(e) {
+		if (e.keyCode==Event.KEY_UP) {
+			e.stop();
+			this.upEvent();
+		} else if (e.keyCode==Event.KEY_DOWN) {
+			this.downEvent();
+		} else {
+			var parsed = parseInt(this.input.value,10);
+			n2i.log(this.input.value);
+			n2i.log(parsed);
+			if (!isNaN(parsed)) {
+				this.setLocalValue(parsed);
+			}
+		}
+	},
+	downEvent : function() {
+		if (this.value===null) {
+			this.setValue(this.options.min);
+		} else {
+			this.setValue(this.value-1);
+		}
+	},
+	upEvent : function() {
+		this.setValue(this.value+1);
+	},
+	getValue : function() {
+		return this.value;
+	},
+	setValue : function(value) {
+		this.setLocalValue(value);
+		this.input.value = this.value;
+	},
+	setLocalValue : function(value) {
+		this.value = Math.min(Math.max(value,this.options.min),this.options.max);
 	}
 }
 
@@ -11166,7 +11315,7 @@ In2iGui.Selection.prototype = {
 			this.items.push(item);
 			var node = new Element('div',{'class':'in2igui_selection_item'});
 			item.element = node;
-			self.element.insert(node);
+			this.element.insert(node);
 			var inner = new Element('span').update(item.title);
 			if (item.icon) {
 				inner.setStyle({'backgroundImage' : 'url('+In2iGui.getIconUrl(item.icon,1)+')'}).addClassName('in2igui_icon');
@@ -11916,7 +12065,7 @@ In2iGui.RichText.prototype = {
 	},
 	showColorPicker : function() {
 		if (!this.colorPicker) {
-			var panel = In2iGui.Window.create(null,{variant:'dark'});
+			var panel = In2iGui.Window.create({variant:'dark'});
 			var picker = In2iGui.ColorPicker.create();
 			picker.addDelegate(this);
 			panel.add(picker);
@@ -12539,7 +12688,7 @@ In2iGui.Editor.prototype = {
 	},
 	showColumnWindow : function() {
 		if (!this.columnEditor) {
-			var w = this.columnEditor = In2iGui.Window.create('columnEditor',{title:'Rediger kolonne'});
+			var w = this.columnEditor = In2iGui.Window.create({name:'columnEditor',title:'Rediger kolonne'});
 			var f = this.columnEditorForm = In2iGui.Formula.create();
 			var g = f.createGroup();
 			var width = In2iGui.Formula.Text.create({label:'Bredde',key:'width'});
@@ -12673,7 +12822,7 @@ In2iGui.Editor.prototype = {
 	},
 	showPartEditor : function() {
 		if (!this.partEditor) {
-			var w = this.partEditor = In2iGui.Window.create(null,{padding:5,title:'Afstande',close:false,variant:'dark'});
+			var w = this.partEditor = In2iGui.Window.create({padding:5,title:'Afstande',close:false,variant:'dark',width: 200});
 			var f = this.partEditorForm = In2iGui.Formula.create();
 			f.buildGroup({above:false},[
 				{type:'Text',options:{label:'Top',key:'top'}},
@@ -14128,6 +14277,7 @@ In2iGui.Wizard.prototype = {
 
 In2iGui.Articles.prototype = {
 	$articlesLoaded : function(doc) {
+		this.element.update();
 		var a = doc.getElementsByTagName('article');
 		for (var i=0; i < a.length; i++) {
 			var e = new Element('div',{'class':'in2igui_article'});
@@ -14145,6 +14295,12 @@ In2iGui.Articles.prototype = {
 			};
 			this.element.insert(e);
 		};
+	},
+	$sourceIsBusy : function() {
+		this.element.update('<div class="in2igui_articles_loading">Loading...</div>');
+	},
+	$sourceIsNotBusy : function() {
+		this.element.removeClassName('in2igui_list_busy');
 	}
 }
 

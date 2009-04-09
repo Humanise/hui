@@ -192,7 +192,7 @@ In2iGui.RichText.prototype = {
 	},
 	showColorPicker : function() {
 		if (!this.colorPicker) {
-			var panel = In2iGui.Window.create(null,{variant:'dark'});
+			var panel = In2iGui.Window.create({variant:'dark'});
 			var picker = In2iGui.ColorPicker.create();
 			picker.addDelegate(this);
 			panel.add(picker);

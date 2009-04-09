@@ -20,15 +20,15 @@
 <body>
 	<button onclick="test1()">Test 1</button>
 <script type="text/javascript" charset="utf-8">
-		var normal = In2iGui.Window.create(null);
+		var normal = In2iGui.Window.create();
 		normal.add(new Element('div',{style:'width: 200px; height: 200px;'}));
 		normal.show();
 		
-		var light = In2iGui.Window.create(null,{variant:'light'});
+		var light = In2iGui.Window.create({variant:'light'});
 		light.add(new Element('div',{style:'width: 200px; height: 200px;'}));
 		light.show();
 		
-		var dark = In2iGui.Window.create(null,{variant:'dark'});
+		var dark = In2iGui.Window.create({variant:'dark'});
 		dark.add(new Element('div',{style:'width: 200px; height: 200px;'}));
 		dark.show();
 </script>

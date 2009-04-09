@@ -140,6 +140,74 @@
 	</script>
 </xsl:template>
 
+<!-- Number -->
+
+<xsl:template match="gui:group/gui:number">
+	<tr>
+		<th><label><xsl:value-of select="@label"/></label></th>
+		<td><div class="in2igui_formula_item"><xsl:call-template name="gui:number"/></div></td>
+	</tr>
+</xsl:template>
+
+<xsl:template match="gui:group[@labels='above']/gui:number">
+	<tr><td>
+		<label><xsl:value-of select="@label"/></label>
+		<div class="in2igui_formula_item"><xsl:call-template name="gui:number"/></div>
+	</td></tr>
+</xsl:template>
+
+<xsl:template name="gui:number">
+	<span class="in2igui_number" id="{generate-id()}">
+		<span><span><input type="text"/><a class="in2igui_number_up"><xsl:comment/></a><a class="in2igui_number_down"><xsl:comment/></a></span></span>
+	</span>
+	<script type="text/javascript">
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.Number({
+			element:'<xsl:value-of select="generate-id()"/>',
+			name:'<xsl:value-of select="@name"/>',
+			key:'<xsl:value-of select="@key"/>'
+			<xsl:if test="@name">,name:'<xsl:value-of select="@name"/>'</xsl:if>
+			<xsl:if test="@key">,key:'<xsl:value-of select="@key"/>'</xsl:if>
+			<xsl:if test="@min">,min:<xsl:value-of select="@min"/></xsl:if>
+			<xsl:if test="@max">,max:<xsl:value-of select="@max"/></xsl:if>
+			<xsl:if test="@decimals">,decimals:<xsl:value-of select="@decimals"/></xsl:if>
+		});
+		<xsl:call-template name="gui:createobject"/>
+	</script>
+</xsl:template>
+
+<!-- Style length -->
+
+<xsl:template match="gui:group/gui:style-length">
+	<tr>
+		<th><label><xsl:value-of select="@label"/></label></th>
+		<td><div class="in2igui_formula_item"><xsl:call-template name="gui:style-length"/></div></td>
+	</tr>
+</xsl:template>
+
+<xsl:template match="gui:group[@labels='above']/gui:style-length">
+	<tr><td>
+		<label><xsl:value-of select="@label"/></label>
+		<div class="in2igui_formula_item"><xsl:call-template name="gui:style-length"/></div>
+	</td></tr>
+</xsl:template>
+
+<xsl:template name="gui:style-length">
+	<span class="in2igui_style_length" id="{generate-id()}">
+		<span><span><input type="text"/><a class="in2igui_style_length_up"><xsl:comment/></a><a class="in2igui_style_length_down"><xsl:comment/></a></span></span>
+	</span>
+	<script type="text/javascript">
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.StyleLength({
+			element:'<xsl:value-of select="generate-id()"/>',
+			name:'<xsl:value-of select="@name"/>',
+			key:'<xsl:value-of select="@key"/>'
+			<xsl:if test="@value">,value:'<xsl:value-of select="@value"/>'</xsl:if>
+			<xsl:if test="@name">,name:'<xsl:value-of select="@name"/>'</xsl:if>
+			<xsl:if test="@key">,key:'<xsl:value-of select="@key"/>'</xsl:if>
+		});
+		<xsl:call-template name="gui:createobject"/>
+	</script>
+</xsl:template>
+
 <!-- Select -->
 
 <xsl:template match="gui:group/gui:select">
@@ -432,10 +500,10 @@
 		<xsl:comment/>
 	</div>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.Tokens(
-			'<xsl:value-of select="generate-id()"/>',
-			'<xsl:value-of select="@name"/>',
-			{'key':'<xsl:value-of select="@key"/>'}
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.Tokens({
+			element:'<xsl:value-of select="generate-id()"/>',
+			name:'<xsl:value-of select="@name"/>',
+			'key':'<xsl:value-of select="@key"/>'}
 			);
 		<xsl:call-template name="gui:createobject"/>
 	</script>

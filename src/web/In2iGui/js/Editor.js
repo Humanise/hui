@@ -169,7 +169,7 @@ In2iGui.Editor.prototype = {
 	},
 	showColumnWindow : function() {
 		if (!this.columnEditor) {
-			var w = this.columnEditor = In2iGui.Window.create('columnEditor',{title:'Rediger kolonne'});
+			var w = this.columnEditor = In2iGui.Window.create({name:'columnEditor',title:'Rediger kolonne'});
 			var f = this.columnEditorForm = In2iGui.Formula.create();
 			var g = f.createGroup();
 			var width = In2iGui.Formula.Text.create({label:'Bredde',key:'width'});
@@ -303,7 +303,7 @@ In2iGui.Editor.prototype = {
 	},
 	showPartEditor : function() {
 		if (!this.partEditor) {
-			var w = this.partEditor = In2iGui.Window.create(null,{padding:5,title:'Afstande',close:false,variant:'dark'});
+			var w = this.partEditor = In2iGui.Window.create({padding:5,title:'Afstande',close:false,variant:'dark',width: 200});
 			var f = this.partEditorForm = In2iGui.Formula.create();
 			f.buildGroup({above:false},[
 				{type:'Text',options:{label:'Top',key:'top'}},

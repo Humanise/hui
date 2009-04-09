@@ -4,7 +4,7 @@ var controller = {
 		alert(Object.toJSON(v));
 	},
 	click$build : function() {
-		var win = In2iGui.Window.create(null,{width:300,padding:10});
+		var win = In2iGui.Window.create({width:300,padding:10});
 		var form = In2iGui.Formula.create();
 		win.add(form);
 		var group = form.createGroup();

@@ -59,11 +59,6 @@ In2iGui.prototype = {
 		}
 		this.domLoaded = true;
 		In2iGui.domReady = true;
-		if (window.in2iguiDeferred) {
-			window.in2iguiDeferred.each(function(func) {
-				func();
-			}.bind(window));
-		}
 		this.resize();
 		In2iGui.callSuperDelegates(this,'interfaceIsReady');
 	},

@@ -32,7 +32,7 @@ In2iGui.Formula.prototype = {
 		var data = {};
 		var d = In2iGui.get().getDescendants(this);
 		for (var i=0; i < d.length; i++) {
-			if (d[i].options&& d[i].options.key && d[i].getValue) {
+			if (d[i].options && d[i].options.key && d[i].getValue) {
 				data[d[i].options.key] = d[i].getValue();
 			} else if (d[i].name && d[i].getValue) {
 				data[d[i].name] = d[i].getValue();
@@ -184,6 +184,9 @@ In2iGui.Formula.Text.create = function(options) {
 			{'class':'in2igui_formula_text'}
 		);		
 	}
+	if (options.value!==undefined) {
+		input.value=options.value;
+	}
 	options.element = In2iGui.wrapInField(input);
 	return new In2iGui.Formula.Text(options);
 }
@@ -322,6 +325,85 @@ In2iGui.Formula.DateTime.prototype = {
 	}
 }
 
+/////////////////////////// Number /////////////////////////
+
+/**
+ * A date and time field
+ * @constructor
+ */
+In2iGui.Formula.Number = function(o) {
+	this.options = n2i.override({min:0,max:1000,value:null,decimals:0,allowNull:false},o);	
+	this.name = o.name;
+	var e = this.element = $(o.element);
+	this.input = e.select('input')[0];
+	this.up = e.select('.in2igui_number_up')[0];
+	this.down = e.select('.in2igui_number_down')[0];
+	this.value = this.options.value;
+	In2iGui.extend(this);
+	this.addBehavior();
+}
+
+In2iGui.Formula.Number.prototype = {
+	addBehavior : function() {
+		var e = this.element;
+		this.input.observe('focus',function() {e.addClassName('in2igui_number_focused')});
+		this.input.observe('blur',this.blurEvent.bind(this));
+		this.input.observe('keyup',this.keyEvent.bind(this));
+		//this.input.observe('keypress',this.keyEvent.bind(this));
+		this.up.observe('mousedown',this.upEvent.bind(this));
+		this.down.observe('mousedown',this.downEvent.bind(this));
+	},
+	blurEvent : function() {
+		this.element.removeClassName('in2igui_number_focused');
+		this.input.value = this.value;
+	},
+	keyEvent : function(e) {
+		if (e.keyCode==Event.KEY_UP) {
+			e.stop();
+			this.upEvent();
+		} else if (e.keyCode==Event.KEY_DOWN) {
+			this.downEvent();
+		} else {
+			/*var chr = String.fromCharCode(e.keyCode);
+			//n2i.log(chr);
+			if (!/\d/.test(chr)) {
+				//n2i.log(e);
+				//n2i.log(e.keyIdentifier!=="Meta");
+				//if (e.keyIdentifier!=="Meta") {
+					e.stop();
+				//}
+				return;
+			}*/
+			var parsed = parseInt(this.input.value,10);
+			n2i.log(this.input.value);
+			n2i.log(parsed);
+			if (!isNaN(parsed)) {
+				this.setLocalValue(parsed);
+			}
+		}
+	},
+	downEvent : function() {
+		if (this.value===null) {
+			this.setValue(this.options.min);
+		} else {
+			this.setValue(this.value-1);
+		}
+	},
+	upEvent : function() {
+		this.setValue(this.value+1);
+	},
+	getValue : function() {
+		return this.value;
+	},
+	setValue : function(value) {
+		this.setLocalValue(value);
+		this.input.value = this.value;
+	},
+	setLocalValue : function(value) {
+		this.value = Math.min(Math.max(value,this.options.min),this.options.max);
+	}
+}
+
 ////////////////////////// DropDown ///////////////////////////
 
 /**
@@ -451,9 +533,13 @@ In2iGui.Formula.DropDown.prototype = {
 	},
 	itemClicked : function(item,index) {
 		this.index = index;
+		var changed = this.value!=this.items[index].value;
 		this.value = this.items[index].value;
 		this.updateUI();
 		this.hideSelector();
+		if (changed) {
+			this.fire('valueChanged',this.value);
+		}
 	}
 }
 
@@ -841,6 +927,74 @@ In2iGui.Formula.Tokens.prototype = {
 		this.element.insert(input);
 		var self = this;
 		input.observe('keyup',function() {self.inputChanged(input,i)});
+	}
+}
+
+/////////////////////////// Style length /////////////////////////
+
+/**
+ * A date and time field
+ * @constructor
+ */
+In2iGui.Formula.StyleLength = function(o) {
+	this.options = n2i.override({value:null,min:0,max:1000,units:['px','pt','em','%'],allowNull:false},o);	
+	this.name = o.name;
+	var e = this.element = $(o.element);
+	this.input = e.select('input')[0];
+	this.up = e.select('.in2igui_style_length_up')[0];
+	this.down = e.select('.in2igui_style_length_down')[0];
+	this.value = this.options.value;
+	In2iGui.extend(this);
+	this.addBehavior();
+}
+
+In2iGui.Formula.StyleLength.prototype = {
+	addBehavior : function() {
+		var e = this.element;
+		this.input.observe('focus',function() {e.addClassName('in2igui_number_focused')});
+		this.input.observe('blur',this.blurEvent.bind(this));
+		this.input.observe('keyup',this.keyEvent.bind(this));
+		this.up.observe('mousedown',this.upEvent.bind(this));
+		this.down.observe('mousedown',this.downEvent.bind(this));
+	},
+	blurEvent : function() {
+		this.element.removeClassName('in2igui_number_focused');
+		this.input.value = this.value;
+	},
+	keyEvent : function(e) {
+		if (e.keyCode==Event.KEY_UP) {
+			e.stop();
+			this.upEvent();
+		} else if (e.keyCode==Event.KEY_DOWN) {
+			this.downEvent();
+		} else {
+			var parsed = parseInt(this.input.value,10);
+			n2i.log(this.input.value);
+			n2i.log(parsed);
+			if (!isNaN(parsed)) {
+				this.setLocalValue(parsed);
+			}
+		}
+	},
+	downEvent : function() {
+		if (this.value===null) {
+			this.setValue(this.options.min);
+		} else {
+			this.setValue(this.value-1);
+		}
+	},
+	upEvent : function() {
+		this.setValue(this.value+1);
+	},
+	getValue : function() {
+		return this.value;
+	},
+	setValue : function(value) {
+		this.setLocalValue(value);
+		this.input.value = this.value;
+	},
+	setLocalValue : function(value) {
+		this.value = Math.min(Math.max(value,this.options.min),this.options.max);
 	}
 }
 

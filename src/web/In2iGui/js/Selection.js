@@ -116,7 +116,7 @@ In2iGui.Selection.prototype = {
 			this.items.push(item);
 			var node = new Element('div',{'class':'in2igui_selection_item'});
 			item.element = node;
-			self.element.insert(node);
+			this.element.insert(node);
 			var inner = new Element('span').update(item.title);
 			if (item.icon) {
 				inner.setStyle({'backgroundImage' : 'url('+In2iGui.getIconUrl(item.icon,1)+')'}).addClassName('in2igui_icon');

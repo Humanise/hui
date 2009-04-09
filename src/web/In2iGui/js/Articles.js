@@ -9,6 +9,7 @@ In2iGui.Articles = function(o) {
 
 In2iGui.Articles.prototype = {
 	$articlesLoaded : function(doc) {
+		this.element.update();
 		var a = doc.getElementsByTagName('article');
 		for (var i=0; i < a.length; i++) {
 			var e = new Element('div',{'class':'in2igui_article'});
@@ -26,6 +27,12 @@ In2iGui.Articles.prototype = {
 			};
 			this.element.insert(e);
 		};
+	},
+	$sourceIsBusy : function() {
+		this.element.update('<div class="in2igui_articles_loading">Loading...</div>');
+	},
+	$sourceIsNotBusy : function() {
+		this.element.removeClassName('in2igui_list_busy');
 	}
 }
 

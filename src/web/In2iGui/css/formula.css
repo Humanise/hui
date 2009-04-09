@@ -224,6 +224,82 @@ div.in2igui_field_focused span.in2igui_field_middle span.in2igui_field_middle
 	background-position: 100% -1254px;
 }
 
+/*********************************** Number **********************************/
+
+span.in2igui_number
+{
+	display: inline-block;
+	background: url('../gfx/number.png') -11px top no-repeat;
+	height: 25px;
+	position: relative;
+}
+
+span.in2igui_number span
+{
+	display: inline-block;
+	background: url('../gfx/number.png') right -50px no-repeat;
+	height: 25px;
+}
+
+span.in2igui_number span span
+{
+	margin: 0 17px 0 4px;
+	background: url('../gfx/number.png') left -25px repeat-x;
+}
+
+span.in2igui_number input
+{
+	border: none;
+	background: none;
+	width: 80px;
+	font-family: Verdana, sans-serif;
+	font-size: 9pt;
+	padding: 4px 4px 0;
+	position: relative;
+	top: 1px;
+	height: 20px;
+	margin: 0;
+	text-align: right;
+}
+
+span.in2igui_number input:focus
+{
+	outline: none;
+}
+
+a.in2igui_number_up
+{
+	position: absolute;
+	width: 15px;
+	height: 10px;
+	right: 2px;
+	top: 2px;
+}
+
+a.in2igui_number_down
+{
+	position: absolute;
+	width: 15px;
+	height: 10px;
+	right: 2px;
+	bottom: 3px;
+}
+
+span.in2igui_number_focused
+{
+	background-position: -11px -75px;
+}
+
+span.in2igui_number_focused span
+{
+	background-position: right -125px;
+}
+
+span.in2igui_number_focused span span
+{
+	background-position: left -100px;
+}
+
 /************************************* Drop down ********************************/
 
 a.in2igui_dropdown
@@ -319,6 +395,7 @@ div.in2igui_dropdown_selector
 	-webkit-border: none;
 	-moz-box-shadow: 0px 3px 5px #999;
 	overflow: auto;
+	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
 }
 
 div.in2igui_dropdown_selector a

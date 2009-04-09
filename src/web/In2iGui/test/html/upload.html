@@ -28,7 +28,7 @@
 	<button onclick="test1()">Simple upload</button>
 	<script type="text/javascript" charset="utf-8">
 		function test1() {
-			var win = In2iGui.Window.create(null,{width:300});
+			var win = In2iGui.Window.create({width:300});
 			var up = In2iGui.Upload.create();
 			win.add(up);
 			var b = In2iGui.Button.create({text:'Choose files'});

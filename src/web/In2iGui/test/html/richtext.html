@@ -27,7 +27,7 @@
 <body>
 <script type="text/javascript" charset="utf-8">
 	In2iGui.onDomReady(function() {
-		var normal = In2iGui.Window.create(null,{width:'300'});
+		var normal = In2iGui.Window.create({width:'300'});
 		var editor = In2iGui.RichText.create()
 		var button = In2iGui.Button.create({text:'View source'})
 		button.addDelegate({click:function() {

@@ -1,6 +1,6 @@
-In2iGui.Window = function(element,name) {
-	this.element = $(element);
-	this.name = name;
+In2iGui.Window = function(options) {
+	this.element = $(options.element);
+	this.name = options.name;
 	this.close = this.element.select('.close')[0];
 	this.titlebar = this.element.select('.titlebar')[0];
 	this.title = this.titlebar.select('.title')[0];
@@ -10,9 +10,9 @@ In2iGui.Window = function(element,name) {
 	this.addBehavior();
 }
 
-In2iGui.Window.create = function(name,options) {
+In2iGui.Window.create = function(options) {
 	options = n2i.override({title:'Window',close:true},options);
-	var element = new Element('div',{'class':'in2igui_window'+(options.variant ? ' in2igui_window_'+options.variant : '')});
+	var element = options.element = new Element('div',{'class':'in2igui_window'+(options.variant ? ' in2igui_window_'+options.variant : '')});
 	element.update((options.close ? '<div class="close"></div>' : '')+
 		'<div class="titlebar"><div class="titlebar"><div class="titlebar"><span>'+options.title+'</span></div></div></div>'+
 		'<div class="in2igui_window_content"><div class="in2igui_window_content"><div class="in2igui_window_body" style="'+
@@ -23,7 +23,7 @@ In2iGui.Window.create = function(name,options) {
 		'<div class="in2igui_window_bottom"><div class="in2igui_window_bottom"><div class="in2igui_window_bottom"></div></div></div>'+
 		'</div>');
 	document.body.appendChild(element);
-	return new In2iGui.Window(element,name);
+	return new In2iGui.Window(options);
 }
 
 In2iGui.Window.prototype = {

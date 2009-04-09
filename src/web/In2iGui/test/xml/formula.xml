@@ -23,6 +23,10 @@
 						<text label="Brugernavn:" key="username"/>
 						<text secret="true" label="Kodeord:" key="password"/>
 						<text label="Notat:" lines="6" key="note"/>
+						<number label="Number:" key="number"/>
+						<number label="Number (min -300):" key="number2" min="-300"/>
+						<number label="Number (min 300):" key="number2" min="300"/>
+						<style-length label="Style length:" key="style" value="15px"/>
 						<datetime label="Date (secs):" key="date-seconds" return-type="seconds"/>
 						<datetime label="Date:" key="date"/>
 						<checkbox label="Internal access:" key="internal"/>

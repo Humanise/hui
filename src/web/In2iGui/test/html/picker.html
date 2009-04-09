@@ -27,7 +27,7 @@
 		{key:'beach',title:'Beach',image:'../gfx/thumbnail.png'}
 	];
 
-	var win = In2iGui.Window.create(null,{title:'Skift skabelon',variant:'light',padding:5});
+	var win = In2iGui.Window.create({title:'Skift skabelon',variant:'light',padding:5});
 	var picker = In2iGui.Picker.create('templatePicker',{itemWidth:92,itemHeight:120});
 	picker.setObjects(objects);
 	win.add(picker);
