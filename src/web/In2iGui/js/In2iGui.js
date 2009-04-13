@@ -252,7 +252,7 @@ In2iGui.showCurtain = function(widget,zIndex) {
 	widget.curtain.style.zIndex=zIndex;
 	n2i.setOpacity(widget.curtain,0);
 	widget.curtain.style.display='block';
-	n2i.ani(widget.curtain,'opacity',0.5,1000,{ease:n2i.ease.slowFastSlow});
+	n2i.ani(widget.curtain,'opacity',0.7,1000,{ease:n2i.ease.slowFastSlow});
 };
 
 In2iGui.hideCurtain = function(widget) {
@@ -381,7 +381,7 @@ In2iGui.addFocusClass = function(o) {
 /////////////////////////////// Animation /////////////////////////////
 
 In2iGui.fadeIn = function(node,time) {
-	if (node.style.display=='none') {
+	if ($(node).getStyle('display')=='none') {
 		node.setStyle({opacity:0,display:''});
 	}
 	n2i.ani(node,'opacity',1,time);

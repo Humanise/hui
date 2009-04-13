@@ -117,9 +117,9 @@ In2iGui.Selection.prototype = {
 			var node = new Element('div',{'class':'in2igui_selection_item'});
 			item.element = node;
 			this.element.insert(node);
-			var inner = new Element('span').update(item.title);
+			var inner = new Element('span',{'class':'in2igui_selection_label'}).update(item.title);
 			if (item.icon) {
-				inner.setStyle({'backgroundImage' : 'url('+In2iGui.getIconUrl(item.icon,1)+')'}).addClassName('in2igui_icon');
+				node.insert(In2iGui.createIcon(item.icon,1));
 			}
 			node.insert(inner);
 			node.observe('click',function() {

@@ -183,17 +183,17 @@ OO.Editor.prototype = {
 	openTemplateWindow : function() {
 		if (!this.templatePanel) {
 			var category = this.templateCategories[0].value;
-			this.templatePanel = In2iGui.Window.create(null,{title:'Skift design',variant:'dark'});
+			this.templatePanel = In2iGui.Window.create({title:'Skift design',variant:'dark',width:550});
 			var c = In2iGui.Columns.create();
-			var s = In2iGui.Selection.create('templateCategories');
-			s.setObjects(this.templateCategories);
-			s.setValue(category);
-			var tp = In2iGui.Picker.create('templatePicker',{itemWidth:92,itemHeight:120,itemsVisible:4});
+			var s = In2iGui.Selection.create({name:'templateCategories'});
+			var tp = In2iGui.Picker.create({name:'templatePicker',itemWidth:92,itemHeight:120,itemsVisible:4});
 			tp.setObjects(this.templates[category]);
 			tp.setValue(OnlineObjects.page.design);
 			c.addToColumn(0,s);
 			c.addToColumn(1,tp);
 			c.setColumnWidth(0,120);
+			s.setObjects(this.templateCategories);
+			s.setValue(category);
 			this.templatePanel.add(c);
 		}
 		this.templatePanel.show();
@@ -204,7 +204,10 @@ OO.Editor.prototype = {
 		AppCommunity.changePageTemplate(OnlineObjects.page.id,value);
 	},
 	selectionChanged$templateCategories : function(value) {
-		In2iGui.get('templatePicker').setObjects(this.templates[value]);
+		var p = In2iGui.get('templatePicker');
+		if (p) {
+			p.setObjects(this.templates[value.value]);
+		}
 	},
 	
 	// Toolbar
@@ -259,8 +262,8 @@ OO.Editor.prototype.click$savePageInfo = function() {
 
 OO.Editor.prototype.click$newPage = function() {
 	if (!this.newPagePanel) {
-		this.newPagePanel = In2iGui.Window.create(null,{title:'Ny side',padding:0,variant:'dark'});
-		this.newPagePicker = In2iGui.Picker.create('documentPicker',{title:'Vælg venligst typen af side der skal oprettes',itemWidth:90,itemHeight:120,valueProperty:'simpleName'});
+		this.newPagePanel = In2iGui.Window.create({title:'Ny side',padding:0,variant:'dark'});
+		this.newPagePicker = In2iGui.Picker.create({name:'documentPicker',title:'Vælg venligst typen af side der skal oprettes',itemWidth:90,itemHeight:120,valueProperty:'simpleName'});
 		this.newPagePanel.add(this.newPagePicker);
 		var self = this;
 		AppCommunity.getDocumentClasses(function(list) {

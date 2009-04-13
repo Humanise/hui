@@ -9,7 +9,6 @@
 {
 	width: 500px;
 	height: 360px;
-	padding: 5px 0px 0px;
 	overflow: hidden;
 }
 
@@ -21,7 +20,7 @@
 {
 	position: absolute;
 	color: #666;
-	margin-top: 26px;
+	margin-top: -21px;
 	margin-left: 5px;
 }
 
@@ -36,66 +35,61 @@
 	background: url('../gfx/sad_mac.png') center center no-repeat;
 }
 
-.in2igui_imageviewer_controller
+div.in2igui_imageviewer_controller
 {
-	padding-top: 7px;
-	height: 30px;
-	width: 115px;
+	height: 50px;
+	width: 180px;
+	position: absolute;
+	margin-top: -70px;
+	background: url('../gfx/overlay.png') left top no-repeat;
+}
+
+div.in2igui_imageviewer_controller div
+{
+	height: 50px;
+	background: url('../gfx/overlay.png') right -50px no-repeat;
+}
+
+div.in2igui_imageviewer_controller div div
+{
+	background: url('../gfx/overlay.png') left -100px repeat-x;
+	margin: 0 10px;
+}
+
+div.in2igui_imageviewer_controller a
+{
+	float: left;
+	width: 40px;
+	height: 25px;
+	margin: 10px 0px 0;
+	background-image: url('../gfx/imageviewer_controls.png');
+	background-repeat: no-repeat;
+	cursor: pointer;
 }
 
 .in2igui_imageviewer_previous
 {
-	float: left;
-	width: 35px;
-	height: 31px;
-	background: url('../gfx/imageviewer_controls.png') left top no-repeat;
-	margin-right: 5px;
-}
-
-.in2igui_imageviewer_previous:hover
-{
-	background-position: -35px 0px;
+	background-position: 7px -75px;
 }
 
 .in2igui_imageviewer_next
 {
-	float: left;
-	width: 35px;
-	height: 31px;
-	background: url('../gfx/imageviewer_controls.png') left -31px no-repeat;
-}
-
-.in2igui_imageviewer_next:hover
-{
-	background-position: -35px -31px;
+	background-position: 7px -50px;
 }
 
 .in2igui_imageviewer_play
 {
-	float: left;
-	width: 35px;
-	height: 31px;
-	background: url('../gfx/imageviewer_controls.png') left -62px no-repeat;
-	margin-right: 5px;
-}
-
-.in2igui_imageviewer_play:hover
-{
-	background-position: -35px -62px;
+	background-position: 7px 0;
 }
 
 .in2igui_imageviewer_pause
 {
-	float: left;
-	width: 35px;
-	height: 31px;
-	background: url('../gfx/imageviewer_controls.png') left -93px no-repeat;
-	margin-right: 5px;
+	background-position: 7px -25px;
 }
 
-.in2igui_imageviewer_pause:hover
+.in2igui_imageviewer_close
 {
-	background-position: -35px -93px;
+	background-position: 7px -100px;
 }
 
 div.in2igui_imageviewer_text
@@ -107,4 +101,12 @@ div.in2igui_imageviewer_text
 	margin-top: -22px;
 	padding: 0 5px;
 	background: #fff;
+}
+
+div.in2igui_imageviewer_zoomer
+{
+	position: absolute;
+	overflow: hidden;
+	z-index: 100;
+	cursor: crosshair;
 }

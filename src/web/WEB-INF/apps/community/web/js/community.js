@@ -197,7 +197,7 @@ oo.community.Chrome.Login.prototype = {
 	addBeahvior : function() {
 		var self = this;		
 		this.form.onsubmit = function() {
-			if (!n2i.browser.gecko && !n2i.browser.webkit && !n2i.browser.msie7) {
+			if (!n2i.browser.gecko && !n2i.browser.webkit && !n2i.browser.msie7 && !n2i.browser.msie8) {
 				In2iGui.get().alert({
 					title:'Den webbrowser De anvender er ikke understøttet.',
 					text:''+
@@ -277,11 +277,11 @@ oo.community.Chrome.SignUp.prototype = {
 		this.form.select('.submit')[0].tabIndex=-1;
 	},
 	submit : function() {
-		if (!n2i.browser.gecko && !n2i.browser.webkit && !n2i.browser.msie7) {
+		if (!n2i.browser.gecko && !n2i.browser.webkit && !n2i.browser.msie7 && !n2i.browser.msie8) {
 			In2iGui.get().alert({
 				title:'Den webbrowser De anvender er ikke understøttet.',
 				text:''+
-				'De kan anvende enten Internet Explorer 7, Firefox 2+ eller Safari 3+.',
+				'De kan anvende enten Internet Explorer 7 eller 8, Firefox 2+ eller Safari 3+.',
 				emotion:'gasp'
 			});
 			return false;

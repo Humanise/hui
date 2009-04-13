@@ -7,6 +7,7 @@ var n2i = {
 n2i.browser.opera = /opera/i.test(navigator.userAgent);
 n2i.browser.msie = !n2i.browser.opera && /MSIE/.test(navigator.userAgent);
 n2i.browser.msie7 = navigator.userAgent.indexOf('MSIE 7')!=-1;
+n2i.browser.msie8 = navigator.userAgent.indexOf('MSIE 8')!=-1;
 n2i.browser.webkit = navigator.userAgent.indexOf('WebKit')!=-1;
 n2i.browser.gecko = !n2i.browser.webkit && navigator.userAgent.indexOf('Gecko')!=-1;
 
@@ -530,7 +531,7 @@ n2i.animation.Item = function(element) {
 
 n2i.animation.Item.prototype.animate = function(from,to,property,duration,delegate) {
 	var css = true;
-	if (property=='scrollLeft') {
+	if (property=='scrollLeft' || property=='scrollTop') {
 		css = false;
 	}
 	

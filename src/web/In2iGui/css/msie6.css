@@ -51,3 +51,19 @@ div.in2igui_box_top, div.in2igui_box_top div, div.in2igui_box_top div div, div.i
 {
 	width: auto;
 }
+
+a.in2igui_box_close
+{
+	background: url('../gfx/box_close.gif') left top no-repeat;
+	margin: 5px 0 0 -8px;
+}
+
+div.in2igui_imageviewer_controller a
+{
+	background-image: url('../gfx/imageviewer_controls.gif');
+}
+
+div.in2igui_imageviewer_controller, div.in2igui_imageviewer_controller div, div.in2igui_imageviewer_controller div div
+{
+	background-image: url('../gfx/overlay.gif');
+}

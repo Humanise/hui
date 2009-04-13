@@ -51,7 +51,7 @@
 		<xsl:comment><![CDATA[[if lt IE 7]>
 			<link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$base-context"/><![CDATA[/In2iGui/css/msie6.css"> </link>
 		<![endif]]]></xsl:comment>
-		<xsl:comment><![CDATA[[if gt IE 6]>
+		<xsl:comment><![CDATA[[if IE 7]>
 			<link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$base-context"/><![CDATA[/In2iGui/css/msie7.css"> </link>
 		<![endif]]]></xsl:comment>
 		<script type="text/javascript" charset="utf-8">

@@ -3,10 +3,18 @@ In2iGui.Box = function(element,name,options) {
 	this.name = name;
 	this.element = $(element);
 	this.body = this.element.select('.in2igui_box_body')[0];
+	this.close = this.element.select('.in2igui_box_close')[0];
+	if (this.close) {
+		this.close.observe('click',function(e) {
+			e.stop();
+			this.hide();
+			this.fire('boxWasClosed');
+		}.bind(this));
+	}
 	In2iGui.extend(this);
 };
 
-In2iGui.Box.create = function(name,options) {
+In2iGui.Box.create = function(options) {
 	options = n2i.override({},options);
 	var e = new Element('div',{'class':'in2igui_box'});
 	if (options.width) {
@@ -15,7 +23,9 @@ In2iGui.Box.create = function(name,options) {
 	if (options.absolute) {
 		e.addClassName('in2igui_box_absolute');
 	}
-	e.update('<div class="in2igui_box_top"><div><div></div></div></div>'+
+	e.update(
+		(options.closable ? '<a class="in2igui_box_close" href="#"></a>' : '')+
+		'<div class="in2igui_box_top"><div><div></div></div></div>'+
 		'<div class="in2igui_box_middle"><div class="in2igui_box_middle">'+
 		(options.title ? '<div class="in2igui_box_header"><strong class="in2igui_box_title">'+options.title+'</strong></div>' : '')+
 		'<div class="in2igui_box_body"'+(options.padding ? ' style="padding: '+options.padding+'px;"' : '')+'></div>'+
@@ -54,6 +64,6 @@ In2iGui.Box.prototype = {
 		this.element.setStyle({display:'none'});
 	},
 	curtainWasClicked : function() {
-		In2iGui.callDelegates(this,'boxCurtainWasClicked');
+		this.fire('boxCurtainWasClicked');
 	}
 };

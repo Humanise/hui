@@ -46,12 +46,6 @@ div.in2igui_selection div.in2igui_selected strong.in2igui_selection_badge
 	color: #3875d7;
 }
 
-div.in2igui_selection_item span.in2igui_icon
-{
-	padding-left: 20px;
-	background: left top no-repeat;
-}
-
 .in2igui_selection_item:hover
 {
 	background-color: #eee;
@@ -69,13 +63,13 @@ div.split_sidebar .in2igui_selection_item:hover
 	background-position: 0px -16px;
 }
 
-div.split_sidebar div.in2igui_selection div.in2igui_selected, div.split_sidebar div.in2igui_selection div.in2igui_selected:hover
+div.in2igui_selection div.in2igui_selected, div.in2igui_selection div.in2igui_selected:hover
 {
 	background-color: #3875d7;
 	color: #fff;
 }
 
-div.in2igui_wizard div.in2igui_selection div.in2igui_selected span.in2igui_selection_label
+div.in2igui_selection_inline div.in2igui_selected span.in2igui_selection_label
 {
 	background-color: #3875d7;
 	color: #fff;

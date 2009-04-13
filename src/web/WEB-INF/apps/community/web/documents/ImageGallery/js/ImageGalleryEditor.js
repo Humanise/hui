@@ -208,7 +208,7 @@ OO.Editor.ImageGallery.prototype = {
 			//var w = In2iGui.Window.create(null,{title:'Tilføj billede',variant:'dark',padding:5});
 			var u = this.uploader = In2iGui.Upload.create({name:'upload',url:'uploadImage',parameters:{'contentId':OnlineObjects.content.id}});
 			//w.add(u);
-			var box = In2iGui.Box.create(null,{title:'Tilføj billeder',width:400,padding:10,absolute:true,modal:true});
+			var box = In2iGui.Box.create({title:'Tilføj billeder',width:400,padding:10,absolute:true,modal:true});
 			box.add('<div class="in2igui_text"><h1>Vælg billeder på din computer</h1><p>Du kan vælge en eller flere billedfiler på din lokale computer...</p></div>');
 			box.add(u);
 			var buttons = In2iGui.Buttons.create({top: 10});
@@ -245,8 +245,8 @@ OO.Editor.ImageGallery.prototype = {
 	// Style
 	openFrameWindow : function() {
 		if (!this.styleWindow) {
-			this.styleWindow = In2iGui.Window.create(null,{title:'Skift ramme',variant:'dark'});
-			var p = In2iGui.Picker.create('framePicker',{title:'Vælg billedernes ramme',itemWidth:90,itemHeight:90,shadow:false});
+			this.styleWindow = In2iGui.Window.create({title:'Skift ramme',variant:'dark',width:400});
+			var p = In2iGui.Picker.create({name:'framePicker',title:'Vælg billedernes ramme',itemWidth:90,itemHeight:90,shadow:false});
 			p.setObjects([
 				{value:'elegant',title:'Elegant',image:OnlineObjects.appContext+'/documents/ImageGallery/frames/elegant/thumbnail.png'},
 				{value:'paper',title:'Papir',image:OnlineObjects.appContext+'/documents/ImageGallery/frames/paper/thumbnail.png'},

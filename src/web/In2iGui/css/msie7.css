@@ -66,12 +66,7 @@ textarea.in2igui_formula_text
 	overflow-y: auto;
 }
 
-span.in2igui_field_content
-{
-	zoom: 1;
-}
-
-div.in2igui_list
+span.in2igui_field_content, div.in2igui_list, div.in2igui_box_middle
 {
 	zoom: 1;
 }

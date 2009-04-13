@@ -13,7 +13,7 @@ In2iGui.Picker = function(o) {
 	In2iGui.extend(this);
 }
 
-In2iGui.Picker.create = function(name,o) {
+In2iGui.Picker.create = function(o) {
 	o = n2i.override({shadow:true},o);
 	var element = new Element('div',{'class':'in2igui_picker'});
 	element.update('<div class="in2igui_picker_top"><div><div></div></div></div>'+
@@ -25,7 +25,6 @@ In2iGui.Picker.create = function(name,o) {
 	if (o.shadow==true) {
 		element.addClassName('in2igui_picker_shadow')
 	}
-	o.name = name;
 	o.element = element;
 	return new In2iGui.Picker(o);
 }
@@ -121,7 +120,12 @@ In2iGui.Picker.prototype = {
 	},
 	$visibilityChanged : function() {
 		this.container.setStyle({display:'none'});
-		this.container.setStyle({width:(this.element.getWidth()-12)+'px',display:'block'});
+		if (this.options.itemsVisible) {
+			var width = this.options.itemsVisible*(this.options.itemWidth+14);
+		} else {
+			var width = this.container.parentNode.clientWidth-12;
+		}
+		this.container.setStyle({width:width+'px',display:'block'});
 	}
 }
 

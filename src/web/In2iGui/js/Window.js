@@ -59,6 +59,7 @@ In2iGui.Window.prototype = {
 		}
 		this.visible = true;
 		In2iGui.callDescendants(this,'parentShown');
+		In2iGui.callVisible(this);
 	},
 	toggle : function() {
 		(this.visible ? this.hide() : this.show() );

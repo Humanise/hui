@@ -64,7 +64,7 @@ OO.ImageGallery.prototype = {
 		return this.viewer;
 	},
 	resolveImageUrl : function(image,width,height) {
-		return OnlineObjects.baseContext+'/service/image/?id='+image.id+'&width='+width+'&height='+height;
+		return OnlineObjects.baseContext+'/service/image/?id='+image.id+'&width='+Math.ceil(width)+'&height='+Math.ceil(height);
 	}
 }
 

@@ -4036,7 +4036,7 @@ In2iGui.showCurtain = function(widget,zIndex) {
 	widget.curtain.style.zIndex=zIndex;
 	n2i.setOpacity(widget.curtain,0);
 	widget.curtain.style.display='block';
-	n2i.ani(widget.curtain,'opacity',0.5,1000,{ease:n2i.ease.slowFastSlow});
+	n2i.ani(widget.curtain,'opacity',0.7,1000,{ease:n2i.ease.slowFastSlow});
 };
 
 In2iGui.hideCurtain = function(widget) {
@@ -4165,7 +4165,7 @@ In2iGui.addFocusClass = function(o) {
 /////////////////////////////// Animation /////////////////////////////
 
 In2iGui.fadeIn = function(node,time) {
-	if (node.style.display=='none') {
+	if ($(node).getStyle('display')=='none') {
 		node.setStyle({opacity:0,display:''});
 	}
 	n2i.ani(node,'opacity',1,time);
@@ -4969,6 +4969,7 @@ In2iGui.Window.prototype = {
 		}
 		this.visible = true;
 		In2iGui.callDescendants(this,'parentShown');
+		In2iGui.callVisible(this);
 	},
 	toggle : function() {
 		(this.visible ? this.hide() : this.show() );
@@ -7096,9 +7097,9 @@ In2iGui.Selection.prototype = {
 			var node = new Element('div',{'class':'in2igui_selection_item'});
 			item.element = node;
 			this.element.insert(node);
-			var inner = new Element('span').update(item.title);
+			var inner = new Element('span',{'class':'in2igui_selection_label'}).update(item.title);
 			if (item.icon) {
-				inner.setStyle({'backgroundImage' : 'url('+In2iGui.getIconUrl(item.icon,1)+')'}).addClassName('in2igui_icon');
+				node.insert(In2iGui.createIcon(item.icon,1));
 			}
 			node.insert(inner);
 			node.observe('click',function() {
@@ -7882,6 +7883,7 @@ In2iGui.RichText.stopEvent = function(e) {
 In2iGui.ImageViewer = function(element,name,options) {
 	this.options = n2i.override({
 		maxWidth:800,maxHeight:600,perimeter:100,sizeSnap:100,
+		margin:0,
 		ease:n2i.ease.slowFastSlow,
 		easeEnd:n2i.ease.bounce,
 		easeAuto:n2i.ease.slowFastSlow,
@@ -7915,11 +7917,11 @@ In2iGui.ImageViewer.create = function(name,options) {
 	element.update('<div class="in2igui_imageviewer_viewer"><div class="in2igui_imageviewer_inner_viewer"></div></div>'+
 	'<div class="in2igui_imageviewer_text"></div>'+
 	'<div class="in2igui_imageviewer_status"></div>'+
-	'<div class="in2igui_imageviewer_controller">'+
+	'<div class="in2igui_imageviewer_controller"><div><div>'+
 	'<a class="in2igui_imageviewer_previous"></a>'+
 	'<a class="in2igui_imageviewer_play"></a>'+
 	'<a class="in2igui_imageviewer_next"></a>'+
-	'</div>');
+	'</div></div></div>');
 	var box = In2iGui.Box.create(null,{absolute:true,modal:true});
 	box.add(element);
 	box.addToDocument();
@@ -7956,6 +7958,24 @@ In2iGui.ImageViewer.prototype = {
 			} else if (n2i.isReturnKey(e)) {
 				self.playOrPause();
 			}
+		},
+		this.viewer.observe('mousemove',this.mouseMoveEvent.bind(this));
+		this.controller.observe('mouseenter',function() {
+			self.overController = true;
+		});
+		this.controller.observe('mouseleave',function() {
+			self.overController = false;
+		});
+	},
+	/** @private */
+	mouseMoveEvent : function() {
+		window.clearTimeout(this.ctrlHider);
+		this.ctrlHider = window.setTimeout(this.hideController.bind(this),2000);
+		In2iGui.fadeIn(this.controller,200);
+	},
+	hideController : function() {
+		if (!this.overController) {
+			In2iGui.fadeOut(this.controller,500);
 		}
 	},
 	/** @private */
@@ -7986,8 +8006,8 @@ In2iGui.ImageViewer.prototype = {
 			maxWidth = Math.max(maxWidth,dims.width);
 			maxHeight = Math.max(maxHeight,dims.height);
 		};
-		newHeight = Math.round(Math.min(newHeight,maxHeight));
-		newWidth = Math.round(Math.min(newWidth,maxWidth));
+		newHeight = Math.floor(Math.min(newHeight,maxHeight))-1;
+		newWidth = Math.floor(Math.min(newWidth,maxWidth))-2;
 		
 		if (newWidth!=this.width || newHeight!=this.height) {
 			this.width = newWidth;
@@ -8007,11 +8027,11 @@ In2iGui.ImageViewer.prototype = {
 		this.index = index || 0;
 		this.calculateSize();
 		this.updateUI();
-		var space = this.shouldShowController() ? 50 : 10;
-		this.element.setStyle({width:(this.width+10)+'px',height:(this.height+space)+'px'});
-		this.viewer.setStyle({width:(this.width+10)+'px',height:this.height+'px'});
-		this.innerViewer.setStyle({width:((this.width+10)*this.images.length)+'px',height:this.height+'px'});
-		this.controller.setStyle({paddingLeft:((this.width-115)/2+5)+'px'});
+		var margin = this.options.margin;
+		this.element.setStyle({width:(this.width+margin)+'px',height:(this.height+margin*2)+'px'});
+		this.viewer.setStyle({width:(this.width+margin)+'px',height:this.height+'px'});
+		this.innerViewer.setStyle({width:((this.width+margin)*this.images.length)+'px',height:this.height+'px'});
+		this.controller.setStyle({marginLeft:((this.width-115)/2+margin*0.5)+'px',display:'none'});
 		this.box.show();
 		this.goToImage(false,0,false);
 		Event.observe(document,'keydown',this.keyListener);
@@ -8030,7 +8050,7 @@ In2iGui.ImageViewer.prototype = {
 		if (this.dirty) {
 			this.innerViewer.innerHTML='';
 			for (var i=0; i < this.images.length; i++) {
-				var element = new Element('div',{'class':'in2igui_imageviewer_image'}).setStyle({'width':(this.width+10)+'px','height':this.height+'px'});
+				var element = new Element('div',{'class':'in2igui_imageviewer_image'}).setStyle({'width':(this.width+this.options.margin)+'px','height':this.height+'px'});
 				this.innerViewer.appendChild(element);
 			};
 			if (this.shouldShowController()) {
@@ -8050,15 +8070,15 @@ In2iGui.ImageViewer.prototype = {
 	goToImage : function(animate,num,user) {	
 		if (animate) {
 			if (num>1) {
-				n2i.ani(this.viewer,'scrollLeft',this.index*(this.width+10),Math.min(num*this.options.transitionReturn,2000),{ease:this.options.easeReturn});				
+				n2i.ani(this.viewer,'scrollLeft',this.index*(this.width+this.options.margin),Math.min(num*this.options.transitionReturn,2000),{ease:this.options.easeReturn});				
 			} else {
 				var end = this.index==0 || this.index==this.images.length-1;
 				var ease = (end ? this.options.easeEnd : this.options.ease);
 				if (!user) ease = this.options.easeAuto;
-				n2i.ani(this.viewer,'scrollLeft',this.index*(this.width+10),(end ? this.options.transitionEnd : this.options.transition),{ease:ease});
+				n2i.ani(this.viewer,'scrollLeft',this.index*(this.width+this.options.margin),(end ? this.options.transitionEnd : this.options.transition),{ease:ease});
 			}
 		} else {
-			this.viewer.scrollLeft=this.index*(this.width+10);
+			this.viewer.scrollLeft=this.index*(this.width+this.options.margin);
 		}
 		var text = this.images[this.index].text;
 		if (text) {
@@ -8185,7 +8205,7 @@ In2iGui.Picker = function(o) {
 	In2iGui.extend(this);
 }
 
-In2iGui.Picker.create = function(name,o) {
+In2iGui.Picker.create = function(o) {
 	o = n2i.override({shadow:true},o);
 	var element = new Element('div',{'class':'in2igui_picker'});
 	element.update('<div class="in2igui_picker_top"><div><div></div></div></div>'+
@@ -8197,7 +8217,6 @@ In2iGui.Picker.create = function(name,o) {
 	if (o.shadow==true) {
 		element.addClassName('in2igui_picker_shadow')
 	}
-	o.name = name;
 	o.element = element;
 	return new In2iGui.Picker(o);
 }
@@ -8293,7 +8312,12 @@ In2iGui.Picker.prototype = {
 	},
 	$visibilityChanged : function() {
 		this.container.setStyle({display:'none'});
-		this.container.setStyle({width:(this.element.getWidth()-12)+'px',display:'block'});
+		if (this.options.itemsVisible) {
+			var width = this.options.itemsVisible*(this.options.itemWidth+14);
+		} else {
+			var width = this.container.parentNode.clientWidth-12;
+		}
+		this.container.setStyle({width:width+'px',display:'block'});
 	}
 }
 
