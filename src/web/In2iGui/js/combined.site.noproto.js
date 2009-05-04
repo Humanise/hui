@@ -7,6 +7,7 @@ var n2i = {
 n2i.browser.opera = /opera/i.test(navigator.userAgent);
 n2i.browser.msie = !n2i.browser.opera && /MSIE/.test(navigator.userAgent);
 n2i.browser.msie7 = navigator.userAgent.indexOf('MSIE 7')!=-1;
+n2i.browser.msie8 = navigator.userAgent.indexOf('MSIE 8')!=-1;
 n2i.browser.webkit = navigator.userAgent.indexOf('WebKit')!=-1;
 n2i.browser.gecko = !n2i.browser.webkit && navigator.userAgent.indexOf('Gecko')!=-1;
 
@@ -530,7 +531,7 @@ n2i.animation.Item = function(element) {
 
 n2i.animation.Item.prototype.animate = function(from,to,property,duration,delegate) {
 	var css = true;
-	if (property=='scrollLeft') {
+	if (property=='scrollLeft' || property=='scrollTop') {
 		css = false;
 	}
 	
@@ -2234,6 +2235,7 @@ In2iGui.ImageViewer = function(element,name,options) {
 	this.controller = this.element.select('.in2igui_imageviewer_controller')[0];
 	this.nextControl = this.element.select('.in2igui_imageviewer_next')[0];
 	this.playControl = this.element.select('.in2igui_imageviewer_play')[0];
+	this.closeControl = this.element.select('.in2igui_imageviewer_close')[0];
 	this.text = this.element.select('.in2igui_imageviewer_text')[0];
 	this.dirty = false;
 	this.width = 600;
@@ -2257,8 +2259,9 @@ In2iGui.ImageViewer.create = function(name,options) {
 	'<a class="in2igui_imageviewer_previous"></a>'+
 	'<a class="in2igui_imageviewer_play"></a>'+
 	'<a class="in2igui_imageviewer_next"></a>'+
+	'<a class="in2igui_imageviewer_close"></a>'+
 	'</div></div></div>');
-	var box = In2iGui.Box.create(null,{absolute:true,modal:true});
+	var box = In2iGui.Box.create({absolute:true,modal:true,closable:true});
 	box.add(element);
 	box.addToDocument();
 	options.box=box;
@@ -2278,9 +2281,8 @@ In2iGui.ImageViewer.prototype = {
 		this.playControl.onclick = function() {
 			self.playOrPause();
 		}
-		this.viewer.onclick = function() {
-			self.hide();
-		}
+		this.closeControl.onclick = this.hide.bind(this);
+		this.viewer.observe('click',this.zoom.bind(this));
 		this.timer = function() {
 			self.next(false);
 		}
@@ -2302,17 +2304,61 @@ In2iGui.ImageViewer.prototype = {
 		this.controller.observe('mouseleave',function() {
 			self.overController = false;
 		});
+		this.viewer.observe('mouseout',function(e) {
+			if (!In2iGui.isWithin(e,this.viewer)) {
+				self.hideController();
+			}
+		}.bind(this));
 	},
 	/** @private */
 	mouseMoveEvent : function() {
 		window.clearTimeout(this.ctrlHider);
-		this.ctrlHider = window.setTimeout(this.hideController.bind(this),2000);
-		In2iGui.fadeIn(this.controller,200);
+		if (this.shouldShowController()) {
+			this.ctrlHider = window.setTimeout(this.hideController.bind(this),2000);
+			if (n2i.browser.msie) {
+				this.controller.show();
+			} else {
+				In2iGui.fadeIn(this.controller,200);
+			}
+		}
 	},
+	/** @private */
 	hideController : function() {
 		if (!this.overController) {
-			In2iGui.fadeOut(this.controller,500);
+			if (n2i.browser.msie) {
+				this.controller.hide();
+			} else {
+				In2iGui.fadeOut(this.controller,500);
+			}
 		}
+	},
+	/** @private */
+	zoom : function(e) {
+		var img = this.images[this.index];
+		if (img.width<=this.width && img.height<=this.height) {
+			return; // Don't zoom if small
+		}
+		if (!this.zoomer) {
+			this.zoomer = new Element('div',{'class':'in2igui_imageviewer_zoomer'}).setStyle({width:this.viewer.clientWidth+'px',height:this.viewer.clientHeight+'px'});
+			this.element.insert({top:this.zoomer});
+			this.zoomer.observe('mousemove',this.zoomMove.bind(this));
+			this.zoomer.observe('click',function() {
+				this.hide();
+			});
+		}
+		this.pause();
+		var size = this.getLargestSize({width:2000,height:2000},img);
+		var url = In2iGui.resolveImageUrl(this,img,size.width,size.height);
+		this.zoomer.update('<div style="width:'+size.width+'px;height:'+size.height+'px;"><img src="'+url+'"/></div>').show();
+		this.zoomInfo = {width:size.width,height:size.height};
+		this.zoomMove(e);
+	},
+	zoomMove : function(e) {
+		var offset = this.zoomer.cumulativeOffset();
+		var x = (e.pointerX()-offset.left)/this.zoomer.clientWidth*(this.zoomInfo.width-this.zoomer.clientWidth);
+		var y = (e.pointerY()-offset.top)/this.zoomer.clientHeight*(this.zoomInfo.height-this.zoomer.clientHeight);
+		this.zoomer.scrollLeft = x;
+		this.zoomer.scrollTop = y;
 	},
 	/** @private */
 	getLargestSize : function(canvas,image) {
@@ -2342,8 +2388,8 @@ In2iGui.ImageViewer.prototype = {
 			maxWidth = Math.max(maxWidth,dims.width);
 			maxHeight = Math.max(maxHeight,dims.height);
 		};
-		newHeight = Math.floor(Math.min(newHeight,maxHeight))-1;
-		newWidth = Math.floor(Math.min(newWidth,maxWidth))-2;
+		newHeight = Math.floor(Math.min(newHeight,maxHeight));
+		newWidth = Math.floor(Math.min(newWidth,maxWidth));
 		
 		if (newWidth!=this.width || newHeight!=this.height) {
 			this.width = newWidth;
@@ -2364,10 +2410,10 @@ In2iGui.ImageViewer.prototype = {
 		this.calculateSize();
 		this.updateUI();
 		var margin = this.options.margin;
-		this.element.setStyle({width:(this.width+margin)+'px',height:(this.height+margin*2)+'px'});
-		this.viewer.setStyle({width:(this.width+margin)+'px',height:this.height+'px'});
-		this.innerViewer.setStyle({width:((this.width+margin)*this.images.length)+'px',height:this.height+'px'});
-		this.controller.setStyle({marginLeft:((this.width-115)/2+margin*0.5)+'px',display:'none'});
+		this.element.setStyle({width:(this.width+margin)+'px',height:(this.height+margin*2-1)+'px'});
+		this.viewer.setStyle({width:(this.width+margin)+'px',height:(this.height-1)+'px'});
+		this.innerViewer.setStyle({width:((this.width+margin)*this.images.length)+'px',height:(this.height-1)+'px'});
+		this.controller.setStyle({marginLeft:((this.width-180)/2+margin*0.5)+'px',display:'none'});
 		this.box.show();
 		this.goToImage(false,0,false);
 		Event.observe(document,'keydown',this.keyListener);
@@ -2378,7 +2424,11 @@ In2iGui.ImageViewer.prototype = {
 		Event.stopObserving(document,'keydown',this.keyListener);
 	},
 	/** @private */
-	boxCurtainWasClicked : function() {
+	$boxCurtainWasClicked : function() {
+		this.hide();
+	},
+	/** @private */
+	$boxWasClosed : function() {
 		this.hide();
 	},
 	/** @private */
@@ -2386,7 +2436,7 @@ In2iGui.ImageViewer.prototype = {
 		if (this.dirty) {
 			this.innerViewer.innerHTML='';
 			for (var i=0; i < this.images.length; i++) {
-				var element = new Element('div',{'class':'in2igui_imageviewer_image'}).setStyle({'width':(this.width+this.options.margin)+'px','height':this.height+'px'});
+				var element = new Element('div',{'class':'in2igui_imageviewer_image'}).setStyle({'width':(this.width+this.options.margin)+'px','height':(this.height)+'px'});
 				this.innerViewer.appendChild(element);
 			};
 			if (this.shouldShowController()) {
@@ -2410,7 +2460,9 @@ In2iGui.ImageViewer.prototype = {
 			} else {
 				var end = this.index==0 || this.index==this.images.length-1;
 				var ease = (end ? this.options.easeEnd : this.options.ease);
-				if (!user) ease = this.options.easeAuto;
+				if (!user) {
+					ease = this.options.easeAuto;
+				}
 				n2i.ani(this.viewer,'scrollLeft',this.index*(this.width+this.options.margin),(end ? this.options.transitionEnd : this.options.transition),{ease:ease});
 			}
 		} else {
@@ -2531,10 +2583,18 @@ In2iGui.ImageViewer.prototype = {
 	this.name = name;
 	this.element = $(element);
 	this.body = this.element.select('.in2igui_box_body')[0];
+	this.close = this.element.select('.in2igui_box_close')[0];
+	if (this.close) {
+		this.close.observe('click',function(e) {
+			e.stop();
+			this.hide();
+			this.fire('boxWasClosed');
+		}.bind(this));
+	}
 	In2iGui.extend(this);
 };
 
-In2iGui.Box.create = function(name,options) {
+In2iGui.Box.create = function(options) {
 	options = n2i.override({},options);
 	var e = new Element('div',{'class':'in2igui_box'});
 	if (options.width) {
@@ -2543,7 +2603,9 @@ In2iGui.Box.create = function(name,options) {
 	if (options.absolute) {
 		e.addClassName('in2igui_box_absolute');
 	}
-	e.update('<div class="in2igui_box_top"><div><div></div></div></div>'+
+	e.update(
+		(options.closable ? '<a class="in2igui_box_close" href="#"></a>' : '')+
+		'<div class="in2igui_box_top"><div><div></div></div></div>'+
 		'<div class="in2igui_box_middle"><div class="in2igui_box_middle">'+
 		(options.title ? '<div class="in2igui_box_header"><strong class="in2igui_box_title">'+options.title+'</strong></div>' : '')+
 		'<div class="in2igui_box_body"'+(options.padding ? ' style="padding: '+options.padding+'px;"' : '')+'></div>'+
@@ -2582,6 +2644,6 @@ In2iGui.Box.prototype = {
 		this.element.setStyle({display:'none'});
 	},
 	curtainWasClicked : function() {
-		In2iGui.callDelegates(this,'boxCurtainWasClicked');
+		this.fire('boxCurtainWasClicked');
 	}
 };

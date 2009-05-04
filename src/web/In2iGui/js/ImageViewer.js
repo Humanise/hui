@@ -97,11 +97,13 @@ In2iGui.ImageViewer.prototype = {
 	/** @private */
 	mouseMoveEvent : function() {
 		window.clearTimeout(this.ctrlHider);
-		this.ctrlHider = window.setTimeout(this.hideController.bind(this),2000);
-		if (n2i.browser.msie) {
-			this.controller.show();
-		} else {
-			In2iGui.fadeIn(this.controller,200);
+		if (this.shouldShowController()) {
+			this.ctrlHider = window.setTimeout(this.hideController.bind(this),2000);
+			if (n2i.browser.msie) {
+				this.controller.show();
+			} else {
+				In2iGui.fadeIn(this.controller,200);
+			}
 		}
 	},
 	/** @private */
@@ -116,6 +118,10 @@ In2iGui.ImageViewer.prototype = {
 	},
 	/** @private */
 	zoom : function(e) {
+		var img = this.images[this.index];
+		if (img.width<=this.width && img.height<=this.height) {
+			return; // Don't zoom if small
+		}
 		if (!this.zoomer) {
 			this.zoomer = new Element('div',{'class':'in2igui_imageviewer_zoomer'}).setStyle({width:this.viewer.clientWidth+'px',height:this.viewer.clientHeight+'px'});
 			this.element.insert({top:this.zoomer});
@@ -125,7 +131,6 @@ In2iGui.ImageViewer.prototype = {
 			});
 		}
 		this.pause();
-		var img = this.images[this.index];
 		var size = this.getLargestSize({width:2000,height:2000},img);
 		var url = In2iGui.resolveImageUrl(this,img,size.width,size.height);
 		this.zoomer.update('<div style="width:'+size.width+'px;height:'+size.height+'px;"><img src="'+url+'"/></div>').show();
@@ -167,8 +172,8 @@ In2iGui.ImageViewer.prototype = {
 			maxWidth = Math.max(maxWidth,dims.width);
 			maxHeight = Math.max(maxHeight,dims.height);
 		};
-		newHeight = Math.floor(Math.min(newHeight,maxHeight))-1;
-		newWidth = Math.floor(Math.min(newWidth,maxWidth))-2;
+		newHeight = Math.floor(Math.min(newHeight,maxHeight));
+		newWidth = Math.floor(Math.min(newWidth,maxWidth));
 		
 		if (newWidth!=this.width || newHeight!=this.height) {
 			this.width = newWidth;

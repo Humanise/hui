@@ -2679,7 +2679,7 @@ div.in2igui_richtext_divider
 {
 	position: absolute;
 	color: #666;
-	margin-top: 26px;
+	margin-top: -21px;
 	margin-left: 5px;
 }
 
@@ -2697,9 +2697,9 @@ div.in2igui_richtext_divider
 div.in2igui_imageviewer_controller
 {
 	height: 50px;
-	width: 125px;
+	width: 180px;
 	position: absolute;
-	margin-top: -60px;
+	margin-top: -70px;
 	background: url('../gfx/overlay.png') left top no-repeat;
 }
 
@@ -2715,41 +2715,40 @@ div.in2igui_imageviewer_controller div div
 	margin: 0 10px;
 }
 
-.in2igui_imageviewer_previous
+div.in2igui_imageviewer_controller a
 {
 	float: left;
-	width: 25px;
+	width: 40px;
 	height: 25px;
-	background: url('../gfx/imageviewer_controls.png') left -75px no-repeat;
-	margin: 10px 5px 0;
+	margin: 10px 0px 0;
+	background-image: url('../gfx/imageviewer_controls.png');
+	background-repeat: no-repeat;
+	cursor: pointer;
+}
+
+.in2igui_imageviewer_previous
+{
+	background-position: 7px -75px;
 }
 
 .in2igui_imageviewer_next
 {
-	float: left;
-	width: 25px;
-	height: 25px;
-	background: url('../gfx/imageviewer_controls.png') left -50px no-repeat;
-	margin: 10px 5px 0;
+	background-position: 7px -50px;
 }
 
 .in2igui_imageviewer_play
 {
-	float: left;
-	width: 25px;
-	height: 25px;
-	background: url('../gfx/imageviewer_controls.png') left 0 no-repeat;
-	margin-right: 5px;
-	margin: 10px 5px 0;
+	background-position: 7px 0;
 }
 
 .in2igui_imageviewer_pause
 {
-	float: left;
-	width: 25px;
-	height: 25px;
-	background: url('../gfx/imageviewer_controls.png') left -25px no-repeat;
-	margin: 10px 5px 0;
+	background-position: 7px -25px;
+}
+
+.in2igui_imageviewer_close
+{
+	background-position: 7px -100px;
 }
 
 div.in2igui_imageviewer_text
@@ -2761,6 +2760,15 @@ div.in2igui_imageviewer_text
 	margin-top: -22px;
 	padding: 0 5px;
 	background: #fff;
+}
+
+div.in2igui_imageviewer_zoomer
+{
+	position: absolute;
+	overflow: hidden;
+	z-index: 100;
+	cursor: crosshair;
+	background: url('../gfx/spinner.gif') center center no-repeat;
 }
 .in2igui_picker
 {
@@ -3413,6 +3421,17 @@ a.in2igui_datepicker_next
 div.in2igui_box
 {
 	margin: 0 auto;
+	text-align: left;
+}
+
+a.in2igui_box_close
+{
+	width: 30px;
+	height: 30px;
+	background: url('../gfx/box_close.png') left top no-repeat;
+	position: absolute;
+	margin: -10px 0 0 -10px;
+	z-index: 200;
 }
 
 div.in2igui_box_absolute

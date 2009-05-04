@@ -109,4 +109,5 @@ div.in2igui_imageviewer_zoomer
 	overflow: hidden;
 	z-index: 100;
 	cursor: crosshair;
+	background: url('../gfx/spinner.gif') center center no-repeat;
 }
