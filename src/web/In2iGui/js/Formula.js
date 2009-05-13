@@ -175,19 +175,19 @@ In2iGui.Formula.Text = function(o) {
 
 In2iGui.Formula.Text.create = function(options) {
 	options = n2i.override({lines:1},options);
+	var node,input;
 	if (options.lines>1) {
-		var input = new Element('textarea',
+		node = input = new Element('textarea',
 			{'class':'in2igui_formula_text','rows':options.lines}
 		);
 	} else {
-		var input = new Element('input',
-			{'class':'in2igui_formula_text'}
-		);		
+		input = new Element('input',{'class':'in2igui_formula_text'});
+		node = new Element('span',{'class':'in2igui_formula_text_singleline'}).insert(input);
 	}
 	if (options.value!==undefined) {
 		input.value=options.value;
 	}
-	options.element = In2iGui.wrapInField(input);
+	options.element = In2iGui.wrapInField(node);
 	return new In2iGui.Formula.Text(options);
 }
 

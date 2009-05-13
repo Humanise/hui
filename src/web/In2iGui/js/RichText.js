@@ -63,19 +63,23 @@ In2iGui.RichText.prototype = {
 	ignite : function() {
 		var self = this;
 		this.editor.observe("wysihat:loaded", function(event) {
+			if (this.ignited) {
+				return;
+			}
 			this.editor.setStyle(this.options.style);
 			this.editor.setRawContent(this.value);
-			this.window = this.editor.getWindow();
 			this.document = this.editor.getDocument();
 			if (this.document.body) {
 				this.document.body.style.minHeight='100%';
 				this.document.body.style.margin='0';
 				this.document.documentElement.style.cursor='text';
 				this.document.documentElement.style.minHeight='100%';
+				Element.setStyle(this.document.body,this.options.style);
 			}
-			Element.setStyle(this.document.body,this.options.style);
+			this.window = this.editor.getWindow();
 			Event.observe(this.window,'focus',function() {self.documentFocused()});
 			Event.observe(this.window,'blur',function() {self.documentBlurred()});
+			this.document.body.focus();
 			this.ignited = true;
      	}.bind(this));
 		this.editor.observe("wysihat:change", function(event) {

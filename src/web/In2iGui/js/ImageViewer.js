@@ -181,6 +181,9 @@ In2iGui.ImageViewer.prototype = {
 			this.dirty = true;
 		}
 	},
+	adjustSize : function() {
+		
+	},
 	showById: function(id) {
 		for (var i=0; i < this.images.length; i++) {
 			if (this.images[i].id==id) {
@@ -220,7 +223,7 @@ In2iGui.ImageViewer.prototype = {
 		if (this.dirty) {
 			this.innerViewer.innerHTML='';
 			for (var i=0; i < this.images.length; i++) {
-				var element = new Element('div',{'class':'in2igui_imageviewer_image'}).setStyle({'width':(this.width+this.options.margin)+'px','height':(this.height)+'px'});
+				var element = new Element('div',{'class':'in2igui_imageviewer_image'}).setStyle({'width':(this.width+this.options.margin)+'px','height':(this.height-1)+'px'});
 				this.innerViewer.appendChild(element);
 			};
 			if (this.shouldShowController()) {

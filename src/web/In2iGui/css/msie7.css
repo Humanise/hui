@@ -6,7 +6,7 @@ body, html
 	overflow-x: auto;
 }
 
-div.in2igui_body
+div.in2igui_body, *
 {
 	zoom: 1;
 }
@@ -69,4 +69,14 @@ textarea.in2igui_formula_text
 span.in2igui_field_content, div.in2igui_list, div.in2igui_box_middle
 {
 	zoom: 1;
+}
+
+span.in2igui_formula_text_singleline
+{
+	position: relative;
+}
+
+span.in2igui_formula_text_singleline input
+{
+	position: absolute;
 }

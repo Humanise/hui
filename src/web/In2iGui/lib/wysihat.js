@@ -15,6 +15,7 @@ WysiHat.Editor = {
     return WysiHat.iFrame.create(textarea, function(editArea) {
       var document = editArea.getDocument();
       var window = editArea.getWindow();
+
       editArea.load();
 
       Event.observe(window, 'focus', function(event) { editArea.focus(); });
@@ -52,8 +53,6 @@ WysiHat.Editor = {
       editArea.observe("wysihat:change", function(event) {
         event.target.save();
       });
-
-        editArea.fire("wysihat:loaded"); // HACK
       //editArea.focus(); HACK!
     });
   }
@@ -337,10 +336,10 @@ WysiHat.Window = (function() {
    *  You should not need to access this directly, and this API is not final.
    */
   function getWindow() {
-    if (this.contentDocument)
-      return this.contentDocument.defaultView;
-    else if (this.contentWindow.document)
+    if (this.contentWindow.document)
       return this.contentWindow;
+    else if (this.contentDocument)
+      return this.contentDocument.defaultView;
     else
       return null;
   }
@@ -376,7 +375,7 @@ WysiHat.Window = (function() {
 
 WysiHat.iFrame = {
   create: function(textarea, callback) {
-    var editArea = new Element('iframe', { 'id': textarea.id + '_editor', 'class': 'editor' });
+    var editArea = new Element('iframe', { 'id': textarea.id + '_editor', 'class': 'editor', allowtransparency:'true' });
 
     Object.extend(editArea, WysiHat.Commands);
     Object.extend(editArea, WysiHat.Persistence);
@@ -429,6 +428,9 @@ WysiHat.iFrame.Methods = {
       document.designMode = 'on';
       callback(this);
       this.ready = true;
+	if (document.body) {
+      this.fire("wysihat:loaded"); // HACK
+}
     });
   },
 

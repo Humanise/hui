@@ -224,6 +224,13 @@ div.in2igui_field_focused span.in2igui_field_middle span.in2igui_field_middle
 	background-position: 100% -1254px;
 }
 
+span.in2igui_formula_text_singleline
+{
+	background: none;
+	height: 18px;
+	display: block;
+}
+
 /*********************************** Number **********************************/
 
 span.in2igui_number
@@ -632,6 +639,11 @@ div.in2igui_window_dark .in2igui_formula_text
 div.in2igui_window_dark div.in2igui_field span
 {
 	background-image: url('../gfx/field_dark.png');
+}
+
+div.in2igui_window_dark div.in2igui_field span.in2igui_formula_text_singleline
+{
+	background: none;
 }
 
 div.in2igui_window_dark div.in2igui_field span.in2igui_field_content

@@ -302,7 +302,8 @@ In2iGui.Editor.prototype = {
 		this.showPartEditor();
 	},
 	showPartEditor : function() {
-		if (!this.partEditor) {
+		 // TODO: Disabled!
+		/*if (!this.partEditor) {
 			var w = this.partEditor = In2iGui.Window.create({padding:5,title:'Afstande',close:false,variant:'dark',width: 200});
 			var f = this.partEditorForm = In2iGui.Formula.create();
 			f.buildGroup({above:false},[
@@ -321,7 +322,7 @@ In2iGui.Editor.prototype = {
 			left: e.getStyle('marginLeft'),
 			right: e.getStyle('marginRight')
 		});
-		this.partEditor.show();
+		this.partEditor.show();*/
 	},
 	updatePartProperties : function(values) {
 		this.activePart.element.setStyle({

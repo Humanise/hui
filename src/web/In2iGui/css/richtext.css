@@ -8,6 +8,7 @@ div.in2igui_richtext
 div.in2igui_richtext iframe
 {
 	width: 100%;
+	background: transparent;
 }
 
 div.in2igui_richtext_toolbar

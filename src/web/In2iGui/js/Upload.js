@@ -61,7 +61,7 @@ In2iGui.Upload.prototype = {
 		}
 		var file = new Element('input',{'type':'file','class':'file','name':this.options.name});
 		var self = this;
-		file.onchange = function() {self.iframeSubmit()}
+		file.onchange = this.iframeSubmit.bind(this);
 		form.insert(file);
 		container.insert(form);
 		var iframe = new Element('iframe',{name:'upload',id:'upload'}).setStyle({display:'none'});
@@ -78,14 +78,16 @@ In2iGui.Upload.prototype = {
 		this.uploading = false;
 		this.form.reset();
 		this.fire('uploadDidCompleteQueue');
+		In2iGui.hideMessage();
 	},
 	iframeSubmit : function() {
 		this.uploading = true;
+		In2iGui.showMessage({text:'Uploader... vent venligst.'});
 		// IE: set value of parms again since they disappear
 		var p = this.options.parameters;
-		for (var i=0; i < p.length; i++) {
-			this.form[p[i].name].value=p[i].value;
-		};
+		$H(this.options.parameters).each(function(pair) {
+			this.form[pair.key].value=pair.value;
+		}.bind(this));
 		this.form.submit();
 		this.fire('uploadDidSubmit');
 	},
