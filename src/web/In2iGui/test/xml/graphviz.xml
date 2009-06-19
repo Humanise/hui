@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
-<gui xmlns="uri:In2iGui" pad="10" title="System">
+<gui xmlns="uri:In2iGui" padding="10" title="System">
 	<controller name="controller" source="graphviz.js"/>
-	<view style="box">
+	<view varint="box">
 		<toolbar>
 			<icon icon="common/smaller" title="Mindre" name="smaller"/>
 			<icon icon="common/larger" title="Større" name="larger"/>

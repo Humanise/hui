@@ -10,7 +10,9 @@
 			<icon icon="common/page" title="Opret side" overlay="new" action="newPage.show()"/>
 			<divider/>
 			<icon icon="common/internet" overlay="upload" title="Udgiv ændringer" action="box.show()"/>
-			<search title="Søgning"/>
+			<right>
+				<search title="Søgning"/>
+			</right>
 		</toolbar>
 		<content>
 			<split>

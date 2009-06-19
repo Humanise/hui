@@ -1,4 +1,4 @@
-
+/** @constructor */
 In2iGui.Picker = function(o) {
 	o = this.options = n2i.override({itemWidth:100,itemHeight:150,itemsVisible:null,shadow:true,valueProperty:'value'},o);
 	this.element = $(o.element);

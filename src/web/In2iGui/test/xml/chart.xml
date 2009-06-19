@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
-<gui xmlns="uri:In2iGui" pad="10" title="System">
-	<view style="box">
+<gui xmlns="uri:In2iGui" padding="10" title="System">
+	<view variant="box">
 		<toolbar>
 			<icon icon="common/color" title="1" action="chart.load('chart1.json')"/>
 			<icon icon="common/color" title="2" action="chart.load('chart2.json')"/>

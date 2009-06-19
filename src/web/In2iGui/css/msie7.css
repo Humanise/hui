@@ -1,9 +1,15 @@
 @import url('msie.css');
 
-body, html
+body.in2igui, html.in2igui
 {
 	overflow-y: auto;
 	overflow-x: auto;
+}
+div.in2igui_body
+{
+	position: fixed;
+	bottom: 0;
+	top: 0;
 }
 
 div.in2igui_body, *
@@ -74,9 +80,41 @@ span.in2igui_field_content, div.in2igui_list, div.in2igui_box_middle
 span.in2igui_formula_text_singleline
 {
 	position: relative;
+	height: 16px;
 }
 
 span.in2igui_formula_text_singleline input
 {
 	position: absolute;
+}
+
+
+.in2igui_overflow
+{
+	position: static;
+	width: 100%;
+}
+
+/********************** layout ****************/
+
+table.in2igui_layout
+{
+	height: auto;
+	border-collapse: collapse;
+}
+
+table.in2igui_layout_middle
+{
+	border-collapse: collapse;
+}
+
+td.in2igui_layout_center
+{
+	width: 100%;
+}
+
+span.in2igui_formula_text_multiline
+{
+	position: relative;
+	display: block;
 }

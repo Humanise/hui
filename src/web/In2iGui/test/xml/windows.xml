@@ -2,7 +2,7 @@
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:In2iGui" pad="10" title="System">
 	<controller name="controller" source="windows.js"/>
-	<view style="box">
+	<view variant="box">
 		<toolbar>
 			<icon icon="common/folder" title="Mørk" overlay="new" action="dark.toggle()"/>
 			<icon icon="common/folder" title="Standard" action="standard.toggle()"/>

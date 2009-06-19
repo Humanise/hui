@@ -13,6 +13,8 @@
 			<xsl:if test="@all">padding: <xsl:value-of select="@all"/>px;</xsl:if>
 			<xsl:if test="@left">padding-left: <xsl:value-of select="@left"/>px;</xsl:if>
 			<xsl:if test="@right">padding-right: <xsl:value-of select="@right"/>px;</xsl:if>
+			<xsl:if test="@top">padding-top: <xsl:value-of select="@top"/>px;</xsl:if>
+			<xsl:if test="@bottom">padding-bottom: <xsl:value-of select="@bottom"/>px;</xsl:if>
 			<xsl:if test="@height">height: <xsl:value-of select="@height"/>px; font-size: 0px;</xsl:if>
 		</xsl:attribute>
 		<xsl:comment/>
@@ -46,49 +48,6 @@
 		<xsl:apply-templates/></h2>
 </xsl:template>
 
-<xsl:template match="gui:horizontal"><!-- Deprecated -->
-	<div class="horizontal">
-		<xsl:apply-templates select="gui:content"/>
-	</div>
-</xsl:template>
-
-<xsl:template match="gui:horizontal/gui:content"><!-- Deprecated -->
-	<div style="width: {100 div count(../gui:content)}%;">
-		<xsl:attribute name="class">
-			horizontal_content
-			<xsl:if test="position()=1">horizontal_content_first</xsl:if>
-		</xsl:attribute>
-		<div>
-			<xsl:attribute name="style">
-				<xsl:if test="position()>1 and ../@space">padding-left: <xsl:value-of select="number(../@space) div 2"/>px;</xsl:if>
-				<xsl:if test="position()!=count(../gui:content) and ../@space">padding-right: <xsl:value-of select="number(../@space) div 2"/>px;</xsl:if>
-			</xsl:attribute>
-			<xsl:comment/>
-			<xsl:apply-templates/>
-		</div>
-	</div>
-</xsl:template>
-
-<xsl:template match="gui:horizontal[@flexible='true']"><!-- Deprecated -->
-	<table cellspacing="0" cellpadding="0" class="in2igui_horizontal_flexible">
-		<tr>
-			<xsl:apply-templates select="gui:content"/>
-		</tr>
-	</table>
-</xsl:template>
-
-<xsl:template match="gui:horizontal[@flexible='true']/gui:content"><!-- Deprecated -->
-	<td class="in2igui_horizontal_flexible_content">
-		<xsl:if test="(position()>1 and ../@space) or @width">
-			<xsl:attribute name="style">
-				<xsl:if test="../@space">padding-left: <xsl:value-of select="../@space"/>px;</xsl:if>
-				<xsl:if test="@width">width: <xsl:value-of select="@width"/>;</xsl:if>
-			</xsl:attribute>
-		</xsl:if>
-		<xsl:apply-templates/>
-	</td>
-</xsl:template>
-
 
 <xsl:template match="gui:split">
 <table class="split" cellpadding="0" cellspacing="0">
@@ -104,24 +63,32 @@
 </xsl:template>
 
 <xsl:template match="gui:split/gui:sidebar">
-	<td class="split_sidebar"><div class="split_sidebar"><xsl:apply-templates/></div></td>
+	<td class="split_sidebar"><xsl:apply-templates/><div class="split_sidebar"><xsl:comment/></div></td>
 </xsl:template>
 
 <xsl:template match="gui:overflow">
 <div class="in2igui_overflow" id="{generate-id()}">
 	<xsl:attribute name="style">
-		 <xsl:if test="@height">height: <xsl:value-of select="@height"/>px;</xsl:if>
-		 <xsl:if test="@max-height">max-height: <xsl:value-of select="@max-height"/>px;</xsl:if>
-		 <xsl:if test="@min-height">min-height: <xsl:value-of select="@min-height"/>px;</xsl:if>
-		 <xsl:if test="@width">width: <xsl:value-of select="@width"/>px;</xsl:if>
+		<xsl:choose>
+			<xsl:when test="@height or @max-height or @min-height">
+				<xsl:if test="@height">height: <xsl:value-of select="@height"/>px;</xsl:if>
+				<xsl:if test="@max-height">max-height: <xsl:value-of select="@max-height"/>px;</xsl:if>
+				<xsl:if test="@min-height">min-height: <xsl:value-of select="@min-height"/>px;</xsl:if>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:text>height: 0px;</xsl:text>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:attribute>
 	<xsl:apply-templates/>
 </div>
-<xsl:if test="@resize">
-	<script type="text/javascript">
-	In2iGui.get().registerOverflow('<xsl:value-of select="generate-id()"/>',<xsl:value-of select="@resize"/>);
-	</script>
-</xsl:if>
+<script type="text/javascript">
+	var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Overflow({
+		element:'<xsl:value-of select="generate-id()"/>',
+		dynamic:<xsl:value-of select="not(@height or @max-height or @min-height)"/>
+	});
+	<xsl:call-template name="gui:createobject"/>
+</script>
 </xsl:template>
 
 <xsl:template match="gui:box">
@@ -135,6 +102,7 @@
 		<xsl:if test="@width">width: <xsl:value-of select="@width"/>px;</xsl:if>
 		<xsl:if test="@top">margin-top: <xsl:value-of select="@top"/>px;</xsl:if>
 		</xsl:attribute>
+		<xsl:if test="@closable='true'"><a class="in2igui_box_close" href="#"><xsl:comment/></a></xsl:if>
 		<div class="in2igui_box_top"><div><div><xsl:comment/></div></div></div>
 		<div class="in2igui_box_middle"><div class="in2igui_box_middle">
 			<xsl:if test="@title or gui:toolbar">
@@ -205,6 +173,62 @@
 			<xsl:call-template name="gui:createobject"/>
 		})();
 	</script>
+</xsl:template>
+
+<xsl:template match="gui:layout">
+	<table class="in2igui_layout" id="{generate-id()}">
+		<xsl:apply-templates/>
+	</table>
+	<script type="text/javascript">
+		(function() {
+			var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Layout({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>'});
+			<xsl:call-template name="gui:createobject"/>
+		})();
+	</script>
+</xsl:template>
+
+<xsl:template match="gui:layout/gui:top">
+	<thead class="in2igui_layout">
+		<tr><td class="in2igui_layout_top">
+			<div class="in2igui_layout_top"><div class="in2igui_layout_top"><div class="in2igui_layout_top">
+				<xsl:apply-templates/>
+				<xsl:comment/>
+			</div></div></div>
+		</td></tr>
+	</thead>
+</xsl:template>
+
+<xsl:template match="gui:layout/gui:middle">
+	<tbody class="in2igui_layout">
+		<tr class="in2igui_layout_middle"><td class="in2igui_layout_middle">
+			<table class="in2igui_layout_middle">
+				<tr>
+					<xsl:apply-templates/>
+				</tr>
+			</table>
+		</td></tr>
+	</tbody>
+</xsl:template>
+
+<xsl:template match="gui:layout/gui:middle/gui:left">
+	<td class="in2igui_layout_left">
+		<xsl:apply-templates/>
+		<div class="in2igui_layout_left"><xsl:comment/></div>
+	</td>
+</xsl:template>
+
+<xsl:template match="gui:layout/gui:middle/gui:center">
+	<td class="in2igui_layout_center"><xsl:apply-templates/></td>
+</xsl:template>
+
+<xsl:template match="gui:layout/gui:bottom">
+	<tfoot class="in2igui_layout">
+		<tr><td class="in2igui_layout_bottom">
+			<div class="in2igui_layout_bottom"><div class="in2igui_layout_bottom"><div class="in2igui_layout_bottom">
+				<xsl:apply-templates/>
+			</div></div></div>
+		</td></tr>
+	</tfoot>
 </xsl:template>
 
 </xsl:stylesheet>

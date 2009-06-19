@@ -1,13 +1,19 @@
-In2iGui.Articles = function(o) {
-	this.options = o;
-	this.name = o.name;
-	this.element = $(o.element);
-	if (o.source) {
-		o.source.addDelegate(this);
+/**
+ * A list of articles
+ * @constructor
+ * @param {Object} options { element: «Node | id», name: «String», source: «In2iGui.Source» }
+ */
+In2iGui.Articles = function(options) {
+	this.options = options;
+	this.name = options.name;
+	this.element = $(options.element);
+	if (options.source) {
+		options.source.addDelegate(this);
 	}
 }
 
 In2iGui.Articles.prototype = {
+	/** @private */
 	$articlesLoaded : function(doc) {
 		this.element.update();
 		var a = doc.getElementsByTagName('article');
@@ -28,9 +34,11 @@ In2iGui.Articles.prototype = {
 			this.element.insert(e);
 		};
 	},
+	/** @private */
 	$sourceIsBusy : function() {
 		this.element.update('<div class="in2igui_articles_loading">Loading...</div>');
 	},
+	/** @private */
 	$sourceIsNotBusy : function() {
 		this.element.removeClassName('in2igui_list_busy');
 	}

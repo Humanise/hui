@@ -1,7 +1,7 @@
 /**
  @constructor
  */
-In2iGui.ImageViewer = function(element,name,options) {
+In2iGui.ImageViewer = function(options) {
 	this.options = n2i.override({
 		maxWidth:800,maxHeight:600,perimeter:100,sizeSnap:100,
 		margin:0,
@@ -10,7 +10,7 @@ In2iGui.ImageViewer = function(element,name,options) {
 		easeAuto:n2i.ease.slowFastSlow,
 		easeReturn:n2i.ease.cubicInOut,transition:400,transitionEnd:1000,transitionReturn:300
 		},options);
-	this.element = $(element);
+	this.element = $(options.element);
 	this.box = this.options.box;
 	this.viewer = this.element.select('.in2igui_imageviewer_viewer')[0];
 	this.innerViewer = this.element.select('.in2igui_imageviewer_inner_viewer')[0];
@@ -26,16 +26,16 @@ In2iGui.ImageViewer = function(element,name,options) {
 	this.height = 460;
 	this.index = 0;
 	this.playing=false;
-	this.name = name;
+	this.name = options.name;
 	this.images = [];
 	this.box.addDelegate(this);
 	this.addBehavior();
 	In2iGui.extend(this);
 }
 
-In2iGui.ImageViewer.create = function(name,options) {
+In2iGui.ImageViewer.create = function(options) {
 	options = options || {};
-	var element = new Element('div',{'class':'in2igui_imageviewer'});
+	var element = options.element = new Element('div',{'class':'in2igui_imageviewer'});
 	element.update('<div class="in2igui_imageviewer_viewer"><div class="in2igui_imageviewer_inner_viewer"></div></div>'+
 	'<div class="in2igui_imageviewer_text"></div>'+
 	'<div class="in2igui_imageviewer_status"></div>'+
@@ -49,7 +49,7 @@ In2iGui.ImageViewer.create = function(name,options) {
 	box.add(element);
 	box.addToDocument();
 	options.box=box;
-	return new In2iGui.ImageViewer(element,name,options);
+	return new In2iGui.ImageViewer(options);
 }
 
 In2iGui.ImageViewer.prototype = {

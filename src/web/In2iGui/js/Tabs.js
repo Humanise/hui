@@ -1,56 +1,84 @@
-In2iGui.Tabs = function(id,name) {
-	this.id = id;
-	this.name = name;
-	this.element = $(id);
-	this.bar = this.element.select('.in2igui_tabs_bar')[0];
-	this.activeTab = 0;
-	this.tabs = [];
+/**
+ * @constructor
+ */
+In2iGui.Tabs = function(o) {
+	o = o || {};
+	this.name = o.name;
+	this.element = $(o.element);
+	this.activeTab = -1;
+	this.bar = this.element.select('.in2igui_tabs_bar ul')[0];
+	this.tabs = this.bar.select('li');
+	this.contents = this.element.select('.in2igui_tabs_tab');
 	this.addBehavior();
 	In2iGui.extend(this);
 }
 
-In2iGui.Tabs.prototype.registerTab = function(obj) {
-	obj.parent = this;
-	this.tabs[this.tabs.length] = obj;
+In2iGui.Tabs.create = function(o) {
+	o = o || {};
+	var e = o.element = new Element('div',{'class':'in2igui_tabs'});
+	var bar = new Element('div',{'class':'in2igui_tabs_bar'});
+	e.insert(bar);
+	var ul = new Element('ul');
+	bar.insert(ul);
+	return new In2iGui.Tabs(o);
 }
 
-In2iGui.Tabs.prototype.addBehavior = function() {
-	var self = this;
-	var tabs = this.bar.select('li');
-	for (var i=0; i < tabs.length; i++) {
-		tabs[i].in2iGuiIndex = i;
-		tabs[i].onclick = function() {
-			self.tabWasClicked(this);
+In2iGui.Tabs.prototype = {
+	addBehavior : function() {
+		this.tabs.each(this.addTabBehavior.bind(this));
+	},
+	addTabBehavior : function(tab,index) {	
+		tab.observe('click',function() {
+			this.tabWasClicked(index);
+		}.bind(this))
+	},
+	registerTab : function(obj) {
+		obj.parent = this;
+		this.tabs.push(obj);
+	},
+	tabWasClicked : function(index) {
+		this.activeTab = index;
+		this.updateGUI();
+	},
+	updateGUI : function() {
+		for (var i=0; i < this.tabs.length; i++) {
+			this.tabs[i].setClassName('in2igui_tabs_selected',i==this.activeTab);
+			this.contents[i].setStyle({display : (i==this.activeTab ? 'block' : 'none')});
+		};
+	},
+	createTab : function(options) {
+		options = options || {};
+		var tab = new Element('li').update('<span><span>'+options.title+'</span></span>');
+		this.bar.insert(tab);
+		this.addTabBehavior(tab,this.tabs.length);
+		this.tabs.push(tab);
+		var e = options.element = new Element('div',{'class':'in2igui_tabs_tab'});
+		if (options.padding>0) {
+			e.setStyle({'padding':options.padding+'px'});
 		}
-	};
+		this.contents.push(e);
+		this.element.insert(e);
+		if (this.activeTab==-1) {
+			this.activeTab=0;
+			tab.addClassName('in2igui_tabs_selected');
+		} else {
+			e.setStyle({display:'none'});			
+		}
+		return new In2iGui.Tab(options);
+	}
+};
+
+/**
+ * @constructor
+ */
+In2iGui.Tab = function(o) {
+	this.name = o.name;
+	this.element = $(o.element);
 }
 
-In2iGui.Tabs.prototype.tabWasClicked = function(tag) {
-	this.activeTab = tag.in2iGuiIndex;
-	this.updateGUI();
-}
-
-In2iGui.Tabs.prototype.updateGUI = function() {
-	for (var i=0; i < this.tabs.length; i++) {
-		this.tabs[i].setActive(i==this.activeTab);
-	};
-}
-
-//////////////////////////////////// Tab ////////////////////////////////
-
-In2iGui.Tabs.Tab = function(id,name) {
-	this.id = id;
-	this.name = name;
-	this.parent = null;
-	this.element = $(id+'_content');
-	this.tab = $(id+'_tab');
-	In2iGui.extend(this);
-}
-
-In2iGui.Tabs.Tab.prototype = {
-	setActive : function(active) {
-		this.element.style.display = (active ? 'block' : 'none');
-		this.tab.setClassName('in2igui_tabs_selected',active);
+In2iGui.Tab.prototype = {
+	add : function(widget) {
+		this.element.insert(widget.element);
 	}
 }
 

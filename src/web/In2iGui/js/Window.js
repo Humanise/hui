@@ -1,3 +1,6 @@
+/**
+ * @constructor
+ */
 In2iGui.Window = function(options) {
 	this.element = $(options.element);
 	this.name = options.name;
@@ -13,15 +16,15 @@ In2iGui.Window = function(options) {
 In2iGui.Window.create = function(options) {
 	options = n2i.override({title:'Window',close:true},options);
 	var element = options.element = new Element('div',{'class':'in2igui_window'+(options.variant ? ' in2igui_window_'+options.variant : '')});
-	element.update((options.close ? '<div class="close"></div>' : '')+
+	var html = (options.close ? '<div class="close"></div>' : '')+
 		'<div class="titlebar"><div class="titlebar"><div class="titlebar"><span>'+options.title+'</span></div></div></div>'+
 		'<div class="in2igui_window_content"><div class="in2igui_window_content"><div class="in2igui_window_body" style="'+
 		(options.width ? 'width:'+options.width+'px;':'')+
 		(options.padding ? 'padding:'+options.padding+'px;':'')+
 		'">'+
 		'</div></div></div>'+
-		'<div class="in2igui_window_bottom"><div class="in2igui_window_bottom"><div class="in2igui_window_bottom"></div></div></div>'+
-		'</div>');
+		'<div class="in2igui_window_bottom"><div class="in2igui_window_bottom"><div class="in2igui_window_bottom"></div></div></div>';
+	element.update(html);
 	document.body.appendChild(element);
 	return new In2iGui.Window(options);
 }

@@ -1,6 +1,10 @@
 div.in2igui_selection
 {
 	font-family: 'Lucida Grande','Verdana',sans-serif;
+}
+
+.split_sidebar div.in2igui_selection
+{
 	padding: 5px 0px;
 }
 
@@ -52,7 +56,7 @@ div.in2igui_selection div.in2igui_selected strong.in2igui_selection_badge
 	cursor: pointer;
 }
 
-div.split_sidebar .in2igui_selection_item:hover
+td.in2igui_layout_left .in2igui_selection_item:hover
 {
 	background-color: #d4dce9;
 	cursor: pointer;

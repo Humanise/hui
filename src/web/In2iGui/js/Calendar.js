@@ -1,8 +1,10 @@
-In2iGui.Calendar = function(id,name,options) {
-	this.name = name;
-	this.options = {startHour:7,endHour:24};
-	n2i.override(this.options,options);
-	this.element = $(id);
+/**
+ * @constructor
+ */
+In2iGui.Calendar = function(o) {
+	this.name = o.name;
+	this.options = n2i.override({startHour:7,endHour:24},o);
+	this.element = $(o.element);
 	this.head = $(this.element.getElementsByTagName('thead')[0]);
 	this.body = $(this.element.getElementsByTagName('tbody')[0]);
 	this.date = new Date();
@@ -85,7 +87,7 @@ In2iGui.Calendar.prototype = {
 	},
 	buildUI : function() {
 		var bar = this.element.select('.in2igui_calendar_bar')[0];
-		this.toolbar = In2iGui.Toolbar.create(null,{labels:false});
+		this.toolbar = In2iGui.Toolbar.create({labels:false});
 		bar.insert(this.toolbar.getElement());
 		var previous = In2iGui.Button.create({name:'in2iguiCalendarPrevious',text:'',icon:'monochrome/previous'});
 		previous.addDelegate(this);
@@ -147,7 +149,7 @@ In2iGui.Calendar.prototype = {
 	showDatePicker : function() {
 		if (!this.datePickerPanel) {
 			this.datePickerPanel = In2iGui.BoundPanel.create();
-			this.datePicker = In2iGui.DatePicker.create('in2iguiCalendarDatePicker',{value:this.date});
+			this.datePicker = In2iGui.DatePicker.create({name:'in2iguiCalendarDatePicker',value:this.date});
 			this.datePicker.addDelegate(this);
 			this.datePickerPanel.add(this.datePicker);
 			this.datePickerPanel.addSpace(5);
@@ -199,11 +201,12 @@ In2iGui.Calendar.prototype = {
 }
 
 
-/********************** Date picker ***************/
+////////////////////////// Date picker ////////////////////////
 
-In2iGui.DatePicker = function(id,name,options) {
-	this.name = name;
-	this.element = $(id);
+/** @constructor */
+In2iGui.DatePicker = function(options) {
+	this.name = options.name;
+	this.element = $(options.element);
 	this.options = {};
 	n2i.override(this.options,options);
 	this.cells = [];
@@ -217,8 +220,8 @@ In2iGui.DatePicker = function(id,name,options) {
 	this.updateUI();
 }
 
-In2iGui.DatePicker.create = function(name,options) {
-	var element = new Element('div',{'class':'in2igui_datepicker'});
+In2iGui.DatePicker.create = function(options) {
+	var element = options.element = new Element('div',{'class':'in2igui_datepicker'});
 	element.insert('<div class="in2igui_datepicker_header"><a class="in2igui_datepicker_next"></a><a class="in2igui_datepicker_previous"></a><strong></strong></div>');
 	var table = new Element('table');
 	var head = new Element('tr');
@@ -237,7 +240,7 @@ In2iGui.DatePicker.create = function(name,options) {
 		body.insert(row);
 	}
 	element.insert(table);
-	return new In2iGui.DatePicker(element,name,options);
+	return new In2iGui.DatePicker(options);
 }
 
 In2iGui.DatePicker.prototype = {
@@ -289,7 +292,9 @@ In2iGui.DatePicker.prototype = {
 		previous.setMonth(previous.getMonth()+1);
 		return previous;
 	},
+
 	////////////////// Events ///////////////
+
 	previous : function() {
 		this.viewDate = this.getPreviousMonth();
 		this.updateUI();

@@ -13,6 +13,7 @@ div.in2igui_calendar_bar
 {
 	background: url('../gfx/calendar_bar.png');
 	height: 34px;
+	border-bottom: 1px solid #ccc;
 }
 
 table.in2igui_calendar_weekview

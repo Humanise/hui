@@ -1,7 +1,7 @@
-In2iGui.List = function(element,name,options) {
+In2iGui.List = function(options) {
 	this.options = n2i.override({url:null,source:null},options);
-	this.element = $(element);
-	this.name = name;
+	this.element = $(options.element);
+	this.name = options.name;
 	this.state = options.state;
 	if (this.options.source) {
 		this.options.source.addDelegate(this);
@@ -13,9 +13,8 @@ In2iGui.List = function(element,name,options) {
 	this.columns = [];
 	this.rows = [];
 	this.selected = [];
-	this.navigation = this.element.select('.navigation')[0];
-	this.count = this.navigation.select('.count')[0];
-	this.windowSize = this.navigation.select('.window_size')[0];
+	this.navigation = this.element.select('.in2igui_list_navigation')[0];
+	this.count = this.navigation.select('.in2igui_list_count')[0];
 	this.windowPage = this.navigation.select('.window_page')[0];
 	this.windowPageBody = this.navigation.select('.window_page_body')[0];
 	this.parameters = {};
@@ -28,6 +27,13 @@ In2iGui.List = function(element,name,options) {
 	}
 	In2iGui.extend(this);
 	if (this.url) this.refresh();
+}
+
+In2iGui.List.create = function(options) {
+	options = n2i.override({},options);
+	var e = options.element = new Element('div',{'class':'in2igui_list'});
+	e.update('<div class="in2igui_list_navigation"><div class="in2igui_list_selection window_page"><div><div class="window_page_body"></div></div></div><span class="in2igui_list_count"></span></div><div class="in2igui_list_body"'+(options.maxHeight>0 ? ' style="max-height: '+options.maxHeight+'px;"' : '')+'><table cellspacing="0" cellpadding="0"><thead><tr></tr></thead><tbody></tbody></table></div>');
+	return new In2iGui.List(options);
 }
 
 In2iGui.List.prototype = {
@@ -60,23 +66,30 @@ In2iGui.List.prototype = {
 	},
 	setSource : function(source) {
 		if (this.options.source!=source) {
-			this.options.source.removeDelegate(this);
+			if (this.options.source) {
+				this.options.source.removeDelegate(this);
+			}
 			source.addDelegate(this);
 			this.options.source = source;
 			source.refresh();
 		}
 	},
 	setUrl : function(url) {
+		if (this.options.source) {
+			this.options.source.removeDelegate(this);
+			this.options.source=null;
+		}
 		this.url = url;
 		this.selected = [];
 		this.sortKey = null;
 		this.sortDirection = null;
-		this.window.page = 0;
+		this.resetState();
 		this.refresh();
 	},
 	resetState : function() {
 		this.window = {size:null,page:0,total:0};
 		In2iGui.firePropertyChange(this,'state',this.window);
+		In2iGui.firePropertyChange(this,'window.page',this.window.page);
 	},
 	valueForProperty : function(p) {
 		if (p=='window.page') return this.window.page;
@@ -211,10 +224,10 @@ In2iGui.List.prototype = {
 		this.fire('selectionReset');
 	},
 	sourceIsBusy : function() {
-		this.element.addClassName('in2igui_list_busy');
+		//this.element.addClassName('in2igui_list_busy');
 	},
 	sourceIsNotBusy : function() {
-		this.element.removeClassName('in2igui_list_busy');
+		//this.element.removeClassName('in2igui_list_busy');
 	},
 	
 	filter : function(str) {
@@ -236,9 +249,9 @@ In2iGui.List.prototype = {
 };
 
 In2iGui.List.prototype.parseCell = function(node,cell) {
-	if (node.getAttribute('icon')!=null) {
-		var icon = new Element('div',{'class':'icon'}).setStyle({'backgroundImage':'url("'+In2iGui.getIconUrl(node.getAttribute('icon'),1)+'")'});
-		cell.insert(icon);
+	var icon = node.getAttribute('icon');
+	if (icon!=null && !icon.blank()) {
+		cell.insert(In2iGui.createIcon(icon,1));
 	}
 	for (var i=0; i < node.childNodes.length; i++) {
 		var child = node.childNodes[i];
@@ -247,7 +260,6 @@ In2iGui.List.prototype.parseCell = function(node,cell) {
 		} else if (n2i.dom.isElement(child,'break')) {
 			cell.insert(new Element('br'));
 		} else if (n2i.dom.isElement(child,'line')) {
-			n2i.log(child);
 			var line = new Element('p',{'class':'in2igui_list_line'}).insert(n2i.dom.getNodeText(child));
 			if (child.getAttribute('dimmed')=='true') {
 				line.addClassName('in2igui_list_dimmed')
@@ -292,24 +304,25 @@ In2iGui.List.prototype.buildNavigation = function() {
 	}
 	this.navigation.style.display='block';
 	var from = ((this.window.page)*this.window.size+1);
-	this.count.update('<span><span>'+from+'-'+Math.min((this.window.page+1)*this.window.size,this.window.total)+'/'+this.window.total+'</span></span>');
-	this.windowPageBody.update();
+	this.count.update(from+'-'+Math.min((this.window.page+1)*this.window.size,this.window.total)+' / '+this.window.total);
+	var pageBody = this.windowPageBody;
+	pageBody.update();
 	if (pages<2) {
 		this.windowPage.style.display='none';	
 	} else {
-		for (var i=0;i<pages;i++) {
+		$R(0, pages-1).each(function(i){
 			var a = document.createElement('a');
 			a.appendChild(document.createTextNode(i+1));
-			a.in2GuiPage = i;
 			a.onclick = function() {
-				self.windowPageWasClicked(this);
+				self.windowPageWasClicked(this,i);
 				return false;
 			}
-			if (i==this.window.page) {
+			if (i==self.window.page) {
 				a.className='selected';
 			}
-			this.windowPageBody.appendChild(a);
-		}
+			pageBody.appendChild(a);
+			
+		});
 		this.windowPage.style.display='block';
 	}
 }
@@ -360,8 +373,7 @@ In2iGui.List.prototype.buildRows = function(rows) {
 		r.cells.each(function(c) {
 			var td = new Element('td');
 			if (c.icon) {
-				var icn = new Element('div',{'class':'icon'}).setStyle({'backgroundImage':'url("'+In2iGui.getIconUrl(c.icon,1)+'")'});
-				td.insert(icn);
+				td.insert(In2iGui.createIcon(c.icon,1));
 				icon = icon || c.icon;
 			}
 			if (c.text) {
@@ -473,11 +485,10 @@ In2iGui.List.prototype.rowDoubleClick = function(index) {
 /**
  * @private
  */
-In2iGui.List.prototype.windowPageWasClicked = function(tag) {
-	this.window.page = tag.in2GuiPage;
+In2iGui.List.prototype.windowPageWasClicked = function(tag,index) {
+	this.window.page = index;
 	In2iGui.firePropertyChange(this,'state',this.window);
 	In2iGui.firePropertyChange(this,'window.page',this.window.page);
-	//this.refresh();
 }
 
 /* EOF */

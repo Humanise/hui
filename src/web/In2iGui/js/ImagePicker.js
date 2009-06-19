@@ -44,7 +44,7 @@ In2iGui.ImagePicker.prototype = {
 			var self = this;
 			this.picker = In2iGui.BoundPanel.create();
 			this.content = new Element('div',{'class':'in2igui_imagepicker_thumbs'});
-			var buttons = new Element('div',{'class':'in2igui_imagepicker_buttons'});
+			var buttons = In2iGui.Buttons.create({align:'right'});
 			var close = In2iGui.Button.create({text:'Luk',highlighted:true});
 			close.addDelegate({
 				click:function() {self.hidePicker()}
@@ -53,8 +53,7 @@ In2iGui.ImagePicker.prototype = {
 			remove.addDelegate({
 				click:function() {self.setObject(null);self.hidePicker()}
 			});
-			buttons.appendChild(close.getElement());
-			buttons.appendChild(remove.getElement());
+			buttons.add(remove).add(close);
 			this.picker.add(this.content);
 			this.picker.add(buttons);
 		}
@@ -84,7 +83,7 @@ In2iGui.ImagePicker.prototype = {
 		this.content.update();
 		var images = doc.getElementsByTagName('image');
 		var self = this;
-		for (var i=0; i < images.length && i<50; i++) {
+		for (var i=0; i < images.length; i++) {
 			var id = images[i].getAttribute('id');
 			var img = {id:images[i].getAttribute('id')};
 			var url = In2iGui.resolveImageUrl(this,img,48,48);

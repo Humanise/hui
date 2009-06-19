@@ -1,4 +1,6 @@
-
+/**
+ * @constructor
+ */
 In2iGui.Editor = function() {
 	this.name = 'In2iGuiEditor';
 	this.parts = [];
@@ -126,7 +128,7 @@ In2iGui.Editor.prototype = {
 	contextColumn : function(column,rowIndex,columnIndex,e) {
 		if (!this.active || this.activePart) return;
 		if (!this.columnMenu) {
-			var menu = In2iGui.Menu.create('In2iGuiEditorColumnMenu');
+			var menu = In2iGui.Menu.create({name:'In2iGuiEditorColumnMenu'});
 			menu.addItem({title:'Rediger kolonne',value:'editColumn'});
 			menu.addItem({title:'Slet kolonne',value:'removeColumn'});
 			menu.addItem({title:'Tilføj kolonne',value:'addColumn'});
@@ -224,7 +226,7 @@ In2iGui.Editor.prototype = {
 	},
 	showPartEditControls : function() {
 		if (!this.partEditControls) {
-			this.partEditControls = In2iGui.Overlay.create('In2iGuiEditorPartEditActions');
+			this.partEditControls = In2iGui.Overlay.create({name:'In2iGuiEditorPartEditActions'});
 			this.partEditControls.addIcon('save','common/save');
 			this.partEditControls.addIcon('cancel','common/close');
 			this.partEditControls.addDelegate(this);
@@ -233,7 +235,7 @@ In2iGui.Editor.prototype = {
 	},
 	showPartControls : function() {
 		if (!this.partControls) {
-			this.partControls = In2iGui.Overlay.create('In2iGuiEditorPartActions');
+			this.partControls = In2iGui.Overlay.create({name:'In2iGuiEditorPartActions'});
 			this.partControls.addIcon('edit','common/edit');
 			this.partControls.addIcon('new','common/new');
 			this.partControls.addIcon('delete','common/delete');
@@ -367,7 +369,7 @@ In2iGui.Editor.prototype = {
 	},
 	newPart : function(e) {
 		if (!this.newPartMenu) {
-			var menu = In2iGui.Menu.create('In2iGuiEditorNewPartMenu');
+			var menu = In2iGui.Menu.create({name:'In2iGuiEditorNewPartMenu'});
 			this.partControllers.each(function(item) {
 				menu.addItem({title:item.title,value:item.key});
 			});
@@ -438,6 +440,9 @@ In2iGui.Editor.getPartId = function(element) {
 
 ////////////////////////////////// Header editor ////////////////////////////////
 
+/**
+ * @constructor
+ */
 In2iGui.Editor.Header = function(element,row,column,position) {
 	this.element = $(element);
 	this.row = row;
@@ -492,6 +497,9 @@ In2iGui.Editor.Header.prototype = {
 
 ////////////////////////////////// Html editor ////////////////////////////////
 
+/**
+ * @constructor
+ */
 In2iGui.Editor.Html = function(element,row,column,position) {
 	this.element = $(element);
 	this.row = row;
@@ -508,7 +516,7 @@ In2iGui.Editor.Html.prototype = {
 		var height = this.element.getHeight();
 		this.element.update('');
 		var style = this.buildStyle();
-		this.editor = In2iGui.RichText.create(null,{autoHideToolbar:false,style:style});
+		this.editor = In2iGui.RichText.create({autoHideToolbar:false,style:style});
 		this.editor.setHeight(height);
 		this.element.appendChild(this.editor.getElement());
 		this.editor.addDelegate(this);

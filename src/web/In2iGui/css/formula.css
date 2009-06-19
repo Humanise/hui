@@ -37,7 +37,7 @@ table.in2igui_formula_group label
 table.in2igui_formula_group_above label
 {
 	line-height: 13px;
-	display: block;
+	display: inline-block;
 	padding-left: 2px;
 }
 
@@ -311,7 +311,7 @@ span.in2igui_number_focused span span
 
 a.in2igui_dropdown
 {
-	display: block;
+	display: inline-block;
 	height: 26px;
 	background: url('../gfx/dropdown.png') -19px top no-repeat;
 	outline: none;
@@ -333,6 +333,7 @@ a.in2igui_dropdown span span
 	margin: 0 25px 0 6px;
 	background: url('../gfx/dropdown.png') left -26px repeat-x;
 	padding-left: 2px;
+	padding-right: 10px;
 }
 
 a.in2igui_dropdown:hover
@@ -387,6 +388,11 @@ a.in2igui_dropdown strong
 	font-weight: normal;
 	height: 26px;
 	width: 100%;
+}
+
+a.in2igui_dropdown em
+{
+	color: #456;
 }
 
 div.in2igui_dropdown_selector
@@ -493,6 +499,11 @@ div.in2igui_checkboxes
 {
 	margin-bottom: 5px;
 	font-size: 0;
+}
+
+div.in2igui_checkboxes_vertical a.in2igui_checkbox
+{
+	display: block;
 }
 
 a.in2igui_checkbox span
@@ -655,5 +666,10 @@ div.in2igui_window_dark input.in2igui_tokens_token
 {
 	background: #222;
 	border: 1px solid #444;
+	color: #fff;
+}
+
+div.in2igui_window_dark a.in2igui_checkbox
+{
 	color: #fff;
 }

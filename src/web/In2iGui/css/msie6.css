@@ -10,11 +10,6 @@
 	background-image: url('../gfx/window_bg_middle.gif');
 }
 
-form.in2igui_formula a.in2igui_button span
-{
-	width: 1%;
-}
-
 div.in2igui_list .navigation .selection div
 {
 	width: 1%;
@@ -24,11 +19,6 @@ div.in2igui_list .navigation .selection div
 div.in2igui_list .navigation .selection a
 {
 	float: none;
-}
-
-a.in2igui_button
-{
-	width: 1%;
 }
 
 div.in2igui_alert div.in2igui_buttons
@@ -45,6 +35,11 @@ div.in2igui_alert_body
 div.in2igui_box_top, div.in2igui_box_top div, div.in2igui_box_top div div, div.in2igui_box_bottom, div.in2igui_box_bottom div, div.in2igui_box_bottom div div, div.in2igui_box_middle, div.in2igui_box_middle div.in2igui_box_middle
 {
 	background: none;
+}
+
+*
+{
+	zoom: 1;
 }
 
 .in2igui_imageviewer_controller

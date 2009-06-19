@@ -1,8 +1,10 @@
-
-In2iGui.Menu = function(element,name,options) {
+/**
+ * @constructor
+ */
+In2iGui.Menu = function(options) {
 	this.options = n2i.override({autoHide:false,parentElement:null},options);
-	this.element = $(element);
-	this.name = name;
+	this.element = $(options.element);
+	this.name = options.name;
 	this.value = null;
 	this.subMenus = [];
 	this.visible = false;
@@ -10,11 +12,11 @@ In2iGui.Menu = function(element,name,options) {
 	this.addBehavior();
 }
 
-In2iGui.Menu.create = function(name,options) {
+In2iGui.Menu.create = function(options) {
 	options = options || {};
-	var element = new Element('div').addClassName('in2igui_menu');
-	var obj = new In2iGui.Menu(element,name,options);
-	document.body.appendChild(element);
+	options.element = new Element('div').addClassName('in2igui_menu');
+	var obj = new In2iGui.Menu(options);
+	document.body.appendChild(options.element);
 	return obj;
 }
 
@@ -89,6 +91,7 @@ In2iGui.Menu.prototype = {
 		if (event) {
 			Event.stop(event);
 		}
+		element = $(element);
 		var point = element.cumulativeOffset();
 		if (position=='horizontal') {
 			point.left += element.getWidth();

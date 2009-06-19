@@ -1,37 +1,48 @@
-In2iGui.BoundPanel = function(o) {
-	this.element = $(o.element);
-	this.name = o.name;
+/**
+ * A bound panel is a panel that is shown at a certain place
+ * @constructor
+ * @param {Object} options { element: «Node | id», name: «String» }
+ */
+In2iGui.BoundPanel = function(options) {
+	this.element = $(options.element);
+	this.name = options.name;
 	this.visible = false;
 	this.content=this.element.select('.content')[0];
 	this.arrow=this.element.select('.arrow')[0];
 	In2iGui.extend(this);
 }
 
-In2iGui.BoundPanel.create = function(o) {
-	var o = n2i.override({name:null,top:'0px',left:'0px'},o);
-	var element = o.element = new Element('div',
-		{'class':'in2igui_boundpanel'}).setStyle({'display':'none','zIndex':In2iGui.nextPanelIndex(),'top':o.top,'left':o.left});
+/**
+ * Creates a new bound panel
+ * <br/><strong>options:</strong> { name: «String», top: «pixels», left: «pixels», padding: «pixels», width: «pixels» }
+ * @param {Object} options The options
+ */
+In2iGui.BoundPanel.create = function(options) {
+	var options = n2i.override({name:null, top:0, left:0, width:null, padding: null}, options);
+	var element = options.element = new Element('div',
+		{'class':'in2igui_boundpanel'}).setStyle({'display':'none','zIndex':In2iGui.nextPanelIndex(),'top':options.top+'px','left':options.left+'px'});
 	
 	var html = 
 		'<div class="arrow"></div>'+
 		'<div class="top"><div><div></div></div></div>'+
 		'<div class="body"><div class="body"><div class="body"><div class="content" style="';
-	if (o.width) {
-		html+='width:'+o.width+'px;';
+	if (options.width) {
+		html+='width:'+options.width+'px;';
 	}
-	if (o.padding) {
-		html+='padding:'+o.padding+'px;';
+	if (options.padding) {
+		html+='padding:'+options.padding+'px;';
 	}
 	html+='"></div></div></div></div>'+
 		'<div class="bottom"><div><div></div></div></div>';
 	element.innerHTML=html;
 	document.body.appendChild(element);
-	return new In2iGui.BoundPanel(o);
+	return new In2iGui.BoundPanel(options);
 }
 
 /********************************* Public methods ***********************************/
 
 In2iGui.BoundPanel.prototype = {
+	/** Shows the panel */
 	show : function() {
 		if (!this.visible) {
 			if (!n2i.browser.msie) {
@@ -59,6 +70,7 @@ In2iGui.BoundPanel.prototype = {
 		this.element.style.zIndex = In2iGui.nextPanelIndex();
 		this.visible=true;
 	},
+	/** Hides the panel */
 	hide : function() {
 		if (n2i.browser.msie) {
 			this.element.style.display='none';
@@ -67,16 +79,25 @@ In2iGui.BoundPanel.prototype = {
 		}
 		this.visible=false;
 	},
-	add : function(obj) {
-		if (obj.getElement) {
-			this.content.appendChild(obj.getElement());
+	/**
+	 * Adds a widget or element to the panel
+	 * @param {Node | Widget} child The object to add
+	 */
+	add : function(child) {
+		if (child.getElement) {
+			this.content.insert(child.getElement());
 		} else {
-			this.content.appendChild(obj);
+			this.content.insert(child);
 		}
 	},
+	/**
+	 * Adds som vertical space to the panel
+	 * @param {pixels} height The height of the space in pixels
+	 */
 	addSpace : function(height) {
 		this.add(new Element('div').setStyle({fontSize:'0px',height:height+'px'}));
 	},
+	/** @private */
 	getDimensions : function() {
 		if (this.element.style.display=='none') {
 			this.element.style.visibility='hidden';
@@ -91,6 +112,9 @@ In2iGui.BoundPanel.prototype = {
 		}
 		return {width:width,height:height};
 	},
+	/** Position the panel at a node
+	 * @param {Node} node The node the panel should be positioned at 
+	 */
 	position : function(node) {
 		node = $(node);
 		var offset = node.cumulativeOffset();

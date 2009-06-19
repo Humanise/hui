@@ -26,6 +26,7 @@ In2iGui.Wizard.prototype = {
 	addBehavior : function() {
 		this.anchors.each(function(node,i) {
 			node.observe('mousedown',function(e) {e.stop();this.goToStep(i)}.bind(this));
+			node.observe('click',function(e) {e.stop();});
 		}.bind(this));
 	},
 	/** Goes to the step with the index */

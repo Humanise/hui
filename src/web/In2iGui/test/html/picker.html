@@ -19,16 +19,16 @@
 <body>
 <script type="text/javascript" charset="utf-8">
 	var objects = [
-		{key:'basic',title:'Basal',image:'../gfx/thumbnail.png'},
-		{key:'modern',title:'Moderne',image:'../gfx/thumbnail.png'},
-		{key:'cartoon',title:'Tegneserie',image:'../gfx/thumbnail.png'},
-		{key:'ocean',title:'Ocean',image:'../gfx/thumbnail.png'},
-		{key:'snow',title:'Snow',image:'../gfx/thumbnail.png'},
-		{key:'beach',title:'Beach',image:'../gfx/thumbnail.png'}
+		{value:'basic',title:'Basal',image:'../gfx/thumbnail.png'},
+		{value:'modern',title:'Moderne',image:'../gfx/thumbnail.png'},
+		{value:'cartoon',title:'Tegneserie',image:'../gfx/thumbnail.png'},
+		{value:'ocean',title:'Ocean',image:'../gfx/thumbnail.png'},
+		{value:'snow',title:'Snow',image:'../gfx/thumbnail.png'},
+		{value:'beach',title:'Beach',image:'../gfx/thumbnail.png'}
 	];
 
-	var win = In2iGui.Window.create({title:'Skift skabelon',variant:'light',padding:5});
-	var picker = In2iGui.Picker.create('templatePicker',{itemWidth:92,itemHeight:120});
+	var win = In2iGui.Window.create({title:'Skift skabelon',variant:'light',padding:5,width:300});
+	var picker = In2iGui.Picker.create({name:'templatePicker',itemWidth:92,itemHeight:120});
 	picker.setObjects(objects);
 	win.add(picker);
 	win.show();

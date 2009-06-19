@@ -1,8 +1,8 @@
-In2iGui.Gallery = function(id,name,options) {
-	this.id = id;
-	this.name = name;
+/** @constructor */
+In2iGui.Gallery = function(options) {
 	this.options = options || {};
-	this.element = $(id);
+	this.name = options.name;
+	this.element = $(options.element);
 	this.objects = [];
 	this.nodes = [];
 	this.selected = new Hash();

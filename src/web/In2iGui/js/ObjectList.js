@@ -1,3 +1,6 @@
+/**
+ * @constructor
+ */
 In2iGui.ObjectList = function(o) {
 	this.options = n2i.override({key:null},o);
 	this.name = o.name;
@@ -92,6 +95,7 @@ In2iGui.ObjectList.prototype = {
 
 /********************** Object ********************/
 
+/** @constructor */
 In2iGui.ObjectList.Object = function(index,data,list) {
 	this.data = data;
 	this.index = index;
@@ -144,7 +148,7 @@ In2iGui.ObjectList.Text.prototype = {
 	getElement : function() {
 		var input = new Element('input',{'class':'in2igui_formula_text'});
 		var field = In2iGui.wrapInField(input);
-		this.wrapper = new In2iGui.TextField(input);
+		this.wrapper = new In2iGui.TextField({element:input});
 		this.wrapper.addDelegate(this);
 		return field;
 	},

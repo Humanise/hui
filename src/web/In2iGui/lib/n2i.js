@@ -6,6 +6,7 @@ var n2i = {
 
 n2i.browser.opera = /opera/i.test(navigator.userAgent);
 n2i.browser.msie = !n2i.browser.opera && /MSIE/.test(navigator.userAgent);
+n2i.browser.msie6 = navigator.userAgent.indexOf('MSIE 6')!=-1;
 n2i.browser.msie7 = navigator.userAgent.indexOf('MSIE 7')!=-1;
 n2i.browser.msie8 = navigator.userAgent.indexOf('MSIE 8')!=-1;
 n2i.browser.webkit = navigator.userAgent.indexOf('WebKit')!=-1;
@@ -39,6 +40,7 @@ n2i.camelize = function(str) {
     return camelizedString;
 }
 
+/** Override the properties on the first argument with properties from the last object */
 n2i.override = function(original,subject) {
 	if (subject) {
 		for (prop in subject) {
@@ -54,10 +56,10 @@ n2i.trim = function(str) {
 	return str.replace(/^[\s\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000]+|[\s\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000]+$/g, '');
 }
 
+/** Escape the html in a string */
 n2i.escapeHTML = function(str) {
     var div = document.createElement('div');
-    var text = document.createTextNode(str);
-    div.appendChild(text);
+    div.appendChild(document.createTextNode(str));
     return div.innerHTML;
 }
 
@@ -74,6 +76,7 @@ n2i.inArray = function(arr,value) {
 	for (var i=0; i < arr.length; i++) {
 		if (arr[i]==value) return true;
 	};
+	return false;
 }
 
 
@@ -117,6 +120,7 @@ n2i.scrollTo = function(element) {
 
 ////////////////////// DOM ////////////////////
 
+/** @namespace */
 n2i.dom = {
 	isElement : function(n,name) {
 		return n.nodeType==n2i.ELEMENT_NODE && (name===undefined ? true : n.nodeName==name);
@@ -178,7 +182,7 @@ n2i.copyStyle = function(source,target,styles) {
 	});
 }
 
-/************************ Events ***********************/
+///////////////////// Events ////////////////////
 
 n2i.isReturnKey = function(e) {
 	return e.keyCode==13;
@@ -196,7 +200,7 @@ n2i.isSpaceKey = function(e) {
 	return e.keyCode==32;
 }
 
-/************************ Frames ***********************/
+//////////////////// Frames ////////////////////
 
 n2i.getFrameDocument = function(frame) {
     if (frame.contentDocument) {
@@ -208,7 +212,7 @@ n2i.getFrameDocument = function(frame) {
     }
 }
 
-/************************* Position **********************/
+/////////////////// Position /////////////////////
 
 n2i.getScrollTop = function() {
 	if (self.pageYOffset) {
@@ -252,6 +256,14 @@ n2i.getInnerWidth = function() {
 }
 
 n2i.getDocumentHeight = function() {
+	if (n2i.browser.msie6) {
+		// In IE6 check the children too
+		var max = Math.max(document.body.clientHeight,document.documentElement.clientHeight,document.documentElement.scrollHeight);
+		$(document.body).childElements().each(function(node) {
+			max = Math.max(max,node.getHeight());
+		});
+		return max;
+	}
 	if (window.scrollMaxY && window.innerHeight) {
 		return window.scrollMaxY+window.innerHeight;
 	} else {
@@ -408,7 +420,7 @@ n2i.ani = n2i.animate = function(element,style,value,duration,delegate) {
 	n2i.animation.get(element).animate(null,value,style,duration,delegate);
 }
 
-/* @namespace */
+/** @namespace */
 n2i.animation = {
 	objects : {},
 	running : false,
@@ -522,7 +534,7 @@ n2i.animation.parseStyle = function(value) {
 	return parsed;
 }
 
-/********************************* Item **********************************/
+///////////////////////////// Item ///////////////////////////////
 
 n2i.animation.Item = function(element) {
 	this.element = element;
@@ -585,7 +597,7 @@ n2i.animation.Item.prototype.getWork = function(property) {
 	return work;
 }
 
-/************************************** Loop **********************************/
+/////////////////////////////// Loop ///////////////////////////////////
 
 n2i.animation.Loop = function(recipe) {
 	this.recipe = recipe;
@@ -856,6 +868,7 @@ n2i.Color = function(color_string) {
 }
 
 
+/** @namespace */
 n2i.ease = {
 	slowFastSlow : function(val) {
 		var a = 1.6;

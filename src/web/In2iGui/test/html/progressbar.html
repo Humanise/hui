@@ -32,16 +32,16 @@
 	
 	<script type="text/javascript" charset="utf-8">
 		function showProgress(small) {
-			var win = In2iGui.Window.create({width:300});
-			var bar = In2iGui.ProgressBar.create({small:small});
-			var g = In2iGui.Buttons.create();
-			var b = In2iGui.Button.create({text:'Random'});
+			var win = ui.Window.create({width:300});
+			var bar = ui.ProgressBar.create({small:small});
+			var g = ui.Buttons.create();
+			var b = ui.Button.create({text:'Random'});
 			b.addDelegate({click:function(){bar.setValue(Math.random())}});
-			var b2 = In2iGui.Button.create({text:'Reset'});
+			var b2 = ui.Button.create({text:'Reset'});
 			b2.addDelegate({click:function(){bar.reset()}});
-			var b3 = In2iGui.Button.create({text:'Wait'});
+			var b3 = ui.Button.create({text:'Wait'});
 			b3.addDelegate({click:function(){bar.setWaiting()}});
-			var b4 = In2iGui.Button.create({text:'Complete'});
+			var b4 = ui.Button.create({text:'Complete'});
 			b4.addDelegate({click:function(){bar.setValue(1)}});
 			g.add(b);
 			g.add(b2);

@@ -1,17 +1,19 @@
 div.in2igui_list
 {
+	font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
 	/*padding-right: 10px;*/
 }
 
-div.in2igui_list_busy .navigation
+div.in2igui_list_body
 {
-	opacity: 0.5;
+	overflow: auto;
 }
 
 div.in2igui_list table
 {
 	width: 100%;
 	border-collapse: collapse;
+	background: #fff;
 }
 
 div.in2igui_list table thead th
@@ -75,13 +77,10 @@ div.in2igui_list table tbody td .object
 	padding-bottom: 2px;
 }
 
-div.in2igui_list table tbody td .icon
+div.in2igui_list .in2igui_icon
 {
-	float: left;
-	width: 16px;
-	height: 16px;
 	margin-right: 3px;
-	background: 0px 0px no-repeat;
+	float: left;
 }
 
 
@@ -91,7 +90,7 @@ div.in2igui_list table tbody tr:hover
 	cursor: pointer;
 }
 
-div.in2igui_list table tbody tr:hover .icon
+div.in2igui_list table tbody tr:hover .in2igui_icon_1
 {
 	background-position: 0px -16px;
 }
@@ -102,12 +101,17 @@ div.in2igui_list table tbody tr.selected
 	color: #fff;
 }
 
+div.in2igui_list table tbody tr.selected p.in2igui_list_dimmed
+{
+	color: #abd;
+}
+
 div.in2igui_list .window_page
 {
 	display: none;
 }
 
-div.in2igui_list .navigation
+div.in2igui_list_navigation
 {
 	display: none;
 	background: url('../gfx/list_navigation.png');
@@ -116,7 +120,7 @@ div.in2igui_list .navigation
 	padding: 0px 3px;
 }
 
-div.in2igui_list .navigation .count
+span.in2igui_list_count
 {
 	float: right;
 	color: #666;
@@ -126,7 +130,7 @@ div.in2igui_list .navigation .count
 	padding-right: 7px;
 }
 
-div.in2igui_list .navigation .selection
+div.in2igui_list_selection
 {
 	margin-top: 1px;
 	float: left;
@@ -134,20 +138,20 @@ div.in2igui_list .navigation .selection
 	background: url('../gfx/list_box.png') repeat-x;
 }
 
-div.in2igui_list .navigation .selection div
+div.in2igui_list_selection div
 {
 	height: 24px;
 	background: url('../gfx/list_box.png') left -24px no-repeat;
 }
 
-div.in2igui_list .navigation .selection div div
+div.in2igui_list_selection div div
 {
 	height: 24px;
 	background: url('../gfx/list_box.png') right -48px no-repeat;
 	padding: 0px 12px;
 }
 
-div.in2igui_list .navigation .selection a
+div.in2igui_list_selection a
 {
 	font-size: 11px;
 	cursor: pointer;
@@ -160,13 +164,13 @@ div.in2igui_list .navigation .selection a
 	-webkit-border-radius: 2px;
 }
 
-div.in2igui_list .navigation .selection a:hover
+div.in2igui_list_selection a:hover
 {
 	background: #aaa;
 	color: #000;
 }
 
-div.in2igui_list .navigation .selection a.selected
+div.in2igui_list_selection a.selected
 {
 	background: #3875D7;
 	color: #fff;

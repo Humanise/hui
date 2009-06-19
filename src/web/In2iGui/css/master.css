@@ -7,32 +7,22 @@ body.in2igui
 {
 	margin: 0px;
 	font-size: 11pt;
-	background: #d8dadd url('../gfx/bg2.png') repeat-x;
+	background: #f3f5f7;
 	overflow: auto;
 	min-height: 100%;
 	height: 100%;
 }
 
-body.in2igui, textarea
+body.in2igui, body.in2igui textarea
 {
 	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
 }
-/*
+
 div.in2igui_body
 {
-	-moz-box-sizing: border-box;
 	height: 100%;
-}
-*/
-/* TODO: remove these */
-td
-{
-	padding: 0px;
-}
-
-table
-{
-	border-spacing: 0px 0px;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
 }
 
 /************************* Links ********************/
@@ -253,6 +243,7 @@ div.browser .column div.selected, div.browser .column div.selected:hover
 div.in2igui_tabs_bar
 {
 	padding-top: 4px;
+	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
 }
 
 div.in2igui_tabs_bar ul
@@ -314,31 +305,33 @@ div.in2igui_tabs_bar li.in2igui_tabs_selected span span
 div.in2igui_buttons
 {
 	overflow: hidden;
+	font-size: 0;
 }
 
 div.in2igui_buttons_right div.in2igui_buttons_body
 {
-	float: right;
+	text-align: right;
 }
 
 div.in2igui_buttons a.in2igui_button
 {
-	margin-right: 5px;
+	margin-right: 2px;
 }
 
 div.in2igui_buttons_right a.in2igui_button
 {
-	margin: 0px 0px 0px 5px;
+	margin: 0px 0px 0px 2px;
 }
 
 a.in2igui_button
 {
 	background: url('../gfx/button2.png') top left no-repeat;
 	color: #004a80;
-	float: left;
+	display: inline-block;
+	vertical-align: middle;
 	font-size: 12px;
 	height: 30px;
-	line-height: 30px;
+	line-height: 29px;
 	cursor: pointer;
 	text-decoration: none;
 	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
@@ -348,11 +341,10 @@ a.in2igui_button span
 {
 	background-image: url('../gfx/button2.png');	
 	background-repeat: no-repeat;
-	display: block;
+	display: inline-block;
 	background-position: right -30px;
 	background-repeat: no-repeat;
 	height: 30px;
-	float: left;
 }
 
 a.in2igui_button span span
@@ -566,22 +558,18 @@ table.in2igui_dock thead td
 table.in2igui_dock tfoot.in2igui_dock_tabs td
 {
 	height: 78px;
+	padding: 0;
 }
 
 table.in2igui_dock tfoot td div.in2igui_toolbar
 {
-	padding: 0px 5px;
 	background: url('../gfx/toolbar_bg.png') repeat-x;
-}
-
-table.in2igui_dock div.in2igui_toolbar
-{
-	overflow: hidden;
 }
 
 table.in2igui_dock tbody td
 {
 	font-size: 0px;
+	padding: 0;
 }
 
 table.in2igui_dock iframe

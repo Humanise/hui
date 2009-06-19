@@ -1,21 +1,25 @@
-In2iGui.Overlay = function(element,name,options) {
-	this.element = $(element);
+/**
+ * @constructor
+ */
+In2iGui.Overlay = function(options) {
+	this.element = $(options.element);
 	this.content = this.element.select('div.in2igui_inner_overlay')[1];
-	this.name = name;
+	this.name = options.name;
 	this.icons = new Hash();
 	this.visible = false;
 	In2iGui.extend(this);
 	this.addBehavior();
 }
 
-In2iGui.Overlay.create = function(name,options) {
-	var element = new Element('div').addClassName('in2igui_overlay').setStyle({'display':'none'});
-	element.update('<div class="in2igui_inner_overlay"><div class="in2igui_inner_overlay"></div></div>');
-	document.body.appendChild(element);
-	return new In2iGui.Overlay(element,name);
+In2iGui.Overlay.create = function(options) {
+	var e = options.element = new Element('div').addClassName('in2igui_overlay').setStyle({'display':'none'});
+	e.update('<div class="in2igui_inner_overlay"><div class="in2igui_inner_overlay"></div></div>');
+	document.body.appendChild(e);
+	return new In2iGui.Overlay(options);
 }
 
 In2iGui.Overlay.prototype = {
+	/** @private */
 	addBehavior : function() {
 		var self = this;
 		this.hider = function(e) {

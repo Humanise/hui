@@ -1,3 +1,7 @@
+/**
+ * @constructor
+ * A button
+ */
 In2iGui.Button = function(o) {
 	this.name = o.name;
 	this.element = $(o.element);
@@ -7,6 +11,9 @@ In2iGui.Button = function(o) {
 	this.addBehavior();
 }
 
+/**
+ * Creates a new button
+ */
 In2iGui.Button.create = function(o) {
 	var o = n2i.override({text:'',highlighted:false,enabled:true},o);
 	var className = 'in2igui_button'+(o.highlighted ? ' in2igui_button_highlighted' : '');
@@ -33,6 +40,7 @@ In2iGui.Button.create = function(o) {
 }
 
 In2iGui.Button.prototype = {
+	/** @private */
 	addBehavior : function() {
 		var self = this;
 		this.element.onclick = function() {
@@ -40,6 +48,7 @@ In2iGui.Button.prototype = {
 			return false;
 		}
 	},
+	/** @private */
 	clicked : function() {
 		if (this.enabled) {
 			In2iGui.callDelegates(this,'buttonWasClicked'); // deprecated
@@ -49,39 +58,50 @@ In2iGui.Button.prototype = {
 			this.element.blur();
 		}
 	},
+	/** Enables or disables the button */
 	setEnabled : function(enabled) {
 		this.enabled = enabled;
 		this.updateUI();
 	},
+	/** Sets whether the button is highlighted */
 	setHighlighted : function(highlighted) {
 		this.element.setClassName('in2igui_button_highlighted',highlighted);
 	},
+	/** @private */
 	updateUI : function() {
 		this.element.setClassName('in2igui_button_disabled',!this.enabled);
 	},
+	/** Sets the button text */
 	setText : function(text) {
 		this.inner.innerHTML = text;
 	}
 }
 
-In2iGui.Buttons = function(id,name) {
-	this.name = name;
-	this.element = $(id);
+////////////////////////////////// Buttons /////////////////////////////
+
+/** @constructor */
+In2iGui.Buttons = function(o) {
+	this.name = o.name;
+	this.element = $(o.element);
 	this.body = this.element.select('.in2igui_buttons_body')[0];
 	In2iGui.extend(this);
 }
 
-In2iGui.Buttons.create = function(name,o) {
+In2iGui.Buttons.create = function(o) {
 	o = n2i.override({top:0},o);
-	var e = new Element('div',{'class':'in2igui_buttons'});
+	var e = o.element = new Element('div',{'class':'in2igui_buttons'});
+	if (o.align=='right') {
+		e.addClassName('in2igui_buttons_right');
+	}
 	if (o.top>0) e.setStyle({paddingTop:o.top+'px'});
 	e.insert(new Element('div',{'class':'in2igui_buttons_body'}));
-	return new In2iGui.Buttons(e,name);
+	return new In2iGui.Buttons(o);
 }
 
 In2iGui.Buttons.prototype = {
 	add : function(widget) {
 		this.body.insert(widget.getElement());
+		return this;
 	}
 }
 

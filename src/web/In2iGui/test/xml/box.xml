@@ -3,8 +3,8 @@
 <gui xmlns="uri:In2iGui" pad="10" title="Box">
 	<box width="400" padding="10" title="Title with toolbar" variant="textured">
 		<toolbar>
-			<icon icon="common/color" title="Hep hey!" selected="true" action="alert(0)"/>
-			<icon icon="common/folder" title="Hep hey!"/>
+			<icon icon="common/color" title="Hep hey!" selected="true" action="ui.alert({title:'ALERT!',emotion:'smile'})"/>
+			<icon icon="common/folder" title="Hep hey!" name="icon" action="ui.get('icon').setSelected(true)"/>
 			<icon icon="common/settings" title="Hep hey!" disabled="true"/>
 		</toolbar>
 		<formula>

@@ -1,3 +1,7 @@
+/**
+ * @constructor
+ * @param {Object} options The options : {modal:false}
+ */
 In2iGui.Box = function(element,name,options) {
 	this.options = n2i.override({},options);
 	this.name = name;
@@ -14,6 +18,10 @@ In2iGui.Box = function(element,name,options) {
 	In2iGui.extend(this);
 };
 
+/**
+ * Creates a new box widget
+ * @param {Object} options The options : {width:0,padding:0,absolute:false,closable:false}
+ */
 In2iGui.Box.create = function(options) {
 	options = n2i.override({},options);
 	var e = new Element('div',{'class':'in2igui_box'});
@@ -35,9 +43,15 @@ In2iGui.Box.create = function(options) {
 };
 
 In2iGui.Box.prototype = {
+	/**
+	 * Adds the box to the end of the body
+	 */
 	addToDocument : function() {
 		document.body.appendChild(this.element);
 	},
+	/**
+	 * Adds a child widget or node
+	 */
 	add : function(widget) {
 		if (widget.getElement) {
 			this.body.insert(widget.getElement());
@@ -45,6 +59,9 @@ In2iGui.Box.prototype = {
 			this.body.insert(widget);
 		}
 	},
+	/**
+	 * Shows the box
+	 */
 	show : function() {
 		var e = this.element;
 		if (this.options.modal) {
@@ -59,10 +76,14 @@ In2iGui.Box.prototype = {
 		e.setStyle({display:'block',visibility:'visible'});
 		In2iGui.callVisible(this);
 	},
+	/**
+	 * Hides the box
+	 */
 	hide : function() {
 		In2iGui.hideCurtain(this);
 		this.element.setStyle({display:'none'});
 	},
+	/** @private */
 	curtainWasClicked : function() {
 		this.fire('boxCurtainWasClicked');
 	}

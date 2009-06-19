@@ -1,7 +1,10 @@
-In2iGui.ColorPicker = function(id,name,options) {
-	this.name = name;
+/**
+ * @constructor
+ */
+In2iGui.ColorPicker = function(options) {
 	this.options = options || {};
-	this.element = $(id);
+	this.name = options.name;
+	this.element = $(options.element);
 	this.color = null;
 	this.wheel1 = this.element.select('div.in2igui_colorpicker_wheel1')[0];
 	In2iGui.extend(this);
@@ -9,18 +12,19 @@ In2iGui.ColorPicker = function(id,name,options) {
 	this.buildData();
 }
 
-In2iGui.ColorPicker.create = function(name,options) {
-	var element = new Element('div',{'class':'in2igui_colorpicker'});
+In2iGui.ColorPicker.create = function(options) {
+	var element = options.element = new Element('div',{'class':'in2igui_colorpicker'});
 	element.update(
 		'<div class="in2igui_colorpicker_content"><div class="in2igui_colorpicker_inner_content">'+
 		'<div class="in2igui_colorpicker_page in2igui_colorpicker_wheel1"></div>'+
 		'<div class="in2igui_colorpicker_page in2igui_colorpicker_wheel2"></div>'+
 		'</div></div>'
 	);
-	return new In2iGui.ColorPicker(element,name,options);
+	return new In2iGui.ColorPicker(options);
 }
 
 In2iGui.ColorPicker.prototype = {
+	/** @private */
 	addBehavior : function() {
 		var self = this;
 		this.wheel1.observe('mousemove',function(e) {
@@ -34,9 +38,11 @@ In2iGui.ColorPicker.prototype = {
 			self.pickColor();
 		})
 	},
+	/** @private */
 	pickColor : function() {
-		In2iGui.callDelegates(this,'colorWasSelected',this.color);
+		this.fire('colorWasSelected',this.color);
 	},
+	/** @private */
 	buildData : function() {
 		var addary = new Array();           //red
 		addary[0] = new Array(0,1,0);   //red green
@@ -58,6 +64,7 @@ In2iGui.ColorPicker.prototype = {
 		}
 		this.colorArray = clrary;
 	},
+	/** @private */
 	hoverWheel1 : function(e) {
 		var pos = this.wheel1.cumulativeOffset();
 		var x = 4 * (e.pointerX() - pos.left);
@@ -93,7 +100,7 @@ In2iGui.ColorPicker.prototype = {
 		}
 		while(c.length < 6) c = "0" + c;
 		this.color = '#'+c;
-		In2iGui.callDelegates(this,'colorWasHovered',this.color);
+		this.fire('colorWasHovered',this.color);
 	}
 }
 

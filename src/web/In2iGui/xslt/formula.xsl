@@ -84,7 +84,9 @@
 			
 			<span class="in2igui_field_top"><span><span><xsl:comment/></span></span></span>
 			<span class="in2igui_field_middle"><span class="in2igui_field_middle"><span class="in2igui_field_content">
+				<span class="in2igui_formula_text_multiline">
 				<textarea class="in2igui_formula_text" rows="{@lines}"><xsl:text></xsl:text></textarea>
+				</span>
 			</span></span></span>
 			<span class="in2igui_field_bottom"><span><span><xsl:comment/></span></span></span>
 			</div>
@@ -93,7 +95,9 @@
 			<div class="in2igui_field" id="{generate-id()}">
 			<span class="in2igui_field_top"><span><span><xsl:comment/></span></span></span>
 			<span class="in2igui_field_middle"><span class="in2igui_field_middle"><span class="in2igui_field_content">
+				<span class="in2igui_formula_text_singleline">
 				<input class="in2igui_formula_text"><xsl:if test="@secret='true'"><xsl:attribute name="type">password</xsl:attribute></xsl:if></input>
+				</span>
 			</span></span></span>
 			<span class="in2igui_field_bottom"><span><span><xsl:comment/></span></span></span>
 			</div>
@@ -208,32 +212,6 @@
 	</script>
 </xsl:template>
 
-<!-- Select -->
-
-<xsl:template match="gui:group/gui:select">
-	<tr>
-		<th><label><xsl:value-of select="@label"/></label></th>
-		<td><xsl:call-template name="gui:select"/></td>
-	</tr>
-</xsl:template>
-
-<xsl:template match="gui:group[@labels='above']/gui:select">
-	<tr><td>
-		<label><xsl:value-of select="@label"/></label>
-		<xsl:call-template name="gui:select"/>
-	</td></tr>
-</xsl:template>
-
-<xsl:template name="gui:select">
-	<select id="{generate-id()}">
-	<xsl:apply-templates/>
-	</select>
-	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.Select('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>',{key:'<xsl:value-of select="@key"/>',source:'<xsl:value-of select="@source"/>'});
-		<xsl:call-template name="gui:createobject"/>
-	</script>
-</xsl:template>
-
 <!-- dropdown -->
 
 <xsl:template match="gui:group/gui:dropdown">
@@ -262,6 +240,7 @@
 			,value:'<xsl:value-of select="@value"/>'
 			<xsl:if test="@source">,source:<xsl:value-of select="@source"/></xsl:if>
 			<xsl:if test="@url">,url:'<xsl:value-of select="@url"/>'</xsl:if>
+			<xsl:if test="@placeholder">,placeholder:'<xsl:value-of select="@placeholder"/>'</xsl:if>
 		});
 		with(<xsl:value-of select="generate-id()"/>_obj) {
 			<xsl:for-each select="gui:item">
@@ -295,7 +274,7 @@
 		<xsl:apply-templates/>
 	</div>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.Radiobuttons('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>',{'value':'<xsl:value-of select="@value"/>','key':'<xsl:value-of select="@key"/>'});
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.Radiobuttons({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>','value':'<xsl:value-of select="@value"/>','key':'<xsl:value-of select="@key"/>'});
 		with (<xsl:value-of select="generate-id()"/>_obj) {
 			<xsl:for-each select="gui:radiobutton">
 				registerRadiobutton({id:'<xsl:value-of select="generate-id()"/>','value':'<xsl:value-of select="@value"/>'});
@@ -337,7 +316,12 @@
 		<span><span><xsl:comment/></span></span>
 	</a>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.Checkbox('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>',{'key':'<xsl:value-of select="@key"/>','value':'<xsl:value-of select="@value"/>'});
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.Checkbox({
+			element:'<xsl:value-of select="generate-id()"/>',
+			name:'<xsl:value-of select="@name"/>',
+			'key':'<xsl:value-of select="@key"/>',
+			'value':'<xsl:value-of select="@value"/>'
+		});
 		<xsl:call-template name="gui:createobject"/>
 	</script>
 </xsl:template>
@@ -363,7 +347,11 @@
 		<xsl:apply-templates/>
 	</div>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.Checkboxes('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>',{key:'<xsl:value-of select="@key"/>'});
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.Checkboxes({
+			element:'<xsl:value-of select="generate-id()"/>',
+			name:'<xsl:value-of select="@name"/>',
+			key:'<xsl:value-of select="@key"/>'
+		});
 		with (<xsl:value-of select="generate-id()"/>_obj) {
 			<xsl:for-each select="gui:items">
 				registerItems(<xsl:value-of select="generate-id()"/>_obj);
@@ -378,7 +366,7 @@
 		<xsl:comment/>
 	</div>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.Checkboxes.Items('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>',{source:<xsl:value-of select="@source"/>});
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.Checkboxes.Items({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>',source:<xsl:value-of select="@source"/>});
 		<xsl:call-template name="gui:createobject"/>
 	</script>
 </xsl:template>
@@ -398,7 +386,7 @@
 </xsl:template>
 
 <xsl:template match="gui:buttons" name="gui:buttons">
-	<div class="">
+	<div>
 		<xsl:attribute name="class">
 			<xsl:text>in2igui_buttons</xsl:text>
 			<xsl:if test="@align='right'">
@@ -415,7 +403,7 @@
 	</div>
 </xsl:template>
 
-<xsl:template match="gui:buttons/gui:button" name="gui:button">
+<xsl:template match="gui:button" name="gui:button">
 	<a id="{generate-id()}" href="#">
 		<xsl:attribute name="class">in2igui_button<xsl:if test="@highlighted='true'"> in2igui_button_highlighted</xsl:if></xsl:attribute>
 		<span><span><xsl:value-of select="@title"/></span></span></a>
