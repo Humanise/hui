@@ -4,11 +4,12 @@ import nu.xom.Attribute;
 import nu.xom.Element;
 import nu.xom.Node;
 import nu.xom.Text;
+import dk.in2isoft.onlineobjects.core.ModelException;
 import dk.in2isoft.onlineobjects.model.Entity;
 
 public class EntityConverter {
 	
-	public final Node generateXML(Entity entity) {
+	public final Node generateXML(Entity entity) throws ModelException {
 		Element root = new Element("Entity",Entity.NAMESPACE);
 		root.addAttribute(new Attribute("id",String.valueOf(entity.getId())));
 		root.addAttribute(new Attribute("type",entity.getType()));
@@ -22,7 +23,7 @@ public class EntityConverter {
 		return root;
 	}
 	
-	protected Node generateSubXML(Entity entity) {
+	protected Node generateSubXML(Entity entity) throws ModelException {
 		return null;
 	}
 

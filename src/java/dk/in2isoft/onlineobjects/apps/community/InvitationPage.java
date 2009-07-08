@@ -7,7 +7,8 @@ import nu.xom.Attribute;
 import nu.xom.Element;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
-import dk.in2isoft.onlineobjects.core.ModelFacade;
+import dk.in2isoft.onlineobjects.core.ModelException;
+import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.model.EmailAddress;
 import dk.in2isoft.onlineobjects.model.Invitation;
@@ -34,7 +35,7 @@ public class InvitationPage extends XSLTInterfaceAdapter {
 		super();
 		stylesheet = controller.getFile("xslt", "invitation.xsl");
 
-		ModelFacade model = Core.getInstance().getModel();
+		ModelService model = Core.getInstance().getModel();
 		String code = request.getString("code");
 		Query<Invitation> query = new Query<Invitation>(Invitation.class).withFieldValue("code", code);
 		List<Invitation> items = model.list(query);
@@ -52,7 +53,7 @@ public class InvitationPage extends XSLTInterfaceAdapter {
 	}
 
 	@Override
-	public void buildContent(Element parent) {
+	public void buildContent(Element parent) throws ModelException {
 		if (invitation==null) {
 			Element error = createPageNode(parent, "error");
 			error.addAttribute(new Attribute("key", "notfound"));

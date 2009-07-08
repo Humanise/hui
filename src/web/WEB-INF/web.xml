@@ -94,7 +94,7 @@
   	</context-param>
  
     <context-param>
-        <param-name>facelets.LIBRARIES</param-name>
+        <param-name>javax.faces.FACELETS_LIBRARIES</param-name>
         <param-value>/META-INF/onlineobjects.taglib.xml;/META-INF/in2igui.taglib.xml</param-value>
     </context-param>
 
@@ -108,6 +108,16 @@
         <url-pattern>/faces/*</url-pattern>
     </servlet-mapping>
 	
+	<!-- Spring -->
+
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:applicationContext.xml</param-value>
+	</context-param>
+
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
 	
 	<session-config>
 		<session-timeout>150</session-timeout>

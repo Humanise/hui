@@ -4,7 +4,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
 	xmlns:gui="http://www.in2isoft.dk/in2igui"
 >
@@ -58,16 +58,14 @@
 								</c:if>
 								<c:if test="#{fn:length(userProfile.info.interests)>0}">
 								<p><span class="label">Interesser: </span>
-									<c:forEach items="#{userProfile.info.interests}" var="item" varStatus="status">
-									<c:if test="#{!status.first}">,</c:if>
+									<c:forEach items="#{userProfile.info.interests}" var="item">
 										#{item}
 									</c:forEach>
 								</p>
 								</c:if>
 								<c:if test="#{fn:length(userProfile.info.music)>0}">
 								<p><span class="label">Yndlingsmusik: </span>
-									<c:forEach items="#{userProfile.info.music}" var="item" varStatus="status">
-									<c:if test="#{!status.first}">,</c:if>
+									<c:forEach items="#{userProfile.info.music}" var="item">
 										#{item}
 									</c:forEach>
 								</p>

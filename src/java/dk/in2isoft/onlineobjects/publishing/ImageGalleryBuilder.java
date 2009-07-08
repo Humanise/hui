@@ -11,7 +11,7 @@ import org.xml.sax.SAXException;
 import dk.in2isoft.onlineobjects.core.ConversionFacade;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
-import dk.in2isoft.onlineobjects.core.ModelFacade;
+import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Priviledged;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.HeaderPart;
@@ -73,7 +73,7 @@ public class ImageGalleryBuilder extends DocumentBuilder implements FeedBuilder 
 
 	@Override
 	public Entity create(Priviledged priviledged) throws EndUserException {
-		ModelFacade model = Core.getInstance().getModel();
+		ModelService model = Core.getInstance().getModel();
 
 		// Create an image gallery
 		ImageGallery gallery = new ImageGallery();

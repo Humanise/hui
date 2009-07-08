@@ -4959,6 +4959,7 @@ n2i.escapeHTML = function(str) {
     return div.innerHTML;
 }
 
+/** Checks if a string has characters */
 n2i.isEmpty = function(str) {
 	if (str==null || typeof(str)=='undefined') return true;
 	return n2i.trim(str).length==0;
@@ -5281,6 +5282,16 @@ n2i.location = {
 			parms.push({name:name,value:value});
 		}
 		n2i.location.setParameters(parms);
+	},
+	hasHash : function(name) {
+		var h = document.location.hash;
+		if (h!=='') {
+			return h=='#'+name;
+		}
+		return false;
+	},
+	clearHash : function() {
+		document.location.hash='#';
 	},
 	setParameters : function(parms) {
 		var query = '';
@@ -6054,7 +6065,7 @@ In2iGui.prototype = {
 				dwr.engine.setErrorHandler(function(msg,e) {
 					n2i.log(msg);
 					n2i.log(e);
-					In2iGui.get().showAlert({title:'An unexpected error occurred!',text:msg,emotion:'gasp'});
+					In2iGui.get().alert({title:'An unexpected error occurred!',text:msg,emotion:'gasp'});
 				});
 			}
 		}
@@ -6067,8 +6078,13 @@ In2iGui.prototype = {
 	addBehavior : function() {
 		Event.observe(window,'resize',this.resize.bind(this));
 	},
-	/** Adds a global delegate */
+	/** Adds a global delegate
+	 * @deprecated
+	*/
 	addDelegate : function(delegate) {
+		this.delegates.push(delegate);
+	},
+	listen : function(delegate) {
 		this.delegates.push(delegate);
 	},
 	getTopPad : function(element) {
@@ -6209,8 +6225,8 @@ In2iGui.prototype = {
 	getAncestor : function(widget,cls) {
 		var a = this.getAncestors(widget);
 		for (var i=0; i < a.length; i++) {
-			if (a[0].getElement().hasClassName(cls)) {
-				return a[0];
+			if (a[i].getElement().hasClassName(cls)) {
+				return a[i];
 			}
 		};
 		return null;

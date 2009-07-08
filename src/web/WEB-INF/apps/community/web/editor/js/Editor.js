@@ -90,6 +90,8 @@ OO.Editor.prototype = {
 			Parts.updateHeaderPart(part.id,part.getValue(),part.properties);
 		} else if (part.type=='html') {
 			Parts.updateHtmlPart(part.id,part.getValue(),part.properties);
+		} else if (part.type=='image') {
+			Parts.updateImagePart(part.id,part.getImageId(),part.properties);
 		}
 	},
 	
@@ -216,11 +218,11 @@ OO.Editor.prototype = {
 		if (!this.toolbar) {
 			this.toolbarRevealer = In2iGui.RevealingToolbar.create();
 			var t = this.toolbar = this.toolbarRevealer.getToolbar();
-			t.add(In2iGui.Toolbar.Icon.create('newPage',{icon:'common/page',overlay:'new','title':'Ny side'}));
-			t.add(In2iGui.Toolbar.Icon.create('deletePage',{icon:'common/page',overlay:'delete','title':'Slet side'}));
+			t.add(In2iGui.Toolbar.Icon.create({name:'newPage',icon:'common/page',overlay:'new','title':'Ny side'}));
+			t.add(In2iGui.Toolbar.Icon.create({name:'deletePage',icon:'common/page',overlay:'delete','title':'Slet side'}));
 			t.addDivider();
-			t.add(In2iGui.Toolbar.Icon.create('pageProperties',{icon:'common/info','title':'Info'}));
-			t.add(In2iGui.Toolbar.Icon.create('changeTemplate',{icon:'common/design','title':'Skift design'}));
+			t.add(In2iGui.Toolbar.Icon.create({name:'pageProperties',icon:'common/info','title':'Info'}));
+			t.add(In2iGui.Toolbar.Icon.create({name:'changeTemplate',icon:'common/design','title':'Skift design'}));
 			t.addDivider();
 			this.delegate.addToToolbar(t);
 		}
@@ -229,7 +231,7 @@ OO.Editor.prototype = {
 
 OO.Editor.prototype.click$pageProperties = function() {
 	if (!this.infoWindow) {
-		var w = In2iGui.Window.create(null,{title:'Sidens egenskaber',padding:5,variant:'dark',width:250});
+		var w = In2iGui.Window.create({title:'Sidens egenskaber',padding:5,variant:'dark',width:250});
 		var f = In2iGui.Formula.create({name:'pageInfoForm'});
 		w.add(f);
 		var g = f.createGroup({above:true});
@@ -289,7 +291,8 @@ OO.Editor.prototype.selectionChanged$documentPicker = function(value) {
 }
 
 OO.Editor.prototype.click$deletePage = function() {
-	In2iGui.get().confirm('confirmDeletePage',{
+	In2iGui.get().confirm({
+		name:'confirmDeletePage',
 		title:'Er du sikker på at du vil slette siden?',
 		text:'Handlingen kan ikke fortrydes og siden kan ikke genskabes',
 		ok:'Ja, slet siden',

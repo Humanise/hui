@@ -8,37 +8,38 @@ import nu.xom.converters.DOMConverter;
 import com.sun.org.apache.xerces.internal.dom.DOMImplementationImpl;
 
 import dk.in2isoft.onlineobjects.core.Core;
+import dk.in2isoft.onlineobjects.core.ModelException;
 import dk.in2isoft.onlineobjects.model.Entity;
 
 
 public abstract class XSLTInterfaceAdapter extends XSLTInterface {
 
 	@Override
-	public final org.w3c.dom.Document getData() {
+	public final org.w3c.dom.Document getData() throws ModelException {
 		return DOMConverter.convert(build(),new DOMImplementationImpl());
 	}
 	
 	@Override
-	public final Document getDocument() {
+	public final Document getDocument() throws ModelException {
 		return build();
 	}
 
-	private Document build() {
+	private Document build() throws ModelException {
 		Element page = new Element("page",NAMESPACE_PAGE);
 		Document doc = new Document(page);
 		buildContent(page);
 		return doc;
 	}
 
-	protected String convertToXML(Entity entity) {
+	protected String convertToXML(Entity entity) throws ModelException {
 		return Core.getInstance().getConverter().generateXML(entity).toXML();
 	}
 
-	protected Node convertToNode(Entity entity) {
+	protected Node convertToNode(Entity entity) throws ModelException {
 		return Core.getInstance().getConverter().generateXML(entity);
 	}
 	
-	protected abstract void buildContent(Element parent);
+	protected abstract void buildContent(Element parent) throws ModelException;
 
 	protected Element create(String name) {
 		return new Element(name,NAMESPACE_PAGE);

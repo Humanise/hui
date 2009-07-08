@@ -6,7 +6,7 @@ public abstract class AbstractDAO {
 		super();
 	}
 
-	protected ModelFacade getModel() {
+	protected ModelService getModel() {
 		return Core.getInstance().getModel();
 	}
 }

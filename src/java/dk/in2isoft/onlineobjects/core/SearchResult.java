@@ -18,4 +18,11 @@ public class SearchResult<T> {
 	public List<T> getResult() {
 		return result;
 	}
+
+	public T getFirst() {
+		if (result.size()>0) {
+			return result.get(0);
+		}
+		return null;
+	}
 }

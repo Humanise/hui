@@ -55,7 +55,7 @@ In2iGui.prototype = {
 				dwr.engine.setErrorHandler(function(msg,e) {
 					n2i.log(msg);
 					n2i.log(e);
-					In2iGui.get().showAlert({title:'An unexpected error occurred!',text:msg,emotion:'gasp'});
+					In2iGui.get().alert({title:'An unexpected error occurred!',text:msg,emotion:'gasp'});
 				});
 			}
 		}
@@ -68,8 +68,13 @@ In2iGui.prototype = {
 	addBehavior : function() {
 		Event.observe(window,'resize',this.resize.bind(this));
 	},
-	/** Adds a global delegate */
+	/** Adds a global delegate
+	 * @deprecated
+	*/
 	addDelegate : function(delegate) {
+		this.delegates.push(delegate);
+	},
+	listen : function(delegate) {
 		this.delegates.push(delegate);
 	},
 	getTopPad : function(element) {
@@ -210,8 +215,8 @@ In2iGui.prototype = {
 	getAncestor : function(widget,cls) {
 		var a = this.getAncestors(widget);
 		for (var i=0; i < a.length; i++) {
-			if (a[0].getElement().hasClassName(cls)) {
-				return a[0];
+			if (a[i].getElement().hasClassName(cls)) {
+				return a[i];
 			}
 		};
 		return null;

@@ -5,6 +5,7 @@ import dk.in2isoft.onlineobjects.core.SecurityController;
 
 public class User extends Entity implements Priviledged {
 
+	public static final String PASSWORD_RECOVERY_CODE_PROPERTY = "item.enity.user.passwordrecoverycode";
 	public static String TYPE = Entity.TYPE+"/User";
 	public static String NAMESPACE = Entity.NAMESPACE+"User/";
 	

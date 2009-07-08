@@ -9,7 +9,7 @@ OO.Editor.ImageGallery = function() {
 	this.cellDims = [];
 	this.imagesLoaded = false;
 	this.busy = false;
-	this.initialUpload = n2i.location.getBoolean('firstRun');
+	this.initialUpload = n2i.location.hasHash('firstRun');
 	var self = this;
 	In2iGui.get().addDelegate(this);
 	In2iGui.Editor.get().addPartController('header','Overskrift',In2iGui.Editor.Header);
@@ -30,6 +30,7 @@ OO.Editor.ImageGallery.prototype = {
 			this.refreshImages();
 			if (this.initialUpload) {
 				this.click$addImages();
+				n2i.location.clearHash();
 			}
 		}
 	},
@@ -50,11 +51,11 @@ OO.Editor.ImageGallery.prototype = {
 		return this.editor.active;
 	},
 	addToToolbar : function(toolbar) {
-		toolbar.add(In2iGui.Toolbar.Icon.create('addImages',{icon:'common/image','overlay':'new','title':'Tilføj billeder'}));
+		toolbar.add(ui.Toolbar.Icon.create({name:'addImages',icon:'common/image','overlay':'new','title':'Tilføj billeder'}));
 		toolbar.addDivider();
-		toolbar.add(In2iGui.Toolbar.Icon.create('changeFrame',{icon:'common/frame','title':'Skift ramme'}));
-		toolbar.add(In2iGui.Toolbar.Icon.create('increaseSize',{icon:'common/larger','title':'Større'}));
-		toolbar.add(In2iGui.Toolbar.Icon.create('decreaseSize',{icon:'common/smaller','title':'Mindre'}));
+		toolbar.add(ui.Toolbar.Icon.create({name:'changeFrame',icon:'common/frame','title':'Skift ramme'}));
+		toolbar.add(ui.Toolbar.Icon.create({name:'increaseSize',icon:'common/larger','title':'Større'}));
+		toolbar.add(ui.Toolbar.Icon.create({name:'decreaseSize',icon:'common/smaller','title':'Mindre'}));
 	},
 	click$changeFrame : function() {
 		this.openFrameWindow();
@@ -223,12 +224,16 @@ OO.Editor.ImageGallery.prototype = {
 		}
 		this.addImagesPanel.show();
 	},
-	click$cancelAddImages : function() {
+	$click$cancelAddImages : function() {
 		this.uploader.clear();
 		this.addImagesPanel.hide();
 		this.initialUpload = false;
 	},
-	uploadDidStartQueue$upload : function() {
+	$uploadDidStartQueue$upload : function() {
+		this.cancelUploadButton.setEnabled(false);
+	},
+	$uploadDidSubmit$upload : function() {
+		alert(0);
 		this.cancelUploadButton.setEnabled(false);
 	},
 	uploadDidCompleteQueue$upload : function() {
@@ -275,7 +280,8 @@ OO.Editor.ImageGallery.prototype = {
 	},
 	deleteImage : function(image) {
 		this.imageToDelete = image;
-		In2iGui.get().confirm('confirmDeleteImage',{
+		In2iGui.get().confirm({
+			name:'confirmDeleteImage',
 			title:'Er du sikker på at du vil slette billedet?',
 			emotion:'gasp',
 			ok:'Ja, slet billedet',
@@ -314,7 +320,7 @@ OO.Editor.ImageGallery.prototype = {
 	},
 	getImageEditorPanel : function() {
 		if (!this.imageEditorPanel) {
-			var panel = In2iGui.BoundPanel.create({top:'50px',left:'50px'});
+			var panel = In2iGui.BoundPanel.create({top:50,left:50});
 			var formula = In2iGui.Formula.create();
 			panel.add(formula);
 			var group = formula.createGroup();

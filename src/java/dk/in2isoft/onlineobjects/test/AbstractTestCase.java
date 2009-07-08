@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 import com.google.common.collect.Lists;
 
 import dk.in2isoft.onlineobjects.core.Core;
-import dk.in2isoft.onlineobjects.core.ModelFacade;
+import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.SecurityController;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.User;
@@ -33,7 +33,7 @@ public class AbstractTestCase extends TestCase {
 		}
 	}
 	
-	protected ModelFacade getModel() {
+	protected ModelService getModel() {
 		return Core.getInstance().getModel();
 	}
 	

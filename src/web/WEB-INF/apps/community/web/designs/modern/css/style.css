@@ -62,7 +62,13 @@ div.gallery div.part_header h1, div.gallery div.part_html
 	text-align: center;
 }
 
-div.gallery div.part_header
+div.gallery div.part_header, div.gallery div.part_html
 {
-	margin: 10px 0px 0px;
+	width: 60%;
+	margin: 0 auto;
+}
+
+div.gallery div.part_header h1, div.gallery div.part_html
+{
+	text-align: center;
 }

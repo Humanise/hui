@@ -20,7 +20,7 @@ In2iGui.Toolbar.prototype = {
 		this.element.appendChild(widget.getElement());
 	},
 	addDivider : function() {
-		this.element.appendChild(new Element('div',{'class':'in2igui_divider'}));
+		this.element.appendChild(new Element('span',{'class':'in2igui_divider'}));
 	}
 }
 

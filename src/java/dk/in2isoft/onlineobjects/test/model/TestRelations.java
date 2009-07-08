@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import dk.in2isoft.onlineobjects.core.ModelException;
-import dk.in2isoft.onlineobjects.core.ModelFacade;
+import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.SecurityException;
 import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.Relation;
@@ -18,7 +18,7 @@ public class TestRelations extends AbstractTestCase {
 
 	public void testRelations() throws SQLException, ModelException, SecurityException {
 		User priviledged = getPublicUser();
-		ModelFacade model = getModel();
+		ModelService model = getModel();
 
 		WebPage page = new WebPage();
 		model.createItem(page, priviledged);

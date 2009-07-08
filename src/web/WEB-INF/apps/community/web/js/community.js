@@ -6,7 +6,7 @@ oo.community.Chrome = function() {
 	new oo.community.Chrome.Login();
 	new oo.community.Chrome.SignUp();
 	new oo.community.Chrome.UserInfo();
-	new oo.community.SearchField({element:'chrome_search'});
+	new oo.community.SearchField({element:'casing_search'});
 }
 
 oo.community.Chrome.get = function() {
@@ -68,9 +68,9 @@ oo.community.SearchField = function(o) {
 	this.name = o.name;
 	this.input = e.select('input')[0];
 	this.reset = e.select('.reset')[0];
-	this.field = new In2iGui.TextField(this.input);
+	this.field = new In2iGui.TextField({element:this.input});
 	this.field.addDelegate(this);
-	this.result = $('chrome_search_result');
+	this.result = $('casing_search_result');
 	this.busy = false;
 	this.expanded = false;
 	In2iGui.extend(this);
@@ -95,7 +95,7 @@ oo.community.SearchField.prototype = {
 	},
 	valueChanged : function(value) {
 		this.dirty = value.length>0;
-		this.element.setClassName('chrome_search_dirty',this.dirty);
+		this.element.setClassName('casing_search_dirty',this.dirty);
 		var c = $$('.content')[0];
 		var r = $$('.content_right')[0];
 		var b = $$('.content_right_body')[0];
@@ -147,7 +147,7 @@ oo.community.SearchField.prototype = {
 		if (this.waitingResult) this.updateList(this.waitingResult);
 	},
 	buildUsers : function(users) {
-		var html = '<div class="chrome_result_group"><h2>Brugere</h2><ul>';
+		var html = '<div class="casing_result_group"><h2>Brugere</h2><ul>';
 		users.each(function(entry) {
 			html+='<li class="user">'+
 			'<div class="thumbnail"></div>'+
@@ -188,8 +188,9 @@ oo.community.Chrome.UserInfo.prototype = {
 oo.community.Chrome.Login = function() {
 	this.form = $('login');
 	if (!this.form) return;
-	this.username = new In2iGui.TextField(this.form.username,null,{placeholderElement:this.form.select('label')[0]});
-	this.password = new In2iGui.TextField(this.form.password,null,{placeholderElement:this.form.select('label')[1]});
+	this.username = new In2iGui.TextField({element:this.form.username,placeholderElement:this.form.select('label')[0]});
+	this.password = new In2iGui.TextField({element:this.form.password,placeholderElement:this.form.select('label')[1]});
+	this.recoverLink = $('casing_recoverpassword');
 	this.addBeahvior();
 }
 
@@ -240,6 +241,7 @@ oo.community.Chrome.Login.prototype = {
 		}
 		this.form.select('.sidebar_button')[0].onclick = function() {self.form.onsubmit();return false;};
 		this.form.select('.submit')[0].tabIndex=-1;
+		this.recoverLink.observe('click',function(e) {e.stop();this.recoverPassword()}.bind(this));
 	},
 	userDidLogIn : function(username) {
 		/*In2iGui.get().alert({
@@ -251,6 +253,64 @@ oo.community.Chrome.Login.prototype = {
 		window.setTimeout(function() {
 			document.location=oo.community.Chrome.buildUserProfileURL(username);
 		},500);
+	},
+	recoverPassword : function() {
+		if (!this.recoverBox) {
+			var box = this.recoverBox = ui.Box.create({title:'Genfind kodeord',closable:true,absolute:true,width:400,padding: 10,modal:true});
+			box.addToDocument();
+			var form = this.recoverForm = ui.Formula.create();
+			var group = form.buildGroup(null,[
+				{type:'Text',options:{label:'Brugernavn eller e-post-adresse',key:'usernameOrEmail'}}
+			]);
+			var cancel = ui.Button.create({text:'Annuller'});
+			cancel.listen({click:function() {box.hide()}});
+			var create = ui.Button.create({text:'Genfind kodeord',highlighted:true,submit:true});
+			group.createButtons().add(cancel).add(create);
+			box.add(form);
+			form.listen({submit:function() {
+				if (this.sendingEmail) return;
+				var str = form.getValues().usernameOrEmail;
+				if (n2i.isEmpty(str)) {
+					ui.showMessage({text:'Feltet skal udfyldes',duration:3000});
+					form.focus();
+				} else {
+					this.sendingEmail = true;
+					create.setEnabled(false);
+					ui.showMessage({text:'Sender e-post-besked, vent venligst...'});
+					CoreSecurity.recoverPassword(str,{
+						callback:function(success) {
+							if (success) {
+								ui.hideMessage();
+								ui.alert({title:'Vi har nu sendt dig en vejledning på din e-post-adresse.',text:'Vejledningen beskriver hvordan du ændrer dit kodeord. Hvis du ikke modtager beskeden bedes du kontakte os.',emotion:'smile'});
+								//ui.showMessage({text:'E-post-beskeden er afsendt, se i din indbakke :-)',duration:5000});
+								box.hide();
+							} else {
+								ui.hideMessage();
+								ui.alert({title:'Brugeren kunne ikke findes',text:'Vi kunne ikke finde en bruger med det angivne brugernavn eller e-post-adresse. Prøv venligst igen.',emotion:'gasp',onOK:function() {
+									form.focus();
+								}});
+							}
+							create.setEnabled(true);
+							this.sendingEmail = false;
+						}.bind(this),
+						errorHandler:function() {
+							ui.alert({title:'Det lykkedes ikke at sende besked',text:'Dette skyldes en fejl fra vores side, prøv venligst igen senere.',emotion:'gasp',onOK:function() {
+								form.focus();
+							}});
+							ui.hideMessage();
+							create.setEnabled(true);
+							this.sendingEmail = false;
+						}.bind(this)
+					});
+				}
+			}.bind(this)});
+		}
+		this.recoverForm.reset();
+		this.recoverBox.show();
+		this.recoverForm.focus();
+	},
+	submitRecoverPassword : function() {
+		
 	}
 }
 
@@ -259,10 +319,10 @@ oo.community.Chrome.Login.prototype = {
 oo.community.Chrome.SignUp = function() {
 	this.form = $('signup');
 	var labels = this.form.select('label');
-	this.username = new In2iGui.TextField(this.form.abc,null,{placeholderElement:labels[0]});
-	this.password = new In2iGui.TextField(this.form.def,null,{placeholderElement:labels[1]});
-	this.name = new In2iGui.TextField(this.form.name,null,{placeholderElement:labels[2]});
-	this.email = new In2iGui.TextField(this.form.email,null,{placeholderElement:labels[3]});
+	this.username = new In2iGui.TextField({element:this.form.abc,placeholderElement:labels[0]});
+	this.password = new In2iGui.TextField({element:this.form.def,placeholderElement:labels[1]});
+	this.name = new In2iGui.TextField({element:this.form.name,placeholderElement:labels[2]});
+	this.email = new In2iGui.TextField({element:this.form.email,placeholderElement:labels[3]});
 	this.addBehavior();
 }
 
@@ -345,7 +405,7 @@ oo.community.Chrome.SignUp.prototype = {
 		this.email.setValue();
 		In2iGui.showMessage('Opretter hjemmeside...');
 		window.setTimeout(function() {
-			document.location=oo.community.Chrome.buildUserWebsiteURL(username)+'?edit=true&firstRun=true'
+			document.location=oo.community.Chrome.buildUserWebsiteURL(username)+'?edit=true#firstRun'
 		},2000);
 		return;
 		In2iGui.get().alert({

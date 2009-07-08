@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
-import dk.in2isoft.onlineobjects.core.ModelFacade;
+import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.ui.Request;
 
 public abstract class ServiceController {
@@ -22,7 +22,7 @@ public abstract class ServiceController {
 		
 	}
 
-	protected ModelFacade getModel() {
+	protected ModelService getModel() {
 		return Core.getInstance().getModel();
 	}
 	

@@ -5,7 +5,8 @@ import java.io.IOException;
 import javax.faces.component.FacesComponent;
 import javax.faces.component.UIComponentBase;
 import javax.faces.context.FacesContext;
-import javax.faces.context.ResponseWriter;
+
+import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value="in2igui.button")
 public class ButtonComponent extends UIComponentBase {
@@ -39,23 +40,16 @@ public class ButtonComponent extends UIComponentBase {
 	@Override
 	public void encodeBegin(FacesContext context) throws IOException {
 		String id = getClientId();
-		ResponseWriter writer = context.getResponseWriter();
-		writer.startElement("a", this);
+		TagWriter writer = new TagWriter(this,context);
 		if (highlighted) {
-			writer.writeAttribute("class", "in2igui_button in2igui_button_highlighted", null);
+			writer.startVoidA("in2igui_button in2igui_button_highlighted");
 		} else {
-			writer.writeAttribute("class", "in2igui_button", null);
+			writer.startVoidA("in2igui_button");
 		}
-		writer.writeAttribute("href", "#", null);
-		writer.writeAttribute("id", id, null);
-		writer.startElement("span", this);
-		writer.startElement("span", this);
-		writer.write(text);
-		writer.endElement("span");
-		writer.endElement("span");
-		writer.endElement("a");
-		writer.startElement("script", this);
-		writer.writeAttribute("type", "text/javascript", null);
+		writer.withId(id);
+		writer.startSpan().startSpan().write(text).endSpan().endSpan();
+		writer.endA();
+		writer.startScopedScript();
 		writer.write("new In2iGui.Button({element:'");
 		writer.write(id);
 		writer.write("'");
@@ -63,7 +57,7 @@ public class ButtonComponent extends UIComponentBase {
 			writer.write(",name:'"+name+"'");
 		}
 		writer.write("});");
-		writer.endElement("script");
+		writer.endScopedScript();
 	}
 
 	public void setHighlighted(boolean highlighted) {

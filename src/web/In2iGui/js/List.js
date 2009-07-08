@@ -364,7 +364,6 @@ In2iGui.List.prototype.buildRows = function(rows) {
 	var self = this;
 	this.body.update();
 	this.rows = [];
-	//var frag = document.createDocumentFragment();
 	if (!rows) return;
 	rows.each(function(r,i) {
 		var tr = new Element('tr');
@@ -383,15 +382,18 @@ In2iGui.List.prototype.buildRows = function(rows) {
 			tr.insert(td);
 		})
 		self.body.insert(tr);
+		// TODO: Memory leak!
 		var info = {id:r.id,kind:r.kind,icon:icon,title:title,index:i};
 		tr.dragDropInfo = info;
 		self.rows.push(info);
-	});
+		this.addRowBehavior(tr,i);
+	}.bind(this));
 }
 
 
 /********************************** Update from objects legacy *******************************/
 
+// TODO: Is this ever used?
 In2iGui.List.prototype.setObjects = function(objects) {
 	this.selected = [];
 	this.body.update();

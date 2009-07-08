@@ -16,7 +16,7 @@ import dk.in2isoft.commons.lang.LangUtil;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelException;
-import dk.in2isoft.onlineobjects.core.ModelFacade;
+import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SecurityException;
 import dk.in2isoft.onlineobjects.model.Entity;
@@ -129,7 +129,7 @@ public class SynchronizerStage extends PipelineStageAdapter {
 
 		try {
 
-			ModelFacade model = Core.getInstance().getModel();
+			ModelService model = Core.getInstance().getModel();
 			
 			Event event = getEvent(easyEvent.getRemoteEventId());
 			if (event.isNew() || event.getUpdated().getTime() < startTime.getTime()) {
@@ -295,7 +295,7 @@ public class SynchronizerStage extends PipelineStageAdapter {
 			context.debug(this, "Found cached event");
 			return cachedEvent;
 		} else {
-			ModelFacade model = Core.getInstance().getModel();
+			ModelService model = Core.getInstance().getModel();
 			Query<Event> eventQuery = new Query<Event>(Event.class).withCustomProperty("sync.remote.id", remoteEventId);
 			List<Event> events = model.list(eventQuery);
 			Event event = null;
@@ -313,7 +313,7 @@ public class SynchronizerStage extends PipelineStageAdapter {
 	}
 
 	private void reloadEventCache() throws ModelException {
-		ModelFacade model = Core.getInstance().getModel();
+		ModelService model = Core.getInstance().getModel();
 		if (cachedEvent.isNew()) {
 			eventRelations = null;
 			eventPersons = null;
@@ -321,7 +321,7 @@ public class SynchronizerStage extends PipelineStageAdapter {
 			eventRelations = model.getChildRelations(cachedEvent);
 			eventPersons = new ArrayList<Person>();
 			for (Relation relation : eventRelations) {
-				Entity entity = ModelFacade.getSubject(relation.getSubEntity());
+				Entity entity = ModelService.getSubject(relation.getSubEntity());
 				if (entity.getType().equals(Person.TYPE)) {
 					eventPersons.add((Person) entity);
 				}
@@ -341,7 +341,7 @@ public class SynchronizerStage extends PipelineStageAdapter {
 				}
 			}
 		}
-		ModelFacade model = Core.getInstance().getModel();
+		ModelService model = Core.getInstance().getModel();
 		return model.getRelation(event, student, kind);
 	}
 
@@ -352,7 +352,7 @@ public class SynchronizerStage extends PipelineStageAdapter {
 			return;
 		}
 		context.info(this, "Searching for events to delete");
-		ModelFacade model = Core.getInstance().getModel();
+		ModelService model = Core.getInstance().getModel();
 		model.commit();
 		Query<Event> query = Query.of(Event.class).withPriviledged(publicUser).withFieldValueLessThan("updated", startTime).withFieldValueMoreThan(
 				"starttime", startTime);

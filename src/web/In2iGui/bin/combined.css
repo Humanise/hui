@@ -918,6 +918,7 @@ span.in2igui_formula_text_singleline
 {
 	background: none;
 	height: 18px;
+	font-size: 0;
 	display: block;
 }
 

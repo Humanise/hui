@@ -1,0 +1,7 @@
+email.host=mail.myhost.com
+email.username=myuser
+email.password=mypass
+email.defaultSenderAddress=my@mail.com
+email.defaultSenderName=My Name
+
+baseUrl=www.myhost.com

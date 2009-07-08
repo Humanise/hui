@@ -5,10 +5,16 @@ In2iGui.Gallery = function(options) {
 	this.element = $(options.element);
 	this.objects = [];
 	this.nodes = [];
-	this.selected = new Hash();
+	this.selected = [];
 	this.width = 100;
 	this.height = 100;
 	In2iGui.extend(this);
+}
+
+In2iGui.Gallery.create = function(options) {
+	options = options || {};
+	options.element = new Element('div',{'class':'in2igui_gallery'});
+	return new In2iGui.Gallery(options);
 }
 
 In2iGui.Gallery.prototype = {
@@ -16,9 +22,7 @@ In2iGui.Gallery.prototype = {
 		this.objects = objects;
 		this.render();
 	},
-	getObjects : function() {
-		return this.objects;
-	},
+	/** @private */
 	render : function() {
 		this.nodes = [];
 		this.element.update();
@@ -43,31 +47,37 @@ In2iGui.Gallery.prototype = {
 			self.nodes.push(item);
 		});
 	},
+	/** @private */
 	updateUI : function() {
-		var self = this;
-		this.objects.each(function(object,i) {
-			if (self.selected.get(i)) {
-				self.nodes[i].addClassName('in2igui_gallery_item_selected');
-			} else {
-				self.nodes[i].removeClassName('in2igui_gallery_item_selected');
-			}
+		var s = this.selected;
+		this.nodes.each(function(node,i) {
+			node.setClassName('in2igui_gallery_item_selected',n2i.inArray(s,i));
 		});
 	},
+	/** @private */
 	resolveImageUrl : function(img) {
 		for (var i=0; i < this.delegates.length; i++) {
-			if (this.delegates[i].resolveImageUrl) {
-				return this.delegates[i].resolveImageUrl(img,this.width,this.height);
+			if (this.delegates[i]['$resolveImageUrl']) {
+				return this.delegates[i]['$resolveImageUrl'](img,this.width,this.height);
 			}
 		};
 		return '';
 	},
+	/** @private */
 	itemClicked : function(index) {
-		this.selected = new Hash();
-		this.selected.set(index,true);
+		this.selected = [index];
+		this.fire('selectionChanged');
 		this.updateUI();
 	},
+	getFirstSelection : function() {
+		if (this.selected.length>0) {
+			return this.objects[this.selected[0]];
+		}
+		return null;
+	},
+	/** @private */
 	itemDoubleClicked : function(index) {
-		In2iGui.callDelegates(this,'itemOpened',this.objects[index]);
+		this.fire('itemOpened',this.objects[index]);
 	}
 }
 

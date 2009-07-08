@@ -3,7 +3,7 @@ package dk.in2isoft.onlineobjects.apps.community;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelException;
-import dk.in2isoft.onlineobjects.core.ModelFacade;
+import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Priviledged;
 import dk.in2isoft.onlineobjects.model.EmailAddress;
 import dk.in2isoft.onlineobjects.model.InternetAddress;
@@ -14,7 +14,7 @@ import dk.in2isoft.onlineobjects.model.Property;
 public class UserProfileInfoUtil {
 
 	public static UserProfileInfo build(Person person,Priviledged priviledged) throws ModelException {
-		ModelFacade model = Core.getInstance().getModel();
+		ModelService model = Core.getInstance().getModel();
 		UserProfileInfo info = new UserProfileInfo();
 		info.setGivenName(person.getGivenName());
 		info.setFamilyName(person.getFamilyName());
@@ -33,7 +33,7 @@ public class UserProfileInfoUtil {
 	}
 	
 	public static void save(UserProfileInfo info,Person person,Priviledged priviledged) throws EndUserException {
-		ModelFacade model = Core.getInstance().getModel();
+		ModelService model = Core.getInstance().getModel();
 		person.setGivenName(info.getGivenName());
 		person.setAdditionalName(info.getAdditionalName());
 		person.setFamilyName(info.getFamilyName());

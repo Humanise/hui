@@ -13,6 +13,7 @@ In2iGui.ColorPicker = function(options) {
 }
 
 In2iGui.ColorPicker.create = function(options) {
+	options = options || {};
 	var element = options.element = new Element('div',{'class':'in2igui_colorpicker'});
 	element.update(
 		'<div class="in2igui_colorpicker_content"><div class="in2igui_colorpicker_inner_content">'+

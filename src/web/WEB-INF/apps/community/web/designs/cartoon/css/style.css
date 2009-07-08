@@ -9,6 +9,7 @@ body
 	padding: 0px;
 	margin: 0px;
 	background: #fff;
+	height: 100%;
 }
 
 .footer
@@ -99,6 +100,12 @@ div.part_html
 	font-size: 11pt;
 	color: #666;
 	margin-top: 5px;
+}
+
+div.gallery div.part_header, div.gallery div.part_html
+{
+	width: 60%;
+	margin: 0 auto;
 }
 
 div.gallery div.part_header h1, div.gallery div.part_html

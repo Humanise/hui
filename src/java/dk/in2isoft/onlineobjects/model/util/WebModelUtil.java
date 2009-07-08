@@ -5,7 +5,7 @@ import java.util.List;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelException;
-import dk.in2isoft.onlineobjects.core.ModelFacade;
+import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Priviledged;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Relation;
@@ -18,7 +18,7 @@ import dk.in2isoft.onlineobjects.publishing.DocumentBuilder;
 public class WebModelUtil {
 	
 	public static WebPage getWebSiteFrontPage(WebSite site) throws ModelException {
-		ModelFacade model = Core.getInstance().getModel();
+		ModelService model = Core.getInstance().getModel();
 		WebPage page = null;
 		WebNode node = model.getChild(site, WebNode.class);
 		if (node!=null) {
@@ -28,13 +28,13 @@ public class WebModelUtil {
 	}
 
 	public static WebSite getUsersWebSite(User user) throws ModelException {
-		ModelFacade model = Core.getInstance().getModel();
+		ModelService model = Core.getInstance().getModel();
 		WebSite site = model.getChild(user, WebSite.class);
 		return site;
 	}
 	
 	public static WebSite getWebSiteOfPage(WebPage page) throws ModelException {
-		ModelFacade model = Core.getInstance().getModel();
+		ModelService model = Core.getInstance().getModel();
 		WebNode node = model.getParent(page, WebNode.class);
 		if (node==null) {
 			return null;
@@ -45,7 +45,7 @@ public class WebModelUtil {
 
 	public static WebPage getPageForWebNode(long id) throws ModelException {
 		WebPage page = null;
-		ModelFacade model = Core.getInstance().getModel();
+		ModelService model = Core.getInstance().getModel();
 		WebNode node = model.get(WebNode.class, id);
 		if (node!=null) {
 			page = model.getChild(node, WebPage.class);
@@ -54,7 +54,7 @@ public class WebModelUtil {
 	}
 	
 	public static long createWebPageOnSite(long webSiteId, Class<?> clazz, Priviledged priviledged) throws EndUserException {
-		ModelFacade model = Core.getInstance().getModel();
+		ModelService model = Core.getInstance().getModel();
 		WebSite site = model.get(WebSite.class, webSiteId);
 		
 		// Create a web page
@@ -98,7 +98,7 @@ public class WebModelUtil {
 	}
 	
 	public static void deleteWebPage(long pageId,Priviledged privileged) throws EndUserException {
-		ModelFacade model = Core.getInstance().getModel();
+		ModelService model = Core.getInstance().getModel();
 		WebPage page = (WebPage) model.get(WebPage.class, pageId);
 		if (page == null) {
 			throw new EndUserException("The page does not exist");

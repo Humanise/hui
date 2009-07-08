@@ -7,7 +7,7 @@ import nu.xom.Element;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelException;
-import dk.in2isoft.onlineobjects.core.ModelFacade;
+import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Image;
@@ -34,12 +34,12 @@ public class UserProfilePage extends XSLTInterfaceAdapter {
 	}
 
 	@Override
-	protected void buildContent(Element parent) {
+	protected void buildContent(Element parent) throws ModelException {
 		
 		Element profile = createPageNode(parent, "profile");
 		appendEntity(profile,user);
 		try {
-			ModelFacade model = Core.getInstance().getModel();
+			ModelService model = Core.getInstance().getModel();
 			Person person = model.getChild(user, Relation.KIND_SYSTEM_USER_SELF, Person.class);
 			appendEntity(profile, person);
 
@@ -54,7 +54,7 @@ public class UserProfilePage extends XSLTInterfaceAdapter {
 		}
 	}
 
-	private void appendEntity(Element parent, Entity entity) {
+	private void appendEntity(Element parent, Entity entity) throws ModelException {
 		parent.appendChild(convertToNode(entity));
 	}
 	

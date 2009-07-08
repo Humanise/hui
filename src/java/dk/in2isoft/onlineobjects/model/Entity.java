@@ -112,6 +112,15 @@ public class Entity extends Item {
 		}
 	}
 
+	public void removeProperties(String key) {
+		for (Iterator<Property> iter = properties.iterator(); iter.hasNext();) {
+			Property element = iter.next();
+			if (element.getKey().equals(key)) {
+				iter.remove();
+			}
+		}
+	}
+
 	public void addProperty(String key, String value) {
 		properties.add(new Property(key,value));
 	}

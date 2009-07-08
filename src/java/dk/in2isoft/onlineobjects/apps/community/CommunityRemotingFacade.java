@@ -24,7 +24,7 @@ import dk.in2isoft.onlineobjects.apps.ApplicationSession;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.ModelException;
-import dk.in2isoft.onlineobjects.core.ModelFacade;
+import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Pair;
 import dk.in2isoft.onlineobjects.core.Priviledged;
 import dk.in2isoft.onlineobjects.core.Query;
@@ -74,7 +74,7 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 	}
 
 	public boolean updateWebNode(long id, String name) throws EndUserException {
-		ModelFacade model = getModel();
+		ModelService model = getModel();
 		WebNode node = model.get(WebNode.class, id);
 		node.setName(name);
 		model.updateItem(node, getUserSession());
@@ -97,7 +97,7 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 	}
 
 	public void changePageTemplate(long pageId, String template) throws EndUserException {
-		ModelFacade model = getModel();
+		ModelService model = getModel();
 		WebPage page = model.get(WebPage.class, pageId);
 		page.overrideFirstProperty(WebPage.PROPERTY_TEMPLATE, template);
 		model.updateItem(page, getUserSession());
@@ -356,7 +356,7 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 	}
 
 	public FormulaData getPageInfo(long pageId) throws EndUserException {
-		ModelFacade model = getModel();
+		ModelService model = getModel();
 		WebPage page = model.get(WebPage.class, pageId);
 		FormulaData data = new FormulaData();
 		data.addValue("title", page.getName());
@@ -365,7 +365,7 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 	}
 
 	public void savePageInfo(long pageId,String title,List<String> tags) throws EndUserException {
-		ModelFacade model = getModel();
+		ModelService model = getModel();
 		WebPage page = model.get(WebPage.class, pageId);
 		page.setName(title);
 		page.overrideProperties(Property.KEY_COMMON_TAG, tags);

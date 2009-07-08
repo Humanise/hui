@@ -1,6 +1,6 @@
 oo.community.Home = function() {
 	this.images = [];
-	this.searchField = new In2iGui.TextField('search_field','searchField');
+	this.searchField = new ui.TextField({element:'search_field',name:'searchField'});
 	this.searchField.addDelegate(this);
 	this.addBehavior();
 	this.search();

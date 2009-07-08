@@ -63,6 +63,7 @@ n2i.escapeHTML = function(str) {
     return div.innerHTML;
 }
 
+/** Checks if a string has characters */
 n2i.isEmpty = function(str) {
 	if (str==null || typeof(str)=='undefined') return true;
 	return n2i.trim(str).length==0;
@@ -385,6 +386,16 @@ n2i.location = {
 			parms.push({name:name,value:value});
 		}
 		n2i.location.setParameters(parms);
+	},
+	hasHash : function(name) {
+		var h = document.location.hash;
+		if (h!=='') {
+			return h=='#'+name;
+		}
+		return false;
+	},
+	clearHash : function() {
+		document.location.hash='#';
 	},
 	setParameters : function(parms) {
 		var query = '';

@@ -1,12 +1,17 @@
 package dk.in2isoft.onlineobjects.publishing;
 
+import java.util.List;
 import java.util.Map;
 
 import dk.in2isoft.onlineobjects.core.EndUserException;
+import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.HeaderPart;
 import dk.in2isoft.onlineobjects.model.HtmlPart;
+import dk.in2isoft.onlineobjects.model.Image;
+import dk.in2isoft.onlineobjects.model.ImagePart;
 import dk.in2isoft.onlineobjects.model.Property;
+import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.ui.AbstractRemotingFacade;
 
 public class PartRemotingFacade extends AbstractRemotingFacade {
@@ -23,6 +28,24 @@ public class PartRemotingFacade extends AbstractRemotingFacade {
 		updateProperties(part, properties);
 		part.setHtml(html);
 		getModel().updateItem(part, getUserSession());
+	}
+	
+	public void updateImagePart(long id,Long imageId,Map<String,String> properties) throws EndUserException {
+		ImagePart part = getModel().get(ImagePart.class, id);
+		if (part==null) {
+			return;
+		}
+		updateProperties(part, properties);
+		UserSession priviledged = getUserSession();
+		List<Relation> relations = getModel().getChildRelations(part, Image.class);
+		for (Relation relation : relations) {
+			getModel().deleteRelation(relation, priviledged);
+		}
+		if (imageId!=null) {
+			Image image = getModel().get(Image.class, imageId);
+			getModel().createRelation(part, image, priviledged);
+		}
+		getModel().updateItem(part, priviledged);
 	}
 	
 	private void updateProperties(Entity entity,Map<String,String> properties) {

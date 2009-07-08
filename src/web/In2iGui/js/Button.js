@@ -2,9 +2,10 @@
  * @constructor
  * A button
  */
-In2iGui.Button = function(o) {
-	this.name = o.name;
-	this.element = $(o.element);
+In2iGui.Button = function(options) {
+	this.options = options;
+	this.name = options.name;
+	this.element = $(options.element);
 	this.inner = this.element.getElementsByTagName('span')[1];
 	this.enabled = !this.element.hasClassName('in2igui_button_disabled');
 	In2iGui.extend(this);
@@ -53,7 +54,11 @@ In2iGui.Button.prototype = {
 		if (this.enabled) {
 			In2iGui.callDelegates(this,'buttonWasClicked'); // deprecated
 			In2iGui.callDelegates(this,'click');
-			In2iGui.callDelegates(this,'onClick');
+			In2iGui.callDelegates(this,'onClick'); // deprecated
+			if (this.options.submit) {
+				var form = In2iGui.get().getAncestor(this,'in2igui_formula');
+				if (form) {form.submit();}
+			}
 		} else {
 			this.element.blur();
 		}

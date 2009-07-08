@@ -22,6 +22,7 @@ import dk.in2isoft.onlineobjects.model.CompoundDocument;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.HeaderPart;
 import dk.in2isoft.onlineobjects.model.HtmlPart;
+import dk.in2isoft.onlineobjects.model.ImagePart;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.publishing.CompoundDocumentBuilder;
 import dk.in2isoft.onlineobjects.publishing.PageRenderer;
@@ -141,6 +142,9 @@ public class CompoundDocumentRemotingFacade extends AbstractRemotingFacade {
 		} else if ("html".equals(type)) {
 			HtmlPart part = new HtmlPart();
 			part.setHtml("Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
+			return part;
+		} else if ("image".equals(type)) {
+			ImagePart part = new ImagePart();
 			return part;
 		} else {
 			throw new EndUserException("Unknown part type: "+type);

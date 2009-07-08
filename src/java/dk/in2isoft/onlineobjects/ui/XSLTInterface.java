@@ -7,6 +7,7 @@ import org.w3c.dom.Document;
 
 import dk.in2isoft.commons.xml.XSLTUtil;
 import dk.in2isoft.onlineobjects.core.EndUserException;
+import dk.in2isoft.onlineobjects.core.ModelException;
 
 public abstract class XSLTInterface {
 
@@ -14,9 +15,9 @@ public abstract class XSLTInterface {
 
 	public abstract File getStylesheet();
 	
-	public abstract Document getData();
+	public abstract Document getData() throws ModelException;
 	
-	public abstract nu.xom.Document getDocument();
+	public abstract nu.xom.Document getDocument() throws ModelException;
 
 	public void display(Request request) throws IOException, EndUserException {
 		XSLTUtil.applyXSLT(this, request);

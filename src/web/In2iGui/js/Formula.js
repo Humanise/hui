@@ -196,12 +196,15 @@ In2iGui.Formula.Text.create = function(options) {
 }
 
 In2iGui.Formula.Text.prototype = {
+	/** @private */
 	addBehavior : function() {
 		In2iGui.addFocusClass({element:this.input,classElement:this.element,'class':'in2igui_field_focused'});
 		this.input.observe('keyup',this.onKeyUp.bind(this));
 	},
+	/** @private */
 	onKeyUp : function(e) {
 		if (this.options.lines<2 && e.keyCode===Event.KEY_RETURN) {
+			this.fire('submit');
 			var form = In2iGui.get().getAncestor(this,'in2igui_formula');
 			if (form) {form.submit();}
 			return;

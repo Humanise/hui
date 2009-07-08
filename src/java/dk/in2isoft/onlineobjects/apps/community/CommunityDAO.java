@@ -16,7 +16,7 @@ import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.EntitylistSynchronizer;
 import dk.in2isoft.onlineobjects.core.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.ModelException;
-import dk.in2isoft.onlineobjects.core.ModelFacade;
+import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Priviledged;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SecurityException;
@@ -36,7 +36,7 @@ import dk.in2isoft.onlineobjects.model.util.WebModelUtil;
 public class CommunityDAO extends AbstractDAO {
 
 	Invitation createInvitation(UserSession session, Person invited, String message) throws ModelException {
-		ModelFacade model = Core.getInstance().getModel();
+		ModelService model = Core.getInstance().getModel();
 		User user = session.getUser();
 
 		Invitation invitation = new Invitation();
@@ -58,7 +58,7 @@ public class CommunityDAO extends AbstractDAO {
 	}
 
 	public void sendInvitation(Invitation invitation) throws EndUserException {
-		ModelFacade model = Core.getInstance().getModel();
+		ModelService model = Core.getInstance().getModel();
 		Person person = (Person) model.getChild(invitation, Person.class);
 		if (person == null) {
 			throw new EndUserException("The invitation does not have a person associated");
@@ -207,7 +207,7 @@ public class CommunityDAO extends AbstractDAO {
 		if (!LangUtil.isWellFormedEmail(email)) {
 			throw new IllegalRequestException("The email address is invalid","invalidEmail");
 		}
-		ModelFacade model = getModel();
+		ModelService model = getModel();
 		User existing = model.getUser(username);
 		if (existing != null) {
 			throw new EndUserException("User allready exists","userExists");

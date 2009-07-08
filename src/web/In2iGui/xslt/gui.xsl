@@ -485,7 +485,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 <xsl:template match="gui:gallery">
 	<div class="in2igui_gallery" id="{generate-id()}"><xsl:comment/>&#160;</div>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Gallery('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>');
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Gallery({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>'});
 		<xsl:call-template name="gui:createobject"/>
 	</script>
 </xsl:template>

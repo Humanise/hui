@@ -47,7 +47,7 @@ public class ConversionFacade {
 		}
 	}
 		
-	public final Node generateXML(Entity entity) {
+	public final Node generateXML(Entity entity) throws ModelException {
 		EntityConverter converter = getConverter(entity);
 		return converter.generateXML(entity);
 	}

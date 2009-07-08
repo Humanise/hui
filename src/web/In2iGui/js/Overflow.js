@@ -18,6 +18,15 @@ In2iGui.Overflow = function(options) {
 	}
 }
 
+In2iGui.Overflow.create = function(options) {
+	options = options || {};
+	var e = options.element = new Element('div',{'class':'in2igui_overflow'});
+	if (options.height) {
+		e.setStyle({height:options.height+'px'});
+	}
+	return new In2iGui.Overflow(options);
+}
+
 In2iGui.Overflow.prototype = {
 	calculate : function() {
 		var top,bottom,parent,viewport;
@@ -35,6 +44,14 @@ In2iGui.Overflow.prototype = {
 	resize : function() {
 		var height = n2i.getInnerHeight();
 		this.element.style.height = Math.max(0,height+this.diff)+'px';
+	},
+	add : function(widgetOrNode) {
+		if (widgetOrNode.getElement) {
+			this.element.insert(widgetOrNode.getElement());
+		} else {
+			this.element.insert(widgetOrNode);
+		}
+		return this;
 	}
 }
 

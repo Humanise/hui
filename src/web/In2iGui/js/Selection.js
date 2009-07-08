@@ -183,7 +183,7 @@ In2iGui.Selection.Items.prototype = {
 	},
 	/** @private */
 	$objectsLoaded : function(objects) {
-		this.itemsLoaded(objects);
+		this.$itemsLoaded(objects);
 	},
 	/** @private */
 	$itemsLoaded : function(items) {

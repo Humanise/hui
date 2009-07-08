@@ -5,7 +5,7 @@ import java.util.List;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelException;
-import dk.in2isoft.onlineobjects.core.ModelFacade;
+import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.ui.SimpleWindow;
@@ -48,7 +48,7 @@ public class Base extends SimpleWindow {
 	}
 	
 	private void listUsers(StringBuilder gui) throws ModelException {
-		ModelFacade model = Core.getInstance().getModel();
+		ModelService model = Core.getInstance().getModel();
         List<User> result = model.list(new Query<User>(User.class));
         for (User user : result) {
     		gui.append(

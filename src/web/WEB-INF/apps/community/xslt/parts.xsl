@@ -4,7 +4,9 @@
 	xmlns:e="http://uri.onlineobjects.com/model/Item/Entity/"
 	xmlns:h="http://uri.onlineobjects.com/model/Item/Entity/HeaderPart/"
 	xmlns:html="http://uri.onlineobjects.com/model/Item/Entity/HtmlPart/"
-	exclude-result-prefixes="e h html"
+	xmlns:imagePart="http://uri.onlineobjects.com/model/Item/Entity/ImagePart/"
+	xmlns:image="http://uri.onlineobjects.com/model/Item/Entity/Image/"
+	exclude-result-prefixes="e h html image"
 	>
 	
 	<xsl:template match="e:Entity[h:HeaderPart]">
@@ -18,6 +20,14 @@
 		<div class="part part_html" id="part-{@id}">
 			<xsl:call-template name="margins"/>
 			<xsl:value-of select="." disable-output-escaping="yes"/>
+		</div>
+	</xsl:template>
+	
+	<xsl:template match="e:Entity[imagePart:ImagePart]">
+		<div class="part part_image" id="part-{@id}" style="min-height: 50px;">
+			<xsl:for-each select="imagePart:ImagePart/e:Entity[image:Image]">
+				<img src="/test/service/image/?id={@id}&amp;height=200&amp;width=200"/>
+			</xsl:for-each>
 		</div>
 	</xsl:template>
 	

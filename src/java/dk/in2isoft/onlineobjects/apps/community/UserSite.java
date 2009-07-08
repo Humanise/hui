@@ -6,7 +6,8 @@ import java.util.List;
 import nu.xom.Element;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
-import dk.in2isoft.onlineobjects.core.ModelFacade;
+import dk.in2isoft.onlineobjects.core.ModelException;
+import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.WebSite;
@@ -28,7 +29,7 @@ public class UserSite extends XSLTInterfaceAdapter {
 	}
 
 	private WebSite getUsersWebsite(User user) throws EndUserException {
-		ModelFacade model = Core.getInstance().getModel();
+		ModelService model = Core.getInstance().getModel();
 		WebSite webSite = null;
 		List<Relation> userSubs = model.getChildRelations(user);
 		for (Relation relation : userSubs) {
@@ -49,7 +50,7 @@ public class UserSite extends XSLTInterfaceAdapter {
 	}
 
 	@Override
-	protected void buildContent(Element parent) {
+	protected void buildContent(Element parent) throws ModelException {
 		parent.appendChild(convertToNode(user));
 		parent.appendChild(convertToNode(site));
 	}

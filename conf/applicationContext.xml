@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+    ">
+
+	<bean id="config" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" value="classpath:configuration.properties" />
+	</bean>
+
+	<bean id="configurationService" class="dk.in2isoft.onlineobjects.services.ConfigurationService">
+		<property name="baseUrl" value="${baseUrl}"/>
+	</bean>
+
+	<bean id="emailService" class="dk.in2isoft.onlineobjects.services.EmailService">
+
+		<property name="host" value="${email.host}" />
+		<property name="username" value="${email.username}" />
+		<property name="password" value="${email.password}" />
+		<property name="defaultSenderAddress" value="${email.defaultSenderAddress}" />
+		<property name="defaultSenderName" value="${email.defaultSenderName}" />
+
+	</bean>
+
+	<bean id="passwordRecoveryService" class="dk.in2isoft.onlineobjects.services.PasswordRecoveryService">
+	
+		<property name="emailService" ref="emailService" />
+		<property name="modelService" ref="modelService" />
+		<property name="configurationService" ref="configurationService"/>
+	
+	</bean>
+
+	<bean id="modelService" class="dk.in2isoft.onlineobjects.core.ModelService"/>
+
+</beans>

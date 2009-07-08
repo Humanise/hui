@@ -14,6 +14,7 @@
 	<xsl:template name="p:head">
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 		<title>
+			<xsl:value-of select="p:context/e:Entity[@type='Item/Entity/WebPage']/e:name"/><xsl:text> &#8250; </xsl:text>
 			<xsl:value-of select="p:context/e:Entity[@type='Item/Entity/WebSite']/e:name"/>
 		</title>
 		<link rel="stylesheet" href="{$local-context}/css/common.css" type="text/css" media="screen" title="front" charset="utf-8"/>
@@ -42,6 +43,8 @@
 				<script src="{$base-context}/In2iGui/js/Layout.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 				<script src="{$base-context}/In2iGui/js/Selection.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 				<script src="{$base-context}/In2iGui/js/Box.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+				<script src="{$base-context}/In2iGui/js/Gallery.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+				<script src="{$base-context}/In2iGui/js/Overflow.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 			</xsl:when>
 			<xsl:otherwise>
 				<link rel="stylesheet" href="{$base-context}/In2iGui/css/minimized.css" type="text/css" media="screen" title="front" charset="utf-8"/>

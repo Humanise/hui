@@ -20,7 +20,7 @@ import dk.in2isoft.commons.util.RestUtil;
 import dk.in2isoft.in2igui.FileBasedInterface;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
-import dk.in2isoft.onlineobjects.core.ModelFacade;
+import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.events.EventManager;
 import dk.in2isoft.onlineobjects.core.events.ModelEventListener;
 import dk.in2isoft.onlineobjects.model.Item;
@@ -89,7 +89,7 @@ public abstract class ApplicationController implements ModelEventListener {
 
 	}
 
-	protected final ModelFacade getModel() {
+	protected final ModelService getModel() {
 		return Core.getInstance().getModel();
 	}
 

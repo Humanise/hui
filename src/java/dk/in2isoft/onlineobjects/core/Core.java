@@ -6,6 +6,8 @@ import java.util.List;
 import javax.servlet.ServletContext;
 
 import org.apache.log4j.Logger;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import dk.in2isoft.onlineobjects.apps.ApplicationManager;
 import dk.in2isoft.onlineobjects.model.Application;
@@ -23,7 +25,7 @@ public class Core {
 
 	private Configuration config;
 
-	private ModelFacade model;
+	private ModelService model;
 
 	private SecurityController security;
 
@@ -87,9 +89,10 @@ public class Core {
 		return context;
 	}
 
-	public ModelFacade getModel() {
+	public ModelService getModel() {
 		if (model == null) {
-			model = new ModelFacade();
+			WebApplicationContext applicationContext = WebApplicationContextUtils.getRequiredWebApplicationContext(context);
+			model = (ModelService) applicationContext.getBean("modelService", ModelService.class);
 		}
 		return model;
 	}

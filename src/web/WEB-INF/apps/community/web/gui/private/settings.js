@@ -12,7 +12,7 @@ var settingsController = {
 			mails.addObjects(addresses);
 		});
 	},
-	buttonWasClicked$savePerson : function() {
+	$click$savePerson : function() {
 		var emails = mails.getObjects();
 		var person = {
 			givenName:givenName.getValue(),

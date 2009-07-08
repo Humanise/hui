@@ -56,6 +56,7 @@ public class CommunityController extends ApplicationController {
 		addJsfMatcher("<username>/images.html", "/jsf/community/user/images.xhtml");
 		addJsfMatcher("<username>", "/jsf/community/user/index.xhtml");
 		addJsfMatcher("", "/jsf/community/index.xhtml");
+		addJsfMatcher("recoverpassword.html", "/jsf/community/recoverpassword.xhtml");
 	}
 
 	public static CommunityDAO getDAO() {
@@ -197,7 +198,12 @@ public class CommunityController extends ApplicationController {
 		}
 		DiskFileItemFactory factory = new DiskFileItemFactory();
 		factory.setSizeThreshold(0);
-
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		ServletFileUpload upload = new ServletFileUpload(factory);
 		ProgressListener progressListener = new ProgressListener() {
 			public void update(long pBytesRead, long pContentLength, int pItems) {
@@ -221,7 +227,7 @@ public class CommunityController extends ApplicationController {
 						imageGalleryId = Integer.parseInt(item.getString());
 					} catch (NumberFormatException e) {
 						process.setError(true);
-						throw new IllegalRequestException("the parameter contentId is not an int:" + item.getString());
+						throw new IllegalRequestException("the parameter contentId is not an int:" + item.getString(),e);
 					}
 				}
 			}

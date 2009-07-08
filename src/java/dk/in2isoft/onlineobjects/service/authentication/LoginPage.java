@@ -5,6 +5,7 @@ import java.io.File;
 import nu.xom.Element;
 import nu.xom.Node;
 import dk.in2isoft.onlineobjects.core.EndUserException;
+import dk.in2isoft.onlineobjects.core.ModelException;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.ui.XSLTInterfaceAdapter;
@@ -30,7 +31,7 @@ public class LoginPage extends XSLTInterfaceAdapter {
 	}
 
 	@Override
-	protected void buildContent(Element parent) {
+	protected void buildContent(Element parent) throws ModelException {
 		parent.appendChild(create("redirect", redirect));
 		parent.appendChild(create("action", action));
 		Node userNode = convertToNode(currentUser);

@@ -12,7 +12,7 @@ import dk.in2isoft.in2igui.data.ListObjects;
 import dk.in2isoft.in2igui.data.ListState;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
-import dk.in2isoft.onlineobjects.core.ModelFacade;
+import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.Scheduler;
 import dk.in2isoft.onlineobjects.core.SearchResult;
@@ -124,7 +124,7 @@ public class SetupRemotingFacade extends AbstractRemotingFacade {
 	
 	public void deleteUser(long id) throws EndUserException {
 		checkUser();
-		ModelFacade model = getModel();
+		ModelService model = getModel();
 		User user = model.get(User.class, id);
 		List<Entity> list = model.list(Query.of(Entity.class).withPriviledged(user));
 		for (Entity entity : list) {

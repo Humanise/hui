@@ -48,7 +48,21 @@ h1.header
 	margin: 0 0 10px;
 	font-weight: normal;
 	font-size: 16pt;
-	color: #666;
+	color: #456;
+}
+
+/************************** Article *******************/
+
+div.article
+{
+	/*font-family: Georgia,"Times New Roman","Times",serif;*/
+}
+
+div.article p
+{
+	font-size: 14px;
+	line-height: 20px;
+	color: #234;
 }
 
 /************************** Layout ********************/
@@ -61,84 +75,107 @@ div.root
 	position: relative;
 }
 
-/**************************** Chrome ************************/
+/**************************** Casing ************************/
 
-div.chrome
+div.casing
 {
-	padding: 20px 0px 40px;
+	padding-top: 20px;
+	padding-bottom: 50px;
 }
 
-div.chrome_top
+div.casing_top
 {
-	height: 44px;
-	background: url('../gfx/chrome.png') repeat-x;
-}
-
-div.chrome_top div.chrome_top
-{
-	background: url('../gfx/chrome.png') left -44px no-repeat;
-}
-
-div.chrome_top div.chrome_top div.chrome_top
-{
-	height: 44px;
-	background: url('../gfx/chrome.png') right -88px no-repeat;
-}
-
-div.chrome_bottom
-{
-	height: 10px;
-	background: url('../gfx/chrome.png') left -132px repeat-x;
+	background: url('../gfx/box.png') left top no-repeat;
+	height: 7px;
 	font-size: 0;
 }
 
-div.chrome_bottom div
+div.casing_top div
 {
+	background: url('../gfx/box.png') right -7px no-repeat;
+	height: 7px;
+}
+
+div.casing_top div div
+{
+	background: url('../gfx/box.png') left -14px repeat-x;
+	margin: 0 8px;
+}
+
+div.casing_bottom
+{
+	background: url('../gfx/box.png') left -21px no-repeat;
 	height: 10px;
-	background: url('../gfx/chrome.png') left -142px no-repeat;
+	font-size: 0;
 }
 
-div.chrome_bottom div div
+div.casing_bottom div
 {
-	background: url('../gfx/chrome.png') right -152px no-repeat;
+	background: url('../gfx/box.png') right -31px no-repeat;
+	height: 10px;
 }
 
-div.chrome_middle
+div.casing_bottom div div
 {
-	background: #fff url('../gfx/chrome_middle.png') 571px top repeat-y;
-	_height: 1%;
+	background: url('../gfx/box.png') left -41px repeat-x;
+	margin: 0 8px;
 }
 
-div.chrome_middle div.chrome_middle
+div.casing_middle
 {
-	padding: 0px 6px;
-	background: url('../gfx/chrome_middle.png') -229px top repeat-y;
+	background: url('../gfx/box_middle.png') left top repeat-y;
+}
+
+div.casing_middle div.casing_middle
+{
+	background: url('../gfx/box_middle.png') right top repeat-y;
+}
+
+div.casing_body
+{
+	margin: 0 3px;
+	background: #fff;
+}
+
+div.casing_head
+{
+	border-bottom: 1px solid #ddd;
+	position: relative;
+	height: 38px;
+}
+
+div.casing_foot
+{
+	height: 28px;
+	border-top: 1px solid #ddd;
 }
 
 /**************************** Search *************************/
 
-form.chrome_search
+form.casing_search
 {
-	float: right;
+	position: absolute;
+	right: 16px;
+	top: 7px;
 	background: url('../gfx/search.png') left top repeat-x;
 	height: 21px;
-	margin: 14px 16px 0px 0px;
+	margin: 0;
 }
 
-form.chrome_search div
+form.casing_search div
 {
 	background: url('../gfx/search.png') left -21px no-repeat;
 	height: 21px;
 	float: left;
 }
 
-form.chrome_search div div
+form.casing_search div div
 {
 	background-position: right -42px;
 	padding: 0px 0px 0px 20px;
 }
 
-form.chrome_search input
+form.casing_search input
 {
 	border: 0px;
 	background: none;
@@ -148,40 +185,37 @@ form.chrome_search input
 	margin-top: 2px;
 }
 
-form.chrome_search_dirty
+form.casing_search_dirty
 {
 	background-position: left -63px;
 }
 
-form.chrome_search_dirty div
+form.casing_search_dirty div
 {
 	background-position: left -84px;
 }
 
-form.chrome_search_dirty div div
+form.casing_search_dirty div div
 {
 	background-position: right -105px;
 }
 
-form.chrome_search div.reset
+form.casing_search div.reset
 {
 	display: none;
 	width: 20px;
 	height: 21px;
 	background: url('../gfx/search.png') left -126px no-repeat;
 	position: absolute;
-	left: 50%;
-	margin-left: 363px;
+	right: 0;
 }
 
-form.chrome_search_dirty div.reset
+form.casing_search_dirty div.reset
 {
 	display: block;
 }
 
-/************************* Search result *********************/
-
-#chrome_search_result
+#casing_search_result
 {
 	overflow: hidden;
 	display: none;
@@ -192,6 +226,7 @@ form.chrome_search_dirty div.reset
 div.content
 {
 	overflow: hidden;
+	background: url('../gfx/sidebar.png') 565px top repeat-y;
 }
 
 div.content_left
@@ -304,7 +339,20 @@ div.content_right form input.submit
 	float: left;
 }
 
-/************************** Sidebar button *********************/
+/************************** Sidebar *********************/
+
+div.content_right p.buttons a.link
+{
+	float: left;
+	font-size: 11px;
+	margin-left: 3px;
+	margin-top: 5px;
+}
+
+div.content_right p.buttons a.link span
+{
+	color: #666;
+}
 
 a.sidebar_button
 {
@@ -409,10 +457,10 @@ div.content_right input.in2igui_placeholder
 
 ul.navigation
 {
-	float: left;
 	list-style: none;
-	margin: 6px 0px 0px 6px;
+	margin: -2px 0 0 6px;
 	padding: 0px;
+	position: absolute;
 }
 
 ul.navigation li
@@ -426,7 +474,7 @@ ul.navigation a
 	height: 34px;
 	text-decoration: none;
 	color: #ddd;
-	padding: 4px 2px 0;
+	padding:4px 2px 0;
 	cursor: pointer;
 }
 
@@ -549,7 +597,7 @@ div.tabs_content
 
 /***************************** Search *******************************/
 
-#chrome_search_result ul
+#casing_search_result ul
 {
 	list-style: none;
 	margin: 0;
@@ -557,13 +605,13 @@ div.tabs_content
 	font-size: 12px;
 }
 
-#chrome_search_result li
+#casing_search_result li
 {
 	overflow: hidden;
 	padding: 5px 0;
 }
 
-#chrome_search_result li.user div.thumbnail
+#casing_search_result li.user div.thumbnail
 {
 	height: 45px;
 	width: 40px;
@@ -573,27 +621,27 @@ div.tabs_content
 	float: left;
 }
 
-#chrome_search_result li.user p.username
+#casing_search_result li.user p.username
 {
 	color: #666;
 }
 
-#chrome_search_result li.user p.website
+#casing_search_result li.user p.website
 {
 	margin-top: 5px;
 }
 
-#chrome_search_result p
+#casing_search_result p
 {
 	margin: 0;
 }
 
-div.chrome_result_group
+div.casing_result_group
 {
 	padding: 10px 0;
 }
 
-div.chrome_result_group h2
+div.casing_result_group h2
 {
 	font-size: 14pt;
 	font-weight: normal;
@@ -696,4 +744,13 @@ div.login_info
 .footer a span
 {
 	color: #666;
+}
+
+/***************************** Formula ********************************/
+
+table.formula th
+{
+	text-align: right;
+	font-weight: normal;
+	font-size: 13px;
 }

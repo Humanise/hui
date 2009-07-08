@@ -47,6 +47,7 @@
 			<script src="#{base.localContext}/In2iGui/js/Upload.js" type="text/javascript" charset="utf-8"></script>
 			<script src="#{base.localContext}/In2iGui/js/ProgressBar.js" type="text/javascript" charset="utf-8"></script>
 			<script src="#{base.localContext}/In2iGui/js/ObjectList.js" type="text/javascript" charset="utf-8"></script>
+			<script src="#{base.localContext}/In2iGui/js/TextField.js" type="text/javascript" charset="utf-8"></script>
 		</h:outputText>
 		<h:outputText rendered="${!base.developmentMode}">
 			<script src="#{base.localContext}/In2iGui/js/minimized.js" type="text/javascript" charset="utf-8"></script>
@@ -63,110 +64,106 @@
 	</h:head>
 	<body>
 		<div class="root">
-			<div class="chrome">
-				<div class="chrome_top">
-					<div class="chrome_top">
-						<div class="chrome_top">
-							<ul class="navigation">
-								<li><a href="#{base.localContext}/" class="home"><span>Forside</span></a></li>
-								<li><a href="#{base.localContext}/images.html" class="#{top=='images' ? 'selected' : ''}"><span><span>Billeder</span></span></a></li>
-								<li><a href="#{base.localContext}/users.html" class="#{top=='users' ? 'selected' : ''}"><span><span>Brugere</span></span></a></li>
-								<!--<li><a href="#{base.localContext}/"><span><span>Kort</span></span></a></li>
-								<li><a href="#{base.localContext}/"><span><span>Søgning</span></span></a></li>-->
-							</ul>
-							<form action="#" method="get" accept-charset="utf-8" class="chrome_search" id="chrome_search">
-								<div><div><input type="text" name="query" value="" class="text"/></div></div>
-								<div class="reset"></div>
-							</form>
-							<!--
-							<xsl:if test="$user-name!='public'">
-							<div class="login_info">
-								Bruger: <xsl:value-of select="$user-name"/><xsl:text> </xsl:text><a href="#" class="link" id="logOut"><span>Log ud</span></a>
+			<div class="casing">
+				<div class="casing_top"><div><div></div></div></div>
+				<div class="casing_middle">
+					<div class="casing_middle">
+						<div class="casing_body">	
+							<div class="casing_head">
+								<ul class="navigation">
+									<li><a href="#{base.localContext}/" class="home"><span>Forside</span></a></li>
+									<li><a href="#{base.localContext}/images.html" class="#{top=='images' ? 'selected' : ''}"><span><span>Billeder</span></span></a></li>
+									<li><a href="#{base.localContext}/users.html" class="#{top=='users' ? 'selected' : ''}"><span><span>Brugere</span></span></a></li>
+									<!--<li><a href="#{base.localContext}/"><span><span>Kort</span></span></a></li>
+									<li><a href="#{base.localContext}/"><span><span>Søgning</span></span></a></li>-->
+								</ul>
+								<form action="#" method="get" accept-charset="utf-8" class="casing_search" id="casing_search">
+									<div><div><input type="text" name="query" value="" class="text"/></div></div>
+									<div class="reset"></div>
+								</form>
 							</div>
-							</xsl:if>
-							-->
-						</div>
-					</div>
-				</div>
-				<div class="chrome_middle">
-					<div class="chrome_middle">
-						<div class="content">
-							<div class="content_left">
-								<ui:insert name="body"/>
-							</div>
+							<div>
+								<div class="content">
+									<div class="content_left">
+										<ui:insert name="body"/>
+									</div>
 							
-							<div class="content_right">
-								<div id="chrome_search_result"></div>
-								<div class="content_right_body">
-									<h:outputText rendered="#{!base.publicUser}">
-										<div id="userinfo">
-											<div class="thumbnail"></div>
-											<h2>#{base.userName}</h2>
-											<p>
-												<a href="#{base.localContext}/#{base.userName}/" class="link"><span>Min profil</span></a>
-											</p>
-											<p class="buttons">
-												<a class="sidebar_button logout" href="#"><span><span>Log ud</span></span></a>
-											</p>
+									<div class="content_right">
+										<div id="casing_search_result"></div>
+										<div class="content_right_body">
+											<h:outputText rendered="#{!base.publicUser}">
+												<div id="userinfo">
+													<div class="thumbnail"></div>
+													<h2>#{base.userName}</h2>
+													<p>
+														<a href="#{base.localContext}/#{base.userName}/" class="link"><span>Min profil</span></a>
+													</p>
+													<p class="buttons">
+														<a class="sidebar_button logout" href="#"><span><span>Log ud</span></span></a>
+													</p>
+												</div>
+											</h:outputText>
+											<h:outputText rendered="#{base.publicUser}">
+												<h2>Log ind</h2>
+												<form action="login" method="get" accept-charset="utf-8" id="login" class="formula">
+													<div>
+														<p>
+															<label>Brugernavn</label>
+															<span class="field"><span><span><input type="text" name="username" value="" class="text"/></span></span></span>
+														</p>
+														<p>
+															<label>Adgangskode</label>
+															<span class="field"><span><span><input type="password" name="password" value="" class="text"/></span></span></span>
+														</p>
+														<p class="buttons">
+															<a href="#" class="link" id="casing_recoverpassword"><span>Glemt kodeord...</span></a>
+															<input type="submit" value="Log ind" class="submit"/>
+															<a class="sidebar_button" href="#"><span><span>Log ind</span></span></a>
+														</p>
+													</div>
+												</form>
+											</h:outputText>
+											<h2>Ny bruger</h2>
+											<form action="signup" method="get" accept-charset="utf-8" id="signup" class="formula">
+												<div>
+													<p class="response"></p>
+													<p>
+														<label>Brugernavn</label>
+														<span class="field"><span><span><input type="text" name="abc" value="" class="text"/></span></span></span>
+														<span class="hint">Kun små bogstaver og/eller tal</span>
+													</p>
+													<p>
+														<label>Kodeord</label>
+														<span class="field"><span><span><input type="password" name="def" value="" class="text"/></span></span></span>
+														<span class="hint">Gerne langt og med tal og tegn</span>
+													</p>
+													<p>
+														<label>Navn</label>
+														<span class="field"><span><span><input type="text" name="name" value="" class="text"/></span></span></span>
+														<span class="hint">F.eks: Jens Petersen</span>
+													</p>
+													<p>
+														<label>E-post</label>
+														<span class="field"><span><span><input type="text" name="email" value="" class="text"/></span></span></span>
+														<span class="hint">F.eks: jens@mail.dk</span>
+													</p>
+													<p class="buttons">
+														<input type="submit" value="Tilmeld" class="submit"/>
+														<a class="sidebar_button" href="#"><span><span>Tilmeld</span></span></a>
+													</p>
+												</div>
+											</form>
 										</div>
-									</h:outputText>
-									<h:outputText rendered="#{base.publicUser}">
-										<h2>Log ind</h2>
-										<form action="login" method="get" accept-charset="utf-8" id="login" class="formula">
-											<div>
-												<p>
-													<label>Brugernavn</label>
-													<span class="field"><span><span><input type="text" name="username" value="" class="text"/></span></span></span>
-												</p>
-												<p>
-													<label>Adgangskode</label>
-													<span class="field"><span><span><input type="password" name="password" value="" class="text"/></span></span></span>
-												</p>
-												<p class="buttons">
-													<input type="submit" value="Log ind" class="submit"/>
-													<a class="sidebar_button" href="#"><span><span>Log ind</span></span></a>
-												</p>
-											</div>
-										</form>
-									</h:outputText>
-									<h2>Ny bruger</h2>
-									<form action="signup" method="get" accept-charset="utf-8" id="signup" class="formula">
-										<div>
-											<p class="response"></p>
-											<p>
-												<label>Brugernavn</label>
-												<span class="field"><span><span><input type="text" name="abc" value="" class="text"/></span></span></span>
-												<span class="hint">Kun små bogstaver og/eller tal</span>
-											</p>
-											<p>
-												<label>Kodeord</label>
-												<span class="field"><span><span><input type="password" name="def" value="" class="text"/></span></span></span>
-												<span class="hint">Gerne langt og med tal og tegn</span>
-											</p>
-											<p>
-												<label>Navn</label>
-												<span class="field"><span><span><input type="text" name="name" value="" class="text"/></span></span></span>
-												<span class="hint">F.eks: Jens Petersen</span>
-											</p>
-											<p>
-												<label>E-post</label>
-												<span class="field"><span><span><input type="text" name="email" value="" class="text"/></span></span></span>
-												<span class="hint">F.eks: jens@mail.dk</span>
-											</p>
-											<p class="buttons">
-												<input type="submit" value="Tilmeld" class="submit"/>
-												<a class="sidebar_button" href="#"><span><span>Tilmeld</span></span></a>
-											</p>
-										</div>
-									</form>
+									</div>
 								</div>
 							</div>
+							<div class="casing_foot">
+								
+							</div>
 						</div>
 					</div>
 				</div>
-				<div class="chrome_bottom">
-					<div><div></div></div>
-				</div>
+				<div class="casing_bottom"><div><div></div></div></div>
 			</div>
 		</div>
 		<div class="footer">

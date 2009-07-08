@@ -14,7 +14,7 @@ import dk.in2isoft.onlineobjects.core.Configuration;
 import dk.in2isoft.onlineobjects.core.ConversionFacade;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
-import dk.in2isoft.onlineobjects.core.ModelFacade;
+import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.WebNode;
@@ -34,7 +34,7 @@ public class PageRenderer {
 	}
 
 	public void render(Request request) throws EndUserException {
-		ModelFacade model = Core.getInstance().getModel();
+		ModelService model = Core.getInstance().getModel();
 		ConversionFacade converter = Core.getInstance().getConverter();
 		// Get the page content
 		Entity document = model.getChild(page, Relation.KIND_WEB_CONTENT, Entity.class);
@@ -68,6 +68,7 @@ public class PageRenderer {
 		// Append context
 		Element context = new Element("context", NAMESPACE);
 		context.appendChild(converter.generateXML(site));
+		context.appendChild(converter.generateXML(page));
 		
 		WebNode node = (WebNode)model.getParent(page,WebNode.class);
 		context.appendChild(converter.generateXML(node));

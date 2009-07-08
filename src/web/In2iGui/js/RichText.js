@@ -9,6 +9,7 @@ In2iGui.RichText = function(options) {
 	e.insert(this.textarea);
 	this.editor = WysiHat.Editor.attach(this.textarea);
 	this.editor.setAttribute('frameborder','0');
+	/* @private */
 	this.toolbar = e.select('.in2igui_richtext_toolbar')[0];
 	this.toolbarContent = e.select('.in2igui_richtext_toolbar_content')[0];
 	this.value = this.options.value;

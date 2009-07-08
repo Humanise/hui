@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import dk.in2isoft.onlineobjects.core.Core;
-import dk.in2isoft.onlineobjects.core.ModelFacade;
+import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.SecurityController;
 import dk.in2isoft.onlineobjects.ui.Request;
 
@@ -37,7 +37,7 @@ public class AbstractManagedBean {
 		return getRequest().isIP();
 	}
 
-	protected ModelFacade getModel() {
+	protected ModelService getModel() {
 		return Core.getInstance().getModel();
 	}
 	

@@ -2,6 +2,7 @@ package dk.in2isoft.onlineobjects.model;
 
 public class EmailAddress extends Entity {
 
+	public static final String ADDRESS_PROPERTY = "address";
 	public static String TYPE = Entity.TYPE+"/EmailAddress";
 	public static String NAMESPACE = Entity.NAMESPACE+"EmailAddress/";
 	

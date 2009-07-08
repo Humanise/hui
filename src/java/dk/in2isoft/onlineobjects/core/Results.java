@@ -17,7 +17,7 @@ public class Results<T> {
 	@SuppressWarnings("unchecked")
 	public T get() {
 		T object = (T) results.get(0);
-		return ModelFacade.getSubject(object);
+		return ModelService.getSubject(object);
 	}
 	
 	public void close() {

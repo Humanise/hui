@@ -30,6 +30,7 @@ import org.w3c.dom.Document;
 
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
+import dk.in2isoft.onlineobjects.core.ModelException;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.ui.XSLTInterface;
 
@@ -141,7 +142,7 @@ public class XSLTUtil {
 		applyXSLT(data, new StreamSource(ui.getStylesheet()), response.getOutputStream(), parameters);
 	}
 
-	private static void writeSource(XSLTInterface ui, Request request) throws IOException {
+	private static void writeSource(XSLTInterface ui, Request request) throws IOException, ModelException {
 		request.getResponse().setContentType("text/xml");
 		Serializer serializer = new Serializer(request.getResponse().getOutputStream());
 		serializer.write(ui.getDocument());

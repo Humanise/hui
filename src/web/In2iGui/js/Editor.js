@@ -171,7 +171,7 @@ In2iGui.Editor.prototype = {
 	},
 	showColumnWindow : function() {
 		if (!this.columnEditor) {
-			var w = this.columnEditor = In2iGui.Window.create({name:'columnEditor',title:'Rediger kolonne'});
+			var w = this.columnEditor = In2iGui.Window.create({name:'columnEditor',title:'Rediger kolonne',width:200});
 			var f = this.columnEditorForm = In2iGui.Formula.create();
 			var g = f.createGroup();
 			var width = In2iGui.Formula.Text.create({label:'Bredde',key:'width'});

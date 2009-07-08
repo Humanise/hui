@@ -43,9 +43,9 @@ import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.util.ModelClassInfo;
 
-public class ModelFacade {
+public class ModelService {
 
-	private static Logger log = Logger.getLogger(ModelFacade.class);
+	private static Logger log = Logger.getLogger(ModelService.class);
 
 	private static final SessionFactory sessionFactory;
 
@@ -62,7 +62,7 @@ public class ModelFacade {
 		}
 	}
 
-	protected ModelFacade() {
+	protected ModelService() {
 		loadModelInfo();
 	}
 
