@@ -14,6 +14,7 @@ public class AllNonModelTests {
 		suite.addTestSuite(TestEntityReflection.class);
 		suite.addTestSuite(TestLangUtil.class);
 		suite.addTestSuite(TestModelInfo.class);
+		suite.addTestSuite(TestVelocity.class);
 		//$JUnit-END$
 		return suite;
 	}

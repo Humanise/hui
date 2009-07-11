@@ -7,13 +7,13 @@
 	<h:head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 		<title>OnlineMe</title>
-		<link rel="stylesheet" href="#{base.localContext}/css/shared.css" type="text/css" media="screen" charset="utf-8"/>
-		<link rel="stylesheet" href="#{base.localContext}/css/home.css" type="text/css" media="screen" charset="utf-8"/>
+		<link rel="stylesheet" href="#{base.localContext}/css/shared.css?#{lifeCycleService.startTime.time}" type="text/css" media="screen" charset="utf-8"/>
+		<link rel="stylesheet" href="#{base.localContext}/css/home.css?#{lifeCycleService.startTime.time}" type="text/css" media="screen" charset="utf-8"/>
 		<h:outputText rendered="${base.developmentMode}">
 			<link rel="stylesheet" href="#{base.localContext}/In2iGui/css/dev.css" type="text/css" media="screen" title="front" charset="utf-8"/>
 		</h:outputText>
 		<h:outputText rendered="${!base.developmentMode}">
-			<link rel="stylesheet" href="#{base.localContext}/In2iGui/css/minimized.css" type="text/css" media="screen" title="front" charset="utf-8"/>
+			<link rel="stylesheet" href="#{base.localContext}/In2iGui/bin/minimized.css?#{lifeCycleService.startTime.time}" type="text/css" media="screen" title="front" charset="utf-8"/>
 		</h:outputText>
 		<!--[if lt IE 7]>
 			<link rel="stylesheet" type="text/css" href="#{base.localContext}/In2iGui/css/msie6.css"></link>
@@ -22,9 +22,9 @@
 			<link rel="stylesheet" type="text/css" href="#{base.localContext}/In2iGui/css/msie7.css"></link>
 		<![endif]-->
 
-			<script type='text/javascript' src='#{base.localContext}/dwr/interface/CoreSecurity.js'></script>
-			<script type='text/javascript' src='#{base.localContext}/dwr/interface/AppCommunity.js'></script>
-			<script type='text/javascript' src='#{base.localContext}/dwr/engine.js'></script>
+			<script type='text/javascript' src='#{base.localContext}/dwr/interface/CoreSecurity.js?#{lifeCycleService.startTime.time}'></script>
+			<script type='text/javascript' src='#{base.localContext}/dwr/interface/AppCommunity.js?#{lifeCycleService.startTime.time}'></script>
+			<script type='text/javascript' src='#{base.localContext}/dwr/engine.js?#{lifeCycleService.startTime.time}'></script>
 		<h:outputText rendered="${base.developmentMode}">
 			<script src="#{base.localContext}/In2iGui/lib/prototype.js" type="text/javascript" charset="utf-8"></script>
 			<script src="#{base.localContext}/In2iGui/lib/n2i.js" type="text/javascript" charset="utf-8"></script>
@@ -50,9 +50,9 @@
 			<script src="#{base.localContext}/In2iGui/js/TextField.js" type="text/javascript" charset="utf-8"></script>
 		</h:outputText>
 		<h:outputText rendered="${!base.developmentMode}">
-			<script src="#{base.localContext}/In2iGui/js/minimized.js" type="text/javascript" charset="utf-8"></script>
+			<script src="#{base.localContext}/In2iGui/bin/minimized.js?#{lifeCycleService.startTime.time}" type="text/javascript" charset="utf-8"></script>
 		</h:outputText>
-		<script src="#{base.localContext}/js/community.js" type="text/javascript" charset="utf-8"></script>
+		<script src="#{base.localContext}/js/community.js?#{lifeCycleService.startTime.time}" type="text/javascript" charset="utf-8"></script>
 		<script type="text/javascript" charset="utf-8">
 			In2iGui.context = '#{base.baseContext}';
 			oo.baseContext='#{base.baseContext}';

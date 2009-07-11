@@ -1,18 +1,15 @@
-package dk.in2isoft.onlineobjects.core;
+package dk.in2isoft.onlineobjects.services;
 
 import nu.xom.Node;
+import dk.in2isoft.onlineobjects.core.ModelException;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.conversion.EntityConverter;
 
 
-public class ConversionFacade {
+public class ConversionService {
 
 	//private static Logger log = Logger.getLogger(ConversionFacade.class);
-	
-	protected ConversionFacade() {
 		
-	}
-	
 	public EntityConverter getConverter(Class<?> classObj) {
 		String className = classObj.getPackage().getName()+".conversion."+classObj.getSimpleName()+"Converter";
 		//log.debug(className);

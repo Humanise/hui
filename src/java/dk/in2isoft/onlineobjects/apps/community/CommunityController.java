@@ -37,7 +37,7 @@ import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.WebPage;
 import dk.in2isoft.onlineobjects.model.WebSite;
 import dk.in2isoft.onlineobjects.model.util.WebModelUtil;
-import dk.in2isoft.onlineobjects.publishing.PageRenderer;
+import dk.in2isoft.onlineobjects.services.PageRenderingService;
 import dk.in2isoft.onlineobjects.ui.AsynchronousProcessDescriptor;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.ui.XSLTInterface;
@@ -57,6 +57,7 @@ public class CommunityController extends ApplicationController {
 		addJsfMatcher("<username>", "/jsf/community/user/index.xhtml");
 		addJsfMatcher("", "/jsf/community/index.xhtml");
 		addJsfMatcher("recoverpassword.html", "/jsf/community/recoverpassword.xhtml");
+		addJsfMatcher("invitation.html", "/jsf/community/invitation.xhtml");
 	}
 
 	public static CommunityDAO getDAO() {
@@ -68,6 +69,8 @@ public class CommunityController extends ApplicationController {
 		String subDomain = request.getSubDomain();
 		if (LangUtil.isDefined(subDomain) && !"www".equals(subDomain)) {
 			handleUser(request);
+		} else if (request.testLocalPathStart("model.action")) {
+			model(request);
 		} else if (request.testLocalPathStart("iphone")) {
 			FileBasedInterface ui = new FileBasedInterface(getFile("iphone", "index.gui.xml"));
 			ui.render(request.getRequest(), request.getResponse());
@@ -158,8 +161,8 @@ public class CommunityController extends ApplicationController {
 		if (page == null) {
 			throw new EndUserException("The page could not be found!");
 		}
-		PageRenderer renderer = new PageRenderer(page);
-		renderer.render(request);
+		PageRenderingService renderer = request.getBean(PageRenderingService.class);
+		renderer.render(page,request);
 	}
 
 	private void uploadProfileImage(Request request) throws EndUserException, IOException {
@@ -198,11 +201,13 @@ public class CommunityController extends ApplicationController {
 		}
 		DiskFileItemFactory factory = new DiskFileItemFactory();
 		factory.setSizeThreshold(0);
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		if (Core.getInstance().getConfiguration().getDevelopmentMode()) {
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
 		ServletFileUpload upload = new ServletFileUpload(factory);
 		ProgressListener progressListener = new ProgressListener() {

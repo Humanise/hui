@@ -25,7 +25,7 @@ import dk.in2isoft.onlineobjects.model.HtmlPart;
 import dk.in2isoft.onlineobjects.model.ImagePart;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.publishing.CompoundDocumentBuilder;
-import dk.in2isoft.onlineobjects.publishing.PageRenderer;
+import dk.in2isoft.onlineobjects.services.PageRenderingService;
 import dk.in2isoft.onlineobjects.ui.AbstractRemotingFacade;
 
 public class CompoundDocumentRemotingFacade extends AbstractRemotingFacade {
@@ -73,7 +73,7 @@ public class CompoundDocumentRemotingFacade extends AbstractRemotingFacade {
 				new String[] { "WEB-INF", "apps", "community", "web", "documents", "CompoundDocument", "xslt",
 						"stylesheet.xsl" });
 		ByteArrayOutputStream x = new ByteArrayOutputStream();
-		Map<String, String> parameters = PageRenderer.buildParameters(getRequest());
+		Map<String, String> parameters = PageRenderingService.buildParameters(getRequest());
 		XSLTUtil.applyXSLT(input.toXML(), stylsheet, x, parameters);
 		return x.toString("UTF-8");
 	}

@@ -6,7 +6,8 @@
 	</dwr>
 	<controller name="controller" source="../../gui/private/controller.js"/>
 	<controller name="personsController" source="../../gui/private/persons.js"/>
-	<view>
+	<layout>
+		<top>
 		<toolbar>
 			<icon icon="common/settings" title="Indstillinger" name="toolSettings"/>
 			<divider/>
@@ -16,22 +17,25 @@
 				<icon icon="common/close" title="Tilbage til website" name="close"/>
 			</right>
 		</toolbar>
-		<content pad="20">
-			<view style="box">
-				<toolbar>
-					<icon icon="common/person" overlay="new" title="Ny person" name="newPerson"/>
-					<icon icon="common/letter" overlay="new" title="Ny invitation" name="newInvitation"/>
-				</toolbar>
-				<content>
-					<split>
-						<sidebar>
-							<selection value="persons">
-								<item icon="common/person" title="Alle personer" value="persons"/>
-								<item icon="common/letter" title="Invitationer" value="invitations"/>
-							</selection>
-						</sidebar>
-						<content>
-							<overflow resize="-190">
+		</top>
+		<middle>
+			<center padding="10">
+			<layout style="box">
+				<top>
+					<toolbar>
+						<icon icon="common/person" overlay="new" title="Ny person" name="newPerson"/>
+						<icon icon="common/letter" overlay="new" title="Ny invitation" name="newInvitation"/>
+					</toolbar>
+				</top>
+				<middle>
+					<left>
+						<selection value="persons">
+							<item icon="common/person" title="Alle personer" value="persons"/>
+							<item icon="common/letter" title="Invitationer" value="invitations"/>
+						</selection>
+					</left>
+					<center>
+						<overflow>
 							<list name="personList" state="persons">
 								<column title="Navn" key="name"/>
 								<column title="E-mail" key="email"/>
@@ -42,50 +46,48 @@
 								<column title="Inviteret" key="person"/>
 								<column title="Status" key="state"/>
 							</list>
-							</overflow>
-						</content>
-					</split>
-				</content>
-				<foot>
-					
-				</foot>
-			</view>
-		</content>
-	</view>
-	<window name="personWindow" title="Person" width="500" pad="5">
+						</overflow>
+					</center>
+				</middle>
+				<bottom/>
+			</layout>
+			</center>
+		</middle>
+	</layout>
+	<window name="personWindow" title="Person" width="400" padding="5">
 		<formula name="personFormula">			
-			<horizontal space="10">
-				<content>
+			<columns space="10">
+				<column>
 					<group labels="above">
 						<text label="Fornavn" key="givenName"/>
 					</group>
-				</content>
-				<content>
+				</column>
+				<column>
 					<group labels="above">
 						<text label="Mellemnavn" key="additionalName"/>
 					</group>
-				</content>
-				<content>
+				</column>
+				<column>
 					<group labels="above">
 						<text label="Efternavn" key="familyName"/>
 					</group>
-				</content>
-			</horizontal>
-			<horizontal space="10">
-				<content>
+				</column>
+			</columns>
+			<columns space="10">
+				<column>
 					<group labels="above">
 						<text label="Præfiks" key="namePrefix"/>
 					</group>
-				</content>
-				<content>
+				</column>
+				<column>
 					<group labels="above">
 						<text label="Postfiks" key="nameSuffix"/>
 					</group>
-				</content>
-			</horizontal>
+				</column>
+			</columns>
 			<space height="10"/>
-			<horizontal space="10">
-				<content>
+			<columns space="10">
+				<column>
 					<group labels="above">
 						<custom>
 						<objectlist name="personEmails">
@@ -94,31 +96,31 @@
 						</objectlist>
 						</custom>
 					</group>
-				</content>
-				<content>
+				</column>
+				<column>
 					<group labels="above">
 						<custom>
 						<objectlist name="personPhones">
-							<text label="Telefonnummer" key="number"/>
+							<text label="Telefon" key="number"/>
 							<text label="Kontekst" key="context"/>
 						</objectlist>
 						</custom>
 					</group>
-				</content>
-			</horizontal>
+				</column>
+			</columns>
 			<buttons top="5">
-				<button title="Gem" highlighted="true" name="savePerson"/>
 				<button title="Annuller" name="cancelPerson"/>
+				<button title="Gem" highlighted="true" name="savePerson"/>
 			</buttons>
 		</formula>
 	</window>
-	<window floating="true" name="invitationWindow" title="Ny invitation" width="300" padding="5">
+	<window floating="true" name="invitationWindow" title="Ny invitation" width="300" padding="10">
 		<formula name="invitationFormula">
 			<group>
 				<text label="Navn" key="name"/>
 				<text label="E-mail" key="email"/>
 				<text label="Besked" key="message" lines="10"/>
-				<buttons top="10">
+				<buttons>
 					<button title="Send" highlighted="true" name="sendInvitation"/>
 				</buttons>
 			</group>

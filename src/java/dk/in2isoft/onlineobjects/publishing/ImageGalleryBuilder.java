@@ -8,7 +8,6 @@ import nu.xom.Node;
 
 import org.xml.sax.SAXException;
 
-import dk.in2isoft.onlineobjects.core.ConversionFacade;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelService;
@@ -18,6 +17,7 @@ import dk.in2isoft.onlineobjects.model.HeaderPart;
 import dk.in2isoft.onlineobjects.model.HtmlPart;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.ImageGallery;
+import dk.in2isoft.onlineobjects.services.ConversionService;
 
 public class ImageGalleryBuilder extends DocumentBuilder implements FeedBuilder {
 
@@ -32,7 +32,7 @@ public class ImageGalleryBuilder extends DocumentBuilder implements FeedBuilder 
 	@Override
 	public Node build(Document document) throws EndUserException {
 		ImageGallery gallery = (ImageGallery) document;
-		ConversionFacade converter = Core.getInstance().getConverter();
+		ConversionService converter = Core.getInstance().getConverter();
 
 		String style = gallery.getPropertyValue(ImageGallery.PROPERTY_FRAMESTYLE);
 		if (style == null)

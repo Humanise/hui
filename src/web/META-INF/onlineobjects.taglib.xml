@@ -8,4 +8,11 @@
       <renderer-type>onlineobjects.list</renderer-type>
     </component>
   </tag>
+  <tag>
+    <tag-name>box</tag-name>
+    <component>
+      <component-type>onlineobjects.box</component-type>
+      <renderer-type>onlineobjects.box</renderer-type>
+    </component>
+  </tag>
 </facelet-taglib>

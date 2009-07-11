@@ -33,7 +33,7 @@
 			<script src="{$context}/In2iGui/iphone/js/In2iPhone.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		</xsl:when>
 		<xsl:otherwise>
-			<script src="{$context}/In2iGui/iphone/js/minimized.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+			<script src="{$context}/In2iGui/iphone/bin/minimized.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		</xsl:otherwise>
 	</xsl:choose>
 

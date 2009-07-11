@@ -17,7 +17,7 @@
 			<xsl:value-of select="p:context/e:Entity[@type='Item/Entity/WebPage']/e:name"/><xsl:text> &#8250; </xsl:text>
 			<xsl:value-of select="p:context/e:Entity[@type='Item/Entity/WebSite']/e:name"/>
 		</title>
-		<link rel="stylesheet" href="{$local-context}/css/common.css" type="text/css" media="screen" title="front" charset="utf-8"/>
+		<link rel="stylesheet" href="{$local-context}/css/common.css?{$cache-version}" type="text/css" media="screen" title="front" charset="utf-8"/>
 		<xsl:choose>
 			<xsl:when test="$development-mode='true'">
 				<link rel="stylesheet" href="{$base-context}/In2iGui/css/dev.css" type="text/css" media="screen" title="front" charset="utf-8"/>
@@ -47,15 +47,15 @@
 				<script src="{$base-context}/In2iGui/js/Overflow.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 			</xsl:when>
 			<xsl:otherwise>
-				<link rel="stylesheet" href="{$base-context}/In2iGui/css/minimized.css" type="text/css" media="screen" title="front" charset="utf-8"/>
-				<script src="{$base-context}/In2iGui/js/minimized.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+				<link rel="stylesheet" href="{$base-context}/In2iGui/bin/minimized.css?{$cache-version}" type="text/css" media="screen" title="front" charset="utf-8"/>
+				<script src="{$base-context}/In2iGui/bin/minimized.js?{$cache-version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 			</xsl:otherwise>
 		</xsl:choose>
 		<xsl:comment><![CDATA[[if lt IE 7]>
-			<link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$base-context"/><![CDATA[/In2iGui/css/msie6.css"> </link>
+			<link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$base-context"/>/In2iGui/css/msie6.css?"><xsl:value-of select="$cache-version"/><![CDATA["> </link>
 		<![endif]]]></xsl:comment>
 		<xsl:comment><![CDATA[[if IE 7]>
-			<link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$base-context"/><![CDATA[/In2iGui/css/msie7.css"> </link>
+			<link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$base-context"/>/In2iGui/css/msie7.css?<xsl:value-of select="$cache-version"/><![CDATA["> </link>
 		<![endif]]]></xsl:comment>
 		<script type="text/javascript" charset="utf-8">
 			In2iGui.context = '<xsl:value-of select="$base-context"/>';
@@ -69,11 +69,11 @@
 			};
 		</script>
 		<xsl:if test="$privilege-document-modify='true'">
-			<link rel="stylesheet" href="{$local-context}/editor/css/editor.css" type="text/css" media="screen" title="front" charset="utf-8"/>
-			<script src="{$local-context}/editor/js/Editor.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-			<script src="{$base-context}/dwr/engine.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-			<script src="{$base-context}/dwr/interface/CoreSecurity.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-			<script src="{$base-context}/dwr/interface/AppCommunity.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+			<link rel="stylesheet" href="{$local-context}/editor/css/editor.css?{$cache-version}" type="text/css" media="screen" title="front" charset="utf-8"/>
+			<script src="{$local-context}/editor/js/Editor.js?{$cache-version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+			<script src="{$base-context}/dwr/engine.js?{$cache-version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+			<script src="{$base-context}/dwr/interface/CoreSecurity.js?{$cache-version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+			<script src="{$base-context}/dwr/interface/AppCommunity.js?{$cache-version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 			<xsl:call-template name="p:content-editor-head"/>
 		</xsl:if>
 		<xsl:call-template name="p:content-head"/>

@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import dk.in2isoft.commons.lang.LangUtil;
 import dk.in2isoft.onlineobjects.core.UserSession;
@@ -262,5 +264,12 @@ public class Request {
 
 	public void redirectFromBase(String redirect) throws IOException {
 		redirect(baseContext + redirect);
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> T getBean(Class<T> beanClass) {
+		String name = beanClass.getSimpleName().substring(0, 1).toLowerCase()+beanClass.getSimpleName().substring(1);
+		WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(request.getSession().getServletContext());
+		return (T) applicationContext.getBean(name, beanClass);
 	}
 }

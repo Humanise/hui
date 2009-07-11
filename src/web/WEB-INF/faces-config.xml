@@ -4,6 +4,11 @@
     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
 http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd" 
     version="2.0">
+    <application>
+   		<variable-resolver>
+      		org.springframework.web.jsf.DelegatingVariableResolver
+   		</variable-resolver>
+	</application>
 	<managed-bean>
         <managed-bean-name>base</managed-bean-name>
         <managed-bean-class>dk.in2isoft.onlineobjects.apps.community.jsf.BaseBean</managed-bean-class>
@@ -30,8 +35,12 @@ http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
         <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
     <component>
-    <component-type>onlineobjects.list</component-type>
+    	<component-type>onlineobjects.list</component-type>
     	<component-class>dk.in2isoft.onlineobjects.ui.jsf.ListComponent</component-class>
+  	</component>
+    <component>
+    	<component-type>onlineobjects.box</component-type>
+    	<component-class>dk.in2isoft.onlineobjects.ui.jsf.BoxComponent</component-class>
   	</component>
     <component>
 	    <component-type>in2igui.button</component-type>

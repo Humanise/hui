@@ -218,7 +218,12 @@
 </xsl:template>
 
 <xsl:template match="gui:layout/gui:middle/gui:center">
-	<td class="in2igui_layout_center"><xsl:apply-templates/></td>
+	<td class="in2igui_layout_center">
+		<xsl:if test="@padding">
+			<xsl:attribute name="style">padding: <xsl:value-of select="@padding"/>px;</xsl:attribute>
+		</xsl:if>
+		<xsl:apply-templates/>
+	</td>
 </xsl:template>
 
 <xsl:template match="gui:layout/gui:bottom">

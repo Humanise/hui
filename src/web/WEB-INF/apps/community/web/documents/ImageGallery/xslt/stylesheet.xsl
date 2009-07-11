@@ -15,17 +15,17 @@ doctype-system="http://www.w3.org/TR/html4/loose.dtd"/>
 	<xsl:include href="../../../../xslt/parts.xsl"/>
 	
 	<xsl:template name="p:content-head">
-		<link rel="stylesheet" href="{$local-context}/documents/ImageGallery/css/style.css" type="text/css" media="screen" title="front" charset="utf-8"/>
-		<script src="{$local-context}/documents/ImageGallery/js/ImageGallery.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<link rel="stylesheet" href="{$local-context}/documents/ImageGallery/css/style.css?{$cache-version}" type="text/css" media="screen" title="front" charset="utf-8"/>
+		<script src="{$local-context}/documents/ImageGallery/js/ImageGallery.js?{$cache-version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 	</xsl:template>
 	
 	<xsl:template name="p:content-editor-head">
-		<link rel="stylesheet" href="{$base-context}/In2iGui/css/progressbar.css" type="text/css" media="screen" title="front" charset="utf-8"/>
-		<script src="{$base-context}/dwr/interface/ImageGalleryDocument.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$base-context}/dwr/interface/Parts.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$base-context}/In2iGui/js/ProgressBar.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$base-context}/In2iGui/js/Upload.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$local-context}/documents/ImageGallery/js/ImageGalleryEditor.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<link rel="stylesheet" href="{$base-context}/In2iGui/css/progressbar.css?{$cache-version}" type="text/css" media="screen" title="front" charset="utf-8"/>
+		<script src="{$base-context}/dwr/interface/ImageGalleryDocument.js?{$cache-version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$base-context}/dwr/interface/Parts.js?{$cache-version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$base-context}/In2iGui/js/ProgressBar.js?{$cache-version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$base-context}/In2iGui/js/Upload.js?{$cache-version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$local-context}/documents/ImageGallery/js/ImageGalleryEditor.js?{$cache-version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script type="text/javascript">
 			with (OO.Editor.ImageGallery.getInstance()) {
 				imageHeight = <xsl:value-of select="//ig:ImageGallery/ig:settings/@tiledHeight"/>;

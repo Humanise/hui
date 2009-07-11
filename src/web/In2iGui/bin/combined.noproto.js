@@ -5107,12 +5107,15 @@ In2iGui.Formula.Text.create = function(options) {
 }
 
 In2iGui.Formula.Text.prototype = {
+	/** @private */
 	addBehavior : function() {
 		In2iGui.addFocusClass({element:this.input,classElement:this.element,'class':'in2igui_field_focused'});
 		this.input.observe('keyup',this.onKeyUp.bind(this));
 	},
+	/** @private */
 	onKeyUp : function(e) {
 		if (this.options.lines<2 && e.keyCode===Event.KEY_RETURN) {
+			this.fire('submit');
 			var form = In2iGui.get().getAncestor(this,'in2igui_formula');
 			if (form) {form.submit();}
 			return;
@@ -8551,7 +8554,7 @@ In2iGui.Editor.prototype = {
 	},
 	showColumnWindow : function() {
 		if (!this.columnEditor) {
-			var w = this.columnEditor = In2iGui.Window.create({name:'columnEditor',title:'Rediger kolonne'});
+			var w = this.columnEditor = In2iGui.Window.create({name:'columnEditor',title:'Rediger kolonne',width:200});
 			var f = this.columnEditorForm = In2iGui.Formula.create();
 			var g = f.createGroup();
 			var width = In2iGui.Formula.Text.create({label:'Bredde',key:'width'});

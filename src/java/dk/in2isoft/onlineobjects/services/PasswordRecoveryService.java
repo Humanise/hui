@@ -1,6 +1,8 @@
 package dk.in2isoft.onlineobjects.services;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import dk.in2isoft.commons.lang.LangUtil;
 import dk.in2isoft.onlineobjects.core.EndUserException;
@@ -33,7 +35,7 @@ public class PasswordRecoveryService {
 					if (person!=null) {
 						User emailUser = modelService.getParent(person, User.class);
 						if (emailUser!=null) {
-							return sendRecoveryMail(emailUser, emailAddress, priviledged);
+							return sendRecoveryMail(emailUser, person, emailAddress, priviledged);
 						}
 					}
 				}
@@ -47,22 +49,30 @@ public class PasswordRecoveryService {
 		if (person!=null) {
 			EmailAddress email = modelService.getChild(person, EmailAddress.class);
 			if (email!=null) {
-				return sendRecoveryMail(user, email,priviledged);
+				return sendRecoveryMail(user, person, email,priviledged);
 			}
 		}
 		return false;
 	}
 	
-	public boolean sendRecoveryMail(User user, EmailAddress email,Priviledged priviledged) throws EndUserException {
-		StringBuilder body = new StringBuilder();
+	public boolean sendRecoveryMail(User user, Person person, EmailAddress email,Priviledged priviledged) throws EndUserException {
 		String random = LangUtil.generateRandomString(30);
 		user.overrideFirstProperty(User.PASSWORD_RECOVERY_CODE_PROPERTY, random);
 		// TODO: Priviledged should be from session
 		modelService.updateItem(user, priviledged);
-		body.append("http://").append(configurationService.getBaseUrl());
-		body.append("/recoverpassword.html?key=");
-		body.append(random);
-		emailService.sendMessage("OnlineObjects password recovery", body.toString(), email.getAddress());
+		StringBuilder url = new StringBuilder();
+		url.append("http://").append(configurationService.getBaseUrl());
+		url.append("/recoverpassword.html?key=");
+		url.append(random);
+
+		Map<String,Object> parms = new HashMap<String, Object>();
+		parms.put("name", person.getFullName());
+		parms.put("url",url.toString());
+		parms.put("base-url", configurationService.getBaseUrl());
+		
+		String html = emailService.applyTemplate("dk/in2isoft/onlineobjects/apps/community/resources/passwordrecovery-template.html", parms);
+		
+		emailService.sendHtmlMessage("\u00C6ndring af kodeord til OnlineMe", html, email.getAddress(),person.getName());
 		return true;
 	}
 

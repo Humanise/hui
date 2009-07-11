@@ -1,3 +1,109 @@
+oo.community.Invitation = {
+	code : null,
+	
+	$interfaceIsReady : function() {
+		var username = ui.get('invitationUsername');
+		if (username) {
+			ui.get('invitationUsername').select();
+		}
+	},
+	
+	$click$changePassword : function() {
+		this.signUp();
+	},
+	$submit$invitationPassword : function() {
+		this.signUp();
+	},
+	$submit$invitationPasswordAgain : function() {
+		this.signUp();
+	},
+	$submit$invitationUsername : function() {
+		this.signUp();
+	},
+
+	signUp : function() {
+		var usernameField = ui.get('invitationUsername');
+		var passwordField = ui.get('invitationPassword');
+		var passwordAgainField = ui.get('invitationPasswordAgain');
+		var username = usernameField.getValue();
+		var password = passwordField.getValue();
+		var passwordAgain = passwordAgainField.getValue();
+		if (n2i.isEmpty(username)) {
+			ui.showMessage({text:'Brugernavnet skal udfyldes',duration:2000});
+			usernameField.focus();
+		} else if (n2i.isEmpty(password) || n2i.isEmpty(passwordAgain)) {
+			ui.showMessage({text:'Begge kodeord skal udfyldes',duration:2000});
+			if (n2i.isEmpty(password)) {
+				 passwordField.focus();
+			} else if (n2i.isEmpty(passwordAgain)) {
+				 passwordAgainField.focus();
+			}
+		} else if (password!==passwordAgain) {
+			ui.showMessage({text:'De to kodeord er ikke ens',duration:2000});
+			passwordAgainField.select();
+		} else {			
+			var delegate = {
+	  			callback:function() { this.userDidSignUp(username) }.bind(this),
+	  			errorHandler:this.errorOccurred.bind(this)
+			};
+			AppCommunity.signUpFromInvitation(this.code,username,password,delegate);
+		}
+	},
+	errorOccurred : function(error,exception) {
+		if (exception.code=='userExists') {
+			ui.alert({
+				emotion: 'gasp',
+				title: 'Brugernavnet er optaget',
+				text: 'Der findes desværre allerede en bruger med dette brugernavn. Prøv venligst med et andet...',
+				onOK : function() {ui.get('invitationUsername').select()}
+			});
+		} else if (exception.code=='invalidUsername') {
+			ui.alert({
+				emotion: 'gasp',
+				title: 'Brugernavnet indeholder ugyldige tegn',
+				text: 'Det er kun tilladt at anvende små bogstaver mellem "a" og "z" samt tal. Du kan ikke anvende store bogstaver eller specialtegn.',
+				onOK : function() {ui.get('invitationUsername').select()}
+			});
+		} else {
+			n2i.log(exception);
+			ui.alert({
+				emotion: 'gasp',
+				title: 'Der skete en fejl!',
+				text: 'Fejlbesked: '+error
+			});
+		}
+	},
+	
+	userDidSignUp : function(username) {
+		var msg = ui.Alert.create({
+			emotion: 'smile',
+			title: 'Du er nu oprettet som bruger...',
+			text: 'Der er oprettet et website til dig. Desuden har du din egen profilside hvor du kan fortælle andre om dig selv...'
+		});
+		var button = ui.Button.create({text : 'Gå til min profilside :-)'});
+		button.listen({$click:function(){
+			document.location=oo.appContext+'/'+username+'/';
+		}});
+		msg.addButton(button);
+		msg.show();
+	}
+};
+ui.get().listen(oo.community.Invitation);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 if (!OO) var OO = {};
 if (!OO.Community) OO.Community = {};
 
@@ -78,7 +184,3 @@ OO.Community.InvitationPage.prototype = {
 		msg.show();
 	}
 }
-
-N2i.Event.addLoadListener(function() {
-	new OO.Community.InvitationPage();
-})

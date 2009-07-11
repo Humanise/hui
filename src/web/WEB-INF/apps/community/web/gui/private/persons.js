@@ -95,8 +95,8 @@ var personsController = {
 	
 	showInvitationProgress : function() {
 		if (!this.inviteProgress) {
-			this.inviteProgress = In2iGui.Alert.create(null,{
-				emotion: 'gasp',
+			this.inviteProgress = In2iGui.Alert.create({
+				emotion: 'smile',
 				title: 'Sender invitation...',
 				text: 'Vent venligst mens invitationen sendes.'
 			});
@@ -106,7 +106,7 @@ var personsController = {
 	
 	invitationFailed : function(errorString) {
 		this.inviteProgress.hide();
-		In2iGui.get().showAlert({
+		ui.alert({
 			emotion: 'gasp',
 			title: 'Invitationen kunne ikke afsendes',
 			text: 'Der skete følgende fejl: '+errorString
@@ -115,16 +115,11 @@ var personsController = {
 	},
 	invitationWasSent : function() {
 		this.inviteProgress.hide();
-		if (!this.inviteSentAlert) {
-			this.inviteSentAlert = In2iGui.Alert.create(null,{
-				emotion: 'smile',
-				title: 'Invitationen er sendt!',
-				text: 'Personen vil modtage en email med oplysninger om hvordan han/hun kan tilmelde sig!'
-			});
-			var button = In2iGui.Button.create({name:'inviteSentOK',text : 'OK'});
-			this.inviteSentAlert.addButton(button);
-		}
-		this.inviteSentAlert.show();
+		ui.alert({
+			emotion: 'smile',
+			title: 'Invitationen er sendt!',
+			text: 'Personen vil modtage en email med oplysninger om hvordan han/hun kan tilmelde sig!'
+		});
 		this.refreshInvitationList();
 	}
 }

@@ -1,4 +1,4 @@
-package dk.in2isoft.onlineobjects.publishing;
+package dk.in2isoft.onlineobjects.services;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,7 +11,6 @@ import nu.xom.Attribute;
 import nu.xom.Element;
 import dk.in2isoft.commons.xml.XSLTUtil;
 import dk.in2isoft.onlineobjects.core.Configuration;
-import dk.in2isoft.onlineobjects.core.ConversionFacade;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelService;
@@ -21,23 +20,22 @@ import dk.in2isoft.onlineobjects.model.WebNode;
 import dk.in2isoft.onlineobjects.model.WebPage;
 import dk.in2isoft.onlineobjects.model.WebSite;
 import dk.in2isoft.onlineobjects.model.util.WebModelUtil;
+import dk.in2isoft.onlineobjects.publishing.Document;
+import dk.in2isoft.onlineobjects.publishing.DocumentBuilder;
+import dk.in2isoft.onlineobjects.publishing.FeedBuilder;
+import dk.in2isoft.onlineobjects.publishing.FeedWriter;
 import dk.in2isoft.onlineobjects.ui.Request;
 
-public class PageRenderer {
+public class PageRenderingService {
 
 	private static String NAMESPACE = "http://uri.onlineobjects.com/publishing/WebPage/";
 	
-	private WebPage page;
+	private ModelService modelService;
+	private ConversionService conversionService;
 
-	public PageRenderer(WebPage page) {
-		this.page = page;
-	}
-
-	public void render(Request request) throws EndUserException {
-		ModelService model = Core.getInstance().getModel();
-		ConversionFacade converter = Core.getInstance().getConverter();
+	public void render(WebPage page,Request request) throws EndUserException {
 		// Get the page content
-		Entity document = model.getChild(page, Relation.KIND_WEB_CONTENT, Entity.class);
+		Entity document = modelService.getChild(page, Relation.KIND_WEB_CONTENT, Entity.class);
 		//ImageGallery document = (ImageGallery)model.getFirstSubRelation(page, ImageGallery.TYPE, ImageGallery.class);
 		if (document==null) {
 			throw new EndUserException("The page does not have a document!");
@@ -67,17 +65,17 @@ public class PageRenderer {
 		
 		// Append context
 		Element context = new Element("context", NAMESPACE);
-		context.appendChild(converter.generateXML(site));
-		context.appendChild(converter.generateXML(page));
+		context.appendChild(conversionService.generateXML(site));
+		context.appendChild(conversionService.generateXML(page));
 		
-		WebNode node = (WebNode)model.getParent(page,WebNode.class);
-		context.appendChild(converter.generateXML(node));
+		WebNode node = (WebNode)modelService.getParent(page,WebNode.class);
+		context.appendChild(conversionService.generateXML(node));
 		
 		Element nodes = new Element("nodes", NAMESPACE);
-		List<WebNode> rootNodes = model.getChildren(site, WebNode.class);
+		List<WebNode> rootNodes = modelService.getChildren(site, WebNode.class);
 		for (Iterator<WebNode> iter = rootNodes.iterator(); iter.hasNext();) {
 			WebNode subNode = (WebNode) iter.next();
-			nodes.appendChild(converter.generateXML(subNode));
+			nodes.appendChild(conversionService.generateXML(subNode));
 		}
 		context.appendChild(nodes);
 		root.appendChild(context);
@@ -117,7 +115,8 @@ public class PageRenderer {
 		if (request.getBoolean("nodev")) {
 			devmode="false";
 		}
-
+		LifeCycleService lifeCycleService = request.getBean(LifeCycleService.class);
+		parameters.put("cache-version", String.valueOf(lifeCycleService.getStartTime().getTime()));
 		parameters.put("local-context", request.getLocalContextPath());
 		parameters.put("base-context", request.getBaseContextPath());
 		parameters.put("base-domain", request.getBaseDomain());
@@ -134,5 +133,21 @@ public class PageRenderer {
 		parameters.put("path-application", path.toString());
 		parameters.put("path-core", path.toString());
 		return parameters;
+	}
+
+	public void setModelService(ModelService modelService) {
+		this.modelService = modelService;
+	}
+
+	public ModelService getModelService() {
+		return modelService;
+	}
+
+	public void setConversionService(ConversionService conversionService) {
+		this.conversionService = conversionService;
+	}
+
+	public ConversionService getConversionService() {
+		return conversionService;
 	}
 }

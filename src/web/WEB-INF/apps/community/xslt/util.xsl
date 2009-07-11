@@ -14,7 +14,7 @@
 				<link rel="stylesheet" href="{$base-context}/In2iGui/css/dev.css" type="text/css" media="screen" title="front" charset="utf-8"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<link rel="stylesheet" href="{$base-context}/In2iGui/css/minimized.css" type="text/css" media="screen" title="front" charset="utf-8"/>
+				<link rel="stylesheet" href="{$base-context}/In2iGui/bin/minimized.css" type="text/css" media="screen" title="front" charset="utf-8"/>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
@@ -41,7 +41,7 @@
 				<script src="{$base-context}/In2iGui/js/Box.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 			</xsl:when>
 			<xsl:otherwise>
-				<script src="{$base-context}/In2iGui/js/minimized.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+				<script src="{$base-context}/In2iGui/bin/minimized.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>

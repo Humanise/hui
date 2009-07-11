@@ -14,7 +14,7 @@
 		<property name="baseUrl" value="${baseUrl}"/>
 	</bean>
 
-	<bean id="emailService" class="dk.in2isoft.onlineobjects.services.EmailService">
+	<bean id="emailService" class="dk.in2isoft.onlineobjects.services.EmailService" autowire="byType">
 
 		<property name="host" value="${email.host}" />
 		<property name="username" value="${email.username}" />
@@ -33,5 +33,28 @@
 	</bean>
 
 	<bean id="modelService" class="dk.in2isoft.onlineobjects.core.ModelService"/>
+	
+	<bean id="lifeCycleService" class="dk.in2isoft.onlineobjects.services.LifeCycleService"/>
+	<bean id="conversionService" class="dk.in2isoft.onlineobjects.services.ConversionService"/>
+	
+	<bean id="pageRenderingService" class="dk.in2isoft.onlineobjects.services.PageRenderingService" autowire="byType"/>
 
+	<!-- Community -->
+
+	<bean id="invitationService" class="dk.in2isoft.onlineobjects.apps.community.services.InvitationService" autowire="byType"/>
+	
+	<bean id="memberService" class="dk.in2isoft.onlineobjects.apps.community.services.MemberService" autowire="byType"/>
+
+	<bean id="invitationView" class="dk.in2isoft.onlineobjects.apps.community.jsf.InvitationBean" autowire="byType" scope="request"/>
+	
+	<!-- Tools -->
+	
+	<bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+      <property name="velocityProperties">
+         <value>
+            resource.loader=class
+            class.resource.loader.class=org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+         </value>
+      </property>
+   </bean>
 </beans>

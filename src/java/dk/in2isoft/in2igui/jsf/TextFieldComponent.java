@@ -2,12 +2,14 @@ package dk.in2isoft.in2igui.jsf;
 
 import java.io.IOException;
 
+import javax.el.ValueExpression;
 import javax.faces.component.FacesComponent;
 import javax.faces.component.UIComponentBase;
 import javax.faces.context.FacesContext;
 
 import org.apache.commons.lang.StringEscapeUtils;
 
+import dk.in2isoft.commons.jsf.ComponentUtil;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value="in2igui.textfield")
@@ -17,11 +19,12 @@ public class TextFieldComponent extends UIComponentBase {
 	private boolean secret;
 	private String placeholder;
 	private int width;
+	private String value;
 
 	@Override
 	public Object saveState(FacesContext context) {
 		Object[] state = new Object[] {
-			super.saveState(context),name,secret,placeholder,width
+			super.saveState(context),name,secret,placeholder,width,value
 		};
 		return state;
 	}
@@ -34,6 +37,7 @@ public class TextFieldComponent extends UIComponentBase {
 		secret = (Boolean) values[2];
 		placeholder = (String) values[3];
 		width = (Integer) values[4];
+		value = (String) values[5];
 	}
 	
 	@Override
@@ -44,6 +48,7 @@ public class TextFieldComponent extends UIComponentBase {
 	@Override
 	public void encodeBegin(FacesContext context) throws IOException {
 		String id = getClientId();
+		String value = ComponentUtil.getBindingAsString(this, "value", this.value, context);
 		TagWriter writer = new TagWriter(this,context);
 		writer.startDiv("in2igui_field").withId(id);
 		if (width>0) {
@@ -55,6 +60,9 @@ public class TextFieldComponent extends UIComponentBase {
 		writer.startElement("input").withClass("in2igui_formula_text");
 		if (secret) {
 			writer.withAttribute("type", "password");
+		}
+		if (value!=null) {
+			writer.withAttribute("value", value);
 		}
 		writer.endElement("input");
 		writer.endSpan();
@@ -105,6 +113,14 @@ public class TextFieldComponent extends UIComponentBase {
 
 	public int getWidth() {
 		return width;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
+
+	public String getValue() {
+		return value;
 	}
 
 	

@@ -12,6 +12,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import dk.in2isoft.onlineobjects.apps.ApplicationManager;
 import dk.in2isoft.onlineobjects.model.Application;
 import dk.in2isoft.onlineobjects.model.User;
+import dk.in2isoft.onlineobjects.services.ConversionService;
 
 public class Core {
 
@@ -29,7 +30,7 @@ public class Core {
 
 	private SecurityController security;
 
-	private ConversionFacade converter;
+	private ConversionService converter;
 
 	private StorageManager storage;
 
@@ -89,10 +90,16 @@ public class Core {
 		return context;
 	}
 
+	@SuppressWarnings("unchecked")
+	public <T> T getBean(Class<T> beanClass) {
+		String name = beanClass.getSimpleName().substring(0, 1).toLowerCase()+beanClass.getSimpleName().substring(1);
+		WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(context);
+		return (T) applicationContext.getBean(name, beanClass);
+	}
+
 	public ModelService getModel() {
 		if (model == null) {
-			WebApplicationContext applicationContext = WebApplicationContextUtils.getRequiredWebApplicationContext(context);
-			model = (ModelService) applicationContext.getBean("modelService", ModelService.class);
+			model = getBean(ModelService.class);
 		}
 		return model;
 	}
@@ -104,9 +111,9 @@ public class Core {
 		return security;
 	}
 
-	public ConversionFacade getConverter() {
+	public ConversionService getConverter() {
 		if (converter == null) {
-			converter = new ConversionFacade();
+			converter = getBean(ConversionService.class);
 		}
 		return converter;
 	}

@@ -15,7 +15,7 @@
 		<html>
 			<head>
 				<xsl:call-template name="p:head"/>
-				<link rel="stylesheet" id="pageDesign" href="{$local-context}/designs/{$page-design}/css/style.css" type="text/css" media="screen" title="front" charset="utf-8"/>
+				<link rel="stylesheet" id="pageDesign" href="{$local-context}/designs/{$page-design}/css/style.css?{$cache-version}" type="text/css" media="screen" title="front" charset="utf-8"/>
 			</head>
 			<body>
 				<div class="body">

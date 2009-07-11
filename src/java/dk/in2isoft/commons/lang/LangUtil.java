@@ -1,7 +1,6 @@
 package dk.in2isoft.commons.lang;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.validator.EmailValidator;
 
 public class LangUtil {
 
@@ -75,10 +74,6 @@ public class LangUtil {
 
 	public static boolean isDefined(String str) {
 		return (str!=null && str.trim().length()>0);
-	}
-	
-	public static boolean isWellFormedEmail(String email) {
-		return EmailValidator.getInstance().isValid(email);
 	}
 
 	public static boolean isDefined(String[] words) {

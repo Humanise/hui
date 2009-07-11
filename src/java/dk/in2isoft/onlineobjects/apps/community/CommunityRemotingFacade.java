@@ -21,6 +21,8 @@ import dk.in2isoft.in2igui.data.ListObjects;
 import dk.in2isoft.in2igui.data.TextFieldData;
 import dk.in2isoft.in2igui.data.WidgetData;
 import dk.in2isoft.onlineobjects.apps.ApplicationSession;
+import dk.in2isoft.onlineobjects.apps.community.services.InvitationService;
+import dk.in2isoft.onlineobjects.apps.community.services.MemberService;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.ModelException;
@@ -45,17 +47,18 @@ import dk.in2isoft.onlineobjects.model.util.WebModelUtil;
 import dk.in2isoft.onlineobjects.publishing.Document;
 import dk.in2isoft.onlineobjects.ui.AbstractRemotingFacade;
 import dk.in2isoft.onlineobjects.ui.AsynchronousProcessDescriptor;
+import dk.in2isoft.onlineobjects.util.ValidationUtil;
 
 public class CommunityRemotingFacade extends AbstractRemotingFacade {
 
 	private static Logger log = Logger.getLogger(CommunityRemotingFacade.class);
 
 	public void signUp(String username, String password, String name, String email) throws EndUserException {
-		CommunityController.getDAO().signUp(getUserSession(),username,password,name,email);
+		getService(MemberService.class).signUp(getUserSession(),username,password,name,email);
 	}
 	
 	public void signUpFromInvitation(String code, String username, String password) throws EndUserException {
-		CommunityController.getDAO().signUpFromInvitation(getUserSession(), code, username, password);
+		getService(InvitationService.class).signUpFromInvitation(getUserSession(), code, username, password);
 	}
 	
 	public long createWebPage(long webSiteId,String template) throws EndUserException {
@@ -192,9 +195,9 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 		Relation personEmail = new Relation(person,email);
 		getModel().createItem(personEmail, getUserSession());
 		
-		CommunityDAO dao = CommunityController.getDAO();
-		Invitation invitation = dao.createInvitation(getUserSession(), person, message);
-		dao.sendInvitation(invitation);
+		InvitationService invitationService = getService(InvitationService.class);
+		Invitation invitation = invitationService.createInvitation(getUserSession(), person, message);
+		invitationService.sendInvitation(invitation);
 		return invitation;
 	}
 	
@@ -347,7 +350,7 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 		message = message.trim();
 		if (!LangUtil.isDefined(emailAddress)) {
 			throw new EndUserException("The email address is empty!");
-		} else if (!LangUtil.isWellFormedEmail(emailAddress)) {
+		} else if (!ValidationUtil.isWellFormedEmail(emailAddress)) {
 			throw new EndUserException("The email address is not well formed!");
 		} else if (!LangUtil.isDefined(message)) {
 			throw new EndUserException("The message is empty!");

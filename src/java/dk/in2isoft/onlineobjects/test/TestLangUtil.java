@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import dk.in2isoft.commons.lang.LangUtil;
+import dk.in2isoft.onlineobjects.util.ValidationUtil;
 import junit.framework.TestCase;
 
 public class TestLangUtil extends TestCase {
@@ -23,17 +24,17 @@ public class TestLangUtil extends TestCase {
 	}
 	
 	public void testEmailValidation() {
-		assertTrue(LangUtil.isWellFormedEmail("jbm@atira.dk"));
-		assertTrue(LangUtil.isWellFormedEmail("xx.jb_0m@atira.dk"));
-		assertTrue(LangUtil.isWellFormedEmail("xx.jb_0m@atira.dk       "));
-		assertTrue(LangUtil.isWellFormedEmail("       xx.jb_0m@atira.dk       "));
+		assertTrue(ValidationUtil.isWellFormedEmail("jbm@atira.dk"));
+		assertTrue(ValidationUtil.isWellFormedEmail("xx.jb_0m@atira.dk"));
+		assertTrue(ValidationUtil.isWellFormedEmail("xx.jb_0m@atira.dk       "));
+		assertTrue(ValidationUtil.isWellFormedEmail("       xx.jb_0m@atira.dk       "));
 
-		assertFalse(LangUtil.isWellFormedEmail("xx.jb_0m@atira"));
-		assertFalse(LangUtil.isWellFormedEmail(null));
-		assertFalse(LangUtil.isWellFormedEmail(""));
-		assertFalse(LangUtil.isWellFormedEmail("xx"));
-		assertFalse(LangUtil.isWellFormedEmail("xx.jb_0m@atira.00"));
-		assertFalse(LangUtil.isWellFormedEmail("xx.jb_0m@atira."));
+		assertFalse(ValidationUtil.isWellFormedEmail("xx.jb_0m@atira"));
+		assertFalse(ValidationUtil.isWellFormedEmail(null));
+		assertFalse(ValidationUtil.isWellFormedEmail(""));
+		assertFalse(ValidationUtil.isWellFormedEmail("xx"));
+		assertFalse(ValidationUtil.isWellFormedEmail("xx.jb_0m@atira.00"));
+		assertFalse(ValidationUtil.isWellFormedEmail("xx.jb_0m@atira."));
 		assertTrue(StringUtils.containsOnly("abc", "abcdefghijklmnopqrstuvwxyz0123456789"));
 	}
 	

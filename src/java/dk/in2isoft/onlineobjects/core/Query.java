@@ -161,7 +161,7 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 		if (child != null) {
 			hql.append(",").append(Relation.class.getName()).append(" as childRelation");
 		}
-		if (!ignorePaging) {
+		if (!ignorePaging && Entity.class.isAssignableFrom(clazz)) {
 			hql.append(" left join fetch obj.properties");
 		}
 		if (LangUtil.isDefined(words) && Entity.class.isAssignableFrom(clazz) || customProperties.size() > 0) {
