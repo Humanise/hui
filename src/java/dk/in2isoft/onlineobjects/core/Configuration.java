@@ -78,18 +78,6 @@ public class Configuration {
 		return tempDir;
 	}
 	
-	public String getMailHost() {
-		return config.getString("mail.host");
-	}
-	
-	public String getMailUsername() {
-		return config.getString("mail.username");
-	}
-	
-	public String getMailPassword() {
-		return config.getString("mail.password");
-	}
-	
 	public File getFile(String... path) {
 		StringBuilder name = new StringBuilder();
 		name.append(baseDir.getAbsolutePath());

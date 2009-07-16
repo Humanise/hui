@@ -4,12 +4,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.apache.commons.mail.EmailException;
-import org.apache.commons.mail.SimpleEmail;
-
 import dk.in2isoft.commons.lang.LangUtil;
 import dk.in2isoft.onlineobjects.core.AbstractDAO;
-import dk.in2isoft.onlineobjects.core.Configuration;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.EntitylistSynchronizer;
@@ -20,27 +16,14 @@ import dk.in2isoft.onlineobjects.model.EmailAddress;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.InternetAddress;
 import dk.in2isoft.onlineobjects.model.PhoneNumber;
+import dk.in2isoft.onlineobjects.services.EmailService;
 
 public class CommunityDAO extends AbstractDAO {
 	
 	public void sendFeedback(String emailAddress,String message) throws EndUserException {
-
-		Configuration config = Core.getInstance().getConfiguration();
-		try {
-			SimpleEmail email = new SimpleEmail();
-			email.setHostName(config.getMailHost());
-			email.setAuthentication(config.getMailUsername(), config.getMailPassword());
-			email.addTo("jonasmunk@mac.com", "Jonas Munk");
-			email.setFrom("jonasmunk@mac.com", "Jonas Munk");
-			email.setSubject("OnlineObjects feedback");
-			email.setMsg("Email: "+emailAddress+"\n\n"+message);
-			email.send();
-		} catch (EmailException e) {
-			throw new EndUserException(e);
-		}
-		
+		EmailService emailService = Core.getInstance().getBean(EmailService.class);
+		emailService.sendMessage("Feedback", "Email: "+emailAddress+"\n\n"+message, emailService.getDefaultSenderAddress());
 	}
-
 	
 	public void updateDummyEmailAddresses(Entity parent,List<EmailAddress> addresses, Priviledged session) throws EndUserException {
 		

@@ -16,8 +16,8 @@ import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.Scheduler;
 import dk.in2isoft.onlineobjects.core.SearchResult;
-import dk.in2isoft.onlineobjects.core.SecurityController;
 import dk.in2isoft.onlineobjects.core.SecurityException;
+import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.ui.AbstractRemotingFacade;
@@ -26,7 +26,7 @@ public class SetupRemotingFacade extends AbstractRemotingFacade {
 
 	private void checkUser() throws SecurityException {
 		String username = getUserSession().getUser().getUsername();
-		if (!SecurityController.ADMIN_USERNAME.equals(username)) {
+		if (!SecurityService.ADMIN_USERNAME.equals(username)) {
 			throw new SecurityException("This tool can only be accessed by the administrator");
 		}
 	}
@@ -39,7 +39,7 @@ public class SetupRemotingFacade extends AbstractRemotingFacade {
 		if (!password1.equals(password2)) {
 			throw new EndUserException("The passwords do not match");
 		}
-		User user = getModel().getUser(SecurityController.ADMIN_USERNAME);
+		User user = getModel().getUser(SecurityService.ADMIN_USERNAME);
 		user.setPassword(password1);
 		getModel().updateItem(user, getUserSession());
 	}

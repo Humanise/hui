@@ -115,7 +115,7 @@ public class Dispatcher implements Filter {
 		Request req = new Request(request, response);
 		//fixCookieScope(req);
 		if (req.isSet("username") && req.isSet("password")) {
-			Core.getInstance().getSecurity().changeUser(req.getSession(), req.getString("username"),
+			Core.getInstance().getSecurityService().changeUser(req.getSession(), req.getString("username"),
 					req.getString("password"));
 		}
 		String[] path = req.getFullPath();
@@ -225,7 +225,7 @@ public class Dispatcher implements Filter {
 	}
 
 	private void callApplication(String application, Request request) throws IOException {
-		ApplicationController controller = Core.getInstance().getApplicationManager().getController(application);
+		ApplicationController controller = Core.getInstance().getApplicationService().getController(application);
 		String[] path = request.getLocalPath();
 		try {
 			if (controller == null) {

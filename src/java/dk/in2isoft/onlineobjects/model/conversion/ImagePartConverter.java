@@ -18,7 +18,7 @@ public class ImagePartConverter extends EntityConverter {
 		Element root = new Element("ImagePart",ImagePart.NAMESPACE);
 		List<Image> children = Core.getInstance().getModel().getChildren(part, Image.class);
 		for (Image image : children) {
-			Node node = Core.getInstance().getConverter().generateXML(image);
+			Node node = Core.getInstance().getConversionService().generateXML(image);
 			root.appendChild(node);
 		}
 		return root;

@@ -4,14 +4,12 @@ import dk.in2isoft.onlineobjects.model.Item;
 import dk.in2isoft.onlineobjects.model.Privilege;
 import dk.in2isoft.onlineobjects.model.User;
 
-public class SecurityController {
+public class SecurityService {
 	
 	public static final String ADMIN_USERNAME = "admin";
 	public static final String PUBLIC_USERNAME = "public";
 	
-	protected SecurityController() {
-		
-	}
+	private ModelService modelService;
 
 	/**
 	 * Tries to change the user of a session
@@ -24,7 +22,7 @@ public class SecurityController {
 		if (userSession==null || username==null || password==null) {
 			throw new IllegalArgumentException("session, username or password is null");
 		}
-		User user = Core.getInstance().getModel().getUser(username);
+		User user = modelService.getUser(username);
 		if (user==null) {
 			return false;
 		} else if (password.equals(user.getPassword())) {
@@ -36,7 +34,7 @@ public class SecurityController {
 	}
 	
 	public boolean logOut(UserSession userSession) {
-		User user = Core.getInstance().getModel().getUser("public");
+		User user = modelService.getUser("public");
 		if (user==null) {
 			return false;
 		} else {
@@ -46,11 +44,19 @@ public class SecurityController {
 	}
 	
 	public boolean canModify(Item item,Priviledged priviledged) {
-		Privilege privilege = Core.getInstance().getModel().getPriviledge(item.getId(), priviledged.getIdentity());
+		Privilege privilege = modelService.getPriviledge(item.getId(), priviledged.getIdentity());
 		if (privilege==null) {
 			return false;
 		} else {
 			return privilege.isAlter();
 		}
+	}
+
+	public void setModelService(ModelService modelService) {
+		this.modelService = modelService;
+	}
+
+	public ModelService getModelService() {
+		return modelService;
 	}
 }

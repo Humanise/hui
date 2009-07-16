@@ -7,22 +7,14 @@ import org.apache.log4j.Logger;
 
 import dk.in2isoft.onlineobjects.model.Item;
 
-public class EventManager {
+public class EventService {
 
-	private static EventManager instance;
 	private List<ModelEventListener> modelEventListeners = new ArrayList<ModelEventListener>();
-	private static Logger log = Logger.getLogger(EventManager.class);
+	private static Logger log = Logger.getLogger(EventService.class);
 	
 	
-	public EventManager() {
+	public EventService() {
 		// TODO Auto-generated constructor stub
-	}
-
-	public static EventManager getInstance() {
-		if (instance == null) {
-			instance = new EventManager();
-		}
-		return instance;
 	}
 	
 	public void addModelEventListener(ModelEventListener listener) {

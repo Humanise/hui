@@ -107,7 +107,7 @@ div.article p
 
 div.root
 {
-	width: 800px;
+	width: 980px;
 	margin: 0 auto;
 	min-height: 100%;
 	position: relative;
@@ -259,18 +259,50 @@ form.casing_search_dirty div.reset
 	display: none;
 }
 
+/*************************** Breadcrumb **********************/
+
+ul.breadcrumb
+{
+	list-style: none;
+	margin: 0;
+	padding: 0 0 0 12px;
+	border-bottom: 1px solid #ddd;
+	font-size: 0;
+}
+
+ul.breadcrumb li
+{
+	margin: 0;
+	padding: 0;
+	display: inline-block;
+}
+
+ul.breadcrumb a
+{
+	display: inline-block;
+	height: 24px;
+	font-size: 13px;
+	padding: 0 14px 0 8px;
+	line-height: 22px;
+	text-decoration: none;
+	color: #666;
+	background: url('../gfx/breadcrumb.png') right top no-repeat;
+	max-width: 150px;
+	overflow: hidden;
+}
+
 /**************************** Content ************************/
 
 div.content
 {
 	overflow: hidden;
-	background: url('../gfx/sidebar.png') 565px top repeat-y;
+	background: url('../gfx/sidebar.png') 750px top repeat-y;
 }
 
 div.content_left
 {
 	float: left;
-	width: 565px;
+	width: 750px;
 }
 
 div.content_right
@@ -692,23 +724,46 @@ div.casing_result_group h2
 div.oo_list_navigator
 {
 	overflow: hidden;
+	position: relative;
+}
+
+a.oo_list_slideshow
+{
+	position: absolute;
+	right: 0;
+	color: #ddd;
+	font-size: 13px;
+}
+
+a.oo_list_slideshow span
+{
+	color: #333;
+}
+
+span.oo_list_pages
+{
+	display: inline-block;
 	font-size: 0;
 }
 
-div.oo_list_navigator a
+span.oo_list_pages a
 {
 	text-decoration: none;
 	color: #333;
 	font-size: 13px;
-	padding: 1px 4px;
+	padding: 0 4px;
+	display: inline-block;
+	height: 16px;
+	line-height: 16px;
+	-moz-border-radius: 3px;
 }
 
-div.oo_list_navigator a:hover
+span.oo_list_pages a:hover
 {
 	background: #ddd;
 }
 
-div.oo_list_navigator a.oo_selected
+span.oo_list_pages a.oo_selected
 {
 	background: #aaa;
 	color: #fff;
@@ -728,7 +783,58 @@ ol.oo_list_result li
 	border-bottom: 1px solid #eee;
 }
 
-ol.oo_gallery
+/****************************** Gallery ********************************/
+
+div.oo_gallery_navigator
+{
+	overflow: hidden;
+	position: relative;
+	height: 16px;
+	font-size: 0;
+}
+
+a.oo_gallery_slideshow
+{
+	color: #ddd;
+	font-size: 13px;
+}
+
+a.oo_gallery_slideshow span
+{
+	color: #333;
+}
+
+span.oo_gallery_pages
+{
+	display: inline-block;
+	font-size: 0;
+	margin-right: 20px;
+}
+
+span.oo_gallery_pages a
+{
+	text-decoration: none;
+	color: #333;
+	font-size: 13px;
+	padding: 0 4px;
+	display: inline-block;
+	height: 16px;
+	line-height: 16px;
+	-moz-border-radius: 3px;
+}
+
+span.oo_gallery_pages a:hover
+{
+	background: #ddd;
+}
+
+span.oo_gallery_pages a.oo_selected
+{
+	background: #aaa;
+	color: #fff;
+}
+
+div.oo_gallery ol
 {
 	padding: 5px 13px 10px;
 	font-size: 0;
@@ -738,18 +844,20 @@ ol.oo_gallery
 	overflow: hidden;
 }
 
-ol.oo_gallery li
+div.oo_gallery li
 {
 	float: left;
 }
 
-ol.oo_gallery a
+div.oo_gallery ol a
 {
 	display: inline-block;
 	border: 1px solid #ddd;
+	border-color: #eee #ddd #ccc;
 	padding: 4px;
 	margin: 10px 10px 0 0;
 }
+
 
 /****************************** User ********************************/
 

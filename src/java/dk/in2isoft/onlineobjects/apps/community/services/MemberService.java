@@ -62,7 +62,7 @@ public class MemberService {
 		modelService.createItem(user, session);
 
 		// TODO: Replace with service
-		Core.getInstance().getSecurity().changeUser(session, username, password);
+		Core.getInstance().getSecurityService().changeUser(session, username, password);
 
 		// Create a person
 		Person person = new Person();

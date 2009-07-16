@@ -1,7 +1,7 @@
 package dk.in2isoft.onlineobjects.model;
 
 import dk.in2isoft.onlineobjects.core.Priviledged;
-import dk.in2isoft.onlineobjects.core.SecurityController;
+import dk.in2isoft.onlineobjects.core.SecurityService;
 
 public class User extends Entity implements Priviledged {
 
@@ -53,6 +53,6 @@ public class User extends Entity implements Priviledged {
 	}
 
 	public boolean isSuper() {
-		return SecurityController.ADMIN_USERNAME.equals(username);
+		return SecurityService.ADMIN_USERNAME.equals(username);
 	}
 }

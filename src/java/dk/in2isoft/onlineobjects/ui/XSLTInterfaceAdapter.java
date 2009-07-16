@@ -32,11 +32,11 @@ public abstract class XSLTInterfaceAdapter extends XSLTInterface {
 	}
 
 	protected String convertToXML(Entity entity) throws ModelException {
-		return Core.getInstance().getConverter().generateXML(entity).toXML();
+		return Core.getInstance().getConversionService().generateXML(entity).toXML();
 	}
 
 	protected Node convertToNode(Entity entity) throws ModelException {
-		return Core.getInstance().getConverter().generateXML(entity);
+		return Core.getInstance().getConversionService().generateXML(entity);
 	}
 	
 	protected abstract void buildContent(Element parent) throws ModelException;

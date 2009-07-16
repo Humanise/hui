@@ -72,12 +72,12 @@ public class Image extends Entity {
 		this.height = height;
 		this.contentType=contentType;
 		this.fileSize = imageFile.length();
-		File folder = Core.getInstance().getStorage().getItemFolder(this);
+		File folder = Core.getInstance().getStorageService().getItemFolder(this);
 		imageFile.renameTo(new File(folder,"original"));
 	}
 	
 	public File getImageFile() {
-		File folder = Core.getInstance().getStorage().getItemFolder(this);
+		File folder = Core.getInstance().getStorageService().getItemFolder(this);
 		return new File(folder,"original");
 	}
 }

@@ -3,6 +3,10 @@
 	<ui:composition template="chrome.xhtml">
 		<ui:param name="top" value="users"/>
 		<ui:define name="body">
+			<ul class="breadcrumb">
+				<li><a href="#{base.baseContext}/">OnlineMe</a></li>
+				<li><a href="#{base.baseContext}/users.html/">Brugere</a></li>
+			</ul>
 			<div class="content_body">
 				<h1 class="header">Brugere</h1>
 				<oo:list model="#{users.userList}" var="pair">

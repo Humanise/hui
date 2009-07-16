@@ -49,7 +49,7 @@ public class CompoundDocumentBuilder extends DocumentBuilder {
 			Entity part = Core.getInstance().getModel().get(Entity.class, id);
 			insertMargins(section, part);
 			if (part!=null) {
-				Node partNode = Core.getInstance().getConverter().generateXML(part);
+				Node partNode = Core.getInstance().getConversionService().generateXML(part);
 				section.appendChild(partNode);
 			}
 		}

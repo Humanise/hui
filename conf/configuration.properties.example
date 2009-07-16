@@ -5,3 +5,5 @@ email.defaultSenderAddress=my@mail.com
 email.defaultSenderName=My Name
 
 baseUrl=www.myhost.com
+developmentMode=false
+storagePath=/path/to/storage

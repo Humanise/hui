@@ -39,6 +39,7 @@ div.profile_image
 	width: 100px;
 	height: 115px;
 	border: 1px solid #ddd;
+	border-color: #eee #ddd #ccc;
 	background: url('../gfx/profile_large.png') center center no-repeat;
 	float: left;
 }
@@ -68,7 +69,7 @@ div.profile h2
 	margin: 0px;
 	font-weight: normal;
 	font-size: 16pt;
-	margin: 0;
+	margin: 0 0 10px;
 	color: #999;
 }
 

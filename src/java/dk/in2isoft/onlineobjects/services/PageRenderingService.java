@@ -94,7 +94,7 @@ public class PageRenderingService {
 		File frame = conf.getFile(new String[] {"WEB-INF","apps","community","web","layouts","horizontal.xsl"});
 
 		Map<String, String> parameters = buildParameters(request);
-		parameters.put("privilege-document-modify", String.valueOf(Core.getInstance().getSecurity().canModify(document, request.getSession())));
+		parameters.put("privilege-document-modify", String.valueOf(Core.getInstance().getSecurityService().canModify(document, request.getSession())));
 		parameters.put("page-design",template);
 		try {
 			if (request.getBoolean("viewsource")) {

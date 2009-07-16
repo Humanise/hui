@@ -42,6 +42,10 @@ public class TagWriter {
 		return withAttribute("id", id);
 	}
 	
+	public TagWriter withHref(Object id) throws IOException {
+		return withAttribute("href", id);
+	}
+	
 	public TagWriter withStyle(String style) throws IOException {
 		return withAttribute("style", style);
 	}
@@ -55,6 +59,10 @@ public class TagWriter {
 	
 	///////// A /////////
 	
+	public TagWriter startA() throws IOException {
+		return startElement("a");
+	}
+	
 	public TagWriter startA(Object className) throws IOException {
 		return startElement("a").withClass(className);
 	}
@@ -65,6 +73,44 @@ public class TagWriter {
 
 	public TagWriter endA() throws IOException {
 		return endElement("a");
+	}
+	
+	/////////// LISTS /////////
+
+	public TagWriter startOl() throws IOException {
+		return startElement("ol");
+	}
+
+	public TagWriter startOl(String className) throws IOException {
+		return startElement("ol").withClass(className);
+	}
+
+	public TagWriter endOl() throws IOException {
+		return endElement("ol");
+	}
+
+	public TagWriter startUl() throws IOException {
+		return startElement("ul");
+	}
+
+	public TagWriter startUl(String className) throws IOException {
+		return startElement("ul").withClass(className);
+	}
+
+	public TagWriter endUl() throws IOException {
+		return endElement("ul");
+	}
+
+	public TagWriter startLi() throws IOException {
+		return startElement("li");
+	}
+
+	public TagWriter startLi(String className) throws IOException {
+		return startElement("li").withClass(className);
+	}
+
+	public TagWriter endLi() throws IOException {
+		return endElement("li");
 	}
 	
 	/////////// SPAN //////////

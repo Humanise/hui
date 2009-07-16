@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.ModelService;
-import dk.in2isoft.onlineobjects.core.SecurityController;
+import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.ui.Request;
 
 public class AbstractManagedBean {
@@ -55,6 +55,6 @@ public class AbstractManagedBean {
 	}
 	
 	public boolean isPublicUser() {
-		return SecurityController.PUBLIC_USERNAME.equals(getUserName());
+		return SecurityService.PUBLIC_USERNAME.equals(getUserName());
 	}
 }

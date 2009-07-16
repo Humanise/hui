@@ -15,75 +15,18 @@
 			<script type="text/javascript" src="#{base.localContext}/js/userprofile.js"></script>
 		</ui:define>
 		<ui:define name="body">
+			<ul class="breadcrumb">
+				<li><a href="#{base.baseContext}/">OnlineMe</a></li>
+				<li><a href="#{base.baseContext}/users.html/">Brugere</a></li>
+				<li><a href="#{base.baseContext}/#{userProfile.user.username}/">#{userProfile.person.fullName}</a></li>
+				<ui:insert name="breadcrumb"/>
+			</ul>
+			<ul class="tabs" style="margin-top: 10px;">
+				<li class="#{tab=='overview' ? 'highlighted' : ''}"><a href="#{base.baseContext}/#{userProfile.user.username}/">Overblik</a></li>
+				<li class="#{tab=='images' ? 'highlighted' : ''}"><a href="#{base.baseContext}/#{userProfile.user.username}/images.html">Billeder</a></li>
+			</ul>
 			<div class="profile">
-				<div class="content_body">
-					<div class="profile_image" id="profileImage">
-						<c:if test="#{userProfile.image!=null}">
-							<div class="profile_image_photo" style="background: url('#{base.baseContext}/service/image/id#{userProfile.image.id}width90height105cropped.jpg')">
-								
-							</div>
-						</c:if>
-					</div>
-					<div class="profile_info">
-						<div id="profileContainer" style="position: relative; overflow: hidden;">
-							<div id="profileInfo">
-								<h1>#{userProfile.person.fullName}</h1>
-								<ul class="icons">
-									<li class="url">
-										<a href="http://#{base.baseDomainContext}/#{userProfile.user.username}/site/" class="link link_next"><span>Hjemmeside</span></a>
-									</li>
-								</ul>
-								<c:if test="#{userProfile.info.resume!=null &amp;&amp; fn:length(userProfile.info.resume)>0}">
-								<p class="resume">&#34;#{userProfile.info.resume}&#34;</p>
-								</c:if>
-								<ul class="icons">
-									<c:if test="#{fn:length(userProfile.info.emails)>1}">
-										<c:forEach items="#{userProfile.info.emails}" var="item">
-											<li class="mail"><a href="mailto:#{item.address}" class="link"><span>#{item.address}</span></a></li>
-										</c:forEach>
-									</c:if>
-									<c:if test="#{fn:length(userProfile.info.urls)>0}">
-										<c:forEach items="#{userProfile.info.urls}" var="item">
-											<li class="url"><a href="#{item.address}" class="link"><span>#{item.address}</span></a></li>
-										</c:forEach>
-									</c:if>
-									<c:if test="#{fn:length(userProfile.info.phones)>0}">
-										<c:forEach items="#{userProfile.info.phones}" var="item">
-											<li class="phone">#{item.number}</li>
-										</c:forEach>
-									</c:if>
-								</ul>
-								<c:if test="#{userProfile.info.sex!=null}">
-								<p><span class="label">Køn: </span>#{userProfile.info.sex ? 'Mand' : 'Kvinde'}</p>
-								</c:if>
-								<c:if test="#{fn:length(userProfile.info.interests)>0}">
-								<p><span class="label">Interesser: </span>
-									<c:forEach items="#{userProfile.info.interests}" var="item">
-										#{item}
-									</c:forEach>
-								</p>
-								</c:if>
-								<c:if test="#{fn:length(userProfile.info.music)>0}">
-								<p><span class="label">Yndlingsmusik: </span>
-									<c:forEach items="#{userProfile.info.music}" var="item">
-										#{item}
-									</c:forEach>
-								</p>
-								</c:if>
-								<h:outputText rendered="#{userProfile.canEdit}">
-									<p><gui:button text="Rediger profil" name="editProfile"/></p>
-								</h:outputText>
-							</div>
-						</div>
-					</div>
-				</div>
-				<ul class="tabs">
-					<li class="#{tab=='overview' ? 'highlighted' : ''}"><a href=".">Overblik</a></li>
-					<li class="#{tab=='images' ? 'highlighted' : ''}"><a href="images.html">Billeder</a></li>
-				</ul>
-				<div class="content_body">
-					<ui:insert name="content"/>
-				</div>
+				<ui:insert name="content"/>
 			</div>
 		</ui:define>
 	</ui:composition>

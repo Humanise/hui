@@ -19,7 +19,7 @@ public class ImageUtil extends AbstractCommandLineInterfaceUtil {
 	}
 
 	public static File getThumbnail(long id, int width, int height) throws EndUserException {
-		File folder = Core.getInstance().getStorage().getItemFolder(id);
+		File folder = Core.getInstance().getStorageService().getItemFolder(id);
 		File original = new File(folder, "original");
 		if (!original.isFile()) {
 			throw new EndUserException("The image with id=" + id + " does not exist");
@@ -34,7 +34,7 @@ public class ImageUtil extends AbstractCommandLineInterfaceUtil {
 	}
 
 	public static File getCroppedThumbnail(long id, int width, int height) throws EndUserException {
-		File folder = Core.getInstance().getStorage().getItemFolder(id);
+		File folder = Core.getInstance().getStorageService().getItemFolder(id);
 		File original = new File(folder, "original");
 		if (!original.isFile()) {
 			throw new EndUserException("The image with id=" + id + " does not exist");

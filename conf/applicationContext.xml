@@ -11,7 +11,9 @@
 	</bean>
 
 	<bean id="configurationService" class="dk.in2isoft.onlineobjects.services.ConfigurationService">
+		<property name="storagePath" value="${storagePath}"/>
 		<property name="baseUrl" value="${baseUrl}"/>
+		<property name="developmentMode" value="${developmentMode}"/>
 	</bean>
 
 	<bean id="emailService" class="dk.in2isoft.onlineobjects.services.EmailService" autowire="byType">
@@ -32,9 +34,18 @@
 	
 	</bean>
 
-	<bean id="modelService" class="dk.in2isoft.onlineobjects.core.ModelService"/>
+	<bean id="modelService" class="dk.in2isoft.onlineobjects.core.ModelService" autowire="byType"/>
+	
+	<bean id="applicationService" class="dk.in2isoft.onlineobjects.services.ApplicationService"/>
+	
+	<bean id="storageService" class="dk.in2isoft.onlineobjects.services.StorageService" autowire="byType"/>
+	
+	<bean id="securityService" class="dk.in2isoft.onlineobjects.core.SecurityService" autowire="byType"/>
 	
 	<bean id="lifeCycleService" class="dk.in2isoft.onlineobjects.services.LifeCycleService"/>
+	
+	<bean id="eventService" class="dk.in2isoft.onlineobjects.core.events.EventService"/>
+	
 	<bean id="conversionService" class="dk.in2isoft.onlineobjects.services.ConversionService"/>
 	
 	<bean id="pageRenderingService" class="dk.in2isoft.onlineobjects.services.PageRenderingService" autowire="byType"/>
@@ -46,6 +57,8 @@
 	<bean id="memberService" class="dk.in2isoft.onlineobjects.apps.community.services.MemberService" autowire="byType"/>
 
 	<bean id="invitationView" class="dk.in2isoft.onlineobjects.apps.community.jsf.InvitationBean" autowire="byType" scope="request"/>
+	
+	<bean id="imageView" class="dk.in2isoft.onlineobjects.apps.community.views.ImageView" autowire="byType" scope="request"/>
 	
 	<!-- Tools -->
 	

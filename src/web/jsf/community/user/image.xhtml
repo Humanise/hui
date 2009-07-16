@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:oo="http://www.onlineobjects.com/jsf" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:gui="http://www.in2isoft.dk/in2igui"
+>
+	<ui:composition template="template.xhtml">
+		<ui:param name="tab" value="images"/>
+		<ui:define name="breadcrumb">
+			<li><a href="#{base.baseContext}/#{userProfile.user.username}/images.html">Billeder</a></li>
+			<li><a href="#{base.baseContext}/#{userProfile.user.username}/images/#{imageView.imageId}.html">#{imageView.image.name}</a></li>
+		</ui:define>
+		<ui:define name="content">
+			<div class="content_body">
+				<img src="#{base.baseContext}/service/image/id#{imageView.image.id}thumbnail300cropped.jpg" width="300" height="300" style="border:1px solid #DDDDDD;
+display:inline-block; padding: 4px; float: left;" onclick="oo.community.showImage({id:#{imageView.image.id},width:#{imageView.image.width},height:#{imageView.image.height}})"/>
+				<div style="margin-left: 350px;">
+					<h1>#{imageView.image.name}</h1>
+					<p>#{imageView.taken}</p>
+					<h:panelGroup rendered="#{imageView.canEdit}">
+						<gui:button text="Rediger"/>
+						<gui:button text="Slet"/>
+					</h:panelGroup>
+				</div>
+			</div>
+		</ui:define>
+	</ui:composition>
+</html>

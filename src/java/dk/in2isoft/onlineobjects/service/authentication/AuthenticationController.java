@@ -27,7 +27,7 @@ public class AuthenticationController extends ServiceController {
 		String username = request.getString("username");
 		String password = request.getString("password");
 		String redirect = request.getString("redirect");
-		boolean success = Core.getInstance().getSecurity().changeUser(request.getSession(), username, password);
+		boolean success = Core.getInstance().getSecurityService().changeUser(request.getSession(), username, password);
 		log.debug(success);
 		if (success) {
 			if (LangUtil.isDefined(redirect)) {
@@ -42,7 +42,7 @@ public class AuthenticationController extends ServiceController {
 	
 
 	public void logout(Request request) throws IOException, EndUserException {
-		Core.getInstance().getSecurity().logOut(request.getSession());
+		Core.getInstance().getSecurityService().logOut(request.getSession());
 		request.redirect(".?action=loggedOut");
 	}
 }

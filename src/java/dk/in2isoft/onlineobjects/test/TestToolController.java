@@ -9,7 +9,7 @@ public class TestToolController extends TestCase {
 
 	
 	public void testToolController() {
-		ApplicationController c = Core.getInstance().getApplicationManager().getController("setup");
+		ApplicationController c = Core.getInstance().getApplicationService().getController("setup");
 		assertNotNull(c);
 		assertTrue(c instanceof SetupController);
 	}

@@ -1,5 +1,23 @@
 if (!oo) var oo = {};
-if (!oo.community) oo.community = {};
+
+oo.community = {
+	showImage : function(img) {
+		var v = this.getViewer();
+		v.clearImages();
+		v.addImage(img);
+		v.show();
+	},
+	getViewer : function() {
+		if (!this.imageViewer) {
+			var v = this.imageViewer = In2iGui.ImageViewer.create();
+			v.addDelegate(this);
+		}
+		return this.imageViewer;
+	},
+	resolveImageUrl : function(image,width,height) {
+		return oo.baseContext+'/service/image/?id='+image.id+'&width='+width+'&height='+height;
+	}
+};
 
 oo.community.Chrome = function() {
 	this.addBehavior();
@@ -440,6 +458,40 @@ oo.community.Gallery.prototype = {
 		if (!this.imageViewer) {
 			var v = this.imageViewer = In2iGui.ImageViewer.create();
 			v.addDelegate(this);
+			v.addImages(this.images);
+		}
+		return this.imageViewer;
+	},
+	resolveImageUrl : function(image,width,height) {
+		return oo.baseContext+'/service/image/?id='+image.id+'&width='+width+'&height='+height;
+	}
+}
+
+oo.Gallery = function(options) {
+	this.options = options;
+	this.element = $(options.element);
+	this.images = options.images;
+	ui.extend(this);
+	this.addBehavior();
+}
+
+oo.Gallery.prototype = {
+	addBehavior : function() {
+		var self = this;
+		/*this.element.select('ol a').each(function(node,i) {
+			node.observe('click',function(e) {self.imageWasClicked(i);e.stop();});
+		});*/
+		this.element.select('.oo_gallery_slideshow')[0].observe('click',function(e) {
+			self.imageWasClicked(0);e.stop();
+		});
+	},
+	imageWasClicked : function(index) {
+		this.getViewer().show(index);
+	},
+	getViewer : function() {
+		if (!this.imageViewer) {
+			var v = this.imageViewer = ui.ImageViewer.create();
+			v.listen(this);
 			v.addImages(this.images);
 		}
 		return this.imageViewer;

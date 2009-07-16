@@ -9,10 +9,13 @@ import org.apache.log4j.Logger;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import dk.in2isoft.onlineobjects.apps.ApplicationManager;
+import dk.in2isoft.onlineobjects.core.events.EventService;
 import dk.in2isoft.onlineobjects.model.Application;
 import dk.in2isoft.onlineobjects.model.User;
+import dk.in2isoft.onlineobjects.services.ApplicationService;
+import dk.in2isoft.onlineobjects.services.ConfigurationService;
 import dk.in2isoft.onlineobjects.services.ConversionService;
+import dk.in2isoft.onlineobjects.services.StorageService;
 
 public class Core {
 
@@ -28,28 +31,20 @@ public class Core {
 
 	private ModelService model;
 
-	private SecurityController security;
-
 	private ConversionService converter;
-
-	private StorageManager storage;
 
 	private Scheduler scheduler;
 
 	private Priviledged superUser = new SuperUser();
 
-	private ApplicationManager applicationManager;
-
 	private boolean started;
 
 	private Core() {
 		scheduler = new Scheduler();
-		applicationManager = new ApplicationManager();
 	}
 
 	private void setupConfiguration() throws ConfigurationException {
 		this.config = new Configuration(baseDir);
-		storage = new StorageManager(config.getStorageDir());
 	}
 
 	public static Core getInstance() {
@@ -82,8 +77,8 @@ public class Core {
 		return config;
 	}
 
-	public ApplicationManager getApplicationManager() {
-		return applicationManager;
+	public ApplicationService getApplicationService() {
+		return getBean(ApplicationService.class);
 	}
 
 	public ServletContext getServletContext() {
@@ -104,22 +99,23 @@ public class Core {
 		return model;
 	}
 
-	public SecurityController getSecurity() {
-		if (security == null) {
-			security = new SecurityController();
-		}
-		return security;
+	public SecurityService getSecurityService() {
+		return getBean(SecurityService.class);
 	}
 
-	public ConversionService getConverter() {
+	public EventService getEventService() {
+		return getBean(EventService.class);
+	}
+
+	public ConversionService getConversionService() {
 		if (converter == null) {
 			converter = getBean(ConversionService.class);
 		}
 		return converter;
 	}
 
-	public StorageManager getStorage() {
-		return storage;
+	public StorageService getStorageService() {
+		return getBean(StorageService.class);
 	}
 
 	public Scheduler getScheduler() {
@@ -127,21 +123,21 @@ public class Core {
 	}
 
 	private void ensureUsers() throws ModelException {
-		User publicUser = getModel().getUser(SecurityController.PUBLIC_USERNAME);
+		User publicUser = getModel().getUser(SecurityService.PUBLIC_USERNAME);
 		if (publicUser == null) {
 			log.warn("No public user present!");
 			User user = new User();
-			user.setUsername(SecurityController.PUBLIC_USERNAME);
+			user.setUsername(SecurityService.PUBLIC_USERNAME);
 			user.setName("Public user");
 			getModel().createItem(user, superUser);
 			getModel().commit();
 			log.info("Public user created!");
 		}
-		User adminUser = getModel().getUser(SecurityController.ADMIN_USERNAME);
+		User adminUser = getModel().getUser(SecurityService.ADMIN_USERNAME);
 		if (adminUser == null) {
 			log.warn("No admin user present!");
 			User user = new User();
-			user.setUsername(SecurityController.ADMIN_USERNAME);
+			user.setUsername(SecurityService.ADMIN_USERNAME);
 			user.setPassword("changeme");
 			user.setName("Administrator");
 			getModel().createItem(user, superUser);
@@ -151,9 +147,10 @@ public class Core {
 	}
 
 	private void ensureApplications() throws ModelException {
+		ApplicationService applicationService = getApplicationService();
 		Query<Application> query = Query.of(Application.class);
 		List<Application> apps = getModel().list(query);
-		applicationManager.registerApplications(apps);
+		applicationService.registerApplications(apps);
 		boolean found = false;
 		for (Application application : apps) {
 			if ("setup".equals(application.getName())) {
@@ -164,10 +161,10 @@ public class Core {
 			log.warn("No setup application present!");
 			Application setup = new Application();
 			setup.setName("setup");
-			User adminUser = getModel().getUser(SecurityController.ADMIN_USERNAME);
+			User adminUser = getModel().getUser(SecurityService.ADMIN_USERNAME);
 			getModel().createItem(setup, adminUser);
 			getModel().commit();
-			applicationManager.registerApplication(setup);
+			applicationService.registerApplication(setup);
 			log.info("Created setup application");
 		}
 	}
@@ -184,5 +181,9 @@ public class Core {
 
 	public boolean isStarted() {
 		return started;
+	}
+
+	public ConfigurationService getConfigurationService() {
+		return getBean(ConfigurationService.class);
 	}
 }

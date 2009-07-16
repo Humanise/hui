@@ -1,4 +1,4 @@
-package dk.in2isoft.onlineobjects.apps;
+package dk.in2isoft.onlineobjects.services;
 
 import java.util.HashMap;
 import java.util.List;
@@ -7,15 +7,16 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import dk.in2isoft.onlineobjects.apps.ApplicationController;
 import dk.in2isoft.onlineobjects.model.Application;
 
-public class ApplicationManager {
+public class ApplicationService {
 
-	private static Logger log = Logger.getLogger(ApplicationManager.class);
+	private static Logger log = Logger.getLogger(ApplicationService.class);
 	
 	private Map<String, ApplicationController> controllers;
 
-	public ApplicationManager() {
+	public ApplicationService() {
 		super();
 		this.controllers = new HashMap<String, ApplicationController>();
 	}

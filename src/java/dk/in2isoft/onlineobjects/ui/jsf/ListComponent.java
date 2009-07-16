@@ -9,8 +9,9 @@ import javax.faces.component.FacesComponent;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIComponentBase;
 import javax.faces.context.FacesContext;
-import javax.faces.context.ResponseWriter;
 import javax.faces.render.Renderer;
+
+import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value="onlineobjects.list")
 public class ListComponent <T> extends UIComponentBase {
@@ -31,10 +32,9 @@ public class ListComponent <T> extends UIComponentBase {
 
 	@Override
 	public Object saveState(FacesContext context) {
-		Object[] state = new Object[] {
+		return new Object[] {
 			super.saveState(context),var,gallery,paging
 		};
-		return state;
 	}
 
 	@Override
@@ -89,7 +89,7 @@ public class ListComponent <T> extends UIComponentBase {
 	
 	@Override
 	public void encodeChildren(FacesContext context) throws IOException {
-		ResponseWriter writer = context.getResponseWriter();
+		TagWriter writer = new TagWriter(this, context);
 		ListModel<T> model = getModel();
 		if (model==null) {
 			writer.write("NO MODEL!!");
@@ -97,46 +97,43 @@ public class ListComponent <T> extends UIComponentBase {
 		}
 		decodeRequest(context, model);
 		ListModelResult<T> result = model.getResult();
-		writer.startElement("div", this);
-		writer.writeAttribute("class","oo_list", null);
+		writer.startDiv("oo_list");
 		if (isPaging()) {
 			encodePaging(writer, result.getTotalCount(), model.getPage(), model.getPageSize());
 		}
-		writer.startElement("ol", this);
-		if (gallery) {
-			writer.writeAttribute("class","oo_gallery", null);
-		} else {
-			writer.writeAttribute("class","oo_list_result", null);
-		}
+		writer.startOl(gallery ? "oo_list_gallery" : "oo_list_result");
 		List<UIComponent> children = getChildren();
 		for (T object : result.getList()) {
-			writer.startElement("li", this);
-			writer.writeAttribute("class","oo_list_item", null);
+			writer.startLi("oo_list_item");
 			context.getExternalContext().getRequestMap().put(var, object);
 			for (UIComponent child : children) {
 				child.encodeAll(context);
 			}
-			writer.endElement("li");
+			writer.endLi();
 		}
-		writer.endElement("ol");
-		writer.endElement("div");
+		writer.endOl();
+		writer.endDiv();
 	}
 	
-	private void encodePaging(ResponseWriter writer, int totalCount, int page, int pageSize) throws IOException {
+	private void encodePaging(TagWriter writer, int totalCount, int page, int pageSize) throws IOException {
 		int pages = (int) Math.ceil((double)totalCount/(double)pageSize);
-		if (pages<2) return;
-		writer.startElement("div", this);
-		writer.writeAttribute("class", "oo_list_navigator", null);
-		for (int i = 0; i < pages; i++) {
-			writer.startElement("a", this);
-			writer.writeAttribute("href", "?page="+(i+1), null);
-			if (page==i) {
-				writer.writeAttribute("class", "oo_selected", null);
+		writer.startDiv("oo_list_navigator");
+		if (pages>1) {
+			writer.startSpan("oo_list_pages");
+			for (int i = 0; i < pages; i++) {
+				writer.startA().withHref("?page="+(i+1));
+				if (page==i) {
+					writer.withClass("oo_selected");
+				}
+				writer.write(String.valueOf(i+1));
+				writer.endA();
 			}
-			writer.write(String.valueOf(i+1));
-			writer.endElement("a");
+			writer.endSpan();
 		}
-		writer.endElement("div");
+		if (gallery) {
+			writer.startVoidA("oo_list_slideshow").startSpan().write("Lysbillede-show").endSpan().endA();
+		}
+		writer.endDiv();
 	}
 
 	@Override

@@ -28,4 +28,10 @@ public class ImagesBean extends AbstractManagedBean {
 		model.setPageSize(24);
 		return model;
 	}
+	
+	public Long getImageId() {
+		String[] path = getRequest().getLocalPath();
+		String string = path[path.length-1];
+		return null;
+	}
 }

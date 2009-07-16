@@ -33,7 +33,7 @@ import org.hibernate.proxy.HibernateProxy;
 import com.google.common.collect.Lists;
 
 import dk.in2isoft.commons.lang.LangUtil;
-import dk.in2isoft.onlineobjects.core.events.EventManager;
+import dk.in2isoft.onlineobjects.core.events.EventService;
 import dk.in2isoft.onlineobjects.junk.HibernateUtil;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Item;
@@ -49,6 +49,8 @@ public class ModelService {
 
 	private static final SessionFactory sessionFactory;
 
+	private EventService eventService;
+	
 	private Collection<ModelClassInfo> modelClassInfo;
 	private List<Class<?>> classes = Lists.newArrayList(); 
 	private List<Class<?>> entityClasses = Lists.newArrayList(); 
@@ -165,7 +167,7 @@ public class ModelService {
 		session.save(item);
 		Privilege privilege = new Privilege(priviledged.getIdentity(), item.getId(), true);
 		session.save(privilege);
-		EventManager.getInstance().fireItemWasCreated(item);
+		eventService.fireItemWasCreated(item);
 	}
 
 	public void deleteEntity(Entity entity, Priviledged priviledged) throws ModelException, SecurityException {
@@ -206,7 +208,7 @@ public class ModelService {
 			log.error(e.getMessage(), e);
 			throw new ModelException(e);
 		}
-		EventManager.getInstance().fireItemWasDeleted(item);
+		eventService.fireItemWasDeleted(item);
 	}
 
 	public void updateItem(Item item, Priviledged priviledged) throws SecurityException,
@@ -217,7 +219,7 @@ public class ModelService {
 		Session session = getSession();
 		item.setUpdated(new Date());
 		session.update(item);
-		EventManager.getInstance().fireItemWasUpdated(item);
+		eventService.fireItemWasUpdated(item);
 	}
 	
 	private boolean canUpdate(Item item, Priviledged priviledged) {
@@ -237,7 +239,7 @@ public class ModelService {
 	private boolean canDelete(Item item, Priviledged priviledged) {
 		if (item instanceof User) {
 			User user = (User) item;
-			if (SecurityController.ADMIN_USERNAME.equals(user.getUsername())) {
+			if (SecurityService.ADMIN_USERNAME.equals(user.getUsername())) {
 				return false;
 			}
 		}
@@ -602,5 +604,13 @@ public class ModelService {
 			obj = (T) ((AbstractLazyInitializer) ((HibernateProxy) obj).getHibernateLazyInitializer())
 					.getImplementation();
 		return obj;
+	}
+
+	public void setEventService(EventService eventService) {
+		this.eventService = eventService;
+	}
+
+	public EventService getEventService() {
+		return eventService;
 	}
 }

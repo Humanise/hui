@@ -23,11 +23,11 @@ public class SecurityRemotingFacade extends AbstractRemotingFacade {
 		if (!StringUtils.isNotBlank(password)) {
 			throw new IllegalRequestException("Password is blank","passwordIsBlank");
 		}
-		return Core.getInstance().getSecurity().changeUser(getUserSession(), username, password);
+		return Core.getInstance().getSecurityService().changeUser(getUserSession(), username, password);
 	}
 
 	public boolean logOut() throws EndUserException {
-		return Core.getInstance().getSecurity().logOut(getUserSession());
+		return Core.getInstance().getSecurityService().logOut(getUserSession());
 	}
 
 	public User getUser() {

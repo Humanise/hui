@@ -25,6 +25,7 @@ public class UserProfileBean extends AbstractManagedBean {
 	private SearchResult<Image> allImages;
 	private ListModel<Image> listModel;
 	private UserProfileInfo profileInfo;
+	private ListModel<Image> latestImages;
 	
 	public int getImagePages() {
 		getAllImages();
@@ -44,17 +45,19 @@ public class UserProfileBean extends AbstractManagedBean {
 	
 	public ListModel<Image> getLatestImages() {
 		this.loadUser();
-		ListModel<Image> model = new ListModel<Image>() {
-			@Override
-			public ListModelResult<Image> getResult() {
-				User user = getModel().getUser(getUsersName());
-				Query<Image> query = Query.of(Image.class).withPriviledged(user).orderByCreated().withPaging(0, getPageSize()).descending();
-				SearchResult<Image> search = getModel().search(query);
-				return new ListModelResult<Image>(search.getResult(),search.getTotalCount());
-			}
-		};
-		model.setPageSize(12);
-		return model;
+		if (latestImages==null) {
+			latestImages = new ListModel<Image>() {
+				@Override
+				public ListModelResult<Image> getResult() {
+					User user = getModel().getUser(getUsersName());
+					Query<Image> query = Query.of(Image.class).withPriviledged(user).orderByCreated().withPaging(0, getPageSize()).descending();
+					SearchResult<Image> search = getModel().search(query);
+					return new ListModelResult<Image>(search.getResult(),search.getResult().size());
+				}
+			};
+			latestImages.setPageSize(16);
+		}
+		return latestImages;
 	}
 	
 	public ListModel<Image> getImageList() {

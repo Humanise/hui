@@ -110,7 +110,7 @@ public class SchoolRemotingFacade extends AbstractRemotingFacade {
 		if (person!=null) {
 			User user = getModel().getParent(person, Relation.KIND_SYSTEM_USER_SELF, User.class);
 			if (user!=null) {
-				return Core.getInstance().getSecurity().changeUser(getUserSession(), user.getUsername(), user.getPassword());
+				return Core.getInstance().getSecurityService().changeUser(getUserSession(), user.getUsername(), user.getPassword());
 			}
 		}
 		return false;

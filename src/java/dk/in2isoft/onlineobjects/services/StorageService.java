@@ -1,20 +1,22 @@
-package dk.in2isoft.onlineobjects.core;
+package dk.in2isoft.onlineobjects.services;
 
 import java.io.File;
 
 import org.apache.log4j.Logger;
 
+import dk.in2isoft.onlineobjects.core.ConfigurationException;
 import dk.in2isoft.onlineobjects.model.Item;
 
-public class StorageManager {
+public class StorageService implements org.springframework.beans.factory.InitializingBean {
 
-	private static Logger log = Logger.getLogger(StorageManager.class);
+	private static Logger log = Logger.getLogger(StorageService.class);
 	
+	private ConfigurationService configurationService;
 	private File storage;
 	private File items;
-	
-	protected StorageManager(File dir) throws ConfigurationException {
-		storage = dir;
+
+	public void afterPropertiesSet() throws Exception {
+		storage = new File(configurationService.getStoragePath());
 		items = new File(storage,"items");
 		if (!items.exists()) {
 			log.warn("Items directory does not exist: "+items);
@@ -37,5 +39,13 @@ public class StorageManager {
 			}
 		}
 		return folder;
+	}
+
+	public void setConfigurationService(ConfigurationService configurationService) {
+		this.configurationService = configurationService;
+	}
+
+	public ConfigurationService getConfigurationService() {
+		return configurationService;
 	}
 }

@@ -5,17 +5,11 @@
 		<ui:define name="body">
 			<div class="content_body">
 				<h1 class="header">Billeder</h1>
-				<script type="text/javascript" charset="utf-8">
-					var gallery = new oo.community.Gallery();
-				</script>
-				<oo:list model="#{images.imageList}" var="image" gallery="true">
+				<oo:gallery model="#{images.imageList}" var="image">
 					<a href="#{base.baseContext}/service/image/id#{image.id}.jpg" id="image_#{image.id}">
 						<img src="#{base.baseContext}/service/image/id#{image.id}thumbnail68cropped.jpg" width="68" height="68"/>
 					</a>
-					<script type="text/javascript" charset="utf-8">
-						gallery.registerImage({id:#{image.id},width:#{image.width},height:#{image.height}},'image_#{image.id}')
-					</script>
-				</oo:list>
+				</oo:gallery>
 			</div>
 		</ui:define>
 	</ui:composition>

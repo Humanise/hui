@@ -12,7 +12,7 @@ import com.google.common.collect.Lists;
 
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.ModelService;
-import dk.in2isoft.onlineobjects.core.SecurityController;
+import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.User;
 
@@ -42,7 +42,7 @@ public class AbstractTestCase extends TestCase {
 	}
 	
 	protected User getPublicUser() {
-		return getModel().getUser(SecurityController.PUBLIC_USERNAME);
+		return getModel().getUser(SecurityService.PUBLIC_USERNAME);
 	}
 
 	protected void autoClean(Entity entity) {

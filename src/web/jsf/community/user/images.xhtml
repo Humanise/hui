@@ -2,18 +2,17 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:oo="http://www.onlineobjects.com/jsf" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core">
 	<ui:composition template="template.xhtml">
 		<ui:param name="tab" value="images"/>
+		<ui:define name="breadcrumb">
+			<li><a href="#{base.baseContext}/#{userProfile.user.username}/images.html">Billeder</a></li>
+		</ui:define>
 		<ui:define name="content">
-			<script type="text/javascript" charset="utf-8">
-				var gallery = new oo.community.Gallery();
-			</script>
-			<oo:list var="image" model="#{userProfile.imageList}" gallery="true">
-				<a href="#{base.baseContext}/service/image/id#{image.id}.jpg" id="image_#{image.id}">
-					<img src="#{base.baseContext}/service/image/id#{image.id}thumbnail68cropped.jpg" width="68" height="68"/>
-				</a>
-				<script type="text/javascript" charset="utf-8">
-					gallery.registerImage({id:#{image.id},width:#{image.width},height:#{image.height}},'image_#{image.id}');
-				</script>
-			</oo:list>
+			<div class="content_body">
+				<oo:gallery model="#{userProfile.imageList}" var="image">
+					<a href="#{base.baseContext}/#{userProfile.user.username}/images/#{image.id}.html">
+						<img src="#{base.baseContext}/service/image/id#{image.id}thumbnail68cropped.jpg" width="68" height="68"/>
+					</a>
+				</oo:gallery>
+			</div>
 		</ui:define>
 	</ui:composition>
 </html>

@@ -19,7 +19,7 @@ public class UserSession implements Priviledged {
 
 	public UserSession() throws SecurityException {
 		toolSessions = new HashMap<String, ApplicationSession>();
-		user = Core.getInstance().getModel().getUser(SecurityController.PUBLIC_USERNAME);
+		user = Core.getInstance().getModel().getUser(SecurityService.PUBLIC_USERNAME);
 		if (user == null) {
 			throw new IllegalStateException("Could not get the public user!");
 		}
@@ -44,7 +44,7 @@ public class UserSession implements Priviledged {
 		if (this.toolSessions.containsKey(toolName)) {
 			return toolSessions.get(toolName);
 		} else {
-			ApplicationController ctrl = Core.getInstance().getApplicationManager().getController(toolName);
+			ApplicationController ctrl = Core.getInstance().getApplicationService().getController(toolName);
 			ApplicationSession session = ctrl.createToolSession();
 			if (session != null) {
 				toolSessions.put(toolName, session);

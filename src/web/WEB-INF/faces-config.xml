@@ -39,6 +39,10 @@ http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
     	<component-class>dk.in2isoft.onlineobjects.ui.jsf.ListComponent</component-class>
   	</component>
     <component>
+    	<component-type>onlineobjects.gallery</component-type>
+    	<component-class>dk.in2isoft.onlineobjects.ui.jsf.GalleryComponent</component-class>
+  	</component>
+    <component>
     	<component-type>onlineobjects.box</component-type>
     	<component-class>dk.in2isoft.onlineobjects.ui.jsf.BoxComponent</component-class>
   	</component>

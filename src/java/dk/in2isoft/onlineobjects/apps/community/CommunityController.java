@@ -54,6 +54,7 @@ public class CommunityController extends ApplicationController {
 		super("community");
 		privateSpaceController = new PrivateSpaceController(this);
 		addJsfMatcher("<username>/images.html", "/jsf/community/user/images.xhtml");
+		addJsfMatcher("<username>/images/<integer>.html", "/jsf/community/user/image.xhtml");
 		addJsfMatcher("<username>", "/jsf/community/user/index.xhtml");
 		addJsfMatcher("", "/jsf/community/index.xhtml");
 		addJsfMatcher("recoverpassword.html", "/jsf/community/recoverpassword.xhtml");

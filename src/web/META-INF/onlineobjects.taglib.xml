@@ -9,6 +9,13 @@
     </component>
   </tag>
   <tag>
+    <tag-name>gallery</tag-name>
+    <component>
+      <component-type>onlineobjects.gallery</component-type>
+      <renderer-type>onlineobjects.gallery</renderer-type>
+    </component>
+  </tag>
+  <tag>
     <tag-name>box</tag-name>
     <component>
       <component-type>onlineobjects.box</component-type>

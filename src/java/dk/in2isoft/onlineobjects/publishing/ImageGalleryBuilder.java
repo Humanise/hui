@@ -32,7 +32,7 @@ public class ImageGalleryBuilder extends DocumentBuilder implements FeedBuilder 
 	@Override
 	public Node build(Document document) throws EndUserException {
 		ImageGallery gallery = (ImageGallery) document;
-		ConversionService converter = Core.getInstance().getConverter();
+		ConversionService converter = Core.getInstance().getConversionService();
 
 		String style = gallery.getPropertyValue(ImageGallery.PROPERTY_FRAMESTYLE);
 		if (style == null)
