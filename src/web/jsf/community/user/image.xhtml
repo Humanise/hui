@@ -38,7 +38,7 @@ display:inline-block; padding: 4px;" onclick="oo.community.showImage({id:#{image
 							</p>
 						</c:if>
 						<h:panelGroup rendered="#{not empty imageView.imageInfo.taken}">
-							<p><span class="label">Dato: </span> <h:outputText value="#{imageView.imageInfo.taken}"><f:convertDateTime pattern="EEEE 'd'. d.  MMMM 'kl.' hh:mm:ss"/></h:outputText></p>
+							<p><span class="label">Dato: </span> <h:outputText value="#{imageView.imageInfo.taken}"><f:convertDateTime pattern="EEEE 'd'. d.  MMMM yyyy 'kl.' hh:mm:ss" locale="da_DK"/></h:outputText></p>
 						</h:panelGroup>
 						<h:panelGroup rendered="#{not empty imageView.imageInfo.cameraMake}">
 							<p><span class="label">Kameraproducent:</span> #{imageView.imageInfo.cameraMake}</p>

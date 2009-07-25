@@ -1,10 +1,12 @@
 package dk.in2isoft.onlineobjects.services;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import dk.in2isoft.commons.lang.LangUtil;
+import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Priviledged;
@@ -69,8 +71,8 @@ public class PasswordRecoveryService {
 		parms.put("name", person.getFullName());
 		parms.put("url",url.toString());
 		parms.put("base-url", configurationService.getBaseUrl());
-		
-		String html = emailService.applyTemplate("dk/in2isoft/onlineobjects/apps/community/resources/passwordrecovery-template.html", parms);
+		File file = Core.getInstance().getConfiguration().getFile("WEB-INF","apps","community","resources","passwordrecovery-template.html");
+		String html = emailService.applyTemplate("WEB-INF/apps/community/resources/passwordrecovery-template.html", parms);
 		
 		emailService.sendHtmlMessage("\u00C6ndring af kodeord til OnlineMe", html, email.getAddress(),person.getName());
 		return true;
