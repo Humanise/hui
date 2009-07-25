@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
-<gui xmlns="uri:In2iGui" title="List">
+<gui xmlns="uri:In2iGui" title="List" padding="10">
 	<controller name="controller" source="list.js"/>
 	<source name="itemsSource" url="data/source_items.xml"/>
-	<view>
+	<layout>
+		<top>
 		<toolbar>
 			<icon icon="common/refresh" title="Refresh" action="list.refresh()"/>
 			<divider/>
@@ -11,23 +12,22 @@
 			<icon icon="common/color" title="List icons" action="list.setUrl('data/list_icons.xml')"/>
 			<icon icon="common/color" title="List icons (json)" action="list.setUrl('data/list_icons.json')"/>
 		</toolbar>
-		<content>
-			<split>
-				<sidebar>
-					<selection value="user" name="selector">
-						<item icon="common/person" title="Brugere" value="user"/>
-						<item icon="common/folder" title="Database" value="database" kind="folder"/>
-						<item icon="common/person" title="Alle objekter" value="object"/>
-						<title>Hey</title>
-						<items source="itemsSource"/>
-					</selection>
-				</sidebar>
-				<content>
-					<overflow height="300" resize="-58">
-						<list name="list" url="data/list_users.xml"/>
-					</overflow>
-				</content>
-			</split>
-		</content>
-	</view>
+		</top>
+		<middle>
+			<left>
+				<selection value="user" name="selector">
+					<item icon="common/person" title="Brugere" value="user"/>
+					<item icon="common/folder" title="Database" value="database" kind="folder"/>
+					<item icon="common/person" title="Alle objekter" value="object"/>
+					<title>Hey</title>
+					<items source="itemsSource"/>
+				</selection>
+			</left>
+			<center>
+				<overflow>
+					<list name="list" url="data/list_users.xml"/>
+				</overflow>
+			</center>
+		</middle>
+	</layout>
 </gui>
