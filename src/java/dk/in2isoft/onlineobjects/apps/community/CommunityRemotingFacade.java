@@ -48,6 +48,8 @@ import dk.in2isoft.onlineobjects.publishing.Document;
 import dk.in2isoft.onlineobjects.ui.AbstractRemotingFacade;
 import dk.in2isoft.onlineobjects.ui.AsynchronousProcessDescriptor;
 import dk.in2isoft.onlineobjects.util.ValidationUtil;
+import dk.in2isoft.onlineobjects.util.images.ImageInfo;
+import dk.in2isoft.onlineobjects.util.images.ImageService;
 
 public class CommunityRemotingFacade extends AbstractRemotingFacade {
 
@@ -305,6 +307,7 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 		return data;
 	}
 	
+	@Deprecated
 	public Map<String,Object> getImage(long id) throws ModelException {
 		Map<String,Object> data = new HashMap<String, Object>();
 		Image image = getModel().get(Image.class, id);
@@ -320,6 +323,24 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 		image.setName(name);
 		image.overrideFirstProperty(Image.PROPERTY_DESCRIPTION, description);
 		image.overrideProperties(Property.KEY_COMMON_TAG, tags);
+		getModel().updateItem(image, getUserSession());
+	}
+	
+	public ImageInfo getImageInfo(long id) throws EndUserException {
+		Image image = getModel().get(Image.class, id);
+		if (image==null) {
+			throw new IllegalRequestException("Image not found");
+		}
+		ImageService imageService = getService(ImageService.class);
+		return imageService.getImageInfo(image);
+	}
+	
+	public void updateImageInfo(ImageInfo info) throws EndUserException {
+		Image image = getModel().get(Image.class, info.getId());
+		image.setName(info.getName());
+		image.overrideFirstProperty(Image.PROPERTY_DESCRIPTION, info.getDescription());
+		image.overrideFirstProperty(Property.KEY_PHOTO_TAKEN, info.getTaken());
+		image.overrideProperties(Property.KEY_COMMON_TAG, info.getTags());
 		getModel().updateItem(image, getUserSession());
 	}
 	

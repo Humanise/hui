@@ -79,7 +79,7 @@ oo.community.Chrome.buildUserProfileURL = function(username) {
 	return oo.appContext+'/'+username+'/';
 }
 
-///////////////////////// Search field ///////////////////
+/////////////////////////////////// Search field /////////////////////////////////
 
 oo.community.SearchField = function(o) {
 	var e = this.element = $(o.element);
@@ -201,7 +201,7 @@ oo.community.Chrome.UserInfo.prototype = {
 	}
 }
 
-/**************************************** Log in handler *************************************/
+/////////////////////////////////// Log in handler /////////////////////////////////
 
 oo.community.Chrome.Login = function() {
 	this.form = $('login');
@@ -332,7 +332,7 @@ oo.community.Chrome.Login.prototype = {
 	}
 }
 
-/**************************************** Sign up handler *************************************/
+///////////////////////////////// Sign up handler ///////////////////////////////
 
 oo.community.Chrome.SignUp = function() {
 	this.form = $('signup');
@@ -435,37 +435,8 @@ oo.community.Chrome.SignUp.prototype = {
 	}
 }
 
-//////////////////////////////////// Community /////////////////////////////
+//////////////////////////////////// Widgets ///////////////////////////////
 
-oo.community.Gallery = function() {
-	this.images = [];
-}
-
-oo.community.Gallery.prototype = {
-	ignite : function() {
-		$$('.image_gallery a').each(function(node,i) {
-			node.observe('click',function(e) {this.onClickImage(i);e.stop();}.bind(this));
-		}.bind(this))
-	},
-	registerImage : function(img,id) {
-		this.images.push(img);
-		$(id).observe('click',function(e) {this.onClickImage(img);e.stop();}.bind(this));
-	},
-	onClickImage : function(img) {
-		this.getViewer().showById(img.id);
-	},
-	getViewer : function() {
-		if (!this.imageViewer) {
-			var v = this.imageViewer = In2iGui.ImageViewer.create();
-			v.addDelegate(this);
-			v.addImages(this.images);
-		}
-		return this.imageViewer;
-	},
-	resolveImageUrl : function(image,width,height) {
-		return oo.baseContext+'/service/image/?id='+image.id+'&width='+width+'&height='+height;
-	}
-}
 
 oo.Gallery = function(options) {
 	this.options = options;
@@ -481,9 +452,12 @@ oo.Gallery.prototype = {
 		/*this.element.select('ol a').each(function(node,i) {
 			node.observe('click',function(e) {self.imageWasClicked(i);e.stop();});
 		});*/
-		this.element.select('.oo_gallery_slideshow')[0].observe('click',function(e) {
-			self.imageWasClicked(0);e.stop();
-		});
+		var slideShow = this.element.select('.oo_gallery_slideshow')[0];
+		if (slideShow) {
+			slideShow.observe('click',function(e) {
+				self.imageWasClicked(0);e.stop();
+			});
+		}
 	},
 	imageWasClicked : function(index) {
 		this.getViewer().show(index);
@@ -501,4 +475,4 @@ oo.Gallery.prototype = {
 	}
 }
 
-In2iGui.onDomReady(function() {oo.community.Chrome.get()});
+ui.onDomReady(function() {oo.community.Chrome.get()});

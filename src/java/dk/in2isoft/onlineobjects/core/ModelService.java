@@ -259,6 +259,8 @@ public class ModelService {
 	@SuppressWarnings("unchecked")
 	public <T extends Entity> T get(Class<T> entityClass, Long id) throws ModelException {
 		T entity = (T) getSession().get(entityClass, id);
+		//getSession().evict(entity);
+		//getSession().evict(entity.getProperties());
 		if (entity != null) {
 			return entity;
 		} else {

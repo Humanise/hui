@@ -32,6 +32,9 @@
     <convert converter="bean" match="dk.in2isoft.onlineobjects.apps.desktop.Window"/>
     <convert converter="bean" match="dk.in2isoft.onlineobjects.apps.desktop.EntityWindow"/>
     <convert converter="bean" match="dk.in2isoft.onlineobjects.apps.desktop.WindowProperty"/>
+    
+    <convert match="dk.in2isoft.onlineobjects.apps.community.views.ImageInfo" converter="bean"/>
+    
     <convert converter="bean" match="dk.in2isoft.onlineobjects.ui.AsynchronousProcessDescriptor"/>
     <convert converter="bean" match="dk.in2isoft.onlineobjects.model.*">
     	<param name="exclude" value="getImageFile"/>

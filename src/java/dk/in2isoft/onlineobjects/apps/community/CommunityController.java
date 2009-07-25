@@ -12,13 +12,13 @@ import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.google.common.collect.Lists;
 
 import dk.in2isoft.commons.lang.LangUtil;
 import dk.in2isoft.commons.util.GraphUtil;
-import dk.in2isoft.commons.util.ImageUtil;
 import dk.in2isoft.commons.xml.XSLTUtil;
 import dk.in2isoft.in2igui.FileBasedInterface;
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
@@ -41,6 +41,7 @@ import dk.in2isoft.onlineobjects.services.PageRenderingService;
 import dk.in2isoft.onlineobjects.ui.AsynchronousProcessDescriptor;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.ui.XSLTInterface;
+import dk.in2isoft.onlineobjects.util.images.ImageService;
 
 public class CommunityController extends ApplicationController {
 
@@ -172,7 +173,7 @@ public class CommunityController extends ApplicationController {
 			public void handleFile(File file, String name,String contentType,Map<String, String> parameters, Request request) throws EndUserException {
 				Entity user = request.getSession().getUser();
 
-				int[] dimensions = ImageUtil.getImageDimensions(file);
+				int[] dimensions = Core.getInstance().getBean(ImageService.class).getImageDimensions(file);
 				Image image = new Image();
 				getModel().createItem(image, request.getSession());
 				image.setName(name);
@@ -198,11 +199,11 @@ public class CommunityController extends ApplicationController {
 		final AsynchronousProcessDescriptor process = session.createAsynchronousProcessDescriptor("imageUpload");
 		if (!ServletFileUpload.isMultipartContent(request.getRequest())) {
 			process.setError(true);
-			throw new SecurityException("The request is not multi-part!");
+			throw new IllegalRequestException("The request is not multi-part!");
 		}
 		DiskFileItemFactory factory = new DiskFileItemFactory();
 		factory.setSizeThreshold(0);
-		if (Core.getInstance().getConfiguration().getDevelopmentMode()) {
+		if (Core.getInstance().getConfigurationService().isDevelopmentMode()) {
 			try {
 				Thread.sleep(2000);
 			} catch (InterruptedException e1) {
@@ -226,7 +227,7 @@ public class CommunityController extends ApplicationController {
 		// Parse the request
 		try {
 			List<DiskFileItem> items = upload.parseRequest(request.getRequest());
-			int imageGalleryId = 0;
+			long imageGalleryId = 0;
 			for (DiskFileItem item : items) {
 				if (item.isFormField() && item.getFieldName() != null && item.getFieldName().equals("contentId")) {
 					try {
@@ -240,10 +241,14 @@ public class CommunityController extends ApplicationController {
 			if (imageGalleryId == 0) {
 				imageGalleryId = request.getInt("contentId");
 			}
+			ImageGallery gallery = getModel().get(ImageGallery.class, imageGalleryId);
+			if (gallery == null) {
+				throw new EndUserException("Could not load gallery with ID=" + imageGalleryId);
+			}
 			for (DiskFileItem item : items) {
 				if (!item.isFormField()) {
 					try {
-						processFile(item, imageGalleryId, request);
+						processFile(item, gallery, request);
 					} catch (Exception e) {
 						process.setError(true);
 						throw new EndUserException(e);
@@ -260,20 +265,18 @@ public class CommunityController extends ApplicationController {
 		request.getResponse().getWriter().write("OK");
 	}
 
-	private void processFile(DiskFileItem item, long imageGalleryId, Request request) throws IOException,
+	private void processFile(DiskFileItem item, ImageGallery gallery, Request request) throws IOException,
 			EndUserException {
-		Entity gallery = getModel().get(ImageGallery.class, imageGalleryId);
-		if (gallery == null) {
-			throw new EndUserException("Could not load gallery with ID=" + imageGalleryId);
-		}
 		File file = item.getStoreLocation();
-		int[] dimensions = ImageUtil.getImageDimensions(file);
+		ImageService imageService = Core.getInstance().getBean(ImageService.class);
+		int[] dimensions = imageService.getImageDimensions(file);
 		Image image = new Image();
 		getModel().createItem(image, request.getSession());
-		image.setName(item.getName());
-		image.changeImageFile(file, dimensions[0], dimensions[1], item.getContentType());
-		log.debug("width:" + image.getWidth());
-		log.debug("height:" + image.getHeight());
+		image.changeImageFile(file, dimensions[0], dimensions[1], imageService.getMimeType(file));
+		imageService.synchronizeMetaData(image, request.getSession());
+		if (StringUtils.isBlank(image.getName())) {
+			image.setName(imageService.cleanFileName(item.getName()));
+		}
 		getModel().updateItem(image, request.getSession());
 		Relation relation = new Relation(gallery, image);
 		relation.setPosition(getMaxImagePosition(gallery) + 1);

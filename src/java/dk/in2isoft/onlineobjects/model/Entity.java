@@ -2,6 +2,7 @@ package dk.in2isoft.onlineobjects.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 
 
@@ -56,8 +57,18 @@ public class Entity extends Item {
 	public String getPropertyValue(String key) {
 		for (Iterator<Property> iter = properties.iterator(); iter.hasNext();) {
 			Property element = iter.next();
-			if (element.getKey().equals(key)) {
+			if (element!=null && element.getKey().equals(key)) {
 				return element.getValue();
+			}
+		}
+		return null;
+	}
+	
+	public Date getPropertyDateValue(String key) {
+		for (Iterator<Property> iter = properties.iterator(); iter.hasNext();) {
+			Property element = iter.next();
+			if (element!=null && element.getKey().equals(key)) {
+				return element.getDateValue();
 			}
 		}
 		return null;
@@ -76,7 +87,7 @@ public class Entity extends Item {
 	public Collection<String> getPropertyValues(String key) {
 		Collection<String> props = new ArrayList<String>();
 		for (Property property : properties) {
-			if (key.equals(property.getKey())) {
+			if (property!=null && key.equals(property.getKey())) {
 				props.add(property.getValue());
 			}
 		}
@@ -86,7 +97,7 @@ public class Entity extends Item {
 	public void overrideProperties(String key,Collection<String> values) {
 		for (Iterator<Property> iter = properties.iterator(); iter.hasNext();) {
 			Property property = iter.next();
-			if (key.equals(property.getKey())) {
+			if (property!=null && key.equals(property.getKey())) {
 				iter.remove();
 			}
 		}
@@ -100,8 +111,23 @@ public class Entity extends Item {
 		boolean found = false;
 		for (Iterator<Property> iter = properties.iterator(); iter.hasNext();) {
 			Property element = iter.next();
-			if (element.getKey().equals(key)) {
+			if (element!=null && element.getKey().equals(key)) {
 				element.setValue(value);
+				found=true;
+				break;
+			}
+		}
+		if (!found) {
+			properties.add(new Property(key,value));
+		}
+	}
+
+	public void overrideFirstProperty(String key, Date value) {
+		boolean found = false;
+		for (Iterator<Property> iter = properties.iterator(); iter.hasNext();) {
+			Property element = iter.next();
+			if (element!=null && element.getKey().equals(key)) {
+				element.setDateValue(value);
 				found=true;
 				break;
 			}
@@ -114,7 +140,7 @@ public class Entity extends Item {
 	public void removeProperties(String key) {
 		for (Iterator<Property> iter = properties.iterator(); iter.hasNext();) {
 			Property element = iter.next();
-			if (element.getKey().equals(key)) {
+			if (element!=null && element.getKey().equals(key)) {
 				iter.remove();
 			}
 		}

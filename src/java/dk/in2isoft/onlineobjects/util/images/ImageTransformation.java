@@ -1,4 +1,4 @@
-package dk.in2isoft.commons.util;
+package dk.in2isoft.onlineobjects.util.images;
 
 public class ImageTransformation {
 	private int width;

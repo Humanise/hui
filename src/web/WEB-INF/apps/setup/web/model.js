@@ -3,7 +3,7 @@ var controller = {
 	
 	interfaceIsReady : function() {
 	},
-	listRowWasOpened : function(row) {
+	$listRowWasOpened : function(row) {
 		if (row.kind=='user') {
 			this.loadUser(row);
 		} else {
@@ -18,7 +18,7 @@ var controller = {
 			userEditor.show();
 		});
 	},
-	onClick$saveUser : function() {
+	$click$saveUser : function() {
 		var values = userFormula.getValues();
 		AppSetup.updateUser(this.userId,values.username,values.password,function() {
 			userFormula.reset();
@@ -26,14 +26,20 @@ var controller = {
 			listSource.refresh();
 		});
 	},
-	onClick$deleteUser : function() {
+	$click$deleteUser : function() {
 		AppSetup.deleteUser(this.userId,function() {
 			userFormula.reset();
 			userEditor.hide();
 			listSource.refresh();
 		});
 	},
-	selectionChanged$selection : function() {
+	$selectionChanged$selection : function() {
 		list.resetState();
+	},
+	$click$syncImages : function(icon) {
+		icon.setEnabled(false);
+		AppSetup.synchronizeImageMetaData(function() {
+			icon.setEnabled(true);
+		});
 	}
 }

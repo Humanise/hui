@@ -20,7 +20,7 @@
 				</div>
 				<div class="profile_info">
 					<div id="profileContainer" style="position: relative; overflow: hidden;">
-						<div id="profileInfo">
+						<div id="profileInfo" class="rendering">
 							<h1>#{userProfile.person.fullName}</h1>
 							<ul class="icons">
 								<li class="url">
@@ -48,21 +48,21 @@
 								</c:if>
 							</ul>
 							<c:if test="#{userProfile.info.sex!=null}">
-							<p><span class="label">Køn: </span>#{userProfile.info.sex ? 'Mand' : 'Kvinde'}</p>
+								<p><span class="label">Køn: </span>#{userProfile.info.sex ? 'Mand' : 'Kvinde'}</p>
 							</c:if>
 							<c:if test="#{fn:length(userProfile.info.interests)>0}">
-							<p><span class="label">Interesser: </span>
-								<c:forEach items="#{userProfile.info.interests}" var="item">
-									#{item}
-								</c:forEach>
-							</p>
+								<p><span class="label">Interesser: </span>
+									<c:forEach items="#{userProfile.info.interests}" var="item">
+										#{item}
+									</c:forEach>
+								</p>
 							</c:if>
 							<c:if test="#{fn:length(userProfile.info.music)>0}">
-							<p><span class="label">Yndlingsmusik: </span>
-								<c:forEach items="#{userProfile.info.music}" var="item">
-									#{item}
-								</c:forEach>
-							</p>
+								<p><span class="label">Yndlingsmusik: </span>
+									<c:forEach items="#{userProfile.info.music}" var="item">
+										#{item}
+									</c:forEach>
+								</p>
 							</c:if>
 							<h:outputText rendered="#{userProfile.canEdit}">
 								<p><gui:button text="Rediger profil" name="editProfile"/></p>

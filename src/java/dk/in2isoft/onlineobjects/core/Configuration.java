@@ -57,14 +57,6 @@ public class Configuration {
 	public String getBaseUrl() {
 		return config.getString("base-url");
 	}
-
-	public String getImageMagickPath() {
-		return config.getString("integration.imagemagick.path");
-	}
-
-	public String getGraphvizPath() {
-		return config.getString("integration.graphviz.path");
-	}
 	
 	public String getBaseDir() {
 		return baseDir.getAbsolutePath();

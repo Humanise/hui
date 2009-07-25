@@ -16,6 +16,7 @@
 		<top>
 			<toolbar>
 				<search name="search" title="Search"/>
+				<icon icon="common/refresh" title="Sync images" name="syncImages"/>
 			</toolbar>
 		</top>
 		<middle>

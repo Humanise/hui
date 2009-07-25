@@ -1,33 +1,46 @@
 package dk.in2isoft.onlineobjects.apps.community.views;
 
-import java.util.Date;
-
 import org.springframework.beans.factory.InitializingBean;
-
-import com.drew.imaging.jpeg.JpegMetadataReader;
-import com.drew.imaging.jpeg.JpegProcessingException;
-import com.drew.lang.CompoundException;
-import com.drew.metadata.Directory;
-import com.drew.metadata.Metadata;
-import com.drew.metadata.exif.ExifDirectory;
 
 import dk.in2isoft.onlineobjects.apps.community.jsf.AbstractManagedBean;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.model.Image;
+import dk.in2isoft.onlineobjects.model.Location;
+import dk.in2isoft.onlineobjects.util.images.ImageInfo;
+import dk.in2isoft.onlineobjects.util.images.ImageService;
 
 public class ImageView extends AbstractManagedBean implements InitializingBean {
 
 	private ModelService modelService;
 	private SecurityService securityService;
-	Image image;
+	private ImageService imageService;
+	private Image image;
+	private ImageInfo imageInfo;
+	private Location location;
 	
 	public void afterPropertiesSet() throws Exception {
 		image = modelService.get(Image.class, getImageId());
+		if (image!=null) {
+			imageInfo = imageService.getImageInfo(image);
+			location = modelService.getParent(image, Location.class);
+		}
 	}
 	
 	public Image getImage() {
 		return image;
+	}
+	
+	public ImageInfo getImageInfo() {
+		return imageInfo;
+	}
+	
+	public Location getLocation() {
+		return location;
+	}
+	
+	public double getMegaPixels() {
+		return Math.round(image.getWidth()*image.getHeight()/(double)10000)/(double)100;
 	}
 	
 	public Long getImageId() {
@@ -35,15 +48,6 @@ public class ImageView extends AbstractManagedBean implements InitializingBean {
 		String string = path[path.length-1];
 		String[] split = string.split("\\.");
 		return Long.valueOf(split[0]);
-	}
-	
-	public Date getTaken() throws Exception {
-		Metadata metadata = JpegMetadataReader.readMetadata(image.getImageFile());
-		Directory exifDirectory = metadata.getDirectory(ExifDirectory.class);
-		if (exifDirectory.containsTag(ExifDirectory.TAG_DATETIME_ORIGINAL)) {
-			return exifDirectory.getDate(ExifDirectory.TAG_DATETIME_ORIGINAL);
-		}
-		return null;
 	}
 	
 	public boolean getCanEdit() {
@@ -64,5 +68,13 @@ public class ImageView extends AbstractManagedBean implements InitializingBean {
 
 	public SecurityService getSecurityService() {
 		return securityService;
+	}
+
+	public void setImageService(ImageService imageService) {
+		this.imageService = imageService;
+	}
+
+	public ImageService getImageService() {
+		return imageService;
 	}
 }

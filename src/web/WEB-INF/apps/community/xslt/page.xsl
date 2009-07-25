@@ -17,7 +17,6 @@
 			<xsl:value-of select="p:context/e:Entity[@type='Item/Entity/WebPage']/e:name"/><xsl:text> &#8250; </xsl:text>
 			<xsl:value-of select="p:context/e:Entity[@type='Item/Entity/WebSite']/e:name"/>
 		</title>
-		<link rel="stylesheet" href="{$local-context}/css/common.css?{$cache-version}" type="text/css" media="screen" title="front" charset="utf-8"/>
 		<xsl:choose>
 			<xsl:when test="$development-mode='true'">
 				<link rel="stylesheet" href="{$base-context}/In2iGui/css/dev.css" type="text/css" media="screen" title="front" charset="utf-8"/>

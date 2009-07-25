@@ -1,3 +1,6 @@
+@import url('modules.css');
+@import url('views.css');
+
 body
 {
 	height: 100%;
@@ -283,7 +286,7 @@ ul.breadcrumb a
 	height: 24px;
 	font-size: 13px;
 	padding: 0 14px 0 8px;
-	line-height: 22px;
+	line-height: 24px;
 	text-decoration: none;
 	color: #666;
 	background: url('../gfx/breadcrumb.png') right top no-repeat;
@@ -336,7 +339,7 @@ div.content_right h2
 	font-weight: normal;
 	margin: 0px;
 	font-size: 14pt;
-	color: #025ab0;
+	color: #468;
 }
 
 div.content_right label
@@ -890,13 +893,4 @@ div.login_info
 .footer a span
 {
 	color: #666;
-}
-
-/***************************** Formula ********************************/
-
-table.formula th
-{
-	text-align: right;
-	font-weight: normal;
-	font-size: 13px;
 }

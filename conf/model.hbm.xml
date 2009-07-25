@@ -12,6 +12,8 @@
         </id>
 		<property name="key"/>
 		<property name="value" length="4000"/>
+		<property name="doubleValue"/>
+		<property name="dateValue"/>
 	</class>
     <class name="dk.in2isoft.onlineobjects.model.Privilege" table="privilege">
         <id name="id" column="id">
@@ -149,6 +151,13 @@
 		    
 		    <joined-subclass name="dk.in2isoft.onlineobjects.model.Application" table="application">
 		        <key column="id"/>
+		    </joined-subclass>
+		    
+		    <joined-subclass name="dk.in2isoft.onlineobjects.model.Location" table="location">
+		        <key column="id"/>
+		        <property name="latitude"/>
+		        <property name="longitude"/>
+		        <property name="altitude"/>
 		    </joined-subclass>
 		    
 	    </joined-subclass>

@@ -14,6 +14,8 @@
 		<property name="storagePath" value="${storagePath}"/>
 		<property name="baseUrl" value="${baseUrl}"/>
 		<property name="developmentMode" value="${developmentMode}"/>
+		<property name="imageMagickPath" value="${imagemagick.path}"/>
+		<property name="graphvizPath" value="${graphviz.path}"/>
 	</bean>
 
 	<bean id="emailService" class="dk.in2isoft.onlineobjects.services.EmailService" autowire="byType">
@@ -50,6 +52,8 @@
 	
 	<bean id="pageRenderingService" class="dk.in2isoft.onlineobjects.services.PageRenderingService" autowire="byType"/>
 
+	<bean id="imageService" class="dk.in2isoft.onlineobjects.util.images.ImageService" autowire="byType"/>
+	
 	<!-- Community -->
 
 	<bean id="invitationService" class="dk.in2isoft.onlineobjects.apps.community.services.InvitationService" autowire="byType"/>

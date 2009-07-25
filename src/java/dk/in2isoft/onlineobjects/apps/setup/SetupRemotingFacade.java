@@ -18,9 +18,13 @@ import dk.in2isoft.onlineobjects.core.Scheduler;
 import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.SecurityException;
 import dk.in2isoft.onlineobjects.core.SecurityService;
+import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.model.Entity;
+import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.ui.AbstractRemotingFacade;
+import dk.in2isoft.onlineobjects.util.images.ImageService;
+import freemarker.ext.util.ModelFactory;
 
 public class SetupRemotingFacade extends AbstractRemotingFacade {
 
@@ -131,5 +135,22 @@ public class SetupRemotingFacade extends AbstractRemotingFacade {
 			model.deleteEntity(entity, getUserSession());
 		}
 		getModel().deleteEntity(user, getUserSession());
+	}
+	
+	public void synchronizeImageMetaData() throws EndUserException {
+		checkUser();
+		ModelService model = getModel();
+		UserSession userSession = getUserSession();
+		ImageService imageService = getService(ImageService.class);
+		List<Image> list = model.list(Query.of(Image.class));
+		for (Image image : list) {
+			String name = image.getName();
+			if (name!=null && name.toLowerCase().endsWith(".jpg")) {
+				image.setName(imageService.cleanFileName(name));
+				model.updateItem(image, userSession);
+			}
+			imageService.synchronizeContentType(image, userSession);
+			imageService.synchronizeMetaData(image,userSession);
+		}
 	}
 }

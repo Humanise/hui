@@ -22,7 +22,7 @@ public class GraphUtil extends AbstractCommandLineInterfaceUtil {
 	private static final ImmutableList<String> algorithms = ImmutableList.of("circo","dot","fdp","neato","twopi");
 
 	private static String getCommand(String name) throws ConfigurationException {
-		return Core.getInstance().getConfiguration().getGraphvizPath() + "/" + name;
+		return Core.getInstance().getConfigurationService().getGraphvizPath() + "/" + name;
 	}
 
 	public static void dotToSVG(String dot, OutputStream out) throws EndUserException {

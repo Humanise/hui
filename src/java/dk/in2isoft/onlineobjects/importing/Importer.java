@@ -11,14 +11,15 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
 
-import dk.in2isoft.commons.util.ImageUtil;
 import dk.in2isoft.onlineobjects.apps.ApplicationSession;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
+import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.SecurityException;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.ui.AsynchronousProcessDescriptor;
 import dk.in2isoft.onlineobjects.ui.Request;
+import dk.in2isoft.onlineobjects.util.images.ImageService;
 
 public class Importer {
 	
@@ -70,16 +71,17 @@ public class Importer {
 	}
 
 	private void processFile(DiskFileItem item, Request request) throws IOException, EndUserException {
-		
+		ImageService imageService = Core.getInstance().getBean(ImageService.class);
+		ModelService modelService = Core.getInstance().getModel();
 		File file = item.getStoreLocation();
-		int[] dimensions = ImageUtil.getImageDimensions(file);
+		int[] dimensions = imageService.getImageDimensions(file);
 		Image image = new Image();
-		Core.getInstance().getModel().createItem(image,request.getSession());
+		modelService.createItem(image,request.getSession());
 		image.setName(item.getName());
 		image.changeImageFile(file, dimensions[0],dimensions[1], item.getContentType());
 		log.debug("width:" + image.getWidth());
 		log.debug("height:" + image.getHeight());
-		Core.getInstance().getModel().updateItem(image,request.getSession());
-		Core.getInstance().getModel().commit();
+		modelService.updateItem(image,request.getSession());
+		modelService.commit();
 	}
 }
