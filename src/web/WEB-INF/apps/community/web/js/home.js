@@ -1,13 +1,12 @@
 oo.community.Home = function() {
 	this.images = [];
-	this.searchField = new ui.TextField({element:'search_field',name:'searchField'});
-	this.searchField.addDelegate(this);
-	this.addBehavior();
+	this.searchField = ui.get('filter');
+	this.searchField.listen(this);
 	this.search();
 }
 
 oo.community.Home.prototype = {
-	valueChanged$searchField : function(value) {
+	$valueChanged$filter : function(value) {
 		this.search(value);
 	},
 	setSearch : function(str) {
@@ -105,33 +104,6 @@ oo.community.Home.prototype = {
 	},
 	resolveImageUrl : function(image,width,height) {
 		return oo.baseContext+'/service/image/?id='+image.id+'&width='+width+'&height='+height;
-	},
-	addBehavior : function() {
-		var self = this;
-		$('feedbackForm').onsubmit=function() {
-			In2iGui.get().alert({
-				title:'Din besked er ved at blive sendt',
-				text:'Du får en besked om lidt med resultatet...',
-				emotion:'smile'
-			});
-			var form = this;
-			var delegate = {
-	  			callback:function() {
-					In2iGui.get().alert({
-						title:'Din besked er afsendt!',
-						text:'Vi vil svare hurtigst muligt :-)',
-						emotion:'smile'
-					});
-					form.reset();
-				},
-	  			errorHandler:function(errorString, exception) {
-					In2iGui.get().alert({title:'Beskeden kunne ikke sendes!',text:errorString,emotion:'gasp'});
-					N2i.log(exception);
-				}
-			};
-			AppCommunity.sendFeedback(form['email'].value,form['message'].value,delegate);
-			return false;
-		};
 	}
 }
 

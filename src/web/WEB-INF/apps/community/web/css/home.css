@@ -58,75 +58,49 @@ a.tag-5
 
 /*********************************** Intro *****************************/
 
-div.intro
+div.home_intro
 {
 	background: url('../gfx/front/poster.jpg');
 	height: 228px;
-	/*font-family: Georgia, 'Palatino', serif;*/
 }
 
-div.intro *
+div.home_intro *
 {
 	display: none;
 }
 
-div.intro h2
+div.home_intro h2
 {
 	margin: 0px;
 	font-weight: normal;
 	font-size: 18pt;
 }
 
-div.intro p
+div.home_intro p
 {
 	font-size: 10pt;
 }
 
 /*********************************** Search *****************************/
 
-
-form.filter
+div.home_latest
 {
-	float: right;
-	background: url('../gfx/search.png') left top repeat-x;
-	height: 21px;
-	margin: 14px 15px 0px 0px;
+	position: relative;
 }
 
-form.filter div
+div.home_filter
 {
-	background: url('../gfx/search.png') left -21px no-repeat;
-	height: 21px;
-	float: left;
-}
-
-form.filter div div
-{
-	background-position: right -42px;
-	padding: 0px 0px 0px 20px;
-}
-
-form.filter input
-{
-	border: 0px;
-	background: none;
-	width: 100px;
-}
-
-/********************************** Support *****************************/
-
-div.support
-{
-	display: none;
+	position: absolute;
+	right: 15px;
+	top: 10px;
 }
 
 /********************************** Sections *****************************/
 
 .section_head
 {
-	/*background: url('../gfx/front/line_light.gif') center repeat-x;*/
 	height: 24px;
-	margin: 15px 0px 0px;
+	padding: 15px 0px 0px;
 }
 
 div.section_head h2

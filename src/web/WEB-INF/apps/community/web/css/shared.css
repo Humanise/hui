@@ -191,77 +191,6 @@ div.casing_foot
 	border-top: 1px solid #ddd;
 }
 
-/**************************** Search *************************/
-
-form.casing_search
-{
-	position: absolute;
-	right: 16px;
-	top: 7px;
-	background: url('../gfx/search.png') left top repeat-x;
-	height: 21px;
-	margin: 0;
-}
-
-form.casing_search div
-{
-	background: url('../gfx/search.png') left -21px no-repeat;
-	height: 21px;
-	float: left;
-}
-
-form.casing_search div div
-{
-	background-position: right -42px;
-	padding: 0px 0px 0px 20px;
-}
-
-form.casing_search input
-{
-	border: 0px;
-	background: none;
-	width: 100px;
-	font-family: Verdana,sans-serif;
-	font-size: 11px;
-	margin-top: 2px;
-}
-
-form.casing_search_dirty
-{
-	background-position: left -63px;
-}
-
-form.casing_search_dirty div
-{
-	background-position: left -84px;
-}
-
-form.casing_search_dirty div div
-{
-	background-position: right -105px;
-}
-
-form.casing_search div.reset
-{
-	display: none;
-	width: 20px;
-	height: 21px;
-	background: url('../gfx/search.png') left -126px no-repeat;
-	position: absolute;
-	right: 0;
-}
-
-form.casing_search_dirty div.reset
-{
-	display: block;
-}
-
-#casing_search_result
-{
-	overflow: hidden;
-	display: none;
-}
-
 /*************************** Breadcrumb **********************/
 
 ul.breadcrumb
@@ -271,13 +200,14 @@ ul.breadcrumb
 	padding: 0 0 0 12px;
 	border-bottom: 1px solid #ddd;
 	font-size: 0;
+	height: 24px;
 }
 
 ul.breadcrumb li
 {
 	margin: 0;
 	padding: 0;
-	display: inline-block;
+	float: left;
 }
 
 ul.breadcrumb a
@@ -292,6 +222,7 @@ ul.breadcrumb a
 	background: url('../gfx/breadcrumb.png') right top no-repeat;
 	max-width: 150px;
 	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 /**************************** Content ************************/
@@ -367,7 +298,7 @@ div.content_right span.error
 	padding-left: 2px;
 }
 
-div.content_right p
+div.content_right div.field
 {
 	margin: 5px 0px 0px;
 }
@@ -378,10 +309,17 @@ div.content_right p.response
 	font-size: 9pt;
 }
 
+div.content_right p
+{
+	margin: 0;
+}
+
 div.content_right p.buttons
 {
 	text-align: right;
+	margin: 5px 0 0 0;
 }
+
 
 div.content_right form
 {
@@ -427,103 +365,13 @@ div.content_right p.buttons a.link span
 	color: #666;
 }
 
-a.sidebar_button
+div.content_right p.buttons a.link:focus
 {
-	display: inline-block;
-	height: 22px;
-	line-height: 22px;
-	background: url('../gfx/sidebar_button.png') repeat-x;
-	font-size: 9pt;
-	text-decoration: none;
-	color: #000;
-	letter-spacing: .5px;
-	cursor: pointer;
-}
-
-a.sidebar_button span
-{
-	display: inline-block;
-	height: 22px;
-	background: url('../gfx/sidebar_button.png') left -22px no-repeat;
-}
-
-a.sidebar_button span span
-{
-	background: url('../gfx/sidebar_button.png') right -44px no-repeat;
-	padding: 0px 15px;
-}
-
-a.sidebar_button:hover, a.sidebar_button:focus
-{
-	background-position: left -66px;
-}
-
-a.sidebar_button:hover span, a.sidebar_button:focus span
-{
-	background-position: left -88px;
-}
-
-a.sidebar_button:hover span span, a.sidebar_button:focus span span
-{
-	background-position: right -110px;
-}
-
-a.sidebar_button:active
-{
-	background-position: left -132px;
-}
-
-a.sidebar_button:active span
-{
-	background-position: left -154px;
-}
-
-a.sidebar_button:active span span
-{
-	background-position: right -176px;
-}
-
-/****************************** Field **************************/
-
-span.field
-{
-	display: block;
-	height: 22px;
-	background: url('../gfx/field.png') left top no-repeat;
-	font-size: 0px;
-}
-
-span.field span
-{
-	display: block;
-	height: 22px;
-	background: url('../gfx/field.png') right -22px no-repeat;
-}
-
-span.field span span
-{
-	margin: 0px 3px;
-	background: url('../gfx/field.png') left -44px repeat-x;
-}
-
-span.field input
-{
-	background: none;
-	border: 0px;
-	margin: 0px;
-	width: 100%;
-	padding: 0px;
-	display: inline-block;
-	font-size: 10pt;
-	padding-top: 2px;
-	line-height: 20px;
-}
-
-div.content_right input.in2igui_placeholder
-{
-	color: #666;
-	font-size: 9pt;
-	padding-top: 3px;
+	-moz-border-radius: 3px;
+	-moz-box-shadow: 0 0 6px #0060ff;
+	-webkit-border-radius: 3px;
+	-webkit-box-shadow: 0 0 3px #0060ff;
+	outline: none;
 }
 
 /*************************** Navigation ********************************/
@@ -670,6 +518,19 @@ div.tabs_content
 
 /***************************** Search *******************************/
 
+div.casing_head_search
+{
+	position: absolute;
+	right: 8px;
+	top: 4px;
+}
+
+#casing_search_result
+{
+	overflow: hidden;
+	display: none;
+}
+
 #casing_search_result ul
 {
 	list-style: none;
@@ -735,12 +596,14 @@ a.oo_list_slideshow
 	position: absolute;
 	right: 0;
 	color: #ddd;
+	cursor: pointer;
 	font-size: 13px;
 }
 
 a.oo_list_slideshow span
 {
 	color: #333;
+	cursor: pointer;
 }
 
 span.oo_list_pages
@@ -791,7 +654,6 @@ ol.oo_list_result li
 div.oo_gallery_navigator
 {
 	overflow: hidden;
-	position: relative;
 	height: 16px;
 	font-size: 0;
 }
@@ -800,6 +662,7 @@ a.oo_gallery_slideshow
 {
 	color: #ddd;
 	font-size: 13px;
+	display: inline-block;
 }
 
 a.oo_gallery_slideshow span

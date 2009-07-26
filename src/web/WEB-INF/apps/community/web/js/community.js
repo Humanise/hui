@@ -16,15 +16,44 @@ oo.community = {
 	},
 	resolveImageUrl : function(image,width,height) {
 		return oo.baseContext+'/service/image/?id='+image.id+'&width='+width+'&height='+height;
+	},
+	checkBrowser : function() {
+		if (!n2i.browser.gecko && !n2i.browser.webkit && !n2i.browser.msie7 && !n2i.browser.msie8) {
+			ui.alert({
+				title:'Den webbrowser du anvender er ikke understøttet.',
+				text:''+
+				'Du kan anvende enten Internet Explorer 7+, Firefox 2+ eller Safari 3+.',
+				emotion:'gasp'
+			});
+			return false;
+		}
+		return true;
 	}
 };
+
+oo.community.util = {
+	expand : function(container,toHide,toShow) {
+		var width = container.getWidth();
+		container.setStyle({height:container.getHeight()+'px',overflow:'hidden',position:'relative'});
+		toHide.setStyle({width:width+'px',position:'absolute',background:'#fff'});
+		toShow.setStyle({width:width+'px',opacity:0,display:'block',position:'absolute',background:'#fff'});
+		n2i.ani(toHide,'opacity',0,500,{hideOnComplete:true});
+		n2i.ani(toShow,'opacity',1,500,{delay:300});
+		n2i.ani(container,'height',toShow.getHeight()+'px',500,{ease:n2i.ease.slowFastSlow,onComplete:function() {
+			toHide.setStyle({position:'static'});
+			toShow.setStyle({position:'static'});
+			container.setStyle({height:'',overflow:'',position:'static'});
+		}});
+	}
+}
 
 oo.community.Chrome = function() {
 	this.addBehavior();
 	new oo.community.Chrome.Login();
 	new oo.community.Chrome.SignUp();
 	new oo.community.Chrome.UserInfo();
-	new oo.community.SearchField({element:'casing_search'});
+	new oo.community.Chrome.Search();
+	//new oo.community.SearchField({element:'casing_search'});
 }
 
 oo.community.Chrome.get = function() {
@@ -81,39 +110,19 @@ oo.community.Chrome.buildUserProfileURL = function(username) {
 
 /////////////////////////////////// Search field /////////////////////////////////
 
-oo.community.SearchField = function(o) {
-	var e = this.element = $(o.element);
-	this.name = o.name;
-	this.input = e.select('input')[0];
-	this.reset = e.select('.reset')[0];
-	this.field = new In2iGui.TextField({element:this.input});
-	this.field.addDelegate(this);
+oo.community.Chrome.Search = function() {
+	this.field = ui.get('casingSearch');
+	this.field.listen(this);
+	n2i.log(this.field);
 	this.result = $('casing_search_result');
 	this.busy = false;
 	this.expanded = false;
-	In2iGui.extend(this);
-	this.addBehavior();
 }
 
-oo.community.SearchField.prototype = {
-	addBehavior : function() {
-		this.input.observe('focus',function() {
-			this.animateInput(true);
-		}.bind(this)).observe('blur',function() {
-			this.animateInput(false);
-		}.bind(this));
-		this.reset.observe('click',function(e) {
-			e.stop();
-			this.field.setValue('');
-			this.valueChanged('');
-		}.bind(this));
-	},
-	animateInput : function(expand) {
-		n2i.ani(this.input,'width',expand ? '185px' : '100px',500,{ease:n2i.ease.slowFastSlow});
-	},
-	valueChanged : function(value) {
+oo.community.Chrome.Search.prototype = {
+	$valueChanged : function(value) {
+		n2i.log(value);
 		this.dirty = value.length>0;
-		this.element.setClassName('casing_search_dirty',this.dirty);
 		var c = $$('.content')[0];
 		var r = $$('.content_right')[0];
 		var b = $$('.content_right_body')[0];
@@ -183,15 +192,11 @@ oo.community.SearchField.prototype = {
 oo.community.Chrome.UserInfo = function() {
 	this.base = $('userinfo');
 	if (!this.base) return;
-	this.addBeahvior();
+	ui.get('casingLogout').listen(this);
 }
 
 oo.community.Chrome.UserInfo.prototype = {
-	addBeahvior : function() {
-		this.base.select('a.logout')[0].observe('click',this.logOut.bind(this));
-	},
-	logOut : function(e) {
-		e.stop();
+	$click$casingLogout : function() {
 		CoreSecurity.logOut(function() {
 			In2iGui.showMessage('Du er nu logget ud');
 			window.setTimeout(function() {
@@ -206,60 +211,59 @@ oo.community.Chrome.UserInfo.prototype = {
 oo.community.Chrome.Login = function() {
 	this.form = $('login');
 	if (!this.form) return;
-	this.username = new In2iGui.TextField({element:this.form.username,placeholderElement:this.form.select('label')[0]});
-	this.password = new In2iGui.TextField({element:this.form.password,placeholderElement:this.form.select('label')[1]});
+	this.username = ui.get('casingUsername');
+	this.password = ui.get('casingPassword');
 	this.recoverLink = $('casing_recoverpassword');
+	ui.get('casingLogin').listen(this);
 	this.addBeahvior();
 }
 
 oo.community.Chrome.Login.prototype = {
-	addBeahvior : function() {
-		var self = this;		
-		this.form.onsubmit = function() {
-			if (!n2i.browser.gecko && !n2i.browser.webkit && !n2i.browser.msie7 && !n2i.browser.msie8) {
-				In2iGui.get().alert({
-					title:'Den webbrowser De anvender er ikke understøttet.',
-					text:''+
-					'De kan anvende enten Internet Explorer 7, Firefox 2+ eller Safari 3+.',
-					emotion:'gasp'
-				});
-				return false;
-			}
-			var valid = true;
-			if (self.username.isBlank()) {
-				self.username.setError('Skal udfyldes');
-				self.username.focus();
-				valid = false;
-			} else {
-				self.username.setError(false);
-			}
-			if (self.password.isBlank()) {
-				self.password.setError('Skal udfyldes');
-				valid = false;
-			} else {
-				self.password.setError(false);
-			}
-			if (!valid) return false;
-			var username = self.username.getValue();
-			var password = self.password.getValue();
-			var delegate = {
-	  			callback:function(data) {
-					if (data==true) {
-						self.userDidLogIn(username);
-					} else {
-						In2iGui.hideMessage();
-						self.username.setError('Kunne ikke logge ind!')
-					}
-				},
-	  			errorHandler:function(errorString, exception) {  }
-			};
-			In2iGui.showMessage('Logger ind...');
-			CoreSecurity.changeUser(username,password,delegate);
-			return false;
-		}
-		this.form.select('.sidebar_button')[0].onclick = function() {self.form.onsubmit();return false;};
+	addBeahvior : function() {		
+		this.form.onsubmit = this.logIn.bind(this);
 		this.form.select('.submit')[0].tabIndex=-1;
 		this.recoverLink.observe('click',function(e) {e.stop();this.recoverPassword()}.bind(this));
+	},
+	logIn : function() {
+		if (!oo.community.checkBrowser()) {
+			return false;
+		}
+		var self = this;
+		var valid = true;
+		if (self.username.isEmpty()) {
+			self.username.setError('Skal udfyldes');
+			self.username.focus();
+			valid = false;
+		} else {
+			self.username.setError(false);
+		}
+		if (self.password.isEmpty()) {
+			self.password.setError('Skal udfyldes');
+			valid = false;
+		} else {
+			self.password.setError(false);
+		}
+		if (!valid) return false;
+		var username = self.username.getValue();
+		var password = self.password.getValue();
+		var delegate = {
+  			callback:function(data) {
+				if (data==true) {
+					self.userDidLogIn(username);
+				} else {
+					In2iGui.hideMessage();
+					self.username.setError('Kunne ikke logge ind!')
+				}
+			},
+  			errorHandler:function(errorString, exception) {  }
+		};
+		In2iGui.showMessage('Logger ind...');
+		CoreSecurity.changeUser(username,password,delegate);
+		return false;
+	},
+	
+	$click$casingLogin : function() {
+		this.logIn();
 	},
 	userDidLogIn : function(username) {
 		/*In2iGui.get().alert({
@@ -269,7 +273,7 @@ oo.community.Chrome.Login.prototype = {
 		});*/
 		In2iGui.showMessage('Login lykkedes!');
 		window.setTimeout(function() {
-			document.location=oo.community.Chrome.buildUserProfileURL(username);
+			document.location.reload();
 		},500);
 	},
 	recoverPassword : function() {
@@ -337,10 +341,10 @@ oo.community.Chrome.Login.prototype = {
 oo.community.Chrome.SignUp = function() {
 	this.form = $('signup');
 	var labels = this.form.select('label');
-	this.username = new In2iGui.TextField({element:this.form.abc,placeholderElement:labels[0]});
-	this.password = new In2iGui.TextField({element:this.form.def,placeholderElement:labels[1]});
-	this.name = new In2iGui.TextField({element:this.form.name,placeholderElement:labels[2]});
-	this.email = new In2iGui.TextField({element:this.form.email,placeholderElement:labels[3]});
+	this.username = ui.get('casingSignupUsername');
+	this.password = ui.get('casingSignupPassword');
+	this.name = ui.get('casingSignupName');
+	this.email = ui.get('casingSignupEmail');
 	this.addBehavior();
 }
 
@@ -351,17 +355,11 @@ oo.community.Chrome.SignUp.prototype = {
 			self.submit();
 			return false;
 		};
-		this.form.select('.sidebar_button')[0].onclick = function() {self.form.onsubmit();return false;};
+		ui.get('casingSignUp').listen({$click:this.submit.bind(this)});
 		this.form.select('.submit')[0].tabIndex=-1;
 	},
 	submit : function() {
-		if (!n2i.browser.gecko && !n2i.browser.webkit && !n2i.browser.msie7 && !n2i.browser.msie8) {
-			In2iGui.get().alert({
-				title:'Den webbrowser De anvender er ikke understøttet.',
-				text:''+
-				'De kan anvende enten Internet Explorer 7 eller 8, Firefox 2+ eller Safari 3+.',
-				emotion:'gasp'
-			});
+		if (!oo.community.checkBrowser()) {
 			return false;
 		}
 		var username = this.username.getValue();

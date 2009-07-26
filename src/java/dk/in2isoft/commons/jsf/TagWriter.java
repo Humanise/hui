@@ -127,6 +127,34 @@ public class TagWriter {
 		return endElement("span");
 	}
 	
+	/////////// Strong //////////
+	
+	public TagWriter startStrong() throws IOException {
+		return startElement("strong");
+	}
+
+	public TagWriter startStrong(Object className) throws IOException {
+		return startElement("strong").withClass(className);
+	}
+	
+	public TagWriter endStrong() throws IOException {
+		return endElement("strong");
+	}
+	
+	/////////// EM //////////
+	
+	public TagWriter startEm() throws IOException {
+		return startElement("em");
+	}
+
+	public TagWriter startEm(Object className) throws IOException {
+		return startElement("em").withClass(className);
+	}
+	
+	public TagWriter endEm() throws IOException {
+		return endElement("em");
+	}
+	
 	/////////// SPAN //////////
 	
 	public TagWriter startDiv() throws IOException {

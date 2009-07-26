@@ -90,8 +90,10 @@ In2iGui.Formula.prototype = {
 	buildGroup : function(options,recipe) {
 		var g = this.createGroup(options);
 		recipe.each(function(item) {
-			var w = In2iGui.Formula[item.type].create(item.options);
-			g.add(w);
+			if (In2iGui.Formula[item.type]) {
+				var w = In2iGui.Formula[item.type].create(item.options);
+				g.add(w);
+			}
 		});
 		return g;
 	},
@@ -200,6 +202,15 @@ In2iGui.Formula.Text.prototype = {
 	addBehavior : function() {
 		In2iGui.addFocusClass({element:this.input,classElement:this.element,'class':'in2igui_field_focused'});
 		this.input.observe('keyup',this.onKeyUp.bind(this));
+		var p = this.element.select('em')[0];
+		if (p) {
+			this.updateClass();
+			p.observe('mousedown',function(){this.input.focus()}.bind(this));
+			p.observe('mouseup',function(){this.input.focus()}.bind(this));
+		}
+	},
+	updateClass : function() {
+		this.element.setClassName('in2igui_field_dirty',this.value.length>0);
 	},
 	/** @private */
 	onKeyUp : function(e) {
@@ -211,6 +222,7 @@ In2iGui.Formula.Text.prototype = {
 		}
 		if (this.input.value==this.value) {return;}
 		this.value=this.input.value;
+		this.updateClass();
 		In2iGui.callAncestors(this,'childValueChanged',this.input.value);
 		this.fire('valueChanged',this.input.value);
 	},
@@ -239,6 +251,9 @@ In2iGui.Formula.Text.prototype = {
 		this.setValue('');
 	},
 	setValue : function(value) {
+		if (value===undefined || value===null) {
+			value='';
+		}
 		this.value = value;
 		this.input.value = value;
 	},
@@ -250,6 +265,16 @@ In2iGui.Formula.Text.prototype = {
 	},
 	isEmpty : function() {
 		return n2i.isEmpty(this.input.value);
+	},
+	setError : function(error) {
+		var isError = error ? true : false;
+		this.element.setClassName('in2igui_field_error',isError);
+		if (typeof(error) == 'string') {
+			In2iGui.showToolTip({text:error,element:this.element,key:this.name});
+		}
+		if (!isError) {
+			In2iGui.hideToolTip({key:this.name});
+		}
 	}
 }
 

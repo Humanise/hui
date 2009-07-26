@@ -8,7 +8,7 @@ oo.community.ImgeView = {
 				{type:'Text',options:{label:'Titel:',key:'name'}},
 				{type:'Text',options:{label:'Beskrivelse:',key:'description',lines:2}},
 				{type:'DateTime',options:{label:'Dato:',key:'taken'}},
-				{type:'Tokens',options:{label:'Nøgleord:',key:'tags',width:80}},
+				{type:'Tokens',options:{label:'Nøgleord:',key:'tags',width:80}}
 			]);
 			var buttons = group.createButtons();
 			buttons.add(ui.Button.create({text:'Annuller',name:'cancelEditImage'}));
@@ -17,15 +17,12 @@ oo.community.ImgeView = {
 			this.created = true;
 		}
 		AppCommunity.getImageInfo(this.id,function(data) {
-			n2i.log(data);
 			this.imageFormula.setValues(data);
-			$('imageEditor').show();
-			$('imageProperies').hide();
+			oo.community.util.expand($('imageContainer'),$('imageProperties'),$('imageEditor'));
 		}.bind(this));
 	},
 	$click$cancelEditImage : function() {
-		$('imageEditor').hide();
-		$('imageProperies').show();
+		oo.community.util.expand($('imageContainer'),$('imageEditor'),$('imageProperties'));
 	},
 	$click$updateEditImage : function() {
 		var values = this.imageFormula.getValues();

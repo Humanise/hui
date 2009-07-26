@@ -485,7 +485,7 @@ n2i.animation.render = function(element) {
 				} else if (n2i.browser.msie && work.property=='opacity') {
 					var opacity = (work.from+(work.to-work.from)*v);
 					if (opacity==1) {
-						obj.element.style['filter']='';
+						obj.element.style.removeAttribute('filter');
 					} else {
 						obj.element.style['filter']='alpha(opacity='+(opacity*100)+')';
 					}
@@ -496,7 +496,7 @@ n2i.animation.render = function(element) {
 				if (place==1) {
 					work.finished = true;
 					if (work.delegate && work.delegate.onComplete) {
-						work.delegate.onComplete();
+						window.setTimeout(work.delegate.onComplete);
 					} else if (work.delegate && work.delegate.hideOnComplete) {
 						obj.element.style.display='none';
 					}

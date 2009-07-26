@@ -232,6 +232,22 @@ span.in2igui_formula_text_singleline
 	display: block;
 }
 
+em.in2igui_field_placeholder
+{
+	position: absolute;
+	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+	color: #999;
+	font-style: normal;
+	font-size: 12px;
+	margin-left: 7px;
+	margin-top: 5px;
+}
+
+div.in2igui_field_focused em.in2igui_field_placeholder, div.in2igui_field_dirty em.in2igui_field_placeholder
+{
+	display: none;
+}
+
 /*********************************** Number **********************************/
 
 span.in2igui_number

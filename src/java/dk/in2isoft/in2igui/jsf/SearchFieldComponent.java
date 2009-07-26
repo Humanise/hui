@@ -2,31 +2,28 @@ package dk.in2isoft.in2igui.jsf;
 
 import java.io.IOException;
 
-import javax.el.ValueExpression;
 import javax.faces.component.FacesComponent;
 import javax.faces.component.UIComponentBase;
 import javax.faces.context.FacesContext;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
 
 import dk.in2isoft.commons.jsf.ComponentUtil;
 import dk.in2isoft.commons.jsf.TagWriter;
 
-@FacesComponent(value="in2igui.textfield")
-public class TextFieldComponent extends UIComponentBase {
+@FacesComponent(value="in2igui.searchfield")
+public class SearchFieldComponent extends UIComponentBase {
 
 	private String name;
-	private String inputName;
-	private boolean secret;
 	private String placeholder;
 	private int width;
+	private int expandedWidth;
 	private String value;
 
 	@Override
 	public Object saveState(FacesContext context) {
 		Object[] state = new Object[] {
-			super.saveState(context),name,secret,placeholder,width,value,inputName
+			super.saveState(context),name,placeholder,width,value,expandedWidth
 		};
 		return state;
 	}
@@ -36,11 +33,10 @@ public class TextFieldComponent extends UIComponentBase {
 		Object[] values = (Object[]) state;
 		super.restoreState(context, values[0]);
 		name = (String) values[1];
-		secret = (Boolean) values[2];
-		placeholder = (String) values[3];
-		width = (Integer) values[4];
-		value = (String) values[5];
-		inputName = (String) values[6];
+		placeholder = (String) values[2];
+		width = (Integer) values[3];
+		value = (String) values[4];
+		expandedWidth = (Integer) values[5];
 	}
 	
 	@Override
@@ -53,37 +49,31 @@ public class TextFieldComponent extends UIComponentBase {
 		String id = getClientId();
 		String value = ComponentUtil.getBindingAsString(this, "value", this.value, context);
 		TagWriter writer = new TagWriter(this,context);
-		writer.startDiv("in2igui_field").withId(id);
+		writer.startSpan("in2igui_searchfield").withId(id);
 		if (width>0) {
 			writer.withStyle("width: "+width+"px;");
 		}
-		if (StringUtils.isNotBlank(placeholder)) {
-			writer.startEm("in2igui_field_placeholder").write(placeholder).endEm();
-		}
-		writer.startSpan("in2igui_field_top").startSpan().startSpan().endSpan().endSpan().endSpan();
-		writer.startSpan("in2igui_field_middle").startSpan("in2igui_field_middle").startSpan("in2igui_field_content");
-		writer.startSpan("in2igui_formula_text_singleline");
-		writer.startElement("input").withClass("in2igui_formula_text");
-		if (secret) {
-			writer.withAttribute("type", "password");
-		}
+		writer.startEm("in2igui_searchfield_placeholder").write(placeholder).endEm();
+		writer.startVoidA("in2igui_searchfield_reset").endA();
+		writer.startSpan().startSpan();
+		writer.startElement("input");
 		if (value!=null) {
 			writer.withAttribute("value", value);
 		}
-		if (inputName!=null) {
-			writer.withAttribute("name", inputName);
-		}
 		writer.endElement("input");
-		writer.endSpan();
 		writer.endSpan().endSpan().endSpan();
-		writer.startSpan("in2igui_field_bottom").startSpan().startSpan().endSpan().endSpan().endSpan();
-		writer.endDiv();
 		writer.startScopedScript();
-		writer.write("new In2iGui.Formula.Text({element:'");
+		writer.write("new In2iGui.SearchField({element:'");
 		writer.write(id);
 		writer.write("'");
 		if (name!=null) {
 			writer.write(",name:'"+StringEscapeUtils.escapeJavaScript(name)+"'");
+		}
+		if (placeholder!=null) {
+			writer.write(",placeholder:'"+StringEscapeUtils.escapeJavaScript(placeholder)+"'");
+		}
+		if (expandedWidth>0) {
+			writer.write(",expandedWidth:"+expandedWidth);
 		}
 		writer.write("});");
 		writer.endScopedScript();
@@ -95,14 +85,6 @@ public class TextFieldComponent extends UIComponentBase {
 
 	public String getName() {
 		return name;
-	}
-
-	public void setSecret(boolean secret) {
-		this.secret = secret;
-	}
-
-	public boolean isSecret() {
-		return secret;
 	}
 
 	public void setPlaceholder(String placeholder) {
@@ -129,12 +111,12 @@ public class TextFieldComponent extends UIComponentBase {
 		return value;
 	}
 
-	public void setInputName(String inputName) {
-		this.inputName = inputName;
+	public void setExpandedWidth(int expandedWidth) {
+		this.expandedWidth = expandedWidth;
 	}
 
-	public String getInputName() {
-		return inputName;
+	public int getExpandedWidth() {
+		return expandedWidth;
 	}
 
 	

@@ -1,8 +1,10 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core">
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:gui="http://www.in2isoft.dk/in2igui"
+>
 <f:view contentType="text/html">
 	<h:head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -48,6 +50,7 @@
 			<script src="#{base.localContext}/In2iGui/js/ProgressBar.js" type="text/javascript" charset="utf-8"></script>
 			<script src="#{base.localContext}/In2iGui/js/ObjectList.js" type="text/javascript" charset="utf-8"></script>
 			<script src="#{base.localContext}/In2iGui/js/TextField.js" type="text/javascript" charset="utf-8"></script>
+			<script src="#{base.localContext}/In2iGui/js/SearchField.js" type="text/javascript" charset="utf-8"></script>
 		</h:outputText>
 		<h:outputText rendered="${!base.developmentMode}">
 			<script src="#{base.localContext}/In2iGui/bin/minimized.js?#{lifeCycleService.startTime.time}" type="text/javascript" charset="utf-8"></script>
@@ -77,10 +80,9 @@
 									<!--<li><a href="#{base.localContext}/"><span><span>Kort</span></span></a></li>
 									<li><a href="#{base.localContext}/"><span><span>Søgning</span></span></a></li>-->
 								</ul>
-								<form action="#" method="get" accept-charset="utf-8" class="casing_search" id="casing_search">
-									<div><div><input type="text" name="query" value="" class="text"/></div></div>
-									<div class="reset"></div>
-								</form>
+								<div class="casing_head_search">
+									<gui:searchfield name="casingSearch" width="120" expandedWidth="210" placeholder="Søg her..."/>
+								</div>
 							</div>
 							<div>
 								<div class="content">
@@ -90,7 +92,7 @@
 							
 									<div class="content_right">
 										<div id="casing_search_result"></div>
-										<div class="content_right_body">
+										<div class="content_right_body" style="background: #f9f9f9;">
 											<h:outputText rendered="#{!base.publicUser}">
 												<div id="userinfo">
 													<div class="thumbnail"></div>
@@ -99,7 +101,7 @@
 														<a href="#{base.localContext}/#{base.userName}/" class="link"><span>Min profil</span></a>
 													</p>
 													<p class="buttons">
-														<a class="sidebar_button logout" href="#"><span><span>Log ud</span></span></a>
+														<gui:button small="true" text="Log ud" name="casingLogout"/>
 													</p>
 												</div>
 											</h:outputText>
@@ -107,18 +109,16 @@
 												<h2>Log ind</h2>
 												<form action="login" method="get" accept-charset="utf-8" id="login" class="formula">
 													<div>
-														<p>
-															<label>Brugernavn</label>
-															<span class="field"><span><span><input type="text" name="username" value="" class="text"/></span></span></span>
-														</p>
-														<p>
-															<label>Adgangskode</label>
-															<span class="field"><span><span><input type="password" name="password" value="" class="text"/></span></span></span>
-														</p>
+														<div class="field">
+															<gui:textfield placeholder="Brugernavn" name="casingUsername" inputName="username"/>
+														</div>
+														<div class="field">
+															<gui:textfield placeholder="Kodeord" name="casingPassword" secret="true" inputName="password"/>
+														</div>
 														<p class="buttons">
 															<a href="#" class="link" id="casing_recoverpassword"><span>Glemt kodeord...</span></a>
 															<input type="submit" value="Log ind" class="submit"/>
-															<a class="sidebar_button" href="#"><span><span>Log ind</span></span></a>
+															<gui:button small="true" text="Log ind" name="casingLogin"/>
 														</p>
 													</div>
 												</form>
@@ -126,30 +126,25 @@
 											<h2>Ny bruger</h2>
 											<form action="signup" method="get" accept-charset="utf-8" id="signup" class="formula">
 												<div>
-													<p class="response"></p>
-													<p>
-														<label>Brugernavn</label>
-														<span class="field"><span><span><input type="text" name="abc" value="" class="text"/></span></span></span>
-														<span class="hint">Kun små bogstaver og/eller tal</span>
-													</p>
-													<p>
-														<label>Kodeord</label>
-														<span class="field"><span><span><input type="password" name="def" value="" class="text"/></span></span></span>
-														<span class="hint">Gerne langt og med tal og tegn</span>
-													</p>
-													<p>
-														<label>Navn</label>
-														<span class="field"><span><span><input type="text" name="name" value="" class="text"/></span></span></span>
+													<div class="field">
+														<gui:textfield placeholder="Navn" name="casingSignupName" inputName="signup_name"/>
 														<span class="hint">F.eks: Jens Petersen</span>
-													</p>
-													<p>
-														<label>E-post</label>
-														<span class="field"><span><span><input type="text" name="email" value="" class="text"/></span></span></span>
+													</div>
+													<div class="field">
+														<gui:textfield placeholder="Brugernavn" name="casingSignupUsername" inputName="signup_username"/>
+														<span class="hint">Kun små bogstaver og/eller tal</span>
+													</div>
+													<div class="field">
+														<gui:textfield placeholder="Kodeord" name="casingSignupPassword" inputName="signup_password" secret="true"/>
+														<span class="hint">Gerne langt og med tal og tegn</span>
+													</div>
+													<div class="field">
+														<gui:textfield placeholder="E-postadresse" name="casingSignupEmail" inputName="signup_email"/>
 														<span class="hint">F.eks: jens@mail.dk</span>
-													</p>
+													</div>
 													<p class="buttons">
 														<input type="submit" value="Tilmeld" class="submit"/>
-														<a class="sidebar_button" href="#"><span><span>Tilmeld</span></span></a>
+														<gui:button small="true" text="Tilmeld" name="casingSignUp"/>
 													</p>
 												</div>
 											</form>

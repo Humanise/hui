@@ -41,16 +41,7 @@ oo.community.UserProfile.prototype = {
 		this.buildProfileEditor();
 		AppCommunity.getUserProfile(function(data) {
 			this.profileForm.setValues(data);
-			this.container.setStyle({height:this.container.getHeight()+'px'});
-			this.profileInfo.setStyle({position:'absolute',width:this.profileInfo.getWidth()+'px'});
-			this.profileEditor.show();
-			n2i.ani(this.profileInfo,'opacity',0,500,{hideOnComplete:true});
-			n2i.ani(this.profileEditor,'opacity',1,500);
-			n2i.ani(this.container,'height',this.profileEditor.getHeight()+'px',1000,{ease:n2i.ease.slowFastSlow,onComplete:function() {
-				this.profileEditor.setStyle({position:'static'});
-				this.container.setStyle({height:''});
-			}.bind(this)});
-			
+			oo.community.util.expand(this.container,this.profileInfo,this.profileEditor);			
 		}.bind(this));
 	},
 	buildProfileEditor : function() {
@@ -89,12 +80,7 @@ oo.community.UserProfile.prototype = {
 		});
 	},
 	cancelEditor : function() {
-		this.profileInfo.show();
-		n2i.ani(this.profileInfo,'opacity',1,500);
-		n2i.ani(this.profileEditor,'opacity',0,500,{hideOnComplete:true});
-		n2i.ani(this.container,'height',this.profileInfo.getHeight()+'px',1000,{ease:n2i.ease.slowFastSlow,onComplete:function() {
-			this.profileForm.reset();
-		}.bind(this)});
+		oo.community.util.expand(this.container,this.profileEditor,this.profileInfo);
 	}
 }
 

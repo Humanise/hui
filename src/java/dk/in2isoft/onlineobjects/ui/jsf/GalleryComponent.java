@@ -132,8 +132,8 @@ public class GalleryComponent<T> extends UIComponentBase {
 			}
 			writer.endSpan();
 		}
-		writer.startVoidA("oo_gallery_slideshow").startSpan().write(
-				"Lysbillede-show").endSpan().endA();
+		writer.startDiv("oo_gallery_slideshow").startVoidA("oo_gallery_slideshow").startSpan().write(
+				"Lysbillede-show").endSpan().endA().endDiv();
 		writer.endDiv();
 	}
 

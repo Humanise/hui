@@ -131,60 +131,17 @@ div.in2igui_toolbar_search
 	text-align: center;
 }
 
-.in2igui_toolbar_search .in2igui_searchfield
+div.in2igui_toolbar_search span.in2igui_searchfield
 {
-	height: 28px;
-	background: url('../gfx/search_field.png') left top no-repeat;
-	padding-left: 15px;
-	margin: 10px 0px 2px;
-	text-align: left;
+	margin: 12px 0px 3px;
 }
 
-.in2igui_toolbar_search .in2igui_searchfield div
-{
-	height: 28px;
-	background: url('../gfx/search_field.png') right -28px no-repeat;
-	padding-right: 15px;
-}
-
-.in2igui_toolbar_search .in2igui_searchfield div div
-{
-	height: 28px;
-	background: url('../gfx/search_field.png') right -56px repeat-x;
-	padding: 0px 0px 0px 12px;
-}
-
-.in2igui_searchfield_button
-{
-	position: absolute;
-	width: 15px;
-	height: 15px;
-	background: url('../gfx/search_field_button.png');
-	margin: 7px 0px 0px -5px;
-}
-
-.in2igui_toolbar_search input
-{
-	border: none;
-	background: none;
-	font-size:12px;
-	height:16px;
-	margin:7px 0 0;
-	padding:0;
-	width:80px;
-}
-
-div.in2igui_toolbar_search span
+div.in2igui_toolbar_search_label
 {
 	display: block;
 	color:#334455;
 	font-size:11px;
 	text-align: center;
-}
-
-div.in2igui_toolbar_search_adaptive, div.in2igui_toolbar_search_adaptive input
-{
-	width: 100%;
 }
 
 /********************** Buttons ********************/

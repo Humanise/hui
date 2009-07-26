@@ -12,11 +12,6 @@ div.in2igui_body
 	top: 0;
 }
 
-div.in2igui_body, *
-{
-	zoom: 1;
-}
-
 td.view_toolbar
 {
 	height: 58px;
@@ -75,17 +70,6 @@ textarea.in2igui_formula_text
 span.in2igui_field_content, div.in2igui_list, div.in2igui_box_middle
 {
 	zoom: 1;
-}
-
-span.in2igui_formula_text_singleline
-{
-	position: relative;
-	height: 16px;
-}
-
-span.in2igui_formula_text_singleline input
-{
-	position: absolute;
 }
 
 

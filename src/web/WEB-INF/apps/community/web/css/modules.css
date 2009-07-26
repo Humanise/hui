@@ -30,6 +30,7 @@ div.rendering p.resume
 div.rendering p.tags
 {
 	font-size: 0;
+	color: #fff;
 }
 
 div.rendering a.tag
@@ -39,10 +40,14 @@ div.rendering a.tag
 	text-decoration: none;
 	border: 1px solid #bcd;
 	-moz-border-radius: 8px;
+	-webkit-border-radius: 8px;
 	padding: 0 8px;
 	height: 16px;
-	color: #000;
+	line-height: 16px;
+	color: #123;
+	letter-spacing: 1px;
 	margin-right: 4px;
+	margin-bottom: 4px;
 	display: inline-block;
 }
 

@@ -37,11 +37,6 @@ div.in2igui_box_top, div.in2igui_box_top div, div.in2igui_box_top div div, div.i
 	background: none;
 }
 
-*
-{
-	zoom: 1;
-}
-
 .in2igui_imageviewer_controller
 {
 	width: auto;
@@ -61,4 +56,11 @@ div.in2igui_imageviewer_controller a
 div.in2igui_imageviewer_controller, div.in2igui_imageviewer_controller div, div.in2igui_imageviewer_controller div div
 {
 	background-image: url('../gfx/overlay.gif');
+}
+
+/*********** Search field ***************/
+
+span.in2igui_searchfield, span.in2igui_searchfield span, a.in2igui_searchfield_reset
+{
+	background-image: url('../gfx/search_field.gif');
 }

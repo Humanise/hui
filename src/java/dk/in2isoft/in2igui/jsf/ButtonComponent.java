@@ -14,6 +14,7 @@ public class ButtonComponent extends UIComponentBase {
 	private String text;
 	private String name;
 	private boolean highlighted;
+	private boolean small;
 	
 	@Override
 	public void restoreState(FacesContext context, Object state) {
@@ -22,12 +23,13 @@ public class ButtonComponent extends UIComponentBase {
 		text = (String) stt[1];
 		name = (String) stt[2];
 		highlighted = (Boolean) stt[3];
+		small = (Boolean) stt[4];
 	}
 
 	@Override
 	public Object saveState(FacesContext context) {
 		Object[] state = new Object[] {
-			super.saveState(context),text,name,highlighted
+			super.saveState(context),text,name,highlighted,small
 		};
 		return state;
 	}
@@ -41,7 +43,9 @@ public class ButtonComponent extends UIComponentBase {
 	public void encodeBegin(FacesContext context) throws IOException {
 		String id = getClientId();
 		TagWriter writer = new TagWriter(this,context);
-		if (highlighted) {
+		if (small) {
+			writer.startVoidA("in2igui_button in2igui_button_small_rounded");
+		} else if (highlighted) {
 			writer.startVoidA("in2igui_button in2igui_button_highlighted");
 		} else {
 			writer.startVoidA("in2igui_button");
@@ -82,6 +86,14 @@ public class ButtonComponent extends UIComponentBase {
 
 	public String getName() {
 		return name;
+	}
+
+	public void setSmall(boolean small) {
+		this.small = small;
+	}
+
+	public boolean isSmall() {
+		return small;
 	}
 
 	

@@ -1,5 +1,6 @@
 package dk.in2isoft.onlineobjects.apps.community.views;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 
 import dk.in2isoft.onlineobjects.apps.community.jsf.AbstractManagedBean;
@@ -33,6 +34,10 @@ public class ImageView extends AbstractManagedBean implements InitializingBean {
 	
 	public ImageInfo getImageInfo() {
 		return imageInfo;
+	}
+	
+	public String getDescription() {
+		return StringUtils.trim(imageInfo.getDescription());
 	}
 	
 	public Location getLocation() {

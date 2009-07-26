@@ -1,3 +1,8 @@
+div,h1,h2,h3,h4,h5,h6,ol,ul,li
+{
+	zoom: 1;
+}
+
 div.in2igui_toolbar_icon div.in2igui_icon
 {
 	margin: 0px;
@@ -26,4 +31,28 @@ table.in2igui_objectlist thead th.in2igui_objectlist
 form.in2igui_formula .checkbox 
 {
 	padding: 2px 0px;
+}
+
+
+span.in2igui_formula_text_singleline
+{
+	position: relative;
+	height: 16px;
+}
+
+span.in2igui_formula_text_singleline input
+{
+	position: absolute;
+}
+
+
+
+/*********** Search field ***************/
+
+span.in2igui_searchfield input
+{
+	margin-top: 4px;
+	margin-left: -21px;
+	margin-right: -13px;
+	padding: 0;
 }

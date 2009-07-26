@@ -1,12 +1,19 @@
 <?xml version="1.0"?>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:gui="http://www.in2isoft.dk/in2igui"
+>
 	<ui:composition template="chrome.xhtml">
+		
 		<ui:define name="head">
 			<link rel="stylesheet" href="#{base.localContext}/css/home.css?#{lifeCycleService.startTime.time}" type="text/css" media="screen" charset="utf-8"/>
 			<script type="text/javascript" src="#{base.localContext}/js/home.js?#{lifeCycleService.startTime.time}"></script>
 		</ui:define>
+		
 		<ui:define name="body">
-			<div class="intro">
+			<div class="home_intro">
 				<h2>Velkommen</h2>
 				<p><em>OnlineMe</em> er et online fællesskab hvor mennesker kan <strong>udstille og udveksle information</strong>.
 					Det er endnu usikkert hvordan det vil udvikle sig så du har rig mulighed for at <strong>påvirke det selv</strong>.</p>
@@ -14,38 +21,24 @@
 				<p>Systemet er udviklet af <a href="http://www.in2isoft.dk/" class="link"><span>In2iSoft</span></a> og bygger på ideen om at information skal være
 					<strong>frit</strong> og skal kunne <strong>sammenkædes</strong> frit.</p>
 			</div>
-			<form action="#" method="get" accept-charset="utf-8" class="filter">
-				<div><div><input type="text" name="query" value="" id="search_field" class="text"/></div></div>
-			</form>
-			<div class="section">
-				<div class="section_head"><h2>Billeder</h2></div>
-				<div class="section_body"><div id="images_container"></div></div>
-			</div>
-			<div class="section">
-				<div class="section_head"><h2>Brugere</h2></div>
-				<div class="section_body"><div id="users_container"></div></div>
-			</div>
-			<div class="section">
-				<div class="section_head"><h2>Nøgleord</h2></div>
-				<div id="tags_container" class="cloud"></div>
-			</div>
-			<div class="support">
-				<h2>Support</h2>
-				<p>Anvend formularen herunder til at sende os feedback om problemer eller ønsker om forbedring.</p>
-				<form action="#" method="get" accept-charset="utf-8" id="feedbackForm" class="formula">
-					<p>
-					<label>E-mail-adresse</label>
-					<input type="text" name="email" value="" class="text"/>
-					</p>
-					<p>
-					<label>Besked</label>
-					<textarea name="message" rows="6" cols="20"></textarea>
-					</p>
-					<p>
-					<input type="submit" value="Afsend besked" class="submit"/>
-					</p>
-				</form>
+			<div class="home_latest">
+				<div class="home_filter">
+					<gui:searchfield name="filter" width="120" expandedWidth="200" placeholder="Filtrér..."/>
+				</div>
+				<div class="section">
+					<div class="section_head"><h2>Billeder</h2></div>
+					<div class="section_body"><div id="images_container"></div></div>
+				</div>
+				<div class="section">
+					<div class="section_head"><h2>Brugere</h2></div>
+					<div class="section_body"><div id="users_container"></div></div>
+				</div>
+				<div class="section">
+					<div class="section_head"><h2>Nøgleord</h2></div>
+					<div id="tags_container" class="cloud"></div>
+				</div>
 			</div>
 		</ui:define>
+		
 	</ui:composition>
 </html>

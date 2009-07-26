@@ -80,14 +80,12 @@ div.in2igui_alert a.in2igui_button
 
 div.in2igui_alert a.in2igui_button span
 {
-	display: block;
 	height: 28px;
 	background: url('../gfx/alert_button.png') 100% -28px no-repeat;
 }
 
 div.in2igui_alert a.in2igui_button span span
 {
-	display: block;
 	height: 28px;
 	background: url('../gfx/alert_button.png') 0px -56px repeat-x;
 	padding: 0px 10px;

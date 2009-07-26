@@ -54,4 +54,8 @@ http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
 	    <component-type>in2igui.textfield</component-type>
     	<component-class>dk.in2isoft.in2igui.jsf.TextFieldComponent</component-class>
   	</component>
+    <component>
+	    <component-type>in2igui.searchfield</component-type>
+    	<component-class>dk.in2isoft.in2igui.jsf.SearchFieldComponent</component-class>
+  	</component>
 </faces-config>

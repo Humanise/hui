@@ -13,6 +13,9 @@
 				<divider/>
 				<icon icon="common/color" title="List icons (json)" action="list.setUrl('data/list_icons.json')"/>
 				<icon icon="common/folder" title="List icons" action="ui.showMessage({text:'hey',duration:2000})"/>
+				<right>
+					<searchfield title="Søgning" placeholder="Søg her..."/>
+				</right>
 			</toolbar>
 			<toolbar labels="false">
 				<button title="Opret"/>

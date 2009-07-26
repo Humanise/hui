@@ -79,6 +79,7 @@
 		<script src="{$context}/In2iGui/js/Wizard.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/Articles.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/TextField.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/In2iGui/js/SearchField.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/Overflow.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/lib/wysihat.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 	</xsl:when>
@@ -386,15 +387,23 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 	</script>
 </xsl:template>
 
-<xsl:template match="gui:toolbar//gui:search">
-	<div class="in2igui_toolbar_search" id="{generate-id()}">
-		<div class="in2igui_searchfield"><strong class="in2igui_searchfield_button"><xsl:comment/></strong><div><div><input type="text"/></div></div></div>
-		<span><xsl:value-of select="@title"/></span>
-	</div>
+<xsl:template match="gui:searchfield" name="gui:searchfield">
+	<span class="in2igui_searchfield" id="{generate-id()}">
+		<em class="in2igui_searchfield_placeholder"><xsl:value-of select="@placeholder"/><xsl:comment/></em>
+		<a href="javascript:void(0);" class="in2igui_searchfield_reset"><xsl:comment/></a>
+		<span><span><input type="text"/></span></span>
+	</span>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Toolbar.SearchField({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>'});
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.SearchField({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>'});
 		<xsl:call-template name="gui:createobject"/>
 	</script>
+</xsl:template>
+
+<xsl:template match="gui:toolbar//gui:searchfield">
+	<div class="in2igui_toolbar_search">
+		<xsl:call-template name="gui:searchfield"/>
+		<div class="in2igui_toolbar_search_label"><xsl:value-of select="@title"/></div>
+	</div>
 </xsl:template>
 
 <xsl:template match="gui:toolbar//gui:badge">

@@ -19,7 +19,7 @@
 					</c:if>
 				</div>
 				<div class="profile_info">
-					<div id="profileContainer" style="position: relative; overflow: hidden;">
+					<div id="profileContainer">
 						<div id="profileInfo" class="rendering">
 							<h1>#{userProfile.person.fullName}</h1>
 							<ul class="icons">
@@ -65,7 +65,7 @@
 								</p>
 							</c:if>
 							<h:outputText rendered="#{userProfile.canEdit}">
-								<p><gui:button text="Rediger profil" name="editProfile"/></p>
+								<p style="margin-top: 20px;"><gui:button text="Rediger profil" name="editProfile" small="true"/></p>
 							</h:outputText>
 						</div>
 					</div>
@@ -74,7 +74,7 @@
 			<h:panelGroup rendered="#{not empty userProfile.latestImages.result.list}">
 			<div class="content_body">
 				<h2>Seneste billeder</h2>
-					<oo:gallery model="#{userProfile.latestImages}" var="image">
+				<oo:gallery model="#{userProfile.latestImages}" var="image">
 					<a href="#{base.baseContext}/#{userProfile.user.username}/images/#{image.id}.html">
 						<img src="#{base.baseContext}/service/image/id#{image.id}thumbnail68cropped.jpg" width="68" height="68"/>
 					</a>

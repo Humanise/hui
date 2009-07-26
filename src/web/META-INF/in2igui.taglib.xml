@@ -15,4 +15,11 @@
       <renderer-type>in2igui.textfield</renderer-type>
     </component>
   </tag>
+  <tag>
+    <tag-name>searchfield</tag-name>
+    <component>
+      <component-type>in2igui.searchfield</component-type>
+      <renderer-type>in2igui.searchfield</renderer-type>
+    </component>
+  </tag>
 </facelet-taglib>

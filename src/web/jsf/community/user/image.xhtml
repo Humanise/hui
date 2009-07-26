@@ -9,26 +9,27 @@
 >
 	<ui:composition template="template.xhtml">
 		<ui:param name="tab" value="images"/>
+		
 		<ui:define name="breadcrumb">
 			<li><a href="#{base.baseContext}/#{userProfile.user.username}/images.html">Billeder</a></li>
 			<li><a href="#{base.baseContext}/#{userProfile.user.username}/images/#{imageView.imageId}.html">#{imageView.image.name}</a></li>
 		</ui:define>
+		
 		<ui:define name="content">
 			<div class="content_body image_view">
-				<div style="float: left; width: 310px;">
-					<img src="#{base.baseContext}/service/image/id#{imageView.image.id}width300height1000.jpg" width="300" style="border:1px solid #DDDDDD;
-display:inline-block; padding: 4px;" onclick="oo.community.showImage({id:#{imageView.image.id},width:#{imageView.image.width},height:#{imageView.image.height}})"/>
+				<div class="image_preview">
+					<img src="#{base.baseContext}/service/image/id#{imageView.image.id}width300height1000.jpg" onclick="oo.community.showImage({id:#{imageView.image.id},width:#{imageView.image.width},height:#{imageView.image.height}})"/>
 					
 					<h:panelGroup rendered="#{not empty imageView.location}">
 						<div id="map_canvas" style="width:100%; height:300px; margin-top: 20px;"></div>
 					</h:panelGroup>
 				</div>
-				<div class="rendering">
-					<div id="imageProperies">
+				<div id="imageContainer" class="container">
+					<div class="rendering" id="imageProperties">
 						<h1>#{imageView.image.name}</h1>
-						<p class="minor">#{imageView.image.width} &#215; #{imageView.image.height} (#{imageView.megaPixels} Megapixel), #{imageView.image.contentType}</p>
-						<c:if test="#{not empty imageView.imageInfo.description}">
-							<p class="resume">&#34;#{imageView.imageInfo.description}&#34;</p>
+						<p class="minor fileinfo">#{imageView.image.width} &#215; #{imageView.image.height} (#{imageView.megaPixels} Megapixel), #{imageView.image.contentType}</p>
+						<c:if test="#{not empty imageView.description}">
+							<p class="resume">&#34;#{imageView.description}&#34;</p>
 						</c:if>
 						<c:if test="#{not empty imageView.imageInfo.tags}">
 							<p class="tags">
@@ -38,7 +39,7 @@ display:inline-block; padding: 4px;" onclick="oo.community.showImage({id:#{image
 							</p>
 						</c:if>
 						<h:panelGroup rendered="#{not empty imageView.imageInfo.taken}">
-							<p><span class="label">Dato: </span> <h:outputText value="#{imageView.imageInfo.taken}"><f:convertDateTime pattern="EEEE 'd'. d.  MMMM yyyy 'kl.' hh:mm:ss" locale="da_DK"/></h:outputText></p>
+							<p><span class="label">Dato: </span> <h:outputText value="#{imageView.imageInfo.taken}"><f:convertDateTime pattern="EEEE 'd'. d.  MMMM yyyy 'kl.' HH:mm:ss" locale="da_DK"/></h:outputText></p>
 						</h:panelGroup>
 						<h:panelGroup rendered="#{not empty imageView.imageInfo.cameraMake}">
 							<p><span class="label">Kameraproducent:</span> #{imageView.imageInfo.cameraMake}</p>
@@ -55,15 +56,16 @@ display:inline-block; padding: 4px;" onclick="oo.community.showImage({id:#{image
 							<script type="text/javascript" charset="utf-8">
 								oo.community.ImgeView.id=#{imageView.image.id};
 							</script>
-							<gui:button text="Rediger" name="editImage" highlighted="true"/>
+							<div class="editbutton">
+								<gui:button text="Rediger egenskaber..." name="editImage" small="true"/>
+							</div>
 						</h:panelGroup>
 					</div>
-					<div id="imageEditor">
-						
-					</div>
+					<div id="imageEditor" style="display: none;"></div>
 				</div>
 			</div>
 		</ui:define>
+		
 		<ui:define name="last">
 			<h:panelGroup rendered="#{not empty imageView.location}">
 				<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
@@ -85,5 +87,6 @@ display:inline-block; padding: 4px;" onclick="oo.community.showImage({id:#{image
 				</script>
 			</h:panelGroup>
 		</ui:define>
+
 	</ui:composition>
 </html>

@@ -1,9 +1,29 @@
-div.image_view div.rendering
+div.image_view div.container
 {
 	margin-left: 330px;
+	width: 390px;
 }
 
-div.image_view div.rendering h1
+div.image_view p.fileinfo
 {
-	margin-bottom: 10px;
+	margin-bottom: 20px;
+}
+
+div.image_view div.editbutton
+{
+	margin-top: 20px;
+}
+
+div.image_view div.image_preview
+{
+	float: left;
+	width: 310px;
+}
+
+div.image_view div.image_preview img
+{
+	border: 1px solid #DDDDDD;
+	display: inline-block;
+	padding: 4px;
+	width: 300px;
 }
