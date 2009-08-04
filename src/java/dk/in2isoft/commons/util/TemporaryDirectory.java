@@ -16,7 +16,7 @@ public class TemporaryDirectory {
 	private File dir;
 	
 	private TemporaryDirectory() throws ConfigurationException, IOException {
-		File tempDir = Core.getInstance().getConfiguration().getTempDir();
+		File tempDir = Core.getInstance().getConfigurationService().getTempDir();
 		dir = new File(tempDir,"temp_"+new Date().getTime());
 		if (!dir.mkdir()) {
 			throw new IOException("Could not create temporary directory");

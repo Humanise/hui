@@ -59,7 +59,20 @@
     </servlet-mapping>
   
   <!-- dwr -->
-
+ 	 <servlet>
+		<servlet-name>dwr</servlet-name>
+		<servlet-class>org.directwebremoting.spring.DwrSpringServlet</servlet-class>
+		<init-param>
+			<param-name>debug</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>dwr</servlet-name>
+		<url-pattern>/dwr/*</url-pattern>
+	</servlet-mapping>
+	<!--
 	<servlet>
 		<servlet-name>dwr-invoker</servlet-name>
 		<display-name>DWR Servlet</display-name>
@@ -77,7 +90,7 @@
 		<servlet-name>dwr-invoker</servlet-name>
 		<url-pattern>/dwr/*</url-pattern>
 	</servlet-mapping>
-	
+	-->
     <!-- Faces -->
 	
     <context-param>

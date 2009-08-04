@@ -2116,11 +2116,6 @@ div.in2igui_toolbar_nolabels div.in2igui_divider
 	opacity: 0;
 }
 
-.in2igui_window .titlebar span
-{
-	color:#000;
-}
-
 .in2igui_window .titlebar
 {
 	font-family: 'Lucida Grande','Verdana',sans-serif;
@@ -2130,6 +2125,21 @@ div.in2igui_toolbar_nolabels div.in2igui_divider
 	height:27px;
 	cursor: default;
 	text-align:center;
+}
+
+.in2igui_window .titlebar span
+{
+	color:#000;
+	vertical-align: middle;
+}
+
+span.in2igui_window_icon
+{
+	font-size: 0;
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	margin-right: 3px;
 }
 
 .in2igui_window .titlebar .titlebar
@@ -4022,9 +4032,9 @@ em.in2igui_searchfield_placeholder
 	font-style: normal;
 	color: #999;
 	font-size: 11px;
-	line-height: 15px;
+	line-height: 17px;
 	left: 25px;
-	height: 15px;
+	height: 17px;
 	top: 4px;
 	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
 }
@@ -4032,6 +4042,11 @@ em.in2igui_searchfield_placeholder
 span.in2igui_searchfield_dirty em,span.in2igui_searchfield_focus em, span.in2igui_searchfield_focus_dirty em
 {
 	display: none;
+}
+
+span.in2igui_searchfield_adaptive
+{
+	width: 100%;
 }
 
 /*** Focus ***/

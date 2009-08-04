@@ -1,4 +1,4 @@
-package dk.in2isoft.onlineobjects.publishing;
+package dk.in2isoft.onlineobjects.publishing.remoting;
 
 import java.util.List;
 import java.util.Map;
@@ -17,35 +17,35 @@ import dk.in2isoft.onlineobjects.ui.AbstractRemotingFacade;
 public class PartRemotingFacade extends AbstractRemotingFacade {
 	
 	public void updateHeaderPart(long id,String text,Map<String,String> properties) throws EndUserException {
-		HeaderPart part = (HeaderPart) getModel().get(HeaderPart.class, id);
+		HeaderPart part = (HeaderPart) modelService.get(HeaderPart.class, id);
 		updateProperties(part, properties);
 		part.setText(text);
-		getModel().updateItem(part, getUserSession());
+		modelService.updateItem(part, getUserSession());
 	}
 	
 	public void updateHtmlPart(long id,String html,Map<String,String> properties) throws EndUserException {
-		HtmlPart part = getModel().get(HtmlPart.class, id);
+		HtmlPart part = modelService.get(HtmlPart.class, id);
 		updateProperties(part, properties);
 		part.setHtml(html);
-		getModel().updateItem(part, getUserSession());
+		modelService.updateItem(part, getUserSession());
 	}
 	
 	public void updateImagePart(long id,Long imageId,Map<String,String> properties) throws EndUserException {
-		ImagePart part = getModel().get(ImagePart.class, id);
+		ImagePart part = modelService.get(ImagePart.class, id);
 		if (part==null) {
 			return;
 		}
 		updateProperties(part, properties);
 		UserSession priviledged = getUserSession();
-		List<Relation> relations = getModel().getChildRelations(part, Image.class);
+		List<Relation> relations = modelService.getChildRelations(part, Image.class);
 		for (Relation relation : relations) {
-			getModel().deleteRelation(relation, priviledged);
+			modelService.deleteRelation(relation, priviledged);
 		}
 		if (imageId!=null) {
-			Image image = getModel().get(Image.class, imageId);
-			getModel().createRelation(part, image, priviledged);
+			Image image = modelService.get(Image.class, imageId);
+			modelService.createRelation(part, image, priviledged);
 		}
-		getModel().updateItem(part, priviledged);
+		modelService.updateItem(part, priviledged);
 	}
 	
 	private void updateProperties(Entity entity,Map<String,String> properties) {

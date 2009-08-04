@@ -10,11 +10,14 @@ import dk.in2isoft.onlineobjects.core.Configuration;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.service.ServiceController;
+import dk.in2isoft.onlineobjects.services.ConfigurationService;
 import dk.in2isoft.onlineobjects.ui.Request;
 
 public class WebrendererController extends ServiceController {
 
 	//private static Logger log = Logger.getLogger(WebrendererController.class);
+	
+	private ConfigurationService configurationService;
 	
 	public WebrendererController() {
 		super("webrenderer");
@@ -41,10 +44,9 @@ public class WebrendererController extends ServiceController {
 		} else {
 			format = "PNG";
 		}
-		Configuration conf = Core.getInstance().getConfiguration();
-		File tempFile = File.createTempFile(this.getClass().getSimpleName(), extension, conf.getTempDir());
+		File tempFile = File.createTempFile(this.getClass().getSimpleName(), extension, configurationService.getTempDir());
 		String tempPath = tempFile.getAbsolutePath();
-		String cmd = "osascript "+conf.getBaseDir()+"/WEB-INF/scripts/paparazzi.app  " + url + " " + format
+		String cmd = "osascript "+configurationService.getBasePath()+"/WEB-INF/scripts/paparazzi.app  " + url + " " + format
 		+ " " + tempPath;
 		Process p = Runtime.getRuntime().exec(cmd);
 		checkError(p);
@@ -68,6 +70,14 @@ public class WebrendererController extends ServiceController {
 			throw new EndUserException(sw.toString());
 		}
 		
+	}
+
+	public void setConfigurationService(ConfigurationService configurationService) {
+		this.configurationService = configurationService;
+	}
+
+	public ConfigurationService getConfigurationService() {
+		return configurationService;
 	}
 
 }

@@ -5,14 +5,16 @@ import java.io.IOException;
 import org.apache.log4j.Logger;
 
 import dk.in2isoft.commons.lang.LangUtil;
-import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
+import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.service.ServiceController;
 import dk.in2isoft.onlineobjects.ui.Request;
 
 public class AuthenticationController extends ServiceController {
 
 	private static Logger log = Logger.getLogger(AuthenticationController.class);
+	
+	private SecurityService securityService;
 
 	public AuthenticationController() {
 		super("authentication");
@@ -27,7 +29,7 @@ public class AuthenticationController extends ServiceController {
 		String username = request.getString("username");
 		String password = request.getString("password");
 		String redirect = request.getString("redirect");
-		boolean success = Core.getInstance().getSecurityService().changeUser(request.getSession(), username, password);
+		boolean success = securityService.changeUser(request.getSession(), username, password);
 		log.debug(success);
 		if (success) {
 			if (LangUtil.isDefined(redirect)) {
@@ -42,7 +44,15 @@ public class AuthenticationController extends ServiceController {
 	
 
 	public void logout(Request request) throws IOException, EndUserException {
-		Core.getInstance().getSecurityService().logOut(request.getSession());
+		securityService.logOut(request.getSession());
 		request.redirect(".?action=loggedOut");
+	}
+
+	public void setSecurityService(SecurityService securityService) {
+		this.securityService = securityService;
+	}
+
+	public SecurityService getSecurityService() {
+		return securityService;
 	}
 }

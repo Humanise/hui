@@ -1,3 +1,5 @@
+/********************** Image view ******************/
+
 div.image_view div.container
 {
 	margin-left: 330px;
@@ -26,4 +28,12 @@ div.image_view div.image_preview img
 	display: inline-block;
 	padding: 4px;
 	width: 300px;
+	cursor: pointer;
+}
+
+div.image_view p.image_actions
+{
+	font-size: 10pt;
+	text-align: center;
+	margin: 0;
 }

@@ -149,52 +149,9 @@ div.section_head h2
 	height: 70px;
 }
 
-div.user
+#users_container div.user
 {
-	height: 62px;
+	height: 68px;
 	float: left;
 	margin-right: 25px;
-	font-size: 10pt;
-}
-
-div.user p
-{
-	margin: 0px;
-	margin-left: 60px;
-}
-
-div.user p.username
-{
-	font-size: 10px;
-	color: #999;
-}
-
-div.user p.website
-{
-	margin-top: 10px;
-	font-size: 11px;
-}
-
-div.user p.website a
-{
-	color: #ccc;
-}
-
-div.user p.website span
-{
-	color: #666;
-}
-
-div.user p.website *:hover
-{
-	color: #0033AA;
-}
-
-div.user .thumbnail
-{
-	height: 60px;
-	width: 50px;
-	border: 1px solid #ddd;
-	background: url('../gfx/user.png') center center no-repeat;
-	float: left;
 }

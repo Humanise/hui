@@ -19,7 +19,7 @@
 	
 	<xsl:template name="p:content-editor-head">
 		<script src="{$base-context}/dwr/interface/CompoundDocumentDocument.js?{$cache-version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$base-context}/dwr/interface/Parts.js?{$cache-version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$base-context}/dwr/interface/CoreParts.js?{$cache-version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$local-context}/documents/CompoundDocument/js/CompoundDocumentEditor.js?{$cache-version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 	</xsl:template>
 	

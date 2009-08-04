@@ -1,11 +1,69 @@
 package dk.in2isoft.onlineobjects.services;
 
-public class ConfigurationService {
+import java.io.File;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.TransformerFactory;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.InitializingBean;
+
+import dk.in2isoft.onlineobjects.core.ConfigurationException;
+
+public class ConfigurationService implements InitializingBean {
+	
+	private static Logger log = Logger.getLogger(ConfigurationService.class);
+	
 	private String baseUrl;
+	private String basePath;
 	private String storagePath;
 	private boolean developmentMode;
 	private String imageMagickPath;
 	private String graphvizPath;
+
+	private File tempDir;
+
+
+	public void afterPropertiesSet() throws Exception {
+		File storageDir = new File(storagePath);
+		if (storageDir.canWrite()) {
+			log.info("Storage can be written");
+		} else {
+			throw new ConfigurationException("Unable to write to storage directory on path: "+storageDir);
+		}
+		tempDir = new File(storageDir,"temporary");
+		if (!tempDir.isDirectory()) {
+			if (!tempDir.mkdir()) {
+				throw new ConfigurationException("Could not create temporary directory");
+			}
+			log.info("Created temporary directory");
+		} else if (!tempDir.canWrite()) {
+			throw new ConfigurationException("Can not write to the temporary directory");
+		}
+		testSetup();
+	}
+	
+	public void testSetup() {
+		log.info("Document builder factory: "+DocumentBuilderFactory.newInstance().getClass().getName());
+		log.info("Transformer factory: "+TransformerFactory.newInstance().getClass().getName());
+		log.info("SAX parser factory: "+SAXParserFactory.newInstance().getClass().getName());
+	}
+	
+	public File getTempDir() {
+		return tempDir;
+	}
+	
+	public File getFile(String... path) {
+		StringBuilder name = new StringBuilder();
+		name.append(basePath);
+		for (int i = 0; i < path.length; i++) {
+			name.append(File.separatorChar);
+			name.append(path[i]);
+		}
+		return new File(name.toString());
+	}
+	
 
 	public void setBaseUrl(String baseUrl) {
 		this.baseUrl = baseUrl;
@@ -45,5 +103,13 @@ public class ConfigurationService {
 
 	public String getGraphvizPath() {
 		return graphvizPath;
+	}
+
+	public void setBasePath(String basePath) {
+		this.basePath = basePath;
+	}
+
+	public String getBasePath() {
+		return basePath;
 	}
 }

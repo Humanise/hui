@@ -7,11 +7,6 @@
 	opacity: 0;
 }
 
-.in2igui_window .titlebar span
-{
-	color:#000;
-}
-
 .in2igui_window .titlebar
 {
 	font-family: 'Lucida Grande','Verdana',sans-serif;
@@ -21,6 +16,21 @@
 	height:27px;
 	cursor: default;
 	text-align:center;
+}
+
+.in2igui_window .titlebar span
+{
+	color:#000;
+	vertical-align: middle;
+}
+
+span.in2igui_window_icon
+{
+	font-size: 0;
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	margin-right: 3px;
 }
 
 .in2igui_window .titlebar .titlebar

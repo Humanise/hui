@@ -10,11 +10,8 @@ import dk.in2isoft.in2igui.data.ListData;
 import dk.in2isoft.in2igui.data.ListDataRow;
 import dk.in2isoft.in2igui.data.ListObjects;
 import dk.in2isoft.in2igui.data.ListState;
-import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
-import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Query;
-import dk.in2isoft.onlineobjects.core.Scheduler;
 import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.SecurityException;
 import dk.in2isoft.onlineobjects.core.SecurityService;
@@ -22,11 +19,14 @@ import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.User;
+import dk.in2isoft.onlineobjects.services.SchedulingService;
 import dk.in2isoft.onlineobjects.ui.AbstractRemotingFacade;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
-import freemarker.ext.util.ModelFactory;
 
 public class SetupRemotingFacade extends AbstractRemotingFacade {
+	
+	private ImageService imageService;
+	private SchedulingService schedulingService;
 
 	private void checkUser() throws SecurityException {
 		String username = getUserSession().getUser().getUsername();
@@ -43,23 +43,22 @@ public class SetupRemotingFacade extends AbstractRemotingFacade {
 		if (!password1.equals(password2)) {
 			throw new EndUserException("The passwords do not match");
 		}
-		User user = getModel().getUser(SecurityService.ADMIN_USERNAME);
+		User user = modelService.getUser(SecurityService.ADMIN_USERNAME);
 		user.setPassword(password1);
-		getModel().updateItem(user, getUserSession());
+		modelService.updateItem(user, getUserSession());
 	}
 	
 	public ListObjects listJobs() throws SecurityException {
 		checkUser();
-		Scheduler scheduler = Core.getInstance().getScheduler();
 		ListObjects list = new ListObjects();
-		Map<String, String> jobs = scheduler.listJobs();
+		Map<String, String> jobs = schedulingService.listJobs();
 		for (Entry<String,String> entry : jobs.entrySet()) {
 			String name = entry.getKey();
 			String group = entry.getValue();
 			ListDataRow row = new ListDataRow();
 			row.addColumn("name", name);
 			row.addColumn("group", group);
-			boolean running = scheduler.isRunning(name, group);
+			boolean running = schedulingService.isRunning(name, group);
 			row.addColumn("status", running ? "Kører" : "Venter");
 			list.add(row);
 		}
@@ -76,7 +75,7 @@ public class SetupRemotingFacade extends AbstractRemotingFacade {
 			return list;
 		}
 		Query<Entity> query = (Query<Entity>) Query.of(className).withWords(search).withPaging(0, 50);
-		List<Entity> data = getModel().list(query);
+		List<Entity> data = modelService.list(query);
 		for (Entity entity : data) {
 			ListDataRow row = new ListDataRow();
 			row.addColumn("id", entity.getId());
@@ -102,7 +101,7 @@ public class SetupRemotingFacade extends AbstractRemotingFacade {
 			return list;
 		}
 		Query<Entity> query = (Query<Entity>) Query.of(className).withWords(search).withPaging(page, 50);
-		SearchResult<Entity> result = getModel().search(query);
+		SearchResult<Entity> result = modelService.search(query);
 		list.setWindow(result.getTotalCount(), 50, page);
 		for (Entity entity : result.getResult()) {
 			String kind = entity.getClass().getSimpleName().toLowerCase();
@@ -115,42 +114,55 @@ public class SetupRemotingFacade extends AbstractRemotingFacade {
 	
 	public void startJob(String name, String group) throws SecurityException {
 		checkUser();
-		Core.getInstance().getScheduler().runJob(name, group);
+		schedulingService.runJob(name, group);
 	}
 	
 	public void updateUser(long id,String username,String password) throws EndUserException {
 		checkUser();
-		User user = getModel().get(User.class, id);
+		User user = modelService.get(User.class, id);
 		user.setPassword(password);
 		user.setUsername(username);
-		getModel().updateItem(user, getUserSession());
+		modelService.updateItem(user, getUserSession());
 	}
 	
 	public void deleteUser(long id) throws EndUserException {
 		checkUser();
-		ModelService model = getModel();
-		User user = model.get(User.class, id);
-		List<Entity> list = model.list(Query.of(Entity.class).withPriviledged(user));
+		User user = modelService.get(User.class, id);
+		List<Entity> list = modelService.list(Query.of(Entity.class).withPriviledged(user));
 		for (Entity entity : list) {
-			model.deleteEntity(entity, getUserSession());
+			modelService.deleteEntity(entity, getUserSession());
 		}
-		getModel().deleteEntity(user, getUserSession());
+		modelService.deleteEntity(user, getUserSession());
 	}
 	
 	public void synchronizeImageMetaData() throws EndUserException {
 		checkUser();
-		ModelService model = getModel();
 		UserSession userSession = getUserSession();
-		ImageService imageService = getService(ImageService.class);
-		List<Image> list = model.list(Query.of(Image.class));
+		List<Image> list = modelService.list(Query.of(Image.class));
 		for (Image image : list) {
 			String name = image.getName();
 			if (name!=null && name.toLowerCase().endsWith(".jpg")) {
-				image.setName(imageService.cleanFileName(name));
-				model.updateItem(image, userSession);
+				image.setName(getImageService().cleanFileName(name));
+				modelService.updateItem(image, userSession);
 			}
 			imageService.synchronizeContentType(image, userSession);
 			imageService.synchronizeMetaData(image,userSession);
 		}
+	}
+
+	public void setImageService(ImageService imageService) {
+		this.imageService = imageService;
+	}
+
+	public ImageService getImageService() {
+		return imageService;
+	}
+
+	public void setSchedulingService(SchedulingService schedulingService) {
+		this.schedulingService = schedulingService;
+	}
+
+	public SchedulingService getSchedulingService() {
+		return schedulingService;
 	}
 }

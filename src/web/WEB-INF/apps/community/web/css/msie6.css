@@ -7,3 +7,9 @@ div.content_right
 {
 	width: 188px;
 }
+
+div.casing_login div.field
+{
+	float: left;
+	margin-right: 4px;
+}

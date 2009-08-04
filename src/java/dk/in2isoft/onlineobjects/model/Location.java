@@ -1,5 +1,9 @@
 package dk.in2isoft.onlineobjects.model;
 
+import org.apache.velocity.runtime.parser.node.MathUtils;
+
+import dk.in2isoft.commons.geo.GeoLatLng;
+
 public class Location extends Entity {
 
 	public static String TYPE = Entity.TYPE+"/Location";
@@ -43,5 +47,39 @@ public class Location extends Entity {
 
 	public double getAltitude() {
 		return altitude;
+	}
+	
+	/* Util */
+	
+	public double getLatitudeDegrees() {
+		return new GeoLatLng(Math.abs(latitude)).getDegrees();
+	}
+	
+	public double getLatitudeMinutes() {
+		return new GeoLatLng(Math.abs(latitude)).getMinutes();
+	}
+	
+	public double getLatitudeSeconds() {
+		return new GeoLatLng(Math.abs(latitude)).getSeconds();
+	}
+	
+	public boolean isLatitudeNorth() {
+		return latitude>0;
+	}
+	
+	public double getLongitudeDegrees() {
+		return new GeoLatLng(Math.abs(longitude)).getDegrees();
+	}
+	
+	public double getLongitudeMinutes() {
+		return new GeoLatLng(Math.abs(longitude)).getMinutes();
+	}
+	
+	public double getLongitudeSeconds() {
+		return new GeoLatLng(Math.abs(longitude)).getSeconds();
+	}
+	
+	public boolean isLongitudeEast() {
+		return longitude>0;
 	}
 }

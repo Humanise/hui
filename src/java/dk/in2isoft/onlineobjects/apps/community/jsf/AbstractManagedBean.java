@@ -18,7 +18,7 @@ public class AbstractManagedBean {
 
 	protected Request getRequest() {
 		ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
-		return new Request((HttpServletRequest) context.getRequest(),(HttpServletResponse) context.getResponse());
+		return Request.get((HttpServletRequest) context.getRequest(),(HttpServletResponse) context.getResponse());
 	}
 	
 	public String getBaseContext() {
@@ -37,17 +37,9 @@ public class AbstractManagedBean {
 		return getRequest().isIP();
 	}
 
+	@Deprecated
 	protected ModelService getModel() {
 		return Core.getInstance().getModel();
-	}
-	
-	public boolean isDevelopmentMode() {
-		Request request = getRequest();
-		if (request.isSet("dev")) {
-			return request.getBoolean("dev");
-		} else {
-			return Core.getInstance().getConfiguration().getDevelopmentMode();
-		}
 	}
 
 	public String getUserName() {

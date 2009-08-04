@@ -1,18 +1,39 @@
 <?xml version="1.0"?>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:oo="http://www.onlineobjects.com/jsf" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core">
+<html 
+	xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:oo="http://www.onlineobjects.com/jsf" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:f="http://java.sun.com/jsf/core"
+>
 	<ui:composition template="chrome.xhtml">
 		<ui:param name="top" value="users"/>
+		
+		<ui:define name="title">
+			Brugere<h:outputText value=" &#187; "/>
+		</ui:define>
+		
 		<ui:define name="body">
 			<ul class="breadcrumb">
-				<li><a href="#{base.baseContext}/">OnlineMe</a></li>
-				<li><a href="#{base.baseContext}/users.html/">Brugere</a></li>
+				<li><a href="#{baseView.baseContext}/">OnlineMe</a></li>
+				<li><a href="#{baseView.baseContext}/users.html">Brugere</a></li>
 			</ul>
-			<div class="content_body">
+			<div class="content_body users_view">
 				<h1 class="header">Brugere</h1>
-				<oo:list model="#{users.userList}" var="pair">
-					<a class="link" href="#{base.localContext}/#{pair.key.username}/"><span>#{pair.value.fullName}</span></a>
+				<oo:list model="#{usersView.userList}" var="item">
+					<div class="user">
+						<div class="thumbnail">
+							<h:panelGroup rendered="#{not empty item.image}">
+								<div style="background: url('#{baseView.baseContext}/service/image/id#{item.image.id}width50height60cropped.jpg');" onclick="oo.community.showImage({id:#{item.image.id},width:#{item.image.width},height:#{item.image.height}})"></div>
+							</h:panelGroup>
+						</div>
+						<p><a class="link" href="#{baseView.localContext}/#{item.user.username}/"><span>#{item.person.fullName}</span></a></p>
+						<p class="username">#{item.user.username}<span> @ </span><h:outputText value="#{item.user.created}"><f:convertDateTime pattern="EEEE 'd'. d.  MMMM yyyy" locale="da_DK"/></h:outputText></p>
+						<p class="website"><a class="link" href="#{baseView.localContext}/#{item.user.username}/site/"><span>Website &#187;</span></a></p>
+					</div>
 				</oo:list>
 			</div>
 		</ui:define>
+		
 	</ui:composition>
 </html>

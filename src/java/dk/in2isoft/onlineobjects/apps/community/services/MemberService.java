@@ -3,10 +3,10 @@ package dk.in2isoft.onlineobjects.apps.community.services;
 import org.apache.commons.lang.StringUtils;
 
 import dk.in2isoft.commons.lang.LangUtil;
-import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.ModelService;
+import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.model.EmailAddress;
 import dk.in2isoft.onlineobjects.model.ImageGallery;
@@ -14,12 +14,14 @@ import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.WebSite;
-import dk.in2isoft.onlineobjects.model.util.WebModelUtil;
+import dk.in2isoft.onlineobjects.services.WebModelService;
 import dk.in2isoft.onlineobjects.util.ValidationUtil;
 
 public class MemberService {
 	
 	private ModelService modelService;
+	private WebModelService webModelService;
+	private SecurityService securityService;
 
 	public void validateNewMember(String username, String password) throws IllegalRequestException {
 		if (!StringUtils.isNotBlank(username)) {
@@ -61,8 +63,7 @@ public class MemberService {
 		user.setPassword(password);
 		modelService.createItem(user, session);
 
-		// TODO: Replace with service
-		Core.getInstance().getSecurityService().changeUser(session, username, password);
+		securityService.changeUser(session, username, password);
 
 		// Create a person
 		Person person = new Person();
@@ -88,7 +89,7 @@ public class MemberService {
 		// Create relation between user and web site
 		modelService.createRelation(user, site,session);
 
-		WebModelUtil.createWebPageOnSite(site.getId(),ImageGallery.class, session);
+		webModelService.createWebPageOnSite(site.getId(),ImageGallery.class, session);
 		
 		return user;
 	}
@@ -109,6 +110,22 @@ public class MemberService {
 
 	public ModelService getModelService() {
 		return modelService;
+	}
+
+	public void setWebModelService(WebModelService webModelService) {
+		this.webModelService = webModelService;
+	}
+
+	public WebModelService getWebModelService() {
+		return webModelService;
+	}
+
+	public void setSecurityService(SecurityService securityService) {
+		this.securityService = securityService;
+	}
+
+	public SecurityService getSecurityService() {
+		return securityService;
 	}
 
 }

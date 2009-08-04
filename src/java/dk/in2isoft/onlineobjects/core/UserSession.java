@@ -3,8 +3,6 @@ package dk.in2isoft.onlineobjects.core;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
 import dk.in2isoft.onlineobjects.apps.ApplicationSession;
 import dk.in2isoft.onlineobjects.model.User;
@@ -13,12 +11,12 @@ public class UserSession implements Priviledged {
 
 	public static String SESSION_ATTRIBUTE = "OnlineObjects.UserSession";
 
-	private Map<String, ApplicationSession> toolSessions;
+	private Map<Class<? extends ApplicationController>, ApplicationSession> toolSessions;
 
 	private User user;
 
 	public UserSession() throws SecurityException {
-		toolSessions = new HashMap<String, ApplicationSession>();
+		toolSessions = new HashMap<Class<? extends ApplicationController>, ApplicationSession>();
 		user = Core.getInstance().getModel().getUser(SecurityService.PUBLIC_USERNAME);
 		if (user == null) {
 			throw new IllegalStateException("Could not get the public user!");
@@ -28,6 +26,9 @@ public class UserSession implements Priviledged {
 	protected void setUser(User user) {
 		if (user==null) {
 			throw new IllegalArgumentException("Cannot set the user to null");
+		}
+		if (user.isNew()) {
+			throw new IllegalArgumentException("Cannot set a user that is not persistent");
 		}
 		this.user = user;
 	}
@@ -40,21 +41,16 @@ public class UserSession implements Priviledged {
 		return user.getId();
 	}
 
-	public ApplicationSession getToolSession(String toolName) {
-		if (this.toolSessions.containsKey(toolName)) {
-			return toolSessions.get(toolName);
+	public ApplicationSession getToolSession(ApplicationController controller) {
+		if (this.toolSessions.containsKey(controller.getClass())) {
+			return toolSessions.get(controller.getClass());
 		} else {
-			ApplicationController ctrl = Core.getInstance().getApplicationService().getController(toolName);
-			ApplicationSession session = ctrl.createToolSession();
+			ApplicationSession session = controller.createToolSession();
 			if (session != null) {
-				toolSessions.put(toolName, session);
+				toolSessions.put(controller.getClass(), session);
 			}
 			return session;
 		}
-	}
-	
-	public static UserSession getUserSession(HttpServletRequest request) {
-		return (UserSession) request.getSession().getAttribute(SESSION_ATTRIBUTE);
 	}
 
 	public boolean isSuper() {

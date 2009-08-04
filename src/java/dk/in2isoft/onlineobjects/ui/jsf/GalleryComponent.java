@@ -13,6 +13,7 @@ import javax.faces.render.Renderer;
 
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.onlineobjects.model.Image;
+import dk.in2isoft.onlineobjects.ui.jsf.model.ImageContainer;
 
 @FacesComponent(value = "onlineobjects.gallery")
 public class GalleryComponent<T> extends UIComponentBase {
@@ -75,7 +76,7 @@ public class GalleryComponent<T> extends UIComponentBase {
 			return;
 		}
 		decodeRequest(context, model);
-		ListModelResult<Image> result = model.getResult();
+		ListModelResult<?> result = model.getResult();
 		String id = getClientId();
 		writer.startDiv("oo_gallery").withId(id);
 		encodePaging(writer, result.getTotalCount(), model.getPage(), model.getPageSize());
@@ -84,15 +85,15 @@ public class GalleryComponent<T> extends UIComponentBase {
 		StringBuilder imageArray = new StringBuilder();
 		imageArray.append("[");
 		int num = 0;
-		for (Image image : result.getList()) {
+		for (Object object : result.getList()) {
 			/*StringBuilder src = new StringBuilder();
 			src.append(context.getExternalContext().getRequestContextPath());
 			src.append("/service/image/id").append(image.getId()).append("thumbnail68cropped.jpg");
-			writer.startLi();
 			writer.startA();
 			writer.startElement("img").withAttribute("src", src).endElement("img");
 			writer.endA();*/
-			context.getExternalContext().getRequestMap().put(var, image);
+			writer.startLi();
+			context.getExternalContext().getRequestMap().put(var, object);
 			for (UIComponent child : children) {
 				child.encodeAll(context);
 			}
@@ -100,10 +101,19 @@ public class GalleryComponent<T> extends UIComponentBase {
 			if (num>0) {
 				imageArray.append(",");
 			}
-			imageArray.append("{id:").append(image.getId()).append(",width:")
+			Image image = null;
+			if (object instanceof Image) {
+				image = (Image) object;
+			}
+			if (object instanceof ImageContainer) {
+				image = ((ImageContainer) object).getImage();
+			}
+			if (image!=null) {
+				imageArray.append("{id:").append(image.getId()).append(",width:")
 				.append(image.getWidth()).append(",height:")
 				.append(image.getHeight()).append("}");
-			num++;
+				num++;
+			}
 		}
 		imageArray.append("]");
 		writer.endOl();
@@ -132,8 +142,8 @@ public class GalleryComponent<T> extends UIComponentBase {
 			}
 			writer.endSpan();
 		}
-		writer.startDiv("oo_gallery_slideshow").startVoidA("oo_gallery_slideshow").startSpan().write(
-				"Lysbillede-show").endSpan().endA().endDiv();
+		writer.startVoidA("oo_gallery_slideshow").startSpan().write(
+				"Lysbillede-show").endSpan().endA();
 		writer.endDiv();
 	}
 

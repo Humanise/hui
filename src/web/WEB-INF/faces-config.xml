@@ -15,16 +15,6 @@ http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
         <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
 	<managed-bean>
-        <managed-bean-name>images</managed-bean-name>
-        <managed-bean-class>dk.in2isoft.onlineobjects.apps.community.jsf.ImagesBean</managed-bean-class>
-        <managed-bean-scope>request</managed-bean-scope>
-    </managed-bean>
-	<managed-bean>
-        <managed-bean-name>users</managed-bean-name>
-        <managed-bean-class>dk.in2isoft.onlineobjects.apps.community.jsf.UsersBean</managed-bean-class>
-        <managed-bean-scope>request</managed-bean-scope>
-    </managed-bean>
-	<managed-bean>
         <managed-bean-name>userProfile</managed-bean-name>
         <managed-bean-class>dk.in2isoft.onlineobjects.apps.community.jsf.UserProfileBean</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>

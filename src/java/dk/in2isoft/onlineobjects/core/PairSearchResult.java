@@ -23,4 +23,11 @@ public class PairSearchResult<K,V> {
 	public Iterator<Pair<K, V>> iterator() {
 		return result.iterator();
 	}
+
+	public Pair<K,V> getFirst() {
+		if (result.size()>0) {
+			return result.get(0);
+		}
+		return null;
+	}
 }

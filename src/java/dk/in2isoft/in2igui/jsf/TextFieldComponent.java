@@ -2,7 +2,6 @@ package dk.in2isoft.in2igui.jsf;
 
 import java.io.IOException;
 
-import javax.el.ValueExpression;
 import javax.faces.component.FacesComponent;
 import javax.faces.component.UIComponentBase;
 import javax.faces.context.FacesContext;

@@ -11,6 +11,7 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
 
+import dk.in2isoft.onlineobjects.apps.ApplicationController;
 import dk.in2isoft.onlineobjects.apps.ApplicationSession;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
@@ -26,9 +27,9 @@ public class Importer {
 	private static Logger log = Logger.getLogger(Importer.class);
 	
 	@SuppressWarnings("unchecked")
-	public void importMultipart(Request request) throws IOException, EndUserException {
+	public void importMultipart(ApplicationController controller,Request request) throws IOException, EndUserException {
 		// boolean isMultipart =
-		ApplicationSession session = request.getSession().getToolSession("community");
+		ApplicationSession session = request.getSession().getToolSession(controller);
 		final AsynchronousProcessDescriptor process = session.createAsynchronousProcessDescriptor("imageUpload");
 		if (!ServletFileUpload.isMultipartContent(request.getRequest())) {
 			process.setError(true);

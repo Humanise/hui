@@ -239,11 +239,18 @@ div.content_left
 	width: 750px;
 }
 
+div.content_body
+{
+	padding: 15px;
+	overflow: hidden;
+}
+
+/****************************** Sidebar **************************/
+
 div.content_right
 {
 	float: left;
-	width: 193px;
-	padding: 0px 15px;
+	width: 224px;
 	overflow: hidden;
 }
 
@@ -254,16 +261,23 @@ div.content_right_busy
 
 div.content_right_body
 {
-	padding-top: 10px;
 }
 
-div.content_body
+div.casing_right_section
 {
-	padding: 15px;
-	overflow: hidden;
+	background: #f9f9f9;
+	padding: 10px 15px;
+	margin-left: 1px;
 }
 
-/****************************** Sidebar **************************/
+div.casing_right_box
+{
+	margin-top: 15px;
+	border: 1px solid #D6E0F0;
+	border-right: none;
+	padding: 5px 15px;
+	background-color: #E9F0FF;
+}
 
 div.content_right h2
 {
@@ -271,15 +285,6 @@ div.content_right h2
 	margin: 0px;
 	font-size: 14pt;
 	color: #468;
-}
-
-div.content_right label
-{
-	position: absolute;
-	color:#666666;
-	font-size:9pt;
-	margin-top: 4px;
-	margin-left: 5px;
 }
 
 div.content_right span.hint
@@ -290,23 +295,9 @@ div.content_right span.hint
 	padding-left: 2px;
 }
 
-div.content_right span.error
-{
-	color: red;
-	font-size: 8pt;
-	display: block;
-	padding-left: 2px;
-}
-
 div.content_right div.field
 {
 	margin: 5px 0px 0px;
-}
-
-div.content_right p.response
-{
-	color:red;
-	font-size: 9pt;
 }
 
 div.content_right p
@@ -320,18 +311,27 @@ div.content_right p.buttons
 	margin: 5px 0 0 0;
 }
 
-
-div.content_right form
-{
-	margin-bottom: 50px;
-}
-
 div.content_right form input.submit
 {
 	position: absolute;
 	left: -100px;
 	top: -100px;
 }
+
+/************************** Login ************************/
+
+div.casing_login div.fields
+{
+	overflow: hidden;
+}
+
+div.casing_login div.field
+{
+	width: 94px;
+	margin-right: 2px;
+	float: left;
+}
+
 
 /**************************** User info ************************/
 
@@ -529,6 +529,7 @@ div.casing_head_search
 {
 	overflow: hidden;
 	display: none;
+	padding: 0 15px;
 }
 
 #casing_search_result ul

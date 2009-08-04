@@ -36,8 +36,8 @@ import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.WebPage;
 import dk.in2isoft.onlineobjects.model.WebSite;
-import dk.in2isoft.onlineobjects.model.util.WebModelUtil;
 import dk.in2isoft.onlineobjects.services.PageRenderingService;
+import dk.in2isoft.onlineobjects.services.WebModelService;
 import dk.in2isoft.onlineobjects.ui.AsynchronousProcessDescriptor;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.ui.XSLTInterface;
@@ -53,7 +53,6 @@ public class CommunityController extends ApplicationController {
 
 	public CommunityController() {
 		super("community");
-		privateSpaceController = new PrivateSpaceController(this);
 		addJsfMatcher("<username>/images.html", "/jsf/community/user/images.xhtml");
 		addJsfMatcher("<username>/images/<integer>.html", "/jsf/community/user/image.xhtml");
 		addJsfMatcher("<username>", "/jsf/community/user/index.xhtml");
@@ -61,6 +60,14 @@ public class CommunityController extends ApplicationController {
 		addJsfMatcher("recoverpassword.html", "/jsf/community/recoverpassword.xhtml");
 		addJsfMatcher("invitation.html", "/jsf/community/invitation.xhtml");
 	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		super.afterPropertiesSet();
+		privateSpaceController = new PrivateSpaceController(this);
+	}
+
+
 
 	public static CommunityDAO getDAO() {
 		return dao;
@@ -144,21 +151,22 @@ public class CommunityController extends ApplicationController {
 	}
 
 	private void importImage(Request request) throws IOException, EndUserException {
-		new Importer().importMultipart(request);
+		new Importer().importMultipart(this,request);
 		request.getResponse().setStatus(HttpServletResponse.SC_OK);
 		request.getResponse().getWriter().write("OK");
 	}
 
 	private void displayUserSite(User user, Request request) throws EndUserException {
-		WebSite site = WebModelUtil.getUsersWebSite(user);
+		WebModelService webModelService = Core.getInstance().getBean(WebModelService.class);
+		WebSite site = webModelService.getUsersWebSite(user);
 		if (site == null) {
 			throw new EndUserException("The user does not have a web site!");
 		}
 		WebPage page = null;
 		if (request.getInt("id") > 0) {
-			page = WebModelUtil.getPageForWebNode(request.getInt("id"));
+			page = webModelService.getPageForWebNode(request.getInt("id"));
 		} else {
-			page = WebModelUtil.getWebSiteFrontPage(site);
+			page = webModelService.getWebSiteFrontPage(site);
 		}
 		if (page == null) {
 			throw new EndUserException("The page could not be found!");
@@ -195,7 +203,7 @@ public class CommunityController extends ApplicationController {
 	@SuppressWarnings("unchecked")
 	private void uploadImage(Request request) throws IOException, EndUserException {
 		// boolean isMultipart =
-		ApplicationSession session = request.getSession().getToolSession("community");
+		ApplicationSession session = request.getSession().getToolSession(this);
 		final AsynchronousProcessDescriptor process = session.createAsynchronousProcessDescriptor("imageUpload");
 		if (!ServletFileUpload.isMultipartContent(request.getRequest())) {
 			process.setError(true);
@@ -302,16 +310,10 @@ public class CommunityController extends ApplicationController {
 		StringBuilder sb = new StringBuilder();
 		sb.append("digraph {");
 		sb.append("graph[normalize=true,packMode=\"node\",pad=1]");
-		// sb.append("graph [");
-		// sb.append(
-		// "normalize=true, outputorder=edgesfirst, overlap=false, pack=false");
-		// sb.append(
-		// ",packmode=\"node\", sep=\"0.6\", splines=true, size=\"14,10\"");
-		// sb.append("]");
 		List<Long> added = Lists.newArrayList();
 
-		Query<Relation> rq = Query.of(Relation.class).withPaging(0, 100);
-		List<Relation> relations = getModel().list(rq);
+		Query<Relation> rq = Query.of(Relation.class).withPaging(0, 1000);
+		List<Relation> relations = modelService.list(rq);
 		for (Relation relation : relations) {
 			Entity sub = relation.getSubEntity();
 			Entity supr = relation.getSuperEntity();
@@ -322,6 +324,7 @@ public class CommunityController extends ApplicationController {
 			if (relation.getKind() != null) {
 				sb.append(relation.getKind());
 			}
+			sb.append(" ("+relation.getPosition()+")");
 			sb.append("\" ];");
 		}
 		for (Relation relation : relations) {

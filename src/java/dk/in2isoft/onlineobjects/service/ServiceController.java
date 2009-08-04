@@ -6,11 +6,13 @@ import java.io.IOException;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelService;
+import dk.in2isoft.onlineobjects.services.ConfigurationService;
 import dk.in2isoft.onlineobjects.ui.Request;
 
 public abstract class ServiceController {
 
 	private String name;
+	private ConfigurationService configurationService;
 
 	public ServiceController(String name) {
 		super();
@@ -28,7 +30,7 @@ public abstract class ServiceController {
 	
 	public File getFile(String... path) {
 		StringBuilder filePath = new StringBuilder();
-		filePath.append(Core.getInstance().getConfiguration().getBaseDir());
+		filePath.append(configurationService.getBasePath());
 		filePath.append(File.separator);
 		filePath.append("WEB-INF");
 		filePath.append(File.separator);
@@ -40,5 +42,13 @@ public abstract class ServiceController {
 			filePath.append(path[i]);
 		}
 		return new File(filePath.toString());
+	}
+
+	public void setConfigurationService(ConfigurationService configurationService) {
+		this.configurationService = configurationService;
+	}
+
+	public ConfigurationService getConfigurationService() {
+		return configurationService;
 	}
 }

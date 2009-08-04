@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import dk.in2isoft.commons.lang.LangUtil;
-import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.ModelException;

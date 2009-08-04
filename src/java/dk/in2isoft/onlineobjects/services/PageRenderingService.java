@@ -10,16 +10,14 @@ import java.util.Map;
 import nu.xom.Attribute;
 import nu.xom.Element;
 import dk.in2isoft.commons.xml.XSLTUtil;
-import dk.in2isoft.onlineobjects.core.Configuration;
-import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelService;
+import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.WebNode;
 import dk.in2isoft.onlineobjects.model.WebPage;
 import dk.in2isoft.onlineobjects.model.WebSite;
-import dk.in2isoft.onlineobjects.model.util.WebModelUtil;
 import dk.in2isoft.onlineobjects.publishing.Document;
 import dk.in2isoft.onlineobjects.publishing.DocumentBuilder;
 import dk.in2isoft.onlineobjects.publishing.FeedBuilder;
@@ -32,6 +30,9 @@ public class PageRenderingService {
 	
 	private ModelService modelService;
 	private ConversionService conversionService;
+	private WebModelService webModelService;
+	private ConfigurationService configurationService;
+	private SecurityService securityService;
 
 	public void render(WebPage page,Request request) throws EndUserException {
 		// Get the page content
@@ -55,7 +56,7 @@ public class PageRenderingService {
 		}
 		
 		// Get the website
-		WebSite site = WebModelUtil.getWebSiteOfPage(page);
+		WebSite site = webModelService.getWebSiteOfPage(page);
 		// Create root
 		Element root = new Element("WebPage", NAMESPACE);
 		root.addAttribute(new Attribute("id",String.valueOf(page.getId())));
@@ -72,10 +73,9 @@ public class PageRenderingService {
 		context.appendChild(conversionService.generateXML(node));
 		
 		Element nodes = new Element("nodes", NAMESPACE);
-		List<WebNode> rootNodes = modelService.getChildren(site, WebNode.class);
-		for (Iterator<WebNode> iter = rootNodes.iterator(); iter.hasNext();) {
-			WebNode subNode = (WebNode) iter.next();
-			nodes.appendChild(conversionService.generateXML(subNode));
+		List<Relation> childRelations = modelService.getChildRelations(site, WebNode.class);
+		for (Relation relation : childRelations) {
+			nodes.appendChild(conversionService.generateXML(relation.getSubEntity()));
 		}
 		context.appendChild(nodes);
 		root.appendChild(context);
@@ -84,17 +84,16 @@ public class PageRenderingService {
 		content.addAttribute(new Attribute("id",String.valueOf(document.getId())));
 		content.appendChild(builder.build((Document)document));
 		root.appendChild(content);
-		Configuration conf = Core.getInstance().getConfiguration();
 		
 		String template = page.getPropertyValue(WebPage.PROPERTY_TEMPLATE);
 		if (template==null) template = "basic";
 		
-		File pageStylesheet = conf.getFile(new String[] {"WEB-INF","apps","community","xslt","page.xsl"});
-		File stylesheet = conf.getFile(new String[] {"WEB-INF","apps","community","web","documents",document.getClass().getSimpleName(),"xslt","stylesheet.xsl"});
-		File frame = conf.getFile(new String[] {"WEB-INF","apps","community","web","layouts","horizontal.xsl"});
+		File pageStylesheet = configurationService.getFile(new String[] {"WEB-INF","apps","community","xslt","page.xsl"});
+		File stylesheet = configurationService.getFile(new String[] {"WEB-INF","apps","community","web","documents",document.getClass().getSimpleName(),"xslt","stylesheet.xsl"});
+		File frame = configurationService.getFile(new String[] {"WEB-INF","apps","community","web","layouts","horizontal.xsl"});
 
 		Map<String, String> parameters = buildParameters(request);
-		parameters.put("privilege-document-modify", String.valueOf(Core.getInstance().getSecurityService().canModify(document, request.getSession())));
+		parameters.put("privilege-document-modify", String.valueOf(securityService.canModify(document, request.getSession())));
 		parameters.put("page-design",template);
 		try {
 			if (request.getBoolean("viewsource")) {
@@ -108,10 +107,9 @@ public class PageRenderingService {
 		}
 	}
 	
-	public static Map<String, String> buildParameters(Request request) {
-		Configuration conf = Core.getInstance().getConfiguration();
+	public Map<String, String> buildParameters(Request request) {
 		Map<String, String> parameters = new HashMap<String, String>();
-		String devmode = String.valueOf(conf.getDevelopmentMode());
+		String devmode = String.valueOf(configurationService.isDevelopmentMode());
 		if (request.getBoolean("nodev")) {
 			devmode="false";
 		}
@@ -149,5 +147,29 @@ public class PageRenderingService {
 
 	public ConversionService getConversionService() {
 		return conversionService;
+	}
+
+	public void setWebModelService(WebModelService webModelService) {
+		this.webModelService = webModelService;
+	}
+
+	public WebModelService getWebModelService() {
+		return webModelService;
+	}
+
+	public void setConfigurationService(ConfigurationService configurationService) {
+		this.configurationService = configurationService;
+	}
+
+	public ConfigurationService getConfigurationService() {
+		return configurationService;
+	}
+
+	public void setSecurityService(SecurityService securityService) {
+		this.securityService = securityService;
+	}
+
+	public SecurityService getSecurityService() {
+		return securityService;
 	}
 }

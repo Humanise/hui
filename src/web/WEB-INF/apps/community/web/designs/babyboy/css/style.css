@@ -20,14 +20,25 @@ body
 	background: url('../gfx/header.png') repeat-x;
 }
 
-.header input
+ol.navigation
 {
-	font-family:Georgia,Times,serif;
+	font-size: 13pt;
+	list-style: none;
+	margin: 0;
+	padding: 0;
 	text-align: center;
-	font-size: 14pt;
-	text-transform: uppercase;
-	color: #333;
-	border: none;
+}
+
+ol.navigation li
+{
+	display: inline;
+}
+
+ol.navigation a
+{
+	padding: 2px 4px;
+	margin: 0 3px;
+	text-decoration: none;
 }
 
 .header a
@@ -39,15 +50,6 @@ body
 .header a.selected
 {
 	color: #46a;
-}
-
-.back
-{
-	font-family: Georgia,Times,serif;
-	color: #3e5b66;
-	position: absolute;
-	margin-top: 17px;
-	margin-left: 17px;
 }
 
 div.part_header h1

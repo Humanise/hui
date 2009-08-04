@@ -18,7 +18,12 @@ In2iGui.Button = function(options) {
 In2iGui.Button.create = function(o) {
 	var o = n2i.override({text:'',highlighted:false,enabled:true},o);
 	var className = 'in2igui_button'+(o.highlighted ? ' in2igui_button_highlighted' : '');
-	if (!o.enabled) className+=' in2igui_button_disabled';
+	if (o.small && o.rounded) {
+		className+=' in2igui_button_small_rounded';
+	}
+	if (!o.enabled) {
+		className+=' in2igui_button_disabled';
+	}
 	var element = o.element = new Element('a',{'class':className,href:'#'});
 	var element2 = new Element('span');
 	element.appendChild(element2);
@@ -52,9 +57,7 @@ In2iGui.Button.prototype = {
 	/** @private */
 	clicked : function() {
 		if (this.enabled) {
-			In2iGui.callDelegates(this,'buttonWasClicked'); // deprecated
-			In2iGui.callDelegates(this,'click');
-			In2iGui.callDelegates(this,'onClick'); // deprecated
+			this.fire('click');
 			if (this.options.submit) {
 				var form = In2iGui.get().getAncestor(this,'in2igui_formula');
 				if (form) {form.submit();}

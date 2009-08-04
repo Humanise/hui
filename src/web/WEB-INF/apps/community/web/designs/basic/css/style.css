@@ -20,34 +20,34 @@ body
 	margin-bottom: 20px;
 }
 
-.header input
-{
-	font-family:Georgia,Times,serif;
-	text-align: center;
-	font-size: 14pt;
-	text-transform: uppercase;
-	color: #333;
-	border: none;
-}
+/******************* Header ***************/
 
-.header a
-{
-	text-decoration: none;
-	color: #333;
-}
-
-.header a.selected
-{
-	color: #CE4F11;
-}
-
-.back
+ol.navigation
 {
 	font-family: Georgia,Times,serif;
-	color: #3e5b66;
-	position: absolute;
-	margin-top: 17px;
-	margin-left: 17px;
+	font-size: 13pt;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+}
+
+ol.navigation li
+{
+	display: inline;
+}
+
+ol.navigation a
+{
+	color: #333;
+	padding: 2px 4px;
+	margin: 0 3px;
+	text-decoration: none;
+}
+
+ol.navigation a.selected
+{
+	color: #CE4F11;
 }
 
 div.part_header, div.part_html

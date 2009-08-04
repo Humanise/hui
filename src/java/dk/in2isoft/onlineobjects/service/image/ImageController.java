@@ -6,8 +6,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import dk.in2isoft.commons.http.FilePusher;
-import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
+import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.service.ServiceController;
 import dk.in2isoft.onlineobjects.ui.Request;
@@ -15,6 +15,9 @@ import dk.in2isoft.onlineobjects.util.images.ImageService;
 
 public class ImageController extends ServiceController {
 
+	private ImageService imageService;
+	private ModelService modelService;
+	
 	private Pattern idPattern;
 	private Pattern widthPattern;
 	private Pattern heightPattern;
@@ -73,7 +76,6 @@ public class ImageController extends ServiceController {
 	}
 
 	private void process(Request request, long id, int thumbnail, int width, int height, boolean cropped) throws IOException, EndUserException {		
-		ImageService imageService = Core.getInstance().getBean(ImageService.class);
 		File file;
 		String mime;
 		if (thumbnail > 0) {
@@ -91,7 +93,7 @@ public class ImageController extends ServiceController {
 			}
 			mime = "image/jpeg";
 		} else {
-			Image image = Core.getInstance().getModel().get(Image.class, id);
+			Image image = modelService.get(Image.class, id);
 			if (image == null) {
 				throw new EndUserException("Could not load image with id=" + id);
 			}
@@ -104,6 +106,22 @@ public class ImageController extends ServiceController {
 		FilePusher pusher = new FilePusher(file);
 		pusher.setClientSideCaching(true);
 		pusher.push(request.getResponse(), mime);
+	}
+
+	public void setImageService(ImageService imageService) {
+		this.imageService = imageService;
+	}
+
+	public ImageService getImageService() {
+		return imageService;
+	}
+
+	public void setModelService(ModelService modelService) {
+		this.modelService = modelService;
+	}
+
+	public ModelService getModelService() {
+		return modelService;
 	}
 
 }

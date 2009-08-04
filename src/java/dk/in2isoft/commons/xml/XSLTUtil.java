@@ -132,7 +132,7 @@ public class XSLTUtil {
 		parameters.put("domain-is-ip", String.valueOf(request.isIP()));
 		parameters.put("base-context", request.getBaseContextPath());
 		parameters.put("user-name", request.getSession().getUser().getUsername());
-		parameters.put("development-mode", String.valueOf(Core.getInstance().getConfiguration().getDevelopmentMode()));
+		parameters.put("development-mode", String.valueOf(Core.getInstance().getConfigurationService().isDevelopmentMode()));
 		if (isXhtmlCapable(request.getRequest())) {
 			response.setContentType("application/xhtml+xml");
 		} else {

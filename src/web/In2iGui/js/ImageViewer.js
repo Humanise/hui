@@ -332,15 +332,15 @@ In2iGui.ImageViewer.prototype = {
 	},
 	/** @private */
 	preloadImages : function() {
-		this.loader = new n2i.Preloader();
-		this.loader.setDelegate(this);
+		var loader = new n2i.Preloader();
+		loader.setDelegate(this);
 		for (var i=0; i < this.images.length; i++) {
 			var url = In2iGui.resolveImageUrl(this,this.images[i],this.width,this.height);
-			this.loader.addImages(url);
+			loader.addImages(url);
 		};
 		this.status.innerHTML = '0%';
 		this.status.style.display='';
-		this.loader.load();
+		loader.load(this.index);
 	},
 	/** @private */
 	allImagesDidLoad : function() {

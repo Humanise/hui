@@ -4,6 +4,9 @@
     <create creator="new" javascript="CoreSecurity" scope="application">
       <param name="class" value="dk.in2isoft.onlineobjects.remoting.SecurityRemotingFacade"/>
     </create>
+    <create creator="new" javascript="CorePublishing" scope="application">
+      <param name="class" value="dk.in2isoft.onlineobjects.publishing.remoting.PublishingRemotingFacade"/>
+    </create>
     <create creator="new" javascript="Common" scope="application">
       <param name="class" value="dk.in2isoft.onlineobjects.remoting.CommonRemotingFacade"/>
     </create>
@@ -11,7 +14,7 @@
       <param name="class" value="dk.in2isoft.onlineobjects.apps.desktop.RemotingFacade"/>
     </create>
     <create creator="new" javascript="AppCommunity" scope="application">
-      <param name="class" value="dk.in2isoft.onlineobjects.apps.community.CommunityRemotingFacade"/>
+      <param name="class" value="dk.in2isoft.onlineobjects.apps.community.remoting.CommunityRemotingFacade"/>
     </create>
     <create creator="new" javascript="AppSchool" scope="application">
       <param name="class" value="dk.in2isoft.onlineobjects.apps.school.SchoolRemotingFacade"/>
@@ -32,6 +35,8 @@
     <convert converter="bean" match="dk.in2isoft.onlineobjects.apps.desktop.Window"/>
     <convert converter="bean" match="dk.in2isoft.onlineobjects.apps.desktop.EntityWindow"/>
     <convert converter="bean" match="dk.in2isoft.onlineobjects.apps.desktop.WindowProperty"/>
+    
+    <convert converter="bean" match="dk.in2isoft.onlineobjects.publishing.remoting.*"/>
     
     <convert match="dk.in2isoft.onlineobjects.apps.community.views.ImageInfo" converter="bean"/>
     

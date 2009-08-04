@@ -205,8 +205,8 @@ In2iGui.Formula.Text.prototype = {
 		var p = this.element.select('em')[0];
 		if (p) {
 			this.updateClass();
-			p.observe('mousedown',function(){this.input.focus()}.bind(this));
-			p.observe('mouseup',function(){this.input.focus()}.bind(this));
+			p.observe('mousedown',function(){window.setTimeout(function() {this.input.focus();this.input.select();}.bind(this))}.bind(this));
+			p.observe('mouseup',function(){this.input.focus();this.input.select();}.bind(this));
 		}
 	},
 	updateClass : function() {
@@ -264,7 +264,10 @@ In2iGui.Formula.Text.prototype = {
 		return this.options.label;
 	},
 	isEmpty : function() {
-		return n2i.isEmpty(this.input.value);
+		return this.input.value=='';
+	},
+	isBlank : function() {
+		return this.input.value.strip()=='';
 	},
 	setError : function(error) {
 		var isError = error ? true : false;

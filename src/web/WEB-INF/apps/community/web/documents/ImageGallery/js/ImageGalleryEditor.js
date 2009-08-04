@@ -57,7 +57,7 @@ OO.Editor.ImageGallery.prototype = {
 		toolbar.add(ui.Toolbar.Icon.create({name:'increaseSize',icon:'common/larger','title':'Større'}));
 		toolbar.add(ui.Toolbar.Icon.create({name:'decreaseSize',icon:'common/smaller','title':'Mindre'}));
 	},
-	click$changeFrame : function() {
+	$click$changeFrame : function() {
 		this.openFrameWindow();
 	},
 	setEditor : function(editor) {
@@ -96,13 +96,13 @@ OO.Editor.ImageGallery.prototype = {
 		}.bind(this));
 		this.tempImages = this.images.concat();
 	},
-	click$increaseSize : function() {
+	$click$increaseSize : function() {
 		if (this.imageWidth+20>300) return;
 		this.imageWidth+=20;
 		this.imageHeight+=20;
 		this.rebuildSize();
 	},
-	click$decreaseSize : function() {
+	$click$decreaseSize : function() {
 		if (this.imageWidth-20<100) return;
 		this.imageWidth-=20;
 		this.imageHeight-=20;
@@ -204,7 +204,7 @@ OO.Editor.ImageGallery.prototype = {
 	},
 	
 	// Multi upload
-	click$addImages : function() {
+	$click$addImages : function() {
 		if (!this.addImagesPanel) {
 			//var w = In2iGui.Window.create(null,{title:'Tilføj billede',variant:'dark',padding:5});
 			var u = this.uploader = In2iGui.Upload.create({name:'upload',url:'uploadImage',parameters:{'contentId':OnlineObjects.content.id}});
@@ -236,7 +236,7 @@ OO.Editor.ImageGallery.prototype = {
 		alert(0);
 		this.cancelUploadButton.setEnabled(false);
 	},
-	uploadDidCompleteQueue$upload : function() {
+	$uploadDidCompleteQueue$upload : function() {
 		this.refreshImages();
 		if (this.initialUpload) {
 			this.uploader.clear();
@@ -262,14 +262,14 @@ OO.Editor.ImageGallery.prototype = {
 		}
 		this.styleWindow.show();
 	},
-	selectionChanged$framePicker : function(value) {
+	$selectionChanged$framePicker : function(value) {
 		OO.ImageGallery.getInstance().style = value;
 		for (var i=0; i < this.images.length; i++) {
 			this.images[i].setStyle(value);
 		};
 		ImageGalleryDocument.changeFrameStyle(OnlineObjects.content.id,value);
 	},
-	ok$confirmDeleteImage : function() {
+	$ok$confirmDeleteImage : function() {
 		var self = this;
 		ImageGalleryDocument.deleteImage(this.imageToDelete.image.id,OnlineObjects.content.id,
 			function(data) { 
@@ -304,20 +304,6 @@ OO.Editor.ImageGallery.prototype = {
 	hideImageEditorPanel : function() {
 		if (this.imageEditorPanel) this.imageEditorPanel.hide();
 	},
-	saveImageEditorPanel : function() {
-		var title = In2iGui.get('imageEditorTitle').getValue();
-		var desc = In2iGui.get('imageEditorDescription').getValue();
-		var tags = In2iGui.get('imageEditorTags').getValue();
-		var photo = this.latestEditedPhoto;
-		var self = this;
-
-		ImageGalleryDocument.updateImage(photo.image.id,title,desc,tags,
-			function(newImage) {
-				photo.image = newImage;
-				self.hideImageEditorPanel();
-			}
-		);
-	},
 	getImageEditorPanel : function() {
 		if (!this.imageEditorPanel) {
 			var panel = In2iGui.BoundPanel.create({top:50,left:50});
@@ -334,20 +320,28 @@ OO.Editor.ImageGallery.prototype = {
 			buttons.add(In2iGui.Button.create({name:'saveImageEditor',text:'Gem',highlighted:true}));
 			group.add(buttons);
 			this.imageEditorPanel = panel;
-			var self = this;
-			In2iGui.get().addDelegate({
-				click$cancelImageEditor : function() {
-					self.hideImageEditorPanel();
-				},
-				click$saveImageEditor : function() {
-					self.saveImageEditorPanel();
-				},
-				click$deleteImageEditor : function() {
-					self.deleteImage(self.latestEditedPhoto);
-				}
-			});
 		}
 		return this.imageEditorPanel;
+	},
+	$click$cancelImageEditor : function() {
+		this.hideImageEditorPanel();
+	},
+	$click$saveImageEditor : function() {
+		var title = In2iGui.get('imageEditorTitle').getValue();
+		var desc = In2iGui.get('imageEditorDescription').getValue();
+		var tags = In2iGui.get('imageEditorTags').getValue();
+		var photo = this.latestEditedPhoto;
+		var self = this;
+
+		ImageGalleryDocument.updateImage(photo.image.id,title,desc,tags,
+			function(newImage) {
+				photo.image = newImage;
+				self.hideImageEditorPanel();
+			}
+		);
+	},
+	$click$deleteImageEditor : function() {
+		this.deleteImage(this.latestEditedPhoto);
 	}
 }
 

@@ -8,13 +8,11 @@ import javax.faces.context.ResponseWriter;
 
 public class TagWriter {
 
-	private FacesContext context;
 	private ResponseWriter writer;
 	private UIComponent component;
 
 	public TagWriter(UIComponent component, FacesContext context) {
 		super();
-		this.context = context;
 		this.writer = context.getResponseWriter();
 		this.component = component;
 	}

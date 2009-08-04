@@ -12,7 +12,6 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import dk.in2isoft.onlineobjects.core.events.EventService;
 import dk.in2isoft.onlineobjects.model.Application;
 import dk.in2isoft.onlineobjects.model.User;
-import dk.in2isoft.onlineobjects.services.ApplicationService;
 import dk.in2isoft.onlineobjects.services.ConfigurationService;
 import dk.in2isoft.onlineobjects.services.ConversionService;
 import dk.in2isoft.onlineobjects.services.StorageService;
@@ -23,28 +22,17 @@ public class Core {
 
 	private static Core instance;
 
-	private File baseDir;
-
 	private ServletContext context;
-
-	private Configuration config;
 
 	private ModelService model;
 
 	private ConversionService converter;
-
-	private Scheduler scheduler;
 
 	private Priviledged superUser = new SuperUser();
 
 	private boolean started;
 
 	private Core() {
-		scheduler = new Scheduler();
-	}
-
-	private void setupConfiguration() throws ConfigurationException {
-		this.config = new Configuration(baseDir);
 	}
 
 	public static Core getInstance() {
@@ -63,22 +51,12 @@ public class Core {
 			throw new IllegalStateException("Invalid base path provided");
 		} else {
 			log.info("OnlineObjects started at basePath: " + basePath);
-			this.baseDir = dir;
 			this.context = context;
 		}
-		setupConfiguration();
 		ensureUsers();
 		ensureApplications();
 		started = true;
 		log.info("OnlineObjects started successfully!");
-	}
-
-	public Configuration getConfiguration() {
-		return config;
-	}
-
-	public ApplicationService getApplicationService() {
-		return getBean(ApplicationService.class);
 	}
 
 	public ServletContext getServletContext() {
@@ -99,14 +77,6 @@ public class Core {
 		return model;
 	}
 
-	public SecurityService getSecurityService() {
-		return getBean(SecurityService.class);
-	}
-
-	public EventService getEventService() {
-		return getBean(EventService.class);
-	}
-
 	public ConversionService getConversionService() {
 		if (converter == null) {
 			converter = getBean(ConversionService.class);
@@ -116,10 +86,6 @@ public class Core {
 
 	public StorageService getStorageService() {
 		return getBean(StorageService.class);
-	}
-
-	public Scheduler getScheduler() {
-		return scheduler;
 	}
 
 	private void ensureUsers() throws ModelException {
@@ -147,10 +113,8 @@ public class Core {
 	}
 
 	private void ensureApplications() throws ModelException {
-		ApplicationService applicationService = getApplicationService();
 		Query<Application> query = Query.of(Application.class);
 		List<Application> apps = getModel().list(query);
-		applicationService.registerApplications(apps);
 		boolean found = false;
 		for (Application application : apps) {
 			if ("setup".equals(application.getName())) {
@@ -164,7 +128,6 @@ public class Core {
 			User adminUser = getModel().getUser(SecurityService.ADMIN_USERNAME);
 			getModel().createItem(setup, adminUser);
 			getModel().commit();
-			applicationService.registerApplication(setup);
 			log.info("Created setup application");
 		}
 	}

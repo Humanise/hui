@@ -6,11 +6,20 @@ var n2i = {
 
 n2i.browser.opera = /opera/i.test(navigator.userAgent);
 n2i.browser.msie = !n2i.browser.opera && /MSIE/.test(navigator.userAgent);
-n2i.browser.msie6 = navigator.userAgent.indexOf('MSIE 6')!=-1;
-n2i.browser.msie7 = navigator.userAgent.indexOf('MSIE 7')!=-1;
-n2i.browser.msie8 = navigator.userAgent.indexOf('MSIE 8')!=-1;
-n2i.browser.webkit = navigator.userAgent.indexOf('WebKit')!=-1;
+n2i.browser.msie6 = navigator.userAgent.indexOf('MSIE 6')!==-1;
+n2i.browser.msie7 = navigator.userAgent.indexOf('MSIE 7')!==-1;
+n2i.browser.msie8 = navigator.userAgent.indexOf('MSIE 8')!==-1;
+n2i.browser.webkit = navigator.userAgent.indexOf('WebKit')!==-1;
+n2i.browser.safari = navigator.userAgent.indexOf('Safari')!==-1;
+n2i.browser.webkitVersion = null;
 n2i.browser.gecko = !n2i.browser.webkit && navigator.userAgent.indexOf('Gecko')!=-1;
+
+(function() {
+	var result = /Safari\/([\d.]+)/.exec(navigator.userAgent);
+	if (result) {
+		n2i.browser.webkitVersion=parseFloat(result[1]);
+	}
+})()
 
 n2i.ELEMENT_NODE=1;
 n2i.ATTRIBUTE_NODE=2;
@@ -295,16 +304,21 @@ n2i.Preloader.prototype = {
 	setDelegate : function(d) {
 		this.delegate = d;
 	},
-	load : function() {
+	load : function(startIndex) {
+		startIndex = startIndex || 0;
 		var self = this;
 		this.obs = [];
-		for (var i=0; i < this.images.length; i++) {
+		for (var i=startIndex; i < this.images.length+startIndex; i++) {
+			var index=i;
+			if (index>=this.images.length) {
+				index = index-this.images.length;
+			}
 			var img = new Image();
-			img.n2iPreloaderIndex = i;
+			img.n2iPreloaderIndex = index;
 			img.onload = function() {self.imageChanged(this.n2iPreloaderIndex,'imageDidLoad')};
 			img.onerror = function() {self.imageChanged(this.n2iPreloaderIndex,'imageDidGiveError')};
 			img.onabort = function() {self.imageChanged(this.n2iPreloaderIndex,'imageDidAbort')};
-			img.src = (this.options.context ? this.options.context : '')+this.images[i];
+			img.src = (this.options.context ? this.options.context : '')+this.images[index];
 			this.obs.push(img);
 		};
 	},
@@ -393,6 +407,20 @@ n2i.location = {
 			return h=='#'+name;
 		}
 		return false;
+	},
+	getHashParameter : function(name) {
+		var h = document.location.hash;
+		if (h!=='') {
+			var i = h.indexOf(name+'=');
+			if (i!==-1) {
+				var remaining = h.substring(i+name.length+1);
+				if (remaining.indexOf('&')!==-1) {
+					return remaining.substring(0,remaining.indexOf('&'));
+				}
+				return remaining;
+			}
+		}
+		return null;
 	},
 	clearHash : function() {
 		document.location.hash='#';

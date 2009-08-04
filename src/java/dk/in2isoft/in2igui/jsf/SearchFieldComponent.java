@@ -19,11 +19,12 @@ public class SearchFieldComponent extends UIComponentBase {
 	private int width;
 	private int expandedWidth;
 	private String value;
+	private boolean adaptive;
 
 	@Override
 	public Object saveState(FacesContext context) {
 		Object[] state = new Object[] {
-			super.saveState(context),name,placeholder,width,value,expandedWidth
+			super.saveState(context),name,placeholder,width,value,expandedWidth,adaptive
 		};
 		return state;
 	}
@@ -37,6 +38,7 @@ public class SearchFieldComponent extends UIComponentBase {
 		width = (Integer) values[3];
 		value = (String) values[4];
 		expandedWidth = (Integer) values[5];
+		adaptive = (Boolean) values[6];
 	}
 	
 	@Override
@@ -49,7 +51,7 @@ public class SearchFieldComponent extends UIComponentBase {
 		String id = getClientId();
 		String value = ComponentUtil.getBindingAsString(this, "value", this.value, context);
 		TagWriter writer = new TagWriter(this,context);
-		writer.startSpan("in2igui_searchfield").withId(id);
+		writer.startSpan(adaptive ? "in2igui_searchfield in2igui_searchfield_adaptive" : "in2igui_searchfield").withId(id);
 		if (width>0) {
 			writer.withStyle("width: "+width+"px;");
 		}
@@ -117,6 +119,14 @@ public class SearchFieldComponent extends UIComponentBase {
 
 	public int getExpandedWidth() {
 		return expandedWidth;
+	}
+
+	public void setAdaptive(boolean adaptive) {
+		this.adaptive = adaptive;
+	}
+
+	public boolean isAdaptive() {
+		return adaptive;
 	}
 
 	

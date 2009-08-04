@@ -36,12 +36,21 @@ public class Request {
 
 	private URI uri;
 
-	public Request(HttpServletRequest request, HttpServletResponse response) {
+	private Request(HttpServletRequest request, HttpServletResponse response) {
 		super();
 		this.response = response;
 		this.request = request;
 		this.decode();
 		this.localContext = new String[] {};
+	}
+	
+	public static Request get(HttpServletRequest request, HttpServletResponse response) {
+		Request attribute = (Request) request.getAttribute("OnlineObjectsRequest");
+		if (attribute==null) {
+			attribute = new Request(request, response);
+			request.setAttribute("OnlineObjectsRequest", attribute);
+		}
+		return attribute;
 	}
 
 	private void decode() {

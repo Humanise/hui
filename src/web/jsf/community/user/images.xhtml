@@ -2,17 +2,24 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:oo="http://www.onlineobjects.com/jsf" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core">
 	<ui:composition template="template.xhtml">
 		<ui:param name="tab" value="images"/>
-		<ui:define name="breadcrumb">
-			<li><a href="#{base.baseContext}/#{userProfile.user.username}/images.html">Billeder</a></li>
+		
+		<ui:define name="title">
+			Billeder<h:outputText value=" &#187; "/>#{userProfile.person.fullName}<h:outputText value=" &#187; "/>
 		</ui:define>
+		
+		<ui:define name="breadcrumb">
+			<li><a href="#{baseView.baseContext}/#{userProfile.user.username}/images.html">Billeder</a></li>
+		</ui:define>
+		
 		<ui:define name="content">
 			<div class="content_body">
 				<oo:gallery model="#{userProfile.imageList}" var="image">
-					<a href="#{base.baseContext}/#{userProfile.user.username}/images/#{image.id}.html">
-						<img src="#{base.baseContext}/service/image/id#{image.id}thumbnail68cropped.jpg" width="68" height="68"/>
+					<a href="#{baseView.baseContext}/#{userProfile.user.username}/images/#{image.id}.html">
+						<img src="#{baseView.baseContext}/service/image/id#{image.id}thumbnail68cropped.jpg" width="68" height="68"/>
 					</a>
 				</oo:gallery>
 			</div>
 		</ui:define>
+		
 	</ui:composition>
 </html>

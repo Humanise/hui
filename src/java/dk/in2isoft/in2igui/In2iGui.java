@@ -24,8 +24,8 @@ import org.apache.commons.pool.PoolableObjectFactory;
 import org.apache.commons.pool.impl.StackObjectPool;
 import org.apache.log4j.Logger;
 
-import dk.in2isoft.onlineobjects.core.Configuration;
 import dk.in2isoft.onlineobjects.core.Core;
+import dk.in2isoft.onlineobjects.services.ConfigurationService;
 
 public class In2iGui {
 
@@ -42,12 +42,9 @@ public class In2iGui {
 	private In2iGui() {
 		super();
 		log.info("In2iGui initialized");
-		Configuration config = Core.getInstance().getConfiguration();
-		developmentMode = config.getDevelopmentMode();
-		path = config.getAlternativeIn2iGuiPath();
-		if (path==null) {
-			path = config.getFile("In2iGui").getAbsolutePath();
-		}
+		ConfigurationService config = Core.getInstance().getConfigurationService();
+		developmentMode = config.isDevelopmentMode();
+		path = config.getFile("In2iGui").getAbsolutePath();
 		pool = new StackObjectPool(new PoolableObjectFactory() {
 
 			public void activateObject(Object arg0) throws Exception {

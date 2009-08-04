@@ -143,7 +143,7 @@ In2iGui.Editor.prototype = {
 		this.hoveredColumnIndex=columnIndex;
 		this.columnMenu.showAtPointer(e);
 	},
-	itemWasClicked$In2iGuiEditorColumnMenu : function(value) {
+	$itemWasClicked$In2iGuiEditorColumnMenu : function(value) {
 		if (value=='removeColumn') {
 			this.fire('removeColumn',{'row':this.hoveredRow,'column':this.hoveredColumnIndex});
 		} else if (value=='editColumn') {
@@ -175,20 +175,20 @@ In2iGui.Editor.prototype = {
 			var f = this.columnEditorForm = In2iGui.Formula.create();
 			var g = f.createGroup();
 			var width = In2iGui.Formula.Text.create({label:'Bredde',key:'width'});
-			width.addDelegate({valueChanged:function(v) {this.changeColumnWidth(v)}.bind(this)})
+			width.addDelegate({$valueChanged:function(v) {this.changeColumnWidth(v)}.bind(this)})
 			g.add(width);
 			var marginLeft = In2iGui.Formula.Text.create({label:'Venstremargen',key:'left'});
-			marginLeft.addDelegate({valueChanged:function(v) {this.changeColumnLeftMargin(v)}.bind(this)})
+			marginLeft.addDelegate({$valueChanged:function(v) {this.changeColumnLeftMargin(v)}.bind(this)})
 			g.add(marginLeft);
 			var marginRight = In2iGui.Formula.Text.create({label:'Højremargen',key:'right'});
-			marginRight.addDelegate({valueChanged:this.changeColumnRightMargin.bind(this)})
+			marginRight.addDelegate({$valueChanged:this.changeColumnRightMargin.bind(this)})
 			g.add(marginRight);
 			w.add(f);
 			w.addDelegate(this);
 		}
 		this.columnEditor.show();
 	},
-	userClosedWindow$columnEditor : function() {
+	$userClosedWindow$columnEditor : function() {
 		this.closeColumn();
 		var values = this.columnEditorForm.getValues();
 		values.row=this.hoveredRow;
@@ -264,7 +264,7 @@ In2iGui.Editor.prototype = {
 			this.hidePartControls();
 		}
 	},
-	iconWasClicked$In2iGuiEditorPartActions : function(key,event) {
+	$iconWasClicked$In2iGuiEditorPartActions : function(key,event) {
 		if (key=='delete') {
 			this.deletePart(this.hoveredPart);
 		} else if (key=='new') {
@@ -273,7 +273,7 @@ In2iGui.Editor.prototype = {
 			this.editPart(this.hoveredPart);
 		}
 	},
-	iconWasClicked$In2iGuiEditorPartEditActions : function(key,event) {
+	$iconWasClicked$In2iGuiEditorPartEditActions : function(key,event) {
 		if (key=='cancel') {
 			this.cancelPart(this.activePart);
 		} else if (key=='save') {
@@ -293,7 +293,9 @@ In2iGui.Editor.prototype = {
 	editPart : function(part) {
 		if (!this.active || this.activePart) return;
 		if (this.activePart) this.activePart.deactivate();
-		this.hoveredPart.element.removeClassName('in2igui_editor_part_hover');
+		if (this.hoveredPart) {
+			this.hoveredPart.element.removeClassName('in2igui_editor_part_hover');
+		}
 		this.activePart = part;
 		this.showPartEditControls();
 		part.element.addClassName('in2igui_editor_part_active');

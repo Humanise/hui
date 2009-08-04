@@ -9,11 +9,16 @@
 >
 	<ui:composition template="template.xhtml">
 		<ui:param name="tab" value="overview"/>
+		
+		<ui:define name="title">
+			#{userProfile.person.fullName}<h:outputText value=" &#187; "/>
+		</ui:define>
+		
 		<ui:define name="content">
 			<div class="content_body">
 				<div class="profile_image" id="profileImage">
 					<c:if test="#{userProfile.image!=null}">
-						<div class="profile_image_photo" style="background: url('#{base.baseContext}/service/image/id#{userProfile.image.id}width90height105cropped.jpg')">
+						<div class="profile_image_photo" style="background: url('#{baseView.baseContext}/service/image/id#{userProfile.image.id}width90height105cropped.jpg')">
 							
 						</div>
 					</c:if>
@@ -24,7 +29,7 @@
 							<h1>#{userProfile.person.fullName}</h1>
 							<ul class="icons">
 								<li class="url">
-									<a href="http://#{base.baseDomainContext}/#{userProfile.user.username}/site/" class="link link_next"><span>Hjemmeside</span></a>
+									<a href="http://#{baseView.baseDomainContext}/#{userProfile.user.username}/site/" class="link link_next"><span>Hjemmeside</span></a>
 								</li>
 							</ul>
 							<c:if test="#{userProfile.info.resume!=null &amp;&amp; fn:length(userProfile.info.resume)>0}">
@@ -75,8 +80,8 @@
 			<div class="content_body">
 				<h2>Seneste billeder</h2>
 				<oo:gallery model="#{userProfile.latestImages}" var="image">
-					<a href="#{base.baseContext}/#{userProfile.user.username}/images/#{image.id}.html">
-						<img src="#{base.baseContext}/service/image/id#{image.id}thumbnail68cropped.jpg" width="68" height="68"/>
+					<a href="#{baseView.baseContext}/#{userProfile.user.username}/images/#{image.id}.html">
+						<img src="#{baseView.baseContext}/service/image/id#{image.id}thumbnail68cropped.jpg" width="68" height="68" alt="#{image.name}"/>
 					</a>
 				</oo:gallery>
 			</div>

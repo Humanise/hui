@@ -51,7 +51,7 @@
 			</xsl:otherwise>
 		</xsl:choose>
 		<xsl:comment><![CDATA[[if lt IE 7]>
-			<link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$base-context"/>/In2iGui/css/msie6.css?"><xsl:value-of select="$cache-version"/><![CDATA["> </link>
+			<link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$base-context"/>/In2iGui/css/msie6.css?<xsl:value-of select="$cache-version"/><![CDATA["> </link>
 		<![endif]]]></xsl:comment>
 		<xsl:comment><![CDATA[[if IE 7]>
 			<link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$base-context"/>/In2iGui/css/msie7.css?<xsl:value-of select="$cache-version"/><![CDATA["> </link>
@@ -62,6 +62,7 @@
 				page:{id:<xsl:value-of select="@id"/>,design:'<xsl:value-of select="$page-design"/>'},
 				content:{id:<xsl:value-of select="p:content/@id"/>},
 				site:{id:<xsl:value-of select="p:context/e:Entity[@type='Item/Entity/WebSite']/@id"/>},
+				node:{id:<xsl:value-of select="p:context/e:Entity[@type='Item/Entity/WebNode']/@id"/>},
 				privilege:{modify:<xsl:value-of select="$privilege-document-modify"/>},
 				baseContext:'<xsl:value-of select="$base-context"/>',
 				appContext:'<xsl:value-of select="$local-context"/>'
@@ -72,6 +73,7 @@
 			<script src="{$local-context}/editor/js/Editor.js?{$cache-version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 			<script src="{$base-context}/dwr/engine.js?{$cache-version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 			<script src="{$base-context}/dwr/interface/CoreSecurity.js?{$cache-version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+			<script src="{$base-context}/dwr/interface/CorePublishing.js?{$cache-version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 			<script src="{$base-context}/dwr/interface/AppCommunity.js?{$cache-version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 			<xsl:call-template name="p:content-editor-head"/>
 		</xsl:if>

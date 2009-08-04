@@ -100,7 +100,7 @@ public class ImageGalleryBuilder extends DocumentBuilder implements FeedBuilder 
 		List<Image> images = getModel().getChildren(gallery, Image.class);
 		try {
 			writer.startFeed();
-			writer.startChannel(gallery.getName(),Core.getInstance().getConfiguration().getBaseUrl());
+			writer.startChannel(gallery.getName(),Core.getInstance().getConfigurationService().getBaseUrl());
 			for (Image image : images) {
 				writer.writeItem(image.getName(), image.getPropertyValue(Image.PROPERTY_DESCRIPTION), image.getUpdated());
 			}

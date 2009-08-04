@@ -40,7 +40,7 @@ public class XmlWebGui {
 		super();
 		skin = "In2ition";
 		log.info("In2iGui initialized");
-		path = Core.getInstance().getConfiguration().getBaseDir();
+		path = Core.getInstance().getConfigurationService().getBasePath();
 	}
 
 	public void display(String xmlData, String[] elements, HttpServletResponse response) throws IOException {

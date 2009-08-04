@@ -25,6 +25,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -38,10 +40,10 @@ import dk.in2isoft.onlineobjects.apps.ApplicationController;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.SecurityException;
+import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.model.Application;
 import dk.in2isoft.onlineobjects.service.ServiceController;
-import dk.in2isoft.onlineobjects.service.ServiceManager;
 
 public class Dispatcher implements Filter {
 
@@ -94,13 +96,13 @@ public class Dispatcher implements Filter {
 		}
 	}
 
-	private void fixCookieScope(Request request) {
+	/*private void fixCookieScope(Request request) {
 		String baseDomain = request.getBaseDomain();
 		if (baseDomain != null) {
 			request.getResponse().setHeader("Set-Cookie",
 					"JSESSIONID=" + request.getRequest().getSession().getId() + ";domain=." + baseDomain);
 		}
-	}
+	}*/
 
 	public void doFilter(ServletRequest sRequest, ServletResponse sResponse, FilterChain chain) throws IOException,
 			ServletException {
@@ -112,10 +114,10 @@ public class Dispatcher implements Filter {
 			throw new ServletException(e);
 		}
 		boolean shouldCommit = false;
-		Request req = new Request(request, response);
+		Request req = Request.get(request, response);
 		//fixCookieScope(req);
 		if (req.isSet("username") && req.isSet("password")) {
-			Core.getInstance().getSecurityService().changeUser(req.getSession(), req.getString("username"),
+			Core.getInstance().getBean(SecurityService.class).changeUser(req.getSession(), req.getString("username"),
 					req.getString("password"));
 		}
 		String[] path = req.getFullPath();
@@ -171,7 +173,8 @@ public class Dispatcher implements Filter {
 			/** If it is a service */
 		} else if (path.length > 1 && path[0].equals("service")) {
 			req.setLocalContext((String[]) ArrayUtils.subarray(path, 0, 2));
-			ServiceController controller = ServiceManager.getInstance().getServiceController(path[1]);
+			//ServiceController controller = ServiceManager.getInstance().getServiceController(path[1]);
+			ServiceController controller = getServiceController(path[1]);
 			try {
 				if (controller == null) {
 					throw new EndUserException("No controller found!");
@@ -203,6 +206,18 @@ public class Dispatcher implements Filter {
 			Core.getInstance().getModel().commit();
 		}
 	}
+	
+	private ServiceController getServiceController(String name) {
+		WebApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(filterConfig.getServletContext());
+		Object bean = context.getBean(name+"Controller");
+		return (ServiceController) bean;
+	}
+	
+	private ApplicationController getApplicationController(String name) {
+		WebApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(filterConfig.getServletContext());
+		Object bean = context.getBean(name+"Controller");
+		return (ApplicationController) bean;
+	}
 
 	private String resolveMapping(Request request) {
 		String url = request.getRequest().getRequestURL().toString();
@@ -225,7 +240,7 @@ public class Dispatcher implements Filter {
 	}
 
 	private void callApplication(String application, Request request) throws IOException {
-		ApplicationController controller = Core.getInstance().getApplicationService().getController(application);
+		ApplicationController controller = getApplicationController(application);
 		String[] path = request.getLocalPath();
 		try {
 			if (controller == null) {
@@ -312,7 +327,7 @@ public class Dispatcher implements Filter {
 	private boolean pushCoreFile(String[] path, HttpServletResponse response) {
 		boolean success = false;
 		StringBuilder filePath = new StringBuilder();
-		filePath.append(Core.getInstance().getConfiguration().getBaseDir());
+		filePath.append(Core.getInstance().getConfigurationService().getBasePath());
 		filePath.append(File.separator);
 		filePath.append("WEB-INF");
 		for (int i = 0; i < path.length; i++) {
@@ -335,7 +350,7 @@ public class Dispatcher implements Filter {
 	private boolean pushFile(String[] path, HttpServletResponse response) {
 		boolean success = false;
 		StringBuilder filePath = new StringBuilder();
-		filePath.append(Core.getInstance().getConfiguration().getBaseDir());
+		filePath.append(Core.getInstance().getConfigurationService().getBasePath());
 		filePath.append(File.separator);
 		filePath.append("WEB-INF");
 		filePath.append(File.separator);

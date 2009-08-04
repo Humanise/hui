@@ -10,6 +10,7 @@ OO.Editor = function(delegate) {
 	this.toolbar = null;
 	this.templates = {
 		all : [
+			{value:'blog',title:'Blog',image:OnlineObjects.appContext+'/designs/blog/info/thumbnail.png'},
 			{value:'basic',title:'Basal',image:OnlineObjects.appContext+'/designs/basic/info/thumbnail.png'},
 			{value:'modern',title:'Moderne',image:OnlineObjects.appContext+'/designs/modern/info/thumbnail.png'},
 			{value:'cartoon',title:'Tegneserie',image:OnlineObjects.appContext+'/designs/cartoon/info/thumbnail.png'},
@@ -77,7 +78,6 @@ OO.Editor.prototype = {
 		Element.removeClassName(document.body,'editor_mode');
 		n2i.animate(this.toolbarPadder,'padding-top','0px',500,{ease:n2i.ease.slowFastSlow});
 		this.toolbarRevealer.hide();
-		this.disableWebNodeEditing();
 		this.delegate.deactivate();
 		In2iGui.Editor.get().deactivate();
 	},
@@ -85,13 +85,13 @@ OO.Editor.prototype = {
 
 	// Editor
 	
-	partChanged : function(part) {
+	$partChanged : function(part) {
 		if (part.type=='header') {
-			Parts.updateHeaderPart(part.id,part.getValue(),part.properties);
+			CoreParts.updateHeaderPart(part.id,part.getValue(),part.properties);
 		} else if (part.type=='html') {
-			Parts.updateHtmlPart(part.id,part.getValue(),part.properties);
+			CoreParts.updateHtmlPart(part.id,part.getValue(),part.properties);
 		} else if (part.type=='image') {
-			Parts.updateImagePart(part.id,part.getImageId(),part.properties);
+			CoreParts.updateImagePart(part.id,part.getImageId(),part.properties);
 		}
 	},
 	
@@ -126,7 +126,9 @@ OO.Editor.prototype = {
 	removeActivator : function() {
 		this.activator.style.display = 'none';
 		this.logout.style.display = 'none';
-		this.private.style.display = 'none';
+		if (this.private) {
+			this.private.style.display = 'none';
+		}
 	},
 	goPrivate : function() {
 		document.location='../private/';
@@ -149,37 +151,61 @@ OO.Editor.prototype = {
 		}
 	},
 	
-	// Web nodes
-	
-	disableWebNodeEditing : function() {
-		for (var i=0; i < this.textEditors.length; i++) {
-			this.textEditors[i].destroy();
-		};
-		this.textEditors = [];
-	},
-	
 	enableWebNodeEditing : function() {
+		if (this.webnodes) {return;}
 		this.webnodes = $$('.webnode');
 		var self = this;
-		for (var i=0; i < this.webnodes.length; i++) {
-			var delegate = {
-				textChanged : function(element,value) {
-					var id = element.id.split('-')[1];
-					self.updateWebNode(id,value);
-				}
-			}
-			var editor = new OO.Editor.TextEditor(this.webnodes[i],delegate);
-			this.textEditors[this.textEditors.length] = editor;
-		};
+		this.webnodes.each(function(node) {
+			node.observe('click',function(e) {
+				if (!self.active) return;
+				e.stop();
+				self.showNodePanel(node);
+			})
+		})
 	},
 	
-	updateWebNode : function(id,name) {
-		AppCommunity.updateWebNode(id,name);
+	showNodePanel : function(node) {
+		this.activeNodeId = node.id.split('-')[1];
+		if (!this.nodePanel) {
+			var p = this.nodePanel = ui.BoundPanel.create({width:220});
+			p.add(ui.Button.create({name:'goToNode',title:'Gå til »',small:true,rounded:true}));
+			p.add(ui.Button.create({name:'editNodeText',title:'Rediger tekst',small:true,rounded:true}));
+			p.add(ui.Button.create({name:'moveNodeUp',title:'Flyt til venstre',small:true,rounded:true}));
+			p.add(ui.Button.create({name:'moveNodeDown',title:'Flyt til højre',small:true,rounded:true}));
+			p.add(ui.Button.create({name:'cancelNodePanel',title:'Luk',small:true,rounded:true}));
+		}
+		this.nodePanel.position(node);
+		this.nodePanel.show();
+	},
+	$click$editNodeText : function() {
+		this.nodePanel.hide();
+		var id = this.activeNodeId;
+		new OO.Editor.TextEditor({element:$('node-'+id),$textChanged:function(text) {
+			CorePublishing.updateWebNode(id,text);
+		}});
+	},
+	$click$goToNode : function() {
+		document.location=$('node-'+this.activeNodeId).href+'&edit=true';
+	},
+	$click$cancelNodePanel : function() {
+		if (this.nodePanel) {
+			this.nodePanel.hide();
+		}
+	},
+	$click$moveNodeUp : function() {
+		CorePublishing.moveNodeUp(this.activeNodeId,function() {
+			document.location.reload();
+		});
+	},
+	$click$moveNodeDown : function() {
+		CorePublishing.moveNodeDown(this.activeNodeId,function() {
+			document.location.reload();
+		});
 	},
 	
 	// Templates
 	
-	click$changeTemplate : function() {
+	$click$changeTemplate : function() {
 		this.openTemplateWindow();
 	},
 	openTemplateWindow : function() {
@@ -200,12 +226,12 @@ OO.Editor.prototype = {
 		}
 		this.templatePanel.show();
 	},
-	selectionChanged$templatePicker : function(value) {
+	$selectionChanged$templatePicker : function(value) {
 		var path = OnlineObjects.appContext+'/designs/'+value+'/css/style.css';
 		$('pageDesign').setAttribute('href',path);
-		AppCommunity.changePageTemplate(OnlineObjects.page.id,value);
+		CorePublishing.changePageTemplate(OnlineObjects.page.id,value);
 	},
-	selectionChanged$templateCategories : function(value) {
+	$selectionChanged$templateCategories : function(value) {
 		var p = In2iGui.get('templatePicker');
 		if (p) {
 			p.setObjects(this.templates[value.value]);
@@ -226,86 +252,93 @@ OO.Editor.prototype = {
 			t.addDivider();
 			this.delegate.addToToolbar(t);
 		}
-	}
-}
-
-OO.Editor.prototype.click$pageProperties = function() {
-	if (!this.infoWindow) {
-		var w = In2iGui.Window.create({title:'Sidens egenskaber',padding:5,variant:'dark',width:250});
-		var f = In2iGui.Formula.create({name:'pageInfoForm'});
-		w.add(f);
-		var g = f.createGroup({above:true});
-		g.add(In2iGui.Formula.Text.create({label:'Titel',key:'title'}));
-		g.add(In2iGui.Formula.Tokens.create({label:'Nøgleord',key:'tags'}));
-		var b = g.createButtons({top:10});
-		b.add(In2iGui.Button.create({name:'cancelPageInfo',text:'Annuller'}));
-		b.add(In2iGui.Button.create({name:'savePageInfo',text:'Gem',highlighted:true}));
-		this.infoWindow = w;
-	}
-	var self = this;
-	AppCommunity.getPageInfo(OnlineObjects.page.id,function(data) {
-		In2iGui.get('pageInfoForm').setValues(data);
-		self.infoWindow.show();
-	});
-}
-
-OO.Editor.prototype.click$cancelPageInfo = function() {
-	this.infoWindow.hide();
-}
-
-OO.Editor.prototype.click$savePageInfo = function() {
-	var form = In2iGui.get('pageInfoForm');
-	var data = form.getValues();
-	AppCommunity.savePageInfo(OnlineObjects.page.id,data.title,data.tags);
-	form.reset();
-	this.infoWindow.hide();
-}
-
-
-OO.Editor.prototype.click$newPage = function() {
-	if (!this.newPagePanel) {
-		this.newPagePanel = In2iGui.Window.create({title:'Ny side',padding:0,variant:'dark'});
-		this.newPagePicker = In2iGui.Picker.create({name:'documentPicker',title:'Vælg venligst typen af side der skal oprettes',itemWidth:90,itemHeight:120,valueProperty:'simpleName'});
-		this.newPagePanel.add(this.newPagePicker);
+	},
+	
+	// Page info
+	
+	$click$pageProperties : function() {
+		if (!this.infoWindow) {
+			var w = this.infoWindow = ui.Window.create({title:'Sidens egenskaber',icon:'common/info',padding:5,variant:'dark',width:250});
+			var f = ui.Formula.create({name:'pageInfoForm'});
+			w.add(f);
+			var g = f.buildGroup({above:true},[
+				{type:'Text',options:{label:'Website titel',key:'siteTitle'}},
+				{type:'Text',options:{label:'Sidens titel',key:'pageTitle'}},
+				{type:'Text',options:{label:'Menupunkt',key:'nodeTitle'}},
+				{type:'Tokens',options:{label:'Nøgleord',key:'tags'}}
+			]);
+			var b = g.createButtons({top:10});
+			b.add(ui.Button.create({name:'cancelPageInfo',text:'Annuller'}));
+			b.add(ui.Button.create({name:'savePageInfo',text:'Gem',highlighted:true}));
+		}
 		var self = this;
-		AppCommunity.getDocumentClasses(function(list) {
-			self.updateAndShowNewPagePicker(list);
+		CorePublishing.getPageInfo(OnlineObjects.page.id,function(data) {
+			In2iGui.get('pageInfoForm').setValues(data);
+			self.infoWindow.show();
 		});
-	} else {
+	},
+	$click$cancelPageInfo : function() {
+		this.infoWindow.hide();
+	},
+	$click$savePageInfo : function() {
+		var form = ui.get('pageInfoForm');
+		var data = form.getValues();
+		data.id = OnlineObjects.page.id;
+		CorePublishing.updatePageInfo(data,function() {
+			$$('title')[0].innerHTML=data.pageTitle+' » '+data.siteTitle;
+			$$('div.header a.selected')[0].innerHTML = data.nodeTitle;
+			form.reset();
+			this.infoWindow.hide();
+		}.bind(this));
+	},
+	
+	// New page
+	
+	$click$newPage : function() {
+		if (!this.newPagePanel) {
+			this.newPagePanel = In2iGui.Window.create({title:'Ny side',padding:0,variant:'dark'});
+			this.newPagePicker = In2iGui.Picker.create({name:'documentPicker',title:'Vælg venligst typen af side der skal oprettes',itemWidth:90,itemHeight:120,valueProperty:'simpleName'});
+			this.newPagePanel.add(this.newPagePicker);
+			var self = this;
+			CorePublishing.getDocumentClasses(function(list) {
+				self.updateAndShowNewPagePicker(list);
+			});
+		} else {
+			this.newPagePanel.show();
+		}
+	},
+	updateAndShowNewPagePicker : function(list) {
+		for (var i=0; i < list.length; i++) {
+			list[i].image = OnlineObjects.appContext+'/documents/'+list[i].simpleName+'/thumbnail.png';
+		};
+		this.newPagePicker.setObjects(list);
 		this.newPagePanel.show();
+	},
+	$selectionChanged$documentPicker : function(value) {
+		CorePublishing.createWebPage(OnlineObjects.site.id,value,function(pageId) {
+			document.location='./?id='+pageId+'&edit=true';
+		});
+	},
+	
+	// Delete page
+	
+	$click$deletePage : function() {
+		ui.get().confirm({
+			name:'confirmDeletePage',
+			title:'Er du sikker på at du vil slette siden?',
+			text:'Handlingen kan ikke fortrydes og siden kan ikke genskabes',
+			ok:'Ja, slet siden',
+			cancel:'Nej, jeg fortryder',
+			highlighted:'cancel',emotion:'gasp'
+		});
+	},
+	$ok$confirmDeletePage : function() {
+		CorePublishing.deleteWebPage(OnlineObjects.page.id,function() {
+			document.location='.?edit=true';
+		});
 	}
 }
 
-OO.Editor.prototype.updateAndShowNewPagePicker = function(list) {
-	for (var i=0; i < list.length; i++) {
-		list[i].image = OnlineObjects.appContext+'/documents/'+list[i].simpleName+'/thumbnail.png';
-	};
-	this.newPagePicker.setObjects(list);
-	this.newPagePanel.show();
-}
-
-OO.Editor.prototype.selectionChanged$documentPicker = function(value) {
-	AppCommunity.createWebPage(OnlineObjects.site.id,value,function(pageId) {
-		document.location='./?id='+pageId+'&edit=true';
-	});
-}
-
-OO.Editor.prototype.click$deletePage = function() {
-	In2iGui.get().confirm({
-		name:'confirmDeletePage',
-		title:'Er du sikker på at du vil slette siden?',
-		text:'Handlingen kan ikke fortrydes og siden kan ikke genskabes',
-		ok:'Ja, slet siden',
-		cancel:'Nej, jeg fortryder',
-		highlighted:'cancel',emotion:'gasp'
-	});
-}
-
-OO.Editor.prototype.ok$confirmDeletePage = function() {
-	AppCommunity.deleteWebPage(OnlineObjects.page.id,function() {
-		document.location='.?edit=true';
-	});
-}
 
 /*********************** Utilities **********************/
 
@@ -338,22 +371,20 @@ OO.Editor.getEntityProperties = function(entity,key) {
 
 /*********************** Text editor **********************/
 
-OO.Editor.TextEditor = function(element,delegate) {
-	this.element=$(element);
-	this.delegate=delegate || {};
-	this.element.onclick = function() {
-		this.activate();
-		return false;
-	}.bind(this);
+OO.Editor.TextEditor = function(options) {
+	this.options = options;
+	this.activate();
 }
 
 OO.Editor.TextEditor.prototype.activate = function() {
+	var e = this.options.element;
 	var field = this.field = new Element('input');
-	field.setStyle({width:(this.element.getWidth()+30)+'px',textAlign:'center'});
-	this.element.style.display='none';
-	this.field.value = this.element.innerHTML;
-	n2i.copyStyle(this.element,field,['fontSize','color','backgroundColor','lineHeight','fontFamily','border']);
-	this.element.parentNode.insertBefore(field,this.element);
+	field.setStyle({width:(e.getWidth()+30)+'px',textAlign:'center'});
+	e.style.display='none';
+	this.field.value = this.original = e.innerHTML;
+	n2i.copyStyle(e,field,['fontSize','color','backgroundColor','lineHeight','fontFamily']);
+	this.field.setStyle({border:'none',textAlign:'middle'});
+	e.parentNode.insertBefore(field,e);
 	field.focus();
 	field.select();
 	this.field.onblur = this.deactivate.bind(this);
@@ -366,13 +397,17 @@ OO.Editor.TextEditor.prototype.activate = function() {
 
 OO.Editor.TextEditor.prototype.deactivate = function() {
 	var value = this.field.value;
-	this.element.innerHTML = value;
+	if (!n2i.isEmpty(value)) {
+		this.options.element.innerHTML = value;
+	}
 	this.field.style.display='none';
-	this.element.style.display='';
+	this.options.element.style.display='';
 	this.field.parentNode.removeChild(this.field);
 	delete(this.field);
-	if (this.delegate.textChanged) {
-		this.delegate.textChanged(this.element,value);
+	if (!n2i.isEmpty(value) && value!==this.original) {
+		if (this.options['$textChanged']) {
+			this.options.$textChanged(value,this.options);
+		}
 	}
 }
 

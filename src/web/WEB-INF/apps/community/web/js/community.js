@@ -113,15 +113,16 @@ oo.community.Chrome.buildUserProfileURL = function(username) {
 oo.community.Chrome.Search = function() {
 	this.field = ui.get('casingSearch');
 	this.field.listen(this);
-	n2i.log(this.field);
 	this.result = $('casing_search_result');
 	this.busy = false;
 	this.expanded = false;
+	if (!this.field.isEmpty()) {
+		this.$valueChanged(this.field.getValue());
+	}
 }
 
 oo.community.Chrome.Search.prototype = {
 	$valueChanged : function(value) {
-		n2i.log(value);
 		this.dirty = value.length>0;
 		var c = $$('.content')[0];
 		var r = $$('.content_right')[0];
@@ -230,14 +231,14 @@ oo.community.Chrome.Login.prototype = {
 		}
 		var self = this;
 		var valid = true;
-		if (self.username.isEmpty()) {
+		if (self.username.isBlank()) {
 			self.username.setError('Skal udfyldes');
 			self.username.focus();
 			valid = false;
 		} else {
 			self.username.setError(false);
 		}
-		if (self.password.isEmpty()) {
+		if (self.password.isBlank()) {
 			self.password.setError('Skal udfyldes');
 			valid = false;
 		} else {
@@ -271,7 +272,7 @@ oo.community.Chrome.Login.prototype = {
 			title: 'Du er nu logget ind!',
 			text: '...og vil blive taget til din profil-side med det samme.'
 		});*/
-		In2iGui.showMessage('Login lykkedes!');
+		In2iGui.showMessage('Du er nu logget ind!');
 		window.setTimeout(function() {
 			document.location.reload();
 		},500);
@@ -285,11 +286,11 @@ oo.community.Chrome.Login.prototype = {
 				{type:'Text',options:{label:'Brugernavn eller e-post-adresse',key:'usernameOrEmail'}}
 			]);
 			var cancel = ui.Button.create({text:'Annuller'});
-			cancel.listen({click:function() {box.hide()}});
+			cancel.listen({$click:function() {box.hide()}});
 			var create = ui.Button.create({text:'Genfind kodeord',highlighted:true,submit:true});
 			group.createButtons().add(cancel).add(create);
 			box.add(form);
-			form.listen({submit:function() {
+			form.listen({$submit:function() {
 				if (this.sendingEmail) return;
 				var str = form.getValues().usernameOrEmail;
 				if (n2i.isEmpty(str)) {
@@ -340,12 +341,13 @@ oo.community.Chrome.Login.prototype = {
 
 oo.community.Chrome.SignUp = function() {
 	this.form = $('signup');
-	var labels = this.form.select('label');
-	this.username = ui.get('casingSignupUsername');
-	this.password = ui.get('casingSignupPassword');
-	this.name = ui.get('casingSignupName');
-	this.email = ui.get('casingSignupEmail');
-	this.addBehavior();
+	if (this.form) {
+		this.username = ui.get('casingSignupUsername');
+		this.password = ui.get('casingSignupPassword');
+		this.name = ui.get('casingSignupName');
+		this.email = ui.get('casingSignupEmail');
+		this.addBehavior();
+	}
 }
 
 oo.community.Chrome.SignUp.prototype = {
@@ -367,25 +369,25 @@ oo.community.Chrome.SignUp.prototype = {
 		var name = this.name.getValue();
 		var email = this.email.getValue();
 		var valid = true;
-		if (this.username.isEmpty()) {
+		if (this.username.isBlank()) {
 			valid = false;
 			this.username.setError('Skal udfyldes');
 		} else {
 			this.username.setError(false);
 		}
-		if (this.password.isEmpty()) {
+		if (this.password.isBlank()) {
 			valid = false;
 			this.password.setError('Skal udfyldes');
 		} else {
 			this.password.setError(false);
 		}
-		if (this.name.isEmpty()) {
+		if (this.name.isBlank()) {
 			valid = false;
 			this.name.setError('Skal udfyldes');
 		} else {
 			this.name.setError(false);
 		}
-		if (this.email.isEmpty()) {
+		if (this.email.isBlank()) {
 			valid = false;
 			this.email.setError('Skal udfyldes');
 		} else {
@@ -469,7 +471,7 @@ oo.Gallery.prototype = {
 		return this.imageViewer;
 	},
 	resolveImageUrl : function(image,width,height) {
-		return oo.baseContext+'/service/image/?id='+image.id+'&width='+width+'&height='+height;
+		return oo.baseContext+'/service/image/id'+image.id+'width'+Math.round(width)+'height'+Math.round(height)+'.jpg';
 	}
 }
 

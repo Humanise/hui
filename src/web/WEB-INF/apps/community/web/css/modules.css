@@ -64,10 +64,14 @@ div.rendering a.tag:focus
 	outline: none;
 }
 
-div.rendering p.minor
+div.rendering .minor
+{
+	font-size: 9pt;
+}
+
+div.rendering .dimmed
 {
 	color: #789;
-	font-size: 9pt;
 }
 
 div.rendering p span.label
@@ -111,4 +115,91 @@ table.formula th
 	text-align: right;
 	font-weight: normal;
 	font-size: 13px;
+}
+
+/************************** User ****************************/
+
+div.user
+{
+	font-size: 10pt;
+	overflow: hidden;
+}
+
+div.user p
+{
+	margin: 0px;
+	margin-left: 66px;
+}
+
+div.user p.username
+{
+	font-size: 10px;
+	color: #999;
+}
+
+div.user p.website
+{
+	margin-top: 10px;
+	font-size: 11px;
+}
+
+div.user p.website a
+{
+	color: #ccc;
+}
+
+div.user p.website span
+{
+	color: #666;
+}
+
+div.user p.website *:hover
+{
+	color: #0033AA;
+}
+
+div.user .thumbnail
+{
+	height: 66px;
+	width: 56px;
+	border: 1px solid #ddd;
+	border-color: #eee #ddd #ccc;
+	background: url('../gfx/user.png') center center no-repeat;
+	float: left;
+}
+
+div.user div.thumbnail div
+{
+	height:60px;
+	width:50px;
+	margin: 3px;
+	cursor: pointer;
+}
+
+/****************************** Mini search results *****************************/
+
+div.mini_searchresult ol
+{
+	list-style: none;
+	padding: 0;
+	margin: 5px 0 0;
+}
+
+div.mini_searchresult li
+{
+	padding: 3px 0;
+	margin: 0;
+	overflow: hidden;
+	font-size: 9pt;
+}
+
+div.mini_searchresult img
+{
+	float: left;
+	width: 40px;
+	height: 40px;
+	padding: 3px;
+	border: 1px solid #abc;
+	background: #fff;
+	margin-right: 7px;
 }

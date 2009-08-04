@@ -18,7 +18,7 @@ public class RemotingFacade extends AbstractRemotingFacade {
 	}
 
 	public List<SearchResult> search(String query) throws EndUserException {
-		List<Entity> entities = getModel().list(new Query<Entity>(Entity.class).withWords(query));
+		List<Entity> entities = modelService.list(new Query<Entity>(Entity.class).withWords(query));
 		List<SearchResult> result = new ArrayList<SearchResult>(); 
 		for (Entity element : entities) {
 			result.add(new SearchResult(element.getName(),element.getClass().getCanonicalName(),element.getId()));

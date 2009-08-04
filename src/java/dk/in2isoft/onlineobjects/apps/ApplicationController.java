@@ -14,30 +14,42 @@ import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.InitializingBean;
 
 import dk.in2isoft.commons.lang.LangUtil;
 import dk.in2isoft.commons.util.RestUtil;
 import dk.in2isoft.in2igui.FileBasedInterface;
-import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelService;
+import dk.in2isoft.onlineobjects.core.events.EventService;
 import dk.in2isoft.onlineobjects.core.events.ModelEventListener;
 import dk.in2isoft.onlineobjects.model.Item;
+import dk.in2isoft.onlineobjects.services.ConfigurationService;
 import dk.in2isoft.onlineobjects.ui.Request;
 
-public abstract class ApplicationController implements ModelEventListener {
+public abstract class ApplicationController implements ModelEventListener,InitializingBean {
 
 	private static Logger log = Logger.getLogger(ApplicationController.class);
 
 	private String name;
 	private Map<Pattern,String> jsfMatchers = new HashMap<Pattern, String>();
 
+	private EventService eventService;
+	private ConfigurationService configurationService;
+	protected ModelService modelService;
+	
 	private XMLConfiguration config;
 
 	public ApplicationController(String name) {
 		this.name = name;
-		Core.getInstance().getEventService().addModelEventListener(this);
 	}
+	
+
+	public void afterPropertiesSet() throws Exception {
+		eventService.addModelEventListener(this);
+	}
+
+
 
 	public AbstractConfiguration getConfig() {
 		if (config == null) {
@@ -77,7 +89,7 @@ public abstract class ApplicationController implements ModelEventListener {
 			}
 			jsfPath = filePath.toString().replaceAll("\\.html", ".xhtml");
 		}
-		File file = new File(Core.getInstance().getConfiguration().getBaseDir() + jsfPath);
+		File file = new File(configurationService.getBasePath() + jsfPath);
 		if (file.exists()) {
 			return context.getRequestDispatcher("/faces"+jsfPath);
 		}
@@ -88,8 +100,9 @@ public abstract class ApplicationController implements ModelEventListener {
 
 	}
 
+	@Deprecated
 	protected final ModelService getModel() {
-		return Core.getInstance().getModel();
+		return modelService;
 	}
 
 	public ApplicationSession createToolSession() {
@@ -107,7 +120,7 @@ public abstract class ApplicationController implements ModelEventListener {
 
 	public File getFile(String... path) {
 		StringBuilder filePath = new StringBuilder();
-		filePath.append(Core.getInstance().getConfiguration().getBaseDir());
+		filePath.append(configurationService.getBasePath());
 		filePath.append(File.separator);
 		filePath.append("WEB-INF");
 		filePath.append(File.separator);
@@ -137,5 +150,29 @@ public abstract class ApplicationController implements ModelEventListener {
 		} else {
 			return false;
 		}
+	}
+
+	public void setEventService(EventService eventService) {
+		this.eventService = eventService;
+	}
+
+	public EventService getEventService() {
+		return eventService;
+	}
+
+	public void setConfigurationService(ConfigurationService configurationService) {
+		this.configurationService = configurationService;
+	}
+
+	public ConfigurationService getConfigurationService() {
+		return configurationService;
+	}
+
+	public void setModelService(ModelService modelService) {
+		this.modelService = modelService;
+	}
+
+	public ModelService getModelService() {
+		return modelService;
 	}
 }

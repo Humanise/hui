@@ -17,7 +17,11 @@ In2iGui.Window.create = function(options) {
 	options = n2i.override({title:'Window',close:true},options);
 	var element = options.element = new Element('div',{'class':'in2igui_window'+(options.variant ? ' in2igui_window_'+options.variant : '')});
 	var html = (options.close ? '<div class="close"></div>' : '')+
-		'<div class="titlebar"><div class="titlebar"><div class="titlebar"><span>'+options.title+'</span></div></div></div>'+
+		'<div class="titlebar"><div class="titlebar"><div class="titlebar">';
+		if (options.icon) {
+			html+='<span class="in2igui_window_icon" style="background-image: url('+In2iGui.getIconUrl(options.icon,1)+')"></span>';
+		}
+	html+='<span>'+options.title+'</span></div></div></div>'+
 		'<div class="in2igui_window_content"><div class="in2igui_window_content"><div class="in2igui_window_body" style="'+
 		(options.width ? 'width:'+options.width+'px;':'')+
 		(options.padding ? 'padding:'+options.padding+'px;':'')+

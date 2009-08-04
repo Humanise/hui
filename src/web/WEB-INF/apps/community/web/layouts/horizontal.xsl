@@ -15,17 +15,20 @@
 		<html>
 			<head>
 				<xsl:call-template name="p:head"/>
-				<link rel="stylesheet" id="pageDesign" href="{$local-context}/designs/{$page-design}/css/style.css?{$cache-version}" type="text/css" media="screen" title="front" charset="utf-8"/>
+				<link rel="stylesheet" id="pageDesign" href="{$local-context}/designs/{$page-design}/css/style.css?{$cache-version}" type="text/css" media="screen" title="front" charset="utf-8"><xsl:comment/></link>
 			</head>
 			<body>
 				<div class="body">
 					<div class="gut"><div class="gut"><div class="gut">
 					<div class="inner_body toolbar_padder">
+						<!--
 						<a href="http://{$base-domain-context}/" class="back">Tilbage</a>
+						-->
 						<div class="header">
+							<ol class="navigation">
 							<xsl:for-each select="p:context/p:nodes/e:Entity[@type='Item/Entity/WebNode']">
-								<xsl:if test="position()>1"> · </xsl:if>
-								<a href="?id={@id}" id="item-{@id}">
+								<li>
+								<a href="?id={@id}" id="node-{@id}">
 									<xsl:attribute name="class">
 										<xsl:text>webnode</xsl:text>
 										<xsl:if test="@id=//p:context/e:Entity[@type='Item/Entity/WebNode']/@id">
@@ -34,9 +37,23 @@
 									</xsl:attribute>
 									<xsl:value-of select="e:name"/>
 								</a>
+								</li>
 							</xsl:for-each>
+							</ol>
 						</div>
-						<xsl:apply-templates select="p:content"/>
+						<div class="content">
+							<div class="content_artifact1"><xsl:comment/></div>
+							<div class="content_artifact2"><xsl:comment/></div>
+							<div class="content_artifact3"><xsl:comment/></div>
+							<div class="content_artifact4"><xsl:comment/></div>
+							<div class="content_top"><xsl:comment/></div>
+							<div class="content_middle">
+								<div class="content_body">
+									<xsl:apply-templates select="p:content"/>
+								</div>
+							</div>
+							<div class="content_bottom"><xsl:comment/></div>
+						</div>
 					</div>
 					</div></div></div>
 				</div>

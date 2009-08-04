@@ -22,7 +22,7 @@ OO.Editor.CompoundDocument.prototype = {
 		toolbar.add(In2iGui.Toolbar.Icon.create({name:'addRow',icon:'layout/row',overlay:'new','title':'Tilføj række'}));
 		toolbar.add(In2iGui.Toolbar.Icon.create({name:'reload',icon:'common/refresh','title':'Genindlæs'}));
 	},
-	click$addRow : function() {
+	$click$addRow : function() {
 		var self = this;
 		CompoundDocumentDocument.addRow(OnlineObjects.content.id,function() {
 			self.updateAll();
@@ -35,7 +35,7 @@ OO.Editor.CompoundDocument.prototype = {
 			In2iGui.Editor.get().reload();
 		});
 	},
-	click$reload : function() {
+	$click$reload : function() {
 		this.updateAll();
 	},
 	setEditor : function(editor) {
@@ -45,32 +45,32 @@ OO.Editor.CompoundDocument.prototype = {
 		this.partToDelete = part;
 		In2iGui.get().confirm({name:'cofirmDeletePart',title:'Er du sikker på at du vil slette afsnittet?',text:'Handlingen kan ikke fortrydes',ok:'Ja, slet',cancel:'Nej, jeg fotryder',highlighted:'cancel',emotion:'gasp',modal:true});
 	},
-	ok$cofirmDeletePart : function() {
+	$ok$cofirmDeletePart : function() {
 		var self = this;
 		CompoundDocumentDocument.removePart(OnlineObjects.content.id,this.partToDelete.id,function() {
 			self.updateAll();
 		});
 	},
 	// Editor responders
-	addPart$In2iGuiEditor : function(info) {
+	$addPart$In2iGuiEditor : function(info) {
 		var self = this;
 		CompoundDocumentDocument.addPart(OnlineObjects.content.id,info.row,info.column,info.position,info.type,function() {
 			self.updateAll();
 		});
 	},
-	removeColumn$In2iGuiEditor : function(info) {
+	$removeColumn$In2iGuiEditor : function(info) {
 		var self = this;
 		CompoundDocumentDocument.removeColumn(OnlineObjects.content.id,info.row,info.column,function() {
 			self.updateAll();
 		});
 	},
-	addColumn$In2iGuiEditor : function(info) {
+	$addColumn$In2iGuiEditor : function(info) {
 		var self = this;
 		CompoundDocumentDocument.addColumn(OnlineObjects.content.id,info.row,info.position,function() {
 			self.updateAll();
 		});
 	},
-	updateColumn$In2iGuiEditor : function(info) {
+	$updateColumn$In2iGuiEditor : function(info) {
 		var self = this;
 		CompoundDocumentDocument.updateColumn(
 			OnlineObjects.content.id,
@@ -107,7 +107,9 @@ OO.Editor.Image = function(element,row,column,position) {
 OO.Editor.Image.prototype = {
 	addBehavior : function() {
 		if (!this.behaviorAdded) {
-			this.img.observe('click',this.showImagePicker.bind(this));
+			if (this.img) {
+				this.img.observe('click',this.showImagePicker.bind(this));
+			}
 			this.behaviorAdded = true;
 		}
 	},
@@ -152,6 +154,10 @@ OO.Editor.Image.prototype = {
 	},
 	$selectionChanged : function(gallery) {
 		var obj = gallery.getFirstSelection();
+		if (!this.img) {
+			this.img = new Element('img');
+			this.element.insert(this.img);
+		}
 		this.img.src=this.$resolveImageUrl(obj,200,200);
 		this.imageId=obj.id;
 	}

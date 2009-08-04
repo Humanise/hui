@@ -18,6 +18,7 @@ import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelException;
 import dk.in2isoft.onlineobjects.core.Query;
+import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Event;
 import dk.in2isoft.onlineobjects.model.Person;
@@ -26,17 +27,19 @@ import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.ui.AbstractRemotingFacade;
 
 public class SchoolRemotingFacade extends AbstractRemotingFacade {
+	
+	private SecurityService securityService;
 
 	public Collection<EventData> getEvents(Date from, Date to) throws EndUserException {
 		User user = getUserSession().getUser();
-		Person person = getModel().getChild(user, Relation.KIND_SYSTEM_USER_SELF, Person.class);
+		Person person = modelService.getChild(user, Relation.KIND_SYSTEM_USER_SELF, Person.class);
 		if (person==null) {
 			throw new EndUserException("The current user does not have a person");
 		}
 		
 		Collection<EventData> data = Lists.newArrayList();
 		Query<Event> query = Query.of(Event.class).withFieldValueMoreThan(Event.FIELD_STARTTIME, from).withFieldValueLessThan(Event.FIELD_ENDTIME, to).withChild(person);
-		List<Event> list = getModel().list(query);
+		List<Event> list = modelService.list(query);
 		for (Event event : list) {
 			EventData eventData = new EventData();
 			eventData.setId(event.getId());
@@ -44,9 +47,9 @@ public class SchoolRemotingFacade extends AbstractRemotingFacade {
 			eventData.setEndTime(event.getEndTime());
 			eventData.setText(event.getName());
 			String location = event.getLocation();
-			/*Person organizer = getModel().getFirstSubRelation(event,Relation.KIND_EVENT_ORGANIZER, Person.class);
+			/*Person organizer = modelService.getFirstSubRelation(event,Relation.KIND_EVENT_ORGANIZER, Person.class);
 			if (organizer!=null) {
-				User orgUser = getModel().getFirstSuperRelation(organizer,Relation.KIND_SYSTEM_USER_SELF, User.class);
+				User orgUser = modelService.getFirstSuperRelation(organizer,Relation.KIND_SYSTEM_USER_SELF, User.class);
 				if (orgUser!=null) {
 					location+=" ("+orgUser.getUsername()+")";
 				}
@@ -64,17 +67,17 @@ public class SchoolRemotingFacade extends AbstractRemotingFacade {
 	
 	public InfoViewData getEventInfo(long id) throws ModelException {
 		InfoViewData data = new InfoViewData();
-		Event event = getModel().get(Event.class, id);
+		Event event = modelService.get(Event.class, id);
 		data.addHeader(event.getName());
 		
 		data.addProperty("Start:",formatDate(event.getStartTime()));
 		data.addProperty("Slut:",formatDate(event.getEndTime()));
 		data.addProperty("Lokation:",event.getLocation());
 
-		List<Person> organizers = getModel().getChildren(event, Relation.KIND_EVENT_ORGANIZER,Person.class);
+		List<Person> organizers = modelService.getChildren(event, Relation.KIND_EVENT_ORGANIZER,Person.class);
 		data.addObjects("Underviser:", convertToObject(organizers));
 
-		List<Person> attendees = getModel().getChildren(event, Relation.KIND_EVENT_ATTENDEE,Person.class);
+		List<Person> attendees = modelService.getChildren(event, Relation.KIND_EVENT_ATTENDEE,Person.class);
 		data.addObjects("Elever:", convertToObject(attendees));
 		
 		return data;
@@ -91,7 +94,7 @@ public class SchoolRemotingFacade extends AbstractRemotingFacade {
 	public Collection<EventData> getEntityHistory(Date from, Date to) {
 		Collection<EventData> data = Lists.newArrayList();
 		Query<Entity> query = new Query<Entity>(Entity.class).withCreatedFrom(from).withCreatedTo(to);
-		List<Entity> list = getModel().list(query);
+		List<Entity> list = modelService.list(query);
 		for (Entity entity : list) {
 			EventData event = new EventData();
 			event.setStartTime(entity.getCreated());
@@ -106,13 +109,21 @@ public class SchoolRemotingFacade extends AbstractRemotingFacade {
 	}
 	
 	public boolean changeToUserOfPerson(long id) throws ModelException {
-		Person person = getModel().get(Person.class, id);
+		Person person = modelService.get(Person.class, id);
 		if (person!=null) {
-			User user = getModel().getParent(person, Relation.KIND_SYSTEM_USER_SELF, User.class);
+			User user = modelService.getParent(person, Relation.KIND_SYSTEM_USER_SELF, User.class);
 			if (user!=null) {
-				return Core.getInstance().getSecurityService().changeUser(getUserSession(), user.getUsername(), user.getPassword());
+				return securityService.changeUser(getUserSession(), user.getUsername(), user.getPassword());
 			}
 		}
 		return false;
+	}
+
+	public void setSecurityService(SecurityService securityService) {
+		this.securityService = securityService;
+	}
+
+	public SecurityService getSecurityService() {
+		return securityService;
 	}
 }

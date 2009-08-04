@@ -36,6 +36,7 @@ import dk.in2isoft.commons.lang.LangUtil;
 import dk.in2isoft.onlineobjects.core.events.EventService;
 import dk.in2isoft.onlineobjects.junk.HibernateUtil;
 import dk.in2isoft.onlineobjects.model.Entity;
+import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.Item;
 import dk.in2isoft.onlineobjects.model.Privilege;
 import dk.in2isoft.onlineobjects.model.Property;
@@ -398,6 +399,13 @@ public class ModelService {
 			return null;
 		}
 	}
+	
+	public User getOwner(Image image) throws ModelException {
+		Session session = getSession();
+		Query q = session.createQuery("select user from User as user, Privilege as priv where priv.alter=true and priv.object=:object and priv.subject=user.id");
+		q.setLong("object", image.getId());
+		return (User) q.uniqueResult();
+	}
 
 	public Privilege getPriviledge(long object, long subject) {
 		Session session = getSession();
@@ -567,6 +575,20 @@ public class ModelService {
 			entry.setValue(entry.getValue() / max);
 		}
 		return cloud;
+	}
+
+	public Relation getRelation(Entity parent, Entity child) {
+		Session session = getSession();
+		StringBuilder hql = new StringBuilder("from Relation as r ");
+		hql.append(" where r.superEntity.id=:parent and r.subEntity.id=:child");
+		Query q = session.createQuery(hql.toString());
+		q.setLong("parent", parent.getId());
+		q.setLong("child", child.getId());
+		List<Relation> list = list(q, Relation.class);
+		if (list.size() > 0) {
+			return getSubject(list.get(0));
+		}
+		return null;
 	}
 
 	public Relation getRelation(Entity parent, Entity child, String kind) {

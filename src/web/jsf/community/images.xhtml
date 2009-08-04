@@ -2,15 +2,32 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:oo="http://www.onlineobjects.com/jsf" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core">
 	<ui:composition template="chrome.xhtml">
 		<ui:param name="top" value="images"/>
+		
+		<ui:define name="title">
+			Billeder<h:outputText value=" &#187; "/>
+		</ui:define>
+		
 		<ui:define name="body">
+			<ul class="breadcrumb">
+				<li><a href="#{baseView.baseContext}/">OnlineMe</a></li>
+				<li><a href="#{baseView.baseContext}/images.html">Billeder</a></li>
+			</ul>
 			<div class="content_body">
 				<h1 class="header">Billeder</h1>
-				<oo:gallery model="#{images.imageList}" var="image">
-					<a href="#{base.baseContext}/service/image/id#{image.id}.jpg" id="image_#{image.id}">
-						<img src="#{base.baseContext}/service/image/id#{image.id}thumbnail68cropped.jpg" width="68" height="68"/>
-					</a>
+				<oo:gallery model="#{imagesView.imageList}" var="item">
+					<h:panelGroup rendered="#{not empty item.user}">
+						<a href="#{baseView.baseContext}/#{item.user.username}/images/#{item.image.id}.html">
+							<img src="#{baseView.baseContext}/service/image/id#{item.image.id}thumbnail68cropped.jpg" width="68" height="68" alt="#{item.image.name}"/>
+						</a>
+					</h:panelGroup>
+					<h:panelGroup rendered="#{empty item.user}">
+						<a>
+							<img src="#{baseView.baseContext}/service/image/id#{item.image.id}thumbnail68cropped.jpg" width="68" height="68" alt="#{item.image.name}"/>
+						</a>
+					</h:panelGroup>
 				</oo:gallery>
 			</div>
 		</ui:define>
+		
 	</ui:composition>
 </html>

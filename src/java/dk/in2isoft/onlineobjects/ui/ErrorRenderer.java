@@ -29,7 +29,7 @@ public class ErrorRenderer extends XSLTInterfaceAdapter {
 	@Override
 	public File getStylesheet() {
 		StringBuilder filePath = new StringBuilder();
-		filePath.append(Core.getInstance().getConfiguration().getBaseDir());
+		filePath.append(Core.getInstance().getConfigurationService().getBasePath());
 		String[] path = {"WEB-INF","core","xslt","error.xsl"};
 		for (int i = 0; i < path.length; i++) {
 			filePath.append(File.separator);

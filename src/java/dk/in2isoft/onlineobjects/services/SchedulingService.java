@@ -1,4 +1,4 @@
-package dk.in2isoft.onlineobjects.core;
+package dk.in2isoft.onlineobjects.services;
 
 import java.text.ParseException;
 import java.util.HashMap;
@@ -14,13 +14,13 @@ import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.impl.StdSchedulerFactory;
 
-public class Scheduler {
+public class SchedulingService {
 
-	private final static Logger log = Logger.getLogger(Scheduler.class);
+	private final static Logger log = Logger.getLogger(SchedulingService.class);
 
 	private org.quartz.Scheduler scheduler;
 
-	protected Scheduler() {
+	protected SchedulingService() {
 		try {
 			scheduler = StdSchedulerFactory.getDefaultScheduler();
 			scheduler.start();

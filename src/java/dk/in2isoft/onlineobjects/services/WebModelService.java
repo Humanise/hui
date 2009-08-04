@@ -1,0 +1,167 @@
+package dk.in2isoft.onlineobjects.services;
+
+import java.util.List;
+
+import dk.in2isoft.onlineobjects.core.EndUserException;
+import dk.in2isoft.onlineobjects.core.ModelException;
+import dk.in2isoft.onlineobjects.core.ModelService;
+import dk.in2isoft.onlineobjects.core.Priviledged;
+import dk.in2isoft.onlineobjects.core.SecurityException;
+import dk.in2isoft.onlineobjects.model.Entity;
+import dk.in2isoft.onlineobjects.model.Relation;
+import dk.in2isoft.onlineobjects.model.User;
+import dk.in2isoft.onlineobjects.model.WebNode;
+import dk.in2isoft.onlineobjects.model.WebPage;
+import dk.in2isoft.onlineobjects.model.WebSite;
+import dk.in2isoft.onlineobjects.publishing.DocumentBuilder;
+
+public class WebModelService {
+	
+	private ModelService modelService;
+	
+	public WebPage getWebSiteFrontPage(WebSite site) throws ModelException {
+		WebPage page = null;
+		WebNode node = modelService.getChild(site, WebNode.class);
+		if (node!=null) {
+			page = modelService.getChild(node, WebPage.class);
+		}
+		return page;
+	}
+
+	public WebSite getUsersWebSite(User user) throws ModelException {
+		WebSite site = modelService.getChild(user, WebSite.class);
+		return site;
+	}
+	
+	public WebSite getWebSiteOfPage(WebPage page) throws ModelException {
+		WebNode node = modelService.getParent(page, WebNode.class);
+		if (node==null) {
+			return null;
+		}
+		WebSite site = modelService.getParent(node, WebSite.class);
+		return site;
+	}
+
+	public WebPage getPageForWebNode(long id) throws ModelException {
+		WebPage page = null;
+		WebNode node = modelService.get(WebNode.class, id);
+		if (node!=null) {
+			page = modelService.getChild(node, WebPage.class);
+		}
+		return page;
+	}
+	
+	public long createWebPageOnSite(long webSiteId, Class<?> clazz, Priviledged priviledged) throws EndUserException {
+		WebSite site = modelService.get(WebSite.class, webSiteId);
+		
+		// Create a web page
+		WebPage page = new WebPage();
+		page.setName("Min side");
+		page.setTitle("Min side");
+		modelService.createItem(page,priviledged);
+		
+		// Create a web node
+		WebNode node = new WebNode();
+		node.setName("Min side");
+		modelService.createItem(node,priviledged);
+		
+		// Update positions of nodes
+		List<Relation> relations = modelService.getChildRelations(site,WebNode.class);
+		int position = 1;
+		for (Relation relation : relations) {
+			relation.setPosition(position);
+			modelService.updateItem(relation, priviledged);
+			position++;
+		}
+		
+		// Create a relation between node and page
+		Relation nodePageRelation = new Relation(node,page);
+		modelService.createItem(nodePageRelation,priviledged);
+		
+		// Create a relation between site and node
+		Relation siteNodeRelation = new Relation(site,node);
+		siteNodeRelation.setPosition(position);
+		modelService.createItem(siteNodeRelation,priviledged);
+		
+		Entity document = DocumentBuilder.getBuilder(clazz).create(priviledged); 
+		
+		// Set gallery as content of page
+		Relation pageDocumentRelation = new Relation(page,document);
+		pageDocumentRelation.setKind(Relation.KIND_WEB_CONTENT);
+		modelService.createItem(pageDocumentRelation,priviledged);
+		
+		return node.getId();
+		
+	}
+
+	public void moveNodeUp(WebNode node, Priviledged priviledged) throws ModelException, SecurityException {
+
+		WebSite site = modelService.getParent(node, WebSite.class);
+		List<Relation> relations = modelService.getChildRelations(site,WebNode.class);
+		int index = getIndexOfNode(relations,node);
+		if (index>0) {
+			Relation relation = relations.remove(index);
+			relations.add(index-1, relation);
+			updatePositions(relations, priviledged);
+		}
+	}
+
+	public void moveNodeDown(WebNode node, Priviledged priviledged) throws ModelException, SecurityException {
+
+		WebSite site = modelService.getParent(node, WebSite.class);
+		List<Relation> relations = modelService.getChildRelations(site,WebNode.class);
+		int index = getIndexOfNode(relations,node);
+		if (index<relations.size()-1) {
+			Relation relation = relations.remove(index);
+			relations.add(index+1, relation);
+			updatePositions(relations, priviledged);
+		}
+	}
+	
+	private void updatePositions(List<Relation> relations, Priviledged priviledged) throws SecurityException, ModelException {
+		int position = 1;
+		for (Relation relation : relations) {
+			relation.setPosition(position);
+			modelService.updateItem(relation, priviledged);
+			position++;
+		}
+	}
+	
+	private int getIndexOfNode(List<Relation> relations, WebNode node) {
+		for (int i	= 0; i < relations.size(); i++) {
+			if (relations.get(i).getSubEntity().getId()==node.getId()) {
+				return i;
+			}
+		}
+		return -1;
+	}
+	
+	public void deleteWebPage(long pageId,Priviledged privileged) throws EndUserException {
+		WebPage page = modelService.get(WebPage.class, pageId);
+		if (page == null) {
+			throw new EndUserException("The page does not exist");
+		}
+
+		// Delete Nodes
+		List<WebNode> nodes = modelService.getParents(page, WebNode.class);
+		for (WebNode node : nodes) {
+			modelService.deleteEntity(node,privileged);
+		}
+
+		// Delete page content
+		List<Entity> contents = modelService.getChildren(page, Relation.KIND_WEB_CONTENT, privileged);
+		for (Entity content : contents) {
+			modelService.deleteEntity(content, privileged);
+		}
+		
+		modelService.deleteEntity(page,privileged);
+	}
+
+	public void setModelService(ModelService modelService) {
+		this.modelService = modelService;
+	}
+
+	public ModelService getModelService() {
+		return modelService;
+	}
+}

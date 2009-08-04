@@ -5,6 +5,7 @@ In2iGui.SearchField = function(options) {
 	this.name = options.name;
 	this.field = this.element.select('input')[0];
 	this.value = this.field.value;
+	this.adaptive = this.element.hasClassName('in2igui_searchfield_adaptive')
 	this.initialWidth=this.element.clientWidth;
 	In2iGui.extend(this);
 	this.addBehavior();
@@ -55,6 +56,12 @@ In2iGui.SearchField.prototype = {
 	getValue : function() {
 		return this.field.value;
 	},
+	isEmpty : function() {
+		return this.field.value=='';
+	},
+	isBlank : function() {
+		return this.field.value.strip()=='';
+	},
 	reset : function() {
 		this.field.value='';
 		this.fieldChanged();
@@ -62,6 +69,9 @@ In2iGui.SearchField.prototype = {
 	/** @private */
 	updateClass : function() {
 		var className = 'in2igui_searchfield';
+		if (this.adaptive) {
+			className+=' in2igui_searchfield_adaptive';
+		}
 		if (this.focused && this.value!='') {
 			className+=' in2igui_searchfield_focus_dirty';
 		} else if (this.focused) {

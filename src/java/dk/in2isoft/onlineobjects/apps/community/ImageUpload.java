@@ -14,8 +14,10 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import com.google.common.collect.Maps;
 
+import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.ui.Request;
+import dk.in2isoft.onlineobjects.util.images.ImageService;
 
 public class ImageUpload {
 
@@ -26,6 +28,7 @@ public class ImageUpload {
 		factory.setSizeThreshold(0);
 		Map<String,String> parameters = Maps.newHashMap();
 		ServletFileUpload upload = new ServletFileUpload(factory);
+		ImageService imageService = Core.getInstance().getBean(ImageService.class);
 		try {
 			List<DiskFileItem> items = upload.parseRequest(request.getRequest());
 			for (DiskFileItem item : items) {
@@ -36,7 +39,9 @@ public class ImageUpload {
 			for (DiskFileItem item : items) {
 				if (!item.isFormField()) {
 					File file = item.getStoreLocation();
-					delegate.handleFile(file, item.getName(), item.getContentType(), parameters, request);
+					String mimeType = imageService.getMimeType(file);
+					String name = imageService.cleanFileName(item.getName());
+					delegate.handleFile(file, name, mimeType, parameters, request);
 				}
 			}
 		} catch (FileUploadException e) {

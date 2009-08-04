@@ -1,5 +1,6 @@
 package dk.in2isoft.onlineobjects.ui.jsf;
 
+
 public abstract class ListModel <T> {
 
 	private int pageSize = 20;

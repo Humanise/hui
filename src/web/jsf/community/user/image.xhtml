@@ -10,24 +10,34 @@
 	<ui:composition template="template.xhtml">
 		<ui:param name="tab" value="images"/>
 		
+		<ui:define name="title">
+			#{imageView.image.name}<h:outputText value=" &#187; "/>#{imageView.person.fullName}<h:outputText value=" &#187; "/>
+		</ui:define>
+		
 		<ui:define name="breadcrumb">
-			<li><a href="#{base.baseContext}/#{userProfile.user.username}/images.html">Billeder</a></li>
-			<li><a href="#{base.baseContext}/#{userProfile.user.username}/images/#{imageView.imageId}.html">#{imageView.image.name}</a></li>
+			<li><a href="#{baseView.baseContext}/#{userProfile.user.username}/images.html">Billeder</a></li>
+			<li><a href="#{baseView.baseContext}/#{userProfile.user.username}/images/#{imageView.imageId}.html">#{imageView.image.name}</a></li>
 		</ui:define>
 		
 		<ui:define name="content">
 			<div class="content_body image_view">
 				<div class="image_preview">
-					<img src="#{base.baseContext}/service/image/id#{imageView.image.id}width300height1000.jpg" onclick="oo.community.showImage({id:#{imageView.image.id},width:#{imageView.image.width},height:#{imageView.image.height}})"/>
-					
+					<img src="#{baseView.baseContext}/service/image/id#{imageView.image.id}width300height1000.jpg" onclick="oo.community.showImage({id:#{imageView.image.id},width:#{imageView.image.width},height:#{imageView.image.height}})" alt="#{imageView.image.name}"/>
+					<p class="image_actions">
+						<a class="link" href="#{baseView.baseContext}/service/image/id#{imageView.image.id}.jpg"><span>Fuld størrelse</span></a>
+					</p>
 					<h:panelGroup rendered="#{not empty imageView.location}">
 						<div id="map_canvas" style="width:100%; height:300px; margin-top: 20px;"></div>
+						<p class="image_actions">
+							<a class="link" href="#{baseView.baseContext}/map.html#image=#{imageView.image.id}"><span>Stor kort</span></a>
+						</p>
 					</h:panelGroup>
 				</div>
 				<div id="imageContainer" class="container">
 					<div class="rendering" id="imageProperties">
 						<h1>#{imageView.image.name}</h1>
-						<p class="minor fileinfo">#{imageView.image.width} &#215; #{imageView.image.height} (#{imageView.megaPixels} Megapixel), #{imageView.image.contentType}</p>
+						<p class="minor"><span>Tilføjet </span><strong><h:outputText value="#{imageView.image.created}"><f:convertDateTime pattern="EEEE 'd'. d.  MMMM yyyy" locale="da_DK"/></h:outputText></strong> af <a class="link" href="#{baseView.baseContext}/#{imageView.user.username}/"><span>#{imageView.person.fullName}</span></a></p>
+						<p class="minor dimmed fileinfo">#{imageView.image.width} &#215; #{imageView.image.height} (#{imageView.megaPixels} Megapixel), #{imageView.image.contentType}</p>
 						<c:if test="#{not empty imageView.description}">
 							<p class="resume">&#34;#{imageView.description}&#34;</p>
 						</c:if>
@@ -39,8 +49,9 @@
 							</p>
 						</c:if>
 						<h:panelGroup rendered="#{not empty imageView.imageInfo.taken}">
-							<p><span class="label">Dato: </span> <h:outputText value="#{imageView.imageInfo.taken}"><f:convertDateTime pattern="EEEE 'd'. d.  MMMM yyyy 'kl.' HH:mm:ss" locale="da_DK"/></h:outputText></p>
+							<p><span class="label">Dato: </span><h:outputText value="#{imageView.imageInfo.taken}"><f:convertDateTime pattern="EEEE 'd'. d.  MMMM yyyy 'kl.' HH:mm:ss" locale="da_DK"/></h:outputText></p>
 						</h:panelGroup>
+						
 						<h:panelGroup rendered="#{not empty imageView.imageInfo.cameraMake}">
 							<p><span class="label">Kameraproducent:</span> #{imageView.imageInfo.cameraMake}</p>
 						</h:panelGroup>
@@ -48,11 +59,41 @@
 							<p><span class="label">Kameramodel:</span> #{imageView.imageInfo.cameraModel}</p>
 						</h:panelGroup>
 						<h:panelGroup rendered="#{not empty imageView.location}">
-							<p><span class="label">Latitude:</span> #{imageView.location.latitude}</p>
-							<p><span class="label">Longitude:</span> #{imageView.location.longitude}</p>
+							<p>
+								<span class="label">Breddegrad: </span>
+								<h:outputText value="#{imageView.location.latitudeDegrees}">
+									<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
+								</h:outputText><span>&#176; </span>
+								<h:outputText value="#{imageView.location.latitudeMinutes}">
+									<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
+								</h:outputText><span>' </span>
+								<h:outputText value="#{imageView.location.latitudeSeconds}">
+									<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
+								</h:outputText><span>" </span>
+								#{imageView.location.latitudeNorth ? 'Nord' : 'Syd'}
+								<span class="minor dimmed">(<h:outputText value="#{imageView.location.latitude}">
+									<f:convertNumber minFractionDigits="2" maxFractionDigits="8"/>
+								</h:outputText>)</span>
+							</p>
+							<p>
+								<span class="label">Længdegrad: </span>
+								<h:outputText value="#{imageView.location.longitudeDegrees}">
+									<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
+								</h:outputText><span>&#176; </span>
+								<h:outputText value="#{imageView.location.longitudeMinutes}">
+									<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
+								</h:outputText><span>' </span>
+								<h:outputText value="#{imageView.location.longitudeSeconds}">
+									<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
+								</h:outputText><span>" </span>
+								#{imageView.location.longitudeEast ? 'Øst' : 'Vest'}
+								<span class="minor dimmed">(<h:outputText value="#{imageView.location.longitude}">
+									<f:convertNumber minFractionDigits="2" maxFractionDigits="8"/>
+								</h:outputText>)</span>
+							</p>
 						</h:panelGroup>
 						<h:panelGroup rendered="#{imageView.canEdit}">
-							<script type="text/javascript" src="#{base.localContext}/js/imageview.js"></script>
+							<script type="text/javascript" src="#{baseView.localContext}/js/imageview.js"></script>
 							<script type="text/javascript" charset="utf-8">
 								oo.community.ImgeView.id=#{imageView.image.id};
 							</script>
@@ -81,7 +122,7 @@
 				    var marker = new google.maps.Marker({
 				        position: myLatlng, 
 				        map: map,
-				        title:"Hello World!"
+				        title:"#{imageView.image.name}"
 				    });   
 				  });
 				</script>

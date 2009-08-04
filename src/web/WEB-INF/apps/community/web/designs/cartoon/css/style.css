@@ -51,13 +51,25 @@ body
 	height: 40px;
 }
 
-.header input
+ol.navigation
 {
-	font-family: "Trebuchet MS", Helvetica, sans-serif;
+	font-size: 13pt;
+	list-style: none;
+	margin: 0;
+	padding: 0;
 	text-align: center;
-	background: #fff;
-	border: none;
-	color: #ffba00;
+}
+
+ol.navigation li
+{
+	display: inline;
+}
+
+ol.navigation a
+{
+	padding: 2px 4px;
+	margin: 0 3px;
+	text-decoration: none;
 }
 
 .header a
@@ -71,19 +83,6 @@ body
 .header a.selected
 {
 	font-weight: bold;
-}
-
-.back
-{
-	font-family: "Trebuchet MS", Helvetica, sans-serif;
-	color: #23a;
-	background: #fff;
-	text-decoration: none;
-	position: absolute;
-	padding: 1px 4px;
-	margin-top: 12px;
-	margin-left: 16px;
-	font-size: 10pt;
 }
 
 div.part_header h1

@@ -126,7 +126,7 @@ In2iGui.prototype = {
 		this.alertBox.show();
 	},
 	/** @private */
-	click$in2iGuiAlertBoxButton : function() {
+	$click$in2iGuiAlertBoxButton : function() {
 		In2iGui.get().alertBox.hide();
 		if (this.alertBoxCallBack) {
 			this.alertBoxCallBack();
@@ -141,7 +141,7 @@ In2iGui.prototype = {
 		if (!alert) {
 			alert = In2iGui.Alert.create(options);
 			var cancel = In2iGui.Button.create({name:name+'_cancel',text : options.cancel || 'Cancel',highlighted:options.highlighted==='cancel'});
-			cancel.addDelegate({buttonWasClicked:function(){
+			cancel.addDelegate({$click:function(){
 				alert.hide();
 				if (options.onCancel) {
 					options.onCancel();
@@ -151,7 +151,7 @@ In2iGui.prototype = {
 			alert.addButton(cancel);
 		
 			var ok = In2iGui.Button.create({name:name+'_ok',text : options.ok || 'OK',highlighted:options.highlighted==='ok'});
-			ok.addDelegate({buttonWasClicked:function(){
+			ok.addDelegate({$click:function(){
 				alert.hide();
 				if (options.onOK) {
 					options.onOK();
@@ -607,7 +607,9 @@ In2iGui.addDelegate = function(d) {
 }
 
 In2iGui.callDelegates = function(obj,method,value,event) {
-	if (typeof(value)=='undefined') value=obj;
+	if (typeof(value)=='undefined') {
+		value=obj;
+	}
 	var result = null;
 	if (obj.delegates) {
 		for (var i=0; i < obj.delegates.length; i++) {
@@ -615,7 +617,7 @@ In2iGui.callDelegates = function(obj,method,value,event) {
 			var thisResult = null;
 			if (obj.name && delegate['$'+method+'$'+obj.name]) {
 				thisResult = delegate['$'+method+'$'+obj.name](value,event);
-			} else if (obj.name && delegate[method+'$'+obj.name]) {
+			}/* else if (obj.name && delegate[method+'$'+obj.name]) {
 				thisResult = delegate[method+'$'+obj.name](value,event);
 			} else if ('$'+obj.name && delegate[method+'$'+obj.name]) {
 				thisResult = delegate['$'+method+'$'+obj.name](value,event);
@@ -623,7 +625,7 @@ In2iGui.callDelegates = function(obj,method,value,event) {
 				thisResult = delegate[method+'$'+obj.kind](value,event);
 			} else if (delegate[method]) {
 				thisResult = delegate[method](value,event);
-			} else if (delegate['$'+method]) {
+			}*/ else if (delegate['$'+method]) {
 				thisResult = delegate['$'+method](value,event);
 			}
 			if (result==null && thisResult!=null && typeof(thisResult)!='undefined') {
@@ -632,7 +634,9 @@ In2iGui.callDelegates = function(obj,method,value,event) {
 		};
 	}
 	var superResult = In2iGui.callSuperDelegates(obj,method,value,event);
-	if (result==null && superResult!=null) result = superResult;
+	if (result==null && superResult!=null) {
+		result = superResult;
+	}
 	return result;
 };
 
@@ -645,13 +649,13 @@ In2iGui.callSuperDelegates = function(obj,method,value,event) {
 		var thisResult = null;
 		if (obj.name && delegate['$'+method+'$'+obj.name]) {
 			thisResult = delegate['$'+method+'$'+obj.name](value,event);
-		} else if (obj.name && delegate[method+'$'+obj.name]) {
+		}/* else if (obj.name && delegate[method+'$'+obj.name]) {
 			thisResult = delegate[method+'$'+obj.name](value,event);
 		} else if (obj.kind && delegate[method+'$'+obj.kind]) {
 			thisResult = delegate[method+'$'+obj.kind](value,event);
 		} else if (delegate[method]) {
 			thisResult = delegate[method](value,event);
-		} else if (delegate['$'+method]) {
+		}*/ else if (delegate['$'+method]) {
 			thisResult = delegate['$'+method](value,event);
 		}
 		if (result==null && thisResult!=null && typeof(thisResult)!='undefined') {

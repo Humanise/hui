@@ -5,9 +5,8 @@ import java.io.IOException;
 import org.quartz.JobDataMap;
 
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
-import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
-import dk.in2isoft.onlineobjects.core.Scheduler;
+import dk.in2isoft.onlineobjects.services.SchedulingService;
 import dk.in2isoft.onlineobjects.ui.Request;
 
 public class SchoolController extends ApplicationController {
@@ -15,12 +14,17 @@ public class SchoolController extends ApplicationController {
 	//private final static Logger log = Logger.getLogger(SchoolController.class);
 	
 	public static final String JOB_SYNCHRONIZER = "Synchronizer";
+	private SchedulingService schedulingService;
 	
 	private String syncUrl;
 
 	public SchoolController() {
 		super("school");
-		Scheduler scheduler = Core.getInstance().getScheduler();
+	}
+	
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		super.afterPropertiesSet();
 		String trigger = getConfig().getString("synchronization.trigger");
 		JobDataMap map = new JobDataMap();
 
@@ -37,9 +41,11 @@ public class SchoolController extends ApplicationController {
 		map.put(UserAndEventSynchronizer.CONFIG_DATABASENAME, databaseName);
 		map.put(UserAndEventSynchronizer.CONFIG_USER, user);
 		map.put(UserAndEventSynchronizer.CONFIG_PASSWORD, password);
-		scheduler.addJob(JOB_SYNCHRONIZER,"school",UserAndEventSynchronizer.class,trigger,map);
+		schedulingService.addJob(JOB_SYNCHRONIZER,"school",UserAndEventSynchronizer.class,trigger,map);
 	}
-	
+
+
+
 	public String getSyncUrl() {
 		return syncUrl;
 	}
@@ -50,5 +56,13 @@ public class SchoolController extends ApplicationController {
 		if (!showGui(request)) {
 			throw new EndUserException("Unknown request");
 		}
+	}
+
+	public void setSchedulingService(SchedulingService schedulingService) {
+		this.schedulingService = schedulingService;
+	}
+
+	public SchedulingService getSchedulingService() {
+		return schedulingService;
 	}
 }

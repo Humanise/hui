@@ -1,0 +1,155 @@
+body
+{
+	background: url('../gfx/bg3.jpg');
+	margin: 0;
+	padding: 0 0 20px;
+}
+
+/******************* Header ***************/
+
+ol.navigation
+{
+	font-family: Georgia,Times,serif;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	font-size: 0;
+	height: 40px;
+	line-height: 40px;
+}
+
+ol.navigation li
+{
+	display: inline;
+}
+
+ol.navigation a
+{
+	background: #321;
+	color: #fff;
+	padding: 2px 4px;
+	margin: 0 3px;
+	text-decoration: none;
+	font-size: 13pt;
+}
+
+ol.navigation a.selected
+{
+	background: #000;
+}
+
+/******************* Parts ***************/
+
+div.part_header, div.part_html
+{
+	font-family: Georgia,Times,serif;
+}
+
+div.part_header h1
+{
+	font-size: 18pt;
+	margin: 0px;
+	color: #333;
+	font-weight: normal;
+}
+
+div.part_html
+{
+	font-size: 11pt;
+}
+
+div.gallery div.part_header, div.gallery div.part_html
+{
+	width: 60%;
+	margin: 0 auto;
+}
+
+div.gallery div.part_header h1, div.gallery div.part_html
+{
+	text-align: center;
+}
+
+/******************** Artifacts ******************/
+
+div.content_artifact1
+{
+	position: absolute;
+	width: 311px;
+	height: 262px;
+	background: url('../gfx/coffee.png') no-repeat;
+	left: 50%;
+	margin-top: 192px;
+	margin-left: -705px;
+}
+
+div.content_artifact2
+{
+	position: absolute;
+	width: 121px;
+	height: 108px;
+	background: url('../gfx/plaster_top_right.png') no-repeat;
+	left: 50%;
+	margin-top: -25px;
+	margin-left: 373px;
+}
+
+div.content_artifact3
+{
+	position: absolute;
+	width: 121px;
+	height: 108px;
+	background: url('../gfx/plaster_top_left.png') no-repeat;
+	left: 50%;
+	margin-top: -25px;
+	margin-left: -494px;
+}
+
+div.content_artifact4
+{
+	position: absolute;
+	width: 200px;
+	height: 314px;
+	background: url('../gfx/pen.png') no-repeat;
+	left: 50%;
+	margin-top: 300px;
+	margin-left: 370px;
+}
+
+/************************* Content ******************/
+
+div.content_top
+{
+	background: url('../gfx/paper_top.png') center repeat-y;
+	height: 40px;
+}
+
+div.content_bottom
+{
+	background: url('../gfx/paper_bottom.png') center repeat-y;
+	height: 40px;
+}
+
+div.content_middle
+{
+	background: url('../gfx/paper.png') center repeat-y;
+}
+
+div.content_body
+{
+	background: url('../gfx/stain.png') center 100px no-repeat;
+	min-height: 600px;
+}
+
+div.inner_inner_content
+{
+}
+
+
+/****************** Compound document ****************/
+
+div.compounddocument
+{
+	width: 800px;
+	margin: 0 auto;
+}

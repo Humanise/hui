@@ -10,7 +10,7 @@
 		<ui:param name="top" value="front"/>
 		
 		<ui:define name="head">
-			<script src="#{base.localContext}/js/invitation.js?#{lifeCycleService.startTime.time}" type="text/javascript" charset="utf-8"></script>
+			<script src="#{baseView.localContext}/js/invitation.js?#{lifeCycleService.startTime.time}" type="text/javascript" charset="utf-8"></script>
 			<script type="text/javascript">
 				oo.community.Invitation.code='#{invitationView.code}';
 			</script>
@@ -36,7 +36,7 @@
 						<div class="article">
 							<h1 class="header">Invitation til <span class="logo">Online<span>Me</span></span></h1>
 							<p>Hej #{invitationView.person.fullName}.</p>
-							<p><a class="link" href="#{base.localContext}/#{invitationView.inviterUser.username}"><span>#{invitationView.inviterPerson.fullName}</span></a> har inviteret dig til at blive bruger af <span class="logo">Online<span>Me</span></span>. Systemet kan anvendes til at lave hjemmesider og dele information.</p>
+							<p><a class="link" href="#{baseView.localContext}/#{invitationView.inviterUser.username}"><span>#{invitationView.inviterPerson.fullName}</span></a> har inviteret dig til at blive bruger af <span class="logo">Online<span>Me</span></span>. Systemet kan anvendes til at lave hjemmesider og dele information.</p>
 							<h:panelGroup rendered="#{not empty invitationView.invitation.message}">
 								<p>#{invitationView.inviterPerson.givenName} har følgende besked til dig...</p>
 								<blockquote class="note">“<h:outputText value="#{invitationView.formattedMessage}" escape="false"/>”</blockquote>
@@ -69,7 +69,7 @@
 				<h:panelGroup rendered="#{not empty passwordRecovery.user}">
 					<div class="article">
 						<h1 class="header">Skift kodeord</h1>
-						<p>Du kan nu ændre dig kodeord for brugeren "<a class="link" href="#{base.localContext}/#{passwordRecovery.user.username}"><span>#{passwordRecovery.user.username}</span></a>". Skriv det nye kodeord nedenunder or klik på "Skift kodeord".</p>
+						<p>Du kan nu ændre dig kodeord for brugeren "<a class="link" href="#{baseView.localContext}/#{passwordRecovery.user.username}"><span>#{passwordRecovery.user.username}</span></a>". Skriv det nye kodeord nedenunder or klik på "Skift kodeord".</p>
 					</div>
 				</h:panelGroup>
 			</div>

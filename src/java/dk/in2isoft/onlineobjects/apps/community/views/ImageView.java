@@ -5,9 +5,14 @@ import org.springframework.beans.factory.InitializingBean;
 
 import dk.in2isoft.onlineobjects.apps.community.jsf.AbstractManagedBean;
 import dk.in2isoft.onlineobjects.core.ModelService;
+import dk.in2isoft.onlineobjects.core.Pair;
+import dk.in2isoft.onlineobjects.core.PairSearchResult;
 import dk.in2isoft.onlineobjects.core.SecurityService;
+import dk.in2isoft.onlineobjects.core.UserQuery;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.Location;
+import dk.in2isoft.onlineobjects.model.Person;
+import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.util.images.ImageInfo;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
 
@@ -19,13 +24,32 @@ public class ImageView extends AbstractManagedBean implements InitializingBean {
 	private Image image;
 	private ImageInfo imageInfo;
 	private Location location;
+	private User user;
+	private Person person;
 	
 	public void afterPropertiesSet() throws Exception {
 		image = modelService.get(Image.class, getImageId());
 		if (image!=null) {
 			imageInfo = imageService.getImageInfo(image);
 			location = modelService.getParent(image, Location.class);
+
+			String username = getRequest().getLocalPath()[0];
+			UserQuery query = new UserQuery().withUsername(username);
+			PairSearchResult<User,Person> searchPairs = modelService.searchPairs(query);
+			Pair<User,Person> first = searchPairs.getFirst();
+			if (first!=null) {
+				user = first.getKey();
+				person = first.getValue();
+			}
 		}
+	}
+	
+	public Person getPerson() {
+		return person;
+	}
+	
+	public User getUser() {
+		return user;
 	}
 	
 	public Image getImage() {
