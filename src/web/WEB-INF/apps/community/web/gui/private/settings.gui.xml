@@ -6,7 +6,8 @@
 	</dwr>
 	<controller name="controller" source="../../gui/private/controller.js"/>
 	<controller name="settingsController" source="../../gui/private/settings.js"/>
-	<view>
+	<layout>
+		<top>
 		<toolbar>
 			<icon icon="common/settings" title="Indstillinger" selected="true"/>
 			<divider/>
@@ -17,7 +18,9 @@
 				<icon icon="common/close" title="Tilbage til website" name="close"/>
 			</right>
 		</toolbar>
-		<content>
+		</top>
+		<middle>
+			<center>
 			<space height="20"/>
 			<box width="600" title="Indstillinger">
 				<formula name="personFormula">
@@ -52,6 +55,7 @@
 					</space>
 				</formula>
 			</box>
-		</content>
-	</view>
+			</center>
+		</middle>
+	</layout>
 </gui>

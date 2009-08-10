@@ -6640,7 +6640,7 @@ In2iGui.callVisible = function(widget) {
 	In2iGui.callDescendants(widget,'$visibilityChanged');
 }
 
-In2iGui.addDelegate = function(d) {
+In2iGui.addDelegate = In2iGui.observe = function(d) {
 	In2iGui.get().addDelegate(d);
 }
 
@@ -6705,15 +6705,15 @@ In2iGui.callSuperDelegates = function(obj,method,value,event) {
 
 In2iGui.resolveImageUrl = function(widget,img,width,height) {
 	for (var i=0; i < widget.delegates.length; i++) {
-		if (widget.delegates[i].resolveImageUrl) {
-			return widget.delegates[i].resolveImageUrl(img,width,height);
+		if (widget.delegates[i].$resolveImageUrl) {
+			return widget.delegates[i].$resolveImageUrl(img,width,height);
 		}
 	};
 	var gui = In2iGui.get();
 	for (var i=0; i < gui.delegates.length; i++) {
 		var delegate = gui.delegates[i];
-		if (delegate.resolveImageUrl) {
-			return delegate.resolveImageUrl(img,width,height);
+		if (delegate.$resolveImageUrl) {
+			return delegate.$resolveImageUrl(img,width,height);
 		}
 	}
 	return null;
@@ -6731,7 +6731,7 @@ In2iGui.bind = function(expression,delegate) {
 		var obj = In2iGui.get(pair[0]);
 		var p = pair.slice(1).join('.');
 		obj.addDelegate({
-			propertyChanged : function(prop) {
+			$propertyChanged : function(prop) {
 				if (prop.property==p) {
 					delegate(prop.value);
 				}
@@ -6933,8 +6933,9 @@ In2iGui.Source.prototype = {
 			var method = pair[1];
 			var args = facade[method].argumentNames();
 			for (var i=0; i < args.length; i++) {
-				if (this.parameters[i])
-					args[i]=this.parameters[i].value || null;
+				if (this.parameters[i]) {
+					args[i]=this.parameters[i].value===undefined ? null : this.parameters[i].value;
+				}
 			};
 			args[args.length-1]=function(r) {self.parseDWR(r)};
 			this.busy=true;
@@ -6984,10 +6985,6 @@ In2iGui.Source.prototype = {
 		}.bind(this),100)
 	}
 }
-
-////////////////////////////////////// Info view /////////////////////////////
-
-
 
 
 //////////////////////////// Prototype extensions ////////////////////////////////
@@ -7144,6 +7141,9 @@ In2iGui.ImageViewer.prototype = {
 		this.zoomMove(e);
 	},
 	zoomMove : function(e) {
+		if (!this.zoomInfo) {
+			return;
+		}
 		var offset = this.zoomer.cumulativeOffset();
 		var x = (e.pointerX()-offset.left)/this.zoomer.clientWidth*(this.zoomInfo.width-this.zoomer.clientWidth);
 		var y = (e.pointerY()-offset.top)/this.zoomer.clientHeight*(this.zoomInfo.height-this.zoomer.clientHeight);
@@ -7155,9 +7155,9 @@ In2iGui.ImageViewer.prototype = {
 		if (image.width<=canvas.width && image.height<=canvas.height) {
 			return {width:image.width,height:image.height};
 		} else if (canvas.width/canvas.height>image.width/image.height) {
-			return {width:canvas.height/image.height*image.width,height:canvas.height};
+			return {width:Math.round(canvas.height/image.height*image.width),height:canvas.height};
 		} else if (canvas.width/canvas.height<image.width/image.height) {
-			return {width:canvas.width,height:canvas.width/image.width*image.height};
+			return {width:canvas.width,height:Math.round(canvas.width/image.width*image.height)};
 		} else {
 			return {width:canvas.width,height:canvas.height};
 		}
@@ -7342,7 +7342,9 @@ In2iGui.ImageViewer.prototype = {
 		loader.setDelegate(this);
 		for (var i=0; i < this.images.length; i++) {
 			var url = In2iGui.resolveImageUrl(this,this.images[i],this.width,this.height);
-			loader.addImages(url);
+			if (url!==null) {
+				loader.addImages(url);
+			}
 		};
 		this.status.innerHTML = '0%';
 		this.status.style.display='';

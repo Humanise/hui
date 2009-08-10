@@ -21,8 +21,8 @@ div.in2igui_toolbar span.in2igui_divider
 {
 	vertical-align: middle;
 	display: inline-block;
-	border-left: 1px solid #fff;
-	border-right: 1px solid #ccc;
+	border-right: 1px solid #fff;
+	border-left: 1px solid #ccc;
 	height: 45px;
 	margin: 1px 5px 0px;
 }

@@ -25,6 +25,10 @@ In2iGui.Gallery.prototype = {
 		this.objects = objects;
 		this.render();
 	},
+	getObjects : function() {
+		return this.objects;
+	},
+	/** @private */
 	$objectsLoaded : function(objects) {
 		this.setObjects(objects);
 	},

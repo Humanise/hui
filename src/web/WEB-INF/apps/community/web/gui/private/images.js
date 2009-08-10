@@ -71,7 +71,7 @@ var imagesController = {
 			this.viewer.addDelegate(this);
 		}
 		this.viewer.clearImages();
-		this.viewer.addImages(this.images);
+		this.viewer.addImages(imageGallery.getObjects());
 		this.viewer.show();
 	},
 	
