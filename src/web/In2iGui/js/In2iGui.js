@@ -602,7 +602,7 @@ In2iGui.callVisible = function(widget) {
 	In2iGui.callDescendants(widget,'$visibilityChanged');
 }
 
-In2iGui.addDelegate = function(d) {
+In2iGui.addDelegate = In2iGui.observe = function(d) {
 	In2iGui.get().addDelegate(d);
 }
 
@@ -667,15 +667,15 @@ In2iGui.callSuperDelegates = function(obj,method,value,event) {
 
 In2iGui.resolveImageUrl = function(widget,img,width,height) {
 	for (var i=0; i < widget.delegates.length; i++) {
-		if (widget.delegates[i].resolveImageUrl) {
-			return widget.delegates[i].resolveImageUrl(img,width,height);
+		if (widget.delegates[i].$resolveImageUrl) {
+			return widget.delegates[i].$resolveImageUrl(img,width,height);
 		}
 	};
 	var gui = In2iGui.get();
 	for (var i=0; i < gui.delegates.length; i++) {
 		var delegate = gui.delegates[i];
-		if (delegate.resolveImageUrl) {
-			return delegate.resolveImageUrl(img,width,height);
+		if (delegate.$resolveImageUrl) {
+			return delegate.$resolveImageUrl(img,width,height);
 		}
 	}
 	return null;
@@ -693,7 +693,7 @@ In2iGui.bind = function(expression,delegate) {
 		var obj = In2iGui.get(pair[0]);
 		var p = pair.slice(1).join('.');
 		obj.addDelegate({
-			propertyChanged : function(prop) {
+			$propertyChanged : function(prop) {
 				if (prop.property==p) {
 					delegate(prop.value);
 				}
@@ -895,8 +895,9 @@ In2iGui.Source.prototype = {
 			var method = pair[1];
 			var args = facade[method].argumentNames();
 			for (var i=0; i < args.length; i++) {
-				if (this.parameters[i])
-					args[i]=this.parameters[i].value || null;
+				if (this.parameters[i]) {
+					args[i]=this.parameters[i].value===undefined ? null : this.parameters[i].value;
+				}
 			};
 			args[args.length-1]=function(r) {self.parseDWR(r)};
 			this.busy=true;
@@ -946,10 +947,6 @@ In2iGui.Source.prototype = {
 		}.bind(this),100)
 	}
 }
-
-////////////////////////////////////// Info view /////////////////////////////
-
-
 
 
 //////////////////////////// Prototype extensions ////////////////////////////////

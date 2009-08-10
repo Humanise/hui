@@ -18,7 +18,9 @@ In2iGui.Layout.prototype = {
 		var height = this.element.parentNode.clientHeight;
 		var top = this.element.select('thead td')[0].firstDescendant().clientHeight;
 		var bottom = this.element.select('tfoot td')[0].firstDescendant().clientHeight;
-		this.element.select('tbody tr td')[0].style.height=(height-top-bottom-40)+'px';
+		if ((height-top-bottom-40)>0) {
+			this.element.select('tbody tr td')[0].style.height=(height-top-bottom-40)+'px';
+		}
 	}
 };
 

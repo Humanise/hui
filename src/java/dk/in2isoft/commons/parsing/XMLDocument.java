@@ -8,22 +8,24 @@ import nu.xom.Builder;
 import nu.xom.ParsingException;
 import nu.xom.converters.DOMConverter;
 
+import org.apache.log4j.Logger;
 import org.apache.xerces.dom.DOMImplementationImpl;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-public class RemoteXMLFile extends RemoteFile {
+public class XMLDocument extends TextDocument {
 
+	private static Logger log = Logger.getLogger(XMLDocument.class);
     private Document DOMDocument;
     private nu.xom.Document XOMDocument;
     
-	public RemoteXMLFile(URL url) {
+	public XMLDocument(URL url) {
 		super(url);
 	}
 	
-	public RemoteXMLFile(String url) throws MalformedURLException {
+	public XMLDocument(String url) throws MalformedURLException {
 		super(url);
 	}
 	
@@ -36,16 +38,19 @@ public class RemoteXMLFile extends RemoteFile {
 	}
 	
 	public nu.xom.Document getXOMDocument() {
-        if (XOMDocument==null) {
-    		    try {
-                XMLReader tagsoup = XMLReaderFactory.createXMLReader("org.ccil.cowan.tagsoup.Parser");
-    			   Builder bob = new Builder(tagsoup);
-                XOMDocument = bob.build(this.url.toString());
-        		}
-        		catch (SAXException ignore) {}
-        		catch (ParsingException ignore) {}
-        		catch (IOException ignore) {}
-        }
-	    return XOMDocument;
+		if (XOMDocument == null) {
+			try {
+				XMLReader tagsoup = XMLReaderFactory.createXMLReader("org.ccil.cowan.tagsoup.Parser");
+				Builder bob = new Builder(tagsoup);
+				XOMDocument = bob.build(this.url.toString());
+			} catch (SAXException e) {
+				log.error(e);
+			} catch (ParsingException e) {
+				log.error(e);
+			} catch (IOException e) {
+				log.error(e);
+			}
+		}
+		return XOMDocument;
 	}
 }

@@ -5,6 +5,7 @@ import java.util.Date;
 public class Property {
 	
 	public static final String KEY_COMMON_TAG = "common.tag";
+	public static final String KEY_COMMON_DESCRIPTION = "common.description";
 	public static final String KEY_STYLE_MARGIN_TOP = "style.margin.top";
 	public static final String KEY_STYLE_MARGIN_BOTTOM = "style.margin.bottom";
 	public static final String KEY_STYLE_MARGIN_LEFT = "style.margin.left";

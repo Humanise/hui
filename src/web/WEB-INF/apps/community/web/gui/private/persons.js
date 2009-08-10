@@ -1,20 +1,20 @@
 var personsController = {
 	activePerson : 0,
 	
-	interfaceIsReady : function() {
+	$interfaceIsReady : function() {
 		this.refreshPersonList();
 	},
 	
-	selectionChanged : function(value) {
-		if (value=='persons') {
+	$selectionChanged : function(item) {
+		if (item.value=='persons') {
 			In2iGui.get().changeState('persons');
 			this.refreshPersonList();
-		} else if (value=='invitations') {
+		} else if (item.value=='invitations') {
 			In2iGui.get().changeState('invitations');
 			this.refreshInvitationList();
 		}
 	},
-	listRowsWasOpened$personList : function(list) {
+	$listRowsWasOpened$personList : function(list) {
 		var obj = list.getFirstSelection();
 		this.editPerson(obj.id);
 	},
@@ -33,17 +33,17 @@ var personsController = {
 	
 	//////////////////////////////// Persons /////////////////////////////
 	
-	click$newPerson : function() {
+	$click$newPerson : function() {
 		this.activePerson = 0;
 		personFormula.reset();
 		personWindow.show();
 	},
-	click$cancelPerson : function() {
+	$click$cancelPerson : function() {
 		this.activePerson = 0;
 		personFormula.reset();
 		personWindow.hide();
 	},
-	click$savePerson : function() {
+	$click$savePerson : function() {
 		var person = personFormula.getValues();
 		person.id=this.activePerson;
 		
@@ -69,11 +69,11 @@ var personsController = {
 	
 	///////////////////////////// Invitations /////////////////////////////
 	
-	click$newInvitation : function() {
+	$click$newInvitation : function() {
 		invitationFormula.reset();
 		invitationWindow.show();
 	},
-	click$sendInvitation : function() {
+	$click$sendInvitation : function() {
 		var form = invitationFormula.getValues();
 		invitationWindow.hide();
 		this.showInvitationProgress();
@@ -83,13 +83,13 @@ var personsController = {
 				self.invitationWasSent();
 			},
 			errorHandler:function(errorString, exception) {
-				N2i.log(errorString);
-				N2i.log(exception);
+				n2i.log(errorString);
+				n2i.log(exception);
 				self.invitationFailed(errorString);
 			}
 		});
 	},
-	click$inviteSentOK : function() {
+	$click$inviteSentOK : function() {
 		this.inviteSentAlert.hide();
 	},
 	

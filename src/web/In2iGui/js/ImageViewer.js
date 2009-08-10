@@ -138,6 +138,9 @@ In2iGui.ImageViewer.prototype = {
 		this.zoomMove(e);
 	},
 	zoomMove : function(e) {
+		if (!this.zoomInfo) {
+			return;
+		}
 		var offset = this.zoomer.cumulativeOffset();
 		var x = (e.pointerX()-offset.left)/this.zoomer.clientWidth*(this.zoomInfo.width-this.zoomer.clientWidth);
 		var y = (e.pointerY()-offset.top)/this.zoomer.clientHeight*(this.zoomInfo.height-this.zoomer.clientHeight);
@@ -149,9 +152,9 @@ In2iGui.ImageViewer.prototype = {
 		if (image.width<=canvas.width && image.height<=canvas.height) {
 			return {width:image.width,height:image.height};
 		} else if (canvas.width/canvas.height>image.width/image.height) {
-			return {width:canvas.height/image.height*image.width,height:canvas.height};
+			return {width:Math.round(canvas.height/image.height*image.width),height:canvas.height};
 		} else if (canvas.width/canvas.height<image.width/image.height) {
-			return {width:canvas.width,height:canvas.width/image.width*image.height};
+			return {width:canvas.width,height:Math.round(canvas.width/image.width*image.height)};
 		} else {
 			return {width:canvas.width,height:canvas.height};
 		}
@@ -336,7 +339,9 @@ In2iGui.ImageViewer.prototype = {
 		loader.setDelegate(this);
 		for (var i=0; i < this.images.length; i++) {
 			var url = In2iGui.resolveImageUrl(this,this.images[i],this.width,this.height);
-			loader.addImages(url);
+			if (url!==null) {
+				loader.addImages(url);
+			}
 		};
 		this.status.innerHTML = '0%';
 		this.status.style.display='';

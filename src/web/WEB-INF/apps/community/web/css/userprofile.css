@@ -1,17 +1,18 @@
-div.images
+div.profile_view div.images
 {
 	overflow: hidden;
 	padding: 20px 20px 15px 20px;
 }
 
-div.images h2
+div.profile_view div.images h2
 {
 	margin: 0px 0px 10px;
 	font-weight: normal;
 	font-size: 15pt;
+	color: #446688;
 }
 
-div.thumbnail
+div.profile_view div.thumbnail
 {
 	float: left;
 	width: 60px;
@@ -25,7 +26,7 @@ div.thumbnail
 
 /***************************** Profile *************************/
 
-div.profile_image
+div.profile_view div.profile_image
 {
 	width: 100px;
 	height: 115px;
@@ -35,19 +36,19 @@ div.profile_image
 	float: left;
 }
 
-div.profile_image_photo
+div.profile_view div.profile_image_photo
 {
 	width: 90px;
 	height: 105px;
 	margin: 5px 0 0 5px;
 }
 
-div.profile_info
+div.profile_view div.profile_info
 {
 	margin-left: 130px;
 }
 
-div.profile h2
+div.profile_view div.profile h2
 {
 	margin: 0px;
 	font-weight: normal;

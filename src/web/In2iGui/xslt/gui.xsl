@@ -394,7 +394,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 		<span><span><input type="text"/></span></span>
 	</span>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.SearchField({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>'});
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.SearchField({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>'<xsl:if test="@expandedWidth">,expandedWidth:<xsl:value-of select="@expandedWidth"/></xsl:if>});
 		<xsl:call-template name="gui:createobject"/>
 	</script>
 </xsl:template>
@@ -494,7 +494,11 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 <xsl:template match="gui:gallery">
 	<div class="in2igui_gallery" id="{generate-id()}"><xsl:comment/>&#160;</div>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Gallery({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>'});
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Gallery({
+			element:'<xsl:value-of select="generate-id()"/>',
+			name:'<xsl:value-of select="@name"/>'
+			<xsl:if test="@source">,source:<xsl:value-of select="@source"/></xsl:if>
+		});
 		<xsl:call-template name="gui:createobject"/>
 	</script>
 </xsl:template>

@@ -15,7 +15,12 @@ public class SearchResult<T> {
 		return totalCount;
 	}
 	
+	@Deprecated
 	public List<T> getResult() {
+		return result;
+	}
+	
+	public List<T> getList() {
 		return result;
 	}
 

@@ -71,7 +71,7 @@ public class InvitationService {
 		parameters.put("inviter-url", inviterUrl);
 		parameters.put("invite-url", url);
 		parameters.put("base-url", configurationService.getBaseUrl());
-        String html = emailService.applyTemplate("WEB-INF/apps/community/resources/invitation-template.html", parameters);
+        String html = emailService.applyTemplate("dk/in2isoft/onlineobjects/apps/community/resources/invitation-template.html", parameters);
 
 		emailService.sendHtmlMessage("Invitation til OnlineMe", html, mail.getAddress(),person.getName());
 	}

@@ -11,7 +11,7 @@ oo.community.UserProfile.prototype = {
 		var edit = In2iGui.get('editProfile');
 		if (edit) {
 			edit.addDelegate({
-				click:this.editProfile.bind(this)
+				$click:this.editProfile.bind(this)
 			});
 			$('profileImage').observe('click',this.changeProfileImage.bind(this));
 		}
@@ -51,8 +51,8 @@ oo.community.UserProfile.prototype = {
 		var form = this.profileForm = In2iGui.Formula.create();
 		var cancel = In2iGui.Button.create({text:'Annuller'});
 		var update = In2iGui.Button.create({text:'Opdatér',highlighted:true});
-		cancel.addDelegate({click:this.cancelEditor.bind(this)});
-		update.addDelegate({click:this.saveEditor.bind(this)});
+		cancel.addDelegate({$click:this.cancelEditor.bind(this)});
+		update.addDelegate({$click:this.saveEditor.bind(this)});
 		var group = form.buildGroup({above:false},[
 			{type:'Text',options:{label:'Fornavn:',key:'givenName'}},
 			{type:'Text',options:{label:'Mellemnavn:',key:'additionalName'}},

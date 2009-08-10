@@ -152,7 +152,7 @@ In2iGui.ObjectList.Text.prototype = {
 		this.wrapper.addDelegate(this);
 		return field;
 	},
-	valueChanged : function(value) {
+	$valueChanged : function(value) {
 		this.value = value;
 		this.object.valueDidChange();
 	},

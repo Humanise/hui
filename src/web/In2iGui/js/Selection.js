@@ -43,7 +43,7 @@ In2iGui.Selection.prototype = {
 			this.kind=item.kind;
 		}
 		this.updateUI();
-		this._fireChange();
+		this.fireChange();
 	},
 	/** @private */
 	getSelectionWithValue : function(value) {
@@ -77,12 +77,15 @@ In2iGui.Selection.prototype = {
 	},
 	/** @private */
 	changeSelection : function(item) {
+		this.subItems.each(function(sub) {
+			sub.selectionChanged(this.selection,item);
+		});
 		this.selection = item;
 		this.updateUI();
-		this._fireChange();
+		this.fireChange();
 	},
 	/** @private */
-	_fireChange : function() {
+	fireChange : function() {
 		this.fire('selectionChanged',this.selection);
 		this.fireProperty('value',this.selection ? this.selection.value : null);
 		this.fireProperty('kind',this.selection ? this.selection.kind : null);
@@ -98,6 +101,7 @@ In2iGui.Selection.prototype = {
 		var item = {id:id,title:title,icon:icon,badge:badge,element:element,value:value,kind:kind};
 		this.items.push(item);
 		this.addItemBehavior(element,item);
+		this.selection = this.getSelectionWithValue(this.options.value);
 	},
 	/** @private */
 	addItemBehavior : function(node,item) {
@@ -269,6 +273,17 @@ In2iGui.Selection.Items.prototype = {
 		this.items.each(function(item) {
 			item.element.setClassName('in2igui_selected',this.parent.isSelection(item));
 		}.bind(this));
+	},
+	/** @private */
+	selectionChanged : function(oldSelection,newSelection) {
+		for (var i=0; i < this.items.length; i++) {
+			var value = this.items[i].value;
+			if (value == newSelection.value) {
+				this.fireProperty('value',newSelection.value);
+				return;
+			}
+		};
+		this.fireProperty('value',null);
 	}
 }
 /* EOF */

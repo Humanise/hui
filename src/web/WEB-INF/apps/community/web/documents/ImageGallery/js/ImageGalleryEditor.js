@@ -206,17 +206,16 @@ OO.Editor.ImageGallery.prototype = {
 	// Multi upload
 	$click$addImages : function() {
 		if (!this.addImagesPanel) {
-			//var w = In2iGui.Window.create(null,{title:'Tilføj billede',variant:'dark',padding:5});
-			var u = this.uploader = In2iGui.Upload.create({name:'upload',url:'uploadImage',parameters:{'contentId':OnlineObjects.content.id}});
+			var u = this.uploader = ui.Upload.create({name:'upload',url:'uploadImage',maxSize:5120,types:'*.jpg;*.jpeg;*.gif;*.png',parameters:{'contentId':OnlineObjects.content.id}});
 			//w.add(u);
-			var box = In2iGui.Box.create({title:'Tilføj billeder',width:400,padding:10,absolute:true,modal:true});
+			var box = ui.Box.create({title:'Tilføj billeder',width:400,padding:10,absolute:true,modal:true});
 			box.add('<div class="in2igui_text"><h1>Vælg billeder på din computer</h1><p>Du kan vælge en eller flere billedfiler på din lokale computer...</p></div>');
 			box.add(u);
-			var buttons = In2iGui.Buttons.create({top: 10});
-			var upload = In2iGui.Button.create({title:'Vælg billeder...',highlighted:true});
+			var buttons = ui.Buttons.create({top: 10});
+			var upload = ui.Button.create({title:'Vælg billeder...',highlighted:true});
 			u.setButton(upload);
 			buttons.add(upload);
-			this.cancelUploadButton = In2iGui.Button.create({name:'cancelAddImages',title:'Afslut'});
+			this.cancelUploadButton = ui.Button.create({name:'cancelAddImages',title:'Afslut'});
 			buttons.add(this.cancelUploadButton);
 			box.add(buttons);
 			box.addToDocument();

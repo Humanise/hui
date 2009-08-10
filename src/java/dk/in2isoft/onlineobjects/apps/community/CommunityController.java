@@ -28,7 +28,7 @@ import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SecurityException;
-import dk.in2isoft.onlineobjects.importing.Importer;
+import dk.in2isoft.onlineobjects.importing.DataImporter;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.ImageGallery;
@@ -36,6 +36,8 @@ import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.WebPage;
 import dk.in2isoft.onlineobjects.model.WebSite;
+import dk.in2isoft.onlineobjects.services.FileService;
+import dk.in2isoft.onlineobjects.services.ImportService;
 import dk.in2isoft.onlineobjects.services.PageRenderingService;
 import dk.in2isoft.onlineobjects.services.WebModelService;
 import dk.in2isoft.onlineobjects.ui.AsynchronousProcessDescriptor;
@@ -45,9 +47,14 @@ import dk.in2isoft.onlineobjects.util.images.ImageService;
 
 public class CommunityController extends ApplicationController {
 
+	
+
 	private static Logger log = Logger.getLogger(CommunityController.class);
 
 	private PrivateSpaceController privateSpaceController;
+	private ImportService importService;
+	private ImageService imageService;
+	private FileService fileService; 
 
 	private static CommunityDAO dao = new CommunityDAO();
 
@@ -136,6 +143,10 @@ public class CommunityController extends ApplicationController {
 					privateSpaceController.displayPersons(request);
 				} else if (request.testLocalPathFull(null, "private", "images.gui")) {
 					privateSpaceController.displayImages(request);
+				} else if (request.testLocalPathFull(null, "private", "bookmarks.gui")) {
+					privateSpaceController.displayBookmarks(request);
+				} else if (request.testLocalPathFull(null, "private", "bookmarks", "import.action")) {
+					importBookmarks(request);
 				} else if (request.testLocalPathFull(null, "private", "images", "upload.action")) {
 					importImage(request);
 				} else if (request.testLocalPathFull(null, "private", "settings.gui")) {
@@ -150,8 +161,18 @@ public class CommunityController extends ApplicationController {
 		}
 	}
 
+	private void importBookmarks(Request request) throws IOException, EndUserException {
+		DataImporter dataImporter = importService.createImporter();
+		dataImporter.setListener(new InternetAddressImporter(modelService));
+		dataImporter.importMultipart(this, request);
+		request.getResponse().setStatus(HttpServletResponse.SC_OK);
+		request.getResponse().getWriter().write("OK");
+	}
+
 	private void importImage(Request request) throws IOException, EndUserException {
-		new Importer().importMultipart(this,request);
+		DataImporter dataImporter = importService.createImporter();
+		dataImporter.setListener(new ImageImporter(modelService,imageService));
+		dataImporter.importMultipart(this, request);
 		request.getResponse().setStatus(HttpServletResponse.SC_OK);
 		request.getResponse().getWriter().write("OK");
 	}
@@ -183,18 +204,18 @@ public class CommunityController extends ApplicationController {
 
 				int[] dimensions = Core.getInstance().getBean(ImageService.class).getImageDimensions(file);
 				Image image = new Image();
-				getModel().createItem(image, request.getSession());
+				modelService.createItem(image, request.getSession());
 				image.setName(name);
 				image.changeImageFile(file, dimensions[0], dimensions[1], contentType);
-				getModel().updateItem(image, request.getSession());
+				modelService.updateItem(image, request.getSession());
 				
-				List<Relation> list = getModel().getChildRelations(user,Image.class,Relation.KIND_SYSTEM_USER_IMAGE);
+				List<Relation> list = modelService.getChildRelations(user,Image.class,Relation.KIND_SYSTEM_USER_IMAGE);
 				for (Relation relation : list) {
 					log.debug("Removing existing image: "+relation);
-					getModel().deleteRelation(relation, request.getSession());
+					modelService.deleteRelation(relation, request.getSession());
 				}
 				
-				getModel().createRelation(user , image, Relation.KIND_SYSTEM_USER_IMAGE, request.getSession());
+				modelService.createRelation(user , image, Relation.KIND_SYSTEM_USER_IMAGE, request.getSession());
 				log.debug("Image is set!");
 			}
 		});
@@ -249,7 +270,7 @@ public class CommunityController extends ApplicationController {
 			if (imageGalleryId == 0) {
 				imageGalleryId = request.getInt("contentId");
 			}
-			ImageGallery gallery = getModel().get(ImageGallery.class, imageGalleryId);
+			ImageGallery gallery = modelService.get(ImageGallery.class, imageGalleryId);
 			if (gallery == null) {
 				throw new EndUserException("Could not load gallery with ID=" + imageGalleryId);
 			}
@@ -267,7 +288,7 @@ public class CommunityController extends ApplicationController {
 			process.setError(true);
 			throw new EndUserException(e);
 		}
-		getModel().commit();
+		modelService.commit();
 		process.setCompleted(true);
 		request.getResponse().setStatus(HttpServletResponse.SC_OK);
 		request.getResponse().getWriter().write("OK");
@@ -276,24 +297,23 @@ public class CommunityController extends ApplicationController {
 	private void processFile(DiskFileItem item, ImageGallery gallery, Request request) throws IOException,
 			EndUserException {
 		File file = item.getStoreLocation();
-		ImageService imageService = Core.getInstance().getBean(ImageService.class);
 		int[] dimensions = imageService.getImageDimensions(file);
 		Image image = new Image();
-		getModel().createItem(image, request.getSession());
-		image.changeImageFile(file, dimensions[0], dimensions[1], imageService.getMimeType(file));
+		modelService.createItem(image, request.getSession());
+		image.changeImageFile(file, dimensions[0], dimensions[1], fileService.getMimeType(file));
 		imageService.synchronizeMetaData(image, request.getSession());
 		if (StringUtils.isBlank(image.getName())) {
-			image.setName(imageService.cleanFileName(item.getName()));
+			image.setName(fileService.cleanFileName(item.getName()));
 		}
-		getModel().updateItem(image, request.getSession());
+		modelService.updateItem(image, request.getSession());
 		Relation relation = new Relation(gallery, image);
 		relation.setPosition(getMaxImagePosition(gallery) + 1);
-		getModel().createItem(relation, request.getSession());
+		modelService.createItem(relation, request.getSession());
 	}
 
 	private float getMaxImagePosition(Entity gallery) throws EndUserException {
 		// TODO : Consider only images (URGENT)
-		List<Relation> relations = getModel().getChildRelations(gallery);
+		List<Relation> relations = modelService.getChildRelations(gallery);
 		if (relations.size() > 0) {
 			return relations.get(relations.size() - 1).getPosition();
 		} else {
@@ -367,5 +387,29 @@ public class CommunityController extends ApplicationController {
 			request.getResponse().setContentType("image/png");
 			GraphUtil.convert(sb.toString(), algorithm, "png", request.getResponse().getOutputStream());
 		}
+	}
+
+	public void setImportService(ImportService importService) {
+		this.importService = importService;
+	}
+
+	public ImportService getImportService() {
+		return importService;
+	}
+
+	public void setImageService(ImageService imageService) {
+		this.imageService = imageService;
+	}
+
+	public ImageService getImageService() {
+		return imageService;
+	}
+
+	public void setFileService(FileService fileService) {
+		this.fileService = fileService;
+	}
+
+	public FileService getFileService() {
+		return fileService;
 	}
 }

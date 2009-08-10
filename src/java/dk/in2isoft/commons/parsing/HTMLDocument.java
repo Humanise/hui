@@ -3,6 +3,8 @@ package dk.in2isoft.commons.parsing;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import nu.xom.Text;
 
@@ -11,17 +13,16 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class RemoteHTMLFile extends RemoteXMLFile {
+public class HTMLDocument extends XMLDocument {
 
 	private String title;
     private String contentType;
-    private String description;
 	
-	public RemoteHTMLFile(String url) throws MalformedURLException {
+	public HTMLDocument(String url) throws MalformedURLException {
 		super(url);
 	}
 
-	public RemoteHTMLFile(URL url) {
+	public HTMLDocument(URL url) {
 		super(url);
 	}
 	
@@ -87,6 +88,7 @@ public class RemoteHTMLFile extends RemoteXMLFile {
     }
     
     private void traverse(nu.xom.Node parent, StringBuffer data) {
+    	if (parent==null) return;
         int count = parent.getChildCount();
         for (int i=0;i<count;i++) {
             nu.xom.Node node = parent.getChild(i);
@@ -101,16 +103,16 @@ public class RemoteHTMLFile extends RemoteXMLFile {
         
     }
 	
-	public RemoteHTMLReference[] getReferences() {
+	public List<HTMLReference> getReferences() {
 		Document doc = getDOMDocument();
 		NodeList list = doc.getElementsByTagName("a");
-		RemoteHTMLReference[] refs = new RemoteHTMLReference[list.getLength()];
+		List<HTMLReference> refs = new ArrayList<HTMLReference>();
 	    for (int i=0;i<list.getLength();i++) {
 	    	Node link = list.item(i);
 	    	NamedNodeMap atts = link.getAttributes();
 	    	Node href = atts.getNamedItem("href");
 	    	Node title = atts.getNamedItem("title");
-	    	RemoteHTMLReference ref = new RemoteHTMLReference();
+	    	HTMLReference ref = new HTMLReference();
 	    	if (href!=null) {
 	    		ref.setUrl(href.getNodeValue());
 	    	}
@@ -126,7 +128,7 @@ public class RemoteHTMLFile extends RemoteXMLFile {
 	    		}
 	    	}
 	    	ref.setText(text);
-	    	refs[i]=ref;
+	    	refs.add(ref);
 	    }
 	    return refs;
 	}

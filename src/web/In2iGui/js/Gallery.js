@@ -9,6 +9,9 @@ In2iGui.Gallery = function(options) {
 	this.width = 100;
 	this.height = 100;
 	In2iGui.extend(this);
+	if (this.options.source) {
+		this.options.source.addDelegate(this);
+	}
 }
 
 In2iGui.Gallery.create = function(options) {
@@ -21,6 +24,9 @@ In2iGui.Gallery.prototype = {
 	setObjects : function(objects) {
 		this.objects = objects;
 		this.render();
+	},
+	$objectsLoaded : function(objects) {
+		this.setObjects(objects);
 	},
 	/** @private */
 	render : function() {
@@ -40,6 +46,11 @@ In2iGui.Gallery.prototype = {
 			item.observe('click',function() {
 				self.itemClicked(i);
 			});
+			item.dragDropInfo = {kind:'image',icon:'common/image',id:object.id,title:object.name};
+			item.onmousedown=function(e) {
+				In2iGui.startDrag(e,item);
+				return false;
+			};
 			item.observe('dblclick',function() {
 				self.itemDoubleClicked(i);
 			});

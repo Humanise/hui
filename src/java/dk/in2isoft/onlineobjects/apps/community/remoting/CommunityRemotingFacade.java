@@ -15,6 +15,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import dk.in2isoft.commons.lang.LangUtil;
+import dk.in2isoft.in2igui.data.ListData;
 import dk.in2isoft.in2igui.data.ListDataRow;
 import dk.in2isoft.in2igui.data.ListObjects;
 import dk.in2isoft.in2igui.data.TextFieldData;
@@ -33,10 +34,13 @@ import dk.in2isoft.onlineobjects.core.ModelException;
 import dk.in2isoft.onlineobjects.core.Pair;
 import dk.in2isoft.onlineobjects.core.Priviledged;
 import dk.in2isoft.onlineobjects.core.Query;
+import dk.in2isoft.onlineobjects.core.SearchResult;
+import dk.in2isoft.onlineobjects.core.SecurityException;
 import dk.in2isoft.onlineobjects.core.UserQuery;
 import dk.in2isoft.onlineobjects.model.EmailAddress;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Image;
+import dk.in2isoft.onlineobjects.model.InternetAddress;
 import dk.in2isoft.onlineobjects.model.Invitation;
 import dk.in2isoft.onlineobjects.model.Location;
 import dk.in2isoft.onlineobjects.model.Person;
@@ -218,7 +222,7 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 	}
 
 	public Map<String, Float> getTagCloud(String query) throws EndUserException {
-		return modelService.getPropertyCloud(Property.KEY_COMMON_TAG,query);
+		return modelService.getPropertyCloud(Property.KEY_COMMON_TAG,query,Image.class);
 	}
 
 	public void updateUsersMainPerson(Person dummy, List<EmailAddress> adresses) throws EndUserException {
@@ -252,9 +256,13 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 		return list;
 	}
 
-	public ListObjects listImages() throws EndUserException {
+	public ListObjects listImages(String text,String tag) throws EndUserException {
 		ListObjects list = new ListObjects();
 		Query<Image> query = new Query<Image>(Image.class).withPriviledged(getUserSession());
+		query.withWords(text);
+		if (tag!=null) {
+			query.withCustomProperty(Property.KEY_COMMON_TAG, tag);
+		}
 		List<Image> persons = modelService.list(query);
 		
 		for (Image image : persons) {
@@ -268,6 +276,59 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 		}
 		return list;
 	}
+	
+	//////////////// Internet addresses ////////////////
+
+	public ListData listPrivateBookmarks(String search, String tag,int page) throws EndUserException {
+		Query<InternetAddress> query = new Query<InternetAddress>(InternetAddress.class).withPriviledged(getUserSession()).withWords(search);
+		query.withPaging(page, 30);
+		if (tag!=null) {
+			query.withCustomProperty(Property.KEY_COMMON_TAG, tag);
+		}
+		SearchResult<InternetAddress> result = modelService.search(query);
+		
+		List<InternetAddress> addresses = result.getList();
+		ListData list = new ListData();
+		list.setWindow(result.getTotalCount(), 30, page);
+		list.addHeader("Titel");
+		list.addHeader("Adresse");
+		for (InternetAddress address : addresses) {
+			list.newRow(address.getId(), "internetAddress");
+			list.addCell(address.getName(),"common/internet");
+			list.addCell(address.getAddress(),"monochrome/globe");
+		}
+		return list;
+	}
+	
+	public InternetAddressInfo getInternetAddress(long id) throws ModelException {
+		InternetAddress address = modelService.get(InternetAddress.class, id);
+		if (address!=null) {
+			InternetAddressInfo info = new InternetAddressInfo();
+			info.setId(address.getId());
+			info.setName(address.getName());
+			info.setAddress(address.getAddress());
+			info.setDescription(address.getPropertyValue(Property.KEY_COMMON_DESCRIPTION));
+			info.setTags(address.getPropertyValues(Property.KEY_COMMON_TAG));
+			return info;
+		}
+		return null;
+	}
+	
+	public void saveInternetAddress(InternetAddressInfo info) throws ModelException, SecurityException {
+		InternetAddress address;
+		if (info.getId()!=null) {
+			address = modelService.get(InternetAddress.class, info.getId());
+		} else {
+			address = new InternetAddress();
+		}
+		address.setAddress(info.getAddress());
+		address.setName(info.getName());
+		address.overrideFirstProperty(Property.KEY_COMMON_DESCRIPTION, info.getDescription());
+		address.overrideProperties(Property.KEY_COMMON_TAG, info.getTags());
+		modelService.createOrUpdateItem(address, getUserSession());
+	}
+	
+	/////////////////////// Persons /////////////// 
 	
 	public Map<String,Object> loadPerson(long id) throws ModelException {
 		Map<String,Object> data = new HashMap<String, Object>();
@@ -361,9 +422,10 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 	}
 	
 	public List<Pair<Location, Image>> searchLocations(String query) throws EndUserException {
-		return modelService.searchPairs(new LocationQuery<Image>(Image.class).withWords(query).withPaging(0, 8)).getResult();
-		
+		return modelService.searchPairs(new LocationQuery<Image>(Image.class).withWords(query).withPaging(0, 8)).getResult();	
 	}
+	
+	////////////////// Services ////////////////
 
 	public void setInvitationService(InvitationService invitationService) {
 		this.invitationService = invitationService;

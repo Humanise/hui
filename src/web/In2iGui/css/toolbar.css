@@ -37,7 +37,8 @@ div.in2igui_toolbar_right
 
 a.in2igui_toolbar_icon
 {
-	height: 58px;
+	margin-top: 2px;
+	height: 55px;
 	vertical-align: middle;
 	display: inline-block;
 	font-size: 0px;
@@ -49,8 +50,18 @@ a.in2igui_toolbar_icon
 
 a.in2igui_toolbar_icon:focus
 {
-	-webkit-box-shadow: 0px 0px 5px #89f;
+	background: url('../gfx/toolbar_bg.png') left 0 no-repeat;
 	outline: none;
+}
+
+a.in2igui_toolbar_icon:focus span.in2igui_toolbar_inner_icon
+{
+	background: url('../gfx/toolbar_bg.png') right -55px no-repeat;
+}
+
+a.in2igui_toolbar_icon:focus span.in2igui_toolbar_inner_icon span.in2igui_toolbar_inner_icon
+{
+	background: url('../gfx/toolbar_bg.png') left -110px repeat-x;
 }
 
 a.in2igui_toolbar_icon span.in2igui_toolbar_inner_icon
@@ -60,23 +71,25 @@ a.in2igui_toolbar_icon span.in2igui_toolbar_inner_icon
 
 a.in2igui_toolbar_icon span.in2igui_toolbar_inner_icon span.in2igui_toolbar_inner_icon
 {
-	padding: 7px 6px 0px 6px;
+	padding: 5px 0 0;
+	height: 50px;
+	margin: 0 7px;
 }
 
 a.in2igui_toolbar_icon_selected
 {
-	background: url('../gfx/toolbar_bg.png') right -290px repeat-x;
+	background: url('../gfx/toolbar_bg.png') left -165px no-repeat;
 }
 
 a.in2igui_toolbar_icon_selected span.in2igui_toolbar_inner_icon
 {
-	background: url('../gfx/toolbar_bg.png') left -174px no-repeat;
-	height: 58px;
+	background: url('../gfx/toolbar_bg.png') right -220px no-repeat;
+	height: 55px;
 }
 
 a.in2igui_toolbar_icon_selected span.in2igui_toolbar_inner_icon span.in2igui_toolbar_inner_icon
 {
-	background: url('../gfx/toolbar_bg.png') right -232px no-repeat;
+	background: url('../gfx/toolbar_bg.png') left -275px repeat-x;
 	height: 51px;
 }
 

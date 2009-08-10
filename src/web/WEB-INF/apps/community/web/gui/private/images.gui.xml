@@ -6,48 +6,66 @@
 	</dwr>
 	<controller name="controller" source="../../gui/private/controller.js"/>
 	<controller name="imagesController" source="../../gui/private/images.js"/>
-	<view>
-		<toolbar>
-			<icon icon="common/settings" title="Indstillinger" name="toolSettings"/>
-			<divider/>
-			<icon icon="common/person" title="Personer" name="toolPersons"/>
-			<icon icon="common/image" title="Billeder" selected="true" name="toolImages"/>
-			<right>
-				<icon icon="common/close" title="Tilbage til website" name="close"/>
-			</right>
-		</toolbar>
-		<content pad="20">
-			<view style="box">
-				<toolbar>
-					<icon icon="common/image" overlay="new" title="Tilføj billeder" name="newImage"/>
-					<divider/>
-					<icon icon="common/play" title="Lysbilledshow" name="slideShow"/>
-					<icon icon="common/delete" title="Slet" name="deleteSelectedImage"/>
-					<search title="Søgning"/>
-				</toolbar>
-				<content>
-					<split>
-						<sidebar>
+	<source name="imagesSource" dwr="AppCommunity.listImages">
+		<parameter key="search" value="@searchfield.value"/>
+		<parameter key="tag" value="@tagSelection.value"/>
+	</source>
+	<source name="tagsSource" dwr="Common.getTagItemsWithCount">
+		<parameter key="simpleName" value="Image"/>
+	</source>
+	<layout>
+		<top>
+			<toolbar>
+				<icon icon="common/settings" title="Indstillinger" name="toolSettings"/>
+				<divider/>
+				<icon icon="common/person" title="Personer" name="toolPersons"/>
+				<icon icon="common/image" title="Billeder" selected="true" name="toolImages"/>
+				<icon icon="common/internet" title="Bogmærker" name="toolBookmarks"/>
+				<right>
+					<icon icon="common/close" title="Tilbage til website" name="close"/>
+				</right>
+			</toolbar>
+		</top>
+		<middle>
+			<center padding="10">
+				<layout style="box">
+					<top>
+						<toolbar>
+							<icon icon="common/image" overlay="new" title="Tilføj billeder" name="newImage"/>
+							<divider/>
+							<icon icon="common/play" title="Lysbilledshow" name="slideShow"/>
+							<icon icon="common/delete" title="Slet" name="deleteSelectedImage"/>
+							<right>
+   								<searchfield title="Søgning" expandedWidth="150" placeholder="Søg her" name="searchfield"/>
+							</right>
+						</toolbar>
+					</top>
+					<middle>
+						<left>
+							<overflow>
 							<selection value="all">
 								<item icon="common/image" title="Alle billeder" value="all"/>
+								<title>Nøgleord</title>
+								<items source="tagsSource" name="tagSelection"/>
 							</selection>
-						</sidebar>
-						<content>
-							<overflow resize="-190">
-								<gallery name="imageGallery" state="persons"/>
 							</overflow>
-						</content>
-					</split>
-				</content>
-				<foot>
+						</left>
+						<center>
+							<overflow resize="-190">
+								<gallery name="imageGallery" source="imagesSource"/>
+							</overflow>
+						</center>
+					</middle>
+					<bottom>
 					
-				</foot>
-			</view>
-		</content>
-	</view>
+					</bottom>
+				</layout>
+			</center>
+		</middle>
+	</layout>
 	<window name="newImageWindow" title="Nyt billede" width="300" variant="dark">
 		<upload name="imageUpload" url="images/upload.action" button="imageUploadButton"/>
-		<formula name="imageFormula">
+		<formula>
 			<group>
 				<button name="imageUploadButton" title="Vælg billeder"/>
 			</group>
@@ -61,9 +79,9 @@
 					<text label="Beskrivelse" key="description" lines="6"/>
 					<tokens label="Nøgleord" key="tags"/>
 					<buttons>
-						<button title="Gem" highlighted="true" name="saveImage"/>
-						<button title="Annuller" name="cancelImage"/>
 						<button title="Slet" name="deleteImage"/>
+						<button title="Annuller" name="cancelImage"/>
+						<button title="Gem" highlighted="true" name="saveImage"/>
 					</buttons>
 				</group>
 			</formula>

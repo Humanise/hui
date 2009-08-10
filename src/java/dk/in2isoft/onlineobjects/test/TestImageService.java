@@ -1,12 +1,12 @@
 package dk.in2isoft.onlineobjects.test;
 
 import dk.in2isoft.onlineobjects.core.EndUserException;
-import dk.in2isoft.onlineobjects.util.images.ImageService;
+import dk.in2isoft.onlineobjects.services.FileService;
 
 public class TestImageService extends SpringTestCase {
 		
 	public void testVelocity() throws EndUserException {
-		ImageService imageService = getBean(ImageService.class);
+		FileService imageService = getBean(FileService.class);
 		assertEquals("Image", imageService.cleanFileName("image"));
 		assertEquals("Image", imageService.cleanFileName("image.jpg"));
 		assertEquals("My image", imageService.cleanFileName("my_image.jpg"));

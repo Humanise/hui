@@ -19,6 +19,7 @@ import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.User;
+import dk.in2isoft.onlineobjects.services.FileService;
 import dk.in2isoft.onlineobjects.services.SchedulingService;
 import dk.in2isoft.onlineobjects.ui.AbstractRemotingFacade;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
@@ -26,6 +27,7 @@ import dk.in2isoft.onlineobjects.util.images.ImageService;
 public class SetupRemotingFacade extends AbstractRemotingFacade {
 	
 	private ImageService imageService;
+	private FileService fileService;
 	private SchedulingService schedulingService;
 
 	private void checkUser() throws SecurityException {
@@ -142,7 +144,7 @@ public class SetupRemotingFacade extends AbstractRemotingFacade {
 		for (Image image : list) {
 			String name = image.getName();
 			if (name!=null && name.toLowerCase().endsWith(".jpg")) {
-				image.setName(getImageService().cleanFileName(name));
+				image.setName(fileService.cleanFileName(name));
 				modelService.updateItem(image, userSession);
 			}
 			imageService.synchronizeContentType(image, userSession);
@@ -164,5 +166,13 @@ public class SetupRemotingFacade extends AbstractRemotingFacade {
 
 	public SchedulingService getSchedulingService() {
 		return schedulingService;
+	}
+
+	public void setFileService(FileService fileService) {
+		this.fileService = fileService;
+	}
+
+	public FileService getFileService() {
+		return fileService;
 	}
 }

@@ -33,6 +33,7 @@ import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.Location;
 import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.services.ConfigurationService;
+import dk.in2isoft.onlineobjects.services.FileService;
 import dk.in2isoft.onlineobjects.services.StorageService;
 import eu.medsea.mimeutil.MimeType;
 import eu.medsea.mimeutil.MimeUtil2;
@@ -43,6 +44,7 @@ public class ImageService extends AbstractCommandLineInterfaceUtil {
 	
 	private StorageService storageService;
 	private ConfigurationService configurationService;
+	private FileService fileService;
 	private ModelService modelService;
 	private MimeUtil2 mimeUtil;
 
@@ -54,23 +56,6 @@ public class ImageService extends AbstractCommandLineInterfaceUtil {
 	
 	public File getThumbnail(long id, int size) throws EndUserException {
 		return getThumbnail(id, size, size);
-	}
-	
-	public String cleanFileName(String fileName) {
-		if (fileName==null) {
-			return null;
-		}
-		int i = fileName.indexOf(".");
-		if (i!=-1) {
-			fileName = fileName.substring(0,i);
-		}
-		i = fileName.lastIndexOf("\\");
-		if (i!=-1) {
-			fileName = fileName.substring(i+1);
-		}
-		fileName = StringUtils.capitalize(fileName);
-		fileName = StringUtils.replace(fileName, "_", " ");
-		return fileName;
 	}
 
 	public File getThumbnail(long id, int width, int height) throws EndUserException {
@@ -208,7 +193,7 @@ public class ImageService extends AbstractCommandLineInterfaceUtil {
 	}
 	
 	public void synchronizeContentType(Image image, Priviledged priviledged) throws EndUserException {
-		String mimeType = getMimeType(image.getImageFile());
+		String mimeType = fileService.getMimeType(image.getImageFile());
 		if (!StringUtils.equals(mimeType, image.getContentType())) {
 			image.setContentType(mimeType);
 			modelService.updateItem(image, priviledged);
@@ -295,9 +280,11 @@ public class ImageService extends AbstractCommandLineInterfaceUtil {
 		return info;
 	}
 
-	public String getMimeType(File file) {
-		Collection<?> types = mimeUtil.getMimeTypes(file);
-		MimeType mimeType = MimeUtil2.getMostSpecificMimeType(types);
-		return mimeType.toString();
+	public void setFileService(FileService fileService) {
+		this.fileService = fileService;
+	}
+
+	public FileService getFileService() {
+		return fileService;
 	}
 }

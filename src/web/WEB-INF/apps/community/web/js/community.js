@@ -14,7 +14,7 @@ oo.community = {
 		}
 		return this.imageViewer;
 	},
-	resolveImageUrl : function(image,width,height) {
+	$resolveImageUrl : function(image,width,height) {
 		return oo.baseContext+'/service/image/?id='+image.id+'&width='+width+'&height='+height;
 	},
 	checkBrowser : function() {
@@ -225,40 +225,44 @@ oo.community.Chrome.Login.prototype = {
 		this.form.select('.submit')[0].tabIndex=-1;
 		this.recoverLink.observe('click',function(e) {e.stop();this.recoverPassword()}.bind(this));
 	},
+	showError : function(text) {
+		var e = this.form.select('.fields')[0];
+		ui.showToolTip({text:text,element:e,key:'loginError'});
+	},
+	hideError : function() {
+		ui.hideToolTip({key:'loginError'});
+	},
 	logIn : function() {
 		if (!oo.community.checkBrowser()) {
 			return false;
 		}
-		var self = this;
-		var valid = true;
-		if (self.username.isBlank()) {
-			self.username.setError('Skal udfyldes');
-			self.username.focus();
-			valid = false;
+		var valid = false;
+		if (this.username.isBlank()) {
+			this.showError('Skal udfyldes');
+			this.username.focus();
+		} else if (this.password.isBlank()) {
+			this.showError('Skal udfyldes');
+			this.password.focus();
 		} else {
-			self.username.setError(false);
-		}
-		if (self.password.isBlank()) {
-			self.password.setError('Skal udfyldes');
-			valid = false;
-		} else {
-			self.password.setError(false);
+			this.hideError();
+			valid = true;
 		}
 		if (!valid) return false;
-		var username = self.username.getValue();
-		var password = self.password.getValue();
+		var username = this.username.getValue();
+		var password = this.password.getValue();
+		var self = this;
 		var delegate = {
   			callback:function(data) {
 				if (data==true) {
 					self.userDidLogIn(username);
 				} else {
 					In2iGui.hideMessage();
-					self.username.setError('Kunne ikke logge ind!')
+					self.showError('Brugernavn og/eller kode er forkert')
 				}
 			},
   			errorHandler:function(errorString, exception) {  }
 		};
-		In2iGui.showMessage('Logger ind...');
+		ui.showMessage('Logger ind...');
 		CoreSecurity.changeUser(username,password,delegate);
 		return false;
 	},
@@ -267,12 +271,7 @@ oo.community.Chrome.Login.prototype = {
 		this.logIn();
 	},
 	userDidLogIn : function(username) {
-		/*In2iGui.get().alert({
-			emotion: 'smile',
-			title: 'Du er nu logget ind!',
-			text: '...og vil blive taget til din profil-side med det samme.'
-		});*/
-		In2iGui.showMessage('Du er nu logget ind!');
+		ui.showMessage('Du er nu logget ind!');
 		window.setTimeout(function() {
 			document.location.reload();
 		},500);
@@ -470,7 +469,7 @@ oo.Gallery.prototype = {
 		}
 		return this.imageViewer;
 	},
-	resolveImageUrl : function(image,width,height) {
+	$resolveImageUrl : function(image,width,height) {
 		return oo.baseContext+'/service/image/id'+image.id+'width'+Math.round(width)+'height'+Math.round(height)+'.jpg';
 	}
 }

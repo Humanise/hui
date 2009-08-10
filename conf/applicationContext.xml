@@ -21,6 +21,7 @@
 	    <dwr:convert type="bean" class="dk.in2isoft.onlineobjects.publishing.remoting.*"/>
 	    
 	    <dwr:convert class="dk.in2isoft.onlineobjects.apps.community.views.ImageInfo" type="bean"/>
+	    <dwr:convert class="dk.in2isoft.onlineobjects.apps.community.remoting.InternetAddressInfo" type="bean"/>
 	    
 	    <dwr:convert type="bean" class="dk.in2isoft.onlineobjects.ui.AsynchronousProcessDescriptor"/>
 	    <dwr:convert type="bean" class="dk.in2isoft.onlineobjects.model.*">
@@ -122,6 +123,10 @@
 	
 	<bean id="schedulingService" class="dk.in2isoft.onlineobjects.services.SchedulingService" autowire="byType"/>
 	
+	<bean id="importService" class="dk.in2isoft.onlineobjects.services.ImportService" autowire="byType"/>
+	
+	<bean id="fileService" class="dk.in2isoft.onlineobjects.services.FileService" autowire="byType"/>
+	
 	<!-- Service controllers -->
 	
 	<bean id="imageController" class="dk.in2isoft.onlineobjects.service.image.ImageController" autowire="byType"/>
@@ -131,7 +136,9 @@
 	
 	<bean id="communityController" class="dk.in2isoft.onlineobjects.apps.community.CommunityController" autowire="byType"/>
 	<bean id="setupController" class="dk.in2isoft.onlineobjects.apps.setup.SetupController" autowire="byType"/>
+	<!--
 	<bean id="schoolController" class="dk.in2isoft.onlineobjects.apps.school.SchoolController" autowire="byType"/>
+	-->
 	<bean id="desktopController" class="dk.in2isoft.onlineobjects.apps.desktop.DesktopController" autowire="byType"/>
 
 	<!-- Community -->
@@ -140,8 +147,7 @@
 	
 	<bean id="memberService" class="dk.in2isoft.onlineobjects.apps.community.services.MemberService" autowire="byType"/>
 
-	<bean id="invitationView" class="dk.in2isoft.onlineobjects.apps.community.jsf.InvitationBean" autowire="byType" scope="request"/>
-	
+	<bean id="invitationView" class="dk.in2isoft.onlineobjects.apps.community.views.InvitationView" autowire="byType" scope="request"/>
 	<bean id="baseView" class="dk.in2isoft.onlineobjects.apps.community.views.BaseView" autowire="byType" scope="request"/>
 	<bean id="imageView" class="dk.in2isoft.onlineobjects.apps.community.views.ImageView" autowire="byType" scope="request"/>
 	<bean id="usersView" class="dk.in2isoft.onlineobjects.apps.community.views.UsersView" autowire="byType" scope="request"/>

@@ -5,6 +5,8 @@ public class ItemData {
 	private long id;
 	private String icon;
 	private String value;
+	private String badge;
+	private String kind;
 	
 	public ItemData() {
 	}
@@ -31,5 +33,17 @@ public class ItemData {
 	}
 	public void setValue(String value) {
 		this.value = value;
+	}
+	public void setBadge(String badge) {
+		this.badge = badge;
+	}
+	public String getBadge() {
+		return badge;
+	}
+	public void setKind(String kind) {
+		this.kind = kind;
+	}
+	public String getKind() {
+		return kind;
 	}
 }

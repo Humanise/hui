@@ -102,7 +102,7 @@ oo.community.Home.prototype = {
 		}
 		return this.viewer;
 	},
-	resolveImageUrl : function(image,width,height) {
+	$resolveImageUrl : function(image,width,height) {
 		return oo.baseContext+'/service/image/?id='+image.id+'&width='+width+'&height='+height;
 	}
 }

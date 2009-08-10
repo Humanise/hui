@@ -54,7 +54,7 @@ public class ModelService {
 	
 	private Collection<ModelClassInfo> modelClassInfo;
 	private List<Class<?>> classes = Lists.newArrayList(); 
-	private List<Class<?>> entityClasses = Lists.newArrayList(); 
+	private List<Class<? extends Entity>> entityClasses = Lists.newArrayList(); 
 
 	static {
 		try {
@@ -107,7 +107,7 @@ public class ModelService {
 				clazz = Class.forName(className);
 				log.info(clazz + " with super " + clazz.getSuperclass());
 				if (clazz.getSuperclass().equals(Entity.class)) {
-					entityClasses.add(clazz);
+					entityClasses.add((Class<? extends Entity>) clazz);
 				}
 				classes.add(clazz);
 			} catch (ClassNotFoundException e) {
@@ -121,6 +121,15 @@ public class ModelService {
 		return modelClassInfo;
 	}
 
+	public ModelClassInfo getClassInfo(String simpleName) {
+		for (ModelClassInfo info : modelClassInfo) {
+			if (info.getSimpleName().equals(simpleName)) {
+				return info;
+			}
+		}
+		return null;
+	}
+
 	public Collection<ModelClassInfo> getClassInfo(Class<?> interfaze) {
 		Collection<ModelClassInfo> infos = new ArrayList<ModelClassInfo>();
 		for (ModelClassInfo info : modelClassInfo) {
@@ -129,6 +138,27 @@ public class ModelService {
 			}
 		}
 		return infos;
+	}
+
+	public Class<?> getModelClass(String simpleName) throws ModelException {
+		try {
+			return Class.forName("dk.in2isoft.onlineobjects.model." + simpleName);
+		} catch (ClassNotFoundException e) {
+			throw new ModelException("Could not find class with simple name=" + simpleName);
+		}
+	}
+	
+	public Collection<Class<? extends Entity>> getEntityClasses() {
+		return entityClasses;
+	}
+	
+	public Class<? extends Entity> getEntityClass(String simpleName) {
+		for (Class<? extends Entity> cls : entityClasses) {
+			if (cls.getSimpleName().equals(simpleName)) {
+				return cls;
+			}
+		}
+		return null;
 	}
 
 	private Session getSession() {
@@ -152,6 +182,14 @@ public class ModelService {
 			getSession().clear();
 			tx.commit();
 			log.debug("Commit transaction!");
+		}
+	}
+
+	public void createOrUpdateItem(Item item, Priviledged priviledged) throws ModelException, SecurityException {
+		if (item.isNew()) {
+			createItem(item, priviledged, getSession());
+		} else {
+			updateItem(item, priviledged);
 		}
 	}
 
@@ -528,18 +566,6 @@ public class ModelService {
 		return list(q);
 	}
 
-	public Class<?> getModelClass(String simpleName) throws ModelException {
-		try {
-			return Class.forName("dk.in2isoft.onlineobjects.model." + simpleName);
-		} catch (ClassNotFoundException e) {
-			throw new ModelException("Could not find class with simple name=" + simpleName);
-		}
-	}
-	
-	public Collection<Class<?>> getEntityClasses() {
-		return entityClasses;
-	}
-
 	@SuppressWarnings("unchecked")
 	public List<Property> getProperties(String key) {
 		Session session = getSession();
@@ -549,15 +575,17 @@ public class ModelService {
 		return q.list();
 	}
 
-	public Map<String, Float> getPropertyCloud(String key, String query) {
+	public Map<String, Float> getPropertyCloud(String key, String query, Class<? extends Entity> cls) {
 		Map<String, Float> cloud = new LinkedHashMap<String, Float>();
 		Session session = getSession();
 		StringBuilder hql = new StringBuilder();
-		hql.append("select value as value,count(id) as count from Property where key=:key");
+		hql.append("select p.value as value,count(p.id) as count from ");
+		hql.append(cls.getSimpleName()).append(" as entity");
+		hql.append(" left join entity.properties as p where p.key=:key");
 		if (LangUtil.isDefined(query)) {
-			hql.append(" and value like :query");
+			hql.append(" and lower(value) like lower(:query)");
 		}
-		hql.append(" group by value");
+		hql.append(" group by p.value order by lower(value)");
 		Query q = session.createQuery(hql.toString());
 		q.setString("key", key);
 		if (LangUtil.isDefined(query)) {
@@ -575,6 +603,25 @@ public class ModelService {
 			entry.setValue(entry.getValue() / max);
 		}
 		return cloud;
+	}
+	
+	public Map<String, Integer> getProperties(String key, Class<? extends Entity> cls, Priviledged priviledged) {
+		Session session = getSession();
+		StringBuilder hql = new StringBuilder();
+		hql.append("select p.value as value,count(p.id) as count from ");
+		hql.append(cls.getSimpleName()).append(" as entity");
+		hql.append(",").append(Privilege.class.getName()).append(" as priv");
+		hql.append(" left join entity.properties as p  where p.key=:key");
+		hql.append(" and entity.id = priv.object and priv.subject=").append(priviledged.getIdentity());
+		hql.append(" group by p.value order by lower(value)");
+		Query q = session.createQuery(hql.toString());
+		q.setString("key", key);
+		Map<String, Integer> list = new LinkedHashMap<String, Integer>();
+		ScrollableResults scroll = q.scroll();
+		while (scroll.next()) {
+			list.put(scroll.getString(0), scroll.getLong(1).intValue());
+		}
+		return list;
 	}
 
 	public Relation getRelation(Entity parent, Entity child) {

@@ -405,7 +405,7 @@
 
 <xsl:template match="gui:button" name="gui:button">
 	<a id="{generate-id()}" href="#">
-		<xsl:attribute name="class">in2igui_button<xsl:if test="@highlighted='true'"> in2igui_button_highlighted</xsl:if></xsl:attribute>
+		<xsl:attribute name="class">in2igui_button<xsl:if test="@highlighted='true'"> in2igui_button_highlighted</xsl:if><xsl:if test="@small='true' and @rounded='true'"> in2igui_button_small_rounded</xsl:if></xsl:attribute>
 		<span><span><xsl:value-of select="@title"/></span></span></a>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Button({

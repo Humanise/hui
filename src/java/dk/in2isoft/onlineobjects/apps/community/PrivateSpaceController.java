@@ -12,11 +12,13 @@ public class PrivateSpaceController {
 	private File persons;
 	private File images;
 	private File settings;
+	private File bookmarks;
 	
 	public PrivateSpaceController(CommunityController controller) {
 		persons = controller.getFile("web","gui","private","persons.gui.xml");
 		images = controller.getFile("web","gui","private","images.gui.xml");
 		settings = controller.getFile("web","gui","private","settings.gui.xml");
+		bookmarks = controller.getFile("web","gui","private","bookmarks.gui.xml");
 	}
 	
 	protected void displayPersons(Request request) throws IOException {
@@ -26,6 +28,11 @@ public class PrivateSpaceController {
 
 	public void displayImages(Request request) throws IOException {
 		Interface ui = new FileBasedInterface(images);
+		ui.render(request.getRequest(),request.getResponse());
+	}
+
+	public void displayBookmarks(Request request) throws IOException {
+		Interface ui = new FileBasedInterface(bookmarks);
 		ui.render(request.getRequest(),request.getResponse());
 	}
 

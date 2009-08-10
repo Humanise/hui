@@ -1,39 +1,53 @@
 var imagesController = {
-	interfaceIsReady : function() {
-		this.refreshImageGallery();
-		imageGallery.addDelegate({resolveImageUrl:this.resolveImageUrl});
+	dragDrop : [
+		{drag:'image',drop:'tag'}
+	],
+	images : [],
+	$interfaceIsReady : function() {
+		imageGallery.addDelegate({$resolveImageUrl:this.$resolveImageUrl});
+	},
+	
+	
+	$drop$image$tag : function(dragged,dropped) {
+		Common.addTag(dragged.id,dropped.value,function() {
+			this.refreshAll();
+		}.bind(this));
+	},
+	
+	refreshAll : function() {
+		tagsSource.refresh();
+		imagesSource.refresh();
 	},
 	
 	//////////////// Image //////////////
 	
-	itemOpened$imageGallery : function(object) {
+	$itemOpened$imageGallery : function(object) {
 		this.imageId = object.id;
 		AppCommunity.getImage(object.id,function(image) {
-			n2i.log(image);
 			imageFormula.setValues(image);
 			imageWindow.show();
 		})
 	},
 	
-	click$cancelImage : function(object) {
+	$click$cancelImage : function(object) {
 		imageFormula.reset();
 		imageWindow.hide();
 	},
 	
-	click$saveImage : function() {
+	$click$saveImage : function() {
 		var values = imageFormula.getValues();
 		var self = this;
 		AppCommunity.updateImage(this.imageId,values.name,values.description,values.tags,function() {
-			self.refreshImageGallery();
+			self.refreshAll();
 			imageFormula.reset();
 			imageWindow.hide();
 		});
 	},
 	
-	click$deleteImage : function() {
+	$click$deleteImage : function() {
 		var self = this;
 		Common.deleteEntity(this.imageId,function() {
-			self.refreshImageGallery();
+			self.refreshAll();
 			imageFormula.reset();
 			imageWindow.hide();
 		});
@@ -41,34 +55,29 @@ var imagesController = {
 	
 	//////////////// Upload //////////////
 	
-	click$newImage : function() {
+	$click$newImage : function() {
 		newImageWindow.show();
 	},
 	
-	uploadDidCompleteQueue : function() {
-		this.refreshImageGallery();
+	$uploadDidCompleteQueue : function() {
+		this.refreshAll();
 	},
 	
 	/////////////// Slide show ////////////
 	
-	click$slideShow : function() {
+	$click$slideShow : function() {
 		if (!this.viewer) {
-			this.viewer = In2iGui.ImageViewer.create('imageViewer');
+			this.viewer = ui.ImageViewer.create();
 			this.viewer.addDelegate(this);
 		}
 		this.viewer.clearImages();
-		this.viewer.addImages(imageGallery.getObjects());
+		this.viewer.addImages(this.images);
 		this.viewer.show();
 	},
 	
 	///////////// Image gallery //////////
 	
-	refreshImageGallery : function() {
-		AppCommunity.listImages(function(list) {
-			imageGallery.setObjects(list);
-		});
-	},
-	resolveImageUrl : function(image,width,height) {
+	$resolveImageUrl : function(image,width,height) {
 		return In2iGui.context+'/service/image/?id='+image.id+'&width='+width+'&height='+height;
 	}
 }

@@ -1,6 +1,6 @@
 var settingsController = {
 	editedId : 0,
-	interfaceIsReady : function(gui) {
+	$interfaceIsReady : function(gui) {
 		AppCommunity.getUsersMainPerson(function(person) {
 			givenName.setValue(person.givenName);
 			familyName.setValue(person.familyName);

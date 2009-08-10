@@ -1,12 +1,12 @@
 package dk.in2isoft.commons.parsing;
 
-public class RemoteHTMLReference {
+public class HTMLReference {
 
 	private String url;
 	private String title;
 	private String text;
 	
-	public RemoteHTMLReference() {
+	public HTMLReference() {
 		super();
 	}
 	

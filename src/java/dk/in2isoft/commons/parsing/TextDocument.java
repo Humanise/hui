@@ -5,16 +5,16 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class RemoteFile {
+public class TextDocument {
 
 	protected URL url;
 	
-	public RemoteFile(URL url) {
+	public TextDocument(URL url) {
 		super();
 		this.url=url;
 	}
 	
-	public RemoteFile(String url) throws MalformedURLException {
+	public TextDocument(String url) throws MalformedURLException {
 		this.url=new URL(url);
 	}
 	

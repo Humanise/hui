@@ -100,11 +100,6 @@ public abstract class ApplicationController implements ModelEventListener,Initia
 
 	}
 
-	@Deprecated
-	protected final ModelService getModel() {
-		return modelService;
-	}
-
 	public ApplicationSession createToolSession() {
 		return null;
 	}

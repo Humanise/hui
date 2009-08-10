@@ -17,6 +17,9 @@ public class InternetAddress extends Entity {
 	}
 
 	public void setAddress(String address) {
+		if (address!=null && address.length()>255) {
+			address = address.substring(0, 255);
+		}
 		this.address = address;
 	}
 

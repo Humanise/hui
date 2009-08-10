@@ -1,8 +1,9 @@
-package dk.in2isoft.onlineobjects.apps.community.jsf;
+package dk.in2isoft.onlineobjects.apps.community.views;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.springframework.beans.factory.InitializingBean;
 
+import dk.in2isoft.onlineobjects.apps.community.jsf.AbstractManagedBean;
 import dk.in2isoft.onlineobjects.apps.community.services.InvitationService;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.model.EmailAddress;
@@ -11,7 +12,7 @@ import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.User;
 
 
-public class InvitationBean extends AbstractManagedBean implements InitializingBean {
+public class InvitationView extends AbstractManagedBean implements InitializingBean {
 	
 	private ModelService modelService;
 	private InvitationService invitationService;
@@ -37,6 +38,14 @@ public class InvitationBean extends AbstractManagedBean implements InitializingB
 			return StringEscapeUtils.escapeHtml(invitation.getMessage()).replaceAll("\\n", "<br/>");
 		}
 		return null;
+	}
+	
+	public String getNewUsername() {
+		String givenName = person.getGivenName();
+		if (givenName!=null) {
+			return givenName.toLowerCase();
+		}
+		return "";
 	}
 	
 	public Invitation getInvitation() {

@@ -13,6 +13,7 @@
 			<divider/>
 			<icon icon="common/person" title="Personer" selected="true" name="toolPersons"/>
 			<icon icon="common/image" title="Billeder" name="toolImages"/>
+			<icon icon="common/internet" title="Bogmærker" name="toolBookmarks"/>
 			<right>
 				<icon icon="common/close" title="Tilbage til website" name="close"/>
 			</right>
