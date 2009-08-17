@@ -1,59 +1,62 @@
 package dk.in2isoft.onlineobjects.test;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Properties;
+import java.io.File;
+import java.io.IOException;
 
-import junit.framework.TestCase;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import org.apache.log4j.Logger;
-
-import com.google.common.collect.Lists;
-
-import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.ModelService;
-import dk.in2isoft.onlineobjects.core.SecurityService;
-import dk.in2isoft.onlineobjects.model.Entity;
-import dk.in2isoft.onlineobjects.model.User;
+import dk.in2isoft.onlineobjects.core.Priviledged;
+import dk.in2isoft.onlineobjects.services.ConfigurationService;
 
-public class AbstractTestCase extends TestCase {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations="classpath:applicationContext.xml")
+public abstract class AbstractTestCase extends AbstractJUnit4SpringContextTests {
 	
-	protected Properties properties;
-	private static Logger log = Logger.getLogger(AbstractTestCase.class);
-	private ArrayList<Entity> entitysToClean = Lists.newArrayList();
+	@Autowired
+	protected ConfigurationService configurationService;
 	
-	protected void setUp() throws Exception {
-		InputStream stream = getClass().getClassLoader().getResourceAsStream("test.properties");
-		properties = new Properties();
-		properties.load(stream);
-		stream.close();
-		String basePath = properties.getProperty("basePath");
-		if (!Core.getInstance().isStarted()) {
-			Core.getInstance().start(basePath, null);
-		}
-	}
+	@Autowired
+	private ApplicationContext context;
 	
-	protected ModelService getModel() {
-		return Core.getInstance().getModel();
-	}
-	
-	protected void info(String msg) {
-		log.info(msg);
-	}
-	
-	protected User getPublicUser() {
-		return getModel().getUser(SecurityService.PUBLIC_USERNAME);
+	@Autowired
+	protected ModelService modelService;
+
+	protected File getTestFile(String name) throws IOException {
+		File file = context.getResource(name).getFile();
+		return file;
 	}
 
-	protected void autoClean(Entity entity) {
-		entitysToClean.add(entity);
+	protected Priviledged getPublicUser() {
+		return modelService.getUser("public");
+	}
+	
+	public void setModelService(ModelService modelService) {
+		this.modelService = modelService;
 	}
 
-	protected void tearDown() throws Exception {
-		User priviledged = getPublicUser();
-		for (Entity entity : entitysToClean) {
-			getModel().deleteEntity(entity, priviledged);
-		}
-		getModel().commit();
+	public ModelService getModelService() {
+		return modelService;
+	}
+
+	public void setConfigurationService(ConfigurationService configurationService) {
+		this.configurationService = configurationService;
+	}
+
+	public ConfigurationService getConfigurationService() {
+		return configurationService;
+	}
+
+	public void setContext(ApplicationContext context) {
+		this.context = context;
+	}
+
+	public ApplicationContext getContext() {
+		return context;
 	}
 }

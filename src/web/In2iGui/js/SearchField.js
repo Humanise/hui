@@ -23,9 +23,7 @@ In2iGui.SearchField.prototype = {
 	/** @private */
 	addBehavior : function() {
 		var self = this;
-		this.field.onkeyup = function() {
-			self.fieldChanged();
-		}
+		this.field.observe('keyup',this.onKeyUp.bind(this));
 		var reset = this.element.select('a')[0];
 		reset.tabIndex=-1;
 		var focus = function() {self.field.focus();self.field.select()};
@@ -49,8 +47,14 @@ In2iGui.SearchField.prototype = {
 			}
 		}
 	},
+	onKeyUp : function(e) {
+		this.fieldChanged();
+		if (e.keyCode===Event.KEY_RETURN) {
+			this.fire('submit');
+		}
+	},
 	setValue : function(value) {
-		this.field.value=value;
+		this.field.value=value===undefined || value===null ? '' : value;
 		this.fieldChanged();
 	},
 	getValue : function() {

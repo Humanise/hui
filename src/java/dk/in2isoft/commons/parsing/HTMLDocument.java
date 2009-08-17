@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import nu.xom.Element;
 import nu.xom.Text;
 
 import org.w3c.dom.Document;
@@ -97,7 +98,12 @@ public class HTMLDocument extends XMLDocument {
                 data.append(node.getValue().trim());
             }
             else {
-                traverse(node,data);
+            	if (node instanceof Element) {
+            		Element element = (Element) node;
+            		if (!element.getLocalName().equals("script") && !element.getLocalName().equals("style")) {
+                        traverse(node,data);            			
+            		}
+            	}
             }
         }
         

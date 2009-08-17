@@ -4,17 +4,17 @@
 		<ui:param name="tab" value="images"/>
 		
 		<ui:define name="title">
-			Billeder<h:outputText value=" &#187; "/>#{userProfile.person.fullName}<h:outputText value=" &#187; "/>
+			Billeder<h:outputText value=" &#187; "/>#{userProfileView.person.fullName}<h:outputText value=" &#187; "/>
 		</ui:define>
 		
 		<ui:define name="breadcrumb">
-			<li><a href="#{baseView.baseContext}/#{userProfile.user.username}/images.html">Billeder</a></li>
+			<li><a href="#{baseView.baseContext}/#{userProfileView.user.username}/images.html">Billeder</a></li>
 		</ui:define>
 		
 		<ui:define name="content">
 			<div class="content_body">
-				<oo:gallery model="#{userProfile.imageList}" var="image">
-					<a href="#{baseView.baseContext}/#{userProfile.user.username}/images/#{image.id}.html">
+				<oo:gallery model="#{userProfileView.imageList}" var="image">
+					<a href="#{baseView.baseContext}/#{userProfileView.user.username}/images/#{image.id}.html">
 						<img src="#{baseView.baseContext}/service/image/id#{image.id}thumbnail68cropped.jpg" width="68" height="68"/>
 					</a>
 				</oo:gallery>

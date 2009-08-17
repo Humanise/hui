@@ -18,12 +18,12 @@
 			<ul class="breadcrumb">
 				<li><a href="#{baseView.baseContext}/">OnlineMe</a></li>
 				<li><a href="#{baseView.baseContext}/users.html/">Brugere</a></li>
-				<li><a href="#{baseView.baseContext}/#{userProfile.user.username}/">#{userProfile.person.fullName}</a></li>
+				<li><a href="#{baseView.baseContext}/#{userProfileView.user.username}/">#{userProfileView.person.fullName}</a></li>
 				<ui:insert name="breadcrumb"/>
 			</ul>
 			<ul class="tabs" style="margin-top: 10px;">
-				<li class="#{tab=='overview' ? 'highlighted' : ''}"><a href="#{baseView.baseContext}/#{userProfile.user.username}/">Overblik</a></li>
-				<li class="#{tab=='images' ? 'highlighted' : ''}"><a href="#{baseView.baseContext}/#{userProfile.user.username}/images.html">Billeder</a></li>
+				<li class="#{tab=='overview' ? 'highlighted' : ''}"><a href="#{baseView.baseContext}/#{userProfileView.user.username}/">Overblik</a></li>
+				<li class="#{tab=='images' ? 'highlighted' : ''}"><a href="#{baseView.baseContext}/#{userProfileView.user.username}/images.html">Billeder</a></li>
 			</ul>
 			<div>
 				<ui:insert name="content"/>

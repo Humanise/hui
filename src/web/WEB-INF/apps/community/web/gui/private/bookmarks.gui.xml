@@ -38,6 +38,8 @@
 							<icon icon="common/info" title="Info" name="itemInfo" disabled="true"/>
 							<icon icon="common/delete" title="Slet" name="deleteItem" disabled="true"/>
 							<icon icon="common/view" title="Vis" name="showItem" disabled="true"/>
+							<divider/>
+   							<searchfield title="Kvik oprettelse" width="200" placeholder="Indsæt url..." name="quickEnter"/>
 							<right>
    								<searchfield title="Søgning" expandedWidth="150" placeholder="Søg her" name="searchfield"/>
 							</right>

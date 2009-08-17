@@ -24,7 +24,7 @@ import com.drew.metadata.exif.GpsDirectory;
 import com.drew.metadata.iptc.IptcDirectory;
 
 import dk.in2isoft.commons.geo.GeoLatLng;
-import dk.in2isoft.commons.util.AbstractCommandLineInterfaceUtil;
+import dk.in2isoft.commons.util.AbstractCommandLineInterface;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelService;
@@ -38,7 +38,7 @@ import dk.in2isoft.onlineobjects.services.StorageService;
 import eu.medsea.mimeutil.MimeType;
 import eu.medsea.mimeutil.MimeUtil2;
 
-public class ImageService extends AbstractCommandLineInterfaceUtil {
+public class ImageService extends AbstractCommandLineInterface {
 
 	private static Logger log = Logger.getLogger(ImageService.class);
 	

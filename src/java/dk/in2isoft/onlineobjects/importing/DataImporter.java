@@ -3,6 +3,9 @@ package dk.in2isoft.onlineobjects.importing;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.ProgressListener;
@@ -10,6 +13,8 @@ import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
+
+import com.google.common.collect.Maps;
 
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
 import dk.in2isoft.onlineobjects.apps.ApplicationSession;
@@ -58,11 +63,17 @@ public class DataImporter {
 		// Parse the request
 		try {
 			List<DiskFileItem> items = upload.parseRequest(request.getRequest());
+			Map<String,String> parameters = Maps.newHashMap();
+			for (DiskFileItem item : items) {
+				if (item.isFormField()) {
+					parameters.put(item.getFieldName(), item.getString());
+				}
+			}
 			for (DiskFileItem item : items) {
 				if (!item.isFormField()) {
 					try {
 						File file = item.getStoreLocation();
-						listener.processFile(file,fileService.getMimeType(file),fileService.cleanFileName(item.getName()), request);
+						listener.processFile(file,fileService.getMimeType(file),fileService.cleanFileName(item.getName()), parameters, request);
 					} catch (Exception e) {
 						process.setError(true);
 						throw new EndUserException(e);
@@ -74,6 +85,8 @@ public class DataImporter {
 			throw new EndUserException(e);
 		}
 		process.setCompleted(true);
+		request.getResponse().setStatus(HttpServletResponse.SC_OK);
+		request.getResponse().getWriter().write("OK");
 	}
 
 	public void setListener(ImportListerner listener) {

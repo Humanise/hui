@@ -309,25 +309,25 @@ if (window.SWFUpload) {
 	var e = In2iGui.Upload.errors = {};
 	e[SWFUpload.QUEUE_ERROR.QUEUE_LIMIT_EXCEEDED]			= 'Der er for mange filer i køen';
 	e[SWFUpload.QUEUE_ERROR.FILE_EXCEEDS_SIZE_LIMIT]		= 'Filen er for stor';
-	e[SWFUpload.QUEUE_ERROR.ZERO_BYTE_FILE]				= 'Filen er tom';
+	e[SWFUpload.QUEUE_ERROR.ZERO_BYTE_FILE]					= 'Filen er tom';
 	e[SWFUpload.QUEUE_ERROR.INVALID_FILETYPE]				= 'Filens type er ikke understøttet';
 	e[SWFUpload.UPLOAD_ERROR.HTTP_ERROR]					= 'Der skete en netværksfejl';
 	e[SWFUpload.UPLOAD_ERROR.MISSING_UPLOAD_URL]			= 'Upload-adressen findes ikke';
 	e[SWFUpload.UPLOAD_ERROR.IO_ERROR]						= 'Der skete en IO-fejl';
 	e[SWFUpload.UPLOAD_ERROR.SECURITY_ERROR]				= 'Der skete en sikkerhedsfejl';
-	e[SWFUpload.UPLOAD_ERROR.UPLOAD_LIMIT_EXCEEDED]		= 'Upload-størrelsen er overskredet';
-	e[SWFUpload.UPLOAD_ERROR.UPLOAD_FAILED]				= 'Upload af filen fejlede';
+	e[SWFUpload.UPLOAD_ERROR.UPLOAD_LIMIT_EXCEEDED]			= 'Upload-størrelsen er overskredet';
+	e[SWFUpload.UPLOAD_ERROR.UPLOAD_FAILED]					= 'Upload af filen fejlede';
 	e[SWFUpload.UPLOAD_ERROR.SPECIFIED_FILE_ID_NOT_FOUND]	= 'Filens id kunne ikke findes';
 	e[SWFUpload.UPLOAD_ERROR.FILE_VALIDATION_FAILED]		= 'Validering af filen fejlede';
 	e[SWFUpload.UPLOAD_ERROR.FILE_CANCELLED]				= 'Filen blev afbrudt';
 	e[SWFUpload.UPLOAD_ERROR.UPLOAD_STOPPED]				= 'Upload af filen blev stoppet';
 	e[SWFUpload.UPLOAD_ERROR.UPLOAD_STOPPED]				= 'Upload af filen blev stoppet';
 	var s = In2iGui.Upload.status = {};
-	s[SWFUpload.FILE_STATUS.QUEUED] = 'Filen er i kø';
-	s[SWFUpload.FILE_STATUS.IN_PROGRESS] = 'Filen er i gang';
-	s[SWFUpload.FILE_STATUS.ERROR] = 'Filen gav fejl';
-	s[SWFUpload.FILE_STATUS.COMPLETE] = 'Filen er færdig';
-	s[SWFUpload.FILE_STATUS.CANCELLED] = 'Filen er afbrudt';
+	s[SWFUpload.FILE_STATUS.QUEUED] 		= 'Filen er i kø';
+	s[SWFUpload.FILE_STATUS.IN_PROGRESS] 	= 'Filen er i gang';
+	s[SWFUpload.FILE_STATUS.ERROR] 			= 'Filen gav fejl';
+	s[SWFUpload.FILE_STATUS.COMPLETE] 		= 'Filen er færdig';
+	s[SWFUpload.FILE_STATUS.CANCELLED] 		= 'Filen er afbrudt';
 }())
 }
 /* EOF */

@@ -8,7 +8,7 @@
 			<icon icon="common/color" title="Hep hey!" selected="true"/>
 			<icon icon="common/folder" title="Show values" name="showValues"/>
 			<icon icon="common/settings" title="Hep hey!" disabled="true"/>
-			<icon icon="common/folder" title="Show window" action="win.show();"/>
+			<icon icon="common/folder" title="Show window" click="win.show();"/>
 		</toolbar>
 		<tabs>
 			<tab title="Formula 1" padding="10">

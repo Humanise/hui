@@ -1,12 +1,15 @@
 package dk.in2isoft.onlineobjects.apps.community.remoting;
 
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
@@ -15,6 +18,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import dk.in2isoft.commons.lang.LangUtil;
+import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.in2igui.data.ListData;
 import dk.in2isoft.in2igui.data.ListDataRow;
 import dk.in2isoft.in2igui.data.ListObjects;
@@ -24,7 +28,6 @@ import dk.in2isoft.onlineobjects.apps.ApplicationSession;
 import dk.in2isoft.onlineobjects.apps.community.CommunityController;
 import dk.in2isoft.onlineobjects.apps.community.CommunityDAO;
 import dk.in2isoft.onlineobjects.apps.community.UserProfileInfo;
-import dk.in2isoft.onlineobjects.apps.community.UserProfileInfoUtil;
 import dk.in2isoft.onlineobjects.apps.community.services.InvitationService;
 import dk.in2isoft.onlineobjects.apps.community.services.MemberService;
 import dk.in2isoft.onlineobjects.core.EndUserException;
@@ -48,6 +51,7 @@ import dk.in2isoft.onlineobjects.model.PhoneNumber;
 import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
+import dk.in2isoft.onlineobjects.services.SemanticService;
 import dk.in2isoft.onlineobjects.ui.AbstractRemotingFacade;
 import dk.in2isoft.onlineobjects.ui.AsynchronousProcessDescriptor;
 import dk.in2isoft.onlineobjects.util.ValidationUtil;
@@ -62,6 +66,8 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 	private MemberService memberService;
 	private ImageService imageService;
 	private CommunityController communityController;
+	private CommunityDAO communityDAO;
+	private SemanticService semanticService;
 
 	public void signUp(String username, String password, String name, String email) throws EndUserException {
 		memberService.signUp(getUserSession(),username,password,name,email);
@@ -107,7 +113,7 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 		if (person==null) {
 			throw new EndUserException("The user does not have a person!");
 		}
-		return UserProfileInfoUtil.build(person,getUserSession());
+		return communityDAO.build(person,getUserSession());
 	}
 	
 	public void updateUserProfile(UserProfileInfo info) throws EndUserException {
@@ -115,7 +121,7 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 		if (person==null) {
 			throw new EndUserException("The user does not have a person!");
 		}
-		UserProfileInfoUtil.save(info, person, getUserSession());
+		communityDAO.save(info, person, getUserSession());
 	}
 
 	public List<Map<String, Object>> getInvitations() throws EndUserException {
@@ -183,7 +189,7 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 	public Map<String,Object> getLatest(String query) throws EndUserException {
 		HashMap<String,Object> map = Maps.newHashMap();
 		map.put("images", getLatestImages(query));
-		map.put("users", searchUsers2(query));
+		map.put("users", searchUsers(query));
 		map.put("tags", getTagCloud(query));
 		return map;
 	}
@@ -192,18 +198,7 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 		return modelService.list(new Query<Image>(Image.class).withWords(query).orderByCreated().descending().withPaging(0, 10));
 	}
 
-	public List<User> searchUsers(String query) {
-		List<User> users = modelService.list(new Query<User>(User.class).withWords(query).withPaging(0, 10));
-		for (Iterator<User> i = users.iterator(); i.hasNext();) {
-			User user = i.next();
-			if (user.getUsername().equals("public") || user.getUsername().equals("admin")) {
-				i.remove();
-			}
-		}
-		return users;
-	}
-
-	public Collection<Map<String,Entity>> searchUsers2(String query) throws ModelException {
+	public Collection<Map<String,Entity>> searchUsers(String query) throws ModelException {
 		List<Map<String,Entity>> result = Lists.newArrayList(); 
 		List<Pair<User, Person>> pairs = modelService.searchPairs(new UserQuery().withWords(query).withPaging(0, 10)).getResult();
 		for (Pair<User, Person> entry : pairs) {
@@ -234,8 +229,7 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 		person.setNamePrefix(dummy.getNamePrefix());
 		person.setNameSuffix(dummy.getNameSuffix());
 		modelService.updateItem(person, priviledged);
-		CommunityDAO dao = CommunityController.getDAO();
-		dao.updateDummyEmailAddresses(person, adresses, getUserSession());
+		communityDAO.updateDummyEmailAddresses(person, adresses, getUserSession());
 	}
 
 	public ListObjects listPersons() throws EndUserException {
@@ -312,6 +306,24 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 			return info;
 		}
 		return null;
+	}
+	
+	public InternetAddressInfo lookupInternetAddress(String url) throws ModelException, MalformedURLException {
+		HTMLDocument doc = new HTMLDocument(url);
+		InternetAddressInfo info = new InternetAddressInfo();
+		info.setName(doc.getTitle());
+		info.setAddress(url);
+		String[] words = semanticService.getWords(doc.getText().toLowerCase());
+		List<String> tags = Lists.newArrayList();
+		Map<String, Integer> properties = modelService.getProperties(Property.KEY_COMMON_TAG, InternetAddress.class, getUserSession());
+		Set<String> existing = properties.keySet();
+		for (String tag : existing) {
+			if (ArrayUtils.contains(words, tag.toLowerCase())) {
+				tags.add(tag);
+			}
+		}
+		info.setTags(tags);
+		return info;
 	}
 	
 	public void saveInternetAddress(InternetAddressInfo info) throws ModelException, SecurityException {
@@ -393,9 +405,8 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 		} else {
 			modelService.createItem(person, getUserSession());
 		}
-		CommunityDAO dao = CommunityController.getDAO();
-		dao.updateDummyEmailAddresses(person, addresses, getUserSession());
-		dao.updateDummyPhoneNumbers(person, phones, getUserSession());
+		communityDAO.updateDummyEmailAddresses(person, addresses, getUserSession());
+		communityDAO.updateDummyPhoneNumbers(person, phones, getUserSession());
 	}
 	
 	public void sendFeedback(String emailAddress,String message) throws EndUserException {
@@ -408,7 +419,7 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 		} else if (!LangUtil.isDefined(message)) {
 			throw new EndUserException("The message is empty!");
 		}
-		CommunityController.getDAO().sendFeedback(emailAddress, message);
+		communityDAO.sendFeedback(emailAddress, message);
 	}
 	
 	////////////// Geo /////////////
@@ -457,5 +468,21 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 
 	public CommunityController getCommunityController() {
 		return communityController;
+	}
+
+	public void setCommunityDAO(CommunityDAO communityDAO) {
+		this.communityDAO = communityDAO;
+	}
+
+	public CommunityDAO getCommunityDAO() {
+		return communityDAO;
+	}
+
+	public void setSemanticService(SemanticService semanticService) {
+		this.semanticService = semanticService;
+	}
+
+	public SemanticService getSemanticService() {
+		return semanticService;
 	}
 }

@@ -10,6 +10,20 @@ ui.observe({
 			this.refreshAll();
 		}.bind(this));
 	},
+	$submit$quickEnter : function() {
+		var url = quickEnter.getValue();
+		ui.showMessage({text:'Anaylserer adresse...'});
+		AppCommunity.lookupInternetAddress(url,function(obj) {
+			quickEnter.setValue();
+			ui.hideMessage();
+			this.bookmarkId = null;
+			bookmarkFormula.reset();
+			bookmarkFormula.setValues(obj);
+			bookmarkWindow.show();
+			bookmarkFormula.focus();
+			deleteBookmark.setEnabled(false);
+		}.bind(this));
+	},
 	$selectionChanged$selection : function() {
 		bookmarksList.resetState();
 	},

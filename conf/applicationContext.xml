@@ -127,6 +127,12 @@
 	
 	<bean id="fileService" class="dk.in2isoft.onlineobjects.services.FileService" autowire="byType"/>
 	
+	<bean id="graphService" class="dk.in2isoft.onlineobjects.services.GraphService" autowire="byType"/>
+	
+	<bean id="semanticService" class="dk.in2isoft.onlineobjects.services.SemanticService" autowire="byType"/>
+	
+	<bean id="indexService" class="dk.in2isoft.onlineobjects.services.IndexService" autowire="byType"/>
+	
 	<!-- Service controllers -->
 	
 	<bean id="imageController" class="dk.in2isoft.onlineobjects.service.image.ImageController" autowire="byType"/>
@@ -135,6 +141,8 @@
 	<!-- Application controllers -->
 	
 	<bean id="communityController" class="dk.in2isoft.onlineobjects.apps.community.CommunityController" autowire="byType"/>
+	<bean id="communityPrivateController" class="dk.in2isoft.onlineobjects.apps.community.PrivateSpaceController" autowire="byType"/>
+	<bean id="communityDAO" class="dk.in2isoft.onlineobjects.apps.community.CommunityDAO" autowire="byType"/>
 	<bean id="setupController" class="dk.in2isoft.onlineobjects.apps.setup.SetupController" autowire="byType"/>
 	<!--
 	<bean id="schoolController" class="dk.in2isoft.onlineobjects.apps.school.SchoolController" autowire="byType"/>
@@ -152,6 +160,7 @@
 	<bean id="imageView" class="dk.in2isoft.onlineobjects.apps.community.views.ImageView" autowire="byType" scope="request"/>
 	<bean id="usersView" class="dk.in2isoft.onlineobjects.apps.community.views.UsersView" autowire="byType" scope="request"/>
 	<bean id="imagesView" class="dk.in2isoft.onlineobjects.apps.community.views.ImagesView" autowire="byType" scope="request"/>
+	<bean id="userProfileView" class="dk.in2isoft.onlineobjects.apps.community.views.UserProfileView" autowire="byType" scope="request"/>
 	
 	<!-- Tools -->
 	

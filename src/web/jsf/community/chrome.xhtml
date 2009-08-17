@@ -10,12 +10,12 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 		<title><ui:insert name="title"/>OnlineMe</title>
 		<link rel="stylesheet" href="#{baseView.localContext}/css/shared.css?#{lifeCycleService.startTime.time}" type="text/css" media="screen" charset="utf-8"/>
-		<h:outputText rendered="${baseView.developmentMode}">
+		<ui:fragment rendered="${baseView.developmentMode}">
 			<link rel="stylesheet" href="#{baseView.localContext}/In2iGui/css/dev.css" type="text/css" media="screen" title="front" charset="utf-8"/>
-		</h:outputText>
-		<h:outputText rendered="${!baseView.developmentMode}">
+		</ui:fragment>
+		<ui:fragment rendered="${!baseView.developmentMode}">
 			<link rel="stylesheet" href="#{baseView.localContext}/In2iGui/bin/minimized.css?#{lifeCycleService.startTime.time}" type="text/css" media="screen" title="front" charset="utf-8"/>
-		</h:outputText>
+		</ui:fragment>
 		<!--[if lt IE 7]>
 			<link rel="stylesheet" type="text/css" href="#{baseView.localContext}/In2iGui/css/msie6.css"></link>
 		<![endif]-->
@@ -26,7 +26,7 @@
 			<script type='text/javascript' src='#{baseView.localContext}/dwr/interface/CoreSecurity.js?#{lifeCycleService.startTime.time}'></script>
 			<script type='text/javascript' src='#{baseView.localContext}/dwr/interface/AppCommunity.js?#{lifeCycleService.startTime.time}'></script>
 			<script type='text/javascript' src='#{baseView.localContext}/dwr/engine.js?#{lifeCycleService.startTime.time}'></script>
-		<h:outputText rendered="${baseView.developmentMode}">
+		<ui:fragment rendered="#{baseView.developmentMode}">
 			<script src="#{baseView.localContext}/In2iGui/lib/prototype.js" type="text/javascript" charset="utf-8"></script>
 			<script src="#{baseView.localContext}/In2iGui/lib/n2i.js" type="text/javascript" charset="utf-8"></script>
 			<script src="#{baseView.localContext}/In2iGui/lib/In2iScripts/In2iDate.js" type="text/javascript" charset="utf-8"></script>
@@ -51,10 +51,10 @@
 			<script src="#{baseView.localContext}/In2iGui/js/ObjectList.js" type="text/javascript" charset="utf-8"></script>
 			<script src="#{baseView.localContext}/In2iGui/js/TextField.js" type="text/javascript" charset="utf-8"></script>
 			<script src="#{baseView.localContext}/In2iGui/js/SearchField.js" type="text/javascript" charset="utf-8"></script>
-		</h:outputText>
-		<h:outputText rendered="${!baseView.developmentMode}">
+		</ui:fragment>
+		<ui:fragment rendered="#{!baseView.developmentMode}">
 			<script src="#{baseView.localContext}/In2iGui/bin/minimized.js?#{lifeCycleService.startTime.time}" type="text/javascript" charset="utf-8"></script>
-		</h:outputText>
+		</ui:fragment>
 		<script src="#{baseView.localContext}/js/community.js?#{lifeCycleService.startTime.time}" type="text/javascript" charset="utf-8"></script>
 		<script type="text/javascript" charset="utf-8">
 			In2iGui.context = '#{baseView.baseContext}';
@@ -94,7 +94,7 @@
 									<div class="content_right">
 										<div id="casing_search_result"></div>
 										<div class="content_right_body">
-											<h:outputText rendered="#{!baseView.publicUser}">
+											<ui:fragment rendered="#{!baseView.publicUser}">
 												<div id="userinfo" class="casing_right_section">
 													<div class="thumbnail"></div>
 													<h2>#{baseView.userName}</h2>
@@ -108,8 +108,8 @@
 														<gui:button small="true" text="Log ud" name="casingLogout"/>
 													</p>
 												</div>
-											</h:outputText>
-											<h:outputText rendered="#{baseView.publicUser}">
+											</ui:fragment>
+											<ui:fragment rendered="#{baseView.publicUser}">
 												<div class="casing_login casing_right_section">
 													<h2>Log ind</h2>
 													<form action="login" method="get" accept-charset="utf-8" id="login" class="formula">
@@ -128,7 +128,7 @@
 														</p>
 													</form>
 												</div>
-											</h:outputText>
+											</ui:fragment>
 											<ui:insert name="sidebar">
 												<div class="casing_right_section">
 													<h2>Ny bruger</h2>

@@ -232,7 +232,6 @@ OO.Editor.ImageGallery.prototype = {
 		this.cancelUploadButton.setEnabled(false);
 	},
 	$uploadDidSubmit$upload : function() {
-		alert(0);
 		this.cancelUploadButton.setEnabled(false);
 	},
 	$uploadDidCompleteQueue$upload : function() {

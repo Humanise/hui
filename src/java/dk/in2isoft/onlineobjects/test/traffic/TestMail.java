@@ -2,11 +2,13 @@ package dk.in2isoft.onlineobjects.test.traffic;
 
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.SimpleEmail;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import dk.in2isoft.onlineobjects.test.AbstractTestCase;
 
-public class TestMail extends TestCase {
+public class TestMail extends AbstractTestCase {
 
+	@Test
 	public void testSimpleMail() throws EmailException {
 		SimpleEmail email = new SimpleEmail();
 		email.setHostName("smtp.mac.com");

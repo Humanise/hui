@@ -379,16 +379,17 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Toolbar.Icon({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>'});
 		<xsl:call-template name="gui:createobject"/>
 		<xsl:if test="@action">
-			<xsl:value-of select="generate-id()"/>_obj.listen({click:function() {<xsl:value-of select="@action"/>}});
+			<xsl:value-of select="generate-id()"/>_obj.listen({$click:function() {<xsl:value-of select="@action"/>}});
 		</xsl:if>
 		<xsl:if test="@click">
-			<xsl:value-of select="generate-id()"/>_obj.listen({click:function() {<xsl:value-of select="@click"/>}});
+			<xsl:value-of select="generate-id()"/>_obj.listen({$click:function() {<xsl:value-of select="@click"/>}});
 		</xsl:if>
 	</script>
 </xsl:template>
 
 <xsl:template match="gui:searchfield" name="gui:searchfield">
 	<span class="in2igui_searchfield" id="{generate-id()}">
+		<xsl:if test="@width"><xsl:attribute name="style">width:<xsl:value-of select="@width"/>px;</xsl:attribute></xsl:if>
 		<em class="in2igui_searchfield_placeholder"><xsl:value-of select="@placeholder"/><xsl:comment/></em>
 		<a href="javascript:void(0);" class="in2igui_searchfield_reset"><xsl:comment/></a>
 		<span><span><input type="text"/></span></span>
