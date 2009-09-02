@@ -1,4 +1,15 @@
-var in2igui = {};
+var in2igui = {
+	locales : {
+		'da/DK':{decimal:',',thousands:'.'},
+		'en/US':{decimal:'.',thousands:','}
+	},
+	locale : {decimal:',',thousands:'.'},
+	setLocale : function(code) {
+		if (this.locales[code]) {
+			this.locale = this.locales[code];
+		}
+	}
+};
 
 /**
   The base class of the In2iGui framework
@@ -386,6 +397,34 @@ In2iGui.addFocusClass = function(o) {
 		ce.removeClassName(c);
 	});
 };
+
+
+/////////////////////////////// Validation /////////////////////////////
+
+In2iGui.NumberValidator = function(options) {
+	n2i.override({allowNull:false,min:0,max:10},options)
+	this.min = options.min;
+	this.max = options.max;
+	this.allowNull = options.allowNull;
+	this.middle = Math.max(Math.min(this.max,0),this.min);
+}
+
+In2iGui.NumberValidator.prototype = {
+	validate : function(value) {
+		if (n2i.isBlank(value) && this.allowNull) {
+			return {valid:true,value:null};
+		}
+		var number = parseFloat(value);
+		if (isNaN(number)) {
+			return {valid:false,value:this.middle};
+		} else if (number<this.min) {
+			return {valid:false,value:this.min};
+		} else if (number>this.max) {
+			return {valid:false,value:this.max};
+		}
+		return {valid:true,value:number};
+	}
+}
 
 /////////////////////////////// Animation /////////////////////////////
 

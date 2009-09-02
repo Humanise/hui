@@ -2,7 +2,6 @@ In2iGui.List = function(options) {
 	this.options = n2i.override({url:null,source:null},options);
 	this.element = $(options.element);
 	this.name = options.name;
-	this.state = options.state;
 	if (this.options.source) {
 		this.options.source.addDelegate(this);
 	}
@@ -88,10 +87,11 @@ In2iGui.List.prototype = {
 	},
 	resetState : function() {
 		this.window = {size:null,page:0,total:0};
-		In2iGui.firePropertyChange(this,'state',this.window);
+		In2iGui.firePropertyChange(this,'window',this.window);
 		In2iGui.firePropertyChange(this,'window.page',this.window.page);
 	},
 	valueForProperty : function(p) {
+		if (p=='window.page') return this.window.page;
 		if (p=='window.page') return this.window.page;
 		else if (p=='sort.key') return this.sortKey;
 		else if (p=='sort.direction') return (this.sortDirection || 'ascending');
@@ -493,7 +493,7 @@ In2iGui.List.prototype.rowDoubleClick = function(index) {
  */
 In2iGui.List.prototype.windowPageWasClicked = function(tag,index) {
 	this.window.page = index;
-	In2iGui.firePropertyChange(this,'state',this.window);
+	In2iGui.firePropertyChange(this,'window',this.window);
 	In2iGui.firePropertyChange(this,'window.page',this.window.page);
 }
 

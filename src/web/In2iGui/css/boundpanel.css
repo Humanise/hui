@@ -95,31 +95,3 @@
 	height: 12px;
 	background: url('../gfx/bound_bottom.png') top left repeat-x;
 }
-
-
-/****************************** Special form style *********************************/
-
-div.in2igui_boundpanel input.in2igui_tokens_token
-{
-	border: 1px solid #DDDDDD;
-}
-
-.in2igui_boundpanel .in2igui_formula_group
-{
-	width: 100%;
-	border-spacing: 0;
-}
-
-.in2igui_boundpanel .in2igui_formula_group th
-{
-	text-align: left;
-}
-
-.in2igui_boundpanel .in2igui_formula_group label
-{
-	color:#0072BC;
-	display:block;
-	font-size:10pt;
-	font-weight:normal;
-	line-height:14px;
-}

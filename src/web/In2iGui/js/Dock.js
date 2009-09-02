@@ -9,7 +9,7 @@ In2iGui.Dock = function(options) {
 	this.iframe = this.element.select('iframe')[0];
 	this.name = options.name;
 	In2iGui.extend(this);
-	In2iGui.get().registerOverflow(this.iframe,-94);
+	In2iGui.get().registerOverflow(this.iframe,-69);
 }
 
 In2iGui.Dock.prototype = {

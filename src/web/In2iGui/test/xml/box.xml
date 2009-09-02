@@ -1,60 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
-<gui xmlns="uri:In2iGui" pad="10" title="Box">
-	<box width="400" padding="10" title="Title with toolbar" variant="textured">
-		<toolbar>
-			<icon icon="common/color" title="Hep hey!" selected="true" action="ui.alert({title:'ALERT!',emotion:'smile'})"/>
-			<icon icon="common/folder" title="Hep hey!" name="icon" action="ui.get('icon').setSelected(true)"/>
-			<icon icon="common/settings" title="Hep hey!" disabled="true"/>
-		</toolbar>
-		<formula>
-			<group>
-				<text label="Brugernavn:"/>
-				<text label="Kodeord:"/>
-				<text label="Notat:" lines="6"/>
-				<checkbox label="Intern adgang:"/>
-				<checkbox label="Ekstern adgang:"/>
-				<tokens label="Tokens:"/>
-				<buttons top="10">
-					<button title="Gem" highlighted="true"/>
-					<button title="Slet"/>
-					<button title="Annuller"/>
-				</buttons>
-			</group>
-		</formula>
-	</box>
-	<box width="400" padding="10" title="Title with no toolbar" variant="textured">
-		<formula>
-			<group>
-				<text label="Brugernavn:"/>
-				<text label="Kodeord:"/>
-				<text label="Notat:" lines="6"/>
-				<checkbox label="Intern adgang:"/>
-				<checkbox label="Ekstern adgang:"/>
-				<tokens label="Tokens:"/>
-				<buttons top="10">
-					<button title="Gem" highlighted="true"/>
-					<button title="Slet"/>
-					<button title="Annuller"/>
-				</buttons>
-			</group>
-		</formula>
-	</box>
-	<box width="400" padding="10" variant="textured">
-		<formula>
-			<group>
-				<text label="Brugernavn:"/>
-				<text label="Kodeord:"/>
-				<text label="Notat:" lines="6"/>
-				<checkbox label="Intern adgang:"/>
-				<checkbox label="Ekstern adgang:"/>
-				<tokens label="Tokens:"/>
-				<buttons top="10">
-					<button title="Gem" highlighted="true"/>
-					<button title="Slet"/>
-					<button title="Annuller"/>
-				</buttons>
-			</group>
-		</formula>
+<gui xmlns="uri:In2iGui" padding="20" title="Box">
+	<columns>
+		<column>
+			<box width="500" padding="10" title="Title with toolbar" variant="textured" closable="true">
+				<toolbar>
+					<icon icon="common/color" title="Hep hey!" selected="true" click="ui.alert({title:'ALERT!',emotion:'smile'})"/>
+					<icon icon="common/folder" title="Hep hey!" name="icon" click="ui.get('icon').setSelected(true)"/>
+					<icon icon="common/settings" title="Disbaled" disabled="true"/>
+					<icon icon="common/view" title="Show hidden box" click="absoluteBox.show();"/>
+				</toolbar>
+				<formula>
+					<group>
+						<text label="Brugernavn:"/>
+						<text label="Kodeord:"/>
+						<text label="Notat:" lines="6"/>
+						<checkbox label="Intern adgang:"/>
+						<checkbox label="Ekstern adgang:"/>
+						<tokens label="Tokens:"/>
+						<buttons top="10">
+							<button title="Gem" highlighted="true"/>
+							<button title="Slet"/>
+							<button title="Annuller"/>
+						</buttons>
+					</group>
+				</formula>
+			</box>
+		</column>
+		<column>
+			<box width="400" padding="10" title="Title with no toolbar">
+				<formula>
+					<group>
+						<text label="Brugernavn:"/>
+						<text label="Kodeord:"/>
+						<text label="Notat:" lines="6"/>
+						<checkbox label="Intern adgang:"/>
+						<checkbox label="Ekstern adgang:"/>
+						<tokens label="Tokens:"/>
+						<buttons top="10">
+							<button title="Gem" highlighted="true"/>
+							<button title="Slet"/>
+							<button title="Annuller"/>
+						</buttons>
+					</group>
+				</formula>
+			</box>
+		</column>
+		<column>
+			<box width="400" padding="10" variant="textured">
+				<formula>
+					<group>
+						<text label="Brugernavn:"/>
+						<text label="Kodeord:"/>
+						<text label="Notat:" lines="6"/>
+						<checkbox label="Intern adgang:"/>
+						<checkbox label="Ekstern adgang:"/>
+						<tokens label="Tokens:"/>
+						<buttons top="10">
+							<button title="Gem" highlighted="true"/>
+							<button title="Slet"/>
+							<button title="Annuller"/>
+						</buttons>
+					</group>
+				</formula>
+			</box>
+		</column>
+	</columns>
+	<box width="400" padding="10" title="Title with toolbar" variant="textured" modal="true" absolute="true" closable="true" name="absoluteBox">
+		hsdjfha jdfhasfjkahsfjka hdfjaksf hak
 	</box>
 </gui>

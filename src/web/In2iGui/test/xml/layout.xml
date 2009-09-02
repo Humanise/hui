@@ -13,11 +13,13 @@
 				<divider/>
 				<icon icon="common/color" title="List icons (json)" action="list.setUrl('data/list_icons.json')"/>
 				<icon icon="common/folder" title="List icons" action="ui.showMessage({text:'hey',duration:2000})"/>
+				<divider/>
+				<icon icon="geo/map" title="Map"/>
 				<right>
-					<searchfield title="Søgning" placeholder="Søg her..."/>
+					<searchfield title="Søgning" placeholder="Søg her..." expandedWidth="200"/>
 				</right>
 			</toolbar>
-			<toolbar labels="false">
+			<toolbar labels="false" border="top">
 				<button title="Opret"/>
 				<button title="Rediger" highlighted="true"/>
 				<button title="Opret"/>
@@ -25,6 +27,7 @@
 		</top>
 		<middle>
 			<left>
+				<overflow>
 				<selection value="user" name="selector">
 					<item icon="common/person" title="Brugere" value="user"/>
 					<item icon="common/folder" title="Database" value="database" kind="folder"/>
@@ -32,9 +35,10 @@
 					<title>Hey</title>
 					<items source="itemsSource"/>
 				</selection>
+				</overflow>
 			</left>
 			<center>
-				<toolbar labels="false">
+				<toolbar labels="false" border="bottom">
 					<button title="Opret"/>
 					<button title="Opret"/>
 					<button title="Opret"/>
@@ -42,7 +46,7 @@
 				<overflow>
 					<list name="list" url="data/list_users.xml"/>
 				</overflow>
-				<toolbar labels="false">
+				<toolbar labels="false" border="top">
 					<button title="Opret"/>
 					<button title="Opret"/>
 					<button title="Opret"/>
@@ -51,8 +55,7 @@
 		</middle>
 		<bottom>
 			<toolbar labels="false">
-				<icon icon="common/new" title="Refresh" action="list.refresh()"/>
-				<button title="Opret"/>
+				<button title="Opret" small="true" rounded="true"/>
 			</toolbar>
 		</bottom>
 	</layout>

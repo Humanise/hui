@@ -7,19 +7,34 @@
 	opacity: 0;
 }
 
-.in2igui_window .titlebar
+.in2igui_window_titlebar
 {
 	font-family: 'Lucida Grande','Verdana',sans-serif;
 	background: url('../gfx/window_grey.png') left -27px no-repeat;
-	line-height: 29px;
-	font-size: 10pt;
+	font-size: 0;
 	height:27px;
 	cursor: default;
 	text-align:center;
 }
 
-.in2igui_window .titlebar span
+.in2igui_window_titlebar div
 {
+	height:27px;
+	background: url('../gfx/window_grey.png') left -27px no-repeat;
+	background-position: right -54px;
+}
+
+.in2igui_window_titlebar div div
+{
+	background-position: left 0px;
+	background-repeat: repeat-x;
+	margin: 0px 13px;
+}
+
+span.in2igui_window_title
+{
+	font-size: 10pt;
+	line-height: 27px;
 	color:#000;
 	vertical-align: middle;
 }
@@ -31,18 +46,6 @@ span.in2igui_window_icon
 	width: 16px;
 	height: 16px;
 	margin-right: 3px;
-}
-
-.in2igui_window .titlebar .titlebar
-{
-	background-position: right -54px;
-}
-
-.in2igui_window .titlebar .titlebar .titlebar
-{
-	background-position: left 0px;
-	background-repeat: repeat-x;
-	margin: 0px 13px;
 }
 
 .in2igui_window_content
@@ -84,8 +87,9 @@ div.in2igui_window_body
 }
 
 
-.in2igui_window .close
+.in2igui_window_close
 {
+	font-size: 0;
 	position: absolute;
 	cursor: pointer;
 	width: 16px;
@@ -95,7 +99,7 @@ div.in2igui_window_body
 	background: url('../gfx/window_close.png') top left no-repeat;
 }
 
-.in2igui_window .close:hover
+.in2igui_window_close:hover
 {
 	background-position: left -16px;
 }
@@ -103,12 +107,12 @@ div.in2igui_window_body
 
 /********************************** Light **************************/
 
-div.in2igui_window_light div.titlebar
+div.in2igui_window_light div.in2igui_window_titlebar, div.in2igui_window_light div.in2igui_window_titlebar div
 {
 	background-image: url('../gfx/window_light.png');
 }
 
-div.in2igui_window_light .titlebar span
+div.in2igui_window_light .in2igui_window_titlebar span
 {
 	color: #333;
 }
@@ -131,12 +135,12 @@ div.in2igui_window_light div.in2igui_window_content div.in2igui_window_content
 
 /********************************** Light **************************/
 
-div.in2igui_window_dark div.titlebar
+div.in2igui_window_dark div.in2igui_window_titlebar, div.in2igui_window_dark div.in2igui_window_titlebar div
 {
 	background-image: url('../gfx/window_dark.png');
 }
 
-div.in2igui_window_dark .titlebar span
+div.in2igui_window_dark .in2igui_window_titlebar span
 {
 	color: #fff;
 }

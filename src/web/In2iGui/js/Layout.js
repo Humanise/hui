@@ -7,10 +7,11 @@ In2iGui.Layout = function(options) {
 	this.options = options || {};
 	this.element = $(options.element);
 	In2iGui.extend(this);
+	/*
 	if (n2i.browser.msie7) {
 		In2iGui.onDomReady(this.resize.bind(this));
 		Event.observe(window,'resize',this.resize.bind(this));
-	}
+	}*/
 }
 
 In2iGui.Layout.prototype = {

@@ -4,9 +4,9 @@
 In2iGui.Window = function(options) {
 	this.element = $(options.element);
 	this.name = options.name;
-	this.close = this.element.select('.close')[0];
-	this.titlebar = this.element.select('.titlebar')[0];
-	this.title = this.titlebar.select('.title')[0];
+	this.close = this.element.select('.in2igui_window_close')[0];
+	this.titlebar = this.element.select('.in2igui_window_titlebar')[0];
+	this.title = this.titlebar.select('.in2igui_window_title')[0];
 	this.content = this.element.select('.in2igui_window_body')[0];
 	this.visible = false;
 	In2iGui.extend(this);
@@ -16,12 +16,12 @@ In2iGui.Window = function(options) {
 In2iGui.Window.create = function(options) {
 	options = n2i.override({title:'Window',close:true},options);
 	var element = options.element = new Element('div',{'class':'in2igui_window'+(options.variant ? ' in2igui_window_'+options.variant : '')});
-	var html = (options.close ? '<div class="close"></div>' : '')+
-		'<div class="titlebar"><div class="titlebar"><div class="titlebar">';
+	var html = (options.close ? '<div class="in2igui_window_close"></div>' : '')+
+		'<div class="in2igui_window_titlebar"><div><div>';
 		if (options.icon) {
 			html+='<span class="in2igui_window_icon" style="background-image: url('+In2iGui.getIconUrl(options.icon,1)+')"></span>';
 		}
-	html+='<span>'+options.title+'</span></div></div></div>'+
+	html+='<span class="in2igui_window_title">'+options.title+'</span></div></div></div>'+
 		'<div class="in2igui_window_content"><div class="in2igui_window_content"><div class="in2igui_window_body" style="'+
 		(options.width ? 'width:'+options.width+'px;':'')+
 		(options.padding ? 'padding:'+options.padding+'px;':'')+
@@ -44,7 +44,6 @@ In2iGui.Window.prototype = {
 			).observe('mousedown',function(e) {e.stop();});
 		}
 		this.titlebar.onmousedown = function(e) {self.startDrag(e);return false;};
-		this.titlebar.observe('touchstart',function(e) {self.startDrag(e);return false;});
 		this.element.observe('mousedown',function() {
 			self.element.style.zIndex=In2iGui.nextPanelIndex();
 		})

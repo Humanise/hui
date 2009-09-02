@@ -342,8 +342,12 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 		<xsl:attribute name="class">
 			<xsl:text>in2igui_toolbar</xsl:text>
 			<xsl:if test="@labels='false'"><xsl:text> in2igui_toolbar_nolabels</xsl:text></xsl:if>
+			<xsl:if test="@border='top'"><xsl:text> in2igui_toolbar_border_top</xsl:text></xsl:if>
+			<xsl:if test="@border='bottom'"><xsl:text> in2igui_toolbar_border_bottom</xsl:text></xsl:if>
 		</xsl:attribute>
+		<div class="in2igui_toolbar_body">
 		<xsl:apply-templates select="gui:right"/><xsl:apply-templates select="child::*[not(name()='right')]"/>
+		</div>
 	</div>
 </xsl:template>
 
@@ -432,8 +436,8 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 			<xsl:text>in2igui_window</xsl:text>
 			<xsl:if test="@variant"><xsl:text> in2igui_window_</xsl:text><xsl:value-of select="@variant"/></xsl:if>
 		</xsl:attribute>
-		<div class="close"><xsl:comment/></div>
-		<div class="titlebar"><div class="titlebar"><div class="titlebar"><span><xsl:value-of select="@title"/></span></div></div></div>
+		<div class="in2igui_window_close"><xsl:comment/></div>
+		<div class="in2igui_window_titlebar"><div><div><span class="in2igui_window_title"><xsl:value-of select="@title"/></span></div></div></div>
 		<div class="in2igui_window_content"><div class="in2igui_window_content"><div class="in2igui_window_body">
  			<xsl:attribute name="style"><xsl:if test="@width">width: <xsl:value-of select="@width"/>px;</xsl:if><xsl:if test="@padding">padding: <xsl:value-of select="@padding"/>px;</xsl:if></xsl:attribute>
 			<xsl:apply-templates/>

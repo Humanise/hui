@@ -1,7 +1,7 @@
 div.in2igui_toolbar
 {
 	height: 58px;
-	padding: 0px 4px;
+	padding: 0px;
 	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
 }
 
@@ -281,4 +281,37 @@ div.in2igui_toolbar_nolabels div.in2igui_divider
 {
 	height: 30px;
 	margin-top: 3px;
+}
+
+/************************************ Border *****************************/
+
+div.in2igui_toolbar_border_top
+{
+	border-top: 1px solid #ddd;
+	padding: 0;
+}
+
+div.in2igui_toolbar_border_top div.in2igui_toolbar_body
+{
+	border-top: 1px solid #fff;
+	background: #f2f2f3;
+}
+
+div.in2igui_toolbar_border_bottom
+{
+	border-bottom: 1px solid #ddd;
+	padding: 0;
+}
+
+div.in2igui_toolbar_border_bottom div.in2igui_toolbar_body
+{
+	border-top: 1px solid #fff;
+	background: #f2f2f3;
+}
+
+div.in2igui_layout_top div.in2igui_toolbar_border_top, div.in2igui_layout_top div.in2igui_toolbar_border_top div.in2igui_toolbar_body
+{
+	padding: 0 6px;
+	width: 100%;
+	margin-left: -6px;
 }

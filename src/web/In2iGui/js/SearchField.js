@@ -5,8 +5,8 @@ In2iGui.SearchField = function(options) {
 	this.name = options.name;
 	this.field = this.element.select('input')[0];
 	this.value = this.field.value;
-	this.adaptive = this.element.hasClassName('in2igui_searchfield_adaptive')
-	this.initialWidth=this.element.clientWidth;
+	this.adaptive = this.element.hasClassName('in2igui_searchfield_adaptive');
+	In2iGui.onDomReady(function() {this.initialWidth=parseInt(this.element.getStyle('width'))}.bind(this));
 	In2iGui.extend(this);
 	this.addBehavior();
 	this.updateClass()

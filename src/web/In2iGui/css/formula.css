@@ -93,7 +93,7 @@ form.in2igui_formula select
 
 input.in2igui_formula_text
 {
-	height: 15px;
+	height: 18px;
 }
 
 textarea.in2igui_formula_text
@@ -267,7 +267,7 @@ span.in2igui_number span
 
 span.in2igui_number span span
 {
-	margin: 0 17px 0 4px;
+	margin: 0 17px 0 6px;
 	background: url('../gfx/number.png') left -25px repeat-x;
 }
 
@@ -635,7 +635,52 @@ input.in2igui_tokens_token
 	-webkit-border-radius: 2px;
 }
 
+/******************************** Location *************************/
 
+div.in2igui_location
+{
+	padding-right: 18px;
+	position: relative;
+}
+
+div.in2igui_location input
+{
+	border: 0;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	background: none;
+	text-indent: 16px;
+	height: 16px;
+}
+
+a.in2igui_location_picker
+{
+	background-image: url('../icons/geo/map1.png');
+	width: 16px;
+	height: 16px;
+	position: absolute;
+	right: 0;
+	top: 4px;
+	font-size: 0;
+}
+
+span.in2igui_location_latitude, span.in2igui_location_longitude
+{
+	display: inline-block;
+	height: 16px;
+	width: 50%;
+}
+
+span.in2igui_location_latitude
+{
+	background: url('../icons/monochrome/latitude1.png') left top no-repeat;
+}
+
+span.in2igui_location_longitude
+{
+	background: url('../icons/monochrome/longitude1.png') left top no-repeat;
+}
 
 /************************* Override for windows *******************/
 

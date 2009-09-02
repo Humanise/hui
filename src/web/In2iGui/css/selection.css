@@ -70,6 +70,7 @@ td.in2igui_layout_left .in2igui_selection_item:hover
 div.in2igui_selection div.in2igui_selected, div.in2igui_selection div.in2igui_selected:hover
 {
 	background-color: #3875d7;
+	background: url('../gfx/selection_blue.png') left top repeat-x;
 	color: #fff;
 }
 

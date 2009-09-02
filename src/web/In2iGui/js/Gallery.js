@@ -71,6 +71,7 @@ In2iGui.Gallery.prototype = {
 	},
 	/** @private */
 	resolveImageUrl : function(img) {
+		return In2iGui.resolveImageUrl(this,img,this.width,this.height);
 		for (var i=0; i < this.delegates.length; i++) {
 			if (this.delegates[i]['$resolveImageUrl']) {
 				return this.delegates[i]['$resolveImageUrl'](img,this.width,this.height);

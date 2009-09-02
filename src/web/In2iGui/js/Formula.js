@@ -174,7 +174,17 @@ In2iGui.Formula.Text = function(options) {
 	this.name = options.name;
 	In2iGui.extend(this);
 	this.input = this.element.select('.in2igui_formula_text')[0];
+	this.placeholder = this.element.select('.in2igui_field_placeholder')[0];
 	this.value = this.input.value;
+	if (this.placeholder) {
+		var self = this;
+		In2iGui.onDomReady(function() {
+			window.setTimeout(function() {
+				self.value = self.input.value;
+				self.updateClass();
+			},500);
+		});
+	}
 	this.addBehavior();
 }
 
@@ -293,10 +303,11 @@ In2iGui.Formula.DateTime = function(o) {
 	this.name = o.name;
 	this.element = $(o.element);
 	this.input = this.element.select('input')[0];
-	this.options = n2i.override({returnType:null,label:null,allowNull:true},o);
-	this.value = null;
+	this.options = n2i.override({returnType:null,label:null,allowNull:true,value:null},o);
+	this.value = this.options.value;
 	In2iGui.extend(this);
 	this.addBehavior();
+	this.updateUI();
 }
 
 In2iGui.Formula.DateTime.create = function(options) {
@@ -495,8 +506,9 @@ In2iGui.Formula.DropDown.prototype = {
 		}.bind(this));
 	},
 	updateUI : function() {
-		if (this.items[this.index]) {
-			this.inner.update(this.items[this.index].title);
+		var selected = this.items[this.index];
+		if (selected) {
+			this.inner.update(selected.label || selected.title);
 		} else if (this.options.placeholder) {
 			this.inner.update(new Element('em').update(this.options.placeholder.escapeHTML()));
 		} else {
@@ -517,9 +529,11 @@ In2iGui.Formula.DropDown.prototype = {
 		el.focus();
 		if (!this.items) return;
 		In2iGui.positionAtElement(s,el,{vertical:'bottomOutside',top:-2,left:2});
-		s.setStyle({visibility:'hidden',display:'block'});
+		s.setStyle({visibility:'hidden',display:'block',width:''});
 		var width = Math.max(el.getWidth()-5,100,s.getWidth());
-		s.setStyle({visibility:'visible',width:(width)+'px',zIndex:In2iGui.nextTopIndex(),maxHeight:'200px'});
+		var space = n2i.getDocumentWidth()-el.cumulativeOffset().left-20;
+		width = Math.min(width,space);
+		s.setStyle({visibility:'visible',width:width+'px',zIndex:In2iGui.nextTopIndex(),maxHeight:'200px'});
 	},
 	getValue : function(value) {
 		return this.value;
@@ -570,7 +584,7 @@ In2iGui.Formula.DropDown.prototype = {
 		}
 		var self = this;
 		this.items.each(function(item,i) {
-			var e = new Element('a',{href:'#'}).update(item.title).observe('mousedown',function(e) {
+			var e = new Element('a',{href:'#'}).update(item.label || item.title).observe('mousedown',function(e) {
 				e.stop();
 				self.itemClicked(item,i);
 			})
@@ -1044,6 +1058,94 @@ In2iGui.Formula.StyleLength.prototype = {
 	},
 	setLocalValue : function(value) {
 		this.value = Math.min(Math.max(value,this.options.min),this.options.max);
+	}
+}
+
+/////////////////////////// Style length /////////////////////////
+
+/**
+ * A component for geo-location
+ * @constructor
+ */
+In2iGui.Formula.Location = function(options) {
+	this.options = n2i.override({value:null},options);
+	this.name = options.name;
+	this.element = $(options.element);
+	this.chooser = this.element.select('a')[0];
+	this.latField = new In2iGui.TextField({element:this.element.select('input')[0],validator:new In2iGui.NumberValidator({min:-90,max:90,allowNull:true})});
+	this.latField.listen(this);
+	this.lngField = new In2iGui.TextField({element:this.element.select('input')[1],validator:new In2iGui.NumberValidator({min:-180,max:180,allowNull:true})});
+	this.lngField.listen(this);
+	this.value = this.options.value;
+	In2iGui.extend(this);
+	this.setValue(this.value);
+	this.addBehavior();
+}
+
+In2iGui.Formula.Location.create = function(options) {
+	options = options || {};
+	var e = options.element = new Element('div',{'class':'in2igui_location'});
+	var b = new Element('span');
+	b.update('<span class="in2igui_location_latitude"><input/></span><span class="in2igui_location_longitude"><input/></span>');
+	e.insert(In2iGui.wrapInField(b));
+	e.insert('<a class="in2igui_location_picker" href="javascript:void(0);"></a>');
+	return new In2iGui.Formula.Location(options);
+}
+
+In2iGui.Formula.Location.prototype = {
+	/** @private */
+	addBehavior : function() {
+		this.chooser.observe('click',this.showPicker.bind(this));
+		In2iGui.addFocusClass({element:this.latField.element,classElement:this.element,'class':'in2igui_field_focused'});
+		In2iGui.addFocusClass({element:this.lngField.element,classElement:this.element,'class':'in2igui_field_focused'});
+	},
+	getLabel : function() {
+		return this.options.label;
+	},
+	reset : function() {
+		this.setValue();
+	},
+	getValue : function() {
+		return this.value;
+	},
+	setValue : function(loc) {
+		if (loc) {
+			this.latField.setValue(loc.latitude);
+			this.lngField.setValue(loc.longitude);
+			this.value = loc;
+		} else {
+			this.latField.setValue();
+			this.lngField.setValue();
+			this.value = null;
+		}
+		this.updatePicker();
+		n2i.log(this.value);
+	},
+	updatePicker : function() {
+		if (this.picker) {
+			this.picker.setLocation(this.value);
+		}
+	},
+	/** @private */
+	showPicker : function() {
+		if (!this.picker) {
+			this.picker = new In2iGui.LocationPicker();
+			this.picker.listen(this);
+		}
+		this.picker.show({node:this.chooser,location:this.value});
+	},
+	$locationChanged : function(loc) {
+		this.setValue(loc);
+	},
+	$valueChanged : function() {
+		var lat = this.latField.getValue();
+		var lng = this.lngField.getValue();
+		if (lat===null || lng===null) {
+			this.value = null;
+		} else {
+			this.value = {latitude:lat,longitude:lng};
+		}
+		this.updatePicker();
 	}
 }
 

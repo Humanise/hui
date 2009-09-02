@@ -73,9 +73,9 @@ n2i.escapeHTML = function(str) {
 }
 
 /** Checks if a string has characters */
-n2i.isEmpty = function(str) {
-	if (str==null || typeof(str)=='undefined') return true;
-	return n2i.trim(str).length==0;
+n2i.isEmpty = n2i.isBlank = function(str) {
+	if (str===null || typeof(str)==='undefined') return true;
+	return typeof(str)=='string' && n2i.trim(str).length==0;
 }
 
 n2i.isDefined = function(obj) {
@@ -255,7 +255,7 @@ n2i.getInnerHeight = function() {
 	}
 }
 
-n2i.getInnerWidth = function() {
+n2i.getDocumentWidth = n2i.getInnerWidth = function() {
 	if (self.innerHeight) {
 		return self.innerWidth;
 	} else if (document.documentElement && document.documentElement.clientHeight) {
