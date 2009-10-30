@@ -110,7 +110,9 @@ In2iGui.Menu.prototype = {
 		}
 		var width = this.element.getWidth();
 		var height = this.element.getHeight();
-		this.element.setStyle({'top':Math.min(pos.top,innerHeight-height-20+scrollTop)+'px','left':Math.min(pos.left,innerWidth-width-20+scrollLeft)+'px','visibility':'visible',zIndex:In2iGui.nextTopIndex()});
+		var left = Math.min(pos.left,innerWidth-width-20+scrollLeft);
+		var top = Math.max(0,Math.min(pos.top,innerHeight-height-20+scrollTop));
+		this.element.setStyle({'top':top+'px','left':left+'px','visibility':'visible',zIndex:In2iGui.nextTopIndex(),'width':(width-2)+'px'});
 		if (!this.visible) {
 			n2i.ani(this.element,'opacity',1,200);
 			this.addHider();

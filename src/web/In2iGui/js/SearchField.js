@@ -12,10 +12,11 @@ In2iGui.SearchField = function(options) {
 	this.updateClass()
 }
 
-In2iGui.Toolbar.SearchField.create = function(options) {
+In2iGui.SearchField.create = function(options) {
 	options = options || {};
-	var e = options.element = new Element('div',{'class': 'in2igui_searchfield'});
-	e.update('<div><div><input type="text"/></div></div>');
+	
+	var e = options.element = new Element('span',{'class': options.adaptive ? 'in2igui_searchfield in2igui_searchfield_adaptive' : 'in2igui_searchfield'});
+	e.update('<em class="in2igui_searchfield_placeholder"></em><a href="javascript:void(0);" class="in2igui_searchfield_reset"></a><span><span><input type="text"/></span></span>');
 	return new In2iGui.SearchField(options);
 }
 

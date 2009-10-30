@@ -34,7 +34,7 @@ In2iGui.ImagePicker.prototype = {
 		if (this.object==null) {
 			this.element.style.backgroundImage='';
 		} else {
-			var url = In2iGui.callDelegates(this,'getImageUrl');
+			var url = In2iGui.resolveImageUrl(this,this.object,48,48);
 			this.element.style.backgroundImage='url('+url+')';
 		}
 	},
@@ -46,12 +46,12 @@ In2iGui.ImagePicker.prototype = {
 			this.content = new Element('div',{'class':'in2igui_imagepicker_thumbs'});
 			var buttons = In2iGui.Buttons.create({align:'right'});
 			var close = In2iGui.Button.create({text:'Luk',highlighted:true});
-			close.addDelegate({
-				click:function() {self.hidePicker()}
+			close.listen({
+				$click:function() {self.hidePicker()}
 			});
 			var remove = In2iGui.Button.create({text:'Fjern'});
-			remove.addDelegate({
-				click:function() {self.setObject(null);self.hidePicker()}
+			remove.listen({
+				$click:function() {self.setObject(null);self.hidePicker()}
 			});
 			buttons.add(remove).add(close);
 			this.picker.add(this.content);

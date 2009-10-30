@@ -21,6 +21,7 @@ body.in2igui, body.in2igui textarea
 div.in2igui_body
 {
 	height: 100%;
+	box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 }
@@ -235,67 +236,6 @@ div.browser .column .element:hover
 div.browser .column div.selected, div.browser .column div.selected:hover
 {
 	background: #3875D7;
-	color: #fff;
-}
-
-/************************** tabs ************************/
-
-div.in2igui_tabs_bar
-{
-	padding-top: 4px;
-	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
-}
-
-div.in2igui_tabs_bar ul
-{
-	line-height: 25px;
-	height: 32px;
-	background: url('../gfx/tabs.png') left top repeat-x;
-	list-style: none;
-	margin: 0px;
-	padding: 0px;
-	padding-left: 4px;
-}
-
-div.in2igui_tabs_bar li
-{
-	float: left;
-	font-size: 10pt;
-	margin-right: 4px;
-	line-height: 26px;
-	background: #c2c6cd;
-	cursor: pointer;
-	background: url('../gfx/tabs.png') left -128px no-repeat;
-	height: 32px;
-}
-
-div.in2igui_tabs_bar li span
-{
-	background: url('../gfx/tabs.png') right -160px no-repeat;
-	float: left;
-	height: 32px;
-}
-
-div.in2igui_tabs_bar li span span
-{
-	margin: 0px 4px;
-	background: url('../gfx/tabs.png') left -192px repeat-x;
-	padding: 0px 6px;
-}
-
-div.in2igui_tabs_bar li.in2igui_tabs_selected
-{
-	background: url('../gfx/tabs.png') left -32px no-repeat;
-}
-
-div.in2igui_tabs_bar li.in2igui_tabs_selected span
-{
-	background: url('../gfx/tabs.png') right -64px no-repeat;
-}
-
-div.in2igui_tabs_bar li.in2igui_tabs_selected span span
-{
-	background: url('../gfx/tabs.png') right -96px repeat-x;
 	color: #fff;
 }
 

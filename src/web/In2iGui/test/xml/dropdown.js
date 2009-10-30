@@ -1,9 +1,9 @@
 var controller = {
-	click$showValues : function() {
+	$click$showValues : function() {
 		var v = formula.getValues();
 		alert(Object.toJSON(v));
 	},
-	click$build : function() {
+	$click$build : function() {
 		var win = In2iGui.Window.create({width:300,padding:10});
 		var form = In2iGui.Formula.create();
 		win.add(form);

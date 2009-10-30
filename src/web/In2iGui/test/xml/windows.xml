@@ -1,21 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
-<gui xmlns="uri:In2iGui" pad="10" title="System">
+<gui xmlns="uri:In2iGui" padding="10" title="System">
 	<controller name="controller" source="windows.js"/>
-	<view variant="box">
+	<layout>
+		<top>
 		<toolbar>
 			<icon icon="common/folder" title="Mørk" overlay="new" action="dark.toggle()"/>
 			<icon icon="common/folder" title="Standard" action="standard.toggle()"/>
 			<icon icon="common/folder" title="Lys" action="light.toggle()"/>
 		</toolbar>
-		<content>
-			<overflow height="300" resize="-115">
-			</overflow>
-		</content>
-		<foot>
-			
-		</foot>
-	</view>
+		</top>
+		<middle>
+			</middle>
+		<bottom/>
+	</layout>
 	<window name="dark" width="300" title="Bruger" pad="5" variant="dark">
 		<formula>
 			<group>

@@ -97,10 +97,10 @@ In2iGui.Alert.prototype = {
 	/** Adds an In2iGui.Button to the alert */
 	addButton : function(button) {
 		if (!this.buttons) {
-			this.buttons = new Element('div',{'class':'in2igui_buttons'});
-			this.body.appendChild(this.buttons);
+			this.buttons = In2iGui.Buttons.create({align:'right'});
+			this.body.appendChild(this.buttons.element);
 		}
-		this.buttons.appendChild(button.getElement());
+		this.buttons.add(button);
 	}
 }
 

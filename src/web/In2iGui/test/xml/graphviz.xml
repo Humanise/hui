@@ -2,15 +2,16 @@
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:In2iGui" padding="10" title="System">
 	<controller name="controller" source="graphviz.js"/>
-	<view varint="box">
+	<layout>
+		<top>
 		<toolbar>
 			<icon icon="common/smaller" title="Mindre" name="smaller"/>
 			<icon icon="common/larger" title="Større" name="larger"/>
 		</toolbar>
-		<content>
-			<split>
-				<sidebar>
-					<overflow height="300" resize="-115">
+		</top>
+		<middle>
+			<left>
+				<overflow>
 					<selection value="circo" name="algorithm">
 						<title>Algorithm</title>
 						<item icon="common/person" title="circo" value="circo"/>
@@ -79,17 +80,13 @@
 						<item icon="common/person" title="world" value="world.dot"/>
 					</selection>
 					</overflow>
-				</sidebar>
-				<content>
-					<overflow width="600" resize="-115">
+				</left>
+				<center>
+					<overflow>
 						<graphviz name="graph"/>
 					</overflow>
-				</content>
-			</split>
-		</content>
-		<foot>
-			
-		</foot>
-	</view>
+				</center>
+			</middle>
+		</layout>
 </gui>
 

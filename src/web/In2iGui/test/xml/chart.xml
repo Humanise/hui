@@ -15,7 +15,7 @@
 				</sidebar>
 				<content>
 					<overflow height="300" resize="-115">
-						<chart width="500" height="300" url="chart1.json" name="chart"/>
+						<chart width="500" height="300" url="data/chart1.json" name="chart"/>
 					</overflow>
 				</content>
 			</split>

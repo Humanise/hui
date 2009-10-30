@@ -11,7 +11,8 @@
 <xsl:include href="iphone.xsl"/>
 <xsl:include href="layout.xsl"/>
 <xsl:include href="formula.xsl"/>
-<xsl:include href="view.xsl"/>
+<xsl:include href="view.xsl"/> <!-- TODO: remove this -->
+<xsl:include href="toolbar.xsl"/>
 
 <xsl:output encoding="UTF-8" omit-xml-declaration="yes" doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"/>
 
@@ -33,10 +34,13 @@
 <xsl:comment><![CDATA[[if lt IE 8]>
 	<script src="]]><xsl:value-of select="$context"/><![CDATA[/In2iGui/lib/IE8.js" type="text/javascript"></script>
 <![endif]]]></xsl:comment>-->
+<xsl:comment><![CDATA[[if IE 8]>
+	<link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$context"/><![CDATA[/In2iGui/css/msie8.css"> </link>
+<![endif]]]></xsl:comment>
 <xsl:comment><![CDATA[[if lt IE 7]>
 	<link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$context"/><![CDATA[/In2iGui/css/msie6.css"> </link>
 <![endif]]]></xsl:comment>
-<xsl:comment><![CDATA[[if gt IE 6]>
+<xsl:comment><![CDATA[[if IE 7]>
 	<link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$context"/><![CDATA[/In2iGui/css/msie7.css"> </link>
 <![endif]]]></xsl:comment>
 <xsl:for-each select="//gui:css">
@@ -183,9 +187,28 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 	</tbody>
 </table>
 <script type="text/javascript">
-	var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Dock({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>'});
+	var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Dock({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>'<xsl:if test="gui:tabs">,tabs:true</xsl:if>});
 	<xsl:call-template name="gui:createobject"/>
 </script>
+</xsl:template>
+
+<xsl:template match="gui:frames">
+	<html>
+		<head>
+		</head>
+		<frameset rows="84,*" framespacing="0" frameborder="0" border="0">
+			<xsl:for-each select="gui:frame">
+				<frame noresize="noresize" src="{@source}" name="{@name}" frameborder="0" marginheight="0" marginwidth="0" border="0">
+					<xsl:attribute name="scrolling">
+						<xsl:choose>
+							<xsl:when test="@scrolling='false'">no</xsl:when>
+							<xsl:otherwise>auto</xsl:otherwise>
+						</xsl:choose>
+					</xsl:attribute>
+				</frame>
+			</xsl:for-each>
+		</frameset>
+	</html>
 </xsl:template>
 
 <xsl:template match="gui:selection">
@@ -299,20 +322,36 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 <!--                             Tabs                             -->
 
 <xsl:template match="gui:tabs">
-<div class="in2igui_tabs" id="{generate-id()}">
-	<div class="in2igui_tabs_bar">
+<div id="{generate-id()}" class="in2igui_tabs">
+	<xsl:if test="@below='true'">
+		<xsl:apply-templates select="gui:tab"/>
+	</xsl:if>
+	<div>
+		<xsl:attribute name="class">
+			<xsl:text>in2igui_tabs_bar</xsl:text>
+			<xsl:choose>
+				<xsl:when test="@small='true' and @below='true'">
+					<xsl:text> in2igui_tabs_bar_small_below</xsl:text>
+				</xsl:when>
+				<xsl:when test="@small='true'">
+					<xsl:text> in2igui_tabs_bar_small</xsl:text>
+				</xsl:when>
+			</xsl:choose>
+		</xsl:attribute>
 		<ul>
 		<xsl:for-each select="gui:tab">
 			<li id="{generate-id()}_tab">
 				<xsl:if test="position()=1">
 					<xsl:attribute name="class">in2igui_tabs_selected</xsl:attribute>
 				</xsl:if>
-				<span><span><xsl:value-of select="@title"/></span></span>
+				<a href="javascript:void(0)"><span><span><xsl:value-of select="@title"/></span></span></a>
 			</li>
 		</xsl:for-each>
 		</ul>
 	</div>
-	<xsl:apply-templates select="gui:tab"/>
+	<xsl:if test="not(@below='true')">
+		<xsl:apply-templates select="gui:tab"/>
+	</xsl:if>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Tabs({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>'});
 		<xsl:call-template name="gui:createobject"/>
@@ -321,110 +360,19 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 </xsl:template>
 
 <xsl:template match="gui:tabs/gui:tab">
-	<div class="in2igui_tabs_tab" id="{generate-id()}">
+	<div class="" id="{generate-id()}">
+		<xsl:attribute name="class">
+			<xsl:choose>
+				<xsl:when test="@background='light'"><xsl:text>in2igui_tabs_tab in2igui_tabs_tab_light</xsl:text></xsl:when>
+				<xsl:otherwise><xsl:text>in2igui_tabs_tab</xsl:text></xsl:otherwise>
+			</xsl:choose>
+		</xsl:attribute>
 		<xsl:attribute name="style">
 			<xsl:if test="position()>1">display: none;</xsl:if>
 			<xsl:if test="@padding">padding: <xsl:value-of select="@padding"/>px;</xsl:if>
 		</xsl:attribute>
 		<xsl:apply-templates/>
 	</div>
-	<!--script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Tabs.Tab({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>'});
-		<xsl:call-template name="gui:createobject"/>
-	</script-->
-</xsl:template>
-
-<!--                  Toolbar                   -->
-
-
-<xsl:template match="gui:toolbar" name="gui:toolbar">
-	<div>
-		<xsl:attribute name="class">
-			<xsl:text>in2igui_toolbar</xsl:text>
-			<xsl:if test="@labels='false'"><xsl:text> in2igui_toolbar_nolabels</xsl:text></xsl:if>
-			<xsl:if test="@border='top'"><xsl:text> in2igui_toolbar_border_top</xsl:text></xsl:if>
-			<xsl:if test="@border='bottom'"><xsl:text> in2igui_toolbar_border_bottom</xsl:text></xsl:if>
-		</xsl:attribute>
-		<div class="in2igui_toolbar_body">
-		<xsl:apply-templates select="gui:right"/><xsl:apply-templates select="child::*[not(name()='right')]"/>
-		</div>
-	</div>
-</xsl:template>
-
-
-<xsl:template match="gui:toolbar/gui:right">
-	<div class="in2igui_toolbar_right"><xsl:apply-templates /></div>
-</xsl:template>
-
-<xsl:template match="gui:toolbar//gui:divider">
-	<span class="in2igui_divider"><xsl:comment /></span>
-</xsl:template>
-
-<xsl:template match="gui:toolbar//gui:icon">
-	<a id="{generate-id()}" href="javascript:void(0)">
-		<xsl:attribute name="class">
-			<xsl:text>in2igui_toolbar_icon</xsl:text>
-			<xsl:if test="@selected='true'"> in2igui_toolbar_icon_selected</xsl:if>
-			<xsl:if test="@disabled='true'"> in2igui_toolbar_icon_disabled</xsl:if>
-		</xsl:attribute>
-		<span class="in2igui_toolbar_inner_icon">
-			<span class="in2igui_toolbar_inner_icon">
-			<span class="in2igui_icon" style="background-image: url('{$context}/In2iGui/icons/{@icon}2.png')">
-				<xsl:if test="@overlay">
-					<span class="in2igui_icon_overlay" style="background-image: url('{$context}/In2iGui/icons/overlay/{@overlay}2.png')"><xsl:comment/></span>
-				</xsl:if>
-				<xsl:comment/>
-			</span>
-			<strong><xsl:value-of select="@title"/></strong>
-			</span>
-		</span>
-	</a>
-	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Toolbar.Icon({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>'});
-		<xsl:call-template name="gui:createobject"/>
-		<xsl:if test="@action">
-			<xsl:value-of select="generate-id()"/>_obj.listen({$click:function() {<xsl:value-of select="@action"/>}});
-		</xsl:if>
-		<xsl:if test="@click">
-			<xsl:value-of select="generate-id()"/>_obj.listen({$click:function() {<xsl:value-of select="@click"/>}});
-		</xsl:if>
-	</script>
-</xsl:template>
-
-<xsl:template match="gui:searchfield" name="gui:searchfield">
-	<span class="in2igui_searchfield" id="{generate-id()}">
-		<xsl:if test="@width"><xsl:attribute name="style">width:<xsl:value-of select="@width"/>px;</xsl:attribute></xsl:if>
-		<em class="in2igui_searchfield_placeholder"><xsl:value-of select="@placeholder"/><xsl:comment/></em>
-		<a href="javascript:void(0);" class="in2igui_searchfield_reset"><xsl:comment/></a>
-		<span><span><input type="text"/></span></span>
-	</span>
-	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.SearchField({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>'<xsl:if test="@expandedWidth">,expandedWidth:<xsl:value-of select="@expandedWidth"/></xsl:if>});
-		<xsl:call-template name="gui:createobject"/>
-	</script>
-</xsl:template>
-
-<xsl:template match="gui:toolbar//gui:searchfield">
-	<div class="in2igui_toolbar_search">
-		<xsl:call-template name="gui:searchfield"/>
-		<div class="in2igui_toolbar_search_label"><xsl:value-of select="@title"/></div>
-	</div>
-</xsl:template>
-
-<xsl:template match="gui:toolbar//gui:badge">
-	<div id="{generate-id()}" class="in2igui_toolbar_badge">
-		<div class="in2igui_toolbar_inner_badge"><div class="in2igui_toolbar_inner_badge">
-		<xsl:if test="@icon">
-			<div class="in2igui_toolbar_badge_icon" style="background-image: url('{$context}/In2iGui/icons/{@icon}1.png')"><xsl:comment/></div>
-		</xsl:if>
-		<strong><xsl:value-of select="@label"/><xsl:comment/></strong>
-		<span><xsl:value-of select="@text"/><xsl:comment/></span>
-		</div></div>
-	</div>
-	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Toolbar.Badge({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>'});
-		<xsl:call-template name="gui:createobject"/>
-	</script>
 </xsl:template>
 
 
@@ -642,4 +590,15 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 		<xsl:call-template name="gui:createobject"/>
 	</script>
 </xsl:template>
+
+<xsl:template match="gui:text">
+	<div class="in2igui_text">
+		<xsl:apply-templates/>
+	</div>
+</xsl:template>
+
+<xsl:template match="gui:text/gui:header">
+	<h1><xsl:apply-templates/></h1>
+</xsl:template>
+
 </xsl:stylesheet>

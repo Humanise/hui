@@ -77,7 +77,7 @@
 	</td></tr>
 </xsl:template>
 
-<xsl:template name="gui:text">
+<xsl:template name="gui:text" match="gui:textfield">
 	<xsl:choose>
 		<xsl:when test="@lines>1">
 			<div class="in2igui_field in2igui_longfield" id="{generate-id()}">
@@ -162,7 +162,7 @@
 
 <xsl:template name="gui:number">
 	<span class="in2igui_number" id="{generate-id()}">
-		<span><span><input type="text"/><a class="in2igui_number_up"><xsl:comment/></a><a class="in2igui_number_down"><xsl:comment/></a></span></span>
+		<span><span><input type="text"/><em class="in2igui_number_units"><xsl:comment/></em><a class="in2igui_number_up"><xsl:comment/></a><a class="in2igui_number_down"><xsl:comment/></a></span></span>
 	</span>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.Number({
@@ -228,7 +228,7 @@
 	</td></tr>
 </xsl:template>
 
-<xsl:template name="gui:dropdown">
+<xsl:template name="gui:dropdown" match="gui:dropdown">
 	<a class="in2igui_dropdown" id="{generate-id()}" href="#">
 	<span><span><strong><xsl:comment/></strong></span></span>
 	</a>
@@ -411,12 +411,13 @@
 		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Button({
 			element:'<xsl:value-of select="generate-id()"/>'
 			<xsl:if test="@name">,name:'<xsl:value-of select="@name"/>'</xsl:if>
+			<xsl:if test="@submit='true'">,submit:true</xsl:if>
 		});
-		<xsl:if test="@action">
-			<xsl:value-of select="generate-id()"/>_obj.addDelegate({click:function() {<xsl:value-of select="@action"/>}});
+		<xsl:if test="@click">
+			<xsl:value-of select="generate-id()"/>_obj.listen({$click:function() {<xsl:value-of select="@click"/>}});
 		</xsl:if>
 		<xsl:if test="@url">
-			<xsl:value-of select="generate-id()"/>_obj.addDelegate({click:function() {document.location='<xsl:value-of select="@url"/>'}});
+			<xsl:value-of select="generate-id()"/>_obj.listen({$click:function() {document.location='<xsl:value-of select="@url"/>'}});
 		</xsl:if>
 		<xsl:call-template name="gui:createobject"/>
 	</script>

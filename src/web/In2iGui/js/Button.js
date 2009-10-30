@@ -108,7 +108,7 @@ In2iGui.Buttons.create = function(o) {
 
 In2iGui.Buttons.prototype = {
 	add : function(widget) {
-		this.body.insert(widget.getElement());
+		this.body.insert(widget.element);
 		return this;
 	}
 }

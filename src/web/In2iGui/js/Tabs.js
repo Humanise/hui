@@ -2,7 +2,7 @@
  * @constructor
  */
 In2iGui.Tabs = function(o) {
-	o = o || {};
+	o = o || {};
 	this.name = o.name;
 	this.element = $(o.element);
 	this.activeTab = -1;
@@ -13,14 +13,14 @@ In2iGui.Tabs = function(o) {
 	In2iGui.extend(this);
 }
 
-In2iGui.Tabs.create = function(o) {
-	o = o || {};
-	var e = o.element = new Element('div',{'class':'in2igui_tabs'});
-	var bar = new Element('div',{'class':'in2igui_tabs_bar'});
+In2iGui.Tabs.create = function(options) {
+	options = options || {};
+	var e = options.element = new Element('div',{'class':'in2igui_tabs'});
+	var bar = new Element('div',{'class' : options.small ? 'in2igui_tabs_bar in2igui_tabs_bar_small' : 'in2igui_tabs_bar'});
 	e.insert(bar);
 	var ul = new Element('ul');
 	bar.insert(ul);
-	return new In2iGui.Tabs(o);
+	return new In2iGui.Tabs(options);
 }
 
 In2iGui.Tabs.prototype = {
@@ -48,7 +48,7 @@ In2iGui.Tabs.prototype = {
 	},
 	createTab : function(options) {
 		options = options || {};
-		var tab = new Element('li').update('<span><span>'+options.title+'</span></span>');
+		var tab = new Element('li').update('<a><span><span>'+options.title+'</span></span></a>');
 		this.bar.insert(tab);
 		this.addTabBehavior(tab,this.tabs.length);
 		this.tabs.push(tab);

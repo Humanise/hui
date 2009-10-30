@@ -9,7 +9,11 @@ In2iGui.Dock = function(options) {
 	this.iframe = this.element.select('iframe')[0];
 	this.name = options.name;
 	In2iGui.extend(this);
-	In2iGui.get().registerOverflow(this.iframe,-69);
+	var height = -69;
+	if (this.options.tabs) {
+		height-=15;
+	}
+	In2iGui.get().registerOverflow(this.iframe,height);
 }
 
 In2iGui.Dock.prototype = {

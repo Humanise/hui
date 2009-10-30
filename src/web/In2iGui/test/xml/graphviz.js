@@ -1,19 +1,19 @@
 var controller = {
-	interfaceIsReady : function() {
+	$interfaceIsReady : function() {
 		this.refresh();
 	},
 	refresh : function() {
-		var url = '../graphviz/'+algorithm.getValue()+'/'+file.getValue();
+		var url = '../graphviz/'+algorithm.getValue().value+'/'+file.getValue().value;
 		graph.load(url);
 		
 	},
-	selectionChanged : function() {
+	$selectionChanged : function() {
 		this.refresh();
 	},
-	click$smaller : function() {
+	$click$smaller : function() {
 		graph.zoom(.9);
 	},
-	click$larger : function() {
+	$click$larger : function() {
 		graph.zoom(1/.9);
 	}
 }

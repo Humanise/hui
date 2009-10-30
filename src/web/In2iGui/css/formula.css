@@ -324,6 +324,11 @@ span.in2igui_number_focused span span
 	background-position: left -100px;
 }
 
+em.in2igui_number_units
+{
+	vertical-align: middle;
+}
+
 /************************************* Drop down ********************************/
 
 a.in2igui_dropdown
@@ -336,6 +341,7 @@ a.in2igui_dropdown
 	color: #333;
 	font-size: 13px;
 	line-height: 26px;
+	vertical-align: middle;
 }
 
 a.in2igui_dropdown span

@@ -1,8 +1,14 @@
 div.in2igui_toolbar
 {
-	height: 58px;
 	padding: 0px;
 	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+	position: relative;
+	font-size: 0;
+}
+
+td.in2igui_layout_top div.in2igui_toolbar
+{
+	height: 58px;
 }
 
 div.in2igui_revealing_toolbar
@@ -29,7 +35,9 @@ div.in2igui_toolbar span.in2igui_divider
 
 div.in2igui_toolbar_right
 {
-	float: right;
+	position: absolute;
+	right: 0;
+	top: 0;
 }
 
 /********************************** Icon ************************/
@@ -136,7 +144,7 @@ a.in2igui_toolbar_icon_disabled:hover span.in2igui_icon
 
 /********************************* Search *************************/
 
-div.in2igui_toolbar_search
+span.in2igui_toolbar_search
 {
 	height: 58px;
 	vertical-align: middle;
@@ -144,12 +152,12 @@ div.in2igui_toolbar_search
 	text-align: center;
 }
 
-div.in2igui_toolbar_search span.in2igui_searchfield
+span.in2igui_toolbar_search span.in2igui_searchfield
 {
 	margin: 12px 0px 3px;
 }
 
-div.in2igui_toolbar_search_label
+span.in2igui_toolbar_search_label
 {
 	display: block;
 	color:#334455;
@@ -314,4 +322,65 @@ div.in2igui_layout_top div.in2igui_toolbar_border_top, div.in2igui_layout_top di
 	padding: 0 6px;
 	width: 100%;
 	margin-left: -6px;
+}
+
+/************************************ Items *****************************/
+
+span.in2igui_toolbar_item
+{
+	display: inline-block;
+	vertical-align: middle;
+	padding: 0 5px;
+}
+
+span.in2igui_toolbar_item_body
+{
+	display:block;
+	height: 38px;
+	text-align: center;
+}
+
+span.in2igui_toolbar_item span.in2igui_number
+{
+	top: 8px;
+}
+
+span.in2igui_toolbar_item a.in2igui_dropdown
+{
+	margin-top: 7px;
+}
+
+
+span.in2igui_toolbar_label
+{
+	color:#334455;
+	display:block;
+	font-size:11px;
+	text-align:center;
+}
+
+/********************************* Grid ******************************/
+
+table.in2igui_toolbar_grid
+{
+	display: inline-table;
+	border-collapse: collapse;
+	vertical-align: middle;
+	position: relative;
+	top: 1px;
+}
+
+table.in2igui_toolbar_grid td
+{
+	padding: 0px;
+}
+
+table.in2igui_toolbar_grid th
+{
+	color: #334455;
+	font-size: 11px;
+	font-weight: normal;
+	padding-right: 2px;
+	padding-left: 5px;
+	text-align: right;
 }

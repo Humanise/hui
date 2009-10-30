@@ -191,16 +191,18 @@ In2iGui.prototype = {
 		});
 	},
 	getDescendants : function(widget) {
-		var desc = [],e = widget.getElement(),self = this;
+		var desc = [],e = widget.getElement();
 		if (e) {
 			var d = e.descendants();
-			d.each(function(node) {
-				self.objects.values().each(function(obj) {
-					if (obj.getElement()==node) {
-						desc.push(obj);
+			var o = this.objects.values();
+			for (var i=0; i < d.length; i++) {
+				for (var j=0; j < o.length; j++) {
+					if (d[i]==o[j].element) {
+						desc.push(o[j]);
 					}
-				});
-			});
+				};
+				
+			};
 		}
 		return desc;
 	},
@@ -210,16 +212,18 @@ In2iGui.prototype = {
 	*/
 	getAncestors : function(widget) {
 		var desc = [];
-		var e = widget.getElement();
+		var e = widget.element;
 		if (e) {
-			var d = e.ancestors();
-			d.each(function(node) {
-				this.objects.values().each(function(obj) {
-					if (obj.getElement()==node) {
-						desc.push(obj);
+			var a = e.ancestors();
+			var o = this.objects.values();
+			for (var i=0; i < a.length; i++) {
+				for (var j=0; j < o.length; j++) {
+					if (o[j].element==a[i]) {
+						desc.push(o[j]);
 					}
-				});
-			}.bind(this));
+					
+				};
+			};
 		}
 		return desc;
 	},
@@ -266,7 +270,11 @@ In2iGui.showCurtain = function(widget,zIndex) {
 				widget.curtainWasClicked();
 			}
 		};
-		document.body.appendChild(widget.curtain);
+		var body = $$('.in2igui_body')[0];
+		if (!body) {
+			body=document.body;
+		}
+		body.appendChild(widget.curtain);
 	}
 	widget.curtain.style.height=n2i.getDocumentHeight()+'px';
 	widget.curtain.style.zIndex=zIndex;
@@ -620,15 +628,17 @@ In2iGui.callDelegatesDrop = function(dragged,dropped) {
 In2iGui.callAncestors = function(obj,method,value,event) {
 	if (typeof(value)=='undefined') value=obj;
 	var d = In2iGui.get().getAncestors(obj);
-	d.each(function(child) {
-		if (child[method]) {
-			thisResult = child[method](value,event);
+	for (var i=0; i < d.length; i++) {
+		if (d[i][method]) {
+			d[i][method](value,event);
 		}
-	});
+	};
 };
 
 In2iGui.callDescendants = function(obj,method,value,event) {
-	if (typeof(value)=='undefined') value=obj;
+	if (typeof(value)=='undefined') {
+		value=obj;
+	}
 	var d = In2iGui.get().getDescendants(obj);
 	d.each(function(child) {
 		if (child[method]) {
@@ -658,7 +668,7 @@ In2iGui.callDelegates = function(obj,method,value,event) {
 				thisResult = delegate['$'+method+'$'+obj.name](value,event);
 			}/* else if (obj.name && delegate[method+'$'+obj.name]) {
 				thisResult = delegate[method+'$'+obj.name](value,event);
-			} else if ('$'+obj.name && delegate[method+'$'+obj.name]) {
+			} else if ('$'+obj.name && delegate[method+'$'+obj.name]) {
 				thisResult = delegate['$'+method+'$'+obj.name](value,event);
 			} else if (obj.kind && delegate[method+'$'+obj.kind]) {
 				thisResult = delegate[method+'$'+obj.kind](value,event);
@@ -730,6 +740,10 @@ In2iGui.bind = function(expression,delegate) {
 	if (expression.charAt(0)=='@') {
 		var pair = expression.substring(1).split('.');
 		var obj = In2iGui.get(pair[0]);
+		if (!obj) {
+			n2i.log('Unable to bind to '+expression);
+			return;
+		}
 		var p = pair.slice(1).join('.');
 		obj.addDelegate({
 			$propertyChanged : function(prop) {
@@ -858,6 +872,12 @@ In2iGui.request = function(options) {
 			onSuccess(t);
 		}
 	};
+	var onFailure = options.onFailure;
+	options.onFailure = function(t) {
+		if (typeof(onFailure)=='string') {
+			In2iGui.callDelegates(t,'failure$'+onFailure)
+		}
+	}
 	options.onException = function(t,e) {n2i.log(e)};
 	new Ajax.Request(options.url,options);
 };
@@ -897,7 +917,9 @@ In2iGui.Source = function(o) {
 	this.data = null;
 	this.parameters = this.options.parameters;
 	In2iGui.extend(this);
-	if (o.delegate) this.addDelegate(o.delegate);
+	if (o.delegate) {
+		this.addDelegate(o.delegate);
+	}
 	this.busy=false;
 	In2iGui.onDomReady(this.init.bind(this));
 };

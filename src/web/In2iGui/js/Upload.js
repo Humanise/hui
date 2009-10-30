@@ -71,7 +71,7 @@ In2iGui.Upload.prototype = {
 		file.observe('change',this.iframeSubmit.bind(this));
 		form.insert(file);
 		iframe.observe('load',this.iframeUploadComplete.bind(this));
-		this.progressBar = In2iGui.ProgressBar.create();
+		this.progressBar = In2iGui.ProgressBar.create({small:true});
 		this.progressBar.hide();
 		container.insert(this.progressBar.getElement());
 		this.form = form;
@@ -90,13 +90,15 @@ In2iGui.Upload.prototype = {
 			In2iGui.hideMessage();
 		}
 		this.iframe.src=In2iGui.context+'/In2iGui/html/blank.html';
+		this.endIframeProgress();
 	},
 	iframeSubmit : function() {
+		this.startIframeProgress();
 		this.uploading = true;
 		In2iGui.showMessage({text:'Uploader... vent venligst.'});
 		// IE: set value of parms again since they disappear
 		if (n2i.browser.msie) {
-		var p = this.options.parameters;
+			var p = this.options.parameters;
 			$H(this.options.parameters).each(function(pair) {
 				this.form[pair.key].value=pair.value;
 			}.bind(this));
@@ -104,18 +106,16 @@ In2iGui.Upload.prototype = {
 		this.form.submit();
 		this.fire('uploadDidSubmit');
 	},
-	startProgress : function() {
+	startIframeProgress : function() {
 		this.form.style.display='none';
 		this.progressBar.show();
+		this.progressBar.setWaiting();
 	},
-	setProgress : function(value) {
-		this.progressBar.setValue(value);
-	},
-	endProgress : function() {
+	endIframeProgress : function() {
 		this.form.style.display='block';
 		this.form.reset();
-		this.progressBar.reset();
 		this.progressBar.hide();
+		this.progressBar.reset();
 	},
 	
 	parentShown : function() {

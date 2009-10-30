@@ -108,6 +108,7 @@ In2iGui.Window.prototype = {
 		this.upListener = function(e) {self.endDrag(e)};
 		Event.observe(document,'mousemove',this.moveListener);
 		Event.observe(document,'mouseup',this.upListener);
+		Event.observe(document,'mousedown',this.upListener);
 		event.stop();
 		document.body.onselectstart = function () { return false; };
 		return false;
@@ -133,6 +134,7 @@ In2iGui.Window.prototype = {
 	endDrag : function(e) {
 		Event.stopObserving(document,'mousemove',this.moveListener);
 		Event.stopObserving(document,'mouseup',this.upListener);
+		Event.stopObserving(document,'mousedown',this.upListener);
 		document.body.onselectstart = null;
 	}
 }

@@ -85,7 +85,8 @@
 <script type="text/javascript">
 	var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Overflow({
 		element:'<xsl:value-of select="generate-id()"/>',
-		dynamic:<xsl:value-of select="not(@height or @max-height or @min-height)"/>
+		dynamic:<xsl:value-of select="not(@height or @max-height or @min-height or @vertical)"/>
+		<xsl:if test="@vertical">,vertical:<xsl:value-of select="@vertical"/></xsl:if>
 	});
 	<xsl:call-template name="gui:createobject"/>
 </script>

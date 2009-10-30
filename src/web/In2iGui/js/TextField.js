@@ -12,9 +12,11 @@ In2iGui.TextField = function(options) {
 		In2iGui.fadeOut(this.options.placeholderElement,0);
 	}
 	this.checkPlaceholder();
-	if (e==document.activeElement) {
-		this.focused();
-	}
+	try { // IE hack
+		if (e==document.activeElement) {
+			this.focused();
+		}
+	} catch (e) {}
 }
 
 In2iGui.TextField.prototype = {

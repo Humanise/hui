@@ -114,17 +114,17 @@ In2iGui.Calendar.prototype = {
 			time.insert(node);
 		};
 	},
-	click$in2iguiCalendarPrevious : function() {
+	$click$in2iguiCalendarPrevious : function() {
 		var date = new Date(this.date.getTime());
 		date.setDate(this.date.getDate()-7);
 		this.setDate(date);
 	},
-	click$in2iguiCalendarNext : function() {
+	$click$in2iguiCalendarNext : function() {
 		var date = new Date(this.date.getTime());
 		date.setDate(this.date.getDate()+7);
 		this.setDate(date);
 	},
-	click$in2iguiCalendarToday : function() {
+	$click$in2iguiCalendarToday : function() {
 		this.setDate(new Date());
 	},
 	setDate: function(date) {
@@ -135,7 +135,7 @@ In2iGui.Calendar.prototype = {
 			this.datePicker.setValue(this.date);
 		}
 	},
-	click$in2iguiCalendarDatePicker : function() {
+	$click$in2iguiCalendarDatePicker : function() {
 		this.showDatePicker();
 	},
 	refresh : function() {
@@ -160,10 +160,10 @@ In2iGui.Calendar.prototype = {
 		this.datePickerPanel.position(this.datePickerButton.getElement());
 		this.datePickerPanel.show();
 	},
-	click$in2iguiCalendarDatePickerClose : function() {
+	$click$in2iguiCalendarDatePickerClose : function() {
 		this.datePickerPanel.hide();
 	},
-	dateChanged$in2iguiCalendarDatePicker : function(date) {
+	$dateChanged$in2iguiCalendarDatePicker : function(date) {
 		this.setDate(date);
 	},
 	

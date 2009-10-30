@@ -169,7 +169,7 @@ In2iGui.Formula.Group.prototype = {
  * @constructor
  */
 In2iGui.Formula.Text = function(options) {
-	this.options = n2i.override({label:null,key:null,lines:1},options);
+	this.options = n2i.override({label:null,key:null,lines:1,live:false},options);
 	this.element = $(options.element);
 	this.name = options.name;
 	In2iGui.extend(this);
@@ -567,7 +567,7 @@ In2iGui.Formula.DropDown.prototype = {
 		this.updateIndex();
 		this.updateUI();
 	},
-	itemsLoaded : function(items) {
+	$itemsLoaded : function(items) {
 		this.setItems(items);
 	},
 	hideSelector : function() {
@@ -753,7 +753,7 @@ In2iGui.Formula.Checkboxes = function(o) {
 In2iGui.Formula.Checkboxes.create = function(o) {
 	o.element = new Element('div',{'class':o.vertical ? 'in2igui_checkboxes in2igui_checkboxes_vertical' : 'in2igui_checkboxes'});
 	if (o.items) {
-		o.items.each(function(item) {
+		o.items.each(function(item) {
 			var node = new Element('a',{'class':'in2igui_checkbox',href:'javascript:void(0);'}).update(
 				'<span><span></span></span>'+item.title
 			);
@@ -841,8 +841,8 @@ In2iGui.Formula.Checkboxes.prototype = {
 	getLabel : function() {
 		return this.options.label;
 	},
-	itemsLoaded : function(items) {
-		items.each(function(item) {
+	$itemsLoaded : function(items) {
+		items.each(function(item) {
 			var node = new Element('a',{'class':'in2igui_checkbox',href:'javascript:void(0);'}).update(
 				'<span><span></span></span>'+item.title
 			);
@@ -883,7 +883,7 @@ In2iGui.Formula.Checkboxes.Items.prototype = {
 			this.options.source.refresh();
 		}
 	},
-	itemsLoaded : function(items) {
+	$itemsLoaded : function(items) {
 		this.checkboxes = [];
 		this.element.update();
 		var self = this;
@@ -1140,7 +1140,7 @@ In2iGui.Formula.Location.prototype = {
 	$valueChanged : function() {
 		var lat = this.latField.getValue();
 		var lng = this.lngField.getValue();
-		if (lat===null || lng===null) {
+		if (lat===null || lng===null) {
 			this.value = null;
 		} else {
 			this.value = {latitude:lat,longitude:lng};

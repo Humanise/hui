@@ -10,11 +10,13 @@ In2iGui.Overflow = function(options) {
 	In2iGui.extend(this);
 	this.diff=0;
 	if (options.dynamic) {
-		if (n2i.browser.msie7) {
-			window.setTimeout(this.calculate.bind(this),2000);
+		if (n2i.browser.msie7 || n2i.browser.msie8) {
+			window.setTimeout(this.calculate.bind(this),1000);
 		} else {
 			In2iGui.onDomReady(this.calculate.bind(this));
 		}
+	} else if (options.vertical) {
+		In2iGui.get().registerOverflow(this.element,options.vertical*-1);
 	}
 }
 

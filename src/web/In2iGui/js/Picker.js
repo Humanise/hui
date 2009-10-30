@@ -125,6 +125,7 @@ In2iGui.Picker.prototype = {
 		} else {
 			var width = this.container.parentNode.clientWidth-12;
 		}
+		width = Math.max(width,0);
 		this.container.setStyle({width:width+'px',display:'block'});
 	}
 }

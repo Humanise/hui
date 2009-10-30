@@ -1,16 +1,18 @@
 div.in2igui_alert
 {
 	width: 500px;
-	border: 1px solid #efcf3a;
+	border: 1px solid #ccc;
 	position: absolute;
 	top: 20%;
 	left: 50%;
 	margin-left: -250px;
 	margin-top: 0px;
-	background: #fefae1 url('../gfx/alert_large_bg.png') bottom left repeat-x;
+	background: #eee;
+	-moz-box-shadow:0 5px 20px rgba(0, 0, 0, 0.3);
+	-webkit-box-shadow:0 5px 20px rgba(0, 0, 0, 0.3);
 	display: none;
 	opacity: 0;
-	font-family: "Trebuchet MS",Helvetica,sans-serif;
+	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
 }
 
 div.in2igui_alert_body
@@ -19,6 +21,7 @@ div.in2igui_alert_body
 	padding: 13px 15px;
 	overflow: hidden;
 	text-align: left;
+	border: 1px solid #fff;
 }
 
 div.in2igui_alert_content
@@ -41,76 +44,18 @@ div.in2igui_alert .gasp
 
 div.in2igui_alert h1
 {
-	color:#55360F;
-	font-size:16pt;
-	margin:0px 0px 10px;
+	color: #123;
+	font-size: 18px;
+	margin: 0px 0px 10px;
 	font-weight: bold;
 	text-align: left;
 }
 
 div.in2igui_alert p
 {
-	color: #55360F;
-	font-size: 11pt;
+	color: #123;
+	font-size: 13px;
 	margin: 0px 0px 10px;
 	line-height: 14pt;
 	min-height: 57px;
-}
-
-/************************ Override buttons ************************/
-
-div.in2igui_alert div.in2igui_buttons
-{
-	float: right;
-}
-
-div.in2igui_alert a.in2igui_button
-{
-	float: left;
-	background: url('../gfx/alert_button.png') top left no-repeat;
-	text-decoration: none;
-	color: #004a80;
-	margin-left: 10px;
-	margin-right: 0px;
-	cursor: pointer;
-	white-space: nowrap;
-	height: 28px;
-	line-height: 28px;
-}
-
-div.in2igui_alert a.in2igui_button span
-{
-	height: 28px;
-	background: url('../gfx/alert_button.png') 100% -28px no-repeat;
-}
-
-div.in2igui_alert a.in2igui_button span span
-{
-	height: 28px;
-	background: url('../gfx/alert_button.png') 0px -56px repeat-x;
-	padding: 0px 10px;
-	font-family: "Trebuchet MS",Helvetica, sans-serif;
-	font-size: 10pt;
-	line-height: 26px;
-}
-
-div.in2igui_alert a.in2igui_button:hover
-{
-	background-position: 0px -84px;
-}
-
-div.in2igui_alert a.in2igui_button:hover span
-{
-	background-position: 100% -112px;
-}
-
-div.in2igui_alert a.in2igui_button:hover span span
-{
-	background-position: 0px -140px;
-}
-
-div.in2igui_alert a.in2igui_button_highlighted, div.in2igui_alert a.in2igui_button_highlighted span, div.in2igui_alert a.in2igui_button_highlighted span span
-{
-	color: #094100;
-	background-image: url('../gfx/alert_button_highlighted.png');
 }

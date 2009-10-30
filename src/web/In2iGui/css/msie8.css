@@ -1,0 +1,24 @@
+/*@import url('msie7.css');*/
+
+table.in2igui_layout
+{
+	height: 100%;
+	border-collapse: collapse;
+}
+
+a.in2igui_toolbar_icon_disabled
+{
+	filter: alpha(opacity = 50);
+	background-color: #F2F2F3;
+}
+
+a.in2igui_button_disabled
+{
+	filter: alpha(opacity = 50);
+	background-color: #e7e7e7;
+}
+
+.in2igui_formula_text
+{
+	background: url('#');
+}
