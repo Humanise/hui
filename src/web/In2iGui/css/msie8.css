@@ -22,3 +22,8 @@ a.in2igui_button_disabled
 {
 	background: url('#');
 }
+
+span.in2igui_upload_button_input input
+{
+	filter: alpha(opacity = 0);
+}

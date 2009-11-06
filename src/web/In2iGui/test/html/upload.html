@@ -25,28 +25,29 @@
 </head>
 
 <body>
-	<button onclick="test1()">Simple upload</button>
+	<button onclick="testFlash()">Simple upload</button>
 	<script type="text/javascript" charset="utf-8">
-		function test1() {
-			var win = In2iGui.Window.create({width:300});
-			var up = In2iGui.Upload.create({url:'upload.php'});
+		function testFlash() {
+			var win = ui.Window.create({width:300});
+			var up = ui.Upload.create({url:'upload.php'});
 			win.add(up);
-			var b = In2iGui.Button.create({text:'Choose files'});
-			var clear = In2iGui.Button.create({text:'Clear'});
-			clear.addDelegate({click:function() {
-				up.clear();
-			}});
-			up.setButton(b);
-			win.add(b);
-			win.add(clear);
 			win.show();
 		}
 	</script>
-	<button onclick="test2()">Simple upload (noFlash)</button>
+	<button onclick="testNoFlash()">Simple upload (noFlash)</button>
 	<script type="text/javascript" charset="utf-8">
-		function test2() {
+		function testNoFlash() {
 			var win = In2iGui.Window.create({width:300});
-			var up = In2iGui.Upload.create({useFlash:false,url:'upload.php'});
+			var up = In2iGui.Upload.create({useFlash:false,url:'upload.php',name:'noFlashUpload'});
+			win.add(up);
+			win.show();
+		}
+	</script>
+	<button onclick="testNoFlashError()">Simple upload (noFlash) + error</button>
+	<script type="text/javascript" charset="utf-8">
+		function testNoFlashError() {
+			var win = In2iGui.Window.create({width:300});
+			var up = In2iGui.Upload.create({useFlash:false,url:'nowhere',name:'noFlashUploadError'});
 			win.add(up);
 			win.show();
 		}

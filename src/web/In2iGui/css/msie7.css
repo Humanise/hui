@@ -88,6 +88,11 @@ span.in2igui_field_content, div.in2igui_list, div.in2igui_box_middle
 	width: 100%;
 }
 
+span.in2igui_upload_button_input input
+{
+	filter: alpha(opacity = 0);
+}
+
 /********************** layout ****************/
 
 table.in2igui_layout

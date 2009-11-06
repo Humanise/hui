@@ -403,9 +403,11 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 
 <xsl:template match="gui:upload">
 	<div class="in2igui_upload" id="{generate-id()}">
-		<div class="in2igui_upload_placeholder"><xsl:comment/></div>
 		<div class="in2igui_upload_items"><xsl:comment/></div>
 		<div class="in2igui_upload_status"><xsl:comment/></div>
+		<div class="in2igui_upload_placeholder">
+			<xsl:apply-templates/>
+		</div>
 		<!--xsl:if test="@useFlash='false'">
 			<form action="{@url}" method="post" enctype="multipart/form-data" target="abc">
 				<input type="file" name="file" id="some_name" onchange="this.form.submit()"/>
@@ -420,7 +422,8 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 			name:'<xsl:value-of select="@name"/>',
 			url:'<xsl:value-of select="@url"/>',
 			button:'<xsl:value-of select="@button"/>'
-			<xsl:if test="@useFlash">,useFlash:<xsl:value-of select="@useFlash='true'"/></xsl:if>
+			<xsl:if test="@flash">,useFlash:<xsl:value-of select="@flash='true'"/></xsl:if>
+			<xsl:if test="@chooseButton">,chooseButton:'<xsl:value-of select="@chooseButton"/>'</xsl:if>
 		});
 		<xsl:call-template name="gui:createobject"/>
 	</script>

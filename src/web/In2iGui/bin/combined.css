@@ -3293,7 +3293,7 @@ div.in2igui_upload_item
 {
 	font-size: 8pt;
 	overflow: hidden;
-	padding: 3px 5px;
+	padding: 3px 5px 4px;
 	color: #666;
 }
 
@@ -3344,7 +3344,9 @@ div.in2igui_upload_item em
 div.in2igui_upload object
 {
 	position: absolute;
-	margin-left: -108px;
+	width: 100%;
+	height: 30px;
+	cursor: pointer;
 }
 
 div.in2igui_upload_status
@@ -3353,6 +3355,44 @@ div.in2igui_upload_status
 	font-size: 11px;
 	line-height: 15px;
 	padding-left: 1px;
+	display: none;
+}
+
+span.in2igui_upload_button
+{
+	display: inline-block;
+	position: relative;
+	margin-top: 5px;
+}
+
+div.in2igui_upload form
+{
+	margin: 0;
+}
+
+span.in2igui_upload_button_input
+{
+	position: absolute;
+	height: 30px;
+	width: 100%;
+	overflow: hidden;
+	cursor: pointer;
+}
+
+span.in2igui_upload_button_input input
+{
+	position: absolute;
+	right: 0;
+	height: 30px;
+	opacity: 0;
+	cursor: pointer;
+}
+
+div.in2igui_upload_placeholder
+{
+	background: #fff;
+	border: 1px solid #ccc;
+	padding: 5px;
 }div.in2igui_progressbar
 {
 	height: 22px;
