@@ -121,8 +121,12 @@
 		<div class="in2igui_box_bottom"><div><div><xsl:comment/></div></div></div>
 	</div>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Box('<xsl:value-of select="generate-id()"/>',null,{
-			<xsl:if test="@modal='true'">modal:true</xsl:if>
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Box({
+			element:'<xsl:value-of select="generate-id()"/>',
+			name:'<xsl:value-of select="@name"/>'
+			<xsl:if test="@modal='true'">,modal:true</xsl:if>
+			<xsl:if test="@absolute='true'">,absolute:true</xsl:if>
+			<xsl:if test="@state">,state:'<xsl:value-of select="@state"/>'</xsl:if>
 		});
 		<xsl:call-template name="gui:createobject"/>
 	</script>
@@ -235,6 +239,25 @@
 			</div></div></div>
 		</td></tr>
 	</tfoot>
+</xsl:template>
+
+
+
+<xsl:template match="gui:fragment">
+<div class="in2igui_fragment" id="{generate-id()}">
+	<xsl:if test="@state and @state!=//gui:gui/@state">
+		<xsl:attribute name="style">display:none</xsl:attribute>
+	</xsl:if>
+	<xsl:apply-templates/>
+</div>
+<script type="text/javascript">
+	var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Fragment({
+		element:'<xsl:value-of select="generate-id()"/>',
+		name:'<xsl:value-of select="@name"/>',
+		state:'<xsl:value-of select="@state"/>'
+	});
+	<xsl:call-template name="gui:createobject"/>
+</script>
 </xsl:template>
 
 </xsl:stylesheet>

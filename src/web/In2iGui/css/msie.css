@@ -40,7 +40,10 @@ span.in2igui_formula_text_singleline input
 	position: absolute;
 }
 
-
+a.in2igui_button
+{
+	line-height: 28px;
+}
 
 /*********** Search field ***************/
 

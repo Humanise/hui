@@ -77,8 +77,15 @@ In2iGui.Upload.prototype = {
 		var span = new Element('span',{'class':'in2igui_upload_button_input'});
 		span.insert(form);
 		buttonContainer.insert(span);
-		buttonContainer.insert('<a href="javascript:void(0);" class="in2igui_button"><span><span>'+this.options.chooseButton+'</span></span></a>');
-		this.element.insert(buttonContainer);
+		if (this.options.widget) {
+			In2iGui.onDomReady(function() {
+				var w = In2iGui.get(this.options.widget);
+				w.element.wrap(buttonContainer);
+			}.bind(this));
+		} else {
+			buttonContainer.insert('<a href="javascript:void(0);" class="in2igui_button"><span><span>'+this.options.chooseButton+'</span></span></a>');
+			this.element.insert(buttonContainer);
+		}
 		iframe.observe('load',function() {this.iframeUploadComplete()}.bind(this));
 	},
 	iframeUploadComplete : function() {
@@ -149,8 +156,13 @@ In2iGui.Upload.prototype = {
 		var buttonContainer = new Element('span',{'class':'in2igui_upload_button'});
 		var placeholder = new Element('span',{'class':'in2igui_upload_button_object'});
 		buttonContainer.insert(placeholder);
-		buttonContainer.insert('<a href="javascript:void(0);" class="in2igui_button"><span><span>'+this.options.chooseButton+'</span></span></a>');
-		this.element.insert(buttonContainer);
+		if (this.options.widget) {
+			var w = In2iGui.get(this.options.widget);
+			w.element.wrap(buttonContainer);
+		} else {
+			buttonContainer.insert('<a href="javascript:void(0);" class="in2igui_button"><span><span>'+this.options.chooseButton+'</span></span></a>');
+			this.element.insert(buttonContainer);
+		}
 		
 		var self = this;
 		this.loader = new SWFUpload({

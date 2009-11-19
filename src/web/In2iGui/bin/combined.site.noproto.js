@@ -1166,6 +1166,8 @@ function In2iGui() {
 	this.delegates = [];
 	/** @private */
 	this.objects = $H();
+	/** @private */
+	this.state = 'default';
 	this.addBehavior();
 }
 
@@ -1185,12 +1187,15 @@ In2iGui.latestTopIndex = 2000;
 In2iGui.toolTips = {};
 
 /** Gets the one instance of In2iGui */
-In2iGui.get = function(name) {
+In2iGui.get = function(nameOrWidget) {
 	if (!In2iGui.instance) {
 		In2iGui.instance = new In2iGui();
 	}
-	if (name) {
-		return In2iGui.instance.objects.get(name);
+	if (nameOrWidget) {
+		if (nameOrWidget.element) {
+			return nameOrWidget;
+		}
+		return In2iGui.instance.objects.get(nameOrWidget);
 	} else {
 		return In2iGui.instance;
 	}
@@ -1322,16 +1327,6 @@ In2iGui.prototype = {
 		}
 		alert.show();
 	},
-	changeState : function(state) {
-		if (this.state==state) {return;}
-		var objects = this.objects.values();
-		objects.each(function(obj) {
-			if (obj.state) {
-				if (obj.state==state) {obj.show();}
-				else {obj.hide();}
-			}
-		});
-	},
 	getDescendants : function(widget) {
 		var desc = [],e = widget.getElement();
 		if (e) {
@@ -1379,6 +1374,18 @@ In2iGui.prototype = {
 		return null;
 	}
 };
+
+In2iGui.changeState = function(state) {
+	if (In2iGui.get().state===state) {return;}
+	var objects = In2iGui.get().objects.values();
+	objects.each(function(obj) {
+		if (obj.options && obj.options.state) {
+			if (obj.options.state==state) {obj.show();}
+			else {obj.hide();}
+		}
+	});
+	In2iGui.get().state==state;
+}
 
 ///////////////////////////////// Indexes /////////////////////////////
 
@@ -2052,21 +2059,24 @@ In2iGui.parseSubItems = function(parent,array) {
 
 ////////////////////////////////// Source ///////////////////////////
 
-/** @constructor */
-In2iGui.Source = function(o) {
-	this.options = n2i.override({url:null,dwr:null,parameters:[]},o);
-	this.name = o.name;
+/** A data source
+ * @constructor
+ */
+In2iGui.Source = function(options) {
+	this.options = n2i.override({url:null,dwr:null,parameters:[]},options);
+	this.name = options.name;
 	this.data = null;
 	this.parameters = this.options.parameters;
 	In2iGui.extend(this);
-	if (o.delegate) {
-		this.addDelegate(o.delegate);
+	if (options.delegate) {
+		this.addDelegate(options.delegate);
 	}
 	this.busy=false;
 	In2iGui.onDomReady(this.init.bind(this));
 };
 
 In2iGui.Source.prototype = {
+	/** @private */
 	init : function() {
 		var self = this;
 		this.parameters.each(function(parm) {
@@ -2076,6 +2086,7 @@ In2iGui.Source.prototype = {
 		})
 		this.refresh();
 	},
+	/** Refreshes the data source */
 	refresh : function() {
 		if (this.delegates.length==0) return;
 		if (this.busy) {
@@ -2108,6 +2119,7 @@ In2iGui.Source.prototype = {
 			facade[method].apply(facade,args);
 		}
 	},
+	/** @private */
 	end : function() {
 		In2iGui.callDelegates(this,'sourceIsNotBusy');
 		this.busy=false;
@@ -2115,12 +2127,14 @@ In2iGui.Source.prototype = {
 			this.refresh();
 		}
 	},
+	/** @private */
 	parse : function(t) {
 		if (t.responseXML) {
 			this.parseXML(t.responseXML);
 		}
 		this.end();
 	},
+	/** @private */
 	parseXML : function(doc) {
 		if (doc.documentElement.tagName=='items') {
 			this.data = In2iGui.parseItems(doc);
@@ -2131,6 +2145,7 @@ In2iGui.Source.prototype = {
 			this.fire('articlesLoaded',doc);
 		}
 	},
+	/** @private */
 	parseDWR : function(data) {
 		this.data = data;
 		this.fire('objectsLoaded',data);
@@ -2542,10 +2557,10 @@ In2iGui.ImageViewer.prototype = {
  * @constructor
  * @param {Object} options The options : {modal:false}
  */
-In2iGui.Box = function(element,name,options) {
+In2iGui.Box = function(options) {
 	this.options = n2i.override({},options);
-	this.name = name;
-	this.element = $(element);
+	this.name = options.name;
+	this.element = $(options.element);
 	this.body = this.element.select('.in2igui_box_body')[0];
 	this.close = this.element.select('.in2igui_box_close')[0];
 	if (this.close) {
@@ -2564,7 +2579,7 @@ In2iGui.Box = function(element,name,options) {
  */
 In2iGui.Box.create = function(options) {
 	options = n2i.override({},options);
-	var e = new Element('div',{'class':'in2igui_box'});
+	var e = options.element = new Element('div',{'class':'in2igui_box'});
 	if (options.width) {
 		e.setStyle({width:options.width+'px'});
 	}
@@ -2579,7 +2594,7 @@ In2iGui.Box.create = function(options) {
 		'<div class="in2igui_box_body"'+(options.padding ? ' style="padding: '+options.padding+'px;"' : '')+'></div>'+
 		'</div></div>'+
 		'<div class="in2igui_box_bottom"><div><div></div></div></div>');
-	return new In2iGui.Box(e,name,options);
+	return new In2iGui.Box(options);
 };
 
 In2iGui.Box.prototype = {
@@ -2609,11 +2624,15 @@ In2iGui.Box.prototype = {
 			e.style.zIndex=index+1;
 			In2iGui.showCurtain(this,index);
 		}
-		e.setStyle({display:'block',visibility:'hidden'});
-		var w = e.getWidth();
-		var top = (n2i.getInnerHeight()-e.getHeight())/2+n2i.getScrollTop();
-		e.setStyle({'marginLeft':(w/-2)+'px',top:top+'px'});
-		e.setStyle({display:'block',visibility:'visible'});
+		if (this.options.absolute) {
+			e.setStyle({display:'block',visibility:'hidden'});
+			var w = e.getWidth();
+			var top = (n2i.getInnerHeight()-e.getHeight())/2+n2i.getScrollTop();
+			e.setStyle({'marginLeft':(w/-2)+'px',top:top+'px'});
+			e.setStyle({display:'block',visibility:'visible'});
+		} else {
+			e.setStyle({display:'block'});
+		}
 		In2iGui.callVisible(this);
 	},
 	/**

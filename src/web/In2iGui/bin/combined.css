@@ -239,18 +239,70 @@ div.browser .column div.selected, div.browser .column div.selected:hover
 	color: #fff;
 }
 
+/****************************************** Info view ******************************/
 
-/******************************** Buttons ****************************/
+div.in2igui_infoview
+{
+	overflow-y: hidden;
+}
 
+div.in2igui_infoview_busy
+{
+	background: url('../gfx/spinner_large.gif') center center no-repeat;
+}
+
+div.in2igui_infoview table
+{
+	width: 100%;
+	font-size: 8pt;
+	line-height: 14px;
+}
+
+div.in2igui_infoview th
+{
+	vertical-align: top;
+	text-align: right;
+	padding: 2px 8px 0px 0px;
+	color: #666;
+	font-weight: normal;
+}
+
+div.in2igui_infoview td
+{
+	vertical-align: top;
+	padding: 2px 0px 0px 0px;
+}
+
+div.in2igui_infoview th.in2igui_infoview_header
+{
+	font-size: 13pt;
+	padding-bottom: 5px;
+	text-align: left;
+	color: #333;
+	line-height: 19px;
+	padding-top: 0px;
+}
+
+div.in2igui_infoview_click:hover
+{
+	cursor: pointer;
+	text-decoration: underline;
+}
 div.in2igui_buttons
 {
 	overflow: hidden;
 	font-size: 0;
+	line-height: 0;
 }
 
 div.in2igui_buttons_right div.in2igui_buttons_body
 {
 	text-align: right;
+}
+
+div.in2igui_buttons_center div.in2igui_buttons_body
+{
+	text-align: center;
 }
 
 div.in2igui_buttons a.in2igui_button
@@ -428,56 +480,6 @@ a.in2igui_button_disabled:hover span span
 	background-position: 0px -60px;
 }
 
-
-/****************************************** Info view ******************************/
-
-div.in2igui_infoview
-{
-	overflow-y: hidden;
-}
-
-div.in2igui_infoview_busy
-{
-	background: url('../gfx/spinner_large.gif') center center no-repeat;
-}
-
-div.in2igui_infoview table
-{
-	width: 100%;
-	font-size: 8pt;
-	line-height: 14px;
-}
-
-div.in2igui_infoview th
-{
-	vertical-align: top;
-	text-align: right;
-	padding: 2px 8px 0px 0px;
-	color: #666;
-	font-weight: normal;
-}
-
-div.in2igui_infoview td
-{
-	vertical-align: top;
-	padding: 2px 0px 0px 0px;
-}
-
-div.in2igui_infoview th.in2igui_infoview_header
-{
-	font-size: 13pt;
-	padding-bottom: 5px;
-	text-align: left;
-	color: #333;
-	line-height: 19px;
-	padding-top: 0px;
-}
-
-div.in2igui_infoview_click:hover
-{
-	cursor: pointer;
-	text-decoration: underline;
-}
 a.in2igui_button_small_rounded
 {
 	height: 24px;
@@ -3286,6 +3288,9 @@ div.in2igui_upload_items
 	max-height: 200px;
 	background: #fff;
 	border: 1px solid #ccc;
+	border-color: #ccc #ddd #eee;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
 	display: none;
 }
 
@@ -3341,12 +3346,13 @@ div.in2igui_upload_item em
 	font-style: normal;
 }
 
-div.in2igui_upload object
+span.in2igui_upload_button object
 {
 	position: absolute;
 	width: 100%;
 	height: 30px;
 	cursor: pointer;
+	outline: none;
 }
 
 div.in2igui_upload_status
@@ -3362,7 +3368,6 @@ span.in2igui_upload_button
 {
 	display: inline-block;
 	position: relative;
-	margin-top: 5px;
 }
 
 div.in2igui_upload form
@@ -3388,11 +3393,32 @@ span.in2igui_upload_button_input input
 	cursor: pointer;
 }
 
+/*************** Placeholder *************/
+
 div.in2igui_upload_placeholder
 {
-	background: #fff;
-	border: 1px solid #ccc;
-	padding: 5px;
+	text-align: center;
+}
+
+span.in2igui_upload_icon
+{
+	display: inline-block;
+	width: 64px;
+	height: 64px;
+	background-image: url('../icons/common/upload64.png');
+}
+
+div.in2igui_upload_placeholder h2
+{
+	font-size:10pt;
+	margin: 5px 0;
+	color: #234;
+}
+
+div.in2igui_upload_placeholder p
+{
+	font-size: 11px;
+	margin: 0;
 }div.in2igui_progressbar
 {
 	height: 22px;

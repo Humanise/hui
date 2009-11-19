@@ -2,10 +2,10 @@
  * @constructor
  * @param {Object} options The options : {modal:false}
  */
-In2iGui.Box = function(element,name,options) {
+In2iGui.Box = function(options) {
 	this.options = n2i.override({},options);
-	this.name = name;
-	this.element = $(element);
+	this.name = options.name;
+	this.element = $(options.element);
 	this.body = this.element.select('.in2igui_box_body')[0];
 	this.close = this.element.select('.in2igui_box_close')[0];
 	if (this.close) {
@@ -24,7 +24,7 @@ In2iGui.Box = function(element,name,options) {
  */
 In2iGui.Box.create = function(options) {
 	options = n2i.override({},options);
-	var e = new Element('div',{'class':'in2igui_box'});
+	var e = options.element = new Element('div',{'class':'in2igui_box'});
 	if (options.width) {
 		e.setStyle({width:options.width+'px'});
 	}
@@ -39,7 +39,7 @@ In2iGui.Box.create = function(options) {
 		'<div class="in2igui_box_body"'+(options.padding ? ' style="padding: '+options.padding+'px;"' : '')+'></div>'+
 		'</div></div>'+
 		'<div class="in2igui_box_bottom"><div><div></div></div></div>');
-	return new In2iGui.Box(e,name,options);
+	return new In2iGui.Box(options);
 };
 
 In2iGui.Box.prototype = {
@@ -69,11 +69,15 @@ In2iGui.Box.prototype = {
 			e.style.zIndex=index+1;
 			In2iGui.showCurtain(this,index);
 		}
-		e.setStyle({display:'block',visibility:'hidden'});
-		var w = e.getWidth();
-		var top = (n2i.getInnerHeight()-e.getHeight())/2+n2i.getScrollTop();
-		e.setStyle({'marginLeft':(w/-2)+'px',top:top+'px'});
-		e.setStyle({display:'block',visibility:'visible'});
+		if (this.options.absolute) {
+			e.setStyle({display:'block',visibility:'hidden'});
+			var w = e.getWidth();
+			var top = (n2i.getInnerHeight()-e.getHeight())/2+n2i.getScrollTop();
+			e.setStyle({'marginLeft':(w/-2)+'px',top:top+'px'});
+			e.setStyle({display:'block',visibility:'visible'});
+		} else {
+			e.setStyle({display:'block'});
+		}
 		In2iGui.callVisible(this);
 	},
 	/**

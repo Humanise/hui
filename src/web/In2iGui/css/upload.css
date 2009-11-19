@@ -16,6 +16,9 @@ div.in2igui_upload_items
 	max-height: 200px;
 	background: #fff;
 	border: 1px solid #ccc;
+	border-color: #ccc #ddd #eee;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
 	display: none;
 }
 
@@ -71,12 +74,13 @@ div.in2igui_upload_item em
 	font-style: normal;
 }
 
-div.in2igui_upload object
+span.in2igui_upload_button object
 {
 	position: absolute;
 	width: 100%;
 	height: 30px;
 	cursor: pointer;
+	outline: none;
 }
 
 div.in2igui_upload_status
@@ -92,7 +96,6 @@ span.in2igui_upload_button
 {
 	display: inline-block;
 	position: relative;
-	margin-top: 5px;
 }
 
 div.in2igui_upload form
@@ -118,9 +121,30 @@ span.in2igui_upload_button_input input
 	cursor: pointer;
 }
 
+/*************** Placeholder *************/
+
 div.in2igui_upload_placeholder
 {
-	background: #fff;
-	border: 1px solid #ccc;
-	padding: 5px;
+	text-align: center;
+}
+
+span.in2igui_upload_icon
+{
+	display: inline-block;
+	width: 64px;
+	height: 64px;
+	background-image: url('../icons/common/upload64.png');
+}
+
+div.in2igui_upload_placeholder h2
+{
+	font-size:10pt;
+	margin: 5px 0;
+	color: #234;
+}
+
+div.in2igui_upload_placeholder p
+{
+	font-size: 11px;
+	margin: 0;
 }

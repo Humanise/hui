@@ -85,6 +85,7 @@
 		<script src="{$context}/In2iGui/js/TextField.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/SearchField.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/Overflow.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/In2iGui/js/Fragment.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/lib/wysihat.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 	</xsl:when>
 	<xsl:otherwise>
@@ -405,16 +406,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 	<div class="in2igui_upload" id="{generate-id()}">
 		<div class="in2igui_upload_items"><xsl:comment/></div>
 		<div class="in2igui_upload_status"><xsl:comment/></div>
-		<div class="in2igui_upload_placeholder">
-			<xsl:apply-templates/>
-		</div>
-		<!--xsl:if test="@useFlash='false'">
-			<form action="{@url}" method="post" enctype="multipart/form-data" target="abc">
-				<input type="file" name="file" id="some_name" onchange="this.form.submit()"/>
-				<input type="submit"/>
-			</form>
-			<iframe name="abc" src="http://www.apple.com/"/>
-		</xsl:if-->
+		<xsl:apply-templates/>
 	</div>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Upload({
@@ -424,9 +416,18 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 			button:'<xsl:value-of select="@button"/>'
 			<xsl:if test="@flash">,useFlash:<xsl:value-of select="@flash='true'"/></xsl:if>
 			<xsl:if test="@chooseButton">,chooseButton:'<xsl:value-of select="@chooseButton"/>'</xsl:if>
+			<xsl:if test="@widget">,widget:'<xsl:value-of select="@widget"/>'</xsl:if>
 		});
 		<xsl:call-template name="gui:createobject"/>
 	</script>
+</xsl:template>
+
+<xsl:template match="gui:upload/gui:placeholder">
+	<div class="in2igui_upload_placeholder">
+		<span class="in2igui_upload_icon"><xsl:comment/></span>
+		<h2><xsl:value-of select="@header"/></h2>
+		<p><xsl:value-of select="@text"/></p>
+	</div>
 </xsl:template>
 
 
@@ -602,6 +603,10 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 
 <xsl:template match="gui:text/gui:header">
 	<h1><xsl:apply-templates/></h1>
+</xsl:template>
+
+<xsl:template match="gui:text/gui:p">
+	<p><xsl:apply-templates/></p>
 </xsl:template>
 
 </xsl:stylesheet>

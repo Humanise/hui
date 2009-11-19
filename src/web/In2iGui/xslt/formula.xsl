@@ -392,6 +392,9 @@
 			<xsl:if test="@align='right'">
 				<xsl:text> in2igui_buttons_right</xsl:text>
 			</xsl:if>
+			<xsl:if test="@align='center'">
+				<xsl:text> in2igui_buttons_center</xsl:text>
+			</xsl:if>
 		</xsl:attribute>
 		<xsl:attribute name="style">
 			<xsl:if test="@padding">padding:<xsl:value-of select="@padding"/>px;</xsl:if>
