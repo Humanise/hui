@@ -25,6 +25,8 @@ function In2iGui() {
 	/** @private */
 	this.objects = $H();
 	/** @private */
+	this.layoutWidgets = [];
+	/** @private */
 	this.state = 'default';
 	this.addBehavior();
 }
@@ -79,6 +81,11 @@ In2iGui.prototype = {
 		In2iGui.domReady = true;
 		this.resize();
 		In2iGui.callSuperDelegates(this,'interfaceIsReady');
+
+		//if (n2i.browser.msie7 && n2i.browser.msie8) {
+			this.reLayout();
+			Event.observe(window,'resize',this.reLayout.bind(this));
+		//}
 	},
 	/** @private */
 	addBehavior : function() {
@@ -184,6 +191,11 @@ In2iGui.prototype = {
 			if (options.cancel) {In2iGui.get(name+'_cancel').setText(options.cancel);}
 		}
 		alert.show();
+	},
+	reLayout : function() {
+		for (var i = this.layoutWidgets.length - 1; i >= 0; i--){
+			this.layoutWidgets[i]['$$layout']();
+		};
 	},
 	getDescendants : function(widget) {
 		var desc = [],e = widget.getElement();
@@ -397,10 +409,10 @@ In2iGui.onDomReady = function(func) {
 In2iGui.wrapInField = function(e) {
 	var w = new Element('div',{'class':'in2igui_field'}).update(
 		'<span class="in2igui_field_top"><span><span></span></span></span>'+
-		'<span class="in2igui_field_middle"><span class="in2igui_field_middle"><span class="in2igui_field_content"></span></span></span>'+
+		'<span class="in2igui_field_middle"><span class="in2igui_field_middle"><span class="in2igui_field_content"><span class="in2igui_formula_text_singleline"></span></span></span></span>'+
 		'<span class="in2igui_field_bottom"><span><span></span></span></span>'
 	);
-	w.select('span.in2igui_field_content')[0].insert(e);
+	w.select('span.in2igui_formula_text_singleline')[0].insert(e);
 	return w;
 };
 
@@ -598,7 +610,8 @@ In2iGui.extend = function(obj,options) {
 		obj.element = $(options.element);
 		obj.name = options.name;
 	}
-	In2iGui.get().objects.set(obj.name,obj);
+	var ctrl = In2iGui.get();
+	ctrl.objects.set(obj.name,obj);
 	obj.delegates = [];
 	obj.addDelegate = obj.listen = function(delegate) {
 		n2i.addToArray(this.delegates,delegate);
@@ -619,6 +632,9 @@ In2iGui.extend = function(obj,options) {
 	}
 	if (!obj.valueForProperty) {
 		obj.valueForProperty = function(p) {return this[p]};
+	}
+	if (obj['$$layout']) {
+		ctrl.layoutWidgets.push(obj);
 	}
 };
 

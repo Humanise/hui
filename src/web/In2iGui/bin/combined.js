@@ -5140,10 +5140,24 @@ n2i.getScrollLeft = function() {
 	}
 }
 
+/**
+ * Get the height of the viewport
+ */
+n2i.getViewPortHeight = function() {
+	var y;
+	if (window.innerHeight) {
+		return window.innerHeight;
+	} else if (document.documentElement && document.documentElement.clientHeight) {
+		return document.documentElement.clientHeight;
+	} else if (document.body) {
+		return document.body.clientHeight;
+	}
+}
+
 n2i.getInnerHeight = function() {
 	var y;
-	if (self.innerHeight) {
-		return self.innerHeight;
+	if (window.innerHeight) {
+		return window.innerHeight;
 	} else if (document.documentElement && document.documentElement.clientHeight) {
 		return document.documentElement.clientHeight;
 	} else if (document.body) {
@@ -5152,8 +5166,8 @@ n2i.getInnerHeight = function() {
 }
 
 n2i.getDocumentWidth = n2i.getInnerWidth = function() {
-	if (self.innerHeight) {
-		return self.innerWidth;
+	if (window.innerHeight) {
+		return window.innerWidth;
 	} else if (document.documentElement && document.documentElement.clientHeight) {
 		return document.documentElement.clientWidth;
 	} else if (document.body) {
@@ -8760,6 +8774,8 @@ function In2iGui() {
 	/** @private */
 	this.objects = $H();
 	/** @private */
+	this.layoutWidgets = [];
+	/** @private */
 	this.state = 'default';
 	this.addBehavior();
 }
@@ -8814,6 +8830,11 @@ In2iGui.prototype = {
 		In2iGui.domReady = true;
 		this.resize();
 		In2iGui.callSuperDelegates(this,'interfaceIsReady');
+
+		//if (n2i.browser.msie7 && n2i.browser.msie8) {
+			this.reLayout();
+			Event.observe(window,'resize',this.reLayout.bind(this));
+		//}
 	},
 	/** @private */
 	addBehavior : function() {
@@ -8919,6 +8940,11 @@ In2iGui.prototype = {
 			if (options.cancel) {In2iGui.get(name+'_cancel').setText(options.cancel);}
 		}
 		alert.show();
+	},
+	reLayout : function() {
+		for (var i = this.layoutWidgets.length - 1; i >= 0; i--){
+			this.layoutWidgets[i]['$$layout']();
+		};
 	},
 	getDescendants : function(widget) {
 		var desc = [],e = widget.getElement();
@@ -9132,10 +9158,10 @@ In2iGui.onDomReady = function(func) {
 In2iGui.wrapInField = function(e) {
 	var w = new Element('div',{'class':'in2igui_field'}).update(
 		'<span class="in2igui_field_top"><span><span></span></span></span>'+
-		'<span class="in2igui_field_middle"><span class="in2igui_field_middle"><span class="in2igui_field_content"></span></span></span>'+
+		'<span class="in2igui_field_middle"><span class="in2igui_field_middle"><span class="in2igui_field_content"><span class="in2igui_formula_text_singleline"></span></span></span></span>'+
 		'<span class="in2igui_field_bottom"><span><span></span></span></span>'
 	);
-	w.select('span.in2igui_field_content')[0].insert(e);
+	w.select('span.in2igui_formula_text_singleline')[0].insert(e);
 	return w;
 };
 
@@ -9333,7 +9359,8 @@ In2iGui.extend = function(obj,options) {
 		obj.element = $(options.element);
 		obj.name = options.name;
 	}
-	In2iGui.get().objects.set(obj.name,obj);
+	var ctrl = In2iGui.get();
+	ctrl.objects.set(obj.name,obj);
 	obj.delegates = [];
 	obj.addDelegate = obj.listen = function(delegate) {
 		n2i.addToArray(this.delegates,delegate);
@@ -9354,6 +9381,9 @@ In2iGui.extend = function(obj,options) {
 	}
 	if (!obj.valueForProperty) {
 		obj.valueForProperty = function(p) {return this[p]};
+	}
+	if (obj['$$layout']) {
+		ctrl.layoutWidgets.push(obj);
 	}
 };
 
@@ -11544,7 +11574,8 @@ In2iGui.List.prototype = {
 	createObject : function(object) {
 		var node = new Element('div',{'class':'object'});
 		if (object.icon) {
-			node.insert(new Element('div',{'class':'icon'}).setStyle({'backgroundImage':'url("'+In2iGui.getIconUrl(object.icon,1)+'")'}));
+			node.insert(In2iGui.createIcon(object.icon,1));
+			//node.insert(new Element('span',{'class':'in2igui_icon in2igui_icon_1'}).setStyle({'backgroundImage':'url("'+In2iGui.getIconUrl(object.icon,1)+'")'}));
 		}
 		return node.insert(object.text || object.name || '');
 	},
@@ -12086,6 +12117,9 @@ In2iGui.Buttons.create = function(o) {
 	var e = o.element = new Element('div',{'class':'in2igui_buttons'});
 	if (o.align=='right') {
 		e.addClassName('in2igui_buttons_right');
+	}
+	if (o.align=='center') {
+		e.addClassName('in2igui_buttons_center');
 	}
 	if (o.top>0) e.setStyle({paddingTop:o.top+'px'});
 	e.insert(new Element('div',{'class':'in2igui_buttons_body'}));
@@ -14407,7 +14441,8 @@ In2iGui.Upload.create = function(o) {
 	o.element = new Element('div',{'class':'in2igui_upload'});
 	o.element.update(
 		'<div class="in2igui_upload_items"></div>'+
-		'<div class="in2igui_upload_status"></div>'
+		'<div class="in2igui_upload_status"></div>'+
+		(o.placeholder ? '<div class="in2igui_upload_placeholder"><span class="in2igui_upload_icon"></span><h2>'+o.placeholder.title+'</h2><p>'+o.placeholder.text+'</p></div>' : '')
 	);
 	return new In2iGui.Upload(o);
 }
@@ -14541,6 +14576,7 @@ In2iGui.Upload.prototype = {
 			upload_url : url,
 			flash_url : In2iGui.context+"/In2iGui/lib/swfupload/swfupload.swf",
 			file_size_limit : this.options.maxSize,
+			file_queue_limit : this.options.maxItems,
 			file_post_name : this.options.fieldName,
 			file_upload_limit : this.options.maxItems,
 			file_types : this.options.types,
@@ -14587,7 +14623,11 @@ In2iGui.Upload.prototype = {
 		this.addItem(file);
 	},
 	fileQueueError : function(file, error, message) {
-		this.addError(file,error);
+		if (file!==null) {
+			this.addError(file,error);
+		} else {
+			In2iGui.showMessage({text:In2iGui.Upload.errors[error],duration:4000});
+		}
 	},
 	fileDialogComplete : function() {
 		this.startNextUpload();
@@ -14711,7 +14751,7 @@ In2iGui.Upload.Item.prototype = {
 if (window.SWFUpload) {
 (function(){
 	var e = In2iGui.Upload.errors = {};
-	e[SWFUpload.QUEUE_ERROR.QUEUE_LIMIT_EXCEEDED]			= 'Der er for mange filer i køen';
+	e[SWFUpload.QUEUE_ERROR.QUEUE_LIMIT_EXCEEDED]			= 'Der er valgt for mange filer';
 	e[SWFUpload.QUEUE_ERROR.FILE_EXCEEDS_SIZE_LIMIT]		= 'Filen er for stor';
 	e[SWFUpload.QUEUE_ERROR.ZERO_BYTE_FILE]					= 'Filen er tom';
 	e[SWFUpload.QUEUE_ERROR.INVALID_FILETYPE]				= 'Filens type er ikke understøttet';
@@ -15256,21 +15296,29 @@ In2iGui.Layout = function(options) {
 	this.options = options || {};
 	this.element = $(options.element);
 	In2iGui.extend(this);
-	if (n2i.browser.msie7 || n2i.browser.msie8) {
-		In2iGui.onDomReady(this.resize.bind(this));
-		Event.observe(window,'resize',this.resize.bind(this));
-	}
 }
 
 In2iGui.Layout.prototype = {
-	resize : function() {
-		var height = this.element.parentNode.clientHeight;
-		var diff = n2i.browser.msie7 ? 40 : 20;
-		var top = this.element.select('thead td')[0].firstDescendant().clientHeight;
-		var bottom = this.element.select('tfoot td')[0].firstDescendant().clientHeight;
-		if ((height-top-bottom-diff)>0) {
-			this.element.select('tbody tr td')[0].style.height=(height-top-bottom-diff)+'px';
+	$$layout : function() {
+		if (!n2i.browser.msie7 && !n2i.browser.msie8) {
+			return;
 		}
+		if (this.diff===undefined) {
+			var top = this.element.select('thead td')[0].firstDescendant().clientHeight;
+			var foot = this.element.select('tfoot td')[0];
+			var bottom = 0;
+			if (foot) {
+				bottom = foot.firstDescendant().clientHeight;
+			}
+			top+=this.element.cumulativeOffset().top;
+			this.diff = bottom+top;
+			if (this.element.parentNode!==document.body) {
+				this.diff+=15;
+			} else {
+			}
+		}
+		var cell = this.element.select('tbody tr td')[0];
+		cell.style.height=(n2i.getViewPortHeight()-this.diff)+'px';
 	}
 };
 
@@ -15734,16 +15782,6 @@ In2iGui.Overflow = function(options) {
 	this.element = $(options.element);
 	this.name = options.name;
 	In2iGui.extend(this);
-	this.diff=0;
-	if (options.dynamic) {
-		if (n2i.browser.msie7 || n2i.browser.msie8) {
-			window.setTimeout(this.calculate.bind(this),1000);
-		} else {
-			In2iGui.onDomReady(this.calculate.bind(this));
-		}
-	} else if (options.vertical) {
-		In2iGui.get().registerOverflow(this.element,options.vertical*-1);
-	}
 }
 
 In2iGui.Overflow.create = function(options) {
@@ -15766,12 +15804,6 @@ In2iGui.Overflow.prototype = {
 			bottom-=node.clientHeight;
 		})
 		this.diff=-1*(top+(viewport-bottom));
-		this.resize();
-		Event.observe(window,'resize',this.resize.bind(this));
-	},
-	resize : function() {
-		var height = n2i.getInnerHeight();
-		this.element.style.height = Math.max(0,height+this.diff)+'px';
 	},
 	add : function(widgetOrNode) {
 		if (widgetOrNode.getElement) {
@@ -15780,6 +15812,16 @@ In2iGui.Overflow.prototype = {
 			this.element.insert(widgetOrNode);
 		}
 		return this;
+	},
+	$$layout : function() {
+		if (!this.options.dynamic) {
+			return;
+		}
+		if (this.diff===undefined) {
+			this.calculate();
+		}
+		var height = n2i.getInnerHeight();
+		this.element.style.height = Math.max(0,height+this.diff)+'px';
 	}
 }
 

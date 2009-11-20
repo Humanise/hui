@@ -35,7 +35,8 @@ In2iGui.Upload.create = function(o) {
 	o.element = new Element('div',{'class':'in2igui_upload'});
 	o.element.update(
 		'<div class="in2igui_upload_items"></div>'+
-		'<div class="in2igui_upload_status"></div>'
+		'<div class="in2igui_upload_status"></div>'+
+		(o.placeholder ? '<div class="in2igui_upload_placeholder"><span class="in2igui_upload_icon"></span><h2>'+o.placeholder.title+'</h2><p>'+o.placeholder.text+'</p></div>' : '')
 	);
 	return new In2iGui.Upload(o);
 }
@@ -169,6 +170,7 @@ In2iGui.Upload.prototype = {
 			upload_url : url,
 			flash_url : In2iGui.context+"/In2iGui/lib/swfupload/swfupload.swf",
 			file_size_limit : this.options.maxSize,
+			file_queue_limit : this.options.maxItems,
 			file_post_name : this.options.fieldName,
 			file_upload_limit : this.options.maxItems,
 			file_types : this.options.types,
@@ -215,7 +217,11 @@ In2iGui.Upload.prototype = {
 		this.addItem(file);
 	},
 	fileQueueError : function(file, error, message) {
-		this.addError(file,error);
+		if (file!==null) {
+			this.addError(file,error);
+		} else {
+			In2iGui.showMessage({text:In2iGui.Upload.errors[error],duration:4000});
+		}
 	},
 	fileDialogComplete : function() {
 		this.startNextUpload();
@@ -339,7 +345,7 @@ In2iGui.Upload.Item.prototype = {
 if (window.SWFUpload) {
 (function(){
 	var e = In2iGui.Upload.errors = {};
-	e[SWFUpload.QUEUE_ERROR.QUEUE_LIMIT_EXCEEDED]			= 'Der er for mange filer i køen';
+	e[SWFUpload.QUEUE_ERROR.QUEUE_LIMIT_EXCEEDED]			= 'Der er valgt for mange filer';
 	e[SWFUpload.QUEUE_ERROR.FILE_EXCEEDS_SIZE_LIMIT]		= 'Filen er for stor';
 	e[SWFUpload.QUEUE_ERROR.ZERO_BYTE_FILE]					= 'Filen er tom';
 	e[SWFUpload.QUEUE_ERROR.INVALID_FILETYPE]				= 'Filens type er ikke understøttet';

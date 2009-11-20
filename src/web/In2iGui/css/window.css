@@ -46,6 +46,7 @@ span.in2igui_window_icon
 	width: 16px;
 	height: 16px;
 	margin-right: 3px;
+	vertical-align: middle;
 }
 
 .in2igui_window_content

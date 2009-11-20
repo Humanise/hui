@@ -242,6 +242,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 			<span>
 				<xsl:attribute name="style">background-image: url('<xsl:value-of select="$context"/>/In2iGui/icons/<xsl:value-of select="@icon"/>1.png');</xsl:attribute>
 				<xsl:attribute name="class">in2igui_icon_1</xsl:attribute>
+				<xsl:comment/>
 			</span>
 		</xsl:if>
 		<span class="in2igui_selection_label">
@@ -425,8 +426,8 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 <xsl:template match="gui:upload/gui:placeholder">
 	<div class="in2igui_upload_placeholder">
 		<span class="in2igui_upload_icon"><xsl:comment/></span>
-		<h2><xsl:value-of select="@header"/></h2>
-		<p><xsl:value-of select="@text"/></p>
+		<xsl:if test="@title"><h2><xsl:value-of select="@title"/></h2></xsl:if>
+		<xsl:if test="@text"><p><xsl:value-of select="@text"/></p></xsl:if>
 	</div>
 </xsl:template>
 

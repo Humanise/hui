@@ -205,7 +205,8 @@
 
 <xsl:template match="gui:layout/gui:middle">
 	<tbody class="in2igui_layout">
-		<tr class="in2igui_layout_middle"><td class="in2igui_layout_middle">
+		<tr class="in2igui_layout_middle">
+			<td class="in2igui_layout_middle">
 			<table class="in2igui_layout_middle">
 				<tr>
 					<xsl:apply-templates/>

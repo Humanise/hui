@@ -23,13 +23,10 @@ div.in2igui_list .navigation .selection a
 
 div.in2igui_alert div.in2igui_buttons
 {
-	overflow: hidden;
-	height: 1%;
 }
 
 div.in2igui_alert_body
 {
-	height: 1%;
 }
 
 div.in2igui_box_top, div.in2igui_box_top div, div.in2igui_box_top div div, div.in2igui_box_bottom, div.in2igui_box_bottom div, div.in2igui_box_bottom div div, div.in2igui_box_middle, div.in2igui_box_middle div.in2igui_box_middle

@@ -7,21 +7,29 @@ In2iGui.Layout = function(options) {
 	this.options = options || {};
 	this.element = $(options.element);
 	In2iGui.extend(this);
-	if (n2i.browser.msie7 || n2i.browser.msie8) {
-		In2iGui.onDomReady(this.resize.bind(this));
-		Event.observe(window,'resize',this.resize.bind(this));
-	}
 }
 
 In2iGui.Layout.prototype = {
-	resize : function() {
-		var height = this.element.parentNode.clientHeight;
-		var diff = n2i.browser.msie7 ? 40 : 20;
-		var top = this.element.select('thead td')[0].firstDescendant().clientHeight;
-		var bottom = this.element.select('tfoot td')[0].firstDescendant().clientHeight;
-		if ((height-top-bottom-diff)>0) {
-			this.element.select('tbody tr td')[0].style.height=(height-top-bottom-diff)+'px';
+	$$layout : function() {
+		if (!n2i.browser.msie7 && !n2i.browser.msie8) {
+			return;
 		}
+		if (this.diff===undefined) {
+			var top = this.element.select('thead td')[0].firstDescendant().clientHeight;
+			var foot = this.element.select('tfoot td')[0];
+			var bottom = 0;
+			if (foot) {
+				bottom = foot.firstDescendant().clientHeight;
+			}
+			top+=this.element.cumulativeOffset().top;
+			this.diff = bottom+top;
+			if (this.element.parentNode!==document.body) {
+				this.diff+=15;
+			} else {
+			}
+		}
+		var cell = this.element.select('tbody tr td')[0];
+		cell.style.height=(n2i.getViewPortHeight()-this.diff)+'px';
 	}
 };
 

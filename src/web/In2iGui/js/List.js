@@ -476,7 +476,8 @@ In2iGui.List.prototype = {
 	createObject : function(object) {
 		var node = new Element('div',{'class':'object'});
 		if (object.icon) {
-			node.insert(new Element('div',{'class':'icon'}).setStyle({'backgroundImage':'url("'+In2iGui.getIconUrl(object.icon,1)+'")'}));
+			node.insert(In2iGui.createIcon(object.icon,1));
+			//node.insert(new Element('span',{'class':'in2igui_icon in2igui_icon_1'}).setStyle({'backgroundImage':'url("'+In2iGui.getIconUrl(object.icon,1)+'")'}));
 		}
 		return node.insert(object.text || object.name || '');
 	},

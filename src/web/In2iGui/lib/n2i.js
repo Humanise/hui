@@ -244,10 +244,24 @@ n2i.getScrollLeft = function() {
 	}
 }
 
+/**
+ * Get the height of the viewport
+ */
+n2i.getViewPortHeight = function() {
+	var y;
+	if (window.innerHeight) {
+		return window.innerHeight;
+	} else if (document.documentElement && document.documentElement.clientHeight) {
+		return document.documentElement.clientHeight;
+	} else if (document.body) {
+		return document.body.clientHeight;
+	}
+}
+
 n2i.getInnerHeight = function() {
 	var y;
-	if (self.innerHeight) {
-		return self.innerHeight;
+	if (window.innerHeight) {
+		return window.innerHeight;
 	} else if (document.documentElement && document.documentElement.clientHeight) {
 		return document.documentElement.clientHeight;
 	} else if (document.body) {
@@ -256,8 +270,8 @@ n2i.getInnerHeight = function() {
 }
 
 n2i.getDocumentWidth = n2i.getInnerWidth = function() {
-	if (self.innerHeight) {
-		return self.innerWidth;
+	if (window.innerHeight) {
+		return window.innerWidth;
 	} else if (document.documentElement && document.documentElement.clientHeight) {
 		return document.documentElement.clientWidth;
 	} else if (document.body) {

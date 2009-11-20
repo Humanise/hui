@@ -101,6 +101,9 @@ In2iGui.Buttons.create = function(o) {
 	if (o.align=='right') {
 		e.addClassName('in2igui_buttons_right');
 	}
+	if (o.align=='center') {
+		e.addClassName('in2igui_buttons_center');
+	}
 	if (o.top>0) e.setStyle({paddingTop:o.top+'px'});
 	e.insert(new Element('div',{'class':'in2igui_buttons_body'}));
 	return new In2iGui.Buttons(o);

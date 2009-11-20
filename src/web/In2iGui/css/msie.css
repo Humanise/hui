@@ -45,6 +45,11 @@ a.in2igui_button
 	line-height: 28px;
 }
 
+a.in2igui_button_small_rounded
+{
+	line-height: 23px;
+}
+
 /*********** Search field ***************/
 
 span.in2igui_searchfield input

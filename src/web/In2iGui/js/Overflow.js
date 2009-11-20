@@ -8,16 +8,6 @@ In2iGui.Overflow = function(options) {
 	this.element = $(options.element);
 	this.name = options.name;
 	In2iGui.extend(this);
-	this.diff=0;
-	if (options.dynamic) {
-		if (n2i.browser.msie7 || n2i.browser.msie8) {
-			window.setTimeout(this.calculate.bind(this),1000);
-		} else {
-			In2iGui.onDomReady(this.calculate.bind(this));
-		}
-	} else if (options.vertical) {
-		In2iGui.get().registerOverflow(this.element,options.vertical*-1);
-	}
 }
 
 In2iGui.Overflow.create = function(options) {
@@ -40,12 +30,6 @@ In2iGui.Overflow.prototype = {
 			bottom-=node.clientHeight;
 		})
 		this.diff=-1*(top+(viewport-bottom));
-		this.resize();
-		Event.observe(window,'resize',this.resize.bind(this));
-	},
-	resize : function() {
-		var height = n2i.getInnerHeight();
-		this.element.style.height = Math.max(0,height+this.diff)+'px';
 	},
 	add : function(widgetOrNode) {
 		if (widgetOrNode.getElement) {
@@ -54,6 +38,16 @@ In2iGui.Overflow.prototype = {
 			this.element.insert(widgetOrNode);
 		}
 		return this;
+	},
+	$$layout : function() {
+		if (!this.options.dynamic) {
+			return;
+		}
+		if (this.diff===undefined) {
+			this.calculate();
+		}
+		var height = n2i.getInnerHeight();
+		this.element.style.height = Math.max(0,height+this.diff)+'px';
 	}
 }
 
