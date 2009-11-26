@@ -1535,6 +1535,7 @@ td.in2igui_layout_left
 	border-right: 1px solid #BBBBBB;
 	vertical-align: top;
 	padding: 0;
+	width: 200px;
 }
 
 div.in2igui_layout_left
@@ -4182,6 +4183,7 @@ table.in2igui_dock tbody td
 {
 	font-size: 0px;
 	padding: 0;
+	vertical-align: top;
 }
 
 table.in2igui_dock iframe

@@ -1317,6 +1317,7 @@ In2iGui.prototype = {
 			options.name = 'in2iguiConfirm';
 		}
 		var alert = In2iGui.get(options.name);
+		var ok;
 		if (!alert) {
 			alert = In2iGui.Alert.create(options);
 			var cancel = In2iGui.Button.create({name:name+'_cancel',text : options.cancel || 'Cancel',highlighted:options.highlighted==='cancel'});
@@ -1329,23 +1330,25 @@ In2iGui.prototype = {
 			}});
 			alert.addButton(cancel);
 		
-			var ok = In2iGui.Button.create({name:name+'_ok',text : options.ok || 'OK',highlighted:options.highlighted==='ok'});
-			ok.addDelegate({$click:function(){
-				alert.hide();
-				if (options.onOK) {
-					options.onOK();
-				}
-				In2iGui.callDelegates(alert,'ok');
-			}});
+			ok = In2iGui.Button.create({name:name+'_ok',text : options.ok || 'OK',highlighted:options.highlighted==='ok'});
 			alert.addButton(ok);
 		} else {
 			alert.update(options);
-			In2iGui.get(name+'_ok').setText(options.ok || 'ok');
-			In2iGui.get(name+'_ok').setHighlighted(options.highlighted=='ok');
-			In2iGui.get(name+'_cancel').setText(options.ok || 'cancel');
+			ok = In2iGui.get(name+'_ok');
+			ok.setText(options.ok || 'OK');
+			ok.setHighlighted(options.highlighted=='ok');
+			ok.clearDelegates();
+			In2iGui.get(name+'_cancel').setText(options.ok || 'Cancel');
 			In2iGui.get(name+'_cancel').setHighlighted(options.highlighted=='cancel');
 			if (options.cancel) {In2iGui.get(name+'_cancel').setText(options.cancel);}
 		}
+		ok.addDelegate({$click:function(){
+			alert.hide();
+			if (options.onOK) {
+				options.onOK();
+			}
+			In2iGui.callDelegates(alert,'ok');
+		}});
 		alert.show();
 	},
 	reLayout : function() {
@@ -1774,6 +1777,9 @@ In2iGui.extend = function(obj,options) {
 	}
 	obj.removeDelegate = function(delegate) {
 		n2i.removeFromArray(this.delegates,delegate);
+	}
+	obj.clearDelegates = function() {
+		this.delegates = [];
 	}
 	obj.fire = function(method,value,event) {
 		In2iGui.callDelegates(this,method,value,event);

@@ -235,6 +235,8 @@ ul.inheritsList
 	
 	<li><a href="../symbols/In2iGui.Formula.Group.html">In2iGui.Formula.Group</a></li>
 	
+	<li><a href="../symbols/In2iGui.Formula.Location.html">In2iGui.Formula.Location</a></li>
+	
 	<li><a href="../symbols/In2iGui.Formula.Number.html">In2iGui.Formula.Number</a></li>
 	
 	<li><a href="../symbols/In2iGui.Formula.Radiobuttons.html">In2iGui.Formula.Radiobuttons</a></li>
@@ -245,6 +247,8 @@ ul.inheritsList
 	
 	<li><a href="../symbols/In2iGui.Formula.Tokens.html">In2iGui.Formula.Tokens</a></li>
 	
+	<li><a href="../symbols/In2iGui.Fragment.html">In2iGui.Fragment</a></li>
+	
 	<li><a href="../symbols/In2iGui.Gallery.html">In2iGui.Gallery</a></li>
 	
 	<li><a href="../symbols/In2iGui.ImagePicker.html">In2iGui.ImagePicker</a></li>
@@ -254,6 +258,8 @@ ul.inheritsList
 	<li><a href="../symbols/In2iGui.InfoView.html">In2iGui.InfoView</a></li>
 	
 	<li><a href="../symbols/In2iGui.Layout.html">In2iGui.Layout</a></li>
+	
+	<li><a href="../symbols/In2iGui.List.html">In2iGui.List</a></li>
 	
 	<li><a href="../symbols/In2iGui.Menu.html">In2iGui.Menu</a></li>
 	
@@ -272,6 +278,8 @@ ul.inheritsList
 	<li><a href="../symbols/In2iGui.RevealingToolbar.html">In2iGui.RevealingToolbar</a></li>
 	
 	<li><a href="../symbols/In2iGui.RichText.html">In2iGui.RichText</a></li>
+	
+	<li><a href="../symbols/In2iGui.SearchField.html">In2iGui.SearchField</a></li>
 	
 	<li><a href="../symbols/In2iGui.Selection.html">In2iGui.Selection</a></li>
 	
@@ -334,7 +342,7 @@ ul.inheritsList
 				
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/_Users_jbm_Development_Workspace_onlineobjects_src_web_In2iGui_tools_bin_combined.noproto.js.html">combined.noproto.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/_Users_jbm_Sites_onlinepublisher_In2iGui_tools_bin_combined.noproto.js.html">combined.noproto.js</a>.
 				
 			</p>
 
@@ -391,7 +399,16 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/In2iGui.Upload.html#addError">addError</a></b>(error, file)
+								<div class="fixedFont"><b><a href="../symbols/In2iGui.Upload.html#addError">addError</a></b>(file, error)
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/In2iGui.Upload.html#addItem">addItem</a></b>(file)
 								</div>
 								<div class="description"></div>
 							</td>
@@ -436,7 +453,7 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/In2iGui.Upload.html#endProgress">endProgress</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/In2iGui.Upload.html#endIframeProgress">endIframeProgress</a></b>()
 								</div>
 								<div class="description"></div>
 							</td>
@@ -508,25 +525,7 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/In2iGui.Upload.html#parentShown">parentShown</a></b>()
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/In2iGui.Upload.html#setButton">setButton</a></b>(widget)
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/In2iGui.Upload.html#setProgress">setProgress</a></b>(value)
+								<div class="fixedFont"><b><a href="../symbols/In2iGui.Upload.html#startIframeProgress">startIframeProgress</a></b>()
 								</div>
 								<div class="description"></div>
 							</td>
@@ -536,24 +535,6 @@ ul.inheritsList
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/In2iGui.Upload.html#startNextUpload">startNextUpload</a></b>()
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/In2iGui.Upload.html#startProgress">startProgress</a></b>()
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/In2iGui.Upload.html#updateButtonPosition">updateButtonPosition</a></b>()
 								</div>
 								<div class="description"></div>
 							</td>
@@ -699,7 +680,7 @@ ul.inheritsList
 					<div class="fixedFont">
 					
 					
-					<b>addError</b>(error, file)
+					<b>addError</b>(file, error)
 					
 					</div>
 					<div class="description">
@@ -715,10 +696,46 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
+									<b>file</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
 									<b>error</b>
 									
 								</dt>
 								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="addItem"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>addItem</b>(file)
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
 							
 								<dt>
 									<b>file</b>
@@ -848,11 +865,11 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="endProgress"> </a>
+					<a name="endIframeProgress"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>endProgress</b>()
+					<b>endIframeProgress</b>()
 					
 					</div>
 					<div class="description">
@@ -1093,11 +1110,11 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="parentShown"> </a>
+					<a name="startIframeProgress"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>parentShown</b>()
+					<b>startIframeProgress</b>()
 					
 					</div>
 					<div class="description">
@@ -1108,78 +1125,6 @@ ul.inheritsList
 					
 					
 					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="setButton"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>setButton</b>(widget)
-					
-					</div>
-					<div class="description">
-						
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>widget</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="setProgress"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>setProgress</b>(value)
-					
-					</div>
-					<div class="description">
-						
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>value</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
 						
 						
 						
@@ -1195,56 +1140,6 @@ ul.inheritsList
 					
 					
 					<b>startNextUpload</b>()
-					
-					</div>
-					<div class="description">
-						
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="startProgress"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>startProgress</b>()
-					
-					</div>
-					<div class="description">
-						
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="updateButtonPosition"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>updateButtonPosition</b>()
 					
 					</div>
 					<div class="description">
@@ -1497,7 +1392,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.0.2 on Wed Jul 01 2009 22:38:22 GMT+0200 (CEST)
+			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.0.2 on Mon Nov 16 2009 23:12:39 GMT+0100 (CET)
 		</div>
 	</body>
 </html>

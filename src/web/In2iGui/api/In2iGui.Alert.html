@@ -226,7 +226,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 
+	 Adds an In2iGui.Button to the alert
       </TD>
    </TR>
 
@@ -243,7 +243,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 
+	 Hides the alert
       </TD>
    </TR>
 
@@ -256,11 +256,11 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#setEmotion">setEmotion</A></B>(emotion)
+	       <A HREF="#setEmotion">setEmotion</A></B>( emotion)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 
+	 Sets the alert emotion
       </TD>
    </TR>
 
@@ -273,11 +273,11 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#setText">setText</A></B>(text)
+	       <A HREF="#setText">setText</A></B>( text)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 
+	 Sets the alert text
       </TD>
    </TR>
 
@@ -290,11 +290,11 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#setTitle">setTitle</A></B>(text)
+	       <A HREF="#setTitle">setTitle</A></B>( text)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 
+	 Sets the alert title
       </TD>
    </TR>
 
@@ -311,7 +311,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 
+	 Shows the alert
       </TD>
    </TR>
 
@@ -324,11 +324,11 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#update">update</A></B>(options)
+	       <A HREF="#update">update</A></B>(&lt;Object&gt; options)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 
+	 Updates multiple properties
       </TD>
    </TR>
 
@@ -346,6 +346,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	 Creates a new instance of an alert
+ <br/><strong>options:</strong> { name: «String», title: «String», text: «String», emotion: «'smile' | 'gasp'», modal: «Boolean»}
       </TD>
    </TR>
 
@@ -489,6 +490,8 @@ In2iGui.Alert</H3>
    <H3>addButton</H3>
    <PRE>void <B>addButton</B>(button)</PRE>
    
+      <UL>Adds an In2iGui.Button to the alert</UL>
+   
 
    <!-- METHOD PARAMETERS START -->
    
@@ -505,6 +508,8 @@ In2iGui.Alert</H3>
    <H3>hide</H3>
    <PRE>void <B>hide</B>()</PRE>
    
+      <UL>Hides the alert</UL>
+   
 
    <!-- METHOD PARAMETERS START -->
    
@@ -519,7 +524,9 @@ In2iGui.Alert</H3>
 
    <A NAME="setEmotion"><!-- --></A>
    <H3>setEmotion</H3>
-   <PRE>void <B>setEmotion</B>(emotion)</PRE>
+   <PRE>void <B>setEmotion</B>( emotion)</PRE>
+   
+      <UL>Sets the alert emotion</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -535,7 +542,9 @@ In2iGui.Alert</H3>
 
    <A NAME="setText"><!-- --></A>
    <H3>setText</H3>
-   <PRE>void <B>setText</B>(text)</PRE>
+   <PRE>void <B>setText</B>( text)</PRE>
+   
+      <UL>Sets the alert text</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -551,7 +560,9 @@ In2iGui.Alert</H3>
 
    <A NAME="setTitle"><!-- --></A>
    <H3>setTitle</H3>
-   <PRE>void <B>setTitle</B>(text)</PRE>
+   <PRE>void <B>setTitle</B>( text)</PRE>
+   
+      <UL>Sets the alert title</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -569,6 +580,8 @@ In2iGui.Alert</H3>
    <H3>show</H3>
    <PRE>void <B>show</B>()</PRE>
    
+      <UL>Shows the alert</UL>
+   
 
    <!-- METHOD PARAMETERS START -->
    
@@ -583,10 +596,20 @@ In2iGui.Alert</H3>
 
    <A NAME="update"><!-- --></A>
    <H3>update</H3>
-   <PRE>void <B>update</B>(options)</PRE>
+   <PRE>void <B>update</B>(&lt;Object&gt; options)</PRE>
+   
+      <UL>Updates multiple properties</UL>
    
 
    <!-- METHOD PARAMETERS START -->
+   
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>options</CODE> -  {title: «String», text: «String», emotion: «'smile' | 'gasp'»} 	   
+      </UL> 
+   
+   </UL>
    
    <!-- METHOD PARAMETERS END -->
 
@@ -601,7 +624,8 @@ In2iGui.Alert</H3>
    <H3>create</H3>
    <PRE>&lt;static&gt; Object <B>create</B>(options)</PRE>
    
-      <UL>Creates a new instance of an alert</UL>
+      <UL>Creates a new instance of an alert
+ <br/><strong>options:</strong> { name: «String», title: «String», text: «String», emotion: «'smile' | 'gasp'», modal: «Boolean»}</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -681,6 +705,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <FONT SIZE="-1">
 
 </FONT>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Wed Jun  3 22:19:01 2009</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Sun Nov 15 22:30:48 2009</div>
 </BODY>
 </HTML>

@@ -41,6 +41,10 @@ In2iGui.Overflow.prototype = {
 	},
 	$$layout : function() {
 		if (!this.options.dynamic) {
+			if (this.options.vertical) {
+				var height = n2i.getInnerHeight();
+				this.element.style.height = Math.max(0,height-this.options.vertical)+'px';
+			}
 			return;
 		}
 		if (this.diff===undefined) {

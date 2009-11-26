@@ -9,11 +9,10 @@ In2iGui.Dock = function(options) {
 	this.iframe = this.element.select('iframe')[0];
 	this.name = options.name;
 	In2iGui.extend(this);
-	var height = -69;
+	this.diff = -69;
 	if (this.options.tabs) {
-		height-=15;
+		this.diff-=15;
 	}
-	In2iGui.get().registerOverflow(this.iframe,height);
 }
 
 In2iGui.Dock.prototype = {
@@ -22,6 +21,11 @@ In2iGui.Dock.prototype = {
 	 */
 	setUrl : function(url) {
 		n2i.getFrameDocument(this.iframe).location.href=url;
+	},
+	/** @private */
+	$$layout : function() {
+		var height = n2i.getInnerHeight();
+		this.iframe.style.height=(height+this.diff)+'px';
 	}
 }
 

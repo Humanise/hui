@@ -145,6 +145,14 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <TR BGCOLOR="white" CLASS="TableRowColor">
    <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
    <CODE>&nbsp;Object</CODE></FONT></TD>
+   <TD><CODE><B><A HREF="#placeholder">placeholder</A></B></CODE>
+   <BR>
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+   </TR>
+   
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+   <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+   <CODE>&nbsp;Object</CODE></FONT></TD>
    <TD><CODE><B><A HREF="#value">value</A></B></CODE>
    <BR>
    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -206,23 +214,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#addBehavior">addBehavior</A></B>()
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;void</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
 	       <A HREF="#focus">focus</A></B>()
 	 </CODE>
 	 <BR>
@@ -274,7 +265,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#isEmpty">isEmpty</A></B>()
+	       <A HREF="#isBlank">isBlank</A></B>()
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -285,13 +276,13 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <TR BGCOLOR="white" CLASS="TableRowColor">
       <TD ALIGN="right" VALIGN="top" WIDTH="1%">
 	 <FONT SIZE="-1">
-	    <CODE>&nbsp;void</CODE>
+	    <CODE>&nbsp;Object</CODE>
 	 </FONT>
       </TD>
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#onKeyUp">onKeyUp</A></B>(e)
+	       <A HREF="#isEmpty">isEmpty</A></B>()
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -342,7 +333,41 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
+	       <A HREF="#setError">setError</A></B>(error)
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;void</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
 	       <A HREF="#setValue">setValue</A></B>(value)
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;void</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#updateClass">updateClass</A></B>()
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -456,6 +481,15 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    </UL>
    <HR>
    
+   <A NAME="placeholder"><!-- --></A>
+   <H3>placeholder</H3>
+   <PRE>Object&nbsp;<B>placeholder</B></PRE>
+   <UL>
+   
+   
+   </UL>
+   <HR>
+   
    <A NAME="value"><!-- --></A>
    <H3>value</H3>
    <PRE>Object&nbsp;<B>value</B></PRE>
@@ -519,22 +553,6 @@ In2iGui.Formula.Text</H3>
 
 <!-- One single method detail entry -->
 
-   <A NAME="addBehavior"><!-- --></A>
-   <H3>addBehavior</H3>
-   <PRE>void <B>addBehavior</B>()</PRE>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
    <A NAME="focus"><!-- --></A>
    <H3>focus</H3>
    <PRE>void <B>focus</B>()</PRE>
@@ -583,9 +601,9 @@ In2iGui.Formula.Text</H3>
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
 
-   <A NAME="isEmpty"><!-- --></A>
-   <H3>isEmpty</H3>
-   <PRE>Object <B>isEmpty</B>()</PRE>
+   <A NAME="isBlank"><!-- --></A>
+   <H3>isBlank</H3>
+   <PRE>Object <B>isBlank</B>()</PRE>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -599,9 +617,9 @@ In2iGui.Formula.Text</H3>
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
 
-   <A NAME="onKeyUp"><!-- --></A>
-   <H3>onKeyUp</H3>
-   <PRE>void <B>onKeyUp</B>(e)</PRE>
+   <A NAME="isEmpty"><!-- --></A>
+   <H3>isEmpty</H3>
+   <PRE>Object <B>isEmpty</B>()</PRE>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -647,9 +665,41 @@ In2iGui.Formula.Text</H3>
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
 
+   <A NAME="setError"><!-- --></A>
+   <H3>setError</H3>
+   <PRE>void <B>setError</B>(error)</PRE>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
    <A NAME="setValue"><!-- --></A>
    <H3>setValue</H3>
    <PRE>void <B>setValue</B>(value)</PRE>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="updateClass"><!-- --></A>
+   <H3>updateClass</H3>
+   <PRE>void <B>updateClass</B>()</PRE>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -777,6 +827,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <FONT SIZE="-1">
 
 </FONT>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Wed Jun  3 22:19:01 2009</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Sun Nov 15 22:30:48 2009</div>
 </BODY>
 </HTML>

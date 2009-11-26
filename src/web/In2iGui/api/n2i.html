@@ -193,6 +193,22 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <TR BGCOLOR="white" CLASS="TableRowColor">
    <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
    <CODE>&lt;static&gt; &nbsp;Object</CODE></FONT></TD>
+   <TD><CODE><B><A HREF="#getDocumentWidth">getDocumentWidth</A></B></CODE>
+   <BR>
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+   </TR>
+   
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+   <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+   <CODE>&lt;static&gt; &nbsp;Object</CODE></FONT></TD>
+   <TD><CODE><B><A HREF="#isEmpty">isEmpty</A></B></CODE>
+   <BR>
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Checks if a string has characters</TD>
+   </TR>
+   
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+   <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+   <CODE>&lt;static&gt; &nbsp;Object</CODE></FONT></TD>
    <TD><CODE><B><A HREF="#location">location</A></B></CODE>
    <BR>
    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -364,23 +380,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Frames
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&lt;static&gt;&nbsp;Object</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#getInnerHeight">getInnerHeight</A></B>()
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	 
       </TD>
    </TR>
@@ -394,7 +393,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#getInnerWidth">getInnerWidth</A></B>()
+	       <A HREF="#getInnerHeight">getInnerHeight</A></B>()
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -432,7 +431,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Position
+	 
       </TD>
    </TR>
 
@@ -496,23 +495,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#isEmpty">isEmpty</A></B>(str)
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&lt;static&gt;&nbsp;Object</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
 	       <A HREF="#isEscapeKey">isEscapeKey</A></B>(e)
 	 </CODE>
 	 <BR>
@@ -551,7 +533,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Events
+	 
       </TD>
    </TR>
 
@@ -773,6 +755,24 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    </UL>
    <HR>
    
+   <A NAME="getDocumentWidth"><!-- --></A>
+   <H3>getDocumentWidth</H3>
+   <PRE>&lt;static&gt;&nbsp;Object&nbsp;<B>getDocumentWidth</B></PRE>
+   <UL>
+   
+   
+   </UL>
+   <HR>
+   
+   <A NAME="isEmpty"><!-- --></A>
+   <H3>isEmpty</H3>
+   <PRE>&lt;static&gt;&nbsp;Object&nbsp;<B>isEmpty</B></PRE>
+   <UL>
+   Checks if a string has characters
+   
+   </UL>
+   <HR>
+   
    <A NAME="location"><!-- --></A>
    <H3>location</H3>
    <PRE>&lt;static&gt;&nbsp;Object&nbsp;<B>location</B></PRE>
@@ -943,8 +943,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <H3>getFrameDocument</H3>
    <PRE>&lt;static&gt; Object <B>getFrameDocument</B>(frame)</PRE>
    
-      <UL>Frames</UL>
-   
 
    <!-- METHOD PARAMETERS START -->
    
@@ -960,22 +958,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <A NAME="getInnerHeight"><!-- --></A>
    <H3>getInnerHeight</H3>
    <PRE>&lt;static&gt; Object <B>getInnerHeight</B>()</PRE>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="getInnerWidth"><!-- --></A>
-   <H3>getInnerWidth</H3>
-   <PRE>&lt;static&gt; Object <B>getInnerWidth</B>()</PRE>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -1008,8 +990,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <A NAME="getScrollTop"><!-- --></A>
    <H3>getScrollTop</H3>
    <PRE>&lt;static&gt; Object <B>getScrollTop</B>()</PRE>
-   
-      <UL>Position</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -1071,22 +1051,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
 
-   <A NAME="isEmpty"><!-- --></A>
-   <H3>isEmpty</H3>
-   <PRE>&lt;static&gt; Object <B>isEmpty</B>(str)</PRE>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
    <A NAME="isEscapeKey"><!-- --></A>
    <H3>isEscapeKey</H3>
    <PRE>&lt;static&gt; Object <B>isEscapeKey</B>(e)</PRE>
@@ -1122,8 +1086,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <A NAME="isReturnKey"><!-- --></A>
    <H3>isReturnKey</H3>
    <PRE>&lt;static&gt; Object <B>isReturnKey</B>(e)</PRE>
-   
-      <UL>Events</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -1337,6 +1299,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <FONT SIZE="-1">
 
 </FONT>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Wed Jun  3 22:19:01 2009</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Sun Nov 15 22:30:48 2009</div>
 </BODY>
 </HTML>

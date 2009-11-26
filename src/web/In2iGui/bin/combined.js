@@ -8910,6 +8910,7 @@ In2iGui.prototype = {
 			options.name = 'in2iguiConfirm';
 		}
 		var alert = In2iGui.get(options.name);
+		var ok;
 		if (!alert) {
 			alert = In2iGui.Alert.create(options);
 			var cancel = In2iGui.Button.create({name:name+'_cancel',text : options.cancel || 'Cancel',highlighted:options.highlighted==='cancel'});
@@ -8922,23 +8923,25 @@ In2iGui.prototype = {
 			}});
 			alert.addButton(cancel);
 		
-			var ok = In2iGui.Button.create({name:name+'_ok',text : options.ok || 'OK',highlighted:options.highlighted==='ok'});
-			ok.addDelegate({$click:function(){
-				alert.hide();
-				if (options.onOK) {
-					options.onOK();
-				}
-				In2iGui.callDelegates(alert,'ok');
-			}});
+			ok = In2iGui.Button.create({name:name+'_ok',text : options.ok || 'OK',highlighted:options.highlighted==='ok'});
 			alert.addButton(ok);
 		} else {
 			alert.update(options);
-			In2iGui.get(name+'_ok').setText(options.ok || 'ok');
-			In2iGui.get(name+'_ok').setHighlighted(options.highlighted=='ok');
-			In2iGui.get(name+'_cancel').setText(options.ok || 'cancel');
+			ok = In2iGui.get(name+'_ok');
+			ok.setText(options.ok || 'OK');
+			ok.setHighlighted(options.highlighted=='ok');
+			ok.clearDelegates();
+			In2iGui.get(name+'_cancel').setText(options.ok || 'Cancel');
 			In2iGui.get(name+'_cancel').setHighlighted(options.highlighted=='cancel');
 			if (options.cancel) {In2iGui.get(name+'_cancel').setText(options.cancel);}
 		}
+		ok.addDelegate({$click:function(){
+			alert.hide();
+			if (options.onOK) {
+				options.onOK();
+			}
+			In2iGui.callDelegates(alert,'ok');
+		}});
 		alert.show();
 	},
 	reLayout : function() {
@@ -9367,6 +9370,9 @@ In2iGui.extend = function(obj,options) {
 	}
 	obj.removeDelegate = function(delegate) {
 		n2i.removeFromArray(this.delegates,delegate);
+	}
+	obj.clearDelegates = function() {
+		this.delegates = [];
 	}
 	obj.fire = function(method,value,event) {
 		In2iGui.callDelegates(this,method,value,event);
@@ -11344,7 +11350,7 @@ In2iGui.List.prototype = {
 				var td = new Element('td');
 				this.parseCell(cells[j],td);
 				row.insert(td);
-				if (!title) title = cells[j].innerText;
+				if (!title) title = cells[j].innerText || cells[j].textContent;
 				if (!icon && cells[j].getAttribute('icon')) icon = cells[j].getAttribute('icon');
 			};
 			var info = {id:rows[i].getAttribute('id'),kind:rows[i].getAttribute('kind'),icon:icon,title:title,index:i};
@@ -15378,11 +15384,10 @@ In2iGui.Dock = function(options) {
 	this.iframe = this.element.select('iframe')[0];
 	this.name = options.name;
 	In2iGui.extend(this);
-	var height = -69;
+	this.diff = -69;
 	if (this.options.tabs) {
-		height-=15;
+		this.diff-=15;
 	}
-	In2iGui.get().registerOverflow(this.iframe,height);
 }
 
 In2iGui.Dock.prototype = {
@@ -15391,6 +15396,11 @@ In2iGui.Dock.prototype = {
 	 */
 	setUrl : function(url) {
 		n2i.getFrameDocument(this.iframe).location.href=url;
+	},
+	/** @private */
+	$$layout : function() {
+		var height = n2i.getInnerHeight();
+		this.iframe.style.height=(height+this.diff)+'px';
 	}
 }
 
@@ -15815,6 +15825,10 @@ In2iGui.Overflow.prototype = {
 	},
 	$$layout : function() {
 		if (!this.options.dynamic) {
+			if (this.options.vertical) {
+				var height = n2i.getInnerHeight();
+				this.element.style.height = Math.max(0,height-this.options.vertical)+'px';
+			}
 			return;
 		}
 		if (this.diff===undefined) {

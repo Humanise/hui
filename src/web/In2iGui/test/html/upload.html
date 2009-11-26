@@ -2,6 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 	<title>In2iGui</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<link charset="utf-8" title="front" media="screen" type="text/css" href="../../css/dev.css" rel="stylesheet" />
 	<!--[if lt IE 7]>
 		<link rel="stylesheet" type="text/css" href="../../css/msie6.css"> </link>
@@ -29,17 +30,31 @@
 	<script type="text/javascript" charset="utf-8">
 		function testFlash() {
 			var win = ui.Window.create({width:300});
-			var up = ui.Upload.create({url:'upload.php'});
+			
+			var buttons = ui.Buttons.create();
+			var choose = ui.Button.create({title:'Vælg filer...'});
+			buttons.add(choose);
+			
+			var up = ui.Upload.create({url:'upload.php',widget:choose});
+			
 			win.add(up);
+			win.add(buttons);
 			win.show();
 		}
 	</script>
 	<button onclick="testNoFlash()">Simple upload (noFlash)</button>
 	<script type="text/javascript" charset="utf-8">
 		function testNoFlash() {
-			var win = In2iGui.Window.create({width:300});
-			var up = In2iGui.Upload.create({useFlash:false,url:'upload.php',name:'noFlashUpload'});
+			var win = ui.Window.create({width:300});
+			
+			var buttons = ui.Buttons.create();
+			var choose = ui.Button.create({title:'Vælg filer...'});
+			buttons.add(choose);
+			
+			var up = ui.Upload.create({useFlash:false,url:'upload.php',widget:choose});
+			
 			win.add(up);
+			win.add(buttons);
 			win.show();
 		}
 	</script>
