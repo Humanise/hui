@@ -356,21 +356,40 @@ In2iGui.List.prototype = {
 		if (pages<2) {
 			this.windowPage.style.display='none';	
 		} else {
-			$R(0, pages-1).each(function(i){
-				var a = document.createElement('a');
-				a.appendChild(document.createTextNode(i+1));
-				a.onclick = function() {
-					self.windowPageWasClicked(this,i);
-					return false;
+			var indices = $R(0, pages-1);
+			indices = this.buildPages(pages,this.window.page);
+			indices.each(function(i){
+				if (i==='') {
+					pageBody.insert('<span>·</span>');
+				} else {
+					var a = document.createElement('a');
+					a.appendChild(document.createTextNode(i+1));
+					a.onclick = function() {
+						self.windowPageWasClicked(this,i);
+						return false;
+					}
+					if (i==self.window.page) {
+						a.className='selected';
+					}
+					pageBody.appendChild(a);
 				}
-				if (i==self.window.page) {
-					a.className='selected';
-				}
-				pageBody.appendChild(a);
-			
 			});
 			this.windowPage.style.display='block';
 		}
+	},
+	buildPages : function(count,selected) {
+		var pages = [];
+		var x = false;
+		for (var i=0;i<count;i++) {
+			if (i<1 || i>count-2 || Math.abs(selected-i)<5) {
+				pages.push(i);
+				x=false;
+			} else {
+				if (!x) {pages.push('')};
+				x=true;
+			}
+		}
+		return pages;
 	},
 	/** @private */
 	setData : function(data) {

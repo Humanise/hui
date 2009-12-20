@@ -11460,21 +11460,40 @@ In2iGui.List.prototype = {
 		if (pages<2) {
 			this.windowPage.style.display='none';	
 		} else {
-			$R(0, pages-1).each(function(i){
-				var a = document.createElement('a');
-				a.appendChild(document.createTextNode(i+1));
-				a.onclick = function() {
-					self.windowPageWasClicked(this,i);
-					return false;
+			var indices = $R(0, pages-1);
+			indices = this.buildPages(pages,this.window.page);
+			indices.each(function(i){
+				if (i==='') {
+					pageBody.insert('<span>·</span>');
+				} else {
+					var a = document.createElement('a');
+					a.appendChild(document.createTextNode(i+1));
+					a.onclick = function() {
+						self.windowPageWasClicked(this,i);
+						return false;
+					}
+					if (i==self.window.page) {
+						a.className='selected';
+					}
+					pageBody.appendChild(a);
 				}
-				if (i==self.window.page) {
-					a.className='selected';
-				}
-				pageBody.appendChild(a);
-			
 			});
 			this.windowPage.style.display='block';
 		}
+	},
+	buildPages : function(count,selected) {
+		var pages = [];
+		var x = false;
+		for (var i=0;i<count;i++) {
+			if (i<1 || i>count-2 || Math.abs(selected-i)<5) {
+				pages.push(i);
+				x=false;
+			} else {
+				if (!x) {pages.push('')};
+				x=true;
+			}
+		}
+		return pages;
 	},
 	/** @private */
 	setData : function(data) {
@@ -14422,13 +14441,13 @@ In2iGui.Overlay.prototype = {
  * uploadDidStartQueue
  * uploadDidComplete(file)
  */
-In2iGui.Upload = function(o) {
-	o = this.options = n2i.override({url:'',parameters:{},maxItems:50,maxSize:"20480",types:"*.*",useFlash:true,fieldName:'file',chooseButton:'Choose files...'},o);
-	this.element = $(o.element);
+In2iGui.Upload = function(options) {
+	this.options = n2i.override({url:'',parameters:{},maxItems:50,maxSize:"20480",types:"*.*",useFlash:true,fieldName:'file',chooseButton:'Choose files...'},options);
+	this.element = $(options.element);
 	this.itemContainer = this.element.select('.in2igui_upload_items')[0];
 	this.status = this.element.select('.in2igui_upload_status')[0];
 	this.placeholder = this.element.select('.in2igui_upload_placeholder')[0];
-	this.name = o.name;
+	this.name = options.name;
 	this.items = [];
 	this.busy = false;
 	this.loaded = false;
@@ -14442,18 +14461,20 @@ In2iGui.Upload = function(o) {
 
 In2iGui.Upload.nameIndex = 0;
 
-In2iGui.Upload.create = function(o) {
-	o = o || {};
-	o.element = new Element('div',{'class':'in2igui_upload'});
-	o.element.update(
+/** Creates a new upload widget */
+In2iGui.Upload.create = function(options) {
+	options = options || {};
+	options.element = new Element('div',{'class':'in2igui_upload'});
+	options.element.update(
 		'<div class="in2igui_upload_items"></div>'+
 		'<div class="in2igui_upload_status"></div>'+
-		(o.placeholder ? '<div class="in2igui_upload_placeholder"><span class="in2igui_upload_icon"></span><h2>'+o.placeholder.title+'</h2><p>'+o.placeholder.text+'</p></div>' : '')
+		(options.placeholder ? '<div class="in2igui_upload_placeholder"><span class="in2igui_upload_icon"></span><h2>'+options.placeholder.title+'</h2><p>'+options.placeholder.text+'</p></div>' : '')
 	);
-	return new In2iGui.Upload(o);
+	return new In2iGui.Upload(options);
 }
 
 In2iGui.Upload.prototype = {
+	/** @private */
 	addBehavior : function() {
 		if (!this.useFlash) {
 			this.createIframeVersion();
@@ -14468,6 +14489,7 @@ In2iGui.Upload.prototype = {
 	
 	/////////////////////////// Iframe //////////////////////////
 	
+	/** @private */
 	createIframeVersion : function() {
 		In2iGui.Upload.nameIndex++;
 		var frameName = 'in2igui_upload_'+In2iGui.Upload.nameIndex;
@@ -14501,6 +14523,7 @@ In2iGui.Upload.prototype = {
 		}
 		iframe.observe('load',function() {this.iframeUploadComplete()}.bind(this));
 	},
+	/** @private */
 	iframeUploadComplete : function() {
 		n2i.log('iframeUploadComplete uploading: '+this.uploading+' ('+this.name+')');
 		if (!this.uploading) return;
@@ -14517,6 +14540,7 @@ In2iGui.Upload.prototype = {
 		this.iframe.src=In2iGui.context+'/In2iGui/html/blank.html';
 		this.endIframeProgress();
 	},
+	/** @private */
 	iframeSubmit : function() {
 		n2i.log('iframeSubmit');
 		this.startIframeProgress();
@@ -14533,14 +14557,17 @@ In2iGui.Upload.prototype = {
 		var fileName = this.fileInput.value.split('\\').pop();
 		this.addItem({name:fileName,filestatus:'I gang'}).setWaiting();
 	},
+	/** @private */
 	startIframeProgress : function() {
 		this.form.style.display='none';
 	},
+	/** @private */
 	endIframeProgress : function() {
 		n2i.log('endIframeProgress');
 		this.form.style.display='block';
 		this.form.reset();
 	},
+	/** @public */
 	clear : function() {
 		for (var i=0; i < this.items.length; i++) {
 			if (this.items[i]) {
@@ -14550,6 +14577,9 @@ In2iGui.Upload.prototype = {
 		this.items = [];
 		this.itemContainer.hide();
 		this.status.update();
+		if (this.placeholder) {
+			this.placeholder.show();
+		}
 	},
 	
 	/////////////////////////// Flash //////////////////////////
@@ -14593,24 +14623,16 @@ In2iGui.Upload.prototype = {
 			button_width : '100%',
 			button_height : 30,
 
-			swfupload_loaded_handler : function() {self.flashLoaded()},
+			swfupload_loaded_handler : this.flashLoaded.bind(this),
 			file_queued_handler : self.fileQueued.bind(self),
-			file_queue_error_handler : function(file, error, message) {self.fileQueueError(file, error, message)},
-			file_dialog_complete_handler : function() {self.fileDialogComplete()},
-			upload_start_handler : function() {self.uploadStart()},
-			upload_progress_handler : function(file,complete,total) {self.uploadProgress(file,complete,total)},
-			upload_error_handler : function(file, error, message) {self.uploadError(file, error, message)},
-			upload_success_handler : function(file,data) {self.uploadSuccess(file,data)},
-			upload_complete_handler : function(file) {self.uploadComplete(file)},
-		
-			// SWFObject settings
-			swfupload_pre_load_handler : function() {alert('swfupload_pre_load_handler!')},
-			swfupload_load_failed_handler : function() {alert('swfupload_load_failed_handler!')}
+			file_queue_error_handler : this.fileQueueError.bind(this),
+			file_dialog_complete_handler : this.fileDialogComplete.bind(this),
+			upload_start_handler : this.uploadStart.bind(this),
+			upload_progress_handler : this.uploadProgress.bind(this),
+			upload_error_handler : this.uploadError.bind(this),
+			upload_success_handler : this.uploadSuccess.bind(this),
+			upload_complete_handler : this.uploadComplete.bind(this),
 		});
-		
-		if (this.options.button) {
-			//this.setButton(In2iGui.get(this.options.button));
-		}
 	},
 	startNextUpload : function() {
 		this.loader.startUpload();
@@ -14619,6 +14641,7 @@ In2iGui.Upload.prototype = {
 	//////////////////// Events //////////////
 	
 	flashLoaded : function() {
+		n2i.log('flash loaded');
 		this.loaded = true;
 	},
 	addError : function(file,error) {
@@ -14636,6 +14659,7 @@ In2iGui.Upload.prototype = {
 		}
 	},
 	fileDialogComplete : function() {
+		n2i.log('fileDialogComplete');
 		this.startNextUpload();
 	},
 	uploadStart : function() {

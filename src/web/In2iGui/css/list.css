@@ -165,6 +165,14 @@ div.in2igui_list_selection a
 	-moz-border-radius: 4px;
 }
 
+div.in2igui_list_selection span
+{
+	float: left;
+	height: 16px;
+	margin-top: 4px;
+	line-height: 16px;
+}
+
 div.in2igui_list_selection a:hover
 {
 	background: #aaa;
