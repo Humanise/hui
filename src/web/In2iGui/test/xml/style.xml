@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="setup.xsl"?>
+<gui xmlns="uri:In2iGui" pad="10" title="Formula">
+	<controller name="controller" source="formula.js"/>
+	<source name="itemsSource" url="data/source_items.xml"/>
+	<box width="600" variant="textured">
+		<toolbar>
+			<number label="Style length:" key="style" value="15px"/>
+			<style-length label="Style length:" key="style" value="15px"/>
+		</toolbar>
+		<tabs>
+			<tab title="Formula 1" padding="10">
+				<formula name="formula1">
+					<group labels="above">
+						<style-length label="Style length:" key="style" value="15px"/>
+						<buttons top="10">
+							<button title="Gem" highlighted="true"/>
+							<button title="Slet"/>
+							<button title="Annuller"/>
+						</buttons>
+					</group>
+				</formula>
+			</tab>
+		</tabs>
+	</box>
+</gui>

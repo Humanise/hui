@@ -72,7 +72,7 @@ In2iGui.TextField.prototype = {
 	/** @private */
 	onBlur : function() {
 		this.element.removeClassName('in2igui_invalid');
-		this.element.value = this.value;
+		this.element.value = this.value || '';
 	},
 	getValue : function() {
 		return this.value;

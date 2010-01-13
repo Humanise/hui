@@ -222,6 +222,26 @@ n2i.getFrameDocument = function(frame) {
     }
 }
 
+n2i.getFrameWindow = function(frame) {
+    if (frame.defaultView) {
+        return frame.defaultView;
+    } else if (frame.contentWindow) {
+        return frame.contentWindow;
+    }
+}
+
+/////////////////// Selection /////////////////////
+
+n2i.getSelectedText = function(doc) {
+	doc = doc || document;
+	if (doc.getSelection) {
+		return doc.getSelection()+'';
+	} else if (doc.selection) {
+		return doc.selection.createRange().text;
+	}
+	return '';
+}
+
 /////////////////// Position /////////////////////
 
 n2i.getScrollTop = function() {
@@ -293,6 +313,21 @@ n2i.getDocumentHeight = function() {
 	} else {
 		return Math.max(document.body.clientHeight,document.documentElement.clientHeight,document.documentElement.scrollHeight);
 	}
+}
+
+//////////////////////////// Placement /////////////////////////
+
+n2i.place = function(options) {
+	var left=0,top=0;
+	var trgt = options.target.element;
+	var trgtPos = trgt.cumulativeOffset();
+	left = trgtPos.left+trgt.clientWidth*options.target.horizontal;
+	top = trgtPos.top+trgt.clientHeight*options.target.vertical;
+	
+	
+	var src = options.source.element;
+	src.style.top=top+'px';
+	src.style.left=left+'px';
 }
 
 //////////////////////////// Preloader /////////////////////////
@@ -553,7 +588,6 @@ n2i.animation.render = function(element) {
 	} else {
 		this.running = false;
 	}
-	//window.status = this.running;
 }
 
 n2i.animation.parseStyle = function(value) {
@@ -1238,10 +1272,8 @@ In2iGui.prototype = {
 		this.resize();
 		In2iGui.callSuperDelegates(this,'interfaceIsReady');
 
-		//if (n2i.browser.msie7 && n2i.browser.msie8) {
-			this.reLayout();
-			Event.observe(window,'resize',this.reLayout.bind(this));
-		//}
+		this.reLayout();
+		Event.observe(window,'resize',this.reLayout.bind(this));
 	},
 	/** @private */
 	addBehavior : function() {
@@ -1568,10 +1600,10 @@ In2iGui.onDomReady = function(func) {
 In2iGui.wrapInField = function(e) {
 	var w = new Element('div',{'class':'in2igui_field'}).update(
 		'<span class="in2igui_field_top"><span><span></span></span></span>'+
-		'<span class="in2igui_field_middle"><span class="in2igui_field_middle"><span class="in2igui_field_content"><span class="in2igui_formula_text_singleline"></span></span></span></span>'+
+		'<span class="in2igui_field_middle"><span class="in2igui_field_middle"><span class="in2igui_field_content"></span></span></span>'+
 		'<span class="in2igui_field_bottom"><span><span></span></span></span>'
 	);
-	w.select('span.in2igui_formula_text_singleline')[0].insert(e);
+	w.select('span.in2igui_field_content')[0].insert(e);
 	return w;
 };
 
@@ -2043,7 +2075,7 @@ In2iGui.request = function(options) {
 	options.onSuccess=function(t) {
 		if (typeof(onSuccess)=='string') {
 			In2iGui.jsonResponse(t,onSuccess);
-		} else if (t.responseXML && t.responseXML.documentElement.nodeName!='parsererror' && options.onXML) {
+		} else if (t.responseXML && t.responseXML.documentElement && t.responseXML.documentElement.nodeName!='parsererror' && options.onXML) {
 			options.onXML(t.responseXML);
 		} else if (options.onJSON) {
 			var str = t.responseText.replace(/^\s+|\s+$/g, '');

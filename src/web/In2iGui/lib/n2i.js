@@ -222,6 +222,26 @@ n2i.getFrameDocument = function(frame) {
     }
 }
 
+n2i.getFrameWindow = function(frame) {
+    if (frame.defaultView) {
+        return frame.defaultView;
+    } else if (frame.contentWindow) {
+        return frame.contentWindow;
+    }
+}
+
+/////////////////// Selection /////////////////////
+
+n2i.getSelectedText = function(doc) {
+	doc = doc || document;
+	if (doc.getSelection) {
+		return doc.getSelection()+'';
+	} else if (doc.selection) {
+		return doc.selection.createRange().text;
+	}
+	return '';
+}
+
 /////////////////// Position /////////////////////
 
 n2i.getScrollTop = function() {
@@ -293,6 +313,21 @@ n2i.getDocumentHeight = function() {
 	} else {
 		return Math.max(document.body.clientHeight,document.documentElement.clientHeight,document.documentElement.scrollHeight);
 	}
+}
+
+//////////////////////////// Placement /////////////////////////
+
+n2i.place = function(options) {
+	var left=0,top=0;
+	var trgt = options.target.element;
+	var trgtPos = trgt.cumulativeOffset();
+	left = trgtPos.left+trgt.clientWidth*options.target.horizontal;
+	top = trgtPos.top+trgt.clientHeight*options.target.vertical;
+	
+	
+	var src = options.source.element;
+	src.style.top=top+'px';
+	src.style.left=left+'px';
 }
 
 //////////////////////////// Preloader /////////////////////////
@@ -553,7 +588,6 @@ n2i.animation.render = function(element) {
 	} else {
 		this.running = false;
 	}
-	//window.status = this.running;
 }
 
 n2i.animation.parseStyle = function(value) {

@@ -180,6 +180,8 @@
 	</script>
 </xsl:template>
 
+
+
 <xsl:template match="gui:layout">
 	<table class="in2igui_layout" id="{generate-id()}">
 		<xsl:apply-templates/>
@@ -259,6 +261,13 @@
 	});
 	<xsl:call-template name="gui:createobject"/>
 </script>
+</xsl:template>
+
+
+<xsl:template match="gui:structure">
+	<div style="position:fixed; top: {@top}px; bottom: 0; width: 100%">
+		<xsl:apply-templates/>
+	</div>
 </xsl:template>
 
 </xsl:stylesheet>

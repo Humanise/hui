@@ -150,18 +150,15 @@ div.in2igui_tabs_bar_small_below ul
 	height: 26px;
 }
 
-div.in2igui_tabs_bar_small_below li *
-{
-	background: url('../gfx/tabs_small_below.png');
-}
-
 div.in2igui_tabs_bar_small_below li a
 {
+	background: url('../gfx/tabs_small_below.png');
 	background-position: left -26px;
 	background-repeat: no-repeat;
 	font-size: 12px;
-	line-height: 26px;
+	line-height: 29px;
 	height: 26px;
+	overflow: hidden;
 }
 
 div.in2igui_tabs_bar_small_below li span

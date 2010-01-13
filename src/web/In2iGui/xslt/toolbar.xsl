@@ -83,7 +83,7 @@
 <xsl:template match="gui:toolbar//gui:searchfield[@title]">
 	<span class="in2igui_toolbar_search">
 		<xsl:call-template name="gui:searchfield"/>
-		<span class="in2igui_toolbar_search_label"><xsl:value-of select="@title"/></span>
+		<span class="in2igui_toolbar_search_label"><xsl:value-of select="@title"/><xsl:value-of select="@label"/></span>
 	</span>
 </xsl:template>
 
@@ -107,9 +107,11 @@
 
 
 <xsl:template match="gui:toolbar//gui:grid">
+	<span style="height: 57px; vertical-align: middle; display: inline-block;">
 	<table class="in2igui_toolbar_grid">
 		<xsl:apply-templates/>
 	</table>
+	</span>
 </xsl:template>
 
 <xsl:template match="gui:toolbar//gui:grid/gui:row">
@@ -123,6 +125,11 @@
 		<th><xsl:value-of select="@label"/></th>
 	</xsl:if>
 	<td>
+		<xsl:attribute name="style">
+			<xsl:if test="@width">width:<xsl:value-of select="@width"/>px;</xsl:if>
+			<xsl:if test="@left">padding-left:<xsl:value-of select="@left"/>px;</xsl:if>
+			<xsl:if test="@right">padding-right:<xsl:value-of select="@right"/>px;</xsl:if>
+		</xsl:attribute>
 		<xsl:apply-templates/>
 	</td>
 </xsl:template>
@@ -132,14 +139,21 @@
 <xsl:template match="gui:toolbar//gui:number">
 	<span class="in2igui_toolbar_item">
 		<span class="in2igui_toolbar_item_body"><xsl:call-template name="gui:number"/></span>
-		<span class="in2igui_toolbar_label"><xsl:value-of select="@title"/></span>
+		<span class="in2igui_toolbar_label"><xsl:value-of select="@title"/><xsl:value-of select="@label"/></span>
 	</span>
 </xsl:template>
 
-<xsl:template match="gui:toolbar//gui:dropdown[@title]">
+<xsl:template match="gui:toolbar//gui:style-length">
+	<span class="in2igui_toolbar_item">
+		<span class="in2igui_toolbar_item_body"><xsl:call-template name="gui:style-length"/></span>
+		<span class="in2igui_toolbar_label"><xsl:value-of select="@title"/><xsl:value-of select="@label"/></span>
+	</span>
+</xsl:template>
+
+<xsl:template match="gui:toolbar//gui:dropdown[@title] | gui:toolbar//gui:dropdown[@label]">
 	<span class="in2igui_toolbar_item">
 		<span class="in2igui_toolbar_item_body"><xsl:call-template name="gui:dropdown"/></span>
-		<span class="in2igui_toolbar_label"><xsl:value-of select="@title"/></span>
+		<span class="in2igui_toolbar_label"><xsl:value-of select="@title"/><xsl:value-of select="@label"/></span>
 	</span>
 </xsl:template>
 
@@ -153,6 +167,46 @@
 
 <xsl:template match="gui:toolbar//gui:cell/gui:dropdown">
 	<xsl:call-template name="gui:dropdown"/>
+</xsl:template>
+
+
+<!-- Bar -->
+
+
+<xsl:template match="gui:bar">
+	<div class="in2igui_bar">
+		<div class="in2igui_bar_body">
+			<xsl:apply-templates select="gui:right"/>
+			<div class="in2igui_bar_left">
+				<xsl:apply-templates select="child::*[not(name()='right')]"/>
+				<xsl:comment/>
+			</div>
+		</div>
+	</div>
+</xsl:template>
+
+<xsl:template match="gui:bar/gui:right">
+	<div class="in2igui_bar_right">
+		<xsl:apply-templates/>
+		<xsl:comment/>
+	</div>
+</xsl:template>
+
+<xsl:template match="gui:bar//gui:button">
+	<xsl:variable name="class">
+		<xsl:text>in2igui_bar_button</xsl:text>
+		<xsl:if test="@highlighted='true'"><xsl:text> in2igui_bar_button_highlighted</xsl:text></xsl:if>
+	</xsl:variable>
+	<a id="{generate-id()}" class="{$class}" href="javascript:void(0);">
+		<span class="in2igui_icon_1" style="background-image: url('{$context}/In2iGui/icons/{@icon}1.png')"><xsl:comment/></span>
+		<span class="in2igui_bar_button_text"><xsl:value-of select="@text"/></span>
+	</a>
+	<script type="text/javascript">
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Bar.Button({
+			element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>'
+		});
+		<xsl:call-template name="gui:createobject"/>
+	</script>
 </xsl:template>
 
 </xsl:stylesheet>

@@ -47,8 +47,8 @@ In2iGui.LocationPicker.prototype = {
 	},
 	setLocation : function(loc) {
 		if (!loc && this.marker) {
-			this.marker.set_map(null);
-			this.map.set_center(this.defaultCenter);
+			this.marker.setMap(null);
+			this.map.setCenter(this.defaultCenter);
 			return;
 		}
 		loc = this.buildLatLng(loc);
@@ -58,10 +58,10 @@ In2iGui.LocationPicker.prototype = {
 		        map: this.map
 		    });
 		} else {
-    		this.marker.set_position(loc);
-			this.marker.set_map(this.map);
+    		this.marker.setPosition(loc);
+			this.marker.setMap(this.map);
 		}
-		this.map.set_center(loc);
+		this.map.setCenter(loc);
 	},
 	/** @private */
 	buildLatLng : function(loc) {

@@ -329,6 +329,13 @@ em.in2igui_number_units
 	vertical-align: middle;
 }
 
+/******* Special lenght for style *******/
+
+span.in2igui_style_length input
+{
+	width: 50px;
+}
+
 /************************************* Drop down ********************************/
 
 a.in2igui_dropdown
@@ -453,6 +460,13 @@ div.in2igui_dropdown_selector a:hover
 {
 	background-color: #3875d7;
 	color: #fff;
+}
+
+/* Adaptive */
+
+a.in2igui_dropdown_adaptive
+{
+	width: 100%;
 }
 
 /************************************** Buttons *********************************/
@@ -675,6 +689,12 @@ span.in2igui_location_latitude, span.in2igui_location_longitude
 {
 	display: inline-block;
 	height: 16px;
+	width: 49%;
+	position: relative;
+}
+
+span.in2igui_location_latitude
+{
 	width: 50%;
 }
 
@@ -720,7 +740,7 @@ div.in2igui_window_dark div.in2igui_field span
 	background-image: url('../gfx/field_dark.png');
 }
 
-div.in2igui_window_dark div.in2igui_field span.in2igui_formula_text_singleline
+div.in2igui_window_dark div.in2igui_field span.in2igui_formula_text_singleline, div.in2igui_window_dark div.in2igui_field span.in2igui_formula_text_multiline
 {
 	background: none;
 }

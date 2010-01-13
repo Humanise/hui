@@ -59,6 +59,9 @@ In2iGui.Menu.prototype = {
 			//sub.addDelegate({itemWasClicked:function(value) {self.itemWasClicked(value)}});
 			self.subMenus.push(sub);
 			element.addClassName('in2igui_menu_item_children');
+			//element.observe('mouseleave',function() {
+			//	sub.hide();
+			//});
 		}
 		this.element.insert(element);
 	},

@@ -86,6 +86,8 @@
 		<script src="{$context}/In2iGui/js/SearchField.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/Overflow.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/Fragment.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/In2iGui/js/Bar.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/In2iGui/js/IFrame.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/lib/wysihat.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 	</xsl:when>
 	<xsl:otherwise>
@@ -164,6 +166,12 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 </script>
 </xsl:template>
 
+<xsl:template match="gui:script">
+<script type="text/javascript">
+	<xsl:apply-templates/>
+</script>
+</xsl:template>
+
 <xsl:template match="gui:dock">
 <table class="in2igui_dock" id="{generate-id()}">
 	<xsl:if test="@position='top' or not(@position)">
@@ -211,6 +219,26 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 		</frameset>
 	</html>
 </xsl:template>
+
+<xsl:template match="gui:iframe">
+	<xsl:variable name="id">
+		<xsl:choose>
+			<xsl:when test="@id"><xsl:value-of select="@id"/></xsl:when>
+			<xsl:otherwise><xsl:value-of select="generate-id()"/></xsl:otherwise>
+		</xsl:choose>
+	</xsl:variable>
+	<iframe id="{$id}" name="{$id}" src="{@source}" style="width: 100%; height: 100%; border: 1px solid #ddd; background: #fff;" frameborder="0">
+		<xsl:comment/>
+	</iframe>
+	<script type="text/javascript">
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.IFrame({
+			element:'<xsl:value-of select="$id"/>',
+			name:'<xsl:value-of select="@name"/>'
+		});
+		<xsl:call-template name="gui:createobject"/>
+	</script>
+</xsl:template>
+	
 
 <xsl:template match="gui:selection">
 	<div class="in2igui_selection" id="{generate-id()}"><xsl:apply-templates/></div>

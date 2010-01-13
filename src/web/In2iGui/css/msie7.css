@@ -93,6 +93,11 @@ span.in2igui_upload_button_input input
 	filter: alpha(opacity = 0);
 }
 
+table.in2igui_toolbar_grid
+{
+	display: inline;
+}
+
 /********************** layout ****************/
 
 table.in2igui_layout

@@ -528,12 +528,22 @@ In2iGui.Formula.DropDown.prototype = {
 		var el = this.element,s=this.selector;
 		el.focus();
 		if (!this.items) return;
-		In2iGui.positionAtElement(s,el,{vertical:'bottomOutside',top:-2,left:2});
+		var docHeight = n2i.getDocumentHeight();
+		if (docHeight<200) {
+			var left = this.element.cumulativeOffset().left;
+			this.selector.setStyle({'left':left+'px',top:'5px'});
+		} else {
+			n2i.place({
+				target:{element:this.element,vertical:1,horizontal:0},
+				source:{element:this.selector,vertical:0,horizontal:0}
+			});
+		}
 		s.setStyle({visibility:'hidden',display:'block',width:''});
+		var height = Math.min(docHeight-s.cumulativeOffset().top-5,200);
 		var width = Math.max(el.getWidth()-5,100,s.getWidth());
 		var space = n2i.getDocumentWidth()-el.cumulativeOffset().left-20;
 		width = Math.min(width,space);
-		s.setStyle({visibility:'visible',width:width+'px',zIndex:In2iGui.nextTopIndex(),maxHeight:'200px'});
+		s.setStyle({visibility:'visible',width:width+'px',zIndex:In2iGui.nextTopIndex(),maxHeight:height+'px'});
 	},
 	getValue : function(value) {
 		return this.value;
@@ -1000,18 +1010,20 @@ In2iGui.Formula.Tokens.prototype = {
  * @constructor
  */
 In2iGui.Formula.StyleLength = function(o) {
-	this.options = n2i.override({value:null,min:0,max:1000,units:['px','pt','em','%'],allowNull:false},o);	
+	this.options = n2i.override({value:null,min:0,max:1000,units:['px','pt','em','%'],defaultUnit:'px',allowNull:false},o);	
 	this.name = o.name;
 	var e = this.element = $(o.element);
 	this.input = e.select('input')[0];
-	this.up = e.select('.in2igui_style_length_up')[0];
-	this.down = e.select('.in2igui_style_length_down')[0];
-	this.value = this.options.value;
+	var as = e.select('a');
+	this.up = as[0];
+	this.down = as[1];
+	this.value = this.parseValue(this.options.value);
 	In2iGui.extend(this);
 	this.addBehavior();
 }
 
 In2iGui.Formula.StyleLength.prototype = {
+	/** @private */
 	addBehavior : function() {
 		var e = this.element;
 		this.input.observe('focus',function() {e.addClassName('in2igui_number_focused')});
@@ -1020,10 +1032,29 @@ In2iGui.Formula.StyleLength.prototype = {
 		this.up.observe('mousedown',this.upEvent.bind(this));
 		this.down.observe('mousedown',this.downEvent.bind(this));
 	},
+	/** @private */
+	parseValue : function(value) {
+		var num = parseFloat(value,10);
+		if (isNaN(num)) {
+			return null;
+		}
+		var parsed = {number: num, unit:this.options.defaultUnit};
+		for (var i=0; i < this.options.units.length; i++) {
+			var unit = this.options.units[i];
+			if (value.indexOf(unit)!=-1) {
+				parsed.unit = unit;
+				break;
+			}
+		};
+		parsed.number = Math.max(this.options.min,Math.min(this.options.max,parsed.number));
+		return parsed;
+	},
+	/** @private */
 	blurEvent : function() {
 		this.element.removeClassName('in2igui_number_focused');
-		this.input.value = this.value;
+		this.updateInput();
 	},
+	/** @private */
 	keyEvent : function(e) {
 		if (e.keyCode==Event.KEY_UP) {
 			e.stop();
@@ -1031,33 +1062,56 @@ In2iGui.Formula.StyleLength.prototype = {
 		} else if (e.keyCode==Event.KEY_DOWN) {
 			this.downEvent();
 		} else {
-			var parsed = parseInt(this.input.value,10);
-			n2i.log(this.input.value);
-			n2i.log(parsed);
-			if (!isNaN(parsed)) {
-				this.setLocalValue(parsed);
-			}
+			this.checkAndSetValue(this.parseValue(this.input.value));
 		}
 	},
-	downEvent : function() {
-		if (this.value===null) {
-			this.setValue(this.options.min);
+	/** @private */
+	updateInput : function() {
+		this.input.value = this.getValue();
+	},
+	/** @private */
+	checkAndSetValue : function(value) {
+		var old = this.value;
+		var changed = false;
+		if (old===null && value===null) {
+			// nothing
+		} else if (old!=null && value!=null && old.number===value.number && old.unit===value.unit) {
+			// nothing
 		} else {
-			this.setValue(this.value-1);
+			changed = true;
+		}
+		this.value = value;
+		if (changed) {
+			this.fire('valueChanged',this.getValue());
 		}
 	},
-	upEvent : function() {
-		this.setValue(this.value+1);
+	/** @private */
+	downEvent : function() {
+		if (this.value) {
+			this.checkAndSetValue({number:Math.max(this.options.min,this.value.number-1),unit:this.value.unit});
+		} else {
+			this.checkAndSetValue({number:this.options.min,unit:this.options.defaultUnit});
+		}
+		this.updateInput();
 	},
+	/** @private */
+	upEvent : function() {
+		if (this.value) {
+			this.checkAndSetValue({number:Math.min(this.options.max,this.value.number+1),unit:this.value.unit});
+		} else {
+			this.checkAndSetValue({number:this.options.min+1,unit:this.options.defaultUnit});
+		}
+		this.updateInput();
+	},
+	
+	// Public
+	
 	getValue : function() {
-		return this.value;
+		return this.value ? this.value.number+this.value.unit : '';
 	},
 	setValue : function(value) {
-		this.setLocalValue(value);
-		this.input.value = this.value;
-	},
-	setLocalValue : function(value) {
-		this.value = Math.min(Math.max(value,this.options.min),this.options.max);
+		this.value = this.parseValue(value);
+		this.updateInput();
 	}
 }
 

@@ -195,7 +195,8 @@ a.in2igui_button_small_rounded
 {
 	height: 24px;
 	background-image: url('../gfx/button_small_rounded.png');
-	line-height: 24px;
+	line-height: 0;
+	font-size: 0;
 }
 
 a.in2igui_button_small_rounded span
@@ -210,6 +211,9 @@ a.in2igui_button_small_rounded span span
 	background-position: left -48px;
 	margin: 0 12px;
 	padding: 0 3px;
+	font-size: 12px;
+	line-height: 23px;
+	text-shadow: 0 1px 0 #FFFFFF;
 }
 
 a.in2igui_button_small_rounded:hover

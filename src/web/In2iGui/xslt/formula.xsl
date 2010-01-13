@@ -78,6 +78,7 @@
 </xsl:template>
 
 <xsl:template name="gui:text" match="gui:textfield">
+	<xsl:value-of select="@value"/>x
 	<xsl:choose>
 		<xsl:when test="@lines>1">
 			<div class="in2igui_field in2igui_longfield" id="{generate-id()}">
@@ -85,7 +86,7 @@
 			<span class="in2igui_field_top"><span><span><xsl:comment/></span></span></span>
 			<span class="in2igui_field_middle"><span class="in2igui_field_middle"><span class="in2igui_field_content">
 				<span class="in2igui_formula_text_multiline">
-				<textarea class="in2igui_formula_text" rows="{@lines}"><xsl:text> </xsl:text></textarea>
+				<textarea class="in2igui_formula_text" rows="{@lines}"><xsl:value-of select="@value"/><xsl:text> </xsl:text></textarea>
 				</span>
 			</span></span></span>
 			<span class="in2igui_field_bottom"><span><span><xsl:comment/></span></span></span>
@@ -96,7 +97,7 @@
 			<span class="in2igui_field_top"><span><span><xsl:comment/></span></span></span>
 			<span class="in2igui_field_middle"><span class="in2igui_field_middle"><span class="in2igui_field_content">
 				<span class="in2igui_formula_text_singleline">
-				<input class="in2igui_formula_text"><xsl:if test="@secret='true'"><xsl:attribute name="type">password</xsl:attribute></xsl:if></input>
+				<input class="in2igui_formula_text" value="{@value}"><xsl:if test="@secret='true'"><xsl:attribute name="type">password</xsl:attribute></xsl:if></input>
 				</span>
 			</span></span></span>
 			<span class="in2igui_field_bottom"><span><span><xsl:comment/></span></span></span>
@@ -196,8 +197,8 @@
 </xsl:template>
 
 <xsl:template name="gui:style-length">
-	<span class="in2igui_style_length" id="{generate-id()}">
-		<span><span><input type="text"/><a class="in2igui_style_length_up"><xsl:comment/></a><a class="in2igui_style_length_down"><xsl:comment/></a></span></span>
+	<span class="in2igui_style_length in2igui_number" id="{generate-id()}">
+		<span><span><input type="text" value="{@value}"/><a class="in2igui_number_up"><xsl:comment/></a><a class="in2igui_number_down"><xsl:comment/></a></span></span>
 	</span>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.StyleLength({
@@ -229,7 +230,13 @@
 </xsl:template>
 
 <xsl:template name="gui:dropdown" match="gui:dropdown">
-	<a class="in2igui_dropdown" id="{generate-id()}" href="#">
+	<a id="{generate-id()}" href="#">
+	<xsl:attribute name="class">
+		<xsl:choose>
+			<xsl:when test="@adaptive='true'">in2igui_dropdown in2igui_dropdown_adaptive</xsl:when>
+			<xsl:otherwise>in2igui_dropdown</xsl:otherwise>
+		</xsl:choose>
+	</xsl:attribute>	
 	<span><span><strong><xsl:comment/></strong></span></span>
 	</a>
 	<script type="text/javascript">

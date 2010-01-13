@@ -82,10 +82,8 @@ In2iGui.prototype = {
 		this.resize();
 		In2iGui.callSuperDelegates(this,'interfaceIsReady');
 
-		//if (n2i.browser.msie7 && n2i.browser.msie8) {
-			this.reLayout();
-			Event.observe(window,'resize',this.reLayout.bind(this));
-		//}
+		this.reLayout();
+		Event.observe(window,'resize',this.reLayout.bind(this));
 	},
 	/** @private */
 	addBehavior : function() {
@@ -412,10 +410,10 @@ In2iGui.onDomReady = function(func) {
 In2iGui.wrapInField = function(e) {
 	var w = new Element('div',{'class':'in2igui_field'}).update(
 		'<span class="in2igui_field_top"><span><span></span></span></span>'+
-		'<span class="in2igui_field_middle"><span class="in2igui_field_middle"><span class="in2igui_field_content"><span class="in2igui_formula_text_singleline"></span></span></span></span>'+
+		'<span class="in2igui_field_middle"><span class="in2igui_field_middle"><span class="in2igui_field_content"></span></span></span>'+
 		'<span class="in2igui_field_bottom"><span><span></span></span></span>'
 	);
-	w.select('span.in2igui_formula_text_singleline')[0].insert(e);
+	w.select('span.in2igui_field_content')[0].insert(e);
 	return w;
 };
 
@@ -887,7 +885,7 @@ In2iGui.request = function(options) {
 	options.onSuccess=function(t) {
 		if (typeof(onSuccess)=='string') {
 			In2iGui.jsonResponse(t,onSuccess);
-		} else if (t.responseXML && t.responseXML.documentElement.nodeName!='parsererror' && options.onXML) {
+		} else if (t.responseXML && t.responseXML.documentElement && t.responseXML.documentElement.nodeName!='parsererror' && options.onXML) {
 			options.onXML(t.responseXML);
 		} else if (options.onJSON) {
 			var str = t.responseText.replace(/^\s+|\s+$/g, '');

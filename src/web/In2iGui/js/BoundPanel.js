@@ -63,9 +63,9 @@ In2iGui.BoundPanel.prototype = {
 			this.element.style.marginTop='0px';
 			this.element.style.display='block';
 			if (!n2i.browser.msie) {
-				n2i.ani(this.element,'opacity',1,400,{ease:n2i.ease.fastSlow});
+				n2i.animate(this.element,'opacity',1,400,{ease:n2i.ease.fastSlow});
 			}
-			n2i.ani(this.element,'margin-left','0px',800,{ease:n2i.ease.bounce});
+			n2i.animate(this.element,'margin-left','0px',800,{ease:n2i.ease.bounce});
 		}
 		this.element.style.zIndex = In2iGui.nextPanelIndex();
 		this.visible=true;
@@ -75,7 +75,7 @@ In2iGui.BoundPanel.prototype = {
 		if (n2i.browser.msie) {
 			this.element.style.display='none';
 		} else {
-			n2i.ani(this.element,'opacity',0,300,{ease:n2i.ease.slowFast,hideOnComplete:true});
+			n2i.animate(this.element,'opacity',0,300,{ease:n2i.ease.slowFast,hideOnComplete:true});
 		}
 		this.visible=false;
 	},
@@ -140,8 +140,8 @@ In2iGui.BoundPanel.prototype = {
 		this.arrow.style.marginTop = (dims.height-32)/2+Math.min(0,nodeTop+(nodeHeight-dims.height)/2)+'px';
 		this.arrow.style.marginLeft = arrowLeft+'px';
 		if (this.visible) {
-			n2i.ani(this.element,'top',top+'px',500,{ease:n2i.ease.fastSlow});
-			n2i.ani(this.element,'left',left+'px',500,{ease:n2i.ease.fastSlow});
+			n2i.animate(this.element,'top',top+'px',500,{ease:n2i.ease.fastSlow});
+			n2i.animate(this.element,'left',left+'px',500,{ease:n2i.ease.fastSlow});
 		} else {
 			this.element.style.top=top+'px';
 			this.element.style.left=left+'px';

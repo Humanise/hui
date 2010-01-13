@@ -45,7 +45,7 @@ div.in2igui_toolbar_right
 
 a.in2igui_toolbar_icon
 {
-	margin-top: 2px;
+	margin-top: 1px;
 	height: 55px;
 	vertical-align: middle;
 	display: inline-block;
@@ -53,7 +53,6 @@ a.in2igui_toolbar_icon
 	text-align: center;
 	cursor: pointer;
 	text-decoration: none;
-	-webkit-border-radius: 3px;
 }
 
 a.in2igui_toolbar_icon:focus
@@ -172,39 +171,6 @@ div.in2igui_toolbar a.in2igui_button
 	margin: 0;
 	font-size: 12px;
 }
-/*
-div.in2igui_toolbar a.in2igui_button, div.in2igui_toolbar a.in2igui_button span
-{
-	background-image: url('../gfx/toolbar_button.png');
-	height: 24px;
-	line-height: 24px;
-}
-
-div.in2igui_toolbar a.in2igui_button span
-{
-	background-position: right -24px;
-}
-
-div.in2igui_toolbar a.in2igui_button span span
-{
-	margin: 0px 2px;
-	background-position: left -48px;
-}
-
-div.in2igui_toolbar a.in2igui_button:hover
-{
-	background-position: left -72px;
-}
-
-div.in2igui_toolbar a.in2igui_button:hover span
-{
-	background-position: right -96px;
-}
-
-div.in2igui_toolbar a.in2igui_button:hover span span
-{
-	background-position: left -120px;
-}*/
 
 /********************** Buttons ********************/
 
@@ -331,6 +297,7 @@ span.in2igui_toolbar_item
 	display: inline-block;
 	vertical-align: middle;
 	padding: 0 5px;
+	height: 56px;
 }
 
 span.in2igui_toolbar_item_body
@@ -367,7 +334,7 @@ table.in2igui_toolbar_grid
 	border-collapse: collapse;
 	vertical-align: middle;
 	position: relative;
-	top: 1px;
+	top: 2px;
 }
 
 table.in2igui_toolbar_grid td

@@ -37,7 +37,10 @@ In2iGui.Upload.create = function(options) {
 	options.element.update(
 		'<div class="in2igui_upload_items"></div>'+
 		'<div class="in2igui_upload_status"></div>'+
-		(options.placeholder ? '<div class="in2igui_upload_placeholder"><span class="in2igui_upload_icon"></span><h2>'+options.placeholder.title+'</h2><p>'+options.placeholder.text+'</p></div>' : '')
+		(options.placeholder ? '<div class="in2igui_upload_placeholder"><span class="in2igui_upload_icon"></span>'+
+			(options.placeholder.title ? '<h2>'+options.placeholder.title+'</h2>' : '')+
+			(options.placeholder.text ? '<p>'+options.placeholder.text+'</p>' : '')+
+		'</div>' : '')
 	);
 	return new In2iGui.Upload(options);
 }
@@ -200,7 +203,7 @@ In2iGui.Upload.prototype = {
 			upload_progress_handler : this.uploadProgress.bind(this),
 			upload_error_handler : this.uploadError.bind(this),
 			upload_success_handler : this.uploadSuccess.bind(this),
-			upload_complete_handler : this.uploadComplete.bind(this),
+			upload_complete_handler : this.uploadComplete.bind(this)
 		});
 	},
 	startNextUpload : function() {

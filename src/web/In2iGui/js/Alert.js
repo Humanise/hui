@@ -52,13 +52,13 @@ In2iGui.Alert.prototype = {
 		this.element.style.zIndex=zIndex;
 		this.element.style.display='block';
 		this.element.style.top=(n2i.getScrollTop()+100)+'px';
-		n2i.ani(this.element,'opacity',1,200);
-		n2i.ani(this.element,'margin-top','40px',600,{ease:n2i.ease.elastic});
+		n2i.animate(this.element,'opacity',1,200);
+		n2i.animate(this.element,'margin-top','40px',600,{ease:n2i.ease.elastic});
 	},
 	/** Hides the alert */
 	hide : function() {
-		n2i.ani(this.element,'opacity',0,200,{hideOnComplete:true});
-		n2i.ani(this.element,'margin-top','0px',200);
+		n2i.animate(this.element,'opacity',0,200,{hideOnComplete:true});
+		n2i.animate(this.element,'margin-top','0px',200);
 		In2iGui.hideCurtain(this);
 	},
 	/** Sets the alert title */
