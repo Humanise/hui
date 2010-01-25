@@ -19,16 +19,7 @@ div.image_view div.editbutton
 div.image_view div.image_preview
 {
 	float: left;
-	width: 310px;
-}
-
-div.image_view div.image_preview img
-{
-	border: 1px solid #DDDDDD;
-	display: inline-block;
-	padding: 4px;
-	width: 300px;
-	cursor: pointer;
+	width: 315px;
 }
 
 div.image_view p.image_actions

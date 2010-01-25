@@ -1,8 +1,6 @@
 package dk.in2isoft.onlineobjects.model;
 
-import org.apache.velocity.runtime.parser.node.MathUtils;
-
-import dk.in2isoft.commons.geo.GeoLatLng;
+import dk.in2isoft.commons.geo.GeoDistance;
 
 public class Location extends Entity {
 
@@ -52,15 +50,15 @@ public class Location extends Entity {
 	/* Util */
 	
 	public double getLatitudeDegrees() {
-		return new GeoLatLng(Math.abs(latitude)).getDegrees();
+		return new GeoDistance(Math.abs(latitude)).getDegrees();
 	}
 	
 	public double getLatitudeMinutes() {
-		return new GeoLatLng(Math.abs(latitude)).getMinutes();
+		return new GeoDistance(Math.abs(latitude)).getMinutes();
 	}
 	
 	public double getLatitudeSeconds() {
-		return new GeoLatLng(Math.abs(latitude)).getSeconds();
+		return new GeoDistance(Math.abs(latitude)).getSeconds();
 	}
 	
 	public boolean isLatitudeNorth() {
@@ -68,15 +66,15 @@ public class Location extends Entity {
 	}
 	
 	public double getLongitudeDegrees() {
-		return new GeoLatLng(Math.abs(longitude)).getDegrees();
+		return new GeoDistance(Math.abs(longitude)).getDegrees();
 	}
 	
 	public double getLongitudeMinutes() {
-		return new GeoLatLng(Math.abs(longitude)).getMinutes();
+		return new GeoDistance(Math.abs(longitude)).getMinutes();
 	}
 	
 	public double getLongitudeSeconds() {
-		return new GeoLatLng(Math.abs(longitude)).getSeconds();
+		return new GeoDistance(Math.abs(longitude)).getSeconds();
 	}
 	
 	public boolean isLongitudeEast() {

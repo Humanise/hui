@@ -10,67 +10,10 @@
     	http://www.directwebremoting.org/schema/spring-dwr-2.0.xsd
     ">
     
-    <dwr:configuration>
-	    <dwr:convert type="bean" class="java.lang.Class"/>
-	    
-	    <dwr:convert type="bean" class="dk.in2isoft.onlineobjects.apps.desktop.SearchResult"/>
-	    <dwr:convert type="bean" class="dk.in2isoft.onlineobjects.apps.desktop.Window"/>
-	    <dwr:convert type="bean" class="dk.in2isoft.onlineobjects.apps.desktop.EntityWindow"/>
-	    <dwr:convert type="bean" class="dk.in2isoft.onlineobjects.apps.desktop.WindowProperty"/>
-	    
-	    <dwr:convert type="bean" class="dk.in2isoft.onlineobjects.publishing.remoting.*"/>
-	    
-	    <dwr:convert class="dk.in2isoft.onlineobjects.apps.community.views.ImageInfo" type="bean"/>
-	    <dwr:convert class="dk.in2isoft.onlineobjects.apps.community.remoting.InternetAddressInfo" type="bean"/>
-	    
-	    <dwr:convert type="bean" class="dk.in2isoft.onlineobjects.ui.AsynchronousProcessDescriptor"/>
-	    <dwr:convert type="bean" class="dk.in2isoft.onlineobjects.model.*">
-	    	<dwr:exclude method="getImageFile"/>
-	    </dwr:convert>
-	    <dwr:convert type="bean" class="dk.in2isoft.*"/>
-	    <dwr:convert class="java.lang.Exception" type="exception">
-	    	<dwr:exclude method='getStackTrace'/>
-	    </dwr:convert>
-    </dwr:configuration>
-    
-    
-    <bean id="publishingRemotingFacade" class="dk.in2isoft.onlineobjects.publishing.remoting.PublishingRemotingFacade" autowire="byType">
-    	 <dwr:remote javascript="CorePublishing"/>
-   	</bean>
-   	
-   	<bean id="partsRemotingFacade" class="dk.in2isoft.onlineobjects.publishing.remoting.PartRemotingFacade" autowire="byType">
-    	 <dwr:remote javascript="CoreParts"/>
-   	</bean>
-   	
-   	<bean id="securityRemotingFacade" class="dk.in2isoft.onlineobjects.remoting.SecurityRemotingFacade" autowire="byType">
-    	 <dwr:remote javascript="CoreSecurity"/>
-   	</bean>
-   	
-   	<bean id="commonRemotingFacade" class="dk.in2isoft.onlineobjects.remoting.CommonRemotingFacade" autowire="byType">
-    	 <dwr:remote javascript="Common"/>
-   	</bean>
-   	
-   	<bean id="communityRemotingFacade" class="dk.in2isoft.onlineobjects.apps.community.remoting.CommunityRemotingFacade" autowire="byType">
-    	 <dwr:remote javascript="AppCommunity"/>
-   	</bean>
-   	
-   	<bean id="schoolRemotingFacade" class="dk.in2isoft.onlineobjects.apps.school.SchoolRemotingFacade" autowire="byType">
-    	 <dwr:remote javascript="AppSchool"/>
-   	</bean>
-   	
-   	<bean id="setupRemotingFacade" class="dk.in2isoft.onlineobjects.apps.setup.SetupRemotingFacade" autowire="byType">
-    	 <dwr:remote javascript="AppSetup"/>
-   	</bean>
-   	
-   	<bean id="imageGalleryRemotingFacade" class="dk.in2isoft.onlineobjects.publishing.imagegallery.ImageGalleryRemotingFacade" autowire="byType">
-    	 <dwr:remote javascript="ImageGalleryDocument"/>
-   	</bean>
-   	
-   	<bean id="compoundDocumentRemotingFacade" class="dk.in2isoft.onlineobjects.publishing.compounddocument.CompoundDocumentRemotingFacade" autowire="byType">
-    	 <dwr:remote javascript="CompoundDocumentDocument"/>
-   	</bean>
-   	
-   	
+    <import resource="spring/core-remoting.xml"/>
+    <import resource="spring/app-videosharing.xml"/>
+    <import resource="spring/app-setup.xml"/>
+    <import resource="spring/app-community.xml"/>
 
 	<bean id="config" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="location" value="classpath:configuration.properties" />
@@ -133,34 +76,23 @@
 	
 	<bean id="indexService" class="dk.in2isoft.onlineobjects.services.IndexService" autowire="byType"/>
 	
+	<bean id="remoteDataService" class="dk.in2isoft.onlineobjects.services.RemoteDataService" autowire="byType"/>
+	
+	<bean id="feedService" class="dk.in2isoft.onlineobjects.services.FeedService" autowire="byType"/>
+	
+	<bean id="videoService" class="dk.in2isoft.onlineobjects.modules.video.VideoService" autowire="byType"/>
+	
 	<!-- Service controllers -->
 	
 	<bean id="imageController" class="dk.in2isoft.onlineobjects.service.image.ImageController" autowire="byType"/>
+	<bean id="modelController" class="dk.in2isoft.onlineobjects.service.model.ModelController" autowire="byType"/>
+	<bean id="webrendererController" class="dk.in2isoft.onlineobjects.service.webrenderer.WebrendererController" autowire="byType"/>
 	<bean id="authenticationController" class="dk.in2isoft.onlineobjects.service.authentication.AuthenticationController" autowire="byType"/>
+	<bean id="videoController" class="dk.in2isoft.onlineobjects.service.video.VideoController" autowire="byType"/>
 	
 	<!-- Application controllers -->
-	
-	<bean id="communityController" class="dk.in2isoft.onlineobjects.apps.community.CommunityController" autowire="byType"/>
-	<bean id="communityPrivateController" class="dk.in2isoft.onlineobjects.apps.community.PrivateSpaceController" autowire="byType"/>
-	<bean id="communityDAO" class="dk.in2isoft.onlineobjects.apps.community.CommunityDAO" autowire="byType"/>
-	<bean id="setupController" class="dk.in2isoft.onlineobjects.apps.setup.SetupController" autowire="byType"/>
-	<!--
-	<bean id="schoolController" class="dk.in2isoft.onlineobjects.apps.school.SchoolController" autowire="byType"/>
-	-->
+
 	<bean id="desktopController" class="dk.in2isoft.onlineobjects.apps.desktop.DesktopController" autowire="byType"/>
-
-	<!-- Community -->
-
-	<bean id="invitationService" class="dk.in2isoft.onlineobjects.apps.community.services.InvitationService" autowire="byType"/>
-	
-	<bean id="memberService" class="dk.in2isoft.onlineobjects.apps.community.services.MemberService" autowire="byType"/>
-
-	<bean id="invitationView" class="dk.in2isoft.onlineobjects.apps.community.views.InvitationView" autowire="byType" scope="request"/>
-	<bean id="baseView" class="dk.in2isoft.onlineobjects.apps.community.views.BaseView" autowire="byType" scope="request"/>
-	<bean id="imageView" class="dk.in2isoft.onlineobjects.apps.community.views.ImageView" autowire="byType" scope="request"/>
-	<bean id="usersView" class="dk.in2isoft.onlineobjects.apps.community.views.UsersView" autowire="byType" scope="request"/>
-	<bean id="imagesView" class="dk.in2isoft.onlineobjects.apps.community.views.ImagesView" autowire="byType" scope="request"/>
-	<bean id="userProfileView" class="dk.in2isoft.onlineobjects.apps.community.views.UserProfileView" autowire="byType" scope="request"/>
 	
 	<!-- Tools -->
 	

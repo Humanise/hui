@@ -1,21 +1,46 @@
 package dk.in2isoft.in2igui;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
+
+import dk.in2isoft.onlineobjects.services.FileService;
+
 public abstract class AbstractInterface implements Interface {
 
 	private List<Widget> widgets = new ArrayList<Widget>();
+	private Map<String,Object> parameters = new HashMap<String, Object>();
 
 	public void render(HttpServletRequest request,HttpServletResponse response) throws IOException {
 		File file = getFile();
-		if (file != null) {
+		if (file != null && parameters.isEmpty()) {
 			In2iGui.getInstance().render(file, request, response);
+		} else if (file != null && !parameters.isEmpty()) {
+			String string = FileService.readTextUTF8(file);
+			
+			for (Entry<String, Object> entry : parameters.entrySet()) {
+				String name = "\\{"+entry.getKey()+"\\}";
+				String value = entry.getValue()!=null ? entry.getValue().toString() : "";
+				string = string.replaceAll(name, value);
+			}
+			In2iGui.getInstance().render(string, request, response);
 		} else {
 			StringBuilder gui = new StringBuilder();
 			gui.append("<gui xmlns='uri:In2iGui' context='../../../../'>");
@@ -23,6 +48,10 @@ public abstract class AbstractInterface implements Interface {
 			gui.append("</gui>");
 			In2iGui.getInstance().render(gui.toString(), request,response);
 		}
+	}
+	
+	public void setParameter(String name, Object value) {
+		parameters.put(name, value);
 	}
 
 	public File getFile() {

@@ -2,8 +2,10 @@ package dk.in2isoft.onlineobjects.apps;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -19,8 +21,11 @@ import org.springframework.beans.factory.InitializingBean;
 import dk.in2isoft.commons.lang.LangUtil;
 import dk.in2isoft.commons.util.RestUtil;
 import dk.in2isoft.in2igui.FileBasedInterface;
+import dk.in2isoft.onlineobjects.apps.videosharing.RequestMapping;
 import dk.in2isoft.onlineobjects.core.EndUserException;
+import dk.in2isoft.onlineobjects.core.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.ModelService;
+import dk.in2isoft.onlineobjects.core.StupidProgrammerException;
 import dk.in2isoft.onlineobjects.core.events.EventService;
 import dk.in2isoft.onlineobjects.core.events.ModelEventListener;
 import dk.in2isoft.onlineobjects.model.Item;
@@ -32,7 +37,7 @@ public abstract class ApplicationController implements ModelEventListener,Initia
 	private static Logger log = Logger.getLogger(ApplicationController.class);
 
 	private String name;
-	private Map<Pattern,String> jsfMatchers = new HashMap<Pattern, String>();
+	private Map<Pattern,String> jsfMatchers = new LinkedHashMap<Pattern, String>();
 
 	private EventService eventService;
 	private ConfigurationService configurationService;
@@ -65,7 +70,7 @@ public abstract class ApplicationController implements ModelEventListener,Initia
 	}
 	
 	protected void addJsfMatcher(String pattern,String path) {
-		jsfMatchers.put(RestUtil.compile(pattern), path);
+		jsfMatchers.put(RestUtil.compile(pattern), "/jsf/"+this.name+"/"+path);
 	}
 
 	public RequestDispatcher getDispatcher(Request request, ServletContext context) {
@@ -97,7 +102,29 @@ public abstract class ApplicationController implements ModelEventListener,Initia
 	}
 
 	public void unknownRequest(Request request) throws IOException, EndUserException {
-
+		Method[] methods = getClass().getDeclaredMethods();
+		for (Method method : methods) {
+			RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+			
+			if (annotation!=null && request.testLocalPathStart(annotation.start())) {
+				try {
+					method.invoke(this, new Object[] { request });
+					return;
+				} catch (IllegalArgumentException e) {
+					throw new StupidProgrammerException(e);
+				} catch (IllegalAccessException e) {
+					throw new EndUserException(e);
+				} catch (InvocationTargetException e) {
+					Throwable cause = e.getCause();
+					if (cause!=null) {
+						throw new EndUserException(cause);
+					} else {
+						throw new EndUserException(e);
+					}
+				}
+			}
+		}
+		throw new IllegalRequestException();
 	}
 
 	public ApplicationSession createToolSession() {

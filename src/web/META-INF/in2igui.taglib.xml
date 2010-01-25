@@ -2,6 +2,13 @@
 <facelet-taglib>
   <namespace>http://www.in2isoft.dk/in2igui</namespace>
   <tag>
+    <tag-name>import</tag-name>
+    <component>
+      <component-type>in2igui.import</component-type>
+      <renderer-type>in2igui.import</renderer-type>
+    </component>
+  </tag>
+  <tag>
     <tag-name>button</tag-name>
     <component>
       <component-type>in2igui.button</component-type>
@@ -20,6 +27,27 @@
     <component>
       <component-type>in2igui.searchfield</component-type>
       <renderer-type>in2igui.searchfield</renderer-type>
+    </component>
+  </tag>
+  <tag>
+    <tag-name>bar</tag-name>
+    <component>
+      <component-type>in2igui.bar</component-type>
+      <renderer-type>in2igui.bar</renderer-type>
+    </component>
+  </tag>
+  <tag>
+    <tag-name>barButton</tag-name>
+    <component>
+      <component-type>in2igui.barButton</component-type>
+      <renderer-type>in2igui.barButton</renderer-type>
+    </component>
+  </tag>
+  <tag>
+    <tag-name>videoplayer</tag-name>
+    <component>
+      <component-type>in2igui.videoplayer</component-type>
+      <renderer-type>in2igui.videoplayer</renderer-type>
     </component>
   </tag>
 </facelet-taglib>

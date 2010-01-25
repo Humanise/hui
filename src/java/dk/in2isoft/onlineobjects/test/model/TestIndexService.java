@@ -1,4 +1,4 @@
-package dk.in2isoft.onlineobjects.test.plain;
+package dk.in2isoft.onlineobjects.test.model;
 
 import java.io.IOException;
 import java.util.List;

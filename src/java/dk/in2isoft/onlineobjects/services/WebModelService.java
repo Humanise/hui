@@ -136,6 +136,21 @@ public class WebModelService {
 		return -1;
 	}
 	
+	public boolean isLastPageOnSite(long pageId,Priviledged privileged) throws EndUserException {
+		WebPage page = modelService.get(WebPage.class, pageId);
+		if (page == null) {
+			throw new EndUserException("The page does not exist");
+		}
+		
+		WebNode node = modelService.getParent(page, WebNode.class);
+		if (node==null) {
+			throw new EndUserException("The page has no menu item");
+		}
+		WebSite site = modelService.getParent(node, WebSite.class);
+		List<WebNode> nodes = modelService.getChildren(site, WebNode.class);
+		return nodes.size()==1;
+	}
+	
 	public void deleteWebPage(long pageId,Priviledged privileged) throws EndUserException {
 		WebPage page = modelService.get(WebPage.class, pageId);
 		if (page == null) {

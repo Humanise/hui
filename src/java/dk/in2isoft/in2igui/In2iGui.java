@@ -132,7 +132,10 @@ public class In2iGui {
 		OutputStream stream = response.getOutputStream();
 		try {
 			boolean devMode = developmentMode;
-			StringReader xmlReader = new StringReader("<?xml version=\"1.0\"?>" + xmlData);
+			if (!xmlData.startsWith("<?xml")) {
+				xmlData="<?xml version=\"1.0\"?>"+xmlData;
+			}
+			StringReader xmlReader = new StringReader(xmlData);
 			if ("false".equals(request.getParameter("dev"))) {
 				devMode=false;
 			} else if ("true".equals(request.getParameter("dev"))) {

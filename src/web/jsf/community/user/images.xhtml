@@ -14,9 +14,7 @@
 		<ui:define name="content">
 			<div class="content_body">
 				<oo:gallery model="#{userProfileView.imageList}" var="image">
-					<a href="#{baseView.baseContext}/#{userProfileView.user.username}/images/#{image.id}.html">
-						<img src="#{baseView.baseContext}/service/image/id#{image.id}thumbnail68cropped.jpg" width="68" height="68"/>
-					</a>
+					<oo:thumbnail image="#{image}" width="68" height="68" href="/#{userProfileView.user.username}/images/#{image.id}.html"/>
 				</oo:gallery>
 			</div>
 		</ui:define>

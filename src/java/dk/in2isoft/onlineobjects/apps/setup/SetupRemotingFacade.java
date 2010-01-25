@@ -6,6 +6,9 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.collect.Lists;
+
+import dk.in2isoft.in2igui.data.ItemData;
 import dk.in2isoft.in2igui.data.ListData;
 import dk.in2isoft.in2igui.data.ListDataRow;
 import dk.in2isoft.in2igui.data.ListObjects;
@@ -18,6 +21,7 @@ import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Image;
+import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.services.FileService;
 import dk.in2isoft.onlineobjects.services.SchedulingService;
@@ -67,51 +71,51 @@ public class SetupRemotingFacade extends AbstractRemotingFacade {
 		return list;
 	}
 	
-	public ListObjects listEntities(Map<String,Object> state,String clazz,String search) throws SecurityException {
-		checkUser();
-		ListObjects list = new ListObjects();
-		Class<Entity> className = Entity.class;
-		try {
-			className = (Class<Entity>) Class.forName(clazz);
-		} catch (Exception e) {
-			return list;
-		}
-		Query<Entity> query = (Query<Entity>) Query.of(className).withWords(search).withPaging(0, 50);
-		List<Entity> data = modelService.list(query);
-		for (Entity entity : data) {
-			ListDataRow row = new ListDataRow();
-			row.addColumn("id", entity.getId());
-			row.addColumn("icon", entity.getIcon());
-			row.addColumn("name", entity.getName());
-			row.addColumn("type", entity.getType());
-			row.addColumn("kind", entity.getClass().getSimpleName().toLowerCase());
-			list.add(row);
-		}
-		return list;
-	}
-	
-	public ListData listEntities2(ListState state,String clazz,String search) throws SecurityException {
+	public ListData listEntities(ListState state,String clazz,String search) throws SecurityException, ClassNotFoundException {
 		checkUser();
 		int page = state!=null ? state.getPage() : 0;
 		ListData list = new ListData();
 		list.addHeader("Name");
 		list.addHeader("Type");
-		Class<Entity> className = Entity.class;
-		try {
+		Class<Entity> className;
+		if (clazz==null) {
+			className = Entity.class;
+		} else {
 			className = (Class<Entity>) Class.forName(clazz);
-		} catch (Exception e) {
-			return list;
 		}
 		Query<Entity> query = (Query<Entity>) Query.of(className).withWords(search).withPaging(page, 50);
 		SearchResult<Entity> result = modelService.search(query);
 		list.setWindow(result.getTotalCount(), 50, page);
-		for (Entity entity : result.getResult()) {
+		for (Entity entity : result.getList()) {
 			String kind = entity.getClass().getSimpleName().toLowerCase();
 			list.newRow(entity.getId(),kind);
 			list.addCell(entity.getName(), entity.getIcon());
 			list.addCell(entity.getType());
 		}
 		return list;
+	}
+
+	public List<Image> listImages(String text,String tag) throws EndUserException {
+		Query<Image> query = new Query<Image>(Image.class).withPaging(0, 50);
+		query.withWords(text);
+		if (tag!=null) {
+			query.withCustomProperty(Property.KEY_COMMON_TAG, tag);
+		}
+		return modelService.list(query);
+	}
+
+	public List<ItemData> getImageTags(String text) throws EndUserException {
+		Map<String, Integer> properties = modelService.getProperties(Property.KEY_COMMON_TAG, Image.class, null);
+		List<ItemData> items = Lists.newArrayList();
+		for (Entry<String, Integer> itemData : properties.entrySet()) {
+			ItemData data = new ItemData();
+			data.setValue(itemData.getKey());
+			data.setTitle(itemData.getKey());
+			data.setBadge(itemData.getValue().toString());
+			data.setIcon("common/folder");
+			items.add(data);
+		}
+		return items;
 	}
 	
 	public void startJob(String name, String group) throws SecurityException {

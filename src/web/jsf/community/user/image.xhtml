@@ -22,30 +22,32 @@
 		<ui:define name="content">
 			<div class="content_body image_view">
 				<div class="image_preview">
-					<img src="#{baseView.baseContext}/service/image/id#{imageView.image.id}width300height1000.jpg" onclick="oo.community.showImage({id:#{imageView.image.id},width:#{imageView.image.width},height:#{imageView.image.height}})" alt="#{imageView.image.name}"/>
+					<oo:thumbnail image="#{imageView.image}" width="300" zoom="true"/>
 					<p class="image_actions">
-						<a class="link" href="#{baseView.baseContext}/service/image/id#{imageView.image.id}.jpg"><span>Fuld størrelse</span></a>
+						<oo:link href="/service/image/id#{imageView.image.id}.jpg" core="true">Fuld størrelse</oo:link>
+						<h:outputText value=" "/>
+						<oo:link href="/service/image/id#{imageView.image.id}.jpg?download=true" core="true">Download</oo:link>
 					</p>
 					<h:panelGroup rendered="#{not empty imageView.location}">
 						<div id="map_canvas" style="width:100%; height:300px; margin-top: 20px;"></div>
 						<p class="image_actions">
-							<a class="link" href="#{baseView.baseContext}/map.html#image=#{imageView.image.id}"><span>Stor kort</span></a>
+							<oo:link href="/map.html#image=#{imageView.image.id}">Stort kort</oo:link>
 						</p>
 					</h:panelGroup>
 				</div>
 				<div id="imageContainer" class="container">
 					<div class="rendering" id="imageProperties">
 						<h1>#{imageView.image.name}</h1>
-						<p class="minor"><span>Tilføjet </span><strong><h:outputText value="#{imageView.image.created}"><f:convertDateTime pattern="EEEE 'd'. d.  MMMM yyyy" locale="da_DK"/></h:outputText></strong> af <a class="link" href="#{baseView.baseContext}/#{imageView.user.username}/"><span>#{imageView.person.fullName}</span></a></p>
+						<p class="minor"><span>Tilføjet </span><strong><h:outputText value="#{imageView.image.created}"><f:convertDateTime pattern="EEEE 'd'. d.  MMMM yyyy" locale="da_DK"/></h:outputText></strong> af <oo:link href="/#{imageView.user.username}/">#{imageView.person.fullName}</oo:link></p>
 						<p class="minor dimmed fileinfo">#{imageView.image.width} &#215; #{imageView.image.height} (#{imageView.megaPixels} Megapixel), #{imageView.image.contentType}</p>
 						<c:if test="#{not empty imageView.description}">
 							<p class="resume">&#34;#{imageView.description}&#34;</p>
 						</c:if>
 						<c:if test="#{not empty imageView.imageInfo.tags}">
 							<p class="tags">
-								<ui:repeat value="#{imageView.imageInfo.tags}" var="tag" varStatus="status">
-									<a class="tag" href="#"><span>#{tag}</span></a><h:panelGroup rendered="#{!status.last}">,</h:panelGroup>
-								</ui:repeat>
+								<c:forEach items="#{imageView.imageInfo.tags}" var="tag">
+									<a class="tag" href="#"><span>#{tag}</span></a><h:outputText value=" "/>
+								</c:forEach>
 							</p>
 						</c:if>
 						<h:panelGroup rendered="#{not empty imageView.imageInfo.taken}">
@@ -108,8 +110,10 @@
 		</ui:define>
 		
 		<ui:define name="last">
-			<h:panelGroup rendered="#{not empty imageView.location}">
+			<h:panelGroup rendered="#{not empty imageView.location || imageView.canEdit}">
 				<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+			</h:panelGroup>
+			<h:panelGroup rendered="#{not empty imageView.location}">
 				<script type="text/javascript">
 				  ui.onDomReady(function() {
 				    var myLatlng = new google.maps.LatLng(#{imageView.location.latitude}, #{imageView.location.longitude});

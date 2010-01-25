@@ -13,20 +13,20 @@ oo.community.UserProfile.prototype = {
 			edit.addDelegate({
 				$click:this.editProfile.bind(this)
 			});
-			$('profileImage').observe('click',this.changeProfileImage.bind(this));
+			$('profileImage').observe('click',function(e) {e.stop();this.$click$changeImage()}.bind(this));
 		}
 	},
-	changeProfileImage :function(e) {
-		e.stop();
+	$click$changeImage :function() {
 		if (!this.imagePanel) {
-			var p = this.imagePanel = In2iGui.BoundPanel.create({width:300});
-			var up = In2iGui.Upload.create({name:'upload',url:'uploadProfileImage',maxItems:1,types:"*.jpg;*.png"});
+			var p = this.imagePanel = ui.BoundPanel.create({width:300});
+			var buttons = ui.Buttons.create({align:'center'});
+			var choose = In2iGui.Button.create({text:'Vælg billede...',highlighted:true});
+			buttons.add(choose);
+			var up = ui.Upload.create({name:'upload',url:'uploadProfileImage',widget:choose,maxItems:1,types:"*.jpg;*.png",placeholder:{title:'Vælg et billede på din computer...'}});
 			p.add(up);
-			var b = In2iGui.Button.create({text:'Vælg nyt billede...'});
-			up.setButton(b);
-			p.add(b);
-			var cancel = In2iGui.Button.create({name:'cancelChangeProfileImage',text:'Annuller'});
-			p.add(cancel);
+			var cancel = ui.Button.create({name:'cancelChangeProfileImage',text:'Annuller'});
+			buttons.add(cancel);
+			p.add(buttons);
 		}
 		this.imagePanel.position($('profileImage'));
 		this.imagePanel.show();

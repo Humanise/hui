@@ -6,22 +6,18 @@ public class SecurityException extends EndUserException {
 
 	public SecurityException() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public SecurityException(String arg0) {
 		super(arg0);
-		// TODO Auto-generated constructor stub
 	}
 
 	public SecurityException(String arg0, Throwable arg1) {
 		super(arg0, arg1);
-		// TODO Auto-generated constructor stub
 	}
 
 	public SecurityException(Throwable arg0) {
 		super(arg0);
-		// TODO Auto-generated constructor stub
 	}
 
 }

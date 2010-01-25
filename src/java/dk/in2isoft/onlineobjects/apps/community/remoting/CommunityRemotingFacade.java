@@ -40,6 +40,7 @@ import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.SecurityException;
 import dk.in2isoft.onlineobjects.core.UserQuery;
+import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.model.EmailAddress;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Image;
@@ -79,7 +80,7 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 
 	public AsynchronousProcessDescriptor getProcess(String key) throws Exception {
 		try {
-			ApplicationSession toolSession = getUserSession().getToolSession(communityController);
+			ApplicationSession toolSession = getUserSession().getApplicationSession(communityController);
 			log.debug(toolSession);
 			return toolSession.getAsynchronousProcessDescriptor(key);
 		} catch (Exception e) {
@@ -144,6 +145,8 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 		}
 		return invites;
 	}
+	
+	/////////////////////////// Settings ////////////////////////
 
 	public Person getUsersMainPerson() throws EndUserException {
 		List<Person> persons = modelService.getChildren(getUserSession().getUser(), Person.class);
@@ -158,6 +161,18 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 		Person person = getUsersMainPerson();
 		List<EmailAddress> addresses = modelService.getChildren(person, EmailAddress.class);
 		return addresses;
+	}
+
+	public void updateUsersMainPerson(Person dummy, List<EmailAddress> adresses) throws EndUserException {
+		Priviledged priviledged = getUserSession();
+
+		Person person = getUsersMainPerson();
+		person.setGivenName(dummy.getGivenName());
+		person.setFamilyName(dummy.getFamilyName());
+		person.setNamePrefix(dummy.getNamePrefix());
+		person.setNameSuffix(dummy.getNameSuffix());
+		modelService.updateItem(person, priviledged);
+		communityDAO.updateDummyEmailAddresses(person, adresses, getUserSession());
 	}
 
 	public Invitation createInvitation(String name, String emailAddress, String message) throws EndUserException {
@@ -220,18 +235,6 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 		return modelService.getPropertyCloud(Property.KEY_COMMON_TAG,query,Image.class);
 	}
 
-	public void updateUsersMainPerson(Person dummy, List<EmailAddress> adresses) throws EndUserException {
-		Priviledged priviledged = getUserSession();
-
-		Person person = getUsersMainPerson();
-		person.setGivenName(dummy.getGivenName());
-		person.setFamilyName(dummy.getFamilyName());
-		person.setNamePrefix(dummy.getNamePrefix());
-		person.setNameSuffix(dummy.getNameSuffix());
-		modelService.updateItem(person, priviledged);
-		communityDAO.updateDummyEmailAddresses(person, adresses, getUserSession());
-	}
-
 	public ListObjects listPersons() throws EndUserException {
 		ListObjects list = new ListObjects();
 		Query<Person> query = new Query<Person>(Person.class).withPriviledged(getUserSession());
@@ -287,7 +290,9 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 		list.addHeader("Titel");
 		list.addHeader("Adresse");
 		for (InternetAddress address : addresses) {
-			list.newRow(address.getId(), "internetAddress");
+			Map<String,String> data = Maps.newHashMap();
+			data.put("address", address.getAddress());
+			list.newRow(address.getId(), "internetAddress", data);
 			list.addCell(address.getName(),"common/internet");
 			list.addCell(address.getAddress(),"monochrome/globe");
 		}
@@ -309,6 +314,9 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 	}
 	
 	public InternetAddressInfo lookupInternetAddress(String url) throws ModelException, MalformedURLException {
+		if (!url.startsWith("http")) {
+			url = "http://"+url;
+		}
 		HTMLDocument doc = new HTMLDocument(url);
 		InternetAddressInfo info = new InternetAddressInfo();
 		info.setName(doc.getTitle());
@@ -380,12 +388,8 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 	}
 	
 	public void updateImageInfo(ImageInfo info) throws EndUserException {
-		Image image = modelService.get(Image.class, info.getId());
-		image.setName(info.getName());
-		image.overrideFirstProperty(Image.PROPERTY_DESCRIPTION, info.getDescription());
-		image.overrideFirstProperty(Property.KEY_PHOTO_TAKEN, info.getTaken());
-		image.overrideProperties(Property.KEY_COMMON_TAG, info.getTags());
-		modelService.updateItem(image, getUserSession());
+		UserSession priviledged = getUserSession();
+		imageService.updaImageInfo(info, priviledged);
 	}
 	
 	public void savePerson(Person dummy,List<EmailAddress> addresses,List<PhoneNumber> phones) throws EndUserException {
@@ -432,8 +436,12 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 		return modelService.getParent(image, Location.class);
 	}
 	
-	public List<Pair<Location, Image>> searchLocations(String query) throws EndUserException {
-		return modelService.searchPairs(new LocationQuery<Image>(Image.class).withWords(query).withPaging(0, 8)).getResult();	
+	public List<Pair<Location, Image>> searchLocations(MapQuery mapQuery) throws EndUserException {
+		LocationQuery<Image> query = new LocationQuery<Image>(Image.class).withWords(mapQuery.getWords()).withPaging(0, 50);
+		if (mapQuery.getNorthEast()!=null && mapQuery.getSouthWest()!=null) {
+			query.withBounds(mapQuery.getNorthEast(),mapQuery.getSouthWest());
+		}
+		return modelService.searchPairs(query).getResult();	
 	}
 	
 	////////////////// Services ////////////////

@@ -69,6 +69,9 @@ public class PublishingRemotingFacade extends AbstractRemotingFacade {
 	}
 
 	public boolean deleteWebPage(long id) throws EndUserException {
+		if (webModelService.isLastPageOnSite(id, getUserSession())) {
+			throw new EndUserException("The last page of a site cannot be deleted", "lastPage");
+		}
 		webModelService.deleteWebPage(id,getUserSession());
 		return true;
 	}

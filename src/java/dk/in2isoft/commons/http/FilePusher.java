@@ -29,28 +29,28 @@ public class FilePusher {
 	}
     
     public void push(HttpServletResponse response, String contentType) {
+    	if (!file.exists()) {
+            try {
+            	HeaderUtil.setNotFound(response);
+				response.getWriter().print("File: "+file.getPath()+" not found!");
+			} catch (IOException e) {
+            	HeaderUtil.setInternalServerError(response);
+			}
+			return;
+    	}
         if (!clientSideCaching) {
-            // Set to expire far in the past.
-            response.setHeader("Expires", "Sat, 6 May 1995 12:00:00 GMT");
-            // Set standard HTTP/1.1 no-cache headers.
-            response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
-            // Set IE extended HTTP/1.1 no-cache headers (use addHeader).
-            response.addHeader("Cache-Control", "post-check=0, pre-check=0");
-            // Set standard HTTP/1.0 no-cache header.
-            response.setHeader("Pragma", "no-cache");
+        	HeaderUtil.setNoCache(response);
         }
         else {
-            response.setDateHeader("Last-Modified", file.lastModified());
-            response.setDateHeader("Expires", System.currentTimeMillis()+1000*60*300);
-            response.setHeader("Cache-Control","max-age=2592000");
-            response.setDateHeader("Date", System.currentTimeMillis());
+        	HeaderUtil.setModified(file,response);
+            HeaderUtil.setOneMonthCache(response);
         }
         if (contentType!=null && contentType.length()>0) {
             response.setContentType(contentType);
         }
         response.setContentLength((int) file.length());
         if (download) {
-            response.setHeader("Content-Disposition","attachment; filename=\"" + file.getName() + "\"");
+        	HeaderUtil.setContentDisposition(file.getName(),response);
         }
         try {
         	FileInputStream input = new FileInputStream(file);
@@ -69,6 +69,7 @@ public class FilePusher {
                 response.getWriter().print("File: "+file.getPath()+" not found!");
             }
             catch (IOException ignore) {}
+            catch (IllegalStateException ignore) {}
         }
     }
     

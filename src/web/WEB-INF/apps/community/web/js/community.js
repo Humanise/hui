@@ -31,6 +31,29 @@ oo.community = {
 	}
 };
 
+ui.get().listen({
+	$click$barPublic : function() {
+		document.location=oo.appContext+'/';
+	},
+	$click$barWebsite : function() {
+		document.location=oo.appContext+'/'+oo.user.userName+'/site/';
+	},
+	$click$barUser : function() {
+		document.location=oo.appContext+'/'+oo.user.userName+'/';
+	},
+	$click$barTools : function() {
+		document.location=oo.appContext+'/'+oo.user.userName+'/private/';
+	},
+	$click$barLogOut : function() {
+		CoreSecurity.logOut(function() {
+			In2iGui.showMessage('Du er nu logget ud');
+			window.setTimeout(function() {
+				document.location.reload();
+			},1000);
+		});
+	} 
+})
+
 oo.community.util = {
 	expand : function(container,toHide,toShow) {
 		var width = container.getWidth();
@@ -53,7 +76,6 @@ oo.community.Chrome = function() {
 	new oo.community.Chrome.SignUp();
 	new oo.community.Chrome.UserInfo();
 	new oo.community.Chrome.Search();
-	//new oo.community.SearchField({element:'casing_search'});
 }
 
 oo.community.Chrome.get = function() {
@@ -168,7 +190,11 @@ oo.community.Chrome.Search.prototype = {
 			return;
 		}
 		this.result.style.display='block';
-		this.result.update(this.buildUsers(result.users));
+		if (result.users.length==0) {
+			this.result.update('<div class="casing_result_empty">Søgning gav intet resultat</div>');
+		} else {
+			this.result.update(this.buildUsers(result.users));
+		}
 		this.waitingResult = null;
 	},
 	checkWaitingResult : function() {
@@ -178,10 +204,10 @@ oo.community.Chrome.Search.prototype = {
 		var html = '<div class="casing_result_group"><h2>Brugere</h2><ul>';
 		users.each(function(entry) {
 			html+='<li class="user">'+
-			'<div class="thumbnail"></div>'+
-			'<p class="name"><a href="'+oo.community.Chrome.buildUserProfileURL(entry.user.username)+'" class="link"><span>'+entry.person.fullName+'</span></a></p>'+
+			oo.buildThumbnailHtml({width: 40,height:45,variant:'user'})+
+			'<p class="name"><a href="'+oo.community.Chrome.buildUserProfileURL(entry.user.username)+'" class="oo_link"><span>'+entry.person.fullName+'</span></a></p>'+
 			'<p class="username">'+entry.user.username+'</p>'+
-			'<p class="website"><a href="'+oo.community.Chrome.buildUserWebsiteURL(entry.user.username)+'" class="link"><span>Website »</span></a></p>'+
+			'<p class="website"><a href="'+oo.community.Chrome.buildUserWebsiteURL(entry.user.username)+'" class="oo_link oo_link_dimmed"><span>Website »</span></a></p>'+
 			'</li>';
 		});
 		html+= '</ul></div>';
@@ -437,41 +463,6 @@ oo.community.Chrome.SignUp.prototype = {
 //////////////////////////////////// Widgets ///////////////////////////////
 
 
-oo.Gallery = function(options) {
-	this.options = options;
-	this.element = $(options.element);
-	this.images = options.images;
-	ui.extend(this);
-	this.addBehavior();
-}
 
-oo.Gallery.prototype = {
-	addBehavior : function() {
-		var self = this;
-		/*this.element.select('ol a').each(function(node,i) {
-			node.observe('click',function(e) {self.imageWasClicked(i);e.stop();});
-		});*/
-		var slideShow = this.element.select('.oo_gallery_slideshow')[0];
-		if (slideShow) {
-			slideShow.observe('click',function(e) {
-				self.imageWasClicked(0);e.stop();
-			});
-		}
-	},
-	imageWasClicked : function(index) {
-		this.getViewer().show(index);
-	},
-	getViewer : function() {
-		if (!this.imageViewer) {
-			var v = this.imageViewer = ui.ImageViewer.create();
-			v.listen(this);
-			v.addImages(this.images);
-		}
-		return this.imageViewer;
-	},
-	$resolveImageUrl : function(image,width,height) {
-		return oo.baseContext+'/service/image/id'+image.id+'width'+Math.round(width)+'height'+Math.round(height)+'.jpg';
-	}
-}
 
 ui.onDomReady(function() {oo.community.Chrome.get()});

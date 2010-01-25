@@ -10,6 +10,9 @@ public class ValidationUtil {
 	}
 	
 	public static boolean isValidUsername(String username) {
+		if ("core".equals(username) || "app".equals(username) || "service".equals(username) || "dwr".equals(username) || "In2iGui".equals(username)) {
+			return false;
+		}
 		return StringUtils.containsOnly(username, "abcdefghijklmnopqrstuvwxyz0123456789");
 	}
 }

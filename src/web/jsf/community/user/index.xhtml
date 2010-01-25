@@ -15,79 +15,82 @@
 		</ui:define>
 		
 		<ui:define name="content">
-			<div class="profile_view">
-				<div class="content_body">
-					<div class="profile_image" id="profileImage">
-						<c:if test="#{userProfileView.image!=null}">
-							<div class="profile_image_photo" style="background: url('#{baseView.baseContext}/service/image/id#{userProfileView.image.id}width90height105cropped.jpg')">
-							
+			<c:if test="#{userProfileView.user!=null}">
+				<div class="profile_view">
+					<div class="content_body">
+						<div class="profile_view_left">
+							<div class="profile_image" id="profileImage">
+								<c:if test="#{userProfileView.image!=null}">
+									<div class="profile_image_photo" style="background: url('#{baseView.baseContext}/service/image/id#{userProfileView.image.id}width90height105cropped.jpg')"></div>
+								</c:if>
 							</div>
-						</c:if>
-					</div>
-					<div class="profile_info">
-						<div id="profileContainer">
-							<div id="profileInfo" class="rendering">
-								<h1>#{userProfileView.person.fullName}</h1>
-								<ul class="icons">
-									<li class="url">
-										<a href="http://#{baseView.baseDomainContext}/#{userProfileView.user.username}/site/" class="link link_next"><span>Hjemmeside</span></a>
-									</li>
-								</ul>
-								<c:if test="#{userProfileView.info.resume!=null &amp;&amp; fn:length(userProfileView.info.resume)>0}">
-								<p class="resume">&#34;#{userProfileView.info.resume}&#34;</p>
-								</c:if>
-								<ul class="icons">
-									<c:if test="#{fn:length(userProfileView.info.emails)>1}">
-										<c:forEach items="#{userProfileView.info.emails}" var="item">
-											<li class="mail"><a href="mailto:#{item.address}" class="link"><span>#{item.address}</span></a></li>
-										</c:forEach>
+							<ui:fragment rendered="#{userProfileView.canEdit}">
+								<p style="margin: 10px 0 0; text-align: center;"><gui:button text="Skift billede" name="changeImage" small="true"/></p>
+							</ui:fragment>
+						</div>
+						<div class="profile_info">
+							<div id="profileContainer">
+								<div id="profileInfo" class="rendering">
+									<h1>#{userProfileView.person.fullName}</h1>
+									<ul class="icons">
+										<li class="url">
+											<oo:link href="/#{userProfileView.user.username}/site/">Hjemmeside</oo:link>
+										</li>
+									</ul>
+									<c:if test="#{userProfileView.info.resume!=null &amp;&amp; fn:length(userProfileView.info.resume)>0}">
+									<p class="resume">&#34;#{userProfileView.info.resume}&#34;</p>
 									</c:if>
-									<c:if test="#{fn:length(userProfileView.info.urls)>0}">
-										<c:forEach items="#{userProfileView.info.urls}" var="item">
-											<li class="url"><a href="#{item.address}" class="link"><span>#{item.address}</span></a></li>
-										</c:forEach>
+									<ul class="icons">
+										<c:if test="#{fn:length(userProfileView.info.emails)>1}">
+											<c:forEach items="#{userProfileView.info.emails}" var="item">
+												<li class="mail"><a href="mailto:#{item.address}" class="oo_link"><span>#{item.address}</span></a></li>
+											</c:forEach>
+										</c:if>
+										<c:if test="#{fn:length(userProfileView.info.urls)>0}">
+											<c:forEach items="#{userProfileView.info.urls}" var="item">
+												<li class="url"><a href="#{item.address}" class="oo_link"><span>#{item.address}</span></a></li>
+											</c:forEach>
+										</c:if>
+										<c:if test="#{fn:length(userProfileView.info.phones)>0}">
+											<c:forEach items="#{userProfileView.info.phones}" var="item">
+												<li class="phone">#{item.number}</li>
+											</c:forEach>
+										</c:if>
+									</ul>
+									<c:if test="#{userProfileView.info.sex!=null}">
+										<p><span class="label">Køn: </span>#{userProfileView.info.sex ? 'Mand' : 'Kvinde'}</p>
 									</c:if>
-									<c:if test="#{fn:length(userProfileView.info.phones)>0}">
-										<c:forEach items="#{userProfileView.info.phones}" var="item">
-											<li class="phone">#{item.number}</li>
-										</c:forEach>
+									<c:if test="#{fn:length(userProfileView.info.interests)>0}">
+										<p><span class="label">Interesser: </span>
+											<c:forEach items="#{userProfileView.info.interests}" var="item">
+												#{item}
+											</c:forEach>
+										</p>
 									</c:if>
-								</ul>
-								<c:if test="#{userProfileView.info.sex!=null}">
-									<p><span class="label">Køn: </span>#{userProfileView.info.sex ? 'Mand' : 'Kvinde'}</p>
-								</c:if>
-								<c:if test="#{fn:length(userProfileView.info.interests)>0}">
-									<p><span class="label">Interesser: </span>
-										<c:forEach items="#{userProfileView.info.interests}" var="item">
-											#{item}
-										</c:forEach>
-									</p>
-								</c:if>
-								<c:if test="#{fn:length(userProfileView.info.music)>0}">
-									<p><span class="label">Yndlingsmusik: </span>
-										<c:forEach items="#{userProfileView.info.music}" var="item">
-											#{item}
-										</c:forEach>
-									</p>
-								</c:if>
-								<ui:fragment rendered="#{userProfileView.canEdit}">
-									<p style="margin-top: 20px;"><gui:button text="Rediger profil" name="editProfile" small="true"/></p>
-								</ui:fragment>
+									<c:if test="#{fn:length(userProfileView.info.music)>0}">
+										<p><span class="label">Yndlingsmusik: </span>
+											<c:forEach items="#{userProfileView.info.music}" var="item">
+												#{item}
+											</c:forEach>
+										</p>
+									</c:if>
+									<ui:fragment rendered="#{userProfileView.canEdit}">
+										<p style="margin-top: 20px;"><gui:button text="Rediger profil" name="editProfile" small="true"/></p>
+									</ui:fragment>
+								</div>
 							</div>
 						</div>
 					</div>
+					<h:panelGroup rendered="#{not empty userProfileView.latestImages.result.list}">
+					<div class="content_body images">
+						<h2>Seneste billeder</h2>
+						<oo:gallery model="#{userProfileView.latestImages}" var="image">
+							<oo:thumbnail image="#{image}" width="68" height="68" href="/#{userProfileView.user.username}/images/#{image.id}.html"/>
+						</oo:gallery>
+					</div>
+					</h:panelGroup>
 				</div>
-				<h:panelGroup rendered="#{not empty userProfileView.latestImages.result.list}">
-				<div class="content_body images">
-					<h2>Seneste billeder</h2>
-					<oo:gallery model="#{userProfileView.latestImages}" var="image">
-						<a href="#{baseView.baseContext}/#{userProfileView.user.username}/images/#{image.id}.html">
-							<img src="#{baseView.baseContext}/service/image/id#{image.id}thumbnail68cropped.jpg" width="68" height="68" alt="#{image.name}"/>
-						</a>
-					</oo:gallery>
-				</div>
-				</h:panelGroup>
-			</div>
+			</c:if>
 		</ui:define>
 	</ui:composition>
 </html>

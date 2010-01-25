@@ -3,8 +3,6 @@ package dk.in2isoft.onlineobjects.apps.community;
 import java.io.File;
 import java.io.IOException;
 
-import org.springframework.beans.factory.InitializingBean;
-
 import dk.in2isoft.in2igui.FileBasedInterface;
 import dk.in2isoft.in2igui.Interface;
 import dk.in2isoft.onlineobjects.ui.Request;
@@ -16,12 +14,14 @@ public class PrivateSpaceController {
 	private File images;
 	private File settings;
 	private File bookmarks;
+	private File integration;
 	
 	protected void displayPersons(Request request) throws IOException {
 		if (persons==null) {
 			persons = communityController.getFile("web","gui","private","persons.gui.xml");
 		}
 		Interface ui = new FileBasedInterface(persons);
+		ui.setParameter("username", request.getSession().getUser().getUsername());
 		ui.render(request.getRequest(),request.getResponse());
 	}
 
@@ -30,6 +30,7 @@ public class PrivateSpaceController {
 			images = communityController.getFile("web","gui","private","images.gui.xml");		
 		}
 		Interface ui = new FileBasedInterface(images);
+		ui.setParameter("username", request.getSession().getUser().getUsername());
 		ui.render(request.getRequest(),request.getResponse());
 	}
 
@@ -38,6 +39,16 @@ public class PrivateSpaceController {
 			bookmarks = communityController.getFile("web","gui","private","bookmarks.gui.xml");
 		}
 		Interface ui = new FileBasedInterface(bookmarks);
+		ui.setParameter("username", request.getSession().getUser().getUsername());
+		ui.render(request.getRequest(),request.getResponse());
+	}
+
+	public void displayIntegration(Request request) throws IOException {
+		if (integration==null) {
+			integration = communityController.getFile("web","gui","private","integration.gui.xml");
+		}
+		Interface ui = new FileBasedInterface(integration);
+		ui.setParameter("username", request.getSession().getUser().getUsername());
 		ui.render(request.getRequest(),request.getResponse());
 	}
 
@@ -46,6 +57,7 @@ public class PrivateSpaceController {
 			settings = communityController.getFile("web","gui","private","settings.gui.xml");
 		}
 		Interface ui = new FileBasedInterface(settings);
+		ui.setParameter("username", request.getSession().getUser().getUsername());
 		ui.render(request.getRequest(),request.getResponse());
 	}
 

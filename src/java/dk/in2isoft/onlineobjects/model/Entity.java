@@ -34,7 +34,7 @@ public class Entity extends Item {
 
 	@Override
 	public String getIcon() {
-		return "Element/Generic";
+		return "common/object";
 	}
 
 	public String getType() {
@@ -69,6 +69,16 @@ public class Entity extends Item {
 			Property element = iter.next();
 			if (element!=null && element.getKey().equals(key)) {
 				return element.getDateValue();
+			}
+		}
+		return null;
+	}
+	
+	public Double getPropertyDoubleValue(String key) {
+		for (Iterator<Property> iter = properties.iterator(); iter.hasNext();) {
+			Property element = iter.next();
+			if (element!=null && element.getKey().equals(key)) {
+				return element.getDoubleValue();
 			}
 		}
 		return null;

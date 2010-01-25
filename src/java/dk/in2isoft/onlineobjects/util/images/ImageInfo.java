@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Date;
 
 public class ImageInfo {
-	
+
 	private long id;
 	private String name;
 	private String description;
@@ -12,6 +12,7 @@ public class ImageInfo {
 	private String cameraMake;
 	private String cameraModel;
 	private Collection<String> tags;
+	private ImageLocation location;
 
 	public void setName(String name) {
 		this.name = name;
@@ -67,5 +68,44 @@ public class ImageInfo {
 
 	public String getCameraModel() {
 		return cameraModel;
+	}
+
+	public void setLocation(ImageLocation location) {
+		this.location = location;
+	}
+
+	public ImageLocation getLocation() {
+		return location;
+	}
+
+	public static class ImageLocation {
+		private Double latitude;
+		private Double longitude;
+		
+		public ImageLocation() {
+			
+		}
+		
+		public ImageLocation(double latitude, double longitude) {
+			super();
+			this.latitude = latitude;
+			this.longitude = longitude;
+		}
+
+		public void setLatitude(Double latitude) {
+			this.latitude = latitude;
+		}
+
+		public Double getLatitude() {
+			return latitude;
+		}
+
+		public void setLongitude(Double longitude) {
+			this.longitude = longitude;
+		}
+
+		public Double getLongitude() {
+			return longitude;
+		}
 	}
 }

@@ -2,10 +2,12 @@ package dk.in2isoft.onlineobjects.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Properties;
 
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.Resource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -58,5 +60,17 @@ public abstract class AbstractTestCase extends AbstractJUnit4SpringContextTests 
 
 	public ApplicationContext getContext() {
 		return context;
+	}
+	
+	protected String getProperty(String name) {
+		Resource resource = context.getResource("test.properties");
+		Properties p = new Properties();
+		try {
+			p.load(resource.getInputStream());
+			return p.getProperty(name);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

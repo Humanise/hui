@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<html 
+	xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:oo="http://www.onlineobjects.com/jsf" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:gui="http://www.in2isoft.dk/in2igui"
+>
+	<ui:composition template="../chrome.xhtml">
+		<ui:param name="top" value=""/>
+		
+		<ui:define name="title">
+			Kort<h:outputText value=" &#187; "/>
+		</ui:define>
+		
+		<ui:define name="body">
+			<ul class="breadcrumb">
+				<li><a href="#{baseView.baseContext}/">OnlineMe</a></li>
+				<li><a href="#{baseView.baseContext}/support/">Support</a></li>
+				<li><a href="#{baseView.baseContext}/support/about.xhtml">Om OnlineMe</a></li>
+			</ul>
+			<div class="article" style="padding: 20px;">
+				<h1>Om OnlineMe</h1>
+				<p>OnlineMe er et online fællesskab</p>
+			</div>
+		</ui:define>
+		
+	</ui:composition>
+</html>

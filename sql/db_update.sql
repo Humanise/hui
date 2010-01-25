@@ -5,6 +5,9 @@
     alter table application 
         drop constraint FK5CA40550E94A3D71;
 
+    alter table comment 
+        drop constraint FK38A5EE5FE94A3D71;
+
     alter table compounddocument 
         drop constraint FK2E80BFC6E94A3D71;
 
@@ -38,6 +41,9 @@
     alter table invitation 
         drop constraint FK473F7799E94A3D71;
 
+    alter table location 
+        drop constraint FK714F9FB5E94A3D71;
+
     alter table person 
         drop constraint FKC4E39B55E94A3D71;
 
@@ -47,17 +53,29 @@
     alter table property 
         drop constraint FKC4CDDDD559D64C8B;
 
+    alter table rating 
+        drop constraint FKC815B19DE94A3D71;
+
     alter table relation 
-        drop constraint FKDEF3F9FCAC959B89;
+        drop constraint FKDEF3F9FC165C5561;
 
     alter table relation 
         drop constraint FKDEF3F9FCCFFF80E;
 
     alter table relation 
-        drop constraint FKDEF3F9FC165C5561;
+        drop constraint FKDEF3F9FCAC959B89;
+
+    alter table remoteaccount 
+        drop constraint FK7553D727E94A3D71;
 
     alter table topic 
         drop constraint FK696CD2FE94A3D71;
+
+    alter table video 
+        drop constraint FK6B0147BE94A3D71;
+
+    alter table vote 
+        drop constraint FK3752EAE94A3D71;
 
     alter table webnode 
         drop constraint FK48F7AF56E94A3D71;
@@ -74,6 +92,8 @@
     drop table "user";
 
     drop table application;
+
+    drop table comment;
 
     drop table compounddocument;
 
@@ -99,6 +119,8 @@
 
     drop table item;
 
+    drop table location;
+
     drop table person;
 
     drop table phonenumber;
@@ -107,9 +129,17 @@
 
     drop table property;
 
+    drop table rating;
+
     drop table relation;
 
+    drop table remoteaccount;
+
     drop table topic;
+
+    drop table video;
+
+    drop table vote;
 
     drop table webnode;
 
@@ -134,6 +164,12 @@
 
     create table application (
         id int8 not null,
+        primary key (id)
+    );
+
+    create table comment (
+        id int8 not null,
+        text varchar(255),
         primary key (id)
     );
 
@@ -220,6 +256,14 @@
         primary key (id)
     );
 
+    create table location (
+        id int8 not null,
+        latitude float8,
+        longitude float8,
+        altitude float8,
+        primary key (id)
+    );
+
     create table person (
         id int8 not null,
         givenName varchar(255),
@@ -253,8 +297,16 @@
         id int8 not null,
         key varchar(255),
         value varchar(4000),
+        doubleValue float8,
+        dateValue timestamp,
         enity_id int8,
         sortorder int4,
+        primary key (id)
+    );
+
+    create table rating (
+        id int8 not null,
+        rating float8,
         primary key (id)
     );
 
@@ -267,7 +319,28 @@
         primary key (id)
     );
 
+    create table remoteaccount (
+        id int8 not null,
+        username varchar(255),
+        domain varchar(255),
+        primary key (id)
+    );
+
     create table topic (
+        id int8 not null,
+        primary key (id)
+    );
+
+    create table video (
+        id int8 not null,
+        fileSize int8,
+        contentType varchar(255),
+        width int4,
+        height int4,
+        primary key (id)
+    );
+
+    create table vote (
         id int8 not null,
         primary key (id)
     );
@@ -300,6 +373,11 @@
 
     alter table application 
         add constraint FK5CA40550E94A3D71 
+        foreign key (id) 
+        references entity;
+
+    alter table comment 
+        add constraint FK38A5EE5FE94A3D71 
         foreign key (id) 
         references entity;
 
@@ -358,6 +436,11 @@
         foreign key (id) 
         references entity;
 
+    alter table location 
+        add constraint FK714F9FB5E94A3D71 
+        foreign key (id) 
+        references entity;
+
     alter table person 
         add constraint FKC4E39B55E94A3D71 
         foreign key (id) 
@@ -373,14 +456,9 @@
         foreign key (enity_id) 
         references entity;
 
-    alter table relation 
-        add constraint FKDEF3F9FCAC959B89 
-        foreign key (super_entity_id) 
-        references entity;
-
-    alter table relation 
-        add constraint FKDEF3F9FCCFFF80E 
-        foreign key (sub_entity_id) 
+    alter table rating 
+        add constraint FKC815B19DE94A3D71 
+        foreign key (id) 
         references entity;
 
     alter table relation 
@@ -388,8 +466,33 @@
         foreign key (id) 
         references item;
 
+    alter table relation 
+        add constraint FKDEF3F9FCCFFF80E 
+        foreign key (sub_entity_id) 
+        references entity;
+
+    alter table relation 
+        add constraint FKDEF3F9FCAC959B89 
+        foreign key (super_entity_id) 
+        references entity;
+
+    alter table remoteaccount 
+        add constraint FK7553D727E94A3D71 
+        foreign key (id) 
+        references entity;
+
     alter table topic 
         add constraint FK696CD2FE94A3D71 
+        foreign key (id) 
+        references entity;
+
+    alter table video 
+        add constraint FK6B0147BE94A3D71 
+        foreign key (id) 
+        references entity;
+
+    alter table vote 
+        add constraint FK3752EAE94A3D71 
         foreign key (id) 
         references entity;
 

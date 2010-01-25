@@ -3,9 +3,6 @@ var imagesController = {
 		{drag:'image',drop:'tag'}
 	],
 	images : [],
-	$interfaceIsReady : function() {
-		imageGallery.addDelegate({$resolveImageUrl:this.$resolveImageUrl});
-	},
 	
 	
 	$drop$image$tag : function(dragged,dropped) {

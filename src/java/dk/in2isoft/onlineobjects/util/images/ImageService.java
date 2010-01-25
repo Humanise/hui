@@ -2,7 +2,6 @@ package dk.in2isoft.onlineobjects.util.images;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.regex.Matcher;
@@ -23,19 +22,21 @@ import com.drew.metadata.exif.ExifDirectory;
 import com.drew.metadata.exif.GpsDirectory;
 import com.drew.metadata.iptc.IptcDirectory;
 
-import dk.in2isoft.commons.geo.GeoLatLng;
+import dk.in2isoft.commons.geo.GeoDistance;
 import dk.in2isoft.commons.util.AbstractCommandLineInterface;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
+import dk.in2isoft.onlineobjects.core.ModelException;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Priviledged;
+import dk.in2isoft.onlineobjects.core.SecurityException;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.Location;
 import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.services.ConfigurationService;
 import dk.in2isoft.onlineobjects.services.FileService;
 import dk.in2isoft.onlineobjects.services.StorageService;
-import eu.medsea.mimeutil.MimeType;
+import dk.in2isoft.onlineobjects.util.images.ImageInfo.ImageLocation;
 import eu.medsea.mimeutil.MimeUtil2;
 
 public class ImageService extends AbstractCommandLineInterface {
@@ -46,12 +47,8 @@ public class ImageService extends AbstractCommandLineInterface {
 	private ConfigurationService configurationService;
 	private FileService fileService;
 	private ModelService modelService;
-	private MimeUtil2 mimeUtil;
 
 	public ImageService() {
-		mimeUtil = new MimeUtil2();
-		mimeUtil.registerMimeDetector("eu.medsea.mimeutil.detector.ExtensionMimeDetector");
-		mimeUtil.registerMimeDetector("eu.medsea.mimeutil.detector.MagicMimeMimeDetector");
 	}
 	
 	public File getThumbnail(long id, int size) throws EndUserException {
@@ -167,7 +164,7 @@ public class ImageService extends AbstractCommandLineInterface {
 					Object object = gpsDirectory.getObject(tag.getTagType());
 					if (object instanceof Rational[]) {
 						Rational[] pos = (Rational[]) object;
-						GeoLatLng convert = new GeoLatLng(pos[0].longValue(), pos[1].longValue(), pos[2].longValue());
+						GeoDistance convert = new GeoDistance(pos[0].longValue(), pos[1].longValue(), pos[2].longValue());
 						log.info(tag.getTagName()+" != "+convert.getDecimal());
 					} else {
 						log.info(tag.getTagName()+" = "+object);
@@ -183,7 +180,7 @@ public class ImageService extends AbstractCommandLineInterface {
 	}
 	
 	private double getDecimal(Rational[] triple, String ref) {
-		GeoLatLng point = new GeoLatLng(triple[0].doubleValue(),triple[1].doubleValue(),triple[2].doubleValue());
+		GeoDistance point = new GeoDistance(triple[0].doubleValue(),triple[1].doubleValue(),triple[2].doubleValue());
 		double decimal = point.getDecimal();
 		if (ref.equals("S") || ref.equals("W")) {
 			decimal*=-1;
@@ -193,7 +190,8 @@ public class ImageService extends AbstractCommandLineInterface {
 	}
 	
 	public void synchronizeContentType(Image image, Priviledged priviledged) throws EndUserException {
-		String mimeType = fileService.getMimeType(image.getImageFile());
+		File file = getImageFile(image);
+		String mimeType = fileService.getMimeType(file);
 		if (!StringUtils.equals(mimeType, image.getContentType())) {
 			image.setContentType(mimeType);
 			modelService.updateItem(image, priviledged);
@@ -201,7 +199,8 @@ public class ImageService extends AbstractCommandLineInterface {
 	}
 	
 	public void synchronizeMetaData(Image image, Priviledged priviledged) throws EndUserException {
-		ImageMetaData metaData = getMetaData(image.getImageFile());
+		File file = getImageFile(image);
+		ImageMetaData metaData = getMetaData(file);
 		boolean modified = false;
 		Date taken = image.getPropertyDateValue(Property.KEY_PHOTO_TAKEN);
 		if (taken==null) {
@@ -244,6 +243,52 @@ public class ImageService extends AbstractCommandLineInterface {
 		}
 	}
 
+	public ImageInfo getImageInfo(Image image) throws ModelException {
+		ImageInfo info = new ImageInfo();
+		info.setId(image.getId());
+		info.setName(image.getName());
+		info.setTaken(image.getPropertyDateValue(Property.KEY_PHOTO_TAKEN));
+		info.setDescription(image.getPropertyValue(Image.PROPERTY_DESCRIPTION));
+		info.setCameraMake(image.getPropertyValue(Property.KEY_PHOTO_CAMERA_MAKE));
+		info.setCameraModel(image.getPropertyValue(Property.KEY_PHOTO_CAMERA_MODEL));
+		info.setTags(image.getPropertyValues(Property.KEY_COMMON_TAG));
+		Location location = modelService.getParent(image, Location.class);
+		if (location!=null) {
+			info.setLocation(new ImageLocation(location.getLatitude(), location.getLongitude()));
+		}
+		return info;
+	}
+	
+	public void updaImageInfo(ImageInfo info, Priviledged priviledged) throws ModelException, SecurityException {
+
+		Image image = modelService.get(Image.class, info.getId());
+		image.setName(info.getName());
+		image.overrideFirstProperty(Image.PROPERTY_DESCRIPTION, info.getDescription());
+		image.overrideFirstProperty(Property.KEY_PHOTO_TAKEN, info.getTaken());
+		image.overrideProperties(Property.KEY_COMMON_TAG, info.getTags());
+		modelService.updateItem(image, priviledged);
+		Location location = modelService.getParent(image, Location.class);
+		if (info.getLocation()==null) {
+			if (location!=null) {
+				modelService.deleteEntity(location, priviledged);
+			}
+			return;
+		}
+		if (info.getLocation()==null && location!=null) {
+			modelService.deleteEntity(location, priviledged);
+		} else if (info.getLocation()!=null && location==null) {
+			location = new Location();
+			location.setLatitude(info.getLocation().getLatitude());
+			location.setLongitude(info.getLocation().getLongitude());
+			modelService.createItem(location, priviledged);
+			modelService.createRelation(location, image, priviledged);
+		} else {
+			location.setLatitude(info.getLocation().getLatitude());
+			location.setLongitude(info.getLocation().getLongitude());			
+			modelService.updateItem(location, priviledged);
+		}
+	}
+
 	public void setStorageService(StorageService storageService) {
 		this.storageService = storageService;
 	}
@@ -268,23 +313,29 @@ public class ImageService extends AbstractCommandLineInterface {
 		return modelService;
 	}
 
-	public ImageInfo getImageInfo(Image image) {
-		ImageInfo info = new ImageInfo();
-		info.setId(image.getId());
-		info.setName(image.getName());
-		info.setTaken(image.getPropertyDateValue(Property.KEY_PHOTO_TAKEN));
-		info.setDescription(image.getPropertyValue(Image.PROPERTY_DESCRIPTION));
-		info.setCameraMake(image.getPropertyValue(Property.KEY_PHOTO_CAMERA_MAKE));
-		info.setCameraModel(image.getPropertyValue(Property.KEY_PHOTO_CAMERA_MODEL));
-		info.setTags(image.getPropertyValues(Property.KEY_COMMON_TAG));
-		return info;
-	}
-
 	public void setFileService(FileService fileService) {
 		this.fileService = fileService;
 	}
 
 	public FileService getFileService() {
 		return fileService;
+	}
+
+	public File getImageFile(Image image) {
+		File folder = storageService.getItemFolder(image);
+		return new File(folder,"original");
+	}
+
+	public void changeImageFile(Image image, File file,String contentType)
+	throws EndUserException {
+		String mimeType = fileService.getMimeType(file);
+		
+		int[] dimensions = getImageDimensions(file);
+		image.setWidth(dimensions[0]);
+		image.setHeight(dimensions[1]);
+		image.setContentType(contentType);
+		image.setFileSize(file.length());
+		File folder = storageService.getItemFolder(image);
+		file.renameTo(new File(folder,"original"));
 	}
 }

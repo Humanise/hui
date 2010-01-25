@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:util="http://www.springframework.org/schema/util"
+  	xmlns:dwr="http://www.directwebremoting.org/schema/spring-dwr"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+        http://www.directwebremoting.org/schema/spring-dwr
+    	http://www.directwebremoting.org/schema/spring-dwr-2.0.xsd
+    ">
+    
+    <dwr:configuration>
+	    <dwr:convert type="bean" class="java.lang.Class"/>
+	    
+	    <dwr:convert type="bean" class="dk.in2isoft.onlineobjects.apps.desktop.SearchResult"/>
+	    <dwr:convert type="bean" class="dk.in2isoft.onlineobjects.apps.desktop.Window"/>
+	    <dwr:convert type="bean" class="dk.in2isoft.onlineobjects.apps.desktop.EntityWindow"/>
+	    <dwr:convert type="bean" class="dk.in2isoft.onlineobjects.apps.desktop.WindowProperty"/>
+	    
+	    <dwr:convert type="bean" class="dk.in2isoft.onlineobjects.publishing.remoting.*"/>
+	    <dwr:convert type="bean" class="dk.in2isoft.onlineobjects.core.Pair"/>
+	    <dwr:convert type="bean" class="dk.in2isoft.onlineobjects.util.images.ImageInfo"/>
+	    <dwr:convert type="bean" class="dk.in2isoft.onlineobjects.util.images.ImageInfo$ImageLocation"/>
+	    
+	    <dwr:convert type="bean" class="dk.in2isoft.onlineobjects.ui.AsynchronousProcessDescriptor"/>
+	    <dwr:convert type="bean" class="dk.in2isoft.in2igui.data.*"/>
+	    <dwr:convert type="bean" class="dk.in2isoft.onlineobjects.model.*"/>
+	    <dwr:convert type="bean" class="dk.in2isoft.onlineobjects.model.User">
+	    	<dwr:exclude method="password"/>
+	    </dwr:convert>
+	    <dwr:convert class="java.lang.Exception" type="exception">
+	    	<dwr:include method="message"/>
+	    </dwr:convert>
+    </dwr:configuration>
+    
+    
+    <bean id="publishingRemotingFacade" class="dk.in2isoft.onlineobjects.publishing.remoting.PublishingRemotingFacade" autowire="byType">
+    	<dwr:remote javascript="CorePublishing">
+    	 	<dwr:include method="getPageInfo"/>
+    	 	<dwr:include method="updatePageInfo"/>
+    	 	<dwr:include method="changePageTemplate"/>
+    	 	<dwr:include method="getDocumentClasses"/>
+    	 	<dwr:include method="createWebPage"/>
+    	 	<dwr:include method="deleteWebPage"/>
+    	 	<dwr:include method="updateWebNode"/>
+    	 	<dwr:include method="moveNodeUp"/>
+    	 	<dwr:include method="moveNodeDown"/>
+    	
+    	</dwr:remote>
+   	</bean>
+   	
+   	<bean id="partsRemotingFacade" class="dk.in2isoft.onlineobjects.publishing.remoting.PartRemotingFacade" autowire="byType">
+    	 <dwr:remote javascript="CoreParts">
+    	 	<dwr:include method="updateHeaderPart"/>
+    	 	<dwr:include method="updateHtmlPart"/>
+    	 	<dwr:include method="updateImagePart"/>
+    	 </dwr:remote>
+   	</bean>
+   	
+   	<bean id="securityRemotingFacade" class="dk.in2isoft.onlineobjects.remoting.SecurityRemotingFacade" autowire="byType">
+    	 <dwr:remote javascript="CoreSecurity">
+    	 	<dwr:include method="changeUser"/>
+    	 	<dwr:include method="logOut"/>
+    	 	<dwr:include method="getUser"/>
+    	 	<dwr:include method="getUsersPerson"/>
+    	 	<dwr:include method="recoverPassword"/>
+    	 	<dwr:include method="changePassword"/>
+    	 </dwr:remote>
+   	</bean>
+   	
+   	<bean id="commonRemotingFacade" class="dk.in2isoft.onlineobjects.remoting.CommonRemotingFacade" autowire="byType">
+    	 <dwr:remote javascript="Common">
+    	 	<dwr:include method="getClasses"/>
+    	 	<dwr:include method="getEntity"/>
+    	 	<dwr:include method="deleteEntity"/>
+    	 	<dwr:include method="addTag"/>
+    	 	<dwr:include method="getTagItemsWithCount"/>
+    	 	<dwr:include method="getIpLocation"/>
+    	 </dwr:remote>
+   	</bean>
+   	
+   	<bean id="imageGalleryRemotingFacade" class="dk.in2isoft.onlineobjects.publishing.imagegallery.ImageGalleryRemotingFacade" autowire="byType">
+    	 <dwr:remote javascript="ImageGalleryDocument">
+    	 	<dwr:include method="listImages"/>
+    	 	<dwr:include method="updateImage"/>
+    	 	<dwr:include method="updateImageSize"/>
+    	 	<dwr:include method="updateImagePositions"/>
+    	 	<dwr:include method="deleteImage"/>
+    	 	<dwr:include method="changeFrameStyle"/>
+    	 </dwr:remote>
+   	</bean>
+   	
+   	<bean id="compoundDocumentRemotingFacade" class="dk.in2isoft.onlineobjects.publishing.compounddocument.CompoundDocumentRemotingFacade" autowire="byType">
+    	 <dwr:remote javascript="CompoundDocumentDocument">
+    	 	<dwr:include method="addColumn"/>
+    	 	<dwr:include method="addRow"/>
+    	 	<dwr:include method="getStructure"/>
+    	 	<dwr:include method="getStructureHTML"/>
+    	 	<dwr:include method="addPart"/>
+    	 	<dwr:include method="updateColumn"/>
+    	 	<dwr:include method="removeColumn"/>
+    	 	<dwr:include method="removePart"/>
+    	 </dwr:remote>
+   	</bean>
+	
+</beans>

@@ -20,6 +20,7 @@ import dk.in2isoft.onlineobjects.apps.ApplicationController;
 import dk.in2isoft.onlineobjects.apps.ApplicationSession;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.IllegalRequestException;
+import dk.in2isoft.onlineobjects.core.StupidProgrammerException;
 import dk.in2isoft.onlineobjects.services.FileService;
 import dk.in2isoft.onlineobjects.ui.AsynchronousProcessDescriptor;
 import dk.in2isoft.onlineobjects.ui.Request;
@@ -37,8 +38,11 @@ public class DataImporter {
 
 	@SuppressWarnings("unchecked")
 	public void importMultipart(ApplicationController controller,Request request) throws IOException, EndUserException {
+		if (listener==null) {
+			throw new StupidProgrammerException("No one ever listens!");
+		}
 		log.info("Starting upload");
-		ApplicationSession session = request.getSession().getToolSession(controller);
+		ApplicationSession session = request.getSession().getApplicationSession(controller);
 		final AsynchronousProcessDescriptor process = session.createAsynchronousProcessDescriptor(listener.getProcessName());
 		if (!ServletFileUpload.isMultipartContent(request.getRequest())) {
 			process.setError(true);
@@ -85,8 +89,10 @@ public class DataImporter {
 			throw new EndUserException(e);
 		}
 		process.setCompleted(true);
-		request.getResponse().setStatus(HttpServletResponse.SC_OK);
-		request.getResponse().getWriter().write("OK");
+		HttpServletResponse response = request.getResponse();
+		response.setStatus(HttpServletResponse.SC_OK);
+		response.getWriter().write("SUCCESS");
+		log.info("Upload OK");
 	}
 
 	public void setListener(ImportListerner listener) {

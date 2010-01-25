@@ -16,14 +16,10 @@
 				<h1 class="header">Billeder</h1>
 				<oo:gallery model="#{imagesView.imageList}" var="item">
 					<h:panelGroup rendered="#{not empty item.user}">
-						<a href="#{baseView.baseContext}/#{item.user.username}/images/#{item.image.id}.html">
-							<img src="#{baseView.baseContext}/service/image/id#{item.image.id}thumbnail68cropped.jpg" width="68" height="68" alt="#{item.image.name}"/>
-						</a>
+						<oo:thumbnail image="#{item.image}" width="68" height="68" href="/#{item.user.username}/images/#{item.image.id}.html"/>
 					</h:panelGroup>
 					<h:panelGroup rendered="#{empty item.user}">
-						<a>
-							<img src="#{baseView.baseContext}/service/image/id#{item.image.id}thumbnail68cropped.jpg" width="68" height="68" alt="#{item.image.name}"/>
-						</a>
+						<oo:thumbnail image="#{item.image}" width="68" height="68"/>
 					</h:panelGroup>
 				</oo:gallery>
 			</div>

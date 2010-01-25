@@ -44,7 +44,11 @@ public class TagWriter {
 		return withAttribute("href", id);
 	}
 	
-	public TagWriter withStyle(String style) throws IOException {
+	public TagWriter withSrc(Object src) throws IOException {
+		return withAttribute("src", src);
+	}
+	
+	public TagWriter withStyle(Object style) throws IOException {
 		return withAttribute("style", style);
 	}
 
@@ -169,6 +173,15 @@ public class TagWriter {
 
 	////////// SCRIPT ////////
 	
+	public TagWriter startScript() throws IOException {
+		startElement("script").withAttribute("type", "text/javascript");
+		return this;
+	}
+
+	public TagWriter endScript() throws IOException {
+		return endElement("script");
+	}
+	
 	public TagWriter startScopedScript() throws IOException {
 		startElement("script").withAttribute("type", "text/javascript");
 		write("(function() {");
@@ -178,6 +191,25 @@ public class TagWriter {
 	public TagWriter endScopedScript() throws IOException {
 		write("})();");
 		return endElement("script");
+	}
+
+	public TagWriter newLine() throws IOException {
+		return write("\n");
+	}
+
+	public TagWriter writeStylesheet(Object href) throws IOException {
+		startElement("link").withAttribute("rel", "stylesheet").withAttribute("type", "text/css").withAttribute("charset", "utf-8");
+		withAttribute("href", href);
+		endElement("link");
+		return this;
+	}
+
+	public TagWriter writeScript(Object src) throws IOException {
+		
+		startElement("script").withAttribute("type", "text/javascript").withAttribute("charset", "utf-8");
+		withAttribute("src", src);
+		endElement("script");
+		return this;
 	}
 
 }

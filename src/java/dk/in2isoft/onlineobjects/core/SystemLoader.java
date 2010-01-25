@@ -1,27 +1,31 @@
 package dk.in2isoft.onlineobjects.core;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.Logger;
 
-public class SystemLoader extends HttpServlet {
+public class SystemLoader implements ServletContextListener {
 
 	private static Logger log = Logger.getLogger(SystemLoader.class);
-	private static final long serialVersionUID = -2383964034370210275L;
-    
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
-        String basePath=getServletContext().getRealPath("/");
+
+	public void contextDestroyed(ServletContextEvent event) {
+	}
+
+	public void contextInitialized(ServletContextEvent event) {
+		// TODO Auto-generated method stub
+		ServletContext context = event.getServletContext();
+        String basePath=context.getRealPath("/");
         log.info("System loader is ignitet");
-        log.info("The servlet-context-name is: "+getServletContext().getServletContextName());
+        log.info("The servlet-context-name is: "+context.getServletContextName());
         try {
-			Core.getInstance().start(basePath,getServletContext());
+			Core.getInstance().start(basePath,context);
 		} catch (ConfigurationException e) {
 			log.error(e.getMessage(),e);
 		} catch (ModelException e) {
 			log.error(e.getMessage(),e);
 		}
-    }
+		
+	}
 }

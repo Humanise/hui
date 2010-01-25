@@ -96,6 +96,14 @@
 		        <property name="height"/>
 		    </joined-subclass>
 		    
+		    <joined-subclass name="dk.in2isoft.onlineobjects.model.Video" table="video">
+		        <key column="id"/>
+		        <property name="fileSize"/>
+		        <property name="contentType"/>
+		        <property name="width"/>
+		        <property name="height"/>
+		    </joined-subclass>
+		    
 		    <joined-subclass name="dk.in2isoft.onlineobjects.model.ImagePart" table="imagepart">
 		        <key column="id"/>
 		    </joined-subclass>
@@ -158,6 +166,26 @@
 		        <property name="latitude"/>
 		        <property name="longitude"/>
 		        <property name="altitude"/>
+		    </joined-subclass>
+		    
+		    <joined-subclass name="dk.in2isoft.onlineobjects.model.RemoteAccount" table="remoteaccount">
+		        <key column="id"/>
+		        <property name="username"/>
+		        <property name="domain"/>
+		    </joined-subclass>
+		    
+		    <joined-subclass name="dk.in2isoft.onlineobjects.model.Comment" table="comment">
+		        <key column="id"/>
+		        <property name="text"/>
+		    </joined-subclass>
+		    
+		    <joined-subclass name="dk.in2isoft.onlineobjects.model.Vote" table="vote">
+		        <key column="id"/>
+		    </joined-subclass>
+		    
+		    <joined-subclass name="dk.in2isoft.onlineobjects.model.Rating" table="rating">
+		        <key column="id"/>
+		        <property name="rating"/>
 		    </joined-subclass>
 		    
 	    </joined-subclass>

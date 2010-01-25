@@ -47,12 +47,14 @@ public class CommunityController extends ApplicationController {
 
 	public CommunityController() {
 		super("community");
-		addJsfMatcher("<username>/images.html", "/jsf/community/user/images.xhtml");
-		addJsfMatcher("<username>/images/<integer>.html", "/jsf/community/user/image.xhtml");
-		addJsfMatcher("<username>", "/jsf/community/user/index.xhtml");
-		addJsfMatcher("", "/jsf/community/index.xhtml");
-		addJsfMatcher("recoverpassword.html", "/jsf/community/recoverpassword.xhtml");
-		addJsfMatcher("invitation.html", "/jsf/community/invitation.xhtml");
+		addJsfMatcher("about", "about/index.xhtml");
+		addJsfMatcher("<username>/remote.html", "user/remote.xhtml");
+		addJsfMatcher("<username>/images.html", "user/images.xhtml");
+		addJsfMatcher("<username>/images/<integer>.html", "user/image.xhtml");
+		addJsfMatcher("<username>", "user/index.xhtml");
+		addJsfMatcher("", "index.xhtml");
+		addJsfMatcher("recoverpassword.html", "recoverpassword.xhtml");
+		addJsfMatcher("invitation.html", "invitation.xhtml");
 	}
 
 	@Override
@@ -119,13 +121,15 @@ public class CommunityController extends ApplicationController {
 					throw new SecurityException("User cannot access this private site");
 				}
 				if (request.testLocalPathFull(null, "private")) {
-					request.redirect("settings.gui");
+					request.redirect("images.gui");
 				} else if (request.testLocalPathFull(null, "private", "persons.gui")) {
 					privateSpaceController.displayPersons(request);
 				} else if (request.testLocalPathFull(null, "private", "images.gui")) {
 					privateSpaceController.displayImages(request);
 				} else if (request.testLocalPathFull(null, "private", "bookmarks.gui")) {
 					privateSpaceController.displayBookmarks(request);
+				} else if (request.testLocalPathFull(null, "private", "integration.gui")) {
+					privateSpaceController.displayIntegration(request);
 				} else if (request.testLocalPathFull(null, "private", "bookmarks", "import.action")) {
 					importBookmarks(request);
 				} else if (request.testLocalPathFull(null, "private", "images", "upload.action")) {

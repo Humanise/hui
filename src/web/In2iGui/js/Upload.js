@@ -102,13 +102,15 @@ In2iGui.Upload.prototype = {
 		this.uploading = false;
 		this.form.reset();
 		var doc = n2i.getFrameDocument(this.iframe);
+		var last = this.items.last();
 		if (doc.body.innerHTML.indexOf('SUCCESS')!=-1) {
-			this.fire('uploadDidCompleteQueue');
-			this.items.last().update({progress:1,filestatus:'Færdig'});
-		} else {
-			this.items.last().setError('Upload af filen fejlede!');
-			this.fire('uploadDidCompleteQueue');		
+			if (last) {
+				last.update({progress:1,filestatus:'Færdig'});
+			}
+		} else if (last) {
+			last.setError('Upload af filen fejlede!');
 		}
+		this.fire('uploadDidCompleteQueue');
 		this.iframe.src=In2iGui.context+'/In2iGui/html/blank.html';
 		this.endIframeProgress();
 	},

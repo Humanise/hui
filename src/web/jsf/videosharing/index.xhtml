@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:oo="http://www.onlineobjects.com/jsf" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:gui="http://www.in2isoft.dk/in2igui"
+>
+	<ui:composition template="template.xhtml">
+		<ui:define name="body">
+			<h2>Users</h2>
+			<ul>
+				<ui:repeat value="#{videosharingView.usersList}" var="pair">
+					<li><oo:link href="/users/#{pair.key.username}/">#{pair.value.name}</oo:link></li>
+				</ui:repeat>
+			</ul>
+			<ui:fragment rendered="#{!videosharingView.publicUser}">
+				<gui:button text="Upload video" name="showUpload"/>
+			</ui:fragment>
+			<ui:repeat value="#{videosharingView.latestVideos}" var="video">
+				<div>
+					<h2>#{video.title}</h2>
+					<gui:videoplayer width="560" height="340" src="#{videosharingView.baseContext}/service/video/id#{video.id}/#{video.fileName}" type="#{video.contentType}"/>
+				</div>
+			</ui:repeat>
+		</ui:define>
+	</ui:composition>
+</html>

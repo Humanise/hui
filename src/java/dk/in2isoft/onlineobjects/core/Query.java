@@ -28,12 +28,12 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 	}
 
 	public Query<T> orderByCreated() {
-		ordering = "created";
+		ordering = "obj.created";
 		return this;
 	}
 
 	public Query<T> orderByName() {
-		ordering = "name";
+		ordering = "obj.name";
 		return this;
 	}
 	

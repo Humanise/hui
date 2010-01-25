@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gui xmlns="uri:In2iGui" title="Indstillinger" padding="10">
+	<dwr base="/dwr/">
+		<interface name="AppSetup"/>
+		<interface name="Common"/>
+	</dwr>
+	<controller name="mainController" source="main.js"/>
+	<controller source="images.js"/>
+	<source name="imagesSource" dwr="AppSetup.listImages">
+		<parameter key="search" value="@search.value"/>
+		<parameter key="tags" value="@tags.value"/>
+	</source>
+	<source name="classSource" dwr="AppSetup.getImageTags"/>
+	<layout>
+		<top>
+			<toolbar>
+				<icon icon="common/refresh" title="Sync images" name="syncImages"/>
+				<right>
+					<searchfield name="search" title="Search" expandedWidth="200"/>
+				</right>
+			</toolbar>
+		</top>
+		<middle>
+			<left>
+				<overflow>
+					<selection value="dk.in2isoft.onlineobjects.model.Entity" name="selection">
+						<item icon="common/image" title="All images"/>
+						<items name="tags" source="classSource"/>
+					</selection>
+				</overflow>
+			</left>
+			<center>
+				<overflow>
+					<gallery name="imageGallery" source="imagesSource"/>
+				</overflow>
+			</center>
+		</middle>
+		<bottom/>
+	</layout>
+</gui>

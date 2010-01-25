@@ -27,18 +27,17 @@ class ImageImporter implements ImportListerner {
 		this.modelService = modelService;
 		this.imageService = imageService;
 		importedImages = new ArrayList<Image>();
-		mimeTypes = Lists.newArrayList("image/jpeg","image/png","image/gif");
+		mimeTypes = Lists.newArrayList("image/jpeg", "image/png", "image/gif");
 	}
 
-	public void processFile(File file, String mimeType, String name, Map<String,String> parameters, Request request) throws IOException, EndUserException {
+	public void processFile(File file, String mimeType, String name, Map<String, String> parameters, Request request) throws IOException, EndUserException {
 		if (!mimeTypes.contains(mimeType)) {
 			return;
 		}
-		int[] dimensions = imageService.getImageDimensions(file);
 		Image image = new Image();
 		modelService.createItem(image, request.getSession());
 		image.setName(name);
-		image.changeImageFile(file, dimensions[0], dimensions[1], mimeType);
+		imageService.changeImageFile(image, file, mimeType);
 		imageService.synchronizeMetaData(image, request.getSession());
 		modelService.updateItem(image, request.getSession());
 		modelService.commit();
@@ -46,7 +45,7 @@ class ImageImporter implements ImportListerner {
 		postProcessImage(image, parameters, request);
 	}
 
-	protected void postProcessImage(Image image, Map<String,String> parameters, Request request) throws EndUserException {
+	protected void postProcessImage(Image image, Map<String, String> parameters, Request request) throws EndUserException {
 		// Override this
 	}
 

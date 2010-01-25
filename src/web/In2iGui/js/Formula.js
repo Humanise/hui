@@ -1140,7 +1140,7 @@ In2iGui.Formula.Location.create = function(options) {
 	options = options || {};
 	var e = options.element = new Element('div',{'class':'in2igui_location'});
 	var b = new Element('span');
-	b.update('<span class="in2igui_location_latitude"><input/></span><span class="in2igui_location_longitude"><input/></span>');
+	b.update('<span class="in2igui_location_latitude"><span><input/></span></span><span class="in2igui_location_longitude"><span><input/></span></span>');
 	e.insert(In2iGui.wrapInField(b));
 	e.insert('<a class="in2igui_location_picker" href="javascript:void(0);"></a>');
 	return new In2iGui.Formula.Location(options);

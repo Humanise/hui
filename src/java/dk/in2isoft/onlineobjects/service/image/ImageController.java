@@ -97,7 +97,7 @@ public class ImageController extends ServiceController {
 			if (image == null) {
 				throw new EndUserException("Could not load image with id=" + id);
 			}
-			file = image.getImageFile();
+			file = imageService.getImageFile(image);
 			mime = image.getContentType();
 		}
 		if ("application/octet-stream".equals(mime)) {
@@ -105,6 +105,7 @@ public class ImageController extends ServiceController {
 		}
 		FilePusher pusher = new FilePusher(file);
 		pusher.setClientSideCaching(true);
+		pusher.setDownload(request.getBoolean("download"));
 		pusher.push(request.getResponse(), mime);
 	}
 

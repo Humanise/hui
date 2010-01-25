@@ -32,7 +32,9 @@ public class XMLDocument extends TextDocument {
 	public Document getDOMDocument() {
 		if (DOMDocument==null) {
             nu.xom.Document xom = getXOMDocument();
-            DOMDocument = DOMConverter.convert(xom,DOMImplementationImpl.getDOMImplementation());
+            if (xom!=null) {
+            	DOMDocument = DOMConverter.convert(xom,DOMImplementationImpl.getDOMImplementation());
+            }
         }
 	    return DOMDocument;
 	}

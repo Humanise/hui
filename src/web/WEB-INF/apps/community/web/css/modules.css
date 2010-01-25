@@ -158,22 +158,9 @@ div.user p.website *:hover
 	color: #0033AA;
 }
 
-div.user .thumbnail
+div.user .oo_thumbnail
 {
-	height: 66px;
-	width: 56px;
-	border: 1px solid #ddd;
-	border-color: #eee #ddd #ccc;
-	background: url('../gfx/user.png') center center no-repeat;
 	float: left;
-}
-
-div.user div.thumbnail div
-{
-	height:60px;
-	width:50px;
-	margin: 3px;
-	cursor: pointer;
 }
 
 /****************************** Mini search results *****************************/

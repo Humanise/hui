@@ -33,6 +33,7 @@ doctype-system="http://www.w3.org/TR/html4/loose.dtd"/>
 				style = '<xsl:value-of select="//ig:ImageGallery/ig:settings/@style"/>';
 			}
 		</script>
+		<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"><xsl:comment/></script>
 	</xsl:template>
 	
 	<xsl:template match="ig:ImageGallery">

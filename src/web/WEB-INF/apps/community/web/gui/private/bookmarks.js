@@ -62,14 +62,11 @@ ui.observe({
 	},
 	$click$itemInfo : function() {
 		var obj = bookmarksList.getFirstSelection();
-		n2i.log(obj);
 		this.editBookmark(obj.id);
 	},
 	$click$showItem : function() {
 		var obj = bookmarksList.getFirstSelection();
-		AppCommunity.getInternetAddress(obj.id,function(obj) {
-			window.open(obj.address);
-		});
+		window.open(obj.data.address);
 	},
 	$click$deleteBookmark : function() {
 		Common.deleteEntity(this.bookmarkId,function() {

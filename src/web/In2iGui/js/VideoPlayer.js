@@ -7,6 +7,11 @@ In2iGui.VideoPlayer = function(options) {
 	this.handlers = [In2iGui.VideoPlayer.HTML5,In2iGui.VideoPlayer.QuickTime];
 	this.handler = null;
 	In2iGui.extend(this);
+	if (this.options.video) {
+		In2iGui.onReady(function() {
+			this.setVideo(this.options.video);
+		}.bind(this));
+	}
 }
 
 In2iGui.VideoPlayer.prototype = {

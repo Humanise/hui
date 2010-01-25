@@ -2,35 +2,37 @@ package dk.in2isoft.onlineobjects.ui.jsf;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 import javax.el.ValueExpression;
 import javax.faces.component.FacesComponent;
 import javax.faces.component.UIComponent;
-import javax.faces.component.UIComponentBase;
 import javax.faces.context.FacesContext;
 import javax.faces.render.Renderer;
 
+import dk.in2isoft.commons.jsf.AbstractComponent;
+import dk.in2isoft.commons.jsf.ComponentUtil;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.ui.jsf.model.ImageContainer;
 
-@FacesComponent(value = "onlineobjects.gallery")
-public class GalleryComponent<T> extends UIComponentBase {
+@FacesComponent(value = GalleryComponent.FAMILY)
+public class GalleryComponent<T> extends AbstractComponent {
 
-	private static final String FAMILY = "onlineobjects.gallery";
+	public static final String FAMILY = "onlineobjects.gallery";
 	private String var;
 
+	public GalleryComponent() {
+		super(FAMILY);
+	}
+	
 	@Override
-	public void restoreState(FacesContext context, Object state) {
-		Object[] stt = (Object[]) state;
-		super.restoreState(context, stt[0]);
-		var = (String) stt[1];
+	public void restoreState(Object[] state) {
+		var = (String) state[0];
 	}
 
 	@Override
-	public Object saveState(FacesContext context) {
-		return new Object[] { super.saveState(context), var };
+	public Object[] saveState() {
+		return new Object[] { var };
 	}
 
 	@Override
@@ -44,10 +46,6 @@ public class GalleryComponent<T> extends UIComponentBase {
 
 	public void setVar(String var) {
 		this.var = var;
-	}
-
-	@Override
-	public void encodeBegin(FacesContext context) throws IOException {
 	}
 
 	@Override
@@ -68,8 +66,7 @@ public class GalleryComponent<T> extends UIComponentBase {
 	}
 
 	@Override
-	public void encodeChildren(FacesContext context) throws IOException {
-		TagWriter writer = new TagWriter(this, context);
+	public void encodeChildren(FacesContext context, TagWriter writer) throws IOException {
 		ListModel<Image> model = getModel();
 		if (model == null) {
 			writer.write("NO MODEL!!");
@@ -86,12 +83,6 @@ public class GalleryComponent<T> extends UIComponentBase {
 		imageArray.append("[");
 		int num = 0;
 		for (Object object : result.getList()) {
-			/*StringBuilder src = new StringBuilder();
-			src.append(context.getExternalContext().getRequestContextPath());
-			src.append("/service/image/id").append(image.getId()).append("thumbnail68cropped.jpg");
-			writer.startA();
-			writer.startElement("img").withAttribute("src", src).endElement("img");
-			writer.endA();*/
 			writer.startLi();
 			context.getExternalContext().getRequestMap().put(var, object);
 			for (UIComponent child : children) {
@@ -147,18 +138,10 @@ public class GalleryComponent<T> extends UIComponentBase {
 		writer.endDiv();
 	}
 
-	@Override
-	public void encodeEnd(FacesContext context) throws IOException {
-	}
-
 	private void decodeRequest(FacesContext context, ListModel<Image> model) {
-		Map<String, String> map = context.getExternalContext().getRequestParameterMap();
-		if (map.containsKey("page")) {
-			try {
-				int page = Integer.parseInt(map.get("page"));
-				model.setPage(page - 1);
-			} catch (NumberFormatException ignore) {
-			}
+		int page = ComponentUtil.getIntParameter("page");
+		if (page>0) {
+			model.setPage(page - 1);
 		}
 	}
 }

@@ -3,6 +3,9 @@ var controller = {
 	
 	interfaceIsReady : function() {
 	},
+	$valueChanged$search : function() {
+		list.resetState();
+	},
 	$listRowWasOpened : function(row) {
 		if (row.kind=='user') {
 			this.loadUser(row);
@@ -35,11 +38,5 @@ var controller = {
 	},
 	$selectionChanged$selection : function() {
 		list.resetState();
-	},
-	$click$syncImages : function(icon) {
-		icon.setEnabled(false);
-		AppSetup.synchronizeImageMetaData(function() {
-			icon.setEnabled(true);
-		});
 	}
 }

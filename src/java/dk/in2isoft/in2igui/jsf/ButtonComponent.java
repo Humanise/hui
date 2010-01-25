@@ -3,46 +3,48 @@ package dk.in2isoft.in2igui.jsf;
 import java.io.IOException;
 
 import javax.faces.component.FacesComponent;
-import javax.faces.component.UIComponentBase;
 import javax.faces.context.FacesContext;
 
+import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.TagWriter;
 
-@FacesComponent(value="in2igui.button")
-public class ButtonComponent extends UIComponentBase {
+@FacesComponent(value=ButtonComponent.TYPE)
+public class ButtonComponent extends AbstractComponent {
+
+	public static final String TYPE = "in2igui.button";
 
 	private String text;
 	private String name;
 	private boolean highlighted;
 	private boolean small;
+
+	public ButtonComponent() {
+		super(TYPE);
+	}
 	
 	@Override
-	public void restoreState(FacesContext context, Object state) {
-		Object[] stt = (Object[]) state;
-		super.restoreState(context, stt[0]);
-		text = (String) stt[1];
-		name = (String) stt[2];
-		highlighted = (Boolean) stt[3];
-		small = (Boolean) stt[4];
+	public void restoreState(Object[] state) {
+		text = (String) state[0];
+		name = (String) state[1];
+		highlighted = (Boolean) state[2];
+		small = (Boolean) state[3];
 	}
 
 	@Override
-	public Object saveState(FacesContext context) {
-		Object[] state = new Object[] {
-			super.saveState(context),text,name,highlighted,small
+	public Object[] saveState() {
+		return new Object[] {
+			text,name,highlighted,small
 		};
-		return state;
 	}
 	
 	@Override
 	public String getFamily() {
-		return "in2igui.button";
+		return TYPE;
 	}
 
 	@Override
-	public void encodeBegin(FacesContext context) throws IOException {
+	public void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
 		String id = getClientId();
-		TagWriter writer = new TagWriter(this,context);
 		if (small) {
 			writer.startVoidA("in2igui_button in2igui_button_small_rounded");
 		} else if (highlighted) {
@@ -95,6 +97,4 @@ public class ButtonComponent extends UIComponentBase {
 	public boolean isSmall() {
 		return small;
 	}
-
-	
 }

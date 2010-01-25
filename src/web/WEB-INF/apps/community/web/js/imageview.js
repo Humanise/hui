@@ -6,9 +6,10 @@ oo.community.ImgeView = {
 			var form = this.imageFormula = ui.Formula.create();
 			var group = form.buildGroup({above:false},[
 				{type:'Text',options:{label:'Titel:',key:'name'}},
-				{type:'Text',options:{label:'Beskrivelse:',key:'description',lines:2}},
+				{type:'Text',options:{label:'Beskrivelse:',key:'description',lines:5}},
 				{type:'DateTime',options:{label:'Dato:',key:'taken'}},
-				{type:'Tokens',options:{label:'Nøgleord:',key:'tags',width:80}}
+				{type:'Tokens',options:{label:'Nøgleord:',key:'tags',width:80}},
+				{type:'Location',options:{label:'Lokation',key:'location'}}
 			]);
 			var buttons = group.createButtons();
 			buttons.add(ui.Button.create({text:'Annuller',name:'cancelEditImage'}));

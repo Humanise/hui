@@ -2,9 +2,10 @@
 <gui xmlns="uri:In2iGui" title="Opsætning">
 	<dock url="settings.gui" name="dock">
 		<toolbar>
-			<icon icon="common/settings" title="Indstillinger" action="dock.setUrl('settings.gui')"/>
-			<icon icon="common/time" title="Job" action="dock.setUrl('scheduler.gui')"/>
+			<icon icon="common/settings" title="Settings" action="dock.setUrl('settings.gui')"/>
+			<icon icon="common/time" title="Jobs" action="dock.setUrl('scheduler.gui')"/>
 			<icon icon="common/object" title="Model" action="dock.setUrl('model.gui')"/>
+			<icon icon="common/image" title="Images" action="dock.setUrl('images.gui')"/>
 		</toolbar>
 	</dock>
 </gui>

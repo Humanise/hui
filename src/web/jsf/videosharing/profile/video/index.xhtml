@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:oo="http://www.onlineobjects.com/jsf" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:gui="http://www.in2isoft.dk/in2igui"
+>
+	<ui:composition template="../../template.xhtml">
+		
+		<ui:define name="head">
+			<oo:script src="/style/js/video.js"/>
+			<oo:script>
+				videoView.videoId = #{videosharingVideoView.videoInfo.id};
+			</oo:script>
+		</ui:define>
+		
+		<ui:define name="body">
+			bruger: #{videosharingVideoView.person.name}
+			<div>
+				<h2>#{videosharingVideoView.videoInfo.title}</h2>
+				<object width="560" height="340">
+					<param name="movie" value="#{videosharingView.baseContext}/service/video/id#{videosharingVideoView.videoInfo.id}/#{videosharingVideoView.videoInfo.fileName}"></param>
+					<embed src="#{videosharingView.baseContext}/service/video/id#{videosharingVideoView.videoInfo.id}/#{videosharingVideoView.videoInfo.fileName}" width="560" height="340" autoplay="false"></embed>
+				</object>
+			</div>
+			<ul>
+				<ui:repeat value="#{videosharingVideoView.comments}" var="comment">
+					<li>
+						<p>
+							<oo:out value="#{comment.name}"/>
+						</p>
+						<p>
+							<h:outputText value="#{comment.created}"><f:convertDateTime pattern="EEEE MMMM d. yyyy 'at' HH:mm:ss" locale="en_GB"/></h:outputText>
+						</p>
+						<p><oo:out value="#{comment.text}"/></p>
+					</li>
+				</ui:repeat>
+			</ul>
+			<gui:button text="Add comment" name="addComment"/>
+			<gui:button text="Refresh" name="refresh"/>
+			<ui:remove>
+			<h:form id="form">
+			<h:panelGroup id="panel">
+				<h:outputText value="#{videosharingVideoView.now}"/>
+			</h:panelGroup>
+			</h:form>
+			<h:outputScript name="jsf.js" library="javax.faces" target="head"/>
+			</ui:remove>
+		</ui:define>
+	</ui:composition>
+</html>

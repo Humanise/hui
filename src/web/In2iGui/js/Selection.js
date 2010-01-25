@@ -248,8 +248,9 @@ In2iGui.Selection.Items.prototype = {
 	},
 	/** @private */
 	isHierarchy : function(items) {
+		if (!items) {return false};
 		for (var i=0; i < items.length; i++) {
-			if (items[i].children && items[i].children.length>0) {
+			if (items[i]!==null && items[i].children && items[i].children.length>0) {
 				return true;
 			}
 		};

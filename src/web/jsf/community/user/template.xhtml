@@ -15,19 +15,25 @@
 			<script type="text/javascript" src="#{baseView.localContext}/js/userprofile.js"></script>
 		</ui:define>
 		<ui:define name="body">
-			<ul class="breadcrumb">
-				<li><a href="#{baseView.baseContext}/">OnlineMe</a></li>
-				<li><a href="#{baseView.baseContext}/users.html/">Brugere</a></li>
-				<li><a href="#{baseView.baseContext}/#{userProfileView.user.username}/">#{userProfileView.person.fullName}</a></li>
-				<ui:insert name="breadcrumb"/>
-			</ul>
-			<ul class="tabs" style="margin-top: 10px;">
-				<li class="#{tab=='overview' ? 'highlighted' : ''}"><a href="#{baseView.baseContext}/#{userProfileView.user.username}/">Overblik</a></li>
-				<li class="#{tab=='images' ? 'highlighted' : ''}"><a href="#{baseView.baseContext}/#{userProfileView.user.username}/images.html">Billeder</a></li>
-			</ul>
-			<div>
-				<ui:insert name="content"/>
-			</div>
+			<c:if test="#{not userProfileView.found}">
+				<ui:include src="../notfound.xhtml"/>
+			</c:if>
+			<c:if test="#{userProfileView.found}"> 
+				<ul class="breadcrumb">
+					<li><a href="#{baseView.baseContext}/">OnlineMe</a></li>
+					<li><a href="#{baseView.baseContext}/users.html/">Brugere</a></li>
+					<li><a href="#{baseView.baseContext}/#{userProfileView.user.username}/">#{userProfileView.person.fullName}</a></li>
+					<ui:insert name="breadcrumb"/>
+				</ul>
+				<ul class="tabs" style="margin-top: 10px;">
+					<li class="#{tab=='overview' ? 'highlighted' : ''}"><a href="#{baseView.baseContext}/#{userProfileView.user.username}/">Overblik</a></li>
+					<li class="#{tab=='images' ? 'highlighted' : ''}"><a href="#{baseView.baseContext}/#{userProfileView.user.username}/images.html">Billeder</a></li>
+					<li class="#{tab=='remote' ? 'highlighted' : ''}"><a href="#{baseView.baseContext}/#{userProfileView.user.username}/remote.html">Andet</a></li>
+				</ul>
+				<div>
+					<ui:insert name="content"/>
+				</div>
+			</c:if>
 		</ui:define>
 	</ui:composition>
 </html>

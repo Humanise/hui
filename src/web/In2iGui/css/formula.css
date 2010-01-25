@@ -124,6 +124,13 @@ div.in2igui_formula_item
 
 /*************************************** Field **********************************/
 
+span.in2igui_field
+{
+	display: inline-block;
+	vertical-align: middle;
+}
+
+
 span.in2igui_field_top, span.in2igui_field_top span
 {
 	display: block;
@@ -184,42 +191,42 @@ span.in2igui_field_content
 	background: #fff;
 }
 
-div.in2igui_field_focused span.in2igui_field_top
+.in2igui_field_focused span.in2igui_field_top
 {
 	background-position: 0 -832px;
 }
 
-div.in2igui_field_focused span.in2igui_field_top span
+.in2igui_field_focused span.in2igui_field_top span
 {
 	background-position: 100% -837px;
 }
 
-div.in2igui_field_focused span.in2igui_field_top span span
+.in2igui_field_focused span.in2igui_field_top span span
 {
 	background-position: 100% -827px;
 }
 
-div.in2igui_field_focused span.in2igui_field_bottom
+.in2igui_field_focused span.in2igui_field_bottom
 {
 	background-position: 0 -846px;
 }
 
-div.in2igui_field_focused span.in2igui_field_bottom span
+.in2igui_field_focused span.in2igui_field_bottom span
 {
 	background-position: 100% -850px;
 }
 
-div.in2igui_field_focused span.in2igui_field_bottom span span
+.in2igui_field_focused span.in2igui_field_bottom span span
 {
 	background-position: 100% -842px;
 }
 
-div.in2igui_field_focused span.in2igui_field_middle
+.in2igui_field_focused span.in2igui_field_middle
 {
 	background-position: 0 -854px;
 }
 
-div.in2igui_field_focused span.in2igui_field_middle span.in2igui_field_middle
+.in2igui_field_focused span.in2igui_field_middle span.in2igui_field_middle
 {
 	background-position: 100% -1254px;
 }
@@ -243,7 +250,7 @@ em.in2igui_field_placeholder
 	margin-top: 5px;
 }
 
-div.in2igui_field_focused em.in2igui_field_placeholder, div.in2igui_field_dirty em.in2igui_field_placeholder
+.in2igui_field_focused em.in2igui_field_placeholder, .in2igui_field_dirty em.in2igui_field_placeholder
 {
 	display: none;
 }
@@ -670,7 +677,6 @@ div.in2igui_location input
 	padding: 0;
 	width: 100%;
 	background: none;
-	text-indent: 16px;
 	height: 16px;
 }
 
@@ -696,6 +702,14 @@ span.in2igui_location_latitude, span.in2igui_location_longitude
 span.in2igui_location_latitude
 {
 	width: 50%;
+}
+
+span.in2igui_location_latitude span, span.in2igui_location_longitude span
+{
+	display: block;
+	width: 100%;
+	height: 16px;
+	padding-left: 16px;
 }
 
 span.in2igui_location_latitude

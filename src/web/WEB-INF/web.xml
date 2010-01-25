@@ -10,7 +10,28 @@
 		<param-value>webmaster@onlineobjects.com</param-value>
 		<description />
 	</context-param>
-  
+	
+
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	
+	<listener>
+		<listener-class>dk.in2isoft.onlineobjects.core.SystemLoader</listener-class>
+	</listener>
+	
+  <!-- Servlets -->
+  <!-- 
+	<servlet>
+		<servlet-name>core.systemloader</servlet-name>
+		<servlet-class>dk.in2isoft.onlineobjects.core.SystemLoader</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>core.systemloader</servlet-name>
+		<url-pattern>/internal/core/systemloader/</url-pattern>
+	</servlet-mapping>
+   -->
   <!-- Filters -->
 	<filter>
 		<filter-name>Compress</filter-name>
@@ -32,31 +53,6 @@
 		<filter-name>ui.dispatcher</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-
-  <!-- Servlets -->
-	<servlet>
-		<servlet-name>core.systemloader</servlet-name>
-		<servlet-class>dk.in2isoft.onlineobjects.core.SystemLoader</servlet-class>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>core.systemloader</servlet-name>
-		<url-pattern>/internal/core/systemloader/</url-pattern>
-	</servlet-mapping>
-             
-    <servlet>
-        <servlet-name>webdav</servlet-name>
-        <servlet-class>com.bradmcevoy.http.MiltonServlet</servlet-class>
-        <init-param>
-            <param-name>resource.factory.class</param-name>
-            <param-value>dk.in2isoft.onlineobjects.webdav.TResourceFactory</param-value>
-        </init-param>
-    </servlet>
-    
-    <servlet-mapping>
-        <servlet-name>webdav</servlet-name>
-        <url-pattern>/webdav/*</url-pattern>
-    </servlet-mapping>
   
   <!-- dwr -->
  	 <servlet>
@@ -72,25 +68,7 @@
 		<servlet-name>dwr</servlet-name>
 		<url-pattern>/dwr/*</url-pattern>
 	</servlet-mapping>
-	<!--
-	<servlet>
-		<servlet-name>dwr-invoker</servlet-name>
-		<display-name>DWR Servlet</display-name>
-		<servlet-class>uk.ltd.getahead.dwr.DWRServlet</servlet-class>
-		<init-param>
-			<param-name>debug</param-name>
-			<param-value>true</param-value>
-		</init-param>
-		<init-param>
-			<param-name>allowGetForSafariButMakeForgeryEasier</param-name>
-			<param-value>true</param-value>
-		</init-param>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>dwr-invoker</servlet-name>
-		<url-pattern>/dwr/*</url-pattern>
-	</servlet-mapping>
-	-->
+	
     <!-- Faces -->
 	
     <context-param>
@@ -127,10 +105,6 @@
 		<param-name>contextConfigLocation</param-name>
 		<param-value>classpath:applicationContext.xml</param-value>
 	</context-param>
-
-	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-	</listener>
 	
 	<session-config>
 		<session-timeout>150</session-timeout>

@@ -246,6 +246,10 @@ In2iGui.prototype = {
 	}
 };
 
+In2iGui.listen = function(d) {
+	In2iGui.get().listen(d);
+}
+
 In2iGui.changeState = function(state) {
 	if (In2iGui.get().state===state) {return;}
 	var objects = In2iGui.get().objects.values();
@@ -398,7 +402,7 @@ In2iGui.createIcon = function(icon,size) {
 	return new Element('span',{'class':'in2igui_icon in2igui_icon_'+size}).setStyle({'backgroundImage':'url('+In2iGui.getIconUrl(icon,size)+')'});
 };
 
-In2iGui.onDomReady = function(func) {
+In2iGui.onDomReady = In2iGui.onReady = function(func) {
 	if (In2iGui.domReady) {return func();}
 	if (n2i.browser.gecko && document.baseURI.endsWith('xml')) {
 		window.setTimeout(func,1000);

@@ -29,11 +29,12 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 import com.oreilly.servlet.ServletUtils;
 
+import dk.in2isoft.commons.http.HeaderUtil;
 import dk.in2isoft.commons.xml.XSLTUtil;
 import dk.in2isoft.in2igui.In2iGui;
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
@@ -86,7 +87,7 @@ public class Dispatcher implements Filter {
 			apps.add(app);
 		}
 
-		mappings = Multimaps.newLinkedHashMultimap();
+		mappings = LinkedHashMultimap.create();
 
 		for (Application app : apps) {
 			for (String reg : app.getPropertyValues(Application.PROPERTY_URL_MAPPING)) {
@@ -94,6 +95,16 @@ public class Dispatcher implements Filter {
 				mappings.put("community", p);
 			}
 		}
+		
+	}
+
+	public void destroy() {
+		
+	}
+
+	public void init(FilterConfig filterConfig) {
+
+		this.filterConfig = filterConfig;
 	}
 
 	/*private void fixCookieScope(Request request) {
@@ -127,9 +138,15 @@ public class Dispatcher implements Filter {
 			}
 			chain.doFilter(sRequest, sResponse);
 			shouldCommit = true;
-		} else if (req.getLocalPathAsString().indexOf("javax.faces.resource") != -1) {
+		} else if (req.getLocalPathAsString().indexOf("javax.faces.resource") != -1 || req.getBoolean("javax.faces.partial.ajax")) {
 			String localPath = req.getLocalPathAsString();
 			int index = localPath.indexOf("javax.faces.resource");
+			if (index==-1) {
+				index = localPath.indexOf("jsf");
+			}
+			if (index==-1) {
+				index=0;
+			}
 			String substring = localPath.substring(index);
 			// log.debug("/faces/"+substring);
 			RequestDispatcher requestDispatcher = filterConfig.getServletContext().getRequestDispatcher(
@@ -137,13 +154,9 @@ public class Dispatcher implements Filter {
 			requestDispatcher.forward(request, sResponse);
 		} else if (path.length > 0 && path[0].equals("core")) {
 			String[] filePath = new String[] { "core", "web" };
-			if (!pushCoreFile((String[]) ArrayUtils.addAll(filePath, ArrayUtils.subarray(path, 1, path.length)),
-					response)) {
-				RequestDispatcher dispatcher = filterConfig.getServletContext().getRequestDispatcher(
-						"/faces/community/home.xhtml");
+			if (!pushCoreFile((String[]) ArrayUtils.addAll(filePath, ArrayUtils.subarray(path, 1, path.length)),response)) {
+				RequestDispatcher dispatcher = filterConfig.getServletContext().getRequestDispatcher("/faces/community/home.xhtml");
 				dispatcher.forward(request, response);
-				// chain.doFilter(request, response);
-				// displayError(req, new EndUserException("Not found"));
 			}
 
 		} else if (path.length > 0 && path[0].equals("In2iGui")) {
@@ -250,7 +263,7 @@ public class Dispatcher implements Filter {
 			if (dispatcher != null) {
 				request.getResponse().setContentType("text/html");
 				request.getResponse().setCharacterEncoding("UTF-8");
-				dispatcher.include(request.getRequest(), request.getResponse());
+				dispatcher.forward(request.getRequest(), request.getResponse());
 			} else {
 				if (path.length > 0) {
 					try {
@@ -301,14 +314,6 @@ public class Dispatcher implements Filter {
 		} catch (InvocationTargetException e) {
 			throw new EndUserException(e);
 		}
-	}
-
-	public void destroy() {
-	}
-
-	public void init(FilterConfig filterConfig) {
-
-		this.filterConfig = filterConfig;
 	}
 
 	private void displayError(Request request, Exception ex) {
@@ -378,18 +383,8 @@ public class Dispatcher implements Filter {
 
 	public void push(HttpServletResponse response, File file) throws IOException {
 
-		if (!true) {
-			// Set to expire far in the past.
-			response.setHeader("Expires", "Sat, 6 May 1995 12:00:00 GMT");
-			// Set standard HTTP/1.1 no-cache headers.
-			response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
-			// Set IE extended HTTP/1.1 no-cache headers (use addHeader).
-			response.addHeader("Cache-Control", "post-check=0, pre-check=0");
-			// Set standard HTTP/1.0 no-cache header.
-			response.setHeader("Pragma", "no-cache");
-		} else {
-			response.setDateHeader("Last-Modified", file.lastModified());
-		}
+		HeaderUtil.setModified(file, response);
+		HeaderUtil.setOneWeekCache(response);
 		String mimeType = getMimeType(file);
 		response.setContentLength((int) file.length());
 		try {

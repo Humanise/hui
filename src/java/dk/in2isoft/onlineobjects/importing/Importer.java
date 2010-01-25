@@ -29,7 +29,7 @@ public class Importer {
 	@SuppressWarnings("unchecked")
 	public void importMultipart(ApplicationController controller,Request request) throws IOException, EndUserException {
 		// boolean isMultipart =
-		ApplicationSession session = request.getSession().getToolSession(controller);
+		ApplicationSession session = request.getSession().getApplicationSession(controller);
 		final AsynchronousProcessDescriptor process = session.createAsynchronousProcessDescriptor("imageUpload");
 		if (!ServletFileUpload.isMultipartContent(request.getRequest())) {
 			process.setError(true);
@@ -75,11 +75,10 @@ public class Importer {
 		ImageService imageService = Core.getInstance().getBean(ImageService.class);
 		ModelService modelService = Core.getInstance().getModel();
 		File file = item.getStoreLocation();
-		int[] dimensions = imageService.getImageDimensions(file);
 		Image image = new Image();
 		modelService.createItem(image,request.getSession());
 		image.setName(item.getName());
-		image.changeImageFile(file, dimensions[0],dimensions[1], item.getContentType());
+		imageService.changeImageFile(image,file, item.getContentType());
 		log.debug("width:" + image.getWidth());
 		log.debug("height:" + image.getHeight());
 		modelService.updateItem(image,request.getSession());

@@ -610,9 +610,13 @@ public class ModelService {
 		StringBuilder hql = new StringBuilder();
 		hql.append("select p.value as value,count(p.id) as count from ");
 		hql.append(cls.getSimpleName()).append(" as entity");
-		hql.append(",").append(Privilege.class.getName()).append(" as priv");
+		if (priviledged!=null) {
+			hql.append(",").append(Privilege.class.getName()).append(" as priv");
+		}
 		hql.append(" left join entity.properties as p  where p.key=:key");
-		hql.append(" and entity.id = priv.object and priv.subject=").append(priviledged.getIdentity());
+		if (priviledged!=null) {
+			hql.append(" and entity.id = priv.object and priv.subject=").append(priviledged.getIdentity());
+		}
 		hql.append(" group by p.value order by lower(value)");
 		Query q = session.createQuery(hql.toString());
 		q.setString("key", key);

@@ -6,8 +6,8 @@
 	</dwr>
 	<controller name="mainController" source="main.js"/>
 	<controller name="controller" source="model.js"/>
-	<source name="listSource" dwr="AppSetup.listEntities2">
-		<parameter key="state" value="@list.state"/>
+	<source name="listSource" dwr="AppSetup.listEntities">
+		<parameter key="state" value="@list.window"/>
 		<parameter key="type" value="@selection.value"/>
 		<parameter key="search" value="@search.value"/>
 	</source>
@@ -15,8 +15,9 @@
 	<layout>
 		<top>
 			<toolbar>
-				<search name="search" title="Search"/>
-				<icon icon="common/refresh" title="Sync images" name="syncImages"/>
+				<right>
+					<searchfield name="search" title="Search" expandedWidth="200"/>
+				</right>
 			</toolbar>
 		</top>
 		<middle>

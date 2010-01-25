@@ -15,6 +15,11 @@ public class InternetAddress extends Entity {
 	public String getType() {
 		return TYPE;
 	}
+	
+	@Override
+	public String getIcon() {
+		return "common/internet";
+	}
 
 	public void setAddress(String address) {
 		if (address!=null && address.length()>255) {

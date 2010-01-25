@@ -52,23 +52,10 @@ oo.community.Home.prototype = {
 		container.update();
 		var self = this;
 		images.each(function(image,index) {
-			var width = Math.round(image.width/image.height*60);
-			var height = Math.round(image.height/Math.max(image.width,image.height)*60);
-			var thumb = new Element('div').addClassName('thumbnail').setStyle({
-				width:width+'px',opacity:0,'backgroundImage':'url("'+oo.baseContext+'/service/image/?id='+image.id+'&thumbnail='+Math.max(width,height)+'")'
-			});
-			thumb.observe('click',function(e) {
-				self.imageWasClicked(index);
-				e.stop();
-			});
-			thumb.observe('mouseover',function() {
-				In2iGui.showToolTip({text:image.name,element:thumb});
-			})
-			thumb.observe('mouseout',function() {
-				In2iGui.hideToolTip();
-			})
-			n2i.ani(thumb,'opacity',1,500,{ease:n2i.ease.slowFast,delay:Math.random()*1000});
-			container.insert(thumb);
+			var thumbnail = oo.buildThumbnail({height:60,image:image,zoom:true});
+			thumbnail.setStyle({opacity:0});
+			n2i.ani(thumbnail,'opacity',1,500,{ease:n2i.ease.slowFast,delay:Math.random()*1000});
+			container.insert(thumbnail);
 		});
 	},
 	buildUsers : function(users) {
@@ -76,34 +63,16 @@ oo.community.Home.prototype = {
 		container.update();
 		users.each(function(pair) {
 			var element = new Element('div').addClassName('user');
-			element.insert(new Element('div').addClassName('thumbnail'));
+			element.insert(oo.buildThumbnail({width:50,height:60,variant:'user'}));
 			var html = '<p class="name">'+
-				'<a class="link" href="'+oo.appContext+'/'+pair.user.username+'/">'+
+				'<a class="oo_link" href="'+oo.appContext+'/'+pair.user.username+'/">'+
 				'<span>'+pair.person.name+'</span></a>'+
 				'</p>'+
 				'<p class="username">'+pair.user.username+'</p>'+
-				'<p class="website"><a class="link" href="'+oo.community.Home.buildUserURL(pair.user.username)+'"><span>Website »</span></a></p>';
+				'<p class="website"><a class="oo_link oo_link_dimmed" href="'+oo.community.Home.buildUserURL(pair.user.username)+'"><span>Website »</span></a></p>';
 			element.insert(html);
 			container.insert(element);
 		});
-	},
-	imageWasClicked : function(index) {
-		this.getViewer().show(index);
-	},
-	getViewer : function() {
-		if (!this.viewer) {
-			this.viewer = In2iGui.ImageViewer.create();
-			this.viewer.addDelegate(this);
-		}
-		if (this.dirtyImages) {
-			this.viewer.clearImages();
-			this.viewer.addImages(this.images);
-			this.dirtyImages = false;
-		}
-		return this.viewer;
-	},
-	$resolveImageUrl : function(image,width,height) {
-		return oo.baseContext+'/service/image/?id='+image.id+'&width='+width+'&height='+height;
 	}
 }
 

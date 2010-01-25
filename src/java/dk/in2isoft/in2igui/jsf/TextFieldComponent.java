@@ -21,11 +21,12 @@ public class TextFieldComponent extends UIComponentBase {
 	private String placeholder;
 	private int width;
 	private String value;
+	private boolean adaptive = true;
 
 	@Override
 	public Object saveState(FacesContext context) {
 		Object[] state = new Object[] {
-			super.saveState(context),name,secret,placeholder,width,value,inputName
+			super.saveState(context),name,secret,placeholder,width,value,inputName,adaptive
 		};
 		return state;
 	}
@@ -40,6 +41,7 @@ public class TextFieldComponent extends UIComponentBase {
 		width = (Integer) values[4];
 		value = (String) values[5];
 		inputName = (String) values[6];
+		adaptive = (Boolean) values[7];
 	}
 	
 	@Override
@@ -52,7 +54,12 @@ public class TextFieldComponent extends UIComponentBase {
 		String id = getClientId();
 		String value = ComponentUtil.getBindingAsString(this, "value", this.value, context);
 		TagWriter writer = new TagWriter(this,context);
-		writer.startDiv("in2igui_field").withId(id);
+		if (adaptive) {
+			writer.startDiv("in2igui_field");
+		} else {
+			writer.startSpan("in2igui_field");
+		}
+		writer.withId(id);
 		if (width>0) {
 			writer.withStyle("width: "+width+"px;");
 		}
@@ -76,7 +83,11 @@ public class TextFieldComponent extends UIComponentBase {
 		writer.endSpan();
 		writer.endSpan().endSpan().endSpan();
 		writer.startSpan("in2igui_field_bottom").startSpan().startSpan().endSpan().endSpan().endSpan();
-		writer.endDiv();
+		if (adaptive) {
+			writer.endDiv();
+		} else {
+			writer.endSpan();
+		}
 		writer.startScopedScript();
 		writer.write("new In2iGui.Formula.Text({element:'");
 		writer.write(id);
@@ -134,6 +145,14 @@ public class TextFieldComponent extends UIComponentBase {
 
 	public String getInputName() {
 		return inputName;
+	}
+
+	public void setAdaptive(boolean adaptive) {
+		this.adaptive = adaptive;
+	}
+
+	public boolean isAdaptive() {
+		return adaptive;
 	}
 
 	

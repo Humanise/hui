@@ -41,7 +41,7 @@ public class UserSession implements Priviledged {
 		return user.getId();
 	}
 
-	public ApplicationSession getToolSession(ApplicationController controller) {
+	public ApplicationSession getApplicationSession(ApplicationController controller) {
 		if (this.toolSessions.containsKey(controller.getClass())) {
 			return toolSessions.get(controller.getClass());
 		} else {

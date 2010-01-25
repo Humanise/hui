@@ -20,18 +20,18 @@
 			</ul>
 			<div class="content_body users_view">
 				<h1 class="header">Brugere</h1>
-				<oo:list model="#{usersView.userList}" var="item">
-					<div class="user">
-						<div class="thumbnail">
-							<h:panelGroup rendered="#{not empty item.image}">
-								<div style="background: url('#{baseView.baseContext}/service/image/id#{item.image.id}width50height60cropped.jpg');" onclick="oo.community.showImage({id:#{item.image.id},width:#{item.image.width},height:#{item.image.height}})"></div>
-							</h:panelGroup>
-						</div>
-						<p><a class="link" href="#{baseView.localContext}/#{item.user.username}/"><span>#{item.person.fullName}</span></a></p>
-						<p class="username">#{item.user.username}<span> @ </span><h:outputText value="#{item.user.created}"><f:convertDateTime pattern="EEEE 'd'. d.  MMMM yyyy" locale="da_DK"/></h:outputText></p>
-						<p class="website"><a class="link" href="#{baseView.localContext}/#{item.user.username}/site/"><span>Website &#187;</span></a></p>
-					</div>
-				</oo:list>
+				<oo:navigator model="#{usersView.userList}" var="list">
+					<oo:list value="#{list}" var="item">
+						<oo:splitLeft size="70">
+						<oo:thumbnail image="#{item.image}" width="50" height="60" variant="user" zoom="true"/>
+						<oo:rendering>
+							<p><oo:link href="/#{item.user.username}/">#{item.person.fullName}</oo:link></p>
+							<p class="small dimmed">#{item.user.username}<span> @ </span><h:outputText value="#{item.user.created}"><f:convertDateTime pattern="EEEE 'd'. d.  MMMM yyyy" locale="da_DK"/></h:outputText></p>
+							<p class="space"><oo:link variant="dimmed" href="/#{item.user.username}/site/">Website &#187;</oo:link></p>
+						</oo:rendering>
+						</oo:splitLeft>
+					</oo:list>
+				</oo:navigator>
 			</div>
 		</ui:define>
 		

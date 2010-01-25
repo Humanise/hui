@@ -2,6 +2,8 @@ package dk.in2isoft.onlineobjects.apps.community.views;
 
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import dk.in2isoft.onlineobjects.apps.community.CommunityDAO;
 import dk.in2isoft.onlineobjects.apps.community.UserProfileInfo;
 import dk.in2isoft.onlineobjects.apps.community.jsf.AbstractManagedBean;
@@ -15,14 +17,18 @@ import dk.in2isoft.onlineobjects.core.UserQuery;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.Relation;
+import dk.in2isoft.onlineobjects.model.RemoteAccount;
 import dk.in2isoft.onlineobjects.model.User;
+import dk.in2isoft.onlineobjects.services.RemoteDataService;
 import dk.in2isoft.onlineobjects.ui.jsf.ListModel;
 import dk.in2isoft.onlineobjects.ui.jsf.ListModelResult;
+import dk.in2isoft.onlineobjects.util.remote.RemoteAccountInfo;
 
 public class UserProfileView extends AbstractManagedBean {
 	
 	private CommunityDAO communityDAO;
 	private ModelService modelService;
+	private RemoteDataService remoteDataService;
 	private User user;
 	private Person person;
 	private Image image;
@@ -30,6 +36,7 @@ public class UserProfileView extends AbstractManagedBean {
 	private ListModel<Image> listModel;
 	private UserProfileInfo profileInfo;
 	private ListModel<Image> latestImages;
+	private List<RemoteAccountInfo> remoteAccountInfo;
 	
 	public int getImagePages() {
 		getAllImages();
@@ -112,10 +119,18 @@ public class UserProfileView extends AbstractManagedBean {
 		return getRequest().getSession().getUser().getUsername().equals(getUsersName());
 	}
 	
+	public boolean isFound() {
+		loadUser();
+		return user!=null;
+	}
+	
 	private void loadUser() {
 		if (user==null || person==null) {
 			UserQuery query = new UserQuery().withUsername(getUsersName());
 			PairSearchResult<User,Person> result = modelService.searchPairs(query);
+			if (result.getTotalCount()==0) {
+				return;
+			}
 			Pair<User, Person> next = result.iterator().next();
 			user = next.getKey();
 			person = next.getValue();
@@ -125,6 +140,28 @@ public class UserProfileView extends AbstractManagedBean {
 				// TODO: Do something usefull
 			}
 		}
+	}
+	
+	public String getGoogleUsername() {
+		loadUser();
+		Query<RemoteAccount> query = Query.of(RemoteAccount.class).withFieldValue("domain", "google.com");
+		List<RemoteAccount> list = modelService.list(query);
+		if (list.size()>0) {
+			return list.get(0).getUsername();
+		}
+		return null;
+	}
+	
+	public List<RemoteAccountInfo> getRemoteAccountInfo() {
+		if (remoteAccountInfo==null) {
+			remoteAccountInfo = Lists.newArrayList();
+			Query<RemoteAccount> query = Query.of(RemoteAccount.class).withPriviledged(user);
+			List<RemoteAccount> accounts = modelService.list(query);
+			for (RemoteAccount account : accounts) {
+				remoteAccountInfo.add(remoteDataService.getInfo(account));
+			}
+		}
+		return remoteAccountInfo;
 	}
 
 	public void setCommunityDAO(CommunityDAO communityDAO) {
@@ -141,5 +178,13 @@ public class UserProfileView extends AbstractManagedBean {
 
 	public ModelService getModelService() {
 		return modelService;
+	}
+
+	public void setRemoteDataService(RemoteDataService remoteDataService) {
+		this.remoteDataService = remoteDataService;
+	}
+
+	public RemoteDataService getRemoteDataService() {
+		return remoteDataService;
 	}
 }

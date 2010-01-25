@@ -1,9 +1,5 @@
 package dk.in2isoft.onlineobjects.model;
 
-import java.io.File;
-
-import dk.in2isoft.onlineobjects.core.Core;
-import dk.in2isoft.onlineobjects.core.EndUserException;
 
 
 public class Image extends Entity {
@@ -64,20 +60,5 @@ public class Image extends Entity {
 
 	public void setFileSize(long fileSize) {
 		this.fileSize = fileSize;
-	}
-
-	public void changeImageFile(File imageFile,int width,int height,String contentType)
-	throws EndUserException {
-		this.width = width;
-		this.height = height;
-		this.contentType=contentType;
-		this.fileSize = imageFile.length();
-		File folder = Core.getInstance().getStorageService().getItemFolder(this);
-		imageFile.renameTo(new File(folder,"original"));
-	}
-	
-	public File getImageFile() {
-		File folder = Core.getInstance().getStorageService().getItemFolder(this);
-		return new File(folder,"original");
 	}
 }

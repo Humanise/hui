@@ -16,13 +16,17 @@ public class TestFileService extends AbstractTestCase {
 	
 	@Autowired
 	private FileService fileService;
-	
 
 	@Test
-	public void testApplicationContext() throws EndUserException, IOException {
-		File file = getTestFile("testImageWithGPS.jpg");
+	public void testMimeType() throws EndUserException, IOException {
+		testMimeType("text/plain", "loremipsum.txt");
+		testMimeType("image/pjpeg", "testImageWithGPS.jpg");
+	}
+	
+	private void testMimeType(String type,String fileName) throws IOException {
+		File file = getTestFile(fileName);
 		String mimeType = fileService.getMimeType(file);
-		assertEquals("image/jpeg", mimeType);
+		assertEquals(type, mimeType);
 	}
 	
 	@Test
@@ -34,6 +38,11 @@ public class TestFileService extends AbstractTestCase {
 		assertEquals("Image 789", fileService.cleanFileName("c:\\documents\\image_789.jpg"));
 		assertEquals("", fileService.cleanFileName(""));
 		assertEquals(null, fileService.cleanFileName(null));
+	}
+
+	@Test
+	public void testGetSafeFileName() throws EndUserException {
+		assertEquals("my_image.jpg", fileService.getSafeFileName("My image", "jpg"));
 	}
 
 	public void setFileService(FileService fileService) {

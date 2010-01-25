@@ -26,7 +26,7 @@ public class Invitation extends Entity {
 	}
 
 	public String getIcon() {
-		return "Element/Generic";
+		return "common/letter";
 	}
 
 	public String getCode() {

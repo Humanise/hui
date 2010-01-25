@@ -7,7 +7,8 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses( { 
 	TestPerson.class, 
 	TestRelations.class, 
-	TestUserQuery.class
+	TestUserQuery.class, 
+	TestIndexService.class
 })
 public class AllModelTests {
 

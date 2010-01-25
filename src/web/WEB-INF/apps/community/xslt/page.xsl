@@ -44,6 +44,8 @@
 				<script src="{$base-context}/In2iGui/js/Box.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 				<script src="{$base-context}/In2iGui/js/Gallery.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 				<script src="{$base-context}/In2iGui/js/Overflow.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+				<script src="{$base-context}/In2iGui/js/LocationPicker.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+				<script src="{$base-context}/In2iGui/js/TextField.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 			</xsl:when>
 			<xsl:otherwise>
 				<link rel="stylesheet" href="{$base-context}/In2iGui/bin/minimized.css?{$cache-version}" type="text/css" media="screen" title="front" charset="utf-8"/>
@@ -55,6 +57,9 @@
 		<![endif]]]></xsl:comment>
 		<xsl:comment><![CDATA[[if IE 7]>
 			<link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$base-context"/>/In2iGui/css/msie7.css?<xsl:value-of select="$cache-version"/><![CDATA["> </link>
+		<![endif]]]></xsl:comment>
+		<xsl:comment><![CDATA[[if IE 8]>
+			<link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$base-context"/>/In2iGui/css/msie8.css?<xsl:value-of select="$cache-version"/><![CDATA["> </link>
 		<![endif]]]></xsl:comment>
 		<script type="text/javascript" charset="utf-8">
 			In2iGui.context = '<xsl:value-of select="$base-context"/>';

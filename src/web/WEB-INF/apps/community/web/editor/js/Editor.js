@@ -75,6 +75,9 @@ OO.Editor.prototype = {
 		if (this.newPagePanel) {
 			this.newPagePanel.hide();
 		}
+		if (this.infoWindow) {
+			this.infoWindow.hide();
+		}
 		Element.removeClassName(document.body,'editor_mode');
 		n2i.animate(this.toolbarPadder,'padding-top','0px',500,{ease:n2i.ease.slowFastSlow});
 		this.toolbarRevealer.hide();
@@ -333,9 +336,21 @@ OO.Editor.prototype = {
 		});
 	},
 	$ok$confirmDeletePage : function() {
-		CorePublishing.deleteWebPage(OnlineObjects.page.id,function() {
-			document.location='.?edit=true';
-		});
+		CorePublishing.deleteWebPage(
+			OnlineObjects.page.id,
+			{
+				callback : function() {
+					document.location='.?edit=true';
+				},
+				errorHandler : function(msg,e) {
+					if (e.code=='lastPage') {
+						ui.showMessage({text:'Den sidste side kan ikke slettes',duration:3000});
+					} else {
+						ui.showMessage({text:'Der skete en ukendt fejl',duration:3000});
+					}
+				}
+			}
+		);
 	}
 }
 
@@ -382,8 +397,8 @@ OO.Editor.TextEditor.prototype.activate = function() {
 	field.setStyle({width:(e.getWidth()+30)+'px',textAlign:'center'});
 	e.style.display='none';
 	this.field.value = this.original = e.innerHTML;
-	n2i.copyStyle(e,field,['fontSize','color','backgroundColor','lineHeight','fontFamily']);
-	this.field.setStyle({border:'none',textAlign:'middle'});
+	n2i.copyStyle(e,field,['fontSize','color','backgroundColor','lineHeight','fontFamily','textTransform']);
+	this.field.setStyle({border:'none',textAlign:'center'});
 	e.parentNode.insertBefore(field,e);
 	field.focus();
 	field.select();

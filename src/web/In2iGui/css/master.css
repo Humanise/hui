@@ -6,7 +6,6 @@ html.in2igui
 body.in2igui
 {
 	margin: 0px;
-	font-size: 0;
 	background: #f3f5f7;
 	overflow: auto;
 	min-height: 100%;

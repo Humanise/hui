@@ -60,25 +60,60 @@ a.tag-5
 
 div.home_intro
 {
-	background: url('../gfx/front/poster.jpg');
-	height: 228px;
+	background: url('../gfx/home/poster.png') 20px 10px no-repeat;
+	height: 250px;
+	border-bottom: 1px solid #ddd;
+	position: relative;
 }
 
-div.home_intro *
+/*********************************** Sign up *****************************/
+
+h2.home_signup
 {
-	display: none;
+	width: 249px;
+	height: 29px;
+	text-indent: 400px;
+	overflow: hidden;
+	position: absolute;
+	background: url('../gfx/home/new_profile_header.png') no-repeat;
+	margin: 0;
+	right: 30px;
+	top: 25px;
 }
 
-div.home_intro h2
+form.home_signup
 {
-	margin: 0px;
+	margin: 0;
+	position: absolute;
+	top: 70px;
+	right: 46px;
+}
+
+form.home_signup input.submit
+{
+	position: absolute;
+	left: -1000px;
+	top: -1000px;
+}
+
+form.home_signup th
+{
+	text-align: right;
+	font-size: 12px;
 	font-weight: normal;
-	font-size: 18pt;
+	color: #456;
 }
 
-div.home_intro p
+form.home_signup tbody td
 {
-	font-size: 10pt;
+	width: 180px;
+}
+
+form.home_signup p
+{
+	margin: 0;
+	padding-right: 2px;
+	text-align: right;
 }
 
 /*********************************** Search *****************************/
@@ -125,13 +160,9 @@ div.section_head h2
 	width: 730px;
 }
 
-#images_container .thumbnail
+#images_container span.oo_thumbnail
 {
-	border: 1px solid #ddd;
 	float: left;
-	height: 60px;
-	background: center center no-repeat;
-	padding: 4px;
 	margin-right: 10px;
 }
 
@@ -151,7 +182,7 @@ div.section_head h2
 
 #users_container div.user
 {
-	height: 68px;
+	height: 70px;
 	float: left;
 	margin-right: 25px;
 }

@@ -26,6 +26,12 @@ div.profile_view div.thumbnail
 
 /***************************** Profile *************************/
 
+div.profile_view_left
+{
+	width: 105px;
+	float: left;
+}
+
 div.profile_view div.profile_image
 {
 	width: 100px;
@@ -33,7 +39,6 @@ div.profile_view div.profile_image
 	border: 1px solid #ddd;
 	border-color: #eee #ddd #ccc;
 	background: url('../gfx/profile_large.png') center center no-repeat;
-	float: left;
 }
 
 div.profile_view div.profile_image_photo

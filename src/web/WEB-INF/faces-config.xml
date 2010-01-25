@@ -29,12 +29,48 @@ http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
     	<component-class>dk.in2isoft.onlineobjects.ui.jsf.ListComponent</component-class>
   	</component>
     <component>
+    	<component-type>onlineobjects.navigator</component-type>
+    	<component-class>dk.in2isoft.onlineobjects.ui.jsf.NavigatorComponent</component-class>
+  	</component>
+    <component>
+    	<component-type>onlineobjects.thumbnail</component-type>
+    	<component-class>dk.in2isoft.onlineobjects.ui.jsf.ThumbnailComponent</component-class>
+  	</component>
+    <component>
     	<component-type>onlineobjects.gallery</component-type>
     	<component-class>dk.in2isoft.onlineobjects.ui.jsf.GalleryComponent</component-class>
   	</component>
     <component>
     	<component-type>onlineobjects.box</component-type>
     	<component-class>dk.in2isoft.onlineobjects.ui.jsf.BoxComponent</component-class>
+  	</component>
+    <component>
+    	<component-type>onlineobjects.rendering</component-type>
+    	<component-class>dk.in2isoft.onlineobjects.ui.jsf.RenderingComponent</component-class>
+  	</component>
+    <component>
+    	<component-type>onlineobjects.link</component-type>
+    	<component-class>dk.in2isoft.onlineobjects.ui.jsf.LinkComponent</component-class>
+  	</component>
+    <component>
+    	<component-type>onlineobjects.script</component-type>
+    	<component-class>dk.in2isoft.onlineobjects.ui.jsf.ScriptComponent</component-class>
+  	</component>
+    <component>
+    	<component-type>onlineobjects.stylesheet</component-type>
+    	<component-class>dk.in2isoft.onlineobjects.ui.jsf.StylesheetComponent</component-class>
+  	</component>
+    <component>
+    	<component-type>onlineobjects.scriptsetup</component-type>
+    	<component-class>dk.in2isoft.onlineobjects.ui.jsf.ScriptSetupComponent</component-class>
+  	</component>
+    <component>
+    	<component-type>onlineobjects.splitleft</component-type>
+    	<component-class>dk.in2isoft.onlineobjects.ui.jsf.SplitLeftComponent</component-class>
+  	</component>
+    <component>
+    	<component-type>onlineobjects.output</component-type>
+    	<component-class>dk.in2isoft.onlineobjects.ui.jsf.OutputComponent</component-class>
   	</component>
     <component>
 	    <component-type>in2igui.button</component-type>
@@ -47,5 +83,21 @@ http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
     <component>
 	    <component-type>in2igui.searchfield</component-type>
     	<component-class>dk.in2isoft.in2igui.jsf.SearchFieldComponent</component-class>
+  	</component>
+    <component>
+	    <component-type>in2igui.bar</component-type>
+    	<component-class>dk.in2isoft.in2igui.jsf.BarComponent</component-class>
+  	</component>
+    <component>
+	    <component-type>in2igui.barButton</component-type>
+    	<component-class>dk.in2isoft.in2igui.jsf.BarButtonComponent</component-class>
+  	</component>
+    <component>
+	    <component-type>in2igui.import</component-type>
+    	<component-class>dk.in2isoft.in2igui.jsf.ImportComponent</component-class>
+  	</component>
+    <component>
+	    <component-type>in2igui.videoplayer</component-type>
+    	<component-class>dk.in2isoft.in2igui.jsf.VideoPlayerComponent</component-class>
   	</component>
 </faces-config>

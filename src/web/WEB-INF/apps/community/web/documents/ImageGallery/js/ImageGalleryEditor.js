@@ -29,7 +29,7 @@ OO.Editor.ImageGallery.prototype = {
 		if (!this.imagesLoaded) {
 			this.refreshImages();
 			if (this.initialUpload) {
-				this.click$addImages();
+				this.$click$addImages();
 				n2i.location.clearHash();
 			}
 		}
@@ -206,17 +206,22 @@ OO.Editor.ImageGallery.prototype = {
 	// Multi upload
 	$click$addImages : function() {
 		if (!this.addImagesPanel) {
-			var u = this.uploader = ui.Upload.create({name:'upload',url:'uploadImage',maxSize:5120,types:'*.jpg;*.jpeg;*.gif;*.png',parameters:{'contentId':OnlineObjects.content.id}});
-			//w.add(u);
-			var box = ui.Box.create({title:'Tilføj billeder',width:400,padding:10,absolute:true,modal:true});
-			box.add('<div class="in2igui_text"><h1>Vælg billeder på din computer</h1><p>Du kan vælge en eller flere billedfiler på din lokale computer...</p></div>');
-			box.add(u);
-			var buttons = ui.Buttons.create({top: 10});
-			var upload = ui.Button.create({title:'Vælg billeder...',highlighted:true});
-			u.setButton(upload);
-			buttons.add(upload);
+			var buttons = ui.Buttons.create({top: 10,align:'center'});
 			this.cancelUploadButton = ui.Button.create({name:'cancelAddImages',title:'Afslut'});
 			buttons.add(this.cancelUploadButton);
+			var chooser = ui.Button.create({title:'Vælg billeder...',highlighted:true});
+			buttons.add(chooser);
+			var up = this.uploader = ui.Upload.create({
+				name:'upload',
+				widget:chooser,
+				url:'uploadImage',
+				maxSize:5120,
+				types:'*.jpg;*.jpeg;*.gif;*.png',
+				parameters:{'contentId':OnlineObjects.content.id},
+				placeholder:{title:'Vælg billeder på din computer',text:'Du kan vælge en eller flere billedfiler på din lokale computer...'}
+			});
+			var box = ui.Box.create({width:400,padding:10,absolute:true,modal:true});
+			box.add(up);
 			box.add(buttons);
 			box.addToDocument();
 			this.addImagesPanel = box;
@@ -291,11 +296,12 @@ OO.Editor.ImageGallery.prototype = {
 	showImageEditorPanel : function(photo) {
 		this.latestEditedPhoto = photo;
 		var panel = this.getImageEditorPanel();
-		In2iGui.get('imageEditorTitle').setValue(photo.image.name || '');
+		ui.get('imageEditorTitle').setValue(photo.image.name || '');
 		var desc = OO.Editor.getEntityProperty(photo.image,'item.enity.image.description');
-		In2iGui.get('imageEditorDescription').setValue(desc || '');
+		ui.get('imageEditorDescription').setValue(desc || '');
 		var tags = OO.Editor.getEntityProperties(photo.image,'common.tag');
-		In2iGui.get('imageEditorTags').setValue(tags);
+		ui.get('imageEditorTags').setValue(tags);
+		//ui.get('imageEditorLocation').reset();
 		panel.position(photo.frame.getElementsByTagName('img')[0]);
 		panel.show();
 	},
@@ -312,6 +318,7 @@ OO.Editor.ImageGallery.prototype = {
 			group.add(In2iGui.Formula.Text.create({name:'imageEditorTitle',label:'Titel'}));
 			group.add(In2iGui.Formula.Text.create({name:'imageEditorDescription',label:'Beskrivelse',lines:4}));
 			group.add(In2iGui.Formula.Tokens.create({name:'imageEditorTags',label:'Nøgleord'}));
+			//group.add(In2iGui.Formula.Location.create({name:'imageEditorLocation',label:'Lokation'}));
 			var buttons = In2iGui.Buttons.create();
 			buttons.add(In2iGui.Button.create({name:'deleteImageEditor',text:'Slet'}));
 			buttons.add(In2iGui.Button.create({name:'cancelImageEditor',text:'Annuller'}));

@@ -38,7 +38,7 @@ public class TestComparison extends AbstractTestCase {
 	@Autowired
 	private SemanticService semanticService;
 	
-	//@Test
+	@Test
 	public void testWikipedia() throws EndUserException, MalformedURLException {
 		
 		List<String> urls = Lists.newArrayList(
@@ -57,7 +57,7 @@ public class TestComparison extends AbstractTestCase {
 		compareUrls(urls);
 	}
 	
-	@Test
+	//@Test
 	public void testFeed() throws EndUserException, IllegalArgumentException, FeedException, IOException {
 		
 		List<String> urls = Lists.newArrayList();

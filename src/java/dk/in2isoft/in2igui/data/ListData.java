@@ -35,6 +35,14 @@ public class ListData extends HashMap<String, Object> {
 		getRows().add(map);
 	}
 	
+	public void newRow(Long id,String kind, Object data) {
+		HashMap<String, Object> map = Maps.newHashMap();
+		map.put("id", id);
+		map.put("kind", kind);
+		map.put("data", data);
+		getRows().add(map);
+	}
+	
 	public void newRow() {
 		newRow(null, null);
 	}

@@ -14,12 +14,18 @@
 		
 		<ui:define name="body">
 			<div class="home_intro">
-				<h2>Velkommen</h2>
-				<p><em>OnlineMe</em> er et online fællesskab hvor mennesker kan <strong>udstille og udveksle information</strong>.
-					Det er endnu usikkert hvordan det vil udvikle sig så du har rig mulighed for at <strong>påvirke det selv</strong>.</p>
-				<p>Hvis du har <strong>ideer eller problemer</strong> er du også meget velkommen til at <a href="http://www.in2isoft.dk/kontakt/" class="link"><span>kontakte os</span></a>.</p>
-				<p>Systemet er udviklet af <a href="http://www.in2isoft.dk/" class="link"><span>In2iSoft</span></a> og bygger på ideen om at information skal være
-					<strong>frit</strong> og skal kunne <strong>sammenkædes</strong> frit.</p>
+				<h2 class="home_signup">opret gratis profil...</h2>
+				<form action="signup" method="get" accept-charset="utf-8" id="signup" class="home_signup">
+					<table>
+						<tbody>
+						<tr><th>Navn:</th><td><gui:textfield placeholderx="F.eks: Jens Petersen" name="casingSignupName"/></td></tr>
+						<tr><th>E-mail:</th><td><gui:textfield placeholderx="F.eks: jens@mail.dk" name="casingSignupEmail"/></td></tr>
+						<tr><th>Brugernavn:</th><td><gui:textfield placeholder="Kun små bogstaver og tal" name="casingSignupUsername"/></td></tr>
+						<tr><th>Kodeord:</th><td><gui:textfield placeholder="Gerne med tal og tegn" secret="true" name="casingSignupPassword"/></td></tr>
+						</tbody>
+					</table>
+					<p><gui:button text="Opret profil" highlighted="true" name="casingSignUp"/><input type="submit" value="Tilmeld" class="submit"/></p>
+				</form>
 			</div>
 			<div class="home_latest">
 				<div class="home_filter">
@@ -40,5 +46,8 @@
 			</div>
 		</ui:define>
 		
+		
+		<ui:define name="sidebar">
+		</ui:define>
 	</ui:composition>
 </html>

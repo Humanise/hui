@@ -6,13 +6,18 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import nu.xom.Attribute;
 import nu.xom.Element;
+import nu.xom.Nodes;
 import nu.xom.Text;
+import nu.xom.XPathContext;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import com.google.common.collect.Lists;
 
 public class HTMLDocument extends XMLDocument {
 
@@ -108,11 +113,34 @@ public class HTMLDocument extends XMLDocument {
         }
         
     }
+    
+    public List<HTMLReference> getFeeds() {
+		List<HTMLReference> refs = Lists.newArrayList();
+        nu.xom.Document doc = getXOMDocument();
+        XPathContext context = new XPathContext("html", "http://www.w3.org/1999/xhtml");
+        Nodes titles = doc.query("//html:link[@type='application/rss+xml']", context);
+        for (int i = 0; i < titles.size(); i++) {
+			nu.xom.Node node = titles.get(i);
+			if (node instanceof Element) {
+				Element element = (Element) node;
+				HTMLReference reference = new HTMLReference();
+				Attribute href = element.getAttribute("href");
+				if (href!=null) {
+					reference.setUrl(href.getValue());
+				}
+				refs.add(reference);
+			}
+		}
+    	return refs;
+    }
 	
 	public List<HTMLReference> getReferences() {
 		Document doc = getDOMDocument();
-		NodeList list = doc.getElementsByTagName("a");
 		List<HTMLReference> refs = new ArrayList<HTMLReference>();
+		if (doc==null) {
+			return refs;
+		}
+		NodeList list = doc.getElementsByTagName("a");
 	    for (int i=0;i<list.getLength();i++) {
 	    	Node link = list.item(i);
 	    	NamedNodeMap atts = link.getAttributes();
