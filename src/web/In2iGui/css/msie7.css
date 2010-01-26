@@ -126,3 +126,10 @@ span.in2igui_formula_text_multiline
 	position: relative;
 	display: block;
 }
+
+/********************** Tabs ****************/
+
+div.in2igui_tabs_bar li
+{
+	display: inline;
+}

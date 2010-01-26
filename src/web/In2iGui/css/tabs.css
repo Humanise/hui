@@ -22,7 +22,7 @@ div.in2igui_tabs_bar ul
 
 div.in2igui_tabs_bar li
 {
-	float: left;
+	display: inline-block;
 }
 
 div.in2igui_tabs_bar a
