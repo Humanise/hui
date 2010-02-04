@@ -14,7 +14,6 @@
 					<group>
 						<text label="Brugernavn:"/>
 						<text label="Kodeord:"/>
-						<text label="Notat:" lines="6"/>
 						<checkbox label="Intern adgang:"/>
 						<checkbox label="Ekstern adgang:"/>
 						<tokens label="Tokens:"/>
@@ -33,7 +32,6 @@
 					<group>
 						<text label="Brugernavn:"/>
 						<text label="Kodeord:"/>
-						<text label="Notat:" lines="6"/>
 						<checkbox label="Intern adgang:"/>
 						<checkbox label="Ekstern adgang:"/>
 						<tokens label="Tokens:"/>
@@ -52,7 +50,6 @@
 					<group>
 						<text label="Brugernavn:"/>
 						<text label="Kodeord:"/>
-						<text label="Notat:" lines="6"/>
 						<checkbox label="Intern adgang:"/>
 						<checkbox label="Ekstern adgang:"/>
 						<tokens label="Tokens:"/>
@@ -66,6 +63,9 @@
 			</box>
 		</column>
 	</columns>
+	<box width="400" height="300" padding="10" variant="rounded" name="absoluteBox">
+		hsdjfha jdfhasfjkahsfjka hdfjaksf hak
+	</box>
 	<box width="400" padding="10" title="Title with toolbar" variant="textured" modal="true" absolute="true" closable="true" name="absoluteBox">
 		hsdjfha jdfhasfjkahsfjka hdfjaksf hak
 	</box>

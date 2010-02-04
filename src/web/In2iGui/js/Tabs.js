@@ -16,7 +16,14 @@ In2iGui.Tabs = function(o) {
 In2iGui.Tabs.create = function(options) {
 	options = options || {};
 	var e = options.element = new Element('div',{'class':'in2igui_tabs'});
-	var bar = new Element('div',{'class' : options.small ? 'in2igui_tabs_bar in2igui_tabs_bar_small' : 'in2igui_tabs_bar'});
+	var cls = 'in2igui_tabs_bar';
+	if (options.small) {
+		cls+=' in2igui_tabs_bar_small';
+	}
+	if (options.centered) {
+		cls+=' in2igui_tabs_bar_centered';
+	}
+	var bar = new Element('div',{'class' : cls});
 	e.insert(bar);
 	var ul = new Element('ul');
 	bar.insert(ul);
@@ -24,22 +31,27 @@ In2iGui.Tabs.create = function(options) {
 }
 
 In2iGui.Tabs.prototype = {
+	/** @private */
 	addBehavior : function() {
 		this.tabs.each(this.addTabBehavior.bind(this));
 	},
+	/** @private */
 	addTabBehavior : function(tab,index) {	
 		tab.observe('click',function() {
 			this.tabWasClicked(index);
 		}.bind(this))
 	},
+	/** @private */
 	registerTab : function(obj) {
 		obj.parent = this;
 		this.tabs.push(obj);
 	},
+	/** @private */
 	tabWasClicked : function(index) {
 		this.activeTab = index;
 		this.updateGUI();
 	},
+	/** @private */
 	updateGUI : function() {
 		for (var i=0; i < this.tabs.length; i++) {
 			this.tabs[i].setClassName('in2igui_tabs_selected',i==this.activeTab);

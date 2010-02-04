@@ -68,15 +68,16 @@ a.in2igui_button_highlighted, a.in2igui_button_highlighted span
 em.in2igui_button_icon
 {
 	padding: 0px;
-	margin: 4px 3px 0px -2px;
+	margin: -1px 3px 0px -2px;
 	width: 16px;
 	height: 16px;
-	float: left;
+	display: inline-block;
+	vertical-align: middle;
 }
 
 em.in2igui_button_icon_notext
 {
-	margin: 4px 0px 0px 0px;
+	margin: -1px -3px 0px -3px;
 }
 
 a.in2igui_button:hover

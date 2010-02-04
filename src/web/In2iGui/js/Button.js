@@ -6,7 +6,6 @@ In2iGui.Button = function(options) {
 	this.options = options;
 	this.name = options.name;
 	this.element = $(options.element);
-	this.inner = this.element.getElementsByTagName('span')[1];
 	this.enabled = !this.element.hasClassName('in2igui_button_disabled');
 	In2iGui.extend(this);
 	this.addBehavior();
@@ -81,7 +80,7 @@ In2iGui.Button.prototype = {
 	},
 	/** Sets the button text */
 	setText : function(text) {
-		this.inner.innerHTML = text;
+		this.element.getElementsByTagName('span')[1].innerHTML = text;
 	}
 }
 

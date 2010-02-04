@@ -10,7 +10,7 @@ In2iGui.Gallery = function(options) {
 	this.height = 100;
 	In2iGui.extend(this);
 	if (this.options.source) {
-		this.options.source.addDelegate(this);
+		this.options.source.listen(this);
 	}
 }
 

@@ -3,7 +3,7 @@ div.in2igui_progressbar
 	height: 22px;
 	border: 1px solid #ccc;
 	border-width: 0px 1px;
-	background: #fff;
+	background: url("../gfx/progress_bg.png") repeat-x 0 -28px;
 }
 
 div.in2igui_progressbar div
@@ -11,6 +11,16 @@ div.in2igui_progressbar div
 	height: 22px;
 	background: url('../gfx/progress_animation.gif');
 	width: 0%;
+}
+
+div.in2igui_progressbar_complete div
+{
+	background: url('../gfx/progress_bg.png') left -50px;
+}
+
+div.in2igui_progressbar_waiting
+{
+	background: url('../gfx/progress_animation_indeterminate.gif');
 }
 
 div.in2igui_progressbar_small

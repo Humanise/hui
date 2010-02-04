@@ -5,9 +5,9 @@ In2iGui.ProgressBar = function(o) {
 	this.element = $(o.element);
 	this.name = o.name;
 	/** @private */
-	this.WAITING = 'in2igui_progressbar_small_waiting';
+	this.WAITING = o.small ? 'in2igui_progressbar_small_waiting' : 'in2igui_progressbar_waiting';
 	/** @private */
-	this.COMPLETE = 'in2igui_progressbar_small_complete';
+	this.COMPLETE = o.small ? 'in2igui_progressbar_small_complete' : 'in2igui_progressbar_complete';
 	/** @private */
 	this.options = o || {};
 	/** @private */

@@ -8,7 +8,7 @@ In2iGui.Articles = function(options) {
 	this.name = options.name;
 	this.element = $(options.element);
 	if (options.source) {
-		options.source.addDelegate(this);
+		options.source.listen(this);
 	}
 }
 

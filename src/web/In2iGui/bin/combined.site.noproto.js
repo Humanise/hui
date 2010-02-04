@@ -1282,7 +1282,7 @@ In2iGui.prototype = {
 	/** Adds a global delegate
 	 * @deprecated
 	*/
-	addDelegate : function(delegate) {
+	listen : function(delegate) {
 		this.delegates.push(delegate);
 	},
 	listen : function(delegate) {
@@ -1327,7 +1327,7 @@ In2iGui.prototype = {
 		if (!this.alertBox) {
 			this.alertBox = In2iGui.Alert.create(options);
 			this.alertBoxButton = In2iGui.Button.create({name:'in2iGuiAlertBoxButton',text : 'OK'});
-			this.alertBoxButton.addDelegate(this);
+			this.alertBoxButton.listen(this);
 			this.alertBox.addButton(this.alertBoxButton);
 		} else {
 			this.alertBox.update(options);
@@ -1353,7 +1353,7 @@ In2iGui.prototype = {
 		if (!alert) {
 			alert = In2iGui.Alert.create(options);
 			var cancel = In2iGui.Button.create({name:name+'_cancel',text : options.cancel || 'Cancel',highlighted:options.highlighted==='cancel'});
-			cancel.addDelegate({$click:function(){
+			cancel.listen({$click:function(){
 				alert.hide();
 				if (options.onCancel) {
 					options.onCancel();
@@ -1374,7 +1374,7 @@ In2iGui.prototype = {
 			In2iGui.get(name+'_cancel').setHighlighted(options.highlighted=='cancel');
 			if (options.cancel) {In2iGui.get(name+'_cancel').setText(options.cancel);}
 		}
-		ok.addDelegate({$click:function(){
+		ok.listen({$click:function(){
 			alert.hide();
 			if (options.onOK) {
 				options.onOK();
@@ -1388,8 +1388,8 @@ In2iGui.prototype = {
 			this.layoutWidgets[i]['$$layout']();
 		};
 	},
-	getDescendants : function(widget) {
-		var desc = [],e = widget.getElement();
+	getDescendants : function(widgetOrElement) {
+		var desc = [],e = widgetOrElement.getElement ? widgetOrElement.getElement() : widgetOrElement;
 		if (e) {
 			var d = e.descendants();
 			var o = this.objects.values();
@@ -1436,8 +1436,15 @@ In2iGui.prototype = {
 	}
 };
 
-In2iGui.listen = function(d) {
-	In2iGui.get().listen(d);
+In2iGui.destroyDescendants = function(element) {
+	var desc = In2iGui.get().getDescendants(element);
+	var objects = In2iGui.get().objects;
+	for (var i=0; i < desc.length; i++) {
+		var obj  = objects.unset(desc[i].name);
+		if (!obj) {
+			n2i.log('not found: '+desc[i].name);
+		}
+	};
 }
 
 In2iGui.changeState = function(state) {
@@ -1872,8 +1879,8 @@ In2iGui.callVisible = function(widget) {
 	In2iGui.callDescendants(widget,'$visibilityChanged');
 }
 
-In2iGui.addDelegate = In2iGui.observe = function(d) {
-	In2iGui.get().addDelegate(d);
+In2iGui.addDelegate = In2iGui.observe = In2iGui.listen = function(d) {
+	In2iGui.get().listen(d);
 }
 
 In2iGui.callDelegates = function(obj,method,value,event) {
@@ -1887,15 +1894,7 @@ In2iGui.callDelegates = function(obj,method,value,event) {
 			var thisResult = null;
 			if (obj.name && delegate['$'+method+'$'+obj.name]) {
 				thisResult = delegate['$'+method+'$'+obj.name](value,event);
-			}/* else if (obj.name && delegate[method+'$'+obj.name]) {
-				thisResult = delegate[method+'$'+obj.name](value,event);
-			} else if ('$'+obj.name && delegate[method+'$'+obj.name]) {
-				thisResult = delegate['$'+method+'$'+obj.name](value,event);
-			} else if (obj.kind && delegate[method+'$'+obj.kind]) {
-				thisResult = delegate[method+'$'+obj.kind](value,event);
-			} else if (delegate[method]) {
-				thisResult = delegate[method](value,event);
-			}*/ else if (delegate['$'+method]) {
+			} else if (delegate['$'+method]) {
 				thisResult = delegate['$'+method](value,event);
 			}
 			if (result==null && thisResult!=null && typeof(thisResult)!='undefined') {
@@ -1919,13 +1918,7 @@ In2iGui.callSuperDelegates = function(obj,method,value,event) {
 		var thisResult = null;
 		if (obj.name && delegate['$'+method+'$'+obj.name]) {
 			thisResult = delegate['$'+method+'$'+obj.name](value,event);
-		}/* else if (obj.name && delegate[method+'$'+obj.name]) {
-			thisResult = delegate[method+'$'+obj.name](value,event);
-		} else if (obj.kind && delegate[method+'$'+obj.kind]) {
-			thisResult = delegate[method+'$'+obj.kind](value,event);
-		} else if (delegate[method]) {
-			thisResult = delegate[method](value,event);
-		}*/ else if (delegate['$'+method]) {
+		} else if (delegate['$'+method]) {
 			thisResult = delegate['$'+method](value,event);
 		}
 		if (result==null && thisResult!=null && typeof(thisResult)!='undefined') {
@@ -1966,7 +1959,7 @@ In2iGui.bind = function(expression,delegate) {
 			return;
 		}
 		var p = pair.slice(1).join('.');
-		obj.addDelegate({
+		obj.listen({
 			$propertyChanged : function(prop) {
 				if (prop.property==p) {
 					delegate(prop.value);
@@ -2141,7 +2134,7 @@ In2iGui.Source = function(options) {
 	this.parameters = this.options.parameters;
 	In2iGui.extend(this);
 	if (options.delegate) {
-		this.addDelegate(options.delegate);
+		this.listen(options.delegate);
 	}
 	this.busy=false;
 	In2iGui.onDomReady(this.init.bind(this));
@@ -2283,7 +2276,7 @@ In2iGui.ImageViewer = function(options) {
 	this.playing=false;
 	this.name = options.name;
 	this.images = [];
-	this.box.addDelegate(this);
+	this.box.listen(this);
 	this.addBehavior();
 	In2iGui.extend(this);
 }

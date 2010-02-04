@@ -11,7 +11,11 @@ In2iGui.Overlay = function(options) {
 	this.addBehavior();
 }
 
+/**
+ * Creates a new overlay
+ */
 In2iGui.Overlay.create = function(options) {
+	options = options || {};
 	var e = options.element = new Element('div').addClassName('in2igui_overlay').setStyle({'display':'none'});
 	e.update('<div class="in2igui_inner_overlay"><div class="in2igui_inner_overlay"></div></div>');
 	document.body.appendChild(e);
@@ -60,6 +64,7 @@ In2iGui.Overlay.prototype = {
 		In2iGui.callDelegates(this,'iconWasClicked',key,e);
 	},
 	showAtElement : function(element,options) {
+		options = options || {};
 		In2iGui.positionAtElement(this.element,element,options);
 		if (this.visible) return;
 		if (n2i.browser.msie) {

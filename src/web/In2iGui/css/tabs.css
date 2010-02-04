@@ -25,6 +25,11 @@ div.in2igui_tabs_bar li
 	display: inline-block;
 }
 
+div.in2igui_tabs_bar_centered ul
+{
+	text-align: center;
+}
+
 div.in2igui_tabs_bar a
 {
 	float: left;

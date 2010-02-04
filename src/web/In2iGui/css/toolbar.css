@@ -6,11 +6,6 @@ div.in2igui_toolbar
 	font-size: 0;
 }
 
-td.in2igui_layout_top div.in2igui_toolbar
-{
-	height: 58px;
-}
-
 div.in2igui_revealing_toolbar
 {
 	left: 0px;

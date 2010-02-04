@@ -28,7 +28,7 @@ In2iGui.ImageViewer = function(options) {
 	this.playing=false;
 	this.name = options.name;
 	this.images = [];
-	this.box.addDelegate(this);
+	this.box.listen(this);
 	this.addBehavior();
 	In2iGui.extend(this);
 }

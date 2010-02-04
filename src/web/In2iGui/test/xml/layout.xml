@@ -22,7 +22,11 @@
 			<toolbar labels="false" border="top">
 				<button title="Opret"/>
 				<button title="Rediger" highlighted="true"/>
-				<button title="Opret"/>
+				<button title="Opret" small="true" rounded="true"/>
+				<button icon="common/delete"/>
+				<button icon="common/delete" title=""/>
+				<button icon="common/delete" title="Delete"/>
+					<searchfield placeholder="Søg her..." expandedWidth="200"/>
 			</toolbar>
 		</top>
 		<middle>

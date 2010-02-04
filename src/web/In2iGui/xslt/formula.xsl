@@ -416,7 +416,16 @@
 <xsl:template match="gui:button" name="gui:button">
 	<a id="{generate-id()}" href="#">
 		<xsl:attribute name="class">in2igui_button<xsl:if test="@highlighted='true'"> in2igui_button_highlighted</xsl:if><xsl:if test="@small='true' and @rounded='true'"> in2igui_button_small_rounded</xsl:if></xsl:attribute>
-		<span><span><xsl:value-of select="@title"/></span></span></a>
+		<span><span>
+			<xsl:if test="@icon"><em style="background-image: url('{$context}/In2iGui/icons/{@icon}1.png')">
+				<xsl:attribute name="class">
+					<xsl:text>in2igui_button_icon</xsl:text>
+					<xsl:if test="not(@title) or @title=''"><xsl:text> in2igui_button_icon_notext</xsl:text></xsl:if>
+				</xsl:attribute>
+				<xsl:comment/>
+			</em></xsl:if>
+		<xsl:value-of select="@title"/>
+	</span></span></a>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Button({
 			element:'<xsl:value-of select="generate-id()"/>'

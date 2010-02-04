@@ -36,13 +36,13 @@
 			var bar = ui.ProgressBar.create({small:small});
 			var g = ui.Buttons.create();
 			var b = ui.Button.create({text:'Random'});
-			b.addDelegate({click:function(){bar.setValue(Math.random())}});
+			b.listen({$click:function(){bar.setValue(Math.random())}});
 			var b2 = ui.Button.create({text:'Reset'});
-			b2.addDelegate({click:function(){bar.reset()}});
+			b2.listen({$click:function(){bar.reset()}});
 			var b3 = ui.Button.create({text:'Wait'});
-			b3.addDelegate({click:function(){bar.setWaiting()}});
+			b3.listen({$click:function(){bar.setWaiting()}});
 			var b4 = ui.Button.create({text:'Complete'});
-			b4.addDelegate({click:function(){bar.setValue(1)}});
+			b4.listen({$click:function(){bar.setValue(1)}});
 			g.add(b);
 			g.add(b2);
 			g.add(b3);

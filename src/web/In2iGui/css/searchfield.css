@@ -7,6 +7,9 @@ span.in2igui_searchfield
 	position: relative;
 	cursor: text;
 	width: 100px;
+	font-size: 0;
+	line-height: 0;
+	vertical-align: middle;
 }
 
 span.in2igui_searchfield span

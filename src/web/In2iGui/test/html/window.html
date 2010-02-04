@@ -18,7 +18,9 @@
 	<script charset="utf-8" type="text/javascript" src="../../js/Tabs.js"></script>
 	<script charset="utf-8" type="text/javascript" src="../../js/Formula.js"></script>
 	<script charset="utf-8" type="text/javascript" src="../../js/Toolbar.js"></script>
+	<script charset="utf-8" type="text/javascript" src="../../js/Bar.js"></script>
 	<script charset="utf-8" type="text/javascript" src="../../js/List.js"></script>
+	<script charset="utf-8" type="text/javascript" src="../../js/SearchField.js"></script>
 	<script type="text/javascript" charset="utf-8">
 		ui.context='../../..';
 	</script>
@@ -51,11 +53,11 @@
 		var toolWin = ui.Window.create({width:300,top:50,left:300});
 		var toolbar = ui.Toolbar.create({labels:false});
 		toolbar.add(ui.Toolbar.Icon.create({icon:'common/folder',title:'Test'}));
-		toolbar.add(ui.Toolbar.SearchField.create({title:'Test'}));
+		toolbar.add(ui.SearchField.create({title:'Test'}));
 		toolbar.addDivider();
 		toolbar.add(ui.Button.create({icon:'monochrome/previous'}));
 		toolbar.add(ui.Button.create({icon:'monochrome/next'}));
-		toolbar.add(ui.Button.create({icon:'common/delete'}));
+		toolbar.add(ui.Button.create({icon:'common/delete',text:'Delete'}));
 		toolWin.add(toolbar);
 		toolWin.add(ui.List.create({url:'../xml/data/list_users.xml'}));
 		toolWin.show();

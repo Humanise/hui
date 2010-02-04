@@ -112,7 +112,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 <xsl:for-each select="gui:controller[@source]">
 	<xsl:if test="@name">
 	if (window['<xsl:value-of select="@name"/>']!==undefined) {
-		In2iGui.get().addDelegate(<xsl:value-of select="@name"/>);
+		In2iGui.listen(<xsl:value-of select="@name"/>);
 	}
 	</xsl:if>
 </xsl:for-each>
@@ -366,6 +366,9 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 					<xsl:text> in2igui_tabs_bar_small</xsl:text>
 				</xsl:when>
 			</xsl:choose>
+			<xsl:if test="@centered='true'">
+				<xsl:text> in2igui_tabs_bar_centered</xsl:text>
+			</xsl:if>
 		</xsl:attribute>
 		<ul>
 		<xsl:for-each select="gui:tab">
