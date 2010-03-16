@@ -417,7 +417,7 @@ In2iGui.Formula.Number.prototype = {
 	},
 	blurEvent : function() {
 		this.element.removeClassName('in2igui_number_focused');
-		this.input.value = this.value;
+		this.updateField();
 	},
 	keyEvent : function(e) {
 		if (e.keyCode==Event.KEY_UP) {
@@ -428,19 +428,23 @@ In2iGui.Formula.Number.prototype = {
 		} else {
 			var parsed = parseInt(this.input.value,10);
 			if (!isNaN(parsed)) {
-				this.setLocalValue(parsed);
+				this.setLocalValue(parsed,true);
+			} else {
+				this.setLocalValue(null,true);
 			}
 		}
 	},
 	downEvent : function() {
 		if (this.value===null) {
-			this.setValue(this.options.min);
+			this.setLocalValue(this.options.min,true);
 		} else {
-			this.setValue(this.value-1);
+			this.setLocalValue(this.value-1,true);
 		}
+		this.updateField();
 	},
 	upEvent : function() {
-		this.setValue(this.value+1);
+		this.setLocalValue(this.value+1,true);
+		this.updateField();
 	},
 	getValue : function() {
 		return this.value;
@@ -449,13 +453,34 @@ In2iGui.Formula.Number.prototype = {
 		return this.options.label;
 	},
 	setValue : function(value) {
-		this.setLocalValue(value);
-		this.input.value = this.value;
+		value = parseInt(value,10);
+		if (!isNaN(value)) {
+			this.setLocalValue(value,false);
+		}
+		this.updateField();
 	},
-	setLocalValue : function(value) {
-		this.value = Math.min(Math.max(value,this.options.min),this.options.max);
-		In2iGui.callAncestors(this,'childValueChanged',this.value);
-		this.fire('valueChanged',this.value);
+	updateField : function() {
+		this.input.value = this.value===null || this.value===undefined ? '' : this.value;
+	},
+	setLocalValue : function(value,fire) {
+		var orig = this.value;
+		if (value===null || value===undefined && this.options.allowNull) {
+			this.value = null;
+		} else {
+			this.value = Math.min(Math.max(value,this.options.min),this.options.max);
+		}
+		if (fire && orig!==this.value) {
+			In2iGui.callAncestors(this,'childValueChanged',this.value);
+			this.fire('valueChanged',this.value);
+		}
+	},
+	reset : function() {
+		if (this.options.allowNull) {
+			this.value = null;
+		} else {
+			this.value = Math.min(Math.max(0,this.options.min),this.options.max);
+		}
+		this.updateField();
 	}
 }
 
@@ -481,7 +506,7 @@ In2iGui.Formula.DropDown = function(o) {
 	if (this.options.url) {
 		this.options.source = new In2iGui.Source({url:this.options.url,delegate:this});
 	} else if (this.options.source) {
-		this.options.source.addDelegate(this);	
+		this.options.source.listen(this);	
 	}
 }
 
@@ -508,7 +533,8 @@ In2iGui.Formula.DropDown.prototype = {
 	updateUI : function() {
 		var selected = this.items[this.index];
 		if (selected) {
-			this.inner.update(selected.label || selected.title);
+			var text = selected.label || selected.title || '';
+			this.inner.update(text.split("").join("\u200B"));
 		} else if (this.options.placeholder) {
 			this.inner.update(new Element('em').update(this.options.placeholder.escapeHTML()));
 		} else {
@@ -716,7 +742,7 @@ In2iGui.Formula.Checkbox.prototype = {
 	 * @param {Boolean} value Whether the checkbox is checked
 	 */
 	setValue : function(value) {
-		this.value = value;
+		this.value = value===true || value==='true';
 		this.updateUI();
 	},
 	/** Gets the value
@@ -883,7 +909,7 @@ In2iGui.Formula.Checkboxes.Items = function(options) {
 	this.checkboxes = [];
 	In2iGui.extend(this);
 	if (this.options.source) {
-		this.options.source.addDelegate(this);
+		this.options.source.listen(this);
 	}
 }
 

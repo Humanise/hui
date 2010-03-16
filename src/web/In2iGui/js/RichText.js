@@ -206,17 +206,17 @@ In2iGui.RichText.prototype = {
 		if (!this.colorPicker) {
 			var panel = In2iGui.Window.create({variant:'dark'});
 			var picker = In2iGui.ColorPicker.create();
-			picker.addDelegate(this);
+			picker.listen(this);
 			panel.add(picker);
 			panel.show();
 			this.colorPicker = panel;
 		}
 		this.colorPicker.show();
 	},
-	colorWasHovered : function(color) {
+	$colorWasHovered : function(color) {
 		//this.document.execCommand('forecolor',false,color);
 	},
-	colorWasSelected : function(color) {
+	$colorWasSelected : function(color) {
 		this.document.execCommand('forecolor',false,color);
 		this.documentChanged();
 	}

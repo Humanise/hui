@@ -56,7 +56,7 @@ In2iGui.Menu.prototype = {
 			element.observe('mouseover',function(e) {
 				sub.showAtElement(element,e,'horizontal');
 			});
-			//sub.addDelegate({itemWasClicked:function(value) {self.itemWasClicked(value)}});
+			//sub.listen({itemWasClicked:function(value) {self.itemWasClicked(value)}});
 			self.subMenus.push(sub);
 			element.addClassName('in2igui_menu_item_children');
 			//element.observe('mouseleave',function() {

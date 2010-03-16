@@ -137,7 +137,7 @@ In2iGui.Editor.prototype = {
 				menu.addItem({title:item.title,value:item.key});
 			});
 			this.columnMenu = menu;
-			menu.addDelegate(this);
+			menu.listen(this);
 		}
 		this.hoveredRow=rowIndex;
 		this.hoveredColumnIndex=columnIndex;
@@ -175,16 +175,16 @@ In2iGui.Editor.prototype = {
 			var f = this.columnEditorForm = In2iGui.Formula.create();
 			var g = f.createGroup();
 			var width = In2iGui.Formula.Text.create({label:'Bredde',key:'width'});
-			width.addDelegate({$valueChanged:function(v) {this.changeColumnWidth(v)}.bind(this)})
+			width.listen({$valueChanged:function(v) {this.changeColumnWidth(v)}.bind(this)})
 			g.add(width);
 			var marginLeft = In2iGui.Formula.Text.create({label:'Venstremargen',key:'left'});
-			marginLeft.addDelegate({$valueChanged:function(v) {this.changeColumnLeftMargin(v)}.bind(this)})
+			marginLeft.listen({$valueChanged:function(v) {this.changeColumnLeftMargin(v)}.bind(this)})
 			g.add(marginLeft);
 			var marginRight = In2iGui.Formula.Text.create({label:'Højremargen',key:'right'});
-			marginRight.addDelegate({$valueChanged:this.changeColumnRightMargin.bind(this)})
+			marginRight.listen({$valueChanged:this.changeColumnRightMargin.bind(this)})
 			g.add(marginRight);
 			w.add(f);
-			w.addDelegate(this);
+			w.listen(this);
 		}
 		this.columnEditor.show();
 	},
@@ -229,7 +229,7 @@ In2iGui.Editor.prototype = {
 			this.partEditControls = In2iGui.Overlay.create({name:'In2iGuiEditorPartEditActions'});
 			this.partEditControls.addIcon('save','common/save');
 			this.partEditControls.addIcon('cancel','common/close');
-			this.partEditControls.addDelegate(this);
+			this.partEditControls.listen(this);
 		}
 		this.partEditControls.showAtElement(this.activePart.element,{'horizontal':'right','vertical':'topOutside'});
 	},
@@ -246,7 +246,7 @@ In2iGui.Editor.prototype = {
 			this.partControls.getElement().observe('mouseover',function(e) {
 				self.hoverControls(e);
 			});
-			this.partControls.addDelegate(this);
+			this.partControls.listen(this);
 		}
 		if (this.hoveredPart.column==-1) {
 			this.partControls.hideIcons(['new','delete']);
@@ -317,7 +317,7 @@ In2iGui.Editor.prototype = {
 				{type:'Text',options:{label:'Right',key:'right'}}
 			]);
 			w.add(f);
-			f.addDelegate({valuesChanged:this.updatePartProperties.bind(this)});
+			f.listen({valuesChanged:this.updatePartProperties.bind(this)});
 		}
 		var e = this.activePart.element;
 		this.partEditorForm.setValues({
@@ -375,7 +375,7 @@ In2iGui.Editor.prototype = {
 			this.partControllers.each(function(item) {
 				menu.addItem({title:item.title,value:item.key});
 			});
-			menu.addDelegate(this);
+			menu.listen(this);
 			this.newPartMenu=menu;
 		}
 		this.newPartMenu.showAtPointer(e);
@@ -521,7 +521,7 @@ In2iGui.Editor.Html.prototype = {
 		this.editor = In2iGui.RichText.create({autoHideToolbar:false,style:style});
 		this.editor.setHeight(height);
 		this.element.appendChild(this.editor.getElement());
-		this.editor.addDelegate(this);
+		this.editor.listen(this);
 		this.editor.ignite();
 		this.editor.setValue(this.value);
 		this.editor.focus();

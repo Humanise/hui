@@ -65,7 +65,7 @@ div.in2igui_text p
 
 /************************* icons **********************/
 
-span.in2igui_icon_1
+span.in2igui_icon_1, span.in2igui_icon_16
 {
 	display: inline-block;
 	width: 16px;
@@ -73,7 +73,7 @@ span.in2igui_icon_1
 	vertical-align: middle;
 }
 
-span.in2igui_icon_2
+span.in2igui_icon_2, span.in2igui_icon_32
 {
 	display: inline-block;
 	width: 32px;

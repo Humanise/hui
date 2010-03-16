@@ -158,10 +158,19 @@ In2iGui.Upload.prototype = {
 	
 	/////////////////////////// Flash //////////////////////////
 	
-	createFlashVersion : function() {
+	getAbsoluteUrl : function(relative) {
 		var loc = new String(document.location);
-		var url = loc.slice(0,loc.lastIndexOf('/')+1);
-		url += this.options.url;
+		var url = loc.slice(0,loc.lastIndexOf('/'));
+		while (relative.indexOf('../')===0) {
+			relative=relative.substring(3);
+			url = url.slice(0,url.lastIndexOf('/'));
+		}
+		url += '/'+relative;
+		return url;
+	},
+	
+	createFlashVersion : function() {
+		var url = this.getAbsoluteUrl(this.options.url);
 		var javaSession = n2i.cookie.get('JSESSIONID');
 		if (javaSession) {
 			url+=';jsessionid='+javaSession;

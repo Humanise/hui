@@ -87,6 +87,8 @@
 		<script src="{$context}/In2iGui/js/Overflow.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/Fragment.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/Bar.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/In2iGui/js/IFrame.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/In2iGui/js/Segmented.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/lib/wysihat.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 	</xsl:when>
 	<xsl:otherwise>
@@ -119,7 +121,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 </script>
 <xsl:call-template name="dwr-setup"/>
 </head>
-<body class="in2igui">
+<body class="in2igui" style="font-size: 0;">
 	<xsl:choose>
 		<xsl:when test="@padding"><div style="padding: {@padding}px;" class="in2igui_body"><xsl:apply-templates/></div></xsl:when>
 		<xsl:otherwise><xsl:apply-templates/></xsl:otherwise>
@@ -226,7 +228,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 			<xsl:otherwise><xsl:value-of select="generate-id()"/></xsl:otherwise>
 		</xsl:choose>
 	</xsl:variable>
-	<iframe id="{$id}" name="{$id}" src="{@source}" style="width: 100%; height: 100%; border: 1px solid #ddd; background: #fff;" frameborder="0">
+	<iframe id="{$id}" name="{$id}" src="{@source}" style="width: 100%; height: 100%; border: 1px solid #ddd; background: #fff; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;" frameborder="0">
 		<xsl:comment/>
 	</iframe>
 	<script type="text/javascript">
@@ -611,9 +613,6 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 	<xsl:copy-of select="child::*|child::text()"/>
 </xsl:template>
 
-
-<!-- Gallery -->
-
 <xsl:template match="gui:articles">
 	<div class="in2igui_articles" id="{generate-id()}"><xsl:comment/></div>
 	<script type="text/javascript">
@@ -638,6 +637,33 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 
 <xsl:template match="gui:text/gui:p">
 	<p><xsl:apply-templates/></p>
+</xsl:template>
+
+<xsl:template match="gui:segmented" name="gui:segmented">
+	<span class="in2igui_segmented" id="{generate-id()}">
+		<xsl:for-each select="gui:item">
+			<a href="javascript:void(0)" rel="{@value}">
+				<xsl:if test="@value=../@value">
+					<xsl:attribute name="class">in2igui_segmented_selected</xsl:attribute>
+				</xsl:if>
+				<xsl:if test="@icon">
+					<span class="in2igui_icon_16" style="background-image: url('{$context}/In2iGui/icons/{@icon}16.png')"><xsl:comment/></span>
+				</xsl:if>
+				<xsl:if test="@title">
+					<span class="in2igui_segmented_text"><xsl:value-of select="@title"/></span>
+				</xsl:if>
+			</a>
+		</xsl:for-each>
+	<xsl:comment/></span>
+	<script type="text/javascript">
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Segmented({
+			element:'<xsl:value-of select="generate-id()"/>',
+			name:'<xsl:value-of select="@name"/>'
+			<xsl:if test="@value">,value:'<xsl:value-of select="@value"/>'</xsl:if>
+			<xsl:if test="@allow-null='true'">,allowNull:true</xsl:if>
+		});
+		<xsl:call-template name="gui:createobject"/>
+	</script>
 </xsl:template>
 
 </xsl:stylesheet>

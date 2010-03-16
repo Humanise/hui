@@ -7,6 +7,16 @@
 		<toolbar>
 			<number label="Style length:" key="style" value="15px"/>
 			<style-length label="Style length:" key="style" value="15px"/>
+			<segmented label="Alignment" value="left" name="segmentedBar">
+				<item icon="edit/text_align_left" value="left"/>
+				<item icon="edit/text_align_center" value="center"/>
+				<item icon="edit/text_align_right" value="right"/>
+			</segmented>
+			<segmented label="Alignment (allow null)" value="left" name="segmentedBarNull" allow-null="true">
+				<item icon="edit/text_align_left" value="left"/>
+				<item icon="edit/text_align_center" value="center"/>
+				<item icon="edit/text_align_right" value="right"/>
+			</segmented>
 		</toolbar>
 		<tabs>
 			<tab title="Formula 1" padding="10">
@@ -20,6 +30,13 @@
 						</buttons>
 					</group>
 				</formula>
+				<segmented value="left" name="segmented">
+					<item icon="edit/text_align_left" value="left"/>
+					<item icon="edit/text_align_right" value="right"/>
+					<item title="Click me!"/>
+				</segmented>
+				<button click="segmented.setValue('right')" title="Set right" small="true" rounded="true"/>
+				<button click="alert(segmented.getValue())" title="Alert value" small="true" rounded="true"/>
 			</tab>
 		</tabs>
 	</box>

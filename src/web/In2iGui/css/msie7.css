@@ -5,6 +5,8 @@ body.in2igui, html.in2igui
 	overflow-y: auto;
 	overflow-x: auto;
 }
+
+
 div.in2igui_body
 {
 	position: fixed;
@@ -12,11 +14,6 @@ div.in2igui_body
 	top: 0;
 	left: 0;
 	right: 0;
-}
-
-td.view_toolbar
-{
-	height: 58px;
 }
 
 table.in2igui_view
@@ -27,6 +24,27 @@ table.in2igui_view
 table.in2igui_calendar_weekview div.in2igui_calendar_event
 {
 	width: 17.8%;
+}
+
+td.view_toolbar
+{
+	height: 58px;
+}
+
+a.in2igui_toolbar_icon, span.in2igui_toolbar_item, span.in2igui_divider, span.in2igui_toolbar_grid
+{
+	vertical-align: top;
+}
+
+span.in2igui_divider
+{
+	top: 5px;
+	position: relative;
+}
+
+table.in2igui_toolbar_grid
+{
+	display: inline;
 }
 
 div.in2igui_toolbar_icon div.in2igui_icon
@@ -76,6 +94,11 @@ div.in2igui_box_body
 	height: 1%;
 }
 
+input.in2igui_formula_text
+{
+	margin-top: 0;
+}
+
 textarea.in2igui_formula_text
 {
 	overflow-y: auto;
@@ -96,11 +119,6 @@ span.in2igui_field_content, div.in2igui_list, div.in2igui_box_middle
 span.in2igui_upload_button_input input
 {
 	filter: alpha(opacity = 0);
-}
-
-table.in2igui_toolbar_grid
-{
-	display: inline;
 }
 
 /********************** layout ****************/

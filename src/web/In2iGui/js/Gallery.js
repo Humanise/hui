@@ -33,13 +33,19 @@ In2iGui.Gallery.prototype = {
 		this.setObjects(objects);
 	},
 	/** @private */
+	$itemsLoaded : function(objects) {
+		this.setObjects(objects);
+	},
+	/** @private */
 	render : function() {
 		this.nodes = [];
 		this.element.update();
 		var self = this;
 		this.objects.each(function(object,i) {
 			var url = self.resolveImageUrl(object);
-			url = url.replace(/&amp;/,'&');
+			if (url!==null) {
+				url = url.replace(/&amp;/,'&');
+			}
 			if (object.height<object.width) {
 				var top = (self.height-(self.height*object.height/object.width))/2;
 			} else {
@@ -94,6 +100,20 @@ In2iGui.Gallery.prototype = {
 	/** @private */
 	itemDoubleClicked : function(index) {
 		this.fire('itemOpened',this.objects[index]);
+	},
+	/**
+	 * Sets the lists data source and refreshes it if it is new
+	 * @param {In2iGui.Source} source The source
+	 */
+	setSource : function(source) {
+		if (this.options.source!=source) {
+			if (this.options.source) {
+				this.options.source.removeDelegate(this);
+			}
+			source.listen(this);
+			this.options.source = source;
+			source.refresh();
+		}
 	}
 }
 

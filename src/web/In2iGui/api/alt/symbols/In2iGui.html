@@ -199,6 +199,10 @@ ul.inheritsList
 	
 	<li><a href="../symbols/In2iGui.Articles.html">In2iGui.Articles</a></li>
 	
+	<li><a href="../symbols/In2iGui.Bar.html">In2iGui.Bar</a></li>
+	
+	<li><a href="../symbols/In2iGui.Bar.Button.html">In2iGui.Bar.Button</a></li>
+	
 	<li><a href="../symbols/In2iGui.BoundPanel.html">In2iGui.BoundPanel</a></li>
 	
 	<li><a href="../symbols/In2iGui.Box.html">In2iGui.Box</a></li>
@@ -251,6 +255,8 @@ ul.inheritsList
 	
 	<li><a href="../symbols/In2iGui.Gallery.html">In2iGui.Gallery</a></li>
 	
+	<li><a href="../symbols/In2iGui.IFrame.html">In2iGui.IFrame</a></li>
+	
 	<li><a href="../symbols/In2iGui.ImagePicker.html">In2iGui.ImagePicker</a></li>
 	
 	<li><a href="../symbols/In2iGui.ImageViewer.html">In2iGui.ImageViewer</a></li>
@@ -260,6 +266,8 @@ ul.inheritsList
 	<li><a href="../symbols/In2iGui.Layout.html">In2iGui.Layout</a></li>
 	
 	<li><a href="../symbols/In2iGui.List.html">In2iGui.List</a></li>
+	
+	<li><a href="../symbols/In2iGui.LocationPicker.html">In2iGui.LocationPicker</a></li>
 	
 	<li><a href="../symbols/In2iGui.Menu.html">In2iGui.Menu</a></li>
 	
@@ -338,6 +346,7 @@ ul.inheritsList
 <!-- ============================== class summary ========================== -->			
 			<p class="description">
 				
+				
 			
 				
 				
@@ -414,15 +423,6 @@ ul.inheritsList
 						</tr>
 					</thead>
 					<tbody>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/In2iGui.html#addDelegate">addDelegate</a></b>(delegate)
-								</div>
-								<div class="description">Adds a global delegate</div>
-							</td>
-						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
@@ -535,6 +535,15 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont">In2iGui.<b><a href="../symbols/In2iGui.html#.destroyDescendants">destroyDescendants</a></b>(element)
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont">In2iGui.<b><a href="../symbols/In2iGui.html#.dragEndListener">dragEndListener</a></b>(event)
 								</div>
 								<div class="description"></div>
@@ -634,7 +643,7 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">In2iGui.<b><a href="../symbols/In2iGui.html#.get">get</a></b>(name)
+								<div class="fixedFont">In2iGui.<b><a href="../symbols/In2iGui.html#.get">get</a></b>(nameOrWidget)
 								</div>
 								<div class="description">Gets the one instance of In2iGui</div>
 							</td>
@@ -670,7 +679,7 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/In2iGui.html#getDescendants">getDescendants</a></b>(widget)
+								<div class="fixedFont"><b><a href="../symbols/In2iGui.html#getDescendants">getDescendants</a></b>(widgetOrElement)
 								</div>
 								<div class="description"></div>
 							</td>
@@ -776,11 +785,20 @@ ul.inheritsList
 						</tr>
 					
 						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">In2iGui.<b><a href="../symbols/In2iGui.html#.listen">listen</a></b>(d)
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/In2iGui.html#listen">listen</a></b>(delegate)
 								</div>
-								<div class="description"></div>
+								<div class="description">Adds a global delegate</div>
 							</td>
 						</tr>
 					
@@ -832,16 +850,7 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">In2iGui.<b><a href="../symbols/In2iGui.html#.observe">observe</a></b>(d)
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">In2iGui.<b><a href="../symbols/In2iGui.html#.onDomReady">onDomReady</a></b>(func)
+								<div class="fixedFont">In2iGui.<b><a href="../symbols/In2iGui.html#.onReady">onReady</a></b>(func)
 								</div>
 								<div class="description"></div>
 							</td>
@@ -878,6 +887,15 @@ ul.inheritsList
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/In2iGui.html#registerOverflow">registerOverflow</a></b>(id, diff)
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/In2iGui.html#reLayout">reLayout</a></b>()
 								</div>
 								<div class="description"></div>
 							</td>
@@ -949,6 +967,15 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont">In2iGui.<b><a href="../symbols/In2iGui.html#.VideoPlayer">VideoPlayer</a></b>(options)
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont">In2iGui.<b><a href="../symbols/In2iGui.html#.wrapInField">wrapInField</a></b>(e)
 								</div>
 								<div class="description"></div>
@@ -960,6 +987,8 @@ ul.inheritsList
 				
 				
 				
+			
+<!-- ============================== events summary ======================== -->
 			
 
 <!-- ============================== constructor details ==================== -->		
@@ -1027,42 +1056,6 @@ ul.inheritsList
 				<div class="sectionTitle">
 					Method Detail
 				</div>
-				
-					<a name="addDelegate"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>addDelegate</b>(delegate)
-					
-					</div>
-					<div class="description">
-						Adds a global delegate
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>delegate</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
 				
 					<a name=".addFocusClass"> </a>
 					<div class="fixedFont">&lt;static&gt; 
@@ -1586,6 +1579,42 @@ ul.inheritsList
 
 					<hr />
 				
+					<a name=".destroyDescendants"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">In2iGui.</span><b>destroyDescendants</b>(element)
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>element</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name=".dragEndListener"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
@@ -2005,7 +2034,7 @@ ul.inheritsList
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">In2iGui.</span><b>get</b>(name)
+					<span class="light">In2iGui.</span><b>get</b>(nameOrWidget)
 					
 					</div>
 					<div class="description">
@@ -2021,7 +2050,7 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>name</b>
+									<b>nameOrWidget</b>
 									
 								</dt>
 								<dd></dd>
@@ -2162,7 +2191,7 @@ ul.inheritsList
 					<div class="fixedFont">
 					
 					
-					<b>getDescendants</b>(widget)
+					<b>getDescendants</b>(widgetOrElement)
 					
 					</div>
 					<div class="description">
@@ -2178,7 +2207,7 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>widget</b>
+									<b>widgetOrElement</b>
 									
 								</dt>
 								<dd></dd>
@@ -2598,6 +2627,42 @@ ul.inheritsList
 
 					<hr />
 				
+					<a name=".listen"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">In2iGui.</span><b>listen</b>(d)
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>d</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name="listen"> </a>
 					<div class="fixedFont">
 					
@@ -2606,7 +2671,7 @@ ul.inheritsList
 					
 					</div>
 					<div class="description">
-						
+						Adds a global delegate
 						
 						
 					</div>
@@ -2770,47 +2835,11 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name=".observe"> </a>
+					<a name=".onReady"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">In2iGui.</span><b>observe</b>(d)
-					
-					</div>
-					<div class="description">
-						
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>d</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".onDomReady"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">In2iGui.</span><b>onDomReady</b>(func)
+					<span class="light">In2iGui.</span><b>onReady</b>(func)
 					
 					</div>
 					<div class="description">
@@ -3000,6 +3029,31 @@ ul.inheritsList
 								<dd></dd>
 							
 							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="reLayout"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>reLayout</b>()
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
 						
 						
 						
@@ -3304,6 +3358,42 @@ ul.inheritsList
 
 					<hr />
 				
+					<a name=".VideoPlayer"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">In2iGui.</span><b>VideoPlayer</b>(options)
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>options</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name=".wrapInField"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
@@ -3342,13 +3432,17 @@ ul.inheritsList
 				
 			
 			
+<!-- ============================== event details ========================= -->		
+			
+			
 			<hr />
 		</div>
+
 		
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.0.2 on Mon Nov 16 2009 23:12:36 GMT+0100 (CET)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Thu Feb 04 2010 22:02:41 GMT+0100 (CET)
 		</div>
 	</body>
 </html>

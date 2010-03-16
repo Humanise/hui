@@ -65,7 +65,7 @@ div.in2igui_text p
 
 /************************* icons **********************/
 
-span.in2igui_icon_1
+span.in2igui_icon_1, span.in2igui_icon_16
 {
 	display: inline-block;
 	width: 16px;
@@ -73,7 +73,7 @@ span.in2igui_icon_1
 	vertical-align: middle;
 }
 
-span.in2igui_icon_2
+span.in2igui_icon_2, span.in2igui_icon_32
 {
 	display: inline-block;
 	width: 32px;
@@ -951,10 +951,9 @@ span.in2igui_number input
 	width: 80px;
 	font-family: Verdana, sans-serif;
 	font-size: 9pt;
-	padding: 4px 4px 0;
+	padding: 3px 4px 0;
 	position: relative;
 	top: 1px;
-	height: 20px;
 	margin: 0;
 	text-align: right;
 }
@@ -1002,6 +1001,19 @@ em.in2igui_number_units
 	vertical-align: middle;
 }
 
+span.in2igui_number_adaptive
+{
+	width: 100%;
+}
+
+span.in2igui_number_adaptive input
+{
+	width: 100%;
+	padding-right: 0;
+	padding-left: 0;
+	margin-left: -2px;
+}
+
 /******* Special lenght for style *******/
 
 span.in2igui_style_length input
@@ -1022,6 +1034,7 @@ a.in2igui_dropdown
 	font-size: 13px;
 	line-height: 26px;
 	vertical-align: middle;
+	text-align: left;
 }
 
 a.in2igui_dropdown span
@@ -1195,7 +1208,6 @@ div.in2igui_radiobuttons div.in2igui_selected div
 a.in2igui_checkbox
 {
 	overflow: hidden;
-	padding: 1px 5px 0px 0px;
 	font-size: 10pt;
 	line-height: 20px;
 	cursor: pointer;
@@ -1203,6 +1215,7 @@ a.in2igui_checkbox
 	display: inline-block;
 	outline: none;
 	text-decoration: none;
+	vertical-align: middle;
 }
 
 div.in2igui_checkboxes
@@ -1214,6 +1227,7 @@ div.in2igui_checkboxes
 div.in2igui_checkboxes_vertical a.in2igui_checkbox
 {
 	display: block;
+	padding: 1px 5px 0px 0px;
 }
 
 a.in2igui_checkbox span
@@ -1757,11 +1771,6 @@ td.view_sidebar
 	font-size: 0;
 }
 
-td.in2igui_layout_top div.in2igui_toolbar
-{
-	height: 58px;
-}
-
 div.in2igui_revealing_toolbar
 {
 	left: 0px;
@@ -2068,6 +2077,11 @@ span.in2igui_toolbar_item a.in2igui_dropdown
 	margin-top: 7px;
 }
 
+span.in2igui_toolbar_item span.in2igui_segmented
+{
+	margin-top: 9px;
+}
+
 
 span.in2igui_toolbar_label
 {
@@ -2079,18 +2093,26 @@ span.in2igui_toolbar_label
 
 /********************************* Grid ******************************/
 
+span.in2igui_toolbar_grid
+{
+	height: 56px;
+	vertical-align: middle;
+	display: inline-block;
+}
+
 table.in2igui_toolbar_grid
 {
 	display: inline-table;
 	border-collapse: collapse;
 	vertical-align: middle;
 	position: relative;
-	top: 2px;
+	top: 1px;
 }
 
 table.in2igui_toolbar_grid td
 {
 	padding: 0px;
+	height: 27px;
 }
 
 table.in2igui_toolbar_grid th
@@ -2101,6 +2123,15 @@ table.in2igui_toolbar_grid th
 	padding-right: 2px;
 	padding-left: 5px;
 	text-align: right;
+	height: 27px;
+	padding: 0px;
+}
+
+label.in2igui_toolbar_grid
+{
+	font-size: 11px;
+	color: #334455;
+	vertical-align: middle;
 }.in2igui_window
 {
 	position: absolute;
@@ -2167,6 +2198,7 @@ span.in2igui_window_icon
 div.in2igui_window_body
 {
 	overflow: hidden;
+	margin: 0 -3px;
 }
 
 
@@ -4590,4 +4622,42 @@ div.in2igui_message div div
 {
 	background: url('../gfx/overlay_24.png') left -80px repeat-x;
 	padding: 0px 10px;
+}span.in2igui_segmented
+{
+	-moz-border-radius: 3px;
+	background: #fff;
+	border: 1px solid #AAAAAA;
+	display: inline-block;
+	vertical-align: middle;
+	font-size: 0;
+	height: 20px;
+}
+
+span.in2igui_segmented a
+{
+	display: inline-block;
+	height: 20px;
+	vertical-align: top;
+	text-decoration: none;
+	color: #333;
+	padding: 0 3px;
+	-moz-border-radius: 2px;
+	outline: none;
+}
+
+span.in2igui_segmented .in2igui_icon_16
+{
+	margin-top: 2px;
+}
+
+span.in2igui_segmented_text
+{
+	font-size: 12px;
+	line-height: 20px;
+	padding: 0 4px;
+}
+
+a.in2igui_segmented_selected
+{
+	background: #ddd;
 }

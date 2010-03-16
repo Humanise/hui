@@ -90,16 +90,16 @@ In2iGui.Calendar.prototype = {
 		this.toolbar = In2iGui.Toolbar.create({labels:false});
 		bar.insert(this.toolbar.getElement());
 		var previous = In2iGui.Button.create({name:'in2iguiCalendarPrevious',text:'',icon:'monochrome/previous'});
-		previous.addDelegate(this);
+		previous.listen(this);
 		this.toolbar.add(previous);
 		var today = In2iGui.Button.create({name:'in2iguiCalendarToday',text:'Idag'});
-		today.addDelegate(this);
+		today.listen(this);
 		this.toolbar.add(today);
 		var next = In2iGui.Button.create({name:'in2iguiCalendarNext',text:'',icon:'monochrome/next'});
-		next.addDelegate(this);
+		next.listen(this);
 		this.toolbar.add(next);
 		this.datePickerButton = In2iGui.Button.create({name:'in2iguiCalendarDatePicker',text:'Vælg dato...'});
-		this.datePickerButton.addDelegate(this);
+		this.datePickerButton.listen(this);
 		this.toolbar.add(this.datePickerButton);
 		
 		var time = this.body.select('.time')[0];
@@ -150,11 +150,11 @@ In2iGui.Calendar.prototype = {
 		if (!this.datePickerPanel) {
 			this.datePickerPanel = In2iGui.BoundPanel.create();
 			this.datePicker = In2iGui.DatePicker.create({name:'in2iguiCalendarDatePicker',value:this.date});
-			this.datePicker.addDelegate(this);
+			this.datePicker.listen(this);
 			this.datePickerPanel.add(this.datePicker);
 			this.datePickerPanel.addSpace(5);
 			var button = In2iGui.Button.create({name:'in2iguiCalendarDatePickerClose',text:'Luk'});
-			button.addDelegate(this);
+			button.listen(this);
 			this.datePickerPanel.add(button);
 		}
 		this.datePickerPanel.position(this.datePickerButton.getElement());
@@ -176,7 +176,7 @@ In2iGui.Calendar.prototype = {
 			this.eventViewerPanel.add(this.eventInfo);
 			this.eventViewerPanel.addSpace(5);
 			var button = In2iGui.Button.create({name:'in2iguiCalendarEventClose',text:'Luk'});
-			button.addDelegate(this);
+			button.listen(this);
 			this.eventViewerPanel.add(button);
 		}
 		this.eventInfo.clear();

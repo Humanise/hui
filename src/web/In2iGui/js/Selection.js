@@ -172,7 +172,7 @@ In2iGui.Selection.Items = function(options) {
 	this.items = [];
 	In2iGui.extend(this);
 	if (this.options.source) {
-		this.options.source.addDelegate(this);
+		this.options.source.listen(this);
 	}
 }
 

@@ -65,6 +65,10 @@ In2iGui.Button.prototype = {
 			this.element.blur();
 		}
 	},
+	/** Registers a function as a click handler */
+	onClick : function(func) {
+		this.listen({$click:func});
+	},
 	/** Enables or disables the button */
 	setEnabled : function(enabled) {
 		this.enabled = enabled;

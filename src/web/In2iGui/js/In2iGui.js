@@ -625,7 +625,7 @@ In2iGui.extend = function(obj,options) {
 	var ctrl = In2iGui.get();
 	ctrl.objects.set(obj.name,obj);
 	obj.delegates = [];
-	obj.addDelegate = obj.listen = function(delegate) {
+	obj.listen = function(delegate) {
 		n2i.addToArray(this.delegates,delegate);
 	}
 	obj.removeDelegate = function(delegate) {
@@ -689,7 +689,7 @@ In2iGui.callVisible = function(widget) {
 	In2iGui.callDescendants(widget,'$visibilityChanged');
 }
 
-In2iGui.addDelegate = In2iGui.observe = In2iGui.listen = function(d) {
+In2iGui.listen = function(d) {
 	In2iGui.get().listen(d);
 }
 

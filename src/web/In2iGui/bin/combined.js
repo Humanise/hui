@@ -9407,7 +9407,7 @@ In2iGui.extend = function(obj,options) {
 	var ctrl = In2iGui.get();
 	ctrl.objects.set(obj.name,obj);
 	obj.delegates = [];
-	obj.addDelegate = obj.listen = function(delegate) {
+	obj.listen = function(delegate) {
 		n2i.addToArray(this.delegates,delegate);
 	}
 	obj.removeDelegate = function(delegate) {
@@ -9471,7 +9471,7 @@ In2iGui.callVisible = function(widget) {
 	In2iGui.callDescendants(widget,'$visibilityChanged');
 }
 
-In2iGui.addDelegate = In2iGui.observe = In2iGui.listen = function(d) {
+In2iGui.listen = function(d) {
 	In2iGui.get().listen(d);
 }
 
@@ -10398,7 +10398,7 @@ In2iGui.Formula.Number.prototype = {
 	},
 	blurEvent : function() {
 		this.element.removeClassName('in2igui_number_focused');
-		this.input.value = this.value;
+		this.updateField();
 	},
 	keyEvent : function(e) {
 		if (e.keyCode==Event.KEY_UP) {
@@ -10409,19 +10409,23 @@ In2iGui.Formula.Number.prototype = {
 		} else {
 			var parsed = parseInt(this.input.value,10);
 			if (!isNaN(parsed)) {
-				this.setLocalValue(parsed);
+				this.setLocalValue(parsed,true);
+			} else {
+				this.setLocalValue(null,true);
 			}
 		}
 	},
 	downEvent : function() {
 		if (this.value===null) {
-			this.setValue(this.options.min);
+			this.setLocalValue(this.options.min,true);
 		} else {
-			this.setValue(this.value-1);
+			this.setLocalValue(this.value-1,true);
 		}
+		this.updateField();
 	},
 	upEvent : function() {
-		this.setValue(this.value+1);
+		this.setLocalValue(this.value+1,true);
+		this.updateField();
 	},
 	getValue : function() {
 		return this.value;
@@ -10430,13 +10434,34 @@ In2iGui.Formula.Number.prototype = {
 		return this.options.label;
 	},
 	setValue : function(value) {
-		this.setLocalValue(value);
-		this.input.value = this.value;
+		value = parseInt(value,10);
+		if (!isNaN(value)) {
+			this.setLocalValue(value,false);
+		}
+		this.updateField();
 	},
-	setLocalValue : function(value) {
-		this.value = Math.min(Math.max(value,this.options.min),this.options.max);
-		In2iGui.callAncestors(this,'childValueChanged',this.value);
-		this.fire('valueChanged',this.value);
+	updateField : function() {
+		this.input.value = this.value===null || this.value===undefined ? '' : this.value;
+	},
+	setLocalValue : function(value,fire) {
+		var orig = this.value;
+		if (value===null || value===undefined && this.options.allowNull) {
+			this.value = null;
+		} else {
+			this.value = Math.min(Math.max(value,this.options.min),this.options.max);
+		}
+		if (fire && orig!==this.value) {
+			In2iGui.callAncestors(this,'childValueChanged',this.value);
+			this.fire('valueChanged',this.value);
+		}
+	},
+	reset : function() {
+		if (this.options.allowNull) {
+			this.value = null;
+		} else {
+			this.value = Math.min(Math.max(0,this.options.min),this.options.max);
+		}
+		this.updateField();
 	}
 }
 
@@ -10462,7 +10487,7 @@ In2iGui.Formula.DropDown = function(o) {
 	if (this.options.url) {
 		this.options.source = new In2iGui.Source({url:this.options.url,delegate:this});
 	} else if (this.options.source) {
-		this.options.source.addDelegate(this);	
+		this.options.source.listen(this);	
 	}
 }
 
@@ -10489,7 +10514,8 @@ In2iGui.Formula.DropDown.prototype = {
 	updateUI : function() {
 		var selected = this.items[this.index];
 		if (selected) {
-			this.inner.update(selected.label || selected.title);
+			var text = selected.label || selected.title || '';
+			this.inner.update(text.split("").join("\u200B"));
 		} else if (this.options.placeholder) {
 			this.inner.update(new Element('em').update(this.options.placeholder.escapeHTML()));
 		} else {
@@ -10697,7 +10723,7 @@ In2iGui.Formula.Checkbox.prototype = {
 	 * @param {Boolean} value Whether the checkbox is checked
 	 */
 	setValue : function(value) {
-		this.value = value;
+		this.value = value===true || value==='true';
 		this.updateUI();
 	},
 	/** Gets the value
@@ -10864,7 +10890,7 @@ In2iGui.Formula.Checkboxes.Items = function(options) {
 	this.checkboxes = [];
 	In2iGui.extend(this);
 	if (this.options.source) {
-		this.options.source.addDelegate(this);
+		this.options.source.listen(this);
 	}
 }
 
@@ -11193,7 +11219,7 @@ In2iGui.List = function(options) {
 	this.element = $(options.element);
 	this.name = options.name;
 	if (this.options.source) {
-		this.options.source.addDelegate(this);
+		this.options.source.listen(this);
 	}
 	this.url = options.url;
 	this.table = this.element.select('table')[0];
@@ -11280,7 +11306,7 @@ In2iGui.List.prototype = {
 			if (this.options.source) {
 				this.options.source.removeDelegate(this);
 			}
-			source.addDelegate(this);
+			source.listen(this);
 			this.options.source = source;
 			source.refresh();
 		}
@@ -11976,7 +12002,7 @@ In2iGui.ObjectList.Text.prototype = {
 		var input = new Element('input',{'class':'in2igui_formula_text'});
 		var field = In2iGui.wrapInField(input);
 		this.wrapper = new In2iGui.TextField({element:input});
-		this.wrapper.addDelegate(this);
+		this.wrapper.listen(this);
 		return field;
 	},
 	$valueChanged : function(value) {
@@ -12200,6 +12226,10 @@ In2iGui.Button.prototype = {
 		} else {
 			this.element.blur();
 		}
+	},
+	/** Registers a function as a click handler */
+	onClick : function(func) {
+		this.listen({$click:func});
 	},
 	/** Enables or disables the button */
 	setEnabled : function(enabled) {
@@ -12425,7 +12455,7 @@ In2iGui.Selection.Items = function(options) {
 	this.items = [];
 	In2iGui.extend(this);
 	if (this.options.source) {
-		this.options.source.addDelegate(this);
+		this.options.source.listen(this);
 	}
 }
 
@@ -13191,17 +13221,17 @@ In2iGui.RichText.prototype = {
 		if (!this.colorPicker) {
 			var panel = In2iGui.Window.create({variant:'dark'});
 			var picker = In2iGui.ColorPicker.create();
-			picker.addDelegate(this);
+			picker.listen(this);
 			panel.add(picker);
 			panel.show();
 			this.colorPicker = panel;
 		}
 		this.colorPicker.show();
 	},
-	colorWasHovered : function(color) {
+	$colorWasHovered : function(color) {
 		//this.document.execCommand('forecolor',false,color);
 	},
-	colorWasSelected : function(color) {
+	$colorWasSelected : function(color) {
 		this.document.execCommand('forecolor',false,color);
 		this.documentChanged();
 	}
@@ -13863,7 +13893,7 @@ In2iGui.Editor.prototype = {
 				menu.addItem({title:item.title,value:item.key});
 			});
 			this.columnMenu = menu;
-			menu.addDelegate(this);
+			menu.listen(this);
 		}
 		this.hoveredRow=rowIndex;
 		this.hoveredColumnIndex=columnIndex;
@@ -13901,16 +13931,16 @@ In2iGui.Editor.prototype = {
 			var f = this.columnEditorForm = In2iGui.Formula.create();
 			var g = f.createGroup();
 			var width = In2iGui.Formula.Text.create({label:'Bredde',key:'width'});
-			width.addDelegate({$valueChanged:function(v) {this.changeColumnWidth(v)}.bind(this)})
+			width.listen({$valueChanged:function(v) {this.changeColumnWidth(v)}.bind(this)})
 			g.add(width);
 			var marginLeft = In2iGui.Formula.Text.create({label:'Venstremargen',key:'left'});
-			marginLeft.addDelegate({$valueChanged:function(v) {this.changeColumnLeftMargin(v)}.bind(this)})
+			marginLeft.listen({$valueChanged:function(v) {this.changeColumnLeftMargin(v)}.bind(this)})
 			g.add(marginLeft);
 			var marginRight = In2iGui.Formula.Text.create({label:'Højremargen',key:'right'});
-			marginRight.addDelegate({$valueChanged:this.changeColumnRightMargin.bind(this)})
+			marginRight.listen({$valueChanged:this.changeColumnRightMargin.bind(this)})
 			g.add(marginRight);
 			w.add(f);
-			w.addDelegate(this);
+			w.listen(this);
 		}
 		this.columnEditor.show();
 	},
@@ -13955,7 +13985,7 @@ In2iGui.Editor.prototype = {
 			this.partEditControls = In2iGui.Overlay.create({name:'In2iGuiEditorPartEditActions'});
 			this.partEditControls.addIcon('save','common/save');
 			this.partEditControls.addIcon('cancel','common/close');
-			this.partEditControls.addDelegate(this);
+			this.partEditControls.listen(this);
 		}
 		this.partEditControls.showAtElement(this.activePart.element,{'horizontal':'right','vertical':'topOutside'});
 	},
@@ -13972,7 +14002,7 @@ In2iGui.Editor.prototype = {
 			this.partControls.getElement().observe('mouseover',function(e) {
 				self.hoverControls(e);
 			});
-			this.partControls.addDelegate(this);
+			this.partControls.listen(this);
 		}
 		if (this.hoveredPart.column==-1) {
 			this.partControls.hideIcons(['new','delete']);
@@ -14043,7 +14073,7 @@ In2iGui.Editor.prototype = {
 				{type:'Text',options:{label:'Right',key:'right'}}
 			]);
 			w.add(f);
-			f.addDelegate({valuesChanged:this.updatePartProperties.bind(this)});
+			f.listen({valuesChanged:this.updatePartProperties.bind(this)});
 		}
 		var e = this.activePart.element;
 		this.partEditorForm.setValues({
@@ -14101,7 +14131,7 @@ In2iGui.Editor.prototype = {
 			this.partControllers.each(function(item) {
 				menu.addItem({title:item.title,value:item.key});
 			});
-			menu.addDelegate(this);
+			menu.listen(this);
 			this.newPartMenu=menu;
 		}
 		this.newPartMenu.showAtPointer(e);
@@ -14247,7 +14277,7 @@ In2iGui.Editor.Html.prototype = {
 		this.editor = In2iGui.RichText.create({autoHideToolbar:false,style:style});
 		this.editor.setHeight(height);
 		this.element.appendChild(this.editor.getElement());
-		this.editor.addDelegate(this);
+		this.editor.listen(this);
 		this.editor.ignite();
 		this.editor.setValue(this.value);
 		this.editor.focus();
@@ -14347,7 +14377,7 @@ In2iGui.Menu.prototype = {
 			element.observe('mouseover',function(e) {
 				sub.showAtElement(element,e,'horizontal');
 			});
-			//sub.addDelegate({itemWasClicked:function(value) {self.itemWasClicked(value)}});
+			//sub.listen({itemWasClicked:function(value) {self.itemWasClicked(value)}});
 			self.subMenus.push(sub);
 			element.addClassName('in2igui_menu_item_children');
 			//element.observe('mouseleave',function() {
@@ -14691,10 +14721,19 @@ In2iGui.Upload.prototype = {
 	
 	/////////////////////////// Flash //////////////////////////
 	
-	createFlashVersion : function() {
+	getAbsoluteUrl : function(relative) {
 		var loc = new String(document.location);
-		var url = loc.slice(0,loc.lastIndexOf('/')+1);
-		url += this.options.url;
+		var url = loc.slice(0,loc.lastIndexOf('/'));
+		while (relative.indexOf('../')===0) {
+			relative=relative.substring(3);
+			url = url.slice(0,url.lastIndexOf('/'));
+		}
+		url += '/'+relative;
+		return url;
+	},
+	
+	createFlashVersion : function() {
+		var url = this.getAbsoluteUrl(this.options.url);
 		var javaSession = n2i.cookie.get('JSESSIONID');
 		if (javaSession) {
 			url+=';jsessionid='+javaSession;
@@ -15005,13 +15044,19 @@ In2iGui.Gallery.prototype = {
 		this.setObjects(objects);
 	},
 	/** @private */
+	$itemsLoaded : function(objects) {
+		this.setObjects(objects);
+	},
+	/** @private */
 	render : function() {
 		this.nodes = [];
 		this.element.update();
 		var self = this;
 		this.objects.each(function(object,i) {
 			var url = self.resolveImageUrl(object);
-			url = url.replace(/&amp;/,'&');
+			if (url!==null) {
+				url = url.replace(/&amp;/,'&');
+			}
 			if (object.height<object.width) {
 				var top = (self.height-(self.height*object.height/object.width))/2;
 			} else {
@@ -15066,6 +15111,20 @@ In2iGui.Gallery.prototype = {
 	/** @private */
 	itemDoubleClicked : function(index) {
 		this.fire('itemOpened',this.objects[index]);
+	},
+	/**
+	 * Sets the lists data source and refreshes it if it is new
+	 * @param {In2iGui.Source} source The source
+	 */
+	setSource : function(source) {
+		if (this.options.source!=source) {
+			if (this.options.source) {
+				this.options.source.removeDelegate(this);
+			}
+			source.listen(this);
+			this.options.source = source;
+			source.refresh();
+		}
 	}
 }
 
@@ -15161,16 +15220,16 @@ In2iGui.Calendar.prototype = {
 		this.toolbar = In2iGui.Toolbar.create({labels:false});
 		bar.insert(this.toolbar.getElement());
 		var previous = In2iGui.Button.create({name:'in2iguiCalendarPrevious',text:'',icon:'monochrome/previous'});
-		previous.addDelegate(this);
+		previous.listen(this);
 		this.toolbar.add(previous);
 		var today = In2iGui.Button.create({name:'in2iguiCalendarToday',text:'Idag'});
-		today.addDelegate(this);
+		today.listen(this);
 		this.toolbar.add(today);
 		var next = In2iGui.Button.create({name:'in2iguiCalendarNext',text:'',icon:'monochrome/next'});
-		next.addDelegate(this);
+		next.listen(this);
 		this.toolbar.add(next);
 		this.datePickerButton = In2iGui.Button.create({name:'in2iguiCalendarDatePicker',text:'Vælg dato...'});
-		this.datePickerButton.addDelegate(this);
+		this.datePickerButton.listen(this);
 		this.toolbar.add(this.datePickerButton);
 		
 		var time = this.body.select('.time')[0];
@@ -15221,11 +15280,11 @@ In2iGui.Calendar.prototype = {
 		if (!this.datePickerPanel) {
 			this.datePickerPanel = In2iGui.BoundPanel.create();
 			this.datePicker = In2iGui.DatePicker.create({name:'in2iguiCalendarDatePicker',value:this.date});
-			this.datePicker.addDelegate(this);
+			this.datePicker.listen(this);
 			this.datePickerPanel.add(this.datePicker);
 			this.datePickerPanel.addSpace(5);
 			var button = In2iGui.Button.create({name:'in2iguiCalendarDatePickerClose',text:'Luk'});
-			button.addDelegate(this);
+			button.listen(this);
 			this.datePickerPanel.add(button);
 		}
 		this.datePickerPanel.position(this.datePickerButton.getElement());
@@ -15247,7 +15306,7 @@ In2iGui.Calendar.prototype = {
 			this.eventViewerPanel.add(this.eventInfo);
 			this.eventViewerPanel.addSpace(5);
 			var button = In2iGui.Button.create({name:'in2iguiCalendarEventClose',text:'Luk'});
-			button.addDelegate(this);
+			button.listen(this);
 			this.eventViewerPanel.add(button);
 		}
 		this.eventInfo.clear();
@@ -15711,9 +15770,11 @@ In2iGui.Articles.prototype = {
 			var c = a[i].childNodes;
 			for (var j=0; j < c.length; j++) {
 				if (n2i.dom.isElement(c[j],'title')) {
-					e.insert(new Element('h2').update(n2i.dom.getNodeText(c[j])));
+					var title = n2i.dom.getNodeText(c[j]).escapeHTML();
+					e.insert(new Element('h2').update(title));
 				} else if (n2i.dom.isElement(c[j],'paragraph')) {
-					var p = new Element('p').update(n2i.dom.getNodeText(c[j]));
+					var text = n2i.dom.getNodeText(c[j]).escapeHTML();
+					var p = new Element('p').update(text);
 					if (c[j].getAttribute('dimmed')==='true') {
 						p.addClassName('in2igui_dimmed');
 					}
@@ -16429,4 +16490,59 @@ In2iGui.VideoPlayer.Embedded.prototype = {
 	}
 }
 
-/* EOF */
+/* EOF *//**
+ * @constructor
+ * @param {Object} options The options
+ */
+In2iGui.Segmented = function(options) {
+	this.options = n2i.override({value:null,allowNull:false},options);
+	this.element = $(options.element);
+	this.name = options.name;
+	this.value = this.options.value;
+	In2iGui.extend(this);
+	this.element.observe('click',this.onClick.bind(this));
+}
+
+In2iGui.Segmented.prototype = {
+	/** @private */
+	onClick : function(e) {
+		var a = e.findElement('a');
+		if (a) {
+			var changed = false;
+			var value = a.getAttribute('rel');
+			this.element.select('.in2igui_segmented_selected').each(function(node) {
+				node.removeClassName('in2igui_segmented_selected');
+			});
+			if (value===this.value && this.options.allowNull) {
+				changed=true;
+				this.value = null;
+				this.fire('valueChanged',this.value);
+			} else {
+				a.addClassName('in2igui_segmented_selected');
+				changed=this.value!== value;
+				this.value = value;
+			}
+			if (changed) {
+				this.fire('valueChanged',this.value);
+			}
+		}
+	},
+	setValue : function(value) {
+		if (value===undefined) {
+			value=null;
+		}
+		var as = this.element.select('a');
+		this.value = null;
+		for (var i=0; i < as.length; i++) {
+			if (as[i].getAttribute('rel')===value) {
+				as[i].addClassName('in2igui_segmented_selected');
+				this.value=value;
+			} else {
+				as[i].removeClassName('in2igui_segmented_selected');
+			}
+		};
+	},
+	getValue : function() {
+		return this.value;
+	}
+}

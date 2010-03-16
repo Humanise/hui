@@ -22,9 +22,11 @@ In2iGui.Articles.prototype = {
 			var c = a[i].childNodes;
 			for (var j=0; j < c.length; j++) {
 				if (n2i.dom.isElement(c[j],'title')) {
-					e.insert(new Element('h2').update(n2i.dom.getNodeText(c[j])));
+					var title = n2i.dom.getNodeText(c[j]).escapeHTML();
+					e.insert(new Element('h2').update(title));
 				} else if (n2i.dom.isElement(c[j],'paragraph')) {
-					var p = new Element('p').update(n2i.dom.getNodeText(c[j]));
+					var text = n2i.dom.getNodeText(c[j]).escapeHTML();
+					var p = new Element('p').update(text);
 					if (c[j].getAttribute('dimmed')==='true') {
 						p.addClassName('in2igui_dimmed');
 					}

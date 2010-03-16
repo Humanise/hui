@@ -162,7 +162,11 @@
 </xsl:template>
 
 <xsl:template name="gui:number">
-	<span class="in2igui_number" id="{generate-id()}">
+	<span id="{generate-id()}">
+		<xsl:attribute name="class">
+			<xsl:text>in2igui_number</xsl:text>
+			<xsl:if test="@adaptive='true'"><xsl:text> in2igui_number_adaptive</xsl:text></xsl:if>
+		</xsl:attribute>
 		<span><span><input type="text"/><em class="in2igui_number_units"><xsl:comment/></em><a class="in2igui_number_up"><xsl:comment/></a><a class="in2igui_number_down"><xsl:comment/></a></span></span>
 	</span>
 	<script type="text/javascript">
@@ -175,6 +179,7 @@
 			<xsl:if test="@min">,min:<xsl:value-of select="@min"/></xsl:if>
 			<xsl:if test="@max">,max:<xsl:value-of select="@max"/></xsl:if>
 			<xsl:if test="@decimals">,decimals:<xsl:value-of select="@decimals"/></xsl:if>
+			<xsl:if test="@allow-null">,allowNull:true</xsl:if>
 		});
 		<xsl:call-template name="gui:createobject"/>
 	</script>
@@ -231,6 +236,9 @@
 
 <xsl:template name="gui:dropdown" match="gui:dropdown">
 	<a id="{generate-id()}" href="#">
+		<xsl:if test="@width">
+			<xsl:attribute name="style">width:<xsl:value-of select="@width"/>px;</xsl:attribute>
+		</xsl:if>
 	<xsl:attribute name="class">
 		<xsl:choose>
 			<xsl:when test="@adaptive='true'">in2igui_dropdown in2igui_dropdown_adaptive</xsl:when>
@@ -314,7 +322,7 @@
 	</td></tr>
 </xsl:template>
 
-<xsl:template name="gui:checkbox">
+<xsl:template name="gui:checkbox"  match="gui:checkbox">
 	<a id="{generate-id()}" href="#">
 		<xsl:attribute name="class">
 			<xsl:text>in2igui_checkbox</xsl:text>

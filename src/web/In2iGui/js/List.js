@@ -7,7 +7,7 @@ In2iGui.List = function(options) {
 	this.element = $(options.element);
 	this.name = options.name;
 	if (this.options.source) {
-		this.options.source.addDelegate(this);
+		this.options.source.listen(this);
 	}
 	this.url = options.url;
 	this.table = this.element.select('table')[0];
@@ -94,7 +94,7 @@ In2iGui.List.prototype = {
 			if (this.options.source) {
 				this.options.source.removeDelegate(this);
 			}
-			source.addDelegate(this);
+			source.listen(this);
 			this.options.source = source;
 			source.refresh();
 		}

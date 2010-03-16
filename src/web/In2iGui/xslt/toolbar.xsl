@@ -107,7 +107,7 @@
 
 
 <xsl:template match="gui:toolbar//gui:grid">
-	<span style="height: 57px; vertical-align: middle; display: inline-block;">
+	<span class="in2igui_toolbar_grid">
 	<table class="in2igui_toolbar_grid">
 		<xsl:apply-templates/>
 	</table>
@@ -134,6 +134,9 @@
 	</td>
 </xsl:template>
 
+<xsl:template match="gui:toolbar//gui:grid/gui:row/gui:cell/gui:label">
+	<label class="in2igui_toolbar_grid"><xsl:apply-templates/></label>
+</xsl:template>
 <!-- Inputs -->
 
 <xsl:template match="gui:toolbar//gui:number">
@@ -154,6 +157,13 @@
 	<span class="in2igui_toolbar_item">
 		<span class="in2igui_toolbar_item_body"><xsl:call-template name="gui:dropdown"/></span>
 		<span class="in2igui_toolbar_label"><xsl:value-of select="@title"/><xsl:value-of select="@label"/></span>
+	</span>
+</xsl:template>
+
+<xsl:template match="gui:toolbar//gui:segmented[@label]">
+	<span class="in2igui_toolbar_item">
+		<span class="in2igui_toolbar_item_body"><xsl:call-template name="gui:segmented"/></span>
+		<span class="in2igui_toolbar_label"><xsl:value-of select="@label"/></span>
 	</span>
 </xsl:template>
 

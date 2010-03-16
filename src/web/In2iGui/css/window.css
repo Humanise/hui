@@ -64,6 +64,7 @@ span.in2igui_window_icon
 div.in2igui_window_body
 {
 	overflow: hidden;
+	margin: 0 -3px;
 }
 
 
