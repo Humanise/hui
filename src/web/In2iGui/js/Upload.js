@@ -22,7 +22,7 @@ In2iGui.Upload = function(options) {
 	this.loaded = false;
 	this.useFlash = this.options.useFlash;
 	if (this.options.useFlash) {
-		this.useFlash = swfobject.hasFlashPlayerVersion("10");
+		this.useFlash = In2iGui.Flash.getMajorVersion()>=10;
 	}
 	In2iGui.extend(this);
 	this.addBehavior();

@@ -54,3 +54,5 @@ In2iGui.Segmented.prototype = {
 		return this.value;
 	}
 }
+
+/* EOF */

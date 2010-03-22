@@ -1533,6 +1533,7 @@ td.in2igui_layout_top
 
 td.in2igui_layout_top div.in2igui_toolbar
 {
+	height: 56px;
 }
 
 table.in2igui_layout_middle

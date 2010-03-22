@@ -48,10 +48,10 @@ In2iGui.Button.prototype = {
 	/** @private */
 	addBehavior : function() {
 		var self = this;
-		this.element.onclick = function() {
+		this.element.observe('click',function(e) {
 			self.clicked();
-			return false;
-		}
+			Event.stop(e);
+		});
 	},
 	/** @private */
 	clicked : function() {

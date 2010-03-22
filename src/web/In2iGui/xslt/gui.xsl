@@ -48,7 +48,7 @@
 </xsl:for-each>
 <xsl:choose>
 	<xsl:when test="$dev='true'">
-		<script src="{$context}/In2iGui/lib/swfobject.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<!--script src="{$context}/In2iGui/lib/swfobject.js" type="text/javascript" charset="utf-8"><xsl:comment/></script-->
 		<script src="{$context}/In2iGui/lib/swfupload/swfupload.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<!--
 		<script src="{$context}/In2iGui/lib/swfupload/swfupload.cookies.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
@@ -89,6 +89,7 @@
 		<script src="{$context}/In2iGui/js/Bar.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/IFrame.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/Segmented.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/In2iGui/js/Flash.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/lib/wysihat.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 	</xsl:when>
 	<xsl:otherwise>
@@ -121,7 +122,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 </script>
 <xsl:call-template name="dwr-setup"/>
 </head>
-<body class="in2igui" style="font-size: 0;">
+<body class="in2igui">
 	<xsl:choose>
 		<xsl:when test="@padding"><div style="padding: {@padding}px;" class="in2igui_body"><xsl:apply-templates/></div></xsl:when>
 		<xsl:otherwise><xsl:apply-templates/></xsl:otherwise>

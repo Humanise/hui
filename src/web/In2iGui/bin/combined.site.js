@@ -6616,7 +6616,7 @@ In2iGui.startDrag = function(e,element,options) {
 		proxy.style.backgroundImage = 'url('+In2iGui.getIconUrl(info.icon,1)+')';
 	}
 	In2iGui.startDragPos = {top:Event.pointerY(e),left:Event.pointerX(e)};
-	proxy.innerHTML = '<span>'+info.title+'</span>' || '###';
+	proxy.innerHTML = info.title ? '<span>'+info.title.escapeHTML()+'</span>' : '###';
 	In2iGui.dragging = true;
 	document.body.onselectstart = function () { return false; };
 };
