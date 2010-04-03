@@ -56,7 +56,13 @@
 		</span>
 	</a>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Toolbar.Icon({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>'});
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Toolbar.Icon({
+			element:'<xsl:value-of select="generate-id()"/>',
+			name:'<xsl:value-of select="@name"/>'
+			<xsl:if test="gui:confirm">
+				,confirm:{text:'<xsl:value-of select="gui:confirm/@text"/>',okText:'<xsl:value-of select="gui:confirm/@ok"/>',cancelText:'<xsl:value-of select="gui:confirm/@cancel"/>'}
+			</xsl:if>
+		});
 		<xsl:call-template name="gui:createobject"/>
 		<xsl:if test="@action">
 			<xsl:value-of select="generate-id()"/>_obj.listen({$click:function() {<xsl:value-of select="@action"/>}});

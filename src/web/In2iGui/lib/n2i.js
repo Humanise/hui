@@ -324,6 +324,9 @@ n2i.place = function(options) {
 	left = trgtPos.left+trgt.clientWidth*options.target.horizontal;
 	top = trgtPos.top+trgt.clientHeight*options.target.vertical;
 	
+	var src = options.source.element;
+	left-=src.clientWidth*options.source.horizontal;
+	top-=src.clientHeight*options.source.vertical;
 	
 	var src = options.source.element;
 	src.style.top=top+'px';
@@ -515,7 +518,9 @@ n2i.animation = {
 	latestId : 0,
 	get : function(element) {
 		element = $(element);
-		if (!element.n2iAnimationId) element.n2iAnimationId = this.latestId++;
+		if (!element.n2iAnimationId) {
+			element.n2iAnimationId = this.latestId++;
+		}
 		if (!this.objects[element.n2iAnimationId]) {
 			this.objects[element.n2iAnimationId] = new n2i.animation.Item(element);
 		}
@@ -553,6 +558,16 @@ n2i.animation.render = function(element) {
 				var value = null;
 				if (!work.css) {
 					obj.element[work.property] = Math.round(work.from+(work.to-work.from)*v);
+				} else if (work.property=='transform' && !n2i.browser.msie) {
+					var t = work.transform;
+					var str = '';
+					if (t.rotate) {
+						str+=' rotate('+(t.rotate.from+(t.rotate.to-t.rotate.from)*v)+t.rotate.unit+')';
+					}
+					if (t.scale) {
+						str+=' scale('+(t.scale.from+(t.scale.to-t.scale.from)*v)+')';
+					}
+					obj.element.style[n2i.animation.TRANSFORM]=str;
 				} else if (work.to.red!=null) {
 					var red = Math.round(work.from.red+(work.to.red-work.from.red)*v);
 					var green = Math.round(work.from.green+(work.to.green-work.from.green)*v);
@@ -640,6 +655,8 @@ n2i.animation.Item.prototype.animate = function(from,to,property,duration,delega
 	work.css = css;
 	if (from!=null) {
 		work.from = from;
+	} else if (property=='transform') {
+		work.transform = n2i.animation.Item.parseTransform(to,this.element);
 	} else if (work.css && n2i.browser.msie && property=='opacity') {
 		work.from = this.getIEOpacity(this.element);
 	} else if (work.css) {
@@ -661,6 +678,38 @@ n2i.animation.Item.prototype.animate = function(from,to,property,duration,delega
 	if (delegate && delegate.delay) work.start+=delegate.delay;
 	work.end = work.start+duration;
 	n2i.animation.start();
+}
+
+n2i.animation.TRANSFORM = n2i.browser.gecko ? 'MozTransform' : 'WebkitTransform';
+
+n2i.animation.Item.parseTransform = function(value,element) {
+	var result = {};
+	var rotateReg = /rotate\(([0-9\.]+)([a-z]+)\)/i;
+	var rotate = value.match(rotateReg);
+	if (rotate) {
+		var from = 0;
+		if (element.style[n2i.animation.TRANSFORM]) {
+			var fromMatch = element.style[n2i.animation.TRANSFORM].match(rotateReg);
+			if (fromMatch) {
+				from = parseFloat(fromMatch[1]);
+			}
+		}
+		result.rotate = {from:from,to:parseFloat(rotate[1]),unit:rotate[2]};
+	}
+	var scaleReg = /scale\(([0-9\.]+)\)/i;
+	var scale = value.match(scaleReg);
+	if (scale) {
+		var from = 1;
+		if (element.style[n2i.animation.TRANSFORM]) {
+			var fromMatch = element.style[n2i.animation.TRANSFORM].match(scaleReg);
+			if (fromMatch) {
+				from = parseFloat(fromMatch[1]);
+			}
+		}
+		result.scale = {from:from,to:parseFloat(scale[1])};
+	}
+	
+	return result;
 }
 
 n2i.animation.Item.prototype.getIEOpacity = function(element) {

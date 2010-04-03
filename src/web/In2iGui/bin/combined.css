@@ -678,6 +678,7 @@ div.in2igui_dragproxy span
 table.in2igui_formula_group
 {
 	width: 100%;
+	font-size: 0;
 }
 
 table.in2igui_formula_group_above
@@ -1342,6 +1343,11 @@ input.in2igui_tokens_token
 	-webkit-border-radius: 2px;
 }
 
+input.in2igui_tokens_token:focus
+{
+	border-color: #68f;
+}
+
 /******************************** Location *************************/
 
 div.in2igui_location
@@ -1767,7 +1773,7 @@ td.view_sidebar
 }div.in2igui_toolbar
 {
 	padding: 0px;
-	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+	font-family: "Lucida Grande","Tahoma",sans-serif;
 	position: relative;
 	font-size: 0;
 }
@@ -2421,8 +2427,8 @@ span.in2igui_list_count
 {
 	float: right;
 	color: #666;
-	height: 24px;
-	line-height: 24px;
+	height: 26px;
+	line-height: 26px;
 	font-size: 12px;
 	padding-right: 7px;
 }
@@ -3270,6 +3276,7 @@ div.in2igui_menu_item_children:hover
 	height: 40px;
 	background: url('../gfx/overlay_24.png') left top no-repeat;
 	padding-left: 7px;
+	font-size: 0;
 }
 
 div.in2igui_inner_overlay
@@ -3293,7 +3300,33 @@ div.in2igui_overlay_icon
 	margin: 3px 1px 0px;
 }
 
-div.in2igui_upload
+div.in2igui_overlay a.in2igui_button
+{
+	margin-top: 4px;
+}
+/*
+div.in2igui_overlay a.in2igui_button
+{
+	-webkit-transition: -webkit-transform 0.3s ease-in-out;
+}
+
+div.in2igui_overlay a.in2igui_button:hover
+{
+    -webkit-transform: scale(1.2);
+}*/
+
+span.in2igui_overlay_text
+{
+	display: inline-block;
+	line-height: 30px;
+	vertical-align: middle;
+	height: 30px;
+	padding: 0 10px;
+	color: #fff;
+	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+	font-size: 12px;
+	margin-top: 2px;
+}div.in2igui_upload
 {
 	overflow: hidden;
 	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
@@ -3528,7 +3561,7 @@ div.in2igui_calendar_busy div.in2igui_toolbar
 div.in2igui_calendar_bar
 {
 	background: url('../gfx/calendar_bar.png');
-	height: 34px;
+	height: 30px;
 	border-bottom: 1px solid #ccc;
 }
 
@@ -3697,7 +3730,7 @@ div.in2igui_datepicker td
 	height: 22px;
 	padding: 0px;
 	text-align: center;
-	font-size: 10pt;
+	font-size: 11px;
 	line-height: 12px;
 	cursor: pointer;
 	background: #fff;

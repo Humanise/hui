@@ -56,13 +56,35 @@ In2iGui.Button.prototype = {
 	/** @private */
 	clicked : function() {
 		if (this.enabled) {
-			this.fire('click');
-			if (this.options.submit) {
-				var form = In2iGui.get().getAncestor(this,'in2igui_formula');
-				if (form) {form.submit();}
+			if (this.options.confirm) {
+				In2iGui.confirmOverlay({
+					widget:this,
+					text:this.options.confirm.text,
+					okText:this.options.confirm.okText,
+					cancelText:this.options.confirm.cancelText,
+					onOk:this.fireClick.bind(this)
+				});
+			} else {
+				this.fireClick();
 			}
 		} else {
 			this.element.blur();
+		}
+	},
+	/** @private */
+	fireClick : function() {
+		this.fire('click');
+		if (this.options.submit) {
+			var form = In2iGui.get().getAncestor(this,'in2igui_formula');
+			if (form) {form.submit();}
+		}
+	},
+	/** Registers a function as a click listener or issue a click */
+	click : function(func) {
+		if (func) {
+			this.listen({$click:func});
+		} else {
+			this.clicked();
 		}
 	},
 	/** Registers a function as a click handler */

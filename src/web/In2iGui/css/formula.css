@@ -15,6 +15,7 @@ form.in2igui_formula
 table.in2igui_formula_group
 {
 	width: 100%;
+	font-size: 0;
 }
 
 table.in2igui_formula_group_above
@@ -677,6 +678,11 @@ input.in2igui_tokens_token
 	padding: 1px 0px;
 	-moz-border-radius: 2px;
 	-webkit-border-radius: 2px;
+}
+
+input.in2igui_tokens_token:focus
+{
+	border-color: #68f;
 }
 
 /******************************** Location *************************/

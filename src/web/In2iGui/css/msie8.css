@@ -33,7 +33,17 @@ div.in2igui_window_dark a.in2igui_button_disabled
 	background: url('#');
 }
 
+input.in2igui_formula_text
+{
+	padding-top: 2px;
+}
+
 span.in2igui_upload_button_input input
 {
 	filter: alpha(opacity = 0);
+}
+
+span.in2igui_number input
+{
+	padding-top: 4px;
 }

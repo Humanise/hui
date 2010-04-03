@@ -7,6 +7,9 @@
 	<style type="text/css" media="screen">
 		#target1
 		{
+			position: absolute;
+			left: 400px;
+			top: 100px;
 			width: 200px;
 			height: 300px;
 			background: green;
@@ -19,6 +22,7 @@
 			position: absolute;
 			left: 300px;
 			top: 200px;
+			opacity: .5;
 		}
 	</style>
 </head>
@@ -26,6 +30,7 @@
 <body>
 <button onclick="leftTopToLeftBottom()">left/top &rarr; left/bottom</button>
 <button onclick="leftTopToMiddleMiddle()">left/top &rarr; left/middle</button>
+<button onclick="middleMiddleToMiddleMiddle()">middle/middle &rarr; middle/middle</button>
 
 <script type="text/javascript" charset="utf-8">
 	function leftTopToLeftBottom() {
@@ -37,6 +42,12 @@
 	function leftTopToMiddleMiddle() {
 		n2i.place({
 			source:{element:$('source1'),vertical:0,horizontal:0},
+			target:{element:$('target1'),vertical:.5,horizontal:.5}
+		})
+	}
+	function middleMiddleToMiddleMiddle() {
+		n2i.place({
+			source:{element:$('source1'),vertical:.5,horizontal:.5},
 			target:{element:$('target1'),vertical:.5,horizontal:.5}
 		})
 	}

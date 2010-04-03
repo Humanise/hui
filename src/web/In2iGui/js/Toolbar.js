@@ -68,6 +68,7 @@ In2iGui.RevealingToolbar.prototype = {
 
 /** @constructor */
 In2iGui.Toolbar.Icon = function(options) {
+	this.options = options;
 	this.element = $(options.element);
 	this.name = options.name;
 	this.enabled = !this.element.hasClassName('in2igui_toolbar_icon_disabled');
@@ -114,9 +115,23 @@ In2iGui.Toolbar.Icon.prototype = {
 	/** @private */
 	wasClicked : function() {
 		if (this.enabled) {
-			In2iGui.callDelegates(this,'toolbarIconWasClicked');
-			In2iGui.callDelegates(this,'click');
+			if (this.options.confirm) {
+				In2iGui.confirmOverlay({
+					widget:this,
+					text:this.options.confirm.text,
+					okText:this.options.confirm.okText,
+					cancelText:this.options.confirm.cancelText,
+					onOk:this.fireClick.bind(this)
+				});
+			} else {
+				this.fireClick();
+			}
 		}
+	},
+	/** @private */
+	fireClick : function() {
+		In2iGui.callDelegates(this,'toolbarIconWasClicked');
+		In2iGui.callDelegates(this,'click');
 	}
 }
 

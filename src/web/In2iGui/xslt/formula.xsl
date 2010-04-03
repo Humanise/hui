@@ -80,7 +80,7 @@
 <xsl:template name="gui:text" match="gui:textfield">
 	<xsl:value-of select="@value"/>
 	<xsl:choose>
-		<xsl:when test="@lines>1">
+		<xsl:when test="@lines>1 or @multiline='true'">
 			<div class="in2igui_field in2igui_longfield" id="{generate-id()}">
 			
 			<span class="in2igui_field_top"><span><span><xsl:comment/></span></span></span>
@@ -423,7 +423,12 @@
 
 <xsl:template match="gui:button" name="gui:button">
 	<a id="{generate-id()}" href="#">
-		<xsl:attribute name="class">in2igui_button<xsl:if test="@highlighted='true'"> in2igui_button_highlighted</xsl:if><xsl:if test="@small='true' and @rounded='true'"> in2igui_button_small_rounded</xsl:if></xsl:attribute>
+		<xsl:attribute name="class">
+			in2igui_button
+			<xsl:if test="@highlighted='true'"> in2igui_button_highlighted</xsl:if>
+			<xsl:if test="@disabled='true'"> in2igui_button_disabled</xsl:if>
+			<xsl:if test="@small='true' and @rounded='true'"> in2igui_button_small_rounded</xsl:if>
+		</xsl:attribute>
 		<span><span>
 			<xsl:if test="@icon"><em style="background-image: url('{$context}/In2iGui/icons/{@icon}1.png')">
 				<xsl:attribute name="class">
@@ -439,6 +444,9 @@
 			element:'<xsl:value-of select="generate-id()"/>'
 			<xsl:if test="@name">,name:'<xsl:value-of select="@name"/>'</xsl:if>
 			<xsl:if test="@submit='true'">,submit:true</xsl:if>
+			<xsl:if test="gui:confirm">
+				,confirm:{text:'<xsl:value-of select="gui:confirm/@text"/>',okText:'<xsl:value-of select="gui:confirm/@ok"/>',cancelText:'<xsl:value-of select="gui:confirm/@cancel"/>'}
+			</xsl:if>
 		});
 		<xsl:if test="@click">
 			<xsl:value-of select="generate-id()"/>_obj.listen({$click:function() {<xsl:value-of select="@click"/>}});

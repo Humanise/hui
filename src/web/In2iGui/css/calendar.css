@@ -12,7 +12,7 @@ div.in2igui_calendar_busy div.in2igui_toolbar
 div.in2igui_calendar_bar
 {
 	background: url('../gfx/calendar_bar.png');
-	height: 34px;
+	height: 30px;
 	border-bottom: 1px solid #ccc;
 }
 
@@ -181,7 +181,7 @@ div.in2igui_datepicker td
 	height: 22px;
 	padding: 0px;
 	text-align: center;
-	font-size: 10pt;
+	font-size: 11px;
 	line-height: 12px;
 	cursor: pointer;
 	background: #fff;

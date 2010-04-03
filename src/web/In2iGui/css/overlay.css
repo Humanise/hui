@@ -5,6 +5,7 @@ div.in2igui_overlay
 	height: 40px;
 	background: url('../gfx/overlay_24.png') left top no-repeat;
 	padding-left: 7px;
+	font-size: 0;
 }
 
 div.in2igui_inner_overlay
@@ -28,3 +29,30 @@ div.in2igui_overlay_icon
 	margin: 3px 1px 0px;
 }
 
+div.in2igui_overlay a.in2igui_button
+{
+	margin-top: 4px;
+}
+/*
+div.in2igui_overlay a.in2igui_button
+{
+	-webkit-transition: -webkit-transform 0.3s ease-in-out;
+}
+
+div.in2igui_overlay a.in2igui_button:hover
+{
+    -webkit-transform: scale(1.2);
+}*/
+
+span.in2igui_overlay_text
+{
+	display: inline-block;
+	line-height: 30px;
+	vertical-align: middle;
+	height: 30px;
+	padding: 0 10px;
+	color: #fff;
+	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+	font-size: 12px;
+	margin-top: 2px;
+}

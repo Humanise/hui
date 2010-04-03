@@ -52,11 +52,7 @@ In2iGui.Upload.prototype = {
 			this.createIframeVersion();
 			return;
 		}
-		if (In2iGui.get().domLoaded) {
-			this.createFlashVersion();			
-		} else {
-			In2iGui.onDomReady(this.createFlashVersion.bind(this));
-		}
+		In2iGui.onDomReady(this.createFlashVersion.bind(this));
 	},
 	
 	/////////////////////////// Iframe //////////////////////////
@@ -170,6 +166,7 @@ In2iGui.Upload.prototype = {
 	},
 	
 	createFlashVersion : function() {
+		n2i.log('Creating flash verison');
 		var url = this.getAbsoluteUrl(this.options.url);
 		var javaSession = n2i.cookie.get('JSESSIONID');
 		if (javaSession) {

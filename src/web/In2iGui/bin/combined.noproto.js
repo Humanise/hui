@@ -324,6 +324,9 @@ n2i.place = function(options) {
 	left = trgtPos.left+trgt.clientWidth*options.target.horizontal;
 	top = trgtPos.top+trgt.clientHeight*options.target.vertical;
 	
+	var src = options.source.element;
+	left-=src.clientWidth*options.source.horizontal;
+	top-=src.clientHeight*options.source.vertical;
 	
 	var src = options.source.element;
 	src.style.top=top+'px';
@@ -515,7 +518,9 @@ n2i.animation = {
 	latestId : 0,
 	get : function(element) {
 		element = $(element);
-		if (!element.n2iAnimationId) element.n2iAnimationId = this.latestId++;
+		if (!element.n2iAnimationId) {
+			element.n2iAnimationId = this.latestId++;
+		}
 		if (!this.objects[element.n2iAnimationId]) {
 			this.objects[element.n2iAnimationId] = new n2i.animation.Item(element);
 		}
@@ -553,6 +558,16 @@ n2i.animation.render = function(element) {
 				var value = null;
 				if (!work.css) {
 					obj.element[work.property] = Math.round(work.from+(work.to-work.from)*v);
+				} else if (work.property=='transform' && !n2i.browser.msie) {
+					var t = work.transform;
+					var str = '';
+					if (t.rotate) {
+						str+=' rotate('+(t.rotate.from+(t.rotate.to-t.rotate.from)*v)+t.rotate.unit+')';
+					}
+					if (t.scale) {
+						str+=' scale('+(t.scale.from+(t.scale.to-t.scale.from)*v)+')';
+					}
+					obj.element.style[n2i.animation.TRANSFORM]=str;
 				} else if (work.to.red!=null) {
 					var red = Math.round(work.from.red+(work.to.red-work.from.red)*v);
 					var green = Math.round(work.from.green+(work.to.green-work.from.green)*v);
@@ -640,6 +655,8 @@ n2i.animation.Item.prototype.animate = function(from,to,property,duration,delega
 	work.css = css;
 	if (from!=null) {
 		work.from = from;
+	} else if (property=='transform') {
+		work.transform = n2i.animation.Item.parseTransform(to,this.element);
 	} else if (work.css && n2i.browser.msie && property=='opacity') {
 		work.from = this.getIEOpacity(this.element);
 	} else if (work.css) {
@@ -661,6 +678,38 @@ n2i.animation.Item.prototype.animate = function(from,to,property,duration,delega
 	if (delegate && delegate.delay) work.start+=delegate.delay;
 	work.end = work.start+duration;
 	n2i.animation.start();
+}
+
+n2i.animation.TRANSFORM = n2i.browser.gecko ? 'MozTransform' : 'WebkitTransform';
+
+n2i.animation.Item.parseTransform = function(value,element) {
+	var result = {};
+	var rotateReg = /rotate\(([0-9\.]+)([a-z]+)\)/i;
+	var rotate = value.match(rotateReg);
+	if (rotate) {
+		var from = 0;
+		if (element.style[n2i.animation.TRANSFORM]) {
+			var fromMatch = element.style[n2i.animation.TRANSFORM].match(rotateReg);
+			if (fromMatch) {
+				from = parseFloat(fromMatch[1]);
+			}
+		}
+		result.rotate = {from:from,to:parseFloat(rotate[1]),unit:rotate[2]};
+	}
+	var scaleReg = /scale\(([0-9\.]+)\)/i;
+	var scale = value.match(scaleReg);
+	if (scale) {
+		var from = 1;
+		if (element.style[n2i.animation.TRANSFORM]) {
+			var fromMatch = element.style[n2i.animation.TRANSFORM].match(scaleReg);
+			if (fromMatch) {
+				from = parseFloat(fromMatch[1]);
+			}
+		}
+		result.scale = {from:from,to:parseFloat(scale[1])};
+	}
+	
+	return result;
 }
 
 n2i.animation.Item.prototype.getIEOpacity = function(element) {
@@ -4129,6 +4178,36 @@ In2iGui.prototype = {
 	}
 };
 
+In2iGui.confirmOverlays = {};
+
+In2iGui.confirmOverlay = function(options) {
+	var node = options.element || options.widget.getElement();
+	if (In2iGui.confirmOverlays[node]) {
+		var overlay = In2iGui.confirmOverlays[node];
+		overlay.clear();
+	} else {
+		var overlay = ui.Overlay.create({modal:true});
+		In2iGui.confirmOverlays[node] = overlay;
+	}
+	if (options.text) {
+		overlay.addText(options.text);
+	}
+	var ok = ui.Button.create({text:options.okText || 'OK',highlighted:'true'});
+	ok.click(function() {
+		if (options.onOk) {
+			options.onOk();
+		}
+		overlay.hide();
+	});
+	overlay.add(ok);
+	var cancel = ui.Button.create({text:options.cancelText || 'Cancel'});
+	cancel.onClick(function() {
+		overlay.hide();
+	});
+	overlay.add(cancel);
+	overlay.show({element:node});
+}
+
 In2iGui.destroyDescendants = function(element) {
 	var desc = In2iGui.get().getDescendants(element);
 	var objects = In2iGui.get().objects;
@@ -4176,7 +4255,36 @@ In2iGui.nextTopIndex = function() {
 
 ///////////////////////////////// Curtain /////////////////////////////
 
-In2iGui.showCurtain = function(widget,zIndex) {
+In2iGui.showCurtain = function(options,zIndex) {
+	if (options.getElement) {
+		In2iGui.showCurtainOld(options,zIndex);
+		return;
+	}
+	var widget = options.widget;
+	if (!widget.curtain) {
+		widget.curtain = new Element('div',{'class':'in2igui_curtain'}).setStyle({'z-index':'none'});
+		widget.curtain.onclick = function() {
+			if (widget['$curtainWasClicked']) {
+				widget['$curtainWasClicked']();
+			}
+		};
+		var body = $$('.in2igui_body')[0];
+		if (!body) {
+			body=document.body;
+		}
+		body.appendChild(widget.curtain);
+	}
+	if (options.color) {
+		widget.curtain.style.backgroundColor=options.color;
+	}
+	widget.curtain.style.height=n2i.getDocumentHeight()+'px';
+	widget.curtain.style.zIndex=options.zIndex;
+	n2i.setOpacity(widget.curtain,0);
+	widget.curtain.style.display='block';
+	n2i.ani(widget.curtain,'opacity',0.7,1000,{ease:n2i.ease.slowFastSlow});
+}
+
+In2iGui.showCurtainOld = function(widget,zIndex) {
 	if (!widget.curtain) {
 		widget.curtain = new Element('div',{'class':'in2igui_curtain'}).setStyle({'z-index':'none'});
 		widget.curtain.onclick = function() {
@@ -4359,6 +4467,17 @@ In2iGui.fadeIn = function(node,time) {
 
 In2iGui.fadeOut = function(node,time) {
 	n2i.ani(node,'opacity',0,time,{hideOnComplete:true});
+};
+
+In2iGui.bounceIn = function(node,time) {
+	if (n2i.browser.msie) {
+		node.setStyle({'display':'block',visibility:'visible'});
+	} else {
+		node.setStyle({'display':'block','opacity':0,visibility:'visible'});
+		n2i.ani(node,'transform','scale(0.1)',0);// rotate(10deg)
+		n2i.ani(node,'opacity',1,300);
+		n2i.ani(node,'transform','scale(1)',800,{ease:n2i.ease.elastic}); // rotate(0deg)
+	}
 };
 
 //////////////////////////// Positioning /////////////////////////////
@@ -7319,13 +7438,35 @@ In2iGui.Button.prototype = {
 	/** @private */
 	clicked : function() {
 		if (this.enabled) {
-			this.fire('click');
-			if (this.options.submit) {
-				var form = In2iGui.get().getAncestor(this,'in2igui_formula');
-				if (form) {form.submit();}
+			if (this.options.confirm) {
+				In2iGui.confirmOverlay({
+					widget:this,
+					text:this.options.confirm.text,
+					okText:this.options.confirm.okText,
+					cancelText:this.options.confirm.cancelText,
+					onOk:this.fireClick.bind(this)
+				});
+			} else {
+				this.fireClick();
 			}
 		} else {
 			this.element.blur();
+		}
+	},
+	/** @private */
+	fireClick : function() {
+		this.fire('click');
+		if (this.options.submit) {
+			var form = In2iGui.get().getAncestor(this,'in2igui_formula');
+			if (form) {form.submit();}
+		}
+	},
+	/** Registers a function as a click listener or issue a click */
+	click : function(func) {
+		if (func) {
+			this.listen({$click:func});
+		} else {
+			this.clicked();
 		}
 	},
 	/** Registers a function as a click handler */
@@ -7741,6 +7882,7 @@ In2iGui.RevealingToolbar.prototype = {
 
 /** @constructor */
 In2iGui.Toolbar.Icon = function(options) {
+	this.options = options;
 	this.element = $(options.element);
 	this.name = options.name;
 	this.enabled = !this.element.hasClassName('in2igui_toolbar_icon_disabled');
@@ -7787,9 +7929,23 @@ In2iGui.Toolbar.Icon.prototype = {
 	/** @private */
 	wasClicked : function() {
 		if (this.enabled) {
-			In2iGui.callDelegates(this,'toolbarIconWasClicked');
-			In2iGui.callDelegates(this,'click');
+			if (this.options.confirm) {
+				In2iGui.confirmOverlay({
+					widget:this,
+					text:this.options.confirm.text,
+					okText:this.options.confirm.okText,
+					cancelText:this.options.confirm.cancelText,
+					onOk:this.fireClick.bind(this)
+				});
+			} else {
+				this.fireClick();
+			}
 		}
+	},
+	/** @private */
+	fireClick : function() {
+		In2iGui.callDelegates(this,'toolbarIconWasClicked');
+		In2iGui.callDelegates(this,'click');
 	}
 }
 
@@ -9576,6 +9732,7 @@ In2iGui.Menu.prototype = {
  * @constructor
  */
 In2iGui.Overlay = function(options) {
+	this.options = options;
 	this.element = $(options.element);
 	this.content = this.element.select('div.in2igui_inner_overlay')[1];
 	this.name = options.name;
@@ -9622,6 +9779,12 @@ In2iGui.Overlay.prototype = {
 		this.icons.set(key,element);
 		this.content.insert(element);
 	},
+	addText : function(text) {
+		this.content.insert(new Element('span',{'class':'in2igui_overlay_text'}).update(text));
+	},
+	add : function(widget) {
+		this.content.insert(widget.getElement());
+	},
 	hideIcons : function(keys) {
 		var self = this;
 		keys.each(function(key) {
@@ -9653,11 +9816,51 @@ In2iGui.Overlay.prototype = {
 			element.observe('mouseout',this.hider);
 			element.addClassName('in2igui_overlay_bound');
 		}
+		if (this.options.modal) {
+			var zIndex = In2iGui.nextAlertIndex();
+			this.element.style.zIndex=zIndex+1;
+			In2iGui.showCurtain({widget:this,zIndex:zIndex});
+		}
 		return;
 	},
+	show : function(options) {
+		options = options || {};
+		if (!this.visible) {
+			this.element.setStyle({'display':'block',visibility:'hidden'});
+		}
+		if (options.element) {
+			n2i.place({
+				source:{element:this.element,vertical:0,horizontal:.5},
+				target:{element:options.element,vertical:.5,horizontal:.5}
+			});
+		}
+		if (this.visible) return;
+		In2iGui.bounceIn(this.element);
+		this.visible = true;
+		if (options.autoHide && options.element) {
+			this.boundElement = options.element;
+			options.element.observe('mouseout',this.hider);
+			options.element.addClassName('in2igui_overlay_bound');
+		}
+		if (this.options.modal) {
+			var zIndex = In2iGui.nextAlertIndex();
+			this.element.style.zIndex=zIndex+1;
+			var color = $(document.body).getStyle('background-color');
+			In2iGui.showCurtain({widget:this,zIndex:zIndex,color:color});
+		}
+	},
+	/** private */
+	$curtainWasClicked : function() {
+		this.hide();
+	},
 	hide : function() {
+		In2iGui.hideCurtain(this);
 		this.element.setStyle({'display':'none'});
 		this.visible = false;
+	},
+	clear : function() {
+		In2iGui.destroyDescendants(this.content);
+		this.content.update();
 	}
 }
 
@@ -9716,11 +9919,7 @@ In2iGui.Upload.prototype = {
 			this.createIframeVersion();
 			return;
 		}
-		if (In2iGui.get().domLoaded) {
-			this.createFlashVersion();			
-		} else {
-			In2iGui.onDomReady(this.createFlashVersion.bind(this));
-		}
+		In2iGui.onDomReady(this.createFlashVersion.bind(this));
 	},
 	
 	/////////////////////////// Iframe //////////////////////////
@@ -9834,6 +10033,7 @@ In2iGui.Upload.prototype = {
 	},
 	
 	createFlashVersion : function() {
+		n2i.log('Creating flash verison');
 		var url = this.getAbsoluteUrl(this.options.url);
 		var javaSession = n2i.cookie.get('JSESSIONID');
 		if (javaSession) {

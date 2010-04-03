@@ -5220,6 +5220,9 @@ n2i.place = function(options) {
 	left = trgtPos.left+trgt.clientWidth*options.target.horizontal;
 	top = trgtPos.top+trgt.clientHeight*options.target.vertical;
 	
+	var src = options.source.element;
+	left-=src.clientWidth*options.source.horizontal;
+	top-=src.clientHeight*options.source.vertical;
 	
 	var src = options.source.element;
 	src.style.top=top+'px';
@@ -5411,7 +5414,9 @@ n2i.animation = {
 	latestId : 0,
 	get : function(element) {
 		element = $(element);
-		if (!element.n2iAnimationId) element.n2iAnimationId = this.latestId++;
+		if (!element.n2iAnimationId) {
+			element.n2iAnimationId = this.latestId++;
+		}
 		if (!this.objects[element.n2iAnimationId]) {
 			this.objects[element.n2iAnimationId] = new n2i.animation.Item(element);
 		}
@@ -5449,6 +5454,16 @@ n2i.animation.render = function(element) {
 				var value = null;
 				if (!work.css) {
 					obj.element[work.property] = Math.round(work.from+(work.to-work.from)*v);
+				} else if (work.property=='transform' && !n2i.browser.msie) {
+					var t = work.transform;
+					var str = '';
+					if (t.rotate) {
+						str+=' rotate('+(t.rotate.from+(t.rotate.to-t.rotate.from)*v)+t.rotate.unit+')';
+					}
+					if (t.scale) {
+						str+=' scale('+(t.scale.from+(t.scale.to-t.scale.from)*v)+')';
+					}
+					obj.element.style[n2i.animation.TRANSFORM]=str;
 				} else if (work.to.red!=null) {
 					var red = Math.round(work.from.red+(work.to.red-work.from.red)*v);
 					var green = Math.round(work.from.green+(work.to.green-work.from.green)*v);
@@ -5536,6 +5551,8 @@ n2i.animation.Item.prototype.animate = function(from,to,property,duration,delega
 	work.css = css;
 	if (from!=null) {
 		work.from = from;
+	} else if (property=='transform') {
+		work.transform = n2i.animation.Item.parseTransform(to,this.element);
 	} else if (work.css && n2i.browser.msie && property=='opacity') {
 		work.from = this.getIEOpacity(this.element);
 	} else if (work.css) {
@@ -5557,6 +5574,38 @@ n2i.animation.Item.prototype.animate = function(from,to,property,duration,delega
 	if (delegate && delegate.delay) work.start+=delegate.delay;
 	work.end = work.start+duration;
 	n2i.animation.start();
+}
+
+n2i.animation.TRANSFORM = n2i.browser.gecko ? 'MozTransform' : 'WebkitTransform';
+
+n2i.animation.Item.parseTransform = function(value,element) {
+	var result = {};
+	var rotateReg = /rotate\(([0-9\.]+)([a-z]+)\)/i;
+	var rotate = value.match(rotateReg);
+	if (rotate) {
+		var from = 0;
+		if (element.style[n2i.animation.TRANSFORM]) {
+			var fromMatch = element.style[n2i.animation.TRANSFORM].match(rotateReg);
+			if (fromMatch) {
+				from = parseFloat(fromMatch[1]);
+			}
+		}
+		result.rotate = {from:from,to:parseFloat(rotate[1]),unit:rotate[2]};
+	}
+	var scaleReg = /scale\(([0-9\.]+)\)/i;
+	var scale = value.match(scaleReg);
+	if (scale) {
+		var from = 1;
+		if (element.style[n2i.animation.TRANSFORM]) {
+			var fromMatch = element.style[n2i.animation.TRANSFORM].match(scaleReg);
+			if (fromMatch) {
+				from = parseFloat(fromMatch[1]);
+			}
+		}
+		result.scale = {from:from,to:parseFloat(scale[1])};
+	}
+	
+	return result;
 }
 
 n2i.animation.Item.prototype.getIEOpacity = function(element) {
@@ -6332,6 +6381,36 @@ In2iGui.prototype = {
 	}
 };
 
+In2iGui.confirmOverlays = {};
+
+In2iGui.confirmOverlay = function(options) {
+	var node = options.element || options.widget.getElement();
+	if (In2iGui.confirmOverlays[node]) {
+		var overlay = In2iGui.confirmOverlays[node];
+		overlay.clear();
+	} else {
+		var overlay = ui.Overlay.create({modal:true});
+		In2iGui.confirmOverlays[node] = overlay;
+	}
+	if (options.text) {
+		overlay.addText(options.text);
+	}
+	var ok = ui.Button.create({text:options.okText || 'OK',highlighted:'true'});
+	ok.click(function() {
+		if (options.onOk) {
+			options.onOk();
+		}
+		overlay.hide();
+	});
+	overlay.add(ok);
+	var cancel = ui.Button.create({text:options.cancelText || 'Cancel'});
+	cancel.onClick(function() {
+		overlay.hide();
+	});
+	overlay.add(cancel);
+	overlay.show({element:node});
+}
+
 In2iGui.destroyDescendants = function(element) {
 	var desc = In2iGui.get().getDescendants(element);
 	var objects = In2iGui.get().objects;
@@ -6379,7 +6458,36 @@ In2iGui.nextTopIndex = function() {
 
 ///////////////////////////////// Curtain /////////////////////////////
 
-In2iGui.showCurtain = function(widget,zIndex) {
+In2iGui.showCurtain = function(options,zIndex) {
+	if (options.getElement) {
+		In2iGui.showCurtainOld(options,zIndex);
+		return;
+	}
+	var widget = options.widget;
+	if (!widget.curtain) {
+		widget.curtain = new Element('div',{'class':'in2igui_curtain'}).setStyle({'z-index':'none'});
+		widget.curtain.onclick = function() {
+			if (widget['$curtainWasClicked']) {
+				widget['$curtainWasClicked']();
+			}
+		};
+		var body = $$('.in2igui_body')[0];
+		if (!body) {
+			body=document.body;
+		}
+		body.appendChild(widget.curtain);
+	}
+	if (options.color) {
+		widget.curtain.style.backgroundColor=options.color;
+	}
+	widget.curtain.style.height=n2i.getDocumentHeight()+'px';
+	widget.curtain.style.zIndex=options.zIndex;
+	n2i.setOpacity(widget.curtain,0);
+	widget.curtain.style.display='block';
+	n2i.ani(widget.curtain,'opacity',0.7,1000,{ease:n2i.ease.slowFastSlow});
+}
+
+In2iGui.showCurtainOld = function(widget,zIndex) {
 	if (!widget.curtain) {
 		widget.curtain = new Element('div',{'class':'in2igui_curtain'}).setStyle({'z-index':'none'});
 		widget.curtain.onclick = function() {
@@ -6562,6 +6670,17 @@ In2iGui.fadeIn = function(node,time) {
 
 In2iGui.fadeOut = function(node,time) {
 	n2i.ani(node,'opacity',0,time,{hideOnComplete:true});
+};
+
+In2iGui.bounceIn = function(node,time) {
+	if (n2i.browser.msie) {
+		node.setStyle({'display':'block',visibility:'visible'});
+	} else {
+		node.setStyle({'display':'block','opacity':0,visibility:'visible'});
+		n2i.ani(node,'transform','scale(0.1)',0);// rotate(10deg)
+		n2i.ani(node,'opacity',1,300);
+		n2i.ani(node,'transform','scale(1)',800,{ease:n2i.ease.elastic}); // rotate(0deg)
+	}
 };
 
 //////////////////////////// Positioning /////////////////////////////
