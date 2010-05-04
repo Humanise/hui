@@ -7,8 +7,8 @@ In2iGui.BoundPanel = function(options) {
 	this.element = $(options.element);
 	this.name = options.name;
 	this.visible = false;
-	this.content=this.element.select('.content')[0];
-	this.arrow=this.element.select('.arrow')[0];
+	this.content=this.element.select('div.in2igui_boundpanel_content')[0];
+	this.arrow=this.element.select('div.in2igui_boundpanel_arrow')[0];
 	In2iGui.extend(this);
 }
 
@@ -23,9 +23,9 @@ In2iGui.BoundPanel.create = function(options) {
 		{'class':'in2igui_boundpanel'}).setStyle({'display':'none','zIndex':In2iGui.nextPanelIndex(),'top':options.top+'px','left':options.left+'px'});
 	
 	var html = 
-		'<div class="arrow"></div>'+
-		'<div class="top"><div><div></div></div></div>'+
-		'<div class="body"><div class="body"><div class="body"><div class="content" style="';
+		'<div class="in2igui_boundpanel_arrow"></div>'+
+		'<div class="in2igui_boundpanel_top"><div><div></div></div></div>'+
+		'<div class="in2igui_boundpanel_body"><div class="in2igui_boundpanel_body"><div class="in2igui_boundpanel_body"><div class="in2igui_boundpanel_content" style="';
 	if (options.width) {
 		html+='width:'+options.width+'px;';
 	}
@@ -33,7 +33,7 @@ In2iGui.BoundPanel.create = function(options) {
 		html+='padding:'+options.padding+'px;';
 	}
 	html+='"></div></div></div></div>'+
-		'<div class="bottom"><div><div></div></div></div>';
+		'<div class="in2igui_boundpanel_bottom"><div><div></div></div></div>';
 	element.innerHTML=html;
 	document.body.appendChild(element);
 	return new In2iGui.BoundPanel(options);
@@ -128,12 +128,12 @@ In2iGui.BoundPanel.prototype = {
 		if ((nodeLeft+nodeWidth/2)/winWidth<.5) {
 			this.relativePosition='left';
 			var left = nodeLeft+nodeWidth+10;
-			this.arrow.className='arrow arrow_left';
+			this.arrow.className='in2igui_boundpanel_arrow in2igui_boundpanel_arrow_left';
 			var arrowLeft=-14;
 		} else {
 			this.relativePosition='right';
 			var left = nodeLeft-dims.width-10;
-			this.arrow.className='arrow arrow_right';
+			this.arrow.className='in2igui_boundpanel_arrow in2igui_boundpanel_arrow_right';
 			var arrowLeft=dims.width-4;
 		}
 		var top = Math.max(0,nodeTop+(nodeHeight-dims.height)/2);

@@ -9,8 +9,9 @@ div.in2igui_videoplayer_controller
 {
 	background:none repeat scroll 0 0 #000000;
 	color:#FFFFFF;
-	font-size:11px;
-	height:20px;
+	font-size: 11px;
+	height: 20px;
+	margin-top: -20px;
 }
 
 div.in2igui_videoplayer_placeholder

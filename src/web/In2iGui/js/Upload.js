@@ -146,7 +146,7 @@ In2iGui.Upload.prototype = {
 		};
 		this.items = [];
 		this.itemContainer.hide();
-		this.status.update();
+		this.status.hide();
 		if (this.placeholder) {
 			this.placeholder.show();
 		}
@@ -296,7 +296,11 @@ In2iGui.Upload.prototype = {
 	
 	updateStatus : function() {
 		var s = this.loader.getStats();
-		this.status.update('Status: '+Math.round(s.successful_uploads/this.items.length*100)+'%');
+		if (this.items.length==0) {
+			this.status.hide();
+		} else {
+			this.status.update('Status: '+Math.round(s.successful_uploads/this.items.length*100)+'%').setStyle({display:'block'});
+		}
 		n2i.log(s);
 	}
 }

@@ -1,4 +1,4 @@
-.in2igui_boundpanel
+div.in2igui_boundpanel
 {
 	position: absolute;
 	font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
@@ -6,7 +6,7 @@
 	left: 0px;
 }
 
-.in2igui_boundpanel .arrow
+div.in2igui_boundpanel_arrow
 {
 	position: absolute;
 	width: 18px;
@@ -15,17 +15,17 @@
 	margin-top: 17px;
 }
 
-.in2igui_boundpanel .arrow_left
+div.in2igui_boundpanel_arrow_left
 {
 	background: url('../gfx/bound_arrow_left.png');
 }
 
-.in2igui_boundpanel .arrow_right
+div.in2igui_boundpanel_arrow_right
 {
 	background: url('../gfx/bound_arrow_right.png');
 }
 
-.in2igui_boundpanel .content
+div.in2igui_boundpanel_content
 {
 	width: 200px;
 	overflow: hidden;
@@ -33,21 +33,21 @@
 
 /* Top */
 
-.in2igui_boundpanel .top
+div.in2igui_boundpanel_top
 {
 	height: 8px;
 	padding-left: 10px;
 	background: url('../gfx/bound_top_left.png') top left no-repeat;
 }
 
-.in2igui_boundpanel .top div
+div.in2igui_boundpanel_top div
 {
 	height: 8px;
 	padding-right: 10px;
 	background: url('../gfx/bound_top_right.png') top right no-repeat;
 }
 
-.in2igui_boundpanel .top div div
+div.in2igui_boundpanel_top div div
 {
 	height: 8px;
 	background: url('../gfx/bound_top.png') top left repeat-x;
@@ -55,20 +55,20 @@
 
 /* body */
 
-.in2igui_boundpanel .body
+div.in2igui_boundpanel_body
 {
 	padding-left: 10px;
 	background: url('../gfx/bound_left.png') top left repeat-y;
 }
 
-.in2igui_boundpanel .body .body
+div.in2igui_boundpanel_body div.in2igui_boundpanel_body
 {
 	padding-left: 0px;
 	padding-right: 10px;
 	background: url('../gfx/bound_right.png') top right repeat-y;
 }
 
-.in2igui_boundpanel .body .body .body
+div.in2igui_boundpanel_body div.in2igui_boundpanel_body div.in2igui_boundpanel_body
 {
 	padding: 0px;
 	background: #f2f2f2;
@@ -76,21 +76,21 @@
 
 /* Bottom */
 
-.in2igui_boundpanel .bottom
+div.in2igui_boundpanel_bottom
 {
 	height: 12px;
 	padding-left: 10px;
 	background: url('../gfx/bound_bottom_left.png') top left no-repeat;
 }
 
-.in2igui_boundpanel .bottom div
+div.in2igui_boundpanel_bottom div
 {
 	height: 12px;
 	padding-right: 10px;
 	background: url('../gfx/bound_bottom_right.png') top right no-repeat;
 }
 
-.in2igui_boundpanel .bottom div div
+div.in2igui_boundpanel_bottom div div
 {
 	height: 12px;
 	background: url('../gfx/bound_bottom.png') top left repeat-x;

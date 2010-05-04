@@ -32,6 +32,14 @@ In2iGui.Selection.prototype = {
 	getValue : function() {
 		return this.selection;
 	},
+	valueForProperty : function(p) {
+		if (p==='value') {
+			return this.selection ? this.selection.value : null;
+		} else if (p==='kind') {
+			return this.selection ? this.selection.kind : null;
+		}
+		return undefined;
+	},
 	/** Set the selected item
 	 * @param {Object} value The selected item */
 	setValue : function(value) {
