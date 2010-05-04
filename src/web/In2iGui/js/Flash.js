@@ -1,7 +1,9 @@
+/** @namespace */
 In2iGui.Flash = {
 	
 	fullVersion:undefined,
 	
+	/** Gets the major version of flash */
 	getMajorVersion : function() {
 		var full = this.getFullVersion();
 		if (full===null || full===undefined) {
@@ -53,7 +55,7 @@ In2iGui.Flash = {
 		this.fullVersion = flashVer;
 		return flashVer;
 	},
-	
+	/** @private */
 	getActiveXVersion : function() {
 		var version;
 		var axo;

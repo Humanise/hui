@@ -13,5 +13,6 @@
 		<button title="Confirmation" click="ui.showMessage({text:'Action approved!',duration:2000})">
 			<confirm text="Are you sure?" ok="Yes" cancel="No"/>
 		</button>
+		<button name="disabledButton" icon="common/delete"/>
 	</box>
 </gui>

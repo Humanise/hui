@@ -96,7 +96,7 @@
 			<div class="in2igui_field" id="{generate-id()}">
 			<span class="in2igui_field_top"><span><span><xsl:comment/></span></span></span>
 			<span class="in2igui_field_middle"><span class="in2igui_field_middle"><span class="in2igui_field_content">
-				<span class="in2igui_formula_text_singleline">
+				<span class="in2igui_field_singleline">
 				<input class="in2igui_formula_text" value="{@value}"><xsl:if test="@secret='true'"><xsl:attribute name="type">password</xsl:attribute></xsl:if></input>
 				</span>
 			</span></span></span>
@@ -130,7 +130,9 @@
 	<div class="in2igui_field" id="{generate-id()}">
 		<span class="in2igui_field_top"><span><span><xsl:comment/></span></span></span>
 		<span class="in2igui_field_middle"><span class="in2igui_field_middle"><span class="in2igui_field_content">
-			<input type="text" class="in2igui_formula_text"/>
+			<span class="in2igui_field_singleline">
+				<input type="text" class="in2igui_formula_text"/>
+			</span>
 		</span></span></span>
 		<span class="in2igui_field_bottom"><span><span><xsl:comment/></span></span></span>
 	</div>

@@ -159,6 +159,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 			<xsl:when test="@url">,url:'<xsl:value-of select="@url"/>'</xsl:when>
 			<xsl:when test="@dwr">,dwr:'<xsl:value-of select="@dwr"/>'</xsl:when>
 		</xsl:choose>
+		<xsl:if test="@lazy='true'">,lazy:true</xsl:if>
 	});
 	<xsl:call-template name="gui:createobject"/>
 	with (<xsl:value-of select="generate-id()"/>_obj) {
@@ -506,13 +507,17 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 
 <xsl:template match="gui:calendar">
 	<div class="in2igui_calendar" id="{generate-id()}">
+		<xsl:if test="@state and @state!=//gui:gui/@state">
+			<xsl:attribute name="style">display:none</xsl:attribute>
+		</xsl:if>
 	<div class="in2igui_calendar_bar">
 		<xsl:comment/>
 	</div>
 	<table class="in2igui_calendar_weekview">
 		<thead>
 		<tr>
-			<th class="time"><xsl:comment/></th>
+			<th class="day"><xsl:comment/></th>
+			<th class="day"><xsl:comment/></th>
 			<th class="day"><xsl:comment/></th>
 			<th class="day"><xsl:comment/></th>
 			<th class="day"><xsl:comment/></th>
@@ -522,12 +527,13 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 		</thead>
 		<tbody>
 		<tr>
-			<td class="time"><xsl:comment/></td>
-			<td class="day"><xsl:comment/></td>
-			<td class="day"><xsl:comment/></td>
-			<td class="day"><xsl:comment/></td>
-			<td class="day"><xsl:comment/></td>
-			<td class="day"><xsl:comment/></td>
+			<td><div class="in2igui_calendar_day"><xsl:comment/></div></td>
+			<td><div class="in2igui_calendar_day"><xsl:comment/></div></td>
+			<td><div class="in2igui_calendar_day"><xsl:comment/></div></td>
+			<td><div class="in2igui_calendar_day"><xsl:comment/></div></td>
+			<td><div class="in2igui_calendar_day"><xsl:comment/></div></td>
+			<td><div class="in2igui_calendar_day"><xsl:comment/></div></td>
+			<td><div class="in2igui_calendar_day"><xsl:comment/></div></td>
 		</tr>
 		</tbody>
 	</table>
@@ -536,8 +542,10 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Calendar({
 			element:'<xsl:value-of select="generate-id()"/>'
 			,name:'<xsl:value-of select="@name"/>'
+			,state:'<xsl:value-of select="@state"/>'
 			<xsl:if test="@startHour">,startHour:<xsl:value-of select="@startHour"/></xsl:if>
 			<xsl:if test="@endHour">,endHour:<xsl:value-of select="@endHour"/></xsl:if>
+			<xsl:if test="@source">,source:<xsl:value-of select="@source"/></xsl:if>
 		});
 		<xsl:call-template name="gui:createobject"/>
 	</script>

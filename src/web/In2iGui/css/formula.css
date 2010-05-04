@@ -235,7 +235,7 @@ span.in2igui_field_content
 	background-position: 100% -1254px;
 }
 
-span.in2igui_formula_text_singleline
+span.in2igui_field_singleline
 {
 	background: none;
 	height: 16px;
@@ -523,6 +523,7 @@ div.in2igui_radiobutton
 	cursor: default;
 	color: #004A80;
 	float: left;
+	line-height: 15px;
 }
 
 div.in2igui_radiobutton div
@@ -560,6 +561,11 @@ div.in2igui_checkboxes
 {
 	margin-bottom: 5px;
 	font-size: 0;
+}
+
+div.in2igui_checkboxes a.in2igui_checkbox
+{
+	margin-right: 10px;
 }
 
 div.in2igui_checkboxes_vertical a.in2igui_checkbox

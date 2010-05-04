@@ -3,19 +3,19 @@ var controller = {
 		{drag:'user',drop:'folder'},
 		{drag:'icon',drop:'folder'}
 	],
-	interfaceIsReady : function() {
+	$interfaceIsReady : function() {
 		this.loadUser();
 	},
 	loadUser : function() {
 		list.loadData('data/list_users.xml');
 	},
-	drop$user$folder : function(dragged,target) {
+	$drop$user$folder : function(dragged,target) {
 		In2iGui.get().alert({text:Object.toJSON(dragged)+' was dropped on '+Object.toJSON(target)});
 	},
-	drop$icon$folder : function(dragged,target) {
+	$drop$icon$folder : function(dragged,target) {
 		In2iGui.get().alert({text:Object.toJSON(dragged)+' was dropped on '+Object.toJSON(target)});
 	},
-	onRowOpen$list : function(info) {
+	$listRowWasOpened$list : function(info) {
 		alert(Object.toJSON(info))
 	}
 }

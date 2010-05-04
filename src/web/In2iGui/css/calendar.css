@@ -60,7 +60,7 @@ table.in2igui_calendar_weekview td.time
 	border-right:1px solid #DDDDDD;
 }
 
-table.in2igui_calendar_weekview td.time div
+div.in2igui_calendar_time
 {
 	color: #666;
 	font-family: Helvetica,Arial,sans-serif;
@@ -69,23 +69,22 @@ table.in2igui_calendar_weekview td.time div
 	height: 40px;
 }
 
-table.in2igui_calendar_weekview td.time span
+div.in2igui_calendar_time span
 {
 	margin-top: -10px;
-	float: right;
-	padding-right: 4px;
+	padding: 0 2px;
+	margin-left: 2px;
+	position: absolute;
+	background: #fff;
 }
-table.in2igui_calendar_weekview td.time div.first span
+
+div.in2igui_calendar_time_first span
 {
 	margin-top: -2px;
+	background: none;
 }
 
-table.in2igui_calendar_weekview td.time div.last
-{
-	height: auto;
-}
-
-table.in2igui_calendar_weekview td.time div.last span
+div.in2igui_calendar_time_list span
 {
 	margin-top: -13px;
 	line-height: 12px;
@@ -97,12 +96,18 @@ table.in2igui_calendar_weekview td.time em
 	font-style: normal;
 }
 
-table.in2igui_calendar_weekview td.day
+div.in2igui_calendar_day
+{
+	position: relative;
+}
+
+table.in2igui_calendar_weekview tbody td
 {
 	background-image: url('../gfx/calendar_bg.gif');
 	border-right: 1px solid #DDDDDD;
 	vertical-align:top;
-	width: 18%;
+	width: 14%;
+	padding: 0;
 	-webkit-box-sizing: border-box;
 }
 
@@ -112,17 +117,16 @@ table.in2igui_calendar_weekview div.in2igui_calendar_event
 	background: #caddfd;
 	background: rgba(180, 200, 255, 0.5);
 	border: 1px solid #acbbd4;
-	width: 18%;
+	width: 100%;
 	margin-left: -1px;
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
+	/*-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;*/
 	box-sizing: border-box;
 	-moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
 	color: #112039;
 	font-size: 9pt;
 	line-height: 12px;
-	overflow: hidden;
 	cursor: pointer;
 }
 

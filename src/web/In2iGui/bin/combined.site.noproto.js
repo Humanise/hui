@@ -1781,9 +1781,11 @@ In2iGui.bounceIn = function(node,time) {
 		node.setStyle({'display':'block',visibility:'visible'});
 	} else {
 		node.setStyle({'display':'block','opacity':0,visibility:'visible'});
-		n2i.ani(node,'transform','scale(0.1)',0);// rotate(10deg)
-		n2i.ani(node,'opacity',1,300);
-		n2i.ani(node,'transform','scale(1)',800,{ease:n2i.ease.elastic}); // rotate(0deg)
+		n2i.animate(node,'transform','scale(0.1)',0);// rotate(10deg)
+		window.setTimeout(function() {
+			n2i.animate(node,'opacity',1,300);
+			n2i.animate(node,'transform','scale(1)',400,{ease:n2i.ease.backOut}); // rotate(0deg)
+		});
 	}
 };
 
@@ -2209,6 +2211,8 @@ In2iGui.request = function(options) {
 	options.onFailure = function(t) {
 		if (typeof(onFailure)=='string') {
 			In2iGui.callDelegates(t,'failure$'+onFailure)
+		} else if (typeof(onFailure)=='function') {
+			onFailure(t);
 		}
 	}
 	options.onException = function(t,e) {n2i.log(e)};
@@ -2247,7 +2251,7 @@ In2iGui.parseSubItems = function(parent,array) {
  * @constructor
  */
 In2iGui.Source = function(options) {
-	this.options = n2i.override({url:null,dwr:null,parameters:[]},options);
+	this.options = n2i.override({url:null,dwr:null,parameters:[],lazy:false},options);
 	this.name = options.name;
 	this.data = null;
 	this.parameters = this.options.parameters;
@@ -2264,15 +2268,33 @@ In2iGui.Source.prototype = {
 	init : function() {
 		var self = this;
 		this.parameters.each(function(parm) {
-			parm.value = In2iGui.bind(parm.value,function(value) {
+			var val = In2iGui.bind(parm.value,function(value) {
 				self.changeParameter(parm.key,value);
 			});
+			parm.value = self.convertValue(val);
 		})
-		this.refresh();
+		if (!this.options.lazy) {
+			this.refresh();
+		}
+	},
+	/** @private */
+	convertValue : function(value) {		
+		if (value && value.getTime) {
+			return value.getTime();
+		}
+		return value;
 	},
 	/** Refreshes the data source */
 	refresh : function() {
-		if (this.delegates.length==0) return;
+		if (this.delegates.length==0) {
+			return;
+		}
+		for (var i=0; i < this.delegates.length; i++) {
+			var d = this.delegates[i];
+			if (d['$sourceShouldRefresh'] && d['$sourceShouldRefresh']()==false) {
+				return;
+			}
+		};
 		if (this.busy) {
 			this.pendingRefresh = true;
 			return;
@@ -2315,6 +2337,14 @@ In2iGui.Source.prototype = {
 	parse : function(t) {
 		if (t.responseXML) {
 			this.parseXML(t.responseXML);
+		} else {
+			var str = t.responseText.replace(/^\s+|\s+$/g, '');
+			if (str.length>0) {
+				var json = t.responseText.evalJSON(true);
+			} else {
+				var json = null;
+			}
+			this.fire('objectsLoaded',json);
 		}
 		this.end();
 	},
@@ -2339,10 +2369,12 @@ In2iGui.Source.prototype = {
 		this.parameters.push(parm);
 	},
 	changeParameter : function(key,value) {
+		value = this.convertValue(value);
 		this.parameters.each(function(p) {
-			if (p.key==key) p.value=value;
+			if (p.key==key) {
+				p.value=value;
+			}
 		})
-		var self = this;
 		window.clearTimeout(this.paramDelay);
 		this.paramDelay = window.setTimeout(function() {
 			this.refresh();

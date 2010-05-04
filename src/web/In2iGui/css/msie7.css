@@ -121,6 +121,11 @@ span.in2igui_upload_button_input input
 	filter: alpha(opacity = 0);
 }
 
+em.in2igui_button_icon_notext
+{
+	margin-top: 6px;
+}
+
 /********************** layout ****************/
 
 table.in2igui_layout

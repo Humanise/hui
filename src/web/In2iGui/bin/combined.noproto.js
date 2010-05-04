@@ -3552,7 +3552,7 @@ Date.prototype.getWeekOfYear = function() {
     // Find the first Thursday of the year
     var jan1 = new Date(this.getFullYear(), 0, 1);
     var then = (5 - jan1.getDay());
-    return String.leftPad(((now - then) / 7) + 1, 2, "0");
+    return parseInt(String.leftPad(((now - then) / 7) + 1, 2, "0"));
 }
 
 Date.prototype.isLeapYear = function() {
@@ -4474,9 +4474,11 @@ In2iGui.bounceIn = function(node,time) {
 		node.setStyle({'display':'block',visibility:'visible'});
 	} else {
 		node.setStyle({'display':'block','opacity':0,visibility:'visible'});
-		n2i.ani(node,'transform','scale(0.1)',0);// rotate(10deg)
-		n2i.ani(node,'opacity',1,300);
-		n2i.ani(node,'transform','scale(1)',800,{ease:n2i.ease.elastic}); // rotate(0deg)
+		n2i.animate(node,'transform','scale(0.1)',0);// rotate(10deg)
+		window.setTimeout(function() {
+			n2i.animate(node,'opacity',1,300);
+			n2i.animate(node,'transform','scale(1)',400,{ease:n2i.ease.backOut}); // rotate(0deg)
+		});
 	}
 };
 
@@ -4902,6 +4904,8 @@ In2iGui.request = function(options) {
 	options.onFailure = function(t) {
 		if (typeof(onFailure)=='string') {
 			In2iGui.callDelegates(t,'failure$'+onFailure)
+		} else if (typeof(onFailure)=='function') {
+			onFailure(t);
 		}
 	}
 	options.onException = function(t,e) {n2i.log(e)};
@@ -4940,7 +4944,7 @@ In2iGui.parseSubItems = function(parent,array) {
  * @constructor
  */
 In2iGui.Source = function(options) {
-	this.options = n2i.override({url:null,dwr:null,parameters:[]},options);
+	this.options = n2i.override({url:null,dwr:null,parameters:[],lazy:false},options);
 	this.name = options.name;
 	this.data = null;
 	this.parameters = this.options.parameters;
@@ -4957,15 +4961,33 @@ In2iGui.Source.prototype = {
 	init : function() {
 		var self = this;
 		this.parameters.each(function(parm) {
-			parm.value = In2iGui.bind(parm.value,function(value) {
+			var val = In2iGui.bind(parm.value,function(value) {
 				self.changeParameter(parm.key,value);
 			});
+			parm.value = self.convertValue(val);
 		})
-		this.refresh();
+		if (!this.options.lazy) {
+			this.refresh();
+		}
+	},
+	/** @private */
+	convertValue : function(value) {		
+		if (value && value.getTime) {
+			return value.getTime();
+		}
+		return value;
 	},
 	/** Refreshes the data source */
 	refresh : function() {
-		if (this.delegates.length==0) return;
+		if (this.delegates.length==0) {
+			return;
+		}
+		for (var i=0; i < this.delegates.length; i++) {
+			var d = this.delegates[i];
+			if (d['$sourceShouldRefresh'] && d['$sourceShouldRefresh']()==false) {
+				return;
+			}
+		};
 		if (this.busy) {
 			this.pendingRefresh = true;
 			return;
@@ -5008,6 +5030,14 @@ In2iGui.Source.prototype = {
 	parse : function(t) {
 		if (t.responseXML) {
 			this.parseXML(t.responseXML);
+		} else {
+			var str = t.responseText.replace(/^\s+|\s+$/g, '');
+			if (str.length>0) {
+				var json = t.responseText.evalJSON(true);
+			} else {
+				var json = null;
+			}
+			this.fire('objectsLoaded',json);
 		}
 		this.end();
 	},
@@ -5032,10 +5062,12 @@ In2iGui.Source.prototype = {
 		this.parameters.push(parm);
 	},
 	changeParameter : function(key,value) {
+		value = this.convertValue(value);
 		this.parameters.each(function(p) {
-			if (p.key==key) p.value=value;
+			if (p.key==key) {
+				p.value=value;
+			}
 		})
-		var self = this;
 		window.clearTimeout(this.paramDelay);
 		this.paramDelay = window.setTimeout(function() {
 			this.refresh();
@@ -5399,7 +5431,7 @@ In2iGui.Formula.Text.create = function(options) {
 		node = new Element('span',{'class':'in2igui_formula_text_multiline'}).insert(input);
 	} else {
 		input = new Element('input',{'class':'in2igui_formula_text'});
-		node = new Element('span',{'class':'in2igui_formula_text_singleline'}).insert(input);
+		node = new Element('span',{'class':'in2igui_field_singleline'}).insert(input);
 	}
 	if (options.value!==undefined) {
 		input.value=options.value;
@@ -6431,6 +6463,26 @@ In2iGui.Formula.Location.prototype = {
 }
 
 /* EOF *//**
+ * <p><strong>Events:</strong></p>
+ * <ul>
+ * <li>listRowWasOpened - When a row is double clicked (rename to open)</li>
+ * <li>selectionChanged - When a row is selected (rename to select)</li>
+ * <li>selectionReset - When a selection is removed</li>
+ * </ul>
+ * <p><strong>Bindings:</strong></p>
+ * <ul>
+ * <li><del>window</del></li>
+ * <li>window.page</li>
+ * <li>sort.direction</li>
+ * <li>sort.key</li>
+ * </ul>
+ * <p><strong>XML:</strong></p>
+ * <code>
+ * &lt;list name=&quot;list&quot; source=&quot;sourcesListSource&quot; state=&quot;list&quot;/&gt;
+ * <br/>
+ * &lt;list name=&quot;list&quot; url=&quot;my_list_data.xml&quot; state=&quot;list&quot;/&gt;
+ * </code>
+ *
  * @constructor
  * @param {Object} options The options : {url:null,source:null}
  */
@@ -6461,7 +6513,9 @@ In2iGui.List = function(options) {
 		this.window.size = parseInt(options.windowSize);
 	}
 	In2iGui.extend(this);
-	if (this.url) this.refresh();
+	if (this.url)  {
+		this.refresh();
+	}
 }
 
 /**
@@ -6483,6 +6537,7 @@ In2iGui.List.prototype = {
 	/** Shows the list */
 	show : function() {
 		this.element.show();
+		this.refresh();
 	},
 	/** @private */
 	registerColumn : function(column) {
@@ -6575,9 +6630,11 @@ In2iGui.List.prototype = {
 		else if (p=='sort.direction') return (this.sortDirection || 'ascending');
 		else return this[p];
 	},
-	/**
-	 * @private
-	 */
+	/** @private */
+	$sourceShouldRefresh : function() {
+		return this.element.style.display!='none';
+	},
+	/** @private */
 	refresh : function() {
 		if (this.options.source) {
 			this.options.source.refresh();
@@ -6694,7 +6751,9 @@ In2iGui.List.prototype = {
 	
 	/** @private */
 	$objectsLoaded : function(data) {
-		if (data.constructor == Array) {
+		if (data==null) {
+			// NOOP
+		} else if (data.constructor == Array) {
 			this.setObjects(data);
 		} else {
 			this.setData(data);
@@ -6809,6 +6868,7 @@ In2iGui.List.prototype = {
 			this.windowPage.style.display='block';
 		}
 	},
+	/** @private */
 	buildPages : function(count,selected) {
 		var pages = [];
 		var x = false;
@@ -6963,9 +7023,7 @@ In2iGui.List.prototype = {
 	},
 	/** @private */
 	rowDoubleClick : function(index) {
-		In2iGui.callDelegates(this,'listRowsWasOpened');
-		In2iGui.callDelegates(this,'listRowWasOpened',this.getFirstSelection());
-		In2iGui.callDelegates(this,'onRowOpen',this.getFirstSelection());
+		this.fire('listRowWasOpened',this.getFirstSelection());
 	},
 	/** @private */
 	windowPageWasClicked : function(tag,index) {
@@ -7886,6 +7944,7 @@ In2iGui.Toolbar.Icon = function(options) {
 	this.element = $(options.element);
 	this.name = options.name;
 	this.enabled = !this.element.hasClassName('in2igui_toolbar_icon_disabled');
+	this.element.tabIndex=this.enabled ? 0 : -1;
 	this.icon = this.element.select('.in2igui_icon')[0];
 	In2iGui.extend(this);
 	this.addBehavior();
@@ -7920,6 +7979,7 @@ In2iGui.Toolbar.Icon.prototype = {
 	/** Sets wether the icon should be enabled */
 	setEnabled : function(enabled) {
 		this.enabled = enabled;
+		this.element.tabIndex=enabled ? 0 : -1;
 		this.element.setClassName('in2igui_toolbar_icon_disabled',!this.enabled);
 	},
 	/** Sets wether the icon should be selected */
@@ -10442,9 +10502,22 @@ In2iGui.Calendar = function(o) {
 	In2iGui.extend(this);
 	this.buildUI();
 	this.updateUI();
+	if (this.options.source) {
+		this.options.source.listen(this);
+	}
 }
 
 In2iGui.Calendar.prototype = {
+	show : function() {
+		this.element.style.display='block';
+		if (this.options.source) {
+			this.options.source.refresh();
+		}
+	},
+	hide : function() {
+		this.element.style.display='none';
+	},
+	/** @private */
 	getFirstDay : function() {
 		var date = new Date(this.date.getTime());
 		date.setDate(date.getDate()-date.getDay()+1);
@@ -10453,6 +10526,7 @@ In2iGui.Calendar.prototype = {
 		date.setSeconds(0);
 		return date;
 	},
+	/** @private */
 	getLastDay : function() {
 		var date = new Date(this.date.getTime());
 		date.setDate(date.getDate()-date.getDay()+7);
@@ -10469,31 +10543,67 @@ In2iGui.Calendar.prototype = {
 		});
 		this.hideEventViewer();
 	},
+	$objectsLoaded : function(data) {
+		try {
+			this.setEvents(data);
+		} catch (e) {
+			n2i.log(e);
+		}
+	},
+	$sourceIsBusy : function() {
+		this.setBusy(true);
+	},
+	$sourceShouldRefresh : function() {
+		return this.element.style.display!='none';
+	},
 	setEvents : function(events) {
+		events = events || [];
+		for (var i=0; i < events.length; i++) {
+			var e = events[i];
+			if (typeof(e.startTime)!='object') {
+				e.startTime = new Date(parseInt(e.startTime)*1000);
+			}
+			if (typeof(e.endTime)!='object') {
+				e.endTime = new Date(parseInt(e.endTime)*1000);
+			}
+		};
 		this.setBusy(false);
 		this.clearEvents();
 		this.events = events;
 		var self = this;
 		var pixels = (this.options.endHour-this.options.startHour)*40;
+		var week = this.getFirstDay().getWeekOfYear();
+		var year = this.getFirstDay().getYear();
 		this.events.each(function(event) {
-			var day = self.body.select('.day')[event.startTime.getDay()-1];
+			var day = self.body.select('.in2igui_calendar_day')[event.startTime.getDay()-1];
+			if (!day) {
+				return;
+			}
+			if (event.startTime.getWeekOfYear()!=week || event.startTime.getYear()!=year) {
+				return;
+			}
 			var node = new Element('div',{'class':'in2igui_calendar_event'});
 			var top = ((event.startTime.getHours()*60+event.startTime.getMinutes())/60-self.options.startHour)*40-1;
 			var height = (event.endTime.getTime()-event.startTime.getTime())/1000/60/60*40+1;
 			var height = Math.min(pixels-top,height);
-			node.setStyle({'marginTop':top+'px','height':height+'px'});
+			node.setStyle({'marginTop':top+'px','height':height+'px',visibility:'hidden'});
 			var content = new Element('div');
 			content.insert(new Element('p',{'class':'in2igui_calendar_event_time'}).update(event.startTime.dateFormat('H:i')));
 			content.insert(new Element('p',{'class':'in2igui_calendar_event_text'}).update(event.text));
 			if (event.location) {
 				content.insert(new Element('p',{'class':'in2igui_calendar_event_location'}).update(event.location));
 			}
+			
 			day.insert(node.insert(content));
+			window.setTimeout(function() {
+				In2iGui.bounceIn(node);
+			},Math.random()*200)
 			node.observe('click',function() {
 				self.eventWasClicked(event,this);
 			});
 		});
 	},
+	/** @private */
 	eventWasClicked : function(event,node) {
 		this.showEvent(event,node);
 	},
@@ -10504,10 +10614,11 @@ In2iGui.Calendar.prototype = {
 			this.element.removeClassName('in2igui_calendar_busy');
 		}
 	},
+	/** @private */
 	updateUI : function() {
 		var first = this.getFirstDay();
-		var x = this.head.select('.time')[0];
-		x.update('<div>Uge '+this.date.getWeekOfYear()+' '+this.date.getFullYear()+'</div>');
+		//var x = this.head.select('.time')[0];
+		//x.update('<div>Uge '+this.date.getWeekOfYear()+' '+this.date.getFullYear()+'</div>');
 		
 		var days = this.head.select('.day');
 		for (var i=0; i < days.length; i++) {
@@ -10516,6 +10627,7 @@ In2iGui.Calendar.prototype = {
 			days[i].update(date.dateFormat('l \\d. d M'))
 		};
 	},
+	/** @private */
 	buildUI : function() {
 		var bar = this.element.select('.in2igui_calendar_bar')[0];
 		this.toolbar = In2iGui.Toolbar.create({labels:false});
@@ -10524,7 +10636,7 @@ In2iGui.Calendar.prototype = {
 		previous.listen(this);
 		this.toolbar.add(previous);
 		var today = In2iGui.Button.create({name:'in2iguiCalendarToday',text:'Idag'});
-		today.listen(this);
+		today.click(function() {this.setDate(new Date())}.bind(this));
 		this.toolbar.add(today);
 		var next = In2iGui.Button.create({name:'in2iguiCalendarNext',text:'',icon:'monochrome/next'});
 		next.listen(this);
@@ -10533,14 +10645,14 @@ In2iGui.Calendar.prototype = {
 		this.datePickerButton.listen(this);
 		this.toolbar.add(this.datePickerButton);
 		
-		var time = this.body.select('.time')[0];
+		var time = this.body.select('.in2igui_calendar_day')[0];
 		for (var i=this.options.startHour; i <= this.options.endHour; i++) {
-			var node = new Element('div').update('<span><em>'+i+':00</em></span>');
+			var node = new Element('div',{'class':'in2igui_calendar_time'}).update('<span><em>'+i+':00</em></span>');
 			if (i==this.options.startHour) {
-				node.addClassName('first');
+				node.addClassName('in2igui_calendar_time_first');
 			}
 			if (i==this.options.endHour) {
-				node.addClassName('last');
+				node.addClassName('in2igui_calendar_time_last');
 			}
 			time.insert(node);
 		};
@@ -10554,9 +10666,6 @@ In2iGui.Calendar.prototype = {
 		var date = new Date(this.date.getTime());
 		date.setDate(this.date.getDate()+7);
 		this.setDate(date);
-	},
-	$click$in2iguiCalendarToday : function() {
-		this.setDate(new Date());
 	},
 	setDate: function(date) {
 		this.date = new Date(date.getTime());
@@ -10573,7 +10682,19 @@ In2iGui.Calendar.prototype = {
 		this.clearEvents();
 		this.setBusy(true);
 		var info = {'startTime':this.getFirstDay(),'endTime':this.getLastDay()};
-		In2iGui.callDelegates(this,'calendarSpanChanged',info);
+		this.fire('calendarSpanChanged',info);
+		In2iGui.firePropertyChange(this,'startTime',this.getFirstDay());
+		In2iGui.firePropertyChange(this,'endTime',this.getLastDay());
+	},
+	/** @private */
+	valueForProperty : function(p) {
+		if (p=='startTime') {
+			return this.getFirstDay();
+		}
+		if (p=='endTime') {
+			return this.getLastDay();
+		}
+		return this[p];
 	},
 	
 	////////////////////////////////// Date picker ///////////////////////////
@@ -10583,8 +10704,8 @@ In2iGui.Calendar.prototype = {
 			this.datePicker = In2iGui.DatePicker.create({name:'in2iguiCalendarDatePicker',value:this.date});
 			this.datePicker.listen(this);
 			this.datePickerPanel.add(this.datePicker);
-			this.datePickerPanel.addSpace(5);
-			var button = In2iGui.Button.create({name:'in2iguiCalendarDatePickerClose',text:'Luk'});
+			this.datePickerPanel.addSpace(3);
+			var button = In2iGui.Button.create({name:'in2iguiCalendarDatePickerClose',text:'Luk',small:true,rounded:true});
 			button.listen(this);
 			this.datePickerPanel.add(button);
 		}
@@ -11848,10 +11969,12 @@ In2iGui.Segmented.prototype = {
 	}
 }
 
-/* EOF */In2iGui.Flash = {
+/* EOF *//** @namespace */
+In2iGui.Flash = {
 	
 	fullVersion:undefined,
 	
+	/** Gets the major version of flash */
 	getMajorVersion : function() {
 		var full = this.getFullVersion();
 		if (full===null || full===undefined) {
@@ -11903,7 +12026,7 @@ In2iGui.Segmented.prototype = {
 		this.fullVersion = flashVer;
 		return flashVer;
 	},
-	
+	/** @private */
 	getActiveXVersion : function() {
 		var version;
 		var axo;

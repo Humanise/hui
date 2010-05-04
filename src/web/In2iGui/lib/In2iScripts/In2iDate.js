@@ -303,7 +303,7 @@ Date.prototype.getWeekOfYear = function() {
     // Find the first Thursday of the year
     var jan1 = new Date(this.getFullYear(), 0, 1);
     var then = (5 - jan1.getDay());
-    return String.leftPad(((now - then) / 7) + 1, 2, "0");
+    return parseInt(String.leftPad(((now - then) / 7) + 1, 2, "0"));
 }
 
 Date.prototype.isLeapYear = function() {

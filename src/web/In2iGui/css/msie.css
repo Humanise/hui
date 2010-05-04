@@ -29,13 +29,13 @@ form.in2igui_formula .checkbox
 }
 
 
-span.in2igui_formula_text_singleline
+span.in2igui_field_singleline
 {
 	position: relative;
 	height: 16px;
 }
 
-span.in2igui_formula_text_singleline input
+span.in2igui_field_singleline input
 {
 	position: absolute;
 }

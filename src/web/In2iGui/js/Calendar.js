@@ -11,9 +11,22 @@ In2iGui.Calendar = function(o) {
 	In2iGui.extend(this);
 	this.buildUI();
 	this.updateUI();
+	if (this.options.source) {
+		this.options.source.listen(this);
+	}
 }
 
 In2iGui.Calendar.prototype = {
+	show : function() {
+		this.element.style.display='block';
+		if (this.options.source) {
+			this.options.source.refresh();
+		}
+	},
+	hide : function() {
+		this.element.style.display='none';
+	},
+	/** @private */
 	getFirstDay : function() {
 		var date = new Date(this.date.getTime());
 		date.setDate(date.getDate()-date.getDay()+1);
@@ -22,6 +35,7 @@ In2iGui.Calendar.prototype = {
 		date.setSeconds(0);
 		return date;
 	},
+	/** @private */
 	getLastDay : function() {
 		var date = new Date(this.date.getTime());
 		date.setDate(date.getDate()-date.getDay()+7);
@@ -38,31 +52,67 @@ In2iGui.Calendar.prototype = {
 		});
 		this.hideEventViewer();
 	},
+	$objectsLoaded : function(data) {
+		try {
+			this.setEvents(data);
+		} catch (e) {
+			n2i.log(e);
+		}
+	},
+	$sourceIsBusy : function() {
+		this.setBusy(true);
+	},
+	$sourceShouldRefresh : function() {
+		return this.element.style.display!='none';
+	},
 	setEvents : function(events) {
+		events = events || [];
+		for (var i=0; i < events.length; i++) {
+			var e = events[i];
+			if (typeof(e.startTime)!='object') {
+				e.startTime = new Date(parseInt(e.startTime)*1000);
+			}
+			if (typeof(e.endTime)!='object') {
+				e.endTime = new Date(parseInt(e.endTime)*1000);
+			}
+		};
 		this.setBusy(false);
 		this.clearEvents();
 		this.events = events;
 		var self = this;
 		var pixels = (this.options.endHour-this.options.startHour)*40;
+		var week = this.getFirstDay().getWeekOfYear();
+		var year = this.getFirstDay().getYear();
 		this.events.each(function(event) {
-			var day = self.body.select('.day')[event.startTime.getDay()-1];
+			var day = self.body.select('.in2igui_calendar_day')[event.startTime.getDay()-1];
+			if (!day) {
+				return;
+			}
+			if (event.startTime.getWeekOfYear()!=week || event.startTime.getYear()!=year) {
+				return;
+			}
 			var node = new Element('div',{'class':'in2igui_calendar_event'});
 			var top = ((event.startTime.getHours()*60+event.startTime.getMinutes())/60-self.options.startHour)*40-1;
 			var height = (event.endTime.getTime()-event.startTime.getTime())/1000/60/60*40+1;
 			var height = Math.min(pixels-top,height);
-			node.setStyle({'marginTop':top+'px','height':height+'px'});
+			node.setStyle({'marginTop':top+'px','height':height+'px',visibility:'hidden'});
 			var content = new Element('div');
 			content.insert(new Element('p',{'class':'in2igui_calendar_event_time'}).update(event.startTime.dateFormat('H:i')));
 			content.insert(new Element('p',{'class':'in2igui_calendar_event_text'}).update(event.text));
 			if (event.location) {
 				content.insert(new Element('p',{'class':'in2igui_calendar_event_location'}).update(event.location));
 			}
+			
 			day.insert(node.insert(content));
+			window.setTimeout(function() {
+				In2iGui.bounceIn(node);
+			},Math.random()*200)
 			node.observe('click',function() {
 				self.eventWasClicked(event,this);
 			});
 		});
 	},
+	/** @private */
 	eventWasClicked : function(event,node) {
 		this.showEvent(event,node);
 	},
@@ -73,10 +123,11 @@ In2iGui.Calendar.prototype = {
 			this.element.removeClassName('in2igui_calendar_busy');
 		}
 	},
+	/** @private */
 	updateUI : function() {
 		var first = this.getFirstDay();
-		var x = this.head.select('.time')[0];
-		x.update('<div>Uge '+this.date.getWeekOfYear()+' '+this.date.getFullYear()+'</div>');
+		//var x = this.head.select('.time')[0];
+		//x.update('<div>Uge '+this.date.getWeekOfYear()+' '+this.date.getFullYear()+'</div>');
 		
 		var days = this.head.select('.day');
 		for (var i=0; i < days.length; i++) {
@@ -85,6 +136,7 @@ In2iGui.Calendar.prototype = {
 			days[i].update(date.dateFormat('l \\d. d M'))
 		};
 	},
+	/** @private */
 	buildUI : function() {
 		var bar = this.element.select('.in2igui_calendar_bar')[0];
 		this.toolbar = In2iGui.Toolbar.create({labels:false});
@@ -93,7 +145,7 @@ In2iGui.Calendar.prototype = {
 		previous.listen(this);
 		this.toolbar.add(previous);
 		var today = In2iGui.Button.create({name:'in2iguiCalendarToday',text:'Idag'});
-		today.listen(this);
+		today.click(function() {this.setDate(new Date())}.bind(this));
 		this.toolbar.add(today);
 		var next = In2iGui.Button.create({name:'in2iguiCalendarNext',text:'',icon:'monochrome/next'});
 		next.listen(this);
@@ -102,14 +154,14 @@ In2iGui.Calendar.prototype = {
 		this.datePickerButton.listen(this);
 		this.toolbar.add(this.datePickerButton);
 		
-		var time = this.body.select('.time')[0];
+		var time = this.body.select('.in2igui_calendar_day')[0];
 		for (var i=this.options.startHour; i <= this.options.endHour; i++) {
-			var node = new Element('div').update('<span><em>'+i+':00</em></span>');
+			var node = new Element('div',{'class':'in2igui_calendar_time'}).update('<span><em>'+i+':00</em></span>');
 			if (i==this.options.startHour) {
-				node.addClassName('first');
+				node.addClassName('in2igui_calendar_time_first');
 			}
 			if (i==this.options.endHour) {
-				node.addClassName('last');
+				node.addClassName('in2igui_calendar_time_last');
 			}
 			time.insert(node);
 		};
@@ -123,9 +175,6 @@ In2iGui.Calendar.prototype = {
 		var date = new Date(this.date.getTime());
 		date.setDate(this.date.getDate()+7);
 		this.setDate(date);
-	},
-	$click$in2iguiCalendarToday : function() {
-		this.setDate(new Date());
 	},
 	setDate: function(date) {
 		this.date = new Date(date.getTime());
@@ -142,7 +191,19 @@ In2iGui.Calendar.prototype = {
 		this.clearEvents();
 		this.setBusy(true);
 		var info = {'startTime':this.getFirstDay(),'endTime':this.getLastDay()};
-		In2iGui.callDelegates(this,'calendarSpanChanged',info);
+		this.fire('calendarSpanChanged',info);
+		In2iGui.firePropertyChange(this,'startTime',this.getFirstDay());
+		In2iGui.firePropertyChange(this,'endTime',this.getLastDay());
+	},
+	/** @private */
+	valueForProperty : function(p) {
+		if (p=='startTime') {
+			return this.getFirstDay();
+		}
+		if (p=='endTime') {
+			return this.getLastDay();
+		}
+		return this[p];
 	},
 	
 	////////////////////////////////// Date picker ///////////////////////////
@@ -152,8 +213,8 @@ In2iGui.Calendar.prototype = {
 			this.datePicker = In2iGui.DatePicker.create({name:'in2iguiCalendarDatePicker',value:this.date});
 			this.datePicker.listen(this);
 			this.datePickerPanel.add(this.datePicker);
-			this.datePickerPanel.addSpace(5);
-			var button = In2iGui.Button.create({name:'in2iguiCalendarDatePickerClose',text:'Luk'});
+			this.datePickerPanel.addSpace(3);
+			var button = In2iGui.Button.create({name:'in2iguiCalendarDatePickerClose',text:'Luk',small:true,rounded:true});
 			button.listen(this);
 			this.datePickerPanel.add(button);
 		}

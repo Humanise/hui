@@ -198,7 +198,7 @@ In2iGui.Formula.Text.create = function(options) {
 		node = new Element('span',{'class':'in2igui_formula_text_multiline'}).insert(input);
 	} else {
 		input = new Element('input',{'class':'in2igui_formula_text'});
-		node = new Element('span',{'class':'in2igui_formula_text_singleline'}).insert(input);
+		node = new Element('span',{'class':'in2igui_field_singleline'}).insert(input);
 	}
 	if (options.value!==undefined) {
 		input.value=options.value;

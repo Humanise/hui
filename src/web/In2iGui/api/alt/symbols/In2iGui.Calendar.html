@@ -225,6 +225,8 @@ ul.inheritsList
 	
 	<li><a href="../symbols/In2iGui.Editor.Html.html">In2iGui.Editor.Html</a></li>
 	
+	<li><a href="../symbols/In2iGui.Flash.html">In2iGui.Flash</a></li>
+	
 	<li><a href="../symbols/In2iGui.Formula.html">In2iGui.Formula</a></li>
 	
 	<li><a href="../symbols/In2iGui.Formula.Checkbox.html">In2iGui.Formula.Checkbox</a></li>
@@ -288,6 +290,8 @@ ul.inheritsList
 	<li><a href="../symbols/In2iGui.RichText.html">In2iGui.RichText</a></li>
 	
 	<li><a href="../symbols/In2iGui.SearchField.html">In2iGui.SearchField</a></li>
+	
+	<li><a href="../symbols/In2iGui.Segmented.html">In2iGui.Segmented</a></li>
 	
 	<li><a href="../symbols/In2iGui.Selection.html">In2iGui.Selection</a></li>
 	
@@ -435,15 +439,6 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/In2iGui.Calendar.html#$click$in2iguiCalendarToday">$click$in2iguiCalendarToday</a></b>()
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/In2iGui.Calendar.html#$dateChanged$in2iguiCalendarDatePicker">$dateChanged$in2iguiCalendarDatePicker</a></b>(date)
 								</div>
 								<div class="description"></div>
@@ -453,7 +448,25 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/In2iGui.Calendar.html#buildUI">buildUI</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/In2iGui.Calendar.html#$objectsLoaded">$objectsLoaded</a></b>(data)
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/In2iGui.Calendar.html#$sourceIsBusy">$sourceIsBusy</a></b>()
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/In2iGui.Calendar.html#$sourceShouldRefresh">$sourceShouldRefresh</a></b>()
 								</div>
 								<div class="description"></div>
 							</td>
@@ -480,25 +493,7 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/In2iGui.Calendar.html#eventWasClicked">eventWasClicked</a></b>(event, node)
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/In2iGui.Calendar.html#getFirstDay">getFirstDay</a></b>()
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/In2iGui.Calendar.html#getLastDay">getLastDay</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/In2iGui.Calendar.html#hide">hide</a></b>()
 								</div>
 								<div class="description"></div>
 							</td>
@@ -552,6 +547,15 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/In2iGui.Calendar.html#show">show</a></b>()
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/In2iGui.Calendar.html#showDatePicker">showDatePicker</a></b>()
 								</div>
 								<div class="description"></div>
@@ -571,15 +575,6 @@ ul.inheritsList
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/In2iGui.Calendar.html#updateEventInfo">updateEventInfo</a></b>(event, data)
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/In2iGui.Calendar.html#updateUI">updateUI</a></b>()
 								</div>
 								<div class="description"></div>
 							</td>
@@ -744,31 +739,6 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="$click$in2iguiCalendarToday"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>$click$in2iguiCalendarToday</b>()
-					
-					</div>
-					<div class="description">
-						
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
 					<a name="$dateChanged$in2iguiCalendarDatePicker"> </a>
 					<div class="fixedFont">
 					
@@ -805,11 +775,72 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="buildUI"> </a>
+					<a name="$objectsLoaded"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>buildUI</b>()
+					<b>$objectsLoaded</b>(data)
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>data</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="$sourceIsBusy"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>$sourceIsBusy</b>()
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="$sourceShouldRefresh"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>$sourceShouldRefresh</b>()
 					
 					</div>
 					<div class="description">
@@ -880,78 +911,11 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="eventWasClicked"> </a>
+					<a name="hide"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>eventWasClicked</b>(event, node)
-					
-					</div>
-					<div class="description">
-						
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>event</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>node</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="getFirstDay"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>getFirstDay</b>()
-					
-					</div>
-					<div class="description">
-						
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="getLastDay"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>getLastDay</b>()
+					<b>hide</b>()
 					
 					</div>
 					<div class="description">
@@ -1130,6 +1094,31 @@ ul.inheritsList
 
 					<hr />
 				
+					<a name="show"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>show</b>()
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name="showDatePicker"> </a>
 					<div class="fixedFont">
 					
@@ -1237,31 +1226,6 @@ ul.inheritsList
 						
 						
 
-					<hr />
-				
-					<a name="updateUI"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>updateUI</b>()
-					
-					</div>
-					<div class="description">
-						
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
 					
 				
 			
@@ -1276,7 +1240,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Thu Feb 04 2010 22:02:41 GMT+0100 (CET)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Thu Apr 15 2010 20:15:55 GMT+0200 (CEST)
 		</div>
 	</body>
 </html>

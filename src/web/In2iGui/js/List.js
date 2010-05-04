@@ -1,4 +1,24 @@
 /**
+ * <p><strong>Events:</strong></p>
+ * <ul>
+ * <li>listRowWasOpened - When a row is double clicked (rename to open)</li>
+ * <li>selectionChanged - When a row is selected (rename to select)</li>
+ * <li>selectionReset - When a selection is removed</li>
+ * </ul>
+ * <p><strong>Bindings:</strong></p>
+ * <ul>
+ * <li><del>window</del></li>
+ * <li>window.page</li>
+ * <li>sort.direction</li>
+ * <li>sort.key</li>
+ * </ul>
+ * <p><strong>XML:</strong></p>
+ * <code>
+ * &lt;list name=&quot;list&quot; source=&quot;sourcesListSource&quot; state=&quot;list&quot;/&gt;
+ * <br/>
+ * &lt;list name=&quot;list&quot; url=&quot;my_list_data.xml&quot; state=&quot;list&quot;/&gt;
+ * </code>
+ *
  * @constructor
  * @param {Object} options The options : {url:null,source:null}
  */
@@ -29,7 +49,9 @@ In2iGui.List = function(options) {
 		this.window.size = parseInt(options.windowSize);
 	}
 	In2iGui.extend(this);
-	if (this.url) this.refresh();
+	if (this.url)  {
+		this.refresh();
+	}
 }
 
 /**
@@ -51,6 +73,7 @@ In2iGui.List.prototype = {
 	/** Shows the list */
 	show : function() {
 		this.element.show();
+		this.refresh();
 	},
 	/** @private */
 	registerColumn : function(column) {
@@ -143,9 +166,11 @@ In2iGui.List.prototype = {
 		else if (p=='sort.direction') return (this.sortDirection || 'ascending');
 		else return this[p];
 	},
-	/**
-	 * @private
-	 */
+	/** @private */
+	$sourceShouldRefresh : function() {
+		return this.element.style.display!='none';
+	},
+	/** @private */
 	refresh : function() {
 		if (this.options.source) {
 			this.options.source.refresh();
@@ -262,7 +287,9 @@ In2iGui.List.prototype = {
 	
 	/** @private */
 	$objectsLoaded : function(data) {
-		if (data.constructor == Array) {
+		if (data==null) {
+			// NOOP
+		} else if (data.constructor == Array) {
 			this.setObjects(data);
 		} else {
 			this.setData(data);
@@ -377,6 +404,7 @@ In2iGui.List.prototype = {
 			this.windowPage.style.display='block';
 		}
 	},
+	/** @private */
 	buildPages : function(count,selected) {
 		var pages = [];
 		var x = false;
@@ -531,9 +559,7 @@ In2iGui.List.prototype = {
 	},
 	/** @private */
 	rowDoubleClick : function(index) {
-		In2iGui.callDelegates(this,'listRowsWasOpened');
-		In2iGui.callDelegates(this,'listRowWasOpened',this.getFirstSelection());
-		In2iGui.callDelegates(this,'onRowOpen',this.getFirstSelection());
+		this.fire('listRowWasOpened',this.getFirstSelection());
 	},
 	/** @private */
 	windowPageWasClicked : function(tag,index) {

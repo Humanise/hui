@@ -72,6 +72,7 @@ In2iGui.Toolbar.Icon = function(options) {
 	this.element = $(options.element);
 	this.name = options.name;
 	this.enabled = !this.element.hasClassName('in2igui_toolbar_icon_disabled');
+	this.element.tabIndex=this.enabled ? 0 : -1;
 	this.icon = this.element.select('.in2igui_icon')[0];
 	In2iGui.extend(this);
 	this.addBehavior();
@@ -106,6 +107,7 @@ In2iGui.Toolbar.Icon.prototype = {
 	/** Sets wether the icon should be enabled */
 	setEnabled : function(enabled) {
 		this.enabled = enabled;
+		this.element.tabIndex=enabled ? 0 : -1;
 		this.element.setClassName('in2igui_toolbar_icon_disabled',!this.enabled);
 	},
 	/** Sets wether the icon should be selected */
