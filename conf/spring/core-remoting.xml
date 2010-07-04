@@ -32,6 +32,10 @@
 	    <dwr:convert class="java.lang.Exception" type="exception">
 	    	<dwr:include method="message"/>
 	    </dwr:convert>
+	    <dwr:convert class="dk.in2isoft.onlineobjects.core.EndUserException" type="exception">
+	    	<dwr:include method="message"/>
+	    	<dwr:include method="code"/>
+	    </dwr:convert>
     </dwr:configuration>
     
     
@@ -46,7 +50,7 @@
     	 	<dwr:include method="updateWebNode"/>
     	 	<dwr:include method="moveNodeUp"/>
     	 	<dwr:include method="moveNodeDown"/>
-    	
+    	 	<dwr:filter class="dk.in2isoft.onlineobjects.ui.DWRFilter"/>
     	</dwr:remote>
    	</bean>
    	
@@ -55,6 +59,7 @@
     	 	<dwr:include method="updateHeaderPart"/>
     	 	<dwr:include method="updateHtmlPart"/>
     	 	<dwr:include method="updateImagePart"/>
+    	 	<dwr:filter class="dk.in2isoft.onlineobjects.ui.DWRFilter"/>
     	 </dwr:remote>
    	</bean>
    	
@@ -66,6 +71,7 @@
     	 	<dwr:include method="getUsersPerson"/>
     	 	<dwr:include method="recoverPassword"/>
     	 	<dwr:include method="changePassword"/>
+    	 	<dwr:filter class="dk.in2isoft.onlineobjects.ui.DWRFilter"/>
     	 </dwr:remote>
    	</bean>
    	
@@ -77,6 +83,9 @@
     	 	<dwr:include method="addTag"/>
     	 	<dwr:include method="getTagItemsWithCount"/>
     	 	<dwr:include method="getIpLocation"/>
+    	 	<dwr:include method="makePubliclyViewable"/>
+    	 	<dwr:include method="makePubliclyHidden"/>
+    	 	<dwr:filter class="dk.in2isoft.onlineobjects.ui.DWRFilter"/>
     	 </dwr:remote>
    	</bean>
    	
@@ -88,6 +97,7 @@
     	 	<dwr:include method="updateImagePositions"/>
     	 	<dwr:include method="deleteImage"/>
     	 	<dwr:include method="changeFrameStyle"/>
+    	 	<dwr:filter class="dk.in2isoft.onlineobjects.ui.DWRFilter"/>
     	 </dwr:remote>
    	</bean>
    	
@@ -101,6 +111,7 @@
     	 	<dwr:include method="updateColumn"/>
     	 	<dwr:include method="removeColumn"/>
     	 	<dwr:include method="removePart"/>
+    	 	<dwr:filter class="dk.in2isoft.onlineobjects.ui.DWRFilter"/>
     	 </dwr:remote>
    	</bean>
 	

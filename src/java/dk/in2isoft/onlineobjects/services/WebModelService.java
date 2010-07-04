@@ -5,7 +5,7 @@ import java.util.List;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelException;
 import dk.in2isoft.onlineobjects.core.ModelService;
-import dk.in2isoft.onlineobjects.core.Priviledged;
+import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.SecurityException;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Relation;
@@ -51,7 +51,7 @@ public class WebModelService {
 		return page;
 	}
 	
-	public long createWebPageOnSite(long webSiteId, Class<?> clazz, Priviledged priviledged) throws EndUserException {
+	public long createWebPageOnSite(long webSiteId, Class<?> clazz, Privileged priviledged) throws EndUserException {
 		WebSite site = modelService.get(WebSite.class, webSiteId);
 		
 		// Create a web page
@@ -94,7 +94,7 @@ public class WebModelService {
 		
 	}
 
-	public void moveNodeUp(WebNode node, Priviledged priviledged) throws ModelException, SecurityException {
+	public void moveNodeUp(WebNode node, Privileged priviledged) throws ModelException, SecurityException {
 
 		WebSite site = modelService.getParent(node, WebSite.class);
 		List<Relation> relations = modelService.getChildRelations(site,WebNode.class);
@@ -106,7 +106,7 @@ public class WebModelService {
 		}
 	}
 
-	public void moveNodeDown(WebNode node, Priviledged priviledged) throws ModelException, SecurityException {
+	public void moveNodeDown(WebNode node, Privileged priviledged) throws ModelException, SecurityException {
 
 		WebSite site = modelService.getParent(node, WebSite.class);
 		List<Relation> relations = modelService.getChildRelations(site,WebNode.class);
@@ -118,7 +118,7 @@ public class WebModelService {
 		}
 	}
 	
-	private void updatePositions(List<Relation> relations, Priviledged priviledged) throws SecurityException, ModelException {
+	private void updatePositions(List<Relation> relations, Privileged priviledged) throws SecurityException, ModelException {
 		int position = 1;
 		for (Relation relation : relations) {
 			relation.setPosition(position);
@@ -136,7 +136,7 @@ public class WebModelService {
 		return -1;
 	}
 	
-	public boolean isLastPageOnSite(long pageId,Priviledged privileged) throws EndUserException {
+	public boolean isLastPageOnSite(long pageId,Privileged privileged) throws EndUserException {
 		WebPage page = modelService.get(WebPage.class, pageId);
 		if (page == null) {
 			throw new EndUserException("The page does not exist");
@@ -151,7 +151,7 @@ public class WebModelService {
 		return nodes.size()==1;
 	}
 	
-	public void deleteWebPage(long pageId,Priviledged privileged) throws EndUserException {
+	public void deleteWebPage(long pageId,Privileged privileged) throws EndUserException {
 		WebPage page = modelService.get(WebPage.class, pageId);
 		if (page == null) {
 			throw new EndUserException("The page does not exist");

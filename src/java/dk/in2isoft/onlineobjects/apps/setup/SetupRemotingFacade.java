@@ -1,7 +1,12 @@
 package dk.in2isoft.onlineobjects.apps.setup;
 
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
@@ -14,6 +19,7 @@ import dk.in2isoft.in2igui.data.ListDataRow;
 import dk.in2isoft.in2igui.data.ListObjects;
 import dk.in2isoft.in2igui.data.ListState;
 import dk.in2isoft.onlineobjects.core.EndUserException;
+import dk.in2isoft.onlineobjects.core.ModelException;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.SecurityException;
@@ -21,10 +27,14 @@ import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Image;
+import dk.in2isoft.onlineobjects.model.Privilege;
 import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.model.User;
+import dk.in2isoft.onlineobjects.modules.localization.LocalizationService;
+import dk.in2isoft.onlineobjects.modules.surveillance.RequestInfo;
 import dk.in2isoft.onlineobjects.services.FileService;
 import dk.in2isoft.onlineobjects.services.SchedulingService;
+import dk.in2isoft.onlineobjects.services.SurveillanceService;
 import dk.in2isoft.onlineobjects.ui.AbstractRemotingFacade;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
 
@@ -33,16 +43,20 @@ public class SetupRemotingFacade extends AbstractRemotingFacade {
 	private ImageService imageService;
 	private FileService fileService;
 	private SchedulingService schedulingService;
-
-	private void checkUser() throws SecurityException {
+	private SecurityService securityService;
+	private SurveillanceService surveillanceService;
+	private LocalizationService localizationService;
+	
+	@Override
+	public boolean isAccessAllowed(Method method) throws SecurityException {
 		String username = getUserSession().getUser().getUsername();
 		if (!SecurityService.ADMIN_USERNAME.equals(username)) {
 			throw new SecurityException("This tool can only be accessed by the administrator");
 		}
+		return true;
 	}
 	
 	public void changeAdminPassword(String password1, String password2) throws EndUserException {
-		checkUser();
 		if (StringUtils.isBlank(password1) || StringUtils.isBlank(password2)) {
 			throw new EndUserException("The password cannot be blank");
 		}
@@ -55,7 +69,6 @@ public class SetupRemotingFacade extends AbstractRemotingFacade {
 	}
 	
 	public ListObjects listJobs() throws SecurityException {
-		checkUser();
 		ListObjects list = new ListObjects();
 		Map<String, String> jobs = schedulingService.listJobs();
 		for (Entry<String,String> entry : jobs.entrySet()) {
@@ -66,17 +79,24 @@ public class SetupRemotingFacade extends AbstractRemotingFacade {
 			row.addColumn("group", group);
 			boolean running = schedulingService.isRunning(name, group);
 			row.addColumn("status", running ? "Kører" : "Venter");
+			Date latest = schedulingService.getLatestExecution(name, group);
+			row.addColumn("latest", String.valueOf(latest));
+			Date next = schedulingService.getNextExecution(name, group);
+			row.addColumn("next", String.valueOf(next));
 			list.add(row);
 		}
 		return list;
 	}
 	
 	public ListData listEntities(ListState state,String clazz,String search) throws SecurityException, ClassNotFoundException {
-		checkUser();
+		User publicUser = securityService.getPublicUser();
 		int page = state!=null ? state.getPage() : 0;
 		ListData list = new ListData();
 		list.addHeader("Name");
 		list.addHeader("Type");
+		list.addHeader("Public view");
+		list.addHeader("Public modify");
+		list.addHeader("Public delete");
 		Class<Entity> className;
 		if (clazz==null) {
 			className = Entity.class;
@@ -91,8 +111,28 @@ public class SetupRemotingFacade extends AbstractRemotingFacade {
 			list.newRow(entity.getId(),kind);
 			list.addCell(entity.getName(), entity.getIcon());
 			list.addCell(entity.getType());
+			list.addCell(securityService.canView(entity, publicUser));
+			list.addCell(securityService.canModify(entity, publicUser));
+			list.addCell(securityService.canDelete(entity, publicUser));
 		}
 		return list;
+	}
+	
+	public EntityInfo getEntityInfo(long id) {
+		EntityInfo info = new EntityInfo();
+		info.setId(id);
+		Privilege privilege = securityService.getPrivilege(id,securityService.getPublicUser());
+		if (privilege!=null) {
+			info.setPublicAlter(privilege.isAlter());
+			info.setPublicDelete(privilege.isDelete());
+			info.setPublicView(privilege.isView());
+		}
+		return info;
+	}
+	
+	public void updateEntityInfo(EntityInfo info) throws ModelException {
+		Entity entity = modelService.get(Entity.class, info.getId());
+		securityService.grantPublicPrivileges(entity,info.isPublicView(),info.isPublicAlter(),info.isPublicDelete());
 	}
 
 	public List<Image> listImages(String text,String tag) throws EndUserException {
@@ -119,12 +159,10 @@ public class SetupRemotingFacade extends AbstractRemotingFacade {
 	}
 	
 	public void startJob(String name, String group) throws SecurityException {
-		checkUser();
 		schedulingService.runJob(name, group);
 	}
 	
 	public void updateUser(long id,String username,String password) throws EndUserException {
-		checkUser();
 		User user = modelService.get(User.class, id);
 		user.setPassword(password);
 		user.setUsername(username);
@@ -132,7 +170,6 @@ public class SetupRemotingFacade extends AbstractRemotingFacade {
 	}
 	
 	public void deleteUser(long id) throws EndUserException {
-		checkUser();
 		User user = modelService.get(User.class, id);
 		List<Entity> list = modelService.list(Query.of(Entity.class).withPriviledged(user));
 		for (Entity entity : list) {
@@ -142,7 +179,6 @@ public class SetupRemotingFacade extends AbstractRemotingFacade {
 	}
 	
 	public void synchronizeImageMetaData() throws EndUserException {
-		checkUser();
 		UserSession userSession = getUserSession();
 		List<Image> list = modelService.list(Query.of(Image.class));
 		for (Image image : list) {
@@ -155,28 +191,61 @@ public class SetupRemotingFacade extends AbstractRemotingFacade {
 			imageService.synchronizeMetaData(image,userSession);
 		}
 	}
+	
+	public ListData getSurveillanceList(String kind) {
+		ListData data = new ListData();
+		if ("longestRunningRequests".equals(kind)) {
+			SortedSet<RequestInfo> requests = surveillanceService.getLongestRunningRequests();
+			data.addHeader("URI");
+			data.addHeader("Hits");
+			data.addHeader("Average");
+			data.addHeader("Max");
+			data.addHeader("Min");
+			data.addHeader("Total");
+			
+			for (RequestInfo info : requests) {
+				data.newRow();
+				data.addCell(info.getUri());
+				data.addCell(String.valueOf(info.getCounts()));
+				data.addCell(String.valueOf(info.getAverageRunningTime()));
+				data.addCell(String.valueOf(info.getMaxRunningTime()));
+				data.addCell(String.valueOf(info.getMinRunningTime()));
+				data.addCell(localizationService.formatMilis(info.getTotalRunningTime()));
+			}
+		} else {
+			Collection<String> exceptions = surveillanceService.getLatestExceptions();
+			List<String> reversed = Lists.newArrayList(exceptions);
+			Collections.reverse(reversed);
+			data.addHeader("Exception");
+			for (String string : reversed) {
+				data.newRow();
+				data.addCell(string);
+			}
+		}
+		return data;
+	}
 
 	public void setImageService(ImageService imageService) {
 		this.imageService = imageService;
-	}
-
-	public ImageService getImageService() {
-		return imageService;
 	}
 
 	public void setSchedulingService(SchedulingService schedulingService) {
 		this.schedulingService = schedulingService;
 	}
 
-	public SchedulingService getSchedulingService() {
-		return schedulingService;
-	}
-
 	public void setFileService(FileService fileService) {
 		this.fileService = fileService;
 	}
 
-	public FileService getFileService() {
-		return fileService;
+	public void setSecurityService(SecurityService securityService) {
+		this.securityService = securityService;
+	}
+
+	public void setSurveillanceService(SurveillanceService surveillanceService) {
+		this.surveillanceService = surveillanceService;
+	}
+	
+	public void setLocalizationService(LocalizationService localizationService) {
+		this.localizationService = localizationService;
 	}
 }

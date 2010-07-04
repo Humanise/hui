@@ -16,32 +16,41 @@ public class OutputComponent<T> extends AbstractComponent {
 
 	public static final String FAMILY = "onlineobjects.output";
 	
+	private String emptyText;
+	
 	public OutputComponent() {
 		super(FAMILY);
 	}
 	
 	@Override
-	public void restoreState(Object[] state) {
-	}
-
-	@Override
 	public Object[] saveState() {
-		return new Object[] { };
+		return new Object[] { emptyText };
 	}
-
+	
 	@Override
-	public String getFamily() {
-		return FAMILY;
+	public void restoreState(Object[] state) {
+		emptyText = (String) state[0];
 	}
 	
 	@Override
 	protected void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
 		Object value = getBinding("value");
-		if (value!=null) {
-			String str = value.toString();
-			str = StringEscapeUtils.escapeXml(str);
-			str = StringUtils.replace(str, "\n", "<br/>");
-			writer.write(str);
+		String text = value==null ? null : value.toString();
+		if (StringUtils.isBlank(text)) {
+			text = emptyText;
 		}
+		if (text!=null) {
+			text = StringEscapeUtils.escapeXml(text);
+			text = StringUtils.replace(text, "\n", "<br/>");
+			writer.write(text);
+		}
+	}
+
+	public void setEmptyText(String emptyText) {
+		this.emptyText = emptyText;
+	}
+
+	public String getEmptyText() {
+		return emptyText;
 	}
 }

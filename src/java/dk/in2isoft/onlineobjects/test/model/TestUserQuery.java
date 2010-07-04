@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.PairSearchResult;
-import dk.in2isoft.onlineobjects.core.Priviledged;
+import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.UserQuery;
 import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.User;
@@ -16,7 +16,7 @@ public class TestUserQuery extends AbstractTestCase {
     	
 	@Test
 	public void testThis() throws EndUserException {
-		Priviledged priviledged = getPublicUser();
+		Privileged priviledged = getPublicUser();
 		User user = new User();
 		user.setUsername("unitTestUser");
 		Person person = new Person();

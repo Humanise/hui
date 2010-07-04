@@ -1,0 +1,122 @@
+/******************************* Profile info **************************/
+
+div.profile_info
+{
+	padding: 15px 20px 20px;
+	font-size: 12px;
+	line-height: 14px;
+}
+
+div.profile_info h2
+{
+	color: #000;
+	margin: 5px 0 15px;
+	font-size: 24px;
+	opacity: .9;
+	line-height: 24px;
+}
+
+div.profile_info h2 span
+{
+	color: #333;
+}
+
+div.profile_info p
+{
+	margin: 0;
+}
+
+div.profile_info h3
+{
+	margin: 10px 0 0;
+	font-size: 12px;
+	color: #000;
+}
+
+div.profile_info_male
+{
+	background: #ddf3ff;
+	color: #003366;
+}
+
+div.profile_info_female
+{
+	background: #FFDDDD;
+	color: #ff0032;
+}
+
+div.profile_info div.large
+{
+	font-size: 16px;
+	line-height: 18px;
+}
+
+div.profile_info strong
+{
+	color: #000;
+}
+
+/****************************** Badges **************************/
+
+ul.profile_badges
+{
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	height: 65px;
+}
+
+ul.profile_badges li
+{
+	float: left;
+	width: 160px;
+}
+
+ul.profile_badges div
+{
+	height: 45px;
+	background: url('../gfx/icons/blocks.png') no-repeat;
+	padding-left: 70px;
+}
+
+ul.profile_badges li.video div
+{
+	background-position: 0 -45px;
+}
+
+ul.profile_badges li.audio div
+{
+	background-position: 0 -90px;
+}
+
+ul.profile_badges li.favorites div
+{
+	background-position: 0 -135px;
+}
+
+ul.profile_badges span.count
+{
+	font-size: 42px;
+	color: #ccc;
+	font-weight: bold;
+}
+
+ul.profile_badges span.count strong
+{
+	color: #000;
+}
+
+ul.profile_badges p
+{
+	font-size: 12px;
+	margin: 0;
+	line-height: 20px;
+	font-weight: bold;
+}
+
+div.profile_completeness
+{
+	margin-top: 10px;
+	background: #e5e5e5 url('../gfx/mock/completeness.png') 20px 20px no-repeat;
+	height: 200px;
+}

@@ -34,6 +34,8 @@ public class TestFileService extends AbstractTestCase {
 		assertEquals("Image", fileService.cleanFileName("image"));
 		assertEquals("Image", fileService.cleanFileName("image.jpg"));
 		assertEquals("My image", fileService.cleanFileName("my_image.jpg"));
+		assertEquals("My image", fileService.cleanFileName("my__image.jpg"));
+		assertEquals("My image", fileService.cleanFileName("my_ _image.jpg"));
 		assertEquals("Image", fileService.cleanFileName("c:\\documents\\image.jpg"));
 		assertEquals("Image 789", fileService.cleanFileName("c:\\documents\\image_789.jpg"));
 		assertEquals("", fileService.cleanFileName(""));

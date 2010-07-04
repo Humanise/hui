@@ -25,6 +25,47 @@ var oo = {
 		var cls = options.variant ? 'oo_thumbnail oo_thumbnail_'+options.variant : 'oo_thumbnail';
 		var html = '<span class="'+cls+'" style="width: '+options.width+'px; height: '+options.height+'px;"></span>';
 		return html;
+	},
+	update : function(options) {
+		var id = options.id;
+		var nodes = [];
+		if (Object.isArray(id)) {
+			for (var i=0; i < id.length; i++) {
+				var nd = $(id[i]);
+				if (nd) {
+					nodes.push(nd);
+				} else {
+					n2i.log('Node not found : '+id[i]);
+				}
+			};
+		} else {
+			var node = $(id);
+			if (!node) {
+				n2i.log('Node not found: '+id);
+			} else {
+				nodes.push(node);
+			}
+		}
+		new Ajax.Request(document.location+'',{onSuccess:function(t) {
+			var e = new Element('div');
+			e.innerHTML=t.responseText;
+			for (var i=0; i < nodes.length; i++) {
+				ui.destroyDescendants(nodes[i]);
+				try {
+					var html = e.select('#'+nodes[i].id)[0];
+					n2i.log(html);
+					nodes[i].replace(html);
+				} catch (e) {
+					n2i.log(e);
+				}
+			};
+			if (options.onComplete) {
+				options.onComplete();
+			}
+		},onException : function(a,b) {
+			n2i.log(a);
+			n2i.log(b);
+		}})
 	}
 }
 

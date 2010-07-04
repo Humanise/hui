@@ -35,10 +35,11 @@ import dk.in2isoft.onlineobjects.core.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.LocationQuery;
 import dk.in2isoft.onlineobjects.core.ModelException;
 import dk.in2isoft.onlineobjects.core.Pair;
-import dk.in2isoft.onlineobjects.core.Priviledged;
+import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.SecurityException;
+import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.UserQuery;
 import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.model.EmailAddress;
@@ -69,6 +70,7 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 	private CommunityController communityController;
 	private CommunityDAO communityDAO;
 	private SemanticService semanticService;
+	private SecurityService securityService;
 
 	public void signUp(String username, String password, String name, String email) throws EndUserException {
 		memberService.signUp(getUserSession(),username,password,name,email);
@@ -164,7 +166,7 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 	}
 
 	public void updateUsersMainPerson(Person dummy, List<EmailAddress> adresses) throws EndUserException {
-		Priviledged priviledged = getUserSession();
+		Privileged priviledged = getUserSession();
 
 		Person person = getUsersMainPerson();
 		person.setGivenName(dummy.getGivenName());
@@ -209,13 +211,14 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 		return map;
 	}
 
-	public List<Image> getLatestImages(String query) {
-		return modelService.list(new Query<Image>(Image.class).withWords(query).orderByCreated().descending().withPaging(0, 10));
+	public List<Image> getLatestImages(String text) {
+		Query<Image> query = new Query<Image>(Image.class).withWords(text).orderByCreated().descending().withPaging(0, 10).withPriviledged(securityService.getPublicUser());
+		return modelService.list(query);
 	}
 
 	public Collection<Map<String,Entity>> searchUsers(String query) throws ModelException {
 		List<Map<String,Entity>> result = Lists.newArrayList(); 
-		List<Pair<User, Person>> pairs = modelService.searchPairs(new UserQuery().withWords(query).withPaging(0, 10)).getResult();
+		List<Pair<User, Person>> pairs = modelService.searchPairs(new UserQuery().withWords(query).withPaging(0, 10)).getList();
 		for (Pair<User, Person> entry : pairs) {
 			Map<String,Entity> map = Maps.newHashMap();
 			map.put("user", entry.getKey());
@@ -441,7 +444,7 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 		if (mapQuery.getNorthEast()!=null && mapQuery.getSouthWest()!=null) {
 			query.withBounds(mapQuery.getNorthEast(),mapQuery.getSouthWest());
 		}
-		return modelService.searchPairs(query).getResult();	
+		return modelService.searchPairs(query).getList();	
 	}
 	
 	////////////////// Services ////////////////
@@ -492,5 +495,13 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 
 	public SemanticService getSemanticService() {
 		return semanticService;
+	}
+
+	public void setSecurityService(SecurityService securityService) {
+		this.securityService = securityService;
+	}
+
+	public SecurityService getSecurityService() {
+		return securityService;
 	}
 }

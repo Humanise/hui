@@ -11,68 +11,27 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 		<title><ui:insert name="title"/>OnlineMe</title>
 		<link rel="stylesheet" href="#{baseView.localContext}/css/shared.css?#{lifeCycleService.startTime.time}" type="text/css" media="screen" charset="utf-8"/>
-		<ui:fragment rendered="${baseView.developmentMode}">
-			<link rel="stylesheet" href="#{baseView.baseContext}/In2iGui/css/dev.css" type="text/css" media="screen" title="front" charset="utf-8"/>
-		</ui:fragment>
-		<ui:fragment rendered="${!baseView.developmentMode}">
-			<link rel="stylesheet" href="#{baseView.baseContext}/In2iGui/bin/minimized.css?#{lifeCycleService.startTime.time}" type="text/css" media="screen" title="front" charset="utf-8"/>
-		</ui:fragment>
 		<!--[if lt IE 7]>
-			<link rel="stylesheet" type="text/css" href="#{baseView.localContext}/In2iGui/css/msie6.css"></link>
 			<link rel="stylesheet" type="text/css" href="#{baseView.localContext}/css/msie6.css"></link>
 		<![endif]-->
-		<!--[if IE 7]>
-			<link rel="stylesheet" type="text/css" href="#{baseView.localContext}/In2iGui/css/msie7.css"></link>
-		<![endif]-->
-		<!--[if IE 8]>
-			<link rel="stylesheet" type="text/css" href="#{baseView.localContext}/In2iGui/css/msie8.css"></link>
-		<![endif]-->
+		<gui:importStyle/>
 
+		<ui:insert name="style"/>
 		<oo:script src="/dwr/interface/CoreSecurity.js" core="true"/>
+		<oo:script src="/dwr/interface/Common.js" core="true"/>
 		<oo:script src="/dwr/interface/AppCommunity.js" core="true"/>
 		<oo:script src="/dwr/engine.js" core="true"/>
-		<ui:fragment rendered="#{baseView.developmentMode}">
-			<script src="#{baseView.baseContext}/In2iGui/lib/prototype.js" type="text/javascript" charset="utf-8"></script>
-			<script src="#{baseView.baseContext}/In2iGui/lib/n2i.js" type="text/javascript" charset="utf-8"></script>
-			<script src="#{baseView.baseContext}/In2iGui/lib/In2iScripts/In2iDate.js" type="text/javascript" charset="utf-8"></script>
-			<script src="#{baseView.baseContext}/In2iGui/lib/swfupload/swfupload.js" type="text/javascript" charset="utf-8"></script>
-			<script src="#{baseView.baseContext}/In2iGui/lib/swfobject.js" type="text/javascript" charset="utf-8"></script>
-			<script src="#{baseView.baseContext}/In2iGui/js/In2iGui.js" type="text/javascript" charset="utf-8"></script>
-			<script src="#{baseView.baseContext}/In2iGui/js/Toolbar.js" type="text/javascript" charset="utf-8"></script>
-			<script src="#{baseView.baseContext}/In2iGui/js/BoundPanel.js" type="text/javascript" charset="utf-8"></script>
-			<script src="#{baseView.baseContext}/In2iGui/js/Formula.js" type="text/javascript" charset="utf-8"></script>
-			<script src="#{baseView.baseContext}/In2iGui/js/Alert.js" type="text/javascript" charset="utf-8"></script>
-			<script src="#{baseView.baseContext}/In2iGui/js/Button.js" type="text/javascript" charset="utf-8"></script>
-			
-			<oo:script src="/In2iGui/js/Picker.js" core="true"/>
-			<oo:script src="/In2iGui/js/Editor.js" core="true"/>
-			<oo:script src="/In2iGui/js/ImageViewer.js" core="true"/>
-			<oo:script src="/In2iGui/js/RichText.js" core="true"/>
-			<oo:script src="/In2iGui/js/Menu.js" core="true"/>
-			<oo:script src="/In2iGui/js/ColorPicker.js" core="true"/>
-			<oo:script src="/In2iGui/js/Overlay.js" core="true"/>
-			<oo:script src="/In2iGui/js/Box.js" core="true"/>
-			<oo:script src="/In2iGui/js/Upload.js" core="true"/>
-			<oo:script src="/In2iGui/js/ProgressBar.js" core="true"/>
-			<oo:script src="/In2iGui/js/ObjectList.js" core="true"/>
-			<oo:script src="/In2iGui/js/TextField.js" core="true"/>
-			<oo:script src="/In2iGui/js/SearchField.js" core="true"/>
-			<oo:script src="/In2iGui/js/LocationPicker.js" core="true"/>
-			<oo:script src="/In2iGui/js/Bar.js" core="true"/>
-		</ui:fragment>
-		<ui:fragment rendered="#{!baseView.developmentMode}">
-			<oo:script src="/In2iGui/bin/minimized.js" core="true"/>
-		</ui:fragment>
+		<gui:importScripts/>
 		<oo:script src="/core/js/onlineobjects.js" core="true"/>
 		<oo:script src="/js/community.js"/>
 		<script type="text/javascript" charset="utf-8">
-			In2iGui.context = '#{baseView.baseContext}';
 			oo.baseContext='#{baseView.baseContext}';
 			oo.baseDomainContext='#{baseView.baseDomainContext}';
 			oo.appContext='#{baseView.localContext}';
 			oo.domainIsIP=#{baseView.isIP};
 			oo.user = {userName:'#{baseView.userName}'};
 		</script>
+		<ui:insert name="scripts"/>
 		<ui:insert name="head"/>
 	</h:head>
 	<body>

@@ -7,6 +7,7 @@ import javax.el.ValueExpression;
 import javax.faces.component.UIComponentBase;
 import javax.faces.context.FacesContext;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -102,5 +103,9 @@ public abstract class AbstractComponent extends UIComponentBase {
 		}
 		return localValue;
 	};
+
+	protected boolean isNotBlank(String string) {
+		return StringUtils.isNotBlank(string);
+	}
 	
 }

@@ -15,7 +15,7 @@ import com.google.common.collect.ImmutableMap;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelService;
-import dk.in2isoft.onlineobjects.core.Priviledged;
+import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.model.CompoundDocument;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Property;
@@ -66,7 +66,7 @@ public class CompoundDocumentBuilder extends DocumentBuilder {
 	
 
 	@Override
-	public Entity create(Priviledged priviledged) throws EndUserException {
+	public Entity create(Privileged priviledged) throws EndUserException {
 		ModelService model = Core.getInstance().getModel();
 		CompoundDocument document = new CompoundDocument();
 		model.createItem(document, priviledged);

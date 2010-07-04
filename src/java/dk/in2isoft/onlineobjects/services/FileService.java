@@ -71,6 +71,7 @@ public class FileService {
 		}
 		fileName = StringUtils.capitalize(fileName);
 		fileName = StringUtils.replace(fileName, "_", " ");
+		fileName = fileName.replaceAll("[ ]+", " ");
 		return fileName;
 	}
 	

@@ -24,11 +24,10 @@ import com.drew.metadata.iptc.IptcDirectory;
 
 import dk.in2isoft.commons.geo.GeoDistance;
 import dk.in2isoft.commons.util.AbstractCommandLineInterface;
-import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelException;
 import dk.in2isoft.onlineobjects.core.ModelService;
-import dk.in2isoft.onlineobjects.core.Priviledged;
+import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.SecurityException;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.Location;
@@ -37,7 +36,6 @@ import dk.in2isoft.onlineobjects.services.ConfigurationService;
 import dk.in2isoft.onlineobjects.services.FileService;
 import dk.in2isoft.onlineobjects.services.StorageService;
 import dk.in2isoft.onlineobjects.util.images.ImageInfo.ImageLocation;
-import eu.medsea.mimeutil.MimeUtil2;
 
 public class ImageService extends AbstractCommandLineInterface {
 
@@ -63,7 +61,7 @@ public class ImageService extends AbstractCommandLineInterface {
 		}
 		File converted = new File(folder, "thumbnail-" + width + "x" + height + ".jpg");
 		if (!converted.exists()) {
-			String cmd = configurationService.getImageMagickPath() + "/convert -thumbnail " + width
+			String cmd = getImageMagickCommand()+" -thumbnail " + width
 					+ "x" + height + " " + original.getAbsolutePath() + "[0] " + converted.getAbsolutePath();
 			execute(cmd);
 		}
@@ -71,20 +69,24 @@ public class ImageService extends AbstractCommandLineInterface {
 	}
 
 	public File getCroppedThumbnail(long id, int width, int height) throws EndUserException {
-		File folder = Core.getInstance().getStorageService().getItemFolder(id);
+		File folder = storageService.getItemFolder(id);
 		File original = new File(folder, "original");
 		if (!original.isFile()) {
 			throw new EndUserException("The image with id=" + id + " does not exist");
 		}
 		File converted = new File(folder, "thumbnail-" + width + "x" + height + "cropped.jpg");
 		if (!converted.exists()) {
-			String cmd = configurationService.getImageMagickPath() + "/convert -size " + (width * 3)
+			String cmd = getImageMagickCommand()+" -size " + (width * 3)
 					+ "x" + (height * 3) + " " + original.getAbsolutePath() + " -thumbnail x" + (height * 2)
 					+ "   -resize " + (width * 2) + "x<   -resize 50% -gravity center -crop " + width + "x" + height
 					+ "+0+0  +repage " + converted.getAbsolutePath();
 			execute(cmd);
 		}
 		return converted;
+	}
+	
+	private String getImageMagickCommand() {
+		return configurationService.getImageMagickPath() + "/convert"; // -limit area 100mb
 	}
 
 	public int[] getImageDimensions(File file) throws EndUserException {
@@ -189,7 +191,7 @@ public class ImageService extends AbstractCommandLineInterface {
 		return decimal;
 	}
 	
-	public void synchronizeContentType(Image image, Priviledged priviledged) throws EndUserException {
+	public void synchronizeContentType(Image image, Privileged priviledged) throws EndUserException {
 		File file = getImageFile(image);
 		String mimeType = fileService.getMimeType(file);
 		if (!StringUtils.equals(mimeType, image.getContentType())) {
@@ -198,7 +200,7 @@ public class ImageService extends AbstractCommandLineInterface {
 		}
 	}
 	
-	public void synchronizeMetaData(Image image, Priviledged priviledged) throws EndUserException {
+	public void synchronizeMetaData(Image image, Privileged priviledged) throws EndUserException {
 		File file = getImageFile(image);
 		ImageMetaData metaData = getMetaData(file);
 		boolean modified = false;
@@ -259,7 +261,7 @@ public class ImageService extends AbstractCommandLineInterface {
 		return info;
 	}
 	
-	public void updaImageInfo(ImageInfo info, Priviledged priviledged) throws ModelException, SecurityException {
+	public void updaImageInfo(ImageInfo info, Privileged priviledged) throws ModelException, SecurityException {
 
 		Image image = modelService.get(Image.class, info.getId());
 		image.setName(info.getName());
@@ -329,7 +331,7 @@ public class ImageService extends AbstractCommandLineInterface {
 	public void changeImageFile(Image image, File file,String contentType)
 	throws EndUserException {
 		String mimeType = fileService.getMimeType(file);
-		
+		// TODO: why not use mimeType?
 		int[] dimensions = getImageDimensions(file);
 		image.setWidth(dimensions[0]);
 		image.setHeight(dimensions[1]);

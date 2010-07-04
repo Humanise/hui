@@ -60,6 +60,7 @@
 		        <property name="namePrefix"/>
 		        <property name="nameSuffix"/>
 		        <property name="sex"/>
+		        <property name="birthday"/>
 		    </joined-subclass>
 		    
 		    <joined-subclass name="dk.in2isoft.onlineobjects.model.EmailAddress" table="emailaddress">
@@ -176,7 +177,7 @@
 		    
 		    <joined-subclass name="dk.in2isoft.onlineobjects.model.Comment" table="comment">
 		        <key column="id"/>
-		        <property name="text"/>
+		        <property name="text" length="4000"/>
 		    </joined-subclass>
 		    
 		    <joined-subclass name="dk.in2isoft.onlineobjects.model.Vote" table="vote">
@@ -186,6 +187,19 @@
 		    <joined-subclass name="dk.in2isoft.onlineobjects.model.Rating" table="rating">
 		        <key column="id"/>
 		        <property name="rating"/>
+		    </joined-subclass>
+		    
+		    <joined-subclass name="dk.in2isoft.onlineobjects.model.Pile" table="pile">
+		        <key column="id"/>
+		    </joined-subclass>
+		    
+		    <joined-subclass name="dk.in2isoft.onlineobjects.model.Address" table="address">
+		        <key column="id"/>
+		        <property name="street"/>
+		        <property name="city"/>
+		        <property name="region"/>
+		        <property name="country"/>
+		        <property name="postalCode"/>
 		    </joined-subclass>
 		    
 	    </joined-subclass>

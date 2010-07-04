@@ -16,7 +16,7 @@ public class PairSearchResult<K,V> {
 		return totalCount;
 	}
 	
-	public List<Pair<K,V>> getResult() {
+	public List<Pair<K,V>> getList() {
 		return result;
 	}
 	

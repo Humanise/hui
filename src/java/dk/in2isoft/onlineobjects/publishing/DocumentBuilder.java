@@ -4,7 +4,7 @@ import nu.xom.Node;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelService;
-import dk.in2isoft.onlineobjects.core.Priviledged;
+import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.model.Entity;
 
 public abstract class DocumentBuilder {
@@ -18,7 +18,7 @@ public abstract class DocumentBuilder {
 		return Core.getInstance().getModel();
 	}
 
-	public abstract Entity create(Priviledged priviledged) throws EndUserException;
+	public abstract Entity create(Privileged priviledged) throws EndUserException;
 
 	public static DocumentBuilder getBuilder(Class<?> clazz) throws EndUserException {
 

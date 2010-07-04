@@ -1,8 +1,8 @@
 var controller = {
-	interfaceIsReady : function() {
+	$interfaceIsReady : function() {
 		this.refreshList();
 	},
-	click$refresh : function() {
+	$click$refresh : function() {
 		this.refreshList();
 	},
 	refreshList : function() {
@@ -10,7 +10,7 @@ var controller = {
 			list.setObjects(data);
 		})
 	},
-	click$start : function() {
+	$click$start : function() {
 		var item = list.getFirstSelection();
 		if (item) {
 			var self = this;

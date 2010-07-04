@@ -1,5 +1,7 @@
 package dk.in2isoft.onlineobjects.model;
 
+import java.util.Date;
+
 import org.apache.commons.lang.StringUtils;
 
 import dk.in2isoft.commons.lang.LangUtil;
@@ -15,6 +17,7 @@ public class Person extends Entity {
 	private String namePrefix;
 	private String nameSuffix;
 	private Boolean sex;
+	private Date birthday;
 
 	public Person() {
 		super();
@@ -74,6 +77,12 @@ public class Person extends Entity {
 	}
 	
 	public void setFullName(String fullName) {
+		if (fullName==null) {
+			setGivenName(null);
+			setFamilyName(null);
+			setAdditionalName(null);
+			return;
+		}
 		String[] names = StringUtils.split(fullName);
 		if (names==null || names.length==0) {
 			setGivenName(null);
@@ -84,6 +93,9 @@ public class Person extends Entity {
 		}
 		if (names.length>1) {
 			setFamilyName(names[names.length-1]);
+		}
+		if (names.length>2) {
+			setAdditionalName(names[names.length-2]);
 		}
 	}
 
@@ -101,5 +113,13 @@ public class Person extends Entity {
 
 	public void setSex(Boolean sex) {
 		this.sex = sex;
+	}
+
+	public void setBirthday(Date birth) {
+		this.birthday = birth;
+	}
+
+	public Date getBirthday() {
+		return birthday;
 	}
 }

@@ -7,7 +7,10 @@ import javax.faces.component.FacesComponent;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
+import org.apache.commons.lang.StringUtils;
+
 import dk.in2isoft.commons.jsf.AbstractComponent;
+import dk.in2isoft.commons.jsf.ClassBuilder;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=ListComponent.FAMILY)
@@ -16,6 +19,8 @@ public class ListComponent <T> extends AbstractComponent {
 
 	public static final String FAMILY = "onlineobjects.list";
 	private String var;
+	private String variant;
+	private String styleClass;
 	
 	public ListComponent() {
 		super(FAMILY);
@@ -24,13 +29,13 @@ public class ListComponent <T> extends AbstractComponent {
 	@Override
 	public void restoreState(Object[] state) {
 		var = (String) state[0];
+		variant = (String) state[1];
+		styleClass = (String) state[2];
 	}
 
 	@Override
 	public Object[] saveState() {
-		return new Object[] {
-			var
-		};
+		return new Object[] {var,variant,styleClass};
 	}
 
 	public String getVar() {
@@ -43,7 +48,17 @@ public class ListComponent <T> extends AbstractComponent {
 
 	@Override
 	public boolean getRendersChildren() {
-		return true;
+		return StringUtils.isNotBlank(var);
+	}
+	
+	@Override
+	protected void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
+		writer.startOl(new ClassBuilder("oo_list").add("oo_list", variant).add(styleClass));
+	}
+
+	@Override
+	protected void encodeEnd(FacesContext context, TagWriter writer) throws IOException {
+		writer.endOl();
 	}
 	
 	@Override
@@ -52,7 +67,6 @@ public class ListComponent <T> extends AbstractComponent {
 		if (list==null) {
 			return;
 		}
-		writer.startOl("oo_list");
 		List<UIComponent> children = getChildren();
 		for (T object : list) {
 			writer.startLi("oo_list_item");
@@ -62,6 +76,21 @@ public class ListComponent <T> extends AbstractComponent {
 			}
 			writer.endLi();
 		}
-		writer.endOl();
+	}
+
+	public void setVariant(String variant) {
+		this.variant = variant;
+	}
+
+	public String getVariant() {
+		return variant;
+	}
+
+	public void setStyleClass(String styleClass) {
+		this.styleClass = styleClass;
+	}
+
+	public String getStyleClass() {
+		return styleClass;
 	}
 }

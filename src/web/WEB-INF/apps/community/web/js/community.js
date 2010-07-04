@@ -10,7 +10,7 @@ oo.community = {
 	getViewer : function() {
 		if (!this.imageViewer) {
 			var v = this.imageViewer = In2iGui.ImageViewer.create();
-			v.addDelegate(this);
+			v.listen(this);
 		}
 		return this.imageViewer;
 	},
@@ -439,6 +439,8 @@ oo.community.Chrome.SignUp.prototype = {
 			this.email.setError('Adressen er ikke valid');
 		} else if (e.code=='noPassword') {
 			this.password.setError('Kodeordet er ikke validt');
+		} else {
+			ui.showMessage({text:'Der skete en uventet fejl',duration:3000});
 		}
 	},
 	userDidSignUp : function(username) {

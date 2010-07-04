@@ -11,6 +11,7 @@ import dk.in2isoft.commons.lang.LangUtil;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Privilege;
 import dk.in2isoft.onlineobjects.model.Relation;
+import dk.in2isoft.onlineobjects.model.User;
 
 public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuery<T> {
 
@@ -21,6 +22,9 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 	private String ordering;
 	
 	private boolean descending;
+	
+	private boolean publicView;
+	
 
 	public Query(Class<T> clazz) {
 		super();
@@ -58,6 +62,11 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 		}
 		return this;
 	}
+	
+	public Query<T> withIds(Long... ids) {
+		this.ids = ids;
+		return this;
+	}
 
 	public Query<T> withName(Object value) {
 		limitations
@@ -85,8 +94,13 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 		return this;
 	}
 
-	public Query<T> withPriviledged(Priviledged priviledged) {
-		this.priviledged = priviledged;
+	public Query<T> withPriviledged(Privileged... priviledged) {
+		this.privileged = priviledged;
+		return this;
+	}
+
+	public Query<T> withPublicView() {
+		this.publicView = true;
 		return this;
 	}
 
@@ -152,8 +166,12 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 		hql.append(" from ");
 		hql.append(clazz.getName());
 		hql.append(" as obj");
-		if (priviledged != null) {
+		if (privileged != null && privileged.length>0) {
 			hql.append(",").append(Privilege.class.getName()).append(" as priv");
+		}
+		if (publicView) {
+			hql.append(",").append(Privilege.class.getName()).append(" as publicPrivilege");
+			hql.append(",").append(User.class.getName()).append(" as publicUser");
 		}
 		if (parent != null) {
 			hql.append(",").append(Relation.class.getName()).append(" as parentrel");
@@ -184,6 +202,16 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 						+ "))");
 			}
 		}
+		if (ids!=null) {
+			hql.append(" and (");
+			for (int i = 0; i < ids.length; i++) {
+				if (i>0) {
+					hql.append(" or ");
+				}
+				hql.append("obj.id=").append(ids[i]);
+			}
+			hql.append(")");
+		}
 		if (customProperties.size() > 0) {
 			hql.append(" and p.key=:propertyKey and p.value=:propertyValue");
 		}
@@ -206,8 +234,19 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 				hql.append(" and childRelation.kind=:childKind");
 			}
 		}
-		if (priviledged != null) {
-			hql.append(" and obj.id = priv.object and priv.subject=").append(priviledged.getIdentity());
+		if (privileged!=null && privileged.length>0) {
+			hql.append(" and obj.id = priv.object and (");
+			for (int i = 0; i < privileged.length; i++) {
+				if (i>0) {
+					hql.append(" or ");
+				}
+				hql.append("priv.subject=").append(privileged[i].getIdentity());
+				
+			}
+			hql.append(")");
+		}
+		if (publicView) {
+			hql.append(" and obj.id = publicPrivilege.object and publicPrivilege.subject=publicUser.id and publicUser.username='public'");
 		}
 		if (createdFrom != null) {
 			hql.append(" and obj.created>=:createdFrom");

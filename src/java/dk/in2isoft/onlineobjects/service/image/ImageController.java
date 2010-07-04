@@ -6,6 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import dk.in2isoft.commons.http.FilePusher;
+import dk.in2isoft.onlineobjects.core.ContentNotFoundException;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.model.Image;
@@ -77,6 +78,10 @@ public class ImageController extends ServiceController {
 
 	private void process(Request request, long id, int thumbnail, int width, int height, boolean cropped) throws IOException, EndUserException {		
 		File file;
+		Image image = modelService.get(Image.class, id, request.getSession());
+		if (image==null) {
+			//throw new ContentNotFoundException("The image could not be found");
+		}
 		String mime;
 		if (thumbnail > 0) {
 			if (cropped) {
@@ -93,9 +98,8 @@ public class ImageController extends ServiceController {
 			}
 			mime = "image/jpeg";
 		} else {
-			Image image = modelService.get(Image.class, id);
 			if (image == null) {
-				throw new EndUserException("Could not load image with id=" + id);
+				throw new ContentNotFoundException("Could not load image with id=" + id);
 			}
 			file = imageService.getImageFile(image);
 			mime = image.getContentType();

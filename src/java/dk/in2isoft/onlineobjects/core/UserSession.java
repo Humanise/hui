@@ -7,7 +7,7 @@ import dk.in2isoft.onlineobjects.apps.ApplicationController;
 import dk.in2isoft.onlineobjects.apps.ApplicationSession;
 import dk.in2isoft.onlineobjects.model.User;
 
-public class UserSession implements Priviledged {
+public class UserSession implements Privileged {
 
 	public static String SESSION_ATTRIBUTE = "OnlineObjects.UserSession";
 
@@ -15,12 +15,9 @@ public class UserSession implements Priviledged {
 
 	private User user;
 
-	public UserSession() throws SecurityException {
+	public UserSession(User user) throws SecurityException {
 		toolSessions = new HashMap<Class<? extends ApplicationController>, ApplicationSession>();
-		user = Core.getInstance().getModel().getUser(SecurityService.PUBLIC_USERNAME);
-		if (user == null) {
-			throw new IllegalStateException("Could not get the public user!");
-		}
+		this.user = user;
 	}
 	
 	protected void setUser(User user) {

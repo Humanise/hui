@@ -8,7 +8,7 @@ import java.util.List;
 import org.junit.Test;
 
 import dk.in2isoft.onlineobjects.core.ModelException;
-import dk.in2isoft.onlineobjects.core.Priviledged;
+import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.SecurityException;
 import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.Relation;
@@ -20,7 +20,7 @@ public class TestRelations extends AbstractTestCase {
 
 	@Test
 	public void testRelations() throws SQLException, ModelException, SecurityException {
-		Priviledged priviledged = getPublicUser();
+		Privileged priviledged = getPublicUser();
 
 		WebPage page = new WebPage();
 		modelService.createItem(page, priviledged);

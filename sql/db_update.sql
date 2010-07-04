@@ -2,6 +2,9 @@
     alter table "user" 
         drop constraint FK36EBCBE94A3D71;
 
+    alter table address 
+        drop constraint FKBB979BF4E94A3D71;
+
     alter table application 
         drop constraint FK5CA40550E94A3D71;
 
@@ -50,6 +53,9 @@
     alter table phonenumber 
         drop constraint FKEF7FCE37E94A3D71;
 
+    alter table pile 
+        drop constraint FK348132E94A3D71;
+
     alter table property 
         drop constraint FKC4CDDDD559D64C8B;
 
@@ -91,6 +97,8 @@
 
     drop table "user";
 
+    drop table address;
+
     drop table application;
 
     drop table comment;
@@ -124,6 +132,8 @@
     drop table person;
 
     drop table phonenumber;
+
+    drop table pile;
 
     drop table privilege;
 
@@ -162,6 +172,16 @@
         primary key (id)
     );
 
+    create table address (
+        id int8 not null,
+        street varchar(255),
+        city varchar(255),
+        region varchar(255),
+        country varchar(255),
+        postalCode varchar(255),
+        primary key (id)
+    );
+
     create table application (
         id int8 not null,
         primary key (id)
@@ -169,7 +189,7 @@
 
     create table comment (
         id int8 not null,
-        text varchar(255),
+        text varchar(4000),
         primary key (id)
     );
 
@@ -272,6 +292,7 @@
         namePrefix varchar(255),
         nameSuffix varchar(255),
         sex bool,
+        birthday timestamp,
         primary key (id)
     );
 
@@ -279,6 +300,11 @@
         id int8 not null,
         number varchar(255),
         context varchar(255),
+        primary key (id)
+    );
+
+    create table pile (
+        id int8 not null,
         primary key (id)
     );
 
@@ -371,6 +397,11 @@
         foreign key (id) 
         references entity;
 
+    alter table address 
+        add constraint FKBB979BF4E94A3D71 
+        foreign key (id) 
+        references entity;
+
     alter table application 
         add constraint FK5CA40550E94A3D71 
         foreign key (id) 
@@ -448,6 +479,11 @@
 
     alter table phonenumber 
         add constraint FKEF7FCE37E94A3D71 
+        foreign key (id) 
+        references entity;
+
+    alter table pile 
+        add constraint FK348132E94A3D71 
         foreign key (id) 
         references entity;
 

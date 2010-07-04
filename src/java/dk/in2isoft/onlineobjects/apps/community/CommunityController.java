@@ -5,18 +5,18 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
-
 import com.google.common.collect.Lists;
 
 import dk.in2isoft.commons.lang.LangUtil;
 import dk.in2isoft.in2igui.FileBasedInterface;
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
 import dk.in2isoft.onlineobjects.apps.ApplicationSession;
+import dk.in2isoft.onlineobjects.core.ContentNotFoundException;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SecurityException;
+import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.importing.DataImporter;
 import dk.in2isoft.onlineobjects.importing.ImportListerner;
 import dk.in2isoft.onlineobjects.model.Entity;
@@ -35,13 +35,14 @@ import dk.in2isoft.onlineobjects.util.images.ImageService;
 
 public class CommunityController extends ApplicationController {
 
-	private static Logger log = Logger.getLogger(CommunityController.class);
+	//private static Logger log = Logger.getLogger(CommunityController.class);
 
 	private PrivateSpaceController privateSpaceController;
 	private ImportService importService;
 	private ImageService imageService;
 	private FileService fileService; 
 	private GraphService graphService;
+	private SecurityService securityService;
 
 	private static CommunityDAO dao = new CommunityDAO();
 
@@ -78,6 +79,8 @@ public class CommunityController extends ApplicationController {
 			ui.render(request.getRequest(), request.getResponse());
 		} else if (request.testLocalPathStart(new String[] { null })) {
 			handleUser(request);
+		} else {
+			throw new ContentNotFoundException();
 		}
 	}
 
@@ -104,7 +107,7 @@ public class CommunityController extends ApplicationController {
 		} else {
 			User siteUser = Core.getInstance().getModel().getUser(request.getLocalPath()[0]);
 			if (siteUser == null) {
-				throw new EndUserException("The user does not excist!");
+				throw new ContentNotFoundException("The user does not excist!");
 			}
 			if (request.testLocalPathFull(null, "site", "uploadImage")) {
 				if (siteUser.getId() != request.getSession().getUser().getId()) {
@@ -139,6 +142,8 @@ public class CommunityController extends ApplicationController {
 				}
 			} else if (request.testLocalPathFull(null, "site")) {
 				displayUserSite(siteUser, request);
+			} else {
+				throw new ContentNotFoundException();
 			}
 		}
 	}
@@ -161,7 +166,10 @@ public class CommunityController extends ApplicationController {
 		WebModelService webModelService = Core.getInstance().getBean(WebModelService.class);
 		WebSite site = webModelService.getUsersWebSite(user);
 		if (site == null) {
-			throw new EndUserException("The user does not have a web site!");
+			throw new ContentNotFoundException("The user does not have a web site!");
+		}
+		if (!securityService.canView(site, request.getSession())) {
+			throw new SecurityException("The current user is not allowed to view this web site");
 		}
 		WebPage page = null;
 		if (request.getInt("id") > 0) {
@@ -178,7 +186,7 @@ public class CommunityController extends ApplicationController {
 
 	private void uploadProfileImage(Request request) throws EndUserException, IOException {
 		DataImporter dataImporter = importService.createImporter();
-		ImageImporter listener = new ProfileImageImporter(modelService,imageService);
+		ImageImporter listener = new ProfileImageImporter(modelService,imageService,securityService);
 		dataImporter.setListener(listener);
 		dataImporter.importMultipart(this, request);
 	}
@@ -296,5 +304,9 @@ public class CommunityController extends ApplicationController {
 
 	public PrivateSpaceController getPrivateSpaceController() {
 		return privateSpaceController;
+	}
+	
+	public void setSecurityService(SecurityService securityService) {
+		this.securityService = securityService;
 	}
 }

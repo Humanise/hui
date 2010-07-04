@@ -64,6 +64,10 @@ public class ListData extends HashMap<String, Object> {
 	public void addCell(String text) {
 		addCell(text,null);
 	}
+
+	public void addCell(boolean bool) {
+		addCell(String.valueOf(bool));
+	}
 	
 	@SuppressWarnings("unchecked")
 	private List<Map<String,Object>> getRows() {

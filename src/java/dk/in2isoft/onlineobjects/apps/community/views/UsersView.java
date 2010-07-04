@@ -29,7 +29,7 @@ public class UsersView extends AbstractManagedBean implements InitializingBean {
 			public ListModelResult<UserInfo> getResult() {
 				UserQuery query = new UserQuery().withPaging(getPage(), getPageSize());
 				PairSearchResult<User, Person> search = modelService.searchPairs(query);
-				return new ListModelResult<UserInfo>(convert(search.getResult()),search.getTotalCount());
+				return new ListModelResult<UserInfo>(convert(search.getList()),search.getTotalCount());
 			}
 			
 		};

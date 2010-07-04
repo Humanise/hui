@@ -11,7 +11,7 @@ OO.Editor.ImageGallery = function() {
 	this.busy = false;
 	this.initialUpload = n2i.location.hasHash('firstRun');
 	var self = this;
-	In2iGui.get().addDelegate(this);
+	In2iGui.get().listen(this);
 	In2iGui.Editor.get().addPartController('header','Overskrift',In2iGui.Editor.Header);
 	In2iGui.Editor.get().addPartController('html','Tekst',In2iGui.Editor.Html);
 }
@@ -234,9 +234,6 @@ OO.Editor.ImageGallery.prototype = {
 		this.initialUpload = false;
 	},
 	$uploadDidStartQueue$upload : function() {
-		this.cancelUploadButton.setEnabled(false);
-	},
-	$uploadDidSubmit$upload : function() {
 		this.cancelUploadButton.setEnabled(false);
 	},
 	$uploadDidCompleteQueue$upload : function() {

@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:o="http://www.onlineobjects.com/jsf" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:gui="http://www.in2isoft.dk/in2igui"
+>
+	<ui:composition template="templates/plain.xhtml">
+		
+		<ui:param name="tab" value="home"/>
+		
+		<ui:define name="body">
+			#{developerController}
+			<o:link href="/test">Throw ContentNotFound</o:link>
+			
+			<o:list>
+			<ui:repeat value="#{developerView.users}" var="pair">
+				<o:listItem>
+					#{pair.user.username}
+					=
+					#{pair.person.fullName}
+					=
+					#{pair.userCanModifyPerson}
+				</o:listItem>
+			</ui:repeat>
+			</o:list>
+		</ui:define>
+	</ui:composition>
+</html>

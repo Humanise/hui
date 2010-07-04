@@ -14,11 +14,11 @@ public class ClassBuilder {
 		this.sb = new StringBuilder(name);
 	}
 	
-	public static ClassBuilder add(String name) {
+	public static ClassBuilder with(String name) {
 		return new ClassBuilder(name);
 	}
 	
-	public ClassBuilder append(String name) {
+	public ClassBuilder add(String name) {
 		if (StringUtils.isBlank(name)) {
 			return this;
 		}
@@ -29,14 +29,14 @@ public class ClassBuilder {
 		return this;
 	}
 	
-	public ClassBuilder append(String prefix, String name) {
+	public ClassBuilder add(String prefix, String name) {
 		if (StringUtils.isBlank(name)) {
 			return this;
 		}
 		if (sb.length()>0) {
 			sb.append(" ");
 		}
-		sb.append(prefix).append(name);
+		sb.append(prefix).append("_").append(name);
 		return this;
 	}
 	

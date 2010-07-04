@@ -71,6 +71,15 @@ span.logo span
 	color: #3366FF;
 }
 
+h2.message
+{
+	color: #aaa;
+	text-align: center;
+	margin: 0;
+	padding: 40px 0;
+	font-weight: normal;
+}
+
 /************************** Article *******************/
 
 div.article
@@ -785,4 +794,5 @@ div.oo_splitleft
 div.oo_splitleft_left
 {
 	float: left;
+	font-size: 0;
 }

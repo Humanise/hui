@@ -11,7 +11,7 @@ import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.EntitylistSynchronizer;
 import dk.in2isoft.onlineobjects.core.ModelException;
 import dk.in2isoft.onlineobjects.core.ModelService;
-import dk.in2isoft.onlineobjects.core.Priviledged;
+import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.SecurityException;
 import dk.in2isoft.onlineobjects.model.EmailAddress;
 import dk.in2isoft.onlineobjects.model.Entity;
@@ -28,7 +28,7 @@ public class CommunityDAO extends AbstractDAO {
 		emailService.sendMessage("Feedback", "Email: "+emailAddress+"\n\n"+message, emailService.getDefaultSenderAddress());
 	}
 	
-	public void updateDummyEmailAddresses(Entity parent,List<EmailAddress> addresses, Priviledged session) throws EndUserException {
+	public void updateDummyEmailAddresses(Entity parent,List<EmailAddress> addresses, Privileged session) throws EndUserException {
 		
 		// Remove empty addresses
 		for (Iterator<EmailAddress> i = addresses.iterator(); i.hasNext();) {
@@ -59,7 +59,7 @@ public class CommunityDAO extends AbstractDAO {
 	}
 
 	
-	public void updateDummyPhoneNumbers(Entity parent,List<PhoneNumber> phones, Priviledged priviledged) throws EndUserException {
+	public void updateDummyPhoneNumbers(Entity parent,List<PhoneNumber> phones, Privileged priviledged) throws EndUserException {
 
 		// Remove empty addresses
 		for (Iterator<PhoneNumber> i = phones.iterator(); i.hasNext();) {
@@ -88,7 +88,7 @@ public class CommunityDAO extends AbstractDAO {
 		}
 	}
 
-	public void updateDummyInternetAddresses(Entity parent, List<InternetAddress> urls, Priviledged priviledged) throws ModelException, SecurityException {
+	public void updateDummyInternetAddresses(Entity parent, List<InternetAddress> urls, Privileged priviledged) throws ModelException, SecurityException {
 
 		// Remove empty addresses
 		for (Iterator<InternetAddress> i = urls.iterator(); i.hasNext();) {
@@ -117,7 +117,7 @@ public class CommunityDAO extends AbstractDAO {
 		}
 	}
 
-	public UserProfileInfo build(Person person,Priviledged priviledged) throws ModelException {
+	public UserProfileInfo build(Person person,Privileged priviledged) throws ModelException {
 		ModelService model = Core.getInstance().getModel();
 		UserProfileInfo info = new UserProfileInfo();
 		info.setGivenName(person.getGivenName());
@@ -136,7 +136,7 @@ public class CommunityDAO extends AbstractDAO {
 		return info;
 	}
 	
-	public void save(UserProfileInfo info,Person person,Priviledged priviledged) throws EndUserException {
+	public void save(UserProfileInfo info,Person person,Privileged priviledged) throws EndUserException {
 		ModelService model = Core.getInstance().getModel();
 		person.setGivenName(info.getGivenName());
 		person.setAdditionalName(info.getAdditionalName());

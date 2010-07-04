@@ -35,6 +35,8 @@ public class Request {
 	private String relativePath;
 
 	private URI uri;
+	
+	private long startTime;
 
 	private Request(HttpServletRequest request, HttpServletResponse response) {
 		super();
@@ -42,6 +44,7 @@ public class Request {
 		this.request = request;
 		this.decode();
 		this.localContext = new String[] {};
+		this.startTime = System.currentTimeMillis();
 	}
 	
 	public static Request get(HttpServletRequest request, HttpServletResponse response) {
@@ -55,7 +58,7 @@ public class Request {
 
 	private void decode() {
 		baseContext = request.getContextPath();
-		String uri = request.getRequestURI().substring(baseContext.length() + 1);
+		String uri = request.getServletPath().substring(1);
 		if (uri.indexOf(";jsessionid=") != -1) {
 			uri = uri.substring(0, uri.indexOf(";jsessionid="));
 		}
@@ -280,5 +283,13 @@ public class Request {
 		String name = beanClass.getSimpleName().substring(0, 1).toLowerCase()+beanClass.getSimpleName().substring(1);
 		WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(request.getSession().getServletContext());
 		return (T) applicationContext.getBean(name, beanClass);
+	}
+	
+	public long getStartTime() {
+		return startTime;
+	}
+
+	public long getRunningTime() {
+		return System.currentTimeMillis()-startTime;
 	}
 }

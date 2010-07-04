@@ -1,0 +1,115 @@
+
+/******************* List ****************/
+
+ol.oo_list
+{
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+/** border-variant */
+
+ol.oo_list_bordered
+{
+	border-top: 1px solid #eee;
+}
+
+ol.oo_list_bordered li.oo_list_item
+{
+	border-bottom: 1px solid #eee;
+}
+
+
+
+
+
+div.oo_block_right
+{
+	float: right;
+}
+
+
+
+
+
+div.oo_article
+{
+	font-size: 12px;
+}
+
+div.oo_article p
+{
+	margin: 0;
+}
+
+
+
+/******************* Split left ***************/
+
+div.oo_splitleft
+{
+	overflow: hidden;
+}
+
+div.oo_splitleft_left
+{
+	float: left;
+}
+
+/**************************** Thumbnail *****************************/
+
+.oo_thumbnail
+{
+	font-size: 0;
+	display: inline-block;
+	background: #fff no-repeat scroll center center;
+}
+
+.oo_thumbnail_frame
+{
+	padding: 4px;
+	border: 1px solid #ddd;
+	border-color:#EEEEEE #DDDDDD #CCCCCC;
+}
+
+.oo_thumbnail img
+{
+	border: none;
+}
+
+.oo_thumbnail_video
+{
+	background-color: #eee;
+}
+
+.oo_thumbnail_user
+{
+	background-image: url('../gfx/user.png');
+}
+
+.oo_thumbnail_zoom img
+{
+	cursor: pointer;
+	cursor: -webkit-zoom-in;
+}
+
+a.oo_thumbnail_frame:focus
+{
+	padding: 3px;
+	border: 2px solid #79f;
+	outline: none;
+}
+
+
+/*************************** Rendering *************************/
+
+div.oo_rendering h3
+{
+	margin: 0;
+}
+
+div.oo_rendering p
+{
+	margin: 0;
+}

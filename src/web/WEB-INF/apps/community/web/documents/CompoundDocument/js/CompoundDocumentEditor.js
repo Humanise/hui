@@ -1,5 +1,5 @@
 OO.Editor.CompoundDocument = function() {
-	In2iGui.get().addDelegate(this);
+	In2iGui.get().listen(this);
 	In2iGui.Editor.get().addPartController('header','Overskrift',In2iGui.Editor.Header);
 	In2iGui.Editor.get().addPartController('html','Tekst',In2iGui.Editor.Html);
 	In2iGui.Editor.get().addPartController('image','Billede',OO.Editor.Image);

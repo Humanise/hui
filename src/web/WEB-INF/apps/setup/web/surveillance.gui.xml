@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gui xmlns="uri:In2iGui" title="Scheduler" padding="10">
+	<dwr base="/dwr/">
+		<interface name="AppSetup"/>
+	</dwr>
+	<controller source="surveillance.js"/>
+	<source name="listSource" dwr="AppSetup.getSurveillanceList">
+		<parameter key="kind" value="@selection.value"/>
+	</source>
+	<layout>
+		<top>
+			<toolbar>
+				<icon icon="common/refresh" title="Opdater" name="refresh"/>
+			</toolbar>
+		</top>
+		<middle>
+			<left>
+				<overflow>
+					<selection value="longestRunningRequests" name="selection">
+						<item icon="common/time" title="Longest requests" value="longestRunningRequests"/>
+						<item icon="common/warning" title="Latest exceptions" value="latestExceptions"/>
+					</selection>
+				</overflow>
+			</left>
+			<center>
+				<overflow>
+					<list name="list" source="listSource"/>
+				</overflow>
+			</center>
+		</middle>
+	</layout>				
+</gui>

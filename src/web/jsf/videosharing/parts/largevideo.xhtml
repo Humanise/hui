@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<ui:fragment xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:o="http://www.onlineobjects.com/jsf" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:gui="http://www.in2isoft.dk/in2igui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+>
+	<h1 style="margin: 0 0 10px; color: #333; font-size: 18px;"><o:out value="#{videosharingVideoView.videoInfo.title}" emptyText="Untitled"/></h1>
+	<p style="margin: 5px 0; font-size: 14px; font-weight: bold;" id="average_rating">
+		<strong style="color: #999;">Average rating: </strong><o:out value="#{videosharingVideoView.averageRating}"/>
+	</p>
+	<gui:videoplayer value="#{video}" width="630" height="340" rendered="#{not empty video}"/>
+	<div class="videoinfo">
+		<gui:link styleClass="add_to_contest" name="addToContest" rendered="#{!video.inContest}">Add to contest</gui:link>
+		<gui:link styleClass="vote" name="addToContest" rendered="#{video.inContest}">Vote!</gui:link>
+		<ui:fragment rendered="#{video.inContest}">
+			<span class="votes">57.293</span>
+		</ui:fragment>
+		<span class="divider"></span>
+		<span class="rating" id="rating">
+			<strong>Rate this video: </strong>
+			<c:forEach items="#{videosharingVideoView.ratingBars}" var="bar" varStatus="status">
+				<a href="javascript:videoView.rate(#{status.index})" class="bar #{bar}">#{bar}</a>
+			</c:forEach>
+			<gui:link name="rateDown" styleClass="rate_down">Rate down</gui:link>
+			<gui:link name="rateUp" styleClass="rate_up">Rate up</gui:link>
+			<em><o:out value="#{videosharingVideoView.usersRating}"/></em>
+		</span>
+	</div>
+	<div class="videoinfo_bottom">
+		<span class="item favorites"><strong>4598</strong> Fav'd</span>
+		<span class="item views"><strong>546,879</strong> Views</span>
+		<span class="item"><strong>294</strong> Comments</span>
+		<a class="item share" href="#"><strong>+</strong> Share</a>
+		<span class="item mobile">Mobile vote <strong>F19902</strong></span>
+		<a class="favorite" href="#">Favorite this</a>
+	</div>
+</ui:fragment>

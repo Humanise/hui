@@ -85,6 +85,7 @@ public class MemberService {
 		WebSite site = new WebSite();
 		site.setName(buildWebSiteTitle(fullName));
 		modelService.createItem(site, session);
+		securityService.grantPublicPrivileges(site, true, false, false);
 
 		// Create relation between user and web site
 		modelService.createRelation(user, site,session);

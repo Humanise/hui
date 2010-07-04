@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:o="http://www.onlineobjects.com/jsf" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:gui="http://www.in2isoft.dk/in2igui"
+>
+	<ui:composition template="templates/plain.xhtml">
+		
+		<ui:param name="tab" value="home"/>
+		
+		<ui:define name="body">
+			#{facesContext.viewRoot.locale}
+			<h2>Link</h2>
+			<o:link href="#">A simple link</o:link>
+			<h2>List</h2>
+			<o:list>
+				<o:listItem>List item</o:listItem>
+				<o:listItem>List item</o:listItem>
+				<o:listItem>List item</o:listItem>
+				<o:listItem>List item</o:listItem>
+				<o:listItem>List item</o:listItem>
+			</o:list>
+			<h3>Bordered</h3>
+			<o:list variant="bordered">
+				<o:listItem>List item</o:listItem>
+				<o:listItem>List item</o:listItem>
+				<o:listItem>List item</o:listItem>
+				<o:listItem>List item</o:listItem>
+				<o:listItem>List item</o:listItem>
+			</o:list>
+			<h2>Date</h2>
+			<o:date value="#{developerComponentTestView.date}"/>
+			<h2>Box</h2>
+			<o:box>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</o:box>
+			<h2>In2iGui</h2>
+			<gui:button text="This is the text"/>
+			<gui:button text="This is the text" small="true" click="alert(0)" name="theButton"/>
+			<gui:button text="This is the text" small="true" click="ui.get('theButton').setEnabled(false)"/>
+			<gui:searchfield/>
+		</ui:define>
+	</ui:composition>
+</html>

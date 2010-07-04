@@ -26,9 +26,12 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.exception.DataException;
 import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.proxy.AbstractLazyInitializer;
 import org.hibernate.proxy.HibernateProxy;
+
+import sun.font.LayoutPathImpl.EndType;
 
 import com.google.common.collect.Lists;
 
@@ -36,7 +39,6 @@ import dk.in2isoft.commons.lang.LangUtil;
 import dk.in2isoft.onlineobjects.core.events.EventService;
 import dk.in2isoft.onlineobjects.junk.HibernateUtil;
 import dk.in2isoft.onlineobjects.model.Entity;
-import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.Item;
 import dk.in2isoft.onlineobjects.model.Privilege;
 import dk.in2isoft.onlineobjects.model.Property;
@@ -51,6 +53,7 @@ public class ModelService {
 	private static final SessionFactory sessionFactory;
 
 	private EventService eventService;
+	private SecurityService securityService;
 	
 	private Collection<ModelClassInfo> modelClassInfo;
 	private List<Class<?>> classes = Lists.newArrayList(); 
@@ -175,43 +178,68 @@ public class ModelService {
 	}
 
 	public void commit() {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = getSession();
 		Transaction tx = session.getTransaction();
 		if (tx.isActive()) {
-			getSession().flush();
-			getSession().clear();
-			tx.commit();
+			try {
+				session.flush();
+				session.clear();
+				tx.commit();
+			} catch (DataException e) {
+				log.error("Rolling back!", e);
+				tx.rollback();
+			}
 			log.debug("Commit transaction!");
 		}
 	}
 
-	public void createOrUpdateItem(Item item, Priviledged priviledged) throws ModelException, SecurityException {
-		if (item.isNew()) {
-			createItem(item, priviledged, getSession());
-		} else {
-			updateItem(item, priviledged);
+	public void rollBack() {
+		Session session = getSession();
+		Transaction tx = session.getTransaction();
+		if (tx.isActive()) {
+			try {
+				tx.rollback();
+				log.warn("Rolling back!");
+			} catch (DataException e) {
+				log.error("Could not roll back!", e);
+			}
 		}
 	}
 
-	public void createItem(Item item, Priviledged priviledged) throws ModelException {
-		createItem(item, priviledged, getSession());
+	public void createOrUpdateItem(Item item, Privileged privileged) throws ModelException, SecurityException {
+		if (item.isNew()) {
+			createItem(item, privileged, getSession());
+		} else {
+			updateItem(item, privileged);
+		}
 	}
 
-	public void createItem(Item item, Priviledged priviledged, Session session) throws ModelException {
+	public void createItem(Item item, Privileged privileged) throws ModelException {
+		createItem(item, privileged, getSession());
+	}
+	
+	public boolean isDirty() {
+		return getSession().isDirty();
+	}
+
+	public void createItem(Item item, Privileged privileged, Session session) throws ModelException {
 		if (!item.isNew()) {
 			throw new ModelException("Tried to create an already created item!");
 		}
 		item.setCreated(new Date());
 		item.setUpdated(new Date());
 		session.save(item);
-		Privilege privilege = new Privilege(priviledged.getIdentity(), item.getId(), true);
+		Privilege privilege = new Privilege(privileged.getIdentity(), item.getId(), true);
 		session.save(privilege);
 		eventService.fireItemWasCreated(item);
 	}
 
-	public void deleteEntity(Entity entity, Priviledged priviledged) throws ModelException, SecurityException {
+	public void deleteEntity(Entity entity, Privileged privileged) throws ModelException, SecurityException {
+		if (!canDelete(entity, privileged)) {
+			throw new SecurityException("Privilieged=" + privileged + " cannot delete Entity=" + entity);
+		}
 		removeAllRelations(entity);
-		deleteItem(entity, priviledged);
+		deleteItem(entity, privileged);
 	}
 
 	private void removeAllRelations(Entity entity) {
@@ -232,13 +260,13 @@ public class ModelService {
 		}
 	}
 
-	public void deleteRelation(Relation relation, Priviledged priviledged) throws SecurityException, ModelException {
-		deleteItem(relation, priviledged);
+	public void deleteRelation(Relation relation, Privileged privileged) throws SecurityException, ModelException {
+		deleteItem(relation, privileged);
 	}
 
-	private void deleteItem(Item item, Priviledged priviledged) throws SecurityException, ModelException {
-		if (!canDelete(item, priviledged)) {
-			throw new SecurityException("Privilieged=" + priviledged + " cannot delete Item=" + item);
+	private void deleteItem(Item item, Privileged privileged) throws SecurityException, ModelException {
+		if (!canDelete(item, privileged)) {
+			throw new SecurityException("Privilieged=" + privileged + " cannot delete Item=" + item);
 		}
 		removeAllPrivileges(item);
 		try {
@@ -250,10 +278,10 @@ public class ModelService {
 		eventService.fireItemWasDeleted(item);
 	}
 
-	public void updateItem(Item item, Priviledged priviledged) throws SecurityException,
+	public void updateItem(Item item, Privileged privileged) throws SecurityException,
 			ModelException {
-		if (!canUpdate(item, priviledged)) {
-			throw new SecurityException("Privilieged=" + priviledged + " cannot update Item=" + item);
+		if (!canUpdate(item, privileged)) {
+			throw new SecurityException("Privilieged=" + privileged + " cannot update Item=" + item);
 		}
 		Session session = getSession();
 		item.setUpdated(new Date());
@@ -261,45 +289,27 @@ public class ModelService {
 		eventService.fireItemWasUpdated(item);
 	}
 	
-	private boolean canUpdate(Item item, Priviledged priviledged) {
-		if (priviledged.isSuper()) {
+	public boolean canUpdate(Item item, Privileged privileged) {
+		if (privileged.isSuper()) {
 			return true;
 		}
-		if (item.getId() == priviledged.getIdentity()) {
+		if (item.getId() == privileged.getIdentity()) {
 			return true;
 		}
-		Privilege privilege = getPriviledge(item, priviledged, getSession());
+		Privilege privilege = getPriviledge(item, privileged, getSession());
 		if (privilege != null && privilege.isAlter()) {
 			return true;
 		}
 		return false;
 	}
 	
-	private boolean canDelete(Item item, Priviledged priviledged) {
-		if (item instanceof User) {
-			User user = (User) item;
-			if (SecurityService.ADMIN_USERNAME.equals(user.getUsername())) {
-				return false;
-			}
-		}
-		if (priviledged.isSuper()) {
-			return true;
-		}
-		if (item.getId() == priviledged.getIdentity()) {
-			return false;
-		}
-		Privilege privilege = getPriviledge(item, priviledged, getSession());
-		if (privilege != null && privilege.isDelete()) {
-			return true;
-		}
-		return false;
+	private boolean canDelete(Item item, Privileged privileged) {
+		return securityService.canDelete(item, privileged);
 	}
 
 	@SuppressWarnings("unchecked")
 	public <T extends Entity> T get(Class<T> entityClass, Long id) throws ModelException {
 		T entity = (T) getSession().get(entityClass, id);
-		//getSession().evict(entity);
-		//getSession().evict(entity.getProperties());
 		if (entity != null) {
 			return entity;
 		} else {
@@ -307,16 +317,27 @@ public class ModelService {
 		}
 	}
 
-	public void createRelation(Entity parent, Entity child, Priviledged priviledged) throws ModelException {
-		Relation relation = new Relation(parent, child);
-		createItem(relation, priviledged);
+	public <T extends Entity> T get(Class<T> entityClass, Long id, Privileged privileged) throws ModelException {
+		dk.in2isoft.onlineobjects.core.Query<T> query = dk.in2isoft.onlineobjects.core.Query.of(entityClass);
+		query.withPriviledged(privileged,securityService.getPublicUser());
+		query.withIds(id);
+		List<T> result = list(query);
+		if (!result.isEmpty()) {
+			return result.get(0);
+		}
+		return null;
 	}
 
-	public void createRelation(Entity parent, Entity child, String kind, Priviledged priviledged)
+	public void createRelation(Entity parent, Entity child, Privileged privileged) throws ModelException {
+		Relation relation = new Relation(parent, child);
+		createItem(relation, privileged);
+	}
+
+	public void createRelation(Entity parent, Entity child, String kind, Privileged privileged)
 			throws ModelException {
 		Relation relation = new Relation(parent, child);
 		relation.setKind(kind);
-		createItem(relation, priviledged);
+		createItem(relation, privileged);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -360,6 +381,7 @@ public class ModelService {
 		q.setString("kind", relationKind);
 		List<Relation> result = q.list();
 		for (int i = 0; i < result.size(); i++) {
+			getSession().getTransaction().rollback();
 			result.set(i, getSubject(result.get(i)));
 		}
 		return result;
@@ -416,17 +438,17 @@ public class ModelService {
 		q.setString(0, username);
 		User user = (User) q.uniqueResult();
 		if (user != null) {
-			return user;
+			return getSubject(user);
 		} else {
 			return null;
 		}
 	}
 
-	public Privilege getPriviledge(Item item, Priviledged priviledged) {
+	public Privilege getPriviledge(Item item, Privileged priviledged) {
 		return getPriviledge(item, priviledged, getSession());
 	}
 
-	public Privilege getPriviledge(Item item, Priviledged priviledged, Session session) {
+	public Privilege getPriviledge(Item item, Privileged priviledged, Session session) {
 		Query q = session.createQuery("from Privilege as priv where priv.object=:object and priv.subject=:subject");
 		q.setLong("object", item.getId());
 		q.setLong("subject", priviledged.getIdentity());
@@ -438,11 +460,18 @@ public class ModelService {
 		}
 	}
 	
-	public User getOwner(Image image) throws ModelException {
+	@SuppressWarnings("unchecked")
+	public User getOwner(Item item) throws ModelException {
 		Session session = getSession();
 		Query q = session.createQuery("select user from User as user, Privilege as priv where priv.alter=true and priv.object=:object and priv.subject=user.id");
-		q.setLong("object", image.getId());
-		return (User) q.uniqueResult();
+		q.setLong("object", item.getId());
+		List<User> list = q.list();
+		for (User user : list) {
+			if (!SecurityService.PUBLIC_USERNAME.equals(user.getUsername())) {
+				return user;
+			}
+		}
+		return null;
 	}
 
 	public Privilege getPriviledge(long object, long subject) {
@@ -456,6 +485,15 @@ public class ModelService {
 		} else {
 			return null;
 		}
+	}
+
+	public void removePriviledges(Item object, Privileged subject) {
+		Session session = getSession();
+		Query q = session.createQuery("delete from Privilege as priv where priv.object=:object and priv.subject=:subject");
+		q.setLong("object", object.getId());
+		q.setLong("subject", subject.getIdentity());
+		int count = q.executeUpdate();
+		log.info("Deleting privileges for: " + object.getClass().getName() + "; count: " + count);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -479,7 +517,6 @@ public class ModelService {
 			T item = items.get(i);
 			items.set(i, getSubject(item));
 		}
-		log.debug("items: "+items.size());
 		return items;
 	}
 
@@ -515,13 +552,29 @@ public class ModelService {
 		return new PairSearchResult<T,U>(map,count.intValue());
 	}
 
-	public void grantFullPrivileges(Item item, Priviledged priviledged) {
+	public void grantFullPrivileges(Item item, Privileged priviledged) throws ModelException {
+		grantPrivileges(item, priviledged, true, true, true);
+	}
+
+	public void grantPrivileges(Item item, Privileged priviledged, boolean view, boolean alter, boolean delete) throws ModelException {
+		if (priviledged==null) {
+			throw new ModelException("Privileged is null");
+		}
+		if (priviledged.getIdentity()<1) {
+			throw new ModelException("Privileged ID is "+priviledged.getIdentity());
+		}
+		if (item.isNew()) {
+			throw new ModelException("The item is new so cannot grant privileges");
+		}
 		Session session = getSession();
 		Privilege privilege = getPriviledge(item.getId(), priviledged.getIdentity());
 		if (privilege == null) {
-			privilege = new Privilege(priviledged.getIdentity(), item.getId(), true);
-			session.save(privilege);
+			privilege = new Privilege(priviledged.getIdentity(), item.getId());
 		}
+		privilege.setAlter(alter);
+		privilege.setDelete(delete);
+		privilege.setView(view);
+		session.save(privilege);
 	}
 
 	private void removeAllPrivileges(Item item) {
@@ -533,7 +586,7 @@ public class ModelService {
 		log.info("Deleting privileges for: " + item.getClass().getName() + "; count: " + count);
 	}
 
-	public List<Entity> getChildren(Entity item, String relationKind, Priviledged priviledged) throws ModelException {
+	public List<Entity> getChildren(Entity item, String relationKind, Privileged priviledged) throws ModelException {
 		dk.in2isoft.onlineobjects.core.Query<Entity> q = dk.in2isoft.onlineobjects.core.Query.of(Entity.class);
 		q.withPriviledged(priviledged).withParent(item,relationKind);
 		return list(q);
@@ -599,13 +652,17 @@ public class ModelService {
 		for (Float count : cloud.values()) {
 			max = Math.max(max, count);
 		}
+		float min = max;
+		for (Float count : cloud.values()) {
+			min = Math.min(min, count);
+		}
 		for (Map.Entry<String, Float> entry : cloud.entrySet()) {
-			entry.setValue(entry.getValue() / max);
+			entry.setValue(((entry.getValue()-min) / (max-min)));
 		}
 		return cloud;
 	}
 	
-	public Map<String, Integer> getProperties(String key, Class<? extends Entity> cls, Priviledged priviledged) {
+	public Map<String, Integer> getProperties(String key, Class<? extends Entity> cls, Privileged priviledged) {
 		Session session = getSession();
 		StringBuilder hql = new StringBuilder();
 		hql.append("select p.value as value,count(p.id) as count from ");
@@ -674,7 +731,7 @@ public class ModelService {
 		// is needed in future versions
 		// Fixed so that initialized objects actually are instance of their
 		// correct class and not just Content
-
+		
 		if (obj instanceof HibernateProxy)
 			obj = (T) ((AbstractLazyInitializer) ((HibernateProxy) obj).getHibernateLazyInitializer())
 					.getImplementation();
@@ -687,5 +744,9 @@ public class ModelService {
 
 	public EventService getEventService() {
 		return eventService;
+	}
+	
+	public void setSecurityService(SecurityService securityService) {
+		this.securityService = securityService;
 	}
 }

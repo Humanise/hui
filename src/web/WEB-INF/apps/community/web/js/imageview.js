@@ -31,6 +31,16 @@ oo.community.ImgeView = {
 		AppCommunity.updateImageInfo(values,function() {
 			document.location.reload();
 		});
+	},
+	$click$makeNonPublic : function() {
+		Common.makePubliclyHidden(this.id,function() {
+			document.location.reload();
+		});
+	},
+	$click$makePublic : function() {
+		Common.makePubliclyViewable(this.id,function() {
+			document.location.reload();
+		});
 	}
 }
 

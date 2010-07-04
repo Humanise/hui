@@ -5,6 +5,8 @@ public class Relation extends Item {
 	public static final String TYPE = Item.TYPE+"/Relation";
 	public static final String NAMESPACE = Item.NAMESPACE+"Relation/";
 	
+	public static final String KIND_COMMON_AUTHOR = "common.author";
+	
 	public static final String KIND_WEB_CONTENT = "web.content";
 	public static final String KIND_WEB_PRIMARY = "web.primary";
 	public static final String KIND_SYSTEM_USER_SELF = "system.user.self";

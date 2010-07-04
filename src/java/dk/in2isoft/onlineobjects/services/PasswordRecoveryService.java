@@ -7,7 +7,7 @@ import java.util.Map;
 import dk.in2isoft.commons.lang.LangUtil;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelService;
-import dk.in2isoft.onlineobjects.core.Priviledged;
+import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.model.EmailAddress;
 import dk.in2isoft.onlineobjects.model.Person;
@@ -19,7 +19,7 @@ public class PasswordRecoveryService {
 	private ModelService modelService;
 	private ConfigurationService configurationService;
 	
-	public boolean sendRecoveryMail(String usernameOrEmail,Priviledged priviledged) throws EndUserException {
+	public boolean sendRecoveryMail(String usernameOrEmail,Privileged priviledged) throws EndUserException {
 		User user = modelService.getUser(usernameOrEmail);
 		if (user!=null) {
 			return sendRecoveryMail(user,priviledged);
@@ -44,7 +44,7 @@ public class PasswordRecoveryService {
 		return false;
 	}
 	
-	public boolean sendRecoveryMail(User user,Priviledged priviledged) throws EndUserException {
+	public boolean sendRecoveryMail(User user,Privileged priviledged) throws EndUserException {
 		Person person = modelService.getChild(user, Person.class);
 		if (person!=null) {
 			EmailAddress email = modelService.getChild(person, EmailAddress.class);
@@ -55,7 +55,7 @@ public class PasswordRecoveryService {
 		return false;
 	}
 	
-	public boolean sendRecoveryMail(User user, Person person, EmailAddress email,Priviledged priviledged) throws EndUserException {
+	public boolean sendRecoveryMail(User user, Person person, EmailAddress email,Privileged priviledged) throws EndUserException {
 		String random = LangUtil.generateRandomString(30);
 		user.overrideFirstProperty(User.PASSWORD_RECOVERY_CODE_PROPERTY, random);
 		// TODO: Priviledged should be from session

@@ -1,9 +1,9 @@
 package dk.in2isoft.onlineobjects.model;
 
-import dk.in2isoft.onlineobjects.core.Priviledged;
+import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 
-public class User extends Entity implements Priviledged {
+public class User extends Entity implements Privileged {
 
 	public static final String PASSWORD_RECOVERY_CODE_PROPERTY = "item.enity.user.passwordrecoverycode";
 	public static String TYPE = Entity.TYPE+"/User";

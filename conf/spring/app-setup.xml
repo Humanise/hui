@@ -22,9 +22,16 @@
     	 	<dwr:include method="updateUser"/>
     	 	<dwr:include method="deleteUser"/>
     	 	<dwr:include method="synchronizeImageMetaData"/>
+    	 	<dwr:include method="getEntityInfo"/>
+    	 	<dwr:include method="updateEntityInfo"/>
+    	 	<dwr:include method="getSurveillanceList"/>
+    	 	<dwr:filter class="dk.in2isoft.onlineobjects.ui.DWRFilter"/>
     	 </dwr:remote>
    	</bean>
    	
    	<bean id="setupController" class="dk.in2isoft.onlineobjects.apps.setup.SetupController" autowire="byType"/>
    	
+    <dwr:configuration>
+	    <dwr:convert type="bean" class="dk.in2isoft.onlineobjects.apps.setup.EntityInfo"/>
+	</dwr:configuration>
 </beans>

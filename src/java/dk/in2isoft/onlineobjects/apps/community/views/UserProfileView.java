@@ -2,6 +2,8 @@ package dk.in2isoft.onlineobjects.apps.community.views;
 
 import java.util.List;
 
+import org.springframework.beans.factory.InitializingBean;
+
 import com.google.common.collect.Lists;
 
 import dk.in2isoft.onlineobjects.apps.community.CommunityDAO;
@@ -13,6 +15,7 @@ import dk.in2isoft.onlineobjects.core.Pair;
 import dk.in2isoft.onlineobjects.core.PairSearchResult;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SearchResult;
+import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.UserQuery;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.Person;
@@ -24,44 +27,48 @@ import dk.in2isoft.onlineobjects.ui.jsf.ListModel;
 import dk.in2isoft.onlineobjects.ui.jsf.ListModelResult;
 import dk.in2isoft.onlineobjects.util.remote.RemoteAccountInfo;
 
-public class UserProfileView extends AbstractManagedBean {
+public class UserProfileView extends AbstractManagedBean implements InitializingBean {
 	
 	private CommunityDAO communityDAO;
 	private ModelService modelService;
 	private RemoteDataService remoteDataService;
+	private SecurityService securityService;
 	private User user;
 	private Person person;
 	private Image image;
-	private SearchResult<Image> allImages;
 	private ListModel<Image> listModel;
 	private UserProfileInfo profileInfo;
 	private ListModel<Image> latestImages;
 	private List<RemoteAccountInfo> remoteAccountInfo;
+	private boolean canModify;
 	
-	public int getImagePages() {
-		getAllImages();
-		return allImages.getTotalCount();
-	}
-	
-	public List<Image> getAllImages() {
-		if (allImages!=null) return allImages.getList();
-		this.loadUser();
-		int page = getRequest().getInt("page");
-		User user = getModelService().getUser(getUsersName());
-		Query<Image> query = Query.of(Image.class).withPriviledged(user).orderByCreated().withPaging(page, 24);
-		SearchResult<Image> search = modelService.search(query);
-		allImages = search;
-		return allImages.getList();
+	public void afterPropertiesSet() throws Exception {
+		UserQuery query = new UserQuery().withUsername(getUsersName());
+		PairSearchResult<User,Person> result = modelService.searchPairs(query);
+		if (result.getTotalCount()==0) {
+			return;
+		}
+		Pair<User, Person> next = result.iterator().next();
+		user = next.getKey();
+		person = next.getValue();
+		canModify = securityService.canModify(person, getRequest().getSession());
+		try {
+			image = modelService.getChild(user, Relation.KIND_SYSTEM_USER_IMAGE, Image.class);
+		} catch (ModelException e) {
+			// TODO: Do something usefull
+		}
 	}
 	
 	public ListModel<Image> getLatestImages() {
-		this.loadUser();
 		if (latestImages==null) {
 			latestImages = new ListModel<Image>() {
 				@Override
 				public ListModelResult<Image> getResult() {
 					User user = modelService.getUser(getUsersName());
 					Query<Image> query = Query.of(Image.class).withPriviledged(user).orderByCreated().withPaging(0, getPageSize()).descending();
+					if (!canModify) {
+						query.withPublicView();
+					}
 					SearchResult<Image> search = modelService.search(query);
 					return new ListModelResult<Image>(search.getList(),search.getList().size());
 				}
@@ -72,7 +79,6 @@ public class UserProfileView extends AbstractManagedBean {
 	}
 	
 	public ListModel<Image> getImageList() {
-		this.loadUser();
 		if (listModel!=null) return listModel;
 		ListModel<Image> model = new ListModel<Image>() {
 
@@ -80,6 +86,9 @@ public class UserProfileView extends AbstractManagedBean {
 			public ListModelResult<Image> getResult() {
 				User user = modelService.getUser(getUsersName());
 				Query<Image> query = Query.of(Image.class).withPriviledged(user).orderByCreated().withPaging(getPage(), getPageSize()).descending();
+				if (!canModify) {
+					query.withPublicView();
+				}
 				SearchResult<Image> search = modelService.search(query);
 				return new ListModelResult<Image>(search.getList(),search.getTotalCount());
 			}
@@ -95,61 +104,30 @@ public class UserProfileView extends AbstractManagedBean {
 	}
 	
 	public User getUser() {
-		loadUser();
 		return user;
 	}
 	
 	public UserProfileInfo getInfo() throws ModelException {
-		if (profileInfo==null)
+		if (profileInfo==null) {
 			this.profileInfo = communityDAO.build(getPerson(),getRequest().getSession());
+		}
 		return this.profileInfo;
 	}
 	
 	public Person getPerson() {
-		loadUser();
 		return person;
 	}
 	
 	public Image getImage() {
-		loadUser();
 		return image;
 	}
 	
-	public boolean getCanEdit() {
-		return getRequest().getSession().getUser().getUsername().equals(getUsersName());
+	public boolean isCanModify() {
+		return canModify;
 	}
 	
 	public boolean isFound() {
-		loadUser();
 		return user!=null;
-	}
-	
-	private void loadUser() {
-		if (user==null || person==null) {
-			UserQuery query = new UserQuery().withUsername(getUsersName());
-			PairSearchResult<User,Person> result = modelService.searchPairs(query);
-			if (result.getTotalCount()==0) {
-				return;
-			}
-			Pair<User, Person> next = result.iterator().next();
-			user = next.getKey();
-			person = next.getValue();
-			try {
-				image = modelService.getChild(user, Relation.KIND_SYSTEM_USER_IMAGE, Image.class);
-			} catch (ModelException e) {
-				// TODO: Do something usefull
-			}
-		}
-	}
-	
-	public String getGoogleUsername() {
-		loadUser();
-		Query<RemoteAccount> query = Query.of(RemoteAccount.class).withFieldValue("domain", "google.com");
-		List<RemoteAccount> list = modelService.list(query);
-		if (list.size()>0) {
-			return list.get(0).getUsername();
-		}
-		return null;
 	}
 	
 	public List<RemoteAccountInfo> getRemoteAccountInfo() {
@@ -186,5 +164,13 @@ public class UserProfileView extends AbstractManagedBean {
 
 	public RemoteDataService getRemoteDataService() {
 		return remoteDataService;
+	}
+
+	public void setSecurityService(SecurityService securityService) {
+		this.securityService = securityService;
+	}
+
+	public SecurityService getSecurityService() {
+		return securityService;
 	}
 }

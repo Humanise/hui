@@ -9,6 +9,13 @@
     </component>
   </tag>
   <tag>
+    <tag-name>listItem</tag-name>
+    <component>
+      <component-type>onlineobjects.listitem</component-type>
+      <renderer-type>onlineobjects.listitem</renderer-type>
+    </component>
+  </tag>
+  <tag>
     <tag-name>gallery</tag-name>
     <component>
       <component-type>onlineobjects.gallery</component-type>
@@ -83,6 +90,27 @@
     <component>
       <component-type>onlineobjects.output</component-type>
       <renderer-type>onlineobjects.output</renderer-type>
+    </component>
+  </tag>
+  <tag>
+    <tag-name>article</tag-name>
+    <component>
+      <component-type>onlineobjects.article</component-type>
+      <renderer-type>onlineobjects.article</renderer-type>
+    </component>
+  </tag>
+  <tag>
+    <tag-name>date</tag-name>
+    <component>
+      <component-type>onlineobjects.date</component-type>
+      <renderer-type>onlineobjects.date</renderer-type>
+    </component>
+  </tag>
+  <tag>
+    <tag-name>block</tag-name>
+    <component>
+      <component-type>onlineobjects.block</component-type>
+      <renderer-type>onlineobjects.block</renderer-type>
     </component>
   </tag>
 </facelet-taglib>

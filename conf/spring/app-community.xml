@@ -70,6 +70,7 @@
 			<dwr:include method="sendFeedback"/>
 			<dwr:include method="getImageLocation"/>
 			<dwr:include method="searchLocations"/>
+    	 	<dwr:filter class="dk.in2isoft.onlineobjects.ui.DWRFilter"/>
 		</dwr:remote>
    	</bean>
    	
@@ -77,6 +78,7 @@
     	 <dwr:remote javascript="AppCommunityTools">
     	 	<dwr:include method="listAccounts"/>
     	 	<dwr:include method="saveAccount"/>
+    	 	<dwr:filter class="dk.in2isoft.onlineobjects.ui.DWRFilter"/>
     	 </dwr:remote>
    	</bean>
 </beans>

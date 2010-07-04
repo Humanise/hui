@@ -29,6 +29,10 @@ http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
     	<component-class>dk.in2isoft.onlineobjects.ui.jsf.ListComponent</component-class>
   	</component>
     <component>
+    	<component-type>onlineobjects.listitem</component-type>
+    	<component-class>dk.in2isoft.onlineobjects.ui.jsf.ListItemComponent</component-class>
+  	</component>
+    <component>
     	<component-type>onlineobjects.navigator</component-type>
     	<component-class>dk.in2isoft.onlineobjects.ui.jsf.NavigatorComponent</component-class>
   	</component>
@@ -73,6 +77,18 @@ http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
     	<component-class>dk.in2isoft.onlineobjects.ui.jsf.OutputComponent</component-class>
   	</component>
     <component>
+    	<component-type>onlineobjects.article</component-type>
+    	<component-class>dk.in2isoft.onlineobjects.ui.jsf.ArticleComponent</component-class>
+  	</component>
+    <component>
+    	<component-type>onlineobjects.date</component-type>
+    	<component-class>dk.in2isoft.onlineobjects.ui.jsf.DateComponent</component-class>
+  	</component>
+    <component>
+    	<component-type>onlineobjects.block</component-type>
+    	<component-class>dk.in2isoft.onlineobjects.ui.jsf.BlockComponent</component-class>
+  	</component>
+    <component>
 	    <component-type>in2igui.button</component-type>
     	<component-class>dk.in2isoft.in2igui.jsf.ButtonComponent</component-class>
   	</component>
@@ -93,11 +109,23 @@ http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
     	<component-class>dk.in2isoft.in2igui.jsf.BarButtonComponent</component-class>
   	</component>
     <component>
-	    <component-type>in2igui.import</component-type>
-    	<component-class>dk.in2isoft.in2igui.jsf.ImportComponent</component-class>
+	    <component-type>in2igui.importScripts</component-type>
+    	<component-class>dk.in2isoft.in2igui.jsf.ImportScriptsComponent</component-class>
+  	</component>
+    <component>
+	    <component-type>in2igui.importStyle</component-type>
+    	<component-class>dk.in2isoft.in2igui.jsf.ImportStyleComponent</component-class>
   	</component>
     <component>
 	    <component-type>in2igui.videoplayer</component-type>
     	<component-class>dk.in2isoft.in2igui.jsf.VideoPlayerComponent</component-class>
+  	</component>
+    <component>
+	    <component-type>in2igui.formula</component-type>
+    	<component-class>dk.in2isoft.in2igui.jsf.FormulaComponent</component-class>
+  	</component>
+    <component>
+	    <component-type>in2igui.link</component-type>
+    	<component-class>dk.in2isoft.in2igui.jsf.LinkComponent</component-class>
   	</component>
 </faces-config>

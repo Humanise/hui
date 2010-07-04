@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
@@ -81,6 +82,12 @@ public class XSLTUtil {
 		Source xmlSource = new DOMSource(doc.getDocumentElement());
 		applyXSLT(xmlSource, xslt, new StreamResult(output), parameters);
 	}
+
+	private static void applyXSLT(Document doc, Source xslt, PrintWriter output, Map<String, String> parameters)
+			throws EndUserException {
+		Source xmlSource = new DOMSource(doc.getDocumentElement());
+		applyXSLT(xmlSource, xslt, new StreamResult(output), parameters);
+	}
 	
 	private static void applyXSLT(String xmlData, File[] xsltFile, OutputStream output, Map<String, String> parameters)
 			throws EndUserException {
@@ -139,7 +146,12 @@ public class XSLTUtil {
 			response.setContentType("text/html");
 		}
 		Document data = ui.getData();
-		applyXSLT(data, new StreamSource(ui.getStylesheet()), response.getOutputStream(), parameters);
+		response.getWriter();
+		try {
+			applyXSLT(data, new StreamSource(ui.getStylesheet()), response.getOutputStream(), parameters);
+		} catch (IllegalStateException e) {
+			applyXSLT(data, new StreamSource(ui.getStylesheet()), response.getWriter(), parameters);
+		}
 	}
 
 	private static void writeSource(XSLTInterface ui, Request request) throws IOException, ModelException {

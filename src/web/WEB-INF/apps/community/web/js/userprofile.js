@@ -2,7 +2,7 @@ oo.community.UserProfile = function() {
 	this.container = $('profileContainer');
 	this.profileInfo = $('profileInfo');
 	this.editLink = $('editProfile');
-	In2iGui.get().addDelegate(this);
+	In2iGui.get().listen(this);
 	this.addBehavior();
 }
 
@@ -10,7 +10,7 @@ oo.community.UserProfile.prototype = {
 	addBehavior : function() {
 		var edit = In2iGui.get('editProfile');
 		if (edit) {
-			edit.addDelegate({
+			edit.listen({
 				$click:this.editProfile.bind(this)
 			});
 			$('profileImage').observe('click',function(e) {e.stop();this.$click$changeImage()}.bind(this));
@@ -51,8 +51,8 @@ oo.community.UserProfile.prototype = {
 		var form = this.profileForm = In2iGui.Formula.create();
 		var cancel = In2iGui.Button.create({text:'Annuller'});
 		var update = In2iGui.Button.create({text:'Opdatér',highlighted:true});
-		cancel.addDelegate({$click:this.cancelEditor.bind(this)});
-		update.addDelegate({$click:this.saveEditor.bind(this)});
+		cancel.listen({$click:this.cancelEditor.bind(this)});
+		update.listen({$click:this.saveEditor.bind(this)});
 		var group = form.buildGroup({above:false},[
 			{type:'Text',options:{label:'Fornavn:',key:'givenName'}},
 			{type:'Text',options:{label:'Mellemnavn:',key:'additionalName'}},

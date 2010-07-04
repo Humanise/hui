@@ -10,13 +10,15 @@
 >
 	<ui:composition template="../chrome.xhtml">
 		<ui:param name="top" value="users"/>
+		
 		<ui:define name="head">
 			<link rel="stylesheet" href="#{baseView.localContext}/css/userprofile.css" type="text/css" media="screen" charset="utf-8"/>
 			<script type="text/javascript" src="#{baseView.localContext}/js/userprofile.js"></script>
 		</ui:define>
+		
 		<ui:define name="body">
 			<c:if test="#{not userProfileView.found}">
-				<ui:include src="../notfound.xhtml"/>
+				<h2 class="message">Brugeren blev ikke fundet</h2>
 			</c:if>
 			<c:if test="#{userProfileView.found}"> 
 				<ul class="breadcrumb">

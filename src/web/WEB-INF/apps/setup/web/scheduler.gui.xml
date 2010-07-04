@@ -18,6 +18,8 @@
 				<column title="Navn" key="name"/>
 				<column title="Gruppe" key="group"/>
 				<column title="Status" key="status"/>
+				<column title="Senest" key="latest"/>
+				<column title="Næste" key="next"/>
 			</list>
 			</overflow>
 		</middle>

@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:o="http://www.onlineobjects.com/jsf" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:gui="http://www.in2isoft.dk/in2igui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+>
+	<ui:composition template="templates/plain.xhtml">
+		
+		<ui:param name="tab" value="charts"/>
+		
+		<ui:define name="body">
+			<h2 class="block">Top lists</h2>
+			<c:forEach items="#{videosharingChartsView.charts}" var="chart" varStatus="status">
+				<div style="float: left; width: 300px; margin-bottom: 20px; margin-right: #{status.index mod 3 == 2 ? '0' : '40'}px;">
+					
+					<ui:include src="parts/chartlist.xhtml">
+						<ui:param name="title" value="#{chart.key}"/>
+						<ui:param name="variant" value="plain"/>
+						<ui:param name="list" value="#{chart.value}"/>
+					</ui:include>
+				</div>
+			</c:forEach>
+		</ui:define>
+	</ui:composition>
+</html>

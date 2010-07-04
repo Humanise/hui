@@ -54,7 +54,7 @@ public class EmailService {
 				email.setMsg(textBody);
 			}
 			email.setSSL(true);
-			email.setDebug(true);
+			//email.setDebug(true);
 			log.info("Sending email to: "+address);
 			email.send();
 			log.info("Sent email to: "+address);

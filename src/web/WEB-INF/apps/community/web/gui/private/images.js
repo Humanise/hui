@@ -65,7 +65,7 @@ var imagesController = {
 	$click$slideShow : function() {
 		if (!this.viewer) {
 			this.viewer = ui.ImageViewer.create();
-			this.viewer.addDelegate(this);
+			this.viewer.listen(this);
 		}
 		this.viewer.clearImages();
 		this.viewer.addImages(imageGallery.getObjects());

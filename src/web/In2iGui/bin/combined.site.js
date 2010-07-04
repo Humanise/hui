@@ -6480,7 +6480,15 @@ In2iGui.showCurtain = function(options,zIndex) {
 	if (options.color) {
 		widget.curtain.style.backgroundColor=options.color;
 	}
-	widget.curtain.style.height=n2i.getDocumentHeight()+'px';
+	if (n2i.browser.msie) {
+		widget.curtain.style.height=n2i.getDocumentHeight()+'px';
+	} else {
+		widget.curtain.style.position='fixed';
+		widget.curtain.style.top='0';
+		widget.curtain.style.left='0';
+		widget.curtain.style.bottom='0';
+		widget.curtain.style.right='0';
+	}
 	widget.curtain.style.zIndex=options.zIndex;
 	n2i.setOpacity(widget.curtain,0);
 	widget.curtain.style.display='block';
@@ -7262,6 +7270,7 @@ In2iGui.Source.prototype = {
 		this.end();
 	},
 	addParameter : function(parm) {
+		n2i.log(parm.value);
 		this.parameters.push(parm);
 	},
 	changeParameter : function(key,value) {

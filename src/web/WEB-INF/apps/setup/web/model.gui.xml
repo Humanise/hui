@@ -25,26 +25,29 @@
 				<overflow>
 					<selection value="dk.in2isoft.onlineobjects.model.Entity" name="selection">
 						<item icon="common/object" title="All classes" value="dk.in2isoft.onlineobjects.model.Entity"/>
+						<title>Classes</title>
 						<items name="classes" source="classSource"/>
 					</selection>
 				</overflow>
 			</left>
 			<center>
 				<overflow>
-					<list name="list" source="listSource">
-						<column title="Name" key="name"/>
-						<column title="Type" key="type"/>
-					</list>
+					<list name="list" source="listSource"/>
 				</overflow>
 			</center>
 		</middle>
 		<bottom/>
 	</layout>
-	<window name="entityEditor" width="300">
+	<window name="entityEditor" width="300" padding="5">
 		<formula name="entityFormula">
 			<group>
-				<text label="Name:" key="name"/>
+				<checkbox label="Modify:" key="publicAlter"/>
+				<checkbox label="View:" key="publicView"/>
+				<checkbox label="Delete:" key="publicDelete"/>
 			</group>
+			<buttons>
+				<button title="Update" name="updateEntity" highlighted="true"/>
+			</buttons>
 		</formula>
 	</window>
 	<window name="userEditor" title="User" padding="5" width="300">

@@ -54,7 +54,7 @@ OO.ImageGallery.prototype = {
 	getViewer : function() {
 		if (!this.viewer) {
 			this.viewer = In2iGui.ImageViewer.create();
-			this.viewer.addDelegate(this);
+			this.viewer.listen(this);
 		}
 		if (this.dirty) {
 			this.viewer.clearImages();

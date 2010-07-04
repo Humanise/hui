@@ -22,8 +22,8 @@ import dk.in2isoft.commons.lang.LangUtil;
 import dk.in2isoft.commons.util.RestUtil;
 import dk.in2isoft.in2igui.FileBasedInterface;
 import dk.in2isoft.onlineobjects.apps.videosharing.RequestMapping;
+import dk.in2isoft.onlineobjects.core.ContentNotFoundException;
 import dk.in2isoft.onlineobjects.core.EndUserException;
-import dk.in2isoft.onlineobjects.core.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.StupidProgrammerException;
 import dk.in2isoft.onlineobjects.core.events.EventService;
@@ -39,8 +39,8 @@ public abstract class ApplicationController implements ModelEventListener,Initia
 	private String name;
 	private Map<Pattern,String> jsfMatchers = new LinkedHashMap<Pattern, String>();
 
-	private EventService eventService;
-	private ConfigurationService configurationService;
+	protected EventService eventService;
+	protected ConfigurationService configurationService;
 	protected ModelService modelService;
 	
 	private XMLConfiguration config;
@@ -73,7 +73,8 @@ public abstract class ApplicationController implements ModelEventListener,Initia
 		jsfMatchers.put(RestUtil.compile(pattern), "/jsf/"+this.name+"/"+path);
 	}
 
-	public RequestDispatcher getDispatcher(Request request, ServletContext context) {
+	public RequestDispatcher getDispatcher(Request request) {
+		ServletContext context = request.getRequest().getSession().getServletContext();
 		String subDomain = request.getSubDomain();
 		if (!request.isIP() && !"".equals(subDomain) && !"www".equals(subDomain)) return null;
 		String localPath = request.getLocalPathAsString();
@@ -124,7 +125,7 @@ public abstract class ApplicationController implements ModelEventListener,Initia
 				}
 			}
 		}
-		throw new IllegalRequestException();
+		throw new ContentNotFoundException(request.getLocalPathAsString());
 	}
 
 	public ApplicationSession createToolSession() {
@@ -196,5 +197,9 @@ public abstract class ApplicationController implements ModelEventListener,Initia
 
 	public ModelService getModelService() {
 		return modelService;
+	}
+
+	public boolean isAllowed(Request request) {
+		return true;
 	}
 }

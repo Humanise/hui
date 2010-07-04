@@ -1,0 +1,52 @@
+div.bottom
+{
+	height: 250px;
+	background: url('../gfx/gradients.png');
+}
+
+div.footer
+{
+	width: 980px;
+	margin: 0 auto;
+}
+
+div.footer div.column
+{
+	float: left;
+	width: 245px;
+}
+
+div.footer h3
+{
+	font-weight: normal;
+	text-transform: uppercase;
+	margin: 35px 0 20px;
+	color: #333;
+	font-family: 'Gotham Rounded',Helvetica,Arial,sans-serif;
+	font-size: 18px;
+}
+
+div.footer ul
+{
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+div.footer li
+{
+	height: 20px;
+}
+
+div.footer a span
+{
+	color: #444;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+div.footer a
+{
+	background: url('../gfx/icons/arrows_blue.png') left center no-repeat;
+	padding-left: 20px;	
+}

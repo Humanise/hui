@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
+import junit.framework.Assert;
+
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +28,9 @@ public class TestFeedParsing extends AbstractTestCase {
 	@Autowired
 	private SemanticService semanticService;
 	
+	@SuppressWarnings("unchecked")
 	@Test
-	public void testWikipedia() throws EndUserException, IllegalArgumentException, FeedException, IOException {
+	public void testAlistApartFeed() throws EndUserException, IllegalArgumentException, FeedException, IOException {
 		URL feedUrl = new URL("http://www.alistapart.com/feed/rss.xml");
 
         WireFeedInput input = new WireFeedInput();
@@ -35,11 +38,11 @@ public class TestFeedParsing extends AbstractTestCase {
         if (feed instanceof Channel) {
         	Channel channel = (Channel) feed;
         	List<Item> items = channel.getItems();
+        	Assert.assertTrue(items.size()>0);
         	for (Item item : items) {
-				item.getLink();
+		        log.info(item.getLink());
 			}
         }
-        System.out.println(feed.getClass());
 	}
 
 	public void setSemanticService(SemanticService semanticService) {

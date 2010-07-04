@@ -46,7 +46,7 @@ OO.Editor = function(delegate) {
 	if (editmode) {
 		this.activate(true);
 	}
-	In2iGui.get().addDelegate(this);
+	In2iGui.get().listen(this);
 	In2iGui.Editor.get().ignite();
 }
 

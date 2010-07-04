@@ -15,7 +15,7 @@ public abstract class AbstractModelQuery<T> implements ModelQuery {
 	protected Class<T> clazz;
 	protected List<ModelPropertyLimitation> limitations = new ArrayList<ModelPropertyLimitation>();
 	protected Map<String,Object> customProperties = new HashMap<String, Object>();
-	protected Priviledged priviledged;
+	protected Privileged[] privileged;
 	protected String[] words;
 	protected int pageSize;
 	protected int pageNumber;
@@ -25,6 +25,7 @@ public abstract class AbstractModelQuery<T> implements ModelQuery {
 	protected String parentKind;
 	protected Entity child;
 	protected String childKind;
+	protected Long[] ids;
 
 	public Class<T> getClazz() {
 		return clazz;
@@ -34,8 +35,8 @@ public abstract class AbstractModelQuery<T> implements ModelQuery {
 		return limitations;
 	}
 	
-	public Priviledged getPriviledged() {
-		return priviledged;
+	public Privileged[] getPrivileged() {
+		return privileged;
 	}
 	
 	public String[] getWords() {

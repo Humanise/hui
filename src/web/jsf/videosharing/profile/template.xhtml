@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:o="http://www.onlineobjects.com/jsf" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:gui="http://www.in2isoft.dk/in2igui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+>
+	<ui:composition template="../templates/plain.xhtml">
+		
+		<ui:param name="tab" value="users"/>
+		
+		<ui:define name="body">
+			<div style="height: 10px;"></div>
+			<o:splitLeft size="340">
+				<ui:fragment>
+					<div style="width: 300px; font-size: 0;">
+					<div id="profile_photo">
+						<o:thumbnail width="300" height="300" variant="user" frame="false" image="#{videosharingProfileView.image}"/>
+					</div>
+					<div class="profile_info #{videosharingProfileView.person.sex ? 'profile_info_male' : 'profile_info_female'}">
+						<h2>
+							<o:link href="/users/#{videosharingProfileView.user.username}/">#{videosharingProfileView.person.name}</o:link>
+						</h2>
+						<div class="large">
+							<c:if test="#{not empty videosharingProfileView.city}">
+								<p><strong>City:</strong> #{videosharingProfileView.city}</p>
+							</c:if>
+							<c:if test="#{not empty videosharingProfileView.age}">
+								<p><strong>Age:</strong> #{videosharingProfileView.age}</p>
+							</c:if>
+						</div>
+						<ui:fragment rendered="#{not empty videosharingProfileView.musicInterests}">
+							<h3>Musical interests</h3>
+							<p>
+							<c:forEach items="#{videosharingProfileView.musicInterests}" var="item" varStatus="status">
+							#{item}<c:if test="#{not status.last}">, </c:if>
+							</c:forEach>
+							</p>
+						</ui:fragment>
+						<ui:fragment rendered="#{not empty videosharingProfileView.otherInterests}">
+							<h3>Other interests</h3>
+							<p>
+							<c:forEach items="#{videosharingProfileView.otherInterests}" var="item" varStatus="status">
+							#{item}<c:if test="#{not status.last}">, </c:if>
+							</c:forEach>
+							</p>
+						</ui:fragment>
+						<ui:fragment rendered="#{not empty videosharingProfileView.trackInterests}">
+							<h3>Favorite song/album right now</h3>
+							<p>
+							<c:forEach items="#{videosharingProfileView.trackInterests}" var="item" varStatus="status">
+							#{item}<c:if test="#{not status.last}">, </c:if>
+							</c:forEach>
+							</p>
+						</ui:fragment>
+						<ui:fragment rendered="#{videosharingProfileView.canModify}">
+							<p style="margin-top: 15px;"><gui:link name="editProfile">Edit profile</gui:link></p>
+						</ui:fragment>
+					</div>
+					</div>
+					<ui:insert name="left"/>
+				</ui:fragment>
+				<ui:insert name="inner_body"/>
+			</o:splitLeft>
+		</ui:define>
+		
+	</ui:composition>
+</html>

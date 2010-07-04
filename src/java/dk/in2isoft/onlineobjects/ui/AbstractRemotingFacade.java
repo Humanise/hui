@@ -1,10 +1,13 @@
 package dk.in2isoft.onlineobjects.ui;
 
+import java.lang.reflect.Method;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.directwebremoting.WebContextFactory;
 
 import dk.in2isoft.onlineobjects.core.ModelService;
+import dk.in2isoft.onlineobjects.core.SecurityException;
 import dk.in2isoft.onlineobjects.core.UserSession;
 
 public abstract class AbstractRemotingFacade {
@@ -29,5 +32,9 @@ public abstract class AbstractRemotingFacade {
 
 	public ModelService getModelService() {
 		return modelService;
+	}
+	
+	public boolean isAccessAllowed(Method method) throws SecurityException {
+		return true;
 	}
 }

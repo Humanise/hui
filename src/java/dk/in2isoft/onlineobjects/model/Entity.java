@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 
 
@@ -94,8 +95,8 @@ public class Entity extends Item {
 		return props;
 	}
 	
-	public Collection<String> getPropertyValues(String key) {
-		Collection<String> props = new ArrayList<String>();
+	public List<String> getPropertyValues(String key) {
+		List<String> props = new ArrayList<String>();
 		for (Property property : properties) {
 			if (property!=null && key.equals(property.getKey())) {
 				props.add(property.getValue());

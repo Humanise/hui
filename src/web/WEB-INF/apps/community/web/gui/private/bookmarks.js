@@ -1,4 +1,4 @@
-ui.observe({
+ui.listen({
 	dragDrop : [
 		{drag:'internetAddress',drop:'tag'}
 	],

@@ -26,10 +26,21 @@ public class ImageView extends AbstractManagedBean implements InitializingBean {
 	private Location location;
 	private User user;
 	private Person person;
+	private boolean secret;
+	private boolean canModify;
 	
 	public void afterPropertiesSet() throws Exception {
 		image = modelService.get(Image.class, getImageId());
 		if (image!=null) {
+			if (!securityService.canView(image, getRequest().getSession())) {
+				image = null;
+				return;
+			}
+			canModify = securityService.canModify(image, getRequest().getSession());
+			if (canModify) {
+				secret = !securityService.canView(image, securityService.getPublicUser());
+			}
+			
 			imageInfo = imageService.getImageInfo(image);
 			location = modelService.getParent(image, Location.class);
 
@@ -56,6 +67,10 @@ public class ImageView extends AbstractManagedBean implements InitializingBean {
 		return image;
 	}
 	
+	public boolean isSecret() {
+		return secret;
+	}
+	
 	public ImageInfo getImageInfo() {
 		return imageInfo;
 	}
@@ -79,8 +94,8 @@ public class ImageView extends AbstractManagedBean implements InitializingBean {
 		return Long.valueOf(split[0]);
 	}
 	
-	public boolean getCanEdit() {
-		return securityService.canModify(image, getRequest().getSession());
+	public boolean isCanModify() {
+		return canModify;
 	}
 
 	public void setModelService(ModelService modelService) {

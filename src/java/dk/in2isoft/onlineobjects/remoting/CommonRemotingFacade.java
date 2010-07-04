@@ -19,12 +19,15 @@ import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.ModelException;
 import dk.in2isoft.onlineobjects.core.SecurityException;
+import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.ui.AbstractRemotingFacade;
 
 public class CommonRemotingFacade extends AbstractRemotingFacade {
 
+	private SecurityService securityService;
+	
 	public Entity getEntity(long id) throws ModelException {
 		return modelService.get(Entity.class, id);
 	}
@@ -82,5 +85,23 @@ public class CommonRemotingFacade extends AbstractRemotingFacade {
 			result.put(object.toString(), object.toString());
 		}
 		return result;
+	}
+	
+	public void makePubliclyViewable(long id) throws ModelException, SecurityException {
+		Entity entity = modelService.get(Entity.class, id);
+		securityService.makePublicVisible(entity,getUserSession());
+	}
+	
+	public void makePubliclyHidden(long id) throws ModelException, SecurityException {
+		Entity entity = modelService.get(Entity.class, id);
+		securityService.makePublicHidden(entity,getUserSession());
+	}
+
+	public void setSecurityService(SecurityService securityService) {
+		this.securityService = securityService;
+	}
+
+	public SecurityService getSecurityService() {
+		return securityService;
 	}
 }

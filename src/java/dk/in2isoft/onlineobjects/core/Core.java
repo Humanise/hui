@@ -28,7 +28,7 @@ public class Core {
 
 	private ConversionService converter;
 
-	private Priviledged superUser = new SuperUser();
+	private Privileged superUser = new SuperUser();
 
 	private boolean started;
 
@@ -132,7 +132,7 @@ public class Core {
 		}
 	}
 
-	private class SuperUser implements Priviledged {
+	private class SuperUser implements Privileged {
 		public long getIdentity() {
 			return -1;
 		}

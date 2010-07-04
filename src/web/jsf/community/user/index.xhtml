@@ -24,7 +24,7 @@
 									<div class="profile_image_photo" style="background: url('#{baseView.baseContext}/service/image/id#{userProfileView.image.id}width90height105cropped.jpg')"></div>
 								</c:if>
 							</div>
-							<ui:fragment rendered="#{userProfileView.canEdit}">
+							<ui:fragment rendered="#{userProfileView.canModify}">
 								<p style="margin: 10px 0 0; text-align: center;"><gui:button text="Skift billede" name="changeImage" small="true"/></p>
 							</ui:fragment>
 						</div>
@@ -74,7 +74,7 @@
 											</c:forEach>
 										</p>
 									</c:if>
-									<ui:fragment rendered="#{userProfileView.canEdit}">
+									<ui:fragment rendered="#{userProfileView.canModify}">
 										<p style="margin-top: 20px;"><gui:button text="Rediger profil" name="editProfile" small="true"/></p>
 									</ui:fragment>
 								</div>

@@ -24,6 +24,7 @@ public class ThumbnailComponent<T> extends AbstractComponent {
 	private String variant;
 	private boolean zoom;
 	private String href;
+	private boolean frame = true;
 	
 	public ThumbnailComponent() {
 		super(FAMILY);
@@ -36,11 +37,12 @@ public class ThumbnailComponent<T> extends AbstractComponent {
 		variant = (String) state[2];
 		zoom = (Boolean) state[3];
 		href = (String) state[4];
+		frame = (Boolean) state[5];
 	}
 
 	@Override
 	public Object[] saveState() {
-		return new Object[] { width, height, variant, zoom, href };
+		return new Object[] { width, height, variant, zoom, href, frame };
 	}
 
 	@Override
@@ -54,9 +56,12 @@ public class ThumbnailComponent<T> extends AbstractComponent {
 		Image image = super.getBinding("image");
 		StyleBuilder style = new StyleBuilder();
 		style.withWidth(width).withHeight(height);
-		ClassBuilder cls = new ClassBuilder("oo_thumbnail").append("oo_thumbnail_",variant);
+		ClassBuilder cls = new ClassBuilder("oo_thumbnail").add("oo_thumbnail",variant);
 		if (zoom) {
-			cls.append("oo_thumbnail_zoom");
+			cls.add("oo_thumbnail_zoom");
+		}
+		if (frame) {
+			cls.add("oo_thumbnail_frame");
 		}
 		if (StringUtils.isNotBlank(href)) {
 			writer.startA(cls).withStyle(style).withAttribute("href", LinkComponent.buildUrl(href, false));
@@ -134,5 +139,13 @@ public class ThumbnailComponent<T> extends AbstractComponent {
 
 	public String getHref(FacesContext context) {
 		return getBinding(href, "href");
+	}
+
+	public void setFrame(boolean frame) {
+		this.frame = frame;
+	}
+
+	public boolean isFrame() {
+		return frame;
 	}
 }

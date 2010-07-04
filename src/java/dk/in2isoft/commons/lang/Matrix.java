@@ -2,6 +2,8 @@ package dk.in2isoft.commons.lang;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.google.common.collect.Lists;
 
 public class Matrix<X, Y, V> {
@@ -73,7 +75,7 @@ public class Matrix<X, Y, V> {
 	}
 	
 	private String toCell(String string) {
-		string = string + "                                                  ";
+		string = string + "                                                                                                                                                      ";
 		return string.substring(0, 40);
 	}
 	

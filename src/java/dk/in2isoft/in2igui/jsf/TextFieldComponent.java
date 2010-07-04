@@ -16,6 +16,7 @@ import dk.in2isoft.commons.jsf.TagWriter;
 public class TextFieldComponent extends UIComponentBase {
 
 	private String name;
+	private String key;
 	private String inputName;
 	private boolean secret;
 	private String placeholder;
@@ -68,7 +69,7 @@ public class TextFieldComponent extends UIComponentBase {
 		}
 		writer.startSpan("in2igui_field_top").startSpan().startSpan().endSpan().endSpan().endSpan();
 		writer.startSpan("in2igui_field_middle").startSpan("in2igui_field_middle").startSpan("in2igui_field_content");
-		writer.startSpan("in2igui_formula_text_singleline");
+		writer.startSpan("in2igui_field_singleline");
 		writer.startElement("input").withClass("in2igui_formula_text");
 		if (secret) {
 			writer.withAttribute("type", "password");
@@ -89,11 +90,12 @@ public class TextFieldComponent extends UIComponentBase {
 			writer.endSpan();
 		}
 		writer.startScopedScript();
-		writer.write("new In2iGui.Formula.Text({element:'");
-		writer.write(id);
-		writer.write("'");
+		writer.write("new In2iGui.Formula.Text({element:'").write(id).write("'");
 		if (name!=null) {
 			writer.write(",name:'"+StringEscapeUtils.escapeJavaScript(name)+"'");
+		}
+		if (key!=null) {
+			writer.write(",key:'"+StringEscapeUtils.escapeJavaScript(key)+"'");
 		}
 		writer.write("});");
 		writer.endScopedScript();
@@ -155,5 +157,12 @@ public class TextFieldComponent extends UIComponentBase {
 		return adaptive;
 	}
 
+	public void setKey(String key) {
+		this.key = key;
+	}
+
+	public String getKey() {
+		return key;
+	}
 	
 }

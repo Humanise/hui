@@ -1,6 +1,7 @@
 package dk.in2isoft.onlineobjects.services;
 
 import java.text.ParseException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,23 +11,24 @@ import org.quartz.CronTrigger;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
+import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
-import org.quartz.impl.StdSchedulerFactory;
+import org.springframework.beans.factory.InitializingBean;
 
-public class SchedulingService {
+public class SchedulingService implements InitializingBean {
 
 	private final static Logger log = Logger.getLogger(SchedulingService.class);
 
 	private org.quartz.Scheduler scheduler;
 
 	protected SchedulingService() {
-		try {
+		/*try {
 			scheduler = StdSchedulerFactory.getDefaultScheduler();
 			scheduler.start();
 		} catch (SchedulerException e) {
 			log.error(e.getMessage(), e);
-		}
+		}*/
 	}
 
 	public void scheduleJob(JobDetail detail, Trigger trigger) {
@@ -79,6 +81,30 @@ public class SchedulingService {
 			log.error(e.getMessage(), e);
 		}
 	}
+	
+	public Date getLatestExecution(String name, String group) {
+		try {
+			Trigger[] triggers = scheduler.getTriggersOfJob(name, group);
+			if (triggers.length>0) {
+				return triggers[0].getPreviousFireTime();
+			}
+		} catch (SchedulerException e) {
+			log.error(e.getMessage(), e);
+		}
+		return null;
+	}
+
+	public Date getNextExecution(String name, String group) {
+		try {
+			Trigger[] triggers = scheduler.getTriggersOfJob(name, group);
+			if (triggers.length>0) {
+				return triggers[0].getNextFireTime();
+			}
+		} catch (SchedulerException e) {
+			log.error(e.getMessage(), e);
+		}
+		return null;
+	}
 
 	public void addJob(String name, String group, Class<?> jobClass, String cron, JobDataMap map) {
 
@@ -93,5 +119,13 @@ public class SchedulingService {
 			log.error(e.getMessage(),e);
 		}
 		scheduleJob(detail, trigger);
+	}
+
+	public void afterPropertiesSet() throws Exception {
+		
+	}
+	
+	public void setCoreScheduler(Scheduler coreSchedulerFactory) {
+		this.scheduler = coreSchedulerFactory;
 	}
 }

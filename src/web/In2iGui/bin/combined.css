@@ -26,7 +26,7 @@ div.in2igui_body
 }
 
 /************************* Links ********************/
-
+/*
 a.in2igui_link
 {
 	color: #ccc;
@@ -43,7 +43,7 @@ a.in2igui_link:hover, a.in2igui_link:hover span
 {
 	color: #0033aa;
 }
-
+*/
 /*********************** text **********************/
 
 div.in2igui_text
@@ -2675,7 +2675,7 @@ div.in2igui_window_dark .in2igui_selection_item span
 .in2igui_imagepicker_thumbnail:hover
 {
 	border-color: #3875d7;
-}.in2igui_boundpanel
+}div.in2igui_boundpanel
 {
 	position: absolute;
 	font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
@@ -2683,7 +2683,7 @@ div.in2igui_window_dark .in2igui_selection_item span
 	left: 0px;
 }
 
-.in2igui_boundpanel .arrow
+div.in2igui_boundpanel_arrow
 {
 	position: absolute;
 	width: 18px;
@@ -2692,17 +2692,17 @@ div.in2igui_window_dark .in2igui_selection_item span
 	margin-top: 17px;
 }
 
-.in2igui_boundpanel .arrow_left
+div.in2igui_boundpanel_arrow_left
 {
 	background: url('../gfx/bound_arrow_left.png');
 }
 
-.in2igui_boundpanel .arrow_right
+div.in2igui_boundpanel_arrow_right
 {
 	background: url('../gfx/bound_arrow_right.png');
 }
 
-.in2igui_boundpanel .content
+div.in2igui_boundpanel_content
 {
 	width: 200px;
 	overflow: hidden;
@@ -2710,21 +2710,21 @@ div.in2igui_window_dark .in2igui_selection_item span
 
 /* Top */
 
-.in2igui_boundpanel .top
+div.in2igui_boundpanel_top
 {
 	height: 8px;
 	padding-left: 10px;
 	background: url('../gfx/bound_top_left.png') top left no-repeat;
 }
 
-.in2igui_boundpanel .top div
+div.in2igui_boundpanel_top div
 {
 	height: 8px;
 	padding-right: 10px;
 	background: url('../gfx/bound_top_right.png') top right no-repeat;
 }
 
-.in2igui_boundpanel .top div div
+div.in2igui_boundpanel_top div div
 {
 	height: 8px;
 	background: url('../gfx/bound_top.png') top left repeat-x;
@@ -2732,20 +2732,20 @@ div.in2igui_window_dark .in2igui_selection_item span
 
 /* body */
 
-.in2igui_boundpanel .body
+div.in2igui_boundpanel_body
 {
 	padding-left: 10px;
 	background: url('../gfx/bound_left.png') top left repeat-y;
 }
 
-.in2igui_boundpanel .body .body
+div.in2igui_boundpanel_body div.in2igui_boundpanel_body
 {
 	padding-left: 0px;
 	padding-right: 10px;
 	background: url('../gfx/bound_right.png') top right repeat-y;
 }
 
-.in2igui_boundpanel .body .body .body
+div.in2igui_boundpanel_body div.in2igui_boundpanel_body div.in2igui_boundpanel_body
 {
 	padding: 0px;
 	background: #f2f2f2;
@@ -2753,21 +2753,21 @@ div.in2igui_window_dark .in2igui_selection_item span
 
 /* Bottom */
 
-.in2igui_boundpanel .bottom
+div.in2igui_boundpanel_bottom
 {
 	height: 12px;
 	padding-left: 10px;
 	background: url('../gfx/bound_bottom_left.png') top left no-repeat;
 }
 
-.in2igui_boundpanel .bottom div
+div.in2igui_boundpanel_bottom div
 {
 	height: 12px;
 	padding-right: 10px;
 	background: url('../gfx/bound_bottom_right.png') top right no-repeat;
 }
 
-.in2igui_boundpanel .bottom div div
+div.in2igui_boundpanel_bottom div div
 {
 	height: 12px;
 	background: url('../gfx/bound_bottom.png') top left repeat-x;
@@ -4583,8 +4583,9 @@ div.in2igui_videoplayer_controller
 {
 	background:none repeat scroll 0 0 #000000;
 	color:#FFFFFF;
-	font-size:11px;
-	height:20px;
+	font-size: 11px;
+	height: 20px;
+	margin-top: -20px;
 }
 
 div.in2igui_videoplayer_placeholder

@@ -83,7 +83,7 @@ public class TagWriter {
 		return startElement("ol");
 	}
 
-	public TagWriter startOl(String className) throws IOException {
+	public TagWriter startOl(Object className) throws IOException {
 		return startElement("ol").withClass(className);
 	}
 
@@ -95,7 +95,7 @@ public class TagWriter {
 		return startElement("ul");
 	}
 
-	public TagWriter startUl(String className) throws IOException {
+	public TagWriter startUl(Object className) throws IOException {
 		return startElement("ul").withClass(className);
 	}
 
@@ -184,12 +184,12 @@ public class TagWriter {
 	
 	public TagWriter startScopedScript() throws IOException {
 		startElement("script").withAttribute("type", "text/javascript");
-		write("(function() {");
+		write("\n(function() {\n");
 		return this;
 	}
 
 	public TagWriter endScopedScript() throws IOException {
-		write("})();");
+		write("\n})();\n");
 		return endElement("script");
 	}
 

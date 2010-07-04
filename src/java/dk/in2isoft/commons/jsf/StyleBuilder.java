@@ -32,4 +32,30 @@ public class StyleBuilder {
 		sb.append("margin:").append(margin).append(";");
 		return this;
 	}
+
+	public StyleBuilder withPaddingTop(Number top) {
+		if (top!=null) {
+			sb.append("padding-top:").append(top).append("px;");
+		}
+		return this;
+	}
+
+	public StyleBuilder withPaddingBottom(Number bottom) {
+		if (bottom!=null) {
+			sb.append("padding-bottom:").append(bottom).append("px;");
+		}
+		return this;
+	}
+
+	public StyleBuilder withBackgroundImage(String url) {
+		sb.append("background-image: url('").append(url).append("');");
+		return this;
+	}
+
+	public StyleBuilder withRule(String style) {
+		if (style!=null) {
+			sb.append(style);
+		}
+		return this;
+	}
 }

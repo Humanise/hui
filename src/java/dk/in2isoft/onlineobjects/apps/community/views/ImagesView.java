@@ -8,6 +8,7 @@ import dk.in2isoft.onlineobjects.core.ModelException;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SearchResult;
+import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.ui.jsf.ListModel;
@@ -17,16 +18,17 @@ import dk.in2isoft.onlineobjects.ui.jsf.model.ImageContainer;
 public class ImagesView extends AbstractManagedBean {
 
 	private ModelService modelService;
+	private SecurityService securityService;
 	
 	public ListModel<Photo> getImageList() {
 		ListModel<Photo> model = new ListModel<Photo>() {
 
 			@Override
 			public ListModelResult<Photo> getResult() {
-				Query<Image> query = Query.of(Image.class).orderByCreated().withPaging(getPage(), getPageSize());
-				SearchResult<Image> search = modelService.search(query);
-				List<Photo> list = convert(search.getResult());
-				return new ListModelResult<Photo>(list,search.getTotalCount());
+				Query<Image> query = Query.of(Image.class).orderByCreated().withPaging(getPage(), getPageSize()).withPriviledged(securityService.getPublicUser());
+				SearchResult<Image> result = modelService.search(query);
+				List<Photo> list = convert(result.getList());
+				return new ListModelResult<Photo>(list,result.getTotalCount());
 			}
 			
 		};
@@ -54,6 +56,14 @@ public class ImagesView extends AbstractManagedBean {
 
 	public ModelService getModelService() {
 		return modelService;
+	}
+
+	public void setSecurityService(SecurityService securityService) {
+		this.securityService = securityService;
+	}
+
+	public SecurityService getSecurityService() {
+		return securityService;
 	}
 
 	public class Photo implements ImageContainer {

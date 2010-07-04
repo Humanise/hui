@@ -7,7 +7,7 @@ import java.util.List;
 import org.junit.Test;
 
 import dk.in2isoft.onlineobjects.core.EndUserException;
-import dk.in2isoft.onlineobjects.core.Priviledged;
+import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.test.AbstractTestCase;
@@ -17,7 +17,7 @@ public class TestPerson extends AbstractTestCase {
 
 	@Test
 	public void testCreate() throws EndUserException {
-		Priviledged priviledged = getPublicUser();
+		Privileged priviledged = getPublicUser();
 		Person person = new Person();
 		person.setGivenName("Jonas1");
 		person.setAdditionalName("Brinkmann2");

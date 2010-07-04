@@ -9,13 +9,14 @@ import java.util.Map;
 import com.google.common.collect.Lists;
 
 import dk.in2isoft.onlineobjects.core.EndUserException;
+import dk.in2isoft.onlineobjects.core.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.importing.ImportListerner;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
 
-class ImageImporter implements ImportListerner {
+public class ImageImporter implements ImportListerner {
 
 	protected ModelService modelService;
 	private ImageService imageService;
@@ -31,6 +32,9 @@ class ImageImporter implements ImportListerner {
 	}
 
 	public void processFile(File file, String mimeType, String name, Map<String, String> parameters, Request request) throws IOException, EndUserException {
+		if (!isRequestLegal(parameters,request)) {
+			throw new IllegalRequestException("The request is illegal!");
+		}
 		if (!mimeTypes.contains(mimeType)) {
 			return;
 		}
@@ -43,6 +47,10 @@ class ImageImporter implements ImportListerner {
 		modelService.commit();
 		importedImages.add(image);
 		postProcessImage(image, parameters, request);
+	}
+	
+	protected boolean isRequestLegal(Map<String, String> parameters, Request request) throws EndUserException {
+		return true;
 	}
 
 	protected void postProcessImage(Image image, Map<String, String> parameters, Request request) throws EndUserException {

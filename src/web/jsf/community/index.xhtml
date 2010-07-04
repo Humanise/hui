@@ -7,8 +7,11 @@
 >
 	<ui:composition template="chrome.xhtml">
 		
-		<ui:define name="head">
+		<ui:define name="style">
 			<link rel="stylesheet" href="#{baseView.localContext}/css/home.css?#{lifeCycleService.startTime.time}" type="text/css" media="screen" charset="utf-8"/>
+		</ui:define>
+		
+		<ui:define name="scripts">
 			<script type="text/javascript" src="#{baseView.localContext}/js/home.js?#{lifeCycleService.startTime.time}"></script>
 		</ui:define>
 		

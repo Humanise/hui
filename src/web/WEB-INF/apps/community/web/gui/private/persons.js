@@ -14,8 +14,7 @@ var personsController = {
 			this.refreshInvitationList();
 		}
 	},
-	$listRowsWasOpened$personList : function(list) {
-		var obj = list.getFirstSelection();
+	$listRowWasOpened$personList : function(obj) {
 		this.editPerson(obj.id);
 	},
 	

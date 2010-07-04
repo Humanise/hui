@@ -11,9 +11,12 @@
     ">
     
     <import resource="spring/core-remoting.xml"/>
+    <import resource="spring/core-scheduling.xml"/>
     <import resource="spring/app-videosharing.xml"/>
     <import resource="spring/app-setup.xml"/>
     <import resource="spring/app-community.xml"/>
+    <import resource="spring/app-developer.xml"/>
+    <import resource="spring/app-desktop.xml"/>
 
 	<bean id="config" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="location" value="classpath:configuration.properties" />
@@ -64,7 +67,24 @@
 	
 	<bean id="webModelService" class="dk.in2isoft.onlineobjects.services.WebModelService" autowire="byType"/>
 	
-	<bean id="schedulingService" class="dk.in2isoft.onlineobjects.services.SchedulingService" autowire="byType"/>
+	<bean id="dispatchingService" class="dk.in2isoft.onlineobjects.services.DispatchingService" autowire="byType">
+		<property name="responders">
+			<util:list>
+				<bean class="dk.in2isoft.onlineobjects.modules.dispatch.DWRResponder" autowire="byType"/>
+				<bean class="dk.in2isoft.onlineobjects.modules.dispatch.FacesResponder" autowire="byType"/>
+				<bean class="dk.in2isoft.onlineobjects.modules.dispatch.CoreFilesResponder" autowire="byType"/>
+				<bean class="dk.in2isoft.onlineobjects.modules.dispatch.In2iGuiResponder" autowire="byType"/>
+				<bean class="dk.in2isoft.onlineobjects.modules.dispatch.ServicesResponder" autowire="byType"/>
+				<bean class="dk.in2isoft.onlineobjects.modules.dispatch.ApplicationResponder" autowire="byType"/>
+			</util:list>
+		</property>
+	</bean>
+	
+	<bean id="surveillanceService" class="dk.in2isoft.onlineobjects.services.SurveillanceService" autowire="byType"/>
+	
+	<bean id="schedulingService" class="dk.in2isoft.onlineobjects.services.SchedulingService" autowire="byType">
+		<property name="coreScheduler" ref="coreScheduler"/>
+	</bean>
 	
 	<bean id="importService" class="dk.in2isoft.onlineobjects.services.ImportService" autowire="byType"/>
 	
@@ -77,10 +97,17 @@
 	<bean id="indexService" class="dk.in2isoft.onlineobjects.services.IndexService" autowire="byType"/>
 	
 	<bean id="remoteDataService" class="dk.in2isoft.onlineobjects.services.RemoteDataService" autowire="byType"/>
+	<bean id="personService" class="dk.in2isoft.onlineobjects.services.PersonService" autowire="byType"/>
 	
 	<bean id="feedService" class="dk.in2isoft.onlineobjects.services.FeedService" autowire="byType"/>
+	<bean id="ratingService" class="dk.in2isoft.onlineobjects.services.RatingService" autowire="byType"/>
 	
 	<bean id="videoService" class="dk.in2isoft.onlineobjects.modules.video.VideoService" autowire="byType"/>
+	<bean id="youTubeService" class="dk.in2isoft.onlineobjects.modules.youtube.YouTubeService" autowire="byType"/>
+	
+	<bean id="localizationService" class="dk.in2isoft.onlineobjects.modules.localization.LocalizationService" autowire="byType"/>
+	
+	<bean id="userService" class="dk.in2isoft.onlineobjects.modules.user.UserService" autowire="byType"/>
 	
 	<!-- Service controllers -->
 	
@@ -89,10 +116,6 @@
 	<bean id="webrendererController" class="dk.in2isoft.onlineobjects.service.webrenderer.WebrendererController" autowire="byType"/>
 	<bean id="authenticationController" class="dk.in2isoft.onlineobjects.service.authentication.AuthenticationController" autowire="byType"/>
 	<bean id="videoController" class="dk.in2isoft.onlineobjects.service.video.VideoController" autowire="byType"/>
-	
-	<!-- Application controllers -->
-
-	<bean id="desktopController" class="dk.in2isoft.onlineobjects.apps.desktop.DesktopController" autowire="byType"/>
 	
 	<!-- Tools -->
 	

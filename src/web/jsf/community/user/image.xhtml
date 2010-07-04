@@ -16,101 +16,110 @@
 		
 		<ui:define name="breadcrumb">
 			<li><a href="#{baseView.baseContext}/#{userProfileView.user.username}/images.html">Billeder</a></li>
+			<c:if test="#{not empty imageView.image}">
 			<li><a href="#{baseView.baseContext}/#{userProfileView.user.username}/images/#{imageView.imageId}.html">#{imageView.image.name}</a></li>
+			</c:if>
 		</ui:define>
 		
 		<ui:define name="content">
-			<div class="content_body image_view">
-				<div class="image_preview">
-					<oo:thumbnail image="#{imageView.image}" width="300" zoom="true"/>
-					<p class="image_actions">
-						<oo:link href="/service/image/id#{imageView.image.id}.jpg" core="true">Fuld størrelse</oo:link>
-						<h:outputText value=" "/>
-						<oo:link href="/service/image/id#{imageView.image.id}.jpg?download=true" core="true">Download</oo:link>
-					</p>
-					<h:panelGroup rendered="#{not empty imageView.location}">
-						<div id="map_canvas" style="width:100%; height:300px; margin-top: 20px;"></div>
+			<c:if test="#{empty imageView.image}">
+				<h2 class="message">Billedet blev ikke fundet</h2>
+			</c:if>
+			<c:if test="#{not empty imageView.image}">
+				<div class="content_body image_view">
+					<div class="image_preview">
+						<oo:thumbnail image="#{imageView.image}" width="300" zoom="true"/>
 						<p class="image_actions">
-							<oo:link href="/map.html#image=#{imageView.image.id}">Stort kort</oo:link>
+							<oo:link href="/service/image/id#{imageView.image.id}.jpg" core="true">Fuld størrelse</oo:link>
+							<h:outputText value=" "/>
+							<oo:link href="/service/image/id#{imageView.image.id}.jpg?download=true" core="true">Download</oo:link>
 						</p>
-					</h:panelGroup>
-				</div>
-				<div id="imageContainer" class="container">
-					<div class="rendering" id="imageProperties">
-						<h1>#{imageView.image.name}</h1>
-						<p class="minor"><span>Tilføjet </span><strong><h:outputText value="#{imageView.image.created}"><f:convertDateTime pattern="EEEE 'd'. d.  MMMM yyyy" locale="da_DK"/></h:outputText></strong> af <oo:link href="/#{imageView.user.username}/">#{imageView.person.fullName}</oo:link></p>
-						<p class="minor dimmed fileinfo">#{imageView.image.width} &#215; #{imageView.image.height} (#{imageView.megaPixels} Megapixel), #{imageView.image.contentType}</p>
-						<c:if test="#{not empty imageView.description}">
-							<p class="resume">&#34;#{imageView.description}&#34;</p>
-						</c:if>
-						<c:if test="#{not empty imageView.imageInfo.tags}">
-							<p class="tags">
-								<c:forEach items="#{imageView.imageInfo.tags}" var="tag">
-									<a class="tag" href="#"><span>#{tag}</span></a><h:outputText value=" "/>
-								</c:forEach>
-							</p>
-						</c:if>
-						<h:panelGroup rendered="#{not empty imageView.imageInfo.taken}">
-							<p><span class="label">Dato: </span><h:outputText value="#{imageView.imageInfo.taken}"><f:convertDateTime pattern="EEEE 'd'. d.  MMMM yyyy 'kl.' HH:mm:ss" locale="da_DK"/></h:outputText></p>
-						</h:panelGroup>
-						
-						<h:panelGroup rendered="#{not empty imageView.imageInfo.cameraMake}">
-							<p><span class="label">Kameraproducent:</span> #{imageView.imageInfo.cameraMake}</p>
-						</h:panelGroup>
-						<h:panelGroup rendered="#{not empty imageView.imageInfo.cameraModel}">
-							<p><span class="label">Kameramodel:</span> #{imageView.imageInfo.cameraModel}</p>
-						</h:panelGroup>
 						<h:panelGroup rendered="#{not empty imageView.location}">
-							<p>
-								<span class="label">Breddegrad: </span>
-								<h:outputText value="#{imageView.location.latitudeDegrees}">
-									<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
-								</h:outputText><span>&#176; </span>
-								<h:outputText value="#{imageView.location.latitudeMinutes}">
-									<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
-								</h:outputText><span>' </span>
-								<h:outputText value="#{imageView.location.latitudeSeconds}">
-									<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
-								</h:outputText><span>" </span>
-								#{imageView.location.latitudeNorth ? 'Nord' : 'Syd'}
-								<span class="minor dimmed">(<h:outputText value="#{imageView.location.latitude}">
-									<f:convertNumber minFractionDigits="2" maxFractionDigits="8"/>
-								</h:outputText>)</span>
+							<div id="map_canvas" style="width:100%; height:300px; margin-top: 20px;"></div>
+							<p class="image_actions">
+								<oo:link href="/map.html#image=#{imageView.image.id}">Stort kort</oo:link>
 							</p>
-							<p>
-								<span class="label">Længdegrad: </span>
-								<h:outputText value="#{imageView.location.longitudeDegrees}">
-									<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
-								</h:outputText><span>&#176; </span>
-								<h:outputText value="#{imageView.location.longitudeMinutes}">
-									<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
-								</h:outputText><span>' </span>
-								<h:outputText value="#{imageView.location.longitudeSeconds}">
-									<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
-								</h:outputText><span>" </span>
-								#{imageView.location.longitudeEast ? 'Øst' : 'Vest'}
-								<span class="minor dimmed">(<h:outputText value="#{imageView.location.longitude}">
-									<f:convertNumber minFractionDigits="2" maxFractionDigits="8"/>
-								</h:outputText>)</span>
-							</p>
-						</h:panelGroup>
-						<h:panelGroup rendered="#{imageView.canEdit}">
-							<script type="text/javascript" src="#{baseView.localContext}/js/imageview.js"></script>
-							<script type="text/javascript" charset="utf-8">
-								oo.community.ImgeView.id=#{imageView.image.id};
-							</script>
-							<div class="editbutton">
-								<gui:button text="Rediger egenskaber..." name="editImage" small="true"/>
-							</div>
 						</h:panelGroup>
 					</div>
-					<div id="imageEditor" style="display: none;"></div>
+					<div id="imageContainer" class="container">
+						<div class="rendering" id="imageProperties">
+							<h1>#{imageView.image.name}</h1>
+							<p class="minor"><span>Tilføjet </span><strong><h:outputText value="#{imageView.image.created}"><f:convertDateTime pattern="EEEE 'd'. d.  MMMM yyyy" locale="da_DK"/></h:outputText></strong> af <oo:link href="/#{imageView.user.username}/">#{imageView.person.fullName}</oo:link></p>
+							<p class="minor dimmed fileinfo">#{imageView.image.width} &#215; #{imageView.image.height} (#{imageView.megaPixels} Megapixel), #{imageView.image.contentType}</p>
+							<c:if test="#{not empty imageView.description}">
+								<p class="resume">&#34;#{imageView.description}&#34;</p>
+							</c:if>
+							<c:if test="#{not empty imageView.imageInfo.tags}">
+								<p class="tags">
+									<c:forEach items="#{imageView.imageInfo.tags}" var="tag">
+										<a class="tag" href="#"><span>#{tag}</span></a><h:outputText value=" "/>
+									</c:forEach>
+								</p>
+							</c:if>
+							<h:panelGroup rendered="#{not empty imageView.imageInfo.taken}">
+								<p><span class="label">Dato: </span><h:outputText value="#{imageView.imageInfo.taken}"><f:convertDateTime pattern="EEEE 'd'. d.  MMMM yyyy 'kl.' HH:mm:ss" locale="da_DK"/></h:outputText></p>
+							</h:panelGroup>
+					
+							<h:panelGroup rendered="#{not empty imageView.imageInfo.cameraMake}">
+								<p><span class="label">Kameraproducent:</span> #{imageView.imageInfo.cameraMake}</p>
+							</h:panelGroup>
+							<h:panelGroup rendered="#{not empty imageView.imageInfo.cameraModel}">
+								<p><span class="label">Kameramodel:</span> #{imageView.imageInfo.cameraModel}</p>
+							</h:panelGroup>
+							<h:panelGroup rendered="#{not empty imageView.location}">
+								<p>
+									<span class="label">Breddegrad: </span>
+									<h:outputText value="#{imageView.location.latitudeDegrees}">
+										<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
+									</h:outputText><span>&#176; </span>
+									<h:outputText value="#{imageView.location.latitudeMinutes}">
+										<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
+									</h:outputText><span>' </span>
+									<h:outputText value="#{imageView.location.latitudeSeconds}">
+										<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
+									</h:outputText><span>" </span>
+									#{imageView.location.latitudeNorth ? 'Nord' : 'Syd'}
+									<span class="minor dimmed">(<h:outputText value="#{imageView.location.latitude}">
+										<f:convertNumber minFractionDigits="2" maxFractionDigits="8"/>
+									</h:outputText>)</span>
+								</p>
+								<p>
+									<span class="label">Længdegrad: </span>
+									<h:outputText value="#{imageView.location.longitudeDegrees}">
+										<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
+									</h:outputText><span>&#176; </span>
+									<h:outputText value="#{imageView.location.longitudeMinutes}">
+										<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
+									</h:outputText><span>' </span>
+									<h:outputText value="#{imageView.location.longitudeSeconds}">
+										<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
+									</h:outputText><span>" </span>
+									#{imageView.location.longitudeEast ? 'Øst' : 'Vest'}
+									<span class="minor dimmed">(<h:outputText value="#{imageView.location.longitude}">
+										<f:convertNumber minFractionDigits="2" maxFractionDigits="8"/>
+									</h:outputText>)</span>
+								</p>
+							</h:panelGroup>
+							<h:panelGroup rendered="#{imageView.canModify}">
+								<script type="text/javascript" src="#{baseView.localContext}/js/imageview.js"></script>
+								<script type="text/javascript" charset="utf-8">
+									oo.community.ImgeView.id=#{imageView.image.id};
+								</script>
+								<div class="editbutton">
+									<gui:button text="Rediger egenskaber..." name="editImage" small="true"/>
+									<gui:button text="Gør privat" name="makeNonPublic" small="true" rendered="#{!imageView.secret}"/>
+									<gui:button text="Gør offentlig" name="makePublic" small="true" rendered="#{imageView.secret}"/>
+								</div>
+							</h:panelGroup>
+						</div>
+						<div id="imageEditor" style="display: none;"></div>
+					</div>
 				</div>
-			</div>
+			</c:if>
 		</ui:define>
 		
 		<ui:define name="last">
-			<h:panelGroup rendered="#{not empty imageView.location || imageView.canEdit}">
+			<h:panelGroup rendered="#{not empty imageView.location || imageView.canModify}">
 				<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
 			</h:panelGroup>
 			<h:panelGroup rendered="#{not empty imageView.location}">
