@@ -4955,6 +4955,13 @@ n2i.override = function(original,subject) {
 	return original;
 }
 
+n2i.wrap = function(str) {
+	if (str===null || str===undefined) {
+		return '';
+	}
+	return str.split('').join("\u200B");
+}
+
 /** Trim whitespace including unicode chars */
 n2i.trim = function(str) {
 	if (!str) return str;
@@ -4963,17 +4970,16 @@ n2i.trim = function(str) {
 
 /** Escape the html in a string */
 n2i.escapeHTML = function(str) {
-    var div = document.createElement('div');
-    div.appendChild(document.createTextNode(str));
-    return div.innerHTML;
+   	return document.createElement('div').appendChild(document.createTextNode(str)).innerHTML;
 }
 
 /** Checks if a string has characters */
 n2i.isEmpty = n2i.isBlank = function(str) {
-	if (str===null || typeof(str)==='undefined') return true;
+	if (str===null || typeof(str)==='undefined' || str==='') return true;
 	return typeof(str)=='string' && n2i.trim(str).length==0;
 }
 
+/** Checks that an object is not null or undefined */
 n2i.isDefined = function(obj) {
 	return obj!==null && typeof(obj)!=='undefined';
 }
@@ -4985,6 +4991,20 @@ n2i.inArray = function(arr,value) {
 	return false;
 }
 
+/**
+ * Converts a string to an int if it is only digits, otherwise remains a string
+ */
+n2i.intOrString = function(str) {
+	if (n2i.isDefined(str)) {
+		var result = /[0-9]+/.exec(str);
+		if (result!==null && result[0]==str) {
+			if (parseInt(str,10)==str) {
+				return parseInt(str,10);
+			}
+		}
+	}
+	return str;
+}
 
 n2i.flipInArray = function(arr,value) {
 	if (n2i.inArray(arr,value)) {
@@ -5014,6 +5034,14 @@ n2i.addToArray = function(arr,value) {
 			arr.push(value);
 		}
 	}
+}
+
+n2i.toIntArray = function(str) {
+	var array = str.split(',');
+	for (var i = array.length - 1; i >= 0; i--){
+		array[i] = parseInt(array[i]);
+	};
+	return array;
 }
 
 n2i.scrollTo = function(element) {
@@ -5046,7 +5074,31 @@ n2i.dom = {
 			}
 		};
 		return txt;
+	},
+	isVisible : function(node) {
+		while (node) {
+			if (node.style && (node.getStyle('display')==='none' || node.getStyle('visibility')==='hidden')) {
+				return false;
+			}
+			node = node.parentNode;
+		}
+		return true;
 	}
+}
+
+n2i.get = function(str) {
+	if (n.nodeType==n2i.ELEMENT_NODE) {
+		return str;
+	}
+	return document.getElementById(str);
+}
+
+n2i.build = function(tag,options) {
+	var e = document.createElement(tag);
+	if (options.className) {
+		e.className = options.className;
+	}
+	return e;
 }
 
 ///////////////////// Style ///////////////////
@@ -5136,6 +5188,29 @@ n2i.getSelectedText = function(doc) {
 		return doc.selection.createRange().text;
 	}
 	return '';
+}
+
+n2i.selection = {
+	clear : function() { 
+		var sel ; 
+		if(document.selection && document.selection.empty	){ 
+			document.selection.empty() ; 
+		} else if(window.getSelection) { 
+			sel=window.getSelection();
+			if(sel && sel.removeAllRanges) {
+				sel.removeAllRanges() ; 
+			}
+		}
+	},
+	getText : function(doc) {
+		doc = doc || document;
+		if (doc.getSelection) {
+			return doc.getSelection()+'';
+		} else if (doc.selection) {
+			return doc.selection.createRange().text;
+		}
+		return '';
+	}
 }
 
 /////////////////// Position /////////////////////
@@ -6215,7 +6290,8 @@ In2iGui.prototype = {
 		this.domLoaded = true;
 		In2iGui.domReady = true;
 		this.resize();
-		In2iGui.callSuperDelegates(this,'interfaceIsReady');
+		//In2iGui.callSuperDelegates(this,'interfaceIsReady');
+		In2iGui.callSuperDelegates(this,'ready');
 
 		this.reLayout();
 		Event.observe(window,'resize',this.reLayout.bind(this));
@@ -6721,6 +6797,22 @@ In2iGui.positionAtElement = function(element,target,options) {
 	}
 };
 
+In2iGui.getTextAreaHeight = function(input) {
+	var t = this.textAreaDummy;
+	if (!t) {
+		var t = this.textAreaDummy = document.createElement('div');
+		t.className='in2igui_textarea_dummy';
+		document.body.appendChild(t);
+	}
+	var html = input.value;
+	if (html[html.length-1]==='\n') {
+		html+='x';
+	}
+	html = html.escapeHTML().replace(/\n/g,'<br/>');
+	t.innerHTML = html;
+	t.style.width=(input.clientWidth)+'px';
+	return t.clientHeight;
+}
 
 //////////////////////////////// Drag drop //////////////////////////////
 
@@ -6891,6 +6983,9 @@ In2iGui.callAncestors = function(obj,method,value,event) {
 In2iGui.callDescendants = function(obj,method,value,event) {
 	if (typeof(value)=='undefined') {
 		value=obj;
+	}
+	if (!method[0]=='$') {
+		method = '$'+method;
 	}
 	var d = In2iGui.get().getDescendants(obj);
 	d.each(function(child) {
@@ -7109,6 +7204,8 @@ In2iGui.request = function(options) {
 			options.onJSON(json);
 		} else if (typeof(onSuccess)=='function') {
 			onSuccess(t);
+		} else if (options.onText) {
+			options.onText(t.responseText);
 		}
 	};
 	var onFailure = options.onFailure;
@@ -7206,13 +7303,14 @@ In2iGui.Source.prototype = {
 		this.pendingRefresh = false;
 		var self = this;
 		if (this.options.url) {
-			var url = new n2i.URL(this.options.url);
-			this.parameters.each(function(p) {
-				url.addParameter(p.key,p.value);
-			});
+			var prms = {};
+			for (var i=0; i < this.parameters.length; i++) {
+				var p = this.parameters[i];
+				prms[p.key] = p.value;
+			};
 			this.busy=true;
 			In2iGui.callDelegates(this,'sourceIsBusy');
-			new Ajax.Request(url.toString(), {onSuccess: function(t) {self.parse(t)},onException:function(t,e) {n2i.log(e)}});
+			new Ajax.Request(this.options.url, {parameters:prms,onSuccess: function(t) {self.parse(t)},onException:function(t,e) {n2i.log(e)}});
 		} else if (this.options.dwr) {
 			var pair = this.options.dwr.split('.');
 			var facade = eval(pair[0]);
@@ -7270,7 +7368,7 @@ In2iGui.Source.prototype = {
 		this.end();
 	},
 	addParameter : function(parm) {
-		n2i.log(parm.value);
+		//n2i.log(parm.value);
 		this.parameters.push(parm);
 	},
 	changeParameter : function(key,value) {

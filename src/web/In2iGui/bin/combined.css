@@ -210,6 +210,13 @@ div.browser .column div.selected, div.browser .column div.selected:hover
 	color: #fff;
 }
 
+/****************************************** Fragment *******************************/
+
+div.in2igui_fragment_brushed
+{
+	background: url('../gfx/backgrounds/brushed.png');
+}
+
 /****************************************** Info view ******************************/
 
 div.in2igui_infoview
@@ -298,6 +305,8 @@ a.in2igui_button
 	cursor: pointer;
 	text-decoration: none;
 	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+	-webkit-user-select: none;
+	-moz-user-select: none;
 }
 
 a.in2igui_button span
@@ -666,6 +675,39 @@ div.in2igui_dragproxy span
 	padding: 0px;
 	margin: 0px;
 	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+	text-align: left;
+}
+
+div.in2igui_formula_fieldset
+{
+	border: 1px solid #ddd;
+	padding: 10px;
+	margin-top: 4px;
+	background: #f6f6f6;
+}
+
+strong.in2igui_formula_fieldset
+{
+	position: absolute;
+	margin-top: -19px;
+	background: #f3f3f3;
+	font-size: 12px;
+	padding: 0 4px;
+	margin-left: -2px;
+	color: #666;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+}
+
+div.in2igui_window strong.in2igui_formula_fieldset
+{
+	background: #E7E7E7;
+}
+
+div.in2igui_window div.in2igui_formula_fieldset
+{
+	background: #eee;
+	border: 1px solid #ccc;
 }
 
 .in2igui_formula_header
@@ -755,6 +797,19 @@ form.in2igui_formula select
 	outline: none;
 }
 
+div.in2igui_textarea_dummy
+{
+	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+	font-size: 9pt;
+	line-height:16px;
+	position: absolute;
+	visibility: hidden;
+	left: -10000px;
+	top: -10000px;
+	word-wrap: break-word;
+	padding: 1px 0px;
+}
+
 input.in2igui_formula_text
 {
 	height: 18px;
@@ -767,6 +822,8 @@ textarea.in2igui_formula_text
 	padding: 0px;
 	margin: 0;
 	padding: 1px 0px;
+	resize: none;
+	overflow-x: hidden;
 }
 
 form.in2igui_formula fieldset
@@ -780,6 +837,11 @@ form.in2igui_formula fieldset legend
 {
 	font-size: 9pt;
 	color: #999;
+}
+
+td.in2igui_formula_group
+{
+	padding: 0;
 }
 
 div.in2igui_formula_item
@@ -943,6 +1005,7 @@ span.in2igui_number span span
 {
 	margin: 0 17px 0 6px;
 	background: url('../gfx/number.png') left -25px repeat-x;
+	line-height: 32px;
 }
 
 span.in2igui_number input
@@ -1020,140 +1083,6 @@ span.in2igui_number_adaptive input
 span.in2igui_style_length input
 {
 	width: 50px;
-}
-
-/************************************* Drop down ********************************/
-
-a.in2igui_dropdown
-{
-	display: inline-block;
-	height: 26px;
-	background: url('../gfx/dropdown.png') -19px top no-repeat;
-	outline: none;
-	text-decoration: none;
-	color: #333;
-	font-size: 13px;
-	line-height: 26px;
-	vertical-align: middle;
-	text-align: left;
-}
-
-a.in2igui_dropdown span
-{
-	display: block;
-	height: 26px;
-	background: url('../gfx/dropdown.png') right -52px no-repeat;
-}
-
-a.in2igui_dropdown span span
-{
-	margin: 0 25px 0 6px;
-	background: url('../gfx/dropdown.png') left -26px repeat-x;
-	padding-left: 2px;
-	padding-right: 10px;
-}
-
-a.in2igui_dropdown:hover
-{
-	background-position: -19px -156px;
-}
-
-a.in2igui_dropdown:hover span
-{
-	background-position: right -208px;
-}
-
-a.in2igui_dropdown:hover span span
-{
-	background-position: left -182px;
-}
-
-a.in2igui_dropdown_focused
-{
-	background-position: -19px -78px;
-}
-
-a.in2igui_dropdown_focused span
-{
-	background-position: right -130px;
-}
-
-a.in2igui_dropdown_focused span span
-{
-	background-position: left -104px;
-}
-
-a.in2igui_dropdown_focused:hover
-{
-	background-position: -19px -234px;
-}
-
-a.in2igui_dropdown_focused:hover span
-{
-	background-position: right -286px;
-}
-
-a.in2igui_dropdown_focused:hover span span
-{
-	background-position: left -260px;
-}
-
-a.in2igui_dropdown strong
-{
-	display: block;
-	overflow: hidden;
-	font-weight: normal;
-	height: 26px;
-	width: 100%;
-}
-
-a.in2igui_dropdown em
-{
-	color: #456;
-}
-
-div.in2igui_dropdown_selector
-{
-	position: absolute;
-	display: none;
-	top: 0;
-	left: 0;
-	background: #fff;
-	border: 1px solid #ddd;
-	font-size: 12px;
-	-webkit-box-shadow: 0px 3px 5px #999;
-	-webkit-border: none;
-	-moz-box-shadow: 0px 3px 5px #999;
-	overflow: auto;
-	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
-}
-
-div.in2igui_dropdown_selector a
-{
-	padding: 2px 5px;
-	display: block;
-	text-decoration: none;
-	color: #333;
-}
-
-div.in2igui_dropdown_selector a.in2igui_selected
-{
-	background: #eee;
-	color: #000;
-	font-weight: bold;
-}
-
-div.in2igui_dropdown_selector a:hover
-{
-	background-color: #3875d7;
-	color: #fff;
-}
-
-/* Adaptive */
-
-a.in2igui_dropdown_adaptive
-{
-	width: 100%;
 }
 
 /************************************** Buttons *********************************/
@@ -1456,6 +1385,11 @@ div.in2igui_window_dark div.in2igui_field span.in2igui_field_content
 	background: #222222;
 }
 
+div.in2igui_window_dark div.in2igui_field span.in2igui_field_singleline
+{
+	background: none;
+}
+
 div.in2igui_window_dark input.in2igui_tokens_token
 {
 	background: #222;
@@ -1466,6 +1400,137 @@ div.in2igui_window_dark input.in2igui_tokens_token
 div.in2igui_window_dark a.in2igui_checkbox
 {
 	color: #fff;
+}a.in2igui_dropdown
+{
+	display: inline-block;
+	height: 26px;
+	background: url('../gfx/dropdown.png') -19px top no-repeat;
+	outline: none;
+	text-decoration: none;
+	color: #333;
+	font-size: 13px;
+	line-height: 26px;
+	vertical-align: middle;
+	text-align: left;
+}
+
+a.in2igui_dropdown span
+{
+	display: block;
+	height: 26px;
+	background: url('../gfx/dropdown.png') right -52px no-repeat;
+}
+
+a.in2igui_dropdown span span
+{
+	margin: 0 25px 0 6px;
+	background: url('../gfx/dropdown.png') left -26px repeat-x;
+	padding-left: 2px;
+	padding-right: 10px;
+}
+
+a.in2igui_dropdown:hover
+{
+	background-position: -19px -156px;
+}
+
+a.in2igui_dropdown:hover span
+{
+	background-position: right -208px;
+}
+
+a.in2igui_dropdown:hover span span
+{
+	background-position: left -182px;
+}
+
+a.in2igui_dropdown_focused
+{
+	background-position: -19px -78px;
+}
+
+a.in2igui_dropdown_focused span
+{
+	background-position: right -130px;
+}
+
+a.in2igui_dropdown_focused span span
+{
+	background-position: left -104px;
+}
+
+a.in2igui_dropdown_focused:hover
+{
+	background-position: -19px -234px;
+}
+
+a.in2igui_dropdown_focused:hover span
+{
+	background-position: right -286px;
+}
+
+a.in2igui_dropdown_focused:hover span span
+{
+	background-position: left -260px;
+}
+
+a.in2igui_dropdown strong
+{
+	display: block;
+	overflow: hidden;
+	font-weight: normal;
+	height: 100%;
+	width: 100%;
+}
+
+a.in2igui_dropdown em
+{
+	color: #456;
+}
+
+div.in2igui_dropdown_selector
+{
+	position: absolute;
+	display: none;
+	top: 0;
+	left: 0;
+	background: #fff;
+	border: 1px solid #ddd;
+	font-size: 12px;
+	-webkit-box-shadow: 0px 3px 5px #999;
+	-webkit-border: none;
+	-moz-box-shadow: 0px 3px 5px #999;
+	overflow: auto;
+	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+}
+
+div.in2igui_dropdown_selector a
+{
+	padding: 2px 5px;
+	display: block;
+	text-decoration: none;
+	color: #333;
+	min-height: 15px;
+}
+
+div.in2igui_dropdown_selector a.in2igui_selected
+{
+	background: #eee;
+	color: #000;
+	font-weight: bold;
+}
+
+div.in2igui_dropdown_selector a:hover
+{
+	background-color: #3875d7;
+	color: #fff;
+}
+
+/* Adaptive */
+
+a.in2igui_dropdown_adaptive
+{
+	width: 100%;
 }/************************ overflow **********************/
 
 
@@ -1806,6 +1871,11 @@ div.in2igui_toolbar span.in2igui_divider
 	margin: 1px 5px 0px;
 }
 
+div.in2igui_toolbar_centered
+{
+	text-align: center;
+}
+
 div.in2igui_toolbar_right
 {
 	position: absolute;
@@ -2090,6 +2160,16 @@ span.in2igui_toolbar_item a.in2igui_dropdown
 	margin-top: 7px;
 }
 
+span.in2igui_toolbar_item .in2igui_checkboxes
+{
+	padding-top: 11px;
+}
+
+span.in2igui_toolbar_item .in2igui_field
+{
+	padding-top: 8px;
+}
+
 span.in2igui_toolbar_item span.in2igui_segmented
 {
 	margin-top: 9px;
@@ -2282,7 +2362,7 @@ div.in2igui_window_light div.in2igui_window_content div.in2igui_window_content
 }
 
 
-/********************************** Light **************************/
+/********************************** Dark **************************/
 
 div.in2igui_window_dark div.in2igui_window_titlebar, div.in2igui_window_dark div.in2igui_window_titlebar div
 {
@@ -2315,7 +2395,6 @@ div.in2igui_window_dark div.in2igui_window_content div.in2igui_window_content
 
 div.in2igui_list_body
 {
-	overflow: auto;
 }
 
 div.in2igui_list table
@@ -2390,6 +2469,19 @@ div.in2igui_list .in2igui_icon
 {
 	margin-right: 3px;
 	float: left;
+}
+
+span.in2igui_list_icons
+{
+	white-space: nowrap;
+	font-size: 0;
+	vertical-align: top;
+	display: inline-block;
+}
+
+span.in2igui_list_icons .in2igui_icon
+{
+	float: none;
 }
 
 
@@ -2540,10 +2632,10 @@ div.in2igui_selection_item span.in2igui_selection_label
 strong.in2igui_selection_badge
 {
 	float: right;
-	background: #8697ba;
+	background: #bcd;
 	color: #fff;
 	font-size: 11px;
-	padding: 0 5px;
+	padding: 0 4px;
 	-moz-border-radius: 8px;
 	-webkit-border-radius: 7px;
 	min-width: 10px;
@@ -2582,6 +2674,10 @@ div.in2igui_selection div.in2igui_selected, div.in2igui_selection div.in2igui_se
 	background: -moz-linear-gradient(top, #92BCFA, #5580ee);
 	background: -webkit-gradient(linear, left top, left bottom, from(#92BCFA), to(#5580ee));
 	color: #fff;
+}
+
+div.in2igui_selection div.in2igui_selected span.in2igui_selection_label
+{
 	text-shadow: 0 1px 0 #5070cc;
 }
 
@@ -2591,6 +2687,7 @@ div.in2igui_selection_inline div.in2igui_selected span.in2igui_selection_label
 	color: #fff;
 	-moz-border-radius: 3px;
 	-webkit-border-radius: 3px;
+	text-shadow: none;
 }
 
 .in2igui_selection .title
@@ -3190,6 +3287,7 @@ textarea.in2igui_editor_header
 	position: absolute;
 	padding: 0px;
 	display: block;
+	outline: none;
 }
 
 textarea.in2igui_editor_html
@@ -3210,7 +3308,7 @@ div.in2igui_editor_dragproxy
 
 .in2igui_editor_part_active
 {
-	border: 1px dashed #3875d7;
+	outline: 1px dashed #3875d7;
 }
 
 div.in2igui_overlay_icon:hover
@@ -3827,6 +3925,7 @@ div.in2igui_box_absolute
 	left: 50%;
 	top: -10000px;
 	margin-left: -1000px;
+	visibility: hidden;
 }
 
 div.in2igui_box_top
@@ -4284,6 +4383,7 @@ div.in2igui_tabs_bar
 {
 	padding-top: 4px;
 	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+	font-size: 0;
 }
 
 div.in2igui_tabs_bar ul
@@ -4511,6 +4611,14 @@ div.in2igui_bar_left
 	height: 30px;
 }
 
+div.in2igui_bar_absolute
+{
+	position: absolute;
+	visibility: hidden;
+	left: -1000px;
+	top: -1000px;
+}
+
 /*************** Button **************/
 
 a.in2igui_bar_button
@@ -4676,6 +4784,7 @@ div.in2igui_message div div
 }span.in2igui_segmented
 {
 	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
 	background: #fff;
 	border: 1px solid #AAAAAA;
 	display: inline-block;
@@ -4693,6 +4802,7 @@ span.in2igui_segmented a
 	color: #333;
 	padding: 0 3px;
 	-moz-border-radius: 2px;
+	-webkit-border-radius: 2px;
 	outline: none;
 }
 
@@ -4711,4 +4821,79 @@ span.in2igui_segmented_text
 a.in2igui_segmented_selected
 {
 	background: #ddd;
+	background: -moz-linear-gradient(top, #EFF2F4, #C0C9CF);
+	background: -webkit-gradient(linear, left top, left bottom, from(#EFF2F4), to(#C0C9CF));
+}div.in2igui_links
+{
+	border-top: 1px solid #eee;
+	background: #fff;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+}
+
+div.in2igui_links_row
+{
+	padding: 2px 3px;
+	border-bottom: 1px solid #eee;
+	overflow: hidden;
+	position: relative;
+	cursor: pointer;
+}
+
+div.in2igui_links_row:hover
+{
+	background-color: #EBF0F7;
+}
+
+div.in2igui_links_text
+{
+	margin-left: 20px;
+	font-size: 11px;
+	line-height: 11px;
+}
+
+div.in2igui_links_info
+{
+	margin-left: 20px;
+	font-size: 9px;
+	line-height: 11px;
+	color: #aaa;
+}
+
+div.in2igui_links span.in2igui_icon
+{
+	float: left;
+}
+
+div.in2igui_links_row_selected
+{
+	background-color: #3875d7;
+	background: -moz-linear-gradient(top, #92BCFA, #5580ee);
+	background: -webkit-gradient(linear, left top, left bottom, from(#92BCFA), to(#5580ee));
+}
+
+div.in2igui_links_row_selected div
+{
+	color: #fff;
+	text-shadow: 0 1px 2px #5070cc;
+}
+
+span.in2igui_links_remove
+{
+	position: absolute;
+	right: 5px;
+	top: 50%;
+	margin-top: -8px;
+	display: none;
+}
+
+span.in2igui_links_remove:hover
+{
+	cursor: pointer;
+	background-position: 0 -16px;
+}
+
+div.in2igui_links_row:hover span.in2igui_links_remove
+{
+	display: inline-block;
 }
