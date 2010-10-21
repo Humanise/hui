@@ -79,7 +79,7 @@ In2iGui.Button.prototype = {
 			if (form) {form.submit();}
 		}
 	},
-	/** Registers a function as a click listener or issue a click */
+	/** Registers a function as a click listener or issues a click */
 	click : function(func) {
 		if (func) {
 			this.listen({$click:func});
@@ -95,6 +95,14 @@ In2iGui.Button.prototype = {
 	setEnabled : function(enabled) {
 		this.enabled = enabled;
 		this.updateUI();
+	},
+	/** Enables the button */
+	enable : function() {
+		this.setEnabled(true);
+	},
+	/** Disables the button */
+	disable : function() {
+		this.setEnabled(false);
 	},
 	/** Sets whether the button is highlighted */
 	setHighlighted : function(highlighted) {

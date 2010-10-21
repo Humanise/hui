@@ -6,7 +6,6 @@ div.in2igui_list
 
 div.in2igui_list_body
 {
-	overflow: auto;
 }
 
 div.in2igui_list table
@@ -81,6 +80,19 @@ div.in2igui_list .in2igui_icon
 {
 	margin-right: 3px;
 	float: left;
+}
+
+span.in2igui_list_icons
+{
+	white-space: nowrap;
+	font-size: 0;
+	vertical-align: top;
+	display: inline-block;
+}
+
+span.in2igui_list_icons .in2igui_icon
+{
+	float: none;
 }
 
 

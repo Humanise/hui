@@ -32,10 +32,10 @@ div.in2igui_selection_item span.in2igui_selection_label
 strong.in2igui_selection_badge
 {
 	float: right;
-	background: #8697ba;
+	background: #bcd;
 	color: #fff;
 	font-size: 11px;
-	padding: 0 5px;
+	padding: 0 4px;
 	-moz-border-radius: 8px;
 	-webkit-border-radius: 7px;
 	min-width: 10px;
@@ -74,6 +74,10 @@ div.in2igui_selection div.in2igui_selected, div.in2igui_selection div.in2igui_se
 	background: -moz-linear-gradient(top, #92BCFA, #5580ee);
 	background: -webkit-gradient(linear, left top, left bottom, from(#92BCFA), to(#5580ee));
 	color: #fff;
+}
+
+div.in2igui_selection div.in2igui_selected span.in2igui_selection_label
+{
 	text-shadow: 0 1px 0 #5070cc;
 }
 
@@ -83,6 +87,7 @@ div.in2igui_selection_inline div.in2igui_selected span.in2igui_selection_label
 	color: #fff;
 	-moz-border-radius: 3px;
 	-webkit-border-radius: 3px;
+	text-shadow: none;
 }
 
 .in2igui_selection .title

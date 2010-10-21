@@ -30,14 +30,14 @@
 		var normal = In2iGui.Window.create({width:'300'});
 		var editor = In2iGui.RichText.create()
 		var button = In2iGui.Button.create({text:'View source'})
-		button.listen({click:function() {
-			alert(editor.getValue())
+		button.listen({$click:function() {
+			$('source').value=editor.getValue();
 		}});
 		normal.add(editor);
 		normal.add(button);
 		normal.show();
 	})
 </script>
-
+<textarea id="source" style="height: 200px;"></textarea>
 </body>
 </html>

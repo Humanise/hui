@@ -3,6 +3,7 @@
  */
 In2iGui.Editor = function() {
 	this.name = 'In2iGuiEditor';
+	this.options = {rowClass:'row',columnClass:'column',partClass:'part'};
 	this.parts = [];
 	this.rows = [];
 	this.partControllers = [];
@@ -26,6 +27,9 @@ In2iGui.Editor.prototype = {
 	addPartController : function(key,title,controller) {
 		this.partControllers.push({key:key,'title':title,'controller':controller});
 	},
+	setOptions : function(options) {
+		n2i.override(this.options,options);
+	},
 	getPartController : function(key) {
 		var ctrl = null;
 		this.partControllers.each(function(item) {
@@ -39,20 +43,21 @@ In2iGui.Editor.prototype = {
 		}
 		var self = this;
 		this.parts = [];
-		var rows = $$('.row');
+		var rows = $$('.'+this.options.partClass);
 		rows.each(function(row,i) {
-			var columns = row.select('.column');
+			var columns = row.select('.'+self.options.columnClass);
 			self.reloadColumns(columns,i);
 			columns.each(function(column,j) {
-				var parts = column.select('.part');
+				var parts = column.select('.'+self.options.partClass);
 				self.reloadParts(parts,i,j);
 			});
 		});
-		var parts = $$('.part');
-		
+		var parts = $$('.'+this.options.partClass);
 		this.parts.each(function(part) {
 			var i = parts.indexOf(part.element);
-			if (i!=-1) delete(parts[i]);
+			if (i!=-1) {
+				delete(parts[i]);
+			}
 		});
 		this.reloadParts(parts,-1,-1);
 	},
@@ -75,9 +80,10 @@ In2iGui.Editor.prototype = {
 	},
 	reloadParts : function(parts,row,column) {
 		var self = this;
+		var reg = new RegExp(this.options.partClass+"_([\\w]+)","i");
 		parts.each(function(element,partIndex) {
 			if (!element) return;
-			var match = element.className.match(/part_([\w]+)/i);
+			var match = element.className.match(reg);
 			if (match && match[1]) {
 				var handler = self.getPartController(match[1]);
 				if (handler) {
@@ -490,7 +496,7 @@ In2iGui.Editor.Header.prototype = {
 	},
 	updateFieldStyle : function() {
 		this.field.setStyle({width:this.header.getWidth()+'px',height:this.header.getHeight()+'px'});
-		n2i.copyStyle(this.header,this.field,['fontSize','marginTop','fontWeight','fontFamily','textAlign','color','fontStyle']);
+		n2i.copyStyle(this.header,this.field,['fontSize','lineHeight','marginTop','fontWeight','fontFamily','textAlign','color','fontStyle']);
 	},
 	getValue : function() {
 		return this.value;

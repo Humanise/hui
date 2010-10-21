@@ -69,7 +69,9 @@ In2iGui.Formula.prototype = {
 	reset : function() {
 		var d = In2iGui.get().getDescendants(this);
 		for (var i=0; i < d.length; i++) {
-			if (d[i].reset) d[i].reset();
+			if (d[i].reset) {
+				d[i].reset();
+			}
 		}
 	},
 	/** Adds a widget to the form */
@@ -134,21 +136,21 @@ In2iGui.Formula.Group.create = function(options) {
 In2iGui.Formula.Group.prototype = {
 	add : function(widget) {
 		var tr = new Element('tr');
-		this.body.insert(tr);
+		this.body.appendChild(tr);
+		var td = new Element('td',{'class':'in2igui_formula_group'});
 		if (widget.getLabel) {
 			var label = widget.getLabel();
 			if (label) {
-				var th = new Element('th');
-				th.insert(new Element('label').insert(label));
-				tr.insert(th);
+				if (this.options.above) {
+					td.insert(new Element('label').insert(label));
+				} else {
+					var th = new Element('th');
+					th.insert(new Element('label').insert(label));
+					tr.insert(th);
+				}
 			}
 		}
-		var td = new Element('td');
 		td.insert(new Element('div',{'class':'in2igui_formula_item'}).insert(widget.getElement()));
-		if (this.options.above) {
-			tr = new Element('tr');
-			this.body.insert(tr);
-		}
 		tr.insert(td);
 	},
 	createButtons : function(options) {
@@ -169,11 +171,12 @@ In2iGui.Formula.Group.prototype = {
  * @constructor
  */
 In2iGui.Formula.Text = function(options) {
-	this.options = n2i.override({label:null,key:null,lines:1,live:false},options);
+	this.options = n2i.override({label:null,key:null,lines:1,live:false,maxHeight:100},options);
 	this.element = $(options.element);
 	this.name = options.name;
 	In2iGui.extend(this);
 	this.input = this.element.select('.in2igui_formula_text')[0];
+	this.multiline = this.input.tagName.toLowerCase() == 'textarea';
 	this.placeholder = this.element.select('.in2igui_field_placeholder')[0];
 	this.value = this.input.value;
 	if (this.placeholder) {
@@ -191,9 +194,9 @@ In2iGui.Formula.Text = function(options) {
 In2iGui.Formula.Text.create = function(options) {
 	options = n2i.override({lines:1},options);
 	var node,input;
-	if (options.lines>1) {
+	if (options.lines>1 || options.multiline) {
 		input = new Element('textarea',
-			{'class':'in2igui_formula_text','rows':options.lines}
+			{'class':'in2igui_formula_text','rows':options.lines,style:'height: 32px;'}
 		);
 		node = new Element('span',{'class':'in2igui_formula_text_multiline'}).insert(input);
 	} else {
@@ -224,7 +227,7 @@ In2iGui.Formula.Text.prototype = {
 	},
 	/** @private */
 	onKeyUp : function(e) {
-		if (this.options.lines<2 && e.keyCode===Event.KEY_RETURN) {
+		if (!this.multiline && e.keyCode===Event.KEY_RETURN) {
 			this.fire('submit');
 			var form = In2iGui.get().getAncestor(this,'in2igui_formula');
 			if (form) {form.submit();}
@@ -233,6 +236,7 @@ In2iGui.Formula.Text.prototype = {
 		if (this.input.value==this.value) {return;}
 		this.value=this.input.value;
 		this.updateClass();
+		this.expand(true);
 		In2iGui.callAncestors(this,'childValueChanged',this.input.value);
 		this.fire('valueChanged',this.input.value);
 	},
@@ -266,6 +270,7 @@ In2iGui.Formula.Text.prototype = {
 		}
 		this.value = value;
 		this.input.value = value;
+		this.expand(true);
 	},
 	getValue : function() {
 		return this.input.value;
@@ -288,6 +293,34 @@ In2iGui.Formula.Text.prototype = {
 		if (!isError) {
 			In2iGui.hideToolTip({key:this.name});
 		}
+	},
+	// Expanding
+	
+	$visibilityChanged : function() {
+		window.setTimeout(this.expand.bind(this));
+	},
+	/** @private */
+	expand : function(animate) {
+		if (!this.multiline) {return};
+		n2i.log('Visible:'+n2i.dom.isVisible(this.element));
+		if (!n2i.dom.isVisible(this.element)) {return};
+		var textHeight = In2iGui.getTextAreaHeight(this.input);
+		textHeight = Math.max(32,textHeight);
+		textHeight = Math.min(textHeight,this.options.maxHeight);
+		if (animate) {
+			this.updateOverflow();
+			n2i.animate(this.input,'height',textHeight+'px',300,{ease:n2i.ease.slowFastSlow,onComplete:function() {
+				this.updateOverflow();
+				}.bind(this)
+			});
+		} else {
+			this.input.style.height=textHeight+'px';
+			this.updateOverflow();
+		}
+	},
+	updateOverflow : function() {
+		if (!this.multiline) return;
+		this.input.style.overflowY=this.input.clientHeight>=this.options.maxHeight ? 'auto' : 'hidden';
 	}
 }
 
@@ -494,7 +527,7 @@ In2iGui.Formula.DropDown = function(o) {
 	this.options = n2i.override({label:null,placeholder:null,url:null,source:null},o);
 	this.name = o.name;
 	var e = this.element = $(o.element);
-	this.inner = e.select('strong')[0];
+	this.inner = e.getElementsByTagName('strong')[0];
 	this.items = o.items || [];
 	this.index = -1;
 	this.value = this.options.value || null;
@@ -506,52 +539,62 @@ In2iGui.Formula.DropDown = function(o) {
 	if (this.options.url) {
 		this.options.source = new In2iGui.Source({url:this.options.url,delegate:this});
 	} else if (this.options.source) {
-		this.options.source.listen(this);	
+		this.options.source.listen(this);
 	}
 }
 
-In2iGui.Formula.DropDown.create = function(o) {
-	o = o || {};
-	o.element = new Element('a',{'class':'in2igui_dropdown',href:'#'}).update(
+In2iGui.Formula.DropDown.create = function(options) {
+	options = options || {};
+	options.element = new Element('a',{'class':'in2igui_dropdown',href:'#'}).update(
 		'<span><span><strong></strong></span></span>'
 	);
-	return new In2iGui.Formula.DropDown(o);
+	return new In2iGui.Formula.DropDown(options);
 }
 
 In2iGui.Formula.DropDown.prototype = {
+	/** @private */
 	addBehavior : function() {
 		In2iGui.addFocusClass({element:this.element,'class':'in2igui_dropdown_focused'});
 		this.element.observe('click',this.clicked.bind(this));
 		this.element.observe('blur',this.hideSelector.bind(this));
+		this.element.observe('keydown',this._keyDown.bind(this));
 	},
+	/** @private */
 	updateIndex : function() {
 		this.index=-1;
-		this.items.each(function(item,i) {
-			if (item.value==this.value) this.index=i;
-		}.bind(this));
+		for (var i=0; i < this.items.length; i++) {
+			if (this.items[i].value==this.value) {
+				this.index=i;
+			}
+		};
 	},
+	/** @private */
 	updateUI : function() {
 		var selected = this.items[this.index];
 		if (selected) {
 			var text = selected.label || selected.title || '';
-			this.inner.update(text.split("").join("\u200B"));
+			this.inner.innerHTML='';
+			n2i.dom.addText(this.inner,n2i.wrap(text));
 		} else if (this.options.placeholder) {
 			this.inner.update(new Element('em').update(this.options.placeholder.escapeHTML()));
 		} else {
-			this.inner.update();
+			this.inner.innerHTML='';
 		}
-		if (!this.selector) return;
+		if (!this.selector) {
+			return;
+		}
 		this.selector.select('a').each(function(a,i) {
 			if (this.index==i) {
 				a.addClassName('in2igui_selected');
 			}
-			else a.className='';
+			else {a.className=''};
 		}.bind(this));
 	},
+	/** @private */
 	clicked : function(e) {
 		e.stop();
 		this.buildSelector();
-		var el = this.element,s=this.selector;
+		var el = this.element, s=this.selector;
 		el.focus();
 		if (!this.items) return;
 		var docHeight = n2i.getDocumentHeight();
@@ -566,13 +609,40 @@ In2iGui.Formula.DropDown.prototype = {
 		}
 		s.setStyle({visibility:'hidden',display:'block',width:''});
 		var height = Math.min(docHeight-s.cumulativeOffset().top-5,200);
-		var width = Math.max(el.getWidth()-5,100,s.getWidth());
+		var width = Math.max(el.getWidth()-5,100,s.getWidth()+20);
 		var space = n2i.getDocumentWidth()-el.cumulativeOffset().left-20;
 		width = Math.min(width,space);
 		s.setStyle({visibility:'visible',width:width+'px',zIndex:In2iGui.nextTopIndex(),maxHeight:height+'px'});
 	},
-	getValue : function(value) {
+	getValue : function() {
 		return this.value;
+	},
+	/** @private */
+	_keyDown : function(e) {
+		if (this.items.length==0) {
+			return;
+		}
+		if (e.keyCode==40) {
+			e.stop();
+			if (this.index>=this.items.length-1) {
+				this.value=this.items[0].value;
+			} else {
+				this.value=this.items[this.index+1].value;
+			}
+			this.updateIndex();
+			this.updateUI();
+			this.fireChange();
+		} else if (e.keyCode==38) {
+			e.stop();
+			if (this.index>0) {
+				this.index--;
+			} else {
+				this.index = this.items.length-1;
+			}
+			this.value = this.items[this.index].value;
+			this.updateUI();
+			this.fireChange();
+		}
 	},
 	setValue : function(value) {
 		this.value = value;
@@ -590,6 +660,12 @@ In2iGui.Formula.DropDown.prototype = {
 			this.options.source.refresh();
 		}
 	},
+	getItem : function(value) {
+		if (this.index>=0) {
+			return this.items[this.index];
+		}
+		return 0;
+	},
 	addItem : function(item) {
 		this.items.push(item);
 		this.dirty = true;
@@ -603,18 +679,22 @@ In2iGui.Formula.DropDown.prototype = {
 		this.updateIndex();
 		this.updateUI();
 	},
+	/** @private */
 	$itemsLoaded : function(items) {
 		this.setItems(items);
 	},
+	/** @private */
 	hideSelector : function() {
 		if (!this.selector) return;
 		this.selector.hide();
 	},
+	/** @private */
 	buildSelector : function() {
 		if (!this.dirty || !this.items) return;
 		if (!this.selector) {
 			this.selector = new Element('div',{'class':'in2igui_dropdown_selector'});
 			document.body.appendChild(this.selector);
+			this.selector.observe('mousedown',function(e) {e.stop()});
 		} else {
 			this.selector.update();
 		}
@@ -629,6 +709,7 @@ In2iGui.Formula.DropDown.prototype = {
 		});
 		this.dirty = false;
 	},
+	/** @private */
 	itemClicked : function(item,index) {
 		this.index = index;
 		var changed = this.value!=this.items[index].value;
@@ -636,9 +717,12 @@ In2iGui.Formula.DropDown.prototype = {
 		this.updateUI();
 		this.hideSelector();
 		if (changed) {
-			In2iGui.callAncestors(this,'childValueChanged',this.value);
-			this.fire('valueChanged',this.value);
+			this.fireChange();
 		}
+	},
+	fireChange : function() {
+		In2iGui.callAncestors(this,'childValueChanged',this.value);
+		this.fire('valueChanged',this.value);
 	}
 }
 
@@ -686,6 +770,7 @@ In2iGui.Formula.Radiobuttons.prototype = {
 		var self = this;
 		element.onclick = function() {
 			self.setValue(radio.value);
+			self.fire('valueChanged',radio.value);
 		}
 	}
 }
@@ -769,20 +854,19 @@ In2iGui.Formula.Checkbox.prototype = {
  * Multiple checkboxes
  * @constructor
  */
-In2iGui.Formula.Checkboxes = function(o) {
-	this.options = o;
-	this.element = $(o.element);
-	this.name = o.name;
-	this.items = o.items || [];
+In2iGui.Formula.Checkboxes = function(options) {
+	this.options = options;
+	this.element = $(options.element);
+	this.name = options.name;
+	this.items = options.items || [];
 	this.sources = [];
 	this.subItems = [];
-	this.values = o.values || o.value || []; // values is deprecated
-	n2i.log(this.values);
+	this.values = options.values || options.value || []; // values is deprecated
 	In2iGui.extend(this);
 	this.addBehavior();
 	this.updateUI();
-	if (o.url) {
-		new In2iGui.Source({url:o.url,delegate:this});
+	if (options.url) {
+		new In2iGui.Source({url:options.url,delegate:this});
 	}
 }
 
@@ -801,6 +885,7 @@ In2iGui.Formula.Checkboxes.create = function(o) {
 }
 
 In2iGui.Formula.Checkboxes.prototype = {
+	/** @private */
 	addBehavior : function() {
 		this.element.select('a.in2igui_checkbox').each(function(check,i) {
 			check.observe('click',function(e) {
@@ -869,6 +954,13 @@ In2iGui.Formula.Checkboxes.prototype = {
 	registerSource : function(source) {
 		source.parent = this;
 		this.sources.push(source);
+	},
+	registerItem : function(item) {
+		// If it is a number, treat it as such
+		if (parseInt(item.value)==item.value) {
+			item.value = parseInt(item.value);
+		}
+		this.items.push(item);
 	},
 	registerItems : function(items) {
 		items.parent = this;
@@ -1199,7 +1291,6 @@ In2iGui.Formula.Location.prototype = {
 			this.value = null;
 		}
 		this.updatePicker();
-		n2i.log(this.value);
 	},
 	updatePicker : function() {
 		if (this.picker) {

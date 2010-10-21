@@ -34,6 +34,7 @@ In2iGui.Window.create = function(options) {
 }
 
 In2iGui.Window.prototype = {
+	/** @private */
 	addBehavior : function() {
 		var self = this;
 		if (this.close) {
@@ -64,7 +65,6 @@ In2iGui.Window.prototype = {
 			n2i.ani(this.element,'opacity',1,0);
 		}
 		this.visible = true;
-		In2iGui.callDescendants(this,'parentShown');
 		In2iGui.callVisible(this);
 	},
 	toggle : function() {
@@ -96,6 +96,7 @@ In2iGui.Window.prototype = {
 
 ////////////////////////////// Dragging ////////////////////////////////
 
+	/** @private */
 	startDrag : function(e) {
 		var event = Event.extend(e || window.event);
 		this.element.style.zIndex=In2iGui.nextPanelIndex();
@@ -113,6 +114,7 @@ In2iGui.Window.prototype = {
 		document.body.onselectstart = function () { return false; };
 		return false;
 	},
+	/** @private */
 	calc : function(top,left) {
 		// TODO: No need to do this all the time
 		this.a = this.latestPosition.left-left;
@@ -121,6 +123,7 @@ In2iGui.Window.prototype = {
 		this.latestTime = new Date().getMilliseconds();
 		this.latestPosition = {'top':top,'left':left};
 	},
+	/** @private */
 	drag : function(e) {
 		var event = Event.extend(e);
 		this.element.style.right = 'auto';
@@ -131,6 +134,7 @@ In2iGui.Window.prototype = {
 		//this.calc(top,left);
 		return false;
 	},
+	/** @private */
 	endDrag : function(e) {
 		Event.stopObserving(document,'mousemove',this.moveListener);
 		Event.stopObserving(document,'mouseup',this.upListener);

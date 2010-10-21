@@ -28,6 +28,11 @@ div.in2igui_toolbar span.in2igui_divider
 	margin: 1px 5px 0px;
 }
 
+div.in2igui_toolbar_centered
+{
+	text-align: center;
+}
+
 div.in2igui_toolbar_right
 {
 	position: absolute;
@@ -310,6 +315,16 @@ span.in2igui_toolbar_item span.in2igui_number
 span.in2igui_toolbar_item a.in2igui_dropdown
 {
 	margin-top: 7px;
+}
+
+span.in2igui_toolbar_item .in2igui_checkboxes
+{
+	padding-top: 11px;
+}
+
+span.in2igui_toolbar_item .in2igui_field
+{
+	padding-top: 8px;
 }
 
 span.in2igui_toolbar_item span.in2igui_segmented

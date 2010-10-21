@@ -59,6 +59,13 @@ n2i.override = function(original,subject) {
 	return original;
 }
 
+n2i.wrap = function(str) {
+	if (str===null || str===undefined) {
+		return '';
+	}
+	return str.split('').join("\u200B");
+}
+
 /** Trim whitespace including unicode chars */
 n2i.trim = function(str) {
 	if (!str) return str;
@@ -67,17 +74,16 @@ n2i.trim = function(str) {
 
 /** Escape the html in a string */
 n2i.escapeHTML = function(str) {
-    var div = document.createElement('div');
-    div.appendChild(document.createTextNode(str));
-    return div.innerHTML;
+   	return document.createElement('div').appendChild(document.createTextNode(str)).innerHTML;
 }
 
 /** Checks if a string has characters */
 n2i.isEmpty = n2i.isBlank = function(str) {
-	if (str===null || typeof(str)==='undefined') return true;
+	if (str===null || typeof(str)==='undefined' || str==='') return true;
 	return typeof(str)=='string' && n2i.trim(str).length==0;
 }
 
+/** Checks that an object is not null or undefined */
 n2i.isDefined = function(obj) {
 	return obj!==null && typeof(obj)!=='undefined';
 }
@@ -89,6 +95,20 @@ n2i.inArray = function(arr,value) {
 	return false;
 }
 
+/**
+ * Converts a string to an int if it is only digits, otherwise remains a string
+ */
+n2i.intOrString = function(str) {
+	if (n2i.isDefined(str)) {
+		var result = /[0-9]+/.exec(str);
+		if (result!==null && result[0]==str) {
+			if (parseInt(str,10)==str) {
+				return parseInt(str,10);
+			}
+		}
+	}
+	return str;
+}
 
 n2i.flipInArray = function(arr,value) {
 	if (n2i.inArray(arr,value)) {
@@ -118,6 +138,14 @@ n2i.addToArray = function(arr,value) {
 			arr.push(value);
 		}
 	}
+}
+
+n2i.toIntArray = function(str) {
+	var array = str.split(',');
+	for (var i = array.length - 1; i >= 0; i--){
+		array[i] = parseInt(array[i]);
+	};
+	return array;
 }
 
 n2i.scrollTo = function(element) {
@@ -150,7 +178,31 @@ n2i.dom = {
 			}
 		};
 		return txt;
+	},
+	isVisible : function(node) {
+		while (node) {
+			if (node.style && (node.getStyle('display')==='none' || node.getStyle('visibility')==='hidden')) {
+				return false;
+			}
+			node = node.parentNode;
+		}
+		return true;
 	}
+}
+
+n2i.get = function(str) {
+	if (n.nodeType==n2i.ELEMENT_NODE) {
+		return str;
+	}
+	return document.getElementById(str);
+}
+
+n2i.build = function(tag,options) {
+	var e = document.createElement(tag);
+	if (options.className) {
+		e.className = options.className;
+	}
+	return e;
 }
 
 ///////////////////// Style ///////////////////
@@ -240,6 +292,29 @@ n2i.getSelectedText = function(doc) {
 		return doc.selection.createRange().text;
 	}
 	return '';
+}
+
+n2i.selection = {
+	clear : function() { 
+		var sel ; 
+		if(document.selection && document.selection.empty	){ 
+			document.selection.empty() ; 
+		} else if(window.getSelection) { 
+			sel=window.getSelection();
+			if(sel && sel.removeAllRanges) {
+				sel.removeAllRanges() ; 
+			}
+		}
+	},
+	getText : function(doc) {
+		doc = doc || document;
+		if (doc.getSelection) {
+			return doc.getSelection()+'';
+		} else if (doc.selection) {
+			return doc.selection.createRange().text;
+		}
+		return '';
+	}
 }
 
 /////////////////// Position /////////////////////

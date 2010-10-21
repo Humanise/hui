@@ -61,7 +61,7 @@ In2iGui.List = function(options) {
 In2iGui.List.create = function(options) {
 	options = n2i.override({},options);
 	var e = options.element = new Element('div',{'class':'in2igui_list'});
-	e.update('<div class="in2igui_list_navigation"><div class="in2igui_list_selection window_page"><div><div class="window_page_body"></div></div></div><span class="in2igui_list_count"></span></div><div class="in2igui_list_body"'+(options.maxHeight>0 ? ' style="max-height: '+options.maxHeight+'px;"' : '')+'><table cellspacing="0" cellpadding="0"><thead><tr></tr></thead><tbody></tbody></table></div>');
+	e.update('<div class="in2igui_list_navigation"><div class="in2igui_list_selection window_page"><div><div class="window_page_body"></div></div></div><span class="in2igui_list_count"></span></div><div class="in2igui_list_body"'+(options.maxHeight>0 ? ' style="max-height: '+options.maxHeight+'px; overflow: auto;"' : '')+'><table cellspacing="0" cellpadding="0"><thead><tr></tr></thead><tbody></tbody></table></div>');
 	return new In2iGui.List(options);
 }
 
@@ -255,7 +255,7 @@ In2iGui.List.prototype = {
 			th.className=className;
 			var span = new Element('span');
 			th.appendChild(span);
-			span.appendChild(document.createTextNode(headers[i].getAttribute('title')));
+			span.appendChild(document.createTextNode(headers[i].getAttribute('title') || ''));
 			headTr.appendChild(th);
 			this.columns.push({'key':key,'sortable':sortable,'width':width});
 		};
@@ -335,6 +335,8 @@ In2iGui.List.prototype = {
 				n2i.dom.addText(cell,child.nodeValue);
 			} else if (n2i.dom.isElement(child,'break')) {
 				cell.insert(new Element('br'));
+			} else if (n2i.dom.isElement(child,'icon')) {
+				cell.insert(In2iGui.createIcon(child.getAttribute('icon'),1));
 			} else if (n2i.dom.isElement(child,'line')) {
 				var line = new Element('p',{'class':'in2igui_list_line'}).insert(n2i.dom.getNodeText(child));
 				if (child.getAttribute('dimmed')=='true') {
@@ -350,6 +352,10 @@ In2iGui.List.prototype = {
 					obj.appendChild(document.createTextNode(child.firstChild.nodeValue));
 				}
 				cell.insert(obj);
+			} else if (n2i.dom.isElement(child,'icons')) {
+				var icons = new Element('span',{'class':'in2igui_list_icons'});
+				this.parseCell(child,icons);
+				cell.appendChild(icons);
 			}
 		};
 	},
@@ -391,7 +397,7 @@ In2iGui.List.prototype = {
 				} else {
 					var a = document.createElement('a');
 					a.appendChild(document.createTextNode(i+1));
-					a.onclick = function() {
+					a.onmousedown = function() {
 						self.windowPageWasClicked(this,i);
 						return false;
 					}

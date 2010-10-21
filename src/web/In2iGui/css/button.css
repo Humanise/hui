@@ -38,6 +38,8 @@ a.in2igui_button
 	cursor: pointer;
 	text-decoration: none;
 	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+	-webkit-user-select: none;
+	-moz-user-select: none;
 }
 
 a.in2igui_button span

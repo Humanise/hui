@@ -45,3 +45,8 @@ span.in2igui_number input
 {
 	padding-top: 4px;
 }
+
+div.in2igui_list_body
+{
+	overflow-y: hidden;
+}

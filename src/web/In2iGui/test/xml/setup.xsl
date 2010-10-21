@@ -5,7 +5,8 @@
 <xsl:include href="../../xslt/gui.xsl"/>
 
 <xsl:variable name="context">../../..</xsl:variable>
-<xsl:variable name="dev">false</xsl:variable>
+<xsl:variable name="dev">true</xsl:variable>
+<xsl:variable name="version">1</xsl:variable>
 
 <xsl:template match="/"><xsl:apply-templates/></xsl:template>
 </xsl:stylesheet>

@@ -5,6 +5,7 @@
 		<toolbar>
 			<icon icon="common/folder" title="List" action="dock.setUrl('list.xml')"/>
 			<icon icon="common/folder" title="Tabs" action="dock.setUrl('tabs.xml')"/>
+			<icon icon="common/folder" title="Bar" action="dock.setUrl('bar.xml')"/>
 			<icon icon="common/folder" title="Box" action="dock.setUrl('box.xml')"/>
 			<icon icon="common/folder" title="Formula" action="dock.setUrl('formula.xml')"/>
 			<icon icon="common/folder" title="Windows" action="dock.setUrl('windows.xml')"/>

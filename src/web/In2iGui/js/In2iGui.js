@@ -80,7 +80,8 @@ In2iGui.prototype = {
 		this.domLoaded = true;
 		In2iGui.domReady = true;
 		this.resize();
-		In2iGui.callSuperDelegates(this,'interfaceIsReady');
+		//In2iGui.callSuperDelegates(this,'interfaceIsReady');
+		In2iGui.callSuperDelegates(this,'ready');
 
 		this.reLayout();
 		Event.observe(window,'resize',this.reLayout.bind(this));
@@ -586,6 +587,22 @@ In2iGui.positionAtElement = function(element,target,options) {
 	}
 };
 
+In2iGui.getTextAreaHeight = function(input) {
+	var t = this.textAreaDummy;
+	if (!t) {
+		var t = this.textAreaDummy = document.createElement('div');
+		t.className='in2igui_textarea_dummy';
+		document.body.appendChild(t);
+	}
+	var html = input.value;
+	if (html[html.length-1]==='\n') {
+		html+='x';
+	}
+	html = html.escapeHTML().replace(/\n/g,'<br/>');
+	t.innerHTML = html;
+	t.style.width=(input.clientWidth)+'px';
+	return t.clientHeight;
+}
 
 //////////////////////////////// Drag drop //////////////////////////////
 
@@ -756,6 +773,9 @@ In2iGui.callAncestors = function(obj,method,value,event) {
 In2iGui.callDescendants = function(obj,method,value,event) {
 	if (typeof(value)=='undefined') {
 		value=obj;
+	}
+	if (!method[0]=='$') {
+		method = '$'+method;
 	}
 	var d = In2iGui.get().getDescendants(obj);
 	d.each(function(child) {
@@ -974,6 +994,8 @@ In2iGui.request = function(options) {
 			options.onJSON(json);
 		} else if (typeof(onSuccess)=='function') {
 			onSuccess(t);
+		} else if (options.onText) {
+			options.onText(t.responseText);
 		}
 	};
 	var onFailure = options.onFailure;
@@ -1071,13 +1093,14 @@ In2iGui.Source.prototype = {
 		this.pendingRefresh = false;
 		var self = this;
 		if (this.options.url) {
-			var url = new n2i.URL(this.options.url);
-			this.parameters.each(function(p) {
-				url.addParameter(p.key,p.value);
-			});
+			var prms = {};
+			for (var i=0; i < this.parameters.length; i++) {
+				var p = this.parameters[i];
+				prms[p.key] = p.value;
+			};
 			this.busy=true;
 			In2iGui.callDelegates(this,'sourceIsBusy');
-			new Ajax.Request(url.toString(), {onSuccess: function(t) {self.parse(t)},onException:function(t,e) {n2i.log(e)}});
+			new Ajax.Request(this.options.url, {parameters:prms,onSuccess: function(t) {self.parse(t)},onException:function(t,e) {n2i.log(e)}});
 		} else if (this.options.dwr) {
 			var pair = this.options.dwr.split('.');
 			var facade = eval(pair[0]);
@@ -1135,7 +1158,7 @@ In2iGui.Source.prototype = {
 		this.end();
 	},
 	addParameter : function(parm) {
-		n2i.log(parm.value);
+		//n2i.log(parm.value);
 		this.parameters.push(parm);
 	},
 	changeParameter : function(key,value) {

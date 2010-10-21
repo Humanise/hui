@@ -21,6 +21,7 @@ In2iGui.Menu.create = function(options) {
 }
 
 In2iGui.Menu.prototype = {
+	/** @private */
 	addBehavior : function() {
 		var self = this;
 		this.hider = function() {
@@ -51,7 +52,7 @@ In2iGui.Menu.prototype = {
 			Event.stop(e);
 		});
 		if (item.children) {
-			var sub = In2iGui.Menu.create(null,{autoHide:true,parentElement:element});
+			var sub = In2iGui.Menu.create({autoHide:true,parentElement:element});
 			sub.addItems(item.children);
 			element.observe('mouseover',function(e) {
 				sub.showAtElement(element,e,'horizontal');
@@ -79,8 +80,8 @@ In2iGui.Menu.prototype = {
 	},
 	itemWasClicked : function(value) {
 		this.value = value;
-		In2iGui.callDelegates(this,'itemWasClicked',value);
-		In2iGui.callDelegates(this,'select',value);
+		this.fire('itemWasClicked',value);
+		this.fire('select',value);
 		this.hide();
 	},
 	showAtPointer : function(event) {
@@ -117,7 +118,8 @@ In2iGui.Menu.prototype = {
 		var top = Math.max(0,Math.min(pos.top,innerHeight-height-20+scrollTop));
 		this.element.setStyle({'top':top+'px','left':left+'px','visibility':'visible',zIndex:In2iGui.nextTopIndex(),'width':(width-2)+'px'});
 		if (!this.visible) {
-			n2i.ani(this.element,'opacity',1,200);
+			//n2i.ani(this.element,'opacity',1,200);
+			this.element.setStyle({opacity:1});
 			this.addHider();
 			this.visible = true;
 		}
@@ -127,7 +129,7 @@ In2iGui.Menu.prototype = {
 		var self = this;
 		n2i.ani(this.element,'opacity',0,200,{onComplete:function() {
 			self.element.setStyle({'display':'none'});
-		}})
+		}});
 		this.removeHider();
 		for (var i=0; i < this.subMenus.length; i++) {
 			this.subMenus[i].hide();

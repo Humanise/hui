@@ -6,7 +6,7 @@
  * {url:'',parameters:{}}
  *
  * Events:
- * uploadDidCompleteQueue
+ * uploadDidCompleteQueue / queueComplete
  * uploadDidStartQueue
  * uploadDidComplete(file)
  */
@@ -53,6 +53,23 @@ In2iGui.Upload.prototype = {
 			return;
 		}
 		In2iGui.onDomReady(this.createFlashVersion.bind(this));
+	},
+	/**
+	 * Change a parameter
+	 */
+	setParameter : function(name,value) {
+		if (this.useFlash) {
+			alert('Not implemented for flash');
+		} else {
+			var existing = this.form.getElementsByTagName('input');
+			for (var i=0; i < existing.length; i++) {
+				if (existing[i].name==name) {
+					existing[i].value = value;
+					return;
+				}
+			};
+			this.form.insert(new Element('input',{'type':'hidden','name':name,'value':value}));
+		}
 	},
 	
 	/////////////////////////// Iframe //////////////////////////
@@ -107,12 +124,12 @@ In2iGui.Upload.prototype = {
 			last.setError('Upload af filen fejlede!');
 		}
 		this.fire('uploadDidCompleteQueue');
+		this.fire('queueComplete');
 		this.iframe.src=In2iGui.context+'/In2iGui/html/blank.html';
 		this.endIframeProgress();
 	},
 	/** @private */
 	iframeSubmit : function() {
-		n2i.log('iframeSubmit');
 		this.startIframeProgress();
 		this.uploading = true;
 		// IE: set value of parms again since they disappear
@@ -123,7 +140,7 @@ In2iGui.Upload.prototype = {
 			}.bind(this));
 		}
 		this.form.submit();
-		this.fire('uploadDidSubmit');
+		this.fire('uploadDidStartQueue');
 		var fileName = this.fileInput.value.split('\\').pop();
 		this.addItem({name:fileName,filestatus:'I gang'}).setWaiting();
 	},
@@ -154,6 +171,7 @@ In2iGui.Upload.prototype = {
 	
 	/////////////////////////// Flash //////////////////////////
 	
+	/** @private */
 	getAbsoluteUrl : function(relative) {
 		var loc = new String(document.location);
 		var url = loc.slice(0,loc.lastIndexOf('/'));
@@ -165,6 +183,7 @@ In2iGui.Upload.prototype = {
 		return url;
 	},
 	
+	/** @private */
 	createFlashVersion : function() {
 		n2i.log('Creating flash verison');
 		var url = this.getAbsoluteUrl(this.options.url);
@@ -214,23 +233,28 @@ In2iGui.Upload.prototype = {
 			upload_complete_handler : this.uploadComplete.bind(this)
 		});
 	},
+	/** @private */
 	startNextUpload : function() {
 		this.loader.startUpload();
 	},
 	
 	//////////////////// Events //////////////
 	
+	/** @private */
 	flashLoaded : function() {
 		n2i.log('flash loaded');
 		this.loaded = true;
 	},
+	/** @private */
 	addError : function(file,error) {
 		var item = this.addItem(file);
 		item.setError(error);
 	},
+	/** @private */
 	fileQueued : function(file) {
 		this.addItem(file);
 	},
+	/** @private */
 	fileQueueError : function(file, error, message) {
 		if (file!==null) {
 			this.addError(file,error);
@@ -238,10 +262,12 @@ In2iGui.Upload.prototype = {
 			In2iGui.showMessage({text:In2iGui.Upload.errors[error],duration:4000});
 		}
 	},
+	/** @private */
 	fileDialogComplete : function() {
 		n2i.log('fileDialogComplete');
 		this.startNextUpload();
 	},
+	/** @private */
 	uploadStart : function() {
 		this.status.setStyle({display:'block'});
 		n2i.log('uploadStart');
@@ -250,20 +276,24 @@ In2iGui.Upload.prototype = {
 		}
 		this.busy = true;
 	},
+	/** @private */
 	uploadProgress : function(file,complete,total) {
 		this.updateStatus();
 		this.items[file.index].updateProgress(complete,total);
 	},
+	/** @private */
 	uploadError : function(file, error, message) {
 		n2i.log('uploadError file:'+file+', error:'+error+', message:'+message);
 		if (file) {
 			this.items[file.index].update(file);
 		}
 	},
+	/** @private */
 	uploadSuccess : function(file,data) {
 		n2i.log('uploadSuccess file:'+file+', data:'+data);
 		this.items[file.index].updateProgress(file.size,file.size);
 	},
+	/** @private */
 	uploadComplete : function(file) {
 		this.items[file.index].update(file);
 		this.startNextUpload();
@@ -271,6 +301,7 @@ In2iGui.Upload.prototype = {
 		this.fire('uploadDidComplete',file);
 		if (this.loader.getStats().files_queued==0) {
 			this.fire('uploadDidCompleteQueue');
+			this.fire('queueComplete');
 		}
 		this.updateStatus();
 		this.busy = false;
@@ -278,6 +309,7 @@ In2iGui.Upload.prototype = {
 	
 	//////////// Items ////////////
 	
+	/** @private */
 	addItem : function(file) {
 		var index = file.index;
 		if (index===undefined) {
@@ -294,6 +326,7 @@ In2iGui.Upload.prototype = {
 		return item;
 	},
 	
+	/** @private */
 	updateStatus : function() {
 		var s = this.loader.getStats();
 		if (this.items.length==0) {
