@@ -19,10 +19,11 @@
 			<xsl:if test="@labels='false'"><xsl:text> in2igui_toolbar_nolabels</xsl:text></xsl:if>
 			<xsl:if test="@border='top'"><xsl:text> in2igui_toolbar_border_top</xsl:text></xsl:if>
 			<xsl:if test="@border='bottom'"><xsl:text> in2igui_toolbar_border_bottom</xsl:text></xsl:if>
+			<xsl:if test="@centered='true'"><xsl:text> in2igui_toolbar_centered</xsl:text></xsl:if>
 		</xsl:attribute>
 		<div class="in2igui_toolbar_body">
-		<xsl:apply-templates select="child::*[not(name()='right')]"/>
-		<xsl:apply-templates select="gui:right"/>
+			<xsl:apply-templates select="child::*[not(name()='right')]"/>
+			<xsl:apply-templates select="gui:right"/>
 		</div>
 	</div>
 </xsl:template>
@@ -115,6 +116,9 @@
 <xsl:template match="gui:toolbar//gui:grid">
 	<span class="in2igui_toolbar_grid">
 	<table class="in2igui_toolbar_grid">
+		<xsl:if test="@left">
+			<xsl:attribute name="style">margin-left:<xsl:value-of select="@left"/>px;</xsl:attribute>
+		</xsl:if>
 		<xsl:apply-templates/>
 	</table>
 	</span>
@@ -145,6 +149,13 @@
 </xsl:template>
 <!-- Inputs -->
 
+<xsl:template match="gui:toolbar//gui:checkboxes">
+	<span class="in2igui_toolbar_item">
+		<span class="in2igui_toolbar_item_body"><xsl:call-template name="gui:checkboxes"/></span>
+		<span class="in2igui_toolbar_label"><xsl:value-of select="@title"/><xsl:value-of select="@label"/></span>
+	</span>
+</xsl:template>
+
 <xsl:template match="gui:toolbar//gui:number">
 	<span class="in2igui_toolbar_item">
 		<span class="in2igui_toolbar_item_body"><xsl:call-template name="gui:number"/></span>
@@ -169,6 +180,13 @@
 <xsl:template match="gui:toolbar//gui:segmented[@label]">
 	<span class="in2igui_toolbar_item">
 		<span class="in2igui_toolbar_item_body"><xsl:call-template name="gui:segmented"/></span>
+		<span class="in2igui_toolbar_label"><xsl:value-of select="@label"/></span>
+	</span>
+</xsl:template>
+
+<xsl:template match="gui:toolbar//gui:textfield">
+	<span class="in2igui_toolbar_item">
+		<span class="in2igui_toolbar_item_body"><xsl:call-template name="gui:text"/></span>
 		<span class="in2igui_toolbar_label"><xsl:value-of select="@label"/></span>
 	</span>
 </xsl:template>

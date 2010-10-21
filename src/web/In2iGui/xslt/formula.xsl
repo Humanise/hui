@@ -47,6 +47,13 @@
 	</fieldset>
 </xsl:template>
 
+<xsl:template match="gui:formula//gui:fieldset">
+	<div class="in2igui_formula_fieldset">
+		<strong class="in2igui_formula_fieldset"><xsl:value-of select="@legend"/></strong>
+		<xsl:apply-templates/>
+	</div>
+</xsl:template>
+
 <xsl:template match="gui:group/gui:custom">
 	<tr>
 		<th><label><xsl:value-of select="@label"/></label></th>
@@ -66,7 +73,7 @@
 <xsl:template match="gui:group/gui:text">
 	<tr>
 		<th><label><xsl:value-of select="@label"/></label></th>
-		<td><div class="in2igui_formula_item"><xsl:call-template name="gui:text"/></div></td>
+		<td class="in2igui_formula_group"><div class="in2igui_formula_item"><xsl:call-template name="gui:text"/></div></td>
 	</tr>
 </xsl:template>
 
@@ -78,7 +85,6 @@
 </xsl:template>
 
 <xsl:template name="gui:text" match="gui:textfield">
-	<xsl:value-of select="@value"/>
 	<xsl:choose>
 		<xsl:when test="@lines>1 or @multiline='true'">
 			<div class="in2igui_field in2igui_longfield" id="{generate-id()}">
@@ -152,7 +158,7 @@
 <xsl:template match="gui:group/gui:number">
 	<tr>
 		<th><label><xsl:value-of select="@label"/></label></th>
-		<td><div class="in2igui_formula_item"><xsl:call-template name="gui:number"/></div></td>
+		<td class="in2igui_formula_group"><div class="in2igui_formula_item"><xsl:call-template name="gui:number"/></div></td>
 	</tr>
 </xsl:template>
 
@@ -169,7 +175,7 @@
 			<xsl:text>in2igui_number</xsl:text>
 			<xsl:if test="@adaptive='true'"><xsl:text> in2igui_number_adaptive</xsl:text></xsl:if>
 		</xsl:attribute>
-		<span><span><input type="text"/><em class="in2igui_number_units"><xsl:comment/></em><a class="in2igui_number_up"><xsl:comment/></a><a class="in2igui_number_down"><xsl:comment/></a></span></span>
+		<span><span><input type="text" value="{@value}"/><em class="in2igui_number_units"><xsl:comment/></em><a class="in2igui_number_up"><xsl:comment/></a><a class="in2igui_number_down"><xsl:comment/></a></span></span>
 	</span>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.Number({
@@ -182,6 +188,7 @@
 			<xsl:if test="@max">,max:<xsl:value-of select="@max"/></xsl:if>
 			<xsl:if test="@decimals">,decimals:<xsl:value-of select="@decimals"/></xsl:if>
 			<xsl:if test="@allow-null">,allowNull:true</xsl:if>
+			<xsl:if test="@value">,value:parseInt(<xsl:value-of select="@value"/>)</xsl:if>
 		});
 		<xsl:call-template name="gui:createobject"/>
 	</script>
@@ -192,7 +199,7 @@
 <xsl:template match="gui:group/gui:style-length">
 	<tr>
 		<th><label><xsl:value-of select="@label"/></label></th>
-		<td><div class="in2igui_formula_item"><xsl:call-template name="gui:style-length"/></div></td>
+		<td class="in2igui_formula_group"><div class="in2igui_formula_item"><xsl:call-template name="gui:style-length"/></div></td>
 	</tr>
 </xsl:template>
 
@@ -225,7 +232,7 @@
 <xsl:template match="gui:group/gui:dropdown">
 	<tr>
 		<th><label><xsl:value-of select="@label"/></label></th>
-		<td><div class="in2igui_formula_item"><xsl:call-template name="gui:dropdown"/></div></td>
+		<td class="in2igui_formula_group"><div class="in2igui_formula_item"><xsl:call-template name="gui:dropdown"/></div></td>
 	</tr>
 </xsl:template>
 
@@ -261,7 +268,7 @@
 		});
 		with(<xsl:value-of select="generate-id()"/>_obj) {
 			<xsl:for-each select="gui:item">
-				addItem({title:'<xsl:value-of select="@title"/>',value:'<xsl:value-of select="@value"/>'});
+				addItem({title:'<xsl:value-of select="@title"/><xsl:value-of select="@label"/>',value:n2i.intOrString('<xsl:value-of select="@value"/>')});
 			</xsl:for-each>
 		}
 		<xsl:call-template name="gui:createobject"/>
@@ -293,7 +300,7 @@
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.Radiobuttons({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>','value':'<xsl:value-of select="@value"/>','key':'<xsl:value-of select="@key"/>'});
 		with (<xsl:value-of select="generate-id()"/>_obj) {
-			<xsl:for-each select="gui:radiobutton">
+			<xsl:for-each select="gui:radiobutton | gui:item">
 				registerRadiobutton({id:'<xsl:value-of select="generate-id()"/>','value':'<xsl:value-of select="@value"/>'});
 			</xsl:for-each>
 		}
@@ -301,7 +308,7 @@
 	</script>
 </xsl:template>
 
-<xsl:template match="gui:radiobuttons/gui:radiobutton">
+<xsl:template match="gui:radiobuttons/gui:radiobutton | gui:radiobuttons/gui:item">
 	<div id="{generate-id()}">
 		<xsl:attribute name="class">in2igui_radiobutton <xsl:if test="@value=../@value">in2igui_selected</xsl:if></xsl:attribute>
 		<div><xsl:comment/></div><xsl:value-of select="@label"/>
@@ -373,6 +380,9 @@
 			<xsl:for-each select="gui:items">
 				registerItems(<xsl:value-of select="generate-id()"/>_obj);
 			</xsl:for-each>
+			<xsl:for-each select="gui:item">
+				registerItem({title:'<xsl:value-of select="@title"/>',value:n2i.intOrString('<xsl:value-of select="@value"/>')});
+			</xsl:for-each>
 		}
 		<xsl:call-template name="gui:createobject"/>
 	</script>
@@ -386,6 +396,12 @@
 		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.Checkboxes.Items({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>',source:<xsl:value-of select="@source"/>});
 		<xsl:call-template name="gui:createobject"/>
 	</script>
+</xsl:template>
+
+<xsl:template match="gui:checkboxes/gui:item">
+	<a class="in2igui_checkbox" href="javascript:void(0);">
+		<span><span></span></span><xsl:value-of select="@title"/>
+	</a>
 </xsl:template>
 
 <!-- Buttons -->
@@ -416,6 +432,9 @@
 		<xsl:attribute name="style">
 			<xsl:if test="@padding">padding:<xsl:value-of select="@padding"/>px;</xsl:if>
 			<xsl:if test="@top">padding-top:<xsl:value-of select="@top"/>px;</xsl:if>
+			<xsl:if test="@left">padding-left:<xsl:value-of select="@left"/>px;</xsl:if>
+			<xsl:if test="@bottom">padding-bottom:<xsl:value-of select="@bottom"/>px;</xsl:if>
+			<xsl:if test="@right">padding-right:<xsl:value-of select="@right"/>px;</xsl:if>
 		</xsl:attribute>
 		<div class="in2igui_buttons_body">
 			<xsl:apply-templates/>

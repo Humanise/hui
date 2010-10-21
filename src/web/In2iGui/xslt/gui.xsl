@@ -8,11 +8,12 @@
     exclude-result-prefixes="gui"
     >
 
-<xsl:include href="iphone.xsl"/>
+<!--xsl:include href="iphone.xsl"/-->
 <xsl:include href="layout.xsl"/>
 <xsl:include href="formula.xsl"/>
-<xsl:include href="view.xsl"/> <!-- TODO: remove this -->
+<!--xsl:include href="view.xsl"/--> <!-- TODO: remove this -->
 <xsl:include href="toolbar.xsl"/>
+<xsl:include href="links.xsl"/>
 
 <xsl:output encoding="UTF-8" omit-xml-declaration="yes" doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"/>
 
@@ -23,25 +24,24 @@
 <title><xsl:value-of select="@title"/></title>
 <xsl:choose>
 	<xsl:when test="$dev='true'">
-		<link rel="stylesheet" href="{$context}/In2iGui/css/dev.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
+		<link rel="stylesheet" href="{$context}/In2iGui/css/dev.css?version={$version}" type="text/css" media="screen" title="no title" charset="utf-8"/>
 	</xsl:when>
 	<xsl:otherwise>
-		<link rel="stylesheet" href="{$context}/In2iGui/bin/minimized.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
+		<link rel="stylesheet" href="{$context}/In2iGui/bin/minimized.css?version={$version}" type="text/css" media="screen" title="no title" charset="utf-8"/>
 	</xsl:otherwise>
 </xsl:choose>
-<link rel="stylesheet" href="{$context}/In2iGui/css/print.css" type="text/css" media="print" title="no title" charset="utf-8"/>
 <!--
 <xsl:comment><![CDATA[[if lt IE 8]>
 	<script src="]]><xsl:value-of select="$context"/><![CDATA[/In2iGui/lib/IE8.js" type="text/javascript"></script>
 <![endif]]]></xsl:comment>-->
 <xsl:comment><![CDATA[[if IE 8]>
-	<link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$context"/><![CDATA[/In2iGui/css/msie8.css"> </link>
+	<link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$context"/><![CDATA[/In2iGui/css/msie8.css?version=]]><xsl:value-of select="$version"/><![CDATA["> </link>
 <![endif]]]></xsl:comment>
 <xsl:comment><![CDATA[[if lt IE 7]>
-	<link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$context"/><![CDATA[/In2iGui/css/msie6.css"> </link>
+	<link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$context"/><![CDATA[/In2iGui/css/msie6.css?version=]]><xsl:value-of select="$version"/><![CDATA["> </link>
 <![endif]]]></xsl:comment>
 <xsl:comment><![CDATA[[if IE 7]>
-	<link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$context"/><![CDATA[/In2iGui/css/msie7.css"> </link>
+	<link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$context"/><![CDATA[/In2iGui/css/msie7.css?version=]]><xsl:value-of select="$version"/><![CDATA["> </link>
 <![endif]]]></xsl:comment>
 <xsl:for-each select="//gui:css">
 	<link rel="stylesheet" href="{@url}" type="text/css" media="screen" title="no title" charset="utf-8"/>
@@ -92,9 +92,10 @@
 		<script src="{$context}/In2iGui/js/Flash.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/Overlay.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/lib/wysihat.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/In2iGui/js/Links.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 	</xsl:when>
 	<xsl:otherwise>
-		<script src="{$context}/In2iGui/bin/minimized.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/In2iGui/bin/minimized.js?version={$version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 	</xsl:otherwise>
 </xsl:choose>
 <xsl:if test="//gui:graphviz">
@@ -170,6 +171,12 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 </script>
 </xsl:template>
 
+<xsl:template name="gui:subgui">
+	<div>
+	<xsl:apply-templates/>
+	</div>
+</xsl:template>
+
 <xsl:template match="gui:script">
 <script type="text/javascript">
 	<xsl:apply-templates/>
@@ -231,7 +238,13 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 			<xsl:otherwise><xsl:value-of select="generate-id()"/></xsl:otherwise>
 		</xsl:choose>
 	</xsl:variable>
-	<iframe id="{$id}" name="{$id}" src="{@source}" style="width: 100%; height: 100%; border: 1px solid #ddd; background: #fff; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;" frameborder="0">
+	<iframe id="{$id}" name="{$id}" src="{@source}" frameborder="0">
+		<xsl:attribute name="style">
+			<xsl:text>width: 100%; height: 100%; background: #fff;</xsl:text>
+			<xsl:if test="@border='true'">
+				<xsl:text>border: 1px solid #ddd; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;</xsl:text>
+			</xsl:if>
+		</xsl:attribute>
 		<xsl:comment/>
 	</iframe>
 	<script type="text/javascript">
@@ -624,10 +637,6 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 	</script>
 </xsl:template>
 
-<xsl:template match="html:html">
-	<xsl:copy-of select="child::*|child::text()"/>
-</xsl:template>
-
 <xsl:template match="gui:articles">
 	<div class="in2igui_articles" id="{generate-id()}"><xsl:comment/></div>
 	<script type="text/javascript">
@@ -640,13 +649,17 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 	</script>
 </xsl:template>
 
+<xsl:template match="html:html">
+	<xsl:copy-of select="child::*|child::text()"/>
+</xsl:template>
+
 <xsl:template match="gui:text">
 	<div class="in2igui_text">
 		<xsl:apply-templates/>
 	</div>
 </xsl:template>
 
-<xsl:template match="gui:text/gui:header">
+<xsl:template match="gui:text/gui:header | gui:text/gui:h">
 	<h1><xsl:apply-templates/></h1>
 </xsl:template>
 
