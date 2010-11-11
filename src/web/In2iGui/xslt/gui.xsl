@@ -14,6 +14,7 @@
 <!--xsl:include href="view.xsl"/--> <!-- TODO: remove this -->
 <xsl:include href="toolbar.xsl"/>
 <xsl:include href="links.xsl"/>
+<xsl:include href="other.xsl"/>
 
 <xsl:output encoding="UTF-8" omit-xml-declaration="yes" doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"/>
 
@@ -100,6 +101,12 @@
 </xsl:choose>
 <xsl:if test="//gui:graphviz">
 	<script src="{$context}/In2iGui/ext/Graphviz.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+</xsl:if>
+<xsl:if test="//gui:graph">
+	<link rel="stylesheet" href="{$context}/In2iGui/ext/graph.css?version={$version}" type="text/css" media="screen" title="no title" charset="utf-8"/>
+	<script type="text/javascript" src="{$context}/In2iGui/lib/protovis-3.2/protovis-r3.2.js"><xsl:comment/></script>
+	<script type="text/javascript" src="{$context}/In2iGui/lib/raphael-min.js"><xsl:comment/></script>
+	<script src="{$context}/In2iGui/ext/Graph.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 </xsl:if>
 <xsl:if test="//gui:chart">
 	<script src="{$context}/In2iGui/lib/swfobject.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
@@ -297,6 +304,9 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 </xsl:template>
 
 <xsl:template match="gui:selection/gui:items">
+	<xsl:if test="@title">
+		<div class="in2igui_selection_title" id="{generate-id()}_title" style="display: none;"><span><xsl:value-of select="@title"/></span></div>
+	</xsl:if>
 	<div id="{generate-id()}">
 		<xsl:comment/>
 	</div>
@@ -321,7 +331,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 </xsl:template>
 
 <xsl:template match="gui:selection/gui:title">
-	<div class="title"><span><xsl:value-of select="."/></span></div>
+	<div class="in2igui_selection_title"><span><xsl:value-of select="."/></span></div>
 </xsl:template>
 
 <!--             List            -->

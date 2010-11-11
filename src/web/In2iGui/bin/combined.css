@@ -266,6 +266,8 @@ div.in2igui_infoview_click:hover
 	cursor: pointer;
 	text-decoration: underline;
 }
+
+
 div.in2igui_buttons
 {
 	overflow: hidden;
@@ -307,6 +309,7 @@ a.in2igui_button
 	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
 	-webkit-user-select: none;
 	-moz-user-select: none;
+	white-space: nowrap;
 }
 
 a.in2igui_button span
@@ -560,7 +563,30 @@ a.in2igui_button_small_rounded:focus:active span
 a.in2igui_button_small_rounded:focus:active span span
 {
 	background-position: left -408px;
-}div.in2igui_curtain
+}
+
+/*****************************************/
+/*
+a.in2igui_button_highlighted {
+    -webkit-animation-name: in2igui_pulse;
+    -webkit-animation-duration: 2s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: ease-in-out;
+}
+
+
+
+@-webkit-keyframes in2igui_pulse {
+	0% {
+	  opacity: 1;
+	}
+	50% {
+	  opacity: .8;
+	}
+	100% {
+	  opacity: 1;
+	}
+}*/div.in2igui_curtain
 {
 	width: 100%;
 	background: #000;
@@ -1883,6 +1909,12 @@ div.in2igui_toolbar_right
 	top: 0;
 }
 
+div.in2igui_toolbar_body_fixed_height
+{
+	height: 56px;
+	overflow: hidden;
+}
+
 /********************************** Icon ************************/
 
 
@@ -2690,7 +2722,7 @@ div.in2igui_selection_inline div.in2igui_selected span.in2igui_selection_label
 	text-shadow: none;
 }
 
-.in2igui_selection .title
+.in2igui_selection_title
 {
 	background: url('../gfx/selection_separator.png') 3px 9px repeat-x;
 	color:#334455;
@@ -2698,7 +2730,7 @@ div.in2igui_selection_inline div.in2igui_selected span.in2igui_selection_label
 	margin:3px 5px;
 	padding-left:16px;
 }
-.in2igui_selection .title span
+.in2igui_selection_title span
 {
 	background: #EBF0F7;
 	padding: 0px 3px;
@@ -3223,6 +3255,21 @@ div.in2igui_picker_title
 	cursor: pointer;
 	padding: 5px;
 	margin: 1px 2px 0px;
+	font-size: 0;
+}
+
+.in2igui_picker_item strong
+{
+	font-size: 10px;
+	display: inline-block;
+	height: 15px;
+	line-height: 15px;
+	padding: 0 5px;
+	background: #FAFcFF;
+	border-bottom: 1px solid #DDD;
+	border-right: 1px solid #eee;
+	font-weight: normal;
+	color: #456;
 }
 
 .in2igui_picker_item:hover
@@ -3653,10 +3700,9 @@ div.in2igui_gallery_item:hover
 div.in2igui_gallery_item_selected, div.in2igui_gallery_item_selected:hover
 {
 	border-color: #3875d7;
-	/*border-color: rgba(56,117,215,.7);*/
-	/*border-color: #F5CC40;*/
 	background: url('../gfx/hover_bg.png');
 	-moz-border-radius: 5px;
+	border-radius: 5px;
 }div.in2igui_calendar
 {
 	overflow-x: hidden;

@@ -9924,7 +9924,9 @@ In2iGui.parseSubItems = function(parent,array) {
 	var children = parent.childNodes;
 	for (var i=0; i < children.length; i++) {
 		var node = children[i];
-		if (node.nodeType==1 && node.nodeName=='item') {
+		if (node.nodeType==1 && node.nodeName=='title') {
+			array.push({title:node.getAttribute('title'),type:'title'})
+		} else if (node.nodeType==1 && node.nodeName=='item') {
 			var sub = [];
 			In2iGui.parseSubItems(node,sub);
 			array.push({
@@ -10003,7 +10005,14 @@ In2iGui.Source.prototype = {
 			};
 			this.busy=true;
 			In2iGui.callDelegates(this,'sourceIsBusy');
-			new Ajax.Request(this.options.url, {parameters:prms,onSuccess: function(t) {self.parse(t)},onException:function(t,e) {n2i.log(e)}});
+			new Ajax.Request(this.options.url, {
+				parameters:prms,
+				onSuccess: function(t) {self.parse(t)},
+				onException:function(t,e) {n2i.log(e)},
+				onFailure:function(t,e) {
+					In2iGui.callDelegates(self,'sourceFailed');
+				}
+			});
 		} else if (this.options.dwr) {
 			var pair = this.options.dwr.split('.');
 			var facade = eval(pair[0]);
@@ -10030,7 +10039,7 @@ In2iGui.Source.prototype = {
 	},
 	/** @private */
 	parse : function(t) {
-		if (t.responseXML) {
+		if (t.responseXML && t.responseXML.documentElement && t.responseXML.documentElement.nodeName!='parsererror') {
 			this.parseXML(t.responseXML);
 		} else {
 			var str = t.responseText.replace(/^\s+|\s+$/g, '');
@@ -12506,6 +12515,7 @@ In2iGui.Alert.prototype = {
 			this.content.appendChild(this.title);
 		}
 		this.title.innerHTML = text;
+		
 	},
 	/** Sets the alert text */
 	setText : function(/**String*/ text) {
@@ -12792,6 +12802,9 @@ In2iGui.Selection.prototype = {
 		this.fire('selectionChanged',this.selection);
 		this.fireProperty('value',this.selection ? this.selection.value : null);
 		this.fireProperty('kind',this.selection ? this.selection.kind : null);
+		for (var i=0; i < this.subItems.length; i++) {
+			this.subItems[i].parentValueChanged();
+		};
 	},
 	/** @private */
 	registerItems : function(items) {
@@ -12870,6 +12883,7 @@ In2iGui.Selection.prototype = {
 In2iGui.Selection.Items = function(options) {
 	this.options = n2i.override({source:null},options);
 	this.element = $(options.element);
+	this.title = $(this.element.id+'_title');
 	this.name = options.name;
 	this.parent = null;
 	this.items = [];
@@ -12897,6 +12911,9 @@ In2iGui.Selection.Items.prototype = {
 		this.items = [];
 		this.element.update();
 		this.buildLevel(this.element,items,0);
+		if (this.title) {
+			this.title.style.display=this.items.length>0 ? 'block' : 'none';
+		}
 		this.parent.updateUI();
 	},
 	/** @private */
@@ -12907,6 +12924,12 @@ In2iGui.Selection.Items.prototype = {
 		var level = new Element('div',{'class':'in2igui_selection_level'}).setStyle({display:open ? 'block' : 'none'});
 		parent.insert(level);
 		items.each(function(item) {
+			if (item.type=='title') {
+				var div = new Element('div',{'class':'in2igui_selection_title'});
+				div.update('<span>'+item.title+'</span>');
+				level.insert(div)
+				return;
+			}
 			var hasChildren = item.children && item.children.length>0;
 			var left = inc*16+6;
 			if (!hierarchical && inc>0 || hierarchical && !hasChildren) left+=13;
@@ -12984,6 +13007,19 @@ In2iGui.Selection.Items.prototype = {
 			var value = this.items[i].value;
 			if (value == newSelection.value) {
 				this.fireProperty('value',newSelection.value);
+				return;
+			}
+		};
+		this.fireProperty('value',null);
+	},
+	/**
+	 * Called when the parent changes value, must fire its new value
+	 * @private
+	 */
+	parentValueChanged : function() {
+		for (var i=0; i < this.items.length; i++) {
+			if (this.parent.isSelection(this.items[i])) {
+				this.fireProperty('value',this.items[i].value);
 				return;
 			}
 		};
@@ -14139,7 +14175,7 @@ In2iGui.Picker.prototype = {
 			if (self.value!=null && object[self.options.valueProperty]==self.value) item.addClassName('in2igui_picker_item_selected');
 			item.update(
 				'<div class="in2igui_picker_item_middle"><div class="in2igui_picker_item_middle">'+
-				'<div style="width:'+self.options.itemWidth+'px;height:'+self.options.itemHeight+'px;background-image:url(\''+object.image+'\')"></div>'+
+				'<div style="width:'+self.options.itemWidth+'px;height:'+self.options.itemHeight+'px; overflow: hidden; background-image:url(\''+object.image+'\')"><strong>'+object.title+'</strong></div>'+
 				'</div></div>'+
 				'<div class="in2igui_picker_item_bottom"><div><div></div></div></div>'
 			);
@@ -15173,8 +15209,8 @@ In2iGui.Upload.prototype = {
 	},
 	/** @private */
 	iframeUploadComplete : function() {
-		n2i.log('iframeUploadComplete uploading: '+this.uploading+' ('+this.name+')');
 		if (!this.uploading) return;
+		n2i.log('iframeUploadComplete uploading: '+this.uploading+' ('+this.name+')');
 		this.uploading = false;
 		this.form.reset();
 		var doc = n2i.getFrameDocument(this.iframe);
@@ -15553,9 +15589,14 @@ In2iGui.Gallery = function(options) {
 	this.selected = [];
 	this.width = 100;
 	this.height = 100;
+	this.revealing = false;
 	In2iGui.extend(this);
 	if (this.options.source) {
 		this.options.source.listen(this);
+	}
+	if (this.element.parentNode.hasClassName('in2igui_overflow')) {
+		this.revealing = true;
+		this.element.parentNode.observe('scroll',this._reveal.bind(this));
 	}
 }
 
@@ -15569,6 +15610,7 @@ In2iGui.Gallery.prototype = {
 	setObjects : function(objects) {
 		this.objects = objects;
 		this.render();
+		this.fire('selectionReset');
 	},
 	getObjects : function() {
 		return this.objects;
@@ -15584,6 +15626,7 @@ In2iGui.Gallery.prototype = {
 	/** @private */
 	render : function() {
 		this.nodes = [];
+		this.maxRevealed=0;
 		this.element.update();
 		var self = this;
 		this.objects.each(function(object,i) {
@@ -15596,12 +15639,13 @@ In2iGui.Gallery.prototype = {
 			} else {
 				var top = 0;
 			}
-			var img = new Element('img',{src:url}).setStyle({margin:top+'px auto 0px'});
+			var img = new Element('img').setStyle({margin:top+'px auto 0px'});
+			img.setAttribute(self.revealing ? 'data-src' : 'src', url );
 			var item = new Element('div',{'class':'in2igui_gallery_item'}).setStyle({'width':self.width+'px','height':self.height+'px'}).insert(img);
 			item.observe('click',function() {
 				self.itemClicked(i);
 			});
-			item.dragDropInfo = {kind:'image',icon:'common/image',id:object.id,title:object.name};
+			item.dragDropInfo = {kind:'image',icon:'common/image',id:object.id,title:object.name || object.title};
 			item.onmousedown=function(e) {
 				In2iGui.startDrag(e,item);
 				return false;
@@ -15612,6 +15656,28 @@ In2iGui.Gallery.prototype = {
 			self.element.insert(item);
 			self.nodes.push(item);
 		});
+		this._reveal();
+	},
+	$$layout : function() {
+		if (this.nodes.length>0) {
+			this._reveal();
+		}
+	},
+	_reveal : function() {
+		var container = this.element.parentNode;
+		var limit = container.scrollTop+container.clientHeight;
+		if (limit<=this.maxRevealed) {
+			return;
+		}
+		this.maxRevealed = limit;
+		for (var i=0,l=this.nodes.length; i < l; i++) {
+			var item = this.nodes[i];
+			if (item.offsetTop<limit) {
+				var img = item.getElementsByTagName('img')[0];
+				img.src = img.getAttribute('data-src');
+				item.revealed = true;
+			}
+		};
 	},
 	/** @private */
 	updateUI : function() {
@@ -16378,6 +16444,9 @@ In2iGui.Articles.prototype = {
 			};
 			this.element.insert(e);
 		};
+	},
+	$sourceFailed : function() {
+		this.element.update('<div>Failed!</div>');
 	},
 	/** @private */
 	$sourceIsBusy : function() {
