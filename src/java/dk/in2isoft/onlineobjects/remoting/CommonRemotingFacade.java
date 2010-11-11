@@ -52,8 +52,10 @@ public class CommonRemotingFacade extends AbstractRemotingFacade {
 	
 	public void addTag(long id,String tag) throws ModelException, SecurityException {
 		Entity entity = modelService.get(Entity.class, id);
-		entity.addProperty(Property.KEY_COMMON_TAG, tag);
-		modelService.updateItem(entity, getUserSession());
+		if (entity.getPropertyValues(Property.KEY_COMMON_TAG).isEmpty()) {
+			entity.addProperty(Property.KEY_COMMON_TAG, tag);
+			modelService.updateItem(entity, getUserSession());
+		}
 	}
 	
 	public List<ItemData> getTagItemsWithCount(String className) throws EndUserException {
