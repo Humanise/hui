@@ -24,9 +24,11 @@ public class ConfigurationService implements InitializingBean {
 
 	private File tempDir;
 
+	private File storageDir;
+
 
 	public void afterPropertiesSet() throws Exception {
-		File storageDir = new File(storagePath);
+		storageDir = new File(storagePath);
 		if (storageDir.canWrite()) {
 			log.info("Storage can be written");
 		} else {
@@ -83,6 +85,10 @@ public class ConfigurationService implements InitializingBean {
 
 	public void setStoragePath(String storagePath) {
 		this.storagePath = storagePath;
+	}
+	
+	public File getStorageDir() {
+		return storageDir;
 	}
 
 	public String getStoragePath() {

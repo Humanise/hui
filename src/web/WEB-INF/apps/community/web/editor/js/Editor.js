@@ -288,7 +288,7 @@ OO.Editor.prototype = {
 		var data = form.getValues();
 		data.id = OnlineObjects.page.id;
 		CorePublishing.updatePageInfo(data,function() {
-			$$('title')[0].innerHTML=data.pageTitle+' » '+data.siteTitle;
+			//$$('title')[0].innerHTML=data.pageTitle+' » '+data.siteTitle;
 			$$('div.header a.selected')[0].innerHTML = data.nodeTitle;
 			form.reset();
 			this.infoWindow.hide();

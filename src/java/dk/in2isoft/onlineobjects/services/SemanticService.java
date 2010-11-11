@@ -6,6 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -29,6 +30,11 @@ public class SemanticService {
 			}
 		}
 		return list.toArray(new String[]{});
+	}
+	
+	public String[] getNaturalWords(String text) {
+		String[] words = StringUtils.splitPreserveAllTokens(text, " ");
+		return words;
 	}
 	
 	public String[] getWords(String text) {

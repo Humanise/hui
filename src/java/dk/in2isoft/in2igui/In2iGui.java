@@ -88,6 +88,7 @@ public class In2iGui {
 			}
 			transformer.setParameter("context", context);
 			transformer.setParameter("dev", devMode);
+			transformer.setParameter("version", "x");
 			transformer.transform(source, new StreamResult(output));
 		} catch (TransformerFactoryConfigurationError e) {
 			e.printStackTrace(new PrintStream(output));
@@ -167,7 +168,7 @@ public class In2iGui {
 			xslString.append("<?xml version='1.0' encoding='UTF-8'?>").append(
 					"<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='1.0'>").append(
 					"<xsl:output method='xml' indent='no' encoding='UTF-8'/>").append(
-					"<xsl:param name='dev'/><xsl:param name='context'/>").append(
+					"<xsl:param name='dev'/><xsl:param name='version'/><xsl:param name='context'/>").append(
 					"<xsl:include href='").append(path).append("/xslt/gui.xsl'/>").append(
 					"<xsl:template match='/'><xsl:apply-templates/></xsl:template>").append("</xsl:stylesheet>");
 			StringReader xslReader = new StringReader(xslString.toString());

@@ -109,6 +109,8 @@
 	
 	<bean id="userService" class="dk.in2isoft.onlineobjects.modules.user.UserService" autowire="byType"/>
 	
+	<bean id="dictionaryService" class="dk.in2isoft.onlineobjects.services.DictionaryService" autowire="byType"/>
+	
 	<!-- Service controllers -->
 	
 	<bean id="imageController" class="dk.in2isoft.onlineobjects.service.image.ImageController" autowire="byType"/>
