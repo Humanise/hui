@@ -7,7 +7,7 @@
     exclude-result-prefixes="gui"
     >
 
-<xsl:template match="gui:space">
+<xsl:template match="gui:space | gui:block">
 	<div class="in2igui_space">
 		<xsl:attribute name="style">
 			<xsl:if test="@all">padding: <xsl:value-of select="@all"/>px;</xsl:if>
@@ -15,6 +15,7 @@
 			<xsl:if test="@right">padding-right: <xsl:value-of select="@right"/>px;</xsl:if>
 			<xsl:if test="@top">padding-top: <xsl:value-of select="@top"/>px;</xsl:if>
 			<xsl:if test="@bottom">padding-bottom: <xsl:value-of select="@bottom"/>px;</xsl:if>
+			<xsl:if test="@align">text-align: <xsl:value-of select="@align"/>;</xsl:if>
 			<xsl:if test="@height">height: <xsl:value-of select="@height"/>px; font-size: 0px;</xsl:if>
 		</xsl:attribute>
 		<xsl:comment/>
@@ -140,9 +141,12 @@
 				<xsl:for-each select="gui:step">
 					<li>
 						<a href="#">
+							<xsl:attribute name="class">
+								<xsl:text>in2igui_wizard_selection</xsl:text>
 						<xsl:if test="position()=1">
-							<xsl:attribute name="class">in2igui_selected</xsl:attribute>
+							<xsl:text> in2igui_selected</xsl:text>
 						</xsl:if>
+						</xsl:attribute>
 						<xsl:if test="@icon"><span class="in2igui_icon_1" style="background-image: url('{$context}/In2iGui/icons/{@icon}1.png');')"><xsl:comment/></span></xsl:if>
 						<span><xsl:value-of select="@title"/></span>
 						</a>

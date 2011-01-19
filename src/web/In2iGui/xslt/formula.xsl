@@ -9,6 +9,12 @@
 
 <xsl:template match="gui:formula">
 	<form class="in2igui_formula" id="{generate-id()}">
+		<xsl:attribute name="style">
+			<xsl:if test="@state and @state!=//gui:gui/@state">
+				<xsl:text>display:none;</xsl:text>
+			</xsl:if>
+			<xsl:if test="@padding">padding: <xsl:value-of select="@padding"/>px;</xsl:if>
+		</xsl:attribute>
 		<xsl:apply-templates/>
 	</form>
 	<script type="text/javascript">
@@ -16,6 +22,9 @@
 			var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula({
 				element:'<xsl:value-of select="generate-id()"/>',
 				name:'<xsl:value-of select="@name"/>'
+				<xsl:if test="@state">
+					,state:'<xsl:value-of select="@state"/>'
+				</xsl:if>
 			});
 			<xsl:call-template name="gui:createobject"/>		
 		}());
@@ -72,7 +81,7 @@
 
 <xsl:template match="gui:group/gui:text">
 	<tr>
-		<th><label><xsl:value-of select="@label"/></label></th>
+		<th class="in2igui_formula_middle"><label><xsl:value-of select="@label"/></label></th>
 		<td class="in2igui_formula_group"><div class="in2igui_formula_item"><xsl:call-template name="gui:text"/></div></td>
 	</tr>
 </xsl:template>
@@ -319,8 +328,8 @@
 
 <xsl:template match="gui:group/gui:checkbox">
 	<tr>
-		<th><label><xsl:value-of select="@label"/></label></th>
-		<td><xsl:call-template name="gui:checkbox"/></td>
+		<th class="in2igui_formula_middle"><label><xsl:value-of select="@label"/></label></th>
+		<td><div class="in2igui_formula_item"><xsl:call-template name="gui:checkbox"/></div></td>
 	</tr>
 </xsl:template>
 
@@ -338,6 +347,7 @@
 			<xsl:if test="@value='true'"> in2igui_checkbox_selected</xsl:if>
 		</xsl:attribute>
 		<span><span><xsl:comment/></span></span>
+		<xsl:value-of select="@title"/>
 	</a>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Formula.Checkbox({
@@ -368,6 +378,7 @@
 
 <xsl:template name="gui:checkboxes">
 	<div class="in2igui_checkboxes" id="{generate-id()}">
+		<xsl:if test="@max-height"><xsl:attribute name="style">max-height:<xsl:value-of select="@max-height"/>px; overflow: auto;</xsl:attribute></xsl:if>
 		<xsl:apply-templates/>
 	</div>
 	<script type="text/javascript">

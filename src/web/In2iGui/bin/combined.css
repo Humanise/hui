@@ -26,7 +26,7 @@ div.in2igui_body
 }
 
 /************************* Links ********************/
-/*
+
 a.in2igui_link
 {
 	color: #ccc;
@@ -43,7 +43,7 @@ a.in2igui_link:hover, a.in2igui_link:hover span
 {
 	color: #0033aa;
 }
-*/
+
 /*********************** text **********************/
 
 div.in2igui_text
@@ -788,6 +788,11 @@ table.in2igui_formula_group th
 	white-space: nowrap;
 }
 
+table.in2igui_formula_group th.in2igui_formula_middle
+{
+	vertical-align: middle;
+}
+
 table.in2igui_formula_group_above th
 {
 	text-align: left;
@@ -1528,6 +1533,7 @@ div.in2igui_dropdown_selector
 	-moz-box-shadow: 0px 3px 5px #999;
 	overflow: auto;
 	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+	text-align: left;
 }
 
 div.in2igui_dropdown_selector a
@@ -2365,6 +2371,17 @@ div.in2igui_window_body
 	background-position: left -16px;
 }
 
+/*************************** Back ***********************/
+
+div.in2igui_window_back
+{
+	position: absolute;
+	width: 100%;
+	background: #333 url('../gfx/backgrounds/brushed.png');
+	border-radius: 8px;
+	-webkit-box-sizing: border-box;
+	border: 1px solid #555;
+}
 
 /********************************** Light **************************/
 
@@ -2629,6 +2646,11 @@ p.in2igui_list_line
 p.in2igui_list_dimmed
 {
 	font-size: 9px;
+	color: #999;
+}
+
+div.in2igui_list_busy td
+{
 	color: #999;
 }div.in2igui_selection
 {
@@ -4391,10 +4413,8 @@ span.in2igui_searchfield_focus_dirty span span
 
 table.in2igui_dock thead td
 {
-	height: 58px;
-	padding: 0px 5px;
-	background: #eee;
-	border-bottom: 1px solid #ddd;
+	height: 78px;
+	padding: 0;
 }
 
 table.in2igui_dock tfoot.in2igui_dock_tabs td
@@ -4420,6 +4440,8 @@ table.in2igui_dock iframe
 	width: 100%;
 	border: none;
 	font-size: 0px;
+	background: #fff;
+	display: block;
 }div.in2igui_tabs_tab_light
 {
 	background: #fff;
@@ -4942,4 +4964,36 @@ span.in2igui_links_remove:hover
 div.in2igui_links_row:hover span.in2igui_links_remove
 {
 	display: inline-block;
+}.in2igui_flip_container
+{
+	-webkit-perspective: 1000;
+}
+
+.in2igui_flip_back, .in2igui_flip_front
+{
+	-webkit-transform-style : preserve-3d;
+   	-webkit-transition-property : -webkit-transform;
+	-webkit-backface-visibility : hidden;
+	/*-webkit-transition-duration : 1s;*/
+	-webkit-transform : rotate(2deg);
+}
+
+.in2igui_flip_back
+{
+	-webkit-transform : rotateY(180deg);
+}
+
+.in2igui_flip_flipped .in2igui_flip_back
+{
+	-webkit-transform : rotateY(360deg);
+}
+
+.in2igui_flip_front
+{
+	-webkit-transform : rotateY(0deg);
+}
+
+.in2igui_flip_flipped .in2igui_flip_front
+{
+	-webkit-transform : rotateY(180deg);
 }

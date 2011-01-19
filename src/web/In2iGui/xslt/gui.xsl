@@ -23,6 +23,7 @@
 
 <head>
 <title><xsl:value-of select="@title"/></title>
+	<meta http-equiv="X-UA-Compatible" content="IE8" />
 <xsl:choose>
 	<xsl:when test="$dev='true'">
 		<link rel="stylesheet" href="{$context}/In2iGui/css/dev.css?version={$version}" type="text/css" media="screen" title="no title" charset="utf-8"/>
@@ -49,16 +50,13 @@
 </xsl:for-each>
 <xsl:choose>
 	<xsl:when test="$dev='true'">
-		<!--script src="{$context}/In2iGui/lib/swfobject.js" type="text/javascript" charset="utf-8"><xsl:comment/></script-->
 		<script src="{$context}/In2iGui/lib/swfupload/swfupload.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<!--
-		<script src="{$context}/In2iGui/lib/swfupload/swfupload.cookies.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		-->
-		<script src="{$context}/In2iGui/lib/prototype.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/lib/n2i.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/lib/In2iScripts/In2iDate.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/lib/json2.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/In2iGui.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/In2iGui/js/Source.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/In2iGui/js/DragDrop.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/Window.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/Formula.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/List.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
@@ -92,11 +90,11 @@
 		<script src="{$context}/In2iGui/js/Segmented.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/Flash.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/Overlay.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/lib/wysihat.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/Links.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/In2iGui/js/Link.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 	</xsl:when>
 	<xsl:otherwise>
-		<script src="{$context}/In2iGui/bin/minimized.js?version={$version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/In2iGui/bin/minimized.noproto.js?version={$version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 	</xsl:otherwise>
 </xsl:choose>
 <xsl:if test="//gui:graphviz">
@@ -247,7 +245,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 	</xsl:variable>
 	<iframe id="{$id}" name="{$id}" src="{@source}" frameborder="0">
 		<xsl:attribute name="style">
-			<xsl:text>width: 100%; height: 100%; background: #fff;</xsl:text>
+			<xsl:text>width: 100%; height: 100%; background: #fff; display: block;</xsl:text>
 			<xsl:if test="@border='true'">
 				<xsl:text>border: 1px solid #ddd; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;</xsl:text>
 			</xsl:if>
@@ -444,18 +442,21 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 			<xsl:text>in2igui_window</xsl:text>
 			<xsl:if test="@variant"><xsl:text> in2igui_window_</xsl:text><xsl:value-of select="@variant"/></xsl:if>
 		</xsl:attribute>
-		<div class="in2igui_window_close"><xsl:comment/></div>
-		<div class="in2igui_window_titlebar"><div><div>
-			<xsl:if test="@icon">
-				<span class="in2igui_window_icon" style="background-image: url('{$context}/In2iGui/icons/{@icon}1.png')"></span>
-			</xsl:if>
-			<span class="in2igui_window_title"><xsl:value-of select="@title"/></span>
-		</div></div></div>
-		<div class="in2igui_window_content"><div class="in2igui_window_content"><div class="in2igui_window_body">
- 			<xsl:attribute name="style"><xsl:if test="@width">width: <xsl:value-of select="@width"/>px;</xsl:if><xsl:if test="@padding">padding: <xsl:value-of select="@padding"/>px;</xsl:if></xsl:attribute>
-			<xsl:apply-templates/>
-		</div></div></div>
-		<div class="in2igui_window_bottom"><div class="in2igui_window_bottom"><div class="in2igui_window_bottom"><xsl:comment/></div></div></div>
+		<xsl:apply-templates select="gui:back"/>
+		<div class="in2igui_window_front">
+			<div class="in2igui_window_close"><xsl:comment/></div>
+			<div class="in2igui_window_titlebar"><div><div>
+				<xsl:if test="@icon">
+					<span class="in2igui_window_icon" style="background-image: url('{$context}/In2iGui/icons/{@icon}1.png')"></span>
+				</xsl:if>
+				<span class="in2igui_window_title"><xsl:value-of select="@title"/></span>
+			</div></div></div>
+			<div class="in2igui_window_content"><div class="in2igui_window_content"><div class="in2igui_window_body">
+	 			<xsl:attribute name="style"><xsl:if test="@width">width: <xsl:value-of select="@width"/>px;</xsl:if><xsl:if test="@padding">padding: <xsl:value-of select="@padding"/>px;</xsl:if></xsl:attribute>
+				<xsl:apply-templates select="child::*[not(name()='back')]"/>
+			</div></div></div>
+			<div class="in2igui_window_bottom"><div class="in2igui_window_bottom"><div class="in2igui_window_bottom"><xsl:comment/></div></div></div>
+		</div>
 	</div>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Window({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>'});
@@ -463,7 +464,12 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 	</script>
 </xsl:template>
 
-
+<xsl:template match="gui:window/gui:back">
+	<div class="in2igui_window_back">
+		<xsl:apply-templates/>
+		<xsl:comment/>
+	</div>
+</xsl:template>
 <!-- Upload -->
 
 <xsl:template match="gui:upload">
@@ -665,8 +671,22 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 
 <xsl:template match="gui:text">
 	<div class="in2igui_text">
+		<xsl:if test="@align">
+			<xsl:attribute name="style">text-align:<xsl:value-of select="@align"/>;</xsl:attribute>
+		</xsl:if>
 		<xsl:apply-templates/>
 	</div>
+</xsl:template>
+
+<xsl:template match="gui:link">
+	<a href="javascript:void(0);" class="in2igui_link" id="{generate-id()}"><span><xsl:apply-templates/></span></a>
+	<script type="text/javascript">
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Link({
+			element:'<xsl:value-of select="generate-id()"/>',
+			name:'<xsl:value-of select="@name"/>'
+		});
+		<xsl:call-template name="gui:createobject"/>
+	</script>
 </xsl:template>
 
 <xsl:template match="gui:text/gui:header | gui:text/gui:h">
