@@ -22,6 +22,12 @@
 <html class="in2igui">
 
 <head>
+	<xsl:if test="$profile='true'">
+	<script>
+		console.profile();
+		window.setTimeout(function() {console.profileEnd()},5000);
+	</script>
+	</xsl:if>
 <title><xsl:value-of select="@title"/></title>
 	<meta http-equiv="X-UA-Compatible" content="IE8" />
 <xsl:choose>
@@ -117,7 +123,9 @@
 	<script src="{@source}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 </xsl:for-each>
 <script type="text/javascript">
+<xsl:if test="@state">
 In2iGui.state = '<xsl:value-of select="@state"/>';
+</xsl:if>
 In2iGui.context = '<xsl:value-of select="$context"/>';
 <xsl:for-each select="gui:controller[@source]">
 	<xsl:if test="@name">
@@ -158,6 +166,22 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 	</xsl:if>
 </xsl:template>
 
+<xsl:template name="gui:escapeScript">
+	<xsl:param name="text"/>
+	<xsl:choose>
+		<xsl:when test='contains($text,"&apos;")'>
+			<xsl:value-of select='substring-before($text,"&apos;")'/>
+			<xsl:value-of select='"\&apos;"'/>
+			<xsl:call-template name="gui:escapeScript">
+				<xsl:with-param name="text" select='substring-after($text,"&apos;")'/>
+			</xsl:call-template>
+		</xsl:when>
+		<xsl:otherwise>
+			<xsl:value-of select="$text"/>
+		</xsl:otherwise>
+	</xsl:choose>
+</xsl:template>
+
 <xsl:template match="gui:source">
 <script type="text/javascript">
 	var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Source({name:'<xsl:value-of select="@name"/>'
@@ -188,6 +212,19 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 </script>
 </xsl:template>
 
+<xsl:template match="gui:listen">
+<script type="text/javascript">
+	(function() {
+		var listener = {};
+		<xsl:for-each select="*">
+			listener['$<xsl:value-of select="local-name()"/>$<xsl:value-of select="../@for"/>']=function() {<xsl:apply-templates/>};
+		</xsl:for-each>
+		In2iGui.listen(listener);
+	
+	})()
+</script>	
+</xsl:template>
+
 <xsl:template match="gui:dock">
 <table class="in2igui_dock" id="{generate-id()}">
 	<xsl:if test="@position='top' or not(@position)">
@@ -207,6 +244,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 	</xsl:if>
 	<tbody>
 		<tr><td>
+			<div class="in2igui_dock_progress"><xsl:comment/></div>
 			<iframe src="{@url}" frameborder="0" name="{@frame-name}"/>
 		</td></tr>
 	</tbody>
@@ -245,7 +283,11 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 	</xsl:variable>
 	<iframe id="{$id}" name="{$id}" src="{@source}" frameborder="0">
 		<xsl:attribute name="style">
-			<xsl:text>width: 100%; height: 100%; background: #fff; display: block;</xsl:text>
+			<xsl:text>width: 100%; background: #fff; display: block;</xsl:text>
+			<xsl:choose>
+				<xsl:when test="@height"><xsl:text>height: </xsl:text><xsl:value-of select="@height"/><xsl:text>px;</xsl:text></xsl:when>
+				<xsl:otherwise>height: 100%;</xsl:otherwise>
+			</xsl:choose>
 			<xsl:if test="@border='true'">
 				<xsl:text>border: 1px solid #ddd; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;</xsl:text>
 			</xsl:if>
@@ -256,6 +298,9 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.IFrame({
 			element:'<xsl:value-of select="$id"/>',
 			name:'<xsl:value-of select="@name"/>'
+			<xsl:if test="@state">
+				,state:'<xsl:value-of select="@state"/>'
+			</xsl:if>
 		});
 		<xsl:call-template name="gui:createobject"/>
 	</script>
@@ -336,6 +381,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 
 <xsl:template match="gui:list">
 	<div class="in2igui_list" id="{generate-id()}">
+		<div class="in2igui_list_progress"></div>
 		<xsl:if test="@state and @state!=//gui:gui/@state">
 			<xsl:attribute name="style">display:none</xsl:attribute>
 		</xsl:if>
@@ -434,6 +480,38 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 </xsl:template>
 
 
+<!-- Bound panel -->
+
+<xsl:template match="gui:boundpanel">
+	<div id="{generate-id()}" class="in2igui_boundpanel" style="display:none;">
+		<div class="in2igui_boundpanel_arrow"><xsl:comment/></div>
+		<div class="in2igui_boundpanel_top"><div><div><xsl:comment/></div></div></div>
+		<div class="in2igui_boundpanel_body">
+			<div class="in2igui_boundpanel_body">
+				<div class="in2igui_boundpanel_body">
+					<div class="in2igui_boundpanel_content">
+						<xsl:attribute name="style">
+							<xsl:if test="@width">width:<xsl:value-of select="@width"/>px;</xsl:if>
+							<xsl:if test="@padding">padding:<xsl:value-of select="@padding"/>px;</xsl:if>
+						</xsl:attribute>
+						<xsl:apply-templates/>
+						<xsl:comment/>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="in2igui_boundpanel_bottom"><div><div><xsl:comment/></div></div></div>
+	</div>
+	<script type="text/javascript">
+		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.BoundPanel({
+			element:'<xsl:value-of select="generate-id()"/>',
+			name:'<xsl:value-of select="@name"/>'
+			<xsl:if test="@target">,target:'<xsl:value-of select="@target"/>'</xsl:if>
+		});
+		<xsl:call-template name="gui:createobject"/>
+	</script>
+</xsl:template>
+
 <!-- Window -->
 
 <xsl:template match="gui:window">
@@ -519,7 +597,11 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 <!-- Gallery -->
 
 <xsl:template match="gui:gallery">
-	<div class="in2igui_gallery" id="{generate-id()}"><xsl:comment/>&#160;</div>
+	<div class="in2igui_gallery" id="{generate-id()}">
+		<xsl:if test="@padding"><xsl:attribute name="style">padding:<xsl:value-of select="@padding"/>px;</xsl:attribute></xsl:if>
+		<xsl:comment/>
+		<xsl:text>&#160;</xsl:text>
+	</div>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Gallery({
 			element:'<xsl:value-of select="generate-id()"/>',

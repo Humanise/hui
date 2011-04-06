@@ -2,6 +2,7 @@
 <xsl:stylesheet
 	xmlns="http://www.w3.org/1999/xhtml"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+	xmlns:fn="http://www.w3.org/2005/xpath-functions"
     xmlns:gui="uri:In2iGui"
     version="1.0"
     exclude-result-prefixes="gui"
@@ -101,7 +102,7 @@
 			<span class="in2igui_field_top"><span><span><xsl:comment/></span></span></span>
 			<span class="in2igui_field_middle"><span class="in2igui_field_middle"><span class="in2igui_field_content">
 				<span class="in2igui_formula_text_multiline">
-				<textarea class="in2igui_formula_text" rows="{@lines}"><xsl:value-of select="@value"/><xsl:text> </xsl:text></textarea>
+				<textarea class="in2igui_formula_text" rows="{@lines}"><xsl:value-of select="@value"/><xsl:text></xsl:text></textarea>
 				</span>
 			</span></span></span>
 			<span class="in2igui_field_bottom"><span><span><xsl:comment/></span></span></span>
@@ -277,7 +278,11 @@
 		});
 		with(<xsl:value-of select="generate-id()"/>_obj) {
 			<xsl:for-each select="gui:item">
-				addItem({title:'<xsl:value-of select="@title"/><xsl:value-of select="@label"/>',value:n2i.intOrString('<xsl:value-of select="@value"/>')});
+				
+				addItem({
+					title:'<xsl:value-of select="@title"/><xsl:value-of select="@label"/>',
+					value:n2i.intOrString('<xsl:call-template name="gui:escapeScript"><xsl:with-param name="text" select="@value"/></xsl:call-template>')
+				});
 			</xsl:for-each>
 		}
 		<xsl:call-template name="gui:createobject"/>
@@ -465,11 +470,11 @@
 			<xsl:if test="@icon"><em style="background-image: url('{$context}/In2iGui/icons/{@icon}1.png')">
 				<xsl:attribute name="class">
 					<xsl:text>in2igui_button_icon</xsl:text>
-					<xsl:if test="not(@title) or @title=''"><xsl:text> in2igui_button_icon_notext</xsl:text></xsl:if>
+					<xsl:if test="(not(@title) or @title='') and (not(@text) or @text='')"><xsl:text> in2igui_button_icon_notext</xsl:text></xsl:if>
 				</xsl:attribute>
 				<xsl:comment/>
 			</em></xsl:if>
-		<xsl:value-of select="@title"/>
+		<xsl:value-of select="@title"/><xsl:value-of select="@text"/>
 	</span></span></a>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Button({

@@ -13,6 +13,7 @@ div.in2igui_inner_overlay
 	background: url('../gfx/overlay_24.png') right -40px no-repeat;
 	padding-right: 7px;
 	height: 40px;
+	white-space: nowrap;
 }
 
 div.in2igui_inner_overlay div.in2igui_inner_overlay
@@ -55,4 +56,5 @@ span.in2igui_overlay_text
 	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
 	font-size: 12px;
 	margin-top: 2px;
+	cursor: default;
 }

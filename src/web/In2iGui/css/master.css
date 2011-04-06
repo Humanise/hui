@@ -81,6 +81,14 @@ span.in2igui_icon_2, span.in2igui_icon_32
 	vertical-align: middle;
 }
 
+span.in2igui_icon_24
+{
+	display: inline-block;
+	width: 24px;
+	height: 24px;
+	vertical-align: middle;
+}
+
 /************************* disclosure **********************/
 
 span.in2igui_disclosure
@@ -212,9 +220,19 @@ div.browser .column div.selected, div.browser .column div.selected:hover
 
 /****************************************** Fragment *******************************/
 
-div.in2igui_fragment_brushed
+.in2igui_bg_brushed
 {
-	background: url('../gfx/backgrounds/brushed.png');
+	background: url('../gfx/backgrounds/brushed_light.jpg');
+}
+
+.in2igui_bg_wood
+{
+	background: url('../gfx/backgrounds/wood.jpg');	
+}
+
+.in2igui_bg_leather
+{
+	background: url('../gfx/backgrounds/leather.jpg');	
 }
 
 /****************************************** Info view ******************************/

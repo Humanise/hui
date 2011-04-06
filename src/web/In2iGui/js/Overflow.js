@@ -22,7 +22,7 @@ In2iGui.Overflow.create = function(options) {
 In2iGui.Overflow.prototype = {
 	calculate : function() {
 		var top,bottom,parent,viewport;
-		viewport = n2i.getInnerHeight();
+		viewport = n2i.getViewPortHeight();
 		parent = this.element.parentNode;
 		top = n2i.getTop(this.element);
 		bottom = n2i.getTop(parent)+parent.clientHeight;
@@ -31,6 +31,9 @@ In2iGui.Overflow.prototype = {
 			bottom-=sibs[i].clientHeight;
 		};
 		this.diff=-1*(top+(viewport-bottom));
+		if (n2i.browser.webkit) {
+			this.diff++;
+		}
 	},
 	add : function(widgetOrNode) {
 		if (widgetOrNode.getElement) {
@@ -41,9 +44,10 @@ In2iGui.Overflow.prototype = {
 		return this;
 	},
 	$$layout : function() {
+		var height;
 		if (!this.options.dynamic) {
 			if (this.options.vertical) {
-				var height = n2i.getInnerHeight();
+				height = n2i.getViewPortHeight();
 				this.element.style.height = Math.max(0,height-this.options.vertical)+'px';
 			}
 			return;
@@ -51,7 +55,7 @@ In2iGui.Overflow.prototype = {
 		if (this.diff===undefined) {
 			this.calculate();
 		}
-		var height = n2i.getInnerHeight();
+		height = n2i.getViewPortHeight();
 		this.element.style.height = Math.max(0,height+this.diff)+'px';
 	}
 }

@@ -49,18 +49,17 @@ In2iGui.Gallery.prototype = {
 		this.element.innerHTML='';
 		var self = this;
 		n2i.each(this.objects,function(object,i) {
-			var url = self.resolveImageUrl(object);
+			var url = self.resolveImageUrl(object),
+				top = 0;
 			if (url!==null) {
 				url = url.replace(/&amp;/,'&');
 			}
 			if (object.height<object.width) {
-				var top = (self.height-(self.height*object.height/object.width))/2;
-			} else {
-				var top = 0;
+				top = (self.height-(self.height*object.height/object.width))/2;
 			}
 			var img = n2i.build('img',{style:'margin:'+top+'px auto 0px'});
 			img.setAttribute(self.revealing ? 'data-src' : 'src', url );
-			var item = n2i.build('div',{'class':'in2igui_gallery_item',style:'width:'+self.width+'px; height:'+self.height+'px'});
+			var item = n2i.build('div',{'class' : 'in2igui_gallery_item',style:'width:'+self.width+'px; height:'+self.height+'px'});
 			item.appendChild(img);
 			n2i.listen(item,'click',function() {
 				self.itemClicked(i);
@@ -93,8 +92,13 @@ In2iGui.Gallery.prototype = {
 		this.maxRevealed = limit;
 		for (var i=0,l=this.nodes.length; i < l; i++) {
 			var item = this.nodes[i];
+			if (item.revealed) {continue}
 			if (item.offsetTop<limit) {
 				var img = item.getElementsByTagName('img')[0];
+				item.className = 'in2igui_gallery_item in2igui_gallery_item_busy';
+				img.onload = function() {
+					item.className = 'in2igui_gallery_item';
+				}
 				img.src = img.getAttribute('data-src');
 				item.revealed = true;
 			}

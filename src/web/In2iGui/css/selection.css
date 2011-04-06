@@ -1,6 +1,7 @@
 div.in2igui_selection
 {
 	font-family: 'Lucida Grande','Verdana',sans-serif;
+	font-size: 0;
 }
 
 .split_sidebar div.in2igui_selection
@@ -38,6 +39,7 @@ strong.in2igui_selection_badge
 	padding: 0 4px;
 	-moz-border-radius: 8px;
 	-webkit-border-radius: 7px;
+	border-radius: 7px;
 	min-width: 10px;
 	text-align: center;
 	height: 14px;

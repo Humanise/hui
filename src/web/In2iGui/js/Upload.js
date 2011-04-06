@@ -69,7 +69,7 @@ In2iGui.Upload.prototype = {
 					return;
 				}
 			};
-			this.form.insert(new Element('input',{'type':'hidden','name':name,'value':value}));
+			this.form.appendChild(n2i.build('input',{'type':'hidden','name':name,'value':value}));
 		}
 	},
 	
@@ -87,13 +87,14 @@ In2iGui.Upload.prototype = {
 		form.setAttribute('encoding','multipart/form-data');
 		form.setAttribute('target',frameName);
 		if (this.options.parameters) {
-			for (key in this.options.parameters) {
+			for (var key in this.options.parameters) {
 				var hidden = n2i.build('input',{'type':'hidden','name':key});
 				hidden.value = this.options.parameters[key];
 				form.appendChild(hidden);
 			}
 		}
-		var iframe = this.iframe = n2i.build('iframe',{name:frameName,id:frameName,src:In2iGui.context+'/In2iGui/html/blank.html',style:'display:none'});
+		var iframe = this.iframe = n2i.build('iframe',{name:frameName,id:frameName,src:In2iGui.context+'/In2iGui/html/blank.html'});
+		iframe.style.display='none';
 		this.element.appendChild(iframe);
 		this.fileInput = n2i.build('input',{'type':'file','class':'file','name':this.options.fieldName});
 		n2i.listen(this.fileInput,'change',this.iframeSubmit.bind(this));
@@ -144,7 +145,6 @@ In2iGui.Upload.prototype = {
 		this.uploading = true;
 		// IE: set value of parms again since they disappear
 		if (n2i.browser.msie) {
-			var p = this.options.parameters;
 			n2i.each(this.options.parameters,function(key,value) {
 				this.form[key].value = value;
 			}.bind(this));
@@ -308,7 +308,6 @@ In2iGui.Upload.prototype = {
 	uploadComplete : function(file) {
 		this.items[file.index].update(file);
 		this.startNextUpload();
-		var self = this;
 		this.fire('uploadDidComplete',file);
 		if (this.loader.getStats().files_queued==0) {
 			this.fire('uploadDidCompleteQueue');
@@ -382,7 +381,7 @@ In2iGui.Upload.Item.prototype = {
 		}
 	},
 	setError : function(error) {
-		this.status.update(In2iGui.Upload.errors[error] || error);
+		n2i.dom.setText(this.status,In2iGui.Upload.errors[error] || error);
 		n2i.addClass(this.element,'in2igui_upload_item_error');
 		this.progress.hide();
 	},

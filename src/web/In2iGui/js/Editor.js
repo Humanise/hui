@@ -166,7 +166,8 @@ In2iGui.Editor.prototype = {
 	
 	editColumn : function(rowIndex,columnIndex) {
 		this.closeColumn();
-		var c = this.activeColumn = $$('.row')[rowIndex].select('.column')[columnIndex];
+		var row = n2i.byClass(document.body,'row')[rowIndex];
+		var c = this.activeColumn = n2i.byClass(row,'column')[columnIndex];
 		n2i.addClass(c,'in2igui_editor_column_edit');
 		this.showColumnWindow();
 		this.columnEditorForm.setValues({width:c.getStyle('width'),paddingLeft:c.getStyle('padding-left')});
@@ -427,9 +428,10 @@ In2iGui.Editor.startDrag = function(e,element) {
 }
 
 In2iGui.Editor.dragListener = function(e) {
+	e = n2i.event(e);
 	var element = In2iGui.Editor.dragElement;
-	element.style.left = e.pointerX()+'px';
-	element.style.top = e.pointerY()+'px';
+	element.style.left = e.getLeft()+'px';
+	element.style.top = e.getTop()+'px';
 	element.style.display='block';
 	return false;
 }
@@ -452,12 +454,12 @@ In2iGui.Editor.getPartId = function(element) {
  * @constructor
  */
 In2iGui.Editor.Header = function(element,row,column,position) {
-	this.element = $(element);
+	this.element = n2i.get(element);
 	this.row = row;
 	this.column = column;
 	this.position = position;
 	this.id = In2iGui.Editor.getPartId(this.element);
-	this.header = this.element.firstDescendant();
+	this.header = n2i.firstByTag(this.element,'*');
 	this.field = null;
 }
 
@@ -509,7 +511,7 @@ In2iGui.Editor.Header.prototype = {
  * @constructor
  */
 In2iGui.Editor.Html = function(element,row,column,position) {
-	this.element = $(element);
+	this.element = n2i.get(element);
 	this.row = row;
 	this.column = column;
 	this.position = position;

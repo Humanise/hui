@@ -21,8 +21,10 @@ In2iGui.Selection = function(options) {
  */
 In2iGui.Selection.create = function(options) {
 	options = n2i.override({width:0},options);
-	var e = options.element = new Element('div',{'class':'in2igui_selection'});
-	if (options.width>0) e.setStyle({width:options.width+'px'});
+	var e = options.element = n2i.build('div',{'class':'in2igui_selection'});
+	if (options.width>0) {
+		e.style.width = options.width+'px';
+	}
 	return new In2iGui.Selection(options);
 }
 
@@ -55,12 +57,13 @@ In2iGui.Selection.prototype = {
 	},
 	/** @private */
 	getSelectionWithValue : function(value) {
-		for (var i=0; i < this.items.length; i++) {
+		var i;
+		for (i=0; i < this.items.length; i++) {
 			if (this.items[i].value==value) {
 				return this.items[i];
 			}
 		};
-		for (var i=0; i < this.subItems.length; i++) {
+		for (i=0; i < this.subItems.length; i++) {
 			var items = this.subItems[i].items;
 			for (var j=0; j < items.length; j++) {
 				if (items[j].value==value) {
@@ -76,10 +79,11 @@ In2iGui.Selection.prototype = {
 	},
 	/** @private */
 	updateUI : function() {
-		for (var i=0; i < this.items.length; i++) {
+		var i;
+		for (i=0; i < this.items.length; i++) {
 			n2i.setClass(this.items[i].element,'in2igui_selected',this.isSelection(this.items[i]));
 		};
-		for (var i=0; i < this.subItems.length; i++) {
+		for (i=0; i < this.subItems.length; i++) {
 			this.subItems[i].updateUI();
 		};
 	},
@@ -127,22 +131,22 @@ In2iGui.Selection.prototype = {
 	/** Untested!! */
 	setObjects : function(items) {
 		this.items = [];
-		items.each(function(item) {
+		n2i.each(items,function(item) {
 			this.items.push(item);
-			var node = new Element('div',{'class':'in2igui_selection_item'});
+			var node = n2i.build('div',{'class':'in2igui_selection_item'});
 			item.element = node;
-			this.element.insert(node);
-			var inner = new Element('span',{'class':'in2igui_selection_label'}).update(item.title);
+			this.element.appendChild(node);
+			var inner = n2i.build('span',{'class':'in2igui_selection_label',text:item.title});
 			if (item.icon) {
-				node.insert(In2iGui.createIcon(item.icon,1));
+				node.appendChild(In2iGui.createIcon(item.icon,1));
 			}
-			node.insert(inner);
-			node.observe('click',function() {
+			node.appendChild(inner);
+			n2i.listen(node,'click',function() {
 				this.itemWasClicked(item);
 			}.bind(this));
-			node.observe('dblclick',function(e) {
+			n2i.listen(node,'dblclick',function(e) {
+				n2i.stop(e);
 				this.itemWasDoubleClicked(item);
-				e.stop();
 			}.bind(this));
 		}.bind(this));
 	},
@@ -219,7 +223,7 @@ In2iGui.Selection.Items.prototype = {
 		var level = n2i.build('div',{'class':'in2igui_selection_level',style:(open ? 'display:block' : 'display:none'),parent:parent});
 		n2i.each(items,function(item) {
 			if (item.type=='title') {
-				var div = n2i.build('div',{'class':'in2igui_selection_title',html:'<span>'+item.title+'</span>',parent:level});
+				n2i.build('div',{'class':'in2igui_selection_title',html:'<span>'+item.title+'</span>',parent:level});
 				return;
 			}
 			var hasChildren = item.children && item.children.length>0;

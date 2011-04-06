@@ -15,7 +15,8 @@ In2iGui.IFrame.prototype = {
 	 * @param {String} url The url to change the iframe to
 	 */
 	setUrl : function(url) {
-		n2i.getFrameDocument(this.element).location.href=url;
+		this.element.setAttribute('src',url);
+		//n2i.getFrameDocument(this.element).location.href=url;
 	},
 	getDocument : function() {
 		return n2i.getFrameDocument(this.element);
@@ -25,6 +26,12 @@ In2iGui.IFrame.prototype = {
 	},
 	reload : function() {
 		this.getWindow().location.reload();
+	},
+	show : function() {
+		this.element.style.display='';
+	},
+	hide : function() {
+		this.element.style.display='none';
 	}
 }
 

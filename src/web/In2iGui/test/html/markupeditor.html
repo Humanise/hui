@@ -2,19 +2,26 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 	<title>In2iGui</title>
-	<link charset="utf-8" title="front" media="screen" type="text/css" href="../../css/dev.css" rel="stylesheet" />
+	<!--<link charset="utf-8" title="front" media="screen" type="text/css" href="../../css/dev.css" rel="stylesheet" />-->
+	<link charset="utf-8" title="front" media="screen" type="text/css" href="../../css/master.css" rel="stylesheet" />
+	<link charset="utf-8" title="front" media="screen" type="text/css" href="../../css/window.css" rel="stylesheet" />
+	<link charset="utf-8" title="front" media="screen" type="text/css" href="../../css/markupeditor.css" rel="stylesheet" />
+	<link charset="utf-8" title="front" media="screen" type="text/css" href="../../css/button.css" rel="stylesheet" />
+	<link charset="utf-8" title="front" media="screen" type="text/css" href="../../css/bar.css" rel="stylesheet" />
+	<link charset="utf-8" title="front" media="screen" type="text/css" href="../../css/formula.css" rel="stylesheet" />
+	<link charset="utf-8" title="front" media="screen" type="text/css" href="../../css/colorpicker.css" rel="stylesheet" />
 	<!--[if lt IE 7]>
 		<link rel="stylesheet" type="text/css" href="../../css/msie6.css"> </link>
 	<![endif]-->
 	<!--[if IE 7]>
 		<link rel="stylesheet" type="text/css" href="../../css/msie7.css"> </link>
 	<![endif]-->
-	<script charset="utf-8" type="text/javascript" src="../../lib/prototype.js"></script>
 	<script charset="utf-8" type="text/javascript" src="../../lib/n2i.js"></script>
 	<script charset="utf-8" type="text/javascript" src="../../js/In2iGui.js"></script>
 	<script charset="utf-8" type="text/javascript" src="../../js/Bar.js"></script>
 	<script charset="utf-8" type="text/javascript" src="../../js/Button.js"></script>
 	<script charset="utf-8" type="text/javascript" src="../../js/Window.js"></script>
+	<script charset="utf-8" type="text/javascript" src="../../js/Formula.js"></script>
 	<script charset="utf-8" type="text/javascript" src="../../js/MarkupEditor.js"></script>
 	<script charset="utf-8" type="text/javascript" src="../../js/ColorPicker.js"></script>
 	<script type="text/javascript" charset="utf-8">
@@ -26,17 +33,31 @@
 <body>
 <script type="text/javascript" charset="utf-8">
 	ui.onDomReady(function() {
-		var normal = ui.Window.create({width:'300'});
-		var editor = ui.MarkupEditor.create()
-		var button = ui.Button.create({text:'View source'})
-		button.listen({$click:function() {
-			$('source').value=editor.getValue();
-		}});
-		normal.add(editor);
-		normal.add(button);
-		normal.show();
+		var win = ui.Window.create({width:'500'});
+		var editor = ui.MarkupEditor.create({value:'<h1>Lorem ipsum</h1><p>Lorem ipsum</p>'});
+		var source = ui.Formula.Text.create({multiline:true});
+		var view = ui.Button.create({text:'View source'}).listen({
+			$click:function() {
+				source.setValue(editor.getValue());
+			}
+		});
+		editor.listen({
+			$valueChanged : function(value) {
+				source.setValue(value);
+			}
+		})
+		source.listen({
+			$valueChanged : function(value) {
+				editor.setValue(value);
+			}
+		})
+		win.add(editor);
+		win.add(source);
+		win.add(view);
+		win.show();
+		editor.focus();
 	})
 </script>
-<textarea id="source" style="height: 200px;"></textarea>
+<textarea id="source" style="height: 200px; width: 300px;"></textarea>
 </body>
 </html>

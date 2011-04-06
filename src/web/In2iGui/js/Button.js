@@ -15,7 +15,7 @@ In2iGui.Button = function(options) {
  * Creates a new button
  */
 In2iGui.Button.create = function(o) {
-	var o = n2i.override({text:'',highlighted:false,enabled:true},o);
+	o = n2i.override({text:'',highlighted:false,enabled:true},o);
 	var className = 'in2igui_button'+(o.highlighted ? ' in2igui_button_highlighted' : '');
 	if (o.small && o.rounded) {
 		className+=' in2igui_button_small_rounded';
@@ -48,6 +48,9 @@ In2iGui.Button.prototype = {
 	/** @private */
 	addBehavior : function() {
 		var self = this;
+		n2i.listen(this.element,'mousedown',function(e) {
+			n2i.stop(e);
+		});
 		n2i.listen(this.element,'click',function(e) {
 			n2i.stop(e);
 			self.clicked();
@@ -107,7 +110,7 @@ In2iGui.Button.prototype = {
 	},
 	/** Sets whether the button is highlighted */
 	setHighlighted : function(highlighted) {
-		this.element.setClassName('in2igui_button_highlighted',highlighted);
+		n2i.setClass(this.element,'in2igui_button_highlighted',highlighted);
 	},
 	/** @private */
 	updateUI : function() {
@@ -115,7 +118,7 @@ In2iGui.Button.prototype = {
 	},
 	/** Sets the button text */
 	setText : function(text) {
-		this.element.getElementsByTagName('span')[1].innerHTML = text;
+		n2i.dom.setText(this.element.getElementsByTagName('span')[1], text);
 	}
 }
 
