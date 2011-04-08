@@ -497,7 +497,7 @@ In2iGui.Editor.Header.prototype = {
 		In2iGui.Editor.get().partDidDeacivate(this);
 	},
 	updateFieldStyle : function() {
-		n2i.setStyle(this.field,{width:this.header.getWidth()+'px',height:this.header.getHeight()+'px'});
+		n2i.setStyle(this.field,{width:this.header.clientWidth+'px',height:this.header.clientHeight+'px'});
 		n2i.copyStyle(this.header,this.field,['fontSize','lineHeight','marginTop','fontWeight','fontFamily','textAlign','color','fontStyle']);
 	},
 	getValue : function() {
@@ -526,11 +526,11 @@ In2iGui.Editor.Html.prototype = {
 		var height = this.element.clientHeight;
 		this.element.innerHTML='';
 		var style = this.buildStyle();
-		this.editor = In2iGui.RichText.create({autoHideToolbar:false,style:style});
-		this.editor.setHeight(height);
+		this.editor = In2iGui.MarkupEditor.create({autoHideToolbar:false,style:style});
+		//this.editor.setHeight(height);
 		this.element.appendChild(this.editor.getElement());
 		this.editor.listen(this);
-		this.editor.ignite();
+		//this.editor.ignite();
 		this.editor.setValue(this.value);
 		this.editor.focus();
 	},
@@ -549,7 +549,7 @@ In2iGui.Editor.Html.prototype = {
 	},
 	save : function() {
 		this.deactivate();
-		var value = this.editor.value;
+		var value = this.editor.getValue();
 		if (value!=this.value) {
 			this.value = value;
 			In2iGui.Editor.get().partChanged(this);
@@ -558,7 +558,7 @@ In2iGui.Editor.Html.prototype = {
 	},
 	deactivate : function() {
 		if (this.editor) {
-			this.editor.deactivate();
+			this.editor.destroy();
 			this.element.innerHTML = this.value;
 		}
 		In2iGui.Editor.get().partDidDeacivate(this);
