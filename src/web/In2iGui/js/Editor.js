@@ -522,15 +522,11 @@ In2iGui.Editor.Html = function(element,row,column,position) {
 In2iGui.Editor.Html.prototype = {
 	activate : function() {
 		this.value = this.element.innerHTML;
-		//if (Prototype.Browser.IE) return;
-		var height = this.element.clientHeight;
 		this.element.innerHTML='';
 		var style = this.buildStyle();
 		this.editor = In2iGui.MarkupEditor.create({autoHideToolbar:false,style:style});
-		//this.editor.setHeight(height);
 		this.element.appendChild(this.editor.getElement());
 		this.editor.listen(this);
-		//this.editor.ignite();
 		this.editor.setValue(this.value);
 		this.editor.focus();
 	},
