@@ -259,11 +259,8 @@ n2i.dom = {
 		}
 	},
 	replaceNode : function(oldNode,newNode) {
+		newNode.parentNode.removeChild(newNode);
 		oldNode.parentNode.insertBefore(newNode,oldNode);
-		var c = oldNode.childNodes;
-		for (var i=0; i < c.length; i++) {
-			newNode.appendChild(oldNode.removeChild(c[i]));
-		};
 		oldNode.parentNode.removeChild(oldNode);
 	},
 	replaceHTML : function(node,html) {
@@ -385,6 +382,22 @@ if (document.querySelectorAll) {
 		}
 		return out;
 	}
+}
+
+
+n2i.byId = function(e,id) {
+	var children = e.childNodes;
+	for (var i = children.length - 1; i >= 0; i--) {
+		if (children[i].nodeType===hui.ELEMENT_NODE && children[i].getAttribute('id')===id) {
+			return children[i];
+		} else {
+			var found = n2i.byId(children[i],id);
+			if (found) {
+				return found;
+			}
+		}
+	}
+	return null;
 }
 
 n2i.firstParentByTag = function(node,tag) {
