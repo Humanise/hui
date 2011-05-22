@@ -1,5 +1,5 @@
 /** @namespace */
-hui.hui.Flash = {
+hui.ui.Flash = {
 	
 	fullVersion:undefined,
 	

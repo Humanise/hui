@@ -4916,14 +4916,14 @@ hui.ui.Window.prototype = {
  * @class
  * This is a formula
  */
-hui.hui.Formula = function(options) {
+hui.ui.Formula = function(options) {
 	this.options = options;
-	hui.hui.extend(this,options);
+	hui.ui.extend(this,options);
 	this.addBehavior();
 }
 
 /** @static Creates a new formula */
-hui.hui.Formula.create = function(o) {
+hui.ui.Formula.create = function(o) {
 	o = o || {};
 	var atts = {'class':'in2igui_formula hui_formula'};
 	if (o.action) {
@@ -9397,7 +9397,7 @@ hui.ui.Editor.prototype = {
 	showPartEditor : function() {
 		 // TODO: Disabled!
 		/*if (!this.partEditor) {
-			var w = this.partEditor = hui.hui.Window.create({padding:5,title:'Afstande',close:false,variant:'dark',width: 200});
+			var w = this.partEditor = hui.ui.Window.create({padding:5,title:'Afstande',close:false,variant:'dark',width: 200});
 			var f = this.partEditorForm = hui.ui.Formula.create();
 			f.buildGroup({above:false},[
 				{type:'Text',options:{label:'Top',key:'top'}},
@@ -12208,7 +12208,7 @@ hui.ui.Segmented.prototype = {
 }
 
 /* EOF *//** @namespace */
-hui.hui.Flash = {
+hui.ui.Flash = {
 	
 	fullVersion:undefined,
 	

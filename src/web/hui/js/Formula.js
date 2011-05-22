@@ -2,14 +2,14 @@
  * @class
  * This is a formula
  */
-hui.hui.Formula = function(options) {
+hui.ui.Formula = function(options) {
 	this.options = options;
-	hui.hui.extend(this,options);
+	hui.ui.extend(this,options);
 	this.addBehavior();
 }
 
 /** @static Creates a new formula */
-hui.hui.Formula.create = function(o) {
+hui.ui.Formula.create = function(o) {
 	o = o || {};
 	var atts = {'class':'in2igui_formula hui_formula'};
 	if (o.action) {

@@ -316,7 +316,7 @@ hui.ui.Editor.prototype = {
 	showPartEditor : function() {
 		 // TODO: Disabled!
 		/*if (!this.partEditor) {
-			var w = this.partEditor = hui.hui.Window.create({padding:5,title:'Afstande',close:false,variant:'dark',width: 200});
+			var w = this.partEditor = hui.ui.Window.create({padding:5,title:'Afstande',close:false,variant:'dark',width: 200});
 			var f = this.partEditorForm = hui.ui.Formula.create();
 			f.buildGroup({above:false},[
 				{type:'Text',options:{label:'Top',key:'top'}},
