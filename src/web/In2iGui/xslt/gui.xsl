@@ -57,10 +57,11 @@
 <xsl:choose>
 	<xsl:when test="$dev='true'">
 		<script src="{$context}/In2iGui/lib/swfupload/swfupload.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/lib/n2i.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/lib/In2iScripts/In2iDate.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/In2iGui/lib/date.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/lib/json2.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/In2iGui.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/In2iGui/js/hui.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/In2iGui/js/ui.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/In2iGui/js/Require.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/Source.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/DragDrop.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/Window.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
@@ -82,6 +83,7 @@
 		<script src="{$context}/In2iGui/js/ProgressBar.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/Gallery.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/Calendar.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/In2iGui/js/DatePicker.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/Layout.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/Dock.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/In2iGui/js/Box.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
@@ -100,21 +102,14 @@
 		<script src="{$context}/In2iGui/js/Link.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 	</xsl:when>
 	<xsl:otherwise>
-		<script src="{$context}/In2iGui/bin/minimized.noproto.js?version={$version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/In2iGui/bin/minimized.js?version={$version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 	</xsl:otherwise>
 </xsl:choose>
-<xsl:if test="//gui:graphviz">
-	<script src="{$context}/In2iGui/ext/Graphviz.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-</xsl:if>
 <xsl:if test="//gui:graph">
 	<link rel="stylesheet" href="{$context}/In2iGui/ext/graph.css?version={$version}" type="text/css" media="screen" title="no title" charset="utf-8"/>
 	<script type="text/javascript" src="{$context}/In2iGui/lib/protovis-3.2/protovis-r3.2.js"><xsl:comment/></script>
 	<script type="text/javascript" src="{$context}/In2iGui/lib/raphael-min.js"><xsl:comment/></script>
 	<script src="{$context}/In2iGui/ext/Graph.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-</xsl:if>
-<xsl:if test="//gui:chart">
-	<script src="{$context}/In2iGui/lib/swfobject.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-	<script src="{$context}/In2iGui/ext/FlashChart.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 </xsl:if>
 <xsl:for-each select="gui:localize[@source]">
 	<script src="{@source}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
@@ -124,13 +119,13 @@
 </xsl:for-each>
 <script type="text/javascript">
 <xsl:if test="@state">
-In2iGui.state = '<xsl:value-of select="@state"/>';
+hui.ui.state = '<xsl:value-of select="@state"/>';
 </xsl:if>
-In2iGui.context = '<xsl:value-of select="$context"/>';
+hui.ui.context = '<xsl:value-of select="$context"/>';
 <xsl:for-each select="gui:controller[@source]">
 	<xsl:if test="@name">
 	if (window['<xsl:value-of select="@name"/>']!==undefined) {
-		In2iGui.listen(<xsl:value-of select="@name"/>);
+		hui.ui.listen(<xsl:value-of select="@name"/>);
 	}
 	</xsl:if>
 </xsl:for-each>
@@ -153,7 +148,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 			<script src="{$context}{../@base}interface/{@name}.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		</xsl:for-each>
 		<script type="text/javascript">
-			dwr.engine.setErrorHandler(In2iGui.dwrErrorHandler);
+			dwr.engine.setErrorHandler(hui.ui.dwrErrorHandler);
 		</script>
 	</xsl:if>
 </xsl:template>
@@ -184,7 +179,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 
 <xsl:template match="gui:source">
 <script type="text/javascript">
-	var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Source({name:'<xsl:value-of select="@name"/>'
+	var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Source({name:'<xsl:value-of select="@name"/>'
 		<xsl:choose>
 			<xsl:when test="@url">,url:'<xsl:value-of select="@url"/>'</xsl:when>
 			<xsl:when test="@dwr">,dwr:'<xsl:value-of select="@dwr"/>'</xsl:when>
@@ -219,7 +214,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 		<xsl:for-each select="*">
 			listener['$<xsl:value-of select="local-name()"/>$<xsl:value-of select="../@for"/>']=function() {<xsl:apply-templates/>};
 		</xsl:for-each>
-		In2iGui.listen(listener);
+		hui.ui.listen(listener);
 	
 	})()
 </script>	
@@ -250,7 +245,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 	</tbody>
 </table>
 <script type="text/javascript">
-	var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Dock({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>'<xsl:if test="gui:tabs">,tabs:true</xsl:if>});
+	var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Dock({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>'<xsl:if test="gui:tabs">,tabs:true</xsl:if>});
 	<xsl:call-template name="gui:createobject"/>
 </script>
 </xsl:template>
@@ -295,7 +290,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 		<xsl:comment/>
 	</iframe>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.IFrame({
+		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.IFrame({
 			element:'<xsl:value-of select="$id"/>',
 			name:'<xsl:value-of select="@name"/>'
 			<xsl:if test="@state">
@@ -310,7 +305,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 <xsl:template match="gui:selection">
 	<div class="in2igui_selection" id="{generate-id()}"><xsl:apply-templates/></div>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Selection({
+		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Selection({
 			element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>'
 			<xsl:if test="@value">,value:'<xsl:value-of select="@value"/>'</xsl:if>
 		});
@@ -354,7 +349,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 		<xsl:comment/>
 	</div>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Selection.Items({
+		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Selection.Items({
 			element:'<xsl:value-of select="generate-id()"/>'
 			,name:'<xsl:value-of select="@name"/>'
 			<xsl:if test="@source">,source:<xsl:value-of select="@source"/></xsl:if>
@@ -368,7 +363,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 		<xsl:comment/>
 	</div>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Selection.Source('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>',{url:'<xsl:value-of select="@url"/>'});
+		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Selection.Source('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>',{url:'<xsl:value-of select="@url"/>'});
 		<xsl:call-template name="gui:createobject"/>
 	</script>
 </xsl:template>
@@ -401,7 +396,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 		</div>
 	</div>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.List({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>',url:'<xsl:value-of select="@url"/>',<xsl:if test="@source">source:<xsl:value-of select="@source"/>,</xsl:if>state:'<xsl:value-of select="@state"/>',windowSize:'<xsl:value-of select="gui:window/@size"/>'});
+		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.List({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>',url:'<xsl:value-of select="@url"/>',<xsl:if test="@source">source:<xsl:value-of select="@source"/>,</xsl:if>state:'<xsl:value-of select="@state"/>',windowSize:'<xsl:value-of select="gui:window/@size"/>'});
 		with (<xsl:value-of select="generate-id()"/>_obj) {
 			<xsl:for-each select="gui:column">
 				registerColumn({key:'<xsl:value-of select="@key"/>',title:'<xsl:value-of select="@title"/>'});
@@ -457,7 +452,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 		<xsl:apply-templates select="gui:tab"/>
 	</xsl:if>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Tabs({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>'});
+		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Tabs({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>'});
 		<xsl:call-template name="gui:createobject"/>
 	</script>
 </div>
@@ -503,7 +498,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 		<div class="in2igui_boundpanel_bottom"><div><div><xsl:comment/></div></div></div>
 	</div>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.BoundPanel({
+		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.BoundPanel({
 			element:'<xsl:value-of select="generate-id()"/>',
 			name:'<xsl:value-of select="@name"/>'
 			<xsl:if test="@target">,target:'<xsl:value-of select="@target"/>'</xsl:if>
@@ -537,7 +532,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 		</div>
 	</div>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Window({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>'});
+		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Window({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>'});
 		<xsl:call-template name="gui:createobject"/>
 	</script>
 </xsl:template>
@@ -557,7 +552,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 		<xsl:apply-templates/>
 	</div>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Upload({
+		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Upload({
 			element:'<xsl:value-of select="generate-id()"/>',
 			name:'<xsl:value-of select="@name"/>',
 			url:'<xsl:value-of select="@url"/>',
@@ -586,7 +581,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 		<div class="in2igui_richtext_toolbar" id="{generate-id()}_toolbar"><div class="in2igui_richtext_inner_toolbar"><div class="in2igui_richtext_toolbar_content" id="{generate-id()}_toolbar_content"><xsl:comment/></div></div></div>
 		<iframe id="{generate-id()}_iframe" style="width: 100%; height: {@heigth}px;" frameborder="0"/>		
 		<script type="text/javascript">
-			var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.RichText({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>'});
+			var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.RichText({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>'});
 			<xsl:call-template name="gui:createobject"/>
 		</script>
 	</div>
@@ -599,11 +594,14 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 <xsl:template match="gui:gallery">
 	<div class="in2igui_gallery" id="{generate-id()}">
 		<xsl:if test="@padding"><xsl:attribute name="style">padding:<xsl:value-of select="@padding"/>px;</xsl:attribute></xsl:if>
-		<xsl:comment/>
-		<xsl:text>&#160;</xsl:text>
+		<div class="in2igui_gallery_progress"><xsl:comment/></div>
+		<div class="in2igui_gallery_body">
+			<xsl:comment/>
+			<xsl:text>&#160;</xsl:text>
+		</div>
 	</div>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Gallery({
+		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Gallery({
 			element:'<xsl:value-of select="generate-id()"/>',
 			name:'<xsl:value-of select="@name"/>'
 			<xsl:if test="@source">,source:<xsl:value-of select="@source"/></xsl:if>
@@ -650,7 +648,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 	</table>
 	</div>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Calendar({
+		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Calendar({
 			element:'<xsl:value-of select="generate-id()"/>'
 			,name:'<xsl:value-of select="@name"/>'
 			,state:'<xsl:value-of select="@state"/>'
@@ -672,27 +670,10 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 		<canvas/>
 	</div>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Graphviz('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>');
-		<xsl:call-template name="gui:createobject"/>
-	</script>
-</xsl:template>
-
-
-<!-- Chart -->
-
-<xsl:template match="gui:chart">
-	<div id="{generate-id()}"><div id="{generate-id()}_chart"><xsl:comment/></div></div>
-	<script type="text/javascript">
-		swfobject.embedSWF(
-			"<xsl:value-of select="$context"/>/In2iGui/lib/openflashchart/open-flash-chart.swf",
-			"<xsl:value-of select="generate-id()"/>_chart",
-			"<xsl:value-of select="@width"/>",
-			"<xsl:value-of select="@height"/>",
-  			"9.0.0", "expressInstall.swf",
-  			{"data-file":"<xsl:value-of select="@url"/>"}
-  		);
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.FlashChart('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>');
-		<xsl:call-template name="gui:createobject"/>
+		hui.require('<xsl:value-of select="$context"/>/In2iGui/ext/Graphviz.js',function() {
+			var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Graphviz('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>');
+			<xsl:call-template name="gui:createobject"/>
+		});
 	</script>
 </xsl:template>
 
@@ -715,7 +696,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 	</div>
 	<script type="text/javascript">
 		(function() {
-			var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Picker({
+			var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Picker({
 				element:'<xsl:value-of select="generate-id()"/>',
 				name:'<xsl:value-of select="@name"/>'
 				<xsl:if test="@item-height">,itemHeight:<xsl:value-of select="@item-height"/></xsl:if>
@@ -738,7 +719,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 <xsl:template match="gui:articles">
 	<div class="in2igui_articles" id="{generate-id()}"><xsl:comment/></div>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Articles({
+		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Articles({
 			element:'<xsl:value-of select="generate-id()"/>',
 			name:'<xsl:value-of select="@name"/>'
 			<xsl:if test="@source">,source:<xsl:value-of select="@source"/></xsl:if>
@@ -763,7 +744,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 <xsl:template match="gui:link">
 	<a href="javascript:void(0);" class="in2igui_link" id="{generate-id()}"><span><xsl:apply-templates/></span></a>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Link({
+		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Link({
 			element:'<xsl:value-of select="generate-id()"/>',
 			name:'<xsl:value-of select="@name"/>'
 		});
@@ -796,7 +777,7 @@ In2iGui.context = '<xsl:value-of select="$context"/>';
 		</xsl:for-each>
 	<xsl:comment/></span>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new In2iGui.Segmented({
+		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Segmented({
 			element:'<xsl:value-of select="generate-id()"/>',
 			name:'<xsl:value-of select="@name"/>'
 			<xsl:if test="@value">,value:'<xsl:value-of select="@value"/>'</xsl:if>
