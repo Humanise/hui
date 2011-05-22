@@ -1,0 +1,51 @@
+textarea.hui_editor_header
+{
+	background: none;
+	border: none;
+	position: absolute;
+	padding: 0px;
+	display: block;
+	outline: none;
+}
+
+textarea.hui_editor_html
+{
+	background: none;
+	border: none;
+	padding: 0px;
+	display: block;
+	width: 100%;
+}
+
+div.hui_editor_dragproxy
+{
+	position: absolute;
+	top: 0px;
+	left: 0px;
+}
+
+.hui_editor_part_active
+{
+	outline: 1px dashed #3875d7;
+}
+
+div.hui_overlay_icon:hover
+{
+	cursor: pointer;
+	background-position: 0px -32px;
+}
+
+.hui_editor_part_hover
+{
+	background: url('../gfx/hover_bg.png');
+}
+
+.hui_editor_column_hover
+{
+	border: 1px dashed #3875d7;
+}
+
+.hui_editor_column_edit
+{
+	outline: 2px dashed #3875d7 !important;
+}

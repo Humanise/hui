@@ -1,0 +1,46 @@
+span.in2igui_segmented
+{
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	background: #fff;
+	border: 1px solid #AAAAAA;
+	border-color: #ddd #ccc #aaa;
+	display: inline-block;
+	vertical-align: middle;
+	font-size: 0;
+	height: 20px;
+	background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#eee));
+	background: -moz-linear-gradient(top, #fff, #eee);
+}
+
+span.in2igui_segmented a
+{
+	display: inline-block;
+	height: 20px;
+	vertical-align: top;
+	text-decoration: none;
+	color: #333;
+	padding: 0 3px;
+	-moz-border-radius: 2px;
+	-webkit-border-radius: 2px;
+	outline: none;
+}
+
+span.in2igui_segmented .in2igui_icon_16
+{
+	margin-top: 2px;
+}
+
+span.in2igui_segmented_text
+{
+	font-size: 12px;
+	line-height: 20px;
+	padding: 0 4px;
+}
+
+a.in2igui_segmented_selected
+{
+	background: #ddd;
+	background: -moz-linear-gradient(top, #EFF2F4, #C0C9CF);
+	background: -webkit-gradient(linear, left top, left bottom, from(#EFF2F4), to(#C0C9CF));
+}

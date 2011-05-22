@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="setup.xsl"?>
+<gui xmlns="uri:In2iGui" title="Graph">
+	<controller source="graph.js"/>
+	<source url="data/graph_family.json" name="soirce"/>
+	<layout>
+		<top>
+			<toolbar>
+				<icon icon="common/new" title="Test"/>
+			</toolbar>
+		</top>
+		<middle>
+			<left></left>
+			<center>
+				<graph name="graph" layout="graffle" source="soirce"/>
+			</center>
+		</middle>
+		<bottom>
+		</bottom>
+	</layout>
+</gui>
+

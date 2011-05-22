@@ -1,0 +1,373 @@
+
+div.hui_buttons
+{
+	overflow: hidden;
+	font-size: 0;
+	line-height: 0;
+}
+
+div.hui_buttons_right div.hui_buttons_body
+{
+	text-align: right;
+}
+
+div.hui_buttons_center div.hui_buttons_body
+{
+	text-align: center;
+}
+
+div.hui_buttons a.hui_button
+{
+	margin-right: 2px;
+}
+
+div.hui_buttons_right a.hui_button
+{
+	margin: 0px 0px 0px 2px;
+}
+
+a.hui_button
+{
+	background: url('../gfx/button2.png') top left no-repeat;
+	color: #004a80;
+	display: inline-block;
+	vertical-align: middle;
+	font-size: 12px;
+	height: 30px;
+	line-height: 29px;
+	cursor: pointer;
+	text-decoration: none;
+	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	white-space: nowrap;
+}
+
+a.hui_button span
+{
+	background-image: url('../gfx/button2.png');	
+	background-repeat: no-repeat;
+	display: inline-block;
+	background-position: right -30px;
+	background-repeat: no-repeat;
+	height: 30px;
+}
+
+a.hui_button span span
+{
+	background-position: 0px -60px;
+	background-repeat: repeat-x;
+	margin: 0px 6px;
+	padding: 0px 6px;
+}
+
+em.hui_button_icon
+{
+	padding: 0px;
+	margin: -1px 3px 0px -2px;
+	width: 16px;
+	height: 16px;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+em.hui_button_icon_notext
+{
+	margin: -1px -3px 0px -3px;
+}
+
+a.hui_button:hover
+{
+	background-position: 0px -90px;
+}
+
+a.hui_button:hover span
+{
+	background-position: 100% -120px;
+}
+
+a.hui_button:hover span span
+{
+	background-position: 0px -150px;
+	background-repeat: repeat-x;
+}
+
+a.hui_button:focus
+{
+	background-position: 0px -180px;
+	outline: none;
+}
+
+a.hui_button:focus span
+{
+	background-position: 100% -210px;
+}
+
+a.hui_button:focus span span
+{
+	background-position: 0px -240px;
+	background-repeat: repeat-x;
+}
+
+a.hui_button:focus:hover
+{
+	background-position: 0px -270px;
+	outline: none;
+}
+
+a.hui_button:focus:hover span
+{
+	background-position: 100% -300px;
+}
+
+a.hui_button:focus:hover span span
+{
+	background-position: 0px -330px;
+	background-repeat: repeat-x;
+}
+
+a.hui_button:active
+{
+	background-position: 0px -360px;
+	outline: none;
+}
+
+a.hui_button:active span
+{
+	background-position: 100% -390px;
+}
+
+a.hui_button:active span span
+{
+	background-position: 0px -420px;
+	background-repeat: repeat-x;
+}
+
+a.hui_button:active:focus
+{
+	background-position: 0px -450px;
+	outline: none;
+}
+
+a.hui_button:active:focus span
+{
+	background-position: 100% -480px;
+}
+
+a.hui_button:active:focus span span
+{
+	background-position: 0px -510px;
+	background-repeat: repeat-x;
+}
+
+a.hui_button_highlighted, a.hui_button_highlighted span
+{
+	background-image: url('../gfx/button_highlighted2.png');
+	color: #fff;
+}
+
+a.hui_button_disabled
+{
+	color: #666;
+	opacity: .5;
+	cursor: default;
+}
+
+a.hui_button_disabled:hover
+{
+	background-position: top left;
+}
+
+a.hui_button_disabled:hover span
+{
+	background-position: 100% -30px;
+}
+
+a.hui_button_disabled:hover span span
+{
+	background-position: 0px -60px;
+}
+
+a.hui_button_small_rounded
+{
+	height: 24px;
+	background-image: url('../gfx/button_small_rounded.png');
+	line-height: 0;
+	font-size: 0;
+}
+
+a.hui_button_small_rounded span
+{
+	height: 24px;
+	background-image: url('../gfx/button_small_rounded.png');
+	background-position: right -24px;
+}
+
+a.hui_button_small_rounded span span
+{
+	background-position: left -48px;
+	margin: 0 12px;
+	padding: 0 3px;
+	font-size: 12px;
+	line-height: 23px;
+	text-shadow: 0 1px 0 #FFFFFF;
+}
+
+a.hui_button_small_rounded:hover
+{
+	background-position: left -72px;
+}
+
+a.hui_button_small_rounded:hover span
+{
+	background-position: right -96px;
+}
+
+a.hui_button_small_rounded:hover span span
+{
+	background-position: left -120px;
+}
+
+a.hui_button_small_rounded:active
+{
+	background-position: left -144px;
+}
+
+a.hui_button_small_rounded:active span
+{
+	background-position: right -168px;
+}
+
+a.hui_button_small_rounded:active span span
+{
+	background-position: left -192px;
+}
+
+
+a.hui_button_small_rounded:focus
+{
+	background-position: left -216px;
+}
+
+a.hui_button_small_rounded:focus span
+{
+	background-position: right -240px;
+}
+
+a.hui_button_small_rounded:focus span span
+{
+	background-position: left -264px;
+}
+
+a.hui_button_small_rounded:focus:hover
+{
+	background-position: left -288px;
+}
+
+a.hui_button_small_rounded:focus:hover span
+{
+	background-position: right -312px;
+}
+
+a.hui_button_small_rounded:focus:hover span span
+{
+	background-position: left -336px;
+}
+
+a.hui_button_small_rounded:focus:active
+{
+	background-position: left -360px;
+}
+
+a.hui_button_small_rounded:focus:active span
+{
+	background-position: right -384px;
+}
+
+a.hui_button_small_rounded:focus:active span span
+{
+	background-position: left -408px;
+}
+
+/*****************************************/
+/*
+a.hui_button_highlighted {
+    -webkit-animation-name: hui_pulse;
+    -webkit-animation-duration: 2s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: ease-in-out;
+}
+
+
+
+@-webkit-keyframes hui_pulse {
+	0% {
+	  opacity: 1;
+	}
+	50% {
+	  opacity: .8;
+	}
+	100% {
+	  opacity: 1;
+	}
+}*/
+
+a.hui_button_paper, a.hui_button_paper span
+{
+	background: none;
+	height: 26px;
+	line-height: 26px;
+	font-family: Georgia,serif;
+	font-size: 14px;
+}
+
+a.hui_button_paper
+{
+	border: 1px solid #ddd;
+	border-radius: 4px;
+    background: -webkit-gradient(linear, 0% 0%, 0% 100% , from(#fff), to(#f6f6f6));
+	background: -moz-linear-gradient(top, #fff, #f6f6f6);
+    filter: progid:DXImageTransform.Microsoft.gradient (GradientType=0, startColorstr=#ffffff, endColorstr=#f6f6f6);
+	-webkit-background-clip: border-box;
+	color: #333;
+	/*-webkit-box-shadow: 0px 1px 3px #eee;*/
+}
+
+a.hui_button_paper:hover
+{
+	border-color: #dadada;
+    background: -webkit-gradient(linear, 0% 0%, 0% 100% , from(#fafafa), to(#eee));
+	background: -moz-linear-gradient(top, #fafafa, #eee);
+    filter: progid:DXImageTransform.Microsoft.gradient (GradientType=0, startColorstr=#fafafa, endColorstr=#eeeeee);
+}
+
+a.hui_button_paper:active
+{
+	border-color: #dadada;
+    background: -webkit-gradient(linear, 0% 0%, 0% 100% , from(#eee), to(#fafafa));
+	background: -moz-linear-gradient(top, #eee, #fafafa);
+    filter: progid:DXImageTransform.Microsoft.gradient (GradientType=0, startColorstr=#eeeeee, endColorstr=#fafafa);
+}
+
+a.hui_button_paper:focus
+{
+	outline: auto 5px rgba(1,105,255,.3);
+	outline-offset: -2px;
+	-moz-outline: -moz-mac-focusring solid 2px; -moz-outline-radius: 0 7px 7px;
+	-moz-outline-offset: 0;
+	background-position: 0 0;
+}
+
+a.hui_button_small_paper, a.hui_button_small_paper span
+{
+	height: 20px;
+	line-height: 18px;
+}
+
+a.hui_button_small_paper span span
+{
+	margin: 0;
+	padding: 0 10px;
+	font-size: 11px;
+	line-height: 18px;
+}
