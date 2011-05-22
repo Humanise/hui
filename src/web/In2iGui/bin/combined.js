@@ -1,4901 +1,5 @@
-/*  Prototype JavaScript framework, version 1.6.1_rc2
- *  (c) 2005-2009 Sam Stephenson
- *
- *  Prototype is freely distributable under the terms of an MIT-style license.
- *  For details, see the Prototype web site: http://www.prototypejs.org/
- *
- *--------------------------------------------------------------------------*/
-
-var Prototype = {
-  Version: '1.6.1_rc2',
-
-  Browser: {
-    IE:     !!(window.attachEvent &&
-      navigator.userAgent.indexOf('Opera') === -1),
-    Opera:  navigator.userAgent.indexOf('Opera') > -1,
-    WebKit: navigator.userAgent.indexOf('AppleWebKit/') > -1,
-    Gecko:  navigator.userAgent.indexOf('Gecko') > -1 &&
-      navigator.userAgent.indexOf('KHTML') === -1,
-    MobileSafari: !!navigator.userAgent.match(/Apple.*Mobile.*Safari/)
-  },
-
-  BrowserFeatures: {
-    XPath: !!document.evaluate,
-    SelectorsAPI: !!document.querySelector,
-    ElementExtensions: (function() {
-      if (window.HTMLElement && window.HTMLElement.prototype)
-        return true;
-      if (window.Element && window.Element.prototype)
-        return true;
-    })(),
-    SpecificElementExtensions: (function() {
-      if (typeof window.HTMLDivElement !== 'undefined')
-        return true;
-
-      var div = document.createElement('div');
-      if (div['__proto__'] && div['__proto__'] !==
-       document.createElement('form')['__proto__']) {
-        return true;
-      }
-
-      return false;
-    })()
-  },
-
-  ScriptFragment: '<script[^>]*>([\\S\\s]*?)<\/script>',
-  JSONFilter: /^\/\*-secure-([\s\S]*)\*\/\s*$/,
-
-  emptyFunction: function() { },
-  K: function(x) { return x }
-};
-
-if (Prototype.Browser.MobileSafari)
-  Prototype.BrowserFeatures.SpecificElementExtensions = false;
-
-
-var Abstract = { };
-
-
-var Try = {
-  these: function() {
-    var returnValue;
-
-    for (var i = 0, length = arguments.length; i < length; i++) {
-      var lambda = arguments[i];
-      try {
-        returnValue = lambda();
-        break;
-      } catch (e) { }
-    }
-
-    return returnValue;
-  }
-};
-
-/* Based on Alex Arnell's inheritance implementation. */
-
-var Class = (function() {
-  function create() {
-    var parent = null, properties = $A(arguments);
-    if (Object.isFunction(properties[0]))
-      parent = properties.shift();
-
-    function klass() {
-      this.initialize.apply(this, arguments);
-    }
-
-    Object.extend(klass, Class.Methods);
-    klass.superclass = parent;
-    klass.subclasses = [];
-
-    if (parent) {
-      var subclass = function() {};
-      subclass.prototype = parent.prototype;
-      klass.prototype = new subclass;
-      parent.subclasses.push(klass);
-    }
-
-    for (var i = 0; i < properties.length; i++)
-      klass.addMethods(properties[i]);
-
-    if (!klass.prototype.initialize)
-      klass.prototype.initialize = Prototype.emptyFunction;
-
-    klass.prototype.constructor = klass;
-    return klass;
-  }
-
-  function addMethods(source) {
-    var ancestor   = this.superclass && this.superclass.prototype;
-    var properties = Object.keys(source);
-
-    if (!Object.keys({ toString: true }).length) {
-      if (source.toString != Object.prototype.toString)
-        properties.push("toString");
-      if (source.valueOf != Object.prototype.valueOf)
-        properties.push("valueOf");
-    }
-
-    for (var i = 0, length = properties.length; i < length; i++) {
-      var property = properties[i], value = source[property];
-      if (ancestor && Object.isFunction(value) &&
-          value.argumentNames().first() == "$super") {
-        var method = value;
-        value = (function(m) {
-          return function() { return ancestor[m].apply(this, arguments); };
-        })(property).wrap(method);
-
-        value.valueOf = method.valueOf.bind(method);
-        value.toString = method.toString.bind(method);
-      }
-      this.prototype[property] = value;
-    }
-
-    return this;
-  }
-
-  return {
-    create: create,
-    Methods: {
-      addMethods: addMethods
-    }
-  };
-})();
-(function() {
-
-  function getClass(object) {
-    return Object.prototype.toString.call(object)
-     .match(/^\[object\s(.*)\]$/)[1];
-  }
-
-  function extend(destination, source) {
-    for (var property in source)
-      destination[property] = source[property];
-    return destination;
-  }
-
-  function inspect(object) {
-    try {
-      if (isUndefined(object)) return 'undefined';
-      if (object === null) return 'null';
-      return object.inspect ? object.inspect() : String(object);
-    } catch (e) {
-      if (e instanceof RangeError) return '...';
-      throw e;
-    }
-  }
-
-  function toJSON(object) {
-    var type = typeof object;
-    switch (type) {
-      case 'undefined':
-      case 'function':
-      case 'unknown': return;
-      case 'boolean': return object.toString();
-    }
-
-    if (object === null) return 'null';
-    if (object.toJSON) return object.toJSON();
-    if (isElement(object)) return;
-
-    var results = [];
-    for (var property in object) {
-      var value = toJSON(object[property]);
-      if (!isUndefined(value))
-        results.push(property.toJSON() + ': ' + value);
-    }
-
-    return '{' + results.join(', ') + '}';
-  }
-
-  function toQueryString(object) {
-    return $H(object).toQueryString();
-  }
-
-  function toHTML(object) {
-    return object && object.toHTML ? object.toHTML() : String.interpret(object);
-  }
-
-  function keys(object) {
-    var results = [];
-    for (var property in object)
-      results.push(property);
-    return results;
-  }
-
-  function values(object) {
-    var results = [];
-    for (var property in object)
-      results.push(object[property]);
-    return results;
-  }
-
-  function clone(object) {
-    return extend({ }, object);
-  }
-
-  function isElement(object) {
-    return !!(object && object.nodeType == 1);
-  }
-
-  function isArray(object) {
-    return getClass(object) === "Array";
-  }
-
-
-  function isHash(object) {
-    return object instanceof Hash;
-  }
-
-  function isFunction(object) {
-    return typeof object === "function";
-  }
-
-  function isString(object) {
-    return getClass(object) === "String";
-  }
-
-  function isNumber(object) {
-    return getClass(object) === "Number";
-  }
-
-  function isUndefined(object) {
-    return typeof object === "undefined";
-  }
-
-  extend(Object, {
-    extend:        extend,
-    inspect:       inspect,
-    toJSON:        toJSON,
-    toQueryString: toQueryString,
-    toHTML:        toHTML,
-    keys:          keys,
-    values:        values,
-    clone:         clone,
-    isElement:     isElement,
-    isArray:       isArray,
-    isHash:        isHash,
-    isFunction:    isFunction,
-    isString:      isString,
-    isNumber:      isNumber,
-    isUndefined:   isUndefined
-  });
-})();
-Object.extend(Function.prototype, (function() {
-  var slice = Array.prototype.slice;
-
-  function update(array, args) {
-    var arrayLength = array.length, length = args.length;
-    while (length--) array[arrayLength + length] = args[length];
-    return array;
-  }
-
-  function merge(array, args) {
-    array = slice.call(array, 0);
-    return update(array, args);
-  }
-
-  function argumentNames() {
-    var names = this.toString().match(/^[\s\(]*function[^(]*\(([^)]*)\)/)[1]
-      .replace(/\/\/.*?[\r\n]|\/\*(?:.|[\r\n])*?\*\//g, '')
-      .replace(/\s+/g, '').split(',');
-    return names.length == 1 && !names[0] ? [] : names;
-  }
-
-  function bind(context) {
-    if (arguments.length < 2 && Object.isUndefined(arguments[0])) return this;
-    var __method = this, args = slice.call(arguments, 1);
-    return function() {
-      var a = merge(args, arguments);
-      return __method.apply(context, a);
-    }
-  }
-
-  function bindAsEventListener(context) {
-    var __method = this, args = slice.call(arguments, 1);
-    return function(event) {
-      var a = update([event || window.event], args);
-      return __method.apply(context, a);
-    }
-  }
-
-  function curry() {
-    if (!arguments.length) return this;
-    var __method = this, args = slice.call(arguments, 0);
-    return function() {
-      var a = merge(args, arguments);
-      return __method.apply(this, a);
-    }
-  }
-
-  function delay(timeout) {
-    var __method = this, args = slice.call(arguments, 1);
-    timeout = timeout * 1000
-    return window.setTimeout(function() {
-      return __method.apply(__method, args);
-    }, timeout);
-  }
-
-  function defer() {
-    var args = update([0.01], arguments);
-    return this.delay.apply(this, args);
-  }
-
-  function wrap(wrapper) {
-    var __method = this;
-    return function() {
-      var a = update([__method.bind(this)], arguments);
-      return wrapper.apply(this, a);
-    }
-  }
-
-  function methodize() {
-    if (this._methodized) return this._methodized;
-    var __method = this;
-    return this._methodized = function() {
-      var a = update([this], arguments);
-      return __method.apply(null, a);
-    };
-  }
-
-  return {
-    argumentNames:       argumentNames,
-    bind:                bind,
-    bindAsEventListener: bindAsEventListener,
-    curry:               curry,
-    delay:               delay,
-    defer:               defer,
-    wrap:                wrap,
-    methodize:           methodize
-  }
-})());
-
-
-Date.prototype.toJSON = function() {
-  return '"' + this.getUTCFullYear() + '-' +
-    (this.getUTCMonth() + 1).toPaddedString(2) + '-' +
-    this.getUTCDate().toPaddedString(2) + 'T' +
-    this.getUTCHours().toPaddedString(2) + ':' +
-    this.getUTCMinutes().toPaddedString(2) + ':' +
-    this.getUTCSeconds().toPaddedString(2) + 'Z"';
-};
-
-
-RegExp.prototype.match = RegExp.prototype.test;
-
-RegExp.escape = function(str) {
-  return String(str).replace(/([.*+?^=!:${}()|[\]\/\\])/g, '\\$1');
-};
-var PeriodicalExecuter = Class.create({
-  initialize: function(callback, frequency) {
-    this.callback = callback;
-    this.frequency = frequency;
-    this.currentlyExecuting = false;
-
-    this.registerCallback();
-  },
-
-  registerCallback: function() {
-    this.timer = setInterval(this.onTimerEvent.bind(this), this.frequency * 1000);
-  },
-
-  execute: function() {
-    this.callback(this);
-  },
-
-  stop: function() {
-    if (!this.timer) return;
-    clearInterval(this.timer);
-    this.timer = null;
-  },
-
-  onTimerEvent: function() {
-    if (!this.currentlyExecuting) {
-      try {
-        this.currentlyExecuting = true;
-        this.execute();
-      } catch(e) {
-        /* empty catch for clients that don't support try/finally */
-      }
-      finally {
-        this.currentlyExecuting = false;
-      }
-    }
-  }
-});
-Object.extend(String, {
-  interpret: function(value) {
-    return value == null ? '' : String(value);
-  },
-  specialChar: {
-    '\b': '\\b',
-    '\t': '\\t',
-    '\n': '\\n',
-    '\f': '\\f',
-    '\r': '\\r',
-    '\\': '\\\\'
-  }
-});
-
-Object.extend(String.prototype, (function() {
-
-  function prepareReplacement(replacement) {
-    if (Object.isFunction(replacement)) return replacement;
-    var template = new Template(replacement);
-    return function(match) { return template.evaluate(match) };
-  }
-
-  function gsub(pattern, replacement) {
-    var result = '', source = this, match;
-    replacement = prepareReplacement(replacement);
-
-    if (Object.isString(pattern))
-      pattern = RegExp.escape(pattern);
-
-    if (!(pattern.length || pattern.source)) {
-      replacement = replacement('');
-      return replacement + source.split('').join(replacement) + replacement;
-    }
-
-    while (source.length > 0) {
-      if (match = source.match(pattern)) {
-        result += source.slice(0, match.index);
-        result += String.interpret(replacement(match));
-        source  = source.slice(match.index + match[0].length);
-      } else {
-        result += source, source = '';
-      }
-    }
-    return result;
-  }
-
-  function sub(pattern, replacement, count) {
-    replacement = prepareReplacement(replacement);
-    count = Object.isUndefined(count) ? 1 : count;
-
-    return this.gsub(pattern, function(match) {
-      if (--count < 0) return match[0];
-      return replacement(match);
-    });
-  }
-
-  function scan(pattern, iterator) {
-    this.gsub(pattern, iterator);
-    return String(this);
-  }
-
-  function truncate(length, truncation) {
-    length = length || 30;
-    truncation = Object.isUndefined(truncation) ? '...' : truncation;
-    return this.length > length ?
-      this.slice(0, length - truncation.length) + truncation : String(this);
-  }
-
-  function strip() {
-    return this.replace(/^\s+/, '').replace(/\s+$/, '');
-  }
-
-  function stripTags() {
-    return this.replace(/<\/?[^>]+>/gi, '');
-  }
-
-  function stripScripts() {
-    return this.replace(new RegExp(Prototype.ScriptFragment, 'img'), '');
-  }
-
-  function extractScripts() {
-    var matchAll = new RegExp(Prototype.ScriptFragment, 'img');
-    var matchOne = new RegExp(Prototype.ScriptFragment, 'im');
-    return (this.match(matchAll) || []).map(function(scriptTag) {
-      return (scriptTag.match(matchOne) || ['', ''])[1];
-    });
-  }
-
-  function evalScripts() {
-    return this.extractScripts().map(function(script) { return eval(script) });
-  }
-
-  function escapeHTML() {
-    escapeHTML.text.data = this;
-    return escapeHTML.div.innerHTML;
-  }
-
-  function unescapeHTML() {
-    var div = document.createElement('div');
-    div.innerHTML = this.stripTags();
-    return div.childNodes[0] ? (div.childNodes.length > 1 ?
-      $A(div.childNodes).inject('', function(memo, node) { return memo+node.nodeValue }) :
-      div.childNodes[0].nodeValue) : '';
-  }
-
-  function toQueryParams(separator) {
-    var match = this.strip().match(/([^?#]*)(#.*)?$/);
-    if (!match) return { };
-
-    return match[1].split(separator || '&').inject({ }, function(hash, pair) {
-      if ((pair = pair.split('='))[0]) {
-        var key = decodeURIComponent(pair.shift());
-        var value = pair.length > 1 ? pair.join('=') : pair[0];
-        if (value != undefined) value = decodeURIComponent(value);
-
-        if (key in hash) {
-          if (!Object.isArray(hash[key])) hash[key] = [hash[key]];
-          hash[key].push(value);
-        }
-        else hash[key] = value;
-      }
-      return hash;
-    });
-  }
-
-  function toArray() {
-    return this.split('');
-  }
-
-  function succ() {
-    return this.slice(0, this.length - 1) +
-      String.fromCharCode(this.charCodeAt(this.length - 1) + 1);
-  }
-
-  function times(count) {
-    return count < 1 ? '' : new Array(count + 1).join(this);
-  }
-
-  function camelize() {
-    var parts = this.split('-'), len = parts.length;
-    if (len == 1) return parts[0];
-
-    var camelized = this.charAt(0) == '-'
-      ? parts[0].charAt(0).toUpperCase() + parts[0].substring(1)
-      : parts[0];
-
-    for (var i = 1; i < len; i++)
-      camelized += parts[i].charAt(0).toUpperCase() + parts[i].substring(1);
-
-    return camelized;
-  }
-
-  function capitalize() {
-    return this.charAt(0).toUpperCase() + this.substring(1).toLowerCase();
-  }
-
-  function underscore() {
-    return this.gsub(/::/, '/').gsub(/([A-Z]+)([A-Z][a-z])/,'#{1}_#{2}').gsub(/([a-z\d])([A-Z])/,'#{1}_#{2}').gsub(/-/,'_').toLowerCase();
-  }
-
-  function dasherize() {
-    return this.gsub(/_/,'-');
-  }
-
-  function inspect(useDoubleQuotes) {
-    var escapedString = this.gsub(/[\x00-\x1f\\]/, function(match) {
-      var character = String.specialChar[match[0]];
-      return character ? character : '\\u00' + match[0].charCodeAt().toPaddedString(2, 16);
-    });
-    if (useDoubleQuotes) return '"' + escapedString.replace(/"/g, '\\"') + '"';
-    return "'" + escapedString.replace(/'/g, '\\\'') + "'";
-  }
-
-  function toJSON() {
-    return this.inspect(true);
-  }
-
-  function unfilterJSON(filter) {
-    return this.sub(filter || Prototype.JSONFilter, '#{1}');
-  }
-
-  function isJSON() {
-    var str = this;
-    if (str.blank()) return false;
-    str = this.replace(/\\./g, '@').replace(/"[^"\\\n\r]*"/g, '');
-    return (/^[,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]*$/).test(str);
-  }
-
-  function evalJSON(sanitize) {
-    var json = this.unfilterJSON();
-    try {
-      if (!sanitize || json.isJSON()) return eval('(' + json + ')');
-    } catch (e) { }
-    throw new SyntaxError('Badly formed JSON string: ' + this.inspect());
-  }
-
-  function include(pattern) {
-    return this.indexOf(pattern) > -1;
-  }
-
-  function startsWith(pattern) {
-    return this.indexOf(pattern) === 0;
-  }
-
-  function endsWith(pattern) {
-    var d = this.length - pattern.length;
-    return d >= 0 && this.lastIndexOf(pattern) === d;
-  }
-
-  function empty() {
-    return this == '';
-  }
-
-  function blank() {
-    return /^\s*$/.test(this);
-  }
-
-  function interpolate(object, pattern) {
-    return new Template(this, pattern).evaluate(object);
-  }
-
-  return {
-    gsub:           gsub,
-    sub:            sub,
-    scan:           scan,
-    truncate:       truncate,
-    strip:          strip,
-    stripTags:      stripTags,
-    stripScripts:   stripScripts,
-    extractScripts: extractScripts,
-    evalScripts:    evalScripts,
-    escapeHTML:     escapeHTML,
-    unescapeHTML:   unescapeHTML,
-    toQueryParams:  toQueryParams,
-    parseQuery:     toQueryParams,
-    toArray:        toArray,
-    succ:           succ,
-    times:          times,
-    camelize:       camelize,
-    capitalize:     capitalize,
-    underscore:     underscore,
-    dasherize:      dasherize,
-    inspect:        inspect,
-    toJSON:         toJSON,
-    unfilterJSON:   unfilterJSON,
-    isJSON:         isJSON,
-    evalJSON:       evalJSON,
-    include:        include,
-    startsWith:     startsWith,
-    endsWith:       endsWith,
-    empty:          empty,
-    blank:          blank,
-    interpolate:    interpolate
-  };
-})());
-
-Object.extend(String.prototype.escapeHTML, {
-  div:  document.createElement('div'),
-  text: document.createTextNode('')
-});
-
-String.prototype.escapeHTML.div.appendChild(String.prototype.escapeHTML.text);
-
-if ('<\n>'.escapeHTML() !== '&lt;\n&gt;') {
-  String.prototype.escapeHTML = function() {
-    return this.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  }
-}
-
-if ('&lt;\n&gt;'.unescapeHTML() !== '<\n>') {
-  String.prototype.unescapeHTML = function() {
-    return this.stripTags().replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
-  }
-}
-var Template = Class.create({
-  initialize: function(template, pattern) {
-    this.template = template.toString();
-    this.pattern = pattern || Template.Pattern;
-  },
-
-  evaluate: function(object) {
-    if (Object.isFunction(object.toTemplateReplacements))
-      object = object.toTemplateReplacements();
-
-    return this.template.gsub(this.pattern, function(match) {
-      if (object == null) return '';
-
-      var before = match[1] || '';
-      if (before == '\\') return match[2];
-
-      var ctx = object, expr = match[3];
-      var pattern = /^([^.[]+|\[((?:.*?[^\\])?)\])(\.|\[|$)/;
-      match = pattern.exec(expr);
-      if (match == null) return before;
-
-      while (match != null) {
-        var comp = match[1].startsWith('[') ? match[2].gsub('\\\\]', ']') : match[1];
-        ctx = ctx[comp];
-        if (null == ctx || '' == match[3]) break;
-        expr = expr.substring('[' == match[3] ? match[1].length : match[0].length);
-        match = pattern.exec(expr);
-      }
-
-      return before + String.interpret(ctx);
-    });
-  }
-});
-Template.Pattern = /(^|.|\r|\n)(#\{(.*?)\})/;
-
-var $break = { };
-
-var Enumerable = (function() {
-  function each(iterator, context) {
-    var index = 0;
-    try {
-      this._each(function(value) {
-        iterator.call(context, value, index++);
-      });
-    } catch (e) {
-      if (e != $break) throw e;
-    }
-    return this;
-  }
-
-  function eachSlice(number, iterator, context) {
-    var index = -number, slices = [], array = this.toArray();
-    if (number < 1) return array;
-    while ((index += number) < array.length)
-      slices.push(array.slice(index, index+number));
-    return slices.collect(iterator, context);
-  }
-
-  function all(iterator, context) {
-    iterator = iterator || Prototype.K;
-    var result = true;
-    this.each(function(value, index) {
-      result = result && !!iterator.call(context, value, index);
-      if (!result) throw $break;
-    });
-    return result;
-  }
-
-  function any(iterator, context) {
-    iterator = iterator || Prototype.K;
-    var result = false;
-    this.each(function(value, index) {
-      if (result = !!iterator.call(context, value, index))
-        throw $break;
-    });
-    return result;
-  }
-
-  function collect(iterator, context) {
-    iterator = iterator || Prototype.K;
-    var results = [];
-    this.each(function(value, index) {
-      results.push(iterator.call(context, value, index));
-    });
-    return results;
-  }
-
-  function detect(iterator, context) {
-    var result;
-    this.each(function(value, index) {
-      if (iterator.call(context, value, index)) {
-        result = value;
-        throw $break;
-      }
-    });
-    return result;
-  }
-
-  function findAll(iterator, context) {
-    var results = [];
-    this.each(function(value, index) {
-      if (iterator.call(context, value, index))
-        results.push(value);
-    });
-    return results;
-  }
-
-  function grep(filter, iterator, context) {
-    iterator = iterator || Prototype.K;
-    var results = [];
-
-    if (Object.isString(filter))
-      filter = new RegExp(RegExp.escape(filter));
-
-    this.each(function(value, index) {
-      if (filter.match(value))
-        results.push(iterator.call(context, value, index));
-    });
-    return results;
-  }
-
-  function include(object) {
-    if (Object.isFunction(this.indexOf))
-      if (this.indexOf(object) != -1) return true;
-
-    var found = false;
-    this.each(function(value) {
-      if (value == object) {
-        found = true;
-        throw $break;
-      }
-    });
-    return found;
-  }
-
-  function inGroupsOf(number, fillWith) {
-    fillWith = Object.isUndefined(fillWith) ? null : fillWith;
-    return this.eachSlice(number, function(slice) {
-      while(slice.length < number) slice.push(fillWith);
-      return slice;
-    });
-  }
-
-  function inject(memo, iterator, context) {
-    this.each(function(value, index) {
-      memo = iterator.call(context, memo, value, index);
-    });
-    return memo;
-  }
-
-  function invoke(method) {
-    var args = $A(arguments).slice(1);
-    return this.map(function(value) {
-      return value[method].apply(value, args);
-    });
-  }
-
-  function max(iterator, context) {
-    iterator = iterator || Prototype.K;
-    var result;
-    this.each(function(value, index) {
-      value = iterator.call(context, value, index);
-      if (result == null || value >= result)
-        result = value;
-    });
-    return result;
-  }
-
-  function min(iterator, context) {
-    iterator = iterator || Prototype.K;
-    var result;
-    this.each(function(value, index) {
-      value = iterator.call(context, value, index);
-      if (result == null || value < result)
-        result = value;
-    });
-    return result;
-  }
-
-  function partition(iterator, context) {
-    iterator = iterator || Prototype.K;
-    var trues = [], falses = [];
-    this.each(function(value, index) {
-      (iterator.call(context, value, index) ?
-        trues : falses).push(value);
-    });
-    return [trues, falses];
-  }
-
-  function pluck(property) {
-    var results = [];
-    this.each(function(value) {
-      results.push(value[property]);
-    });
-    return results;
-  }
-
-  function reject(iterator, context) {
-    var results = [];
-    this.each(function(value, index) {
-      if (!iterator.call(context, value, index))
-        results.push(value);
-    });
-    return results;
-  }
-
-  function sortBy(iterator, context) {
-    return this.map(function(value, index) {
-      return {
-        value: value,
-        criteria: iterator.call(context, value, index)
-      };
-    }).sort(function(left, right) {
-      var a = left.criteria, b = right.criteria;
-      return a < b ? -1 : a > b ? 1 : 0;
-    }).pluck('value');
-  }
-
-  function toArray() {
-    return this.map();
-  }
-
-  function zip() {
-    var iterator = Prototype.K, args = $A(arguments);
-    if (Object.isFunction(args.last()))
-      iterator = args.pop();
-
-    var collections = [this].concat(args).map($A);
-    return this.map(function(value, index) {
-      return iterator(collections.pluck(index));
-    });
-  }
-
-  function size() {
-    return this.toArray().length;
-  }
-
-  function inspect() {
-    return '#<Enumerable:' + this.toArray().inspect() + '>';
-  }
-
-
-
-
-
-
-
-
-
-  return {
-    each:       each,
-    eachSlice:  eachSlice,
-    all:        all,
-    every:      all,
-    any:        any,
-    some:       any,
-    collect:    collect,
-    map:        collect,
-    detect:     detect,
-    findAll:    findAll,
-    select:     findAll,
-    filter:     findAll,
-    grep:       grep,
-    include:    include,
-    member:     include,
-    inGroupsOf: inGroupsOf,
-    inject:     inject,
-    invoke:     invoke,
-    max:        max,
-    min:        min,
-    partition:  partition,
-    pluck:      pluck,
-    reject:     reject,
-    sortBy:     sortBy,
-    toArray:    toArray,
-    entries:    toArray,
-    zip:        zip,
-    size:       size,
-    inspect:    inspect,
-    find:       detect
-  };
-})();
-function $A(iterable) {
-  if (!iterable) return [];
-  if ('toArray' in iterable) return iterable.toArray();
-  var length = iterable.length || 0, results = new Array(length);
-  while (length--) results[length] = iterable[length];
-  return results;
-}
-
-function $w(string) {
-  if (!Object.isString(string)) return [];
-  string = string.strip();
-  return string ? string.split(/\s+/) : [];
-}
-
-Array.from = $A;
-
-
-(function() {
-  var arrayProto = Array.prototype,
-      slice = arrayProto.slice,
-      _each = arrayProto.forEach; // use native browser JS 1.6 implementation if available
-
-  function each(iterator) {
-    for (var i = 0, length = this.length; i < length; i++)
-      iterator(this[i]);
-  }
-  if (!_each) _each = each;
-
-  function clear() {
-    this.length = 0;
-    return this;
-  }
-
-  function first() {
-    return this[0];
-  }
-
-  function last() {
-    return this[this.length - 1];
-  }
-
-  function compact() {
-    return this.select(function(value) {
-      return value != null;
-    });
-  }
-
-  function flatten() {
-    return this.inject([], function(array, value) {
-      if (Object.isArray(value))
-        return array.concat(value.flatten());
-      array.push(value);
-      return array;
-    });
-  }
-
-  function without() {
-    var values = slice.call(arguments, 0);
-    return this.select(function(value) {
-      return !values.include(value);
-    });
-  }
-
-  function reverse(inline) {
-    return (inline !== false ? this : this.toArray())._reverse();
-  }
-
-  function uniq(sorted) {
-    return this.inject([], function(array, value, index) {
-      if (0 == index || (sorted ? array.last() != value : !array.include(value)))
-        array.push(value);
-      return array;
-    });
-  }
-
-  function intersect(array) {
-    return this.uniq().findAll(function(item) {
-      return array.detect(function(value) { return item === value });
-    });
-  }
-
-
-  function clone() {
-    return slice.call(this, 0);
-  }
-
-  function size() {
-    return this.length;
-  }
-
-  function inspect() {
-    return '[' + this.map(Object.inspect).join(', ') + ']';
-  }
-
-  function toJSON() {
-    var results = [];
-    this.each(function(object) {
-      var value = Object.toJSON(object);
-      if (!Object.isUndefined(value)) results.push(value);
-    });
-    return '[' + results.join(', ') + ']';
-  }
-
-  function indexOf(item, i) {
-    i || (i = 0);
-    var length = this.length;
-    if (i < 0) i = length + i;
-    for (; i < length; i++)
-      if (this[i] === item) return i;
-    return -1;
-  }
-
-  function lastIndexOf(item, i) {
-    i = isNaN(i) ? this.length : (i < 0 ? this.length + i : i) + 1;
-    var n = this.slice(0, i).reverse().indexOf(item);
-    return (n < 0) ? n : i - n - 1;
-  }
-
-  function concat() {
-    var array = slice.call(this, 0), item;
-    for (var i = 0, length = arguments.length; i < length; i++) {
-      item = arguments[i];
-      if (Object.isArray(item) && !('callee' in item)) {
-        for (var j = 0, arrayLength = item.length; j < arrayLength; j++)
-          array.push(item[j]);
-      } else {
-        array.push(item);
-      }
-    }
-    return array;
-  }
-
-  Object.extend(arrayProto, Enumerable);
-
-  if (!arrayProto._reverse)
-    arrayProto._reverse = arrayProto.reverse;
-
-  Object.extend(arrayProto, {
-    _each:     _each,
-    clear:     clear,
-    first:     first,
-    last:      last,
-    compact:   compact,
-    flatten:   flatten,
-    without:   without,
-    reverse:   reverse,
-    uniq:      uniq,
-    intersect: intersect,
-    clone:     clone,
-    toArray:   clone,
-    size:      size,
-    inspect:   inspect,
-    toJSON:    toJSON
-  });
-
-  var CONCAT_ARGUMENTS_BUGGY = (function() {
-    return [].concat(arguments)[0][0] !== 1;
-  })(1,2)
-
-  if (CONCAT_ARGUMENTS_BUGGY) arrayProto.concat = concat;
-
-  if (!arrayProto.indexOf) arrayProto.indexOf = indexOf;
-  if (!arrayProto.lastIndexOf) arrayProto.lastIndexOf = lastIndexOf;
-})();
-function $H(object) {
-  return new Hash(object);
-};
-
-var Hash = Class.create(Enumerable, (function() {
-  function initialize(object) {
-    this._object = Object.isHash(object) ? object.toObject() : Object.clone(object);
-  }
-
-  function _each(iterator) {
-    for (var key in this._object) {
-      var value = this._object[key], pair = [key, value];
-      pair.key = key;
-      pair.value = value;
-      iterator(pair);
-    }
-  }
-
-  function set(key, value) {
-    return this._object[key] = value;
-  }
-
-  function get(key) {
-    if (this._object[key] !== Object.prototype[key])
-      return this._object[key];
-  }
-
-  function unset(key) {
-    var value = this._object[key];
-    delete this._object[key];
-    return value;
-  }
-
-  function toObject() {
-    return Object.clone(this._object);
-  }
-
-  function keys() {
-    return this.pluck('key');
-  }
-
-  function values() {
-    return this.pluck('value');
-  }
-
-  function index(value) {
-    var match = this.detect(function(pair) {
-      return pair.value === value;
-    });
-    return match && match.key;
-  }
-
-  function merge(object) {
-    return this.clone().update(object);
-  }
-
-  function update(object) {
-    return new Hash(object).inject(this, function(result, pair) {
-      result.set(pair.key, pair.value);
-      return result;
-    });
-  }
-
-  function toQueryPair(key, value) {
-    if (Object.isUndefined(value)) return key;
-    return key + '=' + encodeURIComponent(String.interpret(value));
-  }
-
-  function toQueryString() {
-    return this.inject([], function(results, pair) {
-      var key = encodeURIComponent(pair.key), values = pair.value;
-
-      if (values && typeof values == 'object') {
-        if (Object.isArray(values))
-          return results.concat(values.map(toQueryPair.curry(key)));
-      } else results.push(toQueryPair(key, values));
-      return results;
-    }).join('&');
-  }
-
-  function inspect() {
-    return '#<Hash:{' + this.map(function(pair) {
-      return pair.map(Object.inspect).join(': ');
-    }).join(', ') + '}>';
-  }
-
-  function toJSON() {
-    return Object.toJSON(this.toObject());
-  }
-
-  function clone() {
-    return new Hash(this);
-  }
-
-  return {
-    initialize:             initialize,
-    _each:                  _each,
-    set:                    set,
-    get:                    get,
-    unset:                  unset,
-    toObject:               toObject,
-    toTemplateReplacements: toObject,
-    keys:                   keys,
-    values:                 values,
-    index:                  index,
-    merge:                  merge,
-    update:                 update,
-    toQueryString:          toQueryString,
-    inspect:                inspect,
-    toJSON:                 toJSON,
-    clone:                  clone
-  };
-})());
-
-Hash.from = $H;
-Object.extend(Number.prototype, (function() {
-  function toColorPart() {
-    return this.toPaddedString(2, 16);
-  }
-
-  function succ() {
-    return this + 1;
-  }
-
-  function times(iterator, context) {
-    $R(0, this, true).each(iterator, context);
-    return this;
-  }
-
-  function toPaddedString(length, radix) {
-    var string = this.toString(radix || 10);
-    return '0'.times(length - string.length) + string;
-  }
-
-  function toJSON() {
-    return isFinite(this) ? this.toString() : 'null';
-  }
-
-  function abs() {
-    return Math.abs(this);
-  }
-
-  function round() {
-    return Math.round(this);
-  }
-
-  function ceil() {
-    return Math.ceil(this);
-  }
-
-  function floor() {
-    return Math.floor(this);
-  }
-
-  return {
-    toColorPart:    toColorPart,
-    succ:           succ,
-    times:          times,
-    toPaddedString: toPaddedString,
-    toJSON:         toJSON,
-    abs:            abs,
-    round:          round,
-    ceil:           ceil,
-    floor:          floor
-  };
-})());
-
-function $R(start, end, exclusive) {
-  return new ObjectRange(start, end, exclusive);
-}
-
-var ObjectRange = Class.create(Enumerable, (function() {
-  function initialize(start, end, exclusive) {
-    this.start = start;
-    this.end = end;
-    this.exclusive = exclusive;
-  }
-
-  function _each(iterator) {
-    var value = this.start;
-    while (this.include(value)) {
-      iterator(value);
-      value = value.succ();
-    }
-  }
-
-  function include(value) {
-    if (value < this.start)
-      return false;
-    if (this.exclusive)
-      return value < this.end;
-    return value <= this.end;
-  }
-
-  return {
-    initialize: initialize,
-    _each:      _each,
-    include:    include
-  };
-})());
-
-
-
-var Ajax = {
-  getTransport: function() {
-    return Try.these(
-      function() {return new XMLHttpRequest()},
-      function() {return new ActiveXObject('Msxml2.XMLHTTP')},
-      function() {return new ActiveXObject('Microsoft.XMLHTTP')}
-    ) || false;
-  },
-
-  activeRequestCount: 0
-};
-
-Ajax.Responders = {
-  responders: [],
-
-  _each: function(iterator) {
-    this.responders._each(iterator);
-  },
-
-  register: function(responder) {
-    if (!this.include(responder))
-      this.responders.push(responder);
-  },
-
-  unregister: function(responder) {
-    this.responders = this.responders.without(responder);
-  },
-
-  dispatch: function(callback, request, transport, json) {
-    this.each(function(responder) {
-      if (Object.isFunction(responder[callback])) {
-        try {
-          responder[callback].apply(responder, [request, transport, json]);
-        } catch (e) { }
-      }
-    });
-  }
-};
-
-Object.extend(Ajax.Responders, Enumerable);
-
-Ajax.Responders.register({
-  onCreate:   function() { Ajax.activeRequestCount++ },
-  onComplete: function() { Ajax.activeRequestCount-- }
-});
-Ajax.Base = Class.create({
-  initialize: function(options) {
-    this.options = {
-      method:       'post',
-      asynchronous: true,
-      contentType:  'application/x-www-form-urlencoded',
-      encoding:     'UTF-8',
-      parameters:   '',
-      evalJSON:     true,
-      evalJS:       true
-    };
-    Object.extend(this.options, options || { });
-
-    this.options.method = this.options.method.toLowerCase();
-
-    if (Object.isString(this.options.parameters))
-      this.options.parameters = this.options.parameters.toQueryParams();
-    else if (Object.isHash(this.options.parameters))
-      this.options.parameters = this.options.parameters.toObject();
-  }
-});
-Ajax.Request = Class.create(Ajax.Base, {
-  _complete: false,
-
-  initialize: function($super, url, options) {
-    $super(options);
-    this.transport = Ajax.getTransport();
-    this.request(url);
-  },
-
-  request: function(url) {
-    this.url = url;
-    this.method = this.options.method;
-    var params = Object.clone(this.options.parameters);
-
-    if (!['get', 'post'].include(this.method)) {
-      params['_method'] = this.method;
-      this.method = 'post';
-    }
-
-    this.parameters = params;
-
-    if (params = Object.toQueryString(params)) {
-      if (this.method == 'get')
-        this.url += (this.url.include('?') ? '&' : '?') + params;
-      else if (/Konqueror|Safari|KHTML/.test(navigator.userAgent))
-        params += '&_=';
-    }
-
-    try {
-      var response = new Ajax.Response(this);
-      if (this.options.onCreate) this.options.onCreate(response);
-      Ajax.Responders.dispatch('onCreate', this, response);
-
-      this.transport.open(this.method.toUpperCase(), this.url,
-        this.options.asynchronous);
-
-      if (this.options.asynchronous) this.respondToReadyState.bind(this).defer(1);
-
-      this.transport.onreadystatechange = this.onStateChange.bind(this);
-      this.setRequestHeaders();
-
-      this.body = this.method == 'post' ? (this.options.postBody || params) : null;
-      this.transport.send(this.body);
-
-      /* Force Firefox to handle ready state 4 for synchronous requests */
-      if (!this.options.asynchronous && this.transport.overrideMimeType)
-        this.onStateChange();
-
-    }
-    catch (e) {
-      this.dispatchException(e);
-    }
-  },
-
-  onStateChange: function() {
-    var readyState = this.transport.readyState;
-    if (readyState > 1 && !((readyState == 4) && this._complete))
-      this.respondToReadyState(this.transport.readyState);
-  },
-
-  setRequestHeaders: function() {
-    var headers = {
-      'X-Requested-With': 'XMLHttpRequest',
-      'X-Prototype-Version': Prototype.Version,
-      'Accept': 'text/javascript, text/html, application/xml, text/xml, */*'
-    };
-
-    if (this.method == 'post') {
-      headers['Content-type'] = this.options.contentType +
-        (this.options.encoding ? '; charset=' + this.options.encoding : '');
-
-      /* Force "Connection: close" for older Mozilla browsers to work
-       * around a bug where XMLHttpRequest sends an incorrect
-       * Content-length header. See Mozilla Bugzilla #246651.
-       */
-      if (this.transport.overrideMimeType &&
-          (navigator.userAgent.match(/Gecko\/(\d{4})/) || [0,2005])[1] < 2005)
-            headers['Connection'] = 'close';
-    }
-
-    if (typeof this.options.requestHeaders == 'object') {
-      var extras = this.options.requestHeaders;
-
-      if (Object.isFunction(extras.push))
-        for (var i = 0, length = extras.length; i < length; i += 2)
-          headers[extras[i]] = extras[i+1];
-      else
-        $H(extras).each(function(pair) { headers[pair.key] = pair.value });
-    }
-
-    for (var name in headers)
-      this.transport.setRequestHeader(name, headers[name]);
-  },
-
-  success: function() {
-    var status = this.getStatus();
-    return !status || (status >= 200 && status < 300);
-  },
-
-  getStatus: function() {
-    try {
-      return this.transport.status || 0;
-    } catch (e) { return 0 }
-  },
-
-  respondToReadyState: function(readyState) {
-    var state = Ajax.Request.Events[readyState], response = new Ajax.Response(this);
-
-    if (state == 'Complete') {
-      try {
-        this._complete = true;
-        (this.options['on' + response.status]
-         || this.options['on' + (this.success() ? 'Success' : 'Failure')]
-         || Prototype.emptyFunction)(response, response.headerJSON);
-      } catch (e) {
-        this.dispatchException(e);
-      }
-
-      var contentType = response.getHeader('Content-type');
-      if (this.options.evalJS == 'force'
-          || (this.options.evalJS && this.isSameOrigin() && contentType
-          && contentType.match(/^\s*(text|application)\/(x-)?(java|ecma)script(;.*)?\s*$/i)))
-        this.evalResponse();
-    }
-
-    try {
-      (this.options['on' + state] || Prototype.emptyFunction)(response, response.headerJSON);
-      Ajax.Responders.dispatch('on' + state, this, response, response.headerJSON);
-    } catch (e) {
-      this.dispatchException(e);
-    }
-
-    if (state == 'Complete') {
-      this.transport.onreadystatechange = Prototype.emptyFunction;
-    }
-  },
-
-  isSameOrigin: function() {
-    var m = this.url.match(/^\s*https?:\/\/[^\/]*/);
-    return !m || (m[0] == '#{protocol}//#{domain}#{port}'.interpolate({
-      protocol: location.protocol,
-      domain: document.domain,
-      port: location.port ? ':' + location.port : ''
-    }));
-  },
-
-  getHeader: function(name) {
-    try {
-      return this.transport.getResponseHeader(name) || null;
-    } catch (e) { return null; }
-  },
-
-  evalResponse: function() {
-    try {
-      return eval((this.transport.responseText || '').unfilterJSON());
-    } catch (e) {
-      this.dispatchException(e);
-    }
-  },
-
-  dispatchException: function(exception) {
-    (this.options.onException || Prototype.emptyFunction)(this, exception);
-    Ajax.Responders.dispatch('onException', this, exception);
-  }
-});
-
-Ajax.Request.Events =
-  ['Uninitialized', 'Loading', 'Loaded', 'Interactive', 'Complete'];
-
-
-
-
-
-
-
-
-Ajax.Response = Class.create({
-  initialize: function(request){
-    this.request = request;
-    var transport  = this.transport  = request.transport,
-        readyState = this.readyState = transport.readyState;
-
-    if((readyState > 2 && !Prototype.Browser.IE) || readyState == 4) {
-      this.status       = this.getStatus();
-      this.statusText   = this.getStatusText();
-      this.responseText = String.interpret(transport.responseText);
-      this.headerJSON   = this._getHeaderJSON();
-    }
-
-    if(readyState == 4) {
-      var xml = transport.responseXML;
-      this.responseXML  = Object.isUndefined(xml) ? null : xml;
-      this.responseJSON = this._getResponseJSON();
-    }
-  },
-
-  status:      0,
-
-  statusText: '',
-
-  getStatus: Ajax.Request.prototype.getStatus,
-
-  getStatusText: function() {
-    try {
-      return this.transport.statusText || '';
-    } catch (e) { return '' }
-  },
-
-  getHeader: Ajax.Request.prototype.getHeader,
-
-  getAllHeaders: function() {
-    try {
-      return this.getAllResponseHeaders();
-    } catch (e) { return null }
-  },
-
-  getResponseHeader: function(name) {
-    return this.transport.getResponseHeader(name);
-  },
-
-  getAllResponseHeaders: function() {
-    return this.transport.getAllResponseHeaders();
-  },
-
-  _getHeaderJSON: function() {
-    var json = this.getHeader('X-JSON');
-    if (!json) return null;
-    json = decodeURIComponent(escape(json));
-    try {
-      return json.evalJSON(this.request.options.sanitizeJSON ||
-        !this.request.isSameOrigin());
-    } catch (e) {
-      this.request.dispatchException(e);
-    }
-  },
-
-  _getResponseJSON: function() {
-    var options = this.request.options;
-    if (!options.evalJSON || (options.evalJSON != 'force' &&
-      !(this.getHeader('Content-type') || '').include('application/json')) ||
-        this.responseText.blank())
-          return null;
-    try {
-      return this.responseText.evalJSON(options.sanitizeJSON ||
-        !this.request.isSameOrigin());
-    } catch (e) {
-      this.request.dispatchException(e);
-    }
-  }
-});
-
-Ajax.Updater = Class.create(Ajax.Request, {
-  initialize: function($super, container, url, options) {
-    this.container = {
-      success: (container.success || container),
-      failure: (container.failure || (container.success ? null : container))
-    };
-
-    options = Object.clone(options);
-    var onComplete = options.onComplete;
-    options.onComplete = (function(response, json) {
-      this.updateContent(response.responseText);
-      if (Object.isFunction(onComplete)) onComplete(response, json);
-    }).bind(this);
-
-    $super(url, options);
-  },
-
-  updateContent: function(responseText) {
-    var receiver = this.container[this.success() ? 'success' : 'failure'],
-        options = this.options;
-
-    if (!options.evalScripts) responseText = responseText.stripScripts();
-
-    if (receiver = $(receiver)) {
-      if (options.insertion) {
-        if (Object.isString(options.insertion)) {
-          var insertion = { }; insertion[options.insertion] = responseText;
-          receiver.insert(insertion);
-        }
-        else options.insertion(receiver, responseText);
-      }
-      else receiver.update(responseText);
-    }
-  }
-});
-
-Ajax.PeriodicalUpdater = Class.create(Ajax.Base, {
-  initialize: function($super, container, url, options) {
-    $super(options);
-    this.onComplete = this.options.onComplete;
-
-    this.frequency = (this.options.frequency || 2);
-    this.decay = (this.options.decay || 1);
-
-    this.updater = { };
-    this.container = container;
-    this.url = url;
-
-    this.start();
-  },
-
-  start: function() {
-    this.options.onComplete = this.updateComplete.bind(this);
-    this.onTimerEvent();
-  },
-
-  stop: function() {
-    this.updater.options.onComplete = undefined;
-    clearTimeout(this.timer);
-    (this.onComplete || Prototype.emptyFunction).apply(this, arguments);
-  },
-
-  updateComplete: function(response) {
-    if (this.options.decay) {
-      this.decay = (response.responseText == this.lastText ?
-        this.decay * this.options.decay : 1);
-
-      this.lastText = response.responseText;
-    }
-    this.timer = this.onTimerEvent.bind(this).delay(this.decay * this.frequency);
-  },
-
-  onTimerEvent: function() {
-    this.updater = new Ajax.Updater(this.container, this.url, this.options);
-  }
-});
-
-
-
-function $(element) {
-  if (arguments.length > 1) {
-    for (var i = 0, elements = [], length = arguments.length; i < length; i++)
-      elements.push($(arguments[i]));
-    return elements;
-  }
-  if (Object.isString(element))
-    element = document.getElementById(element);
-  return Element.extend(element);
-}
-
-if (Prototype.BrowserFeatures.XPath) {
-  document._getElementsByXPath = function(expression, parentElement) {
-    var results = [];
-    var query = document.evaluate(expression, $(parentElement) || document,
-      null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-    for (var i = 0, length = query.snapshotLength; i < length; i++)
-      results.push(Element.extend(query.snapshotItem(i)));
-    return results;
-  };
-}
-
-/*--------------------------------------------------------------------------*/
-
-if (!window.Node) var Node = { };
-
-if (!Node.ELEMENT_NODE) {
-  Object.extend(Node, {
-    ELEMENT_NODE: 1,
-    ATTRIBUTE_NODE: 2,
-    TEXT_NODE: 3,
-    CDATA_SECTION_NODE: 4,
-    ENTITY_REFERENCE_NODE: 5,
-    ENTITY_NODE: 6,
-    PROCESSING_INSTRUCTION_NODE: 7,
-    COMMENT_NODE: 8,
-    DOCUMENT_NODE: 9,
-    DOCUMENT_TYPE_NODE: 10,
-    DOCUMENT_FRAGMENT_NODE: 11,
-    NOTATION_NODE: 12
-  });
-}
-
-
-(function(global) {
-
-  var SETATTRIBUTE_IGNORES_NAME = (function(){
-    var elForm = document.createElement("form");
-    var elInput = document.createElement("input");
-    var root = document.documentElement;
-    elInput.setAttribute("name", "test");
-    elForm.appendChild(elInput);
-    root.appendChild(elForm);
-    var isBuggy = elForm.elements
-      ? (typeof elForm.elements.test == "undefined")
-      : null;
-    root.removeChild(elForm);
-    elForm = elInput = null;
-    return isBuggy;
-  })();
-
-  var element = global.Element;
-  global.Element = function(tagName, attributes) {
-    attributes = attributes || { };
-    tagName = tagName.toLowerCase();
-    var cache = Element.cache;
-    if (SETATTRIBUTE_IGNORES_NAME && attributes.name) {
-      tagName = '<' + tagName + ' name="' + attributes.name + '">';
-      delete attributes.name;
-      return Element.writeAttribute(document.createElement(tagName), attributes);
-    }
-    if (!cache[tagName]) cache[tagName] = Element.extend(document.createElement(tagName));
-    return Element.writeAttribute(cache[tagName].cloneNode(false), attributes);
-  };
-  Object.extend(global.Element, element || { });
-  if (element) global.Element.prototype = element.prototype;
-})(this);
-
-Element.cache = { };
-Element.idCounter = 1;
-
-Element.Methods = {
-  visible: function(element) {
-    return $(element).style.display != 'none';
-  },
-
-  toggle: function(element) {
-    element = $(element);
-    Element[Element.visible(element) ? 'hide' : 'show'](element);
-    return element;
-  },
-
-
-  hide: function(element) {
-    element = $(element);
-    element.style.display = 'none';
-    return element;
-  },
-
-  show: function(element) {
-    element = $(element);
-    element.style.display = '';
-    return element;
-  },
-
-  remove: function(element) {
-    element = $(element);
-    element.parentNode.removeChild(element);
-    return element;
-  },
-
-  update: (function(){
-
-    var SELECT_ELEMENT_INNERHTML_BUGGY = (function(){
-      var el = document.createElement("select"),
-          isBuggy = true;
-      el.innerHTML = "<option value=\"test\">test</option>";
-      if (el.options && el.options[0]) {
-        isBuggy = el.options[0].nodeName.toUpperCase() !== "OPTION";
-      }
-      el = null;
-      return isBuggy;
-    })();
-
-    var TABLE_ELEMENT_INNERHTML_BUGGY = (function(){
-      try {
-        var el = document.createElement("table");
-        if (el && el.tBodies) {
-          el.innerHTML = "<tbody><tr><td>test</td></tr></tbody>";
-          var isBuggy = typeof el.tBodies[0] == "undefined";
-          el = null;
-          return isBuggy;
-        }
-      } catch (e) {
-        return true;
-      }
-    })();
-
-    var SCRIPT_ELEMENT_REJECTS_TEXTNODE_APPENDING = (function () {
-      var s = document.createElement("script"),
-          isBuggy = false;
-      try {
-        s.appendChild(document.createTextNode(""));
-        isBuggy = !s.firstChild ||
-          s.firstChild && s.firstChild.nodeType !== 3;
-      } catch (e) {
-        isBuggy = true;
-      }
-      s = null;
-      return isBuggy;
-    })();
-
-    function update(element, content) {
-      element = $(element);
-
-      if (content && content.toElement)
-        content = content.toElement();
-
-      if (Object.isElement(content))
-        return element.update().insert(content);
-
-      content = Object.toHTML(content);
-
-      var tagName = element.tagName.toUpperCase();
-
-      if (tagName === 'SCRIPT' && SCRIPT_ELEMENT_REJECTS_TEXTNODE_APPENDING) {
-        element.text = content;
-        return element;
-      }
-
-      if (SELECT_ELEMENT_INNERHTML_BUGGY || TABLE_ELEMENT_INNERHTML_BUGGY) {
-        if (tagName in Element._insertionTranslations.tags) {
-          $A(element.childNodes).each(function(node) {
-            element.removeChild(node);
-          });
-          Element._getContentFromAnonymousElement(tagName, content.stripScripts())
-            .each(function(node) {
-              element.appendChild(node)
-            });
-        }
-        else {
-          element.innerHTML = content.stripScripts();
-        }
-      }
-      else {
-        element.innerHTML = content.stripScripts();
-      }
-
-      content.evalScripts.bind(content).defer();
-      return element;
-    }
-
-    return update;
-  })(),
-
-  replace: function(element, content) {
-    element = $(element);
-    if (content && content.toElement) content = content.toElement();
-    else if (!Object.isElement(content)) {
-      content = Object.toHTML(content);
-      var range = element.ownerDocument.createRange();
-      range.selectNode(element);
-      content.evalScripts.bind(content).defer();
-      content = range.createContextualFragment(content.stripScripts());
-    }
-    element.parentNode.replaceChild(content, element);
-    return element;
-  },
-
-  insert: function(element, insertions) {
-    element = $(element);
-
-    if (Object.isString(insertions) || Object.isNumber(insertions) ||
-        Object.isElement(insertions) || (insertions && (insertions.toElement || insertions.toHTML)))
-          insertions = {bottom:insertions};
-
-    var content, insert, tagName, childNodes;
-
-    for (var position in insertions) {
-      content  = insertions[position];
-      position = position.toLowerCase();
-      insert = Element._insertionTranslations[position];
-
-      if (content && content.toElement) content = content.toElement();
-      if (Object.isElement(content)) {
-        insert(element, content);
-        continue;
-      }
-
-      content = Object.toHTML(content);
-
-      tagName = ((position == 'before' || position == 'after')
-        ? element.parentNode : element).tagName.toUpperCase();
-
-      childNodes = Element._getContentFromAnonymousElement(tagName, content.stripScripts());
-
-      if (position == 'top' || position == 'after') childNodes.reverse();
-      childNodes.each(insert.curry(element));
-
-      content.evalScripts.bind(content).defer();
-    }
-
-    return element;
-  },
-
-  wrap: function(element, wrapper, attributes) {
-    element = $(element);
-    if (Object.isElement(wrapper))
-      $(wrapper).writeAttribute(attributes || { });
-    else if (Object.isString(wrapper)) wrapper = new Element(wrapper, attributes);
-    else wrapper = new Element('div', wrapper);
-    if (element.parentNode)
-      element.parentNode.replaceChild(wrapper, element);
-    wrapper.appendChild(element);
-    return wrapper;
-  },
-
-  inspect: function(element) {
-    element = $(element);
-    var result = '<' + element.tagName.toLowerCase();
-    $H({'id': 'id', 'className': 'class'}).each(function(pair) {
-      var property = pair.first(), attribute = pair.last();
-      var value = (element[property] || '').toString();
-      if (value) result += ' ' + attribute + '=' + value.inspect(true);
-    });
-    return result + '>';
-  },
-
-  recursivelyCollect: function(element, property) {
-    element = $(element);
-    var elements = [];
-    while (element = element[property])
-      if (element.nodeType == 1)
-        elements.push(Element.extend(element));
-    return elements;
-  },
-
-  ancestors: function(element) {
-    return $(element).recursivelyCollect('parentNode');
-  },
-
-  descendants: function(element) {
-    return Element.select(element, "*");
-  },
-
-  firstDescendant: function(element) {
-    element = $(element).firstChild;
-    while (element && element.nodeType != 1) element = element.nextSibling;
-    return $(element);
-  },
-
-  immediateDescendants: function(element) {
-    if (!(element = $(element).firstChild)) return [];
-    while (element && element.nodeType != 1) element = element.nextSibling;
-    if (element) return [element].concat($(element).nextSiblings());
-    return [];
-  },
-
-  previousSiblings: function(element) {
-    return $(element).recursivelyCollect('previousSibling');
-  },
-
-  nextSiblings: function(element) {
-    return $(element).recursivelyCollect('nextSibling');
-  },
-
-  siblings: function(element) {
-    element = $(element);
-    return element.previousSiblings().reverse().concat(element.nextSiblings());
-  },
-
-  match: function(element, selector) {
-    if (Object.isString(selector))
-      selector = new Selector(selector);
-    return selector.match($(element));
-  },
-
-  up: function(element, expression, index) {
-    element = $(element);
-    if (arguments.length == 1) return $(element.parentNode);
-    var ancestors = element.ancestors();
-    return Object.isNumber(expression) ? ancestors[expression] :
-      Selector.findElement(ancestors, expression, index);
-  },
-
-  down: function(element, expression, index) {
-    element = $(element);
-    if (arguments.length == 1) return element.firstDescendant();
-    return Object.isNumber(expression) ? element.descendants()[expression] :
-      Element.select(element, expression)[index || 0];
-  },
-
-  previous: function(element, expression, index) {
-    element = $(element);
-    if (arguments.length == 1) return $(Selector.handlers.previousElementSibling(element));
-    var previousSiblings = element.previousSiblings();
-    return Object.isNumber(expression) ? previousSiblings[expression] :
-      Selector.findElement(previousSiblings, expression, index);
-  },
-
-  next: function(element, expression, index) {
-    element = $(element);
-    if (arguments.length == 1) return $(Selector.handlers.nextElementSibling(element));
-    var nextSiblings = element.nextSiblings();
-    return Object.isNumber(expression) ? nextSiblings[expression] :
-      Selector.findElement(nextSiblings, expression, index);
-  },
-
-
-  select: function() {
-    var args = $A(arguments), element = $(args.shift());
-    return Selector.findChildElements(element, args);
-  },
-
-  adjacent: function() {
-    var args = $A(arguments), element = $(args.shift());
-    return Selector.findChildElements(element.parentNode, args).without(element);
-  },
-
-  identify: function(element) {
-    element = $(element);
-    var id = element.readAttribute('id');
-    if (id) return id;
-    do { id = 'anonymous_element_' + Element.idCounter++ } while ($(id));
-    element.writeAttribute('id', id);
-    return id;
-  },
-
-  readAttribute: (function(){
-
-    var iframeGetAttributeThrowsError = (function(){
-      var el = document.createElement('iframe'),
-          isBuggy = false;
-
-      document.documentElement.appendChild(el);
-      try {
-        el.getAttribute('type', 2);
-      } catch(e) {
-        isBuggy = true;
-      }
-      document.documentElement.removeChild(el);
-      el = null;
-      return isBuggy;
-    })();
-
-    return function(element, name) {
-      element = $(element);
-      if (iframeGetAttributeThrowsError &&
-          name === 'type' &&
-          element.tagName.toUpperCase() == 'IFRAME') {
-        return element.getAttribute('type');
-      }
-      if (Prototype.Browser.IE) {
-        var t = Element._attributeTranslations.read;
-        if (t.values[name]) return t.values[name](element, name);
-        if (t.names[name]) name = t.names[name];
-        if (name.include(':')) {
-          return (!element.attributes || !element.attributes[name]) ? null :
-           element.attributes[name].value;
-        }
-      }
-      return element.getAttribute(name);
-    }
-  })(),
-
-  writeAttribute: function(element, name, value) {
-    element = $(element);
-    var attributes = { }, t = Element._attributeTranslations.write;
-
-    if (typeof name == 'object') attributes = name;
-    else attributes[name] = Object.isUndefined(value) ? true : value;
-
-    for (var attr in attributes) {
-      name = t.names[attr] || attr;
-      value = attributes[attr];
-      if (t.values[attr]) name = t.values[attr](element, value);
-      if (value === false || value === null)
-        element.removeAttribute(name);
-      else if (value === true)
-        element.setAttribute(name, name);
-      else element.setAttribute(name, value);
-    }
-    return element;
-  },
-
-  getHeight: function(element) {
-    return $(element).getDimensions().height;
-  },
-
-  getWidth: function(element) {
-    return $(element).getDimensions().width;
-  },
-
-  classNames: function(element) {
-    return new Element.ClassNames(element);
-  },
-
-  hasClassName: function(element, className) {
-    if (!(element = $(element))) return;
-    var elementClassName = element.className;
-    return (elementClassName.length > 0 && (elementClassName == className ||
-      new RegExp("(^|\\s)" + className + "(\\s|$)").test(elementClassName)));
-  },
-
-  addClassName: function(element, className) {
-    if (!(element = $(element))) return;
-    if (!element.hasClassName(className))
-      element.className += (element.className ? ' ' : '') + className;
-    return element;
-  },
-
-  removeClassName: function(element, className) {
-    if (!(element = $(element))) return;
-    element.className = element.className.replace(
-      new RegExp("(^|\\s+)" + className + "(\\s+|$)"), ' ').strip();
-    return element;
-  },
-
-  toggleClassName: function(element, className) {
-    if (!(element = $(element))) return;
-    return element[element.hasClassName(className) ?
-      'removeClassName' : 'addClassName'](className);
-  },
-
-  cleanWhitespace: function(element) {
-    element = $(element);
-    var node = element.firstChild;
-    while (node) {
-      var nextNode = node.nextSibling;
-      if (node.nodeType == 3 && !/\S/.test(node.nodeValue))
-        element.removeChild(node);
-      node = nextNode;
-    }
-    return element;
-  },
-
-  empty: function(element) {
-    return $(element).innerHTML.blank();
-  },
-
-  descendantOf: function(element, ancestor) {
-    element = $(element), ancestor = $(ancestor);
-
-    if (element.compareDocumentPosition)
-      return (element.compareDocumentPosition(ancestor) & 8) === 8;
-
-    if (ancestor.contains)
-      return ancestor.contains(element) && ancestor !== element;
-
-    while (element = element.parentNode)
-      if (element == ancestor) return true;
-
-    return false;
-  },
-
-  scrollTo: function(element) {
-    element = $(element);
-    var pos = element.cumulativeOffset();
-    window.scrollTo(pos[0], pos[1]);
-    return element;
-  },
-
-  getStyle: function(element, style) {
-    element = $(element);
-    style = style == 'float' ? 'cssFloat' : style.camelize();
-    var value = element.style[style];
-    if (!value || value == 'auto') {
-      var css = document.defaultView.getComputedStyle(element, null);
-      value = css ? css[style] : null;
-    }
-    if (style == 'opacity') return value ? parseFloat(value) : 1.0;
-    return value == 'auto' ? null : value;
-  },
-
-  getOpacity: function(element) {
-    return $(element).getStyle('opacity');
-  },
-
-  setStyle: function(element, styles) {
-    element = $(element);
-    var elementStyle = element.style, match;
-    if (Object.isString(styles)) {
-      element.style.cssText += ';' + styles;
-      return styles.include('opacity') ?
-        element.setOpacity(styles.match(/opacity:\s*(\d?\.?\d*)/)[1]) : element;
-    }
-    for (var property in styles)
-      if (property == 'opacity') element.setOpacity(styles[property]);
-      else
-        elementStyle[(property == 'float' || property == 'cssFloat') ?
-          (Object.isUndefined(elementStyle.styleFloat) ? 'cssFloat' : 'styleFloat') :
-            property] = styles[property];
-
-    return element;
-  },
-
-  setOpacity: function(element, value) {
-    element = $(element);
-    element.style.opacity = (value == 1 || value === '') ? '' :
-      (value < 0.00001) ? 0 : value;
-    return element;
-  },
-
-  getDimensions: function(element) {
-    element = $(element);
-    var display = element.getStyle('display');
-    if (display != 'none' && display != null) // Safari bug
-      return {width: element.offsetWidth, height: element.offsetHeight};
-
-    var els = element.style;
-    var originalVisibility = els.visibility;
-    var originalPosition = els.position;
-    var originalDisplay = els.display;
-    els.visibility = 'hidden';
-    if (originalPosition != 'fixed') // Switching fixed to absolute causes issues in Safari
-      els.position = 'absolute';
-    els.display = 'block';
-    var originalWidth = element.clientWidth;
-    var originalHeight = element.clientHeight;
-    els.display = originalDisplay;
-    els.position = originalPosition;
-    els.visibility = originalVisibility;
-    return {width: originalWidth, height: originalHeight};
-  },
-
-  makePositioned: function(element) {
-    element = $(element);
-    var pos = Element.getStyle(element, 'position');
-    if (pos == 'static' || !pos) {
-      element._madePositioned = true;
-      element.style.position = 'relative';
-      if (Prototype.Browser.Opera) {
-        element.style.top = 0;
-        element.style.left = 0;
-      }
-    }
-    return element;
-  },
-
-  undoPositioned: function(element) {
-    element = $(element);
-    if (element._madePositioned) {
-      element._madePositioned = undefined;
-      element.style.position =
-        element.style.top =
-        element.style.left =
-        element.style.bottom =
-        element.style.right = '';
-    }
-    return element;
-  },
-
-  makeClipping: function(element) {
-    element = $(element);
-    if (element._overflow) return element;
-    element._overflow = Element.getStyle(element, 'overflow') || 'auto';
-    if (element._overflow !== 'hidden')
-      element.style.overflow = 'hidden';
-    return element;
-  },
-
-  undoClipping: function(element) {
-    element = $(element);
-    if (!element._overflow) return element;
-    element.style.overflow = element._overflow == 'auto' ? '' : element._overflow;
-    element._overflow = null;
-    return element;
-  },
-
-  cumulativeOffset: function(element) {
-    var valueT = 0, valueL = 0;
-    do {
-      valueT += element.offsetTop  || 0;
-      valueL += element.offsetLeft || 0;
-      element = element.offsetParent;
-    } while (element);
-    return Element._returnOffset(valueL, valueT);
-  },
-
-  positionedOffset: function(element) {
-    var valueT = 0, valueL = 0;
-    do {
-      valueT += element.offsetTop  || 0;
-      valueL += element.offsetLeft || 0;
-      element = element.offsetParent;
-      if (element) {
-        if (element.tagName.toUpperCase() == 'BODY') break;
-        var p = Element.getStyle(element, 'position');
-        if (p !== 'static') break;
-      }
-    } while (element);
-    return Element._returnOffset(valueL, valueT);
-  },
-
-  absolutize: function(element) {
-    element = $(element);
-    if (element.getStyle('position') == 'absolute') return element;
-
-    var offsets = element.positionedOffset();
-    var top     = offsets[1];
-    var left    = offsets[0];
-    var width   = element.clientWidth;
-    var height  = element.clientHeight;
-
-    element._originalLeft   = left - parseFloat(element.style.left  || 0);
-    element._originalTop    = top  - parseFloat(element.style.top || 0);
-    element._originalWidth  = element.style.width;
-    element._originalHeight = element.style.height;
-
-    element.style.position = 'absolute';
-    element.style.top    = top + 'px';
-    element.style.left   = left + 'px';
-    element.style.width  = width + 'px';
-    element.style.height = height + 'px';
-    return element;
-  },
-
-  relativize: function(element) {
-    element = $(element);
-    if (element.getStyle('position') == 'relative') return element;
-
-    element.style.position = 'relative';
-    var top  = parseFloat(element.style.top  || 0) - (element._originalTop || 0);
-    var left = parseFloat(element.style.left || 0) - (element._originalLeft || 0);
-
-    element.style.top    = top + 'px';
-    element.style.left   = left + 'px';
-    element.style.height = element._originalHeight;
-    element.style.width  = element._originalWidth;
-    return element;
-  },
-
-  cumulativeScrollOffset: function(element) {
-    var valueT = 0, valueL = 0;
-    do {
-      valueT += element.scrollTop  || 0;
-      valueL += element.scrollLeft || 0;
-      element = element.parentNode;
-    } while (element);
-    return Element._returnOffset(valueL, valueT);
-  },
-
-  getOffsetParent: function(element) {
-    if (element.offsetParent) return $(element.offsetParent);
-    if (element == document.body) return $(element);
-
-    while ((element = element.parentNode) && element != document.body)
-      if (Element.getStyle(element, 'position') != 'static')
-        return $(element);
-
-    return $(document.body);
-  },
-
-  viewportOffset: function(forElement) {
-    var valueT = 0, valueL = 0;
-
-    var element = forElement;
-    do {
-      valueT += element.offsetTop  || 0;
-      valueL += element.offsetLeft || 0;
-
-      if (element.offsetParent == document.body &&
-        Element.getStyle(element, 'position') == 'absolute') break;
-
-    } while (element = element.offsetParent);
-
-    element = forElement;
-    do {
-      if (!Prototype.Browser.Opera || (element.tagName && (element.tagName.toUpperCase() == 'BODY'))) {
-        valueT -= element.scrollTop  || 0;
-        valueL -= element.scrollLeft || 0;
-      }
-    } while (element = element.parentNode);
-
-    return Element._returnOffset(valueL, valueT);
-  },
-
-  clonePosition: function(element, source) {
-    var options = Object.extend({
-      setLeft:    true,
-      setTop:     true,
-      setWidth:   true,
-      setHeight:  true,
-      offsetTop:  0,
-      offsetLeft: 0
-    }, arguments[2] || { });
-
-    source = $(source);
-    var p = source.viewportOffset();
-
-    element = $(element);
-    var delta = [0, 0];
-    var parent = null;
-    if (Element.getStyle(element, 'position') == 'absolute') {
-      parent = element.getOffsetParent();
-      delta = parent.viewportOffset();
-    }
-
-    if (parent == document.body) {
-      delta[0] -= document.body.offsetLeft;
-      delta[1] -= document.body.offsetTop;
-    }
-
-    if (options.setLeft)   element.style.left  = (p[0] - delta[0] + options.offsetLeft) + 'px';
-    if (options.setTop)    element.style.top   = (p[1] - delta[1] + options.offsetTop) + 'px';
-    if (options.setWidth)  element.style.width = source.offsetWidth + 'px';
-    if (options.setHeight) element.style.height = source.offsetHeight + 'px';
-    return element;
-  }
-};
-
-Object.extend(Element.Methods, {
-  getElementsBySelector: Element.Methods.select,
-
-  childElements: Element.Methods.immediateDescendants
-});
-
-Element._attributeTranslations = {
-  write: {
-    names: {
-      className: 'class',
-      htmlFor:   'for'
-    },
-    values: { }
-  }
-};
-
-if (Prototype.Browser.Opera) {
-  Element.Methods.getStyle = Element.Methods.getStyle.wrap(
-    function(proceed, element, style) {
-      switch (style) {
-        case 'left': case 'top': case 'right': case 'bottom':
-          if (proceed(element, 'position') === 'static') return null;
-        case 'height': case 'width':
-          if (!Element.visible(element)) return null;
-
-          var dim = parseInt(proceed(element, style), 10);
-
-          if (dim !== element['offset' + style.capitalize()])
-            return dim + 'px';
-
-          var properties;
-          if (style === 'height') {
-            properties = ['border-top-width', 'padding-top',
-             'padding-bottom', 'border-bottom-width'];
-          }
-          else {
-            properties = ['border-left-width', 'padding-left',
-             'padding-right', 'border-right-width'];
-          }
-          return properties.inject(dim, function(memo, property) {
-            var val = proceed(element, property);
-            return val === null ? memo : memo - parseInt(val, 10);
-          }) + 'px';
-        default: return proceed(element, style);
-      }
-    }
-  );
-
-  Element.Methods.readAttribute = Element.Methods.readAttribute.wrap(
-    function(proceed, element, attribute) {
-      if (attribute === 'title') return element.title;
-      return proceed(element, attribute);
-    }
-  );
-}
-
-else if (Prototype.Browser.IE) {
-  Element.Methods.getOffsetParent = Element.Methods.getOffsetParent.wrap(
-    function(proceed, element) {
-      element = $(element);
-      try { element.offsetParent }
-      catch(e) { return $(document.body) }
-      var position = element.getStyle('position');
-      if (position !== 'static') return proceed(element);
-      element.setStyle({ position: 'relative' });
-      var value = proceed(element);
-      element.setStyle({ position: position });
-      return value;
-    }
-  );
-
-  $w('positionedOffset viewportOffset').each(function(method) {
-    Element.Methods[method] = Element.Methods[method].wrap(
-      function(proceed, element) {
-        element = $(element);
-        try { element.offsetParent }
-        catch(e) { return Element._returnOffset(0,0) }
-        var position = element.getStyle('position');
-        if (position !== 'static') return proceed(element);
-        var offsetParent = element.getOffsetParent();
-        if (offsetParent && offsetParent.getStyle('position') === 'fixed')
-          offsetParent.setStyle({ zoom: 1 });
-        element.setStyle({ position: 'relative' });
-        var value = proceed(element);
-        element.setStyle({ position: position });
-        return value;
-      }
-    );
-  });
-
-  Element.Methods.cumulativeOffset = Element.Methods.cumulativeOffset.wrap(
-    function(proceed, element) {
-      try { element.offsetParent }
-      catch(e) { return Element._returnOffset(0,0) }
-      return proceed(element);
-    }
-  );
-
-  Element.Methods.getStyle = function(element, style) {
-    element = $(element);
-    style = (style == 'float' || style == 'cssFloat') ? 'styleFloat' : style.camelize();
-    var value = element.style[style];
-    if (!value && element.currentStyle) value = element.currentStyle[style];
-
-    if (style == 'opacity') {
-      if (value = (element.getStyle('filter') || '').match(/alpha\(opacity=(.*)\)/))
-        if (value[1]) return parseFloat(value[1]) / 100;
-      return 1.0;
-    }
-
-    if (value == 'auto') {
-      if ((style == 'width' || style == 'height') && (element.getStyle('display') != 'none'))
-        return element['offset' + style.capitalize()] + 'px';
-      return null;
-    }
-    return value;
-  };
-
-  Element.Methods.setOpacity = function(element, value) {
-    function stripAlpha(filter){
-      return filter.replace(/alpha\([^\)]*\)/gi,'');
-    }
-    element = $(element);
-    var currentStyle = element.currentStyle;
-    if ((currentStyle && !currentStyle.hasLayout) ||
-      (!currentStyle && element.style.zoom == 'normal'))
-        element.style.zoom = 1;
-
-    var filter = element.getStyle('filter'), style = element.style;
-    if (value == 1 || value === '') {
-      (filter = stripAlpha(filter)) ?
-        style.filter = filter : style.removeAttribute('filter');
-      return element;
-    } else if (value < 0.00001) value = 0;
-    style.filter = stripAlpha(filter) +
-      'alpha(opacity=' + (value * 100) + ')';
-    return element;
-  };
-
-  Element._attributeTranslations = (function(){
-
-    var classProp = 'className';
-    var forProp = 'for';
-
-    var el = document.createElement('div');
-
-    el.setAttribute(classProp, 'x');
-
-    if (el.className !== 'x') {
-      el.setAttribute('class', 'x');
-      if (el.className === 'x') {
-        classProp = 'class';
-      }
-    }
-    el = null;
-
-    el = document.createElement('label');
-    el.setAttribute(forProp, 'x');
-    if (el.htmlFor !== 'x') {
-      el.setAttribute('htmlFor', 'x');
-      if (el.htmlFor === 'x') {
-        forProp = 'htmlFor';
-      }
-    }
-    el = null;
-
-    return {
-      read: {
-        names: {
-          'class':      classProp,
-          'className':  classProp,
-          'for':        forProp,
-          'htmlFor':    forProp
-        },
-        values: {
-          _getAttr: function(element, attribute) {
-            return element.getAttribute(attribute, 2);
-          },
-          _getAttrNode: function(element, attribute) {
-            var node = element.getAttributeNode(attribute);
-            return node ? node.value : "";
-          },
-          _getEv: (function(){
-
-            var el = document.createElement('div');
-            el.onclick = Prototype.emptyFunction;
-            var value = el.getAttribute('onclick');
-            var f;
-
-            if (String(value).indexOf('{') > -1) {
-              f = function(element, attribute) {
-                attribute = element.getAttribute(attribute);
-                if (!attribute) return null;
-                attribute = attribute.toString();
-                attribute = attribute.split('{')[1];
-                attribute = attribute.split('}')[0];
-                return attribute.strip();
-              }
-            }
-            else if (value === '') {
-              f = function(element, attribute) {
-                attribute = element.getAttribute(attribute);
-                if (!attribute) return null;
-                return attribute.strip();
-              }
-            }
-            el = null;
-            return f;
-          })(),
-          _flag: function(element, attribute) {
-            return $(element).hasAttribute(attribute) ? attribute : null;
-          },
-          style: function(element) {
-            return element.style.cssText.toLowerCase();
-          },
-          title: function(element) {
-            return element.title;
-          }
-        }
-      }
-    }
-  })();
-
-  Element._attributeTranslations.write = {
-    names: Object.extend({
-      cellpadding: 'cellPadding',
-      cellspacing: 'cellSpacing'
-    }, Element._attributeTranslations.read.names),
-    values: {
-      checked: function(element, value) {
-        element.checked = !!value;
-      },
-
-      style: function(element, value) {
-        element.style.cssText = value ? value : '';
-      }
-    }
-  };
-
-  Element._attributeTranslations.has = {};
-
-  $w('colSpan rowSpan vAlign dateTime accessKey tabIndex ' +
-      'encType maxLength readOnly longDesc frameBorder').each(function(attr) {
-    Element._attributeTranslations.write.names[attr.toLowerCase()] = attr;
-    Element._attributeTranslations.has[attr.toLowerCase()] = attr;
-  });
-
-  (function(v) {
-    Object.extend(v, {
-      href:        v._getAttr,
-      src:         v._getAttr,
-      type:        v._getAttr,
-      action:      v._getAttrNode,
-      disabled:    v._flag,
-      checked:     v._flag,
-      readonly:    v._flag,
-      multiple:    v._flag,
-      onload:      v._getEv,
-      onunload:    v._getEv,
-      onclick:     v._getEv,
-      ondblclick:  v._getEv,
-      onmousedown: v._getEv,
-      onmouseup:   v._getEv,
-      onmouseover: v._getEv,
-      onmousemove: v._getEv,
-      onmouseout:  v._getEv,
-      onfocus:     v._getEv,
-      onblur:      v._getEv,
-      onkeypress:  v._getEv,
-      onkeydown:   v._getEv,
-      onkeyup:     v._getEv,
-      onsubmit:    v._getEv,
-      onreset:     v._getEv,
-      onselect:    v._getEv,
-      onchange:    v._getEv
-    });
-  })(Element._attributeTranslations.read.values);
-
-  if (Prototype.BrowserFeatures.ElementExtensions) {
-    (function() {
-      function _descendants(element) {
-        var nodes = element.getElementsByTagName('*'), results = [];
-        for (var i = 0, node; node = nodes[i]; i++)
-          if (node.tagName !== "!") // Filter out comment nodes.
-            results.push(node);
-        return results;
-      }
-
-      Element.Methods.down = function(element, expression, index) {
-        element = $(element);
-        if (arguments.length == 1) return element.firstDescendant();
-        return Object.isNumber(expression) ? _descendants(element)[expression] :
-          Element.select(element, expression)[index || 0];
-      }
-    })();
-  }
-
-}
-
-else if (Prototype.Browser.Gecko && /rv:1\.8\.0/.test(navigator.userAgent)) {
-  Element.Methods.setOpacity = function(element, value) {
-    element = $(element);
-    element.style.opacity = (value == 1) ? 0.999999 :
-      (value === '') ? '' : (value < 0.00001) ? 0 : value;
-    return element;
-  };
-}
-
-else if (Prototype.Browser.WebKit) {
-  Element.Methods.setOpacity = function(element, value) {
-    element = $(element);
-    element.style.opacity = (value == 1 || value === '') ? '' :
-      (value < 0.00001) ? 0 : value;
-
-    if (value == 1)
-      if(element.tagName.toUpperCase() == 'IMG' && element.width) {
-        element.width++; element.width--;
-      } else try {
-        var n = document.createTextNode(' ');
-        element.appendChild(n);
-        element.removeChild(n);
-      } catch (e) { }
-
-    return element;
-  };
-
-  Element.Methods.cumulativeOffset = function(element) {
-    var valueT = 0, valueL = 0;
-    do {
-      valueT += element.offsetTop  || 0;
-      valueL += element.offsetLeft || 0;
-      if (element.offsetParent == document.body)
-        if (Element.getStyle(element, 'position') == 'absolute') break;
-
-      element = element.offsetParent;
-    } while (element);
-
-    return Element._returnOffset(valueL, valueT);
-  };
-}
-
-if ('outerHTML' in document.documentElement) {
-  Element.Methods.replace = function(element, content) {
-    element = $(element);
-
-    if (content && content.toElement) content = content.toElement();
-    if (Object.isElement(content)) {
-      element.parentNode.replaceChild(content, element);
-      return element;
-    }
-
-    content = Object.toHTML(content);
-    var parent = element.parentNode, tagName = parent.tagName.toUpperCase();
-
-    if (Element._insertionTranslations.tags[tagName]) {
-      var nextSibling = element.next();
-      var fragments = Element._getContentFromAnonymousElement(tagName, content.stripScripts());
-      parent.removeChild(element);
-      if (nextSibling)
-        fragments.each(function(node) { parent.insertBefore(node, nextSibling) });
-      else
-        fragments.each(function(node) { parent.appendChild(node) });
-    }
-    else element.outerHTML = content.stripScripts();
-
-    content.evalScripts.bind(content).defer();
-    return element;
-  };
-}
-
-Element._returnOffset = function(l, t) {
-  var result = [l, t];
-  result.left = l;
-  result.top = t;
-  return result;
-};
-
-Element._getContentFromAnonymousElement = function(tagName, html) {
-  var div = new Element('div'), t = Element._insertionTranslations.tags[tagName];
-  if (t) {
-    div.innerHTML = t[0] + html + t[1];
-    t[2].times(function() { div = div.firstChild });
-  } else div.innerHTML = html;
-  return $A(div.childNodes);
-};
-
-Element._insertionTranslations = {
-  before: function(element, node) {
-    element.parentNode.insertBefore(node, element);
-  },
-  top: function(element, node) {
-    element.insertBefore(node, element.firstChild);
-  },
-  bottom: function(element, node) {
-    element.appendChild(node);
-  },
-  after: function(element, node) {
-    element.parentNode.insertBefore(node, element.nextSibling);
-  },
-  tags: {
-    TABLE:  ['<table>',                '</table>',                   1],
-    TBODY:  ['<table><tbody>',         '</tbody></table>',           2],
-    TR:     ['<table><tbody><tr>',     '</tr></tbody></table>',      3],
-    TD:     ['<table><tbody><tr><td>', '</td></tr></tbody></table>', 4],
-    SELECT: ['<select>',               '</select>',                  1]
-  }
-};
-
-(function() {
-  Object.extend(this.tags, {
-    THEAD: this.tags.TBODY,
-    TFOOT: this.tags.TBODY,
-    TH:    this.tags.TD
-  });
-}).call(Element._insertionTranslations);
-
-Element.Methods.Simulated = {
-  hasAttribute: function(element, attribute) {
-    attribute = Element._attributeTranslations.has[attribute] || attribute;
-    var node = $(element).getAttributeNode(attribute);
-    return !!(node && node.specified);
-  }
-};
-
-Element.Methods.ByTag = { };
-
-Object.extend(Element, Element.Methods);
-
-(function(div) {
-
-  if (!Prototype.BrowserFeatures.ElementExtensions && div['__proto__']) {
-    window.HTMLElement = { };
-    window.HTMLElement.prototype = div['__proto__'];
-    Prototype.BrowserFeatures.ElementExtensions = true;
-  }
-
-  div = null;
-
-})(document.createElement('div'))
-
-Element.extend = (function() {
-
-  function checkDeficiency(tagName) {
-    if (typeof window.Element != 'undefined') {
-      var proto = window.Element.prototype;
-      if (proto) {
-        var id = '_' + (Math.random()+'').slice(2);
-        var el = document.createElement(tagName);
-        proto[id] = 'x';
-        var isBuggy = (el[id] !== 'x');
-        delete proto[id];
-        el = null;
-        return isBuggy;
-      }
-    }
-    return false;
-  }
-
-  function extendElementWith(element, methods) {
-    for (var property in methods) {
-      var value = methods[property];
-      if (Object.isFunction(value) && !(property in element))
-        element[property] = value.methodize();
-    }
-  }
-
-  var HTMLOBJECTELEMENT_PROTOTYPE_BUGGY = checkDeficiency('object');
-  var HTMLAPPLETELEMENT_PROTOTYPE_BUGGY = checkDeficiency('applet');
-
-  if (Prototype.BrowserFeatures.SpecificElementExtensions) {
-    if (HTMLOBJECTELEMENT_PROTOTYPE_BUGGY &&
-        HTMLAPPLETELEMENT_PROTOTYPE_BUGGY) {
-      return function(element) {
-        if (element && element.tagName) {
-          var tagName = element.tagName.toUpperCase();
-          if (tagName === 'OBJECT' || tagName === 'APPLET') {
-            extendElementWith(element, Element.Methods);
-            if (tagName === 'OBJECT') {
-              extendElementWith(element, Element.Methods.ByTag.OBJECT)
-            }
-            else if (tagName === 'APPLET') {
-              extendElementWith(element, Element.Methods.ByTag.APPLET)
-            }
-          }
-        }
-        return element;
-      }
-    }
-    return Prototype.K;
-  }
-
-  var Methods = { }, ByTag = Element.Methods.ByTag;
-
-  var extend = Object.extend(function(element) {
-    if (!element || typeof element._extendedByPrototype != 'undefined' ||
-        element.nodeType != 1 || element == window) return element;
-
-    var methods = Object.clone(Methods),
-        tagName = element.tagName.toUpperCase();
-
-    if (ByTag[tagName]) Object.extend(methods, ByTag[tagName]);
-
-    extendElementWith(element, methods);
-
-    element._extendedByPrototype = Prototype.emptyFunction;
-    return element;
-
-  }, {
-    refresh: function() {
-      if (!Prototype.BrowserFeatures.ElementExtensions) {
-        Object.extend(Methods, Element.Methods);
-        Object.extend(Methods, Element.Methods.Simulated);
-      }
-    }
-  });
-
-  extend.refresh();
-  return extend;
-})();
-
-Element.hasAttribute = function(element, attribute) {
-  if (element.hasAttribute) return element.hasAttribute(attribute);
-  return Element.Methods.Simulated.hasAttribute(element, attribute);
-};
-
-Element.addMethods = function(methods) {
-  var F = Prototype.BrowserFeatures, T = Element.Methods.ByTag;
-
-  if (!methods) {
-    Object.extend(Form, Form.Methods);
-    Object.extend(Form.Element, Form.Element.Methods);
-    Object.extend(Element.Methods.ByTag, {
-      "FORM":     Object.clone(Form.Methods),
-      "INPUT":    Object.clone(Form.Element.Methods),
-      "SELECT":   Object.clone(Form.Element.Methods),
-      "TEXTAREA": Object.clone(Form.Element.Methods)
-    });
-  }
-
-  if (arguments.length == 2) {
-    var tagName = methods;
-    methods = arguments[1];
-  }
-
-  if (!tagName) Object.extend(Element.Methods, methods || { });
-  else {
-    if (Object.isArray(tagName)) tagName.each(extend);
-    else extend(tagName);
-  }
-
-  function extend(tagName) {
-    tagName = tagName.toUpperCase();
-    if (!Element.Methods.ByTag[tagName])
-      Element.Methods.ByTag[tagName] = { };
-    Object.extend(Element.Methods.ByTag[tagName], methods);
-  }
-
-  function copy(methods, destination, onlyIfAbsent) {
-    onlyIfAbsent = onlyIfAbsent || false;
-    for (var property in methods) {
-      var value = methods[property];
-      if (!Object.isFunction(value)) continue;
-      if (!onlyIfAbsent || !(property in destination))
-        destination[property] = value.methodize();
-    }
-  }
-
-  function findDOMClass(tagName) {
-    var klass;
-    var trans = {
-      "OPTGROUP": "OptGroup", "TEXTAREA": "TextArea", "P": "Paragraph",
-      "FIELDSET": "FieldSet", "UL": "UList", "OL": "OList", "DL": "DList",
-      "DIR": "Directory", "H1": "Heading", "H2": "Heading", "H3": "Heading",
-      "H4": "Heading", "H5": "Heading", "H6": "Heading", "Q": "Quote",
-      "INS": "Mod", "DEL": "Mod", "A": "Anchor", "IMG": "Image", "CAPTION":
-      "TableCaption", "COL": "TableCol", "COLGROUP": "TableCol", "THEAD":
-      "TableSection", "TFOOT": "TableSection", "TBODY": "TableSection", "TR":
-      "TableRow", "TH": "TableCell", "TD": "TableCell", "FRAMESET":
-      "FrameSet", "IFRAME": "IFrame"
-    };
-    if (trans[tagName]) klass = 'HTML' + trans[tagName] + 'Element';
-    if (window[klass]) return window[klass];
-    klass = 'HTML' + tagName + 'Element';
-    if (window[klass]) return window[klass];
-    klass = 'HTML' + tagName.capitalize() + 'Element';
-    if (window[klass]) return window[klass];
-
-    var element = document.createElement(tagName);
-    var proto = element['__proto__'] || element.constructor.prototype;
-    element = null;
-    return proto;
-  }
-
-  var elementPrototype = window.HTMLElement ? HTMLElement.prototype :
-   Element.prototype;
-
-  if (F.ElementExtensions) {
-    copy(Element.Methods, elementPrototype);
-    copy(Element.Methods.Simulated, elementPrototype, true);
-  }
-
-  if (F.SpecificElementExtensions) {
-    for (var tag in Element.Methods.ByTag) {
-      var klass = findDOMClass(tag);
-      if (Object.isUndefined(klass)) continue;
-      copy(T[tag], klass.prototype);
-    }
-  }
-
-  Object.extend(Element, Element.Methods);
-  delete Element.ByTag;
-
-  if (Element.extend.refresh) Element.extend.refresh();
-  Element.cache = { };
-};
-
-
-document.viewport = {
-
-  getDimensions: function() {
-    return { width: this.getWidth(), height: this.getHeight() };
-  },
-
-  getScrollOffsets: function() {
-    return Element._returnOffset(
-      window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft,
-      window.pageYOffset || document.documentElement.scrollTop  || document.body.scrollTop);
-  }
-};
-
-(function(viewport) {
-  var B = Prototype.Browser, doc = document, element, property = {};
-
-  function getRootElement() {
-    if (B.WebKit && !doc.evaluate)
-      return document;
-
-    if (B.Opera && window.parseFloat(window.opera.version()) < 9.5)
-      return document.body;
-
-    return document.documentElement;
-  }
-
-  function define(D) {
-    if (!element) element = getRootElement();
-
-    property[D] = 'client' + D;
-
-    viewport['get' + D] = function() { return element[property[D]] };
-    return viewport['get' + D]();
-  }
-
-  viewport.getWidth  = define.curry('Width');
-
-  viewport.getHeight = define.curry('Height');
-})(document.viewport);
-
-
-Element.Storage = {
-  UID: 1
-};
-
-Element.addMethods({
-  getStorage: function(element) {
-    if (!(element = $(element))) return;
-
-    var uid;
-    if (element === window) {
-      uid = 0;
-    } else {
-      if (typeof element._prototypeUID === "undefined")
-        element._prototypeUID = [Element.Storage.UID++];
-      uid = element._prototypeUID[0];
-    }
-
-    if (!Element.Storage[uid])
-      Element.Storage[uid] = $H();
-
-    return Element.Storage[uid];
-  },
-
-  store: function(element, key, value) {
-    if (!(element = $(element))) return;
-
-    if (arguments.length === 2) {
-      element.getStorage().update(key);
-    } else {
-      element.getStorage().set(key, value);
-    }
-
-    return element;
-  },
-
-  retrieve: function(element, key, defaultValue) {
-    if (!(element = $(element))) return;
-    var hash = Element.getStorage(element), value = hash.get(key);
-
-    if (Object.isUndefined(value)) {
-      hash.set(key, defaultValue);
-      value = defaultValue;
-    }
-
-    return value;
-  },
-
-  clone: function(element, deep) {
-    if (!(element = $(element))) return;
-    var clone = element.cloneNode(deep);
-    clone._prototypeUID = void 0;
-    if (deep) {
-      var descendants = Element.select(clone, '*'),
-          i = descendants.length;
-      while (i--) {
-        descendants[i]._prototypeUID = void 0;
-      }
-    }
-    return Element.extend(clone);
-  }
-});
-/* Portions of the Selector class are derived from Jack Slocum's DomQuery,
- * part of YUI-Ext version 0.40, distributed under the terms of an MIT-style
- * license.  Please see http://www.yui-ext.com/ for more information. */
-
-var Selector = Class.create({
-  initialize: function(expression) {
-    this.expression = expression.strip();
-
-    if (this.shouldUseSelectorsAPI()) {
-      this.mode = 'selectorsAPI';
-    } else if (this.shouldUseXPath()) {
-      this.mode = 'xpath';
-      this.compileXPathMatcher();
-    } else {
-      this.mode = "normal";
-      this.compileMatcher();
-    }
-
-  },
-
-  shouldUseXPath: (function() {
-
-    var IS_DESCENDANT_SELECTOR_BUGGY = (function(){
-      var isBuggy = false;
-      if (document.evaluate && window.XPathResult) {
-        var el = document.createElement('div');
-        el.innerHTML = '<ul><li></li></ul><div><ul><li></li></ul></div>';
-
-        var xpath = ".//*[local-name()='ul' or local-name()='UL']" +
-          "//*[local-name()='li' or local-name()='LI']";
-
-        var result = document.evaluate(xpath, el, null,
-          XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-
-        isBuggy = (result.snapshotLength !== 2);
-        el = null;
-      }
-      return isBuggy;
-    })();
-
-    return function() {
-      if (!Prototype.BrowserFeatures.XPath) return false;
-
-      var e = this.expression;
-
-      if (Prototype.Browser.WebKit &&
-       (e.include("-of-type") || e.include(":empty")))
-        return false;
-
-      if ((/(\[[\w-]*?:|:checked)/).test(e))
-        return false;
-
-      if (IS_DESCENDANT_SELECTOR_BUGGY) return false;
-
-      return true;
-    }
-
-  })(),
-
-  shouldUseSelectorsAPI: function() {
-    if (!Prototype.BrowserFeatures.SelectorsAPI) return false;
-
-    if (Selector.CASE_INSENSITIVE_CLASS_NAMES) return false;
-
-    if (!Selector._div) Selector._div = new Element('div');
-
-    try {
-      Selector._div.querySelector(this.expression);
-    } catch(e) {
-      return false;
-    }
-
-    return true;
-  },
-
-  compileMatcher: function() {
-    var e = this.expression, ps = Selector.patterns, h = Selector.handlers,
-        c = Selector.criteria, le, p, m, len = ps.length, name;
-
-    if (Selector._cache[e]) {
-      this.matcher = Selector._cache[e];
-      return;
-    }
-
-    this.matcher = ["this.matcher = function(root) {",
-                    "var r = root, h = Selector.handlers, c = false, n;"];
-
-    while (e && le != e && (/\S/).test(e)) {
-      le = e;
-      for (var i = 0; i<len; i++) {
-        p = ps[i].re;
-        name = ps[i].name;
-        if (m = e.match(p)) {
-          this.matcher.push(Object.isFunction(c[name]) ? c[name](m) :
-            new Template(c[name]).evaluate(m));
-          e = e.replace(m[0], '');
-          break;
-        }
-      }
-    }
-
-    this.matcher.push("return h.unique(n);\n}");
-    eval(this.matcher.join('\n'));
-    Selector._cache[this.expression] = this.matcher;
-  },
-
-  compileXPathMatcher: function() {
-    var e = this.expression, ps = Selector.patterns,
-        x = Selector.xpath, le, m, len = ps.length, name;
-
-    if (Selector._cache[e]) {
-      this.xpath = Selector._cache[e]; return;
-    }
-
-    this.matcher = ['.//*'];
-    while (e && le != e && (/\S/).test(e)) {
-      le = e;
-      for (var i = 0; i<len; i++) {
-        name = ps[i].name;
-        if (m = e.match(ps[i].re)) {
-          this.matcher.push(Object.isFunction(x[name]) ? x[name](m) :
-            new Template(x[name]).evaluate(m));
-          e = e.replace(m[0], '');
-          break;
-        }
-      }
-    }
-
-    this.xpath = this.matcher.join('');
-    Selector._cache[this.expression] = this.xpath;
-  },
-
-  findElements: function(root) {
-    root = root || document;
-    var e = this.expression, results;
-
-    switch (this.mode) {
-      case 'selectorsAPI':
-        if (root !== document) {
-          var oldId = root.id, id = $(root).identify();
-          id = id.replace(/[\.:]/g, "\\$0");
-          e = "#" + id + " " + e;
-        }
-
-        results = $A(root.querySelectorAll(e)).map(Element.extend);
-        root.id = oldId;
-
-        return results;
-      case 'xpath':
-        return document._getElementsByXPath(this.xpath, root);
-      default:
-       return this.matcher(root);
-    }
-  },
-
-  match: function(element) {
-    this.tokens = [];
-
-    var e = this.expression, ps = Selector.patterns, as = Selector.assertions;
-    var le, p, m, len = ps.length, name;
-
-    while (e && le !== e && (/\S/).test(e)) {
-      le = e;
-      for (var i = 0; i<len; i++) {
-        p = ps[i].re;
-        name = ps[i].name;
-        if (m = e.match(p)) {
-          if (as[name]) {
-            this.tokens.push([name, Object.clone(m)]);
-            e = e.replace(m[0], '');
-          } else {
-            return this.findElements(document).include(element);
-          }
-        }
-      }
-    }
-
-    var match = true, name, matches;
-    for (var i = 0, token; token = this.tokens[i]; i++) {
-      name = token[0], matches = token[1];
-      if (!Selector.assertions[name](element, matches)) {
-        match = false; break;
-      }
-    }
-
-    return match;
-  },
-
-  toString: function() {
-    return this.expression;
-  },
-
-  inspect: function() {
-    return "#<Selector:" + this.expression.inspect() + ">";
-  }
-});
-
-if (Prototype.BrowserFeatures.SelectorsAPI &&
- document.compatMode === 'BackCompat') {
-  Selector.CASE_INSENSITIVE_CLASS_NAMES = (function(){
-    var div = document.createElement('div'),
-     span = document.createElement('span');
-
-    div.id = "prototype_test_id";
-    span.className = 'Test';
-    div.appendChild(span);
-    var isIgnored = (div.querySelector('#prototype_test_id .test') !== null);
-    div = span = null;
-    return isIgnored;
-  })();
-}
-
-Object.extend(Selector, {
-  _cache: { },
-
-  xpath: {
-    descendant:   "//*",
-    child:        "/*",
-    adjacent:     "/following-sibling::*[1]",
-    laterSibling: '/following-sibling::*',
-    tagName:      function(m) {
-      if (m[1] == '*') return '';
-      return "[local-name()='" + m[1].toLowerCase() +
-             "' or local-name()='" + m[1].toUpperCase() + "']";
-    },
-    className:    "[contains(concat(' ', @class, ' '), ' #{1} ')]",
-    id:           "[@id='#{1}']",
-    attrPresence: function(m) {
-      m[1] = m[1].toLowerCase();
-      return new Template("[@#{1}]").evaluate(m);
-    },
-    attr: function(m) {
-      m[1] = m[1].toLowerCase();
-      m[3] = m[5] || m[6];
-      return new Template(Selector.xpath.operators[m[2]]).evaluate(m);
-    },
-    pseudo: function(m) {
-      var h = Selector.xpath.pseudos[m[1]];
-      if (!h) return '';
-      if (Object.isFunction(h)) return h(m);
-      return new Template(Selector.xpath.pseudos[m[1]]).evaluate(m);
-    },
-    operators: {
-      '=':  "[@#{1}='#{3}']",
-      '!=': "[@#{1}!='#{3}']",
-      '^=': "[starts-with(@#{1}, '#{3}')]",
-      '$=': "[substring(@#{1}, (string-length(@#{1}) - string-length('#{3}') + 1))='#{3}']",
-      '*=': "[contains(@#{1}, '#{3}')]",
-      '~=': "[contains(concat(' ', @#{1}, ' '), ' #{3} ')]",
-      '|=': "[contains(concat('-', @#{1}, '-'), '-#{3}-')]"
-    },
-    pseudos: {
-      'first-child': '[not(preceding-sibling::*)]',
-      'last-child':  '[not(following-sibling::*)]',
-      'only-child':  '[not(preceding-sibling::* or following-sibling::*)]',
-      'empty':       "[count(*) = 0 and (count(text()) = 0)]",
-      'checked':     "[@checked]",
-      'disabled':    "[(@disabled) and (@type!='hidden')]",
-      'enabled':     "[not(@disabled) and (@type!='hidden')]",
-      'not': function(m) {
-        var e = m[6], p = Selector.patterns,
-            x = Selector.xpath, le, v, len = p.length, name;
-
-        var exclusion = [];
-        while (e && le != e && (/\S/).test(e)) {
-          le = e;
-          for (var i = 0; i<len; i++) {
-            name = p[i].name
-            if (m = e.match(p[i].re)) {
-              v = Object.isFunction(x[name]) ? x[name](m) : new Template(x[name]).evaluate(m);
-              exclusion.push("(" + v.substring(1, v.length - 1) + ")");
-              e = e.replace(m[0], '');
-              break;
-            }
-          }
-        }
-        return "[not(" + exclusion.join(" and ") + ")]";
-      },
-      'nth-child':      function(m) {
-        return Selector.xpath.pseudos.nth("(count(./preceding-sibling::*) + 1) ", m);
-      },
-      'nth-last-child': function(m) {
-        return Selector.xpath.pseudos.nth("(count(./following-sibling::*) + 1) ", m);
-      },
-      'nth-of-type':    function(m) {
-        return Selector.xpath.pseudos.nth("position() ", m);
-      },
-      'nth-last-of-type': function(m) {
-        return Selector.xpath.pseudos.nth("(last() + 1 - position()) ", m);
-      },
-      'first-of-type':  function(m) {
-        m[6] = "1"; return Selector.xpath.pseudos['nth-of-type'](m);
-      },
-      'last-of-type':   function(m) {
-        m[6] = "1"; return Selector.xpath.pseudos['nth-last-of-type'](m);
-      },
-      'only-of-type':   function(m) {
-        var p = Selector.xpath.pseudos; return p['first-of-type'](m) + p['last-of-type'](m);
-      },
-      nth: function(fragment, m) {
-        var mm, formula = m[6], predicate;
-        if (formula == 'even') formula = '2n+0';
-        if (formula == 'odd')  formula = '2n+1';
-        if (mm = formula.match(/^(\d+)$/)) // digit only
-          return '[' + fragment + "= " + mm[1] + ']';
-        if (mm = formula.match(/^(-?\d*)?n(([+-])(\d+))?/)) { // an+b
-          if (mm[1] == "-") mm[1] = -1;
-          var a = mm[1] ? Number(mm[1]) : 1;
-          var b = mm[2] ? Number(mm[2]) : 0;
-          predicate = "[((#{fragment} - #{b}) mod #{a} = 0) and " +
-          "((#{fragment} - #{b}) div #{a} >= 0)]";
-          return new Template(predicate).evaluate({
-            fragment: fragment, a: a, b: b });
-        }
-      }
-    }
-  },
-
-  criteria: {
-    tagName:      'n = h.tagName(n, r, "#{1}", c);      c = false;',
-    className:    'n = h.className(n, r, "#{1}", c);    c = false;',
-    id:           'n = h.id(n, r, "#{1}", c);           c = false;',
-    attrPresence: 'n = h.attrPresence(n, r, "#{1}", c); c = false;',
-    attr: function(m) {
-      m[3] = (m[5] || m[6]);
-      return new Template('n = h.attr(n, r, "#{1}", "#{3}", "#{2}", c); c = false;').evaluate(m);
-    },
-    pseudo: function(m) {
-      if (m[6]) m[6] = m[6].replace(/"/g, '\\"');
-      return new Template('n = h.pseudo(n, "#{1}", "#{6}", r, c); c = false;').evaluate(m);
-    },
-    descendant:   'c = "descendant";',
-    child:        'c = "child";',
-    adjacent:     'c = "adjacent";',
-    laterSibling: 'c = "laterSibling";'
-  },
-
-  patterns: [
-    { name: 'laterSibling', re: /^\s*~\s*/ },
-    { name: 'child',        re: /^\s*>\s*/ },
-    { name: 'adjacent',     re: /^\s*\+\s*/ },
-    { name: 'descendant',   re: /^\s/ },
-
-    { name: 'tagName',      re: /^\s*(\*|[\w\-]+)(\b|$)?/ },
-    { name: 'id',           re: /^#([\w\-\*]+)(\b|$)/ },
-    { name: 'className',    re: /^\.([\w\-\*]+)(\b|$)/ },
-    { name: 'pseudo',       re: /^:((first|last|nth|nth-last|only)(-child|-of-type)|empty|checked|(en|dis)abled|not)(\((.*?)\))?(\b|$|(?=\s|[:+~>]))/ },
-    { name: 'attrPresence', re: /^\[((?:[\w-]+:)?[\w-]+)\]/ },
-    { name: 'attr',         re: /\[((?:[\w-]*:)?[\w-]+)\s*(?:([!^$*~|]?=)\s*((['"])([^\4]*?)\4|([^'"][^\]]*?)))?\]/ }
-  ],
-
-  assertions: {
-    tagName: function(element, matches) {
-      return matches[1].toUpperCase() == element.tagName.toUpperCase();
-    },
-
-    className: function(element, matches) {
-      return Element.hasClassName(element, matches[1]);
-    },
-
-    id: function(element, matches) {
-      return element.id === matches[1];
-    },
-
-    attrPresence: function(element, matches) {
-      return Element.hasAttribute(element, matches[1]);
-    },
-
-    attr: function(element, matches) {
-      var nodeValue = Element.readAttribute(element, matches[1]);
-      return nodeValue && Selector.operators[matches[2]](nodeValue, matches[5] || matches[6]);
-    }
-  },
-
-  handlers: {
-    concat: function(a, b) {
-      for (var i = 0, node; node = b[i]; i++)
-        a.push(node);
-      return a;
-    },
-
-    mark: function(nodes) {
-      var _true = Prototype.emptyFunction;
-      for (var i = 0, node; node = nodes[i]; i++)
-        node._countedByPrototype = _true;
-      return nodes;
-    },
-
-    unmark: function(nodes) {
-      for (var i = 0, node; node = nodes[i]; i++)
-        node._countedByPrototype = undefined;
-      return nodes;
-    },
-
-    index: function(parentNode, reverse, ofType) {
-      parentNode._countedByPrototype = Prototype.emptyFunction;
-      if (reverse) {
-        for (var nodes = parentNode.childNodes, i = nodes.length - 1, j = 1; i >= 0; i--) {
-          var node = nodes[i];
-          if (node.nodeType == 1 && (!ofType || node._countedByPrototype)) node.nodeIndex = j++;
-        }
-      } else {
-        for (var i = 0, j = 1, nodes = parentNode.childNodes; node = nodes[i]; i++)
-          if (node.nodeType == 1 && (!ofType || node._countedByPrototype)) node.nodeIndex = j++;
-      }
-    },
-
-    unique: function(nodes) {
-      if (nodes.length == 0) return nodes;
-      var results = [], n;
-      for (var i = 0, l = nodes.length; i < l; i++)
-        if (typeof (n = nodes[i])._countedByPrototype == 'undefined') {
-          n._countedByPrototype = Prototype.emptyFunction;
-          results.push(Element.extend(n));
-        }
-      return Selector.handlers.unmark(results);
-    },
-
-    descendant: function(nodes) {
-      var h = Selector.handlers;
-      for (var i = 0, results = [], node; node = nodes[i]; i++)
-        h.concat(results, node.getElementsByTagName('*'));
-      return results;
-    },
-
-    child: function(nodes) {
-      var h = Selector.handlers;
-      for (var i = 0, results = [], node; node = nodes[i]; i++) {
-        for (var j = 0, child; child = node.childNodes[j]; j++)
-          if (child.nodeType == 1 && child.tagName != '!') results.push(child);
-      }
-      return results;
-    },
-
-    adjacent: function(nodes) {
-      for (var i = 0, results = [], node; node = nodes[i]; i++) {
-        var next = this.nextElementSibling(node);
-        if (next) results.push(next);
-      }
-      return results;
-    },
-
-    laterSibling: function(nodes) {
-      var h = Selector.handlers;
-      for (var i = 0, results = [], node; node = nodes[i]; i++)
-        h.concat(results, Element.nextSiblings(node));
-      return results;
-    },
-
-    nextElementSibling: function(node) {
-      while (node = node.nextSibling)
-        if (node.nodeType == 1) return node;
-      return null;
-    },
-
-    previousElementSibling: function(node) {
-      while (node = node.previousSibling)
-        if (node.nodeType == 1) return node;
-      return null;
-    },
-
-    tagName: function(nodes, root, tagName, combinator) {
-      var uTagName = tagName.toUpperCase();
-      var results = [], h = Selector.handlers;
-      if (nodes) {
-        if (combinator) {
-          if (combinator == "descendant") {
-            for (var i = 0, node; node = nodes[i]; i++)
-              h.concat(results, node.getElementsByTagName(tagName));
-            return results;
-          } else nodes = this[combinator](nodes);
-          if (tagName == "*") return nodes;
-        }
-        for (var i = 0, node; node = nodes[i]; i++)
-          if (node.tagName.toUpperCase() === uTagName) results.push(node);
-        return results;
-      } else return root.getElementsByTagName(tagName);
-    },
-
-    id: function(nodes, root, id, combinator) {
-      var targetNode = $(id), h = Selector.handlers;
-
-      if (root == document) {
-        if (!targetNode) return [];
-        if (!nodes) return [targetNode];
-      } else {
-        if (!root.sourceIndex || root.sourceIndex < 1) {
-          var nodes = root.getElementsByTagName('*');
-          for (var j = 0, node; node = nodes[j]; j++) {
-            if (node.id === id) return [node];
-          }
-        }
-      }
-
-      if (nodes) {
-        if (combinator) {
-          if (combinator == 'child') {
-            for (var i = 0, node; node = nodes[i]; i++)
-              if (targetNode.parentNode == node) return [targetNode];
-          } else if (combinator == 'descendant') {
-            for (var i = 0, node; node = nodes[i]; i++)
-              if (Element.descendantOf(targetNode, node)) return [targetNode];
-          } else if (combinator == 'adjacent') {
-            for (var i = 0, node; node = nodes[i]; i++)
-              if (Selector.handlers.previousElementSibling(targetNode) == node)
-                return [targetNode];
-          } else nodes = h[combinator](nodes);
-        }
-        for (var i = 0, node; node = nodes[i]; i++)
-          if (node == targetNode) return [targetNode];
-        return [];
-      }
-      return (targetNode && Element.descendantOf(targetNode, root)) ? [targetNode] : [];
-    },
-
-    className: function(nodes, root, className, combinator) {
-      if (nodes && combinator) nodes = this[combinator](nodes);
-      return Selector.handlers.byClassName(nodes, root, className);
-    },
-
-    byClassName: function(nodes, root, className) {
-      if (!nodes) nodes = Selector.handlers.descendant([root]);
-      var needle = ' ' + className + ' ';
-      for (var i = 0, results = [], node, nodeClassName; node = nodes[i]; i++) {
-        nodeClassName = node.className;
-        if (nodeClassName.length == 0) continue;
-        if (nodeClassName == className || (' ' + nodeClassName + ' ').include(needle))
-          results.push(node);
-      }
-      return results;
-    },
-
-    attrPresence: function(nodes, root, attr, combinator) {
-      if (!nodes) nodes = root.getElementsByTagName("*");
-      if (nodes && combinator) nodes = this[combinator](nodes);
-      var results = [];
-      for (var i = 0, node; node = nodes[i]; i++)
-        if (Element.hasAttribute(node, attr)) results.push(node);
-      return results;
-    },
-
-    attr: function(nodes, root, attr, value, operator, combinator) {
-      if (!nodes) nodes = root.getElementsByTagName("*");
-      if (nodes && combinator) nodes = this[combinator](nodes);
-      var handler = Selector.operators[operator], results = [];
-      for (var i = 0, node; node = nodes[i]; i++) {
-        var nodeValue = Element.readAttribute(node, attr);
-        if (nodeValue === null) continue;
-        if (handler(nodeValue, value)) results.push(node);
-      }
-      return results;
-    },
-
-    pseudo: function(nodes, name, value, root, combinator) {
-      if (nodes && combinator) nodes = this[combinator](nodes);
-      if (!nodes) nodes = root.getElementsByTagName("*");
-      return Selector.pseudos[name](nodes, value, root);
-    }
-  },
-
-  pseudos: {
-    'first-child': function(nodes, value, root) {
-      for (var i = 0, results = [], node; node = nodes[i]; i++) {
-        if (Selector.handlers.previousElementSibling(node)) continue;
-          results.push(node);
-      }
-      return results;
-    },
-    'last-child': function(nodes, value, root) {
-      for (var i = 0, results = [], node; node = nodes[i]; i++) {
-        if (Selector.handlers.nextElementSibling(node)) continue;
-          results.push(node);
-      }
-      return results;
-    },
-    'only-child': function(nodes, value, root) {
-      var h = Selector.handlers;
-      for (var i = 0, results = [], node; node = nodes[i]; i++)
-        if (!h.previousElementSibling(node) && !h.nextElementSibling(node))
-          results.push(node);
-      return results;
-    },
-    'nth-child':        function(nodes, formula, root) {
-      return Selector.pseudos.nth(nodes, formula, root);
-    },
-    'nth-last-child':   function(nodes, formula, root) {
-      return Selector.pseudos.nth(nodes, formula, root, true);
-    },
-    'nth-of-type':      function(nodes, formula, root) {
-      return Selector.pseudos.nth(nodes, formula, root, false, true);
-    },
-    'nth-last-of-type': function(nodes, formula, root) {
-      return Selector.pseudos.nth(nodes, formula, root, true, true);
-    },
-    'first-of-type':    function(nodes, formula, root) {
-      return Selector.pseudos.nth(nodes, "1", root, false, true);
-    },
-    'last-of-type':     function(nodes, formula, root) {
-      return Selector.pseudos.nth(nodes, "1", root, true, true);
-    },
-    'only-of-type':     function(nodes, formula, root) {
-      var p = Selector.pseudos;
-      return p['last-of-type'](p['first-of-type'](nodes, formula, root), formula, root);
-    },
-
-    getIndices: function(a, b, total) {
-      if (a == 0) return b > 0 ? [b] : [];
-      return $R(1, total).inject([], function(memo, i) {
-        if (0 == (i - b) % a && (i - b) / a >= 0) memo.push(i);
-        return memo;
-      });
-    },
-
-    nth: function(nodes, formula, root, reverse, ofType) {
-      if (nodes.length == 0) return [];
-      if (formula == 'even') formula = '2n+0';
-      if (formula == 'odd')  formula = '2n+1';
-      var h = Selector.handlers, results = [], indexed = [], m;
-      h.mark(nodes);
-      for (var i = 0, node; node = nodes[i]; i++) {
-        if (!node.parentNode._countedByPrototype) {
-          h.index(node.parentNode, reverse, ofType);
-          indexed.push(node.parentNode);
-        }
-      }
-      if (formula.match(/^\d+$/)) { // just a number
-        formula = Number(formula);
-        for (var i = 0, node; node = nodes[i]; i++)
-          if (node.nodeIndex == formula) results.push(node);
-      } else if (m = formula.match(/^(-?\d*)?n(([+-])(\d+))?/)) { // an+b
-        if (m[1] == "-") m[1] = -1;
-        var a = m[1] ? Number(m[1]) : 1;
-        var b = m[2] ? Number(m[2]) : 0;
-        var indices = Selector.pseudos.getIndices(a, b, nodes.length);
-        for (var i = 0, node, l = indices.length; node = nodes[i]; i++) {
-          for (var j = 0; j < l; j++)
-            if (node.nodeIndex == indices[j]) results.push(node);
-        }
-      }
-      h.unmark(nodes);
-      h.unmark(indexed);
-      return results;
-    },
-
-    'empty': function(nodes, value, root) {
-      for (var i = 0, results = [], node; node = nodes[i]; i++) {
-        if (node.tagName == '!' || node.firstChild) continue;
-        results.push(node);
-      }
-      return results;
-    },
-
-    'not': function(nodes, selector, root) {
-      var h = Selector.handlers, selectorType, m;
-      var exclusions = new Selector(selector).findElements(root);
-      h.mark(exclusions);
-      for (var i = 0, results = [], node; node = nodes[i]; i++)
-        if (!node._countedByPrototype) results.push(node);
-      h.unmark(exclusions);
-      return results;
-    },
-
-    'enabled': function(nodes, value, root) {
-      for (var i = 0, results = [], node; node = nodes[i]; i++)
-        if (!node.disabled && (!node.type || node.type !== 'hidden'))
-          results.push(node);
-      return results;
-    },
-
-    'disabled': function(nodes, value, root) {
-      for (var i = 0, results = [], node; node = nodes[i]; i++)
-        if (node.disabled) results.push(node);
-      return results;
-    },
-
-    'checked': function(nodes, value, root) {
-      for (var i = 0, results = [], node; node = nodes[i]; i++)
-        if (node.checked) results.push(node);
-      return results;
-    }
-  },
-
-  operators: {
-    '=':  function(nv, v) { return nv == v; },
-    '!=': function(nv, v) { return nv != v; },
-    '^=': function(nv, v) { return nv == v || nv && nv.startsWith(v); },
-    '$=': function(nv, v) { return nv == v || nv && nv.endsWith(v); },
-    '*=': function(nv, v) { return nv == v || nv && nv.include(v); },
-    '~=': function(nv, v) { return (' ' + nv + ' ').include(' ' + v + ' '); },
-    '|=': function(nv, v) { return ('-' + (nv || "").toUpperCase() +
-     '-').include('-' + (v || "").toUpperCase() + '-'); }
-  },
-
-  split: function(expression) {
-    var expressions = [];
-    expression.scan(/(([\w#:.~>+()\s-]+|\*|\[.*?\])+)\s*(,|$)/, function(m) {
-      expressions.push(m[1].strip());
-    });
-    return expressions;
-  },
-
-  matchElements: function(elements, expression) {
-    var matches = $$(expression), h = Selector.handlers;
-    h.mark(matches);
-    for (var i = 0, results = [], element; element = elements[i]; i++)
-      if (element._countedByPrototype) results.push(element);
-    h.unmark(matches);
-    return results;
-  },
-
-  findElement: function(elements, expression, index) {
-    if (Object.isNumber(expression)) {
-      index = expression; expression = false;
-    }
-    return Selector.matchElements(elements, expression || '*')[index || 0];
-  },
-
-  findChildElements: function(element, expressions) {
-    expressions = Selector.split(expressions.join(','));
-    var results = [], h = Selector.handlers;
-    for (var i = 0, l = expressions.length, selector; i < l; i++) {
-      selector = new Selector(expressions[i].strip());
-      h.concat(results, selector.findElements(element));
-    }
-    return (l > 1) ? h.unique(results) : results;
-  }
-});
-
-if (Prototype.Browser.IE) {
-  Object.extend(Selector.handlers, {
-    concat: function(a, b) {
-      for (var i = 0, node; node = b[i]; i++)
-        if (node.tagName !== "!") a.push(node);
-      return a;
-    },
-
-    unmark: function(nodes) {
-      for (var i = 0, node; node = nodes[i]; i++)
-        node.removeAttribute('_countedByPrototype');
-      return nodes;
-    }
-  });
-}
-
-function $$() {
-  return Selector.findChildElements(document, $A(arguments));
-}
-
-var Form = {
-  reset: function(form) {
-    form = $(form);
-    form.reset();
-    return form;
-  },
-
-  serializeElements: function(elements, options) {
-    if (typeof options != 'object') options = { hash: !!options };
-    else if (Object.isUndefined(options.hash)) options.hash = true;
-    var key, value, submitted = false, submit = options.submit;
-
-    var data = elements.inject({ }, function(result, element) {
-      if (!element.disabled && element.name) {
-        key = element.name; value = $(element).getValue();
-        if (value != null && element.type != 'file' && (element.type != 'submit' || (!submitted &&
-            submit !== false && (!submit || key == submit) && (submitted = true)))) {
-          if (key in result) {
-            if (!Object.isArray(result[key])) result[key] = [result[key]];
-            result[key].push(value);
-          }
-          else result[key] = value;
-        }
-      }
-      return result;
-    });
-
-    return options.hash ? data : Object.toQueryString(data);
-  }
-};
-
-Form.Methods = {
-  serialize: function(form, options) {
-    return Form.serializeElements(Form.getElements(form), options);
-  },
-
-  getElements: function(form) {
-    var elements = $(form).getElementsByTagName('*'),
-        element,
-        arr = [ ],
-        serializers = Form.Element.Serializers;
-    for (var i = 0; element = elements[i]; i++) {
-      arr.push(element);
-    }
-    return arr.inject([], function(elements, child) {
-      if (serializers[child.tagName.toLowerCase()])
-        elements.push(Element.extend(child));
-      return elements;
-    })
-  },
-
-  getInputs: function(form, typeName, name) {
-    form = $(form);
-    var inputs = form.getElementsByTagName('input');
-
-    if (!typeName && !name) return $A(inputs).map(Element.extend);
-
-    for (var i = 0, matchingInputs = [], length = inputs.length; i < length; i++) {
-      var input = inputs[i];
-      if ((typeName && input.type != typeName) || (name && input.name != name))
-        continue;
-      matchingInputs.push(Element.extend(input));
-    }
-
-    return matchingInputs;
-  },
-
-  disable: function(form) {
-    form = $(form);
-    Form.getElements(form).invoke('disable');
-    return form;
-  },
-
-  enable: function(form) {
-    form = $(form);
-    Form.getElements(form).invoke('enable');
-    return form;
-  },
-
-  findFirstElement: function(form) {
-    var elements = $(form).getElements().findAll(function(element) {
-      return 'hidden' != element.type && !element.disabled;
-    });
-    var firstByIndex = elements.findAll(function(element) {
-      return element.hasAttribute('tabIndex') && element.tabIndex >= 0;
-    }).sortBy(function(element) { return element.tabIndex }).first();
-
-    return firstByIndex ? firstByIndex : elements.find(function(element) {
-      return ['input', 'select', 'textarea'].include(element.tagName.toLowerCase());
-    });
-  },
-
-  focusFirstElement: function(form) {
-    form = $(form);
-    form.findFirstElement().activate();
-    return form;
-  },
-
-  request: function(form, options) {
-    form = $(form), options = Object.clone(options || { });
-
-    var params = options.parameters, action = form.readAttribute('action') || '';
-    if (action.blank()) action = window.location.href;
-    options.parameters = form.serialize(true);
-
-    if (params) {
-      if (Object.isString(params)) params = params.toQueryParams();
-      Object.extend(options.parameters, params);
-    }
-
-    if (form.hasAttribute('method') && !options.method)
-      options.method = form.method;
-
-    return new Ajax.Request(action, options);
-  }
-};
-
-/*--------------------------------------------------------------------------*/
-
-
-Form.Element = {
-  focus: function(element) {
-    $(element).focus();
-    return element;
-  },
-
-  select: function(element) {
-    $(element).select();
-    return element;
-  }
-};
-
-Form.Element.Methods = {
-
-  serialize: function(element) {
-    element = $(element);
-    if (!element.disabled && element.name) {
-      var value = element.getValue();
-      if (value != undefined) {
-        var pair = { };
-        pair[element.name] = value;
-        return Object.toQueryString(pair);
-      }
-    }
-    return '';
-  },
-
-  getValue: function(element) {
-    element = $(element);
-    var method = element.tagName.toLowerCase();
-    return Form.Element.Serializers[method](element);
-  },
-
-  setValue: function(element, value) {
-    element = $(element);
-    var method = element.tagName.toLowerCase();
-    Form.Element.Serializers[method](element, value);
-    return element;
-  },
-
-  clear: function(element) {
-    $(element).value = '';
-    return element;
-  },
-
-  present: function(element) {
-    return $(element).value != '';
-  },
-
-  activate: function(element) {
-    element = $(element);
-    try {
-      element.focus();
-      if (element.select && (element.tagName.toLowerCase() != 'input' ||
-          !['button', 'reset', 'submit'].include(element.type)))
-        element.select();
-    } catch (e) { }
-    return element;
-  },
-
-  disable: function(element) {
-    element = $(element);
-    element.disabled = true;
-    return element;
-  },
-
-  enable: function(element) {
-    element = $(element);
-    element.disabled = false;
-    return element;
-  }
-};
-
-/*--------------------------------------------------------------------------*/
-
-var Field = Form.Element;
-
-var $F = Form.Element.Methods.getValue;
-
-/*--------------------------------------------------------------------------*/
-
-Form.Element.Serializers = {
-  input: function(element, value) {
-    switch (element.type.toLowerCase()) {
-      case 'checkbox':
-      case 'radio':
-        return Form.Element.Serializers.inputSelector(element, value);
-      default:
-        return Form.Element.Serializers.textarea(element, value);
-    }
-  },
-
-  inputSelector: function(element, value) {
-    if (Object.isUndefined(value)) return element.checked ? element.value : null;
-    else element.checked = !!value;
-  },
-
-  textarea: function(element, value) {
-    if (Object.isUndefined(value)) return element.value;
-    else element.value = value;
-  },
-
-  select: function(element, value) {
-    if (Object.isUndefined(value))
-      return this[element.type == 'select-one' ?
-        'selectOne' : 'selectMany'](element);
-    else {
-      var opt, currentValue, single = !Object.isArray(value);
-      for (var i = 0, length = element.length; i < length; i++) {
-        opt = element.options[i];
-        currentValue = this.optionValue(opt);
-        if (single) {
-          if (currentValue == value) {
-            opt.selected = true;
-            return;
-          }
-        }
-        else opt.selected = value.include(currentValue);
-      }
-    }
-  },
-
-  selectOne: function(element) {
-    var index = element.selectedIndex;
-    return index >= 0 ? this.optionValue(element.options[index]) : null;
-  },
-
-  selectMany: function(element) {
-    var values, length = element.length;
-    if (!length) return null;
-
-    for (var i = 0, values = []; i < length; i++) {
-      var opt = element.options[i];
-      if (opt.selected) values.push(this.optionValue(opt));
-    }
-    return values;
-  },
-
-  optionValue: function(opt) {
-    return Element.extend(opt).hasAttribute('value') ? opt.value : opt.text;
-  }
-};
-
-/*--------------------------------------------------------------------------*/
-
-
-Abstract.TimedObserver = Class.create(PeriodicalExecuter, {
-  initialize: function($super, element, frequency, callback) {
-    $super(callback, frequency);
-    this.element   = $(element);
-    this.lastValue = this.getValue();
-  },
-
-  execute: function() {
-    var value = this.getValue();
-    if (Object.isString(this.lastValue) && Object.isString(value) ?
-        this.lastValue != value : String(this.lastValue) != String(value)) {
-      this.callback(this.element, value);
-      this.lastValue = value;
-    }
-  }
-});
-
-Form.Element.Observer = Class.create(Abstract.TimedObserver, {
-  getValue: function() {
-    return Form.Element.getValue(this.element);
-  }
-});
-
-Form.Observer = Class.create(Abstract.TimedObserver, {
-  getValue: function() {
-    return Form.serialize(this.element);
-  }
-});
-
-/*--------------------------------------------------------------------------*/
-
-Abstract.EventObserver = Class.create({
-  initialize: function(element, callback) {
-    this.element  = $(element);
-    this.callback = callback;
-
-    this.lastValue = this.getValue();
-    if (this.element.tagName.toLowerCase() == 'form')
-      this.registerFormCallbacks();
-    else
-      this.registerCallback(this.element);
-  },
-
-  onElementEvent: function() {
-    var value = this.getValue();
-    if (this.lastValue != value) {
-      this.callback(this.element, value);
-      this.lastValue = value;
-    }
-  },
-
-  registerFormCallbacks: function() {
-    Form.getElements(this.element).each(this.registerCallback, this);
-  },
-
-  registerCallback: function(element) {
-    if (element.type) {
-      switch (element.type.toLowerCase()) {
-        case 'checkbox':
-        case 'radio':
-          Event.observe(element, 'click', this.onElementEvent.bind(this));
-          break;
-        default:
-          Event.observe(element, 'change', this.onElementEvent.bind(this));
-          break;
-      }
-    }
-  }
-});
-
-Form.Element.EventObserver = Class.create(Abstract.EventObserver, {
-  getValue: function() {
-    return Form.Element.getValue(this.element);
-  }
-});
-
-Form.EventObserver = Class.create(Abstract.EventObserver, {
-  getValue: function() {
-    return Form.serialize(this.element);
-  }
-});
-(function() {
-
-  var Event = {
-    KEY_BACKSPACE: 8,
-    KEY_TAB:       9,
-    KEY_RETURN:   13,
-    KEY_ESC:      27,
-    KEY_LEFT:     37,
-    KEY_UP:       38,
-    KEY_RIGHT:    39,
-    KEY_DOWN:     40,
-    KEY_DELETE:   46,
-    KEY_HOME:     36,
-    KEY_END:      35,
-    KEY_PAGEUP:   33,
-    KEY_PAGEDOWN: 34,
-    KEY_INSERT:   45,
-
-    cache: {}
-  };
-
-  var _isButton;
-  if (Prototype.Browser.IE) {
-    var buttonMap = { 0: 1, 1: 4, 2: 2 };
-    _isButton = function(event, code) {
-      return event.button === buttonMap[code];
-    };
-  } else if (Prototype.Browser.WebKit) {
-    _isButton = function(event, code) {
-      switch (code) {
-        case 0: return event.which == 1 && !event.metaKey;
-        case 1: return event.which == 1 && event.metaKey;
-        default: return false;
-      }
-    };
-  } else {
-    _isButton = function(event, code) {
-      return event.which ? (event.which === code + 1) : (event.button === code);
-    };
-  }
-
-  function isLeftClick(event)   { return _isButton(event, 0) }
-
-  function isMiddleClick(event) { return _isButton(event, 1) }
-
-  function isRightClick(event)  { return _isButton(event, 2) }
-
-  function element(event) {
-    event = Event.extend(event);
-
-    var node = event.target, type = event.type,
-     currentTarget = event.currentTarget;
-
-    if (currentTarget && currentTarget.tagName) {
-      if (type === 'load' || type === 'error' ||
-        (type === 'click' && currentTarget.tagName.toLowerCase() === 'input'
-          && currentTarget.type === 'radio'))
-            node = currentTarget;
-    }
-
-    if (node.nodeType == Node.TEXT_NODE)
-      node = node.parentNode;
-
-    return Element.extend(node);
-  }
-
-  function findElement(event, expression) {
-    var element = Event.element(event);
-    if (!expression) return element;
-    var elements = [element].concat(element.ancestors());
-    return Selector.findElement(elements, expression, 0);
-  }
-
-  function pointer(event) {
-    return { x: pointerX(event), y: pointerY(event) };
-  }
-
-  function pointerX(event) {
-    var docElement = document.documentElement,
-     body = document.body || { scrollLeft: 0 };
-
-    return event.pageX || (event.clientX +
-      (docElement.scrollLeft || body.scrollLeft) -
-      (docElement.clientLeft || 0));
-  }
-
-  function pointerY(event) {
-    var docElement = document.documentElement,
-     body = document.body || { scrollTop: 0 };
-
-    return  event.pageY || (event.clientY +
-       (docElement.scrollTop || body.scrollTop) -
-       (docElement.clientTop || 0));
-  }
-
-
-  function stop(event) {
-    Event.extend(event);
-    event.preventDefault();
-    event.stopPropagation();
-
-    event.stopped = true;
-  }
-
-  Event.Methods = {
-    isLeftClick: isLeftClick,
-    isMiddleClick: isMiddleClick,
-    isRightClick: isRightClick,
-
-    element: element,
-    findElement: findElement,
-
-    pointer: pointer,
-    pointerX: pointerX,
-    pointerY: pointerY,
-
-    stop: stop
-  };
-
-
-  var methods = Object.keys(Event.Methods).inject({ }, function(m, name) {
-    m[name] = Event.Methods[name].methodize();
-    return m;
-  });
-
-  if (Prototype.Browser.IE) {
-    function _relatedTarget(event) {
-      var element;
-      switch (event.type) {
-        case 'mouseover': element = event.fromElement; break;
-        case 'mouseout':  element = event.toElement;   break;
-        default: return null;
-      }
-      return Element.extend(element);
-    }
-
-    Object.extend(methods, {
-      stopPropagation: function() { this.cancelBubble = true },
-      preventDefault:  function() { this.returnValue = false },
-      inspect: function() { return '[object Event]' }
-    });
-
-    Event.extend = function(event, element) {
-      if (!event) return false;
-      if (event._extendedByPrototype) return event;
-
-      event._extendedByPrototype = Prototype.emptyFunction;
-      var pointer = Event.pointer(event);
-
-      Object.extend(event, {
-        target: event.srcElement || element,
-        relatedTarget: _relatedTarget(event),
-        pageX:  pointer.x,
-        pageY:  pointer.y
-      });
-
-      return Object.extend(event, methods);
-    };
-  } else {
-    Event.prototype = window.Event.prototype || document.createEvent('HTMLEvents').__proto__;
-    Object.extend(Event.prototype, methods);
-    Event.extend = Prototype.K;
-  }
-
-  function _createResponder(element, eventName, handler) {
-    var registry = Element.retrieve(element, 'prototype_event_registry');
-
-    if (Object.isUndefined(registry)) {
-      CACHE.push(element);
-      registry = Element.retrieve(element, 'prototype_event_registry', $H());
-    }
-
-    var respondersForEvent = registry.get(eventName);
-    if (Object.isUndefined()) {
-      respondersForEvent = [];
-      registry.set(eventName, respondersForEvent);
-    }
-
-    if (respondersForEvent.pluck('handler').include(handler)) return false;
-
-    var responder;
-    if (eventName.include(":")) {
-      responder = function(event) {
-        if (Object.isUndefined(event.eventName))
-          return false;
-
-        if (event.eventName !== eventName)
-          return false;
-
-        Event.extend(event, element);
-        handler.call(element, event);
-      };
-    } else {
-      if (!Prototype.Browser.IE &&
-       (eventName === "mouseenter" || eventName === "mouseleave")) {
-        if (eventName === "mouseenter" || eventName === "mouseleave") {
-          responder = function(event) {
-            Event.extend(event, element);
-
-            var parent = event.relatedTarget;
-            while (parent && parent !== element) {
-              try { parent = parent.parentNode; }
-              catch(e) { parent = element; }
-            }
-
-            if (parent === element) return;
-
-            handler.call(element, event);
-          };
-        }
-      } else {
-        responder = function(event) {
-          Event.extend(event, element);
-          handler.call(element, event);
-        };
-      }
-    }
-
-    responder.handler = handler;
-    respondersForEvent.push(responder);
-    return responder;
-  }
-
-  function _destroyCache() {
-    for (var i = 0, length = CACHE.length; i < length; i++) {
-      Event.stopObserving(CACHE[i]);
-      CACHE[i] = null;
-    }
-  }
-
-  var CACHE = [];
-
-  if (Prototype.Browser.IE)
-    window.attachEvent('onunload', _destroyCache);
-
-  if (Prototype.Browser.WebKit)
-    window.addEventListener('unload', Prototype.emptyFunction, false);
-
-
-  var _getDOMEventName = Prototype.K;
-
-  if (!Prototype.Browser.IE) {
-    _getDOMEventName = function(eventName) {
-      var translations = { mouseenter: "mouseover", mouseleave: "mouseout" };
-      return eventName in translations ? translations[eventName] : eventName;
-    };
-  }
-
-  function observe(element, eventName, handler) {
-    element = $(element);
-
-    var responder = _createResponder(element, eventName, handler);
-
-    if (!responder) return element;
-
-    if (eventName.include(':')) {
-      if (element.addEventListener)
-        element.addEventListener("dataavailable", responder, false);
-      else {
-        element.attachEvent("ondataavailable", responder);
-        element.attachEvent("onfilterchange", responder);
-      }
-    } else {
-      var actualEventName = _getDOMEventName(eventName);
-
-      if (element.addEventListener)
-        element.addEventListener(actualEventName, responder, false);
-      else
-        element.attachEvent("on" + actualEventName, responder);
-    }
-
-    return element;
-  }
-
-  function stopObserving(element, eventName, handler) {
-    element = $(element);
-
-    var registry = Element.retrieve(element, 'prototype_event_registry');
-
-    if (Object.isUndefined(registry)) return element;
-
-    if (eventName && !handler) {
-      var responders = registry.get(eventName);
-
-      if (Object.isUndefined(responders)) return element;
-
-      responders.each( function(r) {
-        Element.stopObserving(element, eventName, r.handler);
-      });
-      return element;
-    } else if (!eventName) {
-      registry.each( function(pair) {
-        var eventName = pair.key, responders = pair.value;
-
-        responders.each( function(r) {
-          Element.stopObserving(element, eventName, r.handler);
-        });
-      });
-      return element;
-    }
-
-    var responders = registry.get(eventName);
-
-    if (!responders) return;
-
-    var responder = responders.find( function(r) { return r.handler === handler; });
-    if (!responder) return element;
-
-    var actualEventName = _getDOMEventName(eventName);
-
-    if (eventName.include(':')) {
-      if (element.removeEventListener)
-        element.removeEventListener("dataavailable", responder, false);
-      else {
-        element.detachEvent("ondataavailable", responder);
-        element.detachEvent("onfilterchange",  responder);
-      }
-    } else {
-      if (element.removeEventListener)
-        element.removeEventListener(actualEventName, responder, false);
-      else
-        element.detachEvent('on' + actualEventName, responder);
-    }
-
-    registry.set(eventName, responders.without(responder));
-
-    return element;
-  }
-
-  function fire(element, eventName, memo, bubble) {
-    element = $(element);
-
-    if (Object.isUndefined(bubble))
-      bubble = true;
-
-    if (element == document && document.createEvent && !element.dispatchEvent)
-      element = document.documentElement;
-
-    var event;
-    if (document.createEvent) {
-      event = document.createEvent('HTMLEvents');
-      event.initEvent('dataavailable', true, true);
-    } else {
-      event = document.createEventObject();
-      event.eventType = bubble ? 'ondataavailable' : 'onfilterchange';
-    }
-
-    event.eventName = eventName;
-    event.memo = memo || { };
-
-    if (document.createEvent)
-      element.dispatchEvent(event);
-    else
-      element.fireEvent(event.eventType, event);
-
-    return Event.extend(event);
-  }
-
-
-  Object.extend(Event, Event.Methods);
-
-  Object.extend(Event, {
-    fire:          fire,
-    observe:       observe,
-    stopObserving: stopObserving
-  });
-
-  Element.addMethods({
-    fire:          fire,
-
-    observe:       observe,
-
-    stopObserving: stopObserving
-  });
-
-  Object.extend(document, {
-    fire:          fire.methodize(),
-
-    observe:       observe.methodize(),
-
-    stopObserving: stopObserving.methodize(),
-
-    loaded:        false
-  });
-
-  if (window.Event) Object.extend(window.Event, Event);
-  else window.Event = Event;
-})();
-
-(function() {
-  /* Support for the DOMContentLoaded event is based on work by Dan Webb,
-     Matthias Miller, Dean Edwards, John Resig, and Diego Perini. */
-
-  var timer;
-
-  function fireContentLoadedEvent() {
-    if (document.loaded) return;
-    if (timer) window.clearTimeout(timer);
-    document.loaded = true;
-    document.fire('dom:loaded');
-  }
-
-  function checkReadyState() {
-    if (document.readyState === 'complete') {
-      document.stopObserving('readystatechange', checkReadyState);
-      fireContentLoadedEvent();
-    }
-  }
-
-  function pollDoScroll() {
-    try { document.documentElement.doScroll('left'); }
-    catch(e) {
-      timer = pollDoScroll.defer();
-      return;
-    }
-    fireContentLoadedEvent();
-  }
-
-  if (document.addEventListener) {
-    document.addEventListener('DOMContentLoaded', fireContentLoadedEvent, false);
-  } else {
-    document.observe('readystatechange', checkReadyState);
-    if (window == top)
-      timer = pollDoScroll.defer();
-  }
-
-  Event.observe(window, 'load', fireContentLoadedEvent);
-})();
-
-Element.addMethods();
-
-/*------------------------------- DEPRECATED -------------------------------*/
-
-Hash.toQueryString = Object.toQueryString;
-
-var Toggle = { display: Element.toggle };
-
-Element.Methods.childOf = Element.Methods.descendantOf;
-
-var Insertion = {
-  Before: function(element, content) {
-    return Element.insert(element, {before:content});
-  },
-
-  Top: function(element, content) {
-    return Element.insert(element, {top:content});
-  },
-
-  Bottom: function(element, content) {
-    return Element.insert(element, {bottom:content});
-  },
-
-  After: function(element, content) {
-    return Element.insert(element, {after:content});
-  }
-};
-
-var $continue = new Error('"throw $continue" is deprecated, use "return" instead');
-
-var Position = {
-  includeScrollOffsets: false,
-
-  prepare: function() {
-    this.deltaX =  window.pageXOffset
-                || document.documentElement.scrollLeft
-                || document.body.scrollLeft
-                || 0;
-    this.deltaY =  window.pageYOffset
-                || document.documentElement.scrollTop
-                || document.body.scrollTop
-                || 0;
-  },
-
-  within: function(element, x, y) {
-    if (this.includeScrollOffsets)
-      return this.withinIncludingScrolloffsets(element, x, y);
-    this.xcomp = x;
-    this.ycomp = y;
-    this.offset = Element.cumulativeOffset(element);
-
-    return (y >= this.offset[1] &&
-            y <  this.offset[1] + element.offsetHeight &&
-            x >= this.offset[0] &&
-            x <  this.offset[0] + element.offsetWidth);
-  },
-
-  withinIncludingScrolloffsets: function(element, x, y) {
-    var offsetcache = Element.cumulativeScrollOffset(element);
-
-    this.xcomp = x + offsetcache[0] - this.deltaX;
-    this.ycomp = y + offsetcache[1] - this.deltaY;
-    this.offset = Element.cumulativeOffset(element);
-
-    return (this.ycomp >= this.offset[1] &&
-            this.ycomp <  this.offset[1] + element.offsetHeight &&
-            this.xcomp >= this.offset[0] &&
-            this.xcomp <  this.offset[0] + element.offsetWidth);
-  },
-
-  overlap: function(mode, element) {
-    if (!mode) return 0;
-    if (mode == 'vertical')
-      return ((this.offset[1] + element.offsetHeight) - this.ycomp) /
-        element.offsetHeight;
-    if (mode == 'horizontal')
-      return ((this.offset[0] + element.offsetWidth) - this.xcomp) /
-        element.offsetWidth;
-  },
-
-
-  cumulativeOffset: Element.Methods.cumulativeOffset,
-
-  positionedOffset: Element.Methods.positionedOffset,
-
-  absolutize: function(element) {
-    Position.prepare();
-    return Element.absolutize(element);
-  },
-
-  relativize: function(element) {
-    Position.prepare();
-    return Element.relativize(element);
-  },
-
-  realOffset: Element.Methods.cumulativeScrollOffset,
-
-  offsetParent: Element.Methods.getOffsetParent,
-
-  page: Element.Methods.viewportOffset,
-
-  clone: function(source, target, options) {
-    options = options || { };
-    return Element.clonePosition(target, source, options);
-  }
-};
-
-/*--------------------------------------------------------------------------*/
-
-if (!document.getElementsByClassName) document.getElementsByClassName = function(instanceMethods){
-  function iter(name) {
-    return name.blank() ? null : "[contains(concat(' ', @class, ' '), ' " + name + " ')]";
-  }
-
-  instanceMethods.getElementsByClassName = Prototype.BrowserFeatures.XPath ?
-  function(element, className) {
-    className = className.toString().strip();
-    var cond = /\s/.test(className) ? $w(className).map(iter).join('') : iter(className);
-    return cond ? document._getElementsByXPath('.//*' + cond, element) : [];
-  } : function(element, className) {
-    className = className.toString().strip();
-    var elements = [], classNames = (/\s/.test(className) ? $w(className) : null);
-    if (!classNames && !className) return elements;
-
-    var nodes = $(element).getElementsByTagName('*');
-    className = ' ' + className + ' ';
-
-    for (var i = 0, child, cn; child = nodes[i]; i++) {
-      if (child.className && (cn = ' ' + child.className + ' ') && (cn.include(className) ||
-          (classNames && classNames.all(function(name) {
-            return !name.toString().blank() && cn.include(' ' + name + ' ');
-          }))))
-        elements.push(Element.extend(child));
-    }
-    return elements;
-  };
-
-  return function(className, parentElement) {
-    return $(parentElement || document.body).getElementsByClassName(className);
-  };
-}(Element.Methods);
-
-/*--------------------------------------------------------------------------*/
-
-Element.ClassNames = Class.create();
-Element.ClassNames.prototype = {
-  initialize: function(element) {
-    this.element = $(element);
-  },
-
-  _each: function(iterator) {
-    this.element.className.split(/\s+/).select(function(name) {
-      return name.length > 0;
-    })._each(iterator);
-  },
-
-  set: function(className) {
-    this.element.className = className;
-  },
-
-  add: function(classNameToAdd) {
-    if (this.include(classNameToAdd)) return;
-    this.set($A(this).concat(classNameToAdd).join(' '));
-  },
-
-  remove: function(classNameToRemove) {
-    if (!this.include(classNameToRemove)) return;
-    this.set($A(this).without(classNameToRemove).join(' '));
-  },
-
-  toString: function() {
-    return $A(this).join(' ');
-  }
-};
-
-Object.extend(Element.ClassNames.prototype, Enumerable);
-
-/*--------------------------------------------------------------------------*/
 /** @namespace */
-var n2i = {
+var hui = {
 	/** @namespace */
 	browser : {},
 	ELEMENT_NODE : 1,
@@ -4917,56 +21,39 @@ var n2i = {
     KEY_INSERT : 45
 }
 
-if (!window.hui) {
-	var hui = n2i;
+if (!window.n2i) {
+	var n2i = hui;
 }
 
-n2i.browser.opera = /opera/i.test(navigator.userAgent);
-n2i.browser.msie = !n2i.browser.opera && /MSIE/.test(navigator.userAgent);
-n2i.browser.msie6 = navigator.userAgent.indexOf('MSIE 6')!==-1;
-n2i.browser.msie7 = navigator.userAgent.indexOf('MSIE 7')!==-1;
-n2i.browser.msie8 = navigator.userAgent.indexOf('MSIE 8')!==-1;
-n2i.browser.msie9 = navigator.userAgent.indexOf('MSIE 9')!==-1;
-n2i.browser.webkit = navigator.userAgent.indexOf('WebKit')!==-1;
-n2i.browser.safari = navigator.userAgent.indexOf('Safari')!==-1;
-n2i.browser.webkitVersion = null;
-n2i.browser.gecko = !n2i.browser.webkit && navigator.userAgent.indexOf('Gecko')!=-1;
+hui.browser.opera = /opera/i.test(navigator.userAgent);
+hui.browser.msie = !hui.browser.opera && /MSIE/.test(navigator.userAgent);
+hui.browser.msie6 = navigator.userAgent.indexOf('MSIE 6')!==-1;
+hui.browser.msie7 = navigator.userAgent.indexOf('MSIE 7')!==-1;
+hui.browser.msie8 = navigator.userAgent.indexOf('MSIE 8')!==-1;
+hui.browser.msie9 = navigator.userAgent.indexOf('MSIE 9')!==-1;
+hui.browser.webkit = navigator.userAgent.indexOf('WebKit')!==-1;
+hui.browser.safari = navigator.userAgent.indexOf('Safari')!==-1;
+hui.browser.webkitVersion = null;
+hui.browser.gecko = !hui.browser.webkit && navigator.userAgent.indexOf('Gecko')!=-1;
 
-n2i.browser.opacity = !n2i.browser.msie || n2i.browser.msie9;
+hui.browser.opacity = !hui.browser.msie || hui.browser.msie9;
 
 (function() {
 	var result = /Safari\/([\d.]+)/.exec(navigator.userAgent);
 	if (result) {
-		n2i.browser.webkitVersion=parseFloat(result[1]);
+		hui.browser.webkitVersion=parseFloat(result[1]);
 	}
 })()
 
 /** Log something */
-n2i.log = function(obj) {
+hui.log = function(obj) {
 	try {
 		console.log(obj);
 	} catch (ignore) {};
 }
 
-/** Make a string camelized */
-n2i.camelize = function(str) {
-	if (str.indexOf('-')==-1) {return str}
-    var oStringList = str.split('-');
-
-    var camelizedString = str.indexOf('-') == 0
-      ? oStringList[0].charAt(0).toUpperCase() + oStringList[0].substring(1)
-      : oStringList[0];
-
-    for (var i = 1, len = oStringList.length; i < len; i++) {
-      var s = oStringList[i];
-      camelizedString += s.charAt(0).toUpperCase() + s.substring(1);
-    }
-
-    return camelizedString;
-}
-
 /** Override the properties on the first argument with properties from the last object */
-n2i.override = function(original,subject) {
+hui.override = function(original,subject) {
 	if (subject) {
 		for (prop in subject) {
 			original[prop] = subject[prop];
@@ -4975,7 +62,8 @@ n2i.override = function(original,subject) {
 	return original;
 }
 
-n2i.wrap = function(str) {
+/** Inserts invisible break chars in string so it will wrap */
+hui.wrap = function(str) {
 	if (str===null || str===undefined) {
 		return '';
 	}
@@ -4983,20 +71,20 @@ n2i.wrap = function(str) {
 }
 
 /** Trim whitespace including unicode chars */
-n2i.trim = function(str) {
+hui.trim = function(str) {
 	if (str===null || str===undefined) {return ''};
 	if (typeof(str)!='string') {str=new String(str)}
 	return str.replace(/^[\s\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000]+|[\s\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000]+$/g, '');
 }
 
 /** Escape the html in a string */
-n2i.escapeHTML = function(str) {
+hui.escapeHTML = function(str) {
 	if (str===null || str===undefined) {return ''};
-   	return n2i.build('div',{text:str}).innerHTML;
+   	return hui.build('div',{text:str}).innerHTML;
 }
 
-n2i.escape = function(str) {
-	if (!n2i.isDefined(str)) {return ''};
+hui.escape = function(str) {
+	if (!hui.isDefined(str)) {return ''};
 	return str.replace(/&/g,'&amp;').
 		replace(/>/g,'&gt;').
 		replace(/</g,'&lt;').
@@ -5004,22 +92,22 @@ n2i.escape = function(str) {
 }
 
 /** Checks if a string has characters */
-n2i.isBlank = function(str) {
+hui.isBlank = function(str) {
 	if (str===null || typeof(str)==='undefined' || str==='') {return true};
-	return typeof(str)=='string' && n2i.trim(str).length==0;
+	return typeof(str)=='string' && hui.trim(str).length==0;
 }
 
-n2i.isEmpty = function(str) {
-	n2i.log('n2i.isEmpty is deprecated');
-	return n2i.isBlank(str);
+hui.isEmpty = function(str) {
+	hui.log('hui.isEmpty is deprecated');
+	return hui.isBlank(str);
 }
 
 /** Checks that an object is not null or undefined */
-n2i.isDefined = function(obj) {
+hui.isDefined = function(obj) {
 	return obj!==null && typeof(obj)!=='undefined';
 }
 
-n2i.isArray = function(obj) {
+hui.isArray = function(obj) {
 	if (obj==null || obj==undefined) {
 		return false;
 	}
@@ -5030,16 +118,40 @@ n2i.isArray = function(obj) {
 	}
 }
 
-n2i.string = {
+/** @namespace */
+hui.string = {
+	
+	/**
+	Test that a string ends with another string
+	@param str The string to test
+	@param end The string to look for at the end
+	*/
 	endsWith : function(str,end) {
 		if (!typeof(str)=='string' || !typeof(end)=='string') {
 			return false;
 		}
 		return (str.match(end+"$")==end);
+	},
+	
+	/** Make a string camelized */
+	camelize : function(str) {
+		if (str.indexOf('-')==-1) {return str}
+	    var oStringList = str.split('-');
+
+	    var camelizedString = str.indexOf('-') == 0
+	      ? oStringList[0].charAt(0).toUpperCase() + oStringList[0].substring(1)
+	      : oStringList[0];
+
+	    for (var i = 1, len = oStringList.length; i < len; i++) {
+	      var s = oStringList[i];
+	      camelizedString += s.charAt(0).toUpperCase() + s.substring(1);
+	    }
+
+	    return camelizedString;
 	}
 }
 
-n2i.inArray = function(arr,value) {
+hui.inArray = function(arr,value) {
 	for (var i=0; i < arr.length; i++) {
 		if (arr[i]===value) {
 			return true;
@@ -5048,7 +160,7 @@ n2i.inArray = function(arr,value) {
 	return false;
 }
 
-n2i.indexInArray = function(arr,value) {
+hui.indexInArray = function(arr,value) {
 	for (var i=0; i < arr.length; i++) {
 		if (arr[i]===value) {
 			return i;
@@ -5057,8 +169,8 @@ n2i.indexInArray = function(arr,value) {
 	return -1;
 }
 
-n2i.each = function(items,func) {
-	if (n2i.isArray(items)) {		
+hui.each = function(items,func) {
+	if (hui.isArray(items)) {		
 		for (var i=0; i < items.length; i++) {
 			func(items[i],i);
 		};
@@ -5072,8 +184,8 @@ n2i.each = function(items,func) {
 /**
  * Converts a string to an int if it is only digits, otherwise remains a string
  */
-n2i.intOrString = function(str) {
-	if (n2i.isDefined(str)) {
+hui.intOrString = function(str) {
+	if (hui.isDefined(str)) {
 		var result = /[0-9]+/.exec(str);
 		if (result!==null && result[0]==str) {
 			if (parseInt(str,10)==str) {
@@ -5084,15 +196,15 @@ n2i.intOrString = function(str) {
 	return str;
 }
 
-n2i.flipInArray = function(arr,value) {
-	if (n2i.inArray(arr,value)) {
-		n2i.removeFromArray(arr,value);
+hui.flipInArray = function(arr,value) {
+	if (hui.inArray(arr,value)) {
+		hui.removeFromArray(arr,value);
 	} else {
 		arr.push(value);
 	}
 }
 
-n2i.removeFromArray = function(arr,value) {
+hui.removeFromArray = function(arr,value) {
 	for (var i = arr.length - 1; i >= 0; i--){
 		if (arr[i]==value) {
 			arr.splice(i,1);
@@ -5100,21 +212,21 @@ n2i.removeFromArray = function(arr,value) {
 	};
 }
 
-n2i.addToArray = function(arr,value) {
+hui.addToArray = function(arr,value) {
 	if (value.constructor==Array) {
 		for (var i=0; i < value.length; i++) {
-			if (!n2i.inArray(arr,value[i])) {
+			if (!hui.inArray(arr,value[i])) {
 				arr.push(value);
 			}
 		};
 	} else {
-		if (!n2i.inArray(arr,value)) {
+		if (!hui.inArray(arr,value)) {
 			arr.push(value);
 		}
 	}
 }
 
-n2i.toIntArray = function(str) {
+hui.toIntArray = function(str) {
 	var array = str.split(',');
 	for (var i = array.length - 1; i >= 0; i--){
 		array[i] = parseInt(array[i]);
@@ -5122,10 +234,10 @@ n2i.toIntArray = function(str) {
 	return array;
 }
 
-n2i.scrollTo = function(element) {
-	element = n2i.get(element);
+hui.scrollTo = function(element) {
+	element = hui.get(element);
 	if (element) {
-		var pos = n2i.getPosition(element);
+		var pos = hui.getPosition(element);
 		window.scrollTo(pos.left, pos.top-50);
 	}
 }
@@ -5133,12 +245,12 @@ n2i.scrollTo = function(element) {
 ////////////////////// DOM ////////////////////
 
 /** @namespace */
-n2i.dom = {
+hui.dom = {
 	isElement : function(n,name) {
-		return n.nodeType==n2i.ELEMENT_NODE && (name===undefined ? true : n.nodeName.toLowerCase()==name);
+		return n.nodeType==hui.ELEMENT_NODE && (name===undefined ? true : n.nodeName.toLowerCase()==name);
 	},
 	isDefinedText : function(node) {
-		return node.nodeType==n2i.TEXT_NODE && node.nodeValue.length>0;
+		return node.nodeType==hui.TEXT_NODE && node.nodeValue.length>0;
 	},
 	addText : function(node,text) {
 		node.appendChild(document.createTextNode(text));
@@ -5160,7 +272,7 @@ n2i.dom = {
 		oldNode.parentNode.removeChild(oldNode);
 	},
 	replaceHTML : function(node,html) {
-		node = n2i.get(node);
+		node = hui.get(node);
 		node.innerHTML=html;
 	},
 	runScripts : function(node) {
@@ -5173,7 +285,7 @@ n2i.dom = {
 		var c = node.childNodes;
 		var updated = false;
 		for (var i = c.length - 1; i >= 0; i--){
-			if (!updated && c[i].nodeType==n2i.TEXT_NODE) {
+			if (!updated && c[i].nodeType==hui.TEXT_NODE) {
 				c[i].nodeValue=text;
 				updated = true;
 			} else {
@@ -5181,24 +293,24 @@ n2i.dom = {
 			}
 		}
 		if (!updated) {
-			n2i.dom.addText(node,text);
+			hui.dom.addText(node,text);
 		}
 	},
 	getText : function(node) {
 		var txt = '';
 		var c = node.childNodes;
 		for (var i=0; i < c.length; i++) {
-			if (c[i].nodeType==n2i.TEXT_NODE && c[i].nodeValue!=null) {
+			if (c[i].nodeType==hui.TEXT_NODE && c[i].nodeValue!=null) {
 				txt+=c[i].nodeValue;
-			} else if (c[i].nodeType==n2i.ELEMENT_NODE) {
-				txt+=n2i.dom.getText(c[i]);
+			} else if (c[i].nodeType==hui.ELEMENT_NODE) {
+				txt+=hui.dom.getText(c[i]);
 			}
 		};
 		return txt;
 	},
 	isVisible : function(node) {
 		while (node) {
-			if (node.style && (n2i.getStyle(node,'display')==='none' || n2i.getStyle(node,'visibility')==='hidden')) {
+			if (node.style && (hui.getStyle(node,'display')==='none' || hui.getStyle(node,'visibility')==='hidden')) {
 				return false;
 			}
 			node = node.parentNode;
@@ -5207,12 +319,12 @@ n2i.dom = {
 	}
 }
 
-n2i.form = {
+hui.form = {
 	getValues : function(node) {
 		var params = {};
 		var inputs = node.getElementsByTagName('input');
 		for (var i=0; i < inputs.length; i++) {
-			if (n2i.isDefined(inputs[i].name)) {
+			if (hui.isDefined(inputs[i].name)) {
 				params[inputs[i].name] = inputs[i].value;
 			}
 		};
@@ -5222,18 +334,18 @@ n2i.form = {
 
 ///////////////////////////// Quering ////////////////////////
 
-n2i.get = function(str) {
+hui.get = function(str) {
 	if (typeof(str)=='string') {
 		return document.getElementById(str);
 	}
 	return str;
 }
 
-n2i.getChildren = function(node) {
+hui.getChildren = function(node) {
 	var children = [];
 	var x = node.childNodes;
 	for (var i=0; i < x.length; i++) {
-		if (n2i.dom.isElement(x[i])) {
+		if (hui.dom.isElement(x[i])) {
 			children.push(x[i]);
 		}
 	};
@@ -5242,15 +354,15 @@ n2i.getChildren = function(node) {
 
 
 if (document.querySelector) {
-	n2i.firstByClass = function(parentElement,className,tag) {
+	hui.firstByClass = function(parentElement,className,tag) {
 		parentElement = parentElement || document.body;
 		return parentElement.querySelector((tag ? tag+'.' : '.')+className);
 	}
 } else {
-	n2i.firstByClass = function(parentElement,className,tag) {
-		var children = (n2i.get(parentElement) || document.body).getElementsByTagName(tag || '*');
+	hui.firstByClass = function(parentElement,className,tag) {
+		var children = (hui.get(parentElement) || document.body).getElementsByTagName(tag || '*');
 		for (var i=0;i<children.length;i++) {
-			if (n2i.hasClass(children[i],className)) {
+			if (hui.hasClass(children[i],className)) {
 				return children[i];
 			}
 		}
@@ -5259,7 +371,7 @@ if (document.querySelector) {
 }
 
 if (document.querySelectorAll) {
-	n2i.byClass = function(parentElement,className,tag) {
+	hui.byClass = function(parentElement,className,tag) {
 		parentElement = parentElement || document.body;
 		var nl = parentElement.querySelectorAll((tag ? tag+'.' : '.')+className);
 		// Important to convert into array...
@@ -5268,11 +380,11 @@ if (document.querySelectorAll) {
 		return l;
 	}
 } else {
-	n2i.byClass = function(parentElement,className,tag) {
-		var children = (n2i.get(parentElement) || document.body).getElementsByTagName(tag || '*');
-		var out = [];
+	hui.byClass = function(parentElement,className,tag) {
+		var children = (hui.get(parentElement) || document.body).getElementsByTagName(tag || '*'),
+			out = [];
 		for (var i=0;i<children.length;i++) {
-			if (n2i.hasClass(children[i],className)) {
+			if (hui.hasClass(children[i],className)) {
 				out[out.length]=children[i];
 			}
 		}
@@ -5280,14 +392,20 @@ if (document.querySelectorAll) {
 	}
 }
 
+hui.byTag = function(node,name) {
+	var nl = node.getElementsByTagName(name),
+		l=[];
+	for(var i=0, ll=nl.length; i!=ll; l.push(nl[i++]));
+	return l;
+}
 
-n2i.byId = function(e,id) {
+hui.byId = function(e,id) {
 	var children = e.childNodes;
 	for (var i = children.length - 1; i >= 0; i--) {
 		if (children[i].nodeType===hui.ELEMENT_NODE && children[i].getAttribute('id')===id) {
 			return children[i];
 		} else {
-			var found = n2i.byId(children[i],id);
+			var found = hui.byId(children[i],id);
 			if (found) {
 				return found;
 			}
@@ -5296,7 +414,7 @@ n2i.byId = function(e,id) {
 	return null;
 }
 
-n2i.firstParentByTag = function(node,tag) {
+hui.firstParentByTag = function(node,tag) {
 	var parent = node;
 	while (parent) {
 		if (parent.tagName && parent.tagName.toLowerCase()==tag) {
@@ -5307,10 +425,10 @@ n2i.firstParentByTag = function(node,tag) {
 	return null;
 }
 
-n2i.firstParentByClass = function(node,tag) {
+hui.firstParentByClass = function(node,tag) {
 	var parent = node;
 	while (parent) {
-		if (n2i.hasClass(parent)) {
+		if (hui.hasClass(parent)) {
 			return parent;
 		}
 		parent = parent.parentNode;
@@ -5318,8 +436,8 @@ n2i.firstParentByClass = function(node,tag) {
 	return null;
 }
 
-n2i.firstByTag = function(parentElement,tag) {
-	parentElement = n2i.get(parentElement) || document.body;
+hui.firstByTag = function(parentElement,tag) {
+	parentElement = hui.get(parentElement) || document.body;
 	if (document.querySelector && tag!=='*') {
 		return parentElement.querySelector(tag);
 	}
@@ -5327,7 +445,7 @@ n2i.firstByTag = function(parentElement,tag) {
 	return children[0];
 }
 
-n2i.build = function(tag,options) {
+hui.build = function(tag,options) {
 	var e = document.createElement(tag);
 	if (options) {
 		for (prop in options) {
@@ -5347,9 +465,9 @@ n2i.build = function(tag,options) {
 				e.className=options.className;
 			} else if (prop=='class') {
 				e.className=options['class'];
-			} else if (prop=='style' && (n2i.browser.msie7 || n2i.browser.msie6)) {
+			} else if (prop=='style' && (hui.browser.msie7 || hui.browser.msie6)) {
 				e.style.setAttribute('cssText',options[prop]);
-			} else if (n2i.isDefined(options[prop])) {
+			} else if (hui.isDefined(options[prop])) {
 				e.setAttribute(prop,options[prop]);
 			}
 		}
@@ -5357,7 +475,7 @@ n2i.build = function(tag,options) {
 	return e;
 }
 
-n2i.getAncestors = function(element) {
+hui.getAncestors = function(element) {
 	var ancestors = [];
 	var parent = element.parentNode;
 	while (parent) {
@@ -5367,7 +485,7 @@ n2i.getAncestors = function(element) {
 	return ancestors;
 }
 
-n2i.getNext = function(element) {
+hui.getNext = function(element) {
 	if (!element) {
 		return null;
 	}
@@ -5381,18 +499,18 @@ n2i.getNext = function(element) {
     return next;
 }
 
-n2i.getAllNext = function(element) {
+hui.getAllNext = function(element) {
 	var elements = [];
-	var next = n2i.getNext(element);
+	var next = hui.getNext(element);
 	while (next) {
 		elements.push(next);
-		next = n2i.getNext(next);
+		next = hui.getNext(next);
 	}
 	return elements;
 }
 
-n2i.getTop = function(element) {
-    element = n2i.get(element);
+hui.getTop = function(element) {
+    element = hui.get(element);
 	if (element) {
 		var yPos = element.offsetTop;
 		var tempEl = element.offsetParent;
@@ -5405,8 +523,8 @@ n2i.getTop = function(element) {
 	else return 0;
 }
 
-n2i.getLeft = function(element) {
-    element = n2i.get(element);
+hui.getLeft = function(element) {
+    element = hui.get(element);
 	if (element) {
 		var xPos = element.offsetLeft;
 		var tempEl = element.offsetParent;
@@ -5419,17 +537,17 @@ n2i.getLeft = function(element) {
 	else return 0;
 }
 
-n2i.getPosition = function(element) {
+hui.getPosition = function(element) {
 	return {
-		left : n2i.getLeft(element),
-		top : n2i.getTop(element)
+		left : hui.getLeft(element),
+		top : hui.getTop(element)
 	}
 }
 
 /////////////////////////// Class handling //////////////////////
 
-n2i.hasClass = function(element, className) {
-	element = n2i.get(element);
+hui.hasClass = function(element, className) {
+	element = hui.get(element);
 	if (!element || !element.className) {
 		return false
 	}
@@ -5442,16 +560,16 @@ n2i.hasClass = function(element, className) {
 	return false;
 }
 
-n2i.addClass = function(element, className) {
-    element = n2i.get(element);
+hui.addClass = function(element, className) {
+    element = hui.get(element);
 	if (!element) {return};
 	
-    n2i.removeClass(element, className);
+    hui.removeClass(element, className);
     element.className += ' ' + className;
 }
 
-n2i.removeClass = function(element, className) {
-	element = n2i.get(element);
+hui.removeClass = function(element, className) {
+	element = hui.get(element);
 	if (!element) {return};
 
 	var newClassName = '';
@@ -5467,35 +585,35 @@ n2i.removeClass = function(element, className) {
 	element.className = newClassName;
 }
 
-n2i.toggleClass = function(element,className) {
-	if (n2i.hasClass(element,className)) {
-		n2i.removeClass(element,className);
+hui.toggleClass = function(element,className) {
+	if (hui.hasClass(element,className)) {
+		hui.removeClass(element,className);
 	} else {
-		n2i.addClass(element,className);
+		hui.addClass(element,className);
 	}
 }
 
-n2i.setClass = function(element,className,add) {
+hui.setClass = function(element,className,add) {
 	if (add) {
-		n2i.addClass(element,className);
+		hui.addClass(element,className);
 	} else {
-		n2i.removeClass(element,className);
+		hui.removeClass(element,className);
 	}
 }
 
-n2i.fromJSON = function(json) {
+hui.fromJSON = function(json) {
 	return JSON.parse(json);
 	//return eval('(' + json + ')');
 }
 
-n2i.toJSON = function(obj) {
+hui.toJSON = function(obj) {
 	return JSON.stringify(obj);
 }
 
 ///////////////////// Events //////////////////
 
-n2i.listen = function(el,type,listener,useCapture) {
-	el = n2i.get(el);
+hui.listen = function(el,type,listener,useCapture) {
+	el = hui.get(el);
 	if(document.addEventListener) {
 		el.addEventListener(type,listener,useCapture ? true : false);
 	} else {
@@ -5503,8 +621,8 @@ n2i.listen = function(el,type,listener,useCapture) {
 	}
 }
 
-n2i.unListen = function(el,type,listener,useCapture) {
-	el = n2i.get(el);
+hui.unListen = function(el,type,listener,useCapture) {
+	el = hui.get(el);
 	if(document.removeEventListener) {
 		el.removeEventListener(type,listener,useCapture ? true : false);
 	} else {
@@ -5512,11 +630,11 @@ n2i.unListen = function(el,type,listener,useCapture) {
 	}
 }
 
-n2i.event = function(event) {
-	return new n2i.Event(event);
+hui.event = function(event) {
+	return new hui.Event(event);
 }
 
-n2i.Event = function(event) {
+hui.Event = function(event) {
 	this.event = event = event || window.event;
 	this.element = event.target ? event.target : event.srcElement;
 	this.shiftKey = event.shiftKey;
@@ -5530,14 +648,14 @@ n2i.Event = function(event) {
 	this.keyCode = event.keyCode;
 }
 
-n2i.Event.prototype = {
+hui.Event.prototype = {
 	left : function() {
 	    var left = 0;
 		if (this.event) {
 		    if (this.event.pageX) {
 			    left = this.event.pageX;
 		    } else if (this.event.clientX) {
-			    left = this.event.clientX + n2i.getScrollLeft();
+			    left = this.event.clientX + hui.getScrollLeft();
 		    }
 		}
 	    return left;
@@ -5551,7 +669,7 @@ n2i.Event.prototype = {
 		    if (this.event.pageY) {
 			    top = this.event.pageY;
 		    } else if (this.event.clientY) {
-			    top = this.event.clientY + n2i.getScrollTop();
+			    top = this.event.clientY + hui.getScrollTop();
 		    }
 		}
 	    return top;
@@ -5565,7 +683,7 @@ n2i.Event.prototype = {
 	findByClass : function(cls) {
 		var parent = this.element;
 		while (parent) {
-			if (n2i.hasClass(parent,cls)) {
+			if (hui.hasClass(parent,cls)) {
 				return parent;
 			}
 			parent = parent.parentNode;
@@ -5584,11 +702,11 @@ n2i.Event.prototype = {
 	},
 
 	stop : function() {
-		n2i.stop(this.event);
+		hui.stop(this.event);
 	}
 }
 
-n2i.stop = function(e) {
+hui.stop = function(e) {
 	if (!e) {e = window.event};
 	if (e.stopPropagation) {e.stopPropagation()};
 	if (e.preventDefault) {e.preventDefault()};
@@ -5596,7 +714,7 @@ n2i.stop = function(e) {
     e.stopped = true;
 }
 
-n2i.onReady = function(delegate) {
+hui.onReady = function(delegate) {
 	if(window.addEventListener) {
 		window.addEventListener('DOMContentLoaded',delegate,false);
 	}
@@ -5642,9 +760,9 @@ n2i.onReady = function(delegate) {
 
 // Ajax //
 
-n2i.request = function(options) {
-	options = n2i.override({method:'POST',async:true},options);
-	var transport = n2i.request.createTransport();
+hui.request = function(options) {
+	options = hui.override({method:'POST',async:true},options);
+	var transport = hui.request.createTransport();
 	transport.onreadystatechange = function() {
 		try {
 			if (transport.readyState == 4) {
@@ -5666,17 +784,17 @@ n2i.request = function(options) {
 	transport.open(method, options.url, options.async);
 	var body = '';
     if (method=='POST' && options.parameters) {
-		body = n2i.request.buildPostBody(options.parameters);
+		body = hui.request.buildPostBody(options.parameters);
 		transport.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=utf-8");
 	}
 	transport.send(body);
 }
 
-n2i.request.isXMLResponse = function(t) {
+hui.request.isXMLResponse = function(t) {
 	return t.responseXML && t.responseXML.documentElement && t.responseXML.documentElement.nodeName!='parsererror';
 }
 
-n2i.request.buildPostBody = function(parameters) {
+hui.request.buildPostBody = function(parameters) {
 	if (!parameters) return null;
 	var output = '';
 	for (param in parameters) {
@@ -5689,7 +807,7 @@ n2i.request.buildPostBody = function(parameters) {
 	return output;
 }
 
-n2i.request.createTransport = function() {
+hui.request.createTransport = function() {
 	try {
 		if (window.XMLHttpRequest) {
 			var req = new XMLHttpRequest();
@@ -5704,7 +822,7 @@ n2i.request.createTransport = function() {
 			return req;
 		}
 		else if (window.ActiveXObject) {
-			return n2i.request.getActiveX();
+			return hui.request.getActiveX();
 		} else {
 			// Could not create transport
 			this.delegate.onError(this);
@@ -5717,7 +835,7 @@ n2i.request.createTransport = function() {
 	}
 }
 
-n2i.request.getActiveX = function() {
+hui.request.getActiveX = function() {
 	var prefixes = ["MSXML2", "Microsoft", "MSXML", "MSXML3"];
 	var o;
 	for (var i = 0; i < prefixes.length; i++) {
@@ -5734,9 +852,9 @@ n2i.request.getActiveX = function() {
 
 ///////////////////// Style ///////////////////
 
-n2i.getStyle = function(element, style) {
-	element = n2i.get(element);
-	var cameled = n2i.camelize(style);
+hui.getStyle = function(element, style) {
+	element = hui.get(element);
+	var cameled = hui.string.camelize(style);
 	var value = element.style[cameled];
 	if (!value) {
 		if (document.defaultView && document.defaultView.getComputedStyle) {
@@ -5747,13 +865,31 @@ n2i.getStyle = function(element, style) {
 		}
 	}
 	if (window.opera && ['left', 'top', 'right', 'bottom'].include(style)) {
-		if (n2i.getStyle(element, 'position') == 'static') value = 'auto';
+		if (hui.getStyle(element, 'position') == 'static') value = 'auto';
 	}
 	return value == 'auto' ? null : value;
 }
 
-n2i.setOpacity = function(element,opacity) {
-	if (!n2i.browser.opacity) {
+hui.getTopPad = function(element) {
+	var all,top;
+	all = parseInt(hui.getStyle(element,'padding'),10);
+	top = parseInt(hui.getStyle(element,'padding-top'),10);
+	if (all) {return all;}
+	if (top) {return top;}
+	return 0;
+}
+
+hui.getBottomPad = function(element) {
+	var all,bottom;
+	all = parseInt(hui.getStyle(element,'padding'),10);
+	bottom = parseInt(hui.getStyle(element,'padding-bottom'),10);
+	if (all) {return all;}
+	if (bottom) {return bottom;}
+	return 0;
+}
+
+hui.setOpacity = function(element,opacity) {
+	if (!hui.browser.opacity) {
 		if (opacity==1) {
 			element.style['filter']=null;
 		} else {
@@ -5764,20 +900,20 @@ n2i.setOpacity = function(element,opacity) {
 	}
 }
 
-n2i.setStyle = function(element,styles) {
+hui.setStyle = function(element,styles) {
 	for (style in styles) {
 		if (style==='opacity') {
-			n2i.setOpacity(element,styles[style]);
+			hui.setOpacity(element,styles[style]);
 		} else {
 			element.style[style] = styles[style];
 		}
 	}
 }
 
-n2i.copyStyle = function(source,target,styles) {
+hui.copyStyle = function(source,target,styles) {
 	for (var i=0; i < styles.length; i++) {
 		var s = styles[i];
-		var r = n2i.getStyle(source,s);
+		var r = hui.getStyle(source,s);
 		if (r) {
 			target.style[s] = r;
 		}
@@ -5786,7 +922,7 @@ n2i.copyStyle = function(source,target,styles) {
 
 //////////////////// Frames ////////////////////
 
-n2i.getFrameDocument = function(frame) {
+hui.getFrameDocument = function(frame) {
     if (frame.contentDocument) {
         return frame.contentDocument;
     } else if (frame.contentWindow) {
@@ -5796,7 +932,7 @@ n2i.getFrameDocument = function(frame) {
     }
 }
 
-n2i.getFrameWindow = function(frame) {
+hui.getFrameWindow = function(frame) {
     if (frame.defaultView) {
         return frame.defaultView;
     } else if (frame.contentWindow) {
@@ -5806,7 +942,7 @@ n2i.getFrameWindow = function(frame) {
 
 /////////////////// Selection /////////////////////
 
-n2i.getSelectedText = function(doc) {
+hui.getSelectedText = function(doc) {
 	doc = doc || document;
 	if (doc.getSelection) {
 		return doc.getSelection()+'';
@@ -5816,7 +952,7 @@ n2i.getSelectedText = function(doc) {
 	return '';
 }
 
-n2i.selection = {
+hui.selection = {
 	clear : function() { 
 		var sel ; 
 		if(document.selection && document.selection.empty	){ 
@@ -5841,26 +977,35 @@ n2i.selection = {
 
 /////////////////// Effects //////////////////////
 
-n2i.effect = {
+hui.effect = {
 	makeFlippable : function(options) {
-		n2i.addClass(options.container,'in2igui_flip_container');
-		n2i.addClass(options.front,'in2igui_flip_front');
-		n2i.addClass(options.back,'in2igui_flip_back');
+		if (hui.browser.webkit) {
+			hui.addClass(options.container,'in2igui_flip_container');
+			hui.addClass(options.front,'in2igui_flip_front');
+			hui.addClass(options.back,'in2igui_flip_back');
+		} else {
+			hui.addClass(options.front,'in2igui_flip_front_legacy');
+			hui.addClass(options.back,'in2igui_flip_back_legacy');
+		}
 	},
 	flip : function(options) {
-		var element = n2i.get(options.element);
-		var duration = options.duration || '1s';
-		var front = n2i.firstByClass(element,'in2igui_flip_front');
-		var back = n2i.firstByClass(element,'in2igui_flip_back');
-		front.style.webkitTransitionDuration=duration;
-		back.style.webkitTransitionDuration=duration;
-		n2i.toggleClass(options.element,'in2igui_flip_flipped');
+		if (!hui.browser.webkit) {
+			hui.toggleClass(options.element,'in2igui_flip_flipped_legacy');
+		} else {
+			var element = hui.get(options.element);
+			var duration = options.duration || '1s';
+			var front = hui.firstByClass(element,'in2igui_flip_front');
+			var back = hui.firstByClass(element,'in2igui_flip_back');
+			front.style.webkitTransitionDuration=duration;
+			back.style.webkitTransitionDuration=duration;
+			hui.toggleClass(options.element,'in2igui_flip_flipped');
+		}
 	}
 }
 
 /////////////////// Position /////////////////////
 
-n2i.getScrollTop = function() {
+hui.getScrollTop = function() {
 	if (self.pageYOffset) {
 		return self.pageYOffset;
 	} else if (document.documentElement && document.documentElement.scrollTop) {
@@ -5870,7 +1015,7 @@ n2i.getScrollTop = function() {
 	}
 }
 
-n2i.getScrollLeft = function() {
+hui.getScrollLeft = function() {
 	if (self.pageYOffset) {
 		return self.pageXOffset;
 	} else if (document.documentElement && document.documentElement.scrollTop) {
@@ -5883,7 +1028,7 @@ n2i.getScrollLeft = function() {
 /**
  * Get the height of the viewport
  */
-n2i.getViewPortHeight = function() {
+hui.getViewPortHeight = function() {
 	if (window.innerHeight) {
 		return window.innerHeight;
 	} else if (document.documentElement && document.documentElement.clientHeight) {
@@ -5896,7 +1041,7 @@ n2i.getViewPortHeight = function() {
 /**
  * Get the height of the viewport
  */
-n2i.getViewPortWidth = function() {
+hui.getViewPortWidth = function() {
 	if (window.innerWidth) {
 		return window.innerWidth;
 	} else if (document.documentElement && document.documentElement.clientWidth) {
@@ -5906,18 +1051,18 @@ n2i.getViewPortWidth = function() {
 	}
 }
 
-n2i.getDocumentWidth = function() {
+hui.getDocumentWidth = function() {
 	return Math.max(document.body.clientWidth,document.documentElement.clientWidth,document.documentElement.scrollWidth)
 	return document.body.scrollWidth;
 }
 
-n2i.getDocumentHeight = function() {
-	if (n2i.browser.msie6) {
+hui.getDocumentHeight = function() {
+	if (hui.browser.msie6) {
 		// In IE6 check the children too
 		var max = Math.max(document.body.clientHeight,document.documentElement.clientHeight,document.documentElement.scrollHeight);
 		var children = document.body.childNodes;
 		for (var i=0; i < children.length; i++) {
-			if (n2i.dom.isElement(children[i])) {
+			if (hui.dom.isElement(children[i])) {
 				max = Math.max(max,children[i].clientHeight);
 			}
 		}
@@ -5933,12 +1078,12 @@ n2i.getDocumentHeight = function() {
 //////////////////////////// Placement /////////////////////////
 
 /**
- * Example n2i.place({target : {element : myTarget, horizontal : 1}, source : {element : mySource, vertical : 0.5}})
+ * Example hui.place({target : {element : myTarget, horizontal : 1}, source : {element : mySource, vertical : 0.5}})
  */
-n2i.place = function(options) {
+hui.place = function(options) {
 	var left=0,top=0;
 	var trgt = options.target.element;
-	var trgtPos = {left:n2i.getLeft(trgt),top:n2i.getTop(trgt)};
+	var trgtPos = {left:hui.getLeft(trgt),top:hui.getTop(trgt)};
 	left = trgtPos.left+trgt.clientWidth*options.target.horizontal;
 	top = trgtPos.top+trgt.clientHeight*options.target.vertical;
 	
@@ -5947,8 +1092,8 @@ n2i.place = function(options) {
 	top-=src.clientHeight*options.source.vertical;
 	
 	if (options.insideViewPort) {
-		var w = n2i.getViewPortWidth();
-		n2i.log((left+src.clientWidth)+'>'+w);
+		var w = hui.getViewPortWidth();
+		hui.log((left+src.clientWidth)+'>'+w);
 		if (left+src.clientWidth>w) {
 			left=w-src.clientWidth;
 		}
@@ -5963,14 +1108,14 @@ n2i.place = function(options) {
 //////////////////////////// Preloader /////////////////////////
 
 /** @constructor */
-n2i.Preloader = function(options) {
+hui.Preloader = function(options) {
 	this.options = options || {};
 	this.delegate = {};
 	this.images = [];
 	this.loaded = 0;
 }
 
-n2i.Preloader.prototype = {
+hui.Preloader.prototype = {
 	addImages : function(imageOrImages) {
 		if (typeof(imageOrImages)=='object') {
 			for (var i=0; i < imageOrImages.length; i++) {
@@ -6013,7 +1158,7 @@ n2i.Preloader.prototype = {
 }
 
 /* @namespace */
-n2i.cookie = {
+hui.cookie = {
 	set : function(name,value,days) {
 		var expires;
 		if (days) {
@@ -6042,14 +1187,14 @@ n2i.cookie = {
 
 ///////////////////////// URL/Location /////////////////////
 
-n2i.URL = function(url) {
+hui.URL = function(url) {
 	this.url = url || '';
 }
 
-n2i.URL.prototype = {
+hui.URL.prototype = {
 	addParameter : function(key,value) {
 		this.url+=this.url.indexOf('?')!=-1 ? '&' : '?';
-		this.url+=key+'='+(n2i.isDefined(value) ? value : '');
+		this.url+=key+'='+(hui.isDefined(value) ? value : '');
 	},
 	toString : function() {
 		return this.url;
@@ -6057,9 +1202,9 @@ n2i.URL.prototype = {
 }
 
 /* @namespace */
-n2i.location = {
+hui.location = {
 	getParameter : function(name) {
-		var parms = n2i.location.getParameters();
+		var parms = hui.location.getParameters();
 		for (var i=0; i < parms.length; i++) {
 			if (parms[i].name==name) {
 				return parms[i].value;
@@ -6068,7 +1213,7 @@ n2i.location = {
 		return null;
 	},
 	setParameter : function(name,value) {
-		var parms = n2i.location.getParameters();
+		var parms = hui.location.getParameters();
 		var found = false;
 		for (var i=0; i < parms.length; i++) {
 			if (parms[i].name==name) {
@@ -6080,7 +1225,7 @@ n2i.location = {
 		if (!found) {
 			parms.push({name:name,value:value});
 		}
-		n2i.location.setParameters(parms);
+		hui.location.setParameters(parms);
 	},
 	hasHash : function(name) {
 		var h = document.location.hash;
@@ -6115,7 +1260,7 @@ n2i.location = {
 		document.location.search=query;
 	},
 	getBoolean : function(name) {
-		var value = n2i.location.getParameter(name);
+		var value = hui.location.getParameter(name);
 		return (value=='true' || value=='1');
 	},
 	getParameters : function() {
@@ -6136,33 +1281,33 @@ n2i.location = {
 /////////////////////////// Animation ///////////////////////////
 
 
-n2i.ani = n2i.animate = function(element,style,value,duration,delegate) {
-	n2i.animation.get(element).animate(null,value,style,duration,delegate);
+hui.ani = hui.animate = function(element,style,value,duration,delegate) {
+	hui.animation.get(element).animate(null,value,style,duration,delegate);
 }
 
 /** @namespace */
-n2i.animation = {
+hui.animation = {
 	objects : {},
 	running : false,
 	latestId : 0,
 	get : function(element) {
-		element = n2i.get(element);
+		element = hui.get(element);
 		if (!element.n2iAnimationId) {
 			element.n2iAnimationId = this.latestId++;
 		}
 		if (!this.objects[element.n2iAnimationId]) {
-			this.objects[element.n2iAnimationId] = new n2i.animation.Item(element);
+			this.objects[element.n2iAnimationId] = new hui.animation.Item(element);
 		}
 		return this.objects[element.n2iAnimationId];
 	},
 	start : function() {
 		if (!this.running) {
-			n2i.animation.render();
+			hui.animation.render();
 		}
 	}
 };
 
-n2i.animation.render = function(element) {
+hui.animation.render = function(element) {
 	this.running = true;
 	var next = false;
 	var stamp = new Date().getTime();
@@ -6189,7 +1334,7 @@ n2i.animation.render = function(element) {
 					work.delegate.callback(obj.element,v);
 				} else if (!work.css) {
 					obj.element[work.property] = Math.round(work.from+(work.to-work.from)*v);
-				} else if (work.property=='transform' && !n2i.browser.msie) {
+				} else if (work.property=='transform' && !hui.browser.msie) {
 					var t = work.transform;
 					var str = '';
 					if (t.rotate) {
@@ -6198,14 +1343,14 @@ n2i.animation.render = function(element) {
 					if (t.scale) {
 						str+=' scale('+(t.scale.from+(t.scale.to-t.scale.from)*v)+')';
 					}
-					obj.element.style[n2i.animation.TRANSFORM]=str;
+					obj.element.style[hui.animation.TRANSFORM]=str;
 				} else if (work.to.red!=null) {
 					var red = Math.round(work.from.red+(work.to.red-work.from.red)*v);
 					var green = Math.round(work.from.green+(work.to.green-work.from.green)*v);
 					var blue = Math.round(work.from.blue+(work.to.blue-work.from.blue)*v);
 					value = 'rgb('+red+','+green+','+blue+')';
 					obj.element.style[work.property]=value;
-				} else if (!n2i.browser.opacity && work.property=='opacity') {
+				} else if (!hui.browser.opacity && work.property=='opacity') {
 					var opacity = (work.from+(work.to-work.from)*v);
 					if (opacity==1) {
 						obj.element.style.removeAttribute('filter');
@@ -6229,17 +1374,17 @@ n2i.animation.render = function(element) {
 	}
 	if (next) {
 		window.setTimeout(function() {
-			n2i.animation.render();
+			hui.animation.render();
 		},0);
 	} else {
 		this.running = false;
 	}
 }
 
-n2i.animation.parseStyle = function(value) {
+hui.animation.parseStyle = function(value) {
 	var parsed = {type:null,value:null,unit:null};
 	var match;
-	if (!n2i.isDefined(value)) {
+	if (!hui.isDefined(value)) {
 		return parsed;
 	} else if (!isNaN(value)) {
 		parsed.value=parseFloat(value);
@@ -6255,7 +1400,7 @@ n2i.animation.parseStyle = function(value) {
 			blue:parseInt(match[3])
 		};
 	} else {
-		var color = new n2i.Color(value);
+		var color = new hui.Color(value);
 		if (color.ok) {
 			parsed.value = {
 				red:color.r,
@@ -6269,36 +1414,36 @@ n2i.animation.parseStyle = function(value) {
 
 ///////////////////////////// Item ///////////////////////////////
 
-n2i.animation.Item = function(element) {
+hui.animation.Item = function(element) {
 	this.element = element;
 	this.work = [];
 }
 
-n2i.animation.Item.prototype.animate = function(from,to,property,duration,delegate) {
+hui.animation.Item.prototype.animate = function(from,to,property,duration,delegate) {
 	var css = true;
 	if (property=='scrollLeft' || property=='scrollTop') {
 		css = false;
 	}
 	
-	var work = this.getWork(css ? n2i.camelize(property) : property);
+	var work = this.getWork(css ? hui.string.camelize(property) : property);
 	work.delegate = delegate;
 	work.finished = false;
 	work.css = css;
 	if (from!=null) {
 		work.from = from;
 	} else if (property=='transform') {
-		work.transform = n2i.animation.Item.parseTransform(to,this.element);
-	} else if (work.css && !n2i.browser.opacity && property=='opacity') {
+		work.transform = hui.animation.Item.parseTransform(to,this.element);
+	} else if (work.css && !hui.browser.opacity && property=='opacity') {
 		work.from = this.getIEOpacity(this.element);
 	} else if (work.css) {
-		var style = n2i.getStyle(this.element,property);
-		var parsedStyle = n2i.animation.parseStyle(style);
+		var style = hui.getStyle(this.element,property);
+		var parsedStyle = hui.animation.parseStyle(style);
 		work.from = parsedStyle.value;
 	} else {
 		work.from = this.element[property];
 	}
 	if (work.css) {
-		var parsed = n2i.animation.parseStyle(to);
+		var parsed = hui.animation.parseStyle(to);
 		work.to = parsed.value;
 		work.unit = parsed.unit;
 	} else {
@@ -6310,20 +1455,20 @@ n2i.animation.Item.prototype.animate = function(from,to,property,duration,delega
 		work.start+=delegate.delay;
 	}
 	work.end = work.start+duration;
-	n2i.animation.start();
+	hui.animation.start();
 }
 
-n2i.animation.TRANSFORM = n2i.browser.gecko ? 'MozTransform' : 'WebkitTransform';
+hui.animation.TRANSFORM = hui.browser.gecko ? 'MozTransform' : 'WebkitTransform';
 
-n2i.animation.Item.parseTransform = function(value,element) {
+hui.animation.Item.parseTransform = function(value,element) {
 	var result = {};
 	var from,fromMatch;
 	var rotateReg = /rotate\(([0-9\.]+)([a-z]+)\)/i;
 	var rotate = value.match(rotateReg);
 	if (rotate) {
 		from = 0;
-		if (element.style[n2i.animation.TRANSFORM]) {
-			fromMatch = element.style[n2i.animation.TRANSFORM].match(rotateReg);
+		if (element.style[hui.animation.TRANSFORM]) {
+			fromMatch = element.style[hui.animation.TRANSFORM].match(rotateReg);
 			if (fromMatch) {
 				from = parseFloat(fromMatch[1]);
 			}
@@ -6334,8 +1479,8 @@ n2i.animation.Item.parseTransform = function(value,element) {
 	var scale = value.match(scaleReg);
 	if (scale) {
 		from = 1;
-		if (element.style[n2i.animation.TRANSFORM]) {
-			fromMatch = element.style[n2i.animation.TRANSFORM].match(scaleReg);
+		if (element.style[hui.animation.TRANSFORM]) {
+			fromMatch = element.style[hui.animation.TRANSFORM].match(scaleReg);
 			if (fromMatch) {
 				from = parseFloat(fromMatch[1]);
 			}
@@ -6346,8 +1491,8 @@ n2i.animation.Item.parseTransform = function(value,element) {
 	return result;
 }
 
-n2i.animation.Item.prototype.getIEOpacity = function(element) {
-	var filter = n2i.getStyle(element,'filter').toLowerCase();
+hui.animation.Item.prototype.getIEOpacity = function(element) {
+	var filter = hui.getStyle(element,'filter').toLowerCase();
 	var match;
 	if (match = filter.match(/opacity=([0-9]+)/)) {
 		return parseFloat(match[1])/100;
@@ -6356,7 +1501,7 @@ n2i.animation.Item.prototype.getIEOpacity = function(element) {
 	}
 }
 
-n2i.animation.Item.prototype.getWork = function(property) {
+hui.animation.Item.prototype.getWork = function(property) {
 	for (var i=0; i < this.work.length; i++) {
 		if (this.work[i].property==property) {
 			return this.work[i];
@@ -6369,13 +1514,13 @@ n2i.animation.Item.prototype.getWork = function(property) {
 
 /////////////////////////////// Loop ///////////////////////////////////
 
-n2i.animation.Loop = function(recipe) {
+hui.animation.Loop = function(recipe) {
 	this.recipe = recipe;
 	this.position = -1;
 	this.running = false;
 }
 
-n2i.animation.Loop.prototype.next = function() {
+hui.animation.Loop.prototype.next = function() {
 	this.position++;
 	if (this.position>=this.recipe.length) {
 		this.position = 0;
@@ -6384,191 +1529,35 @@ n2i.animation.Loop.prototype.next = function() {
 	if (typeof(item)=='function') {
 		item();
 	} else if (item.element) {
-		n2i.ani(item.element,item.property,item.value,item.duration,{ease:item.ease});
+		hui.ani(item.element,item.property,item.value,item.duration,{ease:item.ease});
 	}
 	var self = this;
 	var time = item.duration || 0;
 	window.setTimeout(function() {self.next()},time);
 }
 
-n2i.animation.Loop.prototype.start = function() {
+hui.animation.Loop.prototype.start = function() {
 	this.running=true;
 	this.next();
 }
 
-/**
-	@constructor
-*/
-n2i.Color = function(color_string) {
+/** @constructor */
+hui.Color = function(str) {
     this.ok = false;
-
+	if (hui.isBlank(str)) {
+		return;
+	}
     // strip any leading #
-    if (color_string.charAt(0) == '#') { // remove # if any
-        color_string = color_string.substr(1,6);
+    if (str.charAt(0) == '#') { // remove # if any
+        str = str.substr(1,6);
     }
 
-    color_string = color_string.replace(/ /g,'');
-    color_string = color_string.toLowerCase();
-	
-	var simple_colors = {
-		white : 'ffffff',
-		black : '000000',
-		red : 'ff0000',
-		green : '00ff00',
-		blue : '0000ff'
-	};
-	
-    // before getting into regexps, try simple matches
-    // and overwrite the input
-	/*
-    var simple_colors = {
-        aliceblue: 'f0f8ff',
-        antiquewhite: 'faebd7',
-        aqua: '00ffff',
-        aquamarine: '7fffd4',
-        azure: 'f0ffff',
-        beige: 'f5f5dc',
-        bisque: 'ffe4c4',
-        black: '000000',
-        blanchedalmond: 'ffebcd',
-        blue: '0000ff',
-        blueviolet: '8a2be2',
-        brown: 'a52a2a',
-        burlywood: 'deb887',
-        cadetblue: '5f9ea0',
-        chartreuse: '7fff00',
-        chocolate: 'd2691e',
-        coral: 'ff7f50',
-        cornflowerblue: '6495ed',
-        cornsilk: 'fff8dc',
-        crimson: 'dc143c',
-        cyan: '00ffff',
-        darkblue: '00008b',
-        darkcyan: '008b8b',
-        darkgoldenrod: 'b8860b',
-        darkgray: 'a9a9a9',
-        darkgreen: '006400',
-        darkkhaki: 'bdb76b',
-        darkmagenta: '8b008b',
-        darkolivegreen: '556b2f',
-        darkorange: 'ff8c00',
-        darkorchid: '9932cc',
-        darkred: '8b0000',
-        darksalmon: 'e9967a',
-        darkseagreen: '8fbc8f',
-        darkslateblue: '483d8b',
-        darkslategray: '2f4f4f',
-        darkturquoise: '00ced1',
-        darkviolet: '9400d3',
-        deeppink: 'ff1493',
-        deepskyblue: '00bfff',
-        dimgray: '696969',
-        dodgerblue: '1e90ff',
-        feldspar: 'd19275',
-        firebrick: 'b22222',
-        floralwhite: 'fffaf0',
-        forestgreen: '228b22',
-        fuchsia: 'ff00ff',
-        gainsboro: 'dcdcdc',
-        ghostwhite: 'f8f8ff',
-        gold: 'ffd700',
-        goldenrod: 'daa520',
-        gray: '808080',
-        green: '008000',
-        greenyellow: 'adff2f',
-        honeydew: 'f0fff0',
-        hotpink: 'ff69b4',
-        indianred : 'cd5c5c',
-        indigo : '4b0082',
-        ivory: 'fffff0',
-        khaki: 'f0e68c',
-        lavender: 'e6e6fa',
-        lavenderblush: 'fff0f5',
-        lawngreen: '7cfc00',
-        lemonchiffon: 'fffacd',
-        lightblue: 'add8e6',
-        lightcoral: 'f08080',
-        lightcyan: 'e0ffff',
-        lightgoldenrodyellow: 'fafad2',
-        lightgrey: 'd3d3d3',
-        lightgreen: '90ee90',
-        lightpink: 'ffb6c1',
-        lightsalmon: 'ffa07a',
-        lightseagreen: '20b2aa',
-        lightskyblue: '87cefa',
-        lightslateblue: '8470ff',
-        lightslategray: '778899',
-        lightsteelblue: 'b0c4de',
-        lightyellow: 'ffffe0',
-        lime: '00ff00',
-        limegreen: '32cd32',
-        linen: 'faf0e6',
-        magenta: 'ff00ff',
-        maroon: '800000',
-        mediumaquamarine: '66cdaa',
-        mediumblue: '0000cd',
-        mediumorchid: 'ba55d3',
-        mediumpurple: '9370d8',
-        mediumseagreen: '3cb371',
-        mediumslateblue: '7b68ee',
-        mediumspringgreen: '00fa9a',
-        mediumturquoise: '48d1cc',
-        mediumvioletred: 'c71585',
-        midnightblue: '191970',
-        mintcream: 'f5fffa',
-        mistyrose: 'ffe4e1',
-        moccasin: 'ffe4b5',
-        navajowhite: 'ffdead',
-        navy: '000080',
-        oldlace: 'fdf5e6',
-        olive: '808000',
-        olivedrab: '6b8e23',
-        orange: 'ffa500',
-        orangered: 'ff4500',
-        orchid: 'da70d6',
-        palegoldenrod: 'eee8aa',
-        palegreen: '98fb98',
-        paleturquoise: 'afeeee',
-        palevioletred: 'd87093',
-        papayawhip: 'ffefd5',
-        peachpuff: 'ffdab9',
-        peru: 'cd853f',
-        pink: 'ffc0cb',
-        plum: 'dda0dd',
-        powderblue: 'b0e0e6',
-        purple: '800080',
-        red: 'ff0000',
-        rosybrown: 'bc8f8f',
-        royalblue: '4169e1',
-        saddlebrown: '8b4513',
-        salmon: 'fa8072',
-        sandybrown: 'f4a460',
-        seagreen: '2e8b57',
-        seashell: 'fff5ee',
-        sienna: 'a0522d',
-        silver: 'c0c0c0',
-        skyblue: '87ceeb',
-        slateblue: '6a5acd',
-        slategray: '708090',
-        snow: 'fffafa',
-        springgreen: '00ff7f',
-        steelblue: '4682b4',
-        tan: 'd2b48c',
-        teal: '008080',
-        thistle: 'd8bfd8',
-        tomato: 'ff6347',
-        turquoise: '40e0d0',
-        violet: 'ee82ee',
-        violetred: 'd02090',
-        wheat: 'f5deb3',
-        white: 'ffffff',
-        whitesmoke: 'f5f5f5',
-        yellow: 'ffff00',
-        yellowgreen: '9acd32'
-    };*/
-    for (var key in simple_colors) {
-        if (color_string == key) {
-            color_string = simple_colors[key];
+    str = str.replace(/ /g,'');
+    str = str.toLowerCase();
+		
+    for (var key in hui.Color.table) {
+        if (str == key) {
+            str = hui.Color.table[key];
         }
     }
     // emd of simple type-in colors
@@ -6577,7 +1566,6 @@ n2i.Color = function(color_string) {
     var color_defs = [
         {
             re: /^rgb\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})\)$/,
-            example: ['rgb(123, 234, 45)', 'rgb(255,234,245)'],
             process: function (bits){
                 return [
                     parseInt(bits[1]),
@@ -6587,8 +1575,17 @@ n2i.Color = function(color_string) {
             }
         },
         {
+            re: /^rgb\((\d{1,3})%,\s*(\d{1,3})%,\s*(\d{1,3})%\)$/	,
+            process: function (bits){
+                return [
+                    Math.round(parseInt(bits[1])/100*255),
+                    Math.round(parseInt(bits[2])/100*255),
+                    Math.round(parseInt(bits[3])/100*255)
+                ];
+            }
+        },
+        {
             re: /^(\w{2})(\w{2})(\w{2})$/,
-            example: ['#00ff00', '336699'],
             process: function (bits){
                 return [
                     parseInt(bits[1], 16),
@@ -6599,7 +1596,6 @@ n2i.Color = function(color_string) {
         },
         {
             re: /^(\w{1})(\w{1})(\w{1})$/,
-            example: ['#fb0', 'f0f'],
             process: function (bits){
                 return [
                     parseInt(bits[1] + bits[1], 16),
@@ -6612,40 +1608,78 @@ n2i.Color = function(color_string) {
 
     // search through the definitions to find a match
     for (var i = 0; i < color_defs.length; i++) {
-        var re = color_defs[i].re;
-        var processor = color_defs[i].process;
-        var bits = re.exec(color_string);
+        var re = color_defs[i].re,
+			processor = color_defs[i].process,
+			bits = re.exec(str);
         if (bits) {
             channels = processor(bits);
             this.r = channels[0];
             this.g = channels[1];
             this.b = channels[2];
             this.ok = true;
+			break;
         }
-
     }
 
     // validate/cleanup values
     this.r = (this.r < 0 || isNaN(this.r)) ? 0 : ((this.r > 255) ? 255 : this.r);
     this.g = (this.g < 0 || isNaN(this.g)) ? 0 : ((this.g > 255) ? 255 : this.g);
     this.b = (this.b < 0 || isNaN(this.b)) ? 0 : ((this.b > 255) ? 255 : this.b);
+}
 
-    // some getters
-    this.toRGB = function () {
+hui.Color.prototype = {
+	toRGB : function () {
         return 'rgb(' + this.r + ', ' + this.g + ', ' + this.b + ')';
-    }
-    this.toHex = function () {
+    },
+	toHex : function() {
         var r = this.r.toString(16);
         var g = this.g.toString(16);
         var b = this.b.toString(16);
-        if (r.length == 1) r = '0' + r;
-        if (g.length == 1) g = '0' + g;
-        if (b.length == 1) b = '0' + b;
+        if (r.length == 1) {
+			r = '0' + r;
+		}
+        if (g.length == 1) {
+			g = '0' + g;
+		}
+        if (b.length == 1) {
+			b = '0' + b;
+		}
         return '#' + r + g + b;
-    }
+	}
 }
 
-n2i.Color.hsv2rgb = function (Hdeg,S,V) {
+hui.Color.table = {
+	white : 'ffffff',
+	black : '000000',
+	red : 'ff0000',
+	green : '00ff00',
+	blue : '0000ff'
+}
+
+hui.Color.hex2rgb = function(hex) {
+	if (hui.isBlank(hex)) {
+		return null;
+	}
+	if (hex[0]=="#") {
+		hex=hex.substr(1);
+	}
+	if (hex.length==3) {
+		var temp=hex;
+		hex='';
+		temp = /^([a-f0-9])([a-f0-9])([a-f0-9])$/i.exec(temp).slice(1);
+		for (var i=0;i<3;i++) {
+			hex+=temp[i]+temp[i];
+		}
+	}
+	var triplets = /^([a-f0-9]{2})([a-f0-9]{2})([a-f0-9]{2})$/i.exec(hex).slice(1);
+	return {
+		r:   parseInt(triplets[0],16),
+		g: parseInt(triplets[1],16),
+		b:  parseInt(triplets[2],16)
+	}
+}
+
+hui.Color.hsv2rgb = function (Hdeg,S,V) {
   	var H = Hdeg/360,R,G,B;     // convert from degrees to 0 to 1
   	if (S==0) {       // HSV values = From 0 to 1
 		R = V*255;     // RGB results = From 0 to 255
@@ -6679,7 +1713,7 @@ n2i.Color.hsv2rgb = function (Hdeg,S,V) {
   	return new Array(R,G,B);
 }
 
-n2i.Color.rgb2hsv = function(r, g, b) {
+hui.Color.rgb2hsv = function(r, g, b) {
 
     r = (r / 255);
     g = (g / 255);
@@ -6716,7 +1750,7 @@ n2i.Color.rgb2hsv = function(r, g, b) {
     return [Math.round(hue), Math.round(saturation * 100), Math.round(value * 100)];
 }
 
-n2i.Color.rgb2hex = function(rgbary) {
+hui.Color.rgb2hex = function(rgbary) {
 	var c = '#';
   	for (var i=0; i < 3; i++) {
 		var str = parseInt(rgbary[i]).toString(16);
@@ -6730,7 +1764,7 @@ n2i.Color.rgb2hex = function(rgbary) {
 
 
 /** @namespace */
-n2i.ease = {
+hui.ease = {
 	slowFastSlow : function(val) {
 		var a = 1.6;
 		var b = 1.4;
@@ -6742,7 +1776,7 @@ n2i.ease = {
 		return -1*Math.pow(Math.cos((Math.PI/2)*Math.pow(val,a)),Math.pow(Math.PI,b))+1;
 	},
 	elastic : function(t) {
-		return 1 - n2i.ease.elastic2(1-t);
+		return 1 - hui.ease.elastic2(1-t);
 	},
 
 	elastic2 : function (t, a, p) {
@@ -6938,7 +1972,7 @@ n2i.ease = {
 
 	bounceIn: function(/* Decimal? */n){
 		// summary: An easing function that "bounces" near the beginning of an Animation
-		return (1 - n2i.ease.bounceOut(1-n)); // Decimal
+		return (1 - hui.ease.bounceOut(1-n)); // Decimal
 	},
 
 	bounceOut: function(/* Decimal? */n){
@@ -6963,8 +1997,8 @@ n2i.ease = {
 
 	bounceInOut: function(/* Decimal? */n){
 		// summary: An easing function that "bounces" at the beginning and end of the Animation
-		if(n<0.5){ return n2i.ease.bounceIn(n*2) / 2; }
-		return (n2i.ease.bounceOut(n*2-1) / 2) + 0.5; // Decimal
+		if(n<0.5){ return hui.ease.bounceIn(n*2) / 2; }
+		return (hui.ease.bounceOut(n*2-1) / 2) + 0.5; // Decimal
 	}
 };
 
@@ -6994,7 +2028,120 @@ if (!Function.prototype.argumentNames) {
 			.replace(/\s+/g, '').split(',');
 		return names.length == 1 && !names[0] ? [] : names;
 	}
-}/**
+}/*!
+  * $script.js v1.3
+  * https://github.com/ded/script.js
+  * Copyright: @ded & @fat - Dustin Diaz, Jacob Thornton 2011
+  * Follow our software http://twitter.com/dedfat
+  * License: MIT
+  */
+!function(win, doc, timeout) {
+  var head = doc.getElementsByTagName('head')[0],
+      list = {}, ids = {}, delay = {},
+      scripts = {}, s = 'string', f = false,
+      push = 'push', domContentLoaded = 'DOMContentLoaded', readyState = 'readyState',
+      addEventListener = 'addEventListener', onreadystatechange = 'onreadystatechange',
+      every = function(ar, fn) {
+        for (var i = 0, j = ar.length; i < j; ++i) {
+          if (!fn(ar[i])) {
+            return f;
+          }
+        }
+        return 1;
+      };
+      function each(ar, fn) {
+        every(ar, function(el) {
+          return !fn(el);
+        });
+      }
+
+  if (!doc[readyState] && doc[addEventListener]) {
+    doc[addEventListener](domContentLoaded, function fn() {
+      doc.removeEventListener(domContentLoaded, fn, f);
+      doc[readyState] = "complete";
+    }, f);
+    doc[readyState] = "loading";
+  }
+
+  var $script = function(paths, idOrDone, optDone) {
+    paths = paths[push] ? paths : [paths];
+    var idOrDoneIsDone = idOrDone && idOrDone.call,
+        done = idOrDoneIsDone ? idOrDone : optDone,
+        id = idOrDoneIsDone ? paths.join('') : idOrDone,
+        queue = paths.length;
+        function loopFn(item) {
+          return item.call ? item() : list[item];
+        }
+        function callback() {
+          if (!--queue) {
+            list[id] = 1;
+            done && done();
+            for (var dset in delay) {
+              every(dset.split('|'), loopFn) && !each(delay[dset], loopFn) && (delay[dset] = []);
+            }
+          }
+        }
+    timeout(function() {
+      each(paths, function(path) {
+        if (scripts[path]) {
+          id && (ids[id] = 1);
+          callback();
+          return;
+        }
+        scripts[path] = 1;
+        id && (ids[id] = 1);
+        create($script.path ?
+          $script.path + path + '.js' :
+          path, callback);
+      });
+    }, 0);
+    return $script;
+  };
+
+  function create(path, fn) {
+    var el = doc.createElement("script"),
+        loaded = f;
+    el.onload = el.onerror = el[onreadystatechange] = function () {
+      if ((el[readyState] && !(/^c|loade/.test(el[readyState]))) || loaded) {
+        return;
+      }
+      el.onload = el[onreadystatechange] = null;
+      loaded = 1;
+      fn();
+    };
+    el.async = 1;
+    el.src = path;
+    head.insertBefore(el, head.firstChild);
+  }
+
+  $script.get = create;
+
+  $script.ready = function(deps, ready, req) {
+    deps = deps[push] ? deps : [deps];
+    var missing = [];
+    !each(deps, function(dep) {
+      list[dep] || missing[push](dep);
+    }) && every(deps, function(dep) {
+      return list[dep];
+    }) ? ready() : !function(key) {
+      delay[key] = delay[key] || [];
+      delay[key][push](ready);
+      req && req(missing);
+    }(deps.join('|'));
+    return $script;
+  };
+
+  var old = win.$script;
+  $script.noConflict = function () {
+    win.$script = old;
+    return this;
+  };
+
+  (typeof module !== 'undefined' && module.exports) ?
+    (module.exports = $script) :
+    (win.hui.require = $script);
+}(this, document, setTimeout);
+/**
  * SWFUpload: http://www.swfupload.org, http://swfupload.googlecode.com
  *
  * mmSWFUpload 1.0: Flash upload dialog - http://profandesign.se/swfupload/,  http://www.vinterwebb.se/
@@ -8125,7 +3272,7 @@ Date.createNewFormat = function(format) {
         }
         else if (special) {
             special = false;
-            code += "'" + String.escape(ch) + "' + ";
+            code += "'" + Date.escape(ch) + "' + ";
         }
         else {
             code += Date.getFormatCode(ch);
@@ -8137,7 +3284,7 @@ Date.createNewFormat = function(format) {
 Date.getFormatCode = function(character) {
     switch (character) {
     case "d":
-        return "String.leftPad(this.getDate(), 2, '0') + ";
+        return "Date.leftPad(this.getDate(), 2, '0') + ";
     case "D":
         return "Date.dayNames[this.getDay()].substring(0, 3) + ";
     case "j":
@@ -8155,7 +3302,7 @@ Date.getFormatCode = function(character) {
     case "F":
         return "Date.monthNames[this.getMonth()] + ";
     case "m":
-        return "String.leftPad(this.getMonth() + 1, 2, '0') + ";
+        return "Date.leftPad(this.getMonth() + 1, 2, '0') + ";
     case "M":
         return "Date.monthNames[this.getMonth()].substring(0, 3) + ";
     case "n":
@@ -8177,13 +3324,13 @@ Date.getFormatCode = function(character) {
     case "G":
         return "this.getHours() + ";
     case "h":
-        return "String.leftPad((this.getHours() %12) ? this.getHours() % 12 : 12, 2, '0') + ";
+        return "Date.leftPad((this.getHours() %12) ? this.getHours() % 12 : 12, 2, '0') + ";
     case "H":
-        return "String.leftPad(this.getHours(), 2, '0') + ";
+        return "Date.leftPad(this.getHours(), 2, '0') + ";
     case "i":
-        return "String.leftPad(this.getMinutes(), 2, '0') + ";
+        return "Date.leftPad(this.getMinutes(), 2, '0') + ";
     case "s":
-        return "String.leftPad(this.getSeconds(), 2, '0') + ";
+        return "Date.leftPad(this.getSeconds(), 2, '0') + ";
     case "O":
         return "this.getGMTOffset() + ";
     case "T":
@@ -8191,7 +3338,7 @@ Date.getFormatCode = function(character) {
     case "Z":
         return "(this.getTimezoneOffset() * -60) + ";
     default:
-        return "'" + String.escape(character) + "' + ";
+        return "'" + Date.escape(character) + "' + ";
     }
 }
 
@@ -8228,7 +3375,7 @@ Date.createParser = function(format) {
         }
         else if (special) {
             special = false;
-            regex += String.escape(ch);
+            regex += Date.escape(ch);
         }
         else {
             var obj = Date.formatCodeToRegex(ch, currentGroup);
@@ -8361,7 +3508,7 @@ Date.formatCodeToRegex = function(character, currentGroup) {
     default:
         return {g:0,
             c:null,
-            s:String.escape(character)};
+            s:Date.escape(character)};
     }
 }
 
@@ -8373,8 +3520,8 @@ Date.prototype.getTimezone = function() {
 
 Date.prototype.getGMTOffset = function() {
     return (this.getTimezoneOffset() > 0 ? "-" : "+")
-        + String.leftPad(Math.floor(this.getTimezoneOffset() / 60), 2, "0")
-        + String.leftPad(this.getTimezoneOffset() % 60, 2, "0");
+        + Date.leftPad(Math.floor(this.getTimezoneOffset() / 60), 2, "0")
+        + Date.leftPad(this.getTimezoneOffset() % 60, 2, "0");
 }
 
 Date.prototype.getDayOfYear = function() {
@@ -8392,7 +3539,7 @@ Date.prototype.getWeekOfYear = function() {
     // Find the first Thursday of the year
     var jan1 = new Date(this.getFullYear(), 0, 1);
     var then = (5 - jan1.getDay());
-    return parseInt(String.leftPad(((now - then) / 7) + 1, 2, "0"));
+    return parseInt(Date.leftPad(((now - then) / 7) + 1, 2, "0"));
 }
 
 Date.prototype.isLeapYear = function() {
@@ -8432,11 +3579,11 @@ Date.prototype.getSuffix = function() {
     }
 }
 
-String.escape = function(string) {
+Date.escape = function(string) {
     return string.replace(/('|\\)/g, "\\$1");
 }
 
-String.leftPad = function (val, size, ch) {
+Date.leftPad = function (val, size, ch) {
     var result = new String(val);
     if (ch == null) {
         ch = " ";
@@ -8496,263 +3643,87 @@ Date.patterns = {
     UniversalSortableDateTimePattern: "Y-m-d H:i:sO",
     YearMonthPattern: "F, Y"};
 /**
-  The base class of the In2iGui framework
-  @constructor
+  The namespace of the HUI framework
+  @namespace
  */
-function In2iGui() {
-	/** {boolean} Is true when the DOM is loaded */
-	this.domLoaded = false;
-	/** @private */
-	this.overflows = null;
-	/** @private */
-	this.delegates = [];
-	/** @private */
-	this.objects = {};
-	/** @private */
-	this.layoutWidgets = [];
-	/** @private */
-	this.addBehavior();
+hui.ui = {
+	domReady : false,
+	context : '',
+	language : 'en',
+
+	layoutWidgets : [],
+	objects : [],
+	delegates : [],
+
+	state : 'default',
+
+	latestObjectIndex : 0,
+	latestIndex : 500,
+	latestPanelIndex : 1000,
+	latestAlertIndex : 1500,
+	latestTopIndex : 2000,
+	toolTips : {},
+	confirmOverlays : {}
 }
 
-window.ui = In2iGui;
+//window.ui = hui.ui; // TODO: old namespace
 
-/** @private */
-In2iGui.latestObjectIndex = 0;
-/** @private */
-In2iGui.latestIndex = 500;
-/** @private */
-In2iGui.latestPanelIndex = 1000;
-/** @private */
-In2iGui.latestAlertIndex = 1500;
-/** @private */
-In2iGui.latestTopIndex = 2000;
-/** @private */
-In2iGui.toolTips = {};
+//window.In2iGui = hui.ui; // TODO: old namespace
 
-In2iGui.context = '';
-In2iGui.language = 'en';
-
-In2iGui.state = 'default';
 
 /** Gets the one instance of In2iGui */
-In2iGui.get = function(nameOrWidget) {
-	if (!In2iGui.instance) {
-		In2iGui.instance = new In2iGui();
-	}
+hui.ui.get = function(nameOrWidget) {
 	if (nameOrWidget) {
 		if (nameOrWidget.element) {
 			return nameOrWidget;
 		}
-		return In2iGui.instance.objects[nameOrWidget];
+		return hui.ui.objects[nameOrWidget];
 	} else {
-		return In2iGui.instance;
+		return hui.ui;
 	}
 };
 
-n2i.onReady(function() {
-	In2iGui.get().ignite();
+hui.onReady(function() {
+	if (window.dwr && window.dwr.engine && window.dwr.engine.setErrorHandler) {
+		window.dwr.engine.setErrorHandler(function(msg,e) {
+			hui.log(msg);
+			hui.log(e);
+		});
+	}
+	hui.ui.callSuperDelegates(this,'ready');
+	hui.listen(window,'resize',hui.ui._resize);
+	hui.ui._resize();
+	hui.ui.domReady = true;
+	if (window.parent && window.parent.hui && window.parent.hui.ui) {
+		window.parent.hui.ui._frameLoaded(window);
+	}
 });
 
-In2iGui.prototype = {
-	/** @private */
-	ignite : function() {
-		if (window.dwr && window.dwr.engine && window.dwr.engine.setErrorHandler) {
-			window.dwr.engine.setErrorHandler(function(msg,e) {
-				n2i.log(msg);
-				n2i.log(e);
-				In2iGui.get().alert({title:'An unexpected error occurred!',text:msg,emotion:'gasp'});
-			});
-		}
-		this.domLoaded = true;
-		In2iGui.domReady = true;
-		this.resize();
-		//In2iGui.callSuperDelegates(this,'interfaceIsReady');
-		In2iGui.callSuperDelegates(this,'ready');
+hui.ui._frameLoaded = function(win) {
+	hui.ui.callSuperDelegates(this,'frameLoaded',win);
+}
 
-		this.reLayout();
-		n2i.listen(window,'resize',this.reLayout.bind(this));
-	},
-	/** @private */
-	addBehavior : function() {
-		n2i.listen(window,'resize',this.resize.bind(this));
-	},
-	/** Adds a global delegate
-	 * @deprecated
-	*/
-	listen : function(delegate) {
-		this.delegates.push(delegate);
-	},
-	getTopPad : function(element) {
-		var all,top;
-		all = parseInt(n2i.getStyle(element,'padding'),10);
-		top = parseInt(n2i.getStyle(element,'padding-top'),10);
-		if (all) {return all;}
-		if (top) {return top;}
-		return 0;
-	},
-	getBottomPad : function(element) {
-		var all,bottom;
-		all = parseInt(n2i.getStyle(element,'padding'),10);
-		bottom = parseInt(n2i.getStyle(element,'padding-bottom'),10);
-		if (all) {return all;}
-		if (bottom) {return bottom;}
-		return 0;
-	},
-	/** @private */
-	resize : function() {
-		if (!this.overflows) {return;}
-		var height = n2i.getViewPortHeight();
-		for (var i=0; i < this.overflows.length; i++) {
-			var overflow = this.overflows[i];
-			if (n2i.browser.webkit || n2i.browser.gecko) {
-				overflow.element.style.display='none';
-				overflow.element.style.width = overflow.element.parentNode.clientWidth+'px';
-				overflow.element.style.display='';
-			}
-			overflow.element.style.height = height+overflow.diff+'px';
-		};
-	},
-	registerOverflow : function(id,diff) {
-		if (!this.overflows) {this.overflows=[];}
-		var overflow = n2i.get(id);
-		this.overflows.push({element:overflow,diff:diff});
-	},
-	/** @private */
-	alert : function(options) {
-		if (!this.alertBox) {
-			this.alertBox = In2iGui.Alert.create(options);
-			this.alertBoxButton = In2iGui.Button.create({name:'in2iGuiAlertBoxButton',text : 'OK'});
-			this.alertBoxButton.listen(this);
-			this.alertBox.addButton(this.alertBoxButton);
-		} else {
-			this.alertBox.update(options);
-		}
-		this.alertBoxCallBack = options.onOK;
-		this.alertBoxButton.setText(options.button ? options.button : 'OK');
-		this.alertBox.show();
-	},
-	/** @private */
-	$click$in2iGuiAlertBoxButton : function() {
-		In2iGui.get().alertBox.hide();
-		if (this.alertBoxCallBack) {
-			this.alertBoxCallBack();
-			this.alertBoxCallBack = null;
-		}
-	},
-	confirm : function(options) {
-		if (!options.name) {
-			options.name = 'in2iguiConfirm';
-		}
-		var alert = In2iGui.get(options.name);
-		var ok;
-		if (!alert) {
-			alert = In2iGui.Alert.create(options);
-			var cancel = In2iGui.Button.create({name:name+'_cancel',text : options.cancel || 'Cancel',highlighted:options.highlighted==='cancel'});
-			cancel.listen({$click:function(){
-				alert.hide();
-				if (options.onCancel) {
-					options.onCancel();
-				}
-				In2iGui.callDelegates(alert,'cancel');
-			}});
-			alert.addButton(cancel);
-		
-			ok = In2iGui.Button.create({name:name+'_ok',text : options.ok || 'OK',highlighted:options.highlighted==='ok'});
-			alert.addButton(ok);
-		} else {
-			alert.update(options);
-			ok = In2iGui.get(name+'_ok');
-			ok.setText(options.ok || 'OK');
-			ok.setHighlighted(options.highlighted=='ok');
-			ok.clearDelegates();
-			In2iGui.get(name+'_cancel').setText(options.ok || 'Cancel');
-			In2iGui.get(name+'_cancel').setHighlighted(options.highlighted=='cancel');
-			if (options.cancel) {In2iGui.get(name+'_cancel').setText(options.cancel);}
-		}
-		ok.listen({$click:function(){
-			alert.hide();
-			if (options.onOK) {
-				options.onOK();
-			}
-			In2iGui.callDelegates(alert,'ok');
-		}});
-		alert.show();
-	},
-	reLayout : function() {
-		for (var i = this.layoutWidgets.length - 1; i >= 0; i--){
-			this.layoutWidgets[i]['$$layout']();
-		};
-	},
-	getDescendants : function(widgetOrElement) {
-		var desc = [],e = widgetOrElement.getElement ? widgetOrElement.getElement() : widgetOrElement;
-		if (e) {
-			var d = e.getElementsByTagName('*');
-			var o = [];
-			for (var key in this.objects) {
-				o.push(this.objects[key]);
-			}
-			for (var i=0; i < d.length; i++) {
-				for (var j=0; j < o.length; j++) {
-					if (d[i]==o[j].element) {
-						desc.push(o[j]);
-					}
-				};
-				
-			};
-		}
-		return desc;
-	},
-	/** Gets all ancestors of a widget
-		@param {Widget} A widget
-		@returns {Array} An array of all ancestors
-	*/
-	getAncestors : function(widget) {
-		var desc = [];
-		var e = widget.element;
-		if (e) {
-			var a = n2i.getAncestors(e);
-			var o = [];
-			for (var key in this.objects) {
-				o.push(this.objects[key]);
-			}
-			for (var i=0; i < a.length; i++) {
-				for (var j=0; j < o.length; j++) {
-					if (o[j].element==a[i]) {
-						desc.push(o[j]);
-					}
-					
-				};
-			};
-		}
-		return desc;
-	},
-	getAncestor : function(widget,cls) {
-		var a = this.getAncestors(widget);
-		for (var i=0; i < a.length; i++) {
-			if (n2i.hasClass(a[i].getElement(),cls)) {
-				return a[i];
-			}
-		};
-		return null;
-	}
-};
+/** @private */
+hui.ui._resize = function() {
+	for (var i = hui.ui.layoutWidgets.length - 1; i >= 0; i--){
+		hui.ui.layoutWidgets[i]['$$layout']();
+	};
+}
 
-In2iGui.confirmOverlays = {};
-
-In2iGui.confirmOverlay = function(options) {
+hui.ui.confirmOverlay = function(options) {
 	var node = options.element || options.widget.getElement(),
 		overlay;
-	if (In2iGui.confirmOverlays[node]) {
-		overlay = In2iGui.confirmOverlays[node];
+	if (hui.ui.confirmOverlays[node]) {
+		overlay = hui.ui.confirmOverlays[node];
 		overlay.clear();
 	} else {
-		overlay = In2iGui.Overlay.create({modal:true});
-		In2iGui.confirmOverlays[node] = overlay;
+		overlay = hui.ui.Overlay.create({modal:true});
+		hui.ui.confirmOverlays[node] = overlay;
 	}
 	if (options.text) {
 		overlay.addText(options.text);
 	}
-	var ok = In2iGui.Button.create({text:options.okText || 'OK',highlighted:'true'});
+	var ok = hui.ui.Button.create({text:options.okText || 'OK',highlighted:'true'});
 	ok.click(function() {
 		if (options.onOk) {
 			options.onOk();
@@ -8760,7 +3731,7 @@ In2iGui.confirmOverlay = function(options) {
 		overlay.hide();
 	});
 	overlay.add(ok);
-	var cancel = In2iGui.Button.create({text:options.cancelText || 'Cancel'});
+	var cancel = hui.ui.Button.create({text:options.cancelText || 'Cancel'});
 	cancel.onClick(function() {
 		overlay.hide();
 	});
@@ -8768,25 +3739,81 @@ In2iGui.confirmOverlay = function(options) {
 	overlay.show({element:node});
 }
 
-In2iGui.destroy = function(widget) {
-	var objects = In2iGui.get().objects;
+hui.ui.destroy = function(widget) {
+	var objects = hui.ui.objects;
 	delete(objects[widget.name]);
 }
 
-In2iGui.destroyDescendants = function(element) {
-	var desc = In2iGui.get().getDescendants(element);
-	var objects = In2iGui.get().objects;
+hui.ui.destroyDescendants = function(element) {
+	var desc = hui.ui.getDescendants(element);
+	var objects = hui.ui.objects;
 	for (var i=0; i < desc.length; i++) {
 		var obj  = delete(objects[desc[i].name]);
 		if (!obj) {
-			n2i.log('not found: '+desc[i].name);
+			hui.log('not found: '+desc[i].name);
 		}
 	};
 }
 
-In2iGui.changeState = function(state) {
-	if (In2iGui.state===state) {return;}
-	var all = In2iGui.get().objects,
+/** Gets all ancestors of a widget
+	@param {Widget} A widget
+	@returns {Array} An array of all ancestors
+*/
+hui.ui.getAncestors = function(widget) {
+	var desc = [];
+	var e = widget.element;
+	if (e) {
+		var a = hui.getAncestors(e);
+		var o = [];
+		for (var key in hui.ui.objects) {
+			o.push(hui.ui.objects[key]);
+		}
+		for (var i=0; i < a.length; i++) {
+			for (var j=0; j < o.length; j++) {
+				if (o[j].element==a[i]) {
+					desc.push(o[j]);
+				}
+			}
+		}
+	}
+	return desc;
+}
+
+hui.ui.getDescendants = function(widgetOrElement) {
+	var desc = [],e = widgetOrElement.getElement ? widgetOrElement.getElement() : widgetOrElement;
+	if (e) {
+		var d = e.getElementsByTagName('*');
+		var o = [];
+		for (var key in hui.ui.objects) {
+			o.push(hui.ui.objects[key]);
+		}
+		for (var i=0; i < d.length; i++) {
+			for (var j=0; j < o.length; j++) {
+				if (d[i]==o[j].element) {
+					desc.push(o[j]);
+				}
+			};
+			
+		};
+	}
+	return desc;
+}
+
+hui.ui.getAncestor = function(widget,cls) {
+	var a = hui.ui.getAncestors(widget);
+	for (var i=0; i < a.length; i++) {
+		if (hui.hasClass(a[i].getElement(),cls)) {
+			return a[i];
+		}
+	};
+	return null;
+}
+
+
+
+hui.ui.changeState = function(state) {
+	if (hui.ui.state===state) {return;}
+	var all = hui.ui.objects,
 		key,obj;
 	for (key in all) {
 		obj = all[key];
@@ -8798,43 +3825,43 @@ In2iGui.changeState = function(state) {
 			}
 		}
 	}
-	In2iGui.state=state;
+	hui.ui.state=state;
 }
 
 ///////////////////////////////// Indexes /////////////////////////////
 
-In2iGui.nextIndex = function() {
-	In2iGui.latestIndex++;
-	return 	In2iGui.latestIndex;
+hui.ui.nextIndex = function() {
+	hui.ui.latestIndex++;
+	return 	hui.ui.latestIndex;
 };
 
-In2iGui.nextPanelIndex = function() {
-	In2iGui.latestPanelIndex++;
-	return 	In2iGui.latestPanelIndex;
+hui.ui.nextPanelIndex = function() {
+	hui.ui.latestPanelIndex++;
+	return 	hui.ui.latestPanelIndex;
 };
 
-In2iGui.nextAlertIndex = function() {
-	In2iGui.latestAlertIndex++;
-	return 	In2iGui.latestAlertIndex;
+hui.ui.nextAlertIndex = function() {
+	hui.ui.latestAlertIndex++;
+	return 	hui.ui.latestAlertIndex;
 };
 
-In2iGui.nextTopIndex = function() {
-	In2iGui.latestTopIndex++;
-	return 	In2iGui.latestTopIndex;
+hui.ui.nextTopIndex = function() {
+	hui.ui.latestTopIndex++;
+	return 	hui.ui.latestTopIndex;
 };
 
 ///////////////////////////////// Curtain /////////////////////////////
 
-In2iGui.showCurtain = function(options,zIndex) {
+hui.ui.showCurtain = function(options,zIndex) {
 	var widget = options.widget;
 	if (!widget.curtain) {
-		widget.curtain = n2i.build('div',{'class':'in2igui_curtain',style:'z-index:none'});
+		widget.curtain = hui.build('div',{'class':'in2igui_curtain',style:'z-index:none'});
 		widget.curtain.onclick = function() {
 			if (widget['$curtainWasClicked']) {
 				widget['$curtainWasClicked']();
 			}
 		};
-		var body = n2i.firstByClass(document.body,'in2igui_body');
+		var body = hui.firstByClass(document.body,'in2igui_body');
 		if (!body) {
 			body=document.body;
 		}
@@ -8843,8 +3870,8 @@ In2iGui.showCurtain = function(options,zIndex) {
 	if (options.color) {
 		widget.curtain.style.backgroundColor=options.color;
 	}
-	if (n2i.browser.msie) {
-		widget.curtain.style.height=n2i.getDocumentHeight()+'px';
+	if (hui.browser.msie) {
+		widget.curtain.style.height=hui.getDocumentHeight()+'px';
 	} else {
 		widget.curtain.style.position='fixed';
 		widget.curtain.style.top='0';
@@ -8853,116 +3880,174 @@ In2iGui.showCurtain = function(options,zIndex) {
 		widget.curtain.style.right='0';
 	}
 	widget.curtain.style.zIndex=options.zIndex;
-	n2i.setOpacity(widget.curtain,0);
+	hui.setOpacity(widget.curtain,0);
 	widget.curtain.style.display='block';
-	n2i.ani(widget.curtain,'opacity',0.7,1000,{ease:n2i.ease.slowFastSlow});
+	hui.ani(widget.curtain,'opacity',0.7,1000,{ease:hui.ease.slowFastSlow});
 }
 
-In2iGui.hideCurtain = function(widget) {
+hui.ui.hideCurtain = function(widget) {
 	if (widget.curtain) {
-		n2i.ani(widget.curtain,'opacity',0,200,{hideOnComplete:true});
+		hui.ani(widget.curtain,'opacity',0,200,{hideOnComplete:true});
 	}
 };
 
 //////////////////////////////// Message //////////////////////////////
 
-In2iGui.alert = function(o) {
-	In2iGui.get().alert(o);
+hui.ui.confirm = function(options) {
+	if (!options.name) {
+		options.name = 'in2iguiConfirm';
+	}
+	var alert = hui.ui.get(options.name);
+	var ok;
+	if (!alert) {
+		alert = hui.ui.Alert.create(options);
+		var cancel = hui.ui.Button.create({name:name+'_cancel',text : options.cancel || 'Cancel',highlighted:options.highlighted==='cancel'});
+		cancel.listen({$click:function(){
+			alert.hide();
+			if (options.onCancel) {
+				options.onCancel();
+			}
+			hui.ui.callDelegates(alert,'cancel');
+		}});
+		alert.addButton(cancel);
+	
+		ok = hui.ui.Button.create({name:name+'_ok',text : options.ok || 'OK',highlighted:options.highlighted==='ok'});
+		alert.addButton(ok);
+	} else {
+		alert.update(options);
+		ok = hui.ui.get(name+'_ok');
+		ok.setText(options.ok || 'OK');
+		ok.setHighlighted(options.highlighted=='ok');
+		ok.clearDelegates();
+		hui.ui.get(name+'_cancel').setText(options.ok || 'Cancel');
+		hui.ui.get(name+'_cancel').setHighlighted(options.highlighted=='cancel');
+		if (options.cancel) {hui.ui.get(name+'_cancel').setText(options.cancel);}
+	}
+	ok.listen({$click:function(){
+		alert.hide();
+		if (options.onOK) {
+			options.onOK();
+		}
+		hui.ui.callDelegates(alert,'ok');
+	}});
+	alert.show();
+}
+
+hui.ui.alert = function(options) {
+	if (!this.alertBox) {
+		this.alertBox = hui.ui.Alert.create(options);
+		this.alertBoxButton = hui.ui.Button.create({name:'huiAlertBoxButton',text : 'OK'});
+		this.alertBoxButton.listen({
+			$click$huiAlertBoxButton : function() {
+				hui.ui.alertBox.hide();
+				if (hui.ui.alertBoxCallBack) {
+					hui.ui.alertBoxCallBack();
+					hui.ui.alertBoxCallBack = null;
+				}
+			}
+		});
+		this.alertBox.addButton(this.alertBoxButton);
+	} else {
+		this.alertBox.update(options);
+	}
+	this.alertBoxCallBack = options.onOK;
+	this.alertBoxButton.setText(options.button ? options.button : 'OK');
+	this.alertBox.show();
 };
 
-In2iGui.showMessage = function(options) {
+hui.ui.showMessage = function(options) {
 	if (typeof(options)=='string') {
 		// TODO: Backwards compatibility
 		options={text:options};
 	}
 	if (options.delay) {
-		In2iGui.messageDelayTimer = window.setTimeout(function() {
+		hui.ui.messageDelayTimer = window.setTimeout(function() {
 			options.delay=null;
-			In2iGui.showMessage(options);
+			hui.ui.showMessage(options);
 		},options.delay);
 		return;
 	}
-	window.clearTimeout(In2iGui.messageDelayTimer);
-	if (!In2iGui.message) {
-		In2iGui.message = n2i.build('div',{'class':'in2igui_message',html:'<div><div></div></div>'});
-		if (!n2i.browser.msie) {
-			n2i.setOpacity(In2iGui.message,0);
+	window.clearTimeout(hui.ui.messageDelayTimer);
+	if (!hui.ui.message) {
+		hui.ui.message = hui.build('div',{'class':'in2igui_message',html:'<div><div></div></div>'});
+		if (!hui.browser.msie) {
+			hui.setOpacity(hui.ui.message,0);
 		}
-		document.body.appendChild(In2iGui.message);
+		document.body.appendChild(hui.ui.message);
 	}
-	var inner = In2iGui.message.getElementsByTagName('div')[1];
+	var inner = hui.ui.message.getElementsByTagName('div')[1];
 	if (options.icon) {
-		n2i.dom.clear(inner);
-		inner.appendChild(In2iGui.createIcon(options.icon,24));
-		n2i.dom.addText(inner,options.text);
+		hui.dom.clear(inner);
+		inner.appendChild(hui.ui.createIcon(options.icon,24));
+		hui.dom.addText(inner,options.text);
 	}
 	else if (options.busy) {
 		inner.innerHTML='<span class="in2igui_message_busy"></span>';
-		n2i.dom.addText(inner,options.text);
+		hui.dom.addText(inner,options.text);
 	} else {
-		n2i.dom.setText(inner,options.text);
+		hui.dom.setText(inner,options.text);
 	}
-	In2iGui.message.style.display = 'block';
-	In2iGui.message.style.zIndex = In2iGui.nextTopIndex();
-	In2iGui.message.style.marginLeft = (In2iGui.message.clientWidth/-2)+'px';
-	In2iGui.message.style.marginTop = n2i.getScrollTop()+'px';
-	if (n2i.browser.opacity) {
-		n2i.ani(In2iGui.message,'opacity',1,300);
+	hui.ui.message.style.display = 'block';
+	hui.ui.message.style.zIndex = hui.ui.nextTopIndex();
+	hui.ui.message.style.marginLeft = (hui.ui.message.clientWidth/-2)+'px';
+	hui.ui.message.style.marginTop = hui.getScrollTop()+'px';
+	if (hui.browser.opacity) {
+		hui.ani(hui.ui.message,'opacity',1,300);
 	}
-	window.clearTimeout(In2iGui.messageTimer);
+	window.clearTimeout(hui.ui.messageTimer);
 	if (options.duration) {
-		In2iGui.messageTimer = window.setTimeout(In2iGui.hideMessage,options.duration);
+		hui.ui.messageTimer = window.setTimeout(hui.ui.hideMessage,options.duration);
 	}
 };
 
-In2iGui.hideMessage = function() {
-	window.clearTimeout(In2iGui.messageDelayTimer);
-	if (In2iGui.message) {
-		if (n2i.browser.opacity) {
-			n2i.ani(In2iGui.message,'opacity',0,300,{hideOnComplete:true});
+hui.ui.hideMessage = function() {
+	window.clearTimeout(hui.ui.messageDelayTimer);
+	if (hui.ui.message) {
+		if (hui.browser.opacity) {
+			hui.ani(hui.ui.message,'opacity',0,300,{hideOnComplete:true});
 		} else {
-			In2iGui.message.style.display='none';
+			hui.ui.message.style.display='none';
 		}
 	}
 };
 
-In2iGui.showToolTip = function(options) {
+hui.ui.showToolTip = function(options) {
 	var key = options.key || 'common';
-	var t = In2iGui.toolTips[key];
+	var t = hui.ui.toolTips[key];
 	if (!t) {
-		t = n2i.build('div',{'class':'in2igui_tooltip',style:'display:none;',html:'<div><div></div></div>',parent:document.body});
-		In2iGui.toolTips[key] = t;
+		t = hui.build('div',{'class':'in2igui_tooltip',style:'display:none;',html:'<div><div></div></div>',parent:document.body});
+		hui.ui.toolTips[key] = t;
 	}
-	t.onclick = function() {In2iGui.hideToolTip(options);};
-	var n = n2i.get(options.element);
-	var pos = n2i.getPosition(n);
-	n2i.dom.setText(t.getElementsByTagName('div')[1],options.text);
-	if (t.style.display=='none' && n2i.browser.opacity) {
-		n2i.setOpacity(t,0);
+	t.onclick = function() {hui.ui.hideToolTip(options);};
+	var n = hui.get(options.element);
+	var pos = hui.getPosition(n);
+	hui.dom.setText(t.getElementsByTagName('div')[1],options.text);
+	if (t.style.display=='none' && hui.browser.opacity) {
+		hui.setOpacity(t,0);
 	}
-	n2i.setStyle(t,{'display':'block',zIndex:In2iGui.nextTopIndex()});
-	n2i.setStyle(t,{left:(pos.left-t.clientWidth+4)+'px',top:(pos.top+2-(t.clientHeight/2)+(n.clientHeight/2))+'px'});
-	if (n2i.browser.opacity) {
-		n2i.ani(t,'opacity',1,300);
+	hui.setStyle(t,{'display':'block',zIndex:hui.ui.nextTopIndex()});
+	hui.setStyle(t,{left:(pos.left-t.clientWidth+4)+'px',top:(pos.top+2-(t.clientHeight/2)+(n.clientHeight/2))+'px'});
+	if (hui.browser.opacity) {
+		hui.ani(t,'opacity',1,300);
 	}
 };
 
-In2iGui.hideToolTip = function(options) {
+hui.ui.hideToolTip = function(options) {
 	var key = options ? options.key || 'common' : 'common';
-	var t = In2iGui.toolTips[key];
+	var t = hui.ui.toolTips[key];
 	if (t) {
-		if (!n2i.browser.msie) {
-			n2i.ani(t,'opacity',0,300,{hideOnComplete:true});
+		if (!hui.browser.msie) {
+			hui.ani(t,'opacity',0,300,{hideOnComplete:true});
 		} else {
-			n2i.style.display = 'none';
+			hui.style.display = 'none';
 		}
 	}
 };
 
 /////////////////////////////// Utilities /////////////////////////////
 
-In2iGui.getElement = function(widgetOrElement) {
-	if (n2i.dom.isElement(widgetOrElement)) {
+hui.ui.getElement = function(widgetOrElement) {
+	if (hui.dom.isElement(widgetOrElement)) {
 		return widgetOrElement;
 	} else if (widgetOrElement.getElement) {
 		return widgetOrElement.getElement();
@@ -8970,64 +4055,67 @@ In2iGui.getElement = function(widgetOrElement) {
 	return null;
 }
 
-In2iGui.isWithin = function(e,element) {
-	e = new n2i.Event(e);
-	var offset = {left:n2i.getLeft(element),top:n2i.getTop(element)};
+hui.ui.isWithin = function(e,element) {
+	e = new hui.Event(e);
+	var offset = {left:hui.getLeft(element),top:hui.getTop(element)};
 	var dims = {width:element.clientWidth,height:element.clientHeight};
 	return e.left()>offset.left && e.left()<offset.left+dims.width && e.top()>offset.top && e.top()<offset.top+dims.height;
 };
 
-In2iGui.getIconUrl = function(icon,size) {
-	return In2iGui.context+'/In2iGui/icons/'+icon+size+'.png';
+hui.ui.getIconUrl = function(icon,size) {
+	return hui.ui.context+'/In2iGui/icons/'+icon+size+'.png';
 };
 
-In2iGui.createIcon = function(icon,size) {
-	return n2i.build('span',{'class':'in2igui_icon in2igui_icon_'+size,style:'background-image: url('+In2iGui.getIconUrl(icon,size)+')'});
+hui.ui.createIcon = function(icon,size) {
+	return hui.build('span',{'class':'in2igui_icon in2igui_icon_'+size,style:'background-image: url('+hui.ui.getIconUrl(icon,size)+')'});
 };
 
-In2iGui.onDomReady = In2iGui.onReady = function(func) {
-	if (In2iGui.domReady) {return func();}
-	if (n2i.browser.gecko && n2i.string.endsWith(document.baseURI,'xml')) {
+/**
+ * Called when the DOM is ready and hui.ui is ready
+ */
+hui.ui.onReady = function(func) {
+	if (hui.ui.domReady) {return func();}
+	if (hui.browser.gecko && hui.string.endsWith(document.baseURI,'xml')) {
 		window.setTimeout(func,1000);
 		return;
 	}
-	n2i.onReady(func);
+	hui.onReady(func);
 };
 
-In2iGui.wrapInField = function(e) {
-	var w = n2i.build('div',{'class':'in2igui_field',html:
+hui.ui.wrapInField = function(e) {
+	var w = hui.build('div',{'class':'in2igui_field',html:
 		'<span class="in2igui_field_top"><span><span></span></span></span>'+
 		'<span class="in2igui_field_middle"><span class="in2igui_field_middle"><span class="in2igui_field_content"></span></span></span>'+
 		'<span class="in2igui_field_bottom"><span><span></span></span></span>'
 	});
-	n2i.firstByClass(w,'in2igui_field_content').appendChild(e);
+	hui.firstByClass(w,'in2igui_field_content').appendChild(e);
 	return w;
 };
 
-In2iGui.addFocusClass = function(o) {
+hui.ui.addFocusClass = function(o) {
 	var ce = o.classElement || o.element, c = o['class'];
-	n2i.listen(o.element,'focus',function() {
-		n2i.addClass(ce,c);
+	hui.listen(o.element,'focus',function() {
+		hui.addClass(ce,c);
 	});
-	n2i.listen(o.element,'blur',function() {
-		n2i.removeClass(ce,c);
+	hui.listen(o.element,'blur',function() {
+		hui.removeClass(ce,c);
 	});
 };
 
 
 /////////////////////////////// Validation /////////////////////////////
 
-In2iGui.NumberValidator = function(options) {
-	n2i.override({allowNull:false,min:0,max:10},options)
+hui.ui.NumberValidator = function(options) {
+	hui.override({allowNull:false,min:0,max:10},options)
 	this.min = options.min;
 	this.max = options.max;
 	this.allowNull = options.allowNull;
 	this.middle = Math.max(Math.min(this.max,0),this.min);
 }
 
-In2iGui.NumberValidator.prototype = {
+hui.ui.NumberValidator.prototype = {
 	validate : function(value) {
-		if (n2i.isBlank(value) && this.allowNull) {
+		if (hui.isBlank(value) && this.allowNull) {
 			return {valid:true,value:null};
 		}
 		var number = parseFloat(value);
@@ -9044,42 +4132,42 @@ In2iGui.NumberValidator.prototype = {
 
 /////////////////////////////// Animation /////////////////////////////
 
-In2iGui.fadeIn = function(node,time) {
-	if (n2i.getStyle(node,'display')=='none') {
-		n2i.setStyle(node,{opacity:0,display:''});
+hui.ui.fadeIn = function(node,time) {
+	if (hui.getStyle(node,'display')=='none') {
+		hui.setStyle(node,{opacity:0,display:''});
 	}
-	n2i.animate(node,'opacity',1,time);
+	hui.animate(node,'opacity',1,time);
 };
 
-In2iGui.fadeOut = function(node,time) {
+hui.ui.fadeOut = function(node,time) {
 	hui.animate(node,'opacity',0,time,{hideOnComplete:true});
 };
 
-In2iGui.bounceIn = function(node,time) {
-	if (n2i.browser.msie) {
-		n2i.setStyle(node,{'display':'block',visibility:'visible'});
+hui.ui.bounceIn = function(node,time) {
+	if (hui.browser.msie) {
+		hui.setStyle(node,{'display':'block',visibility:'visible'});
 	} else {
-		n2i.setStyle(node,{'display':'block','opacity':0,visibility:'visible'});
-		n2i.animate(node,'transform','scale(0.1)',0);// rotate(10deg)
+		hui.setStyle(node,{'display':'block','opacity':0,visibility:'visible'});
+		hui.animate(node,'transform','scale(0.1)',0);// rotate(10deg)
 		window.setTimeout(function() {
-			n2i.animate(node,'opacity',1,300);
-			n2i.animate(node,'transform','scale(1)',400,{ease:n2i.ease.backOut}); // rotate(0deg)
+			hui.animate(node,'opacity',1,300);
+			hui.animate(node,'transform','scale(1)',400,{ease:hui.ease.backOut}); // rotate(0deg)
 		});
 	}
 };
 
 //////////////////////////// Positioning /////////////////////////////
 
-In2iGui.positionAtElement = function(element,target,options) {
+hui.ui.positionAtElement = function(element,target,options) {
 	options = options || {};
-	element = n2i.get(element);
-	target = n2i.get(target);
-	var origDisplay = n2i.getStyle(element,'display');
+	element = hui.get(element);
+	target = hui.get(target);
+	var origDisplay = hui.getStyle(element,'display');
 	if (origDisplay=='none') {
-		n2i.setStyle(element,{'visibility':'hidden','display':'block'});
+		hui.setStyle(element,{'visibility':'hidden','display':'block'});
 	}
-	var left = n2i.getLeft(target),
-		top = n2i.getTop(target);
+	var left = hui.getLeft(target),
+		top = hui.getTop(target);
 	var vert=options.vertical || null;
 	if (options.horizontal && options.horizontal=='right') {
 		left = left+target.clientWidth-element.clientWidth;
@@ -9091,13 +4179,13 @@ In2iGui.positionAtElement = function(element,target,options) {
 	}
 	left+=(options.left || 0);
 	top+=(options.top || 0);
-	n2i.setStyle(element,{'left':left+'px','top':top+'px'});
+	hui.setStyle(element,{'left':left+'px','top':top+'px'});
 	if (origDisplay=='none') {
-		n2i.setStyle(element,{'visibility':'visible','display':'none'});
+		hui.setStyle(element,{'visibility':'visible','display':'none'});
 	}
 };
 
-In2iGui.getTextAreaHeight = function(input) {
+hui.ui.getTextAreaHeight = function(input) {
 	var t = this.textAreaDummy;
 	if (!t) {
 		t = this.textAreaDummy = document.createElement('div');
@@ -9108,7 +4196,7 @@ In2iGui.getTextAreaHeight = function(input) {
 	if (html[html.length-1]==='\n') {
 		html+='x';
 	}
-	html = n2i.escape(html).replace(/\n/g,'<br/>');
+	html = hui.escape(html).replace(/\n/g,'<br/>');
 	t.innerHTML = html;
 	t.style.width=(input.clientWidth)+'px';
 	return t.clientHeight;
@@ -9116,36 +4204,35 @@ In2iGui.getTextAreaHeight = function(input) {
 
 //////////////////// Delegating ////////////////////
 
-In2iGui.extend = function(obj,options) {
+hui.ui.extend = function(obj,options) {
 	if (!obj.name) {
-		In2iGui.latestObjectIndex++;
-		obj.name = 'unnamed'+In2iGui.latestObjectIndex;
+		hui.ui.latestObjectIndex++;
+		obj.name = 'unnamed'+hui.ui.latestObjectIndex;
 	}
 	if (options!==undefined) {
 		if (obj.options) {
-			obj.options = n2i.override(obj.options,options);
+			obj.options = hui.override(obj.options,options);
 		}
-		obj.element = n2i.get(options.element);
+		obj.element = hui.get(options.element);
 		obj.name = options.name;
 	}
-	var ctrl = In2iGui.get();
-	ctrl.objects[obj.name] = obj;
+	hui.ui.objects[obj.name] = obj;
 	obj.delegates = [];
 	obj.listen = function(delegate) {
-		n2i.addToArray(this.delegates,delegate);
+		hui.addToArray(this.delegates,delegate);
 		return this;
 	}
 	obj.removeDelegate = function(delegate) {
-		n2i.removeFromArray(this.delegates,delegate);
+		hui.removeFromArray(this.delegates,delegate);
 	}
 	obj.clearDelegates = function() {
 		this.delegates = [];
 	}
 	obj.fire = function(method,value,event) {
-		In2iGui.callDelegates(this,method,value,event);
+		hui.ui.callDelegates(this,method,value,event);
 	}
 	obj.fireProperty = function(key,value) {
-		In2iGui.firePropertyChange(this,key,value);
+		hui.ui.firePropertyChange(this,key,value);
 	}
 	if (!obj.getElement) {
 		obj.getElement = function() {
@@ -9156,22 +4243,21 @@ In2iGui.extend = function(obj,options) {
 		obj.valueForProperty = function(p) {return this[p]};
 	}
 	if (obj['$$layout']) {
-		ctrl.layoutWidgets.push(obj);
+		hui.ui.layoutWidgets.push(obj);
 	}
 };
 
-In2iGui.callDelegatesDrop = function(dragged,dropped) {
-	var gui = In2iGui.get();
-	for (var i=0; i < gui.delegates.length; i++) {
-		if (gui.delegates[i]['$drop$'+dragged.kind+'$'+dropped.kind]) {
-			gui.delegates[i]['$drop$'+dragged.kind+'$'+dropped.kind](dragged,dropped);
+hui.ui.callDelegatesDrop = function(dragged,dropped) {
+	for (var i=0; i < hui.ui.delegates.length; i++) {
+		if (hui.ui.delegates[i]['$drop$'+dragged.kind+'$'+dropped.kind]) {
+			hui.ui.delegates[i]['$drop$'+dragged.kind+'$'+dropped.kind](dragged,dropped);
 		}
 	}
 };
 
-In2iGui.callAncestors = function(obj,method,value,event) {
+hui.ui.callAncestors = function(obj,method,value,event) {
 	if (typeof(value)=='undefined') value=obj;
-	var d = In2iGui.get().getAncestors(obj);
+	var d = hui.ui.getAncestors(obj);
 	for (var i=0; i < d.length; i++) {
 		if (d[i][method]) {
 			d[i][method](value,event);
@@ -9179,14 +4265,14 @@ In2iGui.callAncestors = function(obj,method,value,event) {
 	};
 };
 
-In2iGui.callDescendants = function(obj,method,value,event) {
+hui.ui.callDescendants = function(obj,method,value,event) {
 	if (typeof(value)=='undefined') {
 		value=obj;
 	}
 	if (!method[0]=='$') {
 		method = '$'+method;
 	}
-	var d = In2iGui.get().getDescendants(obj);
+	var d = hui.ui.getDescendants(obj);
 	for (var i=0; i < d.length; i++) {
 		if (d[i][method]) {
 			thisResult = d[i][method](value,event);
@@ -9194,15 +4280,15 @@ In2iGui.callDescendants = function(obj,method,value,event) {
 	};
 };
 
-In2iGui.callVisible = function(widget) {
-	In2iGui.callDescendants(widget,'$visibilityChanged');
+hui.ui.callVisible = function(widget) {
+	hui.ui.callDescendants(widget,'$visibilityChanged');
 }
 
-In2iGui.listen = function(d) {
-	In2iGui.get().listen(d);
+hui.ui.listen = function(delegate) {
+	hui.ui.delegates.push(delegate);
 }
 
-In2iGui.callDelegates = function(obj,method,value,event) {
+hui.ui.callDelegates = function(obj,method,value,event) {
 	if (typeof(value)=='undefined') {
 		value=obj;
 	}
@@ -9221,19 +4307,18 @@ In2iGui.callDelegates = function(obj,method,value,event) {
 			}
 		};
 	}
-	var superResult = In2iGui.callSuperDelegates(obj,method,value,event);
+	var superResult = hui.ui.callSuperDelegates(obj,method,value,event);
 	if (result==null && superResult!=null) {
 		result = superResult;
 	}
 	return result;
 };
 
-In2iGui.callSuperDelegates = function(obj,method,value,event) {
+hui.ui.callSuperDelegates = function(obj,method,value,event) {
 	if (typeof(value)=='undefined') value=obj;
-	var gui = In2iGui.get();
 	var result = null;
-	for (var i=0; i < gui.delegates.length; i++) {
-		var delegate = gui.delegates[i];
+	for (var i=0; i < hui.ui.delegates.length; i++) {
+		var delegate = hui.ui.delegates[i];
 		var thisResult = null;
 		if (obj.name && delegate['$'+method+'$'+obj.name]) {
 			thisResult = delegate['$'+method+'$'+obj.name](value,event);
@@ -9247,15 +4332,14 @@ In2iGui.callSuperDelegates = function(obj,method,value,event) {
 	return result;
 };
 
-In2iGui.resolveImageUrl = function(widget,img,width,height) {
+hui.ui.resolveImageUrl = function(widget,img,width,height) {
 	for (var i=0; i < widget.delegates.length; i++) {
 		if (widget.delegates[i].$resolveImageUrl) {
 			return widget.delegates[i].$resolveImageUrl(img,width,height);
 		}
 	};
-	var gui = In2iGui.get();
-	for (var j=0; j < gui.delegates.length; j++) {
-		var delegate = gui.delegates[j];
+	for (var j=0; j < hui.ui.delegates.length; j++) {
+		var delegate = hui.ui.delegates[j];
 		if (delegate.$resolveImageUrl) {
 			return delegate.$resolveImageUrl(img,width,height);
 		}
@@ -9265,16 +4349,16 @@ In2iGui.resolveImageUrl = function(widget,img,width,height) {
 
 ////////////////////////////// Bindings ///////////////////////////
 
-In2iGui.firePropertyChange = function(obj,name,value) {
-	In2iGui.callDelegates(obj,'propertyChanged',{property:name,value:value});
+hui.ui.firePropertyChange = function(obj,name,value) {
+	hui.ui.callDelegates(obj,'propertyChanged',{property:name,value:value});
 };
 
-In2iGui.bind = function(expression,delegate) {
+hui.ui.bind = function(expression,delegate) {
 	if (expression.charAt(0)=='@') {
 		var pair = expression.substring(1).split('.');
-		var obj = In2iGui.get(pair[0]);
+		var obj = hui.ui.get(pair[0]);
 		if (!obj) {
-			n2i.log('Unable to bind to '+expression);
+			hui.log('Unable to bind to '+expression);
 			return;
 		}
 		var p = pair.slice(1).join('.');
@@ -9292,11 +4376,11 @@ In2iGui.bind = function(expression,delegate) {
 
 //////////////////////////////// Data /////////////////////////////
 
-In2iGui.request = function(options) {
-	options = n2i.override({method:'post',parameters:{}},options);
+hui.ui.request = function(options) {
+	options = hui.override({method:'post',parameters:{}},options);
 	if (options.json) {
 		for (var key in options.json) {
-			options.parameters[key]=n2i.toJSON(options.json[key]);
+			options.parameters[key]=hui.toJSON(options.json[key]);
 		}
 	}
 	var onSuccess = options.onSuccess;
@@ -9304,30 +4388,30 @@ In2iGui.request = function(options) {
 	options.onSuccess=function(t) {
 		if (message) {
 			if (message.success) {
-				In2iGui.showMessage({text:message.success,icon:'common/success',duration:message.duration || 2000});
+				hui.ui.showMessage({text:message.success,icon:'common/success',duration:message.duration || 2000});
 			} else if (message.start) {
-				In2iGui.hideMessage();
+				hui.ui.hideMessage();
 			}
 		}
 		var str,json;
 		if (typeof(onSuccess)=='string') {
-			if (!n2i.request.isXMLResponse(t)) {
+			if (!hui.request.isXMLResponse(t)) {
 				str = t.responseText.replace(/^\s+|\s+$/g, '');
 				if (str.length>0) {
-					json = n2i.fromJSON(t.responseText);
+					json = hui.fromJSON(t.responseText);
 				} else {
 					json = '';
 				}
-				In2iGui.callDelegates(json,'success$'+onSuccess);
+				hui.ui.callDelegates(json,'success$'+onSuccess);
 			} else {
-				In2iGui.callDelegates(t,'success$'+onSuccess);
+				hui.ui.callDelegates(t,'success$'+onSuccess);
 			}
-		} else if (n2i.request.isXMLResponse(t) && options.onXML) {
+		} else if (hui.request.isXMLResponse(t) && options.onXML) {
 			options.onXML(t.responseXML);
 		} else if (options.onJSON) {
 			str = t.responseText.replace(/^\s+|\s+$/g, '');
 			if (str.length>0) {
-				json = n2i.fromJSON(t.responseText);
+				json = hui.fromJSON(t.responseText);
 			} else {
 				json = null;
 			}
@@ -9341,29 +4425,29 @@ In2iGui.request = function(options) {
 	var onFailure = options.onFailure;
 	options.onFailure = function(t) {
 		if (typeof(onFailure)=='string') {
-			In2iGui.callDelegates(t,'failure$'+onFailure)
+			hui.ui.callDelegates(t,'failure$'+onFailure)
 		} else if (typeof(onFailure)=='function') {
 			onFailure(t);
 		}
 	}
 	options.onException = function(t,e) {
-		n2i.log(t);
-		n2i.log(e);
+		hui.log(t);
+		hui.log(e);
 	};
 	if (options.message && options.message.start) {
-		In2iGui.showMessage({text:options.message.start,busy:true,delay:options.message.delay});
+		hui.ui.showMessage({text:options.message.start,busy:true,delay:options.message.delay});
 	}
-	n2i.request(options);
+	hui.request(options);
 };
 
-In2iGui.parseItems = function(doc) {
+hui.ui.parseItems = function(doc) {
 	var root = doc.documentElement;
 	var out = [];
-	In2iGui.parseSubItems(root,out);
+	hui.ui.parseSubItems(root,out);
 	return out;
 };
 
-In2iGui.parseSubItems = function(parent,array) {
+hui.ui.parseSubItems = function(parent,array) {
 	var children = parent.childNodes;
 	for (var i=0; i < children.length; i++) {
 		var node = children[i];
@@ -9371,7 +4455,7 @@ In2iGui.parseSubItems = function(parent,array) {
 			array.push({title:node.getAttribute('title'),type:'title'})
 		} else if (node.nodeType==1 && node.nodeName=='item') {
 			var sub = [];
-			In2iGui.parseSubItems(node,sub);
+			hui.ui.parseSubItems(node,sub);
 			array.push({
 				title:node.getAttribute('title'),
 				value:node.getAttribute('value'),
@@ -9384,43 +4468,50 @@ In2iGui.parseSubItems = function(parent,array) {
 	};
 }
 
-In2iGui.Bundle = function(strings) {
+hui.ui.Bundle = function(strings) {
 	this.strings = strings;
 }
 
-In2iGui.Bundle.prototype = {
+hui.ui.Bundle.prototype = {
 	get : function(key) {
 		var values = this.strings[key];
 		if (values) {
-			return values[In2iGui.language];
+			return values[hui.ui.language];
 		}
-		n2i.log(key+' not found for language:'+In2iGui.language);
+		hui.log(key+' not found for language:'+hui.ui.language);
 		return key;
 	}
+}
+
+hui.ui.require = function(names,func) {
+	for (var i = names.length - 1; i >= 0; i--){
+		names[i] = hui.ui.context+'In2iGui/js/'+names[i]+'.js';
+	};
+	hui.require(names,func);
 }
 /* EOF */
 /** A data source
  * @constructor
  */
-In2iGui.Source = function(options) {
-	this.options = n2i.override({url:null,dwr:null,parameters:[],lazy:false},options);
+hui.ui.Source = function(options) {
+	this.options = hui.override({url:null,dwr:null,parameters:[],lazy:false},options);
 	this.name = options.name;
 	this.data = null;
 	this.parameters = this.options.parameters;
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 	if (options.delegate) {
 		this.listen(options.delegate);
 	}
 	this.busy=false;
-	In2iGui.onDomReady(this.init.bind(this));
+	hui.ui.onReady(this.init.bind(this));
 };
 
-In2iGui.Source.prototype = {
+hui.ui.Source.prototype = {
 	/** @private */
 	init : function() {
 		var self = this;
-		n2i.each(this.parameters,function(parm) {
-			var val = In2iGui.bind(parm.value,function(value) {
+		hui.each(this.parameters,function(parm) {
+			var val = hui.ui.bind(parm.value,function(value) {
 				self.changeParameter(parm.key,value);
 			});
 			parm.value = self.convertValue(val);
@@ -9460,18 +4551,18 @@ In2iGui.Source.prototype = {
 				prms[p.key] = p.value;
 			};
 			this.busy=true;
-			In2iGui.callDelegates(this,'sourceIsBusy');
-			n2i.request({
+			hui.ui.callDelegates(this,'sourceIsBusy');
+			hui.request({
 				method:'post',
 				url:this.options.url,
 				parameters:prms,
 				onSuccess : function(t) {self.parse(t)},
 				onException : function(e,t) {
-					n2i.log('Exception while loading source...')
-					n2i.log(e)
+					hui.log('Exception while loading source...')
+					hui.log(e)
 				},
 				onFailure : function(t) {
-					In2iGui.callDelegates(self,'sourceFailed');
+					hui.ui.callDelegates(self,'sourceFailed');
 				}
 			});
 		} else if (this.options.dwr) {
@@ -9486,7 +4577,7 @@ In2iGui.Source.prototype = {
 			};
 			args[args.length-1]=function(r) {self.parseDWR(r)};
 			this.busy=true;
-			In2iGui.callDelegates(this,'sourceIsBusy');
+			hui.ui.callDelegates(this,'sourceIsBusy');
 			facade[method].apply(facade,args);
 		}
 	},
@@ -9496,7 +4587,7 @@ In2iGui.Source.prototype = {
 		if (this.pendingRefresh) {
 			this.refresh();
 		} else {
-			In2iGui.callDelegates(this,'sourceIsNotBusy');
+			hui.ui.callDelegates(this,'sourceIsNotBusy');
 		}
 	},
 	/** @private */
@@ -9507,7 +4598,7 @@ In2iGui.Source.prototype = {
 			var str = t.responseText.replace(/^\s+|\s+$/g, ''),
 				json = null;
 			if (str.length>0) {
-				json = n2i.fromJSON(t.responseText);
+				json = hui.fromJSON(t.responseText);
 			}
 			this.fire('objectsLoaded',json);
 		}
@@ -9516,7 +4607,7 @@ In2iGui.Source.prototype = {
 	/** @private */
 	parseXML : function(doc) {
 		if (doc.documentElement.tagName=='items') {
-			this.data = In2iGui.parseItems(doc);
+			this.data = hui.ui.parseItems(doc);
 			this.fire('itemsLoaded',this.data);
 		} else if (doc.documentElement.tagName=='list') {
 			this.fire('listLoaded',doc);
@@ -9531,7 +4622,7 @@ In2iGui.Source.prototype = {
 		this.end();
 	},
 	addParameter : function(parm) {
-		//n2i.log(parm.value);
+		//hui.log(parm.value);
 		this.parameters.push(parm);
 	},
 	changeParameter : function(key,value) {
@@ -9549,34 +4640,34 @@ In2iGui.Source.prototype = {
 	}
 }
 
-/* EOF */In2iGui.getDragProxy = function() {
-	if (!In2iGui.dragProxy) {
-		In2iGui.dragProxy = n2i.build('div',{'class':'in2igui_dragproxy',style:'display:none'});
-		document.body.appendChild(In2iGui.dragProxy);
+/* EOF */hui.ui.getDragProxy = function() {
+	if (!hui.ui.dragProxy) {
+		hui.ui.dragProxy = hui.build('div',{'class':'in2igui_dragproxy',style:'display:none'});
+		document.body.appendChild(hui.ui.dragProxy);
 	}
-	return In2iGui.dragProxy;
+	return hui.ui.dragProxy;
 };
 
-In2iGui.startDrag = function(e,element,options) {
-	e = new n2i.Event(e);
+hui.ui.startDrag = function(e,element,options) {
+	e = new hui.Event(e);
 	var info = element.dragDropInfo;
-	In2iGui.dropTypes = In2iGui.findDropTypes(info);
-	if (!In2iGui.dropTypes) return;
-	var proxy = In2iGui.getDragProxy();
-	n2i.listen(document.body,'mousemove',In2iGui.dragListener);
-	n2i.listen(document.body,'mouseup',In2iGui.dragEndListener);
-	In2iGui.dragInfo = info;
+	hui.ui.dropTypes = hui.ui.findDropTypes(info);
+	if (!hui.ui.dropTypes) return;
+	var proxy = hui.ui.getDragProxy();
+	hui.listen(document.body,'mousemove',hui.ui.dragListener);
+	hui.listen(document.body,'mouseup',hui.ui.dragEndListener);
+	hui.ui.dragInfo = info;
 	if (info.icon) {
-		proxy.style.backgroundImage = 'url('+In2iGui.getIconUrl(info.icon,1)+')';
+		proxy.style.backgroundImage = 'url('+hui.ui.getIconUrl(info.icon,1)+')';
 	}
-	In2iGui.startDragPos = {top:e.top(),left:e.left()};
-	proxy.innerHTML = info.title ? '<span>'+n2i.escape(info.title)+'</span>' : '###';
-	In2iGui.dragging = true;
+	hui.ui.startDragPos = {top:e.top(),left:e.left()};
+	proxy.innerHTML = info.title ? '<span>'+hui.escape(info.title)+'</span>' : '###';
+	hui.ui.dragging = true;
 	document.body.onselectstart = function () { return false; };
 };
 
-In2iGui.findDropTypes = function(drag) {
-	var gui = In2iGui.get();
+hui.ui.findDropTypes = function(drag) {
+	var gui = hui.ui;
 	var drops = null;
 	for (var i=0; i < gui.delegates.length; i++) {
 		if (gui.delegates[i].dragDrop) {
@@ -9592,26 +4683,26 @@ In2iGui.findDropTypes = function(drag) {
 	return drops;
 };
 
-In2iGui.dragListener = function(e) {
-	e = new n2i.Event(e);
-	In2iGui.dragProxy.style.left = (e.left()+10)+'px';
-	In2iGui.dragProxy.style.top = e.top()+'px';
-	In2iGui.dragProxy.style.display='block';
-	var target = In2iGui.findDropTarget(e.getElement());
-	if (target && In2iGui.dropTypes[target.dragDropInfo['kind']]) {
-		if (In2iGui.latestDropTarget) {
-			n2i.removeClass(In2iGui.latestDropTarget,'in2igui_drop');
+hui.ui.dragListener = function(e) {
+	e = new hui.Event(e);
+	hui.ui.dragProxy.style.left = (e.left()+10)+'px';
+	hui.ui.dragProxy.style.top = e.top()+'px';
+	hui.ui.dragProxy.style.display='block';
+	var target = hui.ui.findDropTarget(e.getElement());
+	if (target && hui.ui.dropTypes[target.dragDropInfo['kind']]) {
+		if (hui.ui.latestDropTarget) {
+			hui.removeClass(hui.ui.latestDropTarget,'in2igui_drop');
 		}
-		n2i.addClass(target,'in2igui_drop');
-		In2iGui.latestDropTarget = target;
-	} else if (In2iGui.latestDropTarget) {
-		n2i.removeClass(In2iGui.latestDropTarget,'in2igui_drop');
-		In2iGui.latestDropTarget = null;
+		hui.addClass(target,'in2igui_drop');
+		hui.ui.latestDropTarget = target;
+	} else if (hui.ui.latestDropTarget) {
+		hui.removeClass(hui.ui.latestDropTarget,'in2igui_drop');
+		hui.ui.latestDropTarget = null;
 	}
 	return false;
 };
 
-In2iGui.findDropTarget = function(node) {
+hui.ui.findDropTarget = function(node) {
 	while (node) {
 		if (node.dragDropInfo) {
 			return node;
@@ -9621,58 +4712,58 @@ In2iGui.findDropTarget = function(node) {
 	return null;
 };
 
-In2iGui.dragEndListener = function(event) {
-	n2i.unListen(document.body,'mousemove',In2iGui.dragListener);
-	n2i.unListen(document.body,'mouseup',In2iGui.dragEndListener);
-	In2iGui.dragging = false;
-	if (In2iGui.latestDropTarget) {
-		n2i.removeClass(In2iGui.latestDropTarget,'in2igui_drop');
-		In2iGui.callDelegatesDrop(In2iGui.dragInfo,In2iGui.latestDropTarget.dragDropInfo);
-		In2iGui.dragProxy.style.display='none';
+hui.ui.dragEndListener = function(event) {
+	hui.unListen(document.body,'mousemove',hui.ui.dragListener);
+	hui.unListen(document.body,'mouseup',hui.ui.dragEndListener);
+	hui.ui.dragging = false;
+	if (hui.ui.latestDropTarget) {
+		hui.removeClass(hui.ui.latestDropTarget,'in2igui_drop');
+		hui.ui.callDelegatesDrop(hui.ui.dragInfo,hui.ui.latestDropTarget.dragDropInfo);
+		hui.ui.dragProxy.style.display='none';
 	} else {
-		n2i.ani(In2iGui.dragProxy,'left',(In2iGui.startDragPos.left+10)+'px',200,{ease:n2i.ease.fastSlow});
-		n2i.ani(In2iGui.dragProxy,'top',(In2iGui.startDragPos.top-5)+'px',200,{ease:n2i.ease.fastSlow,hideOnComplete:true});
+		hui.animate(hui.ui.dragProxy,'left',(hui.ui.startDragPos.left+10)+'px',200,{ease:hui.ease.fastSlow});
+		hui.animate(hui.ui.dragProxy,'top',(hui.ui.startDragPos.top-5)+'px',200,{ease:hui.ease.fastSlow,hideOnComplete:true});
 	}
-	In2iGui.latestDropTarget=null;
+	hui.ui.latestDropTarget=null;
 	document.body.onselectstart=null;
 };
 
-In2iGui.dropOverListener = function(event) {
-	if (In2iGui.dragging) {
+hui.ui.dropOverListener = function(event) {
+	if (hui.ui.dragging) {
 		//this.style.backgroundColor='#3875D7';
 	}
 };
 
-In2iGui.dropOutListener = function(event) {
-	if (In2iGui.dragging) {
+hui.ui.dropOutListener = function(event) {
+	if (hui.ui.dragging) {
 		//this.style.backgroundColor='';
 	}
 };/**
  * @constructor
  */
-In2iGui.Window = function(options) {
-	this.element = n2i.get(options.element);
+hui.ui.Window = function(options) {
+	this.element = hui.get(options.element);
 	this.name = options.name;
-	this.close = n2i.firstByClass(this.element,'in2igui_window_close');
-	this.titlebar = n2i.firstByClass(this.element,'in2igui_window_titlebar');
-	this.title = n2i.firstByClass(this.titlebar,'in2igui_window_title');
-	this.content = n2i.firstByClass(this.element,'in2igui_window_body');
-	this.front = n2i.firstByClass(this.element,'in2igui_window_front');
-	this.back = n2i.firstByClass(this.element,'in2igui_window_back');
+	this.close = hui.firstByClass(this.element,'in2igui_window_close');
+	this.titlebar = hui.firstByClass(this.element,'in2igui_window_titlebar');
+	this.title = hui.firstByClass(this.titlebar,'in2igui_window_title');
+	this.content = hui.firstByClass(this.element,'in2igui_window_body');
+	this.front = hui.firstByClass(this.element,'in2igui_window_front');
+	this.back = hui.firstByClass(this.element,'in2igui_window_back');
 	if (this.back) {
-		n2i.effect.makeFlippable({container:this.element,front:this.front,back:this.back});
+		hui.effect.makeFlippable({container:this.element,front:this.front,back:this.back});
 	}
 	this.visible = false;
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 	this.addBehavior();
 }
 
-In2iGui.Window.create = function(options) {
-	options = n2i.override({title:'Window',close:true},options);
+hui.ui.Window.create = function(options) {
+	options = hui.override({title:'Window',close:true},options);
 	var html = '<div class="in2igui_window_front">'+(options.close ? '<div class="in2igui_window_close"></div>' : '')+
 		'<div class="in2igui_window_titlebar"><div><div>';
 		if (options.icon) {
-			html+='<span class="in2igui_window_icon" style="background-image: url('+In2iGui.getIconUrl(options.icon,1)+')"></span>';
+			html+='<span class="in2igui_window_icon" style="background-image: url('+hui.ui.getIconUrl(options.icon,1)+')"></span>';
 		}
 	html+='<span class="in2igui_window_title">'+options.title+'</span></div></div></div>'+
 		'<div class="in2igui_window_content"><div class="in2igui_window_content"><div class="in2igui_window_body" style="'+
@@ -9681,63 +4772,63 @@ In2iGui.Window.create = function(options) {
 		'">'+
 		'</div></div></div>'+
 		'<div class="in2igui_window_bottom"><div class="in2igui_window_bottom"><div class="in2igui_window_bottom"></div></div></div></div>';
-	options.element = n2i.build('div',{'class':'in2igui_window'+(options.variant ? ' in2igui_window_'+options.variant : ''),html:html,parent:document.body});
-	return new In2iGui.Window(options);
+	options.element = hui.build('div',{'class':'in2igui_window'+(options.variant ? ' in2igui_window_'+options.variant : ''),html:html,parent:document.body});
+	return new hui.ui.Window(options);
 }
 
-In2iGui.Window.prototype = {
+hui.ui.Window.prototype = {
 	/** @private */
 	addBehavior : function() {
 		var self = this;
 		if (this.close) {
-			n2i.listen(this.close,'click',function(e) {
+			hui.listen(this.close,'click',function(e) {
 				this.hide();
 				this.fire('userClosedWindow');
 			}.bind(this)
 			);
-			n2i.listen(this.close,'mousedown',function(e) {n2i.stop(e)});
+			hui.listen(this.close,'mousedown',function(e) {hui.stop(e)});
 		}
 		this.titlebar.onmousedown = function(e) {self.startDrag(e);return false;};
-		n2i.listen(this.element,'mousedown',function() {
-			self.element.style.zIndex=In2iGui.nextPanelIndex();
+		hui.listen(this.element,'mousedown',function() {
+			self.element.style.zIndex=hui.ui.nextPanelIndex();
 		});
 	},
 	setTitle : function(title) {
-		n2i.dom.setText(this.title,title);
+		hui.dom.setText(this.title,title);
 	},
 	show : function(options) {
 		if (this.visible) {return}
 		options = options || {};
-		n2i.setStyle(this.element,{
-			zIndex : In2iGui.nextPanelIndex(), visibility : 'hidden', display : 'block'
+		hui.setStyle(this.element,{
+			zIndex : hui.ui.nextPanelIndex(), visibility : 'hidden', display : 'block'
 		})
 		var width = this.element.clientWidth;
-		n2i.setStyle(this.element,{
+		hui.setStyle(this.element,{
 			width : width+'px' , visibility : 'visible'
 		});
 		if (options.avoid) {
-			n2i.place({insideViewPort : true, target : {element : options.avoid, vertical : .5, horizontal : 1}, source : {element : this.element, vertical : .5, horizontal : 0} });
+			hui.place({insideViewPort : true, target : {element : options.avoid, vertical : .5, horizontal : 1}, source : {element : this.element, vertical : .5, horizontal : 0} });
 		} else {
 			if (!this.element.style.top) {
-				this.element.style.top = (n2i.getScrollTop()+40)+'px';
+				this.element.style.top = (hui.getScrollTop()+40)+'px';
 			}
 			if (!this.element.style.left) {
-				this.element.style.left = Math.round((n2i.getViewPortWidth()-width)/2)+'px';
+				this.element.style.left = Math.round((hui.getViewPortWidth()-width)/2)+'px';
 			}			
 		}
-		if (n2i.browser.opacity) {
-			n2i.ani(this.element,'opacity',1,0);
+		if (hui.browser.opacity) {
+			hui.ani(this.element,'opacity',1,0);
 		}
 		this.visible = true;
-		In2iGui.callVisible(this);
+		hui.ui.callVisible(this);
 	},
 	toggle : function() {
 		(this.visible ? this.hide() : this.show() );
 	},
 	hide : function() {
 		if (!this.visible) return;
-		if (n2i.browser.opacity) {
-			n2i.ani(this.element,'opacity',0,200,{hideOnComplete:true});
+		if (hui.browser.opacity) {
+			hui.ani(this.element,'opacity',0,200,{hideOnComplete:true});
 		} else {
 			this.element.style.display='none';
 		}
@@ -9752,23 +4843,23 @@ In2iGui.Window.prototype = {
 	},
 	addToBack : function(widgetOrNode) {
 		if (!this.back) {
-			this.back = n2i.build('div',{className:'in2igui_window_back'});
+			this.back = hui.build('div',{className:'in2igui_window_back'});
 			this.element.insertBefore(this.back,this.front);
-			n2i.effect.makeFlippable({container:this.element,front:this.front,back:this.back});
+			hui.effect.makeFlippable({container:this.element,front:this.front,back:this.back});
 		}
-		this.back.appendChild(In2iGui.getElement(widgetOrNode));
+		this.back.appendChild(hui.ui.getElement(widgetOrNode));
 	},
 	setVariant : function(variant) {
-		n2i.removeClass(this.element,'in2igui_window_dark');
-		n2i.removeClass(this.element,'in2igui_window_light');
+		hui.removeClass(this.element,'in2igui_window_dark');
+		hui.removeClass(this.element,'in2igui_window_light');
 		if (variant=='dark' || variant=='light') {
-			n2i.addClass(this.element,'in2igui_window_'+variant);
+			hui.addClass(this.element,'in2igui_window_'+variant);
 		}
 	},
 	flip : function() {
 		if (this.back) {
 			this.back.style.minHeight = this.element.clientHeight+'px';
-			n2i.effect.flip({element:this.element});
+			hui.effect.flip({element:this.element});
 		}
 	},
 
@@ -9776,18 +4867,18 @@ In2iGui.Window.prototype = {
 
 	/** @private */
 	startDrag : function(e) {
-		var event = new n2i.Event(e);
-		this.element.style.zIndex=In2iGui.nextPanelIndex();
-		var pos = { top : n2i.getTop(this.element), left : n2i.getLeft(this.element) };
+		var event = new hui.Event(e);
+		this.element.style.zIndex=hui.ui.nextPanelIndex();
+		var pos = { top : hui.getTop(this.element), left : hui.getLeft(this.element) };
 		this.dragState = {left:event.left()-pos.left,top:event.top()-pos.top};
 		this.latestPosition = {left: this.dragState.left, top:this.dragState.top};
 		this.latestTime = new Date().getMilliseconds();
 		var self = this;
 		this.moveListener = function(e) {self.drag(e)};
 		this.upListener = function(e) {self.endDrag(e)};
-		n2i.listen(document,'mousemove',this.moveListener);
-		n2i.listen(document,'mouseup',this.upListener);
-		n2i.listen(document,'mousedown',this.upListener);
+		hui.listen(document,'mousemove',this.moveListener);
+		hui.listen(document,'mouseup',this.upListener);
+		hui.listen(document,'mousedown',this.upListener);
 		event.stop();
 		document.body.onselectstart = function () { return false; };
 		return false;
@@ -9803,7 +4894,7 @@ In2iGui.Window.prototype = {
 	},
 	/** @private */
 	drag : function(e) {
-		var event = new n2i.Event(e);
+		var event = new hui.Event(e);
 		this.element.style.right = 'auto';
 		var top = (event.top()-this.dragState.top);
 		var left = (event.left()-this.dragState.left);
@@ -9814,9 +4905,9 @@ In2iGui.Window.prototype = {
 	},
 	/** @private */
 	endDrag : function(e) {
-		n2i.unListen(document,'mousemove',this.moveListener);
-		n2i.unListen(document,'mouseup',this.upListener);
-		n2i.unListen(document,'mousedown',this.upListener);
+		hui.unListen(document,'mousemove',this.moveListener);
+		hui.unListen(document,'mouseup',this.upListener);
+		hui.unListen(document,'mousedown',this.upListener);
 		document.body.onselectstart = null;
 	}
 }
@@ -9825,27 +4916,27 @@ In2iGui.Window.prototype = {
  * @class
  * This is a formula
  */
-In2iGui.Formula = function(options) {
+hui.hui.Formula = function(options) {
 	this.options = options;
-	In2iGui.extend(this,options);
+	hui.hui.extend(this,options);
 	this.addBehavior();
 }
 
 /** @static Creates a new formula */
-In2iGui.Formula.create = function(o) {
+hui.hui.Formula.create = function(o) {
 	o = o || {};
-	var atts = {'class':'in2igui_formula'};
+	var atts = {'class':'in2igui_formula hui_formula'};
 	if (o.action) {
 		atts.action=o.action;
 	}
 	if (o.method) {
 		atts.method=o.method;
 	}
-	o.element = n2i.build('form',atts);
-	return new In2iGui.Formula(o);
+	o.element = hui.build('form',atts);
+	return new hui.ui.Formula(o);
 }
 
-In2iGui.Formula.prototype = {
+hui.ui.Formula.prototype = {
 	/** @private */
 	addBehavior : function() {
 		this.element.onsubmit=function() {return false;};
@@ -9856,7 +4947,7 @@ In2iGui.Formula.prototype = {
 	/** Returns a map of all values of descendants */
 	getValues : function() {
 		var data = {};
-		var d = In2iGui.get().getDescendants(this);
+		var d = hui.ui.getDescendants(this);
 		for (var i=0; i < d.length; i++) {
 			if (d[i].options && d[i].options.key && d[i].getValue) {
 				data[d[i].options.key] = d[i].getValue();
@@ -9868,7 +4959,7 @@ In2iGui.Formula.prototype = {
 	},
 	/** Sets the values of the descendants */
 	setValues : function(values) {
-		var d = In2iGui.get().getDescendants(this);
+		var d = hui.ui.getDescendants(this);
 		for (var i=0; i < d.length; i++) {
 			if (d[i].options && d[i].options.key) {
 				var key = d[i].options.key;
@@ -9880,7 +4971,7 @@ In2iGui.Formula.prototype = {
 	},
 	/** Sets focus in the first found child */
 	focus : function() {
-		var d = In2iGui.get().getDescendants(this);
+		var d = hui.ui.getDescendants(this);
 		for (var i=0; i < d.length; i++) {
 			if (d[i].focus) {
 				d[i].focus();
@@ -9890,7 +4981,7 @@ In2iGui.Formula.prototype = {
 	},
 	/** Resets all descendants */
 	reset : function() {
-		var d = In2iGui.get().getDescendants(this);
+		var d = hui.ui.getDescendants(this);
 		for (var i=0; i < d.length; i++) {
 			if (d[i].reset) {
 				d[i].reset();
@@ -9902,21 +4993,21 @@ In2iGui.Formula.prototype = {
 		this.element.appendChild(widget.getElement());
 	},
 	/** Creates a new form group and adds it to the form
-	 * @returns {'In2iGui.Formula.Group'} group
+	 * @returns {'hui.ui.Formula.Group'} group
 	 */
 	createGroup : function(options) {
-		var g = In2iGui.Formula.Group.create(options);
+		var g = hui.ui.Formula.Group.create(options);
 		this.add(g);
 		return g;
 	},
 	/** Builds and adds a new group according to a recipe
-	 * @returns {'In2iGui.Formula.Group'} group
+	 * @returns {'hui.ui.Formula.Group'} group
 	 */
 	buildGroup : function(options,recipe) {
 		var g = this.createGroup(options);
-		n2i.each(recipe,function(item) {
-			if (In2iGui.Formula[item.type]) {
-				var w = In2iGui.Formula[item.type].create(item.options);
+		hui.each(recipe,function(item) {
+			if (hui.ui.Formula[item.type]) {
+				var w = hui.ui.Formula[item.type].create(item.options);
 				g.add(w);
 			}
 		});
@@ -9941,52 +5032,52 @@ In2iGui.Formula.prototype = {
  * A form group
  * @constructor
  */
-In2iGui.Formula.Group = function(options) {
+hui.ui.Formula.Group = function(options) {
 	this.name = options.name;
-	this.element = n2i.get(options.element);
-	this.body = n2i.firstByTag(this.element,'tbody');
-	this.options = n2i.override({above:true},options);
-	In2iGui.extend(this);
+	this.element = hui.get(options.element);
+	this.body = hui.firstByTag(this.element,'tbody');
+	this.options = hui.override({above:true},options);
+	hui.ui.extend(this);
 }
 
 /** Creates a new form group */
-In2iGui.Formula.Group.create = function(options) {
-	options = n2i.override({above:true},options);
-	var element = options.element = n2i.build('table',
+hui.ui.Formula.Group.create = function(options) {
+	options = hui.override({above:true},options);
+	var element = options.element = hui.build('table',
 		{'class':'in2igui_formula_group'}
 	);
 	if (options.above) {
-		n2i.addClass(element,'in2igui_formula_group_above');
+		hui.addClass(element,'in2igui_formula_group_above');
 	}
-	element.appendChild(n2i.build('tbody'));
-	return new In2iGui.Formula.Group(options);
+	element.appendChild(hui.build('tbody'));
+	return new hui.ui.Formula.Group(options);
 }
 
-In2iGui.Formula.Group.prototype = {
+hui.ui.Formula.Group.prototype = {
 	add : function(widget) {
-		var tr = n2i.build('tr');
+		var tr = hui.build('tr');
 		this.body.appendChild(tr);
-		var td = n2i.build('td',{'class':'in2igui_formula_group'});
+		var td = hui.build('td',{'class':'in2igui_formula_group'});
 		if (widget.getLabel) {
 			var label = widget.getLabel();
 			if (label) {
 				if (this.options.above) {
-					n2i.build('label',{text:label,parent:td});
+					hui.build('label',{text:label,parent:td});
 				} else {
-					var th = n2i.build('th',{parent:tr});
-					n2i.build('label',{text:label,parent:th});
+					var th = hui.build('th',{parent:tr});
+					hui.build('label',{text:label,parent:th});
 				}
 			}
 		}
-		var item = n2i.build('div',{'class':'in2igui_formula_item'});
+		var item = hui.build('div',{'class':'in2igui_formula_item'});
 		item.appendChild(widget.getElement());
 		td.appendChild(item);
 		tr.appendChild(td);
 	},
 	createButtons : function(options) {
-		var tr = n2i.build('tr',{parent:this.body});
-		var td = n2i.build('td',{colspan:this.options.above?1:2,parent:tr});
-		var b = In2iGui.Buttons.create(options);
+		var tr = hui.build('tr',{parent:this.body});
+		var td = hui.build('td',{colspan:this.options.above?1:2,parent:tr});
+		var b = hui.ui.Buttons.create(options);
 		td.appendChild(b.getElement());
 		return b;
 	}
@@ -9998,18 +5089,18 @@ In2iGui.Formula.Group.prototype = {
  * A text fields
  * @constructor
  */
-In2iGui.Formula.Text = function(options) {
-	this.options = n2i.override({label:null,key:null,lines:1,live:false,maxHeight:100},options);
-	this.element = n2i.get(options.element);
+hui.ui.Formula.Text = function(options) {
+	this.options = hui.override({label:null,key:null,lines:1,live:false,maxHeight:100},options);
+	this.element = hui.get(options.element);
 	this.name = options.name;
-	In2iGui.extend(this);
-	this.input = n2i.firstByClass(this.element,'in2igui_formula_text');
+	hui.ui.extend(this);
+	this.input = hui.firstByClass(this.element,'in2igui_formula_text');
 	this.multiline = this.input.tagName.toLowerCase() == 'textarea';
-	this.placeholder = n2i.firstByClass(this.element,'in2igui_field_placeholder');
+	this.placeholder = hui.firstByClass(this.element,'in2igui_field_placeholder');
 	this.value = this.input.value;
 	if (this.placeholder) {
 		var self = this;
-		In2iGui.onDomReady(function() {
+		hui.ui.onReady(function() {
 			window.setTimeout(function() {
 				self.value = self.input.value;
 				self.updateClass();
@@ -10019,55 +5110,58 @@ In2iGui.Formula.Text = function(options) {
 	this.addBehavior();
 }
 
-In2iGui.Formula.Text.create = function(options) {
-	options = n2i.override({lines:1},options);
+hui.ui.Formula.Text.create = function(options) {
+	options = hui.override({lines:1},options);
 	var node,input;
 	if (options.lines>1 || options.multiline) {
-		input = n2i.build('textarea',
+		input = hui.build('textarea',
 			{'class':'in2igui_formula_text','rows':options.lines,style:'height: 32px;'}
 		);
-		node = n2i.build('span',{'class':'in2igui_formula_text_multiline'});
+		node = hui.build('span',{'class':'in2igui_formula_text_multiline'});
 		node.appendChild(input);
 	} else {
-		input = n2i.build('input',{'class':'in2igui_formula_text'});
-		node = n2i.build('span',{'class':'in2igui_field_singleline'});
+		input = hui.build('input',{'class':'in2igui_formula_text'});
+		if (options.secret) {
+			input.setAttribute('type','password');
+		}
+		node = hui.build('span',{'class':'in2igui_field_singleline'});
 		node.appendChild(input);
 	}
 	if (options.value!==undefined) {
 		input.value=options.value;
 	}
-	options.element = In2iGui.wrapInField(node);
-	return new In2iGui.Formula.Text(options);
+	options.element = hui.ui.wrapInField(node);
+	return new hui.ui.Formula.Text(options);
 }
 
-In2iGui.Formula.Text.prototype = {
+hui.ui.Formula.Text.prototype = {
 	/** @private */
 	addBehavior : function() {
-		In2iGui.addFocusClass({element:this.input,classElement:this.element,'class':'in2igui_field_focused'});
-		n2i.listen(this.input,'keyup',this.onKeyUp.bind(this));
+		hui.ui.addFocusClass({element:this.input,classElement:this.element,'class':'in2igui_field_focused'});
+		hui.listen(this.input,'keyup',this.onKeyUp.bind(this));
 		var p = this.element.getElementsByTagName('em')[0];
 		if (p) {
 			this.updateClass();
-			n2i.listen(p,'mousedown',function() {
+			hui.listen(p,'mousedown',function() {
 				window.setTimeout(function() {
 					this.input.focus();
 					this.input.select();
 				}.bind(this)
 			)}.bind(this));
-			n2i.listen(p,'mouseup',function() {
+			hui.listen(p,'mouseup',function() {
 				this.input.focus();
 				this.input.select();
 			}.bind(this));
 		}
 	},
 	updateClass : function() {
-		n2i.setClass(this.element,'in2igui_field_dirty',this.value.length>0);
+		hui.setClass(this.element,'in2igui_field_dirty',this.value.length>0);
 	},
 	/** @private */
 	onKeyUp : function(e) {
-		if (!this.multiline && e.keyCode===n2i.KEY_RETURN) {
+		if (!this.multiline && e.keyCode===hui.KEY_RETURN) {
 			this.fire('submit');
-			var form = In2iGui.get().getAncestor(this,'in2igui_formula');
+			var form = hui.ui.getAncestor(this,'in2igui_formula');
 			if (form) {form.submit();}
 			return;
 		}
@@ -10075,7 +5169,7 @@ In2iGui.Formula.Text.prototype = {
 		this.value=this.input.value;
 		this.updateClass();
 		this.expand(true);
-		In2iGui.callAncestors(this,'childValueChanged',this.input.value);
+		hui.ui.callAncestors(this,'childValueChanged',this.input.value);
 		this.fire('valueChanged',this.input.value);
 	},
 	updateFromNode : function(node) {
@@ -10120,16 +5214,16 @@ In2iGui.Formula.Text.prototype = {
 		return this.input.value=='';
 	},
 	isBlank : function() {
-		return n2i.isBlank(this.input.value);
+		return hui.isBlank(this.input.value);
 	},
 	setError : function(error) {
 		var isError = error ? true : false;
-		n2i.setClass(this.element,'in2igui_field_error',isError);
+		hui.setClass(this.element,'in2igui_field_error',isError);
 		if (typeof(error) == 'string') {
-			In2iGui.showToolTip({text:error,element:this.element,key:this.name});
+			hui.ui.showToolTip({text:error,element:this.element,key:this.name});
 		}
 		if (!isError) {
-			In2iGui.hideToolTip({key:this.name});
+			hui.ui.hideToolTip({key:this.name});
 		}
 	},
 	// Expanding
@@ -10140,13 +5234,13 @@ In2iGui.Formula.Text.prototype = {
 	/** @private */
 	expand : function(animate) {
 		if (!this.multiline) {return};
-		if (!n2i.dom.isVisible(this.element)) {return};
-		var textHeight = In2iGui.getTextAreaHeight(this.input);
+		if (!hui.dom.isVisible(this.element)) {return};
+		var textHeight = hui.ui.getTextAreaHeight(this.input);
 		textHeight = Math.max(32,textHeight);
 		textHeight = Math.min(textHeight,this.options.maxHeight);
 		if (animate) {
 			this.updateOverflow();
-			n2i.animate(this.input,'height',textHeight+'px',300,{ease:n2i.ease.slowFastSlow,onComplete:function() {
+			hui.animate(this.input,'height',textHeight+'px',300,{ease:hui.ease.slowFastSlow,onComplete:function() {
 				this.updateOverflow();
 				}.bind(this)
 			});
@@ -10167,30 +5261,30 @@ In2iGui.Formula.Text.prototype = {
  * A date and time field
  * @constructor
  */
-In2iGui.Formula.DateTime = function(o) {
+hui.ui.Formula.DateTime = function(o) {
 	this.inputFormats = ['d-m-Y','d/m-Y','d/m/Y','d-m-Y H:i:s','d/m-Y H:i:s','d/m/Y H:i:s','d-m-Y H:i','d/m-Y H:i','d/m/Y H:i','d-m-Y H','d/m-Y H','d/m/Y H','d-m','d/m','d','Y','m-d-Y','m-d','m/d'];
 	this.outputFormat = 'd-m-Y H:i:s';
 	this.name = o.name;
-	this.element = n2i.get(o.element);
-	this.input = n2i.firstByTag(this.element,'input');
-	this.options = n2i.override({returnType:null,label:null,allowNull:true,value:null},o);
+	this.element = hui.get(o.element);
+	this.input = hui.firstByTag(this.element,'input');
+	this.options = hui.override({returnType:null,label:null,allowNull:true,value:null},o);
 	this.value = this.options.value;
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 	this.addBehavior();
 	this.updateUI();
 }
 
-In2iGui.Formula.DateTime.create = function(options) {
-	var node = n2i.build('span',{'class':'in2igui_formula_text_singleline'});
-	n2i.build('input',{'class':'in2igui_formula_text',parent:node});
-	options.element = In2iGui.wrapInField(node);
-	return new In2iGui.Formula.DateTime(options);
+hui.ui.Formula.DateTime.create = function(options) {
+	var node = hui.build('span',{'class':'in2igui_formula_text_singleline'});
+	hui.build('input',{'class':'in2igui_formula_text',parent:node});
+	options.element = hui.ui.wrapInField(node);
+	return new hui.ui.Formula.DateTime(options);
 }
 
-In2iGui.Formula.DateTime.prototype = {
+hui.ui.Formula.DateTime.prototype = {
 	addBehavior : function() {
-		In2iGui.addFocusClass({element:this.input,classElement:this.element,'class':'in2igui_field_focused'});
-		n2i.listen(this.input,'blur',this.check.bind(this));
+		hui.ui.addFocusClass({element:this.input,classElement:this.element,'class':'in2igui_field_focused'});
+		hui.listen(this.input,'blur',this.check.bind(this));
 	},
 	updateFromNode : function(node) {
 		if (node.firstChild) {
@@ -10257,45 +5351,45 @@ In2iGui.Formula.DateTime.prototype = {
  * A date and time field
  * @constructor
  */
-In2iGui.Formula.Number = function(o) {
-	this.options = n2i.override({min:0,max:10000,value:null,decimals:0,allowNull:false},o);	
+hui.ui.Formula.Number = function(o) {
+	this.options = hui.override({min:0,max:10000,value:null,decimals:0,allowNull:false},o);	
 	this.name = o.name;
-	var e = this.element = n2i.get(o.element);
-	this.input = n2i.firstByTag(e,'input');
-	this.up = n2i.firstByClass(e,'in2igui_number_up');
-	this.down = n2i.firstByClass(e,'in2igui_number_down');
+	var e = this.element = hui.get(o.element);
+	this.input = hui.firstByTag(e,'input');
+	this.up = hui.firstByClass(e,'in2igui_number_up');
+	this.down = hui.firstByClass(e,'in2igui_number_down');
 	this.value = this.options.value;
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 	this.addBehavior();
 }
 
-In2iGui.Formula.Number.create = function(o) {
-	o.element = n2i.build('span',{
+hui.ui.Formula.Number.create = function(o) {
+	o.element = hui.build('span',{
 		'class':'in2igui_number',
 		html:'<span><span><input type="text" value="'+(o.value!==undefined ? o.value : '0')+'"/><a class="in2igui_number_up"></a><a class="in2igui_number_down"></a></span></span>'
 	});
-	return new In2iGui.Formula.Number(o);
+	return new hui.ui.Formula.Number(o);
 }
 
-In2iGui.Formula.Number.prototype = {
+hui.ui.Formula.Number.prototype = {
 	addBehavior : function() {
 		var e = this.element;
-		n2i.listen(this.input,'focus',function() {n2i.addClass(e,'in2igui_number_focused')});
-		n2i.listen(this.input,'blur',this.blurEvent.bind(this));
-		n2i.listen(this.input,'keyup',this.keyEvent.bind(this));
-		n2i.listen(this.up,'mousedown',this.upEvent.bind(this));
-		n2i.listen(this.down,'mousedown',this.downEvent.bind(this));
+		hui.listen(this.input,'focus',function() {hui.addClass(e,'in2igui_number_focused')});
+		hui.listen(this.input,'blur',this.blurEvent.bind(this));
+		hui.listen(this.input,'keyup',this.keyEvent.bind(this));
+		hui.listen(this.up,'mousedown',this.upEvent.bind(this));
+		hui.listen(this.down,'mousedown',this.downEvent.bind(this));
 	},
 	blurEvent : function() {
-		n2i.removeClass(this.element,'in2igui_number_focused');
+		hui.removeClass(this.element,'in2igui_number_focused');
 		this.updateField();
 	},
 	keyEvent : function(e) {
 		e = e || window.event;
-		if (e.keyCode==n2i.KEY_UP) {
-			n2i.stop(e);
+		if (e.keyCode==hui.KEY_UP) {
+			hui.stop(e);
 			this.upEvent();
-		} else if (e.keyCode==n2i.KEY_DOWN) {
+		} else if (e.keyCode==hui.KEY_DOWN) {
 			this.downEvent();
 		} else {
 			var parsed = parseInt(this.input.value,10);
@@ -10347,7 +5441,7 @@ In2iGui.Formula.Number.prototype = {
 			this.value = Math.min(Math.max(value,this.options.min),this.options.max);
 		}
 		if (fire && orig!==this.value) {
-			In2iGui.callAncestors(this,'childValueChanged',this.value);
+			hui.ui.callAncestors(this,'childValueChanged',this.value);
 			this.fire('valueChanged',this.value);
 		}
 	},
@@ -10367,42 +5461,42 @@ In2iGui.Formula.Number.prototype = {
  * A drop down selector
  * @constructor
  */
-In2iGui.Formula.DropDown = function(o) {
-	this.options = n2i.override({label:null,placeholder:null,url:null,source:null},o);
+hui.ui.Formula.DropDown = function(o) {
+	this.options = hui.override({label:null,placeholder:null,url:null,source:null},o);
 	this.name = o.name;
-	var e = this.element = n2i.get(o.element);
+	var e = this.element = hui.get(o.element);
 	this.inner = e.getElementsByTagName('strong')[0];
 	this.items = o.items || [];
 	this.index = -1;
 	this.value = this.options.value || null;
 	this.dirty = true;
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 	this._addBehavior();
 	this._updateIndex();
 	this._updateUI();
 	if (this.options.url) {
-		this.options.source = new In2iGui.Source({url:this.options.url,delegate:this});
+		this.options.source = new hui.ui.Source({url:this.options.url,delegate:this});
 	} else if (this.options.source) {
 		this.options.source.listen(this);
 	}
 }
 
-In2iGui.Formula.DropDown.create = function(options) {
+hui.ui.Formula.DropDown.create = function(options) {
 	options = options || {};
-	options.element = n2i.build('a',{
+	options.element = hui.build('a',{
 		'class':'in2igui_dropdown',href:'#',
 		html:'<span><span><strong></strong></span></span>'
 	});
-	return new In2iGui.Formula.DropDown(options);
+	return new hui.ui.Formula.DropDown(options);
 }
 
-In2iGui.Formula.DropDown.prototype = {
+hui.ui.Formula.DropDown.prototype = {
 	/** @private */
 	_addBehavior : function() {
-		In2iGui.addFocusClass({element:this.element,'class':'in2igui_dropdown_focused'});
-		n2i.listen(this.element,'click',this._click.bind(this));
-		n2i.listen(this.element,'blur',this._hideSelector.bind(this));
-		n2i.listen(this.element,'keydown',this._keyDown.bind(this));
+		hui.ui.addFocusClass({element:this.element,'class':'in2igui_dropdown_focused'});
+		hui.listen(this.element,'click',this._click.bind(this));
+		hui.listen(this.element,'blur',this._hideSelector.bind(this));
+		hui.listen(this.element,'keydown',this._keyDown.bind(this));
 	},
 	/** @private */
 	_updateIndex : function() {
@@ -10419,10 +5513,10 @@ In2iGui.Formula.DropDown.prototype = {
 		if (selected) {
 			var text = selected.label || selected.title || '';
 			this.inner.innerHTML='';
-			n2i.dom.addText(this.inner,n2i.wrap(text));
+			hui.dom.addText(this.inner,hui.wrap(text));
 		} else if (this.options.placeholder) {
 			this.inner.innerHTML='';
-			this.inner.appendChild(n2i.build('em',{text:n2i.escape(this.options.placeholder)}));
+			this.inner.appendChild(hui.build('em',{text:hui.escape(this.options.placeholder)}));
 		} else {
 			this.inner.innerHTML='';
 		}
@@ -10432,7 +5526,7 @@ In2iGui.Formula.DropDown.prototype = {
 		var as = this.selector.getElementsByTagName('a');
 		for (var i=0; i < as.length; i++) {
 			if (this.index==i) {
-				n2i.addClass(as[i],'in2igui_selected');
+				hui.addClass(as[i],'in2igui_selected');
 			} else {
 				as[i].className='';
 			}
@@ -10440,27 +5534,27 @@ In2iGui.Formula.DropDown.prototype = {
 	},
 	/** @private */
 	_click : function(e) {
-		n2i.stop(e);
+		hui.stop(e);
 		this._buildSelector();
 		var el = this.element, s=this.selector;
 		el.focus();
 		if (!this.items) return;
-		var docHeight = n2i.getDocumentHeight();
+		var docHeight = hui.getDocumentHeight();
 		if (docHeight<200) {
-			var left = n2i.getLeft(this.element);
-			n2i.setStyle(this.selector,{'left':left+'px',top:'5px'});
+			var left = hui.getLeft(this.element);
+			hui.setStyle(this.selector,{'left':left+'px',top:'5px'});
 		} else {
-			n2i.place({
+			hui.place({
 				target:{element:this.element,vertical:1,horizontal:0},
 				source:{element:this.selector,vertical:0,horizontal:0}
 			});
 		}
-		n2i.setStyle(s,{visibility:'hidden',display:'block',width:''});
-		var height = Math.min(docHeight-n2i.getTop(s)-5,200);
+		hui.setStyle(s,{visibility:'hidden',display:'block',width:''});
+		var height = Math.min(docHeight-hui.getTop(s)-5,200);
 		var width = Math.max(el.clientWidth-5,100,s.clientWidth+20);
-		var space = n2i.getViewPortWidth()-n2i.getLeft(el)-20;
+		var space = hui.getViewPortWidth()-hui.getLeft(el)-20;
 		width = Math.min(width,space);
-		n2i.setStyle(s,{visibility:'visible',width:width+'px',zIndex:In2iGui.nextTopIndex(),maxHeight:height+'px'});
+		hui.setStyle(s,{visibility:'visible',width:width+'px',zIndex:hui.ui.nextTopIndex(),maxHeight:height+'px'});
 	},
 	/** @private */
 	_keyDown : function(e) {
@@ -10468,7 +5562,7 @@ In2iGui.Formula.DropDown.prototype = {
 			return;
 		}
 		if (e.keyCode==40) {
-			n2i.stop(e);
+			hui.stop(e);
 			if (this.index>=this.items.length-1) {
 				this.value=this.items[0].value;
 			} else {
@@ -10478,7 +5572,7 @@ In2iGui.Formula.DropDown.prototype = {
 			this._updateUI();
 			this._fireChange();
 		} else if (e.keyCode==38) {
-			n2i.stop(e);
+			hui.stop(e);
 			if (this.index>0) {
 				this.index--;
 			} else {
@@ -10546,21 +5640,21 @@ In2iGui.Formula.DropDown.prototype = {
 	_buildSelector : function() {
 		if (!this.dirty || !this.items) {return};
 		if (!this.selector) {
-			this.selector = n2i.build('div',{'class':'in2igui_dropdown_selector'});
+			this.selector = hui.build('div',{'class':'in2igui_dropdown_selector'});
 			document.body.appendChild(this.selector);
-			n2i.listen(this.selector,'mousedown',function(e) {n2i.stop(e)});
+			hui.listen(this.selector,'mousedown',function(e) {hui.stop(e)});
 		} else {
 			this.selector.innerHTML='';
 		}
 		var self = this;
-		n2i.each(this.items,function(item,i) {
-			var e = n2i.build('a',{href:'#',text:item.label || item.title});
-			n2i.listen(e,'mousedown',function(e) {
-				n2i.stop(e);
+		hui.each(this.items,function(item,i) {
+			var e = hui.build('a',{href:'#',text:item.label || item.title});
+			hui.listen(e,'mousedown',function(e) {
+				hui.stop(e);
 				self._itemClicked(item,i);
 			})
 			if (i==self.index) {
-				n2i.addClass(e,'in2igui_selected')
+				hui.addClass(e,'in2igui_selected')
 			};
 			self.selector.appendChild(e);
 		});
@@ -10578,7 +5672,7 @@ In2iGui.Formula.DropDown.prototype = {
 		}
 	},
 	_fireChange : function() {
-		In2iGui.callAncestors(this,'childValueChanged',this.value);
+		hui.ui.callAncestors(this,'childValueChanged',this.value);
 		this.fire('valueChanged',this.value);
 	}
 }
@@ -10589,17 +5683,17 @@ In2iGui.Formula.DropDown.prototype = {
 /**
  * @constructor
  */
-In2iGui.Formula.Radiobuttons = function(options) {
+hui.ui.Formula.Radiobuttons = function(options) {
 	this.options = options;
-	this.element = n2i.get(options.element);
+	this.element = hui.get(options.element);
 	this.name = options.name;
 	this.radios = [];
 	this.value = options.value;
 	this.defaultValue = this.value;
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 }
 
-In2iGui.Formula.Radiobuttons.prototype = {
+hui.ui.Formula.Radiobuttons.prototype = {
 	click : function() {
 		this.value = !this.value;
 		this.updateUI();
@@ -10608,7 +5702,7 @@ In2iGui.Formula.Radiobuttons.prototype = {
 	updateUI : function() {
 		for (var i=0; i < this.radios.length; i++) {
 			var radio = this.radios[i];
-			n2i.setClass(n2i.get(radio.id),'in2igui_selected',radio.value==this.value);
+			hui.setClass(hui.get(radio.id),'in2igui_selected',radio.value==this.value);
 		};
 	},
 	setValue : function(value) {
@@ -10623,7 +5717,7 @@ In2iGui.Formula.Radiobuttons.prototype = {
 	},
 	registerRadiobutton : function(radio) {
 		this.radios.push(radio);
-		var element = n2i.get(radio.id);
+		var element = hui.get(radio.id);
 		var self = this;
 		element.onclick = function() {
 			self.setValue(radio.value);
@@ -10639,45 +5733,45 @@ In2iGui.Formula.Radiobuttons.prototype = {
  * A check box
  * @constructor
  */
-In2iGui.Formula.Checkbox = function(o) {
-	this.element = n2i.get(o.element);
-	this.control = n2i.firstByTag(this.element,'span');
+hui.ui.Formula.Checkbox = function(o) {
+	this.element = hui.get(o.element);
+	this.control = hui.firstByTag(this.element,'span');
 	this.options = o;
 	this.name = o.name;
 	this.value = o.value==='true' || o.value===true;
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 	this.addBehavior();
 }
 
 /**
  * Creates a new checkbox
  */
-In2iGui.Formula.Checkbox.create = function(o) {
-	var e = o.element = n2i.build('a',{'class':'in2igui_checkbox',href:'#',html:'<span><span></span></span>'});
+hui.ui.Formula.Checkbox.create = function(o) {
+	var e = o.element = hui.build('a',{'class':'in2igui_checkbox',href:'#',html:'<span><span></span></span>'});
 	if (o.value) {
-		n2i.addClass(e,'in2igui_checkbox_selected');
+		hui.addClass(e,'in2igui_checkbox_selected');
 	}
-	return new In2iGui.Formula.Checkbox(o);
+	return new hui.ui.Formula.Checkbox(o);
 }
 
-In2iGui.Formula.Checkbox.prototype = {
+hui.ui.Formula.Checkbox.prototype = {
 	/** @private */
 	addBehavior : function() {
-		In2iGui.addFocusClass({element:this.element,'class':'in2igui_checkbox_focused'});
-		n2i.listen(this.element,'click',this.click.bind(this));
+		hui.ui.addFocusClass({element:this.element,'class':'in2igui_checkbox_focused'});
+		hui.listen(this.element,'click',this.click.bind(this));
 	},
 	/** @private */
 	click : function(e) {
-		n2i.stop(e);
+		hui.stop(e);
 		this.element.focus();
 		this.value = !this.value;
 		this.updateUI();
-		In2iGui.callAncestors(this,'childValueChanged',this.value);
+		hui.ui.callAncestors(this,'childValueChanged',this.value);
 		this.fire('valueChanged',this.value);
 	},
 	/** @private */
 	updateUI : function() {
-		n2i.setClass(this.element,'in2igui_checkbox_selected',this.value);
+		hui.setClass(this.element,'in2igui_checkbox_selected',this.value);
 	},
 	/** Sets the value
 	 * @param {Boolean} value Whether the checkbox is checked
@@ -10710,41 +5804,41 @@ In2iGui.Formula.Checkbox.prototype = {
  * Multiple checkboxes
  * @constructor
  */
-In2iGui.Formula.Checkboxes = function(options) {
+hui.ui.Formula.Checkboxes = function(options) {
 	this.options = options;
-	this.element = n2i.get(options.element);
+	this.element = hui.get(options.element);
 	this.name = options.name;
 	this.items = options.items || [];
 	this.sources = [];
 	this.subItems = [];
 	this.values = options.values || options.value || []; // values is deprecated
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 	this.addBehavior();
 	this.updateUI();
 	if (options.url) {
-		new In2iGui.Source({url:options.url,delegate:this});
+		new hui.ui.Source({url:options.url,delegate:this});
 	}
 }
 
-In2iGui.Formula.Checkboxes.create = function(o) {
-	o.element = n2i.build('div',{'class':o.vertical ? 'in2igui_checkboxes in2igui_checkboxes_vertical' : 'in2igui_checkboxes'});
+hui.ui.Formula.Checkboxes.create = function(o) {
+	o.element = hui.build('div',{'class':o.vertical ? 'in2igui_checkboxes in2igui_checkboxes_vertical' : 'in2igui_checkboxes'});
 	if (o.items) {
-		n2i.each(o.items,function(item) {
-			var node = n2i.build('a',{'class':'in2igui_checkbox',href:'javascript:void(0);',html:'<span><span></span></span>'+item.title});
-			In2iGui.addFocusClass({element:node,'class':'in2igui_checkbox_focused'});
+		hui.each(o.items,function(item) {
+			var node = hui.build('a',{'class':'in2igui_checkbox',href:'javascript:void(0);',html:'<span><span></span></span>'+item.title});
+			hui.ui.addFocusClass({element:node,'class':'in2igui_checkbox_focused'});
 			o.element.appendChild(node);
 		});
 	}
-	return new In2iGui.Formula.Checkboxes(o);
+	return new hui.ui.Formula.Checkboxes(o);
 }
 
-In2iGui.Formula.Checkboxes.prototype = {
+hui.ui.Formula.Checkboxes.prototype = {
 	/** @private */
 	addBehavior : function() {
-		var checks = n2i.byClass(this.element,'in2igui_checkbox');
-		n2i.each(checks,function(check,i) {
-			n2i.listen(check,'click',function(e) {
-				n2i.stop(e);
+		var checks = hui.byClass(this.element,'in2igui_checkbox');
+		hui.each(checks,function(check,i) {
+			hui.listen(check,'click',function(e) {
+				hui.stop(e);
 				this.flipValue(this.items[i].value);
 			}.bind(this))
 		}.bind(this))
@@ -10784,22 +5878,22 @@ In2iGui.Formula.Checkboxes.prototype = {
 		this.setValue(values);
 	},
 	flipValue : function(value) {
-		n2i.flipInArray(this.values,value);
+		hui.flipInArray(this.values,value);
 		this.checkValues();
 		this.updateUI();
 		this.fire('valueChanged',this.values);
-		In2iGui.callAncestors(this,'childValueChanged',this.values);
+		hui.ui.callAncestors(this,'childValueChanged',this.values);
 	},
 	updateUI : function() {
 		var i,item,found;
 		for (i=0; i < this.subItems.length; i++) {
 			this.subItems[i].updateUI();
 		};
-		var nodes = n2i.byClass(this.element,'in2igui_checkbox');
+		var nodes = hui.byClass(this.element,'in2igui_checkbox');
 		for (i=0; i < this.items.length; i++) {
 			item = this.items[i];
-			found = n2i.inArray(this.values,item.value);
-			n2i.setClass(nodes[i],'in2igui_checkbox_selected',found);
+			found = hui.inArray(this.values,item.value);
+			hui.setClass(nodes[i],'in2igui_checkbox_selected',found);
 		};
 	},
 	refresh : function() {
@@ -10829,13 +5923,13 @@ In2iGui.Formula.Checkboxes.prototype = {
 		return this.options.label;
 	},
 	$itemsLoaded : function(items) {
-		n2i.each(items,function(item) {
-			var node = n2i.build('a',{'class':'in2igui_checkbox',href:'javascript:void(0);',html:'<span><span></span></span>'+n2i.escape(item.title)});
-			n2i.listen(node,'click',function(e) {
-				n2i.stop(e);
+		hui.each(items,function(item) {
+			var node = hui.build('a',{'class':'in2igui_checkbox',href:'javascript:void(0);',html:'<span><span></span></span>'+hui.escape(item.title)});
+			hui.listen(node,'click',function(e) {
+				hui.stop(e);
 				this.flipValue(item.value);
 			}.bind(this))
-			In2iGui.addFocusClass({element:node,'class':'in2igui_checkbox_focused'});
+			hui.ui.addFocusClass({element:node,'class':'in2igui_checkbox_focused'});
 			this.element.appendChild(node);
 			this.items.push(item);
 		}.bind(this));
@@ -10850,19 +5944,19 @@ In2iGui.Formula.Checkboxes.prototype = {
  * Check box items
  * @constructor
  */
-In2iGui.Formula.Checkboxes.Items = function(options) {
-	this.element = n2i.get(options.element);
+hui.ui.Formula.Checkboxes.Items = function(options) {
+	this.element = hui.get(options.element);
 	this.name = options.name;
 	this.parent = null;
 	this.options = options;
 	this.checkboxes = [];
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 	if (this.options.source) {
 		this.options.source.listen(this);
 	}
 }
 
-In2iGui.Formula.Checkboxes.Items.prototype = {
+hui.ui.Formula.Checkboxes.Items.prototype = {
 	refresh : function() {
 		if (this.options.source) {
 			this.options.source.refresh();
@@ -10872,14 +5966,14 @@ In2iGui.Formula.Checkboxes.Items.prototype = {
 		this.checkboxes = [];
 		this.element.innerHTML='';
 		var self = this;
-		n2i.each(items,function(item) {
-			var node = n2i.build('a',{'class':'in2igui_checkbox',href:'#',html:'<span><span></span></span>'+item.title});
-			n2i.listen(node,'click',function(e) {
-				n2i.stop(e);
+		hui.each(items,function(item) {
+			var node = hui.build('a',{'class':'in2igui_checkbox',href:'#',html:'<span><span></span></span>'+item.title});
+			hui.listen(node,'click',function(e) {
+				hui.stop(e);
 				node.focus();
 				self.itemWasClicked(item)
 			});
-			In2iGui.addFocusClass({element:node,'class':'in2igui_checkbox_focused'});
+			hui.ui.addFocusClass({element:node,'class':'in2igui_checkbox_focused'});
 			self.element.appendChild(node);
 			self.checkboxes.push({title:item.title,element:node,value:item.value});
 		});
@@ -10893,8 +5987,8 @@ In2iGui.Formula.Checkboxes.Items.prototype = {
 		try {
 		for (var i=0; i < this.checkboxes.length; i++) {
 			var item = this.checkboxes[i];
-			var index = n2i.indexInArray(this.parent.values,item.value);
-			n2i.setClass(item.element,'in2igui_checkbox_selected',index!=-1);
+			var index = hui.indexInArray(this.parent.values,item.value);
+			hui.setClass(item.element,'in2igui_checkbox_selected',index!=-1);
 		};
 		} catch (e) {
 			alert(typeof(this.parent.values));
@@ -10917,22 +6011,22 @@ In2iGui.Formula.Checkboxes.Items.prototype = {
  * A tokens component
  * @constructor
  */
-In2iGui.Formula.Tokens = function(o) {
-	this.options = n2i.override({label:null,key:null},o);
-	this.element = n2i.get(o.element);
+hui.ui.Formula.Tokens = function(o) {
+	this.options = hui.override({label:null,key:null},o);
+	this.element = hui.get(o.element);
 	this.name = o.name;
 	this.value = [''];
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 	this.updateUI();
 }
 
-In2iGui.Formula.Tokens.create = function(o) {
+hui.ui.Formula.Tokens.create = function(o) {
 	o = o || {};
-	o.element = n2i.build('div',{'class':'in2igui_tokens'});
-	return new In2iGui.Formula.Tokens(o);
+	o.element = hui.build('div',{'class':'in2igui_tokens'});
+	return new hui.ui.Formula.Tokens(o);
 }
 
-In2iGui.Formula.Tokens.prototype = {
+hui.ui.Formula.Tokens.prototype = {
 	setValue : function(objects) {
 		this.value = objects;
 		this.value.push('');
@@ -10944,8 +6038,8 @@ In2iGui.Formula.Tokens.prototype = {
 	},
 	getValue : function() {
 		var out = [];
-		n2i.each(this.value,function(value) {
-			value = n2i.trim(value);
+		hui.each(this.value,function(value) {
+			value = hui.trim(value);
 			if (value.length>0) {
 				out.push(value);
 			}
@@ -10957,14 +6051,14 @@ In2iGui.Formula.Tokens.prototype = {
 	},
 	updateUI : function() {
 		this.element.innerHTML='';
-		n2i.each(this.value,function(value,i) {
-			var input = n2i.build('input',{'class':'in2igui_tokens_token',parent:this.element});
+		hui.each(this.value,function(value,i) {
+			var input = hui.build('input',{'class':'in2igui_tokens_token',parent:this.element});
 			if (this.options.width) {
 				input.style.width=this.options.width+'px';
 			}
 			input.value = value;
 			input.in2iguiIndex = i;
-			n2i.listen(input,'keyup',function() {
+			hui.listen(input,'keyup',function() {
 				this.inputChanged(input,i)
 			}.bind(this));
 		}.bind(this));
@@ -10978,7 +6072,7 @@ In2iGui.Formula.Tokens.prototype = {
 	},
 	/** @private */
 	addField : function() {
-		var input = n2i.build('input',{'class':'in2igui_tokens_token'});
+		var input = hui.build('input',{'class':'in2igui_tokens_token'});
 		if (this.options.width) {
 			input.style.width = this.options.width+'px';
 		}
@@ -10986,7 +6080,7 @@ In2iGui.Formula.Tokens.prototype = {
 		this.value.push('');
 		this.element.appendChild(input);
 		var self = this;
-		n2i.listen(input,'keyup',function() {self.inputChanged(input,i)});
+		hui.listen(input,'keyup',function() {self.inputChanged(input,i)});
 	}
 }
 
@@ -10996,28 +6090,28 @@ In2iGui.Formula.Tokens.prototype = {
  * A date and time field
  * @constructor
  */
-In2iGui.Formula.StyleLength = function(o) {
-	this.options = n2i.override({value:null,min:0,max:1000,units:['px','pt','em','%'],defaultUnit:'px',allowNull:false},o);	
+hui.ui.Formula.StyleLength = function(o) {
+	this.options = hui.override({value:null,min:0,max:1000,units:['px','pt','em','%'],defaultUnit:'px',allowNull:false},o);	
 	this.name = o.name;
-	var e = this.element = n2i.get(o.element);
-	this.input = n2i.firstByTag(e,'input');
+	var e = this.element = hui.get(o.element);
+	this.input = hui.firstByTag(e,'input');
 	var as = e.getElementsByTagName('a');
 	this.up = as[0];
 	this.down = as[1];
 	this.value = this.parseValue(this.options.value);
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 	this.addBehavior();
 }
 
-In2iGui.Formula.StyleLength.prototype = {
+hui.ui.Formula.StyleLength.prototype = {
 	/** @private */
 	addBehavior : function() {
 		var e = this.element;
-		n2i.listen(this.input,'focus',function() {n2i.addClass(e,'in2igui_number_focused')});
-		n2i.listen(this.input,'blur',this.blurEvent.bind(this));
-		n2i.listen(this.input,'keyup',this.keyEvent.bind(this));
-		n2i.listen(this.up,'mousedown',this.upEvent.bind(this));
-		n2i.listen(this.down,'mousedown',this.downEvent.bind(this));
+		hui.listen(this.input,'focus',function() {hui.addClass(e,'in2igui_number_focused')});
+		hui.listen(this.input,'blur',this.blurEvent.bind(this));
+		hui.listen(this.input,'keyup',this.keyEvent.bind(this));
+		hui.listen(this.up,'mousedown',this.upEvent.bind(this));
+		hui.listen(this.down,'mousedown',this.downEvent.bind(this));
 	},
 	/** @private */
 	parseValue : function(value) {
@@ -11038,16 +6132,16 @@ In2iGui.Formula.StyleLength.prototype = {
 	},
 	/** @private */
 	blurEvent : function() {
-		n2i.removeClass(this.element,'in2igui_number_focused');
+		hui.removeClass(this.element,'in2igui_number_focused');
 		this.updateInput();
 	},
 	/** @private */
 	keyEvent : function(e) {
 		e = e || window.event;
-		if (e.keyCode==n2i.KEY_UP) {
-			n2i.stop(e);
+		if (e.keyCode==hui.KEY_UP) {
+			hui.stop(e);
 			this.upEvent();
-		} else if (e.keyCode==n2i.KEY_DOWN) {
+		} else if (e.keyCode==hui.KEY_DOWN) {
 			this.downEvent();
 		} else {
 			this.checkAndSetValue(this.parseValue(this.input.value));
@@ -11109,36 +6203,36 @@ In2iGui.Formula.StyleLength.prototype = {
  * A component for geo-location
  * @constructor
  */
-In2iGui.Formula.Location = function(options) {
-	this.options = n2i.override({value:null},options);
+hui.ui.Formula.Location = function(options) {
+	this.options = hui.override({value:null},options);
 	this.name = options.name;
-	this.element = n2i.get(options.element);
-	this.chooser = n2i.firstByTag(this.element,'a');
-	this.latField = new In2iGui.TextField({element:n2i.firstByTag(this.element,'input'),validator:new In2iGui.NumberValidator({min:-90,max:90,allowNull:true})});
+	this.element = hui.get(options.element);
+	this.chooser = hui.firstByTag(this.element,'a');
+	this.latField = new hui.ui.TextField({element:hui.firstByTag(this.element,'input'),validator:new hui.ui.NumberValidator({min:-90,max:90,allowNull:true})});
 	this.latField.listen(this);
-	this.lngField = new In2iGui.TextField({element:this.element.getElementsByTagName('input')[1],validator:new In2iGui.NumberValidator({min:-180,max:180,allowNull:true})});
+	this.lngField = new hui.ui.TextField({element:this.element.getElementsByTagName('input')[1],validator:new hui.ui.NumberValidator({min:-180,max:180,allowNull:true})});
 	this.lngField.listen(this);
 	this.value = this.options.value;
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 	this.setValue(this.value);
 	this.addBehavior();
 }
 
-In2iGui.Formula.Location.create = function(options) {
+hui.ui.Formula.Location.create = function(options) {
 	options = options || {};
-	var e = options.element = n2i.build('div',{'class':'in2igui_location'});
-	var b = n2i.build('span',{html:'<span class="in2igui_location_latitude"><span><input/></span></span><span class="in2igui_location_longitude"><span><input/></span></span>'});
-	e.appendChild(In2iGui.wrapInField(b));
-	e.appendChild(n2i.build('a',{'class':'in2igui_location_picker',href:'javascript:void(0);'}));
-	return new In2iGui.Formula.Location(options);
+	var e = options.element = hui.build('div',{'class':'in2igui_location'});
+	var b = hui.build('span',{html:'<span class="in2igui_location_latitude"><span><input/></span></span><span class="in2igui_location_longitude"><span><input/></span></span>'});
+	e.appendChild(hui.ui.wrapInField(b));
+	e.appendChild(hui.build('a',{'class':'in2igui_location_picker',href:'javascript:void(0);'}));
+	return new hui.ui.Formula.Location(options);
 }
 
-In2iGui.Formula.Location.prototype = {
+hui.ui.Formula.Location.prototype = {
 	/** @private */
 	addBehavior : function() {
-		n2i.listen(this.chooser,'click',this.showPicker.bind(this));
-		In2iGui.addFocusClass({element:this.latField.element,classElement:this.element,'class':'in2igui_field_focused'});
-		In2iGui.addFocusClass({element:this.lngField.element,classElement:this.element,'class':'in2igui_field_focused'});
+		hui.listen(this.chooser,'click',this.showPicker.bind(this));
+		hui.ui.addFocusClass({element:this.latField.element,classElement:this.element,'class':'in2igui_field_focused'});
+		hui.ui.addFocusClass({element:this.lngField.element,classElement:this.element,'class':'in2igui_field_focused'});
 	},
 	getLabel : function() {
 		return this.options.label;
@@ -11169,7 +6263,7 @@ In2iGui.Formula.Location.prototype = {
 	/** @private */
 	showPicker : function() {
 		if (!this.picker) {
-			this.picker = new In2iGui.LocationPicker();
+			this.picker = new hui.ui.LocationPicker();
 			this.picker.listen(this);
 		}
 		this.picker.show({node:this.chooser,location:this.value});
@@ -11213,24 +6307,24 @@ In2iGui.Formula.Location.prototype = {
  * @constructor
  * @param {Object} options The options : {url:null,source:null}
  */
-In2iGui.List = function(options) {
-	this.options = n2i.override({url:null,source:null},options);
-	this.element = n2i.get(options.element);
+hui.ui.List = function(options) {
+	this.options = hui.override({url:null,source:null},options);
+	this.element = hui.get(options.element);
 	this.name = options.name;
 	if (this.options.source) {
 		this.options.source.listen(this);
 	}
 	this.url = options.url;
-	this.table = n2i.firstByTag(this.element,'table');
-	this.head = n2i.firstByTag(this.element,'thead');
-	this.body = n2i.firstByTag(this.element,'tbody');
+	this.table = hui.firstByTag(this.element,'table');
+	this.head = hui.firstByTag(this.element,'thead');
+	this.body = hui.firstByTag(this.element,'tbody');
 	this.columns = [];
 	this.rows = [];
 	this.selected = [];
-	this.navigation = n2i.firstByClass(this.element,'in2igui_list_navigation');
-	this.count = n2i.firstByClass(this.navigation,'in2igui_list_count');
-	this.windowPage = n2i.firstByClass(this.navigation,'window_page');
-	this.windowPageBody = n2i.firstByClass(this.navigation,'window_page_body');
+	this.navigation = hui.firstByClass(this.element,'in2igui_list_navigation');
+	this.count = hui.firstByClass(this.navigation,'in2igui_list_count');
+	this.windowPage = hui.firstByClass(this.navigation,'window_page');
+	this.windowPageBody = hui.firstByClass(this.navigation,'window_page_body');
 	this.parameters = {};
 	this.sortKey = null;
 	this.sortDirection = null;
@@ -11239,7 +6333,7 @@ In2iGui.List = function(options) {
 	if (options.windowSize!='') {
 		this.window.size = parseInt(options.windowSize);
 	}
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 	if (this.url)  {
 		this.refresh();
 	}
@@ -11249,15 +6343,15 @@ In2iGui.List = function(options) {
  * Creates a new list widget
  * @param {Object} options The options
  */
-In2iGui.List.create = function(options) {
-	options = n2i.override({},options);
-	options.element = n2i.build('div',{
+hui.ui.List.create = function(options) {
+	options = hui.override({},options);
+	options.element = hui.build('div',{
 		'class':'in2igui_list',
 		html: '<div class="in2igui_list_progress"></div><div class="in2igui_list_navigation"><div class="in2igui_list_selection window_page"><div><div class="window_page_body"></div></div></div><span class="in2igui_list_count"></span></div><div class="in2igui_list_body"'+(options.maxHeight>0 ? ' style="max-height: '+options.maxHeight+'px; overflow: auto;"' : '')+'><table cellspacing="0" cellpadding="0"><thead><tr></tr></thead><tbody></tbody></table></div>'});
-	return new In2iGui.List(options);
+	return new hui.ui.List(options);
 }
 
-In2iGui.List.prototype = {
+hui.ui.List.prototype = {
 	/** Hides the list */
 	hide : function() {
 		this.element.style.display='none';
@@ -11302,7 +6396,7 @@ In2iGui.List.prototype = {
 	},
 	/**
 	 * Sets the lists data source and refreshes it if it is new
-	 * @param {In2iGui.Source} source The source
+	 * @param {hui.ui.Source} source The source
 	 */
 	setSource : function(source) {
 		if (this.options.source!=source) {
@@ -11336,8 +6430,8 @@ In2iGui.List.prototype = {
 		this.columns = [];
 		this.rows = [];
 		this.navigation.style.display='none';
-		n2i.dom.clear(this.body);
-		n2i.dom.clear(this.head);
+		hui.dom.clear(this.body);
+		hui.dom.clear(this.head);
 		if (this.options.source) {
 			this.options.source.removeDelegate(this);
 		}
@@ -11347,8 +6441,8 @@ In2iGui.List.prototype = {
 	/** Resets the window state of the navigator */
 	resetState : function() {
 		this.window = {size:null,page:0,total:0};
-		In2iGui.firePropertyChange(this,'window',this.window);
-		In2iGui.firePropertyChange(this,'window.page',this.window.page);
+		hui.ui.firePropertyChange(this,'window',this.window);
+		hui.ui.firePropertyChange(this,'window.page',this.window.page);
 	},
 	/** @private */
 	valueForProperty : function(p) {
@@ -11391,7 +6485,7 @@ In2iGui.List.prototype = {
 			url+=key+'='+this.parameters[key];
 		}
 		this._setBusy(true);
-		In2iGui.request({
+		hui.ui.request({
 			url:url,
 			onJSON : function(obj) {this._setBusy(false);this.$objectsLoaded(obj)}.bind(this),
 			onXML : function(obj) {this._setBusy(false);this.$listLoaded(obj)}.bind(this)
@@ -11402,9 +6496,9 @@ In2iGui.List.prototype = {
 		var key = this.columns[index].key;
 		if (key==this.sortKey) {
 			this.sortDirection = this.sortDirection=='ascending' ? 'descending' : 'ascending';
-			In2iGui.firePropertyChange(this,'sort.direction',this.sortDirection);
+			hui.ui.firePropertyChange(this,'sort.direction',this.sortDirection);
 		} else {
-			In2iGui.firePropertyChange(this,'sort.key',key);
+			hui.ui.firePropertyChange(this,'sort.key',key);
 		}
 		this.sortKey = key;
 	},
@@ -11414,8 +6508,8 @@ In2iGui.List.prototype = {
 		this.selected = [];
 		this.parseWindow(doc);
 		this.buildNavigation();
-		n2i.dom.clear(this.head);
-		n2i.dom.clear(this.body);
+		hui.dom.clear(this.head);
+		hui.dom.clear(this.body);
 		this.rows = [];
 		this.columns = [];
 		var headTr = document.createElement('tr');
@@ -11470,7 +6564,7 @@ In2iGui.List.prototype = {
 				this.parseCell(cells[j],td);
 				row.appendChild(td);
 				if (!title) {
-					title = n2i.dom.getText(cells[j]);
+					title = hui.dom.getText(cells[j]);
 				}
 				if (!icon) {
 					icon = cells[j].getAttribute('icon');
@@ -11512,10 +6606,10 @@ In2iGui.List.prototype = {
 		if (busy) {
 			var e = this.element;
 			this.busytimer = window.setTimeout(function() {
-				n2i.addClass(e,'in2igui_list_busy');
+				hui.addClass(e,'in2igui_list_busy');
 			},300);
 		} else {
-			n2i.removeClass(this.element,'in2igui_list_busy');
+			hui.removeClass(this.element,'in2igui_list_busy');
 		}
 	},
 	
@@ -11541,38 +6635,38 @@ In2iGui.List.prototype = {
 	parseCell : function(node,cell) {
 		var icon = node.getAttribute('icon');
 		if (icon!=null && icon!='') {
-			cell.appendChild(In2iGui.createIcon(icon,1));
+			cell.appendChild(hui.ui.createIcon(icon,1));
 		}
 		for (var i=0; i < node.childNodes.length; i++) {
 			var child = node.childNodes[i];
-			if (n2i.dom.isDefinedText(child)) {
-				n2i.dom.addText(cell,child.nodeValue);
-			} else if (n2i.dom.isElement(child,'break')) {
+			if (hui.dom.isDefinedText(child)) {
+				hui.dom.addText(cell,child.nodeValue);
+			} else if (hui.dom.isElement(child,'break')) {
 				cell.appendChild(document.createElement('br'));
-			} else if (n2i.dom.isElement(child,'icon')) {
-				cell.appendChild(In2iGui.createIcon(child.getAttribute('icon'),1));
-			} else if (n2i.dom.isElement(child,'line')) {
-				var line = n2i.build('p',{'class':'in2igui_list_line'});
+			} else if (hui.dom.isElement(child,'icon')) {
+				cell.appendChild(hui.ui.createIcon(child.getAttribute('icon'),1));
+			} else if (hui.dom.isElement(child,'line')) {
+				var line = hui.build('p',{'class':'in2igui_list_line'});
 				if (child.getAttribute('dimmed')=='true') {
-					n2i.addClass(line,'in2igui_list_dimmed')
+					hui.addClass(line,'in2igui_list_dimmed')
 				}
 				cell.appendChild(line);
 				this.parseCell(child,line);
-			} else if (n2i.dom.isElement(child,'object')) {
-				var obj = n2i.build('div',{'class':'object'});
+			} else if (hui.dom.isElement(child,'object')) {
+				var obj = hui.build('div',{'class':'object'});
 				if (child.getAttribute('icon')) {
-					obj.appendChild(In2iGui.createIcon(child.getAttribute('icon'),1));
+					obj.appendChild(hui.ui.createIcon(child.getAttribute('icon'),1));
 				}
-				if (child.firstChild && child.firstChild.nodeType==n2i.TEXT_NODE && child.firstChild.nodeValue.length>0) {
-					n2i.dom.addText(obj,child.firstChild.nodeValue);
+				if (child.firstChild && child.firstChild.nodeType==hui.TEXT_NODE && child.firstChild.nodeValue.length>0) {
+					hui.dom.addText(obj,child.firstChild.nodeValue);
 				}
 				cell.appendChild(obj);
-			} else if (n2i.dom.isElement(child,'icons')) {
-				var icons = n2i.build('span',{'class':'in2igui_list_icons'});
+			} else if (hui.dom.isElement(child,'icons')) {
+				var icons = hui.build('span',{'class':'in2igui_list_icons'});
 				this.parseCell(child,icons);
 				cell.appendChild(icons);
-			} else if (n2i.dom.isElement(child,'button')) {
-				var button = In2iGui.Button.create({text:child.getAttribute('text'),small:true,rounded:true});
+			} else if (hui.dom.isElement(child,'button')) {
+				var button = hui.ui.Button.create({text:child.getAttribute('text'),small:true,rounded:true});
 				button.click(function() {
 					this._buttonClick(button);
 				}.bind(this))
@@ -11581,7 +6675,7 @@ In2iGui.List.prototype = {
 		};
 	},
 	_buttonClick : function(button) {
-		var row = n2i.firstParentByTag(button.getElement(),'tr');
+		var row = hui.firstParentByTag(button.getElement(),'tr');
 		var obj = this.rows[parseInt(row.getAttribute('data-index'),10)];
 		this.fire('buttonClick',obj,button);
 	},
@@ -11609,7 +6703,7 @@ In2iGui.List.prototype = {
 		}
 		this.navigation.style.display='block';
 		var from = ((this.window.page)*this.window.size+1);
-		n2i.dom.setText(this.count,(from+'-'+Math.min((this.window.page+1)*this.window.size,this.window.total)+' / '+this.window.total));
+		hui.dom.setText(this.count,(from+'-'+Math.min((this.window.page+1)*this.window.size,this.window.total)+' / '+this.window.total));
 		var pageBody = this.windowPageBody;
 		pageBody.innerHTML='';
 		if (pages<2) {
@@ -11619,7 +6713,7 @@ In2iGui.List.prototype = {
 			for (var i=0; i < indices.length; i++) {
 				var index = indices[i];
 				if (index==='') {
-					pageBody.appendChild(n2i.build('span',{text:'·'}));
+					pageBody.appendChild(hui.build('span',{text:'·'}));
 				} else {
 					var a = document.createElement('a');
 					a.appendChild(document.createTextNode(index+1));
@@ -11667,19 +6761,19 @@ In2iGui.List.prototype = {
 	},
 	/** @private */
 	buildHeaders : function(headers) {
-		n2i.dom.clear(this.head);
+		hui.dom.clear(this.head);
 		this.columns = [];
-		var tr = n2i.build('tr',{parent:this.head});
-		n2i.each(headers,function(h,i) {
-			var th = n2i.build('th');
+		var tr = hui.build('tr',{parent:this.head});
+		hui.each(headers,function(h,i) {
+			var th = hui.build('th');
 			if (h.width) {
 				th.style.width = h.width+'%';
 			}
 			if (h.sortable) {
-				n2i.listen(th,'click',function() {this.sort(i)}.bind(this));
-				n2i.addClass(th,'sortable');
+				hui.listen(th,'click',function() {this.sort(i)}.bind(this));
+				hui.addClass(th,'sortable');
 			}
-			th.appendChild(n2i.build('span',{text:h.title}));
+			th.appendChild(hui.build('span',{text:h.title}));
 			tr.appendChild(th);
 			this.columns.push(h);
 		}.bind(this));
@@ -11687,17 +6781,17 @@ In2iGui.List.prototype = {
 	/** @private */
 	buildRows : function(rows) {
 		var self = this;
-		n2i.dom.clear(this.body);
+		hui.dom.clear(this.body);
 		this.rows = [];
 		if (!rows) return;
-		n2i.each(rows,function(r,i) {
-			var tr = n2i.build('tr');
+		hui.each(rows,function(r,i) {
+			var tr = hui.build('tr');
 			var icon = r.icon;
 			var title = r.title;
-			n2i.each(r.cells,function(c) {
-				var td = n2i.build('td');
+			hui.each(r.cells,function(c) {
+				var td = hui.build('td');
 				if (c.icon) {
-					td.appendChild(In2iGui.createIcon(c.icon,1));
+					td.appendChild(hui.ui.createIcon(c.icon,1));
 					icon = icon || c.icon;
 				}
 				if (c.text) {
@@ -11717,30 +6811,30 @@ In2iGui.List.prototype = {
 	/** @private */
 	setObjects : function(objects) {
 		this.selected = [];
-		n2i.dom.clear(this.body);
+		hui.dom.clear(this.body);
 		this.rows = [];
 		for (var i=0; i < objects.length; i++) {
-			var row = n2i.build('tr');
+			var row = hui.build('tr');
 			var obj = objects[i];
 			var title = null;
 			for (var j=0; j < this.columns.length; j++) {
-				var cell = n2i.build('td');
+				var cell = hui.build('td');
 				if (this.builder) {
 					cell.appendChild(this.builder.buildColumn(this.columns[j],obj));
 				} else {
 					var value = obj[this.columns[j].key] || '';
-					if (n2i.isArray(value)) {
+					if (hui.isArray(value)) {
 						for (var k=0; k < value.length; k++) {
 							if (value[k].constructor == Object) {
 								cell.appendChild(this.createObject(value[k]));
 							} else {
-								cell.appendChild(n2i.build('div',{text:value}));
+								cell.appendChild(hui.build('div',{text:value}));
 							}
 						};
 					} else if (value.constructor == Object) {
 						cell.appendChild(this.createObject(value[j]));
 					} else {
-						n2i.dom.addText(cell,value);
+						hui.dom.addText(cell,value);
 						title = title==null ? value : title;
 					}
 				}
@@ -11755,11 +6849,11 @@ In2iGui.List.prototype = {
 	},
 	/** @private */
 	createObject : function(object) {
-		var node = n2i.build('div',{'class':'object'});
+		var node = hui.build('div',{'class':'object'});
 		if (object.icon) {
-			node.appendChild(In2iGui.createIcon(object.icon,1));
+			node.appendChild(hui.ui.createIcon(object.icon,1));
 		}
-		n2i.dom.addText(node,object.text || object.name || '')
+		hui.dom.addText(node,object.text || object.name || '')
 		return node;
 	},
 	/** @private */
@@ -11768,7 +6862,7 @@ In2iGui.List.prototype = {
 		row.onmousedown = function(e) {
 			if (self.busy) {return};
 			self.rowDown(index);
-			In2iGui.startDrag(e,row);
+			hui.ui.startDrag(e,row);
 			return false;
 		}
 		row.ondblclick = function() {
@@ -11782,10 +6876,10 @@ In2iGui.List.prototype = {
 		var rows = this.body.getElementsByTagName('tr'),
 			i;
 		for (i=0;i<this.selected.length;i++) {
-			n2i.removeClass(rows[this.selected[i]],'selected');
+			hui.removeClass(rows[this.selected[i]],'selected');
 		}
 		for (i=0;i<indexes.length;i++) {
-			n2i.addClass(rows[indexes[i]],'selected');
+			hui.addClass(rows[indexes[i]],'selected');
 		}
 		this.selected = indexes;
 		this.fire('selectionChanged',this.rows[indexes[0]]);
@@ -11802,34 +6896,37 @@ In2iGui.List.prototype = {
 	windowPageWasClicked : function(tag) {
 		var index = parseInt(tag.getAttribute('data-index'));
 		this.window.page = index;
-		In2iGui.firePropertyChange(this,'window',this.window);
-		In2iGui.firePropertyChange(this,'window.page',this.window.page);
+		hui.ui.firePropertyChange(this,'window',this.window);
+		hui.ui.firePropertyChange(this,'window.page',this.window.page);
 	}
 };
 
 /* EOF *//**
  * @constructor
  */
-In2iGui.Tabs = function(o) {
+hui.ui.Tabs = function(o) {
 	o = o || {};
 	this.name = o.name;
-	this.element = n2i.get(o.element);
+	this.element = hui.get(o.element);
 	this.activeTab = -1;
-	var x = n2i.firstByClass(this.element,'in2igui_tabs_bar');
-	this.bar = n2i.firstByTag(x,'ul');
+	var x = hui.firstByClass(this.element,'in2igui_tabs_bar');
+	this.bar = hui.firstByTag(x,'ul');
 	this.tabs = [];
 	var nodes = this.bar.getElementsByTagName('li');
 	for (var i=0; i < nodes.length; i++) {
+		if (!hui.browser.msie) {
+			hui.firstByTag(nodes[i],'a').removeAttribute('href');
+		}
 		this.tabs.push(nodes[i]);
 	};
-	this.contents = n2i.byClass(this.element,'in2igui_tabs_tab');
+	this.contents = hui.byClass(this.element,'in2igui_tabs_tab');
 	this.addBehavior();
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 }
 
-In2iGui.Tabs.create = function(options) {
+hui.ui.Tabs.create = function(options) {
 	options = options || {};
-	var e = options.element = n2i.build('div',{'class':'in2igui_tabs'});
+	var e = options.element = hui.build('div',{'class':'in2igui_tabs'});
 	var cls = 'in2igui_tabs_bar';
 	if (options.small) {
 		cls+=' in2igui_tabs_bar_small';
@@ -11837,12 +6934,12 @@ In2iGui.Tabs.create = function(options) {
 	if (options.centered) {
 		cls+=' in2igui_tabs_bar_centered';
 	}
-	var bar = n2i.build('div',{'class' : cls, parent : e});
-	n2i.build('ul',{parent:bar});
-	return new In2iGui.Tabs(options);
+	var bar = hui.build('div',{'class' : cls, parent : e});
+	hui.build('ul',{parent:bar});
+	return new hui.ui.Tabs(options);
 }
 
-In2iGui.Tabs.prototype = {
+hui.ui.Tabs.prototype = {
 	/** @private */
 	addBehavior : function() {
 		for (var i=0; i < this.tabs.length; i++) {
@@ -11851,7 +6948,7 @@ In2iGui.Tabs.prototype = {
 	},
 	/** @private */
 	addTabBehavior : function(tab,index) {	
-		n2i.listen(tab,'click',function() {
+		hui.listen(tab,'click',function() {
 			this.tabWasClicked(index);
 		}.bind(this))
 	},
@@ -11868,16 +6965,16 @@ In2iGui.Tabs.prototype = {
 	/** @private */
 	updateGUI : function() {
 		for (var i=0; i < this.tabs.length; i++) {
-			n2i.setClass(this.tabs[i],'in2igui_tabs_selected',i==this.activeTab);
+			hui.setClass(this.tabs[i],'in2igui_tabs_selected',i==this.activeTab);
 			this.contents[i].style.display = i==this.activeTab ? 'block' : 'none';
 		};
 	},
 	createTab : function(options) {
 		options = options || {};
-		var tab = n2i.build('li',{html:'<a><span><span>'+n2i.escape(options.title)+'</span></span></a>',parent:this.bar});
+		var tab = hui.build('li',{html:'<a><span><span>'+hui.escape(options.title)+'</span></span></a>',parent:this.bar});
 		this.addTabBehavior(tab,this.tabs.length);
 		this.tabs.push(tab);
-		var e = options.element = n2i.build('div',{'class':'in2igui_tabs_tab'});
+		var e = options.element = hui.build('div',{'class':'in2igui_tabs_tab'});
 		if (options.padding>0) {
 			e.style.padding = options.padding+'px';
 		}
@@ -11885,23 +6982,23 @@ In2iGui.Tabs.prototype = {
 		this.element.appendChild(e);
 		if (this.activeTab==-1) {
 			this.activeTab=0;
-			n2i.addClass(tab,'in2igui_tabs_selected');
+			hui.addClass(tab,'in2igui_tabs_selected');
 		} else {
 			e.style.display='none';
 		}
-		return new In2iGui.Tab(options);
+		return new hui.ui.Tab(options);
 	}
 };
 
 /**
  * @constructor
  */
-In2iGui.Tab = function(o) {
+hui.ui.Tab = function(o) {
 	this.name = o.name;
-	this.element = n2i.get(o.element);
+	this.element = hui.get(o.element);
 }
 
-In2iGui.Tab.prototype = {
+hui.ui.Tab.prototype = {
 	add : function(widget) {
 		this.element.appendChild(widget.element);
 	}
@@ -11910,19 +7007,19 @@ In2iGui.Tab.prototype = {
 /* EOF *//**
  * @constructor
  */
-In2iGui.ObjectList = function(o) {
-	this.options = n2i.override({key:null},o);
+hui.ui.ObjectList = function(o) {
+	this.options = hui.override({key:null},o);
 	this.name = o.name;
-	this.element = n2i.get(o.element);
-	this.body = n2i.firstByTag(this.element,'tbody');
+	this.element = hui.get(o.element);
+	this.body = hui.firstByTag(this.element,'tbody');
 	this.template = [];
 	this.objects = [];
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 }
 
-In2iGui.ObjectList.create = function(o) {
+hui.ui.ObjectList.create = function(o) {
 	o=o || {};
-	var e = o.element = n2i.build('table',{'class':'in2igui_objectlist',cellpadding:'0',cellspacing:'0'});
+	var e = o.element = hui.build('table',{'class':'in2igui_objectlist',cellpadding:'0',cellspacing:'0'});
 	if (o.template) {
 		var head = '<thead><tr>';
 		for (var i=0; i < o.template.length; i++) {
@@ -11931,30 +7028,30 @@ In2iGui.ObjectList.create = function(o) {
 		head+='</tr></thead>';
 		e.innerHTML=head;
 	}
-	n2i.build('tbody',{parent:e});
-	var list = new In2iGui.ObjectList(o);
+	hui.build('tbody',{parent:e});
+	var list = new hui.ui.ObjectList(o);
 	if (o.template) {
-		n2i.each(o.template,function(item) {
-			list.registerTemplateItem(new In2iGui.ObjectList.Text(item.key));
+		hui.each(o.template,function(item) {
+			list.registerTemplateItem(new hui.ui.ObjectList.Text(item.key));
 		});
 	}
 	return list;
 }
 
-In2iGui.ObjectList.prototype = {
+hui.ui.ObjectList.prototype = {
 	ignite : function() {
 		this.addObject({});
 	},
 	addObject : function(data,addToEnd) {
 		var obj;
 		if (this.objects.length==0 || addToEnd) {
-			obj = new In2iGui.ObjectList.Object(this.objects.length,data,this);
+			obj = new hui.ui.ObjectList.Object(this.objects.length,data,this);
 			this.objects.push(obj);
 			this.body.appendChild(obj.getElement());
 		} else {
 			var last = this.objects[this.objects.length-1];
-			n2i.removeFromArray(this.objects,last);
-			obj = new In2iGui.ObjectList.Object(last.index,data,this);
+			hui.removeFromArray(this.objects,last);
+			obj = new hui.ui.ObjectList.Object(last.index,data,this);
 			last.index++;
 			this.objects.push(obj);
 			this.objects.push(last);
@@ -11965,8 +7062,8 @@ In2iGui.ObjectList.prototype = {
 		for (var i=0; i < this.objects.length; i++) {
 			var element = this.objects[i].getElement();
 			if (!element.parentNode) {
-				n2i.log('no parent for...');
-				n2i.log(element);
+				hui.log('no parent for...');
+				hui.log(element);
 			} else {
 				element.parentNode.removeChild(element);
 			}
@@ -12012,14 +7109,14 @@ In2iGui.ObjectList.prototype = {
 /********************** Object ********************/
 
 /** @constructor */
-In2iGui.ObjectList.Object = function(index,data,list) {
+hui.ui.ObjectList.Object = function(index,data,list) {
 	this.data = data;
 	this.index = index;
 	this.list = list;
 	this.fields = [];
 }
 
-In2iGui.ObjectList.Object.prototype = {
+hui.ui.ObjectList.Object.prototype = {
 	getElement : function() {
 		if (!this.element) {
 			this.element = document.createElement('tr');
@@ -12051,19 +7148,19 @@ In2iGui.ObjectList.Object.prototype = {
 
 /*************************** Text **************************/
 
-In2iGui.ObjectList.Text = function(key) {
+hui.ui.ObjectList.Text = function(key) {
 	this.key = key;
 	this.value = null;
 }
 
-In2iGui.ObjectList.Text.prototype = {
+hui.ui.ObjectList.Text.prototype = {
 	clone : function() {
-		return new In2iGui.ObjectList.Text(this.key);
+		return new hui.ui.ObjectList.Text(this.key);
 	},
 	getElement : function() {
-		var input = n2i.build('input',{'class':'in2igui_formula_text'});
-		var field = In2iGui.wrapInField(input);
-		this.wrapper = new In2iGui.TextField({element:input});
+		var input = hui.build('input',{'class':'in2igui_formula_text'});
+		var field = hui.ui.wrapInField(input);
+		this.wrapper = new hui.ui.TextField({element:input});
 		this.wrapper.listen(this);
 		return field;
 	},
@@ -12082,20 +7179,20 @@ In2iGui.ObjectList.Text.prototype = {
 
 /*************************** Select **************************/
 
-In2iGui.ObjectList.Select = function(key) {
+hui.ui.ObjectList.Select = function(key) {
 	this.key = key;
 	this.value = null;
 	this.options = [];
 }
 
-In2iGui.ObjectList.Select.prototype = {
+hui.ui.ObjectList.Select.prototype = {
 	clone : function() {
-		var copy = new In2iGui.ObjectList.Select(this.key);
+		var copy = new hui.ui.ObjectList.Select(this.key);
 		copy.options = this.options;
 		return copy;
 	},
 	getElement : function() {
-		this.select = n2i.build('select');
+		this.select = hui.build('select');
 		for (var i=0; i < this.options.length; i++) {
 			this.select.options[this.select.options.length] = new Option(this.options[i].label,this.options[i].value);
 		};
@@ -12120,15 +7217,15 @@ In2iGui.ObjectList.Select.prototype = {
  * An alert
  * @constructor
  */
-In2iGui.Alert = function(options) {
-	this.options = n2i.override({modal:false},options);
-	this.element = n2i.get(options.element);
+hui.ui.Alert = function(options) {
+	this.options = hui.override({modal:false},options);
+	this.element = hui.get(options.element);
 	this.name = options.name;
-	this.body = n2i.firstByClass(this.element,'in2igui_alert_body');
-	this.content = n2i.firstByClass(this.element,'in2igui_alert_content');
+	this.body = hui.firstByClass(this.element,'hui_alert_body');
+	this.content = hui.firstByClass(this.element,'hui_alert_content');
 	this.emotion = this.options.emotion;
-	this.title = n2i.firstByTag(this.element,'h1');
-	In2iGui.extend(this);
+	this.title = hui.firstByTag(this.element,'h1');
+	hui.ui.extend(this);
 }
 
 /**
@@ -12136,14 +7233,14 @@ In2iGui.Alert = function(options) {
  * <br/><strong>options:</strong> { name: «String», title: «String», text: «String», emotion: «'smile' | 'gasp'», modal: «Boolean»}
  * @static
  */
-In2iGui.Alert.create = function(options) {
-	options = n2i.override({title:'',text:'',emotion:null,title:null},options);
+hui.ui.Alert.create = function(options) {
+	options = hui.override({title:'',text:'',emotion:null,title:null},options);
 	
-	var element = options.element = n2i.build('div',{'class':'in2igui_alert'});
-	var body = n2i.build('div',{'class':'in2igui_alert_body',parent:element});
-	n2i.build('div',{'class':'in2igui_alert_content',parent:body});
+	var element = options.element = hui.build('div',{'class':'hui_alert'});
+	var body = hui.build('div',{'class':'hui_alert_body',parent:element});
+	hui.build('div',{'class':'hui_alert_content',parent:body});
 	document.body.appendChild(element);
-	var obj = new In2iGui.Alert(options);
+	var obj = new hui.ui.Alert(options);
 	if (options.emotion) {
 		obj.setEmotion(options.emotion);
 	}
@@ -12157,48 +7254,48 @@ In2iGui.Alert.create = function(options) {
 	return obj;
 }
 
-In2iGui.Alert.prototype = {
+hui.ui.Alert.prototype = {
 	/** Shows the alert */
 	show : function() {
-		var zIndex = In2iGui.nextAlertIndex();
+		var zIndex = hui.ui.nextAlertIndex();
 		if (this.options.modal) {
-			In2iGui.showCurtain({widget:this,zIndex:zIndex});
+			hui.ui.showCurtain({widget:this,zIndex:zIndex});
 			zIndex++;
 		}
 		this.element.style.zIndex=zIndex;
 		this.element.style.display='block';
-		this.element.style.top=(n2i.getScrollTop()+100)+'px';
-		n2i.animate(this.element,'opacity',1,200);
-		n2i.animate(this.element,'margin-top','40px',600,{ease:n2i.ease.elastic});
+		this.element.style.top=(hui.getScrollTop()+100)+'px';
+		hui.animate(this.element,'opacity',1,200);
+		hui.animate(this.element,'margin-top','40px',600,{ease:hui.ease.elastic});
 	},
 	/** Hides the alert */
 	hide : function() {
-		n2i.animate(this.element,'opacity',0,200,{hideOnComplete:true});
-		n2i.animate(this.element,'margin-top','0px',200);
-		In2iGui.hideCurtain(this);
+		hui.animate(this.element,'opacity',0,200,{hideOnComplete:true});
+		hui.animate(this.element,'margin-top','0px',200);
+		hui.ui.hideCurtain(this);
 	},
 	/** Sets the alert title */
 	setTitle : function(/**String*/ text) {
 		if (!this.title) {
-			this.title = n2i.build('h1',{parent:this.content});
+			this.title = hui.build('h1',{parent:this.content});
 		}
-		n2i.dom.setText(this.title,text);
+		hui.dom.setText(this.title,text);
 		
 	},
 	/** Sets the alert text */
 	setText : function(/**String*/ text) {
 		if (!this.text) {
-			this.text = n2i.build('p',{parent:this.content});
+			this.text = hui.build('p',{parent:this.content});
 		}
-		n2i.dom.setText(this.text,text || '');
+		hui.dom.setText(this.text,text || '');
 	},
 	/** Sets the alert emotion */
 	setEmotion : function(/**String*/ emotion) {
 		if (this.emotion) {
-			n2i.removeClass(this.body,this.emotion);
+			hui.removeClass(this.body,this.emotion);
 		}
 		this.emotion = emotion;
-		n2i.addClass(this.body,emotion);
+		hui.addClass(this.body,emotion);
 	},
 	/** Updates multiple properties
 	 * @param {Object} options {title: «String», text: «String», emotion: «'smile' | 'gasp'»}
@@ -12209,10 +7306,10 @@ In2iGui.Alert.prototype = {
 		this.setText(options.text || null);
 		this.setEmotion(options.emotion || null);
 	},
-	/** Adds an In2iGui.Button to the alert */
+	/** Adds a Button to the alert */
 	addButton : function(button) {
 		if (!this.buttons) {
-			this.buttons = In2iGui.Buttons.create({align:'right'});
+			this.buttons = hui.ui.Buttons.create({align:'right'});
 			this.body.appendChild(this.buttons.element);
 		}
 		this.buttons.add(button);
@@ -12223,57 +7320,57 @@ In2iGui.Alert.prototype = {
  * @constructor
  * A button
  */
-In2iGui.Button = function(options) {
+hui.ui.Button = function(options) {
 	this.options = options;
 	this.name = options.name;
-	this.element = n2i.get(options.element);
-	this.enabled = !n2i.hasClass(this.element,'in2igui_button_disabled');
-	In2iGui.extend(this);
+	this.element = hui.get(options.element);
+	this.enabled = !hui.hasClass(this.element,'hui_button_disabled');
+	hui.ui.extend(this);
 	this.addBehavior();
 }
 
 /**
  * Creates a new button
  */
-In2iGui.Button.create = function(o) {
-	o = n2i.override({text:'',highlighted:false,enabled:true},o);
-	var className = 'in2igui_button'+(o.highlighted ? ' in2igui_button_highlighted' : '');
+hui.ui.Button.create = function(o) {
+	o = hui.override({text:'',highlighted:false,enabled:true},o);
+	var className = 'hui_button'+(o.highlighted ? ' hui_button_highlighted' : '');
 	if (o.small && o.rounded) {
-		className+=' in2igui_button_small_rounded';
+		className+=' hui_button_small_rounded';
 	}
 	if (!o.enabled) {
-		className+=' in2igui_button_disabled';
+		className+=' hui_button_disabled';
 	}
-	var element = o.element = n2i.build('a',{'class':className,href:'#'});
+	var element = o.element = hui.build('a',{'class':className,href:'#'});
 	var element2 = document.createElement('span');
 	element.appendChild(element2);
 	var element3 = document.createElement('span');
 	element2.appendChild(element3);
 	if (o.icon) {
-		var icon = n2i.build('em',{'class':'in2igui_button_icon',style:'background-image:url('+In2iGui.getIconUrl(o.icon,1)+')'});
+		var icon = hui.build('em',{'class':'hui_button_icon',style:'background-image:url('+hui.ui.getIconUrl(o.icon,1)+')'});
 		if (!o.text || o.text.length==0) {
-			n2i.addClass(icon,'in2igui_button_icon_notext');
+			hui.addClass(icon,'hui_button_icon_notext');
 		}
 		element3.appendChild(icon);
 	}
 	if (o.text && o.text.length>0) {
-		n2i.dom.addText(element3,o.text);
+		hui.dom.addText(element3,o.text);
 	}
 	if (o.title && o.title.length>0) {
-		n2i.dom.addText(element3,o.title);
+		hui.dom.addText(element3,o.title);
 	}
-	return new In2iGui.Button(o);
+	return new hui.ui.Button(o);
 }
 
-In2iGui.Button.prototype = {
+hui.ui.Button.prototype = {
 	/** @private */
 	addBehavior : function() {
 		var self = this;
-		n2i.listen(this.element,'mousedown',function(e) {
-			n2i.stop(e);
+		hui.listen(this.element,'mousedown',function(e) {
+			hui.stop(e);
 		});
-		n2i.listen(this.element,'click',function(e) {
-			n2i.stop(e);
+		hui.listen(this.element,'click',function(e) {
+			hui.stop(e);
 			self.clicked();
 		});
 	},
@@ -12281,7 +7378,7 @@ In2iGui.Button.prototype = {
 	clicked : function() {
 		if (this.enabled) {
 			if (this.options.confirm) {
-				In2iGui.confirmOverlay({
+				hui.ui.confirmOverlay({
 					widget:this,
 					text:this.options.confirm.text,
 					okText:this.options.confirm.okText,
@@ -12299,7 +7396,7 @@ In2iGui.Button.prototype = {
 	fireClick : function() {
 		this.fire('click');
 		if (this.options.submit) {
-			var form = In2iGui.get().getAncestor(this,'in2igui_formula');
+			var form = hui.ui.getAncestor(this,'hui_formula');
 			if (form) {form.submit();}
 		}
 	},
@@ -12334,45 +7431,45 @@ In2iGui.Button.prototype = {
 	},
 	/** Sets whether the button is highlighted */
 	setHighlighted : function(highlighted) {
-		n2i.setClass(this.element,'in2igui_button_highlighted',highlighted);
+		hui.setClass(this.element,'hui_button_highlighted',highlighted);
 	},
 	/** @private */
 	updateUI : function() {
-		n2i.setClass(this.element,'in2igui_button_disabled',!this.enabled);
+		hui.setClass(this.element,'hui_button_disabled',!this.enabled);
 	},
 	/** Sets the button text */
 	setText : function(text) {
-		n2i.dom.setText(this.element.getElementsByTagName('span')[1], text);
+		hui.dom.setText(this.element.getElementsByTagName('span')[1], text);
 	}
 }
 
 ////////////////////////////////// Buttons /////////////////////////////
 
 /** @constructor */
-In2iGui.Buttons = function(o) {
+hui.ui.Buttons = function(o) {
 	this.name = o.name;
-	this.element = n2i.get(o.element);
-	this.body = n2i.firstByClass(this.element,'in2igui_buttons_body');
-	In2iGui.extend(this);
+	this.element = hui.get(o.element);
+	this.body = hui.firstByClass(this.element,'hui_buttons_body');
+	hui.ui.extend(this);
 }
 
-In2iGui.Buttons.create = function(o) {
-	o = n2i.override({top:0},o);
-	var e = o.element = n2i.build('div',{'class':'in2igui_buttons'});
+hui.ui.Buttons.create = function(o) {
+	o = hui.override({top:0},o);
+	var e = o.element = hui.build('div',{'class':'hui_buttons'});
 	if (o.align=='right') {
-		n2i.addClass(e,'in2igui_buttons_right');
+		hui.addClass(e,'hui_buttons_right');
 	}
 	if (o.align=='center') {
-		n2i.addClass(e,'in2igui_buttons_center');
+		hui.addClass(e,'hui_buttons_center');
 	}
 	if (o.top>0) {
 		e.style.paddingTop=o.top+'px';
 	}
-	n2i.build('div',{'class':'in2igui_buttons_body',parent:e});
-	return new In2iGui.Buttons(o);
+	hui.build('div',{'class':'hui_buttons_body',parent:e});
+	return new hui.ui.Buttons(o);
 }
 
-In2iGui.Buttons.prototype = {
+hui.ui.Buttons.prototype = {
 	add : function(widget) {
 		this.body.appendChild(widget.element);
 		return this;
@@ -12383,9 +7480,9 @@ In2iGui.Buttons.prototype = {
  * @constructor
  * @param {Object} options The options : {value:null}
  */
-In2iGui.Selection = function(options) {
-	this.options = n2i.override({value:null},options);
-	this.element = n2i.get(options.element);
+hui.ui.Selection = function(options) {
+	this.options = hui.override({value:null},options);
+	this.element = hui.get(options.element);
 	this.name = options.name;
 	this.items = [];
 	this.subItems = [];
@@ -12393,23 +7490,23 @@ In2iGui.Selection = function(options) {
 	if (this.options.value!=null) {
 		this.selection = {value:this.options.value};
 	}
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 }
 
 /**
  * Creates a new selection widget
  * @param {Object} options The options : {width:0}
  */
-In2iGui.Selection.create = function(options) {
-	options = n2i.override({width:0},options);
-	var e = options.element = n2i.build('div',{'class':'in2igui_selection'});
+hui.ui.Selection.create = function(options) {
+	options = hui.override({width:0},options);
+	var e = options.element = hui.build('div',{'class':'in2igui_selection'});
 	if (options.width>0) {
 		e.style.width = options.width+'px';
 	}
-	return new In2iGui.Selection(options);
+	return new hui.ui.Selection(options);
 }
 
-In2iGui.Selection.prototype = {
+hui.ui.Selection.prototype = {
 	/** Get the selected item
 	 * @returns {Object} The selected item, null if no selection */
 	getValue : function() {
@@ -12462,7 +7559,7 @@ In2iGui.Selection.prototype = {
 	updateUI : function() {
 		var i;
 		for (i=0; i < this.items.length; i++) {
-			n2i.setClass(this.items[i].element,'in2igui_selected',this.isSelection(this.items[i]));
+			hui.setClass(this.items[i].element,'in2igui_selected',this.isSelection(this.items[i]));
 		};
 		for (i=0; i < this.subItems.length; i++) {
 			this.subItems[i].updateUI();
@@ -12493,7 +7590,7 @@ In2iGui.Selection.prototype = {
 	},
 	/** @private */
 	registerItem : function(id,title,icon,badge,value,kind) {
-		var element = n2i.get(id);
+		var element = hui.get(id);
 		var item = {id:id,title:title,icon:icon,badge:badge,element:element,value:value,kind:kind};
 		this.items.push(item);
 		this.addItemBehavior(element,item);
@@ -12501,10 +7598,10 @@ In2iGui.Selection.prototype = {
 	},
 	/** @private */
 	addItemBehavior : function(node,item) {
-		n2i.listen(node,'click',function() {
+		hui.listen(node,'click',function() {
 			this.itemWasClicked(item);
 		}.bind(this));
-		n2i.listen(node,'dblclick',function() {
+		hui.listen(node,'dblclick',function() {
 			this.itemWasDoubleClicked(item);
 		}.bind(this));
 		node.dragDropInfo = item;
@@ -12512,21 +7609,21 @@ In2iGui.Selection.prototype = {
 	/** Untested!! */
 	setObjects : function(items) {
 		this.items = [];
-		n2i.each(items,function(item) {
+		hui.each(items,function(item) {
 			this.items.push(item);
-			var node = n2i.build('div',{'class':'in2igui_selection_item'});
+			var node = hui.build('div',{'class':'in2igui_selection_item'});
 			item.element = node;
 			this.element.appendChild(node);
-			var inner = n2i.build('span',{'class':'in2igui_selection_label',text:item.title});
+			var inner = hui.build('span',{'class':'in2igui_selection_label',text:item.title});
 			if (item.icon) {
-				node.appendChild(In2iGui.createIcon(item.icon,1));
+				node.appendChild(hui.ui.createIcon(item.icon,1));
 			}
 			node.appendChild(inner);
-			n2i.listen(node,'click',function() {
+			hui.listen(node,'click',function() {
 				this.itemWasClicked(item);
 			}.bind(this));
-			n2i.listen(node,'dblclick',function(e) {
-				n2i.stop(e);
+			hui.listen(node,'dblclick',function(e) {
+				hui.stop(e);
 				this.itemWasDoubleClicked(item);
 			}.bind(this));
 		}.bind(this));
@@ -12560,20 +7657,20 @@ In2iGui.Selection.prototype = {
  * A group of items loaded from a source
  * @param {Object} options The options : {element,name,source}
  */
-In2iGui.Selection.Items = function(options) {
-	this.options = n2i.override({source:null},options);
-	this.element = n2i.get(options.element);
-	this.title = n2i.get(this.element.id+'_title');
+hui.ui.Selection.Items = function(options) {
+	this.options = hui.override({source:null},options);
+	this.element = hui.get(options.element);
+	this.title = hui.get(this.element.id+'_title');
 	this.name = options.name;
 	this.parent = null;
 	this.items = [];
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 	if (this.options.source) {
 		this.options.source.listen(this);
 	}
 }
 
-In2iGui.Selection.Items.prototype = {
+hui.ui.Selection.Items.prototype = {
 	/**
 	 * Refresh the underlying source
 	 */
@@ -12601,37 +7698,37 @@ In2iGui.Selection.Items.prototype = {
 		if (!items) return;
 		var hierarchical = this.isHierarchy(items);
 		var open = inc==0;
-		var level = n2i.build('div',{'class':'in2igui_selection_level',style:(open ? 'display:block' : 'display:none'),parent:parent});
-		n2i.each(items,function(item) {
+		var level = hui.build('div',{'class':'in2igui_selection_level',style:(open ? 'display:block' : 'display:none'),parent:parent});
+		hui.each(items,function(item) {
 			if (item.type=='title') {
-				n2i.build('div',{'class':'in2igui_selection_title',html:'<span>'+item.title+'</span>',parent:level});
+				hui.build('div',{'class':'in2igui_selection_title',html:'<span>'+item.title+'</span>',parent:level});
 				return;
 			}
 			var hasChildren = item.children && item.children.length>0;
 			var left = inc*16+6;
 			if (!hierarchical && inc>0 || hierarchical && !hasChildren) left+=13;
-			var node = n2i.build('div',{'class':'in2igui_selection_item'});
+			var node = hui.build('div',{'class':'in2igui_selection_item'});
 			node.style.paddingLeft = left+'px';
 			if (item.badge) {
-				node.appendChild(n2i.build('strong',{'class':'in2igui_selection_badge',text:item.badge}));
+				node.appendChild(hui.build('strong',{'class':'in2igui_selection_badge',text:item.badge}));
 			}
 			if (hierarchical && hasChildren) {
 				var self = this;
-				var x = n2i.build('span',{'class':'in2igui_disclosure',parent:node});
-				n2i.listen(x,'click',function(e) {
-					n2i.stop(e);
+				var x = hui.build('span',{'class':'in2igui_disclosure',parent:node});
+				hui.listen(x,'click',function(e) {
+					hui.stop(e);
 					self.toggle(x);
 				});
 			}
-			var inner = n2i.build('span',{'class':'in2igui_selection_label',text:item.title});
+			var inner = hui.build('span',{'class':'in2igui_selection_label',text:item.title});
 			if (item.icon) {
-				node.appendChild(n2i.build('span',{'class':'in2igui_icon_1',style:'background-image: url('+In2iGui.getIconUrl(item.icon,1)+')'}));
+				node.appendChild(hui.build('span',{'class':'in2igui_icon_1',style:'background-image: url('+hui.ui.getIconUrl(item.icon,1)+')'}));
 			}
 			node.appendChild(inner);
-			n2i.listen(node,'click',function(e) {
+			hui.listen(node,'click',function(e) {
 				this.parent.itemWasClicked(item);
 			}.bind(this));
-			n2i.listen(node,'dblclick',function(e) {
+			hui.listen(node,'dblclick',function(e) {
 				this.parent.itemWasDoubleClicked(item);
 			}.bind(this));
 			level.appendChild(node);
@@ -12643,12 +7740,12 @@ In2iGui.Selection.Items.prototype = {
 	},
 	/** @private */
 	toggle : function(node) {
-		if (n2i.hasClass(node,'in2igui_disclosure_open')) {
-			n2i.getNext(node.parentNode).style.display='none';
-			n2i.removeClass(node,'in2igui_disclosure_open');
+		if (hui.hasClass(node,'in2igui_disclosure_open')) {
+			hui.getNext(node.parentNode).style.display='none';
+			hui.removeClass(node,'in2igui_disclosure_open');
 		} else {
-			n2i.getNext(node.parentNode).style.display='block';
-			n2i.addClass(node,'in2igui_disclosure_open');
+			hui.getNext(node.parentNode).style.display='block';
+			hui.addClass(node,'in2igui_disclosure_open');
 		}
 	},
 	/** @private */
@@ -12677,7 +7774,7 @@ In2iGui.Selection.Items.prototype = {
 	/** @private */
 	updateUI : function() {
 		for (var i=0; i < this.items.length; i++) {
-			n2i.setClass(this.items[i].element,'in2igui_selected',this.parent.isSelection(this.items[i]));
+			hui.setClass(this.items[i].element,'in2igui_selected',this.parent.isSelection(this.items[i]));
 		};
 	},
 	/** @private */
@@ -12707,26 +7804,26 @@ In2iGui.Selection.Items.prototype = {
 }
 /* EOF */
 /** @constructor */
-In2iGui.Toolbar = function(options) {
-	this.element = n2i.get(options.element);
+hui.ui.Toolbar = function(options) {
+	this.element = hui.get(options.element);
 	this.name = options.name;
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 }
 
-In2iGui.Toolbar.create = function(options) {
+hui.ui.Toolbar.create = function(options) {
 	options = options || {};
-	options.element = n2i.build('div',{
+	options.element = hui.build('div',{
 		'class' : options.labels ? 'in2igui_toolbar in2igui_toolbar_nolabels' : 'in2igui_toolbar'
 	});
-	return new In2iGui.Toolbar(options);
+	return new hui.ui.Toolbar(options);
 }
 
-In2iGui.Toolbar.prototype = {
+hui.ui.Toolbar.prototype = {
 	add : function(widget) {
 		this.element.appendChild(widget.getElement());
 	},
 	addDivider : function() {
-		this.element.appendChild(n2i.build('span',{'class':'in2igui_divider'}));
+		this.element.appendChild(hui.build('span',{'class':'in2igui_divider'}));
 	}
 }
 
@@ -12735,25 +7832,25 @@ In2iGui.Toolbar.prototype = {
 /////////////////////// Revealing toolbar ////////////////////////
 
 /** @constructor */
-In2iGui.RevealingToolbar = function(options) {
-	this.element = n2i.get(options.element);
+hui.ui.RevealingToolbar = function(options) {
+	this.element = hui.get(options.element);
 	this.name = options.name;
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 }
 
-In2iGui.RevealingToolbar.create = function(options) {
+hui.ui.RevealingToolbar.create = function(options) {
 	options = options || {};
-	options.element = n2i.build( 'div', {
+	options.element = hui.build( 'div', {
 		className : 'in2igui_revealing_toolbar',
 		style : 'display:none',
 		parent : document.body
 	});
-	var bar = new In2iGui.RevealingToolbar(options);
-	bar.setToolbar(In2iGui.Toolbar.create());
+	var bar = new hui.ui.RevealingToolbar(options);
+	bar.setToolbar(hui.ui.Toolbar.create());
 	return bar;
 }
 
-In2iGui.RevealingToolbar.prototype = {
+hui.ui.RevealingToolbar.prototype = {
 	setToolbar : function(widget) {
 		this.toolbar = widget;
 		this.element.appendChild(widget.getElement());
@@ -12763,10 +7860,10 @@ In2iGui.RevealingToolbar.prototype = {
 	},
 	show : function(instantly) {
 		this.element.style.display='';
-		n2i.ani(this.element,'height','58px',instantly ? 0 : 600,{ease:n2i.ease.slowFastSlow});
+		hui.ani(this.element,'height','58px',instantly ? 0 : 600,{ease:hui.ease.slowFastSlow});
 	},
 	hide : function() {
-		n2i.ani(this.element,'height','0px',500,{ease:n2i.ease.slowFastSlow,hideOnComplete:true});
+		hui.ani(this.element,'height','0px',500,{ease:hui.ease.slowFastSlow,hideOnComplete:true});
 	}
 }
 
@@ -12775,32 +7872,35 @@ In2iGui.RevealingToolbar.prototype = {
 /////////////////////// Icon ///////////////////
 
 /** @constructor */
-In2iGui.Toolbar.Icon = function(options) {
+hui.ui.Toolbar.Icon = function(options) {
 	this.options = options;
-	this.element = n2i.get(options.element);
+	this.element = hui.get(options.element);
 	this.name = options.name;
-	this.enabled = !n2i.hasClass(this.element,'in2igui_toolbar_icon_disabled');
+	this.enabled = !hui.hasClass(this.element,'in2igui_toolbar_icon_disabled');
 	this.element.tabIndex=this.enabled ? 0 : -1;
-	this.icon = n2i.firstByClass(this.element,'in2igui_icon');
-	In2iGui.extend(this);
+	this.icon = hui.firstByClass(this.element,'in2igui_icon');
+	if (!hui.browser.msie) {
+		this.element.removeAttribute('href');
+	}
+	hui.ui.extend(this);
 	this.addBehavior();
 }
 
-In2iGui.Toolbar.Icon.create = function(options) {
-	var element = options.element = n2i.build('a',{'class':'in2igui_toolbar_icon'});
-	var icon = n2i.build('span',{'class':'in2igui_icon',style:'background-image: url('+In2iGui.getIconUrl(options.icon,2)+')'});
-	var inner = n2i.build('span',{'class':'in2igui_toolbar_inner_icon',parent:element});
-	var innerest = n2i.build('span',{'class':'in2igui_toolbar_inner_icon',parent:inner});
-	var title = n2i.build('strong',{text:options.title});
+hui.ui.Toolbar.Icon.create = function(options) {
+	var element = options.element = hui.build('a',{'class':'in2igui_toolbar_icon'});
+	var icon = hui.build('span',{'class':'in2igui_icon',style:'background-image: url('+hui.ui.getIconUrl(options.icon,2)+')'});
+	var inner = hui.build('span',{'class':'in2igui_toolbar_inner_icon',parent:element});
+	var innerest = hui.build('span',{'class':'in2igui_toolbar_inner_icon',parent:inner});
+	var title = hui.build('strong',{text:options.title});
 	if (options.overlay) {
-		n2i.build('span',{'class':'in2igui_icon_overlay',parent:icon,style:'background-image: url('+In2iGui.getIconUrl('overlay/'+options.overlay,2)+')'});
+		hui.build('span',{'class':'in2igui_icon_overlay',parent:icon,style:'background-image: url('+hui.ui.getIconUrl('overlay/'+options.overlay,2)+')'});
 	}
 	innerest.appendChild(icon);
 	innerest.appendChild(title);
-	return new In2iGui.Toolbar.Icon(options);
+	return new hui.ui.Toolbar.Icon(options);
 }
 
-In2iGui.Toolbar.Icon.prototype = {
+hui.ui.Toolbar.Icon.prototype = {
 	/** @private */
 	addBehavior : function() {
 		var self = this;
@@ -12812,7 +7912,7 @@ In2iGui.Toolbar.Icon.prototype = {
 	setEnabled : function(enabled) {
 		this.enabled = enabled;
 		this.element.tabIndex=enabled ? 0 : -1;
-		n2i.setClass(this.element,'in2igui_toolbar_icon_disabled',!this.enabled);
+		hui.setClass(this.element,'in2igui_toolbar_icon_disabled',!this.enabled);
 	},
 	/** Disables the icon */
 	disable : function() {
@@ -12824,13 +7924,13 @@ In2iGui.Toolbar.Icon.prototype = {
 	},
 	/** Sets wether the icon should be selected */
 	setSelected : function(selected) {
-		n2i.setClass(this.element,'in2igui_toolbar_icon_selected',selected);
+		hui.setClass(this.element,'in2igui_toolbar_icon_selected',selected);
 	},
 	/** @private */
 	wasClicked : function() {
 		if (this.enabled) {
 			if (this.options.confirm) {
-				In2iGui.confirmOverlay({
+				hui.ui.confirmOverlay({
 					widget:this,
 					text:this.options.confirm.text,
 					okText:this.options.confirm.okText,
@@ -12844,8 +7944,8 @@ In2iGui.Toolbar.Icon.prototype = {
 	},
 	/** @private */
 	fireClick : function() {
-		In2iGui.callDelegates(this,'toolbarIconWasClicked');
-		In2iGui.callDelegates(this,'click');
+		hui.ui.callDelegates(this,'toolbarIconWasClicked');
+		hui.ui.callDelegates(this,'click');
 	}
 }
 
@@ -12853,27 +7953,27 @@ In2iGui.Toolbar.Icon.prototype = {
 /////////////////////// Search field ///////////////////////
 
 /** @constructor */
-In2iGui.Toolbar.SearchField = function(options) {
+hui.ui.Toolbar.SearchField = function(options) {
 	this.options = options;
-	this.element = n2i.get(options.element);
+	this.element = hui.get(options.element);
 	this.name = options.name;
-	this.field = n2i.firstByTag(this.element,'input');
+	this.field = hui.firstByTag(this.element,'input');
 	this.value = this.field.value;
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 	this.addBehavior();
 }
 
-In2iGui.Toolbar.SearchField.create = function(options) {
+hui.ui.Toolbar.SearchField.create = function(options) {
 	options = options || {};
-	options.element = n2i.build('div',{
+	options.element = hui.build('div',{
 		'class' : options.adaptive ? 'in2igui_toolbar_search in2igui_toolbar_search_adaptive' : 'in2igui_toolbar_search',
 		html : '<div class="in2igui_searchfield"><strong class="in2igui_searchfield_button"></strong><div><div><input type="text"/></div></div></div>'+
-		'<span>'+n2i.escape(options.title)+'</span>'
+		'<span>'+hui.escape(options.title)+'</span>'
 	});
-	return new In2iGui.Toolbar.SearchField(options);
+	return new hui.ui.Toolbar.SearchField(options);
 }
 
-In2iGui.Toolbar.SearchField.prototype = {
+hui.ui.Toolbar.SearchField.prototype = {
 	getValue : function() {
 		return this.field.value;
 	},
@@ -12884,18 +7984,18 @@ In2iGui.Toolbar.SearchField.prototype = {
 		}
 		if (!this.options.adaptive) {
 			this.field.onfocus = function() {
-				n2i.ani(this,'width','120px',500,{ease:n2i.ease.slowFastSlow});
+				hui.ani(this,'width','120px',500,{ease:hui.ease.slowFastSlow});
 			}
 			this.field.onblur = function() {
-				n2i.ani(this,'width','80px',500,{ease:n2i.ease.slowFastSlow});
+				hui.ani(this,'width','80px',500,{ease:hui.ease.slowFastSlow});
 			}
 		}
 	},
 	fieldChanged : function() {
 		if (this.field.value!=this.value) {
 			this.value=this.field.value;
-			In2iGui.callDelegates(this,'valueChanged');
-			In2iGui.firePropertyChange(this,'value',this.value);
+			hui.ui.callDelegates(this,'valueChanged');
+			hui.ui.firePropertyChange(this,'value',this.value);
 		}
 	}
 }
@@ -12904,20 +8004,20 @@ In2iGui.Toolbar.SearchField.prototype = {
 //////////////////////// Badge ///////////////////////
 
 /** @constructor */
-In2iGui.Toolbar.Badge = function(options) {
-	this.element = n2i.get(options.element);
+hui.ui.Toolbar.Badge = function(options) {
+	this.element = hui.get(options.element);
 	this.name = options.name;
-	this.label = n2i.firstByTag(this.element,'strong');
-	this.text = n2i.firstByTag(this.element,'span');
-	In2iGui.extend(this);
+	this.label = hui.firstByTag(this.element,'strong');
+	this.text = hui.firstByTag(this.element,'span');
+	hui.ui.extend(this);
 }
 
-In2iGui.Toolbar.Badge.prototype = {
+hui.ui.Toolbar.Badge.prototype = {
 	setLabel : function(str) {
-		n2i.dom.setText(this.label,str);
+		hui.dom.setText(this.label,str);
 	},
 	setText : function(str) {
-		n2i.dom.setText(this.text,str);
+		hui.dom.setText(this.text,str);
 	}
 }
 
@@ -12925,18 +8025,18 @@ In2iGui.Toolbar.Badge.prototype = {
 	Used to choose an image
 	@constructor
 */
-In2iGui.ImagePicker = function(o) {
+hui.ui.ImagePicker = function(o) {
 	this.name = o.name;
 	this.options = o || {};
-	this.element = n2i.get(o.element);
+	this.element = hui.get(o.element);
 	this.images = [];
 	this.object = null;
 	this.thumbnailsLoaded = false;
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 	this.addBehavior();
 }
 
-In2iGui.ImagePicker.prototype = {
+hui.ui.ImagePicker.prototype = {
 	/** @private */
 	addBehavior : function() {
 		this.element.onclick = this.showPicker.bind(this);
@@ -12957,7 +8057,7 @@ In2iGui.ImagePicker.prototype = {
 		if (this.object==null) {
 			this.element.style.backgroundImage='';
 		} else {
-			var url = In2iGui.resolveImageUrl(this,this.object,48,48);
+			var url = hui.ui.resolveImageUrl(this,this.object,48,48);
 			this.element.style.backgroundImage='url('+url+')';
 		}
 	},
@@ -12965,14 +8065,14 @@ In2iGui.ImagePicker.prototype = {
 	showPicker : function() {
 		if (!this.picker) {
 			var self = this;
-			this.picker = In2iGui.BoundPanel.create();
-			this.content = n2i.build('div',{'class':'in2igui_imagepicker_thumbs'});
-			var buttons = In2iGui.Buttons.create({align:'right'});
-			var close = In2iGui.Button.create({text:'Luk',highlighted:true});
+			this.picker = hui.ui.BoundPanel.create();
+			this.content = hui.build('div',{'class':'in2igui_imagepicker_thumbs'});
+			var buttons = hui.ui.Buttons.create({align:'right'});
+			var close = hui.ui.Button.create({text:'Luk',highlighted:true});
 			close.listen({
 				$click:function() {self.hidePicker()}
 			});
-			var remove = In2iGui.Button.create({text:'Fjern'});
+			var remove = hui.ui.Button.create({text:'Fjern'});
 			remove.listen({
 				$click:function() {self.setObject(null);self.hidePicker()}
 			});
@@ -12994,7 +8094,7 @@ In2iGui.ImagePicker.prototype = {
 	/** @private */
 	updateImages : function() {
 		var self = this;
-		n2i.request({
+		hui.request({
 			onSuccess:function(t) {
 				self.parse(t.responseXML);
 			},
@@ -13009,8 +8109,8 @@ In2iGui.ImagePicker.prototype = {
 		for (var i=0; i < images.length; i++) {
 			var id = images[i].getAttribute('id');
 			var img = {id:images[i].getAttribute('id')};
-			var url = In2iGui.resolveImageUrl(this,img,48,48);
-			var thumb = n2i.build('div',{'class':'in2igui_imagepicker_thumbnail',style:'background-image:url('+url+')'});
+			var url = hui.ui.resolveImageUrl(this,img,48,48);
+			var thumb = hui.build('div',{'class':'in2igui_imagepicker_thumbnail',style:'background-image:url('+url+')'});
 			thumb.in2iguiObject = {'id':id};
 			thumb.onclick = function() {
 				self.setObject(this.in2iguiObject);
@@ -13026,14 +8126,14 @@ In2iGui.ImagePicker.prototype = {
  * @constructor
  * @param {Object} options { element: «Node | id», name: «String» }
  */
-In2iGui.BoundPanel = function(options) {
+hui.ui.BoundPanel = function(options) {
 	this.options = options;
-	this.element = n2i.get(options.element);
+	this.element = hui.get(options.element);
 	this.name = options.name;
 	this.visible = false;
-	this.content = n2i.firstByClass(this.element,'in2igui_boundpanel_content');
-	this.arrow = n2i.firstByClass(this.element,'in2igui_boundpanel_arrow');
-	In2iGui.extend(this);
+	this.content = hui.firstByClass(this.element,'in2igui_boundpanel_content');
+	this.arrow = hui.firstByClass(this.element,'in2igui_boundpanel_arrow');
+	hui.ui.extend(this);
 }
 
 /**
@@ -13041,8 +8141,8 @@ In2iGui.BoundPanel = function(options) {
  * <br/><strong>options:</strong> { name: «String», top: «pixels», left: «pixels», padding: «pixels», width: «pixels» }
  * @param {Object} options The options
  */
-In2iGui.BoundPanel.create = function(options) {
-	options = n2i.override({name:null, top:0, left:0, width:null, padding: null}, options);
+hui.ui.BoundPanel.create = function(options) {
+	options = hui.override({name:null, top:0, left:0, width:null, padding: null}, options);
 
 	
 	var html = 
@@ -13058,20 +8158,20 @@ In2iGui.BoundPanel.create = function(options) {
 	html+='"></div></div></div></div>'+
 		'<div class="in2igui_boundpanel_bottom"><div><div></div></div></div>';
 
-	options.element = n2i.build(
+	options.element = hui.build(
 		'div',{
 			'class':'in2igui_boundpanel',
-			style:'display:none;zIndex:'+In2iGui.nextPanelIndex()+';top:'+options.top+'px;left:'+options.left+'px',
+			style:'display:none;zIndex:'+hui.ui.nextPanelIndex()+';top:'+options.top+'px;left:'+options.left+'px',
 			html:html,
 			parent:document.body
 		}
 	);
-	return new In2iGui.BoundPanel(options);
+	return new hui.ui.BoundPanel(options);
 }
 
 /********************************* Public methods ***********************************/
 
-In2iGui.BoundPanel.prototype = {
+hui.ui.BoundPanel.prototype = {
 	toggle : function() {
 		if (!this.visible) {
 			this.show();
@@ -13083,10 +8183,10 @@ In2iGui.BoundPanel.prototype = {
 	show : function() {
 		if (!this.visible) {
 			if (this.options.target) {
-				this.position(In2iGui.get(this.options.target));
+				this.position(hui.ui.get(this.options.target));
 			}
-			if (n2i.browser.opacity) {
-				n2i.setOpacity(this.element,0);
+			if (hui.browser.opacity) {
+				hui.setOpacity(this.element,0);
 			}
 			var vert;
 			if (this.relativePosition=='left') {
@@ -13102,28 +8202,28 @@ In2iGui.BoundPanel.prototype = {
 				vert = true;
 				this.element.style.marginTop='-30px';
 			}
-			n2i.setStyle(this.element,{
+			hui.setStyle(this.element,{
 				visibility : 'hidden', display : 'block'
 			})
 			var width = this.element.clientWidth;
-			n2i.setStyle(this.element,{
+			hui.setStyle(this.element,{
 				width : width+'px' , visibility : 'visible'
 			});
 			this.element.style.display='block';
-			if (n2i.browser.opacity) {
-				n2i.animate(this.element,'opacity',1,400,{ease:n2i.ease.fastSlow});
+			if (hui.browser.opacity) {
+				hui.animate(this.element,'opacity',1,400,{ease:hui.ease.fastSlow});
 			}
-			n2i.animate(this.element,vert ? 'margin-top' : 'margin-left','0px',800,{ease:n2i.ease.bounce});
+			hui.animate(this.element,vert ? 'margin-top' : 'margin-left','0px',800,{ease:hui.ease.bounce});
 		}
-		this.element.style.zIndex = In2iGui.nextPanelIndex();
+		this.element.style.zIndex = hui.ui.nextPanelIndex();
 		this.visible=true;
 	},
 	/** Hides the panel */
 	hide : function() {
-		if (n2i.browser.msie) {
+		if (hui.browser.msie) {
 			this.element.style.display='none';
 		} else {
-			n2i.animate(this.element,'opacity',0,300,{ease:n2i.ease.slowFast,hideOnComplete:true});
+			hui.animate(this.element,'opacity',0,300,{ease:hui.ease.slowFast,hideOnComplete:true});
 		}
 		this.visible=false;
 	},
@@ -13143,7 +8243,7 @@ In2iGui.BoundPanel.prototype = {
 	 * @param {pixels} height The height of the space in pixels
 	 */
 	addSpace : function(height) {
-		this.add(n2i.build('div',{style:'font-size:0px;height:'+height+'px'}));
+		this.add(hui.build('div',{style:'font-size:0px;height:'+height+'px'}));
 	},
 	/** @private */
 	getDimensions : function() {
@@ -13168,16 +8268,16 @@ In2iGui.BoundPanel.prototype = {
 		if (node.getElement) {
 			node = node.getElement();
 		}
-		node = n2i.get(node);
-		var offset = {left:n2i.getLeft(node),top:n2i.getTop(node)};
-		var scrollOffset = {left:n2i.getScrollLeft(),top:n2i.getScrollTop()};
+		node = hui.get(node);
+		var offset = {left:hui.getLeft(node),top:hui.getTop(node)};
+		var scrollOffset = {left:hui.getScrollLeft(),top:hui.getScrollTop()};
 		var dims = this.getDimensions();
-		var viewportWidth = n2i.getViewPortWidth();
-		var viewportHeight = n2i.getViewPortHeight();
-		var nodeLeft = offset.left-scrollOffset.left+n2i.getScrollLeft();
+		var viewportWidth = hui.getViewPortWidth();
+		var viewportHeight = hui.getViewPortHeight();
+		var nodeLeft = offset.left-scrollOffset.left+hui.getScrollLeft();
 		var nodeWidth = node.clientWidth;
 		var nodeHeight = node.clientHeight;
-		var nodeTop = offset.top-scrollOffset.top+n2i.getScrollTop();
+		var nodeTop = offset.top-scrollOffset.top+hui.getScrollTop();
 		var arrowLeft, arrowTop, left, top;
 		var vertical = (nodeTop-scrollOffset.top)/viewportHeight;
 		
@@ -13215,8 +8315,8 @@ In2iGui.BoundPanel.prototype = {
 		this.arrow.style.marginTop = arrowTop+'px';
 		this.arrow.style.marginLeft = arrowLeft+'px';
 		if (this.visible) {
-			n2i.animate(this.element,'top',top+'px',500,{ease:n2i.ease.fastSlow});
-			n2i.animate(this.element,'left',left+'px',500,{ease:n2i.ease.fastSlow});
+			hui.animate(this.element,'top',top+'px',500,{ease:hui.ease.fastSlow});
+			hui.animate(this.element,'left',left+'px',500,{ease:hui.ease.fastSlow});
 		} else {
 			this.element.style.top=top+'px';
 			this.element.style.left=left+'px';
@@ -13227,26 +8327,26 @@ In2iGui.BoundPanel.prototype = {
 /* EOF *//**
  * @constructor
  */
-In2iGui.RichText = function(options) {
+hui.ui.RichText = function(options) {
 	this.name = options.name;
-	var e = this.element = n2i.get(options.element);
-	this.options = n2i.override({debug:false,value:'',autoHideToolbar:true,style:'font-family: sans-serif;'},options);
-	this.textarea = n2i.build('textarea');
+	var e = this.element = hui.get(options.element);
+	this.options = hui.override({debug:false,value:'',autoHideToolbar:true,style:'font-family: sans-serif;'},options);
+	this.textarea = hui.build('textarea');
 	e.appendChild(this.textarea);
 	this.editor = WysiHat.Editor.attach(this.textarea);
 	this.editor.setAttribute('frameborder','0');
 	/* @private */
-	this.toolbar = n2i.firstByClass(e,'in2igui_richtext_toolbar');
-	this.toolbarContent = n2i.firstByClass(e,'in2igui_richtext_toolbar_content');
+	this.toolbar = hui.firstByClass(e,'in2igui_richtext_toolbar');
+	this.toolbarContent = hui.firstByClass(e,'in2igui_richtext_toolbar_content');
 	this.value = this.options.value;
 	this.document = null;
 	this.ignited = false;
 	this.buildToolbar();
 	this.ignite();
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 }
 
-In2iGui.RichText.actions = [
+hui.ui.RichText.actions = [
 	{key:'bold',				cmd:'bold',				value:null,		icon:'edit/text_bold'},
 	{key:'italic',				cmd:'italic',			value:null,		icon:'edit/text_italic'},
 	{key:'underline',			cmd:'underline',		value:null,		icon:'edit/text_underline'},
@@ -13270,23 +8370,23 @@ In2iGui.RichText.actions = [
 	{key:'removeformat', 	cmd:'removeformat', 	'value':null}*/
 ];
 
-In2iGui.RichText.replaceInput = function(options) {
+hui.ui.RichText.replaceInput = function(options) {
 	options = options || {};
-	var input = n2i.get(options.input);
+	var input = hui.get(options.input);
 	input.style.display='none';
 	options.value = input.value;
-	var obj = In2iGui.RichText.create(options);
+	var obj = hui.ui.RichText.create(options);
 	input.parentNode.insertBefore(obj.element,input);
 	obj.ignite();
 }
 
-In2iGui.RichText.create = function(options) {
+hui.ui.RichText.create = function(options) {
 	options = options || {};
-	options.element = n2i.build('div',{'class':'in2igui_richtext',html:'<div class="in2igui_richtext_toolbar"><div class="in2igui_richtext_inner_toolbar"><div class="in2igui_richtext_toolbar_content"></div></div></div>'});
-	return new In2iGui.RichText(options);
+	options.element = hui.build('div',{'class':'in2igui_richtext',html:'<div class="in2igui_richtext_toolbar"><div class="in2igui_richtext_inner_toolbar"><div class="in2igui_richtext_toolbar_content"></div></div></div>'});
+	return new hui.ui.RichText(options);
 }
 
-In2iGui.RichText.prototype = {
+hui.ui.RichText.prototype = {
 	isCompatible : function() {
 	    var agt=navigator.userAgent.toLowerCase();
 		return true;
@@ -13345,61 +8445,61 @@ In2iGui.RichText.prototype = {
 		this.toolbar.onmousedown = function() {this.toolbarMouseDown=true}.bind(this);
 		this.toolbar.onmouseup = function() {this.toolbarMouseDown=false}.bind(this);
 		var self = this;
-		var actions = In2iGui.RichText.actions;
+		var actions = hui.ui.RichText.actions;
 		for (var i=0; i < actions.length; i++) {
 			if (actions[i]==null) {
-				this.toolbarContent.appendChild(n2i.build('div',{'class':'in2igui_richtext_divider'}));
+				this.toolbarContent.appendChild(hui.build('div',{'class':'in2igui_richtext_divider'}));
 			} else {
-				var div = n2i.build('div',{'class':'action action_'+actions[i].key});
+				var div = hui.build('div',{'class':'action action_'+actions[i].key});
 				div.title=actions[i].key;
 				div.in2iguiRichTextAction = actions[i]
 				div.onclick = div.ondblclick = function(e) {return self.actionWasClicked(this.in2iguiRichTextAction,e);}
-				var img = n2i.build('img');
-				img.src=In2iGui.context+'/In2iGui/gfx/trans.png';
+				var img = hui.build('img');
+				img.src=hui.ui.context+'/In2iGui/gfx/trans.png';
 				if (actions[i].icon) {
-					div.style.backgroundImage='url('+In2iGui.getIconUrl(actions[i].icon,1)+')';
+					div.style.backgroundImage='url('+hui.ui.getIconUrl(actions[i].icon,1)+')';
 				}
 				div.appendChild(img);
 				this.toolbarContent.appendChild(div);
-				div.onmousedown = In2iGui.RichText.stopEvent;
+				div.onmousedown = hui.ui.RichText.stopEvent;
 			}
 		};
 	},
 	documentFocused : function() {
-		if (n2i.browser.msie) {
+		if (hui.browser.msie) {
 			this.toolbar.style.display='block';
 			return;
 		}
 		if (this.toolbar.style.display!='block') {
 			this.toolbar.style.marginTop='-40px';
-			n2i.setOpacity(this.toolbar,0);
+			hui.setOpacity(this.toolbar,0);
 			this.toolbar.style.display='block';
-			n2i.ani(this.toolbar,'opacity',1,300);
-			n2i.ani(this.toolbar,'margin-top','-32px',300);
+			hui.ani(this.toolbar,'opacity',1,300);
+			hui.ani(this.toolbar,'margin-top','-32px',300);
 		}
 	},
 	
 	documentBlurred : function() {
 		if (this.toolbarMouseDown) return;
 		if (this.options.autoHideToolbar) {
-			if (n2i.browser.msie) {
+			if (hui.browser.msie) {
 				var self = this;
 				window.setTimeout(function() {
 					self.toolbar.style.display='none';
 				},100);
 				return;
 			}
-			n2i.ani(this.toolbar,'opacity',0,300,{hideOnComplete:true});
-			n2i.ani(this.toolbar,'margin-top','-40px',300);
+			hui.ani(this.toolbar,'opacity',0,300,{hideOnComplete:true});
+			hui.ani(this.toolbar,'margin-top','-40px',300);
 		}
 		this.documentChanged();
-		In2iGui.callDelegates(this,'richTextDidChange');
+		hui.ui.callDelegates(this,'richTextDidChange');
 	},
 	
 	documentChanged : function() {
 		this.value = this.editor.content();
 		if (this.options.input) {
-			n2i.get(this.options.input).value=this.value;
+			hui.get(this.options.input).value=this.value;
 		}
 	},
 	
@@ -13413,7 +8513,7 @@ In2iGui.RichText.prototype = {
 		return false;
 	},
 	actionWasClicked : function(action,e) {
-		In2iGui.RichText.stopEvent(e);
+		hui.ui.RichText.stopEvent(e);
 		if (action.key=='color') {
 			this.showColorPicker();
 		} else {
@@ -13428,8 +8528,8 @@ In2iGui.RichText.prototype = {
 	},
 	showColorPicker : function() {
 		if (!this.colorPicker) {
-			var panel = In2iGui.Window.create({variant:'dark'});
-			var picker = In2iGui.ColorPicker.create();
+			var panel = hui.ui.Window.create({variant:'dark'});
+			var picker = hui.ui.ColorPicker.create();
 			picker.listen(this);
 			panel.add(picker);
 			panel.show();
@@ -13448,7 +8548,7 @@ In2iGui.RichText.prototype = {
 
 
 
-In2iGui.RichText.stopEvent = function(e) {
+hui.ui.RichText.stopEvent = function(e) {
   var evt = e ? e : window.event; 
   if (evt.returnValue) {
     evt.returnValue = false;
@@ -13462,26 +8562,26 @@ In2iGui.RichText.stopEvent = function(e) {
 /* EOF *//**
  @constructor
  */
-In2iGui.ImageViewer = function(options) {
-	this.options = n2i.override({
+hui.ui.ImageViewer = function(options) {
+	this.options = hui.override({
 		maxWidth:800,maxHeight:600,perimeter:100,sizeSnap:100,
 		margin:0,
-		ease:n2i.ease.slowFastSlow,
-		easeEnd:n2i.ease.bounce,
-		easeAuto:n2i.ease.slowFastSlow,
-		easeReturn:n2i.ease.cubicInOut,transition:400,transitionEnd:1000,transitionReturn:300
+		ease:hui.ease.slowFastSlow,
+		easeEnd:hui.ease.bounce,
+		easeAuto:hui.ease.slowFastSlow,
+		easeReturn:hui.ease.cubicInOut,transition:400,transitionEnd:1000,transitionReturn:300
 		},options);
-	this.element = n2i.get(options.element);
+	this.element = hui.get(options.element);
 	this.box = this.options.box;
-	this.viewer = n2i.firstByClass(this.element,'in2igui_imageviewer_viewer');
-	this.innerViewer = n2i.firstByClass(this.element,'in2igui_imageviewer_inner_viewer');
-	this.status = n2i.firstByClass(this.element,'in2igui_imageviewer_status');
-	this.previousControl = n2i.firstByClass(this.element,'in2igui_imageviewer_previous');
-	this.controller = n2i.firstByClass(this.element,'in2igui_imageviewer_controller');
-	this.nextControl = n2i.firstByClass(this.element,'in2igui_imageviewer_next');
-	this.playControl = n2i.firstByClass(this.element,'in2igui_imageviewer_play');
-	this.closeControl = n2i.firstByClass(this.element,'in2igui_imageviewer_close');
-	this.text = n2i.firstByClass(this.element,'in2igui_imageviewer_text');
+	this.viewer = hui.firstByClass(this.element,'in2igui_imageviewer_viewer');
+	this.innerViewer = hui.firstByClass(this.element,'in2igui_imageviewer_inner_viewer');
+	this.status = hui.firstByClass(this.element,'in2igui_imageviewer_status');
+	this.previousControl = hui.firstByClass(this.element,'in2igui_imageviewer_previous');
+	this.controller = hui.firstByClass(this.element,'in2igui_imageviewer_controller');
+	this.nextControl = hui.firstByClass(this.element,'in2igui_imageviewer_next');
+	this.playControl = hui.firstByClass(this.element,'in2igui_imageviewer_play');
+	this.closeControl = hui.firstByClass(this.element,'in2igui_imageviewer_close');
+	this.text = hui.firstByClass(this.element,'in2igui_imageviewer_text');
 	this.dirty = false;
 	this.width = 600;
 	this.height = 460;
@@ -13491,12 +8591,12 @@ In2iGui.ImageViewer = function(options) {
 	this.images = [];
 	this.box.listen(this);
 	this.addBehavior();
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 }
 
-In2iGui.ImageViewer.create = function(options) {
+hui.ui.ImageViewer.create = function(options) {
 	options = options || {};
-	var element = options.element = n2i.build('div',
+	var element = options.element = hui.build('div',
 		{'class':'in2igui_imageviewer',
 		html:
 		'<div class="in2igui_imageviewer_viewer"><div class="in2igui_imageviewer_inner_viewer"></div></div>'+
@@ -13508,14 +8608,14 @@ In2iGui.ImageViewer.create = function(options) {
 		'<a class="in2igui_imageviewer_next"></a>'+
 		'<a class="in2igui_imageviewer_close"></a>'+
 		'</div></div></div>'});
-	var box = In2iGui.Box.create({absolute:true,modal:true,closable:true});
+	var box = hui.ui.Box.create({absolute:true,modal:true,closable:true});
 	box.add(element);
 	box.addToDocument();
 	options.box=box;
-	return new In2iGui.ImageViewer(options);
+	return new hui.ui.ImageViewer(options);
 }
 
-In2iGui.ImageViewer.prototype = {
+hui.ui.ImageViewer.prototype = {
 	/** @private */
 	addBehavior : function() {
 		var self = this;
@@ -13529,12 +8629,12 @@ In2iGui.ImageViewer.prototype = {
 			self.playOrPause();
 		}
 		this.closeControl.onclick = this.hide.bind(this);
-		n2i.listen(this.viewer,'click',this.zoom.bind(this));
+		hui.listen(this.viewer,'click',this.zoom.bind(this));
 		this.timer = function() {
 			self.next(false);
 		}
 		this.keyListener = function(e) {
-			e = n2i.event(e);
+			e = hui.event(e);
 			if (e.rightKey) {
 				self.next(true);
 			} else if (e.leftKey) {
@@ -13545,15 +8645,15 @@ In2iGui.ImageViewer.prototype = {
 				self.playOrPause();
 			}
 		},
-		n2i.listen(this.viewer,'mousemove',this.mouseMoveEvent.bind(this));
-		n2i.listen(this.controller,'mouseenter',function() {
+		hui.listen(this.viewer,'mousemove',this.mouseMoveEvent.bind(this));
+		hui.listen(this.controller,'mouseover',function() {
 			self.overController = true;
 		});
-		n2i.listen(this.controller,'mouseleave',function() {
+		hui.listen(this.controller,'mouseout',function() {
 			self.overController = false;
 		});
-		n2i.listen(this.viewer,'mouseout',function(e) {
-			if (!In2iGui.isWithin(e,this.viewer)) {
+		hui.listen(this.viewer,'mouseout',function(e) {
+			if (!hui.ui.isWithin(e,this.viewer)) {
 				self.hideController();
 			}
 		}.bind(this));
@@ -13563,20 +8663,20 @@ In2iGui.ImageViewer.prototype = {
 		window.clearTimeout(this.ctrlHider);
 		if (this.shouldShowController()) {
 			this.ctrlHider = window.setTimeout(this.hideController.bind(this),2000);
-			if (n2i.browser.msie) {
+			if (hui.browser.msie) {
 				this.controller.show();
 			} else {
-				In2iGui.fadeIn(this.controller,200);
+				hui.ui.fadeIn(this.controller,200);
 			}
 		}
 	},
 	/** @private */
 	hideController : function() {
 		if (!this.overController) {
-			if (n2i.browser.msie) {
+			if (hui.browser.msie) {
 				this.controller.hide();
 			} else {
-				In2iGui.fadeOut(this.controller,500);
+				hui.ui.fadeOut(this.controller,500);
 			}
 		}
 	},
@@ -13587,30 +8687,30 @@ In2iGui.ImageViewer.prototype = {
 			return; // Don't zoom if small
 		}
 		if (!this.zoomer) {
-			this.zoomer = n2i.build('div',{
+			this.zoomer = hui.build('div',{
 				'class' : 'in2igui_imageviewer_zoomer',
 				style : 'width:'+this.viewer.clientWidth+'px;height:'+this.viewer.clientHeight+'px'
 			});
-			this.element.insertBefore(this.zoomer,n2i.firstByTag(this.element,'*'));
-			n2i.listen(this.zoomer,'mousemove',this.zoomMove.bind(this));
-			n2i.listen(this.zoomer,'click',function() {
+			this.element.insertBefore(this.zoomer,hui.firstByTag(this.element,'*'));
+			hui.listen(this.zoomer,'mousemove',this.zoomMove.bind(this));
+			hui.listen(this.zoomer,'click',function() {
 				this.style.display='none';
 			});
 		}
 		this.pause();
 		var size = this.getLargestSize({width:2000,height:2000},img);
-		var url = In2iGui.resolveImageUrl(this,img,size.width,size.height);
+		var url = hui.ui.resolveImageUrl(this,img,size.width,size.height);
 		this.zoomer.innerHTML = '<div style="width:'+size.width+'px;height:'+size.height+'px;"><img src="'+url+'"/></div>';
 		this.zoomer.style.display = 'block';
 		this.zoomInfo = {width:size.width,height:size.height};
 		this.zoomMove(e);
 	},
 	zoomMove : function(e) {
-		e = new n2i.Event(e);
+		e = new hui.Event(e);
 		if (!this.zoomInfo) {
 			return;
 		}
-		var offset = {left:n2i.getLeft(this.zoomer),top:n2i.getTop(this.zoomer)};
+		var offset = {left:hui.getLeft(this.zoomer),top:hui.getTop(this.zoomer)};
 		var x = (e.left()-offset.left)/this.zoomer.clientWidth*(this.zoomInfo.width-this.zoomer.clientWidth);
 		var y = (e.top()-offset.top)/this.zoomer.clientHeight*(this.zoomInfo.height-this.zoomer.clientHeight);
 		this.zoomer.scrollLeft = x;
@@ -13631,10 +8731,10 @@ In2iGui.ImageViewer.prototype = {
 	/** @private */
 	calculateSize : function() {
 		var snap = this.options.sizeSnap;
-		var newWidth = n2i.getViewPortWidth()-this.options.perimeter;
+		var newWidth = hui.getViewPortWidth()-this.options.perimeter;
 		newWidth = Math.floor(newWidth/snap)*snap;
 		newWidth = Math.min(newWidth,this.options.maxWidth);
-		var newHeight = n2i.getViewPortHeight()-this.options.perimeter;
+		var newHeight = hui.getViewPortHeight()-this.options.perimeter;
 		newHeight = Math.floor(newHeight/snap)*snap;
 		newHeight = Math.min(newHeight,this.options.maxHeight);
 		var maxWidth = 0;
@@ -13669,18 +8769,18 @@ In2iGui.ImageViewer.prototype = {
 		this.calculateSize();
 		this.updateUI();
 		var margin = this.options.margin;
-		n2i.setStyle(this.element, {width:(this.width+margin)+'px',height:(this.height+margin*2-1)+'px'});
-		n2i.setStyle(this.viewer, {width:(this.width+margin)+'px',height:(this.height-1)+'px'});
-		n2i.setStyle(this.innerViewer, {width:((this.width+margin)*this.images.length)+'px',height:(this.height-1)+'px'});
-		n2i.setStyle(this.controller, {marginLeft:((this.width-180)/2+margin*0.5)+'px',display:'none'});
+		hui.setStyle(this.element, {width:(this.width+margin)+'px',height:(this.height+margin*2-1)+'px'});
+		hui.setStyle(this.viewer, {width:(this.width+margin)+'px',height:(this.height-1)+'px'});
+		hui.setStyle(this.innerViewer, {width:((this.width+margin)*this.images.length)+'px',height:(this.height-1)+'px'});
+		hui.setStyle(this.controller, {marginLeft:((this.width-180)/2+margin*0.5)+'px',display:'none'});
 		this.box.show();
 		this.goToImage(false,0,false);
-		n2i.listen(document,'keydown',this.keyListener);
+		hui.listen(document,'keydown',this.keyListener);
 	},
 	hide: function(index) {
 		this.pause();
 		this.box.hide();
-		n2i.unListen(document,'keydown',this.keyListener);
+		hui.unListen(document,'keydown',this.keyListener);
 	},
 	/** @private */
 	$boxCurtainWasClicked : function() {
@@ -13695,8 +8795,8 @@ In2iGui.ImageViewer.prototype = {
 		if (this.dirty) {
 			this.innerViewer.innerHTML='';
 			for (var i=0; i < this.images.length; i++) {
-				var element = n2i.build('div',{'class':'in2igui_imageviewer_image'});
-				n2i.setStyle(element,{'width':(this.width+this.options.margin)+'px','height':(this.height-1)+'px'});
+				var element = hui.build('div',{'class':'in2igui_imageviewer_image'});
+				hui.setStyle(element,{'width':(this.width+this.options.margin)+'px','height':(this.height-1)+'px'});
 				this.innerViewer.appendChild(element);
 			};
 			if (this.shouldShowController()) {
@@ -13716,14 +8816,14 @@ In2iGui.ImageViewer.prototype = {
 	goToImage : function(animate,num,user) {	
 		if (animate) {
 			if (num>1) {
-				n2i.ani(this.viewer,'scrollLeft',this.index*(this.width+this.options.margin),Math.min(num*this.options.transitionReturn,2000),{ease:this.options.easeReturn});				
+				hui.ani(this.viewer,'scrollLeft',this.index*(this.width+this.options.margin),Math.min(num*this.options.transitionReturn,2000),{ease:this.options.easeReturn});				
 			} else {
 				var end = this.index==0 || this.index==this.images.length-1;
 				var ease = (end ? this.options.easeEnd : this.options.ease);
 				if (!user) {
 					ease = this.options.easeAuto;
 				}
-				n2i.ani(this.viewer,'scrollLeft',this.index*(this.width+this.options.margin),(end ? this.options.transitionEnd : this.options.transition),{ease:ease});
+				hui.ani(this.viewer,'scrollLeft',this.index*(this.width+this.options.margin),(end ? this.options.transitionEnd : this.options.transition),{ease:ease});
 			}
 		} else {
 			this.viewer.scrollLeft=this.index*(this.width+this.options.margin);
@@ -13799,18 +8899,18 @@ In2iGui.ImageViewer.prototype = {
 	},
 	/** @private */
 	preload : function() {
-		var guiLoader = new n2i.Preloader();
-		guiLoader.addImages(In2iGui.context+'In2iGui/gfx/imageviewer_controls.png');
+		var guiLoader = new hui.Preloader();
+		guiLoader.addImages(hui.ui.context+'In2iGui/gfx/imageviewer_controls.png');
 		var self = this;
 		guiLoader.setDelegate({allImagesDidLoad:function() {self.preloadImages()}});
 		guiLoader.load();
 	},
 	/** @private */
 	preloadImages : function() {
-		var loader = new n2i.Preloader();
+		var loader = new hui.Preloader();
 		loader.setDelegate(this);
 		for (var i=0; i < this.images.length; i++) {
-			var url = In2iGui.resolveImageUrl(this,this.images[i],this.width,this.height);
+			var url = hui.ui.resolveImageUrl(this,this.images[i],this.width,this.height);
 			if (url!==null) {
 				loader.addImages(url);
 			}
@@ -13826,40 +8926,40 @@ In2iGui.ImageViewer.prototype = {
 	/** @private */
 	imageDidLoad : function(loaded,total,index) {
 		this.status.innerHTML = Math.round(loaded/total*100)+'%';
-		var url = In2iGui.resolveImageUrl(this,this.images[index],this.width,this.height);
+		var url = hui.ui.resolveImageUrl(this,this.images[index],this.width,this.height);
 		url = url.replace(/&amp;/g,'&');
 		this.innerViewer.childNodes[index].style.backgroundImage="url('"+url+"')";
-		n2i.setClass(this.innerViewer.childNodes[index],'in2igui_imageviewer_image_abort',false);
-		n2i.setClass(this.innerViewer.childNodes[index],'in2igui_imageviewer_image_error',false);
+		hui.setClass(this.innerViewer.childNodes[index],'in2igui_imageviewer_image_abort',false);
+		hui.setClass(this.innerViewer.childNodes[index],'in2igui_imageviewer_image_error',false);
 	},
 	/** @private */
 	imageDidGiveError : function(loaded,total,index) {
-		n2i.setClass(this.innerViewer.childNodes[index],'in2igui_imageviewer_image_error',true);
+		hui.setClass(this.innerViewer.childNodes[index],'in2igui_imageviewer_image_error',true);
 	},
 	/** @private */
 	imageDidAbort : function(loaded,total,index) {
-		n2i.setClass(this.innerViewer.childNodes[index],'in2igui_imageviewer_image_abort',true);
+		hui.setClass(this.innerViewer.childNodes[index],'in2igui_imageviewer_image_abort',true);
 	}
 }
 
 /* EOF *//** @constructor */
-In2iGui.Picker = function(o) {
-	o = this.options = n2i.override({itemWidth:100,itemHeight:150,itemsVisible:null,shadow:true,valueProperty:'value'},o);
-	this.element = n2i.get(o.element);
+hui.ui.Picker = function(o) {
+	o = this.options = hui.override({itemWidth:100,itemHeight:150,itemsVisible:null,shadow:true,valueProperty:'value'},o);
+	this.element = hui.get(o.element);
 	this.name = o.name;
-	this.container = n2i.firstByClass(this.element,'in2igui_picker_container');
-	this.content = n2i.firstByClass(this.element,'in2igui_picker_content');
-	this.title = n2i.firstByClass(this.element,'in2igui_picker_title');
+	this.container = hui.firstByClass(this.element,'in2igui_picker_container');
+	this.content = hui.firstByClass(this.element,'in2igui_picker_content');
+	this.title = hui.firstByClass(this.element,'in2igui_picker_title');
 	this.objects = [];
 	this.selected = null;
 	this.value = null;
 	this.addBehavior();
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 }
 
-In2iGui.Picker.create = function(o) {
-	o = n2i.override({shadow:true},o);
-	o.element = n2i.build('div',{'class':'in2igui_picker',
+hui.ui.Picker.create = function(o) {
+	o = hui.override({shadow:true},o);
+	o.element = hui.build('div',{'class':'in2igui_picker',
 		html:'<div class="in2igui_picker_top"><div><div></div></div></div>'+
 		'<div class="in2igui_picker_middle"><div class="in2igui_picker_middle">'+
 		(o.title ? '<div class="in2igui_picker_title">'+o.title+'</div>' : '')+
@@ -13867,15 +8967,15 @@ In2iGui.Picker.create = function(o) {
 		'</div></div>'+
 		'<div class="in2igui_picker_bottom"><div><div></div></div></div>'});
 	if (o.shadow==true) {
-		n2i.addClass(o.element,'in2igui_picker_shadow')
+		hui.addClass(o.element,'in2igui_picker_shadow')
 	}
-	return new In2iGui.Picker(o);
+	return new hui.ui.Picker(o);
 }
 
-In2iGui.Picker.prototype = {
+hui.ui.Picker.prototype = {
 	addBehavior : function() {
 		var self = this;
-		n2i.listen(this.content,'mousedown',function(e) {
+		hui.listen(this.content,'mousedown',function(e) {
 			self.startDrag(e);
 			return false;
 		});
@@ -13906,19 +9006,19 @@ In2iGui.Picker.prototype = {
 		} else {
 			width = this.container.clientWidth;
 		}
-		n2i.setStyle(this.container,{width:width+'px',height:(this.options.itemHeight+10)+'px'});
+		hui.setStyle(this.container,{width:width+'px',height:(this.options.itemHeight+10)+'px'});
 		this.content.style.width=(this.objects.length*(this.options.itemWidth+14))+'px';
 		this.content.style.height=(this.options.itemHeight+10)+'px';
-		n2i.each(this.objects,function(object,i) {
-			var item = n2i.build('div',{'class':'in2igui_picker_item',title:object.title});
+		hui.each(this.objects,function(object,i) {
+			var item = hui.build('div',{'class':'in2igui_picker_item',title:object.title});
 			if (self.value!=null && object[self.options.valueProperty]==self.value) {
-				 n2i.addClass(item,'in2igui_picker_item_selected');
+				 hui.addClass(item,'in2igui_picker_item_selected');
 			}
 			item.innerHTML = '<div class="in2igui_picker_item_middle"><div class="in2igui_picker_item_middle">'+
-				'<div style="width:'+self.options.itemWidth+'px;height:'+self.options.itemHeight+'px; overflow: hidden; background-image:url(\''+object.image+'\')"><strong>'+n2i.escape(object.title)+'</strong></div>'+
+				'<div style="width:'+self.options.itemWidth+'px;height:'+self.options.itemHeight+'px; overflow: hidden; background-image:url(\''+object.image+'\')"><strong>'+hui.escape(object.title)+'</strong></div>'+
 				'</div></div>'+
 				'<div class="in2igui_picker_item_bottom"><div><div></div></div></div>';
-			n2i.listen(item,'mouseup',function() {
+			hui.listen(item,'mouseup',function() {
 				self.selectionChanged(object[self.options.valueProperty])
 			});
 			self.content.appendChild(item);
@@ -13927,7 +9027,7 @@ In2iGui.Picker.prototype = {
 	updateSelection : function() {
 		var children = this.content.childNodes;
 		for (var i=0; i < children.length; i++) {
-			n2i.setClass(children[i],'in2igui_picker_item_selected',this.value!=null && this.objects[i][this.options.valueProperty]==this.value);
+			hui.setClass(children[i],'in2igui_picker_item_selected',this.value!=null && this.objects[i][this.options.valueProperty]==this.value);
 		};
 	},
 	selectionChanged : function(value) {
@@ -13940,31 +9040,31 @@ In2iGui.Picker.prototype = {
 	
 	// Dragging
 	startDrag : function(e) {
-		e = new n2i.Event(e);
+		e = new hui.Event(e);
 		e.stop();
 		var self = this;
 		this.dragX = e.left();
 		this.dragScroll = this.container.scrollLeft;
-		In2iGui.Picker.mousemove = function(e) {self.drag(e);return false;}
-		In2iGui.Picker.mouseup = In2iGui.Picker.mousedown = function(e) {self.endDrag(e);return false;}
-		n2i.listen(window.document,'mousemove',In2iGui.Picker.mousemove);
-		n2i.listen(window.document,'mouseup',In2iGui.Picker.mouseup);
-		n2i.listen(window.document,'mousedown',In2iGui.Picker.mouseup);
+		hui.ui.Picker.mousemove = function(e) {self.drag(e);return false;}
+		hui.ui.Picker.mouseup = hui.ui.Picker.mousedown = function(e) {self.endDrag(e);return false;}
+		hui.listen(window.document,'mousemove',hui.ui.Picker.mousemove);
+		hui.listen(window.document,'mouseup',hui.ui.Picker.mouseup);
+		hui.listen(window.document,'mousedown',hui.ui.Picker.mouseup);
 	},
 	drag : function(e) {
-		e = new n2i.Event();
-		this.dragging = true;
+		e = new hui.Event(e);
 		e.stop();
+		this.dragging = true;
 		this.container.scrollLeft=this.dragX-e.left()+this.dragScroll;
 	},
 	endDrag : function(e) {
 		this.dragging = false;
-		n2i.stop(e);
-		n2i.unListen(window.document,'mousemove',In2iGui.Picker.mousemove);
-		n2i.unListen(window.document,'mouseup',In2iGui.Picker.mouseup);
-		n2i.unListen(window.document,'mousedown',In2iGui.Picker.mouseup);
+		hui.stop(e);
+		hui.unListen(window.document,'mousemove',hui.ui.Picker.mousemove);
+		hui.unListen(window.document,'mouseup',hui.ui.Picker.mouseup);
+		hui.unListen(window.document,'mousedown',hui.ui.Picker.mouseup);
 		var size = this.options.itemWidth+14;
-		n2i.ani(this.container,'scrollLeft',Math.round(this.container.scrollLeft/size)*size,500,{ease:n2i.ease.bounceOut});
+		hui.ani(this.container,'scrollLeft',Math.round(this.container.scrollLeft/size)*size,500,{ease:hui.ease.bounceOut});
 	},
 	$visibilityChanged : function() {
 		this.container.style.display='none';
@@ -13975,15 +9075,15 @@ In2iGui.Picker.prototype = {
 			width = this.container.parentNode.clientWidth-12;
 		}
 		width = Math.max(width,0);
-		n2i.setStyle(this.container,{width:width+'px',display:'block'});
+		hui.setStyle(this.container,{width:width+'px',display:'block'});
 	}
 }
 
 /* EOF *//**
  * @constructor
  */
-In2iGui.Editor = function() {
-	this.name = 'In2iGuiEditor';
+hui.ui.Editor = function() {
+	this.name = 'huiEditor';
 	this.options = {rowClass:'row',columnClass:'column',partClass:'part'};
 	this.parts = [];
 	this.rows = [];
@@ -13991,17 +9091,17 @@ In2iGui.Editor = function() {
 	this.activePart = null;
 	this.active = false;
 	this.dragProxy = null;
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 }
 
-In2iGui.Editor.get = function() {
-	if (!In2iGui.Editor.instance) {
-		In2iGui.Editor.instance = new In2iGui.Editor();
+hui.ui.Editor.get = function() {
+	if (!hui.ui.Editor.instance) {
+		hui.ui.Editor.instance = new hui.ui.Editor();
 	}
-	return In2iGui.Editor.instance;
+	return hui.ui.Editor.instance;
 }
 
-In2iGui.Editor.prototype = {
+hui.ui.Editor.prototype = {
 	ignite : function() {
 		this.reload();
 	},
@@ -14009,11 +9109,11 @@ In2iGui.Editor.prototype = {
 		this.partControllers.push({key:key,'title':title,'controller':controller});
 	},
 	setOptions : function(options) {
-		n2i.override(this.options,options);
+		hui.override(this.options,options);
 	},
 	getPartController : function(key) {
 		var ctrl = null;
-		n2i.each(this.partControllers,function(item) {
+		hui.each(this.partControllers,function(item) {
 			if (item.key==key) {ctrl=item};
 		});
 		return ctrl;
@@ -14024,17 +9124,17 @@ In2iGui.Editor.prototype = {
 		}
 		var self = this;
 		this.parts = [];
-		var rows = n2i.byClass(document.body,this.options.partClass);
-		n2i.each(rows,function(row,i) {
-			var columns = n2i.byClass(row,self.options.columnClass);
+		var rows = hui.byClass(document.body,this.options.partClass);
+		hui.each(rows,function(row,i) {
+			var columns = hui.byClass(row,self.options.columnClass);
 			self.reloadColumns(columns,i);
-			n2i.each(columns,function(column,j) {
+			hui.each(columns,function(column,j) {
 				var parts = column.select('.'+self.options.partClass);
 				self.reloadParts(parts,i,j);
 			});
 		});
-		var parts = n2i.byClass(document.body,this.options.partClass);
-		n2i.each(this.parts,function(part) {
+		var parts = hui.byClass(document.body,this.options.partClass);
+		hui.each(this.parts,function(part) {
 			var i = parts.indexOf(part.element);
 			if (i!=-1) {
 				delete(parts[i]);
@@ -14047,14 +9147,14 @@ In2iGui.Editor.prototype = {
 	},
 	reloadColumns : function(columns,rowIndex) {
 		var self = this;
-		n2i.each(columns,function(column,columnIndex) {
-			n2i.lsiten(column,'mouseover',function() {
+		hui.each(columns,function(column,columnIndex) {
+			hui.lsiten(column,'mouseover',function() {
 				self.hoverColumn(column);
 			});
-			n2i.listen(column,'mouseout',function() {
+			hui.listen(column,'mouseout',function() {
 				self.blurColumn();
 			});
-			n2i.listen(column,'contextmenu',function(e) {
+			hui.listen(column,'contextmenu',function(e) {
 				self.contextColumn(column,rowIndex,columnIndex,e);
 			});
 		});
@@ -14062,7 +9162,7 @@ In2iGui.Editor.prototype = {
 	reloadParts : function(parts,row,column) {
 		var self = this;
 		var reg = new RegExp(this.options.partClass+"_([\\w]+)","i");
-		n2i.each(parts,function(element,partIndex) {
+		hui.each(parts,function(element,partIndex) {
 			if (!element) return;
 			var match = element.className.match(reg);
 			if (match && match[1]) {
@@ -14070,16 +9170,16 @@ In2iGui.Editor.prototype = {
 				if (handler) {
 					var part = new handler.controller(element,row,column,partIndex);
 					part.type=match[1];
-					n2i.listen(element,'click',function() {
+					hui.listen(element,'click',function() {
 						self.editPart(part);
 					});
-					n2i.listen(element,'mouseover',function(e) {
+					hui.listen(element,'mouseover',function(e) {
 						self.hoverPart(part);
 					});
-					n2i.listen(element,'mouseout',function(e) {
+					hui.listen(element,'mouseout',function(e) {
 						self.blurPart(e);
 					});
-					n2i.listen(element,'mousedown',function(e) {
+					hui.listen(element,'mousedown',function(e) {
 						self.startPartDrag(e);
 					});
 					self.parts.push(part);
@@ -14104,18 +9204,18 @@ In2iGui.Editor.prototype = {
 	hoverColumn : function(column) {
 		this.hoveredColumn = column;
 		if (!this.active || this.activePart) return;
-		n2i.addClass(column,'in2igui_editor_column_hover');
+		hui.addClass(column,'hui_editor_column_hover');
 	},
 	
 	blurColumn : function() {
 		if (!this.active || !this.hoveredColumn) return;
-		n2i.removeClass(this.hoveredColumn,'in2igui_editor_column_hover');
+		hui.removeClass(this.hoveredColumn,'hui_editor_column_hover');
 	},
 	
 	contextColumn : function(column,rowIndex,columnIndex,e) {
 		if (!this.active || this.activePart) return;
 		if (!this.columnMenu) {
-			var menu = In2iGui.Menu.create({name:'In2iGuiEditorColumnMenu'});
+			var menu = hui.ui.Menu.create({name:'huiEditorColumnMenu'});
 			menu.addItem({title:'Rediger kolonne',value:'editColumn'});
 			menu.addItem({title:'Slet kolonne',value:'removeColumn'});
 			menu.addItem({title:'Tilføj kolonne',value:'addColumn'});
@@ -14131,7 +9231,7 @@ In2iGui.Editor.prototype = {
 		this.hoveredColumnIndex=columnIndex;
 		this.columnMenu.showAtPointer(e);
 	},
-	$itemWasClicked$In2iGuiEditorColumnMenu : function(value) {
+	$itemWasClicked$huiEditorColumnMenu : function(value) {
 		if (value=='removeColumn') {
 			this.fire('removeColumn',{'row':this.hoveredRow,'column':this.hoveredColumnIndex});
 		} else if (value=='editColumn') {
@@ -14147,29 +9247,29 @@ In2iGui.Editor.prototype = {
 	
 	editColumn : function(rowIndex,columnIndex) {
 		this.closeColumn();
-		var row = n2i.byClass(document.body,'row')[rowIndex];
-		var c = this.activeColumn = n2i.byClass(row,'column')[columnIndex];
-		n2i.addClass(c,'in2igui_editor_column_edit');
+		var row = hui.byClass(document.body,'row')[rowIndex];
+		var c = this.activeColumn = hui.byClass(row,'column')[columnIndex];
+		hui.addClass(c,'hui_editor_column_edit');
 		this.showColumnWindow();
 		this.columnEditorForm.setValues({width:c.getStyle('width'),paddingLeft:c.getStyle('padding-left')});
 	},
 	closeColumn : function() {
 		if (this.activeColumn) {
-			n2i.removeClass(this.activeColumn,'in2igui_editor_column_edit');
+			hui.removeClass(this.activeColumn,'hui_editor_column_edit');
 		}
 	},
 	showColumnWindow : function() {
 		if (!this.columnEditor) {
-			var w = this.columnEditor = In2iGui.Window.create({name:'columnEditor',title:'Rediger kolonne',width:200});
-			var f = this.columnEditorForm = In2iGui.Formula.create();
+			var w = this.columnEditor = hui.ui.Window.create({name:'columnEditor',title:'Rediger kolonne',width:200});
+			var f = this.columnEditorForm = hui.ui.Formula.create();
 			var g = f.createGroup();
-			var width = In2iGui.Formula.Text.create({label:'Bredde',key:'width'});
+			var width = hui.ui.Formula.Text.create({label:'Bredde',key:'width'});
 			width.listen({$valueChanged:function(v) {this.changeColumnWidth(v)}.bind(this)})
 			g.add(width);
-			var marginLeft = In2iGui.Formula.Text.create({label:'Venstremargen',key:'left'});
+			var marginLeft = hui.ui.Formula.Text.create({label:'Venstremargen',key:'left'});
 			marginLeft.listen({$valueChanged:function(v) {this.changeColumnLeftMargin(v)}.bind(this)})
 			g.add(marginLeft);
-			var marginRight = In2iGui.Formula.Text.create({label:'Højremargen',key:'right'});
+			var marginRight = hui.ui.Formula.Text.create({label:'Højremargen',key:'right'});
 			marginRight.listen({$valueChanged:this.changeColumnRightMargin.bind(this)})
 			g.add(marginRight);
 			w.add(f);
@@ -14198,24 +9298,24 @@ In2iGui.Editor.prototype = {
 	hoverPart : function(part,event) {
 		if (!this.active || this.activePart) return;
 		this.hoveredPart = part;
-		n2i.addClass(part.element,'in2igui_editor_part_hover');
+		hui.addClass(part.element,'hui_editor_part_hover');
 		var self = this;
 		this.partControlTimer = window.setTimeout(function() {self.showPartControls()},200);
 	},
 	blurPart : function(e) {
 		window.clearTimeout(this.partControlTimer);
 		if (!this.active) return;
-		if (this.partControls && !In2iGui.isWithin(e,this.partControls.element)) {
+		if (this.partControls && !hui.ui.isWithin(e,this.partControls.element)) {
 			this.hidePartControls();
-			n2i.removeClass(this.hoveredPart.element,'in2igui_editor_part_hover');
+			hui.removeClass(this.hoveredPart.element,'hui_editor_part_hover');
 		}
 		if (!this.partControls && this.hoveredPart) {
-			n2i.removeClass(this.hoveredPart.element,'in2igui_editor_part_hover');			
+			hui.removeClass(this.hoveredPart.element,'hui_editor_part_hover');			
 		}
 	},
 	showPartEditControls : function() {
 		if (!this.partEditControls) {
-			this.partEditControls = In2iGui.Overlay.create({name:'In2iGuiEditorPartEditActions'});
+			this.partEditControls = hui.ui.Overlay.create({name:'huiEditorPartEditActions'});
 			this.partEditControls.addIcon('save','common/save');
 			this.partEditControls.addIcon('cancel','common/close');
 			this.partEditControls.listen(this);
@@ -14224,15 +9324,15 @@ In2iGui.Editor.prototype = {
 	},
 	showPartControls : function() {
 		if (!this.partControls) {
-			this.partControls = In2iGui.Overlay.create({name:'In2iGuiEditorPartActions'});
+			this.partControls = hui.ui.Overlay.create({name:'huiEditorPartActions'});
 			this.partControls.addIcon('edit','common/edit');
 			this.partControls.addIcon('new','common/new');
 			this.partControls.addIcon('delete','common/delete');
 			var self = this;
-			n2i.listen(this.partControls.getElement(),'mouseout',function(e) {
+			hui.listen(this.partControls.getElement(),'mouseout',function(e) {
 				self.blurControls(e);
 			});
-			n2i.listen(this.partControls.getElement(),'mouseover',function(e) {
+			hui.listen(this.partControls.getElement(),'mouseover',function(e) {
 				self.hoverControls(e);
 			});
 			this.partControls.listen(this);
@@ -14245,15 +9345,15 @@ In2iGui.Editor.prototype = {
 		this.partControls.showAtElement(this.hoveredPart.element,{'horizontal':'right'});
 	},
 	hoverControls : function(e) {
-		n2i.addClass(this.hoveredPart.element,'in2igui_editor_part_hover');
+		hui.addClass(this.hoveredPart.element,'hui_editor_part_hover');
 	},
 	blurControls : function(e) {
-		n2i.removeClass(this.hoveredPart.element,'in2igui_editor_part_hover');
-		if (!In2iGui.isWithin(e,this.hoveredPart.element)) {
+		hui.removeClass(this.hoveredPart.element,'hui_editor_part_hover');
+		if (!hui.ui.isWithin(e,this.hoveredPart.element)) {
 			this.hidePartControls();
 		}
 	},
-	$iconWasClicked$In2iGuiEditorPartActions : function(key,event) {
+	$iconWasClicked$huiEditorPartActions : function(key,event) {
 		if (key=='delete') {
 			this.deletePart(this.hoveredPart);
 		} else if (key=='new') {
@@ -14262,7 +9362,7 @@ In2iGui.Editor.prototype = {
 			this.editPart(this.hoveredPart);
 		}
 	},
-	$iconWasClicked$In2iGuiEditorPartEditActions : function(key,event) {
+	$iconWasClicked$huiEditorPartEditActions : function(key,event) {
 		if (key=='cancel') {
 			this.cancelPart(this.activePart);
 		} else if (key=='save') {
@@ -14283,11 +9383,11 @@ In2iGui.Editor.prototype = {
 		if (!this.active || this.activePart) return;
 		if (this.activePart) this.activePart.deactivate();
 		if (this.hoveredPart) {
-			n2i.removeClass(this.hoveredPart.element,'in2igui_editor_part_hover');
+			hui.removeClass(this.hoveredPart.element,'hui_editor_part_hover');
 		}
 		this.activePart = part;
 		this.showPartEditControls();
-		n2i.addClass(part.element,'in2igui_editor_part_active');
+		hui.addClass(part.element,'hui_editor_part_active');
 		part.activate();
 		window.clearTimeout(this.partControlTimer);
 		this.hidePartControls();
@@ -14297,8 +9397,8 @@ In2iGui.Editor.prototype = {
 	showPartEditor : function() {
 		 // TODO: Disabled!
 		/*if (!this.partEditor) {
-			var w = this.partEditor = In2iGui.Window.create({padding:5,title:'Afstande',close:false,variant:'dark',width: 200});
-			var f = this.partEditorForm = In2iGui.Formula.create();
+			var w = this.partEditor = hui.hui.Window.create({padding:5,title:'Afstande',close:false,variant:'dark',width: 200});
+			var f = this.partEditorForm = hui.ui.Formula.create();
 			f.buildGroup({above:false},[
 				{type:'Text',options:{label:'Top',key:'top'}},
 				{type:'Text',options:{label:'Bottom',key:'bottom'}},
@@ -14318,14 +9418,14 @@ In2iGui.Editor.prototype = {
 		this.partEditor.show();*/
 	},
 	updatePartProperties : function(values) {
-		n2i.setStyle(this.activePart.element,{
+		hui.setStyle(this.activePart.element,{
 			marginTop:values.top,
 			marginBottom:values.bottom,
 			marginLeft:values.left,
 			marginRight:values.right
 		});
 		this.activePart.properties = values;
-		n2i.log(values);
+		hui.log(values);
 	},
 	hidePartEditor : function() {
 		if (this.partEditor) this.partEditor.hide();
@@ -14347,21 +9447,21 @@ In2iGui.Editor.prototype = {
 		return null;
 	},
 	partDidDeacivate : function(part) {
-		n2i.removeClass(part.element,'in2igui_editor_part_active');
+		hui.removeClass(part.element,'hui_editor_part_active');
 		this.activePart = null;
 		this.hidePartEditControls();
 	},
 	partChanged : function(part) {
-		In2iGui.callDelegates(part,'partChanged');
+		hui.ui.callDelegates(part,'partChanged');
 	},
 	deletePart : function(part) {
-		In2iGui.callDelegates(part,'deletePart');
+		hui.ui.callDelegates(part,'deletePart');
 		this.partControls.hide();
 	},
 	newPart : function(e) {
 		if (!this.newPartMenu) {
-			var menu = In2iGui.Menu.create({name:'In2iGuiEditorNewPartMenu'});
-			n2i.each(this.partControllers,function(item) {
+			var menu = hui.ui.Menu.create({name:'huiEditorNewPartMenu'});
+			hui.each(this.partControllers,function(item) {
 				menu.addItem({title:item.title,value:item.key});
 			});
 			menu.listen(this);
@@ -14369,23 +9469,23 @@ In2iGui.Editor.prototype = {
 		}
 		this.newPartMenu.showAtPointer(e);
 	},
-	itemWasClicked$In2iGuiEditorNewPartMenu : function(value) {
+	itemWasClicked$huiEditorNewPartMenu : function(value) {
 		var info = {row:this.hoveredPart.row,column:this.hoveredPart.column,position:this.hoveredPart.position+1,type:value};
-		In2iGui.callDelegates(this,'addPart',info);
+		hui.ui.callDelegates(this,'addPart',info);
 	},
 	/**** Dragging ****/
 	startPartDrag : function(e) {
 		return true;
 		if (!this.active || this.activePart) return true;
 		if (!this.dragProxy) {
-			this.dragProxy = n2i.build('div',{'class':'in2igui_editor_dragproxy part part_header',parent:document.body});
+			this.dragProxy = hui.build('div',{'class':'hui_editor_dragproxy part part_header',parent:document.body});
 		}
 		var element = this.hoveredPart.element;
 		this.dragProxy.style.width = element.clientWidth+'px';
 		this.dragProxy.innerHTML = element.innerHTML;
-		In2iGui.Editor.startDrag(e,this.dragProxy);
+		hui.ui.Editor.startDrag(e,this.dragProxy);
 		return;
-		n2i.listen(document.body,'mouseup',function() {
+		hui.listen(document.body,'mouseup',function() {
 			self.endPartDrag();
 		})
 	},
@@ -14393,38 +9493,37 @@ In2iGui.Editor.prototype = {
 		
 	},
 	endPartDrag : function() {
-		In2iGui.get();
 	}
 }
 
 
 
-In2iGui.Editor.startDrag = function(e,element) {
-	In2iGui.Editor.dragElement = element;
-	n2i.listen(document.body,'mousemove',In2iGui.Editor.dragListener);
-	n2i.listen(document.body,'mouseup',In2iGui.Editor.dragEndListener);
-	In2iGui.Editor.startDragPos = {top:e.pointerY(),left:e.pointerX()};
+hui.ui.Editor.startDrag = function(e,element) {
+	hui.ui.Editor.dragElement = element;
+	hui.listen(document.body,'mousemove',hui.ui.Editor.dragListener);
+	hui.listen(document.body,'mouseup',hui.ui.Editor.dragEndListener);
+	hui.ui.Editor.startDragPos = {top:e.pointerY(),left:e.pointerX()};
 	e.stop();
 	return false;
 }
 
-In2iGui.Editor.dragListener = function(e) {
-	e = n2i.event(e);
-	var element = In2iGui.Editor.dragElement;
+hui.ui.Editor.dragListener = function(e) {
+	e = hui.event(e);
+	var element = hui.ui.Editor.dragElement;
 	element.style.left = e.getLeft()+'px';
 	element.style.top = e.getTop()+'px';
 	element.style.display='block';
 	return false;
 }
 
-In2iGui.Editor.dragEndListener = function(event) {
-	n2i.unListen(document.body,'mousemove',In2iGui.Editor.dragListener);
-	n2i.unListen(document.body,'mouseup',In2iGui.Editor.dragEndListener);
-	In2iGui.Editor.dragElement.style.display='none';
-	In2iGui.Editor.dragElement=null;
+hui.ui.Editor.dragEndListener = function(event) {
+	hui.unListen(document.body,'mousemove',hui.ui.Editor.dragListener);
+	hui.unListen(document.body,'mouseup',hui.ui.Editor.dragEndListener);
+	hui.ui.Editor.dragElement.style.display='none';
+	hui.ui.Editor.dragElement=null;
 }
 
-In2iGui.Editor.getPartId = function(element) {
+hui.ui.Editor.getPartId = function(element) {
 	var m = element.id.match(/part\-([\d]+)/i);
 	if (m && m.length>0) return m[1];
 }
@@ -14434,27 +9533,27 @@ In2iGui.Editor.getPartId = function(element) {
 /**
  * @constructor
  */
-In2iGui.Editor.Header = function(element,row,column,position) {
-	this.element = n2i.get(element);
+hui.ui.Editor.Header = function(element,row,column,position) {
+	this.element = hui.get(element);
 	this.row = row;
 	this.column = column;
 	this.position = position;
-	this.id = In2iGui.Editor.getPartId(this.element);
-	this.header = n2i.firstByTag(this.element,'*');
+	this.id = hui.ui.Editor.getPartId(this.element);
+	this.header = hui.firstByTag(this.element,'*');
 	this.field = null;
 }
 
-In2iGui.Editor.Header.prototype = {
+hui.ui.Editor.Header.prototype = {
 	activate : function() {
 		this.value = this.header.innerHTML;
-		this.field = n2i.build('textarea',{className:'in2igui_editor_header'});
+		this.field = hui.build('textarea',{className:'hui_editor_header'});
 		this.field.value = this.value;
 		this.header.style.visibility='hidden';
 		this.updateFieldStyle();
 		this.element.insertBefore(this.field,this.header);
 		this.field.focus();
 		this.field.select();
-		n2i.listen(this.field,'keydown',function(e) {
+		hui.listen(this.field,'keydown',function(e) {
 			if (e.keyCode==Event.KEY_RETURN) {
 				this.save();
 			}
@@ -14466,7 +9565,7 @@ In2iGui.Editor.Header.prototype = {
 		this.deactivate();
 		if (value!=this.value) {
 			this.value = value;
-			In2iGui.Editor.get().partChanged(this);
+			hui.ui.Editor.get().partChanged(this);
 		}
 	},
 	cancel : function() {
@@ -14475,11 +9574,11 @@ In2iGui.Editor.Header.prototype = {
 	deactivate : function() {
 		this.header.style.visibility='';
 		this.element.removeChild(this.field);
-		In2iGui.Editor.get().partDidDeacivate(this);
+		hui.ui.Editor.get().partDidDeacivate(this);
 	},
 	updateFieldStyle : function() {
-		n2i.setStyle(this.field,{width:this.header.clientWidth+'px',height:this.header.clientHeight+'px'});
-		n2i.copyStyle(this.header,this.field,['fontSize','lineHeight','marginTop','fontWeight','fontFamily','textAlign','color','fontStyle']);
+		hui.setStyle(this.field,{width:this.header.clientWidth+'px',height:this.header.clientHeight+'px'});
+		hui.copyStyle(this.header,this.field,['fontSize','lineHeight','marginTop','fontWeight','fontFamily','textAlign','color','fontStyle']);
 	},
 	getValue : function() {
 		return this.value;
@@ -14491,21 +9590,21 @@ In2iGui.Editor.Header.prototype = {
 /**
  * @constructor
  */
-In2iGui.Editor.Html = function(element,row,column,position) {
-	this.element = n2i.get(element);
+hui.ui.Editor.Html = function(element,row,column,position) {
+	this.element = hui.get(element);
 	this.row = row;
 	this.column = column;
 	this.position = position;
-	this.id = In2iGui.Editor.getPartId(this.element);
+	this.id = hui.ui.Editor.getPartId(this.element);
 	this.field = null;
 }
 
-In2iGui.Editor.Html.prototype = {
+hui.ui.Editor.Html.prototype = {
 	activate : function() {
 		this.value = this.element.innerHTML;
 		this.element.innerHTML='';
 		var style = this.buildStyle();
-		this.editor = In2iGui.MarkupEditor.create({autoHideToolbar:false,style:style});
+		this.editor = hui.ui.MarkupEditor.create({autoHideToolbar:false,style:style});
 		this.element.appendChild(this.editor.getElement());
 		this.editor.listen(this);
 		this.editor.setValue(this.value);
@@ -14513,11 +9612,11 @@ In2iGui.Editor.Html.prototype = {
 	},
 	buildStyle : function() {
 		return {
-			'textAlign':n2i.getStyle(this.element,'text-align')
-			,'fontFamily':n2i.getStyle(this.element,'font-family')
-			,'fontSize':n2i.getStyle(this.element,'font-size')
-			,'fontWeight':n2i.getStyle(this.element,'font-weight')
-			,'color':n2i.getStyle(this.element,'color')
+			'textAlign':hui.getStyle(this.element,'text-align')
+			,'fontFamily':hui.getStyle(this.element,'font-family')
+			,'fontSize':hui.getStyle(this.element,'font-size')
+			,'fontWeight':hui.getStyle(this.element,'font-weight')
+			,'color':hui.getStyle(this.element,'color')
 		}
 	},
 	cancel : function() {
@@ -14529,7 +9628,7 @@ In2iGui.Editor.Html.prototype = {
 		var value = this.editor.getValue();
 		if (value!=this.value) {
 			this.value = value;
-			In2iGui.Editor.get().partChanged(this);
+			hui.ui.Editor.get().partChanged(this);
 		}
 		this.element.innerHTML = this.value;
 	},
@@ -14538,7 +9637,7 @@ In2iGui.Editor.Html.prototype = {
 			this.editor.destroy();
 			this.element.innerHTML = this.value;
 		}
-		In2iGui.Editor.get().partDidDeacivate(this);
+		hui.ui.Editor.get().partDidDeacivate(this);
 	},
 	richTextDidChange : function() {
 		//this.deactivate();
@@ -14551,26 +9650,26 @@ In2iGui.Editor.Html.prototype = {
 /* EOF *//**
  * @constructor
  */
-In2iGui.Menu = function(options) {
-	this.options = n2i.override({autoHide:false,parentElement:null},options);
-	this.element = n2i.get(options.element);
+hui.ui.Menu = function(options) {
+	this.options = hui.override({autoHide:false,parentElement:null},options);
+	this.element = hui.get(options.element);
 	this.name = options.name;
 	this.value = null;
 	this.subMenus = [];
 	this.visible = false;
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 	this.addBehavior();
 }
 
-In2iGui.Menu.create = function(options) {
+hui.ui.Menu.create = function(options) {
 	options = options || {};
-	options.element = n2i.build('div',{'class':'in2igui_menu'});
-	var obj = new In2iGui.Menu(options);
+	options.element = hui.build('div',{'class':'in2igui_menu'});
+	var obj = new hui.ui.Menu(options);
 	document.body.appendChild(options.element);
 	return obj;
 }
 
-In2iGui.Menu.prototype = {
+hui.ui.Menu.prototype = {
 	/** @private */
 	addBehavior : function() {
 		var self = this;
@@ -14579,36 +9678,36 @@ In2iGui.Menu.prototype = {
 		}
 		if (this.options.autoHide) {
 			var x = function(e) {
-				if (!In2iGui.isWithin(e,self.element) && (!self.options.parentElement || !In2iGui.isWithin(e,self.options.parentElement))) {
+				if (!hui.ui.isWithin(e,self.element) && (!self.options.parentElement || !hui.ui.isWithin(e,self.options.parentElement))) {
 					if (!self.isSubMenuVisible()) {
 						self.hide();
 					}
 				}
 			};
-			n2i.listen(this.element,'mouseout',x);
+			hui.listen(this.element,'mouseout',x);
 			if (this.options.parentElement) {
-				n2i.listen(this.options.parentElement,'mouseout',x);
+				hui.listen(this.options.parentElement,'mouseout',x);
 			}
 		}
 	},
 	addDivider : function() {
-		n2i.build('div',{'class':'in2igui_menu_divider',parent:this.element});
+		hui.build('div',{'class':'in2igui_menu_divider',parent:this.element});
 	},
 	addItem : function(item) {
 		var self = this;
-		var element = n2i.build('div',{'class':'in2igui_menu_item',text:item.title});
-		n2i.listen(element,'click',function(e) {
-			n2i.stop(e);
+		var element = hui.build('div',{'class':'in2igui_menu_item',text:item.title});
+		hui.listen(element,'click',function(e) {
+			hui.stop(e);
 			self.itemWasClicked(item.value);
 		});
 		if (item.children) {
-			var sub = In2iGui.Menu.create({autoHide:true,parentElement:element});
+			var sub = hui.ui.Menu.create({autoHide:true,parentElement:element});
 			sub.addItems(item.children);
-			n2i.listen(element,'mouseover',function(e) {
+			hui.listen(element,'mouseover',function(e) {
 				sub.showAtElement(element,e,'horizontal');
 			});
 			self.subMenus.push(sub);
-			n2i.addClass(element,'in2igui_menu_item_children');
+			hui.addClass(element,'in2igui_menu_item_children');
 		}
 		this.element.appendChild(element);
 	},
@@ -14631,15 +9730,15 @@ In2iGui.Menu.prototype = {
 		this.hide();
 	},
 	showAtPointer : function(e) {
-		e = n2i.event(e);
+		e = hui.event(e);
 		e.stop();
 		this.showAtPoint({'top' : e.getTop(),'left' : e.getLeft()});
 	},
 	showAtElement : function(element,event,position) {
-		event = n2i.event(event);
+		event = hui.event(event);
 		event.stop();
-		element = n2i.get(element);
-		var point = n2i.getPosition(element);
+		element = hui.get(element);
+		var point = hui.getPosition(element);
 		if (position=='horizontal') {
 			point.left += element.clientWidth;
 		} else if (position=='vertical') {
@@ -14648,23 +9747,23 @@ In2iGui.Menu.prototype = {
 		this.showAtPoint(point);
 	},
 	showAtPoint : function(pos) {
-		var innerWidth = n2i.getViewPortWidth();
-		var innerHeight = n2i.getViewPortHeight();
-		var scrollTop = n2i.getScrollTop();
-		var scrollLeft = n2i.getScrollLeft();
+		var innerWidth = hui.getViewPortWidth();
+		var innerHeight = hui.getViewPortHeight();
+		var scrollTop = hui.getScrollTop();
+		var scrollLeft = hui.getScrollLeft();
 		if (!this.visible) {
-			n2i.setStyle(this.element,{'display':'block','visibility':'hidden',opacity:0});
+			hui.setStyle(this.element,{'display':'block','visibility':'hidden',opacity:0});
 		}
 		var width = this.element.clientWidth;
 		var height = this.element.clientHeight;
 		var left = Math.min(pos.left,innerWidth-width-26+scrollLeft);
 		var top = Math.max(0,Math.min(pos.top,innerHeight-height-20+scrollTop));
-		n2i.setStyle(this.element,{'top':top+'px','left':left+'px','visibility':'visible',zIndex:In2iGui.nextTopIndex()});
+		hui.setStyle(this.element,{'top':top+'px','left':left+'px','visibility':'visible',zIndex:hui.ui.nextTopIndex()});
 		if (!this.element.style.width) {
 			this.element.style.width=(width+6)+'px';
 		}
 		if (!this.visible) {
-			n2i.setStyle(this.element,{opacity:1});
+			hui.setStyle(this.element,{opacity:1});
 			this.addHider();
 			this.visible = true;
 		}
@@ -14672,7 +9771,7 @@ In2iGui.Menu.prototype = {
 	hide : function() {
 		if (!this.visible) return;
 		var self = this;
-		n2i.animate(this.element,'opacity',0,200,{onComplete:function() {
+		hui.animate(this.element,'opacity',0,200,{onComplete:function() {
 			self.element.style.display='none';
 		}});
 		this.removeHider();
@@ -14688,10 +9787,10 @@ In2iGui.Menu.prototype = {
 		return false;
 	},
 	addHider : function() {
-		n2i.listen(document.body,'click',this.hider);
+		hui.listen(document.body,'click',this.hider);
 	},
 	removeHider : function() {
-		n2i.unListen(document.body,'click',this.hider);
+		hui.unListen(document.body,'click',this.hider);
 	}
 }
 
@@ -14700,55 +9799,55 @@ In2iGui.Menu.prototype = {
 /* EOF *//**
  * @constructor
  */
-In2iGui.Overlay = function(options) {
+hui.ui.Overlay = function(options) {
 	this.options = options;
-	this.element = n2i.get(options.element);
-	this.content = n2i.byClass(this.element,'in2igui_inner_overlay')[1];
+	this.element = hui.get(options.element);
+	this.content = hui.byClass(this.element,'in2igui_inner_overlay')[1];
 	this.name = options.name;
 	this.icons = {};
 	this.visible = false;
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 	this.addBehavior();
 }
 
 /**
  * Creates a new overlay
  */
-In2iGui.Overlay.create = function(options) {
+hui.ui.Overlay.create = function(options) {
 	options = options || {};
-	var e = options.element = n2i.build('div',{className:'in2igui_overlay',style:'display:none',html:'<div class="in2igui_inner_overlay"><div class="in2igui_inner_overlay"></div></div>'});
+	var e = options.element = hui.build('div',{className:'in2igui_overlay',style:'display:none',html:'<div class="in2igui_inner_overlay"><div class="in2igui_inner_overlay"></div></div>'});
 	document.body.appendChild(e);
-	return new In2iGui.Overlay(options);
+	return new hui.ui.Overlay(options);
 }
 
-In2iGui.Overlay.prototype = {
+hui.ui.Overlay.prototype = {
 	/** @private */
 	addBehavior : function() {
 		var self = this;
 		this.hider = function(e) {
 			if (self.boundElement) {
-				if (In2iGui.isWithin(e,self.boundElement) || In2iGui.isWithin(e,self.element)) return;
+				if (hui.ui.isWithin(e,self.boundElement) || hui.ui.isWithin(e,self.element)) return;
 				// TODO: should be unreg'ed but it fails
 				//self.boundElement.stopObserving(self.hider);
-				n2i.removeClass(self.boundElement,'in2igui_overlay_bound');
+				hui.removeClass(self.boundElement,'in2igui_overlay_bound');
 				self.boundElement = null;
 				self.hide();
 			}
 		}
-		n2i.listen(this.element,'mouseout',this.hider);
+		hui.listen(this.element,'mouseout',this.hider);
 	},
 	addIcon : function(key,icon) {
 		var self = this;
-		var element = n2i.build('div',{className:'in2igui_overlay_icon'});
-		element.style.backgroundImage='url('+In2iGui.getIconUrl(icon,2)+')';
-		n2i.listen(element,'click',function(e) {
+		var element = hui.build('div',{className:'in2igui_overlay_icon'});
+		element.style.backgroundImage='url('+hui.ui.getIconUrl(icon,2)+')';
+		hui.listen(element,'click',function(e) {
 			self.iconWasClicked(key,e);
 		});
 		this.icons[key]=element;
 		this.content.appendChild(element);
 	},
 	addText : function(text) {
-		this.content.appendChild(n2i.build('span',{'class':'in2igui_overlay_text',text:text}));
+		this.content.appendChild(hui.build('span',{'class':'in2igui_overlay_text',text:text}));
 	},
 	add : function(widget) {
 		this.content.appendChild(widget.getElement());
@@ -14764,56 +9863,56 @@ In2iGui.Overlay.prototype = {
 		};
 	},
 	iconWasClicked : function(key,e) {
-		In2iGui.callDelegates(this,'iconWasClicked',key,e);
+		hui.ui.callDelegates(this,'iconWasClicked',key,e);
 	},
 	showAtElement : function(element,options) {
 		options = options || {};
-		In2iGui.positionAtElement(this.element,element,options);
+		hui.ui.positionAtElement(this.element,element,options);
 		if (this.visible) return;
-		if (n2i.browser.msie) {
+		if (hui.browser.msie) {
 			this.element.style.display='block';
 		} else {
-			n2i.setStyle(this.element,{'display':'block','opacity':0});
-			n2i.ani(this.element,'opacity',1,150);
+			hui.setStyle(this.element,{'display':'block','opacity':0});
+			hui.ani(this.element,'opacity',1,150);
 		}
 		this.visible = true;
 		if (options.autoHide) {
 			this.boundElement = element;
-			n2i.listen(element,'mouseout',this.hider);
-			n2i.addClass(element,'in2igui_overlay_bound');
+			hui.listen(element,'mouseout',this.hider);
+			hui.addClass(element,'in2igui_overlay_bound');
 		}
 		if (this.options.modal) {
-			var zIndex = In2iGui.nextAlertIndex();
+			var zIndex = hui.ui.nextAlertIndex();
 			this.element.style.zIndex=zIndex+1;
-			In2iGui.showCurtain({widget:this,zIndex:zIndex});
+			hui.ui.showCurtain({widget:this,zIndex:zIndex});
 		}
 		return;
 	},
 	show : function(options) {
 		options = options || {};
 		if (!this.visible) {
-			n2i.setStyle(this.element,{'display':'block',visibility:'hidden'});
+			hui.setStyle(this.element,{'display':'block',visibility:'hidden'});
 		}
 		if (options.element) {
-			n2i.place({
+			hui.place({
 				source:{element:this.element,vertical:0,horizontal:.5},
 				target:{element:options.element,vertical:.5,horizontal:.5},
 				insideViewPort:true
 			});
 		}
 		if (this.visible) return;
-		In2iGui.bounceIn(this.element);
+		hui.ui.bounceIn(this.element);
 		this.visible = true;
 		if (options.autoHide && options.element) {
 			this.boundElement = options.element;
-			n2i.listen(options.element,'mouseout',this.hider);
-			n2i.addClass(options.element,'in2igui_overlay_bound');
+			hui.listen(options.element,'mouseout',this.hider);
+			hui.addClass(options.element,'in2igui_overlay_bound');
 		}
 		if (this.options.modal) {
-			var zIndex = In2iGui.nextAlertIndex();
+			var zIndex = hui.ui.nextAlertIndex();
 			this.element.style.zIndex=zIndex+1;
-			var color = n2i.getStyle(document.body,'background-color');
-			In2iGui.showCurtain({widget:this,zIndex:zIndex,color:color});
+			var color = hui.getStyle(document.body,'background-color');
+			hui.ui.showCurtain({widget:this,zIndex:zIndex,color:color});
 		}
 	},
 	/** private */
@@ -14821,12 +9920,12 @@ In2iGui.Overlay.prototype = {
 		this.hide();
 	},
 	hide : function() {
-		In2iGui.hideCurtain(this);
+		hui.ui.hideCurtain(this);
 		this.element.style.display='none';
 		this.visible = false;
 	},
 	clear : function() {
-		In2iGui.destroyDescendants(this.content);
+		hui.ui.destroyDescendants(this.content);
 		this.content.innerHTML='';
 	}
 }
@@ -14845,49 +9944,49 @@ In2iGui.Overlay.prototype = {
  * uploadDidComplete(file) - when a single file is successfull
  * uploadDidFail(file) - when a single file fails
  */
-In2iGui.Upload = function(options) {
-	this.options = n2i.override({url:'',parameters:{},maxItems:50,maxSize:"20480",types:"*.*",useFlash:true,fieldName:'file',chooseButton:'Choose files...'},options);
-	this.element = n2i.get(options.element);
-	this.itemContainer = n2i.firstByClass(this.element,'in2igui_upload_items');
-	this.status = n2i.firstByClass(this.element,'in2igui_upload_status');
-	this.placeholder = n2i.firstByClass(this.element,'in2igui_upload_placeholder');
+hui.ui.Upload = function(options) {
+	this.options = hui.override({url:'',parameters:{},maxItems:50,maxSize:"20480",types:"*.*",useFlash:true,fieldName:'file',chooseButton:'Choose files...'},options);
+	this.element = hui.get(options.element);
+	this.itemContainer = hui.firstByClass(this.element,'in2igui_upload_items');
+	this.status = hui.firstByClass(this.element,'in2igui_upload_status');
+	this.placeholder = hui.firstByClass(this.element,'in2igui_upload_placeholder');
 	this.name = options.name;
 	this.items = [];
 	this.busy = false;
 	this.loaded = false;
 	this.useFlash = this.options.useFlash;
 	if (this.options.useFlash) {
-		this.useFlash = In2iGui.Flash.getMajorVersion()>=10;
+		this.useFlash = hui.ui.Flash.getMajorVersion()>=10;
 	}
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 	this.addBehavior();
 }
 
-In2iGui.Upload.nameIndex = 0;
+hui.ui.Upload.nameIndex = 0;
 
 /** Creates a new upload widget */
-In2iGui.Upload.create = function(options) {
+hui.ui.Upload.create = function(options) {
 	options = options || {};
-	options.element = n2i.build('div',{
+	options.element = hui.build('div',{
 		'class':'in2igui_upload',
 		html : '<div class="in2igui_upload_items"></div>'+
 		'<div class="in2igui_upload_status"></div>'+
 		(options.placeholder ? '<div class="in2igui_upload_placeholder"><span class="in2igui_upload_icon"></span>'+
-			(options.placeholder.title ? '<h2>'+n2i.escape(options.placeholder.title)+'</h2>' : '')+
-			(options.placeholder.text ? '<p>'+n2i.escape(options.placeholder.text)+'</p>' : '')+
+			(options.placeholder.title ? '<h2>'+hui.escape(options.placeholder.title)+'</h2>' : '')+
+			(options.placeholder.text ? '<p>'+hui.escape(options.placeholder.text)+'</p>' : '')+
 		'</div>' : '')
 	});
-	return new In2iGui.Upload(options);
+	return new hui.ui.Upload(options);
 }
 
-In2iGui.Upload.prototype = {
+hui.ui.Upload.prototype = {
 	/** @private */
 	addBehavior : function() {
 		if (!this.useFlash) {
 			this.createIframeVersion();
 			return;
 		}
-		In2iGui.onDomReady(this.createFlashVersion.bind(this));
+		hui.ui.onReady(this.createFlashVersion.bind(this));
 	},
 	/**
 	 * Change a parameter
@@ -14903,7 +10002,7 @@ In2iGui.Upload.prototype = {
 					return;
 				}
 			};
-			this.form.appendChild(n2i.build('input',{'type':'hidden','name':name,'value':value}));
+			this.form.appendChild(hui.build('input',{'type':'hidden','name':name,'value':value}));
 		}
 	},
 	
@@ -14911,10 +10010,10 @@ In2iGui.Upload.prototype = {
 	
 	/** @private */
 	createIframeVersion : function() {
-		In2iGui.Upload.nameIndex++;
-		var frameName = 'in2igui_upload_'+In2iGui.Upload.nameIndex;
+		hui.ui.Upload.nameIndex++;
+		var frameName = 'in2igui_upload_'+hui.ui.Upload.nameIndex;
 		
-		var form = this.form = n2i.build('form');
+		var form = this.form = hui.build('form');
 		form.setAttribute('action',this.options.url || '');
 		form.setAttribute('method','post');
 		form.setAttribute('enctype','multipart/form-data');
@@ -14922,55 +10021,52 @@ In2iGui.Upload.prototype = {
 		form.setAttribute('target',frameName);
 		if (this.options.parameters) {
 			for (var key in this.options.parameters) {
-				var hidden = n2i.build('input',{'type':'hidden','name':key});
+				var hidden = hui.build('input',{'type':'hidden','name':key});
 				hidden.value = this.options.parameters[key];
 				form.appendChild(hidden);
 			}
 		}
-		var iframe = this.iframe = n2i.build('iframe',{name:frameName,id:frameName,src:In2iGui.context+'/In2iGui/html/blank.html'});
+		var iframe = this.iframe = hui.build('iframe',{name:frameName,id:frameName,src:hui.ui.context+'/In2iGui/html/blank.html'});
 		iframe.style.display='none';
 		this.element.appendChild(iframe);
-		this.fileInput = n2i.build('input',{'type':'file','class':'file','name':this.options.fieldName});
-		n2i.listen(this.fileInput,'change',this.iframeSubmit.bind(this));
+		this.fileInput = hui.build('input',{'type':'file','class':'file','name':this.options.fieldName});
+		hui.listen(this.fileInput,'change',this.iframeSubmit.bind(this));
 		form.appendChild(this.fileInput);
-		var buttonContainer = n2i.build('span',{'class':'in2igui_upload_button'});
-		var span = n2i.build('span',{'class':'in2igui_upload_button_input'});
+		var buttonContainer = hui.build('span',{'class':'in2igui_upload_button'});
+		var span = hui.build('span',{'class':'in2igui_upload_button_input'});
 		span.appendChild(form);
 		buttonContainer.appendChild(span);
 		if (this.options.widget) {
-			In2iGui.onDomReady(function() {
-				var w = In2iGui.get(this.options.widget);
+			hui.ui.onReady(function() {
+				var w = hui.ui.get(this.options.widget);
 				w.element.parentNode.insertBefore(buttonContainer,w.element);
 				w.element.parentNode.removeChild(w.element);
 				buttonContainer.appendChild(w.element);
 			}.bind(this));
-		} else {
-			buttonContainer.innerHTML='<a href="javascript:void(0);" class="in2igui_button"><span><span>'+this.options.chooseButton+'</span></span></a>';
-			this.element.appendChild(buttonContainer);
 		}
-		n2i.listen(iframe,'load',function() {this.iframeUploadComplete()}.bind(this));
+		hui.listen(iframe,'load',function() {this.iframeUploadComplete()}.bind(this));
 	},
 	/** @private */
 	iframeUploadComplete : function() {
 		if (!this.uploading) return;
-		n2i.log('iframeUploadComplete uploading: '+this.uploading+' ('+this.name+')');
+		hui.log('iframeUploadComplete uploading: '+this.uploading+' ('+this.name+')');
 		this.uploading = false;
 		this.form.reset();
-		var doc = n2i.getFrameDocument(this.iframe);
+		var doc = hui.getFrameDocument(this.iframe);
 		var last = this.items[this.items.length-1];
 		if (doc.body.innerHTML.indexOf('SUCCESS')!=-1) {
 			if (last) {
 				last.update({progress:1,filestatus:'Færdig'});
 			}
 			this.fire('uploadDidComplete',{}); // TODO: Send the correct file
-			n2i.log('Iframe upload succeeded');
+			hui.log('Iframe upload succeeded');
 		} else if (last) {
 			last.setError('Upload af filen fejlede!');
-			n2i.log('Iframe upload failed!');
+			hui.log('Iframe upload failed!');
 			this.fire('uploadDidFail',{}); // TODO: Send the correct file
 		}
 		this.fire('uploadDidCompleteQueue');
-		this.iframe.src=In2iGui.context+'/In2iGui/html/blank.html';
+		this.iframe.src=hui.ui.context+'/In2iGui/html/blank.html';
 		this.endIframeProgress();
 	},
 	/** @private */
@@ -14978,8 +10074,8 @@ In2iGui.Upload.prototype = {
 		this.startIframeProgress();
 		this.uploading = true;
 		// IE: set value of parms again since they disappear
-		if (n2i.browser.msie) {
-			n2i.each(this.options.parameters,function(key,value) {
+		if (hui.browser.msie) {
+			hui.each(this.options.parameters,function(key,value) {
 				this.form[key].value = value;
 			}.bind(this));
 		}
@@ -14987,7 +10083,7 @@ In2iGui.Upload.prototype = {
 		this.fire('uploadDidStartQueue');
 		var fileName = this.fileInput.value.split('\\').pop();
 		this.addItem({name:fileName,filestatus:'I gang'}).setWaiting();
-		n2i.log('Iframe upload started!');
+		hui.log('Iframe upload started!');
 	},
 	/** @private */
 	startIframeProgress : function() {
@@ -15029,32 +10125,32 @@ In2iGui.Upload.prototype = {
 	
 	/** @private */
 	createFlashVersion : function() {
-		n2i.log('Creating flash verison');
+		hui.log('Creating flash verison');
 		var url = this.getAbsoluteUrl(this.options.url);
-		var javaSession = n2i.cookie.get('JSESSIONID');
+		var javaSession = hui.cookie.get('JSESSIONID');
 		if (javaSession) {
 			url+=';jsessionid='+javaSession;
 		}
-		var phpSession = n2i.cookie.get('PHPSESSID');
+		var phpSession = hui.cookie.get('PHPSESSID');
 		if (phpSession) {
 			url+='?PHPSESSID='+phpSession;
 		}
-		var buttonContainer = n2i.build('span',{'class':'in2igui_upload_button'});
-		var placeholder = n2i.build('span',{'class':'in2igui_upload_button_object',parent:buttonContainer});
+		var buttonContainer = hui.build('span',{'class':'in2igui_upload_button'});
+		var placeholder = hui.build('span',{'class':'in2igui_upload_button_object',parent:buttonContainer});
 		if (this.options.widget) {
-			var w = In2iGui.get(this.options.widget);
+			var w = hui.ui.get(this.options.widget);
 			w.element.parentNode.insertBefore(buttonContainer,w.element);
 			w.element.parentNode.removeChild(w.element);
 			buttonContainer.appendChild(w.element);
 		} else {
-			buttonContainer.innerHTL='<a href="javascript:void(0);" class="in2igui_button"><span><span>'+this.options.chooseButton+'</span></span></a>';
+			buttonContainer.innerHTL='<a href="javascript:void(0);" class="hui_button"><span><span>'+this.options.chooseButton+'</span></span></a>';
 			this.element.appendChild(buttonContainer);
 		}
 		
 		var self = this;
 		this.loader = new SWFUpload({
 			upload_url : url,
-			flash_url : In2iGui.context+"/In2iGui/lib/swfupload/swfupload.swf",
+			flash_url : hui.ui.context+"/In2iGui/lib/swfupload/swfupload.swf",
 			file_size_limit : this.options.maxSize,
 			file_queue_limit : this.options.maxItems,
 			file_post_name : this.options.fieldName,
@@ -15087,7 +10183,7 @@ In2iGui.Upload.prototype = {
 	
 	/** @private */
 	flashLoaded : function() {
-		n2i.log('flash loaded');
+		hui.log('flash loaded');
 		this.loaded = true;
 	},
 	/** @private */
@@ -15104,18 +10200,18 @@ In2iGui.Upload.prototype = {
 		if (file!==null) {
 			this.addError(file,error);
 		} else {
-			In2iGui.showMessage({text:In2iGui.Upload.errors[error],duration:4000});
+			hui.ui.showMessage({text:hui.ui.Upload.errors[error],duration:4000});
 		}
 	},
 	/** @private */
 	fileDialogComplete : function() {
-		n2i.log('fileDialogComplete');
+		hui.log('fileDialogComplete');
 		this.startNextUpload();
 	},
 	/** @private */
 	uploadStart : function() {
 		this.status.style.display='block';
-		n2i.log('uploadStart');
+		hui.log('uploadStart');
 		if (!this.busy) {
 			this.fire('uploadDidStartQueue');
 		}
@@ -15128,14 +10224,14 @@ In2iGui.Upload.prototype = {
 	},
 	/** @private */
 	uploadError : function(file, error, message) {
-		n2i.log('uploadError file:'+file+', error:'+error+', message:'+message);
+		hui.log('uploadError file:'+file+', error:'+error+', message:'+message);
 		if (file) {
 			this.items[file.index].update(file);
 		}
 	},
 	/** @private */
 	uploadSuccess : function(file,data) {
-		n2i.log('uploadSuccess file:'+file+', data:'+data);
+		hui.log('uploadSuccess file:'+file+', data:'+data);
 		this.items[file.index].updateProgress(file.size,file.size);
 	},
 	/** @private */
@@ -15159,7 +10255,7 @@ In2iGui.Upload.prototype = {
 			index = this.items.length;
 			file.index = index;
 		}
-		var item = new In2iGui.Upload.Item(file);
+		var item = new hui.ui.Upload.Item(file);
 		this.items[index] = item;
 		this.itemContainer.appendChild(item.element);
 		this.itemContainer.style.display='block';
@@ -15175,48 +10271,48 @@ In2iGui.Upload.prototype = {
 		if (this.items.length==0) {
 			this.status.style.display='none';
 		} else {
-			n2i.dom.setText(this.status,'Status: '+Math.round(s.successful_uploads/this.items.length*100)+'%');
+			hui.dom.setText(this.status,'Status: '+Math.round(s.successful_uploads/this.items.length*100)+'%');
 			this.status.style.display='block';
 		}
-		n2i.log(s);
+		hui.log(s);
 	}
 }
 
-In2iGui.Upload.Item = function(file) {
-	this.element = n2i.build('div',{className:'in2igui_upload_item'});
+hui.ui.Upload.Item = function(file) {
+	this.element = hui.build('div',{className:'in2igui_upload_item'});
 	if (file.index % 2 == 1) {
-		n2i.addClass(this.element,'in2igui_upload_item_alt');
+		hui.addClass(this.element,'in2igui_upload_item_alt');
 	}
-	this.content = n2i.build('div',{className:'in2igui_upload_item_content'});
-	this.icon = In2iGui.createIcon('file/generic',2);
+	this.content = hui.build('div',{className:'in2igui_upload_item_content'});
+	this.icon = hui.ui.createIcon('file/generic',2);
 	this.element.appendChild(this.icon);
 	this.element.appendChild(this.content);
 	this.info = document.createElement('strong');
 	this.status = document.createElement('em');
-	this.progress = In2iGui.ProgressBar.create({small:true});
+	this.progress = hui.ui.ProgressBar.create({small:true});
 	this.content.appendChild(this.progress.getElement());
 	this.content.appendChild(this.info);
 	this.content.appendChild(this.status);
 	this.update(file);
 }
 
-In2iGui.Upload.Item.prototype = {
+hui.ui.Upload.Item.prototype = {
 	update : function(file) {
-		n2i.dom.setText(this.status,In2iGui.Upload.status[file.filestatus] || file.filestatus);
+		hui.dom.setText(this.status,hui.ui.Upload.status[file.filestatus] || file.filestatus);
 		if (file.name) {
-			n2i.dom.setText(this.info,file.name);
+			hui.dom.setText(this.info,file.name);
 		}
 		if (file.progress!==undefined) {
 			this.setProgress(file.progress);
 		}
 		if (file.filestatus==SWFUpload.FILE_STATUS.ERROR) {
-			n2i.addClass(this.element,'in2igui_upload_item_error');
+			hui.addClass(this.element,'in2igui_upload_item_error');
 			this.progress.hide();
 		}
 	},
 	setError : function(error) {
-		n2i.dom.setText(this.status,In2iGui.Upload.errors[error] || error);
-		n2i.addClass(this.element,'in2igui_upload_item_error');
+		hui.dom.setText(this.status,hui.ui.Upload.errors[error] || error);
+		hui.addClass(this.element,'in2igui_upload_item_error');
 		this.progress.hide();
 	},
 	updateProgress : function(complete,total) {
@@ -15235,13 +10331,13 @@ In2iGui.Upload.Item.prototype = {
 		this.element.hide();
 	},
 	destroy : function() {
-		n2i.dom.remove(this.element);
+		hui.dom.remove(this.element);
 	}
 }
 
 if (window.SWFUpload) {
 (function(){
-	var e = In2iGui.Upload.errors = {};
+	var e = hui.ui.Upload.errors = {};
 	e[SWFUpload.QUEUE_ERROR.QUEUE_LIMIT_EXCEEDED]			= 'Der er valgt for mange filer';
 	e[SWFUpload.QUEUE_ERROR.FILE_EXCEEDS_SIZE_LIMIT]		= 'Filen er for stor';
 	e[SWFUpload.QUEUE_ERROR.ZERO_BYTE_FILE]					= 'Filen er tom';
@@ -15256,7 +10352,7 @@ if (window.SWFUpload) {
 	e[SWFUpload.UPLOAD_ERROR.FILE_VALIDATION_FAILED]		= 'Validering af filen fejlede';
 	e[SWFUpload.UPLOAD_ERROR.FILE_CANCELLED]				= 'Filen blev afbrudt';
 	e[SWFUpload.UPLOAD_ERROR.UPLOAD_STOPPED]				= 'Upload af filen blev stoppet';
-	var s = In2iGui.Upload.status = {};
+	var s = hui.ui.Upload.status = {};
 	s[SWFUpload.FILE_STATUS.QUEUED] 		= 'I kø';
 	s[SWFUpload.FILE_STATUS.IN_PROGRESS] 	= 'I gang';
 	s[SWFUpload.FILE_STATUS.ERROR] 			= 'Filen gav fejl';
@@ -15267,8 +10363,8 @@ if (window.SWFUpload) {
 /* EOF *//** A progress bar is a widget that shows progress from 0% to 100%
 	@constructor
 */
-In2iGui.ProgressBar = function(o) {
-	this.element = n2i.get(o.element);
+hui.ui.ProgressBar = function(o) {
+	this.element = hui.get(o.element);
 	this.name = o.name;
 	/** @private */
 	this.WAITING = o.small ? 'in2igui_progressbar_small_waiting' : 'in2igui_progressbar_waiting';
@@ -15277,45 +10373,45 @@ In2iGui.ProgressBar = function(o) {
 	/** @private */
 	this.options = o || {};
 	/** @private */
-	this.indicator = n2i.firstByTag(this.element,'div');
-	In2iGui.extend(this);
+	this.indicator = hui.firstByTag(this.element,'div');
+	hui.ui.extend(this);
 }
 
 /** Creates a new progress bar:
 	@param o {Object} Options : {small:false}
 */
-In2iGui.ProgressBar.create = function(o) {
+hui.ui.ProgressBar.create = function(o) {
 	o = o || {};
-	var e = o.element = n2i.build('div',{'class':o.small ? 'in2igui_progressbar in2igui_progressbar_small' : 'in2igui_progressbar'});
+	var e = o.element = hui.build('div',{'class':o.small ? 'in2igui_progressbar in2igui_progressbar_small' : 'in2igui_progressbar'});
 	e.appendChild(document.createElement('div'));
-	return new In2iGui.ProgressBar(o);
+	return new hui.ui.ProgressBar(o);
 }
 	
-In2iGui.ProgressBar.prototype = {
+hui.ui.ProgressBar.prototype = {
 	/** Set the progress value
 	@param value {Number} A number between 0 and 1
 	*/
 	setValue : function(value) {
 		var el = this.element;
 		if (this.waiting) {
-			n2i.removeClass(el,this.WAITING);
+			hui.removeClass(el,this.WAITING);
 		}
-		n2i.setClass(el,this.COMPLETE,value==1);
-		n2i.ani(this.indicator,'width',(value*100)+'%',200);
+		hui.setClass(el,this.COMPLETE,value==1);
+		hui.ani(this.indicator,'width',(value*100)+'%',200);
 	},
 	/** Mark progress as waiting */
 	setWaiting : function() {
 		this.waiting = true;
 		this.indicator.style.width=0;
-		n2i.addClass(this.element,this.WAITING);
+		hui.addClass(this.element,this.WAITING);
 	},
 	/** Reset the progress bar */
 	reset : function() {
 		var el = this.element;
 		if (this.waiting) {
-			n2i.removeClass(el,this.WAITING);
+			hui.removeClass(el,this.WAITING);
 		}
-		n2i.removeClass(el,this.COMPLETE);
+		hui.removeClass(el,this.COMPLETE);
 		this.indicator.style.width='0%';
 	},
 	/** Hide the progress bar */
@@ -15329,33 +10425,34 @@ In2iGui.ProgressBar.prototype = {
 }
 
 /* EOF *//** @constructor */
-In2iGui.Gallery = function(options) {
+hui.ui.Gallery = function(options) {
 	this.options = options || {};
 	this.name = options.name;
-	this.element = n2i.get(options.element);
+	this.element = hui.get(options.element);
+	this.body = hui.firstByClass(this.element,'in2igui_gallery_body');
 	this.objects = [];
 	this.nodes = [];
 	this.selected = [];
 	this.width = 100;
 	this.height = 100;
 	this.revealing = false;
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 	if (this.options.source) {
 		this.options.source.listen(this);
 	}
-	if (this.element.parentNode && n2i.hasClass(this.element.parentNode,'in2igui_overflow')) {
+	if (this.element.parentNode && hui.hasClass(this.element.parentNode,'in2igui_overflow')) {
 		this.revealing = true;
-		n2i.listen(this.element.parentNode,'scroll',this._reveal.bind(this));
+		hui.listen(this.element.parentNode,'scroll',this._reveal.bind(this));
 	}
 }
 
-In2iGui.Gallery.create = function(options) {
+hui.ui.Gallery.create = function(options) {
 	options = options || {};
-	options.element = n2i.build('div',{'class':'in2igui_gallery'});
-	return new In2iGui.Gallery(options);
+	options.element = hui.build('div',{'class':'in2igui_gallery',html:'<div class="in2igui_gallery_progress"></div><div class="in2igui_gallery_body"></div>'});
+	return new hui.ui.Gallery(options);
 }
 
-In2iGui.Gallery.prototype = {
+hui.ui.Gallery.prototype = {
 	setObjects : function(objects) {
 		this.objects = objects;
 		this.render();
@@ -15376,33 +10473,36 @@ In2iGui.Gallery.prototype = {
 	render : function() {
 		this.nodes = [];
 		this.maxRevealed=0;
-		this.element.innerHTML='';
+		this.body.innerHTML='';
 		var self = this;
-		n2i.each(this.objects,function(object,i) {
+		hui.each(this.objects,function(object,i) {
 			var url = self.resolveImageUrl(object),
 				top = 0;
 			if (url!==null) {
 				url = url.replace(/&amp;/,'&');
 			}
-			if (object.height<object.width) {
+			if (!self.revealing && object.height<object.width) {
 				top = (self.height-(self.height*object.height/object.width))/2;
 			}
-			var img = n2i.build('img',{style:'margin:'+top+'px auto 0px'});
+			var img = hui.build('img',{style:'margin:'+top+'px auto 0px'});
 			img.setAttribute(self.revealing ? 'data-src' : 'src', url );
-			var item = n2i.build('div',{'class' : 'in2igui_gallery_item',style:'width:'+self.width+'px; height:'+self.height+'px'});
+			if (self.revealing) {
+			//	img.style.visibility='hidden';
+			}
+			var item = hui.build('div',{'class' : 'in2igui_gallery_item',style:'width:'+self.width+'px; height:'+self.height+'px'});
 			item.appendChild(img);
-			n2i.listen(item,'click',function() {
+			hui.listen(item,'click',function() {
 				self.itemClicked(i);
 			});
 			item.dragDropInfo = {kind:'image',icon:'common/image',id:object.id,title:object.name || object.title};
 			item.onmousedown=function(e) {
-				In2iGui.startDrag(e,item);
+				hui.ui.startDrag(e,item);
 				return false;
 			};
-			n2i.listen(item,'dblclick',function() {
+			hui.listen(item,'dblclick',function() {
 				self.itemDoubleClicked(i);
 			});
-			self.element.appendChild(item);
+			self.body.appendChild(item);
 			self.nodes.push(item);
 		});
 		this._reveal();
@@ -15426,8 +10526,16 @@ In2iGui.Gallery.prototype = {
 			if (item.offsetTop<limit) {
 				var img = item.getElementsByTagName('img')[0];
 				item.className = 'in2igui_gallery_item in2igui_gallery_item_busy';
+				var self = this;
 				img.onload = function() {
-					item.className = 'in2igui_gallery_item';
+					this.parentNode.className = 'in2igui_gallery_item';
+					if (this.height<this.width) {
+						var top = (self.height-(self.height*this.height/this.width))/2;
+						this.style.marginTop = top+'px';
+					}
+				}
+				img.onerror = function() {
+					this.parentNode.className = 'in2igui_gallery_item in2igui_gallery_item_error';
 				}
 				img.src = img.getAttribute('data-src');
 				item.revealed = true;
@@ -15438,12 +10546,12 @@ In2iGui.Gallery.prototype = {
 	updateUI : function() {
 		var s = this.selected;
 		for (var i=0; i < this.nodes.length; i++) {
-			n2i.setClass(this.nodes[i],'in2igui_gallery_item_selected',n2i.inArray(s,i));
+			hui.setClass(this.nodes[i],'in2igui_gallery_item_selected',hui.inArray(s,i));
 		};
 	},
 	/** @private */
 	resolveImageUrl : function(img) {
-		return In2iGui.resolveImageUrl(this,img,this.width,this.height);
+		return hui.ui.resolveImageUrl(this,img,this.width,this.height);
 		for (var i=0; i < this.delegates.length; i++) {
 			if (this.delegates[i]['$resolveImageUrl']) {
 				return this.delegates[i]['$resolveImageUrl'](img,this.width,this.height);
@@ -15453,6 +10561,9 @@ In2iGui.Gallery.prototype = {
 	},
 	/** @private */
 	itemClicked : function(index) {
+		if (this.busy) {
+			return;
+		}
 		this.selected = [index];
 		this.fire('selectionChanged');
 		this.updateUI();
@@ -15465,11 +10576,14 @@ In2iGui.Gallery.prototype = {
 	},
 	/** @private */
 	itemDoubleClicked : function(index) {
+		if (this.busy) {
+			return;
+		}
 		this.fire('itemOpened',this.objects[index]);
 	},
 	/**
 	 * Sets the lists data source and refreshes it if it is new
-	 * @param {In2iGui.Source} source The source
+	 * @param {hui.ui.Source} source The source
 	 */
 	setSource : function(source) {
 		if (this.options.source!=source) {
@@ -15480,20 +10594,41 @@ In2iGui.Gallery.prototype = {
 			this.options.source = source;
 			source.refresh();
 		}
+	},
+	/** @private */
+	$sourceIsBusy : function() {
+		this._setBusy(true);
+	},
+	/** @private */
+	$sourceIsNotBusy : function() {
+		this._setBusy(false);
+	},
+	
+	_setBusy : function(busy) {
+		this.busy = busy;
+		window.clearTimeout(this.busytimer);
+		if (busy) {
+			var e = this.element;
+			this.busytimer = window.setTimeout(function() {
+				hui.addClass(e,'in2igui_gallery_busy');
+			},300);
+		} else {
+			hui.removeClass(this.element,'in2igui_gallery_busy');
+		}
 	}
 }
 
 /* EOF *//**
  * @constructor
  */
-In2iGui.Calendar = function(o) {
+hui.ui.Calendar = function(o) {
 	this.name = o.name;
-	this.options = n2i.override({startHour:7,endHour:24},o);
-	this.element = n2i.get(o.element);
-	this.head = n2i.firstByTag(this.element,'thead');
-	this.body = n2i.firstByTag(this.element,'tbody');
+	this.options = hui.override({startHour:7,endHour:24},o);
+	this.element = hui.get(o.element);
+	this.head = hui.firstByTag(this.element,'thead');
+	this.body = hui.firstByTag(this.element,'tbody');
 	this.date = new Date();
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 	this.buildUI();
 	this.updateUI();
 	if (this.options.source) {
@@ -15501,7 +10636,7 @@ In2iGui.Calendar = function(o) {
 	}
 }
 
-In2iGui.Calendar.prototype = {
+hui.ui.Calendar.prototype = {
 	show : function() {
 		this.element.style.display='block';
 		if (this.options.source) {
@@ -15531,9 +10666,9 @@ In2iGui.Calendar.prototype = {
 	},
 	clearEvents : function() {
 		this.events = [];
-		var nodes = n2i.byClass(this.element,'in2igui_calendar_event');
+		var nodes = hui.byClass(this.element,'in2igui_calendar_event');
 		for (var i=0; i < nodes.length; i++) {
-			n2i.dom.remove(nodes[i]);
+			hui.dom.remove(nodes[i]);
 		};
 		this.hideEventViewer();
 	},
@@ -15541,7 +10676,7 @@ In2iGui.Calendar.prototype = {
 		try {
 			this.setEvents(data);
 		} catch (e) {
-			n2i.log(e);
+			hui.log(e);
 		}
 	},
 	$sourceIsBusy : function() {
@@ -15568,30 +10703,30 @@ In2iGui.Calendar.prototype = {
 		var pixels = (this.options.endHour-this.options.startHour)*40;
 		var week = this.getFirstDay().getWeekOfYear();
 		var year = this.getFirstDay().getYear();
-		n2i.each(this.events,function(event) {
-			var day = n2i.byClass(self.body,'in2igui_calendar_day')[event.startTime.getDay()-1];
+		hui.each(this.events,function(event) {
+			var day = hui.byClass(self.body,'in2igui_calendar_day')[event.startTime.getDay()-1];
 			if (!day) {
 				return;
 			}
 			if (event.startTime.getWeekOfYear()!=week || event.startTime.getYear()!=year) {
 				return;
 			}
-			var node = n2i.build('div',{'class':'in2igui_calendar_event',parent:day});
+			var node = hui.build('div',{'class':'in2igui_calendar_event',parent:day});
 			var top = ((event.startTime.getHours()*60+event.startTime.getMinutes())/60-self.options.startHour)*40-1;
 			var height = (event.endTime.getTime()-event.startTime.getTime())/1000/60/60*40+1;
 			height = Math.min(pixels-top,height);
-			n2i.setStyle(node,{'marginTop':top+'px','height':height+'px',visibility:'hidden'});
-			var content = n2i.build('div',{parent:node});
-			n2i.build('p',{'class':'in2igui_calendar_event_time',text:event.startTime.dateFormat('H:i'),parent:content});
-			n2i.build('p',{'class':'in2igui_calendar_event_text',text:event.text,parent:content});
+			hui.setStyle(node,{'marginTop':top+'px','height':height+'px',visibility:'hidden'});
+			var content = hui.build('div',{parent:node});
+			hui.build('p',{'class':'in2igui_calendar_event_time',text:event.startTime.dateFormat('H:i'),parent:content});
+			hui.build('p',{'class':'in2igui_calendar_event_text',text:event.text,parent:content});
 			if (event.location) {
-				n2i.build('p',{'class':'in2igui_calendar_event_location',text:event.location,parent:content});
+				hui.build('p',{'class':'in2igui_calendar_event_location',text:event.location,parent:content});
 			}
 			
 			window.setTimeout(function() {
-				In2iGui.bounceIn(node);
+				hui.ui.bounceIn(node);
 			},Math.random()*200)
-			n2i.listen(node,'click',function() {
+			hui.listen(node,'click',function() {
 				self.eventWasClicked(node);
 			});
 		});
@@ -15601,44 +10736,44 @@ In2iGui.Calendar.prototype = {
 		this.showEvent(node);
 	},
 	setBusy : function(busy) {
-		n2i.setClass(this.element,'in2igui_calendar_busy',busy);
+		hui.setClass(this.element,'in2igui_calendar_busy',busy);
 	},
 	/** @private */
 	updateUI : function() {
 		var first = this.getFirstDay();		
-		var days = n2i.byClass(this.head,'day');
+		var days = hui.byClass(this.head,'day');
 		for (var i=0; i < days.length; i++) {
 			var date = new Date(first.getTime());
 			date.setDate(date.getDate()+i);
-			n2i.dom.setText(days[i],date.dateFormat('l \\d. d M'));
+			hui.dom.setText(days[i],date.dateFormat('l \\d. d M'));
 		};
 	},
 	/** @private */
 	buildUI : function() {
-		var bar = n2i.firstByClass(this.element,'in2igui_calendar_bar');
-		this.toolbar = In2iGui.Toolbar.create({labels:false});
+		var bar = hui.firstByClass(this.element,'in2igui_calendar_bar');
+		this.toolbar = hui.ui.Toolbar.create({labels:false});
 		bar.appendChild(this.toolbar.getElement());
-		var previous = In2iGui.Button.create({name:'in2iguiCalendarPrevious',text:'',icon:'monochrome/previous'});
+		var previous = hui.ui.Button.create({name:'in2iguiCalendarPrevious',text:'',icon:'monochrome/previous'});
 		previous.listen(this);
 		this.toolbar.add(previous);
-		var today = In2iGui.Button.create({name:'in2iguiCalendarToday',text:'Idag'});
+		var today = hui.ui.Button.create({name:'in2iguiCalendarToday',text:'Idag'});
 		today.click(function() {this.setDate(new Date())}.bind(this));
 		this.toolbar.add(today);
-		var next = In2iGui.Button.create({name:'in2iguiCalendarNext',text:'',icon:'monochrome/next'});
+		var next = hui.ui.Button.create({name:'in2iguiCalendarNext',text:'',icon:'monochrome/next'});
 		next.listen(this);
 		this.toolbar.add(next);
-		this.datePickerButton = In2iGui.Button.create({name:'in2iguiCalendarDatePicker',text:'Vælg dato...'});
+		this.datePickerButton = hui.ui.Button.create({name:'in2iguiCalendarDatePicker',text:'Vælg dato...'});
 		this.datePickerButton.listen(this);
 		this.toolbar.add(this.datePickerButton);
 		
-		var time = n2i.firstByClass(this.body,'in2igui_calendar_day');
+		var time = hui.firstByClass(this.body,'in2igui_calendar_day');
 		for (var i=this.options.startHour; i <= this.options.endHour; i++) {
-			var node = n2i.build('div',{'class':'in2igui_calendar_time',html:'<span><em>'+i+':00</em></span>'});
+			var node = hui.build('div',{'class':'in2igui_calendar_time',html:'<span><em>'+i+':00</em></span>'});
 			if (i==this.options.startHour) {
-				n2i.addClass(node,'in2igui_calendar_time_first');
+				hui.addClass(node,'in2igui_calendar_time_first');
 			}
 			if (i==this.options.endHour) {
-				n2i.addClass(node,'in2igui_calendar_time_last');
+				hui.addClass(node,'in2igui_calendar_time_last');
 			}
 			time.appendChild(node);
 		};
@@ -15669,8 +10804,8 @@ In2iGui.Calendar.prototype = {
 		this.setBusy(true);
 		var info = {'startTime':this.getFirstDay(),'endTime':this.getLastDay()};
 		this.fire('calendarSpanChanged',info);
-		In2iGui.firePropertyChange(this,'startTime',this.getFirstDay());
-		In2iGui.firePropertyChange(this,'endTime',this.getLastDay());
+		hui.ui.firePropertyChange(this,'startTime',this.getFirstDay());
+		hui.ui.firePropertyChange(this,'endTime',this.getLastDay());
 	},
 	/** @private */
 	valueForProperty : function(p) {
@@ -15686,12 +10821,12 @@ In2iGui.Calendar.prototype = {
 	////////////////////////////////// Date picker ///////////////////////////
 	showDatePicker : function() {
 		if (!this.datePickerPanel) {
-			this.datePickerPanel = In2iGui.BoundPanel.create();
-			this.datePicker = In2iGui.DatePicker.create({name:'in2iguiCalendarDatePicker',value:this.date});
+			this.datePickerPanel = hui.ui.BoundPanel.create();
+			this.datePicker = hui.ui.DatePicker.create({name:'in2iguiCalendarDatePicker',value:this.date});
 			this.datePicker.listen(this);
 			this.datePickerPanel.add(this.datePicker);
 			this.datePickerPanel.addSpace(3);
-			var button = In2iGui.Button.create({name:'in2iguiCalendarDatePickerClose',text:'Luk',small:true,rounded:true});
+			var button = hui.ui.Button.create({name:'in2iguiCalendarDatePickerClose',text:'Luk',small:true,rounded:true});
 			button.listen(this);
 			this.datePickerPanel.add(button);
 		}
@@ -15709,11 +10844,11 @@ In2iGui.Calendar.prototype = {
 	
 	showEvent : function(node) {
 		if (!this.eventViewerPanel) {
-			this.eventViewerPanel = In2iGui.BoundPanel.create({width:270,padding: 3});
-			this.eventInfo = In2iGui.InfoView.create(null,{height:240,clickObjects:true});
+			this.eventViewerPanel = hui.ui.BoundPanel.create({width:270,padding: 3});
+			this.eventInfo = hui.ui.InfoView.create(null,{height:240,clickObjects:true});
 			this.eventViewerPanel.add(this.eventInfo);
 			this.eventViewerPanel.addSpace(5);
-			var button = In2iGui.Button.create({name:'in2iguiCalendarEventClose',text:'Luk'});
+			var button = hui.ui.Button.create({name:'in2iguiCalendarEventClose',text:'Luk'});
 			button.listen(this);
 			this.eventViewerPanel.add(button);
 		}
@@ -15721,7 +10856,7 @@ In2iGui.Calendar.prototype = {
 		this.eventInfo.setBusy(true);
 		this.eventViewerPanel.position(node);
 		this.eventViewerPanel.show();
-		In2iGui.callDelegates(this,'requestEventInfo');
+		hui.ui.callDelegates(this,'requestEventInfo');
 		return;
 	},
 	updateEventInfo : function(event,data) {
@@ -15738,126 +10873,131 @@ In2iGui.Calendar.prototype = {
 	}
 }
 
-
-////////////////////////// Date picker ////////////////////////
-
-/** @constructor */
-In2iGui.DatePicker = function(options) {
+/* EOF *//**
+	Fires dateChanged(date) when the user changes the date
+	@constructor
+	@param options The options (non)
+*/
+hui.ui.DatePicker = function(options) {
 	this.name = options.name;
-	this.element = n2i.get(options.element);
+	this.element = hui.get(options.element);
 	this.options = {};
-	n2i.override(this.options,options);
+	hui.override(this.options,options);
 	this.cells = [];
-	this.title = n2i.firstByTag(this.element,'strong');
+	this.title = hui.firstByTag(this.element,'strong');
 	this.today = new Date();
 	this.value = this.options.value ? new Date(this.options.value.getTime()) : new Date();
 	this.viewDate = new Date(this.value.getTime());
 	this.viewDate.setDate(1);
-	In2iGui.extend(this);
-	this.addBehavior();
-	this.updateUI();
+	hui.ui.extend(this);
+	this._addBehavior();
+	this._updateUI();
 }
 
-In2iGui.DatePicker.create = function(options) {
-	var element = options.element = n2i.build('div',{
-		'class' : 'in2igui_datepicker',
-		html : '<div class="in2igui_datepicker_header"><a class="in2igui_datepicker_next"></a><a class="in2igui_datepicker_previous"></a><strong></strong></div>'
+hui.ui.DatePicker.create = function(options) {
+	var element = options.element = hui.build('div',{
+		'class' : 'hui_datepicker',
+		html : '<div class="hui_datepicker_header"><a class="hui_datepicker_next"></a><a class="hui_datepicker_previous"></a><strong></strong></div>'
 		}),
-		table = n2i.build('table',{parent:element}),
-		thead = n2i.build('thead',{parent:table}),
-		head = n2i.build('tr',{parent:thead});
+		table = hui.build('table',{parent:element}),
+		thead = hui.build('thead',{parent:table}),
+		head = hui.build('tr',{parent:thead});
 	for (var i=0;i<7;i++) {
-		head.appendChild(n2i.build('th',{text:Date.dayNames[i].substring(0,3)}));
+		head.appendChild(hui.build('th',{text:Date.dayNames[i].substring(0,3)}));
 	}
-	var body = n2i.build('tbody',{parent:table});
+	var body = hui.build('tbody',{parent:table});
 	for (var j=0;j<6;j++) {
-		var row = n2i.build('tr',{parent:body});
+		var row = hui.build('tr',{parent:body});
 		for (var k=0;k<7;k++) {
-			n2i.build('td',{parent:row});
+			hui.build('td',{parent:row});
 		}
 	}
-	return new In2iGui.DatePicker(options);
+	return new hui.ui.DatePicker(options);
 }
 
-In2iGui.DatePicker.prototype = {
-	addBehavior : function() {
+hui.ui.DatePicker.prototype = {
+	_addBehavior : function() {
 		var self = this;
-		this.cells = n2i.firstByClass(this.element,'td');
-		this.each(this.cells,function(cell,index) {
-			n2i.listen(cell,'mousedown',function() {self.selectCell(index)});
+		this.cells = hui.byTag(this.element,'td');
+		hui.each(this.cells,function(cell,index) {
+			hui.listen(cell,'mousedown',function() {self._selectCell(index)});
 		})
-		var next = n2i.firstByClass(this.element,'in2igui_datepicker_next');
-		var previous = n2i.firstByClass(this.element,'in2igui_datepicker_previous');
-		n2i.listen(next,'mousedown',function() {self.next()});
-		n2i.listen(previous,'mousedown',function() {self.previous()});
+		var next = hui.firstByClass(this.element,'hui_datepicker_next');
+		var previous = hui.firstByClass(this.element,'hui_datepicker_previous');
+		hui.listen(next,'mousedown',function() {self.next()});
+		hui.listen(previous,'mousedown',function() {self.previous()});
 	},
+	/** Set the date
+	  * @param date The js Date to set
+	  */
 	setValue : function(date) {
 		this.value = new Date(date.getTime());
 		this.viewDate = new Date(date.getTime());
 		this.viewDate.setDate(1);
-		this.updateUI();
+		this._updateUI();
 	},
-	updateUI : function() {
-		this.title.update(this.viewDate.dateFormat('F Y'));
+	_updateUI : function() {
+		hui.dom.setText(this.title,this.viewDate.dateFormat('F Y'));
 		var isSelectedYear =  this.value.getFullYear()==this.viewDate.getFullYear();
 		var month = this.viewDate.getMonth();
 		for (var i=0; i < this.cells.length; i++) {
-			var date = this.indexToDate(i);
+			var date = this._indexToDate(i);
 			var cell = this.cells[i];
 			if (date.getMonth()<month) {
-				cell.className = 'in2igui_datepicker_dimmed';
+				cell.className = 'hui_datepicker_dimmed';
 			} else if (date.getMonth()>month) {
-				cell.className = 'in2igui_datepicker_dimmed';
+				cell.className = 'hui_datepicker_dimmed';
 			} else {
 				cell.className = '';
 			}
 			if (date.getDate()==this.value.getDate() && date.getMonth()==this.value.getMonth() && isSelectedYear) {
-				n2i.addClass(cell,'in2igui_datepicker_selected');
+				hui.addClass(cell,'hui_datepicker_selected');
 			}
 			if (date.getDate()==this.today.getDate() && date.getMonth()==this.today.getMonth() && date.getFullYear()==this.today.getFullYear()) {
-				n2i.addClass(cell,'in2igui_datepicker_today');
+				hui.addClass(cell,'hui_datepicker_today');
 			}
-			n2i.dom.setText(cell,date.getDate());
+			hui.dom.setText(cell,date.getDate());
 		};
 	},
-	getPreviousMonth : function() {
+	_getPreviousMonth : function() {
 		var previous = new Date(this.viewDate.getTime());
 		previous.setMonth(previous.getMonth()-1);
 		return previous;
 	},
-	getNextMonth : function() {
+	_getNextMonth : function() {
 		var previous = new Date(this.viewDate.getTime());
 		previous.setMonth(previous.getMonth()+1);
 		return previous;
 	},
 
 	////////////////// Events ///////////////
-
+	/** Change to previous month */
 	previous : function() {
-		this.viewDate = this.getPreviousMonth();
-		this.updateUI();
+		this.viewDate = this._getPreviousMonth();
+		this._updateUI();
 	},
+	/** Change to next month */
 	next : function() {
-		this.viewDate = this.getNextMonth();
-		this.updateUI();
+		this.viewDate = this._getNextMonth();
+		this._updateUI();
 	},
-	selectCell : function(index) {
-		this.value = this.indexToDate(index);
+	_selectCell : function(index) {
+		this.value = this._indexToDate(index);
 		this.viewDate = new Date(this.value.getTime());
 		this.viewDate.setDate(1);
-		this.updateUI();
-		In2iGui.callDelegates(this,'dateChanged',this.value);
+		this._updateUI();
+		hui.ui.callDelegates(this,'dateChanged',this.value);
 	},
-	indexToDate : function(index) {
+	_indexToDate : function(index) {
 		var first = this.viewDate.getDay(),
 			days = this.viewDate.getDaysInMonth(),
-			previousDays = this.getPreviousMonth().getDaysInMonth(),
+			previousDays = this._getPreviousMonth().getDaysInMonth(),
 			date;
 		if (index<first) {
-			date = this.getPreviousMonth();
+			date = this._getPreviousMonth();
 			date.setDate(previousDays-first+index+1);
 		} else if (index>first+days-1) {
-			date = this.getPreviousMonth();
+			date = this._getPreviousMonth();
 			date.setDate(index-first-days+1);
 		} else {
 			date = new Date(this.viewDate.getTime());
@@ -15893,42 +11033,42 @@ Date.dayNames =
  * @constructor
  * @param {Object} options { element «Node | id», name: «String» }
  */
-In2iGui.Layout = function(options) {
+hui.ui.Layout = function(options) {
 	this.name = options.name;
 	this.options = options || {};
-	this.element = n2i.get(options.element);
-	In2iGui.extend(this);
+	this.element = hui.get(options.element);
+	hui.ui.extend(this);
 }
 
-In2iGui.Layout.prototype = {
+hui.ui.Layout.prototype = {
 	$$layout : function() {
-		if (n2i.browser.gecko) {
-			var center = n2i.firstByClass(this.element,'in2igui_layout_center');
+		if (hui.browser.gecko) {
+			var center = hui.firstByClass(this.element,'in2igui_layout_center');
 			if (center) {
 				center.style.height='100%';
 			}
 		}
-		if (!n2i.browser.msie7 && !n2i.browser.msie8 && !n2i.browser.msie9) {
+		if (!hui.browser.msie7 && !hui.browser.msie8 && !hui.browser.msie9) {
 			return;
 		}
 		if (this.diff===undefined) {
-			var head = n2i.firstByClass(this.element,'in2igui_layout_top');
-			var top = n2i.firstByTag(head,'*').clientHeight;
-			var foot = n2i.firstByTag(n2i.firstByTag(this.element,'tfoot'),'td');
+			var head = hui.firstByClass(this.element,'in2igui_layout_top');
+			var top = hui.firstByTag(head,'*').clientHeight;
+			var foot = hui.firstByTag(hui.firstByTag(this.element,'tfoot'),'td');
 			var bottom = 0;
 			if (foot) {
-				bottom = n2i.firstByTag(foot,'*').clientHeight;
+				bottom = hui.firstByTag(foot,'*').clientHeight;
 			}
-			top += n2i.getTop(this.element);
+			top += hui.getTop(this.element);
 			this.diff = bottom+top;
 			if (this.element.parentNode!==document.body) {
 				this.diff+=15;
 			} else {
 			}
 		}
-		var tbody = n2i.firstByTag(this.element,'tbody');
-		var cell = n2i.firstByTag(tbody,'td');
-		cell.style.height = (n2i.getViewPortHeight()-this.diff+5)+'px';
+		var tbody = hui.firstByTag(this.element,'tbody');
+		var cell = hui.firstByTag(tbody,'td');
+		cell.style.height = (hui.getViewPortHeight()-this.diff+5)+'px';
 	}
 };
 
@@ -15937,31 +11077,31 @@ In2iGui.Layout.prototype = {
  * @constructor
  * @param {Object} options { element «Node | id», name: «String» }
  */
-In2iGui.Columns = function(options) {
+hui.ui.Columns = function(options) {
 	this.name = options.name;
 	this.options = options || {};
-	this.element = n2i.get(options.element);
-	this.body = n2i.firstByTag(this.element,'tr');
-	In2iGui.extend(this);
+	this.element = hui.get(options.element);
+	this.body = hui.firstByTag(this.element,'tr');
+	hui.ui.extend(this);
 }
 
 /**
  * Creates a new Columns opject
  */
-In2iGui.Columns.create = function(options) {
+hui.ui.Columns.create = function(options) {
 	options = options || {};
-	options.element = n2i.build('table',{'class' : 'in2igui_columns',html : '<tbody><tr></tr></tbody>'});
-	return new In2iGui.Columns(options);
+	options.element = hui.build('table',{'class' : 'in2igui_columns',html : '<tbody><tr></tr></tbody>'});
+	return new hui.ui.Columns(options);
 }
 
-In2iGui.Columns.prototype = {
+hui.ui.Columns.prototype = {
 	addToColumn : function(index,widget) {
 		var c = this.ensureColumn(index);
 		c.appendChild(widget.getElement());
 	},
 	setColumnStyle : function(index,style) {
 		var c = this.ensureColumn(index);
-		n2i.setStyle(c,style);
+		hui.setStyle(c,style);
 	},
 	setColumnWidth : function(index,width) {
 		var c = this.ensureColumn(index);
@@ -15969,11 +11109,11 @@ In2iGui.Columns.prototype = {
 	},
 	/** @private */
 	ensureColumn : function(index) {
-		var children = n2i.getChildren(this.body);
+		var children = hui.getChildren(this.body);
 		for (var i=children.length-1;i<index;i++) {
-			this.body.appendChild(n2i.build('td',{'class':'in2igui_columns_column'}));
+			this.body.appendChild(hui.build('td',{'class':'in2igui_columns_column'}));
 		}
-		return n2i.getChildren(this.body)[index];
+		return hui.getChildren(this.body)[index];
 	}
 }
 
@@ -15982,45 +11122,52 @@ In2iGui.Columns.prototype = {
  * @param {Object} The options
  * @constructor
  */
-In2iGui.Dock = function(options) {
+hui.ui.Dock = function(options) {
 	this.options = options;
-	this.element = n2i.get(options.element);
-	this.iframe = n2i.firstByTag(this.element,'iframe');
-	this.progress = n2i.firstByClass(this.element,'in2igui_dock_progress');
-	n2i.listen(this.iframe,'load',this._load.bind(this));
+	this.element = hui.get(options.element);
+	this.iframe = hui.firstByTag(this.element,'iframe');
+	this.progress = hui.firstByClass(this.element,'in2igui_dock_progress');
+	hui.listen(this.iframe,'load',this._load.bind(this));
 	//if (this.iframe.contentWindow) {
-	//	this.iframe.contentWindow.addEventListener('DOMContentLoaded',function() {this._load();n2i.log('Fast path!')}.bind(this));
+	//	this.iframe.contentWindow.addEventListener('DOMContentLoaded',function() {this._load();hui.log('Fast path!')}.bind(this));
 	//}
 	this.name = options.name;
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 	this.diff = -69;
 	if (this.options.tabs) {
 		this.diff-=15;
 	}
 	this.busy = true;
+	hui.ui.listen(this);
 }
 
-In2iGui.Dock.prototype = {
+hui.ui.Dock.prototype = {
 	/** Change the url of the iframe
 	 * @param {String} url The url to change the iframe to
 	 */
 	setUrl : function(url) {
 		this._setBusy(true);
-		n2i.getFrameDocument(this.iframe).location.href=url;
+		hui.getFrameDocument(this.iframe).location.href='about:blank';
+		hui.getFrameDocument(this.iframe).location.href=url;
 	},
 	_load : function() {
 		this._setBusy(false);
 	},
 	_setBusy : function(busy) {
 		if (busy) {
-			n2i.setStyle(this.progress,{display:'block',height:this.iframe.clientHeight});
+			hui.setStyle(this.progress,{display:'block',height:this.iframe.clientHeight});
 		} else {
 			this.progress.style.display = 'none';
 		}
 	},
+	$frameLoaded : function(win) {
+		if (win==hui.getFrameWindow(this.iframe)) {
+			this._setBusy(false);
+		}
+	},
 	/** @private */
 	$$layout : function() {
-		var height = n2i.getViewPortHeight();
+		var height = hui.getViewPortHeight();
 		this.iframe.style.height=(height+this.diff)+'px';
 		this.progress.style.height=(height+this.diff)+'px';
 	}
@@ -16030,34 +11177,34 @@ In2iGui.Dock.prototype = {
  * @constructor
  * @param {Object} options The options : {modal:false}
  */
-In2iGui.Box = function(options) {
-	this.options = n2i.override({},options);
+hui.ui.Box = function(options) {
+	this.options = hui.override({},options);
 	this.name = options.name;
-	this.element = n2i.get(options.element);
-	this.body = n2i.firstByClass(this.element,'in2igui_box_body');
-	this.close = n2i.firstByClass(this.element,'in2igui_box_close');
+	this.element = hui.get(options.element);
+	this.body = hui.firstByClass(this.element,'in2igui_box_body');
+	this.close = hui.firstByClass(this.element,'in2igui_box_close');
 	if (this.close) {
-		n2i.listen(this.close,'click',function(e) {
-			n2i.stop(e);
+		hui.listen(this.close,'click',function(e) {
+			hui.stop(e);
 			this.hide();
 			this.fire('boxWasClosed');
 		}.bind(this));
 	}
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 };
 
 /**
  * Creates a new box widget
  * @param {Object} options The options : {width:0,padding:0,absolute:false,closable:false}
  */
-In2iGui.Box.create = function(options) {
+hui.ui.Box.create = function(options) {
 	options = options || {};
-	options.element = n2i.build('div',{
+	options.element = hui.build('div',{
 		'class' : options.absolute ? 'in2igui_box in2igui_box_absolute' : 'in2igui_box',
 		html : (options.closable ? '<a class="in2igui_box_close" href="#"></a>' : '')+
 			'<div class="in2igui_box_top"><div><div></div></div></div>'+
 			'<div class="in2igui_box_middle"><div class="in2igui_box_middle">'+
-			(options.title ? '<div class="in2igui_box_header"><strong class="in2igui_box_title">'+n2i.escape(options.title)+'</strong></div>' : '')+
+			(options.title ? '<div class="in2igui_box_header"><strong class="in2igui_box_title">'+hui.escape(options.title)+'</strong></div>' : '')+
 			'<div class="in2igui_box_body" style="'+
 			(options.padding ? 'padding: '+options.padding+'px;' : '')+
 			(options.width ? 'width: '+options.width+'px;' : '')+
@@ -16066,10 +11213,10 @@ In2iGui.Box.create = function(options) {
 			'<div class="in2igui_box_bottom"><div><div></div></div></div>',
 		style : options.width ? options.width+'px' : null
 	});
-	return new In2iGui.Box(options);
+	return new hui.ui.Box(options);
 };
 
-In2iGui.Box.prototype = {
+hui.ui.Box.prototype = {
 	/**
 	 * Adds the box to the end of the body
 	 */
@@ -16092,26 +11239,26 @@ In2iGui.Box.prototype = {
 	show : function() {
 		var e = this.element;
 		if (this.options.modal) {
-			var index = In2iGui.nextPanelIndex();
+			var index = hui.ui.nextPanelIndex();
 			e.style.zIndex=index+1;
-			In2iGui.showCurtain({widget:this,zIndex:index});
+			hui.ui.showCurtain({widget:this,zIndex:index});
 		}
 		if (this.options.absolute) {
-			n2i.setStyle(e,{display:'block',visibility:'hidden'});
+			hui.setStyle(e,{display:'block',visibility:'hidden'});
 			var w = e.clientWidth;
-			var top = (n2i.getViewPortHeight()-e.clientHeight)/2+n2i.getScrollTop();
-			n2i.setStyle(e,{'marginLeft':(w/-2)+'px',top:top+'px'});
-			n2i.setStyle(e,{display:'block',visibility:'visible'});
+			var top = (hui.getViewPortHeight()-e.clientHeight)/2+hui.getScrollTop();
+			hui.setStyle(e,{'marginLeft':(w/-2)+'px',top:top+'px'});
+			hui.setStyle(e,{display:'block',visibility:'visible'});
 		} else {
 			e.style.display='block';
 		}
-		In2iGui.callVisible(this);
+		hui.ui.callVisible(this);
 	},
 	/**
 	 * Hides the box
 	 */
 	hide : function() {
-		In2iGui.hideCurtain(this);
+		hui.ui.hideCurtain(this);
 		this.element.style.display='none';
 	},
 	/** @private */
@@ -16122,36 +11269,36 @@ In2iGui.Box.prototype = {
  * @constructor
  * A wizard with a number of steps
  */
-In2iGui.Wizard = function(o) {
+hui.ui.Wizard = function(o) {
 	/** @private */
 	this.options = o || {};
 	/** @private */
-	this.element = n2i.get(o.element);
+	this.element = hui.get(o.element);
 	/** @private */
 	this.name = o.name;
 	/** @private */
-	this.container = n2i.firstByClass(this.element,'in2igui_wizard_steps');
+	this.container = hui.firstByClass(this.element,'in2igui_wizard_steps');
 	/** @private */
-	this.steps = n2i.byClass(this.element,'in2igui_wizard_step');
+	this.steps = hui.byClass(this.element,'in2igui_wizard_step');
 	/** @private */
-	this.anchors = n2i.byClass(this.element,'in2igui_wizard_selection');
+	this.anchors = hui.byClass(this.element,'in2igui_wizard_selection');
 	/** @private */
 	this.selected = 0;
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 	this.addBehavior();
 }
 	
-In2iGui.Wizard.prototype = {
+hui.ui.Wizard.prototype = {
 	/** @private */
 	addBehavior : function() {
 		var self = this;
-		n2i.each(this.anchors,function(node,i) {
-			n2i.listen(node,'mousedown',function(e) {
-				n2i.stop(e);
+		hui.each(this.anchors,function(node,i) {
+			hui.listen(node,'mousedown',function(e) {
+				hui.stop(e);
 				self.goToStep(i)
 			});
-			n2i.listen(node,'click',function(e) {
-				n2i.stop(e);
+			hui.listen(node,'click',function(e) {
+				hui.stop(e);
 			});
 		});
 	},
@@ -16159,15 +11306,15 @@ In2iGui.Wizard.prototype = {
 	goToStep : function(index) {
 		var c = this.container;
 		c.style.height=c.clientHeight+'px';
-		n2i.removeClass(this.anchors[this.selected],'in2igui_selected');
+		hui.removeClass(this.anchors[this.selected],'in2igui_selected');
 		this.steps[this.selected].style.display='none';
-		n2i.addClass(this.anchors[index],'in2igui_selected');
+		hui.addClass(this.anchors[index],'in2igui_selected');
 		this.steps[index].style.display='block';
 		this.selected=index;
-		n2i.ani(c,'height',this.steps[index].clientHeight+'px',500,{ease:n2i.ease.slowFastSlow,onComplete:function() {
+		hui.ani(c,'height',this.steps[index].clientHeight+'px',500,{ease:hui.ease.slowFastSlow,onComplete:function() {
 			c.style.height='';
 		}});
-		In2iGui.callVisible(this);
+		hui.ui.callVisible(this);
 	},
 	/** Goes to the next step */
 	next : function() {
@@ -16186,32 +11333,32 @@ In2iGui.Wizard.prototype = {
 /* EOF *//**
  * A list of articles
  * @constructor
- * @param {Object} options { element: «Node | id», name: «String», source: «In2iGui.Source» }
+ * @param {Object} options { element: «Node | id», name: «String», source: «hui.ui.Source» }
  */
-In2iGui.Articles = function(options) {
+hui.ui.Articles = function(options) {
 	this.options = options;
 	this.name = options.name;
-	this.element = n2i.get(options.element);
+	this.element = hui.get(options.element);
 	if (options.source) {
 		options.source.listen(this);
 	}
 }
 
-In2iGui.Articles.prototype = {
+hui.ui.Articles.prototype = {
 	/** @private */
 	$articlesLoaded : function(doc) {
 		this.element.innerHTML='';
 		var a = doc.getElementsByTagName('article');
 		for (var i=0; i < a.length; i++) {
-			var e = n2i.build('div',{'class':'in2igui_article'});
+			var e = hui.build('div',{'class':'in2igui_article'});
 			var c = a[i].childNodes;
 			for (var j=0; j < c.length; j++) {
-				if (n2i.dom.isElement(c[j],'title')) {
-					var title = n2i.dom.getText(c[j]);
-					e.appendChild(n2i.build('h2',{text:title}));
-				} else if (n2i.dom.isElement(c[j],'paragraph')) {
-					var text = n2i.dom.getText(c[j]);
-					var p = n2i.build('p',{text:text});
+				if (hui.dom.isElement(c[j],'title')) {
+					var title = hui.dom.getText(c[j]);
+					e.appendChild(hui.build('h2',{text:title}));
+				} else if (hui.dom.isElement(c[j],'paragraph')) {
+					var text = hui.dom.getText(c[j]);
+					var p = hui.build('p',{text:text});
 					if (c[j].getAttribute('dimmed')==='true') {
 						p.className='in2igui_dimmed';
 					}
@@ -16230,22 +11377,22 @@ In2iGui.Articles.prototype = {
 	},
 	/** @private */
 	$sourceIsNotBusy : function() {
-		n2i.removeClass(this.element,'in2igui_list_busy');
+		hui.removeClass(this.element,'in2igui_list_busy');
 	}
 }
 
 /* EOF *//** @constructor */
-In2iGui.TextField = function(options) {
-	this.options = n2i.override({placeholderElement:null,validator:null},options);
-	var e = this.element = n2i.get(options.element);
+hui.ui.TextField = function(options) {
+	this.options = hui.override({placeholderElement:null,validator:null},options);
+	var e = this.element = hui.get(options.element);
 	this.element.setAttribute('autocomplete','off');
 	this.value = this.validate(this.element.value);
 	this.isPassword = this.element.type=='password';
 	this.name = options.name;
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 	this.addBehavior();
 	if (this.options.placeholderElement && this.value!='') {
-		In2iGui.fadeOut(this.options.placeholderElement,0);
+		hui.ui.fadeOut(this.options.placeholderElement,0);
 	}
 	this.checkPlaceholder();
 	try { // IE hack
@@ -16255,26 +11402,26 @@ In2iGui.TextField = function(options) {
 	} catch (e) {}
 }
 
-In2iGui.TextField.prototype = {
+hui.ui.TextField.prototype = {
 	addBehavior : function() {
 		var e = this.element;
-		n2i.listen(e,'keyup',this.keyDidStrike.bind(this));
+		hui.listen(e,'keyup',this.keyDidStrike.bind(this));
 		var p = this.options.placeholderElement;
-		n2i.listen(e,'blur',this.onBlur.bind(this));
+		hui.listen(e,'blur',this.onBlur.bind(this));
 		if (p) {
-			n2i.listen(e,'focus',this.focused.bind(this));
-			n2i.listen(e,'blur',this.checkPlaceholder.bind(this));
+			hui.listen(e,'focus',this.focused.bind(this));
+			hui.listen(e,'blur',this.checkPlaceholder.bind(this));
 			if (p) {
 				p.style.cursor='text';
-				n2i.listen(p,'mousedown',this.focus.bind(this));
-				n2i.listen(p,'click',this.focus.bind(this));
+				hui.listen(p,'mousedown',this.focus.bind(this));
+				hui.listen(p,'click',this.focus.bind(this));
 			}
 		}
 	},
 	focused : function() {
 		var e = this.element,p = this.options.placeholderElement;
 		if (p && e.value=='') {
-			In2iGui.fadeOut(p,0);
+			hui.ui.fadeOut(p,0);
 		}
 	},
 	/** @private */
@@ -16282,16 +11429,16 @@ In2iGui.TextField.prototype = {
 		var validator = this.options.validator, result;
 		if (validator) {
 			result = validator.validate(value);
-			n2i.setClass(this.element,'in2igui_invalid',!result.valid);
+			hui.setClass(this.element,'in2igui_invalid',!result.valid);
 			return result.value;
 		}
 		return value;
 	},
 	checkPlaceholder : function() {
 		if (this.options.placeholderElement && this.value=='') {
-			In2iGui.fadeIn(this.options.placeholderElement,200);
+			hui.ui.fadeIn(this.options.placeholderElement,200);
 		}
-		if (this.isPassword && !n2i.browser.msie) {
+		if (this.isPassword && !hui.browser.msie) {
 			this.element.type='password';
 		}
 	},
@@ -16308,7 +11455,7 @@ In2iGui.TextField.prototype = {
 	},
 	/** @private */
 	onBlur : function() {
-		n2i.removeClass(this.element,'in2igui_invalid');
+		hui.removeClass(this.element,'in2igui_invalid');
 		this.element.value = this.value || '';
 	},
 	getValue : function() {
@@ -16332,68 +11479,68 @@ In2iGui.TextField.prototype = {
 	},
 	setError : function(error) {
 		var isError = error ? true : false;
-		n2i.setClass(this.element,'in2igui_field_error',isError);
+		hui.setClass(this.element,'in2igui_field_error',isError);
 		if (typeof(error) == 'string') {
-			In2iGui.showToolTip({text:error,element:this.element,key:this.name});
+			hui.ui.showToolTip({text:error,element:this.element,key:this.name});
 		}
 		if (!isError) {
-			In2iGui.hideToolTip({key:this.name});
+			hui.ui.hideToolTip({key:this.name});
 		}
 	}
 };
 
 /* EOF *//** @constructor */
-In2iGui.InfoView = function(options) {
-	this.options = n2i.override({clickObjects:false},options);
-	this.element = n2i.get(options.element);
+hui.ui.InfoView = function(options) {
+	this.options = hui.override({clickObjects:false},options);
+	this.element = hui.get(options.element);
 	this.body = this.element.select('tbody')[0];
 	this.name = options.name;
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 }
 
-In2iGui.InfoView.create = function(options) {
+hui.ui.InfoView.create = function(options) {
 	options = options || {};
-	var element = options.element = n2i.build('div',{'class':'in2igui_infoview',html:'<table><tbody></tbody></table>'});
+	var element = options.element = hui.build('div',{'class':'in2igui_infoview',html:'<table><tbody></tbody></table>'});
 	if (options.height) {
-		n2i.setStyle(element,{height:options.height+'px','overflow':'auto','overflowX':'hidden'});
+		hui.setStyle(element,{height:options.height+'px','overflow':'auto','overflowX':'hidden'});
 	}
 	if (options.margin) {
 		element.style.margin = options.margin+'px';
 	}
-	return new In2iGui.InfoView(options);
+	return new hui.ui.InfoView(options);
 }
 
-In2iGui.InfoView.prototype = {
+hui.ui.InfoView.prototype = {
 	addHeader : function(text) {
-		var row = n2i.build('tr',{parent:this.body});
-		n2i.build('th',{'class' : 'in2igui_infoview_header',colspan:'2',text:text,parent:row});
+		var row = hui.build('tr',{parent:this.body});
+		hui.build('th',{'class' : 'in2igui_infoview_header',colspan:'2',text:text,parent:row});
 	},
 	addProperty : function(label,text) {
-		var row = n2i.build('tr',{parent:this.body});
-		n2i.build('th',{parent:row,text:label});
-		n2i.build('td',{parent:row,text:text});
+		var row = hui.build('tr',{parent:this.body});
+		hui.build('th',{parent:row,text:label});
+		hui.build('td',{parent:row,text:text});
 	},
 	addObjects : function(label,objects) {
 		if (!objects || objects.length==0) return;
-		var row = n2i.build('tr',{parent:this.body});
-		row.appendChild(n2i.build('th',{text:label}));
-		var cell = n2i.build('td',{parent:row});
+		var row = hui.build('tr',{parent:this.body});
+		row.appendChild(hui.build('th',{text:label}));
+		var cell = hui.build('td',{parent:row});
 		var click = this.options.clickObjects;
-		n2i.each(objects,function(obj) {
-			var node = n2i.build('div',{text:obj.title,parent:cell});
+		hui.each(objects,function(obj) {
+			var node = hui.build('div',{text:obj.title,parent:cell});
 			if (click) {
-				n2i.addClass(node,'in2igui_infoview_click')
-				n2i.listen(node,'click',function() {
-					In2iGui.callDelegates(this,'objectWasClicked',obj);
+				hui.addClass(node,'in2igui_infoview_click')
+				hui.listen(node,'click',function() {
+					hui.ui.callDelegates(this,'objectWasClicked',obj);
 				});
 			}
 		});
 	},
 	setBusy : function(busy) {
-		n2i.setClass(this,element,'in2igui_infoview_busy',busy);
+		hui.setClass(this,element,'in2igui_infoview_busy',busy);
 	},
 	clear : function() {
-		n2i.dom.clear(this.body);
+		hui.dom.clear(this.body);
 	},
 	update : function(data) {
 		this.clear();
@@ -16412,35 +11559,35 @@ In2iGui.InfoView.prototype = {
  * @param {Object} The options
  * @constructor
  */
-In2iGui.Overflow = function(options) {
+hui.ui.Overflow = function(options) {
 	this.options = options;
-	this.element = n2i.get(options.element);
+	this.element = hui.get(options.element);
 	this.name = options.name;
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 }
 
-In2iGui.Overflow.create = function(options) {
+hui.ui.Overflow.create = function(options) {
 	options = options || {};
-	var e = options.element = n2i.build('div',{'class':'in2igui_overflow'});
+	var e = options.element = hui.build('div',{'class':'in2igui_overflow'});
 	if (options.height) {
 		e.style.height=options.height+'px';
 	}
-	return new In2iGui.Overflow(options);
+	return new hui.ui.Overflow(options);
 }
 
-In2iGui.Overflow.prototype = {
+hui.ui.Overflow.prototype = {
 	calculate : function() {
 		var top,bottom,parent,viewport;
-		viewport = n2i.getViewPortHeight();
+		viewport = hui.getViewPortHeight();
 		parent = this.element.parentNode;
-		top = n2i.getTop(this.element);
-		bottom = n2i.getTop(parent)+parent.clientHeight;
-		var sibs = n2i.getAllNext(this.element);
+		top = hui.getTop(this.element);
+		bottom = hui.getTop(parent)+parent.clientHeight;
+		var sibs = hui.getAllNext(this.element);
 		for (var i=0; i < sibs.length; i++) {
 			bottom-=sibs[i].clientHeight;
 		};
 		this.diff=-1*(top+(viewport-bottom));
-		if (n2i.browser.webkit) {
+		if (hui.browser.webkit) {
 			this.diff++;
 		}
 	},
@@ -16456,7 +11603,7 @@ In2iGui.Overflow.prototype = {
 		var height;
 		if (!this.options.dynamic) {
 			if (this.options.vertical) {
-				height = n2i.getViewPortHeight();
+				height = hui.getViewPortHeight();
 				this.element.style.height = Math.max(0,height-this.options.vertical)+'px';
 			}
 			return;
@@ -16464,67 +11611,67 @@ In2iGui.Overflow.prototype = {
 		if (this.diff===undefined) {
 			this.calculate();
 		}
-		height = n2i.getViewPortHeight();
+		height = hui.getViewPortHeight();
 		this.element.style.height = Math.max(0,height+this.diff)+'px';
 	}
 }
 
 /* EOF *//** @constructor */
-In2iGui.SearchField = function(options) {
-	this.options = n2i.override({expandedWidth:null},options);
-	this.element = n2i.get(options.element);
+hui.ui.SearchField = function(options) {
+	this.options = hui.override({expandedWidth:null},options);
+	this.element = hui.get(options.element);
 	this.name = options.name;
-	this.field = n2i.firstByTag(this.element,'input');
+	this.field = hui.firstByTag(this.element,'input');
 	this.value = this.field.value;
-	this.adaptive = n2i.hasClass(this.element,'in2igui_searchfield_adaptive');
-	In2iGui.onDomReady(function() {
-		this.initialWidth = parseInt(n2i.getStyle(this.element,'width'))
+	this.adaptive = hui.hasClass(this.element,'in2igui_searchfield_adaptive');
+	hui.ui.onReady(function() {
+		this.initialWidth = parseInt(hui.getStyle(this.element,'width'))
 	}.bind(this));
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 	this.addBehavior();
 	this.updateClass()
 }
 
-In2iGui.SearchField.create = function(options) {
+hui.ui.SearchField.create = function(options) {
 	options = options || {};
 	
-	options.element = n2i.build('span',{
+	options.element = hui.build('span',{
 		'class' : options.adaptive ? 'in2igui_searchfield in2igui_searchfield_adaptive' : 'in2igui_searchfield',
 		html : '<em class="in2igui_searchfield_placeholder"></em><a href="javascript:void(0);" class="in2igui_searchfield_reset"></a><span><span><input type="text"/></span></span>'
 	});
-	return new In2iGui.SearchField(options);
+	return new hui.ui.SearchField(options);
 }
 
-In2iGui.SearchField.prototype = {
+hui.ui.SearchField.prototype = {
 	/** @private */
 	addBehavior : function() {
 		var self = this;
-		n2i.listen(this.field,'keyup',this.onKeyUp.bind(this));
-		var reset = n2i.firstByTag(this.element,'a');
+		hui.listen(this.field,'keyup',this.onKeyUp.bind(this));
+		var reset = hui.firstByTag(this.element,'a');
 		reset.tabIndex=-1;
 		var focus = function() {self.field.focus();self.field.select()};
-		n2i.listen(this.element,'mousedown',focus);
-		n2i.listen(this.element,'mouseup',focus);
-		n2i.listen(reset,'mousedown',function(e) {
-			n2i.stop(e);
+		hui.listen(this.element,'mousedown',focus);
+		hui.listen(this.element,'mouseup',focus);
+		hui.listen(reset,'mousedown',function(e) {
+			hui.stop(e);
 			self.reset();
 			focus()
 		});
-		n2i.listen(n2i.firstByTag(this.element,'em'),'mousedown',focus);
-		n2i.listen(this.field,'focus',function() {
+		hui.listen(hui.firstByTag(this.element,'em'),'mousedown',focus);
+		hui.listen(this.field,'focus',function() {
 			self.focused=true;
 			self.updateClass();
 		});
-		n2i.listen(this.field,'blur',function() {
+		hui.listen(this.field,'blur',function() {
 			self.focused=false;
 			self.updateClass();
 		});
 		if (this.options.expandedWidth>0) {
 			this.field.onfocus = function() {
-				n2i.ani(self.element,'width',self.options.expandedWidth+'px',500,{ease:n2i.ease.slowFastSlow});
+				hui.ani(self.element,'width',self.options.expandedWidth+'px',500,{ease:hui.ease.slowFastSlow});
 			}
 			this.field.onblur = function() {
-				n2i.ani(self.element,'width',self.initialWidth+'px',500,{ease:n2i.ease.slowFastSlow,delay:100});
+				hui.ani(self.element,'width',self.initialWidth+'px',500,{ease:hui.ease.slowFastSlow,delay:100});
 			}
 		}
 	},
@@ -16572,7 +11719,7 @@ In2iGui.SearchField.prototype = {
 			this.value=this.field.value;
 			this.updateClass();
 			this.fire('valueChanged',this.value);
-			In2iGui.firePropertyChange(this,'value',this.value);
+			hui.ui.firePropertyChange(this,'value',this.value);
 		}
 	}
 }
@@ -16582,14 +11729,14 @@ In2iGui.SearchField.prototype = {
  * @param {Object} The options
  * @constructor
  */
-In2iGui.Fragment = function(options) {
+hui.ui.Fragment = function(options) {
 	this.options = options;
-	this.element = n2i.get(options.element);
+	this.element = hui.get(options.element);
 	this.name = options.name;
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 }
 
-In2iGui.Fragment.prototype = {
+hui.ui.Fragment.prototype = {
 	show : function() {
 		this.element.style.display='block';
 	},
@@ -16602,26 +11749,26 @@ In2iGui.Fragment.prototype = {
 	Used to get a geografical location
 	@constructor
 */
-In2iGui.LocationPicker = function(options) {
+hui.ui.LocationPicker = function(options) {
 	options = options || {};
 	this.name = options.name;
 	this.options = options.options || {};
-	this.element = n2i.get(options.element);
+	this.element = hui.get(options.element);
 	this.defaultCenter = new google.maps.LatLng(57.0465, 9.9185);
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 }
 
-In2iGui.LocationPicker.prototype = {
+hui.ui.LocationPicker.prototype = {
 	show : function(options) {
 		if (!this.panel) {
-			var panel = this.panel = In2iGui.BoundPanel.create({width:300});
-			var mapContainer = n2i.build('div',{style:'width:300px;height:300px'});
+			var panel = this.panel = hui.ui.BoundPanel.create({width:300});
+			var mapContainer = hui.build('div',{style:'width:300px;height:300px'});
 			panel.add(mapContainer);
-			var buttons = In2iGui.Buttons.create({align:'right',top:5});
-			var button = In2iGui.Button.create({text:'Luk'});
+			var buttons = hui.ui.Buttons.create({align:'right',top:5});
+			var button = hui.ui.Button.create({text:'Luk'});
 			button.listen({$click:function() {panel.hide()}});
 			panel.add(buttons.add(button));
-			n2i.setStyle(panel.element,{left:'-10000px',top:'-10000px',display:''});
+			hui.setStyle(panel.element,{left:'-10000px',top:'-10000px',display:''});
 		    var mapOptions = {
 		      zoom: 15,
 		      mapTypeId: google.maps.MapTypeId.TERRAIN
@@ -16671,14 +11818,14 @@ In2iGui.LocationPicker.prototype = {
  * @constructor
  * @param {Object} options The options
  */
-In2iGui.Bar = function(options) {
-	this.options = n2i.override({},options);
+hui.ui.Bar = function(options) {
+	this.options = hui.override({},options);
 	this.name = options.name;
-	this.element = n2i.get(options.element);
-	In2iGui.extend(this);
+	this.element = hui.get(options.element);
+	hui.ui.extend(this);
 };
 
-In2iGui.Bar.create = function(options) {
+hui.ui.Bar.create = function(options) {
 	options = options || {};
 	var cls = 'in2igui_bar';
 	if (options.variant) {
@@ -16687,27 +11834,27 @@ In2iGui.Bar.create = function(options) {
 	if (options.absolute) {
 		cls+=' in2igui_bar_absolute';
 	}
-	options.element = n2i.build('div',{
+	options.element = hui.build('div',{
 		'class' : cls
 	});
-	n2i.build('div',{'class':'in2igui_bar_body',parent:options.element});
-	return new In2iGui.Bar(options);
+	hui.build('div',{'class':'in2igui_bar_body',parent:options.element});
+	return new hui.ui.Bar(options);
 }
 
-In2iGui.Bar.prototype = {
+hui.ui.Bar.prototype = {
 	addToDocument : function() {
 		document.body.appendChild(this.element);
 	},
 	add : function(widget) {
-		var body = n2i.firstByClass(this.element,'in2igui_bar_body');
+		var body = hui.firstByClass(this.element,'in2igui_bar_body');
 		body.appendChild(widget.getElement());
 	},
 	placeAbove : function(widget) {
-		n2i.place({
+		hui.place({
 			source:{element:this.element,vertical:1,horizontal:0},
 			target:{element:widget.getElement(),vertical:0,horizontal:0}
 		});
-		this.element.style.zIndex = In2iGui.nextTopIndex();
+		this.element.style.zIndex = hui.ui.nextTopIndex();
 	},
 	show : function() {
 		this.element.style.visibility='visible';
@@ -16721,66 +11868,66 @@ In2iGui.Bar.prototype = {
  * @constructor
  * @param {Object} options The options
  */
-In2iGui.Bar.Button = function(options) {
-	this.options = n2i.override({},options);
+hui.ui.Bar.Button = function(options) {
+	this.options = hui.override({},options);
 	this.name = options.name;
-	this.element = n2i.get(options.element);
-	n2i.listen(this.element,'click',this._click.bind(this));
-	n2i.listen(this.element,'mousedown',this._mousedown.bind(this));
-	n2i.listen(this.element,'mouseup',function(e) {n2i.stop(e)});
-	In2iGui.extend(this);
+	this.element = hui.get(options.element);
+	hui.listen(this.element,'click',this._click.bind(this));
+	hui.listen(this.element,'mousedown',this._mousedown.bind(this));
+	hui.listen(this.element,'mouseup',function(e) {hui.stop(e)});
+	hui.ui.extend(this);
 };
 
-In2iGui.Bar.Button.create = function(options) {
+hui.ui.Bar.Button.create = function(options) {
 	options = options || {};
-	var e = options.element = n2i.build('a',{'class':'in2igui_bar_button'});
+	var e = options.element = hui.build('a',{'class':'in2igui_bar_button'});
 	if (options.icon) {
-		e.appendChild(In2iGui.createIcon(options.icon,1));
+		e.appendChild(hui.ui.createIcon(options.icon,1));
 	}
-	return new In2iGui.Bar.Button(options);
+	return new hui.ui.Bar.Button(options);
 }
 
-In2iGui.Bar.Button.prototype = {
+hui.ui.Bar.Button.prototype = {
 	_mousedown : function(e) {
 		this.fire('mousedown');
 		if (this.options.stopEvents) {
-			n2i.stop(e);
+			hui.stop(e);
 		}
 	},
 	_click : function(e) {
 		this.fire('click');
 		if (this.options.stopEvents) {
-			n2i.stop(e);
+			hui.stop(e);
 		}
 	},
 	setSelected : function(highlighted) {
-		n2i.setClass(this.element,'in2igui_bar_button_selected',highlighted);
+		hui.setClass(this.element,'in2igui_bar_button_selected',highlighted);
 	}
 }/**
  * A dock
  * @param {Object} The options
  * @constructor
  */
-In2iGui.IFrame = function(options) {
+hui.ui.IFrame = function(options) {
 	this.options = options;
-	this.element = n2i.get(options.element);
+	this.element = hui.get(options.element);
 	this.name = options.name;
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 }
 
-In2iGui.IFrame.prototype = {
+hui.ui.IFrame.prototype = {
 	/** Change the url of the iframe
 	 * @param {String} url The url to change the iframe to
 	 */
 	setUrl : function(url) {
 		this.element.setAttribute('src',url);
-		//n2i.getFrameDocument(this.element).location.href=url;
+		//hui.getFrameDocument(this.element).location.href=url;
 	},
 	getDocument : function() {
-		return n2i.getFrameDocument(this.element);
+		return hui.getFrameDocument(this.element);
 	},
 	getWindow : function() {
-		return n2i.getFrameWindow(this.element);
+		return hui.getFrameWindow(this.element);
 	},
 	reload : function() {
 		this.getWindow().location.reload();
@@ -16794,29 +11941,29 @@ In2iGui.IFrame.prototype = {
 }
 
 /* EOF */
-In2iGui.VideoPlayer = function(options) {
+hui.ui.VideoPlayer = function(options) {
 	this.options = options;
-	this.element = n2i.get(options.element);
-	this.placeholder = n2i.firstByTag(this.element,'div');
+	this.element = hui.get(options.element);
+	this.placeholder = hui.firstByTag(this.element,'div');
 	this.name = options.name;
 	this.state = {duration:0,time:0,loaded:0};
-	this.handlers = [In2iGui.VideoPlayer.HTML5,In2iGui.VideoPlayer.QuickTime,In2iGui.VideoPlayer.Embedded];
+	this.handlers = [hui.ui.VideoPlayer.HTML5,hui.ui.VideoPlayer.QuickTime,hui.ui.VideoPlayer.Embedded];
 	this.handler = null;
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 	if (this.options.video) {
 		if (this.placeholder) {
-			n2i.listen(this.placeholder,'click',function() {
+			hui.listen(this.placeholder,'click',function() {
 				this.setVideo(this.options.video);
 			}.bind(this))
 		} else {
-			In2iGui.onReady(function() {
+			hui.ui.onReady(function() {
 				this.setVideo(this.options.video);
 			}.bind(this));			
 		}
 	}
 }
 
-In2iGui.VideoPlayer.prototype = {
+hui.ui.VideoPlayer.prototype = {
 	setVideo : function(video) {
 		if (this.placeholder) {
 			this.placeholder.style.display='none';
@@ -16836,10 +11983,10 @@ In2iGui.VideoPlayer.prototype = {
 		};
 	},
 	buildController : function() {
-		var e = n2i.build('div',{'class':'in2igui_videoplayer_controller',parent:this.element});
-		this.playButton = n2i.build('a',{href:'javascript:void(0);','class':'in2igui_videoplayer_playpause',text:'wait!',parent:e});
-		n2i.listen(this.playButton,'click',this.playPause.bind(this));
-		this.status = n2i.build('span',{'class':'in2igui_videoplayer_status',parent:e});
+		var e = hui.build('div',{'class':'in2igui_videoplayer_controller',parent:this.element});
+		this.playButton = hui.build('a',{href:'javascript:void(0);','class':'in2igui_videoplayer_playpause',text:'wait!',parent:e});
+		hui.listen(this.playButton,'click',this.playPause.bind(this));
+		this.status = hui.build('span',{'class':'in2igui_videoplayer_status',parent:e});
 	},
 	onCanPlay : function() {
 		this.playButton.update('Play');
@@ -16880,26 +12027,26 @@ In2iGui.VideoPlayer.prototype = {
 
 ///////// HTML5 //////////
 
-In2iGui.VideoPlayer.HTML5 = function(video,player) {
-	var e = this.element = n2i.build('video',{width:video.width,height:video.height,src:video.src});
-	n2i.listen(e,'load',player.onLoad.bind(player));
-	n2i.listen(e,'canplay',player.onCanPlay.bind(player));
-	n2i.listen(e,'durationchange',function(x) {
+hui.ui.VideoPlayer.HTML5 = function(video,player) {
+	var e = this.element = hui.build('video',{width:video.width,height:video.height,src:video.src});
+	hui.listen(e,'load',player.onLoad.bind(player));
+	hui.listen(e,'canplay',player.onCanPlay.bind(player));
+	hui.listen(e,'durationchange',function(x) {
 		player.onDurationChange(e.duration);
 	});
-	n2i.listen(e,'timeupdate',function() {
+	hui.listen(e,'timeupdate',function() {
 		player.onTimeChange(this.element.currentTime);
 	}.bind(this));
 }
 
-In2iGui.VideoPlayer.HTML5.isSupported = function(video) {
-	if (n2i.browser.webkitVersion>528 && (video.type==='video/quicktime' || video.type==='video/mp4')) {
+hui.ui.VideoPlayer.HTML5.isSupported = function(video) {
+	if (hui.browser.webkitVersion>528 && (video.type==='video/quicktime' || video.type==='video/mp4')) {
 		return true;
 	}
 	return false;
 }
 
-In2iGui.VideoPlayer.HTML5.prototype = {
+hui.ui.VideoPlayer.HTML5.prototype = {
 	showController : function() {
 		return true;
 	},
@@ -16919,9 +12066,9 @@ In2iGui.VideoPlayer.HTML5.prototype = {
 
 ///////// QuickTime //////////
 
-In2iGui.VideoPlayer.QuickTime = function(video,player) {
+hui.ui.VideoPlayer.QuickTime = function(video,player) {
 	this.player = player;
-	var e = this.element = n2i.build('object',{width:video.width,height:video.height,data:video.src,type:'video/quicktime'});
+	var e = this.element = hui.build('object',{width:video.width,height:video.height,data:video.src,type:'video/quicktime'});
 	e.innerHTML = '<param value="false" name="controller"/>'
 		+'<param value="true" name="enablejavascript"/>'
 		+'<param value="undefined" name="posterframe"/>'
@@ -16933,24 +12080,24 @@ In2iGui.VideoPlayer.QuickTime = function(video,player) {
 		+'<param value="true" name="saveembedtags"/>'
 		+'<param value="true" name="postdomevents"/>';
 		
-	n2i.listen(e,'qt_canplay',player.onCanPlay.bind(player));
-	n2i.listen(e,'qt_load',player.onLoad.bind(player));
-	n2i.listen(e,'qt_progress',function() {
+	hui.listen(e,'qt_canplay',player.onCanPlay.bind(player));
+	hui.listen(e,'qt_load',player.onLoad.bind(player));
+	hui.listen(e,'qt_progress',function() {
 		player.onLoadProgressChange(e.GetMaxTimeLoaded()/3000);
 	});
-	n2i.listen(e,'qt_durationchange',function(x) {
+	hui.listen(e,'qt_durationchange',function(x) {
 		player.onDurationChange(e.GetDuration()/3000);
 	});
-	n2i.listen(e,'qt_timechanged',function() {
+	hui.listen(e,'qt_timechanged',function() {
 		player.onTimeChange(e.GetTime());
 	})
 }
 
-In2iGui.VideoPlayer.QuickTime.isSupported = function(video) {
+hui.ui.VideoPlayer.QuickTime.isSupported = function(video) {
 	return video.html==undefined;
 }
 
-In2iGui.VideoPlayer.QuickTime.prototype = {
+hui.ui.VideoPlayer.QuickTime.prototype = {
 	showController : function() {
 		return true;
 	},
@@ -16975,15 +12122,15 @@ In2iGui.VideoPlayer.QuickTime.prototype = {
 
 ///////// Embedded //////////
 
-In2iGui.VideoPlayer.Embedded = function(video,player) {
-	this.element = n2i.build('div',{width:video.width,height:video.height,html:video.html});
+hui.ui.VideoPlayer.Embedded = function(video,player) {
+	this.element = hui.build('div',{width:video.width,height:video.height,html:video.html});
 }
 
-In2iGui.VideoPlayer.Embedded.isSupported = function(video) {
+hui.ui.VideoPlayer.Embedded.isSupported = function(video) {
 	return video.html!==undefined;
 }
 
-In2iGui.VideoPlayer.Embedded.prototype = {
+hui.ui.VideoPlayer.Embedded.prototype = {
 	showController : function() {
 		return false;
 	},
@@ -17005,33 +12152,33 @@ In2iGui.VideoPlayer.Embedded.prototype = {
  * @constructor
  * @param {Object} options The options
  */
-In2iGui.Segmented = function(options) {
-	this.options = n2i.override({value:null,allowNull:false},options);
-	this.element = n2i.get(options.element);
+hui.ui.Segmented = function(options) {
+	this.options = hui.override({value:null,allowNull:false},options);
+	this.element = hui.get(options.element);
 	this.name = options.name;
 	this.value = this.options.value;
-	In2iGui.extend(this);
-	n2i.listen(this.element,'mousedown',this.onClick.bind(this));
+	hui.ui.extend(this);
+	hui.listen(this.element,'mousedown',this.onClick.bind(this));
 }
 
-In2iGui.Segmented.prototype = {
+hui.ui.Segmented.prototype = {
 	/** @private */
 	onClick : function(e) {
-		e = new n2i.Event(e);
+		e = new hui.Event(e);
 		var a = e.findByTag('a');
 		if (a) {
 			var changed = false;
 			var value = a.getAttribute('rel');
-			var x = n2i.byClass(this.element,'in2igui_segmented_selected');
+			var x = hui.byClass(this.element,'in2igui_segmented_selected');
 			for (var i=0; i < x.length; i++) {
-				n2i.removeClass(x[i],'in2igui_segmented_selected');
+				hui.removeClass(x[i],'in2igui_segmented_selected');
 			};
 			if (value===this.value && this.options.allowNull) {
 				changed=true;
 				this.value = null;
 				this.fire('valueChanged',this.value);
 			} else {
-				n2i.addClass(a,'in2igui_segmented_selected');
+				hui.addClass(a,'in2igui_segmented_selected');
 				changed=this.value!== value;
 				this.value = value;
 			}
@@ -17048,10 +12195,10 @@ In2iGui.Segmented.prototype = {
 		this.value = null;
 		for (var i=0; i < as.length; i++) {
 			if (as[i].getAttribute('rel')===value) {
-				n2i.addClass(as[i],'in2igui_segmented_selected');
+				hui.addClass(as[i],'in2igui_segmented_selected');
 				this.value=value;
 			} else {
-				n2i.removeClass(as[i],'in2igui_segmented_selected');
+				hui.removeClass(as[i],'in2igui_segmented_selected');
 			}
 		};
 	},
@@ -17061,7 +12208,7 @@ In2iGui.Segmented.prototype = {
 }
 
 /* EOF *//** @namespace */
-In2iGui.Flash = {
+hui.hui.Flash = {
 	
 	fullVersion:undefined,
 	
@@ -17111,7 +12258,7 @@ In2iGui.Flash = {
 		else if (navigator.userAgent.toLowerCase().indexOf("webtv/2.5") != -1) flashVer = 3;
 		// older WebTV supports Flash 2
 		else if (navigator.userAgent.toLowerCase().indexOf("webtv") != -1) flashVer = 2;
-		else if ( n2i.browser.msie ) {
+		else if ( hui.browser.msie ) {
 			flashVer = this.getActiveXVersion();
 		}
 		this.fullVersion = flashVer;
@@ -17194,20 +12341,20 @@ In2iGui.Flash = {
  * @constructor
  * A link
  */
-In2iGui.Link = function(options) {
+hui.ui.Link = function(options) {
 	this.options = options;
 	this.name = options.name;
-	this.element = n2i.get(options.element);
-	In2iGui.extend(this);
+	this.element = hui.get(options.element);
+	hui.ui.extend(this);
 	this.addBehavior();
 }
 
-In2iGui.Link.prototype = {
+hui.ui.Link.prototype = {
 	/** @private */
 	addBehavior : function() {
 		var self = this;
-		n2i.listen(this.element,'click',function(e) {
-			n2i.stop(e);
+		hui.listen(this.element,'click',function(e) {
+			hui.stop(e);
 			window.setTimeout(function() {
 				self.fire('click');
 			});
@@ -17220,21 +12367,21 @@ In2iGui.Link.prototype = {
  * @param {Object} The options
  * @constructor
  */
-In2iGui.Links = function(options) {
+hui.ui.Links = function(options) {
 	this.options = options;
-	this.element = n2i.get(options.element);
+	this.element = hui.get(options.element);
 	this.name = options.name;
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 	this.items = [];
 	this.addBehavior();
 	this.selectedIndex = null;
 	this.inputs = {};
 }
 
-In2iGui.Links.prototype = {
+hui.ui.Links.prototype = {
 	addBehavior : function() {
-		n2i.listen(this.element,'click',this.onClick.bind(this));
-		n2i.listen(this.element,'dblclick',this.onDblClick.bind(this));
+		hui.listen(this.element,'click',this.onClick.bind(this));
+		hui.listen(this.element,'dblclick',this.onDblClick.bind(this));
 	},
 	reset : function() {
 		this.setValue([]);
@@ -17248,8 +12395,8 @@ In2iGui.Links.prototype = {
 		return this.items;
 	},
 	onDblClick : function(e) {
-		e = new n2i.Event(e);
-		n2i.selection.clear();
+		e = new hui.Event(e);
+		hui.selection.clear();
 		e.stop(e);
 		var link = this.selectAndGetRow(e);
 		var values = {text:link.text};
@@ -17261,12 +12408,12 @@ In2iGui.Links.prototype = {
 		win.show();
 	},
 	onClick : function(e) {
-		e = new n2i.Event(e);
+		e = new hui.Event(e);
 		e.stop();
 		var element = e.getElement();
-		if (n2i.hasClass(element,'in2igui_links_remove')) {
+		if (hui.hasClass(element,'in2igui_links_remove')) {
 			var row = e.findByClass('in2igui_links_row');
-			In2iGui.confirmOverlay({element:element,text:'Vil du fjerne linket?',okText:'Ja, fjern',cancelText:'Annuller',onOk:function() {
+			hui.ui.confirmOverlay({element:element,text:'Vil du fjerne linket?',okText:'Ja, fjern',cancelText:'Annuller',onOk:function() {
 				this.items.splice(row.in2igui_index,1);
 				if (this.selectedIndex===row.in2igui_index) {
 					this.selectedIndex=null;
@@ -17282,31 +12429,31 @@ In2iGui.Links.prototype = {
 		if (row) {
 			var idx = row.in2igui_index;
 			if (this.selectedIndex!==null) {
-				var x = n2i.byClass(this.element,'in2igui_links_row')[this.selectedIndex];
-				n2i.removeClass(x,'in2igui_links_row_selected')
+				var x = hui.byClass(this.element,'in2igui_links_row')[this.selectedIndex];
+				hui.removeClass(x,'in2igui_links_row_selected')
 			}
 			this.selectedIndex = idx;
-			n2i.addClass(row,'in2igui_links_row_selected');
+			hui.addClass(row,'in2igui_links_row_selected');
 			return this.items[idx];
 		}
 	},
 	build : function() {
-		var list = this.list || n2i.firstByClass(this.element,'in2igui_links_list'),
+		var list = this.list || hui.firstByClass(this.element,'in2igui_links_list'),
 			i,item,row,infoNode,text,remove;
 		list.innerHTML='';
 		for (i=0; i < this.items.length; i++) {
 			item = this.items[i];
-			row = n2i.build('div',{'class':'in2igui_links_row'});
+			row = hui.build('div',{'class':'in2igui_links_row'});
 			row.in2igui_index = i;
 			
-			row.appendChild(In2iGui.createIcon(item.icon,1));
-			text = n2i.build('div',{'class':'in2igui_links_text',text:item.text});
+			row.appendChild(hui.ui.createIcon(item.icon,1));
+			text = hui.build('div',{'class':'in2igui_links_text',text:item.text});
 			row.appendChild(text);
 
-			infoNode = n2i.build('div',{'class':'in2igui_links_info',text:n2i.wrap(item.info)});
+			infoNode = hui.build('div',{'class':'in2igui_links_info',text:hui.wrap(item.info)});
 			row.appendChild(infoNode);
-			remove = In2iGui.createIcon('monochrome/round_x',1);
-			n2i.addClass(remove,'in2igui_links_remove');
+			remove = hui.ui.createIcon('monochrome/round_x',1);
+			hui.addClass(remove,'in2igui_links_remove');
 			row.appendChild(remove);
 
 			list.appendChild(row);
@@ -17320,34 +12467,34 @@ In2iGui.Links.prototype = {
 	},
 	getEditWindow : function() {
 		if (!this.editWindow) {
-			var win = this.editWindow = In2iGui.Window.create({title:'Link',width:300,padding:5});
-			var form = this.editForm = In2iGui.Formula.create();
+			var win = this.editWindow = hui.ui.Window.create({title:'Link',width:300,padding:5});
+			var form = this.editForm = hui.ui.Formula.create();
 			var g = form.buildGroup({above:false},[
 				{type:'Text',options:{label:'Tekst',key:'text'}}
 			]);
 			
-			var url = In2iGui.Formula.Text.create({label:'URL',key:'url'});
+			var url = hui.ui.Formula.Text.create({label:'URL',key:'url'});
 			g.add(url);
 			this.inputs['url']=url;
 			
-			var email = In2iGui.Formula.Text.create({label:'E-mail',key:'email'});
+			var email = hui.ui.Formula.Text.create({label:'E-mail',key:'email'});
 			g.add(email);
 			this.inputs['email']=email;
 			
-			page = In2iGui.Formula.DropDown.create({label:'Side',key:'page',source:this.options.pageSource});
+			page = hui.ui.Formula.DropDown.create({label:'Side',key:'page',source:this.options.pageSource});
 			g.add(page);
 			this.inputs['page']=page;
 			
-			file = In2iGui.Formula.DropDown.create({label:'Fil',key:'file',source:this.options.fileSource});
+			file = hui.ui.Formula.DropDown.create({label:'Fil',key:'file',source:this.options.fileSource});
 			g.add(file);
 			this.inputs['file']=file;
 			
 			var self = this;
-			n2i.each(this.inputs,function(key,value) {
+			hui.each(this.inputs,function(key,value) {
 				value.listen({$valueChanged:function(){self.changeType(key)}});
 			});
 			
-			g.createButtons().add(In2iGui.Button.create({text:'Gem',submit:true,highlighted:true}));
+			g.createButtons().add(hui.ui.Button.create({text:'Gem',submit:true,highlighted:true}));
 			this.editForm.listen({$submit:this.saveLink.bind(this)});
 			win.add(form);
 			if (this.options.pageSource) {
@@ -17364,7 +12511,7 @@ In2iGui.Links.prototype = {
 		var link = this.valuesToLink(v);
 		var edited = this.editedLink;
 		if (edited) {
-			n2i.override(edited,link);
+			hui.override(edited,link);
 		} else {
 			this.items.push(link);
 		}
@@ -17386,12 +12533,12 @@ In2iGui.Links.prototype = {
 			link.value=values.url;
 			link.info=values.url;
 			link.icon='monochrome/globe';
-		} else if (n2i.isDefined(values.page)) {
+		} else if (hui.isDefined(values.page)) {
 			link.kind='page';
 			link.value=values.page;
 			link.info=this.inputs['page'].getItem().title;
 			link.icon='common/page';
-		} else if (n2i.isDefined(values.file)) {
+		} else if (hui.isDefined(values.file)) {
 			link.kind='file';
 			link.value=values.file;
 			link.info=this.inputs['file'].getItem().title;
@@ -17400,7 +12547,7 @@ In2iGui.Links.prototype = {
 		return link;
 	},
 	changeType : function(type) {
-		n2i.each(this.inputs,function(key,value) {
+		hui.each(this.inputs,function(key,value) {
 			if (key!=type) {
 				value.setValue();
 			}
@@ -17411,43 +12558,43 @@ In2iGui.Links.prototype = {
 /* EOF *//**
  * @constructor
  */
-In2iGui.MarkupEditor = function(options) {
+hui.ui.MarkupEditor = function(options) {
 	this.name = options.name;
-	this.options = n2i.override({debug:false,value:'',autoHideToolbar:true,style:'font-family: sans-serif; font-size: 11px;'},options);
+	this.options = hui.override({debug:false,value:'',autoHideToolbar:true,style:'font-family: sans-serif; font-size: 11px;'},options);
 	if (options.replace) {
-		options.replace = n2i.get(options.replace);
-		options.element = n2i.build('div',{className:'in2igui_markupeditor'});
+		options.replace = hui.get(options.replace);
+		options.element = hui.build('div',{className:'in2igui_markupeditor'});
 		options.replace.parentNode.insertBefore(options.element,options.replace);
 		options.replace.style.display='none';
 		options.value = options.replace.innerHTML;
 	}
 	this.ready = false;
 	this.pending = [];
-	this.element = n2i.get(options.element);
-	if (n2i.browser.msie) {
-		this.impl = In2iGui.MarkupEditor.MSIE;
+	this.element = hui.get(options.element);
+	if (hui.browser.msie) {
+		this.impl = hui.ui.MarkupEditor.MSIE;
 	} else {
-		this.impl = In2iGui.MarkupEditor.webkit;
+		this.impl = hui.ui.MarkupEditor.webkit;
 	}
 	this.impl.initialize({element:this.element,controller:this});
 	if (this.options.value) {
 		this.setValue(this.options.value);
 	}
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 }
 
-In2iGui.MarkupEditor.create = function(options) {
+hui.ui.MarkupEditor.create = function(options) {
 	options = options || {};
-	options.element = n2i.build('div',{className:'in2igui_markupeditor'});
-	return new In2iGui.MarkupEditor(options);
+	options.element = hui.build('div',{className:'in2igui_markupeditor'});
+	return new hui.ui.MarkupEditor(options);
 }
 
-In2iGui.MarkupEditor.prototype = {
+hui.ui.MarkupEditor.prototype = {
 	implIsReady : function() {
 		this.ready = true;
-		n2i.log('I am ready!');
+		hui.log('I am ready!');
 		for (var i=0; i < this.pending.length; i++) {
-			n2i.log(this.pending[i]);
+			hui.log(this.pending[i]);
 			this.pending[i]();
 		};
 	},
@@ -17462,8 +12609,8 @@ In2iGui.MarkupEditor.prototype = {
 		this._valueChanged();
 	},
 	destroy : function() {
-		n2i.dom.remove(this.element);
-		In2iGui.destroy(this);
+		hui.dom.remove(this.element);
+		hui.ui.destroy(this);
 	},
 	getValue : function() {
 		return this.impl.getHTML();
@@ -17504,9 +12651,9 @@ In2iGui.MarkupEditor.prototype = {
 				{key:'insert-table',icon:'edit/text_italic'}*/
 			]
 			
-			this.bar = In2iGui.Bar.create({absolute:true,variant:'mini',small:true});
-			n2i.each(things,function(info) {
-				var button = new In2iGui.Bar.Button.create({icon:info.icon,stopEvents:true});
+			this.bar = hui.ui.Bar.create({absolute:true,variant:'mini',small:true});
+			hui.each(things,function(info) {
+				var button = new hui.ui.Bar.Button.create({icon:info.icon,stopEvents:true});
 				button.listen({
 					$mousedown : function() { this._buttonClicked(info) }.bind(this)
 				});
@@ -17535,8 +12682,8 @@ In2iGui.MarkupEditor.prototype = {
 	},
 	_showColorPicker : function() {
 		if (!this.colorPicker) {
-			this.colorPicker = In2iGui.Window.create();
-			var picker = In2iGui.ColorPicker.create();
+			this.colorPicker = hui.ui.Window.create();
+			var picker = hui.ui.ColorPicker.create();
 			picker.listen(this);
 			this.colorPicker.add(picker);
 			this.colorPicker.listen({
@@ -17549,15 +12696,15 @@ In2iGui.MarkupEditor.prototype = {
 	},
 	_showLinkEditor : function() {
 		if (!this.linkEditor) {
-			this.linkEditor = In2iGui.Window.create({padding:5,width:300});
-			this.linkForm = In2iGui.Formula.create();
+			this.linkEditor = hui.ui.Window.create({padding:5,width:300});
+			this.linkForm = hui.ui.Formula.create();
 			this.linkEditor.add(this.linkForm);
 			var group = this.linkForm.buildGroup({},[
 				{type : 'Text', options:{key:'url',label:'Address:'}}
 			]);
 			this.linkEditor.add(this.linkForm);
 			var buttons = group.createButtons();
-			var ok = In2iGui.Button.create({text:'OK',submit:true});
+			var ok = hui.ui.Button.create({text:'OK',submit:true});
 			this.linkForm.listen({$submit:this._updateLink.bind(this)});
 			buttons.add(ok);
 		}
@@ -17586,19 +12733,19 @@ In2iGui.MarkupEditor.prototype = {
 	}
 }
 
-In2iGui.MarkupEditor.webkit = {
+hui.ui.MarkupEditor.webkit = {
 	initialize : function(options) {
 		this.element = options.element;
 		this.element.style.overflow='auto';
 		this.element.contentEditable = true;
 		var ctrl = this.controller = options.controller;
-		n2i.listen(this.element,'focus',function() {
+		hui.listen(this.element,'focus',function() {
 			ctrl.implFocused();
 		});
-		n2i.listen(this.element,'blur',function() {
+		hui.listen(this.element,'blur',function() {
 			ctrl.implBlurred();
 		});
-		n2i.listen(this.element,'keyup',this._keyUp.bind(this));
+		hui.listen(this.element,'keyup',this._keyUp.bind(this));
 		ctrl.implIsReady();
 	},
 	saveSelection : function() {
@@ -17631,7 +12778,7 @@ In2iGui.MarkupEditor.webkit = {
 		var selection = window.getSelection();
 		var range = selection.getRangeAt(0);
 		var ancestor = range.commonAncestorContainer;
-		if (!n2i.dom.isElement(ancestor)) {
+		if (!hui.dom.isElement(ancestor)) {
 			ancestor = ancestor.parentNode;
 		}
 		return ancestor;
@@ -17652,7 +12799,7 @@ In2iGui.MarkupEditor.webkit = {
 		if (selection.rangeCount<1) {return}
 		var range = selection.getRangeAt(0);
 		var ancestor = range.commonAncestorContainer;
-		if (!n2i.dom.isElement(ancestor)) {
+		if (!hui.dom.isElement(ancestor)) {
 			ancestor = ancestor.parentNode;
 		}
 		if (ancestor.tagName.toLowerCase()==tag) {
@@ -17662,7 +12809,7 @@ In2iGui.MarkupEditor.webkit = {
 			range.surroundContents(node);
 			selection.selectAllChildren(node);
 		}
-		//document.execCommand('inserthtml',null,'<'+tag+'>'+n2i.escape(n2i.getSelectedText())+'</'+tag+'>');
+		//document.execCommand('inserthtml',null,'<'+tag+'>'+hui.escape(hui.getSelectedText())+'</'+tag+'>');
 	},
 	_getInlineTag : function() {
 		var selection = window.getSelection();
@@ -17680,7 +12827,7 @@ In2iGui.MarkupEditor.webkit = {
 		document.execCommand('inserthtml',null,html);
 	},
 	_selectionChanged : function() {
-		n2i.log({
+		hui.log({
 			bold : document.queryCommandState('bold'),
 			italic : document.queryCommandState('italic')
 		});
@@ -17692,16 +12839,16 @@ In2iGui.MarkupEditor.webkit = {
 		this.element.innerHTML = html;
 	},
 	getHTML : function() {
-		var cleaned = In2iGui.MarkupEditor.util.clean(this.element);
+		var cleaned = hui.ui.MarkupEditor.util.clean(this.element);
 		return cleaned.innerHTML;
 	}
 }
 
-In2iGui.MarkupEditor.MSIE = {
+hui.ui.MarkupEditor.MSIE = {
 	initialize : function(options) {
 		this.element = options.element;
-		this.iframe = n2i.build('iframe',{style:'display:block; width: 100%; border: 0;',parent:this.element})
-		n2i.listen(this.iframe,'load',this._load.bind(this));
+		this.iframe = hui.build('iframe',{style:'display:block; width: 100%; border: 0;',parent:this.element})
+		hui.listen(this.iframe,'load',this._load.bind(this));
 		this.controller = options.controller;
 	},
 	saveSelection : function() {
@@ -17716,11 +12863,11 @@ In2iGui.MarkupEditor.MSIE = {
 		}.bind(this));
 	},
 	_load : function() {
-		this.document = n2i.getFrameDocument(this.iframe);
+		this.document = hui.getFrameDocument(this.iframe);
 		this.body = this.document.body;
 		this.body.contentEditable = true;
-		n2i.listen(this.body,'keyup',this._keyUp.bind(this));
-		n2i.listen(this.body,'mouseup',this._mouseUp.bind(this));
+		hui.listen(this.body,'keyup',this._keyUp.bind(this));
+		hui.listen(this.body,'mouseup',this._mouseUp.bind(this));
 		this.controller.implIsReady();
 	},
 	_keyUp : function() {
@@ -17755,7 +12902,7 @@ In2iGui.MarkupEditor.MSIE = {
 		this.restoreSelection();
 	},
 	_wrapInTag : function(tag) {
-		document.execCommand('inserthtml',null,'<'+tag+'>'+n2i.escape(n2i.getSelectedText())+'</'+tag+'>');
+		document.execCommand('inserthtml',null,'<'+tag+'>'+hui.escape(hui.getSelectedText())+'</'+tag+'>');
 	},
 	_insertHTML : function(html) {
 		document.execCommand('inserthtml',null,html);
@@ -17764,17 +12911,17 @@ In2iGui.MarkupEditor.MSIE = {
 		this.body.innerHTML = html;
 	},
 	getHTML : function() {
-		var cleaned = In2iGui.MarkupEditor.util.clean(this.body);
+		var cleaned = hui.ui.MarkupEditor.util.clean(this.body);
 		return cleaned.innerHTML;
 	}
 }
 
-In2iGui.MarkupEditor.util = {
+hui.ui.MarkupEditor.util = {
 	clean : function(node) {
 		var copy = node.cloneNode(true);
 		this.replaceNodes(copy,{b:'strong',i:'em',font:'span'});
 
-		var apples = n2i.byClass(copy,'Apple-style-span');
+		var apples = hui.byClass(copy,'Apple-style-span');
 		for (var i = apples.length - 1; i >= 0; i--){
 			apples[i].removeAttribute('class');
 		};
@@ -17790,7 +12937,7 @@ In2iGui.MarkupEditor.util = {
 				if (color) {
 					replacement.style.color=color;
 				}
-				n2i.dom.replaceNode(bs[i],replacement);
+				hui.dom.replaceNode(bs[i],replacement);
 			};
 		}
 	},
@@ -17810,60 +12957,60 @@ In2iGui.MarkupEditor.util = {
 /* EOF *//**
  * @constructor
  */
-In2iGui.ColorPicker = function(options) {
+hui.ui.ColorPicker = function(options) {
 	this.options = options || {};
 	this.name = options.name;
-	this.element = n2i.get(options.element);
+	this.element = hui.get(options.element);
 	this.color = null;
 	this.buttons = [];
-	this.preview = n2i.firstByClass(this.element,'in2igui_colorpicker_preview');
-	this.pages = n2i.byClass(this.element,'in2igui_colorpicker_page');
-	this.input = n2i.firstByTag(this.element,'input');
+	this.preview = hui.firstByClass(this.element,'in2igui_colorpicker_preview');
+	this.pages = hui.byClass(this.element,'in2igui_colorpicker_page');
+	this.input = hui.firstByTag(this.element,'input');
 	this.wheel1 = this.pages[0];
 	this.wheel2 = this.pages[1];
 	this.wheel3 = this.pages[2];
 	this.swatches = this.pages[3];
-	In2iGui.extend(this);
+	hui.ui.extend(this);
 	this.addBehavior();
 	this.buildData();
 }
 
-In2iGui.ColorPicker.create = function(options) {
+hui.ui.ColorPicker.create = function(options) {
 	var swatches = '',
 		c, hex, j;
 	for (var i=0; i < 360; i+=30) {
 		for (j=0.05; j <= 1; j+=.15) {
-			c = n2i.Color.hsv2rgb(i,j,1);
-			hex = n2i.Color.rgb2hex(c);
+			c = hui.Color.hsv2rgb(i,j,1);
+			hex = hui.Color.rgb2hex(c);
 			swatches+='<a style="background: rgb('+c[0]+','+c[1]+','+c[2]+')" rel="'+hex+'"></a>';
 		}
 		for (j=1; j >= .20; j-=.15) {
-			c = n2i.Color.hsv2rgb(i,1,j);
-			hex = n2i.Color.rgb2hex(c);
+			c = hui.Color.hsv2rgb(i,1,j);
+			hex = hui.Color.rgb2hex(c);
 			swatches+='<a style="background: rgb('+c[0]+','+c[1]+','+c[2]+')" rel="'+hex+'"></a>';
 		}
 	}
 	for (j=255; j >=0; j-=255/12) {
-		hex = n2i.Color.rgb2hex([j,j,j]);
+		hex = hui.Color.rgb2hex([j,j,j]);
 		swatches+='<a style="background: rgb('+Math.round(j)+','+Math.round(j)+','+Math.round(j)+')" rel="'+hex+'"></a>';
 	}
 	options = options || {};
-	options.element = n2i.build('div',{
+	options.element = hui.build('div',{
 		'class':'in2igui_colorpicker',
 		html : 
 			'<div class="in2igui_bar in2igui_bar_window">'+
 				'<div class="in2igui_bar_body">'+
 					'<a class="in2igui_bar_button in2igui_bar_button_selected" href="javascript:void(0)" rel="0">'+
-						'<span class="in2igui_icon_1" style="background: url('+In2iGui.getIconUrl('colorpicker/wheel_pastels',1)+')"></span>'+
+						'<span class="in2igui_icon_1" style="background: url('+hui.ui.getIconUrl('colorpicker/wheel_pastels',1)+')"></span>'+
 					'</a>'+
 					'<a class="in2igui_bar_button" href="javascript:void(0)" rel="1">'+
-						'<span class="in2igui_icon_1" style="background: url('+In2iGui.getIconUrl('colorpicker/wheel_brightness',1)+')"></span>'+
+						'<span class="in2igui_icon_1" style="background: url('+hui.ui.getIconUrl('colorpicker/wheel_brightness',1)+')"></span>'+
 					'</a>'+
 					'<a class="in2igui_bar_button" href="javascript:void(0)" rel="2">'+
-						'<span class="in2igui_icon_1" style="background: url('+In2iGui.getIconUrl('colorpicker/wheel_saturated',1)+')"></span>'+
+						'<span class="in2igui_icon_1" style="background: url('+hui.ui.getIconUrl('colorpicker/wheel_saturated',1)+')"></span>'+
 					'</a>'+
 					'<a class="in2igui_bar_button" href="javascript:void(0)" rel="3">'+
-						'<span class="in2igui_icon_1" style="background: url('+In2iGui.getIconUrl('colorpicker/swatches',1)+')"></span>'+
+						'<span class="in2igui_icon_1" style="background: url('+hui.ui.getIconUrl('colorpicker/swatches',1)+')"></span>'+
 					'</a>'+
 					'<input class="in2igui_colorpicker"/>'+
 				'</div>'+
@@ -17876,34 +13023,34 @@ In2iGui.ColorPicker.create = function(options) {
 			'</div>'+
 			'<div class="in2igui_colorpicker_preview"></div>'
 	});
-	return new In2iGui.ColorPicker(options);
+	return new hui.ui.ColorPicker(options);
 }
 
-In2iGui.ColorPicker.prototype = {
+hui.ui.ColorPicker.prototype = {
 	/** @private */
 	addBehavior : function() {
-		var bs = n2i.byClass(this.element,'in2igui_bar_button');
+		var bs = hui.byClass(this.element,'in2igui_bar_button');
 		for (var i=0; i < bs.length; i++) {
-			var button = new In2iGui.Bar.Button({element:bs[i]});
+			var button = new hui.ui.Bar.Button({element:bs[i]});
 			button.listen(this);
 			this.buttons.push(button);
 		};
 		
-		n2i.listen(this.element,'click',this._click.bind(this));
-		n2i.listen(this.wheel1,'mousemove',this._hoverWheel1.bind(this));
-		n2i.listen(this.wheel1,'click',this._pickColor.bind(this));
-		n2i.listen(this.wheel2,'mousemove',this._hoverWheel2.bind(this));
-		n2i.listen(this.wheel2,'click',this._pickColor.bind(this));
-		n2i.listen(this.wheel3,'mousemove',this._hoverWheel3.bind(this));
-		n2i.listen(this.wheel3,'click',this._pickColor.bind(this));
-		n2i.listen(this.element,'mousedown',function(e) {
-			n2i.stop(e);
+		hui.listen(this.element,'click',this._click.bind(this));
+		hui.listen(this.wheel1,'mousemove',this._hoverWheel1.bind(this));
+		hui.listen(this.wheel1,'click',this._pickColor.bind(this));
+		hui.listen(this.wheel2,'mousemove',this._hoverWheel2.bind(this));
+		hui.listen(this.wheel2,'click',this._pickColor.bind(this));
+		hui.listen(this.wheel3,'mousemove',this._hoverWheel3.bind(this));
+		hui.listen(this.wheel3,'click',this._pickColor.bind(this));
+		hui.listen(this.element,'mousedown',function(e) {
+			hui.stop(e);
 		})
-		n2i.listen(this.swatches,'mousemove',function(e) {
-			e = n2i.event(e);
+		hui.listen(this.swatches,'mousemove',function(e) {
+			e = hui.event(e);
 			this._hoverColor(e.element.getAttribute('rel'));
 		}.bind(this));
-		n2i.listen(this.swatches,'click',this._pickColor.bind(this));
+		hui.listen(this.swatches,'click',this._pickColor.bind(this));
 	},
 	$click : function(button) {
 		var page = parseInt(button.element.getAttribute('rel')),
@@ -17916,7 +13063,7 @@ In2iGui.ColorPicker.prototype = {
 		};
 	},
 	_click : function(e) {
-		e = n2i.event(e);
+		e = hui.event(e);
 		e.stop();
 	//	return;
 		var input = e.findByTag('input');
@@ -17924,7 +13071,7 @@ In2iGui.ColorPicker.prototype = {
 	},
 	/** @private */
 	_pickColor : function(e) {
-		n2i.stop(e);
+		hui.stop(e);
 		this.fire('colorWasSelected',this.color);
 	},
 	_hoverColor : function(color) {
@@ -17957,8 +13104,8 @@ In2iGui.ColorPicker.prototype = {
 	},
 	/** @private */
 	_hoverWheel1 : function(e) {
-		e = n2i.event(e);
-		var pos = n2i.getPosition(this.wheel1);
+		e = hui.event(e);
+		var pos = hui.getPosition(this.wheel1);
 		var x = 4 * (e.getLeft() - pos.left);
 		var y = 4 * (e.getTop() - pos.top);
 
@@ -17995,8 +13142,8 @@ In2iGui.ColorPicker.prototype = {
 	},
 	_hoverWheel2 : function(e) {
 		var rgb,sat,val;
-		e = n2i.event(e);
-		var pos = n2i.getPosition(this.wheel2);
+		e = hui.event(e);
+		var pos = hui.getPosition(this.wheel2);
 		var x = (e.getLeft() - pos.left);
 		var y = (e.getTop() - pos.top);
 
@@ -18023,19 +13170,19 @@ In2iGui.ColorPicker.prototype = {
 			} else if (rnorm >= .5) {
 				sat = 1 - ((rnorm - .5) *2);
 				val = 1;
-				rgb = n2i.Color.hsv2rgb(adeg,sat,val);
+				rgb = hui.Color.hsv2rgb(adeg,sat,val);
 			} else {
 				sat = 1;
 				val = rnorm * 2;
-				rgb = n2i.Color.hsv2rgb(adeg,sat,val);
+				rgb = hui.Color.hsv2rgb(adeg,sat,val);
 			}
 		}
-		this._hoverColor(n2i.Color.rgb2hex(rgb));
+		this._hoverColor(hui.Color.rgb2hex(rgb));
 	},
 	_hoverWheel3 : function(e) {
 		var rgb,sat,val;
-		e = n2i.event(e);
-		var pos = n2i.getPosition(this.wheel3);
+		e = hui.event(e);
+		var pos = hui.getPosition(this.wheel3);
 		var x = (e.getLeft() - pos.left);
 		var y = (e.getTop() - pos.top);
 
@@ -18062,1202 +13209,11 @@ In2iGui.ColorPicker.prototype = {
 			} else {
 				sat = rnorm;// - ((rnorm - .5) *2);
 				val = 1;
-				rgb = n2i.Color.hsv2rgb(adeg,sat,val);
+				rgb = hui.Color.hsv2rgb(adeg,sat,val);
 			}
 		}
-		this._hoverColor(n2i.Color.rgb2hex(rgb));
+		this._hoverColor(hui.Color.rgb2hex(rgb));
 	}
 }
 
-/* EOF */var WysiHat = {};
-
-WysiHat.Editor = {
-  /**
-   *  WysiHat.Editor.attach(textarea)
-   *  - textarea (String | Element): an id or DOM node of the textarea that
-   *  you want to convert to rich text.
-   *
-   *  Creates a new editor for the textarea.
-   **/
-  attach: function(textarea) {
-    textarea = $(textarea);
-    textarea.hide();
-
-    return WysiHat.iFrame.create(textarea, function(editArea) {
-      var document = editArea.getDocument();
-      var window = editArea.getWindow();
-
-      editArea.load();
-
-      Event.observe(window, 'focus', function(event) { editArea.focus(); });
-      Event.observe(window, 'blur', function(event) { editArea.blur(); });
-
-
-      Event.observe(document, 'mouseup', function(event) {
-        editArea.fire("wysihat:mouseup");
-      });
-
-      Event.observe(document, 'mousemove', function(event) {
-        editArea.fire("wysihat:mousemove");
-      });
-
-      Event.observe(document, 'keypress', function(event) {
-        editArea.fire("wysihat:change");
-        editArea.fire("wysihat:keypress");
-      });
-
-      Event.observe(document, 'keyup', function(event) {
-        editArea.fire("wysihat:change");
-        editArea.fire("wysihat:keyup");
-      });
-
-      Event.observe(document, 'keydown', function(event) {
-        if (event.keyCode == 86)
-          editArea.fire("wysihat:paste");
-      });
-
-      Event.observe(window, 'paste', function(event) {
-        editArea.fire("wysihat:paste");
-      });
-
-
-      editArea.observe("wysihat:change", function(event) {
-        event.target.save();
-      });
-      //editArea.focus(); HACK!
-    });
-  }
-};
-
-/**
- * mixin WysiHat.Commands
- *
- *  Methods will be mixed into the editor element. Most of these
- *  methods will be used to bind to button clicks or key presses.
- *
- *  var editor = WysiHat.Editor.attach(textarea);
- *  $('bold_button').observe('click', function(event) {
- *    editor.boldSelection();
- *    Event.stop(event);
- *  });
- *
- *  In this example, it is important to stop the click event so you don't
- *  lose your current selection.
- **/
-WysiHat.Commands = {
-  /**
-   * WysiHat.Commands#boldSelection() -> undefined
-   *  Bolds the current selection.
-   **/
-  boldSelection: function() {
-    this.execCommand('bold', false, null);
-  },
-
-  /**
-   * WysiHat.Commands#underlineSelection() -> undefined
-   *  Underlines the current selection.
-   **/
-  underlineSelection: function() {
-    this.execCommand('underline', false, null);
-  },
-
-  /**
-   * WysiHat.Commands#italicSelection() -> undefined
-   *  Italicizes the current selection.
-   **/
-  italicSelection: function() {
-    this.execCommand('italic', false, null);
-  },
-
-  /**
-   * WysiHat.Commands#italicSelection() -> undefined
-   *  Strikethroughs the current selection.
-   **/
-  strikethroughSelection: function() {
-    this.execCommand('strikethrough', false, null);
-  },
-
-  /**
-   * WysiHat.Commands#italicSelection() -> undefined
-   *  Blockquotes the current selection.
-   **/
-  blockquoteSelection: function() {
-    this.execCommand('blockquote', false, null);
-  },
-
-  /**
-   * WysiHat.Commands#colorSelection(color) -> undefined
-   *  - color (String): a color name or hexadecimal value
-   *  Sets the foreground color of the current selection.
-   **/
-  colorSelection: function(color) {
-    this.execCommand('forecolor', false, color);
-  },
-
-  /**
-   * WysiHat.Commands#linkSelection(url) -> undefined
-   *  - url (String): value for href
-   *  Wraps the current selection in a link.
-   **/
-  linkSelection: function(url) {
-    this.execCommand('createLink', false, url);
-  },
-
-  /**
-   * WysiHat.Commands#insertOrderedList() -> undefined
-   *  Formats current selection as an ordered list. If the selection is empty
-   *  a new list is inserted.
-   **/
-  insertOrderedList: function() {
-    this.execCommand('insertorderedlist', false, null);
-  },
-
-  /**
-   * WysiHat.Commands#insertUnorderedList() -> undefined
-   *  Formats current selection as an unordered list. If the selection is empty
-   *  a new list is inserted.
-   **/
-  insertUnorderedList: function() {
-    this.execCommand('insertunorderedlist', false, null);
-  },
-
-  /**
-   * WysiHat.Commands#insertImage(url) -> undefined
-   *  - url (String): value for src
-   *  Insert an image at the insertion point with the given url.
-   **/
-  insertImage: function(url) {
-    this.execCommand('insertImage', false, url);
-  },
-
-  /**
-   * WysiHat.Commands#insertHTML(html) -> undefined
-   *  - html (String): HTML or plain text
-   *  Insert HTML at the insertion point.
-   **/
-  insertHTML: function(html) {
-    if (Prototype.Browser.IE) {
-      var range = this._selection.getRange();
-      range.pasteHTML(html);
-      range.collapse(false);
-      range.select();
-    } else {
-      this.execCommand('insertHTML', false, html);
-    }
-  },
-
-  /**
-   * WysiHat.Commands#execCommand(command[, ui = false][, value = null]) -> undefined
-   *  - command (String): Command to execute
-   *  - ui (Boolean): Boolean flag for showing UI. Currenty this not
-   *  implemented by any browser. Just use false.
-   *  - value (String): Value to pass to command
-   *  A simple delegation method to the documents execCommand method.
-   **/
-  execCommand: function(command, ui, value) {
-    var document = this.getDocument();
-    document.execCommand(command, ui, value);
-  },
-
-  queryStateCommands: $A(['bold', 'italic', 'underline', 'strikethrough']),
-
-  /**
-   * WysiHat.Commands#queryCommandState(state) -> Boolean
-   *  - state (String): bold, italic, underline, etc
-   *  Determines whether the current selection has the given state.
-   *  queryCommandState('bold') would return true if the selected text
-   *  is bold.
-   *
-   * You can extend this behavior by adding a custom method to the editor
-   * element, queryCustom(). However this API is not final.
-   * queryCommandState('link') would call queryLink().
-   **/
-  queryCommandState: function(state) {
-    var document = this.getDocument();
-
-    if (this.queryStateCommands.include(state))
-      return document.queryCommandState(state);
-    else if ((f = this['query' + state.capitalize()]))
-      return f.bind(this).call();
-    else
-      return false;
-  }
-};
-/**
- * mixin WysiHat.Persistence
- *
- *  Methods will be mixed into the editor element. These methods deal with
- *  extracting and filtering content going in and out of the editor.
- */
-WysiHat.Persistence = (function() {
-  /**
-   * WysiHat.Persistence#outputFilter(text) -> String
-   *  - text (String): HTML string
-   *
-   *  Use to filter content coming out of the editor. By default it calls
-   *  text.format_html_output. This method has been extract so you can override
-   *  it and provide your own custom output filter.
-   */
-  function outputFilter(text) {
-    return text.format_html_output();
-  }
-
-  /**
-   * WysiHat.Persistence#inputFilter(text) -> String
-   *  - text (String): HTML string
-   *
-   *  Use to filter content going into the editor. By default it calls
-   *  text.format_html_input. This method has been extract so you can override
-   *  it and provide your own custom input filter.
-   */
-  function inputFilter(text) {
-    return text.format_html_input();
-  }
-
-  /**
-   * WysiHat.Persistence#content() -> String
-   *  Returns the editors HTML contents. The contents are first passed
-   *  through outputFilter.
-   *
-   *  You can replace the generic outputFilter with your own function. The
-   *  default behavior is to use String#format_html_output.
-   *
-   *  editor.outputFilter = function(text) {
-   *    return MyUtils.format_and_santize(text);
-   *  };
-   **/
-  function content() {
-    return this.outputFilter(this.rawContent());
-  }
-
-  /**
-   * WysiHat.Persistence#setContent(text) -> undefined
-   *  - text (String): HTML string
-   *
-   *  Replaces editor's entire contents with the given HTML. The contents are
-   *  first passed through inputFilter.
-   *
-   *  You can replace the generic inputFilter with your own function. The
-   *  default behavior is to use String#format_html_input.
-   *
-   *  editor.inputFilter = function(text) {
-   *    return MyUtils.format_and_santize(text);
-   *  };
-   **/
-  function setContent(text) {
-    this.setRawContent(this.inputFilter(text));
-  }
-
-  /**
-   * WysiHat.Persistence#save() -> undefined
-   *  Saves editors contents back out to the textarea.
-   **/
-  function save() {
-    this.textarea.value = this.content();
-  }
-
-  /**
-   * WysiHat.Persistence#load() -> undefined
-   *  Loads textarea contents into editor.
-   **/
-   function load() {
-     this.setContent(this.textarea.value);
-  }
-
-  /**
-   * WysiHat.Persistence#reload() -> undefined
-   *  Saves current contents and loads contents into editor.
-   **/
-  function reload() {
-    this.selection.setBookmark();
-    this.save();
-    this.load();
-    this.selection.moveToBookmark();
-  }
-
-  return {
-    outputFilter: outputFilter,
-    inputFilter:  inputFilter,
-    content:      content,
-    setContent:   setContent,
-    save:         save,
-    load:         load,
-    reload:       reload
-  };
-})();
-/**
- * mixin WysiHat.Window
- *
- *  Methods will be mixed into the editor element. These methods handle window
- *  events such as focus and blur events on the editor.
- */
-WysiHat.Window = (function() {
-  /**
-   * WysiHat.Window#getDocument() -> Document
-   *  Cross browser method to return the iFrame's document.
-   *  You should not need to access this directly, and this API is not final.
-   */
-  function getDocument() {
-    return this.contentDocument || this.contentWindow.document;
-  }
-
-  /**
-   * WysiHat.Window#getWindow() -> Window
-   *  Cross browser method to return the iFrame's window.
-   *  You should not need to access this directly, and this API is not final.
-   */
-  function getWindow() {
-    if (this.contentWindow.document)
-      return this.contentWindow;
-    else if (this.contentDocument)
-      return this.contentDocument.defaultView;
-    else
-      return null;
-  }
-
-  /**
-   * WysiHat.Window#focus() -> undefined
-   *  binds observers to mouseup, mousemove, keypress, and keyup on focus
-   **/
-  function focus() {
-    this.getWindow().focus();
-
-    if (this.hasFocus)
-      return;
-
-    this.hasFocus = true;
-  }
-
-  /**
-   * WysiHat.Window#blur() -> undefined
-   *  removes observers to mouseup, mousemove, keypress, and keyup on blur
-   **/
-  function blur() {
-    this.hasFocus = false;
-  }
-
-  return {
-    getDocument: getDocument,
-    getWindow: getWindow,
-    focus: focus,
-    blur: blur
-  };
-})();
-
-WysiHat.iFrame = {
-  create: function(textarea, callback) {
-    var editArea = new Element('iframe', { 'id': textarea.id + '_editor', 'class': 'editor', allowtransparency:'true' });
-
-    Object.extend(editArea, WysiHat.Commands);
-    Object.extend(editArea, WysiHat.Persistence);
-    Object.extend(editArea, WysiHat.Window);
-    Object.extend(editArea, WysiHat.iFrame.Methods);
-
-    editArea.attach(textarea, callback);
-
-    textarea.insert({before: editArea});
-
-    return editArea;
-  }
-};
-
-WysiHat.iFrame.Methods = {
-  attach: function(element, callback) {
-    this.textarea = element;
-
-    this.observe('load', function() {
-      function setDocumentStyles(document, styles) {
-        if (Prototype.Browser.IE) {
-          var style = document.createStyleSheet();
-          style.addRule("body", "border: 0");
-          style.addRule("p", "margin: 0");
-
-          $H(styles).each(function(pair) {
-            var value = pair.first().underscore().dasherize() + ": " + pair.last();
-            style.addRule("body", value);
-          });
-        } else if (Prototype.Browser.Opera) {
-          var style = Element('style').update("p { margin: 0; }");
-          var head = document.getElementsByTagName('head')[0];
-          head.appendChild(style);
-        } else {
-          Element.setStyle(document.body, styles);
-        }
-      }
-
-      try {
-        var document = this.getDocument();
-      } catch(e) { return; } // No iframe, just stop
-
-      this.selection = new WysiHat.Selection(this);
-
-      if (this.ready && document.designMode == 'on')
-        return;
-
-      setDocumentStyles(document, WysiHat.Editor.styles || {});
-
-      document.designMode = 'on';
-      callback(this);
-      this.ready = true;
-	if (document.body) {
-      this.fire("wysihat:loaded"); // HACK
-}
-    });
-  },
-
-  rawContent: function() {
-    var document = this.getDocument();
-    return document.body.innerHTML;
-  },
-
-  setRawContent: function(text) {
-    var document = this.getDocument();
-    if (document.body)
-      document.body.innerHTML = text;
-  }
-};
-
-Object.extend(String.prototype, (function() {
-  /**
-   * String#format_html_output() -> String
-   *
-   *  Cleanup browser's HTML mess!
-   *
-   *  There is no standard formatting among the major browsers for the rich
-   *  text output. Safari wraps its line breaks with "div" tags, Firefox puts
-   *  "br" tags at the end of the line, and other such as Internet Explorer
-   *  wrap lines in "p" tags.
-   *
-   *  The output is a standarizes these inconsistencies and produces a clean
-   *  result. A single return creates a line break "br" and double returns
-   *  create a new paragraph. This is similar to how Textile and Markdown
-   *  handle whitespace.
-   *
-   *  Raw browser content => String#format_html_output => Textarea
-   **/
-  function format_html_output() {
-    var text = String(this);
-    text = text.tidy_xhtml();
-
-    if (Prototype.Browser.WebKit) {
-      text = text.replace(/(<div>)+/g, "\n");
-      text = text.replace(/(<\/div>)+/g, "");
-
-      text = text.replace(/<p>\s*<\/p>/g, "");
-
-      text = text.replace(/<br \/>(\n)*/g, "\n");
-    } else if (Prototype.Browser.Gecko) {
-      text = text.replace(/<p>/g, "");
-      text = text.replace(/<\/p>(\n)?/g, "\n");
-
-      text = text.replace(/<br \/>(\n)*/g, "\n");
-    } else if (Prototype.Browser.IE || Prototype.Browser.Opera) {
-      text = text.replace(/<p>(&nbsp;|&#160;|\s)<\/p>/g, "<p></p>");
-
-      text = text.replace(/<br \/>/g, "");
-
-      text = text.replace(/<p>/g, '');
-
-      text = text.replace(/&nbsp;/g, '');
-
-      text = text.replace(/<\/p>(\n)?/g, "\n");
-
-      text = text.gsub(/^<p>/, '');
-      text = text.gsub(/<\/p>$/, '');
-    }
-
-    text = text.gsub(/<b>/, "<strong>");
-    text = text.gsub(/<\/b>/, "</strong>");
-
-    text = text.gsub(/<i>/, "<em>");
-    text = text.gsub(/<\/i>/, "</em>");
-
-    text = text.replace(/\n\n+/g, "</p>\n\n<p>");
-
-    text = text.gsub(/(([^\n])(\n))(?=([^\n]))/, "#{2}<br />\n");
-
-    text = '<p>' + text + '</p>';
-
-    text = text.replace(/<p>\s*/g, "<p>");
-    text = text.replace(/\s*<\/p>/g, "</p>");
-
-    var element = Element("body");
-    element.innerHTML = text;
-
-    if (Prototype.Browser.WebKit || Prototype.Browser.Gecko) {
-      var replaced;
-      do {
-        replaced = false;
-        element.select('span').each(function(span) {
-          if (span.hasClassName('Apple-style-span')) {
-            span.removeClassName('Apple-style-span');
-            if (span.className == '')
-              span.removeAttribute('class');
-            replaced = true;
-          } else if (span.getStyle('fontWeight') == 'bold') {
-            span.setStyle({fontWeight: ''});
-            if (span.style.length == 0)
-              span.removeAttribute('style');
-            span.update('<strong>' + span.innerHTML + '</strong>');
-            replaced = true;
-          } else if (span.getStyle('fontStyle') == 'italic') {
-            span.setStyle({fontStyle: ''});
-            if (span.style.length == 0)
-              span.removeAttribute('style');
-            span.update('<em>' + span.innerHTML + '</em>');
-            replaced = true;
-          } else if (span.getStyle('textDecoration') == 'underline') {
-            span.setStyle({textDecoration: ''});
-            if (span.style.length == 0)
-              span.removeAttribute('style');
-            span.update('<u>' + span.innerHTML + '</u>');
-            replaced = true;
-          } else if (span.attributes.length == 0) {
-            span.replace(span.innerHTML);
-            replaced = true;
-          }
-        });
-      } while (replaced);
-
-    }
-
-    for (var i = 0; i < element.descendants().length; i++) {
-      var node = element.descendants()[i];
-      if (node.innerHTML.blank() && node.nodeName != 'BR' && node.id != 'bookmark')
-        node.remove();
-    }
-
-    text = element.innerHTML;
-    text = text.tidy_xhtml();
-
-    text = text.replace(/<br \/>(\n)*/g, "<br />\n");
-    text = text.replace(/<\/p>\n<p>/g, "</p>\n\n<p>");
-
-    text = text.replace(/<p>\s*<\/p>/g, "");
-
-    text = text.replace(/\s*$/g, "");
-
-    return text;
-  }
-
-  /**
-   * String#format_html_input() -> String
-   *
-   *  Prepares sane HTML for editing.
-   *
-   *  This function preforms the reserve function of String#format_html_output. Each
-   *  browser has difficulty editing mix formatting conventions. This restores
-   *  most of the original browser specific formatting tags and some other
-   *  styling conventions.
-   *
-   *  Textarea => String#format_html_input => Raw content
-  **/
-  function format_html_input() {
-    var text = String(this);
-
-    var element = Element("body");
-    element.innerHTML = text;
-
-    if (Prototype.Browser.Gecko || Prototype.Browser.WebKit) {
-      element.select('strong').each(function(element) {
-        element.replace('<span style="font-weight: bold;">' + element.innerHTML + '</span>');
-      });
-      element.select('em').each(function(element) {
-        element.replace('<span style="font-style: italic;">' + element.innerHTML + '</span>');
-      });
-      element.select('u').each(function(element) {
-        element.replace('<span style="text-decoration: underline;">' + element.innerHTML + '</span>');
-      });
-    }
-
-    if (Prototype.Browser.WebKit)
-      element.select('span').each(function(span) {
-        if (span.getStyle('fontWeight') == 'bold')
-          span.addClassName('Apple-style-span');
-
-        if (span.getStyle('fontStyle') == 'italic')
-          span.addClassName('Apple-style-span');
-
-        if (span.getStyle('textDecoration') == 'underline')
-          span.addClassName('Apple-style-span');
-      });
-
-    text = element.innerHTML;
-    text = text.tidy_xhtml();
-
-    text = text.replace(/<\/p>(\n)*<p>/g, "\n\n");
-
-    text = text.replace(/(\n)?<br( \/)?>(\n)?/g, "\n");
-
-    text = text.replace(/^<p>/g, '');
-    text = text.replace(/<\/p>$/g, '');
-
-    if (Prototype.Browser.Gecko) {
-      text = text.replace(/\n/g, "<br>");
-      text = text + '<br>';
-    } else if (Prototype.Browser.WebKit) {
-      text = text.replace(/\n/g, "</div><div>");
-      text = '<div>' + text + '</div>';
-      text = text.replace(/<div><\/div>/g, "<div><br></div>");
-    } else if (Prototype.Browser.IE || Prototype.Browser.Opera) {
-      text = text.replace(/\n/g, "</p>\n<p>");
-      text = '<p>' + text + '</p>';
-      text = text.replace(/<p><\/p>/g, "<p>&nbsp;</p>");
-      text = text.replace(/(<p>&nbsp;<\/p>)+$/g, "");
-    }
-
-    return text;
-  }
-
-  /**
-   * String#tidy_xhtml() -> String
-   *
-   *  Normalizes and tidies text into XHTML content.
-   *   * Strips out browser line breaks, '\r'
-   *   * Downcases tag names
-   *   * Closes line break tags
-   **/
-  function tidy_xhtml() {
-    var text = String(this);
-
-    text = text.gsub(/\r\n?/, "\n");
-
-    text = text.gsub(/<([A-Z]+)([^>]*)>/, function(match) {
-      return '<' + match[1].toLowerCase() + match[2] + '>';
-    });
-
-    text = text.gsub(/<\/([A-Z]+)>/, function(match) {
-      return '</' + match[1].toLowerCase() + '>';
-    });
-
-    text = text.replace(/<br>/g, "<br />");
-
-    return text;
-  }
-
-  return {
-    format_html_output: format_html_output,
-    format_html_input:  format_html_input,
-    tidy_xhtml:         tidy_xhtml
-  };
-})());
-Object.extend(String.prototype, {
-  /**
-   * String#sanitize([options]) -> String
-   * - options (Hash): Whitelist options
-   *
-   *  Sanitizes HTML tags and attributes. Options accepts an array of
-   *  allowed tags and attributes.
-   #
-   *  "<a href='#'>Example</a>".sanitize({tags: ['a'], attributes: ['href']})
-   **/
-  sanitize: function(options) {
-    return Element("div").update(this).sanitize(options).innerHTML.tidy_xhtml();
-  }
-});
-
-Element.addMethods({
-  /**
-   * Element#sanitize([options]) -> Element
-   * - options (Hash): Whitelist options
-   *
-   *  Sanitizes element tags and attributes. Options accepts an array of
-   *  allowed tags and attributes.
-   #
-   *  This method is called by String#sanitize().
-   **/
-  sanitize: function(element, options) {
-    element = $(element);
-    options = $H(options);
-    var allowed_tags = $A(options.get('tags') || []);
-    var allowed_attributes = $A(options.get('attributes') || []);
-    var sanitized = Element(element.nodeName);
-
-    $A(element.childNodes).each(function(child) {
-      if (child.nodeType == 1) {
-        var children = $(child).sanitize(options).childNodes;
-
-        if (allowed_tags.include(child.nodeName.toLowerCase())) {
-          var new_child = Element(child.nodeName);
-          allowed_attributes.each(function(attribute) {
-            if ((value = child.readAttribute(attribute)))
-              new_child.writeAttribute(attribute, value);
-          });
-          sanitized.appendChild(new_child);
-
-          $A(children).each(function(grandchild) { new_child.appendChild(grandchild); });
-        } else {
-          $A(children).each(function(grandchild) { sanitized.appendChild(grandchild); });
-        }
-      } else if (child.nodeType == 3) {
-        sanitized.appendChild(child);
-      }
-    });
-    return sanitized;
-  }
-});
-
-/**
- * class Range
- *
- *  *Under construction*
- *
- *  An attempt to implement the W3C Range in IE.
- *
- **/
-if (Prototype.Browser.IE) {
-  function Range(ownerDocument) {
-    this.ownerDocument = ownerDocument;
-
-    this.startContainer = this.ownerDocument.documentElement;
-    this.startOffset    = 0;
-    this.endContainer   = this.ownerDocument.documentElement;
-    this.endOffset      = 0;
-
-    this.collapsed = true;
-    this.commonAncestorContainer = null;
-
-    this.START_TO_START = 0;
-    this.START_TO_END   = 1;
-    this.END_TO_END     = 2;
-    this.END_TO_START   = 3;
-  }
-
-  document.createRange = function() {
-    return new Range(this);
-  };
-
-  Object.extend(Range.prototype, {
-    setStart: function(parent, offset) {},
-    setEnd: function(parent, offset) {},
-    setStartBefore: function(node) {},
-    setStartAfter: function(node) {},
-    setEndBefore: function(node) {},
-    setEndAfter: function(node) {},
-
-    collapse: function(toStart) {},
-
-    selectNode: function(n) {},
-    selectNodeContents: function(n) {},
-
-    compareBoundaryPoints: function(how, sourceRange) {},
-
-    deleteContents: function() {},
-    extractContents: function() {},
-    cloneContents: function() {},
-
-    insertNode: function(n) {
-      var range = this.ownerDocument.selection.createRange();
-      var parent = this.ownerDocument.createElement('div');
-      parent.appendChild(n);
-      range.collapse();
-      range.pasteHTML(parent.innerHTML);
-    },
-    surroundContents: function(newParent) {
-      var range = this.ownerDocument.selection.createRange();
-      var parent = this.document.createElement('div');
-      parent.appendChild(newParent);
-      node.innerHTML += range.htmlText;
-      range.pasteHTML(parent.innerHTML);
-    },
-
-    cloneRange: function() {},
-    toString: function() {},
-    detach: function() {}
-  });
-}
-/**
- * class WysiHat.Selection
- **/
-WysiHat.Selection = Class.create((function() {
-  /**
-   *  new WysiHat.Selection(editor)
-   *  - editor (WysiHat.Editor): the editor object that you want to bind to
-   **/
-  function initialize(editor) {
-    this.window = editor.getWindow();
-    this.document = editor.getDocument();
-  }
-
-  /**
-   * WysiHat.Selection#getSelection() -> Selection
-   *  Get selected text.
-   **/
-  function getSelection() {
-    return this.window.getSelection ? this.window.getSelection() : this.document.selection;
-  }
-
-  /**
-   * WysiHat.Selection#getRange() -> Range
-   *  Get range for selected text.
-   **/
-  function getRange() {
-    var selection = this.getSelection();
-
-    try {
-      var range;
-      if (selection.getRangeAt)
-        range = selection.getRangeAt(0);
-      else
-        range = selection.createRange();
-    } catch(e) { return null; }
-
-    if (Prototype.Browser.WebKit) {
-      range.setStart(selection.baseNode, selection.baseOffset);
-      range.setEnd(selection.extentNode, selection.extentOffset);
-    }
-
-    return range;
-  }
-
-  /**
-   * WysiHat.Selection#selectNode(node) -> undefined
-   * - node (Element): Element or node to select
-   **/
-  function selectNode(node) {
-    var selection = this.getSelection();
-
-    if (Prototype.Browser.IE) {
-      var range = createRangeFromElement(this.document, node);
-      range.select();
-    } else if (Prototype.Browser.WebKit) {
-      selection.setBaseAndExtent(node, 0, node, node.innerText.length);
-    } else if (Prototype.Browser.Opera) {
-      range = this.document.createRange();
-      range.selectNode(node);
-      selection.removeAllRanges();
-      selection.addRange(range);
-    } else {
-      var range = createRangeFromElement(this.document, node);
-      selection.removeAllRanges();
-      selection.addRange(range);
-    }
-  }
-
-  /**
-   * WysiHat.Selection#getNode() -> Element
-   *  Returns selected node.
-   **/
-  function getNode() {
-    var nodes = null, candidates = [], children, el;
-    var range = this.getRange();
-
-    if (!range)
-      return null;
-
-    var parent;
-    if (range.parentElement)
-      parent = range.parentElement();
-    else
-      parent = range.commonAncestorContainer;
-
-    if (parent) {
-      while (parent.nodeType != 1) parent = parent.parentNode;
-      if (parent.nodeName.toLowerCase() != "body") {
-        el = parent;
-        do {
-          el = el.parentNode;
-          candidates[candidates.length] = el;
-        } while (el.nodeName.toLowerCase() != "body");
-      }
-      children = parent.all || parent.getElementsByTagName("*");
-      for (var j = 0; j < children.length; j++)
-        candidates[candidates.length] = children[j];
-      nodes = [parent];
-      for (var ii = 0, r2; ii < candidates.length; ii++) {
-        r2 = createRangeFromElement(this.document, candidates[ii]);
-        if (r2 && compareRanges(range, r2))
-          nodes[nodes.length] = candidates[ii];
-      }
-    }
-
-    return nodes.first();
-  }
-
-  function createRangeFromElement(document, node) {
-    if (document.body.createTextRange) {
-      var range = document.body.createTextRange();
-      range.moveToElementText(node);
-    } else if (document.createRange) {
-      var range = document.createRange();
-      range.selectNodeContents(node);
-    }
-    return range;
-  }
-
-  function compareRanges(r1, r2) {
-    if (r1.compareEndPoints) {
-      return !(
-        r2.compareEndPoints('StartToStart', r1) == 1 &&
-        r2.compareEndPoints('EndToEnd', r1) == 1 &&
-        r2.compareEndPoints('StartToEnd', r1) == 1 &&
-        r2.compareEndPoints('EndToStart', r1) == 1
-        ||
-        r2.compareEndPoints('StartToStart', r1) == -1 &&
-        r2.compareEndPoints('EndToEnd', r1) == -1 &&
-        r2.compareEndPoints('StartToEnd', r1) == -1 &&
-        r2.compareEndPoints('EndToStart', r1) == -1
-      );
-    } else if (r1.compareBoundaryPoints) {
-      return !(
-        r2.compareBoundaryPoints(0, r1) == 1 &&
-        r2.compareBoundaryPoints(2, r1) == 1 &&
-        r2.compareBoundaryPoints(1, r1) == 1 &&
-        r2.compareBoundaryPoints(3, r1) == 1
-        ||
-        r2.compareBoundaryPoints(0, r1) == -1 &&
-        r2.compareBoundaryPoints(2, r1) == -1 &&
-        r2.compareBoundaryPoints(1, r1) == -1 &&
-        r2.compareBoundaryPoints(3, r1) == -1
-      );
-    }
-
-    return null;
-  };
-
-  function setBookmark() {
-    var bookmark = this.document.getElementById('bookmark');
-    if (bookmark)
-      bookmark.parentNode.removeChild(bookmark);
-
-    bookmark = this.document.createElement('span');
-    bookmark.id = 'bookmark';
-    bookmark.innerHTML = '&nbsp;';
-
-    var range;
-    if (Prototype.Browser.IE)
-      range = new Range(this.document);
-    else
-      range = this.getRange();
-    range.insertNode(bookmark);
-  }
-
-  function moveToBookmark() {
-    var bookmark = this.document.getElementById('bookmark');
-    if (!bookmark)
-      return;
-
-    if (Prototype.Browser.IE) {
-      var range = this.getRange();
-      range.moveToElementText(bookmark);
-      range.collapse();
-      range.select();
-    } else if (Prototype.Browser.WebKit) {
-      var selection = this.getSelection();
-      selection.setBaseAndExtent(bookmark, 0, bookmark, 0);
-    } else {
-      var range = this.getRange();
-      range.setStartBefore(bookmark);
-    }
-
-    bookmark.parentNode.removeChild(bookmark);
-  }
-
-  return {
-    initialize:     initialize,
-    getSelection:   getSelection,
-    getRange:       getRange,
-    getNode:        getNode,
-    selectNode:     selectNode,
-    setBookmark:    setBookmark,
-    moveToBookmark: moveToBookmark
-  };
-})());
-
-/**
- * class WysiHat.Toolbar
- **/
-WysiHat.Toolbar = Class.create((function() {
-  /**
-   * new WysiHat.Toolbar(editor)
-   *  - editor (WysiHat.Editor): the editor object that you want to attach to
-   *
-   *  Creates a toolbar element above the editor. The WysiHat.Toolbar object
-   *  has many helper methods to easily add buttons to the toolbar.
-   *
-   *  This toolbar class is not required for the Editor object to function.
-   *  It is merely a set of helper methods to get you started and to build
-   *  on top of.
-   **/
-  function initialize(editArea) {
-    this.editArea = editArea;
-
-    this.hasMouseDown = false;
-    this.element = new Element('div', { 'class': 'editor_toolbar' });
-
-    var toolbar = this;
-    this.element.observe('mousedown', function(event) { toolbar.mouseDown(event); });
-    this.element.observe('mouseup', function(event) { toolbar.mouseUp(event); });
-
-    this.editArea.insert({before: this.element});
-  }
-
-  /**
-   * WysiHat.Toolbar#addButtonSet(set) -> undefined
-   *  - set (Array): The set array contains nested arrays that hold the
-   *  button options, and handler.
-   *
-   *  Adds a button set to the toolbar.
-   *
-   *  WysiHat.Toolbar.ButtonSets.Basic is a built in button set,
-   *  that looks like:
-   *  [
-   *    [{ name: 'bold', label: "Bold" }, function(editor) {
-   *      editor.boldSelection();
-   *    }],
-   *    [{ name: 'underline', label: "Underline" }, function(editor) {
-   *      editor.underlineSelection();
-   *    }],
-   *    [{ name: 'italic', label: "Italic" }, function(editor) {
-   *      editor.italicSelection();
-   *    }]
-   *  ]
-   **/
-  function addButtonSet(set) {
-    var toolbar = this;
-    $A(set).each(function(button) {
-      var options = button.first();
-      var handler = button.last();
-      toolbar.addButton(options, handler);
-    });
-  }
-
-  /**
-   * WysiHat.Toolbar#addButton(options, handler) -> undefined
-   *  - options (Hash): Required options hash
-   *  - handler (Function): Function to bind to the button
-   *
-   *  The options hash accepts two required keys, name and label. The label
-   *  value is used as the link's inner text. The name value is set to the
-   *  link's class and is used to check the button state.
-   *
-   *  toolbar.addButton({
-   *    name: 'bold', label: "Bold" }, function(editor) {
-   *      editor.boldSelection();
-   *  });
-   *
-   *  Would create a link,
-   *  "<a href='#' class='button bold'><span>Bold</span></a>"
-   **/
-  function addButton(options, handler) {
-    options = $H(options);
-    var button = Element('a', { 'class': 'button', 'href': '#' }).update('<span>' + options.get('label') + '</span>');
-    button.addClassName(options.get('name'));
-
-    this.observeButtonClick(button, handler);
-    this.observeStateChanges(button, options.get('name'));
-    this.element.appendChild(button);
-  }
-
-  /**
-   * WysiHat.Toolbar#observeButtonClick(element, handler) -> undefined
-   *  - element (String | Element): Element to bind handler to
-   *  - handler (Function): Function to bind to the element
-   *  fires wysihat:change
-   *
-   *  In addition to binding the given handler to the element, this observe
-   *  function also sets up a few more events. When the elements onclick is
-   *  fired, the toolbars hasMouseDown property will be set to true and
-   *  back to false on exit.
-   **/
-  function observeButtonClick(element, handler) {
-    var toolbar = this;
-    $(element).observe('click', function(event) {
-      toolbar.hasMouseDown = true;
-      handler(toolbar.editArea);
-      toolbar.editArea.fire("wysihat:change");
-      Event.stop(event);
-      toolbar.hasMouseDown = false;
-    });
-  }
-
-  /**
-   * WysiHat.Toolbar#observeStateChanges(element, command) -> undefined
-   *  - element (String | Element): Element to receive changes
-   *  - command (String): Name of editor command to observe
-   *
-   *  Adds the class "selected" to the given Element when the selected text
-   *  matches the command.
-   *
-   *  toolbar.observeStateChanges(buttonElement, 'bold')
-   *  would add the class "selected" to the buttonElement when the editor's
-   *  selected text was bold.
-   **/
-  function observeStateChanges(element, command) {
-    this.editArea.observe("wysihat:mousemove", function(event) {
-      if (event.target.queryCommandState(command))
-        element.addClassName('selected');
-      else
-        element.removeClassName('selected');
-    });
-  }
-
-  /**
-   * WysiHat.Toolbar#mouseDown(event) -> undefined
-   *  - event (Event)
-   *  This function is triggered when the user clicks their mouse down on
-   *  the toolbar element. For now, it only updates the hasMouseDown property
-   *  to true.
-   **/
-  function mouseDown(event) {
-    this.hasMouseDown = true;
-  }
-
-  /**
-   * WysiHat.Toolbar#mouseDown(event) -> undefined
-   *  - event (Event)
-   *  This function is triggered when the user releases their mouse from
-   *  the toolbar element. It resets the hasMouseDown property back to false
-   *  and refocuses on the editing window.
-   **/
-  function mouseUp(event) {
-    this.editArea.focus();
-    this.hasMouseDown = false;
-  }
-
-  return {
-    initialize:          initialize,
-    addButtonSet:        addButtonSet,
-    addButton:           addButton,
-    observeButtonClick:  observeButtonClick,
-    observeStateChanges: observeStateChanges,
-    mouseDown:           mouseDown,
-    mouseUp:             mouseUp
-  };
-})());
-
-WysiHat.Toolbar.ButtonSets = {};
-
-/**
- * WysiHat.Toolbar.ButtonSets.Basic = $A([
- *    [{ name: 'bold', label: "Bold" }, function(editor) {
- *      editor.boldSelection();
- *    }],
- *
- *    [{ name: 'underline', label: "Underline" }, function(editor) {
- *      editor.underlineSelection();
- *    }],
- *
- *    [{ name: 'italic', label: "Italic" }, function(editor) {
- *      editor.italicSelection();
- *    }]
- *  ])
- *
- *  A basic set of buttons: bold, underline, and italic. This set is
- *  compatible with WysiHat.Toolbar, and can be added to the toolbar with:
- *  toolbar.addButtonSet(WysiHat.Toolbar.ButtonSets.Basic);
- **/
-WysiHat.Toolbar.ButtonSets.Basic = $A([
-  [{ name: 'bold', label: "Bold" }, function(editor) {
-    editor.boldSelection();
-  }],
-
-  [{ name: 'underline', label: "Underline" }, function(editor) {
-    editor.underlineSelection();
-  }],
-
-  [{ name: 'italic', label: "Italic" }, function(editor) {
-    editor.italicSelection();
-  }]
-]);
-
+/* EOF */
