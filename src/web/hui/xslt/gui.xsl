@@ -32,84 +32,84 @@
 	<meta http-equiv="X-UA-Compatible" content="IE8" />
 <xsl:choose>
 	<xsl:when test="$dev='true'">
-		<link rel="stylesheet" href="{$context}/In2iGui/css/dev.css?version={$version}" type="text/css" media="screen" title="no title" charset="utf-8"/>
+		<link rel="stylesheet" href="{$context}/hui/css/dev.css?version={$version}" type="text/css" media="screen" title="no title" charset="utf-8"/>
 	</xsl:when>
 	<xsl:otherwise>
-		<link rel="stylesheet" href="{$context}/In2iGui/bin/minimized.css?version={$version}" type="text/css" media="screen" title="no title" charset="utf-8"/>
+		<link rel="stylesheet" href="{$context}/hui/bin/minimized.css?version={$version}" type="text/css" media="screen" title="no title" charset="utf-8"/>
 	</xsl:otherwise>
 </xsl:choose>
 <!--
 <xsl:comment><![CDATA[[if lt IE 8]>
-	<script src="]]><xsl:value-of select="$context"/><![CDATA[/In2iGui/lib/IE8.js" type="text/javascript"></script>
+	<script src="]]><xsl:value-of select="$context"/><![CDATA[/hui/lib/IE8.js" type="text/javascript"></script>
 <![endif]]]></xsl:comment>-->
 <xsl:comment><![CDATA[[if IE 8]>
-	<link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$context"/><![CDATA[/In2iGui/css/msie8.css?version=]]><xsl:value-of select="$version"/><![CDATA["> </link>
+	<link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$context"/><![CDATA[/hui/css/msie8.css?version=]]><xsl:value-of select="$version"/><![CDATA["> </link>
 <![endif]]]></xsl:comment>
 <xsl:comment><![CDATA[[if lt IE 7]>
-	<link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$context"/><![CDATA[/In2iGui/css/msie6.css?version=]]><xsl:value-of select="$version"/><![CDATA["> </link>
+	<link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$context"/><![CDATA[/hui/css/msie6.css?version=]]><xsl:value-of select="$version"/><![CDATA["> </link>
 <![endif]]]></xsl:comment>
 <xsl:comment><![CDATA[[if IE 7]>
-	<link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$context"/><![CDATA[/In2iGui/css/msie7.css?version=]]><xsl:value-of select="$version"/><![CDATA["> </link>
+	<link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$context"/><![CDATA[/hui/css/msie7.css?version=]]><xsl:value-of select="$version"/><![CDATA["> </link>
 <![endif]]]></xsl:comment>
 <xsl:for-each select="//gui:css">
 	<link rel="stylesheet" href="{@url}" type="text/css" media="screen" title="no title" charset="utf-8"/>
 </xsl:for-each>
 <xsl:choose>
 	<xsl:when test="$dev='true'">
-		<script src="{$context}/In2iGui/lib/swfupload/swfupload.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/lib/date.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/lib/json2.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/hui.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/ui.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/Require.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/Source.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/DragDrop.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/Window.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/Formula.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/List.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/Tabs.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/ObjectList.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/Alert.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/Button.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/Selection.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/Toolbar.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/ImagePicker.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/BoundPanel.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/RichText.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/Picker.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/ImageViewer.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/ColorPicker.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/Upload.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/ProgressBar.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/Gallery.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/Calendar.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/DatePicker.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/Layout.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/Dock.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/Box.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/Wizard.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/Articles.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/TextField.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/SearchField.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/Overflow.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/Fragment.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/Bar.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/IFrame.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/Segmented.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/Flash.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/Overlay.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/Links.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/In2iGui/js/Link.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/lib/swfupload/swfupload.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/lib/date.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/lib/json2.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/hui.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/ui.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/Require.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/Source.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/DragDrop.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/Window.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/Formula.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/List.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/Tabs.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/ObjectList.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/Alert.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/Button.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/Selection.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/Toolbar.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/ImagePicker.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/BoundPanel.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/RichText.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/Picker.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/ImageViewer.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/ColorPicker.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/Upload.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/ProgressBar.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/Gallery.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/Calendar.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/DatePicker.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/Layout.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/Dock.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/Box.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/Wizard.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/Articles.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/TextField.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/SearchField.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/Overflow.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/Fragment.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/Bar.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/IFrame.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/Segmented.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/Flash.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/Overlay.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/Links.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/Link.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 	</xsl:when>
 	<xsl:otherwise>
-		<script src="{$context}/In2iGui/bin/minimized.js?version={$version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/bin/minimized.js?version={$version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 	</xsl:otherwise>
 </xsl:choose>
 <xsl:if test="//gui:graph">
-	<link rel="stylesheet" href="{$context}/In2iGui/ext/graph.css?version={$version}" type="text/css" media="screen" title="no title" charset="utf-8"/>
-	<script type="text/javascript" src="{$context}/In2iGui/lib/protovis-3.2/protovis-r3.2.js"><xsl:comment/></script>
-	<script type="text/javascript" src="{$context}/In2iGui/lib/raphael-min.js"><xsl:comment/></script>
-	<script src="{$context}/In2iGui/ext/Graph.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+	<link rel="stylesheet" href="{$context}/hui/ext/graph.css?version={$version}" type="text/css" media="screen" title="no title" charset="utf-8"/>
+	<script type="text/javascript" src="{$context}/hui/lib/protovis-3.2/protovis-r3.2.js"><xsl:comment/></script>
+	<script type="text/javascript" src="{$context}/hui/lib/raphael-min.js"><xsl:comment/></script>
+	<script src="{$context}/hui/ext/Graph.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 </xsl:if>
 <xsl:for-each select="gui:localize[@source]">
 	<script src="{@source}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
@@ -330,7 +330,7 @@ hui.ui.context = '<xsl:value-of select="$context"/>';
 		<xsl:if test="@badge"><strong class="in2igui_selection_badge"><xsl:value-of select="@badge"/></strong></xsl:if>
 		<xsl:if test="@icon">
 			<span>
-				<xsl:attribute name="style">background-image: url('<xsl:value-of select="$context"/>/In2iGui/icons/<xsl:value-of select="@icon"/>1.png');</xsl:attribute>
+				<xsl:attribute name="style">background-image: url('<xsl:value-of select="$context"/>/hui/icons/<xsl:value-of select="@icon"/>1.png');</xsl:attribute>
 				<xsl:attribute name="class">in2igui_icon_1</xsl:attribute>
 				<xsl:comment/>
 			</span>
@@ -520,7 +520,7 @@ hui.ui.context = '<xsl:value-of select="$context"/>';
 			<div class="in2igui_window_close"><xsl:comment/></div>
 			<div class="in2igui_window_titlebar"><div><div>
 				<xsl:if test="@icon">
-					<span class="in2igui_window_icon" style="background-image: url('{$context}/In2iGui/icons/{@icon}1.png')"></span>
+					<span class="in2igui_window_icon" style="background-image: url('{$context}/hui/icons/{@icon}1.png')"></span>
 				</xsl:if>
 				<span class="in2igui_window_title"><xsl:value-of select="@title"/></span>
 			</div></div></div>
@@ -670,7 +670,7 @@ hui.ui.context = '<xsl:value-of select="$context"/>';
 		<canvas/>
 	</div>
 	<script type="text/javascript">
-		hui.require('<xsl:value-of select="$context"/>/In2iGui/ext/Graphviz.js',function() {
+		hui.require('<xsl:value-of select="$context"/>/hui/ext/Graphviz.js',function() {
 			var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Graphviz('<xsl:value-of select="generate-id()"/>','<xsl:value-of select="@name"/>');
 			<xsl:call-template name="gui:createobject"/>
 		});
@@ -768,7 +768,7 @@ hui.ui.context = '<xsl:value-of select="$context"/>';
 					<xsl:attribute name="class">in2igui_segmented_selected</xsl:attribute>
 				</xsl:if>
 				<xsl:if test="@icon">
-					<span class="in2igui_icon_16" style="background-image: url('{$context}/In2iGui/icons/{@icon}16.png')"><xsl:comment/></span>
+					<span class="in2igui_icon_16" style="background-image: url('{$context}/hui/icons/{@icon}16.png')"><xsl:comment/></span>
 				</xsl:if>
 				<xsl:if test="@title">
 					<span class="in2igui_segmented_text"><xsl:value-of select="@title"/></span>

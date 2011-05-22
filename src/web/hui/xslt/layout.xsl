@@ -45,7 +45,7 @@
 
 <xsl:template match="gui:header">
 	<h2 class="in2igui_header">
-		<xsl:if test="@icon"><span class="in2igui_icon_2" style="background-image: url('{$context}/In2iGui/icons/{@icon}2.png')"><xsl:comment/></span></xsl:if>
+		<xsl:if test="@icon"><span class="in2igui_icon_2" style="background-image: url('{$context}/hui/icons/{@icon}2.png')"><xsl:comment/></span></xsl:if>
 		<xsl:apply-templates/></h2>
 </xsl:template>
 
@@ -153,7 +153,7 @@
 							<xsl:text> in2igui_selected</xsl:text>
 						</xsl:if>
 						</xsl:attribute>
-						<xsl:if test="@icon"><span class="in2igui_icon_1" style="background-image: url('{$context}/In2iGui/icons/{@icon}1.png');')"><xsl:comment/></span></xsl:if>
+						<xsl:if test="@icon"><span class="in2igui_icon_1" style="background-image: url('{$context}/hui/icons/{@icon}1.png');')"><xsl:comment/></span></xsl:if>
 						<span><xsl:value-of select="@title"/></span>
 						</a>
 					</li>

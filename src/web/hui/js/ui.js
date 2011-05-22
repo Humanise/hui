@@ -419,7 +419,7 @@ hui.ui.isWithin = function(e,element) {
 };
 
 hui.ui.getIconUrl = function(icon,size) {
-	return hui.ui.context+'/In2iGui/icons/'+icon+size+'.png';
+	return hui.ui.context+'/hui/icons/'+icon+size+'.png';
 };
 
 hui.ui.createIcon = function(icon,size) {
@@ -841,7 +841,7 @@ hui.ui.Bundle.prototype = {
 
 hui.ui.require = function(names,func) {
 	for (var i = names.length - 1; i >= 0; i--){
-		names[i] = hui.ui.context+'In2iGui/js/'+names[i]+'.js';
+		names[i] = hui.ui.context+'hui/js/'+names[i]+'.js';
 	};
 	hui.require(names,func);
 }

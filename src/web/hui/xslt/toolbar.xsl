@@ -52,9 +52,9 @@
 		</xsl:attribute>
 		<span class="in2igui_toolbar_inner_icon">
 			<span class="in2igui_toolbar_inner_icon">
-			<span class="in2igui_icon" style="background-image: url('{$context}/In2iGui/icons/{@icon}2.png')">
+			<span class="in2igui_icon" style="background-image: url('{$context}/hui/icons/{@icon}2.png')">
 				<xsl:if test="@overlay">
-					<span class="in2igui_icon_overlay" style="background-image: url('{$context}/In2iGui/icons/overlay/{@overlay}2.png')"><xsl:comment/></span>
+					<span class="in2igui_icon_overlay" style="background-image: url('{$context}/hui/icons/overlay/{@overlay}2.png')"><xsl:comment/></span>
 				</xsl:if>
 				<xsl:comment/>
 			</span>
@@ -104,7 +104,7 @@
 	<div id="{generate-id()}" class="in2igui_toolbar_badge">
 		<div class="in2igui_toolbar_inner_badge"><div class="in2igui_toolbar_inner_badge">
 		<xsl:if test="@icon">
-			<div class="in2igui_toolbar_badge_icon" style="background-image: url('{$context}/In2iGui/icons/{@icon}1.png')"><xsl:comment/></div>
+			<div class="in2igui_toolbar_badge_icon" style="background-image: url('{$context}/hui/icons/{@icon}1.png')"><xsl:comment/></div>
 		</xsl:if>
 		<strong><xsl:value-of select="@label"/><xsl:comment/></strong>
 		<span><xsl:value-of select="@text"/><xsl:comment/></span>
@@ -245,7 +245,7 @@
 	</xsl:variable>
 	<a id="{generate-id()}" class="{$class}" href="javascript:void(0);">
 		<xsl:if test="@icon">
-			<span class="in2igui_icon_1" style="background-image: url('{$context}/In2iGui/icons/{@icon}1.png')"><xsl:comment/></span>
+			<span class="in2igui_icon_1" style="background-image: url('{$context}/hui/icons/{@icon}1.png')"><xsl:comment/></span>
 		</xsl:if>
 		<xsl:if test="@text">
 			<span class="in2igui_bar_button_text"><xsl:value-of select="@text"/></span>
