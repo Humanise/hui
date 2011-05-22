@@ -3,7 +3,7 @@
 	xmlns="http://www.w3.org/1999/xhtml"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:fn="http://www.w3.org/2005/xpath-functions"
-    xmlns:gui="uri:In2iGui"
+    xmlns:gui="uri:hui"
     version="1.0"
     exclude-result-prefixes="gui"
     >
