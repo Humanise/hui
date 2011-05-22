@@ -4,9 +4,12 @@ DIR=$(dirname $0)
 
 ${DIR}/concat.sh
 
+echo "Deleting old symbols"
+rm -rf ${DIR}/../api/symbols/*.html
+
 echo "Documenting"
 
-java -Xmx256m -jar jsdoc_toolkit-2.3.2/jsdoc-toolkit/jsrun.jar jsdoc_toolkit-2.3.2/jsdoc-toolkit/app/run.js -a -t=jsdoc_toolkit-2.3.2/jsdoc-toolkit/templates/jsdoc -d=../api/alt ${DIR}/../bin/combined.noproto.js
+java -Xmx256m -jar jsdoc-toolkit/jsrun.jar jsdoc-toolkit/app/run.js -a -t=jsdoc-toolkit/templates/jsdoc -d=../api ${DIR}/../bin/combined.js
 
 
 #		-a or --allfunctions
