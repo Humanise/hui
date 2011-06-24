@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet
 	xmlns="http://www.w3.org/1999/xhtml"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -8,8 +8,8 @@
     >
 
 <xsl:template match="gui:links">
-	<div class="in2igui_links" id="{generate-id()}">
-		<div class="in2igui_links_list"><xsl:comment/></div>
+	<div class="hui_links" id="{generate-id()}">
+		<div class="hui_links_list"><xsl:comment/></div>
 	</div>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Links({

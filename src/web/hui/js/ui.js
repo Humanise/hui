@@ -19,25 +19,17 @@ hui.ui = {
 	latestAlertIndex : 1500,
 	latestTopIndex : 2000,
 	toolTips : {},
-	confirmOverlays : {}
-}
-
-//window.ui = hui.ui; // TODO: old namespace
-
-//window.In2iGui = hui.ui; // TODO: old namespace
-
-
-/** Gets the one instance of In2iGui */
-hui.ui.get = function(nameOrWidget) {
-	if (nameOrWidget) {
-		if (nameOrWidget.element) {
-			return nameOrWidget;
-		}
-		return hui.ui.objects[nameOrWidget];
-	} else {
-		return hui.ui;
+	confirmOverlays : {},
+	
+	delayedUntilReady : [],
+	
+	texts : {
+		request_error : {en:'An error occurred on the server',da:'Der skete en fejl på serveren'},
+		'continue' : {en:'Continue',da:'Fortsæt'},
+		reload_page : {en:'Reload page',da:'Indæs siden igen'},
+		access_denied : {en:'Access denied, maybe you are nolonger logged in',da:'Adgang nægtet, du er måske ikke længere logget ind'}
 	}
-};
+}
 
 hui.onReady(function() {
 	if (window.dwr && window.dwr.engine && window.dwr.engine.setErrorHandler) {
@@ -53,7 +45,43 @@ hui.onReady(function() {
 	if (window.parent && window.parent.hui && window.parent.hui.ui) {
 		window.parent.hui.ui._frameLoaded(window);
 	}
+	for (var i=0; i < hui.ui.delayedUntilReady.length; i++) {
+		hui.ui.delayedUntilReady[i]();
+	};
 });
+
+/** Get a widget by name */
+hui.ui.get = function(nameOrWidget) {
+	if (nameOrWidget) {
+		if (nameOrWidget.element) {
+			return nameOrWidget;
+		}
+		return hui.ui.objects[nameOrWidget];
+	}
+	return null;
+};
+
+hui.ui.getText = function(key) {
+	var x = this.texts[key];
+	if (!x) {return key}
+	if (x[this.language]) {
+		return x[this.language];
+	} else {
+		return x['en'];
+	}
+}
+
+/**
+ * Called when the DOM is ready and hui.ui is ready
+ */
+hui.ui.onReady = function(func) {
+	if (hui.ui.domReady) {return func();}
+	if (hui.browser.gecko && hui.string.endsWith(document.baseURI,'xml')) {
+		window.setTimeout(func,1000);
+		return;
+	}
+	hui.ui.delayedUntilReady.push(func);
+};
 
 hui.ui._frameLoaded = function(win) {
 	hui.ui.callSuperDelegates(this,'frameLoaded',win);
@@ -61,14 +89,17 @@ hui.ui._frameLoaded = function(win) {
 
 /** @private */
 hui.ui._resize = function() {
-	for (var i = hui.ui.layoutWidgets.length - 1; i >= 0; i--){
+	for (var i = hui.ui.layoutWidgets.length - 1; i >= 0; i--) {
 		hui.ui.layoutWidgets[i]['$$layout']();
 	};
 }
 
 hui.ui.confirmOverlay = function(options) {
-	var node = options.element || options.widget.getElement(),
+	var node = options.element,
 		overlay;
+	if (options.widget) {
+		node = options.widget.getElement();
+	}
 	if (hui.ui.confirmOverlays[node]) {
 		overlay = hui.ui.confirmOverlays[node];
 		overlay.clear();
@@ -112,7 +143,7 @@ hui.ui.destroyDescendants = function(element) {
 }
 
 /** Gets all ancestors of a widget
-	@param {Widget} A widget
+	@param {Widget} widget A widget
 	@returns {Array} An array of all ancestors
 */
 hui.ui.getAncestors = function(widget) {
@@ -182,6 +213,13 @@ hui.ui.changeState = function(state) {
 		}
 	}
 	hui.ui.state=state;
+	
+	for (key in all) {
+		obj = all[key];
+		if (obj['$$layoutChanged']) {
+			obj['$$layoutChanged']();
+		}
+	}
 }
 
 ///////////////////////////////// Indexes /////////////////////////////
@@ -211,13 +249,13 @@ hui.ui.nextTopIndex = function() {
 hui.ui.showCurtain = function(options,zIndex) {
 	var widget = options.widget;
 	if (!widget.curtain) {
-		widget.curtain = hui.build('div',{'class':'in2igui_curtain',style:'z-index:none'});
+		widget.curtain = hui.build('div',{'class':'hui_curtain',style:'z-index:none'});
 		widget.curtain.onclick = function() {
 			if (widget['$curtainWasClicked']) {
 				widget['$curtainWasClicked']();
 			}
 		};
-		var body = hui.firstByClass(document.body,'in2igui_body');
+		var body = hui.firstByClass(document.body,'hui_body');
 		if (!body) {
 			body=document.body;
 		}
@@ -238,12 +276,12 @@ hui.ui.showCurtain = function(options,zIndex) {
 	widget.curtain.style.zIndex=options.zIndex;
 	hui.setOpacity(widget.curtain,0);
 	widget.curtain.style.display='block';
-	hui.ani(widget.curtain,'opacity',0.7,1000,{ease:hui.ease.slowFastSlow});
+	hui.animate(widget.curtain,'opacity',0.7,1000,{ease:hui.ease.slowFastSlow});
 }
 
 hui.ui.hideCurtain = function(widget) {
 	if (widget.curtain) {
-		hui.ani(widget.curtain,'opacity',0,200,{hideOnComplete:true});
+		hui.animate(widget.curtain,'opacity',0,200,{hideOnComplete:true});
 	}
 };
 
@@ -251,7 +289,7 @@ hui.ui.hideCurtain = function(widget) {
 
 hui.ui.confirm = function(options) {
 	if (!options.name) {
-		options.name = 'in2iguiConfirm';
+		options.name = 'huiConfirm';
 	}
 	var alert = hui.ui.get(options.name);
 	var ok;
@@ -325,7 +363,7 @@ hui.ui.showMessage = function(options) {
 	}
 	window.clearTimeout(hui.ui.messageDelayTimer);
 	if (!hui.ui.message) {
-		hui.ui.message = hui.build('div',{'class':'in2igui_message',html:'<div><div></div></div>'});
+		hui.ui.message = hui.build('div',{'class':'hui_message',html:'<div><div></div></div>'});
 		if (!hui.browser.msie) {
 			hui.setOpacity(hui.ui.message,0);
 		}
@@ -338,7 +376,7 @@ hui.ui.showMessage = function(options) {
 		hui.dom.addText(inner,options.text);
 	}
 	else if (options.busy) {
-		inner.innerHTML='<span class="in2igui_message_busy"></span>';
+		inner.innerHTML='<span class="hui_message_busy"></span>';
 		hui.dom.addText(inner,options.text);
 	} else {
 		hui.dom.setText(inner,options.text);
@@ -348,7 +386,7 @@ hui.ui.showMessage = function(options) {
 	hui.ui.message.style.marginLeft = (hui.ui.message.clientWidth/-2)+'px';
 	hui.ui.message.style.marginTop = hui.getScrollTop()+'px';
 	if (hui.browser.opacity) {
-		hui.ani(hui.ui.message,'opacity',1,300);
+		hui.animate(hui.ui.message,'opacity',1,300);
 	}
 	window.clearTimeout(hui.ui.messageTimer);
 	if (options.duration) {
@@ -360,7 +398,7 @@ hui.ui.hideMessage = function() {
 	window.clearTimeout(hui.ui.messageDelayTimer);
 	if (hui.ui.message) {
 		if (hui.browser.opacity) {
-			hui.ani(hui.ui.message,'opacity',0,300,{hideOnComplete:true});
+			hui.animate(hui.ui.message,'opacity',0,300,{hideOnComplete:true});
 		} else {
 			hui.ui.message.style.display='none';
 		}
@@ -371,7 +409,7 @@ hui.ui.showToolTip = function(options) {
 	var key = options.key || 'common';
 	var t = hui.ui.toolTips[key];
 	if (!t) {
-		t = hui.build('div',{'class':'in2igui_tooltip',style:'display:none;',html:'<div><div></div></div>',parent:document.body});
+		t = hui.build('div',{'class':'hui_tooltip',style:'display:none;',html:'<div><div></div></div>',parent:document.body});
 		hui.ui.toolTips[key] = t;
 	}
 	t.onclick = function() {hui.ui.hideToolTip(options);};
@@ -384,7 +422,7 @@ hui.ui.showToolTip = function(options) {
 	hui.setStyle(t,{'display':'block',zIndex:hui.ui.nextTopIndex()});
 	hui.setStyle(t,{left:(pos.left-t.clientWidth+4)+'px',top:(pos.top+2-(t.clientHeight/2)+(n.clientHeight/2))+'px'});
 	if (hui.browser.opacity) {
-		hui.ani(t,'opacity',1,300);
+		hui.animate(t,'opacity',1,300);
 	}
 };
 
@@ -393,7 +431,7 @@ hui.ui.hideToolTip = function(options) {
 	var t = hui.ui.toolTips[key];
 	if (t) {
 		if (!hui.browser.msie) {
-			hui.ani(t,'opacity',0,300,{hideOnComplete:true});
+			hui.animate(t,'opacity',0,300,{hideOnComplete:true});
 		} else {
 			hui.style.display = 'none';
 		}
@@ -415,7 +453,7 @@ hui.ui.isWithin = function(e,element) {
 	e = new hui.Event(e);
 	var offset = {left:hui.getLeft(element),top:hui.getTop(element)};
 	var dims = {width:element.clientWidth,height:element.clientHeight};
-	return e.left()>offset.left && e.left()<offset.left+dims.width && e.top()>offset.top && e.top()<offset.top+dims.height;
+	return e.getLeft()>offset.left && e.getLeft()<offset.left+dims.width && e.getTop()>offset.top && e.getTop()<offset.top+dims.height;
 };
 
 hui.ui.getIconUrl = function(icon,size) {
@@ -423,28 +461,16 @@ hui.ui.getIconUrl = function(icon,size) {
 };
 
 hui.ui.createIcon = function(icon,size) {
-	return hui.build('span',{'class':'in2igui_icon in2igui_icon_'+size,style:'background-image: url('+hui.ui.getIconUrl(icon,size)+')'});
-};
-
-/**
- * Called when the DOM is ready and hui.ui is ready
- */
-hui.ui.onReady = function(func) {
-	if (hui.ui.domReady) {return func();}
-	if (hui.browser.gecko && hui.string.endsWith(document.baseURI,'xml')) {
-		window.setTimeout(func,1000);
-		return;
-	}
-	hui.onReady(func);
+	return hui.build('span',{'class':'hui_icon hui_icon_'+size,style:'background-image: url('+hui.ui.getIconUrl(icon,size)+')'});
 };
 
 hui.ui.wrapInField = function(e) {
-	var w = hui.build('div',{'class':'in2igui_field',html:
-		'<span class="in2igui_field_top"><span><span></span></span></span>'+
-		'<span class="in2igui_field_middle"><span class="in2igui_field_middle"><span class="in2igui_field_content"></span></span></span>'+
-		'<span class="in2igui_field_bottom"><span><span></span></span></span>'
+	var w = hui.build('div',{'class':'hui_field',html:
+		'<span class="hui_field_top"><span><span></span></span></span>'+
+		'<span class="hui_field_middle"><span class="hui_field_middle"><span class="hui_field_content"></span></span></span>'+
+		'<span class="hui_field_bottom"><span><span></span></span></span>'
 	});
-	hui.firstByClass(w,'in2igui_field_content').appendChild(e);
+	hui.firstByClass(w,'hui_field_content').appendChild(e);
 	return w;
 };
 
@@ -461,6 +487,7 @@ hui.ui.addFocusClass = function(o) {
 
 /////////////////////////////// Validation /////////////////////////////
 
+/** @constructor */
 hui.ui.NumberValidator = function(options) {
 	hui.override({allowNull:false,min:0,max:10},options)
 	this.min = options.min;
@@ -545,7 +572,7 @@ hui.ui.getTextAreaHeight = function(input) {
 	var t = this.textAreaDummy;
 	if (!t) {
 		t = this.textAreaDummy = document.createElement('div');
-		t.className='in2igui_textarea_dummy';
+		t.className='hui_textarea_dummy';
 		document.body.appendChild(t);
 	}
 	var html = input.value;
@@ -732,6 +759,38 @@ hui.ui.bind = function(expression,delegate) {
 
 //////////////////////////////// Data /////////////////////////////
 
+hui.ui.handleRequestError = function(widget) {
+	hui.log('General request error received');
+	var result = hui.ui.callSuperDelegates(widget || this,'requestError');
+	if (!result) {
+		hui.ui.confirmOverlay({
+			element : document.body,
+			text : hui.ui.getText('request_error'),
+			okText : hui.ui.getText('reload_page'),
+			cancelText : hui.ui.getText('continue'),
+			onOk : function() {
+				document.location.reload();
+			}
+		});
+	}
+}
+
+hui.ui.handleForbidden = function(widget) {
+	hui.log('General access denied received');
+	var result = hui.ui.callSuperDelegates(widget || this,'accessDenied');
+	if (!result) {
+		hui.ui.confirmOverlay({
+			element : document.body,
+			text : hui.ui.getText('access_denied'),
+			okText : hui.ui.getText('reload_page'),
+			cancelText : hui.ui.getText('continue'),
+			onOk : function() {
+				document.location.reload();
+			}
+		});
+	}
+}
+
 hui.ui.request = function(options) {
 	options = hui.override({method:'post',parameters:{}},options);
 	if (options.json) {
@@ -784,12 +843,24 @@ hui.ui.request = function(options) {
 			hui.ui.callDelegates(t,'failure$'+onFailure)
 		} else if (typeof(onFailure)=='function') {
 			onFailure(t);
+		} else {
+			if (options.message && options.message.start) {
+				hui.ui.hideMessage();
+			}
+			hui.ui.handleRequestError();
 		}
 	}
 	options.onException = function(t,e) {
 		hui.log(t);
 		hui.log(e);
 	};
+	options.onForbidden = function(t) {
+		if (options.message && options.message.start) {
+			hui.ui.hideMessage();
+		}
+		options.onFailure(t);
+		hui.ui.handleForbidden();
+	}
 	if (options.message && options.message.start) {
 		hui.ui.showMessage({text:options.message.start,busy:true,delay:options.message.delay});
 	}

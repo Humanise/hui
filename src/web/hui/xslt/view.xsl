@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet
 	xmlns="http://www.w3.org/1999/xhtml"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -11,8 +11,8 @@
 	<table cellspacing="0" cellpadding="0">
 		<xsl:if test="@width"><xsl:attribute name="style">width: <xsl:value-of select="@width"/>px; margin: 0 auto;</xsl:attribute></xsl:if>
 		<xsl:attribute name="class">
-			<xsl:text>in2igui_view</xsl:text>
-			<xsl:if test="@variant='box'"> in2igui_view_box</xsl:if>
+			<xsl:text>hui_view</xsl:text>
+			<xsl:if test="@variant='box'"> hui_view_box</xsl:if>
 		</xsl:attribute>
 		<xsl:apply-templates select="gui:toolbar"/>
 		<xsl:apply-templates select="gui:content"/>

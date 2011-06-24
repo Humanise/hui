@@ -48,6 +48,10 @@ hui.ui.Source.prototype = {
 		};
 		if (this.busy) {
 			this.pendingRefresh = true;
+			// It might be better to cue rather than abort
+			//if (this.transport) {
+			//	this.transport.abort();
+			//}
 			return;
 		}
 		this.pendingRefresh = false;
@@ -60,17 +64,25 @@ hui.ui.Source.prototype = {
 			};
 			this.busy=true;
 			hui.ui.callDelegates(this,'sourceIsBusy');
-			hui.request({
-				method:'post',
-				url:this.options.url,
-				parameters:prms,
-				onSuccess : function(t) {self.parse(t)},
+			this.transport = hui.request({
+				method : 'post',
+				url : this.options.url,
+				parameters : prms,
+				onSuccess : this.parse.bind(this),
 				onException : function(e,t) {
 					hui.log('Exception while loading source...')
 					hui.log(e)
+					self.end();
+				},
+				onForbidden : function() {
+					hui.ui.handleForbidden(self);
+					hui.ui.callDelegates(self,'sourceFailed');
+					self.end();
 				},
 				onFailure : function(t) {
+					hui.log('sourceFailed');
 					hui.ui.callDelegates(self,'sourceFailed');
+					self.end();
 				}
 			});
 		} else if (this.options.dwr) {
@@ -100,7 +112,7 @@ hui.ui.Source.prototype = {
 	},
 	/** @private */
 	parse : function(t) {
-		if (t.responseXML && t.responseXML.documentElement && t.responseXML.documentElement.nodeName!='parsererror') {
+		if (hui.request.isXMLResponse(t)) {
 			this.parseXML(t.responseXML);
 		} else {
 			var str = t.responseText.replace(/^\s+|\s+$/g, ''),
@@ -130,7 +142,6 @@ hui.ui.Source.prototype = {
 		this.end();
 	},
 	addParameter : function(parm) {
-		//hui.log(parm.value);
 		this.parameters.push(parm);
 	},
 	changeParameter : function(key,value) {

@@ -4,7 +4,7 @@ hui.ui.Graphviz = function(element,name,options) {
 		this.scale = 1;
 		this.padding = 8;
 		this.element = hui.get(element);
-		this.texts = hui.firstByClass(this.element,'in2igui_graphviz_texts');
+		this.texts = hui.firstByClass(this.element,'hui_graphviz_texts');
 		this.canvas = hui.firstByTag(this.element,'canvas');
 		this.ctx = this.canvas.getContext('2d');
 
@@ -15,10 +15,10 @@ hui.ui.Graphviz = function(element,name,options) {
 }
 
 hui.ui.Graphviz.create = function(name,options) {
-	var element = hui.build('div',{'class':'in2igui_graphviz'});
-	var texts = bui.build('div',{'class':'in2igui_graphviz_texts',style:'position:relative;'});
+	var element = hui.build('div',{'class':'hui_graphviz'});
+	var texts = bui.build('div',{'class':'hui_graphviz_texts',style:'position:relative;'});
 	element.appendChild(texts);
-	element.appendChild(n2i.build('canvas'));
+	element.appendChild(hui.build('canvas'));
 	return new hui.ui.Graphviz(element,name,options);
 }
 
@@ -263,7 +263,7 @@ hui.ui.Graphviz.prototype = {
 							var str = tokenizer.takeString();
 							if (!redraw_canvas && !str.match(/^\s*$/)) {
 //								hui.ui.Graphviz.debug('draw text ' + str + ' ' + x + ' ' + y + ' ' + text_align + ' ' + text_width);
-								str = n2i.escapeHTML(str);
+								str = hui.escapeHTML(str);
 								do {
 									matches = str.match(/ ( +)/);
 									if (matches) {
@@ -468,7 +468,7 @@ hui.ui.Graphviz.Image.prototype = {
 }
 
 hui.ui.Graphviz.debug = function(str) {
-	n2i.log(str);
+	hui.log(str);
 }
 
 

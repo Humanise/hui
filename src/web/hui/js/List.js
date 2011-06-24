@@ -4,6 +4,8 @@
  * <li>listRowWasOpened - When a row is double clicked (rename to open)</li>
  * <li>selectionChanged - When a row is selected (rename to select)</li>
  * <li>selectionReset - When a selection is removed</li>
+ * <li>clickButton(row,button) - When a button is clicked</li>
+ * <li>clickIcon(row,data) - When an icon is clicked</li>
  * </ul>
  * <p><strong>Bindings:</strong></p>
  * <ul>
@@ -14,8 +16,8 @@
  * </ul>
  * <p><strong>XML:</strong></p>
  * <code>
- * &lt;list name=&quot;list&quot; source=&quot;sourcesListSource&quot; state=&quot;list&quot;/&gt;
- * <br/>
+ * &lt;list name=&quot;myList&quot; source=&quot;mySource&quot; state=&quot;list&quot;/&gt;
+ * <br/><br/>
  * &lt;list name=&quot;list&quot; url=&quot;my_list_data.xml&quot; state=&quot;list&quot;/&gt;
  * </code>
  *
@@ -36,8 +38,8 @@ hui.ui.List = function(options) {
 	this.columns = [];
 	this.rows = [];
 	this.selected = [];
-	this.navigation = hui.firstByClass(this.element,'in2igui_list_navigation');
-	this.count = hui.firstByClass(this.navigation,'in2igui_list_count');
+	this.navigation = hui.firstByClass(this.element,'hui_list_navigation');
+	this.count = hui.firstByClass(this.navigation,'hui_list_count');
 	this.windowPage = hui.firstByClass(this.navigation,'window_page');
 	this.windowPageBody = hui.firstByClass(this.navigation,'window_page_body');
 	this.parameters = {};
@@ -61,8 +63,8 @@ hui.ui.List = function(options) {
 hui.ui.List.create = function(options) {
 	options = hui.override({},options);
 	options.element = hui.build('div',{
-		'class':'in2igui_list',
-		html: '<div class="in2igui_list_progress"></div><div class="in2igui_list_navigation"><div class="in2igui_list_selection window_page"><div><div class="window_page_body"></div></div></div><span class="in2igui_list_count"></span></div><div class="in2igui_list_body"'+(options.maxHeight>0 ? ' style="max-height: '+options.maxHeight+'px; overflow: auto;"' : '')+'><table cellspacing="0" cellpadding="0"><thead><tr></tr></thead><tbody></tbody></table></div>'});
+		'class':'hui_list',
+		html: '<div class="hui_list_progress"></div><div class="hui_list_navigation"><div class="hui_list_selection window_page"><div><div class="window_page_body"></div></div></div><span class="hui_list_count"></span></div><div class="hui_list_body"'+(options.maxHeight>0 ? ' style="max-height: '+options.maxHeight+'px; overflow: auto;"' : '')+'><table cellspacing="0" cellpadding="0"><thead><tr></tr></thead><tbody></tbody></table></div>'});
 	return new hui.ui.List(options);
 }
 
@@ -220,6 +222,7 @@ hui.ui.List.prototype = {
 
 	/** @private */
 	$listLoaded : function(doc) {
+		this._setError(false);
 		this.selected = [];
 		this.parseWindow(doc);
 		this.buildNavigation();
@@ -248,8 +251,8 @@ hui.ui.List.prototype = {
 			}
 			if (sortable) {
 				var self = this;
-				th.in2iguiIndex = i;
-				th.onclick=function() {self.sort(this.in2iguiIndex)};
+				th.huiIndex = i;
+				th.onclick=function() {self.sort(this.huiIndex)};
 				className+='sortable';
 			}
 			if (this.sortKey && key==this.sortKey) {
@@ -271,10 +274,17 @@ hui.ui.List.prototype = {
 			row.setAttribute('data-index',i);
 			var icon = rows[i].getAttribute('icon');
 			var title = rows[i].getAttribute('title');
+			var level = rows[i].getAttribute('level');
 			for (var j=0; j < cells.length; j++) {
 				var td = document.createElement('td');
 				if (cells[j].getAttribute('wrap')=='false') {
 					td.style.whiteSpace='nowrap';
+				}
+				if (cells[j].getAttribute('vertical-align')) {
+					td.style.verticalAlign=cells[j].getAttribute('vertical-align');
+				}
+				if (j==0 && level>1) {
+					td.style.paddingLeft = ((parseInt(level)-1)*16+5)+'px';
 				}
 				this.parseCell(cells[j],td);
 				row.appendChild(td);
@@ -285,7 +295,7 @@ hui.ui.List.prototype = {
 					icon = cells[j].getAttribute('icon');
 				}
 			};
-			var info = {id:rows[i].getAttribute('id'),kind:rows[i].getAttribute('kind'),icon:icon,title:title,index:i};
+			var info = {id:rows[i].getAttribute('id'),kind:rows[i].getAttribute('kind'),icon:icon,title:title,index:i,data:this._getData(rows[i])};
 			row.dragDropInfo = info;
 			this.addRowBehavior(row,i);
 			frag.appendChild(row);
@@ -297,6 +307,7 @@ hui.ui.List.prototype = {
 	
 	/** @private */
 	$objectsLoaded : function(data) {
+		this._setError(false);
 		if (data==null) {
 			// NOOP
 		} else if (data.constructor == Array) {
@@ -314,37 +325,34 @@ hui.ui.List.prototype = {
 	$sourceIsNotBusy : function() {
 		this._setBusy(false);
 	},
-	
+	/** @private */
+	$sourceFailed : function() {
+		hui.log('The source failed!');
+		this._setError(true);
+	},
+	_setError : function(error) {
+		hui.setClass(this.element,'hui_list_error',error);
+	},
 	_setBusy : function(busy) {
 		this.busy = busy;
 		window.clearTimeout(this.busytimer);
 		if (busy) {
 			var e = this.element;
 			this.busytimer = window.setTimeout(function() {
-				hui.addClass(e,'in2igui_list_busy');
+				hui.addClass(e,'hui_list_busy');
 			},300);
 		} else {
-			hui.removeClass(this.element,'in2igui_list_busy');
+			hui.removeClass(this.element,'hui_list_busy');
 		}
 	},
 	
-	/** @private 
-	filter : function(str) {
-		var len = 20;
-		var regex = new RegExp("[\\w]{"+len+",}","g");
-		var match = regex.exec(str);
-		if (match) {
-			for (var i=0; i < match.length; i++) {
-				var rep = '';
-				for (var j=0; j < match[i].length; j++) {
-					rep+=match[i][j];
-					if ((j+1)%len==0) rep+='\u200B';
-				};
-				str = str.replace(match[i],rep);
-			};
-		}
-		return str;
-	},*/
+	_wrap : function(str) {
+		var out = '';
+		for (var i=0; i < str.length; i++) {
+			out+=str[i]+'\u200B';
+		};
+		return out;
+	},
 	
 	/** @private */
 	parseCell : function(node,cell) {
@@ -359,11 +367,20 @@ hui.ui.List.prototype = {
 			} else if (hui.dom.isElement(child,'break')) {
 				cell.appendChild(document.createElement('br'));
 			} else if (hui.dom.isElement(child,'icon')) {
-				cell.appendChild(hui.ui.createIcon(child.getAttribute('icon'),1));
+				var icon = hui.ui.createIcon(child.getAttribute('icon'),1);
+				var data = child.getAttribute('data');
+				if (data) {
+					icon.setAttribute('data',data);
+					hui.addClass(icon,'hui_list_action');
+					if (child.getAttribute('revealing')==='true') {
+						hui.addClass(icon,'hui_list_revealing');
+					}
+				}
+				cell.appendChild(icon);
 			} else if (hui.dom.isElement(child,'line')) {
-				var line = hui.build('p',{'class':'in2igui_list_line'});
+				var line = hui.build('p',{'class':'hui_list_line'});
 				if (child.getAttribute('dimmed')=='true') {
-					hui.addClass(line,'in2igui_list_dimmed')
+					hui.addClass(line,'hui_list_dimmed')
 				}
 				cell.appendChild(line);
 				this.parseCell(child,line);
@@ -377,22 +394,32 @@ hui.ui.List.prototype = {
 				}
 				cell.appendChild(obj);
 			} else if (hui.dom.isElement(child,'icons')) {
-				var icons = hui.build('span',{'class':'in2igui_list_icons'});
+				var icons = hui.build('span',{'class':'hui_list_icons'});
 				this.parseCell(child,icons);
 				cell.appendChild(icons);
 			} else if (hui.dom.isElement(child,'button')) {
-				var button = hui.ui.Button.create({text:child.getAttribute('text'),small:true,rounded:true});
-				button.click(function() {
-					this._buttonClick(button);
-				}.bind(this))
+				var button = hui.ui.Button.create({text:child.getAttribute('text'),small:true,rounded:true,data:this._getData(child)});
+				button.click(this._buttonClick.bind(this))
 				cell.appendChild(button.getElement());
+			} else if (hui.dom.isElement(child,'wrap')) {
+				hui.dom.addText(cell,this._wrap(hui.dom.getText(child)));
+			} else if (hui.dom.isElement(child,'delete')) {
+				var icons = hui.build('del',{parent:cell});
+				this.parseCell(child,icons);
 			}
 		};
+	},
+	_getData : function(node) {
+		var data = node.getAttribute('data');
+		if (data) {
+			return hui.fromJSON(data);
+		}
+		return null;
 	},
 	_buttonClick : function(button) {
 		var row = hui.firstParentByTag(button.getElement(),'tr');
 		var obj = this.rows[parseInt(row.getAttribute('data-index'),10)];
-		this.fire('buttonClick',obj,button);
+		this.fire('clickButton',obj,button);
 	},
 	/** @private */
 	parseWindow : function(doc) {
@@ -471,11 +498,11 @@ hui.ui.List.prototype = {
 		this.window.size = win.size || 0;
 		this.window.page = win.page || 0;
 		this.buildNavigation();
-		this.buildHeaders(data.headers);
-		this.buildRows(data.rows);
+		this._buildHeaders(data.headers);
+		this._buildRows(data.rows);
 	},
 	/** @private */
-	buildHeaders : function(headers) {
+	_buildHeaders : function(headers) {
 		hui.dom.clear(this.head);
 		this.columns = [];
 		var tr = hui.build('tr',{parent:this.head});
@@ -494,7 +521,7 @@ hui.ui.List.prototype = {
 		}.bind(this));
 	},
 	/** @private */
-	buildRows : function(rows) {
+	_buildRows : function(rows) {
 		var self = this;
 		hui.dom.clear(this.body);
 		this.rows = [];
@@ -519,6 +546,7 @@ hui.ui.List.prototype = {
 			// TODO: Memory leak!
 			var info = {id:r.id,kind:r.kind,icon:icon,title:title,index:i};
 			tr.dragDropInfo = info;
+			hui.log(this._getData(r))
 			self.rows.push({id:r.id,kind:r.kind,icon:icon,title:title,index:i,data:r.data});
 			this.addRowBehavior(tr,i);
 		}.bind(this));
@@ -576,13 +604,23 @@ hui.ui.List.prototype = {
 		var self = this;
 		row.onmousedown = function(e) {
 			if (self.busy) {return};
-			self.rowDown(index);
-			hui.ui.startDrag(e,row);
+			var event = hui.event(e);
+			var action = event.findByClass('hui_list_action');
+			if (!action) {
+				self._rowDown(index);
+				hui.ui.startDrag(e,row);
+				return false;
+			}
+		}
+		row.ondblclick = function(e) {
+			if (self.busy) {return};
+			self._rowDoubleClick(index,e);
+			hui.selection.clear();
 			return false;
 		}
-		row.ondblclick = function() {
+		row.onclick = function(e) {
 			if (self.busy) {return};
-			self.rowDoubleClick(index);
+			self._rowClick(index,e);
 			return false;
 		}
 	},
@@ -599,13 +637,27 @@ hui.ui.List.prototype = {
 		this.selected = indexes;
 		this.fire('selectionChanged',this.rows[indexes[0]]);
 	},
-	/** @private */
-	rowDown : function(index) {
+	_rowClick : function(index,e) {
+		e = hui.event(e);
+		var a = e.findByClass('hui_list_action');
+		if (a) {
+			var data = a.getAttribute('data');
+			if (data) {
+				this.fire('clickIcon',this.rows[index],hui.fromJSON(data));
+			}
+		}
+	},
+	_rowDown : function(index) {
 		this.changeSelection([index]);
 	},
-	/** @private */
-	rowDoubleClick : function(index) {
-		this.fire('listRowWasOpened',this.getFirstSelection());
+	_rowDoubleClick : function(index,e) {
+		e = hui.event(e);
+		if (!e.findByClass('hui_list_action')) {
+			var row = this.getFirstSelection();
+			if (row) {
+				this.fire('listRowWasOpened',row);
+			}			
+		}
 	},
 	/** @private */
 	windowPageWasClicked : function(tag) {
@@ -613,6 +665,10 @@ hui.ui.List.prototype = {
 		this.window.page = index;
 		hui.ui.firePropertyChange(this,'window',this.window);
 		hui.ui.firePropertyChange(this,'window.page',this.window.page);
+		var as = this.windowPageBody.getElementsByTagName('a');
+		for (var i = as.length - 1; i >= 0; i--){
+			as[i].className = as[i]==tag ? 'selected' : '';
+		};
 	}
 };
 

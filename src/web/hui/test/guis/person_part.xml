@@ -39,6 +39,6 @@
 				</grid>
 			</toolbar>
 		</top>
-		<middle><checkbox/></middle>
+		<middle></middle>
 	</layout>
 </gui>

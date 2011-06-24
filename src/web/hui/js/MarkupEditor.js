@@ -1,19 +1,20 @@
 /**
  * @constructor
+ * @param options The options { debug : «boolean», value : '«html»', autoHideToolbar : «boolean», style : '«css»', replace : «node-or-id»}
  */
 hui.ui.MarkupEditor = function(options) {
 	this.name = options.name;
 	this.options = hui.override({debug:false,value:'',autoHideToolbar:true,style:'font-family: sans-serif; font-size: 11px;'},options);
-	if (options.replace) {
-		options.replace = hui.get(options.replace);
-		options.element = hui.build('div',{className:'in2igui_markupeditor'});
-		options.replace.parentNode.insertBefore(options.element,options.replace);
-		options.replace.style.display='none';
-		options.value = options.replace.innerHTML;
+	if (this.options.replace) {
+		this.options.replace = hui.get(options.replace);
+		this.options.element = hui.build('div',{className:'hui_markupeditor '+this.options.replace.className});
+		this.options.replace.parentNode.insertBefore(this.options.element,this.options.replace);
+		this.options.replace.style.display='none';
+		this.options.value = this.options.replace.innerHTML;
 	}
 	this.ready = false;
 	this.pending = [];
-	this.element = hui.get(options.element);
+	this.element = hui.get(this.options.element);
 	if (hui.browser.msie) {
 		this.impl = hui.ui.MarkupEditor.MSIE;
 	} else {
@@ -28,41 +29,47 @@ hui.ui.MarkupEditor = function(options) {
 
 hui.ui.MarkupEditor.create = function(options) {
 	options = options || {};
-	options.element = hui.build('div',{className:'in2igui_markupeditor'});
+	options.element = hui.build('div',{className:'hui_markupeditor'});
 	return new hui.ui.MarkupEditor(options);
 }
 
 hui.ui.MarkupEditor.prototype = {
+	/** @private */
 	implIsReady : function() {
 		this.ready = true;
-		hui.log('I am ready!');
 		for (var i=0; i < this.pending.length; i++) {
-			hui.log(this.pending[i]);
 			this.pending[i]();
 		};
 	},
+	/** @private */
 	implFocused : function() {
 		this._showBar();
 	},
+	/** @private */
 	implBlurred : function() {
 		this.bar.hide();
 		this.fire('blur');
 	},
+	/** @private */
 	implValueChanged : function() {
 		this._valueChanged();
 	},
+	/** Remove the widget from the DOM */
 	destroy : function() {
 		hui.dom.remove(this.element);
 		hui.ui.destroy(this);
 	},
+	/** Get the HTML value */
 	getValue : function() {
 		return this.impl.getHTML();
 	},
+	/** Set the HTML value */
 	setValue : function(value) {
 		this._whenReady(function() {
 			this.impl.setHTML(value);
 		}.bind(this));
 	},
+	/** Focus the editor */
 	focus : function() {
 		this._whenReady(this.impl.focus.bind(this.impl));
 	},
@@ -168,6 +175,7 @@ hui.ui.MarkupEditor.prototype = {
 		this.fire('valueChanged',this.impl.getHTML());		
 	},
 	
+	/** @private */
 	$colorWasSelected : function(color) {
 		this.impl.restoreSelection(function() {
 			this.impl.colorize(color);
@@ -176,6 +184,7 @@ hui.ui.MarkupEditor.prototype = {
 	}
 }
 
+/** @private */
 hui.ui.MarkupEditor.webkit = {
 	initialize : function(options) {
 		this.element = options.element;
@@ -252,7 +261,7 @@ hui.ui.MarkupEditor.webkit = {
 			range.surroundContents(node);
 			selection.selectAllChildren(node);
 		}
-		//document.execCommand('inserthtml',null,'<'+tag+'>'+hui.escape(hui.getSelectedText())+'</'+tag+'>');
+		//document.execCommand('inserthtml',null,'<'+tag+'>'+hui.escape(hui.selection.getText())+'</'+tag+'>');
 	},
 	_getInlineTag : function() {
 		var selection = window.getSelection();
@@ -287,6 +296,7 @@ hui.ui.MarkupEditor.webkit = {
 	}
 }
 
+/** @private */
 hui.ui.MarkupEditor.MSIE = {
 	initialize : function(options) {
 		this.element = options.element;
@@ -345,7 +355,7 @@ hui.ui.MarkupEditor.MSIE = {
 		this.restoreSelection();
 	},
 	_wrapInTag : function(tag) {
-		document.execCommand('inserthtml',null,'<'+tag+'>'+hui.escape(hui.getSelectedText())+'</'+tag+'>');
+		document.execCommand('inserthtml',null,'<'+tag+'>'+hui.escape(hui.selection.getText())+'</'+tag+'>');
 	},
 	_insertHTML : function(html) {
 		document.execCommand('inserthtml',null,html);
@@ -359,6 +369,7 @@ hui.ui.MarkupEditor.MSIE = {
 	}
 }
 
+/** @private */
 hui.ui.MarkupEditor.util = {
 	clean : function(node) {
 		var copy = node.cloneNode(true);
@@ -375,12 +386,18 @@ hui.ui.MarkupEditor.util = {
 		for (var key in recipe) {
 			var bs = node.getElementsByTagName(key);
 			for (var i = bs.length - 1; i >= 0; i--) {
+				var x = bs[i];
 				var replacement = document.createElement(recipe[key]);
 				var color = bs[i].getAttribute('color');
 				if (color) {
 					replacement.style.color=color;
 				}
-				hui.dom.replaceNode(bs[i],replacement);
+				hui.dom.replaceNode(x,replacement);
+				var children = x.childNodes;
+				for (var j=0; j < children.length; j++) {
+					var removed = x.removeChild(children[j]);
+					replacement.appendChild(removed);
+				};
 			};
 		}
 	},

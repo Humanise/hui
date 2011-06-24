@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
-<gui xmlns="uri:hui" title="Box">
+<gui xmlns="uri:hui" title="HUI tests">
 	<dock url="unittests/hui.html" name="dock" position="bottom" frame-name="Desktop">
 		<tabs small="true">
 			<tab title="Unit-tests">
 				<toolbar>
+					<icon icon="common/folder" text="Animation" click="dock.setUrl('unittests/animation.html')"/>
 					<icon icon="common/folder" text="Formula" click="dock.setUrl('unittests/formula.html')"/>
 					<icon icon="common/folder" text="HUI" click="dock.setUrl('unittests/hui.html')"/>
 					<icon icon="common/folder" text="Style" click="dock.setUrl('unittests/style.html')"/>
@@ -18,7 +19,6 @@
 					<icon icon="common/folder" text="Box" click="dock.setUrl('xml/box.xml')"/>
 					<icon icon="common/folder" text="Button" click="dock.setUrl('xml/button.xml')"/>
 					<icon icon="common/folder" text="Calendar" click="dock.setUrl('xml/calendar.xml')"/>
-					<icon icon="common/folder" text="Chart" click="dock.setUrl('xml/chart.xml')"/>
 					<icon icon="common/folder" text="DropDown" click="dock.setUrl('xml/dropdown.xml')"/>
 					<icon icon="common/folder" text="Formula" click="dock.setUrl('xml/formula.xml')"/>
 					<icon icon="common/folder" text="Formula - fieldset" click="dock.setUrl('xml/formula_fieldset.xml')"/>
