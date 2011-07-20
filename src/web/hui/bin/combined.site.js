@@ -47,6 +47,8 @@ hui.browser.safari = navigator.userAgent.indexOf('Safari')!==-1;
 hui.browser.webkitVersion = null;
 /** If the browser is Gecko based */
 hui.browser.gecko = !hui.browser.webkit && navigator.userAgent.indexOf('Gecko')!=-1;
+/** If the browser is safari on iPad */
+hui.browser.ipad = hui.browser.webkit && navigator.userAgent.indexOf('iPad')!=-1;
 
 /** If the browser supports CSS opacity */
 hui.browser.opacity = !hui.browser.msie || hui.browser.msie9;
@@ -1170,37 +1172,38 @@ hui.getDocumentHeight = function() {
 //////////////////////////// Placement /////////////////////////
 
 /**
- * Example hui.place({target : {element : myTarget, horizontal : 1}, source : {element : mySource, vertical : 0.5}})
+ * Example hui.place({target : {element : «node», horizontal : «0-1»}, source : {element : «node», vertical : «0 - 1»}, insideViewPort:«boolean», viewPartMargin:«integer»})
  */
 hui.place = function(options) {
-	var left=0,top=0;
-	var trgt = options.target.element;
-	var trgtPos = {left:hui.getLeft(trgt),top:hui.getTop(trgt)};
-	left = trgtPos.left+trgt.clientWidth*options.target.horizontal;
-	top = trgtPos.top+trgt.clientHeight*options.target.vertical;
+	var left = 0,
+		top = 0,
+		trgt = options.target.element,
+		trgtPos = {left : hui.getLeft(trgt), top : hui.getTop(trgt) };
+	left = trgtPos.left + trgt.clientWidth * (options.target.horizontal || 0);
+	top = trgtPos.top + trgt.clientHeight * (options.target.vertical || 0);
 	
 	var src = options.source.element;
-	left-=src.clientWidth*options.source.horizontal;
-	top-=src.clientHeight*options.source.vertical;
+	left -= src.clientWidth * (options.source.horizontal || 0);
+	top -= src.clientHeight * (options.source.vertical || 0);
 	
 	if (options.insideViewPort) {
 		var w = hui.getViewPortWidth();
-		hui.log((left+src.clientWidth)+'>'+w);
-		if (left+src.clientWidth>w) {
-			left=w-src.clientWidth;
+		if (left + src.clientWidth > w) {
+			left = w - src.clientWidth - (options.viewPartMargin || 0);
+			hui.log(options.viewPartMargin)
 		}
-		if (left<0) {left=0}
-		if (top<0) {top=0}
+		if (left < 0) {left=0}
+		if (top < 0) {top=0}
 	}
 	if (options.top) {
-		top+=options.top;
+		top += options.top;
 	}
 	if (options.left) {
-		left+=options.left;
+		left += options.left;
 	}
 	
-	src.style.top=top+'px';
-	src.style.left=left+'px';
+	src.style.top = top+'px';
+	src.style.left = left+'px';
 }
 
 //////////////////////////// Preloader /////////////////////////
@@ -2380,6 +2383,9 @@ hui.ui._resize = function() {
 	};
 }
 
+/**
+ * @param options { element:«node», widget:«widget», text:«string», okText:«string», cancelText«string», onOk:«function»}
+ */
 hui.ui.confirmOverlay = function(options) {
 	var node = options.element,
 		overlay;
@@ -2536,16 +2542,17 @@ hui.ui.showCurtain = function(options,zIndex) {
 	var widget = options.widget;
 	if (!widget.curtain) {
 		widget.curtain = hui.build('div',{'class':'hui_curtain',style:'z-index:none'});
-		widget.curtain.onclick = function() {
-			if (widget['$curtainWasClicked']) {
-				widget['$curtainWasClicked']();
-			}
-		};
+		
 		var body = hui.firstByClass(document.body,'hui_body');
 		if (!body) {
 			body=document.body;
 		}
 		body.appendChild(widget.curtain);
+		hui.listen(widget.curtain,'click',function() {
+			if (widget['$curtainWasClicked']) {
+				widget['$curtainWasClicked']();
+			}
+		});
 	}
 	if (options.color) {
 		widget.curtain.style.backgroundColor=options.color;
@@ -3666,8 +3673,8 @@ hui.ui.Box.prototype = {
 		} else {
 			e.style.display='block';
 		}
-		hui.ui.callVisible(this);
 		this.visible = true;
+		hui.ui.callVisible(this);
 	},
 	/** private */
 	$$layout : function() {
@@ -3685,6 +3692,7 @@ hui.ui.Box.prototype = {
 		hui.ui.hideCurtain(this);
 		this.element.style.display='none';
 		this.visible = false;
+		hui.ui.callVisible(this);
 	},
 	/** @private */
 	curtainWasClicked : function() {

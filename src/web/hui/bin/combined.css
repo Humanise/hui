@@ -218,11 +218,16 @@ div.browser .column div.selected, div.browser .column div.selected:hover
 	color: #fff;
 }
 
-/****************************************** Fragment *******************************/
+/****************************************** Backgrounds *******************************/
 
 .hui_bg_brushed
 {
 	background: url('../gfx/backgrounds/brushed_light.jpg');
+}
+
+.hui_bg_linen
+{
+	background: url('../gfx/backgrounds/linen.png');
 }
 
 .hui_bg_wood
@@ -243,55 +248,6 @@ div.browser .column div.selected, div.browser .column div.selected:hover
 .hui_bg_aluminum
 {
 	background: url('../gfx/backgrounds/brushed_alu.png');	
-}
-/****************************************** Info view ******************************/
-
-div.hui_infoview
-{
-	overflow-y: hidden;
-}
-
-div.hui_infoview_busy
-{
-	background: url('../gfx/spinner_large.gif') center center no-repeat;
-}
-
-div.hui_infoview table
-{
-	width: 100%;
-	font-size: 8pt;
-	line-height: 14px;
-}
-
-div.hui_infoview th
-{
-	vertical-align: top;
-	text-align: right;
-	padding: 2px 8px 0px 0px;
-	color: #666;
-	font-weight: normal;
-}
-
-div.hui_infoview td
-{
-	vertical-align: top;
-	padding: 2px 0px 0px 0px;
-}
-
-div.hui_infoview th.hui_infoview_header
-{
-	font-size: 13pt;
-	padding-bottom: 5px;
-	text-align: left;
-	color: #333;
-	line-height: 19px;
-	padding-top: 0px;
-}
-
-div.hui_infoview_click:hover
-{
-	cursor: pointer;
-	text-decoration: underline;
 }
 
 
@@ -324,13 +280,13 @@ div.hui_buttons_right a.hui_button
 
 a.hui_button
 {
-	background: url('../gfx/button2.png') top left no-repeat;
+	background: url('../gfx/button.png') top left no-repeat;
 	color: #004a80;
 	display: inline-block;
 	vertical-align: middle;
 	font-size: 12px;
-	height: 30px;
-	line-height: 29px;
+	height: 28px;
+	line-height: 28px;
 	cursor: pointer;
 	text-decoration: none;
 	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
@@ -341,125 +297,130 @@ a.hui_button
 
 a.hui_button span
 {
-	background-image: url('../gfx/button2.png');	
+	background-image: url('../gfx/button.png');	
 	background-repeat: no-repeat;
 	display: inline-block;
-	background-position: right -30px;
+	background-position: right -56px;
 	background-repeat: no-repeat;
-	height: 30px;
+	height: 28px;
 }
 
 a.hui_button span span
 {
-	background-position: 0px -60px;
+	background-position: 0px -28px;
 	background-repeat: repeat-x;
-	margin: 0px 6px;
-	padding: 0px 6px;
+	margin: 0px 5px;
+	padding: 0px 5px;
 }
 
 em.hui_button_icon
 {
 	padding: 0px;
-	margin: -1px 3px 0px -2px;
+	margin: 6px 3px 0px -2px;
 	width: 16px;
 	height: 16px;
 	display: inline-block;
-	vertical-align: middle;
+	vertical-align: top;
 }
 
 em.hui_button_icon_notext
 {
-	margin: -1px -3px 0px -3px;
+	margin: 6px -3px 0px -3px;
+}
+
+a.hui_button:hover em.hui_button_icon
+{
+	background-position: 0 -16px;
 }
 
 a.hui_button:hover
 {
-	background-position: 0px -90px;
+	background-position: 0px -84px;
 }
 
 a.hui_button:hover span
 {
-	background-position: 100% -120px;
+	background-position: 100% -140px;
 }
 
 a.hui_button:hover span span
 {
-	background-position: 0px -150px;
-	background-repeat: repeat-x;
-}
-
-a.hui_button:focus
-{
-	background-position: 0px -180px;
-	outline: none;
-}
-
-a.hui_button:focus span
-{
-	background-position: 100% -210px;
-}
-
-a.hui_button:focus span span
-{
-	background-position: 0px -240px;
-	background-repeat: repeat-x;
-}
-
-a.hui_button:focus:hover
-{
-	background-position: 0px -270px;
-	outline: none;
-}
-
-a.hui_button:focus:hover span
-{
-	background-position: 100% -300px;
-}
-
-a.hui_button:focus:hover span span
-{
-	background-position: 0px -330px;
+	background-position: 0px -112px;
 	background-repeat: repeat-x;
 }
 
 a.hui_button:active
 {
-	background-position: 0px -360px;
+	background-position: 0px -168px;
 	outline: none;
 }
 
 a.hui_button:active span
 {
-	background-position: 100% -390px;
+	background-position: 100% -224px;
 }
 
 a.hui_button:active span span
 {
-	background-position: 0px -420px;
+	background-position: 0px -196px;
+	background-repeat: repeat-x;
+}
+
+a.hui_button:focus
+{
+	background-position: 0px -252px;
+	outline: none;
+}
+
+a.hui_button:focus span
+{
+	background-position: 100% -308px;
+}
+
+a.hui_button:focus span span
+{
+	background-position: 0px -280px;
+	background-repeat: repeat-x;
+}
+
+a.hui_button:focus:hover
+{
+	background-position: 0px -336px;
+	outline: none;
+}
+
+a.hui_button:focus:hover span
+{
+	background-position: 100% -392px;
+}
+
+a.hui_button:focus:hover span span
+{
+	background-position: 0px -364px;
 	background-repeat: repeat-x;
 }
 
 a.hui_button:active:focus
 {
-	background-position: 0px -450px;
+	background-position: 0px -420px;
 	outline: none;
 }
 
 a.hui_button:active:focus span
 {
-	background-position: 100% -480px;
+	background-position: 100% -476px;
 }
 
 a.hui_button:active:focus span span
 {
-	background-position: 0px -510px;
+	background-position: 0px -448px;
 	background-repeat: repeat-x;
 }
 
 a.hui_button_highlighted, a.hui_button_highlighted span
 {
-	background-image: url('../gfx/button_highlighted2.png');
-	color: #fff;
+	background-image: url('../gfx/button_highlighted.png');
+	color: #152;
 }
 
 a.hui_button_disabled
@@ -476,30 +437,30 @@ a.hui_button_disabled:hover
 
 a.hui_button_disabled:hover span
 {
-	background-position: 100% -30px;
+	background-position: 100% -56px;
 }
 
 a.hui_button_disabled:hover span span
 {
-	background-position: 0px -60px;
+	background-position: 0px -28px;
 }
 
-a.hui_button_small_rounded
+a.hui_button_small
 {
 	height: 24px;
-	background-image: url('../gfx/button_small_rounded.png');
+	background-image: url('../gfx/button_small.png');
 	line-height: 0;
 	font-size: 0;
 }
 
-a.hui_button_small_rounded span
+a.hui_button_small span
 {
 	height: 24px;
-	background-image: url('../gfx/button_small_rounded.png');
+	background-image: url('../gfx/button_small.png');
 	background-position: right -24px;
 }
 
-a.hui_button_small_rounded span span
+a.hui_button_small span span
 {
 	background-position: left -48px;
 	margin: 0 12px;
@@ -509,80 +470,98 @@ a.hui_button_small_rounded span span
 	text-shadow: 0 1px 0 #FFFFFF;
 }
 
-a.hui_button_small_rounded:hover
+a.hui_button_small:hover
 {
 	background-position: left -72px;
 }
 
-a.hui_button_small_rounded:hover span
+a.hui_button_small:hover span
 {
 	background-position: right -96px;
 }
 
-a.hui_button_small_rounded:hover span span
+a.hui_button_small:hover span span
 {
 	background-position: left -120px;
 }
 
-a.hui_button_small_rounded:active
+a.hui_button_small:active
 {
 	background-position: left -144px;
 }
 
-a.hui_button_small_rounded:active span
+a.hui_button_small:active span
 {
 	background-position: right -168px;
 }
 
-a.hui_button_small_rounded:active span span
+a.hui_button_small:active span span
 {
 	background-position: left -192px;
 }
 
 
-a.hui_button_small_rounded:focus
+a.hui_button_small:focus
 {
 	background-position: left -216px;
 }
 
-a.hui_button_small_rounded:focus span
+a.hui_button_small:focus span
 {
 	background-position: right -240px;
 }
 
-a.hui_button_small_rounded:focus span span
+a.hui_button_small:focus span span
 {
 	background-position: left -264px;
 }
 
-a.hui_button_small_rounded:focus:hover
+a.hui_button_small:focus:hover
 {
 	background-position: left -288px;
 }
 
-a.hui_button_small_rounded:focus:hover span
+a.hui_button_small:focus:hover span
 {
 	background-position: right -312px;
 }
 
-a.hui_button_small_rounded:focus:hover span span
+a.hui_button_small:focus:hover span span
 {
 	background-position: left -336px;
 }
 
-a.hui_button_small_rounded:focus:active
+a.hui_button_small:focus:active
 {
 	background-position: left -360px;
 }
 
-a.hui_button_small_rounded:focus:active span
+a.hui_button_small:focus:active span
 {
 	background-position: right -384px;
 }
 
-a.hui_button_small_rounded:focus:active span span
+a.hui_button_small:focus:active span span
 {
 	background-position: left -408px;
+}
+
+a.hui_button_small_highlighted, a.hui_button_small_highlighted span
+{
+	background-image: url('../gfx/button_small_highlighted.png');
+	color: #152;
+}
+
+a.hui_button_small em.hui_button_icon
+{
+	margin-left: -3px;
+    margin-top: 4px;
+}
+
+a.hui_button_small em.hui_button_icon_notext
+{
+    margin-right: -4px;
+    margin-left: -4px;
 }
 
 /*****************************************/
@@ -647,11 +626,7 @@ a.hui_button_paper:active
 
 a.hui_button_paper:focus
 {
-	outline: auto 5px rgba(1,105,255,.3);
-	outline-offset: -2px;
-	-moz-outline: -moz-mac-focusring solid 2px; -moz-outline-radius: 0 7px 7px;
-	-moz-outline-offset: 0;
-	background-position: 0 0;
+	border-color: rgb(1,105,255);
 }
 
 a.hui_button_small_paper, a.hui_button_small_paper span
@@ -666,6 +641,18 @@ a.hui_button_small_paper span span
 	padding: 0 10px;
 	font-size: 11px;
 	line-height: 18px;
+}
+
+a.hui_button_paper em.hui_button_icon
+{
+	margin-left: -6px;
+    margin-right: 5px;
+    margin-top: 5px;
+}
+
+a.hui_button_paper em.hui_button_icon_notext
+{
+    margin-right: -5px;
 }div.hui_curtain
 {
 	width: 100%;
@@ -787,7 +774,7 @@ div.hui_dragproxy span
 div.hui_formula_fieldset
 {
 	border: 1px solid #ddd;
-	padding: 10px;
+	padding: 10px 10px 5px;
 	margin-top: 4px;
 	background: #f6f6f6;
 }
@@ -814,6 +801,8 @@ div.hui_window div.hui_formula_fieldset
 {
 	background: #eee;
 	border: 1px solid #ccc;
+	border-radius: 3px 3px 3px 3px;
+    box-shadow: 0 1px 3px #DDDDDD inset;
 }
 
 .hui_formula_header
@@ -1110,101 +1099,6 @@ em.hui_field_placeholder
 	display: none;
 }
 
-/*********************************** Number **********************************/
-
-span.hui_number
-{
-	display: inline-block;
-	background: url('../gfx/number.png') -11px top no-repeat;
-	height: 25px;
-	position: relative;
-}
-
-span.hui_number span
-{
-	display: inline-block;
-	background: url('../gfx/number.png') right -50px no-repeat;
-	height: 25px;
-}
-
-span.hui_number span span
-{
-	margin: 0 17px 0 6px;
-	background: url('../gfx/number.png') left -25px repeat-x;
-	line-height: 0;
-}
-
-span.hui_number input
-{
-	border: none;
-	background: none;
-	width: 80px;
-	font-family: Verdana, sans-serif;
-	font-size: 9pt;
-	padding: 0 4px 0;
-	height: 16px;
-	margin: 5px 0;
-	text-align: right;
-	line-height: 16px;
-	vertical-align: top;
-}
-
-span.hui_number input:focus
-{
-	outline: none;
-}
-
-a.hui_number_up
-{
-	position: absolute;
-	width: 15px;
-	height: 10px;
-	right: 2px;
-	top: 2px;
-}
-
-a.hui_number_down
-{
-	position: absolute;
-	width: 15px;
-	height: 10px;
-	right: 2px;
-	bottom: 3px;
-}
-
-span.hui_number_focused
-{
-	background-position: -11px -75px;
-}
-
-span.hui_number_focused span
-{
-	background-position: right -125px;
-}
-
-span.hui_number_focused span span
-{
-	background-position: left -100px;
-}
-
-em.hui_number_units
-{
-	vertical-align: middle;
-}
-
-span.hui_number_adaptive
-{
-	width: 100%;
-}
-
-span.hui_number_adaptive input
-{
-	width: 100%;
-	padding-right: 0;
-	padding-left: 0;
-	margin-left: -2px;
-}
-
 /******* Special lenght for style *******/
 
 span.hui_style_length input
@@ -1223,41 +1117,6 @@ form.hui_formula a.hui_button
 {
 	margin-left: 2px;
 	margin-right: 0px;
-}
-
-/******************************* Radio button **************************/
-
-div.hui_radiobuttons
-{
-	overflow: hidden;
-	margin-bottom: 5px;
-	padding-top: 4px;
-}
-
-div.hui_radiobutton
-{
-	overflow: hidden;
-	margin-right: 10px;
-	font-size: 10pt;
-	cursor: default;
-	color: #004A80;
-	float: left;
-	line-height: 15px;
-}
-
-div.hui_radiobutton div
-{
-	float: left;
-	background: url('../gfx/radiobutton.png') no-repeat;
-	width: 18px;
-	height: 18px;
-	margin-right: 3px;
-	cursor: pointer;
-}
-
-div.hui_radiobuttons div.hui_selected div
-{
-	background-position: 0px -18px;
 }
 
 /******************************* Object list **************************/
@@ -1514,16 +1373,16 @@ a.hui_dropdown_adaptive
 
 .hui_overflow::-webkit-scrollbar-thumb:hover
 {
-    background: #ccc -webkit-gradient(linear, 0% 0%, 100% 0%, from(rgb(250, 250, 250)), to(rgb(230, 230, 230)));
+    background: #ccc -webkit-gradient(linear, 0% 0%, 100% 0%, from(rgb(245, 245, 245)), to(rgb(235, 235, 235)));
 }
 
 .hui_overflow::-webkit-scrollbar-thumb:horizontal:hover
 {
-    background: #ccc -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(250, 250, 250)), to(rgb(230, 230, 230)));
+    background: #ccc -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(245, 245, 245)), to(rgb(235, 235, 235)));
 }
 
 
-.hui_layout_left .hui_overflow::-webkit-scrollbar-thumb
+.hui_context_sidebar .hui_overflow::-webkit-scrollbar-thumb
 {
 	border: 2px solid #EBF0F7;
 	background: #dfe5ee;
@@ -1531,9 +1390,8 @@ a.hui_dropdown_adaptive
 	height: 10px;
 }
 
-.hui_layout_left .hui_overflow:hover::-webkit-scrollbar-thumb
+.hui_context_sidebar .hui_overflow:hover::-webkit-scrollbar-thumb
 {
-	background: #c4cCd9;
 	background: #D4DCE9;
 }
 
@@ -2169,7 +2027,7 @@ span.hui_toolbar_item_body
 	text-align: center;
 }
 
-span.hui_toolbar_item span.hui_number
+span.hui_toolbar_item span.hui_numberfield
 {
 	top: 8px;
 }
@@ -2275,12 +2133,12 @@ label.hui_toolbar_grid
 	background-position: left 0px;
 	background-repeat: repeat-x;
 	margin: 0px 13px;
+	line-height: 31px;
 }
 
 span.hui_window_title
 {
 	font-size: 10pt;
-	line-height: 27px;
 	color:#000;
 	vertical-align: middle;
 }
@@ -2456,6 +2314,7 @@ div.hui_window_news
 	border: 1px solid #ddd;
 	background: #fafafa url('../gfx/holes.png') left top repeat-y;
 	border-radius: 3px;
+	box-shadow: rgba(0, 0, 0, 0.3) 0px 10px 10px;
 }
 
 div.hui_window_news div.hui_window_front
@@ -2466,6 +2325,7 @@ div.hui_window_news div.hui_window_front
 div.hui_window_news div.hui_window_content
 {
 	background: none;
+	padding: 0;
 }
 
 div.hui_window_news div.hui_window_content div.hui_window_content
@@ -2562,8 +2422,7 @@ div.hui_list table tbody td .object
 
 div.hui_list .hui_icon
 {
-	margin-right: 4px;
-	margin-left: 1px;
+	margin: 1px 4px 1px 1px;
 	float: left;
 }
 
@@ -2603,33 +2462,37 @@ div.hui_list table tbody tr:hover
 	cursor: pointer;
 }
 
-div.hui_list tr:hover .hui_icon_1
+div.hui_list tr:hover .hui_icon_16
 {
 	background-position: 0px -16px;
 }
 
-div.hui_list tr:hover span.hui_list_icons .hui_icon_1
+div.hui_list tr:hover span.hui_list_icons .hui_icon_16
 {
 	background-position: 0px 0px;
 }
 
-div.hui_list tr:hover span.hui_list_icons .hui_icon_1:hover
+div.hui_list tr:hover span.hui_list_icons .hui_icon_16:hover
 {
 	background-position: 0px -16px;
 }
 
-div.hui_list table tbody tr.selected
+div.hui_list table tbody tr.hui_list_selected
 {
 	background-color: #3875d7;
 	background: -moz-linear-gradient(top, #92BCFA, #5580ee);
 	background: -webkit-gradient(linear, left top, left bottom, from(#92BCFA), to(#5580ee));
-	color: #fff;
 	text-shadow: 0 1px 2px #5070cc;
 }
 
-div.hui_list table tbody tr.selected p.hui_list_dimmed
+div.hui_list table tbody tr.hui_list_selected td
 {
-	color: #abd;
+	color: #fff;
+}
+
+div.hui_list table tbody tr.hui_list_selected p.hui_list_dimmed
+{
+	color: #def;
 }
 
 div.hui_list .window_page
@@ -2709,7 +2572,7 @@ div.hui_list_selection a:hover
 	color: #000;
 }
 
-div.hui_list_selection a.selected
+div.hui_list_selection a.hui_list_selected
 {
 	background: #3875D7;
 	background: #bbb;
@@ -2728,6 +2591,28 @@ p.hui_list_dimmed
 	color: #999;
 }
 
+span.hui_list_badge
+{
+	font-size: 9px;
+	padding: 1px 4px;
+	border: 1px solid #eee;
+	border-radius: 3px;
+	margin-left: 4px;
+	color: #999;
+}
+
+div.hui_list tr:hover span.hui_list_badge
+{
+	border-color: #ccc;
+	color: #666;
+}
+
+tr.hui_list_selected span.hui_list_badge, div.hui_list tr.hui_list_selected:hover span.hui_list_badge
+{
+	color: #def;
+	border-color: #def;
+}
+
 div.hui_list_busy td
 {
 	color: #999;
@@ -2743,6 +2628,11 @@ div.hui_list td a.hui_button
 	margin: -2px 0;
 }
 
+div.hui_list_busy
+{
+	min-height: 26px;
+}
+
 div.hui_list_progress
 {
 	position: absolute;
@@ -2755,7 +2645,7 @@ div.hui_list_progress
 	border-radius: 3px;
 }
 
-div.hui_overflow div.hui_list_progress
+div.hui_list_busy_large div.hui_list_progress
 {
 	height: 100%;
 	width: 100%;
@@ -2829,7 +2719,7 @@ strong.hui_selection_badge
 
 div.hui_selection:hover strong.hui_selection_badge
 {
-	background: #79b;
+	background: #89b;
 }
 
 
@@ -2845,7 +2735,7 @@ div.hui_selection div.hui_selected strong.hui_selection_badge
 	cursor: pointer;
 }
 
-td.hui_layout_left .hui_selection_item:hover
+.hui_context_sidebar .hui_selection_item:hover
 {
 	background-color: #d4dce9;
 	cursor: pointer;
@@ -3644,24 +3534,28 @@ div.hui_overlay_icon
 
 div.hui_overlay a.hui_button
 {
-	margin-top: 4px;
-}
-/*
-div.hui_overlay a.hui_button
-{
-	-webkit-transition: -webkit-transform 0.3s ease-in-out;
+	vertical-align: top;
+	margin-top: 5px;
+	margin-left: 2px;
 }
 
-div.hui_overlay a.hui_button:hover
+
+div.hui_overlay a.hui_button, div.hui_overlay a.hui_button span
 {
-    -webkit-transform: scale(1.2);
-}*/
+	background-image: url('../gfx/button_overlay.png');
+	color: #fff;
+}
+
+div.hui_overlay a.hui_button_highlighted, div.hui_overlay a.hui_button_highlighted span
+{
+	background-image: url('../gfx/button_overlay_highlighted.png');
+}
 
 span.hui_overlay_text
 {
 	display: inline-block;
-	line-height: 30px;
-	vertical-align: middle;
+	line-height: 33px;
+	vertical-align: top;
 	height: 30px;
 	padding: 0 10px;
 	color: #fff;
@@ -3712,7 +3606,7 @@ div.hui_upload_item_content
 	padding-top: 2px;
 }
 
-div.hui_upload_item span.hui_icon_2
+div.hui_upload_item span.hui_icon_32
 {
 	float:left;
 	height:32px;
@@ -4168,7 +4062,7 @@ div.hui_datepicker_header strong
 a.hui_datepicker_previous
 {
 	float: left;
-	background: url('../icons/monochrome/previous1.png') -1px -2px no-repeat;
+	background: url('../icons/monochrome/previous16.png') -1px -2px no-repeat;
 	width: 12px;
 	height: 12px;
 	margin-left: 5px;
@@ -4178,7 +4072,7 @@ a.hui_datepicker_previous
 a.hui_datepicker_next
 {
 	float: right;
-	background: url('../icons/monochrome/next1.png') -3px -2px no-repeat;
+	background: url('../icons/monochrome/next16.png') -3px -2px no-repeat;
 	width: 12px;
 	height: 12px;
 	margin-right: 5px;
@@ -4381,37 +4275,6 @@ div.hui_box_rounded div.hui_box_body
 	background: #fff;
 	padding: 1px 0;
 	overflow: hidden;
-}div.hui_articles div.hui_article
-{
-	padding: 5px 0;
-}
-
-div.hui_article h2
-{
-	margin: 0;
-	font-weight: normal;
-	font-size: 14px;
-}
-
-div.hui_article p
-{
-	font-size: 11px;
-	margin: 0;
-	color: #333;
-}
-
-div.hui_article p.hui_dimmed
-{
-	color: #999;
-}
-
-div.hui_articles_loading
-{
-	background: url('../gfx/progress/spinner_white_16.gif') left center no-repeat;
-	padding: 0px 0 0 20px;
-	margin-top: 10px;
-	color:#444444;
-	font-size:13px;
 }table.hui_wizard, td.hui_wizard
 {
 	width: 100%;
@@ -4664,8 +4527,33 @@ div.hui_dock_progress
 	position: absolute;
 	height: 100%;
 	width: 100%;
+	/*top: 50%;
+	left: 50%;
+	width: 48px;
+	height: 48px;*/
 	background: url('../gfx/progress/spinner_white_48.gif') center center no-repeat;
 	/* rgba(243,245,247,.5) */
+}
+
+div.hui_dock_sidebar
+{
+	background: #EBF0F7;
+	width: 199px;
+	border-right: 1px solid #bcd;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+}
+
+div.hui_dock_sidebar_main
+{
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 200px;
+}	
 }div.hui_tabs_tab_light
 {
 	background: #fff;
@@ -4911,6 +4799,12 @@ div.hui_bar_absolute
 	top: -1000px;
 }
 
+span.gui_bar_space
+{
+	display: inline-block;
+	width: 5px;
+}
+
 /*************** Button **************/
 
 a.hui_bar_button
@@ -5106,6 +5000,11 @@ div.hui_bar_layout span.hui_bar_text_header
 {
 	color: #445566;
 	font-weight: bold;
+}
+
+div.hui_bar_layout span.hui_segmented
+{
+	margin-top: 3px;
 }
 
 /******************* Mini variant *****************/
@@ -5576,7 +5475,7 @@ div.hui_locationfield input
 
 a.hui_locationfield_picker
 {
-	background-image: url('../icons/geo/map1.png');
+	background-image: url('../icons/geo/map16.png');
 	width: 16px;
 	height: 16px;
 	position: absolute;
@@ -5608,12 +5507,12 @@ span.hui_locationfield_latitude span, span.hui_locationfield_longitude span
 
 span.hui_locationfield_latitude
 {
-	background: url('../icons/monochrome/latitude1.png') left top no-repeat;
+	background: url('../icons/monochrome/latitude16.png') left top no-repeat;
 }
 
 span.hui_locationfield_longitude
 {
-	background: url('../icons/monochrome/longitude1.png') left top no-repeat;
+	background: url('../icons/monochrome/longitude16.png') left top no-repeat;
 }/******************************** Token field *************************/
 
 div.hui_tokenfield
@@ -5725,4 +5624,180 @@ div.hui_checkboxes_vertical a.hui_checkbox
 {
 	display: block;
 	padding: 1px 5px 0px 0px;
+}div.hui_infoview
+{
+	overflow-y: hidden;
+	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+}
+
+div.hui_infoview_busy
+{
+	background: url('../gfx/spinner_large.gif') center center no-repeat;
+}
+
+div.hui_infoview table
+{
+	width: 100%;
+	font-size: 8pt;
+	line-height: 14px;
+}
+
+div.hui_infoview th
+{
+	vertical-align: top;
+	text-align: right;
+	padding: 2px 8px 0px 0px;
+	color: #666;
+	font-weight: bold;
+	width: 50%;
+}
+
+div.hui_infoview td
+{
+	vertical-align: top;
+	padding: 2px 0px 0px 0px;
+}
+
+div.hui_infoview th.hui_infoview_header
+{
+	font-size: 13px;
+	padding-bottom: 5px;
+	text-align: center;
+	color: #333;
+	line-height: 19px;
+	padding-top: 0px;
+}
+
+div.hui_infoview_click:hover
+{
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+/******************************* Radio button **************************/
+
+div.hui_radiobuttons
+{
+	overflow: hidden;
+	margin-bottom: 5px;
+	padding-top: 4px;
+}
+
+div.hui_radiobutton
+{
+	overflow: hidden;
+	margin-right: 10px;
+	font-size: 10pt;
+	cursor: default;
+	color: #004A80;
+	float: left;
+	line-height: 15px;
+}
+
+div.hui_radiobutton div
+{
+	float: left;
+	background: url('../gfx/radiobutton.png') no-repeat;
+	width: 18px;
+	height: 18px;
+	margin-right: 3px;
+	cursor: pointer;
+}
+
+div.hui_radiobuttons div.hui_selected div
+{
+	background-position: 0px -18px;
+}/*********************************** Number **********************************/
+
+span.hui_numberfield
+{
+	display: inline-block;
+	background: url('../gfx/number.png') -11px top no-repeat;
+	height: 25px;
+	position: relative;
+}
+
+span.hui_numberfield span
+{
+	display: inline-block;
+	background: url('../gfx/number.png') right -50px no-repeat;
+	height: 25px;
+}
+
+span.hui_numberfield span span
+{
+	margin: 0 17px 0 6px;
+	background: url('../gfx/number.png') left -25px repeat-x;
+	line-height: 0;
+}
+
+span.hui_numberfield input
+{
+	border: none;
+	background: none;
+	width: 80px;
+	font-family: Verdana, sans-serif;
+	font-size: 9pt;
+	padding: 0 4px 0;
+	height: 16px;
+	margin: 5px 0;
+	text-align: right;
+	line-height: 16px;
+	vertical-align: top;
+}
+
+span.hui_numberfield input:focus
+{
+	outline: none;
+}
+
+a.hui_numberfield_up
+{
+	position: absolute;
+	width: 15px;
+	height: 10px;
+	right: 2px;
+	top: 2px;
+}
+
+a.hui_numberfield_down
+{
+	position: absolute;
+	width: 15px;
+	height: 10px;
+	right: 2px;
+	bottom: 3px;
+}
+
+span.hui_numberfield_focused
+{
+	background-position: -11px -75px;
+}
+
+span.hui_numberfield_focused span
+{
+	background-position: right -125px;
+}
+
+span.hui_numberfield_focused span span
+{
+	background-position: left -100px;
+}
+
+em.hui_numberfield_units
+{
+	vertical-align: middle;
+}
+
+span.hui_numberfield_adaptive
+{
+	width: 100%;
+}
+
+span.hui_numberfield_adaptive input
+{
+	width: 100%;
+	padding-right: 0;
+	padding-left: 0;
+	margin-left: -2px;
 }
