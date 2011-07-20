@@ -29,16 +29,16 @@
 
 .hui_overflow::-webkit-scrollbar-thumb:hover
 {
-    background: #ccc -webkit-gradient(linear, 0% 0%, 100% 0%, from(rgb(250, 250, 250)), to(rgb(230, 230, 230)));
+    background: #ccc -webkit-gradient(linear, 0% 0%, 100% 0%, from(rgb(245, 245, 245)), to(rgb(235, 235, 235)));
 }
 
 .hui_overflow::-webkit-scrollbar-thumb:horizontal:hover
 {
-    background: #ccc -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(250, 250, 250)), to(rgb(230, 230, 230)));
+    background: #ccc -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(245, 245, 245)), to(rgb(235, 235, 235)));
 }
 
 
-.hui_layout_left .hui_overflow::-webkit-scrollbar-thumb
+.hui_context_sidebar .hui_overflow::-webkit-scrollbar-thumb
 {
 	border: 2px solid #EBF0F7;
 	background: #dfe5ee;
@@ -46,9 +46,8 @@
 	height: 10px;
 }
 
-.hui_layout_left .hui_overflow:hover::-webkit-scrollbar-thumb
+.hui_context_sidebar .hui_overflow:hover::-webkit-scrollbar-thumb
 {
-	background: #c4cCd9;
 	background: #D4DCE9;
 }
 

@@ -63,7 +63,7 @@
 -->
 <xsl:template match="gui:header">
 	<h2 class="hui_header">
-		<xsl:if test="@icon"><span class="hui_icon_2" style="background-image: url('{$context}/hui/icons/{@icon}2.png')"><xsl:comment/></span></xsl:if>
+		<xsl:if test="@icon"><span class="hui_icon_2" style="background-image: url('{$context}/hui/icons/{@icon}32.png')"><xsl:comment/></span></xsl:if>
 		<xsl:apply-templates/></h2>
 </xsl:template>
 
@@ -168,6 +168,7 @@
 			<div class="hui_box_body">
 				<xsl:if test="@padding"><xsl:attribute name="style">padding: <xsl:value-of select="@padding"/>px;</xsl:attribute></xsl:if>
 				<xsl:apply-templates select="child::*[not(name()='toolbar')]"/>
+				<xsl:comment/>
 			</div>
 		</div></div>
 		<div class="hui_box_bottom"><div><div><xsl:comment/></div></div></div>
@@ -205,7 +206,7 @@
 									<xsl:text> hui_selected</xsl:text>
 								</xsl:if>
 							</xsl:attribute>
-							<xsl:if test="@icon"><span class="hui_icon_1" style="background-image: url('{$context}/hui/icons/{@icon}1.png');')"><xsl:comment/></span></xsl:if>
+							<xsl:if test="@icon"><span class="hui_icon_1" style="background-image: url('{$context}/hui/icons/{@icon}16.png');')"><xsl:comment/></span></xsl:if>
 							<span><xsl:value-of select="@title"/></span>
 						</a>
 					</li>
@@ -301,7 +302,7 @@
 </xsl:template>
 
 <xsl:template match="gui:layout/gui:middle/gui:left">
-	<td class="hui_layout_left">
+	<td class="hui_layout_left hui_context_sidebar">
 		<xsl:apply-templates/>
 		<div class="hui_layout_left"><xsl:comment/></div>
 	</td>

@@ -53,9 +53,9 @@
 		</xsl:attribute>
 		<span class="hui_toolbar_inner_icon">
 			<span class="hui_toolbar_inner_icon">
-			<span class="hui_icon" style="background-image: url('{$context}/hui/icons/{@icon}2.png')">
+			<span class="hui_icon" style="background-image: url('{$context}/hui/icons/{@icon}32.png')">
 				<xsl:if test="@overlay">
-					<span class="hui_icon_overlay" style="background-image: url('{$context}/hui/icons/overlay/{@overlay}2.png')"><xsl:comment/></span>
+					<span class="hui_icon_overlay" style="background-image: url('{$context}/hui/icons/overlay/{@overlay}32.png')"><xsl:comment/></span>
 				</xsl:if>
 				<xsl:comment/>
 			</span>
@@ -82,7 +82,13 @@
 </xsl:template>
 
 <xsl:template match="gui:searchfield" name="gui:searchfield">
-	<span class="hui_searchfield" id="{generate-id()}">
+	<span id="{generate-id()}">
+		<xsl:attribute name="class">
+			<xsl:text>hui_searchfield</xsl:text>
+			<xsl:if test="@adaptive='true'">
+				<xsl:text> hui_searchfield_adaptive</xsl:text>
+			</xsl:if>
+		</xsl:attribute>
 		<xsl:if test="@width"><xsl:attribute name="style">width:<xsl:value-of select="@width"/>px;</xsl:attribute></xsl:if>
 		<em class="hui_searchfield_placeholder"><xsl:value-of select="@placeholder"/><xsl:comment/></em>
 		<a href="javascript:void(0);" class="hui_searchfield_reset"><xsl:comment/></a>
@@ -105,7 +111,7 @@
 	<div id="{generate-id()}" class="hui_toolbar_badge">
 		<div class="hui_toolbar_inner_badge"><div class="hui_toolbar_inner_badge">
 		<xsl:if test="@icon">
-			<div class="hui_toolbar_badge_icon" style="background-image: url('{$context}/hui/icons/{@icon}1.png')"><xsl:comment/></div>
+			<div class="hui_toolbar_badge_icon" style="background-image: url('{$context}/hui/icons/{@icon}16.png')"><xsl:comment/></div>
 		</xsl:if>
 		<strong><xsl:value-of select="@label"/><xsl:comment/></strong>
 		<span><xsl:value-of select="@text"/><xsl:comment/></span>
@@ -257,7 +263,7 @@
 	</xsl:variable>
 	<a id="{generate-id()}" class="{$class}" href="javascript:void(0);">
 		<xsl:if test="@icon">
-			<span class="hui_icon_1" style="background-image: url('{$context}/hui/icons/{@icon}1.png')"><xsl:comment/></span>
+			<span class="hui_icon_1" style="background-image: url('{$context}/hui/icons/{@icon}16.png')"><xsl:comment/></span>
 		</xsl:if>
 		<xsl:if test="@text">
 			<span class="hui_bar_button_text"><xsl:value-of select="@text"/></span>
@@ -291,6 +297,15 @@
 		});
 		<xsl:call-template name="gui:createobject"/>
 	</script>
+</xsl:template>
+
+<xsl:template match="gui:bar//gui:space">
+	<span class="gui_bar_space">
+		<xsl:if test="@width">
+			<xsl:attribute name="style">width:<xsl:value-of select="@width"/>px;</xsl:attribute>
+		</xsl:if>
+		<xsl:comment/>
+	</span>
 </xsl:template>
 
 </xsl:stylesheet>

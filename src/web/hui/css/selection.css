@@ -54,7 +54,7 @@ strong.hui_selection_badge
 
 div.hui_selection:hover strong.hui_selection_badge
 {
-	background: #79b;
+	background: #89b;
 }
 
 
@@ -70,7 +70,7 @@ div.hui_selection div.hui_selected strong.hui_selection_badge
 	cursor: pointer;
 }
 
-td.hui_layout_left .hui_selection_item:hover
+.hui_context_sidebar .hui_selection_item:hover
 {
 	background-color: #d4dce9;
 	cursor: pointer;
