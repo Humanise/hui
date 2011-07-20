@@ -94,6 +94,9 @@ hui.ui._resize = function() {
 	};
 }
 
+/**
+ * @param options { element:«node», widget:«widget», text:«string», okText:«string», cancelText«string», onOk:«function»}
+ */
 hui.ui.confirmOverlay = function(options) {
 	var node = options.element,
 		overlay;
@@ -250,16 +253,17 @@ hui.ui.showCurtain = function(options,zIndex) {
 	var widget = options.widget;
 	if (!widget.curtain) {
 		widget.curtain = hui.build('div',{'class':'hui_curtain',style:'z-index:none'});
-		widget.curtain.onclick = function() {
-			if (widget['$curtainWasClicked']) {
-				widget['$curtainWasClicked']();
-			}
-		};
+		
 		var body = hui.firstByClass(document.body,'hui_body');
 		if (!body) {
 			body=document.body;
 		}
 		body.appendChild(widget.curtain);
+		hui.listen(widget.curtain,'click',function() {
+			if (widget['$curtainWasClicked']) {
+				widget['$curtainWasClicked']();
+			}
+		});
 	}
 	if (options.color) {
 		widget.curtain.style.backgroundColor=options.color;

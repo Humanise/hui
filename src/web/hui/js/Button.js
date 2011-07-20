@@ -17,19 +17,19 @@ hui.ui.Button = function(options) {
 hui.ui.Button.create = function(o) {
 	o = hui.override({text:'',highlighted:false,enabled:true},o);
 	var className = 'hui_button'+(o.highlighted ? ' hui_button_highlighted' : '');
-	if (o.small && o.rounded) {
-		className+=' hui_button_small_rounded';
+	if (o.small) {
+		className+=' hui_button_small';
 	}
 	if (!o.enabled) {
 		className+=' hui_button_disabled';
 	}
-	var element = o.element = hui.build('a',{'class':className,href:'#'});
+	var element = o.element = hui.build('a',{'class':className,href:'javascript://'});
 	var element2 = document.createElement('span');
 	element.appendChild(element2);
 	var element3 = document.createElement('span');
 	element2.appendChild(element3);
 	if (o.icon) {
-		var icon = hui.build('em',{'class':'hui_button_icon',style:'background-image:url('+hui.ui.getIconUrl(o.icon,1)+')'});
+		var icon = hui.build('em',{'class':'hui_button_icon',style:'background-image:url('+hui.ui.getIconUrl(o.icon,16)+')'});
 		if (!o.text || o.text.length==0) {
 			hui.addClass(icon,'hui_button_icon_notext');
 		}

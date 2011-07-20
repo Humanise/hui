@@ -5,7 +5,7 @@
  * <li>selectionChanged - When a row is selected (rename to select)</li>
  * <li>selectionReset - When a selection is removed</li>
  * <li>clickButton(row,button) - When a button is clicked</li>
- * <li>clickIcon(row,data) - When an icon is clicked</li>
+ * <li>clickIcon({row:row,data:data,node:node}) - When an icon is clicked</li>
  * </ul>
  * <p><strong>Bindings:</strong></p>
  * <ul>
@@ -22,10 +22,10 @@
  * </code>
  *
  * @constructor
- * @param {Object} options The options : {url:null,source:null}
+ * @param {Object} options The options : {url:null,source:null,selectable:«boolean»}
  */
 hui.ui.List = function(options) {
-	this.options = hui.override({url:null,source:null},options);
+	this.options = hui.override({url:null,source:null,selectable:true},options);
 	this.element = hui.get(options.element);
 	this.name = options.name;
 	if (this.options.source) {
@@ -171,7 +171,14 @@ hui.ui.List.prototype = {
 	},
 	/** @private */
 	$sourceShouldRefresh : function() {
-		return this.element.style.display!='none';
+		return hui.dom.isVisible(this.element);
+	},
+	/** @private */
+	$visibilityChanged : function() {
+		if (this.options.source && hui.dom.isVisible(this.element)) {
+			// If there is a source, make sure it is initially 
+			this.options.source.refreshFirst();
+		}
 	},
 	/** @private */
 	refresh : function() {
@@ -283,6 +290,9 @@ hui.ui.List.prototype = {
 				if (cells[j].getAttribute('vertical-align')) {
 					td.style.verticalAlign=cells[j].getAttribute('vertical-align');
 				}
+				if (cells[j].getAttribute('align')) {
+					td.style.textAlign=cells[j].getAttribute('align');
+				}
 				if (j==0 && level>1) {
 					td.style.paddingLeft = ((parseInt(level)-1)*16+5)+'px';
 				}
@@ -340,16 +350,32 @@ hui.ui.List.prototype = {
 			var e = this.element;
 			this.busytimer = window.setTimeout(function() {
 				hui.addClass(e,'hui_list_busy');
+				if (e.parentNode.className=='hui_overflow') {
+					hui.addClass(e,'hui_list_busy_large');
+				}
 			},300);
 		} else {
 			hui.removeClass(this.element,'hui_list_busy');
+			if (this.element.parentNode.className=='hui_overflow') {
+				hui.removeClass(this.element,'hui_list_busy_large');
+			}
 		}
 	},
 	
 	_wrap : function(str) {
 		var out = '';
+		var count = 0;
 		for (var i=0; i < str.length; i++) {
-			out+=str[i]+'\u200B';
+			if (str[i]===' ' || str[i]==='-') {
+				count=0;
+			} else {
+				count++;
+			}
+			out+=str[i];
+			if (count>10) {
+				out+='\u200B';
+				count=0;
+			}
 		};
 		return out;
 	},
@@ -358,7 +384,8 @@ hui.ui.List.prototype = {
 	parseCell : function(node,cell) {
 		var icon = node.getAttribute('icon');
 		if (icon!=null && icon!='') {
-			cell.appendChild(hui.ui.createIcon(icon,1));
+			cell.appendChild(hui.ui.createIcon(icon,16));
+			cell = hui.build('div',{parent:cell,style:'margin-left: 20px'});
 		}
 		for (var i=0; i < node.childNodes.length; i++) {
 			var child = node.childNodes[i];
@@ -367,7 +394,7 @@ hui.ui.List.prototype = {
 			} else if (hui.dom.isElement(child,'break')) {
 				cell.appendChild(document.createElement('br'));
 			} else if (hui.dom.isElement(child,'icon')) {
-				var icon = hui.ui.createIcon(child.getAttribute('icon'),1);
+				var icon = hui.ui.createIcon(child.getAttribute('icon'),16);
 				var data = child.getAttribute('data');
 				if (data) {
 					icon.setAttribute('data',data);
@@ -387,7 +414,7 @@ hui.ui.List.prototype = {
 			} else if (hui.dom.isElement(child,'object')) {
 				var obj = hui.build('div',{'class':'object'});
 				if (child.getAttribute('icon')) {
-					obj.appendChild(hui.ui.createIcon(child.getAttribute('icon'),1));
+					obj.appendChild(hui.ui.createIcon(child.getAttribute('icon'),16));
 				}
 				if (child.firstChild && child.firstChild.nodeType==hui.TEXT_NODE && child.firstChild.nodeValue.length>0) {
 					hui.dom.addText(obj,child.firstChild.nodeValue);
@@ -404,8 +431,9 @@ hui.ui.List.prototype = {
 			} else if (hui.dom.isElement(child,'wrap')) {
 				hui.dom.addText(cell,this._wrap(hui.dom.getText(child)));
 			} else if (hui.dom.isElement(child,'delete')) {
-				var icons = hui.build('del',{parent:cell});
-				this.parseCell(child,icons);
+				this.parseCell(child,hui.build('del',{parent:cell}));
+			} else if (hui.dom.isElement(child,'badge')) {
+				this.parseCell(child,hui.build('span',{className:'hui_list_badge',parent:cell}));
 			}
 		};
 	},
@@ -419,7 +447,7 @@ hui.ui.List.prototype = {
 	_buttonClick : function(button) {
 		var row = hui.firstParentByTag(button.getElement(),'tr');
 		var obj = this.rows[parseInt(row.getAttribute('data-index'),10)];
-		this.fire('clickButton',obj,button);
+		this.fire('clickButton',{row:obj,button:button});
 	},
 	/** @private */
 	parseWindow : function(doc) {
@@ -465,7 +493,7 @@ hui.ui.List.prototype = {
 						return false;
 					}
 					if (index==self.window.page) {
-						a.className='selected';
+						a.className='hui_list_selected';
 					}
 					pageBody.appendChild(a);
 				}
@@ -533,7 +561,7 @@ hui.ui.List.prototype = {
 			hui.each(r.cells,function(c) {
 				var td = hui.build('td');
 				if (c.icon) {
-					td.appendChild(hui.ui.createIcon(c.icon,1));
+					td.appendChild(hui.ui.createIcon(c.icon,16));
 					icon = icon || c.icon;
 				}
 				if (c.text) {
@@ -594,7 +622,7 @@ hui.ui.List.prototype = {
 	createObject : function(object) {
 		var node = hui.build('div',{'class':'object'});
 		if (object.icon) {
-			node.appendChild(hui.ui.createIcon(object.icon,1));
+			node.appendChild(hui.ui.createIcon(object.icon,16));
 		}
 		hui.dom.addText(node,object.text || object.name || '')
 		return node;
@@ -626,13 +654,16 @@ hui.ui.List.prototype = {
 	},
 	/** @private */
 	changeSelection : function(indexes) {
+		if (!this.options.selectable) {
+			return;
+		}
 		var rows = this.body.getElementsByTagName('tr'),
 			i;
 		for (i=0;i<this.selected.length;i++) {
-			hui.removeClass(rows[this.selected[i]],'selected');
+			hui.removeClass(rows[this.selected[i]],'hui_list_selected');
 		}
 		for (i=0;i<indexes.length;i++) {
-			hui.addClass(rows[indexes[i]],'selected');
+			hui.addClass(rows[indexes[i]],'hui_list_selected');
 		}
 		this.selected = indexes;
 		this.fire('selectionChanged',this.rows[indexes[0]]);
@@ -643,7 +674,7 @@ hui.ui.List.prototype = {
 		if (a) {
 			var data = a.getAttribute('data');
 			if (data) {
-				this.fire('clickIcon',this.rows[index],hui.fromJSON(data));
+				this.fire('clickIcon',{row:this.rows[index],data:hui.fromJSON(data),node:a});
 			}
 		}
 	},
@@ -667,7 +698,7 @@ hui.ui.List.prototype = {
 		hui.ui.firePropertyChange(this,'window.page',this.window.page);
 		var as = this.windowPageBody.getElementsByTagName('a');
 		for (var i = as.length - 1; i >= 0; i--){
-			as[i].className = as[i]==tag ? 'selected' : '';
+			as[i].className = as[i]==tag ? 'hui_list_selected' : '';
 		};
 	}
 };

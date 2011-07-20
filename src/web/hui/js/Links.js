@@ -82,13 +82,13 @@ hui.ui.Links.prototype = {
 			row = hui.build('div',{'class':'hui_links_row'});
 			row.hui_index = i;
 			
-			row.appendChild(hui.ui.createIcon(item.icon,1));
+			row.appendChild(hui.ui.createIcon(item.icon,16));
 			text = hui.build('div',{'class':'hui_links_text',text:item.text});
 			row.appendChild(text);
 
 			infoNode = hui.build('div',{'class':'hui_links_info',text:hui.wrap(item.info)});
 			row.appendChild(infoNode);
-			remove = hui.ui.createIcon('monochrome/round_x',1);
+			remove = hui.ui.createIcon('monochrome/delete',16);
 			hui.addClass(remove,'hui_links_remove');
 			row.appendChild(remove);
 
@@ -106,14 +106,14 @@ hui.ui.Links.prototype = {
 			var win = this.editWindow = hui.ui.Window.create({title:'Link',width:300,padding:5});
 			var form = this.editForm = hui.ui.Formula.create();
 			var g = form.buildGroup({above:false},[
-				{type:'Text',options:{label:'Tekst',key:'text'}}
+				{type:'TextField',options:{label:'Tekst',key:'text'}}
 			]);
 			
-			var url = hui.ui.Formula.Text.create({label:'URL',key:'url'});
+			var url = hui.ui.TextField.create({label:'URL',key:'url'});
 			g.add(url);
 			this.inputs['url']=url;
 			
-			var email = hui.ui.Formula.Text.create({label:'E-mail',key:'email'});
+			var email = hui.ui.TextField.create({label:'E-mail',key:'email'});
 			g.add(email);
 			this.inputs['email']=email;
 			
