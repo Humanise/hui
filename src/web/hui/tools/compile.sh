@@ -1,9 +1,6 @@
 #!/bin/bash
 
 DIR=$(dirname $0)
-CSS_PATH=${DIR}"/../css/"
-JS_LIB_PATH=${DIR}"/../lib/"
-js_path=${DIR}"/../js/"
 BIN_PATH=${DIR}"/../bin/"
 
 ${DIR}/concat.sh
@@ -16,3 +13,4 @@ echo "Compressing css"
 java -jar yuicompressor-2.2.4.jar ${BIN_PATH}combined.css --charset UTF-8 -o ${BIN_PATH}minimized.css
 echo "Compressing site css"
 java -jar yuicompressor-2.2.4.jar ${BIN_PATH}combined.site.css --charset UTF-8 -o ${BIN_PATH}minimized.site.css
+echo "Finished!"

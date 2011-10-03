@@ -100,6 +100,9 @@ hui.ui._resize = function() {
 hui.ui.confirmOverlay = function(options) {
 	var node = options.element,
 		overlay;
+	if (!node) {
+		node = document.body;
+	}
 	if (options.widget) {
 		node = options.widget.getElement();
 	}
@@ -217,6 +220,12 @@ hui.ui.changeState = function(state) {
 	}
 	hui.ui.state=state;
 	
+	this.reLayout();
+}
+
+hui.ui.reLayout = function() {
+	var all = hui.ui.objects,
+		obj;
 	for (key in all) {
 		obj = all[key];
 		if (obj['$$layoutChanged']) {
@@ -249,7 +258,11 @@ hui.ui.nextTopIndex = function() {
 
 ///////////////////////////////// Curtain /////////////////////////////
 
-hui.ui.showCurtain = function(options,zIndex) {
+/**
+ * Shows a "curtain" behind an element
+ * @param options { widget:«widget», color:«cssColor | 'auto'», zIndex:«cssZindex» }
+ */
+hui.ui.showCurtain = function(options) {
 	var widget = options.widget;
 	if (!widget.curtain) {
 		widget.curtain = hui.build('div',{'class':'hui_curtain',style:'z-index:none'});
@@ -266,7 +279,15 @@ hui.ui.showCurtain = function(options,zIndex) {
 		});
 	}
 	if (options.color) {
-		widget.curtain.style.backgroundColor=options.color;
+		if (options.color=='auto') {
+			var color = hui.getStyle(document.body,'background-color');
+			if (color=='transparent' || color=='rgba(0, 0, 0, 0)') {
+				color='#fff';
+			}
+			widget.curtain.style.backgroundColor=color;
+		} else {
+			widget.curtain.style.backgroundColor=options.color;
+		}
 	}
 	if (hui.browser.msie) {
 		widget.curtain.style.height=hui.getDocumentHeight()+'px';
@@ -530,7 +551,7 @@ hui.ui.fadeOut = function(node,time) {
 	hui.animate(node,'opacity',0,time,{hideOnComplete:true});
 };
 
-hui.ui.bounceIn = function(node,time) {
+hui.ui.bounceIn = function(node) {
 	if (hui.browser.msie) {
 		hui.setStyle(node,{'display':'block',visibility:'visible'});
 	} else {
@@ -858,12 +879,17 @@ hui.ui.request = function(options) {
 		hui.log(t);
 		hui.log(e);
 	};
+	var onForbidden = options.onForbidden;
 	options.onForbidden = function(t) {
 		if (options.message && options.message.start) {
 			hui.ui.hideMessage();
 		}
-		options.onFailure(t);
-		hui.ui.handleForbidden();
+		if (onForbidden) {
+			onForbidden(t);
+		} else {
+			options.onFailure(t);
+			hui.ui.handleForbidden();
+		}
 	}
 	if (options.message && options.message.start) {
 		hui.ui.showMessage({text:options.message.start,busy:true,delay:options.message.delay});

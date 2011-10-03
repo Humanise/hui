@@ -420,6 +420,19 @@ if (document.querySelectorAll) {
 	}
 }
 
+/**
+ * Find the first ancestor with a given class (including self)
+ */
+hui.firstAncestorByClass = function(element,className) {
+	while (element) {
+		if (hui.hasClass(element,className)) {
+			return element;
+		}
+		element = element.parentNode;
+	}
+	return null;
+}
+
 hui.byTag = function(node,name) {
 	var nl = node.getElementsByTagName(name),
 		l=[];
@@ -583,12 +596,26 @@ hui.getPosition = function(element) {
 	}
 }
 
+hui.window = {
+	getScrollTop : function() {
+		if (window.pageYOffset) {
+			return window.pageYOffset;
+		} else if (document.documentElement) {
+			return document.documentElement.scrollTop;
+		}
+		return document.body.scrollTop;
+	}
+}
+
 /////////////////////////// Class handling //////////////////////
 
 hui.hasClass = function(element, className) {
 	element = hui.get(element);
 	if (!element || !element.className) {
 		return false
+	}
+	if (element.className==className) {
+		return true;
 	}
 	var a = element.className.split(/\s+/);
 	for (var i = 0; i < a.length; i++) {
@@ -609,8 +636,11 @@ hui.addClass = function(element, className) {
 
 hui.removeClass = function(element, className) {
 	element = hui.get(element);
-	if (!element) {return};
-
+	if (!element || !element.className) {return};
+	if (element.className=='className') {
+		element.className='';
+		return;
+	}
 	var newClassName = '';
 	var a = element.className.split(/\s+/);
 	for (var i = 0; i < a.length; i++) {
@@ -749,14 +779,7 @@ hui.Event.prototype = {
 	 * @returns {Element} The found element or null
 	 */
 	findByClass : function(cls) {
-		var parent = this.element;
-		while (parent) {
-			if (hui.hasClass(parent,cls)) {
-				return parent;
-			}
-			parent = parent.parentNode;
-		}
-		return null;
+		return hui.firstAncestorByClass(this.element,cls)
 	},
 	/** Finds the nearest ancester with a certain tag name
 	 * @param tag The tag name
@@ -849,7 +872,7 @@ hui.request = function(options) {
 					options.onSuccess(transport);
 				} else if (transport.status == 403 && options.onForbidden) {
 					options.onForbidden(transport);
-				} else if (options.onFailure) {
+				} else if (transport.status !== 0 && options.onFailure) {
 					options.onFailure(transport);
 				}
 			}
@@ -1065,6 +1088,20 @@ hui.selection = {
 			return doc.selection.createRange().text;
 		}
 		return '';
+	},
+	getNode : function(doc) {
+		doc = doc || document;
+		if (doc.getSelection) {
+			var range = doc.getSelection().getRangeAt(0);
+			return range.commonAncestorContainer();
+		}
+		return null;
+	},
+	get : function(doc) {
+		return {
+			node : hui.selection.getNode(doc),
+			text : hui.selection.getText(doc)
+		}
 	}
 }
 
@@ -1181,7 +1218,6 @@ hui.place = function(options) {
 		trgtPos = {left : hui.getLeft(trgt), top : hui.getTop(trgt) };
 	left = trgtPos.left + trgt.clientWidth * (options.target.horizontal || 0);
 	top = trgtPos.top + trgt.clientHeight * (options.target.vertical || 0);
-	
 	var src = options.source.element;
 	left -= src.clientWidth * (options.source.horizontal || 0);
 	top -= src.clientHeight * (options.source.vertical || 0);
@@ -1372,6 +1408,14 @@ hui.location = {
 	getBoolean : function(name) {
 		var value = hui.location.getParameter(name);
 		return (value=='true' || value=='1');
+	},
+	/** Checks if a parameter exists with the value 'true' or 1 */
+	getInt : function(name) {
+		var value = parseInt(hui.location.getParameter(name));
+		if (value!==NaN) {
+			return value;
+		}
+		return null;
 	},
 	/** Gets all parameters as an array like : [{name:'hep',value:'hey'}] */
 	getParameters : function() {
@@ -2389,6 +2433,9 @@ hui.ui._resize = function() {
 hui.ui.confirmOverlay = function(options) {
 	var node = options.element,
 		overlay;
+	if (!node) {
+		node = document.body;
+	}
 	if (options.widget) {
 		node = options.widget.getElement();
 	}
@@ -2506,6 +2553,12 @@ hui.ui.changeState = function(state) {
 	}
 	hui.ui.state=state;
 	
+	this.reLayout();
+}
+
+hui.ui.reLayout = function() {
+	var all = hui.ui.objects,
+		obj;
 	for (key in all) {
 		obj = all[key];
 		if (obj['$$layoutChanged']) {
@@ -2538,7 +2591,11 @@ hui.ui.nextTopIndex = function() {
 
 ///////////////////////////////// Curtain /////////////////////////////
 
-hui.ui.showCurtain = function(options,zIndex) {
+/**
+ * Shows a "curtain" behind an element
+ * @param options { widget:«widget», color:«cssColor | 'auto'», zIndex:«cssZindex» }
+ */
+hui.ui.showCurtain = function(options) {
 	var widget = options.widget;
 	if (!widget.curtain) {
 		widget.curtain = hui.build('div',{'class':'hui_curtain',style:'z-index:none'});
@@ -2555,7 +2612,15 @@ hui.ui.showCurtain = function(options,zIndex) {
 		});
 	}
 	if (options.color) {
-		widget.curtain.style.backgroundColor=options.color;
+		if (options.color=='auto') {
+			var color = hui.getStyle(document.body,'background-color');
+			if (color=='transparent' || color=='rgba(0, 0, 0, 0)') {
+				color='#fff';
+			}
+			widget.curtain.style.backgroundColor=color;
+		} else {
+			widget.curtain.style.backgroundColor=options.color;
+		}
 	}
 	if (hui.browser.msie) {
 		widget.curtain.style.height=hui.getDocumentHeight()+'px';
@@ -2819,7 +2884,7 @@ hui.ui.fadeOut = function(node,time) {
 	hui.animate(node,'opacity',0,time,{hideOnComplete:true});
 };
 
-hui.ui.bounceIn = function(node,time) {
+hui.ui.bounceIn = function(node) {
 	if (hui.browser.msie) {
 		hui.setStyle(node,{'display':'block',visibility:'visible'});
 	} else {
@@ -3147,12 +3212,17 @@ hui.ui.request = function(options) {
 		hui.log(t);
 		hui.log(e);
 	};
+	var onForbidden = options.onForbidden;
 	options.onForbidden = function(t) {
 		if (options.message && options.message.start) {
 			hui.ui.hideMessage();
 		}
-		options.onFailure(t);
-		hui.ui.handleForbidden();
+		if (onForbidden) {
+			onForbidden(t);
+		} else {
+			options.onFailure(t);
+			hui.ui.handleForbidden();
+		}
 	}
 	if (options.message && options.message.start) {
 		hui.ui.showMessage({text:options.message.start,busy:true,delay:options.message.delay});
@@ -3731,15 +3801,20 @@ hui.ui.SearchField.prototype = {
 		hui.listen(this.field,'keyup',this.onKeyUp.bind(this));
 		var reset = hui.firstByTag(this.element,'a');
 		reset.tabIndex=-1;
-		var focus = function() {self.field.focus();self.field.select()};
-		hui.listen(this.element,'mousedown',focus);
-		hui.listen(this.element,'mouseup',focus);
+		if (!hui.browser.ipad) {
+			var focus = function() {self.field.focus();self.field.select()};
+			hui.listen(this.element,'mousedown',focus);
+			hui.listen(this.element,'mouseup',focus);
+			hui.listen(hui.firstByTag(this.element,'em'),'mousedown',focus);
+		} else {
+			var focus = function() {self.field.focus();};
+			hui.listen(hui.firstByTag(this.element,'em'),'click',focus);
+		}
 		hui.listen(reset,'mousedown',function(e) {
 			hui.stop(e);
 			self.reset();
 			focus()
 		});
-		hui.listen(hui.firstByTag(this.element,'em'),'mousedown',focus);
 		hui.listen(this.field,'focus',function() {
 			self.focused=true;
 			self.updateClass();

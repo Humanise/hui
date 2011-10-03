@@ -420,6 +420,19 @@ if (document.querySelectorAll) {
 	}
 }
 
+/**
+ * Find the first ancestor with a given class (including self)
+ */
+hui.firstAncestorByClass = function(element,className) {
+	while (element) {
+		if (hui.hasClass(element,className)) {
+			return element;
+		}
+		element = element.parentNode;
+	}
+	return null;
+}
+
 hui.byTag = function(node,name) {
 	var nl = node.getElementsByTagName(name),
 		l=[];
@@ -583,12 +596,26 @@ hui.getPosition = function(element) {
 	}
 }
 
+hui.window = {
+	getScrollTop : function() {
+		if (window.pageYOffset) {
+			return window.pageYOffset;
+		} else if (document.documentElement) {
+			return document.documentElement.scrollTop;
+		}
+		return document.body.scrollTop;
+	}
+}
+
 /////////////////////////// Class handling //////////////////////
 
 hui.hasClass = function(element, className) {
 	element = hui.get(element);
 	if (!element || !element.className) {
 		return false
+	}
+	if (element.className==className) {
+		return true;
 	}
 	var a = element.className.split(/\s+/);
 	for (var i = 0; i < a.length; i++) {
@@ -609,8 +636,11 @@ hui.addClass = function(element, className) {
 
 hui.removeClass = function(element, className) {
 	element = hui.get(element);
-	if (!element) {return};
-
+	if (!element || !element.className) {return};
+	if (element.className=='className') {
+		element.className='';
+		return;
+	}
 	var newClassName = '';
 	var a = element.className.split(/\s+/);
 	for (var i = 0; i < a.length; i++) {
@@ -749,14 +779,7 @@ hui.Event.prototype = {
 	 * @returns {Element} The found element or null
 	 */
 	findByClass : function(cls) {
-		var parent = this.element;
-		while (parent) {
-			if (hui.hasClass(parent,cls)) {
-				return parent;
-			}
-			parent = parent.parentNode;
-		}
-		return null;
+		return hui.firstAncestorByClass(this.element,cls)
 	},
 	/** Finds the nearest ancester with a certain tag name
 	 * @param tag The tag name
@@ -849,7 +872,7 @@ hui.request = function(options) {
 					options.onSuccess(transport);
 				} else if (transport.status == 403 && options.onForbidden) {
 					options.onForbidden(transport);
-				} else if (options.onFailure) {
+				} else if (transport.status !== 0 && options.onFailure) {
 					options.onFailure(transport);
 				}
 			}
@@ -1065,6 +1088,20 @@ hui.selection = {
 			return doc.selection.createRange().text;
 		}
 		return '';
+	},
+	getNode : function(doc) {
+		doc = doc || document;
+		if (doc.getSelection) {
+			var range = doc.getSelection().getRangeAt(0);
+			return range.commonAncestorContainer();
+		}
+		return null;
+	},
+	get : function(doc) {
+		return {
+			node : hui.selection.getNode(doc),
+			text : hui.selection.getText(doc)
+		}
 	}
 }
 
@@ -1181,7 +1218,6 @@ hui.place = function(options) {
 		trgtPos = {left : hui.getLeft(trgt), top : hui.getTop(trgt) };
 	left = trgtPos.left + trgt.clientWidth * (options.target.horizontal || 0);
 	top = trgtPos.top + trgt.clientHeight * (options.target.vertical || 0);
-	
 	var src = options.source.element;
 	left -= src.clientWidth * (options.source.horizontal || 0);
 	top -= src.clientHeight * (options.source.vertical || 0);
@@ -1372,6 +1408,14 @@ hui.location = {
 	getBoolean : function(name) {
 		var value = hui.location.getParameter(name);
 		return (value=='true' || value=='1');
+	},
+	/** Checks if a parameter exists with the value 'true' or 1 */
+	getInt : function(name) {
+		var value = parseInt(hui.location.getParameter(name));
+		if (value!==NaN) {
+			return value;
+		}
+		return null;
 	},
 	/** Gets all parameters as an array like : [{name:'hep',value:'hey'}] */
 	getParameters : function() {
@@ -3890,6 +3934,9 @@ hui.ui._resize = function() {
 hui.ui.confirmOverlay = function(options) {
 	var node = options.element,
 		overlay;
+	if (!node) {
+		node = document.body;
+	}
 	if (options.widget) {
 		node = options.widget.getElement();
 	}
@@ -4007,6 +4054,12 @@ hui.ui.changeState = function(state) {
 	}
 	hui.ui.state=state;
 	
+	this.reLayout();
+}
+
+hui.ui.reLayout = function() {
+	var all = hui.ui.objects,
+		obj;
 	for (key in all) {
 		obj = all[key];
 		if (obj['$$layoutChanged']) {
@@ -4039,7 +4092,11 @@ hui.ui.nextTopIndex = function() {
 
 ///////////////////////////////// Curtain /////////////////////////////
 
-hui.ui.showCurtain = function(options,zIndex) {
+/**
+ * Shows a "curtain" behind an element
+ * @param options { widget:«widget», color:«cssColor | 'auto'», zIndex:«cssZindex» }
+ */
+hui.ui.showCurtain = function(options) {
 	var widget = options.widget;
 	if (!widget.curtain) {
 		widget.curtain = hui.build('div',{'class':'hui_curtain',style:'z-index:none'});
@@ -4056,7 +4113,15 @@ hui.ui.showCurtain = function(options,zIndex) {
 		});
 	}
 	if (options.color) {
-		widget.curtain.style.backgroundColor=options.color;
+		if (options.color=='auto') {
+			var color = hui.getStyle(document.body,'background-color');
+			if (color=='transparent' || color=='rgba(0, 0, 0, 0)') {
+				color='#fff';
+			}
+			widget.curtain.style.backgroundColor=color;
+		} else {
+			widget.curtain.style.backgroundColor=options.color;
+		}
 	}
 	if (hui.browser.msie) {
 		widget.curtain.style.height=hui.getDocumentHeight()+'px';
@@ -4320,7 +4385,7 @@ hui.ui.fadeOut = function(node,time) {
 	hui.animate(node,'opacity',0,time,{hideOnComplete:true});
 };
 
-hui.ui.bounceIn = function(node,time) {
+hui.ui.bounceIn = function(node) {
 	if (hui.browser.msie) {
 		hui.setStyle(node,{'display':'block',visibility:'visible'});
 	} else {
@@ -4648,12 +4713,17 @@ hui.ui.request = function(options) {
 		hui.log(t);
 		hui.log(e);
 	};
+	var onForbidden = options.onForbidden;
 	options.onForbidden = function(t) {
 		if (options.message && options.message.start) {
 			hui.ui.hideMessage();
 		}
-		options.onFailure(t);
-		hui.ui.handleForbidden();
+		if (onForbidden) {
+			onForbidden(t);
+		} else {
+			options.onFailure(t);
+			hui.ui.handleForbidden();
+		}
 	}
 	if (options.message && options.message.start) {
 		hui.ui.showMessage({text:options.message.start,busy:true,delay:options.message.delay});
@@ -5048,7 +5118,10 @@ hui.ui.Window.prototype = {
 		hui.dom.setText(this.title,title);
 	},
 	show : function(options) {
-		if (this.visible) {return}
+		if (this.visible) {
+			this.element.style.zIndex=hui.ui.nextPanelIndex();
+			return;
+		}
 		options = options || {};
 		hui.setStyle(this.element,{
 			zIndex : hui.ui.nextPanelIndex(), visibility : 'hidden', display : 'block'
@@ -5215,7 +5288,7 @@ hui.ui.Formula.prototype = {
 		for (var i=0; i < d.length; i++) {
 			if (d[i].options && d[i].options.key) {
 				var key = d[i].options.key;
-				if (key && values[key]!=undefined) {
+				if (key && values[key]!==undefined) {
 					d[i].setValue(values[key]);
 				}
 			}
@@ -5634,6 +5707,9 @@ hui.ui.List.prototype = {
 				if (cells[j].getAttribute('align')) {
 					td.style.textAlign=cells[j].getAttribute('align');
 				}
+				if (cells[j].getAttribute('dimmed')=='true') {
+					td.className='hui_list_dimmed';
+				}
 				if (j==0 && level>1) {
 					td.style.paddingLeft = ((parseInt(level)-1)*16+5)+'px';
 				}
@@ -5736,19 +5812,30 @@ hui.ui.List.prototype = {
 				cell.appendChild(document.createElement('br'));
 			} else if (hui.dom.isElement(child,'icon')) {
 				var icon = hui.ui.createIcon(child.getAttribute('icon'),16);
+				if (child.getAttribute('hint')) {
+					icon.setAttribute('title',child.getAttribute('hint'));
+				}
+				if (child.getAttribute('action')=='true') {
+					hui.addClass(icon,'hui_list_icon_action');
+				}
 				var data = child.getAttribute('data');
 				if (data) {
 					icon.setAttribute('data',data);
-					hui.addClass(icon,'hui_list_action');
-					if (child.getAttribute('revealing')==='true') {
-						hui.addClass(icon,'hui_list_revealing');
-					}
+				}
+				if (child.getAttribute('revealing')==='true') {
+					hui.addClass(icon,'hui_list_revealing');
 				}
 				cell.appendChild(icon);
 			} else if (hui.dom.isElement(child,'line')) {
 				var line = hui.build('p',{'class':'hui_list_line'});
 				if (child.getAttribute('dimmed')=='true') {
 					hui.addClass(line,'hui_list_dimmed')
+				}
+				if (child.getAttribute('minor')=='true') {
+					hui.addClass(line,'hui_list_minor')
+				}
+				if (child.getAttribute('mini')=='true') {
+					hui.addClass(line,'hui_list_mini')
 				}
 				cell.appendChild(line);
 				this.parseCell(child,line);
@@ -5773,6 +5860,8 @@ hui.ui.List.prototype = {
 				hui.dom.addText(cell,this._wrap(hui.dom.getText(child)));
 			} else if (hui.dom.isElement(child,'delete')) {
 				this.parseCell(child,hui.build('del',{parent:cell}));
+			} else if (hui.dom.isElement(child,'strong')) {
+				this.parseCell(child,hui.build('strong',{parent:cell}));
 			} else if (hui.dom.isElement(child,'badge')) {
 				this.parseCell(child,hui.build('span',{className:'hui_list_badge',parent:cell}));
 			}
@@ -5974,7 +6063,7 @@ hui.ui.List.prototype = {
 		row.onmousedown = function(e) {
 			if (self.busy) {return};
 			var event = hui.event(e);
-			var action = event.findByClass('hui_list_action');
+			var action = event.findByClass('hui_list_icon_action');
 			if (!action) {
 				self._rowDown(index);
 				hui.ui.startDrag(e,row);
@@ -6011,7 +6100,7 @@ hui.ui.List.prototype = {
 	},
 	_rowClick : function(index,e) {
 		e = hui.event(e);
-		var a = e.findByClass('hui_list_action');
+		var a = e.findByClass('hui_list_icon_action');
 		if (a) {
 			var data = a.getAttribute('data');
 			if (data) {
@@ -6024,7 +6113,7 @@ hui.ui.List.prototype = {
 	},
 	_rowDoubleClick : function(index,e) {
 		e = hui.event(e);
-		if (!e.findByClass('hui_list_action')) {
+		if (!e.findByClass('hui_list_icon_action')) {
 			var row = this.getFirstSelection();
 			if (row) {
 				this.fire('listRowWasOpened',row);
@@ -6413,7 +6502,7 @@ hui.ui.DropDown.prototype = {
 	_updateUI : function() {
 		var selected = this.items[this.index];
 		if (selected) {
-			var text = selected.label || selected.title || '';
+			var text = selected.label || selected.title || selected.text || '';
 			this.inner.innerHTML='';
 			hui.dom.addText(this.inner,hui.wrap(text));
 		} else if (this.options.placeholder) {
@@ -6447,11 +6536,13 @@ hui.ui.DropDown.prototype = {
 			var left = hui.getLeft(this.element);
 			hui.setStyle(this.selector,{'left':left+'px',top:'5px'});
 		} else {
-			var scroll = hui.getScrollOffset(this.element);
+			var windowScrollTop = hui.window.getScrollTop();
+			var scrollOffsetTop = hui.getScrollOffset(this.element).top;
+			var scrollTop = windowScrollTop-scrollOffsetTop;
 			hui.place({
 				target : {element:this.element,vertical:1,horizontal:0},
 				source : {element:this.selector,vertical:0,horizontal:0},
-				top : scroll.top*-1
+				top : scrollTop
 			});
 		}
 		hui.setStyle(s,{visibility:'hidden',display:'block',width:''});
@@ -6581,7 +6672,7 @@ hui.ui.DropDown.prototype = {
 		}
 		var self = this;
 		hui.each(this.items,function(item,i) {
-			var e = hui.build('a',{href:'#',text:item.label || item.title});
+			var e = hui.build('a',{href:'javascript://',text:item.label || item.title || item.text});
 			hui.listen(e,'mousedown',function(e) {
 				hui.stop(e);
 				self._itemClicked(item,i);
@@ -7294,6 +7385,15 @@ hui.ui.Toolbar.prototype = {
 	},
 	addDivider : function() {
 		this.element.appendChild(hui.build('span',{'class':'hui_divider'}));
+	},
+	setSelection : function(key) {
+		var desc = hui.ui.getDescendants(this);
+		for (var i=0; i < desc.length; i++) {
+			var widget = desc[i];
+			if (widget.setSelected) {
+				widget.setSelected(widget.key==key);
+			}
+		};
 	}
 }
 
@@ -7346,6 +7446,7 @@ hui.ui.Toolbar.Icon = function(options) {
 	this.options = options;
 	this.element = hui.get(options.element);
 	this.name = options.name;
+	this.key = options.key;
 	this.enabled = !hui.hasClass(this.element,'hui_toolbar_icon_disabled');
 	this.element.tabIndex=this.enabled ? 0 : -1;
 	this.icon = hui.firstByClass(this.element,'hui_icon');
@@ -7392,8 +7493,22 @@ hui.ui.Toolbar.Icon.prototype = {
 	enable : function() {
 		this.setEnabled(true);
 	},
+	setOverlay : function(overlay) {
+		var node = hui.firstByClass(this.element,'hui_icon_overlay');
+		if (node && !overlay) {
+			node.style.backgroundImage = '';
+		} else if (node && overlay) {
+			node.style.backgroundImage = "url('"+hui.ui.getIconUrl('overlay/'+overlay,32)+"')";
+		} else if (overlay) {
+			var parent = hui.firstByClass(this.element,'hui_icon');
+			hui.build('span',{'class':'hui_icon_overlay',parent:parent,style:'background-image: url('+hui.ui.getIconUrl('overlay/'+overlay,32)+')'});
+		}
+	},
 	/** Sets wether the icon should be selected */
 	setSelected : function(selected) {
+		if (selected) {
+			this.element.blur();
+		}
 		hui.setClass(this.element,'hui_toolbar_icon_selected',selected);
 	},
 	/** @private */
@@ -7603,6 +7718,12 @@ hui.ui.BoundPanel = function(options) {
 	this.visible = false;
 	this.content = hui.firstByClass(this.element,'hui_boundpanel_content');
 	this.arrow = hui.firstByClass(this.element,'hui_boundpanel_arrow');
+	this.arrowWide = 32;
+	this.arrowNarrow = 18;
+	if (options.variant=='light') {
+		this.arrowWide = 23;
+		this.arrowNarrow = 12;
+	}
 	hui.ui.extend(this);
 }
 
@@ -7612,7 +7733,7 @@ hui.ui.BoundPanel = function(options) {
  * @param {Object} options The options
  */
 hui.ui.BoundPanel.create = function(options) {
-	options = hui.override({name:null, top:0, left:0, width:null, padding: null}, options);
+	options = hui.override({name:null, top:0, left:0, width:null, padding: null, modal: false}, options);
 
 	
 	var html = 
@@ -7630,7 +7751,7 @@ hui.ui.BoundPanel.create = function(options) {
 
 	options.element = hui.build(
 		'div',{
-			'class':'hui_boundpanel',
+			'class' : options.variant ? 'hui_boundpanel hui_boundpanel_'+options.variant : 'hui_boundpanel',
 			style:'display:none;zIndex:'+hui.ui.nextPanelIndex()+';top:'+options.top+'px;left:'+options.left+'px',
 			html:html,
 			parent:document.body
@@ -7651,50 +7772,61 @@ hui.ui.BoundPanel.prototype = {
 	},
 	/** Shows the panel */
 	show : function() {
-		if (!this.visible) {
-			if (this.options.target) {
-				this.position(hui.ui.get(this.options.target));
-			}
-			if (hui.browser.opacity) {
-				hui.setOpacity(this.element,0);
-			}
-			var vert;
-			if (this.relativePosition=='left') {
-				vert = false;
-				this.element.style.marginLeft='30px';
-			} else if (this.relativePosition=='right') {
-				vert = false;
-				this.element.style.marginLeft='-30px';
-			} else if (this.relativePosition=='top') {
-				vert = true;
-				this.element.style.marginTop='30px';
-			} else if (this.relativePosition=='bottom') {
-				vert = true;
-				this.element.style.marginTop='-30px';
-			}
-			hui.setStyle(this.element,{
-				visibility : 'hidden', display : 'block'
-			})
-			var width = this.element.clientWidth;
-			hui.setStyle(this.element,{
-				width : width+'px' , visibility : 'visible'
-			});
-			this.element.style.display='block';
-			if (hui.browser.opacity) {
-				hui.animate(this.element,'opacity',1,400,{ease:hui.ease.fastSlow});
-			}
-			hui.animate(this.element,vert ? 'margin-top' : 'margin-left','0px',800,{ease:hui.ease.bounce});
+		if (this.visible) {
+			return;
 		}
-		this.element.style.zIndex = hui.ui.nextPanelIndex();
+		if (this.options.target) {
+			this.position(hui.ui.get(this.options.target));
+		}
+		if (hui.browser.opacity) {
+			hui.setOpacity(this.element,0);
+		}
+		var vert;
+		if (this.relativePosition=='left') {
+			vert = false;
+			this.element.style.marginLeft='30px';
+		} else if (this.relativePosition=='right') {
+			vert = false;
+			this.element.style.marginLeft='-30px';
+		} else if (this.relativePosition=='top') {
+			vert = true;
+			this.element.style.marginTop='30px';
+		} else if (this.relativePosition=='bottom') {
+			vert = true;
+			this.element.style.marginTop='-30px';
+		}
+		hui.setStyle(this.element,{
+			visibility : 'hidden', display : 'block'
+		})
+		this.element.style.visibility = 'visible';
+		this.element.style.display = 'block';
+		var index = hui.ui.nextPanelIndex();
+		this.element.style.zIndex = index;
+		hui.ui.callVisible(this);
+		if (hui.browser.opacity) {
+			hui.animate(this.element,'opacity',1,400,{ease:hui.ease.fastSlow});
+		}
+		hui.animate(this.element,vert ? 'margin-top' : 'margin-left','0px',800,{ease:hui.ease.bounce});
 		this.visible=true;
+		if (this.options.modal) {
+			hui.ui.showCurtain({widget:this,zIndex:index-1,color:'auto'});
+		}
+	},
+	$curtainWasClicked : function() {
+		hui.ui.hideCurtain(this);
+		this.hide();
 	},
 	/** Hides the panel */
 	hide : function() {
+		if (!this.visible) {
+			return;
+		}
 		if (hui.browser.msie) {
 			this.element.style.display='none';
 		} else {
 			hui.animate(this.element,'opacity',0,300,{ease:hui.ease.slowFast,hideOnComplete:true});
 		}
+		hui.ui.callVisible(this);
 		this.visible=false;
 	},
 	/**
@@ -7739,48 +7871,91 @@ hui.ui.BoundPanel.prototype = {
 			node = node.getElement();
 		}
 		node = hui.get(node);
-		var offset = {left:hui.getLeft(node),top:hui.getTop(node)};
-		var scrollOffset = {left:hui.getScrollLeft(),top:hui.getScrollTop()};
-		var dims = this.getDimensions();
+		var nodeOffset = {left:hui.getLeft(node),top:hui.getTop(node)};
+		var nodeScrollOffset = hui.getScrollOffset(node);
+		var windowScrollOffset = {left:hui.getScrollLeft(),top:hui.getScrollTop()};
+				
+		var panelDimensions = this.getDimensions();
 		var viewportWidth = hui.getViewPortWidth();
 		var viewportHeight = hui.getViewPortHeight();
-		var nodeLeft = offset.left-scrollOffset.left+hui.getScrollLeft();
-		var nodeWidth = node.clientWidth;
-		var nodeHeight = node.clientHeight;
-		var nodeTop = offset.top-scrollOffset.top+hui.getScrollTop();
+		var nodeLeft = nodeOffset.left-windowScrollOffset.left+hui.getScrollLeft();
+		var nodeWidth = node.clientWidth || node.offsetWidth;
+		var nodeHeight = node.clientHeight || node.offsetHeight;
 		var arrowLeft, arrowTop, left, top;
-		var vertical = (nodeTop-scrollOffset.top)/viewportHeight;
+		var positionOnScreen = {
+			top : nodeOffset.top-windowScrollOffset.top-(nodeScrollOffset.top-windowScrollOffset.top)
+		}
+		var vertical = (nodeOffset.top-windowScrollOffset.top+nodeScrollOffset.top)/viewportHeight;
+		vertical = positionOnScreen.top / viewportHeight;
+		hui.log(vertical)
+		hui.log(hui.toJSON({
+			nodeOffset : nodeOffset
+		}))
+		hui.log(hui.toJSON({
+			nodeScrollOffset : nodeScrollOffset,
+			windowScrollOffset : windowScrollOffset
+		}))
 		
 		if (vertical<.1) {
 			this.relativePosition='top';
 			this.arrow.className = 'hui_boundpanel_arrow hui_boundpanel_arrow_top';
-			arrowTop = -16;
-			left = Math.min(viewportWidth-dims.width,Math.max(0,nodeLeft+(nodeWidth/2)-((dims.width)/2)));
-			arrowLeft = (nodeLeft+nodeWidth/2)-left-18;
-			top = nodeTop+nodeHeight+8;
+			if (this.options.variant=='light') {
+				arrowTop = this.arrowNarrow*-1+1;
+			} else {
+				arrowTop = this.arrowNarrow*-1+2;
+			}
+			left = Math.min(viewportWidth-panelDimensions.width-3,Math.max(3,nodeLeft+(nodeWidth/2)-((panelDimensions.width)/2)));
+			arrowLeft = (nodeLeft+nodeWidth/2)-left-this.arrowNarrow;
+			top = nodeOffset.top+nodeHeight+8 - (nodeScrollOffset.top-windowScrollOffset.top);
 		}
 		else if (vertical>.9) {
 			this.relativePosition='bottom';
 			this.arrow.className='hui_boundpanel_arrow hui_boundpanel_arrow_bottom';
-			arrowTop = dims.height-6;
-			left = Math.min(viewportWidth-dims.width,Math.max(0,nodeLeft+(nodeWidth/2)-((dims.width)/2)));
-			arrowLeft = (nodeLeft+nodeWidth/2)-left-18;
-			top = nodeTop-dims.height-5;
+			if (this.options.variant=='light') {
+				arrowTop = panelDimensions.height-2;
+			} else {
+				arrowTop = panelDimensions.height-6;
+			}
+			left = Math.min(viewportWidth-panelDimensions.width-3,Math.max(3,nodeLeft+(nodeWidth/2)-((panelDimensions.width)/2)));
+			arrowLeft = (nodeLeft+nodeWidth/2)-left-this.arrowNarrow;
+			top = nodeOffset.top-panelDimensions.height-5 - (nodeScrollOffset.top-windowScrollOffset.top);
 		}
 		else if ((nodeLeft+nodeWidth/2)/viewportWidth<.5) {
 			this.relativePosition='left';
 			left = nodeLeft+nodeWidth+10;
 			this.arrow.className='hui_boundpanel_arrow hui_boundpanel_arrow_left';
-			arrowLeft=-14;
-			top = Math.max(0,nodeTop+(nodeHeight-dims.height)/2);
-			arrowTop = (dims.height-32)/2+Math.min(0,nodeTop+(nodeHeight-dims.height)/2);
+			top = nodeOffset.top+(nodeHeight-panelDimensions.height)/2;
+			//top = Math.min(top,viewportHeight-panelDimensions.height+(windowScrollOffset.top+nodeScrollOffset.top));
+			top-= (nodeScrollOffset.top-windowScrollOffset.top);
+			var min = windowScrollOffset.top+3;
+			var max = windowScrollOffset.top+(viewportHeight-panelDimensions.height)-3;
+			top = Math.min(Math.max(top,min),max);
+			arrowTop = nodeOffset.top-top;
+			arrowTop-= (nodeScrollOffset.top-windowScrollOffset.top);
+			if (this.options.variant=='light') {
+				arrowLeft=-11;
+				arrowTop+=2;
+			} else {
+				arrowLeft=-14;
+			}
 		} else {
 			this.relativePosition='right';
-			left = nodeLeft-dims.width-10;
+			left = nodeLeft-panelDimensions.width-10;
 			this.arrow.className='hui_boundpanel_arrow hui_boundpanel_arrow_right';
-			arrowLeft=dims.width-4;
-			top = Math.max(0,nodeTop+(nodeHeight-dims.height)/2);
-			arrowTop = (dims.height-32)/2+Math.min(0,nodeTop+(nodeHeight-dims.height)/2);
+			top = nodeOffset.top+(nodeHeight-panelDimensions.height)/2;
+			//top = Math.min(top,viewportHeight-panelDimensions.height+(windowScrollOffset.top+nodeScrollOffset.top));
+			top-= (nodeScrollOffset.top-windowScrollOffset.top);
+			var min = windowScrollOffset.top+3;
+			var max = windowScrollOffset.top+(viewportHeight-panelDimensions.height)-3;
+			top = Math.min(Math.max(top,min),max);
+			arrowTop = nodeOffset.top-top;
+			arrowTop-= (nodeScrollOffset.top-windowScrollOffset.top);
+			if (this.options.variant=='light') {
+				arrowLeft=panelDimensions.width-1;
+				arrowTop+=2;
+			} else {
+				arrowLeft=panelDimensions.width-4;
+			}
 		}
 		this.arrow.style.marginTop = arrowTop+'px';
 		this.arrow.style.marginLeft = arrowLeft+'px';
@@ -7792,241 +7967,6 @@ hui.ui.BoundPanel.prototype = {
 			this.element.style.left=left+'px';
 		}
 	}
-}
-
-/* EOF *//**
- * @constructor
- */
-hui.ui.RichText = function(options) {
-	this.name = options.name;
-	var e = this.element = hui.get(options.element);
-	this.options = hui.override({debug:false,value:'',autoHideToolbar:true,style:'font-family: sans-serif;'},options);
-	this.textarea = hui.build('textarea');
-	e.appendChild(this.textarea);
-	this.editor = WysiHat.Editor.attach(this.textarea);
-	this.editor.setAttribute('frameborder','0');
-	/* @private */
-	this.toolbar = hui.firstByClass(e,'hui_richtext_toolbar');
-	this.toolbarContent = hui.firstByClass(e,'hui_richtext_toolbar_content');
-	this.value = this.options.value;
-	this.document = null;
-	this.ignited = false;
-	this.buildToolbar();
-	this.ignite();
-	hui.ui.extend(this);
-}
-
-hui.ui.RichText.actions = [
-	{key:'bold',				cmd:'bold',				value:null,		icon:'edit/text_bold'},
-	{key:'italic',				cmd:'italic',			value:null,		icon:'edit/text_italic'},
-	{key:'underline',			cmd:'underline',		value:null,		icon:'edit/text_underline'},
-	null,
-	{key:'justifyleft',			cmd:'justifyleft',		value:null,		icon:'edit/text_align_left'},
-	{key:'justifycenter',		cmd:'justifycenter',	value:null,		icon:'edit/text_align_center'},
-	{key:'justifyright',		cmd:'justifyright',		value:null,		icon:'edit/text_align_right'},
-	null,
-	{key:'increasefontsize',	cmd:'increasefontsize',	value:null,		icon:'edit/increase_font_size'},
-	{key:'decreasefontsize',	cmd:'decreasefontsize',	value:null,		icon:'edit/decrease_font_size'},
-	{key:'color',				cmd:null,				value:null,		icon:'common/color'}
-	/*,
-	null,
-	{key:'p',				cmd:'formatblock',		value:'p'},
-	{key:'h1',				cmd:'formatblock',		value:'h1'},
-	{key:'h2',				cmd:'formatblock',		value:'h2'},
-	{key:'h3',				cmd:'formatblock',		value:'h3'},
-	{key:'h4',				cmd:'formatblock',		value:'h4'},
-	{key:'h5',				cmd:'formatblock',		value:'h5'},
-	{key:'h6',				cmd:'formatblock',		value:'h6'},
-	{key:'removeformat', 	cmd:'removeformat', 	'value':null}*/
-];
-
-hui.ui.RichText.replaceInput = function(options) {
-	options = options || {};
-	var input = hui.get(options.input);
-	input.style.display='none';
-	options.value = input.value;
-	var obj = hui.ui.RichText.create(options);
-	input.parentNode.insertBefore(obj.element,input);
-	obj.ignite();
-}
-
-hui.ui.RichText.create = function(options) {
-	options = options || {};
-	options.element = hui.build('div',{'class':'hui_richtext',html:'<div class="hui_richtext_toolbar"><div class="hui_richtext_inner_toolbar"><div class="hui_richtext_toolbar_content"></div></div></div>'});
-	return new hui.ui.RichText(options);
-}
-
-hui.ui.RichText.prototype = {
-	isCompatible : function() {
-	    var agt=navigator.userAgent.toLowerCase();
-		return true;
-		return (agt.indexOf('msie 6')>-1 || agt.indexOf('msie 7')>-1 || (agt.indexOf('gecko')>-1 && agt.indexOf('safari')<0));
-	},
-	ignite : function() {
-		var self = this;
-		this.editor.observe("wysihat:loaded", function(event) {
-			if (this.ignited) {
-				return;
-			}
-			this.editor.setStyle(this.options.style);
-			this.editor.setRawContent(this.value);
-			this.document = this.editor.getDocument();
-			if (this.document.body) {
-				this.document.body.style.minHeight='100%';
-				this.document.body.style.margin='0';
-				this.document.documentElement.style.cursor='text';
-				this.document.documentElement.style.minHeight='100%';
-				Element.setStyle(this.document.body,this.options.style);
-			}
-			this.window = this.editor.getWindow();
-			Event.observe(this.window,'focus',function() {self.documentFocused()});
-			Event.observe(this.window,'blur',function() {self.documentBlurred()});
-			this.document.body.focus();
-			this.ignited = true;
-     	}.bind(this));
-		this.editor.observe("wysihat:change", function(event) {
-        	this.documentChanged();
-     	}.bind(this));
-	},
-	setHeight : function(height) {
-		this.editor.style.height=height+'px';
-	},
-	focus : function() {
-		try { // TODO : May only work in gecko
-			var r = this.document.createRange();
-			r.selectNodeContents(this.document.body);
-			this.window.getSelection().addRange(r);
-		} catch (ignore) {}
-		if (this.window)this.window.focus();
-	},
-	setValue : function(value) {
-		this.value = value;
-		this.editor.setRawContent(this.value);
-	},
-	getValue : function() {
-		return this.value;
-	},
-	deactivate : function() {
-		if (this.colorPicker) this.colorPicker.hide();
-		if (this.toolbar) this.toolbar.style.display='none';
-	},
-	
-	buildToolbar : function() {
-		this.toolbar.onmousedown = function() {this.toolbarMouseDown=true}.bind(this);
-		this.toolbar.onmouseup = function() {this.toolbarMouseDown=false}.bind(this);
-		var self = this;
-		var actions = hui.ui.RichText.actions;
-		for (var i=0; i < actions.length; i++) {
-			if (actions[i]==null) {
-				this.toolbarContent.appendChild(hui.build('div',{'class':'hui_richtext_divider'}));
-			} else {
-				var div = hui.build('div',{'class':'action action_'+actions[i].key});
-				div.title=actions[i].key;
-				div.huiRichTextAction = actions[i]
-				div.onclick = div.ondblclick = function(e) {return self.actionWasClicked(this.huiRichTextAction,e);}
-				var img = hui.build('img');
-				img.src=hui.ui.context+'/hui/gfx/trans.png';
-				if (actions[i].icon) {
-					div.style.backgroundImage='url('+hui.ui.getIconUrl(actions[i].icon,16)+')';
-				}
-				div.appendChild(img);
-				this.toolbarContent.appendChild(div);
-				div.onmousedown = hui.ui.RichText.stopEvent;
-			}
-		};
-	},
-	documentFocused : function() {
-		if (hui.browser.msie) {
-			this.toolbar.style.display='block';
-			return;
-		}
-		if (this.toolbar.style.display!='block') {
-			this.toolbar.style.marginTop='-40px';
-			hui.setOpacity(this.toolbar,0);
-			this.toolbar.style.display='block';
-			hui.animate(this.toolbar,'opacity',1,300);
-			hui.animate(this.toolbar,'margin-top','-32px',300);
-		}
-	},
-	
-	documentBlurred : function() {
-		if (this.toolbarMouseDown) return;
-		if (this.options.autoHideToolbar) {
-			if (hui.browser.msie) {
-				var self = this;
-				window.setTimeout(function() {
-					self.toolbar.style.display='none';
-				},100);
-				return;
-			}
-			hui.animate(this.toolbar,'opacity',0,300,{hideOnComplete:true});
-			hui.animate(this.toolbar,'margin-top','-40px',300);
-		}
-		this.documentChanged();
-		hui.ui.callDelegates(this,'richTextDidChange');
-	},
-	
-	documentChanged : function() {
-		this.value = this.editor.content();
-		if (this.options.input) {
-			hui.get(this.options.input).value=this.value;
-		}
-	},
-	
-	disabler : function(e) {
-		var evt = e ? e : window.event; 
-		if (evt.returnValue) {
-			evt.returnValue = false;
-		} else if (evt.preventDefault) {
-			evt.preventDefault( );
-		}
-		return false;
-	},
-	actionWasClicked : function(action,e) {
-		hui.ui.RichText.stopEvent(e);
-		if (action.key=='color') {
-			this.showColorPicker();
-		} else {
-			this.execCommand(action);
-		}
-		this.document.body.focus();
-		return false;
-	},
-	execCommand : function(action) {
-		this.editor.execCommand(action.cmd,false,action.value);
-		this.documentChanged();
-	},
-	showColorPicker : function() {
-		if (!this.colorPicker) {
-			var panel = hui.ui.Window.create({variant:'dark'});
-			var picker = hui.ui.ColorPicker.create();
-			picker.listen(this);
-			panel.add(picker);
-			panel.show();
-			this.colorPicker = panel;
-		}
-		this.colorPicker.show();
-	},
-	$colorWasHovered : function(color) {
-		//this.document.execCommand('forecolor',false,color);
-	},
-	$colorWasSelected : function(color) {
-		this.document.execCommand('forecolor',false,color);
-		this.documentChanged();
-	}
-}
-
-
-
-hui.ui.RichText.stopEvent = function(e) {
-  var evt = e ? e : window.event; 
-  if (evt.returnValue) {
-    evt.returnValue = false;
-  } else if (evt.preventDefault) {
-    evt.preventDefault( );
-  } else {
-    return false;
-  }
 }
 
 /* EOF *//**
@@ -9388,8 +9328,7 @@ hui.ui.Overlay.prototype = {
 		if (this.options.modal) {
 			var zIndex = hui.ui.nextAlertIndex();
 			this.element.style.zIndex=zIndex+1;
-			var color = hui.getStyle(document.body,'background-color');
-			hui.ui.showCurtain({widget:this,zIndex:zIndex,color:color});
+			hui.ui.showCurtain({widget:this,zIndex:zIndex,color:'auto'});
 		}
 	},
 	/** private */
@@ -10091,7 +10030,11 @@ hui.ui.Gallery.prototype = {
 	$sourceIsNotBusy : function() {
 		this._setBusy(false);
 	},
-	
+	$visibilityChanged : function() {
+		if (hui.dom.isVisible(this.element)) {
+			this._reveal();
+		}
+	},
 	_setBusy : function(busy) {
 		this.busy = busy;
 		window.clearTimeout(this.busytimer);
@@ -10553,6 +10496,9 @@ hui.ui.Layout.prototype = {
 		if (!hui.browser.msie7 && !hui.browser.msie8 && !hui.browser.msie9) {
 			return;
 		}
+		if (!hui.dom.isVisible(this.element)) {
+			return;
+		}
 		if (this.diff===undefined) {
 			var head = hui.firstByClass(this.element,'hui_layout_top');
 			var top = hui.firstByTag(head,'*').clientHeight;
@@ -10570,7 +10516,8 @@ hui.ui.Layout.prototype = {
 		}
 		var tbody = hui.firstByTag(this.element,'tbody');
 		var cell = hui.firstByTag(tbody,'td');
-		cell.style.height = (hui.getViewPortHeight()-this.diff+5)+'px';
+		var height = (hui.getViewPortHeight()-this.diff+5);
+		cell.style.height = height+'px';
 	}
 };
 
@@ -10803,12 +10750,11 @@ hui.ui.Wizard = function(o) {
 	/** @private */
 	this.selected = 0;
 	hui.ui.extend(this);
-	this.addBehavior();
+	this._addBehavior();
 }
 	
 hui.ui.Wizard.prototype = {
-	/** @private */
-	addBehavior : function() {
+	_addBehavior : function() {
 		var self = this;
 		hui.each(this.anchors,function(node,i) {
 			hui.listen(node,'mousedown',function(e) {
@@ -10820,7 +10766,11 @@ hui.ui.Wizard.prototype = {
 			});
 		});
 	},
-	/** Goes to the step with the index */
+	/** Get the currently selected step (0-based)*/
+	getStep : function() {
+		return this.selected;
+	},
+	/** Goes to the step with the index (0-based) */
 	goToStep : function(index) {
 		var c = this.container;
 		c.style.height=c.clientHeight+'px';
@@ -10833,6 +10783,13 @@ hui.ui.Wizard.prototype = {
 			c.style.height='';
 		}});
 		hui.ui.callVisible(this);
+		this.fire('stepChanged',this.selected);
+	},
+	isFirst : function() {
+		return this.selected==0;
+	},
+	isLast : function() {
+		return this.selected==this.steps.length-1;
 	},
 	/** Goes to the next step */
 	next : function() {
@@ -11131,15 +11088,20 @@ hui.ui.SearchField.prototype = {
 		hui.listen(this.field,'keyup',this.onKeyUp.bind(this));
 		var reset = hui.firstByTag(this.element,'a');
 		reset.tabIndex=-1;
-		var focus = function() {self.field.focus();self.field.select()};
-		hui.listen(this.element,'mousedown',focus);
-		hui.listen(this.element,'mouseup',focus);
+		if (!hui.browser.ipad) {
+			var focus = function() {self.field.focus();self.field.select()};
+			hui.listen(this.element,'mousedown',focus);
+			hui.listen(this.element,'mouseup',focus);
+			hui.listen(hui.firstByTag(this.element,'em'),'mousedown',focus);
+		} else {
+			var focus = function() {self.field.focus();};
+			hui.listen(hui.firstByTag(this.element,'em'),'click',focus);
+		}
 		hui.listen(reset,'mousedown',function(e) {
 			hui.stop(e);
 			self.reset();
 			focus()
 		});
-		hui.listen(hui.firstByTag(this.element,'em'),'mousedown',focus);
 		hui.listen(this.field,'focus',function() {
 			self.focused=true;
 			self.updateClass();
@@ -11331,6 +11293,8 @@ hui.ui.Bar = function(options) {
 	this.options = hui.override({},options);
 	this.name = options.name;
 	this.element = hui.get(options.element);
+	this.visible = this.element.style.display=='none' ? false : null;
+	this.body = hui.firstByClass(this.element,'hui_bar_body');
 	hui.ui.extend(this);
 };
 
@@ -11355,29 +11319,49 @@ hui.ui.Bar.prototype = {
 		document.body.appendChild(this.element);
 	},
 	add : function(widget) {
-		var body = hui.firstByClass(this.element,'hui_bar_body');
-		body.appendChild(widget.getElement());
+		this.body.appendChild(widget.getElement());
 	},
-	placeAbove : function(widget) {
+	addDivider : function() {
+		hui.build('span',{'class':'hui_bar_divider',parent:this.body})
+	},
+	placeAbove : function(widgetOrElement) {
+		if (widgetOrElement.getElement) {
+			widgetOrElement = widgetOrElement.getElement();
+		}
 		hui.place({
 			source:{element:this.element,vertical:1,horizontal:0},
-			target:{element:widget.getElement(),vertical:0,horizontal:0}
+			target:{element:widgetOrElement,vertical:0,horizontal:0}
 		});
 		this.element.style.zIndex = hui.ui.nextTopIndex();
+	},
+	/** Change the visibility of the bar
+	 * @param {boolean} If the bar should be visible
+	 */
+	setVisible : function(visible) {
+		if (this.visible===visible) {return}
+		if (visible) {
+			this.show();
+		} else {
+			this.hide();
+		}
 	},
 	show : function() {
 		if (this.options.absolute) {
 			this.element.style.visibility='visible';
 		} else {
 			this.element.style.display='';
+			hui.ui.reLayout();
 		}
+		this.visible = true;
 	},
 	hide : function() {
 		if (this.options.absolute) {
 			this.element.style.visibility='hidden';
 		} else {
 			this.element.style.display='none';
+			hui.ui.reLayout();
 		}
+		this.visible = false;
 	}
 }
 
@@ -12180,13 +12164,16 @@ hui.ui.MarkupEditor.prototype = {
 			var things = [
 				{key:'bold',icon:'edit/text_bold'},
 				{key:'italic',icon:'edit/text_italic'},
+				{divider:true},
 				{key:'color',icon:'common/color'},
 				/*{key:'image',icon:'common/image'},*/
-				{key:'addLink',icon:'common/link'},
+				{key:'addLink',icon:'monochrome/link'},
+				{divider:true},
 				{key:'align',value:'left',icon:'edit/text_align_left'},
 				{key:'align',value:'center',icon:'edit/text_align_center'},
 				{key:'align',value:'right',icon:'edit/text_align_right'},
 				{key:'align',value:'justify',icon:'edit/text_align_justify'},
+				{divider:true},
 				{key:'clear',icon:'edit/clear'}/*,
 				{key:'strong',icon:'edit/text_bold'}*/
 				
@@ -12197,6 +12184,10 @@ hui.ui.MarkupEditor.prototype = {
 			
 			this.bar = hui.ui.Bar.create({absolute:true,variant:'mini',small:true});
 			hui.each(things,function(info) {
+				if (info.divider) {
+					this.bar.addDivider();
+					return
+				}
 				var button = new hui.ui.Bar.Button.create({icon:info.icon,stopEvents:true});
 				button.listen({
 					$mousedown : function() { this._buttonClicked(info) }.bind(this)
@@ -12205,6 +12196,7 @@ hui.ui.MarkupEditor.prototype = {
 			}.bind(this));
 			this.bar.addToDocument();
 		}
+		hui.log('Showing bar');
 		this.bar.placeAbove(this);
 		this.bar.show();
 	},
@@ -12238,24 +12230,52 @@ hui.ui.MarkupEditor.prototype = {
 		}
 		this.colorPicker.show({avoid:this.element});
 	},
+	_highlightNode : function(node) {
+		if (this._highlightedNode) {
+			hui.removeClass(this._highlightedNode,'hui_markupeditor_highlighted');
+		}
+		this._highlightedNode = node;
+		if (node) {
+			hui.addClass(node,'hui_markupeditor_highlighted');
+		}
+	},
 	_showLinkEditor : function() {
-		if (!this.linkEditor) {
+		this.temporaryLink = this.impl.getOrCreateLink();
+		this._highlightNode(this.temporaryLink);
+		if (this.options.linkDelegate ) {
+			var delegate = this.options.linkDelegate;
+			delegate.editLink({
+				node:this.temporaryLink,
+				onSuccess : function() {
+					this._highlightNode(null)
+					this.temporaryLink = null;
+					hui.log('success');
+					this._valueChanged();
+				}.bind(this),
+				onCancel : function() {
+					this._highlightNode(null)
+					hui.log('cancelled');
+					this.temporaryLink = null;
+					this._valueChanged();
+				}.bind(this)
+			});
+		} else if (!this.linkEditor) {
 			this.linkEditor = hui.ui.Window.create({padding:5,width:300});
 			this.linkForm = hui.ui.Formula.create();
 			this.linkEditor.add(this.linkForm);
 			var group = this.linkForm.buildGroup({},[
 				{type : 'TextField', options:{key:'url',label:'Address:'}}
 			]);
-			this.linkEditor.add(this.linkForm);
 			var buttons = group.createButtons();
 			var ok = hui.ui.Button.create({text:'OK',submit:true});
 			this.linkForm.listen({$submit:this._updateLink.bind(this)});
 			buttons.add(ok);
 		}
-		this.temporaryLink = this.impl.getOrCreateLink();
-		this.linkForm.setValues({url:this.temporaryLink.href});
-		this.linkEditor.show({avoid:this.element});
-		this.linkForm.focus();
+		if (this.linkEditor) {
+			this.linkForm.setValues({url:this.temporaryLink.href});
+			this.linkEditor.show({avoid:this.element});
+			this.linkForm.focus();
+		}
 	},
 	_updateLink : function() {
 		var values = this.linkForm.getValues();
@@ -12286,6 +12306,7 @@ hui.ui.MarkupEditor.webkit = {
 		this.element.contentEditable = true;
 		var ctrl = this.controller = options.controller;
 		hui.listen(this.element,'focus',function() {
+			hui.log('Webkit focus');
 			ctrl.implFocused();
 		});
 		hui.listen(this.element,'blur',function() {
@@ -12382,6 +12403,7 @@ hui.ui.MarkupEditor.webkit = {
 		document.execCommand('removeFormat',null,null);
 	},
 	setHTML : function(html) {
+			hui.log('Setting html');
 		this.element.innerHTML = html;
 	},
 	getHTML : function() {
@@ -12552,7 +12574,7 @@ hui.ui.ColorPicker.create = function(options) {
 	options.element = hui.build('div',{
 		'class':'hui_colorpicker',
 		html : 
-			'<div class="hui_bar hui_bar_window">'+
+			'<div class="hui_bar hui_bar_window_mini">'+
 				'<div class="hui_bar_body">'+
 					'<a class="hui_bar_button hui_bar_button_selected" href="javascript:void(0)" rel="0">'+
 						'<span class="hui_icon_16" style="background: url('+hui.ui.getIconUrl('colorpicker/wheel_pastels',16)+')"></span>'+
@@ -12934,6 +12956,7 @@ hui.ui.StyleLength.prototype = {
 		}
 		this.value = value;
 		if (changed) {
+			hui.ui.callAncestors(this,'childValueChanged',this.input.value);
 			this.fire('valueChanged',this.getValue());
 		}
 	},
@@ -13148,7 +13171,7 @@ hui.ui.Checkbox = function(o) {
  * Creates a new checkbox
  */
 hui.ui.Checkbox.create = function(o) {
-	var e = o.element = hui.build('a',{'class':'hui_checkbox',href:'#',html:'<span><span></span></span>'});
+	var e = o.element = hui.build('a',{'class':'hui_checkbox',href:'javascript://',html:'<span><span></span></span>'});
 	if (o.value) {
 		hui.addClass(e,'hui_checkbox_selected');
 	}
@@ -13366,7 +13389,7 @@ hui.ui.Checkboxes.Items.prototype = {
 		this.element.innerHTML='';
 		var self = this;
 		hui.each(items,function(item) {
-			var node = hui.build('a',{'class':'hui_checkbox',href:'#',html:'<span><span></span></span>'+item.title});
+			var node = hui.build('a',{'class':'hui_checkbox',href:'javascript://',html:'<span><span></span></span>'+item.title});
 			hui.listen(node,'click',function(e) {
 				hui.stop(e);
 				node.focus();
@@ -13412,19 +13435,20 @@ hui.ui.Radiobuttons = function(options) {
 	this.radios = [];
 	this.value = options.value;
 	this.defaultValue = this.value;
+	this.enabled = true;
 	hui.ui.extend(this);
 }
 
 hui.ui.Radiobuttons.prototype = {
-	click : function() {
+/*	click : function() {
 		this.value = !this.value;
 		this.updateUI();
-	},
+	},*/
 	/** @private */
 	updateUI : function() {
 		for (var i=0; i < this.radios.length; i++) {
 			var radio = this.radios[i];
-			hui.setClass(hui.get(radio.id),'hui_selected',radio.value==this.value);
+			hui.setClass(hui.get(radio.id),'hui_radiobutton_selected',radio.value==this.value);
 		};
 	},
 	setValue : function(value) {
@@ -13432,18 +13456,29 @@ hui.ui.Radiobuttons.prototype = {
 		this.updateUI();
 	},
 	getValue : function() {
+		if (!this.enabled) {
+			return null;
+		}
 		return this.value;
 	},
 	reset : function() {
 		this.setValue(this.defaultValue);
+	},
+	setEnabled : function(enabled) {
+		this.enabled = enabled == true;
+		hui.setClass(this.element,'hui_radiobuttons_disabled',!this.enabled);
 	},
 	registerRadiobutton : function(radio) {
 		this.radios.push(radio);
 		var element = hui.get(radio.id);
 		var self = this;
 		element.onclick = function() {
+			if (!self.enabled) {
+				return;
+			}
 			self.setValue(radio.value);
 			self.fire('valueChanged',radio.value);
+			hui.ui.callAncestors(self,'childValueChanged',radio.value);
 		}
 	}
 }/////////////////////////// Number /////////////////////////
@@ -13578,7 +13613,7 @@ hui.ui.NumberField.prototype = {
  * @constructor
  */
 hui.ui.TextField = function(options) {
-	this.options = hui.override({label:null,key:null,lines:1,live:false,maxHeight:100},options);
+	this.options = hui.override({label:null,key:null,lines:1,live:false,maxHeight:100,animateValueChage:true,animateUserChange:true},options);
 	this.element = hui.get(options.element);
 	this.name = options.name;
 	hui.ui.extend(this);
@@ -13656,7 +13691,7 @@ hui.ui.TextField.prototype = {
 		if (this.input.value==this.value) {return;}
 		this.value=this.input.value;
 		this.updateClass();
-		this.expand(true);
+		this.expand(this.options.animateUserChange);
 		hui.ui.callAncestors(this,'childValueChanged',this.input.value);
 		this.fire('valueChanged',this.input.value);
 	},
@@ -13690,7 +13725,7 @@ hui.ui.TextField.prototype = {
 		}
 		this.value = value;
 		this.input.value = value;
-		this.expand(true);
+		this.expand(this.options.animateValueChange);
 	},
 	getValue : function() {
 		return this.input.value;
@@ -13742,6 +13777,23 @@ hui.ui.TextField.prototype = {
 	updateOverflow : function() {
 		if (!this.multiline) return;
 		this.input.style.overflowY=this.input.clientHeight>=this.options.maxHeight ? 'auto' : 'hidden';
+	}
+}/** @constructor */
+hui.ui.Rendering = function(options) {
+	this.options = hui.override({clickObjects:false},options);
+	this.element = hui.get(options.element);
+	this.name = options.name;
+	hui.ui.extend(this);
+	//hui.listen(this.element,'click',this._click.bind(this));
+}
+
+hui.ui.Rendering.prototype = {
+	_click : function(e) {
+		e = hui.event(e);
+		
+	},
+	setContent : function(html) {
+		this.element.innerHTML = html;
 	}
 }hui.ui.Graph = function(options) {
 	this.options = options;

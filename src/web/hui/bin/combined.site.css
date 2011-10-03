@@ -703,6 +703,7 @@ div.hui_buttons
 	overflow: hidden;
 	font-size: 0;
 	line-height: 0;
+	white-space: nowrap;
 }
 
 div.hui_buttons_right div.hui_buttons_body
@@ -723,6 +724,11 @@ div.hui_buttons a.hui_button
 div.hui_buttons_right a.hui_button
 {
 	margin: 0px 0px 0px 2px;
+}
+
+div.hui_buttons_center a.hui_button
+{
+	margin: 0px 1px 0px 1px;
 }
 
 a.hui_button
@@ -1040,6 +1046,7 @@ a.hui_button_paper, a.hui_button_paper span
 	height: 26px;
 	line-height: 26px;
 	font-family: Georgia,serif;
+	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
 	font-size: 14px;
 }
 
@@ -1153,6 +1160,13 @@ table.hui_formula_group
 {
 	width: 100%;
 	font-size: 0;
+}
+
+p.hui_formula_field_hint
+{
+	font-size: 9px;
+	color: #999;
+	margin: -5px 0 0 3px;
 }
 
 table.hui_formula_group_above
@@ -1506,6 +1520,11 @@ div.hui_window table.hui_formula_group label
 	padding: 0px 2px;
 }
 
+div.hui_window div.hui_formula_fieldset table.hui_formula_group label
+{
+	background: none;
+}
+
 div.hui_window_light table.hui_formula_group label
 {
 	color: #004A80;
@@ -1728,4 +1747,80 @@ span.hui_searchfield_focus_dirty span
 span.hui_searchfield_focus_dirty span span
 {
 	background-position: 0 -275px;
+}a.hui_checkbox
+{
+	overflow: hidden;
+	font-size: 10pt;
+	line-height: 20px;
+	cursor: pointer;
+	color: #004A80;
+	display: inline-block;
+	outline: none;
+	text-decoration: none;
+	vertical-align: middle;
+}
+
+a.hui_checkbox span
+{
+	float: left;
+	width: 20px;
+	height: 20px;
+	margin-right: 2px;
+}
+
+a.hui_checkbox span span
+{
+	background: url('../gfx/checkbox.png') no-repeat;
+	margin: 0;
+}
+
+a.hui_checkbox:hover span span
+{
+	background-position: 0 -20px;
+}
+
+a.hui_checkbox:active span span
+{
+	background-position: 0 -40px;
+}
+
+a.hui_checkbox_focused
+{
+	text-shadow: #3366ff 0px 0px 2px;
+	color: #002244;
+}
+
+a.hui_checkbox_focused span
+{
+	background: url('../gfx/checkbox.png') 0 -120px no-repeat;
+}
+
+a.hui_checkbox_selected span span
+{
+	background-position: 0px -60px;
+}
+
+a.hui_checkbox_selected:hover span span
+{
+	background-position: 0px -80px;
+}
+
+a.hui_checkbox_selected:active span span
+{
+	background-position: 0px -100px;
+}div.hui_checkboxes
+{
+	margin-bottom: 5px;
+	font-size: 0;
+}
+
+div.hui_checkboxes a.hui_checkbox
+{
+	margin-right: 10px;
+}
+
+div.hui_checkboxes_vertical a.hui_checkbox
+{
+	display: block;
+	padding: 1px 5px 0px 0px;
 }

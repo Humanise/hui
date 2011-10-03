@@ -420,6 +420,19 @@ if (document.querySelectorAll) {
 	}
 }
 
+/**
+ * Find the first ancestor with a given class (including self)
+ */
+hui.firstAncestorByClass = function(element,className) {
+	while (element) {
+		if (hui.hasClass(element,className)) {
+			return element;
+		}
+		element = element.parentNode;
+	}
+	return null;
+}
+
 hui.byTag = function(node,name) {
 	var nl = node.getElementsByTagName(name),
 		l=[];
@@ -583,12 +596,26 @@ hui.getPosition = function(element) {
 	}
 }
 
+hui.window = {
+	getScrollTop : function() {
+		if (window.pageYOffset) {
+			return window.pageYOffset;
+		} else if (document.documentElement) {
+			return document.documentElement.scrollTop;
+		}
+		return document.body.scrollTop;
+	}
+}
+
 /////////////////////////// Class handling //////////////////////
 
 hui.hasClass = function(element, className) {
 	element = hui.get(element);
 	if (!element || !element.className) {
 		return false
+	}
+	if (element.className==className) {
+		return true;
 	}
 	var a = element.className.split(/\s+/);
 	for (var i = 0; i < a.length; i++) {
@@ -609,8 +636,11 @@ hui.addClass = function(element, className) {
 
 hui.removeClass = function(element, className) {
 	element = hui.get(element);
-	if (!element) {return};
-
+	if (!element || !element.className) {return};
+	if (element.className=='className') {
+		element.className='';
+		return;
+	}
 	var newClassName = '';
 	var a = element.className.split(/\s+/);
 	for (var i = 0; i < a.length; i++) {
@@ -749,14 +779,7 @@ hui.Event.prototype = {
 	 * @returns {Element} The found element or null
 	 */
 	findByClass : function(cls) {
-		var parent = this.element;
-		while (parent) {
-			if (hui.hasClass(parent,cls)) {
-				return parent;
-			}
-			parent = parent.parentNode;
-		}
-		return null;
+		return hui.firstAncestorByClass(this.element,cls)
 	},
 	/** Finds the nearest ancester with a certain tag name
 	 * @param tag The tag name
@@ -849,7 +872,7 @@ hui.request = function(options) {
 					options.onSuccess(transport);
 				} else if (transport.status == 403 && options.onForbidden) {
 					options.onForbidden(transport);
-				} else if (options.onFailure) {
+				} else if (transport.status !== 0 && options.onFailure) {
 					options.onFailure(transport);
 				}
 			}
@@ -1065,6 +1088,20 @@ hui.selection = {
 			return doc.selection.createRange().text;
 		}
 		return '';
+	},
+	getNode : function(doc) {
+		doc = doc || document;
+		if (doc.getSelection) {
+			var range = doc.getSelection().getRangeAt(0);
+			return range.commonAncestorContainer();
+		}
+		return null;
+	},
+	get : function(doc) {
+		return {
+			node : hui.selection.getNode(doc),
+			text : hui.selection.getText(doc)
+		}
 	}
 }
 
@@ -1181,7 +1218,6 @@ hui.place = function(options) {
 		trgtPos = {left : hui.getLeft(trgt), top : hui.getTop(trgt) };
 	left = trgtPos.left + trgt.clientWidth * (options.target.horizontal || 0);
 	top = trgtPos.top + trgt.clientHeight * (options.target.vertical || 0);
-	
 	var src = options.source.element;
 	left -= src.clientWidth * (options.source.horizontal || 0);
 	top -= src.clientHeight * (options.source.vertical || 0);
@@ -1372,6 +1408,14 @@ hui.location = {
 	getBoolean : function(name) {
 		var value = hui.location.getParameter(name);
 		return (value=='true' || value=='1');
+	},
+	/** Checks if a parameter exists with the value 'true' or 1 */
+	getInt : function(name) {
+		var value = parseInt(hui.location.getParameter(name));
+		if (value!==NaN) {
+			return value;
+		}
+		return null;
 	},
 	/** Gets all parameters as an array like : [{name:'hep',value:'hey'}] */
 	getParameters : function() {

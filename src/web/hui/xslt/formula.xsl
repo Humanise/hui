@@ -5,7 +5,7 @@
 	xmlns:fn="http://www.w3.org/2005/xpath-functions"
     xmlns:gui="uri:hui"
     version="1.0"
-    exclude-result-prefixes="gui"
+    exclude-result-prefixes="gui fn"
     >
 
 <xsl:template match="gui:formula">
@@ -73,8 +73,28 @@
 
 <xsl:template match="gui:group[@labels='above']/gui:custom">
 	<tr><td>
-			<xsl:if test="@label"><label><xsl:value-of select="@label"/></label></xsl:if>
-			<xsl:apply-templates/>
+		<xsl:if test="@label"><label><xsl:value-of select="@label"/></label></xsl:if>
+		<xsl:apply-templates/>
+	</td></tr>
+</xsl:template>
+
+<!-- Field -->
+
+<xsl:template match="gui:group/gui:field">
+	<tr>
+		<th><label><xsl:value-of select="@label"/></label></th>
+		<td class="hui_formula_group">
+			<div class="hui_formula_item"><xsl:apply-templates/></div>
+			<xsl:if test="@hint"><p class="hui_formula_field_hint"><xsl:value-of select="@hint"/></p></xsl:if>
+		</td>
+	</tr>
+</xsl:template>
+
+<xsl:template match="gui:group[@labels='above']/gui:field">
+	<tr><td>
+		<xsl:if test="@label"><label><xsl:value-of select="@label"/></label></xsl:if>
+		<div class="hui_formula_item"><xsl:apply-templates/></div>
+		<xsl:if test="@hint"><p class="hui_formula_field_hint"><xsl:value-of select="@hint"/></p></xsl:if>
 	</td></tr>
 </xsl:template>
 
@@ -123,7 +143,14 @@
 		</xsl:otherwise>
 	</xsl:choose>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.TextField({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>',key:'<xsl:value-of select="@key"/>'});
+		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.TextField({
+			element : '<xsl:value-of select="generate-id()"/>',
+			name : '<xsl:value-of select="@name"/>',
+			key : '<xsl:value-of select="@key"/>'
+			<xsl:if test="@animate-value-change='false'">
+			,animateValueChange : <xsl:value-of select="@animate-value-change"/>
+			</xsl:if>
+		});
 		<xsl:call-template name="gui:createobject"/>
 	</script>
 </xsl:template>
@@ -256,7 +283,7 @@
 </xsl:template>
 
 <xsl:template name="gui:dropdown" match="gui:dropdown">
-	<a id="{generate-id()}" href="#">
+	<a id="{generate-id()}" href="javascript://">
 		<xsl:if test="@width">
 			<xsl:attribute name="style">width:<xsl:value-of select="@width"/>px;</xsl:attribute>
 		</xsl:if>
@@ -325,10 +352,10 @@
 </xsl:template>
 
 <xsl:template match="gui:radiobuttons/gui:radiobutton | gui:radiobuttons/gui:item">
-	<div id="{generate-id()}">
-		<xsl:attribute name="class">hui_radiobutton <xsl:if test="@value=../@value">hui_selected</xsl:if></xsl:attribute>
-		<div><xsl:comment/></div><xsl:value-of select="@label"/>
-	</div>
+	<a id="{generate-id()}">
+		<xsl:attribute name="class">hui_radiobutton <xsl:if test="@value=../@value">hui_radiobutton_selected</xsl:if></xsl:attribute>
+		<span><xsl:comment/></span><xsl:value-of select="@label"/><xsl:value-of select="@text"/>
+	</a>
 </xsl:template>
 
 <!-- Checkbox -->
@@ -348,7 +375,7 @@
 </xsl:template>
 
 <xsl:template name="gui:checkbox"  match="gui:checkbox">
-	<a id="{generate-id()}" href="#">
+	<a id="{generate-id()}" href="javascript://">
 		<xsl:attribute name="class">
 			<xsl:text>hui_checkbox</xsl:text>
 			<xsl:if test="@value='true'"> hui_checkbox_selected</xsl:if>
@@ -418,7 +445,7 @@
 
 <xsl:template match="gui:checkboxes/gui:item">
 	<a class="hui_checkbox" href="javascript:void(0);">
-		<span><span></span></span><xsl:value-of select="@title"/>
+		<span><span></span></span><xsl:value-of select="@title"/><xsl:value-of select="@text"/>
 	</a>
 </xsl:template>
 
@@ -461,7 +488,7 @@
 </xsl:template>
 
 <xsl:template match="gui:button" name="gui:button">
-	<a id="{generate-id()}" href="#">
+	<a id="{generate-id()}" href="javascript://">
 		<xsl:attribute name="class">
 			hui_button
 			<xsl:if test="@variant">

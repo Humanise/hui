@@ -53,6 +53,13 @@ table.hui_formula_group
 	font-size: 0;
 }
 
+p.hui_formula_field_hint
+{
+	font-size: 9px;
+	color: #999;
+	margin: -5px 0 0 3px;
+}
+
 table.hui_formula_group_above
 {
 	border-spacing: 0px;
@@ -402,6 +409,11 @@ div.hui_window table.hui_formula_group label
 {
 	background: rgb(231,231,231);
 	padding: 0px 2px;
+}
+
+div.hui_window div.hui_formula_fieldset table.hui_formula_group label
+{
+	background: none;
 }
 
 div.hui_window_light table.hui_formula_group label

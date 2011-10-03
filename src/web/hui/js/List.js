@@ -293,6 +293,9 @@ hui.ui.List.prototype = {
 				if (cells[j].getAttribute('align')) {
 					td.style.textAlign=cells[j].getAttribute('align');
 				}
+				if (cells[j].getAttribute('dimmed')=='true') {
+					td.className='hui_list_dimmed';
+				}
 				if (j==0 && level>1) {
 					td.style.paddingLeft = ((parseInt(level)-1)*16+5)+'px';
 				}
@@ -395,19 +398,30 @@ hui.ui.List.prototype = {
 				cell.appendChild(document.createElement('br'));
 			} else if (hui.dom.isElement(child,'icon')) {
 				var icon = hui.ui.createIcon(child.getAttribute('icon'),16);
+				if (child.getAttribute('hint')) {
+					icon.setAttribute('title',child.getAttribute('hint'));
+				}
+				if (child.getAttribute('action')=='true') {
+					hui.addClass(icon,'hui_list_icon_action');
+				}
 				var data = child.getAttribute('data');
 				if (data) {
 					icon.setAttribute('data',data);
-					hui.addClass(icon,'hui_list_action');
-					if (child.getAttribute('revealing')==='true') {
-						hui.addClass(icon,'hui_list_revealing');
-					}
+				}
+				if (child.getAttribute('revealing')==='true') {
+					hui.addClass(icon,'hui_list_revealing');
 				}
 				cell.appendChild(icon);
 			} else if (hui.dom.isElement(child,'line')) {
 				var line = hui.build('p',{'class':'hui_list_line'});
 				if (child.getAttribute('dimmed')=='true') {
 					hui.addClass(line,'hui_list_dimmed')
+				}
+				if (child.getAttribute('minor')=='true') {
+					hui.addClass(line,'hui_list_minor')
+				}
+				if (child.getAttribute('mini')=='true') {
+					hui.addClass(line,'hui_list_mini')
 				}
 				cell.appendChild(line);
 				this.parseCell(child,line);
@@ -432,6 +446,8 @@ hui.ui.List.prototype = {
 				hui.dom.addText(cell,this._wrap(hui.dom.getText(child)));
 			} else if (hui.dom.isElement(child,'delete')) {
 				this.parseCell(child,hui.build('del',{parent:cell}));
+			} else if (hui.dom.isElement(child,'strong')) {
+				this.parseCell(child,hui.build('strong',{parent:cell}));
 			} else if (hui.dom.isElement(child,'badge')) {
 				this.parseCell(child,hui.build('span',{className:'hui_list_badge',parent:cell}));
 			}
@@ -633,7 +649,7 @@ hui.ui.List.prototype = {
 		row.onmousedown = function(e) {
 			if (self.busy) {return};
 			var event = hui.event(e);
-			var action = event.findByClass('hui_list_action');
+			var action = event.findByClass('hui_list_icon_action');
 			if (!action) {
 				self._rowDown(index);
 				hui.ui.startDrag(e,row);
@@ -670,7 +686,7 @@ hui.ui.List.prototype = {
 	},
 	_rowClick : function(index,e) {
 		e = hui.event(e);
-		var a = e.findByClass('hui_list_action');
+		var a = e.findByClass('hui_list_icon_action');
 		if (a) {
 			var data = a.getAttribute('data');
 			if (data) {
@@ -683,7 +699,7 @@ hui.ui.List.prototype = {
 	},
 	_rowDoubleClick : function(index,e) {
 		e = hui.event(e);
-		if (!e.findByClass('hui_list_action')) {
+		if (!e.findByClass('hui_list_icon_action')) {
 			var row = this.getFirstSelection();
 			if (row) {
 				this.fire('listRowWasOpened',row);

@@ -20,6 +20,15 @@ hui.ui.Toolbar.prototype = {
 	},
 	addDivider : function() {
 		this.element.appendChild(hui.build('span',{'class':'hui_divider'}));
+	},
+	setSelection : function(key) {
+		var desc = hui.ui.getDescendants(this);
+		for (var i=0; i < desc.length; i++) {
+			var widget = desc[i];
+			if (widget.setSelected) {
+				widget.setSelected(widget.key==key);
+			}
+		};
 	}
 }
 
@@ -72,6 +81,7 @@ hui.ui.Toolbar.Icon = function(options) {
 	this.options = options;
 	this.element = hui.get(options.element);
 	this.name = options.name;
+	this.key = options.key;
 	this.enabled = !hui.hasClass(this.element,'hui_toolbar_icon_disabled');
 	this.element.tabIndex=this.enabled ? 0 : -1;
 	this.icon = hui.firstByClass(this.element,'hui_icon');
@@ -118,8 +128,22 @@ hui.ui.Toolbar.Icon.prototype = {
 	enable : function() {
 		this.setEnabled(true);
 	},
+	setOverlay : function(overlay) {
+		var node = hui.firstByClass(this.element,'hui_icon_overlay');
+		if (node && !overlay) {
+			node.style.backgroundImage = '';
+		} else if (node && overlay) {
+			node.style.backgroundImage = "url('"+hui.ui.getIconUrl('overlay/'+overlay,32)+"')";
+		} else if (overlay) {
+			var parent = hui.firstByClass(this.element,'hui_icon');
+			hui.build('span',{'class':'hui_icon_overlay',parent:parent,style:'background-image: url('+hui.ui.getIconUrl('overlay/'+overlay,32)+')'});
+		}
+	},
 	/** Sets wether the icon should be selected */
 	setSelected : function(selected) {
+		if (selected) {
+			this.element.blur();
+		}
 		hui.setClass(this.element,'hui_toolbar_icon_selected',selected);
 	},
 	/** @private */

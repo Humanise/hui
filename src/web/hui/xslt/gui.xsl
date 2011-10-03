@@ -150,6 +150,9 @@
 <xsl:call-template name="dwr-setup"/>
 </head>
 <body class="hui">
+	<xsl:if test="gui:dock">
+		<xsl:attribute name="style">overflow:hidden;</xsl:attribute>
+	</xsl:if>
 	<xsl:choose>
 		<xsl:when test="@padding"><div style="padding: {@padding}px;" class="hui_body"><xsl:apply-templates/></div></xsl:when>
 		<xsl:otherwise><xsl:apply-templates/></xsl:otherwise>
@@ -333,6 +336,7 @@
 <xsl:template match="gui:frames">
 	<html>
 		<head>
+			<xsl:apply-templates select="gui:script"/>
 		</head>
 		<frameset rows="84,*" framespacing="0" frameborder="0" border="0">
 			<xsl:for-each select="gui:frame">
@@ -613,7 +617,13 @@
 </boundpanel>
 -->
 <xsl:template match="gui:boundpanel">
-	<div id="{generate-id()}" class="hui_boundpanel" style="display:none;">
+	<div id="{generate-id()}" style="display:none;">
+		<xsl:attribute name="class">
+			<xsl:text>hui_boundpanel</xsl:text>
+			<xsl:if test="@variant">
+				<xsl:text> hui_boundpanel_</xsl:text><xsl:value-of select="@variant"/>
+			</xsl:if>
+		</xsl:attribute>
 		<div class="hui_boundpanel_arrow"><xsl:comment/></div>
 		<div class="hui_boundpanel_top"><div><div><xsl:comment/></div></div></div>
 		<div class="hui_boundpanel_body">
@@ -637,6 +647,8 @@
 			element:'<xsl:value-of select="generate-id()"/>',
 			name:'<xsl:value-of select="@name"/>'
 			<xsl:if test="@target">,target:'<xsl:value-of select="@target"/>'</xsl:if>
+			<xsl:if test="@variant">,variant:'<xsl:value-of select="@variant"/>'</xsl:if>
+			<xsl:if test="@modal='true'">,modal:true</xsl:if>
 		});
 		<xsl:call-template name="gui:createobject"/>
 	</script>
@@ -953,6 +965,20 @@
 		});
 		<xsl:call-template name="gui:createobject"/>
 	</script>
+</xsl:template>
+
+<xsl:template match="gui:rendering">
+	<div class="hui_rendering" id="{generate-id()}">
+		<xsl:apply-templates/>
+	</div>
+	<script type="text/javascript">
+		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Rendering({
+			element : '<xsl:value-of select="generate-id()"/>',
+			name : '<xsl:value-of select="@name"/>'
+		});
+		<xsl:call-template name="gui:createobject"/>
+	</script>
+
 </xsl:template>
 
 </xsl:stylesheet>

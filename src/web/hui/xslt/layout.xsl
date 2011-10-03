@@ -155,7 +155,7 @@
 		<xsl:if test="@width">width: <xsl:value-of select="@width"/>px;</xsl:if>
 		<xsl:if test="@top">padding-top: <xsl:value-of select="@top"/>px;</xsl:if>
 		</xsl:attribute>
-		<xsl:if test="@closable='true'"><a class="hui_box_close" href="#"><xsl:comment/></a></xsl:if>
+		<xsl:if test="@closable='true'"><a class="hui_box_close" href="javascript://"><xsl:comment/></a></xsl:if>
 		<div class="hui_box_top"><div><div><xsl:comment/></div></div></div>
 		<div class="hui_box_middle"><div class="hui_box_middle">
 			<xsl:if test="@title or gui:toolbar">
@@ -206,7 +206,7 @@
 									<xsl:text> hui_selected</xsl:text>
 								</xsl:if>
 							</xsl:attribute>
-							<xsl:if test="@icon"><span class="hui_icon_1" style="background-image: url('{$context}/hui/icons/{@icon}16.png');')"><xsl:comment/></span></xsl:if>
+							<xsl:if test="@icon"><span class="hui_icon_16" style="background-image: url('{$context}/hui/icons/{@icon}16.png');')"><xsl:comment/></span></xsl:if>
 							<span><xsl:value-of select="@title"/></span>
 						</a>
 					</li>

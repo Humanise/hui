@@ -55,7 +55,7 @@ hui.ui.DropDown.prototype = {
 	_updateUI : function() {
 		var selected = this.items[this.index];
 		if (selected) {
-			var text = selected.label || selected.title || '';
+			var text = selected.label || selected.title || selected.text || '';
 			this.inner.innerHTML='';
 			hui.dom.addText(this.inner,hui.wrap(text));
 		} else if (this.options.placeholder) {
@@ -89,11 +89,13 @@ hui.ui.DropDown.prototype = {
 			var left = hui.getLeft(this.element);
 			hui.setStyle(this.selector,{'left':left+'px',top:'5px'});
 		} else {
-			var scroll = hui.getScrollOffset(this.element);
+			var windowScrollTop = hui.window.getScrollTop();
+			var scrollOffsetTop = hui.getScrollOffset(this.element).top;
+			var scrollTop = windowScrollTop-scrollOffsetTop;
 			hui.place({
 				target : {element:this.element,vertical:1,horizontal:0},
 				source : {element:this.selector,vertical:0,horizontal:0},
-				top : scroll.top*-1
+				top : scrollTop
 			});
 		}
 		hui.setStyle(s,{visibility:'hidden',display:'block',width:''});
@@ -223,7 +225,7 @@ hui.ui.DropDown.prototype = {
 		}
 		var self = this;
 		hui.each(this.items,function(item,i) {
-			var e = hui.build('a',{href:'#',text:item.label || item.title});
+			var e = hui.build('a',{href:'javascript://',text:item.label || item.title || item.text});
 			hui.listen(e,'mousedown',function(e) {
 				hui.stop(e);
 				self._itemClicked(item,i);
