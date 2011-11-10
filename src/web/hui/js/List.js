@@ -51,6 +51,9 @@ hui.ui.List = function(options) {
 		this.window.size = parseInt(options.windowSize);
 	}
 	hui.ui.extend(this);
+	if (options.dropFiles) {
+		this._addDrop();
+	}
 	if (this.url)  {
 		this.refresh();
 	}
@@ -69,6 +72,15 @@ hui.ui.List.create = function(options) {
 }
 
 hui.ui.List.prototype = {
+	_addDrop : function() {
+		hui.drag.listen({
+			element : this.element,
+			hoverClass : 'hui_list_drop',
+			onFiles : function(files) {
+				this.fire('filesDropped',files);
+			}.bind(this)
+		})
+	},
 	/** Hides the list */
 	hide : function() {
 		this.element.style.display='none';
@@ -91,6 +103,10 @@ hui.ui.List.prototype = {
 			items.push(this.rows[this.selected[i]]);
 		};
 		return items;
+	},
+	/** Gets all rows of the list */
+	getRows : function() {
+		return this.rows;
 	},
 	/** Gets the first selection or null
 	 * @returns {Object} The first selected row
@@ -290,6 +306,9 @@ hui.ui.List.prototype = {
 				if (cells[j].getAttribute('vertical-align')) {
 					td.style.verticalAlign=cells[j].getAttribute('vertical-align');
 				}
+				if (cells[j].getAttribute('width')) {
+					td.style.width=cells[j].getAttribute('width')+'%';
+				}
 				if (cells[j].getAttribute('align')) {
 					td.style.textAlign=cells[j].getAttribute('align');
 				}
@@ -388,7 +407,7 @@ hui.ui.List.prototype = {
 		var icon = node.getAttribute('icon');
 		if (icon!=null && icon!='') {
 			cell.appendChild(hui.ui.createIcon(icon,16));
-			cell = hui.build('div',{parent:cell,style:'margin-left: 20px'});
+			cell = hui.build('div',{parent:cell,style:'margin-left: 21px'});
 		}
 		for (var i=0; i < node.childNodes.length; i++) {
 			var child = node.childNodes[i];
@@ -597,6 +616,7 @@ hui.ui.List.prototype = {
 	},
 	/** @private */
 	setObjects : function(objects) {
+		objects = objects || [];
 		this.selected = [];
 		hui.dom.clear(this.body);
 		this.rows = [];

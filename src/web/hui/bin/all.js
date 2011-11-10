@@ -43,12 +43,16 @@ hui.browser.msie9compat = hui.browser.msie7 && navigator.userAgent.indexOf('Trid
 hui.browser.webkit = navigator.userAgent.indexOf('WebKit')!==-1;
 /** If the browser is any version of Safari */
 hui.browser.safari = navigator.userAgent.indexOf('Safari')!==-1;
+/** If the browser is any version of Chrome */
+hui.browser.chrome = navigator.userAgent.indexOf('Chrome')!==-1;
 /** The version of WebKit (null if not WebKit) */
 hui.browser.webkitVersion = null;
 /** If the browser is Gecko based */
 hui.browser.gecko = !hui.browser.webkit && navigator.userAgent.indexOf('Gecko')!=-1;
 /** If the browser is safari on iPad */
 hui.browser.ipad = hui.browser.webkit && navigator.userAgent.indexOf('iPad')!=-1;
+/** If the browser is on Windows */
+hui.browser.windows = navigator.userAgent.indexOf('Windows')!=-1;
 
 /** If the browser supports CSS opacity */
 hui.browser.opacity = !hui.browser.msie || hui.browser.msie9;
@@ -256,15 +260,6 @@ hui.toIntArray = function(str) {
 	return array;
 }
 
-/** Scroll to an element */
-hui.scrollTo = function(element) {
-	element = hui.get(element);
-	if (element) {
-		var pos = hui.getPosition(element);
-		window.scrollTo(pos.left, pos.top-50);
-	}
-}
-
 ////////////////////// DOM ////////////////////
 
 /** @namespace */
@@ -344,6 +339,15 @@ hui.dom = {
 			node = node.parentNode;
 		}
 		return true;
+	},
+ 	isDescendantOrSelf : function(element,parent) {
+		while (element) {
+			if (element==parent) {
+				return true;
+			}
+			element = element.parentNode;
+		}
+		return false;
 	}
 }
 
@@ -604,6 +608,20 @@ hui.window = {
 			return document.documentElement.scrollTop;
 		}
 		return document.body.scrollTop;
+	}
+}
+hui.scrollTo = function(options) {
+	var node = options.element;
+	var pos = hui.getPosition(node);
+	var viewTop = hui.window.getScrollTop();
+	var viewHeight = hui.getViewPortHeight();
+	var viewBottom = viewTop+viewHeight;
+	hui.log({pos:pos,height:node.clientHeight,viewTop:viewTop,viewBottom:viewBottom});
+	if (viewTop<pos.top+node.clientHeight || (pos.top)<viewBottom) {
+		var top = pos.top-Math.round((viewHeight-node.clientHeight)/2);
+		top=Math.max(0,top);
+		hui.log(top);
+		window.scrollTo(0,top);
 	}
 }
 
@@ -874,6 +892,8 @@ hui.request = function(options) {
 					options.onForbidden(transport);
 				} else if (transport.status !== 0 && options.onFailure) {
 					options.onFailure(transport);
+				} else if (transport.status == 0 && options.onAbort) {
+					options.onAbort(transport);
 				}
 			}
 		} catch (e) {
@@ -886,10 +906,42 @@ hui.request = function(options) {
 	};
 	var method = options.method.toUpperCase();
 	transport.open(method, options.url, options.async);
-	var body = '';
-    if (method=='POST' && options.parameters) {
+	var body = null;
+	if (method=='POST' && options.file) {
+		if (false) {
+			body = options.file;
+        	transport.setRequestHeader("Content-type", options.file.type);  
+        	transport.setRequestHeader("X_FILE_NAME", options.file.name);
+		} else {
+			body = new FormData();
+			body.append('file', options.file);
+			if (options.parameters) {
+				for (param in options.parameters) {
+					body.append(param, options.parameters[param]);
+				}
+			}
+		}
+		if (options.onProgress) {
+			transport.upload.addEventListener("progress", function(e) {
+				options.onProgress(e.loaded,e.total);
+			}, false);
+		}
+		if (options.onLoad) {
+	        transport.upload.addEventListener("load", function(e) {
+				options.onLoad();
+			}, false); 
+		}
+	} else if (method=='POST' && options.files) {
+		body = new FormData();
+		//form.append('path', '/');
+		for (var i = 0; i < options.files.length; i++) {
+			body.append('file'+i, options.files[i]);
+		}
+	} else if (method=='POST' && options.parameters) {
 		body = hui.request._buildPostBody(options.parameters);
 		transport.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=utf-8");
+	} else {
+		body = '';
 	}
 	if (options.headers) {
 		for (name in options.headers) {
@@ -1209,7 +1261,7 @@ hui.getDocumentHeight = function() {
 //////////////////////////// Placement /////////////////////////
 
 /**
- * Example hui.place({target : {element : «node», horizontal : «0-1»}, source : {element : «node», vertical : «0 - 1»}, insideViewPort:«boolean», viewPartMargin:«integer»})
+ * Example hui.place({target : {element : «node», horizontal : «0-1»}, source : {element : «node», vertical : «0 - 1»}, insideViewPort:«boolean», viewPortMargin:«integer»})
  */
 hui.place = function(options) {
 	var left = 0,
@@ -1241,6 +1293,86 @@ hui.place = function(options) {
 	src.style.top = top+'px';
 	src.style.left = left+'px';
 }
+
+/////////////////////////////// Drag ///////////////////////////
+
+hui.drag = {
+	register : function(options) {
+		hui.listen(options.element,'mousedown',function(e) {
+			hui.stop(e);
+			hui.drag.start(options);
+		})
+	},
+	
+	start : function(options) {
+		var target = hui.browser.msie ? document : window;
+		
+		options.onStart();
+		var mover,upper;
+		mover = function(e) {
+			e = hui.event(e);
+			options.onMove(e);
+		}.bind(this);
+		hui.listen(target,'mousemove',mover);
+		upper = function() {
+			hui.unListen(target,'mousemove',mover);
+			hui.unListen(target,'mouseup',upper);
+			options.onEnd();
+		}.bind(this)
+		hui.listen(target,'mouseup',upper);
+	},
+	_nativeListeners : [],
+	_activeDrop : null,
+	listen : function(options) {
+		if (hui.browser.msie) {
+			return;
+		}
+		hui.drag._nativeListeners.push(options);
+		if (hui.drag._nativeListeners.length>1) {return};
+		hui.listen(document.body,'dragenter',function(e) {
+			var l = hui.drag._nativeListeners;
+			var found = null;
+			for (var i=0; i < l.length; i++) {
+				var lmnt = l[i].element;
+				if (hui.dom.isDescendantOrSelf(e.target,lmnt)) {
+					found = l[i];
+					if (hui.drag._activeDrop==null || hui.drag._activeDrop!=found) {
+						hui.addClass(lmnt,found.hoverClass);
+					}
+					break;
+				}
+			};
+			if (hui.drag._activeDrop) {
+				//var foundElement = found ? found.element : null;
+				if (hui.drag._activeDrop!=found) {
+					hui.removeClass(hui.drag._activeDrop.element,hui.drag._activeDrop.hoverClass);
+				}
+			}
+			hui.drag._activeDrop = found;
+		});
+		
+		hui.listen(document.body,'dragover',function(e) {
+			hui.stop(e);
+		});
+		hui.listen(document.body,'drop',function(e) {
+			hui.stop(e);
+			var options = hui.drag._activeDrop;
+			hui.drag._activeDrop = null;
+			if (options) {
+				hui.removeClass(options.element,options.hoverClass);
+				if (options.onDrop) {
+					options.onDrop(e);
+				}
+				hui.log(e.dataTransfer.types)
+				if (options.onFiles && e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length>0) {
+					options.onFiles(e.dataTransfer.files);
+				}
+			}
+		});
+	}
+}
+
+
 
 //////////////////////////// Preloader /////////////////////////
 
@@ -4292,7 +4424,7 @@ hui.ui.hideToolTip = function(options) {
 		if (!hui.browser.msie) {
 			hui.animate(t,'opacity',0,300,{hideOnComplete:true});
 		} else {
-			hui.style.display = 'none';
+			t.style.display = 'none';
 		}
 	}
 };
@@ -4774,6 +4906,10 @@ hui.ui.Bundle.prototype = {
 	}
 }
 
+/**
+ * Import some widgets by name
+ * @param names Array of widgets to import
+ */
 hui.ui.require = function(names,func) {
 	for (var i = names.length - 1; i >= 0; i--){
 		names[i] = hui.ui.context+'hui/js/'+names[i]+'.js';
@@ -5119,6 +5255,11 @@ hui.ui.Window.prototype = {
 	},
 	show : function(options) {
 		if (this.visible) {
+			var scrollTop = hui.getScrollTop();
+			var winTop = hui.getTop(this.element);
+			if (winTop < scrollTop || winTop+this.element.clientHeight > hui.getViewPortHeight()+scrollTop) {
+				hui.animate({node:this.element,css:{top:(scrollTop+40)+'px'},duration:500,ease:hui.ease.slowFastSlow});
+			}
 			this.element.style.zIndex=hui.ui.nextPanelIndex();
 			return;
 		}
@@ -5152,12 +5293,15 @@ hui.ui.Window.prototype = {
 	hide : function() {
 		if (!this.visible) return;
 		if (hui.browser.opacity) {
-			hui.animate(this.element,'opacity',0,200,{hideOnComplete:true});
+			hui.animate(this.element,'opacity',0,200,{onComplete:function() {
+				this.element.style.display='none';
+				hui.ui.callVisible(this);
+			}.bind(this)});
 		} else {
 			this.element.style.display='none';
+			hui.ui.callVisible(this);
 		}
 		this.visible = false;
-		hui.ui.callVisible(this);
 	},
 	add : function(widgetOrNode) {
 		if (widgetOrNode.getElement) {
@@ -5465,6 +5609,9 @@ hui.ui.List = function(options) {
 		this.window.size = parseInt(options.windowSize);
 	}
 	hui.ui.extend(this);
+	if (options.dropFiles) {
+		this._addDrop();
+	}
 	if (this.url)  {
 		this.refresh();
 	}
@@ -5483,6 +5630,15 @@ hui.ui.List.create = function(options) {
 }
 
 hui.ui.List.prototype = {
+	_addDrop : function() {
+		hui.drag.listen({
+			element : this.element,
+			hoverClass : 'hui_list_drop',
+			onFiles : function(files) {
+				this.fire('filesDropped',files);
+			}.bind(this)
+		})
+	},
 	/** Hides the list */
 	hide : function() {
 		this.element.style.display='none';
@@ -5505,6 +5661,10 @@ hui.ui.List.prototype = {
 			items.push(this.rows[this.selected[i]]);
 		};
 		return items;
+	},
+	/** Gets all rows of the list */
+	getRows : function() {
+		return this.rows;
 	},
 	/** Gets the first selection or null
 	 * @returns {Object} The first selected row
@@ -5704,6 +5864,9 @@ hui.ui.List.prototype = {
 				if (cells[j].getAttribute('vertical-align')) {
 					td.style.verticalAlign=cells[j].getAttribute('vertical-align');
 				}
+				if (cells[j].getAttribute('width')) {
+					td.style.width=cells[j].getAttribute('width')+'%';
+				}
 				if (cells[j].getAttribute('align')) {
 					td.style.textAlign=cells[j].getAttribute('align');
 				}
@@ -5802,7 +5965,7 @@ hui.ui.List.prototype = {
 		var icon = node.getAttribute('icon');
 		if (icon!=null && icon!='') {
 			cell.appendChild(hui.ui.createIcon(icon,16));
-			cell = hui.build('div',{parent:cell,style:'margin-left: 20px'});
+			cell = hui.build('div',{parent:cell,style:'margin-left: 21px'});
 		}
 		for (var i=0; i < node.childNodes.length; i++) {
 			var child = node.childNodes[i];
@@ -6011,6 +6174,7 @@ hui.ui.List.prototype = {
 	},
 	/** @private */
 	setObjects : function(objects) {
+		objects = objects || [];
 		this.selected = [];
 		hui.dom.clear(this.body);
 		this.rows = [];
@@ -6193,6 +6357,7 @@ hui.ui.Tabs.prototype = {
 	tabWasClicked : function(index) {
 		this.activeTab = index;
 		this.updateGUI();
+		hui.ui.callVisible(this);
 	},
 	/** @private */
 	updateGUI : function() {
@@ -7192,6 +7357,12 @@ hui.ui.Selection.prototype = {
 				hui.log('Will not select first since im still busy');
 			}
 		}
+	},
+	show : function() {
+		this.element.style.display='';
+	},
+	hide : function() {
+		this.element.style.display='none';
 	}
 }
 
@@ -9074,7 +9245,7 @@ hui.ui.Menu = function(options) {
 	this.subMenus = [];
 	this.visible = false;
 	hui.ui.extend(this);
-	this.addBehavior();
+	this._addBehavior();
 }
 
 hui.ui.Menu.create = function(options) {
@@ -9087,19 +9258,18 @@ hui.ui.Menu.create = function(options) {
 
 hui.ui.Menu.prototype = {
 	/** @private */
-	addBehavior : function() {
-		var self = this;
+	_addBehavior : function() {
 		this.hider = function() {
-			self.hide();
-		}
+			this.hide();
+		}.bind(this)
 		if (this.options.autoHide) {
 			var x = function(e) {
-				if (!hui.ui.isWithin(e,self.element) && (!self.options.parentElement || !hui.ui.isWithin(e,self.options.parentElement))) {
-					if (!self.isSubMenuVisible()) {
-						self.hide();
+				if (!hui.ui.isWithin(e,this.element) && (!this.options.parentElement || !hui.ui.isWithin(e,this.options.parentElement))) {
+					if (!this.isSubMenuVisible()) {
+						this.hide();
 					}
 				}
-			};
+			}.bind(this);
 			hui.listen(this.element,'mouseout',x);
 			if (this.options.parentElement) {
 				hui.listen(this.options.parentElement,'mouseout',x);
@@ -9361,7 +9531,15 @@ hui.ui.Overlay.prototype = {
  * uploadDidFail(file) - when a single file fails
  */
 hui.ui.Upload = function(options) {
-	this.options = hui.override({url:'',parameters:{},maxItems:50,maxSize:"20480",types:"*.*",useFlash:true,fieldName:'file',chooseButton:'Choose files...'},options);
+	this.options = hui.override({
+		url : '',
+		parameters : {},
+		multiple : false,
+		maxSize : "20480",
+		types : "*.*",
+		fieldName : 'file',
+		chooseButton : 'Choose files...'
+	},options);
 	this.element = hui.get(options.element);
 	this.itemContainer = hui.firstByClass(this.element,'hui_upload_items');
 	this.status = hui.firstByClass(this.element,'hui_upload_status');
@@ -9369,14 +9547,12 @@ hui.ui.Upload = function(options) {
 	this.name = options.name;
 	this.items = [];
 	this.busy = false;
-	this.loaded = false;
-	this.useFlash = this.options.useFlash;
-	if (this.options.useFlash) {
-		this.useFlash = hui.ui.Flash.getMajorVersion()>=10;
-	}
+	this._chooseImplementation();
 	hui.ui.extend(this);
-	this.addBehavior();
+	this._addBehavior();
 }
+
+hui.ui.Upload.implementations = ['Frame','HTML5','Flash'];
 
 hui.ui.Upload.nameIndex = 0;
 
@@ -9396,120 +9572,17 @@ hui.ui.Upload.create = function(options) {
 }
 
 hui.ui.Upload.prototype = {
-	/** @private */
-	addBehavior : function() {
-		if (!this.useFlash) {
-			this.createIframeVersion();
-			return;
-		}
-		hui.ui.onReady(this.createFlashVersion.bind(this));
-	},
+	
+	/////////////// Public parts /////////////
+
 	/**
 	 * Change a parameter
 	 */
 	setParameter : function(name,value) {
-		if (this.useFlash) {
-			alert('Not implemented for flash');
-		} else {
-			var existing = this.form.getElementsByTagName('input');
-			for (var i=0; i < existing.length; i++) {
-				if (existing[i].name==name) {
-					existing[i].value = value;
-					return;
-				}
-			};
-			this.form.appendChild(hui.build('input',{'type':'hidden','name':name,'value':value}));
-		}
+		this.options.parameters[name] = value;
+		this.impl.setParameter(name,value);
 	},
 	
-	/////////////////////////// Iframe //////////////////////////
-	
-	/** @private */
-	createIframeVersion : function() {
-		hui.ui.Upload.nameIndex++;
-		var frameName = 'hui_upload_'+hui.ui.Upload.nameIndex;
-		
-		var form = this.form = hui.build('form');
-		form.setAttribute('action',this.options.url || '');
-		form.setAttribute('method','post');
-		form.setAttribute('enctype','multipart/form-data');
-		form.setAttribute('encoding','multipart/form-data');
-		form.setAttribute('target',frameName);
-		if (this.options.parameters) {
-			for (var key in this.options.parameters) {
-				var hidden = hui.build('input',{'type':'hidden','name':key});
-				hidden.value = this.options.parameters[key];
-				form.appendChild(hidden);
-			}
-		}
-		var iframe = this.iframe = hui.build('iframe',{name:frameName,id:frameName,src:hui.ui.context+'/hui/html/blank.html'});
-		iframe.style.display='none';
-		this.element.appendChild(iframe);
-		this.fileInput = hui.build('input',{'type':'file','class':'file','name':this.options.fieldName});
-		hui.listen(this.fileInput,'change',this.iframeSubmit.bind(this));
-		form.appendChild(this.fileInput);
-		var buttonContainer = hui.build('span',{'class':'hui_upload_button'});
-		var span = hui.build('span',{'class':'hui_upload_button_input'});
-		span.appendChild(form);
-		buttonContainer.appendChild(span);
-		if (this.options.widget) {
-			hui.ui.onReady(function() {
-				var w = hui.ui.get(this.options.widget);
-				w.element.parentNode.insertBefore(buttonContainer,w.element);
-				w.element.parentNode.removeChild(w.element);
-				buttonContainer.appendChild(w.element);
-			}.bind(this));
-		}
-		hui.listen(iframe,'load',function() {this.iframeUploadComplete()}.bind(this));
-	},
-	/** @private */
-	iframeUploadComplete : function() {
-		if (!this.uploading) return;
-		hui.log('iframeUploadComplete uploading: '+this.uploading+' ('+this.name+')');
-		this.uploading = false;
-		this.form.reset();
-		var doc = hui.getFrameDocument(this.iframe);
-		var last = this.items[this.items.length-1];
-		if (doc.body.innerHTML.indexOf('SUCCESS')!=-1) {
-			if (last) {
-				last.update({progress:1,filestatus:'Færdig'});
-			}
-			this.fire('uploadDidComplete',{}); // TODO: Send the correct file
-			hui.log('Iframe upload succeeded');
-		} else if (last) {
-			last.setError('Upload af filen fejlede!');
-			hui.log('Iframe upload failed!');
-			this.fire('uploadDidFail',{}); // TODO: Send the correct file
-		}
-		this.fire('uploadDidCompleteQueue');
-		this.iframe.src=hui.ui.context+'/hui/html/blank.html';
-		this.endIframeProgress();
-	},
-	/** @private */
-	iframeSubmit : function() {
-		this.startIframeProgress();
-		this.uploading = true;
-		// IE: set value of parms again since they disappear
-		if (hui.browser.msie) {
-			hui.each(this.options.parameters,function(key,value) {
-				this.form[key].value = value;
-			}.bind(this));
-		}
-		this.form.submit();
-		this.fire('uploadDidStartQueue');
-		var fileName = this.fileInput.value.split('\\').pop();
-		this.addItem({name:fileName,filestatus:'I gang'}).setWaiting();
-		hui.log('Iframe upload started!');
-	},
-	/** @private */
-	startIframeProgress : function() {
-		this.form.style.display='none';
-	},
-	/** @private */
-	endIframeProgress : function() {
-		this.form.style.display='block';
-		this.form.reset();
-	},
 	/** @public */
 	clear : function() {
 		for (var i=0; i < this.items.length; i++) {
@@ -9524,25 +9597,471 @@ hui.ui.Upload.prototype = {
 			this.placeholder.style.display='block';
 		}
 	},
-	
-	/////////////////////////// Flash //////////////////////////
-	
-	/** @private */
-	getAbsoluteUrl : function(relative) {
-		var loc = new String(document.location);
-		var url = loc.slice(0,loc.lastIndexOf('/'));
-		while (relative.indexOf('../')===0) {
-			relative=relative.substring(3);
-			url = url.slice(0,url.lastIndexOf('/'));
+	addDropTarget : function(options) {
+		if (options.element) {
+			hui.drag.listen({
+				element : options.element,
+				hoverClass : options.hoverClass,
+				onFiles : this._transferFiles.bind(this)
+			});
 		}
-		url += '/'+relative;
-		return url;
+	},
+	uploadFiles : function(files) {
+		this._transferFiles(files);
+	},
+
+	//////////////// Private parts ////////////////
+	
+	_chooseImplementation : function() {
+		var impls = hui.ui.Upload.implementations;
+		if (this.options.implementation) {
+			impls.splice(0,0,this.options.implementation);
+		}
+		
+		for (var i=0; i < impls.length; i++) {
+			var impl = hui.ui.Upload[impls[i]];
+			var support = impl.support();
+			if (support.supported) {
+				if (!this.options.multiple && !support.multiple) {
+					this.impl = new impl(this);
+					hui.log('Selected impl (single): '+impls[i]);
+					break;
+				} else if (this.options.multiple && support.multiple) {
+					this.impl = new impl(this);
+					hui.log('Selected impl (multiple): '+impls[i]);
+					break;
+				}
+			}
+		};
+		if (!this.impl) {
+			hui.log('No implementation found, using frame');
+			this.impl = new hui.ui.Upload.Frame(this);
+		}
+	},
+	_addBehavior : function() {
+		if (!this.impl.initialize) {
+			alert(this.impl)
+			return;
+		}
+		hui.ui.onReady(function() {
+			this.impl.initialize();
+			hui.drag.listen({
+				element : this.element,
+				hoverClass : 'hui_upload_drop',
+				onFiles : this._transferFiles.bind(this)
+			});
+		}.bind(this));
 	},
 	
+	//////////////////////////// Dropping ///////////////////////
+
+/*	_onDrop : function(e) {
+		hui.log('Drop!')
+		hui.stop(e);
+			hui.log(e)
+		if (e.dataTransfer) {
+			var files = e.dataTransfer.files;
+			if (files && files.length>0) {
+				this._transferFiles(files);
+			} else {
+				hui.log('No files...');
+				hui.log(e.dataTransfer.types)
+				if (hui.inArray(e.dataTransfer.types,'image/tiff')) {
+					hui.log(e.dataTransfer.getData('image/tiff'))
+				}
+				hui.log(e.dataTransfer.getData('text/plain'))
+				hui.log(e.dataTransfer.getData('text/html'))
+				hui.log(e.dataTransfer.getData('url'))
+			}
+		} else {
+			hui.log(e)
+		}
+	},*/
+	_transferFiles : function(files) {
+		if (files.length>0) {
+			if (!this.options.multiple) {
+				this._transferFile(files[0]);
+			} else {
+				for (var i=0; i < files.length; i++) {
+					var file = files[i];
+					this._transferFile(file);
+				};
+			}
+		}
+	},
+	_transferFile : function(file) {
+		hui.log(file)
+		var item = this.$_addItem({name:file.name,size:file.size});
+		hui.request({
+			method : 'post',
+			file : file,
+			url : this.options.url,
+			parameters : this.options.parameters,
+			onProgress : function(current,total) {
+				item.updateProgress(current,total);
+			},
+			onLoad : function() {
+				hui.log('transferFile: load');
+			},
+			onAbort : function() {
+				this.$_itemFail(item);
+				item.setError('Afbrudt')
+			}.bind(this),
+			onSuccess : function() {
+				hui.log('transferFile: success');
+				this.$_itemSuccess(item);
+			}.bind(this),
+			onFailure : function() {
+				hui.log('transferFile: fail');
+				this.$_itemFail(item);
+			}.bind(this)
+		})
+	},
+
+	/////////////////////// Implementation ///////////////////////////
+	
+	$_addItem : function(info) {
+		if (!this.busy) {
+			this.fire('uploadDidStartQueue');
+			this.status.style.display='block';
+			this._setWidgetEnabled(false);
+			this.busy = true;
+		}
+		return this._addItem(info);
+	},
+	$_itemSuccess : function(item) {
+		var first = hui.firstByClass(this.itemContainer,'hui_upload_item_success');
+		item.setProgress(1);
+		item.setSuccess();
+		this.fire('uploadDidComplete',item.getInfo());
+		this._checkQueue();
+		var move = first!=null || this.items.length>1;
+		move = move && item.element.nextSibling!=null;
+		
+		if (move && (first==null || first!=item.element.nextSibling)) {
+			var parent = item.element.parentNode;
+			var height = item.element.clientHeight;
+			hui.animate({node:item.element,css:{height:'0px'},ease:hui.ease.slowFastSlow,duration:500,onComplete:function() {
+				parent.removeChild(item.element);
+				if (first) { 
+					parent.insertBefore(item.element,first);
+				} else {
+					parent.appendChild(item.element);
+				}
+				hui.animate({node:item.element,css:{height:height+'px'},ease:hui.ease.slowFastSlow,duration:200});
+			}});
+		}
+
+		
+	},
+	$_itemFail : function(item) {
+		item.setError('Upload af filen fejlede!');
+		this.fire('uploadDidFail',item.getInfo());
+		this._checkQueue();
+	},
+	
+	/*
+	_updateStatus : function() {
+		
+		if (this.items.length==0) {
+			this.status.style.display='none';
+		} else {
+			hui.dom.setText(this.status,'Status: '+Math.round(s.successful_uploads/this.items.length*100)+'%');
+			this.status.style.display='block';
+		}
+	},*/
+	
+	$_getButtonContainer : function() {
+		var buttonContainer = hui.build('span',{'class':'hui_upload_button'});
+		if (this.options.widget) {
+			var w = hui.ui.get(this.options.widget);
+			w.element.parentNode.insertBefore(buttonContainer,w.element);
+			w.element.parentNode.removeChild(w.element);
+			buttonContainer.appendChild(w.element);
+		} else {
+			buttonContainer.innerHTML='<a href="javascript:void(0);" class="hui_button"><span><span>'+this.options.chooseButton+'</span></span></a>';
+			this.element.appendChild(buttonContainer);
+		}
+		return buttonContainer;
+	},
+	
+	_setWidgetEnabled : function(enabled) {
+		if (this.options.widget) {
+			var w = hui.ui.get(this.options.widget);
+			if (w && w.setEnabled) {
+				w.setEnabled(enabled);
+			}
+		}
+	},
+	
+	_checkQueue : function() {
+		for (var i=0; i < this.items.length; i++) {
+			if (!this.items[i].isFinished()) {
+				return;
+			}
+		};
+		this.busy = false;
+		this._setWidgetEnabled(true);
+		this.fire('uploadDidCompleteQueue');
+	},
+	
+		
+	//////////////////// Events //////////////
+		
 	/** @private */
-	createFlashVersion : function() {
+	_addItem : function(file) {
+		var index = file.index;
+		if (index===undefined) {
+			index = this.items.length;
+			file.index = index;
+		}
+		var rearrange = index>4;
+		var item = new hui.ui.Upload.Item(file,rearrange);
+		this.items[index] = item;
+		var first = hui.firstByClass(this.itemContainer,'hui_upload_item_success');
+		if (first) {
+			this.itemContainer.insertBefore(item.element,first);
+		} else {
+			this.itemContainer.appendChild(item.element);
+		}
+		this.itemContainer.style.display='block';
+		if (this.placeholder) {
+			this.placeholder.style.display='none';
+		}
+		return item;
+	}
+}
+
+
+
+
+/////////////////// Item ///////////////////
+
+hui.ui.Upload.Item = function(info,rearrange) {
+	this.data = info;
+	this.rearrange = rearrange;
+	this.element = hui.build('div',{className:'hui_upload_item'});
+	this.element.appendChild(hui.ui.createIcon('file/generic',32));
+	this.content = hui.build('div',{className:'hui_upload_item_content',parent:this.element});
+	this.progress = hui.ui.ProgressBar.create({small:true});
+	this.content.appendChild(this.progress.getElement());
+	var text = hui.build('p',{parent:this.content});
+	this.info = hui.build('strong',{parent:text});
+	this.status = hui.build('em',{parent:text});
+	if (info.name) {
+		hui.dom.setText(this.info,info.name);
+	}
+	this.finished = false;
+	this.error = false;
+}
+
+hui.ui.Upload.Item.prototype = {
+	getInfo : function() {
+		return this.data;
+	},
+	isFinished : function() {
+		return this.finished;
+	},
+	setError : function(error) {
+		this._setStatus(error || 'Fejl');
+		hui.addClass(this.element,'hui_upload_item_error');
+		this.progress.hide();
+		this.progress.setValue(0);
+		this.finished = true;
+	},
+	setSuccess : function(status) {
+		this._setStatus('Færdig');
+		this.progress.setValue(1);
+		this.finished = true;
+		hui.addClass(this.element,'hui_upload_item_success');
+	},
+	updateProgress : function(complete,total) {
+		this.setProgress(complete/total);
+		return this;
+	},
+	setProgress : function(value) {
+		this._setStatus('Overfører');
+		this.progress.setValue(Math.min(0.9999,value));
+		return this;
+	},
+	setWaiting : function() {
+		this._setStatus('Venter');
+		this.progress.setWaiting();
+		return this;
+	},
+	hide : function() {
+		this.element.hide();
+	},
+	destroy : function() {
+		hui.dom.remove(this.element);
+	},
+	_setStatus : function(text) {
+		if (this._status!==text) {
+			hui.dom.setText(this.status,text);
+			this._status = text;
+		}
+	}
+}
+
+//// Util ////
+
+hui.ui.Upload._nameIndex = 0;
+
+hui.ui.Upload._buildForm = function(widget) {
+	var options = widget.options;
+
+	hui.ui.Upload._nameIndex++;
+	var frameName = 'hui_upload_'+hui.ui.Upload.Frame.nameIndex;
+
+	var form = hui.build('form');
+	form.setAttribute('action',options.url || '');
+	form.setAttribute('method','post');
+	form.setAttribute('enctype','multipart/form-data');
+	form.setAttribute('encoding','multipart/form-data');
+	form.setAttribute('target',frameName);
+	if (options.parameters) {
+		for (var key in options.parameters) {
+			var hidden = hui.build('input',{'type':'hidden','name':key});
+			hidden.value = options.parameters[key];
+			form.appendChild(hidden);
+		}
+	}
+	return form;
+}
+
+
+
+
+
+
+
+
+
+
+
+/////////////////////// Frame //////////////////////////
+
+hui.ui.Upload.Frame = function(parent) {
+	this.parent = parent;
+}
+
+hui.ui.Upload.Frame.support = function() {
+	return {supported:true,multiple:false};
+}
+
+hui.ui.Upload.Frame.prototype = {
+	
+	initialize : function() {
+		var options = this.parent.options;
+		
+		var form = this.form = hui.ui.Upload._buildForm(this.parent);
+		var frameName = form.getAttribute('target');
+		
+		var iframe = this.iframe = hui.build('iframe',{name : frameName, id : frameName, src : hui.ui.context+'/hui/html/blank.html', style : 'display:none'});
+		this.parent.element.appendChild(iframe);
+		hui.listen(this.iframe,'load',function() {this._uploadComplete()}.bind(this));
+		
+		this.fileInput = hui.build('input',{'type':'file','name':options.fieldName});
+		hui.listen(this.fileInput,'change',this._onSubmit.bind(this));
+		
+		form.appendChild(this.fileInput);
+		var span = hui.build('span',{'class':'hui_upload_button_input'});
+		span.appendChild(form);
+		var c = this.parent.$_getButtonContainer();		
+		c.insertBefore(span,c.firstChild);
+	},
+	setParameter : function(name,value) {
+		var existing = this.form.getElementsByTagName('input');
+		for (var i=0; i < existing.length; i++) {
+			if (existing[i].name==name) {
+				existing[i].value = value;
+				return;
+			}
+		};
+		hui.build('input',{'type':'hidden','name':name,'value':value,parent:this.form});
+	},
+	
+	_rebuildParameters : function() {
+		// IE: set value of parms again since they disappear
+		if (hui.browser.msie) {
+			hui.each(this.parent.options.parameters,function(key,value) {
+				this.form[key].value = value;
+			}.bind(this));
+		}
+	},
+	_getFileName : function() {
+		return this.fileInput.value.split('\\').pop();
+	},
+	_onSubmit : function() {
+		this.form.style.display='none';
+		this.uploading = true;
+		this._rebuildParameters();
+		this.form.submit();
+		this.item = this.parent.$_addItem({name:this._getFileName()});
+		this.item.setWaiting();
+		
+		hui.log('Frame: Upload started');
+	},
+	
+	_uploadComplete : function() {
+		if (!this.uploading) {
+			return;
+		}
+		this.uploading = false;
+		var success = this._isSuccessResponse();
+		hui.log('Frame: Upload complete: success='+success);
+		var item = this.item;
+		if (item) {
+			if (success) {
+				this.parent.$_itemSuccess(item);
+				hui.log('Frame: Upload succeeded');
+			} else {
+				this.parent.$_itemFail(item);
+				hui.log('Frame: Upload failed!');
+			}
+		}
+		this.iframe.src = hui.ui.context+'/hui/html/blank.html';
+		this.form.style.display = 'block';
+		this.form.reset();
+	},
+	_isSuccessResponse : function() {
+		var doc = hui.getFrameDocument(this.iframe);
+		return doc.body.innerHTML.indexOf('SUCCESS')!==-1;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/////////////////////// Flash //////////////////////////
+
+hui.ui.Upload.Flash = function(parent) {
+	this.parent = parent;
+	
+	this.items = [];
+}
+
+hui.ui.Upload.Flash.support = function() {
+	if (hui.browser.chrome) {
+		//return {supported:false,multiple:true};
+	}
+	return {supported:hui.ui.Flash.getMajorVersion()>=10 && window.SWFUpload!==undefined,multiple:true};
+}
+
+hui.ui.Upload.Flash.prototype = {
+	initialize : function() {
+		var options = this.parent.options;
+		
 		hui.log('Creating flash verison');
-		var url = this.getAbsoluteUrl(this.options.url);
+		var url = this._getAbsoluteUrl(options.url);
 		var javaSession = hui.cookie.get('JSESSIONID');
 		if (javaSession) {
 			url+=';jsessionid='+javaSession;
@@ -9553,229 +10072,173 @@ hui.ui.Upload.prototype = {
 		}
 		var buttonContainer = hui.build('span',{'class':'hui_upload_button'});
 		var placeholder = hui.build('span',{'class':'hui_upload_button_object',parent:buttonContainer});
-		if (this.options.widget) {
-			var w = hui.ui.get(this.options.widget);
+		if (options.widget) {
+			var w = hui.ui.get(options.widget);
 			w.element.parentNode.insertBefore(buttonContainer,w.element);
 			w.element.parentNode.removeChild(w.element);
 			buttonContainer.appendChild(w.element);
 		} else {
-			buttonContainer.innerHTL='<a href="javascript:void(0);" class="hui_button"><span><span>'+this.options.chooseButton+'</span></span></a>';
-			this.element.appendChild(buttonContainer);
+			buttonContainer.innerHTL='<a href="javascript:void(0);" class="hui_button"><span><span>'+options.chooseButton+'</span></span></a>';
+			this.parent.element.appendChild(buttonContainer);
 		}
 		
-		var self = this;
 		this.loader = new SWFUpload({
 			upload_url : url,
 			flash_url : hui.ui.context+"/hui/lib/swfupload/swfupload.swf",
-			file_size_limit : this.options.maxSize,
-			file_queue_limit : this.options.maxItems,
-			file_post_name : this.options.fieldName,
-			file_upload_limit : this.options.maxItems,
-			file_types : this.options.types,
-			debug : true,
-			post_params : this.options.parameters,
-			button_placeholder_id : 'x',
+			file_size_limit : options.maxSize,
+			file_queue_limit : options.maxItems,
+			file_post_name : options.fieldName,
+			file_upload_limit : options.maxItems,
+			file_types : options.types,
+			debug : !true,
+			post_params : options.parameters,
+			/*button_placeholder_id : 'x',
 			button_placeholder : placeholder,
 			button_width : '100%',
-			button_height : 30,
+			button_height : 30,*/
 
-			swfupload_loaded_handler : this.flashLoaded.bind(this),
-			file_queued_handler : self.fileQueued.bind(self),
-			file_queue_error_handler : this.fileQueueError.bind(this),
-			file_dialog_complete_handler : this.fileDialogComplete.bind(this),
-			upload_start_handler : this.uploadStart.bind(this),
-			upload_progress_handler : this.uploadProgress.bind(this),
-			upload_error_handler : this.uploadError.bind(this),
-			upload_success_handler : this.uploadSuccess.bind(this),
-			upload_complete_handler : this.uploadComplete.bind(this)
+			swfupload_loaded_handler : this._onFlashLoaded.bind(this),
+			file_queued_handler : this._onFileQueued.bind(this),
+			file_queue_error_handler : this._onFileQueueError.bind(this),
+			file_dialog_complete_handler : this._onFileDialogComplete.bind(this),
+			upload_start_handler : this._onUploadStart.bind(this),
+			upload_progress_handler : this._onUploadProgress.bind(this),
+			upload_error_handler : this._onUploadError.bind(this),
+			upload_success_handler : this._onUploadSuccess.bind(this),
+			upload_complete_handler : this._onUploadComplete.bind(this)
 		});
 	},
-	/** @private */
-	startNextUpload : function() {
+	setParameter : function(key,value) {
+		hui.log('Flash: Warning: cannot change parameters');
+	},
+	_getAbsoluteUrl : function(relative) {
+		var loc = new String(document.location);
+		var url = loc.slice(0,loc.lastIndexOf('/'));
+		while (relative.indexOf('../')===0) {
+			relative=relative.substring(3);
+			url = url.slice(0,url.lastIndexOf('/'));
+		}
+		url += '/'+relative;
+		return url;
+	},
+	
+	////// Flash listeners /////
+	
+	_onFlashLoaded : function() {
+		hui.log('Flash loaded');
+	},
+	_onFileQueued : function(file) {
+		var item = this.parent.$_addItem({name:file.name,size:file.size});
+		item.setWaiting();
+		this.items.push(item);
+	},
+	_onFileQueueError : function(file, error, message) {
+		hui.log('Flash: fileQueueError file:'+hui.toJSON(file)+', error:'+error+', message:'+message);
+		if (file!==null) {
+			var item = this.parent.$_addItem({name:file.name,size:file.size});
+			this.items.push(item);
+			this.parent.$_itemFail(item);
+			item.setError(hui.ui.Upload.Flash.errors[error]);
+		} else {
+			hui.ui.showMessage({text:hui.ui.Upload.Flash.errors[error],duration:4000});
+		}
+	},
+	_onFileDialogComplete : function() {
+		hui.log('Flash: fileDialogComplete');
 		this.loader.startUpload();
 	},
-	
-	//////////////////// Events //////////////
-	
-	/** @private */
-	flashLoaded : function() {
-		hui.log('flash loaded');
-		this.loaded = true;
+	_onUploadStart : function() {
+
 	},
-	/** @private */
-	addError : function(file,error) {
-		var item = this.addItem(file);
-		item.setError(error);
+	_onUploadProgress : function(file,complete,total) {
+		var item = this.items[file.index];
+		item.updateProgress(complete,total);
 	},
-	/** @private */
-	fileQueued : function(file) {
-		this.addItem(file);
-	},
-	/** @private */
-	fileQueueError : function(file, error, message) {
-		if (file!==null) {
-			this.addError(file,error);
-		} else {
-			hui.ui.showMessage({text:hui.ui.Upload.errors[error],duration:4000});
-		}
-	},
-	/** @private */
-	fileDialogComplete : function() {
-		hui.log('fileDialogComplete');
-		this.startNextUpload();
-	},
-	/** @private */
-	uploadStart : function() {
-		this.status.style.display='block';
-		hui.log('uploadStart');
-		if (!this.busy) {
-			this.fire('uploadDidStartQueue');
-		}
-		this.busy = true;
-	},
-	/** @private */
-	uploadProgress : function(file,complete,total) {
-		this.updateStatus();
-		this.items[file.index].updateProgress(complete,total);
-	},
-	/** @private */
-	uploadError : function(file, error, message) {
-		hui.log('uploadError file:'+file+', error:'+error+', message:'+message);
+	_onUploadError : function(file, error, message) {
+		hui.log('Flash: uploadError file:'+file+', error:'+error+', message:'+message);
 		if (file) {
-			this.items[file.index].update(file);
+			var item = this.items[file.index];
+			this.parent.$_itemFail(item);
+			item.setError(hui.ui.Upload.Flash.errors[error]);
 		}
 	},
 	/** @private */
-	uploadSuccess : function(file,data) {
-		hui.log('uploadSuccess file:'+file+', data:'+data);
-		this.items[file.index].updateProgress(file.size,file.size);
+	_onUploadSuccess : function(file,data) {
+		var item = this.items[file.index];
+		item.updateProgress(file.size,file.size);
+		this.parent.$_itemSuccess(item);
 	},
 	/** @private */
-	uploadComplete : function(file) {
-		this.items[file.index].update(file);
-		this.startNextUpload();
-		this.fire('uploadDidComplete',file);
-		if (this.loader.getStats().files_queued==0) {
-			this.fire('uploadDidCompleteQueue');
-		}
-		this.updateStatus();
-		this.busy = false;
-	},
-	
-	//////////// Items ////////////
-	
-	/** @private */
-	addItem : function(file) {
-		var index = file.index;
-		if (index===undefined) {
-			index = this.items.length;
-			file.index = index;
-		}
-		var item = new hui.ui.Upload.Item(file);
-		this.items[index] = item;
-		this.itemContainer.appendChild(item.element);
-		this.itemContainer.style.display='block';
-		if (this.placeholder) {
-			this.placeholder.style.display='none';
-		}
-		return item;
-	},
-	
-	/** @private */
-	updateStatus : function() {
-		var s = this.loader.getStats();
-		if (this.items.length==0) {
-			this.status.style.display='none';
-		} else {
-			hui.dom.setText(this.status,'Status: '+Math.round(s.successful_uploads/this.items.length*100)+'%');
-			this.status.style.display='block';
-		}
-		hui.log(s);
+	_onUploadComplete : function(file) {
+		this.loader.startUpload();		
 	}
 }
 
-hui.ui.Upload.Item = function(file) {
-	this.element = hui.build('div',{className:'hui_upload_item'});
-	if (file.index % 2 == 1) {
-		hui.addClass(this.element,'hui_upload_item_alt');
+!(function() {
+	var e = hui.ui.Upload.Flash.errors = {};
+	var s = hui.ui.Upload.Flash.status = {};
+	if (window.SWFUpload) {
+		e[SWFUpload.QUEUE_ERROR.QUEUE_LIMIT_EXCEEDED]			= 'Der er valgt for mange filer';
+		e[SWFUpload.QUEUE_ERROR.FILE_EXCEEDS_SIZE_LIMIT]		= 'Filen er for stor';
+		e[SWFUpload.QUEUE_ERROR.ZERO_BYTE_FILE]					= 'Filen er tom';
+		e[SWFUpload.QUEUE_ERROR.INVALID_FILETYPE]				= 'Filens type er ikke understøttet';
+		e[SWFUpload.UPLOAD_ERROR.HTTP_ERROR]					= 'Der skete en netværksfejl';
+		e[SWFUpload.UPLOAD_ERROR.MISSING_UPLOAD_URL]			= 'Upload-adressen findes ikke';
+		e[SWFUpload.UPLOAD_ERROR.IO_ERROR]						= 'Der skete en IO-fejl';
+		e[SWFUpload.UPLOAD_ERROR.SECURITY_ERROR]				= 'Der skete en sikkerhedsfejl';
+		e[SWFUpload.UPLOAD_ERROR.UPLOAD_LIMIT_EXCEEDED]			= 'Upload-størrelsen er overskredet';
+		e[SWFUpload.UPLOAD_ERROR.UPLOAD_FAILED]					= 'Upload af filen fejlede';
+		e[SWFUpload.UPLOAD_ERROR.SPECIFIED_FILE_ID_NOT_FOUND]	= 'Filens id kunne ikke findes';
+		e[SWFUpload.UPLOAD_ERROR.FILE_VALIDATION_FAILED]		= 'Validering af filen fejlede';
+		e[SWFUpload.UPLOAD_ERROR.FILE_CANCELLED]				= 'Filen blev afbrudt';
+		e[SWFUpload.UPLOAD_ERROR.UPLOAD_STOPPED]				= 'Upload af filen blev stoppet';
+		s[SWFUpload.FILE_STATUS.QUEUED] 		= 'I kø';
+		s[SWFUpload.FILE_STATUS.IN_PROGRESS] 	= 'I gang';
+		s[SWFUpload.FILE_STATUS.ERROR] 			= 'Filen gav fejl';
+		s[SWFUpload.FILE_STATUS.COMPLETE] 		= 'Færdig';
+		s[SWFUpload.FILE_STATUS.CANCELLED] 		= 'Afbrudt';
 	}
-	this.content = hui.build('div',{className:'hui_upload_item_content'});
-	this.icon = hui.ui.createIcon('file/generic',32);
-	this.element.appendChild(this.icon);
-	this.element.appendChild(this.content);
-	this.info = document.createElement('strong');
-	this.status = document.createElement('em');
-	this.progress = hui.ui.ProgressBar.create({small:true});
-	this.content.appendChild(this.progress.getElement());
-	this.content.appendChild(this.info);
-	this.content.appendChild(this.status);
-	this.update(file);
+})()
+
+
+
+
+
+
+
+
+//////////////////// HTML5 //////////////////////
+
+
+hui.ui.Upload.HTML5 = function(parent) {
+	this.parent = parent;
 }
 
-hui.ui.Upload.Item.prototype = {
-	update : function(file) {
-		hui.dom.setText(this.status,hui.ui.Upload.status[file.filestatus] || file.filestatus);
-		if (file.name) {
-			hui.dom.setText(this.info,file.name);
-		}
-		if (file.progress!==undefined) {
-			this.setProgress(file.progress);
-		}
-		if (file.filestatus==SWFUpload.FILE_STATUS.ERROR) {
-			hui.addClass(this.element,'hui_upload_item_error');
-			this.progress.hide();
-		}
+hui.ui.Upload.HTML5.support = function() {
+	var supported = window.File!==undefined && (hui.browser.webkit || hui.browser.gecko);//(window.File!==undefined && window.FileReader!==undefined && window.FileList!==undefined && window.Blob!==undefined);
+	hui.log('HTML5: supported='+supported);
+	//supported = !true;
+	return {
+		supported : supported,
+		multiple : true
+	};
+}
+
+hui.ui.Upload.HTML5.prototype = {
+	initialize : function() {
+		var options = this.parent.options;
+		var span = hui.build('span',{'class':'hui_upload_button_input'});
+		this.fileInput = hui.build('input',{'type':'file','name':options.fieldName,'multiple':'multiple',parent:span});
+		var c = this.parent.$_getButtonContainer();		
+		c.insertBefore(span,c.firstChild);
+		hui.listen(this.fileInput,'change',this._submit.bind(this));
 	},
-	setError : function(error) {
-		hui.dom.setText(this.status,hui.ui.Upload.errors[error] || error);
-		hui.addClass(this.element,'hui_upload_item_error');
-		this.progress.hide();
-	},
-	updateProgress : function(complete,total) {
-		this.progress.setValue(complete/total);
-		return this;
-	},
-	setProgress : function(value) {
-		this.progress.setValue(value);
-		return this;
-	},
-	setWaiting : function(value) {
-		this.progress.setWaiting();
-		return this;
-	},
-	hide : function() {
-		this.element.hide();
-	},
-	destroy : function() {
-		hui.dom.remove(this.element);
+	_submit : function(e) {
+		var files = this.fileInput.files;
+		this.parent._transferFiles(files);
 	}
 }
 
-if (window.SWFUpload) {
-(function(){
-	var e = hui.ui.Upload.errors = {};
-	e[SWFUpload.QUEUE_ERROR.QUEUE_LIMIT_EXCEEDED]			= 'Der er valgt for mange filer';
-	e[SWFUpload.QUEUE_ERROR.FILE_EXCEEDS_SIZE_LIMIT]		= 'Filen er for stor';
-	e[SWFUpload.QUEUE_ERROR.ZERO_BYTE_FILE]					= 'Filen er tom';
-	e[SWFUpload.QUEUE_ERROR.INVALID_FILETYPE]				= 'Filens type er ikke understøttet';
-	e[SWFUpload.UPLOAD_ERROR.HTTP_ERROR]					= 'Der skete en netværksfejl';
-	e[SWFUpload.UPLOAD_ERROR.MISSING_UPLOAD_URL]			= 'Upload-adressen findes ikke';
-	e[SWFUpload.UPLOAD_ERROR.IO_ERROR]						= 'Der skete en IO-fejl';
-	e[SWFUpload.UPLOAD_ERROR.SECURITY_ERROR]				= 'Der skete en sikkerhedsfejl';
-	e[SWFUpload.UPLOAD_ERROR.UPLOAD_LIMIT_EXCEEDED]			= 'Upload-størrelsen er overskredet';
-	e[SWFUpload.UPLOAD_ERROR.UPLOAD_FAILED]					= 'Upload af filen fejlede';
-	e[SWFUpload.UPLOAD_ERROR.SPECIFIED_FILE_ID_NOT_FOUND]	= 'Filens id kunne ikke findes';
-	e[SWFUpload.UPLOAD_ERROR.FILE_VALIDATION_FAILED]		= 'Validering af filen fejlede';
-	e[SWFUpload.UPLOAD_ERROR.FILE_CANCELLED]				= 'Filen blev afbrudt';
-	e[SWFUpload.UPLOAD_ERROR.UPLOAD_STOPPED]				= 'Upload af filen blev stoppet';
-	var s = hui.ui.Upload.status = {};
-	s[SWFUpload.FILE_STATUS.QUEUED] 		= 'I kø';
-	s[SWFUpload.FILE_STATUS.IN_PROGRESS] 	= 'I gang';
-	s[SWFUpload.FILE_STATUS.ERROR] 			= 'Filen gav fejl';
-	s[SWFUpload.FILE_STATUS.COMPLETE] 		= 'Færdig';
-	s[SWFUpload.FILE_STATUS.CANCELLED] 		= 'Afbrudt';
-}())
-}
 /* EOF *//** A progress bar is a widget that shows progress from 0% to 100%
 	@constructor
 */
@@ -9853,6 +10316,9 @@ hui.ui.Gallery = function(options) {
 	this.height = 100;
 	this.revealing = false;
 	hui.ui.extend(this);
+	if (options.dropFiles) {
+		this._addDrop();
+	}
 	if (this.options.source) {
 		this.options.source.listen(this);
 	}
@@ -9869,6 +10335,15 @@ hui.ui.Gallery.create = function(options) {
 }
 
 hui.ui.Gallery.prototype = {
+	_addDrop : function() {
+		hui.drag.listen({
+			element : this.element,
+			hoverClass : 'hui_gallery_drop',
+			onFiles : function(files) {
+				this.fire('filesDropped',files);
+			}.bind(this)
+		})
+	},
 	hide : function() {
 		this.element.style.display='none';
 	},
@@ -10576,6 +11051,7 @@ hui.ui.Dock = function(options) {
 	this.element = hui.get(options.element);
 	this.iframe = hui.firstByTag(this.element,'iframe');
 	this.progress = hui.firstByClass(this.element,'hui_dock_progress');
+	this.resizer = hui.firstByClass(this.element,'hui_dock_sidebar_line');
 	hui.listen(this.iframe,'load',this._load.bind(this));
 	//if (this.iframe.contentWindow) {
 	//	this.iframe.contentWindow.addEventListener('DOMContentLoaded',function() {this._load();hui.log('Fast path!')}.bind(this));
@@ -10588,9 +11064,54 @@ hui.ui.Dock = function(options) {
 	}
 	this.busy = true;
 	hui.ui.listen(this);
+	this._addBehavior();
 }
 
 hui.ui.Dock.prototype = {
+	_addBehavior : function() {
+		if (this.resizer) {
+			this.sidebar = hui.firstByClass(this.element,'hui_dock_sidebar');
+			this.main = hui.firstByClass(this.element,'hui_dock_sidebar_main');
+			hui.drag.register({
+				element : this.resizer,
+				onStart : function() {
+					this.hasDragged = false;
+					hui.addClass(this.element,'hui_dock_sidebar_resizing');
+					this._setBusy(true);
+				}.bind(this),
+				onMove : function(e) {
+					var left = e.getLeft();
+					if (left<10) {
+						left=10;
+					}
+					this._updateSidebarWidth(left);
+					if (!this.hasDragged) {
+						hui.removeClass(this.element,'hui_dock_sidebar_collapsed');
+					}
+					this.hasDragged = true;
+				}.bind(this),
+				onEnd : function() {
+					this._setBusy(false);
+					if (!this.hasDragged) {
+						this.toggle();
+					} else if (this.latestWidth==10) {
+						this.collapse();
+					} else {
+						this.latestExpandedWidth = this.latestWidth;
+					}
+					hui.removeClass(this.element,'hui_dock_sidebar_resizing');
+					hui.ui.callVisible(this);
+					hui.ui.reLayout();
+				}.bind(this)
+			})
+		}
+	},
+	_updateSidebarWidth : function(width) {
+		this.latestWidth = width;
+		this.sidebar.style.width = (width-1)+'px';
+		this.main.style.left = width+'px';
+		this.resizer.style.left = (width-5)+'px';
+	},
 	/** Change the url of the iframe
 	 * @param {String} url The url to change the iframe to
 	 */
@@ -10599,13 +11120,29 @@ hui.ui.Dock.prototype = {
 		hui.getFrameDocument(this.iframe).location.href='about:blank';
 		hui.getFrameDocument(this.iframe).location.href=url;
 	},
+	collapse : function() {
+		hui.addClass(this.element,'hui_dock_sidebar_collapsed');
+		this._updateSidebarWidth(10);
+		hui.ui.callVisible(this);
+	},
+	expand : function() {
+		hui.removeClass(this.element,'hui_dock_sidebar_collapsed');
+		this._updateSidebarWidth(this.latestExpandedWidth || 200);
+		hui.ui.callVisible(this);
+	},
+	toggle : function() {
+		if (hui.hasClass(this.element,'hui_dock_sidebar_collapsed')) {
+			this.expand();
+		} else {
+			this.collapse();
+		}
+	},
 	_load : function() {
 		this._setBusy(false);
 	},
 	_setBusy : function(busy) {
 		if (busy) {
-			hui.log(this.iframe.clientWidth)
-			hui.setStyle(this.progress,{display:'block',style:'height:'+this.iframe.clientHeight+'px;width:'+this.iframe.clientWidth+'px'});
+			hui.setStyle(this.progress,{display:'block',height:this.iframe.clientHeight+'px',width:this.iframe.clientWidth+'px'});
 		} else {
 			this.progress.style.display = 'none';
 		}
@@ -10841,6 +11378,11 @@ hui.ui.Input.prototype = {
 				hui.listen(p,'click',this.focus.bind(this));
 			}
 		}
+		if (e.type=='submit') {
+			hui.listen(e,'click',function(event) {
+				this.fire('click',event);
+			}.bind(this));
+		}
 	},
 	_focused : function() {
 		var e = this.element,p = this.options.placeholderElement;
@@ -11008,7 +11550,9 @@ hui.ui.Overflow.prototype = {
 			bottom = hui.getTop(parent)+parent.clientHeight,
 			sibs = hui.getAllNext(this.element);
 		for (var i=0; i < sibs.length; i++) {
-			bottom-=sibs[i].clientHeight;
+			if (hui.getStyle(sibs[i],'position')!='absolute') {
+				bottom-=sibs[i].clientHeight;
+			}
 		}
 		this.diff = -1 * (top + (viewport - bottom));
 		if (hui.browser.webkit && this.element.parentNode.className=='hui_layout_center') {
@@ -11017,9 +11561,11 @@ hui.ui.Overflow.prototype = {
 	},
 	show : function() {
 		this.element.style.display='';
+		hui.ui.callVisible(this);
 	},
 	hide : function() {
 		this.element.style.display='none';
+		hui.ui.callVisible(this);
 	},
 	add : function(widgetOrNode) {
 		if (widgetOrNode.getElement) {
@@ -11136,7 +11682,7 @@ hui.ui.SearchField.prototype = {
 		return this.field.value=='';
 	},
 	isBlank : function() {
-		return this.field.value.strip()=='';
+		return hui.isBlank(this.field.value);
 	},
 	reset : function() {
 		this.field.value='';
@@ -12899,7 +13445,7 @@ hui.ui.StyleLength.prototype = {
 	/** @private */
 	addBehavior : function() {
 		var e = this.element;
-		hui.listen(this.input,'focus',function() {hui.addClass(e,'hui_number_focused')});
+		hui.listen(this.input,'focus',function() {hui.addClass(e,'hui_numberfield_focused')});
 		hui.listen(this.input,'blur',this.blurEvent.bind(this));
 		hui.listen(this.input,'keyup',this.keyEvent.bind(this));
 		hui.listen(this.up,'mousedown',this.upEvent.bind(this));
@@ -12907,6 +13453,9 @@ hui.ui.StyleLength.prototype = {
 	},
 	/** @private */
 	parseValue : function(value) {
+		if (value===null || value===undefined) {
+			return null;
+		}
 		var num = parseFloat(value,10);
 		if (isNaN(num)) {
 			return null;
@@ -12924,7 +13473,7 @@ hui.ui.StyleLength.prototype = {
 	},
 	/** @private */
 	blurEvent : function() {
-		hui.removeClass(this.element,'hui_number_focused');
+		hui.removeClass(this.element,'hui_numberfield_focused');
 		this.updateInput();
 	},
 	/** @private */
@@ -12987,6 +13536,19 @@ hui.ui.StyleLength.prototype = {
 	setValue : function(value) {
 		this.value = this.parseValue(value);
 		this.updateInput();
+	},
+	focus : function() {
+		try {
+			this.input.focus();
+		} catch (e) {}		
+	},
+	focus : function() {
+		try {
+			this.input.focus();
+		} catch (e) {}		
+	},
+	reset : function() {
+		this.setValue('');
 	}
 }/////////////////////////// Date time /////////////////////////
 
@@ -13338,6 +13900,7 @@ hui.ui.Checkboxes.prototype = {
 		this.items.push(item);
 	},
 	registerItems : function(items) {
+		hui.log('registerItems')
 		items.parent = this;
 		this.subItems.push(items);
 	},
@@ -13376,6 +13939,7 @@ hui.ui.Checkboxes.Items = function(options) {
 	if (this.options.source) {
 		this.options.source.listen(this);
 	}
+	hui.log('itms')
 }
 
 hui.ui.Checkboxes.Items.prototype = {
@@ -13845,9 +14409,28 @@ hui.ui.Graph.prototype = {
 	implNodeWasClicked : function(node) {
 		this.fire('clickNode',node);
 	},
+	/** @private */
+	$sourceShouldRefresh : function() {
+		return hui.dom.isVisible(this.element);
+	},
+	refresh : function() {	
+		if (this.options.source) {
+			this.options.source.refresh();
+		}
+	},
 	show : function() {
-		hui.log('graph.show');
 		this.element.style.display='block';
+		this.refresh();
+	},
+	hide : function() {
+		this.element.style.display='none';
+	},
+	/** @private */
+	$visibilityChanged : function() {
+		if (this.options.source && hui.dom.isVisible(this.element)) {
+			// If there is a source, make sure it is initially 
+			this.options.source.refreshFirst();
+		}
 	},
 	$$layout : function() {
 		hui.log('graph.layout');
@@ -13897,7 +14480,6 @@ hui.ui.Graph.Protoviz = {
 		};
 	},
 	setData : function(data) {
-		hui.log('Setting data...')
 		var colors = pv.Colors.category19();
 		data = this.convert(data);
 		
@@ -13913,7 +14495,7 @@ hui.ui.Graph.Protoviz = {
 		    .fillStyle(function(d) {return d.fix ? "brown" : colors(d.group)})
 		    .strokeStyle(function() {return this.fillStyle().darker()})
 		    .lineWidth(1)
-		    .title(function(d) {return d.label})
+		    .title(function(d) {return d.label || ''})
 		    .event("mousedown", pv.Behavior.drag())
 		    .event("click", function(x) {console.log(data.nodes[x.index])})
 		    .event("drag", force);
@@ -13990,7 +14572,16 @@ hui.ui.Graph.D3 = {
 		return {"nodes":[{"name":"Person","group":1,"icon":"monochrome/person"},{"name":"Email","group":1},{"name":"Group","group":1}],"links":[{"source":1,"target":0,"value":1},{"source":0,"target":0,"value":2},{"source":1,"target":2,"value":2}]};
 	},
 	
+	clear : function() {
+		if (this.layout) {
+			this.layout.stop();
+			this.vis.remove();
+			this._init();
+		}
+	},
+	
 	setData : function(data) {
+		this.clear();
 		var w = this.parent.element.clientWidth,
 	    h = this.parent.element.clientHeight;
 		var json = this._convert(data);
@@ -14067,18 +14658,61 @@ hui.ui.Graph.D3 = {
 			node.attr('d','M-9.315,10c0,0-0.575-2.838,1.863-3.951c1.763-0.799,2.174-0.949,2.512-1.2 c0.138-0.087,0.263-0.198,0.438-0.351c0.661-0.561,0.562-1.324,1.038-1.562c0.474-0.225,0.424,0.238,0.524,0 c0.101-0.225-0.075-1.799,0-1.551c0.062,0.252-0.863-1.636-0.901-2.611C-3.888-2.439-4.702-2.99-4.613-3.651 c0.212-1.513,1.472-2.322,1.472-2.322s-2.423-0.454-1.36-1.478c1.062-1.012,1.474-1.4,2.6-2.076c1.138-0.663,2.674-0.599,4.163,0 C3.749-8.914,4.124-8.489,4.61-7.602c0.425,0.762,0.45,1.326,0.413,1.813C4.986-5.314,5.049-4.926,5.049-4.926 s0.499,0.112,0.513,0.837c0.013,0.687-0.175,1.699-0.551,2.162C4.861-1.752,4.599-1.114,4.197-0.264 C3.812,0.574,3.3,1.898,3.3,1.898s0.012,0.725,0,0.926c-0.039,0.45,0.649,0.012,0.962,0.512c0.312,0.501,0.1,0.85,0.799,1.162 c0.688,0.312,2.639,1.562,3.588,2.151C9.762,7.337,9.262,10,9.262,10H-9.315z').attr('fill-rule','evenodd');
 		} else if (icon=='monochrome/folder') {
 			var node = parent.append('svg:g').attr('class','hui_graph_icon');
-			node.append('svg:polygon').attr('points','-10,-2 -8.461,8 8.461,8 10,-2');
-			node.append('svg:polygon').attr('points','8,-5 -0.77,-5 -3.846,-8 -8,-8 -8,-5.384 -8,-4 8,-4');
+			node.append('svg:polygon').attr('fill','#fff').attr('points','9.464,-3.309 9.464,-6.384 -0.354,-6.384 -3.433,-9.462 -9.462,-9.462 -9.462,-3.309 -11.153,-3.309 -9.329,9.462 9.331,9.462 11.153,-3.309');
+			node.append('svg:polygon').attr('points','-9.999,-2.309 -8.461,8.462 8.464,8.462 10.001,-2.309');
+			node.append('svg:polygon').attr('points','8.464,-5.384 -0.769,-5.384 -3.846,-8.462 -8.461,-8.462 -8.461,-5.384 -8.461,-3.846 8.464,-3.846');
+			//node.append('svg:rect').attr('cx','0').attr('cy','0').attr('r','12').attr('fill','#fff');
+			//node.append('svg:polygon').attr('points','-10,-2 -8.461,8 8.461,8 10,-2');
+			//node.append('svg:polygon').attr('points','8,-5 -0.77,-5 -3.846,-8 -8,-8 -8,-5.384 -8,-4 8,-4');
 		} else if (icon=='monochrome/image') {
 			var node = parent.append('svg:g').attr('class','hui_graph_icon');
-			node.append('svg:path').attr('d','M7.5-5.625v11.25h-15v-11.25H7.5 M10-8.125h-20v16.25h20V-8.125L10-8.125z');
-			node.append('svg:path').attr('d','M-6.25,4.375h12.5l0,0l0,0v-4.534L4.271-3.75L1.584,2.054L0,0.435c0,0-2.193,0.815-2.917,2.065 c-1.151-0.625-1.776,0-1.776,0L-6.25,4.375z');
-			node.append('svg:circle').attr('cx','-2.819').attr('cy','-2.818').attr('r','1.875');
+			node.append('svg:rect').attr('x','-11').attr('y','-9').attr('width','22').attr('height','18').attr('fill','#fff');
+			node.append('svg:path').attr('d','M8-6V6H-8V-6H8 M10-8h-20V8h20V-8L10-8z');
+			node.append('svg:circle').attr('cx','-2.818').attr('cy','-2.693').attr('r','1.875');
+			node.append('svg:path').attr('d','M-7,5H7v-5.033L4.271-3.625L1.585,2.18L0,0.561c0,0-2.193,0.814-2.917,2.064c-1.151-0.625-1.776,0-1.776,0L-7,5z');
+		} else if (icon=='monochrome/news') {
+			var node = parent.append('svg:g').attr('class','hui_graph_icon');
+			node.append('svg:path').attr('d','M10.523-9.273l-1.25-1.25C8.967-10.831,8.559-11,8.125-11s-0.842,0.169-1.148,0.477L5.625-9.173 l-1.352-1.351C3.968-10.83,3.56-11,3.125-11c-0.367,0-0.727,0.126-1.014,0.354L0-8.956l-2.109-1.688 C-2.396-10.873-2.757-11-3.124-11c-0.435,0-0.843,0.169-1.149,0.477l-1.352,1.351l-1.352-1.351C-7.283-10.831-7.691-11-8.125-11 s-0.842,0.169-1.148,0.477l-1.25,1.25C-10.831-8.967-11-8.559-11-8.125v16.25c0,0.434,0.169,0.841,0.477,1.148l1.25,1.25 c0.307,0.307,0.715,0.476,1.148,0.476s0.842-0.169,1.148-0.476l1.352-1.351l1.352,1.351c0.309,0.308,0.716,0.476,1.149,0.476 c0.366,0,0.726-0.125,1.012-0.354L0,8.956l2.109,1.688C2.394,10.873,2.755,11,3.125,11c0.44,0,0.852-0.172,1.157-0.485l1.343-1.342 l1.352,1.351c0.307,0.307,0.715,0.476,1.148,0.476s0.842-0.169,1.148-0.476l1.25-1.25C10.831,8.966,11,8.559,11,8.125v-16.25 C11-8.559,10.831-8.967,10.523-9.273z').attr('fill','#fff');
+			node.append('svg:path').attr('d','M9.816-8.566l-1.25-1.25c-0.244-0.244-0.639-0.244-0.883,0L5.625-7.759L3.566-9.816c-0.225-0.226-0.583-0.245-0.832-0.047 L0-7.675l-2.734-2.188c-0.248-0.198-0.606-0.179-0.832,0.047l-2.059,2.058l-2.059-2.058c-0.244-0.244-0.639-0.244-0.883,0 l-1.25,1.25C-9.934-8.449-10-8.291-10-8.125v16.25c0,0.166,0.066,0.324,0.184,0.441l1.25,1.25c0.244,0.244,0.639,0.244,0.883,0 l2.059-2.058l2.059,2.058c0.226,0.225,0.584,0.244,0.832,0.047L0,7.676l2.734,2.188C2.85,9.956,2.987,10,3.125,10 c0.161,0,0.321-0.061,0.441-0.184l2.059-2.058l2.059,2.058c0.244,0.244,0.639,0.244,0.883,0l1.25-1.25 C9.934,8.449,10,8.291,10,8.125v-16.25C10-8.291,9.934-8.449,9.816-8.566z M-1.25,3.75H-7.5V-2.5h6.25V3.75z M7.5,3.75H0V2.5h7.5 V3.75z M7.5,1.25H0V0h7.5V1.25z M7.5-1.25H0V-2.5h7.5V-1.25z M7.5-3.75h-15V-5h15V-3.75z');
+		} else if (icon=='monochrome/warning') {
+			var node = parent.append('svg:g').attr('class','hui_graph_icon');
+			node.append('svg:path').attr('d','M10.672,7.15L2.321-9.432C1.913-10.386,0.984-11-0.057-11c-0.882,0-1.693,0.445-2.173,1.19 c-0.099,0.156-0.176,0.309-0.234,0.459l-8.152,16.403C-10.867,7.46-11,7.929-11,8.411C-11,9.839-9.841,11-8.416,11H8.416 C9.841,11,11,9.839,11,8.411C11,7.969,10.887,7.533,10.672,7.15z').attr('fill','#fff');
+			node.append('svg:path').attr('d','M9.8,7.639L1.411-9.013C1.175-9.592,0.607-10-0.057-10c-0.558,0-1.049,0.291-1.333,0.731 c-0.062,0.1-0.116,0.206-0.156,0.316L-9.744,7.543C-9.908,7.795-10,8.091-10,8.411C-10,9.286-9.294,10-8.416,10H8.416 C9.291,10,10,9.286,10,8.411C10,8.13,9.928,7.867,9.8,7.639 M1.613-5.456L1.166,3.906H-1.15l-0.444-9.362H1.613z M0.009,8.869 h-0.02c-1.077,0-1.808-0.792-1.808-1.855c0-1.1,0.751-1.855,1.827-1.855c1.077,0,1.788,0.756,1.81,1.855 C1.818,8.077,1.107,8.869,0.009,8.869');
+		} else if (icon=='monochrome/globe') {
+			var node = parent.append('svg:g').attr('class','hui_graph_icon');
+			node.append('svg:circle').attr('cx','0').attr('cy','0').attr('r','11').attr('fill','#fff');
+			node.append('svg:path').attr('d','M0.048-9.91c-5.496,0-9.955,4.456-9.955,9.954S-5.448,10,0.048,10 S10,5.542,10,0.044S5.544-9.91,0.048-9.91 M6.974-5.686C7.083-5.721,7.47-5.287,7.556-5.406c0.113-0.149-0.407-0.515-0.407-0.668 c0-0.21,0.978,0.964,1.032,1.057c0.013,0.021-0.27-0.136-0.276-0.108C7.883-4.966,7.852-4.809,7.813-4.65 C7.402-4.612,6.57-5.55,6.974-5.686 M2.82,4.227c-0.755,0.929-0.313,1.975-1.71,2.39C0.392,6.831,0.7,8.332-0.506,7.959 c0.069,0.07,0.069,0.171,0.239,0.28c-0.266,0.19-0.57,0.228-0.885,0.322c0.077,0.088,0.285,0.672,0.468,0.605 C-2.344,10-2.666,6.858-3.027,6c-0.271-0.653-1.199-0.954-1.596-1.555C-4.869,4.069-5.025,3.651-5.262,3.27 c-0.565-0.908,0.843-1.993,0.208-2.791C-5.307,0.159-5.762,0.667-6.25,0.026c-0.127-0.167-0.172-0.534-0.226-0.732 C-6.811-0.622-7.312-1.351-7.42-1.242c-0.375,0.375-0.934-0.514-0.891-0.845c0.128-0.971-0.375-1.522,0.148-2.444 c0.793-1.392,1.738-2.674,3.156-3.475c0.827-0.467,2.369-1.355,3.358-1.085C-1.83-9.02-3.658-8.137-3.457-8.079 c0.175,0.052,0.582-0.202,0.69,0.064c0.003,0.118-0.025,0.225-0.089,0.323c0.203,0.299,1.448-0.978,1.707-1.078 c0.506-0.2,0.744,0.327,1.312,0.132c0.396-0.135,0.213,0.623,0.172,0.623c0.066,0,0.53-0.203,0.503,0.042 C0.77-7.379-1.377-8.058-1.604-7.367c-0.061,0.188,0.697-0.175,0.82-0.063c-0.051,0.083-0.109,0.16-0.173,0.236 c0.059,0.117,0.523,0.265,0.573,0.158C-0.434-6.93-1.781-6.76-2.012-6.664c-0.393,0.162-1.07,0.585-1.436,0.911 c-0.217,0.197-0.126,0.482-0.376,0.659c-0.274,0.194-0.561,0.381-0.811,0.608C-4.96-4.19-4.667-3.286-5.028-3.119 c0.102-0.047-0.356-1.584-0.97-0.84C-6.243-3.661-6.733-3.787-7.11-3.42c-0.335,0.327-0.454,0.969-0.391,1.412 c0.149,1.05,0.815-0.293,1.221-0.293c0.271,0-0.46,0.972-0.247,1.128C-6.086-0.85-5.801-1.399-5.96-0.417 c-0.236,1.433,2.149,0.1,2.071-0.053c0.112,0.226-0.282,0.441-0.009,0.629c0.11,0.075,0.096-0.386,0.17-0.464 c0.24-0.251,0.339,0.118,0.551,0.202c0.269,0.11,1.516,0.09,1.595,0.495c0.206,1.011,2.215,0.385,1.633,1.951 c0.065-0.041,0.134-0.066,0.208-0.078c0.485,0.127,0.933,0.55,1.366,0.498C2.539,2.651,3.563,3.32,2.82,4.227 M7.309,0.806 c-1.176-1.099-1.178-3.391-0.12-4.486c-0.12-0.761,0.75-0.87,1.163-0.548c0.3,0.23,0.628,0.978,0.741,1.332 c0.683,2.116,0.578,4.827-0.563,6.78C8.935,3.006,8.911,2.22,9.108,1.319C9.436-0.147,7.744,1.213,7.309,0.806');
+		} else if (icon=='monochrome/dot') {
+			var node = parent.append('svg:g').attr('class','hui_graph_icon');
+			node.append('svg:circle').attr('cx','0').attr('cy','0').attr('r','11').attr('fill','#fff');
+			node.append('svg:circle').attr('cx','0').attr('cy','0').attr('r','10');
+		} else if (icon=='monochrome/page') {
+			var node = parent.append('svg:g').attr('class','hui_graph_icon');
+			node.append('svg:polygon').attr('fill','#fff').attr('points','-9,11 -9,-11 3,-11 9,-5 9,11');
+			node.append('svg:polygon').attr('points','3,-9.5 3,-5 7.5,-5');
+			node.append('svg:polygon').attr('points','-8,-10 2,-10 2,-4 8,-4 8,10 -8,10');
+
+			node.append('svg:rect').attr('x','-6').attr('y','-8').attr('width','6').attr('height','1').attr('fill','#fff');
+			node.append('svg:rect').attr('x','-6').attr('y','-5').attr('width','6').attr('height','1').attr('fill','#fff');
+			node.append('svg:rect').attr('x','-6').attr('y','-2').attr('width','12').attr('height','1').attr('fill','#fff');
+			node.append('svg:rect').attr('x','-6').attr('y','7').attr('width','12').attr('height','1').attr('fill','#fff');
+			node.append('svg:rect').attr('x','-6').attr('y','4').attr('width','12').attr('height','1').attr('fill','#fff');
+			node.append('svg:rect').attr('x','-6').attr('y','1').attr('width','12').attr('height','1').attr('fill','#fff');
+		} else if (icon=='monochrome/hierarchy') {
+			var node = parent.append('svg:g').attr('class','hui_graph_icon');
+			node.append('svg:path').attr('fill','#fff').attr('d','M8.574,4L3.527,0.971V-11h-7V0.939L-8.575,4H-11v7h22V4H8.574z');
+			node.append('svg:polygon').attr('points','8.297,5 2.526,1.537 2.526,-2.5 0.651,-2.5 0.651,-5 2.526,-5 2.526,-10 -2.474,-10 -2.474,-5 -0.599,-5 -0.599,-2.5 -2.474,-2.5 -2.474,1.505 -8.298,5 -10,5 -10,10 -5,10 -5,5 -5.868,5 -1.702,2.5 -0.599,2.5 -0.599,5 -2.474,5 -2.474,10 2.526,10 2.526,5 0.651,5 0.651,2.5 1.702,2.5 5.869,5 5,5 5,10 10,10 10,5');
+		} else if (icon=='monochrome/email') {
+			var node = parent.append('svg:g').attr('class','hui_graph_icon');
+			node.append('svg:path').attr('fill','#fff').attr('d','M10.727-1.695C10.727-7.086,6.645-11,1.02-11c-6.696,0-11.746,5.137-11.746,11.949 C-10.727,7.549-5.713,11-0.76,11c2.283,0,3.872-0.314,5.668-1.121L5.707,9.52L4.701,6.158C8.271,5.922,10.727,2.76,10.727-1.695z');
+			node.append('svg:path').attr('d','M4.498,8.967C2.773,9.742,1.281,10-0.76,10c-4.771,0-8.967-3.418-8.967-9.051C-9.727-4.912-5.445-10,1.02-10 c5.086,0,8.707,3.479,8.707,8.305c0,4.225-2.355,6.869-5.459,6.869c-1.35,0-2.328-0.719-2.471-2.211H1.74 C0.82,4.398-0.445,5.174-1.996,5.174c-1.84,0-3.219-1.408-3.219-3.764c0-3.535,2.613-6.695,6.754-6.695 c1.262,0,2.699,0.314,3.391,0.688L4.066,0.748c-0.258,1.695-0.059,2.473,0.748,2.5c1.234,0.057,2.787-1.523,2.787-4.855 c0-3.766-2.414-6.639-6.867-6.639c-4.426,0-8.248,3.42-8.248,8.938c0,4.828,3.045,7.529,7.328,7.529 c1.467,0,3.045-0.318,4.193-0.893L4.498,8.967z M1.969-2.9C1.74-2.957,1.422-3.016,1.078-3.016c-1.898,0-3.391,1.867-3.391,4.08 c0,1.092,0.488,1.781,1.408,1.781c1.092,0,2.213-1.35,2.443-3.018L1.969-2.9z');
 		} else {
 			var node = parent.append('svg:g').attr('class','hui_graph_icon');
-			node.append('svg:polygon').attr('points','0.909,-8.182 0.909,-2.727 6.364,-2.727');
+			node.append('svg:polygon').attr('fill','#fff').attr('points','0.09,-11 -9.182,-11 -9.182,11 9.182,11 9.182,-1.909');
+			node.append('svg:polygon').attr('points','0.91,-8.182 0.91,-2.727 6.365,-2.727');
 			node.append('svg:polygon').attr('points','-8.182,-10 -0.91,-10 -0.91,-0.909 8.182,-0.909 8.182,10 -8.182,10');
 		}
+		
 	}
 }
 

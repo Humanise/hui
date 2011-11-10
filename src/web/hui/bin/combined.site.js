@@ -43,12 +43,16 @@ hui.browser.msie9compat = hui.browser.msie7 && navigator.userAgent.indexOf('Trid
 hui.browser.webkit = navigator.userAgent.indexOf('WebKit')!==-1;
 /** If the browser is any version of Safari */
 hui.browser.safari = navigator.userAgent.indexOf('Safari')!==-1;
+/** If the browser is any version of Chrome */
+hui.browser.chrome = navigator.userAgent.indexOf('Chrome')!==-1;
 /** The version of WebKit (null if not WebKit) */
 hui.browser.webkitVersion = null;
 /** If the browser is Gecko based */
 hui.browser.gecko = !hui.browser.webkit && navigator.userAgent.indexOf('Gecko')!=-1;
 /** If the browser is safari on iPad */
 hui.browser.ipad = hui.browser.webkit && navigator.userAgent.indexOf('iPad')!=-1;
+/** If the browser is on Windows */
+hui.browser.windows = navigator.userAgent.indexOf('Windows')!=-1;
 
 /** If the browser supports CSS opacity */
 hui.browser.opacity = !hui.browser.msie || hui.browser.msie9;
@@ -256,15 +260,6 @@ hui.toIntArray = function(str) {
 	return array;
 }
 
-/** Scroll to an element */
-hui.scrollTo = function(element) {
-	element = hui.get(element);
-	if (element) {
-		var pos = hui.getPosition(element);
-		window.scrollTo(pos.left, pos.top-50);
-	}
-}
-
 ////////////////////// DOM ////////////////////
 
 /** @namespace */
@@ -344,6 +339,15 @@ hui.dom = {
 			node = node.parentNode;
 		}
 		return true;
+	},
+ 	isDescendantOrSelf : function(element,parent) {
+		while (element) {
+			if (element==parent) {
+				return true;
+			}
+			element = element.parentNode;
+		}
+		return false;
 	}
 }
 
@@ -604,6 +608,20 @@ hui.window = {
 			return document.documentElement.scrollTop;
 		}
 		return document.body.scrollTop;
+	}
+}
+hui.scrollTo = function(options) {
+	var node = options.element;
+	var pos = hui.getPosition(node);
+	var viewTop = hui.window.getScrollTop();
+	var viewHeight = hui.getViewPortHeight();
+	var viewBottom = viewTop+viewHeight;
+	hui.log({pos:pos,height:node.clientHeight,viewTop:viewTop,viewBottom:viewBottom});
+	if (viewTop<pos.top+node.clientHeight || (pos.top)<viewBottom) {
+		var top = pos.top-Math.round((viewHeight-node.clientHeight)/2);
+		top=Math.max(0,top);
+		hui.log(top);
+		window.scrollTo(0,top);
 	}
 }
 
@@ -874,6 +892,8 @@ hui.request = function(options) {
 					options.onForbidden(transport);
 				} else if (transport.status !== 0 && options.onFailure) {
 					options.onFailure(transport);
+				} else if (transport.status == 0 && options.onAbort) {
+					options.onAbort(transport);
 				}
 			}
 		} catch (e) {
@@ -886,10 +906,42 @@ hui.request = function(options) {
 	};
 	var method = options.method.toUpperCase();
 	transport.open(method, options.url, options.async);
-	var body = '';
-    if (method=='POST' && options.parameters) {
+	var body = null;
+	if (method=='POST' && options.file) {
+		if (false) {
+			body = options.file;
+        	transport.setRequestHeader("Content-type", options.file.type);  
+        	transport.setRequestHeader("X_FILE_NAME", options.file.name);
+		} else {
+			body = new FormData();
+			body.append('file', options.file);
+			if (options.parameters) {
+				for (param in options.parameters) {
+					body.append(param, options.parameters[param]);
+				}
+			}
+		}
+		if (options.onProgress) {
+			transport.upload.addEventListener("progress", function(e) {
+				options.onProgress(e.loaded,e.total);
+			}, false);
+		}
+		if (options.onLoad) {
+	        transport.upload.addEventListener("load", function(e) {
+				options.onLoad();
+			}, false); 
+		}
+	} else if (method=='POST' && options.files) {
+		body = new FormData();
+		//form.append('path', '/');
+		for (var i = 0; i < options.files.length; i++) {
+			body.append('file'+i, options.files[i]);
+		}
+	} else if (method=='POST' && options.parameters) {
 		body = hui.request._buildPostBody(options.parameters);
 		transport.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=utf-8");
+	} else {
+		body = '';
 	}
 	if (options.headers) {
 		for (name in options.headers) {
@@ -1209,7 +1261,7 @@ hui.getDocumentHeight = function() {
 //////////////////////////// Placement /////////////////////////
 
 /**
- * Example hui.place({target : {element : «node», horizontal : «0-1»}, source : {element : «node», vertical : «0 - 1»}, insideViewPort:«boolean», viewPartMargin:«integer»})
+ * Example hui.place({target : {element : «node», horizontal : «0-1»}, source : {element : «node», vertical : «0 - 1»}, insideViewPort:«boolean», viewPortMargin:«integer»})
  */
 hui.place = function(options) {
 	var left = 0,
@@ -1241,6 +1293,86 @@ hui.place = function(options) {
 	src.style.top = top+'px';
 	src.style.left = left+'px';
 }
+
+/////////////////////////////// Drag ///////////////////////////
+
+hui.drag = {
+	register : function(options) {
+		hui.listen(options.element,'mousedown',function(e) {
+			hui.stop(e);
+			hui.drag.start(options);
+		})
+	},
+	
+	start : function(options) {
+		var target = hui.browser.msie ? document : window;
+		
+		options.onStart();
+		var mover,upper;
+		mover = function(e) {
+			e = hui.event(e);
+			options.onMove(e);
+		}.bind(this);
+		hui.listen(target,'mousemove',mover);
+		upper = function() {
+			hui.unListen(target,'mousemove',mover);
+			hui.unListen(target,'mouseup',upper);
+			options.onEnd();
+		}.bind(this)
+		hui.listen(target,'mouseup',upper);
+	},
+	_nativeListeners : [],
+	_activeDrop : null,
+	listen : function(options) {
+		if (hui.browser.msie) {
+			return;
+		}
+		hui.drag._nativeListeners.push(options);
+		if (hui.drag._nativeListeners.length>1) {return};
+		hui.listen(document.body,'dragenter',function(e) {
+			var l = hui.drag._nativeListeners;
+			var found = null;
+			for (var i=0; i < l.length; i++) {
+				var lmnt = l[i].element;
+				if (hui.dom.isDescendantOrSelf(e.target,lmnt)) {
+					found = l[i];
+					if (hui.drag._activeDrop==null || hui.drag._activeDrop!=found) {
+						hui.addClass(lmnt,found.hoverClass);
+					}
+					break;
+				}
+			};
+			if (hui.drag._activeDrop) {
+				//var foundElement = found ? found.element : null;
+				if (hui.drag._activeDrop!=found) {
+					hui.removeClass(hui.drag._activeDrop.element,hui.drag._activeDrop.hoverClass);
+				}
+			}
+			hui.drag._activeDrop = found;
+		});
+		
+		hui.listen(document.body,'dragover',function(e) {
+			hui.stop(e);
+		});
+		hui.listen(document.body,'drop',function(e) {
+			hui.stop(e);
+			var options = hui.drag._activeDrop;
+			hui.drag._activeDrop = null;
+			if (options) {
+				hui.removeClass(options.element,options.hoverClass);
+				if (options.onDrop) {
+					options.onDrop(e);
+				}
+				hui.log(e.dataTransfer.types)
+				if (options.onFiles && e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length>0) {
+					options.onFiles(e.dataTransfer.files);
+				}
+			}
+		});
+	}
+}
+
+
 
 //////////////////////////// Preloader /////////////////////////
 
@@ -2791,7 +2923,7 @@ hui.ui.hideToolTip = function(options) {
 		if (!hui.browser.msie) {
 			hui.animate(t,'opacity',0,300,{hideOnComplete:true});
 		} else {
-			hui.style.display = 'none';
+			t.style.display = 'none';
 		}
 	}
 };
@@ -3273,6 +3405,10 @@ hui.ui.Bundle.prototype = {
 	}
 }
 
+/**
+ * Import some widgets by name
+ * @param names Array of widgets to import
+ */
 hui.ui.require = function(names,func) {
 	for (var i = names.length - 1; i >= 0; i--){
 		names[i] = hui.ui.context+'hui/js/'+names[i]+'.js';
@@ -3849,7 +3985,7 @@ hui.ui.SearchField.prototype = {
 		return this.field.value=='';
 	},
 	isBlank : function() {
-		return this.field.value.strip()=='';
+		return hui.isBlank(this.field.value);
 	},
 	reset : function() {
 		this.field.value='';

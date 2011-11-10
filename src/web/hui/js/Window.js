@@ -58,6 +58,11 @@ hui.ui.Window.prototype = {
 	},
 	show : function(options) {
 		if (this.visible) {
+			var scrollTop = hui.getScrollTop();
+			var winTop = hui.getTop(this.element);
+			if (winTop < scrollTop || winTop+this.element.clientHeight > hui.getViewPortHeight()+scrollTop) {
+				hui.animate({node:this.element,css:{top:(scrollTop+40)+'px'},duration:500,ease:hui.ease.slowFastSlow});
+			}
 			this.element.style.zIndex=hui.ui.nextPanelIndex();
 			return;
 		}
@@ -91,12 +96,15 @@ hui.ui.Window.prototype = {
 	hide : function() {
 		if (!this.visible) return;
 		if (hui.browser.opacity) {
-			hui.animate(this.element,'opacity',0,200,{hideOnComplete:true});
+			hui.animate(this.element,'opacity',0,200,{onComplete:function() {
+				this.element.style.display='none';
+				hui.ui.callVisible(this);
+			}.bind(this)});
 		} else {
 			this.element.style.display='none';
+			hui.ui.callVisible(this);
 		}
 		this.visible = false;
-		hui.ui.callVisible(this);
 	},
 	add : function(widgetOrNode) {
 		if (widgetOrNode.getElement) {

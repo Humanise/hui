@@ -82,7 +82,6 @@
 		<script src="{$context}/hui/js/Toolbar.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/hui/js/ImagePicker.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/hui/js/BoundPanel.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/hui/js/RichText.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/hui/js/Picker.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/hui/js/ImageViewer.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/hui/js/ColorPicker.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
@@ -278,15 +277,26 @@
 <xsl:template match="gui:dock">
 	<xsl:call-template name="gui:dock-internals"/>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Dock({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>'<xsl:if test="gui:tabs">,tabs:true</xsl:if>});
+		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Dock({
+			element:'<xsl:value-of select="generate-id()"/>',
+			name:'<xsl:value-of select="@name"/>'
+			<xsl:if test="gui:tabs">,tabs:true</xsl:if>
+			<xsl:if test="gui:sidebar/@collapsed='true'">,collapsed:true</xsl:if>
+		});
 		<xsl:call-template name="gui:createobject"/>
 	</script>
 </xsl:template>
 
 <xsl:template match="gui:dock[gui:sidebar]">
-	<xsl:apply-templates select="gui:sidebar"/>
-	<div class="hui_dock_sidebar_main">
-		<xsl:call-template name="gui:dock-internals"/>
+	<div class="hui_dock" id="{generate-id()}">
+		<xsl:attribute name="class">
+			<xsl:text>hui_dock</xsl:text>
+			<xsl:if test="gui:sidebar/@collapsed='true'"> hui_dock_sidebar_collapsed</xsl:if>
+		</xsl:attribute>
+		<xsl:apply-templates select="gui:sidebar"/>
+		<div class="hui_dock_sidebar_main">
+			<xsl:call-template name="gui:dock-internals"/>
+		</div>
 	</div>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Dock({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>'<xsl:if test="gui:tabs">,tabs:true</xsl:if>});
@@ -295,7 +305,10 @@
 </xsl:template>
 
 <xsl:template name="gui:dock-internals">
-	<table class="hui_dock" id="{generate-id()}">
+	<table class="hui_dock">
+		<xsl:if test="not(gui:sidebar)">
+			<xsl:attribute name="id"><xsl:value-of select="generate-id()"/></xsl:attribute>
+		</xsl:if>
 		<xsl:attribute name="class">
 			<xsl:text>hui_dock</xsl:text>
 			<xsl:if test="gui:sidebar">
@@ -328,9 +341,10 @@
 
 <xsl:template match="gui:dock/gui:sidebar">
 	<div class="hui_dock_sidebar hui_context_sidebar">
-		<xsl:comment/>
 		<xsl:apply-templates/>
+		<xsl:comment/>
 	</div>
+	<div class="hui_dock_sidebar_line"><xsl:comment/></div>
 </xsl:template>
 
 <xsl:template match="gui:frames">
@@ -401,10 +415,14 @@
 </selection>
 -->
 <xsl:template match="gui:selection">
-	<div class="hui_selection" id="{generate-id()}"><xsl:apply-templates/></div>
+	<div class="hui_selection" id="{generate-id()}">	
+		<xsl:if test="@state and (not(//gui:gui/@state) or @state!=//gui:gui/@state)">
+			<xsl:attribute name="style">display:none</xsl:attribute>
+		</xsl:if>
+		<xsl:apply-templates/>
+	</div>
 	<script type="text/javascript">
 		!function() {
-		
 			var items = [];
 			<xsl:for-each select="gui:item">
 			items.push({
@@ -421,6 +439,7 @@
 		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Selection({
 			element : '<xsl:value-of select="generate-id()"/>',
 			name : '<xsl:value-of select="@name"/>',
+			state : '<xsl:value-of select="@state"/>',
 			items : items
 			<xsl:if test="@value">,value:'<xsl:value-of select="@value"/>'</xsl:if>
 		});
@@ -487,7 +506,7 @@
 -->
 <xsl:template match="gui:list">
 	<div class="hui_list" id="{generate-id()}">
-		<xsl:if test="@state and (not(//gui:gui/@state) or @state!=//gui:gui/@state)">
+		<xsl:if test="@state and (not(//gui:gui/@state) or @state!=//gui:gui/@state) or @visible='false'">
 			<xsl:attribute name="style">display:none</xsl:attribute>
 		</xsl:if>
 		<div class="hui_list_progress"></div>
@@ -515,6 +534,7 @@
 			<xsl:if test="@selectable">selectable:<xsl:value-of select="@selectable"/>,</xsl:if>
 			state:'<xsl:value-of select="@state"/>',
 			windowSize:'<xsl:value-of select="gui:window/@size"/>'
+			<xsl:if test="@drop-files='true'">,dropFiles:true</xsl:if>
 		});
 		with (<xsl:value-of select="generate-id()"/>_obj) {
 			<xsl:for-each select="gui:column">
@@ -724,7 +744,7 @@
 			name:'<xsl:value-of select="@name"/>',
 			url:'<xsl:value-of select="@url"/>',
 			button:'<xsl:value-of select="@button"/>'
-			<xsl:if test="@flash">,useFlash:<xsl:value-of select="@flash='true'"/></xsl:if>
+			<xsl:if test="@multiple">,multiple:<xsl:value-of select="@multiple='true'"/></xsl:if>
 			<xsl:if test="@chooseButton">,chooseButton:'<xsl:value-of select="@chooseButton"/>'</xsl:if>
 			<xsl:if test="@widget">,widget:'<xsl:value-of select="@widget"/>'</xsl:if>
 		});
@@ -743,9 +763,10 @@
 
 <!-- Rich text -->
 
-<!--doc title:'Rich text' class:'hui.ui.RichText'
+<!--
+doc title:'Rich text' class:'hui.ui.RichText'
 <richtext name="«name»" height="«pixels»" />
--->
+
 <xsl:template match="gui:richtext">
 	<div class="hui_richtext" id="{generate-id()}">
 		<div class="hui_richtext_toolbar" id="{generate-id()}_toolbar"><div class="hui_richtext_inner_toolbar"><div class="hui_richtext_toolbar_content" id="{generate-id()}_toolbar_content"><xsl:comment/></div></div></div>
@@ -759,7 +780,7 @@
 		</script>
 	</div>
 </xsl:template>
-
+-->
 
 
 <!-- Gallery -->
@@ -772,9 +793,9 @@
 		<xsl:if test="@state and (not(//gui:gui/@state) or @state!=//gui:gui/@state)">
 			<xsl:attribute name="style">display:none</xsl:attribute>
 		</xsl:if>
-		<xsl:if test="@padding"><xsl:attribute name="style">padding:<xsl:value-of select="@padding"/>px;</xsl:attribute></xsl:if>
 		<div class="hui_gallery_progress"><xsl:comment/></div>
 		<div class="hui_gallery_body">
+			<xsl:if test="@padding"><xsl:attribute name="style">padding:<xsl:value-of select="@padding"/>px;</xsl:attribute></xsl:if>
 			<xsl:comment/>
 			<xsl:text>&#160;</xsl:text>
 		</div>
@@ -785,6 +806,7 @@
 			name:'<xsl:value-of select="@name"/>'
 			<xsl:if test="@source">,source:<xsl:value-of select="@source"/></xsl:if>
 			<xsl:if test="@state">,state:'<xsl:value-of select="@state"/>'</xsl:if>
+			<xsl:if test="@drop-files='true'">,dropFiles:true</xsl:if>
 		});
 		<xsl:call-template name="gui:createobject"/>
 	</script>
