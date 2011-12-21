@@ -21,9 +21,10 @@ var hui = {
     KEY_INSERT : 45
 }
 
-if (!window.n2i) {
-	var n2i = hui;
-}
+
+
+
+//////////////////////// Browser //////////////////////////
 
 /** If the browser is opera */
 hui.browser.opera = /opera/i.test(navigator.userAgent);
@@ -60,17 +61,33 @@ hui.browser.opacity = !hui.browser.msie || hui.browser.msie9;
 (function() {
 	var result = /Safari\/([\d.]+)/.exec(navigator.userAgent);
 	if (result) {
-		hui.browser.webkitVersion=parseFloat(result[1]);
+		hui.browser.webkitVersion = parseFloat(result[1]);
 	}
 })()
 
-/** Log something */
+
+
+
+
+
+
+////////////////////// Common ////////////////////////
+
+/**
+ * Log something
+ * @param {Object} obj The object to log
+ */
 hui.log = function(obj) {
 	try {
 		console.log(obj);
 	} catch (ignore) {};
 }
 
+/**
+ * Defer a function so it will fire when the current "thread" is done
+ * @param {Function} func The fundtion to defer
+ * @param {Object} ?bind Optional, the object to bind "this" to
+ */
 hui.defer = function(func,bind) {
 	if (bind) {
 		func = func.bind(bind);
@@ -78,7 +95,12 @@ hui.defer = function(func,bind) {
 	window.setTimeout(func);
 }
 
-/** Override the properties on the first argument with properties from the last object */
+/**
+ * Override the properties on the first argument with properties from the last object
+ * @param {Object} original The object to override
+ * @param {Object} subject The object to copy the properties from
+ * @return {Object} The original
+ */
 hui.override = function(original,subject) {
 	if (subject) {
 		for (prop in subject) {
@@ -88,113 +110,13 @@ hui.override = function(original,subject) {
 	return original;
 }
 
-/** Inserts invisible break chars in string so it will wrap */
-hui.wrap = function(str) {
-	if (str===null || str===undefined) {
-		return '';
-	}
-	return str.split('').join("\u200B");
-}
-
-/** Trim whitespace including unicode chars */
-hui.trim = function(str) {
-	if (str===null || str===undefined) {return ''};
-	if (typeof(str)!='string') {str=new String(str)}
-	return str.replace(/^[\s\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000]+|[\s\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000]+$/g, '');
-}
-
-/** Escape the html in a string */
-hui.escapeHTML = function(str) {
-	if (str===null || str===undefined) {return ''};
-   	return hui.build('div',{text:str}).innerHTML;
-}
-
-hui.escape = function(str) {
-	if (!hui.isDefined(str)) {return ''};
-	return str.replace(/&/g,'&amp;').
-		replace(/>/g,'&gt;').
-		replace(/</g,'&lt;').
-		replace(/"/g,'&quot;')
-}
-
-/** Checks if a string has characters */
-hui.isBlank = function(str) {
-	if (str===null || typeof(str)==='undefined' || str==='') {return true};
-	return typeof(str)=='string' && hui.trim(str).length==0;
-}
-
-hui.isEmpty = function(str) {
-	hui.log('hui.isEmpty is deprecated');
-	return hui.isBlank(str);
-}
-
-/** Checks that an object is not null or undefined */
-hui.isDefined = function(obj) {
-	return obj!==null && typeof(obj)!=='undefined';
-}
-
-hui.isArray = function(obj) {
-	if (obj==null || obj==undefined) {
-		return false;
-	}
-	if (obj.constructor == Array) {
-		return true;
-	} else {
-		return Object.prototype.toString.call(obj) === '[object Array]';
-	}
-}
-
-/** @namespace */
-hui.string = {
-	
-	/**
-	Test that a string ends with another string
-	@param str The string to test
-	@param end The string to look for at the end
-	*/
-	endsWith : function(str,end) {
-		if (!typeof(str)=='string' || !typeof(end)=='string') {
-			return false;
-		}
-		return (str.match(end+"$")==end);
-	},
-	
-	/** Make a string camelized */
-	camelize : function(str) {
-		if (str.indexOf('-')==-1) {return str}
-	    var oStringList = str.split('-');
-
-	    var camelizedString = str.indexOf('-') == 0
-	      ? oStringList[0].charAt(0).toUpperCase() + oStringList[0].substring(1)
-	      : oStringList[0];
-
-	    for (var i = 1, len = oStringList.length; i < len; i++) {
-	      var s = oStringList[i];
-	      camelizedString += s.charAt(0).toUpperCase() + s.substring(1);
-	    }
-
-	    return camelizedString;
-	}
-}
-
-hui.inArray = function(arr,value) {
-	for (var i=0; i < arr.length; i++) {
-		if (arr[i]===value) {
-			return true;
-		}
-	};
-	return false;
-}
-
-hui.indexInArray = function(arr,value) {
-	for (var i=0; i < arr.length; i++) {
-		if (arr[i]===value) {
-			return i;
-		}
-	};
-	return -1;
-}
-
+/**
+ * Loop through items in array or properties in an object.
+ * If «items» is an array «func» is called with each item.
+ * If «items» is an object «func» is called with each (key,value)
+ * @param {Object | Array} items The object or array to loop through
+ * @param {Function} func The callback to handle each item
+ */
 hui.each = function(items,func) {
 	if (hui.isArray(items)) {		
 		for (var i=0; i < items.length; i++) {
@@ -209,6 +131,8 @@ hui.each = function(items,func) {
 
 /**
  * Converts a string to an int if it is only digits, otherwise remains a string
+ * @param {String} str The string to convert
+ * @returns {Object} An int of the string or the same string
  */
 hui.intOrString = function(str) {
 	if (hui.isDefined(str)) {
@@ -222,43 +146,256 @@ hui.intOrString = function(str) {
 	return str;
 }
 
-hui.flipInArray = function(arr,value) {
-	if (hui.inArray(arr,value)) {
-		hui.removeFromArray(arr,value);
+/**
+ * Checks if a string has non-whitespace characters
+ * @param {String} str The string
+ */
+hui.isBlank = function(str) {
+	if (str===null || typeof(str)==='undefined' || str==='') {
+		return true;
+	}
+	return typeof(str)=='string' && hui.string.trim(str).length==0;
+}
+
+/**
+ * Checks that an object is not null and not undefined
+ * @param {Object} obj The object to check
+ */
+hui.isDefined = function(obj) {
+	return obj!==null && typeof(obj)!=='undefined';
+}
+
+/**
+ * Checks if an object is an array
+ * @param {Object} obj The object to check
+ */
+hui.isArray = function(obj) {
+	if (obj==null || obj==undefined) {
+		return false;
+	}
+	if (obj.constructor == Array) {
+		return true;
 	} else {
-		arr.push(value);
+		return Object.prototype.toString.call(obj) === '[object Array]';
 	}
 }
 
-hui.removeFromArray = function(arr,value) {
-	for (var i = arr.length - 1; i >= 0; i--){
-		if (arr[i]==value) {
-			arr.splice(i,1);
+
+
+
+
+
+
+
+
+
+
+///////////////////////// Strings ///////////////////////
+
+/** @namespace */
+hui.string = {
+	
+	/**
+	 * Test that a string ends with another string
+	 * @param {String} str The string to test
+	 * @param {String} end The string to look for at the end
+	 * @returns {Boolean} True if «str» ends with «end»
+	 */
+	endsWith : function(str,end) {
+		if (!typeof(str)=='string' || !typeof(end)=='string') {
+			return false;
 		}
-	};
+		return (str.match(end+"$")==end);
+	},
+	
+	/** 
+	 * Make a string camelized
+	 * @param {String} The string to camelize
+	 * @returns {String} The camelized string
+	 */
+	camelize : function(str) {
+		if (str.indexOf('-')==-1) {return str}
+	    var oStringList = str.split('-');
+
+	    var camelizedString = str.indexOf('-') == 0
+	      ? oStringList[0].charAt(0).toUpperCase() + oStringList[0].substring(1)
+	      : oStringList[0];
+
+	    for (var i = 1, len = oStringList.length; i < len; i++) {
+	      var s = oStringList[i];
+	      camelizedString += s.charAt(0).toUpperCase() + s.substring(1);
+	    }
+
+	    return camelizedString;
+	},
+	/**
+ 	 * Trim whitespace including unicode chars
+	 * @param {String} str The text to trim
+	 * @returns {String} The trimmed text
+	 */
+	trim : function(str) {
+		if (str===null || str===undefined) {
+			return ''
+		}
+		if (typeof(str)!='string') {
+			str=new String(str)
+		}
+		return str.replace(/^[\s\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000]+|[\s\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000]+$/g, '');
+	},
+	/**
+	 * Inserts invisible break chars in string so it will wrap
+	 * @param {String} str The text to wrap
+	 * @returns {String} The wrapped text
+	 */
+	wrap : function(str) {
+		if (str===null || str===undefined) {
+			return '';
+		}
+		return str.split('').join("\u200B");
+	},
+	/**
+	 * Escape the html in a string (robust)
+	 * @param {String} str The text to escape
+	 * @returns {String} The escaped text
+	 */
+	escapeHTML : function(str) {
+		if (str===null || str===undefined) {return ''};
+	   	return hui.build('div',{text:str}).innerHTML;
+	},
+	/**
+	 * Escape the html in a string (fast)
+	 * @param {String} str The text to escape
+	 * @returns {String} The escaped text
+	 */
+	escape : function(str) {
+		if (!hui.isDefined(str)) {return ''};
+		return str.replace(/&/g,'&amp;').
+			replace(/>/g,'&gt;').
+			replace(/</g,'&lt;').
+			replace(/"/g,'&quot;')
+	},
+	/**
+	 * Converts a JSON string into an object
+	 * @param json {String} The JSON string to parse
+	 * @returns {Object} The object
+	 */
+	fromJSON : function(json) {
+		return JSON.parse(json);
+	},
+
+	/**
+	 * Converts an object into a JSON string
+	 * @param obj {Object} the object to convert
+	 * @returns {String} A JSON representation
+	 */
+	toJSON : function(obj) {
+		return JSON.stringify(obj);
+	}
 }
 
-hui.addToArray = function(arr,value) {
-	if (value.constructor==Array) {
-		for (var i=0; i < value.length; i++) {
-			if (!hui.inArray(arr,value[i])) {
+
+
+
+
+
+
+//////////////////////// Array //////////////////////////
+
+/** @namespace */
+hui.array = {
+	/**
+	 * Add an object to an array if it not already exists
+	 * @param {Array} arr The array
+	 * @param {Object} value The object to add
+	 */
+	add : function(arr,value) {
+		if (value.constructor==Array) {
+			for (var i=0; i < value.length; i++) {
+				if (!hui.array.contains(arr,value[i])) {
+					arr.push(value);
+				}
+			};
+		} else {
+			if (!hui.array.contains(arr,value)) {
 				arr.push(value);
 			}
+		}
+	},
+	/**
+	 * Check if an array contains a value
+	 * @param {Array} arr The array
+	 * @param {Object} value The object to check for
+	 * @returns {boolean} true if the value is in the array
+	 */
+	contains : function(arr,value) {
+		for (var i=0; i < arr.length; i++) {
+			if (arr[i]===value) {
+				return true;
+			}
 		};
-	} else {
-		if (!hui.inArray(arr,value)) {
+		return false;
+	},
+	/**
+	 * Add or remove a value from an array.
+	 * If the value exists all instances are removed, otherwise the value is added
+	 * @param {Array} arr The array to change
+	 * @param {Object} value The value to flip
+	 */
+	flip : function(arr,value) {
+		if (hui.array.contains(arr,value)) {
+			hui.array.remove(arr,value);
+		} else {
 			arr.push(value);
 		}
+	},
+	/**
+	 * Remove all instances of a value from an array
+	 * @param {Array} arr The array to change
+	 * @param {Object} value The value to remove
+	 */
+	remove : function(arr,value) {
+		for (var i = arr.length - 1; i >= 0; i--){
+			if (arr[i]==value) {
+				arr.splice(i,1);
+			}
+		};
+	},
+	/**
+	 * Find the first index of a value in an array, -1 if not found
+	 * @param {Array} arr The array to inspect
+	 * @param {Object} value The value to find
+	 * @returns {Number} The index of the first occurrence, -1 if not found.
+	 */
+	indexOf : function(arr,value) {
+		for (var i=0; i < arr.length; i++) {
+			if (arr[i]===value) {
+				return i;
+			}
+		};
+		return -1;
+	},
+	/**
+	 * Split a string, like "1,4,6" into an array of integers.
+	 * @param {String} The string to split
+	 * @returns {Array} An array of integers
+	 */
+	toIntegers : function(str) {
+		var array = str.split(',');
+		for (var i = array.length - 1; i >= 0; i--){
+			array[i] = parseInt(array[i]);
+		};
+		return array;
 	}
 }
 
-hui.toIntArray = function(str) {
-	var array = str.split(',');
-	for (var i = array.length - 1; i >= 0; i--){
-		array[i] = parseInt(array[i]);
-	};
-	return array;
-}
+
+
+
+
+
+
+
+
 
 ////////////////////// DOM ////////////////////
 
@@ -272,6 +409,15 @@ hui.dom = {
 	},
 	addText : function(node,text) {
 		node.appendChild(document.createTextNode(text));
+	},
+	firstChild : function(node) {
+		var children = node.childNodes;
+		for (var i=0; i < children.length; i++) {
+			if (children[i].nodeType==hui.ELEMENT_NODE) {
+				return children[i];
+			}
+		};
+		return null;
 	},
 	clear : function(node) {
 		var children = node.childNodes;
@@ -290,6 +436,9 @@ hui.dom = {
 		}
 		oldNode.parentNode.insertBefore(newNode,oldNode);
 		oldNode.parentNode.removeChild(oldNode);
+	},
+	insertBefore : function(target,newNode) {
+		target.parentNode.insertBefore(newNode,target);
 	},
 	replaceHTML : function(node,html) {
 		node = hui.get(node);
@@ -333,7 +482,7 @@ hui.dom = {
 	},
 	isVisible : function(node) {
 		while (node) {
-			if (node.style && (hui.getStyle(node,'display')==='none' || hui.getStyle(node,'visibility')==='hidden')) {
+			if (node.style && (hui.style.get(node,'display')==='none' || hui.style.get(node,'visibility')==='hidden')) {
 				return false;
 			}
 			node = node.parentNode;
@@ -351,6 +500,17 @@ hui.dom = {
 	}
 }
 
+
+
+
+
+
+
+
+
+///////////////////// Form //////////////////////
+
+/** @namespace */
 hui.form = {
 	getValues : function(node) {
 		var params = {};
@@ -364,16 +524,34 @@ hui.form = {
 	}
 }
 
+
+
+
+
+
+
 ///////////////////////////// Quering ////////////////////////
 
-hui.get = function(str) {
-	if (typeof(str)=='string') {
-		return document.getElementById(str);
+/**
+ * @namespace
+ * Functions for finding elements
+ *
+ * @function
+ * Get an element by ID. If the ID is not a string it is returned.
+ * @param {String | Element} id The ID to find
+ * @returns {Element} The element with the ID or null
+ */
+hui.get = function(id) {
+	if (typeof(id)=='string') {
+		return document.getElementById(id);
 	}
-	return str;
+	return id;
 }
 
-hui.getChildren = function(node) {
+/**
+ * Get array of child elements of «node», not a NodeList
+ */
+hui.get.children = function(node) {
 	var children = [];
 	var x = node.childNodes;
 	for (var i=0; i < x.length; i++) {
@@ -384,39 +562,87 @@ hui.getChildren = function(node) {
 	return children;
 }
 
-
-if (document.querySelector) {
-	hui.firstByClass = function(parentElement,className,tag) {
-		parentElement = parentElement || document.body;
-		return parentElement.querySelector((tag ? tag+'.' : '.')+className);
+hui.get.ancestors = function(element) {
+	var ancestors = [];
+	var parent = element.parentNode;
+	while (parent) {
+		ancestors[ancestors.length] = parent;
+		parent = parent.parentNode;
 	}
-} else {
-	hui.firstByClass = function(parentElement,className,tag) {
-		var children = (hui.get(parentElement) || document.body).getElementsByTagName(tag || '*');
+	return ancestors;
+}
+
+/**
+ * Find the first ancestor with a given class (including self)
+ */
+hui.get.firstAncestorByClass = function(element,className) {
+	while (element) {
+		if (hui.cls.has(element,className)) {
+			return element;
+		}
+		element = element.parentNode;
+	}
+	return null;
+}
+
+hui.get.next = function(element) {
+	if (!element) {
+		return null;
+	}
+	if (!element.nextSibling) {
+		return null;
+	}
+	var next = element.nextSibling;
+	while (next && next.nodeType!=1) {
+		next = next.nextSibling;
+	}
+	if (next && next.nodeType==1) { 
+    	return next;
+	}
+	return null;
+}
+
+/**
+ * Find all sibling elements after «element»
+ */ 
+hui.get.after = function(element) {
+	var elements = [];
+	var next = hui.get.next(element);
+	while (next) {
+		elements.push(next);
+		next = hui.get.next(next);
+	}
+	return elements;
+}
+
+hui.get.firstByClass = function(parentElement,className,tag) {
+	parentElement = hui.get(parentElement) || document.body;
+	if (document.querySelector) {
+		return parentElement.querySelector((tag ? tag+'.' : '.')+className);
+	} else {
+		var children = parentElement.getElementsByTagName(tag || '*');
 		for (var i=0;i<children.length;i++) {
-			if (hui.hasClass(children[i],className)) {
+			if (hui.cls.has(children[i],className)) {
 				return children[i];
 			}
 		}
-		return null;
 	}
+	return null;
 }
 
-if (document.querySelectorAll) {
-	hui.byClass = function(parentElement,className,tag) {
-		parentElement = parentElement || document.body;
+hui.get.byClass = function(parentElement,className,tag) {
+	parentElement = hui.get(parentElement) || document.body;
+	if (document.querySelectorAll) {
 		var nl = parentElement.querySelectorAll((tag ? tag+'.' : '.')+className);
 		// Important to convert into array...
 		var l=[];
 		for(var i=0, ll=nl.length; i!=ll; l.push(nl[i++]));
 		return l;
-	}
-} else {
-	hui.byClass = function(parentElement,className,tag) {
-		var children = (hui.get(parentElement) || document.body).getElementsByTagName(tag || '*'),
-			out = [];
+	} else {
+		var children = parentElement.getElementsByTagName(tag || '*'),
+		out = [];
 		for (var i=0;i<children.length;i++) {
-			if (hui.hasClass(children[i],className)) {
+			if (hui.cls.has(children[i],className)) {
 				out[out.length]=children[i];
 			}
 		}
@@ -425,32 +651,25 @@ if (document.querySelectorAll) {
 }
 
 /**
- * Find the first ancestor with a given class (including self)
+ * Get array of descendants of «node» with the name «name»
+ * @param node The node to start from
+ * @param name The name of the nodes to find
+ * @returns An array of nodes (not NodeList)
  */
-hui.firstAncestorByClass = function(element,className) {
-	while (element) {
-		if (hui.hasClass(element,className)) {
-			return element;
-		}
-		element = element.parentNode;
-	}
-	return null;
-}
-
-hui.byTag = function(node,name) {
+hui.get.byTag = function(node,name) {
 	var nl = node.getElementsByTagName(name),
 		l=[];
 	for(var i=0, ll=nl.length; i!=ll; l.push(nl[i++]));
 	return l;
 }
 
-hui.byId = function(e,id) {
+hui.get.byId = function(e,id) {
 	var children = e.childNodes;
 	for (var i = children.length - 1; i >= 0; i--) {
 		if (children[i].nodeType===hui.ELEMENT_NODE && children[i].getAttribute('id')===id) {
 			return children[i];
 		} else {
-			var found = hui.byId(children[i],id);
+			var found = hui.get.byId(children[i],id);
 			if (found) {
 				return found;
 			}
@@ -459,7 +678,7 @@ hui.byId = function(e,id) {
 	return null;
 }
 
-hui.firstParentByTag = function(node,tag) {
+hui.get.firstParentByTag = function(node,tag) {
 	var parent = node;
 	while (parent) {
 		if (parent.tagName && parent.tagName.toLowerCase()==tag) {
@@ -470,10 +689,10 @@ hui.firstParentByTag = function(node,tag) {
 	return null;
 }
 
-hui.firstParentByClass = function(node,tag) {
+hui.get.firstParentByClass = function(node,tag) {
 	var parent = node;
 	while (parent) {
-		if (hui.hasClass(parent)) {
+		if (hui.cls.has(parent)) {
 			return parent;
 		}
 		parent = parent.parentNode;
@@ -481,17 +700,55 @@ hui.firstParentByClass = function(node,tag) {
 	return null;
 }
 
-hui.firstByTag = function(parentElement,tag) {
-	parentElement = hui.get(parentElement) || document.body;
+/**
+ * Find first descendant by tag (excluding self)
+ * @param {Element} node The node to start from, will start from body if null
+ * @param {String} tag The name of the node to find
+ * @returns {Element} The found element or null
+ */
+hui.get.firstByTag = function(node,tag) {
+	node = hui.get(node) || document.body;
 	if (document.querySelector && tag!=='*') {
-		return parentElement.querySelector(tag);
+		return node.querySelector(tag);
 	}
-	var children = parentElement.getElementsByTagName(tag);
+	var children = node.getElementsByTagName(tag);
 	return children[0];
 }
 
-hui.build = function(tag,options) {
-	var e = document.createElement(tag);
+
+
+
+
+
+
+
+
+
+
+
+//////////////////////// Elements ///////////////////////////
+
+
+/**
+ * Builds an element with the «name» and «options»
+ * <pre><strong>options:</strong> {
+ *  html : '<em>markup</em>', 
+ *  text : 'child text', 
+ *  parent : «Element», 
+ *  parentFirst : «Element», 
+ *  class : 'css_class', 
+ *  className : 'css_class', 
+ *  style : 'color: blue;' 
+ *}
+ *
+ * Additional properties will be set as attributes
+ * </pre>
+ * @param {String} name The name of the new element
+ * @param {Object} options The options
+ * @returns {Element} The new element
+ */
+hui.build = function(name,options) {
+	var e = document.createElement(name);
 	if (options) {
 		for (prop in options) {
 			if (prop=='text') {
@@ -520,194 +777,314 @@ hui.build = function(tag,options) {
 	return e;
 }
 
-hui.getAncestors = function(element) {
-	var ancestors = [];
-	var parent = element.parentNode;
-	while (parent) {
-		ancestors[ancestors.length] = parent;
-		parent = parent.parentNode;
-	}
-	return ancestors;
-}
 
-hui.getNext = function(element) {
-	if (!element) {
-		return null;
-	}
-	if (!element.nextSibling) {
-		return null;
-	}
-	var next = element.nextSibling;
-	while (next && next.nodeType!=1) {
-		next = next.nextSibling;
-	}
-    return next;
-}
 
-hui.getAllNext = function(element) {
-	var elements = [];
-	var next = hui.getNext(element);
-	while (next) {
-		elements.push(next);
-		next = hui.getNext(next);
-	}
-	return elements;
-}
 
-hui.getTop = function(element) {
-    element = hui.get(element);
-	if (element) {
-		var yPos = element.offsetTop,
-			tempEl = element.offsetParent;
-		while (tempEl != null) {
-			yPos += tempEl.offsetTop;
-			tempEl = tempEl.offsetParent;
+
+
+
+
+/////////////////////// Position ///////////////////////
+
+/** @namespace */
+hui.position = {
+	getTop : function(element) {
+	    element = hui.get(element);
+		if (element) {
+			var yPos = element.offsetTop,
+				tempEl = element.offsetParent;
+			while (tempEl != null) {
+				yPos += tempEl.offsetTop;
+				tempEl = tempEl.offsetParent;
+			}
+			return yPos;
 		}
-		return yPos;
-	}
-	else return 0;
-}
-
-hui.getScrollOffset = function(element) {
-    element = hui.get(element);
-	var top = 0, left = 0;
-    do {
-      top += element.scrollTop  || 0;
-      left += element.scrollLeft || 0;
-      element = element.parentNode;
-    } while (element);
-	return {top:top,left:left};
-}
-
-hui.getLeft = function(element) {
-    element = hui.get(element);
-	if (element) {
-		var xPos = element.offsetLeft,
-			tempEl = element.offsetParent;
-		while (tempEl != null) {
-			xPos += tempEl.offsetLeft;
-			tempEl = tempEl.offsetParent;
+		else return 0;
+	},
+	getLeft : function(element) {
+	    element = hui.get(element);
+		if (element) {
+			var xPos = element.offsetLeft,
+				tempEl = element.offsetParent;
+			while (tempEl != null) {
+				xPos += tempEl.offsetLeft;
+				tempEl = tempEl.offsetParent;
+			}
+			return xPos;
 		}
-		return xPos;
+		else return 0;
+	},
+	get : function(element) {
+		return {
+			left : hui.position.getLeft(element),
+			top : hui.position.getTop(element)
+		}
+	},
+	getScrollOffset : function(element) {
+	    element = hui.get(element);
+		var top = 0, left = 0;
+	    do {
+	      top += element.scrollTop  || 0;
+	      left += element.scrollLeft || 0;
+	      element = element.parentNode;
+	    } while (element);
+		return {top:top,left:left};
+	},
+	/**
+	 * Place on element relative to another
+	 * Example hui.position.place({target : {element : «node», horizontal : «0-1»}, source : {element : «node», vertical : «0 - 1»}, insideViewPort:«boolean», viewPortMargin:«integer»})
+	 */
+	place : function(options) {
+		var left = 0,
+			top = 0,
+			src = hui.get(options.source.element),
+			trgt = hui.get(options.target.element),
+			trgtPos = {left : hui.position.getLeft(trgt), top : hui.position.getTop(trgt) };
+
+		left = trgtPos.left + trgt.clientWidth * (options.target.horizontal || 0);
+		top = trgtPos.top + trgt.clientHeight * (options.target.vertical || 0);
+
+		left -= src.clientWidth * (options.source.horizontal || 0);
+		top -= src.clientHeight * (options.source.vertical || 0);
+
+		if (options.insideViewPort) {
+			var w = hui.window.getViewWidth();
+			if (left + src.clientWidth > w) {
+				left = w - src.clientWidth - (options.viewPartMargin || 0);
+				hui.log(options.viewPartMargin)
+			}
+			if (left < 0) {left=0}
+			if (top < 0) {top=0}
+		}
+		if (options.top) {
+			top += options.top;
+		}
+		if (options.left) {
+			left += options.left;
+		}
+
+		src.style.top = top+'px';
+		src.style.left = left+'px';
 	}
-	else return 0;
 }
 
-hui.getPosition = function(element) {
-	return {
-		left : hui.getLeft(element),
-		top : hui.getTop(element)
-	}
-}
 
+
+
+
+
+
+////////////////////// Window /////////////////////
+
+/** @namespace */
 hui.window = {
 	getScrollTop : function() {
 		if (window.pageYOffset) {
 			return window.pageYOffset;
-		} else if (document.documentElement) {
+		} else if (document.documentElement && document.documentElement.scrollTop) {
 			return document.documentElement.scrollTop;
+		} else if (document.body) {
+			return document.body.scrollTop;
 		}
-		return document.body.scrollTop;
+		return 0;
+	},
+	getScrollLeft : function() {
+		if (window.pageYOffset) {
+			return window.pageXOffset;
+		} else if (document.documentElement && document.documentElement.scrollTop) {
+			return document.documentElement.scrollLeft;
+		} else if (document.body) {
+			return document.body.scrollLeft;
+		}
+		return 0;
+	},
+	/**
+	 * Scroll to an element, will try to show the element in the middle of the screen and only scroll if it makes sence
+	 * @param {Object} options {element:«the element to scroll to»}
+	 */
+	scrollTo : function(options) {
+		var node = options.element;
+		var pos = hui.position.get(node);
+		var viewTop = hui.window.getScrollTop();
+		var viewHeight = hui.window.getViewHeight();
+		var viewBottom = viewTop+viewHeight;
+		if (viewTop < pos.top + node.clientHeight || (pos.top)<viewBottom) {
+			var top = pos.top - Math.round((viewHeight - node.clientHeight) / 2);
+			top = Math.max(0, top);
+			window.scrollTo(0, top);
+		}
+	},
+	/**
+	 * Get the height of the viewport (the visible part of the page)
+	 */
+	getViewHeight : function() {
+		if (window.innerHeight) {
+			return window.innerHeight;
+		} else if (document.documentElement && document.documentElement.clientHeight) {
+			return document.documentElement.clientHeight;
+		} else if (document.body) {
+			return document.body.clientHeight;
+		}
+	},
+	/**
+	 * Get the width of the viewport (the visible part of the page)
+	 */
+	getViewWidth : function() {
+		if (window.innerWidth) {
+			return window.innerWidth;
+		} else if (document.documentElement && document.documentElement.clientWidth) {
+			return document.documentElement.clientWidth;
+		} else if (document.body) {
+			return document.body.clientWidth;
+		}
 	}
 }
-hui.scrollTo = function(options) {
-	var node = options.element;
-	var pos = hui.getPosition(node);
-	var viewTop = hui.window.getScrollTop();
-	var viewHeight = hui.getViewPortHeight();
-	var viewBottom = viewTop+viewHeight;
-	hui.log({pos:pos,height:node.clientHeight,viewTop:viewTop,viewBottom:viewBottom});
-	if (viewTop<pos.top+node.clientHeight || (pos.top)<viewBottom) {
-		var top = pos.top-Math.round((viewHeight-node.clientHeight)/2);
-		top=Math.max(0,top);
-		hui.log(top);
-		window.scrollTo(0,top);
-	}
-}
+
+
+
+
+
+
+
+
+
+
+
+
 
 /////////////////////////// Class handling //////////////////////
 
-hui.hasClass = function(element, className) {
-	element = hui.get(element);
-	if (!element || !element.className) {
-		return false
-	}
-	if (element.className==className) {
-		return true;
-	}
-	var a = element.className.split(/\s+/);
-	for (var i = 0; i < a.length; i++) {
-		if (a[i] == className) {
+/** @namespace */
+hui.cls = {
+	/**
+	 * Check if an element has a class
+	 * @param {Element} element The element
+	 * @param {String} className The class
+	 * @returns {boolean} true if the element has the class 
+	 */
+	has : function(element, className) {
+		element = hui.get(element);
+		if (!element || !element.className) {
+			return false
+		}
+		if (element.hasClassName) {
+			return element.hasClassName(className);
+		}
+		if (element.className==className) {
 			return true;
 		}
-	}
-	return false;
-}
-
-hui.addClass = function(element, className) {
-    element = hui.get(element);
-	if (!element) {return};
-	
-    hui.removeClass(element, className);
-    element.className += ' ' + className;
-}
-
-hui.removeClass = function(element, className) {
-	element = hui.get(element);
-	if (!element || !element.className) {return};
-	if (element.className=='className') {
-		element.className='';
-		return;
-	}
-	var newClassName = '';
-	var a = element.className.split(/\s+/);
-	for (var i = 0; i < a.length; i++) {
-		if (a[i] != className) {
-			if (i > 0) {
-				newClassName += ' ';				
+		var a = element.className.split(/\s+/);
+		for (var i = 0; i < a.length; i++) {
+			if (a[i] == className) {
+				return true;
 			}
-			newClassName += a[i];
+		}
+		return false;
+	},
+	/**
+	 * Add a class to an element
+	 * @param {Element} element The element to add the class to
+	 * @param {String} className The class
+	 */
+	add : function(element, className) {
+	    element = hui.get(element);
+		if (!element) {
+			return
+		}
+		if (element.addClassName) {
+			element.addClassName(className);
+		}
+	    hui.cls.remove(element, className);
+	    element.className += ' ' + className;
+	},
+	/**
+	 * Remove a class from an element
+	 * @param {Element} element The element to remove the class from
+	 * @param {String} className The class
+	 */
+	remove : function(element, className) {
+		element = hui.get(element);
+		if (!element || !element.className) {return};
+		if (element.removeClassName) {
+			element.removeClassName(className);
+		}
+		if (element.className=='className') {
+			element.className='';
+			return;
+		}
+		var newClassName = '';
+		var a = element.className.split(/\s+/);
+		for (var i = 0; i < a.length; i++) {
+			if (a[i] != className) {
+				if (i > 0) {
+					newClassName += ' ';				
+				}
+				newClassName += a[i];
+			}
+		}
+		element.className = newClassName;
+	},
+	/**
+	 * Add or remove a class from an element
+	 * @param {Element} element The element
+	 * @param {String} className The class
+	 */
+	toggle : function(element,className) {
+		if (hui.cls.has(element,className)) {
+			hui.cls.remove(element,className);
+		} else {
+			hui.cls.add(element,className);
+		}
+	},
+	/**
+	 * Add or remove a class from an element
+	 * @param {Element} element The element
+	 * @param {String} className The class
+	 * @param {boolean} add If the class should be added or removed
+	 */
+	set : function(element,className,add) {
+		if (add) {
+			hui.cls.add(element,className);
+		} else {
+			hui.cls.remove(element,className);
 		}
 	}
-	element.className = newClassName;
 }
 
-hui.toggleClass = function(element,className) {
-	if (hui.hasClass(element,className)) {
-		hui.removeClass(element,className);
-	} else {
-		hui.addClass(element,className);
-	}
-}
 
-hui.setClass = function(element,className,add) {
-	if (add) {
-		hui.addClass(element,className);
-	} else {
-		hui.removeClass(element,className);
-	}
-}
 
-hui.fromJSON = function(json) {
-	return JSON.parse(json);
-	//return eval('(' + json + ')');
-}
 
-hui.toJSON = function(obj) {
-	return JSON.stringify(obj);
-}
+
+
+
+
+
 
 ///////////////////// Events //////////////////
 
-hui.listen = function(el,type,listener,useCapture) {
-	el = hui.get(el);
+/**
+ * Add an event listener to an element
+ * @param {Element} element The element to listen on
+ * @param {String} type The event to listen for
+ * @param {Function} listener The function to be called
+ * @param {boolean} ?useCapture If the listener should "capture"
+ */
+hui.listen = function(element,type,listener,useCapture) {
+	element = hui.get(element);
 	if(document.addEventListener) {
-		el.addEventListener(type,listener,useCapture ? true : false);
+		element.addEventListener(type,listener,useCapture ? true : false);
 	} else {
-		el.attachEvent('on'+type, listener);
+		element.attachEvent('on'+type, listener);
 	}
 }
 
+/**
+ * Remove an event listener from an element
+ * @param {Element} element The element to remove listener from
+ * @param {String} type The event to remove
+ * @param {Function} listener The function to remove
+ * @param {boolean} useCapture If the listener should "capture"
+ */
 hui.unListen = function(el,type,listener,useCapture) {
 	el = hui.get(el);
 	if(document.removeEventListener) {
@@ -736,6 +1113,8 @@ hui.Event = function(event) {
 	this.element = event.target ? event.target : event.srcElement;
 	/** If the shift key was pressed */
 	this.shiftKey = event.shiftKey;
+	/** If the alt key was pressed */
+	this.altKey = event.altKey;
 	/** If the return key was pressed */
 	this.returnKey = event.keyCode==13;
 	/** If the escape key was pressed */
@@ -766,7 +1145,7 @@ hui.Event.prototype = {
 		    if (this.event.pageX) {
 			    left = this.event.pageX;
 		    } else if (this.event.clientX) {
-			    left = this.event.clientX + hui.getScrollLeft();
+			    left = this.event.clientX + hui.window.getScrollLeft();
 		    }
 		}
 	    return left;
@@ -781,7 +1160,7 @@ hui.Event.prototype = {
 		    if (this.event.pageY) {
 			    top = this.event.pageY;
 		    } else if (this.event.clientY) {
-			    top = this.event.clientY + hui.getScrollTop();
+			    top = this.event.clientY + hui.window.getScrollTop();
 		    }
 		}
 	    return top;
@@ -797,7 +1176,7 @@ hui.Event.prototype = {
 	 * @returns {Element} The found element or null
 	 */
 	findByClass : function(cls) {
-		return hui.firstAncestorByClass(this.element,cls)
+		return hui.get.firstAncestorByClass(this.element,cls)
 	},
 	/** Finds the nearest ancester with a certain tag name
 	 * @param tag The tag name
@@ -819,9 +1198,10 @@ hui.Event.prototype = {
 	}
 }
 
-/** Stops an event from propagating
+/** 
+ * Stops an event from propagating
  * @param event A standard DOM event, NOT an hui.Event
-*/
+ */
 hui.stop = function(event) {
 	if (!event) {event = window.event};
 	if (event.stopPropagation) {event.stopPropagation()};
@@ -878,8 +1258,52 @@ hui.onReady = function(delegate) {
 	}
 }
 
-// Ajax //
 
+
+
+
+
+
+
+///////////////////////// Request /////////////////////////
+
+/**
+ * Send a HTTP request
+ * <pre><strong>options:</strong> {
+ *  method : «'<strong>POST</strong>' | 'get' | 'rEmOVe'»,
+ *  async : <strong>true</strong>,
+ *  headers : {<strong>Ajax : true</strong>, header : 'value'},
+ *  file : «HTML5-file»,
+ *  files : «HTML5-files»,
+ *  parameters : {key : 'value'},
+ *
+ *  onSuccess : function(transport) {
+ *    // when status is 200
+ *  },
+ *  onForbidden : function(transport) {
+ *    // when status is 403
+ *  },
+ *  onAbort : function(transport) {
+ *    // when request is aborted
+ *  },
+ *  onFailure : function(transport) {
+ *    // when status is not 200 (if status is 403 and onForbidden is set then onFailure will not be called)
+ *  },
+ *  onException : function(exception,transport) {
+ *    // When an exception has occurred while calling on«Something», If not set the exception will be thrown
+ *  },
+ *  onProgress : function(current,total) {
+ *    // Progress for file uploads (maybe also other requests?)
+ *  },
+ *  onLoad : functon() {
+ *    // When file upload is transfered?
+ *  }
+ *}
+ * </pre>
+ *
+ * @param options The options
+ * @returns {XMLHttpRequest} The transport
+ */
 hui.request = function(options) {
 	options = hui.override({method:'POST',async:true,headers:{Ajax:true}},options);
 	var transport = hui.request.createTransport();
@@ -952,6 +1376,11 @@ hui.request = function(options) {
 	return transport;
 }
 
+/**
+ * Check if a http request has a valid XML response
+ * @param {XMLHttpRequest} t The request
+ * @return true if a valid XML request exists
+ */
 hui.request.isXMLResponse = function(t) {
 	return t.responseXML && t.responseXML.documentElement && t.responseXML.documentElement.nodeName!='parsererror';
 }
@@ -970,8 +1399,8 @@ hui.request._buildPostBody = function(parameters) {
 }
 
 /**
- * Creates a new XMLHttpRequest (ActiveX)
- * @returns The transport
+ * Creates a new XMLHttpRequest
+ * @returns The request
  */
 hui.request.createTransport = function() {
 	try {
@@ -1016,102 +1445,114 @@ hui.request._getActiveX = function() {
 	throw new Error("Could not find an installed XML parser");
 }
 
+
+
+
+
+
+
 ///////////////////// Style ///////////////////
 
-hui.getStyle = function(element, style) {
-	element = hui.get(element);
-	var cameled = hui.string.camelize(style);
-	var value = element.style[cameled];
-	if (!value) {
-		if (document.defaultView && document.defaultView.getComputedStyle) {
-			var css = document.defaultView.getComputedStyle(element, null);
-			value = css ? css.getPropertyValue(style) : null;
-		} else if (element.currentStyle) {
-			value = element.currentStyle[cameled];
+/** @namespace */
+hui.style = {
+	/**
+	 * Copy the style from one element to another
+	 * @param source The element to copy from
+	 * @param target The element to copy to
+	 * @param styles An array of properties to copy
+	 */
+	copy : function(source,target,styles) {
+		for (var i=0; i < styles.length; i++) {
+			var s = styles[i];
+			var r = hui.style.get(source,s);
+			if (r) {
+				target.style[s] = r;
+			}
+		};
+	},
+	set : function(element,styles) {
+		for (style in styles) {
+			if (style==='transform') {
+				element.style['webkitTransform'] = styles[style];
+			} else if (style==='opacity') {
+				hui.style.setOpacity(element,styles[style]);
+			} else {
+				element.style[style] = styles[style];
+			}
 		}
-	}
-	if (window.opera && ['left', 'top', 'right', 'bottom'].include(style)) {
-		if (hui.getStyle(element, 'position') == 'static') {
-			value = 'auto';
+	},
+	get : function(element, style) {
+		element = hui.get(element);
+		var cameled = hui.string.camelize(style);
+		var value = element.style[cameled];
+		if (!value) {
+			if (document.defaultView && document.defaultView.getComputedStyle) {
+				var css = document.defaultView.getComputedStyle(element, null);
+				value = css ? css.getPropertyValue(style) : null;
+			} else if (element.currentStyle) {
+				value = element.currentStyle[cameled];
+			}
 		}
-	}
-	return value == 'auto' ? '' : value;
-}
-
-/** @deprecated
- * TODO: Remove this */
-hui.getTopPad = function(element) {
-	var all,top;
-	all = parseInt(hui.getStyle(element,'padding'),10);
-	top = parseInt(hui.getStyle(element,'padding-top'),10);
-	if (all) {return all;}
-	if (top) {return top;}
-	return 0;
-}
-
-/** @deprecated
- * TODO: Remove this */
-hui.getBottomPad = function(element) {
-	var all,bottom;
-	all = parseInt(hui.getStyle(element,'padding'),10);
-	bottom = parseInt(hui.getStyle(element,'padding-bottom'),10);
-	if (all) {return all;}
-	if (bottom) {return bottom;}
-	return 0;
-}
-
-/** Cross browser way of setting opacity */
-hui.setOpacity = function(element,opacity) {
-	if (!hui.browser.opacity) {
-		if (opacity==1) {
-			element.style['filter']=null;
+		if (window.opera && ['left', 'top', 'right', 'bottom'].include(style)) {
+			if (hui.style.get(element, 'position') == 'static') {
+				value = 'auto';
+			}
+		}
+		return value == 'auto' ? '' : value;
+	},
+	/** Cross browser way of setting opacity */
+	setOpacity : function(element,opacity) {
+		if (!hui.browser.opacity) {
+			if (opacity==1) {
+				element.style['filter']=null;
+			} else {
+				element.style['filter']='alpha(opacity='+(opacity*100)+')';
+			}
 		} else {
-			element.style['filter']='alpha(opacity='+(opacity*100)+')';
-		}
-	} else {
-		element.style['opacity']=opacity;
-	}
-}
-
-hui.setStyle = function(element,styles) {
-	for (style in styles) {
-		if (style==='opacity') {
-			hui.setOpacity(element,styles[style]);
-		} else {
-			element.style[style] = styles[style];
+			element.style['opacity']=opacity;
 		}
 	}
 }
 
-hui.copyStyle = function(source,target,styles) {
-	for (var i=0; i < styles.length; i++) {
-		var s = styles[i];
-		var r = hui.getStyle(source,s);
-		if (r) {
-			target.style[s] = r;
-		}
-	};
-}
+
+
+
+
 
 //////////////////// Frames ////////////////////
 
-hui.getFrameDocument = function(frame) {
-    if (frame.contentDocument) {
-        return frame.contentDocument;
-    } else if (frame.contentWindow) {
-        return frame.contentWindow.document;
-    } else if (frame.document) {
-        return frame.document;
-    }
+/** @namespace */
+hui.frame = {
+	/**
+	 * Get the document object of a frame
+	 * @param frame The frame to get the document from
+	 */
+	getDocument : function(frame) {
+	    if (frame.contentDocument) {
+	        return frame.contentDocument;
+	    } else if (frame.contentWindow) {
+	        return frame.contentWindow.document;
+	    } else if (frame.document) {
+	        return frame.document;
+	    }
+	},
+	/**
+	 * Get the window object of a frame
+	 * @param frame The frame to get the window from
+	 */
+	getWindow : function(frame) {
+	    if (frame.defaultView) {
+	        return frame.defaultView;
+	    } else if (frame.contentWindow) {
+	        return frame.contentWindow;
+	    }
+	}
 }
 
-hui.getFrameWindow = function(frame) {
-    if (frame.defaultView) {
-        return frame.defaultView;
-    } else if (frame.contentWindow) {
-        return frame.contentWindow;
-    }
-}
+
+
+
+
 
 /////////////////// Selection /////////////////////
 
@@ -1157,145 +1598,103 @@ hui.selection = {
 	}
 }
 
+
+
+
+
 /////////////////// Effects //////////////////////
 
 /** @namespace */
 hui.effect = {
 	makeFlippable : function(options) {
 		if (hui.browser.webkit) {
-			hui.addClass(options.container,'hui_flip_container');
-			hui.addClass(options.front,'hui_flip_front');
-			hui.addClass(options.back,'hui_flip_back');
+			hui.cls.add(options.container,'hui_flip_container');
+			hui.cls.add(options.front,'hui_flip_front');
+			hui.cls.add(options.back,'hui_flip_back');
 		} else {
-			hui.addClass(options.front,'hui_flip_front_legacy');
-			hui.addClass(options.back,'hui_flip_back_legacy');
+			hui.cls.add(options.front,'hui_flip_front_legacy');
+			hui.cls.add(options.back,'hui_flip_back_legacy');
 		}
 	},
 	flip : function(options) {
 		if (!hui.browser.webkit) {
-			hui.toggleClass(options.element,'hui_flip_flipped_legacy');
+			hui.cls.toggle(options.element,'hui_flip_flipped_legacy');
 		} else {
 			var element = hui.get(options.element);
 			var duration = options.duration || '1s';
-			var front = hui.firstByClass(element,'hui_flip_front');
-			var back = hui.firstByClass(element,'hui_flip_back');
+			var front = hui.get.firstByClass(element,'hui_flip_front');
+			var back = hui.get.firstByClass(element,'hui_flip_back');
 			front.style.webkitTransitionDuration=duration;
 			back.style.webkitTransitionDuration=duration;
-			hui.toggleClass(options.element,'hui_flip_flipped');
+			hui.cls.toggle(options.element,'hui_flip_flipped');
+		}
+	},
+	/**
+	 * Reveal an element using a bounce/zoom effect
+	 * @param {Object} options {element:«Element»}
+	 */
+	bounceIn : function(options) {
+		var node = options.element;
+		if (hui.browser.msie) {
+			hui.style.set(node,{'display':'block',visibility:'visible'});
+		} else {
+			hui.style.set(node,{'display':'block','opacity':0,visibility:'visible'});
+			hui.animate(node,'transform','scale(0.1)',0);// rotate(10deg)
+			window.setTimeout(function() {
+				hui.animate(node,'opacity',1,300);
+				hui.animate(node,'transform','scale(1)',400,{ease:hui.ease.backOut}); // rotate(0deg)
+			});
 		}
 	}
 }
 
-/////////////////// Position /////////////////////
 
-hui.getScrollTop = function() {
-	if (self.pageYOffset) {
-		return self.pageYOffset;
-	} else if (document.documentElement && document.documentElement.scrollTop) {
-		return document.documentElement.scrollTop;
-	} else if (document.body) {
-		return document.body.scrollTop;
-	}
-}
 
-hui.getScrollLeft = function() {
-	if (self.pageYOffset) {
-		return self.pageXOffset;
-	} else if (document.documentElement && document.documentElement.scrollTop) {
-		return document.documentElement.scrollLeft;
-	} else if (document.body) {
-		return document.body.scrollLeft;
-	}
-}
 
-/**
- * Get the height of the viewport
- */
-hui.getViewPortHeight = function() {
-	if (window.innerHeight) {
-		return window.innerHeight;
-	} else if (document.documentElement && document.documentElement.clientHeight) {
-		return document.documentElement.clientHeight;
-	} else if (document.body) {
-		return document.body.clientHeight;
-	}
-}
 
-/**
- * Get the width of the viewport
- */
-hui.getViewPortWidth = function() {
-	if (window.innerWidth) {
-		return window.innerWidth;
-	} else if (document.documentElement && document.documentElement.clientWidth) {
-		return document.documentElement.clientWidth;
-	} else if (document.body) {
-		return document.body.clientWidth;
-	}
-}
+/////////////////// Document /////////////////////
 
-hui.getDocumentWidth = function() {
-	return Math.max(document.body.clientWidth,document.documentElement.clientWidth,document.documentElement.scrollWidth)
-	return document.body.scrollWidth;
-}
-
-hui.getDocumentHeight = function() {
-	if (hui.browser.msie6) {
-		// In IE6 check the children too
-		var max = Math.max(document.body.clientHeight,document.documentElement.clientHeight,document.documentElement.scrollHeight);
-		var children = document.body.childNodes;
-		for (var i=0; i < children.length; i++) {
-			if (hui.dom.isElement(children[i])) {
-				max = Math.max(max,children[i].clientHeight);
+/** @namespace */
+hui.document = {
+	/**
+	 * Get the height of the document (including the invisble part)
+	 */
+	getWidth : function() {
+		return Math.max(document.body.clientWidth,document.documentElement.clientWidth,document.documentElement.scrollWidth)
+	},
+	/**
+	 * Get the width of the document (including the invisble part)
+	 */
+	getHeight : function() {
+		if (hui.browser.msie6) {
+			// In IE6 check the children too
+			var max = Math.max(document.body.clientHeight,document.documentElement.clientHeight,document.documentElement.scrollHeight);
+			var children = document.body.childNodes;
+			for (var i=0; i < children.length; i++) {
+				if (hui.dom.isElement(children[i])) {
+					max = Math.max(max,children[i].clientHeight);
+				}
 			}
+			return max;
 		}
-		return max;
-	}
-	if (window.scrollMaxY && window.innerHeight) {
-		return window.scrollMaxY+window.innerHeight;
-	} else {
-		return Math.max(document.body.clientHeight,document.documentElement.clientHeight,document.documentElement.scrollHeight);
+		if (window.scrollMaxY && window.innerHeight) {
+			return window.scrollMaxY+window.innerHeight;
+		} else {
+			return Math.max(document.body.clientHeight,document.documentElement.clientHeight,document.documentElement.scrollHeight);
+		}
 	}
 }
 
-//////////////////////////// Placement /////////////////////////
 
-/**
- * Example hui.place({target : {element : «node», horizontal : «0-1»}, source : {element : «node», vertical : «0 - 1»}, insideViewPort:«boolean», viewPortMargin:«integer»})
- */
-hui.place = function(options) {
-	var left = 0,
-		top = 0,
-		trgt = options.target.element,
-		trgtPos = {left : hui.getLeft(trgt), top : hui.getTop(trgt) };
-	left = trgtPos.left + trgt.clientWidth * (options.target.horizontal || 0);
-	top = trgtPos.top + trgt.clientHeight * (options.target.vertical || 0);
-	var src = options.source.element;
-	left -= src.clientWidth * (options.source.horizontal || 0);
-	top -= src.clientHeight * (options.source.vertical || 0);
-	
-	if (options.insideViewPort) {
-		var w = hui.getViewPortWidth();
-		if (left + src.clientWidth > w) {
-			left = w - src.clientWidth - (options.viewPartMargin || 0);
-			hui.log(options.viewPartMargin)
-		}
-		if (left < 0) {left=0}
-		if (top < 0) {top=0}
-	}
-	if (options.top) {
-		top += options.top;
-	}
-	if (options.left) {
-		left += options.left;
-	}
-	
-	src.style.top = top+'px';
-	src.style.left = left+'px';
-}
+
+
+
+
+
 
 /////////////////////////////// Drag ///////////////////////////
 
+/** @namespace */
 hui.drag = {
 	register : function(options) {
 		hui.listen(options.element,'mousedown',function(e) {
@@ -1307,19 +1706,39 @@ hui.drag = {
 	start : function(options) {
 		var target = hui.browser.msie ? document : window;
 		
-		options.onStart();
-		var mover,upper;
+		if (options.onStart) {
+			options.onStart();
+		}
+		var mover,
+			upper,
+			moved = false;
 		mover = function(e) {
 			e = hui.event(e);
+			e.stop(e);
+			if (!moved && options.onBeforeMove) {
+				options.onBeforeMove(e);
+			}
+			moved = true;
 			options.onMove(e);
 		}.bind(this);
 		hui.listen(target,'mousemove',mover);
 		upper = function() {
 			hui.unListen(target,'mousemove',mover);
 			hui.unListen(target,'mouseup',upper);
-			options.onEnd();
+			if (options.onEnd) {
+				options.onEnd();
+			}
+			if (moved && options.onAfterMove) {
+				options.onAfterMove();
+			}
+			hui.drag._setSelect(true);
 		}.bind(this)
 		hui.listen(target,'mouseup',upper);
+		hui.drag._setSelect(false);
+	},
+	_setSelect : function(on) {
+		document.onselectstart = on ? null : function () { return false; };
+		document.body.style.webkitUserSelect = on ? null : 'none';
 	},
 	_nativeListeners : [],
 	_activeDrop : null,
@@ -1337,7 +1756,7 @@ hui.drag = {
 				if (hui.dom.isDescendantOrSelf(e.target,lmnt)) {
 					found = l[i];
 					if (hui.drag._activeDrop==null || hui.drag._activeDrop!=found) {
-						hui.addClass(lmnt,found.hoverClass);
+						hui.cls.add(lmnt,found.hoverClass);
 					}
 					break;
 				}
@@ -1345,7 +1764,7 @@ hui.drag = {
 			if (hui.drag._activeDrop) {
 				//var foundElement = found ? found.element : null;
 				if (hui.drag._activeDrop!=found) {
-					hui.removeClass(hui.drag._activeDrop.element,hui.drag._activeDrop.hoverClass);
+					hui.cls.remove(hui.drag._activeDrop.element,hui.drag._activeDrop.hoverClass);
 				}
 			}
 			hui.drag._activeDrop = found;
@@ -1359,13 +1778,20 @@ hui.drag = {
 			var options = hui.drag._activeDrop;
 			hui.drag._activeDrop = null;
 			if (options) {
-				hui.removeClass(options.element,options.hoverClass);
+				hui.cls.remove(options.element,options.hoverClass);
 				if (options.onDrop) {
 					options.onDrop(e);
 				}
 				hui.log(e.dataTransfer.types)
 				if (options.onFiles && e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length>0) {
 					options.onFiles(e.dataTransfer.files);
+				}
+				else if (hui.array.contains(e.dataTransfer.types,'public.url')) {
+					var url = e.dataTransfer.getData('public.url');
+					hui.log('URL: '+url);
+					if (options.onURL) {
+						options.onURL(url);
+					}
 				}
 			}
 		});
@@ -1377,6 +1803,8 @@ hui.drag = {
 //////////////////////////// Preloader /////////////////////////
 
 /** @constructor
+ * A preloader for images
+ * Events: imageDidLoad(index), imageDidGiveError(index), imageDidAbort(index)
  * @param options {context:«prefix for urls»}
  */
 hui.Preloader = function(options) {
@@ -1433,6 +1861,11 @@ hui.Preloader.prototype = {
 	}
 }
 
+
+
+
+///////////////// Cookies //////////////////
+
 /** @namespace */
 hui.cookie = {
 	/** Adds a cookie value by name */
@@ -1467,6 +1900,11 @@ hui.cookie = {
 		this.set(name,"",-1);
 	}
 }
+
+
+
+
+
 
 ///////////////////////// Location /////////////////////
 
@@ -1565,12 +2003,65 @@ hui.location = {
 	}	
 };
 
-/////////////////////////// Animation ///////////////////////////
 
 
-hui.animate = function(options,style,value,duration,delegate) {
+
+
+
+
+
+
+
+
+
+if (!Function.prototype.bind) {
+	Function.prototype.bind = function () {
+	    if (arguments.length < 2 && arguments[0] === undefined) {
+	        return this;
+	    }
+	    var thisObj = this,
+	    args = Array.prototype.slice.call(arguments),
+	    obj = args.shift();
+	    return function () {
+	        return thisObj.apply(obj, args.concat(Array.prototype.slice.call(arguments)));
+	    };
+	};
+
+	Function.bind = function() {
+	    var args = Array.prototype.slice.call(arguments);
+	    return Function.prototype.bind.apply(args.shift(), args);
+	}
+}
+
+if (!Function.prototype.argumentNames) {
+	Function.prototype.argumentNames = function() {
+		var names = this.toString().match(/^[\s\(]*function[^(]*\(([^)]*)\)/)[1]
+			.replace(/\/\/.*?[\r\n]|\/\*(?:.|[\r\n])*?\*\//g, '')
+			.replace(/\s+/g, '').split(',');
+		return names.length == 1 && !names[0] ? [] : names;
+	}
+}/////////////////////////// Animation ///////////////////////////
+
+/**
+ * Animate something
+ * <pre><strong>options:</strong> {
+ *  node : «Element», 
+ *  css : { fontSize : '11px', color : '#f00', opacity : 0.5 }, 
+ *  duration : 1000, // 1sec 
+ *  ease : function(num) {},
+ *  onComplete : function() {}
+ *}
+ * 
+ * @param {Element | Object} options Options or an element
+ * @param {String} style The css property
+ * @param {String} value The css value
+ * @param {Number} duration The duration in milisecons
+ * @param {Object} deleagte The options if first param is an element
+ * 
+ */
+hui.animate = function(options,property,value,duration,delegate) {
 	if (typeof(options)=='string' || hui.dom.isElement(options)) {
-		hui.animation.get(options).animate(null,value,style,duration,delegate);
+		hui.animation.get(options).animate(null,value,property,duration,delegate);
 	} else {
 		var item = hui.animation.get(options.node);
 		for (prop in options.css) {
@@ -1586,13 +2077,13 @@ hui.animation = {
 	latestId : 0,
 	get : function(element) {
 		element = hui.get(element);
-		if (!element.n2iAnimationId) {
-			element.n2iAnimationId = this.latestId++;
+		if (!element.huiAnimationId) {
+			element.huiAnimationId = this.latestId++;
 		}
-		if (!this.objects[element.n2iAnimationId]) {
-			this.objects[element.n2iAnimationId] = new hui.animation.Item(element);
+		if (!this.objects[element.huiAnimationId]) {
+			this.objects[element.huiAnimationId] = new hui.animation.Item(element);
 		}
-		return this.objects[element.n2iAnimationId];
+		return this.objects[element.huiAnimationId];
 	},
 	start : function() {
 		if (!this.running) {
@@ -1740,7 +2231,7 @@ hui.animation.Item.prototype.animate = function(from,to,property,duration,delega
 	} else if (!hui.browser.opacity && property=='opacity') {
 		work.from = this._getIEOpacity(this.element);
 	} else if (css) {
-		var style = hui.getStyle(this.element,property);
+		var style = hui.style.get(this.element,property);
 		var parsedStyle = hui.animation._parseStyle(style);
 		work.from = parsedStyle.value;
 	} else {
@@ -1806,7 +2297,7 @@ hui.animation.Item.parseTransform = function(value,element) {
 }
 
 hui.animation.Item.prototype._getIEOpacity = function(element) {
-	var filter = hui.getStyle(element,'filter').toLowerCase();
+	var filter = hui.style.get(element,'filter').toLowerCase();
 	var match;
 	if (match = filter.match(/opacity=([0-9]+)/)) {
 		return parseFloat(match[1])/100;
@@ -1858,232 +2349,6 @@ hui.animation.Loop.prototype.start = function() {
 	this.running=true;
 	this.next();
 }
-
-/** @constructor
- * @param str The color like red or rgb(255, 0, 0) or #ff0000 or rgb(100%, 0%, 0%)
- */
-hui.Color = function(str) {
-    this.ok = false;
-	if (hui.isBlank(str)) {
-		return;
-	}
-    // strip any leading #
-    if (str.charAt(0) == '#') { // remove # if any
-        str = str.substr(1,6);
-    }
-
-    str = str.replace(/ /g,'');
-    str = str.toLowerCase();
-		
-    for (var key in hui.Color.table) {
-        if (str == key) {
-            str = hui.Color.table[key];
-        }
-    }
-    // emd of simple type-in colors
-
-    // array of color definition objects
-    var color_defs = [
-        {
-            re: /^rgb\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})\)$/,
-            process: function (bits){
-                return [
-                    parseInt(bits[1]),
-                    parseInt(bits[2]),
-                    parseInt(bits[3])
-                ];
-            }
-        },
-        {
-            re: /^rgb\((\d{1,3})%,\s*(\d{1,3})%,\s*(\d{1,3})%\)$/	,
-            process: function (bits){
-                return [
-                    Math.round(parseInt(bits[1])/100*255),
-                    Math.round(parseInt(bits[2])/100*255),
-                    Math.round(parseInt(bits[3])/100*255)
-                ];
-            }
-        },
-        {
-            re: /^(\w{2})(\w{2})(\w{2})$/,
-            process: function (bits){
-                return [
-                    parseInt(bits[1], 16),
-                    parseInt(bits[2], 16),
-                    parseInt(bits[3], 16)
-                ];
-            }
-        },
-        {
-            re: /^(\w{1})(\w{1})(\w{1})$/,
-            process: function (bits){
-                return [
-                    parseInt(bits[1] + bits[1], 16),
-                    parseInt(bits[2] + bits[2], 16),
-                    parseInt(bits[3] + bits[3], 16)
-                ];
-            }
-        }
-    ];
-
-    // search through the definitions to find a match
-    for (var i = 0; i < color_defs.length; i++) {
-        var re = color_defs[i].re,
-			processor = color_defs[i].process,
-			bits = re.exec(str);
-        if (bits) {
-            channels = processor(bits);
-            this.r = channels[0];
-            this.g = channels[1];
-            this.b = channels[2];
-            this.ok = true;
-			break;
-        }
-    }
-
-    // validate/cleanup values
-    this.r = (this.r < 0 || isNaN(this.r)) ? 0 : ((this.r > 255) ? 255 : this.r);
-    this.g = (this.g < 0 || isNaN(this.g)) ? 0 : ((this.g > 255) ? 255 : this.g);
-    this.b = (this.b < 0 || isNaN(this.b)) ? 0 : ((this.b > 255) ? 255 : this.b);
-}
-
-hui.Color.prototype = {
-	/** Get the color as rgb(255,0,0) */
-	toRGB : function () {
-        return 'rgb(' + this.r + ', ' + this.g + ', ' + this.b + ')';
-    },
-	/** Get the color as #ff0000 */
-	toHex : function() {
-        var r = this.r.toString(16);
-        var g = this.g.toString(16);
-        var b = this.b.toString(16);
-        if (r.length == 1) {
-			r = '0' + r;
-		}
-        if (g.length == 1) {
-			g = '0' + g;
-		}
-        if (b.length == 1) {
-			b = '0' + b;
-		}
-        return '#' + r + g + b;
-	}
-}
-
-hui.Color.table = {
-	white : 'ffffff',
-	black : '000000',
-	red : 'ff0000',
-	green : '00ff00',
-	blue : '0000ff'
-}
-
-hui.Color.hex2rgb = function(hex) {
-	if (hui.isBlank(hex)) {
-		return null;
-	}
-	if (hex[0]=="#") {
-		hex=hex.substr(1);
-	}
-	if (hex.length==3) {
-		var temp=hex;
-		hex='';
-		temp = /^([a-f0-9])([a-f0-9])([a-f0-9])$/i.exec(temp).slice(1);
-		for (var i=0;i<3;i++) {
-			hex+=temp[i]+temp[i];
-		}
-	}
-	var triplets = /^([a-f0-9]{2})([a-f0-9]{2})([a-f0-9]{2})$/i.exec(hex).slice(1);
-	return {
-		r:   parseInt(triplets[0],16),
-		g: parseInt(triplets[1],16),
-		b:  parseInt(triplets[2],16)
-	}
-}
-
-hui.Color.hsv2rgb = function (Hdeg,S,V) {
-  	var H = Hdeg/360,R,G,B;     // convert from degrees to 0 to 1
-  	if (S==0) {       // HSV values = From 0 to 1
-		R = V*255;     // RGB results = From 0 to 255
-		G = V*255;
-		B = V*255;
-	} else {
-    	var h = H*6,
-			var_r,var_g,var_b;
-    	var i = Math.floor( h );
-    	var var_1 = V*(1-S);
-    	var var_2 = V*(1-S*(h-i));
-    	var var_3 = V*(1-S*(1-(h-i)));
-    	if (i==0) {
-			var_r=V ;
-			var_g=var_3;
-			var_b=var_1
-		}
-    	else if (i==1) {
-			var_r=var_2;
-			var_g=V;
-			var_b=var_1
-		}
-    	else if (i==2) {var_r=var_1; var_g=V;     var_b=var_3}
-    	else if (i==3) {var_r=var_1; var_g=var_2; var_b=V}
-    	else if (i==4) {var_r=var_3; var_g=var_1; var_b=V}
-    	else {var_r=V;     var_g=var_1; var_b=var_2}
-    	R = Math.round(var_r*255);   //RGB results = From 0 to 255
-    	G = Math.round(var_g*255);
-    	B = Math.round(var_b*255);
-  	}
-  	return new Array(R,G,B);
-}
-
-hui.Color.rgb2hsv = function(r, g, b) {
-
-    r = (r / 255);
-    g = (g / 255);
-	b = (b / 255);	
-
-    var min = Math.min(Math.min(r, g), b),
-        max = Math.max(Math.max(r, g), b),
-		value = max,
-        saturation,
-        hue;
-
-    // Hue
-    if (max == min) {
-        hue = 0;
-    } else if (max == r) {
-        hue = (60 * ((g-b) / (max-min))) % 360;
-    } else if (max == g) {
-        hue = 60 * ((b-r) / (max-min)) + 120;
-    } else if (max == b) {
-        hue = 60 * ((r-g) / (max-min)) + 240;
-    }
-
-    if (hue < 0) {
-        hue += 360;
-    }
-
-    // Saturation
-    if (max == 0) {
-        saturation = 0;
-    } else {
-        saturation = 1 - (min/max);
-    }
-
-    return [Math.round(hue), Math.round(saturation * 100), Math.round(value * 100)];
-}
-
-hui.Color.rgb2hex = function(rgbary) {
-	var c = '#';
-  	for (var i=0; i < 3; i++) {
-		var str = parseInt(rgbary[i]).toString(16);
-    	if (str.length < 2) {
-			str = '0'+str;
-		}
-		c+=str;
-  	}
-  	return c;
-}
-
 
 /** @namespace */
 hui.ease = {
@@ -2324,33 +2589,234 @@ hui.ease = {
 	}
 };
 
-if (!Function.prototype.bind) {
-	Function.prototype.bind = function () {
-	    if (arguments.length < 2 && arguments[0] === undefined) {
-	        return this;
-	    }
-	    var thisObj = this,
-	    args = Array.prototype.slice.call(arguments),
-	    obj = args.shift();
-	    return function () {
-	        return thisObj.apply(obj, args.concat(Array.prototype.slice.call(arguments)));
-	    };
-	};
 
-	Function.bind = function() {
-	    var args = Array.prototype.slice.call(arguments);
-	    return Function.prototype.bind.apply(args.shift(), args);
+
+/** @constructor
+ * @param str The color like red or rgb(255, 0, 0) or #ff0000 or rgb(100%, 0%, 0%)
+ */
+hui.Color = function(str) {
+    this.ok = false;
+	if (hui.isBlank(str)) {
+		return;
+	}
+    // strip any leading #
+    if (str.charAt(0) == '#') { // remove # if any
+        str = str.substr(1,6);
+    }
+
+    str = str.replace(/ /g,'');
+    str = str.toLowerCase();
+		
+    for (var key in hui.Color.table) {
+        if (str == key) {
+            str = hui.Color.table[key];
+        }
+    }
+    // emd of simple type-in colors
+
+    // array of color definition objects
+    var color_defs = [
+        {
+            re: /^rgb\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})\)$/,
+            process: function (bits){
+                return [
+                    parseInt(bits[1]),
+                    parseInt(bits[2]),
+                    parseInt(bits[3])
+                ];
+            }
+        },
+        {
+            re: /^rgb\((\d{1,3})%,\s*(\d{1,3})%,\s*(\d{1,3})%\)$/	,
+            process: function (bits){
+                return [
+                    Math.round(parseInt(bits[1])/100*255),
+                    Math.round(parseInt(bits[2])/100*255),
+                    Math.round(parseInt(bits[3])/100*255)
+                ];
+            }
+        },
+        {
+            re: /^(\w{2})(\w{2})(\w{2})$/,
+            process: function (bits){
+                return [
+                    parseInt(bits[1], 16),
+                    parseInt(bits[2], 16),
+                    parseInt(bits[3], 16)
+                ];
+            }
+        },
+        {
+            re: /^(\w{1})(\w{1})(\w{1})$/,
+            process: function (bits){
+                return [
+                    parseInt(bits[1] + bits[1], 16),
+                    parseInt(bits[2] + bits[2], 16),
+                    parseInt(bits[3] + bits[3], 16)
+                ];
+            }
+        }
+    ];
+
+    // search through the definitions to find a match
+    for (var i = 0; i < color_defs.length; i++) {
+        var re = color_defs[i].re,
+			processor = color_defs[i].process,
+			bits = re.exec(str);
+        if (bits) {
+            channels = processor(bits);
+            this.r = channels[0];
+            this.g = channels[1];
+            this.b = channels[2];
+            this.ok = true;
+			break;
+        }
+    }
+
+    // validate/cleanup values
+    this.r = (this.r < 0 || isNaN(this.r)) ? 0 : ((this.r > 255) ? 255 : this.r);
+    this.g = (this.g < 0 || isNaN(this.g)) ? 0 : ((this.g > 255) ? 255 : this.g);
+    this.b = (this.b < 0 || isNaN(this.b)) ? 0 : ((this.b > 255) ? 255 : this.b);
+}
+
+hui.Color.prototype = {
+	/** Get the color as rgb(255,0,0) */
+	toRGB : function () {
+        return 'rgb(' + this.r + ', ' + this.g + ', ' + this.b + ')';
+    },
+	/** Get the color as #ff0000 */
+	toHex : function() {
+        var r = this.r.toString(16);
+        var g = this.g.toString(16);
+        var b = this.b.toString(16);
+        if (r.length == 1) {
+			r = '0' + r;
+		}
+        if (g.length == 1) {
+			g = '0' + g;
+		}
+        if (b.length == 1) {
+			b = '0' + b;
+		}
+        return '#' + r + g + b;
 	}
 }
 
-if (!Function.prototype.argumentNames) {
-	Function.prototype.argumentNames = function() {
-		var names = this.toString().match(/^[\s\(]*function[^(]*\(([^)]*)\)/)[1]
-			.replace(/\/\/.*?[\r\n]|\/\*(?:.|[\r\n])*?\*\//g, '')
-			.replace(/\s+/g, '').split(',');
-		return names.length == 1 && !names[0] ? [] : names;
+hui.Color.table = {
+	white : 'ffffff',
+	black : '000000',
+	red : 'ff0000',
+	green : '00ff00',
+	blue : '0000ff'
+}
+
+hui.Color.hex2rgb = function(hex) {
+	if (hui.isBlank(hex)) {
+		return null;
 	}
-}/*!
+	if (hex[0]=="#") {
+		hex=hex.substr(1);
+	}
+	if (hex.length==3) {
+		var temp=hex;
+		hex='';
+		temp = /^([a-f0-9])([a-f0-9])([a-f0-9])$/i.exec(temp).slice(1);
+		for (var i=0;i<3;i++) {
+			hex+=temp[i]+temp[i];
+		}
+	}
+	var triplets = /^([a-f0-9]{2})([a-f0-9]{2})([a-f0-9]{2})$/i.exec(hex).slice(1);
+	return {
+		r:   parseInt(triplets[0],16),
+		g: parseInt(triplets[1],16),
+		b:  parseInt(triplets[2],16)
+	}
+}
+
+hui.Color.hsv2rgb = function (Hdeg,S,V) {
+  	var H = Hdeg/360,R,G,B;     // convert from degrees to 0 to 1
+  	if (S==0) {       // HSV values = From 0 to 1
+		R = V*255;     // RGB results = From 0 to 255
+		G = V*255;
+		B = V*255;
+	} else {
+    	var h = H*6,
+			var_r,var_g,var_b;
+    	var i = Math.floor( h );
+    	var var_1 = V*(1-S);
+    	var var_2 = V*(1-S*(h-i));
+    	var var_3 = V*(1-S*(1-(h-i)));
+    	if (i==0) {
+			var_r=V ;
+			var_g=var_3;
+			var_b=var_1
+		}
+    	else if (i==1) {
+			var_r=var_2;
+			var_g=V;
+			var_b=var_1
+		}
+    	else if (i==2) {var_r=var_1; var_g=V;     var_b=var_3}
+    	else if (i==3) {var_r=var_1; var_g=var_2; var_b=V}
+    	else if (i==4) {var_r=var_3; var_g=var_1; var_b=V}
+    	else {var_r=V;     var_g=var_1; var_b=var_2}
+    	R = Math.round(var_r*255);   //RGB results = From 0 to 255
+    	G = Math.round(var_g*255);
+    	B = Math.round(var_b*255);
+  	}
+  	return new Array(R,G,B);
+}
+
+hui.Color.rgb2hsv = function(r, g, b) {
+
+    r = (r / 255);
+    g = (g / 255);
+	b = (b / 255);	
+
+    var min = Math.min(Math.min(r, g), b),
+        max = Math.max(Math.max(r, g), b),
+		value = max,
+        saturation,
+        hue;
+
+    // Hue
+    if (max == min) {
+        hue = 0;
+    } else if (max == r) {
+        hue = (60 * ((g-b) / (max-min))) % 360;
+    } else if (max == g) {
+        hue = 60 * ((b-r) / (max-min)) + 120;
+    } else if (max == b) {
+        hue = 60 * ((r-g) / (max-min)) + 240;
+    }
+
+    if (hue < 0) {
+        hue += 360;
+    }
+
+    // Saturation
+    if (max == 0) {
+        saturation = 0;
+    } else {
+        saturation = 1 - (min/max);
+    }
+
+    return [Math.round(hue), Math.round(saturation * 100), Math.round(value * 100)];
+}
+
+hui.Color.rgb2hex = function(rgbary) {
+	var c = '#';
+  	for (var i=0; i < 3; i++) {
+		var str = parseInt(rgbary[i]).toString(16);
+    	if (str.length < 2) {
+			str = '0'+str;
+		}
+		c+=str;
+  	}
+  	return c;
+}
+
+/*!
   * $script.js v1.3
   * https://github.com/ded/script.js
   * Copyright: @ded & @fat - Dustin Diaz, Jacob Thornton 2011
@@ -2515,7 +2981,11 @@ hui.onReady(function() {
 	};
 });
 
-/** Get a widget by name */
+/**
+ * Get a widget by name
+ * @param nameOrWidget {Widget | String} Get a widget by name, if the parameter is already a widget it is returned
+ * @return {Widget} The widget with the name or null
+ */
 hui.ui.get = function(nameOrWidget) {
 	if (nameOrWidget) {
 		if (nameOrWidget.element) {
@@ -2560,7 +3030,17 @@ hui.ui._resize = function() {
 }
 
 /**
- * @param options { element:«node», widget:«widget», text:«string», okText:«string», cancelText«string», onOk:«function»}
+ * Show a confirming overlay
+ * <pre><strong>options:</strong> {
+ *  element : «Element», // the element to show at
+ *  widget : «Widget», // the widget to show at
+ *  text : «String», // the text message
+ *  okText : «String», // text of OK button
+ *  cancelText «String», // text of cancel button
+ *  onOk: «Function» // called when user clicks the OK button
+ * }
+ * </pre>
+ * @param options {Object} The options
  */
 hui.ui.confirmOverlay = function(options) {
 	var node = options.element,
@@ -2597,6 +3077,10 @@ hui.ui.confirmOverlay = function(options) {
 	overlay.show({element:node});
 }
 
+/**
+ * Unregisters a widget
+ * @param widget {Widget} The widget to destroy 
+ */
 hui.ui.destroy = function(widget) {
 	var objects = hui.ui.objects;
 	delete(objects[widget.name]);
@@ -2621,7 +3105,7 @@ hui.ui.getAncestors = function(widget) {
 	var desc = [];
 	var e = widget.element;
 	if (e) {
-		var a = hui.getAncestors(e);
+		var a = hui.get.ancestors(e);
 		var o = [];
 		for (var key in hui.ui.objects) {
 			o.push(hui.ui.objects[key]);
@@ -2660,7 +3144,7 @@ hui.ui.getDescendants = function(widgetOrElement) {
 hui.ui.getAncestor = function(widget,cls) {
 	var a = hui.ui.getAncestors(widget);
 	for (var i=0; i < a.length; i++) {
-		if (hui.hasClass(a[i].getElement(),cls)) {
+		if (hui.cls.has(a[i].getElement(),cls)) {
 			return a[i];
 		}
 	};
@@ -2699,6 +3183,21 @@ hui.ui.reLayout = function() {
 	}
 }
 
+//////////////////////////////// Widget //////////////////////////////
+
+hui.ui.Widget = function() {
+	
+}
+
+hui.ui.Widget.prototype = {
+	hide : function() {
+		this.element.style.display = 'none';
+	},
+	show : function() {
+		this.element.style.display = '';
+	}
+}
+
 ///////////////////////////////// Indexes /////////////////////////////
 
 hui.ui.nextIndex = function() {
@@ -2732,7 +3231,7 @@ hui.ui.showCurtain = function(options) {
 	if (!widget.curtain) {
 		widget.curtain = hui.build('div',{'class':'hui_curtain',style:'z-index:none'});
 		
-		var body = hui.firstByClass(document.body,'hui_body');
+		var body = hui.get.firstByClass(document.body,'hui_body');
 		if (!body) {
 			body=document.body;
 		}
@@ -2745,7 +3244,7 @@ hui.ui.showCurtain = function(options) {
 	}
 	if (options.color) {
 		if (options.color=='auto') {
-			var color = hui.getStyle(document.body,'background-color');
+			var color = hui.style.get(document.body,'background-color');
 			if (color=='transparent' || color=='rgba(0, 0, 0, 0)') {
 				color='#fff';
 			}
@@ -2755,7 +3254,7 @@ hui.ui.showCurtain = function(options) {
 		}
 	}
 	if (hui.browser.msie) {
-		widget.curtain.style.height=hui.getDocumentHeight()+'px';
+		widget.curtain.style.height=hui.document.getHeight()+'px';
 	} else {
 		widget.curtain.style.position='fixed';
 		widget.curtain.style.top='0';
@@ -2764,7 +3263,7 @@ hui.ui.showCurtain = function(options) {
 		widget.curtain.style.right='0';
 	}
 	widget.curtain.style.zIndex=options.zIndex;
-	hui.setOpacity(widget.curtain,0);
+	hui.style.setOpacity(widget.curtain,0);
 	widget.curtain.style.display='block';
 	hui.animate(widget.curtain,'opacity',0.7,1000,{ease:hui.ease.slowFastSlow});
 }
@@ -2855,7 +3354,7 @@ hui.ui.showMessage = function(options) {
 	if (!hui.ui.message) {
 		hui.ui.message = hui.build('div',{'class':'hui_message',html:'<div><div></div></div>'});
 		if (!hui.browser.msie) {
-			hui.setOpacity(hui.ui.message,0);
+			hui.style.setOpacity(hui.ui.message,0);
 		}
 		document.body.appendChild(hui.ui.message);
 	}
@@ -2874,7 +3373,7 @@ hui.ui.showMessage = function(options) {
 	hui.ui.message.style.display = 'block';
 	hui.ui.message.style.zIndex = hui.ui.nextTopIndex();
 	hui.ui.message.style.marginLeft = (hui.ui.message.clientWidth/-2)+'px';
-	hui.ui.message.style.marginTop = hui.getScrollTop()+'px';
+	hui.ui.message.style.marginTop = hui.window.getScrollTop()+'px';
 	if (hui.browser.opacity) {
 		hui.animate(hui.ui.message,'opacity',1,300);
 	}
@@ -2904,13 +3403,13 @@ hui.ui.showToolTip = function(options) {
 	}
 	t.onclick = function() {hui.ui.hideToolTip(options);};
 	var n = hui.get(options.element);
-	var pos = hui.getPosition(n);
+	var pos = hui.position.get(n);
 	hui.dom.setText(t.getElementsByTagName('div')[1],options.text);
 	if (t.style.display=='none' && hui.browser.opacity) {
-		hui.setOpacity(t,0);
+		hui.style.setOpacity(t,0);
 	}
-	hui.setStyle(t,{'display':'block',zIndex:hui.ui.nextTopIndex()});
-	hui.setStyle(t,{left:(pos.left-t.clientWidth+4)+'px',top:(pos.top+2-(t.clientHeight/2)+(n.clientHeight/2))+'px'});
+	hui.style.set(t,{'display':'block',zIndex:hui.ui.nextTopIndex()});
+	hui.style.set(t,{left:(pos.left-t.clientWidth+4)+'px',top:(pos.top+2-(t.clientHeight/2)+(n.clientHeight/2))+'px'});
 	if (hui.browser.opacity) {
 		hui.animate(t,'opacity',1,300);
 	}
@@ -2930,6 +3429,11 @@ hui.ui.hideToolTip = function(options) {
 
 /////////////////////////////// Utilities /////////////////////////////
 
+/**
+ * Get the element of a widget if not already an element
+ * @param widgetOrElement {Widget | Element} The widget to get the element for
+ * @returns {Element} The element or null
+ */
 hui.ui.getElement = function(widgetOrElement) {
 	if (hui.dom.isElement(widgetOrElement)) {
 		return widgetOrElement;
@@ -2941,7 +3445,7 @@ hui.ui.getElement = function(widgetOrElement) {
 
 hui.ui.isWithin = function(e,element) {
 	e = new hui.Event(e);
-	var offset = {left:hui.getLeft(element),top:hui.getTop(element)};
+	var offset = {left:hui.position.getLeft(element),top:hui.position.getTop(element)};
 	var dims = {width:element.clientWidth,height:element.clientHeight};
 	return e.getLeft()>offset.left && e.getLeft()<offset.left+dims.width && e.getTop()>offset.top && e.getTop()<offset.top+dims.height;
 };
@@ -2960,19 +3464,36 @@ hui.ui.wrapInField = function(e) {
 		'<span class="hui_field_middle"><span class="hui_field_middle"><span class="hui_field_content"></span></span></span>'+
 		'<span class="hui_field_bottom"><span><span></span></span></span>'
 	});
-	hui.firstByClass(w,'hui_field_content').appendChild(e);
+	hui.get.firstByClass(w,'hui_field_content').appendChild(e);
 	return w;
 };
 
+/**
+ * Add focus class to an element
+ * @param options {Object} {element : «Element», class : «String»}
+ */
 hui.ui.addFocusClass = function(o) {
 	var ce = o.classElement || o.element, c = o['class'];
 	hui.listen(o.element,'focus',function() {
-		hui.addClass(ce,c);
+		hui.cls.add(ce,c);
 	});
 	hui.listen(o.element,'blur',function() {
-		hui.removeClass(ce,c);
+		hui.cls.remove(ce,c);
 	});
 };
+
+/**
+ * Make a widget draw attention to itself
+ * @param widget {Widget} The widget to stress
+ */
+hui.ui.stress = function(widget) {
+	var e = widget.element;
+	hui.cls.add(e,'hui_effect_wiggle');
+	window.setTimeout(function() {
+		hui.cls.remove(e,'hui_effect_wiggle');
+	},1000);
+	
+}
 
 
 /////////////////////////////// Validation /////////////////////////////
@@ -3006,8 +3527,8 @@ hui.ui.NumberValidator.prototype = {
 /////////////////////////////// Animation /////////////////////////////
 
 hui.ui.fadeIn = function(node,time) {
-	if (hui.getStyle(node,'display')=='none') {
-		hui.setStyle(node,{opacity:0,display:''});
+	if (hui.style.get(node,'display')=='none') {
+		hui.style.set(node,{opacity:0,display:''});
 	}
 	hui.animate(node,'opacity',1,time);
 };
@@ -3016,18 +3537,19 @@ hui.ui.fadeOut = function(node,time) {
 	hui.animate(node,'opacity',0,time,{hideOnComplete:true});
 };
 
+/*
 hui.ui.bounceIn = function(node) {
 	if (hui.browser.msie) {
-		hui.setStyle(node,{'display':'block',visibility:'visible'});
+		hui.style.set(node,{'display':'block',visibility:'visible'});
 	} else {
-		hui.setStyle(node,{'display':'block','opacity':0,visibility:'visible'});
+		hui.style.set(node,{'display':'block','opacity':0,visibility:'visible'});
 		hui.animate(node,'transform','scale(0.1)',0);// rotate(10deg)
 		window.setTimeout(function() {
 			hui.animate(node,'opacity',1,300);
 			hui.animate(node,'transform','scale(1)',400,{ease:hui.ease.backOut}); // rotate(0deg)
 		});
 	}
-};
+};*/
 
 //////////////////////////// Positioning /////////////////////////////
 
@@ -3035,12 +3557,12 @@ hui.ui.positionAtElement = function(element,target,options) {
 	options = options || {};
 	element = hui.get(element);
 	target = hui.get(target);
-	var origDisplay = hui.getStyle(element,'display');
+	var origDisplay = hui.style.get(element,'display');
 	if (origDisplay=='none') {
-		hui.setStyle(element,{'visibility':'hidden','display':'block'});
+		hui.style.set(element,{'visibility':'hidden','display':'block'});
 	}
-	var left = hui.getLeft(target),
-		top = hui.getTop(target);
+	var left = hui.position.getLeft(target),
+		top = hui.position.getTop(target);
 	var vert=options.vertical || null;
 	if (options.horizontal && options.horizontal=='right') {
 		left = left+target.clientWidth-element.clientWidth;
@@ -3052,9 +3574,9 @@ hui.ui.positionAtElement = function(element,target,options) {
 	}
 	left+=(options.left || 0);
 	top+=(options.top || 0);
-	hui.setStyle(element,{'left':left+'px','top':top+'px'});
+	hui.style.set(element,{'left':left+'px','top':top+'px'});
 	if (origDisplay=='none') {
-		hui.setStyle(element,{'visibility':'visible','display':'none'});
+		hui.style.set(element,{'visibility':'visible','display':'none'});
 	}
 };
 
@@ -3069,7 +3591,7 @@ hui.ui.getTextAreaHeight = function(input) {
 	if (html[html.length-1]==='\n') {
 		html+='x';
 	}
-	html = hui.escape(html).replace(/\n/g,'<br/>');
+	html = hui.string.escape(html).replace(/\n/g,'<br/>');
 	t.innerHTML = html;
 	t.style.width=(input.clientWidth)+'px';
 	return t.clientHeight;
@@ -3092,17 +3614,17 @@ hui.ui.extend = function(obj,options) {
 	hui.ui.objects[obj.name] = obj;
 	obj.delegates = [];
 	obj.listen = function(delegate) {
-		hui.addToArray(this.delegates,delegate);
+		hui.array.add(this.delegates,delegate);
 		return this;
 	}
 	obj.removeDelegate = function(delegate) {
-		hui.removeFromArray(this.delegates,delegate);
+		hui.array.remove(this.delegates,delegate);
 	}
 	obj.clearDelegates = function() {
 		this.delegates = [];
 	}
 	obj.fire = function(method,value,event) {
-		hui.ui.callDelegates(this,method,value,event);
+		return hui.ui.callDelegates(this,method,value,event);
 	}
 	obj.fireProperty = function(key,value) {
 		hui.ui.firePropertyChange(this,key,value);
@@ -3165,23 +3687,23 @@ hui.ui.callDelegates = function(obj,method,value,event) {
 	if (typeof(value)=='undefined') {
 		value=obj;
 	}
-	var result = null;
+	var result = undefined;
 	if (obj.delegates) {
 		for (var i=0; i < obj.delegates.length; i++) {
 			var delegate = obj.delegates[i];
-			var thisResult = null;
+			var thisResult = undefined;
 			if (obj.name && delegate['$'+method+'$'+obj.name]) {
 				thisResult = delegate['$'+method+'$'+obj.name](value,event);
 			} else if (delegate['$'+method]) {
 				thisResult = delegate['$'+method](value,event);
 			}
-			if (result==null && thisResult!=null && typeof(thisResult)!='undefined') {
+			if (result===undefined && thisResult!==undefined && typeof(thisResult)!='undefined') {
 				result = thisResult;
 			}
 		};
 	}
 	var superResult = hui.ui.callSuperDelegates(obj,method,value,event);
-	if (result==null && superResult!=null) {
+	if (result===undefined && superResult!==undefined) {
 		result = superResult;
 	}
 	return result;
@@ -3189,16 +3711,16 @@ hui.ui.callDelegates = function(obj,method,value,event) {
 
 hui.ui.callSuperDelegates = function(obj,method,value,event) {
 	if (typeof(value)=='undefined') value=obj;
-	var result = null;
+	var result = undefined;
 	for (var i=0; i < hui.ui.delegates.length; i++) {
 		var delegate = hui.ui.delegates[i];
-		var thisResult = null;
+		var thisResult = undefined;
 		if (obj.name && delegate['$'+method+'$'+obj.name]) {
 			thisResult = delegate['$'+method+'$'+obj.name](value,event);
 		} else if (delegate['$'+method]) {
 			thisResult = delegate['$'+method](value,event);
 		}
-		if (result==null && thisResult!=null && typeof(thisResult)!='undefined') {
+		if (result===undefined && thisResult!==undefined && typeof(thisResult)!='undefined') {
 			result = thisResult;
 		}
 	};
@@ -3285,7 +3807,7 @@ hui.ui.request = function(options) {
 	options = hui.override({method:'post',parameters:{}},options);
 	if (options.json) {
 		for (var key in options.json) {
-			options.parameters[key]=hui.toJSON(options.json[key]);
+			options.parameters[key]=hui.string.toJSON(options.json[key]);
 		}
 	}
 	var onSuccess = options.onSuccess;
@@ -3303,7 +3825,7 @@ hui.ui.request = function(options) {
 			if (!hui.request.isXMLResponse(t)) {
 				str = t.responseText.replace(/^\s+|\s+$/g, '');
 				if (str.length>0) {
-					json = hui.fromJSON(t.responseText);
+					json = hui.string.fromJSON(t.responseText);
 				} else {
 					json = '';
 				}
@@ -3316,7 +3838,7 @@ hui.ui.request = function(options) {
 		} else if (options.onJSON) {
 			str = t.responseText.replace(/^\s+|\s+$/g, '');
 			if (str.length>0) {
-				json = hui.fromJSON(t.responseText);
+				json = hui.string.fromJSON(t.responseText);
 			} else {
 				json = null;
 			}
@@ -3390,6 +3912,9 @@ hui.ui.parseSubItems = function(parent,array) {
 	};
 }
 
+/** A bundle of strings
+ * @constructor
+ */
 hui.ui.Bundle = function(strings) {
 	this.strings = strings;
 }
@@ -3417,40 +3942,75 @@ hui.ui.require = function(names,func) {
 }
 /* EOF */
 /**
- @constructor
+ * An image slideshow viewer
+ * <pre><strong>options:</strong> {
+ *  element : «Element | ID»,
+ *  name : «String»,
+ *  perimeter : «Integer»,
+ *  sizeSnap : «Integer»,
+ *  margin : «Integer»,
+ *  ease : «Function»,
+ *  easeEnd : «Function»,
+ *  easeAuto : «Function»,
+ *  easeReturn : «Function»,
+ *  transition : «Integer»,
+ *  transitionEnd : «Integer»,
+ *  transitionReturn : «Integer»
+ * }
+ * </pre>
+ * @constructor
  */
 hui.ui.ImageViewer = function(options) {
+	
 	this.options = hui.override({
-		maxWidth:800,maxHeight:600,perimeter:100,sizeSnap:100,
-		margin:0,
-		ease:hui.ease.slowFastSlow,
-		easeEnd:hui.ease.bounce,
-		easeAuto:hui.ease.slowFastSlow,
-		easeReturn:hui.ease.cubicInOut,transition:400,transitionEnd:1000,transitionReturn:300
-		},options);
+		maxWidth : 800,
+		maxHeight : 600,
+		perimeter : 100,
+		sizeSnap : 100,
+		margin : 0,
+		ease : hui.ease.slowFastSlow,
+		easeEnd : hui.ease.bounce,
+		easeAuto : hui.ease.slowFastSlow,
+		easeReturn : hui.ease.cubicInOut,
+		transition : 400,
+		transitionEnd : 1000,
+		transitionReturn : 300
+	},options);
+	
+	// Collect elements ...
 	this.element = hui.get(options.element);
 	this.box = this.options.box;
-	this.viewer = hui.firstByClass(this.element,'hui_imageviewer_viewer');
-	this.innerViewer = hui.firstByClass(this.element,'hui_imageviewer_inner_viewer');
-	this.status = hui.firstByClass(this.element,'hui_imageviewer_status');
-	this.previousControl = hui.firstByClass(this.element,'hui_imageviewer_previous');
-	this.controller = hui.firstByClass(this.element,'hui_imageviewer_controller');
-	this.nextControl = hui.firstByClass(this.element,'hui_imageviewer_next');
-	this.playControl = hui.firstByClass(this.element,'hui_imageviewer_play');
-	this.closeControl = hui.firstByClass(this.element,'hui_imageviewer_close');
-	this.text = hui.firstByClass(this.element,'hui_imageviewer_text');
+	this.viewer = hui.get.firstByClass(this.element,'hui_imageviewer_viewer');
+	this.innerViewer = hui.get.firstByClass(this.element,'hui_imageviewer_inner_viewer');
+	
+	this.status = hui.get.firstByClass(this.element,'hui_imageviewer_status');
+	
+	this.previousControl = hui.get.firstByClass(this.element,'hui_imageviewer_previous');
+	this.controller = hui.get.firstByClass(this.element,'hui_imageviewer_controller');
+	this.nextControl = hui.get.firstByClass(this.element,'hui_imageviewer_next');
+	this.playControl = hui.get.firstByClass(this.element,'hui_imageviewer_play');
+	this.closeControl = hui.get.firstByClass(this.element,'hui_imageviewer_close');
+	
+	this.text = hui.get.firstByClass(this.element,'hui_imageviewer_text');
+	
+	// State ...
 	this.dirty = false;
 	this.width = 600;
 	this.height = 460;
 	this.index = 0;
-	this.playing=false;
+	this.playing = false;
 	this.name = options.name;
 	this.images = [];
+	
+	// Behavior ...
 	this.box.listen(this);
-	this.addBehavior();
+	this._addBehavior();
 	hui.ui.extend(this);
 }
 
+/**
+ * Creates a new image viewer
+ */
 hui.ui.ImageViewer.create = function(options) {
 	options = options || {};
 	var element = options.element = hui.build('div',
@@ -3465,16 +4025,15 @@ hui.ui.ImageViewer.create = function(options) {
 		'<a class="hui_imageviewer_next"></a>'+
 		'<a class="hui_imageviewer_close"></a>'+
 		'</div></div></div>'});
-	var box = hui.ui.Box.create({absolute:true,modal:true,closable:true});
+	var box = options.box = hui.ui.Box.create({absolute:true,modal:true,closable:true});
 	box.add(element);
 	box.addToDocument();
-	options.box=box;
 	return new hui.ui.ImageViewer(options);
 }
 
 hui.ui.ImageViewer.prototype = {
-	/** @private */
-	addBehavior : function() {
+
+	_addBehavior : function() {
 		var self = this;
 		this.nextControl.onclick = function() {
 			self.next(true);
@@ -3486,11 +4045,11 @@ hui.ui.ImageViewer.prototype = {
 			self.playOrPause();
 		}
 		this.closeControl.onclick = this.hide.bind(this);
-		hui.listen(this.viewer,'click',this.zoom.bind(this));
-		this.timer = function() {
+		hui.listen(this.viewer,'click',this._zoom.bind(this));
+		this._timer = function() {
 			self.next(false);
 		}
-		this.keyListener = function(e) {
+		this._keyListener = function(e) {
 			e = hui.event(e);
 			if (e.rightKey) {
 				self.next(true);
@@ -3502,7 +4061,7 @@ hui.ui.ImageViewer.prototype = {
 				self.playOrPause();
 			}
 		},
-		hui.listen(this.viewer,'mousemove',this.mouseMoveEvent.bind(this));
+		hui.listen(this.viewer,'mousemove',this._onMouseMove.bind(this));
 		hui.listen(this.controller,'mouseover',function() {
 			self.overController = true;
 		});
@@ -3511,15 +4070,14 @@ hui.ui.ImageViewer.prototype = {
 		});
 		hui.listen(this.viewer,'mouseout',function(e) {
 			if (!hui.ui.isWithin(e,this.viewer)) {
-				self.hideController();
+				self._hideController();
 			}
 		}.bind(this));
 	},
-	/** @private */
-	mouseMoveEvent : function() {
+	_onMouseMove : function() {
 		window.clearTimeout(this.ctrlHider);
-		if (this.shouldShowController()) {
-			this.ctrlHider = window.setTimeout(this.hideController.bind(this),2000);
+		if (this._shouldShowController()) {
+			this.ctrlHider = window.setTimeout(this._hideController.bind(this),2000);
 			if (hui.browser.msie) {
 				this.controller.show();
 			} else {
@@ -3527,8 +4085,7 @@ hui.ui.ImageViewer.prototype = {
 			}
 		}
 	},
-	/** @private */
-	hideController : function() {
+	_hideController : function() {
 		if (!this.overController) {
 			if (hui.browser.msie) {
 				this.controller.hide();
@@ -3537,44 +4094,7 @@ hui.ui.ImageViewer.prototype = {
 			}
 		}
 	},
-	/** @private */
-	zoom : function(e) {
-		var img = this.images[this.index];
-		if (img.width<=this.width && img.height<=this.height) {
-			return; // Don't zoom if small
-		}
-		if (!this.zoomer) {
-			this.zoomer = hui.build('div',{
-				'class' : 'hui_imageviewer_zoomer',
-				style : 'width:'+this.viewer.clientWidth+'px;height:'+this.viewer.clientHeight+'px'
-			});
-			this.element.insertBefore(this.zoomer,hui.firstByTag(this.element,'*'));
-			hui.listen(this.zoomer,'mousemove',this.zoomMove.bind(this));
-			hui.listen(this.zoomer,'click',function() {
-				this.style.display='none';
-			});
-		}
-		this.pause();
-		var size = this.getLargestSize({width:2000,height:2000},img);
-		var url = hui.ui.resolveImageUrl(this,img,size.width,size.height);
-		this.zoomer.innerHTML = '<div style="width:'+size.width+'px;height:'+size.height+'px;"><img src="'+url+'"/></div>';
-		this.zoomer.style.display = 'block';
-		this.zoomInfo = {width:size.width,height:size.height};
-		this.zoomMove(e);
-	},
-	zoomMove : function(e) {
-		e = new hui.Event(e);
-		if (!this.zoomInfo) {
-			return;
-		}
-		var offset = {left:hui.getLeft(this.zoomer),top:hui.getTop(this.zoomer)};
-		var x = (e.getLeft()-offset.left)/this.zoomer.clientWidth*(this.zoomInfo.width-this.zoomer.clientWidth);
-		var y = (e.getTop()-offset.top)/this.zoomer.clientHeight*(this.zoomInfo.height-this.zoomer.clientHeight);
-		this.zoomer.scrollLeft = x;
-		this.zoomer.scrollTop = y;
-	},
-	/** @private */
-	getLargestSize : function(canvas,image) {
+	_getLargestSize : function(canvas,image) {
 		if (image.width<=canvas.width && image.height<=canvas.height) {
 			return {width:image.width,height:image.height};
 		} else if (canvas.width/canvas.height>image.width/image.height) {
@@ -3585,92 +4105,51 @@ hui.ui.ImageViewer.prototype = {
 			return {width:canvas.width,height:canvas.height};
 		}
 	},
-	/** @private */
-	calculateSize : function() {
+	_calculateSize : function() {
 		var snap = this.options.sizeSnap;
-		var newWidth = hui.getViewPortWidth()-this.options.perimeter;
-		newWidth = Math.floor(newWidth/snap)*snap;
-		newWidth = Math.min(newWidth,this.options.maxWidth);
-		var newHeight = hui.getViewPortHeight()-this.options.perimeter;
-		newHeight = Math.floor(newHeight/snap)*snap;
-		newHeight = Math.min(newHeight,this.options.maxHeight);
+		var newWidth = hui.window.getViewWidth() - this.options.perimeter;
+		newWidth = Math.floor(newWidth / snap) * snap;
+		newWidth = Math.min(newWidth , this.options.maxWidth);
+		var newHeight = hui.window.getViewHeight() - this.options.perimeter;
+		newHeight = Math.floor(newHeight / snap) * snap;
+		newHeight = Math.min(newHeight , this.options.maxHeight);
 		var maxWidth = 0;
 		var maxHeight = 0;
 		for (var i=0; i < this.images.length; i++) {
-			var dims = this.getLargestSize({width:newWidth,height:newHeight},this.images[i]);
-			maxWidth = Math.max(maxWidth,dims.width);
-			maxHeight = Math.max(maxHeight,dims.height);
+			var dims = this._getLargestSize({ width : newWidth, height : newHeight}, this.images[i] );
+			maxWidth = Math.max(maxWidth , dims.width);
+			maxHeight = Math.max(maxHeight , dims.height);
 		};
-		newHeight = Math.floor(Math.min(newHeight,maxHeight));
-		newWidth = Math.floor(Math.min(newWidth,maxWidth));
+		newHeight = Math.floor( Math.min(newHeight , maxHeight) );
+		newWidth = Math.floor( Math.min(newWidth , maxWidth) );
 		
-		if (newWidth!=this.width || newHeight!=this.height) {
+		if (newWidth != this.width || newHeight != this.height) {
 			this.width = newWidth;
 			this.height = newHeight;
 			this.dirty = true;
 		}
 	},
-	adjustSize : function() {
-		
-	},
-	showById: function(id) {
-		for (var i=0; i < this.images.length; i++) {
-			if (this.images[i].id==id) {
-				this.show(i);
-				break;
-			}
-		};
-	},
-	show: function(index) {
-		this.index = index || 0;
-		this.calculateSize();
-		this.updateUI();
-		var margin = this.options.margin;
-		hui.setStyle(this.element, {width:(this.width+margin)+'px',height:(this.height+margin*2-1)+'px'});
-		hui.setStyle(this.viewer, {width:(this.width+margin)+'px',height:(this.height-1)+'px'});
-		hui.setStyle(this.innerViewer, {width:((this.width+margin)*this.images.length)+'px',height:(this.height-1)+'px'});
-		hui.setStyle(this.controller, {marginLeft:((this.width-180)/2+margin*0.5)+'px',display:'none'});
-		this.box.show();
-		this.goToImage(false,0,false);
-		hui.listen(document,'keydown',this.keyListener);
-	},
-	hide: function(index) {
-		this.pause();
-		this.box.hide();
-		hui.unListen(document,'keydown',this.keyListener);
-	},
-	/** @private */
-	$boxCurtainWasClicked : function() {
-		this.hide();
-	},
-	/** @private */
-	$boxWasClosed : function() {
-		this.hide();
-	},
-	/** @private */
-	updateUI : function() {
+	_updateUI : function() {
 		if (this.dirty) {
 			this.innerViewer.innerHTML='';
 			for (var i=0; i < this.images.length; i++) {
 				var element = hui.build('div',{'class':'hui_imageviewer_image'});
-				hui.setStyle(element,{'width':(this.width+this.options.margin)+'px','height':(this.height-1)+'px'});
+				hui.style.set(element,{width: (this.width + this.options.margin) + 'px',height : (this.height-1)+'px' });
 				this.innerViewer.appendChild(element);
 			};
-			if (this.shouldShowController()) {
+			if (this._shouldShowController()) {
 				this.controller.style.display='block';
 			} else {
 				this.controller.style.display='none';
 			}
 			this.dirty = false;
-			this.preload();
+			this._preload();
 		}
 	},
-	/** @private */
-	shouldShowController : function() {
+	_shouldShowController : function() {
 		return this.images.length>1;
 	},
-	/** @private */
-	goToImage : function(animate,num,user) {	
+	_goToImage : function(animate,num,user) {	
 		if (animate) {
 			if (num>1) {
 				hui.animate(this.viewer,'scrollLeft',this.index*(this.width+this.options.margin),Math.min(num*this.options.transitionReturn,2000),{ease:this.options.easeReturn});				
@@ -3683,44 +4162,112 @@ hui.ui.ImageViewer.prototype = {
 				hui.animate(this.viewer,'scrollLeft',this.index*(this.width+this.options.margin),(end ? this.options.transitionEnd : this.options.transition),{ease:ease});
 			}
 		} else {
-			this.viewer.scrollLeft=this.index*(this.width+this.options.margin);
+			this.viewer.scrollLeft = this.index*(this.width+this.options.margin);
 		}
 		var text = this.images[this.index].text;
 		if (text) {
-			this.text.innerHTML=text;
-			this.text.style.display='block';
+			this.text.innerHTML = text;
+			this.text.style.display = 'block';
 		} else {
-			this.text.innerHTML='';
-			this.text.style.display='none';
+			this.text.innerHTML = '';
+			this.text.style.display = 'none';
 		}
 	},
+	
+	// Show / hide ...
+
+	/** Show the image viewer starting at the image with a certain id. Will not show if image is not found
+	 * @param {Integer} id The id if the image to start with
+	 */
+	showById: function(id) {
+		for (var i=0; i < this.images.length; i++) {
+			if (this.images[i].id==id) {
+				this.show(i);
+				break;
+			}
+		};
+	},
+	/** Show the image viewer
+	 * @param {Integer} index? Optional index to start from (zero-based)
+	 */
+	show: function(index) {
+		this.index = index || 0;
+		this._calculateSize();
+		this._updateUI();
+		var margin = this.options.margin;
+		hui.style.set(this.element, {width:(this.width+margin)+'px',height:(this.height+margin*2-1)+'px'});
+		hui.style.set(this.viewer, {width:(this.width+margin)+'px',height:(this.height-1)+'px'});
+		hui.style.set(this.innerViewer, {width:((this.width+margin)*this.images.length)+'px',height:(this.height-1)+'px'});
+		hui.style.set(this.controller, {marginLeft:((this.width-180)/2+margin*0.5)+'px',display:'none'});
+		this.box.show();
+		this._goToImage(false,0,false);
+		hui.listen(document,'keydown',this._keyListener);
+	},
+	/** Hide the image viewer */
+	hide: function() {
+		this.pause();
+		this.box.hide();
+		hui.unListen(document,'keydown',this._keyListener);
+	},
+
+
+	// Listeners ...
+
+	/** @private */
+	$boxCurtainWasClicked : function() {
+		this.hide();
+	},
+	/** @private */
+	$boxWasClosed : function() {
+		this.hide();
+	},
+	
+	
+	// Data handling ...
+	
+	/** Clear all images in the stack */
 	clearImages : function() {
 		this.images = [];
 		this.dirty = true;
 	},
+	/**
+	 * Add multiple images to the stack
+	 * @param {Array} images An array of image objects
+	 */
 	addImages : function(images) {
 		for (var i=0; i < images.length; i++) {
 			this.addImage(images[i]);
 		};
 	},
+	/**
+	 * Add an image to the stack
+	 * @param {Object} img An image object representing an image
+	 */
 	addImage : function(img) {
 		this.images.push(img);
 		this.dirty = true;
 	},
+	
+	
+	// Playback...
+	
+	/** Start playing slideshow */
 	play : function() {
 		if (!this.interval) {
-			this.interval = window.setInterval(this.timer,6000);
+			this.interval = window.setInterval(this._timer,6000);
 		}
 		this.next(false);
 		this.playing=true;
 		this.playControl.className='hui_imageviewer_pause';
 	},
+	/** Pauseslideshow */
 	pause : function() {
 		window.clearInterval(this.interval);
 		this.interval = null;
 		this.playControl.className='hui_imageviewer_play';
 		this.playing = false;
 	},
+	/** Start or pause slideshow */
 	playOrPause : function() {
 		if (this.playing) {
 			this.pause();
@@ -3728,12 +4275,15 @@ hui.ui.ImageViewer.prototype = {
 			this.play();
 		}
 	},
-	resetPlay : function() {
+	_resetPlay : function() {
 		if (this.playing) {
 			window.clearInterval(this.interval);
-			this.interval = window.setInterval(this.timer,6000);
+			this.interval = window.setInterval(this._timer,6000);
 		}
 	},
+	/** Go to the previous image
+	 * @param {Boolean} user If it is initiated by the user
+	 */
 	previous : function(user) {
 		var num = 1;
 		this.index--;
@@ -3741,9 +4291,12 @@ hui.ui.ImageViewer.prototype = {
 			this.index=this.images.length-1;
 			num = this.images.length-1;
 		}
-		this.goToImage(true,num,user);
-		this.resetPlay();
+		this._goToImage(true,num,user);
+		this._resetPlay();
 	},
+	/** Go to the next image
+	 * @param {Boolean} user If it is initiated by the user
+ 	 */
 	next : function(user) {
 		var num = 1;
 		this.index++;
@@ -3751,19 +4304,25 @@ hui.ui.ImageViewer.prototype = {
 			this.index=0;
 			num = this.images.length-1;
 		}
-		this.goToImage(true,num,user);
-		this.resetPlay();
+		this._goToImage(true,num,user);
+		this._resetPlay();
 	},
-	/** @private */
-	preload : function() {
+	
+	
+	
+	
+	
+	
+	// Preloading ...
+	
+	_preload : function() {
 		var guiLoader = new hui.Preloader();
 		guiLoader.addImages(hui.ui.context+'hui/gfx/imageviewer_controls.png');
 		var self = this;
-		guiLoader.setDelegate({allImagesDidLoad:function() {self.preloadImages()}});
+		guiLoader.setDelegate({allImagesDidLoad:function() {self._preloadImages()}});
 		guiLoader.load();
 	},
-	/** @private */
-	preloadImages : function() {
+	_preloadImages : function() {
 		var loader = new hui.Preloader();
 		loader.setDelegate(this);
 		for (var i=0; i < this.images.length; i++) {
@@ -3773,12 +4332,12 @@ hui.ui.ImageViewer.prototype = {
 			}
 		};
 		this.status.innerHTML = '0%';
-		this.status.style.display='';
+		this.status.style.display = '';
 		loader.load(this.index);
 	},
 	/** @private */
 	allImagesDidLoad : function() {
-		this.status.style.display='none';
+		this.status.style.display = 'none';
 	},
 	/** @private */
 	imageDidLoad : function(loaded,total,index) {
@@ -3786,17 +4345,59 @@ hui.ui.ImageViewer.prototype = {
 		var url = hui.ui.resolveImageUrl(this,this.images[index],this.width,this.height);
 		url = url.replace(/&amp;/g,'&');
 		this.innerViewer.childNodes[index].style.backgroundImage="url('"+url+"')";
-		hui.setClass(this.innerViewer.childNodes[index],'hui_imageviewer_image_abort',false);
-		hui.setClass(this.innerViewer.childNodes[index],'hui_imageviewer_image_error',false);
+		hui.cls.set(this.innerViewer.childNodes[index],'hui_imageviewer_image_abort',false);
+		hui.cls.set(this.innerViewer.childNodes[index],'hui_imageviewer_image_error',false);
 	},
 	/** @private */
 	imageDidGiveError : function(loaded,total,index) {
-		hui.setClass(this.innerViewer.childNodes[index],'hui_imageviewer_image_error',true);
+		hui.cls.set(this.innerViewer.childNodes[index],'hui_imageviewer_image_error',true);
 	},
 	/** @private */
 	imageDidAbort : function(loaded,total,index) {
-		hui.setClass(this.innerViewer.childNodes[index],'hui_imageviewer_image_abort',true);
+		hui.cls.set(this.innerViewer.childNodes[index],'hui_imageviewer_image_abort',true);
+	},
+	
+	
+	
+	
+	// Zooming ...
+
+	_zoom : function(e) {
+		var img = this.images[this.index];
+		if (img.width<=this.width && img.height<=this.height) {
+			return; // Don't zoom if small
+		}
+		if (!this.zoomer) {
+			this.zoomer = hui.build('div',{
+				'class' : 'hui_imageviewer_zoomer',
+				style : 'width:'+this.viewer.clientWidth+'px;height:'+this.viewer.clientHeight+'px'
+			});
+			this.element.insertBefore(this.zoomer,hui.get.firstByTag(this.element,'*'));
+			hui.listen(this.zoomer,'mousemove',this._onZoomMove.bind(this));
+			hui.listen(this.zoomer,'click',function() {
+				this.style.display='none';
+			});
+		}
+		this.pause();
+		var size = this._getLargestSize({width:2000,height:2000},img);
+		var url = hui.ui.resolveImageUrl(this,img,size.width,size.height);
+		this.zoomer.innerHTML = '<div style="width:'+size.width+'px;height:'+size.height+'px;"><img src="'+url+'"/></div>';
+		this.zoomer.style.display = 'block';
+		this.zoomInfo = {width:size.width,height:size.height};
+		this._onZoomMove(e);
+	},
+	_onZoomMove : function(e) {
+		e = new hui.Event(e);
+		if (!this.zoomInfo) {
+			return;
+		}
+		var offset = {left:hui.position.getLeft(this.zoomer),top:hui.position.getTop(this.zoomer)};
+		var x = (e.getLeft()-offset.left)/this.zoomer.clientWidth*(this.zoomInfo.width-this.zoomer.clientWidth);
+		var y = (e.getTop()-offset.top)/this.zoomer.clientHeight*(this.zoomInfo.height-this.zoomer.clientHeight);
+		this.zoomer.scrollLeft = x;
+		this.zoomer.scrollTop = y;
 	}
+	
 }
 
 /* EOF *//**
@@ -3807,8 +4408,8 @@ hui.ui.Box = function(options) {
 	this.options = hui.override({},options);
 	this.name = options.name;
 	this.element = hui.get(options.element);
-	this.body = hui.firstByClass(this.element,'hui_box_body');
-	this.close = hui.firstByClass(this.element,'hui_box_close');
+	this.body = hui.get.firstByClass(this.element,'hui_box_body');
+	this.close = hui.get.firstByClass(this.element,'hui_box_close');
 	this.visible = !this.options.absolute;
 	if (this.close) {
 		hui.listen(this.close,'click',function(e) {
@@ -3831,7 +4432,7 @@ hui.ui.Box.create = function(options) {
 		html : (options.closable ? '<a class="hui_box_close" href="#"></a>' : '')+
 			'<div class="hui_box_top"><div><div></div></div></div>'+
 			'<div class="hui_box_middle"><div class="hui_box_middle">'+
-			(options.title ? '<div class="hui_box_header"><strong class="hui_box_title">'+hui.escape(options.title)+'</strong></div>' : '')+
+			(options.title ? '<div class="hui_box_header"><strong class="hui_box_title">'+hui.string.escape(options.title)+'</strong></div>' : '')+
 			'<div class="hui_box_body" style="'+
 			(options.padding ? 'padding: '+options.padding+'px;' : '')+
 			(options.width ? 'width: '+options.width+'px;' : '')+
@@ -3871,11 +4472,11 @@ hui.ui.Box.prototype = {
 			hui.ui.showCurtain({widget:this,zIndex:index});
 		}
 		if (this.options.absolute) {
-			hui.setStyle(e,{display:'block',visibility:'hidden'});
+			hui.style.set(e,{display:'block',visibility:'hidden'});
 			var w = e.clientWidth;
-			var top = (hui.getViewPortHeight()-e.clientHeight)/2+hui.getScrollTop();
-			hui.setStyle(e,{'marginLeft':(w/-2)+'px',top:top+'px'});
-			hui.setStyle(e,{display:'block',visibility:'visible'});
+			var top = (hui.window.getViewHeight()-e.clientHeight)/2+hui.window.getScrollTop();
+			hui.style.set(e,{'marginLeft':(w/-2)+'px',top:top+'px'});
+			hui.style.set(e,{display:'block',visibility:'visible'});
 		} else {
 			e.style.display='block';
 		}
@@ -3887,8 +4488,8 @@ hui.ui.Box.prototype = {
 		if (this.options.absolute && this.visible) {
 			var e = this.element;
 			var w = e.clientWidth;
-			var top = (hui.getViewPortHeight()-e.clientHeight)/2+hui.getScrollTop();
-			hui.setStyle(e,{'marginLeft':(w/-2)+'px',top:top+'px'});
+			var top = (hui.window.getViewHeight()-e.clientHeight)/2+hui.window.getScrollTop();
+			hui.style.set(e,{'marginLeft':(w/-2)+'px',top:top+'px'});
 		}
 	},
 	/**
@@ -3909,11 +4510,11 @@ hui.ui.SearchField = function(options) {
 	this.options = hui.override({expandedWidth:null},options);
 	this.element = hui.get(options.element);
 	this.name = options.name;
-	this.field = hui.firstByTag(this.element,'input');
+	this.field = hui.get.firstByTag(this.element,'input');
 	this.value = this.field.value;
-	this.adaptive = hui.hasClass(this.element,'hui_searchfield_adaptive');
+	this.adaptive = hui.cls.has(this.element,'hui_searchfield_adaptive');
 	hui.ui.onReady(function() {
-		this.initialWidth = parseInt(hui.getStyle(this.element,'width'))
+		this.initialWidth = parseInt(hui.style.get(this.element,'width'))
 	}.bind(this));
 	hui.ui.extend(this);
 	this.addBehavior();
@@ -3935,16 +4536,16 @@ hui.ui.SearchField.prototype = {
 	addBehavior : function() {
 		var self = this;
 		hui.listen(this.field,'keyup',this.onKeyUp.bind(this));
-		var reset = hui.firstByTag(this.element,'a');
+		var reset = hui.get.firstByTag(this.element,'a');
 		reset.tabIndex=-1;
 		if (!hui.browser.ipad) {
 			var focus = function() {self.field.focus();self.field.select()};
 			hui.listen(this.element,'mousedown',focus);
 			hui.listen(this.element,'mouseup',focus);
-			hui.listen(hui.firstByTag(this.element,'em'),'mousedown',focus);
+			hui.listen(hui.get.firstByTag(this.element,'em'),'mousedown',focus);
 		} else {
 			var focus = function() {self.field.focus();};
-			hui.listen(hui.firstByTag(this.element,'em'),'click',focus);
+			hui.listen(hui.get.firstByTag(this.element,'em'),'click',focus);
 		}
 		hui.listen(reset,'mousedown',function(e) {
 			hui.stop(e);

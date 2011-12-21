@@ -154,11 +154,11 @@ hui.ui.MarkupEditor.prototype = {
 	},
 	_highlightNode : function(node) {
 		if (this._highlightedNode) {
-			hui.removeClass(this._highlightedNode,'hui_markupeditor_highlighted');
+			hui.cls.remove(this._highlightedNode,'hui_markupeditor_highlighted');
 		}
 		this._highlightedNode = node;
 		if (node) {
-			hui.addClass(node,'hui_markupeditor_highlighted');
+			hui.cls.add(node,'hui_markupeditor_highlighted');
 		}
 	},
 	_showLinkEditor : function() {
@@ -220,7 +220,7 @@ hui.ui.MarkupEditor.prototype = {
 	}
 }
 
-/** @private */
+/** @namespace */
 hui.ui.MarkupEditor.webkit = {
 	initialize : function(options) {
 		this.element = options.element;
@@ -298,7 +298,7 @@ hui.ui.MarkupEditor.webkit = {
 			range.surroundContents(node);
 			selection.selectAllChildren(node);
 		}
-		//document.execCommand('inserthtml',null,'<'+tag+'>'+hui.escape(hui.selection.getText())+'</'+tag+'>');
+		//document.execCommand('inserthtml',null,'<'+tag+'>'+hui.string.escape(hui.selection.getText())+'</'+tag+'>');
 	},
 	_getInlineTag : function() {
 		var selection = window.getSelection();
@@ -334,7 +334,7 @@ hui.ui.MarkupEditor.webkit = {
 	}
 }
 
-/** @private */
+/** @namespace */
 hui.ui.MarkupEditor.MSIE = {
 	initialize : function(options) {
 		this.element = options.element;
@@ -354,7 +354,7 @@ hui.ui.MarkupEditor.MSIE = {
 		}.bind(this));
 	},
 	_load : function() {
-		this.document = hui.getFrameDocument(this.iframe);
+		this.document = hui.frame.getDocument(this.iframe);
 		this.body = this.document.body;
 		this.body.contentEditable = true;
 		hui.listen(this.body,'keyup',this._keyUp.bind(this));
@@ -393,7 +393,7 @@ hui.ui.MarkupEditor.MSIE = {
 		this.restoreSelection();
 	},
 	_wrapInTag : function(tag) {
-		document.execCommand('inserthtml',null,'<'+tag+'>'+hui.escape(hui.selection.getText())+'</'+tag+'>');
+		document.execCommand('inserthtml',null,'<'+tag+'>'+hui.string.escape(hui.selection.getText())+'</'+tag+'>');
 	},
 	_insertHTML : function(html) {
 		document.execCommand('inserthtml',null,html);
@@ -407,13 +407,13 @@ hui.ui.MarkupEditor.MSIE = {
 	}
 }
 
-/** @private */
+/** @namespace */
 hui.ui.MarkupEditor.util = {
 	clean : function(node) {
 		var copy = node.cloneNode(true);
 		this.replaceNodes(copy,{b:'strong',i:'em',font:'span'});
 
-		var apples = hui.byClass(copy,'Apple-style-span');
+		var apples = hui.get.byClass(copy,'Apple-style-span');
 		for (var i = apples.length - 1; i >= 0; i--){
 			apples[i].removeAttribute('class');
 		};

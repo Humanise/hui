@@ -8,8 +8,8 @@ hui.ui.BoundPanel = function(options) {
 	this.element = hui.get(options.element);
 	this.name = options.name;
 	this.visible = false;
-	this.content = hui.firstByClass(this.element,'hui_boundpanel_content');
-	this.arrow = hui.firstByClass(this.element,'hui_boundpanel_arrow');
+	this.content = hui.get.firstByClass(this.element,'hui_boundpanel_content');
+	this.arrow = hui.get.firstByClass(this.element,'hui_boundpanel_arrow');
 	this.arrowWide = 32;
 	this.arrowNarrow = 18;
 	if (options.variant=='light') {
@@ -55,6 +55,7 @@ hui.ui.BoundPanel.create = function(options) {
 /********************************* Public methods ***********************************/
 
 hui.ui.BoundPanel.prototype = {
+	/** Show or hide the panel */
 	toggle : function() {
 		if (!this.visible) {
 			this.show();
@@ -71,7 +72,7 @@ hui.ui.BoundPanel.prototype = {
 			this.position(hui.ui.get(this.options.target));
 		}
 		if (hui.browser.opacity) {
-			hui.setOpacity(this.element,0);
+			hui.style.setOpacity(this.element,0);
 		}
 		var vert;
 		if (this.relativePosition=='left') {
@@ -87,7 +88,7 @@ hui.ui.BoundPanel.prototype = {
 			vert = true;
 			this.element.style.marginTop='-30px';
 		}
-		hui.setStyle(this.element,{
+		hui.style.set(this.element,{
 			visibility : 'hidden', display : 'block'
 		})
 		this.element.style.visibility = 'visible';
@@ -104,6 +105,7 @@ hui.ui.BoundPanel.prototype = {
 			hui.ui.showCurtain({widget:this,zIndex:index-1,color:'auto'});
 		}
 	},
+	/** @private */
 	$curtainWasClicked : function() {
 		hui.ui.hideCurtain(this);
 		this.hide();
@@ -163,14 +165,14 @@ hui.ui.BoundPanel.prototype = {
 			node = node.getElement();
 		}
 		node = hui.get(node);
-		var nodeOffset = {left:hui.getLeft(node),top:hui.getTop(node)};
-		var nodeScrollOffset = hui.getScrollOffset(node);
-		var windowScrollOffset = {left:hui.getScrollLeft(),top:hui.getScrollTop()};
+		var nodeOffset = {left:hui.position.getLeft(node),top:hui.position.getTop(node)};
+		var nodeScrollOffset = hui.position.getScrollOffset(node);
+		var windowScrollOffset = {left:hui.window.getScrollLeft(),top:hui.window.getScrollTop()};
 				
 		var panelDimensions = this.getDimensions();
-		var viewportWidth = hui.getViewPortWidth();
-		var viewportHeight = hui.getViewPortHeight();
-		var nodeLeft = nodeOffset.left-windowScrollOffset.left+hui.getScrollLeft();
+		var viewportWidth = hui.window.getViewWidth();
+		var viewportHeight = hui.window.getViewHeight();
+		var nodeLeft = nodeOffset.left-windowScrollOffset.left+hui.window.getScrollLeft();
 		var nodeWidth = node.clientWidth || node.offsetWidth;
 		var nodeHeight = node.clientHeight || node.offsetHeight;
 		var arrowLeft, arrowTop, left, top;
@@ -180,10 +182,10 @@ hui.ui.BoundPanel.prototype = {
 		var vertical = (nodeOffset.top-windowScrollOffset.top+nodeScrollOffset.top)/viewportHeight;
 		vertical = positionOnScreen.top / viewportHeight;
 		hui.log(vertical)
-		hui.log(hui.toJSON({
+		hui.log(hui.string.toJSON({
 			nodeOffset : nodeOffset
 		}))
-		hui.log(hui.toJSON({
+		hui.log(hui.string.toJSON({
 			nodeScrollOffset : nodeScrollOffset,
 			windowScrollOffset : windowScrollOffset
 		}))

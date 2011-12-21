@@ -35,7 +35,7 @@ hui.ui.Checkboxes.create = function(o) {
 hui.ui.Checkboxes.prototype = {
 	/** @private */
 	addBehavior : function() {
-		var checks = hui.byClass(this.element,'hui_checkbox');
+		var checks = hui.get.byClass(this.element,'hui_checkbox');
 		hui.each(checks,function(check,i) {
 			hui.listen(check,'click',function(e) {
 				hui.stop(e);
@@ -78,7 +78,7 @@ hui.ui.Checkboxes.prototype = {
 		this.setValue(values);
 	},
 	flipValue : function(value) {
-		hui.flipInArray(this.values,value);
+		hui.array.flip(this.values,value);
 		this.checkValues();
 		this.updateUI();
 		this.fire('valueChanged',this.values);
@@ -89,11 +89,11 @@ hui.ui.Checkboxes.prototype = {
 		for (i=0; i < this.subItems.length; i++) {
 			this.subItems[i].updateUI();
 		};
-		var nodes = hui.byClass(this.element,'hui_checkbox');
+		var nodes = hui.get.byClass(this.element,'hui_checkbox');
 		for (i=0; i < this.items.length; i++) {
 			item = this.items[i];
-			found = hui.inArray(this.values,item.value);
-			hui.setClass(nodes[i],'hui_checkbox_selected',found);
+			found = hui.array.contains(this.values,item.value);
+			hui.cls.set(nodes[i],'hui_checkbox_selected',found);
 		};
 	},
 	refresh : function() {
@@ -125,7 +125,7 @@ hui.ui.Checkboxes.prototype = {
 	},
 	$itemsLoaded : function(items) {
 		hui.each(items,function(item) {
-			var node = hui.build('a',{'class':'hui_checkbox',href:'javascript:void(0);',html:'<span><span></span></span>'+hui.escape(item.title)});
+			var node = hui.build('a',{'class':'hui_checkbox',href:'javascript:void(0);',html:'<span><span></span></span>'+hui.string.escape(item.title)});
 			hui.listen(node,'click',function(e) {
 				hui.stop(e);
 				this.flipValue(item.value);
@@ -189,8 +189,8 @@ hui.ui.Checkboxes.Items.prototype = {
 		try {
 		for (var i=0; i < this.checkboxes.length; i++) {
 			var item = this.checkboxes[i];
-			var index = hui.indexInArray(this.parent.values,item.value);
-			hui.setClass(item.element,'hui_checkbox_selected',index!=-1);
+			var index = hui.array.indexOf(this.parent.values,item.value);
+			hui.cls.set(item.element,'hui_checkbox_selected',index!=-1);
 		};
 		} catch (e) {
 			alert(typeof(this.parent.values));

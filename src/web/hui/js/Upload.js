@@ -22,9 +22,9 @@ hui.ui.Upload = function(options) {
 		chooseButton : 'Choose files...'
 	},options);
 	this.element = hui.get(options.element);
-	this.itemContainer = hui.firstByClass(this.element,'hui_upload_items');
-	this.status = hui.firstByClass(this.element,'hui_upload_status');
-	this.placeholder = hui.firstByClass(this.element,'hui_upload_placeholder');
+	this.itemContainer = hui.get.firstByClass(this.element,'hui_upload_items');
+	this.status = hui.get.firstByClass(this.element,'hui_upload_status');
+	this.placeholder = hui.get.firstByClass(this.element,'hui_upload_placeholder');
 	this.name = options.name;
 	this.items = [];
 	this.busy = false;
@@ -45,8 +45,8 @@ hui.ui.Upload.create = function(options) {
 		html : '<div class="hui_upload_items"></div>'+
 		'<div class="hui_upload_status"></div>'+
 		(options.placeholder ? '<div class="hui_upload_placeholder"><span class="hui_upload_icon"></span>'+
-			(options.placeholder.title ? '<h2>'+hui.escape(options.placeholder.title)+'</h2>' : '')+
-			(options.placeholder.text ? '<p>'+hui.escape(options.placeholder.text)+'</p>' : '')+
+			(options.placeholder.title ? '<h2>'+hui.string.escape(options.placeholder.title)+'</h2>' : '')+
+			(options.placeholder.text ? '<p>'+hui.string.escape(options.placeholder.text)+'</p>' : '')+
 		'</div>' : '')
 	});
 	return new hui.ui.Upload(options);
@@ -64,7 +64,6 @@ hui.ui.Upload.prototype = {
 		this.impl.setParameter(name,value);
 	},
 	
-	/** @public */
 	clear : function() {
 		for (var i=0; i < this.items.length; i++) {
 			if (this.items[i]) {
@@ -147,7 +146,7 @@ hui.ui.Upload.prototype = {
 			} else {
 				hui.log('No files...');
 				hui.log(e.dataTransfer.types)
-				if (hui.inArray(e.dataTransfer.types,'image/tiff')) {
+				if (hui.array.contains(e.dataTransfer.types,'image/tiff')) {
 					hui.log(e.dataTransfer.getData('image/tiff'))
 				}
 				hui.log(e.dataTransfer.getData('text/plain'))
@@ -201,6 +200,7 @@ hui.ui.Upload.prototype = {
 
 	/////////////////////// Implementation ///////////////////////////
 	
+	/** @private */
 	$_addItem : function(info) {
 		if (!this.busy) {
 			this.fire('uploadDidStartQueue');
@@ -210,8 +210,9 @@ hui.ui.Upload.prototype = {
 		}
 		return this._addItem(info);
 	},
+	/** @private */
 	$_itemSuccess : function(item) {
-		var first = hui.firstByClass(this.itemContainer,'hui_upload_item_success');
+		var first = hui.get.firstByClass(this.itemContainer,'hui_upload_item_success');
 		item.setProgress(1);
 		item.setSuccess();
 		this.fire('uploadDidComplete',item.getInfo());
@@ -235,6 +236,7 @@ hui.ui.Upload.prototype = {
 
 		
 	},
+	/** @private */
 	$_itemFail : function(item) {
 		item.setError('Upload af filen fejlede!');
 		this.fire('uploadDidFail',item.getInfo());
@@ -252,6 +254,7 @@ hui.ui.Upload.prototype = {
 		}
 	},*/
 	
+	/** @private */
 	$_getButtonContainer : function() {
 		var buttonContainer = hui.build('span',{'class':'hui_upload_button'});
 		if (this.options.widget) {
@@ -299,7 +302,7 @@ hui.ui.Upload.prototype = {
 		var rearrange = index>4;
 		var item = new hui.ui.Upload.Item(file,rearrange);
 		this.items[index] = item;
-		var first = hui.firstByClass(this.itemContainer,'hui_upload_item_success');
+		var first = hui.get.firstByClass(this.itemContainer,'hui_upload_item_success');
 		if (first) {
 			this.itemContainer.insertBefore(item.element,first);
 		} else {
@@ -318,6 +321,10 @@ hui.ui.Upload.prototype = {
 
 /////////////////// Item ///////////////////
 
+/**
+ * @class
+ * @constructor
+ */
 hui.ui.Upload.Item = function(info,rearrange) {
 	this.data = info;
 	this.rearrange = rearrange;
@@ -345,7 +352,7 @@ hui.ui.Upload.Item.prototype = {
 	},
 	setError : function(error) {
 		this._setStatus(error || 'Fejl');
-		hui.addClass(this.element,'hui_upload_item_error');
+		hui.cls.add(this.element,'hui_upload_item_error');
 		this.progress.hide();
 		this.progress.setValue(0);
 		this.finished = true;
@@ -354,7 +361,7 @@ hui.ui.Upload.Item.prototype = {
 		this._setStatus('Færdig');
 		this.progress.setValue(1);
 		this.finished = true;
-		hui.addClass(this.element,'hui_upload_item_success');
+		hui.cls.add(this.element,'hui_upload_item_success');
 	},
 	updateProgress : function(complete,total) {
 		this.setProgress(complete/total);
@@ -422,6 +429,10 @@ hui.ui.Upload._buildForm = function(widget) {
 
 /////////////////////// Frame //////////////////////////
 
+/**
+ * @class
+ * @constructor
+ */
 hui.ui.Upload.Frame = function(parent) {
 	this.parent = parent;
 }
@@ -470,6 +481,14 @@ hui.ui.Upload.Frame.prototype = {
 			}.bind(this));
 		}
 	},
+	_rebuildFileInput : function() {
+		var options = this.parent.options;
+		var old = this.fileInput;
+		this.fileInput = hui.build('input',{'type':'file','name':options.fieldName});
+		hui.listen(this.fileInput,'change',this._onSubmit.bind(this));
+		hui.dom.replaceNode(old,this.fileInput);
+		hui.log('Frame: input replaced');
+	},
 	_getFileName : function() {
 		return this.fileInput.value.split('\\').pop();
 	},
@@ -480,7 +499,7 @@ hui.ui.Upload.Frame.prototype = {
 		this.form.submit();
 		this.item = this.parent.$_addItem({name:this._getFileName()});
 		this.item.setWaiting();
-		
+		this._rebuildFileInput();
 		hui.log('Frame: Upload started');
 	},
 	
@@ -506,7 +525,7 @@ hui.ui.Upload.Frame.prototype = {
 		this.form.reset();
 	},
 	_isSuccessResponse : function() {
-		var doc = hui.getFrameDocument(this.iframe);
+		var doc = hui.frame.getDocument(this.iframe);
 		return doc.body.innerHTML.indexOf('SUCCESS')!==-1;
 	}
 }
@@ -524,6 +543,10 @@ hui.ui.Upload.Frame.prototype = {
 
 /////////////////////// Flash //////////////////////////
 
+/**
+ * @class
+ * @constructor
+ */
 hui.ui.Upload.Flash = function(parent) {
 	this.parent = parent;
 	
@@ -573,10 +596,10 @@ hui.ui.Upload.Flash.prototype = {
 			file_types : options.types,
 			debug : !true,
 			post_params : options.parameters,
-			/*button_placeholder_id : 'x',
+			button_placeholder_id : 'x',
 			button_placeholder : placeholder,
 			button_width : '100%',
-			button_height : 30,*/
+			button_height : 30,
 
 			swfupload_loaded_handler : this._onFlashLoaded.bind(this),
 			file_queued_handler : this._onFileQueued.bind(this),
@@ -614,7 +637,7 @@ hui.ui.Upload.Flash.prototype = {
 		this.items.push(item);
 	},
 	_onFileQueueError : function(file, error, message) {
-		hui.log('Flash: fileQueueError file:'+hui.toJSON(file)+', error:'+error+', message:'+message);
+		hui.log('Flash: fileQueueError file:'+hui.string.toJSON(file)+', error:'+error+', message:'+message);
 		if (file!==null) {
 			var item = this.parent.$_addItem({name:file.name,size:file.size});
 			this.items.push(item);
@@ -691,6 +714,10 @@ hui.ui.Upload.Flash.prototype = {
 //////////////////// HTML5 //////////////////////
 
 
+/**
+ * @class
+ * @constructor
+ */
 hui.ui.Upload.HTML5 = function(parent) {
 	this.parent = parent;
 }

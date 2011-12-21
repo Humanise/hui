@@ -7,7 +7,7 @@ hui.ui.Bar = function(options) {
 	this.name = options.name;
 	this.element = hui.get(options.element);
 	this.visible = this.element.style.display=='none' ? false : null;
-	this.body = hui.firstByClass(this.element,'hui_bar_body');
+	this.body = hui.get.firstByClass(this.element,'hui_bar_body');
 	hui.ui.extend(this);
 };
 
@@ -41,7 +41,7 @@ hui.ui.Bar.prototype = {
 		if (widgetOrElement.getElement) {
 			widgetOrElement = widgetOrElement.getElement();
 		}
-		hui.place({
+		hui.position.place({
 			source:{element:this.element,vertical:1,horizontal:0},
 			target:{element:widgetOrElement,vertical:0,horizontal:0}
 		});
@@ -115,7 +115,7 @@ hui.ui.Bar.Button.prototype = {
 		}
 	},
 	setSelected : function(highlighted) {
-		hui.setClass(this.element,'hui_bar_button_selected',highlighted);
+		hui.cls.set(this.element,'hui_bar_button_selected',highlighted);
 	}
 }
 

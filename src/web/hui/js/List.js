@@ -1,25 +1,27 @@
 /**
- * <p><strong>Events:</strong></p>
- * <ul>
- * <li>listRowWasOpened - When a row is double clicked (rename to open)</li>
- * <li>selectionChanged - When a row is selected (rename to select)</li>
- * <li>selectionReset - When a selection is removed</li>
- * <li>clickButton(row,button) - When a button is clicked</li>
- * <li>clickIcon({row:row,data:data,node:node}) - When an icon is clicked</li>
- * </ul>
- * <p><strong>Bindings:</strong></p>
- * <ul>
- * <li><del>window</del></li>
- * <li>window.page</li>
- * <li>sort.direction</li>
- * <li>sort.key</li>
- * </ul>
- * <p><strong>XML:</strong></p>
- * <code>
- * &lt;list name=&quot;myList&quot; source=&quot;mySource&quot; state=&quot;list&quot;/&gt;
- * <br/><br/>
- * &lt;list name=&quot;list&quot; url=&quot;my_list_data.xml&quot; state=&quot;list&quot;/&gt;
- * </code>
+ * A list
+ * <pre><strong>options:</strong> {
+ *  element : «Element | ID»,
+ *  name : «String»,
+ *  url : «String»,
+ *  source : «hui.ui.Source»,
+ *  selectable : «<strong>true</strong> | false»,
+ *  dropFiles : «true | <strong>false</strong>»
+ * }
+ *
+ * <strong>Events:</strong>
+ * $listRowWasOpened(row) - When a row is double clicked (rename to open)
+ * $selectionChanged() - When a row is selected (rename to select)
+ * $selectionReset() - When a previous selection is removed (nothing is selected)
+ * $clickButton({row:row,button:button}) - When a button is clicked
+ * $clickIcon({row:row,data:data,node:node}) - When an icon is clicked
+ *
+ * <strong>Bindings:</strong>
+ * <del>window</del>
+ * window.page
+ * sort.direction
+ * sort.key
+ * </pre>
  *
  * @constructor
  * @param {Object} options The options : {url:null,source:null,selectable:«boolean»}
@@ -32,16 +34,16 @@ hui.ui.List = function(options) {
 		this.options.source.listen(this);
 	}
 	this.url = options.url;
-	this.table = hui.firstByTag(this.element,'table');
-	this.head = hui.firstByTag(this.element,'thead');
-	this.body = hui.firstByTag(this.element,'tbody');
+	this.table = hui.get.firstByTag(this.element,'table');
+	this.head = hui.get.firstByTag(this.element,'thead');
+	this.body = hui.get.firstByTag(this.element,'tbody');
 	this.columns = [];
 	this.rows = [];
 	this.selected = [];
-	this.navigation = hui.firstByClass(this.element,'hui_list_navigation');
-	this.count = hui.firstByClass(this.navigation,'hui_list_count');
-	this.windowPage = hui.firstByClass(this.navigation,'window_page');
-	this.windowPageBody = hui.firstByClass(this.navigation,'window_page_body');
+	this.navigation = hui.get.firstByClass(this.element,'hui_list_navigation');
+	this.count = hui.get.firstByClass(this.navigation,'hui_list_count');
+	this.windowPage = hui.get.firstByClass(this.navigation,'window_page');
+	this.windowPageBody = hui.get.firstByClass(this.navigation,'window_page_body');
 	this.parameters = {};
 	this.sortKey = null;
 	this.sortDirection = null;
@@ -61,10 +63,19 @@ hui.ui.List = function(options) {
 
 /**
  * Creates a new list widget
+ * <pre><strong>options:</strong> {
+ *  maxHeight : «Integer»,
+ *
+ *  name : «String»,
+ *  url : «String»,
+ *  source : «hui.ui.Source»,
+ *  selectable : «<strong>true</strong> | false»,
+ *  dropFiles : «true | <strong>false</strong>»
+ * }
  * @param {Object} options The options
  */
 hui.ui.List.create = function(options) {
-	options = hui.override({},options);
+	options = options || {};
 	options.element = hui.build('div',{
 		'class':'hui_list',
 		html: '<div class="hui_list_progress"></div><div class="hui_list_navigation"><div class="hui_list_selection window_page"><div><div class="window_page_body"></div></div></div><span class="hui_list_count"></span></div><div class="hui_list_body"'+(options.maxHeight>0 ? ' style="max-height: '+options.maxHeight+'px; overflow: auto;"' : '')+'><table cellspacing="0" cellpadding="0"><thead><tr></tr></thead><tbody></tbody></table></div>'});
@@ -104,7 +115,9 @@ hui.ui.List.prototype = {
 		};
 		return items;
 	},
-	/** Gets all rows of the list */
+	/** Gets all rows of the list
+	 * @returns {Array} The all rows
+	 */
 	getRows : function() {
 		return this.rows;
 	},
@@ -291,6 +304,7 @@ hui.ui.List.prototype = {
 		this.head.appendChild(headTr);
 		var frag = document.createDocumentFragment();
 		var rows = doc.getElementsByTagName('row');
+		hui.log(rows)
 		for (i=0; i < rows.length; i++) {
 			var cells = rows[i].getElementsByTagName('cell');
 			var row = document.createElement('tr');
@@ -363,7 +377,7 @@ hui.ui.List.prototype = {
 		this._setError(true);
 	},
 	_setError : function(error) {
-		hui.setClass(this.element,'hui_list_error',error);
+		hui.cls.set(this.element,'hui_list_error',error);
 	},
 	_setBusy : function(busy) {
 		this.busy = busy;
@@ -371,15 +385,15 @@ hui.ui.List.prototype = {
 		if (busy) {
 			var e = this.element;
 			this.busytimer = window.setTimeout(function() {
-				hui.addClass(e,'hui_list_busy');
+				hui.cls.add(e,'hui_list_busy');
 				if (e.parentNode.className=='hui_overflow') {
-					hui.addClass(e,'hui_list_busy_large');
+					hui.cls.add(e,'hui_list_busy_large');
 				}
 			},300);
 		} else {
-			hui.removeClass(this.element,'hui_list_busy');
+			hui.cls.remove(this.element,'hui_list_busy');
 			if (this.element.parentNode.className=='hui_overflow') {
-				hui.removeClass(this.element,'hui_list_busy_large');
+				hui.cls.remove(this.element,'hui_list_busy_large');
 			}
 		}
 	},
@@ -421,26 +435,26 @@ hui.ui.List.prototype = {
 					icon.setAttribute('title',child.getAttribute('hint'));
 				}
 				if (child.getAttribute('action')=='true') {
-					hui.addClass(icon,'hui_list_icon_action');
+					hui.cls.add(icon,'hui_list_icon_action');
 				}
 				var data = child.getAttribute('data');
 				if (data) {
 					icon.setAttribute('data',data);
 				}
 				if (child.getAttribute('revealing')==='true') {
-					hui.addClass(icon,'hui_list_revealing');
+					hui.cls.add(icon,'hui_list_revealing');
 				}
 				cell.appendChild(icon);
 			} else if (hui.dom.isElement(child,'line')) {
 				var line = hui.build('p',{'class':'hui_list_line'});
 				if (child.getAttribute('dimmed')=='true') {
-					hui.addClass(line,'hui_list_dimmed')
+					hui.cls.add(line,'hui_list_dimmed')
 				}
 				if (child.getAttribute('minor')=='true') {
-					hui.addClass(line,'hui_list_minor')
+					hui.cls.add(line,'hui_list_minor')
 				}
 				if (child.getAttribute('mini')=='true') {
-					hui.addClass(line,'hui_list_mini')
+					hui.cls.add(line,'hui_list_mini')
 				}
 				cell.appendChild(line);
 				this.parseCell(child,line);
@@ -475,12 +489,12 @@ hui.ui.List.prototype = {
 	_getData : function(node) {
 		var data = node.getAttribute('data');
 		if (data) {
-			return hui.fromJSON(data);
+			return hui.string.fromJSON(data);
 		}
 		return null;
 	},
 	_buttonClick : function(button) {
-		var row = hui.firstParentByTag(button.getElement(),'tr');
+		var row = hui.get.firstParentByTag(button.getElement(),'tr');
 		var obj = this.rows[parseInt(row.getAttribute('data-index'),10)];
 		this.fire('clickButton',{row:obj,button:button});
 	},
@@ -576,7 +590,7 @@ hui.ui.List.prototype = {
 			}
 			if (h.sortable) {
 				hui.listen(th,'click',function() {this.sort(i)}.bind(this));
-				hui.addClass(th,'sortable');
+				hui.cls.add(th,'sortable');
 			}
 			th.appendChild(hui.build('span',{text:h.title}));
 			tr.appendChild(th);
@@ -696,10 +710,10 @@ hui.ui.List.prototype = {
 		var rows = this.body.getElementsByTagName('tr'),
 			i;
 		for (i=0;i<this.selected.length;i++) {
-			hui.removeClass(rows[this.selected[i]],'hui_list_selected');
+			hui.cls.remove(rows[this.selected[i]],'hui_list_selected');
 		}
 		for (i=0;i<indexes.length;i++) {
-			hui.addClass(rows[indexes[i]],'hui_list_selected');
+			hui.cls.add(rows[indexes[i]],'hui_list_selected');
 		}
 		this.selected = indexes;
 		this.fire('selectionChanged',this.rows[indexes[0]]);
@@ -710,7 +724,7 @@ hui.ui.List.prototype = {
 		if (a) {
 			var data = a.getAttribute('data');
 			if (data) {
-				this.fire('clickIcon',{row:this.rows[index],data:hui.fromJSON(data),node:a});
+				this.fire('clickIcon',{row:this.rows[index],data:hui.string.fromJSON(data),node:a});
 			}
 		}
 	},

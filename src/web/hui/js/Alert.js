@@ -1,21 +1,35 @@
 /**
  * An alert
+ * <pre><strong>options:</strong> {
+ *  element : «Element | ID»,
+ *  name : «String»,
+ *  modal : «true | <strong>false</strong>»
+ * }
+ * </pre>
  * @constructor
  */
 hui.ui.Alert = function(options) {
 	this.options = hui.override({modal:false},options);
 	this.element = hui.get(options.element);
 	this.name = options.name;
-	this.body = hui.firstByClass(this.element,'hui_alert_body');
-	this.content = hui.firstByClass(this.element,'hui_alert_content');
+	this.body = hui.get.firstByClass(this.element,'hui_alert_body');
+	this.content = hui.get.firstByClass(this.element,'hui_alert_content');
 	this.emotion = this.options.emotion;
-	this.title = hui.firstByTag(this.element,'h1');
+	this.title = hui.get.firstByTag(this.element,'h1');
 	hui.ui.extend(this);
 }
 
 /**
  * Creates a new instance of an alert
- * <br/><strong>options:</strong> { name: «String», title: «String», text: «String», emotion: «'smile' | 'gasp'», modal: «Boolean»}
+ * <pre><strong>options:</strong> {
+ *  title : «String»,
+ *  text : «String»,
+ *  emotion: «'smile' | 'gasp'»,
+ *
+ *  modal : «true | <strong>false</strong>»,
+ *  name : «String»
+ * }
+ * </pre>
  * @static
  */
 hui.ui.Alert.create = function(options) {
@@ -49,7 +63,7 @@ hui.ui.Alert.prototype = {
 		}
 		this.element.style.zIndex=zIndex;
 		this.element.style.display='block';
-		this.element.style.top=(hui.getScrollTop()+100)+'px';
+		this.element.style.top=(hui.window.getScrollTop()+100)+'px';
 		hui.animate(this.element,'opacity',1,200);
 		hui.animate(this.element,'margin-top','40px',600,{ease:hui.ease.elastic});
 	},
@@ -59,28 +73,34 @@ hui.ui.Alert.prototype = {
 		hui.animate(this.element,'margin-top','0px',200);
 		hui.ui.hideCurtain(this);
 	},
-	/** Sets the alert title */
-	setTitle : function(/**String*/ text) {
+	/** Sets the alert title
+	 * @param {String} text The new title
+	 */
+	setTitle : function(text) {
 		if (!this.title) {
 			this.title = hui.build('h1',{parent:this.content});
 		}
 		hui.dom.setText(this.title,text);
 		
 	},
-	/** Sets the alert text */
-	setText : function(/**String*/ text) {
+	/** Sets the alert text
+	 * @param {String} text The new text
+	 */
+	setText : function(text) {
 		if (!this.text) {
 			this.text = hui.build('p',{parent:this.content});
 		}
 		hui.dom.setText(this.text,text || '');
 	},
-	/** Sets the alert emotion */
-	setEmotion : function(/**String*/ emotion) {
+	/** Sets the alert emotion
+	 * @param {String} emotion Can be 'smile' or 'gasp'
+	 */
+	setEmotion : function(emotion) {
 		if (this.emotion) {
-			hui.removeClass(this.body,this.emotion);
+			hui.cls.remove(this.body,this.emotion);
 		}
 		this.emotion = emotion;
-		hui.addClass(this.body,emotion);
+		hui.cls.add(this.body,emotion);
 	},
 	/** Updates multiple properties
 	 * @param {Object} options {title: «String», text: «String», emotion: «'smile' | 'gasp'»}
@@ -91,7 +111,9 @@ hui.ui.Alert.prototype = {
 		this.setText(options.text || null);
 		this.setEmotion(options.emotion || null);
 	},
-	/** Adds a Button to the alert */
+	/** Adds a Button to the alert
+	 * @param {hui.ui.Button} button The button to add
+	 */
 	addButton : function(button) {
 		if (!this.buttons) {
 			this.buttons = hui.ui.Buttons.create({align:'right'});

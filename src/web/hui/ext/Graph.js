@@ -1,3 +1,6 @@
+/** A graph
+ * @constructor
+ */
 hui.ui.Graph = function(options) {
 	this.options = options;
 	this.name = options.name;
@@ -81,6 +84,7 @@ hui.ui.Graph.prototype = {
 	}
 }
 
+/** @namespace */
 hui.ui.Graph.Protoviz = {
 	init : function(parent) {
 		this.parent = parent;
@@ -99,7 +103,7 @@ hui.ui.Graph.Protoviz = {
 			parent.implIsReady();
 		}.bind(this))		
 	},
-	convert : function(data) {
+	_convert : function(data) {
 		var result = {nodes:[],links:[]};
 		for (var i=0; i < data.nodes.length; i++) {
 			var node = data.nodes[i];
@@ -120,7 +124,7 @@ hui.ui.Graph.Protoviz = {
 	},
 	setData : function(data) {
 		var colors = pv.Colors.category19();
-		data = this.convert(data);
+		data = this._convert(data);
 		
 		var force = this.vis.add(pv.Layout.Force)
 		    .nodes(data.nodes)
@@ -148,6 +152,7 @@ hui.ui.Graph.Protoviz = {
 	
 }
 
+/** @namespace */
 hui.ui.Graph.D3 = {
 	init : function(parent) {
 		this.parent = parent;
@@ -355,6 +360,7 @@ hui.ui.Graph.D3 = {
 	}
 }
 
+/** @namespace */
 hui.ui.Graph.Raphael = {
 	init : function(parent) {
 		this.parent = parent;

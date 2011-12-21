@@ -5,7 +5,7 @@ hui.ui.ObjectList = function(o) {
 	this.options = hui.override({key:null},o);
 	this.name = o.name;
 	this.element = hui.get(o.element);
-	this.body = hui.firstByTag(this.element,'tbody');
+	this.body = hui.get.firstByTag(this.element,'tbody');
 	this.template = [];
 	this.objects = [];
 	hui.ui.extend(this);
@@ -44,7 +44,7 @@ hui.ui.ObjectList.prototype = {
 			this.body.appendChild(obj.getElement());
 		} else {
 			var last = this.objects[this.objects.length-1];
-			hui.removeFromArray(this.objects,last);
+			hui.array.remove(this.objects,last);
 			obj = new hui.ui.ObjectList.Object(last.index,data,this);
 			last.index++;
 			this.objects.push(obj);

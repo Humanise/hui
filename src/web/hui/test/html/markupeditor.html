@@ -18,6 +18,8 @@
 		<link rel="stylesheet" type="text/css" href="../../css/msie7.css"> </link>
 	<![endif]-->
 	<script charset="utf-8" type="text/javascript" src="../../js/hui.js"></script>
+	<script charset="utf-8" type="text/javascript" src="../../js/hui_animation.js"></script>
+	<script charset="utf-8" type="text/javascript" src="../../js/hui_color.js"></script>
 	<script charset="utf-8" type="text/javascript" src="../../js/ui.js"></script>
 	<script charset="utf-8" type="text/javascript" src="../../js/Bar.js"></script>
 	<script charset="utf-8" type="text/javascript" src="../../js/Button.js"></script>
@@ -57,14 +59,14 @@
 				this.options = options;
 				linkForm.reset();
 				var node = options.node;
-				var info = hui.fromJSON(node.getAttribute('data'));
+				var info = hui.string.fromJSON(node.getAttribute('data'));
 				if (info) {
 					linkForm.setValues(info);
 				}
 				linkEditor.show();
 			},
 			$submit : function() {
-				this.options.node.setAttribute('data',hui.toJSON(linkForm.getValues()));
+				this.options.node.setAttribute('data',hui.string.toJSON(linkForm.getValues()));
 				linkForm.reset();
 				linkEditor.hide();
 				this.options.onSuccess();
