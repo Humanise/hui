@@ -117,6 +117,8 @@
 		<script src="{$context}/hui/js/Radiobuttons.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/hui/js/NumberField.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/hui/js/TextField.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/Icon.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/ColorInput.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 	</xsl:when>
 	<xsl:otherwise>
 		<script src="{$context}/hui/bin/minimized.js?version={$version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
@@ -125,6 +127,14 @@
 <xsl:if test="//gui:graph">
 	<link rel="stylesheet" href="{$context}/hui/ext/graph.css?version={$version}" type="text/css" media="screen" title="no title" charset="utf-8"/>
 	<script src="{$context}/hui/ext/Graph.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+</xsl:if>
+<xsl:if test="//gui:tiles">
+	<link rel="stylesheet" href="{$context}/hui/ext/tiles.css?version={$version}" type="text/css" media="screen" title="no title" charset="utf-8"/>
+	<script src="{$context}/hui/ext/Tiles.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+</xsl:if>
+<xsl:if test="//gui:pages">
+	<link rel="stylesheet" href="{$context}/hui/ext/pages.css?version={$version}" type="text/css" media="screen" title="no title" charset="utf-8"/>
+	<script src="{$context}/hui/ext/Pages.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 </xsl:if>
 <xsl:for-each select="gui:localize[@source]">
 	<script src="{@source}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
@@ -149,8 +159,19 @@
 	</xsl:for-each>
 </script>
 <xsl:call-template name="dwr-setup"/>
+<xsl:for-each select="//gui:style">
+	<style>
+		<xsl:value-of select="."/>
+	</style>
+</xsl:for-each>
 </head>
 <body class="hui">
+	<xsl:attribute name="class">
+		<xsl:text>hui</xsl:text>
+		<xsl:if test="@background">
+			<xsl:text> hui_bg_</xsl:text><xsl:value-of select="@background"/>
+		</xsl:if>
+	</xsl:attribute>
 	<xsl:if test="gui:dock">
 		<xsl:attribute name="style">overflow:hidden;</xsl:attribute>
 	</xsl:if>
@@ -161,6 +182,8 @@
 </body>
 </html>
 </xsl:template>
+
+<xsl:template match="gui:style"></xsl:template>
 
 <!--doc title:'DWR setup'
 <dwr base="«url»">
@@ -501,13 +524,19 @@
 <!--             List            -->
 
 <!--doc title:'List' class:'hui.ui.List'
-<list name="«text»" state="«text»" url="«url»" source="«source»">
+<list name="«text»" state="«text»" url="«url»" source="«source»" selectable="«boolean»">
     <window size="«integer»" />
     <column key="«text»" title="«text»" width="«'min'»" />
 </list>
 -->
 <xsl:template match="gui:list">
-	<div class="hui_list" id="{generate-id()}">
+	<div id="{generate-id()}">
+		<xsl:attribute name="class">
+			<xsl:text>hui_list</xsl:text>
+			<xsl:if test="@variant">
+				<xsl:text> hui_list_</xsl:text><xsl:value-of select="@variant"/>
+			</xsl:if>
+		</xsl:attribute>
 		<xsl:if test="@state and (not(//gui:gui/@state) or @state!=//gui:gui/@state) or @visible='false'">
 			<xsl:attribute name="style">display:none</xsl:attribute>
 		</xsl:if>
@@ -523,8 +552,18 @@
 					<xsl:apply-templates select="gui:column"/>
 					</tr>
 				</thead>
-				<tbody><xsl:comment/></tbody>
+				<tbody>
+					<xsl:if test="not(@selectable) or @selectable='true'">
+						<xsl:attribute name="class">hui_list_selectable</xsl:attribute>
+					</xsl:if>
+					<xsl:comment/>
+				</tbody>
 			</table>
+			<xsl:if test="gui:empty">
+				<div class="hui_list_empty">
+					<xsl:apply-templates select="gui:empty"/>
+				</div>
+			</xsl:if>
 		</div>
 	</div>
 	<script type="text/javascript">
@@ -537,6 +576,7 @@
 			state:'<xsl:value-of select="@state"/>',
 			windowSize:'<xsl:value-of select="gui:window/@size"/>'
 			<xsl:if test="@drop-files='true'">,dropFiles:true</xsl:if>
+			<xsl:if test="@indent">,indent:<xsl:value-of select="@indent"/></xsl:if>
 		});
 		with (<xsl:value-of select="generate-id()"/>_obj) {
 			<xsl:for-each select="gui:column">
@@ -936,11 +976,38 @@ doc title:'Rich text' class:'hui.ui.RichText'
 	<xsl:copy-of select="child::*|child::text()"/>
 </xsl:template>
 
+<xsl:template match="gui:html">
+	<xsl:copy-of select="child::*|child::text()"/>
+</xsl:template>
+
+<xsl:template match="gui:div|gui:span|gui:strong|gui:p|gui:em|gui:a|gui:input">
+	<xsl:element name="{name()}">
+		<xsl:if test="@style">
+			<xsl:attribute name="style"><xsl:value-of select="@style"/></xsl:attribute>
+		</xsl:if>
+		<xsl:if test="@class">
+			<xsl:attribute name="class"><xsl:value-of select="@class"/></xsl:attribute>
+		</xsl:if>
+		<xsl:if test="@id">
+			<xsl:attribute name="id"><xsl:value-of select="@id"/></xsl:attribute>
+		</xsl:if>
+		<xsl:if test="@href">
+			<xsl:attribute name="href"><xsl:value-of select="@href"/></xsl:attribute>
+		</xsl:if>
+		<xsl:if test="@onclick">
+			<xsl:attribute name="onclick"><xsl:value-of select="@onclick"/></xsl:attribute>
+		</xsl:if>
+		<xsl:apply-templates/>
+	</xsl:element>
+</xsl:template>
+
 <xsl:template match="gui:text">
 	<div class="hui_text">
-		<xsl:if test="@align">
-			<xsl:attribute name="style">text-align:<xsl:value-of select="@align"/>;</xsl:attribute>
-		</xsl:if>
+		<xsl:attribute name="style">
+			<xsl:if test="@align">text-align:<xsl:value-of select="@align"/>;</xsl:if>
+			<xsl:if test="@top">padding-top:<xsl:value-of select="@top"/>px;</xsl:if>
+			<xsl:if test="@bottom">padding-bottom:<xsl:value-of select="@bottom"/>px;</xsl:if>
+		</xsl:attribute>
 		<xsl:apply-templates/>
 	</div>
 </xsl:template>

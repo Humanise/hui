@@ -227,17 +227,19 @@
 			<xsl:if test="@max">,max:<xsl:value-of select="@max"/></xsl:if>
 			<xsl:if test="@decimals">,decimals:<xsl:value-of select="@decimals"/></xsl:if>
 			<xsl:if test="@allow-null">,allowNull:true</xsl:if>
-			<xsl:if test="@value">,value:parseInt(<xsl:value-of select="@value"/>)</xsl:if>
+			<xsl:if test="@value">,value : '<xsl:value-of select="@value"/>'</xsl:if>
 		});
 		<xsl:call-template name="gui:createobject"/>
 	</script>
 </xsl:template>
 
+
+
 <!-- Style length -->
 
 <xsl:template match="gui:group/gui:style-length">
 	<tr>
-		<th><label><xsl:value-of select="@label"/></label></th>
+		<th class="hui_formula_middle"><label><xsl:value-of select="@label"/></label></th>
 		<td class="hui_formula_group"><div class="hui_formula_item"><xsl:call-template name="gui:style-length"/></div></td>
 	</tr>
 </xsl:template>
@@ -265,6 +267,51 @@
 		<xsl:call-template name="gui:createobject"/>
 	</script>
 </xsl:template>
+
+
+
+<!-- Color field -->
+
+<xsl:template match="gui:color-input">
+	<span class="hui_colorinput" id="{generate-id()}">
+		<span><span><input type="text" value="{@value}"/></span></span><a class="hui_colorinput" href="javascript://"><xsl:comment/></a>
+	</span>
+	<script type="text/javascript">
+		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.ColorInput({
+			element:'<xsl:value-of select="generate-id()"/>'
+			<xsl:if test="@value">,value:'<xsl:value-of select="@value"/>'</xsl:if>
+			<xsl:if test="@name">,name:'<xsl:value-of select="@name"/>'</xsl:if>
+			<xsl:if test="@key">,key:'<xsl:value-of select="@key"/>'</xsl:if>
+		});
+		<xsl:call-template name="gui:createobject"/>
+	</script>
+</xsl:template>
+
+
+
+<xsl:template match="gui:location-input">
+	<span class="hui_locationfield" id="{generate-id()}">
+		
+		<span class="hui_field_top"><span><span><xsl:comment/></span></span></span>
+			<span class="hui_field_middle"><span class="hui_field_middle"><span class="hui_field_content">
+				<span>
+					<span class="hui_locationfield_latitude"><span><input/></span></span><span class="hui_locationfield_longitude"><span><input/></span></span>
+				</span>
+			</span></span></span>
+			<span class="hui_field_bottom"><span><span><xsl:comment/></span></span></span>
+		<a class="hui_locationfield_picker" href="javascript://"><xsl:comment/></a>
+	</span>
+	<script type="text/javascript">
+		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.LocationField({
+			element:'<xsl:value-of select="generate-id()"/>'
+			<xsl:if test="@value">,value:'<xsl:value-of select="@value"/>'</xsl:if>
+			<xsl:if test="@name">,name:'<xsl:value-of select="@name"/>'</xsl:if>
+			<xsl:if test="@key">,key:'<xsl:value-of select="@key"/>'</xsl:if>
+		});
+		<xsl:call-template name="gui:createobject"/>
+	</script>
+</xsl:template>
+
 
 <!-- dropdown -->
 
@@ -309,8 +356,8 @@
 			<xsl:for-each select="gui:item">
 				
 				addItem({
-					title:'<xsl:value-of select="@title"/><xsl:value-of select="@label"/>',
-					value:hui.intOrString('<xsl:call-template name="gui:escapeScript"><xsl:with-param name="text" select="@value"/></xsl:call-template>')
+					title : '<xsl:value-of select="@title"/><xsl:value-of select="@label"/><xsl:value-of select="@text"/>',
+					value : hui.intOrString('<xsl:call-template name="gui:escapeScript"><xsl:with-param name="text" select="@value"/></xsl:call-template>')
 				});
 			</xsl:for-each>
 		}
@@ -499,10 +546,13 @@
 				<xsl:when test="@variant and @small='true'">
 					<xsl:text> hui_button_small_</xsl:text><xsl:value-of select="@variant"/>
 				</xsl:when>
+				<xsl:when test="@variant and @mini='true'">
+					<xsl:text> hui_button_mini_</xsl:text><xsl:value-of select="@variant"/>
+				</xsl:when>
 				<xsl:when test="@small='true' and @highlighted='true'">
 					<xsl:text> hui_button_small hui_button_small_highlighted</xsl:text>
 				</xsl:when>
-				<xsl:when test="@small='true'">
+				<xsl:when test="@small='true' or ../@small='true'">
 					<xsl:text> hui_button_small</xsl:text>
 				</xsl:when>
 				<xsl:when test="@highlighted='true'">

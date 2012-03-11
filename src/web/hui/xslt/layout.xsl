@@ -7,12 +7,55 @@
     exclude-result-prefixes="gui"
     >
 
+
+
+<xsl:template match="gui:icon">
+	<span id="{generate-id()}">
+		<xsl:attribute name="style">background-image: url('<xsl:value-of select="$context"/>/hui/icons/<xsl:value-of select="@icon"/><xsl:value-of select="@size"/>.png');</xsl:attribute>
+		<xsl:attribute name="class">hui_icon_<xsl:value-of select="@size"/></xsl:attribute>
+		<xsl:comment/>
+	</span>
+	<script type="text/javascript">
+		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Icon({
+			element : '<xsl:value-of select="generate-id()"/>',
+			icon : '<xsl:value-of select="@icon"/>',
+			size : <xsl:value-of select="@size"/>
+			<xsl:if test="@name">,name:'<xsl:value-of select="@name"/>'</xsl:if>
+		});
+		<xsl:call-template name="gui:createobject"/>
+	</script>
+</xsl:template>
+
+
+<xsl:template match="gui:icon[@text]">
+	<a id="{generate-id()}" href="javascript://" class="hui_icon_labeled hui_icon_labeled_{@size}">
+		<xsl:if test="@click">
+			<xsl:attribute name="onclick"><xsl:value-of select="@click"/></xsl:attribute>
+		</xsl:if>
+		<span>
+			<xsl:attribute name="style">background-image: url('<xsl:value-of select="$context"/>/hui/icons/<xsl:value-of select="@icon"/><xsl:value-of select="@size"/>.png');</xsl:attribute>
+			<xsl:attribute name="class">hui_icon_<xsl:value-of select="@size"/></xsl:attribute>
+			<xsl:comment/>
+		</span>
+		<strong><xsl:value-of select="@text"/></strong>
+	</a>
+	<script type="text/javascript">
+		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Icon({
+			element : '<xsl:value-of select="generate-id()"/>',
+			icon : '<xsl:value-of select="@icon"/>',
+			size : <xsl:value-of select="@size"/>
+			<xsl:if test="@name">,name:'<xsl:value-of select="@name"/>'</xsl:if>
+		});
+		<xsl:call-template name="gui:createobject"/>
+	</script>
+</xsl:template>
+	
 <!--doc title:'Space'
 <space all="«pixels»" left="«pixels»" right="«pixels»" top="«pixels»" bottom="«pixels»" align="«left | center | right»" height="«pixels»">
     ···
 </space>
 -->
-<xsl:template match="gui:space | gui:block">
+<xsl:template match="gui:space">
 	<div class="hui_space">
 		<xsl:attribute name="style">
 			<xsl:if test="@all">padding: <xsl:value-of select="@all"/>px;</xsl:if>
@@ -63,8 +106,13 @@
 -->
 <xsl:template match="gui:header">
 	<h2 class="hui_header">
-		<xsl:if test="@icon"><span class="hui_icon_2" style="background-image: url('{$context}/hui/icons/{@icon}32.png')"><xsl:comment/></span></xsl:if>
-		<xsl:apply-templates/></h2>
+		<xsl:if test="@icon">
+			<span class="hui_icon_2" style="background-image: url('{$context}/hui/icons/{@icon}32.png')">
+				<xsl:comment/>
+			</span>
+		</xsl:if>
+		<xsl:apply-templates/>
+	</h2>
 </xsl:template>
 
 <!--doc title:'Split'
@@ -112,7 +160,8 @@
 	</xsl:attribute>
 	<xsl:attribute name="style">
 		<xsl:choose>
-			<xsl:when test="@height or @max-height or @min-height">
+			<xsl:when test="@height or @max-height or @min-height or @full='true'">
+				<xsl:if test="@full='true'">height: 100%;</xsl:if>
 				<xsl:if test="@height">height: <xsl:value-of select="@height"/>px;</xsl:if>
 				<xsl:if test="@max-height">max-height: <xsl:value-of select="@max-height"/>px;</xsl:if>
 				<xsl:if test="@min-height">min-height: <xsl:value-of select="@min-height"/>px;</xsl:if>
@@ -130,7 +179,7 @@
 <script type="text/javascript">
 	var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Overflow({
 		element : '<xsl:value-of select="generate-id()"/>',
-		dynamic : <xsl:value-of select="not(@height or @max-height or @min-height or @vertical)"/>
+		dynamic : <xsl:value-of select="not(@height or @max-height or @min-height or @vertical or @full='true')"/>
 		<xsl:if test="@vertical">,vertical:<xsl:value-of select="@vertical"/></xsl:if>
 		<xsl:if test="@state">,state:'<xsl:value-of select="@state"/>'</xsl:if>
 		<xsl:if test="@name">,name:'<xsl:value-of select="@name"/>'</xsl:if>
@@ -370,6 +419,132 @@
 	<div style="position:fixed; top: {@top}px; bottom: 0; width: 100%">
 		<xsl:apply-templates/>
 	</div>
+</xsl:template>
+
+
+<xsl:template match="gui:pages">
+	<div id="{generate-id()}">
+		<xsl:attribute name="class">
+			<xsl:text>hui_pages</xsl:text>
+			<xsl:if test="@height='full'">
+				<xsl:text> hui_pages_full</xsl:text>
+			</xsl:if>
+		</xsl:attribute>
+		<xsl:for-each select="gui:page">
+			<div class="hui_pages_page">
+				<xsl:if test="position()>1">
+					<xsl:attribute name="style">display:none;</xsl:attribute>
+				</xsl:if>
+				<xsl:apply-templates/>
+				<xsl:comment/>
+			</div>			
+		</xsl:for-each>
+		<xsl:apply-templates/>
+	</div>
+	<script type="text/javascript">
+	var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Pages({
+		element : '<xsl:value-of select="generate-id()"/>'
+		<xsl:if test="@name">,name : '<xsl:value-of select="@name"/>'</xsl:if>
+	});
+	<xsl:call-template name="gui:createobject"/>
+	</script>
+</xsl:template>
+
+<xsl:template match="gui:pages/gui:page">
+</xsl:template>
+
+
+<xsl:template match="gui:tiles">
+	<div id="{generate-id()}">
+		<xsl:attribute name="class">
+			<xsl:text>hui_tiles</xsl:text>
+			<xsl:if test="@reveal='true'">
+				<xsl:text> hui_tiles_revealing</xsl:text>
+			</xsl:if>
+		</xsl:attribute>
+		<xsl:apply-templates/>
+	</div>
+	<script type="text/javascript">
+	var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Tiles({
+		element : '<xsl:value-of select="generate-id()"/>'
+		<xsl:if test="@name">,name : '<xsl:value-of select="@name"/>'</xsl:if>
+		<xsl:if test="@reveal='true'">,reveal : true</xsl:if>
+	});
+	<xsl:call-template name="gui:createobject"/>
+	</script>
+</xsl:template>
+
+<xsl:template match="gui:tiles/gui:tile">
+	<div class="hui_tile" id="{generate-id()}">
+		<xsl:attribute name="style">
+			width: <xsl:value-of select="@width"/>%;
+			height: <xsl:value-of select="@height"/>%; 
+			left: <xsl:value-of select="@left"/>%; 
+			top: <xsl:value-of select="@top"/>%; 
+			padding: <xsl:value-of select="../@space div 2"/>px;
+		</xsl:attribute>
+		<div>
+			<xsl:attribute name="class">
+				<xsl:text>hui_tile_body</xsl:text>
+				<xsl:if test="@background">
+					<xsl:text> hui_tile_color</xsl:text>
+				</xsl:if>
+				<xsl:if test="@variant">
+					<xsl:text> hui_tile_</xsl:text><xsl:value-of select="@variant"/>
+				</xsl:if>
+			</xsl:attribute>
+			<xsl:if test="@background">
+				<xsl:attribute name="style">
+					background-color: <xsl:value-of select="@background"/>;
+				</xsl:attribute>
+			</xsl:if>
+			<xsl:choose>
+				<xsl:when test="gui:title">
+					<div class="hui_tile_title">
+						<xsl:value-of select="gui:title"/>
+					</div>
+					<div class="hui_tile_content">
+						<xsl:apply-templates/>
+					</div>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:apply-templates/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</div>
+	</div>
+	<script type="text/javascript">
+	var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Tile({
+		element : '<xsl:value-of select="generate-id()"/>'
+		<xsl:if test="@name">,name : '<xsl:value-of select="@name"/>'</xsl:if>
+	});
+	<xsl:call-template name="gui:createobject"/>
+	</script>
+</xsl:template>
+
+<xsl:template match="gui:tile/gui:title">
+	<!--
+	<div class="hui_tile_title">
+		<xsl:apply-templates/>
+	</div>
+	-->
+</xsl:template>
+
+<xsl:template match="gui:tile/gui:actions">
+	<div class="hui_tile_actions">
+		<xsl:apply-templates/>
+	</div>
+</xsl:template>
+
+<xsl:template match="gui:tile/gui:actions/gui:icon">
+	<a class="hui_icon_16 hui_tile_icon" style="background-image: url('{$context}/hui/icons/{@icon}16.png')">
+		<xsl:if test="@key">
+			<xsl:attribute name="data-hui-key">
+				<xsl:value-of select="@key"/>
+			</xsl:attribute>
+		</xsl:if>
+		<xsl:comment/>
+	</a>
 </xsl:template>
 
 </xsl:stylesheet>

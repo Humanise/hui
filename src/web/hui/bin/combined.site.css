@@ -65,7 +65,7 @@ div.hui_text p
 
 /************************* icons **********************/
 
-span.hui_icon_1, span.hui_icon_16
+span.hui_icon_1, span.hui_icon_16, a.hui_icon_16
 {
 	display: inline-block;
 	width: 16px;
@@ -73,7 +73,12 @@ span.hui_icon_1, span.hui_icon_16
 	vertical-align: middle;
 }
 
-span.hui_icon_2, span.hui_icon_32
+a.hui_icon_16:hover
+{
+	background-position: 0 -16px;
+}
+
+span.hui_icon_2, span.hui_icon_32, a.hui_icon_32
 {
 	display: inline-block;
 	width: 32px;
@@ -87,6 +92,54 @@ span.hui_icon_24
 	width: 24px;
 	height: 24px;
 	vertical-align: middle;
+}
+
+span.hui_icon_64
+{
+	display: inline-block;
+	width: 64px;
+	height: 64px;
+	vertical-align: middle;
+}
+
+span.hui_icon_128
+{
+	display: inline-block;
+	width: 128px;
+	height: 128px;
+	vertical-align: middle;
+}
+
+a.hui_icon_labeled
+{
+	display: inline-block;	
+	vertical-align: middle;
+	text-align: center;
+	text-decoration: none;
+}
+
+a.hui_icon_labeled strong
+{
+	display: block;
+	color: #333;
+	font-size: 12px;
+	font-weight: normal;
+	margin-top: 2px;
+}
+
+a.hui_icon_labeled_128 strong
+{
+	font-size: 18px;
+}
+
+a.hui_icon_labeled:hover span.hui_icon_64
+{
+	background-position: 0 -64px;
+}
+
+a.hui_icon_labeled:hover span.hui_icon_128
+{
+	background-position: 0 -128px;
 }
 
 /************************* disclosure **********************/
@@ -220,34 +273,49 @@ div.browser .column div.selected, div.browser .column div.selected:hover
 
 /****************************************** Backgrounds *******************************/
 
-.hui_bg_brushed
+.hui_bg_white, body.hui_bg_white
+{
+	background: #fff;
+}
+
+.hui_bg_brushed, body.hui_bg_brushed
 {
 	background: url('../gfx/backgrounds/brushed_light.jpg');
 }
 
-.hui_bg_linen
+.hui_bg_linen, body.hui_bg_linen
 {
 	background: url('../gfx/backgrounds/linen.png');
 }
 
-.hui_bg_wood
+.hui_bg_wood, body.hui_bg_wood
 {
 	background: url('../gfx/backgrounds/wood.jpg');	
 }
 
-.hui_bg_leather
+.hui_bg_leather, body.hui_bg_leather
 {
 	background: url('../gfx/backgrounds/leather.jpg');	
 }
 
-.hui_bg_vichy
+.hui_bg_vichy, body.hui_bg_vichy
 {
 	background: url('../gfx/backgrounds/vichy.png');	
 }
 
-.hui_bg_aluminum
+.hui_bg_aluminum, body.hui_bg_aluminum
 {
 	background: url('../gfx/backgrounds/brushed_alu.png');	
+}
+
+.hui_bg_sand_light, body.hui_bg_sand_light
+{
+	background: url('../gfx/backgrounds/sand_light.png');
+}
+
+.hui_bg_sand_grey, body.hui_bg_sand_grey
+{
+	background: url('../gfx/backgrounds/sand_grey.png');
 }
 
 div.hui_curtain
@@ -1111,6 +1179,28 @@ a.hui_button_paper:focus
 	border-color: rgb(1,105,255);
 }
 
+
+
+/** Icon **/
+
+a.hui_button_paper em.hui_button_icon
+{
+	margin-left: -6px;
+    margin-right: 5px;
+    margin-top: 5px;
+}
+
+a.hui_button_paper em.hui_button_icon_notext
+{
+    margin-right: -5px;
+}
+
+
+
+
+
+/** Small paper **/
+
 a.hui_button_small_paper, a.hui_button_small_paper span
 {
 	height: 20px;
@@ -1125,16 +1215,30 @@ a.hui_button_small_paper span span
 	line-height: 18px;
 }
 
-a.hui_button_paper em.hui_button_icon
+
+
+
+
+/** Mini paper **/
+
+a.hui_button_mini_paper
 {
-	margin-left: -6px;
-    margin-right: 5px;
-    margin-top: 5px;
+	border-radius: 16px;
 }
 
-a.hui_button_paper em.hui_button_icon_notext
+a.hui_button_mini_paper, a.hui_button_mini_paper span
 {
-    margin-right: -5px;
+	height: 16px;
+	line-height: 16px;
+	font-size: 0;
+}
+
+a.hui_button_mini_paper span span
+{
+	margin: 0;
+	padding: 0 10px;
+	font-size: 10px;
+	line-height: 16px;
 }form.hui_formula
 {
 	padding: 0px;
@@ -1576,7 +1680,7 @@ div.hui_window_dark div.hui_field span
 	background-image: url('../gfx/field_dark.png');
 }
 
-div.hui_window_dark div.hui_field span.hui_formula_text_singleline, div.hui_window_dark div.hui_field span.hui_formula_text_multiline
+div.hui_window_dark div.hui_field span.hui_field_singleline, div.hui_window_dark div.hui_field span.hui_formula_text_multiline
 {
 	background: none;
 }

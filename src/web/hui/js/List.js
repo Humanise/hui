@@ -6,7 +6,8 @@
  *  url : «String»,
  *  source : «hui.ui.Source»,
  *  selectable : «<strong>true</strong> | false»,
- *  dropFiles : «true | <strong>false</strong>»
+ *  dropFiles : «true | <strong>false</strong>»,
+ *  indent : «Integer»
  * }
  *
  * <strong>Events:</strong>
@@ -27,7 +28,7 @@
  * @param {Object} options The options : {url:null,source:null,selectable:«boolean»}
  */
 hui.ui.List = function(options) {
-	this.options = hui.override({url:null,source:null,selectable:true},options);
+	this.options = hui.override({url:null,source:null,selectable:true,indent:null},options);
 	this.element = hui.get(options.element);
 	this.name = options.name;
 	if (this.options.source) {
@@ -70,7 +71,8 @@ hui.ui.List = function(options) {
  *  url : «String»,
  *  source : «hui.ui.Source»,
  *  selectable : «<strong>true</strong> | false»,
- *  dropFiles : «true | <strong>false</strong>»
+ *  dropFiles : «true | <strong>false</strong>»,
+ *  indent : «Integer»
  * }
  * @param {Object} options The options
  */
@@ -255,9 +257,13 @@ hui.ui.List.prototype = {
 		}
 		this.sortKey = key;
 	},
+	_debug : function(obj) {
+		hui.log(obj);
+	},
 
 	/** @private */
 	$listLoaded : function(doc) {
+		this._debug('List loaded');
 		this._setError(false);
 		this.selected = [];
 		this.parseWindow(doc);
@@ -304,7 +310,6 @@ hui.ui.List.prototype = {
 		this.head.appendChild(headTr);
 		var frag = document.createDocumentFragment();
 		var rows = doc.getElementsByTagName('row');
-		hui.log(rows)
 		for (i=0; i < rows.length; i++) {
 			var cells = rows[i].getElementsByTagName('cell');
 			var row = document.createElement('tr');
@@ -331,6 +336,8 @@ hui.ui.List.prototype = {
 				}
 				if (j==0 && level>1) {
 					td.style.paddingLeft = ((parseInt(level)-1)*16+5)+'px';
+				} else if (j==0 && this.options.indent!=null) {
+					td.style.paddingLeft = this.options.indent+'px';
 				}
 				this.parseCell(cells[j],td);
 				row.appendChild(td);
@@ -348,6 +355,7 @@ hui.ui.List.prototype = {
 			this.rows.push(info);
 		};
 		this.body.appendChild(frag);
+		this._setEmpty(rows.length==0);
 		this.fire('selectionReset');
 	},
 	
@@ -365,10 +373,12 @@ hui.ui.List.prototype = {
 	},
 	/** @private */
 	$sourceIsBusy : function() {
+		this._debug('$sourceIsBusy');
 		this._setBusy(true);
 	},
 	/** @private */
 	$sourceIsNotBusy : function() {
+		this._debug('$sourceIsNotBusy');
 		this._setBusy(false);
 	},
 	/** @private */
@@ -397,6 +407,12 @@ hui.ui.List.prototype = {
 			}
 		}
 	},
+	_setEmpty : function(empty) {
+		var lmnt = hui.get.firstByClass(this.element,'hui_list_empty');
+		if (lmnt) {
+			lmnt.style.display = empty ? 'block' : '';
+		}
+	},
 	
 	_wrap : function(str) {
 		var out = '';
@@ -418,6 +434,10 @@ hui.ui.List.prototype = {
 	
 	/** @private */
 	parseCell : function(node,cell) {
+		var variant = node.getAttribute('variant');
+		if (variant!=null && variant!='') {
+			cell = hui.build('div',{parent:cell,className : 'hui_list_cell_'+variant});
+		}
 		var icon = node.getAttribute('icon');
 		if (icon!=null && icon!='') {
 			cell.appendChild(hui.ui.createIcon(icon,16));
@@ -456,10 +476,16 @@ hui.ui.List.prototype = {
 				if (child.getAttribute('mini')=='true') {
 					hui.cls.add(line,'hui_list_mini')
 				}
+				if (child.getAttribute('class')) {
+					hui.cls.add(line,child.getAttribute('class'))
+				}
+				if (child.getAttribute('top')) {
+					line.style.paddingTop=child.getAttribute('top')+'px';
+				}
 				cell.appendChild(line);
 				this.parseCell(child,line);
 			} else if (hui.dom.isElement(child,'object')) {
-				var obj = hui.build('div',{'class':'object'});
+				var obj = hui.build('div',{'class':'hui_list_object'});
 				if (child.getAttribute('icon')) {
 					obj.appendChild(hui.ui.createIcon(child.getAttribute('icon'),16));
 				}
@@ -670,7 +696,7 @@ hui.ui.List.prototype = {
 	},
 	/** @private */
 	createObject : function(object) {
-		var node = hui.build('div',{'class':'object'});
+		var node = hui.build('div',{'class':'hui_list_object'});
 		if (object.icon) {
 			node.appendChild(hui.ui.createIcon(object.icon,16));
 		}

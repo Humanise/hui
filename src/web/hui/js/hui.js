@@ -19,7 +19,7 @@ var hui = {
     KEY_PAGEUP : 33,
     KEY_PAGEDOWN : 34,
     KEY_INSERT : 45
-}
+};
 
 
 
@@ -31,29 +31,29 @@ hui.browser.opera = /opera/i.test(navigator.userAgent);
 /** If the browser is any version of InternetExplorer */
 hui.browser.msie = !hui.browser.opera && /MSIE/.test(navigator.userAgent);
 /** If the browser is InternetExplorer 6 */
-hui.browser.msie6 = navigator.userAgent.indexOf('MSIE 6')!==-1;
+hui.browser.msie6 = navigator.userAgent.indexOf('MSIE 6') !== -1;
 /** If the browser is InternetExplorer 7 */
-hui.browser.msie7 = navigator.userAgent.indexOf('MSIE 7')!==-1;
+hui.browser.msie7 = navigator.userAgent.indexOf('MSIE 7') !== -1;
 /** If the browser is InternetExplorer 8 */
-hui.browser.msie8 = navigator.userAgent.indexOf('MSIE 8')!==-1;
+hui.browser.msie8 = navigator.userAgent.indexOf('MSIE 8') !== -1;
 /** If the browser is InternetExplorer 9 */
-hui.browser.msie9 = navigator.userAgent.indexOf('MSIE 9')!==-1;
+hui.browser.msie9 = navigator.userAgent.indexOf('MSIE 9') !== -1;
 /** If the browser is InternetExplorer 9 in compatibility mode */
-hui.browser.msie9compat = hui.browser.msie7 && navigator.userAgent.indexOf('Trident/5.0')!==-1;
+hui.browser.msie9compat = hui.browser.msie7 && navigator.userAgent.indexOf('Trident/5.0') !== -1;
 /** If the browser is WebKit based */
-hui.browser.webkit = navigator.userAgent.indexOf('WebKit')!==-1;
+hui.browser.webkit = navigator.userAgent.indexOf('WebKit') !== -1;
 /** If the browser is any version of Safari */
-hui.browser.safari = navigator.userAgent.indexOf('Safari')!==-1;
+hui.browser.safari = navigator.userAgent.indexOf('Safari') !== -1;
 /** If the browser is any version of Chrome */
-hui.browser.chrome = navigator.userAgent.indexOf('Chrome')!==-1;
+hui.browser.chrome = navigator.userAgent.indexOf('Chrome') !== -1;
 /** The version of WebKit (null if not WebKit) */
 hui.browser.webkitVersion = null;
 /** If the browser is Gecko based */
-hui.browser.gecko = !hui.browser.webkit && navigator.userAgent.indexOf('Gecko')!=-1;
+hui.browser.gecko = !hui.browser.webkit && navigator.userAgent.indexOf('Gecko') !== -1;
 /** If the browser is safari on iPad */
-hui.browser.ipad = hui.browser.webkit && navigator.userAgent.indexOf('iPad')!=-1;
+hui.browser.ipad = hui.browser.webkit && navigator.userAgent.indexOf('iPad') !== -1;
 /** If the browser is on Windows */
-hui.browser.windows = navigator.userAgent.indexOf('Windows')!=-1;
+hui.browser.windows = navigator.userAgent.indexOf('Windows') !== -1;
 
 /** If the browser supports CSS opacity */
 hui.browser.opacity = !hui.browser.msie || hui.browser.msie9;
@@ -195,6 +195,18 @@ hui.isArray = function(obj) {
 /** @namespace */
 hui.string = {
 	
+	/**
+	 * Test that a string start with another string
+	 * @param {String} str The string to test
+	 * @param {String} start The string to look for at the start
+	 * @returns {Boolean} True if «str» starts with «start»
+	 */
+	startsWith : function(str,start) {
+		if (!typeof(str)=='string' || !typeof(start)=='string') {
+			return false;
+		}
+		return (str.match("^"+start)==start);
+	},
 	/**
 	 * Test that a string ends with another string
 	 * @param {String} str The string to test
@@ -410,6 +422,7 @@ hui.dom = {
 	addText : function(node,text) {
 		node.appendChild(document.createTextNode(text));
 	},
+	// TODO: Move to hui.get
 	firstChild : function(node) {
 		var children = node.childNodes;
 		for (var i=0; i < children.length; i++) {
@@ -440,9 +453,17 @@ hui.dom = {
 	insertBefore : function(target,newNode) {
 		target.parentNode.insertBefore(newNode,target);
 	},
+	insertAfter : function(target,newNode) {
+		var next = target.nextSibling;
+		if (next) {
+			next.parentNode.insertBefore(newNode,next);			
+		} else {
+			target.parentNode.appendChild(newNode);
+		}
+	},
 	replaceHTML : function(node,html) {
 		node = hui.get(node);
-		node.innerHTML=html;
+		node.innerHTML = html;
 	},
 	runScripts : function(node) {
 		var scripts = node.getElementsByTagName('script');
@@ -589,6 +610,9 @@ hui.get.next = function(element) {
 	if (!element) {
 		return null;
 	}
+	if (element.nextElementSibling) {
+		return element.nextElementSibling;
+	}
 	if (!element.nextSibling) {
 		return null;
 	}
@@ -600,6 +624,21 @@ hui.get.next = function(element) {
     	return next;
 	}
 	return null;
+}
+
+hui.get.before = function(element) {
+	var elements = [];
+	if (element) {
+		var nodes = element.parentNode.childNodes;
+		for (var i=0; i < nodes.length; i++) {
+			if (nodes[i]==element) {
+				break;
+			} else if (nodes[i].nodeType===1) {
+				elements.push(nodes[i]);
+			}
+		};
+	}
+	return elements;
 }
 
 /**
@@ -716,7 +755,7 @@ hui.get.firstByTag = function(node,tag) {
 }
 
 
-
+hui.get.firstChild = hui.dom.firstChild;
 
 
 
@@ -786,7 +825,9 @@ hui.build = function(name,options) {
 
 /////////////////////// Position ///////////////////////
 
-/** @namespace */
+/** @namespace
+ * Functions for getting and changing the position of elements
+ */
 hui.position = {
 	getTop : function(element) {
 	    element = hui.get(element);
@@ -1099,6 +1140,9 @@ hui.unListen = function(el,type,listener,useCapture) {
  * @returns {hui.Event} An event wrapper
  */
 hui.event = function(event) {
+	if (event!==undefined && event.huiEvent===true) {
+		return event;
+	}
 	return new hui.Event(event);
 }
 
@@ -1107,6 +1151,7 @@ hui.event = function(event) {
  * @param event The DOM event
  */
 hui.Event = function(event) {
+	this.huiEvent = true;
 	/** The event */
 	this.event = event = event || window.event;
 	/** The target element */
@@ -1481,6 +1526,11 @@ hui.style = {
 			}
 		}
 	},
+	/**
+	 * Get the computed style of an element
+	 * @param {Element} element The element
+	 * @param {String} style The CSS property in the form font-size NOT fontSize; 
+	 */
 	get : function(element, style) {
 		element = hui.get(element);
 		var cameled = hui.string.camelize(style);
@@ -1645,6 +1695,49 @@ hui.effect = {
 				hui.animate(node,'transform','scale(1)',400,{ease:hui.ease.backOut}); // rotate(0deg)
 			});
 		}
+	},
+	/**
+	 * Fade an element in - making it visible
+	 * @param {Object} options {element : «Element», duration : «milliseconds», delay : «milliseconds», onComplete : «Function» }
+	 */
+	fadeIn : function(options) {
+		var node = options.element;
+		if (hui.style.get(node,'display')=='none') {
+			hui.style.set(node,{opacity : 0,display : 'inherit'});
+		}
+		hui.animate({
+			node : node,
+			css : { opacity : 1 },
+			delay : options.delay || null,
+			duration : options.duration || 500,
+			onComplete : options.onComplete
+		});
+	},
+	/**
+	 * Fade an element out - making it invisible
+	 * @param {Object} options {element : «Element», duration : «milliseconds», delay : «milliseconds», onComplete : «Function» }
+	 */
+	fadeOut : function(options) {
+		hui.animate({
+			node : options.element,
+			css : { opacity : 0 },
+			delay : options.delay || null,
+			duration : options.duration || 500,
+			hideOnComplete : true,
+			onComplete : options.onComplete
+		});
+	},
+	/**
+	 * Make an element wiggle
+	 * @param {Object} options {element : «Element», duration : «milliseconds» }
+	 */
+	wiggle : function(options) {
+		var e = hui.ui.getElement(options.element);
+		hui.cls.add(options.element,'hui_effect_wiggle');
+		window.setTimeout(function() {
+			hui.cls.remove(options.element,'hui_effect_wiggle');
+		},options.duration || 1000);
+	
 	}
 }
 
@@ -1696,13 +1789,28 @@ hui.document = {
 
 /** @namespace */
 hui.drag = {
+	/** Register dragging on an element
+	 * <pre><strong>options:</strong> {
+	 *  element : «Element»
+	 *  <em>see hui.drag.start for more options</em>
+	 * }
+	 * @param {Object} options The options
+	 */
 	register : function(options) {
 		hui.listen(options.element,'mousedown',function(e) {
 			hui.stop(e);
 			hui.drag.start(options);
 		})
 	},
-	
+	/** Start dragging
+	 * <pre><strong>options:</strong> {
+	 *  onBeforeMove : function(event), // Called when the cursor moves for the first time
+	 *  onMove : function(event), // Called when the cursor moves
+	 *  onAfterMove : function(event), // Called if the cursor has moved
+	 *  onEnd : function(event), // Called when the mouse is released, even if the cursor has not moved
+	 * }
+	 * @param {Object} options The options
+	 */
 	start : function(options) {
 		var target = hui.browser.msie ? document : window;
 		
@@ -1742,6 +1850,15 @@ hui.drag = {
 	},
 	_nativeListeners : [],
 	_activeDrop : null,
+	/** Listen for native drops
+	 * <pre><strong>options:</strong> {
+	 *  hoverClass : «String»,
+	 *  onDrop : function(event),
+	 *  onFiles : function(fileArray),
+	 *  onURL : function(url)
+	 * }
+	 * @param {Object} options The options
+	 */
 	listen : function(options) {
 		if (hui.browser.msie) {
 			return;
@@ -1782,14 +1899,13 @@ hui.drag = {
 				if (options.onDrop) {
 					options.onDrop(e);
 				}
-				hui.log(e.dataTransfer.types)
+				//hui.log(e.dataTransfer.types)
 				if (options.onFiles && e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length>0) {
 					options.onFiles(e.dataTransfer.files);
 				}
-				else if (hui.array.contains(e.dataTransfer.types,'public.url')) {
+				else if (options.onURL && hui.array.contains(e.dataTransfer.types,'public.url')) {
 					var url = e.dataTransfer.getData('public.url');
-					hui.log('URL: '+url);
-					if (options.onURL) {
+					if (options.onURL && !hui.string.startsWith(url,'data:')) {
 						options.onURL(url);
 					}
 				}
@@ -2005,7 +2121,33 @@ hui.location = {
 
 
 
-
+hui.xml = {
+	transform : function(xml,xsl) {
+		if (window.ActiveXObject) {
+			return xml.transformNode(xsl);
+		} else if (document.implementation && document.implementation.createDocument) {
+			try {
+			  	var pro = new XSLTProcessor();
+			  	pro.importStylesheet(xsl);
+			    return pro.transformToFragment(xml,document);				
+			} catch (e) {
+				hui.log(e);
+			}
+		}
+	},
+	parse : function(xml) {
+		var doc;
+		if (window.DOMParser) {
+  			var parser=new DOMParser();
+  			doc = parser.parseFromString(xml,"text/xml");
+  		} else {
+  			doc = new ActiveXObject("Microsoft.XMLDOM");
+			doc.async = false;
+  			doc.loadXML(xml); 
+  		}
+		return doc;
+	}
+}
 
 
 

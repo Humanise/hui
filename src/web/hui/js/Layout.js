@@ -9,8 +9,32 @@ hui.ui.Layout = function(options) {
 	hui.ui.extend(this);
 }
 
+hui.ui.Layout.create = function(options) {
+	options = hui.override({text:'',highlighted:false,enabled:true},options);
+	options.element = hui.build('table',{'class' : 'hui_layout'});
+	options.element.innerHTML = '<tbody class="hui_layout"><tr class="hui_layout_middle"><td class="hui_layout_middle">'+
+			'<table class="hui_layout_middle"><tr>'+
+			'<td class="hui_layout_left hui_context_sidebar"><div class="hui_layout_left"></div></td>'+
+			'<td class="hui_layout_center"></td>'+
+			'</tr></table>'+
+			'</td></tr></tbody>';
+	return new hui.ui.Layout(options);
+}
+
 hui.ui.Layout.prototype = {
-	$$layout : function() {
+	
+	addToLeft : function(widget) {
+		var tbody = hui.get.firstByClass(this.element,'hui_layout_left');
+		tbody.appendChild(widget.element);
+	},
+	
+	addToCenter : function(widget) {
+		var tbody = hui.get.firstByClass(this.element,'hui_layout_center');
+		tbody.appendChild(widget.element);
+	},
+	
+	/** @private */
+	$$resize : function() {
 		if (hui.browser.gecko) {
 			var center = hui.get.firstByClass(this.element,'hui_layout_center');
 			if (center) {
@@ -44,50 +68,5 @@ hui.ui.Layout.prototype = {
 		cell.style.height = height+'px';
 	}
 };
-
-
-/**
- * @constructor
- * @param {Object} options { element «Node | id», name: «String» }
- */
-hui.ui.Columns = function(options) {
-	this.name = options.name;
-	this.options = options || {};
-	this.element = hui.get(options.element);
-	this.body = hui.get.firstByTag(this.element,'tr');
-	hui.ui.extend(this);
-}
-
-/**
- * Creates a new Columns opject
- */
-hui.ui.Columns.create = function(options) {
-	options = options || {};
-	options.element = hui.build('table',{'class' : 'hui_columns',html : '<tbody><tr></tr></tbody>'});
-	return new hui.ui.Columns(options);
-}
-
-hui.ui.Columns.prototype = {
-	addToColumn : function(index,widget) {
-		var c = this.ensureColumn(index);
-		c.appendChild(widget.getElement());
-	},
-	setColumnStyle : function(index,style) {
-		var c = this.ensureColumn(index);
-		hui.style.set(c,style);
-	},
-	setColumnWidth : function(index,width) {
-		var c = this.ensureColumn(index);
-		c.style.width=width+'px';
-	},
-	/** @private */
-	ensureColumn : function(index) {
-		var children = hui.get.children(this.body);
-		for (var i=children.length-1;i<index;i++) {
-			this.body.appendChild(hui.build('td',{'class':'hui_columns_column'}));
-		}
-		return hui.get.children(this.body)[index];
-	}
-}
 
 /* EOF */

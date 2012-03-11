@@ -65,6 +65,11 @@ hui.ui.get = function(nameOrWidget) {
 	return null;
 };
 
+/**
+ * Get a localized text, defaults to english or the key
+ * @param {String} key The key of the text
+ * @returns {String} The localized string
+ */
 hui.ui.getText = function(key) {
 	var x = this.texts[key];
 	if (!x) {return key}
@@ -94,7 +99,7 @@ hui.ui._frameLoaded = function(win) {
 /** @private */
 hui.ui._resize = function() {
 	for (var i = hui.ui.layoutWidgets.length - 1; i >= 0; i--) {
-		hui.ui.layoutWidgets[i]['$$layout']();
+		hui.ui.layoutWidgets[i]['$$resize']();
 	};
 }
 
@@ -246,8 +251,8 @@ hui.ui.reLayout = function() {
 		obj;
 	for (key in all) {
 		obj = all[key];
-		if (obj['$$layoutChanged']) {
-			obj['$$layoutChanged']();
+		if (obj['$$layout']) {
+			obj['$$layout']();
 		}
 	}
 }
@@ -259,6 +264,11 @@ hui.ui.Widget = function() {
 }
 
 hui.ui.Widget.prototype = {
+	_init : function(options) {
+		this.options = options;
+		this.name = options.name;
+		this.element = hui.get(options.element);
+	},
 	hide : function() {
 		this.element.style.display = 'none';
 	},
@@ -527,13 +537,13 @@ hui.ui.createIcon = function(icon,size) {
 	return hui.build('span',{'class':'hui_icon hui_icon_'+size,style:'background-image: url('+hui.ui.getIconUrl(icon,size)+')'});
 };
 
-hui.ui.wrapInField = function(e) {
+hui.ui.wrapInField = function(element) {
 	var w = hui.build('div',{'class':'hui_field',html:
 		'<span class="hui_field_top"><span><span></span></span></span>'+
 		'<span class="hui_field_middle"><span class="hui_field_middle"><span class="hui_field_content"></span></span></span>'+
 		'<span class="hui_field_bottom"><span><span></span></span></span>'
 	});
-	hui.get.firstByClass(w,'hui_field_content').appendChild(e);
+	hui.get.firstByClass(w,'hui_field_content').appendChild(element);
 	return w;
 };
 
@@ -556,12 +566,8 @@ hui.ui.addFocusClass = function(o) {
  * @param widget {Widget} The widget to stress
  */
 hui.ui.stress = function(widget) {
-	var e = widget.element;
-	hui.cls.add(e,'hui_effect_wiggle');
-	window.setTimeout(function() {
-		hui.cls.remove(e,'hui_effect_wiggle');
-	},1000);
-	
+	var e = hui.ui.getElement(widget);
+	hui.effect.wiggle({element:e,duration:1000});
 }
 
 
@@ -592,33 +598,6 @@ hui.ui.NumberValidator.prototype = {
 		return {valid:true,value:number};
 	}
 }
-
-/////////////////////////////// Animation /////////////////////////////
-
-hui.ui.fadeIn = function(node,time) {
-	if (hui.style.get(node,'display')=='none') {
-		hui.style.set(node,{opacity:0,display:''});
-	}
-	hui.animate(node,'opacity',1,time);
-};
-
-hui.ui.fadeOut = function(node,time) {
-	hui.animate(node,'opacity',0,time,{hideOnComplete:true});
-};
-
-/*
-hui.ui.bounceIn = function(node) {
-	if (hui.browser.msie) {
-		hui.style.set(node,{'display':'block',visibility:'visible'});
-	} else {
-		hui.style.set(node,{'display':'block','opacity':0,visibility:'visible'});
-		hui.animate(node,'transform','scale(0.1)',0);// rotate(10deg)
-		window.setTimeout(function() {
-			hui.animate(node,'opacity',1,300);
-			hui.animate(node,'transform','scale(1)',400,{ease:hui.ease.backOut}); // rotate(0deg)
-		});
-	}
-};*/
 
 //////////////////////////// Positioning /////////////////////////////
 
@@ -706,7 +685,7 @@ hui.ui.extend = function(obj,options) {
 	if (!obj.valueForProperty) {
 		obj.valueForProperty = function(p) {return this[p]};
 	}
-	if (obj['$$layout']) {
+	if (obj['$$resize']) {
 		hui.ui.layoutWidgets.push(obj);
 	}
 };
@@ -759,10 +738,11 @@ hui.ui.callDelegates = function(obj,method,value,event) {
 	var result = undefined;
 	if (obj.delegates) {
 		for (var i=0; i < obj.delegates.length; i++) {
-			var delegate = obj.delegates[i];
-			var thisResult = undefined;
-			if (obj.name && delegate['$'+method+'$'+obj.name]) {
-				thisResult = delegate['$'+method+'$'+obj.name](value,event);
+			var delegate = obj.delegates[i],
+				thisResult = undefined,
+				x = '$'+method+'$'+obj.name;
+			if (obj.name && delegate[x]) {
+				thisResult = delegate[x](value,event);
 			} else if (delegate['$'+method]) {
 				thisResult = delegate['$'+method](value,event);
 			}
@@ -1001,7 +981,8 @@ hui.ui.Bundle.prototype = {
 
 /**
  * Import some widgets by name
- * @param names Array of widgets to import
+ * @param {Array} names Array of widgets to import
+ * @param {Function} func The function to call when finished
  */
 hui.ui.require = function(names,func) {
 	for (var i = names.length - 1; i >= 0; i--){

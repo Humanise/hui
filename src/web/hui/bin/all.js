@@ -19,7 +19,7 @@ var hui = {
     KEY_PAGEUP : 33,
     KEY_PAGEDOWN : 34,
     KEY_INSERT : 45
-}
+};
 
 
 
@@ -31,29 +31,29 @@ hui.browser.opera = /opera/i.test(navigator.userAgent);
 /** If the browser is any version of InternetExplorer */
 hui.browser.msie = !hui.browser.opera && /MSIE/.test(navigator.userAgent);
 /** If the browser is InternetExplorer 6 */
-hui.browser.msie6 = navigator.userAgent.indexOf('MSIE 6')!==-1;
+hui.browser.msie6 = navigator.userAgent.indexOf('MSIE 6') !== -1;
 /** If the browser is InternetExplorer 7 */
-hui.browser.msie7 = navigator.userAgent.indexOf('MSIE 7')!==-1;
+hui.browser.msie7 = navigator.userAgent.indexOf('MSIE 7') !== -1;
 /** If the browser is InternetExplorer 8 */
-hui.browser.msie8 = navigator.userAgent.indexOf('MSIE 8')!==-1;
+hui.browser.msie8 = navigator.userAgent.indexOf('MSIE 8') !== -1;
 /** If the browser is InternetExplorer 9 */
-hui.browser.msie9 = navigator.userAgent.indexOf('MSIE 9')!==-1;
+hui.browser.msie9 = navigator.userAgent.indexOf('MSIE 9') !== -1;
 /** If the browser is InternetExplorer 9 in compatibility mode */
-hui.browser.msie9compat = hui.browser.msie7 && navigator.userAgent.indexOf('Trident/5.0')!==-1;
+hui.browser.msie9compat = hui.browser.msie7 && navigator.userAgent.indexOf('Trident/5.0') !== -1;
 /** If the browser is WebKit based */
-hui.browser.webkit = navigator.userAgent.indexOf('WebKit')!==-1;
+hui.browser.webkit = navigator.userAgent.indexOf('WebKit') !== -1;
 /** If the browser is any version of Safari */
-hui.browser.safari = navigator.userAgent.indexOf('Safari')!==-1;
+hui.browser.safari = navigator.userAgent.indexOf('Safari') !== -1;
 /** If the browser is any version of Chrome */
-hui.browser.chrome = navigator.userAgent.indexOf('Chrome')!==-1;
+hui.browser.chrome = navigator.userAgent.indexOf('Chrome') !== -1;
 /** The version of WebKit (null if not WebKit) */
 hui.browser.webkitVersion = null;
 /** If the browser is Gecko based */
-hui.browser.gecko = !hui.browser.webkit && navigator.userAgent.indexOf('Gecko')!=-1;
+hui.browser.gecko = !hui.browser.webkit && navigator.userAgent.indexOf('Gecko') !== -1;
 /** If the browser is safari on iPad */
-hui.browser.ipad = hui.browser.webkit && navigator.userAgent.indexOf('iPad')!=-1;
+hui.browser.ipad = hui.browser.webkit && navigator.userAgent.indexOf('iPad') !== -1;
 /** If the browser is on Windows */
-hui.browser.windows = navigator.userAgent.indexOf('Windows')!=-1;
+hui.browser.windows = navigator.userAgent.indexOf('Windows') !== -1;
 
 /** If the browser supports CSS opacity */
 hui.browser.opacity = !hui.browser.msie || hui.browser.msie9;
@@ -195,6 +195,18 @@ hui.isArray = function(obj) {
 /** @namespace */
 hui.string = {
 	
+	/**
+	 * Test that a string start with another string
+	 * @param {String} str The string to test
+	 * @param {String} start The string to look for at the start
+	 * @returns {Boolean} True if «str» starts with «start»
+	 */
+	startsWith : function(str,start) {
+		if (!typeof(str)=='string' || !typeof(start)=='string') {
+			return false;
+		}
+		return (str.match("^"+start)==start);
+	},
 	/**
 	 * Test that a string ends with another string
 	 * @param {String} str The string to test
@@ -410,6 +422,7 @@ hui.dom = {
 	addText : function(node,text) {
 		node.appendChild(document.createTextNode(text));
 	},
+	// TODO: Move to hui.get
 	firstChild : function(node) {
 		var children = node.childNodes;
 		for (var i=0; i < children.length; i++) {
@@ -440,9 +453,17 @@ hui.dom = {
 	insertBefore : function(target,newNode) {
 		target.parentNode.insertBefore(newNode,target);
 	},
+	insertAfter : function(target,newNode) {
+		var next = target.nextSibling;
+		if (next) {
+			next.parentNode.insertBefore(newNode,next);			
+		} else {
+			target.parentNode.appendChild(newNode);
+		}
+	},
 	replaceHTML : function(node,html) {
 		node = hui.get(node);
-		node.innerHTML=html;
+		node.innerHTML = html;
 	},
 	runScripts : function(node) {
 		var scripts = node.getElementsByTagName('script');
@@ -589,6 +610,9 @@ hui.get.next = function(element) {
 	if (!element) {
 		return null;
 	}
+	if (element.nextElementSibling) {
+		return element.nextElementSibling;
+	}
 	if (!element.nextSibling) {
 		return null;
 	}
@@ -600,6 +624,21 @@ hui.get.next = function(element) {
     	return next;
 	}
 	return null;
+}
+
+hui.get.before = function(element) {
+	var elements = [];
+	if (element) {
+		var nodes = element.parentNode.childNodes;
+		for (var i=0; i < nodes.length; i++) {
+			if (nodes[i]==element) {
+				break;
+			} else if (nodes[i].nodeType===1) {
+				elements.push(nodes[i]);
+			}
+		};
+	}
+	return elements;
 }
 
 /**
@@ -716,7 +755,7 @@ hui.get.firstByTag = function(node,tag) {
 }
 
 
-
+hui.get.firstChild = hui.dom.firstChild;
 
 
 
@@ -786,7 +825,9 @@ hui.build = function(name,options) {
 
 /////////////////////// Position ///////////////////////
 
-/** @namespace */
+/** @namespace
+ * Functions for getting and changing the position of elements
+ */
 hui.position = {
 	getTop : function(element) {
 	    element = hui.get(element);
@@ -1099,6 +1140,9 @@ hui.unListen = function(el,type,listener,useCapture) {
  * @returns {hui.Event} An event wrapper
  */
 hui.event = function(event) {
+	if (event!==undefined && event.huiEvent===true) {
+		return event;
+	}
 	return new hui.Event(event);
 }
 
@@ -1107,6 +1151,7 @@ hui.event = function(event) {
  * @param event The DOM event
  */
 hui.Event = function(event) {
+	this.huiEvent = true;
 	/** The event */
 	this.event = event = event || window.event;
 	/** The target element */
@@ -1481,6 +1526,11 @@ hui.style = {
 			}
 		}
 	},
+	/**
+	 * Get the computed style of an element
+	 * @param {Element} element The element
+	 * @param {String} style The CSS property in the form font-size NOT fontSize; 
+	 */
 	get : function(element, style) {
 		element = hui.get(element);
 		var cameled = hui.string.camelize(style);
@@ -1645,6 +1695,49 @@ hui.effect = {
 				hui.animate(node,'transform','scale(1)',400,{ease:hui.ease.backOut}); // rotate(0deg)
 			});
 		}
+	},
+	/**
+	 * Fade an element in - making it visible
+	 * @param {Object} options {element : «Element», duration : «milliseconds», delay : «milliseconds», onComplete : «Function» }
+	 */
+	fadeIn : function(options) {
+		var node = options.element;
+		if (hui.style.get(node,'display')=='none') {
+			hui.style.set(node,{opacity : 0,display : 'inherit'});
+		}
+		hui.animate({
+			node : node,
+			css : { opacity : 1 },
+			delay : options.delay || null,
+			duration : options.duration || 500,
+			onComplete : options.onComplete
+		});
+	},
+	/**
+	 * Fade an element out - making it invisible
+	 * @param {Object} options {element : «Element», duration : «milliseconds», delay : «milliseconds», onComplete : «Function» }
+	 */
+	fadeOut : function(options) {
+		hui.animate({
+			node : options.element,
+			css : { opacity : 0 },
+			delay : options.delay || null,
+			duration : options.duration || 500,
+			hideOnComplete : true,
+			onComplete : options.onComplete
+		});
+	},
+	/**
+	 * Make an element wiggle
+	 * @param {Object} options {element : «Element», duration : «milliseconds» }
+	 */
+	wiggle : function(options) {
+		var e = hui.ui.getElement(options.element);
+		hui.cls.add(options.element,'hui_effect_wiggle');
+		window.setTimeout(function() {
+			hui.cls.remove(options.element,'hui_effect_wiggle');
+		},options.duration || 1000);
+	
 	}
 }
 
@@ -1696,13 +1789,28 @@ hui.document = {
 
 /** @namespace */
 hui.drag = {
+	/** Register dragging on an element
+	 * <pre><strong>options:</strong> {
+	 *  element : «Element»
+	 *  <em>see hui.drag.start for more options</em>
+	 * }
+	 * @param {Object} options The options
+	 */
 	register : function(options) {
 		hui.listen(options.element,'mousedown',function(e) {
 			hui.stop(e);
 			hui.drag.start(options);
 		})
 	},
-	
+	/** Start dragging
+	 * <pre><strong>options:</strong> {
+	 *  onBeforeMove : function(event), // Called when the cursor moves for the first time
+	 *  onMove : function(event), // Called when the cursor moves
+	 *  onAfterMove : function(event), // Called if the cursor has moved
+	 *  onEnd : function(event), // Called when the mouse is released, even if the cursor has not moved
+	 * }
+	 * @param {Object} options The options
+	 */
 	start : function(options) {
 		var target = hui.browser.msie ? document : window;
 		
@@ -1742,6 +1850,15 @@ hui.drag = {
 	},
 	_nativeListeners : [],
 	_activeDrop : null,
+	/** Listen for native drops
+	 * <pre><strong>options:</strong> {
+	 *  hoverClass : «String»,
+	 *  onDrop : function(event),
+	 *  onFiles : function(fileArray),
+	 *  onURL : function(url)
+	 * }
+	 * @param {Object} options The options
+	 */
 	listen : function(options) {
 		if (hui.browser.msie) {
 			return;
@@ -1782,14 +1899,13 @@ hui.drag = {
 				if (options.onDrop) {
 					options.onDrop(e);
 				}
-				hui.log(e.dataTransfer.types)
+				//hui.log(e.dataTransfer.types)
 				if (options.onFiles && e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length>0) {
 					options.onFiles(e.dataTransfer.files);
 				}
-				else if (hui.array.contains(e.dataTransfer.types,'public.url')) {
+				else if (options.onURL && hui.array.contains(e.dataTransfer.types,'public.url')) {
 					var url = e.dataTransfer.getData('public.url');
-					hui.log('URL: '+url);
-					if (options.onURL) {
+					if (options.onURL && !hui.string.startsWith(url,'data:')) {
 						options.onURL(url);
 					}
 				}
@@ -2005,7 +2121,33 @@ hui.location = {
 
 
 
-
+hui.xml = {
+	transform : function(xml,xsl) {
+		if (window.ActiveXObject) {
+			return xml.transformNode(xsl);
+		} else if (document.implementation && document.implementation.createDocument) {
+			try {
+			  	var pro = new XSLTProcessor();
+			  	pro.importStylesheet(xsl);
+			    return pro.transformToFragment(xml,document);				
+			} catch (e) {
+				hui.log(e);
+			}
+		}
+	},
+	parse : function(xml) {
+		var doc;
+		if (window.DOMParser) {
+  			var parser=new DOMParser();
+  			doc = parser.parseFromString(xml,"text/xml");
+  		} else {
+  			doc = new ActiveXObject("Microsoft.XMLDOM");
+			doc.async = false;
+  			doc.loadXML(xml); 
+  		}
+		return doc;
+	}
+}
 
 
 
@@ -4497,6 +4639,11 @@ hui.ui.get = function(nameOrWidget) {
 	return null;
 };
 
+/**
+ * Get a localized text, defaults to english or the key
+ * @param {String} key The key of the text
+ * @returns {String} The localized string
+ */
 hui.ui.getText = function(key) {
 	var x = this.texts[key];
 	if (!x) {return key}
@@ -4526,7 +4673,7 @@ hui.ui._frameLoaded = function(win) {
 /** @private */
 hui.ui._resize = function() {
 	for (var i = hui.ui.layoutWidgets.length - 1; i >= 0; i--) {
-		hui.ui.layoutWidgets[i]['$$layout']();
+		hui.ui.layoutWidgets[i]['$$resize']();
 	};
 }
 
@@ -4678,8 +4825,8 @@ hui.ui.reLayout = function() {
 		obj;
 	for (key in all) {
 		obj = all[key];
-		if (obj['$$layoutChanged']) {
-			obj['$$layoutChanged']();
+		if (obj['$$layout']) {
+			obj['$$layout']();
 		}
 	}
 }
@@ -4691,6 +4838,11 @@ hui.ui.Widget = function() {
 }
 
 hui.ui.Widget.prototype = {
+	_init : function(options) {
+		this.options = options;
+		this.name = options.name;
+		this.element = hui.get(options.element);
+	},
 	hide : function() {
 		this.element.style.display = 'none';
 	},
@@ -4959,13 +5111,13 @@ hui.ui.createIcon = function(icon,size) {
 	return hui.build('span',{'class':'hui_icon hui_icon_'+size,style:'background-image: url('+hui.ui.getIconUrl(icon,size)+')'});
 };
 
-hui.ui.wrapInField = function(e) {
+hui.ui.wrapInField = function(element) {
 	var w = hui.build('div',{'class':'hui_field',html:
 		'<span class="hui_field_top"><span><span></span></span></span>'+
 		'<span class="hui_field_middle"><span class="hui_field_middle"><span class="hui_field_content"></span></span></span>'+
 		'<span class="hui_field_bottom"><span><span></span></span></span>'
 	});
-	hui.get.firstByClass(w,'hui_field_content').appendChild(e);
+	hui.get.firstByClass(w,'hui_field_content').appendChild(element);
 	return w;
 };
 
@@ -4988,12 +5140,8 @@ hui.ui.addFocusClass = function(o) {
  * @param widget {Widget} The widget to stress
  */
 hui.ui.stress = function(widget) {
-	var e = widget.element;
-	hui.cls.add(e,'hui_effect_wiggle');
-	window.setTimeout(function() {
-		hui.cls.remove(e,'hui_effect_wiggle');
-	},1000);
-	
+	var e = hui.ui.getElement(widget);
+	hui.effect.wiggle({element:e,duration:1000});
 }
 
 
@@ -5024,33 +5172,6 @@ hui.ui.NumberValidator.prototype = {
 		return {valid:true,value:number};
 	}
 }
-
-/////////////////////////////// Animation /////////////////////////////
-
-hui.ui.fadeIn = function(node,time) {
-	if (hui.style.get(node,'display')=='none') {
-		hui.style.set(node,{opacity:0,display:''});
-	}
-	hui.animate(node,'opacity',1,time);
-};
-
-hui.ui.fadeOut = function(node,time) {
-	hui.animate(node,'opacity',0,time,{hideOnComplete:true});
-};
-
-/*
-hui.ui.bounceIn = function(node) {
-	if (hui.browser.msie) {
-		hui.style.set(node,{'display':'block',visibility:'visible'});
-	} else {
-		hui.style.set(node,{'display':'block','opacity':0,visibility:'visible'});
-		hui.animate(node,'transform','scale(0.1)',0);// rotate(10deg)
-		window.setTimeout(function() {
-			hui.animate(node,'opacity',1,300);
-			hui.animate(node,'transform','scale(1)',400,{ease:hui.ease.backOut}); // rotate(0deg)
-		});
-	}
-};*/
 
 //////////////////////////// Positioning /////////////////////////////
 
@@ -5138,7 +5259,7 @@ hui.ui.extend = function(obj,options) {
 	if (!obj.valueForProperty) {
 		obj.valueForProperty = function(p) {return this[p]};
 	}
-	if (obj['$$layout']) {
+	if (obj['$$resize']) {
 		hui.ui.layoutWidgets.push(obj);
 	}
 };
@@ -5191,10 +5312,11 @@ hui.ui.callDelegates = function(obj,method,value,event) {
 	var result = undefined;
 	if (obj.delegates) {
 		for (var i=0; i < obj.delegates.length; i++) {
-			var delegate = obj.delegates[i];
-			var thisResult = undefined;
-			if (obj.name && delegate['$'+method+'$'+obj.name]) {
-				thisResult = delegate['$'+method+'$'+obj.name](value,event);
+			var delegate = obj.delegates[i],
+				thisResult = undefined,
+				x = '$'+method+'$'+obj.name;
+			if (obj.name && delegate[x]) {
+				thisResult = delegate[x](value,event);
 			} else if (delegate['$'+method]) {
 				thisResult = delegate['$'+method](value,event);
 			}
@@ -5433,7 +5555,8 @@ hui.ui.Bundle.prototype = {
 
 /**
  * Import some widgets by name
- * @param names Array of widgets to import
+ * @param {Array} names Array of widgets to import
+ * @param {Function} func The function to call when finished
  */
 hui.ui.require = function(names,func) {
 	for (var i = names.length - 1; i >= 0; i--){
@@ -6088,7 +6211,8 @@ hui.ui.Formula.Group.prototype = {
  *  url : «String»,
  *  source : «hui.ui.Source»,
  *  selectable : «<strong>true</strong> | false»,
- *  dropFiles : «true | <strong>false</strong>»
+ *  dropFiles : «true | <strong>false</strong>»,
+ *  indent : «Integer»
  * }
  *
  * <strong>Events:</strong>
@@ -6109,7 +6233,7 @@ hui.ui.Formula.Group.prototype = {
  * @param {Object} options The options : {url:null,source:null,selectable:«boolean»}
  */
 hui.ui.List = function(options) {
-	this.options = hui.override({url:null,source:null,selectable:true},options);
+	this.options = hui.override({url:null,source:null,selectable:true,indent:null},options);
 	this.element = hui.get(options.element);
 	this.name = options.name;
 	if (this.options.source) {
@@ -6152,7 +6276,8 @@ hui.ui.List = function(options) {
  *  url : «String»,
  *  source : «hui.ui.Source»,
  *  selectable : «<strong>true</strong> | false»,
- *  dropFiles : «true | <strong>false</strong>»
+ *  dropFiles : «true | <strong>false</strong>»,
+ *  indent : «Integer»
  * }
  * @param {Object} options The options
  */
@@ -6337,9 +6462,13 @@ hui.ui.List.prototype = {
 		}
 		this.sortKey = key;
 	},
+	_debug : function(obj) {
+		hui.log(obj);
+	},
 
 	/** @private */
 	$listLoaded : function(doc) {
+		this._debug('List loaded');
 		this._setError(false);
 		this.selected = [];
 		this.parseWindow(doc);
@@ -6386,7 +6515,6 @@ hui.ui.List.prototype = {
 		this.head.appendChild(headTr);
 		var frag = document.createDocumentFragment();
 		var rows = doc.getElementsByTagName('row');
-		hui.log(rows)
 		for (i=0; i < rows.length; i++) {
 			var cells = rows[i].getElementsByTagName('cell');
 			var row = document.createElement('tr');
@@ -6413,6 +6541,8 @@ hui.ui.List.prototype = {
 				}
 				if (j==0 && level>1) {
 					td.style.paddingLeft = ((parseInt(level)-1)*16+5)+'px';
+				} else if (j==0 && this.options.indent!=null) {
+					td.style.paddingLeft = this.options.indent+'px';
 				}
 				this.parseCell(cells[j],td);
 				row.appendChild(td);
@@ -6430,6 +6560,7 @@ hui.ui.List.prototype = {
 			this.rows.push(info);
 		};
 		this.body.appendChild(frag);
+		this._setEmpty(rows.length==0);
 		this.fire('selectionReset');
 	},
 	
@@ -6447,10 +6578,12 @@ hui.ui.List.prototype = {
 	},
 	/** @private */
 	$sourceIsBusy : function() {
+		this._debug('$sourceIsBusy');
 		this._setBusy(true);
 	},
 	/** @private */
 	$sourceIsNotBusy : function() {
+		this._debug('$sourceIsNotBusy');
 		this._setBusy(false);
 	},
 	/** @private */
@@ -6479,6 +6612,12 @@ hui.ui.List.prototype = {
 			}
 		}
 	},
+	_setEmpty : function(empty) {
+		var lmnt = hui.get.firstByClass(this.element,'hui_list_empty');
+		if (lmnt) {
+			lmnt.style.display = empty ? 'block' : '';
+		}
+	},
 	
 	_wrap : function(str) {
 		var out = '';
@@ -6500,6 +6639,10 @@ hui.ui.List.prototype = {
 	
 	/** @private */
 	parseCell : function(node,cell) {
+		var variant = node.getAttribute('variant');
+		if (variant!=null && variant!='') {
+			cell = hui.build('div',{parent:cell,className : 'hui_list_cell_'+variant});
+		}
 		var icon = node.getAttribute('icon');
 		if (icon!=null && icon!='') {
 			cell.appendChild(hui.ui.createIcon(icon,16));
@@ -6538,10 +6681,16 @@ hui.ui.List.prototype = {
 				if (child.getAttribute('mini')=='true') {
 					hui.cls.add(line,'hui_list_mini')
 				}
+				if (child.getAttribute('class')) {
+					hui.cls.add(line,child.getAttribute('class'))
+				}
+				if (child.getAttribute('top')) {
+					line.style.paddingTop=child.getAttribute('top')+'px';
+				}
 				cell.appendChild(line);
 				this.parseCell(child,line);
 			} else if (hui.dom.isElement(child,'object')) {
-				var obj = hui.build('div',{'class':'object'});
+				var obj = hui.build('div',{'class':'hui_list_object'});
 				if (child.getAttribute('icon')) {
 					obj.appendChild(hui.ui.createIcon(child.getAttribute('icon'),16));
 				}
@@ -6752,7 +6901,7 @@ hui.ui.List.prototype = {
 	},
 	/** @private */
 	createObject : function(object) {
-		var node = hui.build('div',{'class':'object'});
+		var node = hui.build('div',{'class':'hui_list_object'});
 		if (object.icon) {
 			node.appendChild(hui.ui.createIcon(object.icon,16));
 		}
@@ -7378,7 +7527,7 @@ hui.ui.DropDown.prototype = {
 		}
 		var self = this;
 		hui.each(this.items,function(item,i) {
-			var e = hui.build('a',{href:'javascript://',text:item.label || item.title || item.text});
+			var e = hui.build('a',{href:'javascript://',text : item.label || item.title || item.text || ''});
 			hui.listen(e,'mousedown',function(e) {
 				hui.stop(e);
 				self._itemClicked(item,i);
@@ -7404,6 +7553,7 @@ hui.ui.DropDown.prototype = {
 	_fireChange : function() {
 		hui.ui.callAncestors(this,'childValueChanged',this.value);
 		this.fire('valueChanged',this.value);
+		hui.ui.firePropertyChange(this,'value',this.value);
 	}
 }/**
  * An alert
@@ -7414,6 +7564,7 @@ hui.ui.DropDown.prototype = {
  * }
  * </pre>
  * @constructor
+ * @param {Object} options The options
  */
 hui.ui.Alert = function(options) {
 	this.options = hui.override({modal:false},options);
@@ -7438,6 +7589,7 @@ hui.ui.Alert = function(options) {
  * }
  * </pre>
  * @static
+ * @param {Object} options The options
  */
 hui.ui.Alert.create = function(options) {
 	options = hui.override({title:'',text:'',emotion:null,title:null},options);
@@ -7636,6 +7788,8 @@ hui.ui.Button.prototype = {
 			var form = hui.ui.getAncestor(this,'hui_formula');
 			if (form) {
 				form.submit();
+			} else {
+				hui.log('No form found to submit');
 			}
 		}
 	},
@@ -7838,6 +7992,15 @@ hui.ui.Selection.prototype = {
 	reset : function() {
 		this.setValue(null);
 	},
+	
+	addItems : function(options) {
+		options.element = hui.build('div',{parent:this.element});
+		var items = new hui.ui.Selection.Items(options);
+		items.parent = this;
+		this.subItems.push(items);
+	},
+	
+	
 	/** @private */
 	updateUI : function() {
 		var i;
@@ -8596,10 +8759,13 @@ hui.ui.BoundPanel.prototype = {
 		if (!this.visible) {
 			return;
 		}
-		if (hui.browser.msie) {
+		if (!hui.browser.opacity) {
 			this.element.style.display='none';
 		} else {
 			hui.animate(this.element,'opacity',0,300,{ease:hui.ease.slowFast,hideOnComplete:true});
+		}
+		if (this.options.modal) {
+			hui.ui.hideCurtain(this);
 		}
 		hui.ui.callVisible(this);
 		this.visible=false;
@@ -8882,18 +9048,18 @@ hui.ui.ImageViewer.prototype = {
 		if (this._shouldShowController()) {
 			this.ctrlHider = window.setTimeout(this._hideController.bind(this),2000);
 			if (hui.browser.msie) {
-				this.controller.show();
+				this.controller.style.display='block';
 			} else {
-				hui.ui.fadeIn(this.controller,200);
+				hui.effect.fadeIn({element:this.controller,duration:200});
 			}
 		}
 	},
 	_hideController : function() {
 		if (!this.overController) {
 			if (hui.browser.msie) {
-				this.controller.hide();
+				this.controller.style.display='none';
 			} else {
-				hui.ui.fadeOut(this.controller,500);
+				hui.effect.fadeOut({element:this.controller,duration:500});
 			}
 		}
 	},
@@ -9175,16 +9341,16 @@ hui.ui.ImageViewer.prototype = {
 				'class' : 'hui_imageviewer_zoomer',
 				style : 'width:'+this.viewer.clientWidth+'px;height:'+this.viewer.clientHeight+'px'
 			});
-			this.element.insertBefore(this.zoomer,hui.get.firstByTag(this.element,'*'));
+			this.element.insertBefore(this.zoomer,hui.dom.firstChild(this.element));
 			hui.listen(this.zoomer,'mousemove',this._onZoomMove.bind(this));
 			hui.listen(this.zoomer,'click',function() {
-				this.style.display='none';
-			});
+				this.zoomer.style.display='none';
+			}.bind(this));
 		}
 		this.pause();
 		var size = this._getLargestSize({width:2000,height:2000},img);
 		var url = hui.ui.resolveImageUrl(this,img,size.width,size.height);
-		this.zoomer.innerHTML = '<div style="width:'+size.width+'px;height:'+size.height+'px;"><img src="'+url+'"/></div>';
+		this.zoomer.innerHTML = '<div style="width:'+size.width+'px;height:'+size.height+'px; margin: 0 auto;"><img src="'+url+'"/></div>';
 		this.zoomer.style.display = 'block';
 		this.zoomInfo = {width:size.width,height:size.height};
 		this._onZoomMove(e);
@@ -9891,7 +10057,7 @@ hui.ui.Editor.prototype = {
 			if ((dragInfo.columnIndex == dropInfo.columnIndex && dragInfo.partIndex < dropInfo.partIndex) || dragInfo.rowIndex < dropInfo.rowIndex) {
 				top = top - dragInfo.initialHeight;
 			}
-			top+=3;
+			//top+=3;
 			left++;
 			// Move the proxy to new position
 			hui.animate({
@@ -10034,7 +10200,7 @@ hui.ui.Editor.prototype = {
 						bottom : bottom,
 						position : hui.position.getTop(part)
 					}
-					current+=part.clientHeight;
+					current += part.clientHeight;
 					infos.push(info);
 					previous = part;
 				};
@@ -10059,7 +10225,9 @@ hui.ui.Editor.prototype = {
 					position : position,
 					bottom : max-top > 20 ? max : top+20
 				}
-				current+=part.clientHeight;
+				if (part) {
+					current += part.clientHeight;
+				}
 				infos.push(info);
 			}
 		}
@@ -11396,7 +11564,7 @@ hui.ui.Gallery.prototype = {
 		this._reveal();
 	},
 	/** @private */
-	$$layout : function() {
+	$$resize : function() {
 		if (this.nodes.length>0) {
 			this._reveal();
 		}
@@ -11945,8 +12113,32 @@ hui.ui.Layout = function(options) {
 	hui.ui.extend(this);
 }
 
+hui.ui.Layout.create = function(options) {
+	options = hui.override({text:'',highlighted:false,enabled:true},options);
+	options.element = hui.build('table',{'class' : 'hui_layout'});
+	options.element.innerHTML = '<tbody class="hui_layout"><tr class="hui_layout_middle"><td class="hui_layout_middle">'+
+			'<table class="hui_layout_middle"><tr>'+
+			'<td class="hui_layout_left hui_context_sidebar"><div class="hui_layout_left"></div></td>'+
+			'<td class="hui_layout_center"></td>'+
+			'</tr></table>'+
+			'</td></tr></tbody>';
+	return new hui.ui.Layout(options);
+}
+
 hui.ui.Layout.prototype = {
-	$$layout : function() {
+	
+	addToLeft : function(widget) {
+		var tbody = hui.get.firstByClass(this.element,'hui_layout_left');
+		tbody.appendChild(widget.element);
+	},
+	
+	addToCenter : function(widget) {
+		var tbody = hui.get.firstByClass(this.element,'hui_layout_center');
+		tbody.appendChild(widget.element);
+	},
+	
+	/** @private */
+	$$resize : function() {
 		if (hui.browser.gecko) {
 			var center = hui.get.firstByClass(this.element,'hui_layout_center');
 			if (center) {
@@ -11980,51 +12172,6 @@ hui.ui.Layout.prototype = {
 		cell.style.height = height+'px';
 	}
 };
-
-
-/**
- * @constructor
- * @param {Object} options { element «Node | id», name: «String» }
- */
-hui.ui.Columns = function(options) {
-	this.name = options.name;
-	this.options = options || {};
-	this.element = hui.get(options.element);
-	this.body = hui.get.firstByTag(this.element,'tr');
-	hui.ui.extend(this);
-}
-
-/**
- * Creates a new Columns opject
- */
-hui.ui.Columns.create = function(options) {
-	options = options || {};
-	options.element = hui.build('table',{'class' : 'hui_columns',html : '<tbody><tr></tr></tbody>'});
-	return new hui.ui.Columns(options);
-}
-
-hui.ui.Columns.prototype = {
-	addToColumn : function(index,widget) {
-		var c = this.ensureColumn(index);
-		c.appendChild(widget.getElement());
-	},
-	setColumnStyle : function(index,style) {
-		var c = this.ensureColumn(index);
-		hui.style.set(c,style);
-	},
-	setColumnWidth : function(index,width) {
-		var c = this.ensureColumn(index);
-		c.style.width=width+'px';
-	},
-	/** @private */
-	ensureColumn : function(index) {
-		var children = hui.get.children(this.body);
-		for (var i=children.length-1;i<index;i++) {
-			this.body.appendChild(hui.build('td',{'class':'hui_columns_column'}));
-		}
-		return hui.get.children(this.body)[index];
-	}
-}
 
 /* EOF *//**
  * A dock
@@ -12139,7 +12286,7 @@ hui.ui.Dock.prototype = {
 		}
 	},
 	/** @private */
-	$$layout : function() {
+	$$resize : function() {
 		var height = hui.window.getViewHeight();
 		this.iframe.style.height=(height+this.diff)+'px';
 		this.progress.style.width=(this.iframe.clientWidth)+'px';
@@ -12230,8 +12377,8 @@ hui.ui.Box.prototype = {
 		this.visible = true;
 		hui.ui.callVisible(this);
 	},
-	/** private */
-	$$layout : function() {
+	/** @private */
+	$$resize : function() {
 		if (this.options.absolute && this.visible) {
 			var e = this.element;
 			var w = e.clientWidth;
@@ -12295,12 +12442,12 @@ hui.ui.Wizard.prototype = {
 	/** Goes to the step with the index (0-based) */
 	goToStep : function(index) {
 		var c = this.container;
-		c.style.height=c.clientHeight+'px';
+		c.style.height = c.clientHeight+'px';
 		hui.cls.remove(this.anchors[this.selected],'hui_selected');
-		this.steps[this.selected].style.display='none';
+		this.steps[this.selected].style.display = 'none';
 		hui.cls.add(this.anchors[index],'hui_selected');
-		this.steps[index].style.display='block';
-		this.selected=index;
+		this.steps[index].style.display = 'block';
+		this.selected = index;
 		hui.animate(c,'height',this.steps[index].clientHeight+'px',500,{ease:hui.ease.slowFastSlow,onComplete:function() {
 			c.style.height='';
 		}});
@@ -12338,7 +12485,7 @@ hui.ui.Input = function(options) {
 	hui.ui.extend(this);
 	this._addBehavior();
 	if (this.options.placeholderElement && this.value!='') {
-		hui.ui.fadeOut(this.options.placeholderElement,0);
+		hui.style.set(this.options.placeholderElement,{opacity:0,display:'none'});
 	}
 	this._checkPlaceholder();
 	try { // IE hack
@@ -12372,7 +12519,7 @@ hui.ui.Input.prototype = {
 	_focused : function() {
 		var e = this.element,p = this.options.placeholderElement;
 		if (p && e.value=='') {
-			hui.ui.fadeOut(p,0);
+			hui.style.set(p,{opacity:0,display:'none'});
 		}
 	},
 	/** @private */
@@ -12388,7 +12535,7 @@ hui.ui.Input.prototype = {
 	},
 	_checkPlaceholder : function() {
 		if (this.options.placeholderElement && this.value=='') {
-			hui.ui.fadeIn(this.options.placeholderElement,200);
+			hui.effect.fadeIn({element:this.options.placeholderElement,duration:200});
 		}
 		if (this.isPassword && !hui.browser.msie) {
 			this.element.type='password';
@@ -12560,16 +12707,32 @@ hui.ui.Overflow.prototype = {
 		}
 		return this;
 	},
-	$$layoutChanged : function() {
+	/** @private */
+	$$layout : function() {
 		if (!this.options.dynamic) {return}
+		/*
+		var hasSiblings = false;
+		var sibs = this.element.parentNode.childNodes;
+		for (var i=0; i < sibs.length; i++) {
+			if (sibs[i]!==this.element && hui.dom.isElement(sibs[i]) && sibs[i].nodeName!='script' && hui.style.get(sibs[i],'position')!='absolute') {
+				hasSiblings = true;
+				hui.log(sibs[i])
+				break;
+			}
+		};
+		if (!hasSiblings) {
+			hui.log('Fast path!');
+			this.$$resize();
+			return;
+		}*/
 		this.element.style.height='0px';
 		window.setTimeout(function() {
 			this._calculate();
-			this.$$layout();
+			this.$$resize();
 		}.bind(this))
 	},
 	/** @private */
-	$$layout : function() {
+	$$resize : function() {
 		var height;
 		if (!this.options.dynamic) {
 			if (this.options.vertical) {
@@ -12739,11 +12902,11 @@ hui.ui.LocationPicker = function(options) {
 hui.ui.LocationPicker.prototype = {
 	show : function(options) {
 		if (!this.panel) {
-			var panel = this.panel = hui.ui.BoundPanel.create({width:300});
-			var mapContainer = hui.build('div',{style:'width:300px;height:300px'});
+			var panel = this.panel = hui.ui.BoundPanel.create({width:302});
+			var mapContainer = hui.build('div',{style:'width:300px;height:300px;border:1px solid #bbb;'});
 			panel.add(mapContainer);
 			var buttons = hui.ui.Buttons.create({align:'right',top:5});
-			var button = hui.ui.Button.create({text:'Luk'});
+			var button = hui.ui.Button.create({text:'Luk',small:true});
 			button.listen({$click:function() {panel.hide()}});
 			panel.add(buttons.add(button));
 			hui.style.set(panel.element,{left:'-10000px',top:'-10000px',display:''});
@@ -12817,6 +12980,12 @@ hui.ui.LocationPicker.prototype = {
 }
 
 /* EOF *//**
+ * A bar
+ * <pre><strong>options:</strong> {
+ *  element : «Element»,
+ *  name : «String»
+ * }
+ * </pre>
  * @constructor
  * @param {Object} options The options
  */
@@ -12829,6 +12998,19 @@ hui.ui.Bar = function(options) {
 	hui.ui.extend(this);
 };
 
+
+/**
+ * Creates a new bar
+ * <pre><strong>options:</strong> {
+ *  variant : «null | 'window' | 'mini' | 'layout' | 'layout_mini' | 'window_mini'»,
+ *  absolute : «true | <strong>false</strong>»,
+ *
+ *  name : «String»
+ * }
+ * </pre>
+ * @static
+ * @param {Object} options The options
+ */
 hui.ui.Bar.create = function(options) {
 	options = options || {};
 	var cls = 'hui_bar';
@@ -12846,12 +13028,18 @@ hui.ui.Bar.create = function(options) {
 }
 
 hui.ui.Bar.prototype = {
+	/** Add the bar to the page */
 	addToDocument : function() {
 		document.body.appendChild(this.element);
 	},
+	/**
+	 * Add a widget to the bar
+	 * @param {Widget} widget The widget to add
+	 */
 	add : function(widget) {
 		this.body.appendChild(widget.getElement());
 	},
+	/** Add a divider to the bar */
 	addDivider : function() {
 		hui.build('span',{'class':'hui_bar_divider',parent:this.body})
 	},
@@ -12866,7 +13054,7 @@ hui.ui.Bar.prototype = {
 		this.element.style.zIndex = hui.ui.nextTopIndex();
 	},
 	/** Change the visibility of the bar
-	 * @param {boolean} If the bar should be visible
+	 * @param {Boolean} visible If the bar should be visible
 	 */
 	setVisible : function(visible) {
 		if (this.visible===visible) {return}
@@ -12876,6 +13064,7 @@ hui.ui.Bar.prototype = {
 			this.hide();
 		}
 	},
+	/** Show the bar */
 	show : function() {
 		if (this.options.absolute) {
 			this.element.style.visibility='visible';
@@ -12885,6 +13074,7 @@ hui.ui.Bar.prototype = {
 		}
 		this.visible = true;
 	},
+	/** Hide the bar */
 	hide : function() {
 		if (this.options.absolute) {
 			this.element.style.visibility='hidden';
@@ -12897,6 +13087,12 @@ hui.ui.Bar.prototype = {
 }
 
 /**
+ * A bar button
+ * <pre><strong>options:</strong> {
+ *  element : «Element»,
+ *  name : «String»
+ * }
+ * </pre>
  * @constructor
  * @param {Object} options The options
  */
@@ -12906,10 +13102,23 @@ hui.ui.Bar.Button = function(options) {
 	this.element = hui.get(options.element);
 	hui.listen(this.element,'click',this._click.bind(this));
 	hui.listen(this.element,'mousedown',this._mousedown.bind(this));
-	hui.listen(this.element,'mouseup',function(e) {hui.stop(e)});
+	hui.listen(this.element,'mouseup',hui.stop);
 	hui.ui.extend(this);
 };
 
+
+
+/**
+ * Creates a new bar button
+ * <pre><strong>options:</strong> {
+ *  icon : «String»,
+ *
+ *  name : «String»
+ * }
+ * </pre>
+ * @static
+ * @param {Object} options The options
+ */
 hui.ui.Bar.Button.create = function(options) {
 	options = options || {};
 	var e = options.element = hui.build('a',{'class':'hui_bar_button'});
@@ -12932,12 +13141,21 @@ hui.ui.Bar.Button.prototype = {
 			hui.stop(e);
 		}
 	},
-	setSelected : function(highlighted) {
-		hui.cls.set(this.element,'hui_bar_button_selected',highlighted);
+	/** Mark the button as selected
+	 * @param {Boolean} selected If it should be marked selected
+	 */
+	setSelected : function(selected) {
+		hui.cls.set(this.element,'hui_bar_button_selected',selected);
 	}
 }
 
 /**
+ * A bar text
+ * <pre><strong>options:</strong> {
+ *  element : «Element»,
+ *  name : «String»
+ * }
+ * </pre>
  * @constructor
  * @param {Object} options The options
  */
@@ -12949,6 +13167,9 @@ hui.ui.Bar.Text = function(options) {
 };
 
 hui.ui.Bar.Text.prototype = {
+	/** Change the text
+	 * @param {String} str The text
+	 */
 	setText : function(str) {
 		hui.dom.setText(this.element,str);
 	}
@@ -14348,7 +14569,7 @@ hui.ui.LocationField = function(options) {
 
 hui.ui.LocationField.create = function(options) {
 	options = options || {};
-	var e = options.element = hui.build('div',{'class':'hui_locationfield'});
+	var e = options.element = hui.build('span',{'class':'hui_locationfield'});
 	var b = hui.build('span',{html:'<span class="hui_locationfield_latitude"><span><input/></span></span><span class="hui_locationfield_longitude"><span><input/></span></span>'});
 	e.appendChild(hui.ui.wrapInField(b));
 	e.appendChild(hui.build('a',{'class':'hui_locationfield_picker',href:'javascript:void(0);'}));
@@ -14529,11 +14750,6 @@ hui.ui.StyleLength.prototype = {
 			this.input.focus();
 		} catch (e) {}		
 	},
-	focus : function() {
-		try {
-			this.input.focus();
-		} catch (e) {}		
-	},
 	reset : function() {
 		this.setValue('');
 	}
@@ -14557,7 +14773,7 @@ hui.ui.DateTimeField = function(o) {
 }
 
 hui.ui.DateTimeField.create = function(options) {
-	var node = hui.build('span',{'class':'hui_formula_text_singleline'});
+	var node = hui.build('span',{'class':'hui_field_singleline'});
 	hui.build('input',{'class':'hui_formula_text',parent:node});
 	options.element = hui.ui.wrapInField(node);
 	return new hui.ui.DateTimeField(options);
@@ -14780,12 +14996,11 @@ hui.ui.Checkboxes = function(options) {
 	this.element = hui.get(options.element);
 	this.name = options.name;
 	this.items = options.items || [];
-	this.sources = [];
 	this.subItems = [];
 	this.values = options.values || options.value || []; // values is deprecated
 	hui.ui.extend(this);
 	this.addBehavior();
-	this.updateUI();
+	this._updateUI();
 	if (options.url) {
 		new hui.ui.Source({url:options.url,delegate:this});
 	}
@@ -14817,11 +15032,7 @@ hui.ui.Checkboxes.prototype = {
 	getValue : function() {
 		return this.values;
 	},
-	/** @deprecated */
-	getValues : function() {
-		return this.values;
-	},
-	checkValues : function() {
+	_checkValues : function() {
 		var newValues = [];
 		for (var i=0; i < this.values.length; i++) {
 			var value = this.values[i],
@@ -14831,7 +15042,7 @@ hui.ui.Checkboxes.prototype = {
 				found = found || this.items[j].value===value;
 			}
 			for (j=0; j < this.subItems.length; j++) {
-				found = found || this.subItems[j].hasValue(value);
+				found = found || this.subItems[j]._hasValue(value);
 			};
 			if (found) {
 				newValues.push(value);
@@ -14840,25 +15051,21 @@ hui.ui.Checkboxes.prototype = {
 		this.values=newValues;
 	},
 	setValue : function(values) {
-		this.values=values;
-		this.checkValues();
-		this.updateUI();
-	},
-	/** @deprecated */
-	setValues : function(values) {
-		this.setValue(values);
+		this.values = values;
+		this._checkValues();
+		this._updateUI();
 	},
 	flipValue : function(value) {
 		hui.array.flip(this.values,value);
-		this.checkValues();
-		this.updateUI();
+		this._checkValues();
+		this._updateUI();
 		this.fire('valueChanged',this.values);
 		hui.ui.callAncestors(this,'childValueChanged',this.values);
 	},
-	updateUI : function() {
+	_updateUI : function() {
 		var i,item,found;
 		for (i=0; i < this.subItems.length; i++) {
-			this.subItems[i].updateUI();
+			this.subItems[i]._updateUI();
 		};
 		var nodes = hui.get.byClass(this.element,'hui_checkbox');
 		for (i=0; i < this.items.length; i++) {
@@ -14875,10 +15082,18 @@ hui.ui.Checkboxes.prototype = {
 	reset : function() {
 		this.setValues([]);
 	},
-	registerSource : function(source) {
-		source.parent = this;
-		this.sources.push(source);
+	getLabel : function() {
+		return this.options.label;
 	},
+	/** @private @deprecated */
+	setValues : function(values) {
+		this.setValue(values);
+	},
+	/** @private @deprecated */
+	getValues : function() {
+		return this.values;
+	},
+	/** @private */
 	registerItem : function(item) {
 		// If it is a number, treat it as such
 		if (parseInt(item.value)==item.value) {
@@ -14886,14 +15101,12 @@ hui.ui.Checkboxes.prototype = {
 		}
 		this.items.push(item);
 	},
+	/** @private */
 	registerItems : function(items) {
-		hui.log('registerItems')
 		items.parent = this;
 		this.subItems.push(items);
 	},
-	getLabel : function() {
-		return this.options.label;
-	},
+	/** @private */
 	$itemsLoaded : function(items) {
 		hui.each(items,function(item) {
 			var node = hui.build('a',{'class':'hui_checkbox',href:'javascript:void(0);',html:'<span><span></span></span>'+hui.string.escape(item.title)});
@@ -14905,8 +15118,8 @@ hui.ui.Checkboxes.prototype = {
 			this.element.appendChild(node);
 			this.items.push(item);
 		}.bind(this));
-		this.checkValues();
-		this.updateUI();
+		this._checkValues();
+		this._updateUI();
 	}
 }
 
@@ -14935,6 +15148,7 @@ hui.ui.Checkboxes.Items.prototype = {
 			this.options.source.refresh();
 		}
 	},
+	/** @private */
 	$itemsLoaded : function(items) {
 		this.checkboxes = [];
 		this.element.innerHTML='';
@@ -14944,19 +15158,19 @@ hui.ui.Checkboxes.Items.prototype = {
 			hui.listen(node,'click',function(e) {
 				hui.stop(e);
 				node.focus();
-				self.itemWasClicked(item)
+				self._onItemClick(item)
 			});
 			hui.ui.addFocusClass({element:node,'class':'hui_checkbox_focused'});
 			self.element.appendChild(node);
 			self.checkboxes.push({title:item.title,element:node,value:item.value});
 		});
-		this.parent.checkValues();
-		this.updateUI();
+		this.parent._checkValues();
+		this._updateUI();
 	},
-	itemWasClicked : function(item) {
+	_onItemClick : function(item) {
 		this.parent.flipValue(item.value);
 	},
-	updateUI : function() {
+	_updateUI : function() {
 		try {
 		for (var i=0; i < this.checkboxes.length; i++) {
 			var item = this.checkboxes[i];
@@ -14968,7 +15182,7 @@ hui.ui.Checkboxes.Items.prototype = {
 			alert(e);
 		}
 	},
-	hasValue : function(value) {
+	_hasValue : function(value) {
 		for (var i=0; i < this.checkboxes.length; i++) {
 			if (this.checkboxes[i].value==value) {
 				return true;
@@ -15045,7 +15259,10 @@ hui.ui.NumberField = function(o) {
 	this.input = hui.get.firstByTag(e,'input');
 	this.up = hui.get.firstByClass(e,'hui_numberfield_up');
 	this.down = hui.get.firstByClass(e,'hui_numberfield_down');
-	this.value = this.options.value;
+	this.value = parseInt(this.options.value,10);
+	if (isNaN(this.value)) {
+		this.value = null;
+	}
 	hui.ui.extend(this);
 	this.addBehavior();
 }
@@ -15400,7 +15617,126 @@ hui.ui.Rendering.prototype = {
 	setContent : function(html) {
 		this.element.innerHTML = html;
 	}
-}/** A graph
+}/**
+ * A push button
+ * <pre><strong>options:</strong> {
+ *  element : «Element | ID»,
+ *  name : «String»
+ * }
+ *
+ * <strong>Events:</strong>
+ * $click(button) - When the icon is clicked
+ * </pre>
+ *
+ * @param options {Object} The options
+ * @constructor
+ */
+hui.ui.Icon = function(options) {
+	this.options = options;
+	this.name = options.name;
+	this.icon = this.options.icon;
+	this.size = this.options.size;
+	this.element = hui.get(options.element);
+	hui.ui.extend(this);
+	this._addBehavior();
+}
+
+hui.ui.Icon.prototype = {
+	_addBehavior : function() {
+		hui.listen(this.element,'click',function() {
+			this.fire('click');
+		}.bind(this));
+	},
+	setSize : function(size) {
+		this.size = size;
+		this.element.className = 'hui_icon_labeled hui_icon_labeled_'+this.size;
+		var inner = hui.get.firstByTag(this.element,'span');
+		inner.className = 'hui_icon_'+this.size;
+		inner.style.backgroundImage = 'url('+hui.ui.getIconUrl(this.options.icon,this.size)+')';
+	}
+}/////////////////////////// Color input /////////////////////////
+
+/**
+ * A component for color input
+ * @constructor
+ */
+hui.ui.ColorInput = function(options) {
+	this.options = hui.override({value:null},options);
+	this.name = options.name;
+	this.element = hui.get(options.element);
+	this.button = hui.get.firstByTag('a',this.element);
+	this.value = this.options.value;
+	hui.ui.extend(this);
+	this.setValue(this.value);
+	this._addBehavior();
+}
+
+hui.ui.ColorInput.prototype = {
+	_addBehavior : function() {
+		alert(this.button)
+	},
+	
+	getValue : function() {
+		return this.value;
+	},
+	setValue : function(value) {
+		this.value = value;
+	},
+	focus : function() {
+		try {
+			this.input.focus();
+		} catch (e) {}		
+	},
+	reset : function() {
+		this.setValue('');
+	}
+	
+}
+
+/* EOF *//**
+ * @constructor
+ * @param {Object} options { element «Node | id», name: «String» }
+ */
+hui.ui.Columns = function(options) {
+	this.name = options.name;
+	this.options = options || {};
+	this.element = hui.get(options.element);
+	this.body = hui.get.firstByTag(this.element,'tr');
+	hui.ui.extend(this);
+}
+
+/**
+ * Creates a new Columns opject
+ */
+hui.ui.Columns.create = function(options) {
+	options = options || {};
+	options.element = hui.build('table',{'class' : 'hui_columns',html : '<tbody><tr></tr></tbody>'});
+	return new hui.ui.Columns(options);
+}
+
+hui.ui.Columns.prototype = {
+	addToColumn : function(index,widget) {
+		var c = this._ensureColumn(index);
+		c.appendChild(widget.getElement());
+	},
+	setColumnStyle : function(index,style) {
+		var c = this._ensureColumn(index);
+		hui.style.set(c,style);
+	},
+	setColumnWidth : function(index,width) {
+		var c = this._ensureColumn(index);
+		c.style.width=width+'px';
+	},
+	_ensureColumn : function(index) {
+		var children = hui.get.children(this.body);
+		for (var i=children.length-1;i<index;i++) {
+			this.body.appendChild(hui.build('td',{'class':'hui_columns_column'}));
+		}
+		return hui.get.children(this.body)[index];
+	}
+}
+
+/* EOF *//** A graph
  * @constructor
  */
 hui.ui.Graph = function(options) {
@@ -15476,13 +15812,13 @@ hui.ui.Graph.prototype = {
 			this.options.source.refreshFirst();
 		}
 	},
-	$$layout : function() {
+	$$resize : function() {
 		hui.log('graph.layout');
 		this.impl.resize(this.element.parentNode.clientWidth,this.element.parentNode.clientHeight);
 	},
-	$$layoutChanged : function() {
+	$$layout : function() {
 		hui.log('graph.layoutChanged');
-		window.setTimeout(this.$$layout.bind(this),100);
+		window.setTimeout(this.$$resize.bind(this),100);
 	}
 }
 
@@ -17611,23 +17947,85 @@ hui.ui.Drawing = function(options) {
 
 hui.ui.Drawing.create = function(options) {
 	options = options || {};
-	var e = options.element = hui.build('div',{'class':'hui_drawing'});
+	var e = options.element = hui.build('div',{'class':'hui_drawing',style:'position: relative; overflow: hidden;'});
 	if (options.height) {
-		e.style.height=options.height+'px';
+		e.style.height = options.height+'px';
 	}
 	if (options.width) {
-		e.style.width=options.width+'px';
+		e.style.width = options.width+'px';
+	}
+	if (options.parent) {
+		options.parent.appendChild(e);
 	}
 	return new hui.ui.Drawing(options);
 }
 
 hui.ui.Drawing.prototype = {
 	addLine : function(options) {
-		var node = this._build({tag:'line',parent:this.svg,attributes:{x1:options.x1,y1:options.y1,x2:options.x2,y2:options.y2,style:'stroke:'+(options.color || '#000')+';stroke-width:'+(options.width || 1)}});
+		var node = this._build({
+			tag:'line',
+			parent:this.svg,
+			attributes:{
+				x1 : options.x1,
+				y1 : options.y1,
+				x2 : options.x2,
+				y2 : options.y2,
+				style:'stroke:'+(options.color || '#000')+';stroke-width:'+(options.width || 1)
+			}
+		});
 		return new hui.ui.Drawing.Line(node);
 	},
+	addCircle : function(options) {
+		var node = this._build({
+			tag:'circle',
+			parent:this.svg,
+			attributes : {
+				cx : options.cx,
+				cy : options.cy,
+				r : options.r,
+				style : 'stroke:'+(options.color || '#000')+'; fill:'+(options.fill || '#fff')+'; stroke-width:'+(options.width==undefined ? 1 : options.width)}
+		});
+		return new hui.ui.Drawing.Circle(node);
+	},
+	addElement : function(options) {
+		var node = hui.build('div',{style:'position:absolute;left:0;top:0;',parent:this.element,html:options.html}),
+			element = new hui.ui.Drawing.Element(node);
+		if (options.movable) {
+			hui.drag.register({
+				element : node,
+				onBeforeMove : function(e) {
+					this.fire('shapeWillMove',{shape:element,event:e});
+				}.bind(this),
+				onMove : function(e) {
+					node.style.left = e.getLeft()+'px';
+					node.style.top = e.getTop()+'px';
+					this.fire('shapeMoved',{shape:element,event:e});
+				}.bind(this),
+				onAfterMove : function(e) {
+					this.fire('shapeWasMoved',{shape:element,event:e});
+				}.bind(this)
+			})
+		}
+		return element;
+	},
 	_build : function(options) {
-		var node = document.createElementNS('http://www.w3.org/2000/svg',options.tag);
+		if (false && (hui.browser.msie8 || hui.browser.msie7 || hui.browser.msie6)) {
+			var line = document.createElement("v:line");
+			line.setAttribute('from','0 0');
+			line.setAttribute('to','100 100');
+			line.setAttribute("fillcolor","#FF0000");
+			line.setAttribute("strokeweight","2pt");
+			return line;
+			
+			var frag = document.createDocumentFragment();
+			frag.insertAdjacentHTML('beforeEnd',
+				'<v:rect id="myRect" fillcolor="blue" style="top:10px;left:15px;width:50px;height:30px;position:absolute;"></biv:rect>'
+			);
+			document.body.appendChild(frag);
+			return document.getElementById('myRect');
+		} else {
+			var node = document.createElementNS('http://www.w3.org/2000/svg',options.tag);
+		}
 		if (options.attributes) {
 			for (att in options.attributes) {
 				node.setAttribute(att,options.attributes[att]);
@@ -17640,18 +18038,45 @@ hui.ui.Drawing.prototype = {
 	}
 }
 
+if (hui.browser.msie8) {
+	document.namespaces.add('v', 'urn:schemas-microsoft-com:vml', "#default#VML");
+}
+
 hui.ui.Drawing.Line = function(node) {
 	this.node = node;
 }
 
 hui.ui.Drawing.Line.prototype = {
-	setFrom : function(x,y) {
-		this.node.setAttribute('x1',x);
-		this.node.setAttribute('y1',y);
+	setFrom : function(point) {
+		this.node.setAttribute('x1',point.x);
+		this.node.setAttribute('y1',point.y);
 	},
-	setTo : function(x,y) {
-		this.node.setAttribute('x2',x);
-		this.node.setAttribute('y2',y);
+	setTo : function(point) {
+		this.node.setAttribute('x2',point.x);
+		this.node.setAttribute('y2',point.y);
+	}
+}
+
+hui.ui.Drawing.Circle = function(node) {
+	this.node = node;
+}
+
+hui.ui.Drawing.Circle.prototype = {
+}
+
+
+hui.ui.Drawing.Element = function(node) {
+	this.node = node;
+}
+
+hui.ui.Drawing.Element.prototype = {
+	setPosition : function(point) {
+		this.node.style.left = point.x+'px';
+		this.node.style.top = point.y+'px';
+	},
+	setCenter : function(point) {
+		this.node.style.left = (point.x - this.node.clientWidth/2)+'px';
+		this.node.style.top = (point.y - this.node.clientHeight/2)+'px';
 	}
 }/**
  * Image pasting madness
@@ -17777,5 +18202,154 @@ hui.ui.ImagePaster.prototype = {
 			var container = hui.build('div',{className:'hui_imagepaster_preview',parent:this.element});
 			this.preview = hui.build('img',{src:'data:image/png;base64,'+this.data,parent:container});
 		}
+	}
+}/**
+ * Tiles
+ * @constructor
+ */
+hui.ui.Tiles = function(options) {
+	this.options = options || {};
+	this.element = hui.get(options.element);
+	this.name = options.name;
+	this.tiles = hui.get.children(this.element);
+	hui.ui.extend(this);
+	this._addBehavior();
+	if (this.options.reveal) {
+		hui.onReady(this._reveal.bind(this));
+	}
+}
+
+hui.ui.Tiles.prototype = {
+	_addBehavior : function() {
+	},
+	_reveal : function() {
+		for (var i=0; i < this.tiles.length; i++) {
+			var tile = this.tiles[i];
+			this._bounce(tile);
+		};
+	},
+	_bounce : function(tile) {
+		hui.effect.fadeIn({element:tile,delay:Math.random()*500});		
+	}
+}
+
+hui.ui.Tile = function(options) {
+	this.options = options || {};
+	this.element = hui.get(options.element);
+	this.name = options.name;
+	hui.ui.extend(this);
+	this.fullScreen = false;
+	this.initial = {
+		width : this.element.style.width,
+		height : this.element.style.height,
+		top : this.element.style.top,
+		left : this.element.style.left
+	}
+	this._addBehavior();
+}
+
+hui.ui.Tile._zIndex = 0;
+
+hui.ui.Tile.prototype = {
+	_addBehavior : function() {
+		hui.listen(this.element,'click',function(e) {
+			e = hui.event(e);
+			if (hui.cls.has(e.element,'hui_tile_icon')) {
+				var key = e.element.getAttribute('data-hui-key');
+				this.fire('clickIcon',{key:key,tile:this});
+			}
+		}.bind(this))
+	},
+	isFullScreen : function() {
+		return this.fullScreen;
+	},
+	toggleFullScreen : function() {
+		if (this.fullScreen) {
+			hui.animate({
+				node : this.element,
+				css : this.initial,
+				duration : 1000,
+				ease : hui.ease.elastic,
+				onComplete : function() {
+					hui.ui.reLayout()
+				}
+			});			
+		} else {
+			hui.ui.Tile._zIndex++;
+			this.element.style.zIndex = hui.ui.Tile._zIndex;
+			hui.animate({
+				node : this.element,
+				css : {top:'0%',left:'0%',width:'100%',height:'100%'},
+				duration : 1000,
+				ease : hui.ease.elastic,
+				onComplete : function() {
+					hui.ui.reLayout()
+				}
+			});			
+		}
+		this.fullScreen = !this.fullScreen;
+	}
+}/**
+ * Pages
+ * @constructor
+ */
+hui.ui.Pages = function(options) {
+	this.options = options || {};
+	this.element = hui.get(options.element);
+	this.name = options.name;
+	this.pages = hui.get.children(this.element);
+	this.index = 0;
+	this.expanded = false;
+	hui.ui.extend(this);
+	//hui.listen(this.element,'click',this.next.bind(this));
+}
+
+hui.ui.Pages.prototype = {
+	next : function() {
+		if (this.expanded) {return}
+		var current = this.pages[this.index];
+		this.index = this.pages.length <= this.index+1 ? 0 : this.index+1;
+		this._transition({hide:current,show:this.pages[this.index]});
+	},
+	previous : function() {
+		if (this.expanded) {return}
+		var current = this.pages[this.index];
+		this.index = this.index == 0 ? this.pages.length-1 : this.index-1;
+		this._transition({hide:current,show:this.pages[this.index]});
+	},
+	expand : function() {
+		var l = this.pages.length;
+		for (var i=0; i < l; i++) {
+			if (!this.expanded) {
+				hui.style.set(this.pages[i],{
+					width : (100 / l)+'%',
+					display : 'block',
+					float : 'left',
+					opacity: 1
+				});
+			} else {
+				hui.style.set(this.pages[i],{
+					width : '',
+					display : i==this.index ? 'block' : 'none',
+					float : ''
+				});
+			}
+		};
+		hui.ui.callVisible(this);
+		this.expanded = !this.expanded;
+	},
+	_transition : function(options) {
+		var hide = options.hide,
+			show = options.show;
+		hui.style.set(hide,{position:'absolute',width:this.element.clientWidth+'px'});
+		hui.style.set(show,{position:'absolute',width:this.element.clientWidth+'px',display:'block',opacity:0});
+		hui.effect.fadeOut({element:hide,onComplete:function() {
+			hui.style.set(hide,{width : '',position:'',display:'none'});
+		}});
+		hui.effect.fadeIn({element:show,onComplete:function() {
+			hui.style.set(show,{width : '',position:''});
+			hui.ui.reLayout();
+			hui.ui.callVisible(this);
+		}.bind(this)});
 	}
 }
