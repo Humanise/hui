@@ -6,13 +6,16 @@
 hui.ui.Overflow = function(options) {
 	this.options = options;
 	this.element = hui.get(options.element);
+	this.topShadow = hui.get.firstByClass(this.element,'hui_overflow_top');
+	this.bottomShadow = hui.get.firstByClass(this.element,'hui_overflow_bottom');
+	hui.listen(this.element,'scroll',this._checkShadows.bind(this));
 	this.name = options.name;
 	hui.ui.extend(this);
 }
 
 hui.ui.Overflow.create = function(options) {
 	options = options || {};
-	var e = options.element = hui.build('div',{'class':'hui_overflow'});
+	var e = options.element = hui.build('div',{'class':'hui_overflow',html:'<div class="hui_overflow_top"></div><div class="hui_overflow_bottom"></div>'});
 	if (options.height) {
 		e.style.height=options.height+'px';
 	}
@@ -32,8 +35,23 @@ hui.ui.Overflow.prototype = {
 			}
 		}
 		this.diff = -1 * (top + (viewport - bottom));
-		if (hui.browser.webkit && this.element.parentNode.className=='hui_layout_center') {
+		if (hui.browser.webkit && (this.element.parentNode.className=='hui_layout_center' || hui.cls.has(this.element.parentNode,'hui_layout_left'))) {
 			this.diff++;
+		}
+	},
+	_checkShadows : function() {
+		if (hui.browser.msie) {return}
+		if (this.element.scrollTop>0) {
+			this.topShadow.style.display = 'block';
+			this.topShadow.style.top = this.element.scrollTop+'px';
+		} else {
+			this.topShadow.style.display = 'none';
+		}
+		if(this.element.scrollHeight-this.element.scrollTop-this.element.clientHeight>0) {
+			this.bottomShadow.style.display = 'block';
+			this.bottomShadow.style.top = (this.element.scrollTop+this.element.clientHeight-8)+'px';
+		} else {
+			this.bottomShadow.style.display = 'none';
 		}
 	},
 	show : function() {
@@ -52,9 +70,15 @@ hui.ui.Overflow.prototype = {
 		}
 		return this;
 	},
+	$$childSizeChanged : function() {
+		this._checkShadows();
+	},
 	/** @private */
 	$$layout : function() {
-		if (!this.options.dynamic) {return}
+		if (!this.options.dynamic) {
+			this._checkShadows();
+			return
+		}
 		/*
 		var hasSiblings = false;
 		var sibs = this.element.parentNode.childNodes;
@@ -84,6 +108,7 @@ hui.ui.Overflow.prototype = {
 				height = hui.window.getViewHeight();
 				this.element.style.height = Math.max(0,height-this.options.vertical)+'px';
 			}
+			this._checkShadows();
 			return;
 		}
 		if (this.diff===undefined) {
@@ -91,6 +116,7 @@ hui.ui.Overflow.prototype = {
 		}
 		height = hui.window.getViewHeight();
 		this.element.style.height = Math.max(0,height+this.diff)+'px';
+		this._checkShadows();
 	}
 }
 

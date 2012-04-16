@@ -10,11 +10,7 @@ hui.ui.Box = function(options) {
 	this.close = hui.get.firstByClass(this.element,'hui_box_close');
 	this.visible = !this.options.absolute;
 	if (this.close) {
-		hui.listen(this.close,'click',function(e) {
-			hui.stop(e);
-			this.hide();
-			this.fire('boxWasClosed');
-		}.bind(this));
+		hui.listen(this.close,'click',this._close.bind(this));
 	}
 	hui.ui.extend(this);
 };
@@ -43,6 +39,16 @@ hui.ui.Box.create = function(options) {
 };
 
 hui.ui.Box.prototype = {
+	_close : function(e) {
+		hui.stop(e);
+		this.hide();
+		this.fire('boxWasClosed'); // Deprecated
+		this.fire('close');
+	},
+	shake : function() {
+		hui.effect.shake({element:this.element});
+	},
+	
 	/**
 	 * Adds the box to the end of the body
 	 */
@@ -66,7 +72,7 @@ hui.ui.Box.prototype = {
 		var e = this.element;
 		if (this.options.modal) {
 			var index = hui.ui.nextPanelIndex();
-			e.style.zIndex=index+1;
+			e.style.zIndex = index+1;
 			hui.ui.showCurtain({widget:this,zIndex:index});
 		}
 		if (this.options.absolute) {
@@ -80,6 +86,10 @@ hui.ui.Box.prototype = {
 		}
 		this.visible = true;
 		hui.ui.callVisible(this);
+	},
+	/** If the box is visible */
+	isVisible : function() {
+		return this.visible;
 	},
 	/** @private */
 	$$resize : function() {
@@ -100,7 +110,10 @@ hui.ui.Box.prototype = {
 		hui.ui.callVisible(this);
 	},
 	/** @private */
-	curtainWasClicked : function() {
+	$curtainWasClicked : function() {
 		this.fire('boxCurtainWasClicked');
+		if (this.options.curtainCloses) {
+			this._close();
+		}
 	}
 };

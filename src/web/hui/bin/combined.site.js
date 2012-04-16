@@ -165,6 +165,16 @@ hui.isDefined = function(obj) {
 	return obj!==null && typeof(obj)!=='undefined';
 }
 
+
+
+/**
+ * Checks if an object is a string
+ * @param {Object} obj The object to check
+ */
+hui.isString = function(obj) {
+	return typeof(obj)==='string';
+}
+
 /**
  * Checks if an object is an array
  * @param {Object} obj The object to check
@@ -622,6 +632,26 @@ hui.get.next = function(element) {
 	}
 	if (next && next.nodeType==1) { 
     	return next;
+	}
+	return null;
+}
+
+hui.get.previous = function(element) {
+	if (!element) {
+		return null;
+	}
+	if (element.previousElementSibling) {
+		return element.previousElementSibling;
+	}
+	if (!element.previousSibling) {
+		return null;
+	}
+	var previous = element.previousSibling;
+	while (previous && previous.nodeType!=1) {
+		previous = previous.previousSibling;
+	}
+	if (previous && previous.nodeType==1) { 
+    	return previous;
 	}
 	return null;
 }
@@ -1120,6 +1150,21 @@ hui.listen = function(element,type,listener,useCapture) {
 }
 
 /**
+ * Add an event listener to an element, it will only fire once
+ * @param {Element} element The element to listen on
+ * @param {String} type The event to listen for
+ * @param {Function} listener The function to be called
+ */
+hui.listenOnce = function(element,type,listener) {	
+	var func;
+	func = function() {
+		listener();
+		hui.unListen(element,type,func)
+	}
+	hui.listen(element,type,func);
+}
+
+/**
  * Remove an event listener from an element
  * @param {Element} element The element to remove listener from
  * @param {String} type The event to remove
@@ -1160,6 +1205,8 @@ hui.Event = function(event) {
 	this.shiftKey = event.shiftKey;
 	/** If the alt key was pressed */
 	this.altKey = event.altKey;
+	/** If the command key was pressed */
+	this.metaKey = event.metaKey;
 	/** If the return key was pressed */
 	this.returnKey = event.keyCode==13;
 	/** If the escape key was pressed */
@@ -1232,6 +1279,19 @@ hui.Event.prototype = {
 		while (parent) {
 			if (parent.tagName && parent.tagName.toLowerCase()==tag) {
 				return parent;
+			}
+			parent = parent.parentNode;
+		}
+		return null;
+	},
+	find : function(func) {
+		
+		var parent = this.element;
+		while (parent) {
+			if (parent.tagName && parent.tagName.toLowerCase()==tag) {
+				if (func(parent)) {
+					return parent;
+				};
 			}
 			parent = parent.parentNode;
 		}
@@ -1645,6 +1705,10 @@ hui.selection = {
 			node : hui.selection.getNode(doc),
 			text : hui.selection.getText(doc)
 		}
+	},
+	enable : function(on) {
+		document.onselectstart = on ? null : function () { return false; };
+		document.body.style.webkitUserSelect = on ? null : 'none';
 	}
 }
 
@@ -1736,6 +1800,18 @@ hui.effect = {
 		hui.cls.add(options.element,'hui_effect_wiggle');
 		window.setTimeout(function() {
 			hui.cls.remove(options.element,'hui_effect_wiggle');
+		},options.duration || 1000);
+	
+	},
+	/**
+	 * Make an element shake
+	 * @param {Object} options {element : «Element», duration : «milliseconds» }
+	 */
+	shake : function(options) {
+		var e = hui.ui.getElement(options.element);
+		hui.cls.add(options.element,'hui_effect_shake');
+		window.setTimeout(function() {
+			hui.cls.remove(options.element,'hui_effect_shake');
 		},options.duration || 1000);
 	
 	}
@@ -1839,14 +1915,10 @@ hui.drag = {
 			if (moved && options.onAfterMove) {
 				options.onAfterMove();
 			}
-			hui.drag._setSelect(true);
+			hui.selection.enable(true);
 		}.bind(this)
 		hui.listen(target,'mouseup',upper);
-		hui.drag._setSelect(false);
-	},
-	_setSelect : function(on) {
-		document.onselectstart = on ? null : function () { return false; };
-		document.body.style.webkitUserSelect = on ? null : 'none';
+		hui.selection.enable(false);
 	},
 	_nativeListeners : [],
 	_activeDrop : null,
@@ -2129,10 +2201,15 @@ hui.xml = {
 			try {
 			  	var pro = new XSLTProcessor();
 			  	pro.importStylesheet(xsl);
-			    return pro.transformToFragment(xml,document);				
+				hui.log(pro)
+				var ownerDocument = document;//.implementation.createDocument("", "test", null); 
+			    return pro.transformToFragment(xml,ownerDocument);				
 			} catch (e) {
 				hui.log(e);
+				throw e;
 			}
+		} else {
+			hui.log('No XSLT!');
 		}
 	},
 	parse : function(xml) {
@@ -2826,8 +2903,12 @@ hui.Color.prototype = {
 	toRGB : function () {
         return 'rgb(' + this.r + ', ' + this.g + ', ' + this.b + ')';
     },
+	isDefined : function() {
+		return !(this.r===undefined || this.g===undefined || this.b===undefined);
+	},
 	/** Get the color as #ff0000 */
 	toHex : function() {
+		if (!this.isDefined()) {return null}
         var r = this.r.toString(16);
         var g = this.g.toString(16);
         var b = this.b.toString(16);
@@ -3750,6 +3831,9 @@ hui.ui.extend = function(obj,options) {
 	obj.fireProperty = function(key,value) {
 		hui.ui.firePropertyChange(this,key,value);
 	}
+	obj.fireSizeChange = function() {
+		hui.ui.callAncestors(obj,'$$childSizeChanged');
+	}
 	if (!obj.getElement) {
 		obj.getElement = function() {
 			return this.element;
@@ -3871,7 +3955,7 @@ hui.ui.firePropertyChange = function(obj,name,value) {
 };
 
 hui.ui.bind = function(expression,delegate) {
-	if (expression.charAt(0)=='@') {
+	if (hui.isString(expression) && expression.charAt(0)=='@') {
 		var pair = expression.substring(1).split('.');
 		var obj = hui.ui.get(pair[0]);
 		if (!obj) {
@@ -4535,11 +4619,7 @@ hui.ui.Box = function(options) {
 	this.close = hui.get.firstByClass(this.element,'hui_box_close');
 	this.visible = !this.options.absolute;
 	if (this.close) {
-		hui.listen(this.close,'click',function(e) {
-			hui.stop(e);
-			this.hide();
-			this.fire('boxWasClosed');
-		}.bind(this));
+		hui.listen(this.close,'click',this._close.bind(this));
 	}
 	hui.ui.extend(this);
 };
@@ -4568,6 +4648,16 @@ hui.ui.Box.create = function(options) {
 };
 
 hui.ui.Box.prototype = {
+	_close : function(e) {
+		hui.stop(e);
+		this.hide();
+		this.fire('boxWasClosed'); // Deprecated
+		this.fire('close');
+	},
+	shake : function() {
+		hui.effect.shake({element:this.element});
+	},
+	
 	/**
 	 * Adds the box to the end of the body
 	 */
@@ -4591,7 +4681,7 @@ hui.ui.Box.prototype = {
 		var e = this.element;
 		if (this.options.modal) {
 			var index = hui.ui.nextPanelIndex();
-			e.style.zIndex=index+1;
+			e.style.zIndex = index+1;
 			hui.ui.showCurtain({widget:this,zIndex:index});
 		}
 		if (this.options.absolute) {
@@ -4605,6 +4695,10 @@ hui.ui.Box.prototype = {
 		}
 		this.visible = true;
 		hui.ui.callVisible(this);
+	},
+	/** If the box is visible */
+	isVisible : function() {
+		return this.visible;
 	},
 	/** @private */
 	$$resize : function() {
@@ -4625,8 +4719,11 @@ hui.ui.Box.prototype = {
 		hui.ui.callVisible(this);
 	},
 	/** @private */
-	curtainWasClicked : function() {
+	$curtainWasClicked : function() {
 		this.fire('boxCurtainWasClicked');
+		if (this.options.curtainCloses) {
+			this._close();
+		}
 	}
 };/** @constructor */
 hui.ui.SearchField = function(options) {

@@ -21,11 +21,8 @@ hui.ui.Menu.create = function(options) {
 }
 
 hui.ui.Menu.prototype = {
-	/** @private */
 	_addBehavior : function() {
-		this.hider = function() {
-			this.hide();
-		}.bind(this)
+		this.hider = this.hide.bind(this);
 		if (this.options.autoHide) {
 			var x = function(e) {
 				if (!hui.ui.isWithin(e,this.element) && (!this.options.parentElement || !hui.ui.isWithin(e,this.options.parentElement))) {
@@ -48,7 +45,7 @@ hui.ui.Menu.prototype = {
 		var element = hui.build('div',{'class':'hui_menu_item',text:item.title});
 		hui.listen(element,'click',function(e) {
 			hui.stop(e);
-			self.itemWasClicked(item.value);
+			self._onItemClick(item.value);
 		});
 		if (item.children) {
 			var sub = hui.ui.Menu.create({autoHide:true,parentElement:element});
@@ -58,6 +55,12 @@ hui.ui.Menu.prototype = {
 			});
 			self.subMenus.push(sub);
 			hui.cls.add(element,'hui_menu_item_children');
+			sub.listen({
+				$select : function(value) {
+					self.hide();
+					self.fire('select',value);
+				}
+			})
 		}
 		this.element.appendChild(element);
 	},
@@ -73,7 +76,7 @@ hui.ui.Menu.prototype = {
 	getValue : function() {
 		return this.value;
 	},
-	itemWasClicked : function(value) {
+	_onItemClick : function(value) {
 		this.value = value;
 		this.fire('itemWasClicked',value);
 		this.fire('select',value);
@@ -119,16 +122,19 @@ hui.ui.Menu.prototype = {
 		}
 	},
 	hide : function() {
-		if (!this.visible) return;
+		if (!this.visible) {return};
 		var self = this;
-		hui.animate(this.element,'opacity',0,200,{onComplete:function() {
-			self.element.style.display='none';
-		}});
+		hui.animate(this.element, 'opacity', 0, 200, {
+			onComplete : function() {
+				self.element.style.display='none';
+			}
+		});
 		this.removeHider();
 		for (var i=0; i < this.subMenus.length; i++) {
 			this.subMenus[i].hide();
 		};
 		this.visible = false;
+		this.fire('hide');
 	},
 	isSubMenuVisible : function() {
 		for (var i=0; i < this.subMenus.length; i++) {

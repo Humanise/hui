@@ -116,7 +116,7 @@
 	</td></tr>
 </xsl:template>
 
-<xsl:template name="gui:text" match="gui:textfield">
+<xsl:template name="gui:text" match="gui:textfield | gui:text-input">
 	<xsl:choose>
 		<xsl:when test="@lines>1 or @multiline='true'">
 			<div class="hui_field hui_longfield" id="{generate-id()}">
@@ -135,7 +135,13 @@
 			<span class="hui_field_top"><span><span><xsl:comment/></span></span></span>
 			<span class="hui_field_middle"><span class="hui_field_middle"><span class="hui_field_content">
 				<span class="hui_field_singleline">
-				<input class="hui_formula_text" value="{@value}"><xsl:if test="@secret='true'"><xsl:attribute name="type">password</xsl:attribute></xsl:if></input>
+				<input class="hui_formula_text" value="{@value}">
+					<xsl:if test="@secret='true'"><xsl:attribute name="type">password</xsl:attribute></xsl:if>
+					<xsl:if test="@correction='false'">
+						<xsl:attribute name="autocapitalize">off</xsl:attribute>
+						<xsl:attribute name="autocorrect">off</xsl:attribute>
+					</xsl:if>
+				</input>
 				</span>
 			</span></span></span>
 			<span class="hui_field_bottom"><span><span><xsl:comment/></span></span></span>
@@ -171,7 +177,7 @@
 	</td></tr>
 </xsl:template>
 
-<xsl:template name="gui:datetime">
+<xsl:template name="gui:datetime" match="gui:datetime-input">
 	<div class="hui_field" id="{generate-id()}">
 		<span class="hui_field_top"><span><span><xsl:comment/></span></span></span>
 		<span class="hui_field_middle"><span class="hui_field_middle"><span class="hui_field_content">
@@ -616,6 +622,10 @@
 			<xsl:call-template name="gui:imagepicker"/>
 		</td>
 	</tr>
+</xsl:template>
+
+<xsl:template match="gui:image-input">
+	<xsl:call-template name="gui:imagepicker"/>
 </xsl:template>
 
 <xsl:template name="gui:imagepicker">
