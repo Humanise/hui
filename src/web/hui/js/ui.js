@@ -145,6 +145,9 @@ hui.ui.confirmOverlay = function(options) {
 	overlay.add(ok);
 	var cancel = hui.ui.Button.create({text:options.cancelText || 'Cancel'});
 	cancel.onClick(function() {
+		if (options.onCancel) {
+			options.onCancel();
+		}
 		overlay.hide();
 	});
 	overlay.add(cancel);
@@ -380,7 +383,7 @@ hui.ui.confirm = function(options) {
 		ok = hui.ui.get(name+'_ok');
 		ok.setText(options.ok || 'OK');
 		ok.setHighlighted(options.highlighted=='ok');
-		ok.clearDelegates();
+		ok.clearListeners();
 		hui.ui.get(name+'_cancel').setText(options.ok || 'Cancel');
 		hui.ui.get(name+'_cancel').setHighlighted(options.highlighted=='cancel');
 		if (options.cancel) {hui.ui.get(name+'_cancel').setText(options.cancel);}
@@ -665,10 +668,10 @@ hui.ui.extend = function(obj,options) {
 		hui.array.add(this.delegates,delegate);
 		return this;
 	}
-	obj.removeDelegate = function(delegate) {
+	obj.unListen = function(delegate) {
 		hui.array.remove(this.delegates,delegate);
 	}
-	obj.clearDelegates = function() {
+	obj.clearListeners = function() {
 		this.delegates = [];
 	}
 	obj.fire = function(method,value,event) {

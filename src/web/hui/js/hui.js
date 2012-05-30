@@ -50,6 +50,8 @@ hui.browser.chrome = navigator.userAgent.indexOf('Chrome') !== -1;
 hui.browser.webkitVersion = null;
 /** If the browser is Gecko based */
 hui.browser.gecko = !hui.browser.webkit && navigator.userAgent.indexOf('Gecko') !== -1;
+/** If the browser is Gecko based */
+hui.browser.chrome = navigator.userAgent.indexOf('Chrome') !== -1;
 /** If the browser is safari on iPad */
 hui.browser.ipad = hui.browser.webkit && navigator.userAgent.indexOf('iPad') !== -1;
 /** If the browser is on Windows */
@@ -127,6 +129,14 @@ hui.each = function(items,func) {
 			func(key,items[key]);
 		}
 	}
+}
+
+/**
+ * @param {Object} condition The condition to test
+ * @param {String} text The text to return when condition evaluates to true
+ */
+hui.when = function(condition,text) {
+	return condition ? text : '';
 }
 
 /**
@@ -1142,6 +1152,9 @@ hui.cls = {
  */
 hui.listen = function(element,type,listener,useCapture) {
 	element = hui.get(element);
+	if (!element) {
+		return;
+	}
 	if(document.addEventListener) {
 		element.addEventListener(type,listener,useCapture ? true : false);
 	} else {
@@ -1920,8 +1933,11 @@ hui.drag = {
 		hui.listen(target,'mouseup',upper);
 		hui.selection.enable(false);
 	},
+	
 	_nativeListeners : [],
+	
 	_activeDrop : null,
+	
 	/** Listen for native drops
 	 * <pre><strong>options:</strong> {
 	 *  hoverClass : «String»,

@@ -6,6 +6,8 @@ span.hui_numberfield
 	background: url('../gfx/number.png') -11px top no-repeat;
 	height: 25px;
 	position: relative;
+	font-size: 0;
+	vertical-align: middle;
 }
 
 span.hui_numberfield span
@@ -58,6 +60,12 @@ a.hui_numberfield_down
 	height: 10px;
 	right: 2px;
 	bottom: 3px;
+}
+
+a.hui_numberfield_up:hover, 
+a.hui_numberfield_down:hover
+{
+	background: rgba(0,0,0,.1);
 }
 
 span.hui_numberfield_focused

@@ -9,20 +9,23 @@
 			}
 		})
 	</script>
-	<layout>
+	<structure>
 		<top>
 			<toolbar>
-				<icon icon="common/refresh" title="Refresh" action="list.refresh()"/>
+				<icon icon="common/refresh" title="Refresh" click="list.refresh()"/>
 				<divider/>
 				<icon icon="common/user" title="List users" selected="true"/>
 				<divider/>
-				<number title="Venstre"/>
-				<dropdown title="Billedgruppe" placeholder="Vælg..." source="itemsSource">
-				</dropdown>
+				<field label="Venstre">
+					<number-input/>
+				</field>
+				<field title="Billedgruppe">
+					<dropdown placeholder="Vælg..." source="itemsSource"/>
+				</field>
 				<grid>
 					<row>
 						<cell label="Max antal:">
-							<number/>
+							<number-input/>
 						</cell>
 						<cell label="Gruppe:">
 							<dropdown value="1">
@@ -35,14 +38,15 @@
 					</row>
 					<row>
 						<cell label="Min antal:">
-							<number/>
+							<number-input/>
 						</cell>
 						<cell label="">
-							<textfield/>
+							<text-input/>
 						</cell>
 					</row>
 				</grid>
-					<segmented label="Level" value="1">
+				<field label="Level">
+					<segmented value="1">
 						<item text="1" value="1"/>
 						<item text="2" value="2"/>
 						<item text="3" value="3"/>
@@ -50,10 +54,13 @@
 						<item text="5" value="5"/>
 						<item text="6" value="6"/>
 					</segmented>
+				</field>
 				<button title="Small button" small="true"/>
 				<button title="Regular button"/>
 				<right>
-					<searchfield title="Søgning" expandedWidth="200" placeholder="Search"/>
+					<field label="Søgning">
+						<searchfield expanded-width="200" placeholder="Search"/>
+					</field>
 				</right>
 			</toolbar>
 		</top>
@@ -69,12 +76,12 @@
 			</left>
 			<center>
 				<toolbar border="bottom">
-				<icon icon="common/folder" title="Folder"/>
+					<icon icon="common/folder" title="Folder"/>
 					<button title="Click me" small="true" rounded="true"/>
 					<dropdown placeholder="Vælg..." source="itemsSource"/>
-					<textfield/>
+					<text-input/>
 					<right>
-						<searchfield expandedWidth="200" placeholder="Search"/>
+						<searchfield expanded-width="200" placeholder="Search"/>
 					</right>
 				</toolbar>
 				<overflow>
@@ -84,7 +91,7 @@
 					<button title="Click me" small="true" rounded="true"/>
 					<dropdown placeholder="Vælg..." source="itemsSource"/>
 					<right>
-						<searchfield expandedWidth="200" placeholder="Search"/>
+						<searchfield expanded-width="200" placeholder="Search"/>
 					</right>
 				</toolbar>
 			</center>
@@ -94,11 +101,11 @@
 				<button title="Click me" small="true" rounded="true"/>
 				<button title="Click me" small="true" rounded="true"/>
 				<right>
-					<searchfield expandedWidth="200" placeholder="Search"/>
+					<searchfield expanded-width="200" placeholder="Search"/>
 				</right>
 			</toolbar>
 		</bottom>
-	</layout>
+	</structure>
 	
 	<window name="pageEditor" width="300" title="Side">
 		<toolbar centered="true" variant="window">
@@ -111,11 +118,15 @@
 			</right>
 		</toolbar>
 		<formula name="pageFormula" padding="5">
-			<group labels="above">
-				<text key="title" label="Titel:"/>
-				<text key="description" label="Beskrivelse:" lines="5"/>
-			</group>
-			<group>
+			<fields labels="above">
+				<field label="Titel:">
+					<text-input key="title"/>
+				</field>
+				<field label="Beskrivelse:">
+					<text-input key="description" lines="5"/>
+				</field>
+			</fields>
+			<fields>
 				<buttons>
 					<button name="cancelPage" title="Annuller"/>
 					<button name="deletePage" title="Slet">
@@ -123,7 +134,7 @@
 					</button>
 					<button name="savePage" title="Gem" highlighted="true"/>
 				</buttons>
-			</group>
+			</fields>
 		</formula>
 	</window>
 </gui>

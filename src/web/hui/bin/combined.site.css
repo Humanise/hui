@@ -605,12 +605,29 @@ div.hui_box
 
 a.hui_box_close
 {
-	width: 30px;
-	height: 30px;
+	width: 29px;
+	height: 31px;
 	background: url('../gfx/box_close.png') left top no-repeat;
 	position: absolute;
 	margin: -10px 0 0 -10px;
 	z-index: 200;
+}
+
+a.hui_box_close:hover
+{
+	background-position: 0 -31px;
+}
+
+a.hui_box_close:focus
+{
+	background-position: 0 -62px;
+	outline: none;
+}
+
+a.hui_box_close:focus:hover
+{
+	background-position: 0 -93px;
+	outline: none;
 }
 
 div.hui_box_absolute
@@ -1210,7 +1227,7 @@ a.hui_button_small_paper, a.hui_button_small_paper span
 a.hui_button_small_paper span span
 {
 	margin: 0;
-	padding: 0 10px;
+	padding: 0 5px;
 	font-size: 11px;
 	line-height: 18px;
 }
@@ -1239,6 +1256,23 @@ a.hui_button_mini_paper span span
 	padding: 0 10px;
 	font-size: 10px;
 	line-height: 16px;
+}
+
+
+
+
+
+.hui_context_dark a.hui_button,
+.hui_context_dark a.hui_button span
+{
+	background-image: url('../gfx/button_overlay.png');
+	color: #fff;
+}
+
+.hui_context_dark a.hui_button_highlighted, 
+.hui_context_dark a.hui_button_highlighted span
+{
+	background-image: url('../gfx/button_overlay_highlighted.png');
 }form.hui_formula
 {
 	padding: 0px;
@@ -1288,7 +1322,7 @@ div.hui_window div.hui_formula_fieldset
 	padding-bottom: 5px;
 }
 
-table.hui_formula_group
+table.hui_formula_fields
 {
 	width: 100%;
 	font-size: 0;
@@ -1301,7 +1335,7 @@ p.hui_formula_field_hint
 	margin: -5px 0 0 3px;
 }
 
-table.hui_formula_group_above
+table.hui_formula_fields_above
 {
 	border-spacing: 0px;
 }
@@ -1311,26 +1345,35 @@ form.hui_formula table.split
 	border-spacing: 5px 0px;
 }
 
-table.hui_formula_group label
+td.hui_fields_buttons
+{
+	border-spacing: 0px;
+}
+
+label.hui_formula_field
 {
 	color: #004A80;
 	font-size: 12px;
 	font-weight: normal;
+	line-height: 13px;
+	display: inline-block;
+	padding-left: 2px;
 }
 
-table.hui_formula_group_above label
+
+table.hui_formula_fields_above label.hui_formula_field
 {
 	line-height: 13px;
 	display: inline-block;
 	padding-left: 2px;
 }
 
-table.hui_formula_group th label
+table.hui_formula_fields th label.hui_formula_field
 {
 	font-size: 9pt;
 }
 
-table.hui_formula_group th
+table.hui_formula_fields th
 {
 	width: 1%;
 	vertical-align: top;
@@ -1340,19 +1383,19 @@ table.hui_formula_group th
 	white-space: nowrap;
 }
 
-table.hui_formula_group th.hui_formula_middle
+table.hui_formula_fields th.hui_formula_middle
 {
 	vertical-align: middle;
 	line-height: normal;
 	padding-bottom: 5px;
 }
 
-table.hui_formula_group_above th
+table.hui_formula_fields_above th
 {
 	text-align: left;
 }
 
-table.hui_formula_group_above div.hui_tokenfield
+table.hui_formula_fields_above div.hui_tokenfield
 {
 	margin-bottom: 2px;
 }
@@ -1424,25 +1467,12 @@ textarea.hui_formula_text::-webkit-scrollbar-thumb
 	border: 1px solid #ddd;
 }
 
-form.hui_formula fieldset
-{
-	border: 1px solid #ccc;
-	margin: 0px;
-	padding: 0px 8px 5px 6px;
-}
-
-form.hui_formula fieldset legend
-{
-	font-size: 9pt;
-	color: #999;
-}
-
-td.hui_formula_group
+td.hui_formula_field
 {
 	padding: 0;
 }
 
-div.hui_formula_item
+div.hui_formula_field_body
 {
 	padding-bottom: 5px;
 	font-size: 0;
@@ -1482,13 +1512,13 @@ span.hui_field_bottom, span.hui_field_bottom span
 {
 	display: block;
 	font-size: 0;
-	background: url('../gfx/field.png') 0 -19px no-repeat;
-	height: 4px;
+	background: url('../gfx/field.png') 0 -20px no-repeat;
+	height: 5px;
 }
 
 span.hui_field_bottom span
 {
-	background-position: 100% -23px;
+	background-position: 100% -25px;
 	background-repeat: no-repeat;
 }
 
@@ -1502,7 +1532,7 @@ span.hui_field_bottom span span
 span.hui_field_middle
 {
 	display: block;
-	background: url('../gfx/field.png') 0 -27px no-repeat;
+	background: url('../gfx/field.png') 0 -30px no-repeat;
 }
 
 span.hui_field_middle span.hui_field_middle
@@ -1535,12 +1565,12 @@ span.hui_field_content
 
 .hui_field_focused span.hui_field_bottom
 {
-	background-position: 0 -846px;
+	background-position: 0 -847px;
 }
 
 .hui_field_focused span.hui_field_bottom span
 {
-	background-position: 100% -850px;
+	background-position: 100% -852px;
 }
 
 .hui_field_focused span.hui_field_bottom span span
@@ -1550,7 +1580,7 @@ span.hui_field_content
 
 .hui_field_focused span.hui_field_middle
 {
-	background-position: 0 -854px;
+	background-position: 0 -857px;
 }
 
 .hui_field_focused span.hui_field_middle span.hui_field_middle
@@ -1641,61 +1671,89 @@ table.hui_objectlist th.hui_objectlist1
 	padding-left: 0px;
 }
 
+a.hui_datetime
+{
+	position: absolute;
+	margin-left: -17px;
+	margin-top: -1px;
+	font-size: 0;
+	cursor: pointer;
+	padding: 2px;
+}
 
+a.hui_datetime span,
+body .hui_context_dark a.hui_datetime span
+{
+	background: url('../icons/input/datetime14.png') no-repeat;
+	display: inline-block;
+	width: 14px;
+	height: 14px;
+}
+
+a.hui_datetime:hover span,
+body .hui_context_dark a.hui_datetime:hover span
+{
+	background-position: 0 -14px;
+}
 
 /************************* Override for windows *******************/
 
 
-div.hui_window table.hui_formula_group label
+
+div.hui_window label.hui_formula_field
 {
 	background: rgb(231,231,231);
-	padding: 0px 2px;
 }
 
-div.hui_window div.hui_formula_fieldset table.hui_formula_group label
+div.hui_formula_fieldset label.hui_formula_field,
+div.hui_window_news label.hui_formula_field
 {
 	background: none;
 }
 
-div.hui_window_light table.hui_formula_group label
+div.hui_window_light label.hui_formula_field
 {
 	color: #004A80;
 	background: rgb(229,229,229);
 }
 
 
-div.hui_window_dark table.hui_formula_group label, div.hui_window_dark div.hui_checkbox, div.hui_window_dark div.hui_radiobutton, div.hui_window_dark th.hui_objectlist
+body .hui_context_dark label.hui_formula_field, 
+.hui_context_dark .hui_checkbox, 
+.hui_context_dark span.hui_radiobutton_label, 
+.hui_context_dark th.hui_objectlist
 {
 	color: #fff;
 	background: none;
 }
 
-div.hui_window_dark .hui_formula_text
+.hui_context_dark .hui_formula_text
 {
 	color: #fff;
 }
 
-div.hui_window_dark div.hui_field span
+.hui_context_dark div.hui_field span
 {
 	background-image: url('../gfx/field_dark.png');
 }
 
-div.hui_window_dark div.hui_field span.hui_field_singleline, div.hui_window_dark div.hui_field span.hui_formula_text_multiline
+.hui_context_dark div.hui_field span.hui_field_singleline, 
+.hui_context_dark div.hui_field span.hui_formula_text_multiline
 {
 	background: none;
 }
 
-div.hui_window_dark div.hui_field span.hui_field_content
+.hui_context_dark div.hui_field span.hui_field_content
 {
 	background: #222222;
 }
 
-div.hui_window_dark div.hui_field span.hui_field_singleline
+.hui_context_dark div.hui_field span.hui_field_singleline
 {
 	background: none;
 }
 
-div.hui_window_dark a.hui_checkbox
+.hui_context_dark a.hui_checkbox
 {
 	color: #fff;
 }

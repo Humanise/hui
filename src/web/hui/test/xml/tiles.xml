@@ -38,12 +38,14 @@
 				</actions>
 				<p class="title">Help</p>
 				<formula padding="5">
-					<group labels="above">
-						<text multiline="true"/>
+					<fields labels="above">
+						<field>
+							<text-input multiline="true"/>
+						</field>
 						<buttons>
 							<button text="Send" highlighted="true" small="true"/>
 						</buttons>
-					</group>
+					</fields>
 				</formula>
 			</tile>
 			<tile width="20" height="60" top="40" left="20" background="#0a3" name="newsTile">
@@ -62,12 +64,14 @@
 					</page>
 					<page>
 						<formula padding="5">
-							<group labels="above">
-								<text multiline="true"/>
+							<fields labels="above">
+								<field>
+									<text-input multiline="true"/>
+								</field>
 								<buttons>
 									<button text="Send" highlighted="true" small="true"/>
 								</buttons>
-							</group>
+							</fields>
 						</formula>
 					</page>
 				</pages>
@@ -85,13 +89,15 @@
 		
 		<boundpanel name="developmentPanel" width="200">
 			<formula name="developmentFormula">
-				<group labels="above">
-					<text label="Title"/>
+				<fields labels="above">
+					<field label="Title">
+						<text-input/>
+					</field>
 					<buttons>
 						<button text="Cancel" click="developmentPanel.hide()" small="true"/>
 						<button text="Save" highlighted="true" small="true"/>
 					</buttons>
-				</group>
+				</fields>
 			</formula>			
 		</boundpanel>
 		<script>

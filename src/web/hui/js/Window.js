@@ -15,7 +15,7 @@ hui.ui.Window = function(options) {
 	}
 	this.visible = false;
 	hui.ui.extend(this);
-	this.addBehavior();
+	this._addBehavior();
 }
 
 hui.ui.Window.create = function(options) {
@@ -32,25 +32,35 @@ hui.ui.Window.create = function(options) {
 		'">'+
 		'</div></div></div>'+
 		'<div class="hui_window_bottom"><div class="hui_window_bottom"><div class="hui_window_bottom"></div></div></div></div>';
-	options.element = hui.build('div',{'class':'hui_window'+(options.variant ? ' hui_window_'+options.variant : ''),html:html,parent:document.body});
+	var cls = 'hui_window'+(options.variant ? ' hui_window_'+options.variant : '');
+	if (options.variant=='dark') {
+		cls+=' hui_context_dark';
+	}
+	options.element = hui.build('div',{'class':cls,html:html,parent:document.body});
+	if (options.variant=='dark') {
+		hui.cls.add(options.element,'hui_context_dark');
+	}
 	return new hui.ui.Window(options);
 }
 
 hui.ui.Window.prototype = {
-	/** @private */
-	addBehavior : function() {
+	_addBehavior : function() {
 		var self = this;
 		if (this.close) {
 			hui.listen(this.close,'click',function(e) {
 				this.hide();
 				this.fire('userClosedWindow');
-			}.bind(this)
-			);
+			}.bind(this));
 			hui.listen(this.close,'mousedown',function(e) {hui.stop(e)});
 		}
-		this.titlebar.onmousedown = function(e) {self.startDrag(e);return false;};
+		hui.drag.register({
+			element : this.titlebar,
+			onBeforeMove : this._onBeforeMove.bind(this) ,
+ 			onMove : this._onMove.bind(this),
+			onAfterMove : this._onAfterMove.bind(this)
+		});
 		hui.listen(this.element,'mousedown',function() {
-			self.element.style.zIndex=hui.ui.nextPanelIndex();
+			self.element.style.zIndex = hui.ui.nextPanelIndex();
 		});
 	},
 	setTitle : function(title) {
@@ -124,9 +134,11 @@ hui.ui.Window.prototype = {
 	setVariant : function(variant) {
 		hui.cls.remove(this.element,'hui_window_dark');
 		hui.cls.remove(this.element,'hui_window_light');
-		if (variant=='dark' || variant=='light') {
+		hui.cls.remove(this.element,'hui_window_news');
+		if (variant=='dark' || variant=='light' || variant=='news') {
 			hui.cls.add(this.element,'hui_window_'+variant);
 		}
+		hui.cls.set(this.element,'hui_context_dark',variant=='dark');
 	},
 	flip : function() {
 		if (this.back) {
@@ -135,52 +147,21 @@ hui.ui.Window.prototype = {
 		}
 	},
 
-////////////////////////////// Dragging ////////////////////////////////
-
-	/** @private */
-	startDrag : function(e) {
-		var event = new hui.Event(e);
-		this.element.style.zIndex=hui.ui.nextPanelIndex();
-		var pos = { top : hui.position.getTop(this.element), left : hui.position.getLeft(this.element) };
-		this.dragState = {left:event.getLeft()-pos.left,top:event.getTop()-pos.top};
-		this.latestPosition = {left: this.dragState.left, top:this.dragState.top};
-		this.latestTime = new Date().getMilliseconds();
-		var self = this;
-		this.moveListener = function(e) {self.drag(e)};
-		this.upListener = function(e) {self.endDrag(e)};
-		hui.listen(document,'mousemove',this.moveListener);
-		hui.listen(document,'mouseup',this.upListener);
-		hui.listen(document,'mousedown',this.upListener);
-		event.stop();
-		hui.selection.enable(false);
-		return false;
-	},
-	/** @private */
-	calc : function(top,left) {
-		// TODO: No need to do this all the time
-		this.a = this.latestPosition.left-left;
-		this.b = this.latestPosition.top-top;
-		this.dist = Math.sqrt(Math.pow((this.a),2),Math.pow((this.b),2));
-		this.latestTime = new Date().getMilliseconds();
-		this.latestPosition = {'top':top,'left':left};
-	},
-	/** @private */
-	drag : function(e) {
-		var event = new hui.Event(e);
+	_onBeforeMove : function(e) {
+		e = hui.event(e);
+		this.element.style.zIndex = hui.ui.nextPanelIndex();
+		var pos = hui.position.get(this.element);
+		this.dragState = {left: e.getLeft() - pos.left,top:e.getTop()-pos.top};
 		this.element.style.right = 'auto';
-		var top = (event.getTop()-this.dragState.top);
-		var left = (event.getLeft()-this.dragState.left);
+	},
+	_onMove : function(e) {
+		var top = (e.getTop()-this.dragState.top);
+		var left = (e.getLeft()-this.dragState.left);
 		this.element.style.top = Math.max(top,0)+'px';
 		this.element.style.left = Math.max(left,0)+'px';
-		//this.calc(top,left);
-		return false;
 	},
-	/** @private */
-	endDrag : function(e) {
-		hui.unListen(document,'mousemove',this.moveListener);
-		hui.unListen(document,'mouseup',this.upListener);
-		hui.unListen(document,'mousedown',this.upListener);
-		hui.selection.enable(false);
+	_onAfterMove : function() {
+		hui.ui.callDescendants(this,'$$parentMoved');
 	}
 }
 

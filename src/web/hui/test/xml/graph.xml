@@ -3,16 +3,18 @@
 <gui xmlns="uri:hui" title="Graph">
 	<controller source="graph.js"/>
 	<source url="data/graph_family.json" name="soirce"/>
-	<layout>
+	<structure>
 		<top>
 			<toolbar>
 				<icon icon="common/refresh" title="Test"/>
 				<divider/>
-				<segmented label="View">
-					<item icon="view/list"/>
-					<item icon="view/calendar"/>
-					<item icon="view/graph"/>
-				</segmented>
+				<field label="View">
+					<segmented>
+						<item icon="view/list"/>
+						<item icon="view/calendar"/>
+						<item icon="view/graph"/>
+					</segmented>
+				</field>
 			</toolbar>
 		</top>
 		<middle>
@@ -25,6 +27,6 @@
 		</middle>
 		<bottom>
 		</bottom>
-	</layout>
+	</structure>
 </gui>
 

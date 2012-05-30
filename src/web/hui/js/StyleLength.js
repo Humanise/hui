@@ -5,7 +5,7 @@
  * @constructor
  */
 hui.ui.StyleLength = function(o) {
-	this.options = hui.override({value:null,min:0,max:1000,units:['px','pt','em','%'],defaultUnit:'px',allowNull:false},o);	
+	this.options = hui.override({value:null,min:0,max:1000,units:['px','pt','em','%'],initialValue:null,defaultUnit:'px',allowNull:false},o);	
 	this.name = o.name;
 	var e = this.element = hui.get(o.element);
 	this.input = hui.get.firstByTag(e,'input');
@@ -14,18 +14,18 @@ hui.ui.StyleLength = function(o) {
 	this.down = as[1];
 	this.value = this.parseValue(this.options.value);
 	hui.ui.extend(this);
-	this.addBehavior();
+	this._addBehavior();
 }
 
 hui.ui.StyleLength.prototype = {
 	/** @private */
-	addBehavior : function() {
+	_addBehavior : function() {
 		var e = this.element;
 		hui.listen(this.input,'focus',function() {hui.cls.add(e,'hui_numberfield_focused')});
-		hui.listen(this.input,'blur',this.blurEvent.bind(this));
+		hui.listen(this.input,'blur',this._onBlur.bind(this));
 		hui.listen(this.input,'keyup',this.keyEvent.bind(this));
-		hui.listen(this.up,'mousedown',this.upEvent.bind(this));
-		hui.listen(this.down,'mousedown',this.downEvent.bind(this));
+		hui.listen(this.up,'mousedown',this._upEvent.bind(this));
+		hui.listen(this.down,'mousedown',this._downEvent.bind(this));
 	},
 	/** @private */
 	parseValue : function(value) {
@@ -47,29 +47,27 @@ hui.ui.StyleLength.prototype = {
 		parsed.number = Math.max(this.options.min,Math.min(this.options.max,parsed.number));
 		return parsed;
 	},
-	/** @private */
-	blurEvent : function() {
+	_onBlur : function() {
 		hui.cls.remove(this.element,'hui_numberfield_focused');
-		this.updateInput();
+		this._updateInput();
 	},
 	/** @private */
 	keyEvent : function(e) {
 		e = e || window.event;
 		if (e.keyCode==hui.KEY_UP) {
 			hui.stop(e);
-			this.upEvent();
+			this._upEvent();
 		} else if (e.keyCode==hui.KEY_DOWN) {
-			this.downEvent();
+			this._downEvent();
 		} else {
-			this.checkAndSetValue(this.parseValue(this.input.value));
+			this._checkAndSetValue(this.parseValue(this.input.value));
 		}
 	},
 	/** @private */
-	updateInput : function() {
+	_updateInput : function() {
 		this.input.value = this.getValue();
 	},
-	/** @private */
-	checkAndSetValue : function(value) {
+	_checkAndSetValue : function(value) {
 		var old = this.value;
 		var changed = false;
 		if (old===null && value===null) {
@@ -85,33 +83,41 @@ hui.ui.StyleLength.prototype = {
 			this.fire('valueChanged',this.getValue());
 		}
 	},
-	/** @private */
-	downEvent : function() {
-		if (this.value) {
-			this.checkAndSetValue({number:Math.max(this.options.min,this.value.number-1),unit:this.value.unit});
-		} else {
-			this.checkAndSetValue({number:this.options.min,unit:this.options.defaultUnit});
+	_setInitialValue : function() {
+		if (!this.value && this.options.initialValue) {
+			this.setValue(this.options.initialValue);
 		}
-		this.updateInput();
 	},
-	/** @private */
-	upEvent : function() {
+	_downEvent : function() {
+		this._setInitialValue();
 		if (this.value) {
-			this.checkAndSetValue({number:Math.min(this.options.max,this.value.number+1),unit:this.value.unit});
+			this._checkAndSetValue({number:Math.max(this.options.min,this.value.number-1),unit:this.value.unit});
 		} else {
-			this.checkAndSetValue({number:this.options.min+1,unit:this.options.defaultUnit});
+			this._checkAndSetValue({number:this.options.min,unit:this.options.defaultUnit});
 		}
-		this.updateInput();
+		this._updateInput();
+	},
+	_upEvent : function() {
+		this._setInitialValue();
+		if (this.value) {
+			this._checkAndSetValue({number:Math.min(this.options.max,this.value.number+1),unit:this.value.unit});
+		} else {
+			this._checkAndSetValue({number:this.options.min+1,unit:this.options.defaultUnit});
+		}
+		this._updateInput();
 	},
 	
 	// Public
 	
+	setInitialValue : function(value) {
+		this.options.initialValue = value;
+	},
 	getValue : function() {
 		return this.value ? this.value.number+this.value.unit : '';
 	},
 	setValue : function(value) {
 		this.value = this.parseValue(value);
-		this.updateInput();
+		this._updateInput();
 	},
 	focus : function() {
 		try {

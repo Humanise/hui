@@ -5,13 +5,17 @@
  * @constructor
  */
 hui.ui.NumberField = function(o) {
-	this.options = hui.override({min:0,max:10000,value:null,decimals:0,allowNull:false},o);	
+	this.options = hui.override({min:0,max:undefined,value:null,tickSize:1,decimals:0,allowNull:false},o);	
 	this.name = o.name;
 	var e = this.element = hui.get(o.element);
 	this.input = hui.get.firstByTag(e,'input');
 	this.up = hui.get.firstByClass(e,'hui_numberfield_up');
 	this.down = hui.get.firstByClass(e,'hui_numberfield_down');
-	this.value = parseInt(this.options.value,10);
+	if (hui.isString(this.options.value)) {
+		this.value = parseInt(this.options.value,10);
+	} else {
+		this.value = this.options.value;
+	}
 	if (isNaN(this.value)) {
 		this.value = null;
 	}
@@ -31,7 +35,7 @@ hui.ui.NumberField.create = function(o) {
 hui.ui.NumberField.prototype = {
 	_addBehavior : function() {
 		var e = this.element;
-		hui.listen(this.input,'focus',function() {hui.cls.add(e,'hui_numberfield_focused')});
+		hui.listen(this.input,'focus',this._onFocus.bind(this));
 		hui.listen(this.input,'blur',this._onBlur.bind(this));
 		hui.listen(this.input,'keyup',this._onKey.bind(this));
 		hui.listen(this.up,'mousedown',this.upEvent.bind(this));
@@ -41,7 +45,15 @@ hui.ui.NumberField.prototype = {
 	},
 	_onBlur : function() {
 		hui.cls.remove(this.element,'hui_numberfield_focused');
-		this.updateField();
+		this._updateField();
+		if (this.sliderPanel) {
+			this.sliderPanel.hide();
+		}
+	},
+	_onFocus : function() {
+		hui.cls.add(this.element,'hui_numberfield_focused');
+		this._showSlider();
+		this._updateSlider();
 	},
 	_onKey : function(e) {
 		e = e || window.event;
@@ -51,7 +63,7 @@ hui.ui.NumberField.prototype = {
 		} else if (e.keyCode==hui.KEY_DOWN) {
 			this.downEvent();
 		} else {
-			var parsed = parseInt(this.input.value,10);
+			var parsed = parseFloat(this.input.value,10);
 			if (!isNaN(parsed)) {
 				this.setLocalValue(parsed,true);
 			} else {
@@ -65,15 +77,15 @@ hui.ui.NumberField.prototype = {
 		if (this.value===null) {
 			this.setLocalValue(this.options.min,true);
 		} else {
-			this.setLocalValue(this.value-1,true);
+			this.setLocalValue(this.value-this.options.tickSize,true);
 		}
-		this.updateField();
+		this._updateField();
 	},
 	/** @private */
 	upEvent : function(e) {
 		hui.stop(e);
-		this.setLocalValue(this.value+1,true);
-		this.updateField();
+		this.setLocalValue(this.value+this.options.tickSize,true);
+		this._updateField();
 	},
 	/** Sets focus */
 	focus : function() {
@@ -91,14 +103,14 @@ hui.ui.NumberField.prototype = {
 	},
 	/** Sets the value */
 	setValue : function(value) {
-		value = parseInt(value,10);
+		value = parseFloat(value,10);
 		if (!isNaN(value)) {
 			this.setLocalValue(value,false);
 		}
-		this.updateField();
+		this._updateField();
 	},
 	/** @private */
-	updateField : function() {
+	_updateField : function() {
 		this.input.value = this.value===null || this.value===undefined ? '' : this.value;
 	},
 	/** @private */
@@ -107,20 +119,69 @@ hui.ui.NumberField.prototype = {
 		if (value===null || value===undefined && this.options.allowNull) {
 			this.value = null;
 		} else {
-			this.value = Math.min(Math.max(value,this.options.min),this.options.max);
+			value = this._getValueWithinRange(value);
+			this.value = this._round(value);
 		}
 		if (fire && orig!==this.value) {
 			hui.ui.callAncestors(this,'childValueChanged',this.value);
 			this.fire('valueChanged',this.value);
 		}
+		this._updateSlider();
+	},
+	_round : function(value) {
+		if (this.options.decimals!==undefined) {
+			var x = Math.pow(10,this.options.decimals);
+			value = Math.round(value * x) / x;
+		}
+		return value;
 	},
 	/** Resets the field */
 	reset : function() {
 		if (this.options.allowNull) {
 			this.value = null;
 		} else {
-			this.value = Math.min(Math.max(0,this.options.min),this.options.max);
+			this.value = this._getValueWithinRange(0);
 		}
-		this.updateField();
+		this._updateField();
+	},
+	_getValueWithinRange : function(value) {
+		if (hui.isDefined(this.options.min)) {
+			value = Math.max(value,this.options.min);
+		}
+		if (hui.isDefined(this.options.max)) {
+			value = Math.min(value,this.options.max);
+		}
+		return value;
+	},
+	_onSliderChange : function(value) {
+		var conv = this.options.min+(this.options.max-this.options.min)*value;
+		this.setLocalValue(conv,true);
+		this._updateField();
+	},
+	_showSlider : function() {
+		if (this.options.min===undefined || this.options.max===undefined) {
+			return;
+		}
+		if (!this.sliderPanel) {
+			this.sliderPanel = hui.ui.BoundPanel.create({variant:'light'});
+			this.slider = hui.ui.Slider.create({width:200})
+			this.slider.element.style.margin='0 3px';
+			this.slider.listen({$valueChanged : this._onSliderChange.bind(this)})
+			this.sliderPanel.add(this.slider);
+		}
+		this.sliderPanel.position({element:this.element,position:'vertical'});
+		this.sliderPanel.show();
+	},
+	_updateSlider : function() {
+		if (this.slider) {
+			this.slider.setValue((this.value -this.options.min) / (this.options.max-this.options.min))
+		}
+	},
+	/** @private */
+	$$parentMoved : function() {
+		if (this.sliderPanel && this.sliderPanel.isVisible()) {
+			this.sliderPanel.position({element:this.element,position:'vertical'});
+			this.sliderPanel.show();
+		}
 	}
 }

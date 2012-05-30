@@ -2,7 +2,7 @@ a.hui_dropdown
 {
 	display: inline-block;
 	height: 26px;
-	background: url('../gfx/dropdown.png') -19px top no-repeat;
+	background: url('../gfx/dropdown.png') -16px 0 no-repeat;
 	outline: none;
 	text-decoration: none;
 	color: #333;
@@ -10,66 +10,82 @@ a.hui_dropdown
 	line-height: 26px;
 	vertical-align: middle;
 	text-align: left;
+	
 }
 
 a.hui_dropdown span
 {
 	display: block;
 	height: 26px;
-	background: url('../gfx/dropdown.png') right -52px no-repeat;
+	background: url('../gfx/dropdown.png') right -26px no-repeat;
 }
 
 a.hui_dropdown span span
 {
-	margin: 0 25px 0 6px;
-	background: url('../gfx/dropdown.png') left -26px repeat-x;
-	padding-left: 2px;
+	margin: 0 21px 0 5px;
+	background: url('../gfx/dropdown.png') left -52px repeat-x;
+	padding-left: 3px;
 	padding-right: 10px;
 }
 
 a.hui_dropdown:hover
 {
-	background-position: -19px -156px;
+	background-position: -16px -78px;
 }
 
 a.hui_dropdown:hover span
 {
-	background-position: right -208px;
+	background-position: right -104px;
 }
 
 a.hui_dropdown:hover span span
 {
-	background-position: left -182px;
+	background-position: left -130px;
+}
+
+a.hui_dropdown:active
+{
+	background-position: -16px -156px;
+}
+
+a.hui_dropdown:active span
+{
+	background-position: right -182px;
+}
+
+a.hui_dropdown:active span span
+{
+	background-position: left -208px;
 }
 
 a.hui_dropdown_focused
 {
-	background-position: -19px -78px;
+	background-position: -16px -234px;
 }
 
 a.hui_dropdown_focused span
 {
-	background-position: right -130px;
+	background-position: right -260px;
 }
 
 a.hui_dropdown_focused span span
 {
-	background-position: left -104px;
+	background-position: left -286px;
 }
 
 a.hui_dropdown_focused:hover
 {
-	background-position: -19px -234px;
+	background-position: -16px -312px;
 }
 
 a.hui_dropdown_focused:hover span
 {
-	background-position: right -286px;
+	background-position: right -338px;
 }
 
 a.hui_dropdown_focused:hover span span
 {
-	background-position: left -260px;
+	background-position: left -364px;
 }
 
 a.hui_dropdown strong
@@ -98,9 +114,9 @@ div.hui_dropdown_selector
 	background: #fff;
 	border: 1px solid #ddd;
 	font-size: 12px;
-	-webkit-box-shadow: 0px 3px 5px #999;
+	-webkit-box-shadow: 0px 2px 6px rgba(0,0,0,.1);
 	-webkit-border: none;
-	-moz-box-shadow: 0px 3px 5px #999;
+	-moz-box-shadow: 0px 2px 6px rgba(0,0,0,.1);
 	overflow: auto;
 	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
 	text-align: left;
@@ -133,4 +149,16 @@ div.hui_dropdown_selector a:hover
 a.hui_dropdown_adaptive
 {
 	width: 100%;
+}
+
+
+/** Dark Context */
+
+.hui_context_dark a.hui_dropdown,
+.hui_context_dark a.hui_dropdown span,
+.hui_context_dark a.hui_dropdown_focused:hover
+{
+	background-image: url(../gfx/dropdown_dark.png);
+	color: #fff;
+	
 }

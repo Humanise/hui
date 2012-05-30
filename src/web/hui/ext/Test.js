@@ -1,12 +1,18 @@
 /** @namespace */
-hui.ui.test = {
+hui.test = {
 	status : null,
 	busy : 0,
 	run : function(recipe) {
+		this.errorHandler = hui.listen(window,'error',function(e) {
+			hui.log(e)
+			hui.ui.showMessage({text:'Error ('+e.message+') ['+e.lineno+']',icon:'common/warning'});
+			throw e;
+		});
 		this.status = {failures:0,successes:0};
 		this.busy = 0;
 		hui.ui.showMessage({text:'Running test',busy:true});
 		this._next(0,recipe);
+		
 	},
 	_next : function(num,recipe) {
 		if (recipe[num]===undefined) {
@@ -31,6 +37,7 @@ hui.ui.test = {
 		} else {
 			hui.ui.showMessage({text:'Success',icon:'common/success',duration:2000});
 		}
+		hui.unListen(window,'error',this.errorHandler);
 	},
 	click : function(node,func) {
 		this.busy++;
@@ -86,6 +93,24 @@ hui.ui.test = {
 	
 	// Assertion...
 	
+	assert : {
+		equals : function(obj1,obj2,msg) {
+			return hui.test.assertEquals(obj1,obj2,msg);
+		},
+		notEquals : function(obj1,obj2,msg) {
+			return hui.test.assertNotEquals(obj1,obj2,msg);
+		},
+		'false' : function(value,msg) {
+			return hui.test.assertFalse(value,msg)
+		},
+		'true' : function(value,msg) {
+			return hui.test.assertTrue(value,msg)
+		},
+		'defined' : function(value,msg) {
+			return hui.test.assertDefined(value,msg)
+		}
+	},
+	
 	assertTrue : function(value,msg) {
 		if (value!==true) {
 			this._fail('Failure ('+msg+'), not true...',value);
@@ -95,13 +120,6 @@ hui.ui.test = {
 	},
 	assertFalse : function(value,msg) {
 		if (value!==false) {
-			this._fail('Failure ('+msg+'), not false...',value);
-		} else {
-			this._succeed('Success, false'+(msg ? ': '+msg : ''));
-		}
-	},
-	assertDefined : function(value,msg) {
-		if (value===null || value==undefined) {
 			this._fail('Failure ('+msg+'), not false...',value);
 		} else {
 			this._succeed('Success, false'+(msg ? ': '+msg : ''));

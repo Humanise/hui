@@ -415,7 +415,7 @@ a.hui_button_small_paper, a.hui_button_small_paper span
 a.hui_button_small_paper span span
 {
 	margin: 0;
-	padding: 0 10px;
+	padding: 0 5px;
 	font-size: 11px;
 	line-height: 18px;
 }
@@ -444,4 +444,21 @@ a.hui_button_mini_paper span span
 	padding: 0 10px;
 	font-size: 10px;
 	line-height: 16px;
+}
+
+
+
+
+
+.hui_context_dark a.hui_button,
+.hui_context_dark a.hui_button span
+{
+	background-image: url('../gfx/button_overlay.png');
+	color: #fff;
+}
+
+.hui_context_dark a.hui_button_highlighted, 
+.hui_context_dark a.hui_button_highlighted span
+{
+	background-image: url('../gfx/button_overlay_highlighted.png');
 }

@@ -1,30 +1,45 @@
+span.hui_colorinput
+{
+	display: inline-block;
+	position: relative;
+	vertical-align: middle;
+	margin-right: 24px;
+}
+
 span.hui_colorinput input
 {
-	border-color:#BBBBBB #CCCCCC #DDDDDD;
-	border-style:solid;
-	border-width:1px;
-	width: 100px;
+	border: 0px;
+	font-size: 9pt;
+	font-family: Monaco,monospace;
+	width: 60px;
+	border: none;
 	margin: 0;
-	padding: 1px 0px;
-	-moz-border-radius: 2px;
-	-webkit-border-radius: 2px;
-	-webkit-box-shadow: inset 0 1px 3px #ddd;
-	font-size: 12px;
-	height: 16px;
+	margin-top: -1px;
+	padding: 0;
+	height: 18px;
 }
 
 span.hui_colorinput input:focus
 {
 	outline: none;
-	-webkit-box-shadow: inset 0 1px 3px #ddd, 0 0 5px #68f;
 }
 
 a.hui_colorinput
 {
+	top: 1px;
+	right: -22px;
 	position: absolute;
-	width: 16px;
-	height: 16px;
+	width: 20px;
+	height: 20px;
 	border: 1px solid #CCC;
+	border-radius: 2px;
 	margin-left: 3px;
 	margin-top: 1px;
+	text-decoration: none;
+	font-size: 13px;
+	font-family: Tahoma;
+	text-align: center;
+	color: #ccc;
+	line-height: 20px;
+	outline: none;
 }

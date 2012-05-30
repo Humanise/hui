@@ -11,7 +11,14 @@
 
 <!--                  Toolbar                   -->
 
-
+<!--doc title:'Toolbar' class:'hui.ui.Toolbar' module:'bar'
+<toolbar name="«name»" variant="«?»" border="«'top' | 'bottom'»" labels="«boolean»" fixed-height="«boolean»">
+    ···
+    <right>
+        ···
+    </right>
+</toolbar>
+-->
 <xsl:template match="gui:toolbar" name="gui:toolbar">
 	<div id="{generate-id()}">
 		<xsl:attribute name="class">
@@ -51,6 +58,15 @@
 	<span class="hui_divider"><xsl:comment /></span>
 </xsl:template>
 
+<!--doc title:'Toolbar icon' class:'hui.ui.Toolbar.Icon' module:'bar'
+<toolbar···>
+    ···
+    <icon name="«name»" icon="«icon»" overlay="«overlay»" text="«text»" selected="«boolean»" disabled="«boolean»" click="«script»">
+        <confirm text="«text»" ok="«text»" cancel="«text»"/>
+    </icon>
+    ···
+</toolbar>
+-->
 <xsl:template match="gui:toolbar//gui:icon">
 	<a id="{generate-id()}" href="javascript://">
 		<xsl:attribute name="class">
@@ -82,15 +98,15 @@
 			</xsl:if>
 		});
 		<xsl:call-template name="gui:createobject"/>
-		<xsl:if test="@action">
-			<xsl:value-of select="generate-id()"/>_obj.listen({$click:function() {<xsl:value-of select="@action"/>}});
-		</xsl:if>
 		<xsl:if test="@click">
 			<xsl:value-of select="generate-id()"/>_obj.listen({$click:function() {<xsl:value-of select="@click"/>}});
 		</xsl:if>
 	</script>
 </xsl:template>
 
+<!--doc title:'Search field' class:'hui.ui.SearchField' module:'input'
+<searchfield name="«text»" adaptive="«true»" width="«pixels»" expanded-width="«pixels»"/>
+-->
 <xsl:template match="gui:searchfield" name="gui:searchfield">
 	<span id="{generate-id()}">
 		<xsl:attribute name="class">
@@ -99,7 +115,9 @@
 				<xsl:text> hui_searchfield_adaptive</xsl:text>
 			</xsl:if>
 		</xsl:attribute>
-		<xsl:if test="@width"><xsl:attribute name="style">width:<xsl:value-of select="@width"/>px;</xsl:attribute></xsl:if>
+		<xsl:if test="@width">
+			<xsl:attribute name="style">width:<xsl:value-of select="@width"/>px;</xsl:attribute>
+		</xsl:if>
 		<em class="hui_searchfield_placeholder"><xsl:value-of select="@placeholder"/><xsl:comment/></em>
 		<a href="javascript:void(0);" class="hui_searchfield_reset"><xsl:comment/></a>
 		<span><span><input type="text"/></span></span>
@@ -108,20 +126,15 @@
 		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.SearchField({
 			element:'<xsl:value-of select="generate-id()"/>',
 			name:'<xsl:value-of select="@name"/>'
-			<xsl:if test="@expandedWidth">,expandedWidth:<xsl:value-of select="@expandedWidth"/></xsl:if>
 			<xsl:if test="@expanded-width">,expandedWidth:<xsl:value-of select="@expanded-width"/></xsl:if>
 		});
 		<xsl:call-template name="gui:createobject"/>
 	</script>
 </xsl:template>
 
-<xsl:template match="gui:toolbar//gui:searchfield[@title]">
-	<span class="hui_toolbar_search">
-		<xsl:call-template name="gui:searchfield"/>
-		<span class="hui_toolbar_search_label"><xsl:value-of select="@title"/><xsl:value-of select="@label"/></span>
-	</span>
-</xsl:template>
-
+<!--doc title:'Toolbar badge' class:'hui.ui.Toolbar.Badge' module:'bar'
+<badge name="«text»" label="«text»" text="«text»" icon="«icon»"/>
+-->
 <xsl:template match="gui:toolbar//gui:badge">
 	<div id="{generate-id()}" class="hui_toolbar_badge">
 		<div class="hui_toolbar_inner_badge"><div class="hui_toolbar_inner_badge">
@@ -138,9 +151,45 @@
 	</script>
 </xsl:template>
 
-<!-- ///////////////////// table ///////////////////// -->
+
+<!--doc title:'Toolbar field' module:'bar'
+<toolbar···>
+    ···
+    <field label="«text»">
+        ···
+    </field>
+    ···
+</toolbar>
+-->
+<xsl:template match="gui:toolbar//gui:field">
+	<span class="hui_toolbar_item">
+		<span class="hui_toolbar_item_body"><xsl:apply-templates/></span>
+		<span class="hui_toolbar_label"><xsl:value-of select="@label"/></span>
+	</span>
+</xsl:template>
 
 
+
+
+
+<!--doc title:'Toolbar grid' module:'bar'
+<toolbar···>
+    ···
+    <grid>
+        <row>
+            <cell width="«pixels»" left="«pixels»" right="«pixels»">
+                ···
+            </cell>
+            <cell···><label>«text»</label></cell>
+        </row>
+        <row>
+            <cell···>
+            </cell>
+        </row>
+    </grid>
+    ···
+</toolbar>
+-->
 <xsl:template match="gui:toolbar//gui:grid">
 	<span class="hui_toolbar_grid">
 	<table class="hui_toolbar_grid">
@@ -175,66 +224,22 @@
 <xsl:template match="gui:toolbar//gui:grid/gui:row/gui:cell/gui:label">
 	<label class="hui_toolbar_grid"><xsl:apply-templates/></label>
 </xsl:template>
-<!-- Inputs -->
-
-<xsl:template match="gui:toolbar//gui:checkboxes">
-	<span class="hui_toolbar_item">
-		<span class="hui_toolbar_item_body"><xsl:call-template name="gui:checkboxes"/></span>
-		<span class="hui_toolbar_label"><xsl:value-of select="@title"/><xsl:value-of select="@label"/></span>
-	</span>
-</xsl:template>
-
-<xsl:template match="gui:toolbar//gui:number">
-	<span class="hui_toolbar_item">
-		<span class="hui_toolbar_item_body"><xsl:call-template name="gui:number"/></span>
-		<span class="hui_toolbar_label"><xsl:value-of select="@title"/><xsl:value-of select="@label"/></span>
-	</span>
-</xsl:template>
-
-<xsl:template match="gui:toolbar//gui:style-length">
-	<span class="hui_toolbar_item">
-		<span class="hui_toolbar_item_body"><xsl:call-template name="gui:style-length"/></span>
-		<span class="hui_toolbar_label"><xsl:value-of select="@title"/><xsl:value-of select="@label"/></span>
-	</span>
-</xsl:template>
-
-<xsl:template match="gui:toolbar//gui:dropdown[@title] | gui:toolbar//gui:dropdown[@label]">
-	<span class="hui_toolbar_item">
-		<span class="hui_toolbar_item_body"><xsl:call-template name="gui:dropdown"/></span>
-		<span class="hui_toolbar_label"><xsl:value-of select="@title"/><xsl:value-of select="@label"/></span>
-	</span>
-</xsl:template>
-
-<xsl:template match="gui:toolbar//gui:segmented[@label]">
-	<span class="hui_toolbar_item">
-		<span class="hui_toolbar_item_body"><xsl:call-template name="gui:segmented"/></span>
-		<span class="hui_toolbar_label"><xsl:value-of select="@label"/></span>
-	</span>
-</xsl:template>
-
-<xsl:template match="gui:toolbar//gui:textfield">
-	<span class="hui_toolbar_item">
-		<span class="hui_toolbar_item_body"><xsl:call-template name="gui:text"/></span>
-		<span class="hui_toolbar_label"><xsl:value-of select="@label"/></span>
-	</span>
-</xsl:template>
-
-<xsl:template match="gui:toolbar//gui:cell/gui:number">
-	<xsl:call-template name="gui:number"/>
-</xsl:template>
-
-<xsl:template match="gui:toolbar//gui:cell/gui:textfield">
-	<xsl:call-template name="gui:text"/>
-</xsl:template>
-
-<xsl:template match="gui:toolbar//gui:cell/gui:dropdown">
-	<xsl:call-template name="gui:dropdown"/>
-</xsl:template>
 
 
-<!-- Bar -->
 
 
+
+
+
+
+<!--doc title:'Bar' class:'hui.ui.Bar' module:'bar'
+<bar name="«text»" state="«text»">
+    ···
+    <right>
+        ···
+    </right>
+</bar>
+-->
 <xsl:template match="gui:bar">
 	<div id="{generate-id()}">
 		<xsl:attribute name="class">
@@ -271,6 +276,14 @@
 	</div>
 </xsl:template>
 
+
+
+
+<!--doc title:'Bar button' class:'hui.ui.Bar.Button' module:'bar'
+<bar···>
+    <button name="«text»" icon="«icon»" text="«text»" selected="«boolean»" click="«script»"/>
+</bar>
+-->
 <xsl:template match="gui:bar//gui:button[@icon]">
 	<xsl:variable name="class">
 		<xsl:text>hui_bar_button</xsl:text>
@@ -295,6 +308,14 @@
 	</script>
 </xsl:template>
 
+
+
+
+<!--doc title:'Bar text' class:'hui.ui.Bar.Text' module:'bar'
+<bar···>
+    <text name="«text»" text="«text»" variant="«?»"/>
+</bar>
+-->
 <xsl:template match="gui:bar//gui:text">
 	<span class="hui_bar_text" id="{generate-id()}">
 		<xsl:attribute name="class">
@@ -315,6 +336,14 @@
 	</script>
 </xsl:template>
 
+
+
+
+<!--doc title:'Bar space' module:'bar'
+<bar | toolbar···>
+    <space width="«pixels»"/>
+</bar | toolbar>
+-->
 <xsl:template match="gui:bar//gui:space | gui:toolbar//gui:space">
 	<span class="gui_bar_space">
 		<xsl:if test="@width">

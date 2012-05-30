@@ -9,6 +9,7 @@ div.hui_structure_top
 	min-height: 26px;
 	border: 1px solid #ccc;
 	border-radius: 6px 6px 0 0;
+	padding: 0 5px;
 	background: #fff;
 	background: #CCC -webkit-gradient(linear, 0% 0%, 0% 100% , from(white), to(#F0F0F0));
 	background: -moz-linear-gradient(top, white, #F0F0F0);
@@ -37,9 +38,13 @@ div.hui_structure_middle
 	top: 58px;
 	left: 0;
 	right: 0;
+	background: #fff;
+}
+
+div.hui_structure_full div.hui_structure_middle
+{
 	border-right: 1px solid #ccc;
 	border-left: 1px solid #ccc;
-	background: #fff;
 }
 
 div.hui_structure_center
