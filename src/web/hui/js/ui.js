@@ -96,11 +96,23 @@ hui.ui._frameLoaded = function(win) {
 	hui.ui.callSuperDelegates(this,'frameLoaded',win);
 }
 
+hui.ui._resizeFirst = true;
+
 /** @private */
 hui.ui._resize = function() {
 	for (var i = hui.ui.layoutWidgets.length - 1; i >= 0; i--) {
 		hui.ui.layoutWidgets[i]['$$resize']();
 	};
+	window.clearTimeout(this._delayedResize);
+	if (!hui.ui._resizeFirst) {
+		this._delayedResize = window.setTimeout(hui.ui._afterResize,1000);
+	}
+	hui.ui._resizeFirst = false;
+}
+
+hui.ui._afterResize = function() {
+	hui.log('afterResize')
+	hui.ui.callSuperDelegates(hui.ui,'$afterResize');
 }
 
 /**
@@ -662,6 +674,9 @@ hui.ui.extend = function(obj,options) {
 		obj.element = hui.get(options.element);
 		obj.name = options.name;
 	}
+	if (hui.ui.objects[obj.name]) {
+		hui.log('Widget replaced: '+obj.name);
+	}
 	hui.ui.objects[obj.name] = obj;
 	obj.delegates = [];
 	obj.listen = function(delegate) {
@@ -676,6 +691,11 @@ hui.ui.extend = function(obj,options) {
 	}
 	obj.fire = function(method,value,event) {
 		return hui.ui.callDelegates(this,method,value,event);
+	}
+	obj.fireValueChange = function() {
+		obj.fire('valueChanged',obj.value);
+		hui.ui.firePropertyChange(obj,'value',obj.value);
+		hui.ui.callAncestors(obj,'childValueChanged',obj.value);
 	}
 	obj.fireProperty = function(key,value) {
 		hui.ui.firePropertyChange(this,key,value);

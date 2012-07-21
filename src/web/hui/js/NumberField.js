@@ -65,9 +65,9 @@ hui.ui.NumberField.prototype = {
 		} else {
 			var parsed = parseFloat(this.input.value,10);
 			if (!isNaN(parsed)) {
-				this.setLocalValue(parsed,true);
+				this._setLocalValue(parsed,true);
 			} else {
-				this.setLocalValue(null,true);
+				this._setLocalValue(null,true);
 			}
 		}
 	},
@@ -75,16 +75,16 @@ hui.ui.NumberField.prototype = {
 	downEvent : function(e) {
 		hui.stop(e);
 		if (this.value===null) {
-			this.setLocalValue(this.options.min,true);
+			this._setLocalValue(this.options.min,true);
 		} else {
-			this.setLocalValue(this.value-this.options.tickSize,true);
+			this._setLocalValue(this.value-this.options.tickSize,true);
 		}
 		this._updateField();
 	},
 	/** @private */
 	upEvent : function(e) {
 		hui.stop(e);
-		this.setLocalValue(this.value+this.options.tickSize,true);
+		this._setLocalValue(this.value+this.options.tickSize,true);
 		this._updateField();
 	},
 	/** Sets focus */
@@ -103,18 +103,20 @@ hui.ui.NumberField.prototype = {
 	},
 	/** Sets the value */
 	setValue : function(value) {
-		value = parseFloat(value,10);
-		if (!isNaN(value)) {
-			this.setLocalValue(value,false);
+		if (value===null || value===undefined) {
+			this._setLocalValue(null,false);
+		} else {
+			value = parseFloat(value,10);
+			if (!isNaN(value)) {
+				this._setLocalValue(value,false);
+			}
 		}
 		this._updateField();
 	},
-	/** @private */
 	_updateField : function() {
 		this.input.value = this.value===null || this.value===undefined ? '' : this.value;
 	},
-	/** @private */
-	setLocalValue : function(value,fire) {
+	_setLocalValue : function(value,fire) {
 		var orig = this.value;
 		if (value===null || value===undefined && this.options.allowNull) {
 			this.value = null;
@@ -123,8 +125,7 @@ hui.ui.NumberField.prototype = {
 			this.value = this._round(value);
 		}
 		if (fire && orig!==this.value) {
-			hui.ui.callAncestors(this,'childValueChanged',this.value);
-			this.fire('valueChanged',this.value);
+			this.fireValueChange();
 		}
 		this._updateSlider();
 	},
@@ -155,7 +156,7 @@ hui.ui.NumberField.prototype = {
 	},
 	_onSliderChange : function(value) {
 		var conv = this.options.min+(this.options.max-this.options.min)*value;
-		this.setLocalValue(conv,true);
+		this._setLocalValue(conv,true);
 		this._updateField();
 	},
 	_showSlider : function() {

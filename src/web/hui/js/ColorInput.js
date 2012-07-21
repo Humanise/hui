@@ -19,10 +19,9 @@ hui.ui.ColorInput = function(options) {
 		}
 	});
 	this.input.listen({$valueChanged:this._onInputChange.bind(this)})
-	this.value = this.options.value;
+	this.value = null;
 	hui.ui.extend(this);
-	this._syncInput();
-	this._syncColorButton();
+	this.setValue(this.options.value);
 	this._addBehavior();
 }
 
@@ -43,7 +42,7 @@ hui.ui.ColorInput.prototype = {
 	},
 	_syncColorButton : function() {		
 		this.button.innerHTML = this.value ? '' : '?';
-		this.button.style.backgroundColor = this.value;	
+		this.button.style.backgroundColor = this.value ? this.value : '';	
 	},
 	_onInputChange : function(value) {
 		var changed = value!=this.value;
@@ -86,7 +85,7 @@ hui.ui.ColorInput.prototype = {
 		return this.value;
 	},
 	setValue : function(value) {
-		this.value = value;
+		this.value = new hui.Color(value).toHex();
 		this._syncInput();
 		this._syncColorButton();
 	},

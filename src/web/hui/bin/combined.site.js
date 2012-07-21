@@ -286,6 +286,18 @@ hui.string = {
 		return str.split('').join("\u200B");
 	},
 	/**
+	 * Shorten a string to a maximum length
+	 * @param {String} str The text to shorten
+	 * @param {int} length The maximum length
+	 * @returns {String} The shortened text
+	 */
+	shorten : function(str,length) {
+		if (str.length > length) {
+			return str.substring(0,length-3)+'...';
+		}
+		return str;
+	},
+	/**
 	 * Escape the html in a string (robust)
 	 * @param {String} str The text to escape
 	 * @returns {String} The escaped text
@@ -312,7 +324,12 @@ hui.string = {
 	 * @returns {Object} The object
 	 */
 	fromJSON : function(json) {
-		return JSON.parse(json);
+		try {
+			return JSON.parse(json);
+		} catch (e) {
+			hui.log(e);
+			return null;
+		}
 	},
 
 	/**
@@ -824,14 +841,17 @@ hui.get.firstChild = hui.dom.firstChild;
  * </pre>
  * @param {String} name The name of the new element
  * @param {Object} options The options
+ * @param {Document} doc (Optional) The document to create the element for
  * @returns {Element} The new element
  */
-hui.build = function(name,options) {
-	var e = document.createElement(name);
+hui.build = function(name,options,doc) {
+	
+	var doc = doc || document,
+		e = doc.createElement(name);
 	if (options) {
 		for (prop in options) {
 			if (prop=='text') {
-				e.appendChild(document.createTextNode(options.text));
+				e.appendChild(doc.createTextNode(options.text));
 			} else if (prop=='html') {
 				e.innerHTML=options.html;
 			} else if (prop=='parent') {
@@ -928,6 +948,13 @@ hui.position = {
 		left -= src.clientWidth * (options.source.horizontal || 0);
 		top -= src.clientHeight * (options.source.vertical || 0);
 
+		if (options.top) {
+			top += options.top;
+		}
+		if (options.left) {
+			left += options.left;
+		}
+
 		if (options.insideViewPort) {
 			var w = hui.window.getViewWidth();
 			if (left + src.clientWidth > w) {
@@ -936,14 +963,12 @@ hui.position = {
 			}
 			if (left < 0) {left=0}
 			if (top < 0) {top=0}
+			
+			var height = hui.window.getViewHeight();
+			var vertMax = hui.window.getScrollTop()+hui.window.getViewHeight()-src.clientHeight,
+				vertMin = hui.window.getScrollTop();
+			top = Math.max(Math.min(top,vertMax),vertMin);
 		}
-		if (options.top) {
-			top += options.top;
-		}
-		if (options.left) {
-			left += options.left;
-		}
-
 		src.style.top = top+'px';
 		src.style.left = left+'px';
 	}
@@ -2216,8 +2241,7 @@ hui.xml = {
 		} else if (document.implementation && document.implementation.createDocument) {
 			try {
 			  	var pro = new XSLTProcessor();
-			  	pro.importStylesheet(xsl);
-				hui.log(pro)
+			  	pro.importStylesheet(xsl);	
 				var ownerDocument = document;//.implementation.createDocument("", "test", null); 
 			    return pro.transformToFragment(xml,ownerDocument);				
 			} catch (e) {
@@ -2231,15 +2255,31 @@ hui.xml = {
 	parse : function(xml) {
 		var doc;
 		if (window.DOMParser) {
-  			var parser=new DOMParser();
+  			var parser = new DOMParser();
   			doc = parser.parseFromString(xml,"text/xml");
+			var errors = doc.getElementsByTagName('parsererror');
+			if (errors.length>0 && errors[0].textContent) {
+				hui.log(errors[0].textContent)
+				return null;
+			}
   		} else {
   			doc = new ActiveXObject("Microsoft.XMLDOM");
 			doc.async = false;
   			doc.loadXML(xml); 
   		}
 		return doc;
-	}
+	},
+	serialize : function(node) {
+  		try {
+      		return (new XMLSerializer()).serializeToString(node);
+  		} catch (e) {
+     		try {
+        		return node.xml;
+     		}
+     		catch (e) {}
+     	}
+		return null;
+   	}
 }
 
 
@@ -3266,11 +3306,23 @@ hui.ui._frameLoaded = function(win) {
 	hui.ui.callSuperDelegates(this,'frameLoaded',win);
 }
 
+hui.ui._resizeFirst = true;
+
 /** @private */
 hui.ui._resize = function() {
 	for (var i = hui.ui.layoutWidgets.length - 1; i >= 0; i--) {
 		hui.ui.layoutWidgets[i]['$$resize']();
 	};
+	window.clearTimeout(this._delayedResize);
+	if (!hui.ui._resizeFirst) {
+		this._delayedResize = window.setTimeout(hui.ui._afterResize,1000);
+	}
+	hui.ui._resizeFirst = false;
+}
+
+hui.ui._afterResize = function() {
+	hui.log('afterResize')
+	hui.ui.callSuperDelegates(hui.ui,'$afterResize');
 }
 
 /**
@@ -3832,6 +3884,9 @@ hui.ui.extend = function(obj,options) {
 		obj.element = hui.get(options.element);
 		obj.name = options.name;
 	}
+	if (hui.ui.objects[obj.name]) {
+		hui.log('Widget replaced: '+obj.name);
+	}
 	hui.ui.objects[obj.name] = obj;
 	obj.delegates = [];
 	obj.listen = function(delegate) {
@@ -3846,6 +3901,11 @@ hui.ui.extend = function(obj,options) {
 	}
 	obj.fire = function(method,value,event) {
 		return hui.ui.callDelegates(this,method,value,event);
+	}
+	obj.fireValueChange = function() {
+		obj.fire('valueChanged',obj.value);
+		hui.ui.firePropertyChange(obj,'value',obj.value);
+		hui.ui.callAncestors(obj,'childValueChanged',obj.value);
 	}
 	obj.fireProperty = function(key,value) {
 		hui.ui.firePropertyChange(this,key,value);
@@ -4849,10 +4909,9 @@ hui.ui.SearchField.prototype = {
 	},
 	_fieldChanged : function() {
 		if (this.field.value!=this.value) {
-			this.value=this.field.value;
+			this.value = this.field.value;
 			this._updateClass();
-			this.fire('valueChanged',this.value);
-			hui.ui.firePropertyChange(this,'value',this.value);
+			this.fireValueChange();
 		}
 	}
 }

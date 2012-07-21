@@ -84,7 +84,7 @@
 <xsl:template match="gui:fields/gui:field">
 	<tr>
 		<th>
-			<xsl:if test="gui:text-input[not(@multiline='true')] | gui:dropdown | gui:checkbox | gui:datetime-input">
+			<xsl:if test="gui:text-input[not(@multiline='true')] | gui:dropdown | gui:checkbox | gui:datetime-input | gui:style-length-input | gui:number-input">
 				<xsl:attribute name="class">hui_formula_middle</xsl:attribute>
 			</xsl:if>
 			<label class="hui_formula_field"><xsl:value-of select="@label"/></label>
@@ -587,14 +587,81 @@
 	<div class="hui_imagepicker" id="{generate-id()}" tabindex="0"><xsl:comment/></div>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.ImagePicker({
-			element:'<xsl:value-of select="generate-id()"/>',
-			name:'<xsl:value-of select="@name"/>',
-			source:'<xsl:value-of select="@source"/>'
+			element : '<xsl:value-of select="generate-id()"/>',
+			name : '<xsl:value-of select="@name"/>',
+			key : '<xsl:value-of select="@key"/>',
+			source : '<xsl:value-of select="@source"/>'
 		});
 		<xsl:call-template name="gui:createobject"/>
 	</script>
 </xsl:template>
 
+
+
+
+<!--doc title:'Code input' class:'hui.ui.CodeInput' module:'input'
+<code-input name="«text»"/>
+-->
+<xsl:template match="gui:code-input">
+	<div class="hui_codeinput" id="{generate-id()}">
+		<textarea spellcheck="false"><xsl:text></xsl:text></textarea>
+		<xsl:comment/>
+	</div>
+	<script type="text/javascript">
+		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.CodeInput({
+			element : '<xsl:value-of select="generate-id()"/>',
+			name : '<xsl:value-of select="@name"/>',
+			key : '<xsl:value-of select="@key"/>'
+		});
+		<xsl:call-template name="gui:createobject"/>
+	</script>
+</xsl:template>
+
+
+
+
+<!--doc title:'Object input' class:'hui.ui.ObjectInput' module:'input'
+<object-input name="«text»"/>
+-->
+<xsl:template match="gui:object-input">
+	<div class="hui_objectinput" id="{generate-id()}">
+		<a id="{generate-id()}" href="javascript://" class="hui_dropdown">
+			<span><span><strong><xsl:comment/></strong></span></span>
+		</a>
+		<span class="hui_objectinput_body">
+		<input spellcheck="false" style="display:none;"/>
+		<span class="hui_objectinput_object" style="display:none;">
+			<span class="hui_objectinput_icon hui_icon_16"><xsl:comment/></span>
+			<span class="hui_objectinput_title"><xsl:comment/></span>
+			<xsl:comment/>
+		</span>
+		</span>
+	</div>
+	<script type="text/javascript">
+		(function() {
+			var types = [];
+			<xsl:for-each select="gui:type">
+				types.push({
+					label : '<xsl:value-of select="@label"/>',
+					key : '<xsl:value-of select="@key"/>'
+					<xsl:if test="gui:finder">
+						,finderOptions : {
+							title : '<xsl:value-of select="gui:finder/@title"/>',
+							list : {url:'<xsl:value-of select="gui:finder/@list-url"/>'}
+						}
+					</xsl:if>
+				})
+			</xsl:for-each>
+			var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.ObjectInput({
+				element : '<xsl:value-of select="generate-id()"/>',
+				name : '<xsl:value-of select="@name"/>',
+				key : '<xsl:value-of select="@key"/>',
+				types : types
+			});
+			<xsl:call-template name="gui:createobject"/>
+		})()
+	</script>
+</xsl:template>
 
 
 <!--             Tokens            -->
