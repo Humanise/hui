@@ -43,8 +43,8 @@ public class TestFeedComparison extends AbstractTestCase {
 		
 		List<String> urls = Lists.newArrayList();
 
-		URL feedUrl = new URL("http://feeds.feedburner.com/AjaxRain");
-		//URL feedUrl = new URL("http://www.alistapart.com/feed/rss.xml");
+		//URL feedUrl = new URL("http://feeds.feedburner.com/AjaxRain");
+		URL feedUrl = new URL("http://www.alistapart.com/feed/rss.xml");
 		//URL feedUrl = new URL("http://www.readwriteweb.com/rss.xml");
 		//URL feedUrl = new URL("http://3quarksdaily.blogs.com/3quarksdaily/index.rdf");
 		
@@ -82,6 +82,8 @@ public class TestFeedComparison extends AbstractTestCase {
 			HTMLDocument document = new HTMLDocument(url);
 			docs.put(document.getTitle().trim()+" : "+url, document.getText());
 		}
+		
+		docs.put("CSS", "CSS");
 		
 		Language language = new English();
 		Matrix<String, String, Double> matrix = new Matrix<String, String, Double>();

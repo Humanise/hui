@@ -1,9 +1,8 @@
 package dk.in2isoft.onlineobjects.test.model;
 
-import java.io.IOException;
-import java.util.List;
+import static junit.framework.Assert.assertEquals;
 
-import static junit.framework.Assert.*;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
@@ -16,10 +15,11 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import dk.in2isoft.commons.parsing.HTMLDocument;
-import dk.in2isoft.onlineobjects.core.ModelException;
+import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.model.InternetAddress;
+import dk.in2isoft.onlineobjects.modules.index.IndexManager;
 import dk.in2isoft.onlineobjects.services.ConfigurationService;
 import dk.in2isoft.onlineobjects.services.FileService;
 import dk.in2isoft.onlineobjects.services.IndexService;
@@ -40,11 +40,11 @@ public class TestIndexService extends AbstractJUnit4SpringContextTests {
 	private IndexService indexService;
 	
 	@Test
-	public void testInternetAddress() throws IOException, ModelException {
-		indexService.setDirectoryName("testIndex");
-		indexService.clear();
-		assertEquals(0, indexService.getDocumentCount());
-		Query<InternetAddress> query = Query.of(InternetAddress.class).withPaging(0, 20).orderByName();
+	public void testInternetAddress() throws EndUserException {
+		IndexManager index = indexService.getIndex("testIndex");
+		index.clear();
+		assertEquals(0, index.getDocumentCount());
+		Query<InternetAddress> query = Query.of(InternetAddress.class).withPaging(0, 2).orderByName();
 		List<InternetAddress> list = modelService.list(query);
 		for (InternetAddress address : list) {
 			log.info(address.getAddress());
@@ -55,16 +55,16 @@ public class TestIndexService extends AbstractJUnit4SpringContextTests {
 			} catch (Exception e) {
 				log.info(e.getMessage(), e);
 			}
-			indexService.update(address, doc);
+			index.update(address, doc);
 		}
-		assertEquals(list.size(), indexService.getDocumentCount());
+		assertEquals(list.size(), index.getDocumentCount());
 	}
 	
 	@Test
-	public void testSearch() throws IOException, ModelException {
-		indexService.setDirectoryName("testIndex");
-		indexService.clear();
-		assertEquals(0, indexService.getDocumentCount());
+	public void testSearch() throws EndUserException {
+		IndexManager index = indexService.getIndex("testIndex");
+		index.clear();
+		assertEquals(0, index.getDocumentCount());
 		
 		
 	}

@@ -20,6 +20,10 @@
 		<listener-class>dk.in2isoft.onlineobjects.core.SystemLoader</listener-class>
 	</listener>
 	
+	<listener>
+		<listener-class>dk.in2isoft.onlineobjects.core.SessionListener</listener-class>
+	</listener>
+	
   <!-- Servlets -->
   <!-- 
 	<servlet>

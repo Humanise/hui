@@ -96,7 +96,7 @@ public abstract class AbstractComponent extends UIComponentBase {
 	};
 	
 	@SuppressWarnings("unchecked")
-	public <T> T getBinding(T localValue, String name) {
+	public <T> T getExpression(T localValue, String name) {
 		ValueExpression valueExpression = this.getValueExpression(name);
 		if (valueExpression!=null) {
 			return (T) valueExpression.getValue(FacesContext.getCurrentInstance().getELContext());

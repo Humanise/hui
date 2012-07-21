@@ -24,7 +24,7 @@ public class FacesResponder implements Responder {
 		if (index==-1) {
 			index=0;
 		}
-		String substring = "/faces/"+localPath.substring(index);
+		String substring = "/faces"+localPath.substring(index);
 		// log.debug("/faces/"+substring);
 		RequestDispatcher requestDispatcher = request.getRequest().getRequestDispatcher(substring);
 		try {

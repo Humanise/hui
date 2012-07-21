@@ -1,8 +1,6 @@
 package dk.in2isoft.onlineobjects.ui;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,11 +31,13 @@ public class Request {
 	private String baseContext;
 
 	private String relativePath;
-
-	private URI uri;
 	
 	private long startTime;
-
+	
+	private String language;
+	
+	private String domainName;
+	
 	private Request(HttpServletRequest request, HttpServletResponse response) {
 		super();
 		this.response = response;
@@ -45,6 +45,7 @@ public class Request {
 		this.decode();
 		this.localContext = new String[] {};
 		this.startTime = System.currentTimeMillis();
+		//debug();
 	}
 	
 	public static Request get(HttpServletRequest request, HttpServletResponse response) {
@@ -55,8 +56,25 @@ public class Request {
 		}
 		return attribute;
 	}
+	
+	private synchronized void debug() {
+		log.info("------------ new request ------------");
+		log.info("requestUri: "+request.getRequestURI());
+		log.info("requestUrl: "+request.getRequestURL());
+		log.info("queryString: "+request.getQueryString());
+		log.info("serverName: "+request.getServerName());
+		log.info("localName: "+request.getLocalName());
+		log.info("contextPath: "+request.getContextPath());
+		log.info("method: "+request.getMethod());
+		log.info("remoteHost: "+request.getRemoteHost());
+		log.info("remoteAddr: "+request.getRemoteAddr());
+		log.info("pathInfo: "+request.getPathInfo());
+		log.info("pathTranslated: "+request.getPathTranslated());
+		log.info("------------");
+	}
 
 	private void decode() {
+		domainName = request.getServerName();
 		baseContext = request.getContextPath();
 		String uri = request.getServletPath().substring(1);
 		if (uri.indexOf(";jsessionid=") != -1) {
@@ -79,11 +97,15 @@ public class Request {
 			path.append("../");
 		}
 		relativePath = path.toString();
-		try {
-			this.uri = new URI(request.getRequestURL().toString());
-		} catch (URISyntaxException e) {
-			log.warn("Unable to parse url",e);
-		}
+		language = "en";
+	}
+	
+	public String getLanguage() {
+		return language;
+	}
+	
+	public void setLanguage(String language) {
+		this.language = language;
 	}
 
 	public void setLocalContext(String[] localContext) {
@@ -94,44 +116,45 @@ public class Request {
 		return this.baseContext;
 	}
 
-	public String[] getLocalContext() {
-		return this.localContext;
-	}
-
 	public String getSubDomain() {
 		if (isIP()) {
 			return null;
 		}
-		String host = uri.getHost();
-		String[] parts = host.split("\\.");
+		if (domainName==null) {
+			return null;
+		}
+		String[] parts = domainName.split("\\.");
 		if (parts.length < 2)
 			return null;
 		Object[] sub = ArrayUtils.subarray(parts, 0, parts.length - 2);
 		return StringUtils.join(sub, ".");
 	}
 
+	
 	public String getDomainName() {
-		String host = uri.getHost();
-		return host;
+		return domainName;
 	}
 	
 	public boolean isIP() {
-		return uri.getHost().matches("[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+");
+		return domainName!=null && domainName.matches("[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+");
 	}
 
 	public String getBaseDomain() {
 		if (isIP()) {
 			return null;
 		}
-		String host = getDomainName();
-		String[] parts = host.split("\\.");
-		if (parts.length < 2)
+		if (domainName==null) {
 			return null;
+		}
+		String[] parts = domainName.split("\\.");
+		if (parts.length < 2) {
+			return null;
+		}
 		Object[] sub = ArrayUtils.subarray(parts, parts.length - 2, parts.length);
 		return StringUtils.join(sub, ".");
 	}
 
-	public String getLocalContextPath() {
+	public String getLocalContext() {
 		String context = request.getContextPath();
 		if (localContext.length == 0) {
 			return context;
@@ -161,7 +184,8 @@ public class Request {
 	}
 	
 	public String getLocalPathAsString() {
-		return StringUtils.join(getLocalPath(),"/");
+		String[] localPath = getLocalPath();
+		return "/"+StringUtils.join(localPath,"/");
 	}
 
 	public boolean testLocalPathStart(String... path) {
@@ -244,6 +268,9 @@ public class Request {
 
 	public UserSession getSession() {
 		Object session = request.getSession().getAttribute(UserSession.SESSION_ATTRIBUTE);
+		if (session==null) {
+			log.error("The user session is not set!");
+		}
 		return (UserSession) session;
 	}
 
@@ -251,27 +278,23 @@ public class Request {
 		return username.equals(getSession().getUser().getUsername());
 	}
 
-	public String getBaseContextPath() {
-		return request.getContextPath();
-	}
-
 	public boolean hasDomain() {
 		return !request.getLocalName().equals(request.getLocalAddr());
 	}
 
 	public String getBaseDomainContext() {
-		StringBuilder x = new StringBuilder();
+		StringBuilder context = new StringBuilder();
 		String baseDomain = getBaseDomain();
 		if (baseDomain!=null) {
-			x.append(baseDomain);			
+			context.append(baseDomain);			
 		} else {
-			x.append(uri.getHost());
+			context.append(domainName);
 		}
 		if (request.getLocalPort() != 80) {
-			x.append(":").append(request.getLocalPort());
+			context.append(":").append(request.getLocalPort());
 		}
-		x.append(request.getContextPath());
-		return x.toString();
+		context.append(request.getContextPath());
+		return context.toString();
 	}
 
 	public void redirectFromBase(String redirect) throws IOException {

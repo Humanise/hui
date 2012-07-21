@@ -75,8 +75,6 @@ public abstract class ApplicationController implements ModelEventListener,Initia
 
 	public RequestDispatcher getDispatcher(Request request) {
 		ServletContext context = request.getRequest().getSession().getServletContext();
-		String subDomain = request.getSubDomain();
-		if (!request.isIP() && !"".equals(subDomain) && !"www".equals(subDomain)) return null;
 		String localPath = request.getLocalPathAsString();
 		String jsfPath = null;
 		for (Map.Entry<Pattern, String> entry : jsfMatchers.entrySet()) {
@@ -202,4 +200,9 @@ public abstract class ApplicationController implements ModelEventListener,Initia
 	public boolean isAllowed(Request request) {
 		return true;
 	}
+
+	public String getLanguage(Request request) {
+		return null;
+	}
+
 }

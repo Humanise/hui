@@ -15,6 +15,7 @@ public class PrivateSpaceController {
 	private File settings;
 	private File bookmarks;
 	private File integration;
+	private File bookmarksAlone;
 	
 	protected void displayPersons(Request request) throws IOException {
 		if (persons==null) {
@@ -39,6 +40,15 @@ public class PrivateSpaceController {
 			bookmarks = communityController.getFile("web","gui","private","bookmarks.gui.xml");
 		}
 		Interface ui = new FileBasedInterface(bookmarks);
+		ui.setParameter("username", request.getSession().getUser().getUsername());
+		ui.render(request.getRequest(),request.getResponse());
+	}
+
+	public void displayBookmarksAlone(Request request) throws IOException {
+		if (bookmarksAlone==null) {
+			bookmarksAlone = communityController.getFile("web","gui","private","bookmarks_alone.gui.xml");
+		}
+		Interface ui = new FileBasedInterface(bookmarksAlone);
 		ui.setParameter("username", request.getSession().getUser().getUsername());
 		ui.render(request.getRequest(),request.getResponse());
 	}

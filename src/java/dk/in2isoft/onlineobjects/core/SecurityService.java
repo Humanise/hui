@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 import com.google.common.collect.Lists;
 
 import dk.in2isoft.onlineobjects.model.Entity;
@@ -14,6 +16,8 @@ import dk.in2isoft.onlineobjects.ui.Request;
 
 public class SecurityService {
 	
+	private static final Logger log = Logger.getLogger(SecurityService.class);
+
 	public static final String ADMIN_USERNAME = "admin";
 	public static final String PUBLIC_USERNAME = "public";
 	
@@ -168,10 +172,11 @@ public class SecurityService {
 		this.modelService = modelService;
 	}
 
-	public void ensureUserSession(Request request) throws SecurityException {
-		HttpSession session = request.getRequest().getSession();
+	public UserSession ensureUserSession(HttpSession session) throws SecurityException {
 		if (session.getAttribute(UserSession.SESSION_ATTRIBUTE) == null) {
+			log.debug("Creating new user session");
 			session.setAttribute(UserSession.SESSION_ATTRIBUTE, new UserSession(getPublicUser()));
 		}
+		return UserSession.get(session);
 	}
 }

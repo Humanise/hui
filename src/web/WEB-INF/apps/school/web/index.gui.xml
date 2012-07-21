@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<gui xmlns="uri:In2iGui" title="Elevskema">
+<gui xmlns="uri:hui" title="Elevskema">
 	<dwr base="/dwr/">
 		<interface name="CoreSecurity"/>
 		<interface name="AppSchool"/>

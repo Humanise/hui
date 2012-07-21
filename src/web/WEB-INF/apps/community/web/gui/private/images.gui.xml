@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<gui xmlns="uri:In2iGui" state="persons" title="Images">
+<gui xmlns="uri:hui" state="persons" title="Images">
 	<dwr base="/dwr/">
 		<interface name="Common"/>
 		<interface name="AppCommunity"/>
@@ -23,54 +23,51 @@
 			<button text="Log ud" icon="inset/cross" name="barLogOut"/>
 		</right>
 	</bar>
-	<structure top="30">
-		<layout>
+
+	<toolbar>
+		<icon icon="common/image" title="Billeder" selected="true" name="toolImages"/>
+		<icon icon="common/person" title="Personer" name="toolPersons"/>
+		<icon icon="common/internet" title="Bogmærker" name="toolBookmarks"/>
+		<icon icon="common/settings" title="Integration" name="toolIntegration"/>
+	</toolbar>
+
+	<div style="position: fixed; top: 90px; bottom: 0; left: 0; right: 0; padding: 10px;">
+		<structure>
 			<top>
 				<toolbar>
-					<icon icon="common/image" title="Billeder" selected="true" name="toolImages"/>
-					<icon icon="common/person" title="Personer" name="toolPersons"/>
-					<icon icon="common/internet" title="Bogmærker" name="toolBookmarks"/>
-					<icon icon="common/settings" title="Integration" name="toolIntegration"/>
+					<icon icon="common/image" overlay="new" title="Tilføj billeder" name="newImage"/>
+					<divider/>
+					<icon icon="common/play" title="Lysbilledshow" name="slideShow"/>
+					<icon icon="common/delete" title="Slet" name="deleteSelectedImage"/>
+					<right>
+ 								<searchfield title="Søgning" expandedWidth="150" placeholder="Søg her" name="searchfield"/>
+						<space width="5"/>
+					</right>
 				</toolbar>
 			</top>
 			<middle>
-				<center padding="10">
-					<layout style="box">
-						<top>
-							<toolbar>
-								<icon icon="common/image" overlay="new" title="Tilføj billeder" name="newImage"/>
-								<divider/>
-								<icon icon="common/play" title="Lysbilledshow" name="slideShow"/>
-								<icon icon="common/delete" title="Slet" name="deleteSelectedImage"/>
-								<right>
-	   								<searchfield title="Søgning" expandedWidth="150" placeholder="Søg her" name="searchfield"/>
-								</right>
-							</toolbar>
-						</top>
-						<middle>
-							<left>
-								<overflow>
-								<selection value="all">
-									<item icon="common/image" title="Alle billeder" value="all"/>
-									<title>Nøgleord</title>
-									<items source="tagsSource" name="tagSelection"/>
-								</selection>
-								</overflow>
-							</left>
-							<center>
-								<overflow resize="-190">
-									<gallery name="imageGallery" source="imagesSource"/>
-								</overflow>
-							</center>
-						</middle>
-						<bottom>
-					
-						</bottom>
-					</layout>
+				<left>
+					<overflow>
+					<selection value="all">
+						<item icon="common/image" title="Alle billeder" value="all"/>
+						<title>Nøgleord</title>
+						<items source="tagsSource" name="tagSelection"/>
+					</selection>
+					</overflow>
+				</left>
+				<center>
+					<overflow resize="-190">
+						<gallery name="imageGallery" source="imagesSource"/>
+					</overflow>
 				</center>
 			</middle>
-		</layout>
-	</structure>
+			<bottom>
+		
+			</bottom>
+		</structure>
+	</div>
+	
+	
 	<window name="newImageWindow" title="Nyt billede" width="300" padding="10">
 		<upload name="imageUpload" url="images/upload.action" widget="imageUploadButton">
 			<placeholder title="Upload billeder" text="Vælg billeder på din egen computer..."/>
@@ -79,6 +76,8 @@
 			<button name="imageUploadButton" title="Vælg billeder..."/>
 		</buttons>
 	</window>
+	
+	
 	<window name="imageWindow" title="Egenskaber" width="300" variant="dark">
 		<space all="5">
 			<formula name="imageFormula">

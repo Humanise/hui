@@ -1,4 +1,4 @@
-ui.listen({
+hui.ui.listen({
 	dragDrop : [
 		{drag:'internetAddress',drop:'tag'}
 	],
@@ -12,10 +12,10 @@ ui.listen({
 	},
 	$submit$quickEnter : function() {
 		var url = quickEnter.getValue();
-		ui.showMessage({text:'Anaylserer adresse...'});
+		hui.ui.showMessage({text:'Anaylserer adresse...'});
 		AppCommunity.lookupInternetAddress(url,function(obj) {
 			quickEnter.setValue();
-			ui.hideMessage();
+			hui.ui.hideMessage();
 			this.bookmarkId = null;
 			bookmarkFormula.reset();
 			bookmarkFormula.setValues(obj);
@@ -24,10 +24,10 @@ ui.listen({
 			deleteBookmark.setEnabled(false);
 		}.bind(this));
 	},
-	$selectionChanged$selection : function() {
+	$select$selection : function() {
 		bookmarksList.resetState();
 	},
-	$selectionChanged$bookmarksList : function() {
+	$select$bookmarksList : function() {
 		deleteItem.setEnabled(true);
 		showItem.setEnabled(true);
 		itemInfo.setEnabled(true);
@@ -74,7 +74,7 @@ ui.listen({
 			this.refreshAll();
 		}.bind(this));
 	},
-	$listRowWasOpened$bookmarksList : function(obj) {
+	$open$bookmarksList : function(obj) {
 		this.editBookmark(obj.id);
 	},
 	refreshAll : function() {

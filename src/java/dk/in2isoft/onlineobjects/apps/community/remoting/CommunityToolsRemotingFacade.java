@@ -13,7 +13,7 @@ public class CommunityToolsRemotingFacade extends AbstractRemotingFacade {
 
 	public ListObjects listAccounts() throws EndUserException {
 		ListObjects list = new ListObjects();
-		Query<RemoteAccount> query = new Query<RemoteAccount>(RemoteAccount.class).withPriviledged(getUserSession());
+		Query<RemoteAccount> query = new Query<RemoteAccount>(RemoteAccount.class).withPrivileged(getUserSession());
 		List<RemoteAccount> accounts = modelService.list(query);
 		for (RemoteAccount account : accounts) {
 			ListDataRow row = new ListDataRow();

@@ -1,38 +1,40 @@
 oo.community.UserProfile = function() {
-	this.container = $('profileContainer');
-	this.profileInfo = $('profileInfo');
-	this.editLink = $('editProfile');
-	In2iGui.get().listen(this);
+	this.container = hui.get('profileContainer');
+	this.profileInfo = hui.get('profileInfo');
+	this.editLink = hui.get('editProfile');
+	hui.ui.listen(this);
 	this.addBehavior();
 }
 
 oo.community.UserProfile.prototype = {
 	addBehavior : function() {
-		var edit = In2iGui.get('editProfile');
+		var edit = hui.ui.get('editProfile');
 		if (edit) {
 			edit.listen({
 				$click:this.editProfile.bind(this)
 			});
-			$('profileImage').observe('click',function(e) {e.stop();this.$click$changeImage()}.bind(this));
+			hui.listen(hui.get('profileImage'),'click',function(e) {hui.stop(e);this.$click$changeImage()}.bind(this));
 		}
 	},
 	$click$changeImage :function() {
 		if (!this.imagePanel) {
-			var p = this.imagePanel = ui.BoundPanel.create({width:300});
-			var buttons = ui.Buttons.create({align:'center'});
-			var choose = In2iGui.Button.create({text:'Vælg billede...',highlighted:true});
+			var p = this.imagePanel = hui.ui.BoundPanel.create({width:300});
+			var buttons = hui.ui.Buttons.create({align:'center'});
+			var choose = hui.ui.Button.create({text:'Vælg billede...',highlighted:true});
 			buttons.add(choose);
-			var up = ui.Upload.create({name:'upload',url:'uploadProfileImage',widget:choose,maxItems:1,types:"*.jpg;*.png",placeholder:{title:'Vælg et billede på din computer...'}});
+			var up = hui.ui.Upload.create({name:'upload',url:'uploadProfileImage',widget:choose,maxItems:1,types:"*.jpg;*.png",placeholder:{title:'Vælg et billede på din computer...'}});
 			p.add(up);
-			var cancel = ui.Button.create({name:'cancelChangeProfileImage',text:'Annuller'});
+			var cancel = hui.ui.Button.create({name:'cancelChangeProfileImage',text:'Annuller'});
 			buttons.add(cancel);
 			p.add(buttons);
 		}
-		this.imagePanel.position($('profileImage'));
+		this.imagePanel.position(hui.get('profileImage'));
 		this.imagePanel.show();
 	},
 	$click$cancelChangeProfileImage : function() {
-		if (this.imagePanel) this.imagePanel.hide();
+		if (this.imagePanel) {
+			this.imagePanel.hide();
+		}
 	},
 	$uploadDidCompleteQueue$upload : function() {
 		document.location.reload();
@@ -46,35 +48,36 @@ oo.community.UserProfile.prototype = {
 	},
 	buildProfileEditor : function() {
 		if (this.profileEditor) return;
-		this.profileEditor = new Element('div',{'class':'profile_editor'}).setStyle({opacity:0,width:this.profileInfo.getWidth()+'px',position:'absolute'});
-		this.container.insert(this.profileEditor);
-		var form = this.profileForm = In2iGui.Formula.create();
-		var cancel = In2iGui.Button.create({text:'Annuller'});
-		var update = In2iGui.Button.create({text:'Opdatér',highlighted:true});
+		this.profileEditor = hui.build('div',{'class':'profile_editor',style:'width:'+this.profileInfo.clientWidth+'px;position:absolute'});
+		hui.style.set(this.profileEditor,{opacity:0});
+		this.container.appendChild(this.profileEditor);
+		var form = this.profileForm = hui.ui.Formula.create();
+		var cancel = hui.ui.Button.create({text:'Annuller'});
+		var update = hui.ui.Button.create({text:'Opdatér',highlighted:true});
 		cancel.listen({$click:this.cancelEditor.bind(this)});
 		update.listen({$click:this.saveEditor.bind(this)});
 		var group = form.buildGroup({above:false},[
-			{type:'Text',options:{label:'Fornavn:',key:'givenName'}},
-			{type:'Text',options:{label:'Mellemnavn:',key:'additionalName'}},
-			{type:'Text',options:{label:'Efternavn:',key:'familyName'}},
-			{type:'Text',options:{label:'Om mig:',key:'resume',lines:5}},
+			{type:'TextField',options:{label:'Fornavn:',key:'givenName'}},
+			{type:'TextField',options:{label:'Mellemnavn:',key:'additionalName'}},
+			{type:'TextField',options:{label:'Efternavn:',key:'familyName'}},
+			{type:'TextField',options:{label:'Om mig:',key:'resume',lines:5}},
 			{type:'DropDown',options:{label:'Køn:',key:'sex',items:[{value:null,title:'Ukendt'},{value:true,title:'Mand'},{value:false,title:'Kvinde'}]}},
-			{type:'Tokens',options:{label:'Interesser:',key:'interests',width:80}},
-			{type:'Tokens',options:{label:'Yndlingsmusik:',key:'music',width:80}}
+			{type:'TokenField',options:{label:'Interesser:',key:'interests',width:80}},
+			{type:'TokenField',options:{label:'Yndlingsmusik:',key:'music',width:80}}
 		]);
-		var emails = In2iGui.ObjectList.create({label:'E-mail:',key:'emails',template:[{type:'text',label:'E-mail',key:'address'},{type:'text',label:'Kontekst',key:'context'}]});
+		var emails = hui.ui.ObjectList.create({label:'E-mail:',key:'emails',template:[{type:'text',label:'E-mail',key:'address'},{type:'text',label:'Kontekst',key:'context'}]});
 		group.add(emails);
-		var phones = In2iGui.ObjectList.create({label:'Telefonnumre:',key:'phones',template:[{type:'text',label:'Nummer',key:'number'},{type:'text',label:'Kontekst',key:'context'}]});
+		var phones = hui.ui.ObjectList.create({label:'Telefonnumre:',key:'phones',template:[{type:'text',label:'Nummer',key:'number'},{type:'text',label:'Kontekst',key:'context'}]});
 		group.add(phones);
-		var urls = In2iGui.ObjectList.create({label:'Internetadresser:',key:'urls',template:[{type:'text',label:'Adresse',key:'address'},{type:'text',label:'Kontekst',key:'context'}]});
+		var urls = hui.ui.ObjectList.create({label:'Internetadresser:',key:'urls',template:[{type:'text',label:'Adresse',key:'address'},{type:'text',label:'Kontekst',key:'context'}]});
 		group.add(urls);
 		var buttons = group.createButtons();
 		buttons.add(cancel);
 		buttons.add(update);
-		this.profileEditor.insert(form.element);
+		this.profileEditor.appendChild(form.element);
 	},
 	saveEditor : function() {
-		In2iGui.showMessage('Gemmer profil...');
+		hui.ui.showMessage('Gemmer profil...');
 		AppCommunity.updateUserProfile(this.profileForm.getValues(),function() {
 			document.location.reload();
 		});
@@ -84,4 +87,4 @@ oo.community.UserProfile.prototype = {
 	}
 }
 
-In2iGui.onDomReady(function() {new oo.community.UserProfile();});
+hui.ui.onReady(function() {new oo.community.UserProfile();});

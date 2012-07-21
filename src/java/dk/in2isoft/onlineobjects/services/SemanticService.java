@@ -1,7 +1,10 @@
 package dk.in2isoft.onlineobjects.services;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,15 +14,30 @@ import org.apache.commons.lang.StringUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import dk.in2isoft.onlineobjects.core.Pair;
 import dk.in2isoft.onlineobjects.util.semantics.Language;
 
 public class SemanticService {
-	private static Pattern pattern = Pattern.compile("[a-zA-Z]+");
 	
+	public static final String WORD_EXPRESSION = "[a-zA-Z\u0027\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF]+";
+	
+	public static final char UNICODE_AA_LARGE = '\u00C5';
+	public static final char UNICODE_AA = '\u00E5';
+	
+	public static final char UNICODE_AE_LARGE = '\u00C6';
+	public static final char UNICODE_AE = '\u00E6';
+	
+	public static final char UNICODE_OE_LARGE = '\u00D8';
+	public static final char UNICODE_OE = '\u00F8';
+
+
+	private static Pattern wordPattern = Pattern.compile(WORD_EXPRESSION);
+	
+	private static Pattern abbrPattern = Pattern.compile("[A-Z]+");
 
 	public String[] getWords(String text, Language language) {
 		List<String> list = Lists.newArrayList();
-		Matcher m = pattern.matcher(text);
+		Matcher m = wordPattern.matcher(text);
 		while (m.find()) {
 			String word = m.group();
 			if (language==null) {
@@ -30,6 +48,10 @@ public class SemanticService {
 			}
 		}
 		return list.toArray(new String[]{});
+	}
+	
+	public boolean isAbbreviation(String word) {
+		return abbrPattern.matcher(word).matches();
 	}
 	
 	public String[] getNaturalWords(String text) {
@@ -50,10 +72,9 @@ public class SemanticService {
 		}
 		return list.toArray(new String[]{});
 	}
-
-	public Map<String, Integer> getWordFrquency(String text,Language language) {
-		Map<String,Integer> frequency = Maps.newHashMap();
-		String[] words = getWords(text,language);
+	
+	public Map<String, Integer> getWordFrequency(String[] words) {
+		final Map<String,Integer> frequency = Maps.newHashMap();
 		for (String word : words) {
 			if (frequency.containsKey(word)) {
 				frequency.put(word, frequency.get(word)+1);
@@ -62,6 +83,25 @@ public class SemanticService {
 			}
 		}
 		return frequency;
+	}
+	
+	public List<Pair<String, Integer>> getSortedWordFrequency(String[] words) {
+		List<Pair<String, Integer>> list = Lists.newArrayList();
+		Map<String, Integer> frequency = getWordFrequency(words);
+		for (Entry<String, Integer> entry : frequency.entrySet()) {
+			list.add(Pair.of(entry.getKey(), entry.getValue()));
+		}
+		Collections.sort(list, new Comparator<Pair<String, Integer>>() {
+			public int compare(Pair<String, Integer> o1, Pair<String, Integer> o2) {
+				return o2.getValue().compareTo(o1.getValue());
+			}
+		});
+		return list;
+	}
+
+	public Map<String, Integer> getWordFrquency(String text,Language language) {
+		String[] words = getWords(text,language);
+		return getWordFrequency(words);
 	}
 	
 	public double compare(String text1, String text2, Language language) {
@@ -121,5 +161,12 @@ public class SemanticService {
 			sum+=query[i]*doc[i];
 		}
 		return sum;
+	}
+
+	public void lowercaseWords(String[] words) {
+		for (int i = 0; i < words.length; i++) {
+			words[i] = StringUtils.lowerCase(words[i]);
+		}
+
 	}
 }

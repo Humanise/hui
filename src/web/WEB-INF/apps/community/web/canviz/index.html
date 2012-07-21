@@ -3,13 +3,13 @@
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<title>canviz: graphviz on a canvas</title>
-	<script type="text/javascript" src="../In2iGui/lib/prototype.min.js"></script>
-	<script type="text/javascript" src="../In2iGui/lib/In2iScripts/In2iScripts.js"></script>
-	<script type="text/javascript" src="../In2iGui/js/In2iGui.js"></script>
-	<script type="text/javascript" src="../In2iGui/ext/Graphviz.js"></script>
+	<script type="text/javascript" src="../hui/lib/prototype.min.js"></script>
+	<script type="text/javascript" src="../hui/lib/In2iScripts/In2iScripts.js"></script>
+	<script type="text/javascript" src="../hui/js/ui.js"></script>
+	<script type="text/javascript" src="../hui/ext/Graphviz.js"></script>
 	<script type="text/javascript">
 	function init() {
-		var graph = In2iGui.Graphviz.create();
+		var graph = hui.ui.Graphviz.create();
 		document.body.appendChild(graph.getElement());
 		graph.scale = .5;
 		//graph.load('data.xdot');

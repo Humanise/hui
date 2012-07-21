@@ -7,7 +7,7 @@ var videoView = {
 		if (!this.publicCommentPanel) {
 			var p = this.publicCommentPanel = ui.Box.create({closable:true,modal:true,absolute:true});
 			p.addToDocument();
-			p.add(new Element('div',{'class':'mock_contest_payment'}));
+			p.add(n2i.build('div',{'class':'mock_contest_payment'}));
 		}
 		this.publicCommentPanel.show();
 	},
@@ -19,8 +19,8 @@ var videoView = {
 			p.addToDocument();
 			var form = this.commentFormula = ui.Formula.create({name:'commentFormula'});
 			form.buildGroup({},[
-				{type:'Text',options:{key:'name',label:'Name'}},
-				{type:'Text',options:{key:'text',lines:10,label:'Comment'}}
+				{type:'TextField',options:{key:'name',label:'Name'}},
+				{type:'TextField',options:{key:'text',lines:10,label:'Comment'}}
 			]);
 			p.add(form);
 			var buttons = ui.Buttons.create({top: 10,align:'right'});
@@ -126,7 +126,7 @@ var videoView = {
 		if (!this.ratingPanel) {
 			var p = this.ratingPanel = ui.Box.create({closable:true,modal:true,absolute:true});
 			p.addToDocument();
-			p.add(new Element('div',{'class':'mock_rate_signup'}));
+			p.add(n2i.build('div',{'class':'mock_rate_signup'}));
 		}
 		this.ratingPanel.show();
 	}

@@ -12,7 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import dk.in2isoft.commons.jsf.ComponentUtil;
 import dk.in2isoft.commons.jsf.TagWriter;
 
-@FacesComponent(value="in2igui.textfield")
+@FacesComponent(value="hui.textfield")
 public class TextFieldComponent extends UIComponentBase {
 
 	private String name;
@@ -47,7 +47,7 @@ public class TextFieldComponent extends UIComponentBase {
 	
 	@Override
 	public String getFamily() {
-		return "in2igui.textfield";
+		return "hui.textfield";
 	}
 
 	@Override
@@ -56,21 +56,21 @@ public class TextFieldComponent extends UIComponentBase {
 		String value = ComponentUtil.getBindingAsString(this, "value", this.value, context);
 		TagWriter writer = new TagWriter(this,context);
 		if (adaptive) {
-			writer.startDiv("in2igui_field");
+			writer.startDiv("hui_field");
 		} else {
-			writer.startSpan("in2igui_field");
+			writer.startSpan("hui_field");
 		}
 		writer.withId(id);
 		if (width>0) {
 			writer.withStyle("width: "+width+"px;");
 		}
 		if (StringUtils.isNotBlank(placeholder)) {
-			writer.startEm("in2igui_field_placeholder").write(placeholder).endEm();
+			writer.startEm("hui_field_placeholder").write(placeholder).endEm();
 		}
-		writer.startSpan("in2igui_field_top").startSpan().startSpan().endSpan().endSpan().endSpan();
-		writer.startSpan("in2igui_field_middle").startSpan("in2igui_field_middle").startSpan("in2igui_field_content");
-		writer.startSpan("in2igui_field_singleline");
-		writer.startElement("input").withClass("in2igui_formula_text");
+		writer.startSpan("hui_field_top").startSpan().startSpan().endSpan().endSpan().endSpan();
+		writer.startSpan("hui_field_middle").startSpan("hui_field_middle").startSpan("hui_field_content");
+		writer.startSpan("hui_field_singleline");
+		writer.startElement("input").withClass("hui_formula_text");
 		if (secret) {
 			writer.withAttribute("type", "password");
 		}
@@ -83,14 +83,14 @@ public class TextFieldComponent extends UIComponentBase {
 		writer.endElement("input");
 		writer.endSpan();
 		writer.endSpan().endSpan().endSpan();
-		writer.startSpan("in2igui_field_bottom").startSpan().startSpan().endSpan().endSpan().endSpan();
+		writer.startSpan("hui_field_bottom").startSpan().startSpan().endSpan().endSpan().endSpan();
 		if (adaptive) {
 			writer.endDiv();
 		} else {
 			writer.endSpan();
 		}
 		writer.startScopedScript();
-		writer.write("new In2iGui.Formula.Text({element:'").write(id).write("'");
+		writer.write("new hui.ui.TextField({element:'").write(id).write("'");
 		if (name!=null) {
 			writer.write(",name:'"+StringEscapeUtils.escapeJavaScript(name)+"'");
 		}

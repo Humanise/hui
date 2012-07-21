@@ -1,8 +1,8 @@
 OO.Editor.CompoundDocument = function() {
-	In2iGui.get().listen(this);
-	In2iGui.Editor.get().addPartController('header','Overskrift',In2iGui.Editor.Header);
-	In2iGui.Editor.get().addPartController('html','Tekst',In2iGui.Editor.Html);
-	In2iGui.Editor.get().addPartController('image','Billede',OO.Editor.Image);
+	hui.ui.listen(this);
+	hui.ui.Editor.get().addPartController('header','Overskrift',hui.ui.Editor.Header);
+	hui.ui.Editor.get().addPartController('html','Tekst',hui.ui.Editor.Html);
+	hui.ui.Editor.get().addPartController('image','Billede',OO.Editor.Image);
 	this.base = $$('.compounddocument')[0];
 }
 
@@ -19,8 +19,8 @@ OO.Editor.CompoundDocument.prototype = {
 	deactivate : function() {
 	},
 	addToToolbar : function(toolbar) {
-		toolbar.add(In2iGui.Toolbar.Icon.create({name:'addRow',icon:'layout/row',overlay:'new','title':'Tilføj række'}));
-		toolbar.add(In2iGui.Toolbar.Icon.create({name:'reload',icon:'common/refresh','title':'Genindlæs'}));
+		toolbar.add(hui.ui.Toolbar.Icon.create({name:'addRow',icon:'layout/row',overlay:'new','title':'Tilføj række'}));
+		toolbar.add(hui.ui.Toolbar.Icon.create({name:'reload',icon:'common/refresh','title':'Genindlæs'}));
 	},
 	$click$addRow : function() {
 		var self = this;
@@ -32,7 +32,7 @@ OO.Editor.CompoundDocument.prototype = {
 		var self = this;
 		CompoundDocumentDocument.getStructureHTML(OnlineObjects.content.id,function(html) {
 			self.base.update(html);
-			In2iGui.Editor.get().reload();
+			hui.ui.Editor.get().reload();
 		});
 	},
 	$click$reload : function() {
@@ -43,7 +43,7 @@ OO.Editor.CompoundDocument.prototype = {
 	},
 	deletePart : function(part) {
 		this.partToDelete = part;
-		In2iGui.get().confirm({name:'cofirmDeletePart',title:'Er du sikker på at du vil slette afsnittet?',text:'Handlingen kan ikke fortrydes',ok:'Ja, slet',cancel:'Nej, jeg fotryder',highlighted:'cancel',emotion:'gasp',modal:true});
+		hui.ui.confirm({name:'cofirmDeletePart',title:'Er du sikker på at du vil slette afsnittet?',text:'Handlingen kan ikke fortrydes',ok:'Ja, slet',cancel:'Nej, jeg fotryder',highlighted:'cancel',emotion:'gasp',modal:true});
 	},
 	$ok$cofirmDeletePart : function() {
 		var self = this;
@@ -52,25 +52,25 @@ OO.Editor.CompoundDocument.prototype = {
 		});
 	},
 	// Editor responders
-	$addPart$In2iGuiEditor : function(info) {
+	$addPart$huiEditor : function(info) {
 		var self = this;
 		CompoundDocumentDocument.addPart(OnlineObjects.content.id,info.row,info.column,info.position,info.type,function() {
 			self.updateAll();
 		});
 	},
-	$removeColumn$In2iGuiEditor : function(info) {
+	$removeColumn$huiEditor : function(info) {
 		var self = this;
 		CompoundDocumentDocument.removeColumn(OnlineObjects.content.id,info.row,info.column,function() {
 			self.updateAll();
 		});
 	},
-	$addColumn$In2iGuiEditor : function(info) {
+	$addColumn$huiEditor : function(info) {
 		var self = this;
 		CompoundDocumentDocument.addColumn(OnlineObjects.content.id,info.row,info.position,function() {
 			self.updateAll();
 		});
 	},
-	$updateColumn$In2iGuiEditor : function(info) {
+	$updateColumn$huiEditor : function(info) {
 		var self = this;
 		CompoundDocumentDocument.updateColumn(
 			OnlineObjects.content.id,
@@ -84,7 +84,7 @@ OO.Editor.CompoundDocument.prototype = {
 	}
 }
 
-ui.onDomReady(function() {
+hui.ui.onReady(function() {
 	new OO.Editor(OO.Editor.CompoundDocument.getInstance());
 });
 
@@ -100,7 +100,7 @@ OO.Editor.Image = function(element,row,column,position) {
 	this.position = position;
 	this.imageId = null;
 	this.img = this.element.select('img')[0];
-	this.id = In2iGui.Editor.getPartId(this.element);
+	this.id = hui.ui.Editor.getPartId(this.element);
 	this.field = null;
 }
 
@@ -120,7 +120,7 @@ OO.Editor.Image.prototype = {
 	},
 	save : function() {
 		this.deactivate();
-		In2iGui.Editor.get().partChanged(this);
+		hui.ui.Editor.get().partChanged(this);
 	},
 	cancel : function() {
 		this.deactivate();
@@ -129,7 +129,7 @@ OO.Editor.Image.prototype = {
 		if (this.picker) {
 			this.picker.hide();
 		}
-		In2iGui.Editor.get().partDidDeacivate(this);
+		hui.ui.Editor.get().partDidDeacivate(this);
 		this.active = false;
 	},
 	getImageId : function() {
@@ -138,9 +138,9 @@ OO.Editor.Image.prototype = {
 	showImagePicker : function() {
 		if (!this.active) return;
 		if (!this.picker) {
-			var win = this.picker = ui.Window.create({title:'Vælg billede',width:300});
-			var overflow = ui.Overflow.create({height:300});
-			var gallery = In2iGui.Gallery.create();
+			var win = this.picker = hui.ui.Window.create({title:'Vælg billede',width:300});
+			var overflow = hui.ui.Overflow.create({height:300});
+			var gallery = hui.ui.Gallery.create();
 			gallery.listen(this);
 			win.add(overflow.add(gallery));
 			AppCommunity.getLatestImages('',function(images) {
@@ -152,7 +152,7 @@ OO.Editor.Image.prototype = {
 	$resolveImageUrl : function(image,width,height) {
 		return OnlineObjects.baseContext+'/service/image/?id='+image.id+'&width='+width+'&height='+height;
 	},
-	$selectionChanged : function(gallery) {
+	$select : function(gallery) {
 		var obj = gallery.getFirstSelection();
 		if (!this.img) {
 			this.img = new Element('img');

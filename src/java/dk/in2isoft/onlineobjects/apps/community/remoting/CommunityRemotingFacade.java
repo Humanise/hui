@@ -212,7 +212,7 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 	}
 
 	public List<Image> getLatestImages(String text) {
-		Query<Image> query = new Query<Image>(Image.class).withWords(text).orderByCreated().descending().withPaging(0, 10).withPriviledged(securityService.getPublicUser());
+		Query<Image> query = new Query<Image>(Image.class).withWords(text).orderByCreated().descending().withPaging(0, 10).withPrivileged(securityService.getPublicUser());
 		return modelService.list(query);
 	}
 
@@ -240,7 +240,7 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 
 	public ListObjects listPersons() throws EndUserException {
 		ListObjects list = new ListObjects();
-		Query<Person> query = new Query<Person>(Person.class).withPriviledged(getUserSession());
+		Query<Person> query = new Query<Person>(Person.class).withPrivileged(getUserSession());
 		List<Person> persons = modelService.list(query);
 		for (Person person : persons) {
 			ListDataRow row = new ListDataRow();
@@ -258,7 +258,7 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 
 	public ListObjects listImages(String text,String tag) throws EndUserException {
 		ListObjects list = new ListObjects();
-		Query<Image> query = new Query<Image>(Image.class).withPriviledged(getUserSession());
+		Query<Image> query = new Query<Image>(Image.class).withPrivileged(getUserSession());
 		query.withWords(text);
 		if (tag!=null) {
 			query.withCustomProperty(Property.KEY_COMMON_TAG, tag);
@@ -280,7 +280,7 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 	//////////////// Internet addresses ////////////////
 
 	public ListData listPrivateBookmarks(String search, String tag,int page) throws EndUserException {
-		Query<InternetAddress> query = new Query<InternetAddress>(InternetAddress.class).withPriviledged(getUserSession()).withWords(search);
+		Query<InternetAddress> query = new Query<InternetAddress>(InternetAddress.class).withPrivileged(getUserSession()).withWords(search);
 		query.withPaging(page, 30);
 		if (tag!=null) {
 			query.withCustomProperty(Property.KEY_COMMON_TAG, tag);

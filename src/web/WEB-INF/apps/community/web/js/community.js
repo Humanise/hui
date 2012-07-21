@@ -9,7 +9,7 @@ oo.community = {
 	},
 	getViewer : function() {
 		if (!this.imageViewer) {
-			var v = this.imageViewer = In2iGui.ImageViewer.create();
+			var v = this.imageViewer = hui.ui.ImageViewer.create();
 			v.listen(this);
 		}
 		return this.imageViewer;
@@ -18,8 +18,8 @@ oo.community = {
 		return oo.baseContext+'/service/image/?id='+image.id+'&width='+width+'&height='+height;
 	},
 	checkBrowser : function() {
-		if (!n2i.browser.gecko && !n2i.browser.webkit && !n2i.browser.msie7 && !n2i.browser.msie8) {
-			ui.alert({
+		if (!hui.browser.gecko && !hui.browser.webkit && !hui.browser.msie7 && !hui.browser.msie8) {
+			hui.ui.alert({
 				title:'Den webbrowser du anvender er ikke understøttet.',
 				text:''+
 				'Du kan anvende enten Internet Explorer 7+, Firefox 2+ eller Safari 3+.',
@@ -31,7 +31,7 @@ oo.community = {
 	}
 };
 
-ui.get().listen({
+hui.ui.listen({
 	$click$barPublic : function() {
 		document.location=oo.appContext+'/';
 	},
@@ -46,7 +46,7 @@ ui.get().listen({
 	},
 	$click$barLogOut : function() {
 		CoreSecurity.logOut(function() {
-			In2iGui.showMessage('Du er nu logget ud');
+			hui.ui.showMessage('Du er nu logget ud');
 			window.setTimeout(function() {
 				document.location.reload();
 			},1000);
@@ -56,16 +56,16 @@ ui.get().listen({
 
 oo.community.util = {
 	expand : function(container,toHide,toShow) {
-		var width = container.getWidth();
-		container.setStyle({height:container.getHeight()+'px',overflow:'hidden',position:'relative'});
-		toHide.setStyle({width:width+'px',position:'absolute',background:'#fff'});
-		toShow.setStyle({width:width+'px',opacity:0,display:'block',position:'absolute',background:'#fff'});
-		n2i.ani(toHide,'opacity',0,500,{hideOnComplete:true});
-		n2i.ani(toShow,'opacity',1,500,{delay:300});
-		n2i.ani(container,'height',toShow.getHeight()+'px',500,{ease:n2i.ease.slowFastSlow,onComplete:function() {
-			toHide.setStyle({position:'static'});
-			toShow.setStyle({position:'static'});
-			container.setStyle({height:'',overflow:'',position:'static'});
+		var width = container.clientWidth;
+		hui.style.set(container,{height:container.clientHeight+'px',overflow:'hidden',position:'relative'});
+		hui.style.set(toHide,{width:width+'px',position:'absolute',background:'#fff'});
+		hui.style.set(toShow,{width:width+'px',opacity:0,display:'block',position:'absolute',background:'#fff'});
+		hui.animate(toHide,'opacity',0,500,{hideOnComplete:true});
+		hui.animate(toShow,'opacity',1,500,{delay:300});
+		hui.animate(container,'height',toShow.clientHeight+'px',500,{ease:hui.ease.slowFastSlow,onComplete:function() {
+			toHide.style.position='static';
+			toShow.style.position='static';
+			hui.style.set(container,{height:'',overflow:'',position:'static'});
 		}});
 	}
 }
@@ -89,33 +89,37 @@ oo.community.Chrome.get = function() {
 oo.community.Chrome.prototype = {
 	addBehavior : function() {
 		var self = this;
-		var logout = $('logOut');
+		var logout = hui.get('logOut');
 		if (logout) {
 			logout.onclick = function() {
 				self.logOut();
 				return false;
 			}
 		}
-		$$('ul.navigation a').each(function(node) {
-			node.observe('click',function() {
+		var nav = hui.get.firstByClass(document.body,'navigation');
+		var as = nav.getElementsByTagName('a');
+		for (var i = as.length - 1; i >= 0; i--){
+			hui.listen(as[i],'click',function() {
 				self.udpateNavigation(this);
 			});
-		});
+		};
 	},
 	logOut : function() {
 		CoreSecurity.logOut(function() {
-			In2iGui.fadeOut($$('.login_info')[0],1000);
-			In2iGui.showMessage('Du er nu logget ud');
+			hui.ui.fadeOut(hui.get.firstByClass(document.body,'login_info'),1000);
+			hui.ui.showMessage('Du er nu logget ud');
 			window.setTimeout(function() {
-				In2iGui.hideMessage();
+				hui.ui.hideMessage();
 			},2000);
 		});
 	},
 	udpateNavigation : function(element) {
-		$$('ul.navigation a').each(function(node) {
-			node.removeClassName('selected');
-		});
-		element.addClassName('selected');
+		var nav = hui.get.firstByClass(document.body,'navigation');
+		var as = nav.getElementsByTagName('a');
+		for (var i = as.length - 1; i >= 0; i--) {
+			hui.cls.remove(as[i],'selected');
+		}
+		hui.cls.add(element,'selected');
 	}
 }
 
@@ -133,9 +137,9 @@ oo.community.Chrome.buildUserProfileURL = function(username) {
 /////////////////////////////////// Search field /////////////////////////////////
 
 oo.community.Chrome.Search = function() {
-	this.field = ui.get('casingSearch');
+	this.field = hui.ui.get('casingSearch');
 	this.field.listen(this);
-	this.result = $('casing_search_result');
+	this.result = hui.get('casing_search_result');
 	this.busy = false;
 	this.expanded = false;
 	if (!this.field.isEmpty()) {
@@ -144,22 +148,25 @@ oo.community.Chrome.Search = function() {
 }
 
 oo.community.Chrome.Search.prototype = {
-	$valueChanged : function(value) {
+	$submit$casingSearch : function(obj) {
+		document.location=oo.appContext+'/search.html?text='+obj.getValue();
+	},
+	$valueChanged$casingSearch : function(value) {
 		this.dirty = value.length>0;
-		var c = $$('.content')[0];
-		var r = $$('.content_right')[0];
-		var b = $$('.content_right_body')[0];
+		var c = hui.get.firstByClass(document.body,'content');
+		var r = hui.get.firstByClass(document.body,'content_right');
+		var b = hui.get.firstByClass(document.body,'content_right_body');
 		if (this.dirty) {
 			r.style.height=c.clientHeight+'px';
 			this.result.style.height = c.clientHeight+'px';
 			this.search(value);
 		} else {
-			$$('.content_right')[0].removeClassName('content_right_busy');
+			hui.cls.remove(r,'content_right_busy');
 			r.style.height='';
-			this.result.hide();
-			b.show();
+			this.result.style.display='none';
+			b.style.display='block';
 		}
-		n2i.ani(b,'opacity',this.dirty ? 0 : 1,500,{ease:n2i.ease.slowFastSlow,onComplete:function() {
+		hui.animate(b,'opacity',this.dirty ? 0 : 1,500,{ease:hui.ease.slowFastSlow,onComplete:function() {
 			b.style.display = this.dirty ? 'none' : '';
 			this.expanded = this.dirty;
 			this.checkWaitingResult();
@@ -173,11 +180,12 @@ oo.community.Chrome.Search.prototype = {
 		}
 		this.waitingQuery = null;
 		this.busy = true;
-		$$('.content_right')[0].addClassName('content_right_busy');
+		var right = hui.get.firstByClass(document.body,'content_right');
+		hui.cls.add(right,'content_right_busy');
 		AppCommunity.getLatest(query,function(map) {
 			this.updateList(map);
 			this.busy = false;
-			$$('.content_right')[0].removeClassName('content_right_busy');
+			hui.cls.remove(right,'content_right_busy');
 			if (this.waitingQuery) {
 				this.search(this.waitingQuery);
 			}
@@ -191,9 +199,9 @@ oo.community.Chrome.Search.prototype = {
 		}
 		this.result.style.display='block';
 		if (result.users.length==0) {
-			this.result.update('<div class="casing_result_empty">Søgning gav intet resultat</div>');
+			this.result.innerHTML='<div class="casing_result_empty">Søgning gav intet resultat</div>';
 		} else {
-			this.result.update(this.buildUsers(result.users));
+			this.result.innerHTML=this.buildUsers(result.users);
 		}
 		this.waitingResult = null;
 	},
@@ -202,7 +210,7 @@ oo.community.Chrome.Search.prototype = {
 	},
 	buildUsers : function(users) {
 		var html = '<div class="casing_result_group"><h2>Brugere</h2><ul>';
-		users.each(function(entry) {
+		hui.each(users,function(entry) {
 			html+='<li class="user">'+
 			oo.buildThumbnailHtml({width: 40,height:45,variant:'user'})+
 			'<p class="name"><a href="'+oo.community.Chrome.buildUserProfileURL(entry.user.username)+'" class="oo_link"><span>'+entry.person.fullName+'</span></a></p>'+
@@ -217,15 +225,15 @@ oo.community.Chrome.Search.prototype = {
 
 
 oo.community.Chrome.UserInfo = function() {
-	this.base = $('userinfo');
+	this.base = hui.get('userinfo');
 	if (!this.base) return;
-	ui.get('casingLogout').listen(this);
+	hui.ui.get('casingLogout').listen(this);
 }
 
 oo.community.Chrome.UserInfo.prototype = {
 	$click$casingLogout : function() {
 		CoreSecurity.logOut(function() {
-			In2iGui.showMessage('Du er nu logget ud');
+			hui.ui.showMessage('Du er nu logget ud');
 			window.setTimeout(function() {
 				document.location.reload();
 			},1000);
@@ -236,27 +244,27 @@ oo.community.Chrome.UserInfo.prototype = {
 /////////////////////////////////// Log in handler /////////////////////////////////
 
 oo.community.Chrome.Login = function() {
-	this.form = $('login');
+	this.form = hui.get('login');
 	if (!this.form) return;
-	this.username = ui.get('casingUsername');
-	this.password = ui.get('casingPassword');
-	this.recoverLink = $('casing_recoverpassword');
-	ui.get('casingLogin').listen(this);
+	this.username = hui.ui.get('casingUsername');
+	this.password = hui.ui.get('casingPassword');
+	this.recoverLink = hui.get('casing_recoverpassword');
+	hui.ui.get('casingLogin').listen(this);
 	this.addBeahvior();
 }
 
 oo.community.Chrome.Login.prototype = {
 	addBeahvior : function() {		
 		this.form.onsubmit = this.logIn.bind(this);
-		this.form.select('.submit')[0].tabIndex=-1;
-		this.recoverLink.observe('click',function(e) {e.stop();this.recoverPassword()}.bind(this));
+		hui.get.firstByClass(this.form,'submit').tabIndex=-1;
+		hui.listen(this.recoverLink,'click',function(e) {hui.stop(e);this.recoverPassword()}.bind(this));
 	},
 	showError : function(text) {
-		var e = this.form.select('.fields')[0];
-		ui.showToolTip({text:text,element:e,key:'loginError'});
+		var e = hui.get.firstByClass(this.form,'fields');
+		hui.ui.showToolTip({text:text,element:e,key:'loginError'});
 	},
 	hideError : function() {
-		ui.hideToolTip({key:'loginError'});
+		hui.ui.hideToolTip({key:'loginError'});
 	},
 	logIn : function() {
 		if (!oo.community.checkBrowser()) {
@@ -278,17 +286,19 @@ oo.community.Chrome.Login.prototype = {
 		var password = this.password.getValue();
 		var self = this;
 		var delegate = {
-  			callback:function(data) {
+  			callback : function(data) {
 				if (data==true) {
 					self.userDidLogIn(username);
 				} else {
-					In2iGui.hideMessage();
+					hui.ui.hideMessage();
 					self.showError('Brugernavn og/eller kode er forkert')
 				}
 			},
-  			errorHandler:function(errorString, exception) {  }
+  			errorHandler : function(errorString, exception) {
+				hui.ui.showMessage({text:'Der skete desværre en fejl',icon:'common/warning'});
+			}
 		};
-		ui.showMessage('Logger ind...');
+		hui.ui.showMessage('Logger ind...');
 		CoreSecurity.changeUser(username,password,delegate);
 		return false;
 	},
@@ -297,44 +307,45 @@ oo.community.Chrome.Login.prototype = {
 		this.logIn();
 	},
 	userDidLogIn : function(username) {
-		ui.showMessage('Du er nu logget ind!');
+		hui.ui.showMessage('Du er nu logget ind!');
 		window.setTimeout(function() {
 			document.location.reload();
 		},500);
 	},
 	recoverPassword : function() {
 		if (!this.recoverBox) {
-			var box = this.recoverBox = ui.Box.create({title:'Genfind kodeord',closable:true,absolute:true,width:400,padding: 10,modal:true});
+			var box = this.recoverBox = hui.ui.Box.create({title:'Genfind kodeord',closable:true,absolute:true,width:400,padding: 10,modal:true});
 			box.addToDocument();
-			var form = this.recoverForm = ui.Formula.create();
+			var form = this.recoverForm = hui.ui.Formula.create();
 			var group = form.buildGroup(null,[
-				{type:'Text',options:{label:'Brugernavn eller e-post-adresse',key:'usernameOrEmail'}}
+				{type:'TextField',options:{label:'Brugernavn eller e-post-adresse',key:'usernameOrEmail'}}
 			]);
-			var cancel = ui.Button.create({text:'Annuller'});
+			var cancel = hui.ui.Button.create({text:'Annuller'});
 			cancel.listen({$click:function() {box.hide()}});
-			var create = ui.Button.create({text:'Genfind kodeord',highlighted:true,submit:true});
+			var create = hui.ui.Button.create({text:'Genfind kodeord',highlighted:true,submit:true});
 			group.createButtons().add(cancel).add(create);
 			box.add(form);
 			form.listen({$submit:function() {
 				if (this.sendingEmail) return;
-				var str = form.getValues().usernameOrEmail;
-				if (n2i.isEmpty(str)) {
-					ui.showMessage({text:'Feltet skal udfyldes',duration:3000});
+				var values = form.getValues();
+				var str = values.usernameOrEmail;
+				if (hui.isBlank(str)) {
+					hui.ui.showMessage({text:'Feltet skal udfyldes',duration:3000});
 					form.focus();
 				} else {
 					this.sendingEmail = true;
 					create.setEnabled(false);
-					ui.showMessage({text:'Sender e-post-besked, vent venligst...'});
+					hui.ui.showMessage({text:'Sender e-post-besked, vent venligst...'});
 					CoreSecurity.recoverPassword(str,{
 						callback:function(success) {
 							if (success) {
-								ui.hideMessage();
-								ui.alert({title:'Vi har nu sendt dig en vejledning på din e-post-adresse.',text:'Vejledningen beskriver hvordan du ændrer dit kodeord. Hvis du ikke modtager beskeden bedes du kontakte os.',emotion:'smile'});
+								hui.ui.hideMessage();
+								hui.ui.alert({title:'Vi har nu sendt dig en vejledning på din e-post-adresse.',text:'Vejledningen beskriver hvordan du ændrer dit kodeord. Hvis du ikke modtager beskeden bedes du kontakte os.',emotion:'smile'});
 								//ui.showMessage({text:'E-post-beskeden er afsendt, se i din indbakke :-)',duration:5000});
 								box.hide();
 							} else {
-								ui.hideMessage();
-								ui.alert({title:'Brugeren kunne ikke findes',text:'Vi kunne ikke finde en bruger med det angivne brugernavn eller e-post-adresse. Prøv venligst igen.',emotion:'gasp',onOK:function() {
+								hui.ui.hideMessage();
+								hui.ui.alert({title:'Brugeren kunne ikke findes',text:'Vi kunne ikke finde en bruger med det angivne brugernavn eller e-post-adresse. Prøv venligst igen.',emotion:'gasp',onOK:function() {
 									form.focus();
 								}});
 							}
@@ -342,10 +353,10 @@ oo.community.Chrome.Login.prototype = {
 							this.sendingEmail = false;
 						}.bind(this),
 						errorHandler:function() {
-							ui.alert({title:'Det lykkedes ikke at sende besked',text:'Dette skyldes en fejl fra vores side, prøv venligst igen senere.',emotion:'gasp',onOK:function() {
+							hui.ui.alert({title:'Det lykkedes ikke at sende besked',text:'Dette skyldes en fejl fra vores side, prøv venligst igen senere.',emotion:'gasp',onOK:function() {
 								form.focus();
 							}});
-							ui.hideMessage();
+							hui.ui.hideMessage();
 							create.setEnabled(true);
 							this.sendingEmail = false;
 						}.bind(this)
@@ -365,12 +376,12 @@ oo.community.Chrome.Login.prototype = {
 ///////////////////////////////// Sign up handler ///////////////////////////////
 
 oo.community.Chrome.SignUp = function() {
-	this.form = $('signup');
+	this.form = hui.get('signup');
 	if (this.form) {
-		this.username = ui.get('casingSignupUsername');
-		this.password = ui.get('casingSignupPassword');
-		this.name = ui.get('casingSignupName');
-		this.email = ui.get('casingSignupEmail');
+		this.username = hui.ui.get('casingSignupUsername');
+		this.password = hui.ui.get('casingSignupPassword');
+		this.name = hui.ui.get('casingSignupName');
+		this.email = hui.ui.get('casingSignupEmail');
 		this.addBehavior();
 	}
 }
@@ -382,8 +393,8 @@ oo.community.Chrome.SignUp.prototype = {
 			self.submit();
 			return false;
 		};
-		ui.get('casingSignUp').listen({$click:this.submit.bind(this)});
-		this.form.select('.submit')[0].tabIndex=-1;
+		hui.ui.get('casingSignUp').listen({$click:this.submit.bind(this)});
+		hui.get.firstByClass(this.form,'submit').tabIndex=-1;
 	},
 	submit : function() {
 		if (!oo.community.checkBrowser()) {
@@ -440,7 +451,7 @@ oo.community.Chrome.SignUp.prototype = {
 		} else if (e.code=='noPassword') {
 			this.password.setError('Kodeordet er ikke validt');
 		} else {
-			ui.showMessage({text:'Der skete en uventet fejl',duration:3000});
+			hui.ui.showMessage({text:'Der skete en uventet fejl',duration:3000});
 		}
 	},
 	userDidSignUp : function(username) {
@@ -448,12 +459,12 @@ oo.community.Chrome.SignUp.prototype = {
 		this.password.setValue();
 		this.name.setValue();
 		this.email.setValue();
-		In2iGui.showMessage('Opretter hjemmeside...');
+		hui.ui.showMessage('Opretter hjemmeside...');
 		window.setTimeout(function() {
 			document.location=oo.community.Chrome.buildUserWebsiteURL(username)+'?edit=true#firstRun'
 		},2000);
 		return;
-		In2iGui.get().alert({
+		hui.ui.alert({
 			emotion: 'smile',
 			title: 'Du er nu oprettet som bruger...',
 			text: '...og der er oprettet et websted til dig',
@@ -467,4 +478,4 @@ oo.community.Chrome.SignUp.prototype = {
 
 
 
-ui.onDomReady(function() {oo.community.Chrome.get()});
+hui.ui.onReady(function() {oo.community.Chrome.get()});

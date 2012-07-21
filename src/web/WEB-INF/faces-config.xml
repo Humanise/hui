@@ -89,43 +89,43 @@ http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
     	<component-class>dk.in2isoft.onlineobjects.ui.jsf.BlockComponent</component-class>
   	</component>
     <component>
-	    <component-type>in2igui.button</component-type>
+	    <component-type>hui.button</component-type>
     	<component-class>dk.in2isoft.in2igui.jsf.ButtonComponent</component-class>
   	</component>
     <component>
-	    <component-type>in2igui.textfield</component-type>
+	    <component-type>hui.textfield</component-type>
     	<component-class>dk.in2isoft.in2igui.jsf.TextFieldComponent</component-class>
   	</component>
     <component>
-	    <component-type>in2igui.searchfield</component-type>
+	    <component-type>hui.searchfield</component-type>
     	<component-class>dk.in2isoft.in2igui.jsf.SearchFieldComponent</component-class>
   	</component>
     <component>
-	    <component-type>in2igui.bar</component-type>
+	    <component-type>hui.bar</component-type>
     	<component-class>dk.in2isoft.in2igui.jsf.BarComponent</component-class>
   	</component>
     <component>
-	    <component-type>in2igui.barButton</component-type>
+	    <component-type>hui.barButton</component-type>
     	<component-class>dk.in2isoft.in2igui.jsf.BarButtonComponent</component-class>
   	</component>
     <component>
-	    <component-type>in2igui.importScripts</component-type>
+	    <component-type>hui.importScripts</component-type>
     	<component-class>dk.in2isoft.in2igui.jsf.ImportScriptsComponent</component-class>
   	</component>
     <component>
-	    <component-type>in2igui.importStyle</component-type>
+	    <component-type>hui.importStyle</component-type>
     	<component-class>dk.in2isoft.in2igui.jsf.ImportStyleComponent</component-class>
   	</component>
     <component>
-	    <component-type>in2igui.videoplayer</component-type>
+	    <component-type>hui.videoplayer</component-type>
     	<component-class>dk.in2isoft.in2igui.jsf.VideoPlayerComponent</component-class>
   	</component>
     <component>
-	    <component-type>in2igui.formula</component-type>
+	    <component-type>hui.formula</component-type>
     	<component-class>dk.in2isoft.in2igui.jsf.FormulaComponent</component-class>
   	</component>
     <component>
-	    <component-type>in2igui.link</component-type>
+	    <component-type>hui.link</component-type>
     	<component-class>dk.in2isoft.in2igui.jsf.LinkComponent</component-class>
   	</component>
 </faces-config>

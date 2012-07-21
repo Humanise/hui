@@ -11,7 +11,7 @@ import dk.in2isoft.commons.jsf.TagWriter;
 @FacesComponent(value=FormulaComponent.TYPE)
 public class FormulaComponent extends AbstractComponent {
 
-	public static final String TYPE = "in2igui.formula";
+	public static final String TYPE = "hui.formula";
 
 	private String name;
 
@@ -39,14 +39,14 @@ public class FormulaComponent extends AbstractComponent {
 	@Override
 	public void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
 		String id = getClientId();
-		writer.startElement("form").withClass("in2igui_formula").withId(id);
+		writer.startElement("form").withClass("hui_formula").withId(id);
 	}
 	
 	@Override
 	protected void encodeEnd(FacesContext context, TagWriter writer) throws IOException {
 		writer.endElement("form");
 		writer.startScopedScript();
-		writer.write("new In2iGui.Formula({element:'");
+		writer.write("new hui.ui.Formula({element:'");
 		writer.write(getClientId());
 		writer.write("'");
 		if (name!=null) {

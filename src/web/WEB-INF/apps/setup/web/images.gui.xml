@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<gui xmlns="uri:In2iGui" title="Indstillinger" padding="10">
+<gui xmlns="uri:hui" title="Indstillinger" padding="10">
 	<dwr base="/dwr/">
 		<interface name="AppSetup"/>
 		<interface name="Common"/>
@@ -11,7 +11,7 @@
 		<parameter key="tags" value="@tags.value"/>
 	</source>
 	<source name="classSource" dwr="AppSetup.getImageTags"/>
-	<layout>
+	<structure>
 		<top>
 			<toolbar>
 				<icon icon="common/refresh" title="Sync images" name="syncImages"/>
@@ -36,5 +36,5 @@
 			</center>
 		</middle>
 		<bottom/>
-	</layout>
+	</structure>
 </gui>

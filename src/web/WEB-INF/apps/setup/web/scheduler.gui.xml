@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<gui xmlns="uri:In2iGui" title="Scheduler" padding="10">
+<gui xmlns="uri:hui" title="Scheduler" padding="10">
 	<dwr base="/dwr/">
 		<interface name="AppSetup"/>
 	</dwr>
 	<controller name="controller" source="scheduler.js"/>
-	<layout>
+	<structure>
 		<top>
 			<toolbar>
 				<icon icon="common/refresh" title="Opdater" name="refresh"/>
@@ -23,5 +23,5 @@
 			</list>
 			</overflow>
 		</middle>
-	</layout>				
+	</structure>				
 </gui>

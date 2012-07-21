@@ -35,6 +35,8 @@ public class TestSemanticService extends AbstractTestCase {
 		assertArrayEquals(new String[] {"Eat","my","shorts"},semanticService.getWords("Eat my shorts."));
 		assertArrayEquals(new String[] {"Eat","my","shorts"},semanticService.getWords("Eat, \nmy _ shorts."));
 		
+		assertArrayEquals(new String[] {"Æblet","på","øen","Åen","ændrer","søen","Østers","får","ællinger"},semanticService.getWords("Æblet på øen. Åen ændrer søen. Østers får ællinger."));
+
 		String text = IOUtils.toString(new FileReader(getTestFile("loremipsum.txt")));
 		String[] words = semanticService.getWords(text);
 		assertEquals(69, words.length);
@@ -44,6 +46,13 @@ public class TestSemanticService extends AbstractTestCase {
 		}
 	}
 
+	@Test
+	public void testAbbreviations() throws EndUserException, FileNotFoundException, IOException {
+		assertTrue(semanticService.isAbbreviation("BC"));
+		assertTrue(semanticService.isAbbreviation("NATO"));
+		assertTrue(semanticService.isAbbreviation("FN"));
+	}
+		
 	public void setSemanticService(SemanticService semanticService) {
 		this.semanticService = semanticService;
 	}

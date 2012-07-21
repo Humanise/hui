@@ -19,8 +19,8 @@ public class DeveloperController extends ApplicationController {
 	
 	public DeveloperController() {
 		super("developer");
-		addJsfMatcher("components.html", "components.xhtml");
-		addJsfMatcher("", "index.xhtml");
+		addJsfMatcher("/components.html", "components.xhtml");
+		addJsfMatcher("/", "index.xhtml");
 	}
 	
 	@Override

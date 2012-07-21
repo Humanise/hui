@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="deploy" name="OnlineObjects 2" basedir=".">
+
+    <target name="init">
+        <property location="/opt/local/share/java/tomcat5" name="server"/>
+        <property location="${basedir}/src/web/hui" name="hui"/>
+    	
+        <property location="${server}/webapps/bee" name="build"/>
+    	
+        <property location="${build}/WEB-INF/classes" name="classes"/>
+        <property location="${build}/WEB-INF/lib" name="lib"/>
+    </target>
+	
+    <path id="classpath">
+        <fileset dir="${basedir}/lib">
+            <include name="**/*.jar"/>
+        </fileset>
+		<pathelement location="${basedir}/src/java"/>
+		<pathelement location="${basedir}/src/web/WEB-INF/classes"/>
+		<pathelement location="/Users/jbm/Code/jetty-6.1.15/lib/servlet-api-2.5-20081211.jar"/>
+		<pathelement location="/Users/jbm/Code/jetty-6.1.15/lib/jetty-6.1.15.jar"/>
+		<pathelement location="/Users/jbm/Code/jetty-6.1.15/lib/jetty-util-6.1.15.jar"/>
+		<pathelement location="/Users/jbm/Code/jetty-6.1.15/lib/jsp-2.1/jsp-2.1-glassfish-9.1.1.B51.25.p1.jar"/>
+		<pathelement location="/Users/jbm/Code/jetty-6.1.15/lib/jsp-2.1/jsp-api-2.1-glassfish-9.1.1.B51.25.p1.jar"/>
+    </path>
+
+    <target depends="init" name="hui">
+    	<delete dir="${basedir}/src/web/hui"></delete>
+		<copy todir="${basedir}/src/web/hui">
+			<fileset dir="${hui}"/>
+		</copy>
+    </target>
+	
+	<target name="conf">
+		<copy tofile="${basedir}/src/web/WEB-INF/classes/log4j.properties" file="${basedir}/conf/log4j.properties" />
+        <copy tofile="${basedir}/src/web/WEB-INF/classes/hibernate.cfg.xml" file="${basedir}/conf/hibernate.cfg.xml" />
+	</target>
+
+    <target depends="deploy-base" name="deploy">
+		<copy tofile="/Users/jbm/Temporary/OnlineObjects/onlineobjects/WEB-INF/classes/configuration.properties" file="${basedir}/conf/configuration.properties.deployed" />
+		<copy tofile="/Users/jbm/Temporary/OnlineObjects/onlineobjects/WEB-INF/classes/log4j.properties" file="${basedir}/conf/log4j.properties.deployed" />
+        <copy tofile="/Users/jbm/Temporary/OnlineObjects/onlineobjects/WEB-INF/classes/hibernate.cfg.xml" file="${basedir}/conf/hibernate.cfg.xml.deployed" />
+        <copy tofile="/Users/jbm/Temporary/OnlineObjects/onlineobjects/WEB-INF/classes/onlineobjects.cfg.xml" file="${basedir}/conf/onlineobjects.cfg.xml.deployed" />
+    	<delete dir="/Users/jbm/Temporary/OnlineObjects_temp"/>
+    	<zip destfile="/Users/jbm/Temporary/deployed.zip" >
+    		<fileset dir="/Users/jbm/Temporary/OnlineObjects"/>
+    	</zip>
+    </target>
+
+    <target depends="init" name="deploy-base">
+    	<delete dir="/Users/jbm/Temporary/OnlineObjects"/>
+    	<delete dir="/Users/jbm/Temporary/OnlineObjects_temp"/>
+		<mkdir dir="/Users/jbm/Temporary/OnlineObjects_temp/classes" />
+		<copy todir="/Users/jbm/Temporary/OnlineObjects/onlineobjects/WEB-INF">
+			<fileset dir="${basedir}/src/web/WEB-INF" excludes="**/.*"/>
+		</copy>
+		<copy todir="/Users/jbm/Temporary/OnlineObjects/onlineobjects/META-INF">
+			<fileset dir="${basedir}/src/web/META-INF" excludes="**/.*"/>
+		</copy>
+		<copy todir="/Users/jbm/Temporary/OnlineObjects/onlineobjects/WEB-INF/lib">
+			<fileset dir="${basedir}/lib"/>
+		</copy>
+		<copy todir="/Users/jbm/Temporary/OnlineObjects/onlineobjects/hui">
+			<fileset dir="${hui}" excludes="**/CVS"/>
+		</copy>
+		<copy todir="/Users/jbm/Temporary/OnlineObjects/onlineobjects/jsf">
+			<fileset dir="${basedir}/src/web/jsf" excludes="**/CVS"/>
+		</copy>
+        <javac
+            destdir="/Users/jbm/Temporary/OnlineObjects_temp/classes"
+            debug="on">
+            <classpath refid="classpath"/>
+        	<src path="${basedir}/src/java"/>
+    	    <include name="dk/**"/>
+        </javac>
+    	<jar destfile="/Users/jbm/Temporary/OnlineObjects/onlineobjects/WEB-INF/lib/onlineobjects.jar" basedir="/Users/jbm/Temporary/OnlineObjects_temp/classes"></jar>
+        <copy tofile="/Users/jbm/Temporary/OnlineObjects/onlineobjects/WEB-INF/classes/model.hbm.xml" file="${basedir}/conf/model.hbm.xml" />
+        <copy tofile="/Users/jbm/Temporary/OnlineObjects/onlineobjects/WEB-INF/classes/model.xml" file="${basedir}/conf/model.xml" />
+        <copy tofile="/Users/jbm/Temporary/OnlineObjects/onlineobjects/WEB-INF/classes/applicationContext.xml" file="${basedir}/conf/applicationContext.xml" />
+
+		<copy todir="/Users/jbm/Temporary/OnlineObjects/onlineobjects/WEB-INF/classes/spring">
+			<fileset dir="${basedir}/conf/spring" excludes="**/CVS"/>
+    	</copy>
+        
+    	<copy tofile="/Users/jbm/Temporary/OnlineObjects/onlineobjects/WEB-INF/classes/dk/in2isoft/onlineobjects/apps/community/resources/invitation-template.html" file="${basedir}/src/java/dk/in2isoft/onlineobjects/apps/community/resources/invitation-template.html" />
+        <copy tofile="/Users/jbm/Temporary/OnlineObjects/onlineobjects/WEB-INF/classes/dk/in2isoft/onlineobjects/apps/community/resources/passwordrecovery-template.html" file="${basedir}/src/java/dk/in2isoft/onlineobjects/apps/community/resources/passwordrecovery-template.html" />
+    </target>
+
+    <target depends="deploy-base" name="deploy-ah">
+		<copy tofile="/Users/jbm/Temporary/OnlineObjects/onlineobjects/WEB-INF/classes/log4j.properties" file="${basedir}/conf/ah/log4j.properties.deployed" />
+        <copy tofile="/Users/jbm/Temporary/OnlineObjects/onlineobjects/WEB-INF/classes/hibernate.cfg.xml" file="${basedir}/conf/ah/hibernate.cfg.xml.deployed" />
+        <copy tofile="/Users/jbm/Temporary/OnlineObjects/onlineobjects/WEB-INF/classes/onlineobjects.cfg.xml" file="${basedir}/conf/ah/onlineobjects.cfg.xml.deployed" />
+        <copy tofile="/Users/jbm/Temporary/OnlineObjects/onlineobjects/WEB-INF/classes/school.cfg.xml" file="${basedir}/conf/ah/school.cfg.xml.deployed" />
+    	<delete dir="/Users/jbm/Temporary/OnlineObjects_temp"/>
+    	<zip destfile="/Users/jbm/Sites/OnlineObjects/deployed-ah.zip" >
+    		<fileset dir="/Users/jbm/Temporary/OnlineObjects"/>
+    	</zip>
+    </target>
+
+    <target depends="deploy-base" name="deploy-public">
+		<copy tofile="/Users/jbm/Temporary/OnlineObjects/onlineobjects/WEB-INF/classes/log4j.properties" file="${basedir}/conf/log4j.properties.example" />
+        <copy tofile="/Users/jbm/Temporary/OnlineObjects/onlineobjects/WEB-INF/classes/hibernate.cfg.xml" file="${basedir}/conf/hibernate.cfg.xml.example" />
+        <copy tofile="/Users/jbm/Temporary/OnlineObjects/onlineobjects/WEB-INF/classes/onlineobjects.cfg.xml" file="${basedir}/conf/onlineobjects.cfg.xml.example" />
+        <copy tofile="/Users/jbm/Temporary/OnlineObjects/onlineobjects/WEB-INF/classes/school.cfg.xml" file="${basedir}/conf/school.cfg.xml.example" />
+    	<delete dir="/Users/jbm/Temporary/OnlineObjects_temp"/>
+    	<zip destfile="/Users/jbm/Temporary/OnlineObjects/onlineobjects.zip" >
+    		<fileset dir="/Users/jbm/Temporary/OnlineObjects"/>
+    	</zip>
+    </target>
+    
+	<target name="schema-update" description="Generates SQL" depends="init">
+		<taskdef name="hibernatetool" 
+		         classname="org.hibernate.tool.ant.HibernateToolTask" 
+		         classpathref="classpath" />
+		<mkdir dir="${basedir}/sql" />
+		<hibernatetool destdir="${basedir}/sql">
+			<classpath>
+			  <path location="${basedir}/bin"/>
+			 </classpath>
+			<annotationconfiguration 
+				configurationfile="${basedir}/bin/hibernate.cfg.xml"/>
+			<hbm2ddl 
+				export="true" 
+				outputfilename="db_update.sql"
+				format="true"
+				drop="true"
+			/>
+		</hibernatetool>
+	</target>
+    
+	<target name="schema-drop" description="Generates SQL" depends="init">
+		<taskdef name="hibernatetool" 
+		         classname="org.hibernate.tool.ant.HibernateToolTask" 
+		         classpathref="classpath" />
+		<mkdir dir="${basedir}/sql" />
+		<hibernatetool destdir="${basedir}/sql">
+			<classpath>
+			  <path location="${basedir}/bin"/>
+			 </classpath>
+			<annotationconfiguration 
+				configurationfile="${basedir}/bin/hibernate.cfg.xml"/>
+			<hbm2ddl 
+				export="false" 
+				outputfilename="db_new.sql"
+				format="true"
+				drop="false"
+			/>
+		</hibernatetool>
+	</target>
+</project>

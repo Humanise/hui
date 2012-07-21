@@ -5,6 +5,7 @@ import java.io.File;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.TransactionFailureException;
 import org.neo4j.index.lucene.LuceneIndexService;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.springframework.beans.factory.InitializingBean;
@@ -20,8 +21,12 @@ public class DictionaryService implements InitializingBean {
 	public void afterPropertiesSet() throws Exception {
 		File storageDir = configurationService.getStorageDir();
 		File file = new File(storageDir,"dictionary.db");
-		database = new EmbeddedGraphDatabase(file.getAbsolutePath());
-		index = new LuceneIndexService( database );
+		try {
+			database = new EmbeddedGraphDatabase(file.getAbsolutePath());
+			index = new LuceneIndexService( database );
+		} catch (TransactionFailureException e) {
+			
+		}
 	}
 
 	public void setConfigurationService(ConfigurationService configurationService) {

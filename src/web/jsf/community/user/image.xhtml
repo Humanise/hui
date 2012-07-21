@@ -52,7 +52,7 @@
 							<c:if test="#{not empty imageView.imageInfo.tags}">
 								<p class="tags">
 									<c:forEach items="#{imageView.imageInfo.tags}" var="tag">
-										<a class="tag" href="#"><span>#{tag}</span></a><h:outputText value=" "/>
+										<a class="tag" href="#{baseView.baseContext}/search.html?tag=#{tag}"><span>#{tag}</span></a><h:outputText value=" "/>
 									</c:forEach>
 								</p>
 							</c:if>
@@ -124,7 +124,7 @@
 			</h:panelGroup>
 			<h:panelGroup rendered="#{not empty imageView.location}">
 				<script type="text/javascript">
-				  ui.onDomReady(function() {
+				  hui.ui.onReady(function() {
 				    var myLatlng = new google.maps.LatLng(#{imageView.location.latitude}, #{imageView.location.longitude});
 				    var myOptions = {
 				      zoom: 15,

@@ -14,7 +14,7 @@ import dk.in2isoft.commons.jsf.TagWriter;
 @FacesComponent(value=BarButtonComponent.TYPE)
 public class BarButtonComponent extends AbstractComponent {
 
-	public static final String TYPE = "in2igui.barButton";
+	public static final String TYPE = "hui.barButton";
 
 	private String text;
 	private String name;
@@ -50,26 +50,26 @@ public class BarButtonComponent extends AbstractComponent {
 		String id = getClientId();
 		boolean highlighted = isHighlighted(context);
 		if (highlighted) {
-			writer.startVoidA("in2igui_bar_button in2igui_bar_button_highlighted");
+			writer.startVoidA("hui_bar_button hui_bar_button_highlighted");
 		} else {
-			writer.startVoidA("in2igui_bar_button");
+			writer.startVoidA("hui_bar_button");
 		}
 		writer.withId(id);
 		if (StringUtils.isNotBlank(icon)) {
-			writer.startSpan("in2igui_icon_1");
+			writer.startSpan("hui_icon_1");
 			String contextPath = ComponentUtil.getRequest().getBaseContext();
 			StringBuffer url = new StringBuffer();
 			url.append("background-image: url('");
 			url.append(contextPath);
-			url.append("/In2iGui/icons/").append(icon).append("1.png");
+			url.append("/hui/icons/").append(icon).append("16.png");
 			url.append("');");
 			writer.withStyle(url).endSpan();
 		}
 		String text = getText(context);
-		writer.startSpan("in2igui_bar_button_text").write(text).endSpan();
+		writer.startSpan("hui_bar_button_text").write(text).endSpan();
 		writer.endA();
 		writer.startScopedScript();
-		writer.write("new In2iGui.Bar.Button({element:'");
+		writer.write("new hui.ui.Bar.Button({element:'");
 		writer.write(id);
 		writer.write("'");
 		if (name!=null) {
@@ -88,7 +88,7 @@ public class BarButtonComponent extends AbstractComponent {
 	}
 
 	public boolean isHighlighted(FacesContext context) {
-		return getBinding(highlighted, "highlighted");
+		return getExpression(highlighted, "highlighted");
 	}
 
 	public void setText(String text) {
@@ -100,7 +100,7 @@ public class BarButtonComponent extends AbstractComponent {
 	}
 
 	public String getText(FacesContext context) {
-		return getBinding(text, "text");
+		return getExpression(text, "text");
 	}
 
 	public void setName(String name) {

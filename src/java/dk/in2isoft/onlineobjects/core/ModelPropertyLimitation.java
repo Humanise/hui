@@ -3,7 +3,7 @@ package dk.in2isoft.onlineobjects.core;
 public class ModelPropertyLimitation {
 
 	public enum Comparison {
-		EQUALS ("="), LESSTHAN ("<"), MORETHAN (">");
+		EQUALS ("="), LESSTHAN ("<"), MORETHAN (">"), IN (" in "), LIKE (" like ");
 		
 		private String x;
 		Comparison(String x) {

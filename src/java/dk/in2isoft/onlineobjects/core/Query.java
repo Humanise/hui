@@ -2,10 +2,13 @@ package dk.in2isoft.onlineobjects.core;
 
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
+
+import com.google.common.collect.Lists;
 
 import dk.in2isoft.commons.lang.LangUtil;
 import dk.in2isoft.onlineobjects.model.Entity;
@@ -25,14 +28,22 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 	
 	private boolean publicView;
 	
+	private List<Parent> parents;
+	
 
 	public Query(Class<T> clazz) {
 		super();
 		this.clazz = clazz;
+		this.parents = Lists.newArrayList();
 	}
 
 	public Query<T> orderByCreated() {
 		ordering = "obj.created";
+		return this;
+	}
+
+	public Query<T> orderByField(String field) {
+		ordering = "obj."+field;
 		return this;
 	}
 
@@ -74,17 +85,32 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 		return this;
 	}
 
-	public Query<T> withFieldValue(String property, Object value) {
+	public Query<T> withField(String property, Object value) {
 		limitations.add(new ModelPropertyLimitation(property, value, ModelPropertyLimitation.Comparison.EQUALS));
 		return this;
 	}
 
-	public Query<T> withFieldValueMoreThan(String property, Object value) {
+	public Query<T> withFieldLike(String property, String str) {
+		limitations.add(new ModelPropertyLimitation(property, str, ModelPropertyLimitation.Comparison.LIKE));
+		return this;
+	}
+
+	public Query<T> withFieldIn(String property, Object[] value) {
+		limitations.add(new ModelPropertyLimitation(property, value, ModelPropertyLimitation.Comparison.IN));
+		return this;
+	}
+
+	public Query<T> withFieldIn(String property, List<?> value) {
+		limitations.add(new ModelPropertyLimitation(property, value, ModelPropertyLimitation.Comparison.IN));
+		return this;
+	}
+
+	public Query<T> withFieldMoreThan(String property, Object value) {
 		limitations.add(new ModelPropertyLimitation(property, value, ModelPropertyLimitation.Comparison.MORETHAN));
 		return this;
 	}
 
-	public Query<T> withFieldValueLessThan(String property, Object value) {
+	public Query<T> withFieldLessThan(String property, Object value) {
 		limitations.add(new ModelPropertyLimitation(property, value, ModelPropertyLimitation.Comparison.LESSTHAN));
 		return this;
 	}
@@ -94,7 +120,7 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 		return this;
 	}
 
-	public Query<T> withPriviledged(Privileged... priviledged) {
+	public Query<T> withPrivileged(Privileged... priviledged) {
 		this.privileged = priviledged;
 		return this;
 	}
@@ -121,13 +147,15 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 	}
 
 	public Query<T> withParent(Entity entity) {
-		super.parent = entity;
+		//super.parent = entity;
+		this.parents.add(new Parent(entity,null));
 		return this;
 	}
 
 	public Query<T> withParent(Entity item, String relationKind) {
-		parent = item;
+		//parent = item;
 		parentKind = relationKind;
+		this.parents.add(new Parent(item,relationKind));
 		return this;
 	}
 
@@ -146,13 +174,17 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 		return new Query<E>(className);
 	}
 
+	public static <E> Query<E> after(Class<E> className) {
+		return new Query<E>(className);
+	}
+
 	public org.hibernate.Query createItemQuery(Session session) {
 		StringBuilder hql = new StringBuilder("select obj");
 		return createQuery(hql, session, false);
 	}
 
 	public org.hibernate.Query createCountQuery(Session session) {
-		StringBuilder hql = new StringBuilder("select count(obj)");
+		StringBuilder hql = new StringBuilder("select count(distinct obj.id)");
 		return createQuery(hql, session, true);
 	}
 
@@ -173,8 +205,11 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 			hql.append(",").append(Privilege.class.getName()).append(" as publicPrivilege");
 			hql.append(",").append(User.class.getName()).append(" as publicUser");
 		}
-		if (parent != null) {
-			hql.append(",").append(Relation.class.getName()).append(" as parentrel");
+		//if (parent != null) {
+		//	hql.append(",").append(Relation.class.getName()).append(" as parentrel");
+		//}
+		for (int i = 0; i < parents.size(); i++) {
+			hql.append(",").append(Relation.class.getName()).append(" as parentrel_"+i);
 		}
 		if (child != null) {
 			hql.append(",").append(Relation.class.getName()).append(" as childRelation");
@@ -185,11 +220,12 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 		if (LangUtil.isDefined(words) && Entity.class.isAssignableFrom(clazz) || customProperties.size() > 0) {
 			hql.append(" left join obj.properties as p");
 		}
+		/*
 		if (parent != null) {
 			// TODO is this necessary
 			// hql.append(" left join parentrel.superEntity as parentSuper");
 			// hql.append(" left join parentrel.subEntity as parentSub");
-		}
+		}*/
 		if (child != null) {
 			// TODO is this necessary
 			hql.append(" left join childRelation.superEntity as childSuper");
@@ -217,17 +253,30 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 		}
 		if (limitations.size() > 0) {
 			for (ModelPropertyLimitation limit : limitations) {
-				hql.append(" and ").append(limit.getProperty());
-				hql.append(limit.getComparison());
-				hql.append(":").append(limit.getProperty());
+				if (limit.getComparison().equals(ModelPropertyLimitation.Comparison.IN)) {
+					hql.append(" and ").append(limit.getProperty());
+					hql.append(limit.getComparison());
+					hql.append("(:").append(limit.getProperty()).append(")");
+				} else {
+					hql.append(" and ").append(limit.getProperty());
+					hql.append(limit.getComparison());
+					hql.append(":").append(limit.getProperty());
+				}
 			}
 		}
+		for (int i = 0; i < parents.size(); i++) {
+			hql.append(" and parentrel_").append(i).append(".superEntity=:parent_").append(i).append(" and parentrel_").append(i).append(".subEntity=obj");
+			if (parents.get(i).getRelationKind() != null) {
+				hql.append(" and parentrel_").append(i).append(".kind=:parentKind_").append(i);
+			}
+		}
+		/*
 		if (parent != null) {
 			hql.append(" and parentrel.superEntity=:parent and parentrel.subEntity=obj");
 			if (parentKind != null) {
 				hql.append(" and parentrel.kind=:parentKind");
 			}
-		}
+		}*/
 		if (child != null) {
 			hql.append(" and childSuper.id=obj.id and childSub.id=:child");
 			if (childKind != null) {
@@ -255,8 +304,8 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 			hql.append(" and obj.created<=:createdTo");
 		}
 		if (!ignorePaging) {
-			if (parent != null && inPosition) {
-				hql.append(" order by parentrel.position");
+			if (parents.size()==1 && inPosition) {
+				hql.append(" order by parentrel_0.position");
 				hql.append(descending ? " desc" : " asc");
 			} else if (child != null && inPosition) {
 				hql.append(" order by childRelation.position");
@@ -269,7 +318,7 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 				hql.append(descending ? " desc" : " asc");
 			}
 		}
-		log.debug(hql);
+		log.info(hql);
 		org.hibernate.Query q = session.createQuery(hql.toString());
 		if (pageSize > 0 && !ignorePaging) {
 			q.setMaxResults(pageSize);
@@ -280,6 +329,10 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 			Object value = limit.getValue();
 			if (value instanceof Date) {
 				q.setDate(limit.getProperty(), (Date) limit.getValue());
+			} else if (value instanceof List<?>) {
+				q.setParameterList(limit.getProperty(), (List<?>) limit.getValue());
+			} else if (value instanceof Object[]) {
+				q.setParameterList(limit.getProperty(), (Object[]) limit.getValue());
 			} else {
 				q.setString(limit.getProperty(), limit.getValue().toString());
 			}
@@ -302,12 +355,19 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 		if (createdTo != null) {
 			q.setDate("createdTo", createdTo);
 		}
-		if (parent != null) {
+		for (int i = 0; i < parents.size(); i++) {
+			Parent parent2 = parents.get(i);
+			q.setLong("parent_"+i, parent2.getItem().getId());
+			if (parent2.getRelationKind() != null) {
+				q.setString("parentKind_"+i, parent2.getRelationKind());
+			}
+		}
+		/*if (parent != null) {
 			q.setLong("parent", parent.getId());
 			if (parentKind != null) {
 				q.setString("parentKind", parentKind);
 			}
-		}
+		}*/
 		if (child != null) {
 			q.setLong("child", child.getId());
 			if (childKind != null) {
@@ -319,5 +379,23 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 
 	public void inPosition() {
 		inPosition = true;
+	}
+	
+	private class Parent {
+		Entity item;
+		String relationKind;
+		
+		public Parent(Entity item,String relationKind) {
+			this.item = item;
+			this.relationKind = relationKind;
+		}
+		
+		public Entity getItem() {
+			return item;
+		}
+		
+		public String getRelationKind() {
+			return relationKind;
+		}
 	}
 }

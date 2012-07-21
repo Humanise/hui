@@ -9,10 +9,11 @@ import org.apache.log4j.Logger;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import dk.in2isoft.onlineobjects.core.events.EventService;
 import dk.in2isoft.onlineobjects.model.Application;
+import dk.in2isoft.onlineobjects.model.Language;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.services.ConfigurationService;
+import dk.in2isoft.onlineobjects.services.ConsistencyService;
 import dk.in2isoft.onlineobjects.services.ConversionService;
 import dk.in2isoft.onlineobjects.services.StorageService;
 
@@ -29,7 +30,7 @@ public class Core {
 	private ConversionService converter;
 
 	private Privileged superUser = new SuperUser();
-
+	
 	private boolean started;
 
 	private Core() {
@@ -42,7 +43,7 @@ public class Core {
 		return instance;
 	}
 
-	public void start(String basePath, ServletContext context) throws ConfigurationException, ModelException {
+	public void start(String basePath, ServletContext context) throws ConfigurationException, ModelException, SecurityException {
 		if (started) {
 			throw new IllegalStateException("System allready started!");
 		}
@@ -55,6 +56,7 @@ public class Core {
 		}
 		ensureUsers();
 		ensureApplications();
+		getBean(ConsistencyService.class).check();
 		started = true;
 		log.info("OnlineObjects started successfully!");
 	}
@@ -131,7 +133,7 @@ public class Core {
 			log.info("Created setup application");
 		}
 	}
-
+	
 	private class SuperUser implements Privileged {
 		public long getIdentity() {
 			return -1;

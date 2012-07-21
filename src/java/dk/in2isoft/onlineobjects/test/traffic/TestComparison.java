@@ -52,7 +52,10 @@ public class TestComparison extends AbstractTestCase {
 				"http://en.wikipedia.org/wiki/Inca_Empire",
 				"http://en.wikipedia.org/wiki/South_America",
 				"http://en.wikipedia.org/wiki/Argentina",
-				"http://en.wikipedia.org/wiki/Mexico"
+				"http://en.wikipedia.org/wiki/Mexico",
+				"http://en.wikipedia.org/wiki/Apple_Inc.",
+				"http://en.wikipedia.org/wiki/Steve_Jobs",
+				"http://en.wikipedia.org/wiki/Buddhism"
 		);
 		compareUrls(urls);
 	}

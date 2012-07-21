@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<gui xmlns="uri:In2iGui" title="Opsætning">
+<gui xmlns="uri:hui" title="Opsætning">
 	<dock url="settings.gui" name="dock">
 		<toolbar>
 			<icon icon="common/settings" title="Settings" action="dock.setUrl('settings.gui')"/>

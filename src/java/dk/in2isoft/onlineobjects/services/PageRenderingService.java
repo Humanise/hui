@@ -114,8 +114,8 @@ public class PageRenderingService {
 		}
 		LifeCycleService lifeCycleService = request.getBean(LifeCycleService.class);
 		parameters.put("cache-version", String.valueOf(lifeCycleService.getStartTime().getTime()));
-		parameters.put("local-context", request.getLocalContextPath());
-		parameters.put("base-context", request.getBaseContextPath());
+		parameters.put("local-context", request.getLocalContext());
+		parameters.put("base-context", request.getBaseContext());
 		parameters.put("base-domain", request.getBaseDomain());
 		parameters.put("base-domain-context", request.getBaseDomainContext());
 		parameters.put("session-user-name", request.getSession().getUser().getUsername());

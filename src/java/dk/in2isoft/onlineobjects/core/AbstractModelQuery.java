@@ -21,7 +21,7 @@ public abstract class AbstractModelQuery<T> implements ModelQuery {
 	protected int pageNumber;
 	protected Date createdFrom;
 	protected Date createdTo;
-	protected Entity parent;
+	//protected Entity parent;
 	protected String parentKind;
 	protected Entity child;
 	protected String childKind;
@@ -62,10 +62,10 @@ public abstract class AbstractModelQuery<T> implements ModelQuery {
 	public Map<String, Object> getCustomProperties() {
 		return customProperties;
 	}
-	
+	/*
 	public Entity getParent() {
 		return parent;
-	}
+	}*/
 	
 	public Entity getChild() {
 		return child;

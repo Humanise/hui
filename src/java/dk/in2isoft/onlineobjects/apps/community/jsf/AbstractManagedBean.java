@@ -30,7 +30,7 @@ public class AbstractManagedBean {
 	}
 	
 	public String getLocalContext() {
-		return getRequest().getLocalContextPath();
+		return getRequest().getLocalContext();
 	}
 	
 	public boolean getIsIP() {

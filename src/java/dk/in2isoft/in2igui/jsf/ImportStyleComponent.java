@@ -15,7 +15,7 @@ import dk.in2isoft.onlineobjects.ui.Request;
 @FacesComponent(value=ImportStyleComponent.TYPE)
 public class ImportStyleComponent extends AbstractComponent {
 
-	public static final String TYPE = "in2igui.importStyle";
+	public static final String TYPE = "hui.importStyle";
 
 	public ImportStyleComponent() {
 		super(TYPE);
@@ -45,19 +45,19 @@ public class ImportStyleComponent extends AbstractComponent {
 		boolean developmentMode = configurationService.isDevelopmentMode();
 		//developmentMode = false;
 		if (developmentMode) {
-			writer.writeStylesheet(request.getBaseContext()+"/In2iGui/css/dev.css"+stamp).newLine();
+			writer.writeStylesheet(request.getBaseContext()+"/hui/css/dev.css"+stamp).newLine();
 		} else {
-			writer.writeStylesheet(request.getBaseContext()+"/In2iGui/bin/minimized.css"+stamp).newLine();
+			writer.writeStylesheet(request.getBaseContext()+"/hui/bin/minimized.css"+stamp).newLine();
 		}
 		
 		writer.write("<!--[if lt IE 7]>").newLine();
-		writer.writeStylesheet(request.getBaseContext()+"/In2iGui/css/msie6.css"+stamp).newLine();
+		writer.writeStylesheet(request.getBaseContext()+"/hui/css/msie6.css"+stamp).newLine();
 		writer.write("<![endif]-->").newLine();
 		writer.write("<!--[if IE 7]>").newLine();
-		writer.writeStylesheet(request.getBaseContext()+"/In2iGui/css/msie7.css"+stamp).newLine();
+		writer.writeStylesheet(request.getBaseContext()+"/hui/css/msie7.css"+stamp).newLine();
 		writer.write("<![endif]-->").newLine();
 		writer.write("<!--[if IE 8]>").newLine();
-		writer.writeStylesheet(request.getBaseContext()+"/In2iGui/css/msie8.css"+stamp).newLine();
+		writer.writeStylesheet(request.getBaseContext()+"/hui/css/msie8.css"+stamp).newLine();
 		writer.write("<![endif]-->").newLine();
 	}
 }

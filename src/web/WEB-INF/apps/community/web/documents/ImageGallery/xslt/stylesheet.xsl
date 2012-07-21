@@ -20,12 +20,12 @@ doctype-system="http://www.w3.org/TR/html4/loose.dtd"/>
 	</xsl:template>
 	
 	<xsl:template name="p:content-editor-head">
-		<link rel="stylesheet" href="{$base-context}/In2iGui/css/progressbar.css?{$cache-version}" type="text/css" media="screen" title="front" charset="utf-8"/>
+		<link rel="stylesheet" href="{$base-context}/hui/css/progressbar.css?{$cache-version}" type="text/css" media="screen" title="front" charset="utf-8"/>
 		<script src="{$base-context}/dwr/interface/ImageGalleryDocument.js?{$cache-version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$base-context}/dwr/interface/CoreParts.js?{$cache-version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$base-context}/In2iGui/js/ProgressBar.js?{$cache-version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$base-context}/In2iGui/js/Upload.js?{$cache-version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$base-context}/In2iGui/js/Flash.js?{$cache-version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$base-context}/hui/js/ProgressBar.js?{$cache-version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$base-context}/hui/js/Upload.js?{$cache-version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$base-context}/hui/js/Flash.js?{$cache-version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$local-context}/documents/ImageGallery/js/ImageGalleryEditor.js?{$cache-version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script type="text/javascript">
 			with (OO.Editor.ImageGallery.getInstance()) {

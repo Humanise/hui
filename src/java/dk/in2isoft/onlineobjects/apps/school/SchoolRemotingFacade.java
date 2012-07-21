@@ -38,7 +38,7 @@ public class SchoolRemotingFacade extends AbstractRemotingFacade {
 		}
 		
 		Collection<EventData> data = Lists.newArrayList();
-		Query<Event> query = Query.of(Event.class).withFieldValueMoreThan(Event.FIELD_STARTTIME, from).withFieldValueLessThan(Event.FIELD_ENDTIME, to).withChild(person);
+		Query<Event> query = Query.of(Event.class).withFieldMoreThan(Event.FIELD_STARTTIME, from).withFieldLessThan(Event.FIELD_ENDTIME, to).withChild(person);
 		List<Event> list = modelService.list(query);
 		for (Event event : list) {
 			EventData eventData = new EventData();

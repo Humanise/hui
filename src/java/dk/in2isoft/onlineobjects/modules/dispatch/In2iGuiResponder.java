@@ -16,7 +16,7 @@ public class In2iGuiResponder implements Responder {
 	
 	public boolean applies(Request request) {
 		String[] path = request.getFullPath();
-		return path.length > 0 && path[0].equals("In2iGui");
+		return path.length > 0 && path[0].equals("hui");
 	}
 	
 	public Boolean dispatch(Request request, FilterChain chain) throws IOException {

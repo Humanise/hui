@@ -40,8 +40,8 @@ var videosharing = {
 			var linkTab = tabs.createTab({title:'From link',padding:10});
 			var form = ui.Formula.create({name:'videoUrlForm'});
 			form.buildGroup({above:true},[
-				{type:'Text',options:{label:'Title of the video:',key:'title'}},
-				{type:'Text',options:{label:'Internet address:',key:'url'}}
+				{type:'TextField',options:{label:'Title of the video:',key:'title'}},
+				{type:'TextField',options:{label:'Internet address:',key:'url'}}
 			]);
 			linkTab.add(form);
 			var create = ui.Button.create({name:'createFromUrl',title:'Create'});
@@ -81,7 +81,7 @@ var videosharing = {
 		if (!this.ratingPanel) {
 			var p = this.ratingPanel = ui.Box.create({closable:true,modal:true,absolute:true});
 			p.addToDocument();
-			p.add(new Element('div',{'class':'mock_registration'}));
+			p.add(n2i.build('div',{'class':'mock_registration'}));
 		}
 		this.ratingPanel.show();
 	}

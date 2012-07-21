@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 import com.google.common.collect.Lists;
 
@@ -27,6 +29,7 @@ import dk.in2isoft.onlineobjects.ui.AbstractRemotingFacade;
 public class CommonRemotingFacade extends AbstractRemotingFacade {
 
 	private SecurityService securityService;
+	private static Logger log = Logger.getLogger(CommonRemotingFacade.class);
 	
 	public Entity getEntity(long id) throws ModelException {
 		return modelService.get(Entity.class, id);
@@ -51,10 +54,19 @@ public class CommonRemotingFacade extends AbstractRemotingFacade {
 	}
 	
 	public void addTag(long id,String tag) throws ModelException, SecurityException {
+		if (StringUtils.isBlank(tag)) {
+			return;
+		}
 		Entity entity = modelService.get(Entity.class, id);
-		if (entity.getPropertyValues(Property.KEY_COMMON_TAG).isEmpty()) {
+		if (entity==null) {
+			return;
+		}
+		List<String> existingTags = entity.getPropertyValues(Property.KEY_COMMON_TAG);
+		if (!existingTags.contains(tag)) {
 			entity.addProperty(Property.KEY_COMMON_TAG, tag);
 			modelService.updateItem(entity, getUserSession());
+		} else {
+			log.info("The tag ["+tag+"] already exists");
 		}
 	}
 	

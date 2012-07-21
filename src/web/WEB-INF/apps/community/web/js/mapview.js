@@ -4,9 +4,9 @@ oo.community.MapView = {
 	markers : [],
 	cursorMarker : null,
 	
-	$interfaceIsReady : function() {
+	$ready : function() {
 		this.startMap();
-		var id = n2i.location.getHashParameter('image');
+		var id = hui.location.getHashParameter('image');
 		if (id!==null) {
 			AppCommunity.getImageLocation(id,function(location) {
 				if (location) {
@@ -119,4 +119,4 @@ oo.community.MapView = {
 	}
 }
 
-ui.get().listen(oo.community.MapView);
+hui.ui.listen(oo.community.MapView);

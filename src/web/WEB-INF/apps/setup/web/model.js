@@ -7,7 +7,7 @@ var controller = {
 	$valueChanged$search : function() {
 		list.resetState();
 	},
-	$listRowWasOpened : function(row) {
+	$open$list : function(row) {
 		if (row.kind=='user') {
 			this.loadUser(row);
 		} else {
@@ -50,7 +50,7 @@ var controller = {
 			listSource.refresh();
 		});
 	},
-	$selectionChanged$selection : function() {
+	$select$selection : function() {
 		list.resetState();
 	}
 }

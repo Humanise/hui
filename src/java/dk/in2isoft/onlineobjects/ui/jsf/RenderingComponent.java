@@ -54,6 +54,6 @@ public class RenderingComponent<T> extends AbstractComponent {
 	}
 
 	public String getStyleClass(FacesContext context) {
-		return getBinding(styleClass, "styleClass");
+		return getExpression(styleClass, "styleClass");
 	}
 }

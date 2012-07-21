@@ -14,7 +14,7 @@ import dk.in2isoft.commons.jsf.TagWriter;
 @FacesComponent(value=ButtonComponent.TYPE)
 public class ButtonComponent extends AbstractComponent {
 
-	public static final String TYPE = "in2igui.button";
+	public static final String TYPE = "hui.button";
 
 	private String text;
 	private String name;
@@ -23,6 +23,7 @@ public class ButtonComponent extends AbstractComponent {
 	private String click;
 	private boolean submit;
 	private String styleClass;
+	private String variant;
 
 	public ButtonComponent() {
 		super(TYPE);
@@ -37,12 +38,13 @@ public class ButtonComponent extends AbstractComponent {
 		click = (String) state[4];
 		styleClass = (String) state[5];
 		submit = (Boolean) state[6];
+		variant = (String) state[7];
 	}
 
 	@Override
 	public Object[] saveState() {
 		return new Object[] {
-			text,name,highlighted,small,click,styleClass,submit
+			text,name,highlighted,small,click,styleClass,submit,variant
 		};
 	}
 	
@@ -54,11 +56,16 @@ public class ButtonComponent extends AbstractComponent {
 	@Override
 	public void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
 		String id = getClientId();
-		ClassBuilder cls = new ClassBuilder("in2igui_button").add(styleClass);
+		ClassBuilder cls = new ClassBuilder("hui_button").add(styleClass).add("hui_button", variant);
 		if (small) {
-			cls.add("in2igui_button_small_rounded");
-		} else if (highlighted) {
-			cls.add("in2igui_button_highlighted");
+			cls.add("hui_button_small").add("hui_button_small", variant);
+			if (highlighted) {
+				cls.add("hui_button_small_highlighted");
+			}
+		} else {
+			if (highlighted) {
+				cls.add("hui_button_highlighted").add("hui_button_highlighted", variant);
+			}
 		}
 		if (isNotBlank(styleClass)) {
 			writer.startVoidA(styleClass);
@@ -69,7 +76,7 @@ public class ButtonComponent extends AbstractComponent {
 		writer.startSpan().startSpan().write(text).endSpan().endSpan();
 		writer.endA();
 		writer.startScopedScript();
-		writer.write("var "+id+" = new In2iGui.Button({element:'").write(id).write("'");
+		writer.write("var "+id+" = new hui.ui.Button({element:'").write(id).write("'");
 		writer.write(",submit:"+submit);
 		if (name!=null) {
 			writer.write(",name:'"+name+"'");
@@ -80,7 +87,7 @@ public class ButtonComponent extends AbstractComponent {
 		writer.write("});");
 		String click = getClick(context);
 		if (StringUtils.isNotBlank(click)) {
-			writer.write("\n"+id+".listen({$click:function() {").write(click).write("}});");
+			writer.write("\n"+id+".listen({$click:function(widget) {").write(click).write("}});");
 		}
 		writer.endScopedScript();
 	}
@@ -126,7 +133,7 @@ public class ButtonComponent extends AbstractComponent {
 	}
 	
 	public String getClick(FacesContext context) {
-		return getBinding(click, "click");
+		return getExpression(click, "click");
 	}
 
 	public void setSubmit(boolean submit) {
@@ -143,5 +150,13 @@ public class ButtonComponent extends AbstractComponent {
 
 	public String getStyleClass() {
 		return styleClass;
+	}
+	
+	public void setVariant(String variant) {
+		this.variant = variant;
+	}
+	
+	public String getVariant() {
+		return variant;
 	}
 }

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:util="http://www.springframework.org/schema/util"
+  	xmlns:dwr="http://www.directwebremoting.org/schema/spring-dwr"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+        http://www.directwebremoting.org/schema/spring-dwr
+    	http://www.directwebremoting.org/schema/spring-dwr-2.0.xsd
+    ">
+
+   	
+   	<bean id="dekstopRemotingFacade" class="dk.in2isoft.onlineobjects.apps.desktop.DesktopRemotingFacade" autowire="byType">
+    	 <dwr:remote javascript="AppDesktop">
+    	 	<dwr:include method="find"/>
+    	 </dwr:remote>
+   	</bean>
+   	
+   	<bean id="desktopController" class="dk.in2isoft.onlineobjects.apps.desktop.DesktopController" autowire="byType"/>
+   	
+    <!-- dwr:configuration>
+	    <dwr:convert type="bean" class="dk.in2isoft.onlineobjects.apps.setup.EntityInfo"/>
+	</dwr:configuration-->
+</beans>

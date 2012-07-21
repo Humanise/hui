@@ -64,7 +64,7 @@ var imagesController = {
 	
 	$click$slideShow : function() {
 		if (!this.viewer) {
-			this.viewer = ui.ImageViewer.create();
+			this.viewer = hui.ui.ImageViewer.create();
 			this.viewer.listen(this);
 		}
 		this.viewer.clearImages();
@@ -75,6 +75,6 @@ var imagesController = {
 	///////////// Image gallery //////////
 	
 	$resolveImageUrl : function(image,width,height) {
-		return In2iGui.context+'/service/image/?id='+image.id+'&width='+width+'&height='+height;
+		return hui.ui.context+'/service/image/?id='+image.id+'&width='+width+'&height='+height;
 	}
 }

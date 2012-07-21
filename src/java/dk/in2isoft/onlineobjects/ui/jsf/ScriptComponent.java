@@ -52,7 +52,7 @@ public class ScriptComponent<T> extends AbstractComponent {
 				if (core) {
 					url.append(request.getBaseContext());
 				} else {
-					url.append(request.getLocalContextPath());
+					url.append(request.getLocalContext());
 				}
 				url.append(src);
 				LifeCycleService bean = getBean(LifeCycleService.class);
@@ -84,6 +84,6 @@ public class ScriptComponent<T> extends AbstractComponent {
 	}
 	
 	public String getSrc(FacesContext context) {
-		return getBinding(src,"src");
+		return getExpression(src,"src");
 	}
 }

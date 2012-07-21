@@ -1,10 +1,10 @@
 oo.community.Invitation = {
 	code : null,
 	
-	$interfaceIsReady : function() {
-		var username = ui.get('invitationUsername');
+	$ready : function() {
+		var username = hui.ui.get('invitationUsername');
 		if (username) {
-			ui.get('invitationUsername').select();
+			hui.ui.get('invitationUsername').select();
 		}
 	},
 	
@@ -22,24 +22,24 @@ oo.community.Invitation = {
 	},
 
 	signUp : function() {
-		var usernameField = ui.get('invitationUsername');
-		var passwordField = ui.get('invitationPassword');
-		var passwordAgainField = ui.get('invitationPasswordAgain');
+		var usernameField = hui.ui.get('invitationUsername');
+		var passwordField = hui.ui.get('invitationPassword');
+		var passwordAgainField = hui.ui.get('invitationPasswordAgain');
 		var username = usernameField.getValue();
 		var password = passwordField.getValue();
 		var passwordAgain = passwordAgainField.getValue();
-		if (n2i.isEmpty(username)) {
-			ui.showMessage({text:'Brugernavnet skal udfyldes',duration:2000});
+		if (hui.isEmpty(username)) {
+			hui.ui.showMessage({text:'Brugernavnet skal udfyldes',duration:2000});
 			usernameField.focus();
-		} else if (n2i.isEmpty(password) || n2i.isEmpty(passwordAgain)) {
-			ui.showMessage({text:'Begge kodeord skal udfyldes',duration:2000});
-			if (n2i.isEmpty(password)) {
+		} else if (hui.isEmpty(password) || hui.isEmpty(passwordAgain)) {
+			hui.ui.showMessage({text:'Begge kodeord skal udfyldes',duration:2000});
+			if (hui.isEmpty(password)) {
 				 passwordField.focus();
-			} else if (n2i.isEmpty(passwordAgain)) {
+			} else if (hui.isEmpty(passwordAgain)) {
 				 passwordAgainField.focus();
 			}
 		} else if (password!==passwordAgain) {
-			ui.showMessage({text:'De to kodeord er ikke ens',duration:2000});
+			hui.ui.showMessage({text:'De to kodeord er ikke ens',duration:2000});
 			passwordAgainField.select();
 		} else {			
 			var delegate = {
@@ -51,22 +51,22 @@ oo.community.Invitation = {
 	},
 	errorOccurred : function(error,exception) {
 		if (exception.code=='userExists') {
-			ui.alert({
+			hui.ui.alert({
 				emotion: 'gasp',
 				title: 'Brugernavnet er optaget',
 				text: 'Der findes desværre allerede en bruger med dette brugernavn. Prøv venligst med et andet...',
-				onOK : function() {ui.get('invitationUsername').select()}
+				onOK : function() {hui.ui.get('invitationUsername').select()}
 			});
 		} else if (exception.code=='invalidUsername') {
-			ui.alert({
+			hui.ui.alert({
 				emotion: 'gasp',
 				title: 'Brugernavnet indeholder ugyldige tegn',
 				text: 'Det er kun tilladt at anvende små bogstaver mellem "a" og "z" samt tal. Du kan ikke anvende store bogstaver eller specialtegn.',
-				onOK : function() {ui.get('invitationUsername').select()}
+				onOK : function() {hui.ui.get('invitationUsername').select()}
 			});
 		} else {
-			n2i.log(exception);
-			ui.alert({
+			hui.log(exception);
+			hui.ui.alert({
 				emotion: 'gasp',
 				title: 'Der skete en fejl!',
 				text: 'Fejlbesked: '+error
@@ -75,12 +75,12 @@ oo.community.Invitation = {
 	},
 	
 	userDidSignUp : function(username) {
-		var msg = ui.Alert.create({
+		var msg = hui.ui.Alert.create({
 			emotion: 'smile',
 			title: 'Du er nu oprettet som bruger...',
 			text: 'Der er oprettet et website til dig. Desuden har du din egen profilside hvor du kan fortælle andre om dig selv...'
 		});
-		var button = ui.Button.create({text : 'Gå til min profilside :-)'});
+		var button = hui.ui.Button.create({text : 'Gå til min profilside :-)'});
 		button.listen({$click:function(){
 			document.location=oo.appContext+'/'+username+'/';
 		}});
@@ -88,7 +88,7 @@ oo.community.Invitation = {
 		msg.show();
 	}
 };
-ui.get().listen(oo.community.Invitation);
+hui.ui.listen(oo.community.Invitation);
 
 
 
@@ -163,7 +163,7 @@ OO.Community.InvitationPage.prototype = {
 	},
 	
 	errorOccurred : function(error) {
-		In2iGui.get().showAlert({
+		hui.ui.alert({
 			emotion: 'gasp',
 			title: 'Der skete en fejl!',
 			text: 'Fejlbesked: '+error
@@ -171,12 +171,12 @@ OO.Community.InvitationPage.prototype = {
 	},
 	
 	userDidSignUp : function(username) {
-		var msg = In2iGui.Alert.create(null,{
+		var msg = hui.ui.Alert.create(null,{
 			emotion: 'smile',
 			title: 'Du er nu oprettet som bruger...',
 			text: 'Du vil modtage en e-mail hvor du skal bekræfte at du er dig. Indtil dette er gjort kan du frit anvende dit nye websted i op til 7 dage.'
 		});
-		var button = In2iGui.Button.create({text : 'Gå til mit ny websted :-)!'});
+		var button = hui.ui.Button.create({text : 'Gå til mit ny websted :-)!'});
 		button.listen({$click:function(){
 			document.location=OnlineObjects.appContext+'/'+username+'/site/';
 		}});

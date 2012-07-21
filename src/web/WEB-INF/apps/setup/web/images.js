@@ -1,13 +1,13 @@
-ui.get().listen({
+hui.ui.listen({
 	$resolveImageUrl : function(image,width,height) {
-		return In2iGui.context+'/service/image/?id='+image.id+'&width='+width+'&height='+height;
+		return hui.ui.context+'/service/image/?id='+image.id+'&width='+width+'&height='+height;
 	},
 	$click$syncImages : function(icon) {
 		icon.setEnabled(false);
-		ui.showMessage({text:'Syncing images...'});
+		hui.ui.showMessage({text:'Syncing images...'});
 		AppSetup.synchronizeImageMetaData(function() {
 			icon.setEnabled(true);
-			ui.showMessage({text:'Sync complete!',duration:2000});
+			hui.ui.showMessage({text:'Sync complete!',duration:2000});
 		});
 	}
 })

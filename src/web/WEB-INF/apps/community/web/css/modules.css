@@ -35,10 +35,10 @@ div.rendering p.tags
 
 div.rendering a.tag
 {
-	font-size: 12px;
-	background: #ddeef6;
+	font-size: 11px;
+	background: #f6f6f6;
 	text-decoration: none;
-	border: 1px solid #bcd;
+	border: 1px solid #ddd;
 	-moz-border-radius: 8px;
 	-webkit-border-radius: 8px;
 	padding: 0 8px;
@@ -54,7 +54,7 @@ div.rendering a.tag
 div.rendering a.tag:hover
 {
 	background: #daeaf0;
-	border: 1px solid #798;
+	border: 1px solid #8a9;
 }
 
 div.rendering a.tag:focus

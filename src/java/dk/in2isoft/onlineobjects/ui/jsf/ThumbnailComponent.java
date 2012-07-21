@@ -138,7 +138,7 @@ public class ThumbnailComponent<T> extends AbstractComponent {
 	}
 
 	public String getHref(FacesContext context) {
-		return getBinding(href, "href");
+		return getExpression(href, "href");
 	}
 
 	public void setFrame(boolean frame) {

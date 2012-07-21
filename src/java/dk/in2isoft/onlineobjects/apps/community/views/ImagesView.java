@@ -25,7 +25,7 @@ public class ImagesView extends AbstractManagedBean {
 
 			@Override
 			public ListModelResult<Photo> getResult() {
-				Query<Image> query = Query.of(Image.class).orderByCreated().withPaging(getPage(), getPageSize()).withPriviledged(securityService.getPublicUser());
+				Query<Image> query = Query.of(Image.class).orderByCreated().withPaging(getPage(), getPageSize()).withPrivileged(securityService.getPublicUser());
 				SearchResult<Image> result = modelService.search(query);
 				List<Photo> list = convert(result.getList());
 				return new ListModelResult<Photo>(list,result.getTotalCount());

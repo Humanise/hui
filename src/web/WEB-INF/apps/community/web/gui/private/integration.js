@@ -1,4 +1,4 @@
-ui.get().listen({
+hui.ui.listen({
 	accountId:0,
 	
 	$click$newAccount : function() {
@@ -30,7 +30,7 @@ ui.get().listen({
 			accountWindow.hide();
 		})
 	},
-	$listRowWasOpened$accountsList : function(item) {
+	$open$accountsList : function(item) {
 		this.accountId = item.id;
 		accountFormula.reset();
 		deleteAccount.setEnabled(false);

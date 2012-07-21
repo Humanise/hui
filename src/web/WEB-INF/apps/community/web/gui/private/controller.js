@@ -26,7 +26,7 @@ var controller = {
 	},
 	$click$barLogOut : function() {
 		CoreSecurity.logOut(function() {
-			In2iGui.showMessage('Du er nu logget ud');
+			hui.ui.showMessage('Du er nu logget ud');
 			window.setTimeout(function() {
 				document.location='../../';
 			},1000);

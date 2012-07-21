@@ -27,7 +27,7 @@ public class InvitationService {
 	private MemberService memberService;
 	
 	public Invitation getInvitation(String code) {
-		Query<Invitation> query = new Query<Invitation>(Invitation.class).withFieldValue(Invitation.FIELD_CODE, code);
+		Query<Invitation> query = new Query<Invitation>(Invitation.class).withField(Invitation.FIELD_CODE, code);
 		return modelService.search(query).getFirst();
 	}
 

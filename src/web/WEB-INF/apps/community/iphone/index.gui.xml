@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<iphone xmlns="uri:In2iPhone" xmlns:gui="uri:In2iGui" title="OnlineObjects">
+<iphone xmlns="uri:In2iPhone" xmlns:gui="uri:hui" title="OnlineObjects">
 	<!--
 	<gui:dwr base="/dwr/">
 		<gui:interface name="Common"/>

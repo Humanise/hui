@@ -15,7 +15,7 @@ var profileView = {
 		if (!this.imagePanel) {
 			var p = this.imagePanel = ui.BoundPanel.create({width:300});
 			var buttons = ui.Buttons.create({align:'center'});
-			var choose = In2iGui.Button.create({text:'Choose image...',highlighted:true});
+			var choose = hui.ui.Button.create({text:'Choose image...',highlighted:true});
 			buttons.add(choose);
 			var up = ui.Upload.create({name:'profileImageUpload',url:'../../changeProfileImage.action',widget:choose,maxItems:1,types:"*.jpg;*.png",placeholder:{title:'Choose and image on your computer...'}});
 			p.add(up);
@@ -39,16 +39,16 @@ var profileView = {
 	$click$editProfile : function() {
 		if (!this.profilePanel) {
 			var p = this.profilePanel = ui.Box.create({title:'Edit profile information',closable:true,width:550,padding:10,modal:true,absolute:true});
-			var form = this.profileForm = In2iGui.Formula.create();
+			var form = this.profileForm = hui.ui.Formula.create();
 			var group = form.buildGroup({above:false},[
-				{type:'Text',options:{label:'Name:',key:'fullName'}},
-				{type:'DateTime',options:{label:'Birthday:',key:'birthday'}},
-				{type:'Text',options:{label:'City:',key:'city'}},
-				{type:'Text',options:{label:'About me:',key:'resume',lines:5}},
+				{type:'TextField',options:{label:'Name:',key:'fullName'}},
+				{type:'DateTimeField',options:{label:'Birthday:',key:'birthday'}},
+				{type:'TextField',options:{label:'City:',key:'city'}},
+				{type:'TextField',options:{label:'About me:',key:'resume',lines:5}},
 				{type:'DropDown',options:{label:'Gender:',key:'sex',items:[{value:null,title:'Unknown'},{value:true,title:'Male'},{value:false,title:'Female'}]}},
-				{type:'Tokens',options:{label:'Interests:',key:'interests',width:80}},
-				{type:'Tokens',options:{label:'Favorite music:',key:'music',width:80}},
-				{type:'Tokens',options:{label:'Favorite song/album:',key:'tracks',width:80}}
+				{type:'TokenField',options:{label:'Interests:',key:'interests',width:80}},
+				{type:'TokenField',options:{label:'Favorite music:',key:'music',width:80}},
+				{type:'TokenField',options:{label:'Favorite song/album:',key:'tracks',width:80}}
 			]);
 			var buttons = group.createButtons();
 			var cancel = ui.Button.create({text:'Cancel'});

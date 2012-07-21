@@ -51,7 +51,7 @@ public class StylesheetComponent<T> extends AbstractComponent {
 				if (core) {
 					url.append(request.getBaseContext());
 				} else {
-					url.append(request.getLocalContextPath());
+					url.append(request.getLocalContext());
 				}
 				url.append(href);
 				LifeCycleService bean = getBean(LifeCycleService.class);
@@ -78,6 +78,6 @@ public class StylesheetComponent<T> extends AbstractComponent {
 	}
 	
 	public String getHref(FacesContext context) {
-		return getBinding(href,"href");
+		return getExpression(href,"href");
 	}
 }

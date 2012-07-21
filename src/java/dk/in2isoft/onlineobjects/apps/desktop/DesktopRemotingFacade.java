@@ -25,7 +25,7 @@ public class DesktopRemotingFacade extends AbstractRemotingFacade {
 	}
 
 	public List<Entity> find(String query) throws EndUserException {
-		List<Entity> entities = modelService.list(new Query<Entity>(Entity.class).withWords(query).withPriviledged(getUserSession()));
+		List<Entity> entities = modelService.list(new Query<Entity>(Entity.class).withWords(query).withPrivileged(getUserSession()));
 		return entities;
 	}
 	

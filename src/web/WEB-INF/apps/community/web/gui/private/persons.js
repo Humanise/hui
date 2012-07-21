@@ -1,20 +1,20 @@
 var personsController = {
 	activePerson : 0,
 	
-	$interfaceIsReady : function() {
+	$ready : function() {
 		this.refreshPersonList();
 	},
 	
-	$selectionChanged : function(item) {
+	$select : function(item) {
 		if (item.value=='persons') {
-			In2iGui.get().changeState('persons');
+			hui.ui.changeState('persons');
 			this.refreshPersonList();
 		} else if (item.value=='invitations') {
-			In2iGui.get().changeState('invitations');
+			hui.ui.changeState('invitations');
 			this.refreshInvitationList();
 		}
 	},
-	$listRowWasOpened$personList : function(obj) {
+	$open$personList : function(obj) {
 		this.editPerson(obj.id);
 	},
 	
@@ -82,8 +82,8 @@ var personsController = {
 				self.invitationWasSent();
 			},
 			errorHandler:function(errorString, exception) {
-				n2i.log(errorString);
-				n2i.log(exception);
+				hui.log(errorString);
+				hui.log(exception);
 				self.invitationFailed(errorString);
 			}
 		});
@@ -94,7 +94,7 @@ var personsController = {
 	
 	showInvitationProgress : function() {
 		if (!this.inviteProgress) {
-			this.inviteProgress = In2iGui.Alert.create({
+			this.inviteProgress = hui.ui.Alert.create({
 				emotion: 'smile',
 				title: 'Sender invitation...',
 				text: 'Vent venligst mens invitationen sendes.'
@@ -105,7 +105,7 @@ var personsController = {
 	
 	invitationFailed : function(errorString) {
 		this.inviteProgress.hide();
-		ui.alert({
+		hui.ui.alert({
 			emotion: 'gasp',
 			title: 'Invitationen kunne ikke afsendes',
 			text: 'Der skete følgende fejl: '+errorString
@@ -114,7 +114,7 @@ var personsController = {
 	},
 	invitationWasSent : function() {
 		this.inviteProgress.hide();
-		ui.alert({
+		hui.ui.alert({
 			emotion: 'smile',
 			title: 'Invitationen er sendt!',
 			text: 'Personen vil modtage en email med oplysninger om hvordan han/hun kan tilmelde sig!'

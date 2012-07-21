@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<gui xmlns="uri:In2iGui" state="persons" title="Persons">
+<gui xmlns="uri:hui" state="persons" title="Persons">
 	<dwr base="/dwr/">
 		<interface name="CoreSecurity"/>
 		<interface name="AppCommunity"/>
@@ -15,52 +15,48 @@
 			<button text="Log ud" icon="inset/cross" name="barLogOut"/>
 		</right>
 	</bar>
-	<structure top="30">
-		<layout>
+
+	<toolbar>
+		<icon icon="common/image" title="Billeder" name="toolImages"/>
+		<icon icon="common/person" title="Personer" selected="true" name="toolPersons"/>
+		<icon icon="common/internet" title="Bogmærker" name="toolBookmarks"/>
+		<icon icon="common/settings" title="Integration" name="toolIntegration"/>
+	</toolbar>
+
+	<div style="position: fixed; top: 90px; bottom: 0; left: 0; right: 0; padding: 10px;">
+		<structure>
 			<top>
-			<toolbar>
-				<icon icon="common/image" title="Billeder" name="toolImages"/>
-				<icon icon="common/person" title="Personer" selected="true" name="toolPersons"/>
-				<icon icon="common/internet" title="Bogmærker" name="toolBookmarks"/>
-			</toolbar>
+				<toolbar>
+					<icon icon="common/person" overlay="new" title="Ny person" name="newPerson"/>
+					<icon icon="common/letter" overlay="new" title="Ny invitation" name="newInvitation"/>
+				</toolbar>
 			</top>
 			<middle>
-				<center padding="10">
-				<layout style="box">
-					<top>
-						<toolbar>
-							<icon icon="common/person" overlay="new" title="Ny person" name="newPerson"/>
-							<icon icon="common/letter" overlay="new" title="Ny invitation" name="newInvitation"/>
-						</toolbar>
-					</top>
-					<middle>
-						<left>
-							<selection value="persons">
-								<item icon="common/person" title="Alle personer" value="persons"/>
-								<item icon="common/letter" title="Invitationer" value="invitations"/>
-							</selection>
-						</left>
-						<center>
-							<overflow>
-								<list name="personList" state="persons">
-									<column title="Navn" key="name"/>
-									<column title="E-mail" key="email"/>
-									<column title="Telefon" key="phone"/>
-								</list>
-								<list name="invitationList" state="invitations">
-									<column title="Dato" key="created"/>
-									<column title="Inviteret" key="person"/>
-									<column title="Status" key="state"/>
-								</list>
-							</overflow>
-						</center>
-					</middle>
-					<bottom/>
-				</layout>
+				<left>
+					<selection value="persons">
+						<item icon="common/person" title="Alle personer" value="persons"/>
+						<item icon="common/letter" title="Invitationer" value="invitations"/>
+					</selection>
+				</left>
+				<center>
+					<overflow>
+						<list name="personList" state="persons">
+							<column title="Navn" key="name"/>
+							<column title="E-mail" key="email"/>
+							<column title="Telefon" key="phone"/>
+						</list>
+						<list name="invitationList" state="invitations">
+							<column title="Dato" key="created"/>
+							<column title="Inviteret" key="person"/>
+							<column title="Status" key="state"/>
+						</list>
+					</overflow>
 				</center>
 			</middle>
-		</layout>
-	</structure>
+			<bottom/>
+		</structure>
+	</div>
+
 	<window name="personWindow" title="Person" width="400" padding="5">
 		<formula name="personFormula">			
 			<columns space="10">
@@ -121,7 +117,8 @@
 			</buttons>
 		</formula>
 	</window>
-	<window floating="true" name="invitationWindow" title="Ny invitation" width="300" padding="10">
+
+	<window name="invitationWindow" title="Ny invitation" width="300" padding="10">
 		<formula name="invitationFormula">
 			<group>
 				<text label="Navn" key="name"/>
@@ -133,4 +130,5 @@
 			</group>
 		</formula>
 	</window>
+
 </gui>

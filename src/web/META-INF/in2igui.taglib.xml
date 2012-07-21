@@ -4,71 +4,71 @@
   <tag>
     <tag-name>importScripts</tag-name>
     <component>
-      <component-type>in2igui.importScripts</component-type>
-      <renderer-type>in2igui.importScripts</renderer-type>
+      <component-type>hui.importScripts</component-type>
+      <renderer-type>hui.importScripts</renderer-type>
     </component>
   </tag>
   <tag>
     <tag-name>importStyle</tag-name>
     <component>
-      <component-type>in2igui.importStyle</component-type>
-      <renderer-type>in2igui.importStyle</renderer-type>
+      <component-type>hui.importStyle</component-type>
+      <renderer-type>hui.importStyle</renderer-type>
     </component>
   </tag>
   <tag>
     <tag-name>button</tag-name>
     <component>
-      <component-type>in2igui.button</component-type>
-      <renderer-type>in2igui.button</renderer-type>
+      <component-type>hui.button</component-type>
+      <renderer-type>hui.button</renderer-type>
     </component>
   </tag>
   <tag>
     <tag-name>link</tag-name>
     <component>
-      <component-type>in2igui.link</component-type>
-      <renderer-type>in2igui.link</renderer-type>
+      <component-type>hui.link</component-type>
+      <renderer-type>hui.link</renderer-type>
     </component>
   </tag>
   <tag>
     <tag-name>textfield</tag-name>
     <component>
-      <component-type>in2igui.textfield</component-type>
-      <renderer-type>in2igui.textfield</renderer-type>
+      <component-type>hui.textfield</component-type>
+      <renderer-type>hui.textfield</renderer-type>
     </component>
   </tag>
   <tag>
     <tag-name>searchfield</tag-name>
     <component>
-      <component-type>in2igui.searchfield</component-type>
-      <renderer-type>in2igui.searchfield</renderer-type>
+      <component-type>hui.searchfield</component-type>
+      <renderer-type>hui.searchfield</renderer-type>
     </component>
   </tag>
   <tag>
     <tag-name>bar</tag-name>
     <component>
-      <component-type>in2igui.bar</component-type>
-      <renderer-type>in2igui.bar</renderer-type>
+      <component-type>hui.bar</component-type>
+      <renderer-type>hui.bar</renderer-type>
     </component>
   </tag>
   <tag>
     <tag-name>barButton</tag-name>
     <component>
-      <component-type>in2igui.barButton</component-type>
-      <renderer-type>in2igui.barButton</renderer-type>
+      <component-type>hui.barButton</component-type>
+      <renderer-type>hui.barButton</renderer-type>
     </component>
   </tag>
   <tag>
     <tag-name>videoplayer</tag-name>
     <component>
-      <component-type>in2igui.videoplayer</component-type>
-      <renderer-type>in2igui.videoplayer</renderer-type>
+      <component-type>hui.videoplayer</component-type>
+      <renderer-type>hui.videoplayer</renderer-type>
     </component>
   </tag>
   <tag>
     <tag-name>formula</tag-name>
     <component>
-      <component-type>in2igui.formula</component-type>
-      <renderer-type>in2igui.formula</renderer-type>
+      <component-type>hui.formula</component-type>
+      <renderer-type>hui.formula</renderer-type>
     </component>
   </tag>
 </facelet-taglib>

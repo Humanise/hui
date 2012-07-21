@@ -65,7 +65,7 @@ public class UserProfileView extends AbstractManagedBean implements Initializing
 				@Override
 				public ListModelResult<Image> getResult() {
 					User user = modelService.getUser(getUsersName());
-					Query<Image> query = Query.of(Image.class).withPriviledged(user).orderByCreated().withPaging(0, getPageSize()).descending();
+					Query<Image> query = Query.of(Image.class).withPrivileged(user).orderByCreated().withPaging(0, getPageSize()).descending();
 					if (!canModify) {
 						query.withPublicView();
 					}
@@ -85,7 +85,7 @@ public class UserProfileView extends AbstractManagedBean implements Initializing
 			@Override
 			public ListModelResult<Image> getResult() {
 				User user = modelService.getUser(getUsersName());
-				Query<Image> query = Query.of(Image.class).withPriviledged(user).orderByCreated().withPaging(getPage(), getPageSize()).descending();
+				Query<Image> query = Query.of(Image.class).withPrivileged(user).orderByCreated().withPaging(getPage(), getPageSize()).descending();
 				if (!canModify) {
 					query.withPublicView();
 				}
@@ -133,7 +133,7 @@ public class UserProfileView extends AbstractManagedBean implements Initializing
 	public List<RemoteAccountInfo> getRemoteAccountInfo() {
 		if (remoteAccountInfo==null) {
 			remoteAccountInfo = Lists.newArrayList();
-			Query<RemoteAccount> query = Query.of(RemoteAccount.class).withPriviledged(user);
+			Query<RemoteAccount> query = Query.of(RemoteAccount.class).withPrivileged(user);
 			List<RemoteAccount> accounts = modelService.list(query);
 			for (RemoteAccount account : accounts) {
 				remoteAccountInfo.add(remoteDataService.getInfo(account));

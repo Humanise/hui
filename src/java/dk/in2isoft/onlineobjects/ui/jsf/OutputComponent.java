@@ -36,7 +36,7 @@ public class OutputComponent<T> extends AbstractComponent {
 	protected void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
 		Object value = getBinding("value");
 		String text = value==null ? null : value.toString();
-		if (StringUtils.isBlank(text)) {
+		if (emptyText!=null && StringUtils.isBlank(text)) {
 			text = emptyText;
 		}
 		if (text!=null) {

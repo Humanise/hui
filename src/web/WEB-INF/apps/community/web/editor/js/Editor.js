@@ -6,7 +6,7 @@ OO.Editor = function(delegate) {
 	this.textEditors = [];
 	this.active = false;
 	this.buildActivator();
-	this.toolbarPadder = $$('.toolbar_padder')[0];
+	this.toolbarPadder = hui.get.firstByClass(document.body,'toolbar_padder');
 	this.toolbar = null;
 	this.templates = {
 		all : [
@@ -42,27 +42,27 @@ OO.Editor = function(delegate) {
 		{title:'Begivenhed',icon:'common/color',value:'event'}
 	];
 	var self = this;
-	var editmode = n2i.location.getBoolean('edit');
+	var editmode = hui.location.getBoolean('edit');
 	if (editmode) {
 		this.activate(true);
 	}
-	In2iGui.get().listen(this);
-	In2iGui.Editor.get().ignite();
+	hui.ui.listen(this);
+	hui.ui.Editor.get().ignite();
 }
 
 OO.Editor.prototype = {
 	activate : function(instantly) {
 		this.active=true;
 		this.activator.className='deactivate';
-		Element.addClassName(document.body,'editor_mode');
+		hui.cls.add(document.body,'editor_mode');
 		this.buildToolBar();
-		n2i.animate(this.toolbarPadder,'padding-top','58px',instantly ? 0 : 600,{ease:n2i.ease.slowFastSlow});
+		hui.animate(this.toolbarPadder,'padding-top','58px',instantly ? 0 : 600,{ease:hui.ease.slowFastSlow});
 		this.toolbarRevealer.show(instantly);
 		this.enableWebNodeEditing();
 		var self = this;
 		window.setTimeout(function() {
 			self.delegate.activate();
-			In2iGui.Editor.get().activate();
+			hui.ui.Editor.get().activate();
 		},700);
 	},
 	deactivate : function() {
@@ -78,11 +78,11 @@ OO.Editor.prototype = {
 		if (this.infoWindow) {
 			this.infoWindow.hide();
 		}
-		Element.removeClassName(document.body,'editor_mode');
-		n2i.animate(this.toolbarPadder,'padding-top','0px',500,{ease:n2i.ease.slowFastSlow});
+		hui.cls.remove(document.body,'editor_mode');
+		hui.animate(this.toolbarPadder,'padding-top','0px',500,{ease:hui.ease.slowFastSlow});
 		this.toolbarRevealer.hide();
 		this.delegate.deactivate();
-		In2iGui.Editor.get().deactivate();
+		hui.ui.Editor.get().deactivate();
 	},
 
 
@@ -117,7 +117,7 @@ OO.Editor.prototype = {
 		};
 		document.body.appendChild(this.logout);
 	
-		if (n2i.browser.gecko || n2i.browser.webkit) {
+		if (hui.browser.gecko || hui.browser.webkit) {
 			this.private = document.createElement('div');
 			this.private.className='private';
 			this.private.onclick = function() {
@@ -156,12 +156,12 @@ OO.Editor.prototype = {
 	
 	enableWebNodeEditing : function() {
 		if (this.webnodes) {return;}
-		this.webnodes = $$('.webnode');
+		this.webnodes = hui.get.byClass(document.body,'webnode');
 		var self = this;
-		this.webnodes.each(function(node) {
-			node.observe('click',function(e) {
+		hui.each(this.webnodes,function(node) {
+			hui.listen(node,'click',function(e) {
 				if (!self.active) return;
-				e.stop();
+				hui.stop(e);
 				self.showNodePanel(node);
 			})
 		})
@@ -170,12 +170,12 @@ OO.Editor.prototype = {
 	showNodePanel : function(node) {
 		this.activeNodeId = node.id.split('-')[1];
 		if (!this.nodePanel) {
-			var p = this.nodePanel = ui.BoundPanel.create({width:220});
-			p.add(ui.Button.create({name:'goToNode',title:'Gå til »',small:true,rounded:true}));
-			p.add(ui.Button.create({name:'editNodeText',title:'Rediger tekst',small:true,rounded:true}));
-			p.add(ui.Button.create({name:'moveNodeUp',title:'Flyt til venstre',small:true,rounded:true}));
-			p.add(ui.Button.create({name:'moveNodeDown',title:'Flyt til højre',small:true,rounded:true}));
-			p.add(ui.Button.create({name:'cancelNodePanel',title:'Luk',small:true,rounded:true}));
+			var p = this.nodePanel = hui.ui.BoundPanel.create({});
+			p.add(hui.ui.Button.create({name:'goToNode',title:'Gå til »',small:true,rounded:true}));
+			p.add(hui.ui.Button.create({name:'editNodeText',title:'Rediger tekst',small:true,rounded:true}));
+			p.add(hui.ui.Button.create({name:'moveNodeUp',title:'Flyt til venstre',small:true,rounded:true}));
+			p.add(hui.ui.Button.create({name:'moveNodeDown',title:'Flyt til højre',small:true,rounded:true}));
+			p.add(hui.ui.Button.create({name:'cancelNodePanel',title:'Luk',small:true,rounded:true}));
 		}
 		this.nodePanel.position(node);
 		this.nodePanel.show();
@@ -183,12 +183,12 @@ OO.Editor.prototype = {
 	$click$editNodeText : function() {
 		this.nodePanel.hide();
 		var id = this.activeNodeId;
-		new OO.Editor.TextEditor({element:$('node-'+id),$textChanged:function(text) {
+		new OO.Editor.TextEditor({element:hui.get('node-'+id),$textChanged:function(text) {
 			CorePublishing.updateWebNode(id,text);
 		}});
 	},
 	$click$goToNode : function() {
-		document.location=$('node-'+this.activeNodeId).href+'&edit=true';
+		document.location=hui.get('node-'+this.activeNodeId).href+'&edit=true';
 	},
 	$click$cancelNodePanel : function() {
 		if (this.nodePanel) {
@@ -214,10 +214,10 @@ OO.Editor.prototype = {
 	openTemplateWindow : function() {
 		if (!this.templatePanel) {
 			var category = this.templateCategories[0].value;
-			this.templatePanel = In2iGui.Window.create({title:'Skift design',variant:'dark',width:550});
-			var c = In2iGui.Columns.create();
-			var s = In2iGui.Selection.create({name:'templateCategories'});
-			var tp = In2iGui.Picker.create({name:'templatePicker',itemWidth:92,itemHeight:120,itemsVisible:4});
+			this.templatePanel = hui.ui.Window.create({title:'Skift design',variant:'dark',width:550});
+			var c = hui.ui.Columns.create();
+			var s = hui.ui.Selection.create({name:'templateCategories'});
+			var tp = hui.ui.Picker.create({name:'templatePicker',itemWidth:92,itemHeight:120,itemsVisible:4});
 			tp.setObjects(this.templates[category]);
 			tp.setValue(OnlineObjects.page.design);
 			c.addToColumn(0,s);
@@ -229,13 +229,13 @@ OO.Editor.prototype = {
 		}
 		this.templatePanel.show();
 	},
-	$selectionChanged$templatePicker : function(value) {
+	$select$templatePicker : function(value) {
 		var path = OnlineObjects.appContext+'/designs/'+value+'/css/style.css';
-		$('pageDesign').setAttribute('href',path);
+		hui.get('pageDesign').setAttribute('href',path);
 		CorePublishing.changePageTemplate(OnlineObjects.page.id,value);
 	},
-	$selectionChanged$templateCategories : function(value) {
-		var p = In2iGui.get('templatePicker');
+	$select$templateCategories : function(value) {
+		var p = hui.ui.get('templatePicker');
 		if (p) {
 			p.setObjects(this.templates[value.value]);
 		}
@@ -245,13 +245,13 @@ OO.Editor.prototype = {
 	
 	buildToolBar : function() {
 		if (!this.toolbar) {
-			this.toolbarRevealer = In2iGui.RevealingToolbar.create();
+			this.toolbarRevealer = hui.ui.RevealingToolbar.create();
 			var t = this.toolbar = this.toolbarRevealer.getToolbar();
-			t.add(In2iGui.Toolbar.Icon.create({name:'newPage',icon:'common/page',overlay:'new','title':'Ny side'}));
-			t.add(In2iGui.Toolbar.Icon.create({name:'deletePage',icon:'common/page',overlay:'delete','title':'Slet side'}));
+			t.add(hui.ui.Toolbar.Icon.create({name:'newPage',icon:'common/page',overlay:'new','title':'Ny side'}));
+			t.add(hui.ui.Toolbar.Icon.create({name:'deletePage',icon:'common/page',overlay:'delete','title':'Slet side'}));
 			t.addDivider();
-			t.add(In2iGui.Toolbar.Icon.create({name:'pageProperties',icon:'common/info','title':'Info'}));
-			t.add(In2iGui.Toolbar.Icon.create({name:'changeTemplate',icon:'common/design','title':'Skift design'}));
+			t.add(hui.ui.Toolbar.Icon.create({name:'pageProperties',icon:'common/info','title':'Info'}));
+			t.add(hui.ui.Toolbar.Icon.create({name:'changeTemplate',icon:'common/design','title':'Skift design'}));
 			t.addDivider();
 			this.delegate.addToToolbar(t);
 		}
@@ -261,22 +261,22 @@ OO.Editor.prototype = {
 	
 	$click$pageProperties : function() {
 		if (!this.infoWindow) {
-			var w = this.infoWindow = ui.Window.create({title:'Sidens egenskaber',icon:'common/info',padding:5,variant:'dark',width:250});
-			var f = ui.Formula.create({name:'pageInfoForm'});
+			var w = this.infoWindow = hui.ui.Window.create({title:'Sidens egenskaber',icon:'common/info',padding:5,variant:'dark',width:250});
+			var f = hui.ui.Formula.create({name:'pageInfoForm'});
 			w.add(f);
 			var g = f.buildGroup({above:true},[
-				{type:'Text',options:{label:'Website titel',key:'siteTitle'}},
-				{type:'Text',options:{label:'Sidens titel',key:'pageTitle'}},
-				{type:'Text',options:{label:'Menupunkt',key:'nodeTitle'}},
-				{type:'Tokens',options:{label:'Nøgleord',key:'tags'}}
+				{type:'TextField',options:{label:'Website titel',key:'siteTitle'}},
+				{type:'TextField',options:{label:'Sidens titel',key:'pageTitle'}},
+				{type:'TextField',options:{label:'Menupunkt',key:'nodeTitle'}},
+				{type:'TokenField',options:{label:'Nøgleord',key:'tags'}}
 			]);
 			var b = g.createButtons({top:10});
-			b.add(ui.Button.create({name:'cancelPageInfo',text:'Annuller'}));
-			b.add(ui.Button.create({name:'savePageInfo',text:'Gem',highlighted:true}));
+			b.add(hui.ui.Button.create({name:'cancelPageInfo',text:'Annuller'}));
+			b.add(hui.ui.Button.create({name:'savePageInfo',text:'Gem',highlighted:true}));
 		}
 		var self = this;
 		CorePublishing.getPageInfo(OnlineObjects.page.id,function(data) {
-			In2iGui.get('pageInfoForm').setValues(data);
+			hui.ui.get('pageInfoForm').setValues(data);
 			self.infoWindow.show();
 		});
 	},
@@ -284,12 +284,12 @@ OO.Editor.prototype = {
 		this.infoWindow.hide();
 	},
 	$click$savePageInfo : function() {
-		var form = ui.get('pageInfoForm');
+		var form = hui.ui.get('pageInfoForm');
 		var data = form.getValues();
 		data.id = OnlineObjects.page.id;
 		CorePublishing.updatePageInfo(data,function() {
-			//$$('title')[0].innerHTML=data.pageTitle+' » '+data.siteTitle;
-			$$('div.header a.selected')[0].innerHTML = data.nodeTitle;
+			var header = hui.get.firstByClass(document.body,'header');
+			hui.get.firstByClass(header,'selected').innerHTML = data.nodeTitle;
 			form.reset();
 			this.infoWindow.hide();
 		}.bind(this));
@@ -299,8 +299,8 @@ OO.Editor.prototype = {
 	
 	$click$newPage : function() {
 		if (!this.newPagePanel) {
-			this.newPagePanel = In2iGui.Window.create({title:'Ny side',padding:0,variant:'dark'});
-			this.newPagePicker = In2iGui.Picker.create({name:'documentPicker',title:'Vælg venligst typen af side der skal oprettes',itemWidth:90,itemHeight:120,valueProperty:'simpleName'});
+			this.newPagePanel = hui.ui.Window.create({title:'Ny side',padding:0,variant:'dark'});
+			this.newPagePicker = hui.ui.Picker.create({name:'documentPicker',title:'Vælg venligst typen af side der skal oprettes',itemWidth:90,itemHeight:120,valueProperty:'simpleName'});
 			this.newPagePanel.add(this.newPagePicker);
 			var self = this;
 			CorePublishing.getDocumentClasses(function(list) {
@@ -317,7 +317,7 @@ OO.Editor.prototype = {
 		this.newPagePicker.setObjects(list);
 		this.newPagePanel.show();
 	},
-	$selectionChanged$documentPicker : function(value) {
+	$select$documentPicker : function(value) {
 		CorePublishing.createWebPage(OnlineObjects.site.id,value,function(pageId) {
 			document.location='./?id='+pageId+'&edit=true';
 		});
@@ -326,7 +326,7 @@ OO.Editor.prototype = {
 	// Delete page
 	
 	$click$deletePage : function() {
-		ui.get().confirm({
+		hui.ui.get().confirm({
 			name:'confirmDeletePage',
 			title:'Er du sikker på at du vil slette siden?',
 			text:'Handlingen kan ikke fortrydes og siden kan ikke genskabes',
@@ -344,9 +344,9 @@ OO.Editor.prototype = {
 				},
 				errorHandler : function(msg,e) {
 					if (e.code=='lastPage') {
-						ui.showMessage({text:'Den sidste side kan ikke slettes',duration:3000});
+						hui.ui.showMessage({text:'Den sidste side kan ikke slettes',duration:3000});
 					} else {
-						ui.showMessage({text:'Der skete en ukendt fejl',duration:3000});
+						hui.ui.showMessage({text:'Der skete en ukendt fejl',duration:3000});
 					}
 				}
 			}
@@ -393,18 +393,19 @@ OO.Editor.TextEditor = function(options) {
 
 OO.Editor.TextEditor.prototype.activate = function() {
 	var e = this.options.element;
-	var field = this.field = new Element('input');
-	field.setStyle({width:(e.getWidth()+30)+'px',textAlign:'center'});
+	var field = this.field = hui.build('input');
+	hui.style.set(field,{width:((e.clientWidth || e.offsetWidth)+30)+'px',textAlign:'center'});
 	e.style.display='none';
 	this.field.value = this.original = e.innerHTML;
-	n2i.copyStyle(e,field,['fontSize','color','backgroundColor','lineHeight','fontFamily','textTransform']);
-	this.field.setStyle({border:'none',textAlign:'center'});
+	hui.style.copy(e,field,['font-size','color','background-color','line-height','font-family','text-transform']);
+	hui.style.set(this.field,{border:'none',textAlign:'center'});
 	e.parentNode.insertBefore(field,e);
 	field.focus();
 	field.select();
 	this.field.onblur = this.deactivate.bind(this);
-	this.field.observe('keydown',function(e) {
-		if (n2i.isReturnKey(e)) {
+	hui.listen(this.field,'keydown',function(e) {
+		e = hui.event(e);
+		if (e.returnKey) {
 			this.deactivate();
 		}
 	}.bind(this));
@@ -412,14 +413,14 @@ OO.Editor.TextEditor.prototype.activate = function() {
 
 OO.Editor.TextEditor.prototype.deactivate = function() {
 	var value = this.field.value;
-	if (!n2i.isEmpty(value)) {
+	if (!hui.isBlank(value)) {
 		this.options.element.innerHTML = value;
 	}
 	this.field.style.display='none';
 	this.options.element.style.display='';
 	this.field.parentNode.removeChild(this.field);
 	delete(this.field);
-	if (!n2i.isEmpty(value) && value!==this.original) {
+	if (!hui.isBlank(value) && value!==this.original) {
 		if (this.options['$textChanged']) {
 			this.options.$textChanged(value,this.options);
 		}

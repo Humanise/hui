@@ -21,6 +21,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -30,8 +31,6 @@ import org.hibernate.exception.DataException;
 import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.proxy.AbstractLazyInitializer;
 import org.hibernate.proxy.HibernateProxy;
-
-import sun.font.LayoutPathImpl.EndType;
 
 import com.google.common.collect.Lists;
 
@@ -66,6 +65,10 @@ public class ModelService {
 			log.fatal("Could not create session factory", t);
 			throw new ExceptionInInitializerError(t);
 		}
+	}
+	
+	public static SessionFactory getSessionfactory() {
+		return sessionFactory;
 	}
 
 	protected ModelService() {
@@ -222,7 +225,7 @@ public class ModelService {
 		return getSession().isDirty();
 	}
 
-	public void createItem(Item item, Privileged privileged, Session session) throws ModelException {
+	private void createItem(Item item, Privileged privileged, Session session) throws ModelException {
 		if (!item.isNew()) {
 			throw new ModelException("Tried to create an already created item!");
 		}
@@ -319,7 +322,7 @@ public class ModelService {
 
 	public <T extends Entity> T get(Class<T> entityClass, Long id, Privileged privileged) throws ModelException {
 		dk.in2isoft.onlineobjects.core.Query<T> query = dk.in2isoft.onlineobjects.core.Query.of(entityClass);
-		query.withPriviledged(privileged,securityService.getPublicUser());
+		query.withPrivileged(privileged,securityService.getPublicUser());
 		query.withIds(id);
 		List<T> result = list(query);
 		if (!result.isEmpty()) {
@@ -328,16 +331,18 @@ public class ModelService {
 		return null;
 	}
 
-	public void createRelation(Entity parent, Entity child, Privileged privileged) throws ModelException {
+	public Relation createRelation(Entity parent, Entity child, Privileged privileged) throws ModelException {
 		Relation relation = new Relation(parent, child);
 		createItem(relation, privileged);
+		return relation;
 	}
 
-	public void createRelation(Entity parent, Entity child, String kind, Privileged privileged)
+	public Relation createRelation(Entity parent, Entity child, String kind, Privileged privileged)
 			throws ModelException {
 		Relation relation = new Relation(parent, child);
 		relation.setKind(kind);
 		createItem(relation, privileged);
+		return relation;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -507,6 +512,16 @@ public class ModelService {
 		Query q = query.createItemQuery(getSession());
 		return new Results<T>(q.scroll());
 	}
+	
+	public List<?> querySQL(String sql) throws ModelException {
+		try {
+			SQLQuery query = getSession().createSQLQuery(sql);
+			return query.list();
+		} catch (HibernateException e) {
+			
+		}
+		return null;
+	}
 
 	@SuppressWarnings("unchecked")
 	public <T> List<T> list(ItemQuery<T> query) {
@@ -588,7 +603,7 @@ public class ModelService {
 
 	public List<Entity> getChildren(Entity item, String relationKind, Privileged priviledged) throws ModelException {
 		dk.in2isoft.onlineobjects.core.Query<Entity> q = dk.in2isoft.onlineobjects.core.Query.of(Entity.class);
-		q.withPriviledged(priviledged).withParent(item,relationKind);
+		q.withPrivileged(priviledged).withParent(item,relationKind);
 		return list(q);
 	}
 

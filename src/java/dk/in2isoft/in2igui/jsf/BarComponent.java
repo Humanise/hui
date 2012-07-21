@@ -13,7 +13,7 @@ import dk.in2isoft.commons.jsf.TagWriter;
 @FacesComponent(value=BarComponent.TYPE)
 public class BarComponent extends AbstractComponent {
 
-	public static final String TYPE = "in2igui.bar";
+	public static final String TYPE = "hui.bar";
 
 	private String variant;
 	private String name;
@@ -44,21 +44,21 @@ public class BarComponent extends AbstractComponent {
 
 	@Override
 	public void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
-		writer.startDiv("in2igui_bar");
-		writer.startDiv("in2igui_bar_body");
+		writer.startDiv("hui_bar");
+		writer.startDiv("hui_bar_body");
 		if (contentWidth>0) {
 			writer.withStyle(new StyleBuilder().withWidth(contentWidth).withMargin("0 auto"));
 		}
 		UIComponent right = getFacet("right");
 		if (right!=null) {
-			writer.startDiv("in2igui_bar_right");
+			writer.startDiv("hui_bar_right");
 			right.encodeAll(context);
 			writer.endDiv();
 		}
-		writer.startDiv("in2igui_bar_left");
+		writer.startDiv("hui_bar_left");
 		/*
 		writer.startScopedScript();
-		writer.write("new In2iGui.Button({element:'");
+		writer.write("new hui.ui.Button({element:'");
 		writer.write(id);
 		writer.write("'");
 		if (name!=null) {

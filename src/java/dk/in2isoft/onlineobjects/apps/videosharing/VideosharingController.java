@@ -23,22 +23,22 @@ public class VideosharingController extends ApplicationController {
 	
 	public VideosharingController() {
 		super("videosharing");
-		addJsfMatcher("users/<username>", "profile/index.xhtml");
-		addJsfMatcher("users", "users.xhtml");
-		addJsfMatcher("charts", "charts.xhtml");
-		addJsfMatcher("explore", "explore.xhtml");
-		addJsfMatcher("mobile", "mobile.xhtml");
-		addJsfMatcher("downloads", "downloads.xhtml");
-		addJsfMatcher("contest", "contest.xhtml");
-		addJsfMatcher("contestinfo", "contestinfo.xhtml");
-		addJsfMatcher("labels", "labels.xhtml");
-		addJsfMatcher("rating", "rating.xhtml");
-		addJsfMatcher("star", "star.xhtml");
-		addJsfMatcher("news", "news.xhtml");
-		addJsfMatcher("prize", "prize.xhtml");
-		addJsfMatcher("areyouastar", "areyouastar.xhtml");
-		addJsfMatcher("users/<username>/<integer>", "profile/video/index.xhtml");
-		addJsfMatcher("", "index.xhtml");
+		addJsfMatcher("/users/<username>", "profile/index.xhtml");
+		addJsfMatcher("/users", "users.xhtml");
+		addJsfMatcher("/charts", "charts.xhtml");
+		addJsfMatcher("/explore", "explore.xhtml");
+		addJsfMatcher("/mobile", "mobile.xhtml");
+		addJsfMatcher("/downloads", "downloads.xhtml");
+		addJsfMatcher("/contest", "contest.xhtml");
+		addJsfMatcher("/contestinfo", "contestinfo.xhtml");
+		addJsfMatcher("/labels", "labels.xhtml");
+		addJsfMatcher("/rating", "rating.xhtml");
+		addJsfMatcher("/star", "star.xhtml");
+		addJsfMatcher("/news", "news.xhtml");
+		addJsfMatcher("/prize", "prize.xhtml");
+		addJsfMatcher("/areyouastar", "areyouastar.xhtml");
+		addJsfMatcher("/users/<username>/<integer>", "profile/video/index.xhtml");
+		addJsfMatcher("/", "index.xhtml");
 	}
 	
 	@Override

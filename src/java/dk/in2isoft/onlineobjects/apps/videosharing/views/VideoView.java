@@ -65,7 +65,7 @@ public class VideoView extends AbstractManagedBean implements InitializingBean {
 		videoInfo = videoService.getInfo(video,getRequest());
 		
 		if (!isPublicUser()) {
-			Query<Rating> q = Query.of(Rating.class).withParent(video).withPriviledged(getRequest().getSession());
+			Query<Rating> q = Query.of(Rating.class).withParent(video).withPrivileged(getRequest().getSession());
 			rating = modelService.search(q).getFirst();
 		}
 
@@ -80,7 +80,7 @@ public class VideoView extends AbstractManagedBean implements InitializingBean {
 			averageRating = averageRating/(double)ratings.size();
 		}
 
-		Query<Video> usersVideosQuery = Query.of(Video.class).withPriviledged(user).withPaging(0, 4).orderByCreated().descending();
+		Query<Video> usersVideosQuery = Query.of(Video.class).withPrivileged(user).withPaging(0, 4).orderByCreated().descending();
 		this.usersVideos = videoService.buildVideoInfoList(usersVideosQuery,getRequest());
 
 		Query<Video> relatedVideosQuery = Query.of(Video.class);

@@ -39,7 +39,7 @@ OO.ImageGallery.prototype = {
 	addBehaviour : function() {
 		var self = this;
 		for (var i=0; i < this.images.length; i++) {
-			var tag = $('image-'+this.images[i].id);
+			var tag = hui.get('image-'+this.images[i].id);
 			tag.imageGalleryIndex = i;
 			tag.onclick = function() {
 				if (!self.isActiveEditor()) {
@@ -53,7 +53,7 @@ OO.ImageGallery.prototype = {
 	},
 	getViewer : function() {
 		if (!this.viewer) {
-			this.viewer = In2iGui.ImageViewer.create();
+			this.viewer = hui.ui.ImageViewer.create();
 			this.viewer.listen(this);
 		}
 		if (this.dirty) {
@@ -68,6 +68,6 @@ OO.ImageGallery.prototype = {
 	}
 }
 
-document.observe('dom:loaded',function() {
+hui.onReady(function() {
 	OO.ImageGallery.getInstance().ignite();
 });

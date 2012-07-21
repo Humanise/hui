@@ -5,6 +5,8 @@ import java.io.IOException;
 import javax.faces.component.FacesComponent;
 import javax.faces.context.FacesContext;
 
+import org.apache.commons.lang.StringUtils;
+
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.ComponentUtil;
 import dk.in2isoft.commons.jsf.TagWriter;
@@ -39,9 +41,12 @@ public class ScriptSetupComponent<T> extends AbstractComponent {
 		Request request = ComponentUtil.getRequest();
 		writer.write("oo.baseContext = '").write(request.getBaseContext()).write("';").newLine();
 		writer.write("oo.baseDomainContext = '").write(request.getBaseDomainContext()).write("';").newLine();
-		writer.write("oo.appContext = '").write(request.getLocalContextPath()).write("';").newLine();
+		writer.write("oo.appContext = '").write(request.getLocalContext()).write("';").newLine();
 		writer.write("oo.domainIsIp = '").write(request.isIP()).write("';").newLine();
 		writer.write("oo.user = {userName:'").write(request.getSession().getUser().getUsername()).write("'};").newLine();
+		if (StringUtils.isNotBlank(request.getLanguage())) {
+			writer.write("oo.language = '").write(request.getLanguage()).write("';").newLine();
+		}
 		writer.endElement("script").newLine();
 	}
 }

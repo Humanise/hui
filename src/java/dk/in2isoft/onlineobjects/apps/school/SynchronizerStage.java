@@ -354,7 +354,7 @@ public class SynchronizerStage extends PipelineStageAdapter {
 		context.info(this, "Searching for events to delete");
 		ModelService model = Core.getInstance().getModel();
 		model.commit();
-		Query<Event> query = Query.of(Event.class).withPriviledged(publicUser).withFieldValueLessThan("updated", startTime).withFieldValueMoreThan(
+		Query<Event> query = Query.of(Event.class).withPrivileged(publicUser).withFieldLessThan("updated", startTime).withFieldMoreThan(
 				"starttime", startTime);
 		if (maxDelete>0) {
 			query.withPaging(0, maxDelete);

@@ -12,7 +12,6 @@ import dk.in2isoft.in2igui.FileBasedInterface;
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
 import dk.in2isoft.onlineobjects.apps.ApplicationSession;
 import dk.in2isoft.onlineobjects.core.ContentNotFoundException;
-import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SecurityException;
@@ -43,19 +42,21 @@ public class CommunityController extends ApplicationController {
 	private FileService fileService; 
 	private GraphService graphService;
 	private SecurityService securityService;
+	private WebModelService webModelService;
 
 	private static CommunityDAO dao = new CommunityDAO();
 
 	public CommunityController() {
 		super("community");
-		addJsfMatcher("about", "about/index.xhtml");
-		addJsfMatcher("<username>/remote.html", "user/remote.xhtml");
-		addJsfMatcher("<username>/images.html", "user/images.xhtml");
-		addJsfMatcher("<username>/images/<integer>.html", "user/image.xhtml");
-		addJsfMatcher("<username>", "user/index.xhtml");
-		addJsfMatcher("", "index.xhtml");
-		addJsfMatcher("recoverpassword.html", "recoverpassword.xhtml");
-		addJsfMatcher("invitation.html", "invitation.xhtml");
+		addJsfMatcher("/about", "about/index.xhtml");
+		addJsfMatcher("/<username>/remote.html", "user/remote.xhtml");
+		addJsfMatcher("/<username>/images.html", "user/images.xhtml");
+		addJsfMatcher("/<username>/images/<integer>.html", "user/image.xhtml");
+		addJsfMatcher("/<username>", "user/index.xhtml");
+		addJsfMatcher("/", "index.xhtml");
+		addJsfMatcher("/recoverpassword.html", "recoverpassword.xhtml");
+		addJsfMatcher("/invitation.html", "invitation.xhtml");
+		addJsfMatcher("/invitation.html", "invitation.xhtml");
 	}
 
 	@Override
@@ -72,6 +73,8 @@ public class CommunityController extends ApplicationController {
 		String subDomain = request.getSubDomain();
 		if (LangUtil.isDefined(subDomain) && !"www".equals(subDomain)) {
 			handleUser(request);
+		} else if (request.testLocalPathStart("favicon.ico")) {
+			throw new ContentNotFoundException();
 		} else if (request.testLocalPathStart("model.action")) {
 			model(request);
 		} else if (request.testLocalPathStart("iphone")) {
@@ -92,7 +95,7 @@ public class CommunityController extends ApplicationController {
 	private void handleUser(Request request) throws IOException, EndUserException {
 		String subDomain = request.getSubDomain();
 		if (LangUtil.isDefined(subDomain) && !"www".equals(subDomain)) {
-			User siteUser = Core.getInstance().getModel().getUser(subDomain);
+			User siteUser = modelService.getUser(subDomain);
 			if (siteUser == null) {
 				throw new EndUserException("The user does not excist!");
 			}
@@ -105,7 +108,7 @@ public class CommunityController extends ApplicationController {
 				displayUserSite(siteUser, request);
 			}
 		} else {
-			User siteUser = Core.getInstance().getModel().getUser(request.getLocalPath()[0]);
+			User siteUser = modelService.getUser(request.getLocalPath()[0]);
 			if (siteUser == null) {
 				throw new ContentNotFoundException("The user does not excist!");
 			}
@@ -131,6 +134,8 @@ public class CommunityController extends ApplicationController {
 					privateSpaceController.displayImages(request);
 				} else if (request.testLocalPathFull(null, "private", "bookmarks.gui")) {
 					privateSpaceController.displayBookmarks(request);
+				} else if (request.testLocalPathFull(null, "private", "bookmarks_alone.gui")) {
+					privateSpaceController.displayBookmarksAlone(request);
 				} else if (request.testLocalPathFull(null, "private", "integration.gui")) {
 					privateSpaceController.displayIntegration(request);
 				} else if (request.testLocalPathFull(null, "private", "bookmarks", "import.action")) {
@@ -163,7 +168,6 @@ public class CommunityController extends ApplicationController {
 	}
 
 	private void displayUserSite(User user, Request request) throws EndUserException {
-		WebModelService webModelService = Core.getInstance().getBean(WebModelService.class);
 		WebSite site = webModelService.getUsersWebSite(user);
 		if (site == null) {
 			throw new ContentNotFoundException("The user does not have a web site!");
@@ -308,5 +312,9 @@ public class CommunityController extends ApplicationController {
 	
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
+	}
+	
+	public void setWebModelService(WebModelService webModelService) {
+		this.webModelService = webModelService;
 	}
 }

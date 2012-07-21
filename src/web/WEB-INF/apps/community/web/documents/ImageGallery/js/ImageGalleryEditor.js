@@ -9,11 +9,11 @@ OO.Editor.ImageGallery = function() {
 	this.cellDims = [];
 	this.imagesLoaded = false;
 	this.busy = false;
-	this.initialUpload = n2i.location.hasHash('firstRun');
+	this.initialUpload = hui.location.hasHash('firstRun');
 	var self = this;
-	In2iGui.get().listen(this);
-	In2iGui.Editor.get().addPartController('header','Overskrift',In2iGui.Editor.Header);
-	In2iGui.Editor.get().addPartController('html','Tekst',In2iGui.Editor.Html);
+	hui.ui.listen(this);
+	hui.ui.Editor.get().addPartController('header','Overskrift',hui.ui.Editor.Header);
+	hui.ui.Editor.get().addPartController('html','Tekst',hui.ui.Editor.Html);
 }
 
 OO.Editor.ImageGallery.getInstance = function() {
@@ -25,12 +25,12 @@ OO.Editor.ImageGallery.getInstance = function() {
 
 OO.Editor.ImageGallery.prototype = {
 	activate : function() {
-		this.grid = $$('.grid')[0];
+		this.grid = hui.get.firstByClass(document.body,'grid');
 		if (!this.imagesLoaded) {
 			this.refreshImages();
 			if (this.initialUpload) {
 				this.$click$addImages();
-				n2i.location.clearHash();
+				hui.location.clearHash();
 			}
 		}
 	},
@@ -51,11 +51,11 @@ OO.Editor.ImageGallery.prototype = {
 		return this.editor.active;
 	},
 	addToToolbar : function(toolbar) {
-		toolbar.add(ui.Toolbar.Icon.create({name:'addImages',icon:'common/image','overlay':'new','title':'Tilføj billeder'}));
+		toolbar.add(hui.ui.Toolbar.Icon.create({name:'addImages',icon:'common/image','overlay':'new','title':'Tilføj billeder'}));
 		toolbar.addDivider();
-		toolbar.add(ui.Toolbar.Icon.create({name:'changeFrame',icon:'common/frame','title':'Skift ramme'}));
-		toolbar.add(ui.Toolbar.Icon.create({name:'increaseSize',icon:'common/larger','title':'Større'}));
-		toolbar.add(ui.Toolbar.Icon.create({name:'decreaseSize',icon:'common/smaller','title':'Mindre'}));
+		toolbar.add(hui.ui.Toolbar.Icon.create({name:'changeFrame',icon:'common/frame','title':'Skift ramme'}));
+		toolbar.add(hui.ui.Toolbar.Icon.create({name:'increaseSize',icon:'common/larger','title':'Større'}));
+		toolbar.add(hui.ui.Toolbar.Icon.create({name:'decreaseSize',icon:'common/smaller','title':'Mindre'}));
 	},
 	$click$changeFrame : function() {
 		this.openFrameWindow();
@@ -67,7 +67,7 @@ OO.Editor.ImageGallery.prototype = {
 		var ig = OO.ImageGallery.getInstance();
 		ig.clearImages();
 		var ids = [];
-		this.images.each(function(img) {
+		hui.each(this.images,function(img) {
 			ids.push(img.image.id);
 			ig.addImage(img.image.id);			
 		});
@@ -75,13 +75,13 @@ OO.Editor.ImageGallery.prototype = {
 	},
 	refreshImages : function() {
 		this.busy=true;
-		In2iGui.showMessage('Indlæser billeder...');
+		hui.ui.showMessage('Indlæser billeder...');
 		ImageGalleryDocument.listImages(OnlineObjects.content.id,
 			function(data) {
 				this.parseImages(data);
 				this.updateImages();
 				this.imagesLoaded = true;
-				In2iGui.hideMessage();
+				hui.ui.hideMessage();
 				this.busy=false;
 			}.bind(this)
 		);
@@ -89,7 +89,7 @@ OO.Editor.ImageGallery.prototype = {
 	parseImages : function(images) {
 		OO.ImageGallery.getInstance().clearImages();
 		this.images = [];
-		images.each(function(image,i) {
+		hui.each(images,function(image,i) {
 			var imageCtrl = new OO.Editor.ImageGallery.Image(image,i,this);
 			this.images.push(imageCtrl);
 			OO.ImageGallery.getInstance().addImage(image.id);			
@@ -109,7 +109,7 @@ OO.Editor.ImageGallery.prototype = {
 		this.rebuildSize();
 	},
 	rebuildSize : function() {
-		this.images.each(function(image) {
+		hui.each(this.images,function(image) {
 			image.rebuild();
 		});
 		this.updateImages();
@@ -122,32 +122,32 @@ OO.Editor.ImageGallery.prototype = {
 			this.grid.removeChild(this.grid.childNodes[i]);
 		};
 		this.grid.className='grid grid_'+this.columns;
-		this.grid.setStyle(
-			{width:((this.imageWidth+80)*this.columns)+'px',
-			 marginLeft:((this.imageWidth+80)*this.columns/2*-1)+'px'});
+		hui.style.set(this.grid,{
+			width:((this.imageWidth+80)*this.columns)+'px',
+			marginLeft:((this.imageWidth+80)*this.columns/2*-1)+'px'
+		});
 		var row;
-		this.images.each(function(img,i) {
+		hui.each(this.images,function(img,i) {
 			if (i % this.columns == 0) {
-				row = new Element('div');
-				this.grid.appendChild(row);
+				row = hui.build('div',{parent:this.grid});
 			}
-			var cell = new Element('div',{'class':'cell'});
-			cell.setStyle({width:(this.imageWidth+80)+'px',height:(this.imageHeight+80)+'px'});
-			cell.insert(img.frame);
-			row.insert(cell);			
+			var cell = hui.build('div',{'class':'cell'});
+			hui.style.set(cell,{width:(this.imageWidth+80)+'px',height:(this.imageHeight+80)+'px'});
+			cell.appendChild(img.frame);
+			row.appendChild(cell);			
 		}.bind(this))
 		this.registerCells();
 	},
 	registerCells : function() {
-		this.cells = this.grid.select('.cell');
+		this.cells = hui.get.byClass(this.grid,'cell');
 		this.cellDims = [];
-		this.cells.each(function(cell) {
-			var pos = cell.cumulativeOffset();
+		hui.each(this.cells,function(cell) {
+			var pos = hui.position.get(cell);
 			this.cellDims.push({
 				left: pos.left,
-				right: pos.left+cell.getWidth(),
+				right: pos.left+cell.clientWidth,
 				top: pos.top,
-				bottom: pos.top+cell.getHeight()
+				bottom: pos.top+cell.clientHeight
 			});
 		}.bind(this));
 	},
@@ -206,12 +206,12 @@ OO.Editor.ImageGallery.prototype = {
 	// Multi upload
 	$click$addImages : function() {
 		if (!this.addImagesPanel) {
-			var buttons = ui.Buttons.create({top: 10,align:'center'});
-			this.cancelUploadButton = ui.Button.create({name:'cancelAddImages',title:'Afslut'});
+			var buttons = hui.ui.Buttons.create({top: 10,align:'center'});
+			this.cancelUploadButton = hui.ui.Button.create({name:'cancelAddImages',title:'Afslut'});
 			buttons.add(this.cancelUploadButton);
-			var chooser = ui.Button.create({title:'Vælg billeder...',highlighted:true});
+			var chooser = hui.ui.Button.create({title:'Vælg billeder...',highlighted:true});
 			buttons.add(chooser);
-			var up = this.uploader = ui.Upload.create({
+			var up = this.uploader = hui.ui.Upload.create({
 				name:'upload',
 				widget:chooser,
 				url:'uploadImage',
@@ -220,7 +220,7 @@ OO.Editor.ImageGallery.prototype = {
 				parameters:{'contentId':OnlineObjects.content.id},
 				placeholder:{title:'Vælg billeder på din computer',text:'Du kan vælge en eller flere billedfiler på din lokale computer...'}
 			});
-			var box = ui.Box.create({width:400,padding:10,absolute:true,modal:true});
+			var box = hui.ui.Box.create({width:400,padding:10,absolute:true,modal:true});
 			box.add(up);
 			box.add(buttons);
 			box.addToDocument();
@@ -250,8 +250,8 @@ OO.Editor.ImageGallery.prototype = {
 	// Style
 	openFrameWindow : function() {
 		if (!this.styleWindow) {
-			this.styleWindow = In2iGui.Window.create({title:'Skift ramme',variant:'dark',width:400});
-			var p = In2iGui.Picker.create({name:'framePicker',title:'Vælg billedernes ramme',itemWidth:90,itemHeight:90,shadow:false});
+			this.styleWindow = hui.ui.Window.create({title:'Skift ramme',variant:'dark',width:400});
+			var p = hui.ui.Picker.create({name:'framePicker',title:'Vælg billedernes ramme',itemWidth:90,itemHeight:90,shadow:false});
 			p.setObjects([
 				{value:'elegant',title:'Elegant',image:OnlineObjects.appContext+'/documents/ImageGallery/frames/elegant/thumbnail.png'},
 				{value:'paper',title:'Papir',image:OnlineObjects.appContext+'/documents/ImageGallery/frames/paper/thumbnail.png'},
@@ -262,7 +262,7 @@ OO.Editor.ImageGallery.prototype = {
 		}
 		this.styleWindow.show();
 	},
-	$selectionChanged$framePicker : function(value) {
+	$select$framePicker : function(value) {
 		OO.ImageGallery.getInstance().style = value;
 		for (var i=0; i < this.images.length; i++) {
 			this.images[i].setStyle(value);
@@ -280,7 +280,7 @@ OO.Editor.ImageGallery.prototype = {
 	},
 	deleteImage : function(image) {
 		this.imageToDelete = image;
-		In2iGui.get().confirm({
+		hui.ui.confirm({
 			name:'confirmDeleteImage',
 			title:'Er du sikker på at du vil slette billedet?',
 			emotion:'gasp',
@@ -293,11 +293,11 @@ OO.Editor.ImageGallery.prototype = {
 	showImageEditorPanel : function(photo) {
 		this.latestEditedPhoto = photo;
 		var panel = this.getImageEditorPanel();
-		ui.get('imageEditorTitle').setValue(photo.image.name || '');
+		hui.ui.get('imageEditorTitle').setValue(photo.image.name || '');
 		var desc = OO.Editor.getEntityProperty(photo.image,'item.enity.image.description');
-		ui.get('imageEditorDescription').setValue(desc || '');
+		hui.ui.get('imageEditorDescription').setValue(desc || '');
 		var tags = OO.Editor.getEntityProperties(photo.image,'common.tag');
-		ui.get('imageEditorTags').setValue(tags);
+		hui.ui.get('imageEditorTags').setValue(tags);
 		//ui.get('imageEditorLocation').reset();
 		panel.position(photo.frame.getElementsByTagName('img')[0]);
 		panel.show();
@@ -307,19 +307,19 @@ OO.Editor.ImageGallery.prototype = {
 	},
 	getImageEditorPanel : function() {
 		if (!this.imageEditorPanel) {
-			var panel = In2iGui.BoundPanel.create({top:50,left:50});
-			var formula = In2iGui.Formula.create();
+			var panel = hui.ui.BoundPanel.create({top:50,left:50});
+			var formula = hui.ui.Formula.create();
 			panel.add(formula);
 			var group = formula.createGroup();
 
-			group.add(In2iGui.Formula.Text.create({name:'imageEditorTitle',label:'Titel'}));
-			group.add(In2iGui.Formula.Text.create({name:'imageEditorDescription',label:'Beskrivelse',lines:4}));
-			group.add(In2iGui.Formula.Tokens.create({name:'imageEditorTags',label:'Nøgleord'}));
-			//group.add(In2iGui.Formula.Location.create({name:'imageEditorLocation',label:'Lokation'}));
-			var buttons = In2iGui.Buttons.create();
-			buttons.add(In2iGui.Button.create({name:'deleteImageEditor',text:'Slet'}));
-			buttons.add(In2iGui.Button.create({name:'cancelImageEditor',text:'Annuller'}));
-			buttons.add(In2iGui.Button.create({name:'saveImageEditor',text:'Gem',highlighted:true}));
+			group.add(hui.ui.TextField.create({name:'imageEditorTitle',label:'Titel'}));
+			group.add(hui.ui.TextField.create({name:'imageEditorDescription',label:'Beskrivelse',lines:4}));
+			group.add(hui.ui.TokenField.create({name:'imageEditorTags',label:'Nøgleord'}));
+			//group.add(hui.ui.Formula.Location.create({name:'imageEditorLocation',label:'Lokation'}));
+			var buttons = hui.ui.Buttons.create();
+			buttons.add(hui.ui.Button.create({name:'deleteImageEditor',text:'Slet',small:true}));
+			buttons.add(hui.ui.Button.create({name:'cancelImageEditor',text:'Annuller',small:true}));
+			buttons.add(hui.ui.Button.create({name:'saveImageEditor',text:'Gem',highlighted:true,small:true}));
 			group.add(buttons);
 			this.imageEditorPanel = panel;
 		}
@@ -329,9 +329,9 @@ OO.Editor.ImageGallery.prototype = {
 		this.hideImageEditorPanel();
 	},
 	$click$saveImageEditor : function() {
-		var title = In2iGui.get('imageEditorTitle').getValue();
-		var desc = In2iGui.get('imageEditorDescription').getValue();
-		var tags = In2iGui.get('imageEditorTags').getValue();
+		var title = hui.ui.get('imageEditorTitle').getValue();
+		var desc = hui.ui.get('imageEditorDescription').getValue();
+		var tags = hui.ui.get('imageEditorTags').getValue();
 		var photo = this.latestEditedPhoto;
 		var self = this;
 
@@ -387,23 +387,22 @@ OO.Editor.ImageGallery.Image.prototype = {
 			this.dragger.parentNode.removeChild(this.dragger);
 			this.dragger = null;
 		}
-		this.img = this.frame.select('img')[0];
+		this.img = hui.get.firstByTag(this.frame,'img');
 		this.addBehavior();
 	},
 	build : function() {
-		var frame = new Element('div',{'class':'image image_frame '+this.style});
-		frame.setStyle({
+		var frame = hui.build('div',{'class':'image image_frame '+this.style});
+		hui.style.set(frame,{
 			marginLeft : Math.round((this.editor.imageWidth-this.width)/2)+'px',
 			marginTop : Math.round((this.editor.imageHeight-this.height)/2)+'px',
 			cssFloat : 'left',
 			width : (this.width+80)+'px'
 		})
-		frame.update(
-			'<div class="top"><div><div></div></div></div>'+
+		frame.innerHTML='<div class="top"><div><div></div></div></div>'+
 			'<div class="middle"><div style="width:'+this.width+'px; height:'+this.height+'px">'+
 			'<img id="image-'+this.image.id+'" src="'+OnlineObjects.baseContext+'/service/image/?id='+this.image.id+'&amp;width='+this.editor.imageWidth+'&amp;height='+this.editor.imageWidth+'" width="'+this.width+'" height="'+this.height+'"/>'+
 			'</div></div>'+
-			'<div class="bottom"><div><div></div></div></div>');
+			'<div class="bottom"><div><div></div></div></div>';
 		return frame;
 	},
 	getFrame : function() {
@@ -411,17 +410,20 @@ OO.Editor.ImageGallery.Image.prototype = {
 	},
 	addBehavior : function() {
 		var self = this;
-		this.frame.observe('mousedown',function(e) {
+		hui.listen(this.frame,'mousedown',function(e) {
 			if (!self.editor.isActive()) return;
 			self.startDrag(e);
-			e.stop();
+			hui.stop(e);
 		});
 		this.img.ondragstart = function() {return false}
 	},
 	startDrag : function(e) {
-		var pos = this.frame.cumulativeOffset();
-		this.dragState = {left:e.pointerX()-pos.left,top:e.pointerY()-pos.top};
-		if (!this.dragger) this.dragger = this.build();
+		e = hui.event(e);
+		var pos = hui.position.get(this.frame);
+		this.dragState = {left:e.getLeft()-pos.left,top:e.getTop()-pos.top};
+		if (!this.dragger) {
+			this.dragger = this.build();
+		}
 		this.dragger.style.position='absolute';
 		this.dragger.style.left=pos.left+'px';
 		this.dragger.style.top=pos.top+'px';
@@ -433,43 +435,44 @@ OO.Editor.ImageGallery.Image.prototype = {
 		document.body.onselectstart = function () { return false; };
 		this.moveListener = function(e) {self.drag(e)};
 		this.upListener = function(e) {self.endDrag(e)};
-		Event.observe(document,'mousemove',this.moveListener);
-		Event.observe(document,'mouseup',this.upListener);
+		hui.listen(document,'mousemove',this.moveListener);
+		hui.listen(document,'mouseup',this.upListener);
 		//this.drag(e);
 		this.hasDragged = false;
 	},
 	drag : function(e) {
+		e = hui.event(e);
 		if (!this.hasDragged) {
-			if (!n2i.browser.msie) {
-				n2i.animate(this.dragger,'opacity',1,0);
+			if (hui.browser.opacity) {
+				hui.animate(this.dragger,'opacity',1,0);
 			}
 			this.dragger.style.display='';
-			if (!n2i.browser.msie) {
-				n2i.animate(this.frame,'opacity',.2,500);
+			if (!hui.browser.msie) {
+				hui.animate(this.frame,'opacity',.2,500);
 			}
 			this.editor.hideImageEditorPanel();
 			this.hasDragged = true;
 		}
 		this.dragger.style.right = 'auto';
-		this.dragger.style.top = (e.pointerY()-this.dragState.top)+'px';
-		this.dragger.style.left = (e.pointerX()-this.dragState.left)+'px';
-		var found = this.editor.imageWasDragged(e.pointerY(),e.pointerX(),this.index);
+		this.dragger.style.top = (e.getTop()-this.dragState.top)+'px';
+		this.dragger.style.left = (e.getLeft()-this.dragState.left)+'px';
+		var found = this.editor.imageWasDragged(e.getTop(),e.getLeft(),this.index);
 		return false;
 	},
 	endDrag : function(e) {
-		Event.stopObserving(document,'mousemove',this.moveListener);
-		Event.stopObserving(document,'mouseup',this.upListener);
+		hui.unListen(document,'mousemove',this.moveListener);
+		hui.unListen(document,'mouseup',this.upListener);
 		var shouldReturn = this.editor.imageFinishedDragging(e,this,this.hasDragged);
-		var pos = this.frame.cumulativeOffset();
+		var pos = hui.position.get(this.frame);
 		var self = this;
-		n2i.animate(this.dragger,'top',pos.top+'px',400,{ease:n2i.ease.elastic});
-		n2i.animate(this.dragger,'left',pos.left+'px',400,{ease:n2i.ease.elastic});
+		hui.animate(this.dragger,'top',pos.top+'px',400,{ease:hui.ease.elastic});
+		hui.animate(this.dragger,'left',pos.left+'px',400,{ease:hui.ease.elastic});
 		var ender = {onComplete:function() {
 			self.dragger.style.display='none';
 		}}
-		if (!n2i.browser.msie) {
-			n2i.animate(this.frame,'opacity',1,400);
-			n2i.animate(this.dragger,'opacity',1,200,ender);
+		if (hui.browser.opacity) {
+			hui.animate(this.frame,'opacity',1,400);
+			hui.animate(this.dragger,'opacity',1,200,ender);
 		} else {
 			window.setTimeout(function() {
 			self.dragger.style.display='none';
@@ -485,6 +488,6 @@ OO.Editor.ImageGallery.Image.prototype = {
 	}
 }
 
-In2iGui.onDomReady(function() {
+hui.ui.onReady(function() {
 	new OO.Editor(OO.Editor.ImageGallery.getInstance());
 });

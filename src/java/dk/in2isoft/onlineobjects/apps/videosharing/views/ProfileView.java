@@ -51,7 +51,7 @@ public class ProfileView extends AbstractManagedBean implements InitializingBean
 		user = result.get(0).getKey();
 		image = modelService.getChild(user, Relation.KIND_SYSTEM_USER_IMAGE, Image.class);
 		
-		Query<Video> q = Query.of(Video.class).withPriviledged(user).orderByCreated().descending();
+		Query<Video> q = Query.of(Video.class).withPrivileged(user).orderByCreated().descending();
 		this.usersVideos = videoService.buildVideoInfoList(q,getRequest());
 		
 		Address address = personService.getPersonsPreferredAddress(person);

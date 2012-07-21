@@ -15,7 +15,7 @@ import dk.in2isoft.in2igui.data.VideoData;
 @FacesComponent(value=VideoPlayerComponent.TYPE)
 public class VideoPlayerComponent extends AbstractComponent {
 
-	public static final String TYPE = "in2igui.videoplayer";
+	public static final String TYPE = "hui.videoplayer";
 
 	private String name;
 	private String type;
@@ -77,7 +77,7 @@ public class VideoPlayerComponent extends AbstractComponent {
 		writer.endDiv();
 		writer.endDiv();
 		writer.startScopedScript();
-		writer.write("new In2iGui.VideoPlayer({element:'");
+		writer.write("new hui.ui.VideoPlayer({element:'");
 		writer.write(id);
 		writer.write("'");
 		if (name!=null) {
@@ -114,7 +114,7 @@ public class VideoPlayerComponent extends AbstractComponent {
 	}
 
 	public String getType(FacesContext context) {
-		return getBinding(type, "type");
+		return getExpression(type, "type");
 	}
 
 	public void setWidth(int width) {
@@ -142,6 +142,6 @@ public class VideoPlayerComponent extends AbstractComponent {
 	}
 
 	public String getSrc(FacesContext context) {
-		return getBinding(src, "src");
+		return getExpression(src, "src");
 	}
 }

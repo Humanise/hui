@@ -25,7 +25,7 @@ var controller = {
 		var info = userFormula.getValues();
 		if (info.username.length==0) {
 			return;
-			In2iGui.get().alert({title:'Brugeren findes desværre ikke!',text:'Prøv venligst igen...',emotion:'gasp'});
+			hui.ui.alert({title:'Brugeren findes desværre ikke!',text:'Prøv venligst igen...',emotion:'gasp'});
 		}
 		this.changeUser(info.username);
 	},
@@ -39,7 +39,7 @@ var controller = {
 				self.updateUser();
 				n2i.cookie.set('calendarUser',username,90);
 			} else {
-				In2iGui.get().alert({title:'Brugeren findes desværre ikke!',text:'Prøv venligst igen...',emotion:'gasp'});
+				hui.ui.alert({title:'Brugeren findes desværre ikke!',text:'Prøv venligst igen...',emotion:'gasp'});
 			}
 		});
 		

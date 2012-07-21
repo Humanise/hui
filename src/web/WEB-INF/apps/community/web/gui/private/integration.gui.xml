@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<gui xmlns="uri:In2iGui" title="Persons">
+<gui xmlns="uri:hui" title="Persons">
 	<dwr base="/dwr/">
 		<interface name="Common"/>
 		<interface name="CoreSecurity"/>
@@ -17,45 +17,40 @@
 			<button text="Log ud" icon="inset/cross" name="barLogOut"/>
 		</right>
 	</bar>
-	<structure top="30">
-		<layout>
+
+	<toolbar>
+		<icon icon="common/image" title="Billeder" name="toolImages"/>
+		<icon icon="common/person" title="Personer" name="toolPersons"/>
+		<icon icon="common/internet" title="Bogmærker" name="toolBookmarks"/>
+		<icon icon="common/settings" title="Integration" selected="true" name="toolIntegration"/>
+	</toolbar>
+
+	<div style="position: fixed; top: 90px; bottom: 0; left: 0; right: 0; padding: 10px;">
+		<structure>
 			<top>
-			<toolbar>
-				<icon icon="common/image" title="Billeder" name="toolImages"/>
-				<icon icon="common/person" title="Personer" name="toolPersons"/>
-				<icon icon="common/internet" title="Bogmærker" name="toolBookmarks"/>
-				<icon icon="common/settings" title="Integration" selected="true" name="toolIntegration"/>
-			</toolbar>
+				<toolbar>
+					<icon icon="common/user" overlay="new" title="Ny konto" name="newAccount"/>
+				</toolbar>
 			</top>
 			<middle>
-				<center padding="10">
-					<layout style="box">
-						<top>
-							<toolbar>
-								<icon icon="common/user" overlay="new" title="Ny konto" name="newAccount"/>
-							</toolbar>
-						</top>
-						<middle>
-							<left>
-								<selection value="accounts">
-									<item icon="common/user" title="Alle konti" value="accounts"/>
-								</selection>
-							</left>
-							<center>
-								<overflow>
-									<list name="accountsList" source="accountsSource">
-										<column title="Brugernavn" key="username"/>
-										<column title="Domæne" key="domain"/>
-									</list>
-								</overflow>
-							</center>
-						</middle>
-						<bottom/>
-					</layout>
+				<left>
+					<selection value="accounts">
+						<item icon="common/user" title="Alle konti" value="accounts"/>
+					</selection>
+				</left>
+				<center>
+					<overflow>
+						<list name="accountsList" source="accountsSource">
+							<column title="Brugernavn" key="username"/>
+							<column title="Domæne" key="domain"/>
+						</list>
+					</overflow>
 				</center>
 			</middle>
-		</layout>
-	</structure>
+			<bottom/>
+		</structure>
+	</div>
+
 	<window floating="true" name="accountWindow" title="Konto" width="300" padding="10">
 		<formula name="accountFormula">
 			<group>
@@ -69,4 +64,5 @@
 			</group>
 		</formula>
 	</window>
+	
 </gui>

@@ -11,7 +11,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import dk.in2isoft.commons.jsf.ComponentUtil;
 import dk.in2isoft.commons.jsf.TagWriter;
 
-@FacesComponent(value="in2igui.searchfield")
+@FacesComponent(value="hui.searchfield")
 public class SearchFieldComponent extends UIComponentBase {
 
 	private String name;
@@ -43,7 +43,7 @@ public class SearchFieldComponent extends UIComponentBase {
 	
 	@Override
 	public String getFamily() {
-		return "in2igui.textfield";
+		return "hui.searchfield";
 	}
 
 	@Override
@@ -51,12 +51,12 @@ public class SearchFieldComponent extends UIComponentBase {
 		String id = getClientId();
 		String value = ComponentUtil.getBindingAsString(this, "value", this.value, context);
 		TagWriter writer = new TagWriter(this,context);
-		writer.startSpan(adaptive ? "in2igui_searchfield in2igui_searchfield_adaptive" : "in2igui_searchfield").withId(id);
+		writer.startSpan(adaptive ? "hui_searchfield hui_searchfield_adaptive" : "hui_searchfield").withId(id);
 		if (width>0) {
 			writer.withStyle("width: "+width+"px;");
 		}
-		writer.startEm("in2igui_searchfield_placeholder").write(placeholder).endEm();
-		writer.startVoidA("in2igui_searchfield_reset").endA();
+		writer.startEm("hui_searchfield_placeholder").write(placeholder).endEm();
+		writer.startVoidA("hui_searchfield_reset").endA();
 		writer.startSpan().startSpan();
 		writer.startElement("input");
 		if (value!=null) {
@@ -65,7 +65,7 @@ public class SearchFieldComponent extends UIComponentBase {
 		writer.endElement("input");
 		writer.endSpan().endSpan().endSpan();
 		writer.startScopedScript();
-		writer.write("new In2iGui.SearchField({element:'");
+		writer.write("new hui.ui.SearchField({element:'");
 		writer.write(id);
 		writer.write("'");
 		if (name!=null) {

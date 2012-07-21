@@ -44,6 +44,12 @@ public class ApplicationResponder implements Responder {
 		List<Application> apps = Lists.newArrayList();
 		{
 			Application app = new Application();
+			app.setName("words");
+			app.addProperty(Application.PROPERTY_URL_MAPPING, "words.onlineobjects.com");
+			apps.add(app);
+		}
+		{
+			Application app = new Application();
 			app.setName("community");
 			app.addProperty(Application.PROPERTY_URL_MAPPING, ".*");
 			apps.add(app);
@@ -54,7 +60,7 @@ public class ApplicationResponder implements Responder {
 		for (Application app : apps) {
 			for (String reg : app.getPropertyValues(Application.PROPERTY_URL_MAPPING)) {
 				Pattern p = Pattern.compile(reg);
-				mappings.put("community", p);
+				mappings.put(app.getName(), p);
 			}
 		}
 	}
@@ -86,10 +92,10 @@ public class ApplicationResponder implements Responder {
 	}
 
 	private String resolveMapping(Request request) {
-		String url = request.getRequest().getRequestURL().toString();
+		String domainName = request.getDomainName();
 		for (Entry<String, Pattern> mapping : mappings.entries()) {
 			Pattern pattern = mapping.getValue();
-			Matcher matcher = pattern.matcher(url);
+			Matcher matcher = pattern.matcher(domainName);
 			if (matcher.matches()) {
 				return mapping.getKey();
 			}
@@ -106,6 +112,10 @@ public class ApplicationResponder implements Responder {
 			}
 			if (!controller.isAllowed(request)) {
 				throw new IllegalRequestException("Not allowed");
+			}
+			String language = controller.getLanguage(request);
+			if (language!=null) {
+				request.setLanguage(language);
 			}
 			RequestDispatcher dispatcher = controller.getDispatcher(request);
 			if (dispatcher != null) {

@@ -15,7 +15,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.StopWatch;
 
-import com.google.common.collect.Lists;
 import com.oreilly.servlet.ServletUtils;
 
 import dk.in2isoft.commons.http.HeaderUtil;
@@ -25,13 +24,7 @@ import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.SecurityException;
 import dk.in2isoft.onlineobjects.core.SecurityService;
-import dk.in2isoft.onlineobjects.modules.dispatch.ApplicationResponder;
-import dk.in2isoft.onlineobjects.modules.dispatch.CoreFilesResponder;
-import dk.in2isoft.onlineobjects.modules.dispatch.DWRResponder;
-import dk.in2isoft.onlineobjects.modules.dispatch.FacesResponder;
-import dk.in2isoft.onlineobjects.modules.dispatch.In2iGuiResponder;
 import dk.in2isoft.onlineobjects.modules.dispatch.Responder;
-import dk.in2isoft.onlineobjects.modules.dispatch.ServicesResponder;
 import dk.in2isoft.onlineobjects.ui.ErrorRenderer;
 import dk.in2isoft.onlineobjects.ui.Request;
 
@@ -49,17 +42,6 @@ public class DispatchingService implements InitializingBean {
 	}
 	
 	public void afterPropertiesSet() throws Exception {
-		/*responders=Lists.newArrayList();
-		responders.add(new DWRResponder());
-		responders.add(new FacesResponder());
-		CoreFilesResponder coreFilesResponder = new CoreFilesResponder();
-		coreFilesResponder.setConfigurationService(configurationService);
-		responders.add(coreFilesResponder);
-		responders.add(new In2iGuiResponder());
-		responders.add(new ServicesResponder());
-		ApplicationResponder applicationResponder = new ApplicationResponder();
-		applicationResponder.setConfigurationService(configurationService);
-		responders.add(applicationResponder);*/
 	}
 	
 	public void setResponders(List<Responder> responders) {
@@ -72,18 +54,10 @@ public class DispatchingService implements InitializingBean {
 		stopWatch.start();
 		boolean handled = false;
 		Request request = Request.get(servletRequest, servletResponse);
-		Boolean shouldCommit = null;
-
-		try {
-			securityService.ensureUserSession(request);
-		} catch (SecurityException e) {
-			throw new ServletException(e);
-		}
-		
+		Boolean shouldCommit = null;		
 
 		if (request.isSet("username") && request.isSet("password")) {
-			securityService.changeUser(request.getSession(), request.getString("username"),
-					request.getString("password"));
+			securityService.changeUser(request.getSession(), request.getString("username"),request.getString("password"));
 		}
 		
 		for (Responder responder : responders) {

@@ -25,6 +25,7 @@ import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.SecurityException;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.UserSession;
+import dk.in2isoft.onlineobjects.model.Application;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.Privilege;
@@ -171,7 +172,7 @@ public class SetupRemotingFacade extends AbstractRemotingFacade {
 	
 	public void deleteUser(long id) throws EndUserException {
 		User user = modelService.get(User.class, id);
-		List<Entity> list = modelService.list(Query.of(Entity.class).withPriviledged(user));
+		List<Entity> list = modelService.list(Query.of(Entity.class).withPrivileged(user));
 		for (Entity entity : list) {
 			modelService.deleteEntity(entity, getUserSession());
 		}
@@ -189,6 +190,47 @@ public class SetupRemotingFacade extends AbstractRemotingFacade {
 			}
 			imageService.synchronizeContentType(image, userSession);
 			imageService.synchronizeMetaData(image,userSession);
+		}
+	}
+	
+	public ListData getApplicationList() {
+		ListData data = new ListData();
+		List<Application> list = modelService.list(Query.of(Application.class).orderByName());
+		data.addHeader("Name");
+		data.addHeader("Domain");
+		for (Application application : list) {
+			data.newRow(application.getId(),"application");
+			data.addCell(application.getName());
+			data.addCell(application.getPropertyValue("domain"));
+		}
+		return data;
+	}
+	
+	public ApplicationInfo getApplication(long id) throws ModelException {
+		Application application = modelService.get(Application.class, id,getRequest().getSession().getUser());
+		ApplicationInfo info = new ApplicationInfo();
+		info.setName(application.getName());
+		info.setId(application.getId());
+		info.setDomain(application.getPropertyValue("domain"));
+		return info;
+	}
+	
+	public void deleteApplication(long id) throws ModelException, SecurityException {
+		Application application = modelService.get(Application.class, id,getRequest().getSession().getUser());
+		modelService.deleteEntity(application, getUserSession());
+	}
+	
+	public void saveApplication(ApplicationInfo info) throws ModelException, SecurityException {
+		if (info.getId()==null || info.getId()==0) {
+			Application application = new Application();
+			application.setName(info.getName());
+			application.overrideFirstProperty("domain", info.getDomain());
+			modelService.createItem(application, getUserSession());
+		} else {
+			Application application = modelService.get(Application.class, info.getId());
+			application.setName(info.getName());
+			application.overrideFirstProperty("domain", info.getDomain());
+			modelService.updateItem(application, getUserSession());
 		}
 	}
 	

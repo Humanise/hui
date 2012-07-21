@@ -25,6 +25,8 @@ public class SystemLoader implements ServletContextListener {
 			log.error(e.getMessage(),e);
 		} catch (ModelException e) {
 			log.error(e.getMessage(),e);
+		} catch (SecurityException e) {
+			log.error(e.getMessage(),e);
 		}
 		
 	}

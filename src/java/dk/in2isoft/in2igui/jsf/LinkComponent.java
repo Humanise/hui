@@ -14,7 +14,7 @@ import dk.in2isoft.commons.jsf.TagWriter;
 @FacesComponent(value=LinkComponent.TYPE)
 public class LinkComponent extends AbstractComponent {
 
-	public static final String TYPE = "in2igui.link";
+	public static final String TYPE = "hui.link";
 
 	private String text;
 	private String name;
@@ -48,7 +48,7 @@ public class LinkComponent extends AbstractComponent {
 	@Override
 	public void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
 		String id = getClientId();
-		ClassBuilder cls = new ClassBuilder("in2igui_link").add(styleClass);
+		ClassBuilder cls = new ClassBuilder("hui_link").add(styleClass);
 		writer.startVoidA(cls);
 		writer.withId(id);
 		writer.startSpan().write(text);
@@ -59,7 +59,7 @@ public class LinkComponent extends AbstractComponent {
 		String id = getClientId();
 		writer.endA();
 		writer.startScopedScript();
-		writer.write("var "+id+" = new In2iGui.Link({element:'").write(id).write("'");
+		writer.write("var "+id+" = new hui.ui.Link({element:'").write(id).write("'");
 		if (name!=null) {
 			writer.write(",name:'"+name+"'");
 		}
@@ -96,7 +96,7 @@ public class LinkComponent extends AbstractComponent {
 	}
 	
 	public String getClick(FacesContext context) {
-		return getBinding(click, "click");
+		return getExpression(click, "click");
 	}
 
 	public void setStyleClass(String styleClass) {

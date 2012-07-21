@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<gui xmlns="uri:In2iGui" title="Indstillinger">
+<gui xmlns="uri:hui" title="Indstillinger">
 	<dwr base="/dwr/">
 		<interface name="CoreSecurity"/>
 		<interface name="AppCommunity"/>
@@ -15,8 +15,8 @@
 			<button text="Log ud" icon="inset/cross" name="barLogOut"/>
 		</right>
 	</bar>
-	<structure top="30">
-		<layout>
+	<div style="position: fixed; top: 30px; bottom: 0; width: 100%">
+		<structure>
 			<top>
 			<toolbar>
 				<icon icon="common/settings" title="Indstillinger" selected="true"/>
@@ -64,6 +64,6 @@
 				</box>
 				</center>
 			</middle>
-		</layout>
-	</structure>
+		</structure>
+	</div>
 </gui>

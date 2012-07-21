@@ -19,7 +19,9 @@ public class LinkComponent<T> extends AbstractComponent {
 	public static final String FAMILY = "onlineobjects.link";
 	
 	private String variant;
+	private String title;
 	private String href;
+	private String onclick;
 	private boolean core;
 	private String styleClass;
 	
@@ -33,11 +35,13 @@ public class LinkComponent<T> extends AbstractComponent {
 		core = (Boolean) state[1];
 		href = (String) state[2];
 		styleClass = (String) state[3];
+		onclick = (String) state[4];
+		title = (String) state[5];
 	}
 
 	@Override
 	public Object[] saveState() {
-		return new Object[] { variant, core, href, styleClass };
+		return new Object[] { variant, core, href, styleClass, onclick, title };
 	}
 
 	@Override
@@ -47,10 +51,19 @@ public class LinkComponent<T> extends AbstractComponent {
 	
 	@Override
 	protected void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
+		String styleClass = getStyleClass(context);
+		String onclick = getOnclick(context);
+		String title = getTitle(context);
 		writer.startA(ClassBuilder.with("oo_link").add("oo_link",variant).add(styleClass));
 		String id = getId();
 		if (StringUtils.isNotBlank(id)) {
 			writer.withId(id);
+		}
+		if (StringUtils.isNotBlank(onclick)) {
+			writer.withAttribute("onclick", onclick);
+		}
+		if (StringUtils.isNotBlank(title)) {
+			writer.withAttribute("title", title);
 		}
 		String href = getHref(context);
 		if (href!=null) {
@@ -67,7 +80,7 @@ public class LinkComponent<T> extends AbstractComponent {
 		} else {
 			StringBuilder url = new StringBuilder();
 			Request request = ComponentUtil.getRequest();
-			url.append(core ? request.getBaseContext() : request.getLocalContextPath());
+			url.append(core ? request.getBaseContext() : request.getLocalContext());
 			url.append(href);
 			return url.toString();
 		}
@@ -103,7 +116,7 @@ public class LinkComponent<T> extends AbstractComponent {
 	}
 	
 	public String getHref(FacesContext context) {
-		return getBinding(href,"href");
+		return getExpression(href,"href");
 	}
 
 	public void setStyleClass(String styleClass) {
@@ -112,5 +125,33 @@ public class LinkComponent<T> extends AbstractComponent {
 
 	public String getStyleClass() {
 		return styleClass;
+	}
+
+	public String getStyleClass(FacesContext context) {
+		return getExpression(styleClass, "styleClass");
+	}
+	
+	public void setOnclick(String onclick) {
+		this.onclick = onclick;
+	}
+	
+	public String getOnclick() {
+		return onclick;
+	}
+
+	public String getOnclick(FacesContext context) {
+		return getExpression(onclick, "onclick");
+	}
+	
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	
+	public String getTitle() {
+		return title;
+	}
+
+	public String getTitle(FacesContext context) {
+		return getExpression(title, "title");
 	}
 }

@@ -1,6 +1,6 @@
 oo.community.Home = function() {
 	this.images = [];
-	this.searchField = ui.get('filter');
+	this.searchField = hui.ui.get('filter');
 	this.searchField.listen(this);
 	this.search();
 }
@@ -33,45 +33,41 @@ oo.community.Home.prototype = {
 	},
 	buildTags : function(tags) {
 		var self = this;
-		tags = new Hash(tags);
-		var cloud = $('tags_container');
-		cloud.update();
-		tags.each(function(entry) {
-			var element = new Element('a').addClassName('tag tag-'+Math.round(5*entry.value));
-			element.insert(new Element('span').update(entry.key));
-			element.href='#';
-			element.observe('click',function(e) {self.setSearch(entry.key);e.stop()});
-			cloud.insert(element);
+		var cloud = hui.get('tags_container');
+		cloud.innerHTML = '';
+		hui.log(tags);
+		hui.each(tags,function(key,value) {
+			var element = hui.build('a',{'class':'tag tag-'+Math.round(5*value)});
+			hui.build('span',{text:key,href:'#',parent:element});
+			hui.listen(element,'click',function(e) {self.setSearch(key);hui.stop(e)});
+			cloud.appendChild(element);
 			cloud.appendChild(document.createTextNode(' '));
 		});
 	},
 	buildImages : function(images) {
 		this.dirtyImages = true;
 		this.images = images;
-		var container = $('images_container');
-		container.update();
+		var container = hui.get('images_container');
+		hui.dom.clear(container);
 		var self = this;
-		images.each(function(image,index) {
+		hui.each(images,function(image,index) {
 			var thumbnail = oo.buildThumbnail({height:60,image:image,zoom:true});
-			thumbnail.setStyle({opacity:0});
-			n2i.ani(thumbnail,'opacity',1,500,{ease:n2i.ease.slowFast,delay:Math.random()*1000});
-			container.insert(thumbnail);
+			hui.style.set(thumbnail,{opacity:0});
+			hui.animate(thumbnail,'opacity',1,500,{ease:hui.ease.slowFast,delay:Math.random()*1000});
+			container.appendChild(thumbnail);
 		});
 	},
 	buildUsers : function(users) {
-		var container = $('users_container');
-		container.update();
-		users.each(function(pair) {
-			var element = new Element('div').addClassName('user');
-			element.insert(oo.buildThumbnail({width:50,height:60,variant:'user'}));
-			var html = '<p class="name">'+
-				'<a class="oo_link" href="'+oo.appContext+'/'+pair.user.username+'/">'+
-				'<span>'+pair.person.name+'</span></a>'+
-				'</p>'+
-				'<p class="username">'+pair.user.username+'</p>'+
-				'<p class="website"><a class="oo_link oo_link_dimmed" href="'+oo.community.Home.buildUserURL(pair.user.username)+'"><span>Website »</span></a></p>';
-			element.insert(html);
-			container.insert(element);
+		var container = hui.get('users_container');
+		hui.dom.clear(container);
+		hui.each(users,function(pair) {
+			var element = hui.build('div',{'class':'user'});
+			element.appendChild(oo.buildThumbnail({width:50,height:60,variant:'user'}));
+			element.appendChild(hui.build('p',{'class':'name',html:'<a class="oo_link" href="'+oo.appContext+'/'+pair.user.username+'/">'+
+				'<span>'+pair.person.name+'</span></a>'}));
+			element.appendChild(hui.build('p',{'class':'username',text:pair.user.username}));
+			element.appendChild(hui.build('p',{'class':'website',html:'<a class="oo_link oo_link_dimmed" href="'+oo.community.Home.buildUserURL(pair.user.username)+'"><span>Website »</span></a>'}));
+			container.appendChild(element);
 		});
 	}
 }
@@ -83,4 +79,4 @@ oo.community.Home.buildUserURL = function(username) {
 		: 'http://'+username+'.'+oo.baseDomainContext+'/';
 }
 
-In2iGui.onDomReady(function() {new oo.community.Home();});
+hui.ui.onReady(function() {new oo.community.Home();});

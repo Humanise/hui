@@ -14,7 +14,7 @@ public class RatingService {
 	
 	public void rate(Entity entity, double rate, User user) throws SecurityException, ModelException {
 		rate = makeValidRate(rate);
-		Query<Rating> query = Query.of(Rating.class).withParent(entity).withPriviledged(user); 
+		Query<Rating> query = Query.of(Rating.class).withParent(entity).withPrivileged(user); 
 		Rating rating = modelService.search(query).getFirst();
 		if (rating!=null) {
 			rating.setRating(rate);
@@ -35,7 +35,7 @@ public class RatingService {
 	}
 	
 	public void rateAdditive(Entity entity, double rate, User user) throws SecurityException, ModelException {
-		Query<Rating> query = Query.of(Rating.class).withParent(entity).withPriviledged(user); 
+		Query<Rating> query = Query.of(Rating.class).withParent(entity).withPrivileged(user); 
 		Rating rating = modelService.search(query).getFirst();
 		if (rating!=null) {
 			double newRate = makeValidRate(rating.getRating()+rate);

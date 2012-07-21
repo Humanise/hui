@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<gui xmlns="uri:In2iGui" state="persons" title="Bookmarks">
+<gui xmlns="uri:hui" state="persons" title="Bookmarks">
 	<dwr base="/dwr/">
 		<interface name="Common"/>
 		<interface name="AppCommunity"/>
@@ -24,59 +24,58 @@
 			<button text="Log ud" icon="inset/cross" name="barLogOut"/>
 		</right>
 	</bar>
-	<structure top="30">
-		<layout>
+
+	<toolbar>
+		<icon icon="common/image" title="Billeder" name="toolImages"/>
+		<icon icon="common/person" title="Personer" name="toolPersons"/>
+		<icon icon="common/internet" title="Bogmærker" selected="true" name="toolBookmarks"/>
+		<icon icon="common/settings" title="Integration" name="toolIntegration"/>
+	</toolbar>
+
+	<div style="position: fixed; top: 90px; bottom: 0; left: 0; right: 0; padding: 10px;">
+		<structure>
 			<top>
 				<toolbar>
-					<icon icon="common/image" title="Billeder" name="toolImages"/>
-					<icon icon="common/person" title="Personer" name="toolPersons"/>
-					<icon icon="common/internet" title="Bogmærker" selected="true" name="toolBookmarks"/>
+					<icon icon="common/internet" overlay="new" title="Tilføj bogmærke" name="newBookmark"/>
+					<icon icon="common/internet" overlay="upload" title="Importer" name="import"/>
+					<divider/>
+					<icon icon="common/info" title="Info" name="itemInfo" disabled="true"/>
+					<icon icon="common/delete" title="Slet" name="deleteItem" disabled="true">
+						<confirm text="Er du sikker?" ok="Ja, slet" cancel="Nej"/>
+					</icon>
+					<icon icon="common/view" title="Vis" name="showItem" disabled="true"/>
+					<divider/>
+ 							<searchfield title="Hurtig oprettelse" width="200" placeholder="Indsæt url..." name="quickEnter"/>
+					<right>
+ 								<searchfield title="Søgning" expandedWidth="150" placeholder="Søg her" name="searchfield"/>
+						<space width="10"/>
+					</right>
 				</toolbar>
 			</top>
 			<middle>
-				<center padding="10">
-					<layout style="box">
-						<top>
-							<toolbar>
-								<icon icon="common/internet" overlay="new" title="Tilføj bogmærke" name="newBookmark"/>
-								<icon icon="common/internet" overlay="upload" title="Importer" name="import"/>
-								<divider/>
-								<icon icon="common/info" title="Info" name="itemInfo" disabled="true"/>
-								<icon icon="common/delete" title="Slet" name="deleteItem" disabled="true"/>
-								<icon icon="common/view" title="Vis" name="showItem" disabled="true"/>
-								<divider/>
-	   							<searchfield title="Hurtig oprettelse" width="200" placeholder="Indsæt url..." name="quickEnter"/>
-								<right>
-	   								<searchfield title="Søgning" expandedWidth="150" placeholder="Søg her" name="searchfield"/>
-								</right>
-							</toolbar>
-						</top>
-						<middle>
-							<left>
-								<overflow>
-									<selection value="all" name="selection">
-										<item icon="common/internet" title="Alle bogmærker" value="all"/>
-										<title>Nøgleord</title>
-										<items source="tagsSource" name="tagSelection"/>
-									</selection>
-								</overflow>
-							</left>
-							<center>
-								<overflow>
-									<list source="bookmarksSource" name="bookmarksList">
-										<column key="name" title="Titel"/>
-										<column key="address" title="Adresse"/>
-									</list>
-								</overflow>
-							</center>
-						</middle>
-						<bottom>
-						</bottom>
-					</layout>
+				<left>
+					<overflow>
+						<selection value="all" name="selection">
+							<item icon="common/internet" title="Alle bogmærker" value="all"/>
+							<title>Nøgleord</title>
+							<items source="tagsSource" name="tagSelection"/>
+						</selection>
+					</overflow>
+				</left>
+				<center>
+					<overflow>
+						<list source="bookmarksSource" name="bookmarksList">
+							<column key="name" title="Titel"/>
+							<column key="address" title="Adresse"/>
+						</list>
+					</overflow>
 				</center>
 			</middle>
-		</layout>
-	</structure>
+			<bottom>
+			</bottom>
+		</structure>
+	</div>
+
 	<window name="bookmarkWindow" title="Bogmærke" width="300" variant="dark">
 		<space all="5">
 			<formula name="bookmarkFormula">
@@ -94,6 +93,7 @@
 			</formula>
 		</space>
 	</window>
+
 	<window name="importWindow" title="Importer" width="300" padding="10">
 		<upload name="upload" url="bookmarks/import.action" widget="uploadButton">
 			<placeholder title="Upload bogmærker" text="Filen skal være er HTML dokument med links"/>
@@ -102,4 +102,5 @@
 			<button name="uploadButton" title="Vælg filer..."/>
 		</buttons>
 	</window>
+	
 </gui>

@@ -3,6 +3,9 @@ package dk.in2isoft.onlineobjects.core;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
+import dk.in2isoft.commons.lang.LangUtil;
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
 import dk.in2isoft.onlineobjects.apps.ApplicationSession;
 import dk.in2isoft.onlineobjects.model.User;
@@ -14,10 +17,25 @@ public class UserSession implements Privileged {
 	private Map<Class<? extends ApplicationController>, ApplicationSession> toolSessions;
 
 	private User user;
+	
+	private String id;
 
 	public UserSession(User user) throws SecurityException {
+		this.id = LangUtil.generateRandomString(20);
 		toolSessions = new HashMap<Class<? extends ApplicationController>, ApplicationSession>();
 		this.user = user;
+	}
+	
+	public String getId() {
+		return id;
+	}
+	
+	public static UserSession get(HttpSession session) {
+		Object object = session.getAttribute(SESSION_ATTRIBUTE);
+		if (object instanceof UserSession) {
+			return (UserSession) object;
+		}
+		return null;
 	}
 	
 	protected void setUser(User user) {
