@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:o="http://www.onlineobjects.com/jsf" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:gui="http://www.in2isoft.dk/in2igui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+>
+	<ui:composition template="templates/plain.xhtml">
+				
+		<ui:define name="body">
+			<h1>Words</h1>
+			
+			<h2>Index</h2>
+			<ul class="index">
+				<c:forEach items="#{wordsIndexView.alphabeth}" var="char">
+					<li><o:link href="/en/index/#{char}/">#{char}</o:link></li>
+				</c:forEach>
+			</ul>
+			<h2>Latest words</h2>
+			<ul>
+				<c:forEach items="#{wordsFrontView.latestWords}" var="word">
+					<li>
+						<o:link href="/#{wordsLayoutView.language}/word/#{word.word.text}.html">#{word.word.text}</o:link>
+						<c:if test="#{not empty word.lexicalCategory}">
+							<span style="color: #999; font-size: 12px;">— #{word.lexicalCategory.name}</span>
+						</c:if>
+						<span style="font-size: 10px; color: #999;"> (#{word.language.name})</span>
+					</li>
+				</c:forEach>
+			</ul>
+			<h2>Links</h2>
+			<ul>
+				<li><o:link href="http://www.gigadictionary.org/">Gigadictionary</o:link></li>
+				<li><o:link href="http://www.google.com/dictionary">Google dictionary</o:link></li>
+			</ul>
+		</ui:define>
+	</ui:composition>
+</html>

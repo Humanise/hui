@@ -1,0 +1,177 @@
+body
+{
+	background: #fff;
+	font-family: 'Georgia','Crimson Text','Palatino','Times New Roman','Times';
+}
+
+div.layout_body
+{
+	width: 900px;
+	margin: 0 auto;
+}
+
+div.layout_head
+{
+	height: 20px;
+	border-bottom: 1px solid #eee;
+	position: relative;
+}
+
+div.layout_head ul
+{
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
+div.layout_head a
+{
+	text-decoration: none;
+}
+
+div.layout_head a:hover
+{
+	text-decoration: underline;
+	color: #ddd;
+}
+
+div.layout_head strong
+{
+	color: #333;
+	font-weight: normal;
+}
+
+div.layout_head strong span
+{
+	color: #aaa;
+}
+
+h1
+{
+	font-weight: normal;
+	font-size: 48px;
+}
+
+h2
+{
+	font-weight: normal;
+	font-size: 24px;
+}
+
+/**** Links ****/
+
+a.oo_link
+{
+	color: #ddd;
+}
+
+a.oo_link span
+{
+	color: #f63;
+}
+
+/*************** panel ****************/
+
+div.panel_body
+{
+	font-size: 12px;
+	border: 1px solid #ddd;
+	background: #fff;
+	padding: 10px;
+	font-family: Georgia;
+}
+
+div.panel_body h2
+{
+	margin: 0 0 10px;
+	font-weight: normal;
+	font-style: italic;
+	color: #666;
+}
+
+div.panel_body ul.selection
+{
+	list-style: none;
+	margin: 0 -4px -4px;
+	padding: 0;
+}
+
+div.panel_body ul.selection a
+{
+	display: block;
+	padding: 2px 6px;
+	border: 1px solid transparent;
+	border-radius: 2px;
+	cursor: pointer;
+}
+
+div.panel_body ul.selection a:hover
+{
+	border: 1px solid #eee;
+    background: -webkit-gradient(linear, 0% 0%, 0% 100% , from(#fff), to(#f6f6f6));
+	background: -moz-linear-gradient(top, #fff, #f6f6f6);
+    filter: progid:DXImageTransform.Microsoft.gradient (GradientType=0, startColorstr=#ffffff, endColorstr=#f6f6f6);
+}
+
+p.words a
+{
+	display: inline-block;
+	vertical-align: middle;
+	height: 20px;
+	line-height: 20px;
+}
+p.words a span
+{
+	color: #333;
+}
+
+p.words a.known
+{
+	color: transparent;
+}
+
+p.words a.unknown
+{
+	color: #faa;
+}
+
+p.words a.unknown span
+{
+	color: #a00;
+}
+
+p.words a.highlighted
+{
+	-webkit-box-shadow: 0 0 89px white, 0 0 89px white, 0 0 89px white;
+	position: relative;
+}
+
+p.words a.highlighted span
+{
+	color: #36f;
+}
+
+/*********** index *********/
+
+ul.index
+{
+	list-style: none;
+	padding: 0;
+	margin: 10px 0;
+}
+
+ul.index li
+{
+	display: inline-block;
+}
+
+/*********** paging **********/
+
+p.paging a.selected span
+{
+	color: #000;
+	font-weight: bold;
+}

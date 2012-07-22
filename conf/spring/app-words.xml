@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:util="http://www.springframework.org/schema/util"
+  	xmlns:dwr="http://www.directwebremoting.org/schema/spring-dwr"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+        http://www.directwebremoting.org/schema/spring-dwr
+    	http://www.directwebremoting.org/schema/spring-dwr-2.0.xsd
+    ">
+
+   	<bean id="wordsController" class="dk.in2isoft.onlineobjects.apps.words.WordsController" autowire="byType"/>
+
+   	<bean id="wordsRemotingFacade" class="dk.in2isoft.onlineobjects.apps.words.WordsRemotingFacade" autowire="byType">
+   	 	<property name="languageService" ref="languageService"/>
+   	 	<property name="securityService" ref="securityService"/>
+    	<dwr:remote javascript="AppWords">
+    		<dwr:include method="createWord"/>
+    		<dwr:include method="categorizeWord"/>
+    		<dwr:include method="startUrlImport"/>
+    		<dwr:include method="getOptions"/>
+			<dwr:filter class="dk.in2isoft.onlineobjects.ui.DWRFilter"/>
+		</dwr:remote>
+   	</bean>
+   	<!-- 
+    <dwr:configuration>
+	    <dwr:convert type="bean" class="dk.in2isoft.onlineobjects.apps.setup.EntityInfo"/>
+	    <dwr:convert type="bean" class="dk.in2isoft.onlineobjects.apps.setup.ApplicationInfo"/>
+	</dwr:configuration>
+   	 -->
+   	 
+   	 <bean id="wordsLayoutView" class="dk.in2isoft.onlineobjects.apps.words.views.WordsLayoutView">
+   	 	
+   	 </bean>
+   	 
+   	 <bean id="wordsWordView" class="dk.in2isoft.onlineobjects.apps.words.views.WordsWordView" scope="request">
+   	 	<property name="modelService" ref="modelService"/>
+   	 	<property name="languageService" ref="languageService"/>
+   	 </bean>
+
+   	 <bean id="wordsIndexView" class="dk.in2isoft.onlineobjects.apps.words.views.WordsIndexView" scope="request">
+   	 	<property name="modelService" ref="modelService"/>
+   	 	<property name="languageService" ref="languageService"/>
+   	 </bean>
+
+   	 <bean id="wordsFrontView" class="dk.in2isoft.onlineobjects.apps.words.views.WordsFrontView" scope="request">
+   	 	<property name="modelService" ref="modelService"/>
+   	 	<property name="languageService" ref="languageService"/>
+   	 </bean>
+   	 
+   	 <bean id="wordsImportView" class="dk.in2isoft.onlineobjects.apps.words.views.WordsImportView" scope="request">
+   	 	<property name="modelService" ref="modelService"/>
+   	 	<property name="languageService" ref="languageService"/>
+   	 	<property name="importService" ref="importService"/>
+   	 	<property name="semanticService" ref="semanticService"/>
+   	 </bean>
+</beans>
