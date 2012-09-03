@@ -86,6 +86,14 @@ span.hui_icon_2, span.hui_icon_32, a.hui_icon_32
 	vertical-align: middle;
 }
 
+span.hui_icon_12, a.hui_icon_12
+{
+	display: inline-block;
+	width: 12px;
+	height: 12px;
+	vertical-align: middle;
+}
+
 span.hui_icon_24
 {
 	display: inline-block;
@@ -1232,9 +1240,17 @@ em.hui_field_placeholder
 
 /******* Special lenght for style *******/
 
-span.hui_style_length input
+span.hui_style_length
 {
-	width: 50px;
+	width: 120px;
+}
+
+body span.hui_style_length input
+{
+	width: 100%;
+	padding-right: 0;
+	padding-left: 0;
+	margin-left: -3px;
 }
 
 /************************************** Buttons *********************************/
@@ -1547,7 +1563,7 @@ a.hui_dropdown_adaptive
 	width: 100%;
 	position: relative;
 }
-
+/*
 .hui_overflow::-webkit-scrollbar
 {  
 	height: 14px;
@@ -1589,7 +1605,7 @@ a.hui_dropdown_adaptive
 .hui_context_sidebar .hui_overflow:hover::-webkit-scrollbar-thumb
 {
 	background: #D4DCE9;
-}
+}*/
 
 div.hui_overflow_top
 {
@@ -2101,6 +2117,7 @@ a.hui_toolbar_icon span.hui_icon
 	width: 32px;
 	margin: 0px auto 1px auto;
 	display: inline-block;
+	position: relative;
 }
 
 span.hui_icon_overlay
@@ -2109,6 +2126,24 @@ span.hui_icon_overlay
 	width: 32px;
 	background: right bottom no-repeat;
 	display:inline-block;
+}
+
+span.hui_icon_badge
+{
+	background: -webkit-gradient(linear, left top, left bottom, from(#f69), to(#f03));
+	border: 1px solid #d00;
+	color: #fff;
+	display:inline-block;
+	font-size: 10px;
+	height: 11px;
+	line-height: 11px;
+	position: absolute;
+	padding: 0 2px;
+	border-radius: 4px;
+	font-family: Arial;
+	right: -5px;
+	bottom: -2px;
+	box-shadow: 0 1px 2px rgba(0,0,0,.2);
 }
 
 
@@ -2301,10 +2336,15 @@ span.hui_toolbar_item span.hui_searchfield
 	margin-top: 8px;
 }
 
-span.hui_toolbar_item .hui_checkboxes
+span.hui_toolbar_item div.hui_datetime
+{
+	width: 170px;
+}
+
+/*span.hui_toolbar_item .hui_checkboxes
 {
 	padding-top: 11px;
-}
+}*/
 
 span.hui_toolbar_item .hui_field
 {
@@ -2358,7 +2398,7 @@ table.hui_toolbar_grid th
 	padding-left: 5px;
 	text-align: right;
 	height: 27px;
-	padding: 0px;
+	padding: 0px 2px 0 0;
 }
 
 label.hui_toolbar_grid
@@ -2366,6 +2406,54 @@ label.hui_toolbar_grid
 	font-size: 11px;
 	color: #334455;
 	vertical-align: middle;
+}
+
+
+/************************** More ************************/
+
+span.hui_toolbar_more
+{
+	display: inline-block;
+}
+
+a.hui_toolbar_more
+{
+	display: inline-block;
+	font-size: 12px;
+	border-radius: 9px;
+	height: 18px;
+	background: #e4e4e4;
+	line-height: 18px;
+	padding: 0 10px;
+	color: #666;
+	text-decoration: none;
+	margin: 0 5px;
+}
+
+a.hui_toolbar_more:hover
+{
+	background: #ddd;
+	color: #333;
+}
+
+.hui_tabs_tab_light a.hui_toolbar_more
+{
+	background: #f3f3f3;
+}
+
+.hui_tabs_tab_light a.hui_toolbar_more:hover
+{
+	background: #eaeaea;
+}
+
+span.hui_toolbar_more_content
+{
+	display: none;
+}
+
+span.hui_toolbar_more_expanded span.hui_toolbar_more_content
+{
+	display: inline-block;
 }.hui_window
 {
 	position: absolute;
@@ -2684,6 +2772,7 @@ div.hui_list table tbody td
 	padding-bottom: 2px;
 	line-height: 16px;
 	display: inline-block;
+	margin-right: 7px;
 }
 
 div.hui_list .hui_list_object .hui_icon
@@ -2716,6 +2805,12 @@ span.hui_list_icons .hui_icon
 	float: none;
 	margin: 0 3px 0 0;
 }
+
+div.hui_list .hui_icon_12
+{
+	margin-top: 1px;
+}
+
 
 .hui_list_revealing
 {
@@ -2900,9 +2995,31 @@ div.hui_list_busy td
 	color: #999;
 }
 
+/** errors **/
+
+div.hui_list_error_content
+{
+	display: none;
+}
+
 div.hui_list_error td
 {
 	color: red;
+}
+
+div.hui_list_error div.hui_list_error_content
+{
+	display: block;
+}
+
+p.hui_list_error_text
+{
+	background: url('../gfx/warning_large.png') center 13px no-repeat;
+	padding-top: 50px;
+	font-size: 12px;
+	text-align: center;
+	color: #999;
+	margin: 0;
 }
 
 div.hui_list td a.hui_button
@@ -3268,17 +3385,18 @@ div.hui_window_dark div.hui_selection div.hui_selected, div.hui_window_dark div.
 div.hui_window_dark .hui_selection_item span
 {
 	margin-top: 4px;
-}div.hui_imagepicker
+}div.hui_imageinput
 {
-	width: 52px;
-	height: 52px;
+	width: 50px;
+	height: 50px;
 	border: 1px solid #ddd;
 	cursor: pointer;
 	background: #fff center center no-repeat;
 	margin-top: 2px;
+	padding: 1px;
 }
 
-.hui_imagepicker_thumbs
+.hui_imageinput_thumbs
 {
 	width: 200px;
 	height: 200px;
@@ -3287,7 +3405,7 @@ div.hui_window_dark .hui_selection_item span
 }
 
 
-.hui_imagepicker_thumbnail
+.hui_imageinput_thumbnail
 {
 	float: left;
 	width: 52px;
@@ -3298,7 +3416,7 @@ div.hui_window_dark .hui_selection_item span
 	background: #fff center center no-repeat;
 }
 
-.hui_imagepicker_thumbnail:hover
+.hui_imageinput_thumbnail:hover
 {
 	border-color: #3875d7;
 }div.hui_boundpanel
@@ -4106,7 +4224,7 @@ div.hui_upload_item_alt
 div.hui_upload_item_content
 {
 	margin-left: 36px;
-	padding-top: 4px;
+	padding-top: 6px;
 }
 
 div.hui_upload_item span.hui_icon_32
@@ -5641,7 +5759,7 @@ div.hui_bar_layout div.hui_bar_right, div.hui_bar_layout div.hui_bar_left
 
 div.hui_bar_layout span.hui_bar_text
 {
-	color: #999;
+	color: #666;
     display: inline-block;
     font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
     font-size: 12px;
@@ -5915,6 +6033,7 @@ div.hui_message span.hui_icon
 {
 	-moz-border-radius: 3px;
 	-webkit-border-radius: 3px;
+	border-radius: 3px;
 	background: #fff;
 	border: 1px solid #AAAAAA;
 	border-color: #ddd #ccc #aaa;
@@ -5936,6 +6055,7 @@ span.hui_segmented a
 	padding: 0 3px;
 	-moz-border-radius: 2px;
 	-webkit-border-radius: 2px;
+	border-radius: 2px;
 	outline: none;
 }
 
@@ -6992,4 +7112,69 @@ div.hui_codeinput textarea:focus
 {
 	border-color: #2678ff;
 	outline: 4px auto #2678ff;
+}
+div.hui_objectinput
+{
+	position: relative;
+	font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+}
+
+div.hui_objectinput_busy
+{
+	opacity: .5;
+}
+
+span.hui_objectinput_body
+{
+	margin-left: 106px;
+	position: absolute;
+	right: 0;
+	left: 0;
+	top: 2px;
+	height: 23px;
+}
+
+div.hui_objectinput input
+{
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	border-color: #BBBBBB #CCCCCC #DDDDDD;
+	border-style: solid;
+	border-width: 1px;
+	font-family: Monaco,monospace;
+	padding: 0px 2px;
+	height: 23px;
+	vertical-align: middle;
+	color: #333;
+	line-height: 16px;
+	border-radius: 2px;
+	box-shadow: inset 0 1px 3px rgba(0,0,0,.15);
+	font-size: 11px;
+	width: 100%;
+}
+
+div.hui_objectinput a.hui_dropdown
+{
+	width: 100px;
+}
+
+span.hui_objectinput_object
+{
+	margin-top: 3px;
+	display: inline-block;
+}
+
+span.hui_objectinput_title
+{
+	font-size: 12px;
+	margin-left: 3px;
+	display: inline-block;
+	vertical-align: middle;
+}a.hui_fontinput
+{
+	background: red;
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	vertical-align: middle;
 }

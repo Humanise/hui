@@ -57,23 +57,20 @@ hui.ui.Button.create = function(options) {
 	if (!options.enabled) {
 		className+=' hui_button_disabled';
 	}
+	var text = options.text ? hui.ui.getTranslated(options.text) : null;
+	if (options.title) { // Deprecated
+		text = hui.ui.getTranslated(options.title);
+	}
 	var element = options.element = hui.build('a',{'class':className,href:'javascript://'});
-	var element2 = document.createElement('span');
-	element.appendChild(element2);
-	var element3 = document.createElement('span');
-	element2.appendChild(element3);
+	var inner = hui.build('span',{parent:hui.build('span',{parent:element})});
 	if (options.icon) {
-		var icon = hui.build('em',{'class':'hui_button_icon',style:'background-image:url('+hui.ui.getIconUrl(options.icon,16)+')'});
-		if (!options.text || options.text.length==0) {
+		var icon = hui.build('em',{parent:inner,'class':'hui_button_icon',style:'background-image:url('+hui.ui.getIconUrl(options.icon,16)+')'});
+		if (!text) {
 			hui.cls.add(icon,'hui_button_icon_notext');
 		}
-		element3.appendChild(icon);
 	}
-	if (options.text && options.text.length>0) {
-		hui.dom.addText(element3,options.text);
-	}
-	if (options.title && options.title.length>0) {
-		hui.dom.addText(element3,options.title);
+	if (text) {
+		hui.dom.addText(inner,text);
 	}
 	return new hui.ui.Button(options);
 }
@@ -167,7 +164,7 @@ hui.ui.Button.prototype = {
 	 * @param
 	 */
 	setText : function(text) {
-		hui.dom.setText(this.element.getElementsByTagName('span')[1], text);
+		hui.dom.setText(this.element.getElementsByTagName('span')[1], hui.ui.getTranslated(text));
 	},
 	/**
 	 * Get the data object for the button
@@ -181,27 +178,27 @@ hui.ui.Button.prototype = {
 ////////////////////////////////// Buttons /////////////////////////////
 
 /** @constructor */
-hui.ui.Buttons = function(o) {
-	this.name = o.name;
-	this.element = hui.get(o.element);
+hui.ui.Buttons = function(options) {
+	this.name = options.name;
+	this.element = hui.get(options.element);
 	this.body = hui.get.firstByClass(this.element,'hui_buttons_body');
 	hui.ui.extend(this);
 }
 
-hui.ui.Buttons.create = function(o) {
-	o = hui.override({top:0},o);
-	var e = o.element = hui.build('div',{'class':'hui_buttons'});
-	if (o.align=='right') {
+hui.ui.Buttons.create = function(options) {
+	options = hui.override({top:0},options);
+	var e = options.element = hui.build('div',{'class':'hui_buttons'});
+	if (options.align=='right') {
 		hui.cls.add(e,'hui_buttons_right');
 	}
-	if (o.align=='center') {
+	if (options.align=='center') {
 		hui.cls.add(e,'hui_buttons_center');
 	}
-	if (o.top>0) {
-		e.style.paddingTop=o.top+'px';
+	if (options.top > 0) {
+		e.style.paddingTop=options.top+'px';
 	}
 	hui.build('div',{'class':'hui_buttons_body',parent:e});
-	return new hui.ui.Buttons(o);
+	return new hui.ui.Buttons(options);
 }
 
 hui.ui.Buttons.prototype = {

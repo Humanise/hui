@@ -2,7 +2,7 @@
 	Used to choose an image
 	@constructor
 */
-hui.ui.ImagePicker = function(options) {
+hui.ui.ImageInput = function(options) {
 	this.name = options.name;
 	this.options = hui.override({width:48,height:48},options);
 	this.element = hui.get(options.element);
@@ -13,7 +13,7 @@ hui.ui.ImagePicker = function(options) {
 	this._addBehavior();
 }
 
-hui.ui.ImagePicker.prototype = {
+hui.ui.ImageInput.prototype = {
 	_addBehavior : function() {
 		hui.listen(this.element,'click',this._showPicker.bind(this));
 	},
@@ -42,11 +42,31 @@ hui.ui.ImagePicker.prototype = {
 			this.element.style.backgroundImage = 'url('+url+')';
 		}
 	},
+	_showFinder : function() {
+		if (!this.finder) {
+			this.finder = hui.ui.Finder.create(
+				this.options.finder
+			);
+			this.finder.listen({
+				$select : function(object) {
+					this.setObject(object);
+					this._fireChange();
+					this.finder.hide();
+				}.bind(this)
+			})
+		}
+		this.finder.show();
+	},
 	_showPicker : function() {
+		if (this.options.finder) {
+			this._showFinder();
+			return;
+		}
+		
 		if (!this.picker) {
 			var self = this;
 			this.picker = hui.ui.BoundPanel.create({modal:true});
-			this.content = hui.build('div',{'class':'hui_imagepicker_thumbs'});
+			this.content = hui.build('div',{'class':'hui_imageinput_thumbs'});
 			var buttons = hui.ui.Buttons.create({align:'right'});
 			var close = hui.ui.Button.create({text:'Luk',highlighted:true,small:true});
 			close.listen({
@@ -74,6 +94,15 @@ hui.ui.ImagePicker.prototype = {
 	_hidePicker : function() {
 		this.picker.hide();
 	},
+		/** @private */
+	$visibilityChanged : function() {
+		if (this.picker && !hui.dom.isVisible(this.element)) {
+			this.picker.hide();
+		}
+		if (this.finder && !hui.dom.isVisible(this.element)) {
+			this.finder.hide();
+		}
+	},
 	_fireChange : function() {
 		this.fireValueChange();
 	},
@@ -94,7 +123,7 @@ hui.ui.ImagePicker.prototype = {
 			var id = parseInt(images[i].getAttribute('id'));
 			var img = {id:id};
 			var url = hui.ui.resolveImageUrl(this,img,48,48);
-			var thumb = hui.build('div',{'class':'hui_imagepicker_thumbnail',style:'background-image:url('+url+')'});
+			var thumb = hui.build('div',{'class':'hui_imageinput_thumbnail',style:'background-image:url('+url+')'});
 			thumb.huiObject = {'id':id};
 			thumb.onclick = function() {
 				self.setObject(this.huiObject);

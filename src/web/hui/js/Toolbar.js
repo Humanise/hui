@@ -29,6 +29,15 @@ hui.ui.Toolbar.prototype = {
 				widget.setSelected(widget.key==key);
 			}
 		};
+	},
+	getByKey : function(key) {
+		var desc = hui.ui.getDescendants(this);
+		for (var i=0; i < desc.length; i++) {
+			var widget = desc[i];
+			if (widget.key==key) {
+				return widget;
+			}
+		};
 	}
 }
 
@@ -85,9 +94,6 @@ hui.ui.Toolbar.Icon = function(options) {
 	this.enabled = !hui.cls.has(this.element,'hui_toolbar_icon_disabled');
 	this.element.tabIndex=this.enabled ? 0 : -1;
 	this.icon = hui.get.firstByClass(this.element,'hui_icon');
-	if (!hui.browser.msie) {
-		this.element.removeAttribute('href');
-	}
 	hui.ui.extend(this);
 	this.addBehavior();
 }
@@ -139,6 +145,16 @@ hui.ui.Toolbar.Icon.prototype = {
 			hui.build('span',{'class':'hui_icon_overlay',parent:parent,style:'background-image: url('+hui.ui.getIconUrl('overlay/'+overlay,32)+')'});
 		}
 	},
+	setBadge : function(value) {
+		var node = hui.get.firstByClass(this.element,'hui_icon_badge');
+		if (!node && !hui.isBlank(value)) {
+			node = hui.build('span',{'class':'hui_icon_badge',parent:hui.get.firstByClass(this.element,'hui_icon'),text:value});
+		} else if (hui.isBlank(value) && node) {
+			hui.dom.remove(node);
+		} else if (node) {
+			hui.dom.setText(node,value);
+		}
+	},
 	/** Sets wether the icon should be selected */
 	setSelected : function(selected) {
 		if (selected) {
@@ -188,6 +204,23 @@ hui.ui.Toolbar.Badge.prototype = {
 	},
 	setText : function(str) {
 		hui.dom.setText(this.text,str);
+	}
+}
+
+//////////////////////// More ///////////////////////
+
+/** @constructor */
+hui.ui.Toolbar.More = function(options) {
+	this.element = hui.get(options.element);
+	this.name = options.name;
+	this.button = hui.get.firstByClass(this.element,'hui_toolbar_more');
+	hui.listen(this.button,'click',this.toggle.bind(this));
+	hui.ui.extend(this);
+}
+
+hui.ui.Toolbar.More.prototype = {
+	toggle : function() {
+	 	hui.cls.toggle(this.element,'hui_toolbar_more_expanded');
 	}
 }
 

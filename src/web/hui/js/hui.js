@@ -132,6 +132,7 @@ hui.each = function(items,func) {
 }
 
 /**
+ * Return text if condition is met
  * @param {Object} condition The condition to test
  * @param {String} text The text to return when condition evaluates to true
  */
@@ -289,9 +290,10 @@ hui.string = {
 	 * Shorten a string to a maximum length
 	 * @param {String} str The text to shorten
 	 * @param {int} length The maximum length
-	 * @returns {String} The shortened text
+	 * @returns {String} The shortened text, '' if undefined or null string
 	 */
 	shorten : function(str,length) {
+		if (!hui.isDefined(str)) {return ''};
 		if (str.length > length) {
 			return str.substring(0,length-3)+'...';
 		}
@@ -1463,6 +1465,7 @@ hui.request = function(options) {
 					options.onAbort(transport);
 				}
 			}
+			//hui.request._forget(transport);
 		} catch (e) {
 			if (options.onException) {
 				options.onException(e,transport)
@@ -1516,8 +1519,25 @@ hui.request = function(options) {
 		}
 	}
 	transport.send(body);
+	//hui.request._transports.push(transport);
+	//hui.log('Add: '+hui.request._transports.length);
 	return transport;
 }
+/*
+hui.request._transports = [];
+
+hui.request._forget = function(t) {
+	hui.log('Forget: '+hui.request._transports.length);
+	hui.array.remove(hui.request._transports, t);
+}
+
+hui.request.abort = function() {
+	window.stop();
+	for (var i = hui.request._transports.length - 1; i >= 0; i--){
+		hui.log('aborting: '+hui.request._transports[i].readyState)
+		hui.request._transports[i].abort();
+	};
+}*/
 
 /**
  * Check if a http request has a valid XML response
@@ -2012,14 +2032,15 @@ hui.drag = {
 				if (options.onDrop) {
 					options.onDrop(e);
 				}
-				//hui.log(e.dataTransfer.types)
-				if (options.onFiles && e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length>0) {
-					options.onFiles(e.dataTransfer.files);
-				}
-				else if (options.onURL && hui.array.contains(e.dataTransfer.types,'public.url')) {
-					var url = e.dataTransfer.getData('public.url');
-					if (options.onURL && !hui.string.startsWith(url,'data:')) {
-						options.onURL(url);
+				if (e.dataTransfer) {
+					if (options.onFiles && e.dataTransfer.files && e.dataTransfer.files.length>0) {
+						options.onFiles(e.dataTransfer.files);
+					}
+					else if (options.onURL && e.dataTransfer.types!=null && hui.array.contains(e.dataTransfer.types,'public.url')) {
+						var url = e.dataTransfer.getData('public.url');
+						if (options.onURL && !hui.string.startsWith(url,'data:')) {
+							options.onURL(url);
+						}
 					}
 				}
 			}

@@ -82,7 +82,7 @@
 		<script src="{$context}/hui/js/Button.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/hui/js/Selection.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/hui/js/Toolbar.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-		<script src="{$context}/hui/js/ImagePicker.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/ImageInput.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/hui/js/BoundPanel.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/hui/js/Picker.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/hui/js/ImageViewer.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
@@ -123,6 +123,9 @@
 		<script src="{$context}/hui/js/Structure.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/hui/js/Slider.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 		<script src="{$context}/hui/js/CodeInput.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/ObjectInput.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/FontPicker.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+		<script src="{$context}/hui/js/FontInput.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 	</xsl:when>
 	<xsl:otherwise>
 		<script src="{$context}/hui/bin/minimized.js?version={$version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
@@ -136,13 +139,15 @@
 	<link rel="stylesheet" href="{$context}/hui/ext/tiles.css?version={$version}" type="text/css" media="screen" title="no title" charset="utf-8"/>
 	<script src="{$context}/hui/ext/Tiles.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 </xsl:if>
-<xsl:if test="//gui:object-input">
-	<link rel="stylesheet" href="{$context}/hui/css/objectinput.css?version={$version}" type="text/css" media="screen" title="no title" charset="utf-8"/>
-	<script src="{$context}/hui/js/ObjectInput.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
-</xsl:if>
 <xsl:if test="//gui:pages">
 	<link rel="stylesheet" href="{$context}/hui/ext/pages.css?version={$version}" type="text/css" media="screen" title="no title" charset="utf-8"/>
 	<script src="{$context}/hui/ext/Pages.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+</xsl:if>
+<xsl:if test="//gui:chart">
+	<!--
+	<link rel="stylesheet" href="{$context}/hui/ext/chart.css?version={$version}" type="text/css" media="screen" title="no title" charset="utf-8"/>
+	-->
+	<script src="{$context}/hui/ext/Chart.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 </xsl:if>
 <xsl:for-each select="gui:localize[@source]">
 	<script src="{@source}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
@@ -413,6 +418,7 @@
 <xsl:template match="gui:frames">
 	<html>
 		<head>
+			<script src="{$context}/hui/bin/minimized.js?version={$version}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 			<xsl:apply-templates select="gui:script"/>
 		</head>
 		<frameset rows="84,*" framespacing="0" frameborder="0" border="0">
@@ -610,6 +616,14 @@
 					<xsl:apply-templates select="gui:empty"/>
 				</div>
 			</xsl:if>
+			<xsl:if test="gui:error">
+				<div class="hui_list_error_content">
+					<xsl:if test="gui:error/@text">
+						<p class="hui_list_error_text"><xsl:value-of select="gui:error/@text"/></p>
+					</xsl:if>
+					<xsl:apply-templates select="gui:error"/>
+				</div>
+			</xsl:if>
 		</div>
 	</div>
 	<script type="text/javascript">
@@ -685,7 +699,7 @@
 				<xsl:if test="position()=1">
 					<xsl:attribute name="class">hui_tabs_selected</xsl:attribute>
 				</xsl:if>
-				<a href="javascript:void(0)"><span><span><xsl:value-of select="@title"/></span></span></a>
+				<a><span><span><xsl:value-of select="@title"/></span></span></a>
 			</li>
 		</xsl:for-each>
 		</ul>
@@ -1109,11 +1123,11 @@ doc title:'Rich text' class:'hui.ui.RichText'
 </link>
 -->
 <xsl:template match="gui:link">
-	<a href="javascript:void(0);" class="hui_link" id="{generate-id()}"><span><xsl:apply-templates/></span></a>
+	<a href="javascript://" class="hui_link" id="{generate-id()}"><span><xsl:apply-templates/></span></a>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Link({
-			element:'<xsl:value-of select="generate-id()"/>',
-			name:'<xsl:value-of select="@name"/>'
+			element : '<xsl:value-of select="generate-id()"/>',
+			name : '<xsl:value-of select="@name"/>'
 		});
 		<xsl:call-template name="gui:createobject"/>
 	</script>

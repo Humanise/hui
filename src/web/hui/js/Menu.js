@@ -124,20 +124,26 @@ hui.ui.Menu.prototype = {
 			this.visible = true;
 		}
 	},
-	hide : function() {
+	hide : function(options) {
 		if (!this.visible) {return};
-		var self = this;
-		hui.animate(this.element, 'opacity', 0, 200, {
-			onComplete : function() {
-				self.element.style.display='none';
-			}
-		});
+		if (options && options.immediate) {
+			this.element.style.display='none';
+		} else {
+			hui.animate(this.element, 'opacity', 0, 200, {
+				onComplete : function() {
+					this.element.style.display='none';
+				}.bind(this)
+			});			
+		}
 		this._removeHider();
 		for (var i=0; i < this.subMenus.length; i++) {
 			this.subMenus[i].hide();
 		};
 		this.visible = false;
 		this.fire('hide');
+	},
+	isVisible : function() {
+		return this.visible;
 	},
 	_isSubMenuVisible : function() {
 		for (var i=0; i < this.subMenus.length; i++) {

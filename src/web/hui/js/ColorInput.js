@@ -61,6 +61,7 @@ hui.ui.ColorInput.prototype = {
 	},
 	_onButtonClick : function() {
 		if (hui.window.getViewHeight()<200) {
+			this.fire('clickPicker',this.value)		
 			return; // TODO: mini picker
 		}
 		if (!this.panel) {

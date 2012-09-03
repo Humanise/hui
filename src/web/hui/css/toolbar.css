@@ -139,6 +139,7 @@ a.hui_toolbar_icon span.hui_icon
 	width: 32px;
 	margin: 0px auto 1px auto;
 	display: inline-block;
+	position: relative;
 }
 
 span.hui_icon_overlay
@@ -147,6 +148,24 @@ span.hui_icon_overlay
 	width: 32px;
 	background: right bottom no-repeat;
 	display:inline-block;
+}
+
+span.hui_icon_badge
+{
+	background: -webkit-gradient(linear, left top, left bottom, from(#f69), to(#f03));
+	border: 1px solid #d00;
+	color: #fff;
+	display:inline-block;
+	font-size: 10px;
+	height: 11px;
+	line-height: 11px;
+	position: absolute;
+	padding: 0 2px;
+	border-radius: 4px;
+	font-family: Arial;
+	right: -5px;
+	bottom: -2px;
+	box-shadow: 0 1px 2px rgba(0,0,0,.2);
 }
 
 
@@ -339,10 +358,15 @@ span.hui_toolbar_item span.hui_searchfield
 	margin-top: 8px;
 }
 
-span.hui_toolbar_item .hui_checkboxes
+span.hui_toolbar_item div.hui_datetime
+{
+	width: 170px;
+}
+
+/*span.hui_toolbar_item .hui_checkboxes
 {
 	padding-top: 11px;
-}
+}*/
 
 span.hui_toolbar_item .hui_field
 {
@@ -396,7 +420,7 @@ table.hui_toolbar_grid th
 	padding-left: 5px;
 	text-align: right;
 	height: 27px;
-	padding: 0px;
+	padding: 0px 2px 0 0;
 }
 
 label.hui_toolbar_grid
@@ -404,4 +428,52 @@ label.hui_toolbar_grid
 	font-size: 11px;
 	color: #334455;
 	vertical-align: middle;
+}
+
+
+/************************** More ************************/
+
+span.hui_toolbar_more
+{
+	display: inline-block;
+}
+
+a.hui_toolbar_more
+{
+	display: inline-block;
+	font-size: 12px;
+	border-radius: 9px;
+	height: 18px;
+	background: #e4e4e4;
+	line-height: 18px;
+	padding: 0 10px;
+	color: #666;
+	text-decoration: none;
+	margin: 0 5px;
+}
+
+a.hui_toolbar_more:hover
+{
+	background: #ddd;
+	color: #333;
+}
+
+.hui_tabs_tab_light a.hui_toolbar_more
+{
+	background: #f3f3f3;
+}
+
+.hui_tabs_tab_light a.hui_toolbar_more:hover
+{
+	background: #eaeaea;
+}
+
+span.hui_toolbar_more_content
+{
+	display: none;
+}
+
+span.hui_toolbar_more_expanded span.hui_toolbar_more_content
+{
+	display: inline-block;
 }

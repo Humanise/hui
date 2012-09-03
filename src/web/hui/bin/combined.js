@@ -132,6 +132,7 @@ hui.each = function(items,func) {
 }
 
 /**
+ * Return text if condition is met
  * @param {Object} condition The condition to test
  * @param {String} text The text to return when condition evaluates to true
  */
@@ -289,9 +290,10 @@ hui.string = {
 	 * Shorten a string to a maximum length
 	 * @param {String} str The text to shorten
 	 * @param {int} length The maximum length
-	 * @returns {String} The shortened text
+	 * @returns {String} The shortened text, '' if undefined or null string
 	 */
 	shorten : function(str,length) {
+		if (!hui.isDefined(str)) {return ''};
 		if (str.length > length) {
 			return str.substring(0,length-3)+'...';
 		}
@@ -1463,6 +1465,7 @@ hui.request = function(options) {
 					options.onAbort(transport);
 				}
 			}
+			//hui.request._forget(transport);
 		} catch (e) {
 			if (options.onException) {
 				options.onException(e,transport)
@@ -1516,8 +1519,25 @@ hui.request = function(options) {
 		}
 	}
 	transport.send(body);
+	//hui.request._transports.push(transport);
+	//hui.log('Add: '+hui.request._transports.length);
 	return transport;
 }
+/*
+hui.request._transports = [];
+
+hui.request._forget = function(t) {
+	hui.log('Forget: '+hui.request._transports.length);
+	hui.array.remove(hui.request._transports, t);
+}
+
+hui.request.abort = function() {
+	window.stop();
+	for (var i = hui.request._transports.length - 1; i >= 0; i--){
+		hui.log('aborting: '+hui.request._transports[i].readyState)
+		hui.request._transports[i].abort();
+	};
+}*/
 
 /**
  * Check if a http request has a valid XML response
@@ -2012,14 +2032,15 @@ hui.drag = {
 				if (options.onDrop) {
 					options.onDrop(e);
 				}
-				//hui.log(e.dataTransfer.types)
-				if (options.onFiles && e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length>0) {
-					options.onFiles(e.dataTransfer.files);
-				}
-				else if (options.onURL && hui.array.contains(e.dataTransfer.types,'public.url')) {
-					var url = e.dataTransfer.getData('public.url');
-					if (options.onURL && !hui.string.startsWith(url,'data:')) {
-						options.onURL(url);
+				if (e.dataTransfer) {
+					if (options.onFiles && e.dataTransfer.files && e.dataTransfer.files.length>0) {
+						options.onFiles(e.dataTransfer.files);
+					}
+					else if (options.onURL && e.dataTransfer.types!=null && hui.array.contains(e.dataTransfer.types,'public.url')) {
+						var url = e.dataTransfer.getData('public.url');
+						if (options.onURL && !hui.string.startsWith(url,'data:')) {
+							options.onURL(url);
+						}
 					}
 				}
 			}
@@ -2350,6 +2371,7 @@ hui.animation = {
 	objects : {},
 	running : false,
 	latestId : 0,
+	/** Get an animation item for a node */
 	get : function(element) {
 		element = hui.get(element);
 		if (!element.huiAnimationId) {
@@ -2360,6 +2382,7 @@ hui.animation = {
 		}
 		return this.objects[element.huiAnimationId];
 	},
+	/** Start animating any pending tasks */ 
 	start : function() {
 		if (!this.running) {
 			hui.animation._render();
@@ -2489,6 +2512,10 @@ hui.animation._parseStyle = function(value) {
 
 ///////////////////////////// Item ///////////////////////////////
 
+/** 
+ * @constructor
+ * An animation item describing what to animate on an element
+ */
 hui.animation.Item = function(element) {
 	this.element = element;
 	this.work = [];
@@ -4856,20 +4883,26 @@ hui.ui.confirmOverlay = function(options) {
 		hui.ui.confirmOverlays[node] = overlay;
 	}
 	if (options.text) {
-		overlay.addText(options.text);
+		overlay.addText(hui.ui.getTranslated(options.text));
 	}
-	var ok = hui.ui.Button.create({text:options.okText || 'OK',highlighted:'true'});
+	var ok = hui.ui.Button.create({text:hui.ui.getTranslated(options.okText) || 'OK',highlighted:'true'});
 	ok.click(function() {
 		if (options.onOk) {
 			options.onOk();
 		}
+		if (options['$ok']) {
+			options.$ok();
+		}
 		overlay.hide();
 	});
 	overlay.add(ok);
-	var cancel = hui.ui.Button.create({text:options.cancelText || 'Cancel'});
+	var cancel = hui.ui.Button.create({text:hui.ui.getTranslated(options.cancelText) || 'Cancel'});
 	cancel.onClick(function() {
 		if (options.onCancel) {
 			options.onCancel();
+		}
+		if (options['$cancel']) {
+			options.$cancel();
 		}
 		overlay.hide();
 	});
@@ -5163,17 +5196,18 @@ hui.ui.showMessage = function(options) {
 		}
 		document.body.appendChild(hui.ui.message);
 	}
+	var text = hui.ui.getTranslated(options.text) || '';
 	var inner = hui.ui.message.getElementsByTagName('div')[1];
 	if (options.icon) {
 		hui.dom.clear(inner);
 		inner.appendChild(hui.ui.createIcon(options.icon,24));
-		hui.dom.addText(inner,options.text);
+		hui.dom.addText(inner,text);
 	}
 	else if (options.busy) {
 		inner.innerHTML='<span class="hui_message_busy"></span>';
-		hui.dom.addText(inner,options.text);
+		hui.dom.addText(inner,text);
 	} else {
-		hui.dom.setText(inner,options.text);
+		hui.dom.setText(inner,text);
 	}
 	hui.ui.message.style.display = 'block';
 	hui.ui.message.style.zIndex = hui.ui.nextTopIndex();
@@ -5187,6 +5221,21 @@ hui.ui.showMessage = function(options) {
 		hui.ui.messageTimer = window.setTimeout(hui.ui.hideMessage,options.duration);
 	}
 };
+
+hui.ui.getTranslated = function(value) {
+	if (!hui.isDefined(value) || hui.isString(value)) {
+		return value;
+	}
+	if (value[hui.ui.language]) {
+		return value[hui.ui.language];
+	}
+	if (value[null]) {
+		return value[null];
+	}
+	for (key in value) {
+		return value[key];
+	}
+}
 
 hui.ui.hideMessage = function() {
 	window.clearTimeout(hui.ui.messageDelayTimer);
@@ -5259,8 +5308,8 @@ hui.ui.getIconUrl = function(icon,size) {
 	return hui.ui.context+'/hui/icons/'+icon+size+'.png';
 };
 
-hui.ui.createIcon = function(icon,size) {
-	return hui.build('span',{'class':'hui_icon hui_icon_'+size,style:'background-image: url('+hui.ui.getIconUrl(icon,size)+')'});
+hui.ui.createIcon = function(icon,size,tag) {
+	return hui.build(tag || 'span',{'class':'hui_icon hui_icon_'+size,style:'background-image: url('+hui.ui.getIconUrl(icon,size)+')'});
 };
 
 hui.ui.wrapInField = function(element) {
@@ -5427,6 +5476,7 @@ hui.ui.extend = function(obj,options) {
 	}
 };
 
+/** Send a global drag and drop message */
 hui.ui.callDelegatesDrop = function(dragged,dropped) {
 	for (var i=0; i < hui.ui.delegates.length; i++) {
 		if (hui.ui.delegates[i]['$drop$'+dragged.kind+'$'+dropped.kind]) {
@@ -5435,6 +5485,7 @@ hui.ui.callDelegatesDrop = function(dragged,dropped) {
 	}
 };
 
+/** Send a message to all ancestors of a widget */
 hui.ui.callAncestors = function(obj,method,value,event) {
 	if (typeof(value)=='undefined') value=obj;
 	var d = hui.ui.getAncestors(obj);
@@ -5445,6 +5496,7 @@ hui.ui.callAncestors = function(obj,method,value,event) {
 	};
 };
 
+/** Send a message to all descendants of a widget */
 hui.ui.callDescendants = function(obj,method,value,event) {
 	if (typeof(value)=='undefined') {
 		value=obj;
@@ -5460,10 +5512,12 @@ hui.ui.callDescendants = function(obj,method,value,event) {
 	};
 };
 
+/** Signal that a widget has changed visibility */
 hui.ui.callVisible = function(widget) {
 	hui.ui.callDescendants(widget,'$visibilityChanged');
 }
 
+/** Listen for global events */
 hui.ui.listen = function(delegate) {
 	hui.ui.delegates.push(delegate);
 }
@@ -5494,6 +5548,30 @@ hui.ui.callDelegates = function(obj,method,value,event) {
 	}
 	return result;
 };
+
+/**
+ * Sends a message to parent frames
+ */
+hui.ui.tellContainers = function(event,value) {
+	if (window.parent!=window) {
+		try {
+			window.parent.hui.ui._tellContainers(event,value);
+		} catch (e) {
+			//hui.log('Unable to callContainers')
+		}
+	}
+}
+
+hui.ui._tellContainers = function(event,value) {
+	hui.ui.callSuperDelegates({},event,value);
+	if (window.parent!=window) {
+		try {
+			window.parent.hui.ui._tellContainers(event,value);
+		} catch (e) {
+			//hui.log('Unable to callContainers')
+		}
+	}
+}
 
 hui.ui.callSuperDelegates = function(obj,method,value,event) {
 	if (typeof(value)=='undefined') value=obj;
@@ -5596,7 +5674,7 @@ hui.ui.request = function(options) {
 			options.parameters[key]=hui.string.toJSON(options.json[key]);
 		}
 	}
-	var onSuccess = options.onSuccess;
+	var onSuccess = options.onSuccess || options.$success;
 	var message = options.message;
 	options.onSuccess=function(t) {
 		if (message) {
@@ -5635,7 +5713,7 @@ hui.ui.request = function(options) {
 			options.onText(t.responseText);
 		}
 	};
-	var onFailure = options.onFailure;
+	var onFailure = options.onFailure || options.$failure;
 	options.onFailure = function(t) {
 		if (typeof(onFailure)=='string') {
 			hui.ui.callDelegates(t,'failure$'+onFailure)
@@ -5687,12 +5765,13 @@ hui.ui.parseSubItems = function(parent,array) {
 			var sub = [];
 			hui.ui.parseSubItems(node,sub);
 			array.push({
-				title:node.getAttribute('title'),
-				value:node.getAttribute('value'),
-				icon:node.getAttribute('icon'),
-				kind:node.getAttribute('kind'),
-				badge:node.getAttribute('badge'),
-				children:sub
+				text : node.getAttribute('text'),
+				title : node.getAttribute('title'),
+				value : node.getAttribute('value'),
+				icon : node.getAttribute('icon'),
+				kind : node.getAttribute('kind'),
+				badge : node.getAttribute('badge'),
+				children : sub
 			});
 		}
 	};
@@ -6036,10 +6115,11 @@ hui.ui.Window.create = function(options) {
 		if (options.icon) {
 			html+='<span class="hui_window_icon" style="background-image: url('+hui.ui.getIconUrl(options.icon,16)+')"></span>';
 		}
-	html+='<span class="hui_window_title">'+options.title+'</span></div></div></div>'+
+	html+='<span class="hui_window_title">'+hui.ui.getTranslated(options.title)+'</span></div></div></div>'+
 		'<div class="hui_window_content"><div class="hui_window_content"><div class="hui_window_body" style="'+
 		(options.width ? 'width:'+options.width+'px;':'')+
 		(options.padding ? 'padding:'+options.padding+'px;':'')+
+		(options.padding ? 'padding-bottom:'+Math.max(0,options.padding-2)+'px;':'')+
 		'">'+
 		'</div></div></div>'+
 		'<div class="hui_window_bottom"><div class="hui_window_bottom"><div class="hui_window_bottom"></div></div></div></div>';
@@ -6213,10 +6293,11 @@ hui.ui.Formula.prototype = {
 		var data = {};
 		var d = hui.ui.getDescendants(this);
 		for (var i=0; i < d.length; i++) {
-			if (d[i].options && d[i].options.key && d[i].getValue) {
-				data[d[i].options.key] = d[i].getValue();
-			} else if (d[i].name && d[i].getValue) {
-				data[d[i].name] = d[i].getValue();
+			var widget = d[i];
+			if (widget.options && widget.options.key && widget.getValue) {
+				data[widget.options.key] = widget.getValue();
+			} else if (widget.name && widget.getValue) {
+				data[widget.name] = widget.getValue();
 			}
 		};
 		return data;
@@ -6335,6 +6416,7 @@ hui.ui.Formula.Group.prototype = {
 			label = widget.getLabel();
 		}
 		if (label) {
+			label = hui.ui.getTranslated(label);
 			if (this.options.above) {
 				hui.build('label',{className:'hui_formula_field',text:label,parent:td});
 			} else {
@@ -6645,7 +6727,7 @@ hui.ui.List.prototype = {
 		this.sortKey = key;
 	},
 	_debug : function(obj) {
-		hui.log(obj);
+		//hui.log(obj);
 	},
 
 	/** @private */
@@ -6684,6 +6766,9 @@ hui.ui.List.prototype = {
 			var sortable = headers[i].getAttribute('sortable')=='true';
 			if (width && width!='') {
 				th.style.width=width+'%';
+			}
+			if (headers[i].getAttribute('align')) {
+				th.style.textAlign=headers[i].getAttribute('align');
 			}
 			if (sortable) {
 				var self = this;
@@ -6851,7 +6936,7 @@ hui.ui.List.prototype = {
 		var icon = node.getAttribute('icon');
 		if (icon!=null && icon!='') {
 			cell.appendChild(hui.ui.createIcon(icon,16));
-			cell = hui.build('div',{parent:cell,style:'margin-left: 21px'});
+			cell = hui.build('div',{parent:cell,style:'margin-left: 21px; padding-top: 1px;'});
 		}
 		for (var i=0; i < node.childNodes.length; i++) {
 			var child = node.childNodes[i];
@@ -6860,7 +6945,8 @@ hui.ui.List.prototype = {
 			} else if (hui.dom.isElement(child,'break')) {
 				cell.appendChild(document.createElement('br'));
 			} else if (hui.dom.isElement(child,'icon')) {
-				var icon = hui.ui.createIcon(child.getAttribute('icon'),16);
+				var size = child.getAttribute('size') || 16;
+				var icon = hui.ui.createIcon(child.getAttribute('icon'),size);
 				if (child.getAttribute('hint')) {
 					icon.setAttribute('title',child.getAttribute('hint'));
 				}
@@ -6905,6 +6991,9 @@ hui.ui.List.prototype = {
 				cell.appendChild(obj);
 			} else if (hui.dom.isElement(child,'icons')) {
 				var icons = hui.build('span',{'class':'hui_list_icons'});
+				if (child.getAttribute('left')) {
+					icons.style.marginLeft=child.getAttribute('left')+'px';
+				}
 				this._parseCell(child,icons);
 				cell.appendChild(icons);
 			} else if (hui.dom.isElement(child,'button')) {
@@ -7332,10 +7421,10 @@ hui.ui.Tab.prototype = {
 /* EOF *//**
  * @constructor
  */
-hui.ui.ObjectList = function(o) {
-	this.options = hui.override({key:null},o);
-	this.name = o.name;
-	this.element = hui.get(o.element);
+hui.ui.ObjectList = function(options) {
+	this.options = hui.override({key:null},options);
+	this.name = options.name;
+	this.element = hui.get(options.element);
 	this.body = hui.get.firstByTag(this.element,'tbody');
 	this.template = [];
 	this.objects = [];
@@ -7487,6 +7576,7 @@ hui.ui.ObjectList.Text.prototype = {
 		var field = hui.ui.wrapInField(input);
 		this.wrapper = new hui.ui.Input({element:input});
 		this.wrapper.listen(this);
+		hui.ui.addFocusClass({element:input,classElement:field,'class':'hui_field_focused'});
 		return field;
 	},
 	$valueChanged : function(value) {
@@ -7578,14 +7668,12 @@ hui.ui.DropDown.create = function(options) {
 }
 
 hui.ui.DropDown.prototype = {
-	/** @private */
 	_addBehavior : function() {
 		hui.ui.addFocusClass({element:this.element,'class':'hui_dropdown_focused'});
 		hui.listen(this.element,'click',this._click.bind(this));
 		hui.listen(this.element,'blur',this._hideSelector.bind(this));
 		hui.listen(this.element,'keydown',this._keyDown.bind(this));
 	},
-	/** @private */
 	_updateIndex : function() {
 		this.index=-1;
 		for (var i=0; i < this.items.length; i++) {
@@ -7594,7 +7682,6 @@ hui.ui.DropDown.prototype = {
 			}
 		};
 	},
-	/** @private */
 	_updateUI : function() {
 		var selected = this.items[this.index];
 		if (selected) {
@@ -7619,7 +7706,6 @@ hui.ui.DropDown.prototype = {
 			}
 		};
 	},
-	/** @private */
 	_click : function(e) {
 		if (this.busy) {return}
 		hui.stop(e);
@@ -7648,7 +7734,6 @@ hui.ui.DropDown.prototype = {
 		width = Math.min(width,space);
 		hui.style.set(s,{visibility:'visible',width:width+'px',zIndex:hui.ui.nextTopIndex(),maxHeight:height+'px'});
 	},
-	/** @private */
 	_keyDown : function(e) {
 		if (this.busy) {return}
 		if (this.items.length==0) {
@@ -7681,6 +7766,7 @@ hui.ui.DropDown.prototype = {
 			this.setValue(this.items[0].value);
 		}
 	},
+	/** Get the value of the selected item */
 	getValue : function() {
 		return this.value;
 	},
@@ -7689,12 +7775,15 @@ hui.ui.DropDown.prototype = {
 		this._updateIndex();
 		this._updateUI();
 	},
+	/** Set the value to null */
 	reset : function() {
 		this.setValue(null);
 	},
+	/** Get the label */
 	getLabel : function() {
 		return this.options.label;
 	},
+	/** Refresh the associated source */
 	refresh : function() {
 		if (this.options.source) {
 			this.options.source.refresh();
@@ -7735,6 +7824,7 @@ hui.ui.DropDown.prototype = {
 		this.busy = true;
 		hui.style.setOpacity(this.element,.5);
 	},
+	/** @private */
 	$sourceIsNotBusy : function() {
 		this.busy = false;
 		hui.style.setOpacity(this.element,1);
@@ -7759,7 +7849,6 @@ hui.ui.DropDown.prototype = {
 		if (!this.selector) {return}
 		this.selector.style.display='none';
 	},
-	/** @private */
 	_buildSelector : function() {
 		if (!this.dirty || !this.items) {return};
 		if (!this.selector) {
@@ -7783,7 +7872,6 @@ hui.ui.DropDown.prototype = {
 		});
 		this.dirty = false;
 	},
-	/** @private */
 	_itemClicked : function(item,index) {
 		this.index = index;
 		var changed = this.value!=this.items[index].value;
@@ -7883,7 +7971,7 @@ hui.ui.Alert.prototype = {
 		if (!this.title) {
 			this.title = hui.build('h1',{parent:this.content});
 		}
-		hui.dom.setText(this.title,text);
+		hui.dom.setText(this.title,hui.ui.getTranslated(text));
 		
 	},
 	/** Sets the alert text
@@ -7893,7 +7981,7 @@ hui.ui.Alert.prototype = {
 		if (!this.text) {
 			this.text = hui.build('p',{parent:this.content});
 		}
-		hui.dom.setText(this.text,text || '');
+		hui.dom.setText(this.text,hui.ui.getTranslated(text));
 	},
 	/** Sets the alert emotion
 	 * @param {String} emotion Can be 'smile' or 'gasp'
@@ -7985,23 +8073,20 @@ hui.ui.Button.create = function(options) {
 	if (!options.enabled) {
 		className+=' hui_button_disabled';
 	}
+	var text = options.text ? hui.ui.getTranslated(options.text) : null;
+	if (options.title) { // Deprecated
+		text = hui.ui.getTranslated(options.title);
+	}
 	var element = options.element = hui.build('a',{'class':className,href:'javascript://'});
-	var element2 = document.createElement('span');
-	element.appendChild(element2);
-	var element3 = document.createElement('span');
-	element2.appendChild(element3);
+	var inner = hui.build('span',{parent:hui.build('span',{parent:element})});
 	if (options.icon) {
-		var icon = hui.build('em',{'class':'hui_button_icon',style:'background-image:url('+hui.ui.getIconUrl(options.icon,16)+')'});
-		if (!options.text || options.text.length==0) {
+		var icon = hui.build('em',{parent:inner,'class':'hui_button_icon',style:'background-image:url('+hui.ui.getIconUrl(options.icon,16)+')'});
+		if (!text) {
 			hui.cls.add(icon,'hui_button_icon_notext');
 		}
-		element3.appendChild(icon);
 	}
-	if (options.text && options.text.length>0) {
-		hui.dom.addText(element3,options.text);
-	}
-	if (options.title && options.title.length>0) {
-		hui.dom.addText(element3,options.title);
+	if (text) {
+		hui.dom.addText(inner,text);
 	}
 	return new hui.ui.Button(options);
 }
@@ -8095,7 +8180,7 @@ hui.ui.Button.prototype = {
 	 * @param
 	 */
 	setText : function(text) {
-		hui.dom.setText(this.element.getElementsByTagName('span')[1], text);
+		hui.dom.setText(this.element.getElementsByTagName('span')[1], hui.ui.getTranslated(text));
 	},
 	/**
 	 * Get the data object for the button
@@ -8109,27 +8194,27 @@ hui.ui.Button.prototype = {
 ////////////////////////////////// Buttons /////////////////////////////
 
 /** @constructor */
-hui.ui.Buttons = function(o) {
-	this.name = o.name;
-	this.element = hui.get(o.element);
+hui.ui.Buttons = function(options) {
+	this.name = options.name;
+	this.element = hui.get(options.element);
 	this.body = hui.get.firstByClass(this.element,'hui_buttons_body');
 	hui.ui.extend(this);
 }
 
-hui.ui.Buttons.create = function(o) {
-	o = hui.override({top:0},o);
-	var e = o.element = hui.build('div',{'class':'hui_buttons'});
-	if (o.align=='right') {
+hui.ui.Buttons.create = function(options) {
+	options = hui.override({top:0},options);
+	var e = options.element = hui.build('div',{'class':'hui_buttons'});
+	if (options.align=='right') {
 		hui.cls.add(e,'hui_buttons_right');
 	}
-	if (o.align=='center') {
+	if (options.align=='center') {
 		hui.cls.add(e,'hui_buttons_center');
 	}
-	if (o.top>0) {
-		e.style.paddingTop=o.top+'px';
+	if (options.top > 0) {
+		e.style.paddingTop=options.top+'px';
 	}
 	hui.build('div',{'class':'hui_buttons_body',parent:e});
-	return new hui.ui.Buttons(o);
+	return new hui.ui.Buttons(options);
 }
 
 hui.ui.Buttons.prototype = {
@@ -8159,7 +8244,7 @@ hui.ui.Selection = function(options) {
 			item.element = element;
 			this.addItemBehavior(element,item);
 		};
-		this.selection = this.getSelectionWithValue(this.options.value);
+		this.selection = this._getSelectionWithValue(this.options.value);
 		this.updateUI();
 	} else if (this.options.value!=null) {
 		this.selection = {value:this.options.value};
@@ -8197,7 +8282,7 @@ hui.ui.Selection.prototype = {
 	/** Set the selected item
 	 * @param {Object} value The selected item */
 	setValue : function(value) {
-		var item = this.getSelectionWithValue(value);
+		var item = this._getSelectionWithValue(value);
 		if (item===null) {
 			this.selection = null;
 		} else {
@@ -8207,8 +8292,7 @@ hui.ui.Selection.prototype = {
 		this.updateUI();
 		this.fireChange();
 	},
-	/** @private */
-	getSelectionWithValue : function(value) {
+	_getSelectionWithValue : function(value) {
 		var i;
 		for (i=0; i < this.items.length; i++) {
 			if (this.items[i].value==value) {
@@ -8227,7 +8311,6 @@ hui.ui.Selection.prototype = {
 	},
 	/** Changes selection to the first item */
 	selectFirst : function() {
-		hui.log('selecting first')
 		var i;
 		for (i=0; i < this.items.length; i++) {
 			this.changeSelection(this.items[i]);
@@ -8294,7 +8377,7 @@ hui.ui.Selection.prototype = {
 		var item = {id:id,title:title,icon:icon,badge:badge,element:element,value:value,kind:kind};
 		this.items.push(item);
 		this.addItemBehavior(element,item);
-		this.selection = this.getSelectionWithValue(this.options.value);
+		this.selection = this._getSelectionWithValue(this.options.value);
 	},
 	*/
 	/** @private */
@@ -8304,7 +8387,7 @@ hui.ui.Selection.prototype = {
 		}.bind(this));
 		hui.listen(node,'dblclick',function(e) {
 			hui.stop(e);
-			this.itemWasDoubleClicked(item);
+			this._onDoubleClick(item);
 		}.bind(this));
 		node.dragDropInfo = item;
 	},
@@ -8326,7 +8409,7 @@ hui.ui.Selection.prototype = {
 			}.bind(this));
 			hui.listen(node,'dblclick',function(e) {
 				hui.stop(e);
-				this.itemWasDoubleClicked(item);
+				this._onDoubleClick(item);
 			}.bind(this));
 		}.bind(this));
 		this.fireSizeChange();
@@ -8348,10 +8431,9 @@ hui.ui.Selection.prototype = {
 		if (this.busy>0) {return}
 		this.changeSelection(item);
 	},
-	/** @private */
-	itemWasDoubleClicked : function(item) {
+	_onDoubleClick : function(item) {
 		if (this.busy>0) {return}
-		this.fire('selectionWasOpened',item);
+		this.fire('open',item);
 	},
 	_setBusy : function(busy) {
 		this.busy+= busy ? 1 : -1;
@@ -8367,7 +8449,7 @@ hui.ui.Selection.prototype = {
 	},
 	_checkValue : function() {
 		if (!this.selection) {return}
-		var item = this.getSelectionWithValue(this.selection.value);
+		var item = this._getSelectionWithValue(this.selection.value);
 		if (!item) {
 			hui.log('Value not found: '+this.selection.value);
 			if (!this.busy) {
@@ -8439,6 +8521,19 @@ hui.ui.Selection.Items.prototype = {
 		this.parent._setBusy(false);
 	},
 	/** @private */
+	$sourceShouldRefresh : function() {
+		return hui.dom.isVisible(this.element);
+	},
+	/** @private */
+	$visibilityChanged : function() {
+		if (hui.dom.isVisible(this.element)) {
+			if (this.options.source) {
+				// If there is a source, make sure it is initially 
+				this.options.source.refreshFirst();
+			}			
+		}
+	},
+	/** @private */
 	buildLevel : function(parent,items,inc,open) {
 		if (!items) return;
 		var hierarchical = this.isHierarchy(items);
@@ -8479,7 +8574,7 @@ hui.ui.Selection.Items.prototype = {
 			}.bind(this));
 			hui.listen(node,'dblclick',function(e) {
 				hui.stop(e);
-				this.parent.itemWasDoubleClicked(item);
+				this.parent._onDoubleClick(item);
 			}.bind(this));
 			level.appendChild(node);
 			var info = {title:item.title,icon:item.icon,badge:item.badge,kind:item.kind,element:node,value:item.value};
@@ -8586,6 +8681,15 @@ hui.ui.Toolbar.prototype = {
 				widget.setSelected(widget.key==key);
 			}
 		};
+	},
+	getByKey : function(key) {
+		var desc = hui.ui.getDescendants(this);
+		for (var i=0; i < desc.length; i++) {
+			var widget = desc[i];
+			if (widget.key==key) {
+				return widget;
+			}
+		};
 	}
 }
 
@@ -8642,9 +8746,6 @@ hui.ui.Toolbar.Icon = function(options) {
 	this.enabled = !hui.cls.has(this.element,'hui_toolbar_icon_disabled');
 	this.element.tabIndex=this.enabled ? 0 : -1;
 	this.icon = hui.get.firstByClass(this.element,'hui_icon');
-	if (!hui.browser.msie) {
-		this.element.removeAttribute('href');
-	}
 	hui.ui.extend(this);
 	this.addBehavior();
 }
@@ -8694,6 +8795,16 @@ hui.ui.Toolbar.Icon.prototype = {
 		} else if (overlay) {
 			var parent = hui.get.firstByClass(this.element,'hui_icon');
 			hui.build('span',{'class':'hui_icon_overlay',parent:parent,style:'background-image: url('+hui.ui.getIconUrl('overlay/'+overlay,32)+')'});
+		}
+	},
+	setBadge : function(value) {
+		var node = hui.get.firstByClass(this.element,'hui_icon_badge');
+		if (!node && !hui.isBlank(value)) {
+			node = hui.build('span',{'class':'hui_icon_badge',parent:hui.get.firstByClass(this.element,'hui_icon'),text:value});
+		} else if (hui.isBlank(value) && node) {
+			hui.dom.remove(node);
+		} else if (node) {
+			hui.dom.setText(node,value);
 		}
 	},
 	/** Sets wether the icon should be selected */
@@ -8748,11 +8859,28 @@ hui.ui.Toolbar.Badge.prototype = {
 	}
 }
 
+//////////////////////// More ///////////////////////
+
+/** @constructor */
+hui.ui.Toolbar.More = function(options) {
+	this.element = hui.get(options.element);
+	this.name = options.name;
+	this.button = hui.get.firstByClass(this.element,'hui_toolbar_more');
+	hui.listen(this.button,'click',this.toggle.bind(this));
+	hui.ui.extend(this);
+}
+
+hui.ui.Toolbar.More.prototype = {
+	toggle : function() {
+	 	hui.cls.toggle(this.element,'hui_toolbar_more_expanded');
+	}
+}
+
 /* EOF *//**
 	Used to choose an image
 	@constructor
 */
-hui.ui.ImagePicker = function(options) {
+hui.ui.ImageInput = function(options) {
 	this.name = options.name;
 	this.options = hui.override({width:48,height:48},options);
 	this.element = hui.get(options.element);
@@ -8763,7 +8891,7 @@ hui.ui.ImagePicker = function(options) {
 	this._addBehavior();
 }
 
-hui.ui.ImagePicker.prototype = {
+hui.ui.ImageInput.prototype = {
 	_addBehavior : function() {
 		hui.listen(this.element,'click',this._showPicker.bind(this));
 	},
@@ -8792,11 +8920,31 @@ hui.ui.ImagePicker.prototype = {
 			this.element.style.backgroundImage = 'url('+url+')';
 		}
 	},
+	_showFinder : function() {
+		if (!this.finder) {
+			this.finder = hui.ui.Finder.create(
+				this.options.finder
+			);
+			this.finder.listen({
+				$select : function(object) {
+					this.setObject(object);
+					this._fireChange();
+					this.finder.hide();
+				}.bind(this)
+			})
+		}
+		this.finder.show();
+	},
 	_showPicker : function() {
+		if (this.options.finder) {
+			this._showFinder();
+			return;
+		}
+		
 		if (!this.picker) {
 			var self = this;
 			this.picker = hui.ui.BoundPanel.create({modal:true});
-			this.content = hui.build('div',{'class':'hui_imagepicker_thumbs'});
+			this.content = hui.build('div',{'class':'hui_imageinput_thumbs'});
 			var buttons = hui.ui.Buttons.create({align:'right'});
 			var close = hui.ui.Button.create({text:'Luk',highlighted:true,small:true});
 			close.listen({
@@ -8824,6 +8972,15 @@ hui.ui.ImagePicker.prototype = {
 	_hidePicker : function() {
 		this.picker.hide();
 	},
+		/** @private */
+	$visibilityChanged : function() {
+		if (this.picker && !hui.dom.isVisible(this.element)) {
+			this.picker.hide();
+		}
+		if (this.finder && !hui.dom.isVisible(this.element)) {
+			this.finder.hide();
+		}
+	},
 	_fireChange : function() {
 		this.fireValueChange();
 	},
@@ -8844,7 +9001,7 @@ hui.ui.ImagePicker.prototype = {
 			var id = parseInt(images[i].getAttribute('id'));
 			var img = {id:id};
 			var url = hui.ui.resolveImageUrl(this,img,48,48);
-			var thumb = hui.build('div',{'class':'hui_imagepicker_thumbnail',style:'background-image:url('+url+')'});
+			var thumb = hui.build('div',{'class':'hui_imageinput_thumbnail',style:'background-image:url('+url+')'});
 			thumb.huiObject = {'id':id};
 			thumb.onclick = function() {
 				self.setObject(this.huiObject);
@@ -8976,13 +9133,16 @@ hui.ui.BoundPanel.prototype = {
 		}
 		if (!hui.browser.opacity) {
 			this.element.style.display='none';
+			hui.ui.callVisible(this);
 		} else {
-			hui.animate(this.element,'opacity',0,300,{ease:hui.ease.slowFast,hideOnComplete:true});
+			hui.animate(this.element,'opacity',0,300,{ease:hui.ease.slowFast,onComplete:function() {
+				this.element.style.display='none';
+				hui.ui.callVisible(this);
+			}.bind(this)});
 		}
 		if (this.options.modal) {
 			hui.ui.hideCurtain(this);
 		}
-		hui.ui.callVisible(this);
 		this.visible=false;
 	},
 	/**
@@ -9400,12 +9560,43 @@ hui.ui.ImageViewer.prototype = {
 		this.box.show();
 		this._goToImage(false,0,false);
 		hui.listen(document,'keydown',this._keyListener);
+		this.visible = true;
+		this._setHash(true);
+	},
+	_setHash : function(visible) {
+		//return; // Disabled
+		if (!this._listening) {
+			this._listening = true;
+			if (!hui.browser.msie6 && !hui.browser.msie7) {
+				hui.listen(window,'hashchange',this._onHashChange.bind(this));
+			}
+		}
+		if (visible) {
+			document.location='#imageviewer';
+		} else {
+			hui.location.clearHash();
+		}
+	},
+	_onHashChange : function() {
+		if (this._changing) return;
+		this._changing = true;
+		if (hui.location.hasHash('imageviewer') && !this.visible) {
+			this.show();
+		} else if (!hui.location.hasHash('imageviewer') && this.visible) {
+			this.hide();
+		}
+		this._changing = false;
 	},
 	/** Hide the image viewer */
 	hide: function() {
+		this._hide();
+	},
+	_hide : function() {
 		this.pause();
 		this.box.hide();
 		hui.unListen(document,'keydown',this._keyListener);
+		this.visible = false;
+		this._setHash(false);	
 	},
 
 
@@ -10764,20 +10955,26 @@ hui.ui.Menu.prototype = {
 			this.visible = true;
 		}
 	},
-	hide : function() {
+	hide : function(options) {
 		if (!this.visible) {return};
-		var self = this;
-		hui.animate(this.element, 'opacity', 0, 200, {
-			onComplete : function() {
-				self.element.style.display='none';
-			}
-		});
+		if (options && options.immediate) {
+			this.element.style.display='none';
+		} else {
+			hui.animate(this.element, 'opacity', 0, 200, {
+				onComplete : function() {
+					this.element.style.display='none';
+				}.bind(this)
+			});			
+		}
 		this._removeHider();
 		for (var i=0; i < this.subMenus.length; i++) {
 			this.subMenus[i].hide();
 		};
 		this.visible = false;
 		this.fire('hide');
+	},
+	isVisible : function() {
+		return this.visible;
 	},
 	_isSubMenuVisible : function() {
 		for (var i=0; i < this.subMenus.length; i++) {
@@ -11284,14 +11481,14 @@ hui.ui.Upload.Item.prototype = {
 		return this.finished;
 	},
 	setError : function(error) {
-		this._setStatus(error || 'Fejl');
+		this._setStatus(error || hui.ui.getTranslated({en:'Error',da:'Fejl'}));
 		hui.cls.add(this.element,'hui_upload_item_error');
 		this.progress.hide();
 		this.progress.setValue(0);
 		this.finished = true;
 	},
 	setSuccess : function(status) {
-		this._setStatus('Færdig');
+		this._setStatus(hui.ui.getTranslated({en:'Complete',da:'Færdig'}));
 		this.progress.setValue(1);
 		this.finished = true;
 		hui.cls.add(this.element,'hui_upload_item_success');
@@ -11301,7 +11498,7 @@ hui.ui.Upload.Item.prototype = {
 		return this;
 	},
 	setProgress : function(value) {
-		this._setStatus('Overfører');
+		this._setStatus(hui.ui.getTranslated({en:'Transfering',da:'Overfører'}));
 		this.progress.setValue(Math.min(0.9999,value));
 		return this;
 	},
@@ -12579,7 +12776,19 @@ hui.ui.Dock.prototype = {
 	 */
 	setUrl : function(url) {
 		this._setBusy(true);
-		hui.frame.getDocument(this.iframe).location.href='about:blank';
+		/*
+		var win = hui.frame.getWindow(this.iframe);
+		try {
+			hui.log('Trying to abort!');
+			if (win['hui']) {
+				win.hui.request.abort();
+			} else {
+				hui.log('No HUI found');
+			}
+		} catch (e) {
+			hui.log(e)
+		}*/
+		//hui.frame.getDocument(this.iframe).location.href='about:blank';
 		hui.frame.getDocument(this.iframe).location.href=url;
 	},
 	collapse : function() {
@@ -12652,7 +12861,7 @@ hui.ui.Box.create = function(options) {
 		html : (options.closable ? '<a class="hui_box_close" href="#"></a>' : '')+
 			'<div class="hui_box_top"><div><div></div></div></div>'+
 			'<div class="hui_box_middle"><div class="hui_box_middle">'+
-			(options.title ? '<div class="hui_box_header"><strong class="hui_box_title">'+hui.string.escape(options.title)+'</strong></div>' : '')+
+			(options.title ? '<div class="hui_box_header"><strong class="hui_box_title">'+hui.string.escape(hui.ui.getTranslated(options.title))+'</strong></div>' : '')+
 			'<div class="hui_box_body" style="'+
 			(options.padding ? 'padding: '+options.padding+'px;' : '')+
 			(options.width ? 'width: '+options.width+'px;' : '')+
@@ -12833,7 +13042,7 @@ hui.ui.Input = function(options) {
 	this._checkPlaceholder();
 	try { // IE hack
 		if (e==document.activeElement) {
-			this._focused();
+			this._onFocus();
 		}
 	} catch (e) {}
 }
@@ -12842,10 +13051,10 @@ hui.ui.Input.prototype = {
 	_addBehavior : function() {
 		var e = this.element,
 			p = this.options.placeholderElement;
-		hui.listen(e,'keyup',this.keyDidStrike.bind(this));
-		hui.listen(e,'blur',this.onBlur.bind(this));
+		hui.listen(e,'keyup',this._onKeyUp.bind(this));
+		hui.listen(e,'blur',this._onBlur.bind(this));
 		if (p) {
-			hui.listen(e,'focus',this._focused.bind(this));
+			hui.listen(e,'focus',this._onFocus.bind(this));
 			hui.listen(e,'blur',this._checkPlaceholder.bind(this));
 			if (p) {
 				p.style.cursor='text';
@@ -12859,7 +13068,7 @@ hui.ui.Input.prototype = {
 			}.bind(this));
 		}
 	},
-	_focused : function() {
+	_onFocus : function() {
 		var e = this.element,p = this.options.placeholderElement;
 		if (p && e.value=='') {
 			hui.style.set(p,{opacity:0,display:'none'});
@@ -12885,7 +13094,7 @@ hui.ui.Input.prototype = {
 		}
 	},
 	/** @private */
-	keyDidStrike : function() {
+	_onKeyUp : function() {
 		if (this.value!==this.element.value) {
 			var newValue = this._validate(this.element.value);
 			var changed = newValue!==this.value;
@@ -12896,7 +13105,7 @@ hui.ui.Input.prototype = {
 		}
 	},
 	/** @private */
-	onBlur : function() {
+	_onBlur : function() {
 		hui.cls.remove(this.element,'hui_invalid');
 		this.element.value = this.value || '';
 	},
@@ -13558,7 +13767,7 @@ hui.ui.Bar.Text.prototype = {
 	 * @param {String} str The text
 	 */
 	setText : function(str) {
-		hui.dom.setText(this.element,str);
+		hui.dom.setText(this.element,hui.ui.getTranslated(str));
 	}
 }/**
  * A dock
@@ -14688,6 +14897,9 @@ hui.ui.ColorPicker = function(options) {
 	this.wheel3 = this.pages[2];
 	this.swatches = this.pages[3];
 	hui.ui.extend(this);
+	if (options.listener) {
+		this.listen(options.listener);
+	}
 	this.addBehavior();
 	this.buildData();
 }
@@ -16044,6 +16256,7 @@ hui.ui.TextField.prototype = {
 		}
 		hui.ui.addFocusClass({element:this.input,classElement:this.element,'class':'hui_field_focused'});
 		hui.listen(this.input,'keyup',this._onKeyUp.bind(this));
+		hui.listen(this.input,'keydown',this._onKeyDown.bind(this));
 		var p = this.element.getElementsByTagName('em')[0];
 		if (p) {
 			this._updateClass();
@@ -16062,13 +16275,16 @@ hui.ui.TextField.prototype = {
 	_updateClass : function() {
 		hui.cls.set(this.element,'hui_field_dirty',this.value.length>0);
 	},
-	_onKeyUp : function(e) {
+	_onKeyDown : function(e) {
 		if (!this.multiline && e.keyCode===hui.KEY_RETURN) {
+			hui.stop(e);
 			this.fire('submit');
 			var form = hui.ui.getAncestor(this,'hui_formula');
 			if (form) {form.submit();}
 			return;
 		}
+	},
+	_onKeyUp : function(e) {
 		if (this.input.value==this.value) {return;}
 		this.value=this.input.value;
 		this._updateClass();
@@ -16293,6 +16509,7 @@ hui.ui.ColorInput.prototype = {
 	},
 	_onButtonClick : function() {
 		if (hui.window.getViewHeight()<200) {
+			this.fire('clickPicker',this.value)		
 			return; // TODO: mini picker
 		}
 		if (!this.panel) {
@@ -16493,7 +16710,9 @@ hui.ui.Finder.prototype = {
 	
 	_selectionChanged : function() {
 		var row = this.list.getFirstSelection();
-		this.fire('select',row);
+		if (row!=null) {
+			this.fire('select',row);
+		}
 	}
 }
 
@@ -16764,4 +16983,368 @@ hui.ui.CodeInput.prototype = {
 	    } 
 	    t.scrollTop = scrollTop; 
 	} 
+}/**
+ * An input for objects
+ * @constructor
+ */
+hui.ui.ObjectInput = function(options) {
+	var e = this.element = hui.get(options.element);
+	this.options = hui.override({types:[]},options);
+	this.types = this.options.types;	
+	this.name = options.name;
+	this.value = options.value;
+	this.input = new hui.ui.Input({element:hui.get.firstByTag(e,'input')});
+	this.input.listen({
+		$valueChanged : this._onInputChange.bind(this)
+	})
+	this.object = hui.get.firstByClass(e,'hui_objectinput_object')
+	this.dropdown = new hui.ui.DropDown({
+		element : hui.get.firstByClass(e,'hui_dropdown'),
+		value : 'none',
+		items : this._buildDropDownOptions(),
+		listener : {
+			$valueChanged : this._onDropDownChange.bind(this)
+		}
+	})
+	hui.ui.extend(this);
+	this._addBehavior();
 }
+
+hui.ui.ObjectInput.prototype = {
+	_addBehavior : function() {
+		//hui.listen(this.textarea,'keydown',this._onKeyDown.bind(this));
+		//hui.listen(this.textarea,'keyup',this._onKeyUp.bind(this));
+	},
+	_buildDropDownOptions : function() {
+		var options = [{value:'none',text:'Intet link'}];
+		for (var i=0; i < this.options.types.length; i++) {
+			var type = this.options.types[i];
+			options.push({value:type.key,text:type.label})
+		};
+		return options;
+	},
+	_getType : function(key) {
+		for (var i=0; i < this.types.length; i++) {
+			if (this.types[i].key==key) {
+				return this.types[i];
+			}
+		};
+	},
+	_onInputChange : function(value) {
+		this.value = {type:this.dropdown.getValue(),value:value};
+		this._updateUI();
+		this.fireValueChange();
+	},
+	_onDropDownChange : function(value) {
+		this._closeAllFinders();
+		var type = this._getType(value);
+		if (!type) {
+			this.input.element.style.display = this.object.style.display = 'none';
+			return;
+		}
+		this.input.element.style.display = !type.finderOptions ? '' : 'none';
+		this.object.style.display = type.finderOptions ? '' : 'none';
+		if (type.finderOptions) {
+			if (!type._finder) {
+				type._finder = hui.ui.Finder.create(
+					type.finderOptions
+				);
+				type._finder.listen({
+					$select : function(object) {
+						this._selectObject(type,object);
+					}.bind(this)
+				})
+			}
+			type._finder.show();
+			this.value = {type:value,value:null}
+		} else  {
+			this.input.focus();
+			this.input.setValue('');
+			this.value = {type:value,value:''}
+		}
+		this._updateUI();
+		this.fireValueChange();
+	},
+	_closeAllFinders : function() {
+		for (var i=0; i < this.types.length; i++) {
+			if (this.types[i]._finder) {
+				this.types[i]._finder.hide();
+			}
+		}
+	},
+	_selectObject : function(type,object) {
+		this.value = {type : type.key, value : object};
+		this._updateUI();
+		this._closeAllFinders();
+		this.fireValueChange();
+	},
+	_updateUI : function() {
+		var value = this.value;
+		if (!hui.isDefined(value)) {
+			this.dropdown.setValue('none');
+			this.input.element.style.display = this.object.style.display = 'none';
+		} else {
+			var type = this._getType(value.type);
+			if (type) {
+				this.dropdown.setValue(value.type);
+				this.input.element.style.display = !type.finderOptions ? '' : 'none';
+				this.object.style.display = type.finderOptions ? '' : 'none';
+				if (!type.finderOptions) {
+					this.input.value = value.value;
+				} else {
+					var title = hui.get.firstByClass(this.element,'hui_objectinput_title'),
+						icon = hui.get.firstByClass(this.element,'hui_objectinput_icon');
+					if (!value.value) {
+						this.object.style.display = 'none';
+					} else {
+						this.object.style.display = '';
+						if (hui.isDefined(value.value.title)) {
+							hui.dom.setText(title,hui.string.shorten(value.value.title,40));
+						} else {
+							this._setBusy(true);
+							hui.ui.request({
+								url : type.lookupUrl,
+								parameters : {id:value.value.id},
+								onJSON : function(obj) {
+									hui.dom.setText(title,hui.string.shorten(obj.title,40));
+									this._setBusy(false);
+								}.bind(this),
+								onFailure : function() {
+									hui.dom.setText(title,'!!Error');
+									this._setBusy(false);
+								}.bind(this)
+							})
+						}
+						icon.style.backgroundImage = 'url(\''+hui.ui.getIconUrl(type.icon,16)+'\')';
+					}
+				}
+			}
+		}		
+	},
+	_setBusy : function(busy) {
+		this.busy = busy;
+		hui.cls.set(this.element,'hui_objectinput_busy',busy)
+	},
+	
+	
+	getValue : function() {
+		return this.value;
+	},
+	setValue : function(value) {
+		this.value = value;
+		this._updateUI();
+	},
+	reset : function() {
+		this.setValue(null);
+	}
+}/////////////////////////// Color input /////////////////////////
+
+/**
+ * A component for font input
+ * @constructor
+ */
+hui.ui.FontInput = function(options) {
+	this.options = hui.override({value:null},options);
+	this.name = options.name;
+	this.element = hui.get(options.element);
+	this.button = hui.get.firstByClass(this.element,'hui_fontinput');
+	this.dropdown = new hui.ui.DropDown({
+		element : hui.get.firstByClass(this.element,'hui_dropdown'),
+		items : hui.ui.FontPicker.fonts
+	});
+	this.value = null;
+	hui.ui.extend(this);
+	this.setValue(this.options.value);
+	this._addBehavior();
+}
+
+hui.ui.FontInput.create = function(options) {
+	options = options || {};
+	var e = options.element = hui.build('span',{'class':'hui_colorinput',html:'<span class="hui_field_top"><span><span></span></span></span><span class="hui_field_middle"><span class="hui_field_middle"><span class="hui_field_content"><span class="hui_field_singleline"><input type="text" value=""/></span></span></span></span><span class="hui_field_bottom"><span><span></span></span></span><a tabindex="-1" class="hui_colorinput" href="javascript://"></a>'});
+		
+	return new hui.ui.ColorInput(options);
+}
+
+hui.ui.FontInput.prototype = {
+	_addBehavior : function() {
+		hui.listen(this.button, 'click',this._onButtonClick.bind(this));
+	},
+	_syncInput : function() {
+		this.dropdown.setValue(this.value);
+	},
+	_fireChange : function() {
+		hui.ui.callAncestors(this,'childValueChanged',this.value);
+		this.fire('valueChanged',this.value)		
+	},
+	_onBlur : function() {
+		hui.Color.parse(this.value);
+	},
+	_onButtonClick : function() {
+		if (hui.window.getViewHeight()<200) {
+			this.fire('clickPicker',this.value)		
+			return; // TODO: mini picker
+		}
+		if (!this.panel) {
+			this.panel = hui.ui.BoundPanel.create({modal:true,variant:'light'});
+			this.picker = hui.ui.FontPicker.create();
+			this.picker.listen(this);
+			this.panel.add(this.picker);
+		}
+		this.panel.position(this.button);
+		this.panel.show();
+	},
+	/** @private */
+	$select : function(font) {
+		this.panel.hide();
+		this.setValue(font.value);
+		this._fireChange();
+	},
+	
+	// Public...
+	
+	getValue : function() {
+		return this.value;
+	},
+	setValue : function(value) {
+		this.value = value;
+		this._syncInput();
+	},
+	focus : function() {
+		try {
+			this.input.focus();
+		} catch (e) {}		
+	},
+	reset : function() {
+		this.setValue('');
+	}
+}
+
+/* EOF *//**
+	@constructor
+	@param options The options (non)
+*/
+hui.ui.FontPicker = function(options) {
+	this.name = options.name;
+	this.element = hui.get(options.element);
+	this.fonts = options.fonts.concat(options.additionalFonts);
+	this.previews = {};
+	this.options = options;
+	hui.override(this.options,options);
+	hui.ui.extend(this);
+	this._addBehavior();
+}
+
+hui.ui.FontPicker.fonts =[
+	{text:'Verdana',value:'Verdana,sans-serif'},
+	{text:'Tahoma',value:'Tahoma,Geneva,sans-serif'},
+	{text:'Trebuchet',value:'Trebuchet MS,Helvetica,sans-serif'},
+	{text:'Geneva',value:'Geneva,Tahoma,sans-serif'},
+	{text:'Helvetica',value:'Helvetica,Arial,sans-serif'},
+	{text:'Helvetica Neue',value:'Helvetica Neue,Helvetica,Arial,sans-serif'},
+	{text:'Arial',value:'Arial,Helvetica,sans-serif'},
+	{text:'Arial Black',value:'Arial Black,Gadget,Arial,sans-serif'},
+	{text:'Impact',value:'Impact,Charcoal,Arial Black,Gadget,Arial,sans-serif'},
+
+	{text:'Times New Roman',value:'Times New Roman,Times,serif'},
+	{text:'Times',value:'Times,Times New Roman,serif'},
+	{text:'Book Antiqua',value:'Book Antiqua,Palatino,serif'},
+	{text:'Palatino',value:'Palatino,Book Antiqua,serif'},
+	{text:'Georgia',value:'Georgia,Book Antiqua,Palatino,serif'},
+	{text:'Garamond',value:'Garamond,Times New Roman,Times,serif'},
+
+	{text:'Comic Sans',value:'Comic Sans MS,cursive'},
+
+	{text:'Courier New',value:'Courier New,Courier,monospace'},
+	{text:'Courier',value:'Courier,Courier New,monospace'},
+	{text:'Lucida Console',value:'Lucida Console,Monaco,monospace'},
+	{text:'Monaco',value:'Monaco,Lucida Console,monospace'}
+]
+
+hui.ui.FontPicker.create = function(options) {
+	options = hui.override({
+		fonts : hui.ui.FontPicker.fonts,
+		additionalFonts : []
+	},options);
+	
+	var fonts = options.fonts.concat(options.additionalFonts);
+	
+	var element = options.element = hui.build('div',{
+		'class' : 'hui_fontpicker'
+		});
+	for (var i=0; i < fonts.length; i++) {
+		var font = fonts[i];
+		var node = hui.build('div',{parent:element,'class':'hui_fontpicker_item',text:font.text,style:'font-family:'+font.value+';'});
+		var icon = hui.ui.createIcon('monochrome/info',16,'a');
+		node.appendChild(icon);
+		node.huiIndex = i;
+	};
+	return new hui.ui.FontPicker(options);
+}
+
+hui.ui.FontPicker.prototype = {
+	_addBehavior : function() {
+		hui.listen(this.element,'click',this._onClick.bind(this));
+	},
+	_onClick : function(e) {
+		e = hui.event(e);
+		var node = e.findByClass('hui_fontpicker_item');
+		if (node) {
+			var a = e.findByClass('hui_icon');
+			var font = this.fonts[node.huiIndex];
+			if (a) {
+				this._buildPreview(font);
+			} else {
+				this.fire('select',font);
+			}
+		}
+	},
+	/** @private */
+	$visibilityChanged : function() {
+		if (!hui.dom.isVisible(this.element)) {
+			hui.each(this.previews,function(key,value) {
+				value.hide();
+			})
+		}
+	},
+	_buildPreview : function(font) {
+		if (this.previews[font.name]) {
+			this.previews[font.name].show();
+			return;
+		}
+		var e = hui.build('div',{className:'hui_fontpicker_example',style:'font-family:'+font.value+';'});
+
+		var weights = [100,200,300,'normal',500,600,'bold','bolder'];
+		var sizes = ['9pt','10pt','11pt','12pt','13pt','14pt','16px','18pt'];
+
+		var html = '<h1>'+font.text+'</h1>';
+		
+		html+='<p style="font-size: 12px;">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>';
+		
+		html+='<table>';
+		html+='<thead><tr><th></th>';
+		for (var i=0; i < weights.length; i++) {
+			html+='<th>'+weights[i]+'</th>';
+		};
+		html+='</tr></thead>';
+
+		html+='<tbody>';
+		for (var i=0; i < sizes.length; i++) {
+			html+='<tr><th>'+sizes[i]+'</th>';
+			for (var j=0; j < weights.length; j++) {
+				html+='<td style="font-weight: '+weights[j]+'; font-size:'+sizes[i]+';">Pack my box with five dozen liquor jugs</td>';
+			};
+		};
+		html+='</tbody>';
+		e.innerHTML = html;
+		var win = hui.ui.Window.create({title:font.text,padding:3});
+		win.add(e);
+		this.previews[font.name] = win;
+		win.show();
+	}
+}
+
+/* EOF */
+
+
+
+

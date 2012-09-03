@@ -58,6 +58,23 @@
 	<span class="hui_divider"><xsl:comment /></span>
 </xsl:template>
 
+<xsl:template match="gui:toolbar//gui:more">
+	<span class="hui_toolbar_more" id="{generate-id()}">
+		<span class="hui_toolbar_more_content">
+			<xsl:apply-templates/>
+			<xsl:comment/>
+		</span>
+		<a class="hui_toolbar_more"><xsl:value-of select="@text"/></a>
+	</span>
+	<script type="text/javascript">
+		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Toolbar.More({
+			element:'<xsl:value-of select="generate-id()"/>',
+			name:'<xsl:value-of select="@name"/>'
+		});
+		<xsl:call-template name="gui:createobject"/>
+	</script>
+</xsl:template>
+
 <!--doc title:'Toolbar icon' class:'hui.ui.Toolbar.Icon' module:'bar'
 <toolbar···>
     ···
@@ -68,7 +85,7 @@
 </toolbar>
 -->
 <xsl:template match="gui:toolbar//gui:icon">
-	<a id="{generate-id()}" href="javascript://">
+	<a id="{generate-id()}">
 		<xsl:attribute name="class">
 			<xsl:text>hui_toolbar_icon</xsl:text>
 			<xsl:if test="@selected='true'"> hui_toolbar_icon_selected</xsl:if>
@@ -79,6 +96,9 @@
 			<span class="hui_icon" style="background-image: url('{$context}/hui/icons/{@icon}32.png')">
 				<xsl:if test="@overlay">
 					<span class="hui_icon_overlay" style="background-image: url('{$context}/hui/icons/overlay/{@overlay}32.png')"><xsl:comment/></span>
+				</xsl:if>
+				<xsl:if test="@badge!=''">
+					<span class="hui_icon_badge"><xsl:value-of select="@badge"/></span>
 				</xsl:if>
 				<xsl:comment/>
 			</span>
@@ -119,7 +139,7 @@
 			<xsl:attribute name="style">width:<xsl:value-of select="@width"/>px;</xsl:attribute>
 		</xsl:if>
 		<em class="hui_searchfield_placeholder"><xsl:value-of select="@placeholder"/><xsl:comment/></em>
-		<a href="javascript:void(0);" class="hui_searchfield_reset"><xsl:comment/></a>
+		<a class="hui_searchfield_reset"><xsl:comment/></a>
 		<span><span><input type="text"/></span></span>
 	</span>
 	<script type="text/javascript">
@@ -193,8 +213,15 @@
 <xsl:template match="gui:toolbar//gui:grid">
 	<span class="hui_toolbar_grid">
 	<table class="hui_toolbar_grid">
-		<xsl:if test="@left">
-			<xsl:attribute name="style">margin-left:<xsl:value-of select="@left"/>px;</xsl:attribute>
+		<xsl:if test="@left or @right">
+		<xsl:attribute name="style">
+			<xsl:if test="@left">
+				margin-left:<xsl:value-of select="@left"/>px;
+			</xsl:if>
+			<xsl:if test="@right">
+				margin-right:<xsl:value-of select="@right"/>px;
+			</xsl:if>
+		</xsl:attribute>
 		</xsl:if>
 		<xsl:apply-templates/>
 	</table>
@@ -289,7 +316,7 @@
 		<xsl:text>hui_bar_button</xsl:text>
 		<xsl:if test="@selected='true'"><xsl:text> hui_bar_button_selected</xsl:text></xsl:if>
 	</xsl:variable>
-	<a id="{generate-id()}" class="{$class}" href="javascript:void(0);">
+	<a id="{generate-id()}" class="{$class}">
 		<xsl:if test="@icon">
 			<span class="hui_icon_16" style="background-image: url('{$context}/hui/icons/{@icon}16.png')"><xsl:comment/></span>
 		</xsl:if>

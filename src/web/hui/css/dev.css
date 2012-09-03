@@ -11,7 +11,7 @@
 @import url('window.css');
 @import url('list.css');
 @import url('selection.css');
-@import url('imagepicker.css');
+@import url('imageinput.css');
 @import url('boundpanel.css');
 @import url('richtext.css');
 @import url('imageviewer.css');
@@ -49,3 +49,5 @@
 @import url('structure.css');
 @import url('slider.css');
 @import url('codeinput.css');
+@import url('fontinput.css');
+@import url('fontpicker.css');
