@@ -1,11 +1,11 @@
 var mainController = {
-	click$toolSettings : function() {
+	$click$toolSettings : function() {
 		document.location='.';
 	},
-	click$toolScheduler : function() {
+	$click$toolScheduler : function() {
 		document.location='scheduler.gui';
 	},
-	click$toolModel : function() {
+	$click$toolModel : function() {
 		document.location='model.gui';
 	}
 }

@@ -12,11 +12,15 @@
 		<parameter key="search" value="@search.value"/>
 	</source>
 	<source name="classSource" dwr="Common.getClasses"/>
+
 	<structure>
 		<top>
 			<toolbar>
+				<icon icon="common/new" text="Hey"/>
 				<right>
-					<searchfield name="search" title="Search" expandedWidth="200"/>
+					<field label="Search">
+						<searchfield name="search" expandedWidth="200"/>
+					</field>
 				</right>
 			</toolbar>
 		</top>
@@ -38,24 +42,32 @@
 		</middle>
 		<bottom/>
 	</structure>
+	
 	<window name="entityEditor" width="300" padding="5">
 		<formula name="entityFormula">
-			<group>
-				<checkbox label="Modify:" key="publicAlter"/>
-				<checkbox label="View:" key="publicView"/>
-				<checkbox label="Delete:" key="publicDelete"/>
-			</group>
+			<fields labels="above">
+				<field label="Public access">
+					<checkbox label="Modify" key="publicAlter"/>
+					<checkbox label="View" key="publicView"/>
+					<checkbox label="Delete" key="publicDelete"/>
+				</field>
+			</fields>
 			<buttons>
 				<button title="Update" name="updateEntity" highlighted="true"/>
 			</buttons>
 		</formula>
 	</window>
+	
 	<window name="userEditor" title="User" padding="5" width="300">
 		<formula name="userFormula">
-			<group>
-				<text label="Username:" key="username"/>
-				<text secret="true" label="Password:" key="password"/>
-			</group>
+			<fields>
+				<field label="Username:">
+					<text-input key="username"/>
+				</field>
+				<field label="Password:">
+					<text-input secret="true" key="password"/>
+				</field>
+			</fields>
 			<buttons>
 				<button title="Delete" name="deleteUser"/>
 				<button title="Update" name="saveUser" highlighted="true"/>

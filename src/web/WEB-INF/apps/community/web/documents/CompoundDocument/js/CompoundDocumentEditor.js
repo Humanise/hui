@@ -3,7 +3,7 @@ OO.Editor.CompoundDocument = function() {
 	hui.ui.Editor.get().addPartController('header','Overskrift',hui.ui.Editor.Header);
 	hui.ui.Editor.get().addPartController('html','Tekst',hui.ui.Editor.Html);
 	hui.ui.Editor.get().addPartController('image','Billede',OO.Editor.Image);
-	this.base = $$('.compounddocument')[0];
+	this.base = hui.get.firstByClass('.compounddocument');
 }
 
 OO.Editor.CompoundDocument.getInstance = function() {
@@ -31,7 +31,7 @@ OO.Editor.CompoundDocument.prototype = {
 	updateAll : function() {
 		var self = this;
 		CompoundDocumentDocument.getStructureHTML(OnlineObjects.content.id,function(html) {
-			self.base.update(html);
+			self.base.innerHTML=html;
 			hui.ui.Editor.get().reload();
 		});
 	},

@@ -61,54 +61,56 @@
 		<formula name="personFormula">			
 			<columns space="10">
 				<column>
-					<group labels="above">
-						<text label="Fornavn" key="givenName"/>
-					</group>
+					<fields labels="above">
+						<field label="Fornavn">
+							<text-input key="givenName"/>
+						</field>
+					</fields>
 				</column>
 				<column>
-					<group labels="above">
-						<text label="Mellemnavn" key="additionalName"/>
-					</group>
+					<fields labels="above">
+						<field label="Fornavn">
+							<text-input key="additionalName"/>
+						</field>
+					</fields>
 				</column>
 				<column>
-					<group labels="above">
-						<text label="Efternavn" key="familyName"/>
-					</group>
+					<fields labels="above">
+						<field label="Efternavn">
+							<text-input key="familyName"/>
+						</field>
+					</fields>
 				</column>
 			</columns>
 			<columns space="10">
 				<column>
-					<group labels="above">
-						<text label="Præfiks" key="namePrefix"/>
-					</group>
+					<fields labels="above">
+						<field label="Præfiks">
+							<text-input key="namePrefix"/>
+						</field>
+					</fields>
 				</column>
 				<column>
-					<group labels="above">
-						<text label="Postfiks" key="nameSuffix"/>
-					</group>
+					<fields labels="above">
+						<field label="Postfiks">
+							<text-input key="nameSuffix"/>
+						</field>
+					</fields>
 				</column>
 			</columns>
 			<space height="10"/>
 			<columns space="10">
 				<column>
-					<group labels="above">
-						<custom>
-						<objectlist name="personEmails">
-							<text label="E-mail" key="address"/>
-							<text label="Kontekst" key="context"/>
-						</objectlist>
-						</custom>
-					</group>
+					<objectlist name="personEmails">
+						<text label="E-mail" key="address"/>
+						<text label="Kontekst" key="context"/>
+					</objectlist>
 				</column>
 				<column>
-					<group labels="above">
-						<custom>
-						<objectlist name="personPhones">
-							<text label="Telefon" key="number"/>
-							<text label="Kontekst" key="context"/>
-						</objectlist>
-						</custom>
-					</group>
+					<objectlist name="personPhones">
+						<text label="Telefon" key="number"/>
+						<text label="Kontekst" key="context"/>
+					</objectlist>
 				</column>
 			</columns>
 			<buttons top="5">
@@ -120,14 +122,20 @@
 
 	<window name="invitationWindow" title="Ny invitation" width="300" padding="10">
 		<formula name="invitationFormula">
-			<group>
-				<text label="Navn" key="name"/>
-				<text label="E-mail" key="email"/>
-				<text label="Besked" key="message" lines="10"/>
+			<fields>
+				<field label="Navn">
+					<text-input key="name"/>
+				</field>
+				<field label="E-mail">
+					<text-input key="email"/>
+				</field>
+				<field label="Besked">
+					<text-input key="message" multiline="true"/>
+				</field>
 				<buttons>
 					<button title="Send" highlighted="true" name="sendInvitation"/>
 				</buttons>
-			</group>
+			</fields>
 		</formula>
 	</window>
 

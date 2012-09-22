@@ -2,11 +2,11 @@
 <gui xmlns="uri:hui" title="Opsætning">
 	<dock url="settings.gui" name="dock">
 		<toolbar>
-			<icon icon="common/settings" title="Settings" action="dock.setUrl('settings.gui')"/>
-			<icon icon="common/time" title="Jobs" action="dock.setUrl('scheduler.gui')"/>
-			<icon icon="common/object" title="Model" action="dock.setUrl('model.gui')"/>
-			<icon icon="common/image" title="Images" action="dock.setUrl('images.gui')"/>
-			<icon icon="common/image" title="Surveillance" action="dock.setUrl('surveillance.gui')"/>
+			<icon icon="common/settings" title="Settings" click="dock.setUrl('settings.gui')"/>
+			<icon icon="common/time" title="Jobs" click="dock.setUrl('scheduler.gui')"/>
+			<icon icon="common/object" title="Model" click="dock.setUrl('model.gui')"/>
+			<icon icon="common/image" title="Images" click="dock.setUrl('images.gui')"/>
+			<icon icon="common/image" title="Surveillance" click="dock.setUrl('surveillance.gui')"/>
 		</toolbar>
 	</dock>
 </gui>

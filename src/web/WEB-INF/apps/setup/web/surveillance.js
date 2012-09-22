@@ -1,5 +1,5 @@
-ui.listen({
-	$interfaceIsReady : function() {
+hui.ui.listen({
+	$ready : function() {
 		
 	},
 	$click$refresh : function() {

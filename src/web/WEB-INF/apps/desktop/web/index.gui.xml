@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gui xmlns="uri:hui">
+	<dwr base="/dwr/">
+		<interface name="Common"/>
+		<interface name="CoreSecurity"/>
+		<interface name="AppDesktop"/>
+	</dwr>
+	<controller source="js/ctrl.js"/>
+	<searchfield name="search"/>
+</gui>

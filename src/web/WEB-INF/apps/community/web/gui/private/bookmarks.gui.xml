@@ -45,9 +45,13 @@
 					</icon>
 					<icon icon="common/view" title="Vis" name="showItem" disabled="true"/>
 					<divider/>
- 							<searchfield title="Hurtig oprettelse" width="200" placeholder="Indsæt url..." name="quickEnter"/>
+					<field label="Hurtig oprettelse">
+ 						<searchfield width="200" placeholder="Indsæt url..." name="quickEnter"/>
+					</field>
 					<right>
- 								<searchfield title="Søgning" expandedWidth="150" placeholder="Søg her" name="searchfield"/>
+						<field label="Søgning">
+ 							<searchfield expanded-width="150" placeholder="Søg her" name="searchfield"/>
+						</field>
 						<space width="10"/>
 					</right>
 				</toolbar>
@@ -79,17 +83,25 @@
 	<window name="bookmarkWindow" title="Bogmærke" width="300" variant="dark">
 		<space all="5">
 			<formula name="bookmarkFormula">
-				<group>
-					<text label="Navn" key="name"/>
-					<text label="Adresse" key="address"/>
-					<text label="Beskrivelse" key="description" lines="6"/>
-					<tokens label="Nøgleord" key="tags"/>
+				<fields>
+					<field label="Navn">
+						<text-input key="name"/>
+					</field>
+					<field label="Adresse">
+						<text-input key="address"/>
+					</field>
+					<field label="Beskrivelse">
+						<text-input key="description" lines="6"/>
+					</field>
+					<field label="Nøgleord">
+						<tokens key="tags"/>
+					</field>
 					<buttons>
 						<button title="Slet" name="deleteBookmark"/>
 						<button title="Annuller" name="cancelBookmark"/>
 						<button title="Gem" highlighted="true" name="saveBookmark"/>
 					</buttons>
-				</group>
+				</fields>
 			</formula>
 		</space>
 	</window>

@@ -49,6 +49,16 @@ var imagesController = {
 			imageWindow.hide();
 		});
 	},
+	$click$deleteSelectedImage : function() {
+		var obj = imageGallery.getFirstSelection();
+		if (obj) {			
+			Common.deleteEntity(obj.id,function() {
+				this.refreshAll();
+				imageFormula.reset();
+				imageWindow.hide();
+			}.bind(this));
+		}
+	},
 	
 	//////////////// Upload //////////////
 	
