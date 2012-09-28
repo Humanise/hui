@@ -152,6 +152,7 @@ span.hui_icon_overlay
 
 span.hui_icon_badge
 {
+	background: #f00;
 	background: -webkit-gradient(linear, left top, left bottom, from(#f69), to(#f03));
 	border: 1px solid #d00;
 	color: #fff;
@@ -350,7 +351,17 @@ span.hui_toolbar_item a.hui_checkbox
 
 span.hui_toolbar_item a.hui_dropdown
 {
-	margin-top: 7px;
+	margin-top: 8px;
+}
+
+span.hui_toolbar_item span.hui_fontinput
+{
+	margin-top: 8px;
+}
+
+span.hui_toolbar_item span.hui_fontinput a.hui_dropdown
+{
+	margin-top: 0px;
 }
 
 span.hui_toolbar_item span.hui_searchfield
@@ -450,6 +461,7 @@ a.hui_toolbar_more
 	color: #666;
 	text-decoration: none;
 	margin: 0 5px;
+	cursor: pointer;
 }
 
 a.hui_toolbar_more:hover

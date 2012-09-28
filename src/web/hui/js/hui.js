@@ -201,16 +201,6 @@ hui.isArray = function(obj) {
 	}
 }
 
-
-
-
-
-
-
-
-
-
-
 ///////////////////////// Strings ///////////////////////
 
 /** @namespace */
@@ -864,10 +854,14 @@ hui.build = function(name,options,doc) {
 				} else {
 					options.parentFirst.insertBefore(e,options.parentFirst.childNodes[0]);
 				}
+			} else if (prop=='before') {
+				options.before.parentNode.insertBefore(e,options.before);
 			} else if (prop=='className') {
 				e.className=options.className;
 			} else if (prop=='class') {
 				e.className=options['class'];
+			} else if (prop=='style' && typeof(options[prop])=='object') {
+				hui.style.set(e,options[prop]);
 			} else if (prop=='style' && (hui.browser.msie7 || hui.browser.msie6)) {
 				e.style.setAttribute('cssText',options[prop]);
 			} else if (hui.isDefined(options[prop])) {
@@ -1239,6 +1233,11 @@ hui.Event = function(event) {
 	this.huiEvent = true;
 	/** The event */
 	this.event = event = event || window.event;
+	
+	if (!event) {
+		hui.log('No event');
+	}
+	
 	/** The target element */
 	this.element = event.target ? event.target : event.srcElement;
 	/** If the shift key was pressed */

@@ -201,16 +201,6 @@ hui.isArray = function(obj) {
 	}
 }
 
-
-
-
-
-
-
-
-
-
-
 ///////////////////////// Strings ///////////////////////
 
 /** @namespace */
@@ -864,10 +854,14 @@ hui.build = function(name,options,doc) {
 				} else {
 					options.parentFirst.insertBefore(e,options.parentFirst.childNodes[0]);
 				}
+			} else if (prop=='before') {
+				options.before.parentNode.insertBefore(e,options.before);
 			} else if (prop=='className') {
 				e.className=options.className;
 			} else if (prop=='class') {
 				e.className=options['class'];
+			} else if (prop=='style' && typeof(options[prop])=='object') {
+				hui.style.set(e,options[prop]);
 			} else if (prop=='style' && (hui.browser.msie7 || hui.browser.msie6)) {
 				e.style.setAttribute('cssText',options[prop]);
 			} else if (hui.isDefined(options[prop])) {
@@ -1239,6 +1233,11 @@ hui.Event = function(event) {
 	this.huiEvent = true;
 	/** The event */
 	this.event = event = event || window.event;
+	
+	if (!event) {
+		hui.log('No event');
+	}
+	
 	/** The target element */
 	this.element = event.target ? event.target : event.srcElement;
 	/** If the shift key was pressed */
@@ -1253,6 +1252,8 @@ hui.Event = function(event) {
 	this.escapeKey = event.keyCode==27;
 	/** If the space key was pressed */
 	this.spaceKey = event.keyCode==32;
+	/** If the backspace was pressed */
+	this.backspaceKey = event.keyCode==8;
 	/** If the up key was pressed */
 	this.upKey = event.keyCode==38;
 	/** If the down key was pressed */
@@ -1985,6 +1986,7 @@ hui.drag = {
 	
 	/** Listen for native drops
 	 * <pre><strong>options:</strong> {
+	 *  elements : «Element»,
 	 *  hoverClass : «String»,
 	 *  onDrop : function(event),
 	 *  onFiles : function(fileArray),
@@ -2041,6 +2043,8 @@ hui.drag = {
 						if (options.onURL && !hui.string.startsWith(url,'data:')) {
 							options.onURL(url);
 						}
+					} else if (options.onText && e.dataTransfer.types!=null && hui.array.contains(e.dataTransfer.types,'text/plain')) {
+						options.onText(e.dataTransfer.getData('text/plain'))
 					}
 				}
 			}
@@ -3797,10 +3801,10 @@ hui.ui.getElement = function(widgetOrElement) {
 }
 
 hui.ui.isWithin = function(e,element) {
-	e = new hui.Event(e);
-	var offset = {left:hui.position.getLeft(element),top:hui.position.getTop(element)};
-	var dims = {width:element.clientWidth,height:element.clientHeight};
-	return e.getLeft()>offset.left && e.getLeft()<offset.left+dims.width && e.getTop()>offset.top && e.getTop()<offset.top+dims.height;
+	e = hui.event(e);
+	var offset = { left : hui.position.getLeft(element), top : hui.position.getTop(element) };
+	var dims = { width : element.clientWidth, height : element.clientHeight };
+	return e.getLeft() > offset.left && e.getLeft() < offset.left+dims.width && e.getTop() > offset.top && e.getTop() < offset.top+dims.height;
 };
 
 hui.ui.getIconUrl = function(icon,size) {

@@ -201,16 +201,6 @@ hui.isArray = function(obj) {
 	}
 }
 
-
-
-
-
-
-
-
-
-
-
 ///////////////////////// Strings ///////////////////////
 
 /** @namespace */
@@ -864,10 +854,14 @@ hui.build = function(name,options,doc) {
 				} else {
 					options.parentFirst.insertBefore(e,options.parentFirst.childNodes[0]);
 				}
+			} else if (prop=='before') {
+				options.before.parentNode.insertBefore(e,options.before);
 			} else if (prop=='className') {
 				e.className=options.className;
 			} else if (prop=='class') {
 				e.className=options['class'];
+			} else if (prop=='style' && typeof(options[prop])=='object') {
+				hui.style.set(e,options[prop]);
 			} else if (prop=='style' && (hui.browser.msie7 || hui.browser.msie6)) {
 				e.style.setAttribute('cssText',options[prop]);
 			} else if (hui.isDefined(options[prop])) {
@@ -1239,6 +1233,11 @@ hui.Event = function(event) {
 	this.huiEvent = true;
 	/** The event */
 	this.event = event = event || window.event;
+	
+	if (!event) {
+		hui.log('No event');
+	}
+	
 	/** The target element */
 	this.element = event.target ? event.target : event.srcElement;
 	/** If the shift key was pressed */
@@ -1253,6 +1252,8 @@ hui.Event = function(event) {
 	this.escapeKey = event.keyCode==27;
 	/** If the space key was pressed */
 	this.spaceKey = event.keyCode==32;
+	/** If the backspace was pressed */
+	this.backspaceKey = event.keyCode==8;
 	/** If the up key was pressed */
 	this.upKey = event.keyCode==38;
 	/** If the down key was pressed */
@@ -1985,6 +1986,7 @@ hui.drag = {
 	
 	/** Listen for native drops
 	 * <pre><strong>options:</strong> {
+	 *  elements : «Element»,
 	 *  hoverClass : «String»,
 	 *  onDrop : function(event),
 	 *  onFiles : function(fileArray),
@@ -2041,6 +2043,8 @@ hui.drag = {
 						if (options.onURL && !hui.string.startsWith(url,'data:')) {
 							options.onURL(url);
 						}
+					} else if (options.onText && e.dataTransfer.types!=null && hui.array.contains(e.dataTransfer.types,'text/plain')) {
+						options.onText(e.dataTransfer.getData('text/plain'))
 					}
 				}
 			}
@@ -5298,10 +5302,10 @@ hui.ui.getElement = function(widgetOrElement) {
 }
 
 hui.ui.isWithin = function(e,element) {
-	e = new hui.Event(e);
-	var offset = {left:hui.position.getLeft(element),top:hui.position.getTop(element)};
-	var dims = {width:element.clientWidth,height:element.clientHeight};
-	return e.getLeft()>offset.left && e.getLeft()<offset.left+dims.width && e.getTop()>offset.top && e.getTop()<offset.top+dims.height;
+	e = hui.event(e);
+	var offset = { left : hui.position.getLeft(element), top : hui.position.getTop(element) };
+	var dims = { width : element.clientWidth, height : element.clientHeight };
+	return e.getLeft() > offset.left && e.getLeft() < offset.left+dims.width && e.getTop() > offset.top && e.getTop() < offset.top+dims.height;
 };
 
 hui.ui.getIconUrl = function(icon,size) {
@@ -6146,6 +6150,7 @@ hui.ui.Window.prototype = {
 		}
 		hui.drag.register({
 			element : this.titlebar,
+			onStart : this._onDragStart.bind(this) ,
 			onBeforeMove : this._onBeforeMove.bind(this) ,
  			onMove : this._onMove.bind(this),
 			onAfterMove : this._onAfterMove.bind(this)
@@ -6238,12 +6243,15 @@ hui.ui.Window.prototype = {
 		}
 	},
 
+	_onDragStart : function(e) {
+		this.element.style.zIndex = hui.ui.nextPanelIndex();
+	},
 	_onBeforeMove : function(e) {
 		e = hui.event(e);
-		this.element.style.zIndex = hui.ui.nextPanelIndex();
 		var pos = hui.position.get(this.element);
 		this.dragState = {left: e.getLeft() - pos.left,top:e.getTop()-pos.top};
 		this.element.style.right = 'auto';
+		hui.cls.add(this.element,'hui_window_dragging');
 	},
 	_onMove : function(e) {
 		var top = (e.getTop()-this.dragState.top);
@@ -6253,6 +6261,7 @@ hui.ui.Window.prototype = {
 	},
 	_onAfterMove : function() {
 		hui.ui.callDescendants(this,'$$parentMoved');
+		hui.cls.remove(this.element,'hui_window_dragging');
 	}
 }
 
@@ -8245,7 +8254,7 @@ hui.ui.Selection = function(options) {
 			this.addItemBehavior(element,item);
 		};
 		this.selection = this._getSelectionWithValue(this.options.value);
-		this.updateUI();
+		this._updateUI();
 	} else if (this.options.value!=null) {
 		this.selection = {value:this.options.value};
 	}
@@ -8289,7 +8298,7 @@ hui.ui.Selection.prototype = {
 			this.selection = item;
 			this.kind=item.kind;
 		}
-		this.updateUI();
+		this._updateUI();
 		this.fireChange();
 	},
 	_getSelectionWithValue : function(value) {
@@ -8336,15 +8345,13 @@ hui.ui.Selection.prototype = {
 		this.subItems.push(items);
 	},
 	
-	
-	/** @private */
-	updateUI : function() {
+	_updateUI : function() {
 		var i;
 		for (i=0; i < this.items.length; i++) {
 			hui.cls.set(this.items[i].element,'hui_selected',this.isSelection(this.items[i]));
 		};
 		for (i=0; i < this.subItems.length; i++) {
-			this.subItems[i].updateUI();
+			this.subItems[i]._updateUI();
 		};
 	},
 	/** @private */
@@ -8353,7 +8360,7 @@ hui.ui.Selection.prototype = {
 			this.subItems[i].selectionChanged(this.selection,item);
 		};
 		this.selection = item;
-		this.updateUI();
+		this._updateUI();
 		this.fireChange();
 	},
 	/** @private */
@@ -8445,6 +8452,7 @@ hui.ui.Selection.prototype = {
 			},300);
 		} else {
 			hui.cls.remove(this.element,'hui_selection_busy');
+			this.fire('loaded');
 		}
 	},
 	_checkValue : function() {
@@ -8509,7 +8517,7 @@ hui.ui.Selection.Items.prototype = {
 		if (this.title) {
 			this.title.style.display=this.items.length>0 ? 'block' : 'none';
 		}
-		this.parent.updateUI();
+		this.parent._updateUI();
 		this.parent._checkValue();
 		this.fireSizeChange();
 	},
@@ -8619,8 +8627,7 @@ hui.ui.Selection.Items.prototype = {
 		};
 		return null;
 	},
-	/** @private */
-	updateUI : function() {
+	_updateUI : function() {
 		for (var i=0; i < this.items.length; i++) {
 			hui.cls.set(this.items[i].element,'hui_selected',this.parent.isSelection(this.items[i]));
 		};
@@ -10057,8 +10064,8 @@ hui.ui.Editor.prototype = {
 			hui.listen(column,'mouseover',function() {
 				self._onHoverColumn(column);
 			});
-			hui.listen(column,'mouseout',function() {
-				self._onBlurColumn();
+			hui.listen(column,'mouseout',function(e) {
+				self._onBlurColumn(e);
 			});
 			/*
 			hui.listen(column,'contextmenu',function(e) {
@@ -10316,7 +10323,9 @@ hui.ui.Editor.prototype = {
 		});
 		window.clearTimeout(this.partControlTimer);
 		this._hidePartControls();
-		this._onBlurColumn();
+		if (this.hoveredColumn) {
+			hui.cls.remove(this.hoveredColumn,'hui_editor_column_hover');
+		}
 		this._showPartEditor();
 	},
 	_showPartEditor : function() {
@@ -11994,10 +12003,22 @@ hui.ui.Gallery.prototype = {
 			this.options.source.refresh();
 		}
 	},
+	setSize : function(size) {
+		this.width = size;
+		this.height = size;
+		for (var i=0; i < this.nodes.length; i++) {
+			var node = this.nodes[i];
+			node.style.width = size+'px';
+			node.style.height = size+'px';
+		};
+	},
+	reRender : function() {
+		this._render();
+	},
 	setObjects : function(objects) {
 		this.selected = [];
 		this.objects = objects;
-		this.render();
+		this._render();
 		this.fire('selectionReset');
 	},
 	getObjects : function() {
@@ -12016,38 +12037,37 @@ hui.ui.Gallery.prototype = {
 		this.setObjects(objects);
 	},
 	/** @private */
-	render : function() {
+	_render : function() {
 		this.nodes = [];
-		this.maxRevealed=0;
-		this.body.innerHTML='';
-		var self = this;
+		this.maxRevealed = 0;
+		this.body.innerHTML = '';
 		hui.each(this.objects,function(object,i) {
-			var url = self._resolveImageUrl(object),
+			var url = this._resolveImageUrl(object),
 				top = 0;
 			if (url!==null) {
 				url = url.replace(/&amp;/,'&');
 			}
-			if (!self.revealing && object.height<object.width) {
-				top = (self.height-(self.height*object.height/object.width))/2;
+			if (!this.revealing && object.height < object.width) {
+				top = (this.height-(this.height*object.height/object.width))/2;
 			}
 			var img = hui.build('img',{style:'margin:'+top+'px auto 0px'});
-			img.setAttribute(self.revealing ? 'data-src' : 'src', url );
-			var item = hui.build('div',{'class' : 'hui_gallery_item',style:'width:'+self.width+'px; height:'+self.height+'px'});
+			img.setAttribute(this.revealing ? 'data-src' : 'src', url );
+			var item = hui.build('div',{'class' : 'hui_gallery_item',style:'width:'+this.width+'px; height:'+this.height+'px'});
 			item.appendChild(img);
 			hui.listen(item,'click',function(e) {
-				self._itemClicked(i,e);
-			});
+				this._itemClicked(i,e);
+			}.bind(this));
 			item.dragDropInfo = {kind:'image',icon:'common/image',id:object.id,title:object.name || object.title};
 			item.onmousedown = function(e) {
 				hui.ui.startDrag(e,item);
 				return false;
 			};
 			hui.listen(item,'dblclick',function() {
-				self._onItemDoubleClick(i);
-			});
-			self.body.appendChild(item);
-			self.nodes.push(item);
-		});
+				this._onItemDoubleClick(i);
+			}.bind(this));
+			this.body.appendChild(item);
+			this.nodes.push(item);
+		}.bind(this));
 		this._reveal();
 		this.fireSizeChange();
 	},
@@ -16742,7 +16762,7 @@ hui.ui.Structure.prototype = {
  * @param {Object} options The options : {modal:false}
  */
 hui.ui.Slider = function(options) {
-	this.options = hui.override({value:0},options);
+	this.options = hui.override({value:0,min:0,max:1},options);
 	this.name = options.name;
 	
 	this.element = hui.get(options.element);
@@ -16750,7 +16770,7 @@ hui.ui.Slider = function(options) {
 	hui.ui.extend(this)
 	this.position = 0;
 	this.value = 0;
-	
+	this.setValue(this.options.value);
 	this._addBehavior();
 }
 
@@ -16793,7 +16813,7 @@ hui.ui.Slider.prototype = {
 	_onAfterMove : function() {
 		this.dragging = false;
 		hui.cls.remove(this.element,'hui_slider_active');
-		this.fire('valueChanged',this.position);
+		this.fire('valueChangedEnd',this.position);
 	},
 	
 	_setPosition : function(pos) {
@@ -17150,7 +17170,8 @@ hui.ui.FontInput = function(options) {
 	this.button = hui.get.firstByClass(this.element,'hui_fontinput');
 	this.dropdown = new hui.ui.DropDown({
 		element : hui.get.firstByClass(this.element,'hui_dropdown'),
-		items : hui.ui.FontPicker.fonts
+		items : [{text:'',value:''}].concat(hui.ui.FontPicker.fonts),
+		listener : this
 	});
 	this.value = null;
 	hui.ui.extend(this);
@@ -17174,7 +17195,7 @@ hui.ui.FontInput.prototype = {
 	},
 	_fireChange : function() {
 		hui.ui.callAncestors(this,'childValueChanged',this.value);
-		this.fire('valueChanged',this.value)		
+		this.fire('valueChanged',this.value);
 	},
 	_onBlur : function() {
 		hui.Color.parse(this.value);
@@ -17199,6 +17220,10 @@ hui.ui.FontInput.prototype = {
 		this.setValue(font.value);
 		this._fireChange();
 	},
+	$valueChanged : function(value) {
+		this.setValue(value);
+		this._fireChange();
+	},
 	
 	// Public...
 	
@@ -17208,6 +17233,7 @@ hui.ui.FontInput.prototype = {
 	setValue : function(value) {
 		this.value = value;
 		this._syncInput();
+		this.button.style.fontFamily = value;
 	},
 	focus : function() {
 		try {
@@ -17228,9 +17254,12 @@ hui.ui.FontPicker = function(options) {
 	this.element = hui.get(options.element);
 	this.fonts = options.fonts.concat(options.additionalFonts);
 	this.previews = {};
-	this.options = options;
+	this.options = options || {};
 	hui.override(this.options,options);
 	hui.ui.extend(this);
+	if (this.options.listener) {
+		this.listen(this.options.listener);
+	}
 	this._addBehavior();
 }
 
@@ -17307,8 +17336,8 @@ hui.ui.FontPicker.prototype = {
 		}
 	},
 	_buildPreview : function(font) {
-		if (this.previews[font.name]) {
-			this.previews[font.name].show();
+		if (this.previews[font.text]) {
+			this.previews[font.text].show();
 			return;
 		}
 		var e = hui.build('div',{className:'hui_fontpicker_example',style:'font-family:'+font.value+';'});
@@ -17338,7 +17367,7 @@ hui.ui.FontPicker.prototype = {
 		e.innerHTML = html;
 		var win = hui.ui.Window.create({title:font.text,padding:3});
 		win.add(e);
-		this.previews[font.name] = win;
+		this.previews[font.text] = win;
 		win.show();
 	}
 }
@@ -19569,6 +19598,7 @@ hui.ui.FlashChart.prototype = {
 hui.ui.Drawing = function(options) {
 	this.options = hui.override({width:200,height:200},options);
 	this.element = hui.get(options.element);
+	hui.log({width:options.width,height:options.height})
 	this.svg = this._build({tag:'svg',parent:this.element,attributes:{width:options.width,height:options.height}});
 	this.element.appendChild(this.svg);
 	this.name = options.name;
@@ -19591,17 +19621,34 @@ hui.ui.Drawing.create = function(options) {
 }
 
 hui.ui.Drawing.prototype = {
+	setSize : function(width,height) {
+		this.svg.setAttribute('width',width);
+		this.svg.setAttribute('height',height);
+		this.svg.style.width = width+'px';
+		this.svg.style.height = height+'px';
+	},
+	clear : function() {
+		hui.dom.clear(this.svg);
+	},
 	addLine : function(options) {
+		var attributes = {
+			x1 : options.x1,
+			y1 : options.y1,
+			x2 : options.x2,
+			y2 : options.y2,
+			style : 'stroke:'+(options.color || '#000')+';stroke-width:'+(options.width || 1)
+		};
+		if (options.from && options.to) {
+			attributes.x1 = options.from.x,
+			attributes.y1 = options.from.y,
+			attributes.x2 = options.to.x,
+			attributes.y2 = options.to.y
+		}
+		
 		var node = this._build({
-			tag:'line',
-			parent:this.svg,
-			attributes:{
-				x1 : options.x1,
-				y1 : options.y1,
-				x2 : options.x2,
-				y2 : options.y2,
-				style:'stroke:'+(options.color || '#000')+';stroke-width:'+(options.width || 1)
-			}
+			tag : 'line',
+			parent : this.svg,
+			attributes : attributes
 		});
 		return new hui.ui.Drawing.Line(node);
 	},
@@ -19672,6 +19719,10 @@ if (hui.browser.msie8) {
 	document.namespaces.add('v', 'urn:schemas-microsoft-com:vml', "#default#VML");
 }
 
+
+
+// Drawing
+
 hui.ui.Drawing.Line = function(node) {
 	this.node = node;
 }
@@ -19687,13 +19738,24 @@ hui.ui.Drawing.Line.prototype = {
 	}
 }
 
+
+
+// Circle
+
 hui.ui.Drawing.Circle = function(node) {
 	this.node = node;
 }
 
 hui.ui.Drawing.Circle.prototype = {
+	setCenter : function(point) {
+		this.node.setAttribute('cx',point.x);
+		this.node.setAttribute('cy',point.y);
+	}
 }
 
+
+
+// Element
 
 hui.ui.Drawing.Element = function(node) {
 	this.node = node;
@@ -19971,15 +20033,1430 @@ hui.ui.Pages.prototype = {
 	_transition : function(options) {
 		var hide = options.hide,
 			show = options.show;
-		hui.style.set(hide,{position:'absolute',width:this.element.clientWidth+'px'});
-		hui.style.set(show,{position:'absolute',width:this.element.clientWidth+'px',display:'block',opacity:0});
+		hui.style.set(hide,{position:'absolute',width:this.element.clientWidth+'px',height:this.element.clientHeight+'px'});
+		hui.style.set(show,{position:'absolute',width:this.element.clientWidth+'px',display:'block',opacity:0,height:this.element.clientHeight+'px'});
 		hui.effect.fadeOut({element:hide,onComplete:function() {
-			hui.style.set(hide,{width : '',position:'',display:'none'});
+			hui.style.set(hide,{width : '',position:'',height:'',display:'none'});
 		}});
 		hui.effect.fadeIn({element:show,onComplete:function() {
-			hui.style.set(show,{width : '',position:''});
+			hui.style.set(show,{width : '',position:'',height:''});
 			hui.ui.reLayout();
 			hui.ui.callVisible(this);
 		}.bind(this)});
 	}
+}hui.ui.Chart = function(options) {
+	this.options = options = options || {};
+	this.element = hui.get(options.element);
+	this.body  = { width: undefined, height: undefined, paddingTop: 10, paddingBottom: 30, paddingLeft: 40, paddingRight: 10, innerPaddingVertical: 10, innerPaddingHorizontal: 10 };
+	this.style = { border:true, background:true, colors:['#36a','#69d','#acf']};
+	this.style.legends = { position: 'right' , left: 0, top: 0 };
+	this.style.pie = { radiusFactor: .9 , valueInLegend: false , left: 0, top: 0 };
+	this.xAxis = { labels:[], grid:true, concentration:.8 , maxLabels:12};
+	this.yAxis = { min:0, max:0, steps:8, above:false , factor: 10};
+	this.dataSets = [];
+	this.data = null;
+	hui.ui.extend(this);
+	if (this.options.source) {
+		this.options.source.listen(this);
+	}
 }
+
+hui.ui.Chart.create = function(options) {	
+	options.element = hui.build('div',{'class':'hui_chart',parent:hui.get(options.parent),style:'width: 100%; height: 100%;'});
+	return new hui.ui.Chart(options);
+}
+
+hui.ui.Chart.prototype = {
+	addDataSet : function(dataSet) {
+		this.dataSets[this.dataSets.length] = dataSet;
+	},
+	setXaxisLabels : function(labels) {
+		for (var i=0; i < labels.length; i++) {
+			this.xAxis.labels[this.xAxis.labels.length] = {key:labels[i],label:labels[i]};
+		}
+	},
+	setData : function(data) {
+		if (!data.dataSets) {
+			this.data = this._convertData(data);
+		} else {
+			this.data = data;
+		}
+	},
+	render : function() {
+		var renderer = new hui.ui.Chart.Renderer(this);
+		renderer.render();
+	},
+	$$layout : function() {
+		this.render();
+	},
+	$$resize : function() {
+		this.render();
+	},
+	$objectsLoaded : function(data) {
+		hui.log(data)
+		this.setData(data);
+		this.render();
+	},
+	_convertData : function(obj) {
+		var labels = [],keys = [];
+		for (var i=0; i < obj.sets.length; i++) {
+			var set = obj.sets[i];
+			for (key in set.entries) {
+				if (!hui.array.contains(keys,key)) {
+					keys.push(key)
+					labels.push({key:key,label:key});
+				}
+			}
+		};
+		var data = new hui.ui.Chart.Data({xAxis:{labels:labels}});
+		
+		for (var i=0; i < obj.sets.length; i++) {
+			var set = obj.sets[i];
+			var dataSet = new hui.ui.Chart.DataSet({type:set.type});
+			for (key in set.entries) {
+				dataSet.addEntry(key,set.entries[key]);
+			}
+			data.addDataSet(dataSet);
+		}
+		return data;
+	}
+}
+
+
+//////////////////////// Data ////////////////////
+
+hui.ui.Chart.Data = function(options) {
+	this.xAxis = hui.override({ labels:[], grid:true, concentration:.8 , maxLabels:12},options.xAxis);
+	this.yAxis = hui.override({ min:0, max:0, steps:8, above:false , factor: 10},options.yAxis);
+	this.dataSets = [];
+}
+
+hui.ui.Chart.Data.prototype = {
+	addDataSet : function(set) {
+		this.dataSets.push(set);
+	}
+}
+
+
+///////////////////// Data set ////////////////////
+
+hui.ui.Chart.DataSet = function(options) {
+	options = options || {};
+	this.dataSets = [];
+	this.entries = options.entries || [];
+	this.legend = null;
+	this.style = {type:options.type || 'line'};
+}
+
+hui.ui.Chart.DataSet.prototype = {
+	
+	addDataSet : function(dataSet) {
+		this.dataSets[this.dataSets.length] = dataSet;
+	},
+	setLegend : function(legend) {
+		this.legend = legend;
+	},
+	isMultiDimensional : function() {
+		return this.dataSets.length>0;
+	},
+	addEntry : function(key,value) {
+		this.entries[this.entries.length] = {key:key,value:value};
+	},
+	setValues : function(graph,values) {
+		for (var i=0; i < graph.xAxis.labels.length; i++) {
+			if (values[i]) {
+				this.addEntry(graph.xAxis.labels[i].key,values[i])
+			}
+		};
+	},
+	getEntryValue : function(key) {
+		var value = 0;
+		for (var i=0;i<this.entries.length;i++) {
+			if (this.entries[i].key==key) {
+				return this.entries[i].value;
+			}
+		}
+		return value;
+	},
+	getEntryValue2D : function(key) {
+		var value = [];
+		for (var i=0;i<this.dataSets.length;i++) {
+			var set = this.dataSets[i];
+			for (var j=0;j<set.entries.length;j++) {
+				if (set.entries[j].key==key) {
+					value[i] = set.entries[j].value;
+				}
+			}
+			if (!value[i]) {
+				value[i]=0;
+			}
+		}
+		return value;
+	},
+	keysToValues : function(keys) {
+		var values = [];
+		for (var i=0;i<keys.length;i++) {
+			values[i] = this.getEntryValue(keys[i].key);
+		}
+		return values;
+	},
+	keysToValues2D : function(keys) {
+		var values = [];
+		for (var i=0;i<keys.length;i++) {
+			values[i] = this.getEntryValue2D(keys[i].key);
+		}
+		return values;
+	},
+	getValueRange : function(keys) {
+		var vals = [];
+		if (this.isMultiDimensional()) {
+			var vals2D = this.keysToValues2D(keys);
+			for (var i=0;i<vals2D.length;i++) {
+				var sum = 0;
+				for (var j=0;j<vals2D[i].length;j++) {
+					sum+=vals2D[i][j];
+				}
+				vals[i] = sum;
+			}
+		} else {
+			vals = this.keysToValues(keys);
+		}
+		var min = Number.MAX_VALUE,
+			max = Number.MIN_VALUE;
+		for (var i=0;i<vals.length;i++) {
+			min = Math.min(min,vals[i]);
+			max = Math.max(max,vals[i]);
+		}
+		return {min:min,max:max};
+	},
+	getSubLegends : function() {
+		var value = [];
+		for (var i=0;i<this.dataSets.length;i++) {
+			value[i] = this.dataSets[i].legend;
+		}
+		return value;
+	}
+}
+
+/*********************************************************************/
+/*                             Renderer                              */
+/*********************************************************************/
+
+hui.ui.Chart.Renderer = function(chart) {
+	this.chart = chart;
+	this.crisp = false;
+	this.legends = [];
+	this.state = { numColumns:0, currColumn:0, xLabels:[], yLabels:[], innerBody:{}, coordinateSystem: false, currColor:0 };
+	this.width = null;
+	this.height = null;
+}
+
+hui.ui.Chart.Renderer.prototype.registerLegend = function(color,label) {
+	this.legends[this.legends.length] = {color:color,label:label};
+}
+
+hui.ui.Chart.Renderer.prototype.render = function() {
+	
+	this.width = this.chart.body.width || this.chart.element.clientWidth;
+	this.height = this.chart.body.height || this.chart.element.clientHeight;
+	
+	hui.dom.clear(this.chart.element);
+	this.canvas = hui.build('canvas',{parent:this.chart.element,width:this.width,height:this.height});
+	if (!this.canvas.getContext) {
+		return;
+	}
+	this.ctx = this.canvas.getContext("2d");
+	
+	if (this.chart.data==null) {
+		return;
+	}
+	
+	// Extract basic info about the chart
+	for (var i=0;i<this.chart.data.dataSets.length;i++) {
+		var set = this.chart.data.dataSets[i];
+		if (set.style.type=='line' || set.style.type=='column') {
+			this.state.coordinateSystem = true;
+		}
+		if (set.style.type=='column') {
+			this.state.numColumns++;
+		}
+	}
+	
+	this.state.xLabels = this.chart.data.xAxis.labels;
+	this.state.yLabels = hui.ui.Chart.Util.generateYLabels(this.chart);
+	this.state.innerBody = this.getInnerBody();
+
+	// Render the coordinate system (below)
+	if (this.state.coordinateSystem) {
+		this.renderBody();
+	}
+	
+	// Loop through data sets and render them
+	var xLabels = this.state.xLabels;
+	for (var i=0;i<this.chart.data.dataSets.length;i++) {
+		var set = this.chart.data.dataSets[i];
+		if (set.style.type=='line') {
+			var values = set.keysToValues(xLabels);
+			this.renderLineGraph( { values:values, style:set.style , legend:set.legend } );
+		} else if (set.style.type=='column') {
+			if (set.isMultiDimensional()) {
+				var values = set.keysToValues2D(xLabels);
+				var legend = set.getSubLegends();
+			} else {
+				var values = set.keysToValues(xLabels);
+				var legend = set.legend;
+			}
+			this.renderColumnGraph( { values:values, style:set.style , legend: legend} );	
+		} else if (set.style.type=='pie') {
+			var values = set.keysToValues(xLabels);
+			this.renderPie( { values:values, style:set.style } );
+		}
+	}
+	
+	// Render the coordinate system (above)
+	if (this.shouldRenderCoordinateSystem) {
+		this.renderPostBody();
+	}
+	
+	// Render possible lengends
+	this.renderLegends();
+}
+
+/**
+ * Renders a legend box
+ */
+hui.ui.Chart.Renderer.prototype.renderLegends = function() {
+	if (this.legends.length>0) {
+		var position = this.chart.style.legends.position;
+		var box = hui.build('div',{style:{position:'absolute',zIndex:5,width:this.width+'px'}});
+		
+		var html='<div class="hui_chart_legends" style="margin-right: '+(5-this.chart.style.legends.left)+'px; margin-top: '+(5+this.chart.style.legends.top)+'px;">';
+		for (var i=0;i<this.legends.length;i++) {
+			if (position=='bottom') {
+				var style = 'padding: 2px; padding-right: 8px; float: left; white-space: nowrap;';
+				if (i==this.legends.length-1) {
+					style+='padding-right: 3px';
+				}
+			} else {
+				var style = 'padding: 2px;';
+			}
+			html+='<div class="hui_chart_legend" style="'+style+'"><em style="background: '+this.legends[i].color+';"></em><span>'+this.legends[i].label+'</span></div>'
+		}
+		html+='</div>';
+		box.innerHTML = html;
+		if (position=='right') {
+			this.canvas.parentNode.insertBefore(box,this.canvas);
+		} else if (position=='bottom') {
+			this.canvas.parentNode.appendChild(box);
+			var y = document.createElement('div');
+			y.appendChild(box);
+			this.canvas.parentNode.appendChild(y);
+		}
+	}
+}
+
+/**
+ * Renders the body of the chart
+ */
+hui.ui.Chart.Renderer.prototype.renderBody = function() {
+	
+	var body = this.chart.body,
+		stroke = 'rgb(255,255,255)',
+		background = 'rgb(240,240,240)';
+	
+	stroke = 'rgb(240,240,240)';
+	background = 'rgb(255,255,255)';
+
+	if (this.chart.style.background) {
+		this.ctx.fillStyle=background;
+		this.ctx.fillRect(body.paddingLeft,body.paddingTop,this.width-body.paddingLeft-body.paddingRight,this.height-body.paddingTop-body.paddingBottom);
+	}
+	var innerBody = this.state.innerBody;
+	
+	var mod = 1;
+	/* Build X-axis*/
+	var xLabels = this.state.xLabels;
+	if (xLabels.length>this.chart.data.xAxis.maxLabels) {
+		mod = Math.ceil(xLabels.length/this.chart.data.xAxis.maxLabels);
+	}
+	this.ctx.strokeStyle=stroke;
+	for (var i=0;i<xLabels.length;i++) {
+		var left = i*((innerBody.width)/(xLabels.length-1))+innerBody.left;
+		var left = Math.round(left);
+
+		// Draw grid
+		if (this.chart.data.xAxis.grid) {
+			this.ctx.beginPath();
+			this.ctx.moveTo(.5+left,body.paddingTop+.5);
+			this.ctx.lineTo(.5+left,body.paddingTop+.5+this.height-body.paddingTop-body.paddingBottom);
+			this.ctx.stroke();
+			this.ctx.closePath();
+		}
+		if ((i % mod) ==0) {
+			// Draw label
+			var label = hui.build('span',{
+				'class' : 'hui_chart_label',
+				text : xLabels[i].label,
+				before : this.canvas,
+				style : {
+					marginLeft : left-25+'px',
+					marginTop : this.height-body.paddingBottom+4+'px'
+				}
+			});
+		}
+	}
+	this.ctx.strokeStyle=stroke;
+	
+	/* Build Y-axis*/
+	var yLabels = this.state.yLabels.concat();
+	yLabels.reverse();
+	for (var i=0;i<yLabels.length;i++) {
+		// Draw grid
+		var top = i*((this.height-body.innerPaddingVertical*2-body.paddingTop-body.paddingBottom)/(yLabels.length-1))+body.paddingTop+body.innerPaddingVertical;
+		top = Math.round(top);
+		if (!this.chart.data.yAxis.above) {
+			this.ctx.beginPath();
+			this.ctx.moveTo(.5+body.paddingLeft,top+.5);
+			this.ctx.lineTo(.5+this.width-body.paddingRight,top+.5);
+			this.ctx.stroke();
+			this.ctx.closePath();
+		}
+		// Draw label
+		var label = document.createElement('span');
+		label.appendChild(document.createTextNode(yLabels[i]));
+		label.style.position='absolute';
+		label.style.textAlign='right';
+		label.style.width=body.paddingLeft-3+'px';
+		label.style.font='9px Tahoma';
+		label.style.marginTop=top-5+'px';
+		this.canvas.parentNode.insertBefore(label,this.canvas);
+	}
+	// Draw a line at 0 if 
+	if (!this.chart.data.yAxis.above && yLabels[0]>0 && yLabels[yLabels.length-1]<0) {
+		var top = (this.height-body.innerPaddingVertical*2-body.paddingTop-body.paddingBottom)*yLabels[0]/(yLabels[0]-yLabels[yLabels.length-1])+body.paddingTop+body.innerPaddingVertical;
+		top = Math.round(top);
+		this.ctx.lineWidth = 2;
+		this.ctx.strokeStyle=stroke;
+		this.ctx.beginPath();
+		this.ctx.moveTo(.5+body.paddingLeft,top);
+		this.ctx.lineTo(.5+this.width-body.paddingRight,top);
+		this.ctx.stroke();
+		this.ctx.closePath();
+	}
+}
+
+hui.ui.Chart.Renderer.prototype.renderPostBody = function() {
+	var body = this.chart.body;
+	if (this.chart.data.yAxis.above) {
+
+		this.ctx.strokeStyle='rgb(240,240,240)';
+		var yLabels = this.state.yLabels.concat();
+		yLabels.reverse();
+		for (var i=0;i<yLabels.length;i++) {
+			var top = i*((this.height-body.innerPaddingVertical*2-body.paddingTop-body.paddingBottom)/(yLabels.length-1))+body.paddingTop+body.innerPaddingVertical;
+			top = Math.round(top);
+			this.ctx.lineWidth = 1;
+			this.ctx.beginPath();
+			this.ctx.moveTo(.5+body.paddingLeft,top+.5);
+			this.ctx.lineTo(.5+this.width-body.paddingRight,top+.5);
+			this.ctx.stroke();
+			this.ctx.closePath();
+		}
+		if (yLabels[0]>0 && yLabels[yLabels.length-1]<0) {
+			var top = (this.height-body.innerPaddingVertical*2-body.paddingTop-body.paddingBottom)*yLabels[0]/(yLabels[0]-yLabels[yLabels.length-1])+body.paddingTop+body.innerPaddingVertical;
+			top = Math.round(top);
+			this.ctx.lineWidth = 2;
+			this.ctx.strokeStyle='rgb(255,255,255)';
+			this.ctx.beginPath();
+			this.ctx.moveTo(.5+body.paddingLeft,top);
+			this.ctx.lineTo(.5+this.width-body.paddingRight,top);
+			this.ctx.stroke();
+			this.ctx.closePath();
+		}
+	}
+	if (this.chart.style.border) {
+		this.ctx.lineWidth = 1;
+		this.ctx.strokeStyle='rgb(230,230,230)';
+		this.ctx.strokeRect(body.paddingLeft+.5,body.paddingTop+.5,this.width-body.paddingLeft-body.paddingRight,this.height-body.paddingTop-body.paddingBottom);
+	}
+}
+
+hui.ui.Chart.Renderer.prototype.getInnerBody = function() {
+	var body = this.chart.body;
+	var xLabels = this.state.xLabels;
+	var space = 0;
+	if (this.state.numColumns>0) {
+		space = (this.width-2*body.innerPaddingHorizontal-body.paddingLeft-body.paddingRight)/xLabels.length;
+	}
+	var innerBody = {
+		left:(body.innerPaddingHorizontal+body.paddingLeft+space/2),
+		top:(body.paddingTop+body.innerPaddingVertical),
+		width:(this.width-2*body.innerPaddingHorizontal-body.paddingLeft-body.paddingRight-space),
+		height:(this.height-body.innerPaddingVertical*2-body.paddingTop-body.paddingBottom)
+	};
+	return innerBody;
+}
+
+hui.ui.Chart.Renderer.prototype.renderLineGraph = function(data) {
+	var values = data.values;
+	var xLabels = this.state.xLabels;
+	var yLabels = this.state.yLabels;
+	var yMin = yLabels[0];
+	var yMax = yLabels[yLabels.length-1];
+	var body = this.chart.body;
+	var innerBody = this.state.innerBody;
+	if (data.style.colors) {
+		var color = data.style.colors[0];
+	} else {
+		var color = this.chart.style.colors[this.state.currColor];
+		if (this.state.currColor+2>this.chart.style.colors.length) {
+			this.state.currColor = 0;
+		} else {
+			this.state.currColor++;
+		}
+	}
+	this.ctx.strokeStyle = color;
+	this.ctx.lineWidth = data.width ? data.width : 3;
+	this.ctx.lineCap = this.ctx.lineJoin = 'round';
+	this.ctx.beginPath();
+	for (var i=0;i<xLabels.length;i++) {
+		var amount = (values[i]==undefined ? 0 : values[i]);
+		var value = (amount-yMin)/(yMax-yMin);
+		//alert(value);
+		var top = this.height-value*(innerBody.height)-body.innerPaddingVertical-body.paddingBottom;
+		var left = i*(innerBody.width/(xLabels.length-1))+innerBody.left;
+		if (i==0) {
+			this.ctx.moveTo(left+.5,top+.5);
+		} else {
+			this.ctx.lineTo(left+.5,top+.5);
+		}
+	}
+	this.ctx.stroke();
+	this.ctx.closePath();
+	
+	if (data.legend) {
+		this.registerLegend(color,data.legend);
+	}
+}
+
+
+hui.ui.Chart.Renderer.prototype.renderColumnGraph = function(data) {
+	var values = data.values;
+	var xLabels = this.state.xLabels;
+	var yLabels = this.state.yLabels;
+	var yMin = yLabels[0];
+	var yMax = yLabels[yLabels.length-1];
+	var body = this.chart.body;
+	var colors = data.style.colors ? data.style.colors : this.chart.style.colors;
+	this.state.currColumn++;
+	var innerBody = this.state.innerBody;
+	var space = (this.width-body.paddingLeft-body.paddingRight)/xLabels.length*this.chart.data.xAxis.concentration;
+	var thickness = space/this.state.numColumns;
+	this.ctx.lineCap = this.ctx.lineJoin = 'round';
+	this.ctx.beginPath();
+	for (var i=0;i<xLabels.length;i++) {
+		if (values[i]) {
+			var colorIndex = 0;
+			var currTop = 0;
+			if (values[i] instanceof Array) {
+				for (var j=0;j<values[i].length;j++) {
+					var val = values[i][j];
+					currTop+=this.renderOneColumn(val,colors[colorIndex],body,innerBody,yMin,yMax,currTop,i,xLabels,space,thickness);
+					
+					if (colorIndex+2>colors.length) {
+						colorIndex = 0;
+					} else {
+						colorIndex++;
+					}
+				}
+			} else {
+				currTop+=this.renderOneColumn(values[i],colors[colorIndex],body,innerBody,yMin,yMax,currTop,i,xLabels,space,thickness);
+			}
+		}
+	}
+	this.ctx.stroke();
+	this.ctx.closePath();
+	
+	if (data.legend && data.legend instanceof Array) {
+		for (var i=0; i < data.legend.length; i++) {
+			this.registerLegend(colors[i],data.legend[i]);
+		};
+	} else if (data.legend) {
+		this.registerLegend(colors[0],data.legend);
+	}
+}
+
+hui.ui.Chart.Renderer.prototype.renderOneColumn = function(val,color,body,innerBody,yMin,yMax,currTop,i,xLabels,space,thickness) {
+	var value = (val-yMin)/(yMax-yMin);
+	if (yMin<=0 && val<=0) {
+		var top = innerBody.top+(innerBody.height)*yMax/(yMax-yMin)+currTop;
+		var height = innerBody.height*Math.abs(val)/(yMax-yMin);
+	} else if (yMin<=0) {
+		var top = this.height-body.innerPaddingVertical-body.paddingBottom-value*(innerBody.height)-currTop;
+		var height = (innerBody.height)*Math.abs(val)/(yMax-yMin);
+	}
+	else {
+		var top = this.height-value*(this.height-body.innerPaddingVertical*2-body.paddingTop-body.paddingBottom)-body.innerPaddingVertical-body.paddingBottom-currTop;
+		var height = (this.height-body.paddingBottom-top);
+	}
+	var left = i*((innerBody.width)/(xLabels.length-1))+innerBody.left;
+	
+	this.ctx.fillStyle = color;
+	if (this.crisp) {
+		this.ctx.fillRect(Math.round(left-space/2+thickness*(this.state.currColumn-1)),Math.floor(top),Math.ceil(thickness),Math.ceil(height));
+	} else {
+		this.ctx.fillRect(left-space/2+thickness*(this.state.currColumn-1),top,thickness,height);
+	}
+	return height;
+}
+
+hui.ui.Chart.Renderer.prototype.renderPie = function(data) {
+	
+	var values = data.values;
+	var colors = data.style.colors ? data.style.colors : this.chart.style.colors;
+	var total = hui.ui.Chart.Util.arraySum(values);
+
+	var colorIndex = 0;
+	var current = Math.PI*1.5;
+	var cTop = this.height/2+this.chart.style.pie.top;
+	var cLeft = this.width/2+this.chart.style.pie.left;
+	var radius = this.height/2*this.chart.style.pie.radiusFactor;
+
+	for (var i=0;i<values.length;i++) {
+		this.ctx.beginPath();
+		var color = colors[colorIndex]
+		this.ctx.fillStyle = color;
+		var rads = values[i]/total*(Math.PI*2);
+		this.ctx.moveTo(cLeft,cTop);
+		this.ctx.arc(cLeft,cTop,radius,current,current+rads,false);
+		this.ctx.lineTo(cLeft,cTop);
+		this.ctx.fill();
+		this.ctx.closePath();
+		current+=rads;
+		
+		if (!true) {
+			this.registerLegend(color,this.state.xLabels[i].label);
+		} else {
+			this.registerLegend(color,values[i]+' '+this.state.xLabels[i].label);
+		}
+		if (colorIndex+2>colors.length) {
+			colorIndex = 0;
+		} else {
+			colorIndex++;
+		}
+	}
+	
+}
+
+
+
+
+
+/*********************************************************************/
+/*                           Utitlities                              */
+/*********************************************************************/
+
+hui.ui.Chart.Util = function() {}
+
+hui.ui.Chart.Util.generateYLabels = function(graph) {
+	var range = hui.ui.Chart.Util.getYrange(graph);
+	var labels = [];
+	for (var i=0;i<=graph.yAxis.steps;i++) {
+		labels[labels.length] = Math.round(range.min+(range.max-range.min)/graph.yAxis.steps*i);
+	}
+	return labels;
+}
+
+hui.ui.Chart.Util.getYrange = function(graph) {
+	var min = graph.yAxis.min,
+		max = graph.yAxis.max,
+		data = graph.data;
+	for (var i=0;i<data.dataSets.length;i++) {
+		var range = data.dataSets[i].getValueRange(data.xAxis.labels);
+		min = Math.min(min,range.min);
+		max = Math.max(max,range.max);
+	}
+	var factor = max/graph.yAxis.steps;
+	if (factor < graph.yAxis.factor) {
+		factor = Math.ceil(factor);
+	} else {
+		factor = graph.yAxis.factor;
+	}
+	if (max != Number.MIN_VALUE) {
+		max = Math.ceil(max/factor/graph.yAxis.steps)*factor*graph.yAxis.steps;
+	} else {
+		max = graph.yAxis.steps;
+	}
+	return {min:min,max:max};
+}
+
+hui.ui.Chart.Util.arraySum = function(values) {
+	var total = 0;
+	for (var i=0;i<values.length;i++) {
+		total+=values[i];
+	}
+	return total;
+}/** A diagram
+ * @constructor
+ */
+hui.ui.Diagram = function(options) {
+	this.options = options;
+	this.name = options.name;
+	this.nodes = [];
+	this.lines = [];
+	this.element = hui.get(options.element);
+	this.width = this.element.clientWidth;	
+	this.height = this.element.clientHeight;	
+	hui.ui.extend(this);
+	if (options.source) {
+		options.source.listen(this);
+	}
+	this._init();
+}
+
+hui.ui.Diagram.create = function(options) {
+	options = hui.override({width:400,height:500},options);
+	
+	options.element = hui.build('div',{'class':'hui_diagram'});
+	
+	return new hui.ui.Diagram(options);
+}
+
+hui.ui.Diagram.prototype = {
+	_init : function() {
+		this.background = hui.ui.Drawing.create({
+			width: this.options.width || 0,
+			height: this.options.height || 0
+		});
+		this.element.appendChild(this.background.element);
+		hui.onReady(function() {
+			this.width = this.element.clientWidth;	
+			this.height = this.element.clientHeight;
+			this.background.setSize(this.width,this.height)
+		}.bind(this))
+
+	},
+	
+	_initParticleSystem : function() {
+		hui.require('http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js',function() {
+			hui.require(hui.ui.context+'/hui/lib/arbor/lib/arbor.js',function() {
+				var repulsion = 100,	// the force repelling nodes from each other
+					stiffness = 600,	// the rigidity of the edges
+					friction = 0.5,		// the amount of damping in the system
+					gravity = false,	// an additional force attracting nodes to the origin
+					fps = 55,			// frames per second
+					dt = 0.02,			// timestep to use for stepping the simulation
+					precision = 0.6;	// accuracy vs. speed in force calculations
+		
+				var myRenderer = {
+		  			init:  function(system){ console.log("starting",system) },
+		  			redraw : function() {
+						hui.log('redraw')
+						system.eachNode(function(node,point) {
+							//if (draggedNode==node) {
+							//	return;
+							//}
+							node.data.setCenter(point);
+						});
+						system.eachEdge(function(edge,point1,point2) {
+							var line = edge.data.node;
+							//hui.log(hui.toJSON(point1))
+							line.setFrom(point1);
+							line.setTo(point2);
+							return;
+							if (edge.source!==draggedNode) {
+								line.setFrom(point1);
+							} else {
+								line.setFrom(draggedPoint);
+							}
+							if (edge.target!==draggedNode) {
+								line.setTo(point2);
+							} else {
+								line.setTo(draggedPoint);
+							}
+						});
+					}
+				}
+				var system = this.particleSystem = arbor.ParticleSystem(repulsion, stiffness, friction, gravity, fps, dt, precision);
+				system.stop();
+				system.screenSize(this.element.clientWidth, this.element.clientHeight);
+				system.screenPadding(50,100);
+				system.renderer = myRenderer
+		
+				for (var i=0; i < this.nodes.length; i++) {
+					system.addNode(this.nodes[i].id, this.nodes[i]);
+				};
+		
+				hui.each(this.lines,function(line) {
+					system.addEdge(line.from, line.to, line);
+			
+				})
+				system.start();
+				window.setTimeout(function() {
+					system.stop();
+				},2000)
+			}.bind(this))
+		}.bind(this));
+	},
+	
+	// Data ...
+	
+	/** @private */
+	$objectsLoaded : function(data) {
+		this.clear();
+		var nodes = data.nodes,
+			lines = data.lines;
+		for (var i=0; i < nodes.length; i++) {
+			this.addBox(nodes[i]);
+		};
+		for (var i=0; i < lines.length; i++) {
+			this.addLine(lines[i]);
+		};
+		this._initParticleSystem();
+	},
+	/** @private */
+	$sourceShouldRefresh : function() {
+		return hui.dom.isVisible(this.element);
+	},
+	/** @private */
+	$visibilityChanged : function() {
+		if (hui.dom.isVisible(this.element)) {
+			this.width = this.element.clientWidth;	
+			this.height = this.element.clientHeight;
+			this.background.setSize(this.width,this.height);
+			if (this.options.source) {
+				this.options.source.refreshFirst();
+			}
+		}
+	},
+	clear : function() {
+		if (this.particleSystem) {
+			this.particleSystem.stop();
+		}
+		this.background.clear();
+		this.lines = [];
+		for (var i = this.nodes.length - 1; i >= 0; i--){
+			hui.dom.remove(this.nodes[i].element);
+		};
+		this.nodes = [];
+	},
+	
+	addBox : function(options) {
+		options.container = this;
+		var box = hui.ui.Diagram.Box.create(options);
+		this.add(box);
+	},
+	add : function(widget) {
+		var e = widget.element;
+		this.element.appendChild(e);
+		e.style.left = (Math.random()*(this.width - e.clientWidth))+'px';
+		e.style.top = (Math.random()*(this.height - e.clientHeight))+'px';
+		this.nodes.push(widget);
+	},
+	addLine : function(options) {
+		var from = this.getNode(options.from),
+			to = this.getNode(options.to);
+		if (from==null || to==null) {
+			hui.log('Unable to build line...');
+			hui.log(options);
+			return;
+		}
+		var fromCenter = this._getCenter(from),
+			toCenter = this._getCenter(to);
+			
+		var line = this.background.addLine({ from: fromCenter, to: toCenter, color: options.color || '#999' });
+		this.lines.push({ from: options.from, to: options.to, node: line });
+	},
+	_getCenter : function(widget) {
+		var e = widget.element;
+		return {
+			x : Math.round(parseInt(e.style.left)+e.clientWidth/2),
+			y : Math.round(parseInt(e.style.top)+e.clientHeight/2)
+		};
+	},
+	getNode : function(id) {
+		for (var i=0; i < this.nodes.length; i++) {
+			if (this.nodes[i].id == id) {
+				return this.nodes[i];
+			}
+		};
+		return null;
+	},
+	__nodeMoved : function(widget) {
+		var center = this._getCenter(widget);
+		for (var i=0; i < this.lines.length; i++) {
+			var line = this.lines[i];
+			if (line.from==widget.id) {
+				line.node.setFrom(center);
+			}
+			else if (line.to==widget.id) {
+				line.node.setTo(center);
+			}
+		};
+	}
+}
+
+/** A box in a diagram
+ * @constructor
+ */
+hui.ui.Diagram.Box = function(options) {
+	this.options = options;
+	this.id = options.id;
+	this.name = options.name;
+	this.element = hui.get(options.element);	
+	hui.ui.extend(this);
+	this._addBehavior();
+}
+
+hui.ui.Diagram.Box.create = function(options) {
+	var e = options.element = hui.build('div',{'class':'hui_diagram_box'});
+	hui.build('h1',{text:options.title || 'Untitled',parent:e});
+	if (options.properties) {
+		var table = hui.build('table',{parent:e})
+		for (var i=0; i < options.properties.length; i++) {
+			var p = options.properties[i];
+			var tr = hui.build('tr',{parent:table});
+			hui.build('th',{parent:tr,text:p.label});
+			hui.build('td',{parent:tr,text:p.value});
+		};
+	}
+	return new hui.ui.Diagram.Box(options);
+}
+
+hui.ui.Diagram.Box.prototype = {
+	_addBehavior : function() {
+		hui.drag.register({
+			element : this.element,
+			onStart : this._onDragStart.bind(this),
+			onBeforeMove : this._onBeforeMove.bind(this) ,
+ 			onMove : this._onMove.bind(this),
+			onEnd : this._onDragEnd.bind(this)
+		});
+	},
+	setCenter : function(point) {
+		var e = this.element;
+		e.style.top = Math.round(point.y - e.clientHeight/2)+'px';
+		e.style.left = Math.round(point.x - e.clientWidth/2)+'px';
+	},
+	_onDragStart : function() {
+		hui.cls.add(this.element,'hui_diagram_box_dragging');
+	},
+	_onBeforeMove : function(e) {
+		e = hui.event(e);
+		this.element.style.zIndex = hui.ui.nextPanelIndex();
+		var pos = hui.position.get(this.element);
+		var container = hui.position.get(this.options.container.element);
+		this.dragState = {left: e.getLeft() - pos.left + container.left,top:e.getTop()-pos.top + container.top};
+		this.element.style.right = 'auto';
+	},
+	_onMove : function(e) {
+		var top = (e.getTop()-this.dragState.top);
+		var left = (e.getLeft()-this.dragState.left);
+		this.element.style.top = Math.max(top,0)+'px';
+		this.element.style.left = Math.max(left,0)+'px';
+		this.options.container.__nodeMoved(this);
+	},
+	_onDragEnd : function() {
+		hui.cls.remove(this.element,'hui_diagram_box_dragging');
+		//hui.ui.callDescendants(this,'$$parentMoved');
+	}
+}/** A diagram
+ * @constructor
+ */
+hui.ui.Diagram = function(options) {
+	this.options = options;
+	this.name = options.name;
+	this.nodes = [];
+	this.lines = [];
+	this.element = hui.get(options.element);
+	this.width = this.element.clientWidth;	
+	this.height = this.element.clientHeight;	
+	hui.ui.extend(this);
+	if (options.source) {
+		options.source.listen(this);
+	}
+	this._init();
+}
+
+hui.ui.Diagram.create = function(options) {
+	options = hui.override({width:400,height:500},options);
+	
+	options.element = hui.build('div',{'class':'hui_diagram'});
+	
+	return new hui.ui.Diagram(options);
+}
+
+hui.ui.Diagram.prototype = {
+	_init : function() {
+		this.background = hui.ui.Drawing.create({
+			width: this.options.width || 0,
+			height: this.options.height || 0
+		});
+		this.element.appendChild(this.background.element);
+		hui.onReady(function() {
+			this.width = this.element.clientWidth;	
+			this.height = this.element.clientHeight;
+			this.background.setSize(this.width,this.height)
+		}.bind(this))
+
+	},
+	
+	_initParticleSystem : function() {
+		hui.require('http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js',function() {
+			hui.require(hui.ui.context+'/hui/lib/arbor/lib/arbor.js',function() {
+				var repulsion = 100,	// the force repelling nodes from each other
+					stiffness = 600,	// the rigidity of the edges
+					friction = 0.5,		// the amount of damping in the system
+					gravity = false,	// an additional force attracting nodes to the origin
+					fps = 55,			// frames per second
+					dt = 0.02,			// timestep to use for stepping the simulation
+					precision = 0.6;	// accuracy vs. speed in force calculations
+		
+				var myRenderer = {
+		  			init:  function(system){ console.log("starting",system) },
+		  			redraw : function() {
+						hui.log('redraw')
+						system.eachNode(function(node,point) {
+							//if (draggedNode==node) {
+							//	return;
+							//}
+							node.data.setCenter(point);
+						});
+						system.eachEdge(function(edge,point1,point2) {
+							var line = edge.data.node;
+							//hui.log(hui.toJSON(point1))
+							line.setFrom(point1);
+							line.setTo(point2);
+							return;
+							if (edge.source!==draggedNode) {
+								line.setFrom(point1);
+							} else {
+								line.setFrom(draggedPoint);
+							}
+							if (edge.target!==draggedNode) {
+								line.setTo(point2);
+							} else {
+								line.setTo(draggedPoint);
+							}
+						});
+					}
+				}
+				var system = this.particleSystem = arbor.ParticleSystem(repulsion, stiffness, friction, gravity, fps, dt, precision);
+				system.stop();
+				system.screenSize(this.element.clientWidth, this.element.clientHeight);
+				system.screenPadding(50,100);
+				system.renderer = myRenderer
+		
+				for (var i=0; i < this.nodes.length; i++) {
+					system.addNode(this.nodes[i].id, this.nodes[i]);
+				};
+		
+				hui.each(this.lines,function(line) {
+					system.addEdge(line.from, line.to, line);
+			
+				})
+				system.start();
+				window.setTimeout(function() {
+					system.stop();
+				},2000)
+			}.bind(this))
+		}.bind(this));
+	},
+	
+	// Data ...
+	
+	/** @private */
+	$objectsLoaded : function(data) {
+		this.clear();
+		var nodes = data.nodes,
+			lines = data.lines;
+		for (var i=0; i < nodes.length; i++) {
+			this.addBox(nodes[i]);
+		};
+		for (var i=0; i < lines.length; i++) {
+			this.addLine(lines[i]);
+		};
+		this._initParticleSystem();
+	},
+	/** @private */
+	$sourceShouldRefresh : function() {
+		return hui.dom.isVisible(this.element);
+	},
+	/** @private */
+	$visibilityChanged : function() {
+		if (hui.dom.isVisible(this.element)) {
+			this.width = this.element.clientWidth;	
+			this.height = this.element.clientHeight;
+			this.background.setSize(this.width,this.height);
+			if (this.options.source) {
+				this.options.source.refreshFirst();
+			}
+		}
+	},
+	clear : function() {
+		if (this.particleSystem) {
+			this.particleSystem.stop();
+		}
+		this.background.clear();
+		this.lines = [];
+		for (var i = this.nodes.length - 1; i >= 0; i--){
+			hui.dom.remove(this.nodes[i].element);
+		};
+		this.nodes = [];
+	},
+	
+	addBox : function(options) {
+		options.container = this;
+		var box = hui.ui.Diagram.Box.create(options);
+		this.add(box);
+	},
+	add : function(widget) {
+		var e = widget.element;
+		this.element.appendChild(e);
+		e.style.left = (Math.random()*(this.width - e.clientWidth))+'px';
+		e.style.top = (Math.random()*(this.height - e.clientHeight))+'px';
+		this.nodes.push(widget);
+	},
+	addLine : function(options) {
+		var from = this.getNode(options.from),
+			to = this.getNode(options.to);
+		if (from==null || to==null) {
+			hui.log('Unable to build line...');
+			hui.log(options);
+			return;
+		}
+		var fromCenter = this._getCenter(from),
+			toCenter = this._getCenter(to);
+			
+		var line = this.background.addLine({ from: fromCenter, to: toCenter, color: options.color || '#999' });
+		this.lines.push({ from: options.from, to: options.to, node: line });
+	},
+	_getCenter : function(widget) {
+		var e = widget.element;
+		return {
+			x : Math.round(parseInt(e.style.left)+e.clientWidth/2),
+			y : Math.round(parseInt(e.style.top)+e.clientHeight/2)
+		};
+	},
+	getNode : function(id) {
+		for (var i=0; i < this.nodes.length; i++) {
+			if (this.nodes[i].id == id) {
+				return this.nodes[i];
+			}
+		};
+		return null;
+	},
+	__nodeMoved : function(widget) {
+		var center = this._getCenter(widget);
+		for (var i=0; i < this.lines.length; i++) {
+			var line = this.lines[i];
+			if (line.from==widget.id) {
+				line.node.setFrom(center);
+			}
+			else if (line.to==widget.id) {
+				line.node.setTo(center);
+			}
+		};
+	}
+}
+
+/** A box in a diagram
+ * @constructor
+ */
+hui.ui.Diagram.Box = function(options) {
+	this.options = options;
+	this.id = options.id;
+	this.name = options.name;
+	this.element = hui.get(options.element);	
+	hui.ui.extend(this);
+	this._addBehavior();
+}
+
+hui.ui.Diagram.Box.create = function(options) {
+	var e = options.element = hui.build('div',{'class':'hui_diagram_box'});
+	hui.build('h1',{text:options.title || 'Untitled',parent:e});
+	if (options.properties) {
+		var table = hui.build('table',{parent:e})
+		for (var i=0; i < options.properties.length; i++) {
+			var p = options.properties[i];
+			var tr = hui.build('tr',{parent:table});
+			hui.build('th',{parent:tr,text:p.label});
+			hui.build('td',{parent:tr,text:p.value});
+		};
+	}
+	return new hui.ui.Diagram.Box(options);
+}
+
+hui.ui.Diagram.Box.prototype = {
+	_addBehavior : function() {
+		hui.drag.register({
+			element : this.element,
+			onStart : this._onDragStart.bind(this),
+			onBeforeMove : this._onBeforeMove.bind(this) ,
+ 			onMove : this._onMove.bind(this),
+			onEnd : this._onDragEnd.bind(this)
+		});
+	},
+	setCenter : function(point) {
+		var e = this.element;
+		e.style.top = Math.round(point.y - e.clientHeight/2)+'px';
+		e.style.left = Math.round(point.x - e.clientWidth/2)+'px';
+	},
+	_onDragStart : function() {
+		hui.cls.add(this.element,'hui_diagram_box_dragging');
+	},
+	_onBeforeMove : function(e) {
+		e = hui.event(e);
+		this.element.style.zIndex = hui.ui.nextPanelIndex();
+		var pos = hui.position.get(this.element);
+		var container = hui.position.get(this.options.container.element);
+		this.dragState = {left: e.getLeft() - pos.left + container.left,top:e.getTop()-pos.top + container.top};
+		this.element.style.right = 'auto';
+	},
+	_onMove : function(e) {
+		var top = (e.getTop()-this.dragState.top);
+		var left = (e.getLeft()-this.dragState.left);
+		this.element.style.top = Math.max(top,0)+'px';
+		this.element.style.left = Math.max(left,0)+'px';
+		this.options.container.__nodeMoved(this);
+	},
+	_onDragEnd : function() {
+		hui.cls.remove(this.element,'hui_diagram_box_dragging');
+		//hui.ui.callDescendants(this,'$$parentMoved');
+	}
+}/**
+ * @constructor
+ */
+hui.ui.RichText = function(options) {
+	this.name = options.name;
+	var e = this.element = hui.get(options.element);
+	this.options = hui.override({debug:false,value:'',autoHideToolbar:true,style:'font-family: sans-serif;'},options);
+	this.textarea = hui.build('textarea');
+	e.appendChild(this.textarea);
+	this.editor = WysiHat.Editor.attach(this.textarea);
+	this.editor.setAttribute('frameborder','0');
+	/* @private */
+	this.toolbar = hui.get.firstByClass(e,'hui_richtext_toolbar');
+	this.toolbarContent = hui.get.firstByClass(e,'hui_richtext_toolbar_content');
+	this.value = this.options.value;
+	this.document = null;
+	this.ignited = false;
+	this.buildToolbar();
+	this.ignite();
+	hui.ui.extend(this);
+}
+
+hui.ui.RichText.actions = [
+	{key:'bold',				cmd:'bold',				value:null,		icon:'edit/text_bold'},
+	{key:'italic',				cmd:'italic',			value:null,		icon:'edit/text_italic'},
+	{key:'underline',			cmd:'underline',		value:null,		icon:'edit/text_underline'},
+	null,
+	{key:'justifyleft',			cmd:'justifyleft',		value:null,		icon:'edit/text_align_left'},
+	{key:'justifycenter',		cmd:'justifycenter',	value:null,		icon:'edit/text_align_center'},
+	{key:'justifyright',		cmd:'justifyright',		value:null,		icon:'edit/text_align_right'},
+	null,
+	{key:'increasefontsize',	cmd:'increasefontsize',	value:null,		icon:'edit/increase_font_size'},
+	{key:'decreasefontsize',	cmd:'decreasefontsize',	value:null,		icon:'edit/decrease_font_size'},
+	{key:'color',				cmd:null,				value:null,		icon:'common/color'}
+	/*,
+	null,
+	{key:'p',				cmd:'formatblock',		value:'p'},
+	{key:'h1',				cmd:'formatblock',		value:'h1'},
+	{key:'h2',				cmd:'formatblock',		value:'h2'},
+	{key:'h3',				cmd:'formatblock',		value:'h3'},
+	{key:'h4',				cmd:'formatblock',		value:'h4'},
+	{key:'h5',				cmd:'formatblock',		value:'h5'},
+	{key:'h6',				cmd:'formatblock',		value:'h6'},
+	{key:'removeformat', 	cmd:'removeformat', 	'value':null}*/
+];
+
+hui.ui.RichText.replaceInput = function(options) {
+	options = options || {};
+	var input = hui.get(options.input);
+	input.style.display='none';
+	options.value = input.value;
+	var obj = hui.ui.RichText.create(options);
+	input.parentNode.insertBefore(obj.element,input);
+	obj.ignite();
+}
+
+hui.ui.RichText.create = function(options) {
+	options = options || {};
+	options.element = hui.build('div',{'class':'hui_richtext',html:'<div class="hui_richtext_toolbar"><div class="hui_richtext_inner_toolbar"><div class="hui_richtext_toolbar_content"></div></div></div>'});
+	return new hui.ui.RichText(options);
+}
+
+hui.ui.RichText.prototype = {
+	isCompatible : function() {
+	    var agt=navigator.userAgent.toLowerCase();
+		return true;
+		return (agt.indexOf('msie 6')>-1 || agt.indexOf('msie 7')>-1 || (agt.indexOf('gecko')>-1 && agt.indexOf('safari')<0));
+	},
+	ignite : function() {
+		var self = this;
+		this.editor.observe("wysihat:loaded", function(event) {
+			if (this.ignited) {
+				return;
+			}
+			this.editor.setStyle(this.options.style);
+			this.editor.setRawContent(this.value);
+			this.document = this.editor.getDocument();
+			if (this.document.body) {
+				this.document.body.style.minHeight='100%';
+				this.document.body.style.margin='0';
+				this.document.documentElement.style.cursor='text';
+				this.document.documentElement.style.minHeight='100%';
+				Element.setStyle(this.document.body,this.options.style);
+			}
+			this.window = this.editor.getWindow();
+			Event.observe(this.window,'focus',function() {self.documentFocused()});
+			Event.observe(this.window,'blur',function() {self.documentBlurred()});
+			this.document.body.focus();
+			this.ignited = true;
+     	}.bind(this));
+		this.editor.observe("wysihat:change", function(event) {
+        	this.documentChanged();
+     	}.bind(this));
+	},
+	setHeight : function(height) {
+		this.editor.style.height=height+'px';
+	},
+	focus : function() {
+		try { // TODO : May only work in gecko
+			var r = this.document.createRange();
+			r.selectNodeContents(this.document.body);
+			this.window.getSelection().addRange(r);
+		} catch (ignore) {}
+		if (this.window)this.window.focus();
+	},
+	setValue : function(value) {
+		this.value = value;
+		this.editor.setRawContent(this.value);
+	},
+	getValue : function() {
+		return this.value;
+	},
+	deactivate : function() {
+		if (this.colorPicker) this.colorPicker.hide();
+		if (this.toolbar) this.toolbar.style.display='none';
+	},
+	
+	buildToolbar : function() {
+		this.toolbar.onmousedown = function() {this.toolbarMouseDown=true}.bind(this);
+		this.toolbar.onmouseup = function() {this.toolbarMouseDown=false}.bind(this);
+		var self = this;
+		var actions = hui.ui.RichText.actions;
+		for (var i=0; i < actions.length; i++) {
+			if (actions[i]==null) {
+				this.toolbarContent.appendChild(hui.build('div',{'class':'hui_richtext_divider'}));
+			} else {
+				var div = hui.build('div',{'class':'action action_'+actions[i].key});
+				div.title=actions[i].key;
+				div.huiRichTextAction = actions[i]
+				div.onclick = div.ondblclick = function(e) {return self.actionWasClicked(this.huiRichTextAction,e);}
+				var img = hui.build('img');
+				img.src=hui.ui.context+'/hui/gfx/trans.png';
+				if (actions[i].icon) {
+					div.style.backgroundImage='url('+hui.ui.getIconUrl(actions[i].icon,16)+')';
+				}
+				div.appendChild(img);
+				this.toolbarContent.appendChild(div);
+				div.onmousedown = hui.ui.RichText.stopEvent;
+			}
+		};
+	},
+	documentFocused : function() {
+		if (hui.browser.msie) {
+			this.toolbar.style.display='block';
+			return;
+		}
+		if (this.toolbar.style.display!='block') {
+			this.toolbar.style.marginTop='-40px';
+			hui.style.setOpacity(this.toolbar,0);
+			this.toolbar.style.display='block';
+			hui.animate(this.toolbar,'opacity',1,300);
+			hui.animate(this.toolbar,'margin-top','-32px',300);
+		}
+	},
+	
+	documentBlurred : function() {
+		if (this.toolbarMouseDown) return;
+		if (this.options.autoHideToolbar) {
+			if (hui.browser.msie) {
+				var self = this;
+				window.setTimeout(function() {
+					self.toolbar.style.display='none';
+				},100);
+				return;
+			}
+			hui.animate(this.toolbar,'opacity',0,300,{hideOnComplete:true});
+			hui.animate(this.toolbar,'margin-top','-40px',300);
+		}
+		this.documentChanged();
+		hui.ui.callDelegates(this,'richTextDidChange');
+	},
+	
+	documentChanged : function() {
+		this.value = this.editor.content();
+		if (this.options.input) {
+			hui.get(this.options.input).value=this.value;
+		}
+	},
+	
+	disabler : function(e) {
+		var evt = e ? e : window.event; 
+		if (evt.returnValue) {
+			evt.returnValue = false;
+		} else if (evt.preventDefault) {
+			evt.preventDefault( );
+		}
+		return false;
+	},
+	actionWasClicked : function(action,e) {
+		hui.ui.RichText.stopEvent(e);
+		if (action.key=='color') {
+			this.showColorPicker();
+		} else {
+			this.execCommand(action);
+		}
+		this.document.body.focus();
+		return false;
+	},
+	execCommand : function(action) {
+		this.editor.execCommand(action.cmd,false,action.value);
+		this.documentChanged();
+	},
+	showColorPicker : function() {
+		if (!this.colorPicker) {
+			var panel = hui.ui.Window.create({variant:'dark'});
+			var picker = hui.ui.ColorPicker.create();
+			picker.listen(this);
+			panel.add(picker);
+			panel.show();
+			this.colorPicker = panel;
+		}
+		this.colorPicker.show();
+	},
+	$colorWasHovered : function(color) {
+		//this.document.execCommand('forecolor',false,color);
+	},
+	$colorWasSelected : function(color) {
+		this.document.execCommand('forecolor',false,color);
+		this.documentChanged();
+	}
+}
+
+
+
+hui.ui.RichText.stopEvent = function(e) {
+  var evt = e ? e : window.event; 
+  if (evt.returnValue) {
+    evt.returnValue = false;
+  } else if (evt.preventDefault) {
+    evt.preventDefault( );
+  } else {
+    return false;
+  }
+}
+
+/* EOF */

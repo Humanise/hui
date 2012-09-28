@@ -208,77 +208,6 @@ div.hui_tooltip div div
 	margin: 0px 18px 0px 11px;
 }
 
-/************************* Split ********************/
-
-table.split
-{
-	height: 100%;
-	width: 100%;
-	border-spacing: 0px 0px;
-}
-
-td.split_content
-{
-	vertical-align: top;
-	width: 100%;
-	background: #fff;
-}
-
-td.split_sidebar
-{
-	background: #EBF0F7;
-	border-right: 1px solid #bbb;
-	vertical-align: top;
-}
-
-div.split_sidebar
-{
-	width: 200px;
-}
-
-
-/*********************** browser ********************/
-div.browser
-{
-	height: 417px;
-	overflow: auto;
-}
-div.browser .contents
-{
-	height: 400px;
-}
-
-div.browser .column
-{
-	background: #fff;
-	float:left;
-	height:400px;
-	overflow-x:auto;
-	overflow-y:auto;
-	width:198px;
-	font-size: 10pt;
-	border: 1px solid #ddd;
-}
-
-div.browser .column .element
-{
-	padding: 1px 4px;
-	overflow: hidden;
-	cursor: default;
-	white-space: nowrap;
-}
-
-div.browser .column .element:hover
-{
-	background: #eee;
-}
-
-div.browser .column div.selected, div.browser .column div.selected:hover
-{
-	background: #3875D7;
-	color: #fff;
-}
-
 /****************************************** Backgrounds *******************************/
 
 .hui_bg_white, body.hui_bg_white
@@ -1306,7 +1235,48 @@ a.hui_button_mini_paper span span
 .hui_context_dark a.hui_button_highlighted span
 {
 	background-image: url('../gfx/button_overlay_highlighted.png');
-}form.hui_formula
+}
+
+
+/** Small bar **/
+
+a.hui_button_bar
+{
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	background: none;
+	height: 26px;
+	line-height: 26px;
+	font-family: Georgia,serif;
+	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+	font-size: 14px;
+	border-color: #ccc #d7d7d7 #ccc;
+    background: -webkit-gradient(linear, 0% 0%, 0% 100% , from(#fdfdfd), to(#e6e6e6));
+	background: -moz-linear-gradient(top, #fafafa, #eee);
+    filter: progid:DXImageTransform.Microsoft.gradient (GradientType=0, startColorstr=#fafafa, endColorstr=#eeeeee);
+}
+
+a.hui_button_bar span
+{
+	background: none;
+	color: #333;
+}
+
+a.hui_button_small_bar, a.hui_button_small_bar span
+{
+	height: 20px;
+	line-height: 20px;
+}
+
+a.hui_button_small_bar span span
+{
+	margin: 0;
+	padding: 0 7px;
+	font-size: 11px;
+	line-height: 17px;
+	text-shadow: 0 1px 0 #fff;
+}
+form.hui_formula
 {
 	padding: 0px;
 	margin: 0px;

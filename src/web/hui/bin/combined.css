@@ -208,77 +208,6 @@ div.hui_tooltip div div
 	margin: 0px 18px 0px 11px;
 }
 
-/************************* Split ********************/
-
-table.split
-{
-	height: 100%;
-	width: 100%;
-	border-spacing: 0px 0px;
-}
-
-td.split_content
-{
-	vertical-align: top;
-	width: 100%;
-	background: #fff;
-}
-
-td.split_sidebar
-{
-	background: #EBF0F7;
-	border-right: 1px solid #bbb;
-	vertical-align: top;
-}
-
-div.split_sidebar
-{
-	width: 200px;
-}
-
-
-/*********************** browser ********************/
-div.browser
-{
-	height: 417px;
-	overflow: auto;
-}
-div.browser .contents
-{
-	height: 400px;
-}
-
-div.browser .column
-{
-	background: #fff;
-	float:left;
-	height:400px;
-	overflow-x:auto;
-	overflow-y:auto;
-	width:198px;
-	font-size: 10pt;
-	border: 1px solid #ddd;
-}
-
-div.browser .column .element
-{
-	padding: 1px 4px;
-	overflow: hidden;
-	cursor: default;
-	white-space: nowrap;
-}
-
-div.browser .column .element:hover
-{
-	background: #eee;
-}
-
-div.browser .column div.selected, div.browser .column div.selected:hover
-{
-	background: #3875D7;
-	color: #fff;
-}
-
 /****************************************** Backgrounds *******************************/
 
 .hui_bg_white, body.hui_bg_white
@@ -789,7 +718,48 @@ a.hui_button_mini_paper span span
 .hui_context_dark a.hui_button_highlighted span
 {
 	background-image: url('../gfx/button_overlay_highlighted.png');
-}div.hui_curtain
+}
+
+
+/** Small bar **/
+
+a.hui_button_bar
+{
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	background: none;
+	height: 26px;
+	line-height: 26px;
+	font-family: Georgia,serif;
+	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+	font-size: 14px;
+	border-color: #ccc #d7d7d7 #ccc;
+    background: -webkit-gradient(linear, 0% 0%, 0% 100% , from(#fdfdfd), to(#e6e6e6));
+	background: -moz-linear-gradient(top, #fafafa, #eee);
+    filter: progid:DXImageTransform.Microsoft.gradient (GradientType=0, startColorstr=#fafafa, endColorstr=#eeeeee);
+}
+
+a.hui_button_bar span
+{
+	background: none;
+	color: #333;
+}
+
+a.hui_button_small_bar, a.hui_button_small_bar span
+{
+	height: 20px;
+	line-height: 20px;
+}
+
+a.hui_button_small_bar span span
+{
+	margin: 0;
+	padding: 0 7px;
+	font-size: 11px;
+	line-height: 17px;
+	text-shadow: 0 1px 0 #fff;
+}
+div.hui_curtain
 {
 	width: 100%;
 	background: #000;
@@ -2130,6 +2100,7 @@ span.hui_icon_overlay
 
 span.hui_icon_badge
 {
+	background: #f00;
 	background: -webkit-gradient(linear, left top, left bottom, from(#f69), to(#f03));
 	border: 1px solid #d00;
 	color: #fff;
@@ -2328,7 +2299,17 @@ span.hui_toolbar_item a.hui_checkbox
 
 span.hui_toolbar_item a.hui_dropdown
 {
-	margin-top: 7px;
+	margin-top: 8px;
+}
+
+span.hui_toolbar_item span.hui_fontinput
+{
+	margin-top: 8px;
+}
+
+span.hui_toolbar_item span.hui_fontinput a.hui_dropdown
+{
+	margin-top: 0px;
 }
 
 span.hui_toolbar_item span.hui_searchfield
@@ -2428,6 +2409,7 @@ a.hui_toolbar_more
 	color: #666;
 	text-decoration: none;
 	margin: 0 5px;
+	cursor: pointer;
 }
 
 a.hui_toolbar_more:hover
@@ -2454,7 +2436,7 @@ span.hui_toolbar_more_content
 span.hui_toolbar_more_expanded span.hui_toolbar_more_content
 {
 	display: inline-block;
-}.hui_window
+}div.hui_window
 {
 	position: absolute;
 	top: 50px;
@@ -2468,9 +2450,15 @@ span.hui_toolbar_more_expanded span.hui_toolbar_more_content
 	font-family: 'Lucida Grande','Verdana',sans-serif;
 	background: url('../gfx/window_grey.png') left -27px no-repeat;
 	font-size: 0;
-	height:27px;
+	height: 27px;
 	cursor: default;
-	text-align:center;
+	text-align: center;
+	cursor: -webkit-grab;
+}
+
+div.hui_window_dragging .hui_window_titlebar
+{
+	cursor: -webkit-grabbing;
 }
 
 .hui_window_titlebar div
@@ -5559,6 +5547,7 @@ a.hui_bar_button
 	background: url('../gfx/bar_light.png') right -30px no-repeat;
 	text-decoration: none;
 	vertical-align: top;
+	cursor: pointer;
 }
 
 a.hui_bar_button:focus
@@ -5628,11 +5617,13 @@ div.hui_bar_window, div.hui_bar_window div.hui_bar_body, div.hui_bar_window div.
 div.hui_bar_window
 {
 	border-top: 1px solid #D6D6D6;
+	border-bottom: 1px solid #D6D6D6;
 }
 
 div.hui_bar_window div.hui_bar_body
 {
 	border-top: 1px solid #F3F3F3;
+	border-bottom: 1px solid #F3F3F3;
 }
 
 div.hui_bar_window span.hui_segmented
@@ -5836,7 +5827,7 @@ div.hui_bar_mini span.hui_bar_divider
 }
 
 
-/******************* window mini variant ***************/
+/******************* Layout mini variant ***************/
 
 div.hui_bar_layout_mini
 {
@@ -6059,6 +6050,16 @@ span.hui_segmented a
 	outline: none;
 }
 
+span.hui_segmented a:focus
+{
+	outline: 4px auto #2678ff;
+}
+
+span.hui_segmented a:hover
+{
+	background: #eee;
+}
+
 span.hui_segmented .hui_icon_16
 {
 	margin-top: 2px;
@@ -6071,7 +6072,8 @@ span.hui_segmented_text
 	padding: 0 4px;
 }
 
-a.hui_segmented_selected
+a.hui_segmented_selected,
+span.hui_segmented a.hui_segmented_selected:hover
 {
 	background: #ddd;
 	background: -moz-linear-gradient(top, #EFF2F4, #C0C9CF);
@@ -7170,11 +7172,122 @@ span.hui_objectinput_title
 	margin-left: 3px;
 	display: inline-block;
 	vertical-align: middle;
-}a.hui_fontinput
+}span.hui_fontinput
 {
-	background: red;
 	display: inline-block;
-	width: 16px;
-	height: 16px;
 	vertical-align: middle;
+}
+
+a.hui_fontinput
+{
+	background: #fff;
+	border: 1px solid #ddd;
+	line-height: 18px;
+	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+	font-size: 18px;
+	text-align: center;
+	color: #333;
+	text-decoration: none;
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	vertical-align: middle;
+	margin-left: 2px;
+	border-radius: 3px;
+	overflow: hidden;
+}
+
+a.hui_fontinput:hover
+{
+	background: #eee;
+	border: 1px solid #ccc;
+}
+
+a.hui_fontinput:focus
+{
+	/*border-color: #2678ff;*/
+	outline: 4px auto #2678ff;
+}div.hui_fontpicker
+{
+	background: #fff;
+	width: 200px;
+	border: 1px solid #ddd;
+	border-width: 1px 1px 0;
+	max-height: 200px;
+	overflow: auto;
+}
+
+div.hui_fontpicker_item
+{
+	border-bottom: 1px solid #ddd;
+	padding: 4px 8px;
+	font-size: 14pt;
+	position: relative;
+}
+
+div.hui_fontpicker_item:hover
+{
+	background: #EBF0F7;
+	cursor: pointer;
+}
+
+div.hui_fontpicker_item a.hui_icon
+{
+	position: absolute;
+	right: 5px;
+	top: 50%;
+	margin-top: -8px;
+	display: none;
+}
+
+div.hui_fontpicker_item:hover a.hui_icon
+{
+	display: block;
+}
+
+/*********** Example ***********/
+
+div.hui_fontpicker_example
+{
+	max-width: 400px;
+	max-height: 400px;
+	overflow: auto;
+	background: #fff;
+	padding: 10px;
+	border: 1px solid #ddd;
+}
+
+div.hui_fontpicker_example h1
+{
+	font-weight: normal;
+	margin: 0 0 10px;
+}
+
+div.hui_fontpicker_example table
+{
+	cell-spacing: 0;
+	border-collapse: collapse;
+	border: 1px solid #eee;
+}
+
+div.hui_fontpicker_example td
+{
+	border: 1px solid #eee;
+	padding: 2px 6px 3px;
+	vertical-align: top;
+}
+
+div.hui_fontpicker_example th
+{
+	border: 1px solid #eee;
+	padding: 2px 6px 3px;
+	font-size: 11px;
+}div.hui_split
+{
+	height: 100%;
+}
+
+div.hui_split_row
+{
+	height: 33%;
 }

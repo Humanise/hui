@@ -201,16 +201,6 @@ hui.isArray = function(obj) {
 	}
 }
 
-
-
-
-
-
-
-
-
-
-
 ///////////////////////// Strings ///////////////////////
 
 /** @namespace */
@@ -864,10 +854,14 @@ hui.build = function(name,options,doc) {
 				} else {
 					options.parentFirst.insertBefore(e,options.parentFirst.childNodes[0]);
 				}
+			} else if (prop=='before') {
+				options.before.parentNode.insertBefore(e,options.before);
 			} else if (prop=='className') {
 				e.className=options.className;
 			} else if (prop=='class') {
 				e.className=options['class'];
+			} else if (prop=='style' && typeof(options[prop])=='object') {
+				hui.style.set(e,options[prop]);
 			} else if (prop=='style' && (hui.browser.msie7 || hui.browser.msie6)) {
 				e.style.setAttribute('cssText',options[prop]);
 			} else if (hui.isDefined(options[prop])) {
@@ -1239,6 +1233,11 @@ hui.Event = function(event) {
 	this.huiEvent = true;
 	/** The event */
 	this.event = event = event || window.event;
+	
+	if (!event) {
+		hui.log('No event');
+	}
+	
 	/** The target element */
 	this.element = event.target ? event.target : event.srcElement;
 	/** If the shift key was pressed */
@@ -1253,6 +1252,8 @@ hui.Event = function(event) {
 	this.escapeKey = event.keyCode==27;
 	/** If the space key was pressed */
 	this.spaceKey = event.keyCode==32;
+	/** If the backspace was pressed */
+	this.backspaceKey = event.keyCode==8;
 	/** If the up key was pressed */
 	this.upKey = event.keyCode==38;
 	/** If the down key was pressed */
@@ -1985,6 +1986,7 @@ hui.drag = {
 	
 	/** Listen for native drops
 	 * <pre><strong>options:</strong> {
+	 *  elements : «Element»,
 	 *  hoverClass : «String»,
 	 *  onDrop : function(event),
 	 *  onFiles : function(fileArray),
@@ -2041,6 +2043,8 @@ hui.drag = {
 						if (options.onURL && !hui.string.startsWith(url,'data:')) {
 							options.onURL(url);
 						}
+					} else if (options.onText && e.dataTransfer.types!=null && hui.array.contains(e.dataTransfer.types,'text/plain')) {
+						options.onText(e.dataTransfer.getData('text/plain'))
 					}
 				}
 			}
@@ -5298,10 +5302,10 @@ hui.ui.getElement = function(widgetOrElement) {
 }
 
 hui.ui.isWithin = function(e,element) {
-	e = new hui.Event(e);
-	var offset = {left:hui.position.getLeft(element),top:hui.position.getTop(element)};
-	var dims = {width:element.clientWidth,height:element.clientHeight};
-	return e.getLeft()>offset.left && e.getLeft()<offset.left+dims.width && e.getTop()>offset.top && e.getTop()<offset.top+dims.height;
+	e = hui.event(e);
+	var offset = { left : hui.position.getLeft(element), top : hui.position.getTop(element) };
+	var dims = { width : element.clientWidth, height : element.clientHeight };
+	return e.getLeft() > offset.left && e.getLeft() < offset.left+dims.width && e.getTop() > offset.top && e.getTop() < offset.top+dims.height;
 };
 
 hui.ui.getIconUrl = function(icon,size) {
@@ -6146,6 +6150,7 @@ hui.ui.Window.prototype = {
 		}
 		hui.drag.register({
 			element : this.titlebar,
+			onStart : this._onDragStart.bind(this) ,
 			onBeforeMove : this._onBeforeMove.bind(this) ,
  			onMove : this._onMove.bind(this),
 			onAfterMove : this._onAfterMove.bind(this)
@@ -6238,12 +6243,15 @@ hui.ui.Window.prototype = {
 		}
 	},
 
+	_onDragStart : function(e) {
+		this.element.style.zIndex = hui.ui.nextPanelIndex();
+	},
 	_onBeforeMove : function(e) {
 		e = hui.event(e);
-		this.element.style.zIndex = hui.ui.nextPanelIndex();
 		var pos = hui.position.get(this.element);
 		this.dragState = {left: e.getLeft() - pos.left,top:e.getTop()-pos.top};
 		this.element.style.right = 'auto';
+		hui.cls.add(this.element,'hui_window_dragging');
 	},
 	_onMove : function(e) {
 		var top = (e.getTop()-this.dragState.top);
@@ -6253,6 +6261,7 @@ hui.ui.Window.prototype = {
 	},
 	_onAfterMove : function() {
 		hui.ui.callDescendants(this,'$$parentMoved');
+		hui.cls.remove(this.element,'hui_window_dragging');
 	}
 }
 
@@ -8245,7 +8254,7 @@ hui.ui.Selection = function(options) {
 			this.addItemBehavior(element,item);
 		};
 		this.selection = this._getSelectionWithValue(this.options.value);
-		this.updateUI();
+		this._updateUI();
 	} else if (this.options.value!=null) {
 		this.selection = {value:this.options.value};
 	}
@@ -8289,7 +8298,7 @@ hui.ui.Selection.prototype = {
 			this.selection = item;
 			this.kind=item.kind;
 		}
-		this.updateUI();
+		this._updateUI();
 		this.fireChange();
 	},
 	_getSelectionWithValue : function(value) {
@@ -8336,15 +8345,13 @@ hui.ui.Selection.prototype = {
 		this.subItems.push(items);
 	},
 	
-	
-	/** @private */
-	updateUI : function() {
+	_updateUI : function() {
 		var i;
 		for (i=0; i < this.items.length; i++) {
 			hui.cls.set(this.items[i].element,'hui_selected',this.isSelection(this.items[i]));
 		};
 		for (i=0; i < this.subItems.length; i++) {
-			this.subItems[i].updateUI();
+			this.subItems[i]._updateUI();
 		};
 	},
 	/** @private */
@@ -8353,7 +8360,7 @@ hui.ui.Selection.prototype = {
 			this.subItems[i].selectionChanged(this.selection,item);
 		};
 		this.selection = item;
-		this.updateUI();
+		this._updateUI();
 		this.fireChange();
 	},
 	/** @private */
@@ -8445,6 +8452,7 @@ hui.ui.Selection.prototype = {
 			},300);
 		} else {
 			hui.cls.remove(this.element,'hui_selection_busy');
+			this.fire('loaded');
 		}
 	},
 	_checkValue : function() {
@@ -8509,7 +8517,7 @@ hui.ui.Selection.Items.prototype = {
 		if (this.title) {
 			this.title.style.display=this.items.length>0 ? 'block' : 'none';
 		}
-		this.parent.updateUI();
+		this.parent._updateUI();
 		this.parent._checkValue();
 		this.fireSizeChange();
 	},
@@ -8619,8 +8627,7 @@ hui.ui.Selection.Items.prototype = {
 		};
 		return null;
 	},
-	/** @private */
-	updateUI : function() {
+	_updateUI : function() {
 		for (var i=0; i < this.items.length; i++) {
 			hui.cls.set(this.items[i].element,'hui_selected',this.parent.isSelection(this.items[i]));
 		};
@@ -10057,8 +10064,8 @@ hui.ui.Editor.prototype = {
 			hui.listen(column,'mouseover',function() {
 				self._onHoverColumn(column);
 			});
-			hui.listen(column,'mouseout',function() {
-				self._onBlurColumn();
+			hui.listen(column,'mouseout',function(e) {
+				self._onBlurColumn(e);
 			});
 			/*
 			hui.listen(column,'contextmenu',function(e) {
@@ -10316,7 +10323,9 @@ hui.ui.Editor.prototype = {
 		});
 		window.clearTimeout(this.partControlTimer);
 		this._hidePartControls();
-		this._onBlurColumn();
+		if (this.hoveredColumn) {
+			hui.cls.remove(this.hoveredColumn,'hui_editor_column_hover');
+		}
 		this._showPartEditor();
 	},
 	_showPartEditor : function() {
@@ -11994,10 +12003,22 @@ hui.ui.Gallery.prototype = {
 			this.options.source.refresh();
 		}
 	},
+	setSize : function(size) {
+		this.width = size;
+		this.height = size;
+		for (var i=0; i < this.nodes.length; i++) {
+			var node = this.nodes[i];
+			node.style.width = size+'px';
+			node.style.height = size+'px';
+		};
+	},
+	reRender : function() {
+		this._render();
+	},
 	setObjects : function(objects) {
 		this.selected = [];
 		this.objects = objects;
-		this.render();
+		this._render();
 		this.fire('selectionReset');
 	},
 	getObjects : function() {
@@ -12016,38 +12037,37 @@ hui.ui.Gallery.prototype = {
 		this.setObjects(objects);
 	},
 	/** @private */
-	render : function() {
+	_render : function() {
 		this.nodes = [];
-		this.maxRevealed=0;
-		this.body.innerHTML='';
-		var self = this;
+		this.maxRevealed = 0;
+		this.body.innerHTML = '';
 		hui.each(this.objects,function(object,i) {
-			var url = self._resolveImageUrl(object),
+			var url = this._resolveImageUrl(object),
 				top = 0;
 			if (url!==null) {
 				url = url.replace(/&amp;/,'&');
 			}
-			if (!self.revealing && object.height<object.width) {
-				top = (self.height-(self.height*object.height/object.width))/2;
+			if (!this.revealing && object.height < object.width) {
+				top = (this.height-(this.height*object.height/object.width))/2;
 			}
 			var img = hui.build('img',{style:'margin:'+top+'px auto 0px'});
-			img.setAttribute(self.revealing ? 'data-src' : 'src', url );
-			var item = hui.build('div',{'class' : 'hui_gallery_item',style:'width:'+self.width+'px; height:'+self.height+'px'});
+			img.setAttribute(this.revealing ? 'data-src' : 'src', url );
+			var item = hui.build('div',{'class' : 'hui_gallery_item',style:'width:'+this.width+'px; height:'+this.height+'px'});
 			item.appendChild(img);
 			hui.listen(item,'click',function(e) {
-				self._itemClicked(i,e);
-			});
+				this._itemClicked(i,e);
+			}.bind(this));
 			item.dragDropInfo = {kind:'image',icon:'common/image',id:object.id,title:object.name || object.title};
 			item.onmousedown = function(e) {
 				hui.ui.startDrag(e,item);
 				return false;
 			};
 			hui.listen(item,'dblclick',function() {
-				self._onItemDoubleClick(i);
-			});
-			self.body.appendChild(item);
-			self.nodes.push(item);
-		});
+				this._onItemDoubleClick(i);
+			}.bind(this));
+			this.body.appendChild(item);
+			this.nodes.push(item);
+		}.bind(this));
 		this._reveal();
 		this.fireSizeChange();
 	},
@@ -16742,7 +16762,7 @@ hui.ui.Structure.prototype = {
  * @param {Object} options The options : {modal:false}
  */
 hui.ui.Slider = function(options) {
-	this.options = hui.override({value:0},options);
+	this.options = hui.override({value:0,min:0,max:1},options);
 	this.name = options.name;
 	
 	this.element = hui.get(options.element);
@@ -16750,7 +16770,7 @@ hui.ui.Slider = function(options) {
 	hui.ui.extend(this)
 	this.position = 0;
 	this.value = 0;
-	
+	this.setValue(this.options.value);
 	this._addBehavior();
 }
 
@@ -16793,7 +16813,7 @@ hui.ui.Slider.prototype = {
 	_onAfterMove : function() {
 		this.dragging = false;
 		hui.cls.remove(this.element,'hui_slider_active');
-		this.fire('valueChanged',this.position);
+		this.fire('valueChangedEnd',this.position);
 	},
 	
 	_setPosition : function(pos) {
@@ -17150,7 +17170,8 @@ hui.ui.FontInput = function(options) {
 	this.button = hui.get.firstByClass(this.element,'hui_fontinput');
 	this.dropdown = new hui.ui.DropDown({
 		element : hui.get.firstByClass(this.element,'hui_dropdown'),
-		items : hui.ui.FontPicker.fonts
+		items : [{text:'',value:''}].concat(hui.ui.FontPicker.fonts),
+		listener : this
 	});
 	this.value = null;
 	hui.ui.extend(this);
@@ -17174,7 +17195,7 @@ hui.ui.FontInput.prototype = {
 	},
 	_fireChange : function() {
 		hui.ui.callAncestors(this,'childValueChanged',this.value);
-		this.fire('valueChanged',this.value)		
+		this.fire('valueChanged',this.value);
 	},
 	_onBlur : function() {
 		hui.Color.parse(this.value);
@@ -17199,6 +17220,10 @@ hui.ui.FontInput.prototype = {
 		this.setValue(font.value);
 		this._fireChange();
 	},
+	$valueChanged : function(value) {
+		this.setValue(value);
+		this._fireChange();
+	},
 	
 	// Public...
 	
@@ -17208,6 +17233,7 @@ hui.ui.FontInput.prototype = {
 	setValue : function(value) {
 		this.value = value;
 		this._syncInput();
+		this.button.style.fontFamily = value;
 	},
 	focus : function() {
 		try {
@@ -17228,9 +17254,12 @@ hui.ui.FontPicker = function(options) {
 	this.element = hui.get(options.element);
 	this.fonts = options.fonts.concat(options.additionalFonts);
 	this.previews = {};
-	this.options = options;
+	this.options = options || {};
 	hui.override(this.options,options);
 	hui.ui.extend(this);
+	if (this.options.listener) {
+		this.listen(this.options.listener);
+	}
 	this._addBehavior();
 }
 
@@ -17307,8 +17336,8 @@ hui.ui.FontPicker.prototype = {
 		}
 	},
 	_buildPreview : function(font) {
-		if (this.previews[font.name]) {
-			this.previews[font.name].show();
+		if (this.previews[font.text]) {
+			this.previews[font.text].show();
 			return;
 		}
 		var e = hui.build('div',{className:'hui_fontpicker_example',style:'font-family:'+font.value+';'});
@@ -17338,7 +17367,7 @@ hui.ui.FontPicker.prototype = {
 		e.innerHTML = html;
 		var win = hui.ui.Window.create({title:font.text,padding:3});
 		win.add(e);
-		this.previews[font.name] = win;
+		this.previews[font.text] = win;
 		win.show();
 	}
 }
