@@ -197,9 +197,16 @@
 </split>
 -->
 <xsl:template match="gui:split">
-	<div class="hui_split">
+	<div class="hui_split" id="{generate-id()}">
 		<xsl:apply-templates select="gui:row"/>
 	</div>
+	<script type="text/javascript">
+		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Split({
+			element : '<xsl:value-of select="generate-id()"/>'
+			<xsl:if test="@name">,name:'<xsl:value-of select="@name"/>'</xsl:if>
+		});
+		<xsl:call-template name="gui:createobject"/>
+	</script>
 </xsl:template>
 
 <xsl:template match="gui:split/gui:row">
