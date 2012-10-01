@@ -15,6 +15,7 @@
 			<link rel="stylesheet" type="text/css" href="#{baseView.localContext}/css/msie6.css"></link>
 		<![endif]-->
 		<gui:importStyle/>
+		<oo:stylesheet href="/core/css/onlineobjects.css" core="true"/>
 
 		<ui:insert name="style"/>
 		<oo:script src="/dwr/interface/CoreSecurity.js" core="true"/>
@@ -36,6 +37,7 @@
 	</h:head>
 	<body>
 		<!-- contentWidth="980" -->
+		<oo:topBar/>
 		<gui:bar rendered="#{!baseView.publicUser}">
 			<gui:barButton text="Offentligt" name="barPublic" icon="inset/public" highlighted="true"/>
 			<gui:barButton text="Hjemmeside" name="barWebsite" icon="inset/globe"/>

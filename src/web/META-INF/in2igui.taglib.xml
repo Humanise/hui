@@ -71,4 +71,11 @@
       <renderer-type>hui.formula</renderer-type>
     </component>
   </tag>
+  <tag>
+    <tag-name>diagram</tag-name>
+    <component>
+      <component-type>hui.diagram</component-type>
+      <renderer-type>hui.diagram</renderer-type>
+    </component>
+  </tag>
 </facelet-taglib>

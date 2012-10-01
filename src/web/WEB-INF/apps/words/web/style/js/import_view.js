@@ -29,8 +29,8 @@ var importView = {
 			this._wordPanel.add(this._wordPanelContent);
 			this._wordPanel.add(form);
 		}
+		hui.cls.add(node,'highlighted');
 		hui.animate(node,'font-size','32px',500,{ease:hui.ease.slowFastSlow,onComplete:function() {
-			hui.cls.add(node,'highlighted');
 			this._wordPanelContent.innerHTML = '<p style="margin: 0; text-align: center; padding: 2px 0;">'+word+'</p>';
 			this._wordPanel.position(node);
 			this._wordPanel.show();

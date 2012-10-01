@@ -14,20 +14,22 @@
 		</ui:define>
 
 		<ui:define name="body">
-			<h1>#{wordsImportView.title}</h1>
-			<p>#{wordsImportView.status}</p>
-			<p>
-			<c:forEach items="#{wordsImportView.foundWords}" var="word">
-				<a>#{word.text}</a>
-			</c:forEach>
-			</p>
-			<p class="words">
-			<c:forEach items="#{wordsImportView.uniqueWords}" var="word">
-				<o:link styleClass="#{word.known ? 'known' : 'unknown'}" title="#{word.count}" onclick="importView.lookupWord('#{word.text}',this)">#{word.text}</o:link><o:out value="#{' '}"/>
-			</c:forEach>
-			</p>
-			<hr/>
-			<p>#{wordsImportView.text}</p>
+			<div class="words">
+				<h1>#{wordsImportView.title}</h1>
+				<p>#{wordsImportView.status}</p>
+				<p>
+				<c:forEach items="#{wordsImportView.foundWords}" var="word">
+					<a>#{word.text}</a>
+				</c:forEach>
+				</p>
+				<p class="words">
+				<c:forEach items="#{wordsImportView.uniqueWords}" var="word">
+					<o:link styleClass="#{word.known ? 'known' : 'unknown'}" title="#{word.count}" onclick="importView.lookupWord('#{word.text}',this)">#{word.text}</o:link><o:out value="#{' '}"/>
+				</c:forEach>
+				</p>
+				<hr/>
+				<p>#{wordsImportView.text}</p>
+			</div>
 		</ui:define>
 	</ui:composition>
 </html>

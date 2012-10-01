@@ -1,7 +1,7 @@
 var wordsApp = {
 	$click$import : function() {
 		if (!this._importWindow) {
-			var win = this._importWindow = hui.ui.Box.create({title:'Import',absolute:true,width:300,modal:true,padding:10,closable:true});
+			var win = this._importWindow = hui.ui.Box.create({title:'Import',absolute:true,width:500,modal:true,padding:10,closable:true});
 			win.addToDocument();
 			var form = this._importForm = hui.ui.Formula.create({name:'importFormula'});
 			form.buildGroup(null,[

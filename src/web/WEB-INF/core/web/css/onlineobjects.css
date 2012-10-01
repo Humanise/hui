@@ -1,4 +1,134 @@
+/************* Top bar *************/
 
+div.oo_topbar
+{
+	font-family: 'Helvetica Neue','Helvetica','Arial',sans-serif;
+	height: 30px;
+	border-bottom: 1px solid #eee;
+	font-size: 0;
+	-webkit-transition-property: background,border-color;
+	-webkit-transition-duration: 1s;
+}
+
+div.oo_topbar:hover
+{
+	background: #fff;
+	/*box-shadow: 0 0 4px rgba(0,0,0,.1);*/
+	border-bottom: 1px solid #ddd;
+}
+
+div.oo_topbar strong
+{
+	display: inline-block;
+	font-weight: 300;
+	padding: 0 10px;
+	font-size: 12pt;
+	color: #333;
+}
+
+div.oo_topbar strong span
+{
+	font-weight: 400;
+	margin-left: 2px;
+}
+
+div.oo_topbar ul
+{
+	display: inline-block;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+div.oo_topbar li
+{
+	display: inline-block;
+}
+
+div.oo_topbar li a
+{
+	display: block;
+	font-size: 11pt;
+	height: 30px;
+	line-height: 30px;
+	padding: 0 10px;
+	color: #999;
+	text-decoration: none;
+	font-weight: 300;
+	-webkit-transition-property: color;
+	-webkit-transition-duration: 1s;
+}
+
+div.oo_topbar li a:hover
+{
+	text-decoration: underline;
+}
+
+div.oo_topbar:hover li a
+{
+	color: #333;
+}
+
+div.oo_topbar a.oo_topbar_selected
+{
+	font-weight: 400;
+	color: #333;
+}
+
+span.oo_topbar_right
+{
+	position: absolute;
+	font-size: 11pt;
+	right: 0;
+	top: 0;
+	height: 30px;
+	line-height: 30px;
+}
+
+span.oo_topbar_right a
+{
+	display: block;
+	padding: 0 10px;
+	color: #999;
+	text-decoration: none;
+}
+
+/****************** Layout ***************/
+
+div.oo_layout
+{
+	width: 900px;
+	margin: 0 auto;
+	box-shadow: 0px 1px 3px 0px #999;
+	-webkit-box-shadow: 0px 1px 3px #999;
+	background: #fff;
+	border-radius: 5px;
+	margin-top: 20px;
+}
+
+div.oo_layout_top
+{
+	height: 32px;
+	border-bottom: 1px solid #ddd;
+}
+
+div.oo_layout_middle
+{
+	background: url('../../gfx/sidebar.png') 700px top repeat-y;
+	overflow: hidden;
+	border-radius: 0 0 5px 0;
+}
+
+div.oo_layout_body
+{
+	width: 700px;
+	float: left;
+}
+div.oo_layout_sidebar
+{
+	width: 200px;
+	float: left;
+}
 /******************* List ****************/
 
 ol.oo_list

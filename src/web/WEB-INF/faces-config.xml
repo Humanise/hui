@@ -89,6 +89,15 @@ http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
     	<component-class>dk.in2isoft.onlineobjects.ui.jsf.BlockComponent</component-class>
   	</component>
     <component>
+    	<component-type>onlineobjects.topBar</component-type>
+    	<component-class>dk.in2isoft.onlineobjects.ui.jsf.TopBarComponent</component-class>
+  	</component>
+    <component>
+    	<component-type>onlineobjects.layout</component-type>
+    	<component-class>dk.in2isoft.onlineobjects.ui.jsf.LayoutComponent</component-class>
+  	</component>
+  	
+    <component>
 	    <component-type>hui.button</component-type>
     	<component-class>dk.in2isoft.in2igui.jsf.ButtonComponent</component-class>
   	</component>
@@ -127,5 +136,9 @@ http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
     <component>
 	    <component-type>hui.link</component-type>
     	<component-class>dk.in2isoft.in2igui.jsf.LinkComponent</component-class>
+  	</component>
+    <component>
+	    <component-type>hui.diagram</component-type>
+    	<component-class>dk.in2isoft.in2igui.jsf.DiagramComponent</component-class>
   	</component>
 </faces-config>

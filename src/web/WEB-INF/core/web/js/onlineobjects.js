@@ -77,11 +77,11 @@ oo.Gallery = function(options) {
 	this.element = hui.get(options.element);
 	this.images = options.images;
 	hui.ui.extend(this);
-	this.addBehavior();
+	this._addBehavior();
 }
 
 oo.Gallery.prototype = {
-	addBehavior : function() {
+	_addBehavior : function() {
 		var self = this;
 		var slideShow = hui.get.firstByClass(this.element,'oo_gallery_slideshow');
 		if (slideShow) {
@@ -104,5 +104,100 @@ oo.Gallery.prototype = {
 	},
 	$resolveImageUrl : function(image,width,height) {
 		return oo.baseContext+'/service/image/id'+image.id+'width'+Math.round(width)+'height'+Math.round(height)+'.jpg';
+	}
+}
+
+
+
+oo.TopBar = function(options) {
+	this.options = options;
+	this.element = hui.get(options.element);
+	hui.ui.extend(this);
+	this._addBehavior();
+	hui.ui.listen(this);
+}
+
+oo.TopBar.prototype = {
+	_addBehavior : function() {
+		hui.listen(this.element,'click',this._onClick.bind(this));
+	},
+	_onClick : function(e) {
+		e = hui.event(e);
+		var a = e.findByTag('a');
+		if (a) {
+			if (a.getAttribute('data')=='user') {
+				e.stop();
+				this._showUserPanel(a)
+			}
+			else if (a.getAttribute('data')=='login') {
+				e.stop();
+				this._showLoginPanel(a)
+			}
+		}
+	},
+	
+	_showUserPanel : function(a) {
+		var panel = this._buildUserPanel();
+		panel.position(a);
+		panel.show();
+	},
+	_buildUserPanel : function() {
+		if (!this._userPanel) {
+			var p = this._userPanel = hui.ui.BoundPanel.create({width:200,variant:'light',hideOnClick:true});
+			var logout = hui.ui.Button.create({text:'Log out'});
+			logout.listen({
+				$click : function() {
+					CoreSecurity.logOut(function() {
+						document.location.reload()
+					})
+				}
+			})
+			p.add(logout);
+		}
+		return this._userPanel;
+	},
+
+	_showLoginPanel : function(a) {
+		var panel = this._buildLoginPanel();
+		panel.position(a);
+		panel.show();
+		this._loginForm.focus();
+	},
+	_buildLoginPanel : function() {
+		if (!this._loginPanel) {
+			var p = this._loginPanel = hui.ui.BoundPanel.create({width:200,variant:'light',hideOnClick:true,padding:5});
+			
+			var form = this._loginForm = hui.ui.Formula.create({name:'topBarLoginForm'});
+			form.buildGroup(null,[
+				{type:'TextField',label:'Username',options:{key:'username'}},
+				{type:'TextField',label:'Password',options:{secret:true,key:'password'}}
+			]);
+			p.add(form);
+			var logout = hui.ui.Button.create({text:'Log in',name:'topBarLoginButton'});
+			logout.listen({
+				$click : function() {
+					
+				}.bind(this)
+			})
+			p.add(logout);
+		}
+		return this._loginPanel;
+	},
+	$submit$topBarLoginForm : function() {
+		this._doLogin();
+	},
+	$click$topBarLoginButton : function() {
+		this._doLogin();
+	},
+	_doLogin : function() {
+		var values = this._loginForm.getValues();
+		CoreSecurity.changeUser(values.username,values.password,{
+			callback:function() {
+				document.location.reload()
+			},
+			errorHandler : function() {
+				hui.ui.showMessage({text:'Unable to log in',icon:'common/warning',duration:2000});
+			}
+		})
 	}
 }

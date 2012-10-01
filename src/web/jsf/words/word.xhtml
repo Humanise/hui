@@ -11,41 +11,64 @@
 		
 		<ui:define name="scripts">
 			<o:script src="/style/js/word_view.js"/>
+			<o:script src="/hui/js/Drawing.js" core="true"/>
+			<o:script src="/hui/ext/Diagram.js" core="true"/>
 		</ui:define>
 		
 		<ui:define name="body">
-			<o:script>
-				wordView.text = '#{wordsWordView.text}';
-			</o:script>
-			<div id="word">
-				<h1>#{wordsWordView.text}</h1>
-				<ui:fragment rendered="#{empty wordsWordView.words}">
-					<p style="color: #cc0000;">This word is not registered!</p>
-					<gui:button text="Register word" name="registerWord" variant="paper" rendered="#{wordsLayoutView.loggedIn}"/>
-				</ui:fragment>
-				<ui:fragment rendered="#{not empty wordsWordView.words}">
-					<ul>
-						<c:forEach items="#{wordsWordView.words}" var="word">
-							<li>
-								<p style="margin: 0;">
-									<span style="vertical-align: middle;">#{word.word.text} </span>
-									<c:if test="#{word.lexicalCategory!=null}">
-										<span style="vertical-align: middle; color: #999; font-size: 12px; position: relative; top: 2px;">— #{word.lexicalCategory.name}</span>
-									</c:if>
-									<c:if test="#{word.language!=null}">
-										<span style="vertical-align: middle; color: #999; font-size: 12px; position: relative; top: 2px;">— #{word.language.name}</span>
-									</c:if>
-									<c:if test="#{word.lexicalCategory==null}">
-										<span style="vertical-align: middle; color: #999; font-size: 12px; position: relative; top: 2px;">(Not categorized) </span>
-										<gui:button rendered="#{wordsLayoutView.loggedIn}" variant="paper" small="true" text="Categorize..." click="wordView.categorizeWord({id:#{word.word.id},widget:widget})"/>
-									</c:if>
-								</p>
-								<p style="margin: 5px 0 0; font-size: 11px; color: #999;">Created: <o:date value="#{word.word.created}"/></p>
-							</li>
-						</c:forEach>
-					</ul>
-					<gui:button variant="paper" name="addVariant" text="Add variant" rendered="#{wordsLayoutView.loggedIn}"/>
-				</ui:fragment>
+			<div class="words">
+				<o:script>
+					wordView.text = '#{wordsWordView.text}';
+				</o:script>
+				<div id="word" class="words_word">
+					<h1>#{wordsWordView.text}</h1>
+					<ui:fragment rendered="#{empty wordsWordView.words}">
+						<p style="color: #cc0000;">This word is not registered!</p>
+					</ui:fragment>
+					<ui:fragment rendered="#{not empty wordsWordView.words}">
+						<ul>
+							<c:forEach items="#{wordsWordView.words}" var="word">
+								<li class="words_word_variant">
+									<p class="words_word_info">
+										<span style="vertical-align: middle;">#{word.word.text} </span>
+										<c:if test="#{word.lexicalCategory!=null}">
+											<span style="vertical-align: middle; color: #999; font-size: 12px; position: relative; top: 2px;">— #{word.lexicalCategory.name}</span>
+										</c:if>
+										<c:if test="#{word.language!=null}">
+											<span style="vertical-align: middle; color: #999; font-size: 12px; position: relative; top: 2px;">— #{word.language.name}</span>
+										</c:if>
+										<c:if test="#{word.lexicalCategory==null}">
+											<span style="vertical-align: middle; color: #999; font-size: 12px; position: relative; top: 2px;">(Not categorized) </span>
+										</c:if>
+										<c:if test="#{wordsLayoutView.loggedIn}">
+											<c:if test="#{word.lexicalCategory==null}">
+												<gui:button variant="paper" small="true" text="Categorize..." click="wordView.categorizeWord({id:#{word.word.id},widget:widget})"/>
+											</c:if>
+											<c:if test="#{word.lexicalCategory!=null}">
+												<gui:button variant="paper" small="true" text="Change..." left="10" 
+													click="wordView.changeWord({id:#{word.word.id},widget:widget,category:'#{word.lexicalCategory}'})"
+												/>
+											</c:if>
+												<gui:button variant="paper" name="delete#{word.word.id}" small="true" text="Remove" left="10" 
+													click="wordView.deleteWord({id:#{word.word.id}})"
+												/>
+										</c:if>
+									</p>
+									<p class="words_word_by">
+										Created: <o:date value="#{word.word.created}"/>
+										<c:if test="#{not empty word.originator}">
+										by #{word.originator.name}
+										</c:if>
+									</p>
+								</li>
+							</c:forEach>
+						</ul>
+					</ui:fragment>
+					<p>
+						<gui:button variant="paper" name="addVariant" small="true" text="Add variant" rendered="#{wordsLayoutView.loggedIn}"/>
+					</p>
+					<gui:diagram name="diagram"/>
+				</div>
 			</div>
 		</ui:define>
 	</ui:composition>

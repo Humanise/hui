@@ -14,6 +14,7 @@
 		<gui:importStyle/>
 		<o:stylesheet href="/core/css/onlineobjects.css" core="true"/>
 		<o:stylesheet href="/style/css/style.css"/>
+		<o:stylesheet href="/hui/ext/diagram.css" core="true"/>
 		<link href='http://fonts.googleapis.com/css?family=Crimson+Text:regular,regularitalic,bold,bolditalic' rel='stylesheet' type='text/css'/>
 		<gui:importScripts/>
 		<o:script src="/core/js/onlineobjects.js" core="true"/>
@@ -26,19 +27,25 @@
 		<ui:insert name="scripts"/>
 	</h:head>
 	<body>
-		<div class="layout_body">
-			<div class="layout_head">
-				<o:link href="/"><strong>words<span>.onlineobjects.com</span></strong></o:link>
-				<c:if test="#{wordsLayoutView.loggedIn}">
-				<ul>
-					<li><gui:link name="import">Import</gui:link></li>
+		<o:topBar/>
+		<o:layout>
+			<f:facet name="sidebar">
+				<div style="padding: 10px">
+				<h2 style="margin: 0; font-family: 'Helvetica Neue';font-weight: 200; color: #999;">Index</h2>
+				<ul class="words_sidebar_index">
+					<c:forEach items="#{wordsIndexView.alphabeth}" var="char">
+						<li><o:link href="/en/index/#{char}/">#{char}</o:link></li>
+					</c:forEach>
 				</ul>
-				</c:if>
-			</div>
-			<div class="layout_content">
-				<ui:insert name="body"/>
-			</div>
-		</div>
+					<c:if test="#{wordsLayoutView.loggedIn}">
+						<p>
+							<gui:button name="import" text="Import" variant="paper"></gui:button>
+						</p>
+					</c:if>
+				</div>
+			</f:facet>
+			<ui:insert name="body"/>
+		</o:layout>
 	</body>
 </html>
 </f:view>

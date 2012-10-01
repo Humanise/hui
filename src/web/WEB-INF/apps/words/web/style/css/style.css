@@ -1,9 +1,74 @@
 body
 {
-	background: #fff;
+	background: #fafafa;
+	margin: 0;
+}
+
+div.words
+{
+	padding: 10px 20px;
 	font-family: 'Georgia','Crimson Text','Palatino','Times New Roman','Times';
 }
 
+
+/********** Sidebar **********/
+
+ul.words_sidebar_index
+{
+	list-style: none;
+	padding: 0;
+	margin: 10px 0;
+	text-align: center;
+	font-size: 0;
+}
+
+ul.words_sidebar_index li
+{
+	display: inline-block;
+}
+
+ul.words_sidebar_index a
+{
+	display: block;
+	width: 28px;
+	text-align: center;
+	font-size: 24pt;
+	height: 38px;
+	line-height: 38px;
+	border-radius: 3px;
+}
+ul.words_sidebar_index a span
+{
+	color: #999;
+}
+
+ul.words_sidebar_index a:hover
+{
+	background: #eee;
+}
+
+
+
+/********** Words **********/
+
+p.words_word_by
+{
+	margin: 5px 0 0;
+	font-size: 11px;
+	color: #999;
+}
+
+p.words_word_info
+{
+	margin: 0;
+}
+
+li.words_word_variant
+{
+	margin-bottom: 10px;
+}
+
+/*
 div.layout_body
 {
 	width: 900px;
@@ -48,9 +113,10 @@ div.layout_head strong span
 {
 	color: #aaa;
 }
-
+*/
 h1
 {
+	margin: 0;
 	font-weight: normal;
 	font-size: 48px;
 }
@@ -70,7 +136,7 @@ a.oo_link
 
 a.oo_link span
 {
-	color: #f63;
+	color: #08c;
 }
 
 /*************** panel ****************/
@@ -149,7 +215,8 @@ p.words a.highlighted
 	position: relative;
 }
 
-p.words a.highlighted span
+p.words a.highlighted span,
+p.words a.highlighted
 {
 	color: #36f;
 }

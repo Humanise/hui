@@ -113,4 +113,18 @@
       <renderer-type>onlineobjects.block</renderer-type>
     </component>
   </tag>
+  <tag>
+    <tag-name>topBar</tag-name>
+    <component>
+      <component-type>onlineobjects.topBar</component-type>
+      <renderer-type>onlineobjects.topBar</renderer-type>
+    </component>
+  </tag>
+  <tag>
+    <tag-name>layout</tag-name>
+    <component>
+      <component-type>onlineobjects.layout</component-type>
+      <renderer-type>onlineobjects.layout</renderer-type>
+    </component>
+  </tag>
 </facelet-taglib>
