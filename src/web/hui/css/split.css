@@ -9,7 +9,7 @@ div.hui_split_row
 	height: 33%;
 	position: absolute;
 	width: 100%;
-	background: rgba(0,0,0,.2);
+	overflow: hidden;
 }
 
 div.hui_split_handle
@@ -22,5 +22,6 @@ div.hui_split_handle
 	background: #CCC -webkit-gradient(linear, 0% 0%, 0% 100% , from(white), to(#F0F0F0));
 	background: -moz-linear-gradient(top, white, #F0F0F0);
 	filter: progid:DXImageTransform.Microsoft.gradient (GradientType=0, startColorstr=white, endColorstr=#F0F0F0);
-
+	cursor: row-resize;
+	margin-top: -6px;
 }
