@@ -29,8 +29,10 @@
 		<property name="storagePath" value="${storagePath}"/>
 		<property name="baseUrl" value="${baseUrl}"/>
 		<property name="developmentMode" value="${developmentMode}"/>
+		<property name="developmentUser" value="${development.user}"/>
 		<property name="imageMagickPath" value="${imagemagick.path}"/>
 		<property name="graphvizPath" value="${graphviz.path}"/>
+		<property name="analyticsCode" value="${analytics.code}"/>
 	</bean>
 
 	<bean id="emailService" class="dk.in2isoft.onlineobjects.services.EmailService" autowire="byType">

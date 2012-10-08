@@ -1,1 +1,10 @@
 basePath=/path/to/base/dir
+
+mail.hostname=smtp.gmail.com
+mail.user=
+mail.password=
+mail.address=
+mail.name=
+
+analytics.username=
+analytics.password=

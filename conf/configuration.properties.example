@@ -10,3 +10,7 @@ storagePath=/path/to/storage
 
 imagemagick.path/opt/local/bin
 graphviz.path>/opt/local/bin
+
+development.user=public
+
+analytics.code=

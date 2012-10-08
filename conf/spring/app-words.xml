@@ -18,8 +18,15 @@
     	<dwr:remote javascript="AppWords">
     		<dwr:include method="createWord"/>
     		<dwr:include method="categorizeWord"/>
+    		<dwr:include method="changeWord"/>
+    		<dwr:include method="changeLanguage"/>
     		<dwr:include method="startUrlImport"/>
     		<dwr:include method="getOptions"/>
+    		<dwr:include method="deleteWord"/>
+    		<dwr:include method="getDiagram"/>
+    		<dwr:include method="searchWords"/>
+    		<dwr:include method="relateWords"/>
+    		<dwr:include method="deleteRelation"/>
 			<dwr:filter class="dk.in2isoft.onlineobjects.ui.DWRFilter"/>
 		</dwr:remote>
    	</bean>
@@ -30,7 +37,7 @@
 	</dwr:configuration>
    	 -->
    	 
-   	 <bean id="wordsLayoutView" class="dk.in2isoft.onlineobjects.apps.words.views.WordsLayoutView">
+   	 <bean id="wordsLayoutView" class="dk.in2isoft.onlineobjects.apps.words.views.WordsLayoutView" scope="request">
    	 	
    	 </bean>
    	 

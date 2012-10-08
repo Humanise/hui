@@ -16,6 +16,7 @@
     	 	<dwr:include method="listImages"/>
     	 	<dwr:include method="changeAdminPassword"/>
     	 	<dwr:include method="listJobs"/>
+    	 	<dwr:include method="listUsers"/>
     	 	<dwr:include method="listEntities"/>
     	 	<dwr:include method="getImageTags"/>
     	 	<dwr:include method="startJob"/>
