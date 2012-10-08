@@ -21,6 +21,8 @@ public class ConfigurationService implements InitializingBean {
 	private boolean developmentMode;
 	private String imageMagickPath;
 	private String graphvizPath;
+	private String developmentUser;
+	private String analyticsCode;
 
 	private File tempDir;
 
@@ -117,5 +119,21 @@ public class ConfigurationService implements InitializingBean {
 
 	public String getBasePath() {
 		return basePath;
+	}
+
+	public String getDevelopmentUser() {
+		return developmentUser;
+	}
+
+	public void setDevelopmentUser(String developmentUser) {
+		this.developmentUser = developmentUser;
+	}
+
+	public String getAnalyticsCode() {
+		return analyticsCode;
+	}
+
+	public void setAnalyticsCode(String analyticsCode) {
+		this.analyticsCode = analyticsCode;
 	}
 }

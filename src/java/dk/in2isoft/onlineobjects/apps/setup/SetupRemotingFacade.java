@@ -26,8 +26,10 @@ import dk.in2isoft.onlineobjects.core.SecurityException;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.model.Application;
+import dk.in2isoft.onlineobjects.model.EmailAddress;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Image;
+import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.Privilege;
 import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.model.User;
@@ -115,6 +117,46 @@ public class SetupRemotingFacade extends AbstractRemotingFacade {
 			list.addCell(securityService.canView(entity, publicUser));
 			list.addCell(securityService.canModify(entity, publicUser));
 			list.addCell(securityService.canDelete(entity, publicUser));
+		}
+		return list;
+	}
+	
+	public ListData listUsers(ListState state,String search) throws SecurityException, ClassNotFoundException, ModelException {
+		User publicUser = securityService.getPublicUser();
+		int page = state!=null ? state.getPage() : 0;
+		ListData list = new ListData();
+		list.addHeader("Name");
+		list.addHeader("Username");
+		list.addHeader("Person");
+		list.addHeader("E-mail");
+		list.addHeader("Image");
+		list.addHeader("Images");
+		list.addHeader("Public view");
+		list.addHeader("Public modify");
+		list.addHeader("Public delete");
+		Query<User> query = Query.of(User.class).withWords(search).withPaging(page, 50);
+		SearchResult<User> result = modelService.search(query);
+		list.setWindow(result.getTotalCount(), 50, page);
+		for (User user : result.getList()) {
+			Query<Image> imgQuery = Query.after(Image.class).withPrivileged(user);
+			Long imageCount = modelService.count(imgQuery);
+			Image image = modelService.getChild(user, Image.class);
+			Person person = modelService.getChild(user, Person.class);
+			EmailAddress email = null;
+			if (person!=null) {
+				email = modelService.getChild(person, EmailAddress.class);
+			}
+			String kind = user.getClass().getSimpleName().toLowerCase();
+			list.newRow(user.getId(),kind);
+			list.addCell(user.getName(), user.getIcon());
+			list.addCell(user.getUsername());
+			list.addCell(person==null ? "?" : person.getFullName());
+			list.addCell(email==null ? "?" : email.getAddress());
+			list.addCell(image==null ? "?" : StringUtils.abbreviate(image.getName(), 30));
+			list.addCell(imageCount);
+			list.addCell(securityService.canView(user, publicUser));
+			list.addCell(securityService.canModify(user, publicUser));
+			list.addCell(securityService.canDelete(user, publicUser));
 		}
 		return list;
 	}

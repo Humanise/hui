@@ -1,4 +1,4 @@
-package dk.in2isoft.onlineobjects.test.data;
+package dk.in2isoft.onlineobjects.test.traffic;
 
 import java.net.MalformedURLException;
 

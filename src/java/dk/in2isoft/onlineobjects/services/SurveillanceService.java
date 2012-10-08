@@ -10,6 +10,7 @@ import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.modules.surveillance.RequestInfo;
 import dk.in2isoft.onlineobjects.modules.surveillance.RequestList;
 import dk.in2isoft.onlineobjects.ui.Request;
+import edu.emory.mathcs.backport.java.util.Collections;
 
 public class SurveillanceService {
 	
@@ -51,7 +52,7 @@ public class SurveillanceService {
 	}
 	
 	public SortedSet<RequestInfo> getLongestRunningRequests() {
-		return longestRunningRequests.getSet();
+		return Collections.synchronizedSortedSet(longestRunningRequests.getSet());
 	}
 	
 	public Collection<String> getLatestExceptions() {

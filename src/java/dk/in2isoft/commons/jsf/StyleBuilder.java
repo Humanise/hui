@@ -23,8 +23,17 @@ public class StyleBuilder {
 		return sb.toString();
 	}
 
-	public StyleBuilder withMarginLeft(int size) {
-		sb.append("margin-left:").append(size).append("px;");
+	public StyleBuilder withMarginLeft(Integer size) {
+		if (size!=null) {
+			sb.append("margin-left:").append(size).append("px;");
+		}
+		return this;
+	}
+
+	public StyleBuilder withMarginRight(Integer size) {
+		if (size!=null) {
+			sb.append("margin-right:").append(size).append("px;");
+		}
 		return this;
 	}
 

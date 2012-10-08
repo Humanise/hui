@@ -73,7 +73,7 @@
 	
 	
 	<window name="newImageWindow" title="Nyt billede" width="300" padding="10">
-		<upload name="imageUpload" url="images/upload.action" widget="imageUploadButton">
+		<upload name="imageUpload" url="images/upload.action" widget="imageUploadButton" multiple="true">
 			<placeholder title="Upload billeder" text="Vælg billeder på din egen computer..."/>
 		</upload>
 		<buttons align="center" top="10">

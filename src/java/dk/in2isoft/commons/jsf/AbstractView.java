@@ -1,5 +1,7 @@
 package dk.in2isoft.commons.jsf;
 
+import java.util.Locale;
+
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
@@ -15,8 +17,16 @@ public class AbstractView {
 	}
 
 	protected Request getRequest() {
-		ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		if (ctx==null) {
+			return null;
+		}
+		ExternalContext context = ctx.getExternalContext();
 		return Request.get((HttpServletRequest) context.getRequest(),(HttpServletResponse) context.getResponse());
+	}
+	
+	protected Locale getLocale() {
+		return FacesContext.getCurrentInstance().getViewRoot().getLocale();
 	}
 	
 	public String getBaseContext() {

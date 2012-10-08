@@ -17,6 +17,7 @@ import dk.in2isoft.onlineobjects.core.SecurityException;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.model.Language;
 import dk.in2isoft.onlineobjects.model.LexicalCategory;
+import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
 
 public class LanguageConsistencyChecker implements ConsistencyChecker {
@@ -30,18 +31,24 @@ public class LanguageConsistencyChecker implements ConsistencyChecker {
 	
 	public LanguageConsistencyChecker() {
 		categories = Maps.newHashMap();
-		categories.put("nomen", "Noun");
-		categories.put("verbum", "Verb");
-		categories.put("pronomen", "Pronoun");
-		categories.put("adjectivum", "Adjective");
-		categories.put("adverbium", "Adverb");
-		categories.put("praeposition", "Preposition");
-		categories.put("conjunction", "Conjunction");
-		categories.put("interjection", "Interjection");
+		categories.put(LexicalCategory.CODE_NOMEN, "Noun");
+		categories.put(LexicalCategory.CODE_PROPRIUM, "Proper noun");
+		categories.put(LexicalCategory.CODE_APPELLATIV, "Common noun");
+		categories.put(LexicalCategory.CODE_VERBUM, "Verb");
+		categories.put(LexicalCategory.CODE_PRONOMEN, "Pronoun");
+		categories.put(LexicalCategory.CODE_ADJECTIVUM, "Adjective");
+		categories.put(LexicalCategory.CODE_ADVERBIUM, "Adverb");
+		categories.put(LexicalCategory.CODE_PRAEPOSITION, "Preposition");
+		categories.put(LexicalCategory.CODE_CONJUNCTION, "Conjunction");
+		categories.put(LexicalCategory.CODE_INTERJECTION, "Interjection");
+		categories.put(LexicalCategory.CODE_ARTICULUS, "Determiner");
+		categories.put(LexicalCategory.CODE_NUMERUS, "Numeral");
+		categories.put(LexicalCategory.CODE_ONOMATOPOEIA, "Numeral");
 
 		languages = Maps.newHashMap();
 		languages.put("en", "English");
 		languages.put("da", "Dansk");
+		languages.put("de", "Deutch");
 	}
 	
 	public void check() throws ModelException, SecurityException {
@@ -76,6 +83,28 @@ public class LanguageConsistencyChecker implements ConsistencyChecker {
 					modelService.commit(); 
 				}
 			}
+		}
+		Query<LexicalCategory> nounQuery = Query.of(LexicalCategory.class).withField(LexicalCategory.CODE, LexicalCategory.CODE_NOMEN);
+		LexicalCategory noun = modelService.search(nounQuery).getFirst();
+		
+		Query<LexicalCategory> propriumQuery = Query.of(LexicalCategory.class).withField(LexicalCategory.CODE, LexicalCategory.CODE_PROPRIUM);
+		LexicalCategory proprium = modelService.search(propriumQuery).getFirst();
+
+		Query<LexicalCategory> appellativQuery = Query.of(LexicalCategory.class).withField(LexicalCategory.CODE, LexicalCategory.CODE_APPELLATIV);
+		LexicalCategory appellativ = modelService.search(appellativQuery).getFirst();
+		
+		Relation nounProprium = modelService.getRelation(noun, proprium, Relation.KIND_STRUCTURE_SPECIALIZATION);
+		if (nounProprium==null) {
+			log.info("Creating nomen > proprium relation");		
+			modelService.createRelation(noun, proprium, Relation.KIND_STRUCTURE_SPECIALIZATION, adminUser);
+			modelService.commit(); 
+		}
+		
+		Relation nounAppellativ = modelService.getRelation(noun, appellativ, Relation.KIND_STRUCTURE_SPECIALIZATION);
+		if (nounAppellativ==null) {
+			log.info("Creating nomen > appellativ relation");		
+			modelService.createRelation(noun, appellativ, Relation.KIND_STRUCTURE_SPECIALIZATION, adminUser);
+			modelService.commit(); 
 		}
 	}
 

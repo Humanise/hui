@@ -7,6 +7,21 @@ public class LexicalCategory extends Entity {
 	public static String TYPE = Entity.TYPE+"/LexicalCategory";
 	public static String NAMESPACE = Entity.NAMESPACE+"LexicalCategory/";
 	
+
+	public static String CODE_NOMEN = "nomen";
+	public static String CODE_PROPRIUM = "proprium";
+	public static String CODE_APPELLATIV = "appellativ";
+	public static String CODE_VERBUM = "verbum";
+	public static String CODE_PRONOMEN = "pronomen";
+	public static String CODE_ADJECTIVUM = "adjectivum";
+	public static String CODE_ADVERBIUM = "adverbium";
+	public static String CODE_PRAEPOSITION = "praeposition";
+	public static String CODE_CONJUNCTION = "conjunction";
+	public static String CODE_INTERJECTION = "interjection";
+	public static String CODE_ARTICULUS = "articulus";
+	public static String CODE_NUMERUS = "numerus";
+	public static String CODE_ONOMATOPOEIA = "onomatopoeia";
+	
 	private String code;
 		
 	public LexicalCategory() {
@@ -15,10 +30,6 @@ public class LexicalCategory extends Entity {
 
 	public String getType() {
 		return TYPE;
-	}
-
-	public String getIcon() {
-		return "Element/Generic";
 	}
 
 	public void setCode(String code) {

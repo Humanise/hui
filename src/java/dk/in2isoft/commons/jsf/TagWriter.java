@@ -72,6 +72,10 @@ public class TagWriter {
 	public TagWriter startVoidA(Object className) throws IOException {
 		return startElement("a").withAttribute("href","javascript:void(0);").withClass(className);
 	}
+	
+	public TagWriter startVoidA() throws IOException {
+		return startElement("a").withAttribute("href","javascript:void(0);");
+	}
 
 	public TagWriter endA() throws IOException {
 		return endElement("a");
@@ -210,6 +214,10 @@ public class TagWriter {
 		withAttribute("src", src);
 		endElement("script");
 		return this;
+	}
+
+	public TagWriter line() throws IOException {
+		return write("\n");
 	}
 
 }

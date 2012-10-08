@@ -4,8 +4,17 @@ public class Relation extends Item {
 
 	public static final String TYPE = Item.TYPE+"/Relation";
 	public static final String NAMESPACE = Item.NAMESPACE+"Relation/";
-	
+
+	public static final String KIND_COMMON_ORIGINATOR = "common.originator";
 	public static final String KIND_COMMON_AUTHOR = "common.author";
+
+	public static final String KIND_STRUCTURE_SPECIALIZATION = "structure.specialization";
+	
+	public static final String KIND_SEMANTICS_ANALOGOUS = "semantics.analogous";
+	public static final String KIND_SEMANTICS_EQUIVALENT = "semantics.equivalent";
+	public static final String KIND_SEMANTICS_SYNONYMOUS = "semantics.synonymous";
+	public static final String KIND_SEMANTICS_ANTONYMOUS = "semantics.antonymous";
+	public static final String KIND_SEMANTICS_MORPHEME = "semantics.morpheme";
 	
 	public static final String KIND_WEB_CONTENT = "web.content";
 	public static final String KIND_WEB_PRIMARY = "web.primary";

@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,7 +18,7 @@ public class TestGraphService extends AbstractTestCase {
 	@Autowired
 	private GraphService graphService;
 	
-	@Test
+	@Test @Ignore
 	public void testBasic() throws Exception {
 		String dot = "digraph finite_state_machine {\n"+
 			"graph [normalize=true, outputorder=edgesfirst, overlap=false, pack=false, packmode=\"node\", sep=\"1\", splines=true, size=\"6,6\"]"+

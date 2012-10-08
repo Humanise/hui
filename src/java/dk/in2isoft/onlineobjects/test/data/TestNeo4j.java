@@ -3,6 +3,7 @@ package dk.in2isoft.onlineobjects.test.data;
 import java.io.File;
 
 import org.apache.log4j.Logger;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -46,7 +47,7 @@ public class TestNeo4j extends AbstractTestCase {
 
 	}
 	
-	@Test
+	@Test @Ignore
 	public void testSearch() {
 		File storageDir = configurationService.getStorageDir();
 		File file = new File(storageDir,"words.db");

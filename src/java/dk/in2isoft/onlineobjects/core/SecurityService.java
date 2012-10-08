@@ -8,11 +8,10 @@ import org.apache.log4j.Logger;
 
 import com.google.common.collect.Lists;
 
-import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Item;
 import dk.in2isoft.onlineobjects.model.Privilege;
 import dk.in2isoft.onlineobjects.model.User;
-import dk.in2isoft.onlineobjects.ui.Request;
+import dk.in2isoft.onlineobjects.services.ConfigurationService;
 
 public class SecurityService {
 	
@@ -23,6 +22,7 @@ public class SecurityService {
 	
 	private ModelService modelService;
 	private User publicUser;
+	private ConfigurationService configurationService;
 
 	/**
 	 * Tries to change the user of a session
@@ -148,6 +148,16 @@ public class SecurityService {
 		return publicUser;
 	}
 
+	private User getInitialUser() {
+		if (configurationService.isDevelopmentMode()) {
+			User user = modelService.getUser(configurationService.getDevelopmentUser());
+			if (user!=null) {
+				return user;
+			}
+		}
+		return getPublicUser();
+	}
+
 	public void makePublicVisible(Item item, Privileged priviledged) throws SecurityException, ModelException {
 		if (!canModify(item, priviledged)) {
 			throw new SecurityException("The user cannot make this public");
@@ -163,20 +173,24 @@ public class SecurityService {
 		modelService.removePriviledges(item, publicUser);
 	}
 
-	public void grantPublicPrivileges(Entity entity, boolean view, boolean alter, boolean delete) throws ModelException {
-		modelService.grantPrivileges(entity, getPublicUser(), view, alter, delete);		
+	public void grantPublicPrivileges(Item item, boolean view, boolean alter, boolean delete) throws ModelException {
+		modelService.grantPrivileges(item, getPublicUser(), view, alter, delete);		
+	}
+
+	public UserSession ensureUserSession(HttpSession session) throws SecurityException {
+		if (session.getAttribute(UserSession.SESSION_ATTRIBUTE) == null) {
+			log.debug("Creating new user session");
+			session.setAttribute(UserSession.SESSION_ATTRIBUTE, new UserSession(getInitialUser()));
+		}
+		return UserSession.get(session);
 	}
 
 
 	public void setModelService(ModelService modelService) {
 		this.modelService = modelService;
 	}
-
-	public UserSession ensureUserSession(HttpSession session) throws SecurityException {
-		if (session.getAttribute(UserSession.SESSION_ATTRIBUTE) == null) {
-			log.debug("Creating new user session");
-			session.setAttribute(UserSession.SESSION_ATTRIBUTE, new UserSession(getPublicUser()));
-		}
-		return UserSession.get(session);
+	
+	public void setConfigurationService(ConfigurationService configurationService) {
+		this.configurationService = configurationService;
 	}
 }

@@ -20,7 +20,7 @@ public class Word extends Entity {
 	}
 
 	public String getIcon() {
-		return "Element/Generic";
+		return "common/object";
 	}
 
 	public void setText(String text) {

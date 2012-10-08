@@ -27,7 +27,7 @@ public class UsersView extends AbstractManagedBean implements InitializingBean {
 		model = new ListModel<UserInfo>() {
 			@Override
 			public ListModelResult<UserInfo> getResult() {
-				UserQuery query = new UserQuery().withPaging(getPage(), getPageSize());
+				UserQuery query = new UserQuery().withPaging(getPage(), getPageSize()).withPublicView();
 				PairSearchResult<User, Person> search = modelService.searchPairs(query);
 				return new ListModelResult<UserInfo>(convert(search.getList()),search.getTotalCount());
 			}

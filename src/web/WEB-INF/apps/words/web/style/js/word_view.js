@@ -2,6 +2,10 @@ var wordView = {
 	language : null,
 	text : null,
 	
+	$ready : function() {
+		//this.addRelation();
+	},
+	
 	categories : [
 		{key : 'nomen',title : 'Noun', description : 'any abstract or concrete entity'},
 		{key : 'pronomen',title : 'Pronoun', description : 'any substitute for a noun or noun phrase'},
@@ -12,6 +16,54 @@ var wordView = {
 		{key : 'conjunction',title : 'Conjunction', description : 'any syntactic connector'},
 		{key : 'interjection',title : 'Interjection', description : 'any emotional greeting (or "exclamation")'}
 	],
+	
+	addRelation : function(options) {
+		this.wordInfo = options;
+		if (!this._finder) {
+			this._finder = hui.ui.Finder.create({
+				name : 'relatedWordFinder',
+				title : {en:'Find word'},
+				list : {source : new hui.ui.Source({dwr:'AppWords.searchWords'}),pageParameter:'page'},
+				search : {parameter:'text'}
+			});
+		}
+		this._finder.show();
+	},
+	$select$relatedWordFinder : function(word) {
+		var button = hui.ui.get('relate'+this.wordInfo.id),
+			panel = hui.ui.get('relationKindPanel');
+
+			hui.listenOnce(hui.get.firstByClass(panel.element,'panel_body'),'click',function(e) {
+				e = hui.event(e);
+				var a = e.findByTag('a');
+				if (a) {
+					panel.hide();
+					this._createRelation(this.wordInfo.id,a.getAttribute('rel'),word.id);
+				}
+			}.bind(this))
+		this._finder.hide();
+		window.setTimeout(function() {
+			panel.position(button);
+			panel.show();
+			
+		},1000)
+		
+	},
+	_createRelation : function(from,kind,to) {
+		AppWords.relateWords(from,kind,to,
+			{callback : function() {
+				oo.update({id:'word',
+					onComplete:function() {
+						hui.ui.showMessage({text:'The relation is created',icon:'common/success',duration:2000});
+					}
+				});
+			},
+			errorHandler : function() {
+				hui.ui.showMessage({text:'Unable to create relation',icon:'common/warning',duration:2000});
+			}
+		});
+		
+	},
 	
 	$added$diagram : function() {
 		var diagram = hui.ui.get('diagram');
@@ -84,18 +136,6 @@ var wordView = {
 			}
 		);
 	},
-	_buildCategories : function() {
-		var body = hui.build('div',{
-			className : 'panel_body',
-			html:'<h2>Lexical Categories</h2>'
-		});
-		var ul = hui.build('ul',{'class':'selection',parent:body});
-		for (var i=0; i < this.categories.length; i++) {
-			var cat = this.categories[i]
-			hui.build('li',{parent:ul,html:'<li><a rel="'+cat.key+'"><strong>'+cat.title+'</strong>: '+cat.description+'</a></li>'})
-		};
-		return body;
-	},
 	_buildCategoryOptions : function() {
 		var options = [];
 		for (var i=0; i < this.categories.length; i++) {
@@ -150,10 +190,53 @@ var wordView = {
 		})
 	},
 	
-	categorizeWord : function(info) {
+	changeLanguage : function(info) {
+		hui.stop(info.event)
 		this.wordInfo = info;
-		var panel = this._buildCategorizePanel();
-		panel.position(info.widget);
+		var panel = hui.ui.get('languagePanel');
+		hui.listenOnce(hui.get.firstByClass(panel.element,'panel_body'),'click',function(e) {
+			e = hui.event(e);
+			var a = e.findByTag('a');
+			if (a) {
+				panel.hide();
+				this._clickLanguage(a.getAttribute('rel'));
+			}
+		}.bind(this))
+		panel.position(info.element);
+		panel.show();
+	},
+	_clickLanguage : function(language) {
+		AppWords.changeLanguage(
+			this.wordInfo.id,
+			language,
+			{
+				callback : function() {
+					oo.update({id:'word',
+						onComplete:function() {
+							hui.ui.showMessage({text:'The language is now changed',icon:'common/success',duration:2000});
+						}
+					});
+				},
+				errorHandler : function() {
+					hui.ui.showMessage({text:'Unable to change language',icon:'common/warning',duration:2000});
+				}
+			}
+		);
+	},
+	
+	categorizeWord : function(info) {
+		hui.stop(info.event)
+		this.wordInfo = info;
+		var panel = hui.ui.get('wordEditor');
+		hui.listenOnce(hui.get.firstByClass(panel.element,'panel_body'),'click',function(e) {
+			e = hui.event(e);
+			var a = e.findByTag('a');
+			if (a) {
+				panel.hide();
+				this._clickCategory(a.getAttribute('rel'));
+			}
+		}.bind(this))
+		panel.position(info.element);
 		panel.show();
 	},
 	_clickCategory : function(category) {
@@ -174,44 +257,20 @@ var wordView = {
 			}
 		);
 	},
-	
-	_buildCategorizePanel : function() {
-		if (!this._categorizePanel) {
-			var p = this._categorizePanel = hui.ui.BoundPanel.create({title:'Categorize',width:200,hideOnClick:true});
-			var body = this._buildCategories();
-			p.add(body);
-			hui.listen(body,'click',function(e) {
-				e = hui.event(e);
-				var a = e.findByTag('a');
-				if (a) {
-					p.hide();
-					this._clickCategory(a.getAttribute('rel'));
-				}
-			}.bind(this))
-		}
-		return this._categorizePanel;
-	},
 	changeWord : function(info) {
+		hui.stop(info.event)
 		this.wordInfo = info;
-		var panel = this._buildChangePanel();
-		panel.position(info.widget);
+		var panel = hui.ui.get('wordEditor');
+		hui.listenOnce(hui.get.firstByClass(panel.element,'panel_body'),'click',function(e) {
+			e = hui.event(e);
+			var a = e.findByTag('a');
+			if (a) {
+				panel.hide();
+				this._clickChange(a.getAttribute('rel'));
+			}
+		}.bind(this))
+		panel.position(info.widget || info.element);
 		panel.show();
-	},
-	_buildChangePanel : function() {
-		if (!this._changePanel) {
-			var p = this._changePanel = hui.ui.BoundPanel.create({title:'Change',width:300,hideOnClick:true});
-			var body = this._buildCategories();
-			p.add(body);
-			hui.listen(body,'click',function(e) {
-				e = hui.event(e);
-				var a = e.findByTag('a');
-				if (a) {
-					p.hide();
-					this._clickChange(a.getAttribute('rel'));
-				}
-			}.bind(this))
-		}
-		return this._changePanel;
 	},
 	_clickChange : function(category) {
 		AppWords.changeWord(
@@ -252,6 +311,34 @@ var wordView = {
 						},
 						errorHandler : function() {
 							hui.ui.showMessage({text:'Unable to delete word',icon:'common/warning',duration:2000});
+						}
+					}
+				);
+				
+			}
+		})
+	},
+	
+	deleteRelation : function(info) {
+		hui.ui.confirmOverlay({
+			element : info.element,
+			text : 'Are you sure?',
+			okText : 'Yes, delete',
+			cancelText : 'No',
+			$ok : function() {
+				hui.ui.showMessage({text:'Deleting relation',busy:true,delay:300});
+				AppWords.deleteRelation(
+					info.id,
+					{
+						callback : function() {
+							oo.update({id:'word',
+								onComplete:function() {
+									hui.ui.showMessage({text:'The relation is now deleted',icon:'common/success',duration:2000});
+								}
+							});
+						},
+						errorHandler : function() {
+							hui.ui.showMessage({text:'Unable to delete relation',icon:'common/warning',duration:2000});
 						}
 					}
 				);

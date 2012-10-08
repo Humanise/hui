@@ -15,6 +15,8 @@
 			<o:script src="/hui/ext/Diagram.js" core="true"/>
 		</ui:define>
 		
+		<ui:define name="title">#{wordsWordView.text} - </ui:define>
+		
 		<ui:define name="body">
 			<div class="words">
 				<o:script>
@@ -23,51 +25,111 @@
 				<div id="word" class="words_word">
 					<h1>#{wordsWordView.text}</h1>
 					<ui:fragment rendered="#{empty wordsWordView.words}">
-						<p style="color: #cc0000;">This word is not registered!</p>
+						<p style="color: #cc0000;">#{msg.word_not_registered}</p>
 					</ui:fragment>
 					<ui:fragment rendered="#{not empty wordsWordView.words}">
-						<ul>
+						<ul class="words_word_variants">
 							<c:forEach items="#{wordsWordView.words}" var="word">
 								<li class="words_word_variant">
 									<p class="words_word_info">
-										<span style="vertical-align: middle;">#{word.word.text} </span>
+										<strong class="words_word_info">#{word.word.text}</strong>
 										<c:if test="#{word.lexicalCategory!=null}">
-											<span style="vertical-align: middle; color: #999; font-size: 12px; position: relative; top: 2px;">— #{word.lexicalCategory.name}</span>
+											<span class="words_word_info">
+												<span>—</span>
+												<a href="javascript://" onclick="wordView.changeWord({id:#{word.word.id},element:this,event:event}); return false;">
+													<o:out value=" #{msg[word.lexicalCategory.code]}" lower="true"/>
+												</a>
+											</span>
 										</c:if>
 										<c:if test="#{word.language!=null}">
-											<span style="vertical-align: middle; color: #999; font-size: 12px; position: relative; top: 2px;">— #{word.language.name}</span>
+											<span class="words_word_info"><span>—</span> 
+												<a href="javascript://" onclick="wordView.changeLanguage({id:#{word.word.id},element:this,event:event}); return false;">
+													<o:out value=" #{msg[word.language.code]}" lower="true"/>
+												</a>
+											</span>
 										</c:if>
 										<c:if test="#{word.lexicalCategory==null}">
-											<span style="vertical-align: middle; color: #999; font-size: 12px; position: relative; top: 2px;">(Not categorized) </span>
-										</c:if>
-										<c:if test="#{wordsLayoutView.loggedIn}">
-											<c:if test="#{word.lexicalCategory==null}">
-												<gui:button variant="paper" small="true" text="Categorize..." click="wordView.categorizeWord({id:#{word.word.id},widget:widget})"/>
-											</c:if>
-											<c:if test="#{word.lexicalCategory!=null}">
-												<gui:button variant="paper" small="true" text="Change..." left="10" 
-													click="wordView.changeWord({id:#{word.word.id},widget:widget,category:'#{word.lexicalCategory}'})"
-												/>
-											</c:if>
-												<gui:button variant="paper" name="delete#{word.word.id}" small="true" text="Remove" left="10" 
-													click="wordView.deleteWord({id:#{word.word.id}})"
-												/>
+											<span class="words_word_info">
+												<span>—</span>
+												<a href="javascript://" onclick="wordView.categorizeWord({id:#{word.word.id},element:this,event:event}); return false;">
+													<o:out value="#{msg.not_categorised}"/>
+												</a>
+											 </span>
 										</c:if>
 									</p>
+									<ul class="words_word_relations">
+									<c:forEach items="#{word.relations}" var="group">
+										<li>
+											<strong>#{msg[group.kind]}:</strong>
+											<c:forEach items="#{group.relations}" var="relation" varStatus="status">
+												<c:if test="#{not status.first}">, </c:if>
+												<span class="words_word_relation">
+													<o:link href="/#{wordsLayoutView.language}/word/#{relation.word.text}.html">#{relation.word.name}</o:link>
+													
+												</span>
+												<c:if test="#{wordsLayoutView.loggedIn}">
+													<a href="javascript://"
+														onclick="wordView.deleteRelation({id:#{relation.id},element:this,event:event}); return false;"
+													><o:out value="#{msg.remove}" lower="true"/></a>
+												</c:if>
+											</c:forEach>
+										</li>
+									</c:forEach>
+									</ul>
 									<p class="words_word_by">
-										Created: <o:date value="#{word.word.created}"/>
+										#{msg.created}: <o:date value="#{word.word.created}"/>
 										<c:if test="#{not empty word.originator}">
-										by #{word.originator.name}
+										#{msg.by} #{word.originator.name}
 										</c:if>
+										<gui:button variant="paper" name="delete#{word.word.id}" tiny="true" text="#{msg.remove}" left="10" 
+											click="wordView.deleteWord({id:#{word.word.id}})"
+											rendered="#{wordsLayoutView.loggedIn}"
+										/>
+										<gui:button variant="paper" name="relate#{word.word.id}" tiny="true" text="#{msg.add_relation}" left="10" 
+											click="wordView.addRelation({id:#{word.word.id}})"
+											rendered="#{wordsLayoutView.loggedIn}"
+										/>
 									</p>
 								</li>
 							</c:forEach>
 						</ul>
 					</ui:fragment>
 					<p>
-						<gui:button variant="paper" name="addVariant" small="true" text="Add variant" rendered="#{wordsLayoutView.loggedIn}"/>
+						<gui:button variant="paper" name="addVariant" small="true" text="#{msg.add_variant}" rendered="#{wordsLayoutView.loggedIn}"/>
 					</p>
 					<gui:diagram name="diagram"/>
+					
+					<gui:boundPanel name="wordEditor" hideOnClick="true" rendered="#{wordsLayoutView.loggedIn}">
+						<div class="panel_body" style="width: 400px">
+							<h2>#{msg.lexical_categories}</h2>
+							<ul class="selection">
+								<c:forEach items="#{wordsWordView.categories}" var="cat">
+									<li><a rel="#{cat.value}"><strong>#{cat.label} :</strong> #{cat.description}</a></li>
+								</c:forEach>
+							</ul>
+						</div>
+					</gui:boundPanel>
+					
+					<gui:boundPanel name="languagePanel" hideOnClick="true" rendered="#{wordsLayoutView.loggedIn}">
+						<div class="panel_body" style="width: 200px">
+							<h2>#{msg.languages}</h2>
+							<ul class="selection">
+								<li><a rel="en"><strong>#{msg.en}</strong></a></li>
+								<li><a rel="da"><strong>#{msg.da}</strong></a></li>
+							</ul>
+						</div>
+					</gui:boundPanel>
+					
+					<gui:boundPanel name="relationKindPanel" hideOnClick="true" rendered="#{wordsLayoutView.loggedIn}">
+						<div class="panel_body" style="width: 200px">
+							<h2>#{msg.relation_kind}</h2>
+							<ul class="selection">
+								<c:forEach items="#{wordsWordView.relations}" var="cat">
+									<li><a rel="#{cat.value}"><strong>#{cat.label}</strong></a></li>
+								</c:forEach>
+							</ul>
+						</div>
+					</gui:boundPanel>
 				</div>
 			</div>
 		</ui:define>

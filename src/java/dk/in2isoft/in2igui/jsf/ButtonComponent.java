@@ -9,6 +9,8 @@ import org.apache.commons.lang.StringUtils;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.ClassBuilder;
+import dk.in2isoft.commons.jsf.ComponentUtil;
+import dk.in2isoft.commons.jsf.StyleBuilder;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=ButtonComponent.TYPE)
@@ -20,10 +22,14 @@ public class ButtonComponent extends AbstractComponent {
 	private String name;
 	private boolean highlighted;
 	private boolean small;
+	private boolean mini;
+	private boolean tiny;
 	private String click;
 	private boolean submit;
 	private String styleClass;
 	private String variant;
+	private Integer left;
+	private Integer right;
 
 	public ButtonComponent() {
 		super(TYPE);
@@ -39,12 +45,16 @@ public class ButtonComponent extends AbstractComponent {
 		styleClass = (String) state[5];
 		submit = (Boolean) state[6];
 		variant = (String) state[7];
+		left = (Integer) state[8];
+		right = (Integer) state[9];
+		mini = (Boolean) state[10];
+		tiny = (Boolean) state[11];
 	}
 
 	@Override
 	public Object[] saveState() {
 		return new Object[] {
-			text,name,highlighted,small,click,styleClass,submit,variant
+			text,name,highlighted,small,click,styleClass,submit,variant,left,right,mini,tiny
 		};
 	}
 	
@@ -62,6 +72,16 @@ public class ButtonComponent extends AbstractComponent {
 			if (highlighted) {
 				cls.add("hui_button_small_highlighted");
 			}
+		} else if (mini) {
+			cls.add("hui_button_mini").add("hui_button_mini", variant);
+			if (highlighted) {
+				cls.add("hui_button_mini_highlighted");
+			}
+		} else if (tiny) {
+			cls.add("hui_button_tiny").add("hui_button_tiny", variant);
+			if (highlighted) {
+				cls.add("hui_button_tiny_highlighted");
+			}
 		} else {
 			if (highlighted) {
 				cls.add("hui_button_highlighted").add("hui_button_highlighted", variant);
@@ -73,11 +93,18 @@ public class ButtonComponent extends AbstractComponent {
 			writer.startVoidA(cls);
 		}
 		writer.withId(id);
+		if (left!=null || right!=null) {
+			StyleBuilder css = new StyleBuilder();
+			css.withMarginLeft(left).withMarginRight(right);
+			writer.withStyle(css);
+		}
+		String text = getText(context);
 		writer.startSpan().startSpan().write(text).endSpan().endSpan();
 		writer.endA();
 		writer.startScopedScript();
 		writer.write("var "+id+" = new hui.ui.Button({element:'").write(id).write("'");
 		writer.write(",submit:"+submit);
+		String name = getName(context);
 		if (name!=null) {
 			writer.write(",name:'"+name+"'");
 		}
@@ -108,12 +135,20 @@ public class ButtonComponent extends AbstractComponent {
 		return text;
 	}
 
+	public String getText(FacesContext context) {
+		return ComponentUtil.getBindingAsString(this, "text", text, context);
+	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
 
 	public String getName() {
 		return name;
+	}
+
+	public String getName(FacesContext context) {
+		return ComponentUtil.getBindingAsString(this, "name", name, context);
 	}
 
 	public void setSmall(boolean small) {
@@ -158,5 +193,37 @@ public class ButtonComponent extends AbstractComponent {
 	
 	public String getVariant() {
 		return variant;
+	}
+
+	public Integer getLeft() {
+		return left;
+	}
+
+	public void setLeft(Integer left) {
+		this.left = left;
+	}
+
+	public Integer getRight() {
+		return right;
+	}
+
+	public void setRight(Integer right) {
+		this.right = right;
+	}
+
+	public boolean isMini() {
+		return mini;
+	}
+
+	public void setMini(boolean mini) {
+		this.mini = mini;
+	}
+	
+	public boolean isTiny() {
+		return tiny;
+	}
+	
+	public void setTiny(boolean tiny) {
+		this.tiny = tiny;
 	}
 }

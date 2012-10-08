@@ -1,28 +1,22 @@
 package dk.in2isoft.onlineobjects.ui.jsf.model;
 
-public class Option {
+import javax.faces.model.SelectItem;
 
-	private String label;
-	private Object value;
+public class Option extends SelectItem {
+
+	private static final long serialVersionUID = 1L;
+
 	private boolean selected;
 	private boolean disabled;
 
-	public void setLabel(String label) {
-		this.label = label;
+	public Option(String value, String label) {
+		super(value, label);
 	}
 	
-	public String getLabel() {
-		return label;
+	public Option() {
+		
 	}
-	
-	public void setValue(Object value) {
-		this.value = value;
-	}
-	
-	public Object getValue() {
-		return value;
-	}
-	
+
 	public void setSelected(boolean selected) {
 		this.selected = selected;
 	}

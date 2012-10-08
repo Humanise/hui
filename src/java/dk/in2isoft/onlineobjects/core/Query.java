@@ -295,7 +295,7 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 			hql.append(")");
 		}
 		if (publicView) {
-			hql.append(" and obj.id = publicPrivilege.object and publicPrivilege.subject=publicUser.id and publicUser.username='public'");
+			hql.append(" and obj.id = publicPrivilege.object and publicPrivilege.subject=publicUser.id and publicUser.username='public' and publicPrivilege.view=true");
 		}
 		if (createdFrom != null) {
 			hql.append(" and obj.created>=:createdFrom");

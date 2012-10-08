@@ -3,7 +3,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:gui="http://www.in2isoft.dk/in2igui"
-	xmlns:oo="http://www.onlineobjects.com/jsf" 
+	xmlns:o="http://www.onlineobjects.com/jsf" 
 >
 <h:outputText value='&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"&gt;' escape="false"/>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -15,16 +15,16 @@
 			<link rel="stylesheet" type="text/css" href="#{baseView.localContext}/css/msie6.css"></link>
 		<![endif]-->
 		<gui:importStyle/>
-		<oo:stylesheet href="/core/css/onlineobjects.css" core="true"/>
+		<o:stylesheet href="/core/css/onlineobjects.css" core="true"/>
 
 		<ui:insert name="style"/>
-		<oo:script src="/dwr/interface/CoreSecurity.js" core="true"/>
-		<oo:script src="/dwr/interface/Common.js" core="true"/>
-		<oo:script src="/dwr/interface/AppCommunity.js" core="true"/>
-		<oo:script src="/dwr/engine.js" core="true"/>
+		<o:script src="/dwr/interface/CoreSecurity.js" core="true"/>
+		<o:script src="/dwr/interface/Common.js" core="true"/>
+		<o:script src="/dwr/interface/AppCommunity.js" core="true"/>
+		<o:script src="/dwr/engine.js" core="true"/>
 		<gui:importScripts/>
-		<oo:script src="/core/js/onlineobjects.js" core="true"/>
-		<oo:script src="/js/community.js"/>
+		<o:script src="/core/js/onlineobjects.js" core="true"/>
+		<o:script src="/js/community.js"/>
 		<script type="text/javascript" charset="utf-8">
 			oo.baseContext='#{baseView.baseContext}';
 			oo.baseDomainContext='#{baseView.baseDomainContext}';
@@ -37,16 +37,7 @@
 	</h:head>
 	<body>
 		<!-- contentWidth="980" -->
-		<oo:topBar/>
-		<gui:bar rendered="#{!baseView.publicUser}">
-			<gui:barButton text="Offentligt" name="barPublic" icon="inset/public" highlighted="true"/>
-			<gui:barButton text="Hjemmeside" name="barWebsite" icon="inset/globe"/>
-			<gui:barButton text="Værktøjer" name="barTools" icon="inset/tools"/>
-			<f:facet name="right">
-				<gui:barButton text="#{baseView.userName}" name="barUser" icon="inset/user"/>
-				<gui:barButton text="Log ud" name="barLogOut" icon="inset/cross"/>
-			</f:facet>
-		</gui:bar>
+		<o:topBar/>
 		<div class="root">
 			<div class="casing">
 				<div class="casing_top"><div><div></div></div></div>
@@ -54,7 +45,7 @@
 					<div class="casing_middle">
 						<div class="casing_body">	
 							<div class="casing_head">
-								<ul class="navigation">
+								<ul class="navigation oo_faded">
 									<li><a href="#{baseView.localContext}/" class="home"><span>Forside</span></a></li>
 									<li><a href="#{baseView.localContext}/images.html" class="#{top=='images' ? 'selected' : ''}"><span><span>Billeder</span></span></a></li>
 									<li><a href="#{baseView.localContext}/users.html" class="#{top=='users' ? 'selected' : ''}"><span><span>Brugere</span></span></a></li>
@@ -63,7 +54,7 @@
 									<!--<li><a href="#{baseView.localContext}/"><span><span>Kort</span></span></a></li>
 									<li><a href="#{baseView.localContext}/"><span><span>Søgning</span></span></a></li>-->
 								</ul>
-								<div class="casing_head_search">
+								<div class="casing_head_search oo_faded">
 									<gui:searchfield name="casingSearch" width="120" expandedWidth="210" placeholder="Søg her..."/>
 								</div>
 							</div>
@@ -75,16 +66,16 @@
 							
 									<div class="content_right">
 										<div id="casing_search_result"></div>
-										<div class="content_right_body">
+										<div class="content_right_body oo_faded">
 											<ui:fragment rendered="#{!baseView.publicUser}">
 												<div id="userinfo" class="casing_right_section">
-													<oo:thumbnail variant="user" width="45" height="50"/>
+													<o:thumbnail variant="user" width="45" height="50"/>
 													<h2>#{baseView.userName}</h2>
 													<p>
-														<oo:link href="/#{baseView.userName}/">Min profil »</oo:link>
+														<o:link href="/#{baseView.userName}/">Min profil »</o:link>
 													</p>
 													<p>
-														<oo:link href="/#{baseView.userName}/site/">Mit website »</oo:link>
+														<o:link href="/#{baseView.userName}/site/">Mit website »</o:link>
 													</p>
 													<p class="buttons">
 														<gui:button small="true" text="Log ud" name="casingLogout"/>
@@ -104,7 +95,7 @@
 															</div>
 														</div>
 														<p class="buttons">
-															<oo:link id="casing_recoverpassword" variant="dimmed">Glemt kodeord...</oo:link>
+															<o:link id="casing_recoverpassword" variant="dimmed">Glemt kodeord...</o:link>
 															<input type="submit" value="Log ind" class="submit"/>
 															<gui:button small="true" text="Log ind" name="casingLogin"/>
 														</p>
@@ -155,19 +146,20 @@
 				<div class="casing_bottom"><div><div></div></div></div>
 			</div>
 		</div>
-		<div class="footer">
-			Designet og udviklet af <oo:link href="http://www.in2isoft.dk/" variant="dimmed">In2iSoft</oo:link>
+		<div class="footer oo_faded">
+			Designet og udviklet af <o:link href="http://www.in2isoft.dk/" variant="dimmed">In2iSoft</o:link>
  			·
-			<oo:link href="http://validator.w3.org/check?uri=referer" variant="dimmed">XHTML 1.0 Strict</oo:link>
+			<o:link href="http://validator.w3.org/check?uri=referer" variant="dimmed">XHTML 1.0 Strict</o:link>
 		</div>
 		<ui:insert name="last"/>
-		<ui:fragment rendered="#{!baseView.developmentMode}">
-		<script src="http://www.google-analytics.com/ga.js" type="text/javascript"></script>
-		<script type="text/javascript">
-			var pageTracker = _gat._getTracker("UA-420000-3");
-			pageTracker._trackPageview();
-		</script>
-		</ui:fragment>
+		<o:analytics/>
+		<ui:remove>
+			<script src="http://www.google-analytics.com/ga.js" type="text/javascript"></script>
+			<script type="text/javascript">
+				var pageTracker = _gat._getTracker("UA-420000-3");
+				pageTracker._trackPageview();
+			</script>
+		</ui:remove>
 	</body>
 </html>
 </f:view>

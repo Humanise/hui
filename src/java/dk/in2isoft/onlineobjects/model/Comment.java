@@ -4,7 +4,6 @@ public class Comment extends Entity {
 
 	public static String TYPE = Entity.TYPE+"/Comment";
 	public static String NAMESPACE = Entity.NAMESPACE+"Comment/";
-	private static String ICON = "Element/Folder";
 
 	private String text;
 	
@@ -17,7 +16,7 @@ public class Comment extends Entity {
 	}
 
 	public String getIcon() {
-		return ICON;
+		return "file/generic";
 	}
 
 	public void setText(String text) {

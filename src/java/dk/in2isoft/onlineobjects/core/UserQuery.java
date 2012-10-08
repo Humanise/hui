@@ -7,6 +7,7 @@ import dk.in2isoft.commons.lang.LangUtil;
 import dk.in2isoft.commons.util.HQLBuilder;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Person;
+import dk.in2isoft.onlineobjects.model.Privilege;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
 
@@ -17,6 +18,7 @@ public class UserQuery implements PairQuery<User, Person> {
 	private int pageNumber;
 	private int pageSize;
 	private Class<? extends Entity> childClass;
+	private boolean publicView;
 
 	public Query createCountQuery(Session session) {
 		HQLBuilder hql = new HQLBuilder().select("count(person)");
@@ -32,6 +34,10 @@ public class UserQuery implements PairQuery<User, Person> {
 		hql.from(User.class,"user");
 		hql.from(Person.class,"person");
 		hql.from(Relation.class,"rel");
+		if (publicView) {
+			hql.from(Privilege.class,"userPrivilege");
+			hql.from(User.class,"publicUser");
+		}
 		hql.where("rel.subEntity=person");
 		hql.where("rel.superEntity=user");
 		
@@ -45,6 +51,9 @@ public class UserQuery implements PairQuery<User, Person> {
 		}
 		if (childClass!=null) {
 			hql.where(" user.id = some ( select priv.subject from Privilege as priv,"+childClass.getName()+" as x where priv.object=x.id)");
+		}
+		if (publicView) {
+			hql.where(" user.id = userPrivilege.object and userPrivilege.subject=publicUser.id and publicUser.username='public' and userPrivilege.view=true");
 		}
 		if (!ignorePaging) {
 			hql.orderBy("person.name");
@@ -68,6 +77,11 @@ public class UserQuery implements PairQuery<User, Person> {
 
 	public UserQuery withUsername(String username) {
 		this.username = username;
+		return this;
+	}
+
+	public UserQuery withPublicView() {
+		this.publicView = true;
 		return this;
 	}
 

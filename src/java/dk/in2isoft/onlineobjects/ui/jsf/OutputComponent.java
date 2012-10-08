@@ -17,6 +17,7 @@ public class OutputComponent<T> extends AbstractComponent {
 	public static final String FAMILY = "onlineobjects.output";
 	
 	private String emptyText;
+	private boolean lower;
 	
 	public OutputComponent() {
 		super(FAMILY);
@@ -24,12 +25,13 @@ public class OutputComponent<T> extends AbstractComponent {
 	
 	@Override
 	public Object[] saveState() {
-		return new Object[] { emptyText };
+		return new Object[] { emptyText, lower };
 	}
 	
 	@Override
 	public void restoreState(Object[] state) {
 		emptyText = (String) state[0];
+		lower = (Boolean) state[1];
 	}
 	
 	@Override
@@ -40,6 +42,9 @@ public class OutputComponent<T> extends AbstractComponent {
 			text = emptyText;
 		}
 		if (text!=null) {
+			if (lower) {
+				text = text.toLowerCase();
+			}
 			text = StringEscapeUtils.escapeXml(text);
 			text = StringUtils.replace(text, "\n", "<br/>");
 			writer.write(text);
@@ -52,5 +57,13 @@ public class OutputComponent<T> extends AbstractComponent {
 
 	public String getEmptyText() {
 		return emptyText;
+	}
+
+	public boolean isLower() {
+		return lower;
+	}
+
+	public void setLower(boolean lower) {
+		this.lower = lower;
 	}
 }

@@ -127,4 +127,11 @@
       <renderer-type>onlineobjects.layout</renderer-type>
     </component>
   </tag>
+  <tag>
+    <tag-name>analytics</tag-name>
+    <component>
+      <component-type>onlineobjects.analytics</component-type>
+      <renderer-type>onlineobjects.analytics</renderer-type>
+    </component>
+  </tag>
 </facelet-taglib>

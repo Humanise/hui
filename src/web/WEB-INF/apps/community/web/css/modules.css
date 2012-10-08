@@ -71,12 +71,12 @@ div.rendering .minor
 
 div.rendering .dimmed
 {
-	color: #789;
+	color: #999;
 }
 
 div.rendering p span.label
 {
-	color: #789;
+	color: #999;
 }
 
 div.rendering ul.icons

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" 
-	xmlns:oo="http://www.onlineobjects.com/jsf" 
+	xmlns:o="http://www.onlineobjects.com/jsf" 
 	xmlns:ui="http://java.sun.com/jsf/facelets" 
 	xmlns:h="http://java.sun.com/jsf/html" 
 	xmlns:f="http://java.sun.com/jsf/core"
@@ -8,7 +8,7 @@
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 >
 	<ui:composition template="template.xhtml">
-		<ui:param name="tab" value="images"/>
+		<ui:param name="tab" value="none"/>
 		
 		<ui:define name="title">
 			#{imageView.image.name}<h:outputText value=" &#187; "/>#{imageView.person.fullName}<h:outputText value=" &#187; "/>
@@ -27,25 +27,24 @@
 			</c:if>
 			<c:if test="#{not empty imageView.image}">
 				<div class="content_body image_view">
+					<h1>#{imageView.image.name}</h1>
+					<p class="image_by"><span>Tilføjet </span><strong><h:outputText value="#{imageView.image.created}"><f:convertDateTime pattern="EEEE 'd'. d.  MMMM yyyy" locale="da_DK"/></h:outputText></strong> af <o:link href="/#{imageView.user.username}/">#{imageView.person.fullName}</o:link></p>
 					<div class="image_preview">
-						<oo:thumbnail image="#{imageView.image}" width="300" zoom="true"/>
-						<p class="image_actions">
-							<oo:link href="/service/image/id#{imageView.image.id}.jpg" core="true">Fuld størrelse</oo:link>
+						<o:thumbnail image="#{imageView.image}" width="748" zoom="true" frame="false"/>
+						<p class="image_actions oo_faded" style="float: right; padding-right: 10px;">
+							<o:link href="/service/image/id#{imageView.image.id}.jpg" core="true">Fuld størrelse</o:link>
 							<h:outputText value=" "/>
-							<oo:link href="/service/image/id#{imageView.image.id}.jpg?download=true" core="true">Download</oo:link>
+							<o:link href="/service/image/id#{imageView.image.id}.jpg?download=true" core="true">Download</o:link>
 						</p>
 						<h:panelGroup rendered="#{not empty imageView.location}">
-							<div id="map_canvas" style="width:100%; height:300px; margin-top: 20px;"></div>
-							<p class="image_actions">
-								<oo:link href="/map.html#image=#{imageView.image.id}">Stort kort</oo:link>
+							<div id="map_canvas" style="width:100%; height:300px; margin-top: 30px;"></div>
+							<p class="image_actions oo_faded">
+								<o:link href="/map.html#image=#{imageView.image.id}">Stort kort</o:link>
 							</p>
 						</h:panelGroup>
 					</div>
 					<div id="imageContainer" class="container">
-						<div class="rendering" id="imageProperties">
-							<h1>#{imageView.image.name}</h1>
-							<p class="minor"><span>Tilføjet </span><strong><h:outputText value="#{imageView.image.created}"><f:convertDateTime pattern="EEEE 'd'. d.  MMMM yyyy" locale="da_DK"/></h:outputText></strong> af <oo:link href="/#{imageView.user.username}/">#{imageView.person.fullName}</oo:link></p>
-							<p class="minor dimmed fileinfo">#{imageView.image.width} &#215; #{imageView.image.height} (#{imageView.megaPixels} Megapixel), #{imageView.image.contentType}</p>
+						<div class="rendering" id="imageProperties" style="margin-top: 10px;">
 							<c:if test="#{not empty imageView.description}">
 								<p class="resume">&#34;#{imageView.description}&#34;</p>
 							</c:if>
@@ -56,6 +55,7 @@
 									</c:forEach>
 								</p>
 							</c:if>
+							<p><span class="label">Info: </span>#{imageView.image.width} &#215; #{imageView.image.height} (#{imageView.megaPixels} Megapixel), #{imageView.image.contentType}</p>
 							<h:panelGroup rendered="#{not empty imageView.imageInfo.taken}">
 								<p><span class="label">Dato: </span><h:outputText value="#{imageView.imageInfo.taken}"><f:convertDateTime pattern="EEEE 'd'. d.  MMMM yyyy 'kl.' HH:mm:ss" locale="da_DK"/></h:outputText></p>
 							</h:panelGroup>
@@ -105,7 +105,7 @@
 								<script type="text/javascript" charset="utf-8">
 									oo.community.ImgeView.id=#{imageView.image.id};
 								</script>
-								<div class="editbutton">
+								<div class="editbutton oo_faded">
 									<gui:button text="Rediger egenskaber..." name="editImage" small="true"/>
 									<gui:button text="Gør privat" name="makeNonPublic" small="true" rendered="#{!imageView.secret}"/>
 									<gui:button text="Gør offentlig" name="makePublic" small="true" rendered="#{imageView.secret}"/>

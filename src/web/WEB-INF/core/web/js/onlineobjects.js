@@ -1,6 +1,6 @@
 var oo = {
 	buildThumbnail : function(options) {
-		var t = hui.build('span',{'class':'oo_thumbnail'});
+		var t = hui.build('span',{'class':'oo_thumbnail oo_thumbnail_frame'});
 		var height = options.height;
 		var width = options.width;
 		if (!width && options.image) {
@@ -22,7 +22,7 @@ var oo = {
 		return t;
 	},
 	buildThumbnailHtml : function(options) {
-		var cls = options.variant ? 'oo_thumbnail oo_thumbnail_'+options.variant : 'oo_thumbnail';
+		var cls = options.variant ? 'oo_thumbnail oo_thumbnail_frame oo_thumbnail_'+options.variant : 'oo_thumbnail';
 		var html = '<span class="'+cls+'" style="width: '+options.width+'px; height: '+options.height+'px;"></span>';
 		return html;
 	},
@@ -71,6 +71,24 @@ var oo = {
 		})
 	}
 }
+
+hui.ui.listen({
+	$ready : function() {
+		hui.listen(document.body,'mousemove',this._onMove.bind(this));
+		this._setTimer();
+	},
+	_onMove : function() {
+		hui.cls.remove(document.body,'oo_fade');
+		this._setTimer();
+	},
+	_fade : function() {
+		hui.cls.add(document.body,'oo_fade');
+	},
+	_setTimer : function() {
+		window.clearTimeout(this._timer);
+		this._timer = window.setTimeout(this._fade.bind(this),3000);
+	}
+})
 
 oo.Gallery = function(options) {
 	this.options = options;

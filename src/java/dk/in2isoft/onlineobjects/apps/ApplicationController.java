@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -53,7 +54,6 @@ public abstract class ApplicationController implements ModelEventListener,Initia
 	public void afterPropertiesSet() throws Exception {
 		eventService.addModelEventListener(this);
 	}
-
 
 
 	public AbstractConfiguration getConfig() {

@@ -1,11 +1,11 @@
 package dk.in2isoft.onlineobjects.ui;
 
+import org.apache.xerces.dom.DOMImplementationImpl;
+
 import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Node;
 import nu.xom.converters.DOMConverter;
-
-import com.sun.org.apache.xerces.internal.dom.DOMImplementationImpl;
 
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.ModelException;

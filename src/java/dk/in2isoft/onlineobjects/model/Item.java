@@ -23,7 +23,7 @@ public class Item {
 	}
 
 	public String getIcon() {
-		return "Element/Generic";
+		return "common/object";
 	}
 
 	public String getNamespace() {

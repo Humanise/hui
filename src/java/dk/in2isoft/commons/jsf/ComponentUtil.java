@@ -6,10 +6,13 @@ import javax.el.ValueExpression;
 import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import dk.in2isoft.onlineobjects.ui.Request;
 
@@ -39,5 +42,16 @@ public class ComponentUtil {
 	public static Request getRequest() {
 		ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
 		return Request.get((HttpServletRequest) context.getRequest(), (HttpServletResponse) context.getResponse());
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T> T getBean(Class<T> type) {
+		ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+		WebApplicationContext webApplicationContext = WebApplicationContextUtils.getWebApplicationContext((ServletContext) context.getContext());
+		Map<?,?> beans = webApplicationContext.getBeansOfType(type);
+		if (!beans.isEmpty()) {
+			return (T) beans.values().iterator().next();
+		}
+		return null;
 	}
 }

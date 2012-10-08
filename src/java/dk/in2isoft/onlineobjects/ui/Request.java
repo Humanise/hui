@@ -1,7 +1,9 @@
 package dk.in2isoft.onlineobjects.ui;
 
 import java.io.IOException;
+import java.util.Locale;
 
+import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -34,9 +36,11 @@ public class Request {
 	
 	private long startTime;
 	
-	private String language;
+	private Locale locale;
 	
 	private String domainName;
+	
+	private String application;
 	
 	private Request(HttpServletRequest request, HttpServletResponse response) {
 		super();
@@ -97,15 +101,21 @@ public class Request {
 			path.append("../");
 		}
 		relativePath = path.toString();
-		language = "en";
+		locale = new Locale("en");
 	}
 	
 	public String getLanguage() {
-		return language;
+		return locale.getLanguage();
 	}
 	
 	public void setLanguage(String language) {
-		this.language = language;
+		if (!locale.getLanguage().equals(language)) {			
+			this.locale = new Locale(language);
+		}
+	}
+	
+	public Locale getLocale() {
+		return locale;
 	}
 
 	public void setLocalContext(String[] localContext) {
@@ -314,5 +324,26 @@ public class Request {
 
 	public long getRunningTime() {
 		return System.currentTimeMillis()-startTime;
+	}
+
+	public static Request get(FacesContext context) {
+		HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
+		HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+		return get(request, response);
+	}
+
+	public String getApplication() {
+		return application;
+	}
+
+	public void setApplication(String application) {
+		this.application = application;
+	}
+
+	public boolean isApplication(String app) {
+		if (StringUtils.isNotBlank(app) && StringUtils.isNotBlank(application)) {
+			return application.equals(app);
+		}
+		return false;
 	}
 }

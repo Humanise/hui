@@ -267,6 +267,12 @@ public class ModelService {
 		deleteItem(relation, privileged);
 	}
 
+	public void deleteRelations(List<Relation> parents, Privileged privileged) throws SecurityException, ModelException {
+		for (Relation relation : parents) {
+			deleteItem(relation, privileged);
+		}
+	}
+
 	private void deleteItem(Item item, Privileged privileged) throws SecurityException, ModelException {
 		if (!canDelete(item, privileged)) {
 			throw new SecurityException("Privilieged=" + privileged + " cannot delete Item=" + item);
@@ -379,11 +385,24 @@ public class ModelService {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Relation> getChildRelations(Entity entity, Class clazz,String relationKind) throws ModelException {
+	public List<Relation> getChildRelations(Entity entity, Class<?> clazz,String relationKind) throws ModelException {
 		String hql = "select relation from Relation as relation,"+clazz.getName()+" child where relation.superEntity=:entity and relation.subEntity=child and relation.kind=:kind order by relation.position";
 		Query q = getSession().createQuery(hql);
 		q.setEntity("entity", entity);
 		q.setString("kind", relationKind);
+		List<Relation> result = q.list();
+		for (int i = 0; i < result.size(); i++) {
+			getSession().getTransaction().rollback();
+			result.set(i, getSubject(result.get(i)));
+		}
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Relation> getParentRelations(Entity entity, Class<?> clazz) throws ModelException {
+		String hql = "select relation from Relation as relation,"+clazz.getName()+" child where relation.subEntity=:entity and relation.superEntity=child order by relation.position";
+		Query q = getSession().createQuery(hql);
+		q.setEntity("entity", entity);
 		List<Relation> result = q.list();
 		for (int i = 0; i < result.size(); i++) {
 			getSession().getTransaction().rollback();
@@ -538,7 +557,7 @@ public class ModelService {
 	@SuppressWarnings("unchecked")
 	public <T> SearchResult<T> search(ItemQuery<T> query) {
 		Query cq = query.createCountQuery(getSession());
-		List list = cq.list();
+		List<?> list = cq.list();
 		Object next = list.iterator().next();
 		Long count = (Long) next;
 		Query q = query.createItemQuery(getSession());
@@ -549,6 +568,13 @@ public class ModelService {
 			items.set(i, getSubject(item));
 		}
 		return new SearchResult<T>(items,count.intValue());
+	}
+
+	public Long count(ItemQuery<?> query) {
+		Query cq = query.createCountQuery(getSession());
+		List<?> list = cq.list();
+		Object next = list.iterator().next();
+		return (Long) next;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -707,6 +733,18 @@ public class ModelService {
 		Query q = session.createQuery(hql.toString());
 		q.setLong("parent", parent.getId());
 		q.setLong("child", child.getId());
+		List<Relation> list = list(q, Relation.class);
+		if (list.size() > 0) {
+			return getSubject(list.get(0));
+		}
+		return null;
+	}
+
+	public Relation getRelation(long id) {
+		Session session = getSession();
+		StringBuilder hql = new StringBuilder("from Relation as r where r.id=:id");
+		Query q = session.createQuery(hql.toString());
+		q.setLong("id", id);
 		List<Relation> list = list(q, Relation.class);
 		if (list.size() > 0) {
 			return getSubject(list.get(0));

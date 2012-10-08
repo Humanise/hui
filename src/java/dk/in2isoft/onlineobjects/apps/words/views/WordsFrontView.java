@@ -20,7 +20,7 @@ public class WordsFrontView extends AbstractView implements InitializingBean {
 	private List<WordImpression> latestWords;
 		
 	public void afterPropertiesSet() throws Exception {
-		Query<Word> query = Query.of(Word.class).withPrivileged(getRequest().getSession()).withPaging(0, 20).orderByCreated().descending();
+		Query<Word> query = Query.of(Word.class).withPublicView().withPaging(0, 20).orderByCreated().descending();
 		String index = getRequest().getString("index");
 		if (StringUtils.isNotBlank(index)) {
 			query.withFieldLike(Word.TEXT_FIELD, index+"%");

@@ -5,6 +5,13 @@
 http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd" 
     version="2.0">
     <application>
+    	<locale-config>
+			<default-locale>en</default-locale>
+			<supported-locale>en</supported-locale>
+			<supported-locale>en_US</supported-locale>
+			<supported-locale>en_UK</supported-locale>
+			<supported-locale>da</supported-locale>
+		</locale-config>
    		<variable-resolver>
       		org.springframework.web.jsf.DelegatingVariableResolver
    		</variable-resolver>
@@ -96,6 +103,10 @@ http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
     	<component-type>onlineobjects.layout</component-type>
     	<component-class>dk.in2isoft.onlineobjects.ui.jsf.LayoutComponent</component-class>
   	</component>
+    <component>
+    	<component-type>onlineobjects.analytics</component-type>
+    	<component-class>dk.in2isoft.onlineobjects.ui.jsf.AnalyticsComponent</component-class>
+  	</component>
   	
     <component>
 	    <component-type>hui.button</component-type>
@@ -140,5 +151,13 @@ http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
     <component>
 	    <component-type>hui.diagram</component-type>
     	<component-class>dk.in2isoft.in2igui.jsf.DiagramComponent</component-class>
+  	</component>
+    <component>
+	    <component-type>hui.boundPanel</component-type>
+    	<component-class>dk.in2isoft.in2igui.jsf.BoundPanelComponent</component-class>
+  	</component>
+    <component>
+	    <component-type>hui.finder</component-type>
+    	<component-class>dk.in2isoft.in2igui.jsf.FinderComponent</component-class>
   	</component>
 </faces-config>

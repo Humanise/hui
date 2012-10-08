@@ -1,6 +1,7 @@
 package dk.in2isoft.commons.jsf;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.el.ValueExpression;
@@ -33,6 +34,10 @@ public abstract class AbstractComponent extends UIComponentBase {
 			super.saveState(context),
 			saveState()
 		};
+	}
+
+	protected Locale getLocale() {
+		return FacesContext.getCurrentInstance().getViewRoot().getLocale();
 	}
 	
 	protected abstract Object[] saveState();

@@ -1,6 +1,7 @@
 body
 {
 	background: #fafafa;
+	font-family: 'Helvetica Neue','Helvetica',Arial,sans-serif;
 	margin: 0;
 }
 
@@ -10,8 +11,33 @@ div.words
 	font-family: 'Georgia','Crimson Text','Palatino','Times New Roman','Times';
 }
 
+p.words_footer
+{
+	font-size: 11pt;
+	font-weight: 200;
+	text-align: center;
+}
+
+p.words_footer strong
+{
+	font-weight: 400;
+}
+
+
 
 /********** Sidebar **********/
+
+div.words_sidebar
+{
+	padding: 10px;
+}
+
+div.words_sidebar h2
+{
+	margin: 0;
+	font-weight: 200;
+	color: #999;
+}
 
 ul.words_sidebar_index
 {
@@ -20,6 +46,7 @@ ul.words_sidebar_index
 	margin: 10px 0;
 	text-align: center;
 	font-size: 0;
+	font-family: 'Georgia','Crimson Text','Palatino','Times New Roman','Times';
 }
 
 ul.words_sidebar_index li
@@ -51,9 +78,16 @@ ul.words_sidebar_index a:hover
 
 /********** Words **********/
 
+ul.words_word_variants
+{
+	list-style: none;
+	margin: 20px 0;
+	padding: 0;
+}
+
 p.words_word_by
 {
-	margin: 5px 0 0;
+	margin: 5px 0 0 20px;
 	font-size: 11px;
 	color: #999;
 }
@@ -63,57 +97,70 @@ p.words_word_info
 	margin: 0;
 }
 
+strong.words_word_info
+{
+	color: #333;
+	vertical-align: middle;
+	display: inline-block;
+	position: relative;
+	top: -2px;
+}
+
+span.words_word_info
+{
+	vertical-align: middle;
+	color: #999;
+	font-size: 12px;
+	display: inline-block;
+}
+
+span.words_word_info a
+{
+	color: #999;
+	text-decoration: none;
+}
+
+span.words_word_info a:hover
+{
+	text-decoration: underline;
+}
+
+span.words_word_info span
+{
+	margin: 0 3px;
+}
+
 li.words_word_variant
 {
 	margin-bottom: 10px;
 }
 
-/*
-div.layout_body
+span.words_list_info
 {
-	width: 900px;
-	margin: 0 auto;
+	color: #999; font-size: 10px;
 }
 
-div.layout_head
-{
-	height: 20px;
-	border-bottom: 1px solid #eee;
-	position: relative;
-}
-
-div.layout_head ul
+ul.words_word_relations
 {
 	list-style: none;
-	margin: 0;
+	margin: 5px 0;
+	color: #999;
+	font-size: 12px;
+	margin-left: 20px;
 	padding: 0;
-	position: absolute;
-	top: 0;
-	right: 0;
 }
 
-div.layout_head a
+ul.words_word_relations li
 {
-	text-decoration: none;
+	margin-bottom: 5px;
 }
 
-div.layout_head a:hover
+span.words_word_relation
 {
-	text-decoration: underline;
-	color: #ddd;
+	margin-left: 5px;
 }
 
-div.layout_head strong
-{
-	color: #333;
-	font-weight: normal;
-}
 
-div.layout_head strong span
-{
-	color: #aaa;
-}
-*/
 h1
 {
 	margin: 0;
@@ -168,10 +215,19 @@ div.panel_body ul.selection
 div.panel_body ul.selection a
 {
 	display: block;
-	padding: 2px 6px;
+	padding: 4px 6px;
 	border: 1px solid transparent;
 	border-radius: 2px;
 	cursor: pointer;
+	color: #666;
+	line-height: 16px;
+}
+
+div.panel_body ul.selection a strong
+{
+	color: #000;
+	font-size: 14px;
+	margin-right: 3px;
 }
 
 div.panel_body ul.selection a:hover

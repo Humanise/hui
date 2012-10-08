@@ -15,7 +15,7 @@ public class WebNode extends Entity {
 	}
 
 	public String getIcon() {
-		return "Basic/Internet";
+		return "monochrome/globe";
 	}
 
 	@Override

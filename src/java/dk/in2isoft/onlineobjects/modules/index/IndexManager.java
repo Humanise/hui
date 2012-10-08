@@ -64,7 +64,7 @@ public class IndexManager {
 	public void update(Entity entity, Document document) throws EndUserException  {
 		IndexWriter writer = null;
 		try {
-			writer = new IndexWriter(getIndexFile(), new StandardAnalyzer(Version.LUCENE_29),MaxFieldLength.LIMITED);
+			writer = new IndexWriter(getIndexFile(), new StandardAnalyzer(),MaxFieldLength.LIMITED);
 			document.add(new Field("id", String.valueOf(entity.getId()),Store.YES,Field.Index.ANALYZED_NO_NORMS));
 			document.add(new Field("type", String.valueOf(entity.getType()),Store.YES,Field.Index.NO));
 			writer.updateDocument(new Term("id",String.valueOf(entity.getId())),document);
@@ -127,7 +127,7 @@ public class IndexManager {
 	private void ensureIndex() throws EndUserException {
 		IndexWriter writer = null;
 		try {
-			writer = new IndexWriter(getIndexFile(), new StandardAnalyzer(Version.LUCENE_29),MaxFieldLength.LIMITED);
+			writer = new IndexWriter(getIndexFile(), new StandardAnalyzer(),MaxFieldLength.LIMITED);
 		} catch (IOException e) {
 			throw new EndUserException(e);
 		} finally {

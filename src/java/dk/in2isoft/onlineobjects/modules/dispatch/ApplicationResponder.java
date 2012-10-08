@@ -104,6 +104,7 @@ public class ApplicationResponder implements Responder {
 	}
 
 	private void callApplication(String application, Request request) throws IOException, EndUserException {
+		request.setApplication(application);
 		ApplicationController controller = getApplicationController(request,application);
 		String[] path = request.getLocalPath();
 		try {

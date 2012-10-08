@@ -218,7 +218,7 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 
 	public Collection<Map<String,Entity>> searchUsers(String query) throws ModelException {
 		List<Map<String,Entity>> result = Lists.newArrayList(); 
-		List<Pair<User, Person>> pairs = modelService.searchPairs(new UserQuery().withWords(query).withPaging(0, 10)).getList();
+		List<Pair<User, Person>> pairs = modelService.searchPairs(new UserQuery().withWords(query).withPaging(0, 10).withPublicView()).getList();
 		for (Pair<User, Person> entry : pairs) {
 			Map<String,Entity> map = Maps.newHashMap();
 			map.put("user", entry.getKey());

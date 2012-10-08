@@ -78,4 +78,18 @@
       <renderer-type>hui.diagram</renderer-type>
     </component>
   </tag>
+  <tag>
+    <tag-name>boundPanel</tag-name>
+    <component>
+      <component-type>hui.boundPanel</component-type>
+      <renderer-type>hui.boundPanel</renderer-type>
+    </component>
+  </tag>
+  <tag>
+    <tag-name>finder</tag-name>
+    <component>
+      <component-type>hui.finder</component-type>
+      <renderer-type>hui.finder</renderer-type>
+    </component>
+  </tag>
 </facelet-taglib>

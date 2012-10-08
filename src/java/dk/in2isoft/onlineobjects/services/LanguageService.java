@@ -9,6 +9,7 @@ import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.model.Language;
 import dk.in2isoft.onlineobjects.model.LexicalCategory;
+import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.modules.language.WordImpression;
 
@@ -31,6 +32,7 @@ public class LanguageService {
 		impression.setWord(word);
 		impression.setLanguage(modelService.getParent(word, Language.class));
 		impression.setLexicalCategory(modelService.getParent(word, LexicalCategory.class));
+		impression.setOriginator(modelService.getChild(word, User.class));
 		return impression;
 	}
 

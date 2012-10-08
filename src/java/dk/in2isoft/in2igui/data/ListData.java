@@ -84,4 +84,8 @@ public class ListData extends HashMap<String, Object> {
 		}
 		return (List<Map<String, Object>>) get("headers");
 	}
+
+	public void addCell(Long number) {
+		addCell(number==null ? null : number.toString());
+	}
 }

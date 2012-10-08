@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.gdata.client.analytics.AnalyticsService;
@@ -23,7 +24,7 @@ import dk.in2isoft.onlineobjects.test.AbstractTestCase;
 
 public class TestAnalytics extends AbstractTestCase {
 
-	@Test
+	@Test @Ignore
 	public void testSimpleMail() throws IOException, ServiceException {
 		String baseUrl = "https://www.google.com/analytics/feeds/data";
 		URL url = new URL(baseUrl);
