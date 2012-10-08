@@ -110,6 +110,18 @@
         primary key (id)
     );
 
+    create table language (
+        id int8 not null,
+        code varchar(255),
+        primary key (id)
+    );
+
+    create table lexicalcategory (
+        id int8 not null,
+        code varchar(255),
+        primary key (id)
+    );
+
     create table location (
         id int8 not null,
         latitude float8,
@@ -226,6 +238,12 @@
         primary key (id)
     );
 
+    create table word (
+        id int8 not null,
+        text varchar(255),
+        primary key (id)
+    );
+
     alter table "user" 
         add constraint FK36EBCBE94A3D71 
         foreign key (id) 
@@ -298,6 +316,16 @@
 
     alter table invitation 
         add constraint FK473F7799E94A3D71 
+        foreign key (id) 
+        references entity;
+
+    alter table language 
+        add constraint FK9FD29358E94A3D71 
+        foreign key (id) 
+        references entity;
+
+    alter table lexicalcategory 
+        add constraint FKAE7FCE62E94A3D71 
         foreign key (id) 
         references entity;
 
@@ -383,6 +411,11 @@
 
     alter table webstructure 
         add constraint FKDE88E09FE94A3D71 
+        foreign key (id) 
+        references entity;
+
+    alter table word 
+        add constraint FK37C70AE94A3D71 
         foreign key (id) 
         references entity;
 
