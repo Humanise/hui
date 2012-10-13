@@ -899,26 +899,26 @@ hui.position = {
 	getTop : function(element) {
 	    element = hui.get(element);
 		if (element) {
-			var yPos = element.offsetTop,
+			var top = element.offsetTop,
 				tempEl = element.offsetParent;
 			while (tempEl != null) {
-				yPos += tempEl.offsetTop;
+				top += tempEl.offsetTop;
 				tempEl = tempEl.offsetParent;
 			}
-			return yPos;
+			return top;
 		}
 		else return 0;
 	},
 	getLeft : function(element) {
 	    element = hui.get(element);
 		if (element) {
-			var xPos = element.offsetLeft,
+			var left = element.offsetLeft,
 				tempEl = element.offsetParent;
 			while (tempEl != null) {
-				xPos += tempEl.offsetLeft;
+				left += tempEl.offsetLeft;
 				tempEl = tempEl.offsetParent;
 			}
-			return xPos;
+			return left;
 		}
 		else return 0;
 	},
@@ -1999,9 +1999,10 @@ hui.drag = {
 	 * <pre><strong>options:</strong> {
 	 *  elements : «Element»,
 	 *  hoverClass : «String»,
-	 *  onDrop : function(event),
-	 *  onFiles : function(fileArray),
-	 *  onURL : function(url)
+	 *  $drop : function(event),
+	 *  $dropFiles : function(fileArray),
+	 *  $dropURL : function(url),
+	 *  $dropText : function(url)
 	 * }
 	 * @param {Object} options The options
 	 */
@@ -2028,34 +2029,53 @@ hui.drag = {
 				//var foundElement = found ? found.element : null;
 				if (hui.drag._activeDrop!=found) {
 					hui.cls.remove(hui.drag._activeDrop.element,hui.drag._activeDrop.hoverClass);
+					if (hui.drag._activeDrop.$leave) {
+						hui.drag._activeDrop.$leave(e);
+					}
+				} else if (hui.drag._activeDrop.$hover) {
+					hui.drag._activeDrop.$hover(e);
 				}
+				
 			}
 			hui.drag._activeDrop = found;
 		});
 		
 		hui.listen(document.body,'dragover',function(e) {
 			hui.stop(e);
+			if (hui.drag._activeDrop) {
+				if (hui.drag._activeDrop.$hover) {
+					hui.drag._activeDrop.$hover(e);
+				}
+			}
 		});
+		
+		hui.listen(document.body,'dragend',function(e) {
+			hui.log('drag end');
+		});
+		
+		hui.listen(document.body,'dragstart',function(e) {
+			hui.log('drag start');
+		});
+		
 		hui.listen(document.body,'drop',function(e) {
 			hui.stop(e);
 			var options = hui.drag._activeDrop;
 			hui.drag._activeDrop = null;
 			if (options) {
 				hui.cls.remove(options.element,options.hoverClass);
-				if (options.onDrop) {
-					options.onDrop(e);
+				if (options.$drop) {
+					options.$drop(e);
 				}
 				if (e.dataTransfer) {
-					if (options.onFiles && e.dataTransfer.files && e.dataTransfer.files.length>0) {
-						options.onFiles(e.dataTransfer.files);
-					}
-					else if (options.onURL && e.dataTransfer.types!=null && hui.array.contains(e.dataTransfer.types,'public.url')) {
+					if (options.$dropFiles && e.dataTransfer.files && e.dataTransfer.files.length>0) {
+						options.$dropFiles(e.dataTransfer.files);
+					} else if (options.$dropURL && e.dataTransfer.types!=null && hui.array.contains(e.dataTransfer.types,'public.url')) {
 						var url = e.dataTransfer.getData('public.url');
-						if (options.onURL && !hui.string.startsWith(url,'data:')) {
-							options.onURL(url);
+						if (!hui.string.startsWith(url,'data:')) {
+							options.$dropURL(url);
 						}
-					} else if (options.onText && e.dataTransfer.types!=null && hui.array.contains(e.dataTransfer.types,'text/plain')) {
-						options.onText(e.dataTransfer.getData('text/plain'))
+					} else if (options.$dropText && e.dataTransfer.types!=null && hui.array.contains(e.dataTransfer.types,'text/plain')) {
+						options.$dropText(e.dataTransfer.getData('text/plain'))
 					}
 				}
 			}
@@ -5308,9 +5328,11 @@ hui.ui.getElement = function(widgetOrElement) {
 
 hui.ui.isWithin = function(e,element) {
 	e = hui.event(e);
-	var offset = { left : hui.position.getLeft(element), top : hui.position.getTop(element) };
-	var dims = { width : element.clientWidth, height : element.clientHeight };
-	return e.getLeft() > offset.left && e.getLeft() < offset.left+dims.width && e.getTop() > offset.top && e.getTop() < offset.top+dims.height;
+	var offset = hui.position.get(element),
+		dims = { width : element.offsetWidth, height : element.offsetHeight },
+		left = e.getLeft(),
+		top = e.getTop();
+	return left > offset.left && left < offset.left+dims.width && top > offset.top && top < offset.top+dims.height;
 };
 
 hui.ui.getIconUrl = function(icon,size) {
@@ -6249,6 +6271,9 @@ hui.ui.Window.prototype = {
 			hui.effect.flip({element:this.element});
 		}
 	},
+	move : function(point) {
+		hui.style.set(this.element,{top:point.top+'px',left:point.left+'px'});
+	},
 
 	_onDragStart : function(e) {
 		this.element.style.zIndex = hui.ui.nextPanelIndex();
@@ -6543,10 +6568,10 @@ hui.ui.List.prototype = {
 		hui.drag.listen({
 			element : this.element,
 			hoverClass : 'hui_list_drop',
-			onFiles : function(files) {
+			$dropFiles : function(files) {
 				this.fire('filesDropped',files);
 			}.bind(this),
-			onURL : function(url) {
+			$dropURL : function(url) {
 				this.fire('urlDropped',url);
 			}.bind(this)
 		})
@@ -11035,7 +11060,7 @@ hui.ui.Overlay = function(options) {
 	this.icons = {};
 	this.visible = false;
 	hui.ui.extend(this);
-	this.addBehavior();
+	this._addBehavior();
 }
 
 /**
@@ -11049,10 +11074,9 @@ hui.ui.Overlay.create = function(options) {
 }
 
 hui.ui.Overlay.prototype = {
-	/** @private */
-	addBehavior : function() {
+	_addBehavior : function() {
 		var self = this;
-		this.hider = function(e) {
+/*		this.hider = function(e) {
 			if (self.boundElement) {
 				if (hui.ui.isWithin(e,self.boundElement) || hui.ui.isWithin(e,self.element)) return;
 				// TODO: should be unreg'ed but it fails
@@ -11062,14 +11086,14 @@ hui.ui.Overlay.prototype = {
 				self.hide();
 			}
 		}
-		hui.listen(this.element,'mouseout',this.hider);
+		hui.listen(this.element,'mouseout',this.hider);*/
 	},
 	addIcon : function(key,icon) {
 		var self = this;
 		var element = hui.build('div',{className:'hui_overlay_icon'});
 		element.style.backgroundImage='url('+hui.ui.getIconUrl(icon,32)+')';
 		hui.listen(element,'click',function(e) {
-			self.iconWasClicked(key,e);
+			self._iconWasClicked(key,e);
 		});
 		this.icons[key]=element;
 		this.content.appendChild(element);
@@ -11090,31 +11114,49 @@ hui.ui.Overlay.prototype = {
 			this.icons[keys[i]].style.display='';
 		};
 	},
-	iconWasClicked : function(key,e) {
+	_iconWasClicked : function(key,e) {
 		hui.ui.callDelegates(this,'iconWasClicked',key,e);
 	},
 	showAtElement : function(element,options) {
 		options = options || {};
 		hui.ui.positionAtElement(this.element,element,options);
-		if (this.visible) return;
+		if (options.autoHide) {
+			// important to do even if visible, sine element may have changed
+			this._autoHide(element);
+		}
+		if (this.visible) {
+			return;
+		}
 		if (hui.browser.msie) {
-			this.element.style.display='block';
+			this.element.style.display = 'block';
 		} else {
 			hui.style.set(this.element,{display : 'block',opacity : 0});
 			hui.animate(this.element,'opacity',1,150);
 		}
-		this.visible = true;
-		if (options.autoHide) {
-			this.boundElement = element;
-			hui.listen(element,'mouseout',this.hider);
-			hui.cls.add(element,'hui_overlay_bound');
-		}
+		var zIndex = hui.ui.nextAlertIndex();
 		if (this.options.modal) {
-			var zIndex = hui.ui.nextAlertIndex();
-			this.element.style.zIndex = zIndex+1;
+			this.element.style.zIndex = hui.ui.nextAlertIndex();
 			hui.ui.showCurtain({ widget : this, zIndex : zIndex });
+		} else {
+			this.element.style.zIndex = zIndex;
 		}
-		return;
+		this.visible = true;
+	},
+	_autoHide : function(element) {
+		hui.cls.add(element,'hui_overlay_bound');
+		hui.unListen(document.body,'mousemove',this._hider);
+		this._hider = function(e) {
+			if (!hui.ui.isWithin(e,element) && !hui.ui.isWithin(e,this.element)) {
+				try {
+					hui.unListen(document.body,'mousemove',this._hider);
+					hui.cls.remove(element,'hui_overlay_bound');
+					this.hide();
+				} catch (e) {
+					hui.log('unable to stop listening: document='+document);
+				}
+			}
+		}.bind(this)
+		hui.listen(document.body,'mousemove',this._hider);
 	},
 	show : function(options) {
 		options = options || {};
@@ -11129,14 +11171,12 @@ hui.ui.Overlay.prototype = {
 				viewPartMargin : 9
 			});
 		}
+		if (options.autoHide && options.element) {
+			this._autoHide(options.element);
+		}
 		if (this.visible) return;
 		hui.effect.bounceIn({element:this.element});
 		this.visible = true;
-		if (options.autoHide && options.element) {
-			this.boundElement = options.element;
-			hui.listen(options.element,'mouseout',this.hider);
-			hui.cls.add(options.element,'hui_overlay_bound');
-		}
 		if (this.options.modal) {
 			var zIndex = hui.ui.nextAlertIndex();
 			this.element.style.zIndex=zIndex+1;
@@ -11244,7 +11284,12 @@ hui.ui.Upload.prototype = {
 			hui.drag.listen({
 				element : options.element,
 				hoverClass : options.hoverClass,
-				onFiles : this._transferFiles.bind(this)
+				$dropFiles : function(files) {
+					if (options.$drop) {
+						options.$drop();
+					}
+					this._transferFiles(files);
+				}.bind(this)
 			});
 		}
 	},
@@ -11290,7 +11335,7 @@ hui.ui.Upload.prototype = {
 			hui.drag.listen({
 				element : this.element,
 				hoverClass : 'hui_upload_drop',
-				onFiles : this._transferFiles.bind(this)
+				$dropFiles : this._transferFiles.bind(this)
 			});
 		}.bind(this));
 	},
@@ -12009,10 +12054,10 @@ hui.ui.Gallery.prototype = {
 		hui.drag.listen({
 			element : this.element,
 			hoverClass : 'hui_gallery_drop',
-			onFiles : function(files) {
+			$dropFiles : function(files) {
 				this.fire('filesDropped',files);
 			}.bind(this),
-			onURL : function(url) {
+			$dropURL : function(url) {
 				this.fire('urlDropped',url);
 			}.bind(this)
 		})
@@ -16865,9 +16910,18 @@ hui.ui.CodeInput = function(options) {
 	this.name = options.name;
 	var e = this.element = hui.get(options.element);
 	this.textarea = hui.get.firstByTag(e,'textarea');
+	if (options.value) {
+		this.textarea.value = options.value;
+	}
 	this.value = this.textarea.value;
 	hui.ui.extend(this);
 	this._addBehavior();
+}
+
+hui.ui.CodeInput.create = function(options) {
+	options = options || {};
+	options.element = hui.build('div',{className:'hui_codeinput',html:'<textarea spellcheck="false"></textarea>'});
+	return new hui.ui.CodeInput(options);
 }
 
 hui.ui.CodeInput.prototype = {

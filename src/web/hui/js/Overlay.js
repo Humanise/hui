@@ -9,7 +9,7 @@ hui.ui.Overlay = function(options) {
 	this.icons = {};
 	this.visible = false;
 	hui.ui.extend(this);
-	this.addBehavior();
+	this._addBehavior();
 }
 
 /**
@@ -23,10 +23,9 @@ hui.ui.Overlay.create = function(options) {
 }
 
 hui.ui.Overlay.prototype = {
-	/** @private */
-	addBehavior : function() {
+	_addBehavior : function() {
 		var self = this;
-		this.hider = function(e) {
+/*		this.hider = function(e) {
 			if (self.boundElement) {
 				if (hui.ui.isWithin(e,self.boundElement) || hui.ui.isWithin(e,self.element)) return;
 				// TODO: should be unreg'ed but it fails
@@ -36,14 +35,14 @@ hui.ui.Overlay.prototype = {
 				self.hide();
 			}
 		}
-		hui.listen(this.element,'mouseout',this.hider);
+		hui.listen(this.element,'mouseout',this.hider);*/
 	},
 	addIcon : function(key,icon) {
 		var self = this;
 		var element = hui.build('div',{className:'hui_overlay_icon'});
 		element.style.backgroundImage='url('+hui.ui.getIconUrl(icon,32)+')';
 		hui.listen(element,'click',function(e) {
-			self.iconWasClicked(key,e);
+			self._iconWasClicked(key,e);
 		});
 		this.icons[key]=element;
 		this.content.appendChild(element);
@@ -64,31 +63,49 @@ hui.ui.Overlay.prototype = {
 			this.icons[keys[i]].style.display='';
 		};
 	},
-	iconWasClicked : function(key,e) {
+	_iconWasClicked : function(key,e) {
 		hui.ui.callDelegates(this,'iconWasClicked',key,e);
 	},
 	showAtElement : function(element,options) {
 		options = options || {};
 		hui.ui.positionAtElement(this.element,element,options);
-		if (this.visible) return;
+		if (options.autoHide) {
+			// important to do even if visible, sine element may have changed
+			this._autoHide(element);
+		}
+		if (this.visible) {
+			return;
+		}
 		if (hui.browser.msie) {
-			this.element.style.display='block';
+			this.element.style.display = 'block';
 		} else {
 			hui.style.set(this.element,{display : 'block',opacity : 0});
 			hui.animate(this.element,'opacity',1,150);
 		}
-		this.visible = true;
-		if (options.autoHide) {
-			this.boundElement = element;
-			hui.listen(element,'mouseout',this.hider);
-			hui.cls.add(element,'hui_overlay_bound');
-		}
+		var zIndex = hui.ui.nextAlertIndex();
 		if (this.options.modal) {
-			var zIndex = hui.ui.nextAlertIndex();
-			this.element.style.zIndex = zIndex+1;
+			this.element.style.zIndex = hui.ui.nextAlertIndex();
 			hui.ui.showCurtain({ widget : this, zIndex : zIndex });
+		} else {
+			this.element.style.zIndex = zIndex;
 		}
-		return;
+		this.visible = true;
+	},
+	_autoHide : function(element) {
+		hui.cls.add(element,'hui_overlay_bound');
+		hui.unListen(document.body,'mousemove',this._hider);
+		this._hider = function(e) {
+			if (!hui.ui.isWithin(e,element) && !hui.ui.isWithin(e,this.element)) {
+				try {
+					hui.unListen(document.body,'mousemove',this._hider);
+					hui.cls.remove(element,'hui_overlay_bound');
+					this.hide();
+				} catch (e) {
+					hui.log('unable to stop listening: document='+document);
+				}
+			}
+		}.bind(this)
+		hui.listen(document.body,'mousemove',this._hider);
 	},
 	show : function(options) {
 		options = options || {};
@@ -103,14 +120,12 @@ hui.ui.Overlay.prototype = {
 				viewPartMargin : 9
 			});
 		}
+		if (options.autoHide && options.element) {
+			this._autoHide(options.element);
+		}
 		if (this.visible) return;
 		hui.effect.bounceIn({element:this.element});
 		this.visible = true;
-		if (options.autoHide && options.element) {
-			this.boundElement = options.element;
-			hui.listen(options.element,'mouseout',this.hider);
-			hui.cls.add(options.element,'hui_overlay_bound');
-		}
 		if (this.options.modal) {
 			var zIndex = hui.ui.nextAlertIndex();
 			this.element.style.zIndex=zIndex+1;
