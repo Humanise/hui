@@ -8,35 +8,41 @@
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 >
 	<ui:composition template="templates/plain.xhtml">
-				
+		
+		<ui:define name="title">#{wordsIndexView.character} - </ui:define>
+		
 		<ui:define name="body">
-		<div class="words">
-			<h1>#{msg.words}</h1>
+			<div class="words">
+				<h1>#{msg.words}</h1>
 			
-			<h2>#{msg.index}</h2>
-			<ul class="index">
-				<c:forEach items="#{wordsIndexView.alphabeth}" var="char">
-					<li><o:link href="/en/index/#{char}/">#{char}</o:link></li>
+				<h2>#{msg.index}</h2>
+				<ul class="words_index">
+					<c:forEach items="#{wordsIndexView.alphabeth}" var="char">
+						<li>
+							<o:link styleClass="#{char == wordsIndexView.character ? 'words_index_selected' : ''}" href="/en/index/#{char}/">#{char}</o:link>
+						</li>
+					</c:forEach>
+				</ul>
+				<ul class="words_list">
+					<c:forEach items="#{wordsIndexView.list}" var="word">
+						<li>
+							<o:link href="/#{wordsLayoutView.language}/word/#{word.word.text}.html">#{word.word.text}</o:link>
+							<span class="words_list_info">
+							<c:if test="#{not empty word.lexicalCategory}">
+								- #{msg[word.lexicalCategory.code]}
+							</c:if>
+							- #{msg[word.language.code]}</span>
+						</li>
+					</c:forEach>
+				</ul>
+				<p class="paging">
+				<c:forEach items="#{wordsIndexView.pages}" var="page">
+					<o:link href="#{page.value}/" styleClass="#{page.selected ? 'selected' : ''}">#{page.label}</o:link>
+					#{' '}
 				</c:forEach>
-			</ul>
-			<ul>
-				<c:forEach items="#{wordsIndexView.list}" var="word">
-					<li>
-						<o:link href="/#{wordsLayoutView.language}/word/#{word.word.text}.html">#{word.word.text}</o:link>
-						<c:if test="#{not empty word.lexicalCategory}">
-							<span style="color: #999; font-size: 10px;">- #{msg[word.lexicalCategory.code]}</span>
-						</c:if>
-						<span style="font-size: 10px; color: #999;">- #{msg[word.language.code]}</span>
-					</li>
-				</c:forEach>
-			</ul>
-			<p class="paging">
-			<c:forEach items="#{wordsIndexView.pages}" var="page">
-				<o:link href="#{page.value}/" styleClass="#{page.selected ? 'selected' : ''}">#{page.label}</o:link>
-				#{' '}
-			</c:forEach>
-			</p>
+				</p>
 			</div>
 		</ui:define>
+		
 	</ui:composition>
 </html>

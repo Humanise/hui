@@ -134,4 +134,11 @@
       <renderer-type>onlineobjects.analytics</renderer-type>
     </component>
   </tag>
+  <tag>
+    <tag-name>doctype</tag-name>
+    <component>
+      <component-type>onlineobjects.doctype</component-type>
+      <renderer-type>onlineobjects.doctype</renderer-type>
+    </component>
+  </tag>
 </facelet-taglib>

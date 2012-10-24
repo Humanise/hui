@@ -51,6 +51,7 @@ public class LayoutComponent <T> extends AbstractComponent {
 		}
 		writer.endDiv();
 		writer.endDiv();
+		writer.startDiv("oo_layout_bottom").endDiv();
 		writer.endDiv();
 	}
 }

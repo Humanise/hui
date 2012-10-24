@@ -16,6 +16,7 @@ public class BoundPanelComponent extends AbstractComponent {
 
 	private String name;
 	private boolean hideOnClick;
+	private int width;
 
 	public BoundPanelComponent() {
 		super(TYPE);
@@ -25,12 +26,13 @@ public class BoundPanelComponent extends AbstractComponent {
 	public void restoreState(Object[] state) {
 		name = (String) state[0];
 		hideOnClick = (Boolean) state[1];
+		width = (Integer) state[2];
 	}
 
 	@Override
 	public Object[] saveState() {
 		return new Object[] {
-			name, hideOnClick
+			name, hideOnClick, width
 		};
 	}
 	
@@ -47,6 +49,9 @@ public class BoundPanelComponent extends AbstractComponent {
 		writer.startDiv("hui_boundpanel_top").startDiv().startDiv().endDiv().endDiv().endDiv();
 		writer.startDiv("hui_boundpanel_body").startDiv("hui_boundpanel_body").startDiv("hui_boundpanel_body");
 		writer.startDiv("hui_boundpanel_content");
+		if (width>0) {
+			writer.withStyle("width:"+width+"px;");
+		}
 	}
 	
 	@Override
@@ -84,5 +89,13 @@ public class BoundPanelComponent extends AbstractComponent {
 
 	public void setHideOnClick(boolean hideOnClick) {
 		this.hideOnClick = hideOnClick;
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	public void setWidth(int width) {
+		this.width = width;
 	}
 }

@@ -22,6 +22,10 @@
 		<ui:remove>
 			<link href='http://fonts.googleapis.com/css?family=Crimson+Text:regular,regularitalic,bold,bolditalic' rel='stylesheet' type='text/css'/>
 		</ui:remove>
+			<link href='http://fonts.googleapis.com/css?family=Neuton:300' rel='stylesheet' type='text/css'/>
+			<link href='http://fonts.googleapis.com/css?family=Antic+Didone' rel='stylesheet' type='text/css'/>
+			<link href='http://fonts.googleapis.com/css?family=Vollkorn' rel='stylesheet' type='text/css'/>
+			<link href='http://fonts.googleapis.com/css?family=Old+Standard+TT' rel='stylesheet' type='text/css'/>
 		<gui:importScripts/>
 		<o:script src="/core/js/onlineobjects.js" core="true"/>
 		<o:scriptSetup/>
@@ -52,7 +56,7 @@
 			</f:facet>
 			<ui:insert name="body"/>
 		</o:layout>
-		<p class="words_footer">
+		<p class="common_footer oo_faded">
 			<c:forEach items="#{wordsLayoutView.languages}" var="item" varStatus="status">
 				<c:if test="#{not status.first}"> · </c:if>
 				<c:if test="#{item.selected}">

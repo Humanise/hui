@@ -60,6 +60,7 @@ public class ImportScriptsComponent extends AbstractComponent {
 		
 		writer.startScript().newLine();
 		writer.write("hui.ui.context = '").write(request.getBaseContext()).write("';").newLine();
+		writer.write("hui.ui.language = '").write(request.getLanguage()).write("';").newLine();
 		writer.endScript().newLine();
 	}
 }

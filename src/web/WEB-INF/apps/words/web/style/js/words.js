@@ -10,7 +10,7 @@ var wordsApp = {
 			win.add(form);
 		}
 		this._importWindow.show();
-		this._importForm.setValues({url:'http://en.wikipedia.org/wiki/Language'});
+		this._importForm.setValues({url:'http://daringfireball.net/linked/2012/10/04/valentine'}); //http://en.wikipedia.org/wiki/Language
 		this._importForm.focus();
 	},
 	$submit$importFormula : function(form) {

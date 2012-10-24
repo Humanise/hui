@@ -532,12 +532,12 @@ public class ModelService {
 		return new Results<T>(q.scroll());
 	}
 	
-	public List<?> querySQL(String sql) throws ModelException {
+	public List<Object[]> querySQL(String sql) throws ModelException {
 		try {
 			SQLQuery query = getSession().createSQLQuery(sql);
 			return query.list();
 		} catch (HibernateException e) {
-			
+			log.error(e.getMessage(),e);
 		}
 		return null;
 	}

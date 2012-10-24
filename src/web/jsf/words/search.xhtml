@@ -17,13 +17,13 @@
 				<h1>#{msg.words}</h1>
 			
 				<h2>#{msg.index}</h2>
-				<ul class="words_index">
+				<ul class="index">
 					<c:forEach items="#{wordsIndexView.alphabeth}" var="char">
 						<li><o:link href="/#{wordsLayoutView.language}/index/#{char}/">#{char}</o:link></li>
 					</c:forEach>
 				</ul>
 				<h2>#{msg.latest_words}</h2>
-				<ul class="words_list">
+				<ul>
 					<c:forEach items="#{wordsFrontView.latestWords}" var="word">
 						<li>
 							<o:link href="/#{wordsLayoutView.language}/word/#{word.text}.html">#{word.text}</o:link>
@@ -36,7 +36,7 @@
 					</c:forEach>
 				</ul>
 				<h2>Links</h2>
-				<ul class="words_list">
+				<ul>
 					<li><o:link href="http://www.gigadictionary.org/">Gigadictionary</o:link></li>
 				</ul>
 			</div>

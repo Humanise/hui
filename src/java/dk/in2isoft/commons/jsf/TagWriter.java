@@ -58,6 +58,13 @@ public class TagWriter {
 		}
 		return this;
 	}
+
+	public TagWriter text(Object text) throws IOException {
+		if (text!=null) {
+			writer.writeText(text.toString(),null);
+		}
+		return this;
+	}
 	
 	///////// A /////////
 	

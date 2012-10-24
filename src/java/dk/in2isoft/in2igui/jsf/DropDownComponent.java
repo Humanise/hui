@@ -1,0 +1,117 @@
+package dk.in2isoft.in2igui.jsf;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.faces.component.FacesComponent;
+import javax.faces.context.FacesContext;
+
+import org.apache.commons.lang.StringEscapeUtils;
+
+import dk.in2isoft.commons.jsf.AbstractComponent;
+import dk.in2isoft.commons.jsf.ClassBuilder;
+import dk.in2isoft.commons.jsf.ComponentUtil;
+import dk.in2isoft.commons.jsf.TagWriter;
+import dk.in2isoft.onlineobjects.ui.jsf.model.Option;
+
+@FacesComponent(value=DropDownComponent.TYPE)
+public class DropDownComponent extends AbstractComponent {
+
+	public static final String TYPE = "hui.dropDown";
+
+	private String name;
+	private String key;
+
+	public DropDownComponent() {
+		super(TYPE);
+	}
+	
+	@Override
+	public void restoreState(Object[] state) {
+		name = (String) state[0];
+		key = (String) state[1];
+	}
+
+	@Override
+	public Object[] saveState() {
+		return new Object[] {
+			name, key
+		};
+	}
+	
+	@Override
+	public String getFamily() {
+		return TYPE;
+	}
+
+	@Override
+	public void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
+		ClassBuilder cls = new ClassBuilder("hui_dropdown");
+		String id = getClientId();
+		writer.startVoidA(cls).withId(id);
+		writer.startSpan().startSpan().startStrong().endStrong().endSpan().endSpan();
+		writer.endA();
+		
+		writer.startScopedScript();
+		String items = getItems(context);
+		
+		writer.write("new hui.ui.DropDown({element:'").write(id).write("'");
+		if (name!=null) {
+			writer.write(",name:'"+name+"'");
+		}
+		if (key!=null) {
+			writer.write(",key:'"+key+"'");
+		}
+		if (items!=null) {
+			writer.write(",items:"+items);
+		}
+		writer.write("});");
+		writer.endScopedScript();
+	}
+	
+	private String getItems(FacesContext context) {
+		Object value = ComponentUtil.getExpressionValue(this, "items", null, context);
+		if (value instanceof List<?>) {
+			List<?> list = (List<?>) value;
+			StringBuilder sb = new StringBuilder("[");
+			boolean first = true;
+			for (Object object : list) {
+				if (object instanceof Option) {
+					Option option = (Option) object;
+					if (!first) {
+						sb.append(",");
+					}
+					sb.append("{");
+					sb.append("text:'").append(StringEscapeUtils.escapeJavaScript(option.getLabel())).append("'");
+					sb.append(",value:");
+					if (option.getValue()==null) {
+						sb.append("null");
+					} else {
+						sb.append("'").append(StringEscapeUtils.escapeJavaScript(option.getValue().toString())).append("'");
+					}
+					sb.append("}");
+					first = false;
+				}
+			}
+			sb.append("]");
+			return sb.toString();
+		}
+		return null;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+}

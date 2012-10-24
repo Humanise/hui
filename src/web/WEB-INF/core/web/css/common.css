@@ -11,6 +11,26 @@ body
 	min-height: 100%;
 }
 
+
+
+p.common_footer
+{
+	font-size: 10pt;
+	font-weight: 200;
+	text-align: center;
+}
+
+p.common_footer strong
+{
+	font-weight: 400;
+}
+
+p.common_footer,
+p.common_footer a.oo_link span
+{
+	color: #666;
+}
+
 a.link
 {
 	color: #ccc;

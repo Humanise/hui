@@ -48,6 +48,7 @@ public class TopBarComponent <T> extends AbstractComponent {
 			out.withHref("http://www.onlineme.dk/");
 		}
 		out.write("Community").endA().endLi();
+		
 		out.startLi("oo_topbar_words").startA(request.isApplication("words") ? "oo_topbar_selected" : null);
 		if (developmentMode) {
 			out.withHref(request.getBaseContext()+"/app/words/"+getLocale().getLanguage()+"/");
@@ -55,6 +56,15 @@ public class TopBarComponent <T> extends AbstractComponent {
 			out.withHref("http://words.onlineobjects.com/"+getLocale().getLanguage()+"/");
 		}
 		out.write("Words").endA().endLi();
+		
+		out.startLi("oo_topbar_photos").startA(request.isApplication("photos") ? "oo_topbar_selected" : null);
+		if (developmentMode) {
+			out.withHref(request.getBaseContext()+"/app/photos/"+getLocale().getLanguage()+"/");
+		} else {
+			out.withHref("http://photos.onlineobjects.com/"+getLocale().getLanguage()+"/");
+		}
+		out.write("Photos").endA().endLi();
+		
 		out.endUl();
 		out.startUl("oo_topbar_right");
 		

@@ -30,6 +30,18 @@ public class ComponentUtil {
 		return localValue;
 	}
 
+	public static <T> T  getExpressionValue(UIComponent component, String name, T localValue, FacesContext context) {
+
+		ValueExpression valueExpression = component.getValueExpression(name);
+		if (valueExpression != null) {
+			Object value = valueExpression.getValue(context.getELContext());
+			if (value != null) {
+				return (T) value;
+			}
+		}
+		return localValue;
+	}
+
 	public static int getIntParameter(String name) {
 		Map<String, String> map = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
 		String string = map.get(name);

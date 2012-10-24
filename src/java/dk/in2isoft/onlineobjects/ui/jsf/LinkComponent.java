@@ -24,6 +24,7 @@ public class LinkComponent<T> extends AbstractComponent {
 	private String onclick;
 	private boolean core;
 	private String styleClass;
+	private boolean plain;
 	
 	public LinkComponent() {
 		super(FAMILY);
@@ -37,11 +38,12 @@ public class LinkComponent<T> extends AbstractComponent {
 		styleClass = (String) state[3];
 		onclick = (String) state[4];
 		title = (String) state[5];
+		plain = (Boolean) state[6];
 	}
 
 	@Override
 	public Object[] saveState() {
-		return new Object[] { variant, core, href, styleClass, onclick, title };
+		return new Object[] { variant, core, href, styleClass, onclick, title, plain };
 	}
 
 	@Override
@@ -54,7 +56,11 @@ public class LinkComponent<T> extends AbstractComponent {
 		String styleClass = getStyleClass(context);
 		String onclick = getOnclick(context);
 		String title = getTitle(context);
-		writer.startA(ClassBuilder.with("oo_link").add("oo_link",variant).add(styleClass));
+		if (plain) {
+			writer.startA();
+		} else {
+			writer.startA(ClassBuilder.with("oo_link").add("oo_link",variant).add(styleClass));
+		}
 		String id = getId();
 		if (StringUtils.isNotBlank(id)) {
 			writer.withId(id);
@@ -71,7 +77,9 @@ public class LinkComponent<T> extends AbstractComponent {
 		} else if (StringUtils.isNotBlank(id)) {
 			writer.withAttribute("href","javascript: void(0);");
 		}
-		writer.startSpan();
+		if (!plain) {
+			writer.startSpan();
+		}
 	}
 	
 	public static String buildUrl(String href,boolean core) {
@@ -88,7 +96,10 @@ public class LinkComponent<T> extends AbstractComponent {
 	
 	@Override
 	protected void encodeEnd(FacesContext context, TagWriter writer) throws IOException {
-		writer.endSpan().endA();
+		if (!plain) {
+			writer.endSpan();
+		}
+		writer.endA();
 	}
 
 	public void setVariant(String variant) {
@@ -153,5 +164,13 @@ public class LinkComponent<T> extends AbstractComponent {
 
 	public String getTitle(FacesContext context) {
 		return getExpression(title, "title");
+	}
+
+	public boolean isPlain() {
+		return plain;
+	}
+
+	public void setPlain(boolean plain) {
+		this.plain = plain;
 	}
 }

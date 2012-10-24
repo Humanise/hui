@@ -24,12 +24,21 @@
 				</p>
 				<p class="words">
 				<c:forEach items="#{wordsImportView.uniqueWords}" var="word">
-					<o:link styleClass="#{word.known ? 'known' : 'unknown'}" title="#{word.count}" onclick="importView.lookupWord('#{word.text}',this)">#{word.text}</o:link><o:out value="#{' '}"/>
+					<o:link styleClass="#{word.known ? 'known' : 'unknown'}" title="#{word.count}" onclick="importView.lookupWord(this)">#{word.text}</o:link><o:out value="#{' '}"/>
 				</c:forEach>
 				</p>
 				<hr/>
 				<p>#{wordsImportView.text}</p>
 			</div>
+			
+			<gui:boundPanel name="registrationPanel" hideOnClick="true">
+				<gui:formula name="registrationForm">
+					<gui:dropDown key="language" items="#{wordsWordView.languages}"/>
+					<gui:dropDown key="category" items="#{wordsWordView.categories}"/>
+					<gui:button text="Register" name="registerButton" highlighted="true"/>
+				</gui:formula>
+			</gui:boundPanel>
 		</ui:define>
+		
 	</ui:composition>
 </html>

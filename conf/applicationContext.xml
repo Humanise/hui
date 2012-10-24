@@ -19,6 +19,7 @@
     <import resource="spring/app-developer.xml"/>
     <import resource="spring/app-desktop.xml"/>
     <import resource="spring/app-words.xml"/>
+    <import resource="spring/app-photos.xml"/>
 
 	<bean id="config" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="location" value="classpath:configuration.properties" />

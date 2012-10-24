@@ -142,7 +142,7 @@ span.oo_topbar_right a
 
 div.oo_layout
 {
-	width: 900px;
+	width: 980px;
 	margin: 0 auto;
 	box-shadow: 0px 1px 3px 0px #999;
 	-webkit-box-shadow: 0px 1px 3px #999;
@@ -159,21 +159,30 @@ div.oo_layout_top
 
 div.oo_layout_middle
 {
-	background: url('../gfx/sidebar.png') 700px top repeat-y;
+	background: url('../gfx/sidebar.png') 780px top repeat-y;
 	overflow: hidden;
 	border-radius: 0 0 5px 0;
 }
 
 div.oo_layout_body
 {
-	width: 700px;
+	width: 780px;
 	float: left;
 }
+
 div.oo_layout_sidebar
 {
 	width: 200px;
 	float: left;
 }
+
+div.oo_layout_bottom
+{
+	height: 32px;
+	border-top: 1px solid #ddd;
+}
+
+
 /******************* List ****************/
 
 ol.oo_list

@@ -107,6 +107,12 @@ http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
     	<component-type>onlineobjects.analytics</component-type>
     	<component-class>dk.in2isoft.onlineobjects.ui.jsf.AnalyticsComponent</component-class>
   	</component>
+    <component>
+    	<component-type>onlineobjects.doctype</component-type>
+    	<component-class>dk.in2isoft.onlineobjects.ui.jsf.DocTypeComponent</component-class>
+  	</component>
+  	
+  	
   	
     <component>
 	    <component-type>hui.button</component-type>
@@ -159,5 +165,17 @@ http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
     <component>
 	    <component-type>hui.finder</component-type>
     	<component-class>dk.in2isoft.in2igui.jsf.FinderComponent</component-class>
+  	</component>
+    <component>
+	    <component-type>hui.dropDown</component-type>
+    	<component-class>dk.in2isoft.in2igui.jsf.DropDownComponent</component-class>
+  	</component>
+    <component>
+	    <component-type>hui.fields</component-type>
+    	<component-class>dk.in2isoft.in2igui.jsf.FieldsComponent</component-class>
+  	</component>
+    <component>
+	    <component-type>hui.field</component-type>
+    	<component-class>dk.in2isoft.in2igui.jsf.FieldComponent</component-class>
   	</component>
 </faces-config>

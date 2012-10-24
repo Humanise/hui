@@ -92,4 +92,25 @@
       <renderer-type>hui.finder</renderer-type>
     </component>
   </tag>
+  <tag>
+    <tag-name>dropDown</tag-name>
+    <component>
+      <component-type>hui.dropDown</component-type>
+      <renderer-type>hui.dropDown</renderer-type>
+    </component>
+  </tag>
+  <tag>
+    <tag-name>fields</tag-name>
+    <component>
+      <component-type>hui.fields</component-type>
+      <renderer-type>hui.fields</renderer-type>
+    </component>
+  </tag>
+  <tag>
+    <tag-name>field</tag-name>
+    <component>
+      <component-type>hui.field</component-type>
+      <renderer-type>hui.field</renderer-type>
+    </component>
+  </tag>
 </facelet-taglib>

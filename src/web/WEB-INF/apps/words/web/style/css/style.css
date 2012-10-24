@@ -5,23 +5,30 @@ body
 	margin: 0;
 }
 
+/***************** Links ***************/
+
+a.oo_link
+{
+	color: #ddd;
+	color: rgba(0,0,0,.1);
+}
+
+a.oo_link span
+{
+	color: #08c;
+}
+
 div.words
 {
 	padding: 10px 20px;
+}
+
+ul.words_sidebar_index, div.words
+{
 	font-family: 'Georgia','Crimson Text','Palatino','Times New Roman','Times';
 }
 
-p.words_footer
-{
-	font-size: 11pt;
-	font-weight: 200;
-	text-align: center;
-}
 
-p.words_footer strong
-{
-	font-weight: 400;
-}
 
 
 
@@ -46,7 +53,6 @@ ul.words_sidebar_index
 	margin: 10px 0;
 	text-align: center;
 	font-size: 0;
-	font-family: 'Georgia','Crimson Text','Palatino','Times New Roman','Times';
 }
 
 ul.words_sidebar_index li
@@ -135,11 +141,6 @@ li.words_word_variant
 	margin-bottom: 10px;
 }
 
-span.words_list_info
-{
-	color: #999; font-size: 10px;
-}
-
 ul.words_word_relations
 {
 	list-style: none;
@@ -148,6 +149,11 @@ ul.words_word_relations
 	font-size: 12px;
 	margin-left: 20px;
 	padding: 0;
+}
+
+a.words_word_action
+{
+	color: #666;
 }
 
 ul.words_word_relations li
@@ -172,19 +178,43 @@ h2
 {
 	font-weight: normal;
 	font-size: 24px;
+	margin: 20px 0 0;
 }
 
-/**** Links ****/
 
-a.oo_link
+
+
+
+
+/***************** List ***************/
+
+ul.words_list
 {
 	color: #ddd;
+	font-size: 11pt;
+	margin: 10px 0 10px 25px;
+	padding: 0;
 }
 
-a.oo_link span
+ul.words_list li
 {
-	color: #08c;
+	margin: 3px 0;
 }
+
+span.words_list_info
+{
+	color: #999; font-size: 10px;
+}
+
+
+
+
+
+
+
+
+
+
 
 /*************** panel ****************/
 
@@ -215,12 +245,13 @@ div.panel_body ul.selection
 div.panel_body ul.selection a
 {
 	display: block;
-	padding: 4px 6px;
+	padding: 4px 6px 4px 26px;
 	border: 1px solid transparent;
 	border-radius: 2px;
 	cursor: pointer;
 	color: #666;
 	line-height: 16px;
+	text-indent: -20px;
 }
 
 div.panel_body ul.selection a strong
@@ -279,16 +310,23 @@ p.words a.highlighted
 
 /*********** index *********/
 
-ul.index
+ul.words_index
 {
 	list-style: none;
 	padding: 0;
 	margin: 10px 0;
 }
 
-ul.index li
+ul.words_index li
 {
 	display: inline-block;
+}
+
+a.words_index_selected span
+{
+	font-weight: bold;
+	color: #000;
+	text-decoration: none;
 }
 
 /*********** paging **********/

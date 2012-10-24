@@ -32,6 +32,7 @@ public class WordsWordView extends AbstractView implements InitializingBean {
 	private List<WordImpression> words;
 	private Language language;
 	private List<Option> categories;
+	private List<Option> languages;
 	private List<Option> relations;
 	
 	public void afterPropertiesSet() throws Exception {
@@ -69,12 +70,17 @@ public class WordsWordView extends AbstractView implements InitializingBean {
 	
 	public List<Option> getCategories() {
 		if (categories!=null) return categories;
+		Locale locale = getLocale();
 
 		Messages msg = new Messages("classpath:dk/in2isoft/onlineobjects/apps/words/msg/Words");
 		categories = Lists.newArrayList();
+
+		Option unknown = new Option();
+		unknown.setLabel(msg.get("unknown", locale));
+		categories.add(unknown);
+		
 		Query<LexicalCategory> query = Query.of(LexicalCategory.class).orderByName();
 		List<LexicalCategory> list = modelService.list(query);
-		Locale locale = getLocale();
 		for (LexicalCategory category : list) {
 			Option option = new Option();
 			option.setValue(category.getCode());
@@ -83,6 +89,23 @@ public class WordsWordView extends AbstractView implements InitializingBean {
 			categories.add(option);
 		}
 		return categories;
+	}
+	
+	public List<Option> getLanguages() {
+		if (languages!=null) return languages;
+
+		Messages msg = new Messages("classpath:dk/in2isoft/onlineobjects/apps/words/msg/Words");
+		languages = Lists.newArrayList();
+		Query<Language> query = Query.of(Language.class).orderByName();
+		List<Language> list = modelService.list(query);
+		Locale locale = getLocale();
+		for (Language category : list) {
+			Option option = new Option();
+			option.setValue(category.getCode());
+			option.setLabel(msg.get(category.getCode(), locale));
+			languages.add(option);
+		}
+		return languages;
 	}
 	
 	public List<Option> getRelations() {

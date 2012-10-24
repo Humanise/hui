@@ -20,7 +20,7 @@
 		<ui:define name="body">
 			<div class="words">
 				<o:script>
-					wordView.text = '#{wordsWordView.text}';
+					wordView.text = "#{wordsWordView.text}";
 				</o:script>
 				<div id="word" class="words_word">
 					<h1>#{wordsWordView.text}</h1>
@@ -68,7 +68,7 @@
 													
 												</span>
 												<c:if test="#{wordsLayoutView.loggedIn}">
-													<a href="javascript://"
+													<a href="javascript://" class="words_word_action"
 														onclick="wordView.deleteRelation({id:#{relation.id},element:this,event:event}); return false;"
 													><o:out value="#{msg.remove}" lower="true"/></a>
 												</c:if>
@@ -99,29 +99,32 @@
 					</p>
 					<gui:diagram name="diagram"/>
 					
-					<gui:boundPanel name="wordEditor" hideOnClick="true" rendered="#{wordsLayoutView.loggedIn}">
-						<div class="panel_body" style="width: 400px">
+					<gui:boundPanel name="wordEditor" hideOnClick="true" width="400" rendered="#{wordsLayoutView.loggedIn}">
+						<div class="panel_body">
 							<h2>#{msg.lexical_categories}</h2>
 							<ul class="selection">
 								<c:forEach items="#{wordsWordView.categories}" var="cat">
-									<li><a rel="#{cat.value}"><strong>#{cat.label} :</strong> #{cat.description}</a></li>
+									<c:if test="#{not empty cat.value}">
+										<li><a rel="#{cat.value}"><strong>#{cat.label} :</strong> #{cat.description}</a></li>
+									</c:if>
 								</c:forEach>
 							</ul>
 						</div>
 					</gui:boundPanel>
 					
-					<gui:boundPanel name="languagePanel" hideOnClick="true" rendered="#{wordsLayoutView.loggedIn}">
-						<div class="panel_body" style="width: 200px">
+					<gui:boundPanel name="languagePanel" hideOnClick="true" width="200" rendered="#{wordsLayoutView.loggedIn}">
+						<div class="panel_body">
 							<h2>#{msg.languages}</h2>
 							<ul class="selection">
-								<li><a rel="en"><strong>#{msg.en}</strong></a></li>
-								<li><a rel="da"><strong>#{msg.da}</strong></a></li>
+								<c:forEach items="#{wordsWordView.languages}" var="cat">
+									<li><a rel="#{cat.value}"><strong>#{cat.label}</strong></a></li>
+								</c:forEach>
 							</ul>
 						</div>
 					</gui:boundPanel>
 					
-					<gui:boundPanel name="relationKindPanel" hideOnClick="true" rendered="#{wordsLayoutView.loggedIn}">
-						<div class="panel_body" style="width: 200px">
+					<gui:boundPanel name="relationKindPanel" hideOnClick="true" width="200" rendered="#{wordsLayoutView.loggedIn}">
+						<div class="panel_body">
 							<h2>#{msg.relation_kind}</h2>
 							<ul class="selection">
 								<c:forEach items="#{wordsWordView.relations}" var="cat">
@@ -130,6 +133,22 @@
 							</ul>
 						</div>
 					</gui:boundPanel>
+
+			
+					<gui:boundPanel name="addVariantPanel" hideOnClick="true" width="200">
+						<gui:formula name="addVariantForm">
+							<gui:fields>
+								<gui:field label="#{msg.language}">
+									<gui:dropDown key="language" items="#{wordsWordView.languages}"/>
+								</gui:field>
+								<gui:field label="#{msg.category}">
+									<gui:dropDown key="category" items="#{wordsWordView.categories}"/>
+								</gui:field>
+							</gui:fields>
+							<gui:button text="#{msg.add}" name="addVariantButton" highlighted="true"/>
+						</gui:formula>
+					</gui:boundPanel>
+					
 				</div>
 			</div>
 		</ui:define>

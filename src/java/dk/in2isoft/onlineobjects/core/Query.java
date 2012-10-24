@@ -190,7 +190,7 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 
 	public org.hibernate.Query createIdQuery(Session session) {
 		StringBuilder hql = new StringBuilder("select obj.id");
-		return createQuery(hql, session, false);
+		return createQuery(hql, session, true);
 	}
 
 	private org.hibernate.Query createQuery(StringBuilder hql, Session session, boolean ignorePaging) {
