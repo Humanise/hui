@@ -1,0 +1,55 @@
+<f:view contentType="text/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:gui="http://www.in2isoft.dk/in2igui"
+	xmlns:o="http://www.onlineobjects.com/jsf" 
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	locale="#{wordsLayoutView.language}"
+>
+<f:loadBundle basename="dk.in2isoft.onlineobjects.apps.words.msg.Words" var="msg"/>
+
+<o:doctype/>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<h:head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title><ui:insert name="title"/>Words - OnlineObjects</title>
+		<gui:importStyle/>
+		<o:stylesheet href="/core/css/onlineobjects.css" core="true"/>
+		<o:stylesheet href="/core/css/common.css" core="true"/>
+		<o:stylesheet href="/core/fonts/awesome/css/font-awesome.css" core="true"/>
+		<o:stylesheet href="/style/css/style.css"/>
+		<o:stylesheet href="/hui/ext/diagram.css" core="true"/>
+		<gui:importScripts/>
+		<o:script src="/core/js/onlineobjects.js" core="true"/>
+		<o:scriptSetup/>
+		<o:script src="/dwr/interface/CoreSecurity.js" core="true"/>
+		<o:script src="/dwr/interface/AppPhotos.js" core="true"/>
+		<o:script src="/dwr/interface/Common.js" core="true"/>
+		<o:script src="/dwr/engine.js" core="true"/>
+		<ui:insert name="scripts"/>
+	</h:head>
+	<body>
+		<o:topBar/>
+		<o:layout>
+			<f:facet name="sidebar">
+			<ui:insert name="sidebar"/>
+			</f:facet>
+			<ui:insert name="body"/>
+		</o:layout>
+		<p class="common_footer oo_faded">
+			<c:forEach items="#{wordsLayoutView.languages}" var="item" varStatus="status">
+				<c:if test="#{not status.first}"> · </c:if>
+				<c:if test="#{item.selected}">
+					<strong>#{item.label}</strong>
+				</c:if>
+				<c:if test="#{not item.selected}">
+					<o:link href="#{item.value}">#{item.label}</o:link>
+				</c:if>
+			</c:forEach>
+		</p>
+		<o:analytics/>
+	</body>
+</html>
+
+</f:view>

@@ -1,0 +1,172 @@
+body
+{
+	background: #fafafa;
+	font-family: 'Helvetica Neue','Helvetica',Arial,sans-serif;
+	margin: 0;
+}
+
+/***************** Links ***************/
+
+a.oo_link
+{
+	color: #ddd;
+}
+
+a.oo_link span
+{
+	color: #08c;
+	-webkit-transition: color 1s;
+	-moz-transition: color 1s;
+	-ms-transition: color 1s;
+}
+
+body.oo_fade a.oo_link span
+{
+	color: #333;
+}
+
+/****************** Photo ***************/
+
+div.photos_photo h1
+{
+	font-weight: 100;
+	margin: 5px 10px;
+	color: #333;
+}
+
+p.photos_photo_by
+{
+	font-weight: 400;
+	font-size: 12px;
+	margin: 5px 10px 10px;
+	color: #999;
+}
+
+p.photos_photo_by strong
+{
+	color: #333;
+	font-weight: 500;
+}
+
+div.photos_photo_image
+{
+	padding-left: 1px;
+	margin-bottom: 1px;
+	position: relative;
+	font-size: 0;
+}
+
+div.photos_controller
+{
+	height: 44px;
+	background: rgba(0,0,0,.2);
+	border-radius: 5px;
+	font-size: 0;
+	position: absolute;
+	bottom: 10px;
+	right: 10px;
+	padding: 0 4px;
+	opacity: 0;
+	-webkit-transition: opacity 1s;
+	-moz-transition: opacity 1s;
+}
+
+div.photos_photo_image:hover div.photos_controller
+{
+	opacity: 1;
+}
+
+body.oo_fade div.photos_photo_image:hover div.photos_controller
+{
+	opacity: 0;
+}
+
+div.photos_controller a
+{
+	vertical-align: middle;
+	display: inline-block;
+	font-size: 36px;
+	width: 44px;
+	height: 44px;
+	line-height: 44px;
+	color: rgba(255,255,255,1);
+	cursor: pointer;
+	text-align: center;
+	text-decoration: none;
+	text-shadow: 0 0 2px rgba(0,0,0,.5);
+}
+
+div.photos_controller a:hover
+{
+	font-size: 40px;
+}
+
+div.photos_controller a:active
+{
+	font-size: 30px;
+}
+
+
+
+div.photos_controller_top
+{
+	bottom: none;
+	top: 10px;
+}
+
+div.photos_controller_top a
+{
+	width: 34px;
+}
+
+
+
+
+div.photos_photo_properties
+{
+	font-weight: 300;
+	padding: 80px 10px;
+	font-size: 12px;
+}
+
+div.photos_photo_properties p
+{
+	margin: 0 0 5px;
+}
+
+div.photos_photo_properties strong
+{
+	font-weight: 400;
+	color: #999;
+}
+
+p.photos_photo_description
+{
+	margin: 10px;
+	font-weight: 200;
+	line-height: 20px;
+	font-size: 11pt;
+	color: #555;
+}
+
+p.photos_photo_description span
+{
+	font-size: 64px;
+	display: inline-block;
+	color: #ddd;
+	position: relative;
+	top: 10px;
+	font-family: Georgia;
+	vertical-align: middle;
+	height: 12px;
+}
+
+span.photos_photo_description_start
+{
+	margin-right: 3px;
+}
+
+span.photos_photo_description_end
+{
+	margin-left: 3px;
+}

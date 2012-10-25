@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:o="http://www.onlineobjects.com/jsf" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:gui="http://www.in2isoft.dk/in2igui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+>
+	<ui:composition template="templates/plain.xhtml">
+		
+		<ui:define name="title">#{photosPhotoView.image.name} - </ui:define>
+		
+		<ui:define name="scripts">
+			<c:if test="#{not empty photosPhotoView.image}">
+				<o:script src="/style/js/photo_view.js"/>
+				<o:script>
+				photoView.editable = #{photosPhotoView.canModify};
+				photoView.imageId = #{photosPhotoView.image.id};
+				</o:script>
+			</c:if>
+		</ui:define>
+		
+		<ui:define name="body">
+			<c:if test="#{empty photosPhotoView.image}">
+				<h2 class="message">Billedet blev ikke fundet</h2>
+			</c:if>
+			<c:if test="#{not empty photosPhotoView.image}">
+				<div class="photos_photo">
+					<h1 id="editableTitle">#{photosPhotoView.image.name}</h1>
+					<p class="photos_photo_by"><span>Tilføjet </span><strong>
+						<h:outputText value="#{photosPhotoView.image.created}">
+							<f:convertDateTime pattern="EEEE 'd'. d.  MMMM yyyy" locale="da_DK"/>
+						</h:outputText></strong> af <o:link href="/#{photosPhotoView.user.username}/">#{photosPhotoView.person.fullName}</o:link>
+					</p>
+					<div class="photos_photo_image">
+						<o:thumbnail image="#{photosPhotoView.image}" width="778" zoom="true" frame="false"/>
+						<div class="photos_controller oo_faded">
+							<o:link href="/service/image/id#{photosPhotoView.image.id}.jpg?download=true" core="true" plain="true"><i class="icon-download-alt"></i></o:link>
+							<o:link href="/service/image/id#{photosPhotoView.image.id}.jpg" core="true" plain="true"><i class="icon-resize-full"></i></o:link>
+						</div>
+						<div class="photos_controller photos_controller_top oo_faded">
+							<o:link href="/#{wordsLayoutView.language}/photo/#{photosPhotoView.previousId}.html" plain="true"><i class="icon-chevron-left"></i></o:link>
+							<o:link href="/#{wordsLayoutView.language}/photo/#{photosPhotoView.nextId}.html" plain="true"><i class="icon-chevron-right"></i></o:link>
+						</div> 
+					</div>
+					<c:if test="#{not empty photosPhotoView.description}">
+						<p class="photos_photo_description">
+							<span class="photos_photo_description_start">&#8220;</span><o:out value="#{photosPhotoView.description}" escape="false"/><span class="photos_photo_description_end">&#8221;</span>
+						</p>
+					</c:if>
+				</div>
+			</c:if>
+		</ui:define>
+		
+		<ui:define name="sidebar">
+			<div class="photos_photo_properties oo_faded">
+
+				<c:forEach items="#{photosPhotoView.properties}" var="prop">
+					<p><strong>#{prop.label}:</strong> #{prop.value}</p>
+				</c:forEach>
+				
+			
+				<c:if test="#{not empty photosPhotoView.imageInfo.tags}">
+					<p class="tags">
+						<c:forEach items="#{photosPhotoView.imageInfo.tags}" var="tag">
+							<a class="tag" href="#{baseView.baseContext}/search.html?tag=#{tag}"><span>#{tag}</span></a><h:outputText value=" "/>
+						</c:forEach>
+					</p>
+				</c:if>
+				
+				<h:panelGroup rendered="#{not empty photosPhotoView.location}">
+					<p>
+						<span class="label">Breddegrad: </span>
+						<h:outputText value="#{photosPhotoView.location.latitudeDegrees}">
+							<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
+						</h:outputText><span>&#176; </span>
+						<h:outputText value="#{photosPhotoView.location.latitudeMinutes}">
+							<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
+						</h:outputText><span>' </span>
+						<h:outputText value="#{photosPhotoView.location.latitudeSeconds}">
+							<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
+						</h:outputText><span>" </span>
+						#{photosPhotoView.location.latitudeNorth ? 'Nord' : 'Syd'}
+						<span class="minor dimmed">(<h:outputText value="#{photosPhotoView.location.latitude}">
+							<f:convertNumber minFractionDigits="2" maxFractionDigits="8"/>
+						</h:outputText>)</span>
+					</p>
+					<p>
+						<span class="label">Længdegrad: </span>
+						<h:outputText value="#{photosPhotoView.location.longitudeDegrees}">
+							<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
+						</h:outputText><span>&#176; </span>
+						<h:outputText value="#{photosPhotoView.location.longitudeMinutes}">
+							<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
+						</h:outputText><span>' </span>
+						<h:outputText value="#{photosPhotoView.location.longitudeSeconds}">
+							<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
+						</h:outputText><span>" </span>
+						#{photosPhotoView.location.longitudeEast ? 'Øst' : 'Vest'}
+						<span class="minor dimmed">(<h:outputText value="#{photosPhotoView.location.longitude}">
+							<f:convertNumber minFractionDigits="2" maxFractionDigits="8"/>
+						</h:outputText>)</span>
+					</p>
+				</h:panelGroup>
+			</div>
+		</ui:define>
+		
+	</ui:composition>
+</html>
