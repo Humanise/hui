@@ -15,8 +15,8 @@
 			<c:if test="#{not empty photosPhotoView.image}">
 				<o:script src="/style/js/photo_view.js"/>
 				<o:script>
-				photoView.editable = #{photosPhotoView.canModify};
-				photoView.imageId = #{photosPhotoView.image.id};
+					photoView.editable = #{photosPhotoView.canModify};
+					photoView.imageId = #{photosPhotoView.image.id};
 				</o:script>
 			</c:if>
 		</ui:define>
@@ -60,7 +60,6 @@
 					<p><strong>#{prop.label}:</strong> #{prop.value}</p>
 				</c:forEach>
 				
-			
 				<c:if test="#{not empty photosPhotoView.imageInfo.tags}">
 					<p class="tags">
 						<c:forEach items="#{photosPhotoView.imageInfo.tags}" var="tag">
@@ -68,41 +67,6 @@
 						</c:forEach>
 					</p>
 				</c:if>
-				
-				<h:panelGroup rendered="#{not empty photosPhotoView.location}">
-					<p>
-						<span class="label">Breddegrad: </span>
-						<h:outputText value="#{photosPhotoView.location.latitudeDegrees}">
-							<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
-						</h:outputText><span>&#176; </span>
-						<h:outputText value="#{photosPhotoView.location.latitudeMinutes}">
-							<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
-						</h:outputText><span>' </span>
-						<h:outputText value="#{photosPhotoView.location.latitudeSeconds}">
-							<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
-						</h:outputText><span>" </span>
-						#{photosPhotoView.location.latitudeNorth ? 'Nord' : 'Syd'}
-						<span class="minor dimmed">(<h:outputText value="#{photosPhotoView.location.latitude}">
-							<f:convertNumber minFractionDigits="2" maxFractionDigits="8"/>
-						</h:outputText>)</span>
-					</p>
-					<p>
-						<span class="label">Længdegrad: </span>
-						<h:outputText value="#{photosPhotoView.location.longitudeDegrees}">
-							<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
-						</h:outputText><span>&#176; </span>
-						<h:outputText value="#{photosPhotoView.location.longitudeMinutes}">
-							<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
-						</h:outputText><span>' </span>
-						<h:outputText value="#{photosPhotoView.location.longitudeSeconds}">
-							<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
-						</h:outputText><span>" </span>
-						#{photosPhotoView.location.longitudeEast ? 'Øst' : 'Vest'}
-						<span class="minor dimmed">(<h:outputText value="#{photosPhotoView.location.longitude}">
-							<f:convertNumber minFractionDigits="2" maxFractionDigits="8"/>
-						</h:outputText>)</span>
-					</p>
-				</h:panelGroup>
 			</div>
 		</ui:define>
 		

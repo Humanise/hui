@@ -19,7 +19,7 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
 
-import dk.in2isoft.commons.lang.LangUtil;
+import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.commons.util.RestUtil;
 import dk.in2isoft.in2igui.FileBasedInterface;
 import dk.in2isoft.onlineobjects.apps.videosharing.RequestMapping;
@@ -127,7 +127,7 @@ public abstract class ApplicationController implements ModelEventListener,Initia
 	}
 
 	public ApplicationSession createToolSession() {
-		return null;
+		return new ApplicationSession();
 	}
 
 	public void itemWasCreated(Item item) {
@@ -160,9 +160,9 @@ public abstract class ApplicationController implements ModelEventListener,Initia
 		File file;
 		if (localPath.length > 0 && localPath[localPath.length - 1].endsWith(".gui")) {
 			localPath[localPath.length - 1] = localPath[localPath.length - 1] + ".xml";
-			file = getFile(LangUtil.combine("web", localPath));
+			file = getFile(Strings.combine("web", localPath));
 		} else {
-			file = getFile(LangUtil.combine("web", localPath, "index.gui.xml"));
+			file = getFile(Strings.combine("web", localPath, "index.gui.xml"));
 		}
 		if (file.exists()) {
 			FileBasedInterface ui = new FileBasedInterface(file);

@@ -1,6 +1,6 @@
 package dk.in2isoft.onlineobjects.core;
 
-import dk.in2isoft.commons.lang.LangUtil;
+import dk.in2isoft.commons.lang.Strings;
 
 public abstract class SubSession {
 
@@ -8,7 +8,7 @@ public abstract class SubSession {
 	private String id;
 	
 	public SubSession() {
-		this.id = LangUtil.generateRandomString(20);
+		this.id = Strings.generateRandomString(20);
 	}
 	
 	public final String getId() {

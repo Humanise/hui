@@ -4,7 +4,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 import dk.in2isoft.commons.geo.GeoLatLng;
-import dk.in2isoft.commons.lang.LangUtil;
+import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Location;
 import dk.in2isoft.onlineobjects.model.Relation;
@@ -37,7 +37,7 @@ public class  LocationQuery<T extends Entity> implements PairQuery<Location, T> 
 		hql.append(",").append(cls.getName()).append(" as entity");
 		hql.append(",").append(Relation.class.getName()).append(" as rel");
 		hql.append(" where rel.subEntity=entity and rel.superEntity=location");
-		if (LangUtil.isDefined(words)) {
+		if (Strings.isDefined(words)) {
 			for (int i = 0; i < words.length; i++) {
 				hql.append(" and (lower(entity.name) like lower(:word" + i + ") or lower(location.name) like lower(:word" + i + "))");
 			}
@@ -54,7 +54,7 @@ public class  LocationQuery<T extends Entity> implements PairQuery<Location, T> 
 			q.setMaxResults(pageSize);
 			q.setFirstResult(pageNumber * pageSize);
 		}
-		if (LangUtil.isDefined(words)) {
+		if (Strings.isDefined(words)) {
 			for (int i = 0; i < words.length; i++) {
 				String word = words[i];
 				q.setString("word" + i, "%" + word + "%");
@@ -70,8 +70,8 @@ public class  LocationQuery<T extends Entity> implements PairQuery<Location, T> 
 	}
 
 	public LocationQuery<T> withWords(String query) {
-		if (LangUtil.isDefined(query)) {
-			words = LangUtil.getWords(query);
+		if (Strings.isDefined(query)) {
+			words = Strings.getWords(query);
 		}
 		return this;
 	}

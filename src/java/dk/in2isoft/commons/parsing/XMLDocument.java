@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.Charset;
 
 import nu.xom.Builder;
 import nu.xom.ParsingException;
@@ -14,10 +13,8 @@ import nu.xom.converters.DOMConverter;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.apache.xerces.dom.DOMImplementationImpl;
+import org.ccil.cowan.tagsoup.Parser;
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 public class XMLDocument extends TextDocument {
 
@@ -48,13 +45,11 @@ public class XMLDocument extends TextDocument {
 			InputStream input = null;
 			InputStreamReader reader = null;
 			try {
-				XMLReader tagsoup = XMLReaderFactory.createXMLReader("org.ccil.cowan.tagsoup.Parser");
+				Parser tagsoup = new Parser();
 				Builder bob = new Builder(tagsoup);
 				input = this.url.openStream();
 				reader = new InputStreamReader(input,"UTF-8");
 				XOMDocument = bob.build(reader);
-			} catch (SAXException e) {
-				log.error(e);
 			} catch (ParsingException e) {
 				log.error(e);
 			} catch (IOException e) {

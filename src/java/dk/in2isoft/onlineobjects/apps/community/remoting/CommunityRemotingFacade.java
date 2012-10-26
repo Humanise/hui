@@ -17,7 +17,7 @@ import org.joda.time.DateTime;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import dk.in2isoft.commons.lang.LangUtil;
+import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.in2igui.data.ListData;
 import dk.in2isoft.in2igui.data.ListDataRow;
@@ -419,11 +419,11 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 	public void sendFeedback(String emailAddress,String message) throws EndUserException {
 		emailAddress = emailAddress.trim();
 		message = message.trim();
-		if (!LangUtil.isDefined(emailAddress)) {
+		if (!Strings.isDefined(emailAddress)) {
 			throw new EndUserException("The email address is empty!");
 		} else if (!ValidationUtil.isWellFormedEmail(emailAddress)) {
 			throw new EndUserException("The email address is not well formed!");
-		} else if (!LangUtil.isDefined(message)) {
+		} else if (!Strings.isDefined(message)) {
 			throw new EndUserException("The message is empty!");
 		}
 		communityDAO.sendFeedback(emailAddress, message);

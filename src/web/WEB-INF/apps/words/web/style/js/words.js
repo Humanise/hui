@@ -1,4 +1,25 @@
 var wordsApp = {
+	$ready : function() {
+		hui.drag.listen({
+			element : document.body,
+			hoverClass : 'words_dropping',
+			$dropFiles : this._dropFiles.bind(this)/*,
+			$dropText : this._dropText.bind(this),
+			$dropURL : this._dropURL.bind(this)*/
+		});
+	},
+	_dropFiles : function(files) {
+		var win = hui.ui.Window.create({width:300});
+		var upload = hui.ui.Upload.create({url:oo.appContext+'/upload'});
+		upload.listen({
+			$uploadDidComplete : function(info) {
+				document.location=oo.appContext+'/en/import/'+info.request.responseText+'/';
+			}
+		})
+		win.add(upload);
+		win.show();
+		upload.uploadFiles(files);
+	},
 	$click$import : function() {
 		if (!this._importWindow) {
 			var win = this._importWindow = hui.ui.Box.create({title:'Import',absolute:true,width:500,modal:true,padding:10,closable:true});

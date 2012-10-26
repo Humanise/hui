@@ -3,7 +3,7 @@ package dk.in2isoft.onlineobjects.core;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
-import dk.in2isoft.commons.lang.LangUtil;
+import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.commons.util.HQLBuilder;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Person;
@@ -44,7 +44,7 @@ public class UserQuery implements PairQuery<User, Person> {
 		if (username!=null) {
 			hql.where("user.username=:username");
 		}
-		if (LangUtil.isDefined(words)) {
+		if (Strings.isDefined(words)) {
 			for (int i = 0; i < words.length; i++) {
 				hql.where("(lower(person.name) like lower(:word" + i + ") or lower(user.name) like lower(:word" + i + "))");
 			}
@@ -66,7 +66,7 @@ public class UserQuery implements PairQuery<User, Person> {
 		if (username!=null) {
 			q.setString("username", username);
 		}
-		if (LangUtil.isDefined(words)) {
+		if (Strings.isDefined(words)) {
 			for (int i = 0; i < words.length; i++) {
 				String word = words[i];
 				q.setString("word" + i, "%" + word + "%");
@@ -86,8 +86,8 @@ public class UserQuery implements PairQuery<User, Person> {
 	}
 
 	public UserQuery withWords(String query) {
-		if (LangUtil.isDefined(query)) {
-			words = LangUtil.getWords(query);
+		if (Strings.isDefined(query)) {
+			words = Strings.getWords(query);
 		}
 		return this;
 	}

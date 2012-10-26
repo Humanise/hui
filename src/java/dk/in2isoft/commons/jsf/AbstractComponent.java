@@ -74,11 +74,11 @@ public abstract class AbstractComponent extends UIComponentBase {
 			super.encodeEnd(context);
 		}
 	}
-	protected void encodeBegin(FacesContext context, TagWriter writer) throws IOException {};
+	protected void encodeBegin(FacesContext context, TagWriter out) throws IOException {};
 
-	protected void encodeChildren(FacesContext context, TagWriter writer) throws IOException {};
+	protected void encodeChildren(FacesContext context, TagWriter out) throws IOException {};
 	
-	protected void encodeEnd(FacesContext context, TagWriter writer) throws IOException {}
+	protected void encodeEnd(FacesContext context, TagWriter out) throws IOException {}
 
 	@SuppressWarnings("unchecked")
 	public <T> T getBinding(String name) {

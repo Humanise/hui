@@ -44,7 +44,7 @@ public class TestFeedComparison extends AbstractTestCase {
 		List<String> urls = Lists.newArrayList();
 
 		//URL feedUrl = new URL("http://feeds.feedburner.com/AjaxRain");
-		URL feedUrl = new URL("http://www.alistapart.com/feed/rss.xml");
+		URL feedUrl = new URL("http://feeds.feedburner.com/alistapart/main?format=xml");
 		//URL feedUrl = new URL("http://www.readwriteweb.com/rss.xml");
 		//URL feedUrl = new URL("http://3quarksdaily.blogs.com/3quarksdaily/index.rdf");
 		

@@ -1,0 +1,51 @@
+package dk.in2isoft.onlineobjects.apps.words.importing;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Map;
+
+import org.apache.commons.io.IOUtils;
+
+import dk.in2isoft.onlineobjects.core.EndUserException;
+import dk.in2isoft.onlineobjects.importing.ImportListerner;
+import dk.in2isoft.onlineobjects.modules.importing.ImportHandler;
+import dk.in2isoft.onlineobjects.modules.importing.ImportSession.Status;
+import dk.in2isoft.onlineobjects.ui.Request;
+
+public class WordsImporter implements ImportListerner,ImportHandler,TextImporter {
+
+	private Status status = Status.waiting;
+	private String text;
+	private String title;
+	
+	public String getProcessName() {
+		return "wordsImport";
+	}
+
+	public void processFile(File file, String mimeType, String name, Map<String, String> parameters, Request request) throws IOException, EndUserException {
+		status = Status.transferring;
+		FileInputStream stream = new FileInputStream(file);
+		text = IOUtils.toString(stream,"UTF-8");
+		title = name;
+		IOUtils.closeQuietly(stream);
+		System.out.println(text);
+		status = Status.success;
+	}
+
+	public Status getStatus() {
+		return status;
+	}
+
+	public void start() {
+		
+	}
+
+	public String getText() {
+		return text;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+}

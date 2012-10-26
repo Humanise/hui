@@ -2,6 +2,7 @@
 package dk.in2isoft.commons.parsing;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,15 +33,20 @@ public class HTMLDocument extends XMLDocument {
 		super(url);
 	}
 	
+	public HTMLDocument(URI uri) throws MalformedURLException {
+		super(uri.toURL());
+	}
 	public String getTitle() {
 		if (this.title==null) {
 			Document doc = getDOMDocument();
-			NodeList titles = doc.getElementsByTagName("title");
-			if (titles.getLength()>0) {
-				Node titleNode = titles.item(0);
-				Node text = titleNode.getFirstChild();
-				if (text!=null) {
-					this.title = text.getNodeValue();
+			if (doc!=null) {
+				NodeList titles = doc.getElementsByTagName("title");
+				if (titles.getLength()>0) {
+					Node titleNode = titles.item(0);
+					Node text = titleNode.getFirstChild();
+					if (text!=null) {
+						this.title = text.getNodeValue();
+					}
 				}
 			}
 		}
@@ -48,29 +54,33 @@ public class HTMLDocument extends XMLDocument {
 	}
     
     public String getMeta(String key) {
-        String value=null;
+        String value = null;
         Document doc = getDOMDocument();
-        NodeList metas = doc.getElementsByTagName("meta");
-        for (int i=0;i<metas.getLength();i++) {
-            Node meta = metas.item(i);
-            if (getAttributeValue(meta,"name").equalsIgnoreCase(key)) {
-                value=getAttributeValue(meta,"content");
-            }
-            else if (getAttributeValue(meta,"http-equiv").equalsIgnoreCase(key)) {
-                value=getAttributeValue(meta,"content");
-            }
-        }
+		if (doc!=null) {
+	        NodeList metas = doc.getElementsByTagName("meta");
+	        for (int i=0;i<metas.getLength();i++) {
+	            Node meta = metas.item(i);
+	            if (getAttributeValue(meta,"name").equalsIgnoreCase(key)) {
+	                value=getAttributeValue(meta,"content");
+	            }
+	            else if (getAttributeValue(meta,"http-equiv").equalsIgnoreCase(key)) {
+	                value=getAttributeValue(meta,"content");
+	            }
+	        }
+		}
         return value;
     }
 	
 	public String getContentType() {
 		if (this.contentType==null) {
 			Document doc = getDOMDocument();
-			NodeList metas = doc.getElementsByTagName("meta");
-			for (int i=0;i<metas.getLength();i++) {
-				Node meta = metas.item(i);
-				if (getAttributeValue(meta,"http-equiv").equalsIgnoreCase("content-type")) {
-					contentType=getAttributeValue(meta,"content");
+			if (doc!=null) {
+				NodeList metas = doc.getElementsByTagName("meta");
+				for (int i=0;i<metas.getLength();i++) {
+					Node meta = metas.item(i);
+					if (getAttributeValue(meta,"http-equiv").equalsIgnoreCase("content-type")) {
+						contentType=getAttributeValue(meta,"content");
+					}
 				}
 			}
 		}

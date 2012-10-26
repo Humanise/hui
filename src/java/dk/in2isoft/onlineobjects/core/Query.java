@@ -10,7 +10,7 @@ import org.hibernate.Session;
 
 import com.google.common.collect.Lists;
 
-import dk.in2isoft.commons.lang.LangUtil;
+import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Privilege;
 import dk.in2isoft.onlineobjects.model.Relation;
@@ -68,8 +68,8 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 	}
 
 	public Query<T> withWords(String query) {
-		if (LangUtil.isDefined(query)) {
-			words = LangUtil.getWords(query);
+		if (Strings.isDefined(query)) {
+			words = Strings.getWords(query);
 		}
 		return this;
 	}
@@ -217,7 +217,7 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 		if (!ignorePaging && Entity.class.isAssignableFrom(clazz)) {
 			hql.append(" left join fetch obj.properties");
 		}
-		if (LangUtil.isDefined(words) && Entity.class.isAssignableFrom(clazz) || customProperties.size() > 0) {
+		if (Strings.isDefined(words) && Entity.class.isAssignableFrom(clazz) || customProperties.size() > 0) {
 			hql.append(" left join obj.properties as p");
 		}
 		/*
@@ -232,7 +232,7 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 			hql.append(" left join childRelation.subEntity as childSub");
 		}
 		hql.append(" where obj.id>0");
-		if (LangUtil.isDefined(words)) {
+		if (Strings.isDefined(words)) {
 			for (int i = 0; i < words.length; i++) {
 				hql.append(" and (lower(obj.name) like lower(:word" + i + ") or lower(p.value) like lower(:word" + i
 						+ "))");
@@ -310,7 +310,7 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 			} else if (child != null && inPosition) {
 				hql.append(" order by childRelation.position");
 				hql.append(descending ? " desc" : " asc");
-			} else if (LangUtil.isDefined(ordering)) {
+			} else if (Strings.isDefined(ordering)) {
 				hql.append(" order by ").append(ordering);
 				hql.append(descending ? " desc" : " asc");
 			} else if (Entity.class.isAssignableFrom(clazz)) {
@@ -337,7 +337,7 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 				q.setString(limit.getProperty(), limit.getValue().toString());
 			}
 		}
-		if (LangUtil.isDefined(words)) {
+		if (Strings.isDefined(words)) {
 			for (int i = 0; i < words.length; i++) {
 				String word = words[i];
 				q.setString("word" + i, "%" + word + "%");

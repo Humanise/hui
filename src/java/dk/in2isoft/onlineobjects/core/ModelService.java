@@ -34,7 +34,7 @@ import org.hibernate.proxy.HibernateProxy;
 
 import com.google.common.collect.Lists;
 
-import dk.in2isoft.commons.lang.LangUtil;
+import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.events.EventService;
 import dk.in2isoft.onlineobjects.junk.HibernateUtil;
 import dk.in2isoft.onlineobjects.model.Entity;
@@ -676,13 +676,13 @@ public class ModelService {
 		hql.append("select p.value as value,count(p.id) as count from ");
 		hql.append(cls.getSimpleName()).append(" as entity");
 		hql.append(" left join entity.properties as p where p.key=:key");
-		if (LangUtil.isDefined(query)) {
+		if (Strings.isDefined(query)) {
 			hql.append(" and lower(value) like lower(:query)");
 		}
 		hql.append(" group by p.value order by lower(value)");
 		Query q = session.createQuery(hql.toString());
 		q.setString("key", key);
-		if (LangUtil.isDefined(query)) {
+		if (Strings.isDefined(query)) {
 			q.setString("query", "%" + query + "%");
 		}
 		ScrollableResults scroll = q.scroll();

@@ -31,7 +31,7 @@ public class TestFeedParsing extends AbstractTestCase {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testAlistApartFeed() throws EndUserException, IllegalArgumentException, FeedException, IOException {
-		URL feedUrl = new URL("http://www.alistapart.com/feed/rss.xml");
+		URL feedUrl = new URL("http://feeds.feedburner.com/alistapart/main?format=xml");
 
         WireFeedInput input = new WireFeedInput();
         WireFeed feed = input.build(new XmlReader(feedUrl));

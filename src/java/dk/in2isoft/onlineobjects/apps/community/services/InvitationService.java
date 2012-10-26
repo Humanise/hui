@@ -3,7 +3,7 @@ package dk.in2isoft.onlineobjects.apps.community.services;
 import java.util.HashMap;
 import java.util.Map;
 
-import dk.in2isoft.commons.lang.LangUtil;
+import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.ModelException;
@@ -35,7 +35,7 @@ public class InvitationService {
 		User user = session.getUser();
 
 		Invitation invitation = new Invitation();
-		invitation.setCode(LangUtil.generateRandomString(40));
+		invitation.setCode(Strings.generateRandomString(40));
 		invitation.setMessage(message);
 		modelService.createItem(invitation, session);
 

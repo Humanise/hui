@@ -1,5 +1,7 @@
 package dk.in2isoft.onlineobjects.apps.photos.views;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 
@@ -10,6 +12,8 @@ import org.springframework.beans.factory.InitializingBean;
 
 import com.google.common.collect.Lists;
 
+import dk.in2isoft.commons.lang.Files;
+import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.apps.community.jsf.AbstractManagedBean;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Pair;
@@ -24,6 +28,7 @@ import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.util.Dates;
 import dk.in2isoft.onlineobjects.util.images.ImageInfo;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
+import freemarker.template.SimpleNumber;
 
 public class PhotosPhotoView extends AbstractManagedBean implements InitializingBean {
 
@@ -76,15 +81,42 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 			Locale locale = getRequest().getLocale();
 			properties = Lists.newArrayList();
 			properties.add(new SelectItem(image.getWidth()+" x "+image.getHeight()+" - "+getMegaPixels()+" Megapixel","Size"));
-			properties.add(new SelectItem(image.getFileSize()+"byte, "+image.getContentType(),"File"));
+			properties.add(new SelectItem(Files.formatFileSize(image.getFileSize())+", "+image.getContentType(),"File"));
 			if (imageInfo.getTaken()!=null) {
 				properties.add(new SelectItem(Dates.formatLongDate(imageInfo.getTaken(),locale ),"Date"));
 			}
-			if (StringUtils.isNotBlank(imageInfo.getCameraMake())) {
+			if (Strings.isNotBlank(imageInfo.getCameraMake())) {
 				//properties.add(new SelectItem(imageInfo.getCameraMake(),"Camera manufacturer"));
 			}
-			if (StringUtils.isNotBlank(imageInfo.getCameraModel())) {
+			if (Strings.isNotBlank(imageInfo.getCameraModel())) {
 				properties.add(new SelectItem(imageInfo.getCameraModel(),"Camera"));
+			}
+			if (location!=null) {
+				DecimalFormat format = new DecimalFormat();
+				format.setMinimumFractionDigits(0);
+				format.setMaximumFractionDigits(2);
+				{
+					StringBuilder latitude = new StringBuilder();
+					latitude.append(format.format(location.getLatitudeDegrees()));
+					latitude.append(Strings.DEGREE).append(" ");
+					latitude.append(format.format(location.getLatitudeMinutes()));
+					latitude.append(Strings.RIGHT_SINGLE_QUOTE).append(" ");
+					latitude.append(format.format(location.getLatitudeSeconds()));
+					latitude.append(Strings.DOUBLE_APOSTROPHE);
+					latitude.append(location.isLatitudeNorth() ? " North" : " South");
+					properties.add(new SelectItem(latitude.toString(), "Latitude"));
+				}
+				{
+					StringBuilder longitude = new StringBuilder();
+					longitude.append(format.format(location.getLongitudeDegrees()));
+					longitude.append(Strings.DEGREE).append(" ");
+					longitude.append(format.format(location.getLongitudeMinutes()));
+					longitude.append(Strings.RIGHT_SINGLE_QUOTE).append(" ");
+					longitude.append(format.format(location.getLongitudeSeconds()));
+					longitude.append(Strings.DOUBLE_APOSTROPHE);
+					longitude.append(location.isLongitudeEast() ? " East" : " West");
+					properties.add(new SelectItem(longitude.toString(), "Longitude"));
+				}
 			}
 		}
 	}

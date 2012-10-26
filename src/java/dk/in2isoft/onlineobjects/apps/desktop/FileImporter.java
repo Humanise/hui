@@ -10,13 +10,11 @@ import dk.in2isoft.onlineobjects.ui.Request;
 
 public class FileImporter implements ImportListerner {
 
-	@Override
 	public void processFile(File file, String mimeType, String name,Map<String, String> parameters, Request request)
 			throws IOException, EndUserException {
 		System.out.println(file.getName());
 	}
 
-	@Override
 	public String getProcessName() {
 		return "fileImport";
 	}

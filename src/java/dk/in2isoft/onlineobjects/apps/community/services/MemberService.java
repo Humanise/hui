@@ -2,7 +2,7 @@ package dk.in2isoft.onlineobjects.apps.community.services;
 
 import org.apache.commons.lang.StringUtils;
 
-import dk.in2isoft.commons.lang.LangUtil;
+import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.ModelService;
@@ -30,17 +30,17 @@ public class MemberService {
 		if (!ValidationUtil.isValidUsername(username)) {
 			throw new IllegalRequestException("Username contains invalid characters","invalidUsername");
 		}
-		if (!LangUtil.isDefined(password)) {
+		if (!Strings.isDefined(password)) {
 			throw new IllegalRequestException("Password is not provided","noPassword");
 		}
 	}
 
 	public void validateNewMember(String username, String password, String fullName, String email) throws IllegalRequestException {
 		validateNewMember(username, password);
-		if (!LangUtil.isDefined(fullName)) {
+		if (!Strings.isDefined(fullName)) {
 			throw new IllegalRequestException("Name is not provided","noName");
 		}
-		if (!LangUtil.isDefined(email)) {
+		if (!Strings.isDefined(email)) {
 			throw new IllegalRequestException("Email is not provided","noEmail");
 		}
 		if (!ValidationUtil.isWellFormedEmail(email)) {

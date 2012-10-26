@@ -1,9 +1,15 @@
 package dk.in2isoft.commons.lang;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 
-public class LangUtil {
+public class Strings {
 
+	public static final String DEGREE = "\u00B0";
+	public static final String RIGHT_SINGLE_QUOTE = "\u2019";
+	public static final String DOUBLE_APOSTROPHE = "\u02EE";
+	
+	
 	// private static Logger log = Logger.getLogger(LangUtil.class);
 
 	public static String concatWords(String first, String second) {
@@ -80,6 +86,14 @@ public class LangUtil {
 		return words != null && words.length > 0;
 	}
 
+	public static boolean isNotBlank(String str) {
+		return StringUtils.isNotBlank(str);
+	}
+	
+	public static boolean isBlank(String str) {
+		return StringUtils.isBlank(str);
+	}
+
 	public static String[] getWords(String query) {
 		return query.trim().split("\\W+");
 	}
@@ -96,4 +110,5 @@ public class LangUtil {
 		}
 		return combined;
 	}
+
 }

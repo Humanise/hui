@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import dk.in2isoft.commons.lang.LangUtil;
+import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Privileged;
@@ -56,7 +56,7 @@ public class PasswordRecoveryService {
 	}
 	
 	public boolean sendRecoveryMail(User user, Person person, EmailAddress email,Privileged priviledged) throws EndUserException {
-		String random = LangUtil.generateRandomString(30);
+		String random = Strings.generateRandomString(30);
 		user.overrideFirstProperty(User.PASSWORD_RECOVERY_CODE_PROPERTY, random);
 		// TODO: Priviledged should be from session
 		modelService.updateItem(user, priviledged);

@@ -5,7 +5,7 @@ import java.util.Map;
 
 import dk.in2isoft.onlineobjects.ui.AsynchronousProcessDescriptor;
 
-public abstract class ApplicationSession {
+public class ApplicationSession {
 
 	private Map<String, AsynchronousProcessDescriptor> asynchronousProcesses;
 	

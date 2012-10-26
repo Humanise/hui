@@ -1,8 +1,10 @@
-package dk.in2isoft.commons.filesystem;
+package dk.in2isoft.commons.lang;
 
 import java.io.File;
 
-public class FileUtils {
+import org.apache.commons.io.FileUtils;
+
+public class Files {
 
 	static public boolean deleteDirectory(File path) {
 		if (path.exists()) {
@@ -16,5 +18,9 @@ public class FileUtils {
 			}
 		}
 		return (path.delete());
+	}
+	
+	public static String formatFileSize(Number bytes) {
+		return FileUtils.byteCountToDisplaySize(bytes.intValue());
 	}
 }

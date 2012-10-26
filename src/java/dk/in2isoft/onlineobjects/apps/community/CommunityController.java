@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.collect.Lists;
 
-import dk.in2isoft.commons.lang.LangUtil;
+import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.in2igui.FileBasedInterface;
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
 import dk.in2isoft.onlineobjects.apps.ApplicationSession;
@@ -71,7 +71,7 @@ public class CommunityController extends ApplicationController {
 	@Override
 	public void unknownRequest(Request request) throws IOException, EndUserException {
 		String subDomain = request.getSubDomain();
-		if (LangUtil.isDefined(subDomain) && !"www".equals(subDomain)) {
+		if (Strings.isDefined(subDomain) && !"www".equals(subDomain)) {
 			handleUser(request);
 		} else if (request.testLocalPathStart("favicon.ico")) {
 			throw new ContentNotFoundException();
@@ -94,7 +94,7 @@ public class CommunityController extends ApplicationController {
 
 	private void handleUser(Request request) throws IOException, EndUserException {
 		String subDomain = request.getSubDomain();
-		if (LangUtil.isDefined(subDomain) && !"www".equals(subDomain)) {
+		if (Strings.isDefined(subDomain) && !"www".equals(subDomain)) {
 			User siteUser = modelService.getUser(subDomain);
 			if (siteUser == null) {
 				throw new EndUserException("The user does not excist!");
@@ -252,7 +252,7 @@ public class CommunityController extends ApplicationController {
 		}
 		sb.append("}");
 		String algorithm = request.getString("algorithm");
-		if (!LangUtil.isDefined(algorithm)) {
+		if (!Strings.isDefined(algorithm)) {
 			algorithm = "dot";
 		}
 		if (request.getBoolean("svg")) {

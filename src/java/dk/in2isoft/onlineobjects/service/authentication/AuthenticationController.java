@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.apache.log4j.Logger;
 
-import dk.in2isoft.commons.lang.LangUtil;
+import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.service.ServiceController;
@@ -32,7 +32,7 @@ public class AuthenticationController extends ServiceController {
 		boolean success = securityService.changeUser(request.getSession(), username, password);
 		log.debug(success);
 		if (success) {
-			if (LangUtil.isDefined(redirect)) {
+			if (Strings.isDefined(redirect)) {
 				request.redirectFromBase(redirect);
 			} else {
 				request.redirect(".?action=loggedIn");

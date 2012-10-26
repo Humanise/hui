@@ -4,7 +4,7 @@ import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 
-import dk.in2isoft.commons.lang.LangUtil;
+import dk.in2isoft.commons.lang.Strings;
 
 public class Person extends Entity {
 
@@ -100,11 +100,11 @@ public class Person extends Entity {
 	}
 
 	public String getFullName() {
-		return LangUtil.concatWords(new String[] {givenName,additionalName,familyName});
+		return Strings.concatWords(new String[] {givenName,additionalName,familyName});
 	}
 
 	private void updateName() {
-		setName(LangUtil.concatWords(new String[] {namePrefix, givenName,additionalName,familyName,nameSuffix}));
+		setName(Strings.concatWords(new String[] {namePrefix, givenName,additionalName,familyName,nameSuffix}));
 	}
 
 	public Boolean getSex() {

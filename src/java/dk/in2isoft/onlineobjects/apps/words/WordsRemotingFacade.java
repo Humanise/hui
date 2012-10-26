@@ -13,6 +13,7 @@ import dk.in2isoft.in2igui.data.Diagram;
 import dk.in2isoft.in2igui.data.ItemData;
 import dk.in2isoft.in2igui.data.ListData;
 import dk.in2isoft.in2igui.data.Node;
+import dk.in2isoft.onlineobjects.apps.words.importing.HTMLDocumentImporter;
 import dk.in2isoft.onlineobjects.core.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.ModelException;
 import dk.in2isoft.onlineobjects.core.NetworkException;
@@ -308,7 +309,8 @@ public class WordsRemotingFacade extends AbstractRemotingFacade {
 	
 	public String startUrlImport(String url) throws NetworkException {
 		ImportSession session = importService.createImportSession(getUserSession());
-		session.importFromUrl(url);
+		session.setHandler(new HTMLDocumentImporter(url));
+		session.start();
 		return session.getId();
 	}
 	

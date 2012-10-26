@@ -31,6 +31,7 @@ http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
         <managed-bean-class>dk.in2isoft.onlineobjects.apps.community.jsf.PasswordRecoveryBean</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
+    
     <component>
     	<component-type>onlineobjects.list</component-type>
     	<component-class>dk.in2isoft.onlineobjects.ui.jsf.ListComponent</component-class>
@@ -177,5 +178,13 @@ http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
     <component>
 	    <component-type>hui.field</component-type>
     	<component-class>dk.in2isoft.in2igui.jsf.FieldComponent</component-class>
+  	</component>
+    <component>
+	    <component-type>hui.box</component-type>
+    	<component-class>dk.in2isoft.in2igui.jsf.BoxComponent</component-class>
+  	</component>
+    <component>
+	    <component-type>hui.locationInput</component-type>
+    	<component-class>dk.in2isoft.in2igui.jsf.LocationInputComponent</component-class>
   	</component>
 </faces-config>

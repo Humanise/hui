@@ -5,7 +5,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
-import dk.in2isoft.commons.lang.LangUtil;
+import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
 import dk.in2isoft.onlineobjects.apps.ApplicationSession;
 import dk.in2isoft.onlineobjects.model.User;
@@ -21,7 +21,7 @@ public class UserSession implements Privileged {
 	private String id;
 
 	public UserSession(User user) throws SecurityException {
-		this.id = LangUtil.generateRandomString(20);
+		this.id = Strings.generateRandomString(20);
 		toolSessions = new HashMap<Class<? extends ApplicationController>, ApplicationSession>();
 		this.user = user;
 	}

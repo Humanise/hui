@@ -12,7 +12,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import dk.in2isoft.commons.lang.LangUtil;
+import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelException;
@@ -202,7 +202,7 @@ public class SynchronizerStage extends PipelineStageAdapter {
 				model.createRelation(event, student, Relation.KIND_EVENT_ATTENDEE, publicUser);
 			}
 			
-			if (LangUtil.isDefined(easyEvent.getTeacherInitials())) {
+			if (Strings.isDefined(easyEvent.getTeacherInitials())) {
 				// Check for existing teacher on the event
 				Person teacher = getCachedPerson(easyEvent.getTeacherInitials());
 				if (teacher==null) {

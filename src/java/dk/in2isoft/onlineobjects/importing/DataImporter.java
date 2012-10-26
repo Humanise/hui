@@ -30,6 +30,7 @@ public class DataImporter {
 	private static Logger log = Logger.getLogger(DataImporter.class);
 	private ImportListerner listener;
 	private FileService fileService;
+	private String successResponse = "SUCCESS";
 	
 	public DataImporter(FileService fileService) {
 		super();
@@ -91,8 +92,12 @@ public class DataImporter {
 		process.setCompleted(true);
 		HttpServletResponse response = request.getResponse();
 		response.setStatus(HttpServletResponse.SC_OK);
-		response.getWriter().write("SUCCESS");
+		response.getWriter().write(successResponse);
 		log.info("Upload OK");
+	}
+	
+	public void setSuccessResponse(String successResponse) {
+		this.successResponse = successResponse;
 	}
 
 	public void setListener(ImportListerner listener) {

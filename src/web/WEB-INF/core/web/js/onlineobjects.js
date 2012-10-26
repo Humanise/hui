@@ -272,6 +272,7 @@ oo.InlineEditor.prototype = {
 		hui.dom.setText(this.element,value);
 		this._field.style.display='none';
 		this.element.style.visibility = '';
+		this.element.focus();
 		if (this.originalValue!=value) {
 			this.fire('valueChanged',value);			
 		}

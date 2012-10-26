@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import dk.in2isoft.commons.lang.LangUtil;
+import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.UserSession;
 
 public class Request {
@@ -169,7 +169,7 @@ public class Request {
 		if (localContext.length == 0) {
 			return context;
 		} else {
-			return context + "/" + LangUtil.implode(localContext, "/");
+			return context + "/" + Strings.implode(localContext, "/");
 		}
 	}
 

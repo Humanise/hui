@@ -113,4 +113,11 @@
       <renderer-type>hui.field</renderer-type>
     </component>
   </tag>
+  <tag>
+    <tag-name>box</tag-name>
+    <component>
+      <component-type>hui.box</component-type>
+      <renderer-type>hui.box</renderer-type>
+    </component>
+  </tag>
 </facelet-taglib>
