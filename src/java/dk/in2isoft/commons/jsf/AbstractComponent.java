@@ -12,6 +12,8 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import dk.in2isoft.onlineobjects.ui.Request;
+
 
 public abstract class AbstractComponent extends UIComponentBase {
 	
@@ -34,6 +36,10 @@ public abstract class AbstractComponent extends UIComponentBase {
 			super.saveState(context),
 			saveState()
 		};
+	}
+	
+	protected String getContext() {
+		return Request.get(getFacesContext()).getBaseContext();
 	}
 
 	protected Locale getLocale() {
@@ -92,7 +98,7 @@ public abstract class AbstractComponent extends UIComponentBase {
 	@SuppressWarnings("unchecked")
 	public <T> T getBean(Class<?> cls) {
 		WebApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(ComponentUtil.getRequest().getRequest().getSession().getServletContext());
-		Map beansOfType = context.getBeansOfType(cls);
+		Map<?,?> beansOfType = context.getBeansOfType(cls);
 		if (beansOfType.isEmpty()) {
 			return null;
 		} else {

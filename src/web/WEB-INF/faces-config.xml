@@ -124,6 +124,10 @@ http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
     	<component-class>dk.in2isoft.in2igui.jsf.ButtonComponent</component-class>
   	</component>
     <component>
+	    <component-type>hui.buttons</component-type>
+    	<component-class>dk.in2isoft.in2igui.jsf.ButtonsComponent</component-class>
+  	</component>
+    <component>
 	    <component-type>hui.textfield</component-type>
     	<component-class>dk.in2isoft.in2igui.jsf.TextFieldComponent</component-class>
   	</component>
@@ -190,5 +194,13 @@ http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
     <component>
 	    <component-type>hui.locationInput</component-type>
     	<component-class>dk.in2isoft.in2igui.jsf.LocationInputComponent</component-class>
+  	</component>
+    <component>
+	    <component-type>hui.pages</component-type>
+    	<component-class>dk.in2isoft.in2igui.jsf.PagesComponent</component-class>
+  	</component>
+    <component>
+	    <component-type>hui.page</component-type>
+    	<component-class>dk.in2isoft.in2igui.jsf.PageComponent</component-class>
   	</component>
 </faces-config>

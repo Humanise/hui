@@ -27,6 +27,25 @@ var photoView = {
 	},
 	$click$saveLocation : function() {
 		oo.render({id:'properties'})
+	},
+	$click$addDescription : function(button) {
+		hui.ui.get('descriptionPages').next()
+		hui.ui.get('description').focus();
+	},
+	$click$cancelDescription : function(button) {
+		hui.ui.get('descriptionPages').next()
+	},
+	$click$saveDescription : function(button) {
+		var text = hui.ui.get('description').getValue();
+		
+		AppPhotos.updateImageDescription(this.imageId,text,{
+			callback : function() {
+				oo.update({id:'photos_photo_description'})
+			},
+			errorHandler : function() {
+				hui.ui.showMessage({text:'Unable to save description',icon:'common/warning',duration:2000});
+			}
+		})
 	}
 };
 

@@ -3,18 +3,20 @@ package dk.in2isoft.in2igui.jsf;
 import java.io.IOException;
 
 import javax.faces.component.FacesComponent;
-import javax.faces.component.UIComponentBase;
 import javax.faces.context.FacesContext;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
+import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.ComponentUtil;
 import dk.in2isoft.commons.jsf.TagWriter;
 
-@FacesComponent(value="hui.textfield")
-public class TextFieldComponent extends UIComponentBase {
+@FacesComponent(value=TextFieldComponent.TYPE)
+public class TextFieldComponent extends AbstractComponent {
 
+	static final String TYPE = "hui.textfield";
+	
 	private String name;
 	private String key;
 	private String inputName;
@@ -23,38 +25,35 @@ public class TextFieldComponent extends UIComponentBase {
 	private int width;
 	private String value;
 	private boolean adaptive = true;
+	private boolean multiline;
+	
+	public TextFieldComponent() {
+		super(TYPE);
+	}
 
 	@Override
-	public Object saveState(FacesContext context) {
-		Object[] state = new Object[] {
-			super.saveState(context),name,secret,placeholder,width,value,inputName,adaptive
+	public Object[] saveState() {
+		return new Object[] {
+			name,secret,placeholder,width,value,inputName,adaptive,multiline
 		};
-		return state;
 	}
 	
 	@Override
-	public void restoreState(FacesContext context, Object state) {
-		Object[] values = (Object[]) state;
-		super.restoreState(context, values[0]);
-		name = (String) values[1];
-		secret = (Boolean) values[2];
-		placeholder = (String) values[3];
-		width = (Integer) values[4];
-		value = (String) values[5];
-		inputName = (String) values[6];
-		adaptive = (Boolean) values[7];
-	}
-	
-	@Override
-	public String getFamily() {
-		return "hui.textfield";
+	public void restoreState(Object[] state) {
+		name = (String) state[0];
+		secret = (Boolean) state[1];
+		placeholder = (String) state[2];
+		width = (Integer) state[3];
+		value = (String) state[4];
+		inputName = (String) state[5];
+		adaptive = (Boolean) state[6];
+		multiline = (Boolean) state[6];
 	}
 
 	@Override
-	public void encodeBegin(FacesContext context) throws IOException {
+	public void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
 		String id = getClientId();
 		String value = ComponentUtil.getBindingAsString(this, "value", this.value, context);
-		TagWriter writer = new TagWriter(this,context);
 		if (adaptive) {
 			writer.startDiv("hui_field");
 		} else {
@@ -69,19 +68,25 @@ public class TextFieldComponent extends UIComponentBase {
 		}
 		writer.startSpan("hui_field_top").startSpan().startSpan().endSpan().endSpan().endSpan();
 		writer.startSpan("hui_field_middle").startSpan("hui_field_middle").startSpan("hui_field_content");
-		writer.startSpan("hui_field_singleline");
-		writer.startElement("input").withClass("hui_formula_text");
-		if (secret) {
-			writer.withAttribute("type", "password");
+		if (multiline) {
+			writer.startSpan("hui_formula_text_multiline");
+			writer.startElement("textarea").withClass("hui_formula_text").write(value).endElement("textarea");
+			writer.endSpan();
+		} else {
+			writer.startSpan("hui_field_singleline");
+			writer.startElement("input").withClass("hui_formula_text");
+			if (secret) {
+				writer.withAttribute("type", "password");
+			}
+			if (value!=null) {
+				writer.withAttribute("value", value);
+			}
+			if (inputName!=null) {
+				writer.withAttribute("name", inputName);
+			}
+			writer.endElement("input");
+			writer.endSpan();
 		}
-		if (value!=null) {
-			writer.withAttribute("value", value);
-		}
-		if (inputName!=null) {
-			writer.withAttribute("name", inputName);
-		}
-		writer.endElement("input");
-		writer.endSpan();
 		writer.endSpan().endSpan().endSpan();
 		writer.startSpan("hui_field_bottom").startSpan().startSpan().endSpan().endSpan().endSpan();
 		if (adaptive) {
@@ -165,4 +170,11 @@ public class TextFieldComponent extends UIComponentBase {
 		return key;
 	}
 	
+	public boolean isMultiline() {
+		return multiline;
+	}
+	
+	public void setMultiline(boolean multiline) {
+		this.multiline = multiline;
+	}
 }

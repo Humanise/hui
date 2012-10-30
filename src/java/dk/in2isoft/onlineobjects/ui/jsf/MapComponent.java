@@ -18,7 +18,7 @@ import dk.in2isoft.onlineobjects.ui.jsf.model.MapPoint;
 @FacesComponent(value=MapComponent.FAMILY)
 public class MapComponent extends AbstractComponent {
 
-	private static final String FAMILY = "onlineobjects.box";
+	public static final String FAMILY = "onlineobjects.box";
 	
 	private String variant;
 	private String name;

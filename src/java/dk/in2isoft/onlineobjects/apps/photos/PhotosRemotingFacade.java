@@ -12,4 +12,10 @@ public class PhotosRemotingFacade extends AbstractRemotingFacade {
 		image.setName(title);
 		getModelService().updateItem(image, getUserSession());
 	}
+
+	public void updateImageDescription(long id, String description) throws ModelException, SecurityException {
+		Image image = getModelService().get(Image.class, id,getUserSession());
+		image.overrideFirstProperty(Image.PROPERTY_DESCRIPTION, description);
+		getModelService().updateItem(image, getUserSession());
+	}
 }

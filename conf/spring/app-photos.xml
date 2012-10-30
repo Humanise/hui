@@ -15,6 +15,7 @@
    	<bean id="photosRemotingFacade" class="dk.in2isoft.onlineobjects.apps.photos.PhotosRemotingFacade" autowire="byType">
     	<dwr:remote javascript="AppPhotos">
     		<dwr:include method="updateImageTitle"/>
+    		<dwr:include method="updateImageDescription"/>
 			<dwr:filter class="dk.in2isoft.onlineobjects.ui.DWRFilter"/>
 		</dwr:remote>
    	</bean>

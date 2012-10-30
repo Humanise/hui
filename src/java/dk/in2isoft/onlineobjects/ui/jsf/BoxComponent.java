@@ -11,7 +11,7 @@ import dk.in2isoft.commons.jsf.TagWriter;
 @FacesComponent(value=BoxComponent.FAMILY)
 public class BoxComponent extends AbstractComponent {
 
-	private static final String FAMILY = "onlineobjects.box";
+	public static final String FAMILY = "onlineobjects.box";
 	private String variant;
 
 	public BoxComponent() {

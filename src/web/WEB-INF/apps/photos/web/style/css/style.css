@@ -142,7 +142,7 @@ div.photos_photo_properties strong
 
 p.photos_photo_description
 {
-	margin: 10px;
+	margin: 0 10px 10px;
 	font-weight: 200;
 	line-height: 20px;
 	font-size: 11pt;
@@ -155,15 +155,18 @@ p.photos_photo_description span
 	display: inline-block;
 	color: #ddd;
 	position: relative;
-	top: 10px;
 	font-family: Georgia;
 	vertical-align: middle;
-	height: 12px;
+	height: 16px;
+	line-height: 52px;
+	overflow: hidden;
 }
 
-span.photos_photo_description_start
+p.photos_photo_description span.photos_photo_description_start
 {
 	margin-right: 3px;
+	top: -2px;
+	line-height: 49px;
 }
 
 span.photos_photo_description_end

@@ -23,6 +23,13 @@
     </component>
   </tag>
   <tag>
+    <tag-name>buttons</tag-name>
+    <component>
+      <component-type>hui.buttons</component-type>
+      <renderer-type>hui.buttons</renderer-type>
+    </component>
+  </tag>
+  <tag>
     <tag-name>link</tag-name>
     <component>
       <component-type>hui.link</component-type>
@@ -31,6 +38,13 @@
   </tag>
   <tag>
     <tag-name>textfield</tag-name>
+    <component>
+      <component-type>hui.textfield</component-type>
+      <renderer-type>hui.textfield</renderer-type>
+    </component>
+  </tag>
+  <tag>
+    <tag-name>textInput</tag-name>
     <component>
       <component-type>hui.textfield</component-type>
       <renderer-type>hui.textfield</renderer-type>
@@ -118,6 +132,20 @@
     <component>
       <component-type>hui.locationInput</component-type>
       <renderer-type>hui.locationInput</renderer-type>
+    </component>
+  </tag>
+  <tag>
+    <tag-name>pages</tag-name>
+    <component>
+      <component-type>hui.pages</component-type>
+      <renderer-type>hui.pages</renderer-type>
+    </component>
+  </tag>
+  <tag>
+    <tag-name>page</tag-name>
+    <component>
+      <component-type>hui.page</component-type>
+      <renderer-type>hui.page</renderer-type>
     </component>
   </tag>
 </facelet-taglib>

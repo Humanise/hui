@@ -12,7 +12,7 @@ import dk.in2isoft.onlineobjects.services.LifeCycleService;
 import dk.in2isoft.onlineobjects.ui.Request;
 
 @FacesComponent(value = StylesheetComponent.FAMILY)
-public class StylesheetComponent<T> extends AbstractComponent {
+public class StylesheetComponent extends AbstractComponent {
 
 	public static final String FAMILY = "onlineobjects.stylesheet";
 	
