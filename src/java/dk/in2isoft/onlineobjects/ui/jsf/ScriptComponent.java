@@ -12,7 +12,7 @@ import dk.in2isoft.onlineobjects.services.LifeCycleService;
 import dk.in2isoft.onlineobjects.ui.Request;
 
 @FacesComponent(value = ScriptComponent.FAMILY)
-public class ScriptComponent<T> extends AbstractComponent {
+public class ScriptComponent extends AbstractComponent {
 
 	public static final String FAMILY = "onlineobjects.script";
 	

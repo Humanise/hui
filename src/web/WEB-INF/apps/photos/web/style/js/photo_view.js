@@ -19,6 +19,14 @@ var photoView = {
 				hui.ui.showMessage({text:'Unable to change title',icon:'common/warning',duration:2000});
 			}
 		})
+	},
+	$click$addLocation : function(widget) {
+		var panel = hui.ui.get('locationPanel');
+		panel.position(widget);
+		panel.show()
+	},
+	$click$saveLocation : function() {
+		oo.render({id:'properties'})
 	}
 };
 

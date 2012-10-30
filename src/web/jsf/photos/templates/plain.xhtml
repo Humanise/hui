@@ -28,8 +28,9 @@
 		<o:script src="/dwr/interface/Common.js" core="true"/>
 		<o:script src="/dwr/engine.js" core="true"/>
 		<ui:insert name="scripts"/>
+		<h:outputScript name="jsf.js" library="javax.faces" target="head"/>
 	</h:head>
-	<body>
+	<h:body>
 		<o:topBar/>
 		<o:layout>
 			<f:facet name="sidebar">
@@ -49,7 +50,7 @@
 			</c:forEach>
 		</p>
 		<o:analytics/>
-	</body>
+	</h:body>
 </html>
 
 </f:view>

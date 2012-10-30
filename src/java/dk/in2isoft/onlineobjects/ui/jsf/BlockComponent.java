@@ -43,7 +43,7 @@ public class BlockComponent <T> extends AbstractComponent {
 		if ("right".equals(cssFloat)) {
 			cls.add("oo_block_right");
 		}
-		writer.startDiv(cls);
+		writer.startDiv(cls).withId(getClientId());
 		StyleBuilder css = new StyleBuilder();
 		css.withPaddingTop(top);
 		css.withPaddingBottom(bottom);

@@ -40,8 +40,27 @@ public class LocationInputComponent extends AbstractComponent {
 	
 	@Override
 	protected void encodeBegin(FacesContext context, TagWriter out) throws IOException {
+		out.startSpan("hui_locationfield").withId(getClientId());
+		out.startSpan("hui_field_top").startSpan().startSpan().endSpan().endSpan().endSpan();
+		
+		out.startSpan("hui_field_middle").startSpan("hui_field_middle").startSpan("hui_field_content");
+		
+		out.startSpan();
+		
+		out.startSpan("hui_locationfield_latitude").startSpan().startInput().endInput().endSpan().endSpan();
+		
+		out.startSpan("hui_locationfield_longitude").startSpan().startInput().endInput().endSpan().endSpan();
+
+		out.endSpan();
+		
+		out.endSpan().endSpan().endSpan();
+		
+		out.startSpan("hui_field_bottom").startSpan().startSpan().endSpan().endSpan().endSpan();
+		
+		out.startVoidA("hui_locationfield_picker").endA();
+		out.endSpan();
 		out.startScopedScript();
-		out.write("new hui.ui.TextField({element:'").write(getClientId()).write("'");
+		out.write("new hui.ui.LocationField({element:'").write(getClientId()).write("'");
 		if (name!=null) {
 			out.write(",name:'"+StringEscapeUtils.escapeJavaScript(name)+"'");
 		}

@@ -112,6 +112,10 @@ http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
     	<component-type>onlineobjects.doctype</component-type>
     	<component-class>dk.in2isoft.onlineobjects.ui.jsf.DocTypeComponent</component-class>
   	</component>
+    <component>
+    	<component-type>onlineobjects.map</component-type>
+    	<component-class>dk.in2isoft.onlineobjects.ui.jsf.MapComponent</component-class>
+  	</component>
   	
   	
   	

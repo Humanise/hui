@@ -11,6 +11,7 @@ import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.ClassBuilder;
 import dk.in2isoft.commons.jsf.ComponentUtil;
 import dk.in2isoft.commons.jsf.TagWriter;
+import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.ui.Request;
 
 @FacesComponent(value = LinkComponent.FAMILY)
@@ -25,6 +26,7 @@ public class LinkComponent<T> extends AbstractComponent {
 	private boolean core;
 	private String styleClass;
 	private boolean plain;
+	private String name;
 	
 	public LinkComponent() {
 		super(FAMILY);
@@ -39,11 +41,12 @@ public class LinkComponent<T> extends AbstractComponent {
 		onclick = (String) state[4];
 		title = (String) state[5];
 		plain = (Boolean) state[6];
+		name = (String) state[7];
 	}
 
 	@Override
 	public Object[] saveState() {
-		return new Object[] { variant, core, href, styleClass, onclick, title, plain };
+		return new Object[] { variant, core, href, styleClass, onclick, title, plain, name };
 	}
 
 	@Override
@@ -64,6 +67,8 @@ public class LinkComponent<T> extends AbstractComponent {
 		String id = getId();
 		if (StringUtils.isNotBlank(id)) {
 			writer.withId(id);
+		} else if (Strings.isNotBlank(name)) {
+			writer.withId(getClientId());
 		}
 		if (StringUtils.isNotBlank(onclick)) {
 			writer.withAttribute("onclick", onclick);
@@ -95,11 +100,16 @@ public class LinkComponent<T> extends AbstractComponent {
 	}
 	
 	@Override
-	protected void encodeEnd(FacesContext context, TagWriter writer) throws IOException {
+	protected void encodeEnd(FacesContext context, TagWriter out) throws IOException {
 		if (!plain) {
-			writer.endSpan();
+			out.endSpan();
 		}
-		writer.endA();
+		out.endA();
+		if (Strings.isNotBlank(name)) {
+			out.startScript();
+			out.startNewObject("oo.Link").property("element", getClientId()).comma().property("name", name).endNewObject();
+			out.endScript();
+		}
 	}
 
 	public void setVariant(String variant) {
@@ -172,5 +182,13 @@ public class LinkComponent<T> extends AbstractComponent {
 
 	public void setPlain(boolean plain) {
 		this.plain = plain;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
 	}
 }

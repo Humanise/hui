@@ -27,7 +27,9 @@
 			</c:if>
 			<c:if test="#{not empty photosPhotoView.image}">
 				<div class="photos_photo">
+					<ui:fragment id="title">
 					<h1 id="editableTitle">#{photosPhotoView.image.name}</h1>
+					</ui:fragment>
 					<p class="photos_photo_by"><span>Tilføjet </span><strong>
 						<h:outputText value="#{photosPhotoView.image.created}">
 							<f:convertDateTime pattern="EEEE 'd'. d.  MMMM yyyy" locale="da_DK"/>
@@ -50,15 +52,22 @@
 						</p>
 					</c:if>
 				</div>
+				<gui:boundPanel name="locationPanel" modal="true">
+					<gui:locationInput/>
+					<div style="margin-top: 3px;">
+						<gui:button text="Save" name="saveLocation" small="true"/>
+					</div>
+				</gui:boundPanel>
 			</c:if>
 		</ui:define>
 		
 		<ui:define name="sidebar">
 			<div class="photos_photo_properties oo_faded">
-
-				<c:forEach items="#{photosPhotoView.properties}" var="prop">
-					<p><strong>#{prop.label}:</strong> #{prop.value}</p>
-				</c:forEach>
+				<o:block id="properties">
+					<c:forEach items="#{photosPhotoView.properties}" var="prop">
+						<p><strong>#{prop.label}:</strong> #{prop.value}</p>
+					</c:forEach>
+				</o:block>
 				
 				<c:if test="#{not empty photosPhotoView.imageInfo.tags}">
 					<p class="tags">
@@ -67,6 +76,10 @@
 						</c:forEach>
 					</p>
 				</c:if>
+				<div style="margin: 10px 0">
+				<o:map location="#{photosPhotoView.mapPoint}"/>
+				</div>
+				<o:link plain="true" name="addLocation"><em class="icon-map-marker"></em>Change location</o:link>
 			</div>
 		</ui:define>
 		

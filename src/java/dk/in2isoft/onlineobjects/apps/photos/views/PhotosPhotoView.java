@@ -2,6 +2,7 @@ package dk.in2isoft.onlineobjects.apps.photos.views;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -25,6 +26,7 @@ import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.Location;
 import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.User;
+import dk.in2isoft.onlineobjects.ui.jsf.model.MapPoint;
 import dk.in2isoft.onlineobjects.util.Dates;
 import dk.in2isoft.onlineobjects.util.images.ImageInfo;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
@@ -38,6 +40,7 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 	private Image image;
 	private ImageInfo imageInfo;
 	private Location location;
+	private MapPoint mapPoint;
 	private User user;
 	private Person person;
 	private boolean secret;
@@ -82,6 +85,7 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 			properties = Lists.newArrayList();
 			properties.add(new SelectItem(image.getWidth()+" x "+image.getHeight()+" - "+getMegaPixels()+" Megapixel","Size"));
 			properties.add(new SelectItem(Files.formatFileSize(image.getFileSize())+", "+image.getContentType(),"File"));
+			properties.add(new SelectItem(Dates.formatLongDate(new Date(), locale),"Now"));
 			if (imageInfo.getTaken()!=null) {
 				properties.add(new SelectItem(Dates.formatLongDate(imageInfo.getTaken(),locale ),"Date"));
 			}
@@ -92,6 +96,9 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 				properties.add(new SelectItem(imageInfo.getCameraModel(),"Camera"));
 			}
 			if (location!=null) {
+				mapPoint = new MapPoint();
+				mapPoint.setLatitude(location.getLatitude());
+				mapPoint.setLongitude(location.getLongitude());
 				DecimalFormat format = new DecimalFormat();
 				format.setMinimumFractionDigits(0);
 				format.setMaximumFractionDigits(2);
@@ -159,6 +166,10 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 	
 	public Location getLocation() {
 		return location;
+	}
+	
+	public MapPoint getMapPoint() {
+		return mapPoint;
 	}
 	
 	public double getMegaPixels() {

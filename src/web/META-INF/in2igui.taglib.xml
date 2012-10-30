@@ -114,10 +114,10 @@
     </component>
   </tag>
   <tag>
-    <tag-name>box</tag-name>
+    <tag-name>locationInput</tag-name>
     <component>
-      <component-type>hui.box</component-type>
-      <renderer-type>hui.box</renderer-type>
+      <component-type>hui.locationInput</component-type>
+      <renderer-type>hui.locationInput</renderer-type>
     </component>
   </tag>
 </facelet-taglib>

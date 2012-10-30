@@ -69,6 +69,13 @@ var oo = {
 				hui.log(b);
 			}
 		})
+	},
+	render : function(options) {
+		jsf.ajax.request(document.createElement('form'),null,{render:options.id,onSuccess:function() {
+			if (options.$success) {
+				options.$success();
+			}
+		}})
 	}
 }
 
@@ -276,5 +283,61 @@ oo.InlineEditor.prototype = {
 		if (this.originalValue!=value) {
 			this.fire('valueChanged',value);			
 		}
+	}
+}
+
+
+
+
+
+
+oo.Link = function(options) {
+	this.element = hui.get(options.element);
+	this.name = options.name;
+	hui.ui.extend(this);
+	this._addBehavior();
+}
+
+oo.Link.prototype = {
+	_addBehavior : function() {
+		hui.listen(this.element,'click',this._onClick.bind(this));
+	},
+	_onClick : function(e) {
+		hui.stop(e)
+		this.fire('click');
+	}
+}
+
+
+oo.Map = function(options) {
+	this.options = options;
+	this.element = hui.get(options.element);
+	this.name = options.name;
+	hui.ui.extend(this);
+	hui.ui.onReady(this._initStatic.bind(this));
+}
+
+oo.Map.prototype = {
+	_initStatic : function() {
+		var loc = this.options.location;
+		var url = 'http://maps.googleapis.com/maps/api/staticmap?center='+loc.latitude+','+loc.longitude+'&zoom=14&size='+(this.element.offsetWidth)+'x'+(this.element.offsetHeight)+'&maptype=terrain&sensor=false';
+		this.element.style.backgroundImage='url(\''+url+'\')';
+	},
+	_init : function() {
+		
+		
+			var options = this.options;
+			var myLatlng = new google.maps.LatLng(options.location.latitude, options.location.longitude);
+			var myOptions = {
+				zoom: 15,
+				center: myLatlng,
+				disableDefaultUI : true,
+				mapTypeId: google.maps.MapTypeId.TERRAIN
+			}
+			var map = new google.maps.Map(this.element, myOptions);
+			var marker = new google.maps.Marker({
+				position : myLatlng, 
+				map : map
+			});
 	}
 }

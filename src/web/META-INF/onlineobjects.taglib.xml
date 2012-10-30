@@ -141,4 +141,11 @@
       <renderer-type>onlineobjects.doctype</renderer-type>
     </component>
   </tag>
+  <tag>
+    <tag-name>map</tag-name>
+    <component>
+      <component-type>onlineobjects.map</component-type>
+      <renderer-type>onlineobjects.map</renderer-type>
+    </component>
+  </tag>
 </facelet-taglib>

@@ -17,6 +17,7 @@ public class BoundPanelComponent extends AbstractComponent {
 	private String name;
 	private boolean hideOnClick;
 	private int width;
+	private String modal;
 
 	public BoundPanelComponent() {
 		super(TYPE);
@@ -27,12 +28,13 @@ public class BoundPanelComponent extends AbstractComponent {
 		name = (String) state[0];
 		hideOnClick = (Boolean) state[1];
 		width = (Integer) state[2];
+		modal = (String) state[3];
 	}
 
 	@Override
 	public Object[] saveState() {
 		return new Object[] {
-			name, hideOnClick, width
+			name, hideOnClick, width, modal
 		};
 	}
 	
@@ -42,33 +44,35 @@ public class BoundPanelComponent extends AbstractComponent {
 	}
 
 	@Override
-	public void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
+	public void encodeBegin(FacesContext context, TagWriter out) throws IOException {
 		String id = getClientId();
-		writer.startDiv().withClass("hui_boundpanel").withId(id).withStyle("display:none;");
-		writer.startDiv("hui_boundpanel_arrow").endDiv();
-		writer.startDiv("hui_boundpanel_top").startDiv().startDiv().endDiv().endDiv().endDiv();
-		writer.startDiv("hui_boundpanel_body").startDiv("hui_boundpanel_body").startDiv("hui_boundpanel_body");
-		writer.startDiv("hui_boundpanel_content");
+		out.startDiv().withClass("hui_boundpanel").withId(id).withStyle("display:none;");
+		out.startDiv("hui_boundpanel_arrow").endDiv();
+		out.startDiv("hui_boundpanel_top").startDiv().startDiv().endDiv().endDiv().endDiv();
+		out.startDiv("hui_boundpanel_body").startDiv("hui_boundpanel_body").startDiv("hui_boundpanel_body");
+		out.startDiv("hui_boundpanel_content");
 		if (width>0) {
-			writer.withStyle("width:"+width+"px;");
+			out.withStyle("width:"+width+"px;");
 		}
 	}
 	
 	@Override
-	protected void encodeEnd(FacesContext context, TagWriter writer) throws IOException {
-		writer.endDiv();
-		writer.endDiv().endDiv().endDiv();
-		writer.startDiv("hui_boundpanel_bottom").startDiv().startDiv().endDiv().endDiv().endDiv();
-		writer.endDiv();
-		writer.startScopedScript();
-		writer.write("new hui.ui.BoundPanel({element:'").write(getClientId()).write("'");
-		writer.write(",hideOnClick:"+hideOnClick);
+	protected void encodeEnd(FacesContext context, TagWriter out) throws IOException {
+		out.endDiv();
+		out.endDiv().endDiv().endDiv();
+		out.startDiv("hui_boundpanel_bottom").startDiv().startDiv().endDiv().endDiv().endDiv();
+		out.endDiv();
+		out.startScopedScript();
+		out.startNewObject("hui.ui.BoundPanel");
+		out.property("element", getClientId());
+		out.comma().property("hideOnClick", hideOnClick);
+		out.comma().property("modal", "true".equals(modal));
 		String name = getName(context);
 		if (name!=null) {
-			writer.write(",name:'"+name+"'");
+			out.comma().property("name",name);
 		}
-		writer.write("});");
-		writer.endScopedScript();
+		out.endNewObject();
+		out.endScopedScript();
 	}
 
 	public void setName(String name) {
@@ -97,5 +101,13 @@ public class BoundPanelComponent extends AbstractComponent {
 
 	public void setWidth(int width) {
 		this.width = width;
+	}
+
+	public void setModal(String modal) {
+		this.modal = modal;
+	}
+
+	public String getModal() {
+		return modal;
 	}
 }

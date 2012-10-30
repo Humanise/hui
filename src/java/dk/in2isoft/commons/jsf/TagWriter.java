@@ -6,6 +6,8 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 public class TagWriter {
 
 	private ResponseWriter writer;
@@ -168,7 +170,7 @@ public class TagWriter {
 		return endElement("em");
 	}
 	
-	/////////// SPAN //////////
+	/////////// DIV //////////
 	
 	public TagWriter startDiv() throws IOException {
 		return startElement("div");
@@ -182,6 +184,16 @@ public class TagWriter {
 		return endElement("div");
 	}
 
+	/////////// INPUT //////////
+
+	public TagWriter startInput() throws IOException {
+		return startElement("input");
+	}
+		
+	public TagWriter endInput() throws IOException {
+		return endElement("input");
+	}
+	
 	////////// SCRIPT ////////
 	
 	public TagWriter startScript() throws IOException {
@@ -225,6 +237,30 @@ public class TagWriter {
 
 	public TagWriter line() throws IOException {
 		return write("\n");
+	}
+
+	public TagWriter comma() throws IOException {
+		return write(",");
+	}
+
+	public TagWriter startNewObject(String name) throws IOException {
+		return write("new ").write(name).write("({");
+	}
+
+	public TagWriter property(String name, String value) throws IOException {
+		return write("'").write(name).write("':'").write(StringEscapeUtils.escapeJavaScript(value)).write("'");
+	}
+
+	public TagWriter property(String name, boolean value) throws IOException {
+		return write("'").write(name).write("':").write(value);
+	}
+
+	public TagWriter property(String name, int value) throws IOException {
+		return write("'").write(name).write("':").write(value);
+	}
+
+	public TagWriter endNewObject() throws IOException {
+		return write("})");
 	}
 
 }
