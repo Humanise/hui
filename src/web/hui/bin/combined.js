@@ -976,8 +976,22 @@ hui.position = {
 				vertMin = hui.window.getScrollTop();
 			top = Math.max(Math.min(top,vertMax),vertMin);
 		}
-		src.style.top = top+'px';
-		src.style.left = left+'px';
+		src.style.top = Math.round(top)+'px';
+		src.style.left = Math.round(left)+'px';
+	},
+	/** Get the remaining height within parent when all siblings has used their height */
+	getRemainingHeight : function(e) {
+		var height = e.parentNode.clientHeight;
+		var siblings = e.parentNode.childNodes;
+		for (var i=0; i < siblings.length; i++) {
+			var sib = siblings[i];
+			if (sib!==e && hui.dom.isElement(siblings[i])) {
+				if (hui.style.get(sib,'position')!='absolute') {
+					height-=sib.offsetHeight;
+				}
+			}
+		};
+		return height;
 	}
 }
 
@@ -5035,6 +5049,14 @@ hui.ui.changeState = function(state) {
 }
 
 hui.ui.reLayout = function() {
+	var widgets = hui.ui.getDescendants(document.body);
+	for (var i=0; i < widgets.length; i++) {
+		var obj = widgets[i];
+		if (obj['$$layout']) {
+			obj['$$layout']();
+		}
+	};
+	return;
 	var all = hui.ui.objects,
 		obj;
 	for (key in all) {
@@ -5702,8 +5724,9 @@ hui.ui.request = function(options) {
 			options.parameters[key]=hui.string.toJSON(options.json[key]);
 		}
 	}
-	var onSuccess = options.onSuccess || options.$success;
-	var message = options.message;
+	var onSuccess = options.onSuccess || options.$success,
+		onJSON = options.onJSON || options.$object,
+		message = options.message;
 	options.onSuccess=function(t) {
 		if (message) {
 			if (message.success) {
@@ -5727,14 +5750,14 @@ hui.ui.request = function(options) {
 			}
 		} else if (hui.request.isXMLResponse(t) && options.onXML) {
 			options.onXML(t.responseXML);
-		} else if (options.onJSON) {
+		} else if (onJSON) {
 			str = t.responseText.replace(/^\s+|\s+$/g, '');
 			if (str.length>0) {
 				json = hui.string.fromJSON(t.responseText);
 			} else {
 				json = null;
 			}
-			options.onJSON(json);
+			onJSON(json);
 		} else if (typeof(onSuccess)=='function') {
 			onSuccess(t);
 		} else if (options.onText) {
@@ -6191,13 +6214,16 @@ hui.ui.Window.prototype = {
 	setTitle : function(title) {
 		hui.dom.setText(this.title,title);
 	},
+	_positionInView : function() {
+		var scrollTop = hui.window.getScrollTop();
+		var winTop = hui.position.getTop(this.element);
+		if (winTop < scrollTop || winTop+this.element.clientHeight > hui.window.getViewHeight()+scrollTop) {
+			hui.animate({node:this.element,css:{top:(scrollTop+40)+'px'},duration:500,ease:hui.ease.slowFastSlow});
+		}
+	},
 	show : function(options) {
 		if (this.visible) {
-			var scrollTop = hui.window.getScrollTop();
-			var winTop = hui.position.getTop(this.element);
-			if (winTop < scrollTop || winTop+this.element.clientHeight > hui.window.getViewHeight()+scrollTop) {
-				hui.animate({node:this.element,css:{top:(scrollTop+40)+'px'},duration:500,ease:hui.ease.slowFastSlow});
-			}
+			this._positionInView();
 			this.element.style.zIndex=hui.ui.nextPanelIndex();
 			return;
 		}
@@ -6214,6 +6240,8 @@ hui.ui.Window.prototype = {
 		} else {
 			if (!this.element.style.top) {
 				this.element.style.top = (hui.window.getScrollTop()+40)+'px';
+			} else {
+				this._positionInView();
 			}
 			if (!this.element.style.left) {
 				this.element.style.left = Math.round((hui.window.getViewWidth()-width)/2)+'px';
@@ -6794,7 +6822,8 @@ hui.ui.List.prototype = {
 			this.sortDirection = sort[0].getAttribute('direction');
 		}
 		if (this.checkboxMode) {
-			var th = hui.build('th',{className:'list_check',parent:headTr,text:'\u00D7'});
+			var th = hui.build('th',{className:'list_check',parent:headTr});
+			var a = hui.build('a',{className:'list_check_all',parent:th})
 			hui.listen(th,'click',this._checkAll.bind(this));
 		}
 		var headers = doc.getElementsByTagName('header');
@@ -6837,7 +6866,7 @@ hui.ui.List.prototype = {
 			
 			if (this.checkboxMode) {
 				var td = hui.build('td',{parent:row,className:'hui_list_checkbox'});
-				hui.build('a',{className:'hui_list_checkbox',parent:td,text:'\u00D7'});
+				hui.build('a',{className:'hui_list_checkbox',parent:td});
 			}
 			
 			var icon = rows[i].getAttribute('icon');
@@ -8435,6 +8464,7 @@ hui.ui.Selection.prototype = {
 		}.bind(this));
 		hui.listen(node,'dblclick',function(e) {
 			hui.stop(e);
+			hui.selection.clear();
 			this._onDoubleClick(item);
 		}.bind(this));
 		node.dragDropInfo = item;
@@ -8623,6 +8653,7 @@ hui.ui.Selection.Items.prototype = {
 			}.bind(this));
 			hui.listen(node,'dblclick',function(e) {
 				hui.stop(e);
+				hui.selection.clear();
 				this.parent._onDoubleClick(item);
 			}.bind(this));
 			level.appendChild(node);
@@ -11014,7 +11045,7 @@ hui.ui.Menu.prototype = {
 	},
 	hide : function(options) {
 		if (!this.visible) {return};
-		if (options && options.immediate) {
+		if (true || options && options.immediate) {
 			this.element.style.display='none';
 		} else {
 			hui.animate(this.element, 'opacity', 0, 200, {
@@ -12076,9 +12107,25 @@ hui.ui.Gallery.prototype = {
 		this.height = size;
 		for (var i=0; i < this.nodes.length; i++) {
 			var node = this.nodes[i];
+			var obj = this.objects[i];
 			node.style.width = size+'px';
 			node.style.height = size+'px';
+			var img = hui.get.firstChild(node);
+			if (img.height && img.width) {
+				var rect = this._findSize(obj,size);
+				hui.style.set(img,{width:rect.width+'px',height:rect.height+'px',marginTop:((size-rect.height)/2)+'px'})
+			}
 		};
+	},
+	_findSize : function(obj,size) {
+		var rect = {width:size,height:size};
+		if (obj.width>obj.height) {
+			rect.height = obj.height/obj.width * size;
+		}
+		if (obj.width<obj.height) {
+			rect.width = obj.width/obj.height * size;
+		}
+		return rect;
 	},
 	reRender : function() {
 		this._render();
@@ -13371,6 +13418,7 @@ hui.ui.Overflow.prototype = {
 		this._checkShadows();
 	},
 	/** @private */
+	/*
 	$$layout : function() {
 		if (!this.options.dynamic) {
 			this._checkShadows();
@@ -13388,6 +13436,15 @@ hui.ui.Overflow.prototype = {
 		}
 		height = hui.window.getViewHeight();
 		this.element.style.height = Math.max(0,height+this.diff)+'px';
+		this._checkShadows();
+	},*/
+	$$layout : function() {
+		if (!this.options.dynamic) {
+			this._checkShadows();
+			return
+		}
+		hui.log(this.element.parentNode.clientHeight)
+		this.element.style.height = hui.position.getRemainingHeight(this.element)+'px';
 		this._checkShadows();
 	}
 }
@@ -17518,9 +17575,22 @@ hui.ui.Split.prototype = {
 	$$layout : function() {
 		this._layout();
 	},
+	_getSiblingHeight : function(e) {
+		var height = e.parentNode.clientHeight;
+		var siblings = e.parentNode.childNodes;
+		for (var i=0; i < siblings.length; i++) {
+			var sib = siblings[i];
+			if (sib!==e && hui.dom.isElement(siblings[i])) {
+				if (hui.style.get(sib,'position')!='absolute') {
+					height-=sib.offsetHeight;
+				}
+			}
+		};
+		return height;
+	},
 	_layout : function() {
 		var pos = 0,
-			full = this.element.clientHeight;
+			full = hui.position.getRemainingHeight(this.element);
 		for (var i=0; i < this.rows.length; i++) {
 			this.rows[i].style.top = (pos*full)+'px';
 			var height = (this.sizes[i]*full);
@@ -17533,6 +17603,5 @@ hui.ui.Split.prototype = {
 				this.handles[i].style.top = (pos*full)+'px';
 			}
 		};
-		//hui.ui.reLayout()
 	}
 }

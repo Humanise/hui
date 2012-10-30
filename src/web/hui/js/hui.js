@@ -976,8 +976,22 @@ hui.position = {
 				vertMin = hui.window.getScrollTop();
 			top = Math.max(Math.min(top,vertMax),vertMin);
 		}
-		src.style.top = top+'px';
-		src.style.left = left+'px';
+		src.style.top = Math.round(top)+'px';
+		src.style.left = Math.round(left)+'px';
+	},
+	/** Get the remaining height within parent when all siblings has used their height */
+	getRemainingHeight : function(e) {
+		var height = e.parentNode.clientHeight;
+		var siblings = e.parentNode.childNodes;
+		for (var i=0; i < siblings.length; i++) {
+			var sib = siblings[i];
+			if (sib!==e && hui.dom.isElement(siblings[i])) {
+				if (hui.style.get(sib,'position')!='absolute') {
+					height-=sib.offsetHeight;
+				}
+			}
+		};
+		return height;
 	}
 }
 

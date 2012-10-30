@@ -262,6 +262,14 @@ hui.ui.changeState = function(state) {
 }
 
 hui.ui.reLayout = function() {
+	var widgets = hui.ui.getDescendants(document.body);
+	for (var i=0; i < widgets.length; i++) {
+		var obj = widgets[i];
+		if (obj['$$layout']) {
+			obj['$$layout']();
+		}
+	};
+	return;
 	var all = hui.ui.objects,
 		obj;
 	for (key in all) {
@@ -929,8 +937,9 @@ hui.ui.request = function(options) {
 			options.parameters[key]=hui.string.toJSON(options.json[key]);
 		}
 	}
-	var onSuccess = options.onSuccess || options.$success;
-	var message = options.message;
+	var onSuccess = options.onSuccess || options.$success,
+		onJSON = options.onJSON || options.$object,
+		message = options.message;
 	options.onSuccess=function(t) {
 		if (message) {
 			if (message.success) {
@@ -954,14 +963,14 @@ hui.ui.request = function(options) {
 			}
 		} else if (hui.request.isXMLResponse(t) && options.onXML) {
 			options.onXML(t.responseXML);
-		} else if (options.onJSON) {
+		} else if (onJSON) {
 			str = t.responseText.replace(/^\s+|\s+$/g, '');
 			if (str.length>0) {
 				json = hui.string.fromJSON(t.responseText);
 			} else {
 				json = null;
 			}
-			options.onJSON(json);
+			onJSON(json);
 		} else if (typeof(onSuccess)=='function') {
 			onSuccess(t);
 		} else if (options.onText) {
