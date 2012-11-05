@@ -259,6 +259,15 @@ public class TagWriter {
 		return write("'").write(name).write("':").write(value);
 	}
 
+	public TagWriter property(String name, double value) throws IOException {
+		return write("'").write(name).write("':").write(value);
+	}
+
+
+	public TagWriter property(String name, Double value) throws IOException {
+		return write("'").write(name).write("':").write(value==null ? "null" : value);
+	}
+	
 	public TagWriter endNewObject() throws IOException {
 		return write("})");
 	}

@@ -57,6 +57,9 @@ public class MapComponent extends AbstractComponent {
 		MapPoint point = getBinding("location");
 		if (point!=null) {
 		out.startDiv("oo_map").withId(getClientId()).withStyle("height: "+height+"px;");
+		if (!dynamic) {
+			out.startVoidA("oo_map_pin").endA();
+		}
 		out.endDiv();
 		out.startScript();
 		out.startNewObject("oo.Map").property("element", getClientId());

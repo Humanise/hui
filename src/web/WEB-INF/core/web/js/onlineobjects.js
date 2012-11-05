@@ -314,7 +314,11 @@ oo.Map = function(options) {
 	this.element = hui.get(options.element);
 	this.name = options.name;
 	hui.ui.extend(this);
-	hui.ui.onReady(this._initStatic.bind(this));
+	if (options.dynamic) {
+		hui.ui.onReady(this._init.bind(this));		
+	} else {
+		hui.ui.onReady(this._initStatic.bind(this));
+	}
 }
 
 oo.Map.prototype = {
@@ -322,6 +326,13 @@ oo.Map.prototype = {
 		var loc = this.options.location;
 		var url = 'http://maps.googleapis.com/maps/api/staticmap?center='+loc.latitude+','+loc.longitude+'&zoom=14&size='+(this.element.offsetWidth)+'x'+(this.element.offsetHeight)+'&maptype=terrain&sensor=false';
 		this.element.style.backgroundImage='url(\''+url+'\')';
+		hui.listen(this.element,'click',function(e) {
+			e = hui.event(e);
+			var pin = e.findByClass('oo_map_pin');
+			if (pin) {
+				this._showPanel(pin);
+			}
+		}.bind(this))
 	},
 	_init : function() {
 		
@@ -339,5 +350,10 @@ oo.Map.prototype = {
 				position : myLatlng, 
 				map : map
 			});
+	},
+	_showPanel : function(target) {
+		var panel = hui.ui.BoundPanel.create({variant:'light',modal:'transparent'});
+		panel.add(hui.build('div',{style:{width:'200px',height:'200px'}}))
+		panel.show({target:target});
 	}
 }

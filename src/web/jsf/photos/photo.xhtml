@@ -47,31 +47,42 @@
 						</div> 
 					</div>
 					<div id="photos_photo_description" style="margin-top: 10px;">
-						<c:if test="#{not empty photosPhotoView.description}">
+						<c:if test="#{not photosPhotoView.canModify and not empty photosPhotoView.description}">
 							<p class="photos_photo_description">
 								<span class="photos_photo_description_start">&#8220;</span><o:out value="#{photosPhotoView.description}" escape="false"/><span class="photos_photo_description_end">&#8221;</span>
 							</p>
 						</c:if>
 						<c:if test="#{photosPhotoView.canModify}">
-							<div style="padding: 0 10px 10px;">
-								<gui:pages name="descriptionPages">
-									<gui:page>
+							<gui:pages name="descriptionPages">
+								<gui:page>
+									<c:if test="#{not empty photosPhotoView.description}">
+										<p class="photos_photo_description">
+											<span class="photos_photo_description_start">&#8220;</span><o:out value="#{photosPhotoView.description}" escape="false"/><span class="photos_photo_description_end">&#8221;</span>
+										</p>
+									</c:if>
+									<div style="padding: 0 10px 10px;">
 										<gui:button variant="paper" text="Edit description" small="true" name="addDescription"/>
-									</gui:page>
-									<gui:page>
-										<gui:textInput name="description" multiline="true" value="#{photosPhotoView.description}"/>
-										<gui:buttons>
-											<gui:button text="Save" variant="paper" name="saveDescription" small="true"/>
-											<gui:button text="Cancel" variant="paper" name="cancelDescription" small="true"/>
-										</gui:buttons>
-									</gui:page>
-								</gui:pages>
-							</div>
+									</div>
+								</gui:page>
+								<gui:page>
+									<div style="padding: 0 10px 10px;">
+									<gui:textInput name="description" multiline="true" value="#{photosPhotoView.description}"/>
+									<div style="padding: 5px 0 0;">
+									<gui:buttons>
+										<gui:button text="Save" variant="paper" name="saveDescription" small="true"/>
+										<gui:button text="Cancel" variant="paper" name="cancelDescription" small="true"/>
+									</gui:buttons>
+									</div>
+									</div>
+								</gui:page>
+							</gui:pages>
 						</c:if>
 					</div>
 				</div>
 				<gui:boundPanel name="locationPanel" modal="true">
-					<gui:locationInput/>
+					<gui:formula name="locationForm">
+						<gui:locationInput key="location"/>
+					</gui:formula>
 					<div style="margin-top: 3px;">
 						<gui:button text="Save" name="saveLocation" small="true"/>
 					</div>
@@ -85,7 +96,6 @@
 					<c:forEach items="#{photosPhotoView.properties}" var="prop">
 						<p><strong>#{prop.label}:</strong> #{prop.value}</p>
 					</c:forEach>
-				</o:block>
 				
 				<c:if test="#{not empty photosPhotoView.imageInfo.tags}">
 					<p class="tags">
@@ -95,9 +105,15 @@
 					</p>
 				</c:if>
 				<div style="margin: 10px 0">
-				<o:map location="#{photosPhotoView.mapPoint}"/>
+				<o:map location="#{photosPhotoView.mapPoint}" dynamic="false"/>
 				</div>
-				<o:link plain="true" name="addLocation"><em class="icon-map-marker"></em>Change location</o:link>
+				</o:block>
+				<c:if test="#{photosPhotoView.canModify}">
+					<gui:button text="Change location" name="addLocation" small="true" variant="paper"/>
+					<ui:remove>
+						<o:link plain="true" name="addLocation"><em class="icon-map-marker"></em>Change location</o:link>
+					</ui:remove>
+				</c:if>
 			</div>
 		</ui:define>
 		

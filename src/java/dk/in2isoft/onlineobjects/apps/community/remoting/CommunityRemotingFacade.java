@@ -392,7 +392,7 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 	
 	public void updateImageInfo(ImageInfo info) throws EndUserException {
 		UserSession priviledged = getUserSession();
-		imageService.updaImageInfo(info, priviledged);
+		imageService.updateImageInfo(info, priviledged);
 	}
 	
 	public void savePerson(Person dummy,List<EmailAddress> addresses,List<PhoneNumber> phones) throws EndUserException {

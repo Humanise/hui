@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.TagWriter;
+import dk.in2isoft.in2igui.data.LocationData;
 
 @FacesComponent(value="hui.locationInput")
 public class LocationInputComponent extends AbstractComponent {
@@ -59,13 +60,21 @@ public class LocationInputComponent extends AbstractComponent {
 		
 		out.startVoidA("hui_locationfield_picker").endA();
 		out.endSpan();
+		
+		LocationData location = getBinding("value");
+		
 		out.startScopedScript();
-		out.write("new hui.ui.LocationField({element:'").write(getClientId()).write("'");
+		out.startNewObject("hui.ui.LocationField").property("element", getClientId());
 		if (name!=null) {
-			out.write(",name:'"+StringEscapeUtils.escapeJavaScript(name)+"'");
+			out.comma().property("name", name);
 		}
 		if (key!=null) {
-			out.write(",key:'"+StringEscapeUtils.escapeJavaScript(key)+"'");
+			out.comma().property("key", key);
+		}
+		if (location!=null) {
+			out.write(",value:{");
+			out.property("latitude", location.getLatitude()).comma().property("longitude", location.getLongitude());
+			out.write("}");
 		}
 		out.write("});");
 		out.endScopedScript();

@@ -16,6 +16,7 @@
     	<dwr:remote javascript="AppPhotos">
     		<dwr:include method="updateImageTitle"/>
     		<dwr:include method="updateImageDescription"/>
+    		<dwr:include method="updateImageLocation"/>
 			<dwr:filter class="dk.in2isoft.onlineobjects.ui.DWRFilter"/>
 		</dwr:remote>
    	</bean>

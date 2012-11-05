@@ -261,7 +261,7 @@ public class ImageService extends AbstractCommandLineInterface {
 		return info;
 	}
 	
-	public void updaImageInfo(ImageInfo info, Privileged priviledged) throws ModelException, SecurityException {
+	public void updateImageInfo(ImageInfo info, Privileged priviledged) throws ModelException, SecurityException {
 
 		Image image = modelService.get(Image.class, info.getId());
 		image.setName(info.getName());
@@ -289,6 +289,29 @@ public class ImageService extends AbstractCommandLineInterface {
 			location.setLongitude(info.getLocation().getLongitude());			
 			modelService.updateItem(location, priviledged);
 		}
+	}
+	
+	public void updateImageLocation(Image image, ImageLocation imageLocation, Privileged priviledged) throws ModelException, SecurityException {
+		Location location = modelService.getParent(image, Location.class);
+		if (imageLocation==null) {
+			if (location!=null) {
+				modelService.deleteEntity(location, priviledged);
+			}
+			return;
+		}
+		if (imageLocation==null && location!=null) {
+			modelService.deleteEntity(location, priviledged);
+		} else if (imageLocation!=null && location==null) {
+			location = new Location();
+			location.setLatitude(imageLocation.getLatitude());
+			location.setLongitude(imageLocation.getLongitude());
+			modelService.createItem(location, priviledged);
+			modelService.createRelation(location, image, priviledged);
+		} else {
+			location.setLatitude(imageLocation.getLatitude());
+			location.setLongitude(imageLocation.getLongitude());			
+			modelService.updateItem(location, priviledged);
+		}		
 	}
 
 	public void setStorageService(StorageService storageService) {

@@ -26,7 +26,18 @@ var photoView = {
 		panel.show()
 	},
 	$click$saveLocation : function() {
-		oo.render({id:'properties'})
+		var form = hui.ui.get('locationForm'),
+			panel = hui.ui.get('locationPanel');
+		AppPhotos.updateImageLocation(this.imageId,form.getValues().location,{
+			callback : function() {
+				oo.render({id:'properties'})
+				hui.ui.showMessage({text:'The location is changed',duration:1000,icon:'common/success'});
+			},
+			errorHandler : function() {
+				hui.ui.showMessage({text:'Unable to change location',icon:'common/warning',duration:2000});
+			}
+		})
+		panel.hide();
 	},
 	$click$addDescription : function(button) {
 		hui.ui.get('descriptionPages').next()
