@@ -46,7 +46,7 @@ public class VideosharingController extends ApplicationController {
 		return new VideosharingSession();
 	}
 
-	@RequestMapping(start={"importVideo.action"})
+	@Path(start={"importVideo.action"})
 	public void importVideo(Request request) throws IOException, EndUserException {
 		DataImporter dataImporter = importService.createImporter();
 		VideoImporter listener = new VideoImporter(modelService, videoService);
@@ -54,7 +54,7 @@ public class VideosharingController extends ApplicationController {
 		dataImporter.importMultipart(this, request);
 	}
 
-	@RequestMapping(start={"changeVideoPoster.action"})
+	@Path(start={"changeVideoPoster.action"})
 	public void changeVideoPoster(Request request) throws IOException, EndUserException {
 		DataImporter dataImporter = importService.createImporter();
 		VideoPosterImporter listener = new VideoPosterImporter(modelService, imageService, securityService);
@@ -62,7 +62,7 @@ public class VideosharingController extends ApplicationController {
 		dataImporter.importMultipart(this, request);
 	}
 
-	@RequestMapping(start={"changeProfileImage.action"})
+	@Path(start={"changeProfileImage.action"})
 	public void changeProfileImage(Request request) throws EndUserException, IOException {
 		DataImporter dataImporter = importService.createImporter();
 		ImageImporter listener = new ProfileImageImporter(modelService,imageService, securityService);

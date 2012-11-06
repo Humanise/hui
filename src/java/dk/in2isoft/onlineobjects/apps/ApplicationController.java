@@ -22,7 +22,7 @@ import org.springframework.beans.factory.InitializingBean;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.commons.util.RestUtil;
 import dk.in2isoft.in2igui.FileBasedInterface;
-import dk.in2isoft.onlineobjects.apps.videosharing.RequestMapping;
+import dk.in2isoft.onlineobjects.apps.videosharing.Path;
 import dk.in2isoft.onlineobjects.core.ContentNotFoundException;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelService;
@@ -103,7 +103,7 @@ public abstract class ApplicationController implements ModelEventListener,Initia
 	public void unknownRequest(Request request) throws IOException, EndUserException {
 		Method[] methods = getClass().getDeclaredMethods();
 		for (Method method : methods) {
-			RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+			Path annotation = method.getAnnotation(Path.class);
 			
 			if (annotation!=null && request.testLocalPathStart(annotation.start())) {
 				try {

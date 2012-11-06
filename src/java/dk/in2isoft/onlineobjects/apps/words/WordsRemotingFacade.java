@@ -1,7 +1,6 @@
 package dk.in2isoft.onlineobjects.apps.words;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -9,10 +8,8 @@ import org.apache.commons.lang.StringUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import dk.in2isoft.in2igui.data.Diagram;
 import dk.in2isoft.in2igui.data.ItemData;
 import dk.in2isoft.in2igui.data.ListData;
-import dk.in2isoft.in2igui.data.Node;
 import dk.in2isoft.onlineobjects.apps.words.importing.HTMLDocumentImporter;
 import dk.in2isoft.onlineobjects.core.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.ModelException;
@@ -21,7 +18,6 @@ import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.SecurityException;
 import dk.in2isoft.onlineobjects.core.SecurityService;
-import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Language;
 import dk.in2isoft.onlineobjects.model.LexicalCategory;
 import dk.in2isoft.onlineobjects.model.Relation;
@@ -31,7 +27,6 @@ import dk.in2isoft.onlineobjects.modules.importing.ImportSession;
 import dk.in2isoft.onlineobjects.services.ImportService;
 import dk.in2isoft.onlineobjects.services.LanguageService;
 import dk.in2isoft.onlineobjects.ui.AbstractRemotingFacade;
-import dk.in2isoft.onlineobjects.util.Messages;
 
 public class WordsRemotingFacade extends AbstractRemotingFacade {
 	
@@ -165,104 +160,6 @@ public class WordsRemotingFacade extends AbstractRemotingFacade {
 		if (user==null) {
 			modelService.createRelation(word, getUserSession().getUser(), Relation.KIND_COMMON_ORIGINATOR, getUserSession());
 		}
-	}
-	
-	public Diagram getDiagram(String text) throws ModelException {
-
-		Messages msg = new Messages("classpath:dk/in2isoft/onlineobjects/apps/words/msg/Words");
-		Diagram diagram = new Diagram();
-		Query<Word> query = Query.of(Word.class).withField(Word.TEXT_FIELD, text);
-		List<Word> words = modelService.search(query).getList();
-		for (Word word : words) {
-			Node wordNode = new Node();
-			wordNode.setId(word.getId());
-			wordNode.setTitle(word.getText());
-			wordNode.addProperty("Type", "Word");
-			diagram.addNode(wordNode);
-			Locale locale = new Locale("en");
-			
-			List<Relation> childRelations = modelService.getChildRelations(word, Word.class);
-			for (Relation relation : childRelations) {
-				Entity child = relation.getSubEntity();
-				Node childNode = new Node();
-				childNode.setId(child.getId());
-				childNode.setTitle(child.getName());
-				childNode.addProperty("Type", "Word");
-				diagram.addNode(childNode);
-				diagram.addEdge(wordNode,msg.get(relation.getKind(), locale),childNode);
-				
-				Language language = modelService.getParent(child, Language.class);
-				if (language!=null) {
-					Node langNode = new Node();
-					langNode.setId(language.getId());
-					langNode.setTitle(language.getName());
-					langNode.addProperty("Type", "Language");
-					diagram.addNode(langNode);
-					diagram.addEdge(childNode,langNode);
-				}
-			}
-			
-			List<Relation> parentRelations = modelService.getParentRelations(word, Word.class);
-			for (Relation relation : parentRelations) {
-				Entity child = relation.getSuperEntity();
-				Node childNode = new Node();
-				childNode.setId(child.getId());
-				childNode.setTitle(child.getName());
-				childNode.addProperty("Type", "Word");
-				diagram.addNode(childNode);
-				diagram.addEdge(wordNode,msg.get(relation.getKind(), locale),childNode);
-				
-				Language language = modelService.getParent(child, Language.class);
-				if (language!=null) {
-					Node langNode = new Node();
-					langNode.setId(language.getId());
-					langNode.setTitle(language.getName());
-					langNode.addProperty("Type", "Language");
-					diagram.addNode(langNode);
-					diagram.addEdge(childNode,langNode);
-				}
-			}
-			
-			Language language = modelService.getParent(word, Language.class);
-			if (language!=null) {
-				Node langNode = new Node();
-				langNode.setId(language.getId());
-				langNode.setTitle(language.getName());
-				langNode.addProperty("Type", "Language");
-				diagram.addNode(langNode);
-				diagram.addEdge(wordNode,langNode);
-			}
-			LexicalCategory category = modelService.getParent(word, LexicalCategory.class);
-			if (category!=null) {
-				Node categoryNode = new Node();
-				categoryNode.setId(category.getId());
-				categoryNode.setTitle(category.getName());
-				categoryNode.addProperty("Type", "Lexical category");
-				diagram.addNode(categoryNode);
-				diagram.addEdge(wordNode,"Category",categoryNode);
-
-				LexicalCategory superCategory = modelService.getParent(category, Relation.KIND_STRUCTURE_SPECIALIZATION, LexicalCategory.class);
-				if (superCategory!=null) {
-					Node superNode = new Node();
-					superNode.setId(superCategory.getId());
-					superNode.setTitle(superCategory.getName());
-					superNode.addProperty("Type", "Lexical category");
-					diagram.addNode(superNode);
-					diagram.addEdge(superNode,"Specialization",categoryNode);
-				}
-			}
-			User user = modelService.getChild(word, Relation.KIND_COMMON_ORIGINATOR, User.class);
-			if (user!=null) {
-				Node userNode = new Node();
-				userNode.setId(user.getId());
-				userNode.setTitle(user.getName());
-				userNode.addProperty("Type", "User");
-				diagram.addNode(userNode);
-				diagram.addEdge(wordNode,"Originator",userNode);
-			}
-		}
-		
-		return diagram;
 	}
 	
 	public ListData searchWords(String text, Integer page) {

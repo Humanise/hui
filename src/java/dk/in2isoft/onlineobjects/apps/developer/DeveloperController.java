@@ -3,7 +3,7 @@ package dk.in2isoft.onlineobjects.apps.developer;
 import java.io.IOException;
 
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
-import dk.in2isoft.onlineobjects.apps.videosharing.RequestMapping;
+import dk.in2isoft.onlineobjects.apps.videosharing.Path;
 import dk.in2isoft.onlineobjects.core.ContentNotFoundException;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.modules.video.VideoService;
@@ -28,7 +28,7 @@ public class DeveloperController extends ApplicationController {
 		return configurationService.isDevelopmentMode();
 	}
 
-	@RequestMapping(start={"test"})
+	@Path(start={"test"})
 	public void importVideo(Request request) throws IOException, EndUserException {
 		throw new ContentNotFoundException();
 	}

@@ -27,6 +27,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.collection.PersistentList;
 import org.hibernate.exception.DataException;
 import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.proxy.AbstractLazyInitializer;
@@ -780,14 +781,10 @@ public class ModelService {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T getSubject(T obj) {
-		// XXX The below "fix" is needed by Hibernate 3.0.5, please check if it
-		// is needed in future versions
-		// Fixed so that initialized objects actually are instance of their
-		// correct class and not just Content
 		
-		if (obj instanceof HibernateProxy)
-			obj = (T) ((AbstractLazyInitializer) ((HibernateProxy) obj).getHibernateLazyInitializer())
-					.getImplementation();
+		if (obj instanceof HibernateProxy) {
+			obj = (T) ((AbstractLazyInitializer) ((HibernateProxy) obj).getHibernateLazyInitializer()).getImplementation();
+		}
 		return obj;
 	}
 

@@ -13,6 +13,9 @@ import org.apache.log4j.Logger;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.UserSession;
 
@@ -345,5 +348,20 @@ public class Request {
 			return application.equals(app);
 		}
 		return false;
+	}
+
+	public void sendObject(Object value) throws IOException {
+		Gson gson = new Gson();
+		String json = gson.toJson(value);
+		response.getWriter().write(json);
+	}
+
+	public <T> T getObject(String name, Class<T> type) {
+		try {
+			Gson gson = new Gson();
+			return gson.fromJson(getString(name), type);
+		} catch (JsonSyntaxException e) {
+			return null;
+		}
 	}
 }

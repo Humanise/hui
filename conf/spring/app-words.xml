@@ -11,6 +11,8 @@
     ">
 
    	<bean id="wordsController" class="dk.in2isoft.onlineobjects.apps.words.WordsController" autowire="byType"/>
+   	
+   	<bean id="wordsModelService" class="dk.in2isoft.onlineobjects.apps.words.WordsModelService" autowire="byType"/>
 
    	<bean id="wordsRemotingFacade" class="dk.in2isoft.onlineobjects.apps.words.WordsRemotingFacade" autowire="byType">
    	 	<property name="languageService" ref="languageService"/>
@@ -23,7 +25,6 @@
     		<dwr:include method="startUrlImport"/>
     		<dwr:include method="getOptions"/>
     		<dwr:include method="deleteWord"/>
-    		<dwr:include method="getDiagram"/>
     		<dwr:include method="searchWords"/>
     		<dwr:include method="relateWords"/>
     		<dwr:include method="deleteRelation"/>

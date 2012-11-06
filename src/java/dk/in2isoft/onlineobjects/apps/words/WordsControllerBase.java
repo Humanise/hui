@@ -1,0 +1,43 @@
+package dk.in2isoft.onlineobjects.apps.words;
+
+import dk.in2isoft.onlineobjects.apps.ApplicationController;
+import dk.in2isoft.onlineobjects.services.ImportService;
+import dk.in2isoft.onlineobjects.ui.Request;
+
+public class WordsControllerBase extends ApplicationController {
+
+	protected ImportService importService;
+	protected WordsModelService wordsModelService;
+
+	public WordsControllerBase() {
+		super("words");
+		addJsfMatcher("/", "front.xhtml");
+		addJsfMatcher("/<language>", "front.xhtml");
+		addJsfMatcher("/<language>/word/<word>.html", "word.xhtml");
+		addJsfMatcher("/<language>/import/<folder>", "import.xhtml");
+		addJsfMatcher("/<language>/index/<word>", "index.xhtml");
+		addJsfMatcher("/<language>/index/<word>/<integer>", "index.xhtml");
+	}
+
+	public WordsControllerBase(String name) {
+		super(name);
+	}
+
+	@Override
+	public String getLanguage(Request request) {
+		String[] path = request.getLocalPath();
+		if (path.length>0) {
+			return path[0];
+		}
+		return super.getLanguage(request);
+	}
+
+	public void setImportService(ImportService importService) {
+		this.importService = importService;
+	}
+
+	public void setWordsModelService(WordsModelService wordsModelService) {
+		this.wordsModelService = wordsModelService;
+	}
+
+}

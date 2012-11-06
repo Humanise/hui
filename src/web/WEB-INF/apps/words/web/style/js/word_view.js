@@ -57,6 +57,16 @@ var wordView = {
 	
 	$added$diagram : function() {
 		var diagram = hui.ui.get('diagram');
+		
+		hui.ui.request({
+			url : oo.appContext+'/diagram.json',
+			parameters : {word:this.text},
+			$object : function(data) {
+				diagram.$objectsLoaded(data);				
+			}
+		})
+		return;
+		
 		AppWords.getDiagram( this.text, {
 			callback : function(data) {
 				diagram.$objectsLoaded(data);
