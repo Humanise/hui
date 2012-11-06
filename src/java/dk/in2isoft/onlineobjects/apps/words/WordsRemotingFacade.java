@@ -163,7 +163,6 @@ public class WordsRemotingFacade extends AbstractRemotingFacade {
 	}
 	
 	public ListData searchWords(String text, Integer page) {
-		System.out.println(text);
 		if (page==null) page=0;
 		ListData list = new ListData();
 		list.addHeader("Word");

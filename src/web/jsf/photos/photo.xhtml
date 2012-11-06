@@ -97,19 +97,28 @@
 						<p><strong>#{prop.label}:</strong> #{prop.value}</p>
 					</c:forEach>
 				
-				<c:if test="#{not empty photosPhotoView.imageInfo.tags}">
-					<p class="tags">
-						<c:forEach items="#{photosPhotoView.imageInfo.tags}" var="tag">
-							<a class="tag" href="#{baseView.baseContext}/search.html?tag=#{tag}"><span>#{tag}</span></a><h:outputText value=" "/>
-						</c:forEach>
-					</p>
-				</c:if>
+					<c:if test="#{not empty photosPhotoView.imageInfo.tags}">
+						<p class="tags">
+							<c:forEach items="#{photosPhotoView.imageInfo.tags}" var="tag">
+								<a class="tag" href="#{baseView.baseContext}/search.html?tag=#{tag}"><span>#{tag}</span></a><h:outputText value=" "/>
+							</c:forEach>
+						</p>
+					</c:if>
+				
+					<c:if test="#{not empty photosPhotoView.words}">
+						<p class="photos_photo_words" id="words">
+							<c:forEach items="#{photosPhotoView.words}" var="word">
+								<a href="javascript://" data="#{word.id}"><span>#{word.text}</span></a><h:outputText value=" "/>
+							</c:forEach>
+						</p>
+					</c:if>
 				<div style="margin: 10px 0">
-				<o:map location="#{photosPhotoView.mapPoint}" dynamic="false"/>
+					<o:map location="#{photosPhotoView.mapPoint}" dynamic="false"/>
 				</div>
 				</o:block>
 				<c:if test="#{photosPhotoView.canModify}">
 					<gui:button text="Change location" name="addLocation" small="true" variant="paper"/>
+					<gui:button text="Add word" name="addWord" small="true" variant="paper"/>
 					<ui:remove>
 						<o:link plain="true" name="addLocation"><em class="icon-map-marker"></em>Change location</o:link>
 					</ui:remove>

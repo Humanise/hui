@@ -17,6 +17,8 @@
     		<dwr:include method="updateImageTitle"/>
     		<dwr:include method="updateImageDescription"/>
     		<dwr:include method="updateImageLocation"/>
+    		<dwr:include method="relateWordToImage"/>
+    		<dwr:include method="removeWordRelation"/>
 			<dwr:filter class="dk.in2isoft.onlineobjects.ui.DWRFilter"/>
 		</dwr:remote>
    	</bean>

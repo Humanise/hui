@@ -89,7 +89,7 @@ hui.ui.listen({
 		this._setTimer();
 	},
 	_fade : function() {
-		hui.cls.add(document.body,'oo_fade');
+		//hui.cls.add(document.body,'oo_fade');
 	},
 	_setTimer : function() {
 		window.clearTimeout(this._timer);

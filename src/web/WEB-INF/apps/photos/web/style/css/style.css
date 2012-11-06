@@ -132,6 +132,8 @@ div.photos_photo_properties
 div.photos_photo_properties p
 {
 	margin: 0 0 5px;
+	padding-left: 10px;
+	text-indent: -10px;
 }
 
 div.photos_photo_properties strong
@@ -172,4 +174,9 @@ p.photos_photo_description span.photos_photo_description_start
 span.photos_photo_description_end
 {
 	margin-left: 3px;
+}
+
+p.photos_photo_words a
+{
+	color: #333;
 }

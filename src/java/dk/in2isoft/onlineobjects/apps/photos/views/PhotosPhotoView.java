@@ -26,6 +26,7 @@ import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.Location;
 import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.User;
+import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.ui.jsf.model.MapPoint;
 import dk.in2isoft.onlineobjects.util.Dates;
 import dk.in2isoft.onlineobjects.util.images.ImageInfo;
@@ -48,6 +49,7 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 	private List<SelectItem> properties;
 	private long nextId;
 	private long previousId;
+	private List<Word> words;
 	
 	public void afterPropertiesSet() throws Exception {
 		image = modelService.get(Image.class, getImageId());
@@ -85,7 +87,6 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 			properties = Lists.newArrayList();
 			properties.add(new SelectItem(image.getWidth()+" x "+image.getHeight()+" - "+getMegaPixels()+" Megapixel","Size"));
 			properties.add(new SelectItem(Files.formatFileSize(image.getFileSize())+", "+image.getContentType(),"File"));
-			properties.add(new SelectItem(Dates.formatLongDate(new Date(), locale),"Now"));
 			if (imageInfo.getTaken()!=null) {
 				properties.add(new SelectItem(Dates.formatLongDate(imageInfo.getTaken(),locale ),"Date"));
 			}
@@ -125,6 +126,7 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 					properties.add(new SelectItem(longitude.toString(), "Longitude"));
 				}
 			}
+			words = modelService.getChildren(image, null, Word.class);
 		}
 	}
 	
@@ -174,6 +176,10 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 	
 	public double getMegaPixels() {
 		return Math.round(image.getWidth()*image.getHeight()/(double)10000)/(double)100;
+	}
+	
+	public List<Word> getWords() {
+		return words;
 	}
 	
 	public Long getImageId() {

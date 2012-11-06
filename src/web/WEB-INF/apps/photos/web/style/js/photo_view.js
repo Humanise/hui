@@ -8,6 +8,7 @@ var photoView = {
 				element : 'editableTitle',
 				name : 'titleEditor'
 			});
+			hui.listen(hui.get('words'),'click',this._onClickWord.bind(this))
 		}
 	},
 	$valueChanged$titleEditor : function(value) {
@@ -19,6 +20,15 @@ var photoView = {
 				hui.ui.showMessage({text:'Unable to change title',icon:'common/warning',duration:2000});
 			}
 		})
+	},
+	_onClickWord : function(e) {
+		e = hui.event(e);
+		var a = e.findByTag('a');
+		if (a) {
+			hui.ui.confirmOverlay({element:a,text:'Delete word?',$ok : function() {
+				this._removeWord(parseInt(a.getAttribute('data'),10));
+			}.bind(this)})			
+		}
 	},
 	$click$addLocation : function(widget) {
 		var panel = hui.ui.get('locationPanel');
@@ -55,6 +65,40 @@ var photoView = {
 			},
 			errorHandler : function() {
 				hui.ui.showMessage({text:'Unable to save description',icon:'common/warning',duration:2000});
+			}
+		})
+	},
+	
+	$click$addWord : function() {
+		if (!this._wordFinder) {
+			this._wordFinder = hui.ui.Finder.create({
+				name : 'wordFinder',
+				title : {en:'Add word',da:'Tilføj ord'},
+				list : {source : new hui.ui.Source({dwr:'AppWords.searchWords'}),pageParameter:'page'},
+				search : {parameter:'text'}
+			});
+		}
+		this._wordFinder.show();
+	},
+	$select$wordFinder : function(value) {
+		this._wordFinder.clear();
+		this._wordFinder.hide();
+		AppPhotos.relateWordToImage(this.imageId,value.id,{
+			callback : function() {
+				oo.render({id:'properties'});
+			},
+			errorHandler : function() {
+				hui.ui.showMessage({text:'Unable to add word',icon:'common/warning',duration:2000});
+			}
+		})
+	},
+	_removeWord : function(wordId) {
+		AppPhotos.removeWordRelation(this.imageId,wordId,{
+			callback : function() {
+				oo.render({id:'properties'});
+			},
+			errorHandler : function() {
+				hui.ui.showMessage({text:'Unable to remove word',icon:'common/warning',duration:2000});
 			}
 		})
 	}
