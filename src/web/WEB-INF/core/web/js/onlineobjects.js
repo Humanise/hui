@@ -176,11 +176,7 @@ oo.TopBar.prototype = {
 			var p = this._userPanel = hui.ui.BoundPanel.create({width:200,variant:'light',hideOnClick:true});
 			var logout = hui.ui.Button.create({text:'Log out'});
 			logout.listen({
-				$click : function() {
-					CoreSecurity.logOut(function() {
-						document.location.reload()
-					})
-				}
+				$click : this._doLogout.bind(this)
 			})
 			p.add(logout);
 		}
@@ -221,14 +217,29 @@ oo.TopBar.prototype = {
 	},
 	_doLogin : function() {
 		var values = this._loginForm.getValues();
-		CoreSecurity.changeUser(values.username,values.password,{
-			callback:function() {
-				document.location.reload()
+		hui.ui.request({
+			url : oo.baseContext+'/service/authentication/changeUser',
+			parameters : {username:values.username,password:values.password},
+			$object : function(response) {
+				if (response.success===true) {
+					document.location.reload();
+				} else {
+					this.$failure();
+				}
 			},
-			errorHandler : function() {
+			$failure : function() {
 				hui.ui.showMessage({text:'Unable to log in',icon:'common/warning',duration:2000});
 			}
 		})
+	},
+	_doLogout : function() {
+		hui.ui.request({
+			url : oo.baseContext+'/service/authentication/logout',
+			$success : function() {
+				document.location.reload();
+			}
+		})
+		
 	}
 }
 
@@ -239,6 +250,7 @@ oo.InlineEditor = function(options) {
 	this.name = options.name;
 	hui.ui.extend(this);
 	this._addBehavior();
+	this.editing = false;
 }
 
 oo.InlineEditor.prototype = {
@@ -259,6 +271,7 @@ oo.InlineEditor.prototype = {
 		field.focus();
 		field.select();
 		this.originalValue = field.value;
+		this.editing = true;
 	},
 	_getField : function() {
 		if (!this._field) {
@@ -275,14 +288,16 @@ oo.InlineEditor.prototype = {
 		return this._field;
 	},
 	_save : function() {
+		if (!this.editing) {return}
 		var value = this._field.value;
 		hui.dom.setText(this.element,value);
 		this._field.style.display='none';
 		this.element.style.visibility = '';
-		this.element.focus();
+		document.body.focus();
 		if (this.originalValue!=value) {
 			this.fire('valueChanged',value);			
 		}
+		this.editing = false;
 	}
 }
 

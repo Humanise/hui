@@ -17,6 +17,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 import dk.in2isoft.commons.lang.Strings;
+import dk.in2isoft.onlineobjects.core.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.UserSession;
 
 public class Request {
@@ -262,10 +263,10 @@ public class Request {
 		return "true".equals(request.getParameter(key));
 	}
 
-	public String getString(String key, String error) throws IllegalArgumentException {
+	public String getString(String key, String error) throws IllegalRequestException {
 		String value = request.getParameter(key);
 		if (value == null) {
-			throw new IllegalArgumentException(error);
+			throw new IllegalRequestException(error);
 		} else {
 			return value;
 		}
@@ -353,6 +354,8 @@ public class Request {
 	public void sendObject(Object value) throws IOException {
 		Gson gson = new Gson();
 		String json = gson.toJson(value);
+		response.setContentType("text/plain");
+		response.setCharacterEncoding("UTF-8");
 		response.getWriter().write(json);
 	}
 

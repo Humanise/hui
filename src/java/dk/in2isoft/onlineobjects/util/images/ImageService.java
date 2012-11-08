@@ -292,25 +292,25 @@ public class ImageService extends AbstractCommandLineInterface {
 	}
 	
 	public void updateImageLocation(Image image, ImageLocation imageLocation, Privileged priviledged) throws ModelException, SecurityException {
-		Location location = modelService.getParent(image, Location.class);
-		if (imageLocation==null) {
-			if (location!=null) {
-				modelService.deleteEntity(location, priviledged);
-			}
+		Location existing = modelService.getParent(image, Location.class);
+		if (imageLocation==null && existing==null) {
 			return;
 		}
-		if (imageLocation==null && location!=null) {
-			modelService.deleteEntity(location, priviledged);
-		} else if (imageLocation!=null && location==null) {
-			location = new Location();
-			location.setLatitude(imageLocation.getLatitude());
-			location.setLongitude(imageLocation.getLongitude());
-			modelService.createItem(location, priviledged);
-			modelService.createRelation(location, image, priviledged);
+		else if (imageLocation==null && existing!=null) {
+			// Delete
+			modelService.deleteEntity(existing, priviledged);
+		} else if (imageLocation!=null && existing==null) {
+			// Update
+			existing = new Location();
+			existing.setLatitude(imageLocation.getLatitude());
+			existing.setLongitude(imageLocation.getLongitude());
+			modelService.createItem(existing, priviledged);
+			modelService.createRelation(existing, image, priviledged);
 		} else {
-			location.setLatitude(imageLocation.getLatitude());
-			location.setLongitude(imageLocation.getLongitude());			
-			modelService.updateItem(location, priviledged);
+			// Add
+			existing.setLatitude(imageLocation.getLatitude());
+			existing.setLongitude(imageLocation.getLongitude());			
+			modelService.updateItem(existing, priviledged);
 		}		
 	}
 

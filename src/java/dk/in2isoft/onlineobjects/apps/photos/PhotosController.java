@@ -1,13 +1,20 @@
 package dk.in2isoft.onlineobjects.apps.photos;
 
+import java.io.IOException;
+
+import dk.in2isoft.in2igui.data.ListData;
 import dk.in2isoft.onlineobjects.apps.videosharing.Path;
 import dk.in2isoft.onlineobjects.core.ContentNotFoundException;
 import dk.in2isoft.onlineobjects.core.ModelException;
-import dk.in2isoft.onlineobjects.core.Privileged;
+import dk.in2isoft.onlineobjects.core.Query;
+import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.SecurityException;
 import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.model.Image;
+import dk.in2isoft.onlineobjects.model.Relation;
+import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.ui.Request;
+import dk.in2isoft.onlineobjects.util.images.ImageInfo.ImageLocation;
 
 
 public class PhotosController extends PhotosControllerBase {
@@ -22,11 +29,72 @@ public class PhotosController extends PhotosControllerBase {
 		modelService.updateItem(image, session);
 	}
 
-	private Image getImage(long id, Privileged privileged) throws ModelException, ContentNotFoundException {
-		Image image = getModelService().get(Image.class, id,privileged);
-		if (image==null) {
-			throw new ContentNotFoundException("The image was not found");
+	@Path(start="updateDescription")
+	public void updateImageDescription(Request request) throws ModelException, SecurityException, ContentNotFoundException {
+		UserSession session = request.getSession();
+		long id = request.getInt("id");
+		String description = request.getString("description");
+		Image image = getImage(id,session);
+		image.overrideFirstProperty(Image.PROPERTY_DESCRIPTION, description);
+		modelService.updateItem(image, session);
+	}
+
+	@Path(start="updateLocation")
+	public void updateImageLocation(Request request) throws ModelException, SecurityException, ContentNotFoundException {
+		UserSession session = request.getSession();
+		long id = request.getInt("id");
+		ImageLocation location = request.getObject("location", ImageLocation.class);
+		Image image = getImage(id,session);
+		imageService.updateImageLocation(image, location, session);
+	}
+
+	@Path(start="relateWord")
+	public void relateWordToImage(Request request) throws ModelException, SecurityException, ContentNotFoundException {
+		UserSession session = request.getSession();
+		long imageId = request.getInt("image");
+		long wordId = request.getInt("word");
+		Image image = getImage(imageId,session);
+		Word word = modelService.get(Word.class, wordId, session);
+		if (word==null) {
+			throw new ContentNotFoundException("The word was not found");
 		}
-		return image;
+		Relation relation = modelService.getRelation(image, word);
+		if (relation==null) {
+			modelService.createRelation(image, word, session);
+		}
+	}
+
+	@Path(start="removeWord")
+	public void removeWordFromImage(Request request) throws ModelException, SecurityException, ContentNotFoundException {
+		UserSession session = request.getSession();
+		long imageId = request.getInt("image");
+		long wordId = request.getInt("word");
+		Image image = getImage(imageId,session);
+		Word word = modelService.get(Word.class, wordId, session);
+		if (word==null) {
+			throw new ContentNotFoundException("The word was not found");
+		}
+		Relation relation = modelService.getRelation(image, word);
+		if (relation!=null) {
+			modelService.deleteRelation(relation, session);
+		}
+	}
+
+	@Path(start="searchWords")
+	public void searchWords(Request request) throws IOException {
+		String text = request.getString("text");
+		Integer page = request.getInt("page");
+		if (page==null) page=0;
+		ListData list = new ListData();
+		list.addHeader("Word");
+		Query<Word> query = Query.of(Word.class).withWords(text).withPaging(page, 50);
+		SearchResult<Word> result = modelService.search(query);
+		list.setWindow(result.getTotalCount(), 50, page);
+		for (Word word : result.getList()) {
+			String kind = word.getClass().getSimpleName().toLowerCase();
+			list.newRow(word.getId(),kind);
+			list.addCell(word.getName(), word.getIcon());
+		}
+		request.sendObject(list);
 	}
 }

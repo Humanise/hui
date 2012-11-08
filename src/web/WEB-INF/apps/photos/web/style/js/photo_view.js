@@ -12,12 +12,12 @@ var photoView = {
 		}
 	},
 	$valueChanged$titleEditor : function(value) {
-		AppPhotos.updateImageTitle(this.imageId,value,{
-			callback : function() {
-				hui.ui.showMessage({text:'The title is changed',duration:1000,icon:'common/success'});
-			},
-			errorHandler : function() {
-				hui.ui.showMessage({text:'Unable to change title',icon:'common/warning',duration:2000});
+		hui.ui.request({
+			message : {start:'Updating title',success:'The title is changed'},
+			url : oo.appContext+'/updateTitle',
+			parameters : {id:this.imageId,title:value},
+			$failure : function() {
+				hui.ui.showMessage({text:'Unable to update tile',icon:'common/warning',duration:2000});
 			}
 		})
 	},
@@ -36,17 +36,20 @@ var photoView = {
 		panel.show()
 	},
 	$click$saveLocation : function() {
-		var form = hui.ui.get('locationForm'),
+		var values = hui.ui.get('locationForm').getValues(),
 			panel = hui.ui.get('locationPanel');
-		AppPhotos.updateImageLocation(this.imageId,form.getValues().location,{
-			callback : function() {
+		
+		hui.ui.request({
+			message : {start:'Updating location',success:'The location is changed'},
+			url : oo.appContext+'/updateLocation',
+			json : {id : this.imageId, location : values.location},
+			$success : function() {
 				oo.render({id:'properties'})
-				hui.ui.showMessage({text:'The location is changed',duration:1000,icon:'common/success'});
 			},
-			errorHandler : function() {
-				hui.ui.showMessage({text:'Unable to change location',icon:'common/warning',duration:2000});
+			$failure : function() {
+				hui.ui.showMessage({text:'Unable to update location',icon:'common/warning',duration:2000});
 			}
-		})
+		});
 		panel.hide();
 	},
 	$click$addDescription : function(button) {
@@ -58,13 +61,15 @@ var photoView = {
 	},
 	$click$saveDescription : function(button) {
 		var text = hui.ui.get('description').getValue();
-		
-		AppPhotos.updateImageDescription(this.imageId,text,{
-			callback : function() {
-				oo.update({id:'photos_photo_description'})
+		hui.ui.request({
+			message : {start:'Updating description',success:'The description is changed'},
+			url : oo.appContext+'/updateDescription',
+			parameters : {id : this.imageId, description : text},
+			$success : function() {
+				oo.update({id:'photos_photo_description'});
 			},
-			errorHandler : function() {
-				hui.ui.showMessage({text:'Unable to save description',icon:'common/warning',duration:2000});
+			$failure : function() {
+				hui.ui.showMessage({text:'Unable to update description',icon:'common/warning',duration:2000});
 			}
 		})
 	},
@@ -74,7 +79,7 @@ var photoView = {
 			this._wordFinder = hui.ui.Finder.create({
 				name : 'wordFinder',
 				title : {en:'Add word',da:'Tilføj ord'},
-				list : {source : new hui.ui.Source({dwr:'AppWords.searchWords'}),pageParameter:'page'},
+				list : {url : oo.appContext+'/searchWords',pageParameter:'page'},
 				search : {parameter:'text'}
 			});
 		}
@@ -83,21 +88,27 @@ var photoView = {
 	$select$wordFinder : function(value) {
 		this._wordFinder.clear();
 		this._wordFinder.hide();
-		AppPhotos.relateWordToImage(this.imageId,value.id,{
-			callback : function() {
+		hui.ui.request({
+			message : {start:'Adding word',success:'The word is added'},
+			url : oo.appContext+'/relateWord',
+			parameters : {image : this.imageId, word : value.id},
+			$success : function() {
 				oo.render({id:'properties'});
 			},
-			errorHandler : function() {
+			$failure : function() {
 				hui.ui.showMessage({text:'Unable to add word',icon:'common/warning',duration:2000});
 			}
 		})
 	},
 	_removeWord : function(wordId) {
-		AppPhotos.removeWordRelation(this.imageId,wordId,{
-			callback : function() {
+		hui.ui.request({
+			message : {start:'Adding word',success:'The word is removed'},
+			url : oo.appContext+'/removeWord',
+			parameters : {image : this.imageId, word : wordId},
+			$success : function() {
 				oo.render({id:'properties'});
 			},
-			errorHandler : function() {
+			$failure : function() {
 				hui.ui.showMessage({text:'Unable to remove word',icon:'common/warning',duration:2000});
 			}
 		})

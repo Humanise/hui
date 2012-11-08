@@ -43,7 +43,7 @@ public class MapComponent extends AbstractComponent {
 	}
 	
 	public void processEvent(ComponentSystemEvent event) throws AbortProcessingException {
-		if (event instanceof PostAddToViewEvent) {
+		if (dynamic && event instanceof PostAddToViewEvent) {
 	        FacesContext context = FacesContext.getCurrentInstance();
 	        ScriptComponent componentResource = new ScriptComponent();
 	        componentResource.setSrc("http://maps.google.com/maps/api/js?sensor=false");

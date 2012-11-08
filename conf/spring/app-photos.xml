@@ -2,26 +2,12 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xmlns:util="http://www.springframework.org/schema/util"
-  	xmlns:dwr="http://www.directwebremoting.org/schema/spring-dwr"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
-        http://www.directwebremoting.org/schema/spring-dwr
-    	http://www.directwebremoting.org/schema/spring-dwr-2.0.xsd
     ">
 
    	<bean id="photosController" class="dk.in2isoft.onlineobjects.apps.photos.PhotosController" autowire="byType"/>
-   	
-   	<bean id="photosRemotingFacade" class="dk.in2isoft.onlineobjects.apps.photos.PhotosRemotingFacade" autowire="byType">
-    	<dwr:remote javascript="AppPhotos">
-    		<dwr:include method="updateImageTitle"/>
-    		<dwr:include method="updateImageDescription"/>
-    		<dwr:include method="updateImageLocation"/>
-    		<dwr:include method="relateWordToImage"/>
-    		<dwr:include method="removeWordRelation"/>
-			<dwr:filter class="dk.in2isoft.onlineobjects.ui.DWRFilter"/>
-		</dwr:remote>
-   	</bean>
    	
    	<bean id="photosFrontView" class="dk.in2isoft.onlineobjects.apps.photos.views.PhotosFrontView" scope="request">
    		<property name="modelService" ref="modelService"/>
