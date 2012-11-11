@@ -16,6 +16,7 @@ public class WordsComponent extends AbstractComponent {
 	public static final String FAMILY = "onlineobjects.words";
 	
 	private boolean editable;
+	private String name;
 	
 	public WordsComponent() {
 		super(FAMILY);
@@ -24,11 +25,12 @@ public class WordsComponent extends AbstractComponent {
 	@Override
 	public void restoreState(Object[] state) {
 		editable = (Boolean) state[0];
+		name = (String) state[1];
 	}
 
 	@Override
 	public Object[] saveState() {
-		return new Object[] {editable};
+		return new Object[] {editable,name};
 	}
 	
 	@Override
@@ -39,7 +41,7 @@ public class WordsComponent extends AbstractComponent {
 		
 		out.startP("oo_words").withId(id);
 		for (Word word : words) {
-			out.startSpan().withAttribute("data", word.getId()).text(word.getText()).endSpan().text(" ");
+			out.startVoidA("oo_words_word").withAttribute("data", word.getId()).text(word.getText()).endA().text(" ");
 		}
 		if (editable) {
 			out.startVoidA("oo_words_add").text("Add word").endA();
@@ -48,6 +50,9 @@ public class WordsComponent extends AbstractComponent {
 		if (editable) {
 			out.startScript();
 			out.startNewObject("oo.Words").property("element", id);
+			if (name!=null) {
+				out.comma().property("name", name);
+			}
 			out.endNewObject();
 			out.endScript();
 		}
@@ -63,5 +68,13 @@ public class WordsComponent extends AbstractComponent {
 
 	public boolean isEditable(FacesContext context) {
 		return getExpression("editable", editable, context);
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 }

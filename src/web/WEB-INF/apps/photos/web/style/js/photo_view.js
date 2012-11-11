@@ -77,45 +77,32 @@ var photoView = {
 		})
 	},
 	
-	$click$addWord : function() {
-		if (!this._wordFinder) {
-			this._wordFinder = hui.ui.Finder.create({
-				name : 'wordFinder',
-				title : {en:'Add word',da:'Tilføj ord'},
-				list : {url : oo.appContext+'/searchWords',pageParameter:'page'},
-				search : {parameter:'text'}
-			});
-		}
-		this._wordFinder.show();
-	},
-	$select$wordFinder : function(value) {
-		this._wordFinder.clear();
-		this._wordFinder.hide();
+	$add$words : function(info) {
 		hui.ui.request({
 			message : {start:'Adding word', delay:300, success:'The word is added'},
 			url : oo.appContext+'/relateWord',
-			parameters : {image : this.imageId, word : value.id},
-			$success : function() {
-				oo.render({id:'properties',	$success : this._addWordBehavior.bind(this)});
-			},
+			parameters : {image : this.imageId, word : info.id},
+			$success : info.callback,
 			$failure : function() {
 				hui.ui.showMessage({text:'Unable to add word',icon:'common/warning',duration:2000});
+				info.callback();
 			}
 		})
 	},
-	_removeWord : function(wordId) {
+	
+	$delete$words : function(info) {
 		hui.ui.request({
-			message : {start:'Adding word', delay:300, success:'The word is removed'},
+			message : {start:'Removing word', delay:300, success:'The word is removed'},
 			url : oo.appContext+'/removeWord',
-			parameters : {image : this.imageId, word : wordId},
-			$success : function() {
-				oo.render({id:'properties',	$success : this._addWordBehavior.bind(this)});
-			},
+			parameters : {image : this.imageId, word : info.id},
+			$success : info.callback,
 			$failure : function() {
 				hui.ui.showMessage({text:'Unable to remove word',icon:'common/warning',duration:2000});
+				info.callback();
 			}
 		})
 	},
+	
 	$valueChanged$publicAccess : function(value) {
 		hui.ui.request({
 			message : {start:'Changing access', delay:300, success:'Access has changed'},

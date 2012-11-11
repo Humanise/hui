@@ -302,10 +302,6 @@ oo.InlineEditor.prototype = {
 }
 
 
-
-
-
-
 oo.Link = function(options) {
 	this.element = hui.get(options.element);
 	this.name = options.name;
@@ -370,5 +366,54 @@ oo.Map.prototype = {
 		var panel = hui.ui.BoundPanel.create({variant:'light',modal:'transparent'});
 		panel.add(hui.build('div',{style:{width:'200px',height:'200px'}}))
 		panel.show({target:target});
+	}
+}
+
+
+oo.Words = function(options) {
+	this.options = options;
+	this.element = hui.get(options.element);
+	this.name = options.name;
+	hui.ui.extend(this);
+	this._addBehavior();
+}
+
+oo.Words.prototype = {
+	_addBehavior : function() {
+		hui.listen(this.element,'click',this._onClick.bind(this));
+	},
+	_onClick : function(e) {
+		e = hui.event(e);
+		var a = e.findByTag('a');
+		if (a) {
+			if (hui.cls.has(a,'oo_words_add')) {
+				this._showFinder();
+			} else {
+				hui.ui.confirmOverlay({element:a,text:'Delete word?',$ok : function() {
+					this.fire('delete',{id:parseInt(a.getAttribute('data')),callback:this._reload.bind(this)});
+				}.bind(this)})
+			}
+		}
+	},
+	_showFinder : function() {
+
+		if (!this._wordFinder) {
+			var finder = this._wordFinder = hui.ui.Finder.create({
+				title : {en:'Add word',da:'Tilføj ord'},
+				list : {url : oo.appContext+'/searchWords',pageParameter:'page'},
+				search : {parameter:'text'}
+			});
+			finder.listen({
+				$select : function(value) {
+					finder.clear();
+					finder.hide();
+					this.fire('add',{id:value.id,callback:this._reload.bind(this)});
+				}.bind(this),
+			})
+		}
+		this._wordFinder.show();
+	},
+	_reload : function() {
+		oo.render({id:this.element.id,$success : this._addBehavior.bind(this)});
 	}
 }

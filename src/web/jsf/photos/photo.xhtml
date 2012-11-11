@@ -91,24 +91,21 @@
 		</ui:define>
 		
 		<ui:define name="sidebar">
+			<div style="padding: 10px; overflow: hidden;">
+				<div style="float: left;">
+					<o:thumbnail image="#{photosPhotoView.personImage}" width="60" height="80" zoom="true" frame="false"/>
+				</div>
+			</div>
 			<div class="photos_photo_properties oo_faded">
 				<o:block id="properties">
 					<c:forEach items="#{photosPhotoView.properties}" var="prop">
-						<p><strong>#{prop.label}:</strong> #{prop.value}</p>
+						<p class="photos_photo_property"><strong>#{prop.label}:</strong> #{prop.value}</p>
 					</c:forEach>
-									
-					<c:if test="#{not empty photosPhotoView.words}">
-						<p class="photos_photo_words" id="words">
-							<c:forEach items="#{photosPhotoView.words}" var="word">
-								<a href="javascript://" data="#{word.id}"><span>#{word.text}</span></a><h:outputText value=" "/>
-							</c:forEach>
-						</p>
-					</c:if>
-					<o:words words="#{photosPhotoView.words}" editable="#{photosPhotoView.canModify}"/>
-				<div style="margin: 10px 0">
-					<o:map location="#{photosPhotoView.mapPoint}" dynamic="false"/>
-				</div>
+					<div style="margin: 10px 0">
+						<o:map location="#{photosPhotoView.mapPoint}" dynamic="false"/>
+					</div>
 				</o:block>
+					<o:words words="#{photosPhotoView.words}" editable="#{photosPhotoView.canModify}" name="words"/>
 				<c:if test="#{photosPhotoView.canModify}">
 					<gui:buttons>
 						<gui:button text="Change location" name="addLocation" small="true" variant="paper"/>

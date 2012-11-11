@@ -25,6 +25,7 @@ import dk.in2isoft.onlineobjects.core.UserQuery;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.Location;
 import dk.in2isoft.onlineobjects.model.Person;
+import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.ui.jsf.model.MapPoint;
@@ -44,6 +45,7 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 	private MapPoint mapPoint;
 	private User user;
 	private Person person;
+	private Image personImage;
 	private boolean secret;
 	private boolean canModify;
 	private List<SelectItem> properties;
@@ -73,6 +75,7 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 			if (first!=null) {
 				user = first.getKey();
 				person = first.getValue();
+				personImage = modelService.getChild(user, Relation.KIND_SYSTEM_USER_IMAGE, Image.class);
 			}
 			
 			Query<Image> allQuery = Query.after(Image.class).withPrivileged(user).withPublicView().orderByCreated();
@@ -180,6 +183,10 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 	
 	public List<Word> getWords() {
 		return words;
+	}
+	
+	public Image getPersonImage() {
+		return personImage;
 	}
 	
 	public Long getImageId() {

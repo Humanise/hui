@@ -129,14 +129,14 @@ div.photos_photo_properties
 	font-size: 12px;
 }
 
-div.photos_photo_properties p
+p.photos_photo_property
 {
 	margin: 0 0 5px;
 	padding-left: 10px;
 	text-indent: -10px;
 }
 
-div.photos_photo_properties strong
+p.photos_photo_property strong
 {
 	font-weight: 400;
 	color: #999;

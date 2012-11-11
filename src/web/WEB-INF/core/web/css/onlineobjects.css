@@ -435,3 +435,40 @@ a.oo_map_pin
 	margin-left: -7px;
 	margin-top: -25px;
 }
+
+
+
+/*********** Words ***********/
+
+p.oo_words
+{
+	font-size: 0;
+}
+
+a.oo_words_word
+{
+	background: #fff;
+	border: 1px solid #eee;
+	border-radius: 8px;
+	display: inline-block;
+	height: 16px;
+	line-height: 16px;
+	font-size: 12px;
+	font-weight: 200;
+	padding: 0 7px;
+	margin: 0 2px 2px 0;
+	color: #333;
+	text-decoration: none;
+}
+
+a.oo_words_word:hover
+{
+	border: 1px solid #ddd;
+}
+
+a.oo_words_add
+{
+	display: inline-block;
+	font-size: 11px;
+	back
+}
