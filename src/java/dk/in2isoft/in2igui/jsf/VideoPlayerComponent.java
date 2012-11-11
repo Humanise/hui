@@ -114,7 +114,7 @@ public class VideoPlayerComponent extends AbstractComponent {
 	}
 
 	public String getType(FacesContext context) {
-		return getExpression(type, "type");
+		return getExpression("type", type, context);
 	}
 
 	public void setWidth(int width) {
@@ -142,6 +142,6 @@ public class VideoPlayerComponent extends AbstractComponent {
 	}
 
 	public String getSrc(FacesContext context) {
-		return getExpression(src, "src");
+		return getExpression("src", src, context);
 	}
 }

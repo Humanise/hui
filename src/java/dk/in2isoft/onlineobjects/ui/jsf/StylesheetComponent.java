@@ -78,6 +78,6 @@ public class StylesheetComponent extends AbstractComponent {
 	}
 	
 	public String getHref(FacesContext context) {
-		return getExpression(href,"href");
+		return getExpression("href", href, context);
 	}
 }

@@ -84,6 +84,6 @@ public class ScriptComponent extends AbstractComponent {
 	}
 	
 	public String getSrc(FacesContext context) {
-		return getExpression(src,"src");
+		return getExpression("src", src, context);
 	}
 }

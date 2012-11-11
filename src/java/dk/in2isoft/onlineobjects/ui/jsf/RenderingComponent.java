@@ -10,7 +10,7 @@ import dk.in2isoft.commons.jsf.ClassBuilder;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value = RenderingComponent.FAMILY)
-public class RenderingComponent<T> extends AbstractComponent {
+public class RenderingComponent extends AbstractComponent {
 
 	public static final String FAMILY = "onlineobjects.rendering";
 	
@@ -54,6 +54,6 @@ public class RenderingComponent<T> extends AbstractComponent {
 	}
 
 	public String getStyleClass(FacesContext context) {
-		return getExpression(styleClass, "styleClass");
+		return getExpression("styleClass", styleClass, context);
 	}
 }

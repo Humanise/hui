@@ -17,7 +17,7 @@ public class ImportScriptsComponent extends AbstractComponent {
 
 	public static final String TYPE = "hui.importSctipts";
 	private static final String[] LIBS = {"date.js","swfupload/swfupload.js"};
-	private static final String[] JS = {"hui.js","hui_require.js","hui_animation.js","hui_color.js","ui.js","DragDrop.js","Toolbar.js","BoundPanel.js","Formula.js","Alert.js","Button.js","Picker.js","Editor.js","ImageViewer.js","Menu.js","ColorPicker.js","Overlay.js","Box.js","Upload.js","ProgressBar.js","ObjectList.js","Input.js","TextField.js","SearchField.js","LocationPicker.js","Bar.js","VideoPlayer.js","Tabs.js","Flash.js","Link.js","DropDown.js","TokenField.js","DateTimeField.js","DatePicker.js","LocationField.js","Drawing.js","Finder.js","Window.js","Layout.js","Overflow.js","List.js","Selection.js","Source.js"};
+	private static final String[] JS = {"hui.js","hui_require.js","hui_animation.js","hui_color.js","ui.js","DragDrop.js","Toolbar.js","BoundPanel.js","Formula.js","Alert.js","Button.js","Picker.js","Editor.js","ImageViewer.js","Menu.js","ColorPicker.js","Overlay.js","Box.js","Upload.js","ProgressBar.js","ObjectList.js","Input.js","TextField.js","SearchField.js","LocationPicker.js","Bar.js","VideoPlayer.js","Tabs.js","Flash.js","Link.js","DropDown.js","TokenField.js","DateTimeField.js","DatePicker.js","LocationField.js","Drawing.js","Finder.js","Window.js","Layout.js","Overflow.js","List.js","Selection.js","Source.js","Checkbox.js"};
 
 	public ImportScriptsComponent() {
 		super(TYPE);

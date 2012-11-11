@@ -14,7 +14,7 @@ import dk.in2isoft.commons.jsf.ClassBuilder;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=ListComponent.FAMILY)
-public class ListComponent <T> extends AbstractComponent {
+public class ListComponent extends AbstractComponent {
 
 
 	public static final String FAMILY = "onlineobjects.list";
@@ -63,12 +63,12 @@ public class ListComponent <T> extends AbstractComponent {
 	
 	@Override
 	public void encodeChildren(FacesContext context, TagWriter writer) throws IOException {
-		List<T> list = getBinding("value");
+		List<?> list = getBinding("value");
 		if (list==null) {
 			return;
 		}
 		List<UIComponent> children = getChildren();
-		for (T object : list) {
+		for (Object object : list) {
 			writer.startLi("oo_list_item");
 			context.getExternalContext().getRequestMap().put(var, object);
 			for (UIComponent child : children) {

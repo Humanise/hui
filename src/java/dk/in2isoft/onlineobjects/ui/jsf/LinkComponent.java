@@ -15,7 +15,7 @@ import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.ui.Request;
 
 @FacesComponent(value = LinkComponent.FAMILY)
-public class LinkComponent<T> extends AbstractComponent {
+public class LinkComponent extends AbstractComponent {
 
 	public static final String FAMILY = "onlineobjects.link";
 	
@@ -137,7 +137,7 @@ public class LinkComponent<T> extends AbstractComponent {
 	}
 	
 	public String getHref(FacesContext context) {
-		return getExpression(href,"href");
+		return getExpression("href", href, context);
 	}
 
 	public void setStyleClass(String styleClass) {
@@ -149,7 +149,7 @@ public class LinkComponent<T> extends AbstractComponent {
 	}
 
 	public String getStyleClass(FacesContext context) {
-		return getExpression(styleClass, "styleClass");
+		return getExpression("styleClass",styleClass, context);
 	}
 	
 	public void setOnclick(String onclick) {
@@ -161,7 +161,7 @@ public class LinkComponent<T> extends AbstractComponent {
 	}
 
 	public String getOnclick(FacesContext context) {
-		return getExpression(onclick, "onclick");
+		return getExpression("onclick", onclick, context);
 	}
 	
 	public void setTitle(String title) {
@@ -173,7 +173,7 @@ public class LinkComponent<T> extends AbstractComponent {
 	}
 
 	public String getTitle(FacesContext context) {
-		return getExpression(title, "title");
+		return getExpression("title", title, context);
 	}
 
 	public boolean isPlain() {

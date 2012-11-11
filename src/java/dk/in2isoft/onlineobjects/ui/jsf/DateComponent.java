@@ -13,7 +13,7 @@ import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.onlineobjects.util.Dates;
 
 @FacesComponent(value = DateComponent.FAMILY)
-public class DateComponent<T> extends AbstractComponent {
+public class DateComponent extends AbstractComponent {
 
 	public static final String FAMILY = "onlineobjects.date";
 	

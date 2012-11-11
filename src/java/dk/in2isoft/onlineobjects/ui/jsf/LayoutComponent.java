@@ -10,7 +10,7 @@ import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=LayoutComponent.FAMILY)
-public class LayoutComponent <T> extends AbstractComponent {
+public class LayoutComponent extends AbstractComponent {
 
 
 	public static final String FAMILY = "onlineobjects.layout";

@@ -88,7 +88,7 @@ public class BarButtonComponent extends AbstractComponent {
 	}
 
 	public boolean isHighlighted(FacesContext context) {
-		return getExpression(highlighted, "highlighted");
+		return getExpression("highlighted",highlighted,context);
 	}
 
 	public void setText(String text) {
@@ -100,7 +100,7 @@ public class BarButtonComponent extends AbstractComponent {
 	}
 
 	public String getText(FacesContext context) {
-		return getExpression(text, "text");
+		return getExpression("text", text, context);
 	}
 
 	public void setName(String name) {

@@ -12,7 +12,7 @@ import dk.in2isoft.commons.jsf.StyleBuilder;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value = SplitLeftComponent.FAMILY)
-public class SplitLeftComponent<T> extends AbstractComponent {
+public class SplitLeftComponent extends AbstractComponent {
 
 	public static final String FAMILY = "onlineobjects.splitleft";
 	

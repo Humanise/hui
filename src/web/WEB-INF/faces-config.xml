@@ -116,6 +116,10 @@ http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
     	<component-type>onlineobjects.map</component-type>
     	<component-class>dk.in2isoft.onlineobjects.ui.jsf.MapComponent</component-class>
   	</component>
+    <component>
+    	<component-type>onlineobjects.words</component-type>
+    	<component-class>dk.in2isoft.onlineobjects.ui.jsf.WordsComponent</component-class>
+  	</component>
   	
   	
   	
@@ -202,5 +206,9 @@ http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
     <component>
 	    <component-type>hui.page</component-type>
     	<component-class>dk.in2isoft.in2igui.jsf.PageComponent</component-class>
+  	</component>
+    <component>
+	    <component-type>hui.checkbox</component-type>
+    	<component-class>dk.in2isoft.in2igui.jsf.CheckboxComponent</component-class>
   	</component>
 </faces-config>

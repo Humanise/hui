@@ -8,10 +8,10 @@ import javax.el.ValueExpression;
 import javax.faces.component.UIComponentBase;
 import javax.faces.context.FacesContext;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.ui.Request;
 
 
@@ -106,17 +106,16 @@ public abstract class AbstractComponent extends UIComponentBase {
 		}
 	};
 	
-	@SuppressWarnings("unchecked")
-	public <T> T getExpression(T localValue, String name) {
-		ValueExpression valueExpression = this.getValueExpression(name);
-		if (valueExpression!=null) {
-			return (T) valueExpression.getValue(FacesContext.getCurrentInstance().getELContext());
-		}
-		return localValue;
+	public <T> T getExpression(String name, T localValue, FacesContext context) {
+		return ComponentUtil.getExpressionValue(this, name, localValue, context);
+	};
+
+	public <T> T getExpression(String name, FacesContext context) {
+		return ComponentUtil.getExpressionValue(this, name, null, context);
 	};
 
 	protected boolean isNotBlank(String string) {
-		return StringUtils.isNotBlank(string);
+		return Strings.isNotBlank(string);
 	}
 	
 }

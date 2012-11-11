@@ -116,6 +116,18 @@ public class TagWriter {
 		return endElement("ul");
 	}
 
+	public TagWriter startP() throws IOException {
+		return startElement("p");
+	}
+
+	public TagWriter startP(Object className) throws IOException {
+		return startElement("p").withClass(className);
+	}
+
+	public TagWriter endP() throws IOException {
+		return endElement("p");
+	}
+
 	public TagWriter startLi() throws IOException {
 		return startElement("li");
 	}

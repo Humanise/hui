@@ -96,7 +96,7 @@ public class LinkComponent extends AbstractComponent {
 	}
 	
 	public String getClick(FacesContext context) {
-		return getExpression(click, "click");
+		return getExpression("click",click,context);
 	}
 
 	public void setStyleClass(String styleClass) {

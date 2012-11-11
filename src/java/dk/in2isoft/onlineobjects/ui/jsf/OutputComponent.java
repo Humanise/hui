@@ -12,7 +12,7 @@ import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value = OutputComponent.FAMILY)
-public class OutputComponent<T> extends AbstractComponent {
+public class OutputComponent extends AbstractComponent {
 
 	public static final String FAMILY = "onlineobjects.output";
 	

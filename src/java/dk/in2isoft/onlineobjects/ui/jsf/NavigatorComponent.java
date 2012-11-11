@@ -13,7 +13,7 @@ import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.onlineobjects.model.Image;
 
 @FacesComponent(value = NavigatorComponent.FAMILY)
-public class NavigatorComponent<T> extends AbstractComponent {
+public class NavigatorComponent extends AbstractComponent {
 
 	public static final String FAMILY = "onlineobjects.navigator";
 	private String var;

@@ -15,7 +15,7 @@ import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.onlineobjects.model.Image;
 
 @FacesComponent(value = ThumbnailComponent.FAMILY)
-public class ThumbnailComponent<T> extends AbstractComponent {
+public class ThumbnailComponent extends AbstractComponent {
 
 	public static final String FAMILY = "onlineobjects.thumbnail";
 
@@ -138,7 +138,7 @@ public class ThumbnailComponent<T> extends AbstractComponent {
 	}
 
 	public String getHref(FacesContext context) {
-		return getExpression(href, "href");
+		return getExpression("href", href, context);
 	}
 
 	public void setFrame(boolean frame) {

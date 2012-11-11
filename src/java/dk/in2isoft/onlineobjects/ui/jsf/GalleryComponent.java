@@ -16,7 +16,7 @@ import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.ui.jsf.model.ImageContainer;
 
 @FacesComponent(value = GalleryComponent.FAMILY)
-public class GalleryComponent<T> extends AbstractComponent {
+public class GalleryComponent extends AbstractComponent {
 
 	public static final String FAMILY = "onlineobjects.gallery";
 	private String var;

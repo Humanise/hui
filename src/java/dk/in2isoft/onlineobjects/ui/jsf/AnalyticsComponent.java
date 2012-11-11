@@ -13,7 +13,7 @@ import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.onlineobjects.services.ConfigurationService;
 
 @FacesComponent(value=AnalyticsComponent.FAMILY)
-public class AnalyticsComponent <T> extends AbstractComponent {
+public class AnalyticsComponent extends AbstractComponent {
 
 
 	public static final String FAMILY = "onlineobjects.analytics";

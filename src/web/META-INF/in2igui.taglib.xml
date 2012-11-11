@@ -148,4 +148,11 @@
       <renderer-type>hui.page</renderer-type>
     </component>
   </tag>
+  <tag>
+    <tag-name>checkbox</tag-name>
+    <component>
+      <component-type>hui.checkbox</component-type>
+      <renderer-type>hui.checkbox</renderer-type>
+    </component>
+  </tag>
 </facelet-taglib>

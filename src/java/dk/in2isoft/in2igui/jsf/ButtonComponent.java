@@ -168,7 +168,7 @@ public class ButtonComponent extends AbstractComponent {
 	}
 	
 	public String getClick(FacesContext context) {
-		return getExpression(click, "click");
+		return getExpression("click",click,context);
 	}
 
 	public void setSubmit(boolean submit) {

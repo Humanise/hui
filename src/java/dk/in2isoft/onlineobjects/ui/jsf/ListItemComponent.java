@@ -9,7 +9,7 @@ import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=ListItemComponent.FAMILY)
-public class ListItemComponent <T> extends AbstractComponent {
+public class ListItemComponent extends AbstractComponent {
 
 	public static final String FAMILY = "onlineobjects.listitem";
 	

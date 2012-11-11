@@ -148,4 +148,11 @@
       <renderer-type>onlineobjects.map</renderer-type>
     </component>
   </tag>
+  <tag>
+    <tag-name>words</tag-name>
+    <component>
+      <component-type>onlineobjects.words</component-type>
+      <renderer-type>onlineobjects.words</renderer-type>
+    </component>
+  </tag>
 </facelet-taglib>

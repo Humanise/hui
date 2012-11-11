@@ -13,7 +13,7 @@ import dk.in2isoft.onlineobjects.services.ConfigurationService;
 import dk.in2isoft.onlineobjects.ui.Request;
 
 @FacesComponent(value=TopBarComponent.FAMILY)
-public class TopBarComponent <T> extends AbstractComponent {
+public class TopBarComponent extends AbstractComponent {
 
 
 	public static final String FAMILY = "onlineobjects.topBar";

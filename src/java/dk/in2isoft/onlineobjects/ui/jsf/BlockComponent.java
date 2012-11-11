@@ -11,7 +11,7 @@ import dk.in2isoft.commons.jsf.StyleBuilder;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=BlockComponent.FAMILY)
-public class BlockComponent <T> extends AbstractComponent {
+public class BlockComponent extends AbstractComponent {
 
 
 	public static final String FAMILY = "onlineobjects.block";

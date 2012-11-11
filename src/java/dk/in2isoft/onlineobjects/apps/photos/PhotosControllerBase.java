@@ -4,6 +4,7 @@ import dk.in2isoft.onlineobjects.apps.ApplicationController;
 import dk.in2isoft.onlineobjects.core.ContentNotFoundException;
 import dk.in2isoft.onlineobjects.core.ModelException;
 import dk.in2isoft.onlineobjects.core.Privileged;
+import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
@@ -11,6 +12,7 @@ import dk.in2isoft.onlineobjects.util.images.ImageService;
 public class PhotosControllerBase extends ApplicationController {
 
 	protected ImageService imageService;
+	protected SecurityService securityService;
 
 	public PhotosControllerBase() {
 		super("photos");
@@ -40,4 +42,7 @@ public class PhotosControllerBase extends ApplicationController {
 		this.imageService = imageService;
 	}
 
+	public void setSecurityService(SecurityService securityService) {
+		this.securityService = securityService;
+	}
 }

@@ -8,12 +8,15 @@ var photoView = {
 				element : 'editableTitle',
 				name : 'titleEditor'
 			});
-			hui.listen(hui.get('words'),'click',this._onClickWord.bind(this))
+			this._addWordBehavior();
 		}
+	},
+	_addWordBehavior : function() {
+		hui.listen(hui.get('words'),'click',this._onClickWord.bind(this))
 	},
 	$valueChanged$titleEditor : function(value) {
 		hui.ui.request({
-			message : {start:'Updating title',success:'The title is changed'},
+			message : {start:'Updating title', delay:300, success:'The title is changed'},
 			url : oo.appContext+'/updateTitle',
 			parameters : {id:this.imageId,title:value},
 			$failure : function() {
@@ -40,7 +43,7 @@ var photoView = {
 			panel = hui.ui.get('locationPanel');
 		
 		hui.ui.request({
-			message : {start:'Updating location',success:'The location is changed'},
+			message : {start:'Updating location', delay:300, success:'The location is changed'},
 			url : oo.appContext+'/updateLocation',
 			json : {id : this.imageId, location : values.location},
 			$success : function() {
@@ -62,7 +65,7 @@ var photoView = {
 	$click$saveDescription : function(button) {
 		var text = hui.ui.get('description').getValue();
 		hui.ui.request({
-			message : {start:'Updating description',success:'The description is changed'},
+			message : {start:'Updating description',delay:300, success:'The description is changed'},
 			url : oo.appContext+'/updateDescription',
 			parameters : {id : this.imageId, description : text},
 			$success : function() {
@@ -89,11 +92,11 @@ var photoView = {
 		this._wordFinder.clear();
 		this._wordFinder.hide();
 		hui.ui.request({
-			message : {start:'Adding word',success:'The word is added'},
+			message : {start:'Adding word', delay:300, success:'The word is added'},
 			url : oo.appContext+'/relateWord',
 			parameters : {image : this.imageId, word : value.id},
 			$success : function() {
-				oo.render({id:'properties'});
+				oo.render({id:'properties',	$success : this._addWordBehavior.bind(this)});
 			},
 			$failure : function() {
 				hui.ui.showMessage({text:'Unable to add word',icon:'common/warning',duration:2000});
@@ -102,14 +105,24 @@ var photoView = {
 	},
 	_removeWord : function(wordId) {
 		hui.ui.request({
-			message : {start:'Adding word',success:'The word is removed'},
+			message : {start:'Adding word', delay:300, success:'The word is removed'},
 			url : oo.appContext+'/removeWord',
 			parameters : {image : this.imageId, word : wordId},
 			$success : function() {
-				oo.render({id:'properties'});
+				oo.render({id:'properties',	$success : this._addWordBehavior.bind(this)});
 			},
 			$failure : function() {
 				hui.ui.showMessage({text:'Unable to remove word',icon:'common/warning',duration:2000});
+			}
+		})
+	},
+	$valueChanged$publicAccess : function(value) {
+		hui.ui.request({
+			message : {start:'Changing access', delay:300, success:'Access has changed'},
+			url : oo.appContext+'/changeAccess',
+			parameters : {image : this.imageId, 'public' : value},
+			$failure : function() {
+				hui.ui.showMessage({text:'Unable to change access',icon:'common/warning',duration:2000});
 			}
 		})
 	}

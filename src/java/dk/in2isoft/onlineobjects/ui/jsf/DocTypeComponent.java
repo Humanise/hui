@@ -9,7 +9,7 @@ import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=DocTypeComponent.FAMILY)
-public class DocTypeComponent <T> extends AbstractComponent {
+public class DocTypeComponent extends AbstractComponent {
 
 
 	public static final String FAMILY = "onlineobjects.doctype";

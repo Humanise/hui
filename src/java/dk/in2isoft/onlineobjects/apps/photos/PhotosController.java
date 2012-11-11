@@ -97,4 +97,17 @@ public class PhotosController extends PhotosControllerBase {
 		}
 		request.sendObject(list);
 	}
+	
+	@Path(start="changeAccess")
+	public void changeAccess(Request request) throws SecurityException, ModelException, ContentNotFoundException {
+		long imageId = request.getInt("image");
+		boolean publicAccess = request.getBoolean("public");
+		Image image = getImage(imageId, request.getSession());
+		if (publicAccess) {
+			securityService.makePublicVisible(image,request.getSession());			
+		} else {
+			securityService.makePublicHidden(image,request.getSession());
+		}
+		
+	}
 }

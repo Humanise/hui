@@ -13,7 +13,7 @@ import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.onlineobjects.ui.Request;
 
 @FacesComponent(value = ScriptSetupComponent.FAMILY)
-public class ScriptSetupComponent<T> extends AbstractComponent {
+public class ScriptSetupComponent extends AbstractComponent {
 
 	public static final String FAMILY = "onlineobjects.scriptsetup";
 	
