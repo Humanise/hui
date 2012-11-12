@@ -1,8 +1,5 @@
 package dk.in2isoft.onlineobjects.apps.photos.views;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -32,7 +29,6 @@ import dk.in2isoft.onlineobjects.ui.jsf.model.MapPoint;
 import dk.in2isoft.onlineobjects.util.Dates;
 import dk.in2isoft.onlineobjects.util.images.ImageInfo;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
-import freemarker.template.SimpleNumber;
 
 public class PhotosPhotoView extends AbstractManagedBean implements InitializingBean {
 
@@ -101,33 +97,9 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 			}
 			if (location!=null) {
 				mapPoint = new MapPoint();
+				mapPoint.setTitle(location.getName());
 				mapPoint.setLatitude(location.getLatitude());
 				mapPoint.setLongitude(location.getLongitude());
-				DecimalFormat format = new DecimalFormat();
-				format.setMinimumFractionDigits(0);
-				format.setMaximumFractionDigits(2);
-				{
-					StringBuilder latitude = new StringBuilder();
-					latitude.append(format.format(location.getLatitudeDegrees()));
-					latitude.append(Strings.DEGREE).append(" ");
-					latitude.append(format.format(location.getLatitudeMinutes()));
-					latitude.append(Strings.RIGHT_SINGLE_QUOTE).append(" ");
-					latitude.append(format.format(location.getLatitudeSeconds()));
-					latitude.append(Strings.DOUBLE_APOSTROPHE);
-					latitude.append(location.isLatitudeNorth() ? " North" : " South");
-					properties.add(new SelectItem(latitude.toString(), "Latitude"));
-				}
-				{
-					StringBuilder longitude = new StringBuilder();
-					longitude.append(format.format(location.getLongitudeDegrees()));
-					longitude.append(Strings.DEGREE).append(" ");
-					longitude.append(format.format(location.getLongitudeMinutes()));
-					longitude.append(Strings.RIGHT_SINGLE_QUOTE).append(" ");
-					longitude.append(format.format(location.getLongitudeSeconds()));
-					longitude.append(Strings.DOUBLE_APOSTROPHE);
-					longitude.append(location.isLongitudeEast() ? " East" : " West");
-					properties.add(new SelectItem(longitude.toString(), "Longitude"));
-				}
 			}
 			words = modelService.getChildren(image, null, Word.class);
 		}

@@ -112,6 +112,19 @@ var photoView = {
 				hui.ui.showMessage({text:'Unable to change access',icon:'common/warning',duration:2000});
 			}
 		})
+	},
+	
+	$remove$map : function(info) {
+		hui.ui.request({
+			message : {start:'Changing location', delay:300, success:'The location is changed'},
+			url : oo.appContext+'/updateLocation',
+			json : {id : this.imageId},
+			$success : info.callback,
+			$failure : function() {
+				hui.ui.showMessage({text:'Unable to change location',icon:'common/warning',duration:2000});
+				info.callback();
+			}
+		});
 	}
 };
 

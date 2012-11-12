@@ -436,7 +436,32 @@ a.oo_map_pin
 	margin-top: -25px;
 }
 
+a.oo_map_edit
+{
+	position: absolute;
+	right: -1px;
+	bottom: -1px;
+	padding: 0 5px;
+	height: 20px;
+	line-height: 20px;
+	background: #fff;
+	border: 1px solid #ddd;
+}
 
+div.oo_map_info
+{
+	font-family: 'Helvetica Neue','Helvetica','Arial',sans-serif;
+	padding: 5px 10px;
+	font-size: 12px;
+}
+
+div.oo_map_info th
+{
+	font-weight: normal;
+	text-align: right;
+	color: #999;
+	padding-right: 3px;
+}
 
 /*********** Words ***********/
 

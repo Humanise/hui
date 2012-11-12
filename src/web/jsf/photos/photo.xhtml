@@ -33,7 +33,7 @@
 					<p class="photos_photo_by"><span>Tilføjet </span><strong>
 						<h:outputText value="#{photosPhotoView.image.created}">
 							<f:convertDateTime pattern="EEEE 'd'. d.  MMMM yyyy" locale="da_DK"/>
-						</h:outputText></strong> af <o:link href="/#{photosPhotoView.user.username}/">#{photosPhotoView.person.fullName}</o:link>
+						</h:outputText></strong> af <o:link href="/users/#{photosPhotoView.user.username}/">#{photosPhotoView.person.fullName}</o:link>
 					</p>
 					<div class="photos_photo_image">
 						<o:thumbnail image="#{photosPhotoView.image}" width="778" zoom="true" frame="false"/>
@@ -95,6 +95,9 @@
 				<div style="float: left;">
 					<o:thumbnail image="#{photosPhotoView.personImage}" width="60" height="80" zoom="true" frame="false"/>
 				</div>
+				<div style="margin-left: 70px">
+					<p style="margin: 0; font-size: 11px;">#{photosPhotoView.person.fullName}</p>
+				</div>
 			</div>
 			<div class="photos_photo_properties oo_faded">
 				<o:block id="properties">
@@ -102,10 +105,10 @@
 						<p class="photos_photo_property"><strong>#{prop.label}:</strong> #{prop.value}</p>
 					</c:forEach>
 					<div style="margin: 10px 0">
-						<o:map location="#{photosPhotoView.mapPoint}" dynamic="false"/>
+						<o:map name="map" location="#{photosPhotoView.mapPoint}" dynamic="false" editable="#{photosPhotoView.canModify}"/>
 					</div>
 				</o:block>
-					<o:words words="#{photosPhotoView.words}" editable="#{photosPhotoView.canModify}" name="words"/>
+				<o:words words="#{photosPhotoView.words}" editable="#{photosPhotoView.canModify}" name="words"/>
 				<c:if test="#{photosPhotoView.canModify}">
 					<gui:buttons>
 						<gui:button text="Change location" name="addLocation" small="true" variant="paper"/>

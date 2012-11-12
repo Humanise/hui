@@ -13,6 +13,7 @@ import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.ui.jsf.model.MapPoint;
+import dk.in2isoft.onlineobjects.util.Locations;
 
 @ListenerFor(systemEventClass=PostAddToViewEvent.class)
 @FacesComponent(value=MapComponent.FAMILY)
@@ -24,6 +25,7 @@ public class MapComponent extends AbstractComponent {
 	private String name;
 	private int height = 200;
 	private boolean dynamic = true;
+	private boolean editable;
 
 	public MapComponent() {
 		super(FAMILY);
@@ -35,11 +37,12 @@ public class MapComponent extends AbstractComponent {
 		name = (String) state[1];
 		height = (Integer) state[2];
 		dynamic = (Boolean) state[3];
+		editable = (Boolean) state[4];
 	}
 
 	@Override
 	public Object[] saveState() {
-		return new Object[] {variant,name,height,dynamic};
+		return new Object[] {variant,name,height,dynamic,editable};
 	}
 	
 	public void processEvent(ComponentSystemEvent event) throws AbortProcessingException {
@@ -55,21 +58,36 @@ public class MapComponent extends AbstractComponent {
 	@Override
 	public void encodeBegin(FacesContext context, TagWriter out) throws IOException {
 		MapPoint point = getBinding("location");
+		boolean editable = isEditable(context);
 		if (point!=null) {
-		out.startDiv("oo_map").withId(getClientId()).withStyle("height: "+height+"px;");
-		if (!dynamic) {
-			out.startVoidA("oo_map_pin").endA();
+			out.startDiv("oo_map").withId(getClientId()).withStyle("height: "+height+"px;");
+			if (!dynamic) {
+				out.startVoidA("oo_map_pin").endA();
+			}
+			if (editable) {
+				out.startVoidA("oo_map_edit").text("Edit").endA();
+			}
+			out.endDiv();
+			out.startScript();
+			out.startNewObject("oo.Map").property("element", getClientId());
+			out.comma().property("dynamic", dynamic);
+			out.comma().property("editable", editable);
+			out.comma().property("info", buildInfo(point));
+			if (Strings.isNotBlank(name)) {
+				out.comma().property("name", name);
+			}
+			out.write(",location:{latitude:"+point.getLatitude()+",longitude:"+point.getLongitude()+"}");
+			out.endNewObject().endScript();
 		}
-		out.endDiv();
-		out.startScript();
-		out.startNewObject("oo.Map").property("element", getClientId());
-		out.comma().property("dynamic", dynamic);
-		if (Strings.isNotBlank(name)) {
-			out.comma().property("name", name);
-		}
-		out.write(",location:{latitude:"+point.getLatitude()+",longitude:"+point.getLongitude()+"}");
-		out.endNewObject().endScript();
-		}
+	}
+	
+	private String buildInfo(MapPoint point) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("<table>");
+		sb.append("<tr><th>Latitude:</th><td>").append(Locations.formatLatitude(point.getLatitude())).append("</td></tr>");
+		sb.append("<tr><th>Longitude:</th><td>").append(Locations.formatLongitude(point.getLongitude())).append("</td></tr>");
+		sb.append("</table>");
+		return sb.toString();
 	}
 
 	public void setVariant(String variant) {
@@ -102,5 +120,17 @@ public class MapComponent extends AbstractComponent {
 
 	public boolean isDynamic() {
 		return dynamic;
+	}
+
+	public void setEditable(boolean editable) {
+		this.editable = editable;
+	}
+
+	public boolean isEditable() {
+		return editable;
+	}
+
+	public boolean isEditable(FacesContext context) {
+		return getExpression("editable", editable, context);
 	}
 }
