@@ -418,10 +418,26 @@ div.oo_gallery ol li *
 
 div.oo_map
 {
+}
+
+div.oo_map_content
+{
 	border: 1px solid rgba(0,0,0,.1);
 	position: relative;
 	background-repeat: no-repeat;
 	background-origin: border-box;
+}
+
+a.oo_map_add
+{
+	display: block;
+	height: 30px;
+	line-height: 30px;
+	text-align: center;
+	border: 2px dashed rgba(0,0,0,.1);
+	border-radius: 5px;
+	text-decoration: none;
+	color: #999;
 }
 
 a.oo_map_pin
@@ -484,6 +500,7 @@ a.oo_words_word
 	margin: 0 2px 2px 0;
 	color: #333;
 	text-decoration: none;
+	vertical-align: middle;
 }
 
 a.oo_words_word:hover
@@ -494,6 +511,16 @@ a.oo_words_word:hover
 a.oo_words_add
 {
 	display: inline-block;
-	font-size: 11px;
-	back
+	font-size: 0;
+	width: 16px;
+	height: 16px;
+	margin-top: -1px;
+	margin-left: 3px;
+	background: url('../../hui/icons/monochrome/new16.png');
+	vertical-align: middle;
+}
+
+a.oo_words_add:hover
+{
+	background-position: 0 -16px;
 }

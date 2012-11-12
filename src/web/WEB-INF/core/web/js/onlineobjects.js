@@ -76,7 +76,25 @@ var oo = {
 				options.$success();
 			}
 		}})
+	},
+	showImage : function(img) {
+		var v = this.getViewer();
+		v.clearImages();
+		v.addImage(img);
+		v.show();
+	},
+	getViewer : function() {
+		if (!this.imageViewer) {
+			var v = this.imageViewer = hui.ui.ImageViewer.create();
+			v.listen({
+				$resolveImageUrl : function(image,width,height) {
+					return oo.baseContext+'/service/image/?id='+image.id+'&width='+width+'&height='+height;
+				}
+			});
+		}
+		return this.imageViewer;
 	}
+	
 }
 
 hui.ui.listen({
@@ -341,6 +359,8 @@ oo.Map.prototype = {
 			if (a) {
 				if (hui.cls.has(a,'oo_map_pin')) {
 					this._showPanel(a);
+				} else if (hui.cls.has(a,'oo_map_add')) {
+					this._edit(a);
 				} else if (hui.cls.has(a,'oo_map_edit')) {
 					this._edit(a);
 				}
@@ -349,8 +369,10 @@ oo.Map.prototype = {
 	},
 	_initStatic : function() {
 		var loc = this.options.location;
-		var url = 'http://maps.googleapis.com/maps/api/staticmap?center='+loc.latitude+','+loc.longitude+'&zoom=14&size='+(this.element.offsetWidth)+'x'+(this.element.offsetHeight)+'&maptype=terrain&sensor=false';
-		this.element.style.backgroundImage='url(\''+url+'\')';
+		if (loc) {
+			var url = 'http://maps.googleapis.com/maps/api/staticmap?center='+loc.latitude+','+loc.longitude+'&zoom=14&size='+(this.element.offsetWidth)+'x'+(this.element.offsetHeight)+'&maptype=terrain&sensor=false';
+			this.element.style.backgroundImage='url(\''+url+'\')';
+		}
 	},
 	_init : function() {
 		var options = this.options;
@@ -389,7 +411,9 @@ oo.Map.prototype = {
 			buttons.add(hui.ui.Button.create({text:'Delete',small:true,confirm:{text:'Are you sure?'},listener:{
 				$click:this._delete.bind(this)
 			}}));
-			buttons.add(hui.ui.Button.create({text:'Save',highlighted:true,small:true}));
+			buttons.add(hui.ui.Button.create({text:'Save',highlighted:true,small:true,listener:{
+				$click:this._update.bind(this)
+			}}));
 			panel.add(form);
 		}
 		this._editForm.setValues({location:this.options.location});
@@ -398,8 +422,17 @@ oo.Map.prototype = {
 	_delete : function() {
 		this._editForm.reset();
 		this._editPanel.hide();
-		this.fire('remove',{callback:function() {
-			alert('Im back')
+		this.fire('valueChanged',{callback:this._reload.bind(this)});
+	},
+	_update : function() {
+		var values = this._editForm.getValues();
+		this._editForm.reset();
+		this._editPanel.hide();
+		this.fire('valueChanged',{location:values.location,callback:this._reload.bind(this)});
+	},
+	_reload : function() {
+		oo.render({id:this.element.id,$success : function() {
+			alert(0)
 		}});
 	}
 }

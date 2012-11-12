@@ -85,7 +85,7 @@ public class ThumbnailComponent extends AbstractComponent {
 			writer.startElement("img").withAttribute("src", url).withAttribute("alt", image.getName());
 			if (zoom) {
 				StringBuilder onClick = new StringBuilder();
-				onClick.append("oo.community.showImage({id:").append(image.getId()).append(",width:").append(image.getWidth()).append(",height:").append(image.getHeight()).append("});");
+				onClick.append("oo.showImage({id:").append(image.getId()).append(",width:").append(image.getWidth()).append(",height:").append(image.getHeight()).append("});");
 				writer.withAttribute("onclick", onClick);
 			}
 			writer.withStyle(stl).endElement("img");

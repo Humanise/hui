@@ -59,8 +59,10 @@ public class MapComponent extends AbstractComponent {
 	public void encodeBegin(FacesContext context, TagWriter out) throws IOException {
 		MapPoint point = getBinding("location");
 		boolean editable = isEditable(context);
+		out.startDiv("oo_map").withId(getClientId());
 		if (point!=null) {
-			out.startDiv("oo_map").withId(getClientId()).withStyle("height: "+height+"px;");
+			out.startDiv("oo_map_content").withId(getClientId());
+			out.withStyle("height: "+height+"px;");
 			if (!dynamic) {
 				out.startVoidA("oo_map_pin").endA();
 			}
@@ -68,25 +70,33 @@ public class MapComponent extends AbstractComponent {
 				out.startVoidA("oo_map_edit").text("Edit").endA();
 			}
 			out.endDiv();
-			out.startScript();
-			out.startNewObject("oo.Map").property("element", getClientId());
-			out.comma().property("dynamic", dynamic);
-			out.comma().property("editable", editable);
-			out.comma().property("info", buildInfo(point));
-			if (Strings.isNotBlank(name)) {
-				out.comma().property("name", name);
-			}
-			out.write(",location:{latitude:"+point.getLatitude()+",longitude:"+point.getLongitude()+"}");
-			out.endNewObject().endScript();
+		} else if (editable) {
+			out.startVoidA("oo_map_add").text("Add location").endA();
 		}
+		out.endDiv();
+		out.startScript();
+		out.startNewObject("oo.Map").property("element", getClientId());
+		out.comma().property("dynamic", dynamic);
+		out.comma().property("editable", editable);
+		out.comma().property("info", buildInfo(point));
+		if (Strings.isNotBlank(name)) {
+			out.comma().property("name", name);
+		}
+		if (point!=null) {
+			out.write(",location:{latitude:"+point.getLatitude()+",longitude:"+point.getLongitude()+"}");
+		}
+		out.endNewObject().endScript();
+		
 	}
 	
 	private String buildInfo(MapPoint point) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("<table>");
-		sb.append("<tr><th>Latitude:</th><td>").append(Locations.formatLatitude(point.getLatitude())).append("</td></tr>");
-		sb.append("<tr><th>Longitude:</th><td>").append(Locations.formatLongitude(point.getLongitude())).append("</td></tr>");
-		sb.append("</table>");
+		if (point!=null) {
+			sb.append("<table>");
+			sb.append("<tr><th>Latitude:</th><td>").append(Locations.formatLatitude(point.getLatitude())).append("</td></tr>");
+			sb.append("<tr><th>Longitude:</th><td>").append(Locations.formatLongitude(point.getLongitude())).append("</td></tr>");
+			sb.append("</table>");
+		}
 		return sb.toString();
 	}
 

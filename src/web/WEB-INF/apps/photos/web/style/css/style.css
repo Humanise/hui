@@ -151,6 +151,7 @@ p.photos_photo_description
 	color: #555;
 }
 
+
 p.photos_photo_description span
 {
 	font-size: 64px;
@@ -179,4 +180,30 @@ span.photos_photo_description_end
 p.photos_photo_words a
 {
 	color: #333;
+}
+
+div.photos_profile
+{
+	padding: 10px;
+	overflow: hidden;
+}
+
+div.photos_profile_body
+{
+	margin-left: 60px;
+}
+
+div.photos_profile_photo
+{
+	float: left;
+	border: 1px solid #ddd;
+	background: #fff;
+	padding: 2px;
+	font-size: 0;
+} 
+
+div.photos_profile_body p
+{
+	margin: 0;
+	font-size: 11px;
 }

@@ -91,12 +91,15 @@
 		</ui:define>
 		
 		<ui:define name="sidebar">
-			<div style="padding: 10px; overflow: hidden;">
-				<div style="float: left;">
-					<o:thumbnail image="#{photosPhotoView.personImage}" width="60" height="80" zoom="true" frame="false"/>
+			<div class="photos_profile">
+				<div class="photos_profile_photo">
+					<o:thumbnail image="#{photosPhotoView.personImage}" width="50" height="60" zoom="true" frame="false"/>
 				</div>
-				<div style="margin-left: 70px">
-					<p style="margin: 0; font-size: 11px;">#{photosPhotoView.person.fullName}</p>
+				<div class="photos_profile_body">
+					<p>#{photosPhotoView.person.fullName}</p>
+					<p>@#{photosPhotoView.user.username}</p>
+					<p style="margin-top: 5px"><o:link>Photos »</o:link></p>
+					<p style="margin-top: 5px"><o:link>Profile »</o:link></p>
 				</div>
 			</div>
 			<div class="photos_photo_properties oo_faded">
@@ -110,10 +113,6 @@
 				</o:block>
 				<o:words words="#{photosPhotoView.words}" editable="#{photosPhotoView.canModify}" name="words"/>
 				<c:if test="#{photosPhotoView.canModify}">
-					<gui:buttons>
-						<gui:button text="Change location" name="addLocation" small="true" variant="paper"/>
-						<gui:button text="Add word" name="addWord" small="true" variant="paper"/>
-					</gui:buttons>
 					<gui:checkbox label="Public access" name="publicAccess" value="#{not photosPhotoView.secret}"/>
 				</c:if>
 			</div>
