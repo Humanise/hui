@@ -9,9 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.services.EmailService;
-import dk.in2isoft.onlineobjects.test.AbstractTestCase;
+import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 
-public class TestEmailService extends AbstractTestCase {
+public class TestEmailService extends AbstractSpringTestCase {
 	
 	@Autowired
 	private EmailService emailService;

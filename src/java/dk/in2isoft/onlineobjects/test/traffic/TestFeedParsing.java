@@ -19,9 +19,9 @@ import com.sun.syndication.io.XmlReader;
 
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.services.SemanticService;
-import dk.in2isoft.onlineobjects.test.AbstractTestCase;
+import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 
-public class TestFeedParsing extends AbstractTestCase {
+public class TestFeedParsing extends AbstractSpringTestCase {
 	
 	private static Logger log = Logger.getLogger(TestFeedParsing.class);
 	

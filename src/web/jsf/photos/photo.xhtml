@@ -107,10 +107,10 @@
 					<c:forEach items="#{photosPhotoView.properties}" var="prop">
 						<p class="photos_photo_property"><strong>#{prop.label}:</strong> #{prop.value}</p>
 					</c:forEach>
-					<div style="margin: 10px 0">
-						<o:map name="map" location="#{photosPhotoView.mapPoint}" dynamic="false" editable="#{photosPhotoView.canModify}"/>
-					</div>
 				</o:block>
+				<div style="margin: 10px 0">
+					<o:map name="map" location="#{photosPhotoView.mapPoint}" dynamic="false" editable="#{photosPhotoView.canModify}"/>
+				</div>
 				<o:words words="#{photosPhotoView.words}" editable="#{photosPhotoView.canModify}" name="words"/>
 				<c:if test="#{photosPhotoView.canModify}">
 					<gui:checkbox label="Public access" name="publicAccess" value="#{not photosPhotoView.secret}"/>

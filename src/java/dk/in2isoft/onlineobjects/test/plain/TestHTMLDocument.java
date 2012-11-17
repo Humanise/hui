@@ -20,9 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.services.SemanticService;
-import dk.in2isoft.onlineobjects.test.AbstractTestCase;
+import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 
-public class TestHTMLDocument extends AbstractTestCase {
+public class TestHTMLDocument extends AbstractSpringTestCase {
 	
 	private static Logger log = Logger.getLogger(TestHTMLDocument.class);
 	

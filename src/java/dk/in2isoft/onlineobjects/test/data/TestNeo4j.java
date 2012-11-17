@@ -16,9 +16,9 @@ import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import dk.in2isoft.onlineobjects.services.ConfigurationService;
-import dk.in2isoft.onlineobjects.test.AbstractTestCase;
+import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 
-public class TestNeo4j extends AbstractTestCase {
+public class TestNeo4j extends AbstractSpringTestCase {
 	
 	private static Logger log = Logger.getLogger(TestNeo4j.class);
 	

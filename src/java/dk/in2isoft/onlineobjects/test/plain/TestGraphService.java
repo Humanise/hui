@@ -10,9 +10,9 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import dk.in2isoft.onlineobjects.services.GraphService;
-import dk.in2isoft.onlineobjects.test.AbstractTestCase;
+import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 
-public class TestGraphService extends AbstractTestCase {
+public class TestGraphService extends AbstractSpringTestCase {
 
 	private static Logger log = Logger.getLogger(TestGraphService.class);
 	@Autowired

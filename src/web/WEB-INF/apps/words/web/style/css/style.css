@@ -167,6 +167,25 @@ span.words_word_relation
 }
 
 
+p.words_word_glossary
+{
+	margin: 5px 0 5px 40px;
+	text-indent: -20px;
+}
+
+span.words_word_example
+{
+	font-style: italic;
+	color: #666;
+	font-size: 90%;
+	margin: 0 5px;
+}
+
+
+
+
+
+
 h1
 {
 	margin: 0;

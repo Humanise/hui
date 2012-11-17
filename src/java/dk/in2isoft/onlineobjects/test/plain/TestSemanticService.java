@@ -16,9 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.services.SemanticService;
-import dk.in2isoft.onlineobjects.test.AbstractTestCase;
+import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 
-public class TestSemanticService extends AbstractTestCase {
+public class TestSemanticService extends AbstractSpringTestCase {
 	
 	private static Logger log = Logger.getLogger(TestSemanticService.class);
 	

@@ -10,9 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.services.FileService;
-import dk.in2isoft.onlineobjects.test.AbstractTestCase;
+import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 
-public class TestFileService extends AbstractTestCase {
+public class TestFileService extends AbstractSpringTestCase {
 	
 	@Autowired
 	private FileService fileService;

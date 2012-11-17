@@ -10,11 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.model.RemoteAccount;
 import dk.in2isoft.onlineobjects.services.RemoteDataService;
-import dk.in2isoft.onlineobjects.test.AbstractTestCase;
+import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 import dk.in2isoft.onlineobjects.util.remote.RemoteAccountInfo;
 import dk.in2isoft.onlineobjects.util.remote.RemoteImageGallery;
 
-public class TestRemoteDataService extends AbstractTestCase {
+public class TestRemoteDataService extends AbstractSpringTestCase {
 
 	@Autowired
 	private RemoteDataService remoteDataService;

@@ -22,7 +22,7 @@
 						<li><o:link href="/#{wordsLayoutView.language}/index/#{char}/">#{char}</o:link></li>
 					</c:forEach>
 				</ul>
-				<h2>#{msg.latest_words}</h2>
+				<h2>#{msg.latest_words} (#{wordsFrontView.totalCount})</h2>
 				<ul class="words_list">
 					<c:forEach items="#{wordsFrontView.latestWords}" var="word">
 						<li>

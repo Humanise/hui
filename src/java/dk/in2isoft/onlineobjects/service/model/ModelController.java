@@ -1,19 +1,13 @@
 package dk.in2isoft.onlineobjects.service.model;
 
 import java.io.IOException;
-import java.util.List;
 
-import javax.servlet.http.HttpServletResponse;
-
-import nu.xom.Document;
-import nu.xom.Element;
-import nu.xom.Node;
-import nu.xom.Serializer;
-
-import dk.in2isoft.onlineobjects.core.EndUserException;
+import dk.in2isoft.in2igui.data.ListData;
+import dk.in2isoft.onlineobjects.apps.videosharing.Path;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Query;
-import dk.in2isoft.onlineobjects.model.Image;
+import dk.in2isoft.onlineobjects.core.SearchResult;
+import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.service.ServiceController;
 import dk.in2isoft.onlineobjects.services.ConversionService;
 import dk.in2isoft.onlineobjects.ui.Request;
@@ -26,9 +20,9 @@ public class ModelController extends ServiceController {
 	private ConversionService conversionService;
 
 	public ModelController() {
-		super("image");
+		super("model");
 	}
-
+/*
 	@Override
 	public void unknownRequest(Request request) throws IOException, EndUserException {
 		Element root = new Element("list");
@@ -43,6 +37,24 @@ public class ModelController extends ServiceController {
 		response.setCharacterEncoding("UTF-8");
 		Serializer serializer = new Serializer(response.getOutputStream(), "UTF-8");
 		serializer.write(doc);
+	}*/
+	
+	@Path(start="listWords")
+	public void listWords(Request request) throws IOException {
+		String text = request.getString("text");
+		Integer page = request.getInt("page");
+		if (page==null) page=0;
+		ListData list = new ListData();
+		list.addHeader("Word");
+		Query<Word> query = Query.of(Word.class).withWords(text).withPaging(page, 50);
+		SearchResult<Word> result = modelService.search(query);
+		list.setWindow(result.getTotalCount(), 50, page);
+		for (Word word : result.getList()) {
+			String kind = word.getClass().getSimpleName().toLowerCase();
+			list.newRow(word.getId(),kind);
+			list.addCell(word.getName(), word.getIcon());
+		}
+		request.sendObject(list);
 	}
 
 	public void setImageService(ImageService imageService) {

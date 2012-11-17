@@ -14,9 +14,9 @@ import dk.in2isoft.onlineobjects.core.SecurityException;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.User;
-import dk.in2isoft.onlineobjects.test.AbstractTestCase;
+import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 
-public class TestAdminUser extends AbstractTestCase {
+public class TestAdminUser extends AbstractSpringTestCase {
 
 	@Autowired
 	private SecurityService securityService;

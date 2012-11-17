@@ -5,9 +5,9 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import dk.in2isoft.commons.util.RegExpUtil;
-import dk.in2isoft.onlineobjects.test.AbstractTestCase;
+import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 
-public class TestRegExpUtil extends AbstractTestCase {
+public class TestRegExpUtil extends AbstractSpringTestCase {
 		
 	@Test
 	public void testValidation() {

@@ -1,6 +1,6 @@
 package dk.in2isoft.onlineobjects.modules.language;
 
-public class SimpleWordImpression {
+public class WordListPerspective {
 
 	private String text;
 	private long id;

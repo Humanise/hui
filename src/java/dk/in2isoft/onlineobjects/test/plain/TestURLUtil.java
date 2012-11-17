@@ -6,9 +6,9 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import dk.in2isoft.commons.http.URLUtil;
-import dk.in2isoft.onlineobjects.test.AbstractTestCase;
+import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 
-public class TestURLUtil extends AbstractTestCase {
+public class TestURLUtil extends AbstractSpringTestCase {
 		
 	@Test
 	public void testValidation() {

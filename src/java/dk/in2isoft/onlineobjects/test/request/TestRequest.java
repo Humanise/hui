@@ -12,10 +12,10 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockServletContext;
 
 import dk.in2isoft.onlineobjects.core.EndUserException;
-import dk.in2isoft.onlineobjects.test.AbstractTestCase;
+import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 import dk.in2isoft.onlineobjects.ui.Request;
 
-public class TestRequest extends AbstractTestCase {
+public class TestRequest extends AbstractSpringTestCase {
 
 	@Test
 	public void testIP() throws EndUserException {

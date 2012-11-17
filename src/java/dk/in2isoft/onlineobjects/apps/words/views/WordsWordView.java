@@ -39,7 +39,7 @@ public class WordsWordView extends AbstractView implements InitializingBean {
 		String[] path = getRequest().getLocalPath();
 		if (path.length==3) {
 			text = path[2].replaceAll(".html", "");
-			words = languageService.getImpressions(Query.of(Word.class).withField(Word.TEXT_FIELD, text));
+			words = languageService.getImpressions(Query.of(Word.class).withFieldLowercase(Word.TEXT_FIELD, text));
 			for (WordImpression impression : words) {
 				Multimap<String, WordRelation> map = HashMultimap.create();
 				List<Relation> children = modelService.getChildRelations(impression.getWord(),Word.class);

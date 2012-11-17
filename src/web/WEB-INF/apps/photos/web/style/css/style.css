@@ -69,6 +69,7 @@ div.photos_controller
 	opacity: 0;
 	-webkit-transition: opacity 1s;
 	-moz-transition: opacity 1s;
+	-webkit-font-smoothing: antialiased;
 }
 
 div.photos_photo_image:hover div.photos_controller

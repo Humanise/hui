@@ -15,9 +15,12 @@ public class ModelPropertyLimitation {
 		}
 	};
 	
+	public enum Function {lower}
+	
 	private String property;
 	private Object value;
 	private Comparison comparison;
+	private Function function;
 	
 	public ModelPropertyLimitation(String property, Object value, Comparison comparison) {
 		super();
@@ -44,5 +47,13 @@ public class ModelPropertyLimitation {
 	
 	public Comparison getComparison() {
 		return comparison;
+	}
+
+	public void setFunction(Function function) {
+		this.function = function;
+	}
+
+	public Function getFunction() {
+		return function;
 	}
 }

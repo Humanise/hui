@@ -14,9 +14,9 @@ import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.WebNode;
 import dk.in2isoft.onlineobjects.model.WebPage;
-import dk.in2isoft.onlineobjects.test.AbstractTestCase;
+import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 
-public class TestRelations extends AbstractTestCase {
+public class TestRelations extends AbstractSpringTestCase {
 
 	@Test
 	public void testRelations() throws SQLException, ModelException, SecurityException {

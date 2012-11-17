@@ -27,11 +27,11 @@ import dk.in2isoft.commons.lang.Matrix;
 import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.services.SemanticService;
-import dk.in2isoft.onlineobjects.test.AbstractTestCase;
+import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 import dk.in2isoft.onlineobjects.util.semantics.English;
 import dk.in2isoft.onlineobjects.util.semantics.Language;
 
-public class TestComparison extends AbstractTestCase {
+public class TestComparison extends AbstractSpringTestCase {
 	
 	private static Logger log = Logger.getLogger(TestComparison.class);
 	

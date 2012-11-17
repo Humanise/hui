@@ -10,10 +10,10 @@ import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.model.Person;
-import dk.in2isoft.onlineobjects.test.AbstractTestCase;
+import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 
 
-public class TestPerson extends AbstractTestCase {
+public class TestPerson extends AbstractSpringTestCase {
 
 	@Test
 	public void testCreate() throws EndUserException {

@@ -20,9 +20,9 @@ import com.google.gdata.data.analytics.Dimension;
 import com.google.gdata.data.analytics.Metric;
 import com.google.gdata.util.ServiceException;
 
-import dk.in2isoft.onlineobjects.test.AbstractTestCase;
+import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 
-public class TestAnalytics extends AbstractTestCase {
+public class TestAnalytics extends AbstractSpringTestCase {
 
 	@Test @Ignore
 	public void testSimpleMail() throws IOException, ServiceException {

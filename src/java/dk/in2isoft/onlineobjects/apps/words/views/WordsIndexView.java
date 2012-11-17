@@ -33,18 +33,18 @@ public class WordsIndexView extends AbstractView implements InitializingBean {
 	private int pageSize = 20;
 			
 	public void afterPropertiesSet() throws Exception {
-		this.alphabeth = modelService.querySQL("select distinct substring(text from 1 for 1) as text from word order by text");
+		this.alphabeth = modelService.querySQL("select distinct substring(lower(text) from 1 for 1) as text from word order by text");
 	}
 	
 	public List<WordImpression> getList() throws ModelException {
 		if (this.list==null) {
-			Query<Word> query = Query.of(Word.class).withPublicView().orderByField(Word.TEXT_FIELD).ascending();
+			Query<Word> query = Query.of(Word.class).withPublicView().orderByFieldLowercase(Word.TEXT_FIELD).ascending();
 			Request request = getRequest();
 			String[] localPath = request.getLocalPath();
 			if (localPath.length>2) {
 				character = request.getLocalPath()[2];
 				if (StringUtils.isNotBlank(character)) {
-					query.withFieldLike(Word.TEXT_FIELD, character+"%");
+					query.withFieldLowercaseLike(Word.TEXT_FIELD, character+"%");
 				}
 			}
 			page = 0;

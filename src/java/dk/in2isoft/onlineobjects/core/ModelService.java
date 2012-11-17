@@ -17,6 +17,7 @@ import nu.xom.Elements;
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
 
+import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -533,6 +534,7 @@ public class ModelService {
 		return new Results<T>(q.scroll());
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<Object[]> querySQL(String sql) throws ModelException {
 		try {
 			SQLQuery query = getSession().createSQLQuery(sql);
@@ -541,6 +543,49 @@ public class ModelService {
 			log.error(e.getMessage(),e);
 		}
 		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> List<T> list(CustomQuery<T> query) throws ModelException {
+		try {
+			SQLQuery sql = getSession().createSQLQuery(query.getSQL());
+			List<Object[]> list = sql.list();
+			List<T> result = Lists.newArrayList();
+			for (Object[] t : list) {
+				result.add(query.convert(t));
+			}
+			return result;
+		} catch (HibernateException e) {
+			throw new ModelException("Error executing SQL", e);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> SearchResult<T> search(CustomQuery<T> query) throws ModelException {
+		try {
+			StopWatch watch = new StopWatch();
+			watch.start();
+			SQLQuery countSql = getSession().createSQLQuery(query.getCountSQL());
+			log.info(query.getCountSQL());
+			List countRows = countSql.list();
+			Object next = countRows.iterator().next();
+			int totalCount = ((Number) next).intValue();
+			log.info(watch.getTime());
+			watch.reset();
+			watch.start();
+			SQLQuery sql = getSession().createSQLQuery(query.getSQL());
+			log.info(query.getSQL());
+			List<Object[]> rows = sql.list();
+			List<T> result = Lists.newArrayList();
+			for (Object[] t : rows) {
+				result.add(query.convert(t));
+			}
+			log.info(watch.getTime());
+			watch.stop();
+			return new SearchResult<T>(result, totalCount);
+		} catch (HibernateException e) {
+			throw new ModelException("Error executing SQL", e);
+		}
 	}
 
 	@SuppressWarnings("unchecked")

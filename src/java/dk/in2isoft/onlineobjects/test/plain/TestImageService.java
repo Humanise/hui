@@ -9,11 +9,11 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import dk.in2isoft.onlineobjects.core.EndUserException;
-import dk.in2isoft.onlineobjects.test.AbstractTestCase;
+import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 import dk.in2isoft.onlineobjects.util.images.ImageMetaData;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
 
-public class TestImageService extends AbstractTestCase {
+public class TestImageService extends AbstractSpringTestCase {
 	
 	@Autowired
 	private ImageService imageService;

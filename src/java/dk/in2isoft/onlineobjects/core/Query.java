@@ -11,6 +11,7 @@ import org.hibernate.Session;
 import com.google.common.collect.Lists;
 
 import dk.in2isoft.commons.lang.Strings;
+import dk.in2isoft.onlineobjects.core.ModelPropertyLimitation.Function;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Privilege;
 import dk.in2isoft.onlineobjects.model.Relation;
@@ -44,6 +45,11 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 
 	public Query<T> orderByField(String field) {
 		ordering = "obj."+field;
+		return this;
+	}
+
+	public Query<T> orderByFieldLowercase(String field) {
+		ordering = "lower(obj."+field+")";
 		return this;
 	}
 
@@ -90,8 +96,22 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 		return this;
 	}
 
+	public Query<T> withFieldLowercase(String property, Object value) {
+		ModelPropertyLimitation limitation = new ModelPropertyLimitation(property, value, ModelPropertyLimitation.Comparison.EQUALS);
+		limitation.setFunction(Function.lower);
+		limitations.add(limitation);
+		return this;
+	}
+
 	public Query<T> withFieldLike(String property, String str) {
 		limitations.add(new ModelPropertyLimitation(property, str, ModelPropertyLimitation.Comparison.LIKE));
+		return this;
+	}
+
+	public Query<T> withFieldLowercaseLike(String property, String str) {
+		ModelPropertyLimitation limitation = new ModelPropertyLimitation(property, str, ModelPropertyLimitation.Comparison.LIKE);
+		limitation.setFunction(ModelPropertyLimitation.Function.lower);
+		limitations.add(limitation);
 		return this;
 	}
 
@@ -215,7 +235,7 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 			hql.append(",").append(Relation.class.getName()).append(" as childRelation");
 		}
 		if (!ignorePaging && Entity.class.isAssignableFrom(clazz)) {
-			hql.append(" left join fetch obj.properties");
+			//hql.append(" left join fetch obj.properties");
 		}
 		if (Strings.isDefined(words) && Entity.class.isAssignableFrom(clazz) || customProperties.size() > 0) {
 			hql.append(" left join obj.properties as p");
@@ -258,7 +278,14 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 					hql.append(limit.getComparison());
 					hql.append("(:").append(limit.getProperty()).append(")");
 				} else {
-					hql.append(" and ").append(limit.getProperty());
+					hql.append(" and ");
+					if (limit.getFunction()!=null) {
+						hql.append(limit.getFunction().name()).append("(");
+					}
+					hql.append(limit.getProperty());
+					if (limit.getFunction()!=null) {
+						hql.append(")");
+					}
 					hql.append(limit.getComparison());
 					hql.append(":").append(limit.getProperty());
 				}
@@ -322,6 +349,7 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 		org.hibernate.Query q = session.createQuery(hql.toString());
 		if (pageSize > 0 && !ignorePaging) {
 			q.setMaxResults(pageSize);
+			q.setFetchSize(pageSize);
 			q.setFirstResult(pageNumber * pageSize);
 		}
 		for (Iterator<ModelPropertyLimitation> i = limitations.iterator(); i.hasNext();) {

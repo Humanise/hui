@@ -6,9 +6,9 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import dk.in2isoft.onlineobjects.modules.youtube.YouTubeService;
-import dk.in2isoft.onlineobjects.test.AbstractTestCase;
+import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 
-public class TestYoutubeService extends AbstractTestCase {
+public class TestYoutubeService extends AbstractSpringTestCase {
 	
 	private static Logger log = Logger.getLogger(TestYoutubeService.class);
 	

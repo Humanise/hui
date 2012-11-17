@@ -1,29 +1,20 @@
 package dk.in2isoft.onlineobjects.service;
 
 import java.io.File;
-import java.io.IOException;
 
 import dk.in2isoft.onlineobjects.core.Core;
-import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelService;
-import dk.in2isoft.onlineobjects.services.ConfigurationService;
-import dk.in2isoft.onlineobjects.ui.Request;
+import dk.in2isoft.onlineobjects.ui.AbstractController;
 
-public abstract class ServiceController {
+public abstract class ServiceController extends AbstractController {
 
 	private String name;
-	private ConfigurationService configurationService;
 
 	public ServiceController(String name) {
 		super();
 		this.name = name;
 	}
 	
-	public void unknownRequest(Request request)
-	throws IOException,EndUserException {
-		
-	}
-
 	protected ModelService getModel() {
 		return Core.getInstance().getModel();
 	}
@@ -44,11 +35,4 @@ public abstract class ServiceController {
 		return new File(filePath.toString());
 	}
 
-	public void setConfigurationService(ConfigurationService configurationService) {
-		this.configurationService = configurationService;
-	}
-
-	public ConfigurationService getConfigurationService() {
-		return configurationService;
-	}
 }

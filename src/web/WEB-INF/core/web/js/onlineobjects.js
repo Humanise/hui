@@ -464,11 +464,10 @@ oo.Words.prototype = {
 		}
 	},
 	_showFinder : function() {
-
 		if (!this._wordFinder) {
 			var finder = this._wordFinder = hui.ui.Finder.create({
 				title : {en:'Add word',da:'Tilføj ord'},
-				list : {url : oo.appContext+'/searchWords',pageParameter:'page'},
+				list : {url : oo.baseContext+'/service/model/listWords',pageParameter:'page'},
 				search : {parameter:'text'}
 			});
 			finder.listen({

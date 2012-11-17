@@ -57,6 +57,19 @@
 											 </span>
 										</c:if>
 									</p>
+									<c:if test="#{not empty word.glossary}">
+										<p class="words_word_glossary">
+											#{word.glossary}
+											<c:if test="#{not empty word.examples}">
+												:
+											<c:forEach items="#{word.examples}" var="example" varStatus="status">
+												<c:if test="#{not status.first}"> | </c:if>
+												<span class="words_word_example">#{example}</span>
+											</c:forEach>
+											</c:if>
+										</p>
+									</c:if>
+										
 									<ul class="words_word_relations">
 									<c:forEach items="#{word.relations}" var="group">
 										<li>

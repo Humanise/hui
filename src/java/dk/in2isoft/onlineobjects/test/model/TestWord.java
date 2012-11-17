@@ -10,10 +10,10 @@ import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.model.Word;
-import dk.in2isoft.onlineobjects.test.AbstractTestCase;
+import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 
 
-public class TestWord extends AbstractTestCase {
+public class TestWord extends AbstractSpringTestCase {
 
 	@Test
 	public void testCreate() throws EndUserException {

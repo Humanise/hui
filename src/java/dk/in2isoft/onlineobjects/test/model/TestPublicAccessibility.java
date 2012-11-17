@@ -15,9 +15,9 @@ import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.model.Comment;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.User;
-import dk.in2isoft.onlineobjects.test.AbstractTestCase;
+import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 
-public class TestPublicAccessibility extends AbstractTestCase {
+public class TestPublicAccessibility extends AbstractSpringTestCase {
 
 	@Autowired
 	private SecurityService securityService;

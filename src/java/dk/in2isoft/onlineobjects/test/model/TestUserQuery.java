@@ -10,9 +10,9 @@ import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.UserQuery;
 import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.User;
-import dk.in2isoft.onlineobjects.test.AbstractTestCase;
+import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 
-public class TestUserQuery extends AbstractTestCase {
+public class TestUserQuery extends AbstractSpringTestCase {
     	
 	@Test
 	public void testThis() throws EndUserException {

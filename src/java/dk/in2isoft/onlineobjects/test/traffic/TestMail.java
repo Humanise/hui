@@ -4,9 +4,9 @@ import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.SimpleEmail;
 import org.junit.Test;
 
-import dk.in2isoft.onlineobjects.test.AbstractTestCase;
+import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 
-public class TestMail extends AbstractTestCase {
+public class TestMail extends AbstractSpringTestCase {
 
 	@Test
 	public void testSimpleMail() throws EmailException {

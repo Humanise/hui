@@ -7,9 +7,9 @@ import org.junit.Test;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.model.User;
-import dk.in2isoft.onlineobjects.test.AbstractTestCase;
+import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 
-public class TestModelDirt extends AbstractTestCase {
+public class TestModelDirt extends AbstractSpringTestCase {
     	
 	@Test
 	public void testThis() throws EndUserException {

@@ -13,6 +13,9 @@ public class WordImpression {
 	private Word word;
 	private LexicalCategory lexicalCategory;
 	private List<WordRelationGroup> relations;
+	private String glossary;
+	private List<String> examples;
+	private String dataSource;
 	private Language language;
 	private User originator;
 
@@ -54,6 +57,30 @@ public class WordImpression {
 
 	public void setRelations(List<WordRelationGroup> relations) {
 		this.relations = relations;
+	}
+
+	public void setGlossary(String glossary) {
+		this.glossary = glossary;
+	}
+
+	public String getGlossary() {
+		return glossary;
+	}
+
+	public void setDataSource(String dataSource) {
+		this.dataSource = dataSource;
+	}
+
+	public String getDataSource() {
+		return dataSource;
+	}
+
+	public void setExamples(List<String> examples) {
+		this.examples = examples;
+	}
+
+	public List<String> getExamples() {
+		return examples;
 	}
 
 	public static class WordRelationGroup {
