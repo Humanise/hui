@@ -3,9 +3,11 @@ package dk.in2isoft.onlineobjects.modules.language;
 public class WordListPerspective {
 
 	private String text;
+	private String urlPart;
 	private long id;
 	private String lexicalCategory;
 	private String language;
+	private String glossary;
 
 	public String getText() {
 		return text;
@@ -37,5 +39,21 @@ public class WordListPerspective {
 
 	public void setLanguage(String language) {
 		this.language = language;
+	}
+
+	public String getUrlPart() {
+		return urlPart;
+	}
+
+	public void setUrlPart(String urlPart) {
+		this.urlPart = urlPart;
+	}
+
+	public String getGlossary() {
+		return glossary;
+	}
+
+	public void setGlossary(String glossary) {
+		this.glossary = glossary;
 	}
 }

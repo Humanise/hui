@@ -13,10 +13,10 @@ public class WordsControllerBase extends ApplicationController {
 		super("words");
 		addJsfMatcher("/", "front.xhtml");
 		addJsfMatcher("/<language>", "front.xhtml");
-		addJsfMatcher("/<language>/word/<word>.html", "word.xhtml");
+		addJsfMatcher("/<language>/word/<no-dot>.html", "word.xhtml");
 		addJsfMatcher("/<language>/import/<folder>", "import.xhtml");
-		addJsfMatcher("/<language>/index/<word>", "index.xhtml");
-		addJsfMatcher("/<language>/index/<word>/<integer>", "index.xhtml");
+		addJsfMatcher("/<language>/index/<folder>", "index.xhtml");
+		addJsfMatcher("/<language>/index/<folder>/<integer>", "index.xhtml");
 	}
 
 	public WordsControllerBase(String name) {

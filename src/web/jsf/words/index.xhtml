@@ -26,12 +26,13 @@
 				<ul class="words_list">
 					<c:forEach items="#{wordsIndexView.list}" var="word">
 						<li>
-							<o:link href="/#{wordsLayoutView.language}/word/#{word.word.text}.html">#{word.word.text}</o:link>
+							<o:link href="/#{wordsLayoutView.language}/word/#{word.urlPart}.html">#{word.text}</o:link>
 							<span class="words_list_info">
 							<c:if test="#{not empty word.lexicalCategory}">
-								- #{msg[word.lexicalCategory.code]}
+								— #{msg[word.lexicalCategory]}
 							</c:if>
-							- #{msg[word.language.code]}</span>
+							– #{msg[word.language]}
+							– #{word.glossary}</span>
 						</li>
 					</c:forEach>
 				</ul>

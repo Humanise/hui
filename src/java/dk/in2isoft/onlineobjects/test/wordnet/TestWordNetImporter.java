@@ -84,7 +84,7 @@ public class TestWordNetImporter extends AbstractSpringTestCase {
 	}
 
 	private static void read(String fileName) throws FileNotFoundException, IOException {
-		FileReader reader = new FileReader(new File("/Users/jbm/Development/Workspace/onlineobjects/testdata/DanNet-2.1_owl/"+fileName));
+		FileReader reader = new FileReader(new File("/Users/jbm/Udvikling/Workspace/OnlineObjects/testdata/DanNet-2.1_owl/"+fileName));
 		model.read(reader, "UTF-8");
 		reader.close();
 		log.info("imported: "+fileName+" : "+new Duration(watch.getTime()));
@@ -116,7 +116,7 @@ public class TestWordNetImporter extends AbstractSpringTestCase {
 		ExtendedIterator<Triple> words = graph.find(null, RDF.type.asNode(), wordURI);
 		{
 			int num = 0;
-			while (words.hasNext() && num<10) {
+			while (words.hasNext()) {
 				num++;
 				Triple word = (Triple) words.next();
 				if (num < start) continue;

@@ -1,5 +1,9 @@
 package dk.in2isoft.commons.lang;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -109,6 +113,24 @@ public class Strings {
 			}
 		}
 		return combined;
+	}
+
+	public static String decodeURL(String string) {
+		try {
+			return URLDecoder.decode(string,"UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			
+		}
+		return string;
+	}
+
+	public static String encodeURL(String string) {
+		try {
+			return URLEncoder.encode(string,"UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			
+		}
+		return string;
 	}
 
 }

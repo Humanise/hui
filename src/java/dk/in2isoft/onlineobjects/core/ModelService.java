@@ -549,6 +549,7 @@ public class ModelService {
 	public <T> List<T> list(CustomQuery<T> query) throws ModelException {
 		try {
 			SQLQuery sql = getSession().createSQLQuery(query.getSQL());
+			query.setParameters(sql);
 			List<Object[]> list = sql.list();
 			List<T> result = Lists.newArrayList();
 			for (Object[] t : list) {
@@ -566,14 +567,16 @@ public class ModelService {
 			StopWatch watch = new StopWatch();
 			watch.start();
 			SQLQuery countSql = getSession().createSQLQuery(query.getCountSQL());
-			log.info(query.getCountSQL());
-			List countRows = countSql.list();
+			query.setParameters(countSql);
+			
+			List<Object> countRows = countSql.list();
 			Object next = countRows.iterator().next();
 			int totalCount = ((Number) next).intValue();
 			log.info(watch.getTime());
 			watch.reset();
 			watch.start();
 			SQLQuery sql = getSession().createSQLQuery(query.getSQL());
+			query.setParameters(sql);
 			log.info(query.getSQL());
 			List<Object[]> rows = sql.list();
 			List<T> result = Lists.newArrayList();

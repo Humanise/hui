@@ -1,6 +1,7 @@
 package dk.in2isoft.onlineobjects.ui;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.Locale;
 
 import javax.faces.context.FacesContext;
@@ -8,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.web.context.WebApplicationContext;
@@ -85,6 +87,9 @@ public class Request {
 		domainName = request.getServerName();
 		baseContext = request.getContextPath();
 		String uri = request.getServletPath().substring(1);
+		String contextPath = request.getContextPath();
+		String requestURI = request.getRequestURI();
+		uri = requestURI.substring(contextPath.length()+1);
 		if (uri.indexOf(";jsessionid=") != -1) {
 			uri = uri.substring(0, uri.indexOf(";jsessionid="));
 		}
@@ -93,6 +98,9 @@ public class Request {
 			this.fullPath = new String[] {};
 		} else {
 			String[] path = uri.split("/");
+			for (int i = 0; i < path.length; i++) {
+				path[i] = Strings.decodeURL(path[i]);
+			}
 			int level = path.length;
 			if (!uri.endsWith("/") || uri.length() == 0) {
 				level--;

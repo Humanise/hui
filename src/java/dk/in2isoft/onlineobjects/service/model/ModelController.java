@@ -4,10 +4,13 @@ import java.io.IOException;
 
 import dk.in2isoft.in2igui.data.ListData;
 import dk.in2isoft.onlineobjects.apps.videosharing.Path;
+import dk.in2isoft.onlineobjects.apps.words.views.WordListPerspectiveQuery;
+import dk.in2isoft.onlineobjects.core.ModelException;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.model.Word;
+import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
 import dk.in2isoft.onlineobjects.service.ServiceController;
 import dk.in2isoft.onlineobjects.services.ConversionService;
 import dk.in2isoft.onlineobjects.ui.Request;
@@ -40,19 +43,23 @@ public class ModelController extends ServiceController {
 	}*/
 	
 	@Path(start="listWords")
-	public void listWords(Request request) throws IOException {
+	public void listWords(Request request) throws IOException, ModelException {
 		String text = request.getString("text");
 		Integer page = request.getInt("page");
 		if (page==null) page=0;
 		ListData list = new ListData();
 		list.addHeader("Word");
-		Query<Word> query = Query.of(Word.class).withWords(text).withPaging(page, 50);
-		SearchResult<Word> result = modelService.search(query);
+		list.addHeader("Language");
+		list.addHeader("Category");
+		WordListPerspectiveQuery query = new WordListPerspectiveQuery().withPaging(page, 50).startingWith(text);
+		SearchResult<WordListPerspective> result = modelService.search(query);
 		list.setWindow(result.getTotalCount(), 50, page);
-		for (Word word : result.getList()) {
+		for (WordListPerspective word : result.getList()) {
 			String kind = word.getClass().getSimpleName().toLowerCase();
 			list.newRow(word.getId(),kind);
-			list.addCell(word.getName(), word.getIcon());
+			list.addCell(word.getText());
+			list.addCell(word.getLanguage());
+			list.addCell(word.getLexicalCategory());
 		}
 		request.sendObject(list);
 	}
