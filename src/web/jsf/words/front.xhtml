@@ -17,22 +17,27 @@
 				<h1>#{msg.words}</h1>
 			
 				<h2>#{msg.index}</h2>
-				<ul class="words_index">
+				<p class="words_paging words_index">
 					<c:forEach items="#{wordsIndexView.alphabeth}" var="char">
-						<li><o:link href="/#{wordsLayoutView.language}/index/#{char}/">#{char}</o:link></li>
+						<o:link href="/#{wordsLayoutView.language}/index/#{char}/">#{char}</o:link>
 					</c:forEach>
-				</ul>
+				</p>
 				<h2>#{msg.latest_words} (#{wordsFrontView.totalCount})</h2>
 				<ul class="words_list">
 					<c:forEach items="#{wordsFrontView.latestWords}" var="word">
 						<li>
-							<o:link href="/#{wordsLayoutView.language}/word/#{word.text}.html">#{word.text}</o:link>
+							<o:link href="/#{wordsLayoutView.language}/word/#{word.urlPart}.html">#{word.text}</o:link>
 							<span class="words_list_info">
 							<c:if test="#{not empty word.lexicalCategory}">
 								— #{msg[word.lexicalCategory]}
 							</c:if>
+							<c:if test="#{not empty word.language}">
 							– #{msg[word.language]}
-							– #{word.glossary}</span>
+							</c:if>
+							</span>
+							<c:if test="#{not empty word.glossary}">
+							<span class="words_list_glossary">– #{word.glossary}</span>
+							</c:if>
 						</li>
 					</c:forEach>
 				</ul>

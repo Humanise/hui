@@ -56,6 +56,14 @@
 												</a>
 											 </span>
 										</c:if>
+										<gui:button variant="paper" name="delete#{word.word.id}" tiny="true" text="#{msg.remove}" left="10" 
+											click="wordView.deleteWord({id:#{word.word.id}})"
+											rendered="#{wordsLayoutView.loggedIn}"
+										/>
+										<gui:button variant="paper" name="relate#{word.word.id}" tiny="true" text="#{msg.add_relation}" left="10" 
+											click="wordView.addRelation({id:#{word.word.id}})"
+											rendered="#{wordsLayoutView.loggedIn}"
+										/>
 									</p>
 									<c:if test="#{not empty word.glossary}">
 										<p class="words_word_glossary">
@@ -63,13 +71,13 @@
 											<c:if test="#{not empty word.examples}">
 												:
 											<c:forEach items="#{word.examples}" var="example" varStatus="status">
-												<c:if test="#{not status.first}"> | </c:if>
+												<c:if test="#{not status.first}"><span class="words_word_example_divider"> | </span></c:if>
 												<span class="words_word_example">#{example}</span>
 											</c:forEach>
 											</c:if>
 										</p>
 									</c:if>
-										
+									<c:if test="#{not empty word.relations}">
 									<ul class="words_word_relations">
 									<c:forEach items="#{word.relations}" var="group">
 										<li>
@@ -89,19 +97,12 @@
 										</li>
 									</c:forEach>
 									</ul>
+									</c:if>
 									<p class="words_word_by">
 										#{msg.created}: <o:date value="#{word.word.created}"/>
 										<c:if test="#{not empty word.originator}">
 										#{msg.by} #{word.originator.name}
 										</c:if>
-										<gui:button variant="paper" name="delete#{word.word.id}" tiny="true" text="#{msg.remove}" left="10" 
-											click="wordView.deleteWord({id:#{word.word.id}})"
-											rendered="#{wordsLayoutView.loggedIn}"
-										/>
-										<gui:button variant="paper" name="relate#{word.word.id}" tiny="true" text="#{msg.add_relation}" left="10" 
-											click="wordView.addRelation({id:#{word.word.id}})"
-											rendered="#{wordsLayoutView.loggedIn}"
-										/>
 									</p>
 								</li>
 							</c:forEach>

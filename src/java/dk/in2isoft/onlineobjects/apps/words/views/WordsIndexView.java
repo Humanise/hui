@@ -18,6 +18,7 @@ import dk.in2isoft.onlineobjects.ui.jsf.model.Option;
 
 public class WordsIndexView extends AbstractView implements InitializingBean {
 
+	private static final int PAGING = 10;
 	private ModelService modelService;
 	private LanguageService languageService;
 	
@@ -55,20 +56,40 @@ public class WordsIndexView extends AbstractView implements InitializingBean {
 	}
 	
 	public List<Option> getPages() {
+		
 		if (pages==null) {
 			pages = Lists.newArrayList();
-			int pageCount = (int) Math.ceil(count/pageSize);
+			int pageCount = (int) Math.ceil(count/pageSize)+1;
 			if (pageCount>1) {
-				for (int i = 1; i <= pageCount+1; i++) {
-					Option option = new Option();
-					option.setValue("/"+getRequest().getLanguage()+"/index/"+character+"/"+i);
-					option.setLabel(i+"");
-					option.setSelected(page==i-1);
-					pages.add(option);
+			
+				int min = Math.max(1,page-PAGING);
+				int max = Math.min(pageCount, page+PAGING);
+				if (min>1) {
+					pages.add(buildOption(1));
+				}
+				if (min>2) {
+					pages.add(null);
+				}
+				for (int i = min; i <= max; i++) {
+					pages.add(buildOption(i));
+				}
+				if (max<pageCount-1) {
+					pages.add(null);
+				}
+				if (max<pageCount) {
+					pages.add(buildOption(pageCount));
 				}
 			}
 		}
 		return pages;
+	}
+	
+	private Option buildOption(int num) {
+		Option option = new Option();
+		option.setValue("/"+getRequest().getLanguage()+"/index/"+character+"/"+num);
+		option.setLabel(num+"");
+		option.setSelected(page==num-1);
+		return option;
 	}
 	
 	public int getCount() {

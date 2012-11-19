@@ -20,12 +20,12 @@ a.oo_link span
 
 div.words
 {
-	padding: 10px 20px;
+	padding: 10px 20px 30px;
 }
 
 ul.words_sidebar_index, div.words
 {
-	font-family: 'Georgia','Crimson Text','Palatino','Times New Roman','Times';
+	font-family: 'Lora','Georgia','Crimson Text','Palatino','Times New Roman','Times';
 }
 
 
@@ -96,6 +96,7 @@ p.words_word_by
 	margin: 5px 0 0 20px;
 	font-size: 11px;
 	color: #999;
+	text-align: right;
 }
 
 p.words_word_info
@@ -138,7 +139,7 @@ span.words_word_info span
 
 li.words_word_variant
 {
-	margin-bottom: 10px;
+	margin-bottom: 25px;
 }
 
 ul.words_word_relations
@@ -169,7 +170,7 @@ span.words_word_relation
 
 p.words_word_glossary
 {
-	margin: 5px 0 5px 40px;
+	margin: 5px 0 0px 40px;
 	text-indent: -20px;
 }
 
@@ -178,10 +179,15 @@ span.words_word_example
 	font-style: italic;
 	color: #666;
 	font-size: 90%;
-	margin: 0 5px;
+	margin: 0 10px;
+	font-size: 9pt;
 }
 
-
+span.words_word_example_divider
+{
+	color: #ccc;
+	font-size: 9pt;
+}
 
 
 
@@ -202,7 +208,53 @@ h2
 
 
 
+/**************** Paging *************/
 
+p.words_paging
+{
+	color: #ddd;
+	font-size: 0;
+	cursor: default;
+}
+
+p.words_paging em
+{
+	font-style: normal;
+	font-size: 12pt;
+	margin: 0 3px;
+}
+
+p.words_paging a
+{
+	display: inline-block;
+}
+
+p.words_paging a span
+{
+	color: #666;
+	padding: 0 3px;
+	display: inline-block;
+	height: 20px;
+	line-height: 19px;
+	border-radius: 3px;
+	font-size: 12pt;
+	min-width: 10px;
+	text-align: center;
+}
+
+p.words_paging a:hover span
+{
+	color: #08C;
+	border-radius: 3px;
+	background: #eee;
+}
+
+p.words_paging a.words_paging_selected span
+{
+	color: #000;
+	font-weight: bold;
+	background: #ddd;
+}
 
 
 /***************** List ***************/
@@ -211,21 +263,27 @@ ul.words_list
 {
 	color: #ddd;
 	font-size: 11pt;
-	margin: 10px 0 10px 25px;
+	margin: 20px 0 20px 25px;
 	padding: 0;
 }
 
 ul.words_list li
 {
-	margin: 3px 0;
+	margin: 5px 0;
 }
 
 span.words_list_info
 {
-	color: #999; font-size: 10px;
+	color: #999;
+	font-size: 10px;
 }
 
-
+span.words_list_glossary
+{
+	color: #333;
+	font-style: italic;
+	font-size: 10pt;
+}
 
 
 
@@ -329,29 +387,8 @@ p.words a.highlighted
 
 /*********** index *********/
 
-ul.words_index
+p.words_index
 {
-	list-style: none;
-	padding: 0;
 	margin: 10px 0;
-}
-
-ul.words_index li
-{
-	display: inline-block;
-}
-
-a.words_index_selected span
-{
-	font-weight: bold;
-	color: #000;
-	text-decoration: none;
-}
-
-/*********** paging **********/
-
-p.paging a.selected span
-{
-	color: #000;
-	font-weight: bold;
+	text-transform: uppercase;
 }

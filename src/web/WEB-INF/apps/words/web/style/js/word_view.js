@@ -12,7 +12,7 @@ var wordView = {
 			this._finder = hui.ui.Finder.create({
 				name : 'relatedWordFinder',
 				title : {en:'Find word',da:'Find ord'},
-				list : {source : new hui.ui.Source({dwr:'AppWords.searchWords'}),pageParameter:'page'},
+				list : {url : oo.baseContext+'/service/model/listWords',pageParameter:'page'},
 				search : {parameter:'text'}
 			});
 		}

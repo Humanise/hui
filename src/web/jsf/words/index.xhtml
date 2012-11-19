@@ -16,13 +16,11 @@
 				<h1>#{msg.words}</h1>
 			
 				<h2>#{msg.index}</h2>
-				<ul class="words_index">
+				<p class="words_paging words_index">
 					<c:forEach items="#{wordsIndexView.alphabeth}" var="char">
-						<li>
-							<o:link styleClass="#{char == wordsIndexView.character ? 'words_index_selected' : ''}" href="/en/index/#{char}/">#{char}</o:link>
-						</li>
+						<o:link styleClass="#{char == wordsIndexView.character ? 'words_paging_selected' : ''}" href="/en/index/#{char}/">#{char}</o:link>
 					</c:forEach>
-				</ul>
+				</p>
 				<ul class="words_list">
 					<c:forEach items="#{wordsIndexView.list}" var="word">
 						<li>
@@ -31,14 +29,24 @@
 							<c:if test="#{not empty word.lexicalCategory}">
 								— #{msg[word.lexicalCategory]}
 							</c:if>
+							<c:if test="#{not empty word.language}">
 							– #{msg[word.language]}
-							– #{word.glossary}</span>
+							</c:if>
+							</span>
+							<c:if test="#{not empty word.glossary}">
+							<span class="words_list_glossary">– #{word.glossary}</span>
+							</c:if>
 						</li>
 					</c:forEach>
 				</ul>
-				<p class="paging">
+				<p class="words_paging">
 				<c:forEach items="#{wordsIndexView.pages}" var="page">
-					<o:link href="#{page.value}/" styleClass="#{page.selected ? 'selected' : ''}">#{page.label}</o:link>
+					<c:choose>
+						<c:when test="#{page==null}"><em>···</em></c:when>
+						<c:otherwise>
+							<o:link href="#{page.value}/" styleClass="#{page.selected ? 'words_paging_selected' : ''}">#{page.label}</o:link>
+						</c:otherwise>
+					</c:choose>
 					#{' '}
 				</c:forEach>
 				</p>

@@ -23,7 +23,7 @@ public class WordsModelService {
 	public Diagram getDiagram(String text) throws ModelException {
 		Messages msg = new Messages("classpath:dk/in2isoft/onlineobjects/apps/words/msg/Words");
 		Diagram diagram = new Diagram();
-		Query<Word> query = Query.of(Word.class).withField(Word.TEXT_FIELD, text);
+		Query<Word> query = Query.of(Word.class).withFieldLowercase(Word.TEXT_FIELD, text);
 		List<Word> words = modelService.search(query).getList();
 		for (Word word : words) {
 			Node wordNode = new Node();
