@@ -10,7 +10,6 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import dk.in2isoft.onlineobjects.model.Application;
-import dk.in2isoft.onlineobjects.model.Language;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.services.ConfigurationService;
 import dk.in2isoft.onlineobjects.services.ConsistencyService;

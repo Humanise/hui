@@ -1,7 +1,6 @@
 package dk.in2isoft.onlineobjects.ui;
 
 import java.io.IOException;
-import java.net.URLDecoder;
 import java.util.Locale;
 
 import javax.faces.context.FacesContext;
@@ -9,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.web.context.WebApplicationContext;

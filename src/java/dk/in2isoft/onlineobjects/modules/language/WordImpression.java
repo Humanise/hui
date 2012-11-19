@@ -1,7 +1,6 @@
 package dk.in2isoft.onlineobjects.modules.language;
 
 import java.util.List;
-import java.util.Map;
 
 import dk.in2isoft.onlineobjects.model.Language;
 import dk.in2isoft.onlineobjects.model.LexicalCategory;

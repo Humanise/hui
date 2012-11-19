@@ -3,7 +3,6 @@ package dk.in2isoft.onlineobjects.modules.dispatch;
 import java.io.IOException;
 
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.ui.Request;

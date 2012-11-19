@@ -1,6 +1,5 @@
 package dk.in2isoft.onlineobjects.apps.words;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
@@ -12,7 +11,6 @@ import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Language;
 import dk.in2isoft.onlineobjects.model.LexicalCategory;
-import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.Word;

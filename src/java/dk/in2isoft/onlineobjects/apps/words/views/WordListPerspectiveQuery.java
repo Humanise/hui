@@ -82,7 +82,6 @@ public class WordListPerspectiveQuery implements CustomQuery<WordListPerspective
 		return sql.toString();
 	}
 	
-	@Override
 	public void setParameters(SQLQuery sql) {
 		if (startingWith!=null) {
 			sql.setString("startingWith", startingWith+"%");

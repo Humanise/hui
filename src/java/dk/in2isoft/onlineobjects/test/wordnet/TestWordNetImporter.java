@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.joda.time.Duration;
@@ -35,11 +34,14 @@ import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.modules.dannet.DanNetGlossary;
 import dk.in2isoft.onlineobjects.modules.dannet.DanNetUtil;
+import dk.in2isoft.onlineobjects.services.ConfigurationService;
 import dk.in2isoft.onlineobjects.services.LanguageService;
 import dk.in2isoft.onlineobjects.services.SemanticService;
 import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 
 public class TestWordNetImporter extends AbstractSpringTestCase {
+	
+	private ConfigurationService configurationService; 
 
 	private static final Logger log = Logger.getLogger(TestWordNetImporter.class);
 	private static Model model;
@@ -84,7 +86,7 @@ public class TestWordNetImporter extends AbstractSpringTestCase {
 	}
 
 	private static void read(String fileName) throws FileNotFoundException, IOException {
-		FileReader reader = new FileReader(new File("/Users/jbm/Udvikling/Workspace/OnlineObjects/testdata/DanNet-2.1_owl/"+fileName));
+		FileReader reader = new FileReader(new File("/Users/jbm/Development/Workspace/onlineobjects/testdata/DanNet-2.1_owl/"+fileName));
 		model.read(reader, "UTF-8");
 		reader.close();
 		log.info("imported: "+fileName+" : "+new Duration(watch.getTime()));
@@ -228,5 +230,10 @@ public class TestWordNetImporter extends AbstractSpringTestCase {
 	@Autowired
 	public void setLanguageService(LanguageService languageService) {
 		this.languageService = languageService;
+	}
+	
+	@Override
+	public void setConfigurationService(ConfigurationService configurationService) {
+		super.setConfigurationService(configurationService);
 	}
 }

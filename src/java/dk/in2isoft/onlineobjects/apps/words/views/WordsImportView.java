@@ -7,7 +7,6 @@ import org.springframework.beans.factory.InitializingBean;
 import com.google.common.collect.Lists;
 
 import dk.in2isoft.commons.jsf.AbstractView;
-import dk.in2isoft.onlineobjects.apps.words.importing.HTMLDocumentImporter;
 import dk.in2isoft.onlineobjects.apps.words.importing.TextImporter;
 import dk.in2isoft.onlineobjects.core.ContentNotFoundException;
 import dk.in2isoft.onlineobjects.core.IllegalRequestException;
@@ -16,7 +15,6 @@ import dk.in2isoft.onlineobjects.core.Pair;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.model.Language;
 import dk.in2isoft.onlineobjects.model.Word;
-import dk.in2isoft.onlineobjects.modules.importing.ImportHandler;
 import dk.in2isoft.onlineobjects.modules.importing.ImportSession;
 import dk.in2isoft.onlineobjects.services.ImportService;
 import dk.in2isoft.onlineobjects.services.LanguageService;

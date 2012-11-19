@@ -1,11 +1,8 @@
 package dk.in2isoft.in2igui.jsf;
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
 
 import javax.faces.component.FacesComponent;
-import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ComponentSystemEvent;

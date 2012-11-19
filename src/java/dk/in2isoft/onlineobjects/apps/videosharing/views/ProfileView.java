@@ -1,11 +1,7 @@
 package dk.in2isoft.onlineobjects.apps.videosharing.views;
 
-import java.util.Date;
 import java.util.List;
 
-import org.joda.time.DateTime;
-import org.joda.time.Duration;
-import org.joda.time.Period;
 import org.springframework.beans.factory.InitializingBean;
 
 import dk.in2isoft.onlineobjects.apps.community.jsf.AbstractManagedBean;

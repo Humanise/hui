@@ -10,7 +10,6 @@ import com.google.common.collect.Lists;
 import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.in2igui.data.KeyboardNavigatorItem;
 import dk.in2isoft.onlineobjects.apps.community.remoting.InternetAddressInfo;
-import dk.in2isoft.onlineobjects.apps.desktop.views.AddressInfo;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelException;
 import dk.in2isoft.onlineobjects.core.Query;

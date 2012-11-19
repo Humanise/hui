@@ -10,7 +10,6 @@ import java.io.IOException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -20,7 +19,7 @@ import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 
 public class TestSemanticService extends AbstractSpringTestCase {
 	
-	private static Logger log = Logger.getLogger(TestSemanticService.class);
+	//private static Logger log = Logger.getLogger(TestSemanticService.class);
 	
 	@Autowired
 	private SemanticService semanticService;

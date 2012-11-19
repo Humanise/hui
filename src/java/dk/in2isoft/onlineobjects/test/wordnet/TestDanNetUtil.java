@@ -2,17 +2,15 @@ package dk.in2isoft.onlineobjects.test.wordnet;
 
 import java.util.Iterator;
 
-import org.apache.log4j.Logger;
 import org.junit.Test;
 
-import dk.in2isoft.onlineobjects.core.Pair;
 import dk.in2isoft.onlineobjects.modules.dannet.DanNetGlossary;
 import dk.in2isoft.onlineobjects.modules.dannet.DanNetUtil;
 import dk.in2isoft.onlineobjects.test.AbstractTestCase;
 
 public class TestDanNetUtil extends AbstractTestCase {
 
-	private static final Logger log = Logger.getLogger(TestDanNetUtil.class);
+	//private static final Logger log = Logger.getLogger(TestDanNetUtil.class);
 
 	@Test
 	public void testParseGlossary() {

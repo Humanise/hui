@@ -9,7 +9,6 @@ import org.apache.log4j.Logger;
 import org.joda.time.Duration;
 import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.io.SystemOutDocumentTarget;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAxiom;
@@ -24,13 +23,8 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.semanticweb.owlapi.reasoner.structural.StructuralReasonerFactory;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-
 import uk.ac.manchester.cs.owl.owlapi.OWLAnnotationPropertyImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLClassImpl;
-import uk.ac.manchester.owl.owlapi.tutorialowled2011.OWLTutorialSyntaxOntologyFormat;
-import uk.ac.manchester.owl.owlapi.tutorialowled2011.OWLTutorialSyntaxOntologyStorer;
 import dk.in2isoft.onlineobjects.test.AbstractTestCase;
 
 public class TestWordNetOWL extends AbstractTestCase {

@@ -14,7 +14,6 @@ import com.google.common.collect.Lists;
 import dk.in2isoft.in2igui.data.EventData;
 import dk.in2isoft.in2igui.data.InfoViewData;
 import dk.in2isoft.in2igui.data.ObjectData;
-import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelException;
 import dk.in2isoft.onlineobjects.core.Query;

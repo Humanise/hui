@@ -2,8 +2,6 @@ package dk.in2isoft.commons.lang;
 
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.collect.Lists;
 
 public class Matrix<X, Y, V> {
