@@ -42,6 +42,17 @@ public class ComponentUtil {
 		return localValue;
 	}
 
+	public static <T> T  getService(Class<T> service, FacesContext context) {
+		String simpleName = service.getSimpleName();
+		String name = simpleName.substring(0, 1).toLowerCase()+simpleName.substring(1);
+		ValueExpression valueExpression = context.getApplication().getExpressionFactory().createValueExpression(context.getELContext(),"#{"+name+"}",service);
+		Object value = valueExpression.getValue(context.getELContext());
+		if (value!=null && service.isAssignableFrom(value.getClass())) {
+			return (T) value;
+		}
+		return null;
+	}
+
 	public static int getIntParameter(String name) {
 		Map<String, String> map = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
 		String string = map.get(name);

@@ -101,7 +101,7 @@
 									<p class="words_word_by">
 										#{msg.created}: <o:date value="#{word.word.created}"/>
 										<c:if test="#{not empty word.originator}">
-										#{msg.by} #{word.originator.name}
+										#{msg.by} <o:link app="community" href="/#{word.originator.name}">#{word.originator.name}</o:link>
 										</c:if>
 									</p>
 								</li>

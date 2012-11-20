@@ -12,6 +12,7 @@ import dk.in2isoft.commons.jsf.ClassBuilder;
 import dk.in2isoft.commons.jsf.ComponentUtil;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.commons.lang.Strings;
+import dk.in2isoft.onlineobjects.services.ConfigurationService;
 import dk.in2isoft.onlineobjects.ui.Request;
 
 @FacesComponent(value = LinkComponent.FAMILY)
@@ -27,6 +28,7 @@ public class LinkComponent extends AbstractComponent {
 	private String styleClass;
 	private boolean plain;
 	private String name;
+	private String app;
 	
 	public LinkComponent() {
 		super(FAMILY);
@@ -42,11 +44,12 @@ public class LinkComponent extends AbstractComponent {
 		title = (String) state[5];
 		plain = (Boolean) state[6];
 		name = (String) state[7];
+		app = (String) state[8];
 	}
 
 	@Override
 	public Object[] saveState() {
-		return new Object[] { variant, core, href, styleClass, onclick, title, plain, name };
+		return new Object[] { variant, core, href, styleClass, onclick, title, plain, name, app };
 	}
 
 	@Override
@@ -78,7 +81,7 @@ public class LinkComponent extends AbstractComponent {
 		}
 		String href = getHref(context);
 		if (href!=null) {
-			writer.withAttribute("href", buildUrl(href, core));
+			writer.withAttribute("href", buildUrl(href, app, core));
 		} else if (StringUtils.isNotBlank(id)) {
 			writer.withAttribute("href","javascript: void(0);");
 		}
@@ -87,13 +90,23 @@ public class LinkComponent extends AbstractComponent {
 		}
 	}
 	
-	public static String buildUrl(String href,boolean core) {
+	public static String buildUrl(String href,String app,boolean core) {
 		if (href.startsWith("http") || href.startsWith("#") || href.startsWith("javascript:")) {
 			return href;
 		} else {
 			StringBuilder url = new StringBuilder();
 			Request request = ComponentUtil.getRequest();
-			url.append(core ? request.getBaseContext() : request.getLocalContext());
+			if (app!=null) {
+				ConfigurationService configurationService = ComponentUtil.getService(ConfigurationService.class, FacesContext.getCurrentInstance());
+				String context = configurationService.getApplicationContext(app,request);
+				if (context!=null) {
+					url.append(context);
+				} else {
+					url.append(request.getBaseContext()).append("/app/").append(app);
+				}
+			} else {
+				url.append(core ? request.getBaseContext() : request.getLocalContext());
+			}
 			url.append(href);
 			return url.toString();
 		}
@@ -190,5 +203,13 @@ public class LinkComponent extends AbstractComponent {
 	
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public void setApp(String app) {
+		this.app = app;
+	}
+
+	public String getApp() {
+		return app;
 	}
 }

@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
 
 import dk.in2isoft.onlineobjects.core.ConfigurationException;
+import dk.in2isoft.onlineobjects.ui.Request;
 
 public class ConfigurationService implements InitializingBean {
 	
@@ -135,5 +136,15 @@ public class ConfigurationService implements InitializingBean {
 
 	public void setAnalyticsCode(String analyticsCode) {
 		this.analyticsCode = analyticsCode;
+	}
+
+	public String getApplicationContext(String app, Request request) {
+		if ("community".equals(app)) {
+			if (developmentMode) {
+				return request.getBaseContext();
+			}
+			return "";
+		}
+		return null;
 	}
 }

@@ -438,6 +438,44 @@ oo.Map.prototype = {
 }
 
 
+oo.WordFinder = function() {
+	this.name = 'oo_wordfinder';
+	hui.ui.extend(this);
+	this._finder = hui.ui.Finder.create({
+		title : {en:'Add word',da:'Tilføj ord'},
+		list : {url : oo.baseContext+'/service/model/listWords',pageParameter:'page'},
+		search : {parameter:'text'}
+	});
+	this._finder.listen({
+		$select : function(value) {
+			this._finder.clear();
+			this._finder.hide();
+			this.fire('select',{id:value.id});
+		}.bind(this),
+	})
+}
+
+oo.WordFinder.show = function() {
+	if (!this._instance) {
+		this._instance = new oo.WordFinder();
+	}
+	this._instance.show();
+}
+
+oo.WordFinder.prototype = {
+	show : function() {
+		this._finder.show();
+	}
+}
+
+
+
+
+
+
+
+
+
 oo.Words = function(options) {
 	this.options = options;
 	this.element = hui.get(options.element);

@@ -64,7 +64,7 @@ public class ThumbnailComponent extends AbstractComponent {
 			cls.add("oo_thumbnail_frame");
 		}
 		if (StringUtils.isNotBlank(href)) {
-			writer.startA(cls).withStyle(style).withAttribute("href", LinkComponent.buildUrl(href, false));
+			writer.startA(cls).withStyle(style).withAttribute("href", LinkComponent.buildUrl(href, null, false));
 		} else {
 			writer.startSpan(cls).withStyle(style);
 		}

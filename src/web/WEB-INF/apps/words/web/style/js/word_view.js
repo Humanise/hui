@@ -8,18 +8,10 @@ var wordView = {
 	
 	addRelation : function(options) {
 		this.wordInfo = options;
-		if (!this._finder) {
-			this._finder = hui.ui.Finder.create({
-				name : 'relatedWordFinder',
-				title : {en:'Find word',da:'Find ord'},
-				list : {url : oo.baseContext+'/service/model/listWords',pageParameter:'page'},
-				search : {parameter:'text'}
-			});
-		}
-		this._finder.show();
+		oo.WordFinder.show();
 	},
-	
-	$select$relatedWordFinder : function(word) {
+		
+	$select$oo_wordfinder : function(word) {
 		var button = hui.ui.get('relate'+this.wordInfo.id),
 			panel = hui.ui.get('relationKindPanel');
 
@@ -31,7 +23,6 @@ var wordView = {
 					this._createRelation(this.wordInfo.id,a.getAttribute('rel'),word.id);
 				}
 			}.bind(this))
-		this._finder.hide();
 		window.setTimeout(function() {
 			panel.position(button);
 			panel.show();
@@ -65,16 +56,6 @@ var wordView = {
 				diagram.$objectsLoaded(data);				
 			}
 		})
-		return;
-		
-		AppWords.getDiagram( this.text, {
-			callback : function(data) {
-				diagram.$objectsLoaded(data);
-			},
-			errorHandler : function() {
-				hui.ui.showMessage({text:'Unable to get diagram',icon:'common/warning',duration:2000});
-			}
-		});
 	},
 
 	$click$registerWord : function() {
