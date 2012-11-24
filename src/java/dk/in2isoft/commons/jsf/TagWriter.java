@@ -263,6 +263,10 @@ public class TagWriter {
 		return write("'").write(name).write("':'").write(StringEscapeUtils.escapeJavaScript(value)).write("'");
 	}
 
+	public TagWriter propertyRaw(String name, String value) throws IOException {
+		return write("'").write(name).write("':").write(value);
+	}
+
 	public TagWriter property(String name, boolean value) throws IOException {
 		return write("'").write(name).write("':").write(value);
 	}

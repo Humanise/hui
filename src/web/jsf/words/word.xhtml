@@ -112,8 +112,8 @@
 						<gui:button variant="paper" name="addVariant" small="true" text="#{msg.add_variant}" rendered="#{wordsLayoutView.loggedIn}"/>
 					</p>
 					<gui:diagram name="diagram"/>
-					
-					<gui:boundPanel name="wordEditor" hideOnClick="true" width="400" rendered="#{wordsLayoutView.loggedIn}">
+					<ui:fragment rendered="#{wordsLayoutView.loggedIn}">
+					<gui:boundPanel name="wordEditor" hideOnClick="true" width="400">
 						<div class="panel_body">
 							<h2>#{msg.lexical_categories}</h2>
 							<ul class="selection">
@@ -126,7 +126,7 @@
 						</div>
 					</gui:boundPanel>
 					
-					<gui:boundPanel name="languagePanel" hideOnClick="true" width="200" rendered="#{wordsLayoutView.loggedIn}">
+					<gui:boundPanel name="languagePanel" hideOnClick="true" width="200">
 						<div class="panel_body">
 							<h2>#{msg.languages}</h2>
 							<ul class="selection">
@@ -137,7 +137,7 @@
 						</div>
 					</gui:boundPanel>
 					
-					<gui:boundPanel name="relationKindPanel" hideOnClick="true" width="200" rendered="#{wordsLayoutView.loggedIn}">
+					<gui:boundPanel name="relationKindPanel" hideOnClick="true" width="200">
 						<div class="panel_body">
 							<h2>#{msg.relation_kind}</h2>
 							<ul class="selection">
@@ -163,6 +163,53 @@
 						</gui:formula>
 					</gui:boundPanel>
 					
+					<gui:source name="wordFinderListSource"/>
+
+					<gui:window title="Find word" name="wordFinder" width="400">
+						<gui:bar variant="window">
+							<gui:button small="true" name="wordFinderAdd" text="Add word"/>
+							<f:facet name="right">
+								<gui:searchfield/>
+							</f:facet>
+						</gui:bar>
+						<gui:pages name="wordFinderPages">
+							<gui:page>
+								<gui:overflow height="200">
+									<gui:list source="wordFinderListSource"/>
+								</gui:overflow>
+							</gui:page>
+							<gui:page>
+								<div style="padding: 10px">
+									<gui:formula>
+										<gui:fields>
+											<gui:field label="#{msg.language}">
+												<gui:dropDown key="language" items="#{wordsWordView.languages}"/>
+											</gui:field>
+											<gui:field label="#{msg.category}">
+												<gui:dropDown key="category" items="#{wordsWordView.categories}"/>
+											</gui:field>
+										</gui:fields>
+										<gui:buttons align="right">
+											<gui:button text="Cancel" name="wordFinderCancel"/>
+											<gui:button text="#{msg.add}" name="addVariantButton" highlighted="true"/>
+										</gui:buttons>
+									</gui:formula>
+								</div>		
+							</gui:page>
+						</gui:pages>
+					</gui:window>
+					<o:script>
+						hui.ui.listen({
+							$click$wordFinderCancel : function() {
+								hui.ui.get('wordFinderPages').next();
+							},
+							$click$wordFinderAdd : function() {
+								hui.ui.get('wordFinderPages').next();
+							}
+						})
+					</o:script>
+					
+					</ui:fragment>
 				</div>
 			</div>
 		</ui:define>

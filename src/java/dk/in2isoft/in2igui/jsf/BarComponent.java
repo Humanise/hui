@@ -43,29 +43,19 @@ public class BarComponent extends AbstractComponent {
 	}
 
 	@Override
-	public void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
-		writer.startDiv("hui_bar");
-		writer.startDiv("hui_bar_body");
+	public void encodeBegin(FacesContext context, TagWriter out) throws IOException {
+		out.startDiv(variant!=null ? "hui_bar hui_bar_"+variant : "hui_bar");
+		out.startDiv("hui_bar_body");
 		if (contentWidth>0) {
-			writer.withStyle(new StyleBuilder().withWidth(contentWidth).withMargin("0 auto"));
+			out.withStyle(new StyleBuilder().withWidth(contentWidth).withMargin("0 auto"));
 		}
 		UIComponent right = getFacet("right");
 		if (right!=null) {
-			writer.startDiv("hui_bar_right");
+			out.startDiv("hui_bar_right");
 			right.encodeAll(context);
-			writer.endDiv();
+			out.endDiv();
 		}
-		writer.startDiv("hui_bar_left");
-		/*
-		writer.startScopedScript();
-		writer.write("new hui.ui.Button({element:'");
-		writer.write(id);
-		writer.write("'");
-		if (name!=null) {
-			writer.write(",name:'"+name+"'");
-		}
-		writer.write("});");
-		writer.endScopedScript();*/
+		out.startDiv("hui_bar_left");
 	}
 	
 	@Override
@@ -95,5 +85,13 @@ public class BarComponent extends AbstractComponent {
 
 	public int getContentWidth() {
 		return contentWidth;
+	}
+
+	public void setVariant(String variant) {
+		this.variant = variant;
+	}
+
+	public String getVariant() {
+		return variant;
 	}
 }

@@ -4,6 +4,7 @@ var wordView = {
 	
 	$ready : function() {
 		//this.addRelation();
+		hui.ui.get('wordFinder').show();
 	},
 	
 	addRelation : function(options) {

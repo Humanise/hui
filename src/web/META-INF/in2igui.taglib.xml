@@ -155,4 +155,32 @@
       <renderer-type>hui.checkbox</renderer-type>
     </component>
   </tag>
+  <tag>
+    <tag-name>window</tag-name>
+    <component>
+      <component-type>hui.window</component-type>
+      <renderer-type>hui.window</renderer-type>
+    </component>
+  </tag>
+  <tag>
+    <tag-name>list</tag-name>
+    <component>
+      <component-type>hui.list</component-type>
+      <renderer-type>hui.list</renderer-type>
+    </component>
+  </tag>
+  <tag>
+    <tag-name>overflow</tag-name>
+    <component>
+      <component-type>hui.overflow</component-type>
+      <renderer-type>hui.overflow</renderer-type>
+    </component>
+  </tag>
+  <tag>
+    <tag-name>source</tag-name>
+    <component>
+      <component-type>hui.source</component-type>
+      <renderer-type>hui.source</renderer-type>
+    </component>
+  </tag>
 </facelet-taglib>

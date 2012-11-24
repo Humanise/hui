@@ -14,7 +14,23 @@ hui.ui.Pages = function(options) {
 	//hui.listen(this.element,'click',this.next.bind(this));
 }
 
+hui.ui.Pages.create = function(options) {
+	options = options || {};
+	options.element = hui.build('div',{'class':'hui_pages'});
+	return new hui.ui.Pages(options);
+}
+
 hui.ui.Pages.prototype = {
+	add : function(widgetOrElement) {
+		var element = hui.dom.isElement(widgetOrElement) ? element : widgetOrElement.element;
+		var page = hui.build('div',{'class':'hui_pages_page'});
+		page.appendChild(element);
+		this.element.appendChild(page);
+		if (this.pages.length>0) {
+			page.style.display = 'none';
+		}
+		this.pages = hui.get.children(this.element);
+	},
 	next : function() {
 		if (this.expanded) {return}
 		var current = this.pages[this.index];

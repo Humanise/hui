@@ -211,4 +211,20 @@ http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
 	    <component-type>hui.checkbox</component-type>
     	<component-class>dk.in2isoft.in2igui.jsf.CheckboxComponent</component-class>
   	</component>
+    <component>
+	    <component-type>hui.window</component-type>
+    	<component-class>dk.in2isoft.in2igui.jsf.WindowComponent</component-class>
+  	</component>
+    <component>
+	    <component-type>hui.list</component-type>
+    	<component-class>dk.in2isoft.in2igui.jsf.ListComponent</component-class>
+  	</component>
+    <component>
+	    <component-type>hui.overflow</component-type>
+    	<component-class>dk.in2isoft.in2igui.jsf.OverflowComponent</component-class>
+  	</component>
+    <component>
+	    <component-type>hui.source</component-type>
+    	<component-class>dk.in2isoft.in2igui.jsf.SourceComponent</component-class>
+  	</component>
 </faces-config>

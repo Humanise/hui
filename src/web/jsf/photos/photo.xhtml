@@ -46,13 +46,14 @@
 							<o:link href="/#{wordsLayoutView.language}/photo/#{photosPhotoView.nextId}.html" plain="true"><i class="icon-chevron-right"></i></o:link>
 						</div> 
 					</div>
-					<div id="photos_photo_description" style="margin-top: 10px;">
+					<div id="photos_photo_description">
 						<c:if test="#{not photosPhotoView.canModify and not empty photosPhotoView.description}">
-							<p class="photos_photo_description">
+							<p class="photos_photo_description" style="margin-top: 10px;">
 								<span class="photos_photo_description_start">&#8220;</span><o:out value="#{photosPhotoView.description}" escape="false"/><span class="photos_photo_description_end">&#8221;</span>
 							</p>
 						</c:if>
 						<c:if test="#{photosPhotoView.canModify}">
+							<div style="margin-top: 10px;">
 							<gui:pages name="descriptionPages">
 								<gui:page>
 									<c:if test="#{not empty photosPhotoView.description}">
@@ -76,6 +77,7 @@
 									</div>
 								</gui:page>
 							</gui:pages>
+							</div>
 						</c:if>
 					</div>
 				</div>
@@ -113,7 +115,10 @@
 				</div>
 				<o:words words="#{photosPhotoView.words}" editable="#{photosPhotoView.canModify}" name="words"/>
 				<c:if test="#{photosPhotoView.canModify}">
-					<gui:checkbox label="Public access" name="publicAccess" value="#{not photosPhotoView.secret}"/>
+					<h2 style="font-weight: 200; font-size: 12pt; border-bottom: 1px solid #ddd; color: #999; margin: 10px 0 0;">Access control</h2>
+					<p style="margin: 5px 0;">
+						<gui:checkbox label="Public access" name="publicAccess" value="#{not photosPhotoView.secret}"/>
+					</p>
 				</c:if>
 			</div>
 		</ui:define>

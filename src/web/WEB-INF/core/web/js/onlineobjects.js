@@ -441,6 +441,41 @@ oo.Map.prototype = {
 oo.WordFinder = function() {
 	this.name = 'oo_wordfinder';
 	hui.ui.extend(this);
+	var win = this._finder = hui.ui.Window.create({title:{en:'Add word',da:'Tilføj ord'},width:300});
+	
+	
+	var bar = hui.ui.Bar.create({variant:'window'});
+	
+	var pages = hui.ui.Pages.create();
+
+	var add = hui.ui.Button.create({text:'New word',small:true,listener:{$click:function() {
+		pages.next();
+	}}});
+	bar.add(add);
+	win.add(bar);
+	
+	var search = hui.ui.SearchField.create();
+	bar.addToRight(search);
+	
+	win.add(pages);
+	
+	var src = new hui.ui.Source({url:oo.baseContext+'/service/model/listWords'});
+	var list = hui.ui.List.create({source:src});
+	var overflow = hui.ui.Overflow.create({height:300});
+	overflow.add(list)
+	pages.add(overflow);
+	
+	
+	var form = hui.ui.Formula.create({padding:10});
+	form.buildGroup({},[
+		{type:'TextField',label:'Text',options:{}},
+		{type:'DropDown',label:'Sprog',options:{
+			items:[{text:'English',value:'en'},{text:'Danish',value:'da'}]
+		}}
+	])
+	pages.add(form);
+	
+	return;
 	this._finder = hui.ui.Finder.create({
 		title : {en:'Add word',da:'Tilføj ord'},
 		list : {url : oo.baseContext+'/service/model/listWords',pageParameter:'page'},
