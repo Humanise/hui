@@ -15,6 +15,7 @@ public class WordImpression {
 	private String glossary;
 	private List<String> examples;
 	private String dataSource;
+	private String sourceTitle;
 	private Language language;
 	private User originator;
 
@@ -80,6 +81,14 @@ public class WordImpression {
 
 	public List<String> getExamples() {
 		return examples;
+	}
+
+	public void setSourceTitle(String sourceTitle) {
+		this.sourceTitle = sourceTitle;
+	}
+
+	public String getSourceTitle() {
+		return sourceTitle;
 	}
 
 	public static class WordRelationGroup {

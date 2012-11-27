@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.google.common.collect.Lists;
 
+import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.ModelException;
 import dk.in2isoft.onlineobjects.core.ModelService;
@@ -45,7 +46,11 @@ public class LanguageService {
 		impression.setOriginator(modelService.getChild(word, User.class));
 		impression.setGlossary(word.getPropertyValue(Property.KEY_SEMANTICS_GLOSSARY));
 		impression.setExamples(word.getPropertyValues(Property.KEY_SEMANTICS_EXAMPLE));
-		impression.setDataSource(word.getPropertyValue(Property.KEY_DATA_SOURCE));
+		String dataSource = word.getPropertyValue(Property.KEY_DATA_SOURCE);
+		impression.setDataSource(dataSource);
+		if (Strings.isNotBlank(dataSource)) {
+			impression.setSourceTitle("WordNet.dk");
+		}
 		return impression;
 	}
 

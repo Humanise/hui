@@ -103,8 +103,8 @@
 										<c:if test="#{not empty word.originator}">
 										#{msg.by} <o:link app="community" href="/#{word.originator.name}">#{word.originator.name}</o:link>
 										</c:if>
-										<c:if test="#{not empty word.dataSource}">
-										from #{word.dataSource}
+										<c:if test="#{not empty word.sourceTitle}">
+										from #{word.sourceTitle}
 										</c:if>
 									</p>
 								</li>

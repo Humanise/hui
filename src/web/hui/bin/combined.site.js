@@ -3323,7 +3323,6 @@ hui.onReady(function() {
 			hui.log(e);
 		});
 	}
-	hui.ui.callSuperDelegates(this,'ready');
 	hui.listen(window,'resize',hui.ui._resize);
 	hui.ui.reLayout();
 	hui.ui.domReady = true;
@@ -3333,6 +3332,8 @@ hui.onReady(function() {
 	for (var i=0; i < hui.ui.delayedUntilReady.length; i++) {
 		hui.ui.delayedUntilReady[i]();
 	};
+	// Call super delegates after delayedUntilReady...
+	hui.ui.callSuperDelegates(this,'ready');
 });
 
 /**

@@ -4824,7 +4824,6 @@ hui.onReady(function() {
 			hui.log(e);
 		});
 	}
-	hui.ui.callSuperDelegates(this,'ready');
 	hui.listen(window,'resize',hui.ui._resize);
 	hui.ui.reLayout();
 	hui.ui.domReady = true;
@@ -4834,6 +4833,8 @@ hui.onReady(function() {
 	for (var i=0; i < hui.ui.delayedUntilReady.length; i++) {
 		hui.ui.delayedUntilReady[i]();
 	};
+	// Call super delegates after delayedUntilReady...
+	hui.ui.callSuperDelegates(this,'ready');
 });
 
 /**
@@ -7181,6 +7182,7 @@ hui.ui.List.prototype = {
 		this._buildNavigation();
 		this._buildHeaders(data.headers);
 		this._buildRows(data.rows);
+		this._setEmpty(!data.rows || data.rows.length==0);
 	},
 	/** @private */
 	_buildHeaders : function(headers) {
@@ -13574,7 +13576,7 @@ hui.ui.LocationPicker = function(options) {
 	this.name = options.name;
 	this.options = options.options || {};
 	this.element = hui.get(options.element);
-	this.backendLoaded = false;
+	this.backendLoaded = window.google!==undefined && window.google.maps!==undefined;
 	this.defered = [];
 	hui.ui.extend(this);
 }
@@ -20345,7 +20347,23 @@ hui.ui.Pages = function(options) {
 	//hui.listen(this.element,'click',this.next.bind(this));
 }
 
+hui.ui.Pages.create = function(options) {
+	options = options || {};
+	options.element = hui.build('div',{'class':'hui_pages'});
+	return new hui.ui.Pages(options);
+}
+
 hui.ui.Pages.prototype = {
+	add : function(widgetOrElement) {
+		var element = hui.dom.isElement(widgetOrElement) ? element : widgetOrElement.element;
+		var page = hui.build('div',{'class':'hui_pages_page'});
+		page.appendChild(element);
+		this.element.appendChild(page);
+		if (this.pages.length>0) {
+			page.style.display = 'none';
+		}
+		this.pages = hui.get.children(this.element);
+	},
 	next : function() {
 		if (this.expanded) {return}
 		var current = this.pages[this.index];
@@ -20357,6 +20375,16 @@ hui.ui.Pages.prototype = {
 		var current = this.pages[this.index];
 		this.index = this.index == 0 ? this.pages.length-1 : this.index-1;
 		this._transition({hide:current,show:this.pages[this.index]});
+	},
+	goTo : function(key) {
+		for (var i=0; i < this.pages.length; i++) {
+			if (this.pages[i].getAttribute('data-key')==key && i!=this.index) {
+				var current = this.pages[this.index];
+				this.index = i;
+				this._transition({hide:current,show:this.pages[i]});
+				return;
+			}
+		};
 	},
 	expand : function() {
 		var l = this.pages.length;

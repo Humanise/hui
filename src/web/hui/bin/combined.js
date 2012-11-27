@@ -4824,7 +4824,6 @@ hui.onReady(function() {
 			hui.log(e);
 		});
 	}
-	hui.ui.callSuperDelegates(this,'ready');
 	hui.listen(window,'resize',hui.ui._resize);
 	hui.ui.reLayout();
 	hui.ui.domReady = true;
@@ -4834,6 +4833,8 @@ hui.onReady(function() {
 	for (var i=0; i < hui.ui.delayedUntilReady.length; i++) {
 		hui.ui.delayedUntilReady[i]();
 	};
+	// Call super delegates after delayedUntilReady...
+	hui.ui.callSuperDelegates(this,'ready');
 });
 
 /**
@@ -7181,6 +7182,7 @@ hui.ui.List.prototype = {
 		this._buildNavigation();
 		this._buildHeaders(data.headers);
 		this._buildRows(data.rows);
+		this._setEmpty(!data.rows || data.rows.length==0);
 	},
 	/** @private */
 	_buildHeaders : function(headers) {
@@ -13574,7 +13576,7 @@ hui.ui.LocationPicker = function(options) {
 	this.name = options.name;
 	this.options = options.options || {};
 	this.element = hui.get(options.element);
-	this.backendLoaded = false;
+	this.backendLoaded = window.google!==undefined && window.google.maps!==undefined;
 	this.defered = [];
 	hui.ui.extend(this);
 }

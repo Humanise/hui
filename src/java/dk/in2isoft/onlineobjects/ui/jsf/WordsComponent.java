@@ -38,10 +38,11 @@ public class WordsComponent extends AbstractComponent {
 		List<Word> words = getExpression("words", context);
 		boolean editable = isEditable(context);
 		String id = getClientId();
-		
 		out.startP("oo_words").withId(id);
-		for (Word word : words) {
-			out.startVoidA("oo_words_word").withAttribute("data", word.getId()).text(word.getText()).endA().text(" ");
+		if (words!=null) {
+			for (Word word : words) {
+				out.startVoidA("oo_words_word").withAttribute("data", word.getId()).text(word.getText()).endA().text(" ");
+			}
 		}
 		if (editable) {
 			out.startVoidA("oo_words_add").text("Add word").endA();

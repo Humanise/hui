@@ -29,7 +29,6 @@ public class PhotosUserView extends AbstractManagedBean implements InitializingB
 	private ListModel<Image> listModel;
 	private boolean modifiable;
 	
-	@Override
 	public void afterPropertiesSet() throws Exception {
 		String[] path = getRequest().getLocalPath();
 		username = path[2];
