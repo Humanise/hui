@@ -62,15 +62,19 @@ public class UserProfileView extends AbstractManagedBean implements Initializing
 	public ListModel<Image> getLatestImages() {
 		if (latestImages==null) {
 			latestImages = new ListModel<Image>() {
+				private ListModelResult<Image> result;
+				
 				@Override
 				public ListModelResult<Image> getResult() {
+					if (result!=null) return result;
 					User user = modelService.getUser(getUsersName());
 					Query<Image> query = Query.of(Image.class).withPrivileged(user).orderByCreated().withPaging(0, getPageSize()).descending();
 					if (!canModify) {
 						query.withPublicView();
 					}
 					SearchResult<Image> search = modelService.search(query);
-					return new ListModelResult<Image>(search.getList(),search.getList().size());
+					result = new ListModelResult<Image>(search.getList(),search.getList().size());
+					return result;
 				}
 			};
 			latestImages.setPageSize(16);

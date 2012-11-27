@@ -104,7 +104,7 @@
 										#{msg.by} <o:link app="community" href="/#{word.originator.name}">#{word.originator.name}</o:link>
 										</c:if>
 										<c:if test="#{not empty word.sourceTitle}">
-										from #{word.sourceTitle}
+										#{msg.from} #{word.sourceTitle}
 										</c:if>
 									</p>
 								</li>

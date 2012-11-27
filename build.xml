@@ -83,12 +83,20 @@
 		<copy todir="${dest}/OnlineObjects/onlineobjects/WEB-INF/classes/spring">
 			<fileset dir="${basedir}/conf/spring" excludes="**/CVS"/>
     	</copy>
-        
+        <!--
     	<copy tofile="${dest}/OnlineObjects/onlineobjects/WEB-INF/classes/dk/in2isoft/onlineobjects/apps/community/resources/invitation-template.html" file="${basedir}/src/java/dk/in2isoft/onlineobjects/apps/community/resources/invitation-template.html" />
         <copy tofile="${dest}/OnlineObjects/onlineobjects/WEB-INF/classes/dk/in2isoft/onlineobjects/apps/community/resources/passwordrecovery-template.html" file="${basedir}/src/java/dk/in2isoft/onlineobjects/apps/community/resources/passwordrecovery-template.html" />
-
+		-->
+		<copy todir="${dest}/OnlineObjects/onlineobjects/WEB-INF/classes">
+			<fileset dir="${basedir}/src/java" includes="**/*.html"/>
+    	</copy>
+		<copy todir="${dest}/OnlineObjects/onlineobjects/WEB-INF/classes">
+			<fileset dir="${basedir}/src/java" includes="**/*.properties"/>
+    	</copy>
+    	<!--
     	<copy tofile="${dest}/OnlineObjects/onlineobjects/WEB-INF/classes/dk/in2isoft/onlineobjects/apps/words/msg/Words_da.properties" file="${basedir}/src/java/dk/in2isoft/onlineobjects/apps/words/msg/Words_da.properties" />
         <copy tofile="${dest}/OnlineObjects/onlineobjects/WEB-INF/classes/dk/in2isoft/onlineobjects/apps/words/msg/Words_en.properties" file="${basedir}/src/java/dk/in2isoft/onlineobjects/apps/words/msg/Words_en.properties" />
+		-->
 	</target>
 	
 	<target name="schema-update" description="Generates SQL" depends="init">

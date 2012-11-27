@@ -143,7 +143,7 @@ public class ConfigurationService implements InitializingBean {
 			if (developmentMode) {
 				return request.getBaseContext();
 			}
-			return "";
+			return "http://www.onlineme.dk/";
 		}
 		return null;
 	}

@@ -47,7 +47,7 @@ public class OutputComponent extends AbstractComponent {
 			if (lower) {
 				text = text.toLowerCase();
 			}
-			text = StringEscapeUtils.escapeXml(text);
+			//text = StringEscapeUtils.escapeXml(text);
 			text = StringUtils.replace(text, "\n", "<br/>");
 			if (escape) {
 				writer.text(text);

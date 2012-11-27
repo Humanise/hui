@@ -7,6 +7,24 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 
 public class Messages extends ReloadableResourceBundleMessageSource {
 
+	
+	public Messages(Object obj) {
+		this(obj.getClass());
+	}
+	
+	public Messages(Class<?> clz) {
+		StringBuilder basename = new StringBuilder();
+		String[] parts = clz.getName().split("\\.");
+		for (int i = 0; i < parts.length; i++) {
+			if (i<parts.length-1) {
+				basename.append(parts[i]).append("/");
+			} else {
+				basename.append("msg/").append(parts[i]);
+			}
+		}
+		setBasename(basename.toString());
+	}
+	
 	public Messages(String basename) {
 		setBasename(basename);
 	}

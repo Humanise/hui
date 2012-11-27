@@ -50,6 +50,12 @@ public class ApplicationResponder implements Responder {
 		}
 		{
 			Application app = new Application();
+			app.setName("photos");
+			app.addProperty(Application.PROPERTY_URL_MAPPING, "photos.onlineobjects.com");
+			apps.add(app);
+		}
+		{
+			Application app = new Application();
 			app.setName("community");
 			app.addProperty(Application.PROPERTY_URL_MAPPING, ".*");
 			apps.add(app);

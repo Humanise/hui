@@ -27,6 +27,14 @@ body.oo_fade a.oo_link span
 
 /****************** Photo ***************/
 
+h1.photos_photo_not_found
+{
+	font-weight: 100;
+	padding: 50px 0;
+	text-align: center;
+	color: #999;
+}
+
 div.photos_photo h1
 {
 	font-weight: 100;
@@ -207,6 +215,11 @@ div.photos_profile_body p
 {
 	margin: 0;
 	font-size: 11px;
+}
+
+p.photos_profile_username
+{
+	color: #999;
 }
 
 /********* User **********/

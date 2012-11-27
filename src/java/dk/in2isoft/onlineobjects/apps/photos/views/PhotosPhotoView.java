@@ -13,6 +13,7 @@ import com.google.common.collect.Lists;
 import dk.in2isoft.commons.lang.Files;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.apps.community.jsf.AbstractManagedBean;
+import dk.in2isoft.onlineobjects.apps.photos.PhotosController;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Pair;
 import dk.in2isoft.onlineobjects.core.PairSearchResult;
@@ -27,6 +28,7 @@ import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.ui.jsf.model.MapPoint;
 import dk.in2isoft.onlineobjects.util.Dates;
+import dk.in2isoft.onlineobjects.util.Messages;
 import dk.in2isoft.onlineobjects.util.images.ImageInfo;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
 
@@ -53,6 +55,8 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 	public void afterPropertiesSet() throws Exception {
 		image = modelService.get(Image.class, getImageId());
 		if (image!=null) {
+			Messages msg = new Messages(PhotosController.class);
+			
 			if (!securityService.canView(image, getRequest().getSession())) {
 				image = null;
 				return;
@@ -85,10 +89,10 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 			
 			Locale locale = getRequest().getLocale();
 			properties = Lists.newArrayList();
-			properties.add(new SelectItem(image.getWidth()+" x "+image.getHeight()+" - "+getMegaPixels()+" Megapixel","Size"));
-			properties.add(new SelectItem(Files.formatFileSize(image.getFileSize())+", "+image.getContentType(),"File"));
+			properties.add(new SelectItem(image.getWidth()+" x "+image.getHeight()+" - "+getMegaPixels()+" Megapixel",msg.get("size", locale)));
+			properties.add(new SelectItem(Files.formatFileSize(image.getFileSize())+", "+image.getContentType(),msg.get("file", locale)));
 			if (imageInfo.getTaken()!=null) {
-				properties.add(new SelectItem(Dates.formatLongDate(imageInfo.getTaken(),locale ),"Date"));
+				properties.add(new SelectItem(Dates.formatLongDate(imageInfo.getTaken(),locale ),msg.get("date", locale)));
 			}
 			if (Strings.isNotBlank(imageInfo.getCameraMake())) {
 				//properties.add(new SelectItem(imageInfo.getCameraMake(),"Camera manufacturer"));

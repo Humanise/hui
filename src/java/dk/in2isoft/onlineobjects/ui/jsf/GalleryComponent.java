@@ -14,6 +14,7 @@ import dk.in2isoft.commons.jsf.ComponentUtil;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.ui.jsf.model.ImageContainer;
+import dk.in2isoft.onlineobjects.util.Messages;
 
 @FacesComponent(value = GalleryComponent.FAMILY)
 public class GalleryComponent extends AbstractComponent {
@@ -114,11 +115,11 @@ public class GalleryComponent extends AbstractComponent {
 		writer.endScopedScript();
 	}
 
-	private void encodePaging(TagWriter writer, int totalCount, int page,
-			int pageSize) throws IOException {
+	private void encodePaging(TagWriter writer, int totalCount, int page, int pageSize) throws IOException {
 		if (totalCount==0) {
 			return;
 		}
+		Messages msg = new Messages(this);
 		int pages = (int) Math.ceil((double) totalCount / (double) pageSize);
 		writer.startDiv("oo_gallery_navigator");
 		if (pages > 1) {
@@ -133,8 +134,7 @@ public class GalleryComponent extends AbstractComponent {
 			}
 			writer.endSpan();
 		}
-		writer.startVoidA("oo_gallery_slideshow").startSpan().write(
-				"Lysbillede-show").endSpan().endA();
+		writer.startVoidA("oo_gallery_slideshow").startSpan().write(msg.get("slideshow", getLocale())).endSpan().endA();
 		writer.endDiv();
 	}
 
