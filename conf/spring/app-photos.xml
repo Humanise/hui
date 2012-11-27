@@ -20,4 +20,10 @@
    		<property name="imageService" ref="imageService"/>
    	</bean>
    	
+   	<bean id="photosUserView" class="dk.in2isoft.onlineobjects.apps.photos.views.PhotosUserView" scope="request">
+   		<property name="modelService" ref="modelService"/>
+   		<property name="securityService" ref="securityService"/>
+   		<property name="imageService" ref="imageService"/>
+   	</bean>
+   	
 </beans>

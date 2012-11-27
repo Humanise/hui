@@ -227,4 +227,8 @@ http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
 	    <component-type>hui.source</component-type>
     	<component-class>dk.in2isoft.in2igui.jsf.SourceComponent</component-class>
   	</component>
+    <component>
+	    <component-type>hui.parameter</component-type>
+    	<component-class>dk.in2isoft.in2igui.jsf.ParameterComponent</component-class>
+  	</component>
 </faces-config>

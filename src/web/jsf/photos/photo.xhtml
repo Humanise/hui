@@ -33,7 +33,7 @@
 					<p class="photos_photo_by"><span>Tilføjet </span><strong>
 						<h:outputText value="#{photosPhotoView.image.created}">
 							<f:convertDateTime pattern="EEEE 'd'. d.  MMMM yyyy" locale="da_DK"/>
-						</h:outputText></strong> af <o:link href="/users/#{photosPhotoView.user.username}/">#{photosPhotoView.person.fullName}</o:link>
+						</h:outputText></strong> af <o:link href="/#{photosPhotoView.language}/users/#{photosPhotoView.user.username}/">#{photosPhotoView.person.fullName}</o:link>
 					</p>
 					<div class="photos_photo_image">
 						<o:thumbnail image="#{photosPhotoView.image}" width="778" zoom="true" frame="false"/>
@@ -89,6 +89,10 @@
 						<gui:button text="Save" name="saveLocation" small="true"/>
 					</div>
 				</gui:boundPanel>
+				
+				<c:if test="#{photosPhotoView.canModify}">
+					<ui:include src="../shared/wordfinder.xhtml"/>
+				</c:if>
 			</c:if>
 		</ui:define>
 		
@@ -100,8 +104,7 @@
 				<div class="photos_profile_body">
 					<p>#{photosPhotoView.person.fullName}</p>
 					<p>@#{photosPhotoView.user.username}</p>
-					<p style="margin-top: 5px"><o:link>Photos »</o:link></p>
-					<p style="margin-top: 5px"><o:link>Profile »</o:link></p>
+					<p style="margin-top: 5px"><o:link app="photos" href="/#{photosPhotoView.language}/users/#{photosPhotoView.user.username}/">Profile »</o:link></p>
 				</div>
 			</div>
 			<div class="photos_photo_properties oo_faded">

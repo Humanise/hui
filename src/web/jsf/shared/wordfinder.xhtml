@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:o="http://www.onlineobjects.com/jsf" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:gui="http://www.in2isoft.dk/in2igui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+>
+	<ui:composition>
+	
+		<gui:source name="wordFinderListSource" url="#{wordsWordView.baseContext}/service/model/listWords">
+			<gui:parameter key="text" value="@wordFinderSearch.value"/>
+			<gui:parameter key="page" value="@wordFinderList.window.page"/>
+		</gui:source>
+
+		<gui:window title="Find word" name="wordFinderWindow" width="400">
+			<gui:bar variant="window">
+				<gui:button small="true" name="wordFinderAdd" text="Add word"/>
+				<f:facet name="right">
+					<gui:searchfield name="wordFinderSearch" expandedWidth="200"/>
+				</f:facet>
+			</gui:bar>
+			<gui:pages name="wordFinderPages">
+				<gui:page key="list">
+					<gui:overflow height="400">
+						<gui:list source="wordFinderListSource" name="wordFinderList">
+							<f:facet name="empty">
+								<div style="padding: 20px; text-align: center;">
+									<p>The word was not found, create it...</p>
+									<gui:button small="true" name="wordFinderEmpty" text="Add word"/>
+								</div>
+							</f:facet>
+						</gui:list>
+					</gui:overflow>
+				</gui:page>
+				<gui:page key="new">
+					<div style="padding: 10px">
+						<gui:formula name="wordFinderForm">
+							<gui:fields>
+								<gui:field label="Text">
+									<gui:textInput key="text"/>
+								</gui:field>
+								<gui:field label="#{msg.language}">
+									<gui:dropDown key="language" items="#{wordsWordView.languages}"/>
+								</gui:field>
+								<gui:field label="#{msg.category}">
+									<gui:dropDown key="category" items="#{wordsWordView.categories}"/>
+								</gui:field>
+							</gui:fields>
+							<gui:buttons align="right">
+								<gui:button text="Cancel" name="wordFinderCancel"/>
+								<gui:button text="#{msg.add}" highlighted="true" submit="true"/>
+							</gui:buttons>
+						</gui:formula>
+					</div>		
+				</gui:page>
+			</gui:pages>
+		</gui:window>
+		<o:script>
+			new oo.WordGetter();
+		</o:script>
+	</ui:composition>
+	
+</html>

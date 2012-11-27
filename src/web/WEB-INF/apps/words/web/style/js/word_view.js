@@ -4,12 +4,15 @@ var wordView = {
 	
 	$ready : function() {
 		//this.addRelation();
-		hui.ui.get('wordFinder').show();
+		//hui.log('showing window')
+		//hui.ui.get('wordFinder').show();
 	},
 	
 	addRelation : function(options) {
 		this.wordInfo = options;
-		oo.WordFinder.show();
+		hui.ui.get('wordFinder').show(this.$select$oo_wordfinder.bind(this))
+		return;
+		oo.WordGetter.show();
 	},
 		
 	$select$oo_wordfinder : function(word) {

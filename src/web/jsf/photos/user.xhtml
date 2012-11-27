@@ -9,17 +9,18 @@
 >
 	<ui:composition template="templates/plain.xhtml">
 		
-		<ui:define name="title"> - </ui:define>
+		<ui:define name="title">#{photosUserView.personName} - </ui:define>
 		
 		<ui:define name="scripts">
-			<o:script src="/style/js/user_view.js"/>
-			<o:script>
-				userView.editable = #{photosPhotoView.canModify};
-			</o:script>
 		</ui:define>
 		
 		<ui:define name="body">
-		
+			<div class="photos_user">
+				<h1>#{photosUserView.personName}</h1>
+				<o:gallery model="#{photosUserView.imageList}" var="image">
+					<o:thumbnail image="#{image}" width="100" height="100" href="/#{wordsLayoutView.language}/photo/#{image.id}.html"/>
+				</o:gallery>
+			</div>
 		</ui:define>
 		
 		<ui:define name="sidebar">

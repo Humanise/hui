@@ -5,40 +5,15 @@ import java.io.IOException;
 import dk.in2isoft.in2igui.data.ListData;
 import dk.in2isoft.onlineobjects.apps.videosharing.Path;
 import dk.in2isoft.onlineobjects.apps.words.views.WordListPerspectiveQuery;
+import dk.in2isoft.onlineobjects.core.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.ModelException;
-import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.SearchResult;
+import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
-import dk.in2isoft.onlineobjects.service.ServiceController;
-import dk.in2isoft.onlineobjects.services.ConversionService;
 import dk.in2isoft.onlineobjects.ui.Request;
-import dk.in2isoft.onlineobjects.util.images.ImageService;
 
-public class ModelController extends ServiceController {
+public class ModelController extends ModelControllerBase {
 
-	private ImageService imageService;
-	private ModelService modelService;
-	private ConversionService conversionService;
-
-	public ModelController() {
-		super("model");
-	}
-/*
-	@Override
-	public void unknownRequest(Request request) throws IOException, EndUserException {
-		Element root = new Element("list");
-		Document doc = new Document(root);
-		List<Image> list = modelService.list(Query.of(Image.class).withPaging(0, 50));
-		for (Image image : list) {
-			Node node = conversionService.generateXML(image);
-			root.appendChild(node);
-		}
-		HttpServletResponse response = request.getResponse();
-		response.setContentType("text/xml");
-		response.setCharacterEncoding("UTF-8");
-		Serializer serializer = new Serializer(response.getOutputStream(), "UTF-8");
-		serializer.write(doc);
-	}*/
 	
 	@Path(start="listWords")
 	public void listWords(Request request) throws IOException, ModelException {
@@ -62,28 +37,13 @@ public class ModelController extends ServiceController {
 		request.sendObject(list);
 	}
 
-	public void setImageService(ImageService imageService) {
-		this.imageService = imageService;
+	@Path(start="addWord")
+	public void addWord(Request request) throws IOException, ModelException, IllegalRequestException {
+		String text = request.getString("text");
+		String language = request.getString("language");
+		String category = request.getString("category");
+		
+		Word word = languageService.createWord(language, category, text, request.getSession());
+		request.sendObject(word);
 	}
-
-	public ImageService getImageService() {
-		return imageService;
-	}
-
-	public void setModelService(ModelService modelService) {
-		this.modelService = modelService;
-	}
-
-	public ModelService getModelService() {
-		return modelService;
-	}
-
-	public void setConversionService(ConversionService conversionService) {
-		this.conversionService = conversionService;
-	}
-
-	public ConversionService getConversionService() {
-		return conversionService;
-	}
-
 }

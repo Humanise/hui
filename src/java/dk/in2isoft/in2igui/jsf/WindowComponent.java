@@ -46,7 +46,7 @@ public class WindowComponent extends AbstractComponent {
 		out.startDiv("hui_window_front");
 		out.startDiv("hui_window_close").endDiv();
 		out.startDiv("hui_window_titlebar").startDiv().startDiv();
-		out.startSpan("hui_window_title").text("Title").endDiv();
+		out.startSpan("hui_window_title").text("Title").endSpan();
 		out.endDiv().endDiv().endDiv();
 		out.startDiv("hui_window_content").startDiv("hui_window_content").startDiv("hui_window_body");
 		if (width>0) {

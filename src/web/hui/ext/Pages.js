@@ -43,6 +43,16 @@ hui.ui.Pages.prototype = {
 		this.index = this.index == 0 ? this.pages.length-1 : this.index-1;
 		this._transition({hide:current,show:this.pages[this.index]});
 	},
+	goTo : function(key) {
+		for (var i=0; i < this.pages.length; i++) {
+			if (this.pages[i].getAttribute('data-key')==key && i!=this.index) {
+				var current = this.pages[this.index];
+				this.index = i;
+				this._transition({hide:current,show:this.pages[i]});
+				return;
+			}
+		};
+	},
 	expand : function() {
 		var l = this.pages.length;
 		for (var i=0; i < l; i++) {

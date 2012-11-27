@@ -183,4 +183,11 @@
       <renderer-type>hui.source</renderer-type>
     </component>
   </tag>
+  <tag>
+    <tag-name>parameter</tag-name>
+    <component>
+      <component-type>hui.parameter</component-type>
+      <renderer-type>hui.parameter</renderer-type>
+    </component>
+  </tag>
 </facelet-taglib>

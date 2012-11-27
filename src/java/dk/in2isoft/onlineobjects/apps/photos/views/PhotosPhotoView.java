@@ -35,6 +35,7 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 	private ModelService modelService;
 	private SecurityService securityService;
 	private ImageService imageService;
+	private String language;
 	private Image image;
 	private ImageInfo imageInfo;
 	private Location location;
@@ -102,6 +103,9 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 				mapPoint.setLongitude(location.getLongitude());
 			}
 			words = modelService.getChildren(image, null, Word.class);
+
+			String[] path = getRequest().getLocalPath();
+			language = path[0];
 		}
 	}
 	
@@ -166,6 +170,10 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 		String string = path[path.length-1];
 		String[] split = string.split("\\.");
 		return Long.valueOf(split[0]);
+	}
+	
+	public String getLanguage() {
+		return language;
 	}
 	
 	public boolean isCanModify() {
