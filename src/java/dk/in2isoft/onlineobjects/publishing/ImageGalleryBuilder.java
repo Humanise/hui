@@ -9,9 +9,9 @@ import nu.xom.Node;
 import org.xml.sax.SAXException;
 
 import dk.in2isoft.onlineobjects.core.Core;
-import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Privileged;
+import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.HeaderPart;
 import dk.in2isoft.onlineobjects.model.HtmlPart;

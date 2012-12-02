@@ -6,6 +6,10 @@ import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.Logger;
 
+import dk.in2isoft.onlineobjects.core.exceptions.ConfigurationException;
+import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
+import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
+
 public class SystemLoader implements ServletContextListener {
 
 	private static Logger log = Logger.getLogger(SystemLoader.class);

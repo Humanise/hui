@@ -13,9 +13,9 @@ import org.apache.commons.lang.StringUtils;
 import com.google.common.collect.ImmutableMap;
 
 import dk.in2isoft.onlineobjects.core.Core;
-import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Privileged;
+import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.model.CompoundDocument;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Property;

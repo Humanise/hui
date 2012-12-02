@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.quartz.JobDataMap;
 
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
-import dk.in2isoft.onlineobjects.core.EndUserException;
+import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.services.SchedulingService;
 import dk.in2isoft.onlineobjects.ui.Request;
 

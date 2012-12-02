@@ -6,7 +6,7 @@ import java.io.StringWriter;
 
 import org.apache.log4j.Logger;
 
-import dk.in2isoft.onlineobjects.core.EndUserException;
+import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 
 public abstract class AbstractCommandLineInterface {
 

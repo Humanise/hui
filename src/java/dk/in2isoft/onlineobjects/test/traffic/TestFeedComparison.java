@@ -25,7 +25,7 @@ import com.sun.syndication.io.XmlReader;
 
 import dk.in2isoft.commons.lang.Matrix;
 import dk.in2isoft.commons.parsing.HTMLDocument;
-import dk.in2isoft.onlineobjects.core.EndUserException;
+import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.services.SemanticService;
 import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 import dk.in2isoft.onlineobjects.util.semantics.English;

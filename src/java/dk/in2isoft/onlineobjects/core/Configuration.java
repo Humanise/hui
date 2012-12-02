@@ -10,6 +10,8 @@ import javax.xml.transform.TransformerFactory;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.log4j.Logger;
 
+import dk.in2isoft.onlineobjects.core.exceptions.ConfigurationException;
+
 public class Configuration {
 	
 	Logger log = Logger.getLogger(Configuration.class);

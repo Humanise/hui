@@ -3,8 +3,8 @@ package dk.in2isoft.onlineobjects.apps.setup;
 import java.io.IOException;
 
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
-import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.SecurityService;
+import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.ui.Request;
 
 public class SetupController extends ApplicationController {

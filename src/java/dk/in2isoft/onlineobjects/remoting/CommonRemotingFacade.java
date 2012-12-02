@@ -17,11 +17,11 @@ import com.google.common.collect.Lists;
 
 import dk.in2isoft.commons.http.FileDownload;
 import dk.in2isoft.in2igui.data.ItemData;
-import dk.in2isoft.onlineobjects.core.EndUserException;
-import dk.in2isoft.onlineobjects.core.IllegalRequestException;
-import dk.in2isoft.onlineobjects.core.ModelException;
-import dk.in2isoft.onlineobjects.core.SecurityException;
 import dk.in2isoft.onlineobjects.core.SecurityService;
+import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
+import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
+import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
+import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.ui.AbstractRemotingFacade;

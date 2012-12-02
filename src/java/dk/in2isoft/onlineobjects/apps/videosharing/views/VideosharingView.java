@@ -4,9 +4,9 @@ import java.util.List;
 
 import dk.in2isoft.onlineobjects.apps.community.jsf.AbstractManagedBean;
 import dk.in2isoft.onlineobjects.apps.videosharing.util.MockUtil;
-import dk.in2isoft.onlineobjects.core.ModelException;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.UserQuery;
+import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.model.Video;
 import dk.in2isoft.onlineobjects.modules.user.UserInfo;
 import dk.in2isoft.onlineobjects.modules.user.UserService;

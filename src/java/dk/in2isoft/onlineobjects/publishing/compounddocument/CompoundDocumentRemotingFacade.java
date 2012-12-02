@@ -16,7 +16,7 @@ import nu.xom.XPathContext;
 import org.apache.commons.lang.StringUtils;
 
 import dk.in2isoft.commons.xml.XSLTUtil;
-import dk.in2isoft.onlineobjects.core.EndUserException;
+import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.model.CompoundDocument;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.HeaderPart;

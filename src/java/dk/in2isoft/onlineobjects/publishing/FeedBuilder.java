@@ -1,6 +1,6 @@
 package dk.in2isoft.onlineobjects.publishing;
 
-import dk.in2isoft.onlineobjects.core.EndUserException;
+import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 
 public interface FeedBuilder {
 

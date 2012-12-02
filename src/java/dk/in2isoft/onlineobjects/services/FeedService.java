@@ -12,7 +12,7 @@ import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.WireFeedInput;
 import com.sun.syndication.io.XmlReader;
 
-import dk.in2isoft.onlineobjects.core.NetworkException;
+import dk.in2isoft.onlineobjects.core.exceptions.NetworkException;
 
 public class FeedService {
 

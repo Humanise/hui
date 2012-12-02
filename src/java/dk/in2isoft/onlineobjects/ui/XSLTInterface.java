@@ -6,8 +6,8 @@ import java.io.IOException;
 import org.w3c.dom.Document;
 
 import dk.in2isoft.commons.xml.XSLTUtil;
-import dk.in2isoft.onlineobjects.core.EndUserException;
-import dk.in2isoft.onlineobjects.core.ModelException;
+import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
+import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 
 public abstract class XSLTInterface {
 

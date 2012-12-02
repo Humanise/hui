@@ -90,6 +90,16 @@ body.oo_fade div.photos_photo_image:hover div.photos_controller
 	opacity: 0;
 }
 
+body.oo_msie8 div.photos_controller
+{
+	display: none;
+}
+
+body.oo_msie8 div.photos_photo_image:hover div.photos_controller
+{
+	display: block;	
+}
+
 div.photos_controller a
 {
 	vertical-align: middle;
@@ -98,6 +108,7 @@ div.photos_controller a
 	width: 44px;
 	height: 44px;
 	line-height: 44px;
+	color: #fff;
 	color: rgba(255,255,255,1);
 	cursor: pointer;
 	text-align: center;

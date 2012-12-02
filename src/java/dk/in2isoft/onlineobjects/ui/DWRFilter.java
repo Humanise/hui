@@ -10,7 +10,7 @@ import org.directwebremoting.AjaxFilter;
 import org.directwebremoting.AjaxFilterChain;
 import org.directwebremoting.WebContextFactory;
 
-import dk.in2isoft.onlineobjects.core.SecurityException;
+import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.services.SurveillanceService;
 
 public class DWRFilter implements AjaxFilter {

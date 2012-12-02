@@ -8,7 +8,7 @@ import com.sun.syndication.feed.rss.Item;
 
 import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.commons.parsing.HTMLReference;
-import dk.in2isoft.onlineobjects.core.NetworkException;
+import dk.in2isoft.onlineobjects.core.exceptions.NetworkException;
 import dk.in2isoft.onlineobjects.model.RemoteAccount;
 import dk.in2isoft.onlineobjects.util.remote.RemoteAccountInfo;
 import dk.in2isoft.onlineobjects.util.remote.RemoteArticle;

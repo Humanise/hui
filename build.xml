@@ -2,54 +2,11 @@
 <project default="deploy" name="OnlineObjects 2" basedir=".">
 
     <target name="init">
-        <property name="server" location="/opt/local/share/java/tomcat5"/>
-        <property name="hui" location="${basedir}/src/web/hui"/>
-    	<property name="jetty" value="/Users/jbm/Udvikling/jetty-6.1.15"/> 
     	<property name="dest" value="/Users/jbm/Midlertidigt"/> 
-    	
+    	<property name="jetty" value="/Users/jbm/Code/jetty-6.1.15"/> 
     </target>
 	
-    <path id="classpath">
-        <fileset dir="${basedir}/lib">
-            <include name="**/*.jar"/>
-        </fileset>
-		<pathelement location="${basedir}/src/java"/>
-		<pathelement location="${basedir}/src/web/WEB-INF/classes"/>
-		<pathelement location="/Users/jbm/Udvikling/jetty-6.1.15/lib/servlet-api-2.5-20081211.jar"/>
-		<pathelement location="/Users/jbm/Udvikling/jetty-6.1.15/lib/jetty-6.1.15.jar"/>
-		<pathelement location="/Users/jbm/Udvikling/jetty-6.1.15/lib/jetty-util-6.1.15.jar"/>
-		<pathelement location="/Users/jbm/Udvikling/jetty-6.1.15/lib/jsp-2.1/jsp-2.1-glassfish-9.1.1.B51.25.p1.jar"/>
-		<pathelement location="/Users/jbm/Udvikling/jetty-6.1.15/lib/jsp-2.1/jsp-api-2.1-glassfish-9.1.1.B51.25.p1.jar"/>
-    </path>
-
-    <target depends="init" name="hui">
-    	<delete dir="${basedir}/src/web/hui"></delete>
-		<copy todir="${basedir}/src/web/hui">
-			<fileset dir="${hui}"/>
-		</copy>
-    </target>
-	
-	<target name="conf">
-		<copy tofile="${basedir}/src/web/WEB-INF/classes/log4j.properties" file="${basedir}/conf/log4j.properties" />
-        <copy tofile="${basedir}/src/web/WEB-INF/classes/hibernate.cfg.xml" file="${basedir}/conf/hibernate.cfg.xml" />
-	</target>
-
-    <target name="deploy" depends="deploy-base">
-    	<echo message="Jetty = ${jetty}"/>
-		<copy tofile="${dest}/OnlineObjects/onlineobjects/WEB-INF/classes/configuration.properties" file="${basedir}/conf/configuration.properties.deployed" />
-		<copy tofile="${dest}/OnlineObjects/onlineobjects/WEB-INF/classes/log4j.properties" file="${basedir}/conf/log4j.properties.deployed" />
-        <copy tofile="${dest}/OnlineObjects/onlineobjects/WEB-INF/classes/hibernate.cfg.xml" file="${basedir}/conf/hibernate.cfg.xml.deployed" />
-        <copy tofile="${dest}/OnlineObjects/onlineobjects/WEB-INF/classes/onlineobjects.cfg.xml" file="${basedir}/conf/onlineobjects.cfg.xml.deployed" />
-    	<delete dir="${dest}/OnlineObjects_temp"/>
-    	<zip destfile="${dest}/deployed.zip" >
-    		<fileset dir="${dest}/OnlineObjects"/>
-    	</zip>
-    	<!--
-    	<delete dir="${dest}/OnlineObjects"/>
-    	-->
-    </target>
-
-    <target name="deploy-base" depends="init">
+    <target name="deploy" depends="init">
     	<delete dir="${dest}/OnlineObjects"/>
     	<delete dir="${dest}/OnlineObjects_temp"/>
 		<mkdir dir="${dest}/OnlineObjects_temp/classes" />
@@ -63,18 +20,31 @@
 			<fileset dir="${basedir}/lib"/>
 		</copy>
 		<copy todir="${dest}/OnlineObjects/onlineobjects/hui">
-			<fileset dir="${hui}" excludes="**/CVS"/>
+			<fileset dir="${basedir}/src/web/hui" excludes="**/CVS"/>
 		</copy>
 		<copy todir="${dest}/OnlineObjects/onlineobjects/jsf">
 			<fileset dir="${basedir}/src/web/jsf" excludes="**/CVS"/>
 		</copy>
+    	
         <javac
             destdir="${dest}/OnlineObjects_temp/classes"
             debug="on">
-            <classpath refid="classpath"/>
+            <classpath>
+                <fileset dir="${basedir}/lib">
+                    <include name="**/*.jar"/>
+                </fileset>
+        		<pathelement location="${basedir}/src/java"/>
+        		<pathelement location="${basedir}/src/web/WEB-INF/classes"/>
+        		<pathelement location="${jetty}/lib/servlet-api-2.5-20081211.jar"/>
+        		<pathelement location="${jetty}/lib/jetty-6.1.15.jar"/>
+        		<pathelement location="${jetty}/lib/jetty-util-6.1.15.jar"/>
+        		<pathelement location="${jetty}/lib/jsp-2.1/jsp-2.1-glassfish-9.1.1.B51.25.p1.jar"/>
+        		<pathelement location="${jetty}/lib/jsp-2.1/jsp-api-2.1-glassfish-9.1.1.B51.25.p1.jar"/>
+            </classpath>
         	<src path="${basedir}/src/java"/>
     	    <include name="dk/**"/>
         </javac>
+    	
     	<jar destfile="${dest}/OnlineObjects/onlineobjects/WEB-INF/lib/onlineobjects.jar" basedir="${dest}/OnlineObjects_temp/classes"></jar>
         <copy tofile="${dest}/OnlineObjects/onlineobjects/WEB-INF/classes/model.hbm.xml" file="${basedir}/conf/model.hbm.xml" />
         <copy tofile="${dest}/OnlineObjects/onlineobjects/WEB-INF/classes/model.xml" file="${basedir}/conf/model.xml" />
@@ -83,26 +53,28 @@
 		<copy todir="${dest}/OnlineObjects/onlineobjects/WEB-INF/classes/spring">
 			<fileset dir="${basedir}/conf/spring" excludes="**/CVS"/>
     	</copy>
-        <!--
-    	<copy tofile="${dest}/OnlineObjects/onlineobjects/WEB-INF/classes/dk/in2isoft/onlineobjects/apps/community/resources/invitation-template.html" file="${basedir}/src/java/dk/in2isoft/onlineobjects/apps/community/resources/invitation-template.html" />
-        <copy tofile="${dest}/OnlineObjects/onlineobjects/WEB-INF/classes/dk/in2isoft/onlineobjects/apps/community/resources/passwordrecovery-template.html" file="${basedir}/src/java/dk/in2isoft/onlineobjects/apps/community/resources/passwordrecovery-template.html" />
-		-->
 		<copy todir="${dest}/OnlineObjects/onlineobjects/WEB-INF/classes">
 			<fileset dir="${basedir}/src/java" includes="**/*.html"/>
     	</copy>
 		<copy todir="${dest}/OnlineObjects/onlineobjects/WEB-INF/classes">
 			<fileset dir="${basedir}/src/java" includes="**/*.properties"/>
     	</copy>
+    	
+    	<copy tofile="${dest}/OnlineObjects/onlineobjects/WEB-INF/classes/configuration.properties" file="${basedir}/conf/configuration.properties.deployed" />
+		<copy tofile="${dest}/OnlineObjects/onlineobjects/WEB-INF/classes/log4j.properties" file="${basedir}/conf/log4j.properties.deployed" />
+        <copy tofile="${dest}/OnlineObjects/onlineobjects/WEB-INF/classes/hibernate.cfg.xml" file="${basedir}/conf/hibernate.cfg.xml.deployed" />
+        <copy tofile="${dest}/OnlineObjects/onlineobjects/WEB-INF/classes/onlineobjects.cfg.xml" file="${basedir}/conf/onlineobjects.cfg.xml.deployed" />
+    	<delete dir="${dest}/OnlineObjects_temp"/>
+    	<zip destfile="${dest}/deployed.zip" >
+    		<fileset dir="${dest}/OnlineObjects"/>
+    	</zip>
     	<!--
-    	<copy tofile="${dest}/OnlineObjects/onlineobjects/WEB-INF/classes/dk/in2isoft/onlineobjects/apps/words/msg/Words_da.properties" file="${basedir}/src/java/dk/in2isoft/onlineobjects/apps/words/msg/Words_da.properties" />
-        <copy tofile="${dest}/OnlineObjects/onlineobjects/WEB-INF/classes/dk/in2isoft/onlineobjects/apps/words/msg/Words_en.properties" file="${basedir}/src/java/dk/in2isoft/onlineobjects/apps/words/msg/Words_en.properties" />
-		-->
-	</target>
+    	<delete dir="${dest}/OnlineObjects"/>
+    	-->
+    </target>
 	
 	<target name="schema-update" description="Generates SQL" depends="init">
-		<taskdef name="hibernatetool" 
-		         classname="org.hibernate.tool.ant.HibernateToolTask" 
-		         classpathref="classpath" />
+		<taskdef name="hibernatetool" classname="org.hibernate.tool.ant.HibernateToolTask" classpathref="classpath" />
 		<mkdir dir="${basedir}/sql" />
 		<hibernatetool destdir="${basedir}/sql">
 			<classpath>

@@ -19,11 +19,11 @@ import com.oreilly.servlet.ServletUtils;
 
 import dk.in2isoft.commons.http.HeaderUtil;
 import dk.in2isoft.commons.xml.XSLTUtil;
-import dk.in2isoft.onlineobjects.core.ContentNotFoundException;
-import dk.in2isoft.onlineobjects.core.EndUserException;
 import dk.in2isoft.onlineobjects.core.ModelService;
-import dk.in2isoft.onlineobjects.core.SecurityException;
 import dk.in2isoft.onlineobjects.core.SecurityService;
+import dk.in2isoft.onlineobjects.core.exceptions.ContentNotFoundException;
+import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
+import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.modules.dispatch.Responder;
 import dk.in2isoft.onlineobjects.ui.ErrorRenderer;
 import dk.in2isoft.onlineobjects.ui.Request;

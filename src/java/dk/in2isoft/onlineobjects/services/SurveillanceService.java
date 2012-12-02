@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 
-import dk.in2isoft.onlineobjects.core.EndUserException;
+import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.modules.surveillance.RequestInfo;
 import dk.in2isoft.onlineobjects.modules.surveillance.RequestList;
 import dk.in2isoft.onlineobjects.ui.Request;

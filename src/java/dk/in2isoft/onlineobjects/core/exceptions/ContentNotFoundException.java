@@ -1,4 +1,5 @@
-package dk.in2isoft.onlineobjects.core;
+package dk.in2isoft.onlineobjects.core.exceptions;
+
 
 public class ContentNotFoundException extends EndUserException {
 

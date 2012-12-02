@@ -7,7 +7,7 @@ import nu.xom.Builder;
 import nu.xom.Element;
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
-import dk.in2isoft.onlineobjects.core.EndUserException;
+import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.publishing.CompoundDocumentBuilder;
 import dk.in2isoft.onlineobjects.publishing.Document;
 import dk.in2isoft.onlineobjects.publishing.DocumentBuilder;

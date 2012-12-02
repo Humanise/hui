@@ -60,6 +60,11 @@ ul.words_sidebar_index li
 	display: inline-block;
 }
 
+body.oo_msie7 ul.words_sidebar_index li
+{
+	display: inline;
+}
+
 ul.words_sidebar_index a
 {
 	display: block;

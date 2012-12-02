@@ -10,10 +10,10 @@ import org.apache.log4j.Logger;
 
 import com.google.common.collect.Lists;
 
-import dk.in2isoft.onlineobjects.core.SecurityException;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.SubSession;
 import dk.in2isoft.onlineobjects.core.UserSession;
+import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 
 public class SessionService {
 

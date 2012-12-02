@@ -28,7 +28,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.collection.PersistentList;
 import org.hibernate.exception.DataException;
 import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.proxy.AbstractLazyInitializer;
@@ -38,7 +37,8 @@ import com.google.common.collect.Lists;
 
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.events.EventService;
-import dk.in2isoft.onlineobjects.junk.HibernateUtil;
+import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
+import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Item;
 import dk.in2isoft.onlineobjects.model.Privilege;
@@ -105,7 +105,7 @@ public class ModelService {
 		} catch (ClassNotFoundException e) {
 			log.error("Could not load model info", e);
 		}
-		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+		SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
 		Map<Object, Object> metadata = sessionFactory.getAllClassMetadata();
 		for (Iterator<Object> i = metadata.values().iterator(); i.hasNext();) {
 			EntityPersister persister = (EntityPersister) i.next();
@@ -319,6 +319,7 @@ public class ModelService {
 	}
 
 	@SuppressWarnings("unchecked")
+	@Deprecated
 	public <T extends Entity> T get(Class<T> entityClass, Long id) throws ModelException {
 		T entity = (T) getSession().get(entityClass, id);
 		if (entity != null) {

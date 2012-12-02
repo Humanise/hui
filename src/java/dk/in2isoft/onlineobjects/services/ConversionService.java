@@ -1,7 +1,7 @@
 package dk.in2isoft.onlineobjects.services;
 
 import nu.xom.Node;
-import dk.in2isoft.onlineobjects.core.ModelException;
+import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.conversion.EntityConverter;
 

@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.io.StringWriter;
 
 import dk.in2isoft.commons.http.FilePusher;
-import dk.in2isoft.onlineobjects.core.EndUserException;
+import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.service.ServiceController;
 import dk.in2isoft.onlineobjects.services.ConfigurationService;
 import dk.in2isoft.onlineobjects.ui.Request;

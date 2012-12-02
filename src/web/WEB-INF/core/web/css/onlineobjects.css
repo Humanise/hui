@@ -64,6 +64,12 @@ div.oo_topbar strong
 	font-size: 12pt;
 	color: #333;
 }
+
+body.oo_msie7 div.oo_topbar strong
+{
+	display: inline;
+}
+
 div.oo_topbar strong span
 {
 	font-weight: 400;
@@ -78,9 +84,19 @@ div.oo_topbar ul
 	padding: 0;
 }
 
+body.oo_msie7 div.oo_topbar ul
+{
+	display: inline;
+}
+
 div.oo_topbar li
 {
 	display: inline-block;
+}
+
+body.oo_msie7 div.oo_topbar li
+{
+	display: inline;
 }
 
 div.oo_topbar li a
@@ -150,6 +166,18 @@ div.oo_layout
 	border-radius: 5px;
 	margin-top: 20px;
 }
+
+body.oo_msie div.oo_layout
+{
+	box-shadow: 0px 1px 6px 0px #999;	
+}
+
+body.oo_msie7 div.oo_layout,
+body.oo_msie8 div.oo_layout
+{
+	border: 1px solid #ddd;
+}
+
 
 div.oo_layout_top
 {
@@ -402,6 +430,11 @@ div.oo_gallery ol
 div.oo_gallery li
 {
 	display: inline-block;
+}
+
+body.oo_msie7 div.oo_gallery li
+{
+	display: inline;
 }
 
 div.oo_gallery ol a

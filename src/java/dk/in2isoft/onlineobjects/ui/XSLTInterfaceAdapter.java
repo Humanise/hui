@@ -8,7 +8,7 @@ import nu.xom.Node;
 import nu.xom.converters.DOMConverter;
 
 import dk.in2isoft.onlineobjects.core.Core;
-import dk.in2isoft.onlineobjects.core.ModelException;
+import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.model.Entity;
 
 

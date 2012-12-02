@@ -4,7 +4,7 @@ import java.io.File;
 
 import org.apache.log4j.Logger;
 
-import dk.in2isoft.onlineobjects.core.ConfigurationException;
+import dk.in2isoft.onlineobjects.core.exceptions.ConfigurationException;
 import dk.in2isoft.onlineobjects.model.Item;
 
 public class StorageService implements org.springframework.beans.factory.InitializingBean {

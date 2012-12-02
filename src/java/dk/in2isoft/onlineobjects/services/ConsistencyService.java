@@ -3,8 +3,8 @@ package dk.in2isoft.onlineobjects.services;
 import java.util.List;
 
 import dk.in2isoft.onlineobjects.core.ConsistencyChecker;
-import dk.in2isoft.onlineobjects.core.ModelException;
-import dk.in2isoft.onlineobjects.core.SecurityException;
+import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
+import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 
 public class ConsistencyService {
 	
