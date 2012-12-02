@@ -3,7 +3,7 @@
 
     <target name="init">
     	<property name="dest" value="/Users/jbm/Midlertidigt"/> 
-    	<property name="jetty" value="/Users/jbm/Code/jetty-6.1.15"/> 
+    	<property name="jetty" value="/Users/jbm/Udvikling/jetty-6.1.15"/> 
     </target>
 	
     <target name="deploy" depends="init">

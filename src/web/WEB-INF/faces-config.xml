@@ -120,6 +120,10 @@ http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
     	<component-type>onlineobjects.words</component-type>
     	<component-class>dk.in2isoft.onlineobjects.ui.jsf.WordsComponent</component-class>
   	</component>
+    <component>
+    	<component-type>onlineobjects.body</component-type>
+    	<component-class>dk.in2isoft.onlineobjects.ui.jsf.BodyComponent</component-class>
+  	</component>
   	
   	
   	

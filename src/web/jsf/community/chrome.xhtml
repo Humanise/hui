@@ -33,7 +33,7 @@
 		<ui:insert name="scripts"/>
 		<ui:insert name="head"/>
 	</h:head>
-	<body>
+	<o:body>
 		<!-- contentWidth="980" -->
 		<o:topBar/>
 		<div class="root">
@@ -151,13 +151,6 @@
 		</div>
 		<ui:insert name="last"/>
 		<o:analytics/>
-		<ui:remove>
-			<script src="http://www.google-analytics.com/ga.js" type="text/javascript"></script>
-			<script type="text/javascript">
-				var pageTracker = _gat._getTracker("UA-420000-3");
-				pageTracker._trackPageview();
-			</script>
-		</ui:remove>
-	</body>
+	</o:body>
 </html>
 </f:view>

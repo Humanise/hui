@@ -2,6 +2,13 @@
 <facelet-taglib>
   <namespace>http://www.onlineobjects.com/jsf</namespace>
   <tag>
+    <tag-name>body</tag-name>
+    <component>
+      <component-type>onlineobjects.body</component-type>
+      <renderer-type>javax.faces.Body</renderer-type>
+    </component>
+  </tag>
+  <tag>
     <tag-name>list</tag-name>
     <component>
       <component-type>onlineobjects.list</component-type>

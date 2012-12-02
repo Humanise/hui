@@ -5,7 +5,6 @@ import java.io.IOException;
 import javax.faces.component.FacesComponent;
 import javax.faces.context.FacesContext;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;

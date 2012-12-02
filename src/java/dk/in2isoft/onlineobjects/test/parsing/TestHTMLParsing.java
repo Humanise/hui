@@ -1,18 +1,11 @@
 package dk.in2isoft.onlineobjects.test.parsing;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-
-import javax.swing.text.html.HTML;
 
 import nu.xom.Attribute;
 import nu.xom.Document;
@@ -20,21 +13,17 @@ import nu.xom.Element;
 import nu.xom.Node;
 import nu.xom.Nodes;
 import nu.xom.ParentNode;
-import nu.xom.Serializer;
 import nu.xom.Text;
 import nu.xom.XPathContext;
 import nu.xom.converters.DOMConverter;
-import nu.xom.jaxen.expr.TextNodeStep;
 
 import org.apache.log4j.Logger;
 import org.apache.xerces.dom.DOMImplementationImpl;
 import org.apache.xml.serialize.HTMLSerializer;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.w3c.dom.NodeList;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.commons.parsing.HTMLDocument;

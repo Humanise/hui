@@ -101,6 +101,7 @@ hui.ui.listen({
 	$ready : function() {
 		hui.listen(document.body,'mousemove',this._onMove.bind(this));
 		this._setTimer();
+		/*
 		if (hui.browser.msie) {
 			hui.cls.add(document.body,'oo_msie');
 		}
@@ -112,7 +113,7 @@ hui.ui.listen({
 		}
 		if (hui.browser.msie8) {
 			hui.cls.add(document.body,'oo_msie8');
-		}
+		}*/
 	},
 	_onMove : function() {
 		hui.cls.remove(document.body,'oo_fade');
