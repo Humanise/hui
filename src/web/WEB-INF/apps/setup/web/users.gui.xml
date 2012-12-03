@@ -8,18 +8,18 @@
 	<controller source="main.js"/>
 	<controller source="users.js"/>
 	
-	<source name="listSource" dwr="AppSetup.listUsers">
-		<parameter key="state" value="@list.window"/>
+	<source name="listSource" url="listUsers"> <!--dwr="AppSetup.listUsers"-->
+		<parameter key="page" value="@list.window.page"/>
 		<parameter key="search" value="@search.value"/>
 	</source>
 
 	<structure>
 		<top>
 			<toolbar>
-				<icon icon="common/new" text="Hey"/>
+				<icon icon="common/new" text="Add user" name="newUser"/>
 				<right>
 					<field label="Search">
-						<searchfield name="search" expandedWidth="200"/>
+						<searchfield name="search" expanded-width="200"/>
 					</field>
 				</right>
 			</toolbar>
@@ -51,9 +51,9 @@
 					<text-input secret="true" key="password"/>
 				</field>
 				<field label="Privileges">
-					<checkboxes>
-						<item value="view" text="View"/>
-					</checkboxes>
+					<checkbox name="publicView" label="View"/>
+					<checkbox name="publicModify" label="Modify"/>
+					<checkbox name="publicDelete" label="Delete"/>
 				</field>
 			</fields>
 			<buttons>

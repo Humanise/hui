@@ -12,6 +12,7 @@ public class Strings {
 	public static final String DEGREE = "\u00B0";
 	public static final String RIGHT_SINGLE_QUOTE = "\u2019";
 	public static final String DOUBLE_APOSTROPHE = "\u02EE";
+	public static final String UTF8 = "UTF-8";
 	
 	
 	// private static Logger log = Logger.getLogger(LangUtil.class);

@@ -331,7 +331,9 @@ public class ModelService {
 
 	public <T extends Entity> T get(Class<T> entityClass, Long id, Privileged privileged) throws ModelException {
 		dk.in2isoft.onlineobjects.core.Query<T> query = dk.in2isoft.onlineobjects.core.Query.of(entityClass);
-		query.withPrivileged(privileged,securityService.getPublicUser());
+		if (!privileged.isSuper()) {
+			query.withPrivileged(privileged,securityService.getPublicUser());
+		}
 		query.withIds(id);
 		List<T> result = list(query);
 		if (!result.isEmpty()) {

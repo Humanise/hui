@@ -20,10 +20,14 @@ hui.ui.listen({
 	},
 	loadUser : function(row) {
 		this.userId = row.id;
-		Common.getEntity(row.id,function(user) {
-			userFormula.setValues(user);
-			userEditor.show();
-		});
+		hui.ui.request({
+			url : 'loadUser',
+			parameters :{id : row.id},
+			$object : function(user) {
+				userFormula.setValues(user);
+				userEditor.show();
+			}
+		})
 	},
 	$click$saveUser : function() {
 		var values = userFormula.getValues();
