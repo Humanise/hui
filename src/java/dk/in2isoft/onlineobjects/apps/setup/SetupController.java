@@ -11,9 +11,12 @@ import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.exceptions.ContentNotFoundException;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
+import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
 import dk.in2isoft.onlineobjects.model.EmailAddress;
+import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.Person;
+import dk.in2isoft.onlineobjects.model.Privilege;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.ui.Request;
 
@@ -106,6 +109,65 @@ public class SetupController extends ApplicationController {
 		writer.endList();
 	}
 	
+	
+	@Path(start="listUsersObjects")
+	public void listUsersObjects(Request request) throws IOException,EndUserException {
+		long id = request.getLong("userId");
+		int page = request.getInt("page");
+		
+		User publicUser = securityService.getPublicUser();
+		User user = modelService.get(User.class, id, request.getSession());
+		if (user==null) {
+			return;
+		}
+		Query<Entity> query = Query.of(Entity.class).withPrivileged(user).withPaging(page, 30);
+		SearchResult<Entity> result = modelService.search(query);
+
+		ListWriter writer = new ListWriter(request);
+		
+		writer.startList();
+		writer.window(result.getTotalCount(), 30, page);
+		writer.startHeaders();
+		writer.header("Name",40);
+		writer.header("Type");
+		writer.header("Private grants",1);
+		writer.header("Public grants",1);
+		writer.endHeaders();
+		for (Entity entity : result.getList()) {
+			Privilege privilege = securityService.getPrivilege(entity.getId(), user);
+			Privilege publicPrivilege = securityService.getPrivilege(entity.getId(), publicUser);
+			writer.startRow();
+			writer.startCell().withIcon(entity.getIcon()).text(entity.getName()).endCell();
+			writer.startCell().text(entity.getClass().getSimpleName()).endCell();
+			writer.startCell().nowrap();
+			if (privilege.isView()) {
+				writer.icon("monochrome/view");
+			}
+			if (privilege.isAlter()) {
+				writer.icon("monochrome/edit");
+			}
+			if (privilege.isDelete()) {
+				writer.icon("monochrome/delete");
+			}			
+			writer.endCell();
+			writer.startCell().nowrap();
+			if (publicPrivilege!=null) {
+				if (publicPrivilege.isView()) {
+					writer.icon("monochrome/view");
+				}
+				if (publicPrivilege.isAlter()) {
+					writer.icon("monochrome/edit");
+				}
+				if (publicPrivilege.isDelete()) {
+					writer.icon("monochrome/delete");
+				}
+			}
+			writer.endCell();
+			writer.endRow();
+		}
+		writer.endList();
+	}
+	
 	@Path(start="loadUser")
 	public void loadUser(Request request) throws IOException,EndUserException {
 		Long id = request.getLong("id");
@@ -121,6 +183,23 @@ public class SetupController extends ApplicationController {
 		perspective.setPublicModify(securityService.canModify(user, publicUser));
 		perspective.setPublicDelete(securityService.canDelete(user, publicUser));
 		request.sendObject(perspective);
+	}
+	
+	@Path(start="saveUser")
+	public void saveUser(Request request) throws IOException,EndUserException {
+		UserPerspective perspective = request.getObject("user", UserPerspective.class);
+		if (perspective==null) {
+			throw new IllegalRequestException("No user provider");
+		}
+		User user = modelService.get(User.class, perspective.getId(), request.getSession());
+		if (user==null) {
+			throw new ContentNotFoundException("User not found (id="+perspective.getId()+")");
+		}
+		user.setUsername(perspective.getUsername());
+		user.setName(perspective.getName());
+		modelService.updateItem(user, request.getSession());
+		
+		securityService.grantPublicPrivileges(user, perspective.isPublicView(), perspective.isPublicModify(), perspective.isPublicDelete());
 	}
 	
 	public void setSecurityService(SecurityService securityService) {

@@ -54,6 +54,14 @@ public class ListWriter extends MarkupWriter {
 		return this;
 	}
 	
+	public ListWriter header(String text, int width) {
+		startTag("header");
+		withAttribute("title", text);
+		withAttribute("width", width);
+		endTag("header");
+		return this;
+	}
+
 	public ListWriter startRow() {
 		startTag("row");
 		return this;
@@ -100,6 +108,11 @@ public class ListWriter extends MarkupWriter {
 
 	public ListWriter withIcon(String icon) {
 		withAttribute("icon", icon);
+		return this;
+	}
+
+	public ListWriter nowrap() {
+		withAttribute("wrap", false);
 		return this;
 	}
 }

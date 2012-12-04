@@ -18,9 +18,8 @@ public class SystemLoader implements ServletContextListener {
 	}
 
 	public void contextInitialized(ServletContextEvent event) {
-		// TODO Auto-generated method stub
 		ServletContext context = event.getServletContext();
-        String basePath=context.getRealPath("/");
+        String basePath = context.getRealPath("/");
         log.info("System loader is ignitet");
         log.info("The servlet-context-name is: "+context.getServletContextName());
         try {

@@ -25,6 +25,7 @@ public class LanguageConsistencyChecker implements ConsistencyChecker {
 	private static Logger log = Logger.getLogger(LanguageConsistencyChecker.class);
 
 	private ModelService modelService;
+	private SecurityService securityService;
 
 	private Map<String,String> categories;
 	private Map<String,String> languages;
@@ -43,7 +44,7 @@ public class LanguageConsistencyChecker implements ConsistencyChecker {
 		categories.put(LexicalCategory.CODE_INTERJECTION, "Interjection");
 		categories.put(LexicalCategory.CODE_ARTICULUS, "Determiner");
 		categories.put(LexicalCategory.CODE_NUMERUS, "Numeral");
-		categories.put(LexicalCategory.CODE_ONOMATOPOEIA, "Numeral");
+		categories.put(LexicalCategory.CODE_ONOMATOPOEIA, "Sound word");
 
 		languages = Maps.newHashMap();
 		languages.put("en", "English");
@@ -55,27 +56,39 @@ public class LanguageConsistencyChecker implements ConsistencyChecker {
 		User adminUser = modelService.getUser(SecurityService.ADMIN_USERNAME);
 		for (Entry<String, String> entry : languages.entrySet()) {
 			Query<Language> query = Query.of(Language.class).withField(Language.CODE, entry.getKey());
-			if (modelService.search(query).getTotalCount()==0) {
+			SearchResult<Language> result = modelService.search(query);
+			if (result.getTotalCount()==0) {
 				log.warn("No language ("+entry.getValue()+"), creating it...");
 				Language language = new Language();
 				language.setCode(entry.getKey());
 				language.setName(entry.getValue());
 				modelService.createItem(language, adminUser);
-				modelService.commit();
 				log.info("Language ("+entry.getValue()+") created!");
+				securityService.grantPublicPrivileges(language, true, false, false);
+				modelService.commit();
+			} else {
+				for (Language item : result.getList()) {
+					securityService.grantPublicPrivileges(item, true, false, false);
+					modelService.commit();
+				}
 			}
 		}
 		for (Entry<String, String> entry : categories.entrySet()) {
 			Query<LexicalCategory> query = Query.of(LexicalCategory.class).withField(LexicalCategory.CODE, entry.getKey());
 			SearchResult<LexicalCategory> result = modelService.search(query);
+			for (LexicalCategory item : result.getList()) {
+				securityService.grantPublicPrivileges(item, true, false, false);
+				modelService.commit(); 
+			}
 			if (result.getTotalCount()==0) {
 				log.warn("No lexical category ("+entry.getValue()+"), creating it...");
-				LexicalCategory language = new LexicalCategory();
-				language.setCode(entry.getKey());
-				language.setName(entry.getValue());
-				modelService.createItem(language, adminUser);
+				LexicalCategory category = new LexicalCategory();
+				category.setCode(entry.getKey());
+				category.setName(entry.getValue());
+				modelService.createItem(category, adminUser);
+				log.info("Lexical category ("+entry.getValue()+") created!");
+				securityService.grantPublicPrivileges(category, true, false, false);
 				modelService.commit(); 
-				log.info("Lexical category ("+entry.getValue()+") created!");				
 			} else if (result.getTotalCount()>1) {
 				List<LexicalCategory> list = result.getList();
 				for (int i = 1; i < list.size(); i++) {
@@ -110,5 +123,9 @@ public class LanguageConsistencyChecker implements ConsistencyChecker {
 
 	public void setModelService(ModelService modelService) {
 		this.modelService = modelService;
+	}
+	
+	public void setSecurityService(SecurityService securityService) {
+		this.securityService = securityService;
 	}
 }
