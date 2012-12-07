@@ -31,11 +31,17 @@ hui.ui.listen({
 	},
 	$click$saveUser : function() {
 		var values = userFormula.getValues();
-		AppSetup.updateUser(this.userId,values.username,values.password,function() {
-			userFormula.reset();
-			userEditor.hide();
-			listSource.refresh();
-		});
+		values.id = this.userId;
+		hui.ui.request({
+			url : 'saveUser',
+			json : {user : values},
+			$success : function(user) {
+				list.refresh();
+			}
+		})
+		this.userId = 0;
+		userFormula.reset();
+		userEditor.hide();
 	},
 	$click$cancelUser : function() {
 		this.userId = 0;
