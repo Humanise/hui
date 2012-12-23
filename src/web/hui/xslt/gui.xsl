@@ -337,13 +337,22 @@
 -->
 <xsl:template match="gui:listen">
 	<script type="text/javascript">
-		(function() {
-			var listener = {};
-			<xsl:for-each select="*">
-				listener['$<xsl:value-of select="local-name()"/>$<xsl:value-of select="../@for"/>']=function() {<xsl:apply-templates/>};
-			</xsl:for-each>
-			hui.ui.listen(listener);
-		})()
+		<xsl:choose>
+			<xsl:when test="@for">
+				(function() {
+					var listener = {};
+					<xsl:for-each select="*">
+						listener['$<xsl:value-of select="local-name()"/>$<xsl:value-of select="../@for"/>']=function() {<xsl:apply-templates/>};
+					</xsl:for-each>
+					hui.ui.listen(listener);
+				})()		
+			</xsl:when>
+			<xsl:otherwise>
+				hui.ui.listen({
+					<xsl:value-of select="."/>
+				});
+			</xsl:otherwise>
+		</xsl:choose>
 	</script>	
 </xsl:template>
 
@@ -470,7 +479,7 @@
 
 
 
-<!--doc title:'Space' module:'layout'
+<!--doc title:'Frames' module:'layout'
 <frames>
 	<frame name="«text»" source="«url»" scrolling="«boolean»"/>
 </frames>
@@ -1261,7 +1270,21 @@ doc title:'Rich text' class:'hui.ui.RichText'
 </segmented>
 -->
 <xsl:template match="gui:segmented" name="gui:segmented">
-	<span class="hui_segmented" id="{generate-id()}">
+	<span id="{generate-id()}">
+		<xsl:if test="@top">
+			<xsl:attribute name="style">
+				<xsl:text>margin-top: </xsl:text><xsl:value-of select="@top"/><xsl:text>px;</xsl:text>
+			</xsl:attribute>
+		</xsl:if>
+		<xsl:attribute name="class">
+			<xsl:text>hui_segmented</xsl:text>
+			<xsl:if test="@variant">
+				<xsl:text> hui_segmented_</xsl:text><xsl:value-of select="@variant"/>
+			</xsl:if>
+			<xsl:if test="not(@variant)">
+				<xsl:text> hui_segmented_standard</xsl:text><xsl:value-of select="@variant"/>
+			</xsl:if>
+		</xsl:attribute>
 		<xsl:for-each select="gui:item">
 			<a href="javascript:void(0)" rel="{@value}">
 				<xsl:if test="@value=../@value">

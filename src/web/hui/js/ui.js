@@ -791,6 +791,9 @@ hui.ui.callVisible = function(widget) {
 
 /** Listen for global events */
 hui.ui.listen = function(delegate) {
+	if (hui.ui.domReady && delegate.$ready) {
+		delegate.$ready();
+	}
 	hui.ui.delegates.push(delegate);
 }
 
@@ -999,7 +1002,7 @@ hui.ui.request = function(options) {
 			hui.ui.handleRequestError();
 		}
 	}
-	options.onException = function(t,e) {
+	options.onException = options.$exception || function(t,e) {
 		hui.log(t);
 		hui.log(e);
 	};
