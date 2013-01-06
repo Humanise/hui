@@ -95,7 +95,8 @@ public class TestHTMLParsing extends AbstractSpringTestCase {
 				//ul.addAttribute(new Attribute("style", "opacity: .1;"));
 			}
 		}
-		File file = new File(getProperty("output.dir")+fileName);
+		File dir = getOutputDir();
+		File file = new File(dir,fileName);
 		if (file.exists()) {
 			file.delete();
 		}

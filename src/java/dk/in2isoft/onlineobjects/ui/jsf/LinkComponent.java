@@ -29,11 +29,17 @@ public class LinkComponent extends AbstractComponent {
 	private boolean plain;
 	private String name;
 	private String app;
+	private boolean focusable;
 	
 	public LinkComponent() {
 		super(FAMILY);
 	}
 	
+	@Override
+	public Object[] saveState() {
+		return new Object[] { variant, core, href, styleClass, onclick, title, plain, name, app, focusable };
+	}
+
 	@Override
 	public void restoreState(Object[] state) {
 		variant = (String) state[0];
@@ -45,12 +51,9 @@ public class LinkComponent extends AbstractComponent {
 		plain = (Boolean) state[6];
 		name = (String) state[7];
 		app = (String) state[8];
+		focusable = (Boolean) state[9];
 	}
 
-	@Override
-	public Object[] saveState() {
-		return new Object[] { variant, core, href, styleClass, onclick, title, plain, name, app };
-	}
 
 	@Override
 	public String getFamily() {
@@ -84,6 +87,10 @@ public class LinkComponent extends AbstractComponent {
 			writer.withAttribute("href", buildUrl(href, app, core));
 		} else if (StringUtils.isNotBlank(id)) {
 			writer.withAttribute("href","javascript: void(0);");
+		}
+		boolean focusable = isFocusable(context);
+		if (!focusable) {
+			writer.withAttribute("tabindex", "-1");
 		}
 		if (!plain) {
 			writer.startSpan();
@@ -211,5 +218,17 @@ public class LinkComponent extends AbstractComponent {
 
 	public String getApp() {
 		return app;
+	}
+
+	public boolean isFocusable() {
+		return focusable;
+	}
+
+	public boolean isFocusable(FacesContext context) {
+		return getExpression("focusable", focusable, context);
+	}
+
+	public void setFocusable(boolean focusable) {
+		this.focusable = focusable;
 	}
 }

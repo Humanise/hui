@@ -75,6 +75,8 @@ public class DictionaryService implements InitializingBean {
 	}
 	
 	public void shutDown() {
-		database.shutdown();
+		if (database!=null) {
+			database.shutdown();
+		}
 	}
 }

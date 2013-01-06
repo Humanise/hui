@@ -24,7 +24,7 @@
 				</ul>
 				<p class="words">
 				<c:forEach items="#{wordsImportView.uniqueWords}" var="word">
-					<o:link styleClass="#{word.known ? 'known' : 'unknown'} #{word.primaryLanguage ? 'native' : 'foreign'}" title="#{word.count}" onclick="importView.lookupWord(this)">
+					<o:link styleClass="#{word.known ? 'known' : 'unknown'} #{word.primaryLanguage ? 'native' : 'foreign'}" title="#{word.count}" onclick="importView.lookupWord(this)" focusable="#{not word.known or not word.primaryLanguage}">
 						<o:out value="#{word.text}"/>
 					</o:link>
 					<o:out value="#{' '}"/>

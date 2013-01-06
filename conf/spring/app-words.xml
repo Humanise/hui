@@ -52,6 +52,10 @@
    	 	<property name="languageService" ref="languageService"/>
    	 </bean>
 
+   	 <bean id="wordsSearchView" class="dk.in2isoft.onlineobjects.apps.words.views.WordsSearchView" scope="request">
+   	 	<property name="modelService" ref="modelService"/>
+   	 </bean>
+
    	 <bean id="wordsFrontView" class="dk.in2isoft.onlineobjects.apps.words.views.WordsFrontView" scope="request">
    	 	<property name="modelService" ref="modelService"/>
    	 	<property name="languageService" ref="languageService"/>

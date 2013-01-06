@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.collect.ImmutableMap;
 
+import dk.in2isoft.commons.util.RegExpUtil;
+
 public class HeaderUtil {
 	
 	private static long secondsInWeek = 604800;
@@ -54,6 +56,16 @@ public class HeaderUtil {
 
 	public static void setInternalServerError(HttpServletResponse response) {
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+	}
+	
+	public static String getContentTypeEncoding(String value) {
+		if (value!=null) {
+			String[] groups = RegExpUtil.getGroups(value, "charset=([a-zA-Z0-9\\-]+)");
+			if (groups!=null) {
+				return groups[1];
+			}
+		}
+		return null;
 	}
 
 	public static String getMimeType(File file) {

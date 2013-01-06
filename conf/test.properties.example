@@ -8,3 +8,5 @@ mail.name=
 
 analytics.username=
 analytics.password=
+
+output.dir=/path/to/output/dir

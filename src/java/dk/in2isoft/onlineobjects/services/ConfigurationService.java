@@ -1,6 +1,7 @@
 package dk.in2isoft.onlineobjects.services;
 
 import java.io.File;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.SAXParserFactory;
@@ -8,6 +9,8 @@ import javax.xml.transform.TransformerFactory;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
+
+import com.google.common.collect.Maps;
 
 import dk.in2isoft.onlineobjects.core.exceptions.ConfigurationException;
 import dk.in2isoft.onlineobjects.ui.Request;
@@ -24,6 +27,8 @@ public class ConfigurationService implements InitializingBean {
 	private String graphvizPath;
 	private String developmentUser;
 	private String analyticsCode;
+	
+	private Map<String,String> appContexts;
 
 	private File tempDir;
 
@@ -47,6 +52,10 @@ public class ConfigurationService implements InitializingBean {
 			throw new ConfigurationException("Can not write to the temporary directory");
 		}
 		testSetup();
+		
+		appContexts = Maps.newHashMap();
+		appContexts.put("photos", "http://photos.onlineobjects.com");
+		appContexts.put("community", "http://www.onlineme.dk");
 	}
 	
 	public void testSetup() {
@@ -139,11 +148,11 @@ public class ConfigurationService implements InitializingBean {
 	}
 
 	public String getApplicationContext(String app, Request request) {
-		if ("community".equals(app)) {
+		if (appContexts.containsKey(app)) {
 			if (developmentMode) {
-				return request.getBaseContext();
+				return request.getBaseContext()+"/app/"+app;
 			}
-			return "http://www.onlineme.dk";
+			return appContexts.get(app);
 		}
 		return null;
 	}

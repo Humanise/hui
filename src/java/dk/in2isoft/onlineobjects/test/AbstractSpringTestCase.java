@@ -12,6 +12,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.services.ConfigurationService;
@@ -76,5 +77,24 @@ public abstract class AbstractSpringTestCase extends AbstractJUnit4SpringContext
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	protected File getOutputDir() {
+
+		String outputDir = getProperty("output.dir");
+		if (Strings.isBlank(outputDir)) {
+			throw new IllegalStateException("The output.dir property is not set");
+		}
+		File dir = new File(outputDir);
+		if (!dir.exists()) {
+			throw new IllegalStateException("The output dir does not exists");
+		}
+		if (!dir.isDirectory()) {
+			throw new IllegalStateException("The output dir is not a folder");
+		}
+		if (!dir.canWrite()) {
+			throw new IllegalStateException("The output dir can not be written");
+		}
+		return dir;
 	}
 }

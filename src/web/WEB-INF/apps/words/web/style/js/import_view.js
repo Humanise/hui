@@ -1,4 +1,10 @@
 var importView = {
+	$ready : function() {
+		var a = hui.get.firstByClass(document.body,'unknown');
+		if (a) {
+			a.focus();
+		}
+	},
 	lookupWord : function(node) {
 		this.word = hui.dom.getText(node);
 		this._lowlight();

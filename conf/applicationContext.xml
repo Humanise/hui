@@ -127,6 +127,7 @@
 	<bean id="webrendererController" class="dk.in2isoft.onlineobjects.service.webrenderer.WebrendererController" autowire="byType"/>
 	<bean id="authenticationController" class="dk.in2isoft.onlineobjects.service.authentication.AuthenticationController" autowire="byType"/>
 	<bean id="videoController" class="dk.in2isoft.onlineobjects.service.video.VideoController" autowire="byType"/>
+	<bean id="languageController" class="dk.in2isoft.onlineobjects.service.language.LanguageController" autowire="byType"/>
 	
 	<!-- Tools -->
 	

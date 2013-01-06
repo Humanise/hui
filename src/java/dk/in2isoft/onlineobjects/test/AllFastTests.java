@@ -8,6 +8,7 @@ import dk.in2isoft.onlineobjects.test.data.TestNeo4j;
 import dk.in2isoft.onlineobjects.test.plain.TestApplicationUrl;
 import dk.in2isoft.onlineobjects.test.plain.TestFileService;
 import dk.in2isoft.onlineobjects.test.plain.TestGraphService;
+import dk.in2isoft.onlineobjects.test.plain.TestHeaderUtil;
 import dk.in2isoft.onlineobjects.test.plain.TestImageService;
 import dk.in2isoft.onlineobjects.test.plain.TestLangUtil;
 import dk.in2isoft.onlineobjects.test.plain.TestRegExp;
@@ -28,6 +29,7 @@ import dk.in2isoft.onlineobjects.test.plain.TestYoutubeService;
 	TestRegExpUtil.class, 
 	TestRestUtil.class,
 	TestSemanticService.class,
+	TestHeaderUtil.class,
 	TestURLUtil.class,
 	TestYoutubeService.class})
 public class AllFastTests {

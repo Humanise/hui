@@ -70,15 +70,16 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 			location = modelService.getParent(image, Location.class);
 
 			user = modelService.getOwner(image);
-			UserQuery query = new UserQuery().withUsername(user.getUsername());
-			PairSearchResult<User,Person> searchPairs = modelService.searchPairs(query);
-			Pair<User,Person> first = searchPairs.getFirst();
-			if (first!=null) {
-				user = first.getKey();
-				person = first.getValue();
-				personImage = modelService.getChild(user, Relation.KIND_SYSTEM_USER_IMAGE, Image.class);
+			if (user!=null) {
+				UserQuery query = new UserQuery().withUsername(user.getUsername());
+				PairSearchResult<User,Person> searchPairs = modelService.searchPairs(query);
+				Pair<User,Person> first = searchPairs.getFirst();
+				if (first!=null) {
+					user = first.getKey();
+					person = first.getValue();
+					personImage = modelService.getChild(user, Relation.KIND_SYSTEM_USER_IMAGE, Image.class);
+				}
 			}
-			
 			Query<Image> allQuery = Query.after(Image.class).withPrivileged(user).withPublicView().orderByCreated();
 			List<Long> ids = modelService.listIds(allQuery);
 			int position = ids.indexOf(image.getId());

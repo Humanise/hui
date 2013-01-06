@@ -33,7 +33,7 @@
 					<p class="photos_photo_by"><span>#{msg.added} </span><strong>
 						<h:outputText value="#{photosPhotoView.image.created}">
 							<f:convertDateTime pattern="EEEE 'd'. d.  MMMM yyyy" locale="da_DK"/>
-						</h:outputText></strong> #{msg.by} <o:link href="/#{photosPhotoView.language}/users/#{photosPhotoView.user.username}/">#{photosPhotoView.person.fullName}</o:link>
+						</h:outputText></strong> #{msg.by} <o:link app="photos" href="/#{photosPhotoView.language}/users/#{photosPhotoView.user.username}/">#{photosPhotoView.person.fullName}</o:link>
 					</p>
 					<div class="photos_photo_image">
 						<o:thumbnail image="#{photosPhotoView.image}" width="778" zoom="true" frame="false"/>

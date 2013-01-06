@@ -3,6 +3,8 @@ package dk.in2isoft.commons.lang;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -134,4 +136,11 @@ public class Strings {
 		return string;
 	}
 
+	public static List<String> asList(String[] strings) {
+		List<String> list = new ArrayList<String>();
+		for (String string : strings) {
+			list.add(string);
+		}
+		return list;
+	}
 }
