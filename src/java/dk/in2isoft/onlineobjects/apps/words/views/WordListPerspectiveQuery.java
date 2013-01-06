@@ -1,13 +1,20 @@
 package dk.in2isoft.onlineobjects.apps.words.views;
 
 import java.math.BigInteger;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.SQLQuery;
+import org.hibernate.type.StringType;
+import org.hibernate.type.Type;
+
+import com.google.common.collect.Lists;
 
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.CustomQuery;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
+import edu.emory.mathcs.backport.java.util.Arrays;
 
 public class WordListPerspectiveQuery implements CustomQuery<WordListPerspective> {
 
@@ -32,6 +39,8 @@ public class WordListPerspectiveQuery implements CustomQuery<WordListPerspective
 	private int pageSize;
 	
 	private String startingWith;
+	
+	private List<String> words;
 	
 	private static final String SQL = 
 	" from word"+
@@ -71,6 +80,9 @@ public class WordListPerspectiveQuery implements CustomQuery<WordListPerspective
 		if (startingWith!=null) {
 			sql.append(" where lower(word.text) like :startingWith"); 
 		}
+		if (words!=null) {
+			sql.append(" where lower(word.text) in (:words)");
+		}
 		sql.append(" order by "+this.ordering+" ");
 		if (pageSize>0) {
 			sql.append(" limit ").append(pageSize);
@@ -78,13 +90,15 @@ public class WordListPerspectiveQuery implements CustomQuery<WordListPerspective
 				sql.append(" offset ").append(pageSize*pageNumber);
 			}
 		}
-		System.out.println(sql.toString());
 		return sql.toString();
 	}
 	
 	public void setParameters(SQLQuery sql) {
 		if (startingWith!=null) {
 			sql.setString("startingWith", startingWith+"%");
+		}
+		if (words!=null) {
+			sql.setParameterList("words", words, new StringType());
 		}
 	}
 	
@@ -102,11 +116,22 @@ public class WordListPerspectiveQuery implements CustomQuery<WordListPerspective
 		this.startingWith = str;
 		return this;
 	}
+	
+	public WordListPerspectiveQuery withWords(List<String> str) {
+		this.words = str;
+		return this;
+	}
+
+	public WordListPerspectiveQuery withWords(String[] words) {
+		this.words = Arrays.asList(words);
+		return this;
+	}
 
 	public WordListPerspectiveQuery withPaging(int pageNumber, int pageSize) {
 		this.pageNumber = pageNumber;
 		this.pageSize = pageSize;
 		return this;
 	}
+
 
 }

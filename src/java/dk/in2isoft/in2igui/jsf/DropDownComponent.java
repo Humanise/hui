@@ -21,6 +21,7 @@ public class DropDownComponent extends AbstractComponent {
 
 	private String name;
 	private String key;
+	private Object value;
 
 	public DropDownComponent() {
 		super(TYPE);
@@ -30,12 +31,13 @@ public class DropDownComponent extends AbstractComponent {
 	public void restoreState(Object[] state) {
 		name = (String) state[0];
 		key = (String) state[1];
+		value = state[2];
 	}
 
 	@Override
 	public Object[] saveState() {
 		return new Object[] {
-			name, key
+			name, key, value
 		};
 	}
 	
@@ -55,15 +57,20 @@ public class DropDownComponent extends AbstractComponent {
 		writer.startScopedScript();
 		String items = getItems(context);
 		
-		writer.write("new hui.ui.DropDown({element:'").write(id).write("'");
+		writer.startNewObject("hui.ui.DropDown").property("element", id);
+		
 		if (name!=null) {
-			writer.write(",name:'"+name+"'");
+			writer.comma().property("name",name);
 		}
 		if (key!=null) {
-			writer.write(",key:'"+key+"'");
+			writer.comma().property("key",key);
 		}
 		if (items!=null) {
-			writer.write(",items:"+items);
+			writer.comma().propertyRaw("items", items);
+		}
+		Object value = getValue(context);
+		if (value!=null) {
+			writer.comma().property("value", value.toString());
 		}
 		writer.write("});");
 		writer.endScopedScript();
@@ -113,5 +120,17 @@ public class DropDownComponent extends AbstractComponent {
 
 	public void setKey(String key) {
 		this.key = key;
+	}
+	
+	public Object getValue() {
+		return value;
+	}
+	
+	public Object getValue(FacesContext context) {
+		return getExpression("value", value, context);
+	}
+	
+	public void setValue(Object value) {
+		this.value = value;
 	}
 }

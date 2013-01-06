@@ -16,24 +16,33 @@
 		<ui:define name="body">
 			<div class="words">
 				<h1>#{wordsImportView.title}</h1>
-				<p>#{wordsImportView.status}</p>
-				<p>
-				<c:forEach items="#{wordsImportView.foundWords}" var="word">
-					<a>#{word.text}</a>
+				<p>Language: #{wordsImportView.language.code}</p>
+				<ul>
+				<c:forEach items="#{wordsImportView.languages}" var="lang">
+					<li><a href="?language=#{lang.key}">#{lang.key} = #{lang.value}</a></li>
 				</c:forEach>
-				</p>
+				</ul>
 				<p class="words">
 				<c:forEach items="#{wordsImportView.uniqueWords}" var="word">
-					<o:link styleClass="#{word.known ? 'known' : 'unknown'}" title="#{word.count}" onclick="importView.lookupWord(this)">#{word.text}</o:link><o:out value="#{' '}"/>
+					<o:link styleClass="#{word.known ? 'known' : 'unknown'} #{word.primaryLanguage ? 'native' : 'foreign'}" title="#{word.count}" onclick="importView.lookupWord(this)">
+						<o:out value="#{word.text}"/>
+					</o:link>
+					<o:out value="#{' '}"/>
 				</c:forEach>
 				</p>
 				<hr/>
 				<p>#{wordsImportView.text}</p>
+				<hr/>
+				<c:forEach items="#{wordsImportView.impressions}" var="imp">
+				<p>
+					<a>#{imp.text} - #{imp.language} - #{imp.lexicalCategory}</a>
+				</p>
+				</c:forEach>
 			</div>
 			
 			<gui:boundPanel name="registrationPanel" hideOnClick="true">
 				<gui:formula name="registrationForm">
-					<gui:dropDown key="language" items="#{wordsWordView.languages}"/>
+					<gui:dropDown key="language" items="#{wordsWordView.languages}" value="#{wordsImportView.language.code}"/>
 					<gui:dropDown key="category" items="#{wordsWordView.categories}"/>
 					<gui:button text="Register" name="registerButton" highlighted="true"/>
 				</gui:formula>

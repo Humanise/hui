@@ -352,6 +352,23 @@ div.panel_body ul.selection a:hover
     filter: progid:DXImageTransform.Microsoft.gradient (GradientType=0, startColorstr=#ffffff, endColorstr=#f6f6f6);
 }
 
+
+
+/*********** index *********/
+
+p.words_index
+{
+	margin: 10px 0;
+	text-transform: uppercase;
+}
+
+
+
+
+
+
+/************ Import *************/
+
 p.words a
 {
 	display: inline-block;
@@ -391,10 +408,8 @@ p.words a.highlighted
 	color: #36f;
 }
 
-/*********** index *********/
-
-p.words_index
+p.words a.known.foreign
 {
-	margin: 10px 0;
-	text-transform: uppercase;
+	text-decoration: line-through;
+	color: red;
 }

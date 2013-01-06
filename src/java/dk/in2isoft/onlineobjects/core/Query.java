@@ -120,6 +120,13 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 		return this;
 	}
 
+	public Query<T> withLowercaseFieldIn(String property, Object[] value) {
+		ModelPropertyLimitation limitation = new ModelPropertyLimitation(property, value, ModelPropertyLimitation.Comparison.IN);
+		limitation.setFunction(ModelPropertyLimitation.Function.lower);
+		limitations.add(limitation);
+		return this;
+	}
+
 	public Query<T> withFieldIn(String property, List<?> value) {
 		limitations.add(new ModelPropertyLimitation(property, value, ModelPropertyLimitation.Comparison.IN));
 		return this;
@@ -274,7 +281,14 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 		if (limitations.size() > 0) {
 			for (ModelPropertyLimitation limit : limitations) {
 				if (limit.getComparison().equals(ModelPropertyLimitation.Comparison.IN)) {
-					hql.append(" and ").append(limit.getProperty());
+					hql.append(" and ");
+					if (limit.getFunction()!=null) {
+						hql.append(limit.getFunction().name()).append("(");
+					}
+					hql.append(limit.getProperty());
+					if (limit.getFunction()!=null) {
+						hql.append(")");
+					}
 					hql.append(limit.getComparison());
 					hql.append("(:").append(limit.getProperty()).append(")");
 				} else {

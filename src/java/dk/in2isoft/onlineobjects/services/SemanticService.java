@@ -19,7 +19,7 @@ import dk.in2isoft.onlineobjects.util.semantics.Language;
 
 public class SemanticService {
 	
-	public static final String WORD_EXPRESSION = "[a-zA-Z\u0027\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF\\-]+";
+	public static final String WORD_EXPRESSION = "[a-zA-Z\u0027\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF\\-\u02BC’]+";
 	
 	public static final char UNICODE_AA_LARGE = '\u00C5';
 	public static final char UNICODE_AA = '\u00E5';
