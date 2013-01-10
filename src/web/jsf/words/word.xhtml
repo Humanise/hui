@@ -36,7 +36,7 @@
 										<c:if test="#{word.lexicalCategory!=null}">
 											<span class="words_word_info">
 												<span>—</span>
-												<a href="javascript://" onclick="wordView.changeWord({id:#{word.word.id},element:this,event:event}); return false;">
+												<a href="javascript://" onclick="wordView.changeCategory({id:#{word.word.id},element:this,event:event}); return false;">
 													<o:out value=" #{msg[word.lexicalCategory.code]}" lower="true"/>
 												</a>
 											</span>
@@ -51,7 +51,7 @@
 										<c:if test="#{word.lexicalCategory==null}">
 											<span class="words_word_info">
 												<span>—</span>
-												<a href="javascript://" onclick="wordView.categorizeWord({id:#{word.word.id},element:this,event:event}); return false;">
+												<a href="javascript://" onclick="wordView.changeCategory({id:#{word.word.id},element:this,event:event}); return false;">
 													<o:out value="#{msg.not_categorised}"/>
 												</a>
 											 </span>
@@ -140,7 +140,7 @@
 						</div>
 					</gui:boundPanel>
 					
-					<gui:boundPanel name="relationKindPanel" hideOnClick="true" width="200">
+					<gui:boundPanel name="relationKindPanel" modal="transparent" width="200">
 						<div class="panel_body">
 							<h2>#{msg.relation_kind}</h2>
 							<ul class="selection">

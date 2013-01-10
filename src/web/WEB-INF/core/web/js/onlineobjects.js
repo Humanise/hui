@@ -64,6 +64,9 @@ var oo = {
 				if (options.onComplete) {
 					options.onComplete();
 				}
+				if (options.$success) {
+					options.$success();
+				}
 			},onException : function(a,b) {
 				hui.log(a);
 				hui.log(b);

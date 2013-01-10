@@ -4,12 +4,14 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;
+import org.mortbay.log.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Lists;
@@ -23,13 +25,17 @@ import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.WireFeedInput;
 import com.sun.syndication.io.XmlReader;
 
+import de.l3s.boilerpipe.BoilerpipeProcessingException;
+import de.l3s.boilerpipe.extractors.ArticleExtractor;
 import dk.in2isoft.commons.lang.Matrix;
+import dk.in2isoft.commons.lang.MatrixEntry;
 import dk.in2isoft.commons.parsing.HTMLDocument;
-import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.services.SemanticService;
 import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
+import dk.in2isoft.onlineobjects.util.semantics.Danish;
 import dk.in2isoft.onlineobjects.util.semantics.English;
 import dk.in2isoft.onlineobjects.util.semantics.Language;
+import edu.emory.mathcs.backport.java.util.Collections;
 
 public class TestComparison extends AbstractSpringTestCase {
 	
@@ -38,8 +44,8 @@ public class TestComparison extends AbstractSpringTestCase {
 	@Autowired
 	private SemanticService semanticService;
 	
-	@Test
-	public void testWikipedia() throws EndUserException, MalformedURLException {
+	//@Test
+	public void testWikipedia() throws Exception {
 		
 		List<String> urls = Lists.newArrayList(
 				"http://en.wikipedia.org/wiki/Whale",
@@ -57,18 +63,27 @@ public class TestComparison extends AbstractSpringTestCase {
 				"http://en.wikipedia.org/wiki/Steve_Jobs",
 				"http://en.wikipedia.org/wiki/Buddhism"
 		);
-		compareUrls(urls);
+		compareUrls(urls, new English());
 	}
 	
-	//@Test
-	public void testFeed() throws EndUserException, IllegalArgumentException, FeedException, IOException {
-		
+	private List<String> getUrlsInFeed(String url) {
 		List<String> urls = Lists.newArrayList();
-
-		URL feedUrl = new URL("http://feeds.feedburner.com/AjaxRain"/*"http://www.alistapart.com/feed/rss.xml"*/);
+		URL feedUrl;
+		try {
+			feedUrl = new URL(url);
+		} catch (MalformedURLException e) {
+			log.error("Malformed url: "+url, e);
+			return null;
+		}
 
         WireFeedInput input = new WireFeedInput();
-        WireFeed wireFeed = input.build(new XmlReader(feedUrl));
+        WireFeed wireFeed;
+		try {
+			wireFeed = input.build(new XmlReader(feedUrl));
+		} catch (Exception e) {
+			log.error("Unable to parse url: "+url, e);
+			return null;
+		}
         if (wireFeed instanceof Channel) {
         	Channel channel = (Channel) wireFeed;
         	List<Item> items = channel.getItems();
@@ -86,18 +101,33 @@ public class TestComparison extends AbstractSpringTestCase {
 				}
 			}
         }
-        System.out.println(wireFeed.getClass());
-		compareUrls(urls);
+		return urls;
+	}
+	
+	@Test
+	public void testFeed() throws Exception {
+		
+		List<String> feeds = Lists.newArrayList("http://politiken.dk/rss/senestenyt.rss","http://www.dr.dk/nyheder/service/feeds/allenyheder","http://www.b.dk/feeds/rss/Kronikker");
+		
+		List<String> urls = Lists.newArrayList();
+		
+		for (String feed : feeds) {
+			List<String> urlsInFeed = getUrlsInFeed(feed);
+			if (urlsInFeed!=null) {
+				urls.addAll(urlsInFeed);
+			}
+		}		
+		compareUrls(urls, new Danish());
 	}
 
-	private void compareUrls(List<String> urls) throws MalformedURLException {
+	private void compareUrls(List<String> urls, Language language) throws MalformedURLException, BoilerpipeProcessingException {
 		Map<String,String> docs = Maps.newHashMap();
 		for (String url : urls) {
 			HTMLDocument document = new HTMLDocument(url);
-			docs.put(document.getTitle()+" : "+url, document.getText());
+			String text = ArticleExtractor.INSTANCE.getText(new URL(url));
+			docs.put(document.getTitle()+" : "+url, text);
 		}
 		
-		Language language = new English();
 		Matrix<String, String, Double> matrix = new Matrix<String, String, Double>();
 		for (Entry<String, String> doc1 : docs.entrySet()) {
 			for (Entry<String, String> doc2 : docs.entrySet()) {
@@ -106,6 +136,8 @@ public class TestComparison extends AbstractSpringTestCase {
 			}
 		}
 		
+		
+		
 		log.info("\n"+matrix.toString());
 
 		StringBuilder entiretext = new StringBuilder();
@@ -113,14 +145,44 @@ public class TestComparison extends AbstractSpringTestCase {
 			entiretext.append(" ").append(string);
 		}
 		
-		final Map<String, Integer> freq = semanticService.getWordFrquency(entiretext.toString().toLowerCase(),language);
+		final Map<String, Integer> freq = semanticService.getWordFrequency(entiretext.toString().toLowerCase(),language);
 		Map<String, Integer> sorted = new java.util.TreeMap<String,Integer>(new Comparator<String>() {
 			public int compare(String o1, String o2) {
 				return freq.get(o1).compareTo(freq.get(o2));
 			}
 		});
 		sorted.putAll(freq);
-		log.info(sorted);
+		
+		log.info("Frequency: "+freq);
+		
+		logMatrix(matrix);
+		
+	}
+
+	private void logMatrix(Matrix<String, String, Double> matrix) {
+		log.info("-------- Entries by value --------");
+		List<MatrixEntry<String,String,Double>> entries = matrix.getEntries();
+		Collections.sort(entries, new Comparator<MatrixEntry<String,String,Double>>() {
+
+			public int compare(MatrixEntry<String, String, Double> o1, MatrixEntry<String, String, Double> o2) {
+				return o1.getValue().compareTo(o2.getValue());
+			}
+		});
+		Map<String,String> exists = new HashMap<String, String>();
+		for (MatrixEntry<String, String, Double> entry : entries) {
+			if (entry.getX().equals(entry.getY())) {
+				continue;
+			}
+			if (exists.containsKey(entry.getX()) && exists.get(entry.getX()).equals(entry.getY())) {
+				continue;
+			}
+			log.info("----------------");
+			log.info("value: "+entry.getValue());
+			log.info("X: "+entry.getX());
+			log.info("Y: "+entry.getY());
+			exists.put(entry.getX(), entry.getY());
+			exists.put(entry.getY(), entry.getX());
+		}
 	}
 
 	public void setSemanticService(SemanticService semanticService) {

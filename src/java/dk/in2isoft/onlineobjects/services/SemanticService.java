@@ -1,13 +1,24 @@
 package dk.in2isoft.onlineobjects.services;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import opennlp.tools.sentdetect.SentenceDetectorME;
+import opennlp.tools.sentdetect.SentenceModel;
+import opennlp.tools.util.InvalidFormatException;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -30,6 +41,7 @@ public class SemanticService {
 	public static final char UNICODE_OE_LARGE = '\u00D8';
 	public static final char UNICODE_OE = '\u00F8';
 
+	private ConfigurationService configurationService;
 
 	private static Pattern wordPattern = Pattern.compile(WORD_EXPRESSION);
 	
@@ -102,7 +114,7 @@ public class SemanticService {
 		return list;
 	}
 
-	public Map<String, Integer> getWordFrquency(String text,Language language) {
+	public Map<String, Integer> getWordFrequency(String text,Language language) {
 		String[] words = getWords(text,language);
 		return getWordFrequency(words);
 	}
@@ -170,6 +182,53 @@ public class SemanticService {
 		for (int i = 0; i < words.length; i++) {
 			words[i] = StringUtils.lowerCase(words[i]);
 		}
+	}
+	
+	public String ensureSentenceStop(String text) {
+		StringBuilder sb = new StringBuilder();
+		String[] lines = text.split("[\\r\\n]+");
+		for (int i = 0; i < lines.length; i++) {
+			if (sb.length()>0) {
+				sb.append(" ");
+			}
+			String line = lines[i].trim();
+			sb.append(line);
+			if (!line.endsWith(".")) {
+				sb.append(".");
+			}
+		}
+		return sb.toString();
+	}
 
+	public String[] getSentences(String text, Locale locale) {
+		text = ensureSentenceStop(text);
+		SentenceModel model = getSentenceModel(locale);
+		SentenceDetectorME sentenceDetector = new SentenceDetectorME(model);
+		return sentenceDetector.sentDetect(text);
+	}
+	
+	public SentenceModel getSentenceModel(Locale locale) {
+		File file = configurationService.getFile("WEB-INF","data","models",locale.getLanguage()+"-sent.bin");
+		
+		//File file = getTestFile("web/WEB-INF/data/models/en-sent.bin");
+		InputStream modelIn = null;
+		try {
+			modelIn = new FileInputStream(file);
+			return new SentenceModel(modelIn);
+		} catch (FileNotFoundException e) {
+		} catch (InvalidFormatException e) {
+		} catch (IOException e) {
+		} finally {
+			IOUtils.closeQuietly(modelIn);
+		}
+		return null;
+	}
+	
+	
+	
+	// Wiring...
+	
+	public void setConfigurationService(ConfigurationService configurationService) {
+		this.configurationService = configurationService;
 	}
 }

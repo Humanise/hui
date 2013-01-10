@@ -5,6 +5,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 import dk.in2isoft.onlineobjects.test.data.TestNeo4j;
+import dk.in2isoft.onlineobjects.test.parsing.TestHTMLParsing;
 import dk.in2isoft.onlineobjects.test.plain.TestApplicationUrl;
 import dk.in2isoft.onlineobjects.test.plain.TestFileService;
 import dk.in2isoft.onlineobjects.test.plain.TestGraphService;
@@ -31,7 +32,9 @@ import dk.in2isoft.onlineobjects.test.plain.TestYoutubeService;
 	TestSemanticService.class,
 	TestHeaderUtil.class,
 	TestURLUtil.class,
-	TestYoutubeService.class})
+	TestYoutubeService.class,
+	TestHTMLParsing.class
+})
 public class AllFastTests {
 
 }

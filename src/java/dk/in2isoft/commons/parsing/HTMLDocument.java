@@ -45,7 +45,7 @@ public class HTMLDocument extends XMLDocument {
 					Node titleNode = titles.item(0);
 					Node text = titleNode.getFirstChild();
 					if (text!=null) {
-						this.title = text.getNodeValue();
+						this.title = text.getNodeValue().trim();
 					}
 				}
 			}

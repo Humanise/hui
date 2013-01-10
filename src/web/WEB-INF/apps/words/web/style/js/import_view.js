@@ -29,18 +29,19 @@ var importView = {
 	$click$registerButton : function() {
 		
 		var values = hui.ui.get('registrationForm').getValues();
-		AppWords.createWord(values.language,values.category,this.word,{
-			callback : function() {
+		hui.ui.request({
+			url : oo.appContext+'/createWord',
+			parameters : { language : values.language, category : values.category, text : this.word },
+			$success : function(id) {
 				this._lowlight();
 				hui.ui.get('registrationPanel').hide();
 				this.latestWordNode.className='known';
 				this.latestWordNode.focus();
 			}.bind(this),
-			errorHandler : function(msg,e) {
-				hui.log(msg,e);
-				hui.ui.showMessage({text:msg,duration:2000,icon:'common/warning'});
+			$failure : function() {
+				hui.ui.showMessage({text:{en:'Unable to add word',da:'Kunne ikke tilføje ordet'},icon:'common/warning',duration:2000});
 			}
-		})
+		});
 	}
 };
 

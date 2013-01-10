@@ -43,16 +43,21 @@ var wordsApp = {
 			return;
 		}
 		this._importWindow.hide();
+		
 		hui.ui.showMessage({text:'Fetching data...',busy:true});
-		AppWords.startUrlImport(url,{
-			callback : function(id) {
+		hui.ui.request({
+			url : oo.appContext+'/startImport',
+			parameters : {url:url},
+			$object : function(id) {
 				hui.ui.showMessage({text:'Complete, redirecting...'});
-				document.location=oo.appContext+'/en/import/'+id+'/';
+				hui.defer(function() {
+					document.location = oo.appContext+'/en/import/'+id+'/';
+				})
 			},
-			errorHandler : function() {
+			$failure : function() {
 				hui.ui.showMessage({text:'The import failed',duration:2000});
 			}
-		});
+		})
 	}
 }
 

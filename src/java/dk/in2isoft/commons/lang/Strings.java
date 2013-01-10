@@ -143,4 +143,13 @@ public class Strings {
 		}
 		return list;
 	}
+
+	public static boolean contains(String find, String[] sentences) {
+		for (String item : sentences) {
+			if (find.equals(item)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

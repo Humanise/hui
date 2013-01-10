@@ -1217,8 +1217,8 @@ hui.listen = function(element,type,listener,useCapture) {
 hui.listenOnce = function(element,type,listener) {	
 	var func;
 	func = function() {
-		listener();
 		hui.unListen(element,type,func)
+		listener();
 	}
 	hui.listen(element,type,func);
 }

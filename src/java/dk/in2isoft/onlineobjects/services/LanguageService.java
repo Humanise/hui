@@ -8,7 +8,6 @@ import com.google.common.collect.Lists;
 
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.ModelService;
-import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.UserSession;
@@ -114,6 +113,7 @@ public class LanguageService {
 			modelService.createRelation(word, session.getUser(), Relation.KIND_COMMON_ORIGINATOR, session);
 		}
 	}
+	
 	
 	// Wiring...
 

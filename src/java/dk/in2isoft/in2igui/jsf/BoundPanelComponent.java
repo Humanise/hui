@@ -66,7 +66,11 @@ public class BoundPanelComponent extends AbstractComponent {
 		out.startNewObject("hui.ui.BoundPanel");
 		out.property("element", getClientId());
 		out.comma().property("hideOnClick", hideOnClick);
-		out.comma().property("modal", "true".equals(modal));
+		if ("true".equals(modal)) {
+			out.comma().property("modal", true);
+		} else if (modal!=null) {
+			out.comma().property("modal", modal);			
+		}
 		String name = getName(context);
 		if (name!=null) {
 			out.comma().property("name",name);

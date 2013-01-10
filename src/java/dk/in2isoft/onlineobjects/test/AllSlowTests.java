@@ -14,7 +14,17 @@ import dk.in2isoft.onlineobjects.test.traffic.TestMail;
 import dk.in2isoft.onlineobjects.test.traffic.TestRemoteDataService;
 
 @RunWith(Suite.class)
-@SuiteClasses({TestComparison.class,TestFeedComparison.class,TestFeedParsing.class,TestEmailService.class,TestHtmlDocumentParser.class,TestMail.class,TestRemoteDataService.class,TestDictionaryService.class})
+@SuiteClasses({
+	TestComparison.class,
+	TestFeedComparison.class,
+	TestFeedParsing.class,
+	TestEmailService.class,
+	TestHtmlDocumentParser.class,
+	TestMail.class,
+	TestRemoteDataService.class,
+	TestDictionaryService.class
+})
+
 public class AllSlowTests {
 
 }

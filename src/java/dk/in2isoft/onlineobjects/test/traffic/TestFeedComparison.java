@@ -101,7 +101,7 @@ public class TestFeedComparison extends AbstractSpringTestCase {
 			entiretext.append(" ").append(string);
 		}
 		
-		final Map<String, Integer> freq = semanticService.getWordFrquency(entiretext.toString().toLowerCase(),language);
+		final Map<String, Integer> freq = semanticService.getWordFrequency(entiretext.toString().toLowerCase(),language);
 		Map<String, Integer> sorted = new java.util.TreeMap<String,Integer>(new Comparator<String>() {
 			public int compare(String o1, String o2) {
 				return freq.get(o1).compareTo(freq.get(o2));

@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.util.Comparator;
 import java.util.List;
 
@@ -17,6 +19,7 @@ import nu.xom.Text;
 import nu.xom.XPathContext;
 import nu.xom.converters.DOMConverter;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.apache.xerces.dom.DOMImplementationImpl;
 import org.apache.xml.serialize.HTMLSerializer;
@@ -25,6 +28,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Lists;
 
+import de.l3s.boilerpipe.BoilerpipeProcessingException;
+import de.l3s.boilerpipe.extractors.ArticleExtractor;
+import de.l3s.boilerpipe.extractors.DefaultExtractor;
+import dk.in2isoft.commons.lang.Files;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.commons.xml.DOM;
@@ -40,7 +47,7 @@ public class TestHTMLParsing extends AbstractSpringTestCase {
 	private SemanticService semanticService;
 		
 	@Test
-	public void testComplexWikipediaPage() throws MalformedURLException, IOException {
+	public void testComplexWikipediaPage() throws Exception {
 		runTest("kommunaldirektoer_fyret_efter_beskyldninger_mod_borgmester.html");
 		runTest("language_wikipedia.html");
 		runTest("masho_tilbage.html");
@@ -48,8 +55,9 @@ public class TestHTMLParsing extends AbstractSpringTestCase {
 		runTest("storbritannien_lurepasser.politiken.dk.html");
 	}
 	
-	private void runTest(String fileName) throws MalformedURLException, IOException {
-		HTMLDocument doc = new HTMLDocument(getTestFile("articles/"+fileName).toURI());		
+	private void runTest(String fileName) throws MalformedURLException, IOException, BoilerpipeProcessingException {
+		URI uri = getTestFile("articles/"+fileName).toURI();
+		HTMLDocument doc = new HTMLDocument(uri);		
 		
 		Document document = doc.getXOMDocument();
 		
@@ -104,6 +112,16 @@ public class TestHTMLParsing extends AbstractSpringTestCase {
 		htmlSerializer.setOutputByteStream(new FileOutputStream(file));
 		htmlSerializer.serialize(DOMConverter.convert(document, DOMImplementationImpl.getDOMImplementation()));
 		log.info("Written: "+file.getCanonicalPath());
+		
+		{
+			String text = ArticleExtractor.INSTANCE.getText(uri.toURL());
+			Files.overwriteTextFile(text, new File(dir,fileName+".article.txt"));
+		}
+
+		{
+			String text = DefaultExtractor.INSTANCE.getText(uri.toURL());
+			Files.overwriteTextFile(text, new File(dir,fileName+".default.txt"));
+		}
 	}
 	
 	private Element findArticle() {

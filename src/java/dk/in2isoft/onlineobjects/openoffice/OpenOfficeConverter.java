@@ -57,8 +57,7 @@ public class OpenOfficeConverter {
 			/* Bootstraps a component context with the jurt base components
 			 registered. Component context to be granted to a component for running.
 			 Arbitrary values can be retrieved from the context. */
-			XComponentContext xcomponentcontext = com.sun.star.comp.helper.Bootstrap
-					.createInitialComponentContext(null);
+			XComponentContext xcomponentcontext = null;
 
 			/* Gets the service manager instance to be used (or null). This method has
 			 been added for convenience, because the service manager is a often used
