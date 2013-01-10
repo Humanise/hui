@@ -17,7 +17,7 @@
 			<fileset dir="${basedir}/src/web/META-INF" excludes="**/.*"/>
 		</copy>
 		<copy todir="${dest}/OnlineObjects/onlineobjects/WEB-INF/lib">
-			<fileset dir="${basedir}/lib"/>
+			<fileset dir="${basedir}/lib" excludes="*sources.jar *javadoc.jar"/>
 		</copy>
 		<copy todir="${dest}/OnlineObjects/onlineobjects/hui">
 			<fileset dir="${basedir}/src/web/hui" excludes="**/CVS"/>

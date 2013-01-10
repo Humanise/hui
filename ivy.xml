@@ -1,0 +1,16 @@
+<ivy-module version="2.0">
+    <info organisation="com.onlineobjects" module="onlineobjects"/>
+    <dependencies>
+
+        <dependency org="org.apache.commons" name="commons-lang3" rev="3.1"/>
+
+        <dependency org="com.google.collections" name="google-collections" rev="1.0"/>
+
+		<dependency org="org.apache.opennlp" name="opennlp-tools" rev="1.5.2-incubating"/>
+		<dependency org="org.apache.opennlp" name="opennlp-uima" rev="1.5.2-incubating"/>
+		<dependency org="org.apache.opennlp" name="opennlp-maxent" rev="3.0.2-incubating"/>
+
+		<dependency org="com.sun.faces" name="jsf-api" rev="2.1.2"/>
+		<dependency org="com.sun.faces" name="jsf-impl" rev="2.1.2"/>
+    </dependencies>
+</ivy-module>
