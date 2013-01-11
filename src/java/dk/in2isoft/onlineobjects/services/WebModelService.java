@@ -42,9 +42,9 @@ public class WebModelService {
 		return site;
 	}
 
-	public WebPage getPageForWebNode(long id) throws ModelException {
+	public WebPage getPageForWebNode(long id, Privileged privileged) throws ModelException {
 		WebPage page = null;
-		WebNode node = modelService.get(WebNode.class, id);
+		WebNode node = modelService.get(WebNode.class, id, privileged);
 		if (node!=null) {
 			page = modelService.getChild(node, WebPage.class);
 		}
@@ -52,7 +52,7 @@ public class WebModelService {
 	}
 	
 	public long createWebPageOnSite(long webSiteId, Class<?> clazz, Privileged priviledged) throws EndUserException {
-		WebSite site = modelService.get(WebSite.class, webSiteId);
+		WebSite site = modelService.get(WebSite.class, webSiteId, priviledged);
 		
 		// Create a web page
 		WebPage page = new WebPage();
@@ -137,7 +137,7 @@ public class WebModelService {
 	}
 	
 	public boolean isLastPageOnSite(long pageId,Privileged privileged) throws EndUserException {
-		WebPage page = modelService.get(WebPage.class, pageId);
+		WebPage page = modelService.get(WebPage.class, pageId, privileged);
 		if (page == null) {
 			throw new EndUserException("The page does not exist");
 		}
@@ -152,7 +152,7 @@ public class WebModelService {
 	}
 	
 	public void deleteWebPage(long pageId,Privileged privileged) throws EndUserException {
-		WebPage page = modelService.get(WebPage.class, pageId);
+		WebPage page = modelService.get(WebPage.class, pageId, privileged);
 		if (page == null) {
 			throw new EndUserException("The page does not exist");
 		}

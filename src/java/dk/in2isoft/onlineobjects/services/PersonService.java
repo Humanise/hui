@@ -1,6 +1,5 @@
 package dk.in2isoft.onlineobjects.services;
 
-import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 

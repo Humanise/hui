@@ -1,6 +1,5 @@
 package dk.in2isoft.onlineobjects.test.traffic;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Comparator;
@@ -11,7 +10,6 @@ import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;
-import org.mortbay.log.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Lists;
@@ -21,7 +19,6 @@ import com.sun.syndication.feed.atom.Feed;
 import com.sun.syndication.feed.atom.Link;
 import com.sun.syndication.feed.rss.Channel;
 import com.sun.syndication.feed.rss.Item;
-import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.WireFeedInput;
 import com.sun.syndication.io.XmlReader;
 

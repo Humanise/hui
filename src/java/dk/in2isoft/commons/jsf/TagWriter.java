@@ -61,6 +61,13 @@ public class TagWriter {
 		return this;
 	}
 
+	public TagWriter writeScriptString(Object text) throws IOException {
+		if (text!=null) {
+			writer.write(StringEscapeUtils.escapeJavaScript(text.toString()));
+		}
+		return this;
+	}
+
 	public TagWriter text(Object text) throws IOException {
 		if (text!=null) {
 			writer.writeText(text.toString(),null);

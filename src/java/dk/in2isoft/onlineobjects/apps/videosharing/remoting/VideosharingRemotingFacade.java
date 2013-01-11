@@ -31,7 +31,7 @@ public class VideosharingRemotingFacade extends AbstractRemotingFacade {
 	private MemberService memberService;
 
 	public void addComment(long id, String name, String text) throws ModelException, IllegalRequestException {
-		Video video = modelService.get(Video.class, id);
+		Video video = modelService.get(Video.class, id, getUserSession());
 		if (video == null) {
 			throw new IllegalRequestException("The video could not be found", "videoNotFound");
 		}
@@ -59,7 +59,7 @@ public class VideosharingRemotingFacade extends AbstractRemotingFacade {
 		if (isPublicUser()) {
 			throw new SecurityException("Not allowed");
 		}
-		Video video = modelService.get(Video.class, id);
+		Video video = modelService.get(Video.class, id, getUserSession());
 		if (video == null) {
 			throw new IllegalRequestException("The video could not be found", "videoNotFound");
 		}
@@ -70,7 +70,7 @@ public class VideosharingRemotingFacade extends AbstractRemotingFacade {
 		if (isPublicUser()) {
 			throw new SecurityException("Not allowed");
 		}
-		Video video = modelService.get(Video.class, id);
+		Video video = modelService.get(Video.class, id, getUserSession());
 		if (video == null) {
 			throw new IllegalRequestException("The video could not be found", "videoNotFound");
 		}
@@ -89,7 +89,7 @@ public class VideosharingRemotingFacade extends AbstractRemotingFacade {
 	}
 
 	public void removeVideo(long id) throws EndUserException {
-		Video video = modelService.get(Video.class, id);
+		Video video = modelService.get(Video.class, id, getUserSession());
 		if (video == null) {
 			throw new IllegalRequestException("The video could not be found", "notFound");
 		}

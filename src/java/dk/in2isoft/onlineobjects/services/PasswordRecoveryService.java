@@ -25,7 +25,7 @@ public class PasswordRecoveryService {
 			return sendRecoveryMail(user,priviledged);
 		} else {
 			Query<EmailAddress> query = Query.of(EmailAddress.class).withField(EmailAddress.ADDRESS_PROPERTY, usernameOrEmail);
-			List<EmailAddress> list = modelService.search(query).getResult();
+			List<EmailAddress> list = modelService.search(query).getList();
 			if (!list.isEmpty()) {
 				if (list.size()>1) {
 					return false;

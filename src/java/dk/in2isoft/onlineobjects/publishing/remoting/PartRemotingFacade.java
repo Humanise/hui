@@ -17,21 +17,21 @@ import dk.in2isoft.onlineobjects.ui.AbstractRemotingFacade;
 public class PartRemotingFacade extends AbstractRemotingFacade {
 	
 	public void updateHeaderPart(long id,String text,Map<String,String> properties) throws EndUserException {
-		HeaderPart part = (HeaderPart) modelService.get(HeaderPart.class, id);
+		HeaderPart part = (HeaderPart) modelService.get(HeaderPart.class, id,getRequest().getSession());
 		updateProperties(part, properties);
 		part.setText(text);
 		modelService.updateItem(part, getUserSession());
 	}
 	
 	public void updateHtmlPart(long id,String html,Map<String,String> properties) throws EndUserException {
-		HtmlPart part = modelService.get(HtmlPart.class, id);
+		HtmlPart part = modelService.get(HtmlPart.class, id,getRequest().getSession());
 		updateProperties(part, properties);
 		part.setHtml(html);
 		modelService.updateItem(part, getUserSession());
 	}
 	
 	public void updateImagePart(long id,Long imageId,Map<String,String> properties) throws EndUserException {
-		ImagePart part = modelService.get(ImagePart.class, id);
+		ImagePart part = modelService.get(ImagePart.class, id,getRequest().getSession());
 		if (part==null) {
 			return;
 		}
@@ -42,7 +42,7 @@ public class PartRemotingFacade extends AbstractRemotingFacade {
 			modelService.deleteRelation(relation, priviledged);
 		}
 		if (imageId!=null) {
-			Image image = modelService.get(Image.class, imageId);
+			Image image = modelService.get(Image.class, imageId,priviledged);
 			modelService.createRelation(part, image, priviledged);
 		}
 		modelService.updateItem(part, priviledged);

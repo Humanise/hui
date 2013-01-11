@@ -54,7 +54,7 @@ public class VideoView extends AbstractManagedBean implements InitializingBean {
 			throw new ContentNotFoundException("The person does not excist");
 		}
 		long id = Long.parseLong(localPath[2]);
-		video = modelService.get(Video.class, id);
+		video = modelService.get(Video.class, id, getRequest().getSession());
 		if (video==null) {
 			throw new ContentNotFoundException("The video does not excist");
 		}

@@ -68,7 +68,7 @@ public class DesktopRemotingFacade extends AbstractRemotingFacade {
 	public void saveInternetAddress(InternetAddressInfo info) throws ModelException, SecurityException {
 		InternetAddress address;
 		if (info.getId()!=null) {
-			address = modelService.get(InternetAddress.class, info.getId());
+			address = modelService.get(InternetAddress.class, info.getId(), getUserSession());
 		} else {
 			address = new InternetAddress();
 		}

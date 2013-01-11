@@ -5,8 +5,6 @@ import java.io.IOException;
 import javax.faces.component.FacesComponent;
 import javax.faces.context.FacesContext;
 
-import org.apache.commons.lang.StringEscapeUtils;
-
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.in2igui.data.LocationData;

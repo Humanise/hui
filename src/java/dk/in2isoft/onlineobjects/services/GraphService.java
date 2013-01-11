@@ -12,7 +12,6 @@ import org.apache.log4j.Logger;
 import com.google.common.collect.ImmutableList;
 
 import dk.in2isoft.commons.util.AbstractCommandLineInterface;
-import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.exceptions.ConfigurationException;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 

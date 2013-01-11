@@ -32,11 +32,11 @@ public class CommonRemotingFacade extends AbstractRemotingFacade {
 	private static Logger log = Logger.getLogger(CommonRemotingFacade.class);
 	
 	public Entity getEntity(long id) throws ModelException {
-		return modelService.get(Entity.class, id);
+		return modelService.get(Entity.class, id, getUserSession());
 	}
 	
 	public void deleteEntity(long id) throws ModelException, SecurityException {
-		Entity entity = modelService.get(Entity.class, id);
+		Entity entity = modelService.get(Entity.class, id, getUserSession());
 		modelService.deleteEntity(entity, getUserSession());
 	}
 	
@@ -57,7 +57,7 @@ public class CommonRemotingFacade extends AbstractRemotingFacade {
 		if (StringUtils.isBlank(tag)) {
 			return;
 		}
-		Entity entity = modelService.get(Entity.class, id);
+		Entity entity = modelService.get(Entity.class, id, getUserSession());
 		if (entity==null) {
 			return;
 		}
@@ -102,12 +102,12 @@ public class CommonRemotingFacade extends AbstractRemotingFacade {
 	}
 	
 	public void makePubliclyViewable(long id) throws ModelException, SecurityException {
-		Entity entity = modelService.get(Entity.class, id);
+		Entity entity = modelService.get(Entity.class, id, getUserSession());
 		securityService.makePublicVisible(entity,getUserSession());
 	}
 	
 	public void makePubliclyHidden(long id) throws ModelException, SecurityException {
-		Entity entity = modelService.get(Entity.class, id);
+		Entity entity = modelService.get(Entity.class, id, getUserSession());
 		securityService.makePublicHidden(entity,getUserSession());
 	}
 

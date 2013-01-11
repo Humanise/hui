@@ -177,7 +177,7 @@ public class CommunityController extends ApplicationController {
 		}
 		WebPage page = null;
 		if (request.getInt("id") > 0) {
-			page = webModelService.getPageForWebNode(request.getInt("id"));
+			page = webModelService.getPageForWebNode(request.getInt("id"),request.getSession());
 		} else {
 			page = webModelService.getWebSiteFrontPage(site);
 		}

@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.google.common.collect.Lists;
 
+import dk.in2isoft.commons.lang.Code;
 import dk.in2isoft.in2igui.data.ItemData;
 import dk.in2isoft.in2igui.data.ListData;
 import dk.in2isoft.in2igui.data.ListDataRow;
@@ -104,7 +105,7 @@ public class SetupRemotingFacade extends AbstractRemotingFacade {
 		if (clazz==null) {
 			className = Entity.class;
 		} else {
-			className = (Class<Entity>) Class.forName(clazz);
+			className = Code.<Entity>castClass(Class.forName(clazz));
 		}
 		Query<Entity> query = (Query<Entity>) Query.of(className).withWords(search).withPaging(page, 50);
 		SearchResult<Entity> result = modelService.search(query);
@@ -174,7 +175,7 @@ public class SetupRemotingFacade extends AbstractRemotingFacade {
 	}
 	
 	public void updateEntityInfo(EntityInfo info) throws ModelException {
-		Entity entity = modelService.get(Entity.class, info.getId());
+		Entity entity = modelService.get(Entity.class, info.getId(), getRequest().getSession());
 		securityService.grantPublicPrivileges(entity,info.isPublicView(),info.isPublicAlter(),info.isPublicDelete());
 	}
 
@@ -206,14 +207,14 @@ public class SetupRemotingFacade extends AbstractRemotingFacade {
 	}
 	
 	public void updateUser(long id,String username,String password) throws EndUserException {
-		User user = modelService.get(User.class, id);
+		User user = modelService.get(User.class, id, getRequest().getSession());
 		user.setPassword(password);
 		user.setUsername(username);
 		modelService.updateItem(user, getUserSession());
 	}
 	
 	public void deleteUser(long id) throws EndUserException {
-		User user = modelService.get(User.class, id);
+		User user = modelService.get(User.class, id, getRequest().getSession());
 		List<Entity> list = modelService.list(Query.of(Entity.class).withPrivileged(user));
 		for (Entity entity : list) {
 			modelService.deleteEntity(entity, getUserSession());
@@ -269,7 +270,7 @@ public class SetupRemotingFacade extends AbstractRemotingFacade {
 			application.overrideFirstProperty("domain", info.getDomain());
 			modelService.createItem(application, getUserSession());
 		} else {
-			Application application = modelService.get(Application.class, info.getId());
+			Application application = modelService.get(Application.class, info.getId(), getRequest().getSession());
 			application.setName(info.getName());
 			application.overrideFirstProperty("domain", info.getDomain());
 			modelService.updateItem(application, getUserSession());

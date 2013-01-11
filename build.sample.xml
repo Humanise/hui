@@ -19,6 +19,9 @@
 		<copy todir="${dest}/OnlineObjects/onlineobjects/WEB-INF/lib">
 			<fileset dir="${basedir}/lib" excludes="*sources.jar *javadoc.jar"/>
 		</copy>
+		<copy todir="${dest}/OnlineObjects/onlineobjects/WEB-INF/lib">
+			<fileset dir="${basedir}/libdep" excludes="*sources.jar *javadoc.jar"/>
+		</copy>
 		<copy todir="${dest}/OnlineObjects/onlineobjects/hui">
 			<fileset dir="${basedir}/src/web/hui" excludes="**/CVS"/>
 		</copy>

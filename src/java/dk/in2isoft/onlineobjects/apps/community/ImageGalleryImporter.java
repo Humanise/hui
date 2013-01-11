@@ -22,7 +22,7 @@ public class ImageGalleryImporter extends ImageImporter {
 	protected void postProcessImage(Image image, Map<String,String> parameters, Request request) throws EndUserException {
 
 		long imageGalleryId = Long.parseLong(parameters.get("contentId"));
-		ImageGallery gallery = modelService.get(ImageGallery.class, imageGalleryId);
+		ImageGallery gallery = modelService.get(ImageGallery.class, imageGalleryId, request.getSession());
 		
 		Relation relation = new Relation(gallery, image);
 		relation.setPosition(getMaxImagePosition(gallery) + 1);

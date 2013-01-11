@@ -34,6 +34,8 @@ public class ConfigurationService implements InitializingBean {
 
 	private File storageDir;
 
+	private File indexDir;
+
 
 	public void afterPropertiesSet() throws Exception {
 		storageDir = new File(storagePath);
@@ -50,6 +52,16 @@ public class ConfigurationService implements InitializingBean {
 			log.info("Created temporary directory");
 		} else if (!tempDir.canWrite()) {
 			throw new ConfigurationException("Can not write to the temporary directory");
+		}
+
+		indexDir = new File(storageDir,"index");
+		if (!indexDir.isDirectory()) {
+			if (!indexDir.mkdir()) {
+				throw new ConfigurationException("Could not create index directory");
+			}
+			log.info("Created index directory");
+		} else if (!indexDir.canWrite()) {
+			throw new ConfigurationException("Can not write to the index directory");
 		}
 		testSetup();
 		
@@ -101,6 +113,10 @@ public class ConfigurationService implements InitializingBean {
 	
 	public File getStorageDir() {
 		return storageDir;
+	}
+	
+	public File getIndexDir() {
+		return indexDir;
 	}
 
 	public String getStoragePath() {

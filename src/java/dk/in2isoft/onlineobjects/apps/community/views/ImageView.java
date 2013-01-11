@@ -9,6 +9,7 @@ import dk.in2isoft.onlineobjects.core.Pair;
 import dk.in2isoft.onlineobjects.core.PairSearchResult;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.UserQuery;
+import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.Location;
 import dk.in2isoft.onlineobjects.model.Person;
@@ -30,7 +31,8 @@ public class ImageView extends AbstractManagedBean implements InitializingBean {
 	private boolean canModify;
 	
 	public void afterPropertiesSet() throws Exception {
-		image = modelService.get(Image.class, getImageId());
+		UserSession privileged = getRequest().getSession();
+		image = modelService.get(Image.class, getImageId(), privileged);
 		if (image!=null) {
 			if (!securityService.canView(image, getRequest().getSession())) {
 				image = null;

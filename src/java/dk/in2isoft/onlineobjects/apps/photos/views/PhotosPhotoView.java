@@ -53,7 +53,7 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 	private List<Word> words;
 	
 	public void afterPropertiesSet() throws Exception {
-		image = modelService.get(Image.class, getImageId());
+		image = modelService.get(Image.class, getImageId(), getRequest().getSession());
 		if (image!=null) {
 			Messages msg = new Messages(PhotosController.class);
 			

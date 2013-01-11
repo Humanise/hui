@@ -65,7 +65,7 @@ public class Request {
 		return attribute;
 	}
 	
-	private synchronized void debug() {
+	public synchronized void debug() {
 		log.info("------------ new request ------------");
 		log.info("requestUri: "+request.getRequestURI());
 		log.info("requestUrl: "+request.getRequestURL());

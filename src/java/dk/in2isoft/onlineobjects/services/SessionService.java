@@ -13,13 +13,11 @@ import com.google.common.collect.Lists;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.SubSession;
 import dk.in2isoft.onlineobjects.core.UserSession;
-import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 
 public class SessionService {
 
 	private static final Logger log = Logger.getLogger(SessionService.class);
 	
-	private int activeSessionCount;
 	
 	private List<SubSession> subSessions = Lists.newArrayList();
 	
@@ -30,18 +28,12 @@ public class SessionService {
 	public void sessionCreated(HttpSessionEvent event) {
 		HttpSession session = event.getSession();
 		//session.setMaxInactiveInterval(60);
-		activeSessionCount++;
 		log.debug("Session created: id="+session.getId()+",interval="+session.getMaxInactiveInterval());
-		try {
-			UserSession userSession = securityService.ensureUserSession(session);
-			userSessions.add(userSession);
-		} catch (SecurityException e) {
-			log.error("Unable to ensure user session",e);
-		}
+		UserSession userSession = securityService.ensureUserSession(session);
+		userSessions.add(userSession);
 	}
 
 	public void sessionDestroyed(HttpSessionEvent event) {
-		activeSessionCount--;
 		log.debug("Session destroyed: "+event.getSession().getId());
 		UserSession userSession = UserSession.get(event.getSession());
 		if (userSession!=null) {

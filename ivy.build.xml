@@ -16,11 +16,12 @@
    specific language governing permissions and limitations
    under the License.    
 -->
-<project name="hello-ivy" default="run" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="hello-ivy" default="resolve" xmlns:ivy="antlib:org.apache.ivy.ant">
     <!-- some variables used -->
     <property name="lib.dir" value="libdep" />
     <property name="build.dir" value="build" />
     <property name="src.dir" value="src" />
+	<property name="ivy.lib.dir" value="${ivy.project.dir}/libdep"></property>
 
 	<ivy:settings file="./ivysettings.xml" />
     

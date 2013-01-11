@@ -51,6 +51,7 @@ public class SurveillanceService {
 		return root;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public SortedSet<RequestInfo> getLongestRunningRequests() {
 		return Collections.synchronizedSortedSet(longestRunningRequests.getSet());
 	}

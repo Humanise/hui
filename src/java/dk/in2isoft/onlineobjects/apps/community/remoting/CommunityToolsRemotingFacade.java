@@ -28,7 +28,7 @@ public class CommunityToolsRemotingFacade extends AbstractRemotingFacade {
 	public void saveAccount(RemoteAccount dummy) throws EndUserException {
 		RemoteAccount account;
 		if (dummy.getId()>0) {
-			account = modelService.get(RemoteAccount.class, dummy.getId());
+			account = modelService.get(RemoteAccount.class, dummy.getId(), getRequest().getSession());
 		} else {
 			account = new RemoteAccount();			
 		}

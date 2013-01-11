@@ -23,7 +23,7 @@ class InternetAddressImporter implements ImportListerner {
 	}
 
 	public void processFile(File file, String mimeType, String name, Map<String,String> parameters, Request request) throws IOException, EndUserException {
-		HTMLDocument doc = new HTMLDocument(file.toURL());
+		HTMLDocument doc = new HTMLDocument(file.toURI());
 		List<HTMLReference> references = doc.getReferences();
 		for (HTMLReference htmlReference : references) {
 			InternetAddress address = new InternetAddress();

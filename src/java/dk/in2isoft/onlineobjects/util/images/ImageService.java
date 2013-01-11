@@ -116,10 +116,10 @@ public class ImageService extends AbstractCommandLineInterface {
 			Directory gpsDirectory = metadata.getDirectory(GpsDirectory.class);
 			Directory iptcDirectory = metadata.getDirectory(IptcDirectory.class);
 			
-			for (Iterator<Directory> iterator = metadata.getDirectoryIterator(); iterator.hasNext();) {
-				Directory dir = iterator.next();
-				for (Iterator<Tag> i = dir.getTagIterator(); i.hasNext();) {
-					Tag tag = i.next();
+			for (Iterator<?> iterator = metadata.getDirectoryIterator(); iterator.hasNext();) {
+				Directory dir = (Directory)iterator.next();
+				for (Iterator<?> i = dir.getTagIterator(); i.hasNext();) {
+					Tag tag = (Tag)i.next();
 					if (dir.containsTag(tag.getTagType())) {
 						log.info(dir.getName()+" : "+tag.getTagName()+" : "+dir.getObject(tag.getTagType()));
 					}
@@ -160,8 +160,8 @@ public class ImageService extends AbstractCommandLineInterface {
 				imageMetaData.setLongitude(decimal);
 			}
 			
-			for (Iterator<Tag> tagIterator = gpsDirectory.getTagIterator(); tagIterator.hasNext();) {
-				Tag tag = tagIterator.next();
+			for (Iterator<?> tagIterator = gpsDirectory.getTagIterator(); tagIterator.hasNext();) {
+				Tag tag = (Tag) tagIterator.next();
 				if (gpsDirectory.containsTag(tag.getTagType())) {
 					Object object = gpsDirectory.getObject(tag.getTagType());
 					if (object instanceof Rational[]) {
@@ -263,7 +263,7 @@ public class ImageService extends AbstractCommandLineInterface {
 	
 	public void updateImageInfo(ImageInfo info, Privileged priviledged) throws ModelException, SecurityException {
 
-		Image image = modelService.get(Image.class, info.getId());
+		Image image = modelService.get(Image.class, info.getId(),priviledged);
 		image.setName(info.getName());
 		image.overrideFirstProperty(Image.PROPERTY_DESCRIPTION, info.getDescription());
 		image.overrideFirstProperty(Property.KEY_PHOTO_TAKEN, info.getTaken());
@@ -353,8 +353,6 @@ public class ImageService extends AbstractCommandLineInterface {
 
 	public void changeImageFile(Image image, File file,String contentType)
 	throws EndUserException {
-		String mimeType = fileService.getMimeType(file);
-		// TODO: why not use mimeType?
 		int[] dimensions = getImageDimensions(file);
 		image.setWidth(dimensions[0]);
 		image.setHeight(dimensions[1]);

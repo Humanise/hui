@@ -22,8 +22,8 @@ public class DictionaryService implements InitializingBean {
 		File storageDir = configurationService.getStorageDir();
 		File file = new File(storageDir,"dictionary.db");
 		try {
-			database = new EmbeddedGraphDatabase(file.getAbsolutePath());
-			index = new LuceneIndexService( database );
+			//database = new EmbeddedGraphDatabase(file.getAbsolutePath());
+			//index = new LuceneIndexService( database );
 		} catch (TransactionFailureException e) {
 			
 		}

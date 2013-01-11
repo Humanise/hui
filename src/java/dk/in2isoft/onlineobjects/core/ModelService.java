@@ -29,12 +29,14 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.exception.DataException;
+import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.proxy.AbstractLazyInitializer;
 import org.hibernate.proxy.HibernateProxy;
 
 import com.google.common.collect.Lists;
 
+import dk.in2isoft.commons.lang.Code;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.events.EventService;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
@@ -106,10 +108,10 @@ public class ModelService {
 			log.error("Could not load model info", e);
 		}
 		SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
-		Map<Object, Object> metadata = sessionFactory.getAllClassMetadata();
-		for (Iterator<Object> i = metadata.values().iterator(); i.hasNext();) {
-			EntityPersister persister = (EntityPersister) i.next();
-			String className = persister.getClassMetadata().getEntityName();
+		Map<String, ClassMetadata> metadata = sessionFactory.getAllClassMetadata();
+		for (Iterator<ClassMetadata> i = metadata.values().iterator(); i.hasNext();) {
+			ClassMetadata metaData = i.next();
+			String className = metaData.getEntityName();
 			Class<?> clazz;
 			try {
 				clazz = Class.forName(className);
@@ -377,12 +379,11 @@ public class ModelService {
 		return result;
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<Relation> getChildRelations(Entity entity, Class clazz) throws ModelException {
+	public List<Relation> getChildRelations(Entity entity, Class<?> clazz) throws ModelException {
 		String hql = "select relation from Relation as relation,"+clazz.getName()+" child where relation.superEntity=:entity and relation.subEntity=child order by relation.position";
 		Query q = getSession().createQuery(hql);
 		q.setEntity("entity", entity);
-		List<Relation> result = q.list();
+		List<Relation> result = Code.castList(q.list());
 		for (int i = 0; i < result.size(); i++) {
 			result.set(i, getSubject(result.get(i)));
 		}
@@ -632,15 +633,15 @@ public class ModelService {
 	@SuppressWarnings("unchecked")
 	public <T,U> PairSearchResult<T,U> searchPairs(PairQuery<T,U> query) {
 		Query cq = query.createCountQuery(getSession());
-		List list = cq.list();
+		List<Object> list = cq.list();
 		Object next = list.iterator().next();
 		Long count = (Long) next;
 		Query q = query.createItemQuery(getSession());
 		//q.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		List<Pair<T, U>> map = new ArrayList<Pair<T, U>>();
-		for (Iterator i = q.iterate(); i.hasNext();) {
+		for (Iterator<Object> i = q.iterate(); i.hasNext();) {
 			Object[] object = (Object[]) i.next();
-			map.add(new Pair((T)getSubject(object[0]), (U)getSubject(object[1])));
+			map.add(new Pair<T,U>((T)getSubject(object[0]), (U)getSubject(object[1])));
 		}
 		return new PairSearchResult<T,U>(map,count.intValue());
 	}

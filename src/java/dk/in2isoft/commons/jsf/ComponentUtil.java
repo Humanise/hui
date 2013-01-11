@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import dk.in2isoft.commons.lang.Code;
 import dk.in2isoft.onlineobjects.ui.Request;
 
 public class ComponentUtil {
@@ -36,7 +37,7 @@ public class ComponentUtil {
 		if (valueExpression != null) {
 			Object value = valueExpression.getValue(context.getELContext());
 			if (value != null) {
-				return (T) value;
+				return Code.cast(value);
 			}
 		}
 		return localValue;
@@ -48,7 +49,7 @@ public class ComponentUtil {
 		ValueExpression valueExpression = context.getApplication().getExpressionFactory().createValueExpression(context.getELContext(),"#{"+name+"}",service);
 		Object value = valueExpression.getValue(context.getELContext());
 		if (value!=null && service.isAssignableFrom(value.getClass())) {
-			return (T) value;
+			return Code.cast(value);
 		}
 		return null;
 	}

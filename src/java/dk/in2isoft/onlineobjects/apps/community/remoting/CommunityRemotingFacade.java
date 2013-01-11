@@ -303,7 +303,7 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 	}
 	
 	public InternetAddressInfo getInternetAddress(long id) throws ModelException {
-		InternetAddress address = modelService.get(InternetAddress.class, id);
+		InternetAddress address = modelService.get(InternetAddress.class, id, getRequest().getSession());
 		if (address!=null) {
 			InternetAddressInfo info = new InternetAddressInfo();
 			info.setId(address.getId());
@@ -340,7 +340,7 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 	public void saveInternetAddress(InternetAddressInfo info) throws ModelException, SecurityException {
 		InternetAddress address;
 		if (info.getId()!=null) {
-			address = modelService.get(InternetAddress.class, info.getId());
+			address = modelService.get(InternetAddress.class, info.getId(), getRequest().getSession());
 		} else {
 			address = new InternetAddress();
 		}
@@ -355,7 +355,7 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 	
 	public Map<String,Object> loadPerson(long id) throws ModelException {
 		Map<String,Object> data = new HashMap<String, Object>();
-		Person person = modelService.get(Person.class, id);
+		Person person = modelService.get(Person.class, id, getRequest().getSession());
 		data.put("person", person);
 		List<EmailAddress> emails = modelService.getChildren(person, EmailAddress.class);
 		data.put("emails", emails);
@@ -366,7 +366,7 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 	
 	public Map<String,Object> getImage(long id) throws ModelException {
 		Map<String,Object> data = new HashMap<String, Object>();
-		Image image = modelService.get(Image.class, id);
+		Image image = modelService.get(Image.class, id, getRequest().getSession());
 		data.put("image", image);
 		data.put("name", image.getName());
 		data.put("description", image.getPropertyValue(Image.PROPERTY_DESCRIPTION));
@@ -375,7 +375,7 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 	}
 	
 	public void updateImage(long id,String name,String description, List<String> tags) throws EndUserException {
-		Image image = modelService.get(Image.class, id);
+		Image image = modelService.get(Image.class, id, getRequest().getSession());
 		image.setName(name);
 		image.overrideFirstProperty(Image.PROPERTY_DESCRIPTION, description);
 		image.overrideProperties(Property.KEY_COMMON_TAG, tags);
@@ -383,7 +383,7 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 	}
 	
 	public ImageInfo getImageInfo(long id) throws EndUserException {
-		Image image = modelService.get(Image.class, id);
+		Image image = modelService.get(Image.class, id, getRequest().getSession());
 		if (image==null) {
 			throw new IllegalRequestException("Image not found");
 		}
@@ -398,7 +398,7 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 	public void savePerson(Person dummy,List<EmailAddress> addresses,List<PhoneNumber> phones) throws EndUserException {
 		Person person;
 		if (dummy.getId()>0) {
-			person = modelService.get(Person.class, dummy.getId());
+			person = modelService.get(Person.class, dummy.getId(), getRequest().getSession());
 		} else {
 			person = new Person();
 		}
@@ -432,7 +432,7 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 	////////////// Geo /////////////
 	
 	public Location getImageLocation(long id) throws EndUserException {
-		Image image = modelService.get(Image.class, id);
+		Image image = modelService.get(Image.class, id, getRequest().getSession());
 		if (image==null) {
 			throw new IllegalRequestException("Image not found");
 		}

@@ -39,6 +39,7 @@
 		class="dk.in2isoft.onlineobjects.apps.words.views.WordsSearchView"
 		scope="request">
 		<property name="modelService" ref="modelService" />
+		<property name="indexService" ref="indexService" />
 	</bean>
 
 	<bean id="wordsFrontView"

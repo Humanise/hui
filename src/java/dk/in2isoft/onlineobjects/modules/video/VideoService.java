@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 import com.google.common.collect.Lists;
 
@@ -28,7 +27,7 @@ import dk.in2isoft.onlineobjects.ui.Request;
 
 public class VideoService extends AbstractCommandLineInterface {
 
-	private static Logger log = Logger.getLogger(VideoService.class);
+	//private static Logger log = Logger.getLogger(VideoService.class);
 	
 	private StorageService storageService;
 	private ConfigurationService configurationService;

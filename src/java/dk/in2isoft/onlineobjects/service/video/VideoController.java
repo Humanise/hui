@@ -55,7 +55,7 @@ public class VideoController extends ServiceController {
 	}
 
 	private void process(Request request, long id) throws IOException, EndUserException {
-		Video video = modelService.get(Video.class, id);
+		Video video = modelService.get(Video.class, id, request.getSession());
 		File file = videoService.getVideoFile(video);
 		FilePusher pusher = new FilePusher(file);
 		pusher.setClientSideCaching(true);

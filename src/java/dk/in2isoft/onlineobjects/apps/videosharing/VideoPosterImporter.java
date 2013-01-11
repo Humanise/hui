@@ -27,7 +27,7 @@ class VideoPosterImporter extends ImageImporter {
 	@Override
 	protected boolean isRequestLegal(Map<String, String> parameters, Request request) throws EndUserException {
 		long videoId = Long.parseLong(parameters.get("videoId"));
-		Video video = modelService.get(Video.class, videoId);
+		Video video = modelService.get(Video.class, videoId, request.getSession());
 		if (video==null) {
 			return false;
 		}
@@ -37,7 +37,7 @@ class VideoPosterImporter extends ImageImporter {
 	@Override
 	protected void postProcessImage(Image image, Map<String, String> parameters, Request request) throws EndUserException {
 		long videoId = Long.parseLong(parameters.get("videoId"));
-		Video video = modelService.get(Video.class, videoId);
+		Video video = modelService.get(Video.class, videoId, request.getSession());
 		if (video==null) {
 			throw new IllegalRequestException("Unable to find video");
 		}

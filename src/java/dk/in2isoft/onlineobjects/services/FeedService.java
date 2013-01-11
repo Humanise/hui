@@ -33,7 +33,8 @@ public class FeedService {
 		}
         if (feed instanceof Channel) {
         	Channel channel = (Channel) feed;
-        	List<Item> items = channel.getItems();
+        	@SuppressWarnings("unchecked")
+			List<Item> items = channel.getItems();
         	return items;
         }
         return null;

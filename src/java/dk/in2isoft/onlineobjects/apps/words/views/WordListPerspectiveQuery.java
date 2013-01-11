@@ -1,16 +1,15 @@
 package dk.in2isoft.onlineobjects.apps.words.views;
 
 import java.math.BigInteger;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.SQLQuery;
+import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
-import org.hibernate.type.Type;
 
-import com.google.common.collect.Lists;
-
+import dk.in2isoft.commons.lang.Code;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.CustomQuery;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
@@ -42,6 +41,8 @@ public class WordListPerspectiveQuery implements CustomQuery<WordListPerspective
 	
 	private List<String> words;
 	
+	private Collection<Long> ids;
+	
 	private static final String SQL = 
 	" from word"+
 	" left JOIN item on item.id=word.id "+
@@ -67,8 +68,23 @@ public class WordListPerspectiveQuery implements CustomQuery<WordListPerspective
 	public String getCountSQL() {
 		StringBuilder sql = new StringBuilder();
 		sql.append("select count(word.id) as num  from word");
+		sql.append(buildWhere());
+		return sql.toString();
+	}
+	
+	private String buildWhere() {
+		StringBuilder sql = new StringBuilder();
 		if (startingWith!=null) {
-			sql.append(" where lower(word.text) like :startingWith"); 
+			sql.append(sql.length()>0 ? " and " : " where ");
+			sql.append(" lower(word.text) like :startingWith"); 
+		}
+		if (words!=null) {
+			sql.append(sql.length()>0 ? " and " : " where ");
+			sql.append(" lower(word.text) in (:words)");
+		}
+		if (ids!=null && !ids.isEmpty()) {
+			sql.append(sql.length()>0 ? " and " : " where ");
+			sql.append(" word.id in (:ids)");
 		}
 		return sql.toString();
 	}
@@ -77,12 +93,7 @@ public class WordListPerspectiveQuery implements CustomQuery<WordListPerspective
 		StringBuilder sql = new StringBuilder();
 		sql.append("select word.id, word.text, language.code as language, lexicalcategory.code as category,item.created,property.value as glossary ");
 		sql.append(SQL);
-		if (startingWith!=null) {
-			sql.append(" where lower(word.text) like :startingWith"); 
-		}
-		if (words!=null) {
-			sql.append(" where lower(word.text) in (:words)");
-		}
+		sql.append(buildWhere());
 		sql.append(" order by "+this.ordering+" ");
 		if (pageSize>0) {
 			sql.append(" limit ").append(pageSize);
@@ -99,6 +110,9 @@ public class WordListPerspectiveQuery implements CustomQuery<WordListPerspective
 		}
 		if (words!=null) {
 			sql.setParameterList("words", words, new StringType());
+		}
+		if (ids!=null && !ids.isEmpty()) {
+			sql.setParameterList("ids", ids, new LongType());
 		}
 	}
 	
@@ -123,7 +137,7 @@ public class WordListPerspectiveQuery implements CustomQuery<WordListPerspective
 	}
 
 	public WordListPerspectiveQuery withWords(String[] words) {
-		this.words = Arrays.asList(words);
+		this.words = Strings.asList(words);
 		return this;
 	}
 
@@ -133,5 +147,9 @@ public class WordListPerspectiveQuery implements CustomQuery<WordListPerspective
 		return this;
 	}
 
+	public WordListPerspectiveQuery withIds(Collection<Long> ids) {
+		this.ids = ids;
+		return this;
+	}
 
 }

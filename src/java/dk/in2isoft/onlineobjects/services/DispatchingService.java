@@ -33,10 +33,10 @@ public class DispatchingService implements InitializingBean {
 	private static Logger log = Logger.getLogger(DispatchingService.class);
 	
 	private ModelService modelService;
-	private ConfigurationService configurationService;
 	private SecurityService securityService;
-	private List<Responder> responders;
 	private SurveillanceService surveillanceService;
+
+	private List<Responder> responders;
 	
 	public DispatchingService() {
 	}
@@ -59,6 +59,8 @@ public class DispatchingService implements InitializingBean {
 		if (request.isSet("username") && request.isSet("password")) {
 			securityService.changeUser(request.getSession(), request.getString("username"),request.getString("password"));
 		}
+		
+		securityService.ensureUserSession(servletRequest.getSession());
 		
 		for (Responder responder : responders) {
 			if (!handled && responder.applies(request)) {
@@ -139,11 +141,7 @@ public class DispatchingService implements InitializingBean {
 	public void setModelService(ModelService modelService) {
 		this.modelService = modelService;
 	}
-	
-	public void setConfigurationService(ConfigurationService configurationService) {
-		this.configurationService = configurationService;
-	}
-	
+		
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
 	}

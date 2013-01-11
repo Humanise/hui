@@ -66,7 +66,7 @@ public class SchoolRemotingFacade extends AbstractRemotingFacade {
 	
 	public InfoViewData getEventInfo(long id) throws ModelException {
 		InfoViewData data = new InfoViewData();
-		Event event = modelService.get(Event.class, id);
+		Event event = modelService.get(Event.class, id, getRequest().getSession());
 		data.addHeader(event.getName());
 		
 		data.addProperty("Start:",formatDate(event.getStartTime()));
@@ -108,7 +108,7 @@ public class SchoolRemotingFacade extends AbstractRemotingFacade {
 	}
 	
 	public boolean changeToUserOfPerson(long id) throws ModelException {
-		Person person = modelService.get(Person.class, id);
+		Person person = modelService.get(Person.class, id,getRequest().getSession());
 		if (person!=null) {
 			User user = modelService.getParent(person, Relation.KIND_SYSTEM_USER_SELF, User.class);
 			if (user!=null) {

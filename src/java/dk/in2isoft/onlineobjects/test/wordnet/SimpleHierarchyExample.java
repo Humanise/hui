@@ -41,11 +41,9 @@ package dk.in2isoft.onlineobjects.test.wordnet;
 import java.io.File;
 import java.io.PrintStream;
 import java.net.MalformedURLException;
-import java.util.Set;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLException;
 import org.semanticweb.owlapi.model.OWLOntology;

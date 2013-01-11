@@ -179,7 +179,7 @@ public class SecurityService {
 		modelService.grantPrivileges(item, getPublicUser(), view, alter, delete);		
 	}
 
-	public UserSession ensureUserSession(HttpSession session) throws SecurityException {
+	public UserSession ensureUserSession(HttpSession session) {
 		if (session.getAttribute(UserSession.SESSION_ATTRIBUTE) == null) {
 			log.debug("Creating new user session");
 			session.setAttribute(UserSession.SESSION_ATTRIBUTE, new UserSession(getInitialUser()));

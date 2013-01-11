@@ -18,7 +18,7 @@ public class PublishingRemotingFacade extends AbstractRemotingFacade {
 	private WebModelService webModelService;
 
 	public WebPageInfo getPageInfo(long pageId) throws EndUserException {
-		WebPage page = modelService.get(WebPage.class, pageId);
+		WebPage page = modelService.get(WebPage.class, pageId, getUserSession());
 		if (page==null) {
 			throw new IllegalRequestException("Page not found");
 		}
@@ -40,7 +40,7 @@ public class PublishingRemotingFacade extends AbstractRemotingFacade {
 	}
 
 	public void updatePageInfo(WebPageInfo info) throws EndUserException {
-		WebPage page = modelService.get(WebPage.class, info.getId());
+		WebPage page = modelService.get(WebPage.class, info.getId(), getUserSession());
 		page.setName(info.getPageTitle());
 		page.overrideProperties(Property.KEY_COMMON_TAG, info.getTags());
 
@@ -54,7 +54,7 @@ public class PublishingRemotingFacade extends AbstractRemotingFacade {
 	}
 
 	public void changePageTemplate(long pageId, String template) throws EndUserException {
-		WebPage page = modelService.get(WebPage.class, pageId);
+		WebPage page = modelService.get(WebPage.class, pageId, getUserSession());
 		page.overrideFirstProperty(WebPage.PROPERTY_TEMPLATE, template);
 		modelService.updateItem(page, getUserSession());
 	}
@@ -77,19 +77,19 @@ public class PublishingRemotingFacade extends AbstractRemotingFacade {
 	}
 
 	public boolean updateWebNode(long id, String name) throws EndUserException {
-		WebNode node = modelService.get(WebNode.class, id);
+		WebNode node = modelService.get(WebNode.class, id, getUserSession());
 		node.setName(name);
 		modelService.updateItem(node, getUserSession());
 		return true;
 	}
 	
 	public void moveNodeUp(long id) throws EndUserException {
-		WebNode node = modelService.get(WebNode.class, id);
+		WebNode node = modelService.get(WebNode.class, id, getUserSession());
 		webModelService.moveNodeUp(node,getUserSession());
 	}
 	
 	public void moveNodeDown(long id) throws EndUserException {
-		WebNode node = modelService.get(WebNode.class, id);
+		WebNode node = modelService.get(WebNode.class, id, getUserSession());
 		webModelService.moveNodeDown(node,getUserSession());
 	}
 
