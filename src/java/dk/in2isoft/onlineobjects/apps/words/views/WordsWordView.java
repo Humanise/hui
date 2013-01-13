@@ -1,5 +1,6 @@
 package dk.in2isoft.onlineobjects.apps.words.views;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
@@ -47,14 +48,18 @@ public class WordsWordView extends AbstractView implements InitializingBean {
 					WordRelation rel = new WordRelation();
 					rel.setId(relation.getId());
 					rel.setWord((Word) relation.getSubEntity());
-					map.put(relation.getKind(), rel);
+					if (!contains(map, relation.getKind(), rel)) {
+						map.put(relation.getKind(), rel);
+					}
 				}
 				List<Relation> parents = modelService.getParentRelations(impression.getWord(),Word.class);
 				for (Relation relation : parents) {
 					WordRelation rel = new WordRelation();
 					rel.setId(relation.getId());
 					rel.setWord((Word) relation.getSuperEntity());
-					map.put(relation.getKind(), rel);
+					if (!contains(map, relation.getKind(), rel)) {
+						map.put(relation.getKind(), rel);
+					}
 				}
 				List<WordRelationGroup> relationsList = Lists.newArrayList();
 				for (String kind : map.keySet()) {
@@ -66,6 +71,16 @@ public class WordsWordView extends AbstractView implements InitializingBean {
 				impression.setRelations(relationsList);
 			}
 		}
+	}
+	
+	private boolean contains(Multimap<String, WordRelation> map, String type, WordRelation relation) {
+		Collection<WordRelation> collection = map.get(type);
+		for (WordRelation wordRelation : collection) {
+			if (wordRelation.getWord().getId()==relation.getWord().getId()) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public List<Option> getCategories() {

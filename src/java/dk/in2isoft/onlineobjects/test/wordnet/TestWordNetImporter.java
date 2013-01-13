@@ -27,10 +27,12 @@ import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
 import dk.in2isoft.onlineobjects.core.Query;
+import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Language;
 import dk.in2isoft.onlineobjects.model.LexicalCategory;
 import dk.in2isoft.onlineobjects.model.Property;
+import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.modules.dannet.DanNetGlossary;
 import dk.in2isoft.onlineobjects.modules.dannet.DanNetUtil;
@@ -54,6 +56,7 @@ public class TestWordNetImporter extends AbstractSpringTestCase {
 	private static Node wordRelation = Node.createURI("http://www.w3.org/2006/03/wn/wn20/schema/word");
 	private static Node lexicalForm = Node.createURI("http://www.w3.org/2006/03/wn/wn20/schema/lexicalForm");
 	private static Node partOfSpeech = Node.createURI("http://www.wordnet.dk/owl/instance/2009/03/schema/partOfSpeech");
+	private static Node nearSynonymOf = Node.createURI("http://www.wordnet.dk/owl/instance/2009/03/schema/nearSynonymOf");
 	private static final Node CONTAINS_SENSE = Node.createURI("http://www.w3.org/2006/03/wn/wn20/schema/containsWordSense");
 	
 	private static final Map<String,String> map = Maps.newHashMap();
@@ -79,6 +82,7 @@ public class TestWordNetImporter extends AbstractSpringTestCase {
 		read("glossary.rdf");
 		read("part_of_speech.rdf");
 		read("synsets.rdf");
+		read("nearSynonymOf.rdf");
 
 		graph = model.getGraph();
 		
@@ -86,7 +90,7 @@ public class TestWordNetImporter extends AbstractSpringTestCase {
 	}
 
 	private static void read(String fileName) throws FileNotFoundException, IOException {
-		FileReader reader = new FileReader(new File("/Users/jbm/Development/Workspace/onlineobjects/testdata/DanNet-2.1_owl/"+fileName));
+		FileReader reader = new FileReader(new File("/Users/jbm/Udvikling/Workspace/OnlineObjects/testdata/DanNet-2.1_owl/"+fileName));
 		model.read(reader, "UTF-8");
 		reader.close();
 		log.info("imported: "+fileName+" : "+new Duration(watch.getTime()));
@@ -125,11 +129,15 @@ public class TestWordNetImporter extends AbstractSpringTestCase {
 				Node lexNode = first(query.objectsFor(word.getSubject(), lexicalForm));
 				String text = lexNode.getLiteralLexicalForm();
 				
+				if (!"mand".equals(text)) {
+					//continue;
+				}
+				
 				if ("heel".equals(text)) {
 					continue;
 				}
 
-				print("","");
+				print("-------------------------------------");
 				print("word",word);
 				print(" - lexicalForm",lexNode);
 				print(" - partOfSpeech",first(query.objectsFor(word.getSubject(), partOfSpeech)));
@@ -147,11 +155,11 @@ public class TestWordNetImporter extends AbstractSpringTestCase {
 						localWord.setText(label);
 						localWord.addProperty(Property.KEY_DATA_SOURCE, sense.getURI());
 						modelService.createItem(localWord, getPublicUser());
-						modelService.commit();
 					} else {
 						print("found",localWord);
 					}
 					
+					// Lexical category...
 					LexicalCategory lexicalCategory = modelService.getParent(localWord, LexicalCategory.class);
 					if (lexicalCategory==null) {
 						String code = map.get(type.getURI());
@@ -167,6 +175,8 @@ public class TestWordNetImporter extends AbstractSpringTestCase {
 					} else {
 						log.error("Already categorized: "+lexicalCategory.getCode());
 					}
+					
+					// Language...
 					Language language = modelService.getParent(localWord, Language.class);
 					if (language==null) {
 						modelService.createRelation(danish, localWord, getPublicUser());
@@ -177,26 +187,63 @@ public class TestWordNetImporter extends AbstractSpringTestCase {
 					
 					
 					print(" - sense",label);
-					//print(" - sense - out",Lists.newArrayList(query.objectsFor(sense, null)));
-					//print(" - sense - in",Lists.newArrayList(graph.find(null, null, sense)));
+					print(" - sense - out",Lists.newArrayList(query.objectsFor(sense, null)));
+					print(" - sense - in",Lists.newArrayList(graph.find(null, null, sense)));
 					ExtendedIterator<Node> synSets = query.subjectsFor(CONTAINS_SENSE, sense);
 					while (synSets.hasNext()) {
 						Node synset = synSets.next();
 						Node glossary = first(query.objectsFor(synset, GLOSSARY));
 						if (glossary!=null) {
-							print(" - sense - -synset - glossary",glossary.getLiteralLexicalForm());
+							print(" - sense - synset - glossary",glossary.getLiteralLexicalForm());
 						}
 						DanNetGlossary parsed = DanNetUtil.parseGlossary(glossary.getLiteralLexicalForm());
 						localWord.removeProperties(Property.KEY_SEMANTICS_GLOSSARY);
+						localWord.removeProperties(Property.KEY_SEMANTICS_EXAMPLE);
 						localWord.addProperty(Property.KEY_SEMANTICS_GLOSSARY, parsed.getGlossary());
 						for (String example : parsed.getExamples()) {
 							localWord.addProperty(Property.KEY_SEMANTICS_EXAMPLE, example);
 						}
 						modelService.updateItem(localWord, getPublicUser());
-						modelService.commit();
 						
+						// remove existing synonyms
+						/*
+						List<Relation> synonyms = modelService.getChildRelations(localWord, Word.class);
+						for (Relation synonym : synonyms) {
+							if (!Relation.KIND_SEMANTICS_SYNONYMOUS.equals(synonym.getKind())) {
+								modelService.deleteRelation(synonym, getPublicUser());
+							}
+						}*/
+						
+
+						print(" - sense - synset - out",Lists.newArrayList(query.objectsFor(synset, null)));
+						print(" - sense - synset - in",Lists.newArrayList(graph.find(null, null, synset)));
+						
+						ExtendedIterator<Node> wordsInSynset = query.objectsFor(synset, CONTAINS_SENSE);
+						int numberOfSensesInSynset = 0;
+						while (wordsInSynset.hasNext()) {
+							Node wordsenseOfSynset = wordsInSynset.next();
+							if (wordsenseOfSynset.getURI().equals(sense.getURI())) {
+								continue; // Skip existing
+							}
+							print(" - sense - synset - sense", wordsenseOfSynset);
+							String wordsenseOfSynsetLabel = first(query.objectsFor(wordsenseOfSynset, RDFS.label.asNode())).getLiteralLexicalForm();
+							print(" - sense - synset - sense - label",wordsenseOfSynsetLabel);
+							print(" - sense - synset - sense - out",Lists.newArrayList(graph.find(wordsenseOfSynset, null, null)));
+							print(" - sense - synset - sense - in",Lists.newArrayList(graph.find(null, null, wordsenseOfSynset)));
+							Word foundSynonym = findWord(wordsenseOfSynsetLabel, wordsenseOfSynset.getURI());
+							if (foundSynonym!=null) {
+								createSynonym(localWord,foundSynonym);
+							} else {
+								print("Unable to find existing sense");
+							}
+							numberOfSensesInSynset++;
+						}
+						if (numberOfSensesInSynset > 4) {
+							print("Found more than 4 senses : "+numberOfSensesInSynset);
+						}
 					}
 					//print(" - sense - in",Lists.newArrayList());
+					modelService.commit();
 				}
 				log.info((Math.round((float) num)/((float) total)*100)+"%");
 			}
@@ -204,6 +251,13 @@ public class TestWordNetImporter extends AbstractSpringTestCase {
 
 	}
 	
+	private void createSynonym(Word localWord, Word foundSynonym) throws ModelException {
+		Word existingSynonym = modelService.getChild(localWord, Relation.KIND_SEMANTICS_SYNONYMOUS,Word.class);
+		if (existingSynonym==null) {
+			modelService.createRelation(localWord, foundSynonym, Relation.KIND_SEMANTICS_SYNONYMOUS, getPublicUser());
+		}
+	}
+
 	private Word findWord(String text, String sourceId) {
 		List<Word> list = modelService.list(Query.after(Word.class).withField(Word.TEXT_FIELD, text));
 		for (Word word : list) {

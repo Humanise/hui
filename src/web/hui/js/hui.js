@@ -1217,10 +1217,8 @@ hui.listen = function(element,type,listener,useCapture) {
 hui.listenOnce = function(element,type,listener) {	
 	var func = null;
 	func = function(e) {
-		if (this.called) return;
 		hui.unListen(element,type,func)
 		listener(e);
-		this.called = true;
 	}
 	hui.listen(element,type,func);
 }
@@ -1233,7 +1231,6 @@ hui.listenOnce = function(element,type,listener) {
  * @param {boolean} useCapture If the listener should "capture"
  */
 hui.unListen = function(el,type,listener,useCapture) {
-	hui.log('unlisten')
 	el = hui.get(el);
 	if(document.removeEventListener) {
 		hui.log('removing',listener, 'from', el)

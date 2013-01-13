@@ -39,7 +39,9 @@ public class WordsController extends WordsControllerBase {
 	public void startImport(Request request) throws NetworkException, IOException {
 		String url = request.getString("url");
 		ImportSession session = importService.createImportSession(request.getSession());
-		session.setHandler(new HTMLDocumentImporter(url));
+		HTMLDocumentImporter handler = new HTMLDocumentImporter(url);
+		handler.setFeedService(feedService);
+		session.setHandler(handler);
 		session.start();
 		
 		request.sendObject(session.getId());

@@ -20,6 +20,9 @@ import org.w3c.dom.NodeList;
 
 import com.google.common.collect.Lists;
 
+import de.l3s.boilerpipe.BoilerpipeProcessingException;
+import de.l3s.boilerpipe.extractors.ArticleExtractor;
+
 public class HTMLDocument extends XMLDocument {
 
 	private String title;
@@ -36,6 +39,7 @@ public class HTMLDocument extends XMLDocument {
 	public HTMLDocument(URI uri) throws MalformedURLException {
 		super(uri.toURL());
 	}
+	
 	public String getTitle() {
 		if (this.title==null) {
 			Document doc = getDOMDocument();
@@ -101,6 +105,14 @@ public class HTMLDocument extends XMLDocument {
         text = text.replaceAll("\\s{2,}", " ");
         text = text.replaceAll("\\s{2,}", " ");
         return text;
+    }
+    
+    public String getExtractedContents() {
+    	try {
+			return ArticleExtractor.INSTANCE.getText(getRawString());
+		} catch (BoilerpipeProcessingException e) {
+			return null;
+		}
     }
     
     private void traverse(nu.xom.Node parent, StringBuffer data) {

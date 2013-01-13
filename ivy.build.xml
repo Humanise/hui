@@ -38,6 +38,8 @@
           target: resolve              
          ================================= -->
     <target name="resolve" description="--> retreive dependencies with ivy">
+    	<delete dir="./libdep"/>
+    	<mkdir dir="./libdep" />
         <ivy:retrieve/>
     </target>    
     

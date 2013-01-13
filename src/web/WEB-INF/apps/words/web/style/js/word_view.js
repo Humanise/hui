@@ -18,23 +18,21 @@ var wordView = {
 	$select$oo_wordfinder : function(word) {
 		var button = hui.ui.get('relate'+this.wordInfo.id),
 			panel = hui.ui.get('relationKindPanel');
-			this.relatedWord = word;
-			hui.listenOnce(hui.get.firstByClass(panel.element,'panel_body'),'click',function(e) {
-				alert(this.relatedWord==word)
-				e = hui.event(e);
-				var a = e.findByTag('a');
-				if (a) {
-					panel.hide();
-					this._createRelation(this.wordInfo.id,a.getAttribute('rel'),word.id);
-				}
-			}.bind(this))
-		hui.defer(function() {
-			panel.position(button);
-			panel.show();
-			
-		});
+		
+		this.newRelatedWord = word;
+		panel.position(button);
+		panel.show();
+	},
+	selectRelationKind : function(e) {
+		e = hui.event(e);
+		var a = e.findByTag('a');
+		if (a) {
+			hui.ui.get('relationKindPanel').hide();
+			this._createRelation(this.wordInfo.id,a.getAttribute('rel'),this.newRelatedWord.id);
+		}
 		
 	},
+	
 	_createRelation : function(from,kind,to) {
 		hui.ui.showMessage({text:{en:'Adding relation...',da:'Tilføjer relation...'},busy:true,delay:300});
 		hui.ui.request({

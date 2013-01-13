@@ -141,7 +141,7 @@
 					</gui:boundPanel>
 					
 					<gui:boundPanel name="relationKindPanel" modal="transparent" width="200">
-						<div class="panel_body">
+						<div class="panel_body" onclick="wordView.selectRelationKind(event)">
 							<h2>#{msg.relation_kind}</h2>
 							<ul class="selection">
 								<c:forEach items="#{wordsWordView.relations}" var="cat">

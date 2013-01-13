@@ -49,7 +49,7 @@ public class TestIndexWords extends AbstractJUnit4SpringContextTests {
 		Results<Word> results = modelService.scroll(query);
 		int num = 0;
 		int percent = -1;
-		while (results.next() && percent<30) {
+		while (results.next()) {
 			Word word = results.get();
 			Document doc = new Document();
 			int newPercent = Math.round(((float)num)/(float)count*100);
@@ -60,8 +60,13 @@ public class TestIndexWords extends AbstractJUnit4SpringContextTests {
 			StringBuilder text = new StringBuilder();
 			text.append(word.getText()).append(" ");
 			String glossary = word.getPropertyValue(Property.KEY_SEMANTICS_GLOSSARY);
+			if (glossary==null) {
+				glossary="";
+			}
 			text.append(glossary);
 			doc.add(new TextField("text", text.toString(), Field.Store.YES));
+			doc.add(new TextField("word", word.getText(), Field.Store.YES));
+			doc.add(new TextField("glossary", glossary, Field.Store.YES));
 			index.update(word, doc);
 			num++;
 		}

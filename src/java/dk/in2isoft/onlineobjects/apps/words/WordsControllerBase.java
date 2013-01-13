@@ -1,6 +1,7 @@
 package dk.in2isoft.onlineobjects.apps.words;
 
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
+import dk.in2isoft.onlineobjects.services.FeedService;
 import dk.in2isoft.onlineobjects.services.ImportService;
 import dk.in2isoft.onlineobjects.ui.Request;
 
@@ -8,6 +9,7 @@ public class WordsControllerBase extends ApplicationController {
 
 	protected ImportService importService;
 	protected WordsModelService wordsModelService;
+	protected FeedService feedService;
 
 	public WordsControllerBase() {
 		super("words");
@@ -40,6 +42,10 @@ public class WordsControllerBase extends ApplicationController {
 
 	public void setWordsModelService(WordsModelService wordsModelService) {
 		this.wordsModelService = wordsModelService;
+	}
+	
+	public void setFeedService(FeedService feedService) {
+		this.feedService = feedService;
 	}
 
 }
