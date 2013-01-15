@@ -28,7 +28,12 @@ var wordView = {
 		var a = e.findByTag('a');
 		if (a) {
 			hui.ui.get('relationKindPanel').hide();
-			this._createRelation(this.wordInfo.id,a.getAttribute('rel'),this.newRelatedWord.id);
+			var info = hui.string.fromJSON(a.getAttribute('rel'));
+			if (info.reverse) {
+				this._createRelation(this.newRelatedWord.id,info.kind,this.wordInfo.id);
+			} else {
+				this._createRelation(this.wordInfo.id,info.kind,this.newRelatedWord.id);
+			}
 		}
 		
 	},

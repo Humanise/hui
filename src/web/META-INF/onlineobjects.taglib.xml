@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <facelet-taglib>
-  <namespace>http://www.onlineobjects.com/jsf</namespace>
+	<namespace>http://www.onlineobjects.com/jsf</namespace>
+  
+	<function>
+		<function-name>json</function-name>
+		<function-class>dk.in2isoft.onlineobjects.ui.jsf.Functions</function-class>
+		<function-signature>String json(java.lang.Object)</function-signature>
+	</function>
+  
   <tag>
     <tag-name>body</tag-name>
     <component>

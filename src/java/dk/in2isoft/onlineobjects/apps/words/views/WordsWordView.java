@@ -11,6 +11,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
 import dk.in2isoft.commons.jsf.AbstractView;
+import dk.in2isoft.onlineobjects.apps.words.views.util.RelationOption;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.model.Language;
@@ -34,7 +35,9 @@ public class WordsWordView extends AbstractView implements InitializingBean {
 	private Language language;
 	private List<Option> categories;
 	private List<Option> languages;
-	private List<Option> relations;
+	private List<RelationOption> relations;
+	private List<String> RELATIONS_BOTH_WAYS = Lists.newArrayList(Relation.KIND_SEMANTICS_EQUIVALENT, Relation.KIND_SEMANTICS_SYNONYMOUS, Relation.KIND_SEMANTICS_ANTONYMOUS);
+	private List<String> RELATIONS_ONE_WAY = Lists.newArrayList(Relation.KIND_SEMANTICS_MORPHEME);
 	
 	public void afterPropertiesSet() throws Exception {
 		String[] path = getRequest().getLocalPath();
@@ -48,8 +51,13 @@ public class WordsWordView extends AbstractView implements InitializingBean {
 					WordRelation rel = new WordRelation();
 					rel.setId(relation.getId());
 					rel.setWord((Word) relation.getSubEntity());
+					
 					if (!contains(map, relation.getKind(), rel)) {
-						map.put(relation.getKind(), rel);
+						if (RELATIONS_ONE_WAY.contains(relation.getKind())) {
+							map.put(relation.getKind()+".reverse", rel);
+						} else {
+							map.put(relation.getKind(), rel);
+						}
 					}
 				}
 				List<Relation> parents = modelService.getParentRelations(impression.getWord(),Word.class);
@@ -123,19 +131,29 @@ public class WordsWordView extends AbstractView implements InitializingBean {
 		return languages;
 	}
 	
-	public List<Option> getRelations() {
+	public List<RelationOption> getRelations() {
 		if (relations!=null) return relations;
 		
-		List<String> kinds = Lists.newArrayList(Relation.KIND_SEMANTICS_EQUIVALENT, Relation.KIND_SEMANTICS_SYNONYMOUS, Relation.KIND_SEMANTICS_ANTONYMOUS);
-
 		Messages msg = new Messages("classpath:dk/in2isoft/onlineobjects/apps/words/msg/Words");
 		relations = Lists.newArrayList();
 		Locale locale = getLocale();
-		for (String kind : kinds) {
-			Option option = new Option();
-			option.setValue(kind);
+		for (String kind : RELATIONS_BOTH_WAYS) {
+			RelationOption option = new RelationOption();
+			option.setKind(kind);
 			option.setLabel(msg.get(kind, locale));
 			relations.add(option);
+		}
+		for (String kind : RELATIONS_ONE_WAY) {
+			RelationOption option = new RelationOption();
+			option.setKind(kind);
+			option.setLabel(msg.get(kind, locale));
+			option.setReverse(true);
+			relations.add(option);
+			
+			RelationOption reverse = new RelationOption();
+			reverse.setKind(kind);
+			reverse.setLabel(msg.get(kind+".reverse", locale));
+			relations.add(reverse);
 		}
 		return relations;
 	}

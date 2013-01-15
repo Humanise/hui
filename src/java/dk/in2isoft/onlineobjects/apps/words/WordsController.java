@@ -1,7 +1,10 @@
 package dk.in2isoft.onlineobjects.apps.words;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 
+import dk.in2isoft.commons.lang.Files;
 import dk.in2isoft.in2igui.data.Diagram;
 import dk.in2isoft.onlineobjects.apps.videosharing.Path;
 import dk.in2isoft.onlineobjects.apps.words.importing.HTMLDocumentImporter;
@@ -14,6 +17,24 @@ import dk.in2isoft.onlineobjects.modules.importing.ImportSession;
 import dk.in2isoft.onlineobjects.ui.Request;
 
 public class WordsController extends WordsControllerBase {
+
+	@Path(start="style.css")
+	public void style(Request request) throws IOException, EndUserException {
+		PrintWriter writer = request.getResponse().getWriter();
+		{
+			File file = configurationService.getFile("WEB-INF","core","web","css","onlineobjects.css");
+			String contents = Files.readString(file);
+			writer.write("/*** onlineobjects.css ***/");
+			writer.write("\n");
+			writer.write(contents);
+		}
+		{
+			File file = configurationService.getFile("WEB-INF","core","web","css","common.css");
+			String contents = Files.readString(file);
+			writer.write("\n\n/*** common.css ***/\n\n");
+			writer.write(contents);
+		}
+	}
 
 	@Path(start="upload")
 	public void upload(Request request) throws IOException, EndUserException {

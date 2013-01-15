@@ -26,6 +26,7 @@ import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
+import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.model.Entity;
@@ -90,7 +91,7 @@ public class TestWordNetImporter extends AbstractSpringTestCase {
 	}
 
 	private static void read(String fileName) throws FileNotFoundException, IOException {
-		FileReader reader = new FileReader(new File("/Users/jbm/Udvikling/Workspace/OnlineObjects/testdata/DanNet-2.1_owl/"+fileName));
+		FileReader reader = new FileReader(new File("/Users/jbm/Development/Eclipse/onlineobjects/testdata/DanNet-2.1_owl/"+fileName));
 		model.read(reader, "UTF-8");
 		reader.close();
 		log.info("imported: "+fileName+" : "+new Duration(watch.getTime()));
@@ -199,7 +200,10 @@ public class TestWordNetImporter extends AbstractSpringTestCase {
 						DanNetGlossary parsed = DanNetUtil.parseGlossary(glossary.getLiteralLexicalForm());
 						localWord.removeProperties(Property.KEY_SEMANTICS_GLOSSARY);
 						localWord.removeProperties(Property.KEY_SEMANTICS_EXAMPLE);
-						localWord.addProperty(Property.KEY_SEMANTICS_GLOSSARY, parsed.getGlossary());
+						
+						if (Strings.isNotBlank(parsed.getGlossary())) {
+							localWord.addProperty(Property.KEY_SEMANTICS_GLOSSARY, parsed.getGlossary());
+						}
 						for (String example : parsed.getExamples()) {
 							localWord.addProperty(Property.KEY_SEMANTICS_EXAMPLE, example);
 						}

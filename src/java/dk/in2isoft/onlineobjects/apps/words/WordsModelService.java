@@ -2,8 +2,11 @@ package dk.in2isoft.onlineobjects.apps.words;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+
+import com.google.common.collect.Sets;
 
 import dk.in2isoft.in2igui.data.Diagram;
 import dk.in2isoft.in2igui.data.Node;
@@ -50,7 +53,7 @@ public class WordsModelService {
 				childNode.setTitle(child.getName());
 				childNode.addProperty("Type", "Word");
 				diagram.addNode(childNode);
-				diagram.addEdge(wordNode,msg.get(relation.getKind(), locale),childNode);
+				diagram.addEdge(wordNode,msg.get(relation.getKind()+".reverse", locale),childNode);
 				
 				Language language = modelService.getParent(child, Language.class);
 				if (language!=null) {
@@ -177,7 +180,8 @@ public class WordsModelService {
 		if (parentWord==null || childWord==null) {
 			throw new IllegalRequestException("Word not found");
 		}
-		if (!Relation.KIND_SEMANTICS_EQUIVALENT.equals(kind) && !Relation.KIND_SEMANTICS_ANTONYMOUS.equals(kind) && !Relation.KIND_SEMANTICS_SYNONYMOUS.equals(kind)) {
+		Set<String> allowed = Sets.newHashSet(Relation.KIND_SEMANTICS_EQUIVALENT, Relation.KIND_SEMANTICS_ANTONYMOUS, Relation.KIND_SEMANTICS_SYNONYMOUS,Relation.KIND_SEMANTICS_ANALOGOUS, Relation.KIND_SEMANTICS_MORPHEME);
+		if (!allowed.contains(kind)) {
 			throw new IllegalRequestException("Illegal relation: "+kind);
 		}
 		

@@ -1,9 +1,11 @@
 package dk.in2isoft.commons.lang;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.StringWriter;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -45,5 +47,25 @@ public class Files {
 			IOUtils.closeQuietly(out);
 		}
 		return false;
+	}
+
+	public static String readString(File file) {
+		FileInputStream inputStream = null;
+		StringWriter writer = null;
+		try {
+			writer = new StringWriter();
+			inputStream = new FileInputStream(file);
+			IOUtils.copy(inputStream, writer, "UTF-8");
+			return writer.toString();
+		} catch (FileNotFoundException e) {
+			// Ignore
+		} catch (IOException e) {
+			// Ignore
+		} finally {
+			IOUtils.closeQuietly(inputStream);			
+			IOUtils.closeQuietly(writer);			
+		}
+		
+		return null;
 	}
 }

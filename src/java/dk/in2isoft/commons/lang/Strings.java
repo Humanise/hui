@@ -9,6 +9,8 @@ import java.util.List;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.google.gson.Gson;
+
 public class Strings {
 
 	public static final String DEGREE = "\u00B0";
@@ -151,5 +153,10 @@ public class Strings {
 			}
 		}
 		return false;
+	}
+	
+	public static String toJSON(Object object) {
+		Gson gson = new Gson();
+		return gson.toJson(object);
 	}
 }

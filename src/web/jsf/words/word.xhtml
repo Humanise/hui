@@ -145,7 +145,7 @@
 							<h2>#{msg.relation_kind}</h2>
 							<ul class="selection">
 								<c:forEach items="#{wordsWordView.relations}" var="cat">
-									<li><a rel="#{cat.value}"><strong>#{cat.label}</strong></a></li>
+									<li><a rel="#{o:json(cat)}"><strong>#{cat.label}</strong></a></li>
 								</c:forEach>
 							</ul>
 						</div>
@@ -166,11 +166,13 @@
 						</gui:formula>
 					</gui:boundPanel>
 					
-					<ui:include src="../shared/wordfinder.xhtml"/>
 					
 					</ui:fragment>
 				</div>
 			</div>
+					<ui:fragment rendered="#{wordsLayoutView.loggedIn}">
+					<ui:include src="../shared/wordfinder.xhtml"/>
+					</ui:fragment>
 		</ui:define>
 	</ui:composition>
 </html>
