@@ -28,11 +28,6 @@ public class FieldsComponent extends AbstractComponent {
 	}
 	
 	@Override
-	public String getFamily() {
-		return TYPE;
-	}
-
-	@Override
 	public void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
 		writer.startElement("table").withClass("hui_formula_fields");
 	}

@@ -1,4 +1,4 @@
-package dk.in2isoft.onlineobjects.apps.words.views;
+package dk.in2isoft.onlineobjects.modules.language;
 
 import java.math.BigInteger;
 import java.util.Collection;
@@ -12,7 +12,6 @@ import org.hibernate.type.StringType;
 import dk.in2isoft.commons.lang.Code;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.CustomQuery;
-import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
 import edu.emory.mathcs.backport.java.util.Arrays;
 
 public class WordListPerspectiveQuery implements CustomQuery<WordListPerspective> {
@@ -38,6 +37,8 @@ public class WordListPerspectiveQuery implements CustomQuery<WordListPerspective
 	private int pageSize;
 	
 	private String startingWith;
+	
+	private boolean startingWithSymbol;
 	
 	private List<String> words;
 	
@@ -78,6 +79,10 @@ public class WordListPerspectiveQuery implements CustomQuery<WordListPerspective
 			sql.append(sql.length()>0 ? " and " : " where ");
 			sql.append(" lower(word.text) like :startingWith"); 
 		}
+		if (startingWithSymbol) {
+			sql.append(sql.length()>0 ? " and " : " where ");
+			sql.append(" lower(substring(word.text from 1 for 1)) not in (:alphabeth)"); 			
+		}
 		if (words!=null) {
 			sql.append(sql.length()>0 ? " and " : " where ");
 			sql.append(" lower(word.text) in (:words)");
@@ -114,6 +119,9 @@ public class WordListPerspectiveQuery implements CustomQuery<WordListPerspective
 		if (ids!=null && !ids.isEmpty()) {
 			sql.setParameterList("ids", ids, new LongType());
 		}
+		if (startingWithSymbol) {
+			sql.setParameterList("alphabeth", Strings.ALPHABETH, new StringType());
+		}
 	}
 	
 	public WordListPerspectiveQuery orderByUpdated() {
@@ -128,6 +136,11 @@ public class WordListPerspectiveQuery implements CustomQuery<WordListPerspective
 	
 	public WordListPerspectiveQuery startingWith(String str) {
 		this.startingWith = str;
+		return this;
+	}
+
+	public WordListPerspectiveQuery startingWithSymbol() {
+		this.startingWithSymbol = true;
 		return this;
 	}
 	

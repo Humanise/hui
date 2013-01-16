@@ -32,11 +32,6 @@ public class NavigatorComponent extends AbstractComponent {
 		return new Object[] { var };
 	}
 
-	@Override
-	public String getFamily() {
-		return FAMILY;
-	}
-
 	public String getVar() {
 		return var;
 	}

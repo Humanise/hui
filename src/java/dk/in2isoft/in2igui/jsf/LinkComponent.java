@@ -41,11 +41,6 @@ public class LinkComponent extends AbstractComponent {
 	}
 	
 	@Override
-	public String getFamily() {
-		return TYPE;
-	}
-
-	@Override
 	public void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
 		String id = getClientId();
 		ClassBuilder cls = new ClassBuilder("hui_link").add(styleClass);

@@ -8,8 +8,10 @@ public class Option extends SelectItem {
 
 	private boolean selected;
 	private boolean disabled;
+	
+	private String key;
 
-	public Option(String value, String label) {
+	public Option(Object value, String label) {
 		super(value, label);
 	}
 	
@@ -31,5 +33,13 @@ public class Option extends SelectItem {
 	
 	public boolean isDisabled() {
 		return disabled;
+	}
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
 	}
 }

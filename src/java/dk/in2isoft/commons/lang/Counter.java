@@ -10,11 +10,7 @@ public class Counter<T> {
 	private Map<T,Integer> map = Maps.newHashMap();
 	
 	public void addOne(T key) {
-		if (map.containsKey(key)) {
-			map.put(key, map.get(key)+1);
-		} else {
-			map.put(key, 1);
-		}
+		add(key, 1);
 	}
 	
 	public Map<T, Integer> getMap() {
@@ -32,5 +28,13 @@ public class Counter<T> {
 			}
 		}
 		return found;
+	}
+
+	public void add(T key, int count) {
+		if (map.containsKey(key)) {
+			map.put(key, map.get(key) + count);
+		} else {
+			map.put(key, count);
+		}
 	}
 }

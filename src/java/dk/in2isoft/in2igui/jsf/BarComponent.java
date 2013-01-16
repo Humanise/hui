@@ -38,11 +38,6 @@ public class BarComponent extends AbstractComponent {
 	}
 	
 	@Override
-	public String getFamily() {
-		return TYPE;
-	}
-
-	@Override
 	public void encodeBegin(FacesContext context, TagWriter out) throws IOException {
 		out.startDiv(variant!=null ? "hui_bar hui_bar_"+variant : "hui_bar");
 		out.startDiv("hui_bar_body");

@@ -32,11 +32,6 @@ public class OverflowComponent extends AbstractComponent {
 	}
 	
 	@Override
-	public String getFamily() {
-		return TYPE;
-	}
-
-	@Override
 	public void encodeBegin(FacesContext context, TagWriter out) throws IOException {
 		String id = getClientId();
 		out.startDiv().withClass("hui_overflow").withId(id);

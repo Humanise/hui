@@ -77,6 +77,27 @@ public class ListWriter extends MarkupWriter {
 		return this;
 	}
 
+	public ListWriter endCell() {
+		endTag("cell");
+		return this;
+	}
+
+	public ListWriter startLine() {
+		startTag("line");
+		return this;
+	}
+
+	public ListWriter startMinorLine() {
+		startTag("line");
+		withAttribute("minor", true);
+		return this;
+	}
+
+	public ListWriter endLine() {
+		endTag("line");
+		return this;
+	}
+
 	public ListWriter icon(String icon) {
 		startTag("icon");
 		withAttribute("icon", icon);
@@ -90,12 +111,6 @@ public class ListWriter extends MarkupWriter {
 		}
 		return this;
 	}
-
-	public ListWriter endCell() {
-		endTag("cell");
-		return this;
-	}
-
 	public ListWriter withId(Object id) {
 		withAttribute("id", id);
 		return this;
@@ -113,6 +128,16 @@ public class ListWriter extends MarkupWriter {
 
 	public ListWriter nowrap() {
 		withAttribute("wrap", false);
+		return this;
+	}
+
+	public ListWriter dimmed() {
+		withAttribute("dimmed", true);
+		return this;
+	}
+
+	public ListWriter minor() {
+		withAttribute("minor", true);
 		return this;
 	}
 }

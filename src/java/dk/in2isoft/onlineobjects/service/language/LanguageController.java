@@ -13,9 +13,9 @@ import com.google.common.collect.Multiset;
 
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.apps.videosharing.Path;
-import dk.in2isoft.onlineobjects.apps.words.views.WordListPerspectiveQuery;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
+import dk.in2isoft.onlineobjects.modules.language.WordListPerspectiveQuery;
 import dk.in2isoft.onlineobjects.ui.Request;
 
 public class LanguageController extends LanguageControllerBase {

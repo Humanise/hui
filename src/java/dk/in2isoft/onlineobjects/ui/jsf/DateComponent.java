@@ -17,31 +17,39 @@ public class DateComponent extends AbstractComponent {
 
 	public static final String FAMILY = "onlineobjects.date";
 	
+	private boolean weekday = true;
+	private boolean time = true;
+	
 	public DateComponent() {
 		super(FAMILY);
 	}
 	
 	@Override
 	public void restoreState(Object[] state) {
+		weekday = (Boolean) state[0];
+		time = (Boolean) state[1];
 	}
 
 	@Override
 	public Object[] saveState() {
-		return new Object[] { };
-	}
-
-	@Override
-	public String getFamily() {
-		return FAMILY;
+		return new Object[] { weekday, time};
 	}
 	
 	@Override
 	protected void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
 		Date value = getBinding("value");
 		if (value!=null) {
-			String str = Dates.formatLongDate(value, getLocale());
+			String str = Dates.formatDate(value, weekday, time, getLocale());
 			str = StringEscapeUtils.escapeXml(str);
 			writer.write(str);
 		}
+	}
+	
+	public void setWeekday(boolean weekday) {
+		this.weekday = weekday;
+	}
+	
+	public void setTime(boolean time) {
+		this.time = time;
 	}
 }

@@ -51,7 +51,7 @@ public abstract class AbstractComponent extends UIComponentBase {
 	protected abstract void restoreState(Object[] state);
 	
 	@Override
-	public String getFamily() {
+	public final String getFamily() {
 		return family;
 	}
 

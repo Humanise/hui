@@ -32,11 +32,6 @@ public class FormulaComponent extends AbstractComponent {
 	}
 	
 	@Override
-	public String getFamily() {
-		return TYPE;
-	}
-
-	@Override
 	public void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
 		String id = getClientId();
 		writer.startElement("form").withClass("hui_formula").withId(id);

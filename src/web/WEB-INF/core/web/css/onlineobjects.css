@@ -52,7 +52,7 @@ body.oo_fade div.oo_topbar
 div.oo_topbar:hover
 {
 	background: #fff;
-	/*box-shadow: 0 0 4px rgba(0,0,0,.1);*/
+	box-shadow: 0 0 4px rgba(0,0,0,.1);
 	border-bottom: 1px solid #ddd;
 }
 
@@ -183,6 +183,25 @@ div.oo_layout_top
 {
 	height: 32px;
 	border-bottom: 1px solid #ddd;
+}
+
+div.oo_layout_top ul
+{
+	list-style: none;
+	margin: 0;
+	padding: 0 5px;
+	line-height: 30px;
+}
+
+div.oo_layout_top li
+{
+	display: inline;
+}
+
+div.oo_layout_top li a span
+{
+	padding: 0 5px;
+	color: #444;
 }
 
 div.oo_layout_middle

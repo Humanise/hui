@@ -8,15 +8,31 @@ import java.util.Map;
 
 public class Dates {
 	
-	private static Map<String,String> formats = new HashMap<String, String>();
+	private static Map<String,String> LONG = new HashMap<String, String>();
+	private static Map<String,String> SHORT = new HashMap<String, String>();
 	
 	static {
-		formats.put("en", "EEEE MMMM d. yyyy 'at' HH:mm:ss");
-		formats.put("da", "EEEE 'd.' d. MMMM yyyy 'kl.' HH:mm:ss");
+		LONG.put("en", "EEEE MMMM d. yyyy 'at' HH:mm:ss");
+		LONG.put("da", "EEEE 'd.' d. MMMM yyyy 'kl.' HH:mm:ss");
+
+		SHORT.put("en", "MMMM d. yyyy");
+		SHORT.put("da", "d. MMMM yyyy");
 	}
 
 	public static String formatLongDate(Date date, Locale locale) {
-		SimpleDateFormat format = new SimpleDateFormat(formats.get(locale.getLanguage()),locale);
+		SimpleDateFormat format = new SimpleDateFormat(LONG.get(locale.getLanguage()),locale);
 		return format.format(date);
+	}
+
+	public static String formatShortDate(Date date, Locale locale) {
+		SimpleDateFormat format = new SimpleDateFormat(SHORT.get(locale.getLanguage()),locale);
+		return format.format(date);
+	}
+
+	public static String formatDate(Date value, boolean weekday, boolean time, Locale locale) {
+		if (weekday && time) {
+			return formatLongDate(value, locale);
+		}
+		return formatShortDate(value, locale);
 	}
 }

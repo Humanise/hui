@@ -13,12 +13,12 @@
 		
 		<ui:define name="body">
 			<div class="words">
-				<h1>#{msg.words}</h1>
+				<h1>#{msg.index} <span>» #{msg.words}</span></h1>
 			
 				<h2>#{msg.index}</h2>
 				<p class="words_paging words_index">
 					<c:forEach items="#{wordsIndexView.alphabeth}" var="char">
-						<o:link styleClass="#{char == wordsIndexView.character ? 'words_paging_selected' : ''}" href="/en/index/#{char}/">#{char}</o:link>
+						<o:link styleClass="#{char.value == wordsIndexView.character ? 'words_paging_selected' : ''}" href="/en/index/#{char.value}/">#{char.label}</o:link>
 					</c:forEach>
 				</p>
 				<ul class="words_list">
@@ -27,14 +27,14 @@
 							<o:link href="/#{wordsLayoutView.language}/word/#{word.urlPart}.html">#{word.text}</o:link>
 							<span class="words_list_info">
 							<c:if test="#{not empty word.lexicalCategory}">
-								— #{msg[word.lexicalCategory]}
+								— #{msgCategory[o:join('code.',word.lexicalCategory)]}
 							</c:if>
 							<c:if test="#{not empty word.language}">
-							– #{msg[word.language]}
+							– #{msgLanguage[o:join("code.",word.language)]}
 							</c:if>
 							</span>
 							<c:if test="#{not empty word.glossary}">
-							<span class="words_list_glossary">– #{word.glossary}</span>
+							<span class="words_list_glossary">&#8764; <span>#{word.glossary}</span></span>
 							</c:if>
 						</li>
 					</c:forEach>

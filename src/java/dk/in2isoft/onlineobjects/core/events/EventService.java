@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Item;
+import dk.in2isoft.onlineobjects.model.Relation;
 
 public class EventService {
 
@@ -24,21 +26,36 @@ public class EventService {
 	public void fireItemWasCreated(Item item) {
 		log.info("Item was created: "+item);
 		for (ModelEventListener listener : modelEventListeners) {
-			listener.itemWasCreated(item);
+			if (item instanceof Entity) {
+				listener.entityWasCreated((Entity) item);
+			}
+			if (item instanceof Relation) {
+				listener.relationWasCreated((Relation) item);
+			}
 		}
 	}
 	
 	public void fireItemWasUpdated(Item item) {
 		log.info("Item was updated: "+item);
 		for (ModelEventListener listener : modelEventListeners) {
-			listener.itemWasUpdated(item);
+			if (item instanceof Entity) {
+				listener.entityWasUpdated((Entity) item);
+			}
+			if (item instanceof Relation) {
+				listener.relationWasUpdated((Relation) item);
+			}
 		}
 	}
 
 	public void fireItemWasDeleted(Item item) {
 		log.info("Item was deleted: "+item);
 		for (ModelEventListener listener : modelEventListeners) {
-			listener.itemWasDeleted(item);
+			if (item instanceof Entity) {
+				listener.entityWasDeleted((Entity) item);
+			}
+			if (item instanceof Relation) {
+				listener.relationWasDeleted((Relation) item);
+			}
 		}
 	}
 }

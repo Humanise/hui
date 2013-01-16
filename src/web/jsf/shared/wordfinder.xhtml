@@ -14,7 +14,7 @@
 			<gui:parameter key="page" value="@wordFinderList.window.page"/>
 		</gui:source>
 
-		<gui:window title="Find word" name="wordFinderWindow" width="400">
+		<gui:window title="Find word" name="wordFinderWindow" width="500">
 			<gui:bar variant="window">
 				<gui:button small="true" name="wordFinderAdd" text="Add word"/>
 				<f:facet name="right">
@@ -42,7 +42,7 @@
 									<gui:textInput key="text"/>
 								</gui:field>
 								<gui:field label="Language">
-									<gui:dropDown key="language" items="#{wordsWordView.languages}"/>
+									<gui:dropDown key="language" value="da" items="#{wordsWordView.languages}"/>
 								</gui:field>
 								<gui:field label="Category">
 									<gui:dropDown key="category" items="#{wordsWordView.categories}"/>

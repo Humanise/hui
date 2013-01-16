@@ -22,7 +22,9 @@ import dk.in2isoft.in2igui.FileBasedInterface;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.events.EventService;
 import dk.in2isoft.onlineobjects.core.events.ModelEventListener;
+import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Item;
+import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.ui.AbstractController;
 import dk.in2isoft.onlineobjects.ui.Request;
 
@@ -96,15 +98,27 @@ public abstract class ApplicationController extends AbstractController implement
 		return new ApplicationSession();
 	}
 
-	public void itemWasCreated(Item item) {
+	public void entityWasCreated(Entity entity) {
+		
+	}
+	
+	public void entityWasDeleted(Entity entity) {
+		
+	}
+	
+	public void entityWasUpdated(Entity entity) {
+		
+	}
+	
+	public void relationWasCreated(Relation relation) {
+	}
+	
+	public void relationWasDeleted(Relation relation) {
 	}
 
-	public void itemWasUpdated(Item item) {
+	public void relationWasUpdated(Relation relation) {
 	}
-
-	public void itemWasDeleted(Item item) {
-	}
-
+	
 	public File getFile(String... path) {
 		StringBuilder filePath = new StringBuilder();
 		filePath.append(configurationService.getBasePath());

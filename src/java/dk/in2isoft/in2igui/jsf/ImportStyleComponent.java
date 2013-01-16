@@ -32,11 +32,6 @@ public class ImportStyleComponent extends AbstractComponent {
 	}
 	
 	@Override
-	public String getFamily() {
-		return TYPE;
-	}
-
-	@Override
 	public void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
 		Request request = ComponentUtil.getRequest();
 		LifeCycleService lifeCycleService = getBean(LifeCycleService.class);

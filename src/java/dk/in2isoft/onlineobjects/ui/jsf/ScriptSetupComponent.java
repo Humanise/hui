@@ -34,11 +34,6 @@ public class ScriptSetupComponent extends AbstractComponent {
 	}
 
 	@Override
-	public String getFamily() {
-		return FAMILY;
-	}
-	
-	@Override
 	protected void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
 		writer.startScript().newLine();
 		Request request = ComponentUtil.getRequest();

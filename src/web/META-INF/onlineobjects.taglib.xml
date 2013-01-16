@@ -8,6 +8,12 @@
 		<function-signature>String json(java.lang.Object)</function-signature>
 	</function>
   
+	<function>
+		<function-name>join</function-name>
+		<function-class>dk.in2isoft.onlineobjects.ui.jsf.Functions</function-class>
+		<function-signature>String join(java.lang.String, java.lang.String)</function-signature>
+	</function>
+
   <tag>
     <tag-name>body</tag-name>
     <component>

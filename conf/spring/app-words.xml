@@ -42,11 +42,14 @@
 		<property name="indexService" ref="indexService" />
 	</bean>
 
-	<bean id="wordsFrontView"
-		class="dk.in2isoft.onlineobjects.apps.words.views.WordsFrontView"
-		scope="request">
+	<bean id="wordsFrontView" class="dk.in2isoft.onlineobjects.apps.words.views.WordsFrontView">
 		<property name="modelService" ref="modelService" />
-		<property name="languageService" ref="languageService" />
+		<property name="eventService" ref="eventService" />
+	</bean>
+
+	<bean id="wordsStatisticsView" class="dk.in2isoft.onlineobjects.apps.words.views.WordsStatisticsView">
+		<property name="modelService" ref="modelService" />
+		<property name="eventService" ref="eventService" />
 	</bean>
 
 	<bean id="wordsImportView"

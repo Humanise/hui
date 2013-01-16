@@ -1,6 +1,7 @@
 package dk.in2isoft.onlineobjects.apps.words.views;
 
 import java.util.List;
+import java.util.Locale;
 
 import javax.faces.model.SelectItem;
 
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.InitializingBean;
 import com.google.common.collect.Lists;
 
 import dk.in2isoft.commons.jsf.AbstractView;
+import dk.in2isoft.onlineobjects.model.Language;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.ui.jsf.model.Option;
 import dk.in2isoft.onlineobjects.util.Messages;
@@ -18,7 +20,7 @@ public class WordsLayoutView extends AbstractView implements InitializingBean {
 	private Messages msg;
 		
 	public void afterPropertiesSet() throws Exception {
-		msg = new Messages("classpath:dk/in2isoft/onlineobjects/apps/words/msg/Words");
+		msg = new Messages(Language.class);
 	}
 	
 	public List<SelectItem> getLanguages() {
@@ -37,7 +39,7 @@ public class WordsLayoutView extends AbstractView implements InitializingBean {
 					sb.append("/");
 				}
 			}
-			Option option = new Option(sb.toString(),msg.get(language, request.getLocale()));
+			Option option = new Option(sb.toString(),msg.get("code."+language, new Locale(language)));
 			option.setSelected(language.equals(request.getLanguage()));
 			items.add(option);
 		}

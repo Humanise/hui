@@ -568,27 +568,25 @@ public class ModelService {
 	@SuppressWarnings("unchecked")
 	public <T> SearchResult<T> search(CustomQuery<T> query) throws ModelException {
 		try {
-			StopWatch watch = new StopWatch();
-			watch.start();
-			SQLQuery countSql = getSession().createSQLQuery(query.getCountSQL());
-			query.setParameters(countSql);
-			
-			List<Object> countRows = countSql.list();
-			Object next = countRows.iterator().next();
-			int totalCount = ((Number) next).intValue();
-			log.info(watch.getTime());
-			watch.reset();
-			watch.start();
+			String countSQL = query.getCountSQL();
+			int totalCount = 0;
+			if (countSQL!=null) {
+				SQLQuery countSqlQuery = getSession().createSQLQuery(countSQL);
+				query.setParameters(countSqlQuery);
+				List<Object> countRows = countSqlQuery.list();
+				Object next = countRows.iterator().next();
+				totalCount = ((Number) next).intValue();
+			}
+
 			SQLQuery sql = getSession().createSQLQuery(query.getSQL());
 			query.setParameters(sql);
-			log.info(query.getSQL());
+
 			List<Object[]> rows = sql.list();
 			List<T> result = Lists.newArrayList();
 			for (Object[] t : rows) {
 				result.add(query.convert(t));
 			}
-			log.info(watch.getTime());
-			watch.stop();
+
 			return new SearchResult<T>(result, totalCount);
 		} catch (HibernateException e) {
 			throw new ModelException("Error executing SQL", e);

@@ -32,15 +32,6 @@ public class SemanticService {
 	
 	public static final String WORD_EXPRESSION = "[a-zA-Z\u0027\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF\\-\u02BC’]+";
 	
-	public static final char UNICODE_AA_LARGE = '\u00C5';
-	public static final char UNICODE_AA = '\u00E5';
-	
-	public static final char UNICODE_AE_LARGE = '\u00C6';
-	public static final char UNICODE_AE = '\u00E6';
-	
-	public static final char UNICODE_OE_LARGE = '\u00D8';
-	public static final char UNICODE_OE = '\u00F8';
-
 	private ConfigurationService configurationService;
 
 	private static Pattern wordPattern = Pattern.compile(WORD_EXPRESSION);

@@ -56,11 +56,6 @@ public class LinkComponent extends AbstractComponent {
 
 
 	@Override
-	public String getFamily() {
-		return FAMILY;
-	}
-	
-	@Override
 	protected void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
 		String styleClass = getStyleClass(context);
 		String onclick = getOnclick(context);

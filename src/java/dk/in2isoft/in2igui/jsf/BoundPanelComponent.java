@@ -39,11 +39,6 @@ public class BoundPanelComponent extends AbstractComponent {
 	}
 	
 	@Override
-	public String getFamily() {
-		return TYPE;
-	}
-
-	@Override
 	public void encodeBegin(FacesContext context, TagWriter out) throws IOException {
 		String id = getClientId();
 		out.startDiv().withClass("hui_boundpanel").withId(id).withStyle("display:none;");

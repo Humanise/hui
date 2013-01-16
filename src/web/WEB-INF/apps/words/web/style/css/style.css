@@ -20,14 +20,20 @@ a.oo_link span
 
 div.words
 {
-	padding: 10px 20px 30px;
+	padding: 25px 30px 40px;
 }
 
-ul.words_sidebar_index, div.words
+ul.words_sidebar_index,
+div.words,
+div.oo_layout_top ul
 {
 	font-family: 'Lora','Georgia','Crimson Text','Palatino','Times New Roman','Times';
 }
 
+div.oo_layout_top ul a span
+{
+	color: #999;
+}
 
 
 
@@ -50,7 +56,7 @@ ul.words_sidebar_index
 {
 	list-style: none;
 	padding: 0;
-	margin: 10px 0;
+	margin: 10px -7px;
 	text-align: center;
 	font-size: 0;
 }
@@ -70,7 +76,7 @@ ul.words_sidebar_index a
 	display: block;
 	width: 28px;
 	text-align: center;
-	font-size: 24pt;
+	font-size: 20pt;
 	height: 38px;
 	line-height: 38px;
 	border-radius: 3px;
@@ -83,6 +89,8 @@ ul.words_sidebar_index a span
 ul.words_sidebar_index a:hover
 {
 	background: #eee;
+	width: 32px;
+	margin: 0 -2px;
 }
 
 
@@ -98,10 +106,12 @@ ul.words_word_variants
 
 p.words_word_by
 {
-	margin: 5px 0 0 20px;
+	margin: 0;
 	font-size: 11px;
 	color: #999;
 	text-align: right;
+	float: right;
+	margin-top: -16px;
 }
 
 p.words_word_info
@@ -157,6 +167,12 @@ ul.words_word_relations
 	padding: 0;
 }
 
+ul.words_word_relations strong
+{
+	font-weight: normal;
+	letter-spacing: 1px;
+}
+
 a.words_word_action
 {
 	color: #666;
@@ -197,11 +213,16 @@ span.words_word_example_divider
 
 
 
-h1
+div.words h1
 {
 	margin: 0;
 	font-weight: normal;
 	font-size: 48px;
+}
+
+div.words h1 span
+{
+	color: #aaa;
 }
 
 h2
@@ -243,7 +264,7 @@ p.words_paging a span
 	line-height: 19px;
 	border-radius: 3px;
 	font-size: 12pt;
-	min-width: 10px;
+	min-width: 14px;
 	text-align: center;
 }
 
@@ -257,8 +278,9 @@ p.words_paging a:hover span
 p.words_paging a.words_paging_selected span
 {
 	color: #000;
-	font-weight: bold;
-	background: #ddd;
+	background: #f6f6f6;
+	border: 1px solid #ddd;
+	margin: -1px;
 }
 
 
@@ -285,10 +307,17 @@ span.words_list_info
 
 span.words_list_glossary
 {
-	color: #333;
-	font-style: italic;
-	font-size: 9pt;
+	color: #ccc;
+	font-size: 24px;
 	margin-left: 10px;
+	line-height: 14px;
+}
+
+span.words_list_glossary span
+{
+	font-size: 13px;
+	color: #333;
+	margin-left: 5px;
 }
 
 
@@ -364,8 +393,56 @@ p.words_index
 
 
 
+/*********** index *********/
 
+div.words_statistics h3
+{
+	font-weight: normal;
+	border-bottom: 1px solid #ddd;
+	line-height: 30px;
+	padding: 0 5px;
+	margin: 20px -5px 10px;
+}
 
+span.words_statistics_count
+{
+	color: #ccc;
+	position: relative;
+	top: -2px;
+	font-size: 16px;
+	margin-left: 5px;
+}
+
+span.words_statistics_count strong
+{
+	margin: 0 3px;
+	font-weight: normal;
+	color: #333;
+	position: relative;
+	font-size: 12px;
+	line-height: 13px;
+	display: inline-block;
+	letter-spacing: 1px;
+}
+
+div.words_statistics ul
+{
+	color: #eee;
+	padding: 0px 0 10px 20px;
+	margin: 0;
+}
+
+div.words_statistics li
+{
+	margin: 0 0 5px;
+}
+
+div.words_statistics ul span.words_statistics_count
+{
+	font-size: 12pt;
+	position: relative;
+	top: -1px;
+}
 
 /************ Import *************/
 

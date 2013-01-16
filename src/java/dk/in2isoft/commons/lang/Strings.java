@@ -17,6 +17,17 @@ public class Strings {
 	public static final String RIGHT_SINGLE_QUOTE = "\u2019";
 	public static final String DOUBLE_APOSTROPHE = "\u02EE";
 	public static final String UTF8 = "UTF-8";
+
+	public static final String UNICODE_AA_LARGE = "\u00C5";
+	public static final String UNICODE_AA = "\u00E5";
+	
+	public static final String UNICODE_AE_LARGE = "\u00C6";
+	public static final String UNICODE_AE = "\u00E6";
+	
+	public static final String UNICODE_OE_LARGE = "\u00D8";
+	public static final String UNICODE_OE = "\u00F8";
+	
+	public static final String[] ALPHABETH = {"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z",Strings.UNICODE_AE,Strings.UNICODE_OE,Strings.UNICODE_AA};
 	
 	
 	// private static Logger log = Logger.getLogger(LangUtil.class);

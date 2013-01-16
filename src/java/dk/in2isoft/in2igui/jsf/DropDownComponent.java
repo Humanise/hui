@@ -42,11 +42,6 @@ public class DropDownComponent extends AbstractComponent {
 	}
 	
 	@Override
-	public String getFamily() {
-		return TYPE;
-	}
-
-	@Override
 	public void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
 		ClassBuilder cls = new ClassBuilder("hui_dropdown");
 		String id = getClientId();

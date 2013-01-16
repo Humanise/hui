@@ -1,13 +1,19 @@
 package dk.in2isoft.onlineobjects.core.events;
 
-import dk.in2isoft.onlineobjects.model.Item;
+import dk.in2isoft.onlineobjects.model.Entity;
+import dk.in2isoft.onlineobjects.model.Relation;
 
 public interface ModelEventListener {
 
-	public void itemWasCreated(Item item);
+	public void entityWasCreated(Entity entity);
 
-	public void itemWasUpdated(Item item);
+	public void entityWasUpdated(Entity entity);
 
-	public void itemWasDeleted(Item item);
+	public void entityWasDeleted(Entity entity);
 	
+	public void relationWasCreated(Relation relation);
+
+	public void relationWasUpdated(Relation relation);
+
+	public void relationWasDeleted(Relation relation);
 }

@@ -38,11 +38,6 @@ public class StylesheetComponent extends AbstractComponent {
 	}
 
 	@Override
-	public String getFamily() {
-		return FAMILY;
-	}
-	
-	@Override
 	protected void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
 		String href = getHref(context);
 		if (href!=null) {

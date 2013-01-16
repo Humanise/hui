@@ -33,11 +33,6 @@ public class SplitLeftComponent extends AbstractComponent {
 	}
 
 	@Override
-	public String getFamily() {
-		return FAMILY;
-	}
-
-	@Override
 	protected void encodeChildren(FacesContext context, TagWriter writer) throws IOException {
 		List<UIComponent> children = getChildren();
 		writer.startDiv("oo_splitleft");

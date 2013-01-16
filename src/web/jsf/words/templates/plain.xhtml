@@ -7,7 +7,9 @@
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	locale="#{wordsLayoutView.language}"
 >
-<f:loadBundle basename="dk.in2isoft.onlineobjects.apps.words.msg.Words" var="msg"/>
+<f:loadBundle basename="dk.in2isoft.onlineobjects.apps.words.msg.WordsController" var="msg"/>
+<f:loadBundle basename="dk.in2isoft.onlineobjects.model.msg.Language" var="msgLanguage"/>
+<f:loadBundle basename="dk.in2isoft.onlineobjects.model.msg.LexicalCategory" var="msgCategory"/>
 
 <h:outputText value='&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"&gt;' escape="false"/>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -36,12 +38,19 @@
 	<o:body>
 		<o:topBar/>
 		<o:layout>
+			<f:facet name="top">
+				<ul>
+					<li><o:link href="/#{wordsLayoutView.language}/">#{msg.home}</o:link></li>
+					<li><o:link href="/#{wordsLayoutView.language}/statistics/">#{msg.statistics}</o:link></li>
+					<li><o:link href="/#{wordsLayoutView.language}/index/a/">#{msg.index}</o:link></li>
+				</ul>
+			</f:facet>
 			<f:facet name="sidebar">
 				<div class="words_sidebar">
 					<h2>#{msg.index}</h2>
 					<ul class="words_sidebar_index">
 						<c:forEach items="#{wordsIndexView.alphabeth}" var="char">
-							<li><o:link href="/#{wordsLayoutView.language}/index/#{char}/">#{char}</o:link></li>
+							<li><o:link href="/#{wordsLayoutView.language}/index/#{char.value}/">#{char.label}</o:link></li>
 						</c:forEach>
 					</ul>
 					<c:if test="#{wordsLayoutView.loggedIn}">

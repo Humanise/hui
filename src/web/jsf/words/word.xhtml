@@ -65,6 +65,15 @@
 											rendered="#{wordsLayoutView.loggedIn}"
 										/>
 									</p>
+									<p class="words_word_by">
+										#{msg.created}: <o:date value="#{word.word.created}" weekday="false" time="false"/>
+										<c:if test="#{not empty word.originator}">
+										#{msg.by} <o:link app="community" href="/#{word.originator.name}">#{word.originator.name}</o:link>
+										</c:if>
+										<c:if test="#{not empty word.sourceTitle}">
+										#{msg.from} #{word.sourceTitle}
+										</c:if>
+									</p>
 									<c:if test="#{not empty word.glossary}">
 										<p class="words_word_glossary">
 											#{word.glossary}
@@ -98,15 +107,6 @@
 									</c:forEach>
 									</ul>
 									</c:if>
-									<p class="words_word_by">
-										#{msg.created}: <o:date value="#{word.word.created}"/>
-										<c:if test="#{not empty word.originator}">
-										#{msg.by} <o:link app="community" href="/#{word.originator.name}">#{word.originator.name}</o:link>
-										</c:if>
-										<c:if test="#{not empty word.sourceTitle}">
-										#{msg.from} #{word.sourceTitle}
-										</c:if>
-									</p>
 								</li>
 							</c:forEach>
 						</ul>

@@ -533,6 +533,7 @@ oo.WordGetter = function() {
 oo.WordGetter.prototype = {
 	show : function(callback) {
 		hui.ui.get('wordFinderWindow').show();
+		hui.ui.get('wordFinderSearch').focus();
 		this.callback = callback;
 	},
 	_found : function(obj) {

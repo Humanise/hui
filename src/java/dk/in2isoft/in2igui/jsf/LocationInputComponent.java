@@ -33,11 +33,6 @@ public class LocationInputComponent extends AbstractComponent {
 	}
 	
 	@Override
-	public String getFamily() {
-		return "hui.textfield";
-	}
-	
-	@Override
 	protected void encodeBegin(FacesContext context, TagWriter out) throws IOException {
 		out.startSpan("hui_locationfield").withId(getClientId());
 		out.startSpan("hui_field_top").startSpan().startSpan().endSpan().endSpan().endSpan();
