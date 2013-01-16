@@ -5,6 +5,67 @@ body
 	margin: 0;
 }
 
+div.words_layout
+{
+	font-family: 'Lora','Georgia','Crimson Text','Palatino','Times New Roman','Times';
+	width: 1018px;
+	background: url('../gfx/paper.png') 0 0 repeat-y;
+	margin: 20px auto;
+}
+
+div.words_layout_middle
+{
+	overflow: hidden;
+	padding: 5px 0px 5px 9px;
+}
+
+div.words_layout_content
+{
+	width: 799px;
+	border-right: 1px solid #eee;
+	float: left;
+	min-height: 640px;
+}
+
+div.words_layout_sidebar
+{
+	width: 200px;
+	border-left: 1px solid #eee;
+	float: left;
+	margin-left: -1px;
+}
+
+div.words_layout_top
+{
+	height: 14px;
+	background: url('../gfx/paper.png') -1018px 0;
+}
+
+div.words_layout_bottom
+{
+	height: 14px;
+	background: url('../gfx/paper.png') -2036px 0;
+}
+
+div.words_layout_left
+{
+	margin-top: 14px;
+	height: 616px;
+	width: 9px;
+	position: absolute;
+	background: url('../gfx/paper_effect.png');
+}
+
+div.words_layout_right
+{
+	margin-top: -618px;
+	margin-left: 1009px;
+	height: 616px;
+	width: 9px;
+	position: absolute;
+	background: url('../gfx/paper_effect.png') -9px 0;
+}
+
 /***************** Links ***************/
 
 a.oo_link
@@ -20,14 +81,13 @@ a.oo_link span
 
 div.words
 {
-	padding: 25px 30px 40px;
+	padding: 18px 30px 40px;
 }
 
 ul.words_sidebar_index,
 div.words,
 div.oo_layout_top ul
 {
-	font-family: 'Lora','Georgia','Crimson Text','Palatino','Times New Roman','Times';
 }
 
 div.oo_layout_top ul a span
@@ -37,12 +97,16 @@ div.oo_layout_top ul a span
 
 
 
+/************ Menu ************/
+
+
+
 
 /********** Sidebar **********/
 
 div.words_sidebar
 {
-	padding: 10px;
+	padding: 0 10px;
 }
 
 div.words_sidebar h2
@@ -88,7 +152,7 @@ ul.words_sidebar_index a span
 
 ul.words_sidebar_index a:hover
 {
-	background: #eee;
+	background: #f6f6f6;
 	width: 32px;
 	margin: 0 -2px;
 }

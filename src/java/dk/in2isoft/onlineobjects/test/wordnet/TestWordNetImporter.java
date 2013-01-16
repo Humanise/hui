@@ -91,7 +91,7 @@ public class TestWordNetImporter extends AbstractSpringTestCase {
 	}
 
 	private static void read(String fileName) throws FileNotFoundException, IOException {
-		FileReader reader = new FileReader(new File("/Users/jbm/Development/Eclipse/onlineobjects/testdata/DanNet-2.1_owl/"+fileName));
+		FileReader reader = new FileReader(new File("/Users/jbm/Udvikling/Workspace/onlineobjects/testdata/DanNet-2.1_owl/"+fileName));
 		model.read(reader, "UTF-8");
 		reader.close();
 		log.info("imported: "+fileName+" : "+new Duration(watch.getTime()));
