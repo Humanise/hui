@@ -6039,6 +6039,17 @@ hui.ui.Source.prototype = {
 		}.bind(this));
 		parm.value = this.convertValue(val);
 	},
+	setParameter : function(key,value) {
+		value = this.convertValue(value);
+		for (var i=0; i < this.parameters.length; i++) {
+			var p = this.parameters[i]
+			if (p.key==key) {
+				p.value=value;
+				return;
+			}
+		}
+		this.parameters.push({key:key,value:value});
+	},
 	changeParameter : function(key,value) {
 		value = this.convertValue(value);
 		for (var i=0; i < this.parameters.length; i++) {
@@ -13468,7 +13479,6 @@ hui.ui.SearchField.create = function(options) {
 }
 
 hui.ui.SearchField.prototype = {
-	/** @private */
 	_addBehavior : function() {
 		var self = this;
 		hui.listen(this.field,'keyup',this._onKeyUp.bind(this));
@@ -13513,6 +13523,9 @@ hui.ui.SearchField.prototype = {
 		if (e.keyCode===hui.KEY_RETURN) {
 			this.fire('submit');
 		}
+	},
+	focus : function() {
+		this.field.focus();
 	},
 	setValue : function(value) {
 		this.field.value = value===undefined || value===null ? '' : value;

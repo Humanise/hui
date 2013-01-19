@@ -17,7 +17,7 @@
 			<ibiblio name="sun" m2compatible="true" root="http://download.java.net/maven/2/" />
 			<ibiblio name="apache" m2compatible="true" root="https://repository.apache.org/content/repositories/releases/" />
 			<ibiblio name="caucho" m2compatible="true" root="http://caucho.com/m2/" />
-			
+			<ibiblio name="caucho" m2compatible="true" root="https://boilerpipe.googlecode.com/svn/repo/" />
 		</chain>
 	</resolvers>
 </ivysettings>

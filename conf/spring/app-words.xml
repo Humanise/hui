@@ -23,6 +23,7 @@
 
 		
 	<bean id="wordsIndex" class="dk.in2isoft.onlineobjects.modules.index.IndexManager">
+		<property name="directoryName"><util:constant static-field="dk.in2isoft.onlineobjects.modules.index.IndexService.WORDS_INDEX"/></property>
 		<property name="configurationService" ref="configurationService"/>
 	</bean>
 	

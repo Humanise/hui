@@ -59,9 +59,21 @@ public class IndexManager {
 		}
 	}
 	
+	private void ensureIndex() throws ExplodingClusterFuckException {
+		Directory directory = getIndexFile();
+		if (!DirectoryReader.indexExists(directory)) {
+			try {
+				openWriter().close();
+			} catch (IOException e) {
+				throw new ExplodingClusterFuckException("Unable to ensure index", e);
+			}
+		}		
+	}
+	
 	private IndexReader openReader() throws ExplodingClusterFuckException {
+		Directory directory = getIndexFile();
 		try {
-			Directory directory = getIndexFile();
+			ensureIndex();
 			return DirectoryReader.open(directory);
 		} catch (CorruptIndexException e) {
 			throw new ExplodingClusterFuckException(e);
@@ -212,6 +224,10 @@ public class IndexManager {
 
 	public String getDirectoryName() {
 		return directoryName;
+	}
+	
+	public void setDirectoryName(String directoryName) {
+		this.directoryName = directoryName;
 	}
 
 }

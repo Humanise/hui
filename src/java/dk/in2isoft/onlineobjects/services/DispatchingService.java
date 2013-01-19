@@ -1,6 +1,7 @@
 package dk.in2isoft.onlineobjects.services;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -93,18 +94,18 @@ public class DispatchingService implements InitializingBean {
 		HeaderUtil.setOneWeekCache(response);
 		String mimeType = HeaderUtil.getMimeType(file);
 		response.setContentLength((int) file.length());
-		FileReader reader = null;
+		FileInputStream in = null;
 		try {
 			ServletOutputStream out = response.getOutputStream();
 			if (mimeType != null) {
 				response.setContentType(mimeType);
 			}
-			reader = new FileReader(file);
-			IOUtils.copy(reader, out);
+			in = new FileInputStream(file);
+			IOUtils.copy(in, out);
 		} catch (FileNotFoundException e) {
 			throw new IOException("File: " + file.getPath() + " not found!");
 		} finally {
-			IOUtils.closeQuietly(reader);
+			IOUtils.closeQuietly(in);
 		}
 	}
 

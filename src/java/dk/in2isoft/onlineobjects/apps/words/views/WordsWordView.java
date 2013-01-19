@@ -11,6 +11,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
 import dk.in2isoft.commons.jsf.AbstractView;
+import dk.in2isoft.onlineobjects.apps.words.WordsController;
 import dk.in2isoft.onlineobjects.apps.words.views.util.RelationOption;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Query;
@@ -134,7 +135,7 @@ public class WordsWordView extends AbstractView implements InitializingBean {
 	public List<RelationOption> getRelations() {
 		if (relations!=null) return relations;
 		
-		Messages msg = new Messages("classpath:dk/in2isoft/onlineobjects/apps/words/msg/Words");
+		Messages msg = new Messages(WordsController.class);
 		relations = Lists.newArrayList();
 		Locale locale = getLocale();
 		for (String kind : RELATIONS_BOTH_WAYS) {

@@ -5,8 +5,8 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
     ">
-	<!-- 
-	<bean name="callHomeJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+<!-- 
+	<bean name="callHomeJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
 		<property name="jobClass" value="dk.in2isoft.onlineobjects.scheduling.CallHomeJob" />
 		<property name="jobDataAsMap">
 			<map>
@@ -16,7 +16,7 @@
 		</property>
 	</bean>
 
-	<bean id="callHomeTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+	<bean id="callHomeTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
 		<property name="jobDetail" ref="callHomeJob" />
 		<property name="startDelay" value="10000" />
 		<property name="repeatInterval" value="21600000" />
@@ -29,5 +29,6 @@
 			</list>
 		</property>
 	</bean>
-	 -->
+ -->
+
 </beans>

@@ -8,23 +8,22 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.quartz.CronScheduleBuilder;
-import org.quartz.DateBuilder;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
+import org.quartz.JobExecutionContext;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
-import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.quartz.spi.MutableTrigger;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.web.context.WebApplicationContext;
+
+import dk.in2isoft.onlineobjects.apps.words.index.WordIndexJob;
 
 public class SchedulingService implements InitializingBean {
 
@@ -32,25 +31,15 @@ public class SchedulingService implements InitializingBean {
 
 	private org.quartz.Scheduler scheduler;
 
-	private WebApplicationContext webApplicationContext;
-
-
 	public void afterPropertiesSet() throws Exception {
 		SchedulerFactory sf = new StdSchedulerFactory();
 		scheduler = sf.getScheduler();
-				
-		JobDetail job = JobBuilder.newJob(HelloJob.class)
-			    .withIdentity("job1", "group1")
-			    .build();
-		Date runTime = DateBuilder.evenMinuteDate(new Date());
-
-		// Trigger the job to run on the next round minute
-		Trigger trigger = TriggerBuilder.newTrigger()
-		    .withIdentity("trigger1", "group1")
-		    .startAt(runTime).withSchedule(SimpleScheduleBuilder.repeatSecondlyForever(20))
-		    .build();
 		
-		scheduler.scheduleJob(job, trigger);
+				
+		JobDetail job = JobBuilder.newJob(WordIndexJob.class)
+			    .withIdentity("indexwords", "core")
+			    .build();
+		scheduler.addJob(job, true);
 		scheduler.start();
 	}
 	
@@ -77,6 +66,7 @@ public class SchedulingService implements InitializingBean {
 	
 	public Map<String,String> listJobs() {
 		
+		Map<String, String> list = new HashMap<String, String>();
 		try {
 			List<String> groupNames = scheduler.getJobGroupNames();
 			for (String group : groupNames) {
@@ -84,24 +74,42 @@ public class SchedulingService implements InitializingBean {
 				for (JobKey key : jobKeys) {
 					JobDetail jobDetail = scheduler.getJobDetail(key);
 					jobDetail.getDescription();
+					list.put(key.getName(),key.getGroup());
 				}
 			}
 		} catch (SchedulerException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Map<String, String> list = new HashMap<String, String>();
 		
 		return list;
 	}
 	
 	public boolean isRunning(String name, String group) {
-		
+		try {
+			List<JobExecutionContext> executingJobs = scheduler.getCurrentlyExecutingJobs();
+			for (JobExecutionContext context : executingJobs) {
+				JobKey key = context.getJobDetail().getKey();
+				if (group.equals(key.getGroup()) && name.equals(key.getName())) {
+					return true;
+				}
+			}
+		} catch (SchedulerException e) {
+			log.error("Exception while checking if job is running", e);
+		}
 		return false;
 	}
 	
 	public void runJob(String name, String group) {
-		
+		try {
+			JobDetail jobDetail = scheduler.getJobDetail(JobKey.jobKey(name, group));
+			if (jobDetail!=null) {
+				scheduler.triggerJob(JobKey.jobKey(name, group));
+				//scheduler.scheduleJob(jobDetail, TriggerBuilder.newTrigger().startNow().build());
+			}
+		} catch (SchedulerException e) {
+			log.error("Exception while running job", e);
+		}
 	}
 	
 	public Date getLatestExecution(String name, String group) {

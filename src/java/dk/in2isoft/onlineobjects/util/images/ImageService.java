@@ -1,9 +1,10 @@
 package dk.in2isoft.onlineobjects.util.images;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,7 +19,7 @@ import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.Tag;
-import com.drew.metadata.exif.ExifDirectory;
+import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.GpsDirectory;
 import com.drew.metadata.iptc.IptcDirectory;
 
@@ -112,31 +113,31 @@ public class ImageService extends AbstractCommandLineInterface {
 		try {
 			Metadata metadata;
 			metadata = JpegMetadataReader.readMetadata(file);
-			Directory exifDirectory = metadata.getDirectory(ExifDirectory.class);
+			Directory exifDirectory = metadata.getDirectory(ExifIFD0Directory.class);
 			Directory gpsDirectory = metadata.getDirectory(GpsDirectory.class);
 			Directory iptcDirectory = metadata.getDirectory(IptcDirectory.class);
 			
-			for (Iterator<?> iterator = metadata.getDirectoryIterator(); iterator.hasNext();) {
-				Directory dir = (Directory)iterator.next();
-				for (Iterator<?> i = dir.getTagIterator(); i.hasNext();) {
-					Tag tag = (Tag)i.next();
+			Iterable<Directory> directories = metadata.getDirectories();
+			for (Directory dir : directories) {
+				Collection<Tag> tags = dir.getTags();
+				for (Tag tag : tags) {
 					if (dir.containsTag(tag.getTagType())) {
 						log.info(dir.getName()+" : "+tag.getTagName()+" : "+dir.getObject(tag.getTagType()));
 					}
 				}
 			}
 			
-			if (exifDirectory.containsTag(ExifDirectory.TAG_DATETIME_ORIGINAL)) {
-				imageMetaData.setDateTimeOriginal(exifDirectory.getDate(ExifDirectory.TAG_DATETIME_ORIGINAL));
+			//if (exifDirectory.containsTag(ExifIFD0Directory.TAG_DATETIME_ORIGINAL)) {
+			//	imageMetaData.setDateTimeOriginal(exifDirectory.getDate(ExifDirectory.TAG_DATETIME_ORIGINAL));
+			//}
+			if (exifDirectory.containsTag(ExifIFD0Directory.TAG_DATETIME)) {
+				imageMetaData.setDateTime(exifDirectory.getDate(ExifIFD0Directory.TAG_DATETIME));
 			}
-			if (exifDirectory.containsTag(ExifDirectory.TAG_DATETIME)) {
-				imageMetaData.setDateTime(exifDirectory.getDate(ExifDirectory.TAG_DATETIME));
+			if (exifDirectory.containsTag(ExifIFD0Directory.TAG_MAKE)) {
+				imageMetaData.setCameraMake(exifDirectory.getString(ExifIFD0Directory.TAG_MAKE));
 			}
-			if (exifDirectory.containsTag(ExifDirectory.TAG_MAKE)) {
-				imageMetaData.setCameraMake(exifDirectory.getString(ExifDirectory.TAG_MAKE));
-			}
-			if (exifDirectory.containsTag(ExifDirectory.TAG_MODEL)) {
-				imageMetaData.setCameraModel(exifDirectory.getString(ExifDirectory.TAG_MODEL));
+			if (exifDirectory.containsTag(ExifIFD0Directory.TAG_MODEL)) {
+				imageMetaData.setCameraModel(exifDirectory.getString(ExifIFD0Directory.TAG_MODEL));
 			}
 			if (iptcDirectory.containsTag(IptcDirectory.TAG_OBJECT_NAME)) {
 				imageMetaData.setObjectName(iptcDirectory.getString(IptcDirectory.TAG_OBJECT_NAME));
@@ -160,8 +161,8 @@ public class ImageService extends AbstractCommandLineInterface {
 				imageMetaData.setLongitude(decimal);
 			}
 			
-			for (Iterator<?> tagIterator = gpsDirectory.getTagIterator(); tagIterator.hasNext();) {
-				Tag tag = (Tag) tagIterator.next();
+			Collection<Tag> tags = gpsDirectory.getTags();
+			for (Tag tag : tags) {
 				if (gpsDirectory.containsTag(tag.getTagType())) {
 					Object object = gpsDirectory.getObject(tag.getTagType());
 					if (object instanceof Rational[]) {
@@ -175,7 +176,7 @@ public class ImageService extends AbstractCommandLineInterface {
 			}
 		} catch (JpegProcessingException e) {
 			log.error(e.getMessage(), e);
-		} catch (MetadataException e) {
+		} catch (IOException e) {
 			log.error(e.getMessage(), e);
 		}
 		return imageMetaData;
