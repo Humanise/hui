@@ -42,6 +42,10 @@ public class IndexManager {
 	private ConfigurationService configurationService;
 	private String directoryName = "index";
 	
+	public IndexManager() {
+		
+	}
+	
 	public IndexManager(String directoryName) {
 		this.directoryName = directoryName;
 	}
@@ -57,7 +61,6 @@ public class IndexManager {
 	
 	private IndexReader openReader() throws ExplodingClusterFuckException {
 		try {
-			openWriter().close();
 			Directory directory = getIndexFile();
 			return DirectoryReader.open(directory);
 		} catch (CorruptIndexException e) {

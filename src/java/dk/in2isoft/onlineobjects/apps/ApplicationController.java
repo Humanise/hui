@@ -2,7 +2,6 @@ package dk.in2isoft.onlineobjects.apps;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -10,9 +9,6 @@ import java.util.regex.Pattern;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 
-import org.apache.commons.configuration.AbstractConfiguration;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -23,7 +19,6 @@ import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.events.EventService;
 import dk.in2isoft.onlineobjects.core.events.ModelEventListener;
 import dk.in2isoft.onlineobjects.model.Entity;
-import dk.in2isoft.onlineobjects.model.Item;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.ui.AbstractController;
 import dk.in2isoft.onlineobjects.ui.Request;
@@ -38,30 +33,16 @@ public abstract class ApplicationController extends AbstractController implement
 	protected EventService eventService;
 	protected ModelService modelService;
 	
-	private XMLConfiguration config;
-
 	public ApplicationController(String name) {
 		this.name = name;
 	}
 	
 
 	public void afterPropertiesSet() throws Exception {
-		eventService.addModelEventListener(this);
+		//eventService.addModelEventListener(this);
 	}
 
 
-	public AbstractConfiguration getConfig() {
-		if (config == null) {
-			URL url = this.getClass().getClassLoader().getResource(this.name + ".cfg.xml");
-			try {
-				config = new XMLConfiguration(url);
-			} catch (ConfigurationException e) {
-				log.error(e.getMessage(), e);
-				return null;
-			}
-		}
-		return config;
-	}
 	
 	protected void addJsfMatcher(String pattern,String path) {
 		jsfMatchers.put(RestUtil.compile(pattern), "/jsf/"+this.name+"/"+path);

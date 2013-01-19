@@ -33,7 +33,7 @@ public class WordsModelService {
 	private SecurityService securityService;
 
 	public Diagram getDiagram(String text) throws ModelException {
-		Messages msg = new Messages("classpath:dk/in2isoft/onlineobjects/apps/words/msg/Words");
+		Messages msg = new Messages(WordsController.class);
 		Diagram diagram = new Diagram();
 		Query<Word> query = Query.of(Word.class).withFieldLowercase(Word.TEXT_FIELD, text);
 		List<Word> words = modelService.search(query).getList();

@@ -5,8 +5,6 @@ import java.util.List;
 
 import com.sun.syndication.feed.rss.Item;
 
-import de.l3s.boilerpipe.BoilerpipeProcessingException;
-import de.l3s.boilerpipe.extractors.ArticleExtractor;
 import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.onlineobjects.core.exceptions.NetworkException;
 import dk.in2isoft.onlineobjects.modules.importing.ImportHandler;

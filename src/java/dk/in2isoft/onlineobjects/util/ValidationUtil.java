@@ -1,7 +1,7 @@
 package dk.in2isoft.onlineobjects.util;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.validator.EmailValidator;
+import org.apache.commons.validator.routines.EmailValidator;
 
 public class ValidationUtil {
 	

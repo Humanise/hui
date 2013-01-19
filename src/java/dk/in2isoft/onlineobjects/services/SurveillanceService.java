@@ -1,6 +1,7 @@
 package dk.in2isoft.onlineobjects.services;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.SortedSet;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -10,7 +11,6 @@ import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.modules.surveillance.RequestInfo;
 import dk.in2isoft.onlineobjects.modules.surveillance.RequestList;
 import dk.in2isoft.onlineobjects.ui.Request;
-import edu.emory.mathcs.backport.java.util.Collections;
 
 public class SurveillanceService {
 	
@@ -51,7 +51,6 @@ public class SurveillanceService {
 		return root;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public SortedSet<RequestInfo> getLongestRunningRequests() {
 		return Collections.synchronizedSortedSet(longestRunningRequests.getSet());
 	}

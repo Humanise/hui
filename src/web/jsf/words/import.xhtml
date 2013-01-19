@@ -16,6 +16,7 @@
 		<ui:define name="body">
 			<div class="words">
 				<h1>#{wordsImportView.title}</h1>
+				<p>Database query time: #{wordsImportView.queryTime}</p>
 				<p>Language: #{wordsImportView.language.code}</p>
 				<ul>
 				<c:forEach items="#{wordsImportView.languages}" var="lang">
@@ -33,11 +34,13 @@
 				<hr/>
 				<p>#{wordsImportView.text}</p>
 				<hr/>
+				<c:if test="#{false}">
 				<c:forEach items="#{wordsImportView.impressions}" var="imp">
 				<p>
 					<a>#{imp.text} - #{imp.language} - #{imp.lexicalCategory}</a>
 				</p>
 				</c:forEach>
+				</c:if>
 			</div>
 			
 			<gui:boundPanel name="registrationPanel" hideOnClick="true">

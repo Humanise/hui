@@ -13,6 +13,7 @@ public class WindowComponent extends AbstractComponent {
 
 	public static final String TYPE = "hui.window";
 
+	private String title;
 	private String name;
 	private int width;
 
@@ -24,23 +25,25 @@ public class WindowComponent extends AbstractComponent {
 	public void restoreState(Object[] state) {
 		name = (String) state[0];
 		width = (Integer) state[1];
+		title = (String) state[2];
 	}
 
 	@Override
 	public Object[] saveState() {
 		return new Object[] {
-			name, width
+			name, width, title
 		};
 	}
 	
 	@Override
 	public void encodeBegin(FacesContext context, TagWriter out) throws IOException {
+		String title = getTitle(context);
 		String id = getClientId();
 		out.startDiv().withClass("hui_window").withId(id).withStyle("display:none;");
 		out.startDiv("hui_window_front");
 		out.startDiv("hui_window_close").endDiv();
 		out.startDiv("hui_window_titlebar").startDiv().startDiv();
-		out.startSpan("hui_window_title").text("Title").endSpan();
+		out.startSpan("hui_window_title").text(title).endSpan();
 		out.endDiv().endDiv().endDiv();
 		out.startDiv("hui_window_content").startDiv("hui_window_content").startDiv("hui_window_body");
 		if (width>0) {
@@ -55,9 +58,9 @@ public class WindowComponent extends AbstractComponent {
 		out.endDiv();
 		out.endDiv();
 		out.startScopedScript();
+		String name = getName(context);
 		out.startNewObject("hui.ui.Window");
 		out.property("element", getClientId());
-		String name = getName(context);
 		if (name!=null) {
 			out.comma().property("name",name);
 		}
@@ -83,6 +86,18 @@ public class WindowComponent extends AbstractComponent {
 
 	public void setWidth(int width) {
 		this.width = width;
+	}
+
+	public String getTitle(FacesContext context) {
+		return getExpression("title", title, context);
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 }

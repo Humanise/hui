@@ -1,5 +1,6 @@
 package dk.in2isoft.onlineobjects.apps.words.views;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -21,7 +22,6 @@ import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspectiveQuery;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.ui.jsf.model.Option;
-import edu.emory.mathcs.backport.java.util.Collections;
 
 public class WordsSearchView extends AbstractView implements InitializingBean {
 

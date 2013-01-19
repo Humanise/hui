@@ -2,6 +2,7 @@ package dk.in2isoft.onlineobjects.test.traffic;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +33,6 @@ import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 import dk.in2isoft.onlineobjects.util.semantics.Danish;
 import dk.in2isoft.onlineobjects.util.semantics.English;
 import dk.in2isoft.onlineobjects.util.semantics.Language;
-import edu.emory.mathcs.backport.java.util.Collections;
 
 public class TestComparison extends AbstractSpringTestCase {
 	

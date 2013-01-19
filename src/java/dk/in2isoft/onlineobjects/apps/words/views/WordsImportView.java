@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.lang.time.StopWatch;
 import org.springframework.beans.factory.InitializingBean;
 
 import com.google.common.collect.HashMultimap;
@@ -44,6 +45,7 @@ public class WordsImportView extends AbstractView implements InitializingBean {
 	private List<Pair<String, Integer>> wordFrequency;
 	private List<WordListPerspective> impressions;
 	private List<Pair<String, Integer>> languages;
+	private long queryTime;
 	
 	private Language findLanguage(String fromContent) throws IllegalRequestException {
 		Request request = getRequest();
@@ -83,11 +85,13 @@ public class WordsImportView extends AbstractView implements InitializingBean {
 			semanticService.lowercaseWords(allWords);
 			wordFrequency = semanticService.getSortedWordFrequency(allWords);
 			String[] words = semanticService.getUniqueWords(allWords);
-			
-			System.out.println(text);
-						
+									
 			WordListPerspectiveQuery perspectiveQuery = new WordListPerspectiveQuery().withWords(words).orderByText();
+			StopWatch watch = new StopWatch();
+			watch.start();
 			this.impressions = modelService.list(perspectiveQuery);
+			watch.stop();
+			this.queryTime = watch.getTime();
 			
 			Multimap<String,String> wordsToLanguages = HashMultimap.create();
 			for (WordListPerspective perspective : impressions) {
@@ -132,10 +136,6 @@ public class WordsImportView extends AbstractView implements InitializingBean {
 				item.setPrimaryLanguage(langs.contains(language.getCode()));
 				uniqueWords.add(item);
 			}
-
-			System.out.println(languageCounts);
-			
-			System.out.println("impressions: "+impressions.size());
 		}
 	}
 	
@@ -153,6 +153,10 @@ public class WordsImportView extends AbstractView implements InitializingBean {
 	
 	public String getId() {
 		return id;
+	}
+	
+	public long getQueryTime() {
+		return queryTime;
 	}
 		
 	public Language getLanguage() {

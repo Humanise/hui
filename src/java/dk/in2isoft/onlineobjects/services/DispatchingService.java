@@ -2,6 +2,7 @@ package dk.in2isoft.onlineobjects.services;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 
@@ -11,11 +12,10 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.StopWatch;
-
-import com.oreilly.servlet.ServletUtils;
 
 import dk.in2isoft.commons.http.HeaderUtil;
 import dk.in2isoft.commons.xml.XSLTUtil;
@@ -93,14 +93,18 @@ public class DispatchingService implements InitializingBean {
 		HeaderUtil.setOneWeekCache(response);
 		String mimeType = HeaderUtil.getMimeType(file);
 		response.setContentLength((int) file.length());
+		FileReader reader = null;
 		try {
 			ServletOutputStream out = response.getOutputStream();
 			if (mimeType != null) {
 				response.setContentType(mimeType);
 			}
-			ServletUtils.returnFile(file.getPath(), out);
+			reader = new FileReader(file);
+			IOUtils.copy(reader, out);
 		} catch (FileNotFoundException e) {
 			throw new IOException("File: " + file.getPath() + " not found!");
+		} finally {
+			IOUtils.closeQuietly(reader);
 		}
 	}
 

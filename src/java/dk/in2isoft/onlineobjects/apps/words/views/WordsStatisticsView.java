@@ -15,7 +15,6 @@ import com.google.common.collect.Multimap;
 
 import dk.in2isoft.commons.jsf.AbstractView;
 import dk.in2isoft.commons.lang.Counter;
-import dk.in2isoft.onlineobjects.apps.words.WordsController;
 import dk.in2isoft.onlineobjects.apps.words.views.util.LanguageStatistic;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.events.AnyModelChangeListener;

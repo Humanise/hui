@@ -25,18 +25,8 @@
 		<listener-class>dk.in2isoft.onlineobjects.core.SessionListener</listener-class>
 	</listener>
 	
-  <!-- Servlets -->
-  <!-- 
-	<servlet>
-		<servlet-name>core.systemloader</servlet-name>
-		<servlet-class>dk.in2isoft.onlineobjects.core.SystemLoader</servlet-class>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>core.systemloader</servlet-name>
-		<url-pattern>/internal/core/systemloader/</url-pattern>
-	</servlet-mapping>
-   -->
+
+
   <!-- Filters -->
 	<filter>
 		<filter-name>Compress</filter-name>
@@ -59,6 +49,8 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
   
+
+
   <!-- dwr -->
  	 <servlet>
 		<servlet-name>dwr</servlet-name>
@@ -74,6 +66,8 @@
 		<url-pattern>/dwr/*</url-pattern>
 	</servlet-mapping>
 	
+
+
     <!-- Faces -->
 	
     <context-param>
@@ -108,6 +102,9 @@
         <url-pattern>/faces/*</url-pattern>
     </servlet-mapping>
 	
+
+
+
 	<!-- Spring -->
 
 	<context-param>

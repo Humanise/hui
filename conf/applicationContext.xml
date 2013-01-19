@@ -62,7 +62,7 @@
 	
 	<bean id="lifeCycleService" class="dk.in2isoft.onlineobjects.services.LifeCycleService"/>
 	
-	<bean id="eventService" class="dk.in2isoft.onlineobjects.core.events.EventService"/>
+	<bean id="eventService" class="dk.in2isoft.onlineobjects.core.events.EventService" autowire="byType"/>
 	
 	<bean id="conversionService" class="dk.in2isoft.onlineobjects.services.ConversionService"/>
 	
@@ -88,7 +88,7 @@
 	<bean id="surveillanceService" class="dk.in2isoft.onlineobjects.services.SurveillanceService" autowire="byType"/>
 	
 	<bean id="schedulingService" class="dk.in2isoft.onlineobjects.services.SchedulingService" autowire="byType">
-		<property name="coreScheduler" ref="coreScheduler"/>
+		<!-- <property name="coreScheduler" ref="coreScheduler"/> -->
 	</bean>
 	
 	<bean id="importService" class="dk.in2isoft.onlineobjects.services.ImportService" autowire="byType"/>

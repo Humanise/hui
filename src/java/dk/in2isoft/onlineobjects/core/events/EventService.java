@@ -19,6 +19,10 @@ public class EventService {
 		// TODO Auto-generated constructor stub
 	}
 	
+	public void setModelEventListeners(List<ModelEventListener> modelEventListeners) {
+		this.modelEventListeners = modelEventListeners;
+	}
+	
 	public void addModelEventListener(ModelEventListener listener) {
 		this.modelEventListeners.add(listener);
 	}

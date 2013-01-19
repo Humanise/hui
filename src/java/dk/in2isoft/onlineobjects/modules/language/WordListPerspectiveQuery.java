@@ -9,10 +9,8 @@ import org.hibernate.SQLQuery;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 
-import dk.in2isoft.commons.lang.Code;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.CustomQuery;
-import edu.emory.mathcs.backport.java.util.Arrays;
 
 public class WordListPerspectiveQuery implements CustomQuery<WordListPerspective> {
 

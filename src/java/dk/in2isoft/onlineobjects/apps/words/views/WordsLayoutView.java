@@ -23,6 +23,23 @@ public class WordsLayoutView extends AbstractView implements InitializingBean {
 		msg = new Messages(Language.class);
 	}
 	
+	public String getSelectedMenuItem() {
+		String[] path = getRequest().getLocalPath();
+		if (path.length==0 || path.length==1) {
+			return "front";
+		}
+		if (path.length>=2 && path[1].equals("search")) {
+			return "search";
+		}
+		if (path.length>=2 && path[1].equals("statistics")) {
+			return "statistics";
+		}
+		if (path.length>=2 && path[1].equals("index")) {
+			return "index";
+		}
+		return null;
+	}
+	
 	public List<SelectItem> getLanguages() {
 		List<SelectItem> items = Lists.newArrayList();
 		String[] languages = new String[] {"da","en"};

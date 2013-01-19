@@ -36,4 +36,12 @@ public class Messages extends ReloadableResourceBundleMessageSource {
 			return "???"+key+"???";
 		}
 	}
+
+	public String get(String property, String key, Locale locale) {
+		try {
+			return getMessage(property+"."+key, null, locale);
+		} catch (NoSuchMessageException e) {
+			return "???"+key+"???";
+		}
+	}
 }

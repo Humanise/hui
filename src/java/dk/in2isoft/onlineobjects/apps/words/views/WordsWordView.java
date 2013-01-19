@@ -95,11 +95,11 @@ public class WordsWordView extends AbstractView implements InitializingBean {
 		if (categories!=null) return categories;
 		Locale locale = getLocale();
 
-		Messages msg = new Messages("classpath:dk/in2isoft/onlineobjects/apps/words/msg/Words");
+		Messages msg = new Messages(LexicalCategory.class);
 		categories = Lists.newArrayList();
 
 		Option unknown = new Option();
-		unknown.setLabel(msg.get("unknown", locale));
+		unknown.setLabel(msg.get("code","none", locale));
 		categories.add(unknown);
 		
 		Query<LexicalCategory> query = Query.of(LexicalCategory.class).orderByName();
@@ -107,8 +107,8 @@ public class WordsWordView extends AbstractView implements InitializingBean {
 		for (LexicalCategory category : list) {
 			Option option = new Option();
 			option.setValue(category.getCode());
-			option.setLabel(msg.get(category.getCode(), locale));
-			option.setDescription(msg.get(category.getCode()+"_description", locale));
+			option.setLabel(msg.get("code",category.getCode(), locale));
+			option.setDescription(msg.get("code",category.getCode()+"_description", locale));
 			categories.add(option);
 		}
 		return categories;
@@ -117,7 +117,7 @@ public class WordsWordView extends AbstractView implements InitializingBean {
 	public List<Option> getLanguages() {
 		if (languages!=null) return languages;
 
-		Messages msg = new Messages("classpath:dk/in2isoft/onlineobjects/apps/words/msg/Words");
+		Messages msg = new Messages(Language.class);
 		languages = Lists.newArrayList();
 		Query<Language> query = Query.of(Language.class).orderByName();
 		List<Language> list = modelService.list(query);
@@ -125,7 +125,7 @@ public class WordsWordView extends AbstractView implements InitializingBean {
 		for (Language category : list) {
 			Option option = new Option();
 			option.setValue(category.getCode());
-			option.setLabel(msg.get(category.getCode(), locale));
+			option.setLabel(msg.get("code",category.getCode(), locale));
 			languages.add(option);
 		}
 		return languages;

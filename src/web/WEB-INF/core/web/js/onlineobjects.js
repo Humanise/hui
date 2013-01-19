@@ -532,6 +532,8 @@ oo.WordGetter = function() {
 
 oo.WordGetter.prototype = {
 	show : function(callback) {
+		hui.ui.get('wordFinderListSource').setParameter('language',oo.language);
+		hui.log(hui.ui.get('wordFinderListSource').parameters)
 		hui.ui.get('wordFinderWindow').show();
 		hui.ui.get('wordFinderSearch').focus();
 		this.callback = callback;

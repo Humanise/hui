@@ -4,14 +4,16 @@ import java.io.IOException;
 import java.util.Locale;
 
 import dk.in2isoft.commons.lang.Strings;
-import dk.in2isoft.in2igui.data.ListData;
 import dk.in2isoft.in2igui.data.ListWriter;
 import dk.in2isoft.onlineobjects.apps.videosharing.Path;
+import dk.in2isoft.onlineobjects.apps.words.WordsController;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.model.Image;
+import dk.in2isoft.onlineobjects.model.Language;
+import dk.in2isoft.onlineobjects.model.LexicalCategory;
 import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspectiveQuery;
@@ -32,18 +34,21 @@ public class ModelController extends ModelControllerBase {
 	public void listWords(Request request) throws IOException, ModelException {
 		String text = request.getString("text");
 		int page = request.getInt("page");
+		String language = request.getString("language");
+		Locale locale = new Locale(language);
 		
 		WordListPerspectiveQuery query = new WordListPerspectiveQuery();
 		query.withPaging(page, 50).startingWith(text).orderByText();
 		SearchResult<WordListPerspective> result = modelService.search(query);
 		
-		Messages msg = new Messages("classpath:dk/in2isoft/onlineobjects/apps/words/msg/Words");
-		Locale locale = Locale.ENGLISH;
+		Messages msg = new Messages(WordsController.class);
+		Messages langMsg = new Messages(Language.class);
+		Messages lexMsg = new Messages(LexicalCategory.class);
 
 		ListWriter writer = new ListWriter(request);
 		writer.startList();
 		writer.window(result.getTotalCount(),50,page);
-		writer.startHeaders().header("Word").header("Language").header("Category").endHeaders();		
+		writer.startHeaders().header(msg.get("word", locale)).header(msg.get("language", locale)).header(msg.get("category", locale)).endHeaders();		
 		
 		for (WordListPerspective word : result.getList()) {
 			String kind = word.getClass().getSimpleName().toLowerCase();
@@ -53,10 +58,14 @@ public class ModelController extends ModelControllerBase {
 				writer.startLine().minor().dimmed().text(word.getGlossary()).endLine();
 			}
 			writer.endCell();
-			writer.startCell().text(msg.get(word.getLanguage(), locale)).endCell();
+			writer.startCell();
+			if (Strings.isNotBlank(word.getLanguage())) {
+				writer.text(langMsg.get("code."+word.getLanguage(), locale));
+			}
+			writer.endCell();
 			writer.startCell();
 			if (Strings.isNotBlank(word.getLexicalCategory())) {
-				writer.text(msg.get(word.getLexicalCategory(),locale));
+				writer.text(lexMsg.get("code."+word.getLexicalCategory(),locale));
 			}
 			writer.endCell();
 			writer.endRow();

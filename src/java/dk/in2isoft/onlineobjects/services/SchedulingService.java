@@ -1,26 +1,62 @@
 package dk.in2isoft.onlineobjects.services;
 
-import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.quartz.CronTrigger;
+import org.quartz.CronScheduleBuilder;
+import org.quartz.DateBuilder;
+import org.quartz.Job;
+import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
+import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
+import org.quartz.SchedulerFactory;
+import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.impl.matchers.GroupMatcher;
+import org.quartz.spi.MutableTrigger;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.web.context.WebApplicationContext;
 
 public class SchedulingService implements InitializingBean {
 
 	private final static Logger log = Logger.getLogger(SchedulingService.class);
 
 	private org.quartz.Scheduler scheduler;
+
+	private WebApplicationContext webApplicationContext;
+
+
+	public void afterPropertiesSet() throws Exception {
+		SchedulerFactory sf = new StdSchedulerFactory();
+		scheduler = sf.getScheduler();
+				
+		JobDetail job = JobBuilder.newJob(HelloJob.class)
+			    .withIdentity("job1", "group1")
+			    .build();
+		Date runTime = DateBuilder.evenMinuteDate(new Date());
+
+		// Trigger the job to run on the next round minute
+		Trigger trigger = TriggerBuilder.newTrigger()
+		    .withIdentity("trigger1", "group1")
+		    .startAt(runTime).withSchedule(SimpleScheduleBuilder.repeatSecondlyForever(20))
+		    .build();
+		
+		scheduler.scheduleJob(job, trigger);
+		scheduler.start();
+	}
+	
+	public void setCoreScheduler(Scheduler coreSchedulerFactory) {
+		this.scheduler = coreSchedulerFactory;
+	}
 
 	protected SchedulingService() {
 		/*try {
@@ -40,92 +76,53 @@ public class SchedulingService implements InitializingBean {
 	}
 	
 	public Map<String,String> listJobs() {
-		Map<String, String> list = new HashMap<String, String>();
+		
 		try {
-			for (String group : scheduler.getJobGroupNames()) {
-				for (String name : scheduler.getJobNames(group)) {
-					list.put(name, group);
+			List<String> groupNames = scheduler.getJobGroupNames();
+			for (String group : groupNames) {
+				Set<JobKey> jobKeys = scheduler.getJobKeys(GroupMatcher.jobGroupEquals(group));
+				for (JobKey key : jobKeys) {
+					JobDetail jobDetail = scheduler.getJobDetail(key);
+					jobDetail.getDescription();
 				}
 			}
 		} catch (SchedulerException e) {
-			log.error(e.getMessage(),e);
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		Map<String, String> list = new HashMap<String, String>();
+		
 		return list;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public boolean isRunning(String name, String group) {
-		List<JobExecutionContext> jobs;
-		try {
-			jobs = scheduler.getCurrentlyExecutingJobs();
-			for (JobExecutionContext context : jobs) {
-				JobDetail detail = context.getJobDetail();
-				if (name.equals(detail.getName()) && group.equals(detail.getGroup())) {
-					return true;
-				}
-			}
-		} catch (SchedulerException e) {
-			log.error(e.getMessage(), e);
-		}
+		
 		return false;
 	}
 	
 	public void runJob(String name, String group) {
-		if (isRunning(name, group)) {
-			log.warn("Job is running!");
-			return;
-		}
-		try {
-			scheduler.triggerJob(name, group);
-		} catch (SchedulerException e) {
-			log.error(e.getMessage(), e);
-		}
+		
 	}
 	
 	public Date getLatestExecution(String name, String group) {
-		try {
-			Trigger[] triggers = scheduler.getTriggersOfJob(name, group);
-			if (triggers.length>0) {
-				return triggers[0].getPreviousFireTime();
-			}
-		} catch (SchedulerException e) {
-			log.error(e.getMessage(), e);
-		}
+		
 		return null;
 	}
 
 	public Date getNextExecution(String name, String group) {
-		try {
-			Trigger[] triggers = scheduler.getTriggersOfJob(name, group);
-			if (triggers.length>0) {
-				return triggers[0].getNextFireTime();
-			}
-		} catch (SchedulerException e) {
-			log.error(e.getMessage(), e);
-		}
+		
 		return null;
 	}
 
-	public void addJob(String name, String group, Class<?> jobClass, String cron, JobDataMap map) {
+	public boolean addJob(String name, String group, Class<? extends Job> jobClass, String cron, JobDataMap map) {
 
-		JobDetail detail = new JobDetail(name, group, jobClass);
-		if (map!=null) {
-			detail.setJobDataMap(map);
-		}
-		CronTrigger trigger = new CronTrigger(name, group);
+		JobDetail jobDetail = JobBuilder.newJob().withIdentity(name, group).ofType(jobClass).usingJobData(map).build();
+		MutableTrigger trigger = CronScheduleBuilder.cronSchedule(cron).build();
 		try {
-			trigger.setCronExpression(cron);
-		} catch (ParseException e) {
-			log.error(e.getMessage(),e);
+			scheduler.scheduleJob(jobDetail, trigger);
+			return true;
+		} catch (SchedulerException e) {
+			return false;
 		}
-		scheduleJob(detail, trigger);
-	}
-
-	public void afterPropertiesSet() throws Exception {
-		
-	}
-	
-	public void setCoreScheduler(Scheduler coreSchedulerFactory) {
-		this.scheduler = coreSchedulerFactory;
 	}
 }

@@ -67,7 +67,6 @@ public class Core {
 		return context;
 	}
 
-	@SuppressWarnings("unchecked")
 	public <T> T getBean(Class<T> beanClass) {
 		String name = beanClass.getSimpleName().substring(0, 1).toLowerCase()+beanClass.getSimpleName().substring(1);
 		WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(context);

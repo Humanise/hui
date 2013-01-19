@@ -1,22 +1,21 @@
 package dk.in2isoft.onlineobjects.scheduling;
 
 import org.apache.log4j.Logger;
+import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.springframework.scheduling.quartz.QuartzJobBean;
 
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.services.ConfigurationService;
 import dk.in2isoft.onlineobjects.services.EmailService;
 
-public class CallHomeJob extends QuartzJobBean {
+public class CallHomeJob implements Job {
 
 	private static Logger log = Logger.getLogger(CallHomeJob.class);
 	private EmailService emailService;
 	private ConfigurationService configurationService;
 
-	@Override
-	protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
+	public void execute(JobExecutionContext context) throws JobExecutionException {
 		if (configurationService.isDevelopmentMode()) {
 			return;
 		}

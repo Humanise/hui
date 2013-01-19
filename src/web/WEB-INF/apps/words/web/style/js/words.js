@@ -31,7 +31,7 @@ var wordsApp = {
 			win.add(form);
 		}
 		this._importWindow.show();
-		this._importForm.setValues({url:'http://daringfireball.net/linked/2012/10/04/valentine'}); //http://en.wikipedia.org/wiki/Language
+		this._importForm.setValues({url:'http://politiken.dk/rss/senestenyt.rss'}); //http://en.wikipedia.org/wiki/Language
 		this._importForm.focus();
 	},
 	$submit$importFormula : function(form) {
@@ -58,6 +58,11 @@ var wordsApp = {
 				hui.ui.showMessage({text:'The import failed',duration:2000});
 			}
 		})
+	},
+	
+	$submit$wordsSidebarSearch : function(field) {
+		var url = oo.appContext+'/'+oo.language+'/search/?text='+field.getValue();
+		document.location = url;
 	}
 }
 

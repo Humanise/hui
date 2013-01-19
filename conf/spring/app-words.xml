@@ -9,21 +9,30 @@
     	http://www.directwebremoting.org/schema/spring-dwr-2.0.xsd
     ">
 
-	<bean id="wordsController" class="dk.in2isoft.onlineobjects.apps.words.WordsController"
-		autowire="byType" />
-
-	<bean id="wordsModelService" class="dk.in2isoft.onlineobjects.apps.words.WordsModelService"
-		autowire="byType" />
-
-	<bean id="wordsLayoutView"
-		class="dk.in2isoft.onlineobjects.apps.words.views.WordsLayoutView"
-		scope="request">
-
+	<bean id="wordsController" class="dk.in2isoft.onlineobjects.apps.words.WordsController" autowire="byType" />
+	
+	<bean id="wordIndexer" class="dk.in2isoft.onlineobjects.modules.index.WordIndexer">
+		<property name="indexManager" ref="wordsIndex" />
+		<property name="modelService" ref="modelService" />
+		<property name="documentBuilder">
+			<bean class="dk.in2isoft.onlineobjects.modules.index.WordIndexDocumentBuilder"/>
+		</property>
 	</bean>
 
-	<bean id="wordsWordView"
-		class="dk.in2isoft.onlineobjects.apps.words.views.WordsWordView"
-		scope="request">
+	<bean id="wordsModelService" class="dk.in2isoft.onlineobjects.apps.words.WordsModelService" autowire="byType" />
+
+		
+	<bean id="wordsIndex" class="dk.in2isoft.onlineobjects.modules.index.IndexManager">
+		<property name="configurationService" ref="configurationService"/>
+	</bean>
+	
+	<bean id="wordIndexJob" class="dk.in2isoft.onlineobjects.apps.words.index.WordIndexJob">
+		<property name="wordIndexer" ref="wordIndexer" />
+	</bean>
+
+	<bean id="wordsLayoutView" class="dk.in2isoft.onlineobjects.apps.words.views.WordsLayoutView" scope="request"/>
+
+	<bean id="wordsWordView" class="dk.in2isoft.onlineobjects.apps.words.views.WordsWordView" scope="request">
 		<property name="modelService" ref="modelService" />
 		<property name="languageService" ref="languageService" />
 	</bean>

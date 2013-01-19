@@ -1,11 +1,6 @@
 package dk.in2isoft.onlineobjects.test.model;
 
-import static org.junit.Assert.assertEquals;
-
 import org.apache.log4j.Logger;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.TextField;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,13 +9,9 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import dk.in2isoft.onlineobjects.core.ModelService;
-import dk.in2isoft.onlineobjects.core.Query;
-import dk.in2isoft.onlineobjects.core.Results;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
-import dk.in2isoft.onlineobjects.model.Property;
-import dk.in2isoft.onlineobjects.model.Word;
-import dk.in2isoft.onlineobjects.modules.index.IndexManager;
 import dk.in2isoft.onlineobjects.modules.index.IndexService;
+import dk.in2isoft.onlineobjects.modules.index.WordIndexer;
 import dk.in2isoft.onlineobjects.services.ConfigurationService;
 import dk.in2isoft.onlineobjects.services.FileService;
 
@@ -38,39 +29,12 @@ public class TestIndexWords extends AbstractJUnit4SpringContextTests {
 	private FileService fileService;
 	@Autowired
 	private IndexService indexService;
+	@Autowired
+	WordIndexer wordIndexer;
 	
 	@Test
 	public void testUpdateWordsIndex() throws EndUserException {
-		IndexManager index = indexService.getIndex(IndexService.WORDS_INDEX);
-		index.clear();
-		assertEquals(0, index.getDocumentCount());
-		Query<Word> query = Query.of(Word.class);
-		Long count = modelService.count(query);
-		Results<Word> results = modelService.scroll(query);
-		int num = 0;
-		int percent = -1;
-		while (results.next()) {
-			Word word = results.get();
-			Document doc = new Document();
-			int newPercent = Math.round(((float)num)/(float)count*100);
-			if (newPercent>percent) {
-				percent = newPercent;
-				log.info("running: "+percent+"%");
-			}
-			StringBuilder text = new StringBuilder();
-			text.append(word.getText()).append(" ");
-			String glossary = word.getPropertyValue(Property.KEY_SEMANTICS_GLOSSARY);
-			if (glossary==null) {
-				glossary="";
-			}
-			text.append(glossary);
-			doc.add(new TextField("text", text.toString(), Field.Store.YES));
-			doc.add(new TextField("word", word.getText(), Field.Store.YES));
-			doc.add(new TextField("glossary", glossary, Field.Store.YES));
-			index.update(word, doc);
-			num++;
-		}
-		log.info("finished: "+percent+"%");
+		wordIndexer.rebuild();
 	}
 
 	public void setFileService(FileService fileService) {
@@ -103,5 +67,9 @@ public class TestIndexWords extends AbstractJUnit4SpringContextTests {
 
 	public IndexService getIndexService() {
 		return indexService;
+	}
+	
+	public void setWordIndexer(WordIndexer wordIndexer) {
+		this.wordIndexer = wordIndexer;
 	}
 }

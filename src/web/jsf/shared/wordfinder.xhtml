@@ -9,14 +9,16 @@
 >
 	<ui:composition>
 	
+		<f:loadBundle basename="dk.in2isoft.onlineobjects.ui.jsf.msg.WordFinderComponent" var="msgWordFinder"/>
+	
 		<gui:source name="wordFinderListSource" url="#{wordsWordView.baseContext}/service/model/listWords">
 			<gui:parameter key="text" value="@wordFinderSearch.value"/>
 			<gui:parameter key="page" value="@wordFinderList.window.page"/>
 		</gui:source>
 
-		<gui:window title="Find word" name="wordFinderWindow" width="500">
+		<gui:window title="#{msgWordFinder['title']}" name="wordFinderWindow" width="500">
 			<gui:bar variant="window">
-				<gui:button small="true" name="wordFinderAdd" text="Add word"/>
+				<gui:button small="true" name="wordFinderAdd" text="#{msgWordFinder['add_word']}"/>
 				<f:facet name="right">
 					<gui:searchfield name="wordFinderSearch" expandedWidth="200"/>
 				</f:facet>
@@ -27,8 +29,8 @@
 						<gui:list source="wordFinderListSource" name="wordFinderList">
 							<f:facet name="empty">
 								<div style="padding: 20px; text-align: center;">
-									<p>The word was not found, create it...</p>
-									<gui:button small="true" name="wordFinderEmpty" text="Add word"/>
+									<p>#{msgWordFinder['not_found']}</p>
+									<gui:button small="true" name="wordFinderEmpty" text="#{msgWordFinder['add_word']}"/>
 								</div>
 							</f:facet>
 						</gui:list>
@@ -38,19 +40,19 @@
 					<div style="padding: 10px">
 						<gui:formula name="wordFinderForm">
 							<gui:fields>
-								<gui:field label="Text">
+								<gui:field label="#{msgWordFinder['text']}">
 									<gui:textInput key="text"/>
 								</gui:field>
-								<gui:field label="Language">
+								<gui:field label="#{msgWordFinder['language']}">
 									<gui:dropDown key="language" value="da" items="#{wordsWordView.languages}"/>
 								</gui:field>
-								<gui:field label="Category">
+								<gui:field label="#{msgWordFinder['category']}">
 									<gui:dropDown key="category" items="#{wordsWordView.categories}"/>
 								</gui:field>
 							</gui:fields>
 							<gui:buttons align="right">
-								<gui:button text="Cancel" name="wordFinderCancel"/>
-								<gui:button text="Add" highlighted="true" submit="true"/>
+								<gui:button text="#{msgWordFinder['cancel']}" name="wordFinderCancel"/>
+								<gui:button text="#{msgWordFinder['create']}" highlighted="true" submit="true"/>
 							</gui:buttons>
 						</gui:formula>
 					</div>		

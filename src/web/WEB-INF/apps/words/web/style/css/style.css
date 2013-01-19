@@ -1,3 +1,5 @@
+@import url('words_search.css');
+
 body
 {
 	background: #fafafa;
@@ -84,12 +86,6 @@ div.words
 	padding: 18px 30px 40px;
 }
 
-ul.words_sidebar_index,
-div.words,
-div.oo_layout_top ul
-{
-}
-
 div.oo_layout_top ul a span
 {
 	color: #999;
@@ -99,21 +95,59 @@ div.oo_layout_top ul a span
 
 /************ Menu ************/
 
+ul.words_menu
+{
+	color: #bbb;
+	padding: 10px  0 0px 35px;
+	list-style-type: circle;
+	font-size: 24px;
+	line-height: 20px;
+	margin: 0;
+}
 
+ul.words_menu li a,
+ul.words_menu li strong
+{
+	font-size: 12pt;
+	position: relative;
+	top: -2px;
+	left: -4px;
+}
 
+ul.words_menu li strong
+{
+	color: #333;
+	font-weight: bold;
+}
 
 /********** Sidebar **********/
 
 div.words_sidebar
 {
-	padding: 0 10px;
+	padding: 5px 10px;
 }
 
-div.words_sidebar h2
+div.words_sidebar h3
 {
-	margin: 0;
+	margin: 10px 0 10px;
 	font-weight: 200;
-	color: #999;
+	border-bottom: 1px solid #eee;
+	position: relative;
+	text-align: center;
+}
+
+div.words_sidebar h3 span
+{
+	background: #fff;
+	font-size: 14px;
+	padding: 0 4px;
+	top: 9px;
+	letter-spacing: 1px;
+	position: relative;
+	/*
+	text-transform: lowercase;
+	font-style: italic;*/
+	color: #ccc;
 }
 
 ul.words_sidebar_index
@@ -360,7 +394,7 @@ ul.words_list
 
 ul.words_list li
 {
-	margin: 5px 0;
+	margin: 8px 0;
 }
 
 span.words_list_info
