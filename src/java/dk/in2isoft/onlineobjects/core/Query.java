@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Session;
 
 import com.google.common.collect.Lists;
@@ -19,7 +18,7 @@ import dk.in2isoft.onlineobjects.model.User;
 
 public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuery<T> {
 
-	private static Logger log = Logger.getLogger(Query.class);
+	//private static Logger log = Logger.getLogger(Query.class);
 
 	private boolean inPosition;
 

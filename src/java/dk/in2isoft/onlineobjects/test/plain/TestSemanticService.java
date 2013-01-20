@@ -10,7 +10,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Locale;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;

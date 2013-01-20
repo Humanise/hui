@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
+import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 
 public class EmailService {
@@ -27,7 +28,7 @@ public class EmailService {
 	}
 
 	public String applyTemplate(String path, Map<String, Object> model) {
-        return VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, path, model);
+        return VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, path, Strings.UTF8, model);
 	}
 	
 	public void sendMessage(String subject, String textBody, String address, String name) throws EndUserException {

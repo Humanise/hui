@@ -2,7 +2,7 @@ package dk.in2isoft.onlineobjects.test.model;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

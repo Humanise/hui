@@ -9,7 +9,6 @@ import java.util.regex.Pattern;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
 
 import dk.in2isoft.commons.lang.Strings;
@@ -25,7 +24,7 @@ import dk.in2isoft.onlineobjects.ui.Request;
 
 public abstract class ApplicationController extends AbstractController implements ModelEventListener,InitializingBean {
 
-	private static Logger log = Logger.getLogger(ApplicationController.class);
+	//private static Logger log = Logger.getLogger(ApplicationController.class);
 
 	private String name;
 	private Map<Pattern,String> jsfMatchers = new LinkedHashMap<Pattern, String>();
@@ -39,7 +38,7 @@ public abstract class ApplicationController extends AbstractController implement
 	
 
 	public void afterPropertiesSet() throws Exception {
-		//eventService.addModelEventListener(this);
+		
 	}
 
 

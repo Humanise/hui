@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.junit.Test;

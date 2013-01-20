@@ -35,7 +35,7 @@ public class In2iGui {
 
 	private String path = "";
 	private boolean developmentMode;
-	private ObjectPool pool;
+	private ObjectPool<Transformer> pool;
 
 	private Templates templates;
 
@@ -45,22 +45,22 @@ public class In2iGui {
 		ConfigurationService config = Core.getInstance().getConfigurationService();
 		developmentMode = config.isDevelopmentMode();
 		path = config.getFile("hui").getAbsolutePath();
-		pool = new StackObjectPool(new PoolableObjectFactory() {
+		pool = new StackObjectPool<Transformer>(new PoolableObjectFactory<Transformer>() {
 
-			public void activateObject(Object arg0) throws Exception {
+			public void activateObject(Transformer arg0) throws Exception {
 			}
 
-			public void destroyObject(Object arg0) throws Exception {
+			public void destroyObject(Transformer arg0) throws Exception {
 			}
 
-			public Object makeObject() throws Exception {
+			public Transformer makeObject() throws Exception {
 				return createTransformer(false);
 			}
 
-			public void passivateObject(Object arg0) throws Exception {
+			public void passivateObject(Transformer arg0) throws Exception {
 			}
 
-			public boolean validateObject(Object arg0) {
+			public boolean validateObject(Transformer arg0) {
 				return true;
 			}
 			

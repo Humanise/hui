@@ -1,7 +1,6 @@
 package dk.in2isoft.onlineobjects.test.parsing;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -14,14 +13,9 @@ import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Node;
 import nu.xom.Nodes;
-import nu.xom.ParentNode;
 import nu.xom.Text;
 import nu.xom.XPathContext;
-import nu.xom.converters.DOMConverter;
-
 import org.apache.log4j.Logger;
-import org.apache.xerces.dom.DOMImplementationImpl;
-import org.apache.xml.serialize.HTMLSerializer;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -34,6 +28,7 @@ import dk.in2isoft.commons.lang.Files;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.commons.xml.DOM;
+import dk.in2isoft.commons.xml.Serializing;
 import dk.in2isoft.onlineobjects.services.SemanticService;
 import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 
@@ -106,9 +101,18 @@ public class TestHTMLParsing extends AbstractSpringTestCase {
 		if (file.exists()) {
 			file.delete();
 		}
-		HTMLSerializer htmlSerializer = new HTMLSerializer();
-		htmlSerializer.setOutputByteStream(new FileOutputStream(file));
-		htmlSerializer.serialize(DOMConverter.convert(document, DOMImplementationImpl.getDOMImplementation()));
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		Serializing.writeAsXHTML(document, file);
+		
 		log.info("Written: "+file.getCanonicalPath());
 		
 		{
@@ -125,7 +129,7 @@ public class TestHTMLParsing extends AbstractSpringTestCase {
 	private Element findArticle() {
 		return null;
 	}
-	
+	/*
 	private Element findFirstParentWithHeader(Node node, XPathContext context) {
 		
 		while (node.getParent()!=null && node.getParent() instanceof Element) {
@@ -139,7 +143,7 @@ public class TestHTMLParsing extends AbstractSpringTestCase {
 		
 		
 		return null;
-	}
+	}*/
 	
 	private Element findTitle(Document doc, XPathContext context) {
 		return findFirstByName(doc, "h1", context);

@@ -44,8 +44,6 @@ import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 
 public class TestWordNetImporter extends AbstractSpringTestCase {
 	
-	private ConfigurationService configurationService; 
-
 	private static final Logger log = Logger.getLogger(TestWordNetImporter.class);
 	private static Model model;
 	private static Graph graph;
@@ -57,7 +55,7 @@ public class TestWordNetImporter extends AbstractSpringTestCase {
 	private static Node wordRelation = Node.createURI("http://www.w3.org/2006/03/wn/wn20/schema/word");
 	private static Node lexicalForm = Node.createURI("http://www.w3.org/2006/03/wn/wn20/schema/lexicalForm");
 	private static Node partOfSpeech = Node.createURI("http://www.wordnet.dk/owl/instance/2009/03/schema/partOfSpeech");
-	private static Node nearSynonymOf = Node.createURI("http://www.wordnet.dk/owl/instance/2009/03/schema/nearSynonymOf");
+	//private static Node nearSynonymOf = Node.createURI("http://www.wordnet.dk/owl/instance/2009/03/schema/nearSynonymOf");
 	private static final Node CONTAINS_SENSE = Node.createURI("http://www.w3.org/2006/03/wn/wn20/schema/containsWordSense");
 	
 	private static final Map<String,String> map = Maps.newHashMap();
@@ -70,7 +68,6 @@ public class TestWordNetImporter extends AbstractSpringTestCase {
 		map.put("http://www.w3.org/2006/03/wn/wn20/schema/AdverbWordSense", LexicalCategory.CODE_ADVERBIUM);
 	}
 	
-	private SemanticService semanticService;
 	private LanguageService languageService;
 	
 	@BeforeClass
@@ -280,10 +277,6 @@ public class TestWordNetImporter extends AbstractSpringTestCase {
 		log.info(string+": "+object);
 	}
 
-	@Autowired
-	public void setSemanticService(SemanticService semanticService) {
-		this.semanticService = semanticService;
-	}
 	
 	@Autowired
 	public void setLanguageService(LanguageService languageService) {

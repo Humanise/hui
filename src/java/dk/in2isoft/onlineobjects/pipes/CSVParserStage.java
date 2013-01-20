@@ -20,10 +20,11 @@ public class CSVParserStage extends PipelineStageAdapter {
 	@Override
 	public void receiveFile(File file) {
 		InputStreamReader inputStreamReader;
+		CSVReader reader = null;
 		try {
 			inputStreamReader = new InputStreamReader(new FileInputStream(file), "UTF-8");
 			BufferedReader buffered = new BufferedReader(inputStreamReader);
-			CSVReader reader = new CSVReader(buffered);
+			reader = new CSVReader(buffered);
 
 			Map<String, String> map = new LinkedHashMap<String, String>();
 			String[] keys = {};
@@ -46,6 +47,14 @@ public class CSVParserStage extends PipelineStageAdapter {
 			}
 		} catch (IOException e) {
 			
+		} finally {
+			if (reader!=null) {
+				try {
+					reader.close();
+				} catch (IOException e) {
+					// ignore
+				}
+			}
 		}
 	}
 

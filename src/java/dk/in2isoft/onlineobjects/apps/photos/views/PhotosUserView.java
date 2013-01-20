@@ -7,7 +7,6 @@ import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Pair;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SearchResult;
-import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.UserQuery;
 import dk.in2isoft.onlineobjects.core.exceptions.ContentNotFoundException;
 import dk.in2isoft.onlineobjects.model.Image;
@@ -15,13 +14,10 @@ import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.ui.jsf.ListModel;
 import dk.in2isoft.onlineobjects.ui.jsf.ListModelResult;
-import dk.in2isoft.onlineobjects.util.images.ImageService;
 
 public class PhotosUserView extends AbstractManagedBean implements InitializingBean {
 
 	private ModelService modelService;
-	private SecurityService securityService;
-	private ImageService imageService;
 	
 	private String username;
 	private User user;
@@ -76,11 +72,4 @@ public class PhotosUserView extends AbstractManagedBean implements InitializingB
 		this.modelService = modelService;
 	}
 	
-	public void setSecurityService(SecurityService securityService) {
-		this.securityService = securityService;
-	}
-	
-	public void setImageService(ImageService imageService) {
-		this.imageService = imageService;
-	}
 }
