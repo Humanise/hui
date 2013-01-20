@@ -28,7 +28,6 @@
 	</bean>
 	
 	<bean id="wordIndexJob" class="dk.in2isoft.onlineobjects.apps.words.index.WordIndexJob">
-		<property name="wordIndexer" ref="wordIndexer" />
 	</bean>
 
 	<bean id="wordsLayoutView" class="dk.in2isoft.onlineobjects.apps.words.views.WordsLayoutView" scope="request"/>

@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
+import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.model.WebNode;
 import dk.in2isoft.onlineobjects.model.WebPage;
@@ -64,7 +65,7 @@ public class PublishingRemotingFacade extends AbstractRemotingFacade {
 	}
 	
 	public long createWebPage(long webSiteId,String template) throws EndUserException {
-		Class<?> docClass = modelService.getModelClass(template);
+		Class<? extends Entity> docClass = modelService.getModelClass(template);
 		return webModelService.createWebPageOnSite(webSiteId, docClass, getUserSession());
 	}
 

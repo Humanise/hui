@@ -32,6 +32,7 @@ public class PageRenderingService {
 	private WebModelService webModelService;
 	private ConfigurationService configurationService;
 	private SecurityService securityService;
+	private List<DocumentBuilder> documentBuilders;
 
 	public void render(WebPage page,Request request) throws EndUserException {
 		// Get the page content
@@ -40,7 +41,7 @@ public class PageRenderingService {
 		if (document==null) {
 			throw new EndUserException("The page does not have a document!");
 		}
-		DocumentBuilder builder = DocumentBuilder.getBuilder(document.getClass());
+		DocumentBuilder builder = getBuilder(document.getClass());
 		
 		if (request.isSet("feed") && builder instanceof FeedBuilder) {
 			//String format = request.getString("feed");
@@ -81,7 +82,7 @@ public class PageRenderingService {
 		// Append content
 		Element content = new Element("content", NAMESPACE);
 		content.addAttribute(new Attribute("id",String.valueOf(document.getId())));
-		content.appendChild(builder.build((Document)document));
+		content.appendChild(builder.build((Document)document, request.getSession()));
 		root.appendChild(content);
 		
 		String template = page.getPropertyValue(WebPage.PROPERTY_TEMPLATE);
@@ -106,6 +107,15 @@ public class PageRenderingService {
 		}
 	}
 	
+	public DocumentBuilder getBuilder(Class<? extends Entity> type) {
+		for (DocumentBuilder builder : documentBuilders) {
+			if (builder.getEntityType().equals(type)) {
+				return builder;
+			}
+		}
+		return null;
+	}
+
 	public Map<String, String> buildParameters(Request request) {
 		Map<String, String> parameters = new HashMap<String, String>();
 		String devmode = String.valueOf(configurationService.isDevelopmentMode());
@@ -131,44 +141,30 @@ public class PageRenderingService {
 		parameters.put("path-core", path.toString());
 		return parameters;
 	}
+	
+	// Wiring...
 
 	public void setModelService(ModelService modelService) {
 		this.modelService = modelService;
-	}
-
-	public ModelService getModelService() {
-		return modelService;
 	}
 
 	public void setConversionService(ConversionService conversionService) {
 		this.conversionService = conversionService;
 	}
 
-	public ConversionService getConversionService() {
-		return conversionService;
-	}
-
 	public void setWebModelService(WebModelService webModelService) {
 		this.webModelService = webModelService;
-	}
-
-	public WebModelService getWebModelService() {
-		return webModelService;
 	}
 
 	public void setConfigurationService(ConfigurationService configurationService) {
 		this.configurationService = configurationService;
 	}
 
-	public ConfigurationService getConfigurationService() {
-		return configurationService;
-	}
-
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
 	}
-
-	public SecurityService getSecurityService() {
-		return securityService;
+	
+	public void setDocumentBuilders(List<DocumentBuilder> documentBuilders) {
+		this.documentBuilders = documentBuilders;
 	}
 }

@@ -22,15 +22,22 @@ import dk.in2isoft.onlineobjects.services.ConversionService;
 public class ImageGalleryBuilder extends DocumentBuilder implements FeedBuilder {
 
 	private static String NAMESPACE = "http://uri.onlineobjects.com/publishing/Document/ImageGallery/";
+	
+	private ModelService modelService;
 
 	// private static Logger log = Logger.getLogger(ImageGalleryBuilder.class);
 
 	public ImageGalleryBuilder() {
 		super();
 	}
+	
+	@Override
+	public Class<? extends Entity> getEntityType() {
+		return ImageGallery.class;
+	}
 
 	@Override
-	public Node build(Document document) throws EndUserException {
+	public Node build(Document document, Privileged priviledged) throws EndUserException {
 		ImageGallery gallery = (ImageGallery) document;
 		ConversionService converter = Core.getInstance().getConversionService();
 
@@ -45,12 +52,12 @@ public class ImageGalleryBuilder extends DocumentBuilder implements FeedBuilder 
 		settings.addAttribute(new Attribute("style", style));
 		root.appendChild(settings);
 
-		HeaderPart header = getModel().getChild(gallery, HeaderPart.class);
+		HeaderPart header = modelService.getChild(gallery, HeaderPart.class);
 		if (header != null) {
 			root.appendChild(converter.generateXML(header));
 		}
 
-		HtmlPart html = getModel().getChild(gallery, HtmlPart.class);
+		HtmlPart html = modelService.getChild(gallery, HtmlPart.class);
 		if (html != null) {
 			root.appendChild(converter.generateXML(html));
 		}
@@ -59,7 +66,7 @@ public class ImageGalleryBuilder extends DocumentBuilder implements FeedBuilder 
 		root.appendChild(tiled);
 		Element row = new Element("row", NAMESPACE);
 		int columns = gallery.getTiledColumns();
-		List<Image> images = getModel().getChildrenOrdered(gallery, Image.class);
+		List<Image> images = modelService.getChildrenOrdered(gallery, Image.class);
 		for (int i = 0; i < images.size(); i++) {
 			if (i % columns == 0) {
 				row = new Element("row", NAMESPACE);
@@ -97,7 +104,7 @@ public class ImageGalleryBuilder extends DocumentBuilder implements FeedBuilder 
 
 	public void buildFeed(Document document, FeedWriter writer) throws EndUserException {
 		ImageGallery gallery = (ImageGallery) document;
-		List<Image> images = getModel().getChildren(gallery, Image.class);
+		List<Image> images = modelService.getChildren(gallery, Image.class);
 		try {
 			writer.startFeed();
 			writer.startChannel(gallery.getName(),Core.getInstance().getConfigurationService().getBaseUrl());
@@ -111,4 +118,7 @@ public class ImageGalleryBuilder extends DocumentBuilder implements FeedBuilder 
 		}
 	}
 
+	public void setModelService(ModelService modelService) {
+		this.modelService = modelService;
+	}
 }

@@ -97,7 +97,10 @@
 		<dependency org="jwnl" name="jwnl" rev="1.3.3" transitive="false"/>
 		<dependency org="antlr" name="antlr" rev="2.7.6" transitive="false"/>
 		<dependency org="org.apache.uima" name="uimaj-core" rev="2.3.1" transitive="false"/>
-    	
+		<dependency org="org.neo4j" name="neo4j-kernel" rev="1.8.1" transitive="false"/>
+		<dependency org="org.neo4j" name="neo4j-index" rev="1.2-1.2" transitive="false"/>
+		<dependency org="org.hamcrest" name="hamcrest-all" rev="1.3" transitive="false"/>
+                        
 
 	<!-- Caching -->
         <dependency org="net.sf.ehcache" name="ehcache-core" rev="2.0.0" transitive="false"/>
@@ -114,7 +117,8 @@
         <dependency org="xml-apis" name="xml-apis" rev="1.4.01" transitive="false"/>
 		<dependency org="org.ccil.cowan.tagsoup" name="tagsoup" rev="1.2.1" transitive="false"/>
 		<dependency org="rome" name="rome" rev="1.0" transitive="false"/>
-		<dependency org="de.l3s.boilerpipe" name="boilerpipe" rev="1.2.0"/>
+		<dependency org="de.l3s.boilerpipe" name="boilerpipe" rev="1.2.0" transitive="false"/>
+		<dependency org="net.sourceforge.nekohtml" name="nekohtml" rev="1.9.17" transitive="false"/>
             
 			
 	<!-- Testing -->

@@ -1,4 +1,4 @@
-package dk.in2isoft.onlineobjects.test.wordnet;
+package dk.in2isoft.onlineobjects.test.dangerous;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -39,7 +39,6 @@ import dk.in2isoft.onlineobjects.modules.dannet.DanNetGlossary;
 import dk.in2isoft.onlineobjects.modules.dannet.DanNetUtil;
 import dk.in2isoft.onlineobjects.services.ConfigurationService;
 import dk.in2isoft.onlineobjects.services.LanguageService;
-import dk.in2isoft.onlineobjects.services.SemanticService;
 import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 
 public class TestWordNetImporter extends AbstractSpringTestCase {

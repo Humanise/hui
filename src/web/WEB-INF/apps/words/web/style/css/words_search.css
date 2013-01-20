@@ -15,6 +15,9 @@ input.words_search_input
 	font-family: Georgia;
 	vertical-align: top;
 	margin: 0;
+	height: 32px;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
 }
 
 input.words_search_button
@@ -22,6 +25,8 @@ input.words_search_button
 	border: 1px solid #ddd;
 	border-radius: 3px;
 	height: 32px;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
 	vertical-align: top;
 	margin: 0;
 	padding: 0 15px;

@@ -7,12 +7,11 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.ReturnableEvaluator;
-import org.neo4j.graphdb.StopEvaluator;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.graphdb.TraversalPosition;
-import org.neo4j.graphdb.Traverser.Order;
+import org.neo4j.graphdb.traversal.TraversalDescription;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
+import org.neo4j.kernel.impl.traversal.TraversalDescriptionImpl;
+import org.neo4j.tooling.GlobalGraphOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import dk.in2isoft.onlineobjects.services.ConfigurationService;
@@ -55,14 +54,10 @@ public class TestNeo4j extends AbstractSpringTestCase {
 		Transaction tx = graphDb.beginTx();
 		try
 		{
-			Iterable<Node> allNodes = graphDb.getAllNodes();
-			graphDb.getReferenceNode().traverse(Order.BREADTH_FIRST, StopEvaluator.END_OF_GRAPH, new ReturnableEvaluator() {
-				
-				public boolean isReturnableNode(TraversalPosition pos) {
-					// TODO Auto-generated method stub
-					return pos.currentNode().hasProperty("word");
-				}
-			});
+			GlobalGraphOperations operations = GlobalGraphOperations.at(graphDb);
+			Iterable<Node> allNodes = operations.getAllNodes();
+			TraversalDescription td = new TraversalDescriptionImpl();
+			td.breadthFirst();
 			for (Node node : allNodes) {
 				log.info("ID: "+node.getId());
 				if (node.hasProperty("word")) {

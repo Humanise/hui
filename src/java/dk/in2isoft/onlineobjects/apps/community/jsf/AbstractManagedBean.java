@@ -5,8 +5,6 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import dk.in2isoft.onlineobjects.core.Core;
-import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.ui.Request;
 
@@ -35,11 +33,6 @@ public class AbstractManagedBean {
 	
 	public boolean getIsIP() {
 		return getRequest().isIP();
-	}
-
-	@Deprecated
-	protected ModelService getModel() {
-		return Core.getInstance().getModel();
 	}
 
 	public String getUserName() {

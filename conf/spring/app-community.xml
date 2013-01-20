@@ -28,7 +28,7 @@
 	<bean id="userProfileView" class="dk.in2isoft.onlineobjects.apps.community.views.UserProfileView" autowire="byType" scope="request"/>
 	<bean id="searchView" class="dk.in2isoft.onlineobjects.apps.community.views.SearchView" autowire="byType" scope="request"/>
 	
-	
+	<bean id="passwordRecovery" class="dk.in2isoft.onlineobjects.apps.community.jsf.PasswordRecoveryBean" autowire="byType" scope="request"/>
 	
 	<!-- Remoting -->
     <dwr:configuration>

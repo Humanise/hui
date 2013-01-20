@@ -12,6 +12,7 @@
     
     <import resource="spring/core-remoting.xml"/>
     <import resource="spring/core-scheduling.xml"/>
+    <import resource="spring/core-publishing.xml"/>
     <import resource="spring/module-language.xml"/>
     <import resource="spring/app-videosharing.xml"/>
     <import resource="spring/app-setup.xml"/>
@@ -66,7 +67,6 @@
 	
 	<bean id="conversionService" class="dk.in2isoft.onlineobjects.services.ConversionService"/>
 	
-	<bean id="pageRenderingService" class="dk.in2isoft.onlineobjects.services.PageRenderingService" autowire="byType"/>
 
 	<bean id="imageService" class="dk.in2isoft.onlineobjects.util.images.ImageService" autowire="byType"/>
 	

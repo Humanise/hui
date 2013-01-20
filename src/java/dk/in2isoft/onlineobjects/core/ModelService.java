@@ -148,9 +148,9 @@ public class ModelService {
 		return infos;
 	}
 
-	public Class<?> getModelClass(String simpleName) throws ModelException {
+	public Class<? extends Entity> getModelClass(String simpleName) throws ModelException {
 		try {
-			return Class.forName("dk.in2isoft.onlineobjects.model." + simpleName);
+			return Code.castClass(Class.forName("dk.in2isoft.onlineobjects.model." + simpleName));
 		} catch (ClassNotFoundException e) {
 			throw new ModelException("Could not find class with simple name=" + simpleName);
 		}

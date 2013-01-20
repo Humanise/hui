@@ -20,7 +20,7 @@ public class TestFileService extends AbstractSpringTestCase {
 	@Test
 	public void testMimeType() throws EndUserException, IOException {
 		testMimeType("text/plain", "loremipsum.txt");
-		testMimeType("image/pjpeg", "testImageWithGPS.jpg");
+		testMimeType("image/jpeg", "testImageWithGPS.jpg");
 	}
 	
 	private void testMimeType(String type,String fileName) throws IOException {

@@ -16,21 +16,6 @@ http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
       		org.springframework.web.jsf.DelegatingVariableResolver
    		</variable-resolver>
 	</application>
-	<managed-bean>
-        <managed-bean-name>base</managed-bean-name>
-        <managed-bean-class>dk.in2isoft.onlineobjects.apps.community.jsf.BaseBean</managed-bean-class>
-        <managed-bean-scope>request</managed-bean-scope>
-    </managed-bean>
-	<managed-bean>
-        <managed-bean-name>userProfile</managed-bean-name>
-        <managed-bean-class>dk.in2isoft.onlineobjects.apps.community.jsf.UserProfileBean</managed-bean-class>
-        <managed-bean-scope>request</managed-bean-scope>
-    </managed-bean>
-	<managed-bean>
-        <managed-bean-name>passwordRecovery</managed-bean-name>
-        <managed-bean-class>dk.in2isoft.onlineobjects.apps.community.jsf.PasswordRecoveryBean</managed-bean-class>
-        <managed-bean-scope>request</managed-bean-scope>
-    </managed-bean>
     
     <component>
     	<component-type>onlineobjects.list</component-type>

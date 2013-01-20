@@ -32,6 +32,7 @@ public class CompoundDocumentRemotingFacade extends AbstractRemotingFacade {
 	
 	private PageRenderingService pageRenderingService;
 	private ConfigurationService configurationService;
+	private CompoundDocumentBuilder compoundDocumentBuilder;
 
 	public String getStructure(long documentId) throws EndUserException {
 		CompoundDocument doc = modelService.get(CompoundDocument.class, documentId, getUserSession());
@@ -69,9 +70,8 @@ public class CompoundDocumentRemotingFacade extends AbstractRemotingFacade {
 
 	public String getStructureHTML(long documentId) throws EndUserException, UnsupportedEncodingException {
 		CompoundDocument doc = modelService.get(CompoundDocument.class, documentId, getUserSession());
-		CompoundDocumentBuilder builder = new CompoundDocumentBuilder();
 		Document input = doc.getStructureDocument();
-		builder.insertParts(input);
+		compoundDocumentBuilder.insertParts(input, getUserSession());
 		File stylsheet = configurationService.getFile(
 				new String[] { "WEB-INF", "apps", "community", "web", "documents", "CompoundDocument", "xslt",
 						"stylesheet.xsl" });
@@ -211,5 +211,9 @@ public class CompoundDocumentRemotingFacade extends AbstractRemotingFacade {
 
 	public ConfigurationService getConfigurationService() {
 		return configurationService;
+	}
+	
+	public void setCompoundDocumentBuilder(CompoundDocumentBuilder compoundDocumentBuilder) {
+		this.compoundDocumentBuilder = compoundDocumentBuilder;
 	}
 }

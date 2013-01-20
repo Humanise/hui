@@ -138,14 +138,16 @@ public class ImageService extends AbstractCommandLineInterface {
 			if (exifDirectory.containsTag(ExifIFD0Directory.TAG_MODEL)) {
 				imageMetaData.setCameraModel(exifDirectory.getString(ExifIFD0Directory.TAG_MODEL));
 			}
-			if (iptcDirectory.containsTag(IptcDirectory.TAG_OBJECT_NAME)) {
-				imageMetaData.setObjectName(iptcDirectory.getString(IptcDirectory.TAG_OBJECT_NAME));
-			}
-			if (iptcDirectory.containsTag(IptcDirectory.TAG_CAPTION)) {
-				imageMetaData.setCaption(iptcDirectory.getString(IptcDirectory.TAG_CAPTION));
-			}
-			if (iptcDirectory.containsTag(IptcDirectory.TAG_KEYWORDS)) {
-				imageMetaData.setKeywords(iptcDirectory.getStringArray(IptcDirectory.TAG_KEYWORDS));
+			if (iptcDirectory!=null) {
+				if (iptcDirectory.containsTag(IptcDirectory.TAG_OBJECT_NAME)) {
+					imageMetaData.setObjectName(iptcDirectory.getString(IptcDirectory.TAG_OBJECT_NAME));
+				}
+				if (iptcDirectory.containsTag(IptcDirectory.TAG_CAPTION)) {
+					imageMetaData.setCaption(iptcDirectory.getString(IptcDirectory.TAG_CAPTION));
+				}
+				if (iptcDirectory.containsTag(IptcDirectory.TAG_KEYWORDS)) {
+					imageMetaData.setKeywords(iptcDirectory.getStringArray(IptcDirectory.TAG_KEYWORDS));
+				}
 			}
 			if (gpsDirectory.containsTag(GpsDirectory.TAG_GPS_LATITUDE) && gpsDirectory.containsTag(GpsDirectory.TAG_GPS_LATITUDE_REF)) {
 				String ref = gpsDirectory.getString(GpsDirectory.TAG_GPS_LATITUDE_REF);

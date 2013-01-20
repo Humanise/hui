@@ -28,7 +28,7 @@ public class TestHTMLDocument extends AbstractSpringTestCase {
 		assertEquals("Language - Wikipedia, the free encyclopedia", doc.getTitle());
 		String text = doc.getFullText();
 		String[] words = semanticService.getWords(text);
-		assertEquals(15437,words.length);
+		assertEquals(15430,words.length);
 	}
 	
 	@Test

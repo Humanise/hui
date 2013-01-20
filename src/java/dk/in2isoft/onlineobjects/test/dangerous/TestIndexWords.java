@@ -1,4 +1,4 @@
-package dk.in2isoft.onlineobjects.test.model;
+package dk.in2isoft.onlineobjects.test.dangerous;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

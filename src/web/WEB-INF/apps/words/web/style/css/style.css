@@ -95,14 +95,20 @@ div.oo_layout_top ul a span
 
 /************ Menu ************/
 
+
 ul.words_menu
 {
-	color: #bbb;
-	padding: 10px  0 0px 35px;
-	list-style-type: circle;
-	font-size: 24px;
-	line-height: 20px;
-	margin: 0;
+	color: #BBBBBB;
+    font-size: 24px;
+    line-height: 20px;
+    list-style-type: circle;
+    margin: 0;
+    padding: 10px 0 0 30px;
+}
+
+ul.words_menu li
+{
+	-webkit-margin-start: 5px;
 }
 
 ul.words_menu li a,
@@ -111,7 +117,7 @@ ul.words_menu li strong
 	font-size: 12pt;
 	position: relative;
 	top: -2px;
-	left: -4px;
+	-webkit-margin-start: -4px;
 }
 
 ul.words_menu li strong
@@ -406,7 +412,6 @@ span.words_list_info
 span.words_list_glossary
 {
 	color: #ccc;
-	font-size: 24px;
 	margin-left: 10px;
 	line-height: 14px;
 }

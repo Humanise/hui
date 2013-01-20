@@ -13,11 +13,11 @@ import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.WebNode;
 import dk.in2isoft.onlineobjects.model.WebPage;
 import dk.in2isoft.onlineobjects.model.WebSite;
-import dk.in2isoft.onlineobjects.publishing.DocumentBuilder;
 
 public class WebModelService {
 	
 	private ModelService modelService;
+	private PageRenderingService pageRenderingService;
 	
 	public WebPage getWebSiteFrontPage(WebSite site) throws ModelException {
 		WebPage page = null;
@@ -51,7 +51,7 @@ public class WebModelService {
 		return page;
 	}
 	
-	public long createWebPageOnSite(long webSiteId, Class<?> clazz, Privileged priviledged) throws EndUserException {
+	public long createWebPageOnSite(long webSiteId, Class<? extends Entity> clazz, Privileged priviledged) throws EndUserException {
 		WebSite site = modelService.get(WebSite.class, webSiteId, priviledged);
 		
 		// Create a web page
@@ -83,7 +83,7 @@ public class WebModelService {
 		siteNodeRelation.setPosition(position);
 		modelService.createItem(siteNodeRelation,priviledged);
 		
-		Entity document = DocumentBuilder.getBuilder(clazz).create(priviledged); 
+		Entity document = pageRenderingService.getBuilder(clazz).create(priviledged); 
 		
 		// Set gallery as content of page
 		Relation pageDocumentRelation = new Relation(page,document);
@@ -178,5 +178,9 @@ public class WebModelService {
 
 	public ModelService getModelService() {
 		return modelService;
+	}
+	
+	public void setPageRenderingService(PageRenderingService pageRenderingService) {
+		this.pageRenderingService = pageRenderingService;
 	}
 }
