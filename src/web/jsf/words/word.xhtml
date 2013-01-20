@@ -24,6 +24,7 @@
 				</o:script>
 				<div id="word" class="words_word">
 					<h1>#{wordsWordView.text}</h1>
+					<p class="words_word_warning">#{msg.this_is_not_a_dictionary} - <o:link href="http://ordnet.dk/ddo/ordbog?query=#{wordsWordView.text}">#{msg.dictionary_search_prefix} "#{wordsWordView.text}" #{msg.dictionary_search_suffix}</o:link></p>
 					<ui:fragment rendered="#{empty wordsWordView.words}">
 						<p style="color: #cc0000;">#{msg.word_not_registered}</p>
 					</ui:fragment>

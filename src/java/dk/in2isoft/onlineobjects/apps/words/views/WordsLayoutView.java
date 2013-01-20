@@ -37,6 +37,9 @@ public class WordsLayoutView extends AbstractView implements InitializingBean {
 		if (path.length>=2 && path[1].equals("index")) {
 			return "index";
 		}
+		if (path.length>=2 && path[1].equals("about")) {
+			return "about";
+		}
 		return null;
 	}
 	

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:o="http://www.onlineobjects.com/jsf" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:gui="http://www.in2isoft.dk/in2igui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+>
+	
+	
+	<ui:composition template="templates/plain.xhtml">
+				
+		<ui:define name="body">
+			
+			<div class="words words_about">
+				<h1>#{msg.about}</h1>
+				<o:out value="#{msg.about_body}" escape="false"/>
+				
+			</div>
+		</ui:define>
+	
+	</ui:composition>
+	
+</html>

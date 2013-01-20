@@ -22,7 +22,7 @@
 		<o:stylesheet href="/core/css/common.css" core="true"/>
 		<o:stylesheet href="/style/css/style.css"/>
 		<o:stylesheet href="/hui/ext/diagram.css" core="true"/>
-		<link href='http://fonts.googleapis.com/css?family=Lora' rel='stylesheet' type='text/css'/>
+		<link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'/>
 		<ui:remove>
 			<link href='http://fonts.googleapis.com/css?family=Crimson+Text:regular,regularitalic,bold,bolditalic' rel='stylesheet' type='text/css'/>
 			<link href='http://fonts.googleapis.com/css?family=Antic+Didone' rel='stylesheet' type='text/css'/>
@@ -86,6 +86,16 @@
 									</c:when>
 									<c:otherwise>
 										<o:link href="/#{wordsLayoutView.language}/statistics/">#{msg.statistics}</o:link>
+									</c:otherwise>
+								</c:choose>
+							</li>
+							<li>
+								<c:choose>
+									<c:when test="#{wordsLayoutView.selectedMenuItem=='about'}">
+										<strong>#{msg.about}</strong>
+									</c:when>
+									<c:otherwise>
+										<o:link href="/#{wordsLayoutView.language}/about/">#{msg.about}</o:link>
 									</c:otherwise>
 								</c:choose>
 							</li>

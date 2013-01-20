@@ -201,6 +201,13 @@ ul.words_sidebar_index a:hover
 
 /********** Words **********/
 
+p.words_word_warning
+{
+	font-size: 10pt;
+	color: #999;
+	font-style: italic;
+}
+
 ul.words_word_variants
 {
 	list-style: none;
@@ -230,6 +237,8 @@ strong.words_word_info
 	display: inline-block;
 	position: relative;
 	top: -2px;
+	font-size: 18pt;
+	font-weight: normal;
 }
 
 span.words_word_info
@@ -592,4 +601,21 @@ p.words a.known.foreign
 {
 	text-decoration: line-through;
 	color: red;
+}
+
+/*** About ***/
+
+div.words_about h1
+{
+	margin: 0 0 20px;
+}
+
+div.words_about h2
+{
+	margin: 30px 0 10px;
+}
+
+div.words_about p
+{
+	margin: 5px 0;
 }
