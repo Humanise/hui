@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.mortbay.log.Log;
+import org.apache.log4j.Logger;
 
 import com.google.common.collect.Lists;
 
@@ -41,6 +41,8 @@ public class DesktopController extends ApplicationController {
 	private ImportService importService;
 	private ImageService imageService;
 	private FileService fileService;
+	
+	private static final Logger log = Logger.getLogger(DesktopController.class);
 
 	public DesktopController() {
 		super("desktop");
@@ -109,9 +111,9 @@ public class DesktopController extends ApplicationController {
 		handler.setRequest(request);
 		handler.setImportListener(listener);
 		session.setHandler(handler);
-		Log.info("Starting upload");
+		log.info("Starting upload");
 		session.start();
-		Log.info("Upload finished");
+		log.info("Upload finished");
 		
 		ImportPerspective info = new ImportPerspective(session);
 		request.sendObject(info);

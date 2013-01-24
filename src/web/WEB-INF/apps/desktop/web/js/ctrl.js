@@ -49,6 +49,9 @@ hui.ui.listen({
 			parameters : {id:options.id},
 			$object : function(obj) {
 				new desktop[obj.type]({entity : obj.entity, position : options.position})
+			},
+			$failure : function() {
+				hui.ui.showMessage({text:'Not found',duration:2000})
 			}
 		})
 	},

@@ -2088,11 +2088,10 @@ hui.drag = {
 						options.$dropFiles(e.dataTransfer.files,{event:event});
 					} else if (options.$dropURL && e.dataTransfer.types!=null && (hui.array.contains(e.dataTransfer.types,'public.url') || hui.array.contains(e.dataTransfer.types,'text/uri-list'))) {
 						var url = e.dataTransfer.getData('public.url');
+						var uriList = e.dataTransfer.getData('text/uri-list');
 						if (url && !hui.string.startsWith(url,'data:')) {
 							options.$dropURL(url,{event:event});
-						}
-						var uriList = e.dataTransfer.getData('text/uri-list');
-						if (uriList && !hui.string.startsWith(url,'data:')) {
+						} else if (uriList && !hui.string.startsWith(url,'data:')) {
 							options.$dropURL(uriList,{event:event});
 						}
 					} else if (options.$dropText && e.dataTransfer.types!=null && hui.array.contains(e.dataTransfer.types,'text/plain')) {
