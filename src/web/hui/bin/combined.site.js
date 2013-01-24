@@ -2073,24 +2073,30 @@ hui.drag = {
 		});
 		
 		hui.listen(document.body,'drop',function(e) {
-			hui.stop(e);
+			var event = hui.event(e)
+			event.stop();
 			var options = hui.drag._activeDrop;
 			hui.drag._activeDrop = null;
 			if (options) {
 				hui.cls.remove(options.element,options.hoverClass);
 				if (options.$drop) {
-					options.$drop(e);
+					options.$drop(e,{event:event});
 				}
 				if (e.dataTransfer) {
+					hui.log(e.dataTransfer.types)
 					if (options.$dropFiles && e.dataTransfer.files && e.dataTransfer.files.length>0) {
-						options.$dropFiles(e.dataTransfer.files);
-					} else if (options.$dropURL && e.dataTransfer.types!=null && hui.array.contains(e.dataTransfer.types,'public.url')) {
+						options.$dropFiles(e.dataTransfer.files,{event:event});
+					} else if (options.$dropURL && e.dataTransfer.types!=null && (hui.array.contains(e.dataTransfer.types,'public.url') || hui.array.contains(e.dataTransfer.types,'text/uri-list'))) {
 						var url = e.dataTransfer.getData('public.url');
-						if (!hui.string.startsWith(url,'data:')) {
-							options.$dropURL(url);
+						if (url && !hui.string.startsWith(url,'data:')) {
+							options.$dropURL(url,{event:event});
+						}
+						var uriList = e.dataTransfer.getData('text/uri-list');
+						if (uriList && !hui.string.startsWith(url,'data:')) {
+							options.$dropURL(uriList,{event:event});
 						}
 					} else if (options.$dropText && e.dataTransfer.types!=null && hui.array.contains(e.dataTransfer.types,'text/plain')) {
-						options.$dropText(e.dataTransfer.getData('text/plain'))
+						options.$dropText(e.dataTransfer.getData('text/plain'),{event:event})
 					}
 				}
 			}
@@ -3892,15 +3898,28 @@ hui.ui.wrapInField = function(element) {
  * Add focus class to an element
  * @param options {Object} {element : «Element», class : «String»}
  */
-hui.ui.addFocusClass = function(o) {
-	var ce = o.classElement || o.element, c = o['class'];
-	hui.listen(o.element,'focus',function() {
+hui.ui.addFocusClass = function(options) {
+	var ce = options.classElement || options.element, c = options['class'];
+	hui.listen(options.element,'focus',function() {
 		hui.cls.add(ce,c);
+		if (options.widget) {
+			hui.ui.setKeyboardTarget(options.widget);
+		}
 	});
-	hui.listen(o.element,'blur',function() {
+	hui.listen(options.element,'blur',function() {
 		hui.cls.remove(ce,c);
+		if (options.widget) {
+			hui.ui.setKeyboardTarget(null);
+		}
 	});
 };
+
+hui.ui.keyboardTarget = null; // The widget currently accepting keyboard input
+
+hui.ui.setKeyboardTarget = function(widget) {
+	hui.ui.keyboardTarget = widget;
+}
+
 
 /**
  * Make a widget draw attention to itself

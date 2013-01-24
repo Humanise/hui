@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.Session;
 
 import com.google.common.collect.Lists;
@@ -147,7 +148,12 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 	}
 
 	public Query<T> withPrivileged(Privileged... priviledged) {
-		this.privileged = priviledged;
+		if (priviledged==null || priviledged.length==1 && priviledged[0]==null) {
+			this.privileged = null;
+		}
+		else {
+			this.privileged = priviledged;
+		}
 		return this;
 	}
 

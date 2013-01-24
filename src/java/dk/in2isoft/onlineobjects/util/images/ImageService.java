@@ -11,6 +11,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.sanselan.ImageReadException;
+import org.apache.sanselan.Sanselan;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
@@ -93,8 +95,7 @@ public class ImageService extends AbstractCommandLineInterface {
 		int[] dimensions = new int[] { 0, 0 };
 		log.debug(file.getAbsolutePath());
 		log.debug("Exists: " + file.exists());
-		String cmd = configurationService.getImageMagickPath() + "/identify -quiet -format \"%wx%h\" "
-				+ file.getAbsolutePath() + "[0]";
+		String cmd = configurationService.getImageMagickPath() + "/identify -quiet -format \"%wx%h\" " + file.getAbsolutePath() + "[0]";
 		String result = execute(cmd).trim();
 		Pattern pattern = Pattern.compile(".*\"([0-9]+)x([0-9]+)\"");
 		Matcher matcher = pattern.matcher(result);
@@ -105,6 +106,24 @@ public class ImageService extends AbstractCommandLineInterface {
 			throw new EndUserException("Could not parse output: " + result);
 		}
 		return dimensions;
+	}
+	
+	public ImageProperties getImageProperties(File file) {
+		try {
+			ImageProperties properties = new ImageProperties();
+			int[] dimensions = getImageDimensions(file);
+			properties.setWidth(dimensions[0]);
+			properties.setHeight(dimensions[1]);
+			org.apache.sanselan.ImageInfo imageInfo = Sanselan.getImageInfo(file);
+			properties.setMimeType(imageInfo.getMimeType());
+			return properties;
+		} catch (EndUserException e) {
+			return null;
+		} catch (ImageReadException e) {
+			return null;
+		} catch (IOException e) {
+			return null;
+		}
 	}
 	
 	public ImageMetaData getMetaData(File file) {
@@ -129,14 +148,16 @@ public class ImageService extends AbstractCommandLineInterface {
 			//if (exifDirectory.containsTag(ExifIFD0Directory.TAG_DATETIME_ORIGINAL)) {
 			//	imageMetaData.setDateTimeOriginal(exifDirectory.getDate(ExifDirectory.TAG_DATETIME_ORIGINAL));
 			//}
-			if (exifDirectory.containsTag(ExifIFD0Directory.TAG_DATETIME)) {
-				imageMetaData.setDateTime(exifDirectory.getDate(ExifIFD0Directory.TAG_DATETIME));
-			}
-			if (exifDirectory.containsTag(ExifIFD0Directory.TAG_MAKE)) {
-				imageMetaData.setCameraMake(exifDirectory.getString(ExifIFD0Directory.TAG_MAKE));
-			}
-			if (exifDirectory.containsTag(ExifIFD0Directory.TAG_MODEL)) {
-				imageMetaData.setCameraModel(exifDirectory.getString(ExifIFD0Directory.TAG_MODEL));
+			if (exifDirectory!=null) {
+				if (exifDirectory.containsTag(ExifIFD0Directory.TAG_DATETIME)) {
+					imageMetaData.setDateTime(exifDirectory.getDate(ExifIFD0Directory.TAG_DATETIME));
+				}
+				if (exifDirectory.containsTag(ExifIFD0Directory.TAG_MAKE)) {
+					imageMetaData.setCameraMake(exifDirectory.getString(ExifIFD0Directory.TAG_MAKE));
+				}
+				if (exifDirectory.containsTag(ExifIFD0Directory.TAG_MODEL)) {
+					imageMetaData.setCameraModel(exifDirectory.getString(ExifIFD0Directory.TAG_MODEL));
+				}
 			}
 			if (iptcDirectory!=null) {
 				if (iptcDirectory.containsTag(IptcDirectory.TAG_OBJECT_NAME)) {
@@ -149,29 +170,30 @@ public class ImageService extends AbstractCommandLineInterface {
 					imageMetaData.setKeywords(iptcDirectory.getStringArray(IptcDirectory.TAG_KEYWORDS));
 				}
 			}
-			if (gpsDirectory.containsTag(GpsDirectory.TAG_GPS_LATITUDE) && gpsDirectory.containsTag(GpsDirectory.TAG_GPS_LATITUDE_REF)) {
-				String ref = gpsDirectory.getString(GpsDirectory.TAG_GPS_LATITUDE_REF);
-				Rational[] dist = gpsDirectory.getRationalArray(GpsDirectory.TAG_GPS_LATITUDE);
-				double decimal = getDecimal(dist,ref);
-				imageMetaData.setLatitude(decimal);
-			}
-			if (gpsDirectory.containsTag(GpsDirectory.TAG_GPS_LONGITUDE) && gpsDirectory.containsTag(GpsDirectory.TAG_GPS_LONGITUDE_REF)) {
-				String ref = gpsDirectory.getString(GpsDirectory.TAG_GPS_LONGITUDE_REF);
-				Rational[] dist = gpsDirectory.getRationalArray(GpsDirectory.TAG_GPS_LONGITUDE);
-				double decimal = getDecimal(dist,ref);
-				imageMetaData.setLongitude(decimal);
-			}
-			
-			Collection<Tag> tags = gpsDirectory.getTags();
-			for (Tag tag : tags) {
-				if (gpsDirectory.containsTag(tag.getTagType())) {
-					Object object = gpsDirectory.getObject(tag.getTagType());
-					if (object instanceof Rational[]) {
-						Rational[] pos = (Rational[]) object;
-						GeoDistance convert = new GeoDistance(pos[0].longValue(), pos[1].longValue(), pos[2].longValue());
-						log.info(tag.getTagName()+" != "+convert.getDecimal());
-					} else {
-						log.info(tag.getTagName()+" = "+object);
+			if (gpsDirectory!=null) {
+				if (gpsDirectory.containsTag(GpsDirectory.TAG_GPS_LATITUDE) && gpsDirectory.containsTag(GpsDirectory.TAG_GPS_LATITUDE_REF)) {
+					String ref = gpsDirectory.getString(GpsDirectory.TAG_GPS_LATITUDE_REF);
+					Rational[] dist = gpsDirectory.getRationalArray(GpsDirectory.TAG_GPS_LATITUDE);
+					double decimal = getDecimal(dist,ref);
+					imageMetaData.setLatitude(decimal);
+				}
+				if (gpsDirectory.containsTag(GpsDirectory.TAG_GPS_LONGITUDE) && gpsDirectory.containsTag(GpsDirectory.TAG_GPS_LONGITUDE_REF)) {
+					String ref = gpsDirectory.getString(GpsDirectory.TAG_GPS_LONGITUDE_REF);
+					Rational[] dist = gpsDirectory.getRationalArray(GpsDirectory.TAG_GPS_LONGITUDE);
+					double decimal = getDecimal(dist,ref);
+					imageMetaData.setLongitude(decimal);
+				}
+				Collection<Tag> tags = gpsDirectory.getTags();
+				for (Tag tag : tags) {
+					if (gpsDirectory.containsTag(tag.getTagType())) {
+						Object object = gpsDirectory.getObject(tag.getTagType());
+						if (object instanceof Rational[]) {
+							Rational[] pos = (Rational[]) object;
+							GeoDistance convert = new GeoDistance(pos[0].longValue(), pos[1].longValue(), pos[2].longValue());
+							log.info(tag.getTagName()+" != "+convert.getDecimal());
+						} else {
+							log.info(tag.getTagName()+" = "+object);
+						}
 					}
 				}
 			}
@@ -293,6 +315,23 @@ public class ImageService extends AbstractCommandLineInterface {
 		}
 	}
 	
+	public Image createImageFromFile(File file, String name, Privileged privileged) throws ModelException {
+		try {
+			ImageProperties properties = getImageProperties(file);
+			Image image = new Image();
+			modelService.createItem(image, privileged);
+			image.setName(name);
+			changeImageFile(image, file, properties.getMimeType());
+			synchronizeMetaData(image, privileged);
+			modelService.updateItem(image, privileged);
+			modelService.commit();
+			return image;
+		} catch (EndUserException e) {
+			log.error("Unable to create image from file",e);
+		}
+		return null;
+	}
+	
 	public void updateImageLocation(Image image, ImageLocation imageLocation, Privileged priviledged) throws ModelException, SecurityException {
 		Location existing = modelService.getParent(image, Location.class);
 		if (imageLocation==null && existing==null) {
@@ -353,8 +392,7 @@ public class ImageService extends AbstractCommandLineInterface {
 		return new File(folder,"original");
 	}
 
-	public void changeImageFile(Image image, File file,String contentType)
-	throws EndUserException {
+	public void changeImageFile(Image image, File file,String contentType) throws EndUserException {
 		int[] dimensions = getImageDimensions(file);
 		image.setWidth(dimensions[0]);
 		image.setHeight(dimensions[1]);

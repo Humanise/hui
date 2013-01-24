@@ -1,0 +1,41 @@
+div.hui_keyboardnavigator
+{
+	display: none;
+	left: 50%;
+	top: 50%;
+	position: absolute;
+	background: rgba(0,0,0,.5);
+	color: #fff;
+	font-size: 18px;
+	border-radius: 5px;
+	width: 300px;
+	z-index: 10000000000;
+}
+
+p.hui_keyboardnavigator_input
+{
+	margin: 0;
+	padding: 3px 8px;
+	background: rgba(0,0,0,.4);
+	margin: 4px;
+	border-radius: 4px;
+}
+
+div.hui_keyboardnavigator li
+{
+	padding: 3px 8px;
+	overflow: hidden;
+	margin: 4px;
+	border-radius: 4px;
+}
+
+div.hui_keyboardnavigator ul
+{
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+li.hui_keyboardnavigator_selected
+{
+	background: #000;
+}

@@ -78,4 +78,11 @@ public class HeaderUtil {
 			return null;
 		}
 	}
+
+	public static String getContentTypesMimeType(String value) {
+		if (value.contains(";")) {
+			return value.split(";")[0].trim();
+		}
+		return value;
+	}
 }

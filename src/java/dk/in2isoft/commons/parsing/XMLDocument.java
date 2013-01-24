@@ -45,8 +45,11 @@ public class XMLDocument extends TextDocument {
 			try {
 				Parser tagsoup = new Parser();
 				Builder bob = new Builder(tagsoup);
-				reader = new StringReader(getRawString());
-				XOMDocument = bob.build(reader);
+				String rawString = getRawString();
+				if (rawString!=null) {
+					reader = new StringReader(rawString);
+					XOMDocument = bob.build(reader);
+				}
 			} catch (ParsingException e) {
 				log.error(e);
 			} catch (IOException e) {

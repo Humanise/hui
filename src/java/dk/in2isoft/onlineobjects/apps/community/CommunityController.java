@@ -17,7 +17,7 @@ import dk.in2isoft.onlineobjects.core.exceptions.ContentNotFoundException;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.importing.DataImporter;
-import dk.in2isoft.onlineobjects.importing.ImportListerner;
+import dk.in2isoft.onlineobjects.importing.ImportListener;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
@@ -197,7 +197,7 @@ public class CommunityController extends ApplicationController {
 
 	private void uploadImage(Request request) throws IOException, EndUserException {
 		DataImporter dataImporter = importService.createImporter();
-		ImportListerner listener = new ImageGalleryImporter(modelService,imageService);
+		ImportListener listener = new ImageGalleryImporter(modelService,imageService);
 		dataImporter.setListener(listener);
 		dataImporter.importMultipart(this, request);
 	}

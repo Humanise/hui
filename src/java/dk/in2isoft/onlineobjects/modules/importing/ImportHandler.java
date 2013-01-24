@@ -7,4 +7,6 @@ public interface ImportHandler {
 	void start();
 	
 	Status getStatus();
+	
+	Object getResult();
 }

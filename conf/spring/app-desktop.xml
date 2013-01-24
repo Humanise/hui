@@ -9,20 +9,7 @@
         http://www.directwebremoting.org/schema/spring-dwr
     	http://www.directwebremoting.org/schema/spring-dwr-2.0.xsd
     ">
-
-   	
-   	<bean id="dekstopRemotingFacade" class="dk.in2isoft.onlineobjects.apps.desktop.DesktopRemotingFacade" autowire="byType">
-    	 <dwr:remote javascript="AppDesktop">
-    	 	<dwr:include method="find"/>
-    	 	<dwr:include method="analyzeURL"/>
-    	 	<dwr:include method="complete"/>
-    	 	<dwr:include method="saveInternetAddress"/>
-    	 </dwr:remote>
-   	</bean>
-   	
+      	
    	<bean id="desktopController" class="dk.in2isoft.onlineobjects.apps.desktop.DesktopController" autowire="byType"/>
    	
-    <dwr:configuration>
-	    <dwr:convert type="bean" class="dk.in2isoft.onlineobjects.apps.desktop.views.AddressInfo"/>
-	</dwr:configuration>
 </beans>

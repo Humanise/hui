@@ -48,8 +48,9 @@ public class DispatchingService implements InitializingBean {
 		this.responders = responders;
 	}
 	
-	public boolean doFilter(HttpServletRequest servletRequest, HttpServletResponse servletResponse, FilterChain chain) throws IOException,
-	ServletException {
+	public boolean doFilter(HttpServletRequest servletRequest, HttpServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
+		//try {Thread.sleep(2000);} catch (InterruptedException e1) {}
+		
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
 		boolean handled = false;

@@ -18,6 +18,7 @@ public class TextDocument {
 
 	protected URL url;
 	private String raw;
+	private boolean fetched;
 	
 	public TextDocument(URL url) {
 		super();
@@ -40,7 +41,7 @@ public class TextDocument {
 	}
 	
 	public String getRawString() {
-		if (raw!=null) {
+		if (fetched) {
 			return raw;
 		}
 		InputStream input = null;
@@ -76,6 +77,7 @@ public class TextDocument {
 				method.releaseConnection();
 			}
 		}
+		fetched = true;
 		return raw;
 	}
 }

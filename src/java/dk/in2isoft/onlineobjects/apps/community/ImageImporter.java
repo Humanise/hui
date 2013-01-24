@@ -11,12 +11,12 @@ import com.google.common.collect.Lists;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
-import dk.in2isoft.onlineobjects.importing.ImportListerner;
+import dk.in2isoft.onlineobjects.importing.ImportListener;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
 
-public class ImageImporter implements ImportListerner {
+public class ImageImporter implements ImportListener {
 
 	protected ModelService modelService;
 	private ImageService imageService;

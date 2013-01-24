@@ -1,6 +1,6 @@
-package dk.in2isoft.onlineobjects.apps.desktop.views;
+package dk.in2isoft.onlineobjects.apps.desktop.perspectives;
 
-public class AddressInfo {
+public class AddressPerspective {
 	private String title;
 	private String summary;
 	

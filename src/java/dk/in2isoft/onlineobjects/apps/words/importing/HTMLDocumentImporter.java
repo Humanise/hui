@@ -62,6 +62,10 @@ public class HTMLDocumentImporter implements ImportHandler, TextImporter {
 		}
 	}
 	
+	public Object getResult() {
+		return null;
+	}
+	
 	
 
 	public String getText() {

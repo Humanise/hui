@@ -1,51 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gui xmlns="uri:hui">
-	<dwr base="/dwr/">
-		<interface name="Common"/>
-		<interface name="CoreSecurity"/>
-		<interface name="AppDesktop"/>
-	</dwr>
-	<style>
-		div.hui_keyboardnavigator
-		{
-			display: none;
-			left: 50%;
-			top: 50%;
-			position: absolute;
-			background: rgba(0,0,0,.5);
-			color: #fff;
-			font-size: 18px;
-			border-radius: 5px;
-			width: 300px;
-		}
-		
-		p.hui_keyboardnavigator_input
-		{
-			margin: 0;
-			padding: 3px 8px;
-			background: rgba(0,0,0,.4);
-			margin: 2px;
-			border-radius: 4px;
-		}
-		
-		div.hui_keyboardnavigator li
-		{
-			padding: 3px 8px;
-			overflow: hidden;
-			margin: 2px;
-			border-radius: 4px;
-		}
-		
-		div.hui_keyboardnavigator ul
-		{
-			list-style: none;
-			margin: 0;
-			padding: 0;
-		}
-		li.hui_keyboardnavigator_selected
-		{
-			background: #000;
-		}
-	</style>
+	<css url="css/desktop.css"/>
 	<controller source="js/ctrl.js"/>
+	<require path="js/Drawing.js"/>
+	<require path="js/ProgressIndicator.js"/>
+	<keyboard-navigator name="keyboarder"/>
+	
+	<window title="Add bookmark" width="500" padding="10" name="bookmarkWindow" variant="news">
+		<formula name="bookmarkFormula">
+			<fields labels="above">
+				<field label="Title">
+					<text-input key="name"/>
+				</field>
+				<field label="Address">
+					<text-input key="address"/>
+				</field>
+				<field label="Summary">
+					<text-input key="description" multiline="true"/>
+				</field>
+				<field label="Keywords">
+					<tokens key="tags"/>
+				</field>
+			</fields>
+			<buttons>
+				<button text="Cancel" name="cancelBookmark"/>
+				<button text="Add" submit="true" highlighted="true"/>
+			</buttons>
+		</formula>
+	</window>
 </gui>

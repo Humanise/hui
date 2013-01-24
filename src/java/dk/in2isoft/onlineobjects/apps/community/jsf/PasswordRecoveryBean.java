@@ -13,7 +13,6 @@ public class PasswordRecoveryBean extends AbstractManagedBean implements Initial
 	private User user;
 	private ModelService modelService;
 	
-	@Override
 	public void afterPropertiesSet() throws Exception {
 		SearchResult<User> result = modelService.search(Query.of(User.class).withCustomProperty(User.PASSWORD_RECOVERY_CODE_PROPERTY, getKey()));
 		user = result.getFirst();
