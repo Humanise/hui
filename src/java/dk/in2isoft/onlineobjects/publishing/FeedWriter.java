@@ -18,7 +18,7 @@ public class FeedWriter {
 	private ContentHandler handler;
 
 	public FeedWriter(HttpServletResponse response) throws IOException {
-
+		
 		OutputFormat of = new OutputFormat("XML", "UTF-8", true);
 		XMLSerializer serializer;
 		response.setContentType("application/rss+xml");

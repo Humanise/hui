@@ -9,6 +9,7 @@ import java.io.StringWriter;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 
 public class Files {
 
@@ -67,5 +68,24 @@ public class Files {
 		}
 		
 		return null;
+	}
+
+	public static String cleanFileName(String fileName) {
+		if (fileName==null) {
+			return null;
+		}
+		int i = fileName.indexOf(".");
+		if (i!=-1) {
+			fileName = fileName.substring(0,i);
+		}
+		i = fileName.lastIndexOf("\\");
+		if (i!=-1) {
+			fileName = fileName.substring(i+1);
+		}
+		fileName = StringUtils.capitalize(fileName);
+		fileName = StringUtils.replace(fileName, "_", " ");
+		fileName = StringUtils.replace(fileName, "-", " ");
+		fileName = fileName.replaceAll("[ ]+", " ");
+		return fileName;
 	}
 }

@@ -1233,7 +1233,6 @@ hui.listenOnce = function(element,type,listener) {
 hui.unListen = function(el,type,listener,useCapture) {
 	el = hui.get(el);
 	if(document.removeEventListener) {
-		hui.log('removing',listener, 'from', el)
 		el.removeEventListener(type,listener,useCapture ? true : false);
 	} else {
 		el.detachEvent('on'+type, listener);
@@ -1959,6 +1958,9 @@ hui.drag = {
 	 */
 	register : function(options) {
 		hui.listen(options.element,'mousedown',function(e) {
+			if (options.$check && options.$check(e)===false) {
+				return;
+			}
 			hui.stop(e);
 			hui.drag.start(options);
 		})

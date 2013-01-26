@@ -105,7 +105,7 @@ hui.ui.KeyboardNavigator.prototype = {
 		}
 		this.element.style.display = 'block';
 		this.element.style.marginLeft = (this.element.clientWidth/-2)+'px';
-		this.element.style.marginTop = (this.element.clientHeight/-2)+'px';
+		hui.animate({node:this.element,duration:300,ease:hui.ease.slowFastSlow,css:{marginTop:(this.element.clientHeight/-2)+'px'}})
 	},
 	_complete : function() {
 		this.fire('complete',{

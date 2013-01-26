@@ -6,6 +6,12 @@
 	<require path="js/ProgressIndicator.js"/>
 	<keyboard-navigator name="keyboarder"/>
 	
+	<div class="top">
+		<div class="top_right">
+			<searchfield expanded-width="200"/>
+		</div>
+	</div>
+	
 	<window title="Add bookmark" width="500" padding="10" name="bookmarkWindow" variant="news">
 		<formula name="bookmarkFormula">
 			<fields labels="above">

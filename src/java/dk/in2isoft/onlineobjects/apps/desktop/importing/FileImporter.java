@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 
 import com.google.common.collect.Maps;
 
+import dk.in2isoft.commons.lang.Code;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.modules.importing.ImportHandler;
@@ -50,7 +51,7 @@ public class FileImporter implements ImportHandler {
 		try {
 			log.info("Starting upload");
 			status = Status.transferring;
-			List<DiskFileItem> items = upload.parseRequest(request.getRequest());
+			List<DiskFileItem> items = Code.castList(upload.parseRequest(request.getRequest()));
 			log.info("Parsing complete");
 			status = Status.processing;
 			Map<String,String> parameters = Maps.newHashMap();
@@ -61,7 +62,7 @@ public class FileImporter implements ImportHandler {
 			}
 			for (DiskFileItem item : items) {
 				if (!item.isFormField()) {
-					log.info("Handling uploaded file: "+item.getName()+" ("+item.getSize()+")");
+					log.info("Handling uploaded file: "+item.getName()+" - "+item.getContentType()+" ("+item.getSize()+"byte)");
 					File file = item.getStoreLocation();
 					result = importListener.fileWasImported(file,item.getName(),item.getContentType());
 				}
@@ -75,6 +76,10 @@ public class FileImporter implements ImportHandler {
 			log.error("Failed to upload file",e);
 			status = Status.failure;
 		}
+	}
+	
+	public float getProgress() {
+		return progress;
 	}
 
 	public Status getStatus() {

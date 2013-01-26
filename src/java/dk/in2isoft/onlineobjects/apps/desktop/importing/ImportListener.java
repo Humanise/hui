@@ -4,6 +4,8 @@ import java.io.File;
 
 import org.apache.log4j.Logger;
 
+import dk.in2isoft.commons.http.URLUtil;
+import dk.in2isoft.commons.lang.Files;
 import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.model.Entity;
@@ -20,14 +22,15 @@ public class ImportListener {
 	private Privileged privileged; 
 	
 	public Entity urlWasImported(File file, String uri, String mimeType) throws ModelException {
-		String name = fileService.cleanFileName(uri);
+		String name = URLUtil.toFileName(uri);
 		return fileWasImported(file, name, mimeType);
 	}
 	
 	public Entity fileWasImported(File file, String fileName, String mimeType) throws ModelException {
 		ImageProperties properties = imageService.getImageProperties(file);
 		if (properties!=null) {
-			return imageService.createImageFromFile(file, fileName, privileged);
+			String name = Files.cleanFileName(fileName);
+			return imageService.createImageFromFile(file, name, privileged);
 		}
 		return null;
 	}

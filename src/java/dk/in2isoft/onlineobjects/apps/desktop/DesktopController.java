@@ -76,6 +76,7 @@ public class DesktopController extends ApplicationController {
 	
 	@Path(start="importURL")
 	public void importUrl(Request request) throws IOException {
+		final String url = request.getString("url");
 		ImportListener listener = new ImportListener();
 		listener.setPrivileged(request.getSession());
 		listener.setImageService(imageService);
@@ -83,16 +84,18 @@ public class DesktopController extends ApplicationController {
 
 		final ImportSession session = importService.createImportSession(request.getSession());
 		
-		UrlImporter handler = new UrlImporter(request.getString("url"),listener);
+		UrlImporter handler = new UrlImporter(url,listener);
 		handler.setConfigurationService(configurationService);
 		session.setHandler(handler);
 		Thread thread = new Thread(new Runnable() {
 			public void run() {
+				log.info("Starting import session of URL: "+url);
 				session.start();
+				log.info("Ending import session of URL: "+url);
 			}
 		});
 		thread.setDaemon(true);
-		thread.start(); 
+		thread.start();
 		System.out.println("Start: "+session.getId()+" / "+session.getStatus());
 		ImportPerspective info = new ImportPerspective(session);
 		request.sendObject(info);

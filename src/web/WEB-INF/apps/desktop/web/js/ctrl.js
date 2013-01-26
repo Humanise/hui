@@ -137,20 +137,14 @@ hui.ui.listen({
 	},
 	
 	addFiles : function(files,info) {
-		/*
-		hui.ui.request({
-			url : hui.ui.context+"/app/desktop/upload",
-			files : file,
-			$success : function(obj) {
-				hui.log(obj);
-			}
-		})*/
-		var pos = {left:info.event.getLeft(),top:info.event.getTop()}
-		this.uploadFile(files[0],pos);
+		for (var i=0; i < files.length; i++) {
+			var pos = {left:info.event.getLeft()+i*50,top:info.event.getTop()+i*50}
+			this.uploadFile(files[i],pos);
+		};
 	},
 	_removeProgress : function(progress) {
-		progress.reset();
-		window.setTimeout(progress.destroy.bind(progress),2000);
+		window.setTimeout(progress.reset.bind(progress),2000);
+		window.setTimeout(progress.destroy.bind(progress),3000);
 	},
 	_createProgress : function(pos) {
 		var progress = hui.ui.ProgressIndicator.create({size:64});
@@ -167,7 +161,6 @@ hui.ui.listen({
 			method : 'post',
 			file : file,
 			url : 'uploadFile',
-			//parameters : this.options.parameters,
 			onProgress : function(current,total) {
 				progress.setValue(current/total);
 			},
@@ -175,18 +168,20 @@ hui.ui.listen({
 				//hui.ui.showMessage({text:'Uploading',busy:true})
 			},
 			onAbort : function() {
-				// TODO
+				this._removeProgress(progress);
 			}.bind(this),
 			onSuccess : function(t) {
 				var info = hui.string.fromJSON(t.responseText);
 				if (info.entity) {
 					this.loadWidget({id:info.entity.id,position:pos});
 				} else {
-					hui.log('No entity...',info);
+					hui.ui.showMessage({text:'The file could not be recognized', icon: 'common/warning',duration:3000})
 				}
+				this._removeProgress(progress);
 			}.bind(this),
 			onFailure : function() {
-				hui.ui.showMessage({text:'Failure',duration:3000})
+				this._removeProgress(progress);
+				hui.ui.showMessage({text:'The upload failed',duration:3000})
 			}.bind(this)
 		})
 	},
@@ -216,11 +211,54 @@ var desktop = {
 }
 
 desktop.Image = function(options) {
-	var url = desktop.baseContext+'/service/image/id'+options.entity.id+'width100height100cropped.jpg';
-	this.element = hui.build('div',{'class':'widget_image',parent:document.body,
+	var e = options.entity;
+	var url = desktop.baseContext+'/service/image/id'+e.id+'width100height100cropped.jpg';
+	this.element = hui.build('div',{'class':'widget widget_image',parent:document.body,
 		style : { visibility: 'hidden' },
-		html : '<img src="'+url+'"/>'
+		html : '<img src="'+url+'"/><div class="widget_image_info widget_nodrag"></div>'
 	});
 	hui.style.set(this.element,{left : options.position.left-(this.element.clientWidth/2)+'px', top : options.position.top-(this.element.clientHeight/2)+'px'})
 	hui.effect.bounceIn({element:this.element});
+	desktop.widgets.makeMovable(this);
+	this.update(e);
+}
+
+desktop.Image.prototype = {
+	update : function(entity) {
+		var body = hui.get.firstByClass(this.element,'widget_image_info');
+		body.innerHTML = '<h1>'+entity.name+'</h1>';
+	}
+}
+
+desktop.widgets = {
+	makeMovable : function(widget) {
+		hui.drag.register({
+			element : widget.element,
+			$check : function(e) {
+				e = hui.event(e);
+				if (e.findByClass('widget_nodrag')) {
+					return false;
+				}
+			},
+			onStart : function(e) {
+				widget.element.style.zIndex = hui.ui.nextPanelIndex();
+			},
+			onBeforeMove : function(e) {
+				e = hui.event(e);
+				var pos = hui.position.get(widget.element);
+				this.dragState = {left: e.getLeft() - pos.left,top:e.getTop()-pos.top};				
+				hui.cls.add(widget.element,'widget_moving');
+			},
+ 			onMove : function(e) {
+				var top = (e.getTop()-this.dragState.top);
+				var left = (e.getLeft()-this.dragState.left);
+				widget.element.style.top = Math.max(top,0)+'px';
+				widget.element.style.left = Math.max(left,0)+'px';
+				
+			},
+			onAfterMove : function(e) {
+				hui.cls.remove(widget.element,'widget_moving');				
+			}
+		});
+	}
 }

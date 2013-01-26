@@ -1,5 +1,7 @@
 package dk.in2isoft.onlineobjects.apps.photos.views;
 
+import java.util.List;
+
 import org.springframework.beans.factory.InitializingBean;
 
 import dk.in2isoft.onlineobjects.apps.community.jsf.AbstractManagedBean;
@@ -10,6 +12,7 @@ import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.UserQuery;
 import dk.in2isoft.onlineobjects.core.exceptions.ContentNotFoundException;
 import dk.in2isoft.onlineobjects.model.Image;
+import dk.in2isoft.onlineobjects.model.ImageGallery;
 import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.ui.jsf.ListModel;
@@ -24,6 +27,8 @@ public class PhotosUserView extends AbstractManagedBean implements InitializingB
 	private Person person;
 	private ListModel<Image> listModel;
 	private boolean modifiable;
+
+	private List<ImageGallery> galleries;
 	
 	public void afterPropertiesSet() throws Exception {
 		String[] path = getRequest().getLocalPath();
@@ -36,6 +41,12 @@ public class PhotosUserView extends AbstractManagedBean implements InitializingB
 		this.user = pair.getKey();
 		this.person = pair.getValue();
 		modifiable = this.user.getId() == getRequest().getSession().getUser().getId();
+		
+		this.galleries = modelService.list(Query.after(ImageGallery.class).withPrivileged(user));
+	}
+	
+	public List<ImageGallery> getGalleries() {
+		return galleries;
 	}
 	
 	public String getUsername() {

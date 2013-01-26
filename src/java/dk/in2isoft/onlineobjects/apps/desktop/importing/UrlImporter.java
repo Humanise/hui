@@ -59,6 +59,7 @@ public class UrlImporter implements ImportHandler {
 			if (header!=null) {
 				log.info("Content-Type: "+header.getValue());
 				mimeType = HeaderUtil.getContentTypesMimeType(header.getValue());
+				log.info("Mime: "+mimeType);
 			} else {
 				log.warn("No header received from: "+uri);
 			}

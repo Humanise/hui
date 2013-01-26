@@ -21,7 +21,35 @@ div.import
 	border: 2px dashed rgba(255,255,255,.5);
 }
 
+div.top_right
+{
+	position: absolute;
+	top: 3px;
+	right: 3px;
+}
 
+div.widget
+{
+	cursor: move;
+	cursor: -webkit-grab;
+	cursor: -moz-grab;	
+}
+
+div.widget_nodrag
+{
+	cursor: default;
+}
+
+div.widget_nodrag h1, div.widget_nodrag p
+{
+	cursor: text;
+}
+
+div.widget_moving
+{
+	cursor: -webkit-grabbing;
+	cursor: -moz-grabbing;
+}
 
 div.widget_image
 {
@@ -33,4 +61,24 @@ div.widget_image
 	box-shadow: 0 0 10px rgba(0,20,100,.2);
 	box-shadow: 0 3px 20px rgba(0,20,100,.3);
 	border-radius: 3px;
+}
+
+div.widget_image img
+{
+	position: absolute;
+}
+
+div.widget_image_info
+{
+	margin-left: 110px;
+}
+
+div.widget_image_info h1
+{
+	margin: 0;
+	font-size: 12px;
+	width: 100%;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }

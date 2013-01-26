@@ -16,6 +16,8 @@ import org.apache.commons.lang.StringUtils;
 
 import com.google.common.collect.Maps;
 
+import dk.in2isoft.commons.lang.Files;
+
 import eu.medsea.mimeutil.MimeType;
 import eu.medsea.mimeutil.MimeUtil2;
 
@@ -58,21 +60,7 @@ public class FileService {
 	}
 	
 	public String cleanFileName(String fileName) {
-		if (fileName==null) {
-			return null;
-		}
-		int i = fileName.indexOf(".");
-		if (i!=-1) {
-			fileName = fileName.substring(0,i);
-		}
-		i = fileName.lastIndexOf("\\");
-		if (i!=-1) {
-			fileName = fileName.substring(i+1);
-		}
-		fileName = StringUtils.capitalize(fileName);
-		fileName = StringUtils.replace(fileName, "_", " ");
-		fileName = fileName.replaceAll("[ ]+", " ");
-		return fileName;
+		return Files.cleanFileName(fileName);
 	}
 	
 	public static String readTextUTF8(File file) throws IOException {

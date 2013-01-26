@@ -41,7 +41,6 @@ public class In2iGui {
 
 	private In2iGui() {
 		super();
-		log.info("In2iGui initialized");
 		ConfigurationService config = Core.getInstance().getConfigurationService();
 		developmentMode = config.isDevelopmentMode();
 		path = config.getFile("hui").getAbsolutePath();
@@ -176,9 +175,7 @@ public class In2iGui {
 			StringReader xslReader = new StringReader(xslString.toString());
 			TransformerFactory factory = TransformerFactory.newInstance();
 			templates = factory.newTemplates(new StreamSource(xslReader));
-			log.info("New templates!");
 		}
-		log.info("New transformer!");
 		return templates.newTransformer();
 	}
 }
