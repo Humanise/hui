@@ -78,7 +78,8 @@
         <dependency org="com.google.collections" name="google-collections" rev="1.0" transitive="false"/>
 		<dependency org="com.google.code.gson" name="gson" rev="2.2.2" transitive="false"/>
 		<dependency org="net.sf.opencsv" name="opencsv" rev="2.3" transitive="false"/>
-                      
+		<dependency org="com.google.guava" name="guava" rev="13.0.1"/>
+                                  
 
 	<!-- Scheduling -->
         <dependency org="org.quartz-scheduler" name="quartz" rev="2.1.6" transitive="false"/>

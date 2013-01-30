@@ -30,7 +30,7 @@ import dk.in2isoft.onlineobjects.util.semantics.Language;
 
 public class SemanticService {
 	
-	public static final String WORD_EXPRESSION = "[a-zA-Z\u0027\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF\\-\u02BC’]+";
+	public static final String WORD_EXPRESSION = "[0-9a-zA-Z\u0027\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF\\-\u02BC’]+";
 	
 	private ConfigurationService configurationService;
 
@@ -44,6 +44,9 @@ public class SemanticService {
 		while (m.find()) {
 			String word = m.group();
 			if ("-".equals(word)) {
+				continue;
+			}
+			if (StringUtils.isNumeric(word)) {
 				continue;
 			}
 			if (language==null) {

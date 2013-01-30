@@ -1,4 +1,4 @@
-package dk.in2isoft.onlineobjects.services;
+package dk.in2isoft.onlineobjects.modules.scheduling;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
@@ -17,17 +18,23 @@ import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
+import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.quartz.spi.MutableTrigger;
 import org.springframework.beans.factory.InitializingBean;
 
+import dk.in2isoft.onlineobjects.apps.words.index.HelloWorldJob;
 import dk.in2isoft.onlineobjects.apps.words.index.WordIndexJob;
+import dk.in2isoft.onlineobjects.modules.information.InformationSpiderJob;
 
 public class SchedulingService implements InitializingBean {
 
 	private final static Logger log = Logger.getLogger(SchedulingService.class);
+	
+	private SchedulingSupportFacade schedulingSupportFacade;
 
 	private org.quartz.Scheduler scheduler;
 
@@ -35,11 +42,30 @@ public class SchedulingService implements InitializingBean {
 		SchedulerFactory sf = new StdSchedulerFactory();
 		scheduler = sf.getScheduler();
 		
-				
-		JobDetail job = JobBuilder.newJob(WordIndexJob.class)
-			    .withIdentity("indexwords", "core")
-			    .build();
-		scheduler.addJob(job, true);
+		{
+			JobDetail job = JobBuilder.newJob(WordIndexJob.class)
+				    .withIdentity("indexwords", "core")
+				    .build();
+			scheduler.addJob(job, true);
+		}
+		{
+			JobDetail job = JobBuilder.newJob(HelloWorldJob.class)
+				    .withIdentity("hello", "core").storeDurably()
+				    .build();
+			job.getJobDataMap().put("schedulingSupportFacade", schedulingSupportFacade);
+			scheduler.addJob(job, true);
+			scheduler.scheduleJob(TriggerBuilder.newTrigger().forJob(job).withSchedule(SimpleScheduleBuilder.repeatMinutelyForever()).build());
+		}
+		if (!false) {
+			JobDetail job = JobBuilder.newJob(InformationSpiderJob.class)
+				    .withIdentity("info-spider", "core").storeDurably()
+				    .build();
+			job.getJobDataMap().put("schedulingSupportFacade", schedulingSupportFacade);
+			scheduler.addJob(job, true);
+			SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.repeatMinutelyForever(5);
+			Date startTime = DateTime.now().plusSeconds(30).toDate();
+			scheduler.scheduleJob(TriggerBuilder.newTrigger().forJob(job).withSchedule(scheduleBuilder).startAt(startTime).build());
+		}
 		scheduler.start();
 	}
 	
@@ -103,9 +129,8 @@ public class SchedulingService implements InitializingBean {
 	public void runJob(String name, String group) {
 		try {
 			JobDetail jobDetail = scheduler.getJobDetail(JobKey.jobKey(name, group));
-			if (jobDetail!=null) {
+			if (jobDetail!=null) {				
 				scheduler.triggerJob(JobKey.jobKey(name, group));
-				//scheduler.scheduleJob(jobDetail, TriggerBuilder.newTrigger().startNow().build());
 			}
 		} catch (SchedulerException e) {
 			log.error("Exception while running job", e);
@@ -113,12 +138,28 @@ public class SchedulingService implements InitializingBean {
 	}
 	
 	public Date getLatestExecution(String name, String group) {
-		
+		try {
+			JobDetail jobDetail = scheduler.getJobDetail(JobKey.jobKey(name, group));
+			List<? extends Trigger> triggersOfJob = scheduler.getTriggersOfJob(jobDetail.getKey());
+			for (Trigger trigger : triggersOfJob) {
+				return trigger.getPreviousFireTime();
+			}
+		} catch (SchedulerException e) {
+			log.error("Exception while running job", e);
+		}		
 		return null;
 	}
 
 	public Date getNextExecution(String name, String group) {
-		
+		try {
+			JobDetail jobDetail = scheduler.getJobDetail(JobKey.jobKey(name, group));
+			List<? extends Trigger> triggersOfJob = scheduler.getTriggersOfJob(jobDetail.getKey());
+			for (Trigger trigger : triggersOfJob) {
+				return trigger.getPreviousFireTime();
+			}
+		} catch (SchedulerException e) {
+			log.error("Exception while running job", e);
+		}		
 		return null;
 	}
 
@@ -132,5 +173,9 @@ public class SchedulingService implements InitializingBean {
 		} catch (SchedulerException e) {
 			return false;
 		}
+	}
+	
+	public void setSchedulingSupportFacade(SchedulingSupportFacade schedulingSupportFacade) {
+		this.schedulingSupportFacade = schedulingSupportFacade;
 	}
 }

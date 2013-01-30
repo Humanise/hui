@@ -5,7 +5,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import com.sun.syndication.feed.WireFeed;
+import com.sun.syndication.feed.atom.Entry;
+import com.sun.syndication.feed.atom.Feed;
+import com.sun.syndication.feed.atom.Link;
 import com.sun.syndication.feed.rss.Channel;
 import com.sun.syndication.feed.rss.Item;
 import com.sun.syndication.io.FeedException;
@@ -35,6 +39,21 @@ public class FeedService {
         	Channel channel = (Channel) feed;
         	@SuppressWarnings("unchecked")
 			List<Item> items = channel.getItems();
+        	return items;
+        } else if (feed instanceof Feed) {
+        	List<Item> items = Lists.newArrayList();
+        	Feed atom = (Feed) feed;
+        	List<Entry> entries = atom.getEntries();
+        	for (Entry entry : entries) {				
+        		Item item = new Item();
+        		item.setTitle(entry.getTitle());
+        		List<Link> alternateLinks = entry.getAlternateLinks();
+        		for (Link link : alternateLinks) {
+        			item.setLink(link.getHref());					
+        			break;
+				}
+        		items.add(item);
+			}
         	return items;
         }
         return null;

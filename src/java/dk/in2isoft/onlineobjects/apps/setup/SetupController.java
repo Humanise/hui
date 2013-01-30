@@ -1,6 +1,11 @@
 package dk.in2isoft.onlineobjects.apps.setup;
 
 import java.io.IOException;
+import java.util.Date;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import com.google.common.collect.Maps;
 
 import dk.in2isoft.in2igui.data.ListWriter;
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
@@ -12,17 +17,21 @@ import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.exceptions.ContentNotFoundException;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
+import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.model.EmailAddress;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.Privilege;
 import dk.in2isoft.onlineobjects.model.User;
+import dk.in2isoft.onlineobjects.modules.scheduling.SchedulingService;
 import dk.in2isoft.onlineobjects.ui.Request;
+import dk.in2isoft.onlineobjects.util.Dates;
 
 public class SetupController extends ApplicationController {
 
 	private SecurityService securityService;
+	private SchedulingService schedulingService;
 	
 	public SetupController() {
 		super("setup");
@@ -202,7 +211,42 @@ public class SetupController extends ApplicationController {
 		securityService.grantPublicPrivileges(user, perspective.isPublicView(), perspective.isPublicModify(), perspective.isPublicDelete());
 	}
 	
+	@Path(start="listJobs")
+	public void listJobs(Request request) throws SecurityException, IOException {
+		ListWriter writer = new ListWriter(request);
+		writer.startList();
+		writer.startHeaders();
+		writer.header("Name").header("Group").header("Status").header("Latest").header("Next");
+		writer.endHeaders();
+		
+		Map<String, String> jobs = schedulingService.listJobs();
+		for (Entry<String,String> entry : jobs.entrySet()) {
+			String name = entry.getKey();
+			String group = entry.getValue();
+			Date latest = schedulingService.getLatestExecution(name, group);
+			Date next = schedulingService.getNextExecution(name, group);
+			boolean running = schedulingService.isRunning(name, group);
+			
+			Map<String,String> data = Maps.newHashMap();
+			data.put("group", group);
+			data.put("name", name);
+			
+			writer.startRow().withData(data);
+			writer.startCell().text(name).endCell();
+			writer.startCell().text(group).endCell();
+			writer.startCell().text(running ? "Kører" : "Venter").endCell();
+			writer.startCell().text(Dates.formatLongDate(latest, request.getLocale())).endCell();
+			writer.startCell().text(Dates.formatLongDate(next, request.getLocale())).endCell();
+			writer.endRow();
+		}
+		writer.endList();
+	}
+	
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
+	}
+	
+	public void setSchedulingService(SchedulingService schedulingService) {
+		this.schedulingService = schedulingService;
 	}
 }

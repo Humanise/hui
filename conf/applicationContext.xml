@@ -87,9 +87,9 @@
 	
 	<bean id="surveillanceService" class="dk.in2isoft.onlineobjects.services.SurveillanceService" autowire="byType"/>
 	
-	<bean id="schedulingService" class="dk.in2isoft.onlineobjects.services.SchedulingService" autowire="byType">
-		<!-- <property name="coreScheduler" ref="coreScheduler"/> -->
-	</bean>
+	<bean id="schedulingSupportFacade" class="dk.in2isoft.onlineobjects.modules.scheduling.SchedulingSupportFacade" autowire="byType"/>
+
+	<bean id="schedulingService" class="dk.in2isoft.onlineobjects.modules.scheduling.SchedulingService" autowire="byType"/>
 	
 	<bean id="importService" class="dk.in2isoft.onlineobjects.services.ImportService" autowire="byType"/>
 	
@@ -119,6 +119,8 @@
 	<bean id="consistencyService" class="dk.in2isoft.onlineobjects.services.ConsistencyService" autowire="byType"/>
 
 	<bean id="sessionService" class="dk.in2isoft.onlineobjects.services.SessionService" autowire="byType"/>
+
+	<bean id="informationService" class="dk.in2isoft.onlineobjects.modules.information.InformationService" autowire="byType"/>
 
 	<!-- Service controllers -->
 	

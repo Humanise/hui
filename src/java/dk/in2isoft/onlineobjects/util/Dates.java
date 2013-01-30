@@ -20,16 +20,25 @@ public class Dates {
 	}
 
 	public static String formatLongDate(Date date, Locale locale) {
+		if (date==null) {
+			return "";
+		}
 		SimpleDateFormat format = new SimpleDateFormat(LONG.get(locale.getLanguage()),locale);
 		return format.format(date);
 	}
 
 	public static String formatShortDate(Date date, Locale locale) {
+		if (date==null) {
+			return "";
+		}
 		SimpleDateFormat format = new SimpleDateFormat(SHORT.get(locale.getLanguage()),locale);
 		return format.format(date);
 	}
 
 	public static String formatDate(Date value, boolean weekday, boolean time, Locale locale) {
+		if (value==null) {
+			return "";
+		}
 		if (weekday && time) {
 			return formatLongDate(value, locale);
 		}

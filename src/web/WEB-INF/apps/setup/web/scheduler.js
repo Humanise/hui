@@ -1,21 +1,20 @@
 var controller = {
-	$interfaceIsReady : function() {
-		this.refreshList();
+	$ready : function() {
+		//this._refresh();
+	},
+	_refresh : function() {
+		listSource.refresh();
+		window.setTimeout(this._refresh.bind(this),2000);
 	},
 	$click$refresh : function() {
-		this.refreshList();
-	},
-	refreshList : function() {
-		AppSetup.listJobs(function(data) {
-			list.setObjects(data);
-		})
+		listSource.refresh();
 	},
 	$click$start : function() {
-		var item = list.getFirstSelection();
+		var item = list.getFirstSelection().data;
 		if (item) {
 			var self = this;
 			AppSetup.startJob(item.name,item.group,function() {
-				self.refreshList();
+				listSource.refresh();
 			});
 		}
 	}

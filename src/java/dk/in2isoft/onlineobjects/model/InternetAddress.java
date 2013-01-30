@@ -4,6 +4,7 @@ public class InternetAddress extends Entity {
 
 	public static String TYPE = Entity.TYPE+"/InternetAddress";
 	public static String NAMESPACE = Entity.NAMESPACE+"InternetAddress/";
+	public static String FIELD_ADDRESS = "address";
 	
 	private String address;
 	private String context;

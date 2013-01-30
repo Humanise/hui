@@ -199,7 +199,7 @@ public class IndexManager {
 		try {
 			writer = openWriter();
 			Term term = new Term("id", String.valueOf(id));
-			openWriter().deleteDocuments(term);
+			writer.deleteDocuments(term);
 		} catch (IOException e) {
 			throw new EndUserException(e);
 		} finally {

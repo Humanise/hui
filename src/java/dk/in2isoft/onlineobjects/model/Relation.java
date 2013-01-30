@@ -7,6 +7,7 @@ public class Relation extends Item {
 
 	public static final String KIND_COMMON_ORIGINATOR = "common.originator";
 	public static final String KIND_COMMON_AUTHOR = "common.author";
+	public static final String KIND_COMMON_SOURCE = "common.source";
 
 	public static final String KIND_STRUCTURE_SPECIALIZATION = "structure.specialization";
 	

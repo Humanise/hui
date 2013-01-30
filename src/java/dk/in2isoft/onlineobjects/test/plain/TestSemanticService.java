@@ -42,6 +42,9 @@ public class TestSemanticService extends AbstractSpringTestCase {
 		assertArrayEquals(new String[] {"Eat","my","shorts"},semanticService.getWords("Eat, \nmy _ shorts."));
 		assertArrayEquals(new String[] {"He","didn't","come","home"},semanticService.getWords("He didn't come home"));
 		assertArrayEquals(new String[] {"He","didn’t","come","home"},semanticService.getWords("He didn’t come home"));
+		assertArrayEquals(new String[] {"He","was","a","big","gun","in","the","80's"},semanticService.getWords("He was a big gun in the 80's"));
+		assertArrayEquals(new String[] {"Oplyser","Midt-","og","Vestsjællands","Politi"},semanticService.getWords("Oplyser Midt- og Vestsjællands Politi"));
+		
 		
 		assertArrayEquals(new String[] {"Æblet","på","øen","Åen","ændrer","søen","Østers","får","ællinger"},semanticService.getWords("Æblet på øen. Åen ændrer søen. Østers får ællinger."));
 

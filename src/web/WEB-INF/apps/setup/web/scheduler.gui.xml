@@ -4,6 +4,7 @@
 		<interface name="AppSetup"/>
 	</dwr>
 	<controller name="controller" source="scheduler.js"/>
+	<source url="listJobs" name="listSource"/>
 	<structure>
 		<top>
 			<toolbar>
@@ -14,13 +15,7 @@
 		</top>
 		<middle>
 			<overflow>
-			<list name="list">
-				<column title="Navn" key="name"/>
-				<column title="Gruppe" key="group"/>
-				<column title="Status" key="status"/>
-				<column title="Senest" key="latest"/>
-				<column title="Næste" key="next"/>
-			</list>
+				<list name="list" source="listSource"/>
 			</overflow>
 		</middle>
 	</structure>				

@@ -111,8 +111,16 @@ public class ListWriter extends MarkupWriter {
 		}
 		return this;
 	}
+
 	public ListWriter withId(Object id) {
 		withAttribute("id", id);
+		return this;
+	}
+
+	public ListWriter withData(Object data) {
+		if (data!=null) {
+			withAttribute("data", Strings.toJSON(data));
+		}
 		return this;
 	}
 

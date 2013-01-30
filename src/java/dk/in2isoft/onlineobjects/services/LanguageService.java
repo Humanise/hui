@@ -1,11 +1,18 @@
 package dk.in2isoft.onlineobjects.services;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 
+import dk.in2isoft.commons.lang.Counter;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Query;
@@ -20,6 +27,7 @@ import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.modules.language.WordImpression;
+import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
 
 public class LanguageService {
 
@@ -27,11 +35,22 @@ public class LanguageService {
 	
 	private SecurityService securityService;
 	
+	private Set<Locale> locales = Sets.newHashSet(new Locale("en","US"),new Locale("da","DK"));
+	
 	public Language getLanguageForCode(String code) {
 		Query<Language> query = Query.of(Language.class).withField(Language.CODE, code);
 		return modelService.search(query).getFirst();
 	}
 	
+	public Locale getLocaleForCode(String language) {
+		for (Locale locale : locales) {
+			if (language.equals(locale.getLanguage())) {
+				return locale;
+			}
+		}
+		return new Locale(language);
+	}
+
 	public LexicalCategory getLexcialCategoryForCode(String code) {
 		Query<LexicalCategory> query = Query.of(LexicalCategory.class).withField(LexicalCategory.CODE, code);
 		return modelService.search(query).getFirst();
@@ -52,6 +71,26 @@ public class LanguageService {
 		}
 		return impression;
 	}
+	
+	public Counter<String> countLanguages(List<WordListPerspective> perspectives) {
+		Multimap<String,String> wordsToLanguages = HashMultimap.create();
+		for (WordListPerspective perspective : perspectives) {
+			if (perspective.getLanguage()!=null) {
+				wordsToLanguages.put(perspective.getText().toLowerCase(), perspective.getLanguage());					
+			}
+		}
+		
+		Counter<String> languageCounts = new Counter<String>();
+		Set<String> set = wordsToLanguages.keySet();
+		for (String word : set) {
+			Collection<String> langs = wordsToLanguages.get(word);
+			for (String lang : langs) {
+				languageCounts.addOne(lang);
+			}
+		}
+		return languageCounts;
+	}
+
 
 	public List<WordImpression> getImpressions(Query<Word> query) throws ModelException {
 		return getImpressions(modelService.list(query));
@@ -124,4 +163,5 @@ public class LanguageService {
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
 	}
+
 }

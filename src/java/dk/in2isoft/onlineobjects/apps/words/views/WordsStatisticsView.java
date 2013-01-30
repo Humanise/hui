@@ -49,7 +49,7 @@ public class WordsStatisticsView extends AbstractView implements InitializingBea
 	private void refresh() {
 		if (this.languages!=null) return;
 		try {
-			languages = Maps.newHashMap();
+			Map<Locale,List<LanguageStatistic>> temp = Maps.newHashMap();
 			Locale[] locales = {new Locale("en"),new Locale("da")};
 			
 			Messages lexMsg = new Messages(LexicalCategory.class);
@@ -64,7 +64,7 @@ public class WordsStatisticsView extends AbstractView implements InitializingBea
 			Map<String, Integer> map = counter.getMap();
 			for (Locale locale : locales) {
 				List<LanguageStatistic> languageStatistics = Lists.newArrayList();
-				languages.put(locale, languageStatistics);
+				temp.put(locale, languageStatistics);
 				for (Entry<String, Integer> entry : map.entrySet()) {
 					LanguageStatistic langStat = new LanguageStatistic();
 					langStat.setCode(entry.getKey());
@@ -83,6 +83,7 @@ public class WordsStatisticsView extends AbstractView implements InitializingBea
 					langStat.setCategories(categories);
 				}
 			}
+			languages = temp;
 			
 		} catch (ModelException e) {
 			// ignore
