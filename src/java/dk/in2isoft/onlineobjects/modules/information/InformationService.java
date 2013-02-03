@@ -105,6 +105,7 @@ public class InformationService {
 					for (String symbol : chars) {
 						if (string.startsWith(symbol) || string.endsWith(symbol)) {
 							i.remove();
+							break;
 						}						
 					}
 				}
