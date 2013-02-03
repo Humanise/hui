@@ -38,6 +38,7 @@ public class InformationSpiderJob extends ServiceBackedJob {
 				"http://politiken.dk/rss/bagsiden.rss",
 				"http://politiken.dk/rss/videnskab.rss",
 				"http://jp.dk/international/?service=rssfeed"
+				
 			);
 		for (String feed : feeds) {
 			informationService.importInformation(feed);
