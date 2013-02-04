@@ -31,6 +31,7 @@ import dk.in2isoft.onlineobjects.apps.words.index.WordIndexJob;
 import dk.in2isoft.onlineobjects.modules.images.ImageCleanupJob;
 import dk.in2isoft.onlineobjects.modules.information.InformationSpiderJob;
 import dk.in2isoft.onlineobjects.modules.synchronization.MailWatchingJob;
+import dk.in2isoft.onlineobjects.services.ConfigurationService;
 
 public class SchedulingService implements InitializingBean {
 
@@ -41,6 +42,8 @@ public class SchedulingService implements InitializingBean {
 	private org.quartz.Scheduler scheduler;
 
 	public void afterPropertiesSet() throws Exception {
+		boolean startJobs = !false;
+		
 		SchedulerFactory sf = new StdSchedulerFactory();
 		scheduler = sf.getScheduler();
 		
@@ -71,7 +74,9 @@ public class SchedulingService implements InitializingBean {
 				    .build();
 			job.getJobDataMap().put("schedulingSupportFacade", schedulingSupportFacade);
 			scheduler.addJob(job, true);
-			scheduler.scheduleJob(TriggerBuilder.newTrigger().forJob(job).withSchedule(SimpleScheduleBuilder.repeatMinutelyForever()).build());
+			if (startJobs) {
+				scheduler.scheduleJob(TriggerBuilder.newTrigger().forJob(job).withSchedule(SimpleScheduleBuilder.repeatMinutelyForever()).build());
+			}
 			
 		}
 		 {
@@ -80,7 +85,7 @@ public class SchedulingService implements InitializingBean {
 				    .build();
 			job.getJobDataMap().put("schedulingSupportFacade", schedulingSupportFacade);
 			scheduler.addJob(job, true);
-			if (false) {
+			if (startJobs && false) {
 				SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.repeatMinutelyForever(5);
 				Date startTime = DateTime.now().plusSeconds(30).toDate();
 				scheduler.scheduleJob(TriggerBuilder.newTrigger().forJob(job).withSchedule(scheduleBuilder).startAt(startTime).build());

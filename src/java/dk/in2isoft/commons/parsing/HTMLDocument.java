@@ -22,6 +22,7 @@ import com.google.common.collect.Lists;
 
 import de.l3s.boilerpipe.BoilerpipeProcessingException;
 import de.l3s.boilerpipe.extractors.ArticleExtractor;
+import dk.in2isoft.commons.lang.Strings;
 
 public class HTMLDocument extends XMLDocument {
 
@@ -109,10 +110,13 @@ public class HTMLDocument extends XMLDocument {
     
     public String getExtractedContents() {
     	try {
-			return ArticleExtractor.INSTANCE.getText(getRawString());
+			String rawString = getRawString();
+			if (Strings.isNotBlank(rawString)) {
+				return ArticleExtractor.INSTANCE.getText(rawString);
+			}
 		} catch (BoilerpipeProcessingException e) {
-			return null;
 		}
+    	return null;
     }
     
     private void traverse(nu.xom.Node parent, StringBuffer data) {
