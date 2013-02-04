@@ -17,10 +17,6 @@ public class HtmlPart extends Entity {
 		return TYPE;
 	}
 
-	public String getIcon() {
-		return "Element/Image";
-	}
-
 	public String getHtml() {
 		return html;
 	}

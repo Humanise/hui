@@ -419,11 +419,11 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 	public void sendFeedback(String emailAddress,String message) throws EndUserException {
 		emailAddress = emailAddress.trim();
 		message = message.trim();
-		if (!Strings.isDefined(emailAddress)) {
+		if (!Strings.isNotBlank(emailAddress)) {
 			throw new EndUserException("The email address is empty!");
 		} else if (!ValidationUtil.isWellFormedEmail(emailAddress)) {
 			throw new EndUserException("The email address is not well formed!");
-		} else if (!Strings.isDefined(message)) {
+		} else if (!Strings.isNotBlank(message)) {
 			throw new EndUserException("The message is empty!");
 		}
 		communityDAO.sendFeedback(emailAddress, message);

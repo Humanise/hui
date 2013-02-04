@@ -1,8 +1,6 @@
 hui.ui.listen({
 	userId : 0,
 	
-	interfaceIsReady : function() {
-	},
 	$valueChanged$search : function() {
 		list.resetState();
 	},
@@ -19,12 +17,16 @@ hui.ui.listen({
 		}
 	},
 	loadUser : function(row) {
+		userFormula.reset();
+		userEditor.show();
+		userEditor.setBusy('Loading');
 		this.userId = row.id;
 		hui.ui.request({
 			url : 'loadUser',
 			parameters :{id : row.id},
 			$object : function(user) {
 				userFormula.setValues(user);
+				userEditor.setBusy(false);
 				userEditor.show();
 			}
 		})
@@ -49,11 +51,15 @@ hui.ui.listen({
 		userEditor.hide();
 	},
 	$click$deleteUser : function() {
-		AppSetup.deleteUser(this.userId,function() {
-			userFormula.reset();
-			userEditor.hide();
-			listSource.refresh();
-		});
+		hui.ui.request({
+			url : 'deleteUser',
+			parameters :{id : this.userId},
+			$success : function(user) {
+				userFormula.reset();
+				userEditor.hide();
+				listSource.refresh();
+			}
+		})
 	},
 	$select$selection : function() {
 		list.resetState();

@@ -25,10 +25,6 @@ public class ImageGallery extends Entity implements Document {
 	public String getType() {
 		return TYPE;
 	}
-
-	public String getIcon() {
-		return "Template/Generic";
-	}
 	
 	public int getTiledColumns() {
 		return tiledColumns;

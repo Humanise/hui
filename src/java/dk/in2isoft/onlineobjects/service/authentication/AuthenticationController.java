@@ -37,7 +37,7 @@ public class AuthenticationController extends ServiceController {
 		boolean success = securityService.changeUser(request.getSession(), username, password);
 		log.debug(success);
 		if (success) {
-			if (Strings.isDefined(redirect)) {
+			if (Strings.isNotBlank(redirect)) {
 				request.redirectFromBase(redirect);
 			} else {
 				request.redirect(".?action=loggedIn");

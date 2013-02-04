@@ -86,7 +86,7 @@ public class UserQuery implements PairQuery<User, Person> {
 	}
 
 	public UserQuery withWords(String query) {
-		if (Strings.isDefined(query)) {
+		if (Strings.isNotBlank(query)) {
 			words = Strings.getWords(query);
 		}
 		return this;

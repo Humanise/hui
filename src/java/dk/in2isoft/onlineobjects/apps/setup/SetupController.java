@@ -1,12 +1,23 @@
 package dk.in2isoft.onlineobjects.apps.setup;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.SortedSet;
 
+import org.apache.commons.lang.StringUtils;
+
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import dk.in2isoft.commons.lang.Code;
+import dk.in2isoft.commons.lang.Strings;
+import dk.in2isoft.in2igui.data.ItemData;
+import dk.in2isoft.in2igui.data.ListData;
 import dk.in2isoft.in2igui.data.ListWriter;
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
 import dk.in2isoft.onlineobjects.apps.setup.perspectives.UserPerspective;
@@ -14,27 +25,42 @@ import dk.in2isoft.onlineobjects.apps.videosharing.Path;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.SecurityService;
+import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.core.exceptions.ContentNotFoundException;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
+import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.model.EmailAddress;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.Privilege;
+import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.model.User;
+import dk.in2isoft.onlineobjects.model.annotations.Appearance;
+import dk.in2isoft.onlineobjects.modules.localization.LocalizationService;
 import dk.in2isoft.onlineobjects.modules.scheduling.SchedulingService;
+import dk.in2isoft.onlineobjects.modules.surveillance.RequestInfo;
+import dk.in2isoft.onlineobjects.services.SurveillanceService;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.util.Dates;
+import dk.in2isoft.onlineobjects.util.ValidationUtil;
 
 public class SetupController extends ApplicationController {
 
 	private SecurityService securityService;
 	private SchedulingService schedulingService;
+	private SurveillanceService surveillanceService;
+	private LocalizationService localizationService;
 	
 	public SetupController() {
 		super("setup");
+	}
+	
+	@Override
+	public boolean isAllowed(Request request) {
+		return request.isUser(SecurityService.ADMIN_USERNAME);
 	}
 
 	@Override
@@ -70,7 +96,7 @@ public class SetupController extends ApplicationController {
 		writer.header("E-mail");
 		writer.header("Image");
 		writer.header("Images");
-		writer.header("Public permissions");
+		writer.header("Public permissions",1);
 		writer.endHeaders();
 		for (User user : result.getList()) {
 			Query<Image> imgQuery = Query.after(Image.class).withPrivileged(user);
@@ -98,7 +124,7 @@ public class SetupController extends ApplicationController {
 			writer.startCell();
 			if (image!=null) {
 				writer.withIcon(image.getIcon());
-				writer.text(image.getName());
+				writer.text(StringUtils.abbreviateMiddle(image.getName(), "...", 20));
 			}
 			writer.endCell();
 			writer.startCell().text(imageCount).endCell();
@@ -117,7 +143,6 @@ public class SetupController extends ApplicationController {
 		}
 		writer.endList();
 	}
-	
 	
 	@Path(start="listUsersObjects")
 	public void listUsersObjects(Request request) throws IOException,EndUserException {
@@ -177,8 +202,9 @@ public class SetupController extends ApplicationController {
 		writer.endList();
 	}
 	
-	@Path(start="loadUser")
+	@Path
 	public void loadUser(Request request) throws IOException,EndUserException {
+		try {Thread.sleep(1000);} catch (InterruptedException e) {}
 		Long id = request.getLong("id");
 		User user = modelService.get(User.class, id, request.getSession());
 		if (user==null) {
@@ -194,7 +220,18 @@ public class SetupController extends ApplicationController {
 		request.sendObject(perspective);
 	}
 	
-	@Path(start="saveUser")
+	@Path
+	public void deleteUser(Request request) throws ModelException, SecurityException {
+		UserSession privileged = request.getSession();
+		User user = modelService.get(User.class, request.getLong("id"), privileged);
+		List<Entity> list = modelService.list(Query.of(Entity.class).withPrivileged(user));
+		for (Entity entity : list) {
+			modelService.deleteEntity(entity, privileged);
+		}
+		modelService.deleteEntity(user, privileged);		
+	}
+	
+	@Path
 	public void saveUser(Request request) throws IOException,EndUserException {
 		UserPerspective perspective = request.getObject("user", UserPerspective.class);
 		if (perspective==null) {
@@ -211,7 +248,7 @@ public class SetupController extends ApplicationController {
 		securityService.grantPublicPrivileges(user, perspective.isPublicView(), perspective.isPublicModify(), perspective.isPublicDelete());
 	}
 	
-	@Path(start="listJobs")
+	@Path
 	public void listJobs(Request request) throws SecurityException, IOException {
 		ListWriter writer = new ListWriter(request);
 		writer.startList();
@@ -241,12 +278,171 @@ public class SetupController extends ApplicationController {
 		}
 		writer.endList();
 	}
+
+	@Path
+	public void startJob(Request request) throws SecurityException, IOException {
+		schedulingService.runJob(request.getString("name"), request.getString("group"));
+	}
 	
+	@Path
+	public void getSurveillanceList(Request request) throws IOException {
+		String kind = request.getString("kind");
+		ListData data = new ListData();
+		if ("longestRunningRequests".equals(kind)) {
+			SortedSet<RequestInfo> requests = surveillanceService.getLongestRunningRequests();
+			data.addHeader("URI");
+			data.addHeader("Hits");
+			data.addHeader("Average");
+			data.addHeader("Max");
+			data.addHeader("Min");
+			data.addHeader("Total");
+			
+			for (RequestInfo info : requests) {
+				data.newRow();
+				data.addCell(info.getUri());
+				data.addCell(String.valueOf(info.getCounts()));
+				data.addCell(String.valueOf(info.getAverageRunningTime()));
+				data.addCell(String.valueOf(info.getMaxRunningTime()));
+				data.addCell(String.valueOf(info.getMinRunningTime()));
+				data.addCell(localizationService.formatMilis(info.getTotalRunningTime()));
+			}
+		} else {
+			Collection<String> exceptions = surveillanceService.getLatestExceptions();
+			List<String> reversed = Lists.newArrayList(exceptions);
+			Collections.reverse(reversed);
+			data.addHeader("Exception");
+			for (String string : reversed) {
+				data.newRow();
+				data.addCell(string);
+			}
+		}
+		request.sendObject(data);
+	}
+	
+	@Path
+	public void changeAdminPassword(Request request) throws EndUserException {
+		String password = request.getString("password");
+		if (!ValidationUtil.isValidPassword(password)) {
+			throw new IllegalRequestException("Invalid password");
+		}
+		securityService.changePassword(SecurityService.ADMIN_USERNAME, password, request.getSession());
+	}
+	
+	@Path
+	public ListData listEntities(Request request) throws SecurityException, ClassNotFoundException, IOException {
+		User publicUser = securityService.getPublicUser();
+		int page = request.getInt("page");
+		String clazz = request.getString("type");
+		String text = request.getString("text");
+		ListData list = new ListData();
+		list.addHeader("Name");
+		list.addHeader("Type");
+		list.addHeader("Public view");
+		list.addHeader("Public modify");
+		list.addHeader("Public delete");
+		Class<Entity> className;
+		if (Strings.isBlank(clazz)) {
+			className = Entity.class;
+		} else {
+			className = Code.<Entity>castClass(Class.forName(clazz));
+		}
+		Query<Entity> query = (Query<Entity>) Query.of(className).withWords(text).withPaging(page, 50);
+		SearchResult<Entity> result = modelService.search(query);
+		list.setWindow(result.getTotalCount(), 50, page);
+		for (Entity entity : result.getList()) {
+			String kind = entity.getClass().getSimpleName().toLowerCase();
+			list.newRow(entity.getId(),kind);
+			list.addCell(entity.getName(), entity.getIcon());
+			list.addCell(entity.getType());
+			list.addCell(securityService.canView(entity, publicUser));
+			list.addCell(securityService.canModify(entity, publicUser));
+			list.addCell(securityService.canDelete(entity, publicUser));
+		}
+		return list;
+	}
+	
+	@Path
+	public Collection<ItemData> getClasses(Request request) {
+		Collection<Class<? extends Entity>> classes = modelService.getEntityClasses();
+		Collection<ItemData> items = Lists.newArrayList();
+		for (Class<?> clazz : classes) {
+			ItemData data = new ItemData();
+			data.setValue(clazz.getCanonicalName());
+			data.setTitle(clazz.getSimpleName());
+			Appearance annotation = clazz.getAnnotation(Appearance.class);
+			if (annotation!=null) {
+				data.setIcon(annotation.icon());
+			} else {
+				data.setIcon("monochrome/round_question");
+			}
+			items.add(data);
+		}
+		return items;
+	}
+	
+	@Path
+	public EntityInfo getEntityInfo(Request request) {
+		long id = request.getLong("id");
+		EntityInfo info = new EntityInfo();
+		info.setId(id);
+		Privilege privilege = securityService.getPrivilege(id,securityService.getPublicUser());
+		if (privilege!=null) {
+			info.setPublicAlter(privilege.isAlter());
+			info.setPublicDelete(privilege.isDelete());
+			info.setPublicView(privilege.isView());
+		}
+		return info;
+	}
+	
+	@Path
+	public void updateEntityInfo(Request request) throws ModelException {
+		EntityInfo info = request.getObject("data", EntityInfo.class);
+		Entity entity = modelService.get(Entity.class, info.getId(), request.getSession());
+		securityService.grantPublicPrivileges(entity,info.isPublicView(),info.isPublicAlter(),info.isPublicDelete());
+	}
+	
+	@Path
+	public List<Image> listImages(Request request) throws EndUserException {
+		String text = request.getString("text");
+		String tag = request.getString("tag");
+		Query<Image> query = new Query<Image>(Image.class).withPaging(0, 50).orderByCreated().descending();
+		query.withWords(text);
+		if (Strings.isNotBlank(tag)) {
+			query.withCustomProperty(Property.KEY_COMMON_TAG, tag);
+		}
+		return modelService.list(query);
+	}
+
+	@Path
+	public List<ItemData> getImageTags(Request request) throws EndUserException {
+		Map<String, Integer> properties = modelService.getProperties(Property.KEY_COMMON_TAG, Image.class, null);
+		List<ItemData> items = Lists.newArrayList();
+		for (Entry<String, Integer> itemData : properties.entrySet()) {
+			ItemData data = new ItemData();
+			data.setValue(itemData.getKey());
+			data.setTitle(itemData.getKey());
+			data.setBadge(itemData.getValue().toString());
+			data.setIcon("common/folder");
+			items.add(data);
+		}
+		return items;
+	}
+
+
+
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
 	}
 	
 	public void setSchedulingService(SchedulingService schedulingService) {
 		this.schedulingService = schedulingService;
+	}
+	
+	public void setSurveillanceService(SurveillanceService surveillanceService) {
+		this.surveillanceService = surveillanceService;
+	}
+	
+	public void setLocalizationService(LocalizationService localizationService) {
+		this.localizationService = localizationService;
 	}
 }

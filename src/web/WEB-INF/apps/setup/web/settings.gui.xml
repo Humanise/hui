@@ -1,35 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<gui xmlns="uri:hui" title="Indstillinger">
+<gui xmlns="uri:hui" title="Settings">
 	<dwr base="/dwr/">
 		<interface name="AppSetup"/>
 	</dwr>
-	<controller name="mainController" source="main.js"/>
-	<controller name="controller" source="index.js"/>
+	<controller name="controller" source="settings.js"/>
 	<space height="20"/>
-	<box width="600" title="Indstillinger">
-		<tabs>
-			<tab title="Administrator">
-				<formula name="formula">
-					<space all="10">
-						<horizontal space="20">
-							<content>
-								<space all="1"/>
-							</content>
-							<content>
-								<header>Skift adgangskode</header>
-								<group labels="above">
-									<text secret="true" label="Adgangskode" name="password1"/>
-									<text secret="true" label="Gentag adgangskode" name="password2"/>
-									<buttons>
-									<button title="Skift" name="changePassword"/>
-									</buttons>
-								</group>
-							</content>
-						</horizontal>
-					</space>
-				</formula>
-			</tab>
-			<tab title="Indstillinger"/>
-		</tabs>
+	<box width="400" title="Settings" padding="10">
+		<formula name="formula">
+			<header>Change administrator password</header>
+			<text><p>At least 8 characters with uppercase, lowercase, numbers and symbols - like pA$sw0rD.</p></text>
+			<fields labels="above">
+				<field label="Password">
+					<text-input secret="true" name="password1"/>
+				</field>
+				<field label="Password - again">
+					<text-input secret="true" label="Gentag adgangskode" name="password2"/>
+				</field>
+			</fields>
+			<buttons>
+				<button title="Change" name="changePassword" submit="true"/>
+			</buttons>
+		</formula>
 	</box>
 </gui>

@@ -70,7 +70,7 @@ public class  LocationQuery<T extends Entity> implements PairQuery<Location, T> 
 	}
 
 	public LocationQuery<T> withWords(String query) {
-		if (Strings.isDefined(query)) {
+		if (Strings.isNotBlank(query)) {
 			words = Strings.getWords(query);
 		}
 		return this;

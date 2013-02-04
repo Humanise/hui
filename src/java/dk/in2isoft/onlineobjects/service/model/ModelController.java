@@ -11,6 +11,7 @@ import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
+import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.Language;
 import dk.in2isoft.onlineobjects.model.LexicalCategory;
@@ -73,7 +74,7 @@ public class ModelController extends ModelControllerBase {
 		writer.endList();
 	}
 
-	@Path(start="addWord")
+	@Path
 	public void addWord(Request request) throws IOException, ModelException, IllegalRequestException {
 		String text = request.getString("text");
 		String language = request.getString("language");
@@ -81,5 +82,11 @@ public class ModelController extends ModelControllerBase {
 		
 		Word word = languageService.createWord(language, category, text, request.getSession());
 		request.sendObject(word);
+	}
+
+	@Path
+	public void changePrimaryEmail(Request request) throws IOException, ModelException, IllegalRequestException, SecurityException {
+		String email = request.getString("email");
+		memberService.changePrimaryEmail(request.getSession().getUser(),email,request.getSession());
 	}
 }

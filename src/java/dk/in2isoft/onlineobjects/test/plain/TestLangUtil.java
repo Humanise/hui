@@ -45,7 +45,35 @@ public class TestLangUtil extends AbstractSpringTestCase {
 		assertFalse(ValidationUtil.isWellFormedEmail("xx.jb_0m@atira."));
 		assertTrue(StringUtils.containsOnly("abc", "abcdefghijklmnopqrstuvwxyz0123456789"));
 	}
-	
+
+	@Test
+	public void testValidUsername() {
+		assertFalse(ValidationUtil.isValidUsername(""));
+		assertFalse(ValidationUtil.isValidUsername(null));
+		assertFalse(ValidationUtil.isValidUsername(" "));
+		assertFalse(ValidationUtil.isValidUsername(" abc"));
+		assertFalse(ValidationUtil.isValidUsername("abc123+"));
+		assertFalse(ValidationUtil.isValidUsername("jonasmunk@mac.com"));
+
+		assertTrue(ValidationUtil.isValidUsername("a"));
+		assertTrue(ValidationUtil.isValidUsername("abc"));
+		assertTrue(ValidationUtil.isValidUsername("abc123"));
+	}
+
+	@Test
+	public void testValidPassword() {
+		assertFalse(ValidationUtil.isValidPassword(""));
+		assertFalse(ValidationUtil.isValidPassword(null));
+		assertFalse(ValidationUtil.isValidPassword(" "));
+		assertFalse(ValidationUtil.isValidPassword("          "));
+		assertFalse(ValidationUtil.isValidPassword("     abcABC123-+&     "));
+		assertFalse(ValidationUtil.isValidPassword(" abcABC123-+&"));
+		assertFalse(ValidationUtil.isValidPassword("abcABC123-+& "));
+		assertFalse(ValidationUtil.isValidPassword("abBC12+"));
+
+		assertTrue(ValidationUtil.isValidPassword("abcABC123-+&"));
+	}
+
 	@Test
 	public void testSplitWords() {
 		assertEquals(Arrays.toString(Strings.getWords("a b c")), Arrays.toString(new String[] {"a","b","c"}));

@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import com.google.common.collect.Lists;
 
+import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.model.Item;
@@ -46,6 +47,15 @@ public class SecurityService {
 		} else {
 			return false;			
 		}
+	}
+	
+	public void changePassword(String username, String password, Privileged privileged) throws SecurityException, ModelException, IllegalRequestException {
+		User user = modelService.getUser(username);
+		if (user==null) {
+			throw new IllegalRequestException("The user with username: "+username+" was not found");
+		}
+		user.setPassword(password);
+		modelService.updateItem(user, privileged);
 	}
 	
 	public boolean logOut(UserSession userSession) {

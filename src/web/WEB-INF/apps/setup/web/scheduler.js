@@ -10,12 +10,15 @@ var controller = {
 		listSource.refresh();
 	},
 	$click$start : function() {
-		var item = list.getFirstSelection().data;
-		if (item) {
-			var self = this;
-			AppSetup.startJob(item.name,item.group,function() {
-				listSource.refresh();
-			});
+		var item = list.getFirstSelection();
+		if (item && item.data) {
+			hui.ui.request({
+				url : 'startJob',
+				parameters : item.data,
+				$success : function() {
+					listSource.refresh();
+				}
+			})
 		}
 	}
 }

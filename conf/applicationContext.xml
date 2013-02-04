@@ -2,144 +2,14 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xmlns:util="http://www.springframework.org/schema/util"
-  	xmlns:dwr="http://www.directwebremoting.org/schema/spring-dwr"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
-        http://www.directwebremoting.org/schema/spring-dwr
-    	http://www.directwebremoting.org/schema/spring-dwr-2.0.xsd
     ">
-    
-    <import resource="spring/core-remoting.xml"/>
-    <import resource="spring/core-scheduling.xml"/>
-    <import resource="spring/core-publishing.xml"/>
-    <import resource="spring/module-language.xml"/>
-    <import resource="spring/app-videosharing.xml"/>
-    <import resource="spring/app-setup.xml"/>
-    <import resource="spring/app-community.xml"/>
-    <import resource="spring/app-developer.xml"/>
-    <import resource="spring/app-desktop.xml"/>
-    <import resource="spring/app-words.xml"/>
-    <import resource="spring/app-photos.xml"/>
-
 	<bean id="config" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="location" value="classpath:configuration.properties" />
 	</bean>
+    
+    <import resource="spring/combined.xml"/>
 
-	<bean id="configurationService" class="dk.in2isoft.onlineobjects.services.ConfigurationService">
-		<property name="basePath" value="${basePath}"/>
-		<property name="storagePath" value="${storagePath}"/>
-		<property name="baseUrl" value="${baseUrl}"/>
-		<property name="developmentMode" value="${developmentMode}"/>
-		<property name="developmentUser" value="${development.user}"/>
-		<property name="imageMagickPath" value="${imagemagick.path}"/>
-		<property name="graphvizPath" value="${graphviz.path}"/>
-		<property name="analyticsCode" value="${analytics.code}"/>
-	</bean>
-
-	<bean id="emailService" class="dk.in2isoft.onlineobjects.services.EmailService" autowire="byType">
-
-		<property name="host" value="${email.host}" />
-		<property name="username" value="${email.username}" />
-		<property name="password" value="${email.password}" />
-		<property name="defaultSenderAddress" value="${email.defaultSenderAddress}" />
-		<property name="defaultSenderName" value="${email.defaultSenderName}" />
-
-	</bean>
-
-	<bean id="passwordRecoveryService" class="dk.in2isoft.onlineobjects.services.PasswordRecoveryService">
-	
-		<property name="emailService" ref="emailService" />
-		<property name="modelService" ref="modelService" />
-		<property name="configurationService" ref="configurationService"/>
-	
-	</bean>
-
-	<bean id="modelService" class="dk.in2isoft.onlineobjects.core.ModelService" autowire="byType"/>
-	
-	<bean id="storageService" class="dk.in2isoft.onlineobjects.services.StorageService" autowire="byType"/>
-	
-	<bean id="securityService" class="dk.in2isoft.onlineobjects.core.SecurityService" autowire="byType"/>
-	
-	<bean id="lifeCycleService" class="dk.in2isoft.onlineobjects.services.LifeCycleService"/>
-	
-	<bean id="eventService" class="dk.in2isoft.onlineobjects.core.events.EventService" autowire="byType"/>
-	
-	<bean id="conversionService" class="dk.in2isoft.onlineobjects.services.ConversionService"/>
-	
-
-	<bean id="imageService" class="dk.in2isoft.onlineobjects.util.images.ImageService" autowire="byType"/>
-	
-	<bean id="webModelService" class="dk.in2isoft.onlineobjects.services.WebModelService" autowire="byType"/>
-	
-	<bean id="dispatchingService" class="dk.in2isoft.onlineobjects.services.DispatchingService" autowire="byType">
-		<property name="responders">
-			<util:list>
-				<bean class="dk.in2isoft.onlineobjects.modules.dispatch.DWRResponder" autowire="byType"/>
-				<bean class="dk.in2isoft.onlineobjects.modules.dispatch.FacesResponder" autowire="byType"/>
-				<bean class="dk.in2isoft.onlineobjects.modules.dispatch.CoreFilesResponder" autowire="byType"/>
-				<bean class="dk.in2isoft.onlineobjects.modules.dispatch.In2iGuiResponder" autowire="byType"/>
-				<bean class="dk.in2isoft.onlineobjects.modules.dispatch.ServicesResponder" autowire="byType"/>
-				<bean class="dk.in2isoft.onlineobjects.modules.dispatch.ApplicationResponder" autowire="byType"/>
-			</util:list>
-		</property>
-	</bean>
-	
-	<bean id="surveillanceService" class="dk.in2isoft.onlineobjects.services.SurveillanceService" autowire="byType"/>
-	
-	<bean id="schedulingSupportFacade" class="dk.in2isoft.onlineobjects.modules.scheduling.SchedulingSupportFacade" autowire="byType"/>
-
-	<bean id="schedulingService" class="dk.in2isoft.onlineobjects.modules.scheduling.SchedulingService" autowire="byType"/>
-	
-	<bean id="importService" class="dk.in2isoft.onlineobjects.services.ImportService" autowire="byType"/>
-	
-	<bean id="fileService" class="dk.in2isoft.onlineobjects.services.FileService" autowire="byType"/>
-	
-	<bean id="graphService" class="dk.in2isoft.onlineobjects.services.GraphService" autowire="byType"/>
-	
-	<bean id="semanticService" class="dk.in2isoft.onlineobjects.services.SemanticService" autowire="byType"/>
-	
-	<bean id="indexService" class="dk.in2isoft.onlineobjects.modules.index.IndexService" autowire="byType"/>
-	
-	<bean id="remoteDataService" class="dk.in2isoft.onlineobjects.services.RemoteDataService" autowire="byType"/>
-	<bean id="personService" class="dk.in2isoft.onlineobjects.services.PersonService" autowire="byType"/>
-	
-	<bean id="feedService" class="dk.in2isoft.onlineobjects.services.FeedService" autowire="byType"/>
-	<bean id="ratingService" class="dk.in2isoft.onlineobjects.services.RatingService" autowire="byType"/>
-	
-	<bean id="videoService" class="dk.in2isoft.onlineobjects.modules.video.VideoService" autowire="byType"/>
-	<bean id="youTubeService" class="dk.in2isoft.onlineobjects.modules.youtube.YouTubeService" autowire="byType"/>
-	
-	<bean id="localizationService" class="dk.in2isoft.onlineobjects.modules.localization.LocalizationService" autowire="byType"/>
-	
-	<bean id="userService" class="dk.in2isoft.onlineobjects.modules.user.UserService" autowire="byType"/>
-	
-	<bean id="dictionaryService" class="dk.in2isoft.onlineobjects.services.DictionaryService" autowire="byType"/>
-	
-	<bean id="consistencyService" class="dk.in2isoft.onlineobjects.services.ConsistencyService" autowire="byType"/>
-
-	<bean id="sessionService" class="dk.in2isoft.onlineobjects.services.SessionService" autowire="byType"/>
-
-	<bean id="informationService" class="dk.in2isoft.onlineobjects.modules.information.InformationService" autowire="byType"/>
-
-	<!-- Service controllers -->
-	
-	<bean id="imageController" class="dk.in2isoft.onlineobjects.service.image.ImageController" autowire="byType"/>
-	<bean id="modelController" class="dk.in2isoft.onlineobjects.service.model.ModelController" autowire="byType"/>
-	<bean id="webrendererController" class="dk.in2isoft.onlineobjects.service.webrenderer.WebrendererController" autowire="byType"/>
-	<bean id="authenticationController" class="dk.in2isoft.onlineobjects.service.authentication.AuthenticationController" autowire="byType"/>
-	<bean id="videoController" class="dk.in2isoft.onlineobjects.service.video.VideoController" autowire="byType"/>
-	<bean id="languageController" class="dk.in2isoft.onlineobjects.service.language.LanguageController" autowire="byType"/>
-	
-	<!-- Tools -->
-	
-	<bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
-      <property name="velocityProperties">
-         <value>
-            resource.loader=file
-            file.resource.loader.class=org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-            file.resource.loader.path=/Users/jbm/Development/Workspace/onlineobjects/src/web/
-         </value>
-      </property>
-   </bean>
 </beans>

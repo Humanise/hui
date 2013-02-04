@@ -5,7 +5,7 @@ public class Address extends Entity {
 
 	public static String TYPE = Entity.TYPE+"/Address";
 	public static String NAMESPACE = Entity.NAMESPACE+"Address/";
-	private static String ICON = "common/object";
+	private static String ICON = "geo/map";
 	
 	private String street;
 	private String city;

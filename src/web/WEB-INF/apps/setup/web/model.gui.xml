@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gui xmlns="uri:hui" title="Indstillinger" padding="10">
-	<dwr base="/dwr/">
-		<interface name="AppSetup"/>
-		<interface name="Common"/>
-	</dwr>
-	<controller name="mainController" source="main.js"/>
+
 	<controller name="controller" source="model.js"/>
-	<source name="listSource" dwr="AppSetup.listEntities">
-		<parameter key="state" value="@list.window"/>
+	<source name="listSource" url="listEntities">
+		<parameter key="page" value="@list.window.page"/>
 		<parameter key="type" value="@selection.value"/>
-		<parameter key="search" value="@search.value"/>
+		<parameter key="text" value="@search.value"/>
 	</source>
-	<source name="classSource" dwr="Common.getClasses"/>
+	<source name="classSource" url="getClasses"/>
 
 	<structure>
 		<top>
@@ -47,32 +43,13 @@
 		<formula name="entityFormula">
 			<fields labels="above">
 				<field label="Public access">
-					<checkbox label="Modify" key="publicAlter"/>
-					<checkbox label="View" key="publicView"/>
+					<checkbox label="Modify" key="publicAlter" right="10"/>
+					<checkbox label="View" key="publicView" right="10"/>
 					<checkbox label="Delete" key="publicDelete"/>
 				</field>
 			</fields>
 			<buttons>
 				<button title="Update" name="updateEntity" highlighted="true"/>
-			</buttons>
-		</formula>
-	</window>
-	
-	<window name="userEditor" title="User" padding="5" width="300">
-		<formula name="userFormula">
-			<fields>
-				<field label="Username:">
-					<text-input key="username"/>
-				</field>
-				<field label="Password:">
-					<text-input secret="true" key="password"/>
-				</field>
-			</fields>
-			<buttons>
-				<button title="Delete" name="deleteUser">
-					<confirm text="Are you sure?" ok="Yes, delete" cancel="No"/>
-				</button>
-				<button title="Update" name="saveUser" highlighted="true"/>
 			</buttons>
 		</formula>
 	</window>

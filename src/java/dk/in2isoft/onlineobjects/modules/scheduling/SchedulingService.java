@@ -28,7 +28,9 @@ import org.springframework.beans.factory.InitializingBean;
 
 import dk.in2isoft.onlineobjects.apps.words.index.HelloWorldJob;
 import dk.in2isoft.onlineobjects.apps.words.index.WordIndexJob;
+import dk.in2isoft.onlineobjects.modules.images.ImageCleanupJob;
 import dk.in2isoft.onlineobjects.modules.information.InformationSpiderJob;
+import dk.in2isoft.onlineobjects.modules.synchronization.MailWatchingJob;
 
 public class SchedulingService implements InitializingBean {
 
@@ -44,7 +46,7 @@ public class SchedulingService implements InitializingBean {
 		
 		{
 			JobDetail job = JobBuilder.newJob(WordIndexJob.class)
-				    .withIdentity("indexwords", "core")
+				    .withIdentity("indexwords", "core").storeDurably()
 				    .build();
 			scheduler.addJob(job, true);
 		}
@@ -56,15 +58,33 @@ public class SchedulingService implements InitializingBean {
 			scheduler.addJob(job, true);
 			scheduler.scheduleJob(TriggerBuilder.newTrigger().forJob(job).withSchedule(SimpleScheduleBuilder.repeatMinutelyForever()).build());
 		}
-		if (!false) {
+		{
+			JobDetail job = JobBuilder.newJob(ImageCleanupJob.class)
+				    .withIdentity("clean-images", "core").storeDurably()
+				    .build();
+			job.getJobDataMap().put("schedulingSupportFacade", schedulingSupportFacade);
+			scheduler.addJob(job, true);
+		}
+		{
+			JobDetail job = JobBuilder.newJob(MailWatchingJob.class)
+				    .withIdentity("mailwatcher", "core").storeDurably()
+				    .build();
+			job.getJobDataMap().put("schedulingSupportFacade", schedulingSupportFacade);
+			scheduler.addJob(job, true);
+			scheduler.scheduleJob(TriggerBuilder.newTrigger().forJob(job).withSchedule(SimpleScheduleBuilder.repeatMinutelyForever()).build());
+			
+		}
+		 {
 			JobDetail job = JobBuilder.newJob(InformationSpiderJob.class)
 				    .withIdentity("info-spider", "core").storeDurably()
 				    .build();
 			job.getJobDataMap().put("schedulingSupportFacade", schedulingSupportFacade);
 			scheduler.addJob(job, true);
-			SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.repeatMinutelyForever(5);
-			Date startTime = DateTime.now().plusSeconds(30).toDate();
-			scheduler.scheduleJob(TriggerBuilder.newTrigger().forJob(job).withSchedule(scheduleBuilder).startAt(startTime).build());
+			if (false) {
+				SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.repeatMinutelyForever(5);
+				Date startTime = DateTime.now().plusSeconds(30).toDate();
+				scheduler.scheduleJob(TriggerBuilder.newTrigger().forJob(job).withSchedule(scheduleBuilder).startAt(startTime).build());
+			}
 		}
 		scheduler.start();
 	}
@@ -138,29 +158,34 @@ public class SchedulingService implements InitializingBean {
 	}
 	
 	public Date getLatestExecution(String name, String group) {
-		try {
-			JobDetail jobDetail = scheduler.getJobDetail(JobKey.jobKey(name, group));
-			List<? extends Trigger> triggersOfJob = scheduler.getTriggersOfJob(jobDetail.getKey());
-			for (Trigger trigger : triggersOfJob) {
+		List<? extends Trigger> triggers = getJobDetail(name, group);
+		if (triggers!=null) {
+			for (Trigger trigger : triggers) {
 				return trigger.getPreviousFireTime();
 			}
-		} catch (SchedulerException e) {
-			log.error("Exception while running job", e);
-		}		
+		}
 		return null;
 	}
 
 	public Date getNextExecution(String name, String group) {
-		try {
-			JobDetail jobDetail = scheduler.getJobDetail(JobKey.jobKey(name, group));
-			List<? extends Trigger> triggersOfJob = scheduler.getTriggersOfJob(jobDetail.getKey());
-			for (Trigger trigger : triggersOfJob) {
-				return trigger.getPreviousFireTime();
+		List<? extends Trigger> triggers = getJobDetail(name, group);
+		if (triggers!=null) {
+			for (Trigger trigger : triggers) {
+				return trigger.getNextFireTime();
 			}
+		}
+		return null;
+	}
+	
+	private List<? extends Trigger> getJobDetail(String name, String group) {
+		try {
+			JobDetail detail = scheduler.getJobDetail(JobKey.jobKey(name, group));
+			return scheduler.getTriggersOfJob(detail.getKey());
 		} catch (SchedulerException e) {
 			log.error("Exception while running job", e);
 		}		
 		return null;
+		
 	}
 
 	public boolean addJob(String name, String group, Class<? extends Job> jobClass, String cron, JobDataMap map) {

@@ -56,6 +56,12 @@ public class ApplicationResponder implements Responder {
 		}
 		{
 			Application app = new Application();
+			app.setName("account");
+			app.addProperty(Application.PROPERTY_URL_MAPPING, "account.onlineobjects.com");
+			apps.add(app);
+		}
+		{
+			Application app = new Application();
 			app.setName("community");
 			app.addProperty(Application.PROPERTY_URL_MAPPING, ".*");
 			apps.add(app);
@@ -115,7 +121,7 @@ public class ApplicationResponder implements Responder {
 		String[] path = request.getLocalPath();
 		try {
 			if (controller == null) {
-				throw new ContentNotFoundException("Application not found");
+				throw new ContentNotFoundException("Application not found: "+application);
 			}
 			if (!controller.isAllowed(request)) {
 				throw new IllegalRequestException("Not allowed");

@@ -18,7 +18,7 @@ import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.services.ConfigurationService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations="classpath:applicationContext.xml")
+@ContextConfiguration(locations="classpath:applicationContext.test.xml")
 public abstract class AbstractSpringTestCase extends AbstractJUnit4SpringContextTests {
 	
 	@Autowired

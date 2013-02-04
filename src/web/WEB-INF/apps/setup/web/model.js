@@ -8,19 +8,28 @@ var controller = {
 	$open$list : function(row) {
 		this.entityId = row.id;
 		entityEditor.setTitle(row.title);
-		AppSetup.getEntityInfo(row.id,function(info) {
-			entityFormula.setValues(info);
-			entityEditor.show();
-		});
+		hui.ui.request({
+			url : 'getEntityInfo',
+			parameters : {id:row.id},
+			$object : function(info) {
+				entityFormula.setValues(info);
+				entityEditor.show();
+			}
+		})
 	},
 	$click$updateEntity : function() {
 		var info = entityFormula.getValues();
 		info.id = this.entityId;
-		AppSetup.updateEntityInfo(info,function() {
-			listSource.refresh();
-			entityFormula.reset();
-			entityEditor.hide();
-		});
+
+		hui.ui.request({
+			url : 'updateEntityInfo',
+			json : {data:info},
+			$success : function(info) {
+				listSource.refresh();
+				entityFormula.reset();
+				entityEditor.hide();
+			}
+		})
 	},
 	$select$selection : function() {
 		list.resetState();

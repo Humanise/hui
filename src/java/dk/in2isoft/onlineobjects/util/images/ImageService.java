@@ -136,6 +136,7 @@ public class ImageService extends AbstractCommandLineInterface {
 			Directory iptcDirectory = metadata.getDirectory(IptcDirectory.class);
 			
 			Iterable<Directory> directories = metadata.getDirectories();
+			/**
 			for (Directory dir : directories) {
 				Collection<Tag> tags = dir.getTags();
 				for (Tag tag : tags) {
@@ -143,7 +144,7 @@ public class ImageService extends AbstractCommandLineInterface {
 						log.info(dir.getName()+" : "+tag.getTagName()+" : "+dir.getObject(tag.getTagType()));
 					}
 				}
-			}
+			}**/
 			
 			//if (exifDirectory.containsTag(ExifIFD0Directory.TAG_DATETIME_ORIGINAL)) {
 			//	imageMetaData.setDateTimeOriginal(exifDirectory.getDate(ExifDirectory.TAG_DATETIME_ORIGINAL));

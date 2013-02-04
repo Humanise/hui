@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.Session;
 
 import com.google.common.collect.Lists;
@@ -74,7 +73,7 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 	}
 
 	public Query<T> withWords(String query) {
-		if (Strings.isDefined(query)) {
+		if (Strings.isNotBlank(query)) {
 			words = Strings.getWords(query);
 		}
 		return this;
@@ -356,7 +355,7 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 			} else if (child != null && inPosition) {
 				hql.append(" order by childRelation.position");
 				hql.append(descending ? " desc" : " asc");
-			} else if (Strings.isDefined(ordering)) {
+			} else if (Strings.isNotBlank(ordering)) {
 				hql.append(" order by ").append(ordering);
 				hql.append(descending ? " desc" : " asc");
 			} else if (Entity.class.isAssignableFrom(clazz)) {

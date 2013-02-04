@@ -725,13 +725,13 @@ public class ModelService {
 		hql.append("select p.value as value,count(p.id) as count from ");
 		hql.append(cls.getSimpleName()).append(" as entity");
 		hql.append(" left join entity.properties as p where p.key=:key");
-		if (Strings.isDefined(query)) {
+		if (Strings.isNotBlank(query)) {
 			hql.append(" and lower(value) like lower(:query)");
 		}
 		hql.append(" group by p.value order by lower(value)");
 		Query q = session.createQuery(hql.toString());
 		q.setString("key", key);
-		if (Strings.isDefined(query)) {
+		if (Strings.isNotBlank(query)) {
 			q.setString("query", "%" + query + "%");
 		}
 		ScrollableResults scroll = q.scroll();

@@ -1,7 +1,10 @@
 package dk.in2isoft.onlineobjects.model;
 
+import dk.in2isoft.onlineobjects.model.annotations.Appearance;
 
 
+
+@Appearance(icon="common/image")
 public class Image extends Entity {
 
 	public static final String PROPERTY_DESCRIPTION = "item.enity.image.description";

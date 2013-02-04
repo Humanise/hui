@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:o="http://www.onlineobjects.com/jsf" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:gui="http://www.in2isoft.dk/in2igui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+>
+	
+	
+	<ui:composition template="templates/plain.xhtml">
+				
+		<ui:define name="body">
+			<div style="padding: 10px;">
+				<h1>#{accountSettingsView.user.username}</h1>
+				<gui:formula name="mailForm">
+					<gui:field label="Primary e-mail">
+						<gui:textInput key="mail" value="#{accountSettingsView.primaryEmail}"/>
+					</gui:field>
+					<gui:button text="Change" submit="true"/>
+				</gui:formula>
+			</div>
+			<script>
+				hui.ui.listen({
+					$submit$mailForm : function() {
+						var values = hui.ui.get('mailForm').getValues();
+						hui.ui.request({
+							url : oo.baseContext+'/service/model/changePrimaryEmail',
+							parameters : {email:values.mail},
+							$success : function() {
+								hui.ui.showMessage({text:'The e-mail address is changed',icon:'common/success',duration:3000});
+							},
+							$failure : function() {
+								hui.ui.showMessage({text:'The e-mail address was not changed',icon:'common/warning',duration:3000});
+							}
+						})
+					}
+				})
+			</script>
+		</ui:define>
+	
+	</ui:composition>
+	
+</html>

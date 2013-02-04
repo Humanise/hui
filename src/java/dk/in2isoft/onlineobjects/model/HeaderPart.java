@@ -17,10 +17,6 @@ public class HeaderPart extends Entity {
 		return TYPE;
 	}
 
-	public String getIcon() {
-		return "Element/Image";
-	}
-
 	public String getText() {
 		return text;
 	}

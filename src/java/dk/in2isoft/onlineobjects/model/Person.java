@@ -5,7 +5,9 @@ import java.util.Date;
 import org.apache.commons.lang.StringUtils;
 
 import dk.in2isoft.commons.lang.Strings;
+import dk.in2isoft.onlineobjects.model.annotations.Appearance;
 
+@Appearance(icon="common/person")
 public class Person extends Entity {
 
 	public static String TYPE = Entity.TYPE+"/Person";

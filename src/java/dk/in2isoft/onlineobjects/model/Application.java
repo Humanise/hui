@@ -6,7 +6,6 @@ public class Application extends Entity {
 	
 	public static String TYPE = Entity.TYPE+"/Application";
 	public static String NAMESPACE = Entity.NAMESPACE+"Application/";
-	private static String ICON = "common/object";
 
 	public Application() {
 		super();
@@ -16,7 +15,4 @@ public class Application extends Entity {
 		return TYPE;
 	}
 
-	public String getIcon() {
-		return ICON;
-	}
 }

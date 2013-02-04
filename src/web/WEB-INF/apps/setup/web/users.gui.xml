@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<gui xmlns="uri:hui" title="Indstillinger" padding="10">
-	<dwr base="/dwr/">
-		<interface name="AppSetup"/>
-		<interface name="Common"/>
-	</dwr>
-	
-	<controller source="main.js"/>
+<gui xmlns="uri:hui" title="Indstillinger" padding="10">	
 	<controller source="users.js"/>
 	
-	<source name="listSource" url="listUsers"> <!--dwr="AppSetup.listUsers"-->
+	<source name="listSource" url="listUsers">
 		<parameter key="page" value="@list.window.page"/>
 		<parameter key="search" value="@search.value"/>
 	</source>
@@ -21,7 +15,7 @@
 	<structure>
 		<top>
 			<toolbar>
-				<icon icon="common/new" text="Add user" name="newUser"/>
+				<icon icon="common/new" text="Add user" name="newUser" disabled="true"/>
 				<right>
 					<field label="Search">
 						<searchfield name="search" expanded-width="200"/>
@@ -33,7 +27,7 @@
 			<left>
 				<overflow>
 					<selection value="dk.in2isoft.onlineobjects.model.Entity" name="selection">
-						<item icon="common/object" title="All classes" value="dk.in2isoft.onlineobjects.model.Entity"/>
+						<item icon="common/user" title="All users" value="dk.in2isoft.onlineobjects.model.Entity"/>
 					</selection>
 				</overflow>
 			</left>
@@ -65,12 +59,12 @@
 					<text-input key="username"/>
 				</field>
 				<field label="Privileges">
-					<checkbox name="publicView" label="View"/>
-					<checkbox name="publicModify" label="Modify"/>
+					<checkbox name="publicView" label="View" right="10"/>
+					<checkbox name="publicModify" label="Modify" right="10"/>
 					<checkbox name="publicDelete" label="Delete"/>
 				</field>
 			</fields>
-			<buttons>
+			<buttons top="10">
 				<button title="Cancel" name="cancelUser"/>
 				<button title="Delete" name="deleteUser">
 					<confirm text="Are you sure?" ok="Yes, delete" cancel="No"/>

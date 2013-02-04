@@ -1,13 +1,19 @@
 package dk.in2isoft.onlineobjects.apps.community.services;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.ModelService;
+import dk.in2isoft.onlineobjects.core.Privileged;
+import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
+import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
+import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.model.EmailAddress;
 import dk.in2isoft.onlineobjects.model.ImageGallery;
 import dk.in2isoft.onlineobjects.model.Person;
@@ -30,17 +36,17 @@ public class MemberService {
 		if (!ValidationUtil.isValidUsername(username)) {
 			throw new IllegalRequestException("Username contains invalid characters","invalidUsername");
 		}
-		if (!Strings.isDefined(password)) {
+		if (!Strings.isNotBlank(password)) {
 			throw new IllegalRequestException("Password is not provided","noPassword");
 		}
 	}
 
 	public void validateNewMember(String username, String password, String fullName, String email) throws IllegalRequestException {
 		validateNewMember(username, password);
-		if (!Strings.isDefined(fullName)) {
+		if (!Strings.isNotBlank(fullName)) {
 			throw new IllegalRequestException("Name is not provided","noName");
 		}
-		if (!Strings.isDefined(email)) {
+		if (!Strings.isNotBlank(email)) {
 			throw new IllegalRequestException("Email is not provided","noEmail");
 		}
 		if (!ValidationUtil.isWellFormedEmail(email)) {
@@ -94,6 +100,61 @@ public class MemberService {
 		
 		return user;
 	}
+
+	/**
+	 * Will create, update or delete the primary email address
+	 * @param user
+	 * @param email
+	 * @param privileged
+	 * @throws ModelException
+	 * @throws SecurityException
+	 * @throws IllegalRequestException 
+	 */
+	public void changePrimaryEmail(User user, String email, Privileged privileged) throws ModelException, SecurityException, IllegalRequestException {
+		EmailAddress emailAddress = modelService.getChild(user, Relation.KIND_SYSTEM_USER_EMAIL, EmailAddress.class);
+		if (StringUtils.isBlank(email)) {
+			if (emailAddress!=null) {
+				modelService.deleteEntity(emailAddress, privileged);
+			}
+			return;
+		}
+		email = email.trim();
+		if (!ValidationUtil.isWellFormedEmail(email)) {
+			throw new IllegalRequestException("The email is not well formed: "+email);
+		}
+		if (emailAddress!=null) {
+			emailAddress.setAddress(email);
+			emailAddress.setName(email);
+			modelService.updateItem(emailAddress, privileged);
+		} else {
+			emailAddress = new EmailAddress();
+			emailAddress.setAddress(email);
+			emailAddress.setName(email);
+			modelService.createItem(emailAddress, privileged);
+			modelService.createRelation(user, emailAddress, Relation.KIND_SYSTEM_USER_EMAIL, privileged);
+		}
+	}
+	
+	/**
+	 * TODO: Optimize this
+	 * @param email
+	 * @param privileged
+	 * @return
+	 * @throws ModelException
+	 */
+	public User getUserByPrimaryEmail(String email, Privileged privileged) throws ModelException {
+		Query<EmailAddress> query = Query.after(EmailAddress.class).withField(EmailAddress.ADDRESS_PROPERTY, email).orderByCreated();
+		
+		List<EmailAddress> list = modelService.list(query);
+		for (EmailAddress emailAddress : list) {
+			User user = modelService.getParent(emailAddress, Relation.KIND_SYSTEM_USER_EMAIL, User.class);
+			if (user!=null) {
+				return user;
+			}
+		}
+		return null;
+	}
+
 	
 	private String buildWebSiteTitle(String fullName) {
 		fullName = fullName.trim();
@@ -128,5 +189,4 @@ public class MemberService {
 	public SecurityService getSecurityService() {
 		return securityService;
 	}
-
 }

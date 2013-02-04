@@ -19,20 +19,30 @@ public class AbstractController {
 		for (Method method : methods) {
 			Path annotation = method.getAnnotation(Path.class);
 			
-			if (annotation!=null && request.testLocalPathStart(annotation.start())) {
-				try {
-					method.invoke(this, new Object[] { request });
-					return;
-				} catch (IllegalArgumentException e) {
-					throw new StupidProgrammerException(e);
-				} catch (IllegalAccessException e) {
-					throw new EndUserException(e);
-				} catch (InvocationTargetException e) {
-					Throwable cause = e.getCause();
-					if (cause!=null) {
-						throw new EndUserException(cause);
-					} else {
+			if (annotation!=null) {
+				String[] start = annotation.start();
+				if (start.length==0) {
+					start = new String[] {method.getName()};
+				}
+				if (request.testLocalPathStart(start)) {
+					try {
+						Object result = method.invoke(this, new Object[] { request });
+						Class<?> returnType = method.getReturnType();
+						if (!returnType.equals(Void.TYPE)) {
+							request.sendObject(result);
+						}
+						return;
+					} catch (IllegalArgumentException e) {
+						throw new StupidProgrammerException(e);
+					} catch (IllegalAccessException e) {
 						throw new EndUserException(e);
+					} catch (InvocationTargetException e) {
+						Throwable cause = e.getCause();
+						if (cause!=null) {
+							throw new EndUserException(cause);
+						} else {
+							throw new EndUserException(e);
+						}
 					}
 				}
 			}

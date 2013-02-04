@@ -20,6 +20,7 @@ public class PhotosControllerBase extends ApplicationController {
 		addJsfMatcher("/<language>", "front.xhtml");
 		addJsfMatcher("/<language>/photo/<integer>.html", "photo.xhtml");
 		addJsfMatcher("/<language>/users/<username>", "user.xhtml");
+		addJsfMatcher("/<language>/users/<username>/gallery/<integer>", "gallery.xhtml");
 	}
 
 	@Override

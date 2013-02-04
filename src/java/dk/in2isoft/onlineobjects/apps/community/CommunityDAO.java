@@ -33,7 +33,7 @@ public class CommunityDAO extends AbstractDAO {
 		// Remove empty addresses
 		for (Iterator<EmailAddress> i = addresses.iterator(); i.hasNext();) {
 			EmailAddress emailAddress = i.next();
-			if (!Strings.isDefined(emailAddress.getAddress())) {
+			if (!Strings.isNotBlank(emailAddress.getAddress())) {
 				i.remove();
 			}
 		}
@@ -64,7 +64,7 @@ public class CommunityDAO extends AbstractDAO {
 		// Remove empty addresses
 		for (Iterator<PhoneNumber> i = phones.iterator(); i.hasNext();) {
 			PhoneNumber number = i.next();
-			if (!Strings.isDefined(number.getNumber())) {
+			if (!Strings.isNotBlank(number.getNumber())) {
 				i.remove();
 			}
 		}
@@ -93,7 +93,7 @@ public class CommunityDAO extends AbstractDAO {
 		// Remove empty addresses
 		for (Iterator<InternetAddress> i = urls.iterator(); i.hasNext();) {
 			InternetAddress address = i.next();
-			if (!Strings.isDefined(address.getAddress())) {
+			if (!Strings.isNotBlank(address.getAddress())) {
 				i.remove();
 			}
 		}

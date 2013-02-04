@@ -4,7 +4,7 @@
 		<interface name="AppSetup"/>
 	</dwr>
 	<controller source="surveillance.js"/>
-	<source name="listSource" dwr="AppSetup.getSurveillanceList">
+	<source name="listSource" url="getSurveillanceList">
 		<parameter key="kind" value="@selection.value"/>
 	</source>
 	<structure>

@@ -4,19 +4,20 @@
 		<interface name="AppSetup"/>
 		<interface name="Common"/>
 	</dwr>
-	<controller name="mainController" source="main.js"/>
 	<controller source="images.js"/>
-	<source name="imagesSource" dwr="AppSetup.listImages">
-		<parameter key="search" value="@search.value"/>
-		<parameter key="tags" value="@tags.value"/>
+	<source name="imagesSource" url="listImages">
+		<parameter key="text" value="@search.value"/>
+		<parameter key="tag" value="@tags.value"/>
 	</source>
-	<source name="classSource" dwr="AppSetup.getImageTags"/>
+	<source name="classSource" url="getImageTags"/>
 	<structure>
 		<top>
 			<toolbar>
 				<icon icon="common/refresh" title="Sync images" name="syncImages"/>
 				<right>
-					<searchfield name="search" title="Search" expandedWidth="200"/>
+					<field label="Search">
+						<searchfield name="search" expanded-width="200"/>
+					</field>
 				</right>
 			</toolbar>
 		</top>

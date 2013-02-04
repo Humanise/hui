@@ -6,8 +6,10 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import dk.in2isoft.onlineobjects.model.annotations.Appearance;
 
 
+@Appearance(icon="common/object")
 public class Entity extends Item {
 
 	public static String NAMESPACE = Item.NAMESPACE+"Entity/";
