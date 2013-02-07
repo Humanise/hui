@@ -37,18 +37,30 @@ body.oo_fade a.oo_link span
 
 /****************** Photo ***************/
 
+div.photos_photo
+{
+	overflow: hidden;
+	padding: 10px 0;
+}
+
+div.photos_photo p.oo_words
+{
+	margin-left: -4px;
+}
+
 div.photos_photo_left
 {
 	float: left;
 	width: 70%;
-	padding-top: 20px;
+	border-right: 1px solid #eee;
+	margin-right: -1px;
 }
 
 div.photos_photo_right
 {
-	float: left;
-	width: 30%;	
-	padding-top: 20px;
+	margin-left: 30%;
+	border-left: 1px solid #eee;
+	overflow: hidden;
 }
 
 
@@ -170,7 +182,7 @@ div.photos_controller_top a
 div.photos_photo_properties
 {
 	font-weight: 300;
-	padding: 10px 0px;
+	padding: 20px 0px 0;
 	font-size: 12px;
 }
 
@@ -249,7 +261,7 @@ div.photos_profile_photo
 div.photos_profile_body p
 {
 	margin: 0;
-	font-size: 11pt;
+	font-size: 10pt;
 }
 
 p.photos_profile_username

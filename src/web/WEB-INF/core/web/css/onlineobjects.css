@@ -587,6 +587,11 @@ a.oo_map_add
 	color: #999;
 }
 
+a.oo_map_add:hover
+{
+	background: rgba(0,0,0,.02);
+}
+
 a.oo_map_pin
 {
 	width: 29px;
@@ -609,6 +614,8 @@ a.oo_map_edit
 	line-height: 20px;
 	background: #fff;
 	border: 1px solid #ddd;
+	font-size: 11px;
+	color: #666;
 }
 
 div.oo_map_info
@@ -657,14 +664,26 @@ a.oo_words_word:hover
 
 a.oo_words_add
 {
+	background: #fff;
+	border: 1px dashed #eee;
+	border-radius: 8px;
 	display: inline-block;
-	font-size: 0;
-	width: 16px;
 	height: 16px;
-	margin-top: -1px;
-	margin-left: 3px;
-	background: url('../../hui/icons/monochrome/new16.png');
+	line-height: 16px;
+	font-size: 12px;
+	font-weight: 200;
+	padding: 0 7px;
+	margin: 0 2px 2px 0;
+	color: #999;
+	text-decoration: none;
 	vertical-align: middle;
+	text-transform: lowercase;
+}
+
+a.oo_words_add:hover
+{
+	border: 1px solid #ddd;
+	color: #333;
 }
 
 a.oo_words_add:hover

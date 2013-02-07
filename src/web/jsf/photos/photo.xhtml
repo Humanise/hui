@@ -44,11 +44,13 @@
 					</div> 
 				</div>
 				
-				<div class="photos_photo" style="overflow: hidden;">
+				<div class="photos_photo">
 					<div class="photos_photo_left">
+						<div style="padding: 7px 20px 20px;">
 						<ui:fragment id="title">
 							<h1 id="editableTitle">#{photosPhotoView.image.name}</h1>
 						</ui:fragment>
+							<o:words words="#{photosPhotoView.words}" editable="#{photosPhotoView.canModify}" name="words"/>
 						<p class="photos_photo_by"><span>#{msg.added} </span><strong>
 							<h:outputText value="#{photosPhotoView.image.created}">
 								<f:convertDateTime pattern="EEEE 'd'. d.  MMMM yyyy" locale="da_DK"/>
@@ -69,12 +71,12 @@
 												<span class="photos_photo_description_start">&#8220;</span><o:out value="#{photosPhotoView.description}" escape="false"/><span class="photos_photo_description_end">&#8221;</span>
 											</p>
 										</c:if>
-										<div style="padding: 0 10px 10px;">
+										<div style="padding: 0 0px 10px;">
 											<gui:button variant="paper" text="Edit description" small="true" name="addDescription"/>
 										</div>
 									</gui:page>
 									<gui:page>
-										<div style="padding: 0 10px 10px;">
+										<div style="padding: 0 0px 10px;">
 										<gui:textInput name="description" multiline="true" value="#{photosPhotoView.description}"/>
 										<div style="padding: 5px 0 0;">
 										<gui:buttons>
@@ -89,8 +91,10 @@
 							</c:if>
 						</div>
 						<o:map name="map" location="#{photosPhotoView.mapPoint}" dynamic="false" editable="#{photosPhotoView.canModify}"/>
+						</div>
 					</div>
 					<div class="photos_photo_right">
+						<div style="padding: 10px 20px 20px;">
 						<div class="photos_profile">
 							<div class="photos_profile_photo">
 								<o:thumbnail image="#{photosPhotoView.personImage}" width="80" height="90" zoom="true" frame="false"/>
@@ -107,13 +111,13 @@
 									<p class="photos_photo_property"><strong>#{prop.label}:</strong> #{prop.value}</p>
 								</c:forEach>
 							</o:block>
-							<o:words words="#{photosPhotoView.words}" editable="#{photosPhotoView.canModify}" name="words"/>
 							<c:if test="#{photosPhotoView.canModify}">
-								<h2 style="font-weight: 200; font-size: 12pt; border-bottom: 1px solid #ddd; color: #999; margin: 10px 0 0;">Access control</h2>
+								<h2 style="font-weight: 200; font-size: 12pt; border-bottom: 1px solid #ddd; color: #999; margin: 40px 0 0;">Access control</h2>
 								<p style="margin: 5px 0;">
 									<gui:checkbox label="Public access" name="publicAccess" value="#{not photosPhotoView.secret}"/>
 								</p>
 							</c:if>
+						</div>
 						</div>
 					</div>
 

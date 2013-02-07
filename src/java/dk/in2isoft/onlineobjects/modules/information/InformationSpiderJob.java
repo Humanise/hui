@@ -37,8 +37,8 @@ public class InformationSpiderJob extends ServiceBackedJob {
 				"http://politiken.dk/rss/boger.rss",
 				"http://politiken.dk/rss/bagsiden.rss",
 				"http://politiken.dk/rss/videnskab.rss",
-				"http://jp.dk/international/?service=rssfeed"
-				
+				"http://jp.dk/international/?service=rssfeed",
+				"http://wp-tfap.appspot.com/?feed=tfa&type=rss2" // Wikipedia featured article
 			);
 		for (String feed : feeds) {
 			informationService.importInformation(feed);

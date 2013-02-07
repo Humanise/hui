@@ -9,6 +9,7 @@ import javax.faces.context.FacesContext;
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.onlineobjects.model.Word;
+import dk.in2isoft.onlineobjects.util.Messages;
 
 @FacesComponent(value=WordsComponent.FAMILY)
 public class WordsComponent extends AbstractComponent {
@@ -45,7 +46,8 @@ public class WordsComponent extends AbstractComponent {
 			}
 		}
 		if (editable) {
-			out.startVoidA("oo_words_add").text("Add word").endA();
+			Messages msg = new Messages(getClass());
+			out.startVoidA("oo_words_add").text(msg.get("add_word", getLocale())).endA();
 		}
 		out.endP();
 		if (editable) {

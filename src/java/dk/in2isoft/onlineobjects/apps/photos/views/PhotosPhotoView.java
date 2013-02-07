@@ -99,6 +99,7 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 			properties = Lists.newArrayList();
 			properties.add(new SelectItem(image.getWidth()+" x "+image.getHeight()+" - "+getMegaPixels()+" Megapixel",msg.get("size", locale)));
 			properties.add(new SelectItem(Files.formatFileSize(image.getFileSize())+", "+image.getContentType(),msg.get("file", locale)));
+			properties.add(new SelectItem(Dates.formatLongDate(image.getCreated(),locale ),msg.get("added", locale)));
 			if (imageInfo.getTaken()!=null) {
 				properties.add(new SelectItem(Dates.formatLongDate(imageInfo.getTaken(),locale ),msg.get("date", locale)));
 			}
