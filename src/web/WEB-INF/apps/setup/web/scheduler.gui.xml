@@ -11,6 +11,9 @@
 				<icon icon="common/refresh" title="Opdater" name="refresh"/>
 				<icon icon="common/stop" title="Stop" name="stop" disabled="true"/>
 				<icon icon="common/play" title="Start" name="start"/>
+				<right>
+					<icon icon="common/play" title="Toggle" name="toggle"/>
+				</right>
 			</toolbar>
 		</top>
 		<middle>

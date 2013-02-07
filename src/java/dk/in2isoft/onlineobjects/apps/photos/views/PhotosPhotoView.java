@@ -51,6 +51,7 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 	private long nextId;
 	private long previousId;
 	private List<Word> words;
+	private boolean vertical;
 	
 	public void afterPropertiesSet() throws Exception {
 		image = modelService.get(Image.class, getImageId(), getRequest().getSession());
@@ -61,6 +62,8 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 				image = null;
 				return;
 			}
+			vertical = ((float)image.getHeight())/((float)image.getWidth()) > 1;
+			
 			canModify = securityService.canModify(image, getRequest().getSession());
 			if (canModify) {
 				secret = !securityService.canView(image, securityService.getPublicUser());
@@ -80,7 +83,11 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 					personImage = modelService.getChild(user, Relation.KIND_SYSTEM_USER_IMAGE, Image.class);
 				}
 			}
-			Query<Image> allQuery = Query.after(Image.class).withPrivileged(user).withPublicView().orderByCreated();
+			
+			Query<Image> allQuery = Query.after(Image.class).withPrivileged(user).orderByCreated();
+			if (user.getId()!=getRequest().getSession().getIdentity()) {
+				allQuery.withPublicView();
+			}
 			List<Long> ids = modelService.listIds(allQuery);
 			int position = ids.indexOf(image.getId());
 			int previous = position>0 ? position-1 : ids.size()-1;
@@ -183,6 +190,10 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 	
 	public boolean isCanModify() {
 		return canModify;
+	}
+	
+	public boolean isVertical() {
+		return vertical;
 	}
 
 	public void setModelService(ModelService modelService) {

@@ -2,12 +2,11 @@ package dk.in2isoft.onlineobjects.publishing;
 
 import java.util.List;
 
+import javax.xml.stream.XMLStreamException;
+
 import nu.xom.Attribute;
 import nu.xom.Element;
 import nu.xom.Node;
-
-import org.xml.sax.SAXException;
-
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Privileged;
@@ -113,7 +112,7 @@ public class ImageGalleryBuilder extends DocumentBuilder implements FeedBuilder 
 			}
 			writer.endChannel();
 			writer.endFeed();
-		} catch (SAXException e) {
+		} catch (XMLStreamException e) {
 			throw new EndUserException(e);
 		}
 	}

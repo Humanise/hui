@@ -135,7 +135,7 @@ public class ImageService extends AbstractCommandLineInterface {
 			Directory gpsDirectory = metadata.getDirectory(GpsDirectory.class);
 			Directory iptcDirectory = metadata.getDirectory(IptcDirectory.class);
 			
-			Iterable<Directory> directories = metadata.getDirectories();
+			//Iterable<Directory> directories = metadata.getDirectories();
 			/**
 			for (Directory dir : directories) {
 				Collection<Tag> tags = dir.getTags();

@@ -7,7 +7,7 @@ body
 {
 	background: #f2f2f2;
 	margin: 0px;
-	font-family: Arial,Helvetica,sans-serif;
+	font-family: 'Helvetica Neue','Helvetica',Arial,sans-serif;
 	min-height: 100%;
 }
 
@@ -31,6 +31,13 @@ p.common_footer a.oo_link span
 {
 	color: #666;
 }
+
+p.common_footer a.oo_link
+{
+	color: #ddd;
+	color: rgba(0,0,0,.1);
+}
+
 
 a.link
 {

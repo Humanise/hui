@@ -64,7 +64,12 @@ public class ThumbnailComponent extends AbstractComponent {
 			writer.startSpan(cls).withStyle(style);
 		}
 		if (image!=null) {
-			int wdth = width;
+			int wdth = 0;
+			if (width==null) {
+				wdth = (int) (((double)height/(double)image.getHeight())*(double)image.getWidth());
+			} else {
+				wdth = width;
+			}
 			int hght = 0;
 			if (height==null) {
 				hght = (int) (((double)width/(double)image.getWidth())*(double)image.getHeight());

@@ -1,7 +1,9 @@
 package dk.in2isoft.onlineobjects.modules.scheduling;
 
 import dk.in2isoft.onlineobjects.core.ModelService;
+import dk.in2isoft.onlineobjects.modules.index.WordIndexer;
 import dk.in2isoft.onlineobjects.modules.information.InformationService;
+import dk.in2isoft.onlineobjects.modules.surveillance.SurveillanceService;
 import dk.in2isoft.onlineobjects.modules.synchronization.MailWatchingService;
 import dk.in2isoft.onlineobjects.services.FileService;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
@@ -13,6 +15,8 @@ public class SchedulingSupportFacade {
 	private FileService fileService;
 	private ImageService imageService;
 	private MailWatchingService mailWatchingService;
+	private SurveillanceService surveillanceService;
+	private WordIndexer wordIndexer;
 
 	public InformationService getInformationService() {
 		return informationService;
@@ -52,6 +56,22 @@ public class SchedulingSupportFacade {
 
 	public void setMailWatchingService(MailWatchingService mailWatchingService) {
 		this.mailWatchingService = mailWatchingService;
+	}
+
+	public SurveillanceService getSurveillanceService() {
+		return surveillanceService;
+	}
+
+	public void setSurveillanceService(SurveillanceService surveillanceService) {
+		this.surveillanceService = surveillanceService;
+	}
+
+	public WordIndexer getWordIndexer() {
+		return wordIndexer;
+	}
+
+	public void setWordIndexer(WordIndexer wordIndexer) {
+		this.wordIndexer = wordIndexer;
 	}
 	
 }

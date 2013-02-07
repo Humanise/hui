@@ -1,11 +1,8 @@
 package dk.in2isoft.onlineobjects.services;
 
-import java.io.File;
-
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.graphdb.TransactionFailureException;
 import org.neo4j.index.lucene.LuceneIndexService;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -13,11 +10,12 @@ public class DictionaryService implements InitializingBean {
 
 	private LuceneIndexService index;
 
-	private ConfigurationService configurationService;
+	//private ConfigurationService configurationService;
 
 	private GraphDatabaseService database;
 	
 	public void afterPropertiesSet() throws Exception {
+		/*
 		File storageDir = configurationService.getStorageDir();
 		File file = new File(storageDir,"dictionary.db");
 		try {
@@ -25,11 +23,11 @@ public class DictionaryService implements InitializingBean {
 			//index = new LuceneIndexService( database );
 		} catch (TransactionFailureException e) {
 			
-		}
+		}*/
 	}
 
 	public void setConfigurationService(ConfigurationService configurationService) {
-		this.configurationService = configurationService;
+		//this.configurationService = configurationService;
 	}
 	
 	public void addWord(String word) {
@@ -47,6 +45,7 @@ public class DictionaryService implements InitializingBean {
 	public Node getWord(String word) {
 		Transaction tx = database.beginTx();
 		try {
+			@SuppressWarnings("deprecation")
 			Iterable<Node> nodes = database.getAllNodes();
 			for (Node node : nodes) {
 				if (node.hasProperty("word")) {

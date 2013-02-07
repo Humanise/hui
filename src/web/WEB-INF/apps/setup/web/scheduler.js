@@ -20,5 +20,14 @@ var controller = {
 				}
 			})
 		}
+	},
+	
+	$click$toggle : function() {
+		hui.ui.request({
+			url : 'toggleScheduler',
+			$success : function() {
+				listSource.refresh();
+			}
+		})
 	}
 }

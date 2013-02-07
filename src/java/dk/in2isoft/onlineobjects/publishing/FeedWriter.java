@@ -5,50 +5,45 @@ import java.util.Date;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.lang.time.DateFormatUtils;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.XMLSerializer;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.AttributesImpl;
+
+import com.sun.xml.internal.ws.api.streaming.XMLStreamWriterFactory;
+
+import dk.in2isoft.commons.lang.Strings;
 
 public class FeedWriter {
 
-	private ContentHandler handler;
+	private XMLStreamWriter writer;
 
 	public FeedWriter(HttpServletResponse response) throws IOException {
-		
-		OutputFormat of = new OutputFormat("XML", "UTF-8", true);
-		XMLSerializer serializer;
-		response.setContentType("application/rss+xml");
-		serializer = new XMLSerializer(response.getOutputStream(), of);
-		handler = serializer.asContentHandler();
+		writer = XMLStreamWriterFactory.create(response.getOutputStream());
 	}
 
-	public void startFeed() throws SAXException {
-		handler.startDocument();
-		AttributesImpl atts = new AttributesImpl();
-		atts.addAttribute("","", "version", null, "2.0");
-		handler.startElement("","", "rss", atts);
+	public void startFeed() throws XMLStreamException {		
+		writer.writeStartDocument(Strings.UTF8, "1.0");
+		writer.writeStartElement("rss");
+		writer.writeAttribute("version", "2.0");
 	}
 	
-	public void endFeed() throws SAXException {
-		handler.endElement("", "rss", null);
-		handler.endDocument();
+	public void endFeed() throws XMLStreamException {
+		writer.writeEndElement();
+		writer.writeEndDocument();
 	}
 	
-	public void startChannel(String title, String url) throws SAXException {
+	public void startChannel(String title, String url) throws XMLStreamException {
 		startElement("channel");
 		writeElement("title", title);
 		writeElement("link", url);
 	}
 	
-	public void endChannel() throws SAXException {
+	public void endChannel() throws XMLStreamException {
 		endElement("channel");
 	}
 	
-	public void writeItem(String title,String description, Date date) throws SAXException {
+	public void writeItem(String title,String description, Date date) throws XMLStreamException {
 		startElement("item");
 		writeElement("title", title);
 		writeElement("description", description);
@@ -56,23 +51,23 @@ public class FeedWriter {
 		endElement("item");
 	}
 	
-	private void writeElement(String name, String value) throws SAXException {
-		handler.startElement("","", name, null);
+	private void writeElement(String name, String value) throws XMLStreamException {
+		startElement(name);
 		write(value);
-		handler.endElement("", "", name);
+		endElement(name);
 	}
 	
-	private void startElement(String name) throws SAXException {
-		handler.startElement("","", name, null);
+	private void startElement(String name) throws XMLStreamException {
+		writer.writeStartElement(name);
 	}
 	
-	private void endElement(String name) throws SAXException {
-		handler.endElement("","", name);
+	private void endElement(String name) throws XMLStreamException {
+		writer.writeEndElement();
 	}
 	
-	private void write(String string) throws SAXException {
+	private void write(String string) throws XMLStreamException {
 		if (string!=null) {
-			handler.characters(string.toCharArray(), 0, string.length());
+			writer.writeCharacters(string);
 		}
 	}
 	

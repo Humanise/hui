@@ -31,7 +31,6 @@ import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.InternetAddress;
 import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.modules.importing.ImportSession;
-import dk.in2isoft.onlineobjects.services.FileService;
 import dk.in2isoft.onlineobjects.services.ImportService;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
@@ -40,7 +39,6 @@ public class DesktopController extends ApplicationController {
 	
 	private ImportService importService;
 	private ImageService imageService;
-	private FileService fileService;
 	
 	private static final Logger log = Logger.getLogger(DesktopController.class);
 
@@ -80,12 +78,10 @@ public class DesktopController extends ApplicationController {
 		ImportListener listener = new ImportListener();
 		listener.setPrivileged(request.getSession());
 		listener.setImageService(imageService);
-		listener.setFileService(fileService);
 
 		final ImportSession session = importService.createImportSession(request.getSession());
 		
 		UrlImporter handler = new UrlImporter(url,listener);
-		handler.setConfigurationService(configurationService);
 		session.setHandler(handler);
 		Thread thread = new Thread(new Runnable() {
 			public void run() {
@@ -107,7 +103,6 @@ public class DesktopController extends ApplicationController {
 		ImportListener listener = new ImportListener();
 		listener.setPrivileged(request.getSession());
 		listener.setImageService(imageService);
-		listener.setFileService(fileService);
 
 		final ImportSession session = importService.createImportSession(request.getSession());
 		FileImporter handler = new FileImporter();
@@ -191,7 +186,4 @@ public class DesktopController extends ApplicationController {
 		this.imageService = imageService;
 	}
 	
-	public void setFileService(FileService fileService) {
-		this.fileService = fileService;
-	}
 }

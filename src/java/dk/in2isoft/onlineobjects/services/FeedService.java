@@ -16,6 +16,7 @@ import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.WireFeedInput;
 import com.sun.syndication.io.XmlReader;
 
+import dk.in2isoft.commons.lang.Code;
 import dk.in2isoft.onlineobjects.core.exceptions.NetworkException;
 
 public class FeedService {
@@ -43,11 +44,11 @@ public class FeedService {
         } else if (feed instanceof Feed) {
         	List<Item> items = Lists.newArrayList();
         	Feed atom = (Feed) feed;
-        	List<Entry> entries = atom.getEntries();
+        	List<Entry> entries = Code.castList(atom.getEntries());
         	for (Entry entry : entries) {				
         		Item item = new Item();
         		item.setTitle(entry.getTitle());
-        		List<Link> alternateLinks = entry.getAlternateLinks();
+        		List<Link> alternateLinks = Code.castList(entry.getAlternateLinks());
         		for (Link link : alternateLinks) {
         			item.setLink(link.getHref());					
         			break;

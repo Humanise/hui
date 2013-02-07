@@ -35,6 +35,14 @@ public class Dates {
 		return format.format(date);
 	}
 
+	public static String formatTime(Date date, Locale locale) {
+		if (date==null) {
+			return "";
+		}
+		SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss",locale);
+		return format.format(date);
+	}
+
 	public static String formatDate(Date value, boolean weekday, boolean time, Locale locale) {
 		if (value==null) {
 			return "";

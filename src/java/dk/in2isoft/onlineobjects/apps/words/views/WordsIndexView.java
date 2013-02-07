@@ -14,7 +14,6 @@ import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspectiveQuery;
-import dk.in2isoft.onlineobjects.services.LanguageService;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.ui.jsf.model.Option;
 
@@ -22,7 +21,6 @@ public class WordsIndexView extends AbstractView implements InitializingBean {
 
 	private static final int PAGING = 10;
 	private ModelService modelService;
-	private LanguageService languageService;
 	
 	private List<WordListPerspective> list;
 	private static List<Option> alphabeth;
@@ -122,10 +120,6 @@ public class WordsIndexView extends AbstractView implements InitializingBean {
 	
 	public void setModelService(ModelService modelService) {
 		this.modelService = modelService;
-	}
-	
-	public void setLanguageService(LanguageService languageService) {
-		this.languageService = languageService;
 	}
 
 }

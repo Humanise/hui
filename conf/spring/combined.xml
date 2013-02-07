@@ -13,6 +13,7 @@
     <import resource="core-remoting.xml"/>
     <import resource="core-scheduling.xml"/>
     <import resource="core-publishing.xml"/>
+    <import resource="core-jobs.xml"/>
     <import resource="module-language.xml"/>
     <import resource="module-synchronization.xml"/>
     <import resource="app-videosharing.xml"/>
@@ -84,7 +85,7 @@
 		</property>
 	</bean>
 	
-	<bean id="surveillanceService" class="dk.in2isoft.onlineobjects.services.SurveillanceService" autowire="byType"/>
+	<bean id="surveillanceService" class="dk.in2isoft.onlineobjects.modules.surveillance.SurveillanceService" autowire="byType"/>
 	
 	<bean id="schedulingSupportFacade" class="dk.in2isoft.onlineobjects.modules.scheduling.SchedulingSupportFacade" autowire="byType"/>
 
@@ -140,5 +141,7 @@
             file.resource.loader.path=/Users/jbm/Development/Workspace/onlineobjects/src/web/
          </value>
       </property>
-   </bean>
+   </bean>	
+	
+	
 </beans>

@@ -17,7 +17,7 @@ public class LoginPage extends XSLTInterfaceAdapter {
 	private String redirect;
 	private String action;
 
-	public LoginPage(AuthenticationController controller, Request request) throws EndUserException {
+	public LoginPage(AuthenticationControllerBase controller, Request request) throws EndUserException {
 		super();
 		stylesheet = controller.getFile("xslt", "login.xsl");
 		currentUser = request.getSession().getUser();

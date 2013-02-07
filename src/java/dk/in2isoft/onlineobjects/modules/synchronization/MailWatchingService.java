@@ -15,6 +15,8 @@ import javax.mail.search.SearchTerm;
 
 import org.apache.log4j.Logger;
 
+import dk.in2isoft.onlineobjects.modules.surveillance.SurveillanceService;
+
 public class MailWatchingService {
 	
 	private static Logger log = Logger.getLogger(MailWatchingService.class);
@@ -24,6 +26,7 @@ public class MailWatchingService {
 	private boolean running;
 	
 	private MailListener mailListener;
+	private SurveillanceService surveillanceService;
 	
 	public void check() {
 		if (running) {
@@ -33,25 +36,26 @@ public class MailWatchingService {
 		Properties props = System.getProperties();
 		props.setProperty("mail.store.protocol", "imaps");
 		Store store = null;
-		Date nextAfterThis = null;
+		int numberOfNewMessages = 0;
 		try {
+			surveillanceService.logInfo("Checking for new mail", "Finding mail after: "+latest);
 			Session session = Session.getDefaultInstance(props, null);
 			store = session.getStore("imaps");
 			store.connect("imap.gmail.com", "onlineobjects@in2isoft.dk", "0heimdal+");
 
 			Folder inbox = store.getFolder("Inbox");
 			inbox.open(Folder.READ_ONLY);
-			Date date = latest;
-			nextAfterThis = new Date();
-			SearchTerm term = new ReceivedDateTerm(ComparisonTerm.GT, date);
-			log.info("Searcing for mail later than "+date);
+			SearchTerm term = new ReceivedDateTerm(ComparisonTerm.GT, latest);
+			log.info("Searcing for mail later than "+latest);
 			Message[] messages = inbox.search(term);
 			log.info("Checking new messages: "+messages.length);
 			for (int i = 0; i < messages.length; i++) {
 				
 				Message message = messages[i];
-				if (message.getReceivedDate().getTime()>date.getTime()) {
+				if (message.getReceivedDate().getTime()>latest.getTime()) {
+					numberOfNewMessages++;
 					mailListener.mailArrived(message);
+					latest = message.getReceivedDate();
 				} else {
 					log.info("Skipping message: "+message.getSubject()+" / received: "+message.getReceivedDate()+" / sent: "+message.getSentDate());
 				}
@@ -64,9 +68,7 @@ public class MailWatchingService {
 			if (store!=null) {
 				try { store.close(); } catch (MessagingException ignore) {}
 			}
-			if (nextAfterThis!=null) {
-				latest = nextAfterThis;
-			}
+			surveillanceService.logInfo("Emails found: "+numberOfNewMessages, "");
 			log.info("Finished new date = "+latest);
 			running = false;
 		}
@@ -74,5 +76,9 @@ public class MailWatchingService {
 	
 	public void setMailListener(MailListener mailListener) {
 		this.mailListener = mailListener;
+	}
+	
+	public void setSurveillanceService(SurveillanceService surveillanceService) {
+		this.surveillanceService = surveillanceService;
 	}
 }

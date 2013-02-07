@@ -2,8 +2,6 @@ package dk.in2isoft.onlineobjects.service;
 
 import java.io.File;
 
-import dk.in2isoft.onlineobjects.core.Core;
-import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.ui.AbstractController;
 
 public abstract class ServiceController extends AbstractController {
@@ -14,11 +12,7 @@ public abstract class ServiceController extends AbstractController {
 		super();
 		this.name = name;
 	}
-	
-	protected ModelService getModel() {
-		return Core.getInstance().getModel();
-	}
-	
+		
 	public File getFile(String... path) {
 		StringBuilder filePath = new StringBuilder();
 		filePath.append(configurationService.getBasePath());

@@ -154,6 +154,100 @@ span.oo_topbar_right a
 	text-decoration: none;
 }
 
+div.oo_topbar_info_busy
+{
+	height: 60px;
+	background: url('../../hui/gfx/progress/spinner_white_24.gif') center center no-repeat;
+}
+
+div.oo_topbar_info
+{
+	overflow: hidden;
+}
+
+div.oo_topbar_info_photo
+{
+	width: 50px;
+	height: 60px;
+	float: left;
+	background: #eee;
+	font-size: 0;
+}
+
+div.oo_topbar_info_photo div
+{
+	width: 50px;
+	height: 60px;	
+}
+
+div.oo_topbar_info_content
+{
+	margin-left: 60px;
+}
+
+div.oo_topbar_info p
+{
+	font-size: 9pt;
+	margin: 0;
+}
+
+div.oo_topbar_info p.oo_topbar_info_name
+{
+	font-size: 14px;
+	font-weight: bold;
+	margin-top: -3px;
+}
+
+p.oo_topbar_info_username
+{
+	color: #666;
+}
+
+div.oo_topbar_info p.oo_topbar_info_account
+{
+	margin-top: 5px;
+}
+
+p.oo_topbar_info_account a
+{
+	color: #ddd;
+}
+
+p.oo_topbar_info_account a span,
+p.oo_topbar_info_account a:hover
+{
+	color: #08c;
+}
+
+p.oo_topbar_info_account strong
+{
+	font-size: 21px;
+	display: inline-block;
+	line-height: 11px;
+	color: #aaa;
+	font-weight: normal;	
+}
+
+div.oo_topbar_info_buttons
+{
+	font-size: 0;
+	text-align: right;
+}
+
+div.oo_topbar_info_buttons a
+{
+	margin-left: 5px;
+}
+
+div.oo_topbar_login_success
+{
+	height: 50px;
+	font-size: 12pt;
+	color: #999;
+	text-align: center;
+	line-height: 50px;
+}
+
 /****************** Layout ***************/
 
 div.oo_layout
@@ -470,6 +564,7 @@ div.oo_gallery ol li *
 
 div.oo_map
 {
+	max-width: 640px;
 }
 
 div.oo_map_content

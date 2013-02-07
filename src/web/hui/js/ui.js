@@ -1015,9 +1015,10 @@ hui.ui.request = function(options) {
 			hui.ui.handleRequestError();
 		}
 	}
-	options.onException = options.$exception || function(t,e) {
-		hui.log(t);
+	options.onException = options.$exception || function(e,t) {
 		hui.log(e);
+		hui.log(t);
+		throw e;
 	};
 	var onForbidden = options.onForbidden;
 	options.onForbidden = function(t) {

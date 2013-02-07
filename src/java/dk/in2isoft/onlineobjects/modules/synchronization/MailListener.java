@@ -21,7 +21,9 @@ import dk.in2isoft.onlineobjects.apps.community.services.MemberService;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
+import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.User;
+import dk.in2isoft.onlineobjects.modules.surveillance.SurveillanceService;
 import dk.in2isoft.onlineobjects.services.FileService;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
 
@@ -33,11 +35,15 @@ public class MailListener {
 	private ImageService imageService;
 	private FileService fileService;
 	private MemberService memberService;
+	private SurveillanceService surveillanceService;
 	
 	public void mailArrived(Message message) {
 		Address[] from;
+		boolean recognized = false;
+		String subject = null;
 		try {
 			from = message.getFrom();
+			subject = message.getSubject();
 			log.info(message.getSubject() + " / " + message.getSentDate() + " / " + message.getFrom());
 			String usersEmail = null;
 			for (Address address : from) {
@@ -63,7 +69,11 @@ public class MailListener {
 					log.info("-- part-disp: " + part.getDisposition());
 
 					if (contentType.toLowerCase().startsWith("image/jpg") || contentType.toLowerCase().startsWith("image/jpeg")) {
+						recognized = true;
 						handleImage(usersEmail, "image/jpg",part.getFileName(), message.getSubject(), part.getInputStream());
+					} else if (contentType.toLowerCase().startsWith("image/png")) {
+						recognized = true;
+						handleImage(usersEmail, "image/png",part.getFileName(), message.getSubject(), part.getInputStream());
 					} else if (contentType.startsWith("multipart")) {
 						MimeMultipart x = new MimeMultipart(part.getDataHandler().getDataSource());
 						log.info("SUB: " + x.getCount());
@@ -73,7 +83,11 @@ public class MailListener {
 							String subContentType = subPart.getContentType();
 							log.info(" ------- " + subContentType);
 							if (subContentType.toLowerCase().startsWith("image/jpg") || subContentType.toLowerCase().startsWith("image/jpeg")) {
+								recognized = true;
 								handleImage(usersEmail, "image/jpg", subPart.getFileName(), message.getSubject(), subPart.getInputStream());
+							} else if (contentType.toLowerCase().startsWith("image/png")) {
+								recognized = true;
+								handleImage(usersEmail, "image/png",subPart.getFileName(), message.getSubject(), subPart.getInputStream());
 							}
 						}
 					}
@@ -85,6 +99,10 @@ public class MailListener {
 			log.error("Error while checking email",e);
 		} catch (IOException e) {
 			log.error("Error while checking email",e);
+		} finally {
+			if (!recognized) {
+				surveillanceService.logInfo("The email was not recognized", subject);
+			}
 		}
 
 	}
@@ -108,8 +126,10 @@ public class MailListener {
 				} else {
 					title = fileService.cleanFileName(fileName);
 				}
-				imageService.createImageFromFile(tempFile, title, user);
+				Image image = imageService.createImageFromFile(tempFile, title, user);
+				surveillanceService.logInfo("Created image "+image.getName()+" for the user "+user.getUsername(), "Image-ID: "+image.getId());
 			} else {
+				surveillanceService.logInfo("Ignoring email since no user found", "Email: "+usersEmail);
 				log.warn("No user found with email:"+usersEmail); 
 			}
 		} catch (IOException e) {
@@ -136,5 +156,9 @@ public class MailListener {
 	
 	public void setFileService(FileService fileService) {
 		this.fileService = fileService;
+	}
+	
+	public void setSurveillanceService(SurveillanceService surveillanceService) {
+		this.surveillanceService = surveillanceService;
 	}
 }

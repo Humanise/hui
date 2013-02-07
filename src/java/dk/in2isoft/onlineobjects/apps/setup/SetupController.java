@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedSet;
@@ -41,8 +42,9 @@ import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.annotations.Appearance;
 import dk.in2isoft.onlineobjects.modules.localization.LocalizationService;
 import dk.in2isoft.onlineobjects.modules.scheduling.SchedulingService;
+import dk.in2isoft.onlineobjects.modules.surveillance.LogEntry;
 import dk.in2isoft.onlineobjects.modules.surveillance.RequestInfo;
-import dk.in2isoft.onlineobjects.services.SurveillanceService;
+import dk.in2isoft.onlineobjects.modules.surveillance.SurveillanceService;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.util.Dates;
 import dk.in2isoft.onlineobjects.util.ValidationUtil;
@@ -285,10 +287,15 @@ public class SetupController extends ApplicationController {
 	}
 	
 	@Path
+	public void toggleScheduler(Request request) throws SecurityException, IOException {
+		schedulingService.toggle();
+	}
+
+	@Path
 	public void getSurveillanceList(Request request) throws IOException {
 		String kind = request.getString("kind");
-		ListData data = new ListData();
 		if ("longestRunningRequests".equals(kind)) {
+			ListData data = new ListData();
 			SortedSet<RequestInfo> requests = surveillanceService.getLongestRunningRequests();
 			data.addHeader("URI");
 			data.addHeader("Hits");
@@ -306,7 +313,28 @@ public class SetupController extends ApplicationController {
 				data.addCell(String.valueOf(info.getMinRunningTime()));
 				data.addCell(localizationService.formatMilis(info.getTotalRunningTime()));
 			}
+			request.sendObject(data);
+		} else if ("log".equals(kind)) {
+			ListWriter writer = new ListWriter(request);
+			
+			writer.startList();
+			
+			writer.startHeaders().header("Time").header("Title").header("Details").endHeaders();
+			
+			Locale locale = request.getLocale();
+			List<LogEntry> entries = surveillanceService.getLogEntries();
+			Collections.reverse(entries);
+			for (LogEntry entry : entries) {
+				writer.startRow();
+				writer.startCell().text(Dates.formatTime(entry.getDate(), locale)).endCell();
+				writer.startCell().text(entry.getTitle()).endCell();
+				writer.startCell().text(entry.getDetails()).endCell();
+				writer.endRow();
+			}
+			writer.endList();
+			
 		} else {
+			ListData data = new ListData();
 			Collection<String> exceptions = surveillanceService.getLatestExceptions();
 			List<String> reversed = Lists.newArrayList(exceptions);
 			Collections.reverse(reversed);
@@ -315,8 +343,8 @@ public class SetupController extends ApplicationController {
 				data.newRow();
 				data.addCell(string);
 			}
+			request.sendObject(data);
 		}
-		request.sendObject(data);
 	}
 	
 	@Path

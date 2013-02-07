@@ -3,7 +3,6 @@ package dk.in2isoft.onlineobjects.modules.information;
 import java.net.MalformedURLException;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -29,6 +28,7 @@ import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspectiveQuery;
+import dk.in2isoft.onlineobjects.modules.surveillance.SurveillanceService;
 import dk.in2isoft.onlineobjects.services.FeedService;
 import dk.in2isoft.onlineobjects.services.LanguageService;
 import dk.in2isoft.onlineobjects.services.SemanticService;
@@ -42,6 +42,7 @@ public class InformationService {
 	private LanguageService languageService;
 	private ModelService modelService;
 	private SecurityService securityService;
+	private SurveillanceService surveillanceService;
 	
 	public void clearUnvalidatedWords() throws ModelException {
 		User admin = modelService.getUser(SecurityService.ADMIN_USERNAME);
@@ -61,8 +62,10 @@ public class InformationService {
 	public void importInformation(String feed) {
 		try {
 			User admin = modelService.getUser(SecurityService.ADMIN_USERNAME);
+			surveillanceService.logInfo("Checking feed", feed);
 			List<Item> items = feedService.getFeedItems(feed);
 			if (items==null) {
+				surveillanceService.logInfo("No items in feed", feed);
 				log.error("Unable to parse feed: "+feed);
 				return;
 			}
@@ -81,9 +84,14 @@ public class InformationService {
 				}
 				
 				log.info("Fetching: "+link);
-				HTMLDocument doc = new HTMLDocument(link);
+				HTMLDocument doc;
+				try {
+					doc = new HTMLDocument(link);
+				} catch (MalformedURLException e) {
+					log.error("Unable to fetch web page: "+link,e);
+					continue;
+				}
 				String contents = doc.getExtractedContents();
-				
 				
 				
 				InternetAddress internetAddress = new InternetAddress();
@@ -92,62 +100,71 @@ public class InformationService {
 				internetAddress.addProperty(Property.KEY_INTERNETADDRESS_CONTENT, StringUtils.abbreviate(contents, 3990));
 				modelService.createItem(internetAddress, admin);
 				
-				String[] allWords = semanticService.getWords(contents);
-				semanticService.lowercaseWords(allWords);
-				List<String> uniqueWords = Lists.newArrayList(semanticService.getUniqueWords(allWords));
+				if (Strings.isBlank(contents)) {
+					log.info("No content: "+link);
+				} else {
 				
-				
-				// Ignore malformed words
-				String[] chars = {"'","-","’"};
-				
-				for (Iterator<String> i = uniqueWords.iterator(); i.hasNext();) {
-					String string = i.next();
-					for (String symbol : chars) {
-						if (string.startsWith(symbol) || string.endsWith(symbol)) {
-							i.remove();
-							break;
-						}						
+					String[] allWords = semanticService.getWords(contents);
+					semanticService.lowercaseWords(allWords);
+					List<String> uniqueWords = Lists.newArrayList(semanticService.getUniqueWords(allWords));
+					
+					
+					// Ignore malformed words
+					String[] chars = {"'","-","’"};
+					
+					for (Iterator<String> i = uniqueWords.iterator(); i.hasNext();) {
+						String string = i.next();
+						for (String symbol : chars) {
+							if (string.startsWith(symbol) || string.endsWith(symbol)) {
+								i.remove();
+								break;
+							}						
+						}
 					}
-				}
-				
-				
-				WordListPerspectiveQuery perspectiveQuery = new WordListPerspectiveQuery().withWords(uniqueWords).orderByText();
-				List<WordListPerspective> list = modelService.list(perspectiveQuery);
-				Set<String> found = Sets.newHashSet();
-				for (WordListPerspective perspective : list) {
-					String foundLower = perspective.getText().toLowerCase();
-					found.add(foundLower);
-				}
-				Counter<String> languages = languageService.countLanguages(list);
-				String topLanguage = languages.getTop();
-				Locale locale = languageService.getLocaleForCode(topLanguage);
-				for (String wordStr : uniqueWords) {
-					if (!found.contains(wordStr)) {
-						Word word = new Word();
-						word.setText(wordStr);
-						word.addProperty(Property.KEY_DATA_VALIDATED, "false");
-						word.addProperty(Property.KEY_WORD_SUGGESTION_LANGUAGE, topLanguage);
-						
-						modelService.createItem(word, admin);
-						securityService.grantPublicPrivileges(word, true, false, false);
-						log.info("New word found: "+word);
-						
-						modelService.createRelation(internetAddress, word, Relation.KIND_COMMON_SOURCE, admin);
+					
+					
+					WordListPerspectiveQuery perspectiveQuery = new WordListPerspectiveQuery().withWords(uniqueWords).orderByText();
+					List<WordListPerspective> list = modelService.list(perspectiveQuery);
+					Set<String> found = Sets.newHashSet();
+					for (WordListPerspective perspective : list) {
+						String foundLower = perspective.getText().toLowerCase();
+						found.add(foundLower);
 					}
-				}
-				String[] sentences = semanticService.getSentences(contents, locale);
-				for (String sentence : sentences) {
-					//log.info("Sentence: "+sentence);
+					int wordsCreated = 0;
+					Counter<String> languages = languageService.countLanguages(list);
+					String topLanguage = languages.getTop();
+					//Locale locale = languageService.getLocaleForCode(topLanguage);
+					for (String wordStr : uniqueWords) {
+						if (!found.contains(wordStr)) {
+							Word word = new Word();
+							word.setText(wordStr);
+							word.addProperty(Property.KEY_DATA_VALIDATED, "false");
+							word.addProperty(Property.KEY_WORD_SUGGESTION_LANGUAGE, topLanguage);
+							
+							modelService.createItem(word, admin);
+							securityService.grantPublicPrivileges(word, true, false, false);
+							log.info("New word found: "+word);
+							
+							modelService.createRelation(internetAddress, word, Relation.KIND_COMMON_SOURCE, admin);
+							wordsCreated++;
+						}
+					}
+					/*
+					String[] sentences = semanticService.getSentences(contents, locale);
+					for (String sentence : sentences) {
+						//log.info("Sentence: "+sentence);
+					}*/
+					surveillanceService.logInfo("Imported webpage", "Title: "+StringUtils.abbreviateMiddle(doc.getTitle(),"...", 50)+" - words: "+wordsCreated);
 				}
 				modelService.commit();
 				//break;
 			}
 		} catch (NetworkException e) {
-			log.info("Failure",e);			
-		} catch (MalformedURLException e) {
-			log.info("Failure",e);			
+			log.info("Failure",e);
 		} catch (ModelException e) {
 			log.info("Failure",e);			
+		} finally {
+			modelService.commit();
 		}
 	}
 	
@@ -170,5 +187,8 @@ public class InformationService {
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
 	}
-
+	
+	public void setSurveillanceService(SurveillanceService surveillanceService) {
+		this.surveillanceService = surveillanceService;
+	}
 }

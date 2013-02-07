@@ -2,8 +2,8 @@ package dk.in2isoft.onlineobjects.test.model;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import org.junit.Assert;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -164,17 +164,17 @@ public class TestPublicAccessibility extends AbstractSpringTestCase {
 		modelService.deleteEntity(comment, user);
 		modelService.deleteEntity(user, user);
 		
-		checkNotPersistent(user);
-		checkNotPersistent(comment);
+		checkNotPersistent(user, publicUser);
+		checkNotPersistent(comment, publicUser);
 		
 		modelService.commit();
 
-		checkNotPersistent(user);
-		checkNotPersistent(comment);
+		checkNotPersistent(user, publicUser);
+		checkNotPersistent(comment, publicUser);
 	}
 	
-	private void checkNotPersistent(Entity item) throws ModelException {
-		Assert.assertNull(modelService.get(Entity.class, item.getId()));
+	private void checkNotPersistent(Entity item, Privileged privileged) throws ModelException {
+		Assert.assertNull(modelService.get(Entity.class, item.getId(), privileged));
 	}
 	
 	private void tryDeleteAndFail(Entity item, Privileged privileged) throws ModelException {

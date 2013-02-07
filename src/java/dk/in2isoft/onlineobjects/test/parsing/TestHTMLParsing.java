@@ -15,6 +15,7 @@ import nu.xom.Node;
 import nu.xom.Nodes;
 import nu.xom.Text;
 import nu.xom.XPathContext;
+
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,7 +88,7 @@ public class TestHTMLParsing extends AbstractSpringTestCase {
 		body.removeChildren();
 		body.appendChild(common);
 		
-		
+		/*
 		Nodes ULs = document.getRootElement().query("//html:ul",context );
 		for (int i = 0; i < ULs.size(); i++) {
 			Node node = ULs.get(i);
@@ -95,7 +96,7 @@ public class TestHTMLParsing extends AbstractSpringTestCase {
 				Element ul = (Element) node;
 				//ul.addAttribute(new Attribute("style", "opacity: .1;"));
 			}
-		}
+		}*/
 		File dir = getOutputDir();
 		File file = new File(dir,fileName);
 		if (file.exists()) {
@@ -125,10 +126,10 @@ public class TestHTMLParsing extends AbstractSpringTestCase {
 			Files.overwriteTextFile(text, new File(dir,fileName+".default.txt"));
 		}
 	}
-	
+	/*
 	private Element findArticle() {
 		return null;
-	}
+	}*/
 	/*
 	private Element findFirstParentWithHeader(Node node, XPathContext context) {
 		
@@ -156,7 +157,7 @@ public class TestHTMLParsing extends AbstractSpringTestCase {
 		}
 		return null;
 	}
-	
+	/*
 	private Element findNearest(Node node, List<Element> candidates) {
 		return candidates.get(candidates.size()-1);
 	}
@@ -169,7 +170,7 @@ public class TestHTMLParsing extends AbstractSpringTestCase {
 			titles.add((Element) node);
 		}
 		return titles;
-	}
+	}*/
 
 	private Text findLargestText(Document doc, XPathContext context) {
 		Text found = null;

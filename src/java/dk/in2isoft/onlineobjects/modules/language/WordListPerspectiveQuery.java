@@ -83,7 +83,12 @@ public class WordListPerspectiveQuery implements CustomQuery<WordListPerspective
 		}
 		if (words!=null) {
 			sql.append(sql.length()>0 ? " and " : " where ");
-			sql.append(" lower(word.text) in (:words)");
+			if (words.size()>0) {
+				sql.append(" lower(word.text) in (:words)");
+			} else {
+				sql.append(" word.id=-1");
+			}
+			
 		}
 		if (ids!=null && !ids.isEmpty()) {
 			sql.append(sql.length()>0 ? " and " : " where ");
@@ -111,7 +116,7 @@ public class WordListPerspectiveQuery implements CustomQuery<WordListPerspective
 		if (startingWith!=null) {
 			sql.setString("startingWith", startingWith+"%");
 		}
-		if (words!=null) {
+		if (words!=null && words.size()>0) {
 			sql.setParameterList("words", words, new StringType());
 		}
 		if (ids!=null && !ids.isEmpty()) {

@@ -41,7 +41,6 @@
 		class="dk.in2isoft.onlineobjects.apps.words.views.WordsIndexView"
 		scope="request">
 		<property name="modelService" ref="modelService" />
-		<property name="languageService" ref="languageService" />
 	</bean>
 
 	<bean id="wordsSearchView"

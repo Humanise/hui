@@ -19,17 +19,13 @@ import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.modules.importing.ImportHandler;
 import dk.in2isoft.onlineobjects.modules.importing.ImportSession.Status;
-import dk.in2isoft.onlineobjects.services.ConfigurationService;
-import dk.in2isoft.onlineobjects.util.images.ImageService;
 
 public class UrlImporter implements ImportHandler {
 
 	private static final Logger log = Logger.getLogger(UrlImporter.class);
 	
-	private ConfigurationService configurationService;
 	private String uri;
 	private Status status = Status.waiting;
-	private ImageService imageService;
 	private ImportListener listener;
 	
 	private Entity result;
@@ -89,10 +85,6 @@ public class UrlImporter implements ImportHandler {
 
 	public Status getStatus() {
 		return status;
-	}
-
-	public void setConfigurationService(ConfigurationService configurationService) {
-		this.configurationService = configurationService;
 	}
 
 }

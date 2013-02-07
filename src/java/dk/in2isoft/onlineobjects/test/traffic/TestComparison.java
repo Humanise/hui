@@ -25,6 +25,7 @@ import com.sun.syndication.io.XmlReader;
 
 import de.l3s.boilerpipe.BoilerpipeProcessingException;
 import de.l3s.boilerpipe.extractors.ArticleExtractor;
+import dk.in2isoft.commons.lang.Code;
 import dk.in2isoft.commons.lang.Matrix;
 import dk.in2isoft.commons.lang.MatrixEntry;
 import dk.in2isoft.commons.parsing.HTMLDocument;
@@ -83,16 +84,16 @@ public class TestComparison extends AbstractSpringTestCase {
 		}
         if (wireFeed instanceof Channel) {
         	Channel channel = (Channel) wireFeed;
-        	List<Item> items = channel.getItems();
+        	List<Item> items = Code.castList(channel.getItems());
         	for (Item item : items) {
 				urls.add(item.getLink());
 			}
         }
         else if (wireFeed instanceof Feed) {
         	Feed feed = (Feed) wireFeed;
-        	List<com.sun.syndication.feed.atom.Entry> entries = feed.getEntries();
+        	List<com.sun.syndication.feed.atom.Entry> entries = Code.castList(feed.getEntries());
         	for (com.sun.syndication.feed.atom.Entry entry : entries) {
-        		List<Link> alternateLinks = entry.getAlternateLinks();
+        		List<Link> alternateLinks = Code.castList(entry.getAlternateLinks());
         		for (Link link : alternateLinks) {
         			urls.add(link.getHrefResolved());
 				}

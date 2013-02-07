@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.joda.time.DateTime;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
@@ -26,12 +25,7 @@ import org.quartz.impl.matchers.GroupMatcher;
 import org.quartz.spi.MutableTrigger;
 import org.springframework.beans.factory.InitializingBean;
 
-import dk.in2isoft.onlineobjects.apps.words.index.HelloWorldJob;
-import dk.in2isoft.onlineobjects.apps.words.index.WordIndexJob;
-import dk.in2isoft.onlineobjects.modules.images.ImageCleanupJob;
-import dk.in2isoft.onlineobjects.modules.information.InformationSpiderJob;
-import dk.in2isoft.onlineobjects.modules.synchronization.MailWatchingJob;
-import dk.in2isoft.onlineobjects.services.ConfigurationService;
+import dk.in2isoft.commons.lang.Strings;
 
 public class SchedulingService implements InitializingBean {
 
@@ -40,6 +34,8 @@ public class SchedulingService implements InitializingBean {
 	private SchedulingSupportFacade schedulingSupportFacade;
 
 	private org.quartz.Scheduler scheduler;
+	
+	private List<JobDescription> jobDescriptions;
 
 	public void afterPropertiesSet() throws Exception {
 		boolean startJobs = !false;
@@ -47,51 +43,55 @@ public class SchedulingService implements InitializingBean {
 		SchedulerFactory sf = new StdSchedulerFactory();
 		scheduler = sf.getScheduler();
 		
-		{
-			JobDetail job = JobBuilder.newJob(WordIndexJob.class)
-				    .withIdentity("indexwords", "core").storeDurably()
-				    .build();
-			scheduler.addJob(job, true);
-		}
-		{
-			JobDetail job = JobBuilder.newJob(HelloWorldJob.class)
-				    .withIdentity("hello", "core").storeDurably()
-				    .build();
-			job.getJobDataMap().put("schedulingSupportFacade", schedulingSupportFacade);
-			scheduler.addJob(job, true);
-			scheduler.scheduleJob(TriggerBuilder.newTrigger().forJob(job).withSchedule(SimpleScheduleBuilder.repeatMinutelyForever()).build());
-		}
-		{
-			JobDetail job = JobBuilder.newJob(ImageCleanupJob.class)
-				    .withIdentity("clean-images", "core").storeDurably()
-				    .build();
-			job.getJobDataMap().put("schedulingSupportFacade", schedulingSupportFacade);
-			scheduler.addJob(job, true);
-		}
-		{
-			JobDetail job = JobBuilder.newJob(MailWatchingJob.class)
-				    .withIdentity("mailwatcher", "core").storeDurably()
-				    .build();
-			job.getJobDataMap().put("schedulingSupportFacade", schedulingSupportFacade);
-			scheduler.addJob(job, true);
-			if (startJobs) {
-				scheduler.scheduleJob(TriggerBuilder.newTrigger().forJob(job).withSchedule(SimpleScheduleBuilder.repeatMinutelyForever()).build());
-			}
-			
-		}
-		 {
-			JobDetail job = JobBuilder.newJob(InformationSpiderJob.class)
-				    .withIdentity("info-spider", "core").storeDurably()
-				    .build();
-			job.getJobDataMap().put("schedulingSupportFacade", schedulingSupportFacade);
-			scheduler.addJob(job, true);
-			if (startJobs && false) {
-				SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.repeatMinutelyForever(5);
-				Date startTime = DateTime.now().plusSeconds(30).toDate();
-				scheduler.scheduleJob(TriggerBuilder.newTrigger().forJob(job).withSchedule(scheduleBuilder).startAt(startTime).build());
+		if (jobDescriptions!=null) {
+			for (JobDescription desc : jobDescriptions) {
+				JobDetail job = JobBuilder.newJob(desc.getJobClass())
+					    .withIdentity(desc.getName(), desc.getGroup()).storeDurably()
+					    .build();
+				job.getJobDataMap().put("schedulingSupportFacade", schedulingSupportFacade);
+				scheduler.addJob(job, true);	
+				if (Strings.isNotBlank(desc.getCron()) || desc.getRepeatMinutes()>0 && startJobs) {
+					if (Strings.isNotBlank(desc.getCron())) {
+						CronScheduleBuilder schedule = CronScheduleBuilder.cronSchedule(desc.getCron());
+						scheduler.scheduleJob(TriggerBuilder.newTrigger().forJob(job).withSchedule(schedule).build());
+					} else if (desc.getRepeatMinutes()>0) {
+						SimpleScheduleBuilder schedule = SimpleScheduleBuilder.repeatMinutelyForever(desc.getRepeatMinutes());
+						scheduler.scheduleJob(TriggerBuilder.newTrigger().forJob(job).withSchedule(schedule).build());
+					}
+				}
 			}
 		}
-		scheduler.start();
+		
+		//scheduler.start();
+	}
+	
+	public void start() {
+		try {
+			scheduler.start();
+		} catch (SchedulerException e) {
+			log.error("Unable to start scheduler",e);
+		}
+	}
+	
+	public void pause() {
+		try {
+			scheduler.standby();
+		} catch (SchedulerException e) {
+			log.error("Unable to pause scheduler",e);
+		}
+	}
+	
+	public void toggle() {
+		try {
+			if (scheduler.isInStandbyMode() || !scheduler.isStarted()) {
+				scheduler.start();
+			} else {
+				scheduler.standby();
+			}
+		} catch (SchedulerException e) {
+			log.error("Unable to pause scheduler",e);
+		}
+		
 	}
 	
 	public void setCoreScheduler(Scheduler coreSchedulerFactory) {
@@ -207,5 +207,9 @@ public class SchedulingService implements InitializingBean {
 	
 	public void setSchedulingSupportFacade(SchedulingSupportFacade schedulingSupportFacade) {
 		this.schedulingSupportFacade = schedulingSupportFacade;
+	}
+
+	public void setJobDescriptions(List<JobDescription> jobDescriptions) {
+		this.jobDescriptions = jobDescriptions;
 	}
 }

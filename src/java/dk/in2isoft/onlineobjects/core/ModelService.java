@@ -2,6 +2,8 @@ package dk.in2isoft.onlineobjects.core;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.BatchUpdateException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -28,6 +30,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.exception.DataException;
+import org.hibernate.exception.SQLGrammarException;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.proxy.AbstractLazyInitializer;
 import org.hibernate.proxy.HibernateProxy;
@@ -461,15 +464,34 @@ public class ModelService {
 	}
 
 	public User getUser(String username) {
-		Session session = getSession();
-		Query q = session.createQuery("from User as user left join fetch user.properties where lower(user.username)=lower(?)");
-		q.setString(0, username);
-		User user = (User) q.uniqueResult();
-		if (user != null) {
-			return getSubject(user);
-		} else {
-			return null;
+		Session session = null;
+		try {
+			if (Strings.isBlank(username)) {
+				log.warn("Empty user requested");
+			} else {
+				session = getSession();
+				
+				Query q = session.createQuery("from User as user left join fetch user.properties where lower(user.username)=lower(?)");
+				q.setString(0, username);
+				List<?> list = q.list();
+				for (Object object : list) {
+					User user = (User) object;
+					if (user != null) {
+						return getSubject(user);
+					}					
+				}
+			}
+		} catch (org.hibernate.exception.GenericJDBCException e) {
+			log.error("Unable to get user: "+username+" / session.active="+session.getTransaction().isActive(),e);
+			Throwable cause = e.getCause();
+			if (cause instanceof BatchUpdateException) {
+				BatchUpdateException batchUpdateException = (BatchUpdateException) cause;
+				SQLException nextException = batchUpdateException.getNextException();
+				log.error("Next exception: "+nextException.getMessage(),e);
+			}
+			log.error("SQL: "+e.getSQL());
 		}
+		return null;
 	}
 
 	public Privilege getPriviledge(Item item, Privileged priviledged) {
@@ -558,7 +580,11 @@ public class ModelService {
 				result.add(query.convert(t));
 			}
 			return result;
+		} catch (SQLGrammarException e) {
+			log.error("SQL:"+e.getSQL());
+			throw new ModelException("Error executing SQL", e);
 		} catch (HibernateException e) {
+			
 			throw new ModelException("Error executing SQL", e);
 		}
 	}

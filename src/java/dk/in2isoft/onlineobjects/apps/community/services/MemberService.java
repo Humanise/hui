@@ -15,6 +15,7 @@ import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.model.EmailAddress;
+import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.ImageGallery;
 import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.Relation;
@@ -53,6 +54,15 @@ public class MemberService {
 			throw new IllegalRequestException("The email address is invalid","invalidEmail");
 		}
 	}
+
+	public Image getUsersProfilePhoto(User user) throws ModelException {
+		return modelService.getChild(user, Relation.KIND_SYSTEM_USER_IMAGE, Image.class);
+	}
+	
+	public Person getUsersPerson(User user) throws ModelException {
+		return modelService.getChild(user, Relation.KIND_SYSTEM_USER_SELF, Person.class);
+	}
+
 
 	public User signUp(UserSession session, String username, String password, String fullName, String email) throws EndUserException {
 
@@ -189,4 +199,5 @@ public class MemberService {
 	public SecurityService getSecurityService() {
 		return securityService;
 	}
+
 }

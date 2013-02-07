@@ -5,6 +5,16 @@ body
 	margin: 0;
 }
 
+div.photos_layout
+{
+	width: 980px;
+	margin: 0 auto;
+	box-shadow: 0px 1px 3px 0px #999;
+	-webkit-box-shadow: 0px 1px 3px #999;
+	background: #fff;
+	margin-top: 20px;
+}
+
 /***************** Links ***************/
 
 a.oo_link
@@ -27,6 +37,21 @@ body.oo_fade a.oo_link span
 
 /****************** Photo ***************/
 
+div.photos_photo_left
+{
+	float: left;
+	width: 70%;
+	padding-top: 20px;
+}
+
+div.photos_photo_right
+{
+	float: left;
+	width: 30%;	
+	padding-top: 20px;
+}
+
+
 h1.photos_photo_not_found
 {
 	font-weight: 100;
@@ -38,7 +63,7 @@ h1.photos_photo_not_found
 div.photos_photo h1
 {
 	font-weight: 100;
-	margin: 5px 10px;
+	margin: 0;
 	color: #333;
 }
 
@@ -46,7 +71,7 @@ p.photos_photo_by
 {
 	font-weight: 400;
 	font-size: 12px;
-	margin: 5px 10px 10px;
+	margin: 5px 0px 10px;
 	color: #999;
 }
 
@@ -58,10 +83,10 @@ p.photos_photo_by strong
 
 div.photos_photo_image
 {
-	padding-left: 1px;
-	margin-bottom: 1px;
 	position: relative;
 	font-size: 0;
+	background: -webkit-radial-gradient(center, ellipse cover, #fff 0%,#f3f3f3 100%);
+	text-align: center;
 }
 
 div.photos_controller
@@ -145,7 +170,7 @@ div.photos_controller_top a
 div.photos_photo_properties
 {
 	font-weight: 300;
-	padding: 10px 10px;
+	padding: 10px 0px;
 	font-size: 12px;
 }
 
@@ -164,7 +189,7 @@ p.photos_photo_property strong
 
 p.photos_photo_description
 {
-	margin: 0 10px 10px;
+	margin: 0 0px 10px;
 	font-weight: 200;
 	line-height: 20px;
 	font-size: 11pt;
@@ -204,13 +229,12 @@ p.photos_photo_words a
 
 div.photos_profile
 {
-	padding: 10px;
 	overflow: hidden;
 }
 
 div.photos_profile_body
 {
-	margin-left: 60px;
+	margin-left: 100px;
 }
 
 div.photos_profile_photo
@@ -225,7 +249,7 @@ div.photos_profile_photo
 div.photos_profile_body p
 {
 	margin: 0;
-	font-size: 11px;
+	font-size: 11pt;
 }
 
 p.photos_profile_username

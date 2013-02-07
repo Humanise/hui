@@ -1,42 +1,18 @@
 package dk.in2isoft.onlineobjects.apps.setup;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.SortedSet;
 
-import org.apache.commons.lang.StringUtils;
-
-import com.google.common.collect.Lists;
-
-import dk.in2isoft.commons.lang.Code;
-import dk.in2isoft.in2igui.data.ItemData;
 import dk.in2isoft.in2igui.data.ListData;
-import dk.in2isoft.in2igui.data.ListDataRow;
-import dk.in2isoft.in2igui.data.ListObjects;
-import dk.in2isoft.in2igui.data.ListState;
 import dk.in2isoft.onlineobjects.core.Query;
-import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.model.Application;
-import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Image;
-import dk.in2isoft.onlineobjects.model.Privilege;
-import dk.in2isoft.onlineobjects.model.Property;
-import dk.in2isoft.onlineobjects.model.User;
-import dk.in2isoft.onlineobjects.modules.localization.LocalizationService;
-import dk.in2isoft.onlineobjects.modules.scheduling.SchedulingService;
-import dk.in2isoft.onlineobjects.modules.surveillance.RequestInfo;
 import dk.in2isoft.onlineobjects.services.FileService;
-import dk.in2isoft.onlineobjects.services.SurveillanceService;
 import dk.in2isoft.onlineobjects.ui.AbstractRemotingFacade;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
 
@@ -44,10 +20,6 @@ public class SetupRemotingFacade extends AbstractRemotingFacade {
 	
 	private ImageService imageService;
 	private FileService fileService;
-	private SchedulingService schedulingService;
-	private SecurityService securityService;
-	private SurveillanceService surveillanceService;
-	private LocalizationService localizationService;
 	
 	@Override
 	public boolean isAccessAllowed(Method method) throws SecurityException {
@@ -115,25 +87,5 @@ public class SetupRemotingFacade extends AbstractRemotingFacade {
 
 	public void setImageService(ImageService imageService) {
 		this.imageService = imageService;
-	}
-
-	public void setSchedulingService(SchedulingService schedulingService) {
-		this.schedulingService = schedulingService;
-	}
-
-	public void setFileService(FileService fileService) {
-		this.fileService = fileService;
-	}
-
-	public void setSecurityService(SecurityService securityService) {
-		this.securityService = securityService;
-	}
-
-	public void setSurveillanceService(SurveillanceService surveillanceService) {
-		this.surveillanceService = surveillanceService;
-	}
-	
-	public void setLocalizationService(LocalizationService localizationService) {
-		this.localizationService = localizationService;
 	}
 }

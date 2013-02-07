@@ -1,9 +1,8 @@
-package dk.in2isoft.onlineobjects.apps.words.index;
+package dk.in2isoft.onlineobjects.modules.scheduling;
 
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import dk.in2isoft.onlineobjects.modules.scheduling.ServiceBackedJob;
 
 public class HelloWorldJob extends ServiceBackedJob {
 		

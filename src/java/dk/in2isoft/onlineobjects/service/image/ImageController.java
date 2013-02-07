@@ -23,7 +23,7 @@ public class ImageController extends ServiceController {
 	private Pattern widthPattern;
 	private Pattern heightPattern;
 	private Pattern thumbnailPattern;
-	private Pattern sepiaPattern;
+	//private Pattern sepiaPattern;
 
 	public ImageController() {
 		super("image");
@@ -31,7 +31,7 @@ public class ImageController extends ServiceController {
 		widthPattern = Pattern.compile("width([0-9]+)");
 		heightPattern = Pattern.compile("height([0-9]+)");
 		thumbnailPattern = Pattern.compile("thumbnail([0-9]+)");
-		sepiaPattern = Pattern.compile("sepia([0-9]+)");
+		//sepiaPattern = Pattern.compile("sepia([0-9]+)");
 	}
 
 	@Override
@@ -43,7 +43,7 @@ public class ImageController extends ServiceController {
 			int width = parseInt(match(widthPattern,subject));
 			int height = parseInt(match(heightPattern,subject));
 			int thumbnail = parseInt(match(thumbnailPattern,subject));
-			int sepia = parseInt(match(sepiaPattern,subject));
+			//int sepia = parseInt(match(sepiaPattern,subject));
 			boolean cropped = subject.indexOf("cropped")!=-1;
 			process(request,id,thumbnail,width,height,cropped);
 		} else {

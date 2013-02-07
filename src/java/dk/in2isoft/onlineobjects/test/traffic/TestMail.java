@@ -17,7 +17,6 @@ import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMultipart;
-import javax.mail.internet.MimeUtility;
 import javax.mail.search.ComparisonTerm;
 import javax.mail.search.SearchTerm;
 import javax.mail.search.SentDateTerm;
@@ -110,11 +109,6 @@ public class TestMail extends AbstractSpringTestCase {
 										handleImage(usersEmail,"image/jpg",subPart.getInputStream());
 									}
 								}
-								String string = IOUtils.toString(part.getInputStream());
-								//log.info(string);
-								String decoded = MimeUtility.decodeText(string);
-								//String decoded = IOUtils.toString(decode);
-								//log.info("Decoded: "+decoded);
 								
 							}
 						}

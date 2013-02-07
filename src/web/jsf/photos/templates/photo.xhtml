@@ -7,7 +7,7 @@
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	locale="#{wordsLayoutView.language}"
 >
-<f:loadBundle basename="dk.in2isoft.onlineobjects.apps.account.msg.AccountController" var="msg"/>
+<f:loadBundle basename="dk.in2isoft.onlineobjects.apps.photos.msg.PhotosController" var="msg"/>
 
 <o:doctype/>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -18,7 +18,7 @@
 		<o:stylesheet href="/core/css/onlineobjects.css" core="true"/>
 		<o:stylesheet href="/core/css/common.css" core="true"/>
 		<o:stylesheet href="/core/fonts/awesome/css/font-awesome.css" core="true"/>
-		<o:stylesheet href="/css/style.css"/>
+		<o:stylesheet href="/style/css/style.css"/>
 		<gui:importScripts/>
 		<o:script src="/core/js/onlineobjects.js" core="true"/>
 		<o:scriptSetup/>
@@ -27,9 +27,9 @@
 	</h:head>
 	<o:body>
 		<o:topBar/>
-		
-		<div style="box-shadow: 0 1px 3px rgba(0,0,0,.2); border-radius: 3px; background: #fff; width: 500px; margin: 20px auto;">
+		<div class="photos_layout">
 			<ui:insert name="body"/>
+			<ui:insert name="sidebar"/>
 		</div>
 		<p class="common_footer oo_faded">
 			<c:forEach items="#{wordsLayoutView.languages}" var="item" varStatus="status">
