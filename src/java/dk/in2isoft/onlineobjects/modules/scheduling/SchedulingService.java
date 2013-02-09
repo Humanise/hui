@@ -84,8 +84,10 @@ public class SchedulingService implements InitializingBean {
 	public void toggle() {
 		try {
 			if (scheduler.isInStandbyMode() || !scheduler.isStarted()) {
+				log.info("Resuming scheduling service");
 				scheduler.start();
 			} else {
+				log.info("Pausing scheduling service");
 				scheduler.standby();
 			}
 		} catch (SchedulerException e) {

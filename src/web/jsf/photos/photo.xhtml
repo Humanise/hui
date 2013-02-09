@@ -46,16 +46,18 @@
 				
 				<div class="photos_photo">
 					<div class="photos_photo_left">
-						<div style="padding: 7px 20px 20px;">
+						<div style="padding: 7px 20px 10px;">
 						<ui:fragment id="title">
 							<h1 id="editableTitle">#{photosPhotoView.image.name}</h1>
 						</ui:fragment>
 							<o:words words="#{photosPhotoView.words}" editable="#{photosPhotoView.canModify}" name="words"/>
+							<ui:remove>
 						<p class="photos_photo_by"><span>#{msg.added} </span><strong>
 							<h:outputText value="#{photosPhotoView.image.created}">
 								<f:convertDateTime pattern="EEEE 'd'. d.  MMMM yyyy" locale="da_DK"/>
 							</h:outputText></strong> #{msg.by} <o:link app="photos" href="/#{photosPhotoView.language}/users/#{photosPhotoView.user.username}/">#{photosPhotoView.person.fullName}</o:link>
 						</p>
+						</ui:remove>
 						<div id="photos_photo_description">
 							<c:if test="#{not photosPhotoView.canModify and not empty photosPhotoView.description}">
 								<p class="photos_photo_description" style="margin-top: 10px;">
@@ -94,14 +96,14 @@
 						</div>
 					</div>
 					<div class="photos_photo_right">
-						<div style="padding: 10px 20px 20px;">
+						<div style="padding: 10px 20px;">
 						<div class="photos_profile">
 							<div class="photos_profile_photo">
 								<o:thumbnail image="#{photosPhotoView.personImage}" width="80" height="90" zoom="true" frame="false"/>
 							</div>
 							<div class="photos_profile_body">
-								<p>#{photosPhotoView.person.fullName}</p>
-								<p class="photos_profile_username">@#{photosPhotoView.user.username}</p>
+								<p style="font-weight: 500; color: #333;">#{photosPhotoView.person.fullName}</p>
+								<p class="photos_profile_username"><span>&#9863;</span><strong>#{photosPhotoView.user.username}</strong></p>
 								<p style="margin-top: 5px"><o:link app="photos" href="/#{photosPhotoView.language}/users/#{photosPhotoView.user.username}/">Profile »</o:link></p>
 							</div>
 						</div>
@@ -112,10 +114,17 @@
 								</c:forEach>
 							</o:block>
 							<c:if test="#{photosPhotoView.canModify}">
-								<h2 style="font-weight: 200; font-size: 12pt; border-bottom: 1px solid #ddd; color: #999; margin: 40px 0 0;">Access control</h2>
+								<div style="background: #f6f6f6; border: 1px solid #eee; border-radius: 5px; margin-top: 30px; padding: 5px 12px 7px 12px;">
+								<h2 style="font-weight: 200; font-size: 12pt; line-height: 24px; border-bottom: 1px solid #ddd; color: #666; margin: 0 0 8px;">Anyone can...</h2>
 								<p style="margin: 5px 0;">
-									<gui:checkbox label="Public access" name="publicAccess" value="#{not photosPhotoView.secret}"/>
+									<gui:checkbox label="See the photo" name="publicAccess" value="#{not photosPhotoView.secret}"/>
 								</p>
+								<ui:remove>
+								<p style="margin: 5px 0;">
+									<gui:checkbox label="See the map location" name="publicAccess" value="#{not photosPhotoView.secret}"/>
+								</p>
+								</ui:remove>
+								</div>
 							</c:if>
 						</div>
 						</div>

@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.SortedSet;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -296,7 +295,7 @@ public class SetupController extends ApplicationController {
 		String kind = request.getString("kind");
 		if ("longestRunningRequests".equals(kind)) {
 			ListData data = new ListData();
-			SortedSet<RequestInfo> requests = surveillanceService.getLongestRunningRequests();
+			List<RequestInfo> requests = surveillanceService.getLongestRunningRequests();
 			data.addHeader("URI");
 			data.addHeader("Hits");
 			data.addHeader("Average");

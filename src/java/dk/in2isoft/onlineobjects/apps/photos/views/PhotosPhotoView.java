@@ -62,7 +62,7 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 				image = null;
 				return;
 			}
-			vertical = ((float)image.getHeight())/((float)image.getWidth()) > 1;
+			vertical = ((float)image.getHeight())/((float)image.getWidth()) > 0.8;
 			
 			canModify = securityService.canModify(image, getRequest().getSession());
 			if (canModify) {

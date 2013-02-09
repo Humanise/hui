@@ -1,14 +1,13 @@
 package dk.in2isoft.onlineobjects.modules.surveillance;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.SortedSet;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
@@ -66,8 +65,8 @@ public class SurveillanceService {
 		return root;
 	}
 	
-	public SortedSet<RequestInfo> getLongestRunningRequests() {
-		return Collections.synchronizedSortedSet(longestRunningRequests.getSet());
+	public ImmutableList<RequestInfo> getLongestRunningRequests() {
+		return ImmutableList.copyOf(longestRunningRequests.getSet());
 	}
 	
 	public Collection<String> getLatestExceptions() {

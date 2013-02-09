@@ -103,7 +103,7 @@
 							<h3><span>Index</span></h3>
 						<ul class="words_sidebar_index">
 							<c:forEach items="#{wordsIndexView.alphabeth}" var="char">
-								<li><o:link href="/#{wordsLayoutView.language}/index/#{char.value}/">#{char.label}</o:link></li>
+								<li class="#{char.value=='_' ? 'words_sidebar_index_symbols' : ''}"><o:link href="/#{wordsLayoutView.language}/index/#{char.value}/">#{char.label}</o:link></li>
 							</c:forEach>
 						</ul>
 						<c:if test="#{wordsLayoutView.loggedIn}">

@@ -151,6 +151,7 @@ div.photos_controller a
 	text-align: center;
 	text-decoration: none;
 	text-shadow: 0 0 2px rgba(0,0,0,.5);
+	outline: none;
 }
 
 div.photos_controller a:hover
@@ -242,6 +243,7 @@ p.photos_photo_words a
 div.photos_profile
 {
 	overflow: hidden;
+	font-size: 10pt;
 }
 
 div.photos_profile_body
@@ -261,13 +263,33 @@ div.photos_profile_photo
 div.photos_profile_body p
 {
 	margin: 0;
-	font-size: 10pt;
 }
 
 p.photos_profile_username
 {
-	color: #999;
+	color: #777;
+	font-size: 9pt;
 }
+
+p.photos_profile_username span
+{
+	color: #888;
+	font-size: 20px;
+	display: inline-block;
+	line-height: 12px;
+	margin-top: -2px;
+	vertical-align: middle;
+	margin-right: 2px;	
+}
+
+p.photos_profile_username strong
+{
+	display: inline-block;
+	vertical-align: middle;
+	font-weight: 200;
+	letter-spacing: 1px;
+}
+	
 
 /********* User **********/
 

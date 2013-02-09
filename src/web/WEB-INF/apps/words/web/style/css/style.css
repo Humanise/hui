@@ -185,6 +185,12 @@ ul.words_sidebar_index a
 	line-height: 38px;
 	border-radius: 3px;
 }
+
+li.words_sidebar_index_symbols a
+{
+	font-size: 16pt;
+}
+
 ul.words_sidebar_index a span
 {
 	color: #999;
@@ -423,6 +429,7 @@ span.words_list_glossary
 	color: #ccc;
 	margin-left: 10px;
 	line-height: 14px;
+	font-size: 10px;
 }
 
 span.words_list_glossary span
