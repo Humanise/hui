@@ -3,18 +3,27 @@ package dk.in2isoft.onlineobjects.apps.words.views;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexableField;
+import org.apache.lucene.queryparser.flexible.standard.QueryParserUtil;
 import org.springframework.beans.factory.InitializingBean;
 
 import com.google.common.collect.Lists;
 
 import dk.in2isoft.commons.jsf.AbstractView;
+import dk.in2isoft.commons.lang.Strings;
+import dk.in2isoft.onlineobjects.apps.words.WordsController;
+import dk.in2isoft.onlineobjects.apps.words.views.util.UrlBuilder;
 import dk.in2isoft.onlineobjects.core.ModelService;
+import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
+import dk.in2isoft.onlineobjects.model.Language;
+import dk.in2isoft.onlineobjects.model.LexicalCategory;
 import dk.in2isoft.onlineobjects.modules.index.IndexManager;
 import dk.in2isoft.onlineobjects.modules.index.IndexSearchResult;
 import dk.in2isoft.onlineobjects.modules.index.IndexService;
@@ -22,6 +31,7 @@ import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspectiveQuery;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.ui.jsf.model.Option;
+import dk.in2isoft.onlineobjects.util.Messages;
 
 public class WordsSearchView extends AbstractView implements InitializingBean {
 
@@ -32,22 +42,59 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 	private List<WordListPerspective> list;
 	private int count;
 	private int page;
+	
 	private String text;
+	private String language;
 	
 	private int pageSize = 20;
 	private List<Option> pages;
+	
+	private List<Option> languageOptions;
+	private List<Option> categoryOptions;
+	private String category;
+	private String effectiveQuery;
 			
 	public void afterPropertiesSet() throws Exception {
-		text = getRequest().getString("text");
 		Request request = getRequest();
+		text = request.getString("text");
+		language = request.getString("language");
+		category = request.getString("category");
+		
 		String[] localPath = request.getLocalPath();
 		page = 0;
 		if (localPath.length>2) {
 			page = Math.max(0, NumberUtils.toInt(localPath[2])-1);
 		}
+		
+		languageOptions = buildLanguageOptions(request);
+		categoryOptions = buildCategoryOptions(request);
+
+		
 		IndexManager index = indexService.getIndex(IndexService.WORDS_INDEX);
 		final List<Long> ids = Lists.newArrayList();
-		SearchResult<IndexSearchResult> indexResult = index.search(text,page,20);
+		
+		StringBuilder searchQuery = new StringBuilder();
+		if (StringUtils.isNotBlank(text)) {
+			searchQuery.append("(word:").append(QueryParserUtil.escape(text)).append("^4").append(" OR word:").append(QueryParserUtil.escape(text)).append("*^4 OR ").append(QueryParserUtil.escape(text)).append("*)");
+		}
+				
+		if (Strings.isNotBlank(language)) {
+			if (searchQuery.length()>0) {
+				searchQuery.append(" AND ");
+			}
+			searchQuery.append("language:").append(language);
+		}
+		if (Strings.isNotBlank(category)) {
+			if (searchQuery.length()>0) {
+				searchQuery.append(" AND ");
+			}
+			searchQuery.append("category:").append(category);
+		}
+		effectiveQuery = searchQuery.toString();
+		if (!true) {
+			effectiveQuery = text;
+		}
+		SearchResult<IndexSearchResult> indexResult = index.search(effectiveQuery,page,20);
 		if (indexResult.getTotalCount()==0) {
 			return;
 		}
@@ -56,14 +103,19 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 			IndexableField field = document.getField("id");
 			ids.add(field.numericValue().longValue());
 		}
-		WordListPerspectiveQuery query = new WordListPerspectiveQuery().withPaging(0, 20).withIds(ids).orderByUpdated();
-		if (true) {
+		WordListPerspectiveQuery query = new WordListPerspectiveQuery().withPaging(0, 20).orderByUpdated();
+		if (!ids.isEmpty()) {
+			query.withIds(ids);
+		}
+		if ("symbol".equals(request.getString("start"))) {
 			query.startingWithSymbol();
 		}
-		System.out.println(query.getSQL());
+		if (request.isSet("language")) {
+			
+		}
 		SearchResult<WordListPerspective> result = modelService.search(query);
 		this.list = result.getList();
-		this.count = result.getTotalCount();
+		this.count = indexResult.getTotalCount();
 		
 		Collections.sort(this.list, new Comparator<WordListPerspective>() {
 
@@ -78,14 +130,107 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 				return 0;
 			}
 		});
+		
+		
 	}
 	
+	private List<Option> buildCategoryOptions(Request request) {
+		List<Option> options = Lists.newArrayList();
+		Messages msg = new Messages(LexicalCategory.class);
+		Messages wordsMsg = new Messages(WordsController.class);
+		Query<LexicalCategory> query = Query.of(LexicalCategory.class).orderByName();
+		List<LexicalCategory> list = modelService.list(query);
+		Locale locale = getLocale();
+		{
+			Option option = new Option();
+			option.setValue(buildUrl(request, text, language, null));
+			option.setLabel(wordsMsg.get("any", locale));
+			option.setSelected(StringUtils.isBlank(category));
+			options.add(option);			
+		}
+		for (LexicalCategory item : list) {
+			Option option = new Option();
+			option.setValue(buildUrl(request, text, language, item.getCode()));
+			option.setLabel(msg.get("code",item.getCode(), locale));
+			option.setSelected(item.getCode().equals(category));
+			options.add(option);
+		}
+		{
+			Option option = new Option();
+			option.setValue(buildUrl(request, text, language, "none"));
+			option.setLabel(wordsMsg.get("none", locale));
+			option.setSelected("none".equals(category));
+			options.add(option);			
+		}
+		return options;
+	}
+	
+	private String buildUrl(Request request,String text, String language, String category) {
+		UrlBuilder url = new UrlBuilder(request.getLocalContext());
+		url.folder(request.getLanguage()).folder("search");
+		url.parameter("category", category);
+		url.parameter("language", language);
+		url.parameter("text", text);
+		return url.toString();
+	}
+
+	private List<Option> buildLanguageOptions(Request request) {
+		List<Option> options = Lists.newArrayList();
+		Messages wordsMsg = new Messages(WordsController.class);
+		Messages msg = new Messages(Language.class);
+		Query<Language> query = Query.of(Language.class).orderByName();
+		List<Language> list = modelService.list(query);
+		Locale locale = getLocale();
+		{
+			Option option = new Option();
+			option.setValue(buildUrl(request, text, null, category));
+			option.setLabel(wordsMsg.get("any", locale));
+			option.setSelected(StringUtils.isBlank(language));
+			options.add(option);			
+		}
+		for (Language item : list) {
+			Option option = new Option();
+			option.setValue(buildUrl(request, text, item.getCode(), category));
+			option.setLabel(msg.get("code",item.getCode(), locale));
+			option.setSelected(item.getCode().equals(language));
+			options.add(option);
+		}
+		{
+			Option option = new Option();
+			option.setValue(buildUrl(request, text, "none", category));
+			option.setLabel(wordsMsg.get("none", locale));
+			option.setSelected("none".equals(language));
+			options.add(option);			
+		}
+		return options;
+	}
+
 	public List<WordListPerspective> getList() throws ModelException {
 		return this.list;
 	}
 	
 	public String getText() {
 		return text;
+	}
+	
+	public String getLanguage() {
+		return language;
+	}
+	
+	public String getCategory() {
+		return category;
+	}
+	
+	public List<Option> getLanguageOptions() {
+		return languageOptions;
+	}
+	
+	public List<Option> getCategoryOptions() {
+		return categoryOptions;
+	}
+	
+	public String getEffectiveQuery() {
+		return effectiveQuery;
 	}
 	
 	public List<Option> getPages() {
@@ -119,7 +264,9 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 	
 	private Option buildOption(int num) {
 		Option option = new Option();
-		option.setValue("/"+getRequest().getLanguage()+"/search/"+num+"/?text="+text);
+		UrlBuilder url = new UrlBuilder(getRequest().getBaseContext()).folder(getRequest().getLanguage()).folder("search").folder(num);
+		url.parameter("text", text).parameter("category", category).parameter("language", language);
+		option.setValue(url.toString());
 		option.setLabel(num+"");
 		option.setSelected(page==num-1);
 		return option;

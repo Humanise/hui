@@ -17,7 +17,6 @@ import org.apache.log4j.Logger;
 
 import dk.in2isoft.onlineobjects.modules.scheduling.JobStatus;
 import dk.in2isoft.onlineobjects.modules.surveillance.SurveillanceService;
-import dk.in2isoft.onlineobjects.services.ConfigurationService;
 import dk.in2isoft.onlineobjects.services.EmailService;
 
 public class MailWatchingService {

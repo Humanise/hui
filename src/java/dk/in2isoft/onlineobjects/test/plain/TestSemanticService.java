@@ -10,11 +10,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Locale;
 
-import org.junit.Assert;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

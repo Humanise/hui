@@ -38,3 +38,107 @@ input.words_search_button
 	filter: progid:DXImageTransform.Microsoft.gradient (GradientType=0, startColorstr=#ffffff, endColorstr=#f6f6f6);
 	-webkit-background-clip: border-box;
 }
+
+p.words_search_query
+{
+	font-size: 9px;
+	color: #ddd;
+	font-family: Monaco;
+}
+
+
+div.words_search_filters
+{
+	float: right;
+	border: 1px solid #eee;
+	padding: 5px;
+	width: 200px;
+	margin-top: -95px;
+	margin-left: 20px;
+}
+
+div.words_search_filters h2
+{
+	text-align: center;
+	font-weight: 200;
+	color: #ddd;
+	margin: -17px 0 0;
+	font-size: 0;
+}
+
+div.words_search_filters h2 span
+{
+	position: relative;
+	color: #ccc;
+	font-size: 14pt;
+	background: #fff;	
+	padding: 0 5px;
+	font-style: italic;
+	font-weight: 200;
+	letter-spacing: 1px;
+}
+
+
+div.words_search_filters h3
+{
+	margin: 0px 0 15px;
+	font-weight: 200;
+	border-bottom: 1px solid #eee;
+	position: relative;
+	text-align: center;
+	font-size: 0;
+}
+
+div.words_search_filters h3 span
+{
+	background: #fff;
+	font-size: 14px;
+	padding: 0 4px;
+	top: 9px;
+	letter-spacing: 1px;
+	position: relative;
+	color: #ccc;
+}
+
+
+p.words_filter
+{
+	margin: 5px;
+	font-size: 0;
+	color: #666;
+	text-align: center;
+}
+
+p.words_filter a
+{
+	display: inline-block;
+	padding: 0 3px;
+}
+
+p.words_filter a span
+{
+	color: #999;
+	padding: 0 6px;
+	display: inline-block;
+	height: 20px;
+	line-height: 19px;
+	border-radius: 3px;
+	font-size: 10pt;
+	min-width: 14px;
+	text-align: center;
+	border: 1px solid #fff;
+}
+
+p.words_filter a:hover span
+{
+	color: #08C;
+	border-radius: 3px;
+	background: #f3f3f3;
+}
+
+p.words_filter a.words_filter_selected span
+{
+	color: #000;
+	background: #f9f9f9;
+	border: 1px solid #eee;
+}

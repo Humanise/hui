@@ -1,6 +1,5 @@
 package dk.in2isoft.commons.geo;
 
-import java.lang.Math;
 
 public class GeoDistance {
 	private double decimal;

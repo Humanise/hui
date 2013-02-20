@@ -118,7 +118,7 @@ public class ApplicationResponder implements Responder, InitializingBean {
 					request.redirectFromBase("service/authentication/?redirect="+request.getRequest().getRequestURI()+"&action=appAccessDenied&faultyuser="+request.getSession().getUser().getUsername());
 					return;
 				} else {
-					throw new IllegalRequestException("Not allowed");
+					throw new IllegalRequestException("Application «"+application+"» denied access to user «"+request.getSession().getUser().getUsername()+"»");
 				}
 			}
 			String language = controller.getLanguage(request);

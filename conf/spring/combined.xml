@@ -76,6 +76,7 @@
 	<bean id="dispatchingService" class="dk.in2isoft.onlineobjects.services.DispatchingService" autowire="byType">
 		<property name="responders">
 			<util:list>
+				<bean class="dk.in2isoft.onlineobjects.modules.dispatch.SharedFilesResponder" autowire="byType"/>
 				<bean class="dk.in2isoft.onlineobjects.modules.dispatch.DWRResponder" autowire="byType"/>
 				<bean class="dk.in2isoft.onlineobjects.modules.dispatch.FacesResponder" autowire="byType"/>
 				<bean class="dk.in2isoft.onlineobjects.modules.dispatch.CoreFilesResponder" autowire="byType"/>

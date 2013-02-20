@@ -41,6 +41,11 @@ public class JobStatus {
 		log.error(string+" - "+key.getName()+" : "+key.getGroup());
 	}
 
+	public void error(String string, Exception e) {
+		schedulingService.error(string, key);
+		log.error(string+" - "+key.getName()+" : "+key.getGroup(), e);
+	}
+
 	public static JobStatus get(JobExecutionContext context) {
 		return (JobStatus) context.get("status");
 	}

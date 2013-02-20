@@ -3,7 +3,7 @@ package dk.in2isoft.onlineobjects.util;
 import java.util.Locale;
 
 import org.springframework.context.NoSuchMessageException;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
 public class Messages extends ReloadableResourceBundleMessageSource {
 

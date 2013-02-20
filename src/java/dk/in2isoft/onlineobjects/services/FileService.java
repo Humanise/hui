@@ -17,7 +17,6 @@ import org.apache.commons.lang.StringUtils;
 import com.google.common.collect.Maps;
 
 import dk.in2isoft.commons.lang.Files;
-
 import eu.medsea.mimeutil.MimeType;
 import eu.medsea.mimeutil.MimeUtil2;
 

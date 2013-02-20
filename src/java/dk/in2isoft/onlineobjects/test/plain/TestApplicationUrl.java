@@ -3,7 +3,6 @@ package dk.in2isoft.onlineobjects.test.plain;
 import java.util.Collection;
 
 import junit.framework.TestCase;
-
 import dk.in2isoft.onlineobjects.model.Application;
 import dk.in2isoft.onlineobjects.model.Property;
 

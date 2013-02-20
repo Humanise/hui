@@ -5,9 +5,8 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
-import org.junit.Assert;
-
 import org.apache.commons.lang.ArrayUtils;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

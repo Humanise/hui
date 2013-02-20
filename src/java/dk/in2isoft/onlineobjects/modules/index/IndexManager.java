@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -23,6 +26,7 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.SimpleFSDirectory;
@@ -120,6 +124,26 @@ public class IndexManager {
 		}
 	}
 	
+	public synchronized void update(Map<Entity ,Document> map) throws EndUserException  {
+		IndexWriter writer = null;
+		try {
+			writer = openWriter();
+			Set<Entry<Entity, Document>> entries = map.entrySet();
+			for (Entry<Entity, Document> entry : entries) {
+				Document document = entry.getValue();
+				Entity entity = entry.getKey();
+				document.add(new LongField("id", entity.getId(),Store.YES));
+				document.add(new StringField("type", String.valueOf(entity.getType()),Store.YES));
+				writer.updateDocument(new Term("id",String.valueOf(entity.getId())),document);				
+			}
+			writer.commit();
+		} catch (IOException e) {
+			throw new ExplodingClusterFuckException("Unable to update documents",e);
+		} finally {
+			closeWriter(writer);
+		}
+	}
+
 	public List<Document> getDocuments() throws ExplodingClusterFuckException {
 		List<Document> found = Lists.newArrayList();
 		IndexReader reader = null;
@@ -154,6 +178,7 @@ public class IndexManager {
 			String field = "text";
 			QueryParser parser = new QueryParser(Version.LUCENE_40, field , new StandardAnalyzer(Version.LUCENE_40));
 			Query query = parser.parse(text);
+			TermQuery tq = new TermQuery(new Term("language", "da")); 
 			int end = (start+1)*size;
 			TopDocs topDocs = searcher.search(query , 100000);
 			ScoreDoc[] scoreDocs = topDocs.scoreDocs;

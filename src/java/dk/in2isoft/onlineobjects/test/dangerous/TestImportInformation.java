@@ -14,7 +14,7 @@ public class TestImportInformation extends AbstractSpringTestCase {
 	@Test
 	public void run() throws ModelException {
 		//informationService.clearUnvalidatedWords();
-		informationService.importInformation("http://politiken.dk/rss/senestenyt.rss");
+		informationService.importInformation("http://politiken.dk/rss/senestenyt.rss", null);
 	}
 	
 	@Autowired

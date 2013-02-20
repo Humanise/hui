@@ -20,10 +20,12 @@ import nu.xom.ParsingException;
 import nu.xom.ValidityException;
 
 import org.apache.log4j.Logger;
+import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -184,6 +186,11 @@ public class ModelService {
 	public void addToSession(Item item) {
 		getSession().merge(item);
 	}
+	
+	public void clearAndFlush() {
+		getSession().clear();
+		getSession().flush();
+	}
 
 	public void commit() {
 		Session session = getSession();
@@ -239,6 +246,7 @@ public class ModelService {
 		session.save(item);
 		Privilege privilege = new Privilege(privileged.getIdentity(), item.getId(), true);
 		session.save(privilege);
+		commit();
 		eventService.fireItemWasCreated(item);
 	}
 
@@ -554,8 +562,8 @@ public class ModelService {
 	}
 
 	public <T> Results<T> scroll(ItemQuery<T> query) {
-		Query q = query.createItemQuery(getSession());
-		return new Results<T>(q.scroll());
+		Query q = query.createItemQuery(getSession()).setReadOnly(true).setFetchSize(0).setCacheable(false).setCacheMode(CacheMode.IGNORE);
+		return new Results<T>(q.scroll(ScrollMode.FORWARD_ONLY));
 	}
 	
 	@SuppressWarnings("unchecked")

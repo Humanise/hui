@@ -3,9 +3,9 @@ package dk.in2isoft.onlineobjects.test.plain;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.junit.Assert;
-
 import junit.framework.TestCase;
+
+import org.junit.Assert;
 
 public class TestRegExp extends TestCase {
 

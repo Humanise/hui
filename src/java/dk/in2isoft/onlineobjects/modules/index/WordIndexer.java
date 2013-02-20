@@ -1,18 +1,21 @@
 package dk.in2isoft.onlineobjects.modules.index;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
 
+import com.google.common.collect.Maps;
+
 import dk.in2isoft.onlineobjects.core.ModelService;
-import dk.in2isoft.onlineobjects.core.Query;
-import dk.in2isoft.onlineobjects.core.Results;
 import dk.in2isoft.onlineobjects.core.events.ModelEventListener;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.Word;
 
-public class WordIndexer implements ModelEventListener, Indexer {
+public class WordIndexer implements ModelEventListener {
 		
 	private WordIndexDocumentBuilder documentBuilder;
 	
@@ -22,28 +25,8 @@ public class WordIndexer implements ModelEventListener, Indexer {
 	
 	private static final Logger log = Logger.getLogger(WordIndexer.class);
 
-	public void rebuild() {
-		try {
-			indexManager.clear();
-		} catch (EndUserException e) {
-			log.error("Exception while clearing index, continuing...",e);
-		}
-		Query<Word> query = Query.of(Word.class);
-		Long count = modelService.count(query);
-		int num = 0;
-		int percent = -1;
-		Results<Word> results = modelService.scroll(query);
-		while (results.next()) {
-			int newPercent = Math.round(((float)num)/(float)count*100);
-			if (newPercent>percent) {
-				percent = newPercent;
-				log.info("indexing words: "+percent+"%");
-			}
-			Word word = results.get();
-			indexWord(word);
-		}
-		results.close();
-		log.info("Finished indexing words");
+	public void clear() throws EndUserException {
+		indexManager.clear();
 	}
 	
 	public void entityWasCreated(Entity entity) {
@@ -52,14 +35,28 @@ public class WordIndexer implements ModelEventListener, Indexer {
 		}
 	}
 	
-	private void indexWord(Word word) {
-		Document document = documentBuilder.build(word);
+	public void indexWord(Word word) {
 		try {
-			log.info("Re-indexing : "+word);
+			Document document = documentBuilder.build(word);
+			log.debug("Re-indexing : "+word);
 			indexManager.update(word, document);
 		} catch (EndUserException e) {
 			log.error("Unable to reindex: "+word, e);
 		}
+	}
+
+	public void indexWords(List<Word> words) {
+		try {
+			Map<Entity,Document> map = Maps.newHashMap();
+			for (Word word : words) {
+				Document document = documentBuilder.build(word);
+				log.debug("Re-indexing : "+word);
+				map.put(word, document);
+			}
+			indexManager.update(map);
+		} catch (EndUserException e) {
+			log.error("Unable to reindex", e);
+		}			
 	}
 
 	public void entityWasUpdated(Entity entity) {

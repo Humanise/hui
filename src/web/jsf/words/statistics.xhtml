@@ -20,7 +20,7 @@
 					<h3>#{lang.header} <span class="words_statistics_count">{<strong>#{lang.total}</strong>}</span></h3>
 					<ul>
 						<c:forEach items="#{lang.categories}" var="cat">
-							<li><o:link>#{cat.label}</o:link> <span class="words_statistics_count">{<strong>#{cat.value}</strong>}</span></li>
+							<li><o:link href="/#{wordsLayoutView.language}/search/?language=#{lang.code}&amp;category=#{cat.key}">#{cat.label}</o:link> <span class="words_statistics_count">{<strong>#{cat.value}</strong>}</span></li>
 						</c:forEach>
 					</ul>
 				</c:forEach>

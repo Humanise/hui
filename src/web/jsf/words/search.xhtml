@@ -19,9 +19,31 @@
 					<p>
 						<input type="text" name="text" value="#{wordsSearchView.text}" class="words_search_input"/>
 						<input type="submit" value="Search" class="words_search_button"/>
+						<c:if test="#{not empty wordsSearchView.language}">
+							<input type="hidden" name="language" value="#{wordsSearchView.language}"/>
+						</c:if>
+						<c:if test="#{not empty wordsSearchView.category}">
+							<input type="hidden" name="category" value="#{wordsSearchView.category}"/>
+						</c:if>
 					</p>
 				</form>
-				
+				<div class="words_search_filters">
+					<h2><span>#{msg.filters}</span></h2>
+					<h3><span>#{msg.languages}</span></h3>
+					<p class="words_filter">
+						<c:forEach items="#{wordsSearchView.languageOptions}" var="option">
+							<o:link styleClass="#{option.selected ? 'words_filter_selected' : ''}" href="#{option.value}">#{option.label}</o:link>
+						</c:forEach>
+					</p>
+					<h3><span>#{msg.lexical_categories}</span></h3>
+					<p class="words_filter">
+						<c:forEach items="#{wordsSearchView.categoryOptions}" var="option">
+							<o:link styleClass="#{option.selected ? 'words_filter_selected' : ''}" href="#{option.value}">#{option.label}</o:link>
+						</c:forEach>
+					</p>
+				</div>
+				<p class="words_search_query">#{wordsSearchView.effectiveQuery}</p>
+
 				<ul class="words_list">
 					<c:forEach items="#{wordsSearchView.list}" var="word">
 						<li>

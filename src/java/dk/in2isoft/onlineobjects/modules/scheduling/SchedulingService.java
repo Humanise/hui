@@ -17,6 +17,7 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
 import org.quartz.SimpleScheduleBuilder;
+import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.Trigger.TriggerState;
 import org.quartz.TriggerBuilder;
@@ -30,7 +31,6 @@ import com.google.common.collect.Maps;
 
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.modules.surveillance.LogEntry;
-import dk.in2isoft.onlineobjects.modules.surveillance.LogEntry.Level;
 
 public class SchedulingService implements InitializingBean {
 
@@ -61,7 +61,7 @@ public class SchedulingService implements InitializingBean {
 					    .withIdentity(desc.getName(), desc.getGroup()).storeDurably()
 					    .build();
 				job.getJobDataMap().put("schedulingSupportFacade", schedulingSupportFacade);
-				scheduler.addJob(job, true);	
+				scheduler.addJob(job, true);
 				if (Strings.isNotBlank(desc.getCron()) || desc.getRepeatMinutes()>0) {
 					if (Strings.isNotBlank(desc.getCron())) {
 						CronScheduleBuilder schedule = CronScheduleBuilder.cronSchedule(desc.getCron());
@@ -69,9 +69,11 @@ public class SchedulingService implements InitializingBean {
 						triggerDescriptions.put(job.getKey(), "cron: "+desc.getCron());
 					} else if (desc.getRepeatMinutes()>0) {
 						SimpleScheduleBuilder schedule = SimpleScheduleBuilder.repeatMinutelyForever(desc.getRepeatMinutes());
-						scheduler.scheduleJob(TriggerBuilder.newTrigger().forJob(job).withSchedule(schedule).withIdentity(desc.getName(), desc.getGroup()).build());
+						SimpleTrigger trigger = TriggerBuilder.newTrigger().forJob(job).withSchedule(schedule).withIdentity(desc.getName(), desc.getGroup()).build();
+						scheduler.scheduleJob(trigger);
 						triggerDescriptions.put(job.getKey(), "min:  "+desc.getRepeatMinutes());
 					}
+					scheduler.pauseJob(job.getKey());
 				}
 			}
 		}

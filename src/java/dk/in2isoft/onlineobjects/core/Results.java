@@ -2,6 +2,8 @@ package dk.in2isoft.onlineobjects.core;
 
 import org.hibernate.ScrollableResults;
 
+import dk.in2isoft.commons.lang.Code;
+
 public class Results<T> {
 
 	private ScrollableResults results;
@@ -14,9 +16,8 @@ public class Results<T> {
 		return results.next();
 	}
 	
-	@SuppressWarnings("unchecked")
 	public T get() {
-		T object = (T) results.get(0);
+		T object = Code.cast(results.get(0));
 		return ModelService.getSubject(object);
 	}
 	

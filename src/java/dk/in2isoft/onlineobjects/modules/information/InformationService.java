@@ -67,30 +67,29 @@ public class InformationService {
 			List<Item> items = feedService.getFeedItems(feed);
 			if (items==null) {
 				surveillanceService.logInfo("No items in feed", feed);
-				log.error("Unable to parse feed: "+feed);
+				status.error("Unable to parse feed: "+feed);
 				return;
 			}
 			for (Item item : items) {
 				String link = item.getLink();
 				if (Strings.isBlank(link)) {
-					log.info("No link: "+item);
+					status.warn("Feed item has no link: "+item.getTitle());
 					continue;
 				}
 				
 				Long num = modelService.count(Query.after(InternetAddress.class).withField(InternetAddress.FIELD_ADDRESS, link));
 
 				if (num>0) {
-					log.info("Internet address already exists: "+link);
+					status.log("Internet address already exists: "+link);
 					continue;
 				}
 				
-				status.log("Fetching: "+link);
-				log.info("Fetching: "+link);
+				status.log("Fetching: "+StringUtils.abbreviateMiddle(link, "...", 50));
 				HTMLDocument doc;
 				try {
 					doc = new HTMLDocument(link);
 				} catch (MalformedURLException e) {
-					log.error("Unable to fetch web page: "+link,e);
+					status.error("Unable to fetch web page: "+link,e);
 					continue;
 				}
 				String contents = doc.getExtractedContents();
@@ -103,7 +102,6 @@ public class InformationService {
 				modelService.createItem(internetAddress, admin);
 				
 				if (Strings.isBlank(contents)) {
-					log.info("No content: "+link);
 					status.warn("No content: "+link);
 				} else {
 				
@@ -146,26 +144,21 @@ public class InformationService {
 							
 							modelService.createItem(word, admin);
 							securityService.grantPublicPrivileges(word, true, false, false);
-							log.info("New word found: "+word);
+							status.log("New word found: "+word);
 							
 							modelService.createRelation(internetAddress, word, Relation.KIND_COMMON_SOURCE, admin);
 							wordsCreated++;
 						}
 					}
-					/*
-					String[] sentences = semanticService.getSentences(contents, locale);
-					for (String sentence : sentences) {
-						//log.info("Sentence: "+sentence);
-					}*/
 					surveillanceService.logInfo("Imported webpage", "Title: "+StringUtils.abbreviateMiddle(doc.getTitle(),"...", 50)+" - words: "+wordsCreated);
 				}
 				modelService.commit();
 				//break;
 			}
 		} catch (NetworkException e) {
-			log.info("Failure",e);
+			status.error("Unable to fetch feed: "+feed,e);
 		} catch (ModelException e) {
-			log.info("Failure",e);			
+			status.error("Failed to persist something",e);			
 		} finally {
 			modelService.commit();
 		}

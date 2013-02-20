@@ -1,6 +1,6 @@
 package dk.in2isoft.onlineobjects.test.plain;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
