@@ -141,6 +141,10 @@ http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
     	<component-class>dk.in2isoft.in2igui.jsf.ImportScriptsComponent</component-class>
   	</component>
     <component>
+	    <component-type>hui.scriptSetup</component-type>
+    	<component-class>dk.in2isoft.in2igui.jsf.ScriptSetupComponent</component-class>
+  	</component>
+    <component>
 	    <component-type>hui.importStyle</component-type>
     	<component-class>dk.in2isoft.in2igui.jsf.ImportStyleComponent</component-class>
   	</component>

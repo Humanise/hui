@@ -1,6 +1,8 @@
 package dk.in2isoft.onlineobjects.apps.videosharing;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
 import dk.in2isoft.onlineobjects.apps.ApplicationSession;
@@ -39,6 +41,11 @@ public class VideosharingController extends ApplicationController {
 		addJsfMatcher("/areyouastar", "areyouastar.xhtml");
 		addJsfMatcher("/users/<username>/<integer>", "profile/video/index.xhtml");
 		addJsfMatcher("/", "index.xhtml");
+	}
+	
+	@Override
+	public List<Locale> getLocales() {
+		return null;
 	}
 	
 	@Override

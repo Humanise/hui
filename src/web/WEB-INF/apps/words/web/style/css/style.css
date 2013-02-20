@@ -1,71 +1,8 @@
-@import url('words_search.css');
-
 body
 {
 	background: #fafafa;
 	font-family: 'Helvetica Neue','Helvetica',Arial,sans-serif;
 	margin: 0;
-}
-
-div.words_layout
-{
-	font-family: 'Lora','Georgia','Crimson Text','Palatino','Times New Roman','Times';
-	width: 1018px;
-	background: url('../gfx/paper.png') 0 0 repeat-y;
-	margin: 20px auto;
-}
-
-div.words_layout_middle
-{
-	overflow: hidden;
-	padding: 5px 0px 5px 9px;
-}
-
-div.words_layout_content
-{
-	width: 799px;
-	border-right: 1px solid #eee;
-	float: left;
-	min-height: 640px;
-}
-
-div.words_layout_sidebar
-{
-	width: 200px;
-	border-left: 1px solid #eee;
-	float: left;
-	margin-left: -1px;
-}
-
-div.words_layout_top
-{
-	height: 14px;
-	background: url('../gfx/paper.png') -1018px 0;
-}
-
-div.words_layout_bottom
-{
-	height: 14px;
-	background: url('../gfx/paper.png') -2036px 0;
-}
-
-div.words_layout_left
-{
-	margin-top: 14px;
-	height: 616px;
-	width: 9px;
-	position: absolute;
-	background: url('../gfx/paper_effect.png');
-}
-
-div.words_layout_right
-{
-	margin-top: -618px;
-	margin-left: 1009px;
-	height: 616px;
-	width: 9px;
-	position: absolute;
-	background: url('../gfx/paper_effect.png') -9px 0;
 }
 
 /***************** Links ***************/
@@ -126,319 +63,31 @@ ul.words_menu li strong
 	font-weight: bold;
 }
 
-/********** Sidebar **********/
-
-div.words_sidebar
-{
-	padding: 5px 10px;
-}
-
-div.words_sidebar h3
-{
-	margin: 10px 0 10px;
-	font-weight: 200;
-	border-bottom: 1px solid #eee;
-	position: relative;
-	text-align: center;
-}
-
-div.words_sidebar h3 span
-{
-	background: #fff;
-	font-size: 14px;
-	padding: 0 4px;
-	top: 9px;
-	letter-spacing: 1px;
-	position: relative;
-	/*
-	text-transform: lowercase;
-	font-style: italic;*/
-	color: #ccc;
-}
-
-ul.words_sidebar_index
-{
-	list-style: none;
-	padding: 0;
-	margin: 10px -7px;
-	text-align: center;
-	font-size: 0;
-}
-
-ul.words_sidebar_index li
-{
-	display: inline-block;
-}
-
-body.oo_msie7 ul.words_sidebar_index li
-{
-	display: inline;
-}
-
-ul.words_sidebar_index a
-{
-	display: block;
-	width: 28px;
-	text-align: center;
-	font-size: 20pt;
-	height: 38px;
-	line-height: 38px;
-	border-radius: 3px;
-}
-
-li.words_sidebar_index_symbols a
-{
-	font-size: 16pt;
-}
-
-ul.words_sidebar_index a span
-{
-	color: #999;
-}
-
-ul.words_sidebar_index a:hover
-{
-	background: #f6f6f6;
-	width: 32px;
-	margin: 0 -2px;
-}
-
-
-
-/********** Words **********/
-
-p.words_word_warning
-{
-	font-size: 10pt;
-	color: #999;
-	font-style: italic;
-}
-
-ul.words_word_variants
-{
-	list-style: none;
-	margin: 20px 0;
-	padding: 0;
-}
-
-p.words_word_by
-{
-	margin: 0;
-	font-size: 11px;
-	color: #999;
-	text-align: right;
-	float: right;
-	margin-top: -16px;
-}
-
-p.words_word_info
-{
-	margin: 0;
-}
-
-strong.words_word_info
-{
-	color: #333;
-	vertical-align: middle;
-	display: inline-block;
-	position: relative;
-	top: -2px;
-	font-size: 18pt;
-	font-weight: normal;
-}
-
-span.words_word_info
-{
-	vertical-align: middle;
-	color: #999;
-	font-size: 12px;
-	display: inline-block;
-}
-
-span.words_word_info a
-{
-	color: #999;
-	text-decoration: none;
-}
-
-span.words_word_info a:hover
-{
-	text-decoration: underline;
-}
-
-span.words_word_info span
-{
-	margin: 0 3px;
-}
-
-li.words_word_variant
-{
-	margin-bottom: 25px;
-}
-
-ul.words_word_relations
-{
-	list-style: none;
-	margin: 5px 0;
-	color: #999;
-	font-size: 12px;
-	margin-left: 20px;
-	padding: 0;
-}
-
-ul.words_word_relations strong
-{
-	font-weight: normal;
-	letter-spacing: 1px;
-}
-
-a.words_word_action
-{
-	color: #666;
-}
-
-ul.words_word_relations li
-{
-	margin-bottom: 5px;
-}
-
-span.words_word_relation
-{
-	margin-left: 5px;
-}
-
-
-p.words_word_glossary
-{
-	margin: 5px 0 0px 40px;
-	text-indent: -20px;
-}
-
-span.words_word_example
-{
-	font-style: italic;
-	color: #666;
-	font-size: 90%;
-	margin: 0 10px;
-	font-size: 9pt;
-}
-
-span.words_word_example_divider
-{
-	color: #ccc;
-	font-size: 9pt;
-}
 
 
 
 
-div.words h1
+
+
+
+h1.words
 {
 	margin: 0;
 	font-weight: normal;
 	font-size: 48px;
 }
 
-div.words h1 span
+h1.words span
 {
 	color: #aaa;
 }
 
-h2
+h2.words
 {
 	font-weight: normal;
 	font-size: 24px;
 	margin: 20px 0 0;
 }
-
-
-
-/**************** Paging *************/
-
-p.words_paging
-{
-	color: #ddd;
-	font-size: 0;
-	cursor: default;
-}
-
-p.words_paging em
-{
-	font-style: normal;
-	font-size: 12pt;
-	margin: 0 3px;
-}
-
-p.words_paging a
-{
-	display: inline-block;
-}
-
-p.words_paging a span
-{
-	color: #666;
-	padding: 0 3px;
-	display: inline-block;
-	height: 20px;
-	line-height: 19px;
-	border-radius: 3px;
-	font-size: 12pt;
-	min-width: 14px;
-	text-align: center;
-}
-
-p.words_paging a:hover span
-{
-	color: #08C;
-	border-radius: 3px;
-	background: #eee;
-}
-
-p.words_paging a.words_paging_selected span
-{
-	color: #000;
-	background: #f6f6f6;
-	border: 1px solid #ddd;
-	margin: -1px;
-}
-
-
-/***************** List ***************/
-
-ul.words_list
-{
-	color: #ddd;
-	font-size: 11pt;
-	margin: 20px 0 20px 25px;
-	padding: 0;
-}
-
-ul.words_list li
-{
-	margin: 8px 0;
-}
-
-span.words_list_info
-{
-	color: #999;
-	font-size: 10px;
-}
-
-span.words_list_glossary
-{
-	color: #ccc;
-	margin-left: 10px;
-	line-height: 14px;
-	font-size: 10px;
-}
-
-span.words_list_glossary span
-{
-	font-size: 13px;
-	color: #333;
-	margin-left: 5px;
-}
-
 
 
 
@@ -510,105 +159,9 @@ p.words_index
 	text-transform: uppercase;
 }
 
-
-
-/*********** index *********/
-
-div.words_statistics h3
-{
-	font-weight: normal;
-	border-bottom: 1px solid #ddd;
-	line-height: 30px;
-	padding: 0 5px;
-	margin: 20px -5px 10px;
-}
-
-span.words_statistics_count
-{
-	color: #ccc;
-	position: relative;
-	top: -2px;
-	font-size: 16px;
-	margin-left: 5px;
-}
-
-span.words_statistics_count strong
-{
-	margin: 0 3px;
-	font-weight: normal;
-	color: #333;
-	position: relative;
-	font-size: 12px;
-	line-height: 13px;
-	display: inline-block;
-	letter-spacing: 1px;
-}
-
-div.words_statistics ul
-{
-	color: #eee;
-	padding: 0px 0 10px 20px;
-	margin: 0;
-}
-
-div.words_statistics li
-{
-	margin: 0 0 5px;
-}
-
-div.words_statistics ul span.words_statistics_count
-{
-	font-size: 12pt;
-	position: relative;
-	top: -1px;
-}
-
 /************ Import *************/
 
-p.words a
-{
-	display: inline-block;
-	vertical-align: middle;
-	height: 20px;
-	line-height: 20px;
-}
-p.words a span
-{
-	color: #333;
-}
 
-p.words a.known
-{
-	color: transparent;
-}
-
-p.words a.unknown
-{
-	color: #faa;
-}
-
-p.words a.unknown span
-{
-	color: #a00;
-}
-
-p.words a.highlighted
-{
-	-webkit-box-shadow: 0 0 89px white, 0 0 89px white, 0 0 89px white;
-	position: relative;
-}
-
-p.words a.highlighted span,
-p.words a.highlighted
-{
-	color: #36f;
-}
-
-p.words a.known.foreign
-{
-	text-decoration: line-through;
-	color: red;
-}
 
 /*** About ***/
 

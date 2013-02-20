@@ -2,6 +2,7 @@ package dk.in2isoft.onlineobjects.apps.desktop;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -45,7 +46,11 @@ public class DesktopController extends ApplicationController {
 	public DesktopController() {
 		super("desktop");
 	}
-	
+
+	public List<Locale> getLocales() {
+		return null;
+	}
+
 	@Override
 	public ApplicationSession createToolSession() {
 		return new DesktopSession();

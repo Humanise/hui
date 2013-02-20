@@ -3,6 +3,8 @@ package dk.in2isoft.onlineobjects.test.plain;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.junit.Assert;
+
 import junit.framework.TestCase;
 
 public class TestRegExp extends TestCase {
@@ -25,5 +27,18 @@ public class TestRegExp extends TestCase {
 		if (!found) {
 			System.out.format("No match found.%n");
 		}
+	}
+	
+	public void testHey() {
+		Pattern pattern = Pattern.compile(";jsessionid=[^?]+");		
+
+		String url = "http://photos.onlineobjects.dk:9090/test/en/;jsessionid=35tfzwrw9hre?abc=hjjdshjs&xyz=dsajdhak";
+		Matcher matcher = pattern.matcher(url);
+		
+		Assert.assertTrue(matcher.find());
+		
+		String replaced = matcher.replaceAll("");
+		
+		Assert.assertEquals("http://photos.onlineobjects.dk:9090/test/en/?abc=hjjdshjs&xyz=dsajdhak",replaced);
 	}
 }

@@ -3,23 +3,25 @@ package dk.in2isoft.onlineobjects.apps.setup;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.Period;
+import org.joda.time.format.PeriodFormatter;
+import org.joda.time.format.PeriodFormatterBuilder;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import dk.in2isoft.commons.lang.Code;
+import dk.in2isoft.commons.lang.Mapper;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.in2igui.data.ItemData;
 import dk.in2isoft.in2igui.data.ListData;
 import dk.in2isoft.in2igui.data.ListWriter;
-import dk.in2isoft.onlineobjects.apps.ApplicationController;
+import dk.in2isoft.onlineobjects.apps.setup.perspectives.SchedulerStatusPerspective;
 import dk.in2isoft.onlineobjects.apps.setup.perspectives.UserPerspective;
 import dk.in2isoft.onlineobjects.apps.videosharing.Path;
 import dk.in2isoft.onlineobjects.core.Query;
@@ -39,34 +41,18 @@ import dk.in2isoft.onlineobjects.model.Privilege;
 import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.annotations.Appearance;
-import dk.in2isoft.onlineobjects.modules.localization.LocalizationService;
-import dk.in2isoft.onlineobjects.modules.scheduling.SchedulingService;
+import dk.in2isoft.onlineobjects.modules.scheduling.JobInfo;
 import dk.in2isoft.onlineobjects.modules.surveillance.LogEntry;
 import dk.in2isoft.onlineobjects.modules.surveillance.RequestInfo;
-import dk.in2isoft.onlineobjects.modules.surveillance.SurveillanceService;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.util.Dates;
+import dk.in2isoft.onlineobjects.util.Messages;
 import dk.in2isoft.onlineobjects.util.ValidationUtil;
 
-public class SetupController extends ApplicationController {
-
-	private SecurityService securityService;
-	private SchedulingService schedulingService;
-	private SurveillanceService surveillanceService;
-	private LocalizationService localizationService;
-	
-	public SetupController() {
-		super("setup");
-	}
+public class SetupController extends SetupControllerBase {
 	
 	@Override
-	public boolean isAllowed(Request request) {
-		return request.isUser(SecurityService.ADMIN_USERNAME);
-	}
-
-	@Override
-	public void unknownRequest(Request request)
-	throws IOException,EndUserException {
+	public void unknownRequest(Request request) throws IOException,EndUserException {
 		if (!request.isUser(SecurityService.ADMIN_USERNAME)) {
 			request.redirectFromBase("/service/authentication/?redirect=/app/setup/&action=appAccessDenied&faultyuser="+request.getSession().getUser().getUsername());
 		} else {
@@ -79,7 +65,7 @@ public class SetupController extends ApplicationController {
 		}
 	}
 	
-	@Path(start="listUsers")
+	@Path
 	public void listUsers(Request request) throws IOException,EndUserException {
 		User publicUser = securityService.getPublicUser();
 		int page = request.getInt("page");
@@ -145,7 +131,7 @@ public class SetupController extends ApplicationController {
 		writer.endList();
 	}
 	
-	@Path(start="listUsersObjects")
+	@Path
 	public void listUsersObjects(Request request) throws IOException,EndUserException {
 		long id = request.getLong("userId");
 		int page = request.getInt("page");
@@ -250,31 +236,82 @@ public class SetupController extends ApplicationController {
 	}
 	
 	@Path
-	public void listJobs(Request request) throws SecurityException, IOException {
+	public void listJobLog(Request request) throws IOException {
 		ListWriter writer = new ListWriter(request);
 		writer.startList();
 		writer.startHeaders();
-		writer.header("Name").header("Group").header("Status").header("Latest").header("Next");
+		writer.header("Time",10).header("Text").header("Name").header("Group");
 		writer.endHeaders();
+		List<LogEntry> liveLog = schedulingService.getLiveLog();
+		for (LogEntry entry : liveLog) {
+			writer.startRow();
+			writer.startCell().text(Dates.formatTime(entry.getDate(), request.getLocale())).endCell();
+			writer.startCell().text(entry.getTitle()).endCell();
+			writer.startCell().text(entry.getName()).endCell();
+			writer.startCell().text(entry.getGroup()).endCell();
+			writer.endRow();
+		}
+		writer.endList();
+	}
+	
+	@Path
+	public void listJobs(Request request) throws SecurityException, IOException {
+		Messages msg = new Messages(this);
+		Locale locale = request.getLocale();
+		PeriodFormatter pf = new PeriodFormatterBuilder().appendHours().appendSeparator(":").appendMinutes().appendSeparator(":").appendSeconds().toFormatter();
+		boolean active = schedulingService.isRunning();
 		
-		Map<String, String> jobs = schedulingService.listJobs();
-		for (Entry<String,String> entry : jobs.entrySet()) {
-			String name = entry.getKey();
-			String group = entry.getValue();
-			Date latest = schedulingService.getLatestExecution(name, group);
-			Date next = schedulingService.getNextExecution(name, group);
-			boolean running = schedulingService.isRunning(name, group);
+		ListWriter writer = new ListWriter(request);
+		writer.startList();
+		writer.startHeaders();
+		writer.header("Name",10).header("Group",10).header("Status",15).header("",10).header("Timing",10).header("Latest",10).header("Next",10).header("State").header("", 1);
+		writer.endHeaders();
+		long now = System.currentTimeMillis();
+		List<JobInfo> jobList = schedulingService.getJobList();
+		for (JobInfo status : jobList) {
+			Map<String,Object> data = Mapper.<String,Object>build("group", status.getGroup()).add("name", status.getName()).add("status", status.getTriggerState()).add("running", new Boolean(status.isRunning())).get();
+			boolean paused = "PAUSED".equals(status.getTriggerState());
 			
-			Map<String,String> data = Maps.newHashMap();
-			data.put("group", group);
-			data.put("name", name);
-			
-			writer.startRow().withData(data);
-			writer.startCell().text(name).endCell();
-			writer.startCell().text(group).endCell();
-			writer.startCell().text(running ? "Kører" : "Venter").endCell();
-			writer.startCell().text(Dates.formatLongDate(latest, request.getLocale())).endCell();
-			writer.startCell().text(Dates.formatLongDate(next, request.getLocale())).endCell();
+			writer.startRow().withId(status.getGroup()+"-"+status.getName()).withData(data);
+			writer.startCell();
+			if (status.isRunning()) {
+				writer.withIcon("status/running");
+			} else {
+				if (paused) {
+					writer.withIcon("status/paused");
+				} else {
+					writer.withIcon("status/waiting");
+				}
+			}
+			writer.text(status.getName()).endCell();
+			writer.startCell().text(status.getGroup()).endCell();
+			writer.startCell();
+			if (status.isRunning()) {
+				writer.text(pf.print(new Period(status.getCurrentRunTime()).toPeriod()));
+			} else {
+				if (paused) {
+					writer.text("Paused");
+				} else if (status.getNextRun()!=null && active) {
+					writer.text(pf.print(new Period(status.getNextRun().getTime()-now)));
+				} else {
+					writer.text(msg.get("job_waiting",locale));
+				}
+			}
+			writer.endCell();
+			writer.startCell();
+			if (status.isRunning()) {
+				writer.progress(status.getProgress());
+			}
+			writer.endCell();
+			writer.startCell().text(status.getTriggerTiming()).endCell();
+			writer.startCell().text(Dates.formatTime(status.getLatestRun(), locale)).endCell();
+			writer.startCell().text(Dates.formatTime(status.getNextRun(), locale)).endCell();
+			writer.startCell().text(status.getTriggerState()).endCell();
+			writer.startCell();
+			if (!"BLOCKED".equals(status.getTriggerState())) {
+				writer.startIcons().startActionIcon("monochrome/play").withData("play").endIcon().endIcons();
+			}
+			writer.endCell();
 			writer.endRow();
 		}
 		writer.endList();
@@ -284,12 +321,38 @@ public class SetupController extends ApplicationController {
 	public void startJob(Request request) throws SecurityException, IOException {
 		schedulingService.runJob(request.getString("name"), request.getString("group"));
 	}
-	
+
 	@Path
-	public void toggleScheduler(Request request) throws SecurityException, IOException {
-		schedulingService.toggle();
+	public void stopJob(Request request) throws SecurityException, IOException {
+		schedulingService.stopJob(request.getString("name"), request.getString("group"));
 	}
 
+	@Path
+	public void pauseJob(Request request) throws SecurityException, IOException {
+		schedulingService.pauseJob(request.getString("name"), request.getString("group"));
+	}
+	
+	@Path
+	public void resumeJob(Request request) throws SecurityException, IOException {
+		schedulingService.resumeJob(request.getString("name"), request.getString("group"));
+	}
+
+	@Path
+	public void toggleScheduler(Request request) throws SecurityException, IOException {
+		if (request.isSet("active")) {
+			schedulingService.setActive(request.getBoolean("active"));
+		} else {
+			schedulingService.toggle();
+		}
+	}
+
+	@Path
+	public SchedulerStatusPerspective getSchedulerStatus(Request request) {
+		SchedulerStatusPerspective status = new SchedulerStatusPerspective();
+		status.setRunning(schedulingService.isRunning());
+		return status;
+	}
+	
 	@Path
 	public void getSurveillanceList(Request request) throws IOException {
 		String kind = request.getString("kind");
@@ -321,9 +384,9 @@ public class SetupController extends ApplicationController {
 			writer.startHeaders().header("Time").header("Title").header("Details").endHeaders();
 			
 			Locale locale = request.getLocale();
-			List<LogEntry> entries = surveillanceService.getLogEntries();
+			List<dk.in2isoft.onlineobjects.modules.surveillance.LogEntry> entries = surveillanceService.getLogEntries();
 			Collections.reverse(entries);
-			for (LogEntry entry : entries) {
+			for (dk.in2isoft.onlineobjects.modules.surveillance.LogEntry entry : entries) {
 				writer.startRow();
 				writer.startCell().text(Dates.formatTime(entry.getDate(), locale)).endCell();
 				writer.startCell().text(entry.getTitle()).endCell();
@@ -453,23 +516,5 @@ public class SetupController extends ApplicationController {
 			items.add(data);
 		}
 		return items;
-	}
-
-
-
-	public void setSecurityService(SecurityService securityService) {
-		this.securityService = securityService;
-	}
-	
-	public void setSchedulingService(SchedulingService schedulingService) {
-		this.schedulingService = schedulingService;
-	}
-	
-	public void setSurveillanceService(SurveillanceService surveillanceService) {
-		this.surveillanceService = surveillanceService;
-	}
-	
-	public void setLocalizationService(LocalizationService localizationService) {
-		this.localizationService = localizationService;
 	}
 }

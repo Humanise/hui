@@ -16,6 +16,13 @@
     </component>
   </tag>
   <tag>
+    <tag-name>scriptSetup</tag-name>
+    <component>
+      <component-type>hui.scriptSetup</component-type>
+      <renderer-type>hui.scriptSetup</renderer-type>
+    </component>
+  </tag>
+  <tag>
     <tag-name>button</tag-name>
     <component>
       <component-type>hui.button</component-type>

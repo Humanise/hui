@@ -28,6 +28,7 @@ import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspectiveQuery;
+import dk.in2isoft.onlineobjects.modules.scheduling.JobStatus;
 import dk.in2isoft.onlineobjects.modules.surveillance.SurveillanceService;
 import dk.in2isoft.onlineobjects.services.FeedService;
 import dk.in2isoft.onlineobjects.services.LanguageService;
@@ -59,7 +60,7 @@ public class InformationService {
 	}
 
 	
-	public void importInformation(String feed) {
+	public void importInformation(String feed, JobStatus status) {
 		try {
 			User admin = modelService.getUser(SecurityService.ADMIN_USERNAME);
 			surveillanceService.logInfo("Checking feed", feed);
@@ -83,6 +84,7 @@ public class InformationService {
 					continue;
 				}
 				
+				status.log("Fetching: "+link);
 				log.info("Fetching: "+link);
 				HTMLDocument doc;
 				try {
@@ -102,6 +104,7 @@ public class InformationService {
 				
 				if (Strings.isBlank(contents)) {
 					log.info("No content: "+link);
+					status.warn("No content: "+link);
 				} else {
 				
 					String[] allWords = semanticService.getWords(contents);

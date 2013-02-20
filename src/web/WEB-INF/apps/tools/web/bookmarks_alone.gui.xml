@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gui xmlns="uri:hui" state="persons" title="Bookmarks">
+	<dwr base="/dwr/">
+		<interface name="Common"/>
+		<interface name="AppCommunity"/>
+		<interface name="CoreSecurity"/>
+	</dwr>
+	<controller name="controller" source="../../gui/private/controller.js"/>
+	<controller source="../../gui/private/bookmarks.js"/>
+	<source name="bookmarksSource" dwr="AppCommunity.listPrivateBookmarks">
+		<parameter key="search" value="@searchfield.value"/>
+		<parameter key="tag" value="@tagSelection.value"/>
+		<parameter key="page" value="@bookmarksList.window.page"/>
+	</source>
+	<source name="tagsSource" dwr="Common.getTagItemsWithCount">
+		<parameter key="simpleName" value="InternetAddress"/>
+	</source>
+					<structure>
+						<top>
+							<toolbar>
+								<icon icon="common/internet" overlay="new" title="Tilføj bogmærke" name="newBookmark"/>
+								<icon icon="common/internet" overlay="upload" title="Importer" name="import"/>
+								<divider/>
+								<icon icon="common/info" title="Info" name="itemInfo" disabled="true"/>
+								<icon icon="common/delete" title="Slet" name="deleteItem" disabled="true">
+									<confirm text="Er du sikker?" ok="Ja, slet" cancel="Nej"/>
+								</icon>
+								<icon icon="common/view" title="Vis" name="showItem" disabled="true"/>
+								<divider/>
+	   							<searchfield title="Hurtig oprettelse" width="200" placeholder="Indsæt url..." name="quickEnter"/>
+								<right>
+	   								<searchfield title="Søgning" expandedWidth="150" placeholder="Søg her" name="searchfield"/>
+								</right>
+							</toolbar>
+						</top>
+						<middle>
+							<left>
+								<overflow>
+									<selection value="all" name="selection">
+										<item icon="common/internet" title="Alle bogmærker" value="all"/>
+										<title>Nøgleord</title>
+										<items source="tagsSource" name="tagSelection"/>
+									</selection>
+								</overflow>
+							</left>
+							<center>
+								<overflow>
+									<list source="bookmarksSource" name="bookmarksList">
+										<column key="name" title="Titel"/>
+										<column key="address" title="Adresse"/>
+									</list>
+								</overflow>
+							</center>
+						</middle>
+						<bottom>
+						</bottom>
+					</structure>
+	<window name="bookmarkWindow" title="Bogmærke" width="300" variant="dark">
+		<space all="5">
+			<formula name="bookmarkFormula">
+				<group>
+					<text label="Navn" key="name"/>
+					<text label="Adresse" key="address"/>
+					<text label="Beskrivelse" key="description" lines="6"/>
+					<tokens label="Nøgleord" key="tags"/>
+					<buttons>
+						<button title="Slet" name="deleteBookmark"/>
+						<button title="Annuller" name="cancelBookmark"/>
+						<button title="Gem" highlighted="true" name="saveBookmark"/>
+					</buttons>
+				</group>
+			</formula>
+		</space>
+	</window>
+	<window name="importWindow" title="Importer" width="300" padding="10">
+		<upload name="upload" url="bookmarks/import.action" widget="uploadButton">
+			<placeholder title="Upload bogmærker" text="Filen skal være er HTML dokument med links"/>
+		</upload>
+		<buttons align="center" top="10">
+			<button name="uploadButton" title="Vælg filer..."/>
+		</buttons>
+	</window>
+</gui>

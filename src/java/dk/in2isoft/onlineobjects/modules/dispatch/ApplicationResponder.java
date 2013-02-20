@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.InitializingBean;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
@@ -31,7 +32,7 @@ import dk.in2isoft.onlineobjects.services.ConfigurationService;
 import dk.in2isoft.onlineobjects.services.DispatchingService;
 import dk.in2isoft.onlineobjects.ui.Request;
 
-public class ApplicationResponder implements Responder {
+public class ApplicationResponder implements Responder, InitializingBean {
 
 	private static Logger log = Logger.getLogger(ApplicationResponder.class);
 	private static final Class<?>[] args = { Request.class };
@@ -39,31 +40,21 @@ public class ApplicationResponder implements Responder {
 	
 	private ConfigurationService configurationService;
 	private HashMap<String, ApplicationController> controllers;
+	private DispatchingService dispatchingService;
 	
 	public ApplicationResponder() {
+
+	}
+	
+	public void afterPropertiesSet() throws Exception {
+		String domain = configurationService.getRootDomain();
+		
 		List<Application> apps = Lists.newArrayList();
-		{
+		
+		for (ApplicationController ctrl : controllers.values()) {
 			Application app = new Application();
-			app.setName("words");
-			app.addProperty(Application.PROPERTY_URL_MAPPING, "words.onlineobjects.com");
-			apps.add(app);
-		}
-		{
-			Application app = new Application();
-			app.setName("photos");
-			app.addProperty(Application.PROPERTY_URL_MAPPING, "photos.onlineobjects.com");
-			apps.add(app);
-		}
-		{
-			Application app = new Application();
-			app.setName("account");
-			app.addProperty(Application.PROPERTY_URL_MAPPING, "account.onlineobjects.com");
-			apps.add(app);
-		}
-		{
-			Application app = new Application();
-			app.setName("community");
-			app.addProperty(Application.PROPERTY_URL_MAPPING, ".*");
+			app.setName(ctrl.getName());
+			app.addProperty(Application.PROPERTY_URL_MAPPING, ctrl.getName()+"."+domain);
 			apps.add(app);
 		}
 
@@ -84,14 +75,13 @@ public class ApplicationResponder implements Responder {
 	public Boolean dispatch(Request request, FilterChain chain) throws IOException, EndUserException {
 		
 		String[] path = request.getFullPath();
-		if (path.length>1 && path[0].equals("app")) {
+		if (configurationService.getRootDomain()==null && path.length>1 && path[0].equals("app")) {
 			request.setLocalContext((String[]) ArrayUtils.subarray(path, 0, 2));
 			callApplication(path[1], request);
 		} else {
 			String appName = resolveMapping(request);
 			if (appName == null) {
-				DispatchingService.displayError(request, new EndUserException("Not found"));
-				return null;
+				throw new ContentNotFoundException("Application not found");
 			} else {
 				callApplication(appName, request);
 			}
@@ -124,7 +114,12 @@ public class ApplicationResponder implements Responder {
 				throw new ContentNotFoundException("Application not found: "+application);
 			}
 			if (!controller.isAllowed(request)) {
-				throw new IllegalRequestException("Not allowed");
+				if (controller.askForUserChange(request)) {
+					request.redirectFromBase("service/authentication/?redirect="+request.getRequest().getRequestURI()+"&action=appAccessDenied&faultyuser="+request.getSession().getUser().getUsername());
+					return;
+				} else {
+					throw new IllegalRequestException("Not allowed");
+				}
 			}
 			String language = controller.getLanguage(request);
 			if (language!=null) {
@@ -146,14 +141,14 @@ public class ApplicationResponder implements Responder {
 							}
 						}
 					} catch (InvocationTargetException e) {
-						DispatchingService.displayError(request, e);
+						dispatchingService.displayError(request, e);
 					}
 				} else {
 					controller.unknownRequest(request);
 				}
 			}
 		} catch (ServletException e) {
-			DispatchingService.displayError(request, e);
+			dispatchingService.displayError(request, e);
 		}
 	}
 
@@ -205,6 +200,10 @@ public class ApplicationResponder implements Responder {
 	
 	public void setConfigurationService(ConfigurationService configurationService) {
 		this.configurationService = configurationService;
+	}
+	
+	public void setDispatchingService(DispatchingService dispatchingService) {
+		this.dispatchingService = dispatchingService;
 	}
 	
 	public void setApplicationControllers(List<ApplicationController> controllers) {

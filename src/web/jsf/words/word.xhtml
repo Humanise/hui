@@ -11,8 +11,6 @@
 		
 		<ui:define name="scripts">
 			<o:script src="/style/js/word_view.js"/>
-			<o:script src="/hui/js/Drawing.js" core="true"/>
-			<o:script src="/hui/ext/Diagram.js" core="true"/>
 		</ui:define>
 		
 		<ui:define name="title">#{wordsWordView.text} - </ui:define>
@@ -23,7 +21,7 @@
 					wordView.text = "#{wordsWordView.text}";
 				</o:script>
 				<div id="word" class="words_word">
-					<h1>#{wordsWordView.text}</h1>
+					<h1 class="words">#{wordsWordView.text}</h1>
 					<p class="words_word_warning">#{msg.this_is_not_a_dictionary} - <o:link href="http://ordnet.dk/ddo/ordbog?query=#{wordsWordView.text}">#{msg.dictionary_search_prefix} "#{wordsWordView.text}" #{msg.dictionary_search_suffix}</o:link></p>
 					<ui:fragment rendered="#{empty wordsWordView.words}">
 						<p style="color: #cc0000;">#{msg.word_not_registered}</p>
@@ -69,7 +67,7 @@
 									<p class="words_word_by">
 										#{msg.created}: <o:date value="#{word.word.created}" weekday="false" time="false"/>
 										<c:if test="#{not empty word.originator}">
-										#{msg.by} <o:link app="community" href="/#{word.originator.name}">#{word.originator.name}</o:link>
+										#{msg.by} <o:link app="community" href="/#{word.originator.name}/">#{word.originator.name}</o:link>
 										</c:if>
 										<c:if test="#{not empty word.sourceTitle}">
 										#{msg.from} #{word.sourceTitle}
@@ -116,64 +114,64 @@
 						<gui:button variant="paper" name="addVariant" small="true" text="#{msg.add_variant}" rendered="#{wordsLayoutView.loggedIn}"/>
 					</p>
 					<gui:diagram name="diagram"/>
-					<ui:fragment rendered="#{wordsLayoutView.loggedIn}">
-					<gui:boundPanel name="wordEditor" hideOnClick="true" width="400">
-						<div class="panel_body">
-							<h2>#{msg.lexical_categories}</h2>
-							<ul class="selection">
-								<c:forEach items="#{wordsWordView.categories}" var="cat">
-									<c:if test="#{not empty cat.value}">
-										<li><a rel="#{cat.value}"><strong>#{cat.label} :</strong> #{cat.description}</a></li>
-									</c:if>
-								</c:forEach>
-							</ul>
-						</div>
-					</gui:boundPanel>
+					<c:if test="#{wordsLayoutView.loggedIn}">
+						<gui:boundPanel name="wordEditor" hideOnClick="true" width="400">
+							<div class="panel_body">
+								<h2>#{msg.lexical_categories}</h2>
+								<ul class="selection">
+									<c:forEach items="#{wordsWordView.categories}" var="cat">
+										<c:if test="#{not empty cat.value}">
+											<li><a rel="#{cat.value}"><strong>#{cat.label} :</strong> #{cat.description}</a></li>
+										</c:if>
+									</c:forEach>
+								</ul>
+							</div>
+						</gui:boundPanel>
 					
-					<gui:boundPanel name="languagePanel" hideOnClick="true" width="200">
-						<div class="panel_body">
-							<h2>#{msg.languages}</h2>
-							<ul class="selection">
-								<c:forEach items="#{wordsWordView.languages}" var="cat">
-									<li><a rel="#{cat.value}"><strong>#{cat.label}</strong></a></li>
-								</c:forEach>
-							</ul>
-						</div>
-					</gui:boundPanel>
+						<gui:boundPanel name="languagePanel" hideOnClick="true" width="200">
+							<div class="panel_body">
+								<h2>#{msg.languages}</h2>
+								<ul class="selection">
+									<c:forEach items="#{wordsWordView.languages}" var="cat">
+										<li><a rel="#{cat.value}"><strong>#{cat.label}</strong></a></li>
+									</c:forEach>
+								</ul>
+							</div>
+						</gui:boundPanel>
 					
-					<gui:boundPanel name="relationKindPanel" modal="transparent" width="200">
-						<div class="panel_body" onclick="wordView.selectRelationKind(event)">
-							<h2>#{msg.relation_kind}</h2>
-							<ul class="selection">
-								<c:forEach items="#{wordsWordView.relations}" var="cat">
-									<li><a rel="#{o:json(cat)}"><strong>#{cat.label}</strong></a></li>
-								</c:forEach>
-							</ul>
-						</div>
-					</gui:boundPanel>
+						<gui:boundPanel name="relationKindPanel" modal="transparent" width="200">
+							<div class="panel_body" onclick="wordView.selectRelationKind(event)">
+								<h2>#{msg.relation_kind}</h2>
+								<ul class="selection">
+									<c:forEach items="#{wordsWordView.relations}" var="cat">
+										<li><a rel="#{o:json(cat)}"><strong>#{cat.label}</strong></a></li>
+									</c:forEach>
+								</ul>
+							</div>
+						</gui:boundPanel>
 
 			
-					<gui:boundPanel name="addVariantPanel" hideOnClick="true" width="200">
-						<gui:formula name="addVariantForm">
-							<gui:fields>
-								<gui:field label="#{msg.language}">
-									<gui:dropDown key="language" items="#{wordsWordView.languages}"/>
-								</gui:field>
-								<gui:field label="#{msg.category}">
-									<gui:dropDown key="category" items="#{wordsWordView.categories}"/>
-								</gui:field>
-							</gui:fields>
-							<gui:button text="#{msg.add}" name="addVariantButton" highlighted="true"/>
-						</gui:formula>
-					</gui:boundPanel>
+						<gui:boundPanel name="addVariantPanel" hideOnClick="true" width="200">
+							<gui:formula name="addVariantForm">
+								<gui:fields>
+									<gui:field label="#{msg.language}">
+										<gui:dropDown key="language" items="#{wordsWordView.languages}"/>
+									</gui:field>
+									<gui:field label="#{msg.category}">
+										<gui:dropDown key="category" items="#{wordsWordView.categories}"/>
+									</gui:field>
+								</gui:fields>
+								<gui:button text="#{msg.add}" name="addVariantButton" highlighted="true"/>
+							</gui:formula>
+						</gui:boundPanel>
 					
 					
-					</ui:fragment>
+					</c:if>
 				</div>
 			</div>
-					<ui:fragment rendered="#{wordsLayoutView.loggedIn}">
-					<ui:include src="../shared/wordfinder.xhtml"/>
-					</ui:fragment>
+			<c:if test="#{wordsLayoutView.loggedIn}">
+				<ui:include src="../shared/wordfinder.xhtml"/>
+			</c:if>
 		</ui:define>
 	</ui:composition>
 </html>

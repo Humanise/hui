@@ -9,7 +9,6 @@ import org.apache.log4j.Logger;
 import com.google.common.collect.Maps;
 
 import dk.in2isoft.commons.lang.Strings;
-import dk.in2isoft.onlineobjects.apps.videosharing.Path;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
@@ -38,7 +37,6 @@ public class AuthenticationController extends AuthenticationControllerBase {
 		String password = request.getString("password");
 		String redirect = request.getString("redirect");
 		boolean success = securityService.changeUser(request.getSession(), username, password);
-		log.debug(success);
 		if (success) {
 			if (Strings.isNotBlank(redirect)) {
 				request.redirectFromBase(redirect);
@@ -46,6 +44,7 @@ public class AuthenticationController extends AuthenticationControllerBase {
 				request.redirect(".?action=loggedIn");
 			}
 		} else {
+			log.warn("Authentication failed");
 			request.redirect(".?action=invalidLogin&redirect="+redirect);
 		}
 	}

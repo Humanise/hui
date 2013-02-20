@@ -3,16 +3,21 @@ package dk.in2isoft.onlineobjects.modules.information;
 import java.util.List;
 
 import org.quartz.DisallowConcurrentExecution;
+import org.quartz.InterruptableJob;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.UnableToInterruptJobException;
 
 import com.google.common.collect.Lists;
 
+import dk.in2isoft.onlineobjects.modules.scheduling.JobStatus;
 import dk.in2isoft.onlineobjects.modules.scheduling.ServiceBackedJob;
 
 @DisallowConcurrentExecution
-public class InformationSpiderJob extends ServiceBackedJob {
+public class InformationSpiderJob extends ServiceBackedJob implements InterruptableJob {
 
+	private boolean interrupted;
+	
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		InformationService informationService = schedulingSupportFacade.getInformationService();
 		
@@ -40,10 +45,24 @@ public class InformationSpiderJob extends ServiceBackedJob {
 				"http://jp.dk/international/?service=rssfeed",
 				"http://wp-tfap.appspot.com/?feed=tfa&type=rss2" // Wikipedia featured article
 			);
-		for (String feed : feeds) {
-			informationService.importInformation(feed);
+		JobStatus status = getStatus(context);
+		int size = feeds.size();
+		status.log("Starting information spider");
+		for (int i = 0; i < size; i++) {
+			if (interrupted) {
+				status.log("Interrupting information spider");
+				break;
+			}
+			String feed = feeds.get(i);
+			status.log("Checking feed: "+feed);
+			informationService.importInformation(feed,status);
+			status.setProgress(i,size);
 		}
-		
+		status.log("Information spider finished");
+	}
+
+	public void interrupt() throws UnableToInterruptJobException {
+		interrupted = true;
 	}
 
 }

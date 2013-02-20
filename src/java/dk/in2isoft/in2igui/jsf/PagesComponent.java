@@ -12,8 +12,6 @@ import javax.faces.event.PostAddToViewEvent;
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.commons.lang.Strings;
-import dk.in2isoft.onlineobjects.ui.jsf.ScriptComponent;
-import dk.in2isoft.onlineobjects.ui.jsf.StylesheetComponent;
 
 @ListenerFor(systemEventClass=PostAddToViewEvent.class)
 @FacesComponent(value=PagesComponent.FAMILY)
@@ -34,15 +32,8 @@ public class PagesComponent extends AbstractComponent {
 	
 	public void processEvent(ComponentSystemEvent event) throws AbortProcessingException {
 		if (event instanceof PostAddToViewEvent) {
-	        FacesContext context = FacesContext.getCurrentInstance();
-	        ScriptComponent script = new ScriptComponent();
-	        script.setSrc("/hui/ext/Pages.js");
-	        script.setCore(true);
-			context.getViewRoot().addComponentResource(context, script,"head");
-			StylesheetComponent css = new StylesheetComponent();
-	        css.setHref("/hui/ext/pages.css");
-	        css.setCore(true);
-			context.getViewRoot().addComponentResource(context, css,"head");
+			requireScript("/hui/ext/Pages.js");
+			requireStylesheet("/hui/ext/pages.css");
 	    }
 	    super.processEvent(event);
 	};

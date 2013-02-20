@@ -14,7 +14,7 @@
 		<ui:define name="body">
 			
 			<div class="words">
-				<h1>#{msg.statistics} <span>» #{msg.words}</span></h1>
+				<h1 class="words">#{msg.statistics} <span>» #{msg.words}</span></h1>
 				<div class="words_statistics">
 				<c:forEach items="#{wordsStatisticsView.languages}" var="lang">
 					<h3>#{lang.header} <span class="words_statistics_count">{<strong>#{lang.total}</strong>}</span></h3>

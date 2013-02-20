@@ -1,17 +1,23 @@
 package dk.in2isoft.onlineobjects.services;
 
 import java.io.File;
-import java.util.Map;
+import java.util.Collection;
+import java.util.Locale;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.TransformerFactory;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import com.google.common.collect.Maps;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
+import dk.in2isoft.onlineobjects.apps.ApplicationController;
 import dk.in2isoft.onlineobjects.core.exceptions.ConfigurationException;
 import dk.in2isoft.onlineobjects.ui.Request;
 
@@ -27,14 +33,15 @@ public class ConfigurationService implements InitializingBean {
 	private String graphvizPath;
 	private String developmentUser;
 	private String analyticsCode;
+	private String rootDomain;
 	
-	private Map<String,String> appContexts;
-
 	private File tempDir;
 
 	private File storageDir;
 
 	private File indexDir;
+	
+	private Multimap<String, Locale> appLocales = HashMultimap.create();
 
 
 	public void afterPropertiesSet() throws Exception {
@@ -63,11 +70,16 @@ public class ConfigurationService implements InitializingBean {
 		} else if (!indexDir.canWrite()) {
 			throw new ConfigurationException("Can not write to the index directory");
 		}
-		testSetup();
-		
-		appContexts = Maps.newHashMap();
-		appContexts.put("photos", "http://photos.onlineobjects.com");
-		appContexts.put("community", "http://www.onlineme.dk");
+		testSetup();		
+	}
+	
+	@Autowired
+	public void setApplicationControllers(Collection<? extends ApplicationController> controllers) {
+		for (ApplicationController controller : controllers) {
+			if (controller.getLocales()!=null) {
+				appLocales.putAll(controller.getName(), controller.getLocales());
+			}
+		}
 	}
 	
 	public void testSetup() {
@@ -162,14 +174,38 @@ public class ConfigurationService implements InitializingBean {
 	public void setAnalyticsCode(String analyticsCode) {
 		this.analyticsCode = analyticsCode;
 	}
-
-	public String getApplicationContext(String app, Request request) {
-		if (appContexts.containsKey(app)) {
-			if (developmentMode) {
-				return request.getBaseContext()+"/app/"+app;
-			}
-			return appContexts.get(app);
+	
+	public String getApplicationContext(String app, String path, Request request) {
+		Locale locale = request.getLocale();
+		if (StringUtils.isBlank(rootDomain)) {
+			return request.getBaseContext()+"/app/words/"+locale.getLanguage()+"/";
 		}
-		return null;
+		HttpServletRequest servletRequest = request.getRequest();
+		StringBuilder url = new StringBuilder();
+		url.append("http://").append(app).append(".").append(rootDomain);
+		if (servletRequest.getServerPort()!=80) {
+			url.append(":").append(servletRequest.getServerPort());
+		}
+		url.append(request.getBaseContext());
+		if (appLocales.containsEntry(app, locale)) {
+			url.append("/").append(locale.getLanguage());
+		}
+		if (path!=null) {
+			url.append(path);
+		} else {
+			url.append("/");
+		}
+		if (request.isLoggedIn()) {
+			url.append(";jsessionid="+servletRequest.getSession().getId());
+		}
+		return url.toString();
+	}
+
+	public String getRootDomain() {
+		return rootDomain;
+	}
+
+	public void setRootDomain(String rootDomain) {
+		this.rootDomain = rootDomain;
 	}
 }

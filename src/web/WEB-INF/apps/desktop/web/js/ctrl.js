@@ -207,12 +207,12 @@ hui.ui.listen({
 })
 
 var desktop = {
-	baseContext : '../..'
+	
 }
 
 desktop.Image = function(options) {
 	var e = options.entity;
-	var url = desktop.baseContext+'/service/image/id'+e.id+'width100height100cropped.jpg';
+	var url = hui.ui.context+'/service/image/id'+e.id+'width100height100cropped.jpg';
 	this.element = hui.build('div',{'class':'widget widget_image',parent:document.body,
 		style : { visibility: 'hidden' },
 		html : '<img src="'+url+'"/><div class="widget_image_info widget_nodrag"></div>'

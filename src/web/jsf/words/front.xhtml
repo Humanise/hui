@@ -14,7 +14,7 @@
 		<ui:define name="body">
 			
 			<div class="words">
-				<h1>#{msg.words}</h1>
+				<h1 class="words">#{msg.words}</h1>
 				<form class="words_search" method="get" action="#{wordsSearchView.localContext}/#{wordsLayoutView.language}/search/">
 					<p>
 						<input type="text" name="text" value="#{wordsSearchView.text}" class="words_search_input"/>
@@ -22,13 +22,13 @@
 					</p>
 				</form>
 			
-				<h2>#{msg.index}</h2>
+				<h2 class="words">#{msg.index}</h2>
 				<p class="words_paging words_index">
 					<c:forEach items="#{wordsIndexView.alphabeth}" var="char">
 						<o:link href="/#{wordsLayoutView.language}/index/#{char.value}/">#{char.label}</o:link>
 					</c:forEach>
 				</p>
-				<h2>#{msg.latest_words}</h2>
+				<h2 class="words">#{msg.latest_words}</h2>
 				<ul class="words_list">
 					<c:forEach items="#{wordsFrontView.latestWords}" var="word">
 						<li>
@@ -47,7 +47,7 @@
 						</li>
 					</c:forEach>
 				</ul>
-				<h2>Links</h2>
+				<h2 class="words">Links</h2>
 				<ul class="words_list">
 					<li><o:link href="http://www.gigadictionary.org/">Gigadictionary</o:link></li>
 					<li><o:link href="http://wordnet.dk/">WordNet.dk</o:link></li>

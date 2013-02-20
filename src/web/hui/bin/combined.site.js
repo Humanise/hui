@@ -1233,7 +1233,6 @@ hui.listenOnce = function(element,type,listener) {
 hui.unListen = function(el,type,listener,useCapture) {
 	el = hui.get(el);
 	if(document.removeEventListener) {
-		hui.log('removing',listener, 'from', el)
 		el.removeEventListener(type,listener,useCapture ? true : false);
 	} else {
 		el.detachEvent('on'+type, listener);
@@ -1959,6 +1958,9 @@ hui.drag = {
 	 */
 	register : function(options) {
 		hui.listen(options.element,'mousedown',function(e) {
+			if (options.$check && options.$check(e)===false) {
+				return;
+			}
 			hui.stop(e);
 			hui.drag.start(options);
 		})
@@ -4311,9 +4313,10 @@ hui.ui.request = function(options) {
 			hui.ui.handleRequestError();
 		}
 	}
-	options.onException = options.$exception || function(t,e) {
-		hui.log(t);
+	options.onException = options.$exception || function(e,t) {
 		hui.log(e);
+		hui.log(t);
+		throw e;
 	};
 	var onForbidden = options.onForbidden;
 	options.onForbidden = function(t) {
@@ -5048,6 +5051,7 @@ hui.ui.SearchField.prototype = {
 		hui.listen(this.field,'blur',this._onBlur.bind(this));
 	},
 	_onFocus : function() {
+		hui.ui.setKeyboardTarget(this);
 		this.focused = true;
 		this._updateClass();
 		if (this.options.expandedWidth > 0) {
@@ -5058,6 +5062,7 @@ hui.ui.SearchField.prototype = {
 		}
 	},
 	_onBlur : function() {
+		hui.ui.setKeyboardTarget(null);
 		this.focused = false;
 		this._updateClass();
 		if (this.initialWidth!==null) {

@@ -24,12 +24,13 @@
     <import resource="app-words.xml"/>
     <import resource="app-photos.xml"/>
     <import resource="app-account.xml"/>
+    <import resource="app-tools.xml"/>
 
-
-	<bean id="configurationService" class="dk.in2isoft.onlineobjects.services.ConfigurationService">
+	<bean id="configurationService" class="dk.in2isoft.onlineobjects.services.ConfigurationService" autowire="byType">
 		<property name="basePath" value="${basePath}"/>
 		<property name="storagePath" value="${storagePath}"/>
 		<property name="baseUrl" value="${baseUrl}"/>
+		<property name="rootDomain" value="${rootDomain}"/>
 		<property name="developmentMode" value="${developmentMode}"/>
 		<property name="developmentUser" value="${development.user}"/>
 		<property name="imageMagickPath" value="${imagemagick.path}"/>

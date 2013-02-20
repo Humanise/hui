@@ -15,7 +15,10 @@ import javax.mail.search.SearchTerm;
 
 import org.apache.log4j.Logger;
 
+import dk.in2isoft.onlineobjects.modules.scheduling.JobStatus;
 import dk.in2isoft.onlineobjects.modules.surveillance.SurveillanceService;
+import dk.in2isoft.onlineobjects.services.ConfigurationService;
+import dk.in2isoft.onlineobjects.services.EmailService;
 
 public class MailWatchingService {
 	
@@ -27,8 +30,9 @@ public class MailWatchingService {
 	
 	private MailListener mailListener;
 	private SurveillanceService surveillanceService;
+	private EmailService emailService;
 	
-	public void check() {
+	public void check(JobStatus status) {
 		if (running) {
 			return;
 		}
@@ -39,20 +43,25 @@ public class MailWatchingService {
 		int numberOfNewMessages = 0;
 		try {
 			surveillanceService.logInfo("Checking for new mail", "Finding mail after: "+latest);
+
+			status.log("Connecting to mail server");			
 			Session session = Session.getDefaultInstance(props, null);
 			store = session.getStore("imaps");
-			store.connect("imap.gmail.com", "onlineobjects@in2isoft.dk", "0heimdal+");
-
+			store.connect(emailService.getHost(), emailService.getUsername(), emailService.getPassword());
+			status.setProgress(1);
 			Folder inbox = store.getFolder("Inbox");
 			inbox.open(Folder.READ_ONLY);
 			SearchTerm term = new ReceivedDateTerm(ComparisonTerm.GT, latest);
+			status.log("Searcing for mail later than "+latest);
 			log.info("Searcing for mail later than "+latest);
 			Message[] messages = inbox.search(term);
-			log.info("Checking new messages: "+messages.length);
-			for (int i = 0; i < messages.length; i++) {
-				
+			int count = messages.length;
+			status.log("Server returned "+messages.length+" messages");
+			for (int i = 0; i < count; i++) {
+				status.setProgress(i,messages.length);
 				Message message = messages[i];
 				if (message.getReceivedDate().getTime()>latest.getTime()) {
+					status.log("New message: "+message.getReceivedDate());
 					numberOfNewMessages++;
 					mailListener.mailArrived(message);
 					latest = message.getReceivedDate();
@@ -60,6 +69,7 @@ public class MailWatchingService {
 					log.info("Skipping message: "+message.getSubject()+" / received: "+message.getReceivedDate()+" / sent: "+message.getSentDate());
 				}
 			}
+			status.log("Finished checking new messages");
 		} catch (NoSuchProviderException e) {
 			log.error("Unable to check for mail", e);
 		} catch (MessagingException e) {
@@ -80,5 +90,9 @@ public class MailWatchingService {
 	
 	public void setSurveillanceService(SurveillanceService surveillanceService) {
 		this.surveillanceService = surveillanceService;
+	}
+	
+	public void setEmailService(EmailService emailService) {
+		this.emailService = emailService;
 	}
 }

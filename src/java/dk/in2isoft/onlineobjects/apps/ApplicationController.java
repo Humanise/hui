@@ -3,6 +3,8 @@ package dk.in2isoft.onlineobjects.apps;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -40,8 +42,12 @@ public abstract class ApplicationController extends AbstractController implement
 	public void afterPropertiesSet() throws Exception {
 		
 	}
+	
+	public abstract List<Locale> getLocales();
 
-
+	public String getName() {
+		return name;
+	}
 	
 	protected void addJsfMatcher(String pattern,String path) {
 		jsfMatchers.put(RestUtil.compile(pattern), "/jsf/"+this.name+"/"+path);
@@ -147,6 +153,10 @@ public abstract class ApplicationController extends AbstractController implement
 
 	public String getLanguage(Request request) {
 		return null;
+	}
+
+	public boolean askForUserChange(Request request) {
+		return false;
 	}
 
 }

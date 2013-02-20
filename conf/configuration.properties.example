@@ -7,6 +7,7 @@ email.defaultSenderName=My Name
 baseUrl=www.myhost.com
 developmentMode=false
 storagePath=/path/to/storage
+rootDomain=myhost.com
 
 imagemagick.path/opt/local/bin
 graphviz.path>/opt/local/bin

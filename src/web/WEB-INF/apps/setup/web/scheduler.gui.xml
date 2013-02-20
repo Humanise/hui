@@ -5,21 +5,43 @@
 	</dwr>
 	<controller name="controller" source="scheduler.js"/>
 	<source url="listJobs" name="listSource"/>
+	<source url="listJobLog" name="logListSource"/>
 	<structure>
 		<top>
 			<toolbar>
 				<icon icon="common/refresh" title="Opdater" name="refresh"/>
-				<icon icon="common/stop" title="Stop" name="stop" disabled="true"/>
-				<icon icon="common/play" title="Start" name="start"/>
+				<icon icon="common/stop" title="Stop" name="interrupt" disabled="true"/>
+				<icon icon="common/play" title="Run" name="start" disabled="true"/>
+				<icon icon="common/pause" title="Pause" name="pause" disabled="true"/>
 				<right>
-					<icon icon="common/play" title="Toggle" name="toggle"/>
+					<field label="Active">
+						<checkbox name="active"/>
+					</field>
 				</right>
 			</toolbar>
 		</top>
 		<middle>
-			<overflow>
-				<list name="list" source="listSource"/>
-			</overflow>
+			<bar variant="layout">
+				<text text="Checking..." name="statusText"/>
+				<right>
+					<div style="display: inline-block; margin: 4px 3px 0 0;">
+						<checkbox label="Live" name="live" value="true"/>
+					</div>
+				</right>
+			</bar>
+			<split>
+				<row>
+					<overflow>
+						<list name="list" source="listSource" remember="true"/>
+					</overflow>
+				</row>
+				<row>
+					<overflow>
+						<list name="logList" source="logListSource" remember="true" selectable="false"/>
+					</overflow>
+				</row>
+			</split>
 		</middle>
+		<bottom/>
 	</structure>				
 </gui>

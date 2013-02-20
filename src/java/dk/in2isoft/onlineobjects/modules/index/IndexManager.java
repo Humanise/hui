@@ -95,6 +95,7 @@ public class IndexManager {
 		Directory dir = getIndexFile();
 		Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_40);
 		IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_40, analyzer);
+		iwc.setWriteLockTimeout(1000*10);
 		iwc.setOpenMode(OpenMode.CREATE_OR_APPEND);
 		try {
 			IndexWriter indexWriter = new IndexWriter(dir, iwc);
@@ -104,7 +105,7 @@ public class IndexManager {
 		}
 	}
 	
-	public void update(Entity entity, Document document) throws EndUserException  {
+	public synchronized void update(Entity entity, Document document) throws EndUserException  {
 		IndexWriter writer = null;
 		try {
 			writer = openWriter();

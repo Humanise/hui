@@ -28,6 +28,7 @@ import dk.in2isoft.commons.geo.GeoDistance;
 import dk.in2isoft.commons.util.AbstractCommandLineInterface;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Privileged;
+import dk.in2isoft.onlineobjects.core.exceptions.ContentNotFoundException;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
@@ -59,7 +60,7 @@ public class ImageService extends AbstractCommandLineInterface {
 		File folder = storageService.getItemFolder(id);
 		File original = new File(folder, "original");
 		if (!original.isFile()) {
-			throw new EndUserException("The image with id=" + id + " does not exist");
+			throw new ContentNotFoundException("The image with id=" + id + " does not exist");
 		}
 		File converted = new File(folder, "thumbnail-" + width + "x" + height + ".jpg");
 		if (!converted.exists()) {
@@ -74,7 +75,7 @@ public class ImageService extends AbstractCommandLineInterface {
 		File folder = storageService.getItemFolder(id);
 		File original = new File(folder, "original");
 		if (!original.isFile()) {
-			throw new EndUserException("The image with id=" + id + " does not exist");
+			throw new ContentNotFoundException("The image with id=" + id + " does not exist");
 		}
 		File converted = new File(folder, "thumbnail-" + width + "x" + height + "cropped.jpg");
 		if (!converted.exists()) {

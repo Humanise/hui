@@ -721,6 +721,7 @@
 			windowSize:'<xsl:value-of select="gui:window/@size"/>'
 			<xsl:if test="@drop-files='true'">,dropFiles:true</xsl:if>
 			<xsl:if test="@indent">,indent:<xsl:value-of select="@indent"/></xsl:if>
+			<xsl:if test="@remember='true'">,rememberSelection:true</xsl:if>
 		});
 		with (<xsl:value-of select="generate-id()"/>_obj) {
 			<xsl:for-each select="gui:column">

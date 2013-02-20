@@ -2,6 +2,7 @@ package dk.in2isoft.onlineobjects.apps.community;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -58,6 +59,11 @@ public class CommunityController extends ApplicationController {
 		addJsfMatcher("/invitation.html", "invitation.xhtml");
 		addJsfMatcher("/invitation.html", "invitation.xhtml");
 	}
+	
+	@Override
+	public List<Locale> getLocales() {
+		return null;
+	}
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -97,7 +103,7 @@ public class CommunityController extends ApplicationController {
 		if (Strings.isNotBlank(subDomain) && !"www".equals(subDomain)) {
 			User siteUser = modelService.getUser(subDomain);
 			if (siteUser == null) {
-				throw new EndUserException("The user does not excist!");
+				throw new ContentNotFoundException("The user does not excist!");
 			}
 			if (request.testLocalPathFull("uploadImage")) {
 				if (siteUser.getId() != request.getSession().getUser().getId()) {

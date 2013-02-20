@@ -7,4 +7,6 @@ import java.lang.annotation.RetentionPolicy;
 public @interface Path {
 
 	String[] start() default {};
+	
+	String expression() default "";
 }

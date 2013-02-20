@@ -17,6 +17,7 @@ public class SchedulingSupportFacade {
 	private MailWatchingService mailWatchingService;
 	private SurveillanceService surveillanceService;
 	private WordIndexer wordIndexer;
+	private SchedulingService schedulingService;
 
 	public InformationService getInformationService() {
 		return informationService;
@@ -74,4 +75,11 @@ public class SchedulingSupportFacade {
 		this.wordIndexer = wordIndexer;
 	}
 	
+	public void setSchedulingService(SchedulingService schedulingService) {
+		this.schedulingService = schedulingService;
+	}
+	
+	public SchedulingService getSchedulingService() {
+		return schedulingService;
+	}
 }

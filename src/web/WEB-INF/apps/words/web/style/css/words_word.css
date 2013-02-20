@@ -1,0 +1,121 @@
+p.words_word_warning
+{
+	font-size: 10pt;
+	color: #999;
+	font-style: italic;
+}
+
+ul.words_word_variants
+{
+	list-style: none;
+	margin: 20px 0;
+	padding: 0;
+}
+
+p.words_word_by
+{
+	margin: 0;
+	font-size: 11px;
+	color: #999;
+	text-align: right;
+	float: right;
+	margin-top: -16px;
+}
+
+p.words_word_info
+{
+	margin: 0;
+}
+
+strong.words_word_info
+{
+	color: #333;
+	vertical-align: middle;
+	display: inline-block;
+	position: relative;
+	top: -2px;
+	font-size: 18pt;
+	font-weight: normal;
+}
+
+span.words_word_info
+{
+	vertical-align: middle;
+	color: #999;
+	font-size: 12px;
+	display: inline-block;
+}
+
+span.words_word_info a
+{
+	color: #999;
+	text-decoration: none;
+}
+
+span.words_word_info a:hover
+{
+	text-decoration: underline;
+}
+
+span.words_word_info span
+{
+	margin: 0 3px;
+}
+
+li.words_word_variant
+{
+	margin-bottom: 25px;
+}
+
+ul.words_word_relations
+{
+	list-style: none;
+	margin: 5px 0;
+	color: #999;
+	font-size: 12px;
+	margin-left: 20px;
+	padding: 0;
+}
+
+ul.words_word_relations strong
+{
+	font-weight: normal;
+	letter-spacing: 1px;
+}
+
+a.words_word_action
+{
+	color: #666;
+}
+
+ul.words_word_relations li
+{
+	margin-bottom: 5px;
+}
+
+span.words_word_relation
+{
+	margin-left: 5px;
+}
+
+
+p.words_word_glossary
+{
+	margin: 5px 0 0px 40px;
+	text-indent: -20px;
+}
+
+span.words_word_example
+{
+	font-style: italic;
+	color: #666;
+	font-size: 90%;
+	margin: 0 10px;
+	font-size: 9pt;
+}
+
+span.words_word_example_divider
+{
+	color: #ccc;
+	font-size: 9pt;
+}

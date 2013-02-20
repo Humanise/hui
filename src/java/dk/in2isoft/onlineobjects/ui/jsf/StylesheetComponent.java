@@ -20,6 +20,7 @@ public class StylesheetComponent extends AbstractComponent {
 	private String href;
 	private boolean core;
 	private String msie;
+	private boolean integrateCache;
 	
 	public StylesheetComponent() {
 		super(FAMILY);
@@ -30,11 +31,12 @@ public class StylesheetComponent extends AbstractComponent {
 		core = (Boolean) state[0];
 		href = (String) state[1];
 		msie = (String) state[2];
+		integrateCache = (Boolean) state[3];
 	}
 
 	@Override
 	public Object[] saveState() {
-		return new Object[] { core, href, msie };
+		return new Object[] { core, href, msie, integrateCache };
 	}
 
 	@Override
@@ -51,9 +53,17 @@ public class StylesheetComponent extends AbstractComponent {
 				} else {
 					url.append(request.getLocalContext());
 				}
-				url.append(href);
 				LifeCycleService bean = getBean(LifeCycleService.class);
-				url.append("?").append(bean.getStartTime().getTime());
+				if (integrateCache) {
+					int idx = href.lastIndexOf(".");
+					url.append(href.substring(0,idx));
+					url.append(".");
+					url.append(bean.getStartTime().getTime());
+					url.append(href.substring(idx));					
+				} else {
+					url.append(href);
+					url.append("?").append(bean.getStartTime().getTime());					
+				}				
 			}
 			if (Strings.isNotBlank(msie)) {
 				writer.write("<!--[if ").write(msie).write("]>");
@@ -91,5 +101,13 @@ public class StylesheetComponent extends AbstractComponent {
 
 	public void setMsie(String msie) {
 		this.msie = msie;
+	}
+
+	public boolean isIntegrateCache() {
+		return integrateCache;
+	}
+
+	public void setIntegrateCache(boolean integrateCache) {
+		this.integrateCache = integrateCache;
 	}
 }

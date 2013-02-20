@@ -14,7 +14,7 @@
 		<ui:define name="body">
 			
 			<div class="words">
-				<h1>#{msg.words}</h1>
+				<h1 class="words">#{msg.searching} <span>» #{msg.words}</span></h1>
 				<form class="words_search" method="get" action="#{wordsSearchView.localContext}/#{wordsLayoutView.language}/search/">
 					<p>
 						<input type="text" name="text" value="#{wordsSearchView.text}" class="words_search_input"/>

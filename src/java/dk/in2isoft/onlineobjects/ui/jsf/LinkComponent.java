@@ -100,16 +100,16 @@ public class LinkComponent extends AbstractComponent {
 			Request request = ComponentUtil.getRequest();
 			if (app!=null) {
 				ConfigurationService configurationService = ComponentUtil.getService(ConfigurationService.class, FacesContext.getCurrentInstance());
-				String context = configurationService.getApplicationContext(app,request);
+				String context = configurationService.getApplicationContext(app, href, request);
 				if (context!=null) {
 					url.append(context);
 				} else {
-					url.append(request.getBaseContext()).append("/app/").append(app);
+					url.append(request.getBaseContext()).append("/app/").append(app).append(href);
 				}
 			} else {
-				url.append(core ? request.getBaseContext() : request.getLocalContext());
+				url.append(core ? request.getBaseContext() : request.getLocalContext()).append(href);
 			}
-			url.append(href);
+			//url.append(href);
 			return url.toString();
 		}
 	}

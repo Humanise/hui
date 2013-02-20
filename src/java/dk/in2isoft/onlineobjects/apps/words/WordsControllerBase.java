@@ -1,5 +1,10 @@
 package dk.in2isoft.onlineobjects.apps.words;
 
+import java.util.List;
+import java.util.Locale;
+
+import com.google.common.collect.Lists;
+
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
 import dk.in2isoft.onlineobjects.services.FeedService;
 import dk.in2isoft.onlineobjects.services.ImportService;
@@ -24,6 +29,11 @@ public class WordsControllerBase extends ApplicationController {
 		addJsfMatcher("/<language>/index/<folder>", "index.xhtml");
 		addJsfMatcher("/<language>/index/<folder>/<integer>", "index.xhtml");
 	}
+	
+	public List<Locale> getLocales() {
+		return Lists.newArrayList(new Locale("en"),new Locale("da"));
+	}
+
 
 	public WordsControllerBase(String name) {
 		super(name);

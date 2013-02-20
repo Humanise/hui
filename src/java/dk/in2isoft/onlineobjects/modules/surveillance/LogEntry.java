@@ -4,19 +4,34 @@ import java.util.Date;
 
 public class LogEntry {
 
-	enum Level {info,warn,error}
+	public enum Level {info,warn,error}
 	
 	private Date date;
 	private String title;
 	private String details;
 	private Level level;
+	private String name;
+	private String group;
+
+	public LogEntry() {
+		this.date = new Date();
+		this.level = Level.info;
+	}
+	
+	public LogEntry(String text) {
+		this();
+		this.title = text;
+	}
+
+	public LogEntry(String text, String name, String group) {
+		this();
+		this.title = text;
+		this.name = name;
+		this.group = group;
+	}
 
 	public Date getDate() {
 		return date;
-	}
-
-	public void setDate(Date date) {
-		this.date = date;
 	}
 
 	public String getTitle() {
@@ -41,5 +56,21 @@ public class LogEntry {
 
 	public void setLevel(Level level) {
 		this.level = level;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getGroup() {
+		return group;
+	}
+
+	public void setGroup(String group) {
+		this.group = group;
 	}
 }

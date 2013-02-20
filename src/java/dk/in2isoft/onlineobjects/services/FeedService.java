@@ -28,18 +28,17 @@ public class FeedService {
 		try {
 			feed = input.build(new XmlReader(new URL(url)));
 		} catch (IllegalArgumentException e) {
-			throw new NetworkException(e);
+			throw new NetworkException("Unable to get feed items: "+url,e);
 		} catch (MalformedURLException e) {
-			throw new NetworkException(e);
+			throw new NetworkException("Unable to get feed items: "+url,e);
 		} catch (FeedException e) {
-			throw new NetworkException(e);
+			throw new NetworkException("Unable to get feed items: "+url,e);
 		} catch (IOException e) {
-			throw new NetworkException(e);
+			throw new NetworkException("Unable to get feed items: "+url,e);
 		}
         if (feed instanceof Channel) {
         	Channel channel = (Channel) feed;
-        	@SuppressWarnings("unchecked")
-			List<Item> items = channel.getItems();
+			List<Item> items = Code.castList(channel.getItems());
         	return items;
         } else if (feed instanceof Feed) {
         	List<Item> items = Lists.newArrayList();

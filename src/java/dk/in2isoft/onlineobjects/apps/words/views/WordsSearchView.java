@@ -57,9 +57,13 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 			ids.add(field.numericValue().longValue());
 		}
 		WordListPerspectiveQuery query = new WordListPerspectiveQuery().withPaging(0, 20).withIds(ids).orderByUpdated();
+		if (true) {
+			query.startingWithSymbol();
+		}
+		System.out.println(query.getSQL());
 		SearchResult<WordListPerspective> result = modelService.search(query);
 		this.list = result.getList();
-		this.count = indexResult.getTotalCount();
+		this.count = result.getTotalCount();
 		
 		Collections.sort(this.list, new Comparator<WordListPerspective>() {
 

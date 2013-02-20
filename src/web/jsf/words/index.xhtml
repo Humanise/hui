@@ -13,7 +13,7 @@
 		
 		<ui:define name="body">
 			<div class="words">
-				<h1>#{msg.index} <span>» #{msg.words}</span></h1>
+				<h1 class="words">#{msg.index} <span>» #{msg.words}</span></h1>
 				<p class="words_paging words_index">
 					<c:forEach items="#{wordsIndexView.alphabeth}" var="char">
 						<o:link styleClass="#{char.value == wordsIndexView.character ? 'words_paging_selected' : ''}" href="/en/index/#{char.value}/">#{char.label}</o:link>

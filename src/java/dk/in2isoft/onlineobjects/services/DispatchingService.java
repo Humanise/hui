@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -33,6 +35,8 @@ public class DispatchingService implements InitializingBean {
 
 	private static Logger log = Logger.getLogger(DispatchingService.class);
 	
+	private static final Pattern SESSION_PATTERN = Pattern.compile(";jsessionid=[^?]+");
+	
 	private ModelService modelService;
 	private SecurityService securityService;
 	private SurveillanceService surveillanceService;
@@ -60,8 +64,17 @@ public class DispatchingService implements InitializingBean {
 		if (request.isSet("username") && request.isSet("password")) {
 			securityService.changeUser(request.getSession(), request.getString("username"),request.getString("password"));
 		}
-		
 		securityService.ensureUserSession(servletRequest.getSession());
+		String url = servletRequest.getRequestURL().toString();
+				
+		if (url.contains(";jsessionid")) {
+			Matcher matcher = SESSION_PATTERN.matcher(url);
+			if (matcher.find()) {
+				String newUrl = matcher.replaceAll("");
+				servletResponse.sendRedirect(newUrl);
+				return true;
+			}
+		}
 		
 		for (Responder responder : responders) {
 			if (!handled && responder.applies(request)) {
@@ -70,7 +83,7 @@ public class DispatchingService implements InitializingBean {
 					shouldCommit = responder.dispatch(request, chain);
 				} catch (EndUserException e) {
 					surveillanceService.survey(e,request);
-					DispatchingService.displayError(request, e);
+					displayError(request, e);
 				}
 			}
 		}
@@ -109,11 +122,16 @@ public class DispatchingService implements InitializingBean {
 		}
 	}
 
-	public static void displayError(Request request, Exception ex) {
-		log.error(ex.toString(), ex);
+	public void displayError(Request request, Exception ex) {
 		ex = findUserException(ex);
 		ErrorRenderer renderer = new ErrorRenderer(ex);
 		try {
+			if (ex instanceof ContentNotFoundException) {
+				log.error(ex.getMessage()+" : "+request.getRequest().getRequestURL().toString());
+				surveillanceService.surveyNotFound(request);
+			} else {
+				log.error(ex.toString(), ex);				
+			}
 			if (ex instanceof SecurityException) {
 				request.getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
 			} else if (ex instanceof ContentNotFoundException) {

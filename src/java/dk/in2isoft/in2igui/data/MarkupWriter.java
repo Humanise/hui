@@ -1,5 +1,6 @@
 package dk.in2isoft.in2igui.data;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 
 import org.apache.commons.lang.StringEscapeUtils;
@@ -8,11 +9,7 @@ public abstract class MarkupWriter {
 
 	protected PrintWriter writer;
 	boolean open = false;
-	
-	public MarkupWriter(PrintWriter writer) {
-		this.writer = writer;
-	}
-	
+		
 	protected void close() {
 		if (open) {
 			writer.write(">");
@@ -20,9 +17,9 @@ public abstract class MarkupWriter {
 		}
 	}
 
-	protected void text(String str) {
+	protected void text(String str) throws IOException {
 		close();
-		writer.write(StringEscapeUtils.escapeXml(str));
+		StringEscapeUtils.escapeXml(writer,str);
 	}
 
 	protected void startTag(String tag) {

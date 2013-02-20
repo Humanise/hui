@@ -1,5 +1,10 @@
 package dk.in2isoft.onlineobjects.apps.photos;
 
+import java.util.List;
+import java.util.Locale;
+
+import com.google.common.collect.Lists;
+
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
 import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.SecurityService;
@@ -21,6 +26,10 @@ public class PhotosControllerBase extends ApplicationController {
 		addJsfMatcher("/<language>/photo/<integer>.html", "photo.xhtml");
 		addJsfMatcher("/<language>/users/<username>", "user.xhtml");
 		addJsfMatcher("/<language>/users/<username>/gallery/<integer>", "gallery.xhtml");
+	}
+	
+	public List<Locale> getLocales() {
+		return Lists.newArrayList(new Locale("en"),new Locale("da"));
 	}
 
 	@Override

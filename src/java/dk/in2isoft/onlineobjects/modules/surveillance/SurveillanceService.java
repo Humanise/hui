@@ -1,7 +1,6 @@
 package dk.in2isoft.onlineobjects.modules.surveillance;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -18,17 +17,18 @@ public class SurveillanceService {
 	private RequestList longestRunningRequests;
 	private ConcurrentLinkedQueue<String> exceptions;
 	private ConcurrentLinkedQueue<LogEntry> logEntries;
+	private RequestList requestsNotFound;
 
 
 	public SurveillanceService() {
-		this.longestRunningRequests = new RequestList();
+		longestRunningRequests = new RequestList();
+		requestsNotFound = new RequestList();
 		exceptions = new ConcurrentLinkedQueue<String>();
 		logEntries = new ConcurrentLinkedQueue<LogEntry>();
 	}
 	
 	public void logInfo(String title,String details) {
 		LogEntry entry = new LogEntry();
-		entry.setDate(new Date());
 		entry.setTitle(title);
 		entry.setDetails(details);
 		logEntries.add(entry);
@@ -41,6 +41,10 @@ public class SurveillanceService {
 		if (!request.getRequest().getRequestURI().startsWith("/service/image")) {
 			this.longestRunningRequests.register(request);
 		}
+	}
+	
+	public void surveyNotFound(Request request) {
+		this.requestsNotFound.register(request);
 	}
 	
 	public void survey(Exception e, Request request) {

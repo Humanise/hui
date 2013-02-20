@@ -17,6 +17,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 import dk.in2isoft.commons.lang.Strings;
+import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
 
@@ -371,5 +372,13 @@ public class Request {
 		} catch (JsonSyntaxException e) {
 			return null;
 		}
+	}
+
+	public boolean isLoggedIn() {
+		return !isUser(SecurityService.PUBLIC_USERNAME);
+	}
+
+	public boolean isLocalRoot() {
+		return getLocalPath().length==0;
 	}
 }

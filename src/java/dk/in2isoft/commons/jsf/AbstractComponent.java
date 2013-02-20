@@ -13,6 +13,8 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.ui.Request;
+import dk.in2isoft.onlineobjects.ui.jsf.ScriptComponent;
+import dk.in2isoft.onlineobjects.ui.jsf.StylesheetComponent;
 
 
 public abstract class AbstractComponent extends UIComponentBase {
@@ -118,4 +120,20 @@ public abstract class AbstractComponent extends UIComponentBase {
 		return Strings.isNotBlank(string);
 	}
 	
+	protected void requireScript(String string) {
+        FacesContext context = getFacesContext();
+        ScriptComponent script = new ScriptComponent();
+        script.setSrc(string);
+        script.setCore(true);
+		context.getViewRoot().addComponentResource(context, script,"head");
+	}
+
+	protected void requireStylesheet(String string) {
+		FacesContext context = getFacesContext();
+		StylesheetComponent css = new StylesheetComponent();
+        css.setHref(string);
+        css.setCore(true);
+		context.getViewRoot().addComponentResource(context, css, "head");
+	}
+
 }

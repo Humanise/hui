@@ -29,6 +29,7 @@ import nu.xom.Serializer;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 
+import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
@@ -140,13 +141,13 @@ public class XSLTUtil {
 		parameters.put("base-context", request.getBaseContext());
 		parameters.put("user-name", request.getSession().getUser().getUsername());
 		parameters.put("development-mode", String.valueOf(Core.getInstance().getConfigurationService().isDevelopmentMode()));
+		response.setCharacterEncoding(Strings.UTF8);
 		if (isXhtmlCapable(request.getRequest())) {
 			response.setContentType("application/xhtml+xml");
 		} else {
 			response.setContentType("text/html");
 		}
 		Document data = ui.getData();
-		response.getWriter();
 		try {
 			applyXSLT(data, new StreamSource(ui.getStylesheet()), response.getOutputStream(), parameters);
 		} catch (IllegalStateException e) {

@@ -18,6 +18,7 @@ public class ScriptComponent extends AbstractComponent {
 	
 	private String src;
 	private boolean core;
+	private boolean integrateCache;
 	
 	public ScriptComponent() {
 		super(FAMILY);
@@ -27,11 +28,12 @@ public class ScriptComponent extends AbstractComponent {
 	public void restoreState(Object[] state) {
 		core = (Boolean) state[0];
 		src = (String) state[1];
+		integrateCache = (Boolean) state[2];
 	}
 
 	@Override
 	public Object[] saveState() {
-		return new Object[] { core, src };
+		return new Object[] { core, src, integrateCache };
 	}
 
 	@Override
@@ -49,9 +51,18 @@ public class ScriptComponent extends AbstractComponent {
 				} else {
 					url.append(request.getLocalContext());
 				}
-				url.append(src);
 				LifeCycleService bean = getBean(LifeCycleService.class);
-				url.append("?").append(bean.getStartTime().getTime());
+				if (integrateCache) {
+					int idx = src.lastIndexOf(".");
+					url.append(src.substring(0,idx));
+					url.append(".");
+					url.append(bean.getStartTime().getTime());
+					url.append(src.substring(idx));					
+				} else {
+					url.append(src);
+					url.append("?").append(bean.getStartTime().getTime());					
+				}
+				
 			}
 			writer.withAttribute("src", url);
 		}
@@ -80,5 +91,13 @@ public class ScriptComponent extends AbstractComponent {
 	
 	public String getSrc(FacesContext context) {
 		return getExpression("src", src, context);
+	}
+
+	public boolean isIntegrateCache() {
+		return integrateCache;
+	}
+
+	public void setIntegrateCache(boolean integrateCache) {
+		this.integrateCache = integrateCache;
 	}
 }

@@ -10,6 +10,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import dk.in2isoft.onlineobjects.core.exceptions.ContentNotFoundException;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.service.ServiceController;
 import dk.in2isoft.onlineobjects.ui.Request;
@@ -29,7 +30,7 @@ public class ServicesResponder implements Responder {
 		request.setLocalContext((String[]) ArrayUtils.subarray(path, 0, 2));
 		ServiceController controller = getServiceController(request,path[1]);
 		if (controller == null) {
-			throw new EndUserException("No controller found!");
+			throw new ContentNotFoundException("No controller found!");
 		}
 		if (path.length > 2) {
 			try {

@@ -2,23 +2,23 @@ package dk.in2isoft.in2igui.data;
 
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletResponse;
+
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.ui.Request;
 
 public class ListWriter extends MarkupWriter {
-
-	private Request request;
 	
 	
 	public ListWriter(Request request) throws IOException {
-		super(request.getResponse().getWriter());
-		this.request = request;
+		HttpServletResponse response = request.getResponse();
+		response.setCharacterEncoding(Strings.UTF8);
+		response.setContentType("text/xml");
+		this.writer = response.getWriter();
 	}
 	
 	public ListWriter startList() {
-		request.getResponse().setContentType("text/xml");
-		request.getResponse().setCharacterEncoding(Strings.UTF8);
-		writer.write("<?xml version=\"1.0\"?>");
+		writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		startTag("list");
 		return this;
 	}
@@ -82,6 +82,34 @@ public class ListWriter extends MarkupWriter {
 		return this;
 	}
 
+	public ListWriter startIcons() {
+		startTag("icons");
+		return this;
+	}
+
+	public ListWriter endIcons() {
+		endTag("icons");
+		return this;
+	}
+	
+	public ListWriter startIcon() {
+		startTag("icon");
+		return this;
+	}
+	
+	public ListWriter startActionIcon(String icon) {
+		startTag("icon");
+		withAttribute("icon", icon);
+		
+		withAttribute("action", true);
+		return this;
+	}
+
+	public ListWriter endIcon() {
+		endTag("icon");
+		return this;
+	}
+	
 	public ListWriter startLine() {
 		startTag("line");
 		return this;
@@ -105,7 +133,7 @@ public class ListWriter extends MarkupWriter {
 		return this;
 	}
 
-	public ListWriter text(Object str) {
+	public ListWriter text(Object str) throws IOException {
 		if (str!=null) {
 			text(str.toString());
 		}
@@ -146,6 +174,13 @@ public class ListWriter extends MarkupWriter {
 
 	public ListWriter minor() {
 		withAttribute("minor", true);
+		return this;
+	}
+
+	public ListWriter progress(float progress) {
+		startTag("progress");
+		withAttribute("value", progress);
+		endTag("progress");
 		return this;
 	}
 }

@@ -33,6 +33,7 @@ public class ImageCleanupJob extends ServiceBackedJob {
 				}
 				imageService.synchronizeContentType(image, admin);
 				imageService.synchronizeMetaData(image,admin);
+				modelService.commit();
 			} catch (EndUserException e) {
 				
 			}
