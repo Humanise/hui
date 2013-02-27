@@ -37,27 +37,30 @@
 				var diagram = new hui.ui.Diagram.create({
 					parent : hui.get('container'),
 					layout : hui.location.getParameter('layout') || 'Arbor',
-					height : 400
+					height : 800
 				});
+				
+				var tmp = [];
 				
 				var data = {
 					nodes : [
-						{id:'jonas',type:'box',title:'Jonas Munk',properties:[{label:'Gender',value:'Male'}]},
-						{id:'address',type:'box',title:'Home',properties:[{label:'Street',value:'H/F Sundbyvester'},{label:'City',value:'Copenhagen S'}]},
-						{id:'info',type:'icon',icon:'common/info',title:'Infomation'},
-						{id:'group',type:'icon',icon:'common/folder',title:'My stuff'},
-						{id:'avatar',type:'icon',icon:'common/image',title:'Avatar'},
-						{id:'images',type:'icon',icon:'application/photos',title:'Gallery'}
 					],
 					edges : [
-						{from:'jonas',to:'info',label:'Vehicula Dolor'},
-						{from:'jonas',to:'group',label:'Sit Ipsum Vulputate Ullamcorper Egestas'},
-						{from:'jonas',to:'avatar',label:'Avatar',color:'#69f'},
-						{from:'avatar',to:'group'},
-						{from:'avatar',to:'images'},
-						{from:'jonas',to:'address'}
 					]
 				};
+				
+				for (var i=0; i < 100; i++) {
+					data.nodes.push({id:i+'',type:'box',title:i,properties:[{label:'ID',value:i}]});
+				};
+				for (var i=0; i < 200; i++) {
+					data.edges.push({
+						from : Math.round(Math.random()*99)+'', 
+						to : Math.round(Math.random()*99)+'',
+						label : i
+					});
+				}
+				
+				
 				var json = JSON.stringify(data,null,4)	
 				diagram.setData(data);
 				
