@@ -582,6 +582,7 @@ div.oo_gallery ol
 div.oo_gallery li
 {
 	display: inline-block;
+	vertical-align: top;
 }
 
 body.oo_msie7 div.oo_gallery li

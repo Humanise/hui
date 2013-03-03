@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:o="http://www.onlineobjects.com/jsf" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:gui="http://www.in2isoft.dk/in2igui"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+>
+	<ui:composition template="templates/plain.xhtml">
+		<ui:param name="tab" value="overview"/>
+		
+		<ui:define name="title">
+			#{peoplePersonView.person.fullName}<h:outputText value=" &#187; "/>
+		</ui:define>
+		
+		<ui:define name="body">
+			<c:if test="#{peoplePersonView.user!=null}">
+				<o:script rendered="#{o:loggedIn()}">
+					personView.userId = #{peoplePersonView.user.id};
+				</o:script>
+				<div class="people_person">
+					<div class="people_person_left">
+						<div class="people_person_image" id="profileImage">
+							<c:if test="#{peoplePersonView.image!=null}">
+								<div class="people_person_image_photo" style="background: url('#{baseView.baseContext}/service/image/id#{peoplePersonView.image.id}width90height105sharpen1.0cropped.jpg')"></div>
+							</c:if>
+						</div>
+						<ui:fragment rendered="#{peoplePersonView.canModify}">
+							<p style="margin: 10px 0 0; text-align: center;"><gui:button text="Skift billede" variant="paper" name="changeImage" small="true"/></p>
+						</ui:fragment>
+					</div>
+					<div class="people_person_info">
+						<div id="profileContainer">
+							<div id="profileInfo" class="rendering">
+								<h1>#{peoplePersonView.person.fullName}</h1>
+								<c:if test="#{peoplePersonView.info.resume!=null &amp;&amp; fn:length(peoplePersonView.info.resume)>0}">
+									<p class="people_person_resume">&#34;#{peoplePersonView.info.resume}&#34;</p>
+								</c:if>
+								<ul class="icons">
+									<c:if test="#{fn:length(peoplePersonView.info.emails)>1}">
+										<c:forEach items="#{peoplePersonView.info.emails}" var="item">
+											<li class="mail"><a href="mailto:#{item.address}" class="oo_link"><span>#{item.address}</span></a></li>
+										</c:forEach>
+									</c:if>
+									<c:if test="#{fn:length(peoplePersonView.info.urls)>0}">
+										<c:forEach items="#{peoplePersonView.info.urls}" var="item">
+											<li class="url"><a href="#{item.address}" class="oo_link"><span>#{item.address}</span></a></li>
+										</c:forEach>
+									</c:if>
+									<c:if test="#{fn:length(peoplePersonView.info.phones)>0}">
+										<c:forEach items="#{peoplePersonView.info.phones}" var="item">
+											<li class="phone">#{item.number}</li>
+										</c:forEach>
+									</c:if>
+								</ul>
+								<c:if test="#{peoplePersonView.info.sex!=null}">
+									<p><span class="label">Køn: </span>#{peoplePersonView.info.sex ? 'Mand' : 'Kvinde'}</p>
+								</c:if>
+								<c:if test="#{fn:length(peoplePersonView.info.interests)>0}">
+									<p><span class="label">Interesser: </span>
+										<c:forEach items="#{peoplePersonView.info.interests}" var="item">
+											#{item}
+										</c:forEach>
+									</p>
+								</c:if>
+								<c:if test="#{fn:length(peoplePersonView.info.music)>0}">
+									<p><span class="label">Yndlingsmusik: </span>
+										<c:forEach items="#{peoplePersonView.info.music}" var="item">
+											#{item}
+										</c:forEach>
+									</p>
+								</c:if>
+								<c:if test="#{peoplePersonView.canModify}">
+									<p style="margin-top: 20px;"><gui:button text="Rediger profil" variant="paper" name="editProfile" small="true"/></p>
+								</c:if>
+							</div>
+						</div>
+					</div>
+					<h:panelGroup rendered="#{not empty peoplePersonView.latestImages.result.list}">
+					<div class="content_body images">
+						<h2>Seneste billeder</h2>
+						<o:gallery model="#{peoplePersonView.latestImages}" var="image">
+							<o:thumbnail image="#{image}" width="68" height="68" href="/photo/#{image.id}.html" app="photos"/>
+						</o:gallery>
+					</div>
+					</h:panelGroup>
+				</div>
+			</c:if>
+		</ui:define>
+	</ui:composition>
+</html>

@@ -28,6 +28,7 @@
     <import resource="app-account.xml"/>
     <import resource="app-tools.xml"/>
     <import resource="app-front.xml"/>
+    <import resource="app-people.xml"/>
 
 	<bean id="configurationService" class="dk.in2isoft.onlineobjects.services.ConfigurationService" autowire="byType">
 		<property name="basePath" value="${basePath}"/>

@@ -106,13 +106,13 @@ public class ApplicationResponder implements Responder, InitializingBean {
 	}
 
 	private void callApplication(String application, Request request) throws IOException, EndUserException {
-		request.setApplication(application);
 		ApplicationController controller = getApplicationController(request,application);
 		String[] path = request.getLocalPath();
 		try {
 			if (controller == null) {
 				throw new ContentNotFoundException("Application not found: "+application);
 			}
+			request.setApplication(application);
 			if (!controller.isAllowed(request)) {
 				if (controller.askForUserChange(request)) {
 					request.redirectFromBase("service/authentication/?redirect="+request.getRequest().getRequestURI()+"&action=appAccessDenied&faultyuser="+request.getSession().getUser().getUsername());

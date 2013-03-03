@@ -56,7 +56,7 @@ public class TopBarComponent extends AbstractComponent {
 		}
 		out.write("Community").endA().endLi();*/
 		
-		List<String> primaryApps = Lists.newArrayList("words","photos","community");
+		List<String> primaryApps = Lists.newArrayList("words","photos","community","people");
 		List<String> privateApps = Lists.newArrayList("desktop","tools");
 		if (request.isUser(SecurityService.ADMIN_USERNAME)) {
 			privateApps.add("setup");

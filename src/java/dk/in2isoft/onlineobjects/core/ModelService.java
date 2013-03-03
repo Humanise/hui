@@ -31,7 +31,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.exception.DataException;
 import org.hibernate.exception.SQLGrammarException;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.proxy.AbstractLazyInitializer;
@@ -200,7 +199,7 @@ public class ModelService {
 				session.flush();
 				session.clear();
 				tx.commit();
-			} catch (DataException e) {
+			} catch (HibernateException e) {
 				log.error("Rolling back!", e);
 				tx.rollback();
 			}
@@ -215,7 +214,7 @@ public class ModelService {
 			try {
 				tx.rollback();
 				log.warn("Rolling back!");
-			} catch (DataException e) {
+			} catch (HibernateException e) {
 				log.error("Could not roll back!", e);
 			}
 		}

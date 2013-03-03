@@ -6,6 +6,8 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
     ">
+   	
+   	<bean id="peopleController" class="dk.in2isoft.onlineobjects.apps.people.PeopleController" autowire="byType"/>
 
-   	<bean id="frontController" class="dk.in2isoft.onlineobjects.apps.front.FrontController" autowire="byType"/>
+	<bean id="peoplePersonView" class="dk.in2isoft.onlineobjects.apps.people.views.PeoplePersonView" scope="request" autowire="byType"/>
 </beans>

@@ -8,6 +8,8 @@ import dk.in2isoft.onlineobjects.model.InternetAddress;
 import dk.in2isoft.onlineobjects.model.PhoneNumber;
 
 public class UserProfileInfo {
+	
+	private long userId;
 
 	private String givenName;
 
@@ -134,6 +136,14 @@ public class UserProfileInfo {
 
 	public List<InternetAddress> getUrls() {
 		return urls;
+	}
+
+	public long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(long userId) {
+		this.userId = userId;
 	}
 
 }

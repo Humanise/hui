@@ -1,0 +1,178 @@
+div.people_person
+{
+	padding: 20px;
+}
+
+div.people_person div.images
+{
+	overflow: hidden;
+	padding: 20px 20px 15px 20px;
+}
+
+div.people_person div.images h2
+{
+	margin: 0px 0px 10px;
+	font-weight: normal;
+	font-size: 15pt;
+	color: #446688;
+}
+
+div.people_person div.thumbnail
+{
+	float: left;
+	width: 60px;
+	height: 60px;
+	border: 1px solid #ddd;
+	margin: 0px 5px 5px 0px;
+	background: #fff;
+	padding: 4px;
+}
+
+
+/***************************** Profile *************************/
+
+div.people_person_left
+{
+	width: 105px;
+	float: left;
+}
+
+div.people_person div.people_person_image
+{
+	width: 100px;
+	height: 115px;
+	border: 1px solid #ddd;
+	border-color: #eee #ddd #ccc;
+	background: url('../gfx/profile_large.png') center center no-repeat;
+}
+
+div.people_person div.people_person_image_photo
+{
+	width: 90px;
+	height: 105px;
+	margin: 5px 0 0 5px;
+}
+
+div.people_person_info
+{
+	margin-left: 130px;
+}
+
+div.people_person_info h1
+{
+	margin: 0px;
+	font-weight: 100;
+	font-size: 36pt;
+}
+
+div.people_person div.profile h2
+{
+	margin: 0px;
+	font-weight: normal;
+	font-size: 16pt;
+	margin: 0 0 10px;
+	color: #999;
+}
+
+p.people_person_resume
+{
+	color: #345;
+	font-size: 11pt;
+	font-style: italic;
+	line-height: 1.5em;
+	margin: 0 0 20px;
+	font-weight: 300;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+div.rendering p.tags
+{
+	font-size: 0;
+	color: #fff;
+}
+
+div.rendering a.tag
+{
+	font-size: 11px;
+	background: #f6f6f6;
+	text-decoration: none;
+	border: 1px solid #ddd;
+	-moz-border-radius: 8px;
+	-webkit-border-radius: 8px;
+	padding: 0 8px;
+	height: 16px;
+	line-height: 16px;
+	color: #123;
+	letter-spacing: 1px;
+	margin-right: 4px;
+	margin-bottom: 4px;
+	display: inline-block;
+}
+
+div.rendering a.tag:hover
+{
+	background: #daeaf0;
+	border: 1px solid #8a9;
+}
+
+div.rendering a.tag:focus
+{
+	border: 1px solid #03f;
+	-moz-box-shadow: 0px 0px 3px #03f;
+	outline: none;
+}
+
+div.rendering .minor
+{
+	font-size: 9pt;
+}
+
+div.rendering .dimmed
+{
+	color: #999;
+}
+
+div.rendering p span.label
+{
+	color: #999;
+}
+
+div.rendering ul.icons
+{
+	list-style: none;
+	margin: 0 0 10px;
+	padding: 0;
+	font-size: 10pt;
+}
+
+div.rendering ul.icons li
+{
+	padding-left: 24px;
+	height: 20px;
+}
+
+div.rendering li.mail
+{
+	background: url('../gfx/dimmed_icons.png') -2px -100px no-repeat;
+}
+
+div.rendering li.url
+{
+	background: url('../gfx/dimmed_icons.png') -2px -2px no-repeat;
+}
+
+div.rendering li.phone
+{
+	background: url('../gfx/dimmed_icons.png') -2px -50px no-repeat;
+}
