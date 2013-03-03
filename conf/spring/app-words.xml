@@ -16,7 +16,7 @@
 		<property name="modelService" ref="modelService" />
 		<property name="documentBuilder">
 			<bean class="dk.in2isoft.onlineobjects.modules.index.WordIndexDocumentBuilder">
-				<property name="modelService" ref="modelService"/>
+				<property name="languageService" ref="languageService"/>
 			</bean>
 		</property>
 	</bean>

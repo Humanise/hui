@@ -8,16 +8,44 @@ import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.core.exceptions.ContentNotFoundException;
+import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.ui.Request;
+import dk.in2isoft.onlineobjects.ui.ScriptWriter;
+import dk.in2isoft.onlineobjects.ui.StylesheetWriter;
 import dk.in2isoft.onlineobjects.util.images.ImageInfo.ImageLocation;
 
 
 public class PhotosController extends PhotosControllerBase {
+	
+
+	@Path(expression="/style.[0-9]+.css")
+	public void style(Request request) throws IOException, EndUserException {
+		StylesheetWriter writer = new StylesheetWriter(request, configurationService);
+		writer.write(publicStyle);
+	}
+
+	@Path(expression="/style_private.[0-9]+.css")
+	public void stylePrivate(Request request) throws IOException, EndUserException {
+		StylesheetWriter writer = new StylesheetWriter(request, configurationService);
+		writer.write(privateStyle);
+	}
+
+	@Path(expression="/script.[0-9]+.js")
+	public void script(Request request) throws IOException, EndUserException {
+		ScriptWriter writer = new ScriptWriter(request, configurationService);	
+		writer.write(publicScript);
+	}
+
+	@Path(expression="/script_private.[0-9]+.js")
+	public void scriptPrivate(Request request) throws IOException, EndUserException {
+		ScriptWriter writer = new ScriptWriter(request, configurationService);
+		writer.write(privateScript);
+	}
 
 	@Path(start="updateTitle")
 	public void updateImageTitle(Request request) throws ModelException, SecurityException, ContentNotFoundException {

@@ -449,4 +449,9 @@
 		<extension>mpv2</extension>
 		<mime-type>video/mpeg2</mime-type>
 	</mime-mapping>
+	<mime-mapping>
+		<extension>woff</extension>
+		<mime-type>application/x-font-woff</mime-type>
+	</mime-mapping>
+	
 </web-app>

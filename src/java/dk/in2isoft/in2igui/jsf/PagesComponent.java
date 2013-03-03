@@ -4,8 +4,6 @@ import java.io.IOException;
 
 import javax.faces.component.FacesComponent;
 import javax.faces.context.FacesContext;
-import javax.faces.event.AbortProcessingException;
-import javax.faces.event.ComponentSystemEvent;
 import javax.faces.event.ListenerFor;
 import javax.faces.event.PostAddToViewEvent;
 
@@ -29,14 +27,14 @@ public class PagesComponent extends AbstractComponent {
 	public void restoreState(Object[] state) {
 		name = (String) state[0];
 	}
-	
+	/*
 	public void processEvent(ComponentSystemEvent event) throws AbortProcessingException {
 		if (event instanceof PostAddToViewEvent) {
 			requireScript("/hui/ext/Pages.js");
 			requireStylesheet("/hui/ext/pages.css");
 	    }
 	    super.processEvent(event);
-	};
+	};*/
 
 	@Override
 	public Object[] saveState() {

@@ -27,6 +27,7 @@
 					<li><a href="#{baseView.baseContext}/#{userProfileView.user.username}/">#{userProfileView.person.fullName}</a></li>
 					<ui:insert name="breadcrumb"/>
 				</ul>
+				<ui:remove>
 				<ui:fragment rendered="#{tab!='none'}">
 					<ul class="tabs oo_faded" style="margin-top: 10px;">
 						<li class="#{tab=='overview' ? 'highlighted' : ''}"><a href="#{baseView.baseContext}/#{userProfileView.user.username}/">Overblik</a></li>
@@ -36,6 +37,7 @@
 						</ui:remove>
 					</ul>
 				</ui:fragment>
+				</ui:remove>
 				<div>
 					<ui:insert name="content"/>
 				</div>

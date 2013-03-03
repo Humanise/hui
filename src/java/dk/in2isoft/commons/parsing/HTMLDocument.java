@@ -2,8 +2,6 @@
 package dk.in2isoft.commons.parsing;
 
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,16 +27,8 @@ public class HTMLDocument extends XMLDocument {
 	private String title;
     private String contentType;
 	
-	public HTMLDocument(String url) throws MalformedURLException {
-		super(url);
-	}
-
-	public HTMLDocument(URL url) {
-		super(url);
-	}
-	
-	public HTMLDocument(URI uri) throws MalformedURLException {
-		super(uri.toURL());
+	public HTMLDocument(String raw) throws MalformedURLException {
+		super(raw);
 	}
 	
 	public String getTitle() {
@@ -201,5 +191,10 @@ public class HTMLDocument extends XMLDocument {
     		out=att.getNodeValue();
     	}
 		return out;
+	}
+
+	public static HTMLDocument fromContent(String content) {
+		
+		return null;
 	}
 }

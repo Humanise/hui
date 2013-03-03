@@ -12,7 +12,9 @@ import dk.in2isoft.commons.jsf.ClassBuilder;
 import dk.in2isoft.commons.jsf.ComponentUtil;
 import dk.in2isoft.commons.jsf.StyleBuilder;
 import dk.in2isoft.commons.jsf.TagWriter;
+import dk.in2isoft.commons.lang.Numbers;
 import dk.in2isoft.onlineobjects.model.Image;
+import dk.in2isoft.onlineobjects.util.images.ImageService;
 
 @FacesComponent(value = ThumbnailComponent.FAMILY)
 public class ThumbnailComponent extends AbstractComponent {
@@ -25,6 +27,8 @@ public class ThumbnailComponent extends AbstractComponent {
 	private boolean zoom;
 	private String href;
 	private boolean frame = true;
+	private String app;
+	private double sharpen = 1.0;
 	
 	public ThumbnailComponent() {
 		super(FAMILY);
@@ -38,17 +42,19 @@ public class ThumbnailComponent extends AbstractComponent {
 		zoom = (Boolean) state[3];
 		href = (String) state[4];
 		frame = (Boolean) state[5];
+		app = (String) state[6];
+		sharpen = (Double) state[7];
 	}
 
 	@Override
 	public Object[] saveState() {
-		return new Object[] { width, height, variant, zoom, href, frame };
+		return new Object[] { width, height, variant, zoom, href, frame, app, sharpen };
 	}
 
 	@Override
 	protected void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
 		String href = getHref(context);
-		Image image = super.getBinding("image");
+		Image image = getBinding("image");
 		StyleBuilder style = new StyleBuilder();
 		style.withWidth(width).withHeight(height);
 		ClassBuilder cls = new ClassBuilder("oo_thumbnail").add("oo_thumbnail",variant);
@@ -59,36 +65,44 @@ public class ThumbnailComponent extends AbstractComponent {
 			cls.add("oo_thumbnail_frame");
 		}
 		if (StringUtils.isNotBlank(href)) {
-			writer.startA(cls).withStyle(style).withAttribute("href", LinkComponent.buildUrl(href, null, false));
+			writer.startA(cls).withStyle(style).withAttribute("href", LinkComponent.buildUrl(href, app, false));
 		} else {
 			writer.startSpan(cls).withStyle(style);
 		}
 		if (image!=null) {
-			int wdth = 0;
-			if (width==null) {
-				wdth = (int) (((double)height/(double)image.getHeight())*(double)image.getWidth());
-			} else {
-				wdth = width;
+			ImageService imageService = getBean(ImageService.class);
+			boolean valid = imageService.hasImageFile(image);
+			if (valid) {
+				int wdth = 0;
+				if (width==null) {
+					wdth = (int) (((double)height/(double)image.getHeight())*(double)image.getWidth());
+				} else {
+					wdth = width;
+				}
+				int hght = 0;
+				if (height==null) {
+					hght = (int) (((double)width/(double)image.getWidth())*(double)image.getHeight());
+				} else {
+					hght = height;
+				}
+				StyleBuilder stl = new StyleBuilder();
+				stl.withWidth(wdth).withHeight(hght);
+					
+				StringBuilder url = new StringBuilder();
+				url.append(ComponentUtil.getRequest().getBaseContext());
+				url.append("/service/image/id").append(image.getId()).append("width").append(wdth).append("height").append(hght);
+				if (sharpen > 0) {
+					url.append("sharpen").append(Numbers.formatDecimal(sharpen,2));
+				}
+				url.append("cropped.jpg");
+				writer.startElement("img").withAttribute("src", url).withAttribute("alt", image.getName());
+				if (zoom) {
+					StringBuilder onClick = new StringBuilder();
+					onClick.append("oo.showImage({id:").append(image.getId()).append(",width:").append(image.getWidth()).append(",height:").append(image.getHeight()).append("});");
+					writer.withAttribute("onclick", onClick);
+				}
+				writer.withStyle(stl).endElement("img");
 			}
-			int hght = 0;
-			if (height==null) {
-				hght = (int) (((double)width/(double)image.getWidth())*(double)image.getHeight());
-			} else {
-				hght = height;
-			}
-			StyleBuilder stl = new StyleBuilder();
-			stl.withWidth(wdth).withHeight(hght);
-				
-			StringBuilder url = new StringBuilder();
-			url.append(ComponentUtil.getRequest().getBaseContext());
-			url.append("/service/image/id").append(image.getId()).append("width").append(wdth).append("height").append(hght).append("cropped.jpg");
-			writer.startElement("img").withAttribute("src", url).withAttribute("alt", image.getName());
-			if (zoom) {
-				StringBuilder onClick = new StringBuilder();
-				onClick.append("oo.showImage({id:").append(image.getId()).append(",width:").append(image.getWidth()).append(",height:").append(image.getHeight()).append("});");
-				writer.withAttribute("onclick", onClick);
-			}
-			writer.withStyle(stl).endElement("img");
 		}
 		if (StringUtils.isNotBlank(href)) {
 			writer.endA();
@@ -147,5 +161,21 @@ public class ThumbnailComponent extends AbstractComponent {
 
 	public boolean isFrame() {
 		return frame;
+	}
+	
+	public void setApp(String app) {
+		this.app = app;
+	}
+	
+	public String getApp() {
+		return app;
+	}
+
+	public double getSharpen() {
+		return sharpen;
+	}
+
+	public void setSharpen(double sharpen) {
+		this.sharpen = sharpen;
 	}
 }

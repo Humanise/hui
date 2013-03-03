@@ -1,6 +1,5 @@
 package dk.in2isoft.onlineobjects.modules.information;
 
-import java.net.MalformedURLException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -28,6 +27,7 @@ import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspectiveQuery;
+import dk.in2isoft.onlineobjects.modules.networking.HTMLService;
 import dk.in2isoft.onlineobjects.modules.scheduling.JobStatus;
 import dk.in2isoft.onlineobjects.modules.surveillance.SurveillanceService;
 import dk.in2isoft.onlineobjects.services.FeedService;
@@ -44,6 +44,7 @@ public class InformationService {
 	private ModelService modelService;
 	private SecurityService securityService;
 	private SurveillanceService surveillanceService;
+	private HTMLService htmlService;
 	
 	public void clearUnvalidatedWords() throws ModelException {
 		User admin = modelService.getUser(SecurityService.ADMIN_USERNAME);
@@ -76,20 +77,20 @@ public class InformationService {
 					status.warn("Feed item has no link: "+item.getTitle());
 					continue;
 				}
+				String abreviated = StringUtils.abbreviateMiddle(link, "...", 100);
 				
 				Long num = modelService.count(Query.after(InternetAddress.class).withField(InternetAddress.FIELD_ADDRESS, link));
 
 				if (num>0) {
-					status.log("Internet address already exists: "+link);
+					status.log("Internet address already exists: "+abreviated);
+					modelService.commit();
 					continue;
 				}
-				
-				status.log("Fetching: "+StringUtils.abbreviateMiddle(link, "...", 50));
-				HTMLDocument doc;
-				try {
-					doc = new HTMLDocument(link);
-				} catch (MalformedURLException e) {
-					status.error("Unable to fetch web page: "+link,e);
+				status.log("Fetching: "+abreviated);
+				HTMLDocument doc = htmlService.getDocumentSilently(link);
+				if (doc==null) {
+					status.log("Unable to get HTML document: "+abreviated);
+					modelService.commit();
 					continue;
 				}
 				String contents = doc.getExtractedContents();
@@ -186,5 +187,9 @@ public class InformationService {
 	
 	public void setSurveillanceService(SurveillanceService surveillanceService) {
 		this.surveillanceService = surveillanceService;
+	}
+	
+	public void setHtmlService(HTMLService htmlService) {
+		this.htmlService = htmlService;
 	}
 }

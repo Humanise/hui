@@ -53,6 +53,7 @@ import dk.in2isoft.onlineobjects.model.PhoneNumber;
 import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
+import dk.in2isoft.onlineobjects.modules.networking.HTMLService;
 import dk.in2isoft.onlineobjects.services.SemanticService;
 import dk.in2isoft.onlineobjects.ui.AbstractRemotingFacade;
 import dk.in2isoft.onlineobjects.ui.AsynchronousProcessDescriptor;
@@ -71,6 +72,7 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 	private CommunityDAO communityDAO;
 	private SemanticService semanticService;
 	private SecurityService securityService;
+	private HTMLService htmlService;
 
 	public void signUp(String username, String password, String name, String email) throws EndUserException {
 		memberService.signUp(getUserSession(),username,password,name,email);
@@ -316,11 +318,14 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 		return null;
 	}
 	
-	public InternetAddressInfo lookupInternetAddress(String url) throws ModelException, MalformedURLException {
+	public InternetAddressInfo lookupInternetAddress(String url) throws ModelException, MalformedURLException, IllegalRequestException {
 		if (!url.startsWith("http")) {
 			url = "http://"+url;
 		}
-		HTMLDocument doc = new HTMLDocument(url);
+		HTMLDocument doc = htmlService.getDocumentSilently(url);
+		if (doc==null) {
+			throw new IllegalRequestException("Not HTML");
+		}
 		InternetAddressInfo info = new InternetAddressInfo();
 		info.setName(doc.getTitle());
 		info.setAddress(url);
@@ -503,5 +508,9 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 
 	public SecurityService getSecurityService() {
 		return securityService;
+	}
+	
+	public void setHtmlService(HTMLService htmlService) {
+		this.htmlService = htmlService;
 	}
 }

@@ -1,0 +1,19 @@
+body
+{
+	background: url('gfx/blueprint.png');
+}
+
+h1
+{
+	background: url('gfx/text.png') center center no-repeat;
+}
+
+#in2isoft
+{
+	background: url('gfx/in2isoft_white.png');
+}
+
+#in2isoft,#onlineobjects
+{
+	display: none;
+}

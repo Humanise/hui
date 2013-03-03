@@ -45,12 +45,16 @@
 							<div class="casing_head">
 								<ul class="navigation oo_faded">
 									<li><a href="#{baseView.localContext}/" class="home"><span>Forside</span></a></li>
+									<ui:remove>
 									<li><a href="#{baseView.localContext}/images.html" class="#{top=='images' ? 'selected' : ''}"><span><span>Billeder</span></span></a></li>
+									</ui:remove>
 									<li><a href="#{baseView.localContext}/users.html" class="#{top=='users' ? 'selected' : ''}"><span><span>Brugere</span></span></a></li>
+									<ui:remove>
 									<li><a href="#{baseView.localContext}/map.html" class="#{top=='map' ? 'selected' : ''}"><span><span>Kort</span></span></a></li>
 									<li><a href="#{baseView.localContext}/about/" class="#{top=='about' ? 'selected' : ''}"><span><span>Om OnlineMe</span></span></a></li>
 									<!--<li><a href="#{baseView.localContext}/"><span><span>Kort</span></span></a></li>
 									<li><a href="#{baseView.localContext}/"><span><span>Søgning</span></span></a></li>-->
+									</ui:remove>
 								</ul>
 								<div class="casing_head_search oo_faded">
 									<gui:searchfield name="casingSearch" width="120" expandedWidth="210" placeholder="Søg her..."/>
@@ -101,6 +105,7 @@
 												</div>
 											</ui:fragment>
 											<ui:insert name="sidebar">
+											<ui:remove>
 												<ui:fragment rendered="#{baseView.publicUser}">
 												<div class="casing_right_section">
 													<h2>Ny bruger</h2>
@@ -130,6 +135,7 @@
 													</form>
 												</div>
 												</ui:fragment>
+												</ui:remove>
 											</ui:insert>
 										</div>
 									</div>

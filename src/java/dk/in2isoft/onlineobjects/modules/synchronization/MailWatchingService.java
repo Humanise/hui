@@ -47,38 +47,37 @@ public class MailWatchingService {
 			Session session = Session.getDefaultInstance(props, null);
 			store = session.getStore("imaps");
 			store.connect(emailService.getHost(), emailService.getUsername(), emailService.getPassword());
-			status.setProgress(1);
+			status.setProgress(0);
 			Folder inbox = store.getFolder("Inbox");
 			inbox.open(Folder.READ_ONLY);
 			SearchTerm term = new ReceivedDateTerm(ComparisonTerm.GT, latest);
 			status.log("Searcing for mail later than "+latest);
-			log.info("Searcing for mail later than "+latest);
 			Message[] messages = inbox.search(term);
 			int count = messages.length;
 			status.log("Server returned "+messages.length+" messages");
 			for (int i = 0; i < count; i++) {
-				status.setProgress(i,messages.length);
 				Message message = messages[i];
 				if (message.getReceivedDate().getTime()>latest.getTime()) {
 					status.log("New message: "+message.getReceivedDate());
 					numberOfNewMessages++;
-					mailListener.mailArrived(message);
+					mailListener.mailArrived(message,status);
 					latest = message.getReceivedDate();
 				} else {
-					log.info("Skipping message: "+message.getSubject()+" / received: "+message.getReceivedDate()+" / sent: "+message.getSentDate());
+					log.debug("Skipping message: "+message.getSubject()+" / received: "+message.getReceivedDate()+" / sent: "+message.getSentDate());
 				}
+				status.setProgress(i,messages.length);
 			}
 			status.log("Finished checking new messages");
 		} catch (NoSuchProviderException e) {
-			log.error("Unable to check for mail", e);
+			status.error("Unable to check for mail", e);
 		} catch (MessagingException e) {
-			log.error("Unable to check for mail", e);
+			status.error("Unable to check for mail", e);
 		} finally {
+			status.setProgress(1);
 			if (store!=null) {
 				try { store.close(); } catch (MessagingException ignore) {}
 			}
 			surveillanceService.logInfo("Emails found: "+numberOfNewMessages, "");
-			log.info("Finished new date = "+latest);
 			running = false;
 		}
 	}

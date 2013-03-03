@@ -45,7 +45,11 @@ public abstract class ApplicationController extends AbstractController implement
 	
 	public abstract List<Locale> getLocales();
 
-	public String getName() {
+	public final String getName() {
+		return name;
+	}
+	
+	public String getMountPoint() {
 		return name;
 	}
 	

@@ -266,6 +266,18 @@ public class Request {
 		}
 	}
 
+	public float getFloat(String key) {
+		String value = request.getParameter(key);
+		if (Strings.isBlank(value)) {
+			return 0f;
+		}
+		try {
+			return Float.parseFloat(value);
+		} catch (NumberFormatException e) {
+			return 0f;
+		}
+	}
+
 	public boolean getBoolean(String key) {
 		return "true".equals(request.getParameter(key));
 	}

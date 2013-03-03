@@ -44,7 +44,7 @@ public class TopBarComponent extends AbstractComponent {
 		Messages msg = new Messages(this);
 		
 		out.startDiv("oo_topbar oo_faded").withId(getClientId());
-		out.startStrong().write("Online").startSpan().write("Objects").endSpan().endStrong();
+		out.startStrong().startI().write("&#xa4;").endI().write("Online").startSpan().write("Objects").endSpan().endStrong();
 
 		out.startUl("oo_topbar_left");
 		/*

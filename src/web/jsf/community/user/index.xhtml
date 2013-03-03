@@ -85,7 +85,7 @@
 					<div class="content_body images">
 						<h2>Seneste billeder</h2>
 						<oo:gallery model="#{userProfileView.latestImages}" var="image">
-							<oo:thumbnail image="#{image}" width="68" height="68" href="/#{userProfileView.user.username}/images/#{image.id}.html"/>
+							<oo:thumbnail image="#{image}" width="68" height="68" href="/photo/#{image.id}.html" app="photos"/>
 						</oo:gallery>
 					</div>
 					</h:panelGroup>

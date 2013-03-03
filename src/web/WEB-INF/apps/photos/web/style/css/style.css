@@ -43,6 +43,11 @@ div.photos_photo
 	padding: 10px 0;
 }
 
+div.photos_photo div.oo_map
+{
+	margin: 20px auto 0;
+}
+
 div.photos_photo p.oo_words
 {
 	margin-left: -4px;
@@ -56,6 +61,11 @@ div.photos_photo_left
 	margin-right: -1px;
 }
 
+div.photos_photo_left_body
+{
+	padding: 7px 20px 10px;
+}
+
 div.photos_photo_right
 {
 	margin-left: 30%;
@@ -63,6 +73,10 @@ div.photos_photo_right
 	overflow: hidden;
 }
 
+div.photos_photo_right_body
+{
+	padding: 10px 20px;
+}
 
 h1.photos_photo_not_found
 {
@@ -75,6 +89,7 @@ h1.photos_photo_not_found
 div.photos_photo h1
 {
 	font-weight: 100;
+	font-family: 'HelveticaNeue-UltraLight','Helvetica Neue','Helvetica','Arial',sans-serif;
 	margin: 0;
 	color: #333;
 }
@@ -141,7 +156,7 @@ div.photos_controller a
 {
 	vertical-align: middle;
 	display: inline-block;
-	font-size: 36px;
+	font-size: 32px;
 	width: 44px;
 	height: 44px;
 	line-height: 44px;
@@ -152,6 +167,14 @@ div.photos_controller a
 	text-decoration: none;
 	text-shadow: 0 0 2px rgba(0,0,0,.5);
 	outline: none;
+}
+
+div.photos_controller i
+{
+	font-family: 'Humanise';
+	font-style: normal;
+	display: inline-block;
+	text-align: center;
 }
 
 div.photos_controller a:hover
@@ -170,13 +193,8 @@ div.photos_controller_top
 {
 	bottom: none;
 	top: 10px;
+	padding: 0;
 }
-
-div.photos_controller_top a
-{
-	width: 34px;
-}
-
 
 
 
@@ -202,7 +220,7 @@ p.photos_photo_property strong
 
 p.photos_photo_description
 {
-	margin: 0 0px 10px;
+	margin: 0 0px 30px;
 	font-weight: 200;
 	line-height: 20px;
 	font-size: 11pt;
@@ -273,13 +291,13 @@ p.photos_profile_username
 
 p.photos_profile_username span
 {
-	color: #888;
-	font-size: 20px;
+	font-family: 'Humanise';
+	color: #aaa;
+	font-size: 12px;
 	display: inline-block;
 	line-height: 12px;
-	margin-top: -2px;
 	vertical-align: middle;
-	margin-right: 2px;	
+	margin-right: 4px;	
 }
 
 p.photos_profile_username strong

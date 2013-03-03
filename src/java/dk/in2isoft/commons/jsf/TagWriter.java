@@ -175,6 +175,20 @@ public class TagWriter {
 		return endElement("strong");
 	}
 	
+	/////////// I //////////
+	
+	public TagWriter startI() throws IOException {
+		return startElement("i");
+	}
+
+	public TagWriter startI(Object className) throws IOException {
+		return startElement("i").withClass(className);
+	}
+	
+	public TagWriter endI() throws IOException {
+		return endElement("i");
+	}
+	
 	/////////// EM //////////
 	
 	public TagWriter startEm() throws IOException {

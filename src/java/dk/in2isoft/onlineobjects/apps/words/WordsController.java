@@ -16,57 +16,18 @@ import dk.in2isoft.onlineobjects.ui.ScriptWriter;
 import dk.in2isoft.onlineobjects.ui.StylesheetWriter;
 
 public class WordsController extends WordsControllerBase {
+	
 
 	@Path(expression="/style.[0-9]+.css")
 	public void style(Request request) throws IOException, EndUserException {
 		StylesheetWriter writer = new StylesheetWriter(request, configurationService);
-		
-		writer.write("hui","css","button.css");
-		writer.write("hui","css","searchfield.css");
-		writer.write("hui","css","panel.css");
-		writer.write("hui","css","boundpanel.css");
-		writer.write("hui","css","window.css");
-		writer.write("hui","css","list.css");
-		writer.write("hui","css","formula.css");
-		writer.write("hui","css","dropdown.css");
-		writer.write("hui","ext","diagram.css");
-		writer.write("hui","css","box.css");
-		writer.write("WEB-INF","core","web","css","onlineobjects.css");
-		writer.write("WEB-INF","core","web","css","common.css");
-		writer.write("WEB-INF","apps","words","web","style","css","style.css");
-		writer.write("WEB-INF","apps","words","web","style","css","words_sidebar.css");		
-		writer.write("WEB-INF","apps","words","web","style","css","words_search.css");		
-		writer.write("WEB-INF","apps","words","web","style","css","words_word.css");
-		writer.write("WEB-INF","apps","words","web","style","css","words_statistics.css");		
-		writer.write("WEB-INF","apps","words","web","style","css","words_layout.css");		
-		writer.write("WEB-INF","apps","words","web","style","css","words_paging.css");		
-		writer.write("WEB-INF","apps","words","web","style","css","words_list.css");		
-		writer.write("WEB-INF","apps","words","web","style","css","words_import.css");		
+		writer.write(publicStyle);
 	}
 
 	@Path(expression="/script.[0-9]+.js")
 	public void script(Request request) throws IOException, EndUserException {
 		ScriptWriter writer = new ScriptWriter(request, configurationService);
-		
-		writer.write("hui","js","hui.js");
-		writer.write("hui","js","hui_require.js");
-		writer.write("hui","js","hui_animation.js");
-		writer.write("hui","js","ui.js");
-		writer.write("hui","js","SearchField.js");
-		writer.write("hui","js","Button.js");
-		writer.write("hui","js","BoundPanel.js");
-		writer.write("hui","js","List.js");
-		writer.write("hui","js","Overflow.js");
-		writer.write("hui","js","Source.js");
-		writer.write("hui","js","Formula.js");
-		writer.write("hui","js","TextField.js");
-		writer.write("hui","js","DropDown.js");
-		writer.write("hui","ext","Diagram.js");
-		writer.write("hui","js","Drawing.js");
-		writer.write("hui","js","Window.js");
-		writer.write("hui","js","Box.js");
-		writer.write("WEB-INF","core","web","js","onlineobjects.js");
-		writer.write("WEB-INF","apps","words","web","style","js","words.js");
+		writer.write(publicScript);
 	}
 	
 	@Path(start="upload")
@@ -95,6 +56,7 @@ public class WordsController extends WordsControllerBase {
 		ImportSession session = importService.createImportSession(request.getSession());
 		HTMLDocumentImporter handler = new HTMLDocumentImporter(url);
 		handler.setFeedService(feedService);
+		handler.setHtmlService(htmlService);
 		session.setHandler(handler);
 		session.start();
 		

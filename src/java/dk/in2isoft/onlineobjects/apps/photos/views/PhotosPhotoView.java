@@ -85,7 +85,7 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 			}
 			
 			Query<Image> allQuery = Query.after(Image.class).withPrivileged(user).orderByCreated();
-			if (user.getId()!=getRequest().getSession().getIdentity()) {
+			if (user==null || user.getId()!=getRequest().getSession().getIdentity()) {
 				allQuery.withPublicView();
 			}
 			List<Long> ids = modelService.listIds(allQuery);

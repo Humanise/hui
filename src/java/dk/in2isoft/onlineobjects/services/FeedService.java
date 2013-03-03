@@ -1,9 +1,12 @@
 package dk.in2isoft.onlineobjects.services;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URISyntaxException;
 import java.util.List;
+
+import org.apache.commons.io.IOUtils;
 
 import com.google.common.collect.Lists;
 import com.sun.syndication.feed.WireFeed;
@@ -18,15 +21,26 @@ import com.sun.syndication.io.XmlReader;
 
 import dk.in2isoft.commons.lang.Code;
 import dk.in2isoft.onlineobjects.core.exceptions.NetworkException;
+import dk.in2isoft.onlineobjects.modules.networking.NetworkResponse;
+import dk.in2isoft.onlineobjects.modules.networking.NetworkService;
 
 public class FeedService {
+	
+	private NetworkService networkService;
 
 	public List<Item> getFeedItems(String url) throws NetworkException {
 
         WireFeedInput input = new WireFeedInput();
         WireFeed feed;
+        XmlReader reader = null;
 		try {
-			feed = input.build(new XmlReader(new URL(url)));
+			NetworkResponse response = networkService.get(url);
+			if (!response.isSuccess()) {
+				throw new NetworkException("Unable to fecth");
+			}
+			File file = response.getFile();
+			reader = new XmlReader(file);
+			feed = input.build(reader);
 		} catch (IllegalArgumentException e) {
 			throw new NetworkException("Unable to get feed items: "+url,e);
 		} catch (MalformedURLException e) {
@@ -35,6 +49,10 @@ public class FeedService {
 			throw new NetworkException("Unable to get feed items: "+url,e);
 		} catch (IOException e) {
 			throw new NetworkException("Unable to get feed items: "+url,e);
+		} catch (URISyntaxException e) {
+			throw new NetworkException("Unable to get feed items: "+url,e);
+		} finally {
+			IOUtils.closeQuietly(reader);
 		}
         if (feed instanceof Channel) {
         	Channel channel = (Channel) feed;
@@ -57,5 +75,9 @@ public class FeedService {
         	return items;
         }
         return null;
+	}
+	
+	public void setNetworkService(NetworkService networkService) {
+		this.networkService = networkService;
 	}
 }

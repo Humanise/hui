@@ -24,11 +24,11 @@ import com.sun.syndication.io.WireFeedInput;
 import com.sun.syndication.io.XmlReader;
 
 import de.l3s.boilerpipe.BoilerpipeProcessingException;
-import de.l3s.boilerpipe.extractors.ArticleExtractor;
 import dk.in2isoft.commons.lang.Code;
 import dk.in2isoft.commons.lang.Matrix;
 import dk.in2isoft.commons.lang.MatrixEntry;
 import dk.in2isoft.commons.parsing.HTMLDocument;
+import dk.in2isoft.onlineobjects.modules.networking.HTMLService;
 import dk.in2isoft.onlineobjects.services.SemanticService;
 import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 import dk.in2isoft.onlineobjects.util.semantics.Danish;
@@ -41,6 +41,9 @@ public class TestComparison extends AbstractSpringTestCase {
 	
 	@Autowired
 	private SemanticService semanticService;
+	
+	@Autowired
+	private HTMLService htmlService;
 	
 	//@Test
 	public void testWikipedia() throws Exception {
@@ -121,9 +124,11 @@ public class TestComparison extends AbstractSpringTestCase {
 	private void compareUrls(List<String> urls, Language language) throws MalformedURLException, BoilerpipeProcessingException {
 		Map<String,String> docs = Maps.newHashMap();
 		for (String url : urls) {
-			HTMLDocument document = new HTMLDocument(url);
-			String text = ArticleExtractor.INSTANCE.getText(new URL(url));
-			docs.put(document.getTitle()+" : "+url, text);
+			HTMLDocument document = htmlService.getDocumentSilently(url);
+			if (document!=null) {
+				String text = document.getExtractedContents();
+				docs.put(document.getTitle()+" : "+url, text);
+			}
 		}
 		
 		Matrix<String, String, Double> matrix = new Matrix<String, String, Double>();

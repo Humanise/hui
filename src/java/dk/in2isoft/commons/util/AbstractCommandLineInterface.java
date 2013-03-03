@@ -16,7 +16,7 @@ public abstract class AbstractCommandLineInterface {
 		Process p;
 		try {
 			p = Runtime.getRuntime().exec(cmd,new String[] {"PATH=/opt/local/bin:/opt/local/sbin:/bin:/sbin:/usr/bin:/usr/local/bin:/usr/sbin"});
-			checkError(p);
+			checkError(p,cmd);
 			return getResult(p);
 		} catch (IOException e) {
 			throw new EndUserException(e);
@@ -25,7 +25,7 @@ public abstract class AbstractCommandLineInterface {
 		}
 	}
 
-	private void checkError(Process p) throws EndUserException, IOException, InterruptedException {
+	private void checkError(Process p, String cmd) throws EndUserException, IOException, InterruptedException {
 		InputStream s = p.getErrorStream();
 		int c;
 		StringWriter sw = new StringWriter();
@@ -34,6 +34,7 @@ public abstract class AbstractCommandLineInterface {
 		}
 		if (sw.getBuffer().length()>0) {
 			log.warn(sw.getBuffer().toString());
+			log.warn("command: "+cmd);
 			if (p.waitFor()!=0) {
 				throw new EndUserException(sw.toString());				
 			}

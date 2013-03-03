@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import dk.in2isoft.commons.parsing.HTMLDocument;
+import dk.in2isoft.onlineobjects.modules.networking.HTMLService;
 import dk.in2isoft.onlineobjects.services.DictionaryService;
 import dk.in2isoft.onlineobjects.services.SemanticService;
 import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
@@ -21,9 +22,12 @@ public class TestDictionaryService extends AbstractSpringTestCase {
 	@Autowired
 	private DictionaryService dictionaryService;
 
+	@Autowired
+	private HTMLService htmlService;
+
 	@Test
 	public void testSetup() throws MalformedURLException {
-		HTMLDocument htmlDocument = new HTMLDocument("http://en.wikipedia.org/wiki/English_language");
+		HTMLDocument htmlDocument = htmlService.getDocumentSilently("http://en.wikipedia.org/wiki/English_language");
 		String text = htmlDocument.getText();
 		
 		String[] uniqueWords = semanticService.getUniqueWords(semanticService.getWords(text));
@@ -42,5 +46,9 @@ public class TestDictionaryService extends AbstractSpringTestCase {
 	
 	public void setSemanticService(SemanticService semanticService) {
 		this.semanticService = semanticService;
+	}
+	
+	public void setHtmlService(HTMLService htmlService) {
+		this.htmlService = htmlService;
 	}
 }

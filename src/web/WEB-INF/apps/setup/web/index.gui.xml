@@ -4,9 +4,10 @@
 		<toolbar variant="dock">
 			<icon icon="common/settings" title="Settings" click="dock.setUrl('settings.gui')"/>
 			<icon icon="common/time" title="Jobs" click="dock.setUrl('scheduler.gui')"/>
+			<icon icon="common/search" title="Surveillance" click="dock.setUrl('surveillance.gui')"/>
+			<divider/>
 			<icon icon="common/object" title="Model" click="dock.setUrl('model.gui')"/>
 			<icon icon="common/image" title="Images" click="dock.setUrl('images.gui')"/>
-			<icon icon="common/search" title="Surveillance" click="dock.setUrl('surveillance.gui')"/>
 			<icon icon="common/user" title="Users" click="dock.setUrl('users.gui')"/>
 		</toolbar>
 	</dock>

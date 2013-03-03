@@ -3,7 +3,6 @@ package dk.in2isoft.commons.parsing;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.MalformedURLException;
-import java.net.URL;
 
 import nu.xom.Builder;
 import nu.xom.ParsingException;
@@ -17,19 +16,16 @@ import org.w3c.dom.Document;
 
 public class XMLDocument extends TextDocument {
 
+
 	private static Logger log = Logger.getLogger(XMLDocument.class);
     private Document DOMDocument;
     private nu.xom.Document XOMDocument;
-    
-	public XMLDocument(URL url) {
-		super(url);
-	}
-	
-	public XMLDocument(String url) throws MalformedURLException {
-		super(url);
-	}
-	
-	public Document getDOMDocument() {
+    	
+    public XMLDocument(String raw) throws MalformedURLException {
+    	super(raw);
+    }
+
+    public Document getDOMDocument() {
 		if (DOMDocument==null) {
             nu.xom.Document xom = getXOMDocument();
             if (xom!=null) {

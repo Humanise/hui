@@ -11,11 +11,7 @@ import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.onlineobjects.core.ModelService;
@@ -27,12 +23,12 @@ import dk.in2isoft.onlineobjects.model.InternetAddress;
 import dk.in2isoft.onlineobjects.modules.index.IndexManager;
 import dk.in2isoft.onlineobjects.modules.index.IndexSearchResult;
 import dk.in2isoft.onlineobjects.modules.index.IndexService;
+import dk.in2isoft.onlineobjects.modules.networking.HTMLService;
 import dk.in2isoft.onlineobjects.services.ConfigurationService;
 import dk.in2isoft.onlineobjects.services.FileService;
+import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations="classpath:applicationContext.xml")
-public class TestIndexService extends AbstractJUnit4SpringContextTests {
+public class TestIndexService extends AbstractSpringTestCase {
 	
 	private static final Logger log = Logger.getLogger(TestIndexService.class);
 	
@@ -44,6 +40,8 @@ public class TestIndexService extends AbstractJUnit4SpringContextTests {
 	private FileService fileService;
 	@Autowired
 	private IndexService indexService;
+	@Autowired
+	private HTMLService htmlService;
 	
 	//@Test
 	public void testInternetAddress() throws EndUserException {
@@ -56,8 +54,10 @@ public class TestIndexService extends AbstractJUnit4SpringContextTests {
 			log.info(address.getAddress());
 			Document doc = new Document();
 			try {
-				HTMLDocument html = new HTMLDocument(address.getAddress());
-				doc.add(new StringField("text", html.getText(), Field.Store.YES));
+				HTMLDocument html = htmlService.getDocumentSilently(address.getAddress());
+				if (html!=null) {
+					doc.add(new StringField("text", html.getText(), Field.Store.YES));
+				}
 			} catch (Exception e) {
 				log.info(e.getMessage(), e);
 			}
@@ -121,7 +121,7 @@ public class TestIndexService extends AbstractJUnit4SpringContextTests {
 		this.indexService = indexService;
 	}
 
-	public IndexService getIndexService() {
-		return indexService;
+	public void setHtmlService(HTMLService htmlService) {
+		this.htmlService = htmlService;
 	}
 }

@@ -4,7 +4,8 @@ public class ImageTransformation {
 	private int width;
 	private int height;
 	private boolean cropped;
-	private int sepia;
+	private float sepia;
+	private float sharpen;
 	
 	public void setWidth(int width) {
 		this.width = width;
@@ -24,10 +25,19 @@ public class ImageTransformation {
 	public boolean isCropped() {
 		return cropped;
 	}
-	public void setSepia(int sepia) {
+	public void setSepia(float sepia) {
 		this.sepia = sepia;
 	}
-	public int getSepia() {
+	public float getSepia() {
 		return sepia;
+	}
+	public float getSharpen() {
+		return sharpen;
+	}
+	public void setSharpen(float sharpen) {
+		this.sharpen = sharpen;
+	}
+	public boolean isTransformed() {
+		return width>0 || height>0 || cropped || sharpen>0 || sepia>0;
 	}
 }

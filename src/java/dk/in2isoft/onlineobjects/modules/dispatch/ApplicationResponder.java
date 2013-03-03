@@ -54,7 +54,7 @@ public class ApplicationResponder implements Responder, InitializingBean {
 		for (ApplicationController ctrl : controllers.values()) {
 			Application app = new Application();
 			app.setName(ctrl.getName());
-			app.addProperty(Application.PROPERTY_URL_MAPPING, ctrl.getName()+"."+domain);
+			app.addProperty(Application.PROPERTY_URL_MAPPING, ctrl.getMountPoint()+"."+domain);
 			apps.add(app);
 		}
 

@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockServletContext;
@@ -25,7 +26,7 @@ public class TestRequest extends AbstractSpringTestCase {
 		request.setLocalContext(new String[] { "app", "words" });
 
 		assertEquals("10.20.3.5", httpRequest.getLocalName());
-		assertEquals("http://10.20.3.5:9090/test/app/words/index/a", httpRequest.getRequestURI());
+		assertEquals("http://10.20.3.5:9090/test/app/words/index/a", httpRequest.getRequestURL().toString());
 		assertEquals(9090, httpRequest.getServerPort());
 		
 		assertEquals("10.20.3.5", request.getDomainName());
@@ -35,7 +36,8 @@ public class TestRequest extends AbstractSpringTestCase {
 		assertEquals("/test", request.getBaseContext());
 		assertEquals("/test/app/words", request.getLocalContext());
 		
-		assertArrayEquals(new String[] {"app","words","index","a"}, request.getFullPath());
+		String[] fullPath = request.getFullPath();
+		assertArrayEquals("Full path not as expected: "+StringUtils.join(fullPath, ","),new String[] {"app","words","index","a"}, fullPath);
 
 		assertEquals("/index/a", request.getLocalPathAsString());
 		assertArrayEquals(new String[] {"index","a"}, request.getLocalPath());
@@ -53,19 +55,20 @@ public class TestRequest extends AbstractSpringTestCase {
 		assertEquals("words.onlineobjects.com", request.getDomainName());
 		assertEquals("onlineobjects.com", request.getBaseDomain());
 		assertEquals("onlineobjects.com/test", request.getBaseDomainContext());
+		assertArrayEquals(new String[] {"app","words","index","a"}, request.getFullPath());
 	}
 	
-	private MockHttpServletRequest buildMock(String uri, String contextPath) {
+	private MockHttpServletRequest buildMock(String completeUrl, String contextPath) {
 		try {
-			URI uri2 = new URI(uri);
+			URI uri = new URI(completeUrl);
 			MockServletContext context = new MockServletContext();
 			context.setContextPath(contextPath);
-			MockHttpServletRequest httpRequest = new MockHttpServletRequest(context, "get", uri);
-			httpRequest.setLocalName(uri2.getHost());
-			httpRequest.setServerName(uri2.getHost());
-			httpRequest.setServletPath(uri.substring(uri.indexOf(contextPath)+contextPath.length()));
+			MockHttpServletRequest httpRequest = new MockHttpServletRequest(context, "get", uri.getPath());
+			httpRequest.setLocalName(uri.getHost());
+			httpRequest.setServerName(uri.getHost());
+			httpRequest.setServletPath(completeUrl.substring(completeUrl.indexOf(contextPath)+contextPath.length()));
 			httpRequest.setContextPath(contextPath);
-			httpRequest.setServerPort(uri2.getPort());
+			httpRequest.setServerPort(uri.getPort());
 			return httpRequest;
 		} catch (URISyntaxException e) {
 			return null;

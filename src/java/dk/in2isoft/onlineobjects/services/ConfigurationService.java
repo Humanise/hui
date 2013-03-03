@@ -42,6 +42,8 @@ public class ConfigurationService implements InitializingBean {
 	private File indexDir;
 	
 	private Multimap<String, Locale> appLocales = HashMultimap.create();
+	
+	private LifeCycleService lifeCycleService;
 
 
 	public void afterPropertiesSet() throws Exception {
@@ -100,6 +102,10 @@ public class ConfigurationService implements InitializingBean {
 			name.append(path[i]);
 		}
 		return new File(name.toString());
+	}
+	
+	public String getDeploymentId() {
+		return String.valueOf(lifeCycleService.getStartTime().getTime());
 	}
 	
 
@@ -207,5 +213,9 @@ public class ConfigurationService implements InitializingBean {
 
 	public void setRootDomain(String rootDomain) {
 		this.rootDomain = rootDomain;
+	}
+	
+	public void setLifeCycleService(LifeCycleService lifeCycleService) {
+		this.lifeCycleService = lifeCycleService;
 	}
 }

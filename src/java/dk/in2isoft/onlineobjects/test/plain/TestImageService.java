@@ -71,8 +71,10 @@ public class TestImageService extends AbstractSpringTestCase {
 		// Clean up
 		modelService.deleteEntity(image, privileged);
 		modelService.deleteEntity(location, privileged);
+		
+		modelService.commit();
 	}
-
+	
 	public void setImageService(ImageService imageService) {
 		this.imageService = imageService;
 	}

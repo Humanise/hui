@@ -1,6 +1,5 @@
 package dk.in2isoft.onlineobjects.services;
 
-import java.net.MalformedURLException;
 import java.util.List;
 
 import com.sun.syndication.feed.rss.Description;
@@ -10,6 +9,7 @@ import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.commons.parsing.HTMLReference;
 import dk.in2isoft.onlineobjects.core.exceptions.NetworkException;
 import dk.in2isoft.onlineobjects.model.RemoteAccount;
+import dk.in2isoft.onlineobjects.modules.networking.HTMLService;
 import dk.in2isoft.onlineobjects.util.remote.RemoteAccountInfo;
 import dk.in2isoft.onlineobjects.util.remote.RemoteArticle;
 import dk.in2isoft.onlineobjects.util.remote.RemoteImageGallery;
@@ -17,6 +17,7 @@ import dk.in2isoft.onlineobjects.util.remote.RemoteStatusUpdate;
 
 public class RemoteDataService {
 	
+	private HTMLService htmlService;
 	private FeedService feedService;
 
 	public RemoteAccountInfo getInfo(RemoteAccount account) {
@@ -55,8 +56,8 @@ public class RemoteDataService {
 			}
 		} else if ("twitter.com".equals(account.getDomain())) {
 			String url = "http://twitter.com/"+account.getUsername();
-			try {
-				HTMLDocument document = new HTMLDocument(url);
+			HTMLDocument document = htmlService.getDocumentSilently(url);
+			if (document!=null) {
 				List<HTMLReference> references = document.getFeeds();
 				for (HTMLReference htmlReference : references) {
 					
@@ -75,8 +76,6 @@ public class RemoteDataService {
 						}
 					}
 				}
-			} catch (MalformedURLException e) {
-				info.addWarning("Unable to get twitter status");
 			}
 		} else if ("wordpress.com".equals(account.getDomain())) {
 			String url = "http://"+account.getUsername()+".wordpress.com/feed/";
@@ -104,8 +103,8 @@ public class RemoteDataService {
 	public void setFeedService(FeedService feedService) {
 		this.feedService = feedService;
 	}
-
-	public FeedService getFeedService() {
-		return feedService;
+	
+	public void setHtmlService(HTMLService htmlService) {
+		this.htmlService = htmlService;
 	}
 }

@@ -28,7 +28,6 @@ import dk.in2isoft.commons.geo.GeoDistance;
 import dk.in2isoft.commons.util.AbstractCommandLineInterface;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Privileged;
-import dk.in2isoft.onlineobjects.core.exceptions.ContentNotFoundException;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
@@ -52,46 +51,6 @@ public class ImageService extends AbstractCommandLineInterface {
 	public ImageService() {
 	}
 	
-	public File getThumbnail(long id, int size) throws EndUserException {
-		return getThumbnail(id, size, size);
-	}
-
-	public File getThumbnail(long id, int width, int height) throws EndUserException {
-		File folder = storageService.getItemFolder(id);
-		File original = new File(folder, "original");
-		if (!original.isFile()) {
-			throw new ContentNotFoundException("The image with id=" + id + " does not exist");
-		}
-		File converted = new File(folder, "thumbnail-" + width + "x" + height + ".jpg");
-		if (!converted.exists()) {
-			String cmd = getImageMagickCommand()+" -thumbnail " + width
-					+ "x" + height + " " + original.getAbsolutePath() + "[0] " + converted.getAbsolutePath();
-			execute(cmd);
-		}
-		return converted;
-	}
-
-	public File getCroppedThumbnail(long id, int width, int height) throws EndUserException {
-		File folder = storageService.getItemFolder(id);
-		File original = new File(folder, "original");
-		if (!original.isFile()) {
-			throw new ContentNotFoundException("The image with id=" + id + " does not exist");
-		}
-		File converted = new File(folder, "thumbnail-" + width + "x" + height + "cropped.jpg");
-		if (!converted.exists()) {
-			String cmd = getImageMagickCommand()+" -size " + (width * 3)
-					+ "x" + (height * 3) + " " + original.getAbsolutePath() + " -thumbnail x" + (height * 2)
-					+ "   -resize " + (width * 2) + "x<   -resize 50% -gravity center -crop " + width + "x" + height
-					+ "+0+0  +repage " + converted.getAbsolutePath();
-			execute(cmd);
-		}
-		return converted;
-	}
-	
-	private String getImageMagickCommand() {
-		return configurationService.getImageMagickPath() + "/convert"; // -limit area 100mb
-	}
-
 	public int[] getImageDimensions(File file) throws EndUserException {
 		int[] dimensions = new int[] { 0, 0 };
 		log.debug(file.getAbsolutePath());
@@ -392,6 +351,14 @@ public class ImageService extends AbstractCommandLineInterface {
 	public File getImageFile(Image image) {
 		File folder = storageService.getItemFolder(image);
 		return new File(folder,"original");
+	}
+
+	public boolean hasImageFile(Image image) {
+		if (image==null) {
+			return false;
+		}
+		File folder = storageService.getItemFolder(image);
+		return new File(folder,"original").exists();
 	}
 
 	public void changeImageFile(Image image, File file,String contentType) throws EndUserException {

@@ -1,4 +1,4 @@
-package dk.in2isoft.onlineobjects.test.dangerous;
+package dk.in2isoft.onlineobjects.tasks;
 
 import java.io.File;
 import java.io.FileNotFoundException;

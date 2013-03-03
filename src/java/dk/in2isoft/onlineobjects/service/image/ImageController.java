@@ -13,17 +13,21 @@ import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.service.ServiceController;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
+import dk.in2isoft.onlineobjects.util.images.ImageTransformation;
+import dk.in2isoft.onlineobjects.util.images.ImageTransformationService;
 
 public class ImageController extends ServiceController {
 
 	private ImageService imageService;
 	private ModelService modelService;
+	private ImageTransformationService imageTransformationService;
 	
 	private Pattern idPattern;
 	private Pattern widthPattern;
 	private Pattern heightPattern;
 	private Pattern thumbnailPattern;
-	//private Pattern sepiaPattern;
+	private Pattern sharpenPattern;
+	private Pattern sepiaPattern;
 
 	public ImageController() {
 		super("image");
@@ -31,7 +35,8 @@ public class ImageController extends ServiceController {
 		widthPattern = Pattern.compile("width([0-9]+)");
 		heightPattern = Pattern.compile("height([0-9]+)");
 		thumbnailPattern = Pattern.compile("thumbnail([0-9]+)");
-		//sepiaPattern = Pattern.compile("sepia([0-9]+)");
+		sharpenPattern = Pattern.compile("sharpen([0-9]+\\.[0-9]+)");
+		sepiaPattern = Pattern.compile("sepia([0-9]+\\.[0-9]+)");
 	}
 
 	@Override
@@ -43,16 +48,19 @@ public class ImageController extends ServiceController {
 			int width = parseInt(match(widthPattern,subject));
 			int height = parseInt(match(heightPattern,subject));
 			int thumbnail = parseInt(match(thumbnailPattern,subject));
-			//int sepia = parseInt(match(sepiaPattern,subject));
+			float sharpen = parseFloat(match(sharpenPattern,subject));
+			float sepia = parseFloat(match(sepiaPattern,subject));
 			boolean cropped = subject.indexOf("cropped")!=-1;
-			process(request,id,thumbnail,width,height,cropped);
+			process(request,id,thumbnail,width,height,cropped,sharpen,sepia);
 		} else {
 			long id = request.getLong("id");
 			int thumbnail = request.getInt("thumbnail");
 			int width = request.getInt("width");
 			int height = request.getInt("height");
 			boolean cropped = request.getBoolean("cropped");
-			process(request,id,thumbnail,width,height,cropped);
+			float sharpen = request.getFloat("sharpen");
+			float sepia = request.getFloat("sepia");
+			process(request,id,thumbnail,width,height,cropped,sharpen,sepia);
 		}
 	}
 	
@@ -61,6 +69,14 @@ public class ImageController extends ServiceController {
 			return 0;
 		} else {
 			return Integer.valueOf(str);
+		}
+	}
+
+	private float parseFloat(String str) {
+		if (str==null) {
+			return 0f;
+		} else {
+			return Float.valueOf(str);
 		}
 	}
 
@@ -76,31 +92,28 @@ public class ImageController extends ServiceController {
 		return null;
 	}
 
-	private void process(Request request, long id, int thumbnail, int width, int height, boolean cropped) throws IOException, EndUserException {		
+	private void process(Request request, long id, int thumbnail, int width, int height, boolean cropped, float sharpen, float sepia) throws IOException, EndUserException {		
 		File file;
 		Image image = modelService.get(Image.class, id, request.getSession());
 		if (image==null) {
-			//throw new ContentNotFoundException("The image could not be found");
+			throw new ContentNotFoundException("The image could not be found, id="+id);
 		}
 		String mime;
-		if (thumbnail > 0) {
-			if (cropped) {
-				file = imageService.getCroppedThumbnail(id, thumbnail, thumbnail);
-			} else {
-				file = imageService.getThumbnail(id, thumbnail);
-			}
-			mime = "image/jpeg";
-		} else if (width > 0 && height > 0) {
-			if (cropped) {
-				file = imageService.getCroppedThumbnail(id, width, height);
-			} else {
-				file = imageService.getThumbnail(id, width, height);
-			}
-			mime = "image/jpeg";
+		ImageTransformation trans = new ImageTransformation();
+		trans.setCropped(cropped);
+		if (thumbnail>0) {
+			trans.setHeight(thumbnail);
+			trans.setWidth(thumbnail);
 		} else {
-			if (image == null) {
-				throw new ContentNotFoundException("Could not load image with id=" + id);
-			}
+			trans.setHeight(height);
+			trans.setWidth(width);
+		}
+		trans.setSharpen(sharpen);
+		trans.setSepia(sepia);
+		if (trans.isTransformed()) {
+			file = imageTransformationService.transform(id, trans);
+			mime = "image/jpeg";			
+		} else {
 			file = imageService.getImageFile(image);
 			mime = image.getContentType();
 		}
@@ -129,4 +142,7 @@ public class ImageController extends ServiceController {
 		return modelService;
 	}
 
+	public void setImageTransformationService(ImageTransformationService imageTransformationService) {
+		this.imageTransformationService = imageTransformationService;
+	}
 }

@@ -78,6 +78,9 @@ var photoView = {
 	},
 	
 	$add$words : function(info) {
+		if (!this.imageId) {
+			throw 'No id';
+		}
 		hui.ui.request({
 			message : {start:'Adding word', delay:300, success:'The word is added'},
 			url : oo.appContext+'/relateWord',
@@ -114,7 +117,7 @@ var photoView = {
 		})
 	},
 	
-	$valueChanged$map : function(info) {
+	$valueChanged$theMap : function(info) {
 		hui.ui.request({
 			message : {start:'Changing location', delay:300, success:'The location is changed'},
 			url : oo.appContext+'/updateLocation',

@@ -24,6 +24,7 @@ import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.WebPage;
 import dk.in2isoft.onlineobjects.model.WebSite;
+import dk.in2isoft.onlineobjects.modules.networking.HTMLService;
 import dk.in2isoft.onlineobjects.services.FileService;
 import dk.in2isoft.onlineobjects.services.GraphService;
 import dk.in2isoft.onlineobjects.services.ImportService;
@@ -44,6 +45,7 @@ public class CommunityController extends ApplicationController {
 	private GraphService graphService;
 	private SecurityService securityService;
 	private WebModelService webModelService;
+	private HTMLService htmlService;
 
 	private static CommunityDAO dao = new CommunityDAO();
 
@@ -161,7 +163,7 @@ public class CommunityController extends ApplicationController {
 
 	private void importBookmarks(Request request) throws IOException, EndUserException {
 		DataImporter dataImporter = importService.createImporter();
-		dataImporter.setListener(new InternetAddressImporter(modelService));
+		dataImporter.setListener(new InternetAddressImporter(modelService,htmlService));
 		dataImporter.importMultipart(this, request);
 		request.getResponse().setStatus(HttpServletResponse.SC_OK);
 		request.getResponse().getWriter().write("OK");
@@ -322,5 +324,9 @@ public class CommunityController extends ApplicationController {
 	
 	public void setWebModelService(WebModelService webModelService) {
 		this.webModelService = webModelService;
+	}
+	
+	public void setHtmlService(HTMLService htmlService) {
+		this.htmlService = htmlService;
 	}
 }

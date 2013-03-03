@@ -30,6 +30,7 @@ import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.commons.xml.DOM;
 import dk.in2isoft.commons.xml.Serializing;
+import dk.in2isoft.onlineobjects.modules.networking.HTMLService;
 import dk.in2isoft.onlineobjects.services.SemanticService;
 import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 
@@ -40,6 +41,9 @@ public class TestHTMLParsing extends AbstractSpringTestCase {
 	@Autowired
 	private SemanticService semanticService;
 		
+	@Autowired
+	private HTMLService htmlService;
+
 	@Test
 	public void testComplexWikipediaPage() throws Exception {
 		runTest("kommunaldirektoer_fyret_efter_beskyldninger_mod_borgmester.html");
@@ -51,7 +55,7 @@ public class TestHTMLParsing extends AbstractSpringTestCase {
 	
 	private void runTest(String fileName) throws MalformedURLException, IOException, BoilerpipeProcessingException {
 		URI uri = getTestFile("articles/"+fileName).toURI();
-		HTMLDocument doc = new HTMLDocument(uri);		
+		HTMLDocument doc = htmlService.getDocumentSilently(uri);
 		
 		Document document = doc.getXOMDocument();
 		
@@ -249,5 +253,8 @@ public class TestHTMLParsing extends AbstractSpringTestCase {
 	public void setSemanticService(SemanticService semanticService) {
 		this.semanticService = semanticService;
 	}
-
+	
+	public void setHtmlService(HTMLService htmlService) {
+		this.htmlService = htmlService;
+	}
 }

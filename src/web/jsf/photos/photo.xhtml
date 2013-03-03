@@ -13,7 +13,6 @@
 		
 		<ui:define name="scripts">
 			<c:if test="#{not empty photosPhotoView.image}">
-				<o:script src="/style/js/photo_view.js"/>
 				<o:script>
 					photoView.editable = #{photosPhotoView.canModify};
 					photoView.imageId = #{photosPhotoView.image.id};
@@ -35,76 +34,76 @@
 						<o:thumbnail image="#{photosPhotoView.image}" width="980" zoom="true" frame="false"/>
 					</c:if>
 					<div class="photos_controller oo_faded">
-						<o:link href="/service/image/id#{photosPhotoView.image.id}.jpg?download=true" core="true" plain="true"><i class="icon-download-alt"></i></o:link>
-						<o:link href="/service/image/id#{photosPhotoView.image.id}.jpg" core="true" plain="true"><i class="icon-resize-full"></i></o:link>
+						<o:link href="/service/image/id#{photosPhotoView.image.id}.jpg?download=true" core="true" plain="true"><i>d</i></o:link>
+						<o:link href="/service/image/id#{photosPhotoView.image.id}.jpg" core="true" plain="true"><i>x</i></o:link>
 					</div>
 					<div class="photos_controller photos_controller_top oo_faded">
-						<o:link href="/#{wordsLayoutView.language}/photo/#{photosPhotoView.previousId}.html" plain="true"><i class="icon-chevron-left"></i></o:link>
-						<o:link href="/#{wordsLayoutView.language}/photo/#{photosPhotoView.nextId}.html" plain="true"><i class="icon-chevron-right"></i></o:link>
+						<o:link href="/#{wordsLayoutView.language}/photo/#{photosPhotoView.previousId}.html" plain="true"><i>&lt;</i></o:link>
+						<o:link href="/#{wordsLayoutView.language}/photo/#{photosPhotoView.nextId}.html" plain="true"><i>&gt;</i></o:link>
 					</div> 
 				</div>
 				
 				<div class="photos_photo">
 					<div class="photos_photo_left">
-						<div style="padding: 7px 20px 10px;">
-						<ui:fragment id="title">
-							<h1 id="editableTitle">#{photosPhotoView.image.name}</h1>
-						</ui:fragment>
-							<o:words words="#{photosPhotoView.words}" editable="#{photosPhotoView.canModify}" name="words"/>
-							<ui:remove>
-						<p class="photos_photo_by"><span>#{msg.added} </span><strong>
-							<h:outputText value="#{photosPhotoView.image.created}">
-								<f:convertDateTime pattern="EEEE 'd'. d.  MMMM yyyy" locale="da_DK"/>
-							</h:outputText></strong> #{msg.by} <o:link app="photos" href="/#{photosPhotoView.language}/users/#{photosPhotoView.user.username}/">#{photosPhotoView.person.fullName}</o:link>
-						</p>
-						</ui:remove>
-						<div id="photos_photo_description">
-							<c:if test="#{not photosPhotoView.canModify and not empty photosPhotoView.description}">
-								<p class="photos_photo_description" style="margin-top: 10px;">
-									<span class="photos_photo_description_start">&#8220;</span><o:out value="#{photosPhotoView.description}" escape="false"/><span class="photos_photo_description_end">&#8221;</span>
-								</p>
-							</c:if>
-							<c:if test="#{photosPhotoView.canModify}">
-								<div style="margin-top: 10px;">
-								<gui:pages name="descriptionPages">
-									<gui:page>
-										<c:if test="#{not empty photosPhotoView.description}">
-											<p class="photos_photo_description">
-												<span class="photos_photo_description_start">&#8220;</span><o:out value="#{photosPhotoView.description}" escape="false"/><span class="photos_photo_description_end">&#8221;</span>
-											</p>
-										</c:if>
-										<div style="padding: 0 0px 10px;">
-											<gui:button variant="paper" text="Edit description" small="true" name="addDescription"/>
+						<div class="photos_photo_left_body">
+							<div class="photos_photo_info">
+								<h1 id="editableTitle">#{photosPhotoView.image.name}</h1>
+								<o:words words="#{photosPhotoView.words}" editable="#{photosPhotoView.canModify}" name="words"/>
+								<ui:remove>
+									<p class="photos_photo_by"><span>#{msg.added} </span><strong>
+										<h:outputText value="#{photosPhotoView.image.created}">
+											<f:convertDateTime pattern="EEEE 'd'. d.  MMMM yyyy" locale="da_DK"/>
+										</h:outputText></strong> #{msg.by} <o:link app="photos" href="/#{photosPhotoView.language}/users/#{photosPhotoView.user.username}/">#{photosPhotoView.person.fullName}</o:link>
+									</p>
+								</ui:remove>
+								<div id="photos_photo_description">
+									<c:if test="#{not photosPhotoView.canModify and not empty photosPhotoView.description}">
+										<p class="photos_photo_description" style="margin-top: 10px;">
+											<span class="photos_photo_description_start">&#8220;</span><o:out value="#{photosPhotoView.description}" escape="false"/><span class="photos_photo_description_end">&#8221;</span>
+										</p>
+									</c:if>
+									<c:if test="#{photosPhotoView.canModify}">
+										<div style="margin-top: 10px;">
+										<gui:pages name="descriptionPages">
+											<gui:page>
+												<c:if test="#{not empty photosPhotoView.description}">
+													<p class="photos_photo_description">
+														<span class="photos_photo_description_start">&#8220;</span><o:out value="#{photosPhotoView.description}" escape="false"/><span class="photos_photo_description_end">&#8221;</span>
+													</p>
+												</c:if>
+												<div style="padding: 0 0px 10px;">
+													<gui:button variant="paper" text="Edit description" small="true" name="addDescription"/>
+												</div>
+											</gui:page>
+											<gui:page>
+												<div style="padding: 0 0px 10px;">
+												<gui:textInput name="description" multiline="true" value="#{photosPhotoView.description}"/>
+												<div style="padding: 5px 0 0;">
+												<gui:buttons>
+													<gui:button text="Save" variant="paper" name="saveDescription" small="true"/>
+													<gui:button text="Cancel" variant="paper" name="cancelDescription" small="true"/>
+												</gui:buttons>
+												</div>
+												</div>
+											</gui:page>
+										</gui:pages>
 										</div>
-									</gui:page>
-									<gui:page>
-										<div style="padding: 0 0px 10px;">
-										<gui:textInput name="description" multiline="true" value="#{photosPhotoView.description}"/>
-										<div style="padding: 5px 0 0;">
-										<gui:buttons>
-											<gui:button text="Save" variant="paper" name="saveDescription" small="true"/>
-											<gui:button text="Cancel" variant="paper" name="cancelDescription" small="true"/>
-										</gui:buttons>
-										</div>
-										</div>
-									</gui:page>
-								</gui:pages>
+									</c:if>
 								</div>
-							</c:if>
-						</div>
-						<o:map name="map" location="#{photosPhotoView.mapPoint}" dynamic="false" editable="#{photosPhotoView.canModify}"/>
+							</div>
+							<o:map name="theMap" location="#{photosPhotoView.mapPoint}" dynamic="false" editable="#{photosPhotoView.canModify}"/>
 						</div>
 					</div>
 					<div class="photos_photo_right">
-						<div style="padding: 10px 20px;">
+						<div class="photos_photo_right_body">
 						<div class="photos_profile">
 							<div class="photos_profile_photo">
 								<o:thumbnail image="#{photosPhotoView.personImage}" width="80" height="90" zoom="true" frame="false"/>
 							</div>
 							<div class="photos_profile_body">
 								<p style="font-weight: 500; color: #333;">#{photosPhotoView.person.fullName}</p>
-								<p class="photos_profile_username"><span>&#9863;</span><strong>#{photosPhotoView.user.username}</strong></p>
-								<p style="margin-top: 5px"><o:link app="photos" href="/#{photosPhotoView.language}/users/#{photosPhotoView.user.username}/">Profile »</o:link></p>
+								<p class="photos_profile_username"><span>u</span><strong>#{photosPhotoView.user.username}</strong></p>
+								<p style="margin-top: 5px"><o:link app="photos" href="/users/#{photosPhotoView.user.username}/">Profile »</o:link></p>
 							</div>
 						</div>
 						<div class="photos_photo_properties oo_faded">
@@ -132,17 +131,17 @@
 
 				</div>
 				
-				
-				<gui:boundPanel name="locationPanel" modal="true">
-					<gui:formula name="locationForm">
-						<gui:locationInput key="location"/>
-					</gui:formula>
-					<div style="margin-top: 3px;">
-						<gui:button text="Save" name="saveLocation" small="true"/>
-					</div>
-				</gui:boundPanel>
-				
 				<c:if test="#{photosPhotoView.canModify}">
+				
+					<gui:boundPanel name="locationPanel" modal="true" >
+						<gui:formula name="locationForm">
+							<gui:locationInput key="location"/>
+						</gui:formula>
+						<div style="margin-top: 3px;">
+							<gui:button text="Save" name="saveLocation" small="true"/>
+						</div>
+					</gui:boundPanel>
+				
 					<ui:include src="../shared/wordfinder.xhtml"/>
 				</c:if>
 			</c:if>

@@ -32,6 +32,7 @@ import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.InternetAddress;
 import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.modules.importing.ImportSession;
+import dk.in2isoft.onlineobjects.modules.networking.HTMLService;
 import dk.in2isoft.onlineobjects.services.ImportService;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
@@ -40,6 +41,7 @@ public class DesktopController extends ApplicationController {
 	
 	private ImportService importService;
 	private ImageService imageService;
+	private HTMLService htmlService;
 	
 	private static final Logger log = Logger.getLogger(DesktopController.class);
 
@@ -135,7 +137,7 @@ public class DesktopController extends ApplicationController {
 	public void analyzeURL(Request request) throws IOException {
 		String url = request.getString("url");
 		InternetAddressInfo info = new InternetAddressInfo();
-		HTMLDocument doc = new HTMLDocument(url);
+		HTMLDocument doc = htmlService.getDocumentSilently(url);
 		info.setName(doc.getTitle());
 		info.setAddress(url);
 		info.setDescription(StringUtils.abbreviate(doc.getText(), 500));
@@ -190,5 +192,8 @@ public class DesktopController extends ApplicationController {
 	public void setImageService(ImageService imageService) {
 		this.imageService = imageService;
 	}
-	
+
+	public void setHtmlService(HTMLService htmlService) {
+		this.htmlService = htmlService;
+	}
 }

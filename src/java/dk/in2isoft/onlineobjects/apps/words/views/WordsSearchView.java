@@ -91,9 +91,6 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 			searchQuery.append("category:").append(category);
 		}
 		effectiveQuery = searchQuery.toString();
-		if (!true) {
-			effectiveQuery = text;
-		}
 		SearchResult<IndexSearchResult> indexResult = index.search(effectiveQuery,page,20);
 		if (indexResult.getTotalCount()==0) {
 			return;

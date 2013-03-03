@@ -9,12 +9,16 @@ public class StyleBuilder {
 	}
 	
 	public StyleBuilder withWidth(Number width) {
-		sb.append("width:").append(width).append("px;");
+		if (width!=null) {
+			sb.append("width:").append(width).append("px;");
+		}
 		return this;
 	}
 	
 	public StyleBuilder withHeight(Number height) {
-		sb.append("height:").append(height).append("px;");
+		if (height!=null) {
+			sb.append("height:").append(height).append("px;");
+		}
 		return this;
 	}
 	

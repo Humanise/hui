@@ -50,13 +50,21 @@ public class Files {
 		return false;
 	}
 
+
 	public static String readString(File file) {
+		return readString(file, Strings.UTF8);
+	}
+	
+	public static String readString(File file, String encoding) {
+		if (encoding==null) {
+			encoding = Strings.UTF8;
+		}
 		FileInputStream inputStream = null;
 		StringWriter writer = null;
 		try {
 			writer = new StringWriter();
 			inputStream = new FileInputStream(file);
-			IOUtils.copy(inputStream, writer, "UTF-8");
+			IOUtils.copy(inputStream, writer, encoding);
 			return writer.toString();
 		} catch (FileNotFoundException e) {
 			// Ignore

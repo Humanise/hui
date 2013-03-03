@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.junit.Test;
 
+import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
@@ -17,15 +18,18 @@ public class TestPerson extends AbstractSpringTestCase {
 
 	@Test
 	public void testCreate() throws EndUserException {
+		String givenName = Strings.generateRandomString(5);
+		String additionalName = Strings.generateRandomString(5);
+		String familyName = Strings.generateRandomString(5);
 		Privileged priviledged = getPublicUser();
 		Person person = new Person();
-		person.setGivenName("Jonas1");
-		person.setAdditionalName("Brinkmann2");
-		person.setFamilyName("Munk3");
-		assertEquals("Jonas1 Brinkmann2 Munk3", person.getName());
+		person.setGivenName(givenName);
+		person.setAdditionalName(additionalName);
+		person.setFamilyName(familyName);
+		assertEquals(givenName+" "+additionalName+" "+familyName, person.getName());
 		modelService.createItem(person, priviledged);
 		{
-			Query<Person> query = Query.of(Person.class).withName("Jonas1 Brinkmann2 Munk3");
+			Query<Person> query = Query.of(Person.class).withName(givenName+" "+additionalName+" "+familyName);
 			List<Person> list = modelService.list(query);
 			assertEquals(1, list.size());
 		}

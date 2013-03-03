@@ -24,11 +24,13 @@
 		</ui:define>
 		
 		<ui:define name="sidebar">
+			<ui:remove>
 			<ul>
 				<c:forEach items="#{photosUserView.galleries}" var="gallery">
 				<li>#{gallery.name}</li>
 				</c:forEach>
 			</ul>
+			</ui:remove>
 		</ui:define>
 		
 	</ui:composition>

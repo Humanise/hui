@@ -16,6 +16,8 @@
     <import resource="core-jobs.xml"/>
     <import resource="module-language.xml"/>
     <import resource="module-synchronization.xml"/>
+    <import resource="module-networking.xml"/>
+    <import resource="module-images.xml"/>
     <import resource="app-videosharing.xml"/>
     <import resource="app-setup.xml"/>
     <import resource="app-community.xml"/>
@@ -25,6 +27,7 @@
     <import resource="app-photos.xml"/>
     <import resource="app-account.xml"/>
     <import resource="app-tools.xml"/>
+    <import resource="app-front.xml"/>
 
 	<bean id="configurationService" class="dk.in2isoft.onlineobjects.services.ConfigurationService" autowire="byType">
 		<property name="basePath" value="${basePath}"/>
@@ -68,8 +71,6 @@
 	
 	<bean id="conversionService" class="dk.in2isoft.onlineobjects.services.ConversionService"/>
 	
-
-	<bean id="imageService" class="dk.in2isoft.onlineobjects.util.images.ImageService" autowire="byType"/>
 	
 	<bean id="webModelService" class="dk.in2isoft.onlineobjects.services.WebModelService" autowire="byType"/>
 	

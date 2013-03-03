@@ -246,7 +246,7 @@ public class ModelService {
 		session.save(item);
 		Privilege privilege = new Privilege(privileged.getIdentity(), item.getId(), true);
 		session.save(privilege);
-		commit();
+		//commit();
 		eventService.fireItemWasCreated(item);
 	}
 

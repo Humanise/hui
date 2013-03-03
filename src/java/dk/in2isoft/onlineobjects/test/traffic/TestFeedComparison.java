@@ -27,6 +27,7 @@ import dk.in2isoft.commons.lang.Code;
 import dk.in2isoft.commons.lang.Matrix;
 import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
+import dk.in2isoft.onlineobjects.modules.networking.HTMLService;
 import dk.in2isoft.onlineobjects.services.SemanticService;
 import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 import dk.in2isoft.onlineobjects.util.semantics.English;
@@ -39,6 +40,9 @@ public class TestFeedComparison extends AbstractSpringTestCase {
 	@Autowired
 	private SemanticService semanticService;
 	
+	@Autowired
+	private HTMLService htmlService;
+
 	@Test
 	public void testFeed() throws EndUserException, IllegalArgumentException, FeedException, IOException {
 		
@@ -80,8 +84,10 @@ public class TestFeedComparison extends AbstractSpringTestCase {
 		Map<String,String> docs = Maps.newHashMap();
 		for (String url : urls) {
 			log.info("Fetching: "+url);
-			HTMLDocument document = new HTMLDocument(url);
-			docs.put(document.getTitle().trim()+" : "+url, document.getText());
+			HTMLDocument document = htmlService.getDocumentSilently(url);
+			if (document!=null) {
+				docs.put(document.getTitle().trim()+" : "+url, document.getText());
+			}
 		}
 		
 		docs.put("CSS", "CSS");
@@ -118,5 +124,9 @@ public class TestFeedComparison extends AbstractSpringTestCase {
 
 	public SemanticService getSemanticService() {
 		return semanticService;
+	}
+	
+	public void setHtmlService(HTMLService htmlService) {
+		this.htmlService = htmlService;
 	}
 }

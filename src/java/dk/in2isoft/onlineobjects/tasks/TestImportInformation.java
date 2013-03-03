@@ -1,4 +1,4 @@
-package dk.in2isoft.onlineobjects.test.dangerous;
+package dk.in2isoft.onlineobjects.tasks;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

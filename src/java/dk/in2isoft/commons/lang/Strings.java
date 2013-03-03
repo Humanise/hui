@@ -13,10 +13,12 @@ import com.google.gson.Gson;
 
 public class Strings {
 
+	public static final Object ISO_8859_1 = "ISO-8859-1";
+	public static final String UTF8 = "UTF-8";
+
 	public static final String DEGREE = "\u00B0";
 	public static final String RIGHT_SINGLE_QUOTE = "\u2019";
 	public static final String DOUBLE_APOSTROPHE = "\u02EE";
-	public static final String UTF8 = "UTF-8";
 
 	public static final String UNICODE_AA_LARGE = "\u00C5";
 	public static final String UNICODE_AA = "\u00E5";

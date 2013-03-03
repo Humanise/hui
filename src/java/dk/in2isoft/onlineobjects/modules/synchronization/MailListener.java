@@ -23,6 +23,7 @@ import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.User;
+import dk.in2isoft.onlineobjects.modules.scheduling.JobStatus;
 import dk.in2isoft.onlineobjects.modules.surveillance.SurveillanceService;
 import dk.in2isoft.onlineobjects.services.FileService;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
@@ -37,19 +38,19 @@ public class MailListener {
 	private MemberService memberService;
 	private SurveillanceService surveillanceService;
 	
-	public void mailArrived(Message message) {
+	public void mailArrived(Message message, JobStatus status) {
 		Address[] from;
 		boolean recognized = false;
 		String subject = null;
 		try {
 			from = message.getFrom();
 			subject = message.getSubject();
-			log.info(message.getSubject() + " / " + message.getSentDate() + " / " + message.getFrom());
+			status.log(message.getSubject() + " / " + message.getSentDate() + " / " + from);
 			String usersEmail = null;
 			for (Address address : from) {
 				if (address instanceof InternetAddress) {
 					InternetAddress iad = (InternetAddress) address;
-					log.info("From: " + iad.getAddress() + " / " + iad.getPersonal());
+					status.log("From: " + iad.getAddress() + " / " + iad.getPersonal());
 					usersEmail = iad.getAddress();
 				}
 			}
@@ -65,50 +66,50 @@ public class MailListener {
 					BodyPart part = mp.getBodyPart(j);
 					String contentType = part.getContentType();
 					
-					log.info("-- part-type: " + contentType);
-					log.info("-- part-disp: " + part.getDisposition());
+					log.debug("-- part-type: " + contentType);
+					log.debug("-- part-disp: " + part.getDisposition());
 
 					if (contentType.toLowerCase().startsWith("image/jpg") || contentType.toLowerCase().startsWith("image/jpeg")) {
 						recognized = true;
-						handleImage(usersEmail, "image/jpg",part.getFileName(), message.getSubject(), part.getInputStream());
+						handleImage(usersEmail, "image/jpg",part.getFileName(), message.getSubject(), part.getInputStream(),status);
 					} else if (contentType.toLowerCase().startsWith("image/png")) {
 						recognized = true;
-						handleImage(usersEmail, "image/png",part.getFileName(), message.getSubject(), part.getInputStream());
+						handleImage(usersEmail, "image/png",part.getFileName(), message.getSubject(), part.getInputStream(),status);
 					} else if (contentType.startsWith("multipart")) {
 						MimeMultipart x = new MimeMultipart(part.getDataHandler().getDataSource());
-						log.info("SUB: " + x.getCount());
+						log.debug("SUB: " + x.getCount());
 
 						for (int k = 0; k < x.getCount(); k++) {
 							BodyPart subPart = x.getBodyPart(k);
 							String subContentType = subPart.getContentType();
-							log.info(" ------- " + subContentType);
+							log.debug(" ------- " + subContentType);
 							if (subContentType.toLowerCase().startsWith("image/jpg") || subContentType.toLowerCase().startsWith("image/jpeg")) {
 								recognized = true;
-								handleImage(usersEmail, "image/jpg", subPart.getFileName(), message.getSubject(), subPart.getInputStream());
+								handleImage(usersEmail, "image/jpg", subPart.getFileName(), message.getSubject(), subPart.getInputStream(),status);
 							} else if (contentType.toLowerCase().startsWith("image/png")) {
 								recognized = true;
-								handleImage(usersEmail, "image/png",subPart.getFileName(), message.getSubject(), subPart.getInputStream());
+								handleImage(usersEmail, "image/png",subPart.getFileName(), message.getSubject(), subPart.getInputStream(),status);
 							}
 						}
 					}
 				}
 			} else {
-				log.info("Content: " + content);
+				log.debug("Content: " + content);
 			}
 		} catch (MessagingException e) {
-			log.error("Error while checking email",e);
+			status.error("Error while checking email",e);
 		} catch (IOException e) {
-			log.error("Error while checking email",e);
+			status.error("Error while checking email",e);
 		} finally {
 			if (!recognized) {
-				surveillanceService.logInfo("The email was not recognized", subject);
+				status.warn("The email was not recognized: "+ subject);
 			}
 		}
 
 	}
 
-	private void handleImage(String usersEmail, String mimeType, String fileName, String subject, InputStream inputStream) {
-		log.info("Image from: " + usersEmail + " of type: " + mimeType + "...");
+	private void handleImage(String usersEmail, String mimeType, String fileName, String subject, InputStream inputStream, JobStatus status) {
+		status.log("Image from: " + usersEmail + " of type: " + mimeType + "...");
 		FileOutputStream output = null;
 		try {
 			User admin = modelService.getUser(SecurityService.ADMIN_USERNAME);
@@ -117,9 +118,9 @@ public class MailListener {
 				File tempFile = File.createTempFile(usersEmail, null);
 				tempFile.deleteOnExit();
 				output = new FileOutputStream(tempFile);
-				log.info("Transfering image from e-mail");
+				status.log("Transfering image from e-mail");
 				IOUtils.copy(inputStream, output);
-				log.info("Creating image from file");
+				status.log("Creating image from file");
 				String title;
 				if (Strings.isNotBlank(subject)) {
 					title = subject;
@@ -127,15 +128,14 @@ public class MailListener {
 					title = fileService.cleanFileName(fileName);
 				}
 				Image image = imageService.createImageFromFile(tempFile, title, user);
-				surveillanceService.logInfo("Created image "+image.getName()+" for the user "+user.getUsername(), "Image-ID: "+image.getId());
+				status.log("Created image "+image.getName()+" for the user "+user.getUsername()+", Image-ID: "+image.getId());
 			} else {
-				surveillanceService.logInfo("Ignoring email since no user found", "Email: "+usersEmail);
-				log.warn("No user found with email:"+usersEmail); 
+				status.warn("Ignoring email since no user found: "+usersEmail);
 			}
 		} catch (IOException e) {
-			log.error("Unable to get stream");
+			status.error("Unable to get stream", e);
 		} catch (ModelException e) {
-			log.error("Unable to create image", e);
+			status.error("Unable to create image", e);
 		} finally {
 			IOUtils.closeQuietly(output);
 			IOUtils.closeQuietly(inputStream);

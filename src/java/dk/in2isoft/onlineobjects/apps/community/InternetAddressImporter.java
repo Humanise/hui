@@ -11,25 +11,30 @@ import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.importing.ImportListener;
 import dk.in2isoft.onlineobjects.model.InternetAddress;
+import dk.in2isoft.onlineobjects.modules.networking.HTMLService;
 import dk.in2isoft.onlineobjects.ui.Request;
 
 class InternetAddressImporter implements ImportListener {
 
 	private ModelService modelService;
+	private HTMLService htmlService;
 
-	public InternetAddressImporter(ModelService modelService) {
+	public InternetAddressImporter(ModelService modelService, HTMLService htmlService) {
 		super();
 		this.modelService = modelService;
+		this.htmlService = htmlService;
 	}
 
 	public void processFile(File file, String mimeType, String name, Map<String,String> parameters, Request request) throws IOException, EndUserException {
-		HTMLDocument doc = new HTMLDocument(file.toURI());
-		List<HTMLReference> references = doc.getReferences();
-		for (HTMLReference htmlReference : references) {
-			InternetAddress address = new InternetAddress();
-			address.setAddress(htmlReference.getUrl());
-			address.setName(htmlReference.getText());
-			modelService.createItem(address, request.getSession());
+		HTMLDocument doc = htmlService.getDocumentSilently(file.toURI().toString());
+		if (doc!=null) {
+			List<HTMLReference> references = doc.getReferences();
+			for (HTMLReference htmlReference : references) {
+				InternetAddress address = new InternetAddress();
+				address.setAddress(htmlReference.getUrl());
+				address.setName(htmlReference.getText());
+				modelService.createItem(address, request.getSession());
+			}
 		}
 	}
 
