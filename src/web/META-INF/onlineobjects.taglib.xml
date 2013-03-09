@@ -180,5 +180,26 @@
       <component-type>onlineobjects.words</component-type>
       <renderer-type>onlineobjects.words</renderer-type>
     </component>
+  </tag>  
+  <tag>
+    <tag-name>footer</tag-name>
+    <component>
+      <component-type>onlineobjects.footer</component-type>
+      <renderer-type>onlineobjects.footer</renderer-type>
+    </component>
+  </tag>
+  <tag>
+    <tag-name>header</tag-name>
+    <component>
+      <component-type>onlineobjects.header</component-type>
+      <renderer-type>onlineobjects.header</renderer-type>
+    </component>
+  </tag>
+  <tag>
+    <tag-name>icon</tag-name>
+    <component>
+      <component-type>onlineobjects.icon</component-type>
+      <renderer-type>onlineobjects.icon</renderer-type>
+    </component>
   </tag>
 </facelet-taglib>

@@ -1,8 +1,13 @@
-body
+div.words
 {
-	background: #fafafa;
-	font-family: 'Helvetica Neue','Helvetica',Arial,sans-serif;
-	margin: 0;
+	padding: 18px 30px 40px;
+}
+
+@media screen and (max-width: 600px) {
+	div.words
+	{
+		padding: 10px;
+	}
 }
 
 /***************** Links ***************/
@@ -18,57 +23,7 @@ a.oo_link span
 	color: #08c;
 }
 
-div.words
-{
-	padding: 18px 30px 40px;
-}
-
-div.oo_layout_top ul a span
-{
-	color: #999;
-}
-
-
-
-/************ Menu ************/
-
-
-ul.words_menu
-{
-	color: #BBBBBB;
-    font-size: 24px;
-    line-height: 20px;
-    list-style-type: circle;
-    margin: 0;
-    padding: 10px 0 0 30px;
-}
-
-ul.words_menu li
-{
-	-webkit-margin-start: 5px;
-}
-
-ul.words_menu li a,
-ul.words_menu li strong
-{
-	font-size: 12pt;
-	position: relative;
-	top: -2px;
-	-webkit-margin-start: -4px;
-}
-
-ul.words_menu li strong
-{
-	color: #333;
-	font-weight: bold;
-}
-
-
-
-
-
-
-
+/**************** Titles **************/
 
 h1.words
 {
@@ -87,6 +42,21 @@ h2.words
 	font-weight: normal;
 	font-size: 24px;
 	margin: 20px 0 0;
+}
+
+@media screen and (max-width: 600px) {
+	h1.words
+	{
+		font-size: 2em;
+	}
+}
+
+/*********** index *********/
+
+p.words_index
+{
+	margin: 10px 0;
+	text-transform: uppercase;
 }
 
 
@@ -147,35 +117,4 @@ div.panel_body ul.selection a:hover
     background: -webkit-gradient(linear, 0% 0%, 0% 100% , from(#fff), to(#f6f6f6));
 	background: -moz-linear-gradient(top, #fff, #f6f6f6);
     filter: progid:DXImageTransform.Microsoft.gradient (GradientType=0, startColorstr=#ffffff, endColorstr=#f6f6f6);
-}
-
-
-
-/*********** index *********/
-
-p.words_index
-{
-	margin: 10px 0;
-	text-transform: uppercase;
-}
-
-/************ Import *************/
-
-
-
-/*** About ***/
-
-div.words_about h1
-{
-	margin: 0 0 20px;
-}
-
-div.words_about h2
-{
-	margin: 30px 0 10px;
-}
-
-div.words_about p
-{
-	margin: 5px 0;
 }

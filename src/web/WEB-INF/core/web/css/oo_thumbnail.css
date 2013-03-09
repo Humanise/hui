@@ -1,0 +1,42 @@
+.oo_thumbnail
+{
+	font-size: 0;
+	overflow: hidden;
+	display: inline-block;
+	background: #fff no-repeat scroll center center;
+}
+
+.oo_thumbnail_frame
+{
+	padding: 4px;
+	border: 1px solid #ddd;
+	border-color:#EEEEEE #DDDDDD #CCCCCC;
+}
+
+.oo_thumbnail img
+{
+	border: none;
+}
+
+.oo_thumbnail_video
+{
+	background-color: #eee;
+}
+
+.oo_thumbnail_user
+{
+	background-image: url('../gfx/person_placeholder.png');
+}
+
+.oo_thumbnail_zoom img
+{
+	cursor: pointer;
+	cursor: -webkit-zoom-in;
+}
+
+a.oo_thumbnail_frame:focus
+{
+	padding: 3px;
+	border: 2px solid #79f;
+	outline: none;
+}

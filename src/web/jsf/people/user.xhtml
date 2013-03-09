@@ -24,7 +24,7 @@
 					<div class="people_person_left">
 						<div class="people_person_image" id="profileImage">
 							<c:if test="#{peoplePersonView.image!=null}">
-								<div class="people_person_image_photo" style="background: url('#{baseView.baseContext}/service/image/id#{peoplePersonView.image.id}width90height105sharpen1.0cropped.jpg')"></div>
+								<div class="people_person_image_photo" style="background: url('#{baseView.baseContext}/service/image/id#{peoplePersonView.image.id}width140height180sharpen1.0cropped.jpg')"></div>
 							</c:if>
 						</div>
 						<ui:fragment rendered="#{peoplePersonView.canModify}">
@@ -33,40 +33,46 @@
 					</div>
 					<div class="people_person_info">
 						<div id="profileContainer">
-							<div id="profileInfo" class="rendering">
-								<h1>#{peoplePersonView.person.fullName}</h1>
+							<div id="profileInfo">
+								<o:header>#{peoplePersonView.person.fullName}</o:header>
 								<c:if test="#{peoplePersonView.info.resume!=null &amp;&amp; fn:length(peoplePersonView.info.resume)>0}">
 									<p class="people_person_resume">&#34;#{peoplePersonView.info.resume}&#34;</p>
 								</c:if>
-								<ul class="icons">
+								<ul class="people_person_contact">
 									<c:if test="#{fn:length(peoplePersonView.info.emails)>1}">
 										<c:forEach items="#{peoplePersonView.info.emails}" var="item">
-											<li class="mail"><a href="mailto:#{item.address}" class="oo_link"><span>#{item.address}</span></a></li>
+											<li>
+												<o:icon icon="envelope" size="16"/>
+												<o:link href="mailto:#{item.address}">#{item.address}</o:link>
+											</li>
 										</c:forEach>
 									</c:if>
 									<c:if test="#{fn:length(peoplePersonView.info.urls)>0}">
 										<c:forEach items="#{peoplePersonView.info.urls}" var="item">
-											<li class="url"><a href="#{item.address}" class="oo_link"><span>#{item.address}</span></a></li>
+											<li>
+												<o:icon icon="globe" size="16"/>
+												<o:link href="#{item.address}">#{item.context}</o:link>
+											</li>
 										</c:forEach>
 									</c:if>
 									<c:if test="#{fn:length(peoplePersonView.info.phones)>0}">
 										<c:forEach items="#{peoplePersonView.info.phones}" var="item">
-											<li class="phone">#{item.number}</li>
+											<li>
+												<o:icon icon="phone" size="16"/>
+												#{item.number}
+											</li>
 										</c:forEach>
 									</c:if>
 								</ul>
-								<c:if test="#{peoplePersonView.info.sex!=null}">
-									<p><span class="label">Køn: </span>#{peoplePersonView.info.sex ? 'Mand' : 'Kvinde'}</p>
-								</c:if>
 								<c:if test="#{fn:length(peoplePersonView.info.interests)>0}">
-									<p><span class="label">Interesser: </span>
+									<p class="people_person_property"><span>Interesser: </span>
 										<c:forEach items="#{peoplePersonView.info.interests}" var="item">
 											#{item}
 										</c:forEach>
 									</p>
 								</c:if>
 								<c:if test="#{fn:length(peoplePersonView.info.music)>0}">
-									<p><span class="label">Yndlingsmusik: </span>
+									<p class="people_person_property"><span>Yndlingsmusik: </span>
 										<c:forEach items="#{peoplePersonView.info.music}" var="item">
 											#{item}
 										</c:forEach>
@@ -78,14 +84,14 @@
 							</div>
 						</div>
 					</div>
-					<h:panelGroup rendered="#{not empty peoplePersonView.latestImages.result.list}">
-					<div class="content_body images">
-						<h2>Seneste billeder</h2>
+					<c:if test="#{not empty peoplePersonView.latestImages.result.list}">
+						<div class="people_person_photos">
+						<o:header level="2">Latest photos</o:header>
 						<o:gallery model="#{peoplePersonView.latestImages}" var="image">
-							<o:thumbnail image="#{image}" width="68" height="68" href="/photo/#{image.id}.html" app="photos"/>
+							<o:thumbnail image="#{image}" width="74" height="74" href="/photo/#{image.id}.html" app="photos"/>
 						</o:gallery>
-					</div>
-					</h:panelGroup>
+						</div>
+					</c:if>
 				</div>
 			</c:if>
 		</ui:define>

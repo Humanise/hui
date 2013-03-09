@@ -109,6 +109,18 @@ http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
     	<component-type>onlineobjects.body</component-type>
     	<component-class>dk.in2isoft.onlineobjects.ui.jsf.BodyComponent</component-class>
   	</component>
+    <component>
+    	<component-type>onlineobjects.footer</component-type>
+    	<component-class>dk.in2isoft.onlineobjects.ui.jsf.FooterComponent</component-class>
+  	</component>
+    <component>
+    	<component-type>onlineobjects.header</component-type>
+    	<component-class>dk.in2isoft.onlineobjects.ui.jsf.HeaderComponent</component-class>
+  	</component>
+    <component>
+    	<component-type>onlineobjects.icon</component-type>
+    	<component-class>dk.in2isoft.onlineobjects.ui.jsf.IconComponent</component-class>
+  	</component>
   	
   	
   	

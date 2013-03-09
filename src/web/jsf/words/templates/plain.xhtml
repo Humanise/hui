@@ -15,6 +15,7 @@
 <h:outputText value='&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"&gt;' escape="false"/>
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<h:head>
+		<meta name="viewport" content="user-scalable=yes, width=device-width, initial-scale = 1, maximum-scale = 10, minimum-scale = 0.2"/>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 		<title><ui:insert name="title"/>Words - OnlineObjects</title>
 		<o:stylesheet href="/style.css" integrateCache="true"/>
@@ -29,13 +30,8 @@
 	</h:head>
 	<o:body>
 		<o:topBar/>
-		<div class="words_layout">
-			<div class="words_layout_top"><div class="words_layout_left"></div></div>
-			<div class="words_layout_middle">
-				<div class="words_layout_content">
-					<ui:insert name="body"/>
-				</div>
-				<div class="words_layout_sidebar">
+		<o:layout variant="paper">
+			<f:facet name="sidebar">
 					<div class="words_sidebar">
 						<gui:searchfield adaptive="true" name="wordsSidebarSearch"/>
 						<h3><span>Navigation</span></h3>
@@ -104,22 +100,10 @@
 							</p>
 						</c:if>
 					</div>
-					
-				</div>
-			</div>
-			<div class="words_layout_bottom"><div class="words_layout_right"></div></div>
-		</div>
-		<p class="common_footer oo_faded">
-			<c:forEach items="#{wordsLayoutView.languages}" var="item" varStatus="status">
-				<c:if test="#{not status.first}"> · </c:if>
-				<c:if test="#{item.selected}">
-					<strong>#{item.label}</strong>
-				</c:if>
-				<c:if test="#{not item.selected}">
-					<o:link href="#{item.value}">#{item.label}</o:link>
-				</c:if>
-			</c:forEach>
-		</p>
+			</f:facet>
+			<ui:insert name="body"/>
+		</o:layout>
+		<o:footer/>
 		<o:analytics/>
 	</o:body>
 </html>

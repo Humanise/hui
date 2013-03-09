@@ -181,6 +181,10 @@ public class ConfigurationService implements InitializingBean {
 		this.analyticsCode = analyticsCode;
 	}
 	
+	public Collection<Locale> getApplicationLocales(String app) {
+		return appLocales.get(app);
+	}
+	
 	public String getApplicationContext(String app, String path, Request request) {
 		Locale locale = request.getLocale();
 		if (StringUtils.isBlank(rootDomain)) {

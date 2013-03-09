@@ -1,0 +1,165 @@
+div.oo_layout
+{
+	width: 980px;
+	margin: 0 auto;
+	background: #fff;
+	margin-top: 20px;
+}
+
+
+div.oo_layout_middle
+{
+	overflow: hidden;
+}
+
+div.oo_layout_body
+{
+	width: 780px;
+	float: left;
+}
+
+div.oo_layout_sidebar
+{
+	width: 200px;
+	float: left;
+}
+
+
+
+/***************** Rounded ***************/
+
+div.oo_layout_rounded
+{
+	width: 980px;
+	box-shadow: 0px 1px 3px 0px #999;
+	-webkit-box-shadow: 0px 1px 3px #999;
+	border-radius: 5px;
+}
+
+div.oo_layout_rounded div.oo_layout_top
+{
+	height: 32px;
+	border-bottom: 1px solid #ddd;
+}
+
+div.oo_layout_rounded div.oo_layout_bottom
+{
+	height: 32px;
+	border-top: 1px solid #ddd;
+}
+
+body.oo_msie div.oo_layout_rounded
+{
+	box-shadow: 0px 1px 6px 0px #999;	
+}
+
+body.oo_msie7 div.oo_layout_rounded,
+body.oo_msie8 div.oo_layout_rounded
+{
+	border: 1px solid #ddd;
+}
+
+div.oo_layout_rounded div.oo_layout_middle
+{
+	background: url('../gfx/sidebar.png') 780px top repeat-y;
+	border-radius: 0 0 5px 0;
+}
+
+/***************** Paper ***************/
+
+div.oo_layout_paper
+{
+	width: 1018px;
+	background: url('../gfx/layout_paper.png') 0 0 repeat-y;
+	margin: 20px auto;
+}
+
+div.oo_layout_paper div.oo_layout_top
+{
+	height: 14px;
+	background: url('../gfx/layout_paper.png') -1018px 0;
+}
+
+div.oo_layout_paper div.oo_layout_bottom
+{
+	height: 14px;
+	background: url('../gfx/layout_paper.png') -2036px 0;
+}
+
+div.oo_layout_paper div.oo_layout_middle
+{
+	padding: 0 10px;
+}
+
+div.oo_layout_paper div.oo_layout_body
+{
+	width: 797px;
+	border-right: 1px solid #eee;
+	float: left;
+	min-height: 640px;
+}
+
+div.oo_layout_paper div.oo_layout_sidebar
+{
+	width: 200px;
+	border-left: 1px solid #eee;
+	float: left;
+	margin-left: -1px;
+}
+
+@media screen and (max-width: 1018px) {
+	div.oo_layout_paper
+	{
+		width: auto;
+		background: #fff;
+		margin: 0;
+		border-bottom: 1px solid #eee;
+	}
+	
+	div.oo_layout_paper div.oo_layout_bottom,
+	div.oo_layout_paper div.oo_layout_top
+	{
+		display: none;
+	}
+	
+	div.oo_layout_paper div.oo_layout_middle
+	{
+		padding: 0;
+		position: relative;
+	}
+	
+	div.oo_layout_paper div.oo_layout_sidebar
+	{
+		position: absolute;
+		float: none;
+		right: 0;
+		top: 10px;
+	}
+	
+	div.oo_layout_paper div.oo_layout_body
+	{
+		float: none;
+		width: auto;
+		margin-right: 200px;
+		overflow: hidden;
+	}
+}
+
+@media screen and (max-width: 600px) {
+
+	div.oo_layout_paper div.oo_layout_body
+	{
+		margin: 0;
+		border: none;
+		min-height: auto;
+	}
+	
+	div.oo_layout_paper div.oo_layout_sidebar
+	{
+		position: static;
+		top: 0;
+		border: none;
+		width: auto;
+	}
+	
+}

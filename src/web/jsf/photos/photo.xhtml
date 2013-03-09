@@ -102,7 +102,10 @@
 							</div>
 							<div class="photos_profile_body">
 								<p style="font-weight: 500; color: #333;">#{photosPhotoView.person.fullName}</p>
-								<p class="photos_profile_username"><span>u</span><strong>#{photosPhotoView.user.username}</strong></p>
+								<p class="photos_profile_username">
+									<o:icon icon="user" size="12"/>
+									<strong>#{photosPhotoView.user.username}</strong>
+								</p>
 								<p style="margin-top: 5px"><o:link app="photos" href="/users/#{photosPhotoView.user.username}/">Profile »</o:link></p>
 							</div>
 						</div>

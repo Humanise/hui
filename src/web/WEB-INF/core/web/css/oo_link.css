@@ -1,0 +1,14 @@
+a.oo_link
+{
+	color: #ccc;
+}
+
+a.oo_link span
+{
+	color: #37e;
+}
+
+a.oo_link:hover, a.oo_link:hover span
+{
+	color: #239;
+}

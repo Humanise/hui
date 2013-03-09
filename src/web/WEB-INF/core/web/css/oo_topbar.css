@@ -1,0 +1,257 @@
+div.oo_topbar
+{
+	font-family: 'Helvetica Neue','Helvetica','Arial',sans-serif;
+	overflow: hidden;
+	border-bottom: 1px solid #eee;
+	font-size: 0;
+	-webkit-transition: background 1s,border-color 1s, opacity 1s;
+	-moz-transition: background 1s,border-color 1s, opacity 1s;
+	-ms-transition: background 1s,border-color 1s, opacity 1s;
+}
+
+body.oo_fade div.oo_topbar
+{
+	opacity: 0;
+}
+
+div.oo_topbar:hover
+{
+	background: #fff;
+	box-shadow: 0 0 4px rgba(0,0,0,.1);
+	border-bottom: 1px solid #ddd;
+}
+
+div.oo_topbar strong
+{
+	float: left;
+	font-weight: 300;
+	height: 30px;
+	line-height: 30px;
+	padding: 0 10px;
+	font-size: 12pt;
+	color: #bbb;
+}
+
+div.oo_topbar strong i
+{
+	font-family: 'OnlineObjects';
+	font-style: normal;
+	font-weight: normal;
+	-webkit-font-smoothing: antialiased;
+	margin: -3px 4px 0 -2px;
+	vertical-align: middle;
+	display: inline-block;
+	font-size: 22px;
+}
+
+body.oo_msie7 div.oo_topbar strong
+{
+	display: inline;
+}
+
+div.oo_topbar strong span
+{
+	font-weight: 200;
+	margin-left: 2px;
+	letter-spacing: 1px;
+}
+
+div.oo_topbar strong span span
+{
+	font-weight: 100;
+}
+
+div.oo_topbar ul
+{
+	display: inline-block;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+body.oo_msie7 div.oo_topbar ul
+{
+	display: inline;
+}
+
+div.oo_topbar li
+{
+	display: inline-block;
+}
+
+body.oo_msie7 div.oo_topbar li
+{
+	display: inline;
+}
+
+div.oo_topbar li a
+{
+	display: block;
+	font-size: 11pt;
+	height: 30px;
+	line-height: 30px;
+	padding: 0 10px;
+	color: #bbb;
+	text-decoration: none;
+	font-weight: 300;
+	-webkit-transition-property: color;
+	-webkit-transition-duration: 1s;
+	-moz-transition-property: color;
+	-moz-transition-duration: 1s;
+	-ms-transition-property: color;
+	-ms-transition-duration: 1s;
+}
+
+div.oo_topbar li a:hover
+{
+	text-decoration: underline;
+}
+
+div.oo_topbar:hover li a
+{
+	color: #333;
+}
+
+div.oo_topbar a.oo_topbar_selected
+{
+	font-weight: 400;
+	color: #333;
+}
+
+ul.oo_topbar_left
+{
+	float: left;
+}
+
+ul.oo_topbar_right
+{
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	float: right;
+	font-size: 11pt;
+	right: 0;
+	top: 0;
+	height: 30px;
+	line-height: 30px;
+}
+
+span.oo_topbar_right a
+{
+	display: block;
+	padding: 0 10px;
+	color: #999;
+	text-decoration: none;
+}
+
+div.oo_topbar_info_busy
+{
+	height: 60px;
+	background: url('../../hui/gfx/progress/spinner_white_24.gif') center center no-repeat;
+}
+
+div.oo_topbar_info
+{
+	overflow: hidden;
+}
+
+div.oo_topbar_info_photo
+{
+	width: 50px;
+	height: 60px;
+	float: left;
+	background: #eee;
+	font-size: 0;
+}
+
+div.oo_topbar_info_photo div
+{
+	width: 50px;
+	height: 60px;	
+}
+
+div.oo_topbar_info_content
+{
+	margin-left: 60px;
+}
+
+div.oo_topbar_info p
+{
+	font-size: 9pt;
+	margin: 0;
+}
+
+div.oo_topbar_info p.oo_topbar_info_name
+{
+	font-size: 14px;
+	font-weight: bold;
+	margin-top: -3px;
+}
+
+p.oo_topbar_info_username
+{
+	color: #666;
+}
+
+div.oo_topbar_info p.oo_topbar_info_account
+{
+	margin-top: 5px;
+}
+
+p.oo_topbar_info_account a
+{
+	color: #ddd;
+}
+
+p.oo_topbar_info_account a span,
+p.oo_topbar_info_account a:hover
+{
+	color: #08c;
+}
+
+p.oo_topbar_info_account strong
+{
+	font-size: 21px;
+	display: inline-block;
+	line-height: 11px;
+	color: #aaa;
+	font-weight: normal;	
+}
+
+div.oo_topbar_info_buttons
+{
+	font-size: 0;
+	text-align: right;
+}
+
+div.oo_topbar_info_buttons a
+{
+	margin-left: 5px;
+}
+
+div.oo_topbar_login_success
+{
+	height: 50px;
+	font-size: 12pt;
+	color: #999;
+	text-align: center;
+	line-height: 50px;
+}
+
+@media screen and (max-width: 500px) {
+
+	div.oo_topbar strong
+	{
+		padding: 0 0 0 5px;
+	}
+	
+	div.oo_topbar li a
+	{
+		padding: 0 5px;
+	}
+	
+	div.oo_topbar strong span
+	{
+		display: none;
+	}
+}

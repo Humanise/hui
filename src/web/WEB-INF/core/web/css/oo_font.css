@@ -1,0 +1,22 @@
+/*
+@font-face {
+	font-family: 'Humanise';
+	src:url('../fonts/humanise/fonts/Humanise.eot');
+	src:url('../fonts/humanise/fonts/Humanise.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/humanise/fonts/Humanise.woff') format('woff'),
+		url('../fonts/humanise/fonts/Humanise.ttf') format('truetype'),
+		url('../fonts/humanise/fonts/Humanise.svg#Humanise') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}*/
+
+@font-face {
+	font-family: 'OnlineObjects';
+	src:url('../fonts/onlineobjects/fonts/OnlineObjects.eot');
+	src:url('../fonts/onlineobjects/fonts/OnlineObjects.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/onlineobjects/fonts/OnlineObjects.woff') format('woff'),
+		url('../fonts/onlineobjects/fonts/OnlineObjects.ttf') format('truetype'),
+		url('../fonts/onlineobjects/fonts/OnlineObjects.svg#OnlineObjects') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}

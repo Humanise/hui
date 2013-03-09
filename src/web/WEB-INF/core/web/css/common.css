@@ -13,46 +13,10 @@ body
 
 
 
-p.common_footer
-{
-	font-size: 10pt;
-	font-weight: 200;
-	text-align: center;
-	padding-bottom: 20px;
-}
-
-p.common_footer strong
-{
-	font-weight: 400;
-}
-
-p.common_footer,
-p.common_footer a.oo_link span
-{
-	color: #666;
-}
-
-p.common_footer a.oo_link
-{
-	color: #ddd;
-	color: rgba(0,0,0,.1);
-}
 
 
-a.link
-{
-	color: #ccc;
-}
 
-a.link span
-{
-	color: #37e;
-}
 
-a.link:hover, a.link:hover span
-{
-	color: #239;
-}
 
 div.base
 {

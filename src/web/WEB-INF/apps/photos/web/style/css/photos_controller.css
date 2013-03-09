@@ -1,0 +1,91 @@
+
+
+div.photos_controller
+{
+	height: 44px;
+	background: rgba(0,0,0,.2);
+	border-radius: 5px;
+	font-size: 0;
+	position: absolute;
+	bottom: 10px;
+	right: 10px;
+	padding: 0 4px;
+	opacity: 0;
+	-webkit-transition: opacity 1s;
+	-moz-transition: opacity 1s;
+	-webkit-font-smoothing: antialiased;
+}
+
+div.photos_photo_image:hover div.photos_controller
+{
+	opacity: 1;
+}
+
+body.oo_fade div.photos_photo_image:hover div.photos_controller
+{
+	opacity: 0;
+}
+
+body.oo_msie8 div.photos_controller
+{
+	display: none;
+}
+
+body.oo_msie8 div.photos_photo_image:hover div.photos_controller
+{
+	display: block;	
+}
+
+div.photos_controller a
+{
+	vertical-align: middle;
+	display: inline-block;
+	font-size: 32px;
+	width: 44px;
+	height: 44px;
+	line-height: 44px;
+	color: #fff;
+	color: rgba(255,255,255,1);
+	cursor: pointer;
+	text-align: center;
+	text-decoration: none;
+	text-shadow: 0 0 2px rgba(0,0,0,.5);
+	outline: none;
+}
+
+div.photos_controller i
+{
+	font-family: 'OnlineObjects';
+	font-style: normal;
+	display: inline-block;
+	text-align: center;
+}
+
+div.photos_controller a:hover
+{
+	font-size: 40px;
+}
+
+div.photos_controller a:active
+{
+	font-size: 30px;
+}
+
+
+
+div.photos_controller_top
+{
+	bottom: none;
+	top: 10px;
+	padding: 0;
+}
+
+div.photos_controller_top a
+{
+	width: 34px;
+}
+
+div.photos_photo div.oo_map
+{
+	margin-top: 20px;
+}

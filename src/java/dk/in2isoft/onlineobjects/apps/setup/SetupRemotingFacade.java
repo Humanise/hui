@@ -30,20 +30,6 @@ public class SetupRemotingFacade extends AbstractRemotingFacade {
 		return true;
 	}
 	
-	public void synchronizeImageMetaData() throws EndUserException {
-		UserSession userSession = getUserSession();
-		List<Image> list = modelService.list(Query.of(Image.class));
-		for (Image image : list) {
-			String name = image.getName();
-			if (name!=null && name.toLowerCase().endsWith(".jpg")) {
-				image.setName(fileService.cleanFileName(name));
-				modelService.updateItem(image, userSession);
-			}
-			imageService.synchronizeContentType(image, userSession);
-			imageService.synchronizeMetaData(image,userSession);
-		}
-	}
-	
 	public ListData getApplicationList() {
 		ListData data = new ListData();
 		List<Application> list = modelService.list(Query.of(Application.class).orderByName());

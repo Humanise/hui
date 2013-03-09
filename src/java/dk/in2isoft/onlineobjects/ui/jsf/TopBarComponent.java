@@ -44,7 +44,7 @@ public class TopBarComponent extends AbstractComponent {
 		Messages msg = new Messages(this);
 		
 		out.startDiv("oo_topbar oo_faded").withId(getClientId());
-		out.startStrong().startI().write("&#xa4;").endI().write("Online").startSpan().write("Objects").endSpan().endStrong();
+		out.startStrong().startI().write("&#xa4;").endI().startSpan().write("Online").startSpan().write("Objects").endSpan().endSpan().endStrong();
 
 		out.startUl("oo_topbar_left");
 		/*
@@ -56,7 +56,7 @@ public class TopBarComponent extends AbstractComponent {
 		}
 		out.write("Community").endA().endLi();*/
 		
-		List<String> primaryApps = Lists.newArrayList("words","photos","community","people");
+		List<String> primaryApps = Lists.newArrayList("words","photos","people");
 		List<String> privateApps = Lists.newArrayList("desktop","tools");
 		if (request.isUser(SecurityService.ADMIN_USERNAME)) {
 			privateApps.add("setup");

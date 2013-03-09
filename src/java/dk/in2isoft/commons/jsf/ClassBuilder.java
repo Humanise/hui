@@ -29,6 +29,13 @@ public class ClassBuilder {
 		return this;
 	}
 	
+	public ClassBuilder add(String prefix, Number name) {
+		if (name!=null) {
+			return add(prefix, name.toString());
+		}
+		return this;
+	}
+	
 	public ClassBuilder add(String prefix, String name) {
 		if (StringUtils.isBlank(name)) {
 			return this;

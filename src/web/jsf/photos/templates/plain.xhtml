@@ -12,6 +12,7 @@
 <o:doctype/>
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<h:head>
+		<meta name="viewport" content="user-scalable=yes, width=device-width, initial-scale = 1, maximum-scale = 10, minimum-scale = 0.2"/>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 		<title><ui:insert name="title"/>Photos - OnlineObjects</title>
 		<o:stylesheet href="/style.css" integrateCache="true"/>
@@ -24,23 +25,13 @@
 	</h:head>
 	<o:body>
 		<o:topBar/>
-		<o:layout>
+		<o:layout variant="paper">
 			<f:facet name="sidebar">
 			<ui:insert name="sidebar"/>
 			</f:facet>
 			<ui:insert name="body"/>
 		</o:layout>
-		<p class="common_footer oo_faded">
-			<c:forEach items="#{wordsLayoutView.languages}" var="item" varStatus="status">
-				<c:if test="#{not status.first}"> · </c:if>
-				<c:if test="#{item.selected}">
-					<strong>#{item.label}</strong>
-				</c:if>
-				<c:if test="#{not item.selected}">
-					<o:link href="#{item.value}">#{item.label}</o:link>
-				</c:if>
-			</c:forEach>
-		</p>
+		<o:footer/>
 		<o:analytics/>
 	</o:body>
 </html>

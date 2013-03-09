@@ -31,3 +31,14 @@ span.words_list_glossary span
 	color: #333;
 	margin-left: 5px;
 }
+
+@media screen and (max-width: 600px) {
+	ul.words_list
+	{
+		margin: 20px 0 20px 20px;
+	}
+	
+	ul.words_list li
+	{
+	}
+}

@@ -105,7 +105,11 @@ public class PeoplePersonView extends AbstractManagedBean implements Initializin
 	}
 	
 	private String getUsersName() {
-		return getRequest().getLocalPath()[0];
+		String[] path = getRequest().getLocalPath();
+		if (path.length==2) {
+			return path[1];
+		}
+		return path[0];
 	}
 	
 	public User getUser() {

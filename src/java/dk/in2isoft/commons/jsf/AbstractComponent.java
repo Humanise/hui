@@ -15,6 +15,7 @@ import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.ui.jsf.ScriptComponent;
 import dk.in2isoft.onlineobjects.ui.jsf.StylesheetComponent;
+import dk.in2isoft.onlineobjects.util.Messages;
 
 
 public abstract class AbstractComponent extends UIComponentBase {
@@ -108,6 +109,10 @@ public abstract class AbstractComponent extends UIComponentBase {
 		}
 	};
 	
+	protected Messages getMessages() {
+		return new Messages(getClass());
+	}
+	
 	public <T> T getExpression(String name, T localValue, FacesContext context) {
 		return ComponentUtil.getExpressionValue(this, name, localValue, context);
 	};
@@ -116,6 +121,10 @@ public abstract class AbstractComponent extends UIComponentBase {
 		return ComponentUtil.getExpressionValue(this, name, null, context);
 	};
 
+	protected Request getRequest() {
+		return Request.get(getFacesContext());
+	}
+	
 	protected boolean isNotBlank(String string) {
 		return Strings.isNotBlank(string);
 	}

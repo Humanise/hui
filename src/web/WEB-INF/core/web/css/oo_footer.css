@@ -1,0 +1,39 @@
+p.oo_footer
+{
+	font-size: 10pt;
+	font-weight: 200;
+	text-align: center;
+	padding-bottom: 0px;
+}
+
+p.oo_footer strong
+{
+	font-weight: 400;
+}
+
+p.oo_footer,
+p.oo_footer a span
+{
+	color: #666;
+}
+
+p.oo_footer a
+{
+	color: #ddd;
+	color: rgba(0,0,0,.1);
+}
+
+p.oo_footer_logo
+{
+	text-align: center;
+	margin: 30px 0;
+}
+
+p.oo_footer_logo span
+{
+	font-family: 'OnlineObjects';
+	font-size: 128px;
+	color: #f3f3f3;
+	text-shadow: 0 0 10px #fff;
+	cursor: default;
+}

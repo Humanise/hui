@@ -1,11 +1,15 @@
 form.words_search p
 {
 	margin: 10px 0 0;
+	margin-right: 100px;
+	position: relative;
 }
 
 input.words_search_input
 {
-	width: 400px;
+	display: block;
+	width: 100%;
+	margin-right: 70px;
 	border: 1px solid #ddd;
 	line-height: 24px;
 	padding: 3px 0 3px 6px;
@@ -22,6 +26,10 @@ input.words_search_input
 
 input.words_search_button
 {
+	top: 0;
+	right: -100px;
+	width: 90px;
+	position: absolute;
 	border: 1px solid #ddd;
 	border-radius: 3px;
 	height: 32px;
@@ -53,7 +61,7 @@ div.words_search_filters
 	border: 1px solid #eee;
 	padding: 5px;
 	width: 200px;
-	margin-top: -95px;
+	margin-top: 30px;
 	margin-left: 20px;
 }
 
@@ -141,4 +149,19 @@ p.words_filter a.words_filter_selected span
 	color: #000;
 	background: #f9f9f9;
 	border: 1px solid #eee;
+}
+
+@media screen and (max-width: 800px) {
+	div.words_search_filters
+	{
+		float: none;
+		width: auto;
+		border: none;
+		margin: 0;
+	}
+	
+	div.words_search_filters h2
+	{
+		display: none;
+	}
 }

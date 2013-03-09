@@ -1,0 +1,19 @@
+ol.oo_list
+{
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+/** border-variant */
+
+ol.oo_list_bordered
+{
+	border-top: 1px solid #eee;
+}
+
+ol.oo_list_bordered li.oo_list_item
+{
+	border-bottom: 1px solid #eee;
+	padding: 5px 0;
+}

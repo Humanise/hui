@@ -29,17 +29,7 @@
 			<ui:insert name="body"/>
 			<ui:insert name="sidebar"/>
 		</div>
-		<p class="common_footer oo_faded">
-			<c:forEach items="#{wordsLayoutView.languages}" var="item" varStatus="status">
-				<c:if test="#{not status.first}"> · </c:if>
-				<c:if test="#{item.selected}">
-					<strong>#{item.label}</strong>
-				</c:if>
-				<c:if test="#{not item.selected}">
-					<o:link href="#{item.value}">#{item.label}</o:link>
-				</c:if>
-			</c:forEach>
-		</p>
+		<o:footer/>
 		<o:analytics/>
 	</o:body>
 </html>

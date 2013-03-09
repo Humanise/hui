@@ -24,24 +24,19 @@ public class WordsControllerBase extends ApplicationController {
 	static {
 		publicStyle = new Blend("words_public_style");
 		//publicStyle.addPath("WEB-INF","core","web","fonts","lora","stylesheet.css");
-		publicStyle.addPath("hui","css","master.css");
-		publicStyle.addPath("hui","css","button.css");
+		publicStyle.addBasicCSS();
 		publicStyle.addPath("hui","css","searchfield.css");
 		publicStyle.addPath("hui","css","panel.css");
 		publicStyle.addPath("hui","css","boundpanel.css");
 		publicStyle.addPath("hui","css","window.css");
 		publicStyle.addPath("hui","css","list.css");
-		publicStyle.addPath("hui","css","formula.css");
 		publicStyle.addPath("hui","css","dropdown.css");
 		publicStyle.addPath("hui","ext","diagram.css");
 		publicStyle.addPath("hui","css","box.css");
-		publicStyle.addPath("hui","css","message.css");
 		publicStyle.addPath("hui","css","bar.css");
 		publicStyle.addPath("hui","css","overlay.css");
 		publicStyle.addPath("hui","ext","pages.css");
-		publicStyle.addPath("WEB-INF","core","web","css","onlineobjects.css");
-		publicStyle.addPath("WEB-INF","core","web","css","common.css");
-		publicStyle.addPath("WEB-INF","apps","words","web","style","css","style.css");
+		publicStyle.addPath("WEB-INF","apps","words","web","style","css","words.css");
 		publicStyle.addPath("WEB-INF","apps","words","web","style","css","words_sidebar.css");		
 		publicStyle.addPath("WEB-INF","apps","words","web","style","css","words_search.css");		
 		publicStyle.addPath("WEB-INF","apps","words","web","style","css","words_word.css");
@@ -50,6 +45,8 @@ public class WordsControllerBase extends ApplicationController {
 		publicStyle.addPath("WEB-INF","apps","words","web","style","css","words_paging.css");		
 		publicStyle.addPath("WEB-INF","apps","words","web","style","css","words_list.css");		
 		publicStyle.addPath("WEB-INF","apps","words","web","style","css","words_import.css");		
+		publicStyle.addPath("WEB-INF","apps","words","web","style","css","words_menu.css");		
+		publicStyle.addPath("WEB-INF","apps","words","web","style","css","words_about.css");		
 
 		publicScript = new Blend("words_public_script");
 		publicScript.addPath("hui","js","hui.js");

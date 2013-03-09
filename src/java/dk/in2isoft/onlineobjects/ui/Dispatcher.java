@@ -33,11 +33,10 @@ public class Dispatcher implements Filter {
 
 		this.filterConfig = filterConfig;
 		WebApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(filterConfig.getServletContext());
-		dispatchingService = (DispatchingService) context.getBeansOfType(DispatchingService.class).values().iterator().next();
+		dispatchingService = context.getBeansOfType(DispatchingService.class).values().iterator().next();
 	}
 
-	public void doFilter(ServletRequest sRequest, ServletResponse sResponse, FilterChain chain) throws IOException,
-			ServletException {
+	public void doFilter(ServletRequest sRequest, ServletResponse sResponse, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest) sRequest;
 		HttpServletResponse response = (HttpServletResponse) sResponse;
 		

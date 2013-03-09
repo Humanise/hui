@@ -78,7 +78,7 @@ public class NavigatorComponent extends AbstractComponent {
 			return;
 		}
 		int pages = (int) Math.ceil((double) totalCount / (double) pageSize);
-		writer.startDiv("oo_navigator");
+		writer.startP("oo_navigator");
 		if (pages > 1) {
 			writer.startSpan("oo_navigator_pages");
 			for (int i = 0; i < pages; i++) {
@@ -86,12 +86,12 @@ public class NavigatorComponent extends AbstractComponent {
 				if (page == i) {
 					writer.withClass("oo_navigator_selected");
 				}
-				writer.write(String.valueOf(i + 1));
+				writer.startSpan().text(String.valueOf(i + 1)).endSpan();
 				writer.endA();
 			}
 			writer.endSpan();
 		}
-		writer.endDiv();
+		writer.endP();
 	}
 
 	private void decodeRequest(FacesContext context, ListModel<Image> model) {

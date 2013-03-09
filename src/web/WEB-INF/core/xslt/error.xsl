@@ -17,10 +17,14 @@
 				<title><xsl:value-of select="p:error/p:message"/></title>
 				<link rel="stylesheet" href="{$base-context}/core/css/error.css" type="text/css" media="screen" title="front" charset="utf-8"/>
 			</head>
-			<body>
+			<body class="oo">
 				<div class="body">
-				<h1><xsl:value-of select="p:error/p:message"/></h1>
-				<textarea><xsl:value-of select="p:error/p:stackTrace"/></textarea>
+					<strong onclick="document.getElementById('stack').style.display='block'">w</strong>
+					<h1><xsl:value-of select="p:error/p:message"/></h1>
+					<xsl:if test="p:error/p:status">
+						<p class="status"><xsl:value-of select="p:error/p:status"/></p>
+					</xsl:if>
+					<textarea id="stack"><xsl:value-of select="p:error/p:stackTrace"/></textarea>
 				</div>
 			</body>
 		</html>

@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.StopWatch;
 
 import dk.in2isoft.commons.http.HeaderUtil;
@@ -31,7 +30,7 @@ import dk.in2isoft.onlineobjects.modules.surveillance.SurveillanceService;
 import dk.in2isoft.onlineobjects.ui.ErrorRenderer;
 import dk.in2isoft.onlineobjects.ui.Request;
 
-public class DispatchingService implements InitializingBean {
+public class DispatchingService {
 
 	private static Logger log = Logger.getLogger(DispatchingService.class);
 	
@@ -40,18 +39,10 @@ public class DispatchingService implements InitializingBean {
 	private ModelService modelService;
 	private SecurityService securityService;
 	private SurveillanceService surveillanceService;
+	private ConfigurationService configurationService;
 
 	private List<Responder> responders;
-	
-	public DispatchingService() {
-	}
-	
-	public void afterPropertiesSet() throws Exception {
-	}
-	
-	public void setResponders(List<Responder> responders) {
-		this.responders = responders;
-	}
+		
 	
 	public boolean doFilter(HttpServletRequest servletRequest, HttpServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
 		
@@ -124,7 +115,7 @@ public class DispatchingService implements InitializingBean {
 
 	public void displayError(Request request, Exception ex) {
 		ex = findUserException(ex);
-		ErrorRenderer renderer = new ErrorRenderer(ex);
+		ErrorRenderer renderer = new ErrorRenderer(ex,request,configurationService);
 		try {
 			if (ex instanceof ContentNotFoundException) {
 				log.error(ex.getMessage()+" : "+request.getRequest().getRequestURL().toString());
@@ -134,10 +125,13 @@ public class DispatchingService implements InitializingBean {
 			}
 			if (ex instanceof SecurityException) {
 				request.getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
+				renderer.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			} else if (ex instanceof ContentNotFoundException) {
 				request.getResponse().setStatus(HttpServletResponse.SC_NOT_FOUND);
+				renderer.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			} else {
 				request.getResponse().setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				renderer.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			}
 			XSLTUtil.applyXSLT(renderer, request);
 		} catch (EndUserException e) {
@@ -161,6 +155,12 @@ public class DispatchingService implements InitializingBean {
 		return ex;
 	}
 	
+	// Wiring...
+	
+	public void setResponders(List<Responder> responders) {
+		this.responders = responders;
+	}
+	
 	public void setModelService(ModelService modelService) {
 		this.modelService = modelService;
 	}
@@ -171,5 +171,9 @@ public class DispatchingService implements InitializingBean {
 	
 	public void setSurveillanceService(SurveillanceService surveillanceService) {
 		this.surveillanceService = surveillanceService;
+	}
+	
+	public void setConfigurationService(ConfigurationService configurationService) {
+		this.configurationService = configurationService;
 	}
 }

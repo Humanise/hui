@@ -11,18 +11,18 @@ public class BodyComponent extends HtmlBody {
 	public java.lang.String getStyleClass() {
 		String styleClass = super.getStyleClass();
 		Map<String, String> map = getFacesContext().getExternalContext().getRequestHeaderMap();
-		String cls = null;
+		String cls = "oo";
 		if (map.containsKey("User-Agent")) {
 			String agent = map.get("User-Agent");
 			if (!agent.contains("Opera")) {
 				if (agent.contains("MSIE 6")) {
-					cls = "oo_msie oo_msie6";
+					cls+= " oo_msie oo_msie6";
 				} else if (agent.contains("MSIE 7")) {
-					cls = "oo_msie oo_msie7";
+					cls+= " oo_msie oo_msie7";
 				} else if (agent.contains("MSIE 8")) {
-					cls = "oo_msie oo_msie8";
+					cls+= " oo_msie oo_msie8";
 				} else if (agent.contains("MSIE")) {
-					cls = "oo_msie";
+					cls+= " oo_msie";
 				}
 			}
 		}

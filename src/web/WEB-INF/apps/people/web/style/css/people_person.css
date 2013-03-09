@@ -3,20 +3,6 @@ div.people_person
 	padding: 20px;
 }
 
-div.people_person div.images
-{
-	overflow: hidden;
-	padding: 20px 20px 15px 20px;
-}
-
-div.people_person div.images h2
-{
-	margin: 0px 0px 10px;
-	font-weight: normal;
-	font-size: 15pt;
-	color: #446688;
-}
-
 div.people_person div.thumbnail
 {
 	float: left;
@@ -29,18 +15,16 @@ div.people_person div.thumbnail
 }
 
 
-/***************************** Profile *************************/
-
 div.people_person_left
 {
-	width: 105px;
+	width: 155px;
 	float: left;
 }
 
 div.people_person div.people_person_image
 {
-	width: 100px;
-	height: 115px;
+	width: 150px;
+	height: 190px;
 	border: 1px solid #ddd;
 	border-color: #eee #ddd #ccc;
 	background: url('../gfx/profile_large.png') center center no-repeat;
@@ -48,21 +32,18 @@ div.people_person div.people_person_image
 
 div.people_person div.people_person_image_photo
 {
-	width: 90px;
-	height: 105px;
+	width: 140px;
+	height: 180px;
 	margin: 5px 0 0 5px;
 }
 
 div.people_person_info
 {
-	margin-left: 130px;
+	margin-left: 180px;
 }
 
 div.people_person_info h1
 {
-	margin: 0px;
-	font-weight: 100;
-	font-size: 36pt;
 }
 
 div.people_person div.profile h2
@@ -80,75 +61,30 @@ p.people_person_resume
 	font-size: 11pt;
 	font-style: italic;
 	line-height: 1.5em;
-	margin: 0 0 20px;
+	margin: 10px 0 20px;
 	font-weight: 300;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-div.rendering p.tags
+p.people_person_property
 {
-	font-size: 0;
-	color: #fff;
+	font-size: 11pt;
+	font-weight: 200;
 }
 
-div.rendering a.tag
-{
-	font-size: 11px;
-	background: #f6f6f6;
-	text-decoration: none;
-	border: 1px solid #ddd;
-	-moz-border-radius: 8px;
-	-webkit-border-radius: 8px;
-	padding: 0 8px;
-	height: 16px;
-	line-height: 16px;
-	color: #123;
-	letter-spacing: 1px;
-	margin-right: 4px;
-	margin-bottom: 4px;
-	display: inline-block;
-}
-
-div.rendering a.tag:hover
-{
-	background: #daeaf0;
-	border: 1px solid #8a9;
-}
-
-div.rendering a.tag:focus
-{
-	border: 1px solid #03f;
-	-moz-box-shadow: 0px 0px 3px #03f;
-	outline: none;
-}
-
-div.rendering .minor
-{
-	font-size: 9pt;
-}
-
-div.rendering .dimmed
+p.people_person_property span
 {
 	color: #999;
 }
 
-div.rendering p span.label
-{
-	color: #999;
-}
 
-div.rendering ul.icons
+
+
+
+
+
+
+
+ul.people_person_contact
 {
 	list-style: none;
 	margin: 0 0 10px;
@@ -156,23 +92,24 @@ div.rendering ul.icons
 	font-size: 10pt;
 }
 
-div.rendering ul.icons li
+ul.people_person_contact li
 {
-	padding-left: 24px;
-	height: 20px;
+	padding-bottom: 3px;
 }
 
-div.rendering li.mail
+ul.people_person_contact span.oo_icon
 {
-	background: url('../gfx/dimmed_icons.png') -2px -100px no-repeat;
+	margin-right: 5px;
+	color: #ddd;
 }
 
-div.rendering li.url
+ul.people_person_contact a.oo_link
 {
-	background: url('../gfx/dimmed_icons.png') -2px -2px no-repeat;
+	vertical-align: middle;
 }
 
-div.rendering li.phone
+
+div.people_person_photos h2
 {
-	background: url('../gfx/dimmed_icons.png') -2px -50px no-repeat;
+	margin-bottom: 10px;
 }

@@ -28,33 +28,25 @@ public class PeopleControllerBase extends ApplicationController {
 	protected static Blend privateScript;
 	
 	static {
-		publicStyle = new Blend("photos_public_style");
-		publicStyle.addPath("hui","css","master.css");
-		publicStyle.addPath("hui","css","button.css");
-		publicStyle.addPath("hui","css","boundpanel.css");
-		publicStyle.addPath("hui","css","checkbox.css");
-		publicStyle.addPath("hui","css","formula.css");
-		publicStyle.addPath("hui","css","message.css");
-		publicStyle.addPath("hui","css","imageviewer.css");
-		publicStyle.addPath("hui","css","box.css");
-		publicStyle.addPath("WEB-INF","core","web","css","onlineobjects.css");
-		publicStyle.addPath("WEB-INF","core","web","css","common.css");
+		publicStyle = new Blend("people_public_style");
+		publicStyle.addBasicCSS();
+		publicStyle.addHUICSS("imageviewer.css");
+		publicStyle.addHUICSS("box.css");
+		publicStyle.addCoreCSS("oo_navigator.css");
+		publicStyle.addCoreCSS("oo_thumbnail.css");
+		publicStyle.addCoreCSS("oo_list.css");
+		publicStyle.addCoreCSS("oo_rendering.css");
+		publicStyle.addCoreCSS("oo_splitleft.css");
+		publicStyle.addCoreCSS("oo_gallery.css");
 		publicStyle.addPath("WEB-INF","apps","people","web","style","css","people_person.css");
+		publicStyle.addPath("WEB-INF","apps","people","web","style","css","people_list.css");
 		
-		privateStyle = new Blend("photos_private_style");
+		privateStyle = new Blend("people_private_style");
 		privateStyle.addPath("hui","css","upload.css");
 		privateStyle.addPath("hui","css","dropdown.css");
 		privateStyle.addPath("hui","css","tokenfield.css");
-		/*
-		privateStyle.addPath("hui","css","locationfield.css");
-		privateStyle.addPath("hui","css","searchfield.css");
-		privateStyle.addPath("hui","css","window.css");
-		privateStyle.addPath("hui","css","layout.css");
-		privateStyle.addPath("hui","css","bar.css");
-		privateStyle.addPath("hui","css","overlay.css");
-		privateStyle.addPath("hui","ext","pages.css");*/
 
-		publicScript = new Blend("photos_public_script");
+		publicScript = new Blend("people_public_script");
 		publicScript.addPath("hui","js","hui.js");
 		publicScript.addPath("hui","js","hui_animation.js");
 		publicScript.addPath("hui","js","ui.js");
@@ -67,7 +59,7 @@ public class PeopleControllerBase extends ApplicationController {
 		publicScript.addPath("WEB-INF","core","web","js","onlineobjects.js");
 		publicScript.addPath("WEB-INF","core","web","js","map.js");
 		
-		privateScript = new Blend("photos_private_script");
+		privateScript = new Blend("people_private_script");
 		privateScript.addPath("hui","js","hui_color.js");
 		privateScript.addPath("hui","js","Upload.js");
 		privateScript.addPath("hui","js","ObjectList.js");
@@ -75,17 +67,6 @@ public class PeopleControllerBase extends ApplicationController {
 		privateScript.addPath("hui","js","DropDown.js");
 		privateScript.addPath("hui","js","TokenField.js");
 		privateScript.addPath("hui","js","Overlay.js");
-		/*
-		privateScript.addPath("hui","js","hui_require.js");
-		privateScript.addPath("hui","js","Checkbox.js");
-		privateScript.addPath("hui","js","Source.js");
-		privateScript.addPath("hui","js","List.js");
-		privateScript.addPath("hui","js","Overflow.js");
-		privateScript.addPath("hui","js","LocationField.js");
-		privateScript.addPath("hui","js","LocationPicker.js");
-		privateScript.addPath("hui","js","SearchField.js");
-		privateScript.addPath("hui","js","DragDrop.js");
-		privateScript.addPath("hui","ext","Pages.js");*/
 		privateScript.addPath("WEB-INF","apps","people","web","style","js","people_person.js");
 
 	}
@@ -106,7 +87,9 @@ public class PeopleControllerBase extends ApplicationController {
 	public String getLanguage(Request request) {
 		String[] path = request.getLocalPath();
 		if (path.length>0) {
-			return path[0];
+			if ("en".equals(path[0]) || "da".equals(path[0])) {
+				return path[0];
+			}
 		}
 		return super.getLanguage(request);
 	}

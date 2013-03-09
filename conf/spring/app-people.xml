@@ -10,4 +10,8 @@
    	<bean id="peopleController" class="dk.in2isoft.onlineobjects.apps.people.PeopleController" autowire="byType"/>
 
 	<bean id="peoplePersonView" class="dk.in2isoft.onlineobjects.apps.people.views.PeoplePersonView" scope="request" autowire="byType"/>
+	
+	<bean id="peopleListView" class="dk.in2isoft.onlineobjects.apps.people.views.PeopleListView" scope="request">
+		<property name="modelService" ref="modelService"/>
+	</bean>
 </beans>

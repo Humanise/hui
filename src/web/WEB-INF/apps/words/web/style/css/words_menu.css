@@ -1,0 +1,29 @@
+ul.words_menu
+{
+	color: #BBBBBB;
+    font-size: 24px;
+    line-height: 20px;
+    list-style-type: circle;
+    margin: 0;
+    padding: 10px 0 0 30px;
+}
+
+ul.words_menu li
+{
+	-webkit-margin-start: 5px;
+}
+
+ul.words_menu li a,
+ul.words_menu li strong
+{
+	font-size: 12pt;
+	position: relative;
+	top: -2px;
+	-webkit-margin-start: -4px;
+}
+
+ul.words_menu li strong
+{
+	color: #333;
+	font-weight: bold;
+}

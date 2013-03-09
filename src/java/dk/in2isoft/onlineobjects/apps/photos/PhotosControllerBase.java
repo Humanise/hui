@@ -28,18 +28,24 @@ public class PhotosControllerBase extends ApplicationController {
 	static {
 		publicStyle = new Blend("photos_public_style");
 		publicStyle.addPath("WEB-INF","apps","photos","web","style","css","photos_fonts.css");
-		publicStyle.addPath("hui","css","master.css");
-		publicStyle.addPath("hui","css","button.css");
-		publicStyle.addPath("hui","css","boundpanel.css");
-		publicStyle.addPath("hui","css","checkbox.css");
-		publicStyle.addPath("hui","css","formula.css");
-		publicStyle.addPath("hui","css","message.css");
+		publicStyle.addBasicCSS();
 		publicStyle.addPath("hui","css","imageviewer.css");
 		publicStyle.addPath("hui","css","box.css");
-		publicStyle.addPath("WEB-INF","core","web","css","onlineobjects.css");
-		publicStyle.addPath("WEB-INF","core","web","css","map.css");
-		publicStyle.addPath("WEB-INF","core","web","css","common.css");
+		publicStyle.addCoreCSS("oo_navigator.css");
+		publicStyle.addCoreCSS("oo_thumbnail.css");
+		publicStyle.addCoreCSS("oo_list.css");
+		publicStyle.addCoreCSS("oo_rendering.css");
+		publicStyle.addCoreCSS("oo_splitleft.css");
+		publicStyle.addCoreCSS("oo_gallery.css");
+		publicStyle.addCoreCSS("oo_words.css");
+		publicStyle.addCoreCSS("oo_map.css");
 		publicStyle.addPath("WEB-INF","apps","photos","web","style","css","style.css");
+		publicStyle.addPath("WEB-INF","apps","photos","web","style","css","photos_front.css");
+		publicStyle.addPath("WEB-INF","apps","photos","web","style","css","photos_controller.css");
+		publicStyle.addPath("WEB-INF","apps","photos","web","style","css","photos_photo.css");
+		publicStyle.addPath("WEB-INF","apps","photos","web","style","css","photos_profile.css");
+		publicStyle.addPath("WEB-INF","apps","photos","web","style","css","photos_user.css");
+		publicStyle.addPath("WEB-INF","apps","photos","web","style","css","photos_layout.css");
 		publicStyle.addPath("WEB-INF","apps","photos","web","style","css","photos_adaption.css");
 		
 		privateStyle = new Blend("photos_private_style");
@@ -103,7 +109,9 @@ public class PhotosControllerBase extends ApplicationController {
 	public String getLanguage(Request request) {
 		String[] path = request.getLocalPath();
 		if (path.length>0) {
-			return path[0];
+			if ("en".equals(path[0]) || "da".equals(path[0])) {
+				return path[0];
+			}
 		}
 		return super.getLanguage(request);
 	}

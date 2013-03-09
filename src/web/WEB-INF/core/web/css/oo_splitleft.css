@@ -1,0 +1,10 @@
+div.oo_splitleft
+{
+	overflow: hidden;
+}
+
+div.oo_splitleft_left
+{
+	float: left;
+	font-size: 0;
+}

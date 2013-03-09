@@ -38,7 +38,7 @@ public class AbstractController {
 				}
 			}
 		}
-		throw new ContentNotFoundException(request.getLocalPathAsString());
+		throw new ContentNotFoundException("The content could not be found");
 	}
 
 	private void invokeMothod(Request request, Method method) throws IOException, StupidProgrammerException, EndUserException {

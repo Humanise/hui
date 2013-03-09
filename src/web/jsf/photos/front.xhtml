@@ -12,7 +12,8 @@
 	<ui:composition template="templates/plain.xhtml">
 				
 		<ui:define name="body">
-		<div style="padding: 20px;">
+		<div class="photos_front">
+			<o:header>Photos</o:header>
 			<o:gallery model="#{photosFrontView.imageList}" var="item">
 				<o:thumbnail image="#{item.image}" width="100" height="100" href="/#{wordsLayoutView.language}/photo/#{item.image.id}.html"/>
 			</o:gallery>

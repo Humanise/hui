@@ -12,8 +12,9 @@ import dk.in2isoft.commons.jsf.TagWriter;
 @FacesComponent(value=LayoutComponent.FAMILY)
 public class LayoutComponent extends AbstractComponent {
 
-
 	public static final String FAMILY = "onlineobjects.layout";
+	
+	private String variant = "rounded";
 	
 	public LayoutComponent() {
 		super(FAMILY);
@@ -21,16 +22,17 @@ public class LayoutComponent extends AbstractComponent {
 
 	@Override
 	public void restoreState(Object[] state) {
+		variant = (String) state[0];
 	}
 
 	@Override
 	public Object[] saveState() {
-		return new Object[] {};
+		return new Object[] { variant };
 	}
 	
 	@Override
 	protected void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
-		writer.startDiv("oo_layout");
+		writer.startDiv("oo_layout oo_layout_"+variant);
 		writer.startDiv("oo_layout_top");
 		UIComponent top = getFacet("top");
 		if (top!=null) {
@@ -53,5 +55,13 @@ public class LayoutComponent extends AbstractComponent {
 		writer.endDiv();
 		writer.startDiv("oo_layout_bottom").endDiv();
 		writer.endDiv();
+	}
+
+	public String getVariant() {
+		return variant;
+	}
+
+	public void setVariant(String variant) {
+		this.variant = variant;
 	}
 }
