@@ -40,6 +40,8 @@ hui.browser.msie8 = navigator.userAgent.indexOf('MSIE 8') !== -1;
 hui.browser.msie9 = navigator.userAgent.indexOf('MSIE 9') !== -1;
 /** If the browser is InternetExplorer 9 in compatibility mode */
 hui.browser.msie9compat = hui.browser.msie7 && navigator.userAgent.indexOf('Trident/5.0') !== -1;
+/** If the browser is InternetExplorer 10 */
+hui.browser.msie9 = navigator.userAgent.indexOf('MSIE 10') !== -1;
 /** If the browser is WebKit based */
 hui.browser.webkit = navigator.userAgent.indexOf('WebKit') !== -1;
 /** If the browser is any version of Safari */
@@ -58,7 +60,7 @@ hui.browser.ipad = hui.browser.webkit && navigator.userAgent.indexOf('iPad') !==
 hui.browser.windows = navigator.userAgent.indexOf('Windows') !== -1;
 
 /** If the browser supports CSS opacity */
-hui.browser.opacity = !hui.browser.msie || hui.browser.msie9;
+hui.browser.opacity = !hui.browser.msie6 && !hui.browser.msie7 && !hui.browser.msie8;
 
 (function() {
 	var result = /Safari\/([\d.]+)/.exec(navigator.userAgent);
@@ -20968,13 +20970,15 @@ hui.ui.Chart.Renderer.prototype.renderBody = function() {
 		var left = i*((innerBody.width)/(xLabels.length-1))+innerBody.left;
 		var left = Math.round(left);
 
-		// Draw grid
-		if (this.chart.data.xAxis.grid) {
-			this.ctx.beginPath();
-			this.ctx.moveTo(.5+left,state.body.top+.5);
-			this.ctx.lineTo(.5+left,state.body.top+.5+state.body.height);
-			this.ctx.stroke();
-			this.ctx.closePath();
+		if (mod<10 || (i % mod) ==0) {
+			// Draw grid
+			if (this.chart.data.xAxis.grid) {
+				this.ctx.beginPath();
+				this.ctx.moveTo(.5+left,state.body.top+.5);
+				this.ctx.lineTo(.5+left,state.body.top+.5+state.body.height);
+				this.ctx.stroke();
+				this.ctx.closePath();
+			}
 		}
 		if ((i % mod) ==0) {
 			// Draw label
@@ -21277,7 +21281,7 @@ hui.ui.Chart.Util.convertData = function(obj) {
 				var entry = set.entries[j];
 				if (!hui.array.contains(keys,entry.key)) {
 					keys.push(entry.key)
-					labels.push({key:entry.key,label:entry.key});					
+					labels.push({key:entry.key,label:entry.label || entry.key});					
 				}
 			}
 		} else {
