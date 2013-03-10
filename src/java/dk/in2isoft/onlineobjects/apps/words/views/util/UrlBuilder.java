@@ -18,7 +18,9 @@ public class UrlBuilder {
 	public UrlBuilder folder(String path) {
 		if (Strings.isNotBlank(path)) {
 			if (sb.length()==0) {
-				sb.append("/");
+				if (!path.startsWith("http")) {
+					sb.append("/");
+				}
 			}
 			sb.append(path);
 			if (!path.endsWith("/")) {

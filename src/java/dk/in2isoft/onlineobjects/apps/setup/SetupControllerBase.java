@@ -6,6 +6,7 @@ import java.util.Locale;
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.modules.localization.LocalizationService;
+import dk.in2isoft.onlineobjects.modules.onlinepublisher.OnlinePublisherService;
 import dk.in2isoft.onlineobjects.modules.scheduling.SchedulingService;
 import dk.in2isoft.onlineobjects.modules.surveillance.SurveillanceService;
 import dk.in2isoft.onlineobjects.ui.Request;
@@ -16,6 +17,7 @@ public abstract class SetupControllerBase extends ApplicationController {
 	protected SchedulingService schedulingService;
 	protected SurveillanceService surveillanceService;
 	protected LocalizationService localizationService;
+	protected OnlinePublisherService onlinePublisherService;
 
 	public SetupControllerBase() {
 		super("setup");
@@ -50,5 +52,8 @@ public abstract class SetupControllerBase extends ApplicationController {
 	public void setLocalizationService(LocalizationService localizationService) {
 		this.localizationService = localizationService;
 	}
-
+	
+	public void setOnlinePublisherService(OnlinePublisherService onlinePublisherService) {
+		this.onlinePublisherService = onlinePublisherService;
+	}
 }

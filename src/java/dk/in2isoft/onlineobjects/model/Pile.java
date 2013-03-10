@@ -1,11 +1,14 @@
 package dk.in2isoft.onlineobjects.model;
 
+import dk.in2isoft.in2igui.Icons;
+import dk.in2isoft.onlineobjects.model.annotations.Appearance;
 
+@Appearance(icon=Icons.COMMON_FOLDER)
 public class Pile extends Entity {
 
 	public static String TYPE = Entity.TYPE+"/Pile";
-	public static String NAMESPACE = Entity.NAMESPACE+"Pile/";
-	private static String ICON = "common/folder";
+	
+	public static String PROPERTY_KEY = "key";
 	
 	public Pile() {
 		super();
@@ -13,9 +16,5 @@ public class Pile extends Entity {
 
 	public String getType() {
 		return TYPE;
-	}
-
-	public String getIcon() {
-		return ICON;
 	}
 }

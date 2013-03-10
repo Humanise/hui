@@ -1,6 +1,7 @@
 package dk.in2isoft.onlineobjects.services;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -10,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Multiset;
 import com.google.common.collect.Sets;
 
 import dk.in2isoft.commons.lang.Counter;
@@ -28,12 +30,16 @@ import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.modules.language.WordImpression;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
+import dk.in2isoft.onlineobjects.modules.language.WordListPerspectiveQuery;
+import dk.in2isoft.onlineobjects.service.language.TextAnalysis;
 
 public class LanguageService {
 
 	private ModelService modelService;
 	
 	private SecurityService securityService;
+	
+	private SemanticService semanticService;
 	
 	private Set<Locale> locales = Sets.newHashSet(new Locale("en","US"),new Locale("da","DK"));
 	
@@ -145,6 +151,59 @@ public class LanguageService {
 		}
 	}
 	
+	public TextAnalysis analyse(String text) throws ModelException {
+		String[] words = semanticService.getWords(text);
+		
+		semanticService.lowercaseWords(words);
+		
+		List<String> uniqueWords = Strings.asList(semanticService.getUniqueWords(words));
+		
+		WordListPerspectiveQuery query = new WordListPerspectiveQuery().withWords(uniqueWords);
+		
+		List<WordListPerspective> list = modelService.list(query);
+		
+		List<String> unknownWords = Lists.newArrayList();
+		
+		Set<String> knownWords = new HashSet<String>();
+				
+		Multimap<String,String> wordsByLanguage = HashMultimap.create();
+		
+		for (WordListPerspective perspective : list) {
+			String word = perspective.getText().toLowerCase();
+			knownWords.add(word);
+			if (perspective.getLanguage()!=null) {
+				wordsByLanguage.put(perspective.getLanguage(), word);
+			}
+		}
+		
+		Multiset<String> languages = wordsByLanguage.keys();
+		String language = null;
+		for (String lang : languages) {
+			if (language==null || (wordsByLanguage.get(lang).size()>wordsByLanguage.get(language).size())) {
+				language = lang;
+			}
+		}
+		
+		
+		for (String word : uniqueWords) {
+			if (!knownWords.contains(word)) {
+				unknownWords.add(word);
+			}
+		}
+		
+		Locale possibleLocale = Locale.ENGLISH;
+		String[] sentences = semanticService.getSentences(text, possibleLocale);
+		
+		TextAnalysis analysis = new TextAnalysis();
+		analysis.setLanguage(language);
+		analysis.setSentences(Strings.asList(sentences));
+		analysis.setWordsByLanguage(wordsByLanguage.asMap());
+		analysis.setUniqueWords(uniqueWords);
+		analysis.setKnownWords(list);
+		analysis.setUnknownWords(unknownWords);
+		return analysis;
+	}
+	
 	private void ensureOriginator(Word word, UserSession session) throws ModelException {
 
 		User user = modelService.getChild(word, Relation.KIND_COMMON_ORIGINATOR, User.class);
@@ -164,4 +223,7 @@ public class LanguageService {
 		this.securityService = securityService;
 	}
 
+	public void setSemanticService(SemanticService semanticService) {
+		this.semanticService = semanticService;
+	}
 }

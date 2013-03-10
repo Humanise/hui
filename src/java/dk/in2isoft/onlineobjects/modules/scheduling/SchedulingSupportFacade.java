@@ -3,6 +3,7 @@ package dk.in2isoft.onlineobjects.modules.scheduling;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.modules.index.WordIndexer;
 import dk.in2isoft.onlineobjects.modules.information.InformationService;
+import dk.in2isoft.onlineobjects.modules.onlinepublisher.OnlinePublisherService;
 import dk.in2isoft.onlineobjects.modules.surveillance.SurveillanceService;
 import dk.in2isoft.onlineobjects.modules.synchronization.MailWatchingService;
 import dk.in2isoft.onlineobjects.services.FileService;
@@ -18,6 +19,7 @@ public class SchedulingSupportFacade {
 	private SurveillanceService surveillanceService;
 	private WordIndexer wordIndexer;
 	private SchedulingService schedulingService;
+	private OnlinePublisherService onlinePublisherService;
 
 	public InformationService getInformationService() {
 		return informationService;
@@ -81,5 +83,13 @@ public class SchedulingSupportFacade {
 	
 	public SchedulingService getSchedulingService() {
 		return schedulingService;
+	}
+
+	public OnlinePublisherService getOnlinePublisherService() {
+		return onlinePublisherService;
+	}
+
+	public void setOnlinePublisherService(OnlinePublisherService onlinePublisherService) {
+		this.onlinePublisherService = onlinePublisherService;
 	}
 }

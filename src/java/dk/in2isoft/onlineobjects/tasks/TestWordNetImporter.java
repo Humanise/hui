@@ -252,10 +252,13 @@ public class TestWordNetImporter extends AbstractSpringTestCase {
 	}
 	
 	private void createSynonym(Word localWord, Word foundSynonym) throws ModelException {
-		Word existingSynonym = modelService.getChild(localWord, Relation.KIND_SEMANTICS_SYNONYMOUS,Word.class);
-		if (existingSynonym==null) {
-			modelService.createRelation(localWord, foundSynonym, Relation.KIND_SEMANTICS_SYNONYMOUS, getPublicUser());
+		List<Word> existingSynonyms = modelService.getChildren(localWord, Relation.KIND_SEMANTICS_SYNONYMOUS,Word.class);
+		for (Word existing : existingSynonyms) {
+			if (existing.getId()==foundSynonym.getId()) {
+				return;
+			}
 		}
+		modelService.createRelation(localWord, foundSynonym, Relation.KIND_SEMANTICS_SYNONYMOUS, getPublicUser());
 	}
 
 	private Word findWord(String text, String sourceId) {

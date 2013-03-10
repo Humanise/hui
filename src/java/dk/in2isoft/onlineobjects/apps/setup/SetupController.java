@@ -24,6 +24,7 @@ import dk.in2isoft.in2igui.data.ListWriter;
 import dk.in2isoft.onlineobjects.apps.setup.perspectives.SchedulerStatusPerspective;
 import dk.in2isoft.onlineobjects.apps.setup.perspectives.UserPerspective;
 import dk.in2isoft.onlineobjects.apps.videosharing.Path;
+import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.SecurityService;
@@ -36,11 +37,13 @@ import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.model.EmailAddress;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Image;
+import dk.in2isoft.onlineobjects.model.InternetAddress;
 import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.Privilege;
 import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.annotations.Appearance;
+import dk.in2isoft.onlineobjects.modules.onlinepublisher.PublisherPerspective;
 import dk.in2isoft.onlineobjects.modules.scheduling.JobInfo;
 import dk.in2isoft.onlineobjects.modules.surveillance.LogEntry;
 import dk.in2isoft.onlineobjects.modules.surveillance.RequestInfo;
@@ -517,4 +520,39 @@ public class SetupController extends SetupControllerBase {
 		}
 		return items;
 	}
+
+	@Path
+	public void listPublishers(Request request) throws ModelException, IOException {
+		
+		List<InternetAddress> sites = onlinePublisherService.getSites(request.getSession());
+		
+		ListWriter writer = new ListWriter(request);
+		writer.startList();
+		writer.startHeaders().header("Name").header("Address").endHeaders();
+		for (InternetAddress address : sites) {
+			writer.startRow().withId(address.getId());
+			writer.startCell().withIcon(address.getIcon()).text(address.getName()).endCell();
+			writer.startCell().text(address.getAddress()).endCell();
+			writer.endRow();
+		}
+		writer.endList();
+	}
+	
+	@Path
+	public void savePublisher(Request request) throws IOException,EndUserException {
+		PublisherPerspective perspective = request.getObject("publisher", PublisherPerspective.class);
+		Privileged privileged = request.getSession();
+		onlinePublisherService.createOrUpdatePublisher(perspective, privileged);
+	}
+
+	@Path
+	public PublisherPerspective loadPublisher(Request request) throws IOException,EndUserException {
+		return onlinePublisherService.getPublisherPerspective(request.getLong("id"), request.getSession());
+	}
+
+	@Path
+	public void deletePublisher(Request request) throws IOException,EndUserException {
+		onlinePublisherService.deletePublisher(request.getLong("id"), request.getSession());
+	}
+	
 }

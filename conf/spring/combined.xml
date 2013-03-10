@@ -18,6 +18,7 @@
     <import resource="module-synchronization.xml"/>
     <import resource="module-networking.xml"/>
     <import resource="module-images.xml"/>
+    <import resource="module-onlinepublisher.xml"/>
     <import resource="app-videosharing.xml"/>
     <import resource="app-setup.xml"/>
     <import resource="app-community.xml"/>
@@ -29,6 +30,7 @@
     <import resource="app-tools.xml"/>
     <import resource="app-front.xml"/>
     <import resource="app-people.xml"/>
+    <import resource="app-api.xml"/>
 
 	<bean id="configurationService" class="dk.in2isoft.onlineobjects.services.ConfigurationService" autowire="byType">
 		<property name="basePath" value="${basePath}"/>
@@ -125,6 +127,8 @@
 	<bean id="sessionService" class="dk.in2isoft.onlineobjects.services.SessionService" autowire="byType"/>
 
 	<bean id="informationService" class="dk.in2isoft.onlineobjects.modules.information.InformationService" autowire="byType"/>
+	
+	<bean id="pileService" class="dk.in2isoft.onlineobjects.services.PileService" autowire="byType"/>
 
 	<!-- Service controllers -->
 	

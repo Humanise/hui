@@ -1,15 +1,15 @@
-package dk.in2isoft.onlineobjects.apps.front;
+package dk.in2isoft.onlineobjects.apps.api;
 
 import java.io.IOException;
 
 import dk.in2isoft.onlineobjects.apps.videosharing.Path;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
+import dk.in2isoft.onlineobjects.service.language.TextAnalysis;
 import dk.in2isoft.onlineobjects.ui.Blend;
 import dk.in2isoft.onlineobjects.ui.Request;
-import dk.in2isoft.onlineobjects.ui.ScriptWriter;
 
 
-public class FrontController extends FrontControllerBase {
+public class APIController extends APIControllerBase {
 
 	protected static final Blend publicScript;
 	
@@ -24,9 +24,9 @@ public class FrontController extends FrontControllerBase {
 		publicScript.addPath("WEB-INF","apps","front","web","animation.js");
 	}
 
-	@Path(expression="/script.[0-9]+.js")
-	public void script(Request request) throws IOException, EndUserException {
-		ScriptWriter writer = new ScriptWriter(request, configurationService);
-		writer.write(publicScript);
+	@Path(start={"v1.0","language","analyse"})
+	public TextAnalysis script(Request request) throws IOException, EndUserException {
+		String text = request.getString("text");
+		return languageService.analyse(text);
 	}
 }

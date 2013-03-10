@@ -1,4 +1,4 @@
-package dk.in2isoft.onlineobjects.apps.front;
+package dk.in2isoft.onlineobjects.apps.api;
 
 import java.io.IOException;
 import java.util.List;
@@ -8,12 +8,15 @@ import com.google.common.collect.Lists;
 
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
+import dk.in2isoft.onlineobjects.services.LanguageService;
 import dk.in2isoft.onlineobjects.ui.Request;
 
-public abstract class FrontControllerBase extends ApplicationController {
+public abstract class APIControllerBase extends ApplicationController {
+	
+	protected LanguageService languageService;
 
-	public FrontControllerBase() {
-		super("front");
+	public APIControllerBase() {
+		super("api");
 		addJsfMatcher("/", "front.xhtml");
 		addJsfMatcher("/<language>", "front.xhtml");
 	}
@@ -31,11 +34,6 @@ public abstract class FrontControllerBase extends ApplicationController {
 	public List<Locale> getLocales() {
 		return Lists.newArrayList(new Locale("en"),new Locale("da"));
 	}
-	
-	@Override
-	public String getMountPoint() {
-		return "www";
-	}
 
 	@Override
 	public String getLanguage(Request request) {
@@ -46,5 +44,8 @@ public abstract class FrontControllerBase extends ApplicationController {
 		return super.getLanguage(request);
 	}
 
+	public void setLanguageService(LanguageService languageService) {
+		this.languageService = languageService;
+	}
 
 }
