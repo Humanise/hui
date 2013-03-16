@@ -1,9 +1,12 @@
 package dk.in2isoft.onlineobjects.service.authentication.views;
 
 import dk.in2isoft.commons.jsf.AbstractView;
+import dk.in2isoft.commons.lang.Strings;
+import dk.in2isoft.onlineobjects.util.Messages;
 
 public class AuthenticationLoginView extends AbstractView {
 	
+	private static final Messages messages = new Messages(AuthenticationLoginView.class);
 	
 	public String getCurrentUserName() {
 		return getUserName();
@@ -15,9 +18,9 @@ public class AuthenticationLoginView extends AbstractView {
 	
 	public String getMessage() {
 		String action = getRequest().getString("action");
-		if ("appAccessDenied".equals(action)) {
-			return "The current user does not have access to this application";
+		if (Strings.isBlank(action)) {
+			return null;
 		}
-		return null;
+		return messages.get("action_"+action, getLocale());
 	}
 }

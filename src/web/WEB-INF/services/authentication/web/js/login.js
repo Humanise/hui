@@ -7,5 +7,8 @@ hui.ui.listen({
 		this.password = hui.ui.get('password');
 		
 		this.username.focus();
+	},
+	$submit$formula : function(formula) {
+		formula.element.submit();
 	}
 })

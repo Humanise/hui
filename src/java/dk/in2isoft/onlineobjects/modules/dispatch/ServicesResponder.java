@@ -43,12 +43,13 @@ public class ServicesResponder extends AbstractControllerResponder implements Re
 		} else {
 			if (path.length > 2) {
 				try {
-					callController(controller, path[2], request);
-				} catch (NoSuchMethodException e) {
-					String[] filePath = new String[] { "service", controller.getName() };
-					if (!pushFile((String[]) ArrayUtils.addAll(filePath, path), request.getResponse())) {
-						controller.unknownRequest(request);
+					if (!callController(controller, path[2], request)) {
+						String[] filePath = new String[] { "service", controller.getName() };
+						if (!pushFile((String[]) ArrayUtils.addAll(filePath, path), request.getResponse())) {
+							controller.unknownRequest(request);
+						}
 					}
+				} catch (NoSuchMethodException e) {
 				}
 			} else {
 				controller.unknownRequest(request);

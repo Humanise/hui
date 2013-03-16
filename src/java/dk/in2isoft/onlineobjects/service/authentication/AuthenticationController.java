@@ -39,11 +39,7 @@ public class AuthenticationController extends AuthenticationControllerBase {
 
 	@Override
 	public void unknownRequest(Request request) throws IOException, EndUserException {
-		if (request.getLocalPath().length==0) {
-			new LoginPage(this,request).display(request);
-		} else {
-			super.unknownRequest(request);
-		}
+		request.redirect("/");
 	}
 
 	public void authenticate(Request request) throws IOException, EndUserException {
