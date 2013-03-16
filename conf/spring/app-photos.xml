@@ -24,4 +24,32 @@
    		<property name="modelService" ref="modelService"/>
    	</bean>
    	
+   	
+   	<!-- Indexing -->
+   	
+   	<bean id="photoIndexer" class="dk.in2isoft.onlineobjects.modules.index.ConfigurableIndexer">
+		<property name="indexManager" ref="photosIndex" />
+		<property name="type" value="dk.in2isoft.onlineobjects.model.Image"/>
+		<property name="documentBuilder">
+			<bean class="dk.in2isoft.onlineobjects.modules.index.PhotoIndexDocumentBuilder">
+			</bean>
+		</property>
+	</bean>
+	<bean id="photosIndex" class="dk.in2isoft.onlineobjects.modules.index.IndexManager">
+		<property name="directoryName"><util:constant static-field="dk.in2isoft.onlineobjects.modules.index.IndexService.PHOTOS_INDEX"/></property>
+		<property name="configurationService" ref="configurationService"/>
+	</bean>
+
+   	<bean class="dk.in2isoft.onlineobjects.modules.scheduling.JobDescription">
+		<property name="jobClass" value="dk.in2isoft.onlineobjects.modules.index.ConfigurableIndexJob"/>
+		<property name="properties">
+			<map>
+				<entry key="configurableIndexer" value-ref="photoIndexer"/>
+			</map>
+		</property>
+		<property name="name" value="index-photos"/>
+		<property name="group" value="core"/>
+	</bean>
+ 
+   	
 </beans>

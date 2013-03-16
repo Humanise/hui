@@ -14,6 +14,7 @@
     <import resource="core-scheduling.xml"/>
     <import resource="core-publishing.xml"/>
     <import resource="core-jobs.xml"/>
+    <import resource="core-services.xml"/>
     <import resource="module-language.xml"/>
     <import resource="module-synchronization.xml"/>
     <import resource="module-networking.xml"/>
@@ -130,14 +131,6 @@
 	
 	<bean id="pileService" class="dk.in2isoft.onlineobjects.services.PileService" autowire="byType"/>
 
-	<!-- Service controllers -->
-	
-	<bean id="imageController" class="dk.in2isoft.onlineobjects.service.image.ImageController" autowire="byType"/>
-	<bean id="modelController" class="dk.in2isoft.onlineobjects.service.model.ModelController" autowire="byType"/>
-	<bean id="webrendererController" class="dk.in2isoft.onlineobjects.service.webrenderer.WebrendererController" autowire="byType"/>
-	<bean id="authenticationController" class="dk.in2isoft.onlineobjects.service.authentication.AuthenticationController" autowire="byType"/>
-	<bean id="videoController" class="dk.in2isoft.onlineobjects.service.video.VideoController" autowire="byType"/>
-	<bean id="languageController" class="dk.in2isoft.onlineobjects.service.language.LanguageController" autowire="byType"/>
 	
 	<!-- Tools -->
 	

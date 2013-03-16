@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+	xmlns:o="http://www.onlineobjects.com/jsf" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:gui="http://www.in2isoft.dk/in2igui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+	
+	<head>
+		<title>OnlineObjects</title>
+		<o:stylesheet href="/style.css" integrateCache="true"/>
+		<o:script src="/script.js" integrateCache="true"/>
+	</head>
+	
+	<o:body>
+		
+		<div class="box" style="width: 400px; background: #fff; padding: 20px; border: 1px solid #eee; margin: 30px auto 0;">
+			<o:header>Adgangskontrol</o:header>
+			<p class="user">Nuværende bruger: #{authenticationLoginView.currentUserName}</p>
+			<c:if test="#{not empty authenticationLoginView.message}">
+				<p>#{authenticationLoginView.message}</p>
+			</c:if>
+			<gui:formula action="authenticate">
+				<p>
+					<label>Brugernavn</label>
+					<gui:textInput inputName="username" name="username"/>
+				</p>
+				<p>
+					<label>Kodeord</label>
+					<gui:textInput inputName="password" name="password" secret="true"/>
+				</p>
+				<p>
+					<input type="hidden" name="redirect" value="#{authenticationLoginView.redirect}"/>
+					<o:link href="/logout">Log ud</o:link>
+					<gui:button text="Log ind" submit="true"/>
+				</p>
+				<p class="links">
+				</p>
+			</gui:formula>
+		</div>
+	</o:body>
+	
+</html>

@@ -1,4 +1,4 @@
-/* Use this script if you need to support IE 7 and IE 6. */
+/* Load this script using conditional IE comments if you need to support IE 7 and IE 6. */
 
 window.onload = function() {
 	function addIcon(el, entity) {
@@ -22,7 +22,8 @@ window.onload = function() {
 			'oo_font_camera' : '&#x63;',
 			'oo_font_file' : '&#x66;',
 			'oo_font_time' : '&#x54;',
-			'oo_font_dimensions' : '&#x44;'
+			'oo_font_dimensions' : '&#x44;',
+			'oo_font_book' : '&#x62;'
 		},
 		els = document.getElementsByTagName('*'),
 		i, attr, html, c, el;

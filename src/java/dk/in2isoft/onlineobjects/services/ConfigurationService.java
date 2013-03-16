@@ -3,6 +3,7 @@ package dk.in2isoft.onlineobjects.services;
 import java.io.File;
 import java.util.Collection;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
@@ -42,6 +44,7 @@ public class ConfigurationService implements InitializingBean {
 	private File indexDir;
 	
 	private Multimap<String, Locale> appLocales = HashMultimap.create();
+	private Map<String, String> appMountPoints = Maps.newHashMap();
 	
 	private LifeCycleService lifeCycleService;
 
@@ -81,6 +84,7 @@ public class ConfigurationService implements InitializingBean {
 			if (controller.getLocales()!=null) {
 				appLocales.putAll(controller.getName(), controller.getLocales());
 			}
+			appMountPoints.put(controller.getName(), controller.getMountPoint());
 		}
 	}
 	
@@ -192,7 +196,7 @@ public class ConfigurationService implements InitializingBean {
 		}
 		HttpServletRequest servletRequest = request.getRequest();
 		StringBuilder url = new StringBuilder();
-		url.append("http://").append(app).append(".").append(rootDomain);
+		url.append("http://").append(appMountPoints.get(app)).append(".").append(rootDomain);
 		if (servletRequest.getServerPort()!=80) {
 			url.append(":").append(servletRequest.getServerPort());
 		}

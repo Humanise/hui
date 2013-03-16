@@ -21,7 +21,7 @@ div.oo_topbar:hover
 	border-bottom: 1px solid #ddd;
 }
 
-div.oo_topbar strong
+a.oo_topbar_logo
 {
 	float: left;
 	font-weight: 300;
@@ -30,18 +30,21 @@ div.oo_topbar strong
 	padding: 0 10px;
 	font-size: 12pt;
 	color: #bbb;
+	text-decoration: none;
 }
 
-div.oo_topbar strong i
+a.oo_topbar_logo em
 {
 	font-family: 'OnlineObjects';
 	font-style: normal;
 	font-weight: normal;
 	-webkit-font-smoothing: antialiased;
-	margin: -3px 4px 0 -2px;
-	vertical-align: middle;
+	margin: 0px 4px 0 -2px;
+	vertical-align: top;
 	display: inline-block;
 	font-size: 22px;
+	width: 22px;
+	height: 22px;
 }
 
 body.oo_msie7 div.oo_topbar strong
@@ -60,6 +63,18 @@ div.oo_topbar strong span span
 {
 	font-weight: 100;
 }
+
+a.oo_topbar_logo:hover strong
+{
+	text-decoration: underline;
+	color: #333;
+}
+
+a.oo_topbar_logo:hover em
+{
+	color: #666;
+}
+
 
 div.oo_topbar ul
 {

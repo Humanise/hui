@@ -1,6 +1,10 @@
 package dk.in2isoft.onlineobjects.modules.scheduling;
 
+import java.util.Collection;
+
 import dk.in2isoft.onlineobjects.core.ModelService;
+import dk.in2isoft.onlineobjects.model.Entity;
+import dk.in2isoft.onlineobjects.modules.index.ConfigurableIndexer;
 import dk.in2isoft.onlineobjects.modules.index.WordIndexer;
 import dk.in2isoft.onlineobjects.modules.information.InformationService;
 import dk.in2isoft.onlineobjects.modules.onlinepublisher.OnlinePublisherService;
@@ -20,6 +24,7 @@ public class SchedulingSupportFacade {
 	private WordIndexer wordIndexer;
 	private SchedulingService schedulingService;
 	private OnlinePublisherService onlinePublisherService;
+	private Collection<ConfigurableIndexer<? extends Entity>> configurableIndexers;
 
 	public InformationService getInformationService() {
 		return informationService;
@@ -91,5 +96,18 @@ public class SchedulingSupportFacade {
 
 	public void setOnlinePublisherService(OnlinePublisherService onlinePublisherService) {
 		this.onlinePublisherService = onlinePublisherService;
+	}
+	
+	public <E extends Entity> ConfigurableIndexer<E> getConfigurableIndexer(Class<E> type) {
+		for (ConfigurableIndexer<? extends Entity> indexer : configurableIndexers) {
+			if (type.equals(indexer.getType())) {
+				return (ConfigurableIndexer<E>) indexer;
+			}
+		}
+		return null;
+	}
+	
+	public void setConfigurableIndexers(Collection<ConfigurableIndexer<? extends Entity>> configurableIndexers) {
+		this.configurableIndexers = configurableIndexers;
 	}
 }

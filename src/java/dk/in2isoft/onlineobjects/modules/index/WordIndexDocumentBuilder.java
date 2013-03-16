@@ -12,7 +12,7 @@ import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.modules.language.WordImpression;
 import dk.in2isoft.onlineobjects.services.LanguageService;
 
-public class WordIndexDocumentBuilder {
+public class WordIndexDocumentBuilder implements IndexDocumentBuilder<Word> {
 	
 	private LanguageService languageService;
 

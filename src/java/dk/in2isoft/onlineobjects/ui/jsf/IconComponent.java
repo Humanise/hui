@@ -52,6 +52,8 @@ public class IconComponent extends AbstractComponent {
 		icons.put("user", 'u');
 		icons.put("globe", 'g');
 		icons.put("envelope", 'e');
+		icons.put("camera", 'c');
+		icons.put("book", 'b');
 		writer.startSpan().withClass(new ClassBuilder("oo_icon").add("oo_icon", size).add(styleClass));
 		writer.text(icons.get(icon));
 		writer.endSpan();

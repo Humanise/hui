@@ -1,6 +1,5 @@
 package dk.in2isoft.onlineobjects.modules.dispatch;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -13,7 +12,6 @@ import java.util.regex.Pattern;
 import javax.servlet.FilterChain;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
@@ -32,13 +30,12 @@ import dk.in2isoft.onlineobjects.services.ConfigurationService;
 import dk.in2isoft.onlineobjects.services.DispatchingService;
 import dk.in2isoft.onlineobjects.ui.Request;
 
-public class ApplicationResponder implements Responder, InitializingBean {
+public class ApplicationResponder extends AbstractControllerResponder implements Responder, InitializingBean {
 
-	private static Logger log = Logger.getLogger(ApplicationResponder.class);
+	static Logger log = Logger.getLogger(ApplicationResponder.class);
 	private static final Class<?>[] args = { Request.class };
 	private Multimap<String, Pattern> mappings;
 	
-	private ConfigurationService configurationService;
 	private HashMap<String, ApplicationController> controllers;
 	private DispatchingService dispatchingService;
 	
@@ -135,7 +132,7 @@ public class ApplicationResponder implements Responder, InitializingBean {
 					try {
 						boolean called = callApplicationMethod(controller, path[0], request);
 						if (!called) {
-							String[] filePath = new String[] { "app", application };
+							String[] filePath = new String[] { "apps", application };
 							if (!pushFile((String[]) ArrayUtils.addAll(filePath, path), request.getResponse())) {
 								controller.unknownRequest(request);
 							}
@@ -155,7 +152,8 @@ public class ApplicationResponder implements Responder, InitializingBean {
 	private boolean callApplicationMethod(ApplicationController controller, String methodName, Request request)
 			throws EndUserException, InvocationTargetException {
 		try {
-			Method method = controller.getClass().getDeclaredMethod(methodName, args);
+			Class<? extends ApplicationController> appClass = controller.getClass();
+			Method method = appClass.getDeclaredMethod(methodName, args);
 			boolean accessible = method.isAccessible();
 			if (!accessible)
 				return false;
@@ -168,39 +166,6 @@ public class ApplicationResponder implements Responder, InitializingBean {
 		}
 	}
 
-
-	private boolean pushFile(String[] path, HttpServletResponse response) {
-		boolean success = false;
-		StringBuilder filePath = new StringBuilder();
-		filePath.append(configurationService.getBasePath());
-		filePath.append(File.separator);
-		filePath.append("WEB-INF");
-		filePath.append(File.separator);
-		filePath.append("apps");
-		filePath.append(File.separator);
-		filePath.append(path[1]);
-		filePath.append(File.separator);
-		filePath.append("web");
-		for (int i = 2; i < path.length; i++) {
-			filePath.append(File.separator);
-			filePath.append(path[i]);
-		}
-		File file = new File(filePath.toString());
-		// log.info(file.getAbsolutePath());
-		if (file.exists() && !file.isDirectory()) {
-			try {
-				DispatchingService.pushFile(response, file);
-				success = true;
-			} catch (Exception e) {
-				log.error(e.toString(), e);
-			}
-		}
-		return success;
-	}
-	
-	public void setConfigurationService(ConfigurationService configurationService) {
-		this.configurationService = configurationService;
-	}
 	
 	public void setDispatchingService(DispatchingService dispatchingService) {
 		this.dispatchingService = dispatchingService;
@@ -209,9 +174,7 @@ public class ApplicationResponder implements Responder, InitializingBean {
 	public void setApplicationControllers(List<ApplicationController> controllers) {
 		this.controllers = new HashMap<String,ApplicationController>();
 		for (ApplicationController controller : controllers) {
-			String name = controller.getClass().getSimpleName();
-			name = name.toLowerCase().substring(0,name.indexOf("Controller"));
-			this.controllers.put(name, controller);
+			this.controllers.put(controller.getName(), controller);
 		}
 	}
 }

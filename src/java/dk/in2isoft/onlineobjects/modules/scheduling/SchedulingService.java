@@ -60,6 +60,9 @@ public class SchedulingService implements InitializingBean {
 				JobDetail job = JobBuilder.newJob(desc.getJobClass())
 					    .withIdentity(desc.getName(), desc.getGroup()).storeDurably()
 					    .build();
+				if (desc.getProperties()!=null) {
+					job.getJobDataMap().putAll(desc.getProperties());
+				}
 				job.getJobDataMap().put("schedulingSupportFacade", schedulingSupportFacade);
 				scheduler.addJob(job, true);
 				if (Strings.isNotBlank(desc.getCron()) || desc.getRepeatMinutes()>0) {
@@ -77,6 +80,7 @@ public class SchedulingService implements InitializingBean {
 				}
 			}
 		}
+		scheduler.start();
 	}
 	
 	public void log(String text) {

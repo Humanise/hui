@@ -33,6 +33,7 @@ public class LayoutComponent extends AbstractComponent {
 	@Override
 	protected void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
 		writer.startDiv("oo_layout oo_layout_"+variant);
+		writer.startDiv("oo_layout_left").endDiv();
 		writer.startDiv("oo_layout_top");
 		UIComponent top = getFacet("top");
 		if (top!=null) {
@@ -53,6 +54,7 @@ public class LayoutComponent extends AbstractComponent {
 		}
 		writer.endDiv();
 		writer.endDiv();
+		writer.startDiv("oo_layout_right").endDiv();
 		writer.startDiv("oo_layout_bottom").endDiv();
 		writer.endDiv();
 	}

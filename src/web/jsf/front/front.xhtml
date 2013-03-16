@@ -10,56 +10,40 @@
 	xmlns:gui="http://www.in2isoft.dk/in2igui"
 	xmlns:c="http://java.sun.com/jsp/jstl/core" xml:lang="en">
 <head>
+	<meta name="viewport" content="user-scalable=yes, width=device-width, initial-scale = 1, maximum-scale = 10, minimum-scale = 0.2"/>
 	<title>OnlineObjects</title>
-	<style>
-			body
-			{
-				
-			}
-			#drawing
-			{
-				position: absolute; left: 50%; top: 40%; margin: -250px 0 0 -250px;
-			}
-			
-			h1
-			{
-				font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;
-				font-size: 90px;
-				font-weight: 100;
-				color: #ccc;
-				position: absolute;
-				top: 40%;
-				width: 100%;
-				text-align: center;
-				line-height: 90px;
-				margin-top: 150px;
-				cursor: default;
-			}
-			
-			p
-			{
-				font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;
-				font-size: 24px;
-				line-height: 24px;
-				font-weight: 100;
-				color: #ccc;
-				position: absolute;
-				top: 40%;
-				width: 100%;
-				text-align: center;
-				margin-top: 250px;
-				letter-spacing: 1px;
-				opacity: 0;
-				padding-top: 30px;
-				cursor: default;
-			}
-	</style>
+	<o:stylesheet href="/style.css" integrateCache="true"/>
 	<o:script src="/script.js" integrateCache="true"/>
 </head>
 
 <body>
-	<div id="drawing"></div>
-	<h1 id="title">OnlineObjects</h1>
-	<p id="slogan" style="padding-top: 20px;">Organic – Electronic – Dynamic</p>
+	<div id="container">
+		<div id="logo">
+			<span class="oo_icon">&#xa4;</span>
+		</div>
+		<h1 id="title">OnlineObjects</h1>
+		<p id="slogan">Organic – Dynamic – Plastic</p>
+	</div>
+	<ul>
+		<li>
+			<o:link plain="true" app="people" href="/">
+				<o:icon size="48" icon="user"/>
+				<strong>People</strong>
+			</o:link>
+		</li>
+		<li>
+			<o:link plain="true" app="words" href="/">
+				<o:icon size="48" icon="book"/>
+				<strong>Words</strong>
+			</o:link>
+		</li>
+		<li>
+			<o:link plain="true" app="photos" href="/">
+				<o:icon size="48" icon="camera"/>
+				<strong>Photos</strong>
+			</o:link>
+		</li>
+	</ul>
+	<o:analytics/>
 </body>
 </html>

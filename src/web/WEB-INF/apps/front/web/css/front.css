@@ -1,0 +1,183 @@
+body
+{
+	margin: 0;
+	font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;
+}
+
+#logo
+{
+	text-align: center;
+	position: absolute;
+	left: 50%;
+	top: 30%;
+	margin: -200px 0 0 -170px;
+	width: 340px;
+	height: 340px;
+}
+
+#logo span.oo_icon
+{
+	display: inline-block;
+	width: 200px;
+	height: 200px;
+	font-size: 200px;
+	line-height: 200px;
+	color: #ddd;
+}
+
+h1
+{
+	font-size: 90px;
+	font-weight: 100;
+	color: #ccc;
+	position: absolute;
+	top: 30%;
+	width: 100%;
+	text-align: center;
+	line-height: 90px;
+	margin-top: 150px;
+	cursor: default;
+	font-family: 'HelveticaNeue-UltraLight','Helvetica Neue','Helvetica','Arial',sans-serif;
+}
+
+
+#slogan
+{
+	font-size: 24px;
+	line-height: 24px;
+	font-weight: 100;
+	color: #ccc;
+	width: 100%;
+	text-align: center;
+	letter-spacing: 1px;
+	cursor: default;
+	font-family: 'HelveticaNeue-UltraLight','Helvetica Neue','Helvetica','Arial',sans-serif;
+	position: absolute;
+	top: 30%;
+	margin-top: 250px;
+}
+
+ul
+{
+	-webkit-user-select: none;
+	display: block;
+	list-style: none;
+	margin: 0;
+	text-align: center;
+	position: fixed;
+	bottom: 1%;
+	width: 100%;
+	padding: 0;
+	font-size: 0;
+}
+
+ul li
+{
+	display: inline-block;
+	text-align: center;
+	width: 100px;
+	overflow: hidden;
+	padding: 20px 0;
+}
+
+ul a
+{
+	outline: none;
+	display: block;
+	text-decoration: none;
+	color: #aaa;
+	-webkit-transition-property: -webkit-transform, color;
+	-webkit-transition-duration: 0.5s;
+	-moz-transition-property: -moz-transform, color;
+	-moz-transition-duration: 0.5s;
+}
+
+ul a:focus
+{
+	text-shadow: 0 0 5px #46f;
+	color: #46a;
+}
+
+ul a strong
+{
+	font-weight: 400;
+	font-size: 18px;
+	display: block;
+	-webkit-font-smoothing: antialiased;
+}
+
+ul a:hover
+{
+	color: #46a;
+	-webkit-transform: scale(1.3);
+	-moz-transform: scale(1.3);
+}
+
+@media screen and (max-width: 600px) {
+	h1
+	{
+		font-size: 60px;
+		line-height: 60px;	
+	}
+	
+	#slogan
+	{
+		font-size: 20px;
+		line-height: 20px;
+		margin-top: 220px;
+	}
+}
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+
+	#logo
+	{
+		position: static;
+		margin: 0 auto;
+		margin-top: 20px;
+		height: auto;
+	}
+	
+	#logo span.oo_icon
+	{
+		display: inline-block;
+		width: 140px;
+		height: 140px;
+		font-size: 140px;
+		line-height: 140px;
+	}
+
+	h1
+	{
+		font-size: 50px;
+		line-height: 50px;
+		position: static;
+		margin: 5px 0;
+		color: #aaa;
+	}
+	
+	#slogan
+	{
+		position: static;
+		font-size: 16px;
+		line-height: 16px;
+		position: static;
+		margin: 5px 0;		
+		font-family: 'HelveticaNeue-Light','Helvetica Neue','Helvetica','Arial',sans-serif;
+		letter-spacing: 0;
+		color: #aaa;
+	}
+
+	ul
+	{
+		position: static;
+		margin: 10px 0;
+	}
+}
+
+@media screen and (max-width: 320px) {
+	#logo
+	{
+		width: auto;
+	}
+}

@@ -8,6 +8,7 @@ public class IndexService {
 	private String directoryName = "index";
 
 	public static String WORDS_INDEX = "app-words-general";
+	public static String PHOTOS_INDEX = "app-photos-general";
 	
 	public IndexManager getIndex(String name) {
 		IndexManager indexManager = new IndexManager(name);

@@ -8,9 +8,31 @@ import com.google.common.collect.Lists;
 
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
+import dk.in2isoft.onlineobjects.ui.Blend;
 import dk.in2isoft.onlineobjects.ui.Request;
 
 public abstract class FrontControllerBase extends ApplicationController {
+	
+	protected static final Blend publicScript;
+	protected static final Blend publicStyle;
+	
+	static {
+
+		publicScript = new Blend("front_public_script");
+		publicScript.addPath("hui","js","hui.js");
+		publicScript.addPath("hui","js","hui_animation.js");
+		//publicScript.addPath("hui","js","hui_color.js");
+		publicScript.addPath("hui","js","ui.js");
+		publicScript.addPath("hui","js","Drawing.js");
+		publicScript.addPath("WEB-INF","apps","front","web","animation.js");
+
+	
+		publicStyle = new Blend("front_public_style");
+		publicStyle.addCoreCSS("oo_font.css");
+		publicStyle.addCoreCSS("oo_icon.css");
+		publicStyle.addPath("WEB-INF","apps","front","web","css","front.css");
+
+	}
 
 	public FrontControllerBase() {
 		super("front");

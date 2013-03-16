@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+    ">
+
+	<!-- Service controllers -->
+	
+	<bean id="imageController" class="dk.in2isoft.onlineobjects.service.image.ImageController" autowire="byType"/>
+	
+	<bean id="modelController" class="dk.in2isoft.onlineobjects.service.model.ModelController" autowire="byType"/>
+	
+	<bean id="webrendererController" class="dk.in2isoft.onlineobjects.service.webrenderer.WebrendererController" autowire="byType"/>
+	
+	<bean id="authenticationController" class="dk.in2isoft.onlineobjects.service.authentication.AuthenticationController" autowire="byType"/>
+	<bean id="authenticationLoginView" class="dk.in2isoft.onlineobjects.service.authentication.views.AuthenticationLoginView"/>
+	
+	<bean id="videoController" class="dk.in2isoft.onlineobjects.service.video.VideoController" autowire="byType"/>
+	
+	<bean id="languageController" class="dk.in2isoft.onlineobjects.service.language.LanguageController" autowire="byType"/>
+
+</beans>

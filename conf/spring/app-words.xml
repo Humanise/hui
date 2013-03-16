@@ -11,6 +11,8 @@
 
 	<bean id="wordsController" class="dk.in2isoft.onlineobjects.apps.words.WordsController" autowire="byType" />
 	
+	<bean id="wordsModelService" class="dk.in2isoft.onlineobjects.apps.words.WordsModelService" autowire="byType" />
+
 	<bean id="wordIndexer" class="dk.in2isoft.onlineobjects.modules.index.WordIndexer">
 		<property name="indexManager" ref="wordsIndex" />
 		<property name="modelService" ref="modelService" />
@@ -20,9 +22,6 @@
 			</bean>
 		</property>
 	</bean>
-
-	<bean id="wordsModelService" class="dk.in2isoft.onlineobjects.apps.words.WordsModelService" autowire="byType" />
-
 		
 	<bean id="wordsIndex" class="dk.in2isoft.onlineobjects.modules.index.IndexManager">
 		<property name="directoryName"><util:constant static-field="dk.in2isoft.onlineobjects.modules.index.IndexService.WORDS_INDEX"/></property>

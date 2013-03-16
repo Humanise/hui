@@ -7,6 +7,7 @@ import javax.faces.context.FacesContext;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.TagWriter;
+import dk.in2isoft.commons.lang.Strings;
 
 @FacesComponent(value=FormulaComponent.TYPE)
 public class FormulaComponent extends AbstractComponent {
@@ -14,6 +15,8 @@ public class FormulaComponent extends AbstractComponent {
 	public static final String TYPE = "hui.formula";
 
 	private String name;
+	private String action;
+	private String method;
 
 	public FormulaComponent() {
 		super(TYPE);
@@ -22,12 +25,14 @@ public class FormulaComponent extends AbstractComponent {
 	@Override
 	public void restoreState(Object[] state) {
 		name = (String) state[0];
+		action = (String) state[1];
+		method = (String) state[2];
 	}
 
 	@Override
 	public Object[] saveState() {
 		return new Object[] {
-			name
+			name, action, method
 		};
 	}
 	
@@ -35,20 +40,24 @@ public class FormulaComponent extends AbstractComponent {
 	public void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
 		String id = getClientId();
 		writer.startElement("form").withClass("hui_formula").withId(id);
+		if (Strings.isNotBlank(action)) {
+			writer.withAttribute("action", action);
+		}
+		if (Strings.isNotBlank(method)) {
+			writer.withAttribute("method", method);
+		}
 	}
 	
 	@Override
-	protected void encodeEnd(FacesContext context, TagWriter writer) throws IOException {
-		writer.endElement("form");
-		writer.startScopedScript();
-		writer.write("new hui.ui.Formula({element:'");
-		writer.write(getClientId());
-		writer.write("'");
+	protected void encodeEnd(FacesContext context, TagWriter out) throws IOException {
+		out.endElement("form");
+		out.startScript();
+		out.startNewObject("hui.ui.Formula").property("element", getClientId());
 		if (name!=null) {
-			writer.write(",name:'"+name+"'");
-		}
-		writer.write("});");
-		writer.endScopedScript();
+			out.comma().property("name", name);
+		}		
+		out.endNewObject();
+		out.endScript();
 
 	}
 
@@ -58,5 +67,21 @@ public class FormulaComponent extends AbstractComponent {
 
 	public String getName() {
 		return name;
+	}
+
+	public String getAction() {
+		return action;
+	}
+
+	public void setAction(String action) {
+		this.action = action;
+	}
+
+	public String getMethod() {
+		return method;
+	}
+
+	public void setMethod(String method) {
+		this.method = method;
 	}
 }

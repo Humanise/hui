@@ -1,5 +1,7 @@
 package dk.in2isoft.onlineobjects.modules.scheduling;
 
+import java.util.Map;
+
 import org.quartz.Job;
 
 public class JobDescription {
@@ -14,6 +16,8 @@ public class JobDescription {
 	
 	private int repeatMinutes;
 
+	private Map<String,Object> properties;
+	
 	public Class<? extends Job> getJobClass() {
 		return jobClass;
 	}
@@ -52,5 +56,13 @@ public class JobDescription {
 
 	public void setRepeatMinutes(int repeatMinutes) {
 		this.repeatMinutes = repeatMinutes;
+	}
+
+	public Map<String,Object> getProperties() {
+		return properties;
+	}
+
+	public void setProperties(Map<String,Object> properties) {
+		this.properties = properties;
 	}
 }
