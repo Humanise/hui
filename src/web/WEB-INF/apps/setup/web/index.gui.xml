@@ -11,6 +11,7 @@
 			<icon icon="common/user" title="Users" click="dock.setUrl('users.gui')"/>
 			<divider/>
 			<icon icon="common/user" title="Integration" click="dock.setUrl('integration.gui')"/>
+			<icon icon="common/internet" title="Internet addresses" click="dock.setUrl('internetaddresses.gui')"/>
 		</toolbar>
 	</dock>
 </gui>

@@ -8,6 +8,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
@@ -15,12 +16,14 @@ import org.joda.time.format.PeriodFormatterBuilder;
 
 import com.google.common.collect.Lists;
 
+import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.commons.lang.Code;
 import dk.in2isoft.commons.lang.Mapper;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.in2igui.data.ItemData;
 import dk.in2isoft.in2igui.data.ListData;
 import dk.in2isoft.in2igui.data.ListWriter;
+import dk.in2isoft.onlineobjects.apps.setup.perspectives.InternetAddressPerspective;
 import dk.in2isoft.onlineobjects.apps.setup.perspectives.SchedulerStatusPerspective;
 import dk.in2isoft.onlineobjects.apps.setup.perspectives.UserPerspective;
 import dk.in2isoft.onlineobjects.apps.videosharing.Path;
@@ -553,6 +556,59 @@ public class SetupController extends SetupControllerBase {
 	@Path
 	public void deletePublisher(Request request) throws IOException,EndUserException {
 		onlinePublisherService.deletePublisher(request.getLong("id"), request.getSession());
+	}
+
+	@Path
+	public void listInternetAddresses(Request request) throws ModelException, IOException {
+		int page = request.getInt("page");
+		int size = 50;
+		
+		SearchResult<InternetAddress> result = modelService.search(Query.after(InternetAddress.class).withPaging(page, 50));
+		
+		ListWriter writer = new ListWriter(request);
+		writer.startList();
+		writer.window(result.getTotalCount(), size, page);
+		writer.startHeaders().header("Name",40).header("Address").endHeaders();
+		for (InternetAddress address : result.getList()) {
+			writer.startRow().withId(address.getId());
+			writer.startCell().withIcon(address.getIcon()).text(address.getName()).endCell();
+			writer.startCell().startWrap().text(address.getAddress()).endWrap().endCell();
+			writer.endRow();
+		}
+		writer.endList();
+	}
+
+	@Path
+	public InternetAddressPerspective getInternetAddressesInfo(Request request) throws IOException,EndUserException {
+		Long id = request.getLong("id");
+		InternetAddressPerspective perspective = new InternetAddressPerspective();
+		InternetAddress address = modelService.get(InternetAddress.class, id, request.getSession());
+		if (address==null) {
+			throw new ContentNotFoundException("The address could not be found, id = "+id);
+		}
+		String content = address.getPropertyValue(Property.KEY_INTERNETADDRESS_CONTENT);
+		perspective.setContent(content);
+		perspective.setId(address.getId());
+		perspective.setTitle(address.getName());
+		perspective.setRendering(buildRendering(address,content));
+		return perspective;
+	}
+	
+	private String buildRendering(InternetAddress address, String content) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("<h1>").append(StringEscapeUtils.escapeXml(address.getName())).append("</h1>");
+		sb.append("<p><a href='").append(StringEscapeUtils.escapeXml(address.getAddress())).append("'>").append(StringEscapeUtils.escapeXml(address.getAddress())).append("</a></p>");
+		if (Strings.isNotBlank(content)) {
+			String[] lines = StringUtils.split(content, "\n");
+			sb.append("<div class='body'>");
+			for (int i = 0; i < lines.length; i++) {
+				sb.append("<p>").append(StringEscapeUtils.escapeXml(lines[i])).append("</p>");
+			}
+			sb.append("</div>");
+		} else {
+			sb.append("<p><em>No content</em></p>");
+		}
+		return sb.toString();
 	}
 	
 }

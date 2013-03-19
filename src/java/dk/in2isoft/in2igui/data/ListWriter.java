@@ -126,6 +126,16 @@ public class ListWriter extends MarkupWriter {
 		return this;
 	}
 
+	public ListWriter startWrap() {
+		startTag("wrap");
+		return this;
+	}
+
+	public ListWriter endWrap() {
+		endTag("wrap");
+		return this;
+	}
+
 	public ListWriter icon(String icon) {
 		startTag("icon");
 		withAttribute("icon", icon);
