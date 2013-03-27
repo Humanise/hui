@@ -7022,7 +7022,7 @@ hui.ui.List.prototype = {
 		} else {
 			this.fire('selectionReset');
 			if (hadSelection) {
-				this.fire('select');
+				this.fire('select',null);
 			}			
 		}
 		this.fireSizeChange();
@@ -13681,6 +13681,9 @@ hui.ui.Fragment.prototype = {
 	hide : function() {
 		this.element.style.display='none';
 		hui.ui.callVisible(this);
+	},
+	setHTML : function(html) {
+		this.element.innerHTML = html;
 	}
 }
 
