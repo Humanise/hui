@@ -2,7 +2,6 @@ package dk.in2isoft.commons.parsing;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.net.MalformedURLException;
 
 import nu.xom.Builder;
 import nu.xom.ParsingException;
@@ -21,7 +20,7 @@ public class XMLDocument extends TextDocument {
     private Document DOMDocument;
     private nu.xom.Document XOMDocument;
     	
-    public XMLDocument(String raw) throws MalformedURLException {
+    public XMLDocument(String raw) {
     	super(raw);
     }
 

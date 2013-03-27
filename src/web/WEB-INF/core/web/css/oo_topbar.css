@@ -265,8 +265,13 @@ div.oo_topbar_login_success
 		padding: 0 5px;
 	}
 	
-	div.oo_topbar strong span
+	div.oo_topbar strong
 	{
 		display: none;
+	}
+	
+	a.oo_topbar_logo
+	{
+		padding: 0 0 0 10px;
 	}
 }

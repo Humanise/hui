@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.Buffer;
+import org.apache.commons.collections.BufferUtils;
 import org.apache.commons.collections.buffer.CircularFifoBuffer;
 import org.apache.log4j.Logger;
 import org.quartz.CronScheduleBuilder;
@@ -25,20 +27,26 @@ import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.quartz.utils.Key;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.ContextStartedEvent;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.modules.surveillance.LogEntry;
+import dk.in2isoft.onlineobjects.services.ConfigurationService;
 
-public class SchedulingService implements InitializingBean {
+public class SchedulingService implements ApplicationListener<ContextRefreshedEvent>, InitializingBean {
 
 	private final static Logger log = Logger.getLogger(SchedulingService.class);
 	
-	private  CircularFifoBuffer liveLog = new CircularFifoBuffer(200);
+	private  Buffer liveLog = BufferUtils.synchronizedBuffer(new CircularFifoBuffer(200));
 	
 	private SchedulingSupportFacade schedulingSupportFacade;
+	
+	private ConfigurationService configurationService;
 
 	private org.quartz.Scheduler scheduler;
 	
@@ -46,8 +54,42 @@ public class SchedulingService implements InitializingBean {
 	
 	private Map<JobKey,String> triggerDescriptions = Maps.newHashMap();
 
+	public void onApplicationEvent(ContextRefreshedEvent event) {
+		try {
+			if (jobDescriptions!=null) {
+				for (JobDescription desc : jobDescriptions) {
+					JobDetail job = JobBuilder.newJob(desc.getJobClass())
+						    .withIdentity(desc.getName(), desc.getGroup()).storeDurably()
+						    .build();
+					if (desc.getProperties()!=null) {
+						job.getJobDataMap().putAll(desc.getProperties());
+					}
+					job.getJobDataMap().put("schedulingSupportFacade", schedulingSupportFacade);
+					scheduler.addJob(job, true);
+					if (Strings.isNotBlank(desc.getCron()) || desc.getRepeatMinutes()>0) {
+						if (Strings.isNotBlank(desc.getCron())) {
+							CronScheduleBuilder schedule = CronScheduleBuilder.cronSchedule(desc.getCron());
+							scheduler.scheduleJob(TriggerBuilder.newTrigger().forJob(job).withSchedule(schedule).build());
+							triggerDescriptions.put(job.getKey(), "cron: "+desc.getCron());
+						} else if (desc.getRepeatMinutes()>0) {
+							SimpleScheduleBuilder schedule = SimpleScheduleBuilder.repeatMinutelyForever(desc.getRepeatMinutes());
+							SimpleTrigger trigger = TriggerBuilder.newTrigger().forJob(job).withSchedule(schedule).withIdentity(desc.getName(), desc.getGroup()).build();
+							scheduler.scheduleJob(trigger);
+							triggerDescriptions.put(job.getKey(), "min:  "+desc.getRepeatMinutes());
+						}
+						if (desc.isPaused() || configurationService.isDevelopmentMode()) {
+							scheduler.pauseJob(job.getKey());
+						}
+					}
+				}
+			}
+			scheduler.start();
+		} catch (SchedulerException e) {
+			log.error("Problem starting scheduler", e);
+		}
+	}
+	
 	public void afterPropertiesSet() throws Exception {
-		
 		SchedulerFactory sf = new StdSchedulerFactory();
 		scheduler = sf.getScheduler();
 		LoggingSchedulerListener listener = new LoggingSchedulerListener(liveLog);
@@ -55,32 +97,6 @@ public class SchedulingService implements InitializingBean {
 		scheduler.getListenerManager().addJobListener(listener);
 		scheduler.getListenerManager().addTriggerListener(listener);
 		
-		if (jobDescriptions!=null) {
-			for (JobDescription desc : jobDescriptions) {
-				JobDetail job = JobBuilder.newJob(desc.getJobClass())
-					    .withIdentity(desc.getName(), desc.getGroup()).storeDurably()
-					    .build();
-				if (desc.getProperties()!=null) {
-					job.getJobDataMap().putAll(desc.getProperties());
-				}
-				job.getJobDataMap().put("schedulingSupportFacade", schedulingSupportFacade);
-				scheduler.addJob(job, true);
-				if (Strings.isNotBlank(desc.getCron()) || desc.getRepeatMinutes()>0) {
-					if (Strings.isNotBlank(desc.getCron())) {
-						CronScheduleBuilder schedule = CronScheduleBuilder.cronSchedule(desc.getCron());
-						scheduler.scheduleJob(TriggerBuilder.newTrigger().forJob(job).withSchedule(schedule).build());
-						triggerDescriptions.put(job.getKey(), "cron: "+desc.getCron());
-					} else if (desc.getRepeatMinutes()>0) {
-						SimpleScheduleBuilder schedule = SimpleScheduleBuilder.repeatMinutelyForever(desc.getRepeatMinutes());
-						SimpleTrigger trigger = TriggerBuilder.newTrigger().forJob(job).withSchedule(schedule).withIdentity(desc.getName(), desc.getGroup()).build();
-						scheduler.scheduleJob(trigger);
-						triggerDescriptions.put(job.getKey(), "min:  "+desc.getRepeatMinutes());
-					}
-					scheduler.pauseJob(job.getKey());
-				}
-			}
-		}
-		scheduler.start();
 	}
 	
 	public void log(String text) {
@@ -337,6 +353,10 @@ public class SchedulingService implements InitializingBean {
 
 	public void setJobDescriptions(List<JobDescription> jobDescriptions) {
 		this.jobDescriptions = jobDescriptions;
+	}
+	
+	public void setConfigurationService(ConfigurationService configurationService) {
+		this.configurationService = configurationService;
 	}
 
 }

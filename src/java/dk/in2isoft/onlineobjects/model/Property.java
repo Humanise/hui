@@ -32,6 +32,7 @@ public class Property {
 	public static final String KEY_PHOTO_TAKEN = "photo.taken";
 
 	public static final String KEY_INTERNETADDRESS_CONTENT = "internetaddress.content";
+	public static final String KEY_INTERNETADDRESS_ENCODING = "internetaddress.encoding";
 
 	public static final String KEY_WORD_SUGGESTION_LANGUAGE = "word.suggestion.language";
 

@@ -11,7 +11,7 @@
 	
 		<f:loadBundle basename="dk.in2isoft.onlineobjects.ui.jsf.msg.WordFinderComponent" var="msgWordFinder"/>
 	
-		<gui:source name="wordFinderListSource" url="#{wordsWordView.baseContext}/service/model/listWords">
+		<gui:source name="wordFinderListSource" url="#{wordsWordView.baseContext}/service/model/listWords" lazy="true">
 			<gui:parameter key="text" value="@wordFinderSearch.value"/>
 			<gui:parameter key="page" value="@wordFinderList.window.page"/>
 		</gui:source>

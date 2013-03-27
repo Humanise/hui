@@ -18,6 +18,8 @@ public class JobDescription {
 
 	private Map<String,Object> properties;
 	
+	private boolean paused;
+	
 	public Class<? extends Job> getJobClass() {
 		return jobClass;
 	}
@@ -64,5 +66,13 @@ public class JobDescription {
 
 	public void setProperties(Map<String,Object> properties) {
 		this.properties = properties;
+	}
+
+	public boolean isPaused() {
+		return paused;
+	}
+
+	public void setPaused(boolean paused) {
+		this.paused = paused;
 	}
 }

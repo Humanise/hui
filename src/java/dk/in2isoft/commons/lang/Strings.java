@@ -168,4 +168,34 @@ public class Strings {
 		Gson gson = new Gson();
 		return gson.toJson(object);
 	}
+	
+	public static String simplifyURL(String url) {
+		if (Strings.isBlank(url)) {
+			return "";
+		}
+		if (url.indexOf("?")!=-1) {
+			url = url.substring(0,url.indexOf("?"));
+		}
+		if (url.indexOf("#")!=-1) {
+			url = url.substring(0,url.indexOf("#"));
+		}
+
+		url = url.trim();
+		url = url.replaceFirst("^[a-z]+://", "");
+		url = url.replaceFirst("^www\\.", "");
+		String[] parts = url.split("/");
+		StringBuilder simplified = new StringBuilder();
+		
+		for (int i = 0; i < parts.length; i++) {
+			if (i==0) {
+				simplified.append(parts[i]);
+			} else if (i==parts.length-1) {
+				simplified.append(" : ");
+				String part = parts[i];
+				simplified.append(Strings.decodeURL(part).trim());
+			}
+		}
+		
+		return simplified.toString();
+	}
 }

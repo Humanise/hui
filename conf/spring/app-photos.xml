@@ -9,6 +9,9 @@
 
    	<bean id="photosController" class="dk.in2isoft.onlineobjects.apps.photos.PhotosController" autowire="byType"/>
    	
+   	
+   	<!-- Views -->
+   	
    	<bean id="photosFrontView" class="dk.in2isoft.onlineobjects.apps.photos.views.PhotosFrontView" scope="request">
    		<property name="modelService" ref="modelService"/>
    		<property name="securityService" ref="securityService"/>
@@ -24,6 +27,9 @@
    		<property name="modelService" ref="modelService"/>
    	</bean>
    	
+   	<bean id="photosGalleryView" class="dk.in2isoft.onlineobjects.apps.photos.views.PhotosGalleryView" scope="request">
+   		<property name="modelService" ref="modelService"/>
+   	</bean>   	
    	
    	<!-- Indexing -->
    	

@@ -358,8 +358,7 @@ public class ModelService {
 		return relation;
 	}
 
-	public Relation createRelation(Entity parent, Entity child, String kind, Privileged privileged)
-			throws ModelException {
+	public Relation createRelation(Entity parent, Entity child, String kind, Privileged privileged) throws ModelException {
 		Relation relation = new Relation(parent, child);
 		relation.setKind(kind);
 		createItem(relation, privileged);
@@ -709,9 +708,12 @@ public class ModelService {
 		log.info("Deleting privileges for: " + item.getClass().getName() + "; count: " + count);
 	}
 
-	public List<Entity> getChildren(Entity item, String relationKind, Privileged priviledged) throws ModelException {
+	public List<Entity> getChildren(Entity item, String relationKind, Privileged privileged) throws ModelException {
 		dk.in2isoft.onlineobjects.core.Query<Entity> q = dk.in2isoft.onlineobjects.core.Query.of(Entity.class);
-		q.withPrivileged(priviledged).withParent(item,relationKind);
+		q.withParent(item,relationKind);
+		if (!privileged.isSuper()) {
+			q.withPrivileged(privileged,securityService.getPublicUser());
+		}
 		return list(q);
 	}
 
@@ -730,9 +732,19 @@ public class ModelService {
 		return list(q);
 	}
 
+	@Deprecated
 	public <T> List<T> getChildren(Entity entity, Class<T> classObj) throws ModelException {
 		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.of(classObj);
 		q.withParent(entity);
+		return list(q);
+	}
+
+	public <T> List<T> getChildren(Entity entity, Class<T> classObj, Privileged privileged) throws ModelException {
+		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.of(classObj);
+		q.withParent(entity);
+		if (!privileged.isSuper()) {
+			q.withPrivileged(privileged,securityService.getPublicUser());
+		}
 		return list(q);
 	}
 

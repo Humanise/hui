@@ -13,4 +13,15 @@ public class Numbers {
 		format.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.ENGLISH));
 		return format.format(number);
 	}
+
+	public static long parseLong(String string) {
+		if (Strings.isNotBlank(string)) {
+			try {
+				return Long.parseLong(string);
+			} catch (NumberFormatException e) {
+				// ignore
+			}
+		}
+		return 0;
+	}
 }

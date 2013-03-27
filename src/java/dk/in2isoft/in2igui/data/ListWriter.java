@@ -193,4 +193,14 @@ public class ListWriter extends MarkupWriter {
 		endTag("progress");
 		return this;
 	}
+
+	public ListWriter withAction() {
+		withAttribute("action", true);
+		return this;
+	}
+	
+	public ListWriter revealing() {
+		withAttribute("revelaing", true);
+		return this;
+	}
 }

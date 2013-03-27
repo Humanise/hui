@@ -5,6 +5,7 @@ import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.model.Pile;
+import dk.in2isoft.onlineobjects.model.User;
 
 public class PileService {
 
@@ -22,6 +23,19 @@ public class PileService {
 		return first;
 	}
 	
+	public Pile getOrCreateUsersPile(String key, User user, Privileged privileged) throws ModelException {
+		Query<Pile> query = Query.after(Pile.class).withCustomProperty(Pile.PROPERTY_KEY, key).withParent(user);
+		Pile first = modelService.search(query).getFirst();
+		if (first==null) {
+			first = new Pile();
+			first.addProperty(Pile.PROPERTY_KEY, key);
+			first.setName(key);
+			modelService.createItem(first, privileged);
+			modelService.createRelation(user, first, privileged);
+		}
+		return first;
+	}
+
 	public void setModelService(ModelService modelService) {
 		this.modelService = modelService;
 	}

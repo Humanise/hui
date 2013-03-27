@@ -20,6 +20,7 @@ import com.sun.syndication.io.WireFeedInput;
 import com.sun.syndication.io.XmlReader;
 
 import dk.in2isoft.commons.lang.Code;
+import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.exceptions.NetworkException;
 import dk.in2isoft.onlineobjects.modules.networking.NetworkResponse;
 import dk.in2isoft.onlineobjects.modules.networking.NetworkService;
@@ -75,6 +76,33 @@ public class FeedService {
         	return items;
         }
         return null;
+	}
+	
+	public dk.in2isoft.onlineobjects.modules.feeds.Feed parse(File file) throws IllegalRequestException {
+        WireFeedInput input = new WireFeedInput();
+        WireFeed wireFeed;
+        XmlReader reader = null;
+		try {
+			reader = new XmlReader(file);
+			wireFeed = input.build(reader);
+			dk.in2isoft.onlineobjects.modules.feeds.Feed feed = new dk.in2isoft.onlineobjects.modules.feeds.Feed();
+			if (wireFeed instanceof Channel) {
+	        	Channel channel = (Channel) wireFeed;
+	        	feed.setTitle(channel.getTitle());
+			} else if (wireFeed instanceof Feed) {
+				Feed atom = (Feed) wireFeed;
+				feed.setTitle(atom.getTitle());
+			}
+			return feed;
+		} catch (IOException e) {
+			throw new IllegalRequestException("Could not parse the feed");
+		} catch (IllegalArgumentException e) {
+			throw new IllegalRequestException("Could not parse the feed");
+		} catch (FeedException e) {
+			throw new IllegalRequestException("Could not parse the feed");
+		} finally {
+			IOUtils.closeQuietly(reader);
+		}
 	}
 	
 	public void setNetworkService(NetworkService networkService) {

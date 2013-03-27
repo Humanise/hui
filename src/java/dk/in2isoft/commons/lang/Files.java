@@ -10,8 +10,11 @@ import java.io.StringWriter;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 public class Files {
+	
+	private static final Logger log = Logger.getLogger(Files.class);
 
 	static public boolean deleteDirectory(File path) {
 		if (path.exists()) {
@@ -95,5 +98,28 @@ public class Files {
 		fileName = StringUtils.replace(fileName, "-", " ");
 		fileName = fileName.replaceAll("[ ]+", " ");
 		return fileName;
+	}
+
+	public static boolean copy(File temp, File original) {
+		if (original.exists()) {
+			log.error("Target file already exists: "+original);
+			return false;
+		}
+		FileInputStream tempStream = null;
+		FileOutputStream outStream = null;
+		try {
+			tempStream = new FileInputStream(temp);
+			outStream = new FileOutputStream(original);
+			IOUtils.copy(tempStream, outStream);
+			return true;
+		} catch (FileNotFoundException e) {
+			log.error("Unable to copy file",e);
+		} catch (IOException e) {
+			log.error("Unable to copy file",e);
+		} finally {
+			IOUtils.closeQuietly(tempStream);
+			IOUtils.closeQuietly(outStream);
+		}
+		return false;
 	}
 }

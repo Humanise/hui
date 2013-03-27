@@ -6,6 +6,7 @@ import javax.faces.component.FacesComponent;
 import javax.faces.context.FacesContext;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
+import dk.in2isoft.commons.jsf.ClassBuilder;
 import dk.in2isoft.commons.jsf.ComponentUtil;
 import dk.in2isoft.commons.jsf.TagWriter;
 
@@ -18,6 +19,7 @@ public class BoundPanelComponent extends AbstractComponent {
 	private boolean hideOnClick;
 	private int width;
 	private String modal;
+	private String variant;
 
 	public BoundPanelComponent() {
 		super(TYPE);
@@ -29,19 +31,20 @@ public class BoundPanelComponent extends AbstractComponent {
 		hideOnClick = (Boolean) state[1];
 		width = (Integer) state[2];
 		modal = (String) state[3];
+		variant = (String) state[4];
 	}
 
 	@Override
 	public Object[] saveState() {
 		return new Object[] {
-			name, hideOnClick, width, modal
+			name, hideOnClick, width, modal, variant
 		};
 	}
 	
 	@Override
 	public void encodeBegin(FacesContext context, TagWriter out) throws IOException {
 		String id = getClientId();
-		out.startDiv().withClass("hui_boundpanel").withId(id).withStyle("display:none;");
+		out.startDiv().withClass(ClassBuilder.with("hui_boundpanel").add("hui_boundpanel", variant)).withId(id).withStyle("display:none;");
 		out.startDiv("hui_boundpanel_arrow").endDiv();
 		out.startDiv("hui_boundpanel_top").startDiv().startDiv().endDiv().endDiv().endDiv();
 		out.startDiv("hui_boundpanel_body").startDiv("hui_boundpanel_body").startDiv("hui_boundpanel_body");
@@ -69,6 +72,9 @@ public class BoundPanelComponent extends AbstractComponent {
 		String name = getName(context);
 		if (name!=null) {
 			out.comma().property("name",name);
+		}
+		if (variant!=null) {
+			out.comma().property("variant",variant);
 		}
 		out.endNewObject();
 		out.endScopedScript();
@@ -108,5 +114,13 @@ public class BoundPanelComponent extends AbstractComponent {
 
 	public String getModal() {
 		return modal;
+	}
+
+	public String getVariant() {
+		return variant;
+	}
+
+	public void setVariant(String variant) {
+		this.variant = variant;
 	}
 }

@@ -27,7 +27,7 @@
 			<ui:remove>
 			<ul>
 				<c:forEach items="#{photosUserView.galleries}" var="gallery">
-				<li>#{gallery.name}</li>
+				<li><o:link href="/gallery/#{gallery.id}/" app="photos">#{gallery.name}</o:link></li>
 				</c:forEach>
 			</ul>
 			</ui:remove>

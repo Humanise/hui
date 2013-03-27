@@ -17,9 +17,13 @@ public abstract class MarkupWriter {
 		}
 	}
 
-	protected void text(String str) throws IOException {
+	protected void text(String str) {
 		close();
-		StringEscapeUtils.escapeXml(writer,str);
+		try {
+			StringEscapeUtils.escapeXml(writer,str);
+		} catch (IOException e) {
+			// Ignore
+		}
 	}
 
 	protected void startTag(String tag) {

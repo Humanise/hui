@@ -27,7 +27,7 @@ public class HTMLDocument extends XMLDocument {
 	private String title;
     private String contentType;
 	
-	public HTMLDocument(String raw) throws MalformedURLException {
+	public HTMLDocument(String raw) {
 		super(raw);
 	}
 	

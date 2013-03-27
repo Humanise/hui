@@ -17,6 +17,7 @@ public class SourceComponent extends AbstractComponent {
 
 	private String name;
 	private String url;
+	private boolean lazy;
 
 	public SourceComponent() {
 		super(TYPE);
@@ -25,17 +26,19 @@ public class SourceComponent extends AbstractComponent {
 	@Override
 	public void restoreState(Object[] state) {
 		name = (String) state[0];
+		url = (String) state[1];
+		lazy = (Boolean) state[2];
 	}
 
 	@Override
 	public Object[] saveState() {
-		return new Object[] { name, url };
+		return new Object[] { name, url, lazy };
 	}
 
 	@Override
 	public void encodeBegin(FacesContext context, TagWriter out) throws IOException {
 		out.startScript();
-		out.startNewObject("hui.ui.Source").property("name", name).comma().property("lazy", true);
+		out.startNewObject("hui.ui.Source").property("name", name).comma().property("lazy", lazy);
 		out.comma().property("url", getUrl(context));
 		out.comma().propertyRaw("parameters", buildParameters());
 		out.endNewObject();
@@ -79,6 +82,14 @@ public class SourceComponent extends AbstractComponent {
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	public boolean isLazy() {
+		return lazy;
+	}
+
+	public void setLazy(boolean lazy) {
+		this.lazy = lazy;
 	}
 	
 }

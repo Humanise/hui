@@ -6,7 +6,7 @@ public class TextDocument {
 
 	private String raw;
 		
-	public TextDocument(String raw) throws MalformedURLException {
+	public TextDocument(String raw) {
 		this.raw = raw;
 	}	
 	

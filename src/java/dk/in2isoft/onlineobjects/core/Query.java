@@ -146,12 +146,12 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 		return this;
 	}
 
-	public Query<T> withPrivileged(Privileged... priviledged) {
-		if (priviledged==null || priviledged.length==1 && priviledged[0]==null) {
+	public Query<T> withPrivileged(Privileged... privileged) {
+		if (privileged==null || privileged.length==1 && privileged[0]==null) {
 			this.privileged = null;
 		}
 		else {
-			this.privileged = priviledged;
+			this.privileged = privileged;
 		}
 		return this;
 	}

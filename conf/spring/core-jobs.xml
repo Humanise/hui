@@ -11,6 +11,7 @@
 		<property name="name" value="helloworld"/>
 		<property name="group" value="core"/>
 		<property name="repeatMinutes" value="1"/>
+		<property name="paused" value="true"/>
 	</bean>
 
 	<bean class="dk.in2isoft.onlineobjects.modules.scheduling.JobDescription">

@@ -1,6 +1,6 @@
 package dk.in2isoft.onlineobjects.modules.scheduling;
 
-import org.apache.commons.collections.buffer.CircularFifoBuffer;
+import org.apache.commons.collections.Buffer;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -18,9 +18,9 @@ import dk.in2isoft.onlineobjects.modules.surveillance.LogEntry;
 
 public class LoggingSchedulerListener implements SchedulerListener, JobListener, TriggerListener {
 	
-	private CircularFifoBuffer log;
+	private Buffer log;
 
-	public LoggingSchedulerListener(CircularFifoBuffer log) {
+	public LoggingSchedulerListener(Buffer log) {
 		this.log = log;
 	}
 	

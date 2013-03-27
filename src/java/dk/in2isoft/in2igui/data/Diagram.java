@@ -37,6 +37,9 @@ public class Diagram {
 	}
 
 	public void addEdge(Node from, Node to) {
+		if (from.getId().equals(to.getId())) {
+			System.out.println(from+" -> "+to);
+		}
 		edges.add(new Edge(from.getId(), to.getId()));
 	}
 

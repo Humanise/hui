@@ -7,6 +7,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
+import dk.in2isoft.commons.jsf.ClassBuilder;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=ListComponent.TYPE)
@@ -16,6 +17,7 @@ public class ListComponent extends AbstractComponent {
 
 	private String name;
 	private String source;
+	private String variant;
 
 	public ListComponent() {
 		super(TYPE);
@@ -25,19 +27,21 @@ public class ListComponent extends AbstractComponent {
 	public void restoreState(Object[] state) {
 		name = (String) state[0];
 		source = (String) state[1];
+		variant = (String) state[2];
 	}
 
 	@Override
 	public Object[] saveState() {
 		return new Object[] {
-			name, source
+			name, source, variant
 		};
 	}
 	
 	@Override
 	public void encodeBegin(FacesContext context, TagWriter out) throws IOException {
 		String id = getClientId();
-		out.startDiv().withClass("hui_list").withId(id);
+		ClassBuilder cls = new ClassBuilder("hui_list").add("hui_list", variant);
+		out.startDiv().withClass(cls).withId(id);
 		out.startDiv("hui_list_progress").endDiv();
 		out.startDiv("hui_list_navigation");
 		out.startDiv("hui_list_selection window_page").startDiv().startDiv("window_page_body").endDiv().endDiv().endDiv();
@@ -92,5 +96,13 @@ public class ListComponent extends AbstractComponent {
 
 	public String getSource() {
 		return source;
+	}
+
+	public String getVariant() {
+		return variant;
+	}
+
+	public void setVariant(String variant) {
+		this.variant = variant;
 	}
 }

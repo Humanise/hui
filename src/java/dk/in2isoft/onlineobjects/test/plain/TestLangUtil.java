@@ -18,17 +18,6 @@ public class TestLangUtil extends AbstractSpringTestCase {
 	
 	private static Logger log = Logger.getLogger(TestLangUtil.class);
 	
-	@Test
-	public void testRandomStringGenerator() {
-		log.info("testRandomStringGenerator: 20 chars = "+Strings.generateRandomString(20));
-		log.info("testRandomStringGenerator: 40 chars = "+Strings.generateRandomString(40));
-	}
-	
-	@Test
-	public void testConcatWords() {
-		assertEquals("", Strings.concatWords(new String[] {}));
-		assertEquals("Jonas Munk", Strings.concatWords(new String[] {"","Jonas"," ","Munk","   ",null}));
-	}
 	
 	@Test
 	public void testEmailValidation() {

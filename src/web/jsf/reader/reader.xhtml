@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:o="http://www.onlineobjects.com/jsf" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:gui="http://www.in2isoft.dk/in2igui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+>
+	<ui:composition template="templates/plain.xhtml">
+				
+		<ui:define name="body">
+			<div class="reader">
+				<o:header>Reader</o:header>
+				<gui:source name="listSource" url="listAddresses">
+					<gui:parameter key="page" value="@list.window.page"/>
+				</gui:source>
+				<gui:list name="list" source="listSource" variant="light"/>
+				<div id="viewer">
+					<div id="info"></div>
+					<div id="rendering">
+						
+					</div>
+				</div>
+			</div>
+		</ui:define>
+		
+		<ui:define name="sidebar">
+			<div class="reader_feeds">
+				<ul id="feeds"></ul>
+				<gui:button name="addFeed" text="Add feed" variant="light" small="true"/>
+			</div>
+			
+		</ui:define>
+
+		<ui:define name="bottom">
+			
+			<gui:boundPanel name="newFeedPanel" variant="light" width="300" modal="true">
+				<gui:formula name="newFeedForm">
+					<gui:fields>
+						<gui:field label="Address">
+							<gui:textInput key="url"/>
+						</gui:field>
+					</gui:fields>
+					<gui:buttons>
+						<gui:button submit="true" text="Add"/>
+					</gui:buttons>
+				</gui:formula>
+			</gui:boundPanel>
+
+			<gui:boundPanel name="wordPanel" variant="light" width="300" modal="true">
+				<div id="wordInfo">
+					
+				</div>
+				<gui:buttons>
+					<gui:button text="remove" variant="light" small="true"/>
+				</gui:buttons>
+			</gui:boundPanel>
+			
+			<ui:include src="../shared/wordfinder.xhtml"/>
+			
+		</ui:define>
+		
+	</ui:composition>
+	
+</html>

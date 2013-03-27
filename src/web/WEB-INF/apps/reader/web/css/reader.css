@@ -1,0 +1,117 @@
+div.reader
+{
+	padding: 20px;
+}
+
+div.reader h1.oo_header
+{
+	margin-bottom: 20px;
+}
+
+#viewer
+{
+	position: fixed;
+	top: 20px;
+	left: 20px;
+	right: 20px;
+	bottom: 20px;
+	background: #fff;
+	box-shadow: 0 0 20px rgba(0,0,0,.2);
+	z-index: 200;
+	display: none;
+}
+
+#info
+{
+	position: absolute;
+	height: 100px;
+	border-bottom: 1px solid #eee;
+	width: 100%;
+	padding: 10px 30px;
+	box-sizing: border-box;
+}
+
+#info h1
+{
+	font-size: 24px;
+	font-weight: 100;
+	margin: 0;
+}
+
+#info p
+{
+	font-size: 11px;
+	margin: 3px 0;
+}
+
+#info p.tags
+{
+	margin-top: 10px;
+}
+
+#info p.tags a
+{
+	display: inline-block;
+	height: 16px;
+	line-height: 16px;
+	border-radius: 8px;
+	border: 1px solid #eee;
+	padding: 0 10px;
+	font-size: 11px;
+	color: #666;
+	text-decoration: none;
+}
+
+#info p.tags a.tag
+{
+	font-style: italic;
+}
+
+#info p.tags a.add
+{
+	border-style: dashed;
+}
+
+#info p.tags a:hover
+{
+	cursor: pointer;
+	background: #f6f6f6;
+	border-color: #ddd;
+}
+
+#info p.link a
+{
+	color: #999;
+	text-decoration: none;
+}
+
+
+#rendering
+{
+	position: fixed;
+	padding: 20px 30px 20px;
+	top: 120px;
+	bottom: 20px;
+	left: 20px;
+	right: 20px;
+	overflow: auto;
+	box-sizing: border-box;
+}
+
+#rendering h1
+{
+	font-weight: 200;
+	margin: 0 0 20px;
+}
+
+#rendering div.body
+{
+	font-size: 11pt;
+	font-weight: 300;
+}
+
+#rendering div.body p
+{
+	margin: 5px 0;
+}
+

@@ -32,6 +32,7 @@
     <import resource="app-front.xml"/>
     <import resource="app-people.xml"/>
     <import resource="app-api.xml"/>
+    <import resource="app-reader.xml"/>
 
 	<bean id="configurationService" class="dk.in2isoft.onlineobjects.services.ConfigurationService" autowire="byType">
 		<property name="basePath" value="${basePath}"/>

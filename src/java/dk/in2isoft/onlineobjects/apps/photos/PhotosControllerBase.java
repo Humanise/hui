@@ -27,7 +27,6 @@ public class PhotosControllerBase extends ApplicationController {
 	
 	static {
 		publicStyle = new Blend("photos_public_style");
-		publicStyle.addPath("WEB-INF","apps","photos","web","style","css","photos_fonts.css");
 		publicStyle.addBasicCSS();
 		publicStyle.addPath("hui","css","imageviewer.css");
 		publicStyle.addPath("hui","css","box.css");
@@ -54,10 +53,10 @@ public class PhotosControllerBase extends ApplicationController {
 		privateStyle.addPath("hui","css","searchfield.css");
 		privateStyle.addPath("hui","css","dropdown.css");
 		privateStyle.addPath("hui","css","window.css");
-		privateStyle.addPath("hui","css","layout.css");
+		privateStyle.addHUICSS("overflow.css");
 		privateStyle.addPath("hui","css","bar.css");
 		privateStyle.addPath("hui","css","overlay.css");
-		privateStyle.addPath("hui","ext","pages.css");
+		privateStyle.addPath("hui","css","pages.css");
 
 		publicScript = new Blend("photos_public_script");
 		publicScript.addPath("hui","js","hui.js");
@@ -88,7 +87,7 @@ public class PhotosControllerBase extends ApplicationController {
 		privateScript.addPath("hui","js","Input.js");
 		privateScript.addPath("hui","js","DragDrop.js");
 		privateScript.addPath("hui","js","Overlay.js");
-		privateScript.addPath("hui","ext","Pages.js");
+		privateScript.addPath("hui","js","Pages.js");
 
 	}
 
@@ -98,7 +97,7 @@ public class PhotosControllerBase extends ApplicationController {
 		addJsfMatcher("/<language>", "front.xhtml");
 		addJsfMatcher("/<language>/photo/<integer>.html", "photo.xhtml");
 		addJsfMatcher("/<language>/users/<username>", "user.xhtml");
-		addJsfMatcher("/<language>/users/<username>/gallery/<integer>", "gallery.xhtml");
+		addJsfMatcher("/<language>/gallery/<integer>", "gallery.xhtml");
 	}
 		
 	public List<Locale> getLocales() {
