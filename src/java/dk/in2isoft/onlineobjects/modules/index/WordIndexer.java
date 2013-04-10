@@ -14,6 +14,7 @@ import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.Word;
+import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
 
 public class WordIndexer implements ModelEventListener {
 		
@@ -43,6 +44,24 @@ public class WordIndexer implements ModelEventListener {
 		} catch (EndUserException e) {
 			log.error("Unable to reindex: "+word, e);
 		}
+	}
+
+	public void indexWordPerspectives(List<WordListPerspective> words) {
+		try {
+			Map<Entity,Document> map = Maps.newHashMap();
+			for (WordListPerspective perspective : words) {
+				Document document = documentBuilder.build(perspective);
+				log.debug("Re-indexing : "+perspective);
+				Word word = new Word();
+				word.setText(perspective.getText());
+				word.setName(perspective.getText());
+				word.setId(perspective.getId());
+				map.put(word, document);
+			}
+			indexManager.update(map);
+		} catch (EndUserException e) {
+			log.error("Unable to reindex", e);
+		}			
 	}
 
 	public void indexWords(List<Word> words) {

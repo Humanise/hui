@@ -43,7 +43,10 @@ public abstract class ReaderControllerBase extends ApplicationController {
 		publicScript.addPath("hui","js","Overflow.js");
 		publicScript.addPath("hui","js","DropDown.js");
 		publicScript.addPath("hui","js","Pages.js");
+		publicScript.addPath("hui","js","Fragment.js");
 		publicScript.addPath("hui","js","Window.js");
+		publicScript.addPath("hui","js","Overlay.js");
+		publicScript.addPath("hui","js","hui_color.js");
 		publicScript.addPath("WEB-INF","core","web","js","onlineobjects.js");
 		publicScript.addPath("WEB-INF","apps","reader","web","js","reader.js");
 
@@ -60,6 +63,7 @@ public abstract class ReaderControllerBase extends ApplicationController {
 		publicStyle.addHUICSS("window.css");
 		publicStyle.addHUICSS("dropdown.css");
 		publicStyle.addHUICSS("bar.css");
+		publicStyle.addHUICSS("overlay.css");
 		publicStyle.addPath("WEB-INF","apps","reader","web","css","reader.css");
 
 	}

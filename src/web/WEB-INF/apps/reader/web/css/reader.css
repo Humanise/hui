@@ -29,6 +29,7 @@ div.reader h1.oo_header
 	width: 100%;
 	padding: 10px 30px;
 	box-sizing: border-box;
+	background: #fafafa;
 }
 
 #info h1
@@ -36,6 +37,9 @@ div.reader h1.oo_header
 	font-size: 24px;
 	font-weight: 100;
 	margin: 0;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 #info p
@@ -60,6 +64,7 @@ div.reader h1.oo_header
 	font-size: 11px;
 	color: #666;
 	text-decoration: none;
+	background: #fff;
 }
 
 #info p.tags a.tag
@@ -70,6 +75,7 @@ div.reader h1.oo_header
 #info p.tags a.add
 {
 	border-style: dashed;
+	color: #bbb;
 }
 
 #info p.tags a:hover
@@ -77,12 +83,18 @@ div.reader h1.oo_header
 	cursor: pointer;
 	background: #f6f6f6;
 	border-color: #ddd;
+	color: #666;
 }
 
 #info p.link a
 {
 	color: #999;
 	text-decoration: none;
+}
+
+#info p.link a:hover
+{
+	text-decoration: underline;
 }
 
 
@@ -115,3 +127,14 @@ div.reader h1.oo_header
 	margin: 5px 0;
 }
 
+div.word_rendering
+{
+	font-size: 12px;
+	padding: 5px;
+}
+
+div.word_rendering h1
+{
+	font-size: 12px;
+	margin: 0;
+}

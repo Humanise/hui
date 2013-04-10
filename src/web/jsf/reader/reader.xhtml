@@ -48,12 +48,10 @@
 				</gui:formula>
 			</gui:boundPanel>
 
-			<gui:boundPanel name="wordPanel" variant="light" width="300" modal="true">
-				<div id="wordInfo">
-					
-				</div>
-				<gui:buttons>
-					<gui:button text="remove" variant="light" small="true"/>
+			<gui:boundPanel name="wordPanel" variant="light" width="200" modal="true">
+				<gui:fragment name="wordRendering"/>
+				<gui:buttons align="right">
+					<gui:button text="Remove" variant="light" small="true" name="removeWord"/>
 				</gui:buttons>
 			</gui:boundPanel>
 			

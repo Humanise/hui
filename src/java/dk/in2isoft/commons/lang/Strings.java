@@ -198,4 +198,11 @@ public class Strings {
 		
 		return simplified.toString();
 	}
+
+	public static String asNonNull(String string) {
+		if (string==null) {
+			return "";
+		}
+		return string;
+	}
 }

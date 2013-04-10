@@ -598,15 +598,7 @@ public class ModelService {
 	@SuppressWarnings("unchecked")
 	public <T> SearchResult<T> search(CustomQuery<T> query) throws ModelException {
 		try {
-			String countSQL = query.getCountSQL();
-			int totalCount = 0;
-			if (countSQL!=null) {
-				SQLQuery countSqlQuery = getSession().createSQLQuery(countSQL);
-				query.setParameters(countSqlQuery);
-				List<Object> countRows = countSqlQuery.list();
-				Object next = countRows.iterator().next();
-				totalCount = ((Number) next).intValue();
-			}
+			int totalCount = count(query);
 
 			SQLQuery sql = getSession().createSQLQuery(query.getSQL());
 			query.setParameters(sql);
@@ -621,6 +613,20 @@ public class ModelService {
 		} catch (HibernateException e) {
 			throw new ModelException("Error executing SQL", e);
 		}
+	}
+
+	public int count(CustomQuery<?> query) {
+
+		String countSQL = query.getCountSQL();
+		int totalCount = 0;
+		if (countSQL!=null) {
+			SQLQuery countSqlQuery = getSession().createSQLQuery(countSQL);
+			query.setParameters(countSqlQuery);
+			List<?> countRows = countSqlQuery.list();
+			Object next = countRows.iterator().next();
+			totalCount = ((Number) next).intValue();
+		}
+		return totalCount;
 	}
 
 	@SuppressWarnings("unchecked")

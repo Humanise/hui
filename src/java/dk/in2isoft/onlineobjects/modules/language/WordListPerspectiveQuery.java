@@ -132,6 +132,11 @@ public class WordListPerspectiveQuery implements CustomQuery<WordListPerspective
 		return this;
 	}
 	
+	public WordListPerspectiveQuery orderByCreated() {
+		this.ordering = Ordering.created;
+		return this;
+	}
+	
 	public WordListPerspectiveQuery orderByText() {
 		this.ordering = Ordering.text;
 		return this;

@@ -7397,7 +7397,10 @@ hui.ui.List.prototype = {
 					self._toggleChecked(index);
 				} else {
 					self._onRowDown(index,event);
-					hui.ui.startDrag(e,row);
+					if (hui.ui.startDrag) {
+						// Only if available
+						hui.ui.startDrag(e,row);
+					}
 					return false;
 				}
 			}
@@ -8314,7 +8317,7 @@ hui.ui.Button.prototype = {
 		}
 	},
 	_fireClick : function() {
-		this.fire('click');
+		this.fire('click',this);
 		if (this.options.submit) {
 			var form = hui.ui.getAncestor(this,'hui_formula');
 			if (form) {
@@ -9291,7 +9294,7 @@ hui.ui.BoundPanel.prototype = {
 			if (target.nodeName) {
 				this.position(target);
 			} else {
-				this.position(hui.ui.get(this.options.target));
+				this.position(hui.ui.get(target));
 			}
 		}
 		if (hui.browser.opacity) {

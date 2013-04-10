@@ -3,12 +3,15 @@ package dk.in2isoft.onlineobjects.apps.reader;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.collect.Lists;
 
+import dk.in2isoft.commons.lang.Code;
 import dk.in2isoft.commons.lang.Files;
 import dk.in2isoft.commons.lang.HTMLWriter;
 import dk.in2isoft.commons.lang.Strings;
@@ -16,6 +19,7 @@ import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.in2igui.data.ListWriter;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.ArticlePerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.FeedPerspective;
+import dk.in2isoft.onlineobjects.apps.reader.perspective.WordPerspective;
 import dk.in2isoft.onlineobjects.apps.videosharing.Path;
 import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.Query;
@@ -30,6 +34,7 @@ import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.model.InternetAddress;
 import dk.in2isoft.onlineobjects.model.Pile;
 import dk.in2isoft.onlineobjects.model.Property;
+import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.modules.feeds.Feed;
@@ -57,7 +62,7 @@ public class ReaderController extends ReaderControllerBase {
 	}
 	
 	@Path
-	public void listAddresses(Request request) throws IOException {
+	public void listAddresses(Request request) throws IOException, ModelException {
 		
 		int page = request.getInt("page");
 		int pageSize = 30;
@@ -79,6 +84,18 @@ public class ReaderController extends ReaderControllerBase {
 			writer.startRow().withId(address.getId());
 			writer.startCell().startLine().text(address.getName()).endLine();
 			writer.startLine().dimmed().minor().text(Strings.simplifyURL(address.getAddress())).endLine();
+			List<Word> words = modelService.getChildren(address, Word.class, request.getSession());
+			if (Code.isNotEmpty(words)) {
+				writer.startLine();
+				for (Iterator<Word> i = words.iterator(); i.hasNext();) {
+					Word word = i.next();
+					writer.text(word.getText());
+					if (i.hasNext()) {
+						writer.text(", ");
+					}
+				}
+				writer.endLine();
+			}
 			writer.endCell();
 			writer.startCell();
 			writer.startIcons().startIcon().withAction().withIcon("monochrome/view").withData(address.getAddress()).endIcon().endIcons();
@@ -232,18 +249,57 @@ public class ReaderController extends ReaderControllerBase {
 		UserSession session = request.getSession();
 		InternetAddress internetAddress = modelService.get(InternetAddress.class, internetAddressId, session);
 		Word word = modelService.get(Word.class, wordId, session);
-		modelService.createRelation(internetAddress, word, session);
+		Relation relation = modelService.getRelation(internetAddress, word);
+		if (relation==null) {
+			modelService.createRelation(internetAddress, word, session);
+		}
+	}
+
+	@Path
+	public void removeWord(Request request) throws ModelException, SecurityException {
+		Long internetAddressId = request.getLong("internetAddressId");
+		Long wordId = request.getLong("wordId");
+		UserSession session = request.getSession();
+		InternetAddress internetAddress = modelService.get(InternetAddress.class, internetAddressId, session);
+		Word word = modelService.get(Word.class, wordId, session);
+		Relation relation = modelService.getRelation(internetAddress, word);
+		if (relation!=null) {
+			modelService.deleteRelation(relation, modelService.getUser(SecurityService.ADMIN_USERNAME));
+		}
+	}
+
+	@Path
+	public void removeTag(Request request) throws ModelException, SecurityException {
+		Long internetAddressId = request.getLong("internetAddressId");
+		String tag = request.getString("tag");
+		UserSession session = request.getSession();
+		InternetAddress internetAddress = modelService.get(InternetAddress.class, internetAddressId, session);
+		Collection<Property> properties = internetAddress.getProperties();
+		for (Iterator<Property> i = properties.iterator(); i.hasNext();) {
+			Property property = i.next();
+			if (Property.KEY_COMMON_TAG.equals(property.getKey()) && tag.equals(property.getValue())) {
+				i.remove();
+			}
+		}
+		modelService.updateItem(internetAddress, session);
 	}
 	
 	@Path
-	public WordListPerspective getWordInfo(Request request) throws ModelException {
+	public WordPerspective getWordInfo(Request request) throws ModelException {
 		WordListPerspectiveQuery query = new WordListPerspectiveQuery();
 		query.withIds(Lists.newArrayList(request.getLong("id")));
-		WordListPerspective perspective = modelService.search(query).getFirst();
-		if (perspective!=null) {
-			
+		WordListPerspective row = modelService.search(query).getFirst();
+		if (row!=null) {
+			HTMLWriter html = new HTMLWriter();
+			html.startDiv().withClass("word_rendering");
+			html.startH1().text(row.getText()).endH1();
+			html.endDiv();
+			WordPerspective perspective = new WordPerspective();
+			perspective.setRendering(html.toString());
+			perspective.setId(row.getId());
+			return perspective;
 		}
-		return perspective;
+		return null;
 	}
 	
 }

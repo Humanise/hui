@@ -21,6 +21,12 @@ var controller = {
 			if (hui.cls.has(a,'word')) {
 				this._clickWord(a);
 			}
+			if (hui.cls.has(a,'tag')) {
+				this._clickTag(a);
+			}
+			if (hui.cls.has(a.parentNode,'link')) {
+				window.open(a.href)
+			}
 		} else {
 			viewer.style.display='none';
 		}
@@ -39,6 +45,7 @@ var controller = {
 	
 	_loadArticle : function(id) {
 		hui.ui.showMessage({text:'Loading...',busy:true});
+		hui.get('info').innerHTML = '<h1>Loading...</h1>';
 		var rendering = hui.get('rendering');
 		rendering.innerHTML='';
 		this.viewer.style.display='block';
@@ -58,6 +65,22 @@ var controller = {
 		var info = hui.get('info');
 		rendering.innerHTML = article.rendering;
 		info.innerHTML = article.info;
+	},
+	
+	_reloadInfo : function() {
+		var info = hui.get('info');
+		info.style.opacity='.5';
+		hui.ui.request({
+			url : 'loadArticle',
+			parameters : {id:this._currentArticle.id},
+			$object : function(article) {
+				this._currentArticle = article;
+				info.innerHTML = article.info;
+			}.bind(this),
+			$finally : function() {
+				info.style.opacity='';
+			}
+		})
 	},
 	
 	// Feeds...
@@ -97,6 +120,25 @@ var controller = {
 	},
 	
 	
+	// Tags
+	
+	_clickTag : function(a) {
+		hui.ui.confirmOverlay({
+			element : a,
+			text : 'Delete it?',
+			okText : 'Yes, delete',
+			$ok : function() {
+				hui.ui.request({
+					url : 'removeTag',
+					parameters : {
+						internetAddressId : this._currentArticle.id, 
+						tag: hui.dom.getText(a)
+					},
+					$success : this._reloadInfo.bind(this)
+				});
+			}.bind(this)
+		})
+	},
 	
 	// Words...
 	
@@ -109,16 +151,40 @@ var controller = {
 			url : 'addWord',
 			parameters : p,
 			$success : function() {
-				this._loadArticle(this._currentArticle.id);
+				this._reloadInfo();
 			}.bind(this)
 		})
 	},
+	
+	_activeWordId : null,
+	
 	_clickWord : function(node) {
-		if (!this._wordPanel) {
-			this._wordPanel = hui.ui.BoundPanel.create({variant:'light',modal:true});
-		}
-		this._wordPanel.add(hui.build('div',{style:'height:200px;width:200px; font-size: 12px;',text:node.getAttribute('data')}));
-		this._wordPanel.show({target:node,modal:true});
+		var panel = hui.ui.get('wordPanel'),
+			rendering = hui.ui.get('wordRendering');
+		rendering.setHTML('<div>Loading: '+node.getAttribute('data')+'</div>');
+		panel.show({target:node,modal:true});
+		this._activeWordId = node.getAttribute('data');
+		hui.ui.request({
+			url : 'getWordInfo',
+			parameters : {id:this._activeWordId},
+			$object : function(obj) {
+				rendering.setHTML(obj.rendering);
+			}
+		})
+	},
+	$click$removeWord : function() {
+		hui.ui.get('wordPanel').hide();
+		hui.ui.request({
+			url : 'removeWord',
+			messages : {start:'Removing',success:'Removed'},
+			parameters : {
+				wordId : this._activeWordId,
+				internetAddressId : this._currentArticle.id
+			},
+			$success : function(obj) {
+				this._reloadInfo();
+			}.bind(this)
+		})
 	}
 }
 

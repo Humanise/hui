@@ -1,5 +1,6 @@
 package dk.in2isoft.commons.lang;
 
+import java.util.Collection;
 import java.util.List;
 
 public class Code {
@@ -17,5 +18,13 @@ public class Code {
 	@SuppressWarnings("unchecked")
 	public static <T> List<T> castList(List<?> object) {
 		return (List<T>) object;
+	}
+
+	public static boolean isEmpty(Collection<?> collection) {
+		return collection==null || collection.isEmpty();
+	}
+
+	public static boolean isNotEmpty(Collection<?> collection) {
+		return !isEmpty(collection);
 	}
 }

@@ -197,4 +197,11 @@
       <renderer-type>hui.parameter</renderer-type>
     </component>
   </tag>
+  <tag>
+    <tag-name>fragment</tag-name>
+    <component>
+      <component-type>hui.fragment</component-type>
+      <renderer-type>hui.fragment</renderer-type>
+    </component>
+  </tag>
 </facelet-taglib>
