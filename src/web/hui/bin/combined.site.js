@@ -1498,6 +1498,9 @@ hui.request = function(options) {
 				} else if (transport.status == 0 && options.onAbort) {
 					options.onAbort(transport);
 				}
+				if (options['$finally']) {
+					options['$finally']();
+				}
 			}
 			//hui.request._forget(transport);
 		} catch (e) {
@@ -1629,17 +1632,12 @@ hui.request.createTransport = function() {
 
 hui.request._getActiveX = function() {
 	var prefixes = ["MSXML2", "Microsoft", "MSXML", "MSXML3"];
-	var o;
 	for (var i = 0; i < prefixes.length; i++) {
 		try {
-			// try to create the objects
-			o = new ActiveXObject(prefixes[i] + ".XmlHttp");
-			return o;
+			return new ActiveXObject(prefixes[i] + ".XmlHttp");
 		}
 		catch (ex) {};
 	}
-	
-	throw new Error("Could not find an installed XML parser");
 }
 
 
@@ -4275,7 +4273,7 @@ hui.ui.request = function(options) {
 	var onSuccess = options.onSuccess || options.$success,
 		onJSON = options.onJSON || options.$object,
 		message = options.message;
-	options.onSuccess=function(t) {
+	options.onSuccess = function(t) {
 		if (message) {
 			if (message.success) {
 				hui.ui.showMessage({text:message.success,icon:'common/success',duration:message.duration || 2000});

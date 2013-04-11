@@ -1498,6 +1498,9 @@ hui.request = function(options) {
 				} else if (transport.status == 0 && options.onAbort) {
 					options.onAbort(transport);
 				}
+				if (options['$finally']) {
+					options['$finally']();
+				}
 			}
 			//hui.request._forget(transport);
 		} catch (e) {
@@ -1629,17 +1632,12 @@ hui.request.createTransport = function() {
 
 hui.request._getActiveX = function() {
 	var prefixes = ["MSXML2", "Microsoft", "MSXML", "MSXML3"];
-	var o;
 	for (var i = 0; i < prefixes.length; i++) {
 		try {
-			// try to create the objects
-			o = new ActiveXObject(prefixes[i] + ".XmlHttp");
-			return o;
+			return new ActiveXObject(prefixes[i] + ".XmlHttp");
 		}
 		catch (ex) {};
 	}
-	
-	throw new Error("Could not find an installed XML parser");
 }
 
 
@@ -5776,7 +5774,7 @@ hui.ui.request = function(options) {
 	var onSuccess = options.onSuccess || options.$success,
 		onJSON = options.onJSON || options.$object,
 		message = options.message;
-	options.onSuccess=function(t) {
+	options.onSuccess = function(t) {
 		if (message) {
 			if (message.success) {
 				hui.ui.showMessage({text:message.success,icon:'common/success',duration:message.duration || 2000});
@@ -7443,14 +7441,14 @@ hui.ui.List.prototype = {
 	_changeSelection : function(indexes) {
 		var rows = this.body.getElementsByTagName('tr'),
 			i;
-		for (i=0;i<this.selected.length;i++) {
+		for (i = 0 ; i < this.selected.length; i++) {
 			hui.cls.remove(rows[this.selected[i]],'hui_list_selected');
 		}
-		for (i=0;i<indexes.length;i++) {
+		for (i = 0; i < indexes.length; i++) {
 			hui.cls.add(rows[indexes[i]],'hui_list_selected');
 		}
 		this.selected = indexes;
-		if (indexes.length>0) {
+		if (indexes.length > 0) {
 			this.fire('select',this.rows[indexes[0]]);
 			hui.ui.firePropertyChange(this,'selection.id',this.rows[indexes[0]].id);
 			this._clearChecked();
@@ -15712,38 +15710,38 @@ hui.ui.DateTimeField.prototype = {
 			b.add(hui.ui.Button.create({
 				text : 'Idag',
 				small : true,
-				variant : 'paper',
+				variant : 'light',
 				listener : {$click:this.goToday.bind(this)}
 			}));
 			b.add(hui.ui.Button.create({
 				text : '+ dag',
 				small : true,
-				variant : 'paper',
+				variant : 'light',
 				listener : {$click:function() {this.addDays(1)}.bind(this)}
 			}));
 			b.add(hui.ui.Button.create({
 				text : '+ uge',
 				small : true,
-				variant : 'paper',
+				variant : 'light',
 				listener : {$click:function() {this.addDays(7)}.bind(this)}
 			}));
 			b.add(hui.ui.Button.create({
 				text : '12:00',
 				small : true,
-				variant : 'paper',
+				variant : 'light',
 				listener : {$click:function() {this.setHour(12)}.bind(this)}
 			}));
 			b.add(hui.ui.Button.create({
 				text : '00:00',
 				small : true,
-				variant : 'paper',
+				variant : 'light',
 				listener : {$click:function() {this.setHour(0)}.bind(this)}
 			}));
 			/*
 			b.add(hui.ui.Button.create({
 				text : 'Kalender',
 				small : true,
-				variant : 'paper',
+				variant : 'light',
 				listener : {$click:this._showPicker.bind(this)}
 			}));*/
 			this.panel.add(b)
@@ -16796,11 +16794,29 @@ hui.ui.Columns = function(options) {
  */
 hui.ui.Columns.create = function(options) {
 	options = options || {};
+	options.flexible = true;
 	options.element = hui.build('table',{'class' : 'hui_columns',html : '<tbody><tr></tr></tbody>'});
 	return new hui.ui.Columns(options);
 }
 
 hui.ui.Columns.prototype = {
+	$$layout : function() {
+		if (this.options.flexible) {
+			return;
+		}
+		this.element.style.height = hui.position.getRemainingHeight(this.element)+'px';
+		var children = hui.get.children(this.element);
+		var left = 0;
+		for (var i=0; i < children.length; i++) {
+			var child = children[i];
+			var width = (this.element.clientWidth/children.length);
+			child.style.width = width+'px'
+			child.style.position = 'absolute'
+			child.style.marginLeft = left+'px';
+			child.style.height = this.element.clientHeight+'px'
+			left+=width;
+		};
+	},
 	addToColumn : function(index,widget) {
 		var c = this._ensureColumn(index);
 		c.appendChild(widget.getElement());

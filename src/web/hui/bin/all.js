@@ -1498,6 +1498,9 @@ hui.request = function(options) {
 				} else if (transport.status == 0 && options.onAbort) {
 					options.onAbort(transport);
 				}
+				if (options['$finally']) {
+					options['$finally']();
+				}
 			}
 			//hui.request._forget(transport);
 		} catch (e) {
@@ -1629,17 +1632,12 @@ hui.request.createTransport = function() {
 
 hui.request._getActiveX = function() {
 	var prefixes = ["MSXML2", "Microsoft", "MSXML", "MSXML3"];
-	var o;
 	for (var i = 0; i < prefixes.length; i++) {
 		try {
-			// try to create the objects
-			o = new ActiveXObject(prefixes[i] + ".XmlHttp");
-			return o;
+			return new ActiveXObject(prefixes[i] + ".XmlHttp");
 		}
 		catch (ex) {};
 	}
-	
-	throw new Error("Could not find an installed XML parser");
 }
 
 
@@ -5776,7 +5774,7 @@ hui.ui.request = function(options) {
 	var onSuccess = options.onSuccess || options.$success,
 		onJSON = options.onJSON || options.$object,
 		message = options.message;
-	options.onSuccess=function(t) {
+	options.onSuccess = function(t) {
 		if (message) {
 			if (message.success) {
 				hui.ui.showMessage({text:message.success,icon:'common/success',duration:message.duration || 2000});
@@ -7443,14 +7441,14 @@ hui.ui.List.prototype = {
 	_changeSelection : function(indexes) {
 		var rows = this.body.getElementsByTagName('tr'),
 			i;
-		for (i=0;i<this.selected.length;i++) {
+		for (i = 0 ; i < this.selected.length; i++) {
 			hui.cls.remove(rows[this.selected[i]],'hui_list_selected');
 		}
-		for (i=0;i<indexes.length;i++) {
+		for (i = 0; i < indexes.length; i++) {
 			hui.cls.add(rows[indexes[i]],'hui_list_selected');
 		}
 		this.selected = indexes;
-		if (indexes.length>0) {
+		if (indexes.length > 0) {
 			this.fire('select',this.rows[indexes[0]]);
 			hui.ui.firePropertyChange(this,'selection.id',this.rows[indexes[0]].id);
 			this._clearChecked();
@@ -15712,38 +15710,38 @@ hui.ui.DateTimeField.prototype = {
 			b.add(hui.ui.Button.create({
 				text : 'Idag',
 				small : true,
-				variant : 'paper',
+				variant : 'light',
 				listener : {$click:this.goToday.bind(this)}
 			}));
 			b.add(hui.ui.Button.create({
 				text : '+ dag',
 				small : true,
-				variant : 'paper',
+				variant : 'light',
 				listener : {$click:function() {this.addDays(1)}.bind(this)}
 			}));
 			b.add(hui.ui.Button.create({
 				text : '+ uge',
 				small : true,
-				variant : 'paper',
+				variant : 'light',
 				listener : {$click:function() {this.addDays(7)}.bind(this)}
 			}));
 			b.add(hui.ui.Button.create({
 				text : '12:00',
 				small : true,
-				variant : 'paper',
+				variant : 'light',
 				listener : {$click:function() {this.setHour(12)}.bind(this)}
 			}));
 			b.add(hui.ui.Button.create({
 				text : '00:00',
 				small : true,
-				variant : 'paper',
+				variant : 'light',
 				listener : {$click:function() {this.setHour(0)}.bind(this)}
 			}));
 			/*
 			b.add(hui.ui.Button.create({
 				text : 'Kalender',
 				small : true,
-				variant : 'paper',
+				variant : 'light',
 				listener : {$click:this._showPicker.bind(this)}
 			}));*/
 			this.panel.add(b)
@@ -16796,11 +16794,29 @@ hui.ui.Columns = function(options) {
  */
 hui.ui.Columns.create = function(options) {
 	options = options || {};
+	options.flexible = true;
 	options.element = hui.build('table',{'class' : 'hui_columns',html : '<tbody><tr></tr></tbody>'});
 	return new hui.ui.Columns(options);
 }
 
 hui.ui.Columns.prototype = {
+	$$layout : function() {
+		if (this.options.flexible) {
+			return;
+		}
+		this.element.style.height = hui.position.getRemainingHeight(this.element)+'px';
+		var children = hui.get.children(this.element);
+		var left = 0;
+		for (var i=0; i < children.length; i++) {
+			var child = children[i];
+			var width = (this.element.clientWidth/children.length);
+			child.style.width = width+'px'
+			child.style.position = 'absolute'
+			child.style.marginLeft = left+'px';
+			child.style.height = this.element.clientHeight+'px'
+			left+=width;
+		};
+	},
 	addToColumn : function(index,widget) {
 		var c = this._ensureColumn(index);
 		c.appendChild(widget.getElement());
@@ -20556,6 +20572,109 @@ hui.ui.Tile.prototype = {
 		}
 		this.fullScreen = !this.fullScreen;
 	}
+}/**
+ * Pages
+ * @constructor
+ */
+hui.ui.Pages = function(options) {
+	this.options = options || {};
+	this.element = hui.get(options.element);
+	this.name = options.name;
+	this.pages = hui.get.children(this.element);
+	this.index = 0;
+	this.fixedHeight = hui.cls.has(this.element,'hui_pages_full');
+	this.expanded = false;
+	hui.ui.extend(this);
+	//hui.listen(this.element,'click',this.next.bind(this));
+}
+
+hui.ui.Pages.create = function(options) {
+	options = options || {};
+	options.element = hui.build('div',{'class':'hui_pages'});
+	return new hui.ui.Pages(options);
+}
+
+hui.ui.Pages.prototype = {
+	add : function(widgetOrElement) {
+		var element = hui.dom.isElement(widgetOrElement) ? element : widgetOrElement.element;
+		var page = hui.build('div',{'class':'hui_pages_page'});
+		page.appendChild(element);
+		this.element.appendChild(page);
+		if (this.pages.length>0) {
+			page.style.display = 'none';
+		}
+		this.pages = hui.get.children(this.element);
+	},
+	next : function() {
+		if (this.expanded) {return}
+		var current = this.pages[this.index];
+		this.index = this.pages.length <= this.index+1 ? 0 : this.index+1;
+		this._transition({hide:current,show:this.pages[this.index]});
+	},
+	previous : function() {
+		if (this.expanded) {return}
+		var current = this.pages[this.index];
+		this.index = this.index == 0 ? this.pages.length-1 : this.index-1;
+		this._transition({hide:current,show:this.pages[this.index]});
+	},
+	goTo : function(key) {
+		for (var i=0; i < this.pages.length; i++) {
+			if (this.pages[i].getAttribute('data-key')==key && i!=this.index) {
+				var current = this.pages[this.index];
+				this.index = i;
+				this._transition({hide:current,show:this.pages[i]});
+				return;
+			}
+		};
+	},
+	expand : function() {
+		var l = this.pages.length;
+		for (var i=0; i < l; i++) {
+			if (!this.expanded) {
+				hui.style.set(this.pages[i],{
+					width : (100 / l)+'%',
+					display : 'block',
+					'float' : 'left',
+					opacity: 1
+				});
+			} else {
+				hui.style.set(this.pages[i],{
+					width : '',
+					display : i==this.index ? 'block' : 'none',
+					'float' : ''
+				});
+			}
+		};
+		hui.ui.callVisible(this);
+		this.expanded = !this.expanded;
+	},
+	_transition : function(options) {
+		var hide = options.hide,
+			show = options.show,
+			e = this.element;
+		if (this.fixedHeight) {
+			hui.style.set(hide,{position:'absolute',width:e.clientWidth+'px',height:this.element.clientHeight+'px'});
+			hui.style.set(show,{position:'absolute',width:e.clientWidth+'px',display:'block',opacity:0,height:this.element.clientHeight+'px'});			
+		} else {
+			hui.style.set(hide,{position:'absolute',width:e.clientWidth+'px'});
+			hui.style.set(show,{position:'absolute',width:e.clientWidth+'px',display:'block',opacity:0});
+			hui.style.set(e,{height:hide.offsetHeight+'px',overflow:'hidden',position:'relative'});
+			hui.animate({node:e,css:{height:show.offsetHeight+'px'},duration:500,ease:hui.ease.slowFastSlow,onComplete:function() {
+				hui.style.set(e,{height:'',overflow:'',position:''});
+			}})
+		}
+		hui.ui.reLayout();
+		
+		hui.effect.fadeOut({element:hide,duration:500,onComplete:function() {
+			hui.style.set(hide,{width : '',position:'',height:'',display:'none'});
+		}});
+		
+		hui.effect.fadeIn({element:show,duration:500,onComplete:function() {
+			hui.style.set(show,{width : '',position:'',height:''});
+			hui.ui.reLayout();
+			hui.ui.callVisible(this);
+		}.bind(this)});
+	}
 }hui.ui.Chart = function(options) {
 	this.options = options = options || {};
 	this.element = hui.get(options.element);
@@ -21604,8 +21723,12 @@ hui.ui.Diagram.D3 = {
 		};
 		
 		var force = this.layout = d3.layout.force()
+            .linkDistance(100)
+            .friction(0.9)
+            .gravity(0.1)
+            .theta(0.2)
+            .linkStrength(0.1)
 			.charge(-1000)
-			.gravity(0.20)
 			.distance(width/3)
 			.nodes(this.diagram.nodes)
 			.links(this.diagram.lines)
@@ -22243,8 +22366,12 @@ hui.ui.Diagram.D3 = {
 		};
 		
 		var force = this.layout = d3.layout.force()
+            .linkDistance(100)
+            .friction(0.9)
+            .gravity(0.1)
+            .theta(0.2)
+            .linkStrength(0.1)
 			.charge(-1000)
-			.gravity(0.20)
 			.distance(width/3)
 			.nodes(this.diagram.nodes)
 			.links(this.diagram.lines)
