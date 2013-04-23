@@ -78,12 +78,6 @@ p.people_person_property span
 
 
 
-
-
-
-
-
-
 ul.people_person_contact
 {
 	list-style: none;
@@ -112,4 +106,20 @@ ul.people_person_contact a.oo_link
 div.people_person_photos h2
 {
 	margin-bottom: 10px;
+}
+
+
+
+@media screen and (max-width: 600px) {
+	div.people_person_left
+	{
+		float: none;
+		width: auto;
+	}
+	
+	div.people_person_info
+	{
+		margin: 20px 0 0;
+	}
+	
 }

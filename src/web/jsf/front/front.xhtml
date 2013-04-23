@@ -1,49 +1,59 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
-	"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml"
+<f:view contentType="text/html"
+ xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:o="http://www.onlineobjects.com/jsf" 
 	xmlns:ui="http://java.sun.com/jsf/facelets" 
 	xmlns:h="http://java.sun.com/jsf/html" 
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:gui="http://www.in2isoft.dk/in2igui"
-	xmlns:c="http://java.sun.com/jsp/jstl/core" xml:lang="en">
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	locale="#{wordsLayoutView.language}"
+>
+<f:loadBundle basename="dk.in2isoft.onlineobjects.apps.photos.msg.PhotosController" var="msg"/>
+
+<o:doctype/>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta name="viewport" content="user-scalable=yes, width=device-width, initial-scale = 1, maximum-scale = 10, minimum-scale = 0.2"/>
 	<title>OnlineObjects</title>
 	<o:stylesheet href="/style.css" integrateCache="true"/>
 	<o:script src="/script.js" integrateCache="true"/>
 </head>
-
+<f:loadBundle basename="dk.in2isoft.onlineobjects.apps.front.msg.FrontController" var="msg"/>
 <body>
 	<div id="container">
 		<div id="logo">
 			<span class="oo_icon">&#xa4;</span>
 		</div>
 		<h1 id="title">OnlineObjects</h1>
-		<p id="slogan">Organic – Dynamic – Plastic</p>
+		<p id="slogan">#{msg.subtitle}</p>
 	</div>
 	<ul>
 		<li>
 			<o:link plain="true" app="people" href="/">
 				<o:icon size="48" icon="user"/>
-				<strong>People</strong>
+				<strong>#{msg.people}</strong>
 			</o:link>
 		</li>
 		<li>
 			<o:link plain="true" app="words" href="/">
 				<o:icon size="48" icon="book"/>
-				<strong>Words</strong>
+				<strong>#{msg.words}</strong>
 			</o:link>
 		</li>
 		<li>
 			<o:link plain="true" app="photos" href="/">
 				<o:icon size="48" icon="camera"/>
-				<strong>Photos</strong>
+				<strong>#{msg.photos}</strong>
 			</o:link>
 		</li>
 	</ul>
+	<p class="language">
+		<o:link href="/da/">Dansk</o:link>
+		<o:out value="#{' '}"/>
+		<o:link href="/en/">Engelsk</o:link>
+	</p>
 	<o:analytics/>
 </body>
 </html>
+</f:view>
