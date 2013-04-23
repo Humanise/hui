@@ -41,7 +41,7 @@ hui.browser.msie9 = navigator.userAgent.indexOf('MSIE 9') !== -1;
 /** If the browser is InternetExplorer 9 in compatibility mode */
 hui.browser.msie9compat = hui.browser.msie7 && navigator.userAgent.indexOf('Trident/5.0') !== -1;
 /** If the browser is InternetExplorer 10 */
-hui.browser.msie9 = navigator.userAgent.indexOf('MSIE 10') !== -1;
+hui.browser.msie10 = navigator.userAgent.indexOf('MSIE 10') !== -1;
 /** If the browser is WebKit based */
 hui.browser.webkit = navigator.userAgent.indexOf('WebKit') !== -1;
 /** If the browser is any version of Safari */
@@ -7452,6 +7452,8 @@ hui.ui.List.prototype = {
 			this.fire('select',this.rows[indexes[0]]);
 			hui.ui.firePropertyChange(this,'selection.id',this.rows[indexes[0]].id);
 			this._clearChecked();
+		} else {
+			this.fire('select');
 		}
 	},
 	_onRowClick : function(index,e) {
