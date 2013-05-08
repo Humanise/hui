@@ -183,9 +183,6 @@ public class ButtonComponent extends AbstractComponent {
 	}
 	
 	public void setVariant(String variant) {
-		if ("light".equals(variant)) {
-			variant = "paper";
-		}
 		this.variant = variant;
 	}
 	

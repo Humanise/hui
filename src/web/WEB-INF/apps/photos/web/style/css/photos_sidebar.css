@@ -1,0 +1,95 @@
+div.photos_sidebar_profile
+{
+	padding: 5px 10px 10px;
+}
+
+div.photos_sidebar_profile_image
+{
+	float: left;
+}
+
+div.photos_sidebar_profile_body
+{
+	margin-left: 60px;
+}
+
+p.photos_sidebar_profile_name
+{
+	margin: 0;
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 16px;
+	font-weight: 400;
+}
+
+p.photos_sidebar_profile_user
+{
+	margin: 0;
+	font-size: 0;
+}
+
+p.photos_sidebar_profile_user span
+{
+	color: #aaa;
+	margin-right: 4px;	
+}
+
+p.photos_sidebar_profile_user strong
+{
+	display: inline-block;
+	vertical-align: middle;
+	font-weight: 200;
+	letter-spacing: 1px;
+	font-size: 9pt;
+}
+
+p.photos_sidebar_profile_link
+{
+	margin: 3px 0;
+	font-size: 12px;	
+}
+
+div.photos_sidebar_galleries
+{
+	padding: 5px;
+}
+
+div.photos_sidebar_galleries h2
+{
+	font-size: 14px;
+	border-bottom: 1px solid #eee;
+	height: 0;
+	margin: 0 0 5px;
+	text-align: center;
+}
+
+div.photos_sidebar_galleries h2 span
+{
+	position: relative;
+	top: -8px;
+	height: 16px;
+	line-height: 16px;
+	background: #fff;
+	color: #ddd;
+	padding: 0 3px;
+	font-weight: normal;
+}
+
+div.photos_sidebar_galleries ul
+{
+	list-style: none;
+	margin: 0;
+	padding: 5px;
+	font-size: 12px;
+}
+
+div.photos_sidebar_galleries li
+{
+	margin: 2px 0;
+}
+
+a.photos_sidebar_selected span
+{
+	font-weight: bold;
+	color: #000;
+}

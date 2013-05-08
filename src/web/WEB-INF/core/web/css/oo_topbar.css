@@ -2,7 +2,7 @@ div.oo_topbar
 {
 	font-family: 'Helvetica Neue','Helvetica','Arial',sans-serif;
 	overflow: hidden;
-	border-bottom: 1px solid #eee;
+	border-bottom: 1px solid #fafafa;
 	font-size: 0;
 	-webkit-transition: background 1s,border-color 1s, opacity 1s;
 	-moz-transition: background 1s,border-color 1s, opacity 1s;
@@ -157,6 +157,12 @@ span.oo_topbar_right a
 	padding: 0 10px;
 	color: #999;
 	text-decoration: none;
+}
+
+a.oo_topbar_user span
+{
+	margin-right: 4px;
+	margin-top: -2px;
 }
 
 div.oo_topbar_info_busy

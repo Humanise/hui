@@ -3,6 +3,7 @@
 	font-size: 0;
 	overflow: hidden;
 	display: inline-block;
+	vertical-align: middle;
 	background: #fff no-repeat scroll center center;
 }
 

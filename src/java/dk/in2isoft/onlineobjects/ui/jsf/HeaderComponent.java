@@ -44,7 +44,7 @@ public class HeaderComponent extends AbstractComponent {
 	
 	@Override
 	protected void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
-		writer.startElement("h"+level).withClass(new ClassBuilder("oo_header").add("oo_header", variant).add(styleClass));
+		writer.startElement("h"+level).withClass(new ClassBuilder("oo_header").add("oo_header", variant).add(styleClass)).withId(getId());
 	}
 
 	@Override

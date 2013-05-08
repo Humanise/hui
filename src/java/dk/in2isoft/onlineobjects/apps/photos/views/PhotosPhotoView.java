@@ -20,7 +20,9 @@ import dk.in2isoft.onlineobjects.core.PairSearchResult;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.UserQuery;
+import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.model.Image;
+import dk.in2isoft.onlineobjects.model.ImageGallery;
 import dk.in2isoft.onlineobjects.model.Location;
 import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.Relation;
@@ -52,19 +54,21 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 	private long previousId;
 	private List<Word> words;
 	private boolean vertical;
+	private List<ImageGallery> galleries;
 	
 	public void afterPropertiesSet() throws Exception {
-		image = modelService.get(Image.class, getImageId(), getRequest().getSession());
+		UserSession session = getRequest().getSession();
+		image = modelService.get(Image.class, getImageId(), session);
 		if (image!=null) {
 			Messages msg = new Messages(PhotosController.class);
 			
-			if (!securityService.canView(image, getRequest().getSession())) {
+			if (!securityService.canView(image, session)) {
 				image = null;
 				return;
 			}
 			vertical = ((float)image.getHeight())/((float)image.getWidth()) > 0.8;
 			
-			canModify = securityService.canModify(image, getRequest().getSession());
+			canModify = securityService.canModify(image, session);
 			if (canModify) {
 				secret = !securityService.canView(image, securityService.getPublicUser());
 			}
@@ -85,7 +89,7 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 			}
 			
 			Query<Image> allQuery = Query.after(Image.class).withPrivileged(user).orderByCreated();
-			if (user==null || user.getId()!=getRequest().getSession().getIdentity()) {
+			if (user==null || user.getId()!=session.getIdentity()) {
 				allQuery.withPublicView();
 			}
 			List<Long> ids = modelService.listIds(allQuery);
@@ -119,11 +123,17 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 
 			String[] path = getRequest().getLocalPath();
 			language = path[0];
+			
+			galleries = modelService.getParents(image, ImageGallery.class,session);
 		}
 	}
 	
 	public List<SelectItem> getProperties() {
 		return properties;
+	}
+	
+	public List<ImageGallery> getGalleries() {
+		return galleries;
 	}
 	
 	public Person getPerson() {

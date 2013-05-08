@@ -24,13 +24,7 @@
 		</ui:define>
 		
 		<ui:define name="sidebar">
-			<ui:remove>
-			<ul>
-				<c:forEach items="#{photosUserView.galleries}" var="gallery">
-				<li><o:link href="/gallery/#{gallery.id}/" app="photos">#{gallery.name}</o:link></li>
-				</c:forEach>
-			</ul>
-			</ui:remove>
+			<ui:include src="sidebar.part.xhtml"/>
 		</ui:define>
 		
 	</ui:composition>

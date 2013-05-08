@@ -11,6 +11,7 @@ import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.exceptions.ContentNotFoundException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.model.Image;
+import dk.in2isoft.onlineobjects.services.ImportService;
 import dk.in2isoft.onlineobjects.ui.Blend;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
@@ -19,6 +20,7 @@ public class PhotosControllerBase extends ApplicationController {
 
 	protected ImageService imageService;
 	protected SecurityService securityService;
+	protected ImportService importService;
 
 	protected static Blend publicStyle;
 	protected static Blend privateStyle;
@@ -42,10 +44,12 @@ public class PhotosControllerBase extends ApplicationController {
 		publicStyle.addPath("WEB-INF","apps","photos","web","style","css","photos_front.css");
 		publicStyle.addPath("WEB-INF","apps","photos","web","style","css","photos_controller.css");
 		publicStyle.addPath("WEB-INF","apps","photos","web","style","css","photos_photo.css");
+		publicStyle.addPath("WEB-INF","apps","photos","web","style","css","photos_gallery.css");
 		publicStyle.addPath("WEB-INF","apps","photos","web","style","css","photos_profile.css");
 		publicStyle.addPath("WEB-INF","apps","photos","web","style","css","photos_user.css");
 		publicStyle.addPath("WEB-INF","apps","photos","web","style","css","photos_layout.css");
 		publicStyle.addPath("WEB-INF","apps","photos","web","style","css","photos_adaption.css");
+		publicStyle.addPath("WEB-INF","apps","photos","web","style","css","photos_sidebar.css");
 		
 		privateStyle = new Blend("photos_private_style");
 		privateStyle.addPath("hui","css","list.css");
@@ -69,8 +73,10 @@ public class PhotosControllerBase extends ApplicationController {
 		publicScript.addPath("hui","js","ImageViewer.js");
 		publicScript.addPath("hui","js","Box.js");
 		publicScript.addPath("WEB-INF","core","web","js","onlineobjects.js");
+		publicScript.addPath("WEB-INF","core","web","js","oo_inlineeditor.js");
 		publicScript.addPath("WEB-INF","core","web","js","map.js");
 		publicScript.addPath("WEB-INF","apps","photos","web","style","js","photo_view.js");
+		publicScript.addPath("WEB-INF","apps","photos","web","style","js","gallery_view.js");
 		
 		privateScript = new Blend("photos_private_script");
 		privateScript.addPath("hui","js","hui_color.js");
@@ -123,11 +129,17 @@ public class PhotosControllerBase extends ApplicationController {
 		return image;
 	}
 	
+	// Wiring...
+	
 	public void setImageService(ImageService imageService) {
 		this.imageService = imageService;
 	}
 
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
+	}
+	
+	public void setImportService(ImportService importService) {
+		this.importService = importService;
 	}
 }

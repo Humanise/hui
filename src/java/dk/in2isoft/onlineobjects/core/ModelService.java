@@ -41,6 +41,7 @@ import com.google.common.collect.Lists;
 import dk.in2isoft.commons.lang.Code;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.events.EventService;
+import dk.in2isoft.onlineobjects.core.exceptions.ContentNotFoundException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.model.Entity;
@@ -339,6 +340,14 @@ public class ModelService {
 		}
 	}
 
+	public <T extends Entity> T getRequired(Class<T> entityClass, Long id, Privileged privileged) throws ModelException,ContentNotFoundException {
+		T found = get(entityClass, id, privileged);
+		if (found==null) {
+			throw new ContentNotFoundException(entityClass, id);
+		}
+		return found;
+	}
+	
 	public <T extends Entity> T get(Class<T> entityClass, Long id, Privileged privileged) throws ModelException {
 		dk.in2isoft.onlineobjects.core.Query<T> query = dk.in2isoft.onlineobjects.core.Query.of(entityClass);
 		if (!privileged.isSuper()) {
@@ -427,6 +436,14 @@ public class ModelService {
 	public <T> List<T> getParents(Entity entity, Class<T> classObj) throws ModelException {
 		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.of(classObj);
 		q.withChild(entity);
+		return list(q);
+	}
+
+
+	public <T> List<T> getParents(Entity entity, Class<T> classObj, Privileged privileged) throws ModelException {
+		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.of(classObj);
+		q.withChild(entity);
+		q.withPrivileged(privileged);
 		return list(q);
 	}
 

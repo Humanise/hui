@@ -9,6 +9,10 @@ public class ContentNotFoundException extends EndUserException {
 		super();
 	}
 
+	public ContentNotFoundException(Class<?> type, Number id) {
+		super("Content of type "+type.getSimpleName()+" and id="+id+" was not found");
+	}
+
 	public ContentNotFoundException(String message, String code) {
 		super(message,code);
 	}

@@ -246,12 +246,12 @@ oo.TopBar.prototype = {
 				hui.cls.remove(node,'oo_topbar_info_busy')
 				var html = '<div class="oo_topbar_info_photo">';
 				if (info.photoId) {
-					html+='<div style="background: url('+oo.baseContext+'/service/image/id'+info.photoId+'width50height60cropped.jpg)"></div>';
+					html+='<div style="background: url('+oo.baseContext+'/service/image/id'+info.photoId+'width50height60sharpen0.7cropped.jpg)"></div>';
 				}
 				html+='</div><div class="oo_topbar_info_content">'+
 					'<p class="oo_topbar_info_name">'+hui.string.escape(info.fullName)+'</p>'+
 					'<p class="oo_topbar_info_username">'+hui.string.escape(info.username)+'</p>'+
-					'<p class="oo_topbar_info_account"><strong>&rsaquo;</strong> <a href="'+oo.baseContext+'/app/account/"><span>Account</span></a></p>'+
+					'<p class="oo_topbar_info_account"><strong>&rsaquo;</strong> <a href="http://account.'+oo.baseDomainContext+'/"><span>Account</span></a></p>'+
 					'</div>';
 				node.innerHTML = html;
 				
@@ -333,61 +333,7 @@ oo.TopBar.prototype = {
 
 
 
-oo.InlineEditor = function(options) {
-	this.element = hui.get(options.element);
-	this.name = options.name;
-	hui.ui.extend(this);
-	this._addBehavior();
-	this.editing = false;
-}
 
-oo.InlineEditor.prototype = {
-	originalValue : null,
-	
-	_addBehavior : function() {
-		hui.listen(this.element,'click',this._edit.bind(this));
-	},
-	_edit : function() {
-		var el = this.element;
-		var field = this._getField();
-		hui.style.copy(el,field,['font-size','font-family','font-weight'])
-		el.style.visibility = 'hidden'
-		hui.position.place({source:{element:field},target:{element:el}});
-		hui.style.set(field,{display:'block',width:el.clientWidth+'px',height:el.clientHeight+'px'})
-		field.value = hui.dom.getText(el);
-		field.style.display='block';
-		field.focus();
-		field.select();
-		this.originalValue = field.value;
-		this.editing = true;
-	},
-	_getField : function() {
-		if (!this._field) {
-			this._field = hui.build('textarea',{style:'border:none; background:none; position:absolute; display:none; padding: 0; margin: 0;',parent:document.body})
-			hui.listen(this._field,'blur',this._save.bind(this));
-			hui.listen(this._field,'keydown',function(e) {
-				e = hui.event(e);
-				if (e.returnKey) {
-					e.stop();
-					this._save()					
-				}
-			}.bind(this));
-		}
-		return this._field;
-	},
-	_save : function() {
-		if (!this.editing) {return}
-		var value = this._field.value;
-		hui.dom.setText(this.element,value);
-		this._field.style.display='none';
-		this.element.style.visibility = '';
-		document.body.focus();
-		if (this.originalValue!=value) {
-			this.fire('valueChanged',value);			
-		}
-		this.editing = false;
-	}
-}
 
 
 oo.Link = function(options) {

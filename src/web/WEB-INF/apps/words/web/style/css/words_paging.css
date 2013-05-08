@@ -37,10 +37,32 @@ p.words_paging a:hover span
 	background: #eee;
 }
 
+p.words_paging a:active
+{
+	outline: none;
+}
+
+p.words_paging a:active span
+{
+	background: #ddd;
+}
+
 p.words_paging a.words_paging_selected span
 {
 	color: #000;
 	background: #f6f6f6;
 	border: 1px solid #ddd;
 	margin: -1px;
+}
+
+p.words_paging a.words_paging_selected:active
+{
+	outline: none;
+}
+
+p.words_paging a.words_paging_selected:active span
+{
+	background: #eee;
+	border: 1px solid #ddd;	
+	outline: none;
 }

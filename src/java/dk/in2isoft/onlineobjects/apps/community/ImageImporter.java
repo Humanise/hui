@@ -36,7 +36,7 @@ public class ImageImporter implements ImportListener {
 			throw new IllegalRequestException("The request is illegal!");
 		}
 		if (!mimeTypes.contains(mimeType)) {
-			return;
+			throw new IllegalRequestException("Unsupported mime type: "+mimeType);
 		}
 		Image image = new Image();
 		modelService.createItem(image, request.getSession());

@@ -12,6 +12,11 @@ http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
 			<supported-locale>en_UK</supported-locale>
 			<supported-locale>da</supported-locale>
 		</locale-config>
+		<!-- 
+		<variable-resolver>
+			org.springframework.web.jsf.el.SpringBeanFacesELResolver
+		</variable-resolver>
+		 -->
    		<variable-resolver>
       		org.springframework.web.jsf.DelegatingVariableResolver
    		</variable-resolver>

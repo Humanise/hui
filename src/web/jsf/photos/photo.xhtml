@@ -16,6 +16,7 @@
 				<o:script>
 					photoView.editable = #{photosPhotoView.canModify};
 					photoView.imageId = #{photosPhotoView.image.id};
+					hui.ui.listen(photoView);
 				</o:script>
 			</c:if>
 		</ui:define>
@@ -110,6 +111,16 @@
 								<p style="margin-top: 5px"><o:link app="people" href="/#{photosPhotoView.user.username}/">Profile »</o:link></p>
 							</div>
 						</div>
+						<c:if test="#{not empty photosPhotoView.galleries}">
+							<div class="photos_photo_galleries">
+								<h2>Galleries</h2>
+								<ul id="galleries">
+									<c:forEach items="#{photosPhotoView.galleries}" var="gallery">
+										<li><o:link href="/gallery/#{gallery.id}/" app="photos">#{gallery.name}</o:link></li>
+									</c:forEach>
+								</ul>
+							</div>
+						</c:if>
 						<div class="photos_photo_properties oo_faded">
 							<o:block id="properties">
 								<c:forEach items="#{photosPhotoView.properties}" var="prop">

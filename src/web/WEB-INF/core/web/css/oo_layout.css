@@ -72,6 +72,7 @@ div.oo_layout_paper
 	width: 1018px;
 	background: url('../gfx/layout_paper.png') 0 0 repeat-y;
 	margin: 20px auto;
+	margin-top: 10px;
 }
 
 div.oo_layout_paper div.oo_layout_top
@@ -135,6 +136,7 @@ div.oo_layout_paper div.oo_layout_right
 		background: #fff;
 		margin: 0;
 		border-bottom: 1px solid #eee;
+		border-top: 1px solid #eee;
 	}
 	
 	div.oo_layout_paper div.oo_layout_bottom,

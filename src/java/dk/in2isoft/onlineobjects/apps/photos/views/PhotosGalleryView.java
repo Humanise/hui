@@ -4,8 +4,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.InitializingBean;
 
+import com.google.common.collect.Lists;
+
 import dk.in2isoft.commons.lang.Numbers;
 import dk.in2isoft.onlineobjects.apps.community.jsf.AbstractManagedBean;
+import dk.in2isoft.onlineobjects.apps.photos.GalleryImagePerspective;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.exceptions.ContentNotFoundException;
 import dk.in2isoft.onlineobjects.model.Image;
@@ -20,7 +23,9 @@ public class PhotosGalleryView extends AbstractManagedBean implements Initializi
 	private ImageGallery imageGallery;
 	private String title;
 
-	private List<Image> images;
+	private List<GalleryImagePerspective> images;
+	
+	private String username;
 
 	private User user;
 	
@@ -30,17 +35,41 @@ public class PhotosGalleryView extends AbstractManagedBean implements Initializi
 		Request request = getRequest();
 		String[] path = request.getLocalPath();
 		long id = Numbers.parseLong(path[2]);
-		imageGallery = modelService.get(ImageGallery.class, id,request.getSession());
-		if (imageGallery==null) {
-			throw new ContentNotFoundException("The gallery does not exist");
+		if (id>0) {
+			imageGallery = modelService.get(ImageGallery.class, id,request.getSession());
+			if (imageGallery==null) {
+				throw new ContentNotFoundException("The gallery does not exist");
+			}
+			title = imageGallery.getName();
+			user = modelService.getOwner(imageGallery);
+			username = user.getUsername();
+			modifiable = user!=null && user.getId()==request.getSession().getIdentity();
+			List<Image> childImages = modelService.getChildrenOrdered(imageGallery, Image.class);
+			images = Lists.newArrayList();
+			for (Image image : childImages) {
+				GalleryImagePerspective perspective = new GalleryImagePerspective();
+				perspective.setId(image.getId());
+				perspective.setTitle(image.getName());
+				perspective.setRemovable(modifiable);
+				perspective.setImage(image);
+				images.add(perspective);
+			}
 		}
-		title = imageGallery.getName();
-		user = modelService.getOwner(imageGallery);
-		modifiable = user!=null && user.getId()==request.getSession().getIdentity();
-		images = modelService.getChildrenOrdered(imageGallery, Image.class);
 	}
 	
-	public List<Image> getImages() {
+	public ImageGallery getImageGallery() {
+		return imageGallery;
+	}
+	
+	protected User getUser() {
+		return user;
+	}
+	
+	public String getUsername() {
+		return username;
+	}
+	
+	public List<GalleryImagePerspective> getImages() {
 		return images;
 	}
 	

@@ -9,6 +9,7 @@ import javax.faces.context.FacesContext;
 import com.google.common.collect.Lists;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
+import dk.in2isoft.commons.jsf.ClassBuilder;
 import dk.in2isoft.commons.jsf.ComponentUtil;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.onlineobjects.core.SecurityService;
@@ -83,7 +84,9 @@ public class TopBarComponent extends AbstractComponent {
 				out.text(msg.get("app_"+app, request.getLocale())).endA().endLi();
 			}		
 			User user = request.getSession().getUser();
-			out.startLi().startVoidA("oo_topbar_user").withAttribute("data", "user").write(user.getName()).endA().endLi();
+			out.startLi().startVoidA("oo_topbar_user").withAttribute("data", "user");
+			out.startSpan().withClass("oo_icon oo_icon_16").text("u").endSpan();
+			out.write(user.getName()).endA().endLi();
 		}
 		out.endUl();
 	}

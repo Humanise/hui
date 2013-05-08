@@ -2,10 +2,12 @@ package dk.in2isoft.onlineobjects.apps.words;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import dk.in2isoft.in2igui.data.Diagram;
@@ -31,6 +33,14 @@ public class WordsModelService {
 	private ModelService modelService;
 	private LanguageService languageService;
 	private SecurityService securityService;
+	
+	private Map<String,Object> getData(Entity entity) {
+		Map<String,Object> data = Maps.newHashMap();
+		data.put("id", entity.getId());
+		data.put("type", entity.getType());
+		data.put("name", entity.getName());
+		return data;
+	}
 
 	public Diagram getDiagram(String text) throws ModelException {
 		Messages msg = new Messages(WordsController.class);
@@ -42,6 +52,7 @@ public class WordsModelService {
 			wordNode.setId(word.getId());
 			wordNode.setTitle(word.getText());
 			wordNode.addProperty("Type", "Word");
+			wordNode.setData(getData(word));
 			diagram.addNode(wordNode);
 			Locale locale = new Locale("en");
 			
@@ -52,6 +63,7 @@ public class WordsModelService {
 				childNode.setId(child.getId());
 				childNode.setTitle(child.getName());
 				childNode.addProperty("Type", "Word");
+				childNode.setData(getData(child));
 				diagram.addNode(childNode);
 				diagram.addEdge(wordNode,msg.get(relation.getKind()+".reverse", locale),childNode);
 				
@@ -68,15 +80,16 @@ public class WordsModelService {
 			
 			List<Relation> parentRelations = modelService.getParentRelations(word, Word.class);
 			for (Relation relation : parentRelations) {
-				Entity child = relation.getSuperEntity();
+				Entity parent = relation.getSuperEntity();
 				Node childNode = new Node();
-				childNode.setId(child.getId());
-				childNode.setTitle(child.getName());
+				childNode.setId(parent.getId());
+				childNode.setTitle(parent.getName());
 				childNode.addProperty("Type", "Word");
+				childNode.setData(getData(parent));
 				diagram.addNode(childNode);
 				diagram.addEdge(wordNode,msg.get(relation.getKind(), locale),childNode);
 				
-				Language language = modelService.getParent(child, Language.class);
+				Language language = modelService.getParent(parent, Language.class);
 				if (language!=null) {
 					Node langNode = new Node();
 					langNode.setId(language.getId());

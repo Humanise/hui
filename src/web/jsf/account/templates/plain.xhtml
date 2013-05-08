@@ -15,8 +15,11 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 		<title><ui:insert name="title"/>Words - OnlineObjects</title>
 		<gui:importStyle/>
-		<o:stylesheet href="/core/css/onlineobjects.css" core="true"/>
-		<o:stylesheet href="/core/css/common.css" core="true"/>
+		<o:stylesheet href="/core/css/oo_font.css" core="true"/>
+		<o:stylesheet href="/core/css/oo_topbar.css" core="true"/>
+		<o:stylesheet href="/core/css/oo_icon.css" core="true"/>
+		<o:stylesheet href="/core/css/oo_footer.css" core="true"/>
+		<o:stylesheet href="/core/css/oo_body.css" core="true"/>
 		<o:stylesheet href="/core/fonts/awesome/css/font-awesome.css" core="true"/>
 		<o:stylesheet href="/css/style.css"/>
 		<gui:importScripts/>
@@ -31,17 +34,7 @@
 		<div style="box-shadow: 0 1px 3px rgba(0,0,0,.2); border-radius: 3px; background: #fff; width: 500px; margin: 20px auto;">
 			<ui:insert name="body"/>
 		</div>
-		<p class="common_footer oo_faded">
-			<c:forEach items="#{wordsLayoutView.languages}" var="item" varStatus="status">
-				<c:if test="#{not status.first}"> · </c:if>
-				<c:if test="#{item.selected}">
-					<strong>#{item.label}</strong>
-				</c:if>
-				<c:if test="#{not item.selected}">
-					<o:link href="#{item.value}">#{item.label}</o:link>
-				</c:if>
-			</c:forEach>
-		</p>
+		<o:footer/>
 		<o:analytics/>
 	</o:body>
 </html>

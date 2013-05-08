@@ -55,11 +55,11 @@
 												</a>
 											 </span>
 										</c:if>
-										<gui:button variant="paper" name="delete#{word.word.id}" tiny="true" text="#{msg.remove}" left="10" 
+										<gui:button variant="light" name="delete#{word.word.id}" tiny="true" text="#{msg.remove}" left="10" 
 											click="wordView.deleteWord({id:#{word.word.id}})"
 											rendered="#{wordsLayoutView.loggedIn}"
 										/>
-										<gui:button variant="paper" name="relate#{word.word.id}" tiny="true" text="#{msg.add_relation}" left="10" 
+										<gui:button variant="light" name="relate#{word.word.id}" tiny="true" text="#{msg.add_relation}" left="10" 
 											click="wordView.addRelation({id:#{word.word.id}})"
 											rendered="#{wordsLayoutView.loggedIn}"
 										/>
@@ -111,7 +111,7 @@
 						</ul>
 					</ui:fragment>
 					<p>
-						<gui:button variant="paper" name="addVariant" small="true" text="#{msg.add_variant}" rendered="#{wordsLayoutView.loggedIn}"/>
+						<gui:button variant="light" name="addVariant" small="true" text="#{msg.add_variant}" rendered="#{wordsLayoutView.loggedIn}"/>
 					</p>
 					<gui:diagram name="diagram"/>
 					<c:if test="#{wordsLayoutView.loggedIn}">

@@ -27,8 +27,6 @@ public class PhotosUserView extends AbstractManagedBean implements InitializingB
 	private Person person;
 	private ListModel<Image> listModel;
 	private boolean modifiable;
-
-	private List<ImageGallery> galleries;
 	
 	public void afterPropertiesSet() throws Exception {
 		String[] path = getRequest().getLocalPath();
@@ -41,12 +39,6 @@ public class PhotosUserView extends AbstractManagedBean implements InitializingB
 		this.user = pair.getKey();
 		this.person = pair.getValue();
 		modifiable = this.user.getId() == getRequest().getSession().getUser().getId();
-		
-		this.galleries = modelService.list(Query.after(ImageGallery.class).withPrivileged(user));
-	}
-	
-	public List<ImageGallery> getGalleries() {
-		return galleries;
 	}
 	
 	public String getUsername() {

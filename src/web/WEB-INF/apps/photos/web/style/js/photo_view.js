@@ -130,5 +130,3 @@ var photoView = {
 		});
 	}
 };
-
-hui.ui.listen(photoView)

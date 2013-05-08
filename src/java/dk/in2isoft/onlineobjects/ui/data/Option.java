@@ -4,6 +4,7 @@ public class Option {
 
 	private String label;
 	private Object value;
+	private boolean selected;
 	
 	public Option() {
 		
@@ -13,6 +14,10 @@ public class Option {
 		super();
 		this.label = label;
 		this.value = value;
+	}
+
+	public static Option of(String label, Object value) {
+		return new Option(label, value);
 	}
 
 	public String getLabel() {
@@ -31,7 +36,11 @@ public class Option {
 		this.value = value;
 	}
 
-	public static Option of(String label, Object value) {
-		return new Option(label, value);
+	public boolean isSelected() {
+		return selected;
+	}
+	
+	public void setSelected(boolean selected) {
+		this.selected = selected;
 	}
 }

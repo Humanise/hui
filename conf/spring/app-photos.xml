@@ -27,6 +27,11 @@
    		<property name="modelService" ref="modelService"/>
    	</bean>
    	
+   	<bean id="photosLayoutView" class="dk.in2isoft.onlineobjects.apps.photos.views.PhotosLayoutView" scope="request">
+   		<property name="modelService" ref="modelService"/>
+   		<property name="photosGalleryView" ref="photosGalleryView"/>
+   	</bean>
+
    	<bean id="photosGalleryView" class="dk.in2isoft.onlineobjects.apps.photos.views.PhotosGalleryView" scope="request">
    		<property name="modelService" ref="modelService"/>
    	</bean>   	

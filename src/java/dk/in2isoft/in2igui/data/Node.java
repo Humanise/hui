@@ -9,6 +9,7 @@ public class Node {
 	private String id;
 	private String title;
 	private List<Property> properties = Lists.newArrayList();
+	private Object data;
 
 	public String getId() {
 		return id;
@@ -40,5 +41,13 @@ public class Node {
 	
 	public void addProperty(String label, String value) {
 		properties.add(new Property(label,value));
+	}
+
+	public Object getData() {
+		return data;
+	}
+
+	public void setData(Object data) {
+		this.data = data;
 	}
 }

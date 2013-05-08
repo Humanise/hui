@@ -65,6 +65,14 @@ var wordView = {
 			}
 		})
 	},
+	$open$diagram : function(node) {
+		hui.log(node);
+		if (node.data) {
+			if (node.data.type=='Item/Entity/Word') {
+				document.location = node.data.name+'.html';
+			}
+		}
+	},
 	
 	$click$addVariant : function(button) {
 		var panel = hui.ui.get('addVariantPanel'),
