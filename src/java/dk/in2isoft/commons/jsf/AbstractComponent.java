@@ -100,7 +100,7 @@ public abstract class AbstractComponent extends UIComponentBase {
 
 	@SuppressWarnings("unchecked")
 	public <T> T getBean(Class<?> cls) {
-		WebApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(ComponentUtil.getRequest().getRequest().getSession().getServletContext());
+		WebApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(Components.getRequest().getRequest().getSession().getServletContext());
 		Map<?,?> beansOfType = context.getBeansOfType(cls);
 		if (beansOfType.isEmpty()) {
 			return null;
@@ -114,11 +114,11 @@ public abstract class AbstractComponent extends UIComponentBase {
 	}
 	
 	public <T> T getExpression(String name, T localValue, FacesContext context) {
-		return ComponentUtil.getExpressionValue(this, name, localValue, context);
+		return Components.getExpressionValue(this, name, localValue, context);
 	};
 
 	public <T> T getExpression(String name, FacesContext context) {
-		return ComponentUtil.getExpressionValue(this, name, null, context);
+		return Components.getExpressionValue(this, name, null, context);
 	};
 
 	protected Request getRequest() {

@@ -8,7 +8,7 @@ import javax.faces.context.FacesContext;
 import org.apache.commons.lang.StringUtils;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
-import dk.in2isoft.commons.jsf.ComponentUtil;
+import dk.in2isoft.commons.jsf.Components;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.onlineobjects.services.ConfigurationService;
 
@@ -33,7 +33,7 @@ public class AnalyticsComponent extends AbstractComponent {
 	
 	@Override
 	protected void encodeBegin(FacesContext context, TagWriter out) throws IOException {
-		ConfigurationService configurationService = ComponentUtil.getBean(ConfigurationService.class);
+		ConfigurationService configurationService = Components.getBean(ConfigurationService.class);
 		String code = configurationService.getAnalyticsCode();
 		if (StringUtils.isNotBlank(code)) {
 			out.startScript();

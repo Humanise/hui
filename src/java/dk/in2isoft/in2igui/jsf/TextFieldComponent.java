@@ -9,7 +9,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
-import dk.in2isoft.commons.jsf.ComponentUtil;
+import dk.in2isoft.commons.jsf.Components;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=TextFieldComponent.TYPE)
@@ -53,7 +53,7 @@ public class TextFieldComponent extends AbstractComponent {
 	@Override
 	public void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
 		String id = getClientId();
-		String value = ComponentUtil.getBindingAsString(this, "value", this.value, context);
+		String value = Components.getBindingAsString(this, "value", this.value, context);
 		if (adaptive) {
 			writer.startDiv("hui_field");
 		} else {

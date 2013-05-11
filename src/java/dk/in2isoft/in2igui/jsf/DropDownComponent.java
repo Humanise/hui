@@ -10,7 +10,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.ClassBuilder;
-import dk.in2isoft.commons.jsf.ComponentUtil;
+import dk.in2isoft.commons.jsf.Components;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.onlineobjects.ui.jsf.model.Option;
 
@@ -72,7 +72,7 @@ public class DropDownComponent extends AbstractComponent {
 	}
 	
 	private String getItems(FacesContext context) {
-		Object value = ComponentUtil.getExpressionValue(this, "items", null, context);
+		Object value = Components.getExpressionValue(this, "items", null, context);
 		if (value instanceof List<?>) {
 			List<?> list = (List<?>) value;
 			StringBuilder sb = new StringBuilder("[");

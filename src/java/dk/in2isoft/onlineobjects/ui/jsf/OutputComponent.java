@@ -8,6 +8,7 @@ import javax.faces.context.FacesContext;
 import org.apache.commons.lang.StringUtils;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
+import dk.in2isoft.commons.jsf.Components;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value = OutputComponent.FAMILY)
@@ -18,6 +19,7 @@ public class OutputComponent extends AbstractComponent {
 	private String emptyText;
 	private boolean lower;
 	private boolean escape = true;
+	private Object value;
 	
 	public OutputComponent() {
 		super(FAMILY);
@@ -25,19 +27,20 @@ public class OutputComponent extends AbstractComponent {
 	
 	@Override
 	public Object[] saveState() {
-		return new Object[] { emptyText, lower, escape };
+		return new Object[] { value, emptyText, lower, escape };
 	}
 	
 	@Override
 	public void restoreState(Object[] state) {
-		emptyText = (String) state[0];
-		lower = (Boolean) state[1];
+		value = state[0];
+		emptyText = (String) state[1];
 		lower = (Boolean) state[2];
+		escape = (Boolean) state[3];
 	}
 	
 	@Override
 	protected void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
-		Object value = getBinding("value");
+		Object value = getValue(context);
 		String text = value==null ? null : value.toString();
 		if (emptyText!=null && StringUtils.isBlank(text)) {
 			text = emptyText;
@@ -78,5 +81,17 @@ public class OutputComponent extends AbstractComponent {
 
 	public void setEscape(boolean escape) {
 		this.escape = escape;
+	}
+	
+	public Object getValue() {
+		return value;
+	}
+
+	public Object getValue(FacesContext context) {
+		return Components.getExpressionValue(this, "value", value, context);
+	}
+
+	public void setValue(Object value) {
+		this.value = value;
 	}
 }

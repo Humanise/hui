@@ -202,4 +202,11 @@
       <renderer-type>onlineobjects.icon</renderer-type>
     </component>
   </tag>
+  <tag>
+    <tag-name>permissions</tag-name>
+    <component>
+      <component-type>onlineobjects.permissions</component-type>
+      <renderer-type>onlineobjects.permissions</renderer-type>
+    </component>
+  </tag>
 </facelet-taglib>

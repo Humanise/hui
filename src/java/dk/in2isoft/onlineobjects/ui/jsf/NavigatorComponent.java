@@ -8,7 +8,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.render.Renderer;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
-import dk.in2isoft.commons.jsf.ComponentUtil;
+import dk.in2isoft.commons.jsf.Components;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.onlineobjects.model.Image;
 
@@ -95,7 +95,7 @@ public class NavigatorComponent extends AbstractComponent {
 	}
 
 	private void decodeRequest(FacesContext context, ListModel<Image> model) {
-		int page = ComponentUtil.getIntParameter("page");
+		int page = Components.getIntParameter("page");
 		if (page>0) {
 			model.setPage(page - 1);
 		}

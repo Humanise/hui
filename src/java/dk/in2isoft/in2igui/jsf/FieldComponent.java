@@ -6,7 +6,7 @@ import javax.faces.component.FacesComponent;
 import javax.faces.context.FacesContext;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
-import dk.in2isoft.commons.jsf.ComponentUtil;
+import dk.in2isoft.commons.jsf.Components;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=LinkComponent.TYPE)
@@ -57,6 +57,6 @@ public class FieldComponent extends AbstractComponent {
 	}
 	
 	private String getLabel(FacesContext context) {
-		return ComponentUtil.getBindingAsString(this, "label", label, context);
+		return Components.getBindingAsString(this, "label", label, context);
 	}
 }

@@ -8,7 +8,7 @@ import javax.faces.context.FacesContext;
 
 import org.apache.commons.lang.StringEscapeUtils;
 
-import dk.in2isoft.commons.jsf.ComponentUtil;
+import dk.in2isoft.commons.jsf.Components;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value="hui.searchfield")
@@ -49,7 +49,7 @@ public class SearchFieldComponent extends UIComponentBase {
 	@Override
 	public void encodeBegin(FacesContext context) throws IOException {
 		String id = getClientId();
-		String value = ComponentUtil.getBindingAsString(this, "value", this.value, context);
+		String value = Components.getBindingAsString(this, "value", this.value, context);
 		TagWriter writer = new TagWriter(this,context);
 		writer.startSpan(adaptive ? "hui_searchfield hui_searchfield_adaptive" : "hui_searchfield").withId(id);
 		if (width>0) {

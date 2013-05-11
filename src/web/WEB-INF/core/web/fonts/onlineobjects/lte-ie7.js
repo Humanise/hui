@@ -23,12 +23,20 @@ window.onload = function() {
 			'oo_font_file' : '&#x66;',
 			'oo_font_time' : '&#x54;',
 			'oo_font_dimensions' : '&#x44;',
-			'oo_font_book' : '&#x62;'
+			'oo_font_book' : '&#x62;',
+			'oo_font_delete' : '&#x2a;',
+			'oo_font_share' : '&#x23;',
+			'oo_font_album' : '&#x6c;',
+			'oo_font_add' : '&#x2b;',
+			'oo_font_edit' : '&#x3d;'
 		},
 		els = document.getElementsByTagName('*'),
 		i, attr, html, c, el;
-	for (i = 0; i < els.length; i += 1) {
+	for (i = 0; ; i += 1) {
 		el = els[i];
+		if(!el) {
+			break;
+		}
 		attr = el.getAttribute('data-icon');
 		if (attr) {
 			addIcon(el, attr);

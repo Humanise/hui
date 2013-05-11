@@ -17,7 +17,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import dk.in2isoft.commons.lang.Code;
 import dk.in2isoft.onlineobjects.ui.Request;
 
-public class ComponentUtil {
+public class Components {
 
 	public static String getBindingAsString(UIComponent component, String name, String localValue, FacesContext context) {
 
@@ -31,6 +31,10 @@ public class ComponentUtil {
 		return localValue;
 	}
 
+	public static <T> T  getExpressionValue(UIComponent component, String name, FacesContext context) {
+		return getExpressionValue(component, name, null, context);
+	}
+	
 	public static <T> T  getExpressionValue(UIComponent component, String name, T localValue, FacesContext context) {
 
 		ValueExpression valueExpression = component.getValueExpression(name);

@@ -25,9 +25,9 @@
 /*
 Instead of a list of all class selectors,
 you can use the generic selector below, but it's slower:
-[class*="oo_font_"]:before {
+[class*="oo_font_"] {
 */
-.oo_font_arrow_right:before, .oo_font_arrow_left:before, .oo_font_download:before, .oo_font_expand:before, .oo_font_user:before, .oo_font_onlineobjects:before, .oo_font_at:before, .oo_font_globe:before, .oo_font_envelope:before, .oo_font_tag:before, .oo_font_globus:before, .oo_font_phone:before, .oo_font_warning:before, .oo_font_camera:before, .oo_font_file:before, .oo_font_time:before, .oo_font_dimensions:before, .oo_font_book:before {
+.oo_font_arrow_right, .oo_font_arrow_left, .oo_font_download, .oo_font_expand, .oo_font_user, .oo_font_onlineobjects, .oo_font_at, .oo_font_globe, .oo_font_envelope, .oo_font_tag, .oo_font_globus, .oo_font_phone, .oo_font_warning, .oo_font_camera, .oo_font_file, .oo_font_time, .oo_font_dimensions, .oo_font_book, .oo_font_delete, .oo_font_share, .oo_font_album, .oo_font_add, .oo_font_edit {
 	font-family: 'OnlineObjects';
 	speak: none;
 	font-style: normal;
@@ -90,4 +90,19 @@ you can use the generic selector below, but it's slower:
 }
 .oo_font_book:before {
 	content: "\62";
+}
+.oo_font_delete:before {
+	content: "\2a";
+}
+.oo_font_share:before {
+	content: "\23";
+}
+.oo_font_album:before {
+	content: "\6c";
+}
+.oo_font_add:before {
+	content: "\2b";
+}
+.oo_font_edit:before {
+	content: "\3d";
 }

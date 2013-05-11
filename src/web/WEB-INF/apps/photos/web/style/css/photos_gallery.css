@@ -3,6 +3,11 @@ div.photos_gallery
 	padding: 20px;
 }
 
+div.photos_gallery h1.oo_header
+{
+	margin-bottom: 20px;
+}
+
 div.photos_gallery_drop
 {
 	background: yellow;

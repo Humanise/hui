@@ -6,7 +6,7 @@ import javax.faces.component.FacesComponent;
 import javax.faces.context.FacesContext;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
-import dk.in2isoft.commons.jsf.ComponentUtil;
+import dk.in2isoft.commons.jsf.Components;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.services.LifeCycleService;
@@ -47,7 +47,7 @@ public class StylesheetComponent extends AbstractComponent {
 			if (href.startsWith("http")) {
 				url.append(href);
 			} else {
-				Request request = ComponentUtil.getRequest();
+				Request request = Components.getRequest();
 				if (core) {
 					url.append(request.getBaseContext());
 				} else {

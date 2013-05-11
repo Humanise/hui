@@ -10,7 +10,7 @@ import com.google.common.collect.Lists;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.ClassBuilder;
-import dk.in2isoft.commons.jsf.ComponentUtil;
+import dk.in2isoft.commons.jsf.Components;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.model.User;
@@ -39,7 +39,7 @@ public class TopBarComponent extends AbstractComponent {
 	
 	@Override
 	protected void encodeBegin(FacesContext context, TagWriter out) throws IOException {
-		ConfigurationService configurationService = ComponentUtil.getBean(ConfigurationService.class);
+		ConfigurationService configurationService = Components.getBean(ConfigurationService.class);
 		//boolean developmentMode = configurationService.isDevelopmentMode();
 		Request request = Request.get(context);
 		Messages msg = new Messages(this);

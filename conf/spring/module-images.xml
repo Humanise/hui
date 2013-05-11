@@ -8,6 +8,10 @@
 
 	<bean id="imageService" class="dk.in2isoft.onlineobjects.util.images.ImageService" autowire="byType"/>
 
+	<bean id="imageGalleryService" class="dk.in2isoft.onlineobjects.modules.images.ImageGalleryService">
+		<property name="modelService" ref="modelService"/>
+	</bean>
+
 	<bean id="imageTransformationService" class="dk.in2isoft.onlineobjects.util.images.ImageTransformationService" autowire="byType"/>
 	
 </beans>

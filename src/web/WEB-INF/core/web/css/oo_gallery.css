@@ -80,10 +80,58 @@ body.oo_msie7 div.oo_gallery li
 	display: inline;
 }
 
-div.oo_gallery ol a
+div.oo_gallery ol span.oo_thumbnail
 {
 	margin: 0px 10px 10px 0;
 }
+
+div.oo_gallery_busy
+{
+	opacity: .5;
+}
+
+/********/
+
+span.oo_gallery_photo
+{
+	display: inline-block;
+	font-size: 0;
+	position: relative;
+}
+
+span.oo_gallery_hover
+{
+	display: none;
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
+span.oo_gallery_photo:hover span.oo_gallery_hover
+{
+	display: block;
+}
+
+span.oo_gallery_hover a
+{
+	margin: 2px;
+	border-radius: 4px;
+	display: inline-block;
+	height: 22px;
+	padding: 0 3px;
+	line-height: 21px;
+	font-size: 11px;
+	color: #333;
+	background: rgba(255,255,255,.5);
+	text-decoration: none;
+	text-shadow: 0 0 6px #fff;
+}
+
+span.oo_gallery_hover a:hover
+{
+	background: rgba(255,255,255,.8);
+}
+
 
 @media screen and (max-width: 600px) {
 	div.oo_gallery ol

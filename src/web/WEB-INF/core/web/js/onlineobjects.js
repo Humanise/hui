@@ -141,40 +141,7 @@ if (false) {
 	})
 }
 
-oo.Gallery = function(options) {
-	this.options = options;
-	this.element = hui.get(options.element);
-	this.images = options.images;
-	hui.ui.extend(this);
-	this._addBehavior();
-}
 
-oo.Gallery.prototype = {
-	_addBehavior : function() {
-		var self = this;
-		var slideShow = hui.get.firstByClass(this.element,'oo_gallery_slideshow');
-		if (slideShow) {
-			hui.listen(slideShow,'click',function(e) {
-				self.imageWasClicked(0);
-				hui.stop(e);
-			});
-		}
-	},
-	imageWasClicked : function(index) {
-		this.getViewer().show(index);
-	},
-	getViewer : function() {
-		if (!this.imageViewer) {
-			var v = this.imageViewer = hui.ui.ImageViewer.create();
-			v.listen(this);
-			v.addImages(this.images);
-		}
-		return this.imageViewer;
-	},
-	$resolveImageUrl : function(image,width,height) {
-		return oo.baseContext+'/service/image/id'+image.id+'width'+Math.round(width)+'height'+Math.round(height)+'.jpg';
-	}
-}
 
 
 

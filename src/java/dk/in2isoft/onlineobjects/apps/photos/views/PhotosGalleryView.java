@@ -10,11 +10,17 @@ import dk.in2isoft.commons.lang.Numbers;
 import dk.in2isoft.onlineobjects.apps.community.jsf.AbstractManagedBean;
 import dk.in2isoft.onlineobjects.apps.photos.GalleryImagePerspective;
 import dk.in2isoft.onlineobjects.core.ModelService;
+import dk.in2isoft.onlineobjects.core.Query;
+import dk.in2isoft.onlineobjects.core.SearchResult;
+import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.core.exceptions.ContentNotFoundException;
+import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.ImageGallery;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.ui.Request;
+import dk.in2isoft.onlineobjects.ui.jsf.ListModel;
+import dk.in2isoft.onlineobjects.ui.jsf.ListModelResult;
 
 public class PhotosGalleryView extends AbstractManagedBean implements InitializingBean {
 	
@@ -31,6 +37,9 @@ public class PhotosGalleryView extends AbstractManagedBean implements Initializi
 	
 	private boolean modifiable;
 
+	private ListModel<Image> listModel;
+	
+
 	public void afterPropertiesSet() throws Exception {
 		Request request = getRequest();
 		String[] path = request.getLocalPath();
@@ -40,10 +49,11 @@ public class PhotosGalleryView extends AbstractManagedBean implements Initializi
 			if (imageGallery==null) {
 				throw new ContentNotFoundException("The gallery does not exist");
 			}
+			UserSession session = request.getSession();
 			title = imageGallery.getName();
 			user = modelService.getOwner(imageGallery);
 			username = user.getUsername();
-			modifiable = user!=null && user.getId()==request.getSession().getIdentity();
+			modifiable = user!=null && user.getId()==session.getIdentity();
 			List<Image> childImages = modelService.getChildrenOrdered(imageGallery, Image.class);
 			images = Lists.newArrayList();
 			for (Image image : childImages) {
@@ -54,7 +64,25 @@ public class PhotosGalleryView extends AbstractManagedBean implements Initializi
 				perspective.setImage(image);
 				images.add(perspective);
 			}
+			listModel = new ListModel<Image>() {
+
+				@Override
+				public ListModelResult<Image> getResult() {
+					try {
+						List<Image> childImages = modelService.getChildrenOrdered(imageGallery, Image.class);
+						return new ListModelResult<Image>(childImages,childImages.size());
+					} catch (ModelException e) {
+						return null;
+					}
+				}
+				
+			};
+
 		}
+	}
+	
+	public ListModel<Image> getListModel() {
+		return listModel;
 	}
 	
 	public ImageGallery getImageGallery() {

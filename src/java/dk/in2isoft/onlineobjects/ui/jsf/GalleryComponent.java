@@ -10,8 +10,9 @@ import javax.faces.context.FacesContext;
 import javax.faces.render.Renderer;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
-import dk.in2isoft.commons.jsf.ComponentUtil;
+import dk.in2isoft.commons.jsf.Components;
 import dk.in2isoft.commons.jsf.TagWriter;
+import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.ui.jsf.model.ImageContainer;
 import dk.in2isoft.onlineobjects.util.Messages;
@@ -21,6 +22,8 @@ public class GalleryComponent extends AbstractComponent {
 
 	public static final String FAMILY = "onlineobjects.gallery";
 	private String var;
+	private String href;
+	private String name;
 
 	public GalleryComponent() {
 		super(FAMILY);
@@ -29,11 +32,13 @@ public class GalleryComponent extends AbstractComponent {
 	@Override
 	public void restoreState(Object[] state) {
 		var = (String) state[0];
+		href = (String) state[1];
+		name = (String) state[2];
 	}
 
 	@Override
 	public Object[] saveState() {
-		return new Object[] { var };
+		return new Object[] { var, href, name };
 	}
 
 	public String getVar() {
@@ -42,6 +47,18 @@ public class GalleryComponent extends AbstractComponent {
 
 	public void setVar(String var) {
 		this.var = var;
+	}
+	
+	public String getHref() {
+		return href;
+	}
+	
+	public String getHref(FacesContext context) {
+		return Components.getExpressionValue(this, "href", href, context);
+	}
+
+	public void setHref(String href) {
+		this.href = href;
 	}
 
 	@Override
@@ -60,31 +77,56 @@ public class GalleryComponent extends AbstractComponent {
 		Object value = expression.getValue(getFacesContext().getELContext());
 		return (ListModel<Image>) value;
 	}
+	 
 
 	@Override
-	public void encodeChildren(FacesContext context, TagWriter writer) throws IOException {
+	public void encodeChildren(FacesContext context, TagWriter out) throws IOException {
 		ListModel<Image> model = getModel();
 		if (model == null) {
-			writer.write("NO MODEL!!");
+			out.write("NO MODEL!!");
 			return;
 		}
 		decodeRequest(context, model);
+		
+		int width = 100;
+		int height = 100;
+		
+		String href = getHref(context);
+		
 		ListModelResult<?> result = model.getResult();
 		String id = getClientId();
-		writer.startDiv("oo_gallery").withId(id);
-		encodePaging(writer, result.getTotalCount(), model.getPage(), model.getPageSize());
-		writer.startOl();
+		out.startDiv("oo_gallery").withId(id);
+		encodePaging(out, result.getTotalCount(), model.getPage(), model.getPageSize());
+		out.startOl();
 		List<UIComponent> children = getChildren();
 		StringBuilder imageArray = new StringBuilder();
 		imageArray.append("[");
 		int num = 0;
 		for (Object object : result.getList()) {
-			writer.startLi();
-			context.getExternalContext().getRequestMap().put(var, object);
-			for (UIComponent child : children) {
-				child.encodeAll(context);
+			out.startLi();
+			
+			
+			if (getChildCount()==0 && object instanceof Image) {
+				Image image = (Image) object;
+				String url = getUrl(image,width,height);
+				out.startSpan("oo_gallery_photo");
+				out.startSpan("oo_gallery_hover");
+				out.startVoidA("oo_gallery_remove").rel("remove").data(image.getId());
+				out.startSpan("oo_icon oo_icon_16").text("*").endSpan();
+				out.endA();
+				out.endSpan();
+				out.startA().withHref(getHref(href,image));
+				out.startImg().src(url).alt(image.getName()).withStyle("width: "+width+"px; height: "+height+"px;").endImg();
+				out.endA();
+				out.endSpan();
+			} else {
+				context.getExternalContext().getRequestMap().put(var, object);
+				for (UIComponent child : children) {
+					child.encodeAll(context);
+				}				
 			}
-			writer.endLi();
+			
+			out.endLi();
 			if (num>0) {
 				imageArray.append(",");
 			}
@@ -103,11 +145,31 @@ public class GalleryComponent extends AbstractComponent {
 			}
 		}
 		imageArray.append("]");
-		writer.endOl();
-		writer.endDiv();
-		writer.startScopedScript();
-		writer.write("new oo.Gallery({element:'" + id + "',images:"+imageArray+"});");
-		writer.endScopedScript();
+		out.endOl();
+		out.endDiv();
+		out.startScopedScript();
+		out.startNewObject("oo.Gallery");
+		if (Strings.isNotBlank(name)) {
+			out.property("name", name).comma();
+		}
+		out.property("element", id).comma().propertyRaw("images", imageArray.toString()).endNewObject();
+		out.endScopedScript();
+	}
+
+	private String getUrl(Image image, int width, int height) {
+		StringBuilder url = new StringBuilder();
+		url.append(Components.getRequest().getBaseContext());
+		url.append("/service/image/id").append(image.getId()).append("width").append(width).append("height").append(height);
+		url.append("sharpen1.0");
+		url.append("cropped.jpg");
+		return url.toString();
+	}
+
+	private Object getHref(String str, Image image) {
+		if (str==null) {
+			return null;
+		}
+		return str.replaceAll("\\[id\\]", String.valueOf(image.getId()));
 	}
 
 	private void encodePaging(TagWriter writer, int totalCount, int page, int pageSize) throws IOException {
@@ -134,9 +196,17 @@ public class GalleryComponent extends AbstractComponent {
 	}
 
 	private void decodeRequest(FacesContext context, ListModel<Image> model) {
-		int page = ComponentUtil.getIntParameter("page");
+		int page = Components.getIntParameter("page");
 		if (page>0) {
 			model.setPage(page - 1);
 		}
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 }

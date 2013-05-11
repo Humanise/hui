@@ -7,7 +7,7 @@ import javax.faces.context.FacesContext;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.ClassBuilder;
-import dk.in2isoft.commons.jsf.ComponentUtil;
+import dk.in2isoft.commons.jsf.Components;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=BoundPanelComponent.TYPE)
@@ -89,7 +89,7 @@ public class BoundPanelComponent extends AbstractComponent {
 	}
 
 	public String getName(FacesContext context) {
-		return ComponentUtil.getBindingAsString(this, "name", name, context);
+		return Components.getBindingAsString(this, "name", name, context);
 	}
 
 	public boolean isHideOnClick() {

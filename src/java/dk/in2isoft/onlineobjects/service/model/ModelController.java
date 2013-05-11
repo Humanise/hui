@@ -12,6 +12,7 @@ import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
+import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.Language;
 import dk.in2isoft.onlineobjects.model.LexicalCategory;
@@ -23,7 +24,20 @@ import dk.in2isoft.onlineobjects.util.Messages;
 
 public class ModelController extends ModelControllerBase {
 
-
+	@Path
+	public void changeAccess(Request request) throws IOException, ModelException, SecurityException {
+		long id = request.getLong("entityId");
+		Boolean publicView = request.getBoolean("publicView",null);
+		if (publicView!=null) {
+			Entity entity = modelService.get(Entity.class, id, request.getSession());
+			if (publicView) {
+				securityService.makePublicVisible(entity,request.getSession());			
+			} else {
+				securityService.makePublicHidden(entity,request.getSession());
+			}
+		}
+	}
+	
 	@Path(start={"image","list"})
 	public void listImage(Request request) throws IOException, ModelException {
 		Query<Image> query = Query.after(Image.class).withPaging(0, 40).withPrivileged(request.getSession()).orderByCreated().descending();

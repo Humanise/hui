@@ -3,13 +3,14 @@ package dk.in2isoft.onlineobjects.ui.jsf;
 import java.io.IOException;
 
 import javax.faces.component.FacesComponent;
+import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
 import org.apache.commons.lang.StringUtils;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.ClassBuilder;
-import dk.in2isoft.commons.jsf.ComponentUtil;
+import dk.in2isoft.commons.jsf.Components;
 import dk.in2isoft.commons.jsf.StyleBuilder;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.commons.lang.Numbers;
@@ -52,7 +53,7 @@ public class ThumbnailComponent extends AbstractComponent {
 	}
 
 	@Override
-	protected void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
+	protected void encodeBegin(FacesContext context, TagWriter out) throws IOException {
 		String href = getHref(context);
 		Image image = getBinding("image");
 		StyleBuilder style = new StyleBuilder();
@@ -64,11 +65,18 @@ public class ThumbnailComponent extends AbstractComponent {
 		if (frame) {
 			cls.add("oo_thumbnail_frame");
 		}
-		if (StringUtils.isNotBlank(href)) {
-			writer.startA(cls).withStyle(style).withAttribute("href", LinkComponent.buildUrl(href, app, false));
-		} else {
-			writer.startSpan(cls).withStyle(style);
+		out.startSpan(cls).withStyle(style);
+		UIComponent hover = getFacet("hover");
+		if (hover!=null) {
+			out.startSpan("oo_thumbnail_hover");
+			context.getExternalContext().getFlash().putNow("item", image);
+			hover.encodeAll(context);
+			out.endSpan();
 		}
+		if (StringUtils.isNotBlank(href)) {
+			out.startA(cls).withAttribute("href", LinkComponent.buildUrl(href, app, false));
+		}
+		
 		if (image!=null) {
 			ImageService imageService = getBean(ImageService.class);
 			boolean valid = imageService.hasImageFile(image);
@@ -89,26 +97,25 @@ public class ThumbnailComponent extends AbstractComponent {
 				stl.withWidth(wdth).withHeight(hght);
 					
 				StringBuilder url = new StringBuilder();
-				url.append(ComponentUtil.getRequest().getBaseContext());
+				url.append(Components.getRequest().getBaseContext());
 				url.append("/service/image/id").append(image.getId()).append("width").append(wdth).append("height").append(hght);
 				if (sharpen > 0) {
 					url.append("sharpen").append(Numbers.formatDecimal(sharpen,2));
 				}
 				url.append("cropped.jpg");
-				writer.startElement("img").withAttribute("src", url).withAttribute("alt", image.getName());
+				out.startElement("img").withAttribute("src", url).withAttribute("alt", image.getName());
 				if (zoom) {
 					StringBuilder onClick = new StringBuilder();
 					onClick.append("oo.showImage({id:").append(image.getId()).append(",width:").append(image.getWidth()).append(",height:").append(image.getHeight()).append("});");
-					writer.withAttribute("onclick", onClick);
+					out.withAttribute("onclick", onClick);
 				}
-				writer.withStyle(stl).endElement("img");
+				out.withStyle(stl).endElement("img");
 			}
 		}
 		if (StringUtils.isNotBlank(href)) {
-			writer.endA();
-		} else {
-			writer.endSpan();
+			out.endA();
 		}
+		out.endSpan();
 	}
 
 	public void setWidth(Integer width) {

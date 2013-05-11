@@ -1,4 +1,4 @@
-.oo_thumbnail
+span.oo_thumbnail
 {
 	font-size: 0;
 	overflow: hidden;
@@ -7,29 +7,29 @@
 	background: #fff no-repeat scroll center center;
 }
 
-.oo_thumbnail_frame
+span.oo_thumbnail_frame
 {
 	padding: 4px;
 	border: 1px solid #ddd;
 	border-color:#EEEEEE #DDDDDD #CCCCCC;
 }
 
-.oo_thumbnail img
+span.oo_thumbnail img
 {
 	border: none;
 }
 
-.oo_thumbnail_video
+span.oo_thumbnail_video
 {
 	background-color: #eee;
 }
 
-.oo_thumbnail_user
+span.oo_thumbnail_user
 {
 	background-image: url('../gfx/person_placeholder.png');
 }
 
-.oo_thumbnail_zoom img
+span.oo_thumbnail_zoom img
 {
 	cursor: pointer;
 	cursor: -webkit-zoom-in;

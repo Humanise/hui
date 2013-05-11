@@ -32,6 +32,7 @@ import dk.in2isoft.onlineobjects.publishing.Part;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.ui.ScriptWriter;
 import dk.in2isoft.onlineobjects.ui.StylesheetWriter;
+import dk.in2isoft.onlineobjects.ui.data.SimpleEntityPerspective;
 import dk.in2isoft.onlineobjects.util.images.ImageInfo.ImageLocation;
 
 
@@ -151,6 +152,12 @@ public class PhotosController extends PhotosControllerBase {
 		} else {
 			securityService.makePublicHidden(image,request.getSession());
 		}
+	}
+	
+	@Path
+	public SimpleEntityPerspective createGallery(Request request) throws IOException, EndUserException {
+		ImageGallery gallery = imageGalleryService.createGallery(request.getSession());
+		return SimpleEntityPerspective.create(gallery);
 	}
 
 	@Path

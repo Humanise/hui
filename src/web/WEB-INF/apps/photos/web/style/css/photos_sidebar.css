@@ -51,45 +51,84 @@ p.photos_sidebar_profile_link
 
 div.photos_sidebar_galleries
 {
+	border-top: 1px solid #eee;
 	padding: 5px;
+	margin: 5px;
 }
 
 div.photos_sidebar_galleries h2
 {
-	font-size: 14px;
-	border-bottom: 1px solid #eee;
-	height: 0;
-	margin: 0 0 5px;
-	text-align: center;
+	color: #ccc;
+	font-size: 14pt;
+	line-height: 30px;
+	font-family: 'HelveticaNeue-UltraLight','Helvetica Neue','Helvetica','Arial',sans-serif;
+	font-weight: 100;
+	letter-spacing: 1px;
+	margin: 0;
+	position: relative;
 }
 
-div.photos_sidebar_galleries h2 span
+div.photos_sidebar_galleries h2 a
 {
-	position: relative;
-	top: -8px;
-	height: 16px;
-	line-height: 16px;
-	background: #fff;
+	position: absolute;
+	right: 0;
+	top: 5px;
 	color: #ddd;
-	padding: 0 3px;
-	font-weight: normal;
+	font-size: 0;
+}
+
+div.photos_sidebar_galleries h2 a:hover
+{
+	color: #333;
 }
 
 div.photos_sidebar_galleries ul
 {
 	list-style: none;
 	margin: 0;
-	padding: 5px;
+	padding: 0px;
 	font-size: 12px;
 }
 
 div.photos_sidebar_galleries li
 {
-	margin: 2px 0;
 }
 
-a.photos_sidebar_selected span
+div.photos_sidebar_galleries ul a
+{
+	text-decoration: none;
+	color: #333;
+	display: block;
+	padding: 2px 0;
+}
+
+div.photos_sidebar_galleries ul a:hover,
+div.photos_sidebar_galleries ul a:hover span.oo_icon
+{
+	color: #000;
+}
+
+div.photos_sidebar_galleries ul a:focus
+{
+	text-shadow: #3366ff 0px 0px 2px;
+	color: #002244;
+	outline: none;
+}
+
+div.photos_sidebar_galleries ul a span.oo_icon
+{
+	color: #ccc;
+	margin-right: 4px;
+	font-weight: normal;
+}
+
+a.photos_sidebar_selected
 {
 	font-weight: bold;
 	color: #000;
+}
+
+div.photos_sidebar_galleries a.photos_sidebar_selected span.oo_icon
+{
+	color: #333;
 }

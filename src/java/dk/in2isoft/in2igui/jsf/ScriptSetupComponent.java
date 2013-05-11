@@ -6,7 +6,7 @@ import javax.faces.component.FacesComponent;
 import javax.faces.context.FacesContext;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
-import dk.in2isoft.commons.jsf.ComponentUtil;
+import dk.in2isoft.commons.jsf.Components;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.onlineobjects.ui.Request;
 
@@ -31,7 +31,7 @@ public class ScriptSetupComponent extends AbstractComponent {
 	
 	@Override
 	public void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
-		Request request = ComponentUtil.getRequest();
+		Request request = Components.getRequest();
 		writer.startScript().newLine();
 		writer.write("hui.ui.context = '").write(request.getBaseContext()).write("';").newLine();
 		writer.write("hui.ui.language = '").write(request.getLanguage()).write("';").newLine();

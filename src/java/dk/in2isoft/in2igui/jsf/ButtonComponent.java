@@ -9,7 +9,7 @@ import org.apache.commons.lang.StringUtils;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.ClassBuilder;
-import dk.in2isoft.commons.jsf.ComponentUtil;
+import dk.in2isoft.commons.jsf.Components;
 import dk.in2isoft.commons.jsf.StyleBuilder;
 import dk.in2isoft.commons.jsf.TagWriter;
 
@@ -131,7 +131,7 @@ public class ButtonComponent extends AbstractComponent {
 	}
 
 	public String getText(FacesContext context) {
-		return ComponentUtil.getBindingAsString(this, "text", text, context);
+		return Components.getBindingAsString(this, "text", text, context);
 	}
 
 	public void setName(String name) {
@@ -143,7 +143,7 @@ public class ButtonComponent extends AbstractComponent {
 	}
 
 	public String getName(FacesContext context) {
-		return ComponentUtil.getBindingAsString(this, "name", name, context);
+		return Components.getBindingAsString(this, "name", name, context);
 	}
 
 	public void setSmall(boolean small) {

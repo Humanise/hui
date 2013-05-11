@@ -25,27 +25,20 @@
 		<ui:define name="body">
 			<div class="photos_gallery">
 				<o:header id="editableTitle">#{photosGalleryView.title}</o:header>
-				<c:if test="#{photosGalleryView.modifiable}">
-					<p><gui:button small="true" text="Delete" name="deleteGallery"/></p>
-				</c:if>
 				<div id="photos_gallery_images">
-					<c:forEach items="#{photosGalleryView.images}" var="image">
-						
-						<span class="photos_gallery_image" data="#{image.id}">
-							<c:if test="#{image.removable}">
-								<span class="photos_gallery_image_actions">
-									<a data="remove">Remove</a>
-								</span>
-							</c:if>
-							<o:thumbnail image="#{image.image}" width="100" height="100" frame="false" href="/#{wordsLayoutView.language}/photo/#{image.id}.html"/>
-						</span>
-					</c:forEach>
+					<o:gallery model="#{photosGalleryView.listModel}" name="gallery"
+						href="/#{wordsLayoutView.language}/photo/[id].html"
+						/>
 				</div>
 			</div>
 		</ui:define>
 		
 		<ui:define name="sidebar">
 			<ui:include src="sidebar.part.xhtml"/>
+				<c:if test="#{photosGalleryView.modifiable}">
+					<p><gui:button small="true" text="Delete" name="deleteGallery"/></p>
+					<o:permissions entity="#{photosGalleryView.imageGallery}"/>
+				</c:if>
 		</ui:define>
 		
 	</ui:composition>

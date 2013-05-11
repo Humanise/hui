@@ -15,11 +15,7 @@ var galleryView = {
 				$dropFiles : this._dropFiles.bind(this),
 				$dropURL : this._dropURL.bind(this)
 			})
-			this._attachToImages();
 		}
-	},
-	_attachToImages : function() {
-		hui.listen('photos_gallery_images','click',this._clickImages.bind(this));
 	},
 	_refreshImages : function() {
 		oo.update({
@@ -59,6 +55,16 @@ var galleryView = {
 	},
 	
 	_dropURL : function(url) {
+	},
+	
+	$remove$gallery : function(info) {
+		hui.ui.request({
+			url : oo.appContext+'/removeImageFromGallery',
+			parameters : {galleryId : this.galleryId, imageId : info.id},
+			$success : function() {
+				info.callback();
+			}.bind(this)
+		});
 	},
 	
 	_removeImage : function(imageId) {

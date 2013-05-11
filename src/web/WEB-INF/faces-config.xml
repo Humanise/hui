@@ -126,6 +126,10 @@ http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
     	<component-type>onlineobjects.icon</component-type>
     	<component-class>dk.in2isoft.onlineobjects.ui.jsf.IconComponent</component-class>
   	</component>
+    <component>
+    	<component-type>onlineobjects.permissions</component-type>
+    	<component-class>dk.in2isoft.onlineobjects.ui.jsf.PermissionsComponent</component-class>
+  	</component>
   	
   	
   	

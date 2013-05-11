@@ -6,7 +6,7 @@ import javax.faces.component.FacesComponent;
 import javax.faces.context.FacesContext;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
-import dk.in2isoft.commons.jsf.ComponentUtil;
+import dk.in2isoft.commons.jsf.Components;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.onlineobjects.services.ConfigurationService;
 import dk.in2isoft.onlineobjects.services.LifeCycleService;
@@ -33,7 +33,7 @@ public class ImportStyleComponent extends AbstractComponent {
 	
 	@Override
 	public void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
-		Request request = ComponentUtil.getRequest();
+		Request request = Components.getRequest();
 		LifeCycleService lifeCycleService = getBean(LifeCycleService.class);
 		String stamp = "?"+lifeCycleService.getStartTime().getTime();
 		ConfigurationService configurationService = getBean(ConfigurationService.class);

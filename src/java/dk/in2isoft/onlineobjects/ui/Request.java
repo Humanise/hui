@@ -249,11 +249,18 @@ public class Request {
 	}
 
 	public Long getLong(String key) {
+		return getLong(key, 0l);
+	}
+
+	public Long getLong(String key, Long whenNullOrInvalid) {
 		String value = request.getParameter(key);
+		if (Strings.isBlank(value)) {
+			return whenNullOrInvalid;
+		}
 		try {
 			return Long.parseLong(value);
 		} catch (NumberFormatException e) {
-			return new Long(0);
+			return whenNullOrInvalid;
 		}
 	}
 
@@ -280,6 +287,16 @@ public class Request {
 
 	public boolean getBoolean(String key) {
 		return "true".equals(request.getParameter(key));
+	}
+
+	public Boolean getBoolean(String key, Boolean whenNullOrInvalid) {
+		String value = request.getParameter(key);
+		if (value==null || "false".equals(value)) {
+			return false;
+		} else if ("true".equals(value)) {
+			return true;
+		}
+		return whenNullOrInvalid;
 	}
 
 	public String getString(String key, String error) throws IllegalRequestException {

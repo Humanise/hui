@@ -9,7 +9,7 @@ import org.apache.commons.lang.StringUtils;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.ClassBuilder;
-import dk.in2isoft.commons.jsf.ComponentUtil;
+import dk.in2isoft.commons.jsf.Components;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.services.ConfigurationService;
@@ -29,7 +29,7 @@ public class LinkComponent extends AbstractComponent {
 	private boolean plain;
 	private String name;
 	private String app;
-	private boolean focusable;
+	private boolean focusable = true;
 	
 	public LinkComponent() {
 		super(FAMILY);
@@ -61,7 +61,7 @@ public class LinkComponent extends AbstractComponent {
 		String onclick = getOnclick(context);
 		String title = getTitle(context);
 		if (plain) {
-			writer.startA();
+			writer.startA(styleClass);
 		} else {
 			writer.startA(ClassBuilder.with("oo_link").add("oo_link",variant).add(styleClass));
 		}
@@ -97,9 +97,9 @@ public class LinkComponent extends AbstractComponent {
 			return href;
 		} else {
 			StringBuilder url = new StringBuilder();
-			Request request = ComponentUtil.getRequest();
+			Request request = Components.getRequest();
 			if (app!=null) {
-				ConfigurationService configurationService = ComponentUtil.getService(ConfigurationService.class, FacesContext.getCurrentInstance());
+				ConfigurationService configurationService = Components.getService(ConfigurationService.class, FacesContext.getCurrentInstance());
 				String context = configurationService.getApplicationContext(app, href, request);
 				if (context!=null) {
 					url.append(context);

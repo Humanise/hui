@@ -8,7 +8,7 @@ import javax.faces.context.FacesContext;
 import org.apache.commons.lang.StringUtils;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
-import dk.in2isoft.commons.jsf.ComponentUtil;
+import dk.in2isoft.commons.jsf.Components;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=BarButtonComponent.TYPE)
@@ -52,7 +52,7 @@ public class BarButtonComponent extends AbstractComponent {
 		writer.withId(id);
 		if (StringUtils.isNotBlank(icon)) {
 			writer.startSpan("hui_icon_1");
-			String contextPath = ComponentUtil.getRequest().getBaseContext();
+			String contextPath = Components.getRequest().getBaseContext();
 			StringBuffer url = new StringBuffer();
 			url.append("background-image: url('");
 			url.append(contextPath);

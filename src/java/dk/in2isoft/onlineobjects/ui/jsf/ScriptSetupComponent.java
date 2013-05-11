@@ -8,7 +8,7 @@ import javax.faces.context.FacesContext;
 import org.apache.commons.lang.StringUtils;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
-import dk.in2isoft.commons.jsf.ComponentUtil;
+import dk.in2isoft.commons.jsf.Components;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.UserSession;
@@ -36,7 +36,7 @@ public class ScriptSetupComponent extends AbstractComponent {
 	@Override
 	protected void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
 		writer.startScript().newLine();
-		Request request = ComponentUtil.getRequest();
+		Request request = Components.getRequest();
 		writer.write("oo.baseContext = '").write(request.getBaseContext()).write("';").newLine();
 		writer.write("oo.baseDomainContext = '").write(request.getBaseDomainContext()).write("';").newLine();
 		writer.write("oo.appContext = '").write(request.getLocalContext()).write("';").newLine();

@@ -11,6 +11,7 @@ import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.exceptions.ContentNotFoundException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.model.Image;
+import dk.in2isoft.onlineobjects.modules.images.ImageGalleryService;
 import dk.in2isoft.onlineobjects.services.ImportService;
 import dk.in2isoft.onlineobjects.ui.Blend;
 import dk.in2isoft.onlineobjects.ui.Request;
@@ -19,6 +20,7 @@ import dk.in2isoft.onlineobjects.util.images.ImageService;
 public class PhotosControllerBase extends ApplicationController {
 
 	protected ImageService imageService;
+	protected ImageGalleryService imageGalleryService;
 	protected SecurityService securityService;
 	protected ImportService importService;
 
@@ -73,10 +75,11 @@ public class PhotosControllerBase extends ApplicationController {
 		publicScript.addPath("hui","js","ImageViewer.js");
 		publicScript.addPath("hui","js","Box.js");
 		publicScript.addPath("WEB-INF","core","web","js","onlineobjects.js");
-		publicScript.addPath("WEB-INF","core","web","js","oo_inlineeditor.js");
+		publicScript.addPath("WEB-INF","core","web","js","oo_gallery.js");
 		publicScript.addPath("WEB-INF","core","web","js","map.js");
 		publicScript.addPath("WEB-INF","apps","photos","web","style","js","photo_view.js");
 		publicScript.addPath("WEB-INF","apps","photos","web","style","js","gallery_view.js");
+		publicScript.addPath("WEB-INF","apps","photos","web","style","js","layout_view.js");
 		
 		privateScript = new Blend("photos_private_script");
 		privateScript.addPath("hui","js","hui_color.js");
@@ -94,6 +97,8 @@ public class PhotosControllerBase extends ApplicationController {
 		privateScript.addPath("hui","js","DragDrop.js");
 		privateScript.addPath("hui","js","Overlay.js");
 		privateScript.addPath("hui","js","Pages.js");
+		privateScript.addPath("WEB-INF","core","web","js","oo_inlineeditor.js");
+		privateScript.addPath("WEB-INF","core","web","js","oo_permissions.js");
 
 	}
 
@@ -141,5 +146,9 @@ public class PhotosControllerBase extends ApplicationController {
 	
 	public void setImportService(ImportService importService) {
 		this.importService = importService;
+	}
+	
+	public void setImageGalleryService(ImageGalleryService imageGalleryService) {
+		this.imageGalleryService = imageGalleryService;
 	}
 }

@@ -22,16 +22,26 @@
 	</div>
 	<c:if test="#{not empty photosLayoutView.galleries}">
 		<div class="photos_sidebar_galleries">
-		<h2><span>Galleries</span></h2>
+		<h2>
+			<o:out value="Album"/>
+			<c:if test="#{photosLayoutView.modifiable}">
+				<o:link name="addImageGallery" plain="true">
+					<o:icon icon="add"/>
+				</o:link>
+			</c:if>
+
+		</h2>
 		<ul id="galleries">
 			<c:forEach items="#{photosLayoutView.galleries}" var="gallery">
-				<li><o:link href="/gallery/#{gallery.value}/" app="photos" styleClass="#{gallery.selected ? 'photos_sidebar_selected' : null}">#{gallery.label}</o:link></li>
+				<li>
+					<o:link href="/gallery/#{gallery.value}/" app="photos" plain="true" styleClass="#{gallery.selected ? 'photos_sidebar_selected' : null}">
+						<o:icon icon="album"/>
+						<o:out value="#{gallery.label}"/>
+					</o:link>
+				</li>
 			</c:forEach>
 		</ul>
 		</div>
-	</c:if>
-	<c:if test="#{photosLayoutView.modifiable}">
-		<gui:button text="Add gallery" small="true" variant="light" left="5"/>
 	</c:if>
 
 </ui:fragment>

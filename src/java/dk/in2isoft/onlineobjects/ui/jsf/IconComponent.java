@@ -11,6 +11,7 @@ import com.google.common.collect.Maps;
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.ClassBuilder;
 import dk.in2isoft.commons.jsf.TagWriter;
+import dk.in2isoft.onlineobjects.ui.Icons;
 
 @FacesComponent(value=IconComponent.FAMILY)
 public class IconComponent extends AbstractComponent {
@@ -47,15 +48,9 @@ public class IconComponent extends AbstractComponent {
 	
 	@Override
 	protected void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
-		Map<String,Character> icons = Maps.newHashMap();
-		icons.put("phone", 'p');
-		icons.put("user", 'u');
-		icons.put("globe", 'g');
-		icons.put("envelope", 'e');
-		icons.put("camera", 'c');
-		icons.put("book", 'b');
+		
 		writer.startSpan().withClass(new ClassBuilder("oo_icon").add("oo_icon", size).add(styleClass));
-		writer.text(icons.get(icon));
+		writer.text(Icons.font.get(icon));
 		writer.endSpan();
 	}
 

@@ -54,6 +54,22 @@ public class TagWriter {
 		return withAttribute("style", style);
 	}
 
+	public TagWriter data(Object data) throws IOException {
+		return withAttribute("data", data);
+	}
+
+	public TagWriter alt(Object alt) throws IOException {
+		return withAttribute("alt", alt);
+	}
+
+	public TagWriter rel(Object rel) throws IOException {
+		return withAttribute("rel", rel);
+	}
+
+	public TagWriter src(Object rel) throws IOException {
+		return withAttribute("src", rel);
+	}
+
 	public TagWriter write(Object text) throws IOException {
 		if (text!=null) {
 			writer.write(text.toString());
@@ -203,6 +219,20 @@ public class TagWriter {
 		return endElement("em");
 	}
 	
+	/////////// IMG //////////
+	
+	public TagWriter startImg() throws IOException {
+		return startElement("img");
+	}
+
+	public TagWriter startImg(Object className) throws IOException {
+		return startElement("img").withClass(className);
+	}
+	
+	public TagWriter endImg() throws IOException {
+		return endElement("img");
+	}
+	
 	/////////// DIV //////////
 	
 	public TagWriter startDiv() throws IOException {
@@ -307,6 +337,10 @@ public class TagWriter {
 	
 	public TagWriter endNewObject() throws IOException {
 		return write("})");
+	}
+
+	public void flush() throws IOException {
+		this.writer.flush();
 	}
 
 }
