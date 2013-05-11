@@ -7,7 +7,6 @@ import com.google.common.collect.Lists;
 
 import dk.in2isoft.commons.lang.Code;
 import dk.in2isoft.in2igui.data.ListData;
-import dk.in2isoft.onlineobjects.apps.community.ImageGalleryImporter;
 import dk.in2isoft.onlineobjects.apps.videosharing.Path;
 import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.Query;
@@ -28,7 +27,6 @@ import dk.in2isoft.onlineobjects.model.ImageGallery;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.Word;
-import dk.in2isoft.onlineobjects.publishing.Part;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.ui.ScriptWriter;
 import dk.in2isoft.onlineobjects.ui.StylesheetWriter;
@@ -140,6 +138,17 @@ public class PhotosController extends PhotosControllerBase {
 			list.addCell(word.getName(), word.getIcon());
 		}
 		request.sendObject(list);
+	}
+	
+	@Path
+	public void deleteImage(Request request) throws SecurityException, ModelException, ContentNotFoundException {
+		long imageId = request.getLong("imageId");
+		Image image = getImage(imageId, request.getSession());
+		if (image!=null) {
+			imageService.deleteImage(image,request.getSession());
+		} else {
+			throw new ContentNotFoundException(Image.class,imageId);
+		}
 	}
 	
 	@Path(start="changeAccess")

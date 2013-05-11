@@ -777,6 +777,13 @@ public class ModelService {
 		return list(q);
 	}
 
+	public <T> List<T> getChildrenOrdered(Entity entity, Class<T> classObj, Privileged privileged) throws ModelException {
+		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.of(classObj);
+		q.withParent(entity).inPosition();
+		q.withPrivileged(privileged);
+		return list(q);
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<Property> getProperties(String key) {
 		Session session = getSession();

@@ -137,3 +137,35 @@ p.photos_photo_words a
 {
 	color: #333;
 }
+
+
+
+div.photos_photo_galleries h2
+{
+	font-weight: 200;
+	font-family: 'HelveticaNeue-Light','Helvetica Neue','Helvetica','Arial',sans-serif;
+	font-size: 14pt;
+	margin: 15px 0 5px;
+	color: #999;
+}
+
+div.photos_photo_galleries ul
+{
+	margin: 0;
+	list-style: none;
+	padding: 0;
+}
+
+div.photos_photo_galleries ul a
+{
+	color: #333;
+	text-decoration: none;
+	font-size: 10pt;
+}
+
+div.photos_photo_galleries ul span.oo_icon
+{
+	vertical-align: center;
+	margin-right: 3px;
+	color: #ccc;
+}

@@ -28,6 +28,7 @@ import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.Word;
+import dk.in2isoft.onlineobjects.services.PersonService;
 import dk.in2isoft.onlineobjects.ui.jsf.model.MapPoint;
 import dk.in2isoft.onlineobjects.util.Dates;
 import dk.in2isoft.onlineobjects.util.Messages;
@@ -39,6 +40,8 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 	private ModelService modelService;
 	private SecurityService securityService;
 	private ImageService imageService;
+	private PersonService personService;
+	
 	private String language;
 	private Image image;
 	private ImageInfo imageInfo;
@@ -55,6 +58,8 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 	private List<Word> words;
 	private boolean vertical;
 	private List<ImageGallery> galleries;
+	
+	private String fullPersonName;
 	
 	public void afterPropertiesSet() throws Exception {
 		UserSession session = getRequest().getSession();
@@ -85,6 +90,7 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 					user = first.getKey();
 					person = first.getValue();
 					personImage = modelService.getChild(user, Relation.KIND_SYSTEM_USER_IMAGE, Image.class);
+					fullPersonName = personService.getFullPersonName(person, 14);
 				}
 			}
 			
@@ -138,6 +144,10 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 	
 	public Person getPerson() {
 		return person;
+	}
+	
+	public String getFullPersonName() {
+		return fullPersonName;
 	}
 	
 	public User getUser() {
@@ -206,28 +216,22 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 	public boolean isVertical() {
 		return vertical;
 	}
+	
+	// Wiring...
 
 	public void setModelService(ModelService modelService) {
 		this.modelService = modelService;
-	}
-
-	public ModelService getModelService() {
-		return modelService;
 	}
 
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
 	}
 
-	public SecurityService getSecurityService() {
-		return securityService;
-	}
-
 	public void setImageService(ImageService imageService) {
 		this.imageService = imageService;
 	}
-
-	public ImageService getImageService() {
-		return imageService;
+	
+	public void setPersonService(PersonService personService) {
+		this.personService = personService;
 	}
 }

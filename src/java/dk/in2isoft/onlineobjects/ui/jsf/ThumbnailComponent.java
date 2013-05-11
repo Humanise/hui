@@ -74,7 +74,7 @@ public class ThumbnailComponent extends AbstractComponent {
 			out.endSpan();
 		}
 		if (StringUtils.isNotBlank(href)) {
-			out.startA(cls).withAttribute("href", LinkComponent.buildUrl(href, app, false));
+			out.startA().withAttribute("href", LinkComponent.buildUrl(href, app, false));
 		}
 		
 		if (image!=null) {

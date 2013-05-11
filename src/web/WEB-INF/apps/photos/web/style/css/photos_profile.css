@@ -16,11 +16,20 @@ div.photos_profile_photo
 	background: #fff;
 	padding: 2px;
 	font-size: 0;
-} 
+}
 
-div.photos_profile_body p
+p.photos_profile_name
 {
-	margin: 0;
+	color: #333;
+	font-size: 16pt;
+	font-weight: 200;
+	line-height: 16pt;
+	margin: 0 0 3px;
+}
+
+p.photos_profile_link
+{
+	margin: 5px 0 0;
 }
 
 p.photos_profile_username

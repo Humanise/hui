@@ -16,7 +16,6 @@ import org.joda.time.format.PeriodFormatterBuilder;
 
 import com.google.common.collect.Lists;
 
-import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.commons.lang.Code;
 import dk.in2isoft.commons.lang.Mapper;
 import dk.in2isoft.commons.lang.Strings;

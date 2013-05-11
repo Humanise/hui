@@ -18,10 +18,7 @@ var galleryView = {
 		}
 	},
 	_refreshImages : function() {
-		oo.update({
-			id : 'photos_gallery_images',
-			$success : this._attachToImages.bind(this)
-		});
+		hui.ui.get('gallery').refresh();
 	},
 	_clickImages : function(e) {
 		e = hui.event(e);

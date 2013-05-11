@@ -1,6 +1,7 @@
 var photoView = {
 	imageId : null,
 	editable : false,
+	username : null,
 	
 	$ready : function() {
 		if (this.editable) {
@@ -128,5 +129,21 @@ var photoView = {
 				info.callback();
 			}
 		});
+	},
+	
+	$click$deletePhoto : function(info) {
+		hui.ui.confirmOverlay({widget:info,text:'Delete?',$ok : function() {
+			hui.ui.request({
+				message : {start:'Deleting photo', delay:300, success:'The image is deleted'},
+				url : oo.appContext+'/deleteImage',
+				parameters : {imageId : this.imageId},
+				$failure : function() {
+					hui.ui.showMessage({text:'Unable to delete photo',icon:'common/warning',duration:2000});
+				},
+				$success : function() {
+					document.location = oo.appContext+'/'+oo.language+'/users/'+this.username+'/'
+				}.bind(this)
+			})
+		}.bind(this)})
 	}
 };

@@ -16,6 +16,7 @@
 				<o:script>
 					photoView.editable = #{photosPhotoView.canModify};
 					photoView.imageId = #{photosPhotoView.image.id};
+					photoView.username = '#{photosPhotoView.user.username}';
 					hui.ui.listen(photoView);
 				</o:script>
 			</c:if>
@@ -50,13 +51,6 @@
 							<div class="photos_photo_info">
 								<h1 id="editableTitle">#{photosPhotoView.image.name}</h1>
 								<o:words words="#{photosPhotoView.words}" editable="#{photosPhotoView.canModify}" name="words"/>
-								<ui:remove>
-									<p class="photos_photo_by"><span>#{msg.added} </span><strong>
-										<h:outputText value="#{photosPhotoView.image.created}">
-											<f:convertDateTime pattern="EEEE 'd'. d.  MMMM yyyy" locale="da_DK"/>
-										</h:outputText></strong> #{msg.by} <o:link app="photos" href="/#{photosPhotoView.language}/users/#{photosPhotoView.user.username}/">#{photosPhotoView.person.fullName}</o:link>
-									</p>
-								</ui:remove>
 								<div id="photos_photo_description">
 									<c:if test="#{not photosPhotoView.canModify and not empty photosPhotoView.description}">
 										<p class="photos_photo_description" style="margin-top: 10px;">
@@ -102,13 +96,13 @@
 								<o:thumbnail image="#{photosPhotoView.personImage}" width="80" height="90" zoom="true" frame="false"/>
 							</div>
 							<div class="photos_profile_body">
-								<p style="font-weight: 500; color: #333;">#{photosPhotoView.person.fullName}</p>
+								<p class="photos_profile_name">#{photosPhotoView.fullPersonName}</p>
 								<p class="photos_profile_username">
 									<o:icon icon="user" size="12"/>
 									<strong>#{photosPhotoView.user.username}</strong>
 								</p>
-								<p style="margin-top: 5px"><o:link app="photos" href="/users/#{photosPhotoView.user.username}/">All photos »</o:link></p>
-								<p style="margin-top: 5px"><o:link app="people" href="/#{photosPhotoView.user.username}/">Profile »</o:link></p>
+								<p class="photos_profile_link"><o:link app="photos" href="/users/#{photosPhotoView.user.username}/">All photos »</o:link></p>
+								<p class="photos_profile_link"><o:link app="people" href="/#{photosPhotoView.user.username}/">Profile »</o:link></p>
 							</div>
 						</div>
 						<c:if test="#{not empty photosPhotoView.galleries}">
@@ -116,7 +110,12 @@
 								<h2>Galleries</h2>
 								<ul id="galleries">
 									<c:forEach items="#{photosPhotoView.galleries}" var="gallery">
-										<li><o:link href="/gallery/#{gallery.id}/" app="photos">#{gallery.name}</o:link></li>
+										<li>
+											<o:link href="/gallery/#{gallery.id}/" app="photos" plain="true">
+												<o:icon icon="album"/>
+												<o:out value="#{gallery.name}"/>
+											</o:link>
+										</li>
 									</c:forEach>
 								</ul>
 							</div>
@@ -129,15 +128,12 @@
 							</o:block>
 							<c:if test="#{photosPhotoView.canModify}">
 								<div style="background: #f6f6f6; border: 1px solid #eee; border-radius: 5px; margin-top: 30px; padding: 5px 12px 7px 12px;">
-								<h2 style="font-weight: 200; font-size: 12pt; line-height: 24px; border-bottom: 1px solid #ddd; color: #666; margin: 0 0 8px;">Anyone can...</h2>
-								<p style="margin: 5px 0;">
-									<gui:checkbox label="See the photo" name="publicAccess" value="#{not photosPhotoView.secret}"/>
-								</p>
-								<ui:remove>
-								<p style="margin: 5px 0;">
-									<gui:checkbox label="See the map location" name="publicAccess" value="#{not photosPhotoView.secret}"/>
-								</p>
-								</ui:remove>
+									<h2 style="font-weight: 200; font-size: 12pt; line-height: 24px; border-bottom: 1px solid #ddd; color: #666; margin: 0 0 8px;">Anyone can...</h2>
+									<p style="margin: 5px 0;">
+										<gui:checkbox label="See the photo" name="publicAccess" value="#{not photosPhotoView.secret}"/>
+									</p>
+									<h2 style="font-weight: 200; font-size: 12pt; line-height: 24px; border-bottom: 1px solid #ddd; color: #666; margin: 10px 0 8px;">Actions</h2>
+									<p style="margin: 0;"><gui:button text="Delete" name="deletePhoto"/></p>
 								</div>
 							</c:if>
 						</div>

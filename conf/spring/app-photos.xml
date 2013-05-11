@@ -21,6 +21,7 @@
    		<property name="modelService" ref="modelService"/>
    		<property name="securityService" ref="securityService"/>
    		<property name="imageService" ref="imageService"/>
+   		<property name="personService" ref="personService"/>
    	</bean>
    	
    	<bean id="photosUserView" class="dk.in2isoft.onlineobjects.apps.photos.views.PhotosUserView" scope="request">
@@ -30,6 +31,7 @@
    	<bean id="photosLayoutView" class="dk.in2isoft.onlineobjects.apps.photos.views.PhotosLayoutView" scope="request">
    		<property name="modelService" ref="modelService"/>
    		<property name="photosGalleryView" ref="photosGalleryView"/>
+   		<property name="personService" ref="personService"/>
    	</bean>
 
    	<bean id="photosGalleryView" class="dk.in2isoft.onlineobjects.apps.photos.views.PhotosGalleryView" scope="request">

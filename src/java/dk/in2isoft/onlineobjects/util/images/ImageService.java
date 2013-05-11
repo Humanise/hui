@@ -28,6 +28,7 @@ import dk.in2isoft.commons.geo.GeoDistance;
 import dk.in2isoft.commons.util.AbstractCommandLineInterface;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Privileged;
+import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
@@ -369,5 +370,13 @@ public class ImageService extends AbstractCommandLineInterface {
 		image.setFileSize(file.length());
 		File folder = storageService.getItemFolder(image);
 		file.renameTo(new File(folder,"original"));
+	}
+
+	public void deleteImage(Image image, Privileged privileged) throws ModelException, SecurityException {
+		Location location = modelService.getParent(image, Location.class);
+		if (location!=null) {
+			modelService.deleteEntity(location, privileged);
+		}
+		modelService.deleteEntity(image, privileged);
 	}
 }

@@ -1,8 +1,10 @@
 package dk.in2isoft.onlineobjects.services;
 
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 
+import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
@@ -22,6 +24,41 @@ public class PersonService {
 	
 	public Address getPersonsPreferredAddress(Person person) throws ModelException {
 		return modelService.getChild(person, Property.KEY_COMMON_PREFERRED, Address.class);
+	}
+	
+	public String getFullPersonName(Person person, int maxLength) {
+		String fullName = person.getFullName();
+		String given = person.getGivenName();
+		String givenFirst = abbreviate(given);
+		String family = person.getFamilyName();
+		String familyFirst = abbreviate(family);
+		String additional = person.getAdditionalName();
+		String additionalFirst = abbreviate(additional);
+		if (fullName.length()>maxLength) {
+
+			String givenAdditionFirstFamily = Strings.concatWords(given, additionalFirst, family);
+			if (givenAdditionFirstFamily.length()<=maxLength) {
+				return givenAdditionFirstFamily;
+			}
+			
+			String givenFamily = Strings.concatWords(given, family);
+			if (givenFamily.length()<=maxLength) {
+				return givenFamily;
+			}
+			
+			String givenFirstFamily = Strings.concatWords(givenFirst, family);
+			if (givenFirstFamily.length()<=maxLength) {
+				return givenFirstFamily;
+			}
+		}
+		return StringUtils.abbreviate(fullName,maxLength);
+	}
+
+	private String abbreviate(String name) {
+		if (Strings.isBlank(name)) {
+			return null;
+		}
+		return name.trim().substring(0, 1).toUpperCase()+".";
 	}
 	
 	public void updatePersonsPreferredAddress(Person person, Address address, Privileged privileged) throws ModelException, SecurityException {

@@ -86,10 +86,11 @@
 					</div>
 					<c:if test="#{not empty peoplePersonView.latestImages.result.list}">
 						<div class="people_person_photos">
-						<o:header level="2">Latest photos</o:header>
-						<o:gallery model="#{peoplePersonView.latestImages}" var="image">
-							<o:thumbnail image="#{image}" width="74" height="74" href="/photo/#{image.id}.html" app="photos"/>
-						</o:gallery>
+							<o:header level="2">Latest photos</o:header>
+							<o:gallery model="#{peoplePersonView.latestImages}" var="image">
+								<o:thumbnail image="#{image}" width="74" height="74" href="/photo/#{image.id}.html" app="photos"/>
+							</o:gallery>
+							<p class="people_person_photos_more"><o:link app="photos" href="/users/#{peoplePersonView.user.username}/">More photos »</o:link></p>
 						</div>
 					</c:if>
 				</div>

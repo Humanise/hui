@@ -7,7 +7,6 @@ import javax.el.ValueExpression;
 import javax.faces.component.FacesComponent;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-import javax.faces.render.Renderer;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.Components;
@@ -24,6 +23,7 @@ public class GalleryComponent extends AbstractComponent {
 	private String var;
 	private String href;
 	private String name;
+	private boolean removable;
 
 	public GalleryComponent() {
 		super(FAMILY);
@@ -34,36 +34,12 @@ public class GalleryComponent extends AbstractComponent {
 		var = (String) state[0];
 		href = (String) state[1];
 		name = (String) state[2];
+		setRemovable((Boolean) state[3]);
 	}
 
 	@Override
 	public Object[] saveState() {
-		return new Object[] { var, href, name };
-	}
-
-	public String getVar() {
-		return var;
-	}
-
-	public void setVar(String var) {
-		this.var = var;
-	}
-	
-	public String getHref() {
-		return href;
-	}
-	
-	public String getHref(FacesContext context) {
-		return Components.getExpressionValue(this, "href", href, context);
-	}
-
-	public void setHref(String href) {
-		this.href = href;
-	}
-
-	@Override
-	protected Renderer getRenderer(FacesContext context) {
-		return null;
+		return new Object[] { var, href, name, isRemovable() };
 	}
 
 	@Override
@@ -107,18 +83,7 @@ public class GalleryComponent extends AbstractComponent {
 			
 			
 			if (getChildCount()==0 && object instanceof Image) {
-				Image image = (Image) object;
-				String url = getUrl(image,width,height);
-				out.startSpan("oo_gallery_photo");
-				out.startSpan("oo_gallery_hover");
-				out.startVoidA("oo_gallery_remove").rel("remove").data(image.getId());
-				out.startSpan("oo_icon oo_icon_16").text("*").endSpan();
-				out.endA();
-				out.endSpan();
-				out.startA().withHref(getHref(href,image));
-				out.startImg().src(url).alt(image.getName()).withStyle("width: "+width+"px; height: "+height+"px;").endImg();
-				out.endA();
-				out.endSpan();
+				encodeImage(out, width, height, href, object, isRemovable(context));
 			} else {
 				context.getExternalContext().getRequestMap().put(var, object);
 				for (UIComponent child : children) {
@@ -154,6 +119,23 @@ public class GalleryComponent extends AbstractComponent {
 		}
 		out.property("element", id).comma().propertyRaw("images", imageArray.toString()).endNewObject();
 		out.endScopedScript();
+	}
+
+	private void encodeImage(TagWriter out, int width, int height, String href, Object object, boolean removable) throws IOException {
+		Image image = (Image) object;
+		String url = getUrl(image,width,height);
+		out.startSpan("oo_gallery_photo oo_gallery_photo_frame");
+		if (removable) {
+			out.startSpan("oo_gallery_hover");
+			out.startVoidA("oo_gallery_remove").rel("remove").data(image.getId());
+			out.startSpan("oo_icon oo_icon_16").text("*").endSpan();
+			out.endA();
+			out.endSpan();
+		}
+		out.startA().withHref(getHref(href,image));
+		out.startImg().src(url).alt(image.getName()).withStyle("width: "+width+"px; height: "+height+"px;").endImg();
+		out.endA();
+		out.endSpan();
 	}
 
 	private String getUrl(Image image, int width, int height) {
@@ -208,5 +190,37 @@ public class GalleryComponent extends AbstractComponent {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public boolean isRemovable() {
+		return removable;
+	}
+
+	public boolean isRemovable(FacesContext context) {
+		return Components.getExpressionValue(this, "removable", removable, context);
+	}
+
+	public void setRemovable(boolean removable) {
+		this.removable = removable;
+	}
+
+	public String getVar() {
+		return var;
+	}
+
+	public void setVar(String var) {
+		this.var = var;
+	}
+	
+	public String getHref() {
+		return href;
+	}
+	
+	public String getHref(FacesContext context) {
+		return Components.getExpressionValue(this, "href", href, context);
+	}
+
+	public void setHref(String href) {
+		this.href = href;
 	}
 }

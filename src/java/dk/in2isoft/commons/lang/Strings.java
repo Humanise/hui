@@ -46,7 +46,7 @@ public class Strings {
 		}
 	}
 
-	public static String concatWords(String[] words) {
+	public static String concatWords(String... words) {
 		StringBuilder str = new StringBuilder();
 		for (int i = 0; i < words.length; i++) {
 			if (words[i] != null) {

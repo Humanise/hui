@@ -17,15 +17,17 @@ import dk.in2isoft.onlineobjects.model.ImageGallery;
 import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
+import dk.in2isoft.onlineobjects.services.PersonService;
 import dk.in2isoft.onlineobjects.ui.data.Option;
 
 public class PhotosLayoutView extends AbstractManagedBean implements InitializingBean {
 
 	private ModelService modelService;
-	
 	private PhotosGalleryView photosGalleryView;
+	private PersonService personService;
 	
 	private String username;
+	private String fullPersonName;
 	private User user;
 	private Person person;
 
@@ -53,6 +55,7 @@ public class PhotosLayoutView extends AbstractManagedBean implements Initializin
 		this.user = pair.getKey();
 		galleries = Lists.newArrayList();
 		this.person = pair.getValue();
+		fullPersonName = personService.getFullPersonName(person, 14);
 		if (user!=null) {
 			Query<ImageGallery> galleryQuery = Query.after(ImageGallery.class).withPrivileged(user);
 			if (user.getId()!=getRequest().getSession().getIdentity()) {
@@ -86,7 +89,7 @@ public class PhotosLayoutView extends AbstractManagedBean implements Initializin
 	}
 	
 	public String getPersonName() {
-		return person.getFullName();
+		return fullPersonName;
 	}
 	
 	// Wiring...
@@ -99,4 +102,7 @@ public class PhotosLayoutView extends AbstractManagedBean implements Initializin
 		this.photosGalleryView = photosGalleryView;
 	}
 	
+	public void setPersonService(PersonService personService) {
+		this.personService = personService;
+	}
 }

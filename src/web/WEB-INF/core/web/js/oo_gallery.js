@@ -27,17 +27,16 @@ oo.Gallery.prototype = {
 					element : frame,
 					text:'Remove?',
 					$ok : function() {
-						this.fire('remove',{id : parseInt(a.getAttribute('data')),callback:this._refresh.bind(this)});
+						this.fire('remove',{id : parseInt(a.getAttribute('data')),callback:this.refresh.bind(this)});
 					}.bind(this)
 				});
 			}
 		}
 	},
-	_refresh : function() {
+	refresh : function() {
 		hui.cls.add(this.element,'oo_gallery_busy');
 		oo.update({
 			id : this.element.id
-			//,$success : this._attachToImages.bind(this)
 		});
 	},
 	imageWasClicked : function(index) {

@@ -99,6 +99,14 @@ span.oo_gallery_photo
 	position: relative;
 }
 
+span.oo_gallery_photo_frame
+{
+	padding: 4px;
+	border: 1px solid #ddd;
+	border-color: #EEEEEE #DDDDDD #CCCCCC;
+	margin: 0px 10px 10px 0;
+}
+
 span.oo_gallery_hover
 {
 	display: none;
@@ -140,7 +148,8 @@ span.oo_gallery_hover a:hover
 		text-align: center;
 	}
 
-	div.oo_gallery ol a
+	div.oo_gallery ol span.oo_gallery_photo,
+	div.oo_gallery ol span.oo_thumbnail
 	{
 		margin: 0 0 1px 1px;
 		padding: 0;

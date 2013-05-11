@@ -108,6 +108,10 @@ div.people_person_photos h2
 	margin-bottom: 10px;
 }
 
+p.people_person_photos_more
+{
+	font-size: 10pt;
+}
 
 
 @media screen and (max-width: 600px) {

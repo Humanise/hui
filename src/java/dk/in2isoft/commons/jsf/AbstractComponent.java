@@ -11,6 +11,7 @@ import javax.faces.context.FacesContext;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import dk.in2isoft.commons.lang.Code;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.ui.jsf.ScriptComponent;
@@ -89,23 +90,21 @@ public abstract class AbstractComponent extends UIComponentBase {
 	
 	protected void encodeEnd(FacesContext context, TagWriter out) throws IOException {}
 
-	@SuppressWarnings("unchecked")
 	public <T> T getBinding(String name) {
 		ValueExpression valueExpression = this.getValueExpression(name);
 		if (valueExpression!=null) {
-			return (T) valueExpression.getValue(FacesContext.getCurrentInstance().getELContext());
+			return Code.cast(valueExpression.getValue(FacesContext.getCurrentInstance().getELContext()));
 		}
 		return null;
 	};
 
-	@SuppressWarnings("unchecked")
 	public <T> T getBean(Class<?> cls) {
 		WebApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(Components.getRequest().getRequest().getSession().getServletContext());
 		Map<?,?> beansOfType = context.getBeansOfType(cls);
 		if (beansOfType.isEmpty()) {
 			return null;
 		} else {
-			return (T) beansOfType.values().iterator().next();
+			return Code.cast(beansOfType.values().iterator().next());
 		}
 	};
 	

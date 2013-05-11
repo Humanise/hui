@@ -10,8 +10,6 @@ import dk.in2isoft.commons.lang.Numbers;
 import dk.in2isoft.onlineobjects.apps.community.jsf.AbstractManagedBean;
 import dk.in2isoft.onlineobjects.apps.photos.GalleryImagePerspective;
 import dk.in2isoft.onlineobjects.core.ModelService;
-import dk.in2isoft.onlineobjects.core.Query;
-import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.core.exceptions.ContentNotFoundException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
@@ -49,7 +47,7 @@ public class PhotosGalleryView extends AbstractManagedBean implements Initializi
 			if (imageGallery==null) {
 				throw new ContentNotFoundException("The gallery does not exist");
 			}
-			UserSession session = request.getSession();
+			final UserSession session = request.getSession();
 			title = imageGallery.getName();
 			user = modelService.getOwner(imageGallery);
 			username = user.getUsername();
@@ -69,7 +67,8 @@ public class PhotosGalleryView extends AbstractManagedBean implements Initializi
 				@Override
 				public ListModelResult<Image> getResult() {
 					try {
-						List<Image> childImages = modelService.getChildrenOrdered(imageGallery, Image.class);
+						List<Image> childImages = modelService.getChildrenOrdered(imageGallery, Image.class,session);
+						this.setPageSize(childImages.size());
 						return new ListModelResult<Image>(childImages,childImages.size());
 					} catch (ModelException e) {
 						return null;

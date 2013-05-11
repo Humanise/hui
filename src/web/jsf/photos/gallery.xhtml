@@ -26,9 +26,11 @@
 			<div class="photos_gallery">
 				<o:header id="editableTitle">#{photosGalleryView.title}</o:header>
 				<div id="photos_gallery_images">
-					<o:gallery model="#{photosGalleryView.listModel}" name="gallery"
+					<o:gallery name="gallery"
+						model="#{photosGalleryView.listModel}"
 						href="/#{wordsLayoutView.language}/photo/[id].html"
-						/>
+						removable="#{photosGalleryView.modifiable}"
+					/>
 				</div>
 			</div>
 		</ui:define>
