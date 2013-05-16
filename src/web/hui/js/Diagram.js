@@ -7,6 +7,7 @@ hui.ui.Diagram = function(options) {
 	this.nodes = [];
 	this.lines = [];
 	this.data = {};
+	this.translation = {x:0,y:0};
 	this.element = hui.get(options.element);
 	this.width = this.element.clientWidth;	
 	this.height = this.element.clientHeight;
@@ -35,12 +36,12 @@ hui.ui.Diagram.prototype = {
 			height: this.height || 0
 		});
 		this.element.appendChild(this.background.element);
-		hui.onReady(function() {
-			this.width = this.element.clientWidth;	
-			this.height = this.element.clientHeight;
-			this.background.setSize(this.width,this.height)
-		}.bind(this))
 		this.fire('added');
+	},
+	$$layout : function() {
+		this.width = this.element.clientWidth;	
+		this.height = this.element.clientHeight;
+		this.background.setSize(this.width,this.height)
 	},
 	_getMagnet : function(from,to,node) {
 		var margin = 1;
@@ -90,8 +91,18 @@ hui.ui.Diagram.prototype = {
 			this.play();
 		}
 	},
+	/** Deprecated */
 	play : function() {
 		this.layout.start();
+	},
+	resume : function() {
+		if (this.layout.resume) { this.layout.resume() }
+	},
+	expand : function() {
+		if (this.layout.expand) { this.layout.expand() }
+	},
+	contract : function() {
+		if (this.layout.contract) { this.layout.contract() }
 	},
 	/** @private */
 	$sourceShouldRefresh : function() {
@@ -158,6 +169,8 @@ hui.ui.Diagram.prototype = {
 		//hui.listen(lineNode.node,'click',function() {alert(line)});
 		this.lines.push(line);
 	},
+	
+	
 	_getCenter : function(widget) {
 		var e = widget.element;
 		return {
@@ -337,7 +350,7 @@ hui.ui.Diagram.D3 = {
 	diagram : null,
 
 	_load : function() {
-		hui.require('http://d3js.org/d3.v2.js',function() {
+		hui.require(hui.ui.context+'/hui/lib/d3.v3/d3.v3.min.js',function() {
 			this.loaded = true;
 			this.start();
 		}.bind(this))
@@ -411,6 +424,25 @@ hui.ui.Diagram.D3 = {
 		
 		force.start()
 	},
+	
+	resume : function() {
+		if (this.layout) { this.layout.start(); }
+	},
+	expand : function() {
+		if (this.layout) {
+			this.layout.linkDistance(this.layout.linkDistance() * 1.3);
+			this.layout.charge(this.layout.charge() * 1.3);
+			this.layout.start();
+		}
+	},
+	contract : function() {
+		if (this.layout) {
+			this.layout.linkDistance(Math.max(0,this.layout.linkDistance() * 0.9));
+			this.layout.charge(Math.min(0,this.layout.charge() * 0.9));
+			this.layout.start();
+		}
+	},
+	
 	_findById : function(nodes,id) {
 		for (var i = nodes.length - 1; i >= 0; i--){
 			if (nodes[i].id===id) {
@@ -430,10 +462,12 @@ hui.ui.Diagram.D3 = {
 		return data;		
 	},
 	populate : function() {
-		
+		this.start();
 	},
 	clear : function() {
-		
+		if (this.layout) {
+			this.layout.stop();
+		}
 	}
 	
 }
@@ -653,8 +687,8 @@ hui.ui.Diagram.util = {
 				var left = (e.getLeft()-dragState.left);
 				obj.px = top;
 				obj.py = left;
-				obj.element.style.top = Math.max(top,5)+'px';
-				obj.element.style.left = Math.max(left,5)+'px';
+				obj.element.style.top = top+'px';
+				obj.element.style.left = left+'px';
 				diagram.__nodeMoved(obj);
  			},
 			onEnd : function() {

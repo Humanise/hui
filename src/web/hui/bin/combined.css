@@ -2720,7 +2720,7 @@ div.hui_window_news div.hui_window_busy
 	margin: 0;
 }div.hui_list
 {
-	font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+	font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
 	/*padding-right: 10px;*/
 	min-height: 100%;
 }
@@ -5882,6 +5882,11 @@ div.hui_bar_layout span.hui_segmented
 {
 	margin-top: 3px;
 	vertical-align: top;
+}
+
+div.hui_bar_layout span.hui_segmented_inset
+{
+	margin-top: 4px;	
 }
 
 div.hui_bar_layout span.hui_searchfield
