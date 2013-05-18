@@ -1,4 +1,4 @@
-package dk.in2isoft.onlineobjects.scheduling;
+package dk.in2isoft.onlineobjects.modules.scheduling;
 
 import org.apache.log4j.Logger;
 import org.quartz.Job;

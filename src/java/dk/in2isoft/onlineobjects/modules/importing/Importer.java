@@ -1,4 +1,4 @@
-package dk.in2isoft.onlineobjects.importing;
+package dk.in2isoft.onlineobjects.modules.importing;
 
 import java.io.File;
 import java.io.IOException;

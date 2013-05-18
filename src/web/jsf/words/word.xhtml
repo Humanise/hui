@@ -67,7 +67,7 @@
 									<p class="words_word_by">
 										#{msg.created}: <o:date value="#{word.word.created}" weekday="false" time="false"/>
 										<c:if test="#{not empty word.originator}">
-										#{msg.by} <o:link app="community" href="/#{word.originator.name}/">#{word.originator.name}</o:link>
+										#{msg.by} <o:link app="people" href="/#{word.originator.name}/">#{word.originator.name}</o:link>
 										</c:if>
 										<c:if test="#{not empty word.sourceTitle}">
 										#{msg.from} #{word.sourceTitle}

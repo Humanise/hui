@@ -76,7 +76,7 @@ public class PhotosControllerBase extends ApplicationController {
 		publicScript.addPath("hui","js","Box.js");
 		publicScript.addPath("WEB-INF","core","web","js","onlineobjects.js");
 		publicScript.addPath("WEB-INF","core","web","js","oo_gallery.js");
-		publicScript.addPath("WEB-INF","core","web","js","map.js");
+		publicScript.addPath("WEB-INF","core","web","js","oo_map.js");
 		publicScript.addPath("WEB-INF","apps","photos","web","style","js","photo_view.js");
 		publicScript.addPath("WEB-INF","apps","photos","web","style","js","gallery_view.js");
 		publicScript.addPath("WEB-INF","apps","photos","web","style","js","layout_view.js");

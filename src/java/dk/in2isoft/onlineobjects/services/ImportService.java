@@ -1,7 +1,7 @@
 package dk.in2isoft.onlineobjects.services;
 
 import dk.in2isoft.onlineobjects.core.UserSession;
-import dk.in2isoft.onlineobjects.importing.DataImporter;
+import dk.in2isoft.onlineobjects.modules.importing.DataImporter;
 import dk.in2isoft.onlineobjects.modules.importing.ImportSession;
 
 public class ImportService {

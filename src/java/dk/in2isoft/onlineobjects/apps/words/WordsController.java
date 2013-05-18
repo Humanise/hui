@@ -9,7 +9,7 @@ import dk.in2isoft.onlineobjects.apps.words.importing.WordsImporter;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.core.exceptions.NetworkException;
-import dk.in2isoft.onlineobjects.importing.DataImporter;
+import dk.in2isoft.onlineobjects.modules.importing.DataImporter;
 import dk.in2isoft.onlineobjects.modules.importing.ImportSession;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.ui.ScriptWriter;

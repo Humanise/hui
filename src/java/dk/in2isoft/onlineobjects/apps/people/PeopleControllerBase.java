@@ -58,7 +58,7 @@ public class PeopleControllerBase extends ApplicationController {
 		publicScript.addPath("hui","js","Box.js");
 		publicScript.addPath("WEB-INF","core","web","js","onlineobjects.js");
 		publicScript.addPath("WEB-INF","core","web","js","oo_gallery.js");
-		publicScript.addPath("WEB-INF","core","web","js","map.js");
+		publicScript.addPath("WEB-INF","core","web","js","oo_map.js");
 		
 		privateScript = new Blend("people_private_script");
 		privateScript.addPath("hui","js","hui_color.js");

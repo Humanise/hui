@@ -10,7 +10,7 @@ import dk.in2isoft.onlineobjects.apps.community.ImageImporter;
 import dk.in2isoft.onlineobjects.apps.community.ProfileImageImporter;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
-import dk.in2isoft.onlineobjects.importing.DataImporter;
+import dk.in2isoft.onlineobjects.modules.importing.DataImporter;
 import dk.in2isoft.onlineobjects.modules.video.VideoService;
 import dk.in2isoft.onlineobjects.services.ImportService;
 import dk.in2isoft.onlineobjects.ui.Request;

@@ -1,4 +1,4 @@
-package dk.in2isoft.onlineobjects.pipes;
+package dk.in2isoft.onlineobjects.modules.pipes;
 
 import java.io.File;
 import java.io.IOException;

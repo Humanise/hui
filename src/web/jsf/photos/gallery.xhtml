@@ -37,10 +37,10 @@
 		
 		<ui:define name="sidebar">
 			<ui:include src="sidebar.part.xhtml"/>
-				<c:if test="#{photosGalleryView.modifiable}">
-					<p><gui:button small="true" text="Delete" name="deleteGallery"/></p>
-					<o:permissions entity="#{photosGalleryView.imageGallery}"/>
-				</c:if>
+			<c:if test="#{photosGalleryView.modifiable}">
+				<p><gui:button small="true" text="Delete" name="deleteGallery"/></p>
+				<o:permissions entity="#{photosGalleryView.imageGallery}"/>
+			</c:if>
 		</ui:define>
 		
 	</ui:composition>

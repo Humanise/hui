@@ -8,8 +8,8 @@ import java.util.Map;
 import org.apache.commons.io.IOUtils;
 
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
-import dk.in2isoft.onlineobjects.importing.ImportListener;
 import dk.in2isoft.onlineobjects.modules.importing.ImportHandler;
+import dk.in2isoft.onlineobjects.modules.importing.ImportListener;
 import dk.in2isoft.onlineobjects.modules.importing.ImportSession.Status;
 import dk.in2isoft.onlineobjects.ui.Request;
 

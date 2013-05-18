@@ -6,8 +6,8 @@ import java.util.Map;
 
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
-import dk.in2isoft.onlineobjects.importing.ImportListener;
 import dk.in2isoft.onlineobjects.model.Video;
+import dk.in2isoft.onlineobjects.modules.importing.ImportListener;
 import dk.in2isoft.onlineobjects.modules.video.VideoService;
 import dk.in2isoft.onlineobjects.ui.Request;
 

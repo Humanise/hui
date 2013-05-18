@@ -9,8 +9,8 @@ import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.commons.parsing.HTMLReference;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
-import dk.in2isoft.onlineobjects.importing.ImportListener;
 import dk.in2isoft.onlineobjects.model.InternetAddress;
+import dk.in2isoft.onlineobjects.modules.importing.ImportListener;
 import dk.in2isoft.onlineobjects.modules.networking.HTMLService;
 import dk.in2isoft.onlineobjects.ui.Request;
 
