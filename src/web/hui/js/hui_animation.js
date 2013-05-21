@@ -7,7 +7,7 @@
  *  css : { fontSize : '11px', color : '#f00', opacity : 0.5 }, 
  *  duration : 1000, // 1sec 
  *  ease : function(num) {},
- *  onComplete : function() {}
+ *  $complete : function() {}
  *}
  * 
  * @param {Element | Object} options Options or an element
@@ -22,7 +22,10 @@ hui.animate = function(options,property,value,duration,delegate) {
 		hui.animation.get(options).animate(null,value,property,duration,delegate);
 	} else {
 		var item = hui.animation.get(options.node);
-		if (!options.css) {
+		if (options.property) {
+			item.animate(null,options.value,options.property,options.duration,options);
+		}
+		else if (!options.css) {
 			item.animate(null,'','',options.duration,options);
 		} else {
 			for (prop in options.css) {

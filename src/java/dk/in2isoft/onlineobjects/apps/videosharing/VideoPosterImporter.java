@@ -3,7 +3,6 @@ package dk.in2isoft.onlineobjects.apps.videosharing;
 import java.util.List;
 import java.util.Map;
 
-import dk.in2isoft.onlineobjects.apps.community.ImageImporter;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
@@ -12,6 +11,7 @@ import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.Video;
+import dk.in2isoft.onlineobjects.modules.images.ImageImporter;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
 

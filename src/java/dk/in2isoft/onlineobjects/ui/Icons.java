@@ -15,7 +15,9 @@ public class Icons {
 		font.put("book", 'b');
 		font.put("delete", '*');
 		font.put("album", 'l');
-		font.put("edito", '=');
+		font.put("edit", '=');
 		font.put("add", '+');
+		font.put("present", '!');
+		font.put("photos", '^');
 	}
 }

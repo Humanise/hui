@@ -9,6 +9,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
+import dk.in2isoft.commons.jsf.ClassBuilder;
 import dk.in2isoft.commons.jsf.Components;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.commons.lang.Strings;
@@ -24,6 +25,7 @@ public class GalleryComponent extends AbstractComponent {
 	private String href;
 	private String name;
 	private boolean removable;
+	private String variant;
 
 	public GalleryComponent() {
 		super(FAMILY);
@@ -34,12 +36,13 @@ public class GalleryComponent extends AbstractComponent {
 		var = (String) state[0];
 		href = (String) state[1];
 		name = (String) state[2];
-		setRemovable((Boolean) state[3]);
+		removable = (Boolean) state[3];
+		variant = (String) state[4];
 	}
 
 	@Override
 	public Object[] saveState() {
-		return new Object[] { var, href, name, isRemovable() };
+		return new Object[] { var, href, name, removable, variant };
 	}
 
 	@Override
@@ -71,7 +74,9 @@ public class GalleryComponent extends AbstractComponent {
 		
 		ListModelResult<?> result = model.getResult();
 		String id = getClientId();
-		out.startDiv("oo_gallery").withId(id);
+
+		ClassBuilder cls = ClassBuilder.with("oo_gallery").add("oo_gallery",variant);
+		out.startDiv(cls).withId(id);
 		encodePaging(out, result.getTotalCount(), model.getPage(), model.getPageSize());
 		out.startOl();
 		List<UIComponent> children = getChildren();
@@ -117,14 +122,14 @@ public class GalleryComponent extends AbstractComponent {
 		if (Strings.isNotBlank(name)) {
 			out.property("name", name).comma();
 		}
-		out.property("element", id).comma().propertyRaw("images", imageArray.toString()).endNewObject();
+		out.property("element", id).comma().propertyRaw("images", imageArray.toString()).comma().property("width", width).comma().property("height", height).endNewObject();
 		out.endScopedScript();
 	}
 
 	private void encodeImage(TagWriter out, int width, int height, String href, Object object, boolean removable) throws IOException {
 		Image image = (Image) object;
 		String url = getUrl(image,width,height);
-		out.startSpan("oo_gallery_photo oo_gallery_photo_frame");
+		out.startSpan("oo_gallery_photo");
 		if (removable) {
 			out.startSpan("oo_gallery_hover");
 			out.startVoidA("oo_gallery_remove").rel("remove").data(image.getId());
@@ -158,10 +163,10 @@ public class GalleryComponent extends AbstractComponent {
 		if (totalCount==0) {
 			return;
 		}
-		Messages msg = new Messages(this);
+		//Messages msg = new Messages(this);
 		int pages = (int) Math.ceil((double) totalCount / (double) pageSize);
-		writer.startDiv("oo_gallery_navigator");
 		if (pages > 1) {
+			writer.startDiv("oo_gallery_navigator");
 			writer.startSpan("oo_gallery_pages");
 			for (int i = 0; i < pages; i++) {
 				writer.startA().withHref("?page=" + (i + 1));
@@ -172,9 +177,9 @@ public class GalleryComponent extends AbstractComponent {
 				writer.endA();
 			}
 			writer.endSpan();
+			writer.endDiv();
 		}
-		writer.startVoidA("oo_gallery_slideshow").startSpan().write(msg.get("slideshow", getLocale())).endSpan().endA();
-		writer.endDiv();
+		//writer.startVoidA("oo_gallery_slideshow").startSpan().write(msg.get("slideshow", getLocale())).endSpan().endA();
 	}
 
 	private void decodeRequest(FacesContext context, ListModel<Image> model) {
@@ -222,5 +227,13 @@ public class GalleryComponent extends AbstractComponent {
 
 	public void setHref(String href) {
 		this.href = href;
+	}
+	
+	public String getVariant() {
+		return variant;
+	}
+	
+	public void setVariant(String variant) {
+		this.variant = variant;
 	}
 }

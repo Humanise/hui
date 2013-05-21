@@ -6,20 +6,11 @@ public class ImageMetaData {
 	private String objectName;
 	private String caption;
 	private String[] keywords;
-	private Date dateTimeOriginal;
 	private Date dateTime;
 	private String cameraMake;
 	private String cameraModel;
 	private Double latitude;
 	private Double longitude;
-
-	public void setDateTimeOriginal(Date dateTimeOriginal) {
-		this.dateTimeOriginal = dateTimeOriginal;
-	}
-	
-	public Date getDateTimeOriginal() {
-		return dateTimeOriginal;
-	}
 	
 	public void setDateTime(Date dateTime) {
 		this.dateTime = dateTime;

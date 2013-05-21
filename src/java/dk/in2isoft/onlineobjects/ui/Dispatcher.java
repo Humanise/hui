@@ -39,7 +39,6 @@ public class Dispatcher implements Filter {
 	public void doFilter(ServletRequest sRequest, ServletResponse sResponse, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest) sRequest;
 		HttpServletResponse response = (HttpServletResponse) sResponse;
-		
 		dispatchingService.doFilter(request, response, chain);
 	}
 }

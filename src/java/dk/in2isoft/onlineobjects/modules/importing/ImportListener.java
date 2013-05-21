@@ -12,4 +12,6 @@ public interface ImportListener {
 	public void processFile(File file, String mimeType, String name, Map<String, String> parameters, Request request) throws IOException, EndUserException;
 
 	public String getProcessName();
+
+	public Object getResponse();
 }

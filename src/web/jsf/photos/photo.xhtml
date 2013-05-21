@@ -30,10 +30,10 @@
 				
 				<div class="photos_photo_image">
 					<c:if test="#{photosPhotoView.vertical}">
-						<o:thumbnail image="#{photosPhotoView.image}" height="500" zoom="true" frame="false"/>							
+						<o:thumbnail image="#{photosPhotoView.image}" height="500" present="true" frame="false"/>							
 					</c:if>
 					<c:if test="#{not photosPhotoView.vertical}">
-						<o:thumbnail image="#{photosPhotoView.image}" width="980" zoom="true" frame="false"/>
+						<o:thumbnail image="#{photosPhotoView.image}" width="980" present="true" frame="false"/>
 					</c:if>
 					<div class="photos_controller oo_faded">
 						<o:link href="/service/image/id#{photosPhotoView.image.id}.jpg?download=true" core="true" plain="true"><i>d</i></o:link>
@@ -67,7 +67,7 @@
 													</p>
 												</c:if>
 												<div style="padding: 0 0px 10px;">
-													<gui:button variant="paper" text="Edit description" small="true" name="addDescription"/>
+													<gui:button variant="light" text="#{msg.edit_description}" small="true" name="addDescription"/>
 												</div>
 											</gui:page>
 											<gui:page>
@@ -75,8 +75,8 @@
 												<gui:textInput name="description" multiline="true" value="#{photosPhotoView.description}"/>
 												<div style="padding: 5px 0 0;">
 												<gui:buttons>
-													<gui:button text="Save" variant="paper" name="saveDescription" small="true"/>
-													<gui:button text="Cancel" variant="paper" name="cancelDescription" small="true"/>
+													<gui:button text="#{msg.save}" variant="light" name="saveDescription" small="true"/>
+													<gui:button text="#{msg.cancel}" variant="light" name="cancelDescription" small="true"/>
 												</gui:buttons>
 												</div>
 												</div>
@@ -101,13 +101,13 @@
 									<o:icon icon="user" size="12"/>
 									<strong>#{photosPhotoView.user.username}</strong>
 								</p>
-								<p class="photos_profile_link"><o:link app="photos" href="/users/#{photosPhotoView.user.username}/">All photos »</o:link></p>
-								<p class="photos_profile_link"><o:link app="people" href="/#{photosPhotoView.user.username}/">Profile »</o:link></p>
+								<p class="photos_profile_link"><o:link app="photos" href="/users/#{photosPhotoView.user.username}/">#{msg.all_photos} »</o:link></p>
+								<p class="photos_profile_link"><o:link app="people" href="/#{photosPhotoView.user.username}/">#{msg.profile} »</o:link></p>
 							</div>
 						</div>
 						<c:if test="#{not empty photosPhotoView.galleries}">
 							<div class="photos_photo_galleries">
-								<h2>Galleries</h2>
+								<h2>#{msg.albums}</h2>
 								<ul id="galleries">
 									<c:forEach items="#{photosPhotoView.galleries}" var="gallery">
 										<li>
@@ -125,6 +125,9 @@
 								<c:forEach items="#{photosPhotoView.properties}" var="prop">
 									<p class="photos_photo_property"><strong>#{prop.label}:</strong> #{prop.value}</p>
 								</c:forEach>
+								<c:if test="#{photosPhotoView.canModify}">
+								<p><gui:button text="Synchronize" name="syncMetaData" small="true" variant="light"/></p>
+								</c:if>
 							</o:block>
 							<c:if test="#{photosPhotoView.canModify}">
 								<div style="background: #f6f6f6; border: 1px solid #eee; border-radius: 5px; margin-top: 30px; padding: 5px 12px 7px 12px;">

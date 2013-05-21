@@ -204,4 +204,11 @@
       <renderer-type>hui.fragment</renderer-type>
     </component>
   </tag>
+  <tag>
+    <tag-name>gallery</tag-name>
+    <component>
+      <component-type>hui.gallery</component-type>
+      <renderer-type>hui.gallery</renderer-type>
+    </component>
+  </tag>
 </facelet-taglib>

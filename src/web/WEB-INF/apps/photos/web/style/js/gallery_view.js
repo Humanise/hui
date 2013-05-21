@@ -17,6 +17,9 @@ var galleryView = {
 			})
 		}
 	},
+	$click$present : function() {
+		hui.ui.get('gallery').present();
+	},
 	_refreshImages : function() {
 		hui.ui.get('gallery').refresh();
 	},
@@ -31,21 +34,47 @@ var galleryView = {
 			e.stop();
 		}
 	},
+	
+	_busyUploads : 0,
+	
 	_dropFiles : function(files) {
+		this._busyUploads+=files.length;
 		for (var i=0; i < files.length; i++) {
-			var file = files[i];
-			hui.ui.request({
-				url : oo.appContext+'/uploadToGallery',
-				parameters : {galleryId : this.galleryId},
-				file : file,
-				$success : function() {
-					this._refreshImages();
-					hui.ui.showMessage({text:'Finished upload',icon:'common/success',duration:2000});
-				}.bind(this)
-			});
-			
+			this._addFile(files[i],i);
 		};
 	},
+	_addFile : function(file,index) {
+		var item = hui.ui.get('gallery').addIncoming();
+		hui.ui.request({
+			url : oo.appContext+'/uploadToGallery',
+			parameters : {galleryId : this.galleryId, index : index},
+			file : file,
+			$object : function(images) {
+				this._uploadEnded(item,images[0])
+			}.bind(this),
+			$success : function() {
+				this._uploadEnded(item,true)
+			}.bind(this),
+			$failure : function() {
+				this._uploadEnded(item,false)
+			},
+			$progress : function(loaded,total) {
+				item.$progress(loaded/total);
+			}
+		});
+	},
+	_uploadEnded : function(item,object) {
+		if (object) {
+			item.$success(object);
+		} else {
+			item.$failure();
+		}
+		this._busyUploads--;
+		if (this._busyUploads<1) {
+			this._refreshImages();
+		}
+	},
+	
 	_addUpload : function() {
 		var images = hui.get('photos_gallery_images');
 		return hui.build('span',{parent:images});
@@ -66,11 +95,11 @@ var galleryView = {
 	
 	_removeImage : function(imageId) {
 		hui.ui.request({
+			message : {start:{en:'Removing image','da':'Fjerner billede'}, delay:300, success:{en:'The image is removed',da:'Billedet er fjernet'}},
 			url : oo.appContext+'/removeImageFromGallery',
 			parameters : {galleryId : this.galleryId, imageId : imageId},
 			$success : function() {
 				this._refreshImages();
-				hui.ui.showMessage({text:'Image removed',icon:'common/success',duration:2000});
 			}.bind(this)
 		});		
 	},
@@ -91,15 +120,29 @@ var galleryView = {
 	},
 	$valueChanged$titleEditor : function(value) {
 		hui.ui.request({
-			message : {start:'Updating title', delay:300, success:'The title is changed'},
+			message : {start:{en:'Changing title','da':'Ændrer titel'}, delay:300, success:{en:'The title is changed',da:'Titlen er ændret'}},
 			url : oo.appContext+'/updateGalleryTitle',
 			parameters : {id:this.galleryId,title:value},
 			$failure : function() {
-				hui.ui.showMessage({text:'Unable to update tile',icon:'common/warning',duration:2000});
+				hui.ui.showMessage({text:{en:'Unable to change title',da:'Kunne ikke ændre titlen'},icon:'common/warning',duration:2000});
 			},
 			$success : function() {
-				oo.update({id:'galleries'});
+				oo.update({id:'galleries',fade:true});
 			}
 		})
 	},
+	$click$addToGallery : function() {
+		hui.ui.get('imageFinder').show();
+	},
+	$add$imageFinder : function(items) {
+		hui.ui.request({
+			url : oo.appContext+'/addImagesToGallery',
+			json : {
+				'info' : {galleryId : this.galleryId, images : items}
+			},
+			$success : function() {
+				this._refreshImages();
+			}.bind(this)
+		});
+	}
 }

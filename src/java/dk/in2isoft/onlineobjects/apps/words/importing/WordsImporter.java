@@ -32,6 +32,11 @@ public class WordsImporter implements ImportListener,ImportHandler,TextImporter 
 		System.out.println(text);
 		status = Status.success;
 	}
+	
+	@Override
+	public Object getResponse() {
+		return null;
+	}
 
 	public Status getStatus() {
 		return status;

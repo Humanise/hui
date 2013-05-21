@@ -32,7 +32,7 @@ public class WordsControllerBase extends ApplicationController {
 		publicStyle.addHUICSS("window.css");
 		publicStyle.addHUICSS("list.css");
 		publicStyle.addHUICSS("dropdown.css");
-		publicStyle.addPath("hui","ext","diagram.css");
+		publicStyle.addHUICSS("diagram.css");
 		publicStyle.addHUICSS("box.css");
 		publicStyle.addHUICSS("bar.css");
 		publicStyle.addHUICSS("overlay.css");
@@ -64,7 +64,7 @@ public class WordsControllerBase extends ApplicationController {
 		publicScript.addPath("hui","js","Formula.js");
 		publicScript.addPath("hui","js","TextField.js");
 		publicScript.addPath("hui","js","DropDown.js");
-		publicScript.addPath("hui","ext","Diagram.js");
+		publicScript.addPath("hui","js","Diagram.js");
 		publicScript.addPath("hui","js","Pages.js");
 		publicScript.addPath("hui","js","Overlay.js");
 		publicScript.addPath("hui","js","DragDrop.js");

@@ -28,7 +28,12 @@ window.onload = function() {
 			'oo_font_share' : '&#x23;',
 			'oo_font_album' : '&#x6c;',
 			'oo_font_add' : '&#x2b;',
-			'oo_font_edit' : '&#x3d;'
+			'oo_font_edit' : '&#x3d;',
+			'oo_font_present' : '&#x21;',
+			'oo_font_location' : '&#x6d;',
+			'oo_font_info' : '&#x69;',
+			'oo_font_photos' : '&#x5e;',
+			'oo_font_close' : '&#x6b;'
 		},
 		els = document.getElementsByTagName('*'),
 		i, attr, html, c, el;

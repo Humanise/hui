@@ -1,6 +1,5 @@
 span.oo_icon
 {
-	display: inline-block;
 	font-family: 'OnlineObjects';
 	display: inline-block;
 	vertical-align: middle;
@@ -21,6 +20,14 @@ span.oo_icon_16
 	line-height: 16px;
 	width: 16px;
 	height: 16px;
+}
+
+span.oo_icon_32
+{
+	font-size: 32px;
+	line-height: 32px;
+	width: 32px;
+	height: 32px;
 }
 
 span.oo_icon_48

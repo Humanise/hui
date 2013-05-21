@@ -42,6 +42,7 @@ public class PhotosControllerBase extends ApplicationController {
 		publicStyle.addCoreCSS("oo_gallery.css");
 		publicStyle.addCoreCSS("oo_words.css");
 		publicStyle.addCoreCSS("oo_map.css");
+		publicStyle.addCoreCSS("oo_photoviewer.css");
 		publicStyle.addPath("WEB-INF","apps","photos","web","style","css","style.css");
 		publicStyle.addPath("WEB-INF","apps","photos","web","style","css","photos_front.css");
 		publicStyle.addPath("WEB-INF","apps","photos","web","style","css","photos_controller.css");
@@ -59,6 +60,8 @@ public class PhotosControllerBase extends ApplicationController {
 		privateStyle.addPath("hui","css","searchfield.css");
 		privateStyle.addPath("hui","css","dropdown.css");
 		privateStyle.addPath("hui","css","window.css");
+		privateStyle.addPath("hui","css","overflow.css");
+		privateStyle.addPath("hui","css","gallery.css");
 		privateStyle.addHUICSS("overflow.css");
 		privateStyle.addPath("hui","css","bar.css");
 		privateStyle.addPath("hui","css","overlay.css");
@@ -77,6 +80,7 @@ public class PhotosControllerBase extends ApplicationController {
 		publicScript.addPath("WEB-INF","core","web","js","onlineobjects.js");
 		publicScript.addPath("WEB-INF","core","web","js","oo_gallery.js");
 		publicScript.addPath("WEB-INF","core","web","js","oo_map.js");
+		publicScript.addPath("WEB-INF","core","web","js","oo_photoviewer.js");
 		publicScript.addPath("WEB-INF","apps","photos","web","style","js","photo_view.js");
 		publicScript.addPath("WEB-INF","apps","photos","web","style","js","gallery_view.js");
 		publicScript.addPath("WEB-INF","apps","photos","web","style","js","layout_view.js");
@@ -88,6 +92,7 @@ public class PhotosControllerBase extends ApplicationController {
 		privateScript.addPath("hui","js","Source.js");
 		privateScript.addPath("hui","js","List.js");
 		privateScript.addPath("hui","js","Overflow.js");
+		privateScript.addPath("hui","js","Gallery.js");
 		privateScript.addPath("hui","js","LocationField.js");
 		privateScript.addPath("hui","js","LocationPicker.js");
 		privateScript.addPath("hui","js","SearchField.js");
@@ -97,8 +102,11 @@ public class PhotosControllerBase extends ApplicationController {
 		privateScript.addPath("hui","js","DragDrop.js");
 		privateScript.addPath("hui","js","Overlay.js");
 		privateScript.addPath("hui","js","Pages.js");
+		privateScript.addPath("hui","js","Drawing.js");
+		privateScript.addPath("hui","js","ProgressIndicator.js");
 		privateScript.addPath("WEB-INF","core","web","js","oo_inlineeditor.js");
 		privateScript.addPath("WEB-INF","core","web","js","oo_permissions.js");
+		privateScript.addPath("WEB-INF","core","web","js","oo_finder.js");
 
 	}
 

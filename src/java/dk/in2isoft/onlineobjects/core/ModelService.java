@@ -406,6 +406,18 @@ public class ModelService {
 		return result;
 	}
 
+	public List<Relation> getChildRelations(Entity entity, Class<?> clazz, Privileged privileged) throws ModelException {
+		String hql = "select relation from Relation as relation,"+clazz.getName()+" child,Privilege as priv where relation.superEntity=:entity and relation.subEntity=child and priv.object=relation.subEntity and priv.subject=:privileged order by relation.position";
+		Query q = getSession().createQuery(hql);
+		q.setEntity("entity", entity);
+		q.setLong("privileged", privileged.getIdentity());
+		List<Relation> result = Code.castList(q.list());
+		for (int i = 0; i < result.size(); i++) {
+			result.set(i, getSubject(result.get(i)));
+		}
+		return result;
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<Relation> getChildRelations(Entity entity, Class<?> clazz,String relationKind) throws ModelException {
 		String hql = "select relation from Relation as relation,"+clazz.getName()+" child where relation.superEntity=:entity and relation.subEntity=child and relation.kind=:kind order by relation.position";

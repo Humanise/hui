@@ -6,10 +6,10 @@ import java.util.Locale;
 
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
 import dk.in2isoft.onlineobjects.apps.ApplicationSession;
-import dk.in2isoft.onlineobjects.apps.community.ImageImporter;
 import dk.in2isoft.onlineobjects.apps.community.ProfileImageImporter;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
+import dk.in2isoft.onlineobjects.modules.images.ImageImporter;
 import dk.in2isoft.onlineobjects.modules.importing.DataImporter;
 import dk.in2isoft.onlineobjects.modules.video.VideoService;
 import dk.in2isoft.onlineobjects.services.ImportService;

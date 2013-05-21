@@ -37,3 +37,8 @@ p.oo_footer_logo span
 	text-shadow: 0 0 10px #fff;
 	cursor: default;
 }
+
+p.oo_footer_logo span:hover
+{
+	color: #eee;
+}

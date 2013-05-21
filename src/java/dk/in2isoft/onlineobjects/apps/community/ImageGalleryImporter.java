@@ -9,6 +9,7 @@ import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.ImageGallery;
 import dk.in2isoft.onlineobjects.model.Relation;
+import dk.in2isoft.onlineobjects.modules.images.ImageImporter;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
 

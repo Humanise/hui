@@ -14,6 +14,7 @@ import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.ui.jsf.model.MapPoint;
 import dk.in2isoft.onlineobjects.util.Locations;
+import dk.in2isoft.onlineobjects.util.Messages;
 
 @ListenerFor(systemEventClass=PostAddToViewEvent.class)
 @FacesComponent(value=MapComponent.FAMILY)
@@ -57,6 +58,7 @@ public class MapComponent extends AbstractComponent {
 
 	@Override
 	public void encodeBegin(FacesContext context, TagWriter out) throws IOException {
+		Messages msg = getMessages();
 		MapPoint point = getBinding("location");
 		boolean editable = isEditable(context);
 		out.startDiv("oo_map").withId(getClientId());
@@ -67,11 +69,11 @@ public class MapComponent extends AbstractComponent {
 				out.startVoidA("oo_map_pin").endA();
 			}
 			if (editable) {
-				out.startVoidA("oo_map_edit").text("Edit").endA();
+				out.startVoidA("oo_map_edit").text(msg.get("edit", context.getViewRoot().getLocale())).endA();
 			}
 			out.endDiv();
 		} else if (editable) {
-			out.startVoidA("oo_map_add").text("Add location").endA();
+			out.startVoidA("oo_map_add").text(msg.get("add_location", context.getViewRoot().getLocale())).endA();
 		}
 		out.endDiv();
 		out.startScript();

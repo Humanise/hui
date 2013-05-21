@@ -37,6 +37,11 @@ class InternetAddressImporter implements ImportListener {
 			}
 		}
 	}
+	
+	@Override
+	public Object getResponse() {
+		return null;
+	}
 
 	public String getProcessName() {
 		return "internetAddressImport";

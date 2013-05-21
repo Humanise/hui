@@ -130,6 +130,10 @@ http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
     	<component-type>onlineobjects.permissions</component-type>
     	<component-class>dk.in2isoft.onlineobjects.ui.jsf.PermissionsComponent</component-class>
   	</component>
+    <component>
+    	<component-type>onlineobjects.finder</component-type>
+    	<component-class>dk.in2isoft.onlineobjects.ui.jsf.FinderComponent</component-class>
+  	</component>
   	
   	
   	

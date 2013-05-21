@@ -46,9 +46,27 @@ var oo = {
 				nodes.push(node);
 			}
 		}
-		hui.request({
+		var fades = [];
+		if (options.fade) {
+			for (var i=0; i < nodes.length; i++) {
+				var node = nodes[i];
+				var pos = hui.position.get(node);
+				var hider = hui.build('div',{parent:document.body,style:{
+					position : 'absolute',
+					left : pos.left+'px',
+					top : pos.top+'px',
+					width : node.offsetWidth+'px',
+					height : node.offsetHeight+'px',
+					background : '#fff',
+					opacity : 0
+				}})
+				hui.animate({node:hider,css:{opacity:'0.5'},delay:300,ease:hui.ease.slowFastSlow,duration:300});
+				fades.push(hider);
+			};
+		}
+		hui.ui.request({
 			url : document.location+'',
-			onSuccess : function(t) {
+			$success : function(t) {
 				var e = hui.build('div',{html:t.responseText});
 				for (var i=0; i < nodes.length; i++) {
 					var oldNode = nodes[i];
@@ -75,9 +93,17 @@ var oo = {
 				if (options.$success) {
 					options.$success();
 				}
-			},onException : function(a,b) {
+			},$exception : function(a,b) {
 				hui.log(a);
 				hui.log(b);
+			},
+			$finally : function() {
+				hui.each(fades,function(fade) {
+					hui.log(fade)
+					hui.animate({node:fade,css:{opacity:'0'},duration:300,ease:hui.ease.slowFastSlow,$complete : function() {
+						hui.dom.remove(fade);
+					}});
+				});
 			}
 		})
 	},
@@ -87,6 +113,13 @@ var oo = {
 				options.$success();
 			}
 		}})
+	},
+	presentImage : function(img) {
+		if (!this.imagePresenter) {
+			this.imagePresenter = oo.PhotoViewer.create();
+		}
+		this.imagePresenter.setImages([img]);
+		this.imagePresenter.show();
 	},
 	showImage : function(img) {
 		var v = this.getViewer();

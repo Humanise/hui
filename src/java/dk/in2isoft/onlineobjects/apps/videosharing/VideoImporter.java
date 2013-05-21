@@ -30,6 +30,10 @@ class VideoImporter implements ImportListener {
 		modelService.updateItem(video, request.getSession());
 	}
 
+	@Override
+	public Object getResponse() {
+		return null;
+	}
 	
 	public String getProcessName() {
 		return "videoImport";

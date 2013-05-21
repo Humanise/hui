@@ -3,27 +3,21 @@ package dk.in2isoft.onlineobjects.apps.photos;
 import java.io.IOException;
 import java.util.List;
 
-import com.google.common.collect.Lists;
-
-import dk.in2isoft.commons.lang.Code;
 import dk.in2isoft.in2igui.data.ListData;
+import dk.in2isoft.onlineobjects.apps.photos.perspectives.AddToGalleryPerspective;
 import dk.in2isoft.onlineobjects.apps.videosharing.Path;
 import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SearchResult;
-import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.core.exceptions.ContentNotFoundException;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.model.Entity;
-import dk.in2isoft.onlineobjects.model.HeaderPart;
-import dk.in2isoft.onlineobjects.model.HtmlPart;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.ImageGallery;
 import dk.in2isoft.onlineobjects.model.Relation;
-import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.modules.importing.DataImporter;
 import dk.in2isoft.onlineobjects.modules.importing.ImportListener;
@@ -122,7 +116,7 @@ public class PhotosController extends PhotosControllerBase {
 		}
 	}
 
-	@Path(start="searchWords")
+	@Path
 	public void searchWords(Request request) throws IOException {
 		String text = request.getString("text");
 		Integer page = request.getInt("page");
@@ -150,8 +144,16 @@ public class PhotosController extends PhotosControllerBase {
 			throw new ContentNotFoundException(Image.class,imageId);
 		}
 	}
+
+	@Path
+	public <T extends Entity> void synchronizeMetaData(Request request) throws EndUserException {
+		long id = request.getLong("imageId");
+		Privileged privileged = request.getSession();
+		Image image = modelService.getRequired(Image.class, id, privileged);
+		imageService.synchronizeMetaData(image, privileged);
+	}
 	
-	@Path(start="changeAccess")
+	@Path
 	public void changeAccess(Request request) throws SecurityException, ModelException, ContentNotFoundException {
 		long imageId = request.getInt("image");
 		boolean publicAccess = request.getBoolean("public");
@@ -172,7 +174,7 @@ public class PhotosController extends PhotosControllerBase {
 	@Path
 	public void uploadToGallery(Request request) throws IOException, EndUserException {
 		DataImporter dataImporter = importService.createImporter();
-		ImportListener listener = new ImageImporter(modelService,imageService);
+		ImportListener listener = new ImageGalleryImporter(modelService,imageService);
 		dataImporter.setListener(listener);
 		dataImporter.importMultipart(this, request);
 	}
@@ -191,18 +193,7 @@ public class PhotosController extends PhotosControllerBase {
 	public <T extends Entity> void deleteGallery(Request request) throws SecurityException, ModelException, ContentNotFoundException {
 		long id = request.getLong("id");
 		Privileged privileged = request.getSession();
-		ImageGallery gallery = modelService.get(ImageGallery.class, id, privileged);
-		List<Class<T>> parts = Lists.newArrayList();
-		parts.add(Code.<Class<T>>cast(HtmlPart.class));
-		parts.add(Code.<Class<T>>cast(HeaderPart.class));
-		User admin = modelService.getUser(SecurityService.ADMIN_USERNAME);
-		for (Class<T> type : parts) {
-			List<T> relations = modelService.getChildren(gallery, type, admin);
-			for (T relation : relations) {
-				modelService.deleteEntity(relation, privileged);
-			}
-		}
-		modelService.deleteEntity(gallery, privileged);
+		imageGalleryService.deleteGallery(id, privileged);
 	}
 	
 	@Path
@@ -217,6 +208,41 @@ public class PhotosController extends PhotosControllerBase {
 		if (relation!=null) {
 			modelService.deleteRelation(relation, session);
 		}
+	}
+	
+	@Path
+	public void addImagesToGallery(Request request) throws SecurityException, ModelException, ContentNotFoundException {
+		UserSession session = request.getSession();
+		AddToGalleryPerspective per = request.getObject("info", AddToGalleryPerspective.class);
+		ImageGallery gallery = modelService.getRequired(ImageGallery.class, per.getGalleryId(), session);
+		float position = getMaxImagePosition(gallery);
+		int num = 0;
+		for (SimpleEntityPerspective imagePerspective : per.getImages()) {
+			Image image = modelService.get(Image.class, imagePerspective.getId(), session);
+			if (image!=null) {
+				num++;
+				Relation relation = new Relation(gallery, image);
+				relation.setPosition(position + num);
+				modelService.createItem(relation, session);
+			}
+		}
+	}
+
+	private float getMaxImagePosition(Entity gallery) throws ModelException {
+		float max = 0;
+		List<Relation> relations = modelService.getChildRelations(gallery,Image.class);
+		for (Relation relation : relations) {
+			max = Math.max(max, relation.getPosition());
+		}
+		return max;
+	}
+	
+	@Path
+	public List<Image> imageFinderGallery(Request request) {
+		UserSession session = request.getSession();
+		Query<Image> query = Query.of(Image.class).withPrivileged(session).orderByCreated().descending();
+		List<Image> list = modelService.list(query);
+		return list;
 	}
 
 }

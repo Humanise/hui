@@ -28,7 +28,6 @@ import dk.in2isoft.commons.geo.GeoDistance;
 import dk.in2isoft.commons.util.AbstractCommandLineInterface;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Privileged;
-import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
@@ -96,20 +95,6 @@ public class ImageService extends AbstractCommandLineInterface {
 			Directory gpsDirectory = metadata.getDirectory(GpsDirectory.class);
 			Directory iptcDirectory = metadata.getDirectory(IptcDirectory.class);
 			
-			//Iterable<Directory> directories = metadata.getDirectories();
-			/**
-			for (Directory dir : directories) {
-				Collection<Tag> tags = dir.getTags();
-				for (Tag tag : tags) {
-					if (dir.containsTag(tag.getTagType())) {
-						log.info(dir.getName()+" : "+tag.getTagName()+" : "+dir.getObject(tag.getTagType()));
-					}
-				}
-			}**/
-			
-			//if (exifDirectory.containsTag(ExifIFD0Directory.TAG_DATETIME_ORIGINAL)) {
-			//	imageMetaData.setDateTimeOriginal(exifDirectory.getDate(ExifDirectory.TAG_DATETIME_ORIGINAL));
-			//}
 			if (exifDirectory!=null) {
 				if (exifDirectory.containsTag(ExifIFD0Directory.TAG_DATETIME)) {
 					imageMetaData.setDateTime(exifDirectory.getDate(ExifIFD0Directory.TAG_DATETIME));
@@ -186,13 +171,13 @@ public class ImageService extends AbstractCommandLineInterface {
 		}
 	}
 	
-	public void synchronizeMetaData(Image image, Privileged priviledged) throws EndUserException {
+	public void synchronizeMetaData(Image image, Privileged priviledged) throws SecurityException, ModelException {
 		File file = getImageFile(image);
 		ImageMetaData metaData = getMetaData(file);
 		boolean modified = false;
 		Date taken = image.getPropertyDateValue(Property.KEY_PHOTO_TAKEN);
 		if (taken==null) {
-			image.overrideFirstProperty(Property.KEY_PHOTO_TAKEN, metaData.getDateTimeOriginal());
+			image.overrideFirstProperty(Property.KEY_PHOTO_TAKEN, metaData.getDateTime());
 			modified = true;
 		}
 		String make = image.getPropertyValue(Property.KEY_PHOTO_CAMERA_MAKE);

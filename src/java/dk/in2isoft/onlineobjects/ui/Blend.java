@@ -41,6 +41,7 @@ public class Blend {
 		addPath("hui","css","checkbox.css");
 		addPath("hui","css","formula.css");
 		addPath("hui","css","message.css");
+		addPath("hui","css","icon.css");
 		addCoreCSS("oo_font.css");
 		addCoreCSS("oo_body.css");
 		addCoreCSS("oo_topbar.css");

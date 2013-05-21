@@ -1,4 +1,4 @@
-package dk.in2isoft.onlineobjects.apps.photos;
+package dk.in2isoft.onlineobjects.apps.photos.perspectives;
 
 import dk.in2isoft.onlineobjects.model.Image;
 

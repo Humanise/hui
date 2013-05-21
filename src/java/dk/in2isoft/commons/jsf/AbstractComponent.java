@@ -5,6 +5,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.el.ValueExpression;
+import javax.faces.component.UIComponent;
 import javax.faces.component.UIComponentBase;
 import javax.faces.context.FacesContext;
 
@@ -90,6 +91,10 @@ public abstract class AbstractComponent extends UIComponentBase {
 	
 	protected void encodeEnd(FacesContext context, TagWriter out) throws IOException {}
 
+	public void add(UIComponent child) {
+		getChildren().add(child);
+	}
+	
 	public <T> T getBinding(String name) {
 		ValueExpression valueExpression = this.getValueExpression(name);
 		if (valueExpression!=null) {

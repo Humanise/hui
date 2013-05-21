@@ -22,6 +22,7 @@ import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.WebPage;
 import dk.in2isoft.onlineobjects.model.WebSite;
+import dk.in2isoft.onlineobjects.modules.images.ImageImporter;
 import dk.in2isoft.onlineobjects.modules.importing.DataImporter;
 import dk.in2isoft.onlineobjects.modules.importing.ImportListener;
 import dk.in2isoft.onlineobjects.modules.networking.HTMLService;

@@ -1,4 +1,4 @@
-package dk.in2isoft.onlineobjects.apps.community;
+package dk.in2isoft.onlineobjects.modules.images;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +31,7 @@ public class ImageImporter implements ImportListener {
 		mimeTypes = Lists.newArrayList("image/jpeg", "image/png", "image/gif");
 	}
 
-	public void processFile(File file, String mimeType, String name, Map<String, String> parameters, Request request) throws IOException, EndUserException {
+	public final void processFile(File file, String mimeType, String name, Map<String, String> parameters, Request request) throws IOException, EndUserException {
 		if (!isRequestLegal(parameters,request)) {
 			throw new IllegalRequestException("The request is illegal!");
 		}
@@ -55,6 +55,11 @@ public class ImageImporter implements ImportListener {
 
 	protected void postProcessImage(Image image, Map<String, String> parameters, Request request) throws EndUserException {
 		// Override this
+	}
+	
+	@Override
+	public Object getResponse() {
+		return null;
 	}
 
 	public String getProcessName() {

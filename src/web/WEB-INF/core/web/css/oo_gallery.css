@@ -99,12 +99,18 @@ span.oo_gallery_photo
 	position: relative;
 }
 
-span.oo_gallery_photo_frame
+div.oo_gallery_frame span.oo_gallery_photo
 {
 	padding: 4px;
 	border: 1px solid #ddd;
 	border-color: #EEEEEE #DDDDDD #CCCCCC;
 	margin: 0px 10px 10px 0;
+}
+
+div.oo_gallery_shadow span.oo_gallery_photo
+{
+	margin: 0px 20px 20px 0;
+	box-shadow: 0 1px 4px rgba(0,0,0,.2);
 }
 
 span.oo_gallery_hover
@@ -133,11 +139,41 @@ span.oo_gallery_hover a
 	background: rgba(255,255,255,.5);
 	text-decoration: none;
 	text-shadow: 0 0 6px #fff;
+	font-size: 0;
+}
+
+span.oo_gallery_hover a span.oo_icon
+{
+	margin-top: 3px;
 }
 
 span.oo_gallery_hover a:hover
 {
 	background: rgba(255,255,255,.8);
+}
+
+
+/******* Incoming *****/
+
+span.oo_gallery_incoming
+{
+	font-size: 0;
+	border: 1px dashed #ddd;
+	background: #fafafa;
+	border-radius: 5px;
+	display: inline-block;
+}
+
+span.oo_gallery_incoming span
+{
+	display: inline-block;
+	font-size: 12px;
+	margin: -1px;
+}
+
+div.oo_gallery_shadow span.oo_gallery_incoming
+{
+	margin: 0 20px 20px 0;
 }
 
 

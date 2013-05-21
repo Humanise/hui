@@ -209,4 +209,11 @@
       <renderer-type>onlineobjects.permissions</renderer-type>
     </component>
   </tag>
+  <tag>
+    <tag-name>finder</tag-name>
+    <component>
+      <component-type>onlineobjects.finder</component-type>
+      <renderer-type>onlineobjects.finder</renderer-type>
+    </component>
+  </tag>
 </facelet-taglib>

@@ -30,6 +30,7 @@ public class Strings {
 	public static final String UNICODE_OE = "\u00F8";
 	
 	public static final String[] ALPHABETH = {"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z",Strings.UNICODE_AE,Strings.UNICODE_OE,Strings.UNICODE_AA};
+	public static final Object RIGHT_ARROW = "\u279D";
 	
 	
 	// private static Logger log = Logger.getLogger(LangUtil.class);

@@ -1,6 +1,6 @@
 div.photos_sidebar_profile
 {
-	padding: 5px 10px 5px;
+	padding: 5px 10px 10px;
 }
 
 div.photos_sidebar_profile_image
@@ -52,7 +52,7 @@ p.photos_sidebar_profile_link
 div.photos_sidebar_galleries
 {
 	border-top: 1px solid #eee;
-	padding: 5px;
+	padding: 10px 5px;
 	margin: 5px;
 }
 
@@ -64,7 +64,7 @@ div.photos_sidebar_galleries h2
 	font-family: 'HelveticaNeue-UltraLight','Helvetica Neue','Helvetica','Arial',sans-serif;
 	font-weight: 100;
 	letter-spacing: 1px;
-	margin: 0 0 5px;
+	margin: 10px 0 5px;
 	position: relative;
 }
 

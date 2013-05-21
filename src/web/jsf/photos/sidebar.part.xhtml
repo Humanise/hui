@@ -16,14 +16,21 @@
 				<o:icon icon="user" size="12"/>
 				<strong>#{photosLayoutView.username}</strong>
 			</p>
-			<p class="photos_sidebar_profile_link"><o:link app="photos" href="/users/#{photosLayoutView.username}/">All photos »</o:link></p>
-			<p class="photos_sidebar_profile_link"><o:link app="people" href="/#{photosLayoutView.username}/">Profile »</o:link></p>
+			<p class="photos_sidebar_profile_link"><o:link app="people" href="/#{photosLayoutView.username}/">#{msg.profile} »</o:link></p>
 		</div>
 	</div>
 	<c:if test="#{not empty photosLayoutView.galleries}">
 		<div class="photos_sidebar_galleries">
+		<ul>
+			<li>
+				<o:link app="photos" href="/users/#{photosLayoutView.username}/" plain="true" styleClass="#{photosLayoutView.allImages ? 'photos_sidebar_selected' : null}">
+					<o:icon icon="photos"/>
+					<o:out value="#{msg.all_photos}"/>
+				</o:link>
+			</li>
+		</ul>
 		<h2>
-			<o:out value="Album"/>
+			<o:out value="#{msg.albums}"/>
 			<c:if test="#{photosLayoutView.modifiable}">
 				<o:link name="addImageGallery" plain="true">
 					<o:icon icon="add"/>

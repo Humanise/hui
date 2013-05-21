@@ -32,6 +32,8 @@ public class PhotosLayoutView extends AbstractManagedBean implements Initializin
 	private Person person;
 
 	private List<Option> galleries;
+	
+	private boolean allImages;
 
 	private boolean modifiable;
 
@@ -43,6 +45,7 @@ public class PhotosLayoutView extends AbstractManagedBean implements Initializin
 		long selected = 0l;
 		if ("users".equals(type)) {
 			username = path[2];
+			allImages = true;
 		} else if ("gallery".equals(type)) {
 			selected = photosGalleryView.getImageGallery().getId();
 			username = photosGalleryView.getUser().getUsername();
@@ -70,6 +73,10 @@ public class PhotosLayoutView extends AbstractManagedBean implements Initializin
 			modifiable = this.user.getId() == getRequest().getSession().getUser().getId();
 			userImage = modelService.getChild(user, Relation.KIND_SYSTEM_USER_IMAGE, Image.class);
 		}
+	}
+	
+	public boolean isAllImages() {
+		return allImages;
 	}
 	
 	public Image getUserImage() {

@@ -41,6 +41,14 @@ public class ImageController extends ServiceController {
 
 	@Override
 	public void unknownRequest(Request request) throws IOException, EndUserException {
+		if (!false) {
+			try {
+				Thread.sleep(Math.round(Math.random()*3000+1000));
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		String[] path = request.getLocalPath();
 		if (path.length>0) {
 			String subject = path[path.length-1];

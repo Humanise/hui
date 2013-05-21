@@ -77,6 +77,20 @@ var photoView = {
 			}
 		})
 	},
+	$click$syncMetaData : function() {
+		hui.ui.request({
+			message : {start:'Synchronizing',delay:300, success:'The meta data is synchronized'},
+			url : oo.appContext+'/synchronizeMetaData',
+			parameters : {imageId : this.imageId},
+			$success : function() {
+				oo.update({id:'properties'});
+			},
+			$failure : function() {
+				hui.ui.msg({text:'Unable to synchronize metadata',icon:'common/warning',duration:2000});
+			}
+		})
+		
+	},
 	
 	$add$words : function(info) {
 		if (!this.imageId) {

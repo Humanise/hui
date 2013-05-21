@@ -1,5 +1,6 @@
 package dk.in2isoft.onlineobjects.apps.photos;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -9,25 +10,32 @@ import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.ImageGallery;
 import dk.in2isoft.onlineobjects.model.Relation;
+import dk.in2isoft.onlineobjects.modules.images.ImageImporter;
 import dk.in2isoft.onlineobjects.ui.Request;
+import dk.in2isoft.onlineobjects.ui.data.SimpleEntityPerspective;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
 
-public class ImageImporter extends dk.in2isoft.onlineobjects.apps.community.ImageImporter {
+public class ImageGalleryImporter extends ImageImporter {
+	
+	private List<SimpleEntityPerspective> imported; 
 
-	public ImageImporter(ModelService modelService,ImageService imageService) {
+	public ImageGalleryImporter(ModelService modelService,ImageService imageService) {
 		super(modelService, imageService);
+		imported = new ArrayList<SimpleEntityPerspective>();
 	}
 
 	@Override
 	protected void postProcessImage(Image image, Map<String,String> parameters, Request request) throws EndUserException {
 
+		int index = Integer.parseInt(parameters.get("index"));
 		long imageGalleryId = Long.parseLong(parameters.get("galleryId"));
 		ImageGallery gallery = modelService.get(ImageGallery.class, imageGalleryId, request.getSession());
 		
 		Relation relation = new Relation(gallery, image);
-		relation.setPosition(getMaxImagePosition(gallery) + 1);
+		relation.setPosition(getMaxImagePosition(gallery) + 1 + index);
 		modelService.createItem(relation, request.getSession());
 
+		imported.add(SimpleEntityPerspective.create(image));
 	}
 
 	private float getMaxImagePosition(Entity gallery) throws EndUserException {
@@ -37,5 +45,10 @@ public class ImageImporter extends dk.in2isoft.onlineobjects.apps.community.Imag
 			max = Math.max(max, relation.getPosition());
 		}
 		return max;
+	}
+	
+	@Override
+	public Object getResponse() {
+		return imported;
 	}
 }

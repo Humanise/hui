@@ -26,6 +26,7 @@ public class ThumbnailComponent extends AbstractComponent {
 	private Integer height;
 	private String variant;
 	private boolean zoom;
+	private boolean present;
 	private String href;
 	private boolean frame = true;
 	private String app;
@@ -45,11 +46,12 @@ public class ThumbnailComponent extends AbstractComponent {
 		frame = (Boolean) state[5];
 		app = (String) state[6];
 		sharpen = (Double) state[7];
+		present = (Boolean) state[8];
 	}
 
 	@Override
 	public Object[] saveState() {
-		return new Object[] { width, height, variant, zoom, href, frame, app, sharpen };
+		return new Object[] { width, height, variant, zoom, href, frame, app, sharpen, present };
 	}
 
 	@Override
@@ -59,7 +61,7 @@ public class ThumbnailComponent extends AbstractComponent {
 		StyleBuilder style = new StyleBuilder();
 		style.withWidth(width).withHeight(height);
 		ClassBuilder cls = new ClassBuilder("oo_thumbnail").add("oo_thumbnail",variant);
-		if (zoom) {
+		if (zoom || present) {
 			cls.add("oo_thumbnail_zoom");
 		}
 		if (frame) {
@@ -107,6 +109,10 @@ public class ThumbnailComponent extends AbstractComponent {
 				if (zoom) {
 					StringBuilder onClick = new StringBuilder();
 					onClick.append("oo.showImage({id:").append(image.getId()).append(",width:").append(image.getWidth()).append(",height:").append(image.getHeight()).append("});");
+					out.withAttribute("onclick", onClick);
+				} else if (present) {
+					StringBuilder onClick = new StringBuilder();
+					onClick.append("oo.presentImage({id:").append(image.getId()).append(",width:").append(image.getWidth()).append(",height:").append(image.getHeight()).append("});");
 					out.withAttribute("onclick", onClick);
 				}
 				out.withStyle(stl).endElement("img");
@@ -184,5 +190,13 @@ public class ThumbnailComponent extends AbstractComponent {
 
 	public void setSharpen(double sharpen) {
 		this.sharpen = sharpen;
+	}
+	
+	public boolean isPresent() {
+		return present;
+	}
+	
+	public void setPresent(boolean present) {
+		this.present = present;
 	}
 }

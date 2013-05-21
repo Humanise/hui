@@ -1,13 +1,22 @@
 package dk.in2isoft.onlineobjects.modules.images;
 
-import dk.in2isoft.onlineobjects.core.Core;
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
+import dk.in2isoft.commons.lang.Code;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Privileged;
+import dk.in2isoft.onlineobjects.core.SecurityService;
+import dk.in2isoft.onlineobjects.core.exceptions.ContentNotFoundException;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
+import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
+import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.HeaderPart;
 import dk.in2isoft.onlineobjects.model.HtmlPart;
 import dk.in2isoft.onlineobjects.model.ImageGallery;
+import dk.in2isoft.onlineobjects.model.User;
 
 public class ImageGalleryService {
 
@@ -35,6 +44,27 @@ public class ImageGalleryService {
 		return gallery;
 	}
 
+	public <T extends Entity>void deleteGallery(long id, Privileged privileged) throws ModelException, SecurityException, ContentNotFoundException {
+		ImageGallery gallery = modelService.get(ImageGallery.class, id, privileged);
+		if (gallery==null) {
+			throw new ContentNotFoundException(ImageGallery.class, id);
+		}
+		List<Class<T>> parts = Lists.newArrayList();
+		parts.add(Code.<Class<T>>cast(HtmlPart.class));
+		parts.add(Code.<Class<T>>cast(HeaderPart.class));
+		User admin = modelService.getUser(SecurityService.ADMIN_USERNAME);
+		for (Class<T> type : parts) {
+			List<T> relations = modelService.getChildren(gallery, type, admin);
+			for (T relation : relations) {
+				modelService.deleteEntity(relation, privileged);
+			}
+		}
+		modelService.deleteEntity(gallery, privileged);
+		
+	}
+
+	// Wiring...
+	
 	public void setModelService(ModelService modelService) {
 		this.modelService = modelService;
 	}

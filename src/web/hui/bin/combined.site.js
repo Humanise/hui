@@ -1528,9 +1528,10 @@ hui.request = function(options) {
 				}
 			}
 		}
-		if (options.onProgress) {
+		var prog = options.onProgress || options.$progress;
+		if (prog) {
 			transport.upload.addEventListener("progress", function(e) {
-				options.onProgress(e.loaded,e.total);
+				prog(e.loaded,e.total);
 			}, false);
 		}
 		if (options.onLoad) {
@@ -2408,7 +2409,7 @@ if (!Function.prototype.argumentNames) {
  *  css : { fontSize : '11px', color : '#f00', opacity : 0.5 }, 
  *  duration : 1000, // 1sec 
  *  ease : function(num) {},
- *  onComplete : function() {}
+ *  $complete : function() {}
  *}
  * 
  * @param {Element | Object} options Options or an element
@@ -2423,7 +2424,10 @@ hui.animate = function(options,property,value,duration,delegate) {
 		hui.animation.get(options).animate(null,value,property,duration,delegate);
 	} else {
 		var item = hui.animation.get(options.node);
-		if (!options.css) {
+		if (options.property) {
+			item.animate(null,options.value,options.property,options.duration,options);
+		}
+		else if (!options.css) {
 			item.animate(null,'','',options.duration,options);
 		} else {
 			for (prop in options.css) {
@@ -3802,6 +3806,13 @@ hui.ui.showMessage = function(options) {
 		hui.ui.messageTimer = window.setTimeout(hui.ui.hideMessage,options.duration);
 	}
 };
+
+hui.ui.msg = hui.ui.showMessage;
+
+hui.ui.msg.success = function(options) {
+	options = hui.override({icon:'common/success',duration:2000},options);
+	hui.ui.msg(options);
+}
 
 hui.ui.getTranslated = function(value) {
 	if (!hui.isDefined(value) || hui.isString(value)) {

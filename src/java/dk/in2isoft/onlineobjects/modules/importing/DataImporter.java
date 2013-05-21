@@ -92,8 +92,12 @@ public class DataImporter {
 		process.setCompleted(true);
 		HttpServletResponse response = request.getResponse();
 		response.setStatus(HttpServletResponse.SC_OK);
-		response.getWriter().write(successResponse);
-		log.info("Upload OK");
+		Object obj = listener.getResponse();
+		if (obj!=null) {
+			request.sendObject(obj);
+		} else {
+			response.getWriter().write(successResponse);
+		}
 	}
 	
 	public void setSuccessResponse(String successResponse) {
