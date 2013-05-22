@@ -129,22 +129,21 @@ div.oo_photoviewer_actions
 	top: 10px;
 	background: rgba(0,0,0,.5);
 	border-radius: 5px;
-	box-shadow: 0 0 4px rgba(255,255,255,.5);
-	padding: 0 5px;
+	padding: 0;
 }
 
 div.oo_photoviewer_actions a
 {
 	text-decoration: none;
 	display: inline-block;
-	padding: 10px 5px;
+	padding: 10px 10px;
 	border-radius: 5px;
 	cursor: pointer;
 }
 
 div.oo_photoviewer_actions a.oo_photoviewer_arrow
 {
-	padding: 10px 0px;
+	padding: 10px 3px;
 }
 
 div.oo_photoviewer_actions a:hover

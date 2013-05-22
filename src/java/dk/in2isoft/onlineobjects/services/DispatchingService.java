@@ -34,7 +34,7 @@ public class DispatchingService {
 
 	private static Logger log = Logger.getLogger(DispatchingService.class);
 	
-	private static final Pattern SESSION_PATTERN = Pattern.compile(";jsessionid=[^?]+");
+	private static final Pattern SESSION_PATTERN = Pattern.compile("_sessionId=[^&]+");
 	
 	private ModelService modelService;
 	private SecurityService securityService;
@@ -66,13 +66,13 @@ public class DispatchingService {
 		securityService.ensureUserSession(servletRequest.getSession());
 		String url = servletRequest.getRequestURL().toString();
 				
-		if (url.contains(";jsessionid")) {
-			Matcher matcher = SESSION_PATTERN.matcher(url);
-			if (matcher.find()) {
-				String newUrl = matcher.replaceAll("");
+		if (request.isSet("_sessionId")) {
+			String sessionId = request.getString("_sessionId");
+			securityService.transferLogin(request, sessionId);
+			
+				String newUrl = url;
 				servletResponse.sendRedirect(newUrl);
 				return true;
-			}
 		}
 		
 		for (Responder responder : responders) {

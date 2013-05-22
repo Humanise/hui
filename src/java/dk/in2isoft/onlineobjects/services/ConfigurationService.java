@@ -209,10 +209,17 @@ public class ConfigurationService implements InitializingBean {
 		} else {
 			url.append("/");
 		}
-		if (request.isLoggedIn()) {
-			url.append(";jsessionid="+servletRequest.getSession().getId());
+		String full = url.toString();
+		if (request.isLoggedIn() && app!=null && !app.equals(request.getApplication())) {
+			if (full.contains("?")) {
+				url.append("&");
+			} else {
+				url.append("?");
+			}
+			url.append("_sessionId="+request.getSession().getId());
+			full = url.toString();
 		}
-		return url.toString();
+		return full;
 	}
 
 	public String getRootDomain() {

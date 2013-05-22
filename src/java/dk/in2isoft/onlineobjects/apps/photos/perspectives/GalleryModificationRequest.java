@@ -4,7 +4,7 @@ import java.util.List;
 
 import dk.in2isoft.onlineobjects.ui.data.SimpleEntityPerspective;
 
-public class AddToGalleryPerspective {
+public class GalleryModificationRequest {
 
 	private long galleryId;
 	

@@ -1,7 +1,5 @@
 package dk.in2isoft.commons.parsing;
 
-import java.net.MalformedURLException;
-
 public class TextDocument {
 
 	private String raw;

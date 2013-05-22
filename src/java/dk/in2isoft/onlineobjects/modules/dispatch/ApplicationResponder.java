@@ -26,7 +26,6 @@ import dk.in2isoft.onlineobjects.core.exceptions.ContentNotFoundException;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
 import dk.in2isoft.onlineobjects.model.Application;
-import dk.in2isoft.onlineobjects.services.ConfigurationService;
 import dk.in2isoft.onlineobjects.services.DispatchingService;
 import dk.in2isoft.onlineobjects.ui.Request;
 

@@ -177,8 +177,8 @@ oo.PhotoViewer.prototype = {
 		}
 	},
 	_checkSize : function() {
-		var w = Math.max(1,Math.floor(this.body.clientWidth / 100)) * 100,
-			h = Math.max(1,Math.floor(this.body.clientHeight / 100)) * 100;
+		var w = Math.max(1,Math.ceil(this.body.clientWidth / 100)) * 100,
+			h = Math.max(1,Math.ceil(this.body.clientHeight / 100)) * 100;
 		if (this.size.width!=w || this.size.height!=h) {
 			this.size = {width : w, height : h};
 			return true;

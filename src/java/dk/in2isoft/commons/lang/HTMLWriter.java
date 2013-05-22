@@ -1,12 +1,8 @@
 package dk.in2isoft.commons.lang;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import org.apache.commons.lang.StringEscapeUtils;
-
-import dk.in2isoft.in2igui.data.ListWriter;
 import dk.in2isoft.in2igui.data.MarkupWriter;
 
 public class HTMLWriter extends MarkupWriter {

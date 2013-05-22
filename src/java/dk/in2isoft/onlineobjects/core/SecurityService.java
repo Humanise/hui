@@ -15,6 +15,8 @@ import dk.in2isoft.onlineobjects.model.Item;
 import dk.in2isoft.onlineobjects.model.Privilege;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.services.ConfigurationService;
+import dk.in2isoft.onlineobjects.services.SessionService;
+import dk.in2isoft.onlineobjects.ui.Request;
 
 public class SecurityService {
 	
@@ -26,6 +28,7 @@ public class SecurityService {
 	private ModelService modelService;
 	private User publicUser;
 	private ConfigurationService configurationService;
+	private SessionService sessionService;
 
 	/**
 	 * Tries to change the user of a session
@@ -197,6 +200,28 @@ public class SecurityService {
 		return UserSession.get(session);
 	}
 
+	public boolean transferLogin(Request request, String sessionId) {
+		Long userId = sessionService.getUserIdForSession(sessionId);
+		if (userId==null) {
+			log.error("User id not found");
+			return false;
+		}
+		User admin = modelService.getUser(SecurityService.ADMIN_USERNAME);
+		try {
+			UserSession session = request.getSession();
+			if (session!=null && session.getIdentity()!=userId) {
+				User user = modelService.get(User.class, userId, admin);
+				session.setUser(user);
+				return true;
+			}
+		} catch (ModelException e) {
+			log.error("Unable to change session",e);
+		}
+		return false;
+	}
+	
+	
+	// Wiring...
 
 	public void setModelService(ModelService modelService) {
 		this.modelService = modelService;
@@ -204,5 +229,9 @@ public class SecurityService {
 	
 	public void setConfigurationService(ConfigurationService configurationService) {
 		this.configurationService = configurationService;
+	}
+	
+	public void setSessionService(SessionService sessionService) {
+		this.sessionService = sessionService;
 	}
 }

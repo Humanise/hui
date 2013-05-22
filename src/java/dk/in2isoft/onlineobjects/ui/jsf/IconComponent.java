@@ -1,12 +1,9 @@
 package dk.in2isoft.onlineobjects.ui.jsf;
 
 import java.io.IOException;
-import java.util.Map;
 
 import javax.faces.component.FacesComponent;
 import javax.faces.context.FacesContext;
-
-import com.google.common.collect.Maps;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.ClassBuilder;

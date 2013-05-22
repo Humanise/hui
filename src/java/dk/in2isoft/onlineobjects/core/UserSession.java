@@ -21,7 +21,7 @@ public class UserSession implements Privileged {
 	private String id;
 
 	public UserSession(User user) {
-		this.id = Strings.generateRandomString(20);
+		this.id = Strings.generateRandomString(50);
 		toolSessions = new HashMap<Class<? extends ApplicationController>, ApplicationSession>();
 		this.user = user;
 	}

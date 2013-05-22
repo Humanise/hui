@@ -60,7 +60,7 @@ var oo = {
 					background : '#fff',
 					opacity : 0
 				}})
-				hui.animate({node:hider,css:{opacity:'0.5'},delay:300,ease:hui.ease.slowFastSlow,duration:300});
+				hui.animate({node:hider,css:{opacity:'0.5'},delay:100,ease:hui.ease.slowFastSlow,duration:300});
 				fades.push(hider);
 			};
 		}

@@ -87,10 +87,23 @@ var galleryView = {
 		hui.ui.request({
 			url : oo.appContext+'/removeImageFromGallery',
 			parameters : {galleryId : this.galleryId, imageId : info.id},
-			$success : function() {
+			$finally : function() {
 				info.callback();
 			}.bind(this)
 		});
+	},
+	
+	$move$gallery : function(info) {
+		hui.ui.request({
+			url : oo.appContext+'/changeGallerySequence',
+			json : {info:{galleryId : this.galleryId, images : info.images}},
+			$failure : function() {
+				hui.ui.msg.fail({text:'Unable to change image sequence'});
+			},
+			$finally : function() {
+				info.callback();
+			}
+		});		
 	},
 	
 	_removeImage : function(imageId) {

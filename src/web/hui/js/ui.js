@@ -502,6 +502,12 @@ hui.ui.msg.success = function(options) {
 	hui.ui.msg(options);
 }
 
+hui.ui.msg.fail = function(options) {
+	options = hui.override({icon:'common/warning',duration:3000},options);
+	hui.ui.msg(options);
+}
+
+
 hui.ui.getTranslated = function(value) {
 	if (!hui.isDefined(value) || hui.isString(value)) {
 		return value;

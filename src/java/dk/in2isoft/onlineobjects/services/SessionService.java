@@ -27,9 +27,10 @@ public class SessionService {
 
 	public void sessionCreated(HttpSessionEvent event) {
 		HttpSession session = event.getSession();
-		//session.setMaxInactiveInterval(60);
+		//session.setMaxInactiveInterval(10);
 		log.debug("Session created: id="+session.getId()+",interval="+session.getMaxInactiveInterval());
 		UserSession userSession = securityService.ensureUserSession(session);
+		log.debug("User session: id="+userSession.getId());
 		userSessions.add(userSession);
 	}
 
@@ -64,6 +65,15 @@ public class SessionService {
 		for (SubSession subSession : subSessions) {
 			if (subSession.getId().equals(id) && type.isAssignableFrom(subSession.getClass())) {
 				return (T) subSession;
+			}
+		}
+		return null;
+	}
+
+	public Long getUserIdForSession(String sessionId) {
+		for (UserSession session : userSessions) {
+			if (sessionId.equals(session.getId())) {
+				return new Long(session.getIdentity());
 			}
 		}
 		return null;

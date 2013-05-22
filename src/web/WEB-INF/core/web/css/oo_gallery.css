@@ -113,6 +113,11 @@ div.oo_gallery_shadow span.oo_gallery_photo
 	box-shadow: 0 1px 4px rgba(0,0,0,.2);
 }
 
+div.oo_gallery_shadow ol
+{
+	margin-right: -20px;
+}
+
 span.oo_gallery_hover
 {
 	display: none;
@@ -152,7 +157,6 @@ span.oo_gallery_hover a:hover
 	background: rgba(255,255,255,.8);
 }
 
-
 /******* Incoming *****/
 
 span.oo_gallery_incoming
@@ -175,6 +179,24 @@ div.oo_gallery_shadow span.oo_gallery_incoming
 {
 	margin: 0 20px 20px 0;
 }
+
+
+
+/************ Drag/drop **************/
+
+span.oo_gallery_dummy
+{
+	position: absolute;
+	opacity: .7;
+	box-shadow: 0 15px 15px rgba(0,0,0,.5);
+	font-size: 0;
+}
+
+span.oo_gallery_dragged
+{
+	opacity: .3;
+}
+
 
 
 @media screen and (max-width: 600px) {

@@ -21,7 +21,6 @@ public class ImageTransformationService extends AbstractCommandLineInterface {
 		File converted = new File(folder, getFileName(transform));
 		if (!converted.exists()) {
 			String cmd = buildImageMagick(original, transform, converted);
-			System.out.println(cmd);
 			execute(cmd);
 		}
 		return converted;

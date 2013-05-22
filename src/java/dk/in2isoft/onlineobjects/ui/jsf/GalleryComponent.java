@@ -15,7 +15,6 @@ import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.ui.jsf.model.ImageContainer;
-import dk.in2isoft.onlineobjects.util.Messages;
 
 @FacesComponent(value = GalleryComponent.FAMILY)
 public class GalleryComponent extends AbstractComponent {
@@ -25,7 +24,10 @@ public class GalleryComponent extends AbstractComponent {
 	private String href;
 	private String name;
 	private boolean removable;
+	private boolean movable;
 	private String variant;
+	private int width = 100;
+	private int height = 100;
 
 	public GalleryComponent() {
 		super(FAMILY);
@@ -38,11 +40,14 @@ public class GalleryComponent extends AbstractComponent {
 		name = (String) state[2];
 		removable = (Boolean) state[3];
 		variant = (String) state[4];
+		movable = (Boolean) state[5];
+		width = (Integer) state[6];
+		height = (Integer) state[7];
 	}
 
 	@Override
 	public Object[] saveState() {
-		return new Object[] { var, href, name, removable, variant };
+		return new Object[] { var, href, name, removable, variant, movable, width, height };
 	}
 
 	@Override
@@ -66,10 +71,7 @@ public class GalleryComponent extends AbstractComponent {
 			return;
 		}
 		decodeRequest(context, model);
-		
-		int width = 100;
-		int height = 100;
-		
+				
 		String href = getHref(context);
 		
 		ListModelResult<?> result = model.getResult();
@@ -122,6 +124,7 @@ public class GalleryComponent extends AbstractComponent {
 		if (Strings.isNotBlank(name)) {
 			out.property("name", name).comma();
 		}
+		out.property("movable", movable).comma();
 		out.property("element", id).comma().propertyRaw("images", imageArray.toString()).comma().property("width", width).comma().property("height", height).endNewObject();
 		out.endScopedScript();
 	}
@@ -236,4 +239,34 @@ public class GalleryComponent extends AbstractComponent {
 	public void setVariant(String variant) {
 		this.variant = variant;
 	}
+
+	public boolean isMovable() {
+		return movable;
+	}
+
+	public void setMovable(boolean movable) {
+		this.movable = movable;
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	public void setWidth(int width) {
+		this.width = width;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
+	public void setHeight(int height) {
+		this.height = height;
+	}
+	
+	public void setSize(int size) {
+		this.width = size;
+		this.height = size;
+	}
+	
 }

@@ -29,8 +29,6 @@ import org.quartz.utils.Key;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.context.event.ContextStartedEvent;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 

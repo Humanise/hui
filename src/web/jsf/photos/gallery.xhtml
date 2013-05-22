@@ -41,12 +41,15 @@
 				</div>
 				<div id="photos_gallery_images">
 					<o:gallery name="gallery"
+						size="130"
 						model="#{photosGalleryView.listModel}"
 						href="/#{wordsLayoutView.language}/photo/[id].html"
 						removable="#{photosGalleryView.modifiable}"
+						movable="#{photosGalleryView.modifiable}"
 						variant="shadow"
 					/>
 				</div>
+				<div id="log"></div>
 			</div>
 		</ui:define>
 		

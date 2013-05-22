@@ -3,8 +3,10 @@ package dk.in2isoft.onlineobjects.apps.photos;
 import java.io.IOException;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import dk.in2isoft.in2igui.data.ListData;
-import dk.in2isoft.onlineobjects.apps.photos.perspectives.AddToGalleryPerspective;
+import dk.in2isoft.onlineobjects.apps.photos.perspectives.GalleryModificationRequest;
 import dk.in2isoft.onlineobjects.apps.videosharing.Path;
 import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.Query;
@@ -213,7 +215,7 @@ public class PhotosController extends PhotosControllerBase {
 	@Path
 	public void addImagesToGallery(Request request) throws SecurityException, ModelException, ContentNotFoundException {
 		UserSession session = request.getSession();
-		AddToGalleryPerspective per = request.getObject("info", AddToGalleryPerspective.class);
+		GalleryModificationRequest per = request.getObject("info", GalleryModificationRequest.class);
 		ImageGallery gallery = modelService.getRequired(ImageGallery.class, per.getGalleryId(), session);
 		float position = getMaxImagePosition(gallery);
 		int num = 0;
@@ -228,6 +230,17 @@ public class PhotosController extends PhotosControllerBase {
 		}
 	}
 
+	@Path
+	public void changeGallerySequence(Request request) throws SecurityException, ModelException, ContentNotFoundException {
+		UserSession session = request.getSession();
+		GalleryModificationRequest info = request.getObject("info", GalleryModificationRequest.class);
+		List<Long> ids = Lists.newArrayList();
+		for (SimpleEntityPerspective image : info.getImages()) {
+			ids.add(image.getId());
+		}
+		imageGalleryService.changeSequence(info.getGalleryId(), ids, session);
+	}
+	
 	private float getMaxImagePosition(Entity gallery) throws ModelException {
 		float max = 0;
 		List<Relation> relations = modelService.getChildRelations(gallery,Image.class);

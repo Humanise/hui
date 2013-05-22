@@ -148,7 +148,6 @@ div.oo_layout_paper div.oo_layout_right
 	div.oo_layout_paper div.oo_layout_middle
 	{
 		padding: 0;
-		position: relative;
 	}
 	
 	div.oo_layout_paper div.oo_layout_sidebar
@@ -156,7 +155,7 @@ div.oo_layout_paper div.oo_layout_right
 		position: absolute;
 		float: none;
 		right: 0;
-		top: 10px;
+		top: 38px;
 	}
 	
 	div.oo_layout_paper div.oo_layout_body

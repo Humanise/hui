@@ -41,7 +41,7 @@ public class ImageController extends ServiceController {
 
 	@Override
 	public void unknownRequest(Request request) throws IOException, EndUserException {
-		if (!false) {
+		if (false) {
 			try {
 				Thread.sleep(Math.round(Math.random()*3000+1000));
 			} catch (InterruptedException e) {

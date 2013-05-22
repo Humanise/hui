@@ -3,6 +3,7 @@
 	div.photos_layout
 	{
 		width: 100%;
+		margin-top: 0px;
 	}
 	
 	div.photos_photo_image
