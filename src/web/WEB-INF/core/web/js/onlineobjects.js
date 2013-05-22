@@ -58,9 +58,11 @@ var oo = {
 					width : node.offsetWidth+'px',
 					height : node.offsetHeight+'px',
 					background : '#fff',
-					opacity : 0
+					opacity : 0,
+					webkitUserSelect : 'none',
+					cursor : 'wait'
 				}})
-				hui.animate({node:hider,css:{opacity:'0.5'},delay:100,ease:hui.ease.slowFastSlow,duration:300});
+				hui.animate({node:hider,css:{opacity:0.2},delay:200,ease:hui.ease.slowFastSlow,duration:300});
 				fades.push(hider);
 			};
 		}
@@ -100,7 +102,7 @@ var oo = {
 			$finally : function() {
 				hui.each(fades,function(fade) {
 					hui.log(fade)
-					hui.animate({node:fade,css:{opacity:'0'},duration:300,ease:hui.ease.slowFastSlow,$complete : function() {
+					hui.animate({node:fade,css:{opacity:'0'},duration:100,ease:hui.ease.slowFastSlow,$complete : function() {
 						hui.dom.remove(fade);
 					}});
 				});

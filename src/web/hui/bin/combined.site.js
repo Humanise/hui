@@ -2430,8 +2430,11 @@ hui.animate = function(options,property,value,duration,delegate) {
 		else if (!options.css) {
 			item.animate(null,'','',options.duration,options);
 		} else {
+			var o = options;
 			for (prop in options.css) {
-				item.animate(null,options.css[prop],prop,options.duration,options);
+				item.animate(null,options.css[prop],prop,options.duration,o);
+				o = hui.override({},options);
+				o.$complete = undefined;
 			}
 		}
 	}
@@ -3813,6 +3816,12 @@ hui.ui.msg.success = function(options) {
 	options = hui.override({icon:'common/success',duration:2000},options);
 	hui.ui.msg(options);
 }
+
+hui.ui.msg.fail = function(options) {
+	options = hui.override({icon:'common/warning',duration:3000},options);
+	hui.ui.msg(options);
+}
+
 
 hui.ui.getTranslated = function(value) {
 	if (!hui.isDefined(value) || hui.isString(value)) {

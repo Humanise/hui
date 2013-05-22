@@ -85,11 +85,6 @@ div.oo_gallery ol span.oo_thumbnail
 	margin: 0px 10px 10px 0;
 }
 
-div.oo_gallery_busy
-{
-	opacity: .5;
-}
-
 /********/
 
 span.oo_gallery_photo
@@ -184,12 +179,21 @@ div.oo_gallery_shadow span.oo_gallery_incoming
 
 /************ Drag/drop **************/
 
+body.oo_gallery_dragging,
+body.oo_gallery_dragging span.oo_gallery_dummy a
+{
+	cursor: move;
+	cursor: -webkit-grabbing;
+}
+
 span.oo_gallery_dummy
 {
 	position: absolute;
 	opacity: .7;
-	box-shadow: 0 15px 15px rgba(0,0,0,.5);
+	box-shadow: 0 5px 15px rgba(0,0,0,.2);
 	font-size: 0;
+	cursor: move;
+	cursor: -webkit-grabbing;
 }
 
 span.oo_gallery_dragged
@@ -197,6 +201,16 @@ span.oo_gallery_dragged
 	opacity: .3;
 }
 
+div.oo_gallery_busy,
+div.oo_gallery_busy span.oo_gallery_photo
+{
+	cursor: wait;
+}
+
+div.oo_gallery_busy span.oo_gallery_hover
+{
+	visibility: hidden;
+}
 
 
 @media screen and (max-width: 600px) {

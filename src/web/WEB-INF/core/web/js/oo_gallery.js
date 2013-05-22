@@ -20,7 +20,6 @@ oo.Gallery.prototype = {
 			element : this.element,
 			photo : null,
 			targets : [],
-			subject : null,
 			dragIndex : null,
 			onBeforeMove : function(e) {
 				if (self.busy) {
@@ -28,8 +27,9 @@ oo.Gallery.prototype = {
 				}
 				var photo = e.findByClass('oo_gallery_photo');
 				if (photo) {
+					hui.cls.add(document.body,'oo_gallery_dragging');
 					this.element.style.height = this.element.clientHeight+'px';
-					this.subject = photo;
+					this.photo = photo;
 					var all = hui.get.byClass(this.element,'oo_gallery_photo');
 					this.targets = [];
 					for (var i=0; i < all.length; i++) {
@@ -56,13 +56,13 @@ oo.Gallery.prototype = {
 					
 					this.dummy = hui.build('span',{'class':'oo_gallery_dummy',parent:document.body,html:photo.innerHTML});
 					this.offset = {
-						left : this.dummy.clientWidth/-2,
-						top : this.dummy.clientHeight/-2
+						left : hui.position.getLeft(photo)-e.getLeft(),
+						top : hui.position.getTop(photo)-e.getTop()
 					}
 				}
 			},
 			onMove : function(e) {
-				if (!this.dummy) {
+				if (!this.dummy || self.busy) {
 					return;
 				}
 				var left = e.getLeft(),
@@ -77,69 +77,59 @@ oo.Gallery.prototype = {
 				};
 			},
 			_changeTarget : function(target) {
-				//if (this._target!=target) {
-					hui.log('_changeTarget',target)
-					if (this._target) {
-						//hui.cls.remove(this._target.node,'oo_gallery_target');
+				this.indices = [];
+				for (var i=0; i < this.targets.length; i++) {
+					this.targets[i]
+					if (i>this.dragIndex) {
+						this.indices.push(i);
 					}
-					this._target = target;
-					//hui.cls.add(this._target.node,'oo_gallery_target');
-					this.indices = [];
-					for (var i=0; i < this.targets.length; i++) {
-						this.targets[i]
-						if (i>this.dragIndex) {
-							this.indices.push(i);
-						}
-						if (i==target.index) {
-							this.indices.push(this.dragIndex);
-						}
-						if (i<this.dragIndex) {
-							this.indices.push(i);
-						}
-					};
-					//hui.get('log').innerHTML = indices.join(',')
-					for (var i=0; i < this.indices.length; i++) {
-						var target = this.targets[i];
-						var node = this.targets[this.indices[i]].node;
-						hui.animate({node:node,css:{
-							left : target.left+'px',
-							top : target.top+'px'
-						},duration:300,ease:hui.ease.fastSlow})
-						//node.style.left = target.left+'px';
-						//node.style.top = target.top+'px';
-					};
-				//}
+					if (i==target.index) {
+						this.indices.push(this.dragIndex);
+					}
+					if (i<this.dragIndex) {
+						this.indices.push(i);
+					}
+				};
+				for (var i=0; i < this.indices.length; i++) {
+					var target = this.targets[i];
+					var node = this.targets[this.indices[i]].node;
+					hui.animate({node:node,css:{
+						left : target.left+'px',
+						top : target.top+'px'
+					},duration:300,ease:hui.ease.fastSlow})
+				};
 			},
 			onEnd : function() {
-				if (self.busy) {
+				if (self.busy || !this.photo) {
 					return;
 				}
-				self.busy = true;
-				if (this.dummy) {
-					hui.dom.remove(this.dummy)
-					this.dummy = null;
-				}
-				if (this._target) {
-					hui.cls.remove(this._target.node,'oo_gallery_target');
-				}
-				if (this.subject) {
-					hui.cls.remove(this.subject,'oo_gallery_dragged');
-					this.subject = null;
-				}
-				var all = hui.get.byClass(this.element,'oo_gallery_photo');
-				for (var i=0; i < all.length; i++) {
-					//all[i].style.left='';
-					//all[i].style.top='';
-					//all[i].style.position='';
-				};
-				//this.element.style.height = ''
+				hui.cls.remove(document.body,'oo_gallery_dragging');
+				self._markBusy();
 				var images = [];
 				for (var i=0; i < this.indices.length; i++) {
 					images.push(self.images[this.indices[i]]);
 				};
-				self.fire('move',{images : images,callback:self.refresh.bind(self)});
+				if (this.dummy) {
+					var end = this.targets[hui.array.indexOf(this.indices,this.dragIndex)];
+					hui.animate({node:this.dummy,css:{left:end.left+'px',top:end.top+'px',opacity:1},duration:300,$complete:function() {
+						hui.dom.remove(this.dummy);
+						this.dummy = null;
+					}.bind(this)})
+					hui.animate({node:this.photo,css:{opacity:0},duration:300,$complete:function() {
+						hui.cls.remove(this.photo,'oo_gallery_dragged');
+						hui.style.set(this.photo,{opacity:1})
+						this.photo = null;
+						self.fire('move',{images : images,callback:self.refresh.bind(self)});
+					}.bind(this)})
+					
+				}
 			}
 		})
+	},
+	_markBusy : function() {
+		this.busy = true;
+		this.element.style.webkitUserSelect = 'none';
+		hui.cls.add(this.element,'oo_gallery_busy');
 	},
 	_click : function(e) {
 		e = hui.event(e);
@@ -159,14 +149,16 @@ oo.Gallery.prototype = {
 					element : frame,
 					text:'Remove?',
 					$ok : function() {
-						this.busy = true;
+						this._markBusy();
 						hui.animate({
 							node : frame,
 							css : {transform:'scale(0)',opacity:0},
 							duration : 400,
-							ease : hui.ease.backIn
+							ease : hui.ease.backIn,
+							$complete : function() {
+								this.fire('remove',{id : parseInt(a.getAttribute('data')),callback:this.refresh.bind(this)});
+							}.bind(this)
 						});
-						this.fire('remove',{id : parseInt(a.getAttribute('data')),callback:this.refresh.bind(this)});
 					}.bind(this)
 				});
 			}
@@ -198,7 +190,7 @@ oo.Gallery.prototype = {
 	},
 	
 	addIncoming : function() {
-		this.busy = true;
+		this._markBusy();
 		var width = this.options.width,
 			height = this.options.height;
 		var ol = hui.get.firstByTag(this.element,'ol');
