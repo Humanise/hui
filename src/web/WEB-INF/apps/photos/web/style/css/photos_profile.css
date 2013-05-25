@@ -48,7 +48,6 @@ p.photos_profile_username strong
 {
 	display: inline-block;
 	vertical-align: middle;
-	font-weight: 200;
-	letter-spacing: 1px;
+	font-weight: 400;
 	font-size: 9pt;
 }

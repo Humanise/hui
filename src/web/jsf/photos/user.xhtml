@@ -17,8 +17,11 @@
 		<ui:define name="body">
 			<div class="photos_user">
 				<o:header>#{photosUserView.personName}</o:header>
-				<o:gallery model="#{photosUserView.imageList}" var="image">
-					<o:thumbnail image="#{image}" width="100" height="100" href="/#{wordsLayoutView.language}/photo/#{image.id}.html"/>
+				<o:gallery model="#{photosUserView.imageList}"
+					variant="shadow"
+					href="/#{wordsLayoutView.language}/photo/[id].html"
+					>
+				
 				</o:gallery>
 			</div>
 		</ui:define>

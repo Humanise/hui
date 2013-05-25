@@ -6,6 +6,6 @@ div.photos_user
 div.photos_user h1
 {
 	font-weight: 100;
-	margin: 0 0 15px;
+	margin-bottom: 15px;
 	color: #333;
 }

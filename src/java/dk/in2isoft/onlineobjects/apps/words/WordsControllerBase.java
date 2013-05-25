@@ -87,6 +87,7 @@ public class WordsControllerBase extends ApplicationController {
 		addJsfMatcher("/<language>/import/<folder>", "import.xhtml");
 		addJsfMatcher("/<language>/index/<folder>", "index.xhtml");
 		addJsfMatcher("/<language>/index/<folder>/<integer>", "index.xhtml");
+		addJsfMatcher("/<language>/enrich", "enrich.xhtml");
 	}
 	
 	public List<Locale> getLocales() {

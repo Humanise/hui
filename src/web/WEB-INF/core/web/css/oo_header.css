@@ -9,7 +9,9 @@ h1.oo_header
 	font-size: 52px;
 	font-weight: 100;
 	line-height: 40px;
-	font-family: 'HelveticaNeue-UltraLight','Helvetica Neue','Helvetica','Arial',sans-serif;
+	font-family: 'Lato';
+	text-indent: -4px;
+	margin-top: -5px;
 }
 
 h2.oo_header
@@ -17,7 +19,8 @@ h2.oo_header
 	font-size: 32px;
 	font-weight: 100;
 	line-height: 26px;
-	font-family: 'HelveticaNeue-UltraLight','Helvetica Neue','Helvetica','Arial',sans-serif;
+	font-family: 'Lato';
+/*	font-family: 'HelveticaNeue-UltraLight','Helvetica Neue','Helvetica','Arial',sans-serif;*/
 }
 
 h3.oo_header
@@ -25,4 +28,5 @@ h3.oo_header
 	font-size: 26px;
 	font-weight: 200;
 	line-height: 22px;	
+	font-family: 'Lato';
 }

@@ -46,8 +46,7 @@ public class IconComponent extends AbstractComponent {
 	@Override
 	protected void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
 		
-		writer.startSpan().withClass(new ClassBuilder("oo_icon").add("oo_icon", size).add(styleClass));
-		writer.text(Icons.font.get(icon));
+		writer.startSpan().withClass(new ClassBuilder("oo_icon").add("oo_icon", size).add(styleClass).add("oo_icon", icon));
 		writer.endSpan();
 	}
 

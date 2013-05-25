@@ -45,7 +45,7 @@ public class TopBarComponent extends AbstractComponent {
 		
 		out.startDiv("oo_topbar oo_faded").withId(getClientId());
 		out.startA("oo_topbar_logo").withHref(configurationService.getApplicationContext("front", null, request));
-		out.startEm().write("&#xa4;").endEm().startStrong().startSpan().write("Online").startSpan().write("Objects").endSpan().endSpan().endStrong();
+		out.startEm("oo_icon_onlineobjects").endEm().startStrong().startSpan().write("Online").startSpan().write("Objects").endSpan().endSpan().endStrong();
 		out.endA();
 
 		out.startUl("oo_topbar_left");
@@ -84,7 +84,7 @@ public class TopBarComponent extends AbstractComponent {
 			}		
 			User user = request.getSession().getUser();
 			out.startLi().startVoidA("oo_topbar_user").withAttribute("data", "user");
-			out.startSpan().withClass("oo_icon oo_icon_16").text("u").endSpan();
+			out.startSpan().withClass("oo_icon oo_icon_16 oo_icon_user").endSpan();
 			out.write(user.getName()).endA().endLi();
 		}
 		out.endUl();

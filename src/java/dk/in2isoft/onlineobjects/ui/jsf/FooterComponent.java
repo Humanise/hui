@@ -38,6 +38,7 @@ public class FooterComponent extends AbstractComponent {
 		ConfigurationService bean = getBean(ConfigurationService.class);
 		Collection<Locale> locales = bean.getApplicationLocales(getRequest().getApplication());
 		Request request = getRequest();
+		writer.startDiv("oo_footer");
 		if (locales!=null) {
 			Messages msg = getMessages();
 			writer.startP("oo_footer");
@@ -60,8 +61,10 @@ public class FooterComponent extends AbstractComponent {
 				}
 			}
 			writer.endP();
-			writer.startP("oo_footer_logo").startSpan().write("&#xa4;").endSpan().endP();
 		}
+		writer.startP("oo_footer_logo").startSpan("oo_icon oo_icon_humanise").endSpan().endP();
+		writer.startP("oo_footer_by").text("Humanise").endP();
+		writer.endDiv();
 	}
 	
 	private String buildUrl(Request request, Locale locale) {

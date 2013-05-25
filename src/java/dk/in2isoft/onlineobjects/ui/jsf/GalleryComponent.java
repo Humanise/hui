@@ -14,7 +14,9 @@ import dk.in2isoft.commons.jsf.Components;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.model.Image;
+import dk.in2isoft.onlineobjects.ui.jsf.model.GalleryItem;
 import dk.in2isoft.onlineobjects.ui.jsf.model.ImageContainer;
+import dk.in2isoft.onlineobjects.util.images.ImageService;
 
 @FacesComponent(value = GalleryComponent.FAMILY)
 public class GalleryComponent extends AbstractComponent {
@@ -89,10 +91,13 @@ public class GalleryComponent extends AbstractComponent {
 			out.startLi();
 			
 			
-			if (getChildCount()==0 && object instanceof Image) {
+			int childCount = getChildCount();
+			if (childCount==0) {
 				encodeImage(out, width, height, href, object, isRemovable(context));
 			} else {
-				context.getExternalContext().getRequestMap().put(var, object);
+				if (var!=null) {
+					context.getExternalContext().getRequestMap().put(var, object);
+				}
 				for (UIComponent child : children) {
 					child.encodeAll(context);
 				}				
@@ -130,18 +135,29 @@ public class GalleryComponent extends AbstractComponent {
 	}
 
 	private void encodeImage(TagWriter out, int width, int height, String href, Object object, boolean removable) throws IOException {
-		Image image = (Image) object;
+		Image image = null;
+		if (object instanceof Image) {
+			image = (Image) object;
+		} else if (object instanceof ImageContainer) {
+			image = ((ImageContainer) object).getImage();
+		}
 		String url = getUrl(image,width,height);
 		out.startSpan("oo_gallery_photo");
 		if (removable) {
 			out.startSpan("oo_gallery_hover");
 			out.startVoidA("oo_gallery_remove").rel("remove").data(image.getId());
-			out.startSpan("oo_icon oo_icon_16").text("*").endSpan();
+			out.startSpan("oo_icon oo_icon_16 oo_icon_delete").endSpan();
 			out.endA();
 			out.endSpan();
 		}
 		out.startA().withHref(getHref(href,image));
-		out.startImg().src(url).alt(image.getName()).withStyle("width: "+width+"px; height: "+height+"px;").endImg();
+		ImageService imageService = getBean(ImageService.class);
+		boolean valid = imageService.hasImageFile(image);
+		out.startImg();
+		if (valid) {
+			out.src(url);
+		}
+		out.alt(image.getName()).withStyle("width: "+width+"px; height: "+height+"px;").endImg();
 		out.endA();
 		out.endSpan();
 	}

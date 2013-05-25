@@ -50,8 +50,10 @@ h1.photos_photo_not_found
 div.photos_photo h1
 {
 	font-weight: 100;
-	font-family: 'HelveticaNeue-UltraLight','Helvetica Neue','Helvetica','Arial',sans-serif;
-	margin: 0;
+	font-family: 'Lato','HelveticaNeue-UltraLight','Helvetica Neue','Helvetica','Arial',sans-serif;
+	margin: 0 0 10px;
+	line-height: 1;
+	text-indent: -2px;
 	color: #333;
 }
 
@@ -116,7 +118,7 @@ p.photos_photo_description span
 	position: relative;
 	font-family: Georgia;
 	vertical-align: middle;
-	height: 16px;
+	height: 18px;
 	line-height: 52px;
 	overflow: hidden;
 }
@@ -143,7 +145,6 @@ p.photos_photo_words a
 div.photos_photo_galleries h2
 {
 	font-weight: 200;
-	font-family: 'HelveticaNeue-Light','Helvetica Neue','Helvetica','Arial',sans-serif;
 	font-size: 14pt;
 	margin: 15px 0 5px;
 	color: #999;

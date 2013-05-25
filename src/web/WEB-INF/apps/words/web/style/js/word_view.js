@@ -14,6 +14,10 @@ var wordView = {
 		return;
 		oo.WordGetter.show();
 	},
+	
+	$click$toggleExpanded : function() {
+		hui.cls.toggle('word','words_word_expanded')
+	},
 		
 	$select$oo_wordfinder : function(word) {
 		var button = hui.ui.get('relate'+this.wordInfo.id),

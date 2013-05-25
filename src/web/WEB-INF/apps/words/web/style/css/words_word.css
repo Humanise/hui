@@ -1,3 +1,20 @@
+a.words_word_expand
+{
+	float: right;
+	color: #ddd;
+}
+
+div.words_word_expanded a.words_word_expand
+{
+	color: #999;
+}
+
+a.words_word_expand:hover,
+div.words_word_expanded a.words_word_expand:hover
+{
+	color: #333;
+}
+
 p.words_word_warning
 {
 	font-size: 10pt;
@@ -19,7 +36,13 @@ p.words_word_by
 	color: #999;
 	text-align: right;
 	float: right;
-	margin-top: -16px;
+	margin-top: -21px;
+	display: none;
+}
+
+div.words_word_expanded p.words_word_by
+{
+	display: block;
 }
 
 p.words_word_info

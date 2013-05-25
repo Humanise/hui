@@ -13,22 +13,22 @@ import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.ui.jsf.ListModel;
 import dk.in2isoft.onlineobjects.ui.jsf.ListModelResult;
-import dk.in2isoft.onlineobjects.ui.jsf.model.ImageContainer;
+import dk.in2isoft.onlineobjects.ui.jsf.model.GalleryItem;
 
 public class PhotosFrontView extends AbstractManagedBean {
 
 	private ModelService modelService;
 	private SecurityService securityService;
 	
-	public ListModel<Photo> getImageList() {
-		ListModel<Photo> model = new ListModel<Photo>() {
+	public ListModel<GalleryItem> getImageList() {
+		ListModel<GalleryItem> model = new ListModel<GalleryItem>() {
 
 			@Override
-			public ListModelResult<Photo> getResult() {
+			public ListModelResult<GalleryItem> getResult() {
 				Query<Image> query = Query.of(Image.class).orderByCreated().withPaging(getPage(), getPageSize()).withPrivileged(securityService.getPublicUser()).descending();
 				SearchResult<Image> result = modelService.search(query);
-				List<Photo> list = convert(result.getList());
-				return new ListModelResult<Photo>(list,result.getTotalCount());
+				List<GalleryItem> list = convert(result.getList());
+				return new ListModelResult<GalleryItem>(list,result.getTotalCount());
 			}
 			
 		};
@@ -36,16 +36,15 @@ public class PhotosFrontView extends AbstractManagedBean {
 		return model;
 	}
 	
-	private List<Photo> convert(List<Image> images) {
-		List<Photo> list = new ArrayList<Photo>();
+	private List<GalleryItem> convert(List<Image> images) {
+		List<GalleryItem> list = new ArrayList<GalleryItem>();
 		for (Image image : images) {
-			Photo photo = new Photo();
-			photo.setImage(image);
+			User user = null;
 			try {
-				photo.setUser(modelService.getOwner(image));
+				user = modelService.getOwner(image);
 			} catch (ModelException ignore) {
 			}
-			list.add(photo);
+			list.add(GalleryItem.create(image, user));
 		}		
 		return list;
 	}
@@ -64,26 +63,5 @@ public class PhotosFrontView extends AbstractManagedBean {
 
 	public SecurityService getSecurityService() {
 		return securityService;
-	}
-
-	public class Photo implements ImageContainer {
-		private Image image;
-		private User user;
-
-		public void setImage(Image image) {
-			this.image = image;
-		}
-
-		public Image getImage() {
-			return image;
-		}
-
-		public void setUser(User user) {
-			this.user = user;
-		}
-
-		public User getUser() {
-			return user;
-		}
 	}
 }

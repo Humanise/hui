@@ -30,6 +30,7 @@ h1.words
 	margin: 0;
 	font-weight: normal;
 	font-size: 48px;
+	line-height: 1;
 }
 
 h1.words span

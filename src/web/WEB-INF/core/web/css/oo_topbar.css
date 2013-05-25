@@ -1,6 +1,5 @@
 div.oo_topbar
 {
-	font-family: 'Helvetica Neue','Helvetica','Arial',sans-serif;
 	overflow: hidden;
 	border-bottom: 1px solid #fafafa;
 	font-size: 0;
@@ -39,7 +38,7 @@ a.oo_topbar_logo em
 	font-style: normal;
 	font-weight: normal;
 	-webkit-font-smoothing: antialiased;
-	margin: 0px 4px 0 -2px;
+	margin: 3px 4px 0 -2px;
 	vertical-align: top;
 	display: inline-block;
 	font-size: 22px;
@@ -54,14 +53,13 @@ body.oo_msie7 div.oo_topbar strong
 
 div.oo_topbar strong span
 {
-	font-weight: 200;
-	margin-left: 2px;
+	font-weight: 400;
 	letter-spacing: 1px;
 }
 
 div.oo_topbar strong span span
 {
-	font-weight: 100;
+	font-weight: 200;
 }
 
 a.oo_topbar_logo:hover strong

@@ -25,9 +25,9 @@
 /*
 Instead of a list of all class selectors,
 you can use the generic selector below, but it's slower:
-[class*="oo_font_"] {
+[class*="oo_icon_"] {
 */
-.oo_font_arrow_right, .oo_font_arrow_left, .oo_font_download, .oo_font_expand, .oo_font_user, .oo_font_onlineobjects, .oo_font_at, .oo_font_globe, .oo_font_envelope, .oo_font_tag, .oo_font_globus, .oo_font_phone, .oo_font_warning, .oo_font_camera, .oo_font_file, .oo_font_time, .oo_font_dimensions, .oo_font_book, .oo_font_delete, .oo_font_share, .oo_font_album, .oo_font_add, .oo_font_edit, .oo_font_present, .oo_font_location, .oo_font_info, .oo_font_photos, .oo_font_close {
+.oo_icon_arrow_right, .oo_icon_arrow_left, .oo_icon_download, .oo_icon_expand, .oo_icon_user, .oo_icon_onlineobjects, .oo_icon_at, .oo_icon_globe, .oo_icon_envelope, .oo_icon_tag, .oo_icon_globus, .oo_icon_phone, .oo_icon_warning, .oo_icon_camera, .oo_icon_file, .oo_icon_time, .oo_icon_dimensions, .oo_icon_book, .oo_icon_delete, .oo_icon_share, .oo_icon_album, .oo_icon_add, .oo_icon_edit, .oo_icon_present, .oo_icon_info, .oo_icon_photos, .oo_icon_close, .oo_icon_gear, .oo_icon_info_light, .oo_icon_first, .oo_icon_statistics, .oo_icon_search, .oo_icon_marker, .oo_icon_inbox, .oo_icon_locked, .oo_icon_support, .oo_icon_list_bullet, .oo_icon_humanise {
 	font-family: 'OnlineObjects';
 	speak: none;
 	font-style: normal;
@@ -37,87 +37,117 @@ you can use the generic selector below, but it's slower:
 	line-height: 1;
 	-webkit-font-smoothing: antialiased;
 }
-.oo_font_arrow_right:before {
+.oo_icon_arrow_right:before {
 	content: "\3e";
 }
-.oo_font_arrow_left:before {
+.oo_icon_arrow_left:before {
 	content: "\3c";
 }
-.oo_font_download:before {
+.oo_icon_download:before {
 	content: "\64";
 }
-.oo_font_expand:before {
+.oo_icon_expand:before {
 	content: "\78";
 }
-.oo_font_user:before {
+.oo_icon_user:before {
 	content: "\75";
 }
-.oo_font_onlineobjects:before {
+.oo_icon_onlineobjects:before {
 	content: "\a4";
 }
-.oo_font_at:before {
+.oo_icon_at:before {
 	content: "\40";
 }
-.oo_font_globe:before {
+.oo_icon_globe:before {
 	content: "\67";
 }
-.oo_font_envelope:before {
+.oo_icon_envelope:before {
 	content: "\65";
 }
-.oo_font_tag:before {
+.oo_icon_tag:before {
 	content: "\74";
 }
-.oo_font_globus:before {
+.oo_icon_globus:before {
 	content: "\47";
 }
-.oo_font_phone:before {
+.oo_icon_phone:before {
 	content: "\70";
 }
-.oo_font_warning:before {
+.oo_icon_warning:before {
 	content: "\77";
 }
-.oo_font_camera:before {
+.oo_icon_camera:before {
 	content: "\63";
 }
-.oo_font_file:before {
+.oo_icon_file:before {
 	content: "\66";
 }
-.oo_font_time:before {
+.oo_icon_time:before {
 	content: "\54";
 }
-.oo_font_dimensions:before {
+.oo_icon_dimensions:before {
 	content: "\44";
 }
-.oo_font_book:before {
+.oo_icon_book:before {
 	content: "\62";
 }
-.oo_font_delete:before {
+.oo_icon_delete:before {
 	content: "\2a";
 }
-.oo_font_share:before {
+.oo_icon_share:before {
 	content: "\23";
 }
-.oo_font_album:before {
+.oo_icon_album:before {
 	content: "\6c";
 }
-.oo_font_add:before {
+.oo_icon_add:before {
 	content: "\2b";
 }
-.oo_font_edit:before {
+.oo_icon_edit:before {
 	content: "\3d";
 }
-.oo_font_present:before {
+.oo_icon_present:before {
 	content: "\21";
 }
-.oo_font_location:before {
-	content: "\6d";
-}
-.oo_font_info:before {
+.oo_icon_info:before {
 	content: "\69";
 }
-.oo_font_photos:before {
+.oo_icon_photos:before {
 	content: "\5e";
 }
-.oo_font_close:before {
+.oo_icon_close:before {
 	content: "\6b";
+}
+.oo_icon_gear:before {
+	content: "\22";
+}
+.oo_icon_info_light:before {
+	content: "\27";
+}
+.oo_icon_first:before {
+	content: "\28";
+}
+.oo_icon_statistics:before {
+	content: "\25";
+}
+.oo_icon_search:before {
+	content: "\24";
+}
+.oo_icon_marker:before {
+	content: "\26";
+}
+.oo_icon_inbox:before {
+	content: "\29";
+}
+.oo_icon_locked:before {
+	content: "\2c";
+}
+.oo_icon_support:before {
+	content: "\2d";
+}
+.oo_icon_list_bullet:before {
+	content: "\2e";
+}
+.oo_icon_humanise:before {
+	content: "\2f";
 }
