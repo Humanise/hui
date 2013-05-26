@@ -116,8 +116,9 @@ public class WordsController extends WordsControllerBase {
 			perspective.setText(first.getText());
 			perspective.setWordId(first.getId());
 			ArrayList<Option> enrichments = Lists.newArrayList();
-			enrichments.add(new Option("Change to danish",Pair.of("language", "da")));
-			enrichments.add(new Option("No language",Pair.of("language", null)));
+			enrichments.add(new Option("Danish",Pair.of("language", "da")));
+			enrichments.add(new Option("English",Pair.of("language", "en")));
+			enrichments.add(new Option("None",Pair.of("language", null)));
 			perspective.setEnrichments(enrichments);
 			return perspective;
 		}
