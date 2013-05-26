@@ -1,7 +1,7 @@
 body
 {
 	margin: 0;
-	font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;
+	font-family: 'Open Sans','Helvetica Neue','Helvetica',Arial,sans-serif;
 }
 
 #logo
@@ -37,7 +37,7 @@ h1
 	line-height: 90px;
 	margin-top: 150px;
 	cursor: default;
-	font-family: 'HelveticaNeue-UltraLight','Helvetica Neue','Helvetica','Arial',sans-serif;
+	font-family: 'Lato';
 }
 
 
@@ -51,10 +51,11 @@ h1
 	text-align: center;
 	letter-spacing: 1px;
 	cursor: default;
-	font-family: 'HelveticaNeue-UltraLight','Helvetica Neue','Helvetica','Arial',sans-serif;
+	font-family: 'Lato';
 	position: absolute;
 	top: 30%;
 	margin-top: 250px;
+	background: #fff;
 }
 
 ul

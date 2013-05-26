@@ -8,7 +8,7 @@
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	locale="#{wordsLayoutView.language}"
 >
-<f:loadBundle basename="dk.in2isoft.onlineobjects.apps.photos.msg.PhotosController" var="msg"/>
+<f:loadBundle basename="dk.in2isoft.onlineobjects.apps.front.msg.FrontController" var="msg"/>
 
 <o:doctype/>
 
@@ -16,10 +16,10 @@
 <head>
 	<meta name="viewport" content="user-scalable=yes, width=device-width, initial-scale = 1, maximum-scale = 10, minimum-scale = 0.2"/>
 	<title>OnlineObjects</title>
+	<o:fonts/>
 	<o:stylesheet href="/style.css" integrateCache="true"/>
 	<o:script src="/script.js" integrateCache="true"/>
 </head>
-<f:loadBundle basename="dk.in2isoft.onlineobjects.apps.front.msg.FrontController" var="msg"/>
 <body>
 	<div id="container">
 		<div id="logo">
@@ -51,7 +51,7 @@
 	<p class="language">
 		<o:link href="/da/">Dansk</o:link>
 		<o:out value="#{' '}"/>
-		<o:link href="/en/">Engelsk</o:link>
+		<o:link href="/en/">English</o:link>
 	</p>
 	<o:analytics/>
 </body>

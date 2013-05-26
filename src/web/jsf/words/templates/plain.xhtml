@@ -18,11 +18,8 @@
 		<meta name="viewport" content="user-scalable=yes, width=device-width, initial-scale = 1, maximum-scale = 10, minimum-scale = 0.2"/>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 		<title><ui:insert name="title"/>Words - OnlineObjects</title>
-		<link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,700,600,300|Lato:100|Titillium+Web:200|Nobile' rel='stylesheet' type='text/css'/>
+		<o:fonts/>
 		<o:stylesheet href="/style.css" integrateCache="true"/>
-		<ui:remove>
-		<o:stylesheet href="/core/fonts/lora/stylesheet.css" core="true"/>
-		</ui:remove>
 		<link href="http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css"/>
 		<o:script src="/script.js" integrateCache="true"/>
 		<gui:scriptSetup/>
@@ -33,59 +30,60 @@
 		<o:topBar/>
 		<o:layout variant="paper">
 			<f:facet name="sidebar">
-					<div class="words_sidebar">
-						<gui:searchfield adaptive="true" name="wordsSidebarSearch"/>
-						<h3><span>Navigation</span></h3>
-						<ul class="words_menu">
-							<li>
-								<o:link href="/#{wordsLayoutView.language}/" plain="true"
-									styleClass="#{wordsLayoutView.selectedMenuItem=='front' ? 'words_menu_selected' : ''}">
-									<o:icon icon="first"/>
-									<span class="words_menu">#{msg.home}</span>
-								</o:link>
-							</li>
-							<li>
-								<o:link href="/#{wordsLayoutView.language}/search/" plain="true"
-									styleClass="#{wordsLayoutView.selectedMenuItem=='search' ? 'words_menu_selected' : ''}">
-									<o:icon icon="search"/>
-									<span class="words_menu">#{msg.searching}</span>
-								</o:link>
-							</li>
-							<li>
-								<o:link href="/#{wordsLayoutView.language}/index/a/" plain="true"
-									styleClass="#{wordsLayoutView.selectedMenuItem=='index' ? 'words_menu_selected' : ''}">
-									<o:icon icon="list_bullet"/>
-									<span class="words_menu">#{msg.index}</span>
-								</o:link>
-							</li>
-							<li>
-								<o:link href="/#{wordsLayoutView.language}/statistics/" plain="true"
-									styleClass="#{wordsLayoutView.selectedMenuItem=='statistics' ? 'words_menu_selected' : ''}">
-									<o:icon icon="statistics"/>
-									<span class="words_menu">#{msg.statistics}</span>
-								</o:link>
-							</li>
-							<li>
-								<o:link href="/#{wordsLayoutView.language}/about/" plain="true"
-									styleClass="#{wordsLayoutView.selectedMenuItem=='about' ? 'words_menu_selected' : ''}">
-									<o:icon icon="info_light"/>
-									<span class="words_menu">#{msg.about}</span>
-								</o:link>
-							</li>
-						</ul>
-							<h3><span>Index</span></h3>
-						<ul class="words_sidebar_index">
-							<c:forEach items="#{wordsIndexView.alphabeth}" var="char">
-								<li class="#{char.value=='_' ? 'words_sidebar_index_symbols' : ''}"><o:link href="/#{wordsLayoutView.language}/index/#{char.value}/">#{char.label}</o:link></li>
-							</c:forEach>
-						</ul>
-						<c:if test="#{wordsLayoutView.loggedIn}">
-							<h3><span>Tools</span></h3>
-							<p>
-								<gui:button name="import" text="Import" variant="light"></gui:button>
-							</p>
-						</c:if>
-					</div>
+				<div class="words_sidebar">
+					<gui:searchfield adaptive="true" name="wordsSidebarSearch"/>
+					<h3><span>Navigation</span></h3>
+					<ul class="words_menu">
+						<li>
+							<o:link href="/#{wordsLayoutView.language}/" plain="true"
+								styleClass="#{wordsLayoutView.selectedMenuItem=='front' ? 'words_menu_selected' : ''}">
+								<o:icon icon="first"/>
+								<span class="words_menu">#{msg.home}</span>
+							</o:link>
+						</li>
+						<li>
+							<o:link href="/#{wordsLayoutView.language}/search/" plain="true"
+								styleClass="#{wordsLayoutView.selectedMenuItem=='search' ? 'words_menu_selected' : ''}">
+								<o:icon icon="search"/>
+								<span class="words_menu">#{msg.searching}</span>
+							</o:link>
+						</li>
+						<li>
+							<o:link href="/#{wordsLayoutView.language}/index/a/" plain="true"
+								styleClass="#{wordsLayoutView.selectedMenuItem=='index' ? 'words_menu_selected' : ''}">
+								<o:icon icon="list_bullet"/>
+								<span class="words_menu">#{msg.index}</span>
+							</o:link>
+						</li>
+						<li>
+							<o:link href="/#{wordsLayoutView.language}/statistics/" plain="true"
+								styleClass="#{wordsLayoutView.selectedMenuItem=='statistics' ? 'words_menu_selected' : ''}">
+								<o:icon icon="statistics"/>
+								<span class="words_menu">#{msg.statistics}</span>
+							</o:link>
+						</li>
+						<li>
+							<o:link href="/#{wordsLayoutView.language}/about/" plain="true"
+								styleClass="#{wordsLayoutView.selectedMenuItem=='about' ? 'words_menu_selected' : ''}">
+								<o:icon icon="info_light"/>
+								<span class="words_menu">#{msg.about}</span>
+							</o:link>
+						</li>
+					</ul>
+						<h3><span>Index</span></h3>
+					<ul class="words_sidebar_index">
+						<c:forEach items="#{wordsIndexView.alphabeth}" var="char">
+							<li class="#{char.value=='_' ? 'words_sidebar_index_symbols' : ''}"><o:link href="/#{wordsLayoutView.language}/index/#{char.value}/">#{char.label}</o:link></li>
+						</c:forEach>
+					</ul>
+					<c:if test="#{wordsLayoutView.loggedIn}">
+						<h3><span>Tools</span></h3>
+						<p>
+							<gui:button name="import" text="Import" variant="light"/>
+							<gui:button name="enrich" text="Enrich" variant="light"/>
+						</p>
+					</c:if>
+				</div>
 			</f:facet>
 			<ui:insert name="body"/>
 		</o:layout>

@@ -66,6 +66,10 @@ public class TagWriter {
 		return withAttribute("rel", rel);
 	}
 
+	public TagWriter type(Object type) throws IOException {
+		return withAttribute("type", type);
+	}
+
 	public TagWriter src(Object rel) throws IOException {
 		return withAttribute("src", rel);
 	}

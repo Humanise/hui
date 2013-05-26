@@ -97,6 +97,11 @@ span.oo_gallery_photo
 	position: relative;
 }
 
+span.oo_gallery_photo img
+{
+	border: none;
+}
+
 div.oo_gallery_frame span.oo_gallery_photo
 {
 	padding: 4px;

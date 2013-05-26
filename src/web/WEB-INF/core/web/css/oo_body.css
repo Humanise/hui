@@ -1,9 +1,6 @@
 body.oo
 {
-	font-family: 'Source Sans pro';
-	font-family: 'Lato';
-	font-family: 'Open Sans';
-	/*'Helvetica Neue','Helvetica',Arial,sans-serif*/
+	font-family: 'Open Sans','Helvetica Neue','Helvetica',Arial,sans-serif;
 	background: #fafafa;
 	margin: 0;
 	padding: 0;

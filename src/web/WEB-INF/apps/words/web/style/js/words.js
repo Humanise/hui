@@ -20,6 +20,9 @@ var wordsApp = {
 		win.show();
 		upload.uploadFiles(files);
 	},
+	$click$enrich : function() {
+		document.location=oo.appContext+'/'+oo.language+'/enrich/';
+	},
 	$click$import : function() {
 		if (!this._importWindow) {
 			var win = this._importWindow = hui.ui.Box.create({title:'Import',absolute:true,width:500,modal:true,padding:10,closable:true});

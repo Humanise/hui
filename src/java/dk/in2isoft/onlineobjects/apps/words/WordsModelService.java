@@ -16,6 +16,7 @@ import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.UserSession;
+import dk.in2isoft.onlineobjects.core.exceptions.ContentNotFoundException;
 import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
@@ -206,16 +207,28 @@ public class WordsModelService {
 		}
 	}
 	
-	public void changeLanguage(long wordId, String languageCode, UserSession session) throws ModelException, IllegalRequestException, SecurityException {
+	public void changeLanguage(long wordId, String languageCode, UserSession session) throws ModelException, IllegalRequestException, SecurityException, ContentNotFoundException {
 		Word word = getWord(wordId, session);
-		Language language = languageService.getLanguageForCode(languageCode);
-		if (language==null) {
-			throw new IllegalRequestException("Unsupported language ("+languageCode+")");
+		if (word==null) {
+			throw new ContentNotFoundException(Word.class, wordId);
+		}
+		changeLanguage(word, languageCode, session);
+	}
+	
+	public void changeLanguage(Word word, String languageCode, UserSession session) throws ModelException, IllegalRequestException, SecurityException {
+		Language language = null;
+		if (languageCode!=null) {
+			language = languageService.getLanguageForCode(languageCode);
+			if (language==null) {
+				throw new IllegalRequestException("Unsupported language ("+languageCode+")");
+			}
 		}
 		List<Relation> parents = modelService.getParentRelations(word, Language.class);
 		modelService.deleteRelations(parents, session);
-		Relation relation = modelService.createRelation(language, word, session);
-		securityService.grantPublicPrivileges(relation, true, true, false);
+		if (language!=null) {
+			Relation relation = modelService.createRelation(language, word, session);
+			securityService.grantPublicPrivileges(relation, true, true, false);
+		}
 		ensureOriginator(word,session);
 	}
 
