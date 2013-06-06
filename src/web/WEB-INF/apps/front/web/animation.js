@@ -3,7 +3,7 @@ hui.onReady(function() {
 		logo = hui.get('logo');
 	
 	
-	if (isMobile()) {
+	if (isMobile() || hui.browser.msie6 || hui.browser.msie7 || hui.browser.msie8) {
 		return;
 	}
 

@@ -58,6 +58,9 @@ public class LanguageService {
 	}
 
 	public LexicalCategory getLexcialCategoryForCode(String code) {
+		if (Strings.isBlank(code)) {
+			return null;
+		}
 		Query<LexicalCategory> query = Query.of(LexicalCategory.class).withField(LexicalCategory.CODE, code);
 		return modelService.search(query).getFirst();
 	}

@@ -1,5 +1,7 @@
 package dk.in2isoft.onlineobjects.modules.language;
 
+import dk.in2isoft.commons.lang.Strings;
+
 public class WordListPerspective {
 
 	private String text;
@@ -55,5 +57,10 @@ public class WordListPerspective {
 
 	public void setGlossary(String glossary) {
 		this.glossary = glossary;
+	}
+	
+	@Override
+	public String toString() {
+		return Strings.concatWords(text,language,lexicalCategory,glossary);
 	}
 }

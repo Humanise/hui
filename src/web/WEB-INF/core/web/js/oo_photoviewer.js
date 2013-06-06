@@ -170,6 +170,14 @@ oo.PhotoViewer.prototype = {
 					hui.cls.remove(this.thumbItems[index],'oo_photoviewer_thumb_loading');
 					hui.cls.remove(this.imageItems[index],'oo_photoviewer_photo_loading');
 					this.imageItems[index].style.backgroundImage = 'url('+urls[index]+')';
+					this.imageItems[index].innerHTML = '<span></span>';
+					this.thumbItems[index].innerHTML = '<span></span>';
+				}.bind(this),
+				imageDidGiveError : function(loaded,total,index) {
+					hui.cls.remove(this.thumbItems[index],'oo_photoviewer_thumb_loading');
+					hui.cls.remove(this.imageItems[index],'oo_photoviewer_photo_loading');
+					this.imageItems[index].innerHTML = '<span></span><span class="oo_icon_warning"></span>';
+					this.thumbItems[index].innerHTML = '<span></span><span class="oo_icon_warning"></span>';
 				}.bind(this)
 			})
 			preloader.addImages(urls);

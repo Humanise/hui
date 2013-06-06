@@ -59,6 +59,9 @@
 	<bean id="wordsStatisticsView" class="dk.in2isoft.onlineobjects.apps.words.views.WordsStatisticsView">
 		<property name="modelService" ref="modelService" />
 		<property name="eventService" ref="eventService" />
+		<property name="statisticsDataProvider">
+			<bean class="dk.in2isoft.onlineobjects.apps.words.views.util.StatisticsDataProvider" autowire="byType"/>
+		</property>
 	</bean>
 
 	<bean id="wordsImportView"

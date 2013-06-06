@@ -50,6 +50,13 @@
 												</a>
 											</span>
 										</c:if>
+										<c:if test="#{word.language==null}">
+											<span class="words_word_info"><span>—</span> 
+												<a href="javascript://" onclick="wordView.changeLanguage({id:#{word.word.id},element:this,event:event}); return false;">
+													<o:out value=" #{msg.no_language}" lower="true"/>
+												</a>
+											</span>
+										</c:if>
 										<c:if test="#{word.lexicalCategory==null}">
 											<span class="words_word_info">
 												<span>—</span>

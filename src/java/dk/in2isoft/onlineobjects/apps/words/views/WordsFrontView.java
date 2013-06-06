@@ -34,7 +34,7 @@ public class WordsFrontView extends AbstractView implements InitializingBean {
 	
 	private void refresh() throws ModelException {
 		if (latestWords==null) {
-			SearchResult<WordListPerspective> result = modelService.search(new WordListPerspectiveQuery().withPaging(0, 30).orderByUpdated());
+			SearchResult<WordListPerspective> result = modelService.search(new WordListPerspectiveQuery().withPaging(0, 30).orderById());
 			totalCount = result.getTotalCount();
 			latestWords = result.getList();
 		}

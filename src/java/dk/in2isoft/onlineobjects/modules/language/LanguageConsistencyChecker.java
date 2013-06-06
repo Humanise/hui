@@ -1,15 +1,18 @@
 package dk.in2isoft.onlineobjects.modules.language;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import dk.in2isoft.onlineobjects.core.ConsistencyChecker;
 import dk.in2isoft.onlineobjects.core.ModelService;
+import dk.in2isoft.onlineobjects.core.Pair;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.SecurityService;
@@ -34,6 +37,9 @@ public class LanguageConsistencyChecker implements ConsistencyChecker {
 		categories = Maps.newHashMap();
 		categories.put(LexicalCategory.CODE_NOMEN, "Noun");
 		categories.put(LexicalCategory.CODE_PROPRIUM, "Proper noun");
+		categories.put(LexicalCategory.CODE_PROPRIUM_FIRST, "First name");
+		categories.put(LexicalCategory.CODE_PROPRIUM_MIDDLE, "Middle name");
+		categories.put(LexicalCategory.CODE_PROPRIUM_LAST, "Last name");
 		categories.put(LexicalCategory.CODE_APPELLATIV, "Common noun");
 		categories.put(LexicalCategory.CODE_VERBUM, "Verb");
 		categories.put(LexicalCategory.CODE_PRONOMEN, "Pronoun");
@@ -54,6 +60,9 @@ public class LanguageConsistencyChecker implements ConsistencyChecker {
 	
 	public void check() throws ModelException, SecurityException {
 		User adminUser = modelService.getUser(SecurityService.ADMIN_USERNAME);
+		
+		List<LexicalCategory> all = modelService.list(Query.after(LexicalCategory.class));
+		
 		for (Entry<String, String> entry : languages.entrySet()) {
 			Query<Language> query = Query.of(Language.class).withField(Language.CODE, entry.getKey());
 			SearchResult<Language> result = modelService.search(query);
@@ -73,6 +82,8 @@ public class LanguageConsistencyChecker implements ConsistencyChecker {
 				}
 			}
 		}
+		Map<String,LexicalCategory> map = Maps.newHashMap();
+		
 		for (Entry<String, String> entry : categories.entrySet()) {
 			Query<LexicalCategory> query = Query.of(LexicalCategory.class).withField(LexicalCategory.CODE, entry.getKey());
 			SearchResult<LexicalCategory> result = modelService.search(query);
@@ -88,37 +99,47 @@ public class LanguageConsistencyChecker implements ConsistencyChecker {
 				modelService.createItem(category, adminUser);
 				log.info("Lexical category ("+entry.getValue()+") created!");
 				securityService.grantPublicPrivileges(category, true, false, false);
-				modelService.commit(); 
+				modelService.commit();
+				map.put(category.getCode(), category);
 			} else if (result.getTotalCount()>1) {
 				List<LexicalCategory> list = result.getList();
+				LexicalCategory category = list.get(0);
+				map.put(category.getCode(), category);
 				for (int i = 1; i < list.size(); i++) {
 					modelService.deleteEntity(list.get(i), adminUser);
 					modelService.commit(); 
 				}
+			} else {
+				LexicalCategory category = result.getFirst();
+				map.put(category.getCode(), category);
 			}
 		}
-		Query<LexicalCategory> nounQuery = Query.of(LexicalCategory.class).withField(LexicalCategory.CODE, LexicalCategory.CODE_NOMEN);
-		LexicalCategory noun = modelService.search(nounQuery).getFirst();
-		
-		Query<LexicalCategory> propriumQuery = Query.of(LexicalCategory.class).withField(LexicalCategory.CODE, LexicalCategory.CODE_PROPRIUM);
-		LexicalCategory proprium = modelService.search(propriumQuery).getFirst();
+		LexicalCategory noun = map.get(LexicalCategory.CODE_NOMEN);
+		LexicalCategory proprium = map.get(LexicalCategory.CODE_PROPRIUM);
+		LexicalCategory appellativ = map.get(LexicalCategory.CODE_PROPRIUM);		
 
-		Query<LexicalCategory> appellativQuery = Query.of(LexicalCategory.class).withField(LexicalCategory.CODE, LexicalCategory.CODE_APPELLATIV);
-		LexicalCategory appellativ = modelService.search(appellativQuery).getFirst();
+		LexicalCategory firstName = map.get(LexicalCategory.CODE_PROPRIUM_FIRST);		
+		LexicalCategory middleName = map.get(LexicalCategory.CODE_PROPRIUM_MIDDLE);	
+		LexicalCategory lastName = map.get(LexicalCategory.CODE_PROPRIUM_LAST);
 		
-		Relation nounProprium = modelService.getRelation(noun, proprium, Relation.KIND_STRUCTURE_SPECIALIZATION);
-		if (nounProprium==null) {
-			log.info("Creating nomen > proprium relation");		
-			modelService.createRelation(noun, proprium, Relation.KIND_STRUCTURE_SPECIALIZATION, adminUser);
-			modelService.commit(); 
-		}
+		List<Pair<LexicalCategory, LexicalCategory>> relations = Lists.newArrayList();
+		relations.add(Pair.of(noun, proprium));
+		relations.add(Pair.of(noun, appellativ));
+		relations.add(Pair.of(proprium, firstName));
+		relations.add(Pair.of(proprium, middleName));
+		relations.add(Pair.of(proprium, lastName));
 		
-		Relation nounAppellativ = modelService.getRelation(noun, appellativ, Relation.KIND_STRUCTURE_SPECIALIZATION);
-		if (nounAppellativ==null) {
-			log.info("Creating nomen > appellativ relation");		
-			modelService.createRelation(noun, appellativ, Relation.KIND_STRUCTURE_SPECIALIZATION, adminUser);
-			modelService.commit(); 
-		}
+		for (Iterator<Pair<LexicalCategory, LexicalCategory>> i = relations.iterator(); i.hasNext();) {
+			Pair<LexicalCategory, LexicalCategory> pair = i.next();
+			LexicalCategory parent = pair.getKey();
+			LexicalCategory child = pair.getValue();
+			Relation relation = modelService.getRelation(parent, child, Relation.KIND_STRUCTURE_SPECIALIZATION);
+			if (relation==null) {
+				log.info("Creating "+parent.getName()+" > "+child.getName()+" relation");		
+				modelService.createRelation(parent, child, Relation.KIND_STRUCTURE_SPECIALIZATION, adminUser);
+				modelService.commit(); 				
+			}
+		}		
 	}
 
 	public void setModelService(ModelService modelService) {

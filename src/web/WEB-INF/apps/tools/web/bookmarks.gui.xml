@@ -80,7 +80,7 @@
 		</structure>
 	</div>
 
-	<window name="bookmarkWindow" title="Bogmærke" width="300" variant="dark">
+	<window name="bookmarkWindow" title="Bogmærke" width="500">
 		<space all="5">
 			<formula name="bookmarkFormula">
 				<fields>

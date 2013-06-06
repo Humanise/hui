@@ -2,6 +2,10 @@ package dk.in2isoft.onlineobjects.apps.words;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang.time.StopWatch;
+import org.mortbay.log.Log;
 
 import com.google.common.collect.Lists;
 
@@ -22,10 +26,12 @@ import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.modules.importing.DataImporter;
 import dk.in2isoft.onlineobjects.modules.importing.ImportSession;
+import dk.in2isoft.onlineobjects.modules.language.WordEnrichmentQuery;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.ui.ScriptWriter;
 import dk.in2isoft.onlineobjects.ui.StylesheetWriter;
 import dk.in2isoft.onlineobjects.ui.data.Option;
+import dk.in2isoft.onlineobjects.ui.data.SimpleEntityPerspective;
 
 public class WordsController extends WordsControllerBase {
 	
@@ -109,16 +115,19 @@ public class WordsController extends WordsControllerBase {
 	@Path
 	public WordEnrichmentPerspective getNextEnrichment(Request request) throws IOException, EndUserException {
 		Query<Word> query = Query.after(Word.class).withCustomProperty(Property.KEY_WORD_SUGGESTION_LANGUAGE, "da");
-		query.withPaging(0, 1);
-		Word first = modelService.search(query).getFirst();
-		if (first!=null) {
-			WordEnrichmentPerspective perspective = new WordEnrichmentPerspective();
-			perspective.setText(first.getText());
-			perspective.setWordId(first.getId());
+		query.withPaging(0, 1).orderByField("id");
+		StopWatch watch = new StopWatch();
+		watch.start();
+		List<WordEnrichmentPerspective> list = modelService.list(new WordEnrichmentQuery());
+		watch.stop();
+		System.out.println(watch.toString());
+		if (!list.isEmpty()) {
+			WordEnrichmentPerspective perspective = list.get(0);
 			ArrayList<Option> enrichments = Lists.newArrayList();
 			enrichments.add(new Option("Danish",Pair.of("language", "da")));
 			enrichments.add(new Option("English",Pair.of("language", "en")));
 			enrichments.add(new Option("None",Pair.of("language", null)));
+			enrichments.add(new Option("Postpone",Pair.of("postpone", null)));
 			perspective.setEnrichments(enrichments);
 			return perspective;
 		}
@@ -129,16 +138,19 @@ public class WordsController extends WordsControllerBase {
 	public void enrich(Request request) throws IOException, EndUserException {
 		Long id = request.getLong("wordId");
 		Pair<?,?> enrichment = request.getObject("enrichment", Pair.class);
-		if (enrichment==null) {
+		if (enrichment==null || enrichment.getKey()==null) {
 			throw new IllegalRequestException("No enrichment provided");
 		}
 		
 		UserSession session = request.getSession();
 		Word word = modelService.getRequired(Word.class, id, session);
 		
-		if (enrichment.getKey().equals("language")) {
+		if (enrichment.getKey().equals("postpone")) {
+			wordsModelService.addToPostponed(word);
+		}
+		else if (enrichment.getKey().equals("language")) {
 			String lang = enrichment.getValue()==null ? null : enrichment.getValue().toString();
-			wordsModelService.changeLanguage(word, lang, session);
+			wordsModelService.changeLanguage(word, lang, session.getUser(),session);
 			word.removeProperties(Property.KEY_WORD_SUGGESTION_LANGUAGE);
 			modelService.updateItem(word, modelService.getUser("admin"));
 		}

@@ -13,7 +13,7 @@ public class ConsistencyService {
 
 	public void check() throws ModelException, SecurityException {
 		if (configurationService.isDevelopmentMode()) {
-			return;
+			//return;
 		}
 		for (ConsistencyChecker consistencyChecker : consistencyCheckers) {
 			consistencyChecker.check();

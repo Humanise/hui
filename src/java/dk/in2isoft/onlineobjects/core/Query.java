@@ -380,7 +380,7 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 			} else if (value instanceof Object[]) {
 				q.setParameterList(limit.getProperty(), (Object[]) limit.getValue());
 			} else {
-				q.setString(limit.getProperty(), limit.getValue().toString());
+				q.setString(limit.getProperty(), value==null ? null : value.toString());
 			}
 		}
 		if (Strings.isDefined(words)) {

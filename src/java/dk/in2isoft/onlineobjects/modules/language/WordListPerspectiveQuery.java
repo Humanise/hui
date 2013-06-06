@@ -9,13 +9,18 @@ import org.hibernate.SQLQuery;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 
+import com.google.common.collect.Lists;
+
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.CustomQuery;
 
 public class WordListPerspectiveQuery implements CustomQuery<WordListPerspective> {
 
 	public enum Ordering {
-		created ("item.created desc"), updated ("item.updated desc"), text("lower(word.text) asc");
+		created ("item.created desc"), 
+		updated ("item.updated desc"),
+		id ("word.id desc"),
+		text("lower(word.text) asc");
 		
 		private String x;
 		
@@ -142,6 +147,11 @@ public class WordListPerspectiveQuery implements CustomQuery<WordListPerspective
 		return this;
 	}
 	
+	public WordListPerspectiveQuery orderById() {
+		this.ordering = Ordering.id;
+		return this;
+	}
+
 	public WordListPerspectiveQuery startingWith(String str) {
 		this.startingWith = str;
 		return this;
@@ -159,6 +169,12 @@ public class WordListPerspectiveQuery implements CustomQuery<WordListPerspective
 
 	public WordListPerspectiveQuery withWords(String[] words) {
 		this.words = Strings.asList(words);
+		return this;
+	}
+
+
+	public WordListPerspectiveQuery withWord(String word) {
+		this.words = Lists.newArrayList(word);
 		return this;
 	}
 

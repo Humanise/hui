@@ -10,6 +10,9 @@ public class LexicalCategory extends Entity {
 
 	public static String CODE_NOMEN = "nomen";
 	public static String CODE_PROPRIUM = "proprium";
+	public static String CODE_PROPRIUM_FIRST = "proprium.personal.first";
+	public static String CODE_PROPRIUM_MIDDLE = "proprium.personal.middle";
+	public static String CODE_PROPRIUM_LAST = "proprium.personal.last";
 	public static String CODE_APPELLATIV = "appellativ";
 	public static String CODE_VERBUM = "verbum";
 	public static String CODE_PRONOMEN = "pronomen";

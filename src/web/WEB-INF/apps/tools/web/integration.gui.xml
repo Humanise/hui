@@ -53,15 +53,19 @@
 
 	<window floating="true" name="accountWindow" title="Konto" width="300" padding="10">
 		<formula name="accountFormula">
-			<group>
-				<text label="Brugernavn" key="username"/>
-				<text label="Domæne" key="domain"/>
+			<fields>
+				<field label="Username">
+					<text-input key="username"/>
+				</field>
+				<field label="Domain">
+					<text-input label="Domæne" key="domain"/>
+				</field>
 				<buttons>
 					<button title="Slet" name="deleteAccount"/>
 					<button title="Annuller" name="cancelAccount"/>
 					<button title="Gem" highlighted="true" name="saveAccount" submit="true"/>
 				</buttons>
-			</group>
+			</fields>
 		</formula>
 	</window>
 	

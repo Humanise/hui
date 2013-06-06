@@ -1,0 +1,29 @@
+div.words_enrich
+{
+	padding: 20px 20px 180px;
+}
+
+#rendering h1
+{
+	font-weight: normal;
+	font-size: 16pt;
+}
+
+#actions a
+{
+	display: inline-block;
+	height: 50px;
+	line-height: 50px;
+	padding: 0 20px;
+	color: #333;
+	border: 1px solid #aaa;
+	background: #fafafa;
+	border-radius: 4px;
+	text-decoration: none;
+	margin-right: 20px;
+}
+
+div.words_enrich_busy
+{
+	color: #999;
+}

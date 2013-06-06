@@ -56,4 +56,28 @@ div.oo_footer:hover p.oo_footer_logo span,
 div.oo_footer:hover p.oo_footer_by
 {
 	color: #ddd;
+	/*
+	-webkit-animation-name: color;
+    -webkit-animation-duration: 4s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: ease-in-out;
+*/
+}
+
+@-webkit-keyframes color {
+       0% {
+         color: #eee;
+       }
+       25% {
+         color: #fd0;
+	}
+       50% {
+         color: #3a3;
+       }
+       75% {
+         color: #06f;
+       }
+	100% {
+		color: #eee;
+	}
 }

@@ -100,7 +100,7 @@ public class ModelService {
 				ModelClassInfo info = new ModelClassInfo((Class<Item>) clazz);
 				modelClassInfo.add(info);
 			}
-			log.info("Model info loaded: " + modelClassInfo.size() + " items");
+			log.debug("Model info loaded: " + modelClassInfo.size() + " items");
 		} catch (ValidityException e) {
 			log.error("Could not load model info", e);
 		} catch (ParsingException e) {
@@ -118,7 +118,7 @@ public class ModelService {
 			Class<?> clazz;
 			try {
 				clazz = Class.forName(className);
-				log.info(clazz + " with super " + clazz.getSuperclass());
+				log.debug(clazz + " with super " + clazz.getSuperclass());
 				if (clazz.getSuperclass().equals(Entity.class)) {
 					entityClasses.add((Class<? extends Entity>) clazz);
 				}
@@ -668,6 +668,17 @@ public class ModelService {
 			items.set(i, getSubject(item));
 		}
 		return items;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> T getFirst(ItemQuery<T> query) {
+		Query q = query.createItemQuery(getSession());
+		q.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		Object result = q.uniqueResult();
+		if (result!=null) {
+			return (T) getSubject(result);
+		}
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")
