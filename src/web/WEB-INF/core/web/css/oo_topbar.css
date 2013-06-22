@@ -1,5 +1,6 @@
 div.oo_topbar
 {
+	font-family: 'Open Sans','Helvetica Neue','Helvetica',Arial,sans-serif;
 	overflow: hidden;
 	border-bottom: 1px solid #fafafa;
 	font-size: 0;
@@ -32,6 +33,7 @@ a.oo_topbar_logo
 	text-decoration: none;
 }
 
+
 a.oo_topbar_logo em
 {
 	font-family: 'OnlineObjects';
@@ -45,6 +47,19 @@ a.oo_topbar_logo em
 	width: 22px;
 	height: 22px;
 }
+
+div.oo_topbar:hover a.oo_topbar_logo,
+div.oo_topbar:hover a.oo_topbar_logo em
+{
+	-webkit-transition-property: color;
+	-webkit-transition-duration: 1s;
+	-moz-transition-property: color;
+	-moz-transition-duration: 1s;
+	-ms-transition-property: color;
+	-ms-transition-duration: 1s;
+	color: #999;
+}
+
 
 body.oo_msie7 div.oo_topbar strong
 {

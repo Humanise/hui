@@ -2,18 +2,14 @@ package dk.in2isoft.onlineobjects.apps.desktop;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 import com.google.common.collect.Lists;
 
 import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.in2igui.FileBasedInterface;
 import dk.in2isoft.in2igui.data.KeyboardNavigatorItem;
-import dk.in2isoft.onlineobjects.apps.ApplicationController;
-import dk.in2isoft.onlineobjects.apps.ApplicationSession;
 import dk.in2isoft.onlineobjects.apps.community.remoting.InternetAddressInfo;
 import dk.in2isoft.onlineobjects.apps.desktop.importing.FileImporter;
 import dk.in2isoft.onlineobjects.apps.desktop.importing.ImportListener;
@@ -32,32 +28,24 @@ import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.InternetAddress;
 import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.modules.importing.ImportSession;
-import dk.in2isoft.onlineobjects.modules.networking.HTMLService;
-import dk.in2isoft.onlineobjects.services.ImportService;
 import dk.in2isoft.onlineobjects.ui.Request;
-import dk.in2isoft.onlineobjects.util.images.ImageService;
+import dk.in2isoft.onlineobjects.ui.ScriptWriter;
+import dk.in2isoft.onlineobjects.ui.StylesheetWriter;
 
-public class DesktopController extends ApplicationController {
+public class DesktopController extends DesktopControlerBase {
 	
-	private ImportService importService;
-	private ImageService imageService;
-	private HTMLService htmlService;
-	
-	private static final Logger log = Logger.getLogger(DesktopController.class);
-
-	public DesktopController() {
-		super("desktop");
+	@Path(expression="/script.[0-9]+.js")
+	public void script(Request request) throws IOException, EndUserException {
+		ScriptWriter writer = new ScriptWriter(request, configurationService);
+		writer.write(publicScript);
 	}
 
-	public List<Locale> getLocales() {
-		return null;
+	@Path(expression="/style.[0-9]+.css")
+	public void style(Request request) throws IOException, EndUserException {
+		StylesheetWriter writer = new StylesheetWriter(request, configurationService);
+		writer.write(publicStyle);
 	}
 
-	@Override
-	public ApplicationSession createToolSession() {
-		return new DesktopSession();
-	}
-	
 	@Override
 	public void unknownRequest(Request request) throws IOException, EndUserException {
 		String[] localPath = request.getLocalPath();
@@ -69,7 +57,7 @@ public class DesktopController extends ApplicationController {
 		}
 	}
 	
-	@Path(start="getUserInfo")
+	@Path
 	public void getUserInfo(Request request) throws IOException, EndUserException {
 		if (request.isUser(SecurityService.PUBLIC_USERNAME)) {
 			throw new SecurityException("This user does not have access");
@@ -79,7 +67,7 @@ public class DesktopController extends ApplicationController {
 		request.sendObject(info);
 	}
 	
-	@Path(start="importURL")
+	@Path
 	public void importUrl(Request request) throws IOException {
 		final String url = request.getString("url");
 		ImportListener listener = new ImportListener();
@@ -105,7 +93,7 @@ public class DesktopController extends ApplicationController {
 		System.out.println("Request finished");
 	}
 
-	@Path(start="uploadFile")
+	@Path
 	public void uploadFile(Request request) throws IOException, EndUserException {
 		ImportListener listener = new ImportListener();
 		listener.setPrivileged(request.getSession());
@@ -124,7 +112,7 @@ public class DesktopController extends ApplicationController {
 		request.sendObject(info);
 	}
 
-	@Path(start="getImport")
+	@Path
 	public void getImport(Request request) throws IOException {
 		ImportSession session = importService.getImportSession(request.getString("id"));
 		//System.out.println("Check: "+session.getId()+" / "+session.getStatus());
@@ -133,7 +121,7 @@ public class DesktopController extends ApplicationController {
 		request.sendObject(info);
 	}
 	
-	@Path(start="analyzeURL")
+	@Path
 	public void analyzeURL(Request request) throws IOException {
 		String url = request.getString("url");
 		InternetAddressInfo info = new InternetAddressInfo();
@@ -144,7 +132,7 @@ public class DesktopController extends ApplicationController {
 		request.sendObject(info);
 	}
 	
-	@Path(start="saveInternetAddress")
+	@Path
 	public void saveInternetAddress(Request request) throws ModelException, SecurityException, InterruptedException {
 		InternetAddressInfo info = request.getObject("info", InternetAddressInfo.class);
 		InternetAddress address;
@@ -160,14 +148,14 @@ public class DesktopController extends ApplicationController {
 		modelService.createOrUpdateItem(address, request.getSession());
 	}
 	
-	@Path(start="getWidget")
+	@Path
 	public void getWidget(Request request) throws ModelException, IOException {
 		Entity entity = modelService.get(Entity.class, request.getLong("id"), request.getSession());
 		request.sendObject(new WidgetPerspective(entity));
 	}
 	
 
-	@Path(start="complete")
+	@Path
 	public void complete(Request request) throws IOException {
 		String text = request.getString("text");
 		Query<InternetAddress> query = new Query<InternetAddress>(InternetAddress.class).withPrivileged(request.getSession()).withWords(text);
@@ -183,17 +171,5 @@ public class DesktopController extends ApplicationController {
 			items.add(item);
 		}
 		request.sendObject(items);
-	}
-	
-	public void setImportService(ImportService importService) {
-		this.importService = importService;
-	}
-	
-	public void setImageService(ImageService imageService) {
-		this.imageService = imageService;
-	}
-
-	public void setHtmlService(HTMLService htmlService) {
-		this.htmlService = htmlService;
 	}
 }

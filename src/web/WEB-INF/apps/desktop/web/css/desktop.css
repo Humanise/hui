@@ -1,12 +1,3 @@
-body.hui
-{
-	width: 100%;
-	height: 100%;
-	background: -webkit-gradient(linear, left top, left bottom, from(#57a), to(rgb(20, 30, 50)));
-	background: -moz-linear-gradient(top, #57a, rgb(20, 30, 50));
-	background: url('../gfx/blueprint.png');
-}
-
 div.import
 {
 	position: absolute;
@@ -51,6 +42,8 @@ div.widget_moving
 	cursor: -moz-grabbing;
 }
 
+/** Image **/
+
 div.widget_image
 {
 	width: 300px;
@@ -81,4 +74,74 @@ div.widget_image_info h1
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+/** Links **/
+
+div.widget_links
+{
+	width: 300px;
+	position: absolute;
+	background: #fff;
+	box-shadow: 0 0 10px rgba(0,20,100,.2);
+	box-shadow: 0 3px 20px rgba(0,20,100,.3);
+}
+
+div.widget_top
+{
+	margin: 0;
+	text-align: center;	
+	position: relative;
+	height: 30px;
+	background: rgba(255,255,255,.8);
+	position: absolute;
+	left: 0;
+	right: 0;
+}
+
+div.widget_top strong
+{
+	font-family: 'Helvetica Neue';
+	font-weight: 200;
+	font-size: 13pt;
+	display: inline-block;
+	height: 30px;
+	line-height: 30px;
+}
+
+div.widget_top a
+{
+	font-family: 'Helvetica Neue';
+	font-weight: 200;
+	font-size: 20pt;
+	display: inline-block;
+	height: 30px;
+	width: 30px;
+	text-align: center;
+	line-height: 23px;
+	position: absolute;
+	right: 0;
+	color: #36f;
+	cursor: pointer;
+}
+
+div.widget_top a:hover
+{
+	background: #eee;
+}
+
+div.widget_body
+{
+	padding-top: 24px;
+	overflow: scroll;
+	max-height: 400px;
+}
+
+div.widget_body div
+{
+	margin: 0 5px;
+	border-bottom: 1px solid #eee;
+	padding: 3px 4px;
+	font-size: 12px;
+	font-weight: 200;
 }

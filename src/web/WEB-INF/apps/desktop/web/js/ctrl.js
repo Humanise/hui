@@ -18,12 +18,13 @@ hui.ui.listen({
 	init : function() {
 		hui.drag.listen({
 			element : document.body,
-			hoverClass : 'hey',
+			hoverClass : 'dropping',
 			$dropURL : this.importUrl.bind(this),
 			$dropText : this.addNote.bind(this),
 			$dropFiles : this.addFiles.bind(this)
 		})
-		this.loadWidget({id:276576,position:{left:250,top:250}});
+		desktop.add();
+		//this.loadWidget({id:276576,position:{left:250,top:250}});
 		//this.importUrl('http://0.tqn.com/d/dogs/1/0/G/2/0/-/disc_dog_DougPensinger-getty.jpg');
 		//this.importUrl('http://vbn.aau.dk/files/19079591/Publication');
 		//this.addUrl('http://daringfireball.net/2012/10/ipad_mini');
@@ -207,7 +208,9 @@ hui.ui.listen({
 })
 
 var desktop = {
-	
+	add : function() {
+		new desktop.Links();
+	}
 }
 
 desktop.Image = function(options) {
@@ -227,6 +230,25 @@ desktop.Image.prototype = {
 	update : function(entity) {
 		var body = hui.get.firstByClass(this.element,'widget_image_info');
 		body.innerHTML = '<h1>'+entity.name+'</h1>';
+	}
+}
+
+desktop.Links = function() {
+	this.element = hui.build('div',{'class':'widget widget_links',
+		style:'left: 100px;top:100px;',
+		parent:document.body,
+		html : '<div class="widget_top"><strong>Links</strong><a class="widget_nodrag">+</a></div><div class="widget_body"></div>'
+	});
+	desktop.widgets.makeMovable(this);
+	this.render();
+}
+
+desktop.Links.prototype = {
+	render : function() {
+		var body = hui.get.firstByClass(this.element,'widget_body');
+		for (var i=0; i < 30; i++) {
+			hui.build('div',{text:'Title '+i,parent:body});
+		};
 	}
 }
 

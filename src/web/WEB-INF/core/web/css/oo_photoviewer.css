@@ -167,7 +167,7 @@ div.oo_photoviewer_actions a.oo_photoviewer_arrow
 
 div.oo_photoviewer_actions a:hover
 {
-	background: #000;
+	background: rgba(80,80,80,.5);
 }
 
 div.oo_photoviewer_actions span.oo_icon

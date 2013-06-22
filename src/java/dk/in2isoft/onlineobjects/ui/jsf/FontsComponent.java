@@ -29,5 +29,6 @@ public class FontsComponent extends AbstractComponent {
 	@Override
 	protected void encodeBegin(FacesContext context, TagWriter out) throws IOException {
 		out.startElement("link").withHref("http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,400,600,300|Lato:100").rel("stylesheet").type("text/css").endElement("link");
+		// |Source+Sans+Pro:200,300,400,600,200italic,300italic,400italic
 	}
 }

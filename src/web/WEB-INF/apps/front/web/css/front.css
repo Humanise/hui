@@ -45,13 +45,14 @@ h1
 {
 	font-size: 24px;
 	line-height: 24px;
-	font-weight: 100;
+	font-weight: 300;
 	color: #ccc;
 	width: 100%;
 	text-align: center;
 	letter-spacing: 1px;
 	cursor: default;
-	font-family: 'Lato';
+/*	font-family: 'Lato';*/
+	font-size: 18px;
 	position: absolute;
 	top: 30%;
 	margin-top: 250px;
