@@ -29,14 +29,21 @@ public abstract class DesktopControlerBase extends ApplicationController {
 		publicScript.addPath("hui","js","hui_animation.js");
 		publicScript.addPath("hui","js","hui_color.js");
 		publicScript.addPath("hui","js","ui.js");
+		publicScript.addPath("hui","js","Input.js");
 		publicScript.addPath("hui","js","Button.js");
 		publicScript.addPath("hui","js","BoundPanel.js");
 		publicScript.addPath("hui","js","TextField.js");
 		publicScript.addPath("hui","js","Formula.js");
 		publicScript.addPath("hui","js","Drawing.js");
+		publicScript.addPath("hui","js","Source.js");
 		publicScript.addPath("hui","js","ProgressIndicator.js");
 		publicScript.addPath("WEB-INF","core","web","js","onlineobjects.js");
 		publicScript.addPath("WEB-INF","apps","desktop","web","js","ctrl.js");
+		publicScript.addPath("WEB-INF","apps","desktop","web","js","desktop.js");
+		publicScript.addPath("WEB-INF","apps","desktop","web","js","desktop_searchbar.js");
+		publicScript.addPath("WEB-INF","apps","desktop","web","js","desktop_list.js");
+		publicScript.addPath("WEB-INF","apps","desktop","web","js","desktop_widget_bookmarks.js");
+		publicScript.addPath("WEB-INF","apps","desktop","web","js","desktop_widget_image.js");
 
 	
 		publicStyle = new Blend("desktop_public_style");
@@ -50,9 +57,12 @@ public abstract class DesktopControlerBase extends ApplicationController {
 		publicStyle.addPath("hui","css","message.css");
 		publicStyle.addPath("hui","css","icon.css");
 		publicStyle.addPath("WEB-INF","core","web","css","oo_topbar.css");
-		publicStyle.addPath("WEB-INF","apps","desktop","web","css","master.css");
 		publicStyle.addPath("WEB-INF","apps","desktop","web","css","desktop.css");
 		publicStyle.addPath("WEB-INF","apps","desktop","web","css","dock.css");
+		publicStyle.addPath("WEB-INF","apps","desktop","web","css","widget.css");
+		publicStyle.addPath("WEB-INF","apps","desktop","web","css","desktop_searchbar.css");
+		publicStyle.addPath("WEB-INF","apps","desktop","web","css","desktop_list.css");
+		publicStyle.addPath("WEB-INF","apps","desktop","web","css","desktop_widget_image.css");
 
 	}
 

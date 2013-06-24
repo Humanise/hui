@@ -1,6 +1,7 @@
 package dk.in2isoft.onlineobjects.apps.desktop;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -14,6 +15,8 @@ import dk.in2isoft.onlineobjects.apps.community.remoting.InternetAddressInfo;
 import dk.in2isoft.onlineobjects.apps.desktop.importing.FileImporter;
 import dk.in2isoft.onlineobjects.apps.desktop.importing.ImportListener;
 import dk.in2isoft.onlineobjects.apps.desktop.importing.UrlImporter;
+import dk.in2isoft.onlineobjects.apps.desktop.model.WidgetList;
+import dk.in2isoft.onlineobjects.apps.desktop.model.WidgetListItem;
 import dk.in2isoft.onlineobjects.apps.desktop.perspectives.ImportPerspective;
 import dk.in2isoft.onlineobjects.apps.desktop.perspectives.UserInfoPerspective;
 import dk.in2isoft.onlineobjects.apps.desktop.perspectives.WidgetPerspective;
@@ -152,6 +155,22 @@ public class DesktopController extends DesktopControlerBase {
 	public void getWidget(Request request) throws ModelException, IOException {
 		Entity entity = modelService.get(Entity.class, request.getLong("id"), request.getSession());
 		request.sendObject(new WidgetPerspective(entity));
+	}
+	
+	@Path
+	public WidgetList listBookmarks(Request request) throws IOException {
+		String text = request.getString("text");
+		Query<InternetAddress> query = new Query<InternetAddress>(InternetAddress.class).withPrivileged(request.getSession()).withWords(text);
+		query.withPaging(0, 30);
+		List<InternetAddress> result = modelService.search(query).getList();
+		
+		WidgetList list = new WidgetList();
+		for (InternetAddress address : result) {
+			WidgetListItem item = new WidgetListItem();
+			item.setText(address.getName());
+			list.addItem(item);
+		}
+		return list;
 	}
 	
 
