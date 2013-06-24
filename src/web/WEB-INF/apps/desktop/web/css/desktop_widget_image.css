@@ -5,8 +5,6 @@ div.widget_image
 	height: 100px;
 	padding: 10px;
 	background: #fff;
-	box-shadow: 0 0 10px rgba(0,20,100,.2);
-	box-shadow: 0 3px 20px rgba(0,20,100,.3);
 	border-radius: 3px;
 }
 
@@ -23,9 +21,10 @@ div.widget_image_info
 div.widget_image_info h1
 {
 	margin: 0;
-	font-size: 12px;
+	font-size: 14px;
 	width: 100%;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	font-weight: 600;
 }

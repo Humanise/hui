@@ -32,10 +32,20 @@ ol.widget_list p.widget_list_minor
 p.widget_list_asside
 {
 	position: absolute;
-	right: 5px;
+	right: 0px;
+	padding: 2px 5px;
 	font-size: 0;
 	top: 50%;
-	margin-top: -9px !important;
+	margin-top: -11px !important;
+	background: #fff;
+	visibility: hidden;
+	border-radius: 3px;
+	box-shadow: 0 0 4px #fff;
+}
+
+ol.widget_list li:hover p.widget_list_asside
+{
+	visibility: visible;
 }
 
 p.widget_list_asside a

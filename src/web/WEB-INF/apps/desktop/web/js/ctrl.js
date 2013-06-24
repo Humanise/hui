@@ -49,7 +49,7 @@ hui.ui.listen({
 			url : 'getWidget',
 			parameters : {id:options.id},
 			$object : function(obj) {
-				new desktop[obj.type]({entity : obj.entity, position : options.position})
+				new desktop.widget[obj.type]({entity : obj.entity, position : options.position})
 			},
 			$failure : function() {
 				hui.ui.showMessage({text:'Not found',duration:2000})
@@ -64,7 +64,7 @@ hui.ui.listen({
 		var event = info.event;
 		var progress = this._createProgress({left:event.getLeft(),top:event.getTop()});
 		hui.ui.request({
-			url : 'importURL',
+			url : 'importUrl',
 			parameters : {url:url},
 			$object : function(info) {
 				this.imports[info.id] = progress;

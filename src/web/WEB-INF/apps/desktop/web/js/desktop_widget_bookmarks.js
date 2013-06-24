@@ -16,7 +16,7 @@ desktop.widget.Bookmarks = function(options) {
 
 desktop.widget.Bookmarks.template = '<div class="widget_header">'+
 		'<span class="widget_left">'+
-			'<a class="widget_nodrag" href="javascript://">×</a>'+
+			'<a class="widget_nodrag" href="javascript://" data="close">×</a>'+
 		'</span>'+
 		'<strong>Bookmarks</strong>'+
 		'<span class="widget_right">'+
@@ -43,6 +43,12 @@ desktop.widget.Bookmarks.prototype = {
 			if (data=='more') {
 				hui.cls.toggle(this.element,'widget_searching');
 			}
+			if (data=='close') {
+				this.destroy();
+			}
 		}
+	},
+	destroy : function() {
+		hui.dom.remove(this.element);
 	}
 }
