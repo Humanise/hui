@@ -1,7 +1,7 @@
 desktop.widget.Bookmarks = function(options) {
-	this.options = hui.override({},options);
+	this.options = hui.override({left:Math.random()*200,top:Math.random()*200},options);
 	this.element = hui.build('div',{'class':'widget widget_links',
-		style:'left: 100px;top:100px;',
+		style:'left: '+this.options.left+'px;top:'+this.options.top+'px; z-index: 1',
 		parent:document.body,
 		html : desktop.widget.Bookmarks.template
 	});
