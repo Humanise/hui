@@ -129,3 +129,52 @@ div.widget_searching ol.widget_list
 {
 	padding-top: 60px;
 }
+
+
+/************** Resizing ***********/
+
+div.widget_resize
+{
+	position: absolute;
+	backgroundx: rgba(0,0,0,.1);
+}
+
+div.widget_resize_left
+{
+	width: 5px;
+	height: 100%;
+	margin-left: -5px;
+	top: 0;
+	left: 0;
+	cursor: w-resize;
+}
+
+div.widget_resize_right
+{
+	width: 5px;
+	height: 100%;
+	margin-right: -5px;
+	top: 0;
+	right: 0;
+	cursor: e-resize;
+}
+
+div.widget_resize_top
+{
+	height: 5px;
+	width: 100%;
+	margin-top: -5px;
+	top: 0;
+	left: 0;
+	cursor: n-resize;
+}
+
+div.widget_resize_bottom
+{
+	height: 5px;
+	width: 100%;
+	margin-bottom: -5px;
+	bottom: 0;
+	left: 0;
+	cursor: s-resize;
+}
