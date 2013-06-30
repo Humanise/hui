@@ -53,7 +53,7 @@ public class WordsController extends WordsControllerBase {
 		ImportSession session = importService.createImportSession(request.getSession());
 		DataImporter importer = importService.createImporter();
 		WordsImporter listener = new WordsImporter();
-		session.setHandler(listener);
+		session.setTransport(listener);
 		importer.setListener(listener);
 		importer.setSuccessResponse(session.getId());
 		importer.importMultipart(this, request);
@@ -75,7 +75,7 @@ public class WordsController extends WordsControllerBase {
 		HTMLDocumentImporter handler = new HTMLDocumentImporter(url);
 		handler.setFeedService(feedService);
 		handler.setHtmlService(htmlService);
-		session.setHandler(handler);
+		session.setTransport(handler);
 		session.start();
 		
 		request.sendObject(session.getId());

@@ -11,7 +11,7 @@ import dk.in2isoft.onlineobjects.modules.importing.ImportListener;
 import dk.in2isoft.onlineobjects.modules.video.VideoService;
 import dk.in2isoft.onlineobjects.ui.Request;
 
-class VideoImporter implements ImportListener {
+class VideoImporter implements ImportListener<Object> {
 
 	protected ModelService modelService;
 	private VideoService videoService;

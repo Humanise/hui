@@ -77,7 +77,7 @@ public class WordsImportView extends AbstractView implements InitializingBean {
 				throw new ContentNotFoundException("The session does not exist");
 			}
 			status = session.getStatus().name();
-			TextImporter handler = (TextImporter) session.getHandler();
+			TextImporter handler = (TextImporter) session.getTransport();
 			this.title = handler.getTitle();
 			this.text = handler.getText();
 						

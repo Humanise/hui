@@ -1,7 +1,6 @@
 package dk.in2isoft.onlineobjects.apps.desktop;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -12,9 +11,7 @@ import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.in2igui.FileBasedInterface;
 import dk.in2isoft.in2igui.data.KeyboardNavigatorItem;
 import dk.in2isoft.onlineobjects.apps.community.remoting.InternetAddressInfo;
-import dk.in2isoft.onlineobjects.apps.desktop.importing.FileImporter;
-import dk.in2isoft.onlineobjects.apps.desktop.importing.ImportListener;
-import dk.in2isoft.onlineobjects.apps.desktop.importing.UrlImporter;
+import dk.in2isoft.onlineobjects.apps.desktop.importing.GenericImportListener;
 import dk.in2isoft.onlineobjects.apps.desktop.model.WidgetList;
 import dk.in2isoft.onlineobjects.apps.desktop.model.WidgetListItem;
 import dk.in2isoft.onlineobjects.apps.desktop.perspectives.ImportPerspective;
@@ -30,7 +27,9 @@ import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.InternetAddress;
 import dk.in2isoft.onlineobjects.model.Property;
+import dk.in2isoft.onlineobjects.modules.importing.HttpImportTransport;
 import dk.in2isoft.onlineobjects.modules.importing.ImportSession;
+import dk.in2isoft.onlineobjects.modules.importing.UploadImportTransport;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.ui.ScriptWriter;
 import dk.in2isoft.onlineobjects.ui.StylesheetWriter;
@@ -73,23 +72,15 @@ public class DesktopController extends DesktopControlerBase {
 	@Path
 	public void importUrl(Request request) throws IOException {
 		final String url = request.getString("url");
-		ImportListener listener = new ImportListener();
+		GenericImportListener listener = new GenericImportListener();
 		listener.setPrivileged(request.getSession());
 		listener.setImageService(imageService);
 
-		final ImportSession session = importService.createImportSession(request.getSession());
+		ImportSession session = importService.createImportSession(request.getSession());
 		
-		UrlImporter handler = new UrlImporter(url,listener);
-		session.setHandler(handler);
-		Thread thread = new Thread(new Runnable() {
-			public void run() {
-				log.info("Starting import session of URL: "+url);
-				session.start();
-				log.info("Ending import session of URL: "+url);
-			}
-		});
-		thread.setDaemon(true);
-		thread.start();
+		HttpImportTransport<Entity> handler = new HttpImportTransport<Entity>(url,listener);
+		session.setTransport(handler);
+		session.startInBackground();
 		System.out.println("Start: "+session.getId()+" / "+session.getStatus());
 		ImportPerspective info = new ImportPerspective(session);
 		request.sendObject(info);
@@ -98,19 +89,19 @@ public class DesktopController extends DesktopControlerBase {
 
 	@Path
 	public void uploadFile(Request request) throws IOException, EndUserException {
-		ImportListener listener = new ImportListener();
+		GenericImportListener listener = new GenericImportListener();
 		listener.setPrivileged(request.getSession());
 		listener.setImageService(imageService);
 
-		final ImportSession session = importService.createImportSession(request.getSession());
-		FileImporter handler = new FileImporter();
-		handler.setRequest(request);
-		handler.setImportListener(listener);
-		session.setHandler(handler);
-		log.info("Starting upload");
-		session.start();
-		log.info("Upload finished");
+		ImportSession session = importService.createImportSession(request.getSession());
 		
+		UploadImportTransport<Entity> transport = new UploadImportTransport<Entity>();		
+		transport.setImportListener(listener);
+		transport.setRequest(request);
+		
+		session.setTransport(transport);
+		session.start();
+				
 		ImportPerspective info = new ImportPerspective(session);
 		request.sendObject(info);
 	}

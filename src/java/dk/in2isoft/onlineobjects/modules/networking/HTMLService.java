@@ -1,5 +1,6 @@
 package dk.in2isoft.onlineobjects.modules.networking;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -45,6 +46,10 @@ public class HTMLService {
 		return null;
 	}
 	
+	public HTMLDocument getDocumentSilently(File file,String encoding) {
+		return new HTMLDocument(Files.readString(file, encoding));
+	}
+
 	
 	public void setNetworkService(NetworkService networkService) {
 		this.networkService = networkService;
@@ -54,4 +59,6 @@ public class HTMLService {
 	public HTMLDocument getDocumentSilently(String uri) {
 		return getDocumentSilently(URI.create(uri));
 	}
+
+
 }

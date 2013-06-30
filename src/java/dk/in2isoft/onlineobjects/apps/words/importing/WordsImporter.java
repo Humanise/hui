@@ -8,12 +8,13 @@ import java.util.Map;
 import org.apache.commons.io.IOUtils;
 
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
-import dk.in2isoft.onlineobjects.modules.importing.ImportHandler;
+import dk.in2isoft.onlineobjects.model.Word;
+import dk.in2isoft.onlineobjects.modules.importing.ImportTransport;
 import dk.in2isoft.onlineobjects.modules.importing.ImportListener;
 import dk.in2isoft.onlineobjects.modules.importing.ImportSession.Status;
 import dk.in2isoft.onlineobjects.ui.Request;
 
-public class WordsImporter implements ImportListener,ImportHandler,TextImporter {
+public class WordsImporter implements ImportListener<Word>,ImportTransport,TextImporter {
 
 	private Status status = Status.waiting;
 	private String text;
@@ -34,7 +35,7 @@ public class WordsImporter implements ImportListener,ImportHandler,TextImporter 
 	}
 	
 	@Override
-	public Object getResponse() {
+	public Word getResponse() {
 		return null;
 	}
 

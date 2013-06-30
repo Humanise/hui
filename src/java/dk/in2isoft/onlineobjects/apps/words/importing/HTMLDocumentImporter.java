@@ -6,12 +6,12 @@ import com.sun.syndication.feed.rss.Item;
 
 import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.onlineobjects.core.exceptions.NetworkException;
-import dk.in2isoft.onlineobjects.modules.importing.ImportHandler;
+import dk.in2isoft.onlineobjects.modules.importing.ImportTransport;
 import dk.in2isoft.onlineobjects.modules.importing.ImportSession.Status;
 import dk.in2isoft.onlineobjects.modules.networking.HTMLService;
 import dk.in2isoft.onlineobjects.services.FeedService;
 
-public class HTMLDocumentImporter implements ImportHandler, TextImporter {
+public class HTMLDocumentImporter implements ImportTransport, TextImporter {
 	
 	private FeedService feedService;
 	private HTMLService htmlService;

@@ -1,6 +1,7 @@
-package dk.in2isoft.onlineobjects.apps.desktop.importing;
+package dk.in2isoft.onlineobjects.modules.importing;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -14,21 +15,28 @@ import org.apache.log4j.Logger;
 import com.google.common.collect.Maps;
 
 import dk.in2isoft.commons.lang.Code;
-import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
+import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.model.Entity;
-import dk.in2isoft.onlineobjects.modules.importing.ImportHandler;
 import dk.in2isoft.onlineobjects.modules.importing.ImportSession.Status;
 import dk.in2isoft.onlineobjects.ui.Request;
 
-public class FileImporter implements ImportHandler {
+public class UploadImportTransport<T> implements ImportTransport {
 
-	private ImportListener importListener;
-	private Entity result;
+	private ImportListener<T> importListener;
+	private T result;
 	private Status status = Status.waiting;
 	private float progress;
 	private Request request;
-	private static final Logger log = Logger.getLogger(FileImporter.class);
+	private static final Logger log = Logger.getLogger(UploadImportTransport.class);
 	
+	public UploadImportTransport() {
+		
+	}
+	
+	public UploadImportTransport(Request request) {
+		this.request = request;
+	}
+
 	public void start() {
 		
 		DiskFileItemFactory factory = new DiskFileItemFactory();
@@ -64,7 +72,8 @@ public class FileImporter implements ImportHandler {
 				if (!item.isFormField()) {
 					log.info("Handling uploaded file: "+item.getName()+" - "+item.getContentType()+" ("+item.getSize()+"byte)");
 					File file = item.getStoreLocation();
-					result = importListener.fileWasImported(file,item.getName(),item.getContentType());
+					importListener.processFile(file, item.getContentType(), item.getName(), parameters, request);
+					result = importListener.getResponse();
 				}
 			}
 			log.info("Upload complete");
@@ -72,9 +81,12 @@ public class FileImporter implements ImportHandler {
 		} catch (FileUploadException e) {
 			status = Status.failure;
 			log.error("Failed to upload file",e);
-		} catch (ModelException e) {
+		} catch (EndUserException e) {
 			log.error("Failed to upload file",e);
 			status = Status.failure;
+		} catch (IOException e) {
+			status = Status.failure;
+			log.error("Failed to upload file",e);
 		}
 	}
 	
@@ -86,7 +98,7 @@ public class FileImporter implements ImportHandler {
 		return status;
 	}
 
-	public Object getResult() {
+	public T getResult() {
 		return result;
 	}
 
@@ -94,7 +106,7 @@ public class FileImporter implements ImportHandler {
 		this.request = request;
 	}
 	
-	public void setImportListener(ImportListener importListener) {
+	public void setImportListener(ImportListener<T> importListener) {
 		this.importListener = importListener;
 	}
 

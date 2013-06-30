@@ -16,7 +16,7 @@ import dk.in2isoft.onlineobjects.modules.importing.ImportListener;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
 
-public class ImageImporter implements ImportListener {
+public class ImageImporter implements ImportListener<Object> {
 
 	protected ModelService modelService;
 	private ImageService imageService;

@@ -12,7 +12,7 @@ public class ImportPerspective {
 	public ImportPerspective(ImportSession session) {
 		this.id = session.getId();
 		this.status = session.getStatus().name();
-		this.entity = (Entity) session.getHandler().getResult();
+		this.entity = (Entity) session.getTransport().getResult();
 	}
 
 	public String getId() {

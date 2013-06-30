@@ -6,21 +6,31 @@ public class ImportSession extends SubSession {
 
 	public static enum Status {waiting,transferring,processing,success,failure}
 		
-	private ImportHandler handler;
+	private ImportTransport transport;
 
 	public Status getStatus() {
-		return handler.getStatus();
+		return transport.getStatus();
 	}
 	
 	public void start() {
-		handler.start();
+		transport.start();
 	}
 	
-	public void setHandler(ImportHandler handler) {
-		this.handler = handler;
+	public void startInBackground() {
+		Thread thread = new Thread(new Runnable() {
+			public void run() {
+				start();
+			}
+		});
+		thread.setDaemon(true);
+		thread.start();
+	}
+
+	public void setTransport(ImportTransport handler) {
+		this.transport = handler;
 	}
 	
-	public ImportHandler getHandler() {
-		return handler;
+	public ImportTransport getTransport() {
+		return transport;
 	}
 }

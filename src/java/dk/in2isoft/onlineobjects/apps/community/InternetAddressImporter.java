@@ -14,7 +14,7 @@ import dk.in2isoft.onlineobjects.modules.importing.ImportListener;
 import dk.in2isoft.onlineobjects.modules.networking.HTMLService;
 import dk.in2isoft.onlineobjects.ui.Request;
 
-class InternetAddressImporter implements ImportListener {
+class InternetAddressImporter implements ImportListener<Object> {
 
 	private ModelService modelService;
 	private HTMLService htmlService;

@@ -1,4 +1,4 @@
-package dk.in2isoft.onlineobjects.apps.desktop.importing;
+package dk.in2isoft.onlineobjects.modules.importing;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -15,27 +15,25 @@ import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
 import dk.in2isoft.commons.http.HeaderUtil;
-import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
-import dk.in2isoft.onlineobjects.model.Entity;
-import dk.in2isoft.onlineobjects.modules.importing.ImportHandler;
+import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.modules.importing.ImportSession.Status;
 
-public class UrlImporter implements ImportHandler {
+public class HttpImportTransport<T> implements ImportTransport {
 
-	private static final Logger log = Logger.getLogger(UrlImporter.class);
+	private static final Logger log = Logger.getLogger(HttpImportTransport.class);
 	
 	private String uri;
 	private Status status = Status.waiting;
-	private ImportListener listener;
+	private ImportListener<T> listener;
 	
-	private Entity result;
+	private T result;
 	
-	public UrlImporter(String uri, ImportListener listener) {
+	public HttpImportTransport(String uri, ImportListener<T> listener) {
 		this.uri = uri;
 		this.listener = listener;
 	}
 	
-	public Entity getResult() {
+	public T getResult() {
 		return result;
 	}
 	
@@ -64,7 +62,8 @@ public class UrlImporter implements ImportHandler {
 			IOUtils.copy(inputStream, outputStream);
 			log.info("Url import finished");
 			status = Status.processing;
-			result = listener.urlWasImported(tempFile, uri, mimeType);
+			listener.processFile(tempFile, mimeType, null, null, null);
+			result = listener.getResponse();
 			status = Status.success;
 			log.info("Processing the file finished");
 		} catch (HttpException e) {
@@ -73,7 +72,7 @@ public class UrlImporter implements ImportHandler {
 		} catch (IOException e) {
 			this.status = Status.failure;
 			log.error("Unable to get: "+uri,e);
-		} catch (ModelException e) {
+		} catch (EndUserException e) {
 			this.status = Status.failure;
 			log.error("Error processing: "+uri,e);
 		} finally {

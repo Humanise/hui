@@ -28,7 +28,7 @@ import dk.in2isoft.onlineobjects.ui.Request;
 public class DataImporter {
 	
 	private static Logger log = Logger.getLogger(DataImporter.class);
-	private ImportListener listener;
+	private ImportListener<?> listener;
 	private FileService fileService;
 	private String successResponse = "SUCCESS";
 	
@@ -104,11 +104,11 @@ public class DataImporter {
 		this.successResponse = successResponse;
 	}
 
-	public void setListener(ImportListener listener) {
+	public void setListener(ImportListener<?> listener) {
 		this.listener = listener;
 	}
 
-	public ImportListener getListener() {
+	public ImportListener<?> getListener() {
 		return listener;
 	}
 

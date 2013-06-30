@@ -16,7 +16,15 @@ desktop.widget = {
 					return false;
 				}
 				var target = e.getElement();
-				this.resize = hui.cls.has(target,'widget_resize');
+				this.resize = null;
+				if (hui.cls.has(target,'widget_resize')) {
+					this.resize = {
+						l : hui.cls.has(target,'widget_resize_left'),
+						r : hui.cls.has(target,'widget_resize_right'),
+						t : hui.cls.has(target,'widget_resize_top'),
+						b : hui.cls.has(target,'widget_resize_bottom')
+					}
+				}
 			},
 			onStart : function(e) {
 				widget.element.style.zIndex = hui.ui.nextPanelIndex();
@@ -44,6 +52,7 @@ desktop.widget = {
 			},
  			onMove : function(e) {
  				if (this.resize) {
+					
  					this.element.style.width = Math.max(200, e.getLeft() - this.startPosition.left + this.initialSize.width)+'px';
  					this.element.style.height = Math.max(200, e.getTop() - this.startPosition.top + this.initialSize.height)+'px';
  				} else {
