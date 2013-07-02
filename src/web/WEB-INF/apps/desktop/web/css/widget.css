@@ -3,6 +3,7 @@ div.widget
 	box-shadow: 0 3px 5px 1px rgba(0,0,0,.2), 0 3px 20px rgba(0,0,0,.1);
 	position: absolute;
 	width: 400px;
+	height: 300px;
 	left: 100px;
 	top: 100px;
 	font-family: 'Source Sans Pro','Helvetica Neue';
@@ -116,7 +117,7 @@ div.widget_header a:active
 
 div.widget_body
 {
-	max-height: 200px;
+	height: 100%;
 	overflow: scroll;
 }
 
@@ -177,4 +178,17 @@ div.widget_resize_bottom
 	bottom: 0;
 	left: 0;
 	cursor: s-resize;
+}
+
+div.widget_resize_bottom.widget_resize_right
+{
+	width: 5px;
+	height: 5px;
+	bottom: 0;
+	right: 0;
+	cursor: se-resize;
+	background: red;
+	margin: 0 -5px -5px 0;
+	left: auto;
+	top: auto;
 }

@@ -1,0 +1,50 @@
+{
+	all : {
+		css : [
+			"WEB-INF/core/web/css/oo_font.css",
+			"WEB-INF/core/web/css/oo_icon.css",
+			"hui/css/curtain.css",
+			"hui/css/button.css",
+			"hui/css/boundpanel.css",
+			"hui/css/checkbox.css",
+			"hui/css/formula.css",
+			"hui/css/message.css",
+			"hui/css/icon.css",
+			"hui/css/overlay.css",
+			
+			"WEB-INF/core/web/css/oo_topbar.css",
+			"WEB-INF/apps/desktop/web/css/desktop.css",
+			"WEB-INF/apps/desktop/web/css/dock.css",
+			"WEB-INF/apps/desktop/web/css/widget.css",
+			"WEB-INF/apps/desktop/web/css/desktop_searchbar.css",
+			"WEB-INF/apps/desktop/web/css/desktop_list.css",
+			"WEB-INF/apps/desktop/web/css/desktop_widget_image.css"		
+		],
+		js : [
+			"hui/js/hui.js",
+			"hui/js/hui_animation.js",
+			"hui/js/hui_color.js",
+			"hui/js/ui.js",
+			"hui/js/Input.js",
+			"hui/js/Button.js",
+			"hui/js/BoundPanel.js",
+			"hui/js/TextField.js",
+			"hui/js/Formula.js",
+			"hui/js/Drawing.js",
+			"hui/js/Source.js",
+			"hui/js/Overlay.js",
+			"hui/js/ProgressIndicator.js",
+			"WEB-INF/core/web/js/onlineobjects.js",
+			"WEB-INF/apps/desktop/web/js/ctrl.js",
+			"WEB-INF/apps/desktop/web/js/desktop.js",
+			"WEB-INF/apps/desktop/web/js/desktop_searchbar.js",
+			"WEB-INF/apps/desktop/web/js/desktop_list.js",
+			"WEB-INF/apps/desktop/web/js/desktop_widget_bookmarks.js",
+			"WEB-INF/apps/desktop/web/js/desktop_widget_image.js"		
+		]
+	},
+	loggedIn : {
+		css : [],
+		js : []
+	}
+}

@@ -25,8 +25,11 @@ desktop.widget.Bookmarks.template = '<div class="widget_header">'+
 		'</span>'+
 	'</div>'+
 	'<div class="widget_body"></div>'+
-	'<div class="widget_resize widget_resize_left"></div><div class="widget_resize widget_resize_right"></div>'+
-	'<div class="widget_resize widget_resize_top"></div><div class="widget_resize widget_resize_bottom"></div>';
+	'<div class="widget_resize widget_resize_left"></div>'+
+	'<div class="widget_resize widget_resize_right"></div>'+
+	'<div class="widget_resize widget_resize_top"></div>'+
+	'<div class="widget_resize widget_resize_bottom"></div>'+
+	'<div class="widget_resize widget_resize_bottom widget_resize_right"></div>';
 
 desktop.widget.Bookmarks.prototype = {
 	_attach : function() {

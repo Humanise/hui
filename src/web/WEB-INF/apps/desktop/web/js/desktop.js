@@ -52,9 +52,12 @@ desktop.widget = {
 			},
  			onMove : function(e) {
  				if (this.resize) {
-					
- 					this.element.style.width = Math.max(200, e.getLeft() - this.startPosition.left + this.initialSize.width)+'px';
- 					this.element.style.height = Math.max(200, e.getTop() - this.startPosition.top + this.initialSize.height)+'px';
+					if (this.resize.r) {
+ 						this.element.style.width = Math.max(200, e.getLeft() - this.startPosition.left + this.initialSize.width)+'px';
+					}
+					if (this.resize.b) {
+ 						this.element.style.height = Math.max(200, e.getTop() - this.startPosition.top + this.initialSize.height)+'px';
+					}
  				} else {
 					var top = (e.getTop()-this.dragState.top);
 					var left = (e.getLeft()-this.dragState.left);
