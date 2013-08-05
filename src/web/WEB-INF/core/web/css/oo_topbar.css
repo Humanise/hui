@@ -175,7 +175,8 @@ span.oo_topbar_right a
 a.oo_topbar_user span
 {
 	margin-right: 4px;
-	margin-top: -2px;
+	margin-top: 7px;
+	vertical-align: top
 }
 
 div.oo_topbar_info_busy
@@ -187,6 +188,7 @@ div.oo_topbar_info_busy
 div.oo_topbar_info
 {
 	overflow: hidden;
+	font-family: 'Open Sans';
 }
 
 div.oo_topbar_info_photo
@@ -207,6 +209,7 @@ div.oo_topbar_info_photo div
 div.oo_topbar_info_content
 {
 	margin-left: 60px;
+	padding-bottom: 10px;
 }
 
 div.oo_topbar_info p
@@ -218,7 +221,7 @@ div.oo_topbar_info p
 div.oo_topbar_info p.oo_topbar_info_name
 {
 	font-size: 14px;
-	font-weight: bold;
+	font-weight: 400;
 	margin-top: -3px;
 }
 
@@ -249,7 +252,8 @@ p.oo_topbar_info_account strong
 	display: inline-block;
 	line-height: 11px;
 	color: #aaa;
-	font-weight: normal;	
+	font-weight: normal;
+	vertical-align: top	
 }
 
 div.oo_topbar_info_buttons
