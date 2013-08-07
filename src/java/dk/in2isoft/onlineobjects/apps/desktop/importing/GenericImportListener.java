@@ -45,6 +45,10 @@ public class GenericImportListener implements ImportListener<Entity> {
 	public void setImageService(ImageService imageService) {
 		this.imageService = imageService;
 	}
+	
+	public void setHtmlService(HTMLService htmlService) {
+		this.htmlService = htmlService;
+	}
 
 	@Override
 	public String getProcessName() {

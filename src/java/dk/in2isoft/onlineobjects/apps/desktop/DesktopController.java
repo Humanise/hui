@@ -75,6 +75,7 @@ public class DesktopController extends DesktopControlerBase {
 		GenericImportListener listener = new GenericImportListener();
 		listener.setPrivileged(request.getSession());
 		listener.setImageService(imageService);
+		listener.setHtmlService(htmlService);
 
 		ImportSession session = importService.createImportSession(request.getSession());
 		

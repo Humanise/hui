@@ -11,6 +11,9 @@
 				
 		<ui:define name="body">
 			<div class="reader">
+				<div style="float: right">
+					<gui:button variant="light" text="Add..." small="true" name="addButton"/>
+				</div>
 				<o:header>Reader</o:header>
 				<gui:source name="listSource" url="listAddresses">
 					<gui:parameter key="page" value="@list.window.page"/>
@@ -43,7 +46,7 @@
 						</gui:field>
 					</gui:fields>
 					<gui:buttons>
-						<gui:button submit="true" text="Add"/>
+						<gui:button submit="true" text="Add" variant="light"/>
 					</gui:buttons>
 				</gui:formula>
 			</gui:boundPanel>
@@ -53,6 +56,20 @@
 				<gui:buttons align="right">
 					<gui:button text="Remove" variant="light" small="true" name="removeWord"/>
 				</gui:buttons>
+			</gui:boundPanel>
+
+			<gui:boundPanel name="addPanel" variant="light" width="300" modal="true">
+				<gui:formula name="addForm">
+					<gui:fields labels="above">
+						<gui:field label="Address">
+							<gui:textInput key="url"/>
+						</gui:field>
+					</gui:fields>
+					<gui:buttons>
+						<gui:button text="Cancel" variant="light" name="cancelAddPanel"/>
+						<gui:button submit="true" text="Add" variant="light"/>
+					</gui:buttons>
+				</gui:formula>
 			</gui:boundPanel>
 			
 			<ui:include src="../shared/wordfinder.xhtml"/>

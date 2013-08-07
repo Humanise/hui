@@ -7,7 +7,7 @@ var controller = {
 		var viewer = this.viewer = hui.get('viewer');
 		hui.listen(viewer,'click',this._click.bind(this));
 		this._refreshFeeds();
-		this._loadArticle(3141);
+		//this._loadArticle(3141);
 	},
 	
 	_click : function(e) {
@@ -117,6 +117,17 @@ var controller = {
 				hui.ui.showMessage({text:'Feed could not be added',icon:'common/warning',duration:3000});
 			}
 		})
+	},
+	
+	// Add
+	
+	$click$addButton : function(button) {
+		hui.ui.get('addPanel').show({target:button})
+		hui.ui.get('addForm').focus();
+	},
+	
+	$click$cancelAddPanel : function() {
+		hui.ui.get('addPanel').hide();
 	},
 	
 	

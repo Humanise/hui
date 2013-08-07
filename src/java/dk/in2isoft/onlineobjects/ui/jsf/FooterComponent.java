@@ -62,7 +62,7 @@ public class FooterComponent extends AbstractComponent {
 			}
 			writer.endP();
 		}
-		writer.startP("oo_footer_logo").startA().withAttribute("onclick", "alert(0)").withHref("http://www.humanise.dk/").startSpan("oo_icon oo_icon_humanise").endSpan().startStrong().text("Humanise").endStrong().endA().endP();
+		writer.startP("oo_footer_logo").startA().withHref("http://www.humanise.dk/").startSpan("oo_icon oo_icon_humanise").endSpan().startStrong().text("Humanise").endStrong().endA().endP();
 		writer.endDiv();
 	}
 	

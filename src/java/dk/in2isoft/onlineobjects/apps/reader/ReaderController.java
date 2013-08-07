@@ -82,7 +82,13 @@ public class ReaderController extends ReaderControllerBase {
 		
 		for (InternetAddress address : result.getList()) {
 			writer.startRow().withId(address.getId());
-			writer.startCell().startLine().text(address.getName()).endLine();
+			writer.startCell().startLine();
+			if (Strings.isBlank(address.getName())) {
+				writer.text("«No name»");
+			} else {
+				writer.text(address.getName());
+			}
+			writer.endLine();
 			writer.startLine().dimmed().minor().text(Strings.simplifyURL(address.getAddress())).endLine();
 			List<Word> words = modelService.getChildren(address, Word.class, request.getSession());
 			if (Code.isNotEmpty(words)) {

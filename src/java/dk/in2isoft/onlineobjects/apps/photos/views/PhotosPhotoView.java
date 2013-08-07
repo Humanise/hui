@@ -174,6 +174,13 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 		return previousId;
 	}
 	
+	public String getTitle() {
+		if (Strings.isBlank(image.getName())) {
+			return "No title";
+		}
+		return image.getName();
+	}
+	
 	public String getDescription() {
 		return StringUtils.trim(imageInfo.getDescription());
 	}
