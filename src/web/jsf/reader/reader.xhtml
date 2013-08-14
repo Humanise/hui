@@ -15,8 +15,12 @@
 					<gui:button variant="light" text="Add..." small="true" name="addButton"/>
 				</div>
 				<o:header>Reader</o:header>
+				<div>
+					<gui:searchfield name="search" placeholder="Search" adaptive="true"/>
+				</div>
 				<gui:source name="listSource" url="listAddresses">
 					<gui:parameter key="page" value="@list.window.page"/>
+					<gui:parameter key="text" value="@search.value"/>
 				</gui:source>
 				<gui:list name="list" source="listSource" variant="light"/>
 				<div id="viewer">

@@ -130,6 +130,25 @@ var controller = {
 		hui.ui.get('addPanel').hide();
 	},
 	
+	$submit$addForm : function(form) {
+		hui.ui.get('addPanel').hide();
+		var values = form.getValues();
+		form.reset();
+		hui.ui.request({
+			message : {start:'Adding address'},
+			url : 'addInternetAddress',
+			parameters : {url:values.url},
+			$object : function(info) {
+				hui.ui.showMessage({text:'Address added',icon:'common/success',duration:3000});
+				hui.ui.get('listSource').refresh();
+				this._loadArticle(info.id);
+			}.bind(this),
+			$failure : function() {
+				hui.ui.showMessage({text:'Address could not be added',icon:'common/warning',duration:3000});
+			}
+		})
+	},
+	
 	
 	// Tags
 	

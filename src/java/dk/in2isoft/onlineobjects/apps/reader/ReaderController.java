@@ -44,6 +44,7 @@ import dk.in2isoft.onlineobjects.modules.networking.NetworkResponse;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.ui.ScriptWriter;
 import dk.in2isoft.onlineobjects.ui.StylesheetWriter;
+import dk.in2isoft.onlineobjects.ui.data.SimpleEntityPerspective;
 
 
 public class ReaderController extends ReaderControllerBase {
@@ -65,11 +66,12 @@ public class ReaderController extends ReaderControllerBase {
 	public void listAddresses(Request request) throws IOException, ModelException {
 		
 		int page = request.getInt("page");
+		String text = request.getString("text");
 		int pageSize = 30;
 
 		ListWriter writer = new ListWriter(request);
 		
-		Query<InternetAddress> query = Query.after(InternetAddress.class).withPrivileged(request.getSession()).withPaging(page, 30);
+		Query<InternetAddress> query = Query.after(InternetAddress.class).withWords(text).withPrivileged(request.getSession()).withPaging(page, 30);
 		
 		SearchResult<InternetAddress> result = modelService.search(query);
 		
@@ -246,6 +248,23 @@ public class ReaderController extends ReaderControllerBase {
 			writer.endDiv();
 		}
 		return writer.toString();
+	}
+	
+	@Path
+	public SimpleEntityPerspective addInternetAddress(Request request) throws ModelException {
+		String url = request.getString("url");
+		
+		InternetAddress internetAddress = new InternetAddress();
+		internetAddress.setAddress(url);
+		HTMLDocument doc = htmlService.getDocumentSilently(url);
+		if (doc!=null) {
+			internetAddress.setName(doc.getTitle());
+		} else {
+			internetAddress.setName(Strings.simplifyURL(url));
+		}
+		modelService.createItem(internetAddress, request.getSession());
+		
+		return SimpleEntityPerspective.create(internetAddress);
 	}
 
 	@Path

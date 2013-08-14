@@ -135,7 +135,9 @@
 	<!-- Get rid of this... -->
         <dependency org="org.directwebremoting" name="dwr" rev="2.0.10" transitive="false"/>
 
-
+	<!-- Geography -->
+	
+		<dependency org="org.geonames" name="geonames" rev="1.0" />
 
 	<!-- TODO -->
         <!-- WebDav: http://milton.io -->
