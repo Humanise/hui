@@ -4690,7 +4690,7 @@ hui.ui.ImageViewer.prototype = {
 		this._setHash(true);
 	},
 	_setHash : function(visible) {
-		//return; // Disabled
+		return; // Disabled
 		if (!this._listening) {
 			this._listening = true;
 			if (!hui.browser.msie6 && !hui.browser.msie7) {
@@ -5321,7 +5321,7 @@ hui.ui.Button = function(options) {
 	this.element = hui.get(options.element);
 	this.enabled = !hui.cls.has(this.element,'hui_button_disabled');
 	hui.ui.extend(this);
-	this.addBehavior();
+	this._attach();
 	if (options.listener) {
 		this.listen(options.listener);
 	}
@@ -5377,20 +5377,23 @@ hui.ui.Button.create = function(options) {
 }
 
 hui.ui.Button.prototype = {
-	/** @private */
-	addBehavior : function() {
+	_attach : function() {
 		var self = this;
 		hui.listen(this.element,'mousedown',function(e) {
 			hui.stop(e);
 		});
 		hui.listen(this.element,'click',function(e) {
 			hui.stop(e);
-			self._onClick();
+			self._onClick(e);
 		});
 	},
-	_onClick : function() {
+	_onClick : function(e) {
 		if (this.enabled) {
-			if (this.options.confirm) {
+			var alt = false;
+			if (e) {
+				alt = hui.event(e).altKey;
+			}
+			if (this.options.confirm && !alt) {
 				hui.ui.confirmOverlay({
 					widget : this,
 					text : this.options.confirm.text,
