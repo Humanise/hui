@@ -136,9 +136,11 @@ hui.ui.Editor.prototype = {
 	deactivate : function() {
 		this.active = false;
 		if (this.activePart) {
-			this.activePart.deactivate();
+			this._deactivatePart(this.activePart);
 		}
-		if (this.partControls) this.partControls.hide();
+		if (this.partControls) {
+			this.partControls.hide();
+		}
 	},
 	
 	
@@ -271,8 +273,9 @@ hui.ui.Editor.prototype = {
 	showPartEditControls : function() {
 		if (!this.partEditControls) {
 			this.partEditControls = hui.ui.Overlay.create({name:'huiEditorPartEditActions'});
-			this.partEditControls.addIcon('save','common/save');
-			this.partEditControls.addIcon('cancel','common/close');
+			this.partEditControls.addIcon('save','common/ok');
+			this.partEditControls.addIcon('cancel','common/stop');
+			this.partEditControls.addIcon('settings','common/info');
 			this.partEditControls.listen(this);
 		}
 		this.partEditControls.showAtElement(this.activePart.element,{'horizontal':'right','vertical':'topOutside'});
@@ -334,70 +337,43 @@ hui.ui.Editor.prototype = {
 	},
 	_editPart : function(part) {
 		if (!this.active || this.activePart) return;
-		if (this.activePart) this.activePart.deactivate();
+		if (this.activePart) {
+			this._deactivatePart(this.activePart);
+		}
 		if (this.hoveredPart) {
 			hui.cls.remove(this.hoveredPart.element,'hui_editor_part_hover');
 		}
 		this.activePart = part;
 		this.showPartEditControls();
 		hui.cls.add(part.element,'hui_editor_part_active');
+		hui.ui.msg({text:{en:'Loading...',da:'Indlæser...'},delay:300,busy:true});
 		part.activate(function() {
-			//hui.ui.showMessage({text:'Loaded',duration:2000});
+			hui.ui.hideMessage();
 		});
 		window.clearTimeout(this.partControlTimer);
 		this._hidePartControls();
 		if (this.hoveredColumn) {
 			hui.cls.remove(this.hoveredColumn,'hui_editor_column_hover');
 		}
-		this._showPartEditor();
-	},
-	_showPartEditor : function() {
-		 // TODO: Disabled!
-		/*if (!this.partEditor) {
-			var w = this.partEditor = hui.ui.Window.create({padding:5,title:'Afstande',close:false,variant:'dark',width: 200});
-			var f = this.partEditorForm = hui.ui.Formula.create();
-			f.buildGroup({above:false},[
-				{type:'TextField',options:{label:'Top',key:'top'}},
-				{type:'TextField',options:{label:'Bottom',key:'bottom'}},
-				{type:'TextField',options:{label:'Left',key:'left'}},
-				{type:'TextField',options:{label:'Right',key:'right'}}
-			]);
-			w.add(f);
-			f.listen({valuesChanged:this.updatePartProperties.bind(this)});
-		}
-		var e = this.activePart.element;
-		this.partEditorForm.setValues({
-			top: e.getStyle('marginTop'),
-			bottom: e.getStyle('marginBottom'),
-			left: e.getStyle('marginLeft'),
-			right: e.getStyle('marginRight')
-		});
-		this.partEditor.show();*/
-	},
-	updatePartProperties : function(values) {
-		hui.style.set(this.activePart.element,{
-			marginTop:values.top,
-			marginBottom:values.bottom,
-			marginLeft:values.left,
-			marginRight:values.right
-		});
-		this.activePart.properties = values;
-	},
-	hidePartEditor : function() {
-		if (this.partEditor) this.partEditor.hide();
+		this.fire('editPart',part);
 	},
 	cancelPart : function(part) {
 		part.cancel();
-		this.hidePartEditor();
+		this._deactivatePart(this.activePart);
 		this.activePart = null;
+		this.fire('cancelPart',part);
 	},
 	savePart : function(part) {
 		this.busy = true;
+		hui.ui.msg({text:{en:'Saving...',da:'Gemmer...'},delay:300,busy:true});
 		part.save({
 			callback : function() {
-				this.hidePartEditor();
+				hui.ui.hideMessage();
 				this.activePart = null;
 				this.busy = false;
+				this._deactivatePart(part);
+				this.partChanged(part);
+				this.fire('savePart',part);
 			}.bind(this)
 		});
 	},
@@ -409,7 +385,13 @@ hui.ui.Editor.prototype = {
 		};
 		return null;
 	},
-	partDidDeacivate : function(part) {
+	_deactivatePart : function(part) {
+		part.deactivate(function() {
+			this.partDidDeactivate(part);
+			this.fire('deactivatePart',part);
+		}.bind(this))
+	},
+	partDidDeactivate : function(part) {
 		hui.cls.remove(part.element,'hui_editor_part_active');
 		this.activePart = null;
 		this._hidePartEditControls();
@@ -761,7 +743,7 @@ hui.ui.Editor.Header = function(options) {
 }
 
 hui.ui.Editor.Header.prototype = {
-	activate : function() {
+	activate : function(callback) {
 		this.value = this.header.innerHTML;
 		this.field = hui.build('textarea',{className:'hui_editor_header'});
 		this.field.value = this.value;
@@ -775,27 +757,27 @@ hui.ui.Editor.Header.prototype = {
 				this.save();
 			}
 		}.bind(this));
+        callback();
 	},
-	save : function() {
+	save : function(options) {
 		var value = this.field.value;
 		this.header.innerHTML = value;
-		this.deactivate();
 		if (value!=this.value) {
 			this.value = value;
-			hui.ui.Editor.get().partChanged(this);
 		}
+        options.callback();
 	},
 	cancel : function() {
-		this.deactivate();
+		
 	},
-	deactivate : function() {
+	deactivate : function(callback) {
 		this.header.style.visibility='';
 		this.element.removeChild(this.field);
-		hui.ui.Editor.get().partDidDeacivate(this);
+        callback();
 	},
 	updateFieldStyle : function() {
 		hui.style.set(this.field,{width:this.header.clientWidth+'px',height:this.header.clientHeight+'px'});
-		hui.style.copy(this.header,this.field,['fontSize','lineHeight','marginTop','fontWeight','fontFamily','textAlign','color','fontStyle']);
+		hui.style.copy(this.header,this.field,['font-size','line-height','margin-top','font-weight','font-family','text-align','color','font-style']);
 	},
 	getValue : function() {
 		return this.value;
@@ -814,7 +796,7 @@ hui.ui.Editor.Html = function(options) {
 }
 
 hui.ui.Editor.Html.prototype = {
-	activate : function() {
+	activate : function(callback) {
 		this.value = this.element.innerHTML;
 		this.element.innerHTML='';
 		var style = this.buildStyle();
@@ -823,6 +805,7 @@ hui.ui.Editor.Html.prototype = {
 		this.editor.listen(this);
 		this.editor.setValue(this.value);
 		this.editor.focus();
+		callback();
 	},
 	buildStyle : function() {
 		return {
@@ -834,24 +817,22 @@ hui.ui.Editor.Html.prototype = {
 		}
 	},
 	cancel : function() {
-		this.deactivate();
 		this.element.innerHTML = this.value;
 	},
-	save : function() {
-		this.deactivate();
+	save : function(options) {
 		var value = this.editor.getValue();
 		if (value!=this.value) {
 			this.value = value;
-			hui.ui.Editor.get().partChanged(this);
 		}
 		this.element.innerHTML = this.value;
+        options.callback();
 	},
-	deactivate : function() {
+	deactivate : function(callback) {
 		if (this.editor) {
 			this.editor.destroy();
 			this.element.innerHTML = this.value;
 		}
-		hui.ui.Editor.get().partDidDeacivate(this);
+		callback();
 	},
 	richTextDidChange : function() {
 		//this.deactivate();
