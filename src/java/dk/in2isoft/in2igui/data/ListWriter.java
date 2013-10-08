@@ -200,7 +200,7 @@ public class ListWriter extends MarkupWriter {
 	}
 	
 	public ListWriter revealing() {
-		withAttribute("revelaing", true);
+		withAttribute("revealing", true);
 		return this;
 	}
 }

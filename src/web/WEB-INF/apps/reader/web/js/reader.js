@@ -7,6 +7,7 @@ var controller = {
 		var viewer = this.viewer = hui.get('viewer');
 		hui.listen(viewer,'click',this._click.bind(this));
 		this._refreshFeeds();
+		this._refreshCloud();
 		//this._loadArticle(3141);
 	},
 	
@@ -30,6 +31,10 @@ var controller = {
 		} else {
 			viewer.style.display='none';
 		}
+	},
+	
+	$valueChanged$search : function() {
+		hui.ui.get('list').resetState();
 	},
 	
 	// List...
@@ -215,6 +220,24 @@ var controller = {
 				this._reloadInfo();
 			}.bind(this)
 		})
+	},
+	
+	// Cloud
+	
+	_refreshCloud : function() {
+		hui.ui.request({
+			url : 'getWordCloud',
+			$object : function(items) {
+				this._buildTags(items);
+			}.bind(this)
+		});
+	},
+	_buildTags : function(items) {
+		var container = hui.get('tags');
+		hui.dom.clear(container);
+		for (var i=0; i < items.length; i++) {
+			hui.build('li',{html:'<span class="oo_icon oo_icon_12 oo_icon_tag"></span><strong>' + hui.string.escape(items[i].title) + '</strong>','data-id':items[i].id,parent:container});
+		};
 	}
 }
 

@@ -33,11 +33,19 @@
 		</ui:define>
 		
 		<ui:define name="sidebar">
-			<div class="reader_feeds">
-				<ul id="feeds"></ul>
-				<gui:button name="addFeed" text="Add feed" variant="light" small="true"/>
+			<div class="sidebar">
+				<div class="block reader_feeds">
+					<h3>Feeds</h3>
+					<ul id="feeds"></ul>
+					<div class="reader_feeds_button">
+						<gui:button name="addFeed" text="Add feed" variant="light" small="true"/>
+					</div>
+				</div>
+				<div class="block">
+					<h3>Tags</h3>
+					<ul id="tags"></ul>
+				</div>
 			</div>
-			
 		</ui:define>
 
 		<ui:define name="bottom">
@@ -64,15 +72,13 @@
 
 			<gui:boundPanel name="addPanel" variant="light" width="300" modal="true">
 				<gui:formula name="addForm">
-					<gui:fields labels="above">
-						<gui:field label="Address">
-							<gui:textInput key="url"/>
-						</gui:field>
-					</gui:fields>
-					<gui:buttons>
-						<gui:button text="Cancel" variant="light" name="cancelAddPanel"/>
-						<gui:button submit="true" text="Add" variant="light"/>
-					</gui:buttons>
+					<gui:textInput key="url" multiline="true"/>
+					<div style="padding: 5px 2px 2px 0">
+						<gui:buttons>
+							<gui:button text="Cancel" variant="light" name="cancelAddPanel" rendered="false"/>
+							<gui:button submit="true" text="Add" variant="light"/>
+						</gui:buttons>
+					</div>
 				</gui:formula>
 			</gui:boundPanel>
 			

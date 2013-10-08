@@ -138,3 +138,39 @@ div.word_rendering h1
 	font-size: 12px;
 	margin: 0;
 }
+
+
+div.sidebar div.block
+{
+	padding: 10px;
+}
+
+div.sidebar div.block h3
+{
+	text-transform: uppercase;
+	color: #999;
+	margin: 0;
+	font-weight: 400;
+	font-size: 12px;
+}
+
+div.sidebar div.block ul
+{
+	list-style: none;
+	padding: 5px 0;
+	margin: 0;
+	font-size: 12px;
+}
+
+div.sidebar div.block ul li span.oo_icon
+{
+	color: #ccc;
+}
+
+div.sidebar div.block ul li strong
+{
+	font-weight: 400;
+	display: inline-block;
+	margin-left: 4px;
+	vertical-align: middle;
+}

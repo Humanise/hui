@@ -16,11 +16,13 @@ import dk.in2isoft.commons.lang.Files;
 import dk.in2isoft.commons.lang.HTMLWriter;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.commons.parsing.HTMLDocument;
+import dk.in2isoft.in2igui.data.ItemData;
 import dk.in2isoft.in2igui.data.ListWriter;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.ArticlePerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.FeedPerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.WordPerspective;
 import dk.in2isoft.onlineobjects.apps.videosharing.Path;
+import dk.in2isoft.onlineobjects.apps.words.perspectives.WordEnrichmentPerspective;
 import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SearchResult;
@@ -38,6 +40,7 @@ import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.modules.feeds.Feed;
+import dk.in2isoft.onlineobjects.modules.language.WordByInternetAddressQuery;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspectiveQuery;
 import dk.in2isoft.onlineobjects.modules.networking.NetworkResponse;
@@ -106,7 +109,7 @@ public class ReaderController extends ReaderControllerBase {
 			}
 			writer.endCell();
 			writer.startCell();
-			writer.startIcons().startIcon().withAction().withIcon("monochrome/view").withData(address.getAddress()).endIcon().endIcons();
+			writer.startIcons().startIcon().revealing().withAction().withIcon("monochrome/view").withData(address.getAddress()).endIcon().endIcons();
 			writer.endCell();
 			writer.endRow();
 		}
@@ -325,6 +328,14 @@ public class ReaderController extends ReaderControllerBase {
 			return perspective;
 		}
 		return null;
+	}
+	
+	@Path
+	public List<ItemData> getWordCloud(Request request) throws ModelException {
+		WordByInternetAddressQuery query = new WordByInternetAddressQuery(request.getSession());
+		List<ItemData> list = modelService.list(query);
+		
+		return list;
 	}
 	
 }
