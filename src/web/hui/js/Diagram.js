@@ -45,7 +45,6 @@ hui.ui.Diagram.prototype = {
 	},
 	_getMagnet : function(from,to,node) {
 		var margin = 1;
-		node._syncSize();
 		var size = node.getSize();
 		var center = node.getCenter();
 		var topLeft = {
@@ -707,16 +706,23 @@ hui.ui.Diagram.util = {
 				obj.element.style.zIndex = hui.ui.nextPanelIndex();
 				var pos = hui.position.get(obj.element);
 				var diagramPosition = hui.position.get(diagram.element);
-				dragState = {left: e.getLeft() - pos.left + diagramPosition.left,top:e.getTop()-pos.top + diagramPosition.top};
+				dragState = {
+					left : e.getLeft() - pos.left + diagramPosition.left,
+					top : e.getTop()-pos.top + diagramPosition.top
+				};
 				obj.element.style.right = 'auto';
 			},
  			onMove : function(e) {
 				var top = (e.getTop()-dragState.top);
 				var left = (e.getLeft()-dragState.left);
+				var size = obj.getSize();
 				obj.px = top;
 				obj.py = left;
-				obj.element.style.top = top+'px';
-				obj.element.style.left = left+'px';
+				//obj.element.style.top = top+'px';
+				//obj.element.style.left = left+'px';
+				top += size.height/2;
+				left += size.width/2;
+				obj.setCenter({x:left,y:top});
 				diagram.__nodeMoved(obj);
  			},
 			onEnd : function() {
