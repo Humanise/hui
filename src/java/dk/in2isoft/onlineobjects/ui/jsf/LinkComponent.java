@@ -1,6 +1,7 @@
 package dk.in2isoft.onlineobjects.ui.jsf;
 
 import java.io.IOException;
+import java.util.Set;
 
 import javax.faces.component.FacesComponent;
 import javax.faces.context.FacesContext;
@@ -60,6 +61,9 @@ public class LinkComponent extends AbstractComponent {
 		String styleClass = getStyleClass(context);
 		String onclick = getOnclick(context);
 		String title = getTitle(context);
+		Set<String> keys = getAttributes().keySet();
+		
+		System.out.println(keys);
 		if (plain) {
 			writer.startA(styleClass);
 		} else {

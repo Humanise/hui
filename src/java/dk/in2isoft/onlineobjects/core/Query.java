@@ -10,7 +10,7 @@ import org.hibernate.Session;
 import com.google.common.collect.Lists;
 
 import dk.in2isoft.commons.lang.Strings;
-import dk.in2isoft.onlineobjects.core.ModelPropertyLimitation.Function;
+import dk.in2isoft.onlineobjects.core.FieldLimitation.Function;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Privilege;
 import dk.in2isoft.onlineobjects.model.Relation;
@@ -85,64 +85,67 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 	}
 
 	public Query<T> withName(Object value) {
-		limitations
-				.add(new ModelPropertyLimitation(Entity.FIELD_NAME, value, ModelPropertyLimitation.Comparison.EQUALS));
+		fieldLimitations
+				.add(new FieldLimitation(Entity.FIELD_NAME, value, FieldLimitation.Comparison.EQUALS));
 		return this;
 	}
 
 	public Query<T> withField(String property, Object value) {
-		limitations.add(new ModelPropertyLimitation(property, value, ModelPropertyLimitation.Comparison.EQUALS));
+		fieldLimitations.add(new FieldLimitation(property, value, FieldLimitation.Comparison.EQUALS));
 		return this;
 	}
 
 	public Query<T> withFieldLowercase(String property, Object value) {
-		ModelPropertyLimitation limitation = new ModelPropertyLimitation(property, value, ModelPropertyLimitation.Comparison.EQUALS);
+		FieldLimitation limitation = new FieldLimitation(property, value, FieldLimitation.Comparison.EQUALS);
 		limitation.setFunction(Function.lower);
-		limitations.add(limitation);
+		fieldLimitations.add(limitation);
 		return this;
 	}
 
 	public Query<T> withFieldLike(String property, String str) {
-		limitations.add(new ModelPropertyLimitation(property, str, ModelPropertyLimitation.Comparison.LIKE));
+		fieldLimitations.add(new FieldLimitation(property, str, FieldLimitation.Comparison.LIKE));
 		return this;
 	}
 
 	public Query<T> withFieldLowercaseLike(String property, String str) {
-		ModelPropertyLimitation limitation = new ModelPropertyLimitation(property, str, ModelPropertyLimitation.Comparison.LIKE);
-		limitation.setFunction(ModelPropertyLimitation.Function.lower);
-		limitations.add(limitation);
+		FieldLimitation limitation = new FieldLimitation(property, str, FieldLimitation.Comparison.LIKE);
+		limitation.setFunction(FieldLimitation.Function.lower);
+		fieldLimitations.add(limitation);
 		return this;
 	}
 
 	public Query<T> withFieldIn(String property, Object[] value) {
-		limitations.add(new ModelPropertyLimitation(property, value, ModelPropertyLimitation.Comparison.IN));
+		fieldLimitations.add(new FieldLimitation(property, value, FieldLimitation.Comparison.IN));
 		return this;
 	}
 
 	public Query<T> withLowercaseFieldIn(String property, Object[] value) {
-		ModelPropertyLimitation limitation = new ModelPropertyLimitation(property, value, ModelPropertyLimitation.Comparison.IN);
-		limitation.setFunction(ModelPropertyLimitation.Function.lower);
-		limitations.add(limitation);
+		FieldLimitation limitation = new FieldLimitation(property, value, FieldLimitation.Comparison.IN);
+		limitation.setFunction(FieldLimitation.Function.lower);
+		fieldLimitations.add(limitation);
 		return this;
 	}
 
 	public Query<T> withFieldIn(String property, List<?> value) {
-		limitations.add(new ModelPropertyLimitation(property, value, ModelPropertyLimitation.Comparison.IN));
+		fieldLimitations.add(new FieldLimitation(property, value, FieldLimitation.Comparison.IN));
 		return this;
 	}
 
 	public Query<T> withFieldMoreThan(String property, Object value) {
-		limitations.add(new ModelPropertyLimitation(property, value, ModelPropertyLimitation.Comparison.MORETHAN));
+		fieldLimitations.add(new FieldLimitation(property, value, FieldLimitation.Comparison.MORETHAN));
 		return this;
 	}
 
 	public Query<T> withFieldLessThan(String property, Object value) {
-		limitations.add(new ModelPropertyLimitation(property, value, ModelPropertyLimitation.Comparison.LESSTHAN));
+		fieldLimitations.add(new FieldLimitation(property, value, FieldLimitation.Comparison.LESSTHAN));
 		return this;
 	}
 
 	public Query<T> withCustomProperty(String key, Object value) {
-		customProperties.put(key, value);
+		PropertyLimitation limitation = new PropertyLimitation();
+		limitation.setKey(key);
+		limitation.setValue(value);
+		customProperties.add(limitation);
 		return this;
 	}
 
@@ -282,9 +285,9 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 		if (customProperties.size() > 0) {
 			hql.append(" and p.key=:propertyKey and p.value=:propertyValue");
 		}
-		if (limitations.size() > 0) {
-			for (ModelPropertyLimitation limit : limitations) {
-				if (limit.getComparison().equals(ModelPropertyLimitation.Comparison.IN)) {
+		if (fieldLimitations.size() > 0) {
+			for (FieldLimitation limit : fieldLimitations) {
+				if (limit.getComparison().equals(FieldLimitation.Comparison.IN)) {
 					hql.append(" and ");
 					if (limit.getFunction()!=null) {
 						hql.append(limit.getFunction().name()).append("(");
@@ -370,8 +373,8 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 			q.setFetchSize(pageSize);
 			q.setFirstResult(pageNumber * pageSize);
 		}
-		for (Iterator<ModelPropertyLimitation> i = limitations.iterator(); i.hasNext();) {
-			ModelPropertyLimitation limit = i.next();
+		for (Iterator<FieldLimitation> i = fieldLimitations.iterator(); i.hasNext();) {
+			FieldLimitation limit = i.next();
 			Object value = limit.getValue();
 			if (value instanceof Date) {
 				q.setDate(limit.getProperty(), (Date) limit.getValue());
@@ -391,7 +394,7 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 		}
 		if (customProperties.size() > 0) {
 			// TODO: more than one property
-			Entry<String, Object> entry = customProperties.entrySet().iterator().next();
+			PropertyLimitation entry = customProperties.iterator().next();
 			q.setString("propertyKey", entry.getKey());
 			q.setString("propertyValue", entry.getValue().toString());
 		}

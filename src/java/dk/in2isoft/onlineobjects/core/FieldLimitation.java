@@ -1,6 +1,6 @@
 package dk.in2isoft.onlineobjects.core;
 
-public class ModelPropertyLimitation {
+public class FieldLimitation {
 
 	public enum Comparison {
 		EQUALS ("="), LESSTHAN ("<"), MORETHAN (">"), IN (" in "), LIKE (" like ");
@@ -22,7 +22,7 @@ public class ModelPropertyLimitation {
 	private Comparison comparison;
 	private Function function;
 	
-	public ModelPropertyLimitation(String property, Object value, Comparison comparison) {
+	public FieldLimitation(String property, Object value, Comparison comparison) {
 		super();
 		this.property = property;
 		this.value = value;

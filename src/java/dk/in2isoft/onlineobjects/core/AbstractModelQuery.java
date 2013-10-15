@@ -9,12 +9,14 @@ import java.util.Map;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
+import com.google.common.collect.Lists;
+
 import dk.in2isoft.onlineobjects.model.Entity;
 
 public abstract class AbstractModelQuery<T> implements ModelQuery {
 	protected Class<T> clazz;
-	protected List<ModelPropertyLimitation> limitations = new ArrayList<ModelPropertyLimitation>();
-	protected Map<String,Object> customProperties = new HashMap<String, Object>();
+	protected List<FieldLimitation> fieldLimitations = new ArrayList<FieldLimitation>();
+	protected List<PropertyLimitation> customProperties = Lists.newArrayList();
 	protected Privileged[] privileged;
 	protected String[] words;
 	protected int pageSize;
@@ -31,8 +33,8 @@ public abstract class AbstractModelQuery<T> implements ModelQuery {
 		return clazz;
 	}
 	
-	public List<ModelPropertyLimitation> getLimitations() {
-		return limitations;
+	public List<FieldLimitation> getFieldLimitations() {
+		return fieldLimitations;
 	}
 	
 	public Privileged[] getPrivileged() {
@@ -59,7 +61,7 @@ public abstract class AbstractModelQuery<T> implements ModelQuery {
 		return createdTo;
 	}
 
-	public Map<String, Object> getCustomProperties() {
+	public List<PropertyLimitation> getCustomProperties() {
 		return customProperties;
 	}
 	/*

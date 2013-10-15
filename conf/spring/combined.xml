@@ -20,6 +20,7 @@
     <import resource="module-networking.xml"/>
     <import resource="module-images.xml"/>
     <import resource="module-onlinepublisher.xml"/>
+    <import resource="module-organic.xml"/>
     <import resource="app-videosharing.xml"/>
     <import resource="app-setup.xml"/>
     <import resource="app-community.xml"/>

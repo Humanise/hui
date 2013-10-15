@@ -3,9 +3,6 @@ var wordView = {
 	text : null,
 	
 	$ready : function() {
-		//this.addRelation();
-		//hui.log('showing window')
-		//hui.ui.get('wordFinder').show();
 	},
 	
 	addRelation : function(options) {
