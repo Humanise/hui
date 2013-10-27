@@ -16,6 +16,13 @@ var galleryView = {
 				$dropURL : this._dropURL.bind(this)
 			})
 		}
+		var images = hui.get.byTag(document.body,'img');
+		for (var i=0; i < images.length; i++) {
+			images[i].onerror = function(e) {
+				hui.log(e)
+			}
+			
+		};
 	},
 	$click$present : function() {
 		hui.ui.get('gallery').present();
