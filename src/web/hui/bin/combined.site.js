@@ -3582,8 +3582,8 @@ hui.ui.destroy = function(widget) {
 	delete(objects[widget.name]);
 }
 
-hui.ui.destroyDescendants = function(element) {
-	var desc = hui.ui.getDescendants(element);
+hui.ui.destroyDescendants = function(widgetOrElement) {
+	var desc = hui.ui.getDescendants(widgetOrElement);
 	var objects = hui.ui.objects;
 	for (var i=0; i < desc.length; i++) {
 		var obj  = delete(objects[desc[i].name]);
@@ -4229,6 +4229,10 @@ hui.ui.listen = function(delegate) {
 	hui.ui.delegates.push(delegate);
 }
 
+hui.ui.unListen = function(listener) {
+	hui.array.remove(hui.ui.delegates,listener);
+}
+
 hui.ui.callDelegates = function(obj,method,value,event) {
 	if (typeof(value)=='undefined') {
 		value=obj;
@@ -4312,6 +4316,18 @@ hui.ui.resolveImageUrl = function(widget,img,width,height) {
 	}
 	return null;
 };
+
+/** Load som UI from an URL */
+hui.ui.include = function(options) {
+	hui.ui.request({
+		url : options.url,
+		$text : function(html) {
+			var container = hui.build('div',{html:html,parent:document.body});
+			hui.dom.runScripts(container);
+			options.$success();
+		}
+	})
+},
 
 ////////////////////////////// Bindings ///////////////////////////
 
