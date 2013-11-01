@@ -5,20 +5,20 @@ div.hui_diagram
 	overflow: hidden;
 }
 
-div.hui_diagram_dragable
+.hui_diagram_dragable
 {
 	cursor: move;
 	cursor: -webkit-grab;
 }
 
-div.hui_diagram_dragging
+.hui_diagram_dragging
 {
 	cursor: move;
 	cursor: -webkit-grabbing;
 }
 
 
-span.hui_diagram_line_label
+.hui_diagram_line_label
 {
 	position: absolute;
 	font-size: 11px;
