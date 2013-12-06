@@ -1895,7 +1895,7 @@ hui.effect = {
 	},
 	/**
 	 * Fade an element in - making it visible
-	 * @param {Object} options {element : «Element», duration : «milliseconds», delay : «milliseconds», onComplete : «Function» }
+	 * @param {Object} options {element : «Element», duration : «milliseconds», delay : «milliseconds», $complete : «Function» }
 	 */
 	fadeIn : function(options) {
 		var node = options.element;
@@ -1907,12 +1907,12 @@ hui.effect = {
 			css : { opacity : 1 },
 			delay : options.delay || null,
 			duration : options.duration || 500,
-			onComplete : options.onComplete
+			$complete : options.onComplete || options.$complete
 		});
 	},
 	/**
 	 * Fade an element out - making it invisible
-	 * @param {Object} options {element : «Element», duration : «milliseconds», delay : «milliseconds», onComplete : «Function» }
+	 * @param {Object} options {element : «Element», duration : «milliseconds», delay : «milliseconds», $complete : «Function» }
 	 */
 	fadeOut : function(options) {
 		hui.animate({
@@ -1921,7 +1921,7 @@ hui.effect = {
 			delay : options.delay || null,
 			duration : options.duration || 500,
 			hideOnComplete : true,
-			onComplete : options.onComplete
+			complete : options.onComplete || options.$complete
 		});
 	},
 	/**
@@ -2600,7 +2600,7 @@ hui.animation._render = function() {
 		}
 	}
 	if (next) {
-		window.setTimeout(hui.animation._render,0);
+		window.requestAnimationFrame(hui.animation._render);
 	} else {
 		hui.animation.running = false;
 	}
@@ -2674,10 +2674,10 @@ hui.animation.Item.prototype.animate = function(from,to,property,duration,delega
 			work.updater = hui.animation._ieOpacityUpdater;
 		} else if (property=='transform') {
 			work.updater = hui.browser.msie ? function() {} : hui.animation._transformUpater;
-		} else if (parsed.value.red===undefined) {
-			work.updater = hui.animation._lengthUpater;
-		} else {
+		} else if (parsed.type=='color') {
 			work.updater = hui.animation._colorUpater;
+		} else {
+			work.updater = hui.animation._lengthUpater;
 		}
 	} else {
 		work.to = to;
@@ -3019,7 +3019,32 @@ hui.ease = {
 };
 
 
-
+(function() {
+    var lastTime = 0;
+    var vendors = ['ms', 'moz', 'webkit', 'o'];
+    if (!hui.browser.chrome) {
+        for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+            window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+            window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame']
+                                       || window[vendors[x]+'CancelRequestAnimationFrame'];
+        }
+    }
+    if (!window.requestAnimationFrame) {
+        window.requestAnimationFrame = function(callback, element) {
+            var currTime = new Date().getTime();
+            var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+            var id = window.setTimeout(function() { callback(currTime + timeToCall); },
+              0);
+            lastTime = currTime + timeToCall;
+            return id;
+        };
+    }
+    if (!window.cancelAnimationFrame) {
+        window.cancelAnimationFrame = function(id) {
+            clearTimeout(id);
+        };
+    }
+}());
 /** @constructor
  * @param str The color like red or rgb(255, 0, 0) or #ff0000 or rgb(100%, 0%, 0%)
  */
@@ -3362,7 +3387,74 @@ hui.Color.rgb2hex = function(rgbary) {
     (module.exports = $script) :
     (win.hui.require = $script);
 }(this, document, setTimeout);
-hui.store = {
+hui.parallax = {
+	
+	_listeners : [],
+	
+	_init : function() {
+		if (this._listening) {
+			return;
+		}
+		this._listening = true;
+		hui.listen(window,'scroll',this._scroll.bind(this));
+		hui.listen(window,'resize',this._resize.bind(this));
+		
+	},
+	_resize : function() {
+		for (var i = this._listeners.length - 1; i >= 0; i--) {
+			var l = this._listeners[i];
+			if (l.$resize) {
+				l.$resize(hui.window.getViewWidth(),hui.window.getViewHeight());
+			}
+		}
+		this._scroll();
+	},
+	_scroll : function() {
+		var pos = hui.window.getScrollTop(),
+			viewHeight = hui.window.getViewHeight();
+		for (var i = this._listeners.length - 1; i >= 0; i--) {
+			var l = this._listeners[i];
+			if (!l.$scroll) {
+				continue;
+			}
+			if (l.debug && !l.debugElement) {
+				l.debugElement = hui.build('div',{style:'position: absolute; border-top: 1px solid red; left: 0; right: 0;',parent:document.body});
+			}
+			
+			if (l.element) {
+				var top = hui.position.getTop(l.element);
+				top+= l.element.clientHeight/2;
+				var diff = top-pos;
+				var scroll = ( diff / viewHeight);
+				if (l.debugElement) {
+					l.debugElement.style.top = top+'px';
+					l.debugElement.innerHTML = '<span>'+scroll+'</span>';
+				}
+				l.$scroll( scroll );
+				continue;
+			}
+			
+			var x = (pos-l.min)/(l.max-l.min);
+			var y = hui.between(0,x,1);
+			
+			if (l._latest!==y) {
+				l.$scroll(y);
+				l._latest=y;			
+			}
+		}
+	},
+	
+	listen : function(info) {
+		this._listeners.push(info);
+	},
+	
+	start : function() {
+		this._init();
+		this._resize();
+	}
+}
+
+/* EOF */hui.store = {
 
 	isSupported: function() {
 		try {

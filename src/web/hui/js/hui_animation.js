@@ -149,7 +149,7 @@ hui.animation._render = function() {
 		}
 	}
 	if (next) {
-		window.setTimeout(hui.animation._render,0);
+		window.requestAnimationFrame(hui.animation._render);
 	} else {
 		hui.animation.running = false;
 	}
@@ -223,10 +223,10 @@ hui.animation.Item.prototype.animate = function(from,to,property,duration,delega
 			work.updater = hui.animation._ieOpacityUpdater;
 		} else if (property=='transform') {
 			work.updater = hui.browser.msie ? function() {} : hui.animation._transformUpater;
-		} else if (parsed.value.red===undefined) {
-			work.updater = hui.animation._lengthUpater;
-		} else {
+		} else if (parsed.type=='color') {
 			work.updater = hui.animation._colorUpater;
+		} else {
+			work.updater = hui.animation._lengthUpater;
 		}
 	} else {
 		work.to = to;
@@ -568,4 +568,29 @@ hui.ease = {
 };
 
 
-
+(function() {
+    var lastTime = 0;
+    var vendors = ['ms', 'moz', 'webkit', 'o'];
+    if (!hui.browser.chrome) {
+        for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+            window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+            window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame']
+                                       || window[vendors[x]+'CancelRequestAnimationFrame'];
+        }
+    }
+    if (!window.requestAnimationFrame) {
+        window.requestAnimationFrame = function(callback, element) {
+            var currTime = new Date().getTime();
+            var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+            var id = window.setTimeout(function() { callback(currTime + timeToCall); },
+              0);
+            lastTime = currTime + timeToCall;
+            return id;
+        };
+    }
+    if (!window.cancelAnimationFrame) {
+        window.cancelAnimationFrame = function(id) {
+            clearTimeout(id);
+        };
+    }
+}());
