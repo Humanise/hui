@@ -62,7 +62,9 @@ hui.ui.Upload.prototype = {
 	 */
 	setParameter : function(name,value) {
 		this.options.parameters[name] = value;
-		this.impl.setParameter(name,value);
+		if (this.impl.setParameter) {
+			this.impl.setParameter(name,value);			
+		}
 	},
 	
 	clear : function() {
@@ -406,7 +408,8 @@ hui.ui.Upload._buildForm = function(widget) {
 	var options = widget.options;
 
 	hui.ui.Upload._nameIndex++;
-	var frameName = 'hui_upload_'+hui.ui.Upload.Frame.nameIndex;
+	var frameName = 'hui_upload_'+hui.ui.Upload._nameIndex;
+    hui.log('Frame: name='+frameName);
 
 	var form = hui.build('form');
 	form.setAttribute('action',options.url || '');
@@ -456,9 +459,16 @@ hui.ui.Upload.Frame.prototype = {
 		var form = this.form = hui.ui.Upload._buildForm(this.parent);
 		var frameName = form.getAttribute('target');
 		
-		var iframe = this.iframe = hui.build('iframe',{name : frameName, id : frameName, src : hui.ui.context+'/hui/html/blank.html', style : 'display:none'});
+		var iframe = this.iframe = hui.build(
+            'iframe',{
+                name : frameName, 
+                id : frameName, 
+                src : hui.ui.context+'/hui/html/blank.html', 
+                style : 'display:none'
+            });
 		this.parent.element.appendChild(iframe);
-		hui.listen(this.iframe,'load',function() {this._uploadComplete()}.bind(this));
+        var self = this;
+		hui.listen(iframe,'load',function() {self._uploadComplete()});
 		
 		this.fileInput = hui.build('input',{'type':'file','name':options.fieldName});
 		hui.listen(this.fileInput,'change',this._onSubmit.bind(this));
@@ -507,10 +517,11 @@ hui.ui.Upload.Frame.prototype = {
 		this.item = this.parent.$_addItem({name:this._getFileName()});
 		this.item.setWaiting();
 		this._rebuildFileInput();
-		hui.log('Frame: Upload started');
+		hui.log('Frame: Upload started:'+this.uploading);
 	},
 	
 	_uploadComplete : function() {
+        hui.log('complete:'+this.uploading+' / '+this.parent.name);
 		if (!this.uploading) {
 			return;
 		}
@@ -730,7 +741,7 @@ hui.ui.Upload.HTML5 = function(parent) {
 }
 
 hui.ui.Upload.HTML5.support = function() {
-	var supported = window.File!==undefined && (hui.browser.webkit || hui.browser.gecko);//(window.File!==undefined && window.FileReader!==undefined && window.FileList!==undefined && window.Blob!==undefined);
+	var supported = window.File!==undefined && (hui.browser.webkit || hui.browser.gecko || hui.browser.msie10 || hui.browser.msie11);//(window.File!==undefined && window.FileReader!==undefined && window.FileList!==undefined && window.Blob!==undefined);
 	hui.log('HTML5: supported='+supported);
 	//supported = !true;
 	return {
@@ -743,7 +754,8 @@ hui.ui.Upload.HTML5.prototype = {
 	initialize : function() {
 		var options = this.parent.options;
 		var span = hui.build('span',{'class':'hui_upload_button_input'});
-		var ps = {'type':'file','name':options.fieldName,parent:span};
+        this.form = hui.build('form',{'style':'display: inline-block; margin:0;',parent:span});
+		var ps = {'type':'file','name':options.fieldName,parent:this.form};
 		if (options.multiple) {
 			ps.multiple = 'multiple';
 		}
@@ -755,7 +767,12 @@ hui.ui.Upload.HTML5.prototype = {
 	_submit : function(e) {
 		var files = this.fileInput.files;
 		this.parent._transferFiles(files);
-	}
+        // TODO: reset/replace input field in IE
+        this._resetInput();
+	},
+    _resetInput : function() {
+        this.form.reset();
+    }
 }
 
 /* EOF */

@@ -42,6 +42,8 @@ hui.browser.msie9 = navigator.userAgent.indexOf('MSIE 9') !== -1;
 hui.browser.msie9compat = hui.browser.msie7 && navigator.userAgent.indexOf('Trident/5.0') !== -1;
 /** If the browser is InternetExplorer 10 */
 hui.browser.msie10 = navigator.userAgent.indexOf('MSIE 10') !== -1;
+/** If the browser is InternetExplorer 11 */
+hui.browser.msie11 = navigator.userAgent.indexOf('Trident/7.0') !== -1;
 /** If the browser is WebKit based */
 hui.browser.webkit = navigator.userAgent.indexOf('WebKit') !== -1;
 /** If the browser is any version of Safari */
@@ -9696,7 +9698,7 @@ hui.ui.BoundPanel.prototype = {
 			node = hui.get(options);
 		}
 		
-        if (!node) {
+        if (!nodeOffset) {
             nodeOffset = {left:hui.position.getLeft(node),top:hui.position.getTop(node)};            
         }
         if (!nodeScrollOffset) {
@@ -10854,7 +10856,9 @@ hui.ui.Upload.prototype = {
 	 */
 	setParameter : function(name,value) {
 		this.options.parameters[name] = value;
-		this.impl.setParameter(name,value);
+		if (this.impl.setParameter) {
+			this.impl.setParameter(name,value);			
+		}
 	},
 	
 	clear : function() {
@@ -11522,7 +11526,7 @@ hui.ui.Upload.HTML5 = function(parent) {
 }
 
 hui.ui.Upload.HTML5.support = function() {
-	var supported = window.File!==undefined && (hui.browser.webkit || hui.browser.gecko);//(window.File!==undefined && window.FileReader!==undefined && window.FileList!==undefined && window.Blob!==undefined);
+	var supported = window.File!==undefined && (hui.browser.webkit || hui.browser.gecko || hui.browser.msie10 || hui.browser.msie11);//(window.File!==undefined && window.FileReader!==undefined && window.FileList!==undefined && window.Blob!==undefined);
 	hui.log('HTML5: supported='+supported);
 	//supported = !true;
 	return {
@@ -12995,7 +12999,10 @@ hui.ui.SearchField = function(options) {
 	this.initialWidth = null;
 	hui.ui.extend(this);
 	this._addBehavior();
-	this._updateClass()
+
+	if (this.value!=='') {
+		this._updateClass()
+	}
 }
 
 hui.ui.SearchField.create = function(options) {

@@ -42,6 +42,8 @@ hui.browser.msie9 = navigator.userAgent.indexOf('MSIE 9') !== -1;
 hui.browser.msie9compat = hui.browser.msie7 && navigator.userAgent.indexOf('Trident/5.0') !== -1;
 /** If the browser is InternetExplorer 10 */
 hui.browser.msie10 = navigator.userAgent.indexOf('MSIE 10') !== -1;
+/** If the browser is InternetExplorer 11 */
+hui.browser.msie11 = navigator.userAgent.indexOf('Trident/7.0') !== -1;
 /** If the browser is WebKit based */
 hui.browser.webkit = navigator.userAgent.indexOf('WebKit') !== -1;
 /** If the browser is any version of Safari */
@@ -65,6 +67,8 @@ hui.browser.opacity = !hui.browser.msie6 && !hui.browser.msie7 && !hui.browser.m
 hui.browser.mediaQueries = hui.browser.opacity;
 /** If the browser supports CSS animations */
 hui.browser.animation = !hui.browser.msie6 && !hui.browser.msie7 && !hui.browser.msie8 && !hui.browser.msie9;
+
+hui.browser.wordbreak = !hui.browser.msie6 && !hui.browser.msie7 && !hui.browser.msie8;
 
 hui.browser.touch = "ontouchstart" in window || window.DocumentTouch && document instanceof DocumentTouch;
 

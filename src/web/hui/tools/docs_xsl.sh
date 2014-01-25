@@ -2,16 +2,14 @@
 
 import os
 import re
+import sys
 import codecs
 from collections import deque
 from sets import Set
 from xml.sax.saxutils import escape
 
-
-
-#base = '/Users/jbm/Sites/onlinepublisher/hui'
-
-base = os.getcwd()+'/..'
+pathname = os.path.dirname(sys.argv[0])
+base = os.path.abspath(pathname)+'/..'
 
 start = re.compile('<!--doc*')
 end = re.compile('-->*')
@@ -67,7 +65,7 @@ for file in files :
 
 print modules
 
-dest.write('<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">')
+dest.write('<!DOCTYPE html>')
 dest.write('<html>\n<head>\n<meta http-equiv="content-type" content="text/html; charset=utf-8"/>\n')
 dest.write('<link rel="stylesheet" href="stylesheet.css" type="text/css"/>')
 dest.write('<link rel="stylesheet" href="../../bin/minimized.css" type="text/css"/>')

@@ -1523,9 +1523,34 @@ a.hui_dropdown_adaptive
 
 /** Mini bar variant **/
 
-a.hui_dropdown_bar_mini {
+a.hui_dropdown_bar_mini
+{
     vertical-align: top;
-    margin-top: -2px;
+    margin-top: 0px;
+    background: none;
+    height: 22px;
+    font-size: 11px;
+    line-height: 22px;
+    padding: 0 4px;
+}
+a.hui_dropdown_bar_mini:hover
+{
+    background: #eee;
+}
+
+a.hui_dropdown_bar_mini span,
+a.hui_dropdown_bar_mini:hover span
+{
+    padding: 0;
+    background: url('../gfx/dropdown_arrow.png') right 7px no-repeat;
+}
+
+a.hui_dropdown_bar_mini span span,
+a.hui_dropdown_bar_mini:hover span span
+{
+    padding: 0 20px 0 0;
+    margin: 0;
+    background: none;
 }/******************** Header *********************/
 
 h2.hui_header
@@ -5776,6 +5801,9 @@ div.hui_bar_window_mini
 {
     background: #ccc -webkit-gradient(linear, 0% 0%, 0% 100% , from(#fff), to(rgb(240, 240, 240)));
 	background: -moz-linear-gradient(top, #fff, rgb(240,240,240));
+	background: -webkit-linear-gradient(top, #fff, rgb(240,240,240));
+	background: -ms-linear-gradient(top, #fff, rgb(240,240,240));
+	background: linear-gradient(top, #fff, rgb(240,240,240));
     filter: progid:DXImageTransform.Microsoft.gradient (GradientType=0, startColorstr=#ffffff, endColorstr=#eeeeee);
 	height: 24px;
 }
@@ -5832,6 +5860,9 @@ div.hui_bar_window_mini a.hui_bar_button_selected, div.hui_bar_window_mini a.hui
 {
     background: #ccc -webkit-gradient(linear, 0% 0%, 0% 100% , from(#bbb), to(#ddd));
 	background: -moz-linear-gradient(top, #bbb, #ddd);
+	background: -webkit-linear-gradient(top, #bbb, #ddd);
+	background: -ms-linear-gradient(top, #bbb, #ddd);
+	background: linear-gradient(top, #bbb, #ddd);
     filter: progid:DXImageTransform.Microsoft.gradient (GradientType=0, startColorstr=#bbbbbb, endColorstr=#dddddd);
 	border-color: #bbb;
 }
