@@ -1021,12 +1021,12 @@ hui.position = {
 		src.style.left = Math.round(left)+'px';
 	},
 	/** Get the remaining height within parent when all siblings has used their height */
-	getRemainingHeight : function(e) {
-		var height = e.parentNode.clientHeight;
-		var siblings = e.parentNode.childNodes;
+	getRemainingHeight : function(element) {
+		var height = element.parentNode.clientHeight;
+		var siblings = element.parentNode.childNodes;
 		for (var i=0; i < siblings.length; i++) {
 			var sib = siblings[i];
-			if (sib!==e && hui.dom.isElement(siblings[i])) {
+			if (sib!==element && hui.dom.isElement(siblings[i])) {
 				if (hui.style.get(sib,'position')!='absolute') {
 					height-=sib.offsetHeight;
 				}
@@ -1408,7 +1408,6 @@ hui.Event.prototype = {
 		return null;
 	},
 	find : function(func) {
-		
 		var parent = this.element;
 		while (parent) {
 			if (parent.tagName && parent.tagName.toLowerCase()==tag) {
@@ -5056,12 +5055,6 @@ hui.ui = {
 }
 
 hui.onReady(function() {
-	if (window.dwr && window.dwr.engine && window.dwr.engine.setErrorHandler) {
-		window.dwr.engine.setErrorHandler(function(msg,e) {
-			hui.log(msg);
-			hui.log(e);
-		});
-	}
 	hui.listen(window,'resize',hui.ui._resize);
 	hui.ui.reLayout();
 	hui.ui.domReady = true;
@@ -5292,6 +5285,8 @@ hui.ui.reLayout = function() {
 	}
 }
 
+
+
 ///////////////////////////////// Indexes /////////////////////////////
 
 hui.ui.nextIndex = function() {
@@ -5313,6 +5308,8 @@ hui.ui.nextTopIndex = function() {
 	hui.ui.latestTopIndex++;
 	return 	hui.ui.latestTopIndex;
 };
+
+
 
 ///////////////////////////////// Curtain /////////////////////////////
 
@@ -5377,8 +5374,8 @@ hui.ui.hideCurtain = function(widget) {
 };
 
 
-///////////////////////////// Localization ////////////////////////////
 
+///////////////////////////// Localization ////////////////////////////
 
 /**
  * Get a localized text, defaults to english or the key
@@ -5409,6 +5406,8 @@ hui.ui.getTranslated = function(value) {
 		return value[key];
 	}
 }
+
+
 
 //////////////////////////////// Message //////////////////////////////
 
@@ -5576,6 +5575,8 @@ hui.ui.hideToolTip = function(options) {
 	}
 };
 
+
+
 /////////////////////////////// Utilities /////////////////////////////
 
 /**
@@ -5684,23 +5685,6 @@ hui.ui.positionAtElement = function(element,target,options) {
 		hui.style.set(element,{'visibility':'visible','display':'none'});
 	}
 };
-
-hui.ui.getTextAreaHeight = function(input) {
-	var t = this.textAreaDummy;
-	if (!t) {
-		t = this.textAreaDummy = document.createElement('div');
-		t.className='hui_textarea_dummy';
-		document.body.appendChild(t);
-	}
-	var html = input.value;
-	if (html[html.length-1]==='\n') {
-		html+='x';
-	}
-	html = hui.string.escape(html).replace(/\n/g,'<br/>');
-	t.innerHTML = html;
-	t.style.width=(input.clientWidth)+'px';
-	return t.clientHeight;
-}
 
 //////////////////// Delegating ////////////////////
 
@@ -5895,6 +5879,8 @@ hui.ui.include = function(options) {
 	})
 },
 
+
+
 ////////////////////////////// Bindings ///////////////////////////
 
 hui.ui.firePropertyChange = function(obj,name,value) {
@@ -5921,6 +5907,8 @@ hui.ui.bind = function(expression,delegate) {
 	}
 	return expression;
 };
+
+
 
 //////////////////////////////// Data /////////////////////////////
 
@@ -6099,8 +6087,8 @@ hui.ui.require = function(names,func) {
 	};
 	hui.require(names,func);
 }
-/* EOF */
 
+/* EOF */
 
 /** A data source
  * @constructor
@@ -9705,7 +9693,7 @@ hui.ui.BoundPanel.prototype = {
                 left : options.rect.left, 
                 top : options.rect.top,                
             }
-            node.scrollOffset = {left: 0, top: 0};
+            nodeScrollOffset = {left: 0, top: 0};
 		} else {
 			node = hui.get(options);
 		}
@@ -16462,13 +16450,15 @@ hui.ui.TextField.prototype = {
 		if (!this.multiline || !hui.dom.isVisible(this.element)) {
 			return
 		};
-		var textHeight = hui.ui.getTextAreaHeight(this.input);
+		var textHeight = this._getTextAreaHeight(this.input);
 		textHeight = Math.max(32,textHeight);
 		textHeight = Math.min(textHeight,this.options.maxHeight);
 		if (animate) {
 			this._updateOverflow();
-			hui.animate(this.input,'height',textHeight+'px',300,{ease:hui.ease.slowFastSlow,onComplete:function() {
-				this._updateOverflow();
+			hui.animate(this.input,'height',textHeight+'px',300,{
+                ease : hui.ease.slowFastSlow,
+                $complete : function() {
+                    this._updateOverflow();
 				}.bind(this)
 			});
 		} else {
@@ -16476,6 +16466,22 @@ hui.ui.TextField.prototype = {
 			this._updateOverflow();
 		}
 	},
+    _getTextAreaHeight : function(input) {
+    	var t = this.textAreaDummy;
+    	if (!t) {
+    		t = this.textAreaDummy = document.createElement('div');
+    		t.className='hui_textarea_dummy';
+    		document.body.appendChild(t);
+    	}
+    	var html = input.value;
+    	if (html[html.length-1]==='\n') {
+    		html+='x';
+    	}
+    	html = hui.string.escape(html).replace(/\n/g,'<br/>');
+    	t.innerHTML = html;
+    	t.style.width=(input.clientWidth)+'px';
+    	return t.clientHeight;
+    },
 	_updateOverflow : function() {
 		if (!this.multiline) {
 			return;
@@ -17655,25 +17661,56 @@ hui.ui.NumberValidator.prototype = {
 	}
 }
 
+/**
+ * A chart (line / column etc.)
+ * <pre><strong>options:</strong> {
+ *  element : «Element | ID»,
+ *  name : «String»,
+ *  (TODO many more)
+ * }
+ * </pre>
+ * @constructor
+ * @param {Object} options The options
+ */
 hui.ui.Chart = function(options) {
 	this.options = options = options || {};
 	this.element = hui.get(options.element);
-	this.body  = { width: undefined, height: undefined, paddingTop: 10, paddingBottom: 30, paddingLeft: 10, paddingRight: 10, innerPaddingVertical: 10, innerPaddingHorizontal: 10 };
-	this.style = { border:true, background:true, colors:['#36a','#69d','#acf']};
-	this.style.legends = { position: 'right' , left: 0, top: 0 };
-	this.style.pie = { radiusFactor: .9 , valueInLegend: false , left: 0, top: 0 };
+	this.body  = {
+        width : undefined, 
+        height : undefined, 
+        paddingTop : 10, 
+        paddingBottom : 30, 
+        paddingLeft : 10, 
+        paddingRight : 10, 
+        innerPaddingVertical : 10, 
+        innerPaddingHorizontal : 10 
+    };
+	this.style = {
+        border : true, 
+        background : true, 
+        colors : ['#36a','#69d','#acf'],
+        legends : { position: 'right' , left: 0, top: 0 },
+        pie : { radiusFactor: .9 , valueInLegend: false , left: 0, top: 0 }
+    };
 	this.xAxis = { labels:[], grid:true, concentration:.8 , maxLabels:12};
 	this.yAxis = { min:0, max:0, steps:8, above:false , factor: 10};
-	this.dataSets = [];
+	
+    this.dataSets = [];
 	this.data = null;
-	hui.ui.extend(this);
+	
+    hui.ui.extend(this);
+    
 	if (this.options.source) {
 		this.options.source.listen(this);
 	}
 }
 
 hui.ui.Chart.create = function(options) {	
-	options.element = hui.build('div',{'class':'hui_chart',parent:hui.get(options.parent),style:'width: 100%; height: 100%;'});
+	options.element = hui.build('div',{
+        'class' : 'hui_chart',
+        parent : hui.get(options.parent),
+        style : 'width: 100%; height: 100%;'
+    });
 	return new hui.ui.Chart(options);
 }
 
@@ -17983,7 +18020,11 @@ hui.ui.Chart.Renderer.prototype.renderBody = function() {
 		stroke = 'rgb(255,255,255)',
 		background = 'rgb(240,240,240)',
 		state = this.state,
-		innerBody = this.state.innerBody;	
+		innerBody = this.state.innerBody;
+    
+        stroke = '#eee'; // TODO Make this configurable
+        background = '#fff';
+    
 
 	if (this.chart.style.background) {
 		this.ctx.fillStyle = background;
@@ -18024,7 +18065,8 @@ hui.ui.Chart.Renderer.prototype.renderBody = function() {
 				before : this.canvas,
 				style : {
 					marginLeft : left-25+'px',
-					marginTop : state.body.bottom + 4 + 'px'
+					marginTop : state.body.bottom + 4 + 'px',
+                    color : '#999'
 				}
 			});
 		}
@@ -18052,7 +18094,8 @@ hui.ui.Chart.Renderer.prototype.renderBody = function() {
 			width : this.state.yLabelWidth-5+'px',
 			font : '9px Tahoma',
 			marginTop : top-5+'px',
-			marginLeft : body.paddingLeft+'px'
+			marginLeft : body.paddingLeft+'px',
+            color : '#999'
 		}});
 		this.canvas.parentNode.insertBefore(label,this.canvas);
 	}
@@ -18332,6 +18375,9 @@ hui.ui.Chart.Util.convertData = function(obj) {
 	var options = {xAxis:{labels:labels}};
 	if (obj.axis && obj.axis.x && obj.axis.x.time===true) {
 		options.xAxis.resolution = 'time';
+	}
+	if (obj.axis && obj.axis.x && hui.isArray(obj.axis.x.labels)) {
+		options.xAxis.labels = obj.axis.x.labels;
 	}
 	var data = new hui.ui.Chart.Data(options);
 		
