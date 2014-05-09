@@ -131,3 +131,31 @@ div.photos_sidebar_galleries a.photos_sidebar_selected span.oo_icon
 {
 	color: #333;
 }
+
+.photos_sidebar_cloud
+{
+	text-align: center;
+	font-size: 12px;
+	padding: 0 10px 20px;
+}
+
+.photos_sidebar_cloud > a
+{
+	color: #333;
+	display: inline-block;
+	vertical-align: middle;
+	line-height: 1;
+	text-decoration: none;
+}
+
+.photos_sidebar_cloud_0 { font-size: 1em; }
+.photos_sidebar_cloud_1 { font-size: 1.1em; }
+.photos_sidebar_cloud_2 { font-size: 1.2em; }
+.photos_sidebar_cloud_3 { font-size: 1.3em; }
+.photos_sidebar_cloud_4 { font-size: 1.4em; }
+.photos_sidebar_cloud_5 { font-size: 1.5em; }
+.photos_sidebar_cloud_6 { font-size: 1.6em; }
+.photos_sidebar_cloud_7 { font-size: 1.7em; }
+.photos_sidebar_cloud_8 { font-size: 1.8em; }
+.photos_sidebar_cloud_9 { font-size: 1.9em; }
+.photos_sidebar_cloud_10 { font-size: 2em; }

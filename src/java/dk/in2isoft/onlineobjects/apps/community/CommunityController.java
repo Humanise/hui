@@ -206,7 +206,7 @@ public class CommunityController extends ApplicationController {
 
 	private void uploadImage(Request request) throws IOException, EndUserException {
 		DataImporter dataImporter = importService.createImporter();
-		ImportListener listener = new ImageGalleryImporter(modelService,imageService);
+		ImportListener<?> listener = new ImageGalleryImporter(modelService,imageService);
 		dataImporter.setListener(listener);
 		dataImporter.importMultipart(this, request);
 	}

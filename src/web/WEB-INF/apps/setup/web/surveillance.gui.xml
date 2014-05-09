@@ -22,7 +22,7 @@
 					<selection value="longestRunningRequests" name="selection">
 						<item icon="common/time" title="Longest requests" value="longestRunningRequests"/>
 						<item icon="common/warning" title="Latest exceptions" value="latestExceptions"/>
-						<item icon="monochrome/list" title="Log" value="log"/>
+						<item icon="view/list" title="Log" value="log"/>
 					</selection>
 				</overflow>
 			</left>

@@ -15,7 +15,6 @@
 
 	<bean id="wordIndexer" class="dk.in2isoft.onlineobjects.modules.index.WordIndexer">
 		<property name="indexManager" ref="wordsIndex" />
-		<property name="modelService" ref="modelService" />
 		<property name="documentBuilder">
 			<bean class="dk.in2isoft.onlineobjects.modules.index.WordIndexDocumentBuilder">
 				<property name="languageService" ref="languageService"/>
@@ -57,16 +56,22 @@
 	</bean>
 
 	<bean id="wordsStatisticsView" class="dk.in2isoft.onlineobjects.apps.words.views.WordsStatisticsView">
-		<property name="modelService" ref="modelService" />
-		<property name="eventService" ref="eventService" />
 		<property name="statisticsDataProvider">
-			<bean class="dk.in2isoft.onlineobjects.apps.words.views.util.StatisticsDataProvider" autowire="byType"/>
+			<bean class="dk.in2isoft.onlineobjects.apps.words.views.util.StatisticsDataProvider">
+				<property name="modelService" ref="modelService" />
+				<property name="eventService" ref="eventService" />
+			</bean>
 		</property>
 	</bean>
 
-	<bean id="wordsImportView"
-		class="dk.in2isoft.onlineobjects.apps.words.views.WordsImportView"
-		scope="request">
+	<bean id="wordsImportView" class="dk.in2isoft.onlineobjects.apps.words.views.WordsImportView" scope="request">
+		<property name="modelService" ref="modelService" />
+		<property name="languageService" ref="languageService" />
+		<property name="importService" ref="importService" />
+		<property name="semanticService" ref="semanticService" />
+	</bean>
+
+	<bean id="wordsImportListView" class="dk.in2isoft.onlineobjects.apps.words.views.WordsImportListView" scope="request">
 		<property name="modelService" ref="modelService" />
 		<property name="languageService" ref="languageService" />
 		<property name="importService" ref="importService" />

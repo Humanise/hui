@@ -1,6 +1,7 @@
 
 package dk.in2isoft.commons.parsing;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,18 +11,26 @@ import nu.xom.Nodes;
 import nu.xom.Text;
 import nu.xom.XPathContext;
 
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import com.google.common.collect.Lists;
 
 import de.l3s.boilerpipe.BoilerpipeProcessingException;
+import de.l3s.boilerpipe.document.TextDocument;
 import de.l3s.boilerpipe.extractors.ArticleExtractor;
+import de.l3s.boilerpipe.sax.BoilerpipeSAXInput;
+import de.l3s.boilerpipe.sax.HTMLHighlighter;
 import dk.in2isoft.commons.lang.Strings;
 
 public class HTMLDocument extends XMLDocument {
+	
+	private static Logger log = Logger.getLogger(HTMLDocument.class);
 
 	private String title;
     private String contentType;
@@ -104,8 +113,28 @@ public class HTMLDocument extends XMLDocument {
 				return ArticleExtractor.INSTANCE.getText(rawString);
 			}
 		} catch (BoilerpipeProcessingException e) {
+			log.error("Unable to extract text", e);
 		}
     	return null;
+    }
+    
+    public String getExtractedMarkup() {
+		final HTMLHighlighter highlighted = HTMLHighlighter.newExtractingInstance();
+		highlighted.setOutputHighlightOnly(false);
+		highlighted.setPreHighlight("<span style='background: red'>");
+		highlighted.setPostHighlight("</span>");
+		
+		String html = getRawString();
+		TextDocument doc;
+		try {
+			doc = new BoilerpipeSAXInput(new InputSource(new StringReader(html))).getTextDocument();
+			return highlighted.process(doc, html);
+		} catch (BoilerpipeProcessingException e) {
+			log.error("Unable to extract markup", e);
+		} catch (SAXException e) {
+			log.error("Unable to extract markup", e);
+		};
+		return null;
     }
     
     private void traverse(nu.xom.Node parent, StringBuffer data) {

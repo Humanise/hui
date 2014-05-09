@@ -3,35 +3,47 @@ package dk.in2isoft.onlineobjects.apps.words;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import org.apache.commons.lang.time.StopWatch;
-import org.mortbay.log.Log;
+import org.onlineobjects.common.Auditor;
+import org.onlineobjects.common.VoidAuditor;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
+import dk.in2isoft.commons.lang.HTMLWriter;
 import dk.in2isoft.in2igui.data.Diagram;
 import dk.in2isoft.onlineobjects.apps.videosharing.Path;
 import dk.in2isoft.onlineobjects.apps.words.importing.HTMLDocumentImporter;
 import dk.in2isoft.onlineobjects.apps.words.importing.WordsImporter;
 import dk.in2isoft.onlineobjects.apps.words.perspectives.WordEnrichmentPerspective;
-import dk.in2isoft.onlineobjects.core.CustomQuery;
+import dk.in2isoft.onlineobjects.apps.words.perspectives.WordsImportRequest;
 import dk.in2isoft.onlineobjects.core.Pair;
 import dk.in2isoft.onlineobjects.core.Query;
+import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.core.exceptions.NetworkException;
+import dk.in2isoft.onlineobjects.model.Entity;
+import dk.in2isoft.onlineobjects.model.Language;
+import dk.in2isoft.onlineobjects.model.LexicalCategory;
 import dk.in2isoft.onlineobjects.model.Property;
+import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.modules.importing.DataImporter;
 import dk.in2isoft.onlineobjects.modules.importing.ImportSession;
 import dk.in2isoft.onlineobjects.modules.language.WordEnrichmentQuery;
+import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
+import dk.in2isoft.onlineobjects.modules.language.WordListPerspectiveQuery;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.ui.ScriptWriter;
 import dk.in2isoft.onlineobjects.ui.StylesheetWriter;
 import dk.in2isoft.onlineobjects.ui.data.Option;
-import dk.in2isoft.onlineobjects.ui.data.SimpleEntityPerspective;
+import dk.in2isoft.onlineobjects.util.Messages;
 
 public class WordsController extends WordsControllerBase {
 	
@@ -48,7 +60,7 @@ public class WordsController extends WordsControllerBase {
 		writer.write(publicScript);
 	}
 	
-	@Path(start="upload")
+	@Path(start="importUpload")
 	public void upload(Request request) throws IOException, EndUserException {
 		ImportSession session = importService.createImportSession(request.getSession());
 		DataImporter importer = importService.createImporter();
@@ -57,6 +69,15 @@ public class WordsController extends WordsControllerBase {
 		importer.setListener(listener);
 		importer.setSuccessResponse(session.getId());
 		importer.importMultipart(this, request);
+	}
+	
+	@Override
+	public boolean isAllowed(Request request) {
+		String[] localPath = request.getLocalPath();
+		if (localPath.length>1 && "index".equals(localPath[1])) {
+			return !SecurityService.PUBLIC_USERNAME.equals(request.getSession().getUser().getUsername());
+		}
+		return super.isAllowed(request);
 	}
 	
 	@Path(start="diagram.json")
@@ -77,7 +98,6 @@ public class WordsController extends WordsControllerBase {
 		handler.setHtmlService(htmlService);
 		session.setTransport(handler);
 		session.start();
-		
 		request.sendObject(session.getId());
 	}
 
@@ -110,6 +130,65 @@ public class WordsController extends WordsControllerBase {
 	public void deleteRelation(Request request) throws IOException, EndUserException {
 		wordsModelService.deleteRelation(request.getLong("relationId"), request.getSession());
 	}
+	
+	@Path
+	public Map<String, Object> getRelationInfo(Request request) throws EndUserException, IOException {
+		Long relationid = request.getLong("relationId");
+		Long wordId = request.getLong("wordId");
+		Locale locale = new Locale(request.getString("language"));
+		
+		Relation relation = modelService.getRelation(relationid);
+		Entity subEntity = relation.getSubEntity();
+		Entity superEntity = relation.getSuperEntity();
+		Entity word = null;
+		if (subEntity.getId()==wordId) {
+			word = subEntity;
+		} else if (superEntity.getId()==wordId) {
+			word = superEntity;
+		} else {
+			throw new IllegalRequestException("Word not found");
+		}
+		
+		WordListPerspectiveQuery query = new WordListPerspectiveQuery().withWord(word);
+		WordListPerspective perspective = modelService.search(query).getFirst();
+		Map<String,Object> map = Maps.newHashMap();
+		map.put("word", perspective);
+		
+
+		Messages msg = new Messages(this);
+		Messages langMsg = new Messages(Language.class);
+		Messages lexMsg = new Messages(LexicalCategory.class);
+		
+		HTMLWriter writer = new HTMLWriter();
+		writer.startDiv();
+		writer.startH1().text(perspective.getText()).endH1();
+		if (perspective.getGlossary()!=null) {
+			writer.startP().withClass("glossary").text(perspective.getGlossary()).endP();			
+		}
+		writer.startP().withClass("kind").startStrong().text(msg.get(relation.getKind(), locale)).endStrong();
+		if (perspective.getLanguage()!=null) {
+			writer.text(" - ").text(langMsg.get("code",perspective.getLanguage(), locale));			
+		}
+		if (perspective.getLexicalCategory()!=null) {
+			writer.text(" - ").text(lexMsg.get("code",perspective.getLexicalCategory(), locale));			
+		}
+		
+		writer.endP();
+		writer.endDiv();
+		
+		map.put("rendering", writer.toString());
+		map.put("id", relation.getId());
+		
+		return map;
+	}
+	
+	@Path
+	public String performImport(Request request) throws IOException, EndUserException {
+		WordsImportRequest object = request.getObject("data", WordsImportRequest.class);
+		Auditor auditor = new VoidAuditor();
+		wordsModelService.importWords(object, auditor , request.getSession());
+		return ""; // TODO: Too much to return
+	}
 
 
 	@Path
@@ -120,7 +199,7 @@ public class WordsController extends WordsControllerBase {
 		watch.start();
 		List<WordEnrichmentPerspective> list = modelService.list(new WordEnrichmentQuery());
 		watch.stop();
-		System.out.println(watch.toString());
+		//System.out.println(watch.toString());
 		if (!list.isEmpty()) {
 			WordEnrichmentPerspective perspective = list.get(0);
 			ArrayList<Option> enrichments = Lists.newArrayList();

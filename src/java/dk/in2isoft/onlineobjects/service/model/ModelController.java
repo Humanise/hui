@@ -1,7 +1,11 @@
 package dk.in2isoft.onlineobjects.service.model;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+
+import com.google.common.collect.Maps;
 
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.in2igui.data.ListWriter;
@@ -16,6 +20,8 @@ import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.Language;
 import dk.in2isoft.onlineobjects.model.LexicalCategory;
+import dk.in2isoft.onlineobjects.model.Pile;
+import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspectiveQuery;
@@ -53,7 +59,7 @@ public class ModelController extends ModelControllerBase {
 		Locale locale = new Locale(language);
 		
 		WordListPerspectiveQuery query = new WordListPerspectiveQuery();
-		query.withPaging(page, 50).startingWith(text).orderByText();
+		query.withPaging(page, 50).startingWith(text.toLowerCase()).orderByText();
 		SearchResult<WordListPerspective> result = modelService.search(query);
 		
 		Messages msg = new Messages(WordsController.class);
@@ -102,5 +108,43 @@ public class ModelController extends ModelControllerBase {
 	public void changePrimaryEmail(Request request) throws IOException, ModelException, IllegalRequestException, SecurityException {
 		String email = request.getString("email");
 		memberService.changePrimaryEmail(request.getSession().getUser(),email,request.getSession());
+	}
+	
+	@Path(start="listInbox")
+	public void listInbox(Request request) throws IOException, ModelException {
+		int page = request.getInt("page");
+		String language = request.getString("language");
+		
+		User user = request.getSession().getUser();
+		Pile inbox = inboxService.getOrCreateInbox(user);
+		
+		List<Image> items = modelService.getChildren(inbox, Image.class, user);
+
+		ListWriter writer = new ListWriter(request);
+		writer.startList();
+		writer.window(items.size(),50,page);
+		writer.startHeaders().header("Inbox").header(null, 1).endHeaders();		
+		
+		for (Entity item : items) {
+			Map<String,String> data = Maps.newHashMap();
+			
+			String url = configurationService.getApplicationContext("photos", "/photo/"+item.getId()+".html", request);
+			data.put("url", url);
+			String kind = item.getClass().getSimpleName().toLowerCase();
+			writer.startRow().withId(item.getId()).withKind(kind).withData(data);
+			writer.startCell().withIcon(item.getIcon()).startLine().text(item.getName()).endLine();
+			writer.endCell();
+			writer.startCell().startIcon().withIcon("monochrome/delete").revealing().withAction().endIcon().endCell();
+			writer.endRow();
+		}
+		writer.endList();
+	}
+	
+	@Path
+	public void removeFromInbox(Request request) throws IllegalRequestException, ModelException, SecurityException {
+
+		long id = request.getLong("id");
+		User user = request.getSession().getUser();
+		inboxService.remove(user,id);
 	}
 }

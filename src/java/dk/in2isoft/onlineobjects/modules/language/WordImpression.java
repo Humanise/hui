@@ -94,6 +94,7 @@ public class WordImpression {
 	public static class WordRelationGroup {
 		private String kind;
 		private List<WordRelation> relations;
+		private String raw;
 
 		public String getKind() {
 			return kind;
@@ -109,6 +110,14 @@ public class WordImpression {
 
 		public void setRelations(List<WordRelation> relations) {
 			this.relations = relations;
+		}
+
+		public String getRaw() {
+			return raw;
+		}
+
+		public void setRaw(String raw) {
+			this.raw = raw;
 		}
 	}
 

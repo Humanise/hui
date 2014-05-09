@@ -1,23 +1,48 @@
 var controller = {
 	
 	viewer : null,
+	viewerVisible : false,
+	text : '',
 	
 	$ready : function() {
 		
-		var viewer = this.viewer = hui.get('viewer');
-		hui.listen(viewer,'click',this._click.bind(this));
-		this._refreshFeeds();
-		this._refreshCloud();
+		this.viewer = hui.get('viewer');
+		hui.listen(document.body,'click',this._click.bind(this));
 		//this._loadArticle(3141);
+		var textListener = function() {
+			var selection = hui.selection.getText();
+			if (!hui.isBlank(selection)) {
+				this.text = selection;
+				hui.log(this.text);
+			}
+		}.bind(this);
+		hui.listen(this.viewer,'mouseup',textListener);
+		hui.listen(window,'keyup',textListener);
+		hui.listen(window,'keydown',function(e) {
+			e = hui.event(e);
+			if (this.viewerVisible && e.escapeKey) {
+				this._hideViewer();
+			}
+		}.bind(this));
 	},
 	
 	_click : function(e) {
+		if (!this.viewerVisible) {
+			e = hui.event(e);
+			var a = e.findByTag('a');
+			if (hui.cls.has(a,'reader_list_word')) {
+				var id = parseInt(a.getAttribute('data-id'));
+				hui.ui.get('tags').selectById(id,e.shiftKey);
+			}
+			return;
+		}
 		e = hui.event(e);
-		e.stop();
 		var a = e.findByTag('a');
 		if (a) {
+			e.stop();
 			if (hui.cls.has(a,'add')) {
 				hui.ui.get('wordFinder').show();
+				hui.ui.get('wordFinderSearch').setValue(this.text);
 			}
 			if (hui.cls.has(a,'word')) {
 				this._clickWord(a);
@@ -25,16 +50,42 @@ var controller = {
 			if (hui.cls.has(a,'tag')) {
 				this._clickTag(a);
 			}
+			if (hui.cls.has(a,'reader_viewer_close')) {
+				this._hideViewer();
+			}
 			if (hui.cls.has(a.parentNode,'link')) {
 				window.open(a.href)
 			}
-		} else {
-			viewer.style.display='none';
+		} else if (hui.cls.has(e.element,'reader_viewer')) {
+			e.stop();
+			this._hideViewer();
 		}
+	},
+	
+	_hideViewer : function() {
+		viewer.style.display='none';
+		hui.cls.remove(document.body,'reader_modal');
+		this.viewerVisible = false;
 	},
 	
 	$valueChanged$search : function() {
 		hui.ui.get('list').resetState();
+	},
+	
+	$valueChanged$tags : function() {
+		hui.ui.get('list').resetState();
+	},
+	
+	$click$removeButton : function() {
+		var obj = hui.ui.get('list').getFirstSelection();
+		hui.ui.request({
+			url : '/removeInternetAddress',
+			parameters : {id:obj.id},
+			$success : function() {
+				hui.ui.get('tagSource').refresh();
+				hui.ui.get('listSource').refresh();
+			}
+		})
 	},
 	
 	// List...
@@ -54,8 +105,10 @@ var controller = {
 		var rendering = hui.get('rendering');
 		rendering.innerHTML='';
 		this.viewer.style.display='block';
+		this.viewerVisible = true;
+		hui.cls.add(document.body,'reader_modal');
 		hui.ui.request({
-			url : 'loadArticle',
+			url : '/loadArticle',
 			parameters : {id:id},
 			$object : function(article) {
 				hui.ui.hideMessage();
@@ -76,7 +129,7 @@ var controller = {
 		var info = hui.get('info');
 		info.style.opacity='.5';
 		hui.ui.request({
-			url : 'loadArticle',
+			url : '/loadArticle',
 			parameters : {id:this._currentArticle.id},
 			$object : function(article) {
 				this._currentArticle = article;
@@ -87,22 +140,7 @@ var controller = {
 			}
 		})
 	},
-	
-	// Feeds...
-	
-	_refreshFeeds : function() {
-		hui.ui.request({
-			url : 'getFeeds',
-			$object : function(feeds) {
-				var c = hui.get('feeds');
-				hui.dom.clear(c);
-				for (var i=0; i < feeds.length; i++) {
-					hui.build('li',{text:feeds[i].title,parent:c});
-				};
-			}
-		})
-	},
-	
+		
 	$click$addFeed : function(button) {
 		hui.ui.get('newFeedPanel').show({target:button})
 		hui.ui.get('newFeedForm').focus();
@@ -112,11 +150,11 @@ var controller = {
 		var url = form.getValues().url;
 		hui.ui.showMessage({text:'Adding feed',busy:true});
 		hui.ui.request({
-			url : 'addFeed',
+			url : '/addFeed',
 			parameters : {url:url},
 			$success : function() {
 				hui.ui.showMessage({text:'Feed added',icon:'common/success',duration:3000});
-				this._refreshFeeds();
+				hui.ui.get('feedSource').refresh();
 			}.bind(this),
 			$failure : function() {
 				hui.ui.showMessage({text:'Feed could not be added',icon:'common/warning',duration:3000});
@@ -141,7 +179,7 @@ var controller = {
 		form.reset();
 		hui.ui.request({
 			message : {start:'Adding address'},
-			url : 'addInternetAddress',
+			url : '/addInternetAddress',
 			parameters : {url:values.url},
 			$object : function(info) {
 				hui.ui.showMessage({text:'Address added',icon:'common/success',duration:3000});
@@ -164,7 +202,7 @@ var controller = {
 			okText : 'Yes, delete',
 			$ok : function() {
 				hui.ui.request({
-					url : 'removeTag',
+					url : '/removeTag',
 					parameters : {
 						internetAddressId : this._currentArticle.id, 
 						tag: hui.dom.getText(a)
@@ -183,10 +221,12 @@ var controller = {
 			wordId : obj.id
 		}
 		hui.ui.request({
-			url : 'addWord',
+			url : '/addWord',
 			parameters : p,
 			$success : function() {
 				this._reloadInfo();
+				hui.ui.get('tagSource').refresh();
+				hui.ui.get('listSource').refresh();
 			}.bind(this)
 		})
 	},
@@ -200,7 +240,7 @@ var controller = {
 		panel.show({target:node,modal:true});
 		this._activeWordId = node.getAttribute('data');
 		hui.ui.request({
-			url : 'getWordInfo',
+			url : '/getWordInfo',
 			parameters : {id:this._activeWordId},
 			$object : function(obj) {
 				rendering.setHTML(obj.rendering);
@@ -210,34 +250,25 @@ var controller = {
 	$click$removeWord : function() {
 		hui.ui.get('wordPanel').hide();
 		hui.ui.request({
-			url : 'removeWord',
-			messages : {start:'Removing',success:'Removed'},
+			url : '/removeWord',
+			message : {start:'Removing',success:'Removed'},
 			parameters : {
 				wordId : this._activeWordId,
 				internetAddressId : this._currentArticle.id
 			},
 			$success : function(obj) {
 				this._reloadInfo();
+				hui.ui.get('tagSource').refresh();
+				hui.ui.get('listSource').refresh();
 			}.bind(this)
 		})
 	},
 	
-	// Cloud
-	
-	_refreshCloud : function() {
+	$click$reindexButton : function() {
 		hui.ui.request({
-			url : 'getWordCloud',
-			$object : function(items) {
-				this._buildTags(items);
-			}.bind(this)
+			url : '/reIndex',
+			message : {start:'Indexing',success:'Finished'}
 		});
-	},
-	_buildTags : function(items) {
-		var container = hui.get('tags');
-		hui.dom.clear(container);
-		for (var i=0; i < items.length; i++) {
-			hui.build('li',{html:'<span class="oo_icon oo_icon_12 oo_icon_tag"></span><strong>' + hui.string.escape(items[i].title) + '</strong>','data-id':items[i].id,parent:container});
-		};
 	}
 }
 

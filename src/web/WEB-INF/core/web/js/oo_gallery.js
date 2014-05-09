@@ -12,7 +12,9 @@ oo.Gallery = function(options) {
 oo.Gallery.prototype = {
 	_addBehavior : function() {
 		hui.listen(this.element,'click',this._click.bind(this));
-		this._attachDragging();
+		if (this.options.movable) {
+			this._attachDragging();			
+		}
 	},
 	_attachDragging : function() {
 		var self = this;

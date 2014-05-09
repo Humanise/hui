@@ -41,6 +41,7 @@ public class ScriptSetupComponent extends AbstractComponent {
 		writer.write("oo.baseDomainContext = '").write(request.getBaseDomainContext()).write("';").newLine();
 		writer.write("oo.appContext = '").write(request.getLocalContext()).write("';").newLine();
 		writer.write("oo.domainIsIp = '").write(request.isIP()).write("';").newLine();
+		writer.write("oo.session = '").write(request.getSession().getId()).write("';").newLine();
 		String username = SecurityService.PUBLIC_USERNAME;
 		UserSession session = request.getSession();
 		if (session!=null) {

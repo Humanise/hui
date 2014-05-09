@@ -14,7 +14,6 @@ import dk.in2isoft.commons.jsf.Components;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.model.Image;
-import dk.in2isoft.onlineobjects.ui.jsf.model.GalleryItem;
 import dk.in2isoft.onlineobjects.ui.jsf.model.ImageContainer;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
 
@@ -129,7 +128,7 @@ public class GalleryComponent extends AbstractComponent {
 		if (Strings.isNotBlank(name)) {
 			out.property("name", name).comma();
 		}
-		out.property("movable", movable).comma();
+		out.property("movable", isMovable(context)).comma();
 		out.property("element", id).comma().propertyRaw("images", imageArray.toString()).comma().property("width", width).comma().property("height", height).endNewObject();
 		out.endScopedScript();
 	}
@@ -258,6 +257,10 @@ public class GalleryComponent extends AbstractComponent {
 
 	public boolean isMovable() {
 		return movable;
+	}
+
+	public boolean isMovable(FacesContext context) {
+		return Components.getExpressionValue(this, "movable", movable, context);
 	}
 
 	public void setMovable(boolean movable) {

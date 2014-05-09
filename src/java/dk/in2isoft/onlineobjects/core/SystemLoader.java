@@ -20,8 +20,7 @@ public class SystemLoader implements ServletContextListener {
 	public void contextInitialized(ServletContextEvent event) {
 		ServletContext context = event.getServletContext();
         String basePath = context.getRealPath("/");
-        log.info("System loader is ignitet");
-        log.info("The servlet-context-name is: "+context.getServletContextName());
+        log.info("OnlineObjects - ready for takeoff");
         try {
 			Core.getInstance().start(basePath,context);
 		} catch (ConfigurationException e) {

@@ -9,6 +9,7 @@
 			<icon icon="common/object" title="Model" click="dock.setUrl('model.gui')"/>
 			<icon icon="common/image" title="Images" click="dock.setUrl('images.gui')"/>
 			<icon icon="common/user" title="Users" click="dock.setUrl('users.gui')"/>
+			<icon icon="common/search" title="Indices" click="dock.setUrl('indices.gui')"/>
 			<divider/>
 			<icon icon="common/user" title="Integration" click="dock.setUrl('integration.gui')"/>
 			<icon icon="common/internet" title="Internet addresses" click="dock.setUrl('internetaddresses.gui')"/>

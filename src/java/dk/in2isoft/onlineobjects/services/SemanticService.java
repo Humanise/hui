@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -25,6 +26,7 @@ import org.apache.commons.lang.StringUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.Pair;
 import dk.in2isoft.onlineobjects.util.semantics.Language;
 
@@ -177,6 +179,22 @@ public class SemanticService {
 			words[i] = StringUtils.lowerCase(words[i]);
 		}
 	}
+
+	public String[] lowercaseWordsCopy(String[] words) {
+		String[] copy = new String[words.length];
+		for (int i = 0; i < words.length; i++) {
+			copy[i] = StringUtils.lowerCase(words[i]);
+		}
+		return copy;
+	}
+
+	public List<String> lowercaseWordsCopy(List<String> words) {
+		List<String> copy = Lists.newArrayList();
+		for (String string : words) {
+			copy.add(StringUtils.lowerCase(string));
+		}
+		return copy;
+	}
 	
 	public String ensureSentenceStop(String text) {
 		StringBuilder sb = new StringBuilder();
@@ -224,5 +242,23 @@ public class SemanticService {
 	
 	public void setConfigurationService(ConfigurationService configurationService) {
 		this.configurationService = configurationService;
+	}
+
+	public String[] getLines(String text) {
+		return text.split("\r?\n|\r");
+	}
+
+	public List<String> getUniqueNoEmptyLines(String text) {
+		List<String> lines = Lists.newArrayList();
+		String[] rawLines = getLines(text);
+		for (String string : rawLines) {
+			if (Strings.isNotBlank(string)) {
+				string = string.trim();
+				if (!lines.contains(string)) {
+					lines.add(string);
+				}
+			}
+		}
+		return lines;
 	}
 }

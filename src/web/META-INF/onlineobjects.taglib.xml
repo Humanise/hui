@@ -223,4 +223,18 @@
       <renderer-type>onlineobjects.fonts</renderer-type>
     </component>
   </tag>
+  <tag>
+    <tag-name>fragment</tag-name>
+    <component>
+      <component-type>onlineobjects.fragment</component-type>
+      <renderer-type>onlineobjects.fragment</renderer-type>
+    </component>
+  </tag>
+  <tag>
+    <tag-name>selection</tag-name>
+    <component>
+      <component-type>onlineobjects.selection</component-type>
+      <renderer-type>onlineobjects.selection</renderer-type>
+    </component>
+  </tag>
 </facelet-taglib>

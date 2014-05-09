@@ -18,10 +18,12 @@ a.oo_link
 	color: rgba(0,0,0,.1);
 }
 
-a.oo_link span
+a.oo_link > span
 {
 	color: #08c;
 }
+
+
 
 /**************** Titles **************/
 
@@ -58,6 +60,12 @@ p.words_index
 {
 	margin: 10px 0;
 	text-transform: uppercase;
+}
+
+.words_searchpage .words_index > a:first-child > span
+{
+	text-transform: none;
+	padding: 0 5px;
 }
 
 

@@ -29,14 +29,31 @@ ul.words_word_variants
 	padding: 0;
 }
 
-p.words_word_by
+.words_word_variant .hui_button
 {
+	visibility: hidden;
+}
+
+.words_word_variant:hover .hui_button
+{
+	visibility: visible;
+}
+
+.words_word_variant_highlighted {
+	background: #fef9e9;
+	border-top: 1px solid #f0ebdc;
+	border-bottom: 1px solid #f0ebdc;
+	margin: -6px -30px -6px -31px;
+	padding: 5px 30px 5px 31px;
+}
+
+.words_word_by
+{
+	position: absolute;
 	margin: 0;
 	font-size: 11px;
 	color: #999;
-	text-align: right;
-	float: right;
-	margin-top: -21px;
+	margin-top: -12px;
 	display: none;
 }
 
@@ -114,11 +131,44 @@ a.words_word_action
 ul.words_word_relations li
 {
 	margin-bottom: 5px;
+	line-height: 18px;
 }
 
-span.words_word_relation
+.words_word_relation
 {
-	margin-left: 5px;
+	margin-right: 3px;
+}
+
+.words_word_relations_more
+{
+	display: none;
+}
+
+.words_word_relations_reveal .words_word_relations_more
+{
+	display: inline;
+}
+
+.words_word_relations_showmore
+{
+	border-radius: 8px;
+	background: #fafafa;
+	border: 1px solid #eee;
+	text-decoration: none;
+	display: inline-block;
+	height: 14px;
+	line-height: 14px;
+	padding: 0 7px;
+	color: #333;
+	vertical-align: middle;
+	text-transform: lowercase;
+	font-size: 11px;
+}
+
+.words_word_relations_showmore:hover
+{
+	background: #eee;
+	border-color: #ddd;
 }
 
 
@@ -141,4 +191,39 @@ span.words_word_example_divider
 {
 	color: #ccc;
 	font-size: 9pt;
+}
+
+
+.word_word_relation_info
+{
+	padding: 5px 8px 10px;
+	font-family: 'Lora','Georgia','Crimson Text','Palatino','Times New Roman','Times';
+}
+
+.word_word_relation_info h1
+{
+	margin: 0;
+	font-size: 16pt;
+	font-weight: normal;
+}
+
+.word_word_relation_info p
+{
+	font-size: 10pt;
+	margin: 0;
+}
+
+.word_word_relation_info .glossary
+{
+	font-style: italic;
+	margin-bottom: 5px;
+}
+
+.word_word_relation_info .kind {
+	color: #999;
+}
+
+.word_word_relation_info .kind strong
+{
+	color: #000;
 }

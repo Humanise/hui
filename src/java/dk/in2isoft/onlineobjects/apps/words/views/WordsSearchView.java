@@ -10,6 +10,8 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.queryparser.flexible.standard.QueryParserUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
 import com.google.common.collect.Lists;
@@ -39,11 +41,14 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 	private ModelService modelService;
 	private IndexService indexService;
 	
+	private static final Logger log = LoggerFactory.getLogger(WordsSearchView.class);
+	
 	private List<WordListPerspective> list;
 	private int count;
 	private int page;
 	
 	private String text;
+	private String letter;
 	private String language;
 	
 	private int pageSize = 20;
@@ -51,12 +56,14 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 	
 	private List<Option> languageOptions;
 	private List<Option> categoryOptions;
+	private List<Option> letterOptions;
 	private String category;
 	private String effectiveQuery;
 			
 	public void afterPropertiesSet() throws Exception {
 		Request request = getRequest();
 		text = request.getString("text");
+		letter = request.getString("letter");
 		language = request.getString("language");
 		category = request.getString("category");
 		
@@ -76,6 +83,12 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 		StringBuilder searchQuery = new StringBuilder();
 		if (StringUtils.isNotBlank(text)) {
 			searchQuery.append("(word:").append(QueryParserUtil.escape(text)).append("^4").append(" OR word:").append(QueryParserUtil.escape(text)).append("*^4 OR ").append(QueryParserUtil.escape(text)).append("*)");
+		}
+		if (StringUtils.isNotBlank(letter)) {
+			if (searchQuery.length()>0) {
+				searchQuery.append(" AND ");
+			}
+			searchQuery.append("(letter:").append(QueryParserUtil.escape(letter)).append(")");
 		}
 				
 		if (Strings.isNotBlank(language)) {
@@ -98,7 +111,7 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 		for (IndexSearchResult item : indexResult.getList()) {
 			Document document = item.getDocument();
 			IndexableField field = document.getField("id");
-			ids.add(field.numericValue().longValue());
+			ids.add(Long.parseLong(field.stringValue()));
 		}
 		WordListPerspectiveQuery query = new WordListPerspectiveQuery().withPaging(0, 20).orderByUpdated();
 		if (!ids.isEmpty()) {
@@ -128,33 +141,70 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 			}
 		});
 		
+		if (ids.size()!=result.getTotalCount()) {
+			log.error("IDs="+ids.size()+", results="+result.getTotalCount());
+			log.error(ids.toString());
+		}
 		
+		effectiveQuery+= " ("+indexResult.getTotalCount()+")";
+	}
+	
+	private List<String> categoryCodes;
+	
+	/** TODO: Optimize this, central cache */
+	private List<String> getCategoryCodes() {
+		if (categoryCodes==null) {
+			Query<LexicalCategory> query = Query.of(LexicalCategory.class).orderByName();
+			List<LexicalCategory> list = modelService.list(query);
+			List<String> codes = Lists.newArrayList();
+	
+			for (LexicalCategory item : list) {
+				codes.add(item.getCode());
+			}
+			categoryCodes = codes;
+		}
+		return categoryCodes;
+	}
+	
+	private List<String> languageCodes;
+	
+	/** TODO: Optimize this, central cache */
+	private List<String> getLanguageCodes() {
+		if (languageCodes==null) {
+			Query<Language> query = Query.of(Language.class).orderByName();
+			List<Language> list = modelService.list(query);
+			List<String> codes = Lists.newArrayList();
+	
+			for (Language item : list) {
+				codes.add(item.getCode());
+			}
+			languageCodes = codes;
+		}
+		return languageCodes;
 	}
 	
 	private List<Option> buildCategoryOptions(Request request) {
 		List<Option> options = Lists.newArrayList();
 		Messages msg = new Messages(LexicalCategory.class);
 		Messages wordsMsg = new Messages(WordsController.class);
-		Query<LexicalCategory> query = Query.of(LexicalCategory.class).orderByName();
-		List<LexicalCategory> list = modelService.list(query);
 		Locale locale = getLocale();
 		{
 			Option option = new Option();
-			option.setValue(buildUrl(request, text, language, null));
+			option.setValue(buildUrl(request, text, language, null,letter));
 			option.setLabel(wordsMsg.get("any", locale));
 			option.setSelected(StringUtils.isBlank(category));
 			options.add(option);			
 		}
-		for (LexicalCategory item : list) {
+		for (String code : getCategoryCodes()) {
 			Option option = new Option();
-			option.setValue(buildUrl(request, text, language, item.getCode()));
-			option.setLabel(msg.get("code",item.getCode(), locale));
-			option.setSelected(item.getCode().equals(category));
+			option.setValue(buildUrl(request, text, language, code,letter));
+			option.setLabel(msg.get("code",code, locale));
+			option.setSelected(code.equals(category));
 			options.add(option);
 		}
 		{
 			Option option = new Option();
-			option.setValue(buildUrl(request, text, language, "none"));
+			option.setValue(buildUrl(request, text, language, "none",letter));
 			option.setLabel(wordsMsg.get("none", locale));
 			option.setSelected("none".equals(category));
 			options.add(option);			
@@ -162,12 +212,13 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 		return options;
 	}
 	
-	private String buildUrl(Request request,String text, String language, String category) {
+	private String buildUrl(Request request,String text, String language, String category, String letter) {
 		UrlBuilder url = new UrlBuilder(request.getLocalContext());
 		url.folder(request.getLanguage()).folder("search");
 		url.parameter("category", category);
 		url.parameter("language", language);
 		url.parameter("text", text);
+		url.parameter("letter", letter);
 		return url.toString();
 	}
 
@@ -175,31 +226,69 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 		List<Option> options = Lists.newArrayList();
 		Messages wordsMsg = new Messages(WordsController.class);
 		Messages msg = new Messages(Language.class);
-		Query<Language> query = Query.of(Language.class).orderByName();
-		List<Language> list = modelService.list(query);
 		Locale locale = getLocale();
 		{
 			Option option = new Option();
-			option.setValue(buildUrl(request, text, null, category));
+			option.setValue(buildUrl(request, text, null, category,letter));
 			option.setLabel(wordsMsg.get("any", locale));
 			option.setSelected(StringUtils.isBlank(language));
 			options.add(option);			
 		}
-		for (Language item : list) {
+		for (String code : getLanguageCodes()) {
 			Option option = new Option();
-			option.setValue(buildUrl(request, text, item.getCode(), category));
-			option.setLabel(msg.get("code",item.getCode(), locale));
-			option.setSelected(item.getCode().equals(language));
+			option.setValue(buildUrl(request, text, code, category,letter));
+			option.setLabel(msg.get("code",code, locale));
+			option.setSelected(code.equals(language));
 			options.add(option);
 		}
 		{
 			Option option = new Option();
-			option.setValue(buildUrl(request, text, "none", category));
+			option.setValue(buildUrl(request, text, "none", category,letter));
 			option.setLabel(wordsMsg.get("none", locale));
 			option.setSelected("none".equals(language));
 			options.add(option);			
 		}
 		return options;
+	}
+	
+	private List<Option> buildLetterOptions(Request request) {
+		List<Option> options = Lists.newArrayList();
+		{
+			Option option = new Option();
+			option.setLabel("Any");
+			option.setSelected(Strings.isBlank(letter));
+			option.setValue(buildUrl(request, text, language, category, null));
+			options.add(option);
+		}
+		for (String character : Strings.ALPHABETH) {
+			Option option = new Option();
+			option.setLabel(character);
+			option.setSelected(character.equals(letter));
+			option.setValue(buildUrl(request, text, language, category, character));
+			options.add(option);
+		}
+		{
+			Option option = new Option();
+			option.setLabel("&");
+			option.setSelected("other".equals(letter));
+			option.setValue(buildUrl(request, text, language, category, "other"));
+			options.add(option);
+		}
+		{
+			Option option = new Option();
+			option.setLabel("#");
+			option.setSelected("number".equals(letter));
+			option.setValue(buildUrl(request, text, language, category, "number"));
+			options.add(option);
+		}
+		return options;
+	}
+	
+	public List<Option> getLetterOptions() {
+		if (letterOptions==null) {
+			letterOptions = buildLetterOptions(getRequest());
+		}
+		return letterOptions;
 	}
 
 	public List<WordListPerspective> getList() throws ModelException {
@@ -228,6 +317,10 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 	
 	public String getEffectiveQuery() {
 		return effectiveQuery;
+	}
+	
+	public String getLetter() {
+		return letter;
 	}
 	
 	public List<Option> getPages() {
@@ -262,7 +355,7 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 	private Option buildOption(int num) {
 		Option option = new Option();
 		UrlBuilder url = new UrlBuilder(getRequest().getBaseContext()).folder(getRequest().getLanguage()).folder("search").folder(num);
-		url.parameter("text", text).parameter("category", category).parameter("language", language);
+		url.parameter("text", text).parameter("category", category).parameter("language", language).parameter("letter", letter);
 		option.setValue(url.toString());
 		option.setLabel(num+"");
 		option.setSelected(page==num-1);

@@ -12,7 +12,7 @@ div.oo_layout_middle
 	overflow: hidden;
 }
 
-div.oo_layout_body
+div.oo_layout_body_sidebar
 {
 	width: 780px;
 	float: left;
@@ -93,10 +93,14 @@ div.oo_layout_paper div.oo_layout_middle
 
 div.oo_layout_paper div.oo_layout_body
 {
+	min-height: 640px;
+}
+
+div.oo_layout_paper div.oo_layout_body_sidebar
+{
 	width: 797px;
 	border-right: 1px solid #eee;
 	float: left;
-	min-height: 640px;
 }
 
 div.oo_layout_paper div.oo_layout_sidebar
@@ -157,7 +161,7 @@ div.oo_layout_paper div.oo_layout_right
 		top: 38px;
 	}
 	
-	div.oo_layout_paper div.oo_layout_body
+	div.oo_layout_paper div.oo_layout_body_sidebar
 	{
 		float: none;
 		width: auto;
@@ -178,7 +182,7 @@ div.oo_layout_paper div.oo_layout_right
 	{
 		margin: 0;
 		border: none;
-		min-height: auto;
+		min-height: 0;
 	}
 	
 	div.oo_layout_paper div.oo_layout_sidebar

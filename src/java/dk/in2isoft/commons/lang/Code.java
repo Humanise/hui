@@ -3,6 +3,8 @@ package dk.in2isoft.commons.lang;
 import java.util.Collection;
 import java.util.List;
 
+import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
+
 public class Code {
 	
 	@SuppressWarnings("unchecked")
@@ -26,5 +28,17 @@ public class Code {
 
 	public static boolean isNotEmpty(Collection<?> collection) {
 		return !isEmpty(collection);
+	}
+
+	public static void checkNotEmpty(Collection<?> collection, String message) throws IllegalRequestException {
+		if (Code.isEmpty(collection)) {
+			throw new IllegalRequestException(message);
+		}
+	}
+
+	public static void checkNotNull(Object object, String message) throws IllegalRequestException {
+		if (object==null) {
+			throw new IllegalRequestException(message);
+		}
 	}
 }

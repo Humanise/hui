@@ -32,7 +32,7 @@ public class PhotosFrontView extends AbstractManagedBean {
 			}
 			
 		};
-		model.setPageSize(24);
+		model.setPageSize(40);
 		return model;
 	}
 	

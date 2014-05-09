@@ -14,19 +14,11 @@
 	<h:head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 		<title><ui:insert name="title"/>Words - OnlineObjects</title>
-		<gui:importStyle/>
-		<o:stylesheet href="/core/css/oo_font.css" core="true"/>
-		<o:stylesheet href="/core/css/oo_topbar.css" core="true"/>
-		<o:stylesheet href="/core/css/oo_icon.css" core="true"/>
-		<o:stylesheet href="/core/css/oo_footer.css" core="true"/>
-		<o:stylesheet href="/core/css/oo_body.css" core="true"/>
-		<o:stylesheet href="/core/fonts/awesome/css/font-awesome.css" core="true"/>
-		<o:stylesheet href="/css/style.css"/>
-		<gui:importScripts/>
-		<o:script src="/core/js/onlineobjects.js" core="true"/>
+		<o:stylesheet href="/style.css" integrateCache="true"/>
+		<o:fonts/>
+		<o:script src="/script.js" integrateCache="true"/>
 		<o:scriptSetup/>
 		<ui:insert name="scripts"/>
-		<h:outputScript name="jsf.js" library="javax.faces" target="head"/>
 	</h:head>
 	<o:body>
 		<o:topBar/>

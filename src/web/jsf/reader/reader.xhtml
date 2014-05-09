@@ -11,39 +11,58 @@
 				
 		<ui:define name="body">
 			<div class="reader">
-				<div style="float: right">
+				<div class="reader_actions">
+					<gui:button variant="light" text="Re-index" small="true" name="reindexButton"/>
+					<gui:button variant="light" text="Remove" small="true" name="removeButton">
+						<gui:confirm text="Er du sikker?"/>
+					</gui:button>
 					<gui:button variant="light" text="Add..." small="true" name="addButton"/>
 				</div>
 				<o:header>Reader</o:header>
+				
 				<div>
 					<gui:searchfield name="search" placeholder="Search" adaptive="true"/>
 				</div>
-				<gui:source name="listSource" url="listAddresses">
+				
+				<gui:source name="listSource" url="#{wordsWordView.baseContext}/searchAddresses">
 					<gui:parameter key="page" value="@list.window.page"/>
 					<gui:parameter key="text" value="@search.value"/>
+					<gui:parameter key="tags" value="@tags.value"/>
 				</gui:source>
-				<gui:list name="list" source="listSource" variant="light"/>
-				<div id="viewer">
-					<div id="info"></div>
-					<div id="rendering">
-						
+				<div class="reader_list">
+					<gui:list name="list" source="listSource" variant="light"/>
+				</div>
+				<div id="viewer" class="reader_viewer">
+					<div class="reader_viewer_frame">
+						<div class="reader_viewer_info">
+							<div id="info"></div>
+							<a class="reader_viewer_close oo_icon oo_icon_close" href="javascript://"></a>
+						</div>
+						<div id="rendering" class="reader_viewer_content"></div>
 					</div>
 				</div>
 			</div>
 		</ui:define>
 		
 		<ui:define name="sidebar">
+		
+			<gui:source name="tagSource" url="#{wordsWordView.baseContext}/getWordCloud">
+			</gui:source>
+		
+			<gui:source name="feedSource" url="#{wordsWordView.baseContext}/getFeeds">
+			</gui:source>
+				
 			<div class="sidebar">
 				<div class="block reader_feeds">
 					<h3>Feeds</h3>
-					<ul id="feeds"></ul>
+					<o:selection name="feeds" source="feedSource"/>
 					<div class="reader_feeds_button">
 						<gui:button name="addFeed" text="Add feed" variant="light" small="true"/>
 					</div>
 				</div>
 				<div class="block">
 					<h3>Tags</h3>
-					<ul id="tags"></ul>
+					<o:selection name="tags" source="tagSource"/>
 				</div>
 			</div>
 		</ui:define>

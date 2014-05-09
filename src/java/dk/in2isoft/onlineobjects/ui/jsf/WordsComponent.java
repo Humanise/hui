@@ -8,6 +8,7 @@ import javax.faces.context.FacesContext;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.TagWriter;
+import dk.in2isoft.onlineobjects.core.Pair;
 import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.util.Messages;
 
@@ -36,13 +37,14 @@ public class WordsComponent extends AbstractComponent {
 	
 	@Override
 	protected void encodeBegin(FacesContext context, TagWriter out) throws IOException {
-		List<Word> words = getExpression("words", context);
+		List<Pair<Word,String>> words = getExpression("words", context);
 		boolean editable = isEditable(context);
 		String id = getClientId();
 		out.startP("oo_words").withId(id);
 		if (words!=null) {
-			for (Word word : words) {
-				out.startVoidA("oo_words_word").withAttribute("data", word.getId()).text(word.getText()).endA().text(" ");
+			for (Pair<Word,String> pair : words) {
+				Word word = pair.getKey();
+				out.startA("oo_words_word").withHref(pair.getValue()).withAttribute("data", word.getId()).text(word.getText()).endA().text(" ");
 			}
 		}
 		if (editable) {

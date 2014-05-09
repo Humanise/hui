@@ -1,8 +1,85 @@
 var wordView = {
 	language : null,
 	text : null,
+	activeRelation : null,
+	activeRelationUrl : null,
 	
 	$ready : function() {
+		this._attach();
+		var id = hui.location.getHash();
+		if (id!==null) {
+			var node = hui.get('word-'+id);
+			if (node) {
+				hui.cls.add(node,'words_word_variant_highlighted')
+			}
+		}
+	},
+
+	_attach : function() {
+		hui.listen('word','click',function(e) {
+			e = hui.event(e);
+			var relation = e.findByClass('words_word_relation');
+			if (relation) {
+				var panel = hui.ui.get('relationInfoPanel');
+				if (panel) {
+					e.stop();
+					this.activeRelationUrl = relation.href;
+					hui.ui.request({
+						url : oo.appContext+'/getRelationInfo',
+						parameters : {
+							relationId : relation.getAttribute('data-relation'),
+							wordId : relation.getAttribute('data-word'),
+							language : oo.language
+						},
+						$object : function(obj) {
+							this.activeRelation = obj;
+							var info = hui.build('div',{'class':'word_word_relation_info',html:obj.rendering});
+							hui.ui.get('relationFragment').setContent(info);
+							panel.position(relation);
+							panel.show();
+						}.bind(this)
+					});
+				}
+			}
+			var more = e.findByClass('words_word_relations_showmore');
+			if (more) {
+				hui.cls.toggle(more.parentNode,'words_word_relations_reveal');
+			}
+		}.bind(this));
+	},
+	
+	_update : function(options) {
+		oo.update({ id : 'word', $success : function() {
+			hui.ui.showMessage({text:options.text,icon:'common/success',duration:2000});
+			this._attach();
+		}.bind(this)});
+	},
+	
+	$click$visitRelationButton : function() {
+		document.location = this.activeRelationUrl;
+	},
+	$click$removeRelationButton : function(button) {
+		var relationId = this.activeRelation.id;
+		hui.ui.confirmOverlay({
+			widget : button,
+			text : {en:'Are you sure?', da:'Er du sikker?'},
+			okText : {en:'Yes, delete', da:'Ja, slet'},
+			cancelText : {en:'No', da:'Nej'},
+			$ok : function() {
+				hui.ui.showMessage({text:{en:'Deleting relation',da:'Sletter relation'},busy:true,delay:300});
+
+				hui.ui.request({
+					url : oo.appContext+'/deleteRelation',
+					parameters : { relationId : relationId },
+					$success : function(id) {
+						this._update({en:'The relation is now deleted',da:'relationen er nu slettet'});
+					}.bind(this),
+					$failure : function() {
+						hui.ui.showMessage({text:{en:'Unable to delete relation',da:'Kunne ikke slettet relationen'},icon:'common/warning',duration:2000});
+					}
+				});				
+			}.bind(this)
+		})
 	},
 	
 	addRelation : function(options) {
@@ -44,11 +121,9 @@ var wordView = {
 		hui.ui.request({
 			url : oo.appContext+'/relateWords',
 			parameters : { parentId : from, kind : kind, childId : to },
-			$success : function(id) {
-				oo.update({ id : 'word', $success : function() {
-					hui.ui.showMessage({text:'The relation is created',icon:'common/success',duration:2000});
-				}});
-			},
+			$success : function() {
+				this._update({text:'The relation is created'});
+			}.bind(this),
 			$failure : function() {
 				hui.ui.showMessage({text:'Unable to create relation',icon:'common/warning',duration:2000});
 			}
@@ -57,7 +132,6 @@ var wordView = {
 	
 	$added$diagram : function() {
 		var diagram = hui.ui.get('diagram');
-		
 		hui.ui.request({
 			url : oo.appContext+'/diagram.json',
 			parameters : {word:this.text},
@@ -98,10 +172,8 @@ var wordView = {
 			url : oo.appContext+'/createWord',
 			parameters : { language : values.language, category : values.category, text : this.text },
 			$success : function(id) {
-				oo.update({ id : 'word', $success : function() {
-					hui.ui.showMessage({text:{en:'The variant has been added',da:'Varianten er tilføjet'},icon:'common/success',duration:2000});
-				}});
-			},
+				this._update({text:{en:'The variant has been added',da:'Varianten er tilføjet'}});
+			}.bind(this),
 			$failure : function() {
 				hui.ui.showMessage({text:{en:'Unable to add variant',da:'Kunne ikke tilføje variant'},icon:'common/warning',duration:2000});
 			}
@@ -128,11 +200,9 @@ var wordView = {
 		hui.ui.request({
 			url : oo.appContext+'/changeLanguage',
 			parameters : { wordId : this.wordInfo.id , language : language },
-			$success : function(id) {
-				oo.update({ id : 'word', $success : function() {
-					hui.ui.showMessage({text:'The language is now changed',icon:'common/success',duration:2000});
-				}});
-			},
+			$success : function() {
+				this._update({text:'The language is now changed'});
+			}.bind(this),
 			$failure : function() {
 				hui.ui.showMessage({text:'Unable to change language',duration:2000});
 			}
@@ -160,10 +230,8 @@ var wordView = {
 			url : oo.appContext+'/changeCategory',
 			parameters : { wordId : this.wordInfo.id , category : category },
 			$success : function(id) {
-				oo.update({ id : 'word', $success : function() {
-					hui.ui.showMessage({text:'The category is now changed',icon:'common/success',duration:2000});
-				}});
-			},
+				this._update({text:'The category is now changed'});
+			}.bind(this),
 			$failure : function() {
 				hui.ui.showMessage({text:'Unable to change category',duration:2000});
 			}
@@ -182,40 +250,13 @@ var wordView = {
 					url : oo.appContext+'/deleteWord',
 					parameters : { wordId : info.id },
 					$success : function(id) {
-						oo.update({ id : 'word', $success : function() {
-							hui.ui.showMessage({text:{en:'The word is now deleted',da:'Ordet er nu slettet'},icon:'common/success',duration:2000});
-						}});
-					},
+						this._update({text:{en:'The word is now deleted',da:'Ordet er nu slettet'}});
+					}.bind(this),
 					$failure : function() {
 						hui.ui.showMessage({text:{en:'Unable to delete word',da:'Kunne ikke slettet ord'},icon:'common/warning',duration:2000});
 					}
 				});				
-			}
-		})
-	},
-	
-	deleteRelation : function(info) {
-		hui.ui.confirmOverlay({
-			element : info.element,
-			text : {en:'Are you sure?', da:'Er du sikker?'},
-			okText : {en:'Yes, delete', da:'Ja, slet'},
-			cancelText : {en:'No', da:'Nej'},
-			$ok : function() {
-				hui.ui.showMessage({text:{en:'Deleting relation',da:'Sletter relation'},busy:true,delay:300});
-
-				hui.ui.request({
-					url : oo.appContext+'/deleteRelation',
-					parameters : { relationId : info.id },
-					$success : function(id) {
-						oo.update({ id : 'word', $success : function() {
-							hui.ui.showMessage({text:{en:'The relation is now deleted',da:'relationen er nu slettet'},icon:'common/success',duration:2000});
-						}});
-					},
-					$failure : function() {
-						hui.ui.showMessage({text:{en:'Unable to delete relation',da:'Kunne ikke slettet relationen'},icon:'common/warning',duration:2000});
-					}
-				});				
-			}
+			}.bind(this)
 		})
 	}
 };

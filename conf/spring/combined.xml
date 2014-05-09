@@ -21,6 +21,7 @@
     <import resource="module-images.xml"/>
     <import resource="module-onlinepublisher.xml"/>
     <import resource="module-organic.xml"/>
+    <import resource="module-inbox.xml"/>
     <import resource="app-videosharing.xml"/>
     <import resource="app-setup.xml"/>
     <import resource="app-community.xml"/>
@@ -39,12 +40,14 @@
 		<property name="basePath" value="${basePath}"/>
 		<property name="storagePath" value="${storagePath}"/>
 		<property name="baseUrl" value="${baseUrl}"/>
+		<property name="port" value="${port}"/>
 		<property name="rootDomain" value="${rootDomain}"/>
 		<property name="developmentMode" value="${developmentMode}"/>
 		<property name="developmentUser" value="${development.user}"/>
 		<property name="imageMagickPath" value="${imagemagick.path}"/>
 		<property name="graphvizPath" value="${graphviz.path}"/>
 		<property name="analyticsCode" value="${analytics.code}"/>
+		<property name="startScheduling" value="${startScheduling}"/>
 	</bean>
 
 	<bean id="emailService" class="dk.in2isoft.onlineobjects.services.EmailService" autowire="byType">
@@ -70,6 +73,8 @@
 	<bean id="storageService" class="dk.in2isoft.onlineobjects.services.StorageService" autowire="byType"/>
 	
 	<bean id="securityService" class="dk.in2isoft.onlineobjects.core.SecurityService" autowire="byType"/>
+	
+	<bean id="passwordEncryptionService" class="dk.in2isoft.onlineobjects.core.PasswordEncryptionService" autowire="byType"/>
 	
 	<bean id="lifeCycleService" class="dk.in2isoft.onlineobjects.services.LifeCycleService"/>
 	

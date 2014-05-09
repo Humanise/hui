@@ -13,7 +13,7 @@
 				
 		<ui:define name="body">
 			
-			<div class="words">
+			<div class="words words_searchpage">
 				<h1 class="words">#{msg.searching} <span>» #{msg.words}</span></h1>
 				<form class="words_search" method="get" action="#{wordsSearchView.localContext}/#{wordsLayoutView.language}/search/">
 					<p>
@@ -25,8 +25,16 @@
 						<c:if test="#{not empty wordsSearchView.category}">
 							<input type="hidden" name="category" value="#{wordsSearchView.category}"/>
 						</c:if>
+						<c:if test="#{not empty wordsSearchView.letter}">
+							<input type="hidden" name="letter" value="#{wordsSearchView.letter}"/>
+						</c:if>
 					</p>
 				</form>
+				<p class="words_paging words_index">
+					<c:forEach items="#{wordsSearchView.letterOptions}" var="option">
+						<o:link styleClass="#{option.selected ? 'words_paging_selected' : ''}" href="#{option.value}">#{option.label}</o:link>
+					</c:forEach>
+				</p>
 				<div class="words_search_filters">
 					<h2><span>#{msg.filters}</span></h2>
 					<h3><span>#{msg.languages}</span></h3>
@@ -42,7 +50,6 @@
 						</c:forEach>
 					</p>
 				</div>
-				<p class="words_search_query">#{wordsSearchView.effectiveQuery}</p>
 
 				<ul class="words_list">
 					<c:forEach items="#{wordsSearchView.list}" var="word">
@@ -73,6 +80,7 @@
 					#{' '}
 				</c:forEach>
 				</p>
+				<p class="words_search_query">#{wordsSearchView.effectiveQuery}</p>
 			</div>
 		</ui:define>
 	

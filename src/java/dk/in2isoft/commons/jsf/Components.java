@@ -1,5 +1,6 @@
 package dk.in2isoft.commons.jsf;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.el.ValueExpression;
@@ -72,13 +73,22 @@ public class Components {
 		return Request.get((HttpServletRequest) context.getRequest(), (HttpServletResponse) context.getResponse());
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static <T> T getBean(Class<T> type) {
 		ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
 		WebApplicationContext webApplicationContext = WebApplicationContextUtils.getWebApplicationContext((ServletContext) context.getContext());
 		Map<?,?> beans = webApplicationContext.getBeansOfType(type);
 		if (!beans.isEmpty()) {
-			return (T) beans.values().iterator().next();
+			return Code.cast(beans.values().iterator().next());
+		}
+		return null;
+	}
+
+	public static <T> T getChild(UIComponent component, Class<T> type) {
+		List<UIComponent> children = component.getChildren();
+		for (UIComponent child : children) {
+			if (child.getClass().isAssignableFrom(type)) {
+				return Code.cast(child);
+			}
 		}
 		return null;
 	}

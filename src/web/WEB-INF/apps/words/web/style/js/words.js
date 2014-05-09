@@ -24,6 +24,9 @@ var wordsApp = {
 		document.location=oo.appContext+'/'+oo.language+'/enrich/';
 	},
 	$click$import : function() {
+		hui.ui.get('importWindow').show();
+		return;
+		
 		if (!this._importWindow) {
 			var win = this._importWindow = hui.ui.Box.create({title:'Import',absolute:true,width:500,modal:true,padding:10,closable:true});
 			win.addToDocument();
@@ -37,6 +40,11 @@ var wordsApp = {
 		this._importForm.setValues({url:'http://politiken.dk/rss/senestenyt.rss'}); //http://en.wikipedia.org/wiki/Language
 		this._importForm.focus();
 	},
+	
+	$uploadDidComplete$importUpload : function(info) {
+		document.location = oo.appContext+'/en/importlist/'+info.request.responseText+'/';
+	},
+	
 	$submit$importFormula : function(form) {
 		var values = form.getValues();
 		var url = values.url;

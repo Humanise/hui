@@ -23,8 +23,8 @@ import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.User;
+import dk.in2isoft.onlineobjects.modules.inbox.InboxService;
 import dk.in2isoft.onlineobjects.modules.scheduling.JobStatus;
-import dk.in2isoft.onlineobjects.modules.surveillance.SurveillanceService;
 import dk.in2isoft.onlineobjects.services.FileService;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
 
@@ -36,7 +36,8 @@ public class MailListener {
 	private ImageService imageService;
 	private FileService fileService;
 	private MemberService memberService;
-	private SurveillanceService surveillanceService;
+
+	private InboxService inboxService;
 	
 	public void mailArrived(Message message, JobStatus status) {
 		Address[] from;
@@ -128,6 +129,7 @@ public class MailListener {
 					title = fileService.cleanFileName(fileName);
 				}
 				Image image = imageService.createImageFromFile(tempFile, title, user);
+				inboxService.add(user, image);
 				status.log("Created image "+image.getName()+" for the user "+user.getUsername()+", Image-ID: "+image.getId());
 			} else {
 				status.warn("Ignoring email since no user found: "+usersEmail);
@@ -139,6 +141,7 @@ public class MailListener {
 		} finally {
 			IOUtils.closeQuietly(output);
 			IOUtils.closeQuietly(inputStream);
+			modelService.commit();
 		}
 	}
 	
@@ -158,7 +161,7 @@ public class MailListener {
 		this.fileService = fileService;
 	}
 	
-	public void setSurveillanceService(SurveillanceService surveillanceService) {
-		this.surveillanceService = surveillanceService;
+	public void setInboxService(InboxService inboxService) {
+		this.inboxService = inboxService;
 	}
 }

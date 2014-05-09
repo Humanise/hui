@@ -20,7 +20,7 @@ public class ImportService {
 	public ImportSession createImportSession(UserSession userSession) {
 		ImportSession session = new ImportSession();
 		session.setUserSessionId(userSession.getId());
-		sessionService.registerSubSeession(session);
+		sessionService.registerSubSession(session);
 		return session;
 	}
 

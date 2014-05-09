@@ -1,17 +1,24 @@
 package dk.in2isoft.onlineobjects.apps.words;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.onlineobjects.common.Auditor;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import dk.in2isoft.commons.lang.Code;
+import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.in2igui.data.Diagram;
 import dk.in2isoft.in2igui.data.Node;
+import dk.in2isoft.onlineobjects.apps.words.importing.WordsImporter;
+import dk.in2isoft.onlineobjects.apps.words.perspectives.WordsImportRequest;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.Query;
@@ -28,8 +35,13 @@ import dk.in2isoft.onlineobjects.model.Pile;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.Word;
+import dk.in2isoft.onlineobjects.modules.importing.ImportSession;
+import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
+import dk.in2isoft.onlineobjects.modules.language.WordListPerspectiveQuery;
+import dk.in2isoft.onlineobjects.services.ImportService;
 import dk.in2isoft.onlineobjects.services.LanguageService;
 import dk.in2isoft.onlineobjects.services.PileService;
+import dk.in2isoft.onlineobjects.services.SemanticService;
 import dk.in2isoft.onlineobjects.util.Messages;
 
 public class WordsModelService {
@@ -38,6 +50,8 @@ public class WordsModelService {
 	private LanguageService languageService;
 	private SecurityService securityService;
 	private PileService pileService;
+	private SemanticService semanticService;
+	private ImportService importService;
 	
 	private Map<String,Object> getData(Entity entity) {
 		Map<String,Object> data = Maps.newHashMap();
@@ -198,7 +212,7 @@ public class WordsModelService {
 		if (parentWord==null || childWord==null) {
 			throw new IllegalRequestException("Word not found");
 		}
-		Set<String> allowed = Sets.newHashSet(Relation.KIND_SEMANTICS_EQUIVALENT, Relation.KIND_SEMANTICS_ANTONYMOUS, Relation.KIND_SEMANTICS_SYNONYMOUS,Relation.KIND_SEMANTICS_ANALOGOUS, Relation.KIND_SEMANTICS_MORPHEME);
+		Set<String> allowed = Sets.newHashSet(Relation.KIND_SEMANTICS_EQUIVALENT, Relation.KIND_SEMANTICS_ANTONYMOUS, Relation.KIND_SEMANTICS_SYNONYMOUS,Relation.KIND_SEMANTICS_ANALOGOUS, Relation.KIND_SEMANTICS_MORPHEME, Relation.KIND_SEMANTICS_GENRALTIZATION);
 		if (!allowed.contains(kind)) {
 			throw new IllegalRequestException("Illegal relation: "+kind);
 		}
@@ -283,7 +297,74 @@ public class WordsModelService {
 			modelService.createRelation(pile, word, admin);
 		}
 	}
+	
+	public void importWords(WordsImportRequest object, Auditor auditor, UserSession userSession) throws ModelException, IllegalRequestException, SecurityException, ContentNotFoundException {
+		Language language = languageService.getLanguageForCode(object.getLanguage());
+		LexicalCategory category = languageService.getLexcialCategoryForCode(object.getCategory());
+		
+		Code.checkNotNull(language, "Unsupported language: "+object.getLanguage());
+		Code.checkNotNull(category, "Unsupported category: "+object.getCategory());
+		
+		Collection<String> words = object.getWords();
+		if (Code.isEmpty(words)) {
+			String sessionId = object.getSessionId();
+			ImportSession session = importService.getImportSession(sessionId);
+			Code.checkNotNull(session, "No session");
+			session.getTransport();
 
+			WordsImporter handler = (WordsImporter) session.getTransport();
+			String text = handler.getText();
+						
+			words = semanticService.getUniqueNoEmptyLines(text);
+			
+		}
+		int num = 0;
+		
+		for (String word : words) {
+			List<WordListPerspective> list = modelService.list(new WordListPerspectiveQuery().withWord(word.toLowerCase()));
+			List<WordListPerspective> candidates = Lists.newArrayList();
+			for (WordListPerspective perspective : list) {
+				// If no or same language
+				if (perspective.getLanguage()==null || Strings.equals(object.getLanguage(),perspective.getLanguage())) {
+					// If no or same category
+					if (perspective.getLexicalCategory()==null || Strings.equals(object.getCategory(),perspective.getLexicalCategory())) {
+						candidates.add(perspective);
+					}
+					
+				}
+			}
+			if (candidates.size()==0) {
+				createWord(language.getCode(), category.getCode(), word, userSession);
+				auditor.info("Created word: '"+word+"'");
+			} else {
+				WordListPerspective perspective = candidates.get(0);
+				if (!perspective.getText().equals(word)) {
+					Word loaded = modelService.get(Word.class, perspective.getId(),userSession);
+					if (loaded!=null) {
+						loaded.setText(word);
+						auditor.info("Changed text from '"+perspective.getText()+"' to '"+word+"'");
+					}
+				}
+				if (perspective.getLanguage()==null) {
+					changeLanguage(perspective.getId(), language.getCode(), userSession);
+					auditor.info("Changed language of '"+word+"' to "+language.getCode());
+				}
+				if (perspective.getLexicalCategory()==null) {
+					changeCategory(perspective.getId(), category.getCode(), userSession);
+					auditor.info("Changed category of '"+word+"' to "+category.getCode());
+				}
+			}
+			num++;
+			if (num>100) {
+				modelService.commit();
+				//System.out.println(Math.round(((float) num)/(float) words.size()*100)+"%");
+				num=0;
+			}
+		}
+	}
+
+	
+	// Wiring...
 	
 	public void setModelService(ModelService modelService) {
 		this.modelService = modelService;
@@ -301,4 +382,11 @@ public class WordsModelService {
 		this.pileService = pileService;
 	}
 
+	public void setImportService(ImportService importService) {
+		this.importService = importService;
+	}
+	
+	public void setSemanticService(SemanticService semanticService) {
+		this.semanticService = semanticService;
+	}
 }

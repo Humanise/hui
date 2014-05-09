@@ -53,6 +53,9 @@ public class WordIndexJob extends ServiceBackedJob implements InterruptableJob {
 				List<WordListPerspective> list = modelService.search(query).getList();
 				wordIndexer.indexWordPerspectives(list);
 				status.setProgress(i, pages);
+				if (interrupted) {
+					break;
+				}
 			}
 		} catch (ModelException e) {
 			status.error("Error while fetching words", e);

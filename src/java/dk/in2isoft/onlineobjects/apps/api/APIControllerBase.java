@@ -1,34 +1,34 @@
 package dk.in2isoft.onlineobjects.apps.api;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
 import com.google.common.collect.Lists;
 
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
-import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
+import dk.in2isoft.onlineobjects.modules.networking.HTMLService;
 import dk.in2isoft.onlineobjects.services.LanguageService;
+import dk.in2isoft.onlineobjects.ui.Blend;
 import dk.in2isoft.onlineobjects.ui.Request;
 
 public abstract class APIControllerBase extends ApplicationController {
 	
 	protected LanguageService languageService;
+	protected HTMLService htmlService;
 
-	public APIControllerBase() {
-		super("api");
-		addJsfMatcher("/", "front.xhtml");
-		addJsfMatcher("/<language>", "front.xhtml");
+	protected static final Blend publicScript;
+	
+	static {
+
+		publicScript = new Blend("api_public_script");
+		publicScript.addPath("hui","js","hui.js");
+		publicScript.addPath("hui","js","hui_animation.js");
+		publicScript.addPath("hui","js","ui.js");
+		publicScript.addPath("WEB-INF","apps","api","web","js","script.js");
 	}
 	
-	@Override
-	public void unknownRequest(Request request) throws IOException,
-			EndUserException {
-		if (request.testLocalPathStart()) {
-			super.unknownRequest(request);
-		} else {
-			super.unknownRequest(request);
-		}
+	public APIControllerBase() {
+		super("api");
 	}
 
 	public List<Locale> getLocales() {
@@ -46,6 +46,10 @@ public abstract class APIControllerBase extends ApplicationController {
 
 	public void setLanguageService(LanguageService languageService) {
 		this.languageService = languageService;
+	}
+	
+	public void setHtmlService(HTMLService htmlService) {
+		this.htmlService = htmlService;
 	}
 
 }

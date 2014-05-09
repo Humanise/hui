@@ -4,7 +4,7 @@ public class ItemData {
 	private String title;
 	private long id;
 	private String icon;
-	private String value;
+	private Object value;
 	private String badge;
 	private String kind;
 
@@ -35,11 +35,11 @@ public class ItemData {
 		this.icon = icon;
 	}
 
-	public String getValue() {
+	public Object getValue() {
 		return value;
 	}
 
-	public void setValue(String value) {
+	public void setValue(Object value) {
 		this.value = value;
 	}
 

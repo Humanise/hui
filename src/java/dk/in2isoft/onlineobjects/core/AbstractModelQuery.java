@@ -2,10 +2,7 @@ package dk.in2isoft.onlineobjects.core;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import org.hibernate.Query;
 import org.hibernate.Session;
 

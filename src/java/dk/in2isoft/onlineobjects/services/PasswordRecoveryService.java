@@ -8,9 +8,11 @@ import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.Query;
+import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.model.EmailAddress;
 import dk.in2isoft.onlineobjects.model.Person;
+import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
 
 public class PasswordRecoveryService {
@@ -31,7 +33,7 @@ public class PasswordRecoveryService {
 					return false;
 				} else {
 					EmailAddress emailAddress = list.get(0);
-					Person person = modelService.getParent(emailAddress, Person.class);
+					Person person = modelService.getParent(emailAddress,Relation.KIND_SYSTEM_USER_EMAIL, Person.class);
 					if (person!=null) {
 						User emailUser = modelService.getParent(person, User.class);
 						if (emailUser!=null) {
@@ -47,7 +49,7 @@ public class PasswordRecoveryService {
 	public boolean sendRecoveryMail(User user,Privileged priviledged) throws EndUserException {
 		Person person = modelService.getChild(user, Person.class);
 		if (person!=null) {
-			EmailAddress email = modelService.getChild(person, EmailAddress.class);
+			EmailAddress email = modelService.getChild(user,Relation.KIND_SYSTEM_USER_EMAIL, EmailAddress.class);
 			if (email!=null) {
 				return sendRecoveryMail(user, person, email,priviledged);
 			}
@@ -58,22 +60,30 @@ public class PasswordRecoveryService {
 	public boolean sendRecoveryMail(User user, Person person, EmailAddress email,Privileged priviledged) throws EndUserException {
 		String random = Strings.generateRandomString(30);
 		user.overrideFirstProperty(User.PASSWORD_RECOVERY_CODE_PROPERTY, random);
-		// TODO: Priviledged should be from session
 		modelService.updateItem(user, priviledged);
 		StringBuilder url = new StringBuilder();
-		url.append("http://").append(configurationService.getBaseUrl());
-		url.append("/recoverpassword.html?key=");
+		String context = configurationService.getApplicationContext("account");
+		url.append(context);
+		url.append("/en/password?key=");
 		url.append(random);
 
 		Map<String,Object> parms = new HashMap<String, Object>();
 		parms.put("name", person.getFullName());
 		parms.put("url",url.toString());
-		parms.put("base-url", configurationService.getBaseUrl());
-		String html = emailService.applyTemplate("dk/in2isoft/onlineobjects/apps/community/resources/passwordrecovery-template.html", parms);
+		parms.put("base-url", "http://" + configurationService.getBaseUrl());
+		String html = emailService.applyTemplate("dk/in2isoft/onlineobjects/apps/account/resources/passwordrecovery-template.html", parms);
 		
-		emailService.sendHtmlMessage("\u00C6ndring af kodeord til OnlineMe", html, email.getAddress(),person.getName());
+		emailService.sendHtmlMessage("Reset password for OnlineObjects", html, email.getAddress(),person.getName());
 		return true;
 	}
+
+	public User getUserByRecoveryKey(String key) {
+
+		SearchResult<User> result = modelService.search(Query.of(User.class).withCustomProperty(User.PASSWORD_RECOVERY_CODE_PROPERTY, key));
+		return result.getFirst();
+	}
+	
+	// Wiring...
 
 	public void setModelService(ModelService modelService) {
 		this.modelService = modelService;

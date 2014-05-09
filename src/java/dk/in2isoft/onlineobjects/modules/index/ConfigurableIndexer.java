@@ -21,7 +21,7 @@ public class ConfigurableIndexer<E extends Entity> implements ModelEventListener
 
 	private IndexDocumentBuilder<E> documentBuilder;
 	
-	private static final Logger log = Logger.getLogger(WordIndexer.class);
+	private static final Logger log = Logger.getLogger(ConfigurableIndexer.class);
 
 	public Class<E> getType() {
 		return type;

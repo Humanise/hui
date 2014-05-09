@@ -1,0 +1,53 @@
+.oo_selection_list
+{
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	font-size: 13px;
+}
+
+.oo_selection_link
+{
+	display: block;
+	text-decoration: none;
+	color: #333;
+	line-height: 0;
+	padding: 2px 4px;
+	margin: 0 -4px;
+}
+
+.oo_selection_text
+{
+	line-height: 1em;
+}
+
+.oo_selection_link:hover
+{
+	background: #fafafa;
+}
+
+.oo_selection_icon
+{
+	color: rgba(0,0,0,.2);
+	margin-right: 5px;
+}
+
+.oo_selection_badge
+{
+	float: right;
+	color: #999;
+	padding: 0 3px;
+	line-height: 12px;
+	font-size: 10px;
+}
+
+.oo_selection_option_selected .oo_selection_text
+{
+	color: #36f;
+	font-weight: 600;
+}
+
+.oo_selection_option_selected .oo_selection_icon
+{
+	color: #36f;
+}

@@ -8,7 +8,6 @@ import javax.faces.context.FacesContext;
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.ClassBuilder;
 import dk.in2isoft.commons.jsf.TagWriter;
-import dk.in2isoft.onlineobjects.ui.Icons;
 
 @FacesComponent(value=IconComponent.FAMILY)
 public class IconComponent extends AbstractComponent {

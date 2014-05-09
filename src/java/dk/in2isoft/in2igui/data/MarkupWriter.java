@@ -26,6 +26,11 @@ public abstract class MarkupWriter {
 		}
 	}
 
+	protected void raw(String markup) {
+		close();
+		writer.write(markup);
+	}
+
 	protected void startTag(String tag) {
 		close();
 		writer.write("<");
@@ -41,9 +46,11 @@ public abstract class MarkupWriter {
 	}
 
 	protected void withAttribute(String name, Object value) {
-		writer.write(" "+name+"=\"");
-		writer.write(StringEscapeUtils.escapeXml(value.toString()));
-		writer.write("\"");
+		if (value!=null && name!=null) {
+			writer.write(" "+name+"=\"");
+			writer.write(StringEscapeUtils.escapeXml(value.toString()));
+			writer.write("\"");
+		}
 	}
 
 }

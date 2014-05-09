@@ -38,6 +38,7 @@ public class Core {
 	private Core() {
 	}
 
+	@Deprecated
 	public static Core getInstance() {
 		if (instance == null) {
 			instance = new Core();
@@ -61,10 +62,6 @@ public class Core {
 		getBean(ConsistencyService.class).check();
 		started = true;
 		log.info("OnlineObjects started successfully!");
-	}
-
-	public ServletContext getServletContext() {
-		return context;
 	}
 
 	public <T> T getBean(Class<T> beanClass) {

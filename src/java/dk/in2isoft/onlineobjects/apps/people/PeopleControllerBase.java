@@ -12,6 +12,7 @@ import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.exceptions.ContentNotFoundException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.model.Image;
+import dk.in2isoft.onlineobjects.services.ImportService;
 import dk.in2isoft.onlineobjects.ui.Blend;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
@@ -21,6 +22,7 @@ public class PeopleControllerBase extends ApplicationController {
 	protected ImageService imageService;
 	protected SecurityService securityService;
 	protected CommunityDAO communityDAO;
+	protected ImportService importService;
 
 	protected static Blend publicStyle;
 	protected static Blend privateStyle;
@@ -57,6 +59,7 @@ public class PeopleControllerBase extends ApplicationController {
 		publicScript.addPath("hui","js","ImageViewer.js");
 		publicScript.addPath("hui","js","Box.js");
 		publicScript.addPath("WEB-INF","core","web","js","onlineobjects.js");
+		publicScript.addPath("WEB-INF","core","web","js","oo_topbar.js");
 		publicScript.addPath("WEB-INF","core","web","js","oo_gallery.js");
 		publicScript.addPath("WEB-INF","core","web","js","oo_map.js");
 		
@@ -68,6 +71,7 @@ public class PeopleControllerBase extends ApplicationController {
 		privateScript.addPath("hui","js","DropDown.js");
 		privateScript.addPath("hui","js","TokenField.js");
 		privateScript.addPath("hui","js","Overlay.js");
+		privateScript.addPath("hui","js","ProgressBar.js");
 		privateScript.addPath("WEB-INF","apps","people","web","style","js","people_person.js");
 
 	}
@@ -113,5 +117,9 @@ public class PeopleControllerBase extends ApplicationController {
 	
 	public void setCommunityDAO(CommunityDAO communityDAO) {
 		this.communityDAO = communityDAO;
+	}
+	
+	public void setImportService(ImportService importService) {
+		this.importService = importService;
 	}
 }

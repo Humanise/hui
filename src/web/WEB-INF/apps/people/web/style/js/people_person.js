@@ -6,10 +6,10 @@ var personView = {
 		this.container = hui.get('profileContainer');
 		this.profileInfo = hui.get('profileInfo');
 		this.editLink = hui.get('editProfile');
-		this.addBehavior();
+		this._attach();
 	},
 	
-	addBehavior : function() {
+	_attach : function() {
 		var edit = hui.ui.get('editProfile');
 		if (edit) {
 			edit.listen({
@@ -24,7 +24,14 @@ var personView = {
 			var buttons = hui.ui.Buttons.create({align:'center'});
 			var choose = hui.ui.Button.create({text:'Vælg billede...',highlighted:true});
 			buttons.add(choose);
-			var up = hui.ui.Upload.create({name:'upload',url:'uploadProfileImage',widget:choose,maxItems:1,types:"*.jpg;*.png",placeholder:{title:'Vælg et billede på din computer...'}});
+			var up = hui.ui.Upload.create({
+				name : 'upload',
+				url : oo.appContext+'/uploadProfileImage',
+				widget : choose,
+				maxItems : 1,
+				types : "*.jpg;*.png",
+				placeholder : {title:'Vælg et billede på din computer...'}
+			});
 			p.add(up);
 			var cancel = hui.ui.Button.create({name:'cancelChangeProfileImage',text:'Annuller'});
 			buttons.add(cancel);

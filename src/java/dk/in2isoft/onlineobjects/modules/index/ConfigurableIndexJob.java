@@ -35,7 +35,7 @@ public class ConfigurableIndexJob<E extends Entity> extends ServiceBackedJob imp
 		}
 		Query<E> query = Query.of(configurableIndexer.getType());
 		Long count = modelService.count(query);
-		status.log("Starting re-index of "+count+" words");
+		status.log("Starting re-index of "+count+" items");
 		int num = 0;
 		int percent = -1;
 		Results<E> results = modelService.scroll(query);
@@ -56,9 +56,14 @@ public class ConfigurableIndexJob<E extends Entity> extends ServiceBackedJob imp
 			if (batch.size()>200) {
 				configurableIndexer.index(batch);
 				batch.clear();
-				modelService.clearAndFlush();
+				modelService.clearAndFlush(); // Free resources
 			}
 			num++;
+		}
+		// Index remaining
+		if (!batch.isEmpty()) {
+			configurableIndexer.index(batch);
+			modelService.clearAndFlush(); // Free resources
 		}
 		results.close();
 		status.log("Finished indexing");

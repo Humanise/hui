@@ -211,4 +211,18 @@
       <renderer-type>hui.gallery</renderer-type>
     </component>
   </tag>
+  <tag>
+    <tag-name>upload</tag-name>
+    <component>
+      <component-type>hui.upload</component-type>
+      <renderer-type>hui.upload</renderer-type>
+    </component>
+  </tag>
+  <tag>
+    <tag-name>confirm</tag-name>
+    <component>
+      <component-type>hui.confirm</component-type>
+      <renderer-type>hui.confirm</renderer-type>
+    </component>
+  </tag>
 </facelet-taglib>

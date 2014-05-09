@@ -18,9 +18,8 @@
 		<meta name="viewport" content="user-scalable=yes, width=device-width, initial-scale = 1, maximum-scale = 10, minimum-scale = 0.2"/>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 		<title><ui:insert name="title"/>Words - OnlineObjects</title>
-		<o:fonts/>
 		<o:stylesheet href="/style.css" integrateCache="true"/>
-		<link href="http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css"/>
+		<o:fonts additional="Lora:400,700,400italic,700italic"/>
 		<o:script src="/script.js" integrateCache="true"/>
 		<gui:scriptSetup/>
 		<o:scriptSetup/>
@@ -29,6 +28,7 @@
 	<o:body>
 		<o:topBar/>
 		<o:layout variant="paper">
+			<c:if test="#{not wordsLayoutView.front}">
 			<f:facet name="sidebar">
 				<div class="words_sidebar">
 					<gui:searchfield adaptive="true" name="wordsSidebarSearch"/>
@@ -48,6 +48,7 @@
 								<span class="words_menu">#{msg.searching}</span>
 							</o:link>
 						</li>
+					<c:if test="#{wordsLayoutView.loggedIn}">
 						<li>
 							<o:link href="/#{wordsLayoutView.language}/index/a/" plain="true"
 								styleClass="#{wordsLayoutView.selectedMenuItem=='index' ? 'words_menu_selected' : ''}">
@@ -55,6 +56,7 @@
 								<span class="words_menu">#{msg.index}</span>
 							</o:link>
 						</li>
+						</c:if>
 						<li>
 							<o:link href="/#{wordsLayoutView.language}/statistics/" plain="true"
 								styleClass="#{wordsLayoutView.selectedMenuItem=='statistics' ? 'words_menu_selected' : ''}">
@@ -72,22 +74,48 @@
 					</ul>
 						<h3><span>Index</span></h3>
 					<ul class="words_sidebar_index">
-						<c:forEach items="#{wordsIndexView.alphabeth}" var="char">
-							<li class="#{char.value=='_' ? 'words_sidebar_index_symbols' : ''}"><o:link href="/#{wordsLayoutView.language}/index/#{char.value}/">#{char.label}</o:link></li>
+						<c:forEach items="#{wordsLayoutView.alphabeth}" var="char">
+							<li class="#{char.value=='_' ? 'words_sidebar_index_symbols' : ''}"><o:link href="/#{wordsLayoutView.language}/search/?letter=#{char.value}">#{char.label}</o:link></li>
 						</c:forEach>
 					</ul>
 					<c:if test="#{wordsLayoutView.loggedIn}">
 						<h3><span>Tools</span></h3>
-						<p>
-							<gui:button name="import" text="Import" variant="light"/>
-							<gui:button name="enrich" text="Enrich" variant="light"/>
-						</p>
+
+						<ul class="words_menu">
+							<li>
+								<o:link plain="true" name="enrich">
+									<o:icon icon="gear"/>
+									<span class="words_menu">#{msg.enrich}</span>
+								</o:link>
+							</li>
+							<li>
+								<o:link plain="true" name="import">
+									<o:icon icon="gear"/>
+									<span class="words_menu">#{msg.import}</span>
+								</o:link>
+							</li>
+						</ul>
 					</c:if>
 				</div>
 			</f:facet>
+			</c:if>
 			<ui:insert name="body"/>
 		</o:layout>
 		<o:footer/>
+		
+		<c:if test="#{wordsLayoutView.loggedIn}">
+			<window name="importWindow" xmlns="http://www.in2isoft.dk/in2igui" width="400" padding="10">
+				<formula>
+					<fields>
+						<field label="Adresse">
+							<textInput/>
+						</field>
+					</fields>
+				</formula>
+				<upload url="/importUpload" name="importUpload"/>
+			</window>
+		</c:if>
+		
 		<o:analytics/>
 	</o:body>
 </html>

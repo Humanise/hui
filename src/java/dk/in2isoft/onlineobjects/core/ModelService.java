@@ -84,7 +84,6 @@ public class ModelService {
 
 	@SuppressWarnings("unchecked")
 	private void loadModelInfo() {
-		log.info("Loading model info");
 		InputStream stream = this.getClass().getClassLoader().getResourceAsStream("model.xml");
 		Builder parser = new Builder();
 		Document doc;
@@ -246,7 +245,6 @@ public class ModelService {
 		session.save(item);
 		Privilege privilege = new Privilege(privileged.getIdentity(), item.getId(), true);
 		session.save(privilege);
-		//commit();
 		eventService.fireItemWasCreated(item);
 	}
 
@@ -455,7 +453,19 @@ public class ModelService {
 	public <T> List<T> getParents(Entity entity, Class<T> classObj, Privileged privileged) throws ModelException {
 		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.of(classObj);
 		q.withChild(entity);
-		q.withPrivileged(privileged);
+		if (!privileged.isSuper()) {
+			q.withPrivileged(privileged);
+		}
+		return list(q);
+	}
+
+
+	public <T> List<T> getParents(Entity entity, String kind, Class<T> classObj, Privileged privileged) throws ModelException {
+		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.of(classObj);
+		q.withChild(entity,kind);
+		if (!privileged.isSuper()) {
+			q.withPrivileged(privileged);
+		}
 		return list(q);
 	}
 
@@ -544,6 +554,13 @@ public class ModelService {
 			return null;
 		}
 	}
+
+	public List<Privilege> getPrivileges(Item item) {
+		Query q = getSession().createQuery("from Privilege as priv where priv.object=:object");
+		q.setLong("object", item.getId());
+		List<Privilege> list = Code.castList(q.list());
+		return list;
+	}
 	
 	@SuppressWarnings("unchecked")
 	public User getOwner(Item item) throws ModelException {
@@ -559,7 +576,7 @@ public class ModelService {
 		return null;
 	}
 
-	public Privilege getPriviledge(long object, long subject) {
+	public Privilege getPrivilege(long object, long subject) {
 		Session session = getSession();
 		Query q = session.createQuery("from Privilege as priv where priv.object=:object and priv.subject=:subject");
 		q.setLong("object", object);
@@ -720,8 +737,8 @@ public class ModelService {
 		return new PairSearchResult<T,U>(map,count.intValue());
 	}
 
-	public void grantFullPrivileges(Item item, Privileged priviledged) throws ModelException {
-		grantPrivileges(item, priviledged, true, true, true);
+	public void grantFullPrivileges(Item item, Privileged privileged) throws ModelException {
+		grantPrivileges(item, privileged, true, true, true);
 	}
 
 	public void grantPrivileges(Item item, Privileged priviledged, boolean view, boolean alter, boolean delete) throws ModelException {
@@ -732,10 +749,10 @@ public class ModelService {
 			throw new ModelException("Privileged ID is "+priviledged.getIdentity());
 		}
 		if (item.isNew()) {
-			throw new ModelException("The item is new so cannot grant privileges");
+			throw new ModelException("The item is new so cannot grant privileges: identity="+priviledged.getIdentity());
 		}
 		Session session = getSession();
-		Privilege privilege = getPriviledge(item.getId(), priviledged.getIdentity());
+		Privilege privilege = getPrivilege(item.getId(), priviledged.getIdentity());
 		if (privilege == null) {
 			privilege = new Privilege(priviledged.getIdentity(), item.getId());
 		}
@@ -746,12 +763,21 @@ public class ModelService {
 	}
 
 	private void removeAllPrivileges(Item item) {
+		
+		
 		Session session = getSession();
+		Query query = session.createQuery("select user from User as user, Privilege as priv where priv.object=:object and priv.subject=user.id");
+		query.setLong("object", item.getId());
+		List<User> users = Code.castList(query.list());
+		
+		
 		String hql = "delete Privilege p where p.object = :id";
 		Query q = session.createQuery(hql);
 		q.setLong("id", item.getId());
 		int count = q.executeUpdate();
 		log.info("Deleting privileges for: " + item.getClass().getName() + "; count: " + count);
+		
+		eventService.firePrivilegesRemoved(item,users);
 	}
 
 	public List<Entity> getChildren(Entity item, String relationKind, Privileged privileged) throws ModelException {
@@ -775,6 +801,15 @@ public class ModelService {
 	public <T> List<T> getChildren(Entity item, String relationKind, Class<T> classObj) throws ModelException {
 		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.of(classObj);
 		q.withParent(item,relationKind);
+		return list(q);
+	}
+
+	public <T> List<T> getChildren(Entity item, String relationKind, Class<T> classObj, Privileged privileged) throws ModelException {
+		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.of(classObj);
+		q.withParent(item,relationKind);
+		if (!privileged.isSuper()) {
+			q.withPrivileged(privileged,securityService.getPublicUser());
+		}
 		return list(q);
 	}
 
@@ -930,6 +965,9 @@ public class ModelService {
 		
 		if (obj instanceof HibernateProxy) {
 			obj = (T) ((AbstractLazyInitializer) ((HibernateProxy) obj).getHibernateLazyInitializer()).getImplementation();
+		}
+		if (obj==null) {
+			log.error("The objects is null");
 		}
 		return obj;
 	}

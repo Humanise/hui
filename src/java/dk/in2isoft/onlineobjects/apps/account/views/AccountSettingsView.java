@@ -4,6 +4,7 @@ import org.springframework.beans.factory.InitializingBean;
 
 import dk.in2isoft.onlineobjects.apps.community.jsf.AbstractManagedBean;
 import dk.in2isoft.onlineobjects.core.ModelService;
+import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.model.EmailAddress;
 import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.Relation;
@@ -21,14 +22,23 @@ public class AccountSettingsView extends AbstractManagedBean implements Initiali
 
 	private String primaryEmail;
 	
+	private boolean allowed;
+	
 	public void afterPropertiesSet() throws Exception {
 		user = getRequest().getSession().getUser();
-		
+		if (user.getUsername().equals(SecurityService.PUBLIC_USERNAME)) {
+			return;
+		}
+		allowed = true;
 		person = modelService.getChild(user, Relation.KIND_SYSTEM_USER_SELF, Person.class);
 		email = modelService.getChild(user, Relation.KIND_SYSTEM_USER_EMAIL, EmailAddress.class);
 		if (email!=null) {
 			primaryEmail = email.getAddress();
 		}
+	}
+	
+	public boolean isAllowed() {
+		return allowed;
 	}
 	
 	public User getUser() {

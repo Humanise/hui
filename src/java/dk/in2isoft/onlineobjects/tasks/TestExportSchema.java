@@ -1,0 +1,19 @@
+package dk.in2isoft.onlineobjects.tasks;
+
+import org.hibernate.cfg.Configuration;
+import org.hibernate.tool.hbm2ddl.SchemaExport;
+import org.junit.Test;
+
+import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
+import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
+
+public class TestExportSchema extends AbstractSpringTestCase {
+	
+	@Test
+	public void run() throws ModelException {
+		Configuration cfg = new Configuration().configure();
+		SchemaExport export = new SchemaExport(cfg);
+		export.setOutputFile(getProperty("schema.file"));
+		export.execute(false, false, false, false);
+	}
+}

@@ -267,6 +267,8 @@ div.oo_topbar_info_buttons a
 	margin-left: 5px;
 }
 
+/************ Login *************/
+
 div.oo_topbar_login_success
 {
 	height: 50px;
@@ -274,6 +276,22 @@ div.oo_topbar_login_success
 	color: #999;
 	text-align: center;
 	line-height: 50px;
+}
+
+.oo_topbar_forgot
+{
+	font-size: 9pt;
+	float: right;
+	margin-top: 10px;
+}
+
+.op_topbar_forgot_intro
+{
+	font-size: 10pt;
+	line-height: 12pt;
+	text-align: center;
+	margin: 5px 0 20px;
+	color: #333;
 }
 
 @media screen and (max-width: 500px) {

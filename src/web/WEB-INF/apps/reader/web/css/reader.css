@@ -8,123 +8,8 @@ div.reader h1.oo_header
 	margin-bottom: 20px;
 }
 
-#viewer
-{
-	position: fixed;
-	top: 20px;
-	left: 20px;
-	right: 20px;
-	bottom: 20px;
-	background: #fff;
-	box-shadow: 0 0 20px rgba(0,0,0,.2);
-	z-index: 200;
-	display: none;
-}
-
-#info
-{
-	position: absolute;
-	height: 100px;
-	border-bottom: 1px solid #eee;
-	width: 100%;
-	padding: 10px 30px;
-	box-sizing: border-box;
-	background: #fafafa;
-}
-
-#info h1
-{
-	font-size: 24px;
-	font-weight: 200;
-	margin: 0;
-	white-space: nowrap;
+.reader_modal {
 	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
-#info p
-{
-	font-size: 11px;
-	margin: 3px 0;
-}
-
-#info p.tags
-{
-	margin-top: 10px;
-}
-
-#info p.tags a
-{
-	display: inline-block;
-	height: 16px;
-	line-height: 16px;
-	border-radius: 8px;
-	border: 1px solid #eee;
-	padding: 0 10px;
-	font-size: 11px;
-	color: #666;
-	text-decoration: none;
-	background: #fff;
-}
-
-#info p.tags a.tag
-{
-	font-style: italic;
-}
-
-#info p.tags a.add
-{
-	border-style: dashed;
-	color: #bbb;
-}
-
-#info p.tags a:hover
-{
-	cursor: pointer;
-	background: #f6f6f6;
-	border-color: #ddd;
-	color: #666;
-}
-
-#info p.link a
-{
-	color: #999;
-	text-decoration: none;
-}
-
-#info p.link a:hover
-{
-	text-decoration: underline;
-}
-
-
-#rendering
-{
-	position: fixed;
-	padding: 20px 30px 20px;
-	top: 120px;
-	bottom: 20px;
-	left: 20px;
-	right: 20px;
-	overflow: auto;
-	box-sizing: border-box;
-}
-
-#rendering h1
-{
-	font-weight: 200;
-	margin: 0 0 20px;
-}
-
-#rendering div.body
-{
-	font-size: 11pt;
-	font-weight: 300;
-}
-
-#rendering div.body p
-{
-	margin: 5px 0;
 }
 
 div.word_rendering
@@ -173,4 +58,88 @@ div.sidebar div.block ul li strong
 	display: inline-block;
 	margin-left: 4px;
 	vertical-align: middle;
+}
+
+
+/* Actions */
+
+.reader_actions
+{
+	float: right;
+}
+
+.reader_actions .hui_button
+{
+	margin-left: 5px;
+}
+
+
+/* Hacks */
+
+.reader_list div.hui_list td {
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+.reader_list div.hui_list tr.hui_list_selected,
+.reader_list div.hui_list tr.hui_list_selected:hover
+{
+	background: #f6f8ff;
+}
+
+.reader_list p.hui_list_line
+{
+	font-weight: 300;
+	font-family: 'Open Sans','Helvetica Neue','Helvetica',Arial,sans-serif;
+	font-size: 13pt;
+	color: #333;
+}
+
+.reader_list p.hui_list_minor
+{
+	font-weight: 400;
+	font-size: 9pt;
+	color: #999;	
+}
+
+.reader_list div.hui_list tr.hui_list_selected p.hui_list_line
+{
+	color: #000;
+	text-shadow: none;
+}
+
+.reader_list div.hui_list tr.hui_list_selected p.hui_list_dimmed
+{
+	color: rgba(0,0,0,.5);
+}
+
+.reader_list_words {
+	font-size: 10px;
+	margin: 6px 0 0 0;
+	text-align: right;
+}
+
+.reader_list_word
+{
+	border-radius: 8px;
+	padding: 0 6px;
+	margin-right: 2px;
+	height: 14px;
+	display: inline-block;
+	background: rgba(0,0,0,.02);
+	border: 1px solid rgba(0,0,0,.04);
+	line-height: 14px;
+	text-decoration: none;
+	color: #333;
+	cursor: pointer;
+}
+
+.reader_list_word:hover {
+	background: rgba(0,0,0,.05);
+	border: 1px solid rgba(0,0,0,.07);
+}
+
+.hui_list_selected .reader_list_word
+{
+	text-shadow: none;
 }

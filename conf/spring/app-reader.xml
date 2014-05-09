@@ -8,4 +8,16 @@
     ">
 
    	<bean id="readerController" class="dk.in2isoft.onlineobjects.apps.reader.ReaderController" autowire="byType"/>
+   	
+   	<bean class="dk.in2isoft.onlineobjects.apps.reader.index.ReaderIndexer">
+   		<property name="documentBuilder" ref="readerIndexDocumentBuilder"/>
+   		<property name="indexService" ref="indexService"/>
+   		<property name="modelService" ref="modelService"/>
+   	</bean>
+
+   	<bean id="readerIndexDocumentBuilder" class="dk.in2isoft.onlineobjects.apps.reader.index.ReaderIndexDocumentBuilder">
+   		<property name="storageService" ref="storageService"/>
+   		<property name="modelService" ref="modelService"/>
+   		<property name="securityService" ref="securityService"/>
+   	</bean>
 </beans>

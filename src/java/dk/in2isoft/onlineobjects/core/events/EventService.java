@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Item;
 import dk.in2isoft.onlineobjects.model.Relation;
+import dk.in2isoft.onlineobjects.model.User;
 
 public class EventService {
 
@@ -59,6 +60,14 @@ public class EventService {
 			}
 			if (item instanceof Relation) {
 				listener.relationWasDeleted((Relation) item);
+			}
+		}
+	}
+
+	public void firePrivilegesRemoved(Item item, List<User> users) {
+		for (ModelEventListener listener : modelEventListeners) {
+			if (listener instanceof ModelPrivilegesEventListener) {
+				((ModelPrivilegesEventListener) listener).allPrivilegesWasRemoved(item, users);
 			}
 		}
 	}

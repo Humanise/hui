@@ -6,9 +6,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.transform.TransformerFactory;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -36,6 +33,8 @@ public class ConfigurationService implements InitializingBean {
 	private String developmentUser;
 	private String analyticsCode;
 	private String rootDomain;
+	private Integer port;
+	private boolean startScheduling;
 	
 	private File tempDir;
 
@@ -51,9 +50,7 @@ public class ConfigurationService implements InitializingBean {
 
 	public void afterPropertiesSet() throws Exception {
 		storageDir = new File(storagePath);
-		if (storageDir.canWrite()) {
-			log.info("Storage can be written");
-		} else {
+		if (!storageDir.canWrite()) {
 			throw new ConfigurationException("Unable to write to storage directory on path: "+storageDir);
 		}
 		tempDir = new File(storageDir,"temporary");
@@ -75,7 +72,6 @@ public class ConfigurationService implements InitializingBean {
 		} else if (!indexDir.canWrite()) {
 			throw new ConfigurationException("Can not write to the index directory");
 		}
-		testSetup();		
 	}
 	
 	@Autowired
@@ -86,12 +82,6 @@ public class ConfigurationService implements InitializingBean {
 			}
 			appMountPoints.put(controller.getName(), controller.getMountPoint());
 		}
-	}
-	
-	public void testSetup() {
-		log.info("Document builder factory: "+DocumentBuilderFactory.newInstance().getClass().getName());
-		log.info("Transformer factory: "+TransformerFactory.newInstance().getClass().getName());
-		log.info("SAX parser factory: "+SAXParserFactory.newInstance().getClass().getName());
 	}
 	
 	public File getTempDir() {
@@ -188,6 +178,16 @@ public class ConfigurationService implements InitializingBean {
 	public Collection<Locale> getApplicationLocales(String app) {
 		return appLocales.get(app);
 	}
+
+	public String getApplicationContext(String app) {
+		StringBuilder url = new StringBuilder();
+		url.append("http://");
+		url.append(appMountPoints.get(app)).append(".").append(rootDomain);
+		if (port!=null) {
+			url.append(":").append(port.intValue());
+		}
+		return url.toString();
+	}
 	
 	public String getApplicationContext(String app, String path, Request request) {
 		Locale locale = request.getLocale();
@@ -196,9 +196,11 @@ public class ConfigurationService implements InitializingBean {
 		}
 		HttpServletRequest servletRequest = request.getRequest();
 		StringBuilder url = new StringBuilder();
-		url.append("http://").append(appMountPoints.get(app)).append(".").append(rootDomain);
-		if (servletRequest.getServerPort()!=80) {
-			url.append(":").append(servletRequest.getServerPort());
+		String scheme = servletRequest.getScheme();
+		url.append(scheme).append("://").append(appMountPoints.get(app)).append(".").append(rootDomain);
+		int port = servletRequest.getServerPort();
+		if (port!=80 && port!=443) {
+			url.append(":").append(port);
 		}
 		url.append(request.getBaseContext());
 		if (appLocales.containsEntry(app, locale)) {
@@ -232,5 +234,21 @@ public class ConfigurationService implements InitializingBean {
 	
 	public void setLifeCycleService(LifeCycleService lifeCycleService) {
 		this.lifeCycleService = lifeCycleService;
+	}
+
+	public Integer getPort() {
+		return port;
+	}
+
+	public void setPort(Integer port) {
+		this.port = port;
+	}
+
+	public boolean isStartScheduling() {
+		return startScheduling;
+	}
+
+	public void setStartScheduling(boolean startScheduling) {
+		this.startScheduling = startScheduling;
 	}
 }

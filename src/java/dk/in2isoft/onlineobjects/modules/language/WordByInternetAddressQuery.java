@@ -10,7 +10,7 @@ public class WordByInternetAddressQuery implements CustomQuery<ItemData> {
 
 	private static String SQL = "select word.id as word_id,word.text,count(internetaddress.id) as count from word,relation,internetaddress,privilege "+
 			" where internetaddress.id = relation.super_entity_id and relation.sub_entity_id=word.id and privilege.object = internetaddress.id and privilege.subject=:privileged"+ 
-			" group by word.id,word.text order by word.id";
+			" group by word.id,word.text order by word.text";
 	
 	private long privileged;
 	
@@ -30,6 +30,7 @@ public class WordByInternetAddressQuery implements CustomQuery<ItemData> {
 	public ItemData convert(Object[] row) {
 		ItemData item = new ItemData();
 		item.setId(((Number) row[0]).longValue());
+		item.setValue(((Number) row[0]));
 		
 		item.setTitle((String) (row[1]==null ? "none" : row[1]));
 		item.setBadge(((Number) row[2]).toString());

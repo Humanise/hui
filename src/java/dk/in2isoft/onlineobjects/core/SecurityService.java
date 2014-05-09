@@ -8,15 +8,20 @@ import org.apache.log4j.Logger;
 
 import com.google.common.collect.Lists;
 
+import dk.in2isoft.commons.lang.Strings;
+import dk.in2isoft.onlineobjects.core.exceptions.ExplodingClusterFuckException;
 import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
+import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.Item;
 import dk.in2isoft.onlineobjects.model.Privilege;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.services.ConfigurationService;
+import dk.in2isoft.onlineobjects.services.PasswordRecoveryService;
 import dk.in2isoft.onlineobjects.services.SessionService;
 import dk.in2isoft.onlineobjects.ui.Request;
+import dk.in2isoft.onlineobjects.util.ValidationUtil;
 
 public class SecurityService {
 	
@@ -26,9 +31,13 @@ public class SecurityService {
 	public static final String PUBLIC_USERNAME = "public";
 	
 	private ModelService modelService;
-	private User publicUser;
 	private ConfigurationService configurationService;
 	private SessionService sessionService;
+	private PasswordEncryptionService passwordEncryptionService;
+	private PasswordRecoveryService passwordRecoveryService;
+
+	private User publicUser;
+	private Privileged adminPrivileged;
 
 	/**
 	 * Tries to change the user of a session
@@ -41,24 +50,58 @@ public class SecurityService {
 		if (userSession==null || username==null || password==null) {
 			throw new IllegalArgumentException("session, username or password is null");
 		}
-		User user = modelService.getUser(username);
-		if (user==null) {
-			return false;
-		} else if (password.equals(user.getPassword())) {
+		User user = getUser(username, password);
+		if (user!=null) {
 			userSession.setUser(user);
 			return true;
-		} else {
-			return false;			
 		}
+		return false;
 	}
 	
-	public void changePassword(String username, String password, Privileged privileged) throws SecurityException, ModelException, IllegalRequestException {
+	public User getUser(String username, String password) {
 		User user = modelService.getUser(username);
+		if (user==null) {
+			return null;
+		}
+		if (Strings.isNotBlank(user.getSalt())) {
+			if (passwordEncryptionService.authenticate(password, user.getPassword(), user.getSalt())) {
+				return user;
+			}
+		} else if (password.equals(user.getPassword())) {
+			return user;
+		}
+		return null;
+	}
+	
+	public void changePassword(String username, String existingPassword,String newPassword, Privileged privileged) throws SecurityException, ModelException, IllegalRequestException, ExplodingClusterFuckException {
+		User user = getUser(username, existingPassword);
 		if (user==null) {
 			throw new IllegalRequestException("The user with username: "+username+" was not found");
 		}
-		user.setPassword(password);
+		if (!ValidationUtil.isValidPassword(newPassword)) {
+			throw new IllegalRequestException("The new password is not valid");
+		}
+		changePassword(user, newPassword, privileged);
+	}
+
+	private void changePassword(User user, String password, Privileged privileged) throws ExplodingClusterFuckException, SecurityException, ModelException, IllegalRequestException {
+		if (!ValidationUtil.isValidPassword(password)) {
+			throw new IllegalRequestException("The password is not valid");
+		}
+		String salt = passwordEncryptionService.generateSalt();
+		String encryptedPassword = passwordEncryptionService.getEncryptedPassword(password, salt);
+		user.setPassword(encryptedPassword);
+		user.setSalt(salt);
+		user.removeProperties(User.PASSWORD_RECOVERY_CODE_PROPERTY);
 		modelService.updateItem(user, privileged);
+	}
+
+	public void changePasswordUsingKey(String key, String password, UserSession session) throws ExplodingClusterFuckException, SecurityException, ModelException, IllegalRequestException {
+		User user = passwordRecoveryService.getUserByRecoveryKey(key);
+		if (user!=null) {
+			changePassword(user, password, session);
+			changeUser(session, user.getUsername(), password);
+		}
 	}
 	
 	public boolean logOut(UserSession userSession) {
@@ -70,9 +113,17 @@ public class SecurityService {
 			return true;
 		}
 	}
+
+	public boolean isPublicView(Item item) {
+		Privilege privilege = modelService.getPrivilege(item.getId(), getPublicUser().getId());
+		if (privilege!=null) {
+			return privilege.isView();
+		}
+		return false;
+	}
 	
 	public Privilege getPrivilege(long id,Privileged priviledged) {
-		return modelService.getPriviledge(id, priviledged.getIdentity());
+		return modelService.getPrivilege(id, priviledged.getIdentity());
 	}
 	
 	public List<Privileged> expand(Privileged priviledged) {
@@ -163,6 +214,14 @@ public class SecurityService {
 		return publicUser;
 	}
 
+	public Privileged getAdminPrivileged() {
+		if (adminPrivileged==null) {
+			User user = modelService.getUser(SecurityService.ADMIN_USERNAME);
+			adminPrivileged = new DummyPrivileged(user.getId(), true);
+		}
+		return adminPrivileged;
+	}
+
 	private User getInitialUser() {
 		if (configurationService.isDevelopmentMode()) {
 			User user = modelService.getUser(configurationService.getDevelopmentUser());
@@ -233,5 +292,13 @@ public class SecurityService {
 	
 	public void setSessionService(SessionService sessionService) {
 		this.sessionService = sessionService;
+	}
+	
+	public void setPasswordEncryptionService(PasswordEncryptionService passwordEncryptionService) {
+		this.passwordEncryptionService = passwordEncryptionService;
+	}
+	
+	public void setPasswordRecoveryService(PasswordRecoveryService passwordRecoveryService) {
+		this.passwordRecoveryService = passwordRecoveryService;
 	}
 }

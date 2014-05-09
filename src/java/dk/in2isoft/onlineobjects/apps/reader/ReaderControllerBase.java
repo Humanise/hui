@@ -7,7 +7,10 @@ import java.util.Locale;
 import com.google.common.collect.Lists;
 
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
+import dk.in2isoft.onlineobjects.apps.reader.index.ReaderIndexer;
+import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
+import dk.in2isoft.onlineobjects.modules.index.IndexService;
 import dk.in2isoft.onlineobjects.modules.networking.HTMLService;
 import dk.in2isoft.onlineobjects.modules.networking.NetworkService;
 import dk.in2isoft.onlineobjects.services.FeedService;
@@ -26,6 +29,8 @@ public abstract class ReaderControllerBase extends ApplicationController {
 	protected PileService pileService;
 	protected FeedService feedService;
 	protected StorageService storageService;
+	protected IndexService indexService;
+	protected ReaderIndexer readerIndexer;
 	
 	static {
 
@@ -48,6 +53,8 @@ public abstract class ReaderControllerBase extends ApplicationController {
 		publicScript.addPath("hui","js","Overlay.js");
 		publicScript.addPath("hui","js","hui_color.js");
 		publicScript.addPath("WEB-INF","core","web","js","onlineobjects.js");
+		publicScript.addPath("WEB-INF","core","web","js","oo_topbar.js");
+		publicScript.addPath("WEB-INF","core","web","js","oo_selection.js");
 		publicScript.addPath("WEB-INF","apps","reader","web","js","reader.js");
 
 	
@@ -55,6 +62,7 @@ public abstract class ReaderControllerBase extends ApplicationController {
 		publicStyle.addBasicCSS();
 		publicStyle.addCoreCSS("oo_font.css");
 		publicStyle.addCoreCSS("oo_icon.css");
+		publicStyle.addCoreCSS("oo_selection.css");
 		publicStyle.addHUICSS("icon.css");
 		publicStyle.addHUICSS("list.css");
 		publicStyle.addHUICSS("searchfield.css");
@@ -65,6 +73,7 @@ public abstract class ReaderControllerBase extends ApplicationController {
 		publicStyle.addHUICSS("bar.css");
 		publicStyle.addHUICSS("overlay.css");
 		publicStyle.addPath("WEB-INF","apps","reader","web","css","reader.css");
+		publicStyle.addPath("WEB-INF","apps","reader","web","css","reader_viewer.css");
 
 	}
 
@@ -96,6 +105,13 @@ public abstract class ReaderControllerBase extends ApplicationController {
 		}
 		return super.getLanguage(request);
 	}
+	
+	@Override
+	public boolean isAllowed(Request request) {
+		return !request.isUser(SecurityService.PUBLIC_USERNAME);
+	}
+	
+	// Wiring...
 
 	public void setNetworkService(NetworkService networkService) {
 		this.networkService = networkService;
@@ -115,5 +131,13 @@ public abstract class ReaderControllerBase extends ApplicationController {
 	
 	public void setStorageService(StorageService storageService) {
 		this.storageService = storageService;
+	}
+	
+	public void setIndexService(IndexService indexService) {
+		this.indexService = indexService;
+	}
+	
+	public void setReaderIndexer(ReaderIndexer readerIndexer) {
+		this.readerIndexer = readerIndexer;
 	}
 }

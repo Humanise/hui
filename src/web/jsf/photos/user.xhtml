@@ -17,17 +17,25 @@
 		<ui:define name="body">
 			<div class="photos_user">
 				<o:header>#{photosUserView.personName}</o:header>
+				<form action="#{photosUserView.root}" class="photos_search">
+					<input name="text" value="#{photosUserView.text}" class="photos_search_text"/>
+					<input type="submit" value="#{msg.search}" class="photos_search_button"/>
+				</form>
 				<o:gallery model="#{photosUserView.imageList}"
 					variant="shadow"
 					href="/#{wordsLayoutView.language}/photo/[id].html"
 					>
-				
 				</o:gallery>
 			</div>
 		</ui:define>
 		
 		<ui:define name="sidebar">
 			<ui:include src="sidebar.part.xhtml"/>
+			<div class="photos_sidebar_cloud">
+				<c:forEach items="#{photosUserView.cloud}" var="item">
+					<a class="photos_sidebar_cloud_#{item.level}" href="#{photosUserView.root}?wordId=#{item.object.id}"><o:out value="#{item.object.text}"/></a>
+				</c:forEach>
+			</div>
 		</ui:define>
 		
 	</ui:composition>

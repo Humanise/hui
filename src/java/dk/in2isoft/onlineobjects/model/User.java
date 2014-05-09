@@ -13,6 +13,7 @@ public class User extends Entity implements Privileged {
 	
 	private String username;
 	private String password;
+	private String salt;
 
 	public User() {
 		super();
@@ -50,11 +51,18 @@ public class User extends Entity implements Privileged {
 		this.password = password;
 	}
 
+	public String getSalt() {
+		return salt;
+	}
+
+	public void setSalt(String salt) {
+		this.salt = salt;
+	}
+
 	public long getIdentity() {
 		return getId();
 	}
 
 	public boolean isSuper() {
 		return SecurityService.ADMIN_USERNAME.equals(username);
-	}
-}
+	}}

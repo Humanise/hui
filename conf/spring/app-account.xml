@@ -12,4 +12,10 @@
    	<bean id="accountSettingsView" class="dk.in2isoft.onlineobjects.apps.account.views.AccountSettingsView" scope="request">
    		<property name="modelService" ref="modelService"/>
    	</bean>
+   	
+   	<bean id="accountPasswordView" class="dk.in2isoft.onlineobjects.apps.account.views.AccountPasswordView" scope="request">
+   		<property name="passwordRecoveryService" ref="passwordRecoveryService"/>
+   	</bean>
+   	
+   	
 </beans>

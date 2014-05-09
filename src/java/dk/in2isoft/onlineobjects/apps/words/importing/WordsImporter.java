@@ -30,7 +30,6 @@ public class WordsImporter implements ImportListener<Word>,ImportTransport,TextI
 		text = IOUtils.toString(stream,"UTF-8");
 		title = name;
 		IOUtils.closeQuietly(stream);
-		System.out.println(text);
 		status = Status.success;
 	}
 	

@@ -85,7 +85,7 @@ public abstract class AbstractController {
 			jsfPath = filePath.toString().replaceAll("\\.html", ".xhtml");
 		}
 		File file = new File(configurationService.getBasePath() + jsfPath);
-		if (file.exists()) {
+		if (file.exists() && file.isFile()) {
 			return context.getRequestDispatcher("/faces"+jsfPath);
 		}
 		return null;

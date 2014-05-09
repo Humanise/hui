@@ -11,8 +11,10 @@ import org.hibernate.type.StringType;
 
 import com.google.common.collect.Lists;
 
+import dk.in2isoft.commons.lang.Code;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.CustomQuery;
+import dk.in2isoft.onlineobjects.model.Entity;
 
 public class WordListPerspectiveQuery implements CustomQuery<WordListPerspective> {
 
@@ -121,10 +123,10 @@ public class WordListPerspectiveQuery implements CustomQuery<WordListPerspective
 		if (startingWith!=null) {
 			sql.setString("startingWith", startingWith+"%");
 		}
-		if (words!=null && words.size()>0) {
+		if (Code.isNotEmpty(words)) {
 			sql.setParameterList("words", words, new StringType());
 		}
-		if (ids!=null && !ids.isEmpty()) {
+		if (Code.isNotEmpty(ids)) {
 			sql.setParameterList("ids", ids, new LongType());
 		}
 		if (startingWithSymbol) {
@@ -186,6 +188,14 @@ public class WordListPerspectiveQuery implements CustomQuery<WordListPerspective
 
 	public WordListPerspectiveQuery withIds(Collection<Long> ids) {
 		this.ids = ids;
+		return this;
+	}
+
+	public WordListPerspectiveQuery withWord(Entity word) {
+		if (this.ids==null) {
+			this.ids = Lists.newArrayList();
+		}
+		this.ids.add(word.getId());
 		return this;
 	}
 

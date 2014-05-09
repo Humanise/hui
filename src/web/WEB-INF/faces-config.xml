@@ -138,6 +138,14 @@ http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
     	<component-type>onlineobjects.fonts</component-type>
     	<component-class>dk.in2isoft.onlineobjects.ui.jsf.FontsComponent</component-class>
   	</component>
+    <component>
+    	<component-type>onlineobjects.fragment</component-type>
+    	<component-class>dk.in2isoft.onlineobjects.ui.jsf.FragmentComponent</component-class>
+  	</component>
+    <component>
+    	<component-type>onlineobjects.selection</component-type>
+    	<component-class>dk.in2isoft.onlineobjects.ui.jsf.SelectionComponent</component-class>
+  	</component>
   	
   	
   	
@@ -256,5 +264,13 @@ http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
     <component>
 	    <component-type>hui.fragment</component-type>
     	<component-class>dk.in2isoft.in2igui.jsf.FragmentComponent</component-class>
+  	</component>
+    <component>
+	    <component-type>hui.upload</component-type>
+    	<component-class>dk.in2isoft.in2igui.jsf.UploadComponent</component-class>
+  	</component>
+    <component>
+	    <component-type>hui.confirm</component-type>
+    	<component-class>dk.in2isoft.in2igui.jsf.ConfirmComponent</component-class>
   	</component>
 </faces-config>

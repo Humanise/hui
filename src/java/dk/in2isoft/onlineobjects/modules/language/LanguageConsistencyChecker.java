@@ -56,12 +56,25 @@ public class LanguageConsistencyChecker implements ConsistencyChecker {
 		languages.put("en", "English");
 		languages.put("da", "Dansk");
 		languages.put("de", "Deutch");
+		languages.put("fr", "Fran\u00E7ais");
+		languages.put("es", "Espa\u00F1ol");
+		languages.put("sv", "Svenska");
+		languages.put("no", "Norsk");
+		languages.put("nb", "Norsk bokm\u00E5l");
+		languages.put("nn", "Norsk nynorsk");
+		languages.put("is", "\u00cdslenska");
+		languages.put("fo", "f\u00F8royskt");
+		languages.put("fi", "Suomi");
+		languages.put("kl", "Kalaallisut");
+		languages.put("ar", "\u0627\u0644\u0639\u0631\u0628\u064a\u0629");
+		languages.put("zh", "\u4E2D\u56FD\u7684");
+		languages.put("hi", "\u0939\u093f\u0928\u094d\u0926\u0940");
+		languages.put("la", "Latine");
 	}
 	
+	@Override
 	public void check() throws ModelException, SecurityException {
 		User adminUser = modelService.getUser(SecurityService.ADMIN_USERNAME);
-		
-		List<LexicalCategory> all = modelService.list(Query.after(LexicalCategory.class));
 		
 		for (Entry<String, String> entry : languages.entrySet()) {
 			Query<Language> query = Query.of(Language.class).withField(Language.CODE, entry.getKey());

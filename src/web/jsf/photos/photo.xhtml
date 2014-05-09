@@ -30,10 +30,10 @@
 				
 				<div class="photos_photo_image">
 					<c:if test="#{photosPhotoView.vertical}">
-						<o:thumbnail image="#{photosPhotoView.image}" height="500" present="true" frame="false"/>							
+						<o:thumbnail image="#{photosPhotoView.image}" height="500" present="true" frame="false"/>
 					</c:if>
 					<c:if test="#{not photosPhotoView.vertical}">
-						<o:thumbnail image="#{photosPhotoView.image}" width="980" present="true" frame="false"/>
+						<o:thumbnail image="#{photosPhotoView.image}" className="photos_photo_image_vertical" width="980" present="true" frame="false" responsive="true"/>
 					</c:if>
 					<div class="photos_controller oo_faded">
 						<o:link href="/service/image/id#{photosPhotoView.image.id}.jpg?download=true" core="true" plain="true"><i>d</i></o:link>

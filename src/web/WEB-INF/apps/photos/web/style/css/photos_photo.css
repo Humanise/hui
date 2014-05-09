@@ -72,7 +72,7 @@ p.photos_photo_by strong
 	font-weight: 500;
 }
 
-div.photos_photo_image
+.photos_photo_image
 {
 	position: relative;
 	font-size: 0;
@@ -80,6 +80,16 @@ div.photos_photo_image
 	text-align: center;
 }
 
+.photos_photo_image_vertical
+{
+	position: relative;
+}
+
+.photos_photo_image_vertical img
+{
+	position: absolute;
+	left: 0;
+}
 
 div.photos_photo_properties
 {

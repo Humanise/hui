@@ -52,7 +52,7 @@ public class SessionService {
 		}
 	}
 	
-	public void registerSubSeession(SubSession subSession) {
+	public void registerSubSession(SubSession subSession) {
 		this.subSessions.add(subSession);
 	}
 

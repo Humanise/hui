@@ -1,20 +1,25 @@
-h1
+.account
+{
+	padding: 20px 20px 20px;
+}
+
+.account_title
 {
 	margin: -3px -10px 10px;
-	font-family: 'Helvetica Neue','Hevetica',Arial,sans-serif;
+	font-family: 'Lato','Hevetica',Arial,sans-serif;
 	font-weight: 100;
 	line-height: 24px;
 	border-bottom: 1px solid #eee;
 	padding: 0 10px 12px;
 }
 
-p.property
+.account_user
 {
 	font-size: 11pt;
 	font-weight: 200;
 }
 
-p.property strong
+.account_user_label
 {
 	font-weight: 200;
 	color: #999;

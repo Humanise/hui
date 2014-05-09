@@ -37,8 +37,10 @@ public abstract class DesktopControlerBase extends ApplicationController {
 		publicScript.addPath("hui","js","Drawing.js");
 		publicScript.addPath("hui","js","Source.js");
 		publicScript.addPath("hui","js","Overlay.js");
+		publicScript.addPath("hui","js","List.js");
 		publicScript.addPath("hui","js","ProgressIndicator.js");
 		publicScript.addPath("WEB-INF","core","web","js","onlineobjects.js");
+		publicScript.addPath("WEB-INF","core","web","js","oo_topbar.js");
 		publicScript.addPath("WEB-INF","apps","desktop","web","js","ctrl.js");
 		publicScript.addPath("WEB-INF","apps","desktop","web","js","desktop.js");
 		publicScript.addPath("WEB-INF","apps","desktop","web","js","desktop_searchbar.js");
@@ -57,6 +59,7 @@ public abstract class DesktopControlerBase extends ApplicationController {
 		publicStyle.addPath("hui","css","formula.css");
 		publicStyle.addPath("hui","css","message.css");
 		publicStyle.addPath("hui","css","icon.css");
+		publicStyle.addPath("hui","css","list.css");
 		publicStyle.addPath("hui","css","overlay.css");
 		publicStyle.addPath("WEB-INF","core","web","css","oo_topbar.css");
 		publicStyle.addPath("WEB-INF","apps","desktop","web","css","desktop.css");

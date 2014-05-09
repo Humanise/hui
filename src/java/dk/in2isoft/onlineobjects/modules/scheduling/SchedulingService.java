@@ -11,7 +11,6 @@ import org.apache.commons.collections.BufferUtils;
 import org.apache.commons.collections.buffer.CircularFifoBuffer;
 import org.apache.log4j.Logger;
 import org.quartz.CronScheduleBuilder;
-import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
@@ -76,7 +75,7 @@ public class SchedulingService implements ApplicationListener<ContextRefreshedEv
 							scheduler.scheduleJob(trigger);
 							triggerDescriptions.put(job.getKey(), "min:  "+desc.getRepeatMinutes());
 						}
-						if (desc.isPaused() || configurationService.isDevelopmentMode()) {
+						if (desc.isPaused() || !configurationService.isStartScheduling()) {
 							scheduler.pauseJob(job.getKey());
 						}
 					}

@@ -3,8 +3,10 @@ package dk.in2isoft.commons.lang;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -45,6 +47,42 @@ public class Strings {
 		} else {
 			return first + " " + second;
 		}
+	}
+	
+	public static String deAccent(String str) {
+		if (str==null) {
+			return null;
+		}
+	    String nfdNormalizedString = Normalizer.normalize(str, Normalizer.Form.NFD); 
+	    Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+	    return pattern.matcher(nfdNormalizedString).replaceAll("");
+	}
+	
+	/**
+	 * For use when indexing - has no other usage
+	 * @param text
+	 * @return
+	 */
+	public static String getAlphabethStartLetter(String text) {
+		if (text==null) {
+			return "none";
+		}
+		text = text.trim();
+		if (text.length()==0) {
+			return "none";
+		}
+		String letter = text.substring(0, 1).toLowerCase();
+		if (Strings.contains(letter, ALPHABETH)) {
+			return letter;
+		}
+		letter = deAccent(letter);
+		if (Strings.contains(letter, ALPHABETH)) {
+			return letter;
+		}
+		if (StringUtils.isNumeric(letter)) {
+			return "number";
+		}
+		return "other";
 	}
 
 	public static String concatWords(String... words) {
@@ -112,6 +150,13 @@ public class Strings {
 	public static boolean isBlank(String str) {
 		return StringUtils.isBlank(str);
 	}
+	
+	public static String fallback(String str, String defaultValue) {
+		if (Strings.isBlank(str)) {
+			return defaultValue;
+		}
+		return str;
+	}
 
 	public static String[] getWords(String query) {
 		return query.trim().split("\\W+");
@@ -141,7 +186,9 @@ public class Strings {
 
 	public static String encodeURL(String string) {
 		try {
-			return URLEncoder.encode(string,"UTF-8");
+			String encoded = URLEncoder.encode(string,"UTF-8");
+			encoded = encoded.replaceAll("\\.", "%2E");
+			return encoded;
 		} catch (UnsupportedEncodingException e) {
 			
 		}
@@ -205,5 +252,26 @@ public class Strings {
 			return "";
 		}
 		return string;
+	}
+
+	public static String asNonBlank(String string,String blankValue) {
+		if (isBlank(string)) {
+			return blankValue;
+		}
+		return string;
+	}
+
+	public static boolean equals(String first, String second) {
+		if (first==null && second==null) {
+			return true;
+		}
+		if (first==null || second==null) {
+			return false;
+		}
+		return first.equals(second);
+	}
+
+	public static String[] toArray(List<String> list) {
+		return (String[]) list.toArray();
 	}
 }

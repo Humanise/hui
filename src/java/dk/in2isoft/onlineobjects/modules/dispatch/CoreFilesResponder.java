@@ -2,6 +2,7 @@ package dk.in2isoft.onlineobjects.modules.dispatch;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletResponse;
@@ -21,13 +22,26 @@ public class CoreFilesResponder implements Responder {
 	
 	public boolean applies(Request request) {
 		String[] path = request.getFullPath();
+		if (path.length > 0 && path[0].equals("robots.txt")) {
+			return true;
+		}
 		return path.length > 0 && path[0].equals("core");
 	}
 	
 	public Boolean dispatch(Request request, FilterChain chain) throws IOException {
 		String[] path = request.getFullPath();
-		String[] filePath = new String[] { "core", "web" };
-		pushCoreFile((String[]) ArrayUtils.addAll(filePath, ArrayUtils.subarray(path, 1, path.length)),request.getResponse());
+
+		if (path.length > 0 && path[0].equals("robots.txt")) {
+			HttpServletResponse response = request.getResponse();
+			response.setContentType("text/plain");
+			PrintWriter writer = response.getWriter();
+			writer.println("User-agent: *");
+			writer.println("Disallow:");
+			writer.close();
+		} else {
+			String[] filePath = new String[] { "core", "web" };
+			pushCoreFile((String[]) ArrayUtils.addAll(filePath, ArrayUtils.subarray(path, 1, path.length)),request.getResponse());
+		}
 		return null;
 	}
 	

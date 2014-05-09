@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.junit.Test;
 
 import dk.in2isoft.commons.lang.Strings;
@@ -16,7 +15,7 @@ import dk.in2isoft.onlineobjects.util.ValidationUtil;
 
 public class TestLangUtil extends AbstractSpringTestCase {
 	
-	private static Logger log = Logger.getLogger(TestLangUtil.class);
+	//private static Logger log = Logger.getLogger(TestLangUtil.class);
 	
 	
 	@Test

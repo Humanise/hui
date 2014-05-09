@@ -32,9 +32,18 @@
 					<ui:fragment rendered="#{not empty wordsWordView.words}">
 						<ul class="words_word_variants">
 							<c:forEach items="#{wordsWordView.words}" var="word">
-								<li class="words_word_variant">
+								<li class="words_word_variant" id="word-#{word.word.id}">
+									<p class="words_word_by">
+										<o:date value="#{word.word.created}" weekday="false" time="false"/>
+										<c:if test="#{not empty word.originator}">
+										#{msg.by} <o:link app="people" href="/#{word.originator.name}/">#{word.originator.name}</o:link>
+										</c:if>
+										<c:if test="#{not empty word.sourceTitle}">
+										#{msg.from} #{word.sourceTitle}
+										</c:if>
+									</p>
 									<p class="words_word_info">
-										<strong class="words_word_info">#{word.word.text}</strong>
+										<strong class="words_word_info" title="#{word.word.id}">#{word.word.text}</strong>
 										<c:if test="#{word.lexicalCategory!=null}">
 											<span class="words_word_info">
 												<span>—</span>
@@ -74,15 +83,6 @@
 											rendered="#{wordsLayoutView.loggedIn}"
 										/>
 									</p>
-									<p class="words_word_by">
-										#{msg.created}: <o:date value="#{word.word.created}" weekday="false" time="false"/>
-										<c:if test="#{not empty word.originator}">
-										#{msg.by} <o:link app="people" href="/#{word.originator.name}/">#{word.originator.name}</o:link>
-										</c:if>
-										<c:if test="#{not empty word.sourceTitle}">
-										#{msg.from} #{word.sourceTitle}
-										</c:if>
-									</p>
 									<c:if test="#{not empty word.glossary}">
 										<p class="words_word_glossary">
 											#{word.glossary}
@@ -98,20 +98,20 @@
 									<c:if test="#{not empty word.relations}">
 									<ul class="words_word_relations">
 									<c:forEach items="#{word.relations}" var="group">
+									<o:out value="#{group.raw}" escape="false"/>
+									<c:if test="#{false}">
 										<li>
 											<strong>#{msg[group.kind]}:</strong>
 											<c:forEach items="#{group.relations}" var="relation" varStatus="status">
-												<c:if test="#{not status.first}">, </c:if>
-												<span class="words_word_relation">
-													<o:link href="/#{wordsLayoutView.language}/word/#{relation.word.text}.html">#{relation.word.name}</o:link>
+												<c:if test="#{not status.first}"><o:out value="#{', '}"/></c:if>
+												<span class="words_word_relation" data-relation="#{relation.id}" data-word="#{relation.word.id}">
+													<o:link href="/#{wordsLayoutView.language}/word/#{relation.word.text}.html">
+														<o:out value="#{relation.word.name}"/>
+													</o:link>
 												</span>
-												<c:if test="#{wordsLayoutView.loggedIn}">
-													<a href="javascript://" class="words_word_action"
-														onclick="wordView.deleteRelation({id:#{relation.id},element:this,event:event}); return false;"
-													><o:out value="#{msg.remove}" lower="true"/></a>
-												</c:if>
 											</c:forEach>
 										</li>
+										</c:if>
 									</c:forEach>
 									</ul>
 									</c:if>
@@ -152,14 +152,13 @@
 							<div class="panel_body" onclick="wordView.selectRelationKind(event)">
 								<h2>#{msg.relation_kind}</h2>
 								<ul class="selection">
-									<c:forEach items="#{wordsWordView.relations}" var="cat">
+									<c:forEach items="#{wordsWordView.relationOptions}" var="cat">
 										<li><a rel="#{o:json(cat)}"><strong>#{cat.label}</strong></a></li>
 									</c:forEach>
 								</ul>
 							</div>
 						</gui:boundPanel>
 
-			
 						<gui:boundPanel name="addVariantPanel" hideOnClick="true" width="200">
 							<gui:formula name="addVariantForm">
 								<gui:fields>
@@ -174,8 +173,15 @@
 							</gui:formula>
 						</gui:boundPanel>
 					
-					
 					</c:if>
+
+					<gui:boundPanel name="relationInfoPanel" modal="transparent" variant="light" width="250" padding="5">
+						<gui:fragment name="relationFragment"/>
+						<gui:buttons align="right">
+							<gui:button text="#{msg.remove}" name="removeRelationButton" small="true" rendered="#{wordsLayoutView.loggedIn}"/>
+							<gui:button text="#{msg.view}" name="visitRelationButton" small="true" highlighted="true"/>
+						</gui:buttons>
+					</gui:boundPanel>
 				</div>
 			</div>
 			<c:if test="#{wordsLayoutView.loggedIn}">

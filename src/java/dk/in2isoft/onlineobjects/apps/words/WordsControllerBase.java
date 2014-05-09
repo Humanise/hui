@@ -9,6 +9,7 @@ import dk.in2isoft.onlineobjects.apps.ApplicationController;
 import dk.in2isoft.onlineobjects.modules.networking.HTMLService;
 import dk.in2isoft.onlineobjects.services.FeedService;
 import dk.in2isoft.onlineobjects.services.ImportService;
+import dk.in2isoft.onlineobjects.services.LanguageService;
 import dk.in2isoft.onlineobjects.ui.Blend;
 import dk.in2isoft.onlineobjects.ui.Request;
 
@@ -18,12 +19,12 @@ public class WordsControllerBase extends ApplicationController {
 	protected WordsModelService wordsModelService;
 	protected FeedService feedService;
 	protected HTMLService htmlService;
+	protected LanguageService languageService;
 
 	protected static final Blend publicStyle;
 	protected static final Blend publicScript;
 	static {
 		publicStyle = new Blend("words_public_style");
-		//publicStyle.addPath("WEB-INF","core","web","fonts","lora","stylesheet.css");
 		publicStyle.addBasicCSS();
 		publicStyle.addHUICSS("searchfield.css");
 		publicStyle.addHUICSS("panel.css");
@@ -37,8 +38,11 @@ public class WordsControllerBase extends ApplicationController {
 		publicStyle.addHUICSS("bar.css");
 		publicStyle.addHUICSS("overlay.css");
 		publicStyle.addHUICSS("pages.css");
+		publicStyle.addHUICSS("upload.css");
+		publicStyle.addHUICSS("progressbar.css");
 		publicStyle.addPath("WEB-INF","apps","words","web","style","css","words.css");
-		publicStyle.addPath("WEB-INF","apps","words","web","style","css","words_sidebar.css");		
+		publicStyle.addPath("WEB-INF","apps","words","web","style","css","words_sidebar.css");
+		publicStyle.addPath("WEB-INF","apps","words","web","style","css","words_front.css");
 		publicStyle.addPath("WEB-INF","apps","words","web","style","css","words_search.css");		
 		publicStyle.addPath("WEB-INF","apps","words","web","style","css","words_word.css");
 		publicStyle.addPath("WEB-INF","apps","words","web","style","css","words_statistics.css");		
@@ -71,7 +75,11 @@ public class WordsControllerBase extends ApplicationController {
 		publicScript.addPath("hui","js","Drawing.js");
 		publicScript.addPath("hui","js","Window.js");
 		publicScript.addPath("hui","js","Box.js");
+		publicScript.addPath("hui","js","Fragment.js");
+		publicScript.addPath("hui","js","Upload.js");
+		publicScript.addPath("hui","js","ProgressBar.js");
 		publicScript.addPath("WEB-INF","core","web","js","onlineobjects.js");
+		publicScript.addPath("WEB-INF","core","web","js","oo_topbar.js");
 		publicScript.addPath("WEB-INF","apps","words","web","style","js","words.js");
 	}
 
@@ -85,6 +93,7 @@ public class WordsControllerBase extends ApplicationController {
 		addJsfMatcher("/<language>/search/<integer>", "search.xhtml");
 		addJsfMatcher("/<language>/word/<no-dot>.html", "word.xhtml");
 		addJsfMatcher("/<language>/import/<folder>", "import.xhtml");
+		addJsfMatcher("/<language>/importlist/<folder>", "importList.xhtml");
 		addJsfMatcher("/<language>/index/<folder>", "index.xhtml");
 		addJsfMatcher("/<language>/index/<folder>/<integer>", "index.xhtml");
 		addJsfMatcher("/<language>/enrich", "enrich.xhtml");
@@ -122,6 +131,10 @@ public class WordsControllerBase extends ApplicationController {
 	
 	public void setHtmlService(HTMLService htmlService) {
 		this.htmlService = htmlService;
+	}
+	
+	public void setLanguageService(LanguageService languageService) {
+		this.languageService = languageService;
 	}
 
 }

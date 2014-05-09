@@ -31,6 +31,8 @@ public class ThumbnailComponent extends AbstractComponent {
 	private boolean frame = true;
 	private String app;
 	private double sharpen = 1.0;
+	private String className;
+	private boolean responsive;
 	
 	public ThumbnailComponent() {
 		super(FAMILY);
@@ -47,11 +49,13 @@ public class ThumbnailComponent extends AbstractComponent {
 		app = (String) state[6];
 		sharpen = (Double) state[7];
 		present = (Boolean) state[8];
+		className = (String) state[9];
+		responsive = (Boolean) state[9];
 	}
 
 	@Override
 	public Object[] saveState() {
-		return new Object[] { width, height, variant, zoom, href, frame, app, sharpen, present };
+		return new Object[] { width, height, variant, zoom, href, frame, app, sharpen, present, className, responsive };
 	}
 
 	@Override
@@ -60,6 +64,10 @@ public class ThumbnailComponent extends AbstractComponent {
 		Image image = getBinding("image");
 		StyleBuilder style = new StyleBuilder();
 		style.withWidth(width).withHeight(height);
+		if (image!=null && responsive) {
+			double percent = (((double)image.getHeight())/(double)image.getWidth()) * 100;
+			style.withRule("padding-bottom: "+percent+"%;");
+		}
 		ClassBuilder cls = new ClassBuilder("oo_thumbnail").add("oo_thumbnail",variant);
 		if (zoom || present) {
 			cls.add("oo_thumbnail_zoom");
@@ -67,6 +75,7 @@ public class ThumbnailComponent extends AbstractComponent {
 		if (frame) {
 			cls.add("oo_thumbnail_frame");
 		}
+		cls.add(className);
 		out.startSpan(cls).withStyle(style);
 		UIComponent hover = getFacet("hover");
 		if (hover!=null) {
@@ -198,5 +207,21 @@ public class ThumbnailComponent extends AbstractComponent {
 	
 	public void setPresent(boolean present) {
 		this.present = present;
+	}
+	
+	public String getClassName() {
+		return className;
+	}
+	
+	public void setClassName(String className) {
+		this.className = className;
+	}
+	
+	public boolean isResponsive() {
+		return responsive;
+	}
+	
+	public void setResponsive(boolean responsive) {
+		this.responsive = responsive;
 	}
 }

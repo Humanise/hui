@@ -1,6 +1,7 @@
 package dk.in2isoft.onlineobjects.ui;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
 
 import javax.faces.context.FacesContext;
@@ -13,6 +14,7 @@ import org.apache.log4j.Logger;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
@@ -255,6 +257,20 @@ public class Request {
 		return getLong(key, 0l);
 	}
 
+	public List<Long> getLongList(String key) {
+		List<Long> found = Lists.newArrayList();
+		String str = getString(key);
+		String[] parts = str.split(",");
+		for (String string : parts) {
+			try {
+				found.add(Long.parseLong(string));
+			} catch (NumberFormatException e) {
+				// ignore
+			}
+		}
+		return found;
+	}
+
 	public Long getLong(String key, Long whenNullOrInvalid) {
 		String value = request.getParameter(key);
 		if (Strings.isBlank(value)) {
@@ -304,7 +320,7 @@ public class Request {
 
 	public String getString(String key, String error) throws IllegalRequestException {
 		String value = request.getParameter(key);
-		if (value == null) {
+		if (Strings.isBlank(value)) {
 			throw new IllegalRequestException(error);
 		} else {
 			return value;

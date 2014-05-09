@@ -76,6 +76,16 @@ public class AuthenticationController extends AuthenticationControllerBase {
 	}
 	
 
+	public void recoverPassword(Request request) throws IOException, EndUserException {
+		String usernameOrEmail = request.getString("usernameOrMail","No username or e-mail provided");
+		if (passwordRecoveryService.sendRecoveryMail(usernameOrEmail, request.getSession())) {
+			
+		} else {
+			throw new IllegalRequestException("Username or e-mail not found");
+		}
+	}
+	
+
 	public void getUserInfo(Request request) throws ModelException, IOException {
 		User user = request.getSession().getUser();
 		Image image = memberService.getUsersProfilePhoto(user);

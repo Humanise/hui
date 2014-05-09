@@ -185,153 +185,7 @@ if (false) {
 
 
 
-oo.TopBar = function(options) {
-	this.options = options;
-	this.element = hui.get(options.element);
-	hui.ui.extend(this);
-	this._addBehavior();
-	hui.ui.listen(this);
-}
 
-oo.TopBar.prototype = {
-	_addBehavior : function() {
-		hui.listen(this.element,'click',this._onClick.bind(this));
-	},
-	_onClick : function(e) {
-		e = hui.event(e);
-		var a = e.findByTag('a');
-		if (a) {
-			if (a.getAttribute('data')=='user') {
-				e.stop();
-				if (this._userPanel && this._userPanel.isVisible()) {
-					this._userPanel.hide();
-				} else {
-					this._showUserPanel(a)
-				}
-			}
-			else if (a.getAttribute('data')=='login') {
-				e.stop();
-				this._showLoginPanel(a)
-			}
-		}
-	},
-	
-	_showUserPanel : function(a) {
-		var panel = this._buildUserPanel();
-		panel.position(a);
-		panel.show();
-		this._updatePanel();
-	},
-	_buildUserPanel : function() {
-		if (!this._userPanel) {
-			var p = this._userPanel = hui.ui.BoundPanel.create({width:250,variant:'light',padding:10,hideOnClick:true});
-			this._userInfoBlock = hui.build('div',{'class':'oo_topbar_info oo_topbar_info_busy'});
-			p.add(this._userInfoBlock);
-			var buttons = hui.build('div',{'class':'oo_topbar_info_buttons'});
-			p.add(buttons);
-			var logout = hui.ui.Button.create({text:'Log out',variant:'paper',small:true, listener: {
-				$click : this._doLogout.bind(this)
-			}});
-			buttons.appendChild(logout.element);
-			var changeUser = hui.ui.Button.create({text:'Change user',variant:'paper',small:true, listener: {
-				$click : this._showLoginPanel.bind(this)
-			}});
-			buttons.appendChild(changeUser.element);
-		}
-		return this._userPanel;
-	},
-	_updatePanel : function() {
-		var node = this._userInfoBlock;
-		hui.ui.request({
-			url : oo.baseContext+'/service/authentication/getUserInfo',
-			$object : function(info) {
-				hui.cls.remove(node,'oo_topbar_info_busy')
-				var html = '<div class="oo_topbar_info_photo">';
-				if (info.photoId) {
-					html+='<div style="background: url('+oo.baseContext+'/service/image/id'+info.photoId+'width50height60sharpen0.7cropped.jpg)"></div>';
-				}
-				html+='</div><div class="oo_topbar_info_content">'+
-					'<p class="oo_topbar_info_name">'+hui.string.escape(info.fullName)+'</p>'+
-					'<p class="oo_topbar_info_username">'+hui.string.escape(info.username)+'</p>'+
-					'<p class="oo_topbar_info_account"><strong>&rsaquo;</strong> <a href="http://account.'+oo.baseDomainContext+'/"><span>Account</span></a></p>'+
-					'</div>';
-				node.innerHTML = html;
-				
-			}.bind(this),
-			$failure : function() {
-				hui.cls.remove(node,'oo_topbar_info_busy');
-				node.innerHTML = '<p>Error</p>';
-			}
-		});
-		
-		window.setTimeout(function() {
-			
-		}.bind(this),2000)
-	},
-
-	_showLoginPanel : function(a) {
-		var panel = this._buildLoginPanel();
-		panel.position(a);
-		panel.show();
-		this._loginForm.focus();
-	},
-	_buildLoginPanel : function() {
-		if (!this._loginPanel) {
-			var p = this._loginPanel = hui.ui.BoundPanel.create({width:200,variant:'light',hideOnClick:true,padding:10});
-			
-			var form = this._loginForm = hui.ui.Formula.create({name:'topBarLoginForm'});
-			form.buildGroup(null,[
-				{type:'TextField',label:'Username',options:{key:'username'}},
-				{type:'TextField',label:'Password',options:{secret:true,key:'password'}}
-			]);
-			p.add(form);
-			var login = hui.ui.Button.create({text:'Log in',variant:'paper',name:'topBarLoginButton'});
-			p.add(login);
-		}
-		return this._loginPanel;
-	},
-	$submit$topBarLoginForm : function() {
-		this._doLogin();
-	},
-	$click$topBarLoginButton : function() {
-		this._doLogin();
-	},
-	_doLogin : function() {
-		var values = this._loginForm.getValues();
-		if (hui.isBlank(values.username) || hui.isBlank(values.password)) {
-			this._loginForm.focus();
-			return;
-		}
-		hui.ui.request({
-			url : oo.baseContext+'/service/authentication/changeUser',
-			parameters : {username:values.username,password:values.password},
-			$object : function(response) {
-				if (response.success===true) {
-					this._loginPanel.clear();
-					this._loginPanel.add(hui.build('div',{'class':'oo_topbar_login_success',text:'You are logged in'}))
-					document.location.reload();
-				} else {
-					hui.ui.showMessage({text:'Unable to log in',icon:'common/warning',duration:2000});
-				}
-			}.bind(this),
-			$failure : function() {
-				hui.ui.showMessage({text:'Unable to log in',icon:'common/warning',duration:2000});
-			},
-			$exception : function(e) {
-				throw e;
-			}
-		})
-	},
-	_doLogout : function() {
-		hui.ui.request({
-			url : oo.baseContext+'/service/authentication/logout',
-			$success : function() {
-				document.location.reload();
-			}
-		})
-		
-	}
-}
 
 
 
@@ -452,16 +306,18 @@ oo.WordGetter.prototype = {
 		this.pages.next();
 	},
 	$click$wordFinderAdd : function() {
-		this.pages.goTo('new');
-		this.form.focus();
+		this._addWord();
 	},
 	$click$wordFinderEmpty : function() {
+		this._addWord();
+	},
+	_addWord : function() {
 		this.pages.goTo('new');
 		var text = hui.ui.get('wordFinderSearch').getValue();
 		this.form.setValues({
 			text : text
 		})
-		this.form.focus();
+		this.form.focus();		
 	},
 	$valueChanged$wordFinderSearch : function() {
 		hui.ui.get('wordFinderList').resetState();
@@ -513,6 +369,7 @@ oo.Words.prototype = {
 		e = hui.event(e);
 		var a = e.findByTag('a');
 		if (a) {
+			e.stop();
 			if (hui.cls.has(a,'oo_words_add')) {
 				this._showFinder();
 			} else {

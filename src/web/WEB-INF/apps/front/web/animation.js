@@ -28,12 +28,12 @@ hui.onReady(function() {
 	var center = {x:size/2,y:size/2};
 
 
-	var arc1 = d.addArc({center : center,fill : 'rgba(0,0,0,.08)'});
-	var arc2 = d.addArc({center : center,fill : 'rgba(0,0,0,.05)'});
-	var arc3 = d.addArc({center : center,fill : 'rgba(0,0,0,.08)'});
-	var arc4 = d.addArc({center : center,fill : 'rgba(0,0,0,.05)'});
+	var arc1 = d.addArc({center : center,fill : 'rgba(0,20,60,.08)'});
+	var arc2 = d.addArc({center : center,fill : 'rgba(0,20,60,.05)'});
+	var arc3 = d.addArc({center : center,fill : 'rgba(0,20,60,.08)'});
+	var arc4 = d.addArc({center : center,fill : 'rgba(0,20,60,.05)'});
 	
-	var circle = d.addCircle({cx:center.x,cy:center.y,r:0,fill:'rgba(0,0,0,.1)',width:0});
+	var circle = d.addCircle({cx:center.x,cy:center.y,r:0,fill:'rgba(0,20,60,.1)',width:0});
 
 
 	var title = hui.get('title');

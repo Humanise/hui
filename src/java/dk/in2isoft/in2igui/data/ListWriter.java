@@ -203,4 +203,23 @@ public class ListWriter extends MarkupWriter {
 		withAttribute("revealing", true);
 		return this;
 	}
+
+	public ListWriter cell(Object text) {
+		startCell();
+		if (text!=null) {
+			text(text.toString());
+		}
+		endCell();
+		return this;
+	}
+
+	public ListWriter html(Object text) {
+		startTag("html");
+		withAttribute("xmlns", "http://www.w3.org/1999/xhtml");
+		if (text!=null) {
+			raw(text.toString());
+		}
+		endTag("html");
+		return this;
+	}
 }

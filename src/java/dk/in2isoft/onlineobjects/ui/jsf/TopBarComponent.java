@@ -13,6 +13,7 @@ import dk.in2isoft.commons.jsf.Components;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.model.User;
+import dk.in2isoft.onlineobjects.modules.inbox.InboxService;
 import dk.in2isoft.onlineobjects.services.ConfigurationService;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.util.Messages;
@@ -59,7 +60,7 @@ public class TopBarComponent extends AbstractComponent {
 		out.write("Community").endA().endLi();*/
 		
 		List<String> primaryApps = Lists.newArrayList("words","photos","people");
-		List<String> privateApps = Lists.newArrayList("desktop","tools");
+		List<String> privateApps = Lists.newArrayList("reader","desktop","tools");
 		if (request.isUser(SecurityService.ADMIN_USERNAME)) {
 			privateApps.add("setup");
 		}
@@ -81,8 +82,11 @@ public class TopBarComponent extends AbstractComponent {
 				out.startLi("oo_topbar_"+app).startA(request.isApplication(app) ? "oo_topbar_selected" : null);
 				out.withHref(configurationService.getApplicationContext(app, null, request));
 				out.text(msg.get("app_"+app, request.getLocale())).endA().endLi();
-			}		
+			}
 			User user = request.getSession().getUser();
+			InboxService inboxService = Components.getBean(InboxService.class);
+			int count = inboxService.getCountSilently(user);
+			out.startLi().startVoidA("oo_topbar_inbox").withAttribute("data", "inbox").text(count).endA().endLi();
 			out.startLi().startVoidA("oo_topbar_user").withAttribute("data", "user");
 			out.startSpan().withClass("oo_icon oo_icon_16 oo_icon_user").endSpan();
 			out.write(user.getName()).endA().endLi();

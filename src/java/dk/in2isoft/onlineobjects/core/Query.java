@@ -3,8 +3,6 @@ package dk.in2isoft.onlineobjects.core;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
-
 import org.hibernate.Session;
 
 import com.google.common.collect.Lists;
@@ -28,13 +26,15 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 	
 	private boolean publicView;
 	
-	private List<Parent> parents;
+	private List<Other> parents;
+	private List<Other> children;
 	
 
 	public Query(Class<T> clazz) {
 		super();
 		this.clazz = clazz;
 		this.parents = Lists.newArrayList();
+		this.children = Lists.newArrayList();
 	}
 
 	public Query<T> orderByCreated() {
@@ -81,6 +81,11 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 	
 	public Query<T> withIds(Long... ids) {
 		this.ids = ids;
+		return this;
+	}
+	
+	public Query<T> withIds(List<Long> ids) {
+		this.ids = ids.toArray(new Long[] {});
 		return this;
 	}
 
@@ -182,14 +187,34 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 
 	public Query<T> withParent(Entity entity) {
 		//super.parent = entity;
-		this.parents.add(new Parent(entity,null));
+		this.parents.add(new Other(entity,null));
+		return this;
+	}
+
+	public Query<T> withParents(List<? extends Entity> entities) {
+		for (Entity entity : entities) {
+			this.parents.add(new Other(entity,null));			
+		}
+		return this;
+	}
+
+	public Query<T> withParentIds(List<Long> ids) {
+		for (Long id : ids) {
+			this.parents.add(new Other(id,null));
+		}
 		return this;
 	}
 
 	public Query<T> withParent(Entity item, String relationKind) {
-		//parent = item;
 		parentKind = relationKind;
-		this.parents.add(new Parent(item,relationKind));
+		this.parents.add(new Other(item,relationKind));
+		return this;
+	}
+
+	public Query<T> withChildren(List<? extends Entity> entities) {
+		for (Entity entity : entities) {
+			this.children.add(new Other(entity,null));			
+		}
 		return this;
 	}
 
@@ -245,6 +270,9 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 		for (int i = 0; i < parents.size(); i++) {
 			hql.append(",").append(Relation.class.getName()).append(" as parentrel_"+i);
 		}
+		for (int i = 0; i < children.size(); i++) {
+			hql.append(",").append(Relation.class.getName()).append(" as childrel_"+i);
+		}
 		if (child != null) {
 			hql.append(",").append(Relation.class.getName()).append(" as childRelation");
 		}
@@ -272,7 +300,7 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 						+ "))");
 			}
 		}
-		if (ids!=null) {
+		if (ids!=null && ids.length>0) {
 			hql.append(" and (");
 			for (int i = 0; i < ids.length; i++) {
 				if (i>0) {
@@ -316,6 +344,12 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 			hql.append(" and parentrel_").append(i).append(".superEntity=:parent_").append(i).append(" and parentrel_").append(i).append(".subEntity=obj");
 			if (parents.get(i).getRelationKind() != null) {
 				hql.append(" and parentrel_").append(i).append(".kind=:parentKind_").append(i);
+			}
+		}
+		for (int i = 0; i < children.size(); i++) {
+			hql.append(" and childrel_").append(i).append(".subEntity=:child_").append(i).append(" and childrel_").append(i).append(".superEntity=obj");
+			if (children.get(i).getRelationKind() != null) {
+				hql.append(" and childrel_").append(i).append(".kind=:childKind_").append(i);
 			}
 		}
 		/*
@@ -405,10 +439,17 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 			q.setDate("createdTo", createdTo);
 		}
 		for (int i = 0; i < parents.size(); i++) {
-			Parent parent2 = parents.get(i);
-			q.setLong("parent_"+i, parent2.getItem().getId());
+			Other parent2 = parents.get(i);
+			q.setLong("parent_"+i, parent2.getId());
 			if (parent2.getRelationKind() != null) {
 				q.setString("parentKind_"+i, parent2.getRelationKind());
+			}
+		}
+		for (int i = 0; i < children.size(); i++) {
+			Other other = children.get(i);
+			q.setLong("child_"+i, other.getId());
+			if (other.getRelationKind() != null) {
+				q.setString("childKind_"+i, other.getRelationKind());
 			}
 		}
 		/*if (parent != null) {
@@ -430,17 +471,22 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 		inPosition = true;
 	}
 	
-	private class Parent {
-		Entity item;
+	private class Other {
 		String relationKind;
+		private long id;
 		
-		public Parent(Entity item,String relationKind) {
-			this.item = item;
+		public Other(long id,String relationKind) {
+			this.id = id;
 			this.relationKind = relationKind;
 		}
 		
-		public Entity getItem() {
-			return item;
+		public Other(Entity item,String relationKind) {
+			this.id = item.getId();
+			this.relationKind = relationKind;
+		}
+		
+		public long getId() {
+			return id;
 		}
 		
 		public String getRelationKind() {

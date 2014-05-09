@@ -55,7 +55,7 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 	private List<SelectItem> properties;
 	private long nextId;
 	private long previousId;
-	private List<Word> words;
+	private List<Pair<Word,String>> words;
 	private boolean vertical;
 	private List<ImageGallery> galleries;
 	
@@ -125,7 +125,15 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 				mapPoint.setLatitude(location.getLatitude());
 				mapPoint.setLongitude(location.getLongitude());
 			}
-			words = modelService.getChildren(image, null, Word.class);
+			List<Word> wordChildren = modelService.getChildren(image, null, Word.class);
+			words = Lists.newArrayList();
+			for (Word word : wordChildren) {
+				String link = "";
+				if (user!=null) {
+					link = "/"+locale.getLanguage()+"/users/"+user.getUsername()+"/?wordId="+word.getId();
+				}
+				words.add(Pair.of(word, link));
+			}
 
 			String[] path = getRequest().getLocalPath();
 			language = path[0];
@@ -197,7 +205,7 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 		return Math.round(image.getWidth()*image.getHeight()/(double)10000)/(double)100;
 	}
 	
-	public List<Word> getWords() {
+	public List<Pair<Word, String>> getWords() {
 		return words;
 	}
 	

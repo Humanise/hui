@@ -234,5 +234,6 @@ div.oo_gallery_busy span.oo_gallery_hover
 		margin: 0 0 1px 1px;
 		padding: 0;
 		border: none;
+		box-shadow: none;
 	}
 }

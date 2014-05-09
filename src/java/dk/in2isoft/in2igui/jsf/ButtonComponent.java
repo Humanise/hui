@@ -12,6 +12,8 @@ import dk.in2isoft.commons.jsf.ClassBuilder;
 import dk.in2isoft.commons.jsf.Components;
 import dk.in2isoft.commons.jsf.StyleBuilder;
 import dk.in2isoft.commons.jsf.TagWriter;
+import dk.in2isoft.commons.lang.Strings;
+import dk.in2isoft.onlineobjects.util.Messages;
 
 @FacesComponent(value=ButtonComponent.TYPE)
 public class ButtonComponent extends AbstractComponent {
@@ -105,6 +107,13 @@ public class ButtonComponent extends AbstractComponent {
 		}
 		if (styleClass!=null) {
 			writer.write(",class:'"+styleClass+"'");
+		}
+		ConfirmComponent confirm = Components.getChild(this,ConfirmComponent.class);
+		if (confirm!=null) {
+			String confirmation = Strings.asNonBlank(confirm.getText(context), "Are you sure?");
+			String okText = Strings.asNonBlank(confirm.getOkText(context), "OK");
+			String canceltext = Strings.asNonBlank(confirm.getOkText(context), "Cancel");
+			writer.write(",confirm:{text:'").writeScriptString(confirmation).write("',okText:'").writeScriptString(okText).write("',cancelText:'").writeScriptString(canceltext).write("'}");
 		}
 		writer.write("});");
 		String click = getClick(context);

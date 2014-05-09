@@ -3,12 +3,14 @@ package dk.in2isoft.onlineobjects.service.authentication;
 import dk.in2isoft.onlineobjects.apps.community.services.MemberService;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.service.ServiceController;
+import dk.in2isoft.onlineobjects.services.PasswordRecoveryService;
 import dk.in2isoft.onlineobjects.ui.Blend;
 
 public abstract class AuthenticationControllerBase extends ServiceController {
 
 	protected SecurityService securityService;
 	protected MemberService memberService;
+	protected PasswordRecoveryService passwordRecoveryService;
 
 	protected static final Blend publicScript;
 	protected static final Blend publicStyle;
@@ -41,6 +43,8 @@ public abstract class AuthenticationControllerBase extends ServiceController {
 		super("authentication");
 		addJsfMatcher("/", "login.xhtml");
 	}
+	
+	// Wiring...
 
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
@@ -48,5 +52,9 @@ public abstract class AuthenticationControllerBase extends ServiceController {
 
 	public void setMemberService(MemberService memberService) {
 		this.memberService = memberService;
+	}
+	
+	public void setPasswordRecoveryService(PasswordRecoveryService passwordRecoveryService) {
+		this.passwordRecoveryService = passwordRecoveryService;
 	}
 }

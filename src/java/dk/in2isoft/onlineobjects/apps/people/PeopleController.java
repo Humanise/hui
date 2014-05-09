@@ -2,11 +2,14 @@ package dk.in2isoft.onlineobjects.apps.people;
 
 import java.io.IOException;
 
+import dk.in2isoft.onlineobjects.apps.community.ProfileImageImporter;
 import dk.in2isoft.onlineobjects.apps.community.UserProfileInfo;
 import dk.in2isoft.onlineobjects.apps.videosharing.Path;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.User;
+import dk.in2isoft.onlineobjects.modules.images.ImageImporter;
+import dk.in2isoft.onlineobjects.modules.importing.DataImporter;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.ui.ScriptWriter;
 import dk.in2isoft.onlineobjects.ui.StylesheetWriter;
@@ -66,5 +69,13 @@ public class PeopleController extends PeopleControllerBase {
 			throw new EndUserException("The user does not have a person!");
 		}
 		communityDAO.save(info, person, request.getSession());
+	}
+
+	@Path
+	public void uploadProfileImage(Request request) throws EndUserException, IOException {
+		DataImporter dataImporter = importService.createImporter();
+		ImageImporter listener = new ProfileImageImporter(modelService,imageService,securityService);
+		dataImporter.setListener(listener);
+		dataImporter.importMultipart(this, request);
 	}
 }

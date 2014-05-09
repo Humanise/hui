@@ -12,35 +12,40 @@
 	<ui:composition template="templates/plain.xhtml">
 				
 		<ui:define name="body">
-			<div style="padding: 20px 20px 20px;">
-				<h1>#{msg.account}</h1>
-				<p class="property"><strong>#{msg.username}:</strong> #{accountSettingsView.user.username}</p>
-				<gui:formula name="mailForm">
-					<gui:field label="#{msg.primary_email}">
-						<gui:textInput key="mail" value="#{accountSettingsView.primaryEmail}"/>
-					</gui:field>
-					<div style="margin: 5px 0 0">
-						<gui:button text="#{msg.change}" submit="true" variant="paper"/>
-					</div>
-				</gui:formula>
+			<div class="account">
+				<h1 class="account_title">#{msg.account}</h1>
+				<p class="account_user"><strong class="account_user_label">#{msg.username}:</strong> #{accountSettingsView.user.username}</p>
+
+				<c:choose>
+					<c:when test="#{accountSettingsView.allowed}">
+						<gui:formula name="mailForm">
+							<gui:field label="#{msg.primary_email}">
+								<gui:textInput key="mail" value="#{accountSettingsView.primaryEmail}"/>
+							</gui:field>
+							<div style="margin: 5px 0 20px -2px">
+								<gui:button text="#{msg.change}" submit="true" variant="paper"/>
+							</div>
+						</gui:formula>
+						<gui:formula name="passwordForm">
+							<gui:field label="#{msg.current_password}">
+								<gui:textInput key="currentPassword" secret="true"/>
+							</gui:field>
+							<gui:field label="#{msg.new_password}">
+								<gui:textInput key="newPassword" secret="true"/>
+							</gui:field>
+							<div style="margin: 5px 0 0 -2px">
+								<gui:button text="#{msg.change_password}" submit="true" variant="paper"/>
+							</div>
+						</gui:formula>
+					</c:when>
+					<c:otherwise>
+						<p>Not allowed</p>
+					</c:otherwise>
+				</c:choose>
 			</div>
-			<script>
-				hui.ui.listen({
-					$submit$mailForm : function() {
-						var values = hui.ui.get('mailForm').getValues();
-						hui.ui.request({
-							url : oo.baseContext+'/service/model/changePrimaryEmail',
-							parameters : {email:values.mail},
-							$success : function() {
-								hui.ui.showMessage({text:'The e-mail address is changed',icon:'common/success',duration:3000});
-							},
-							$failure : function() {
-								hui.ui.showMessage({text:'The e-mail address was not changed',icon:'common/warning',duration:3000});
-							}
-						})
-					}
-				})
-			</script>
+			<o:script>
+			hui.ui.listen(accountView);
+			</o:script>
 		</ui:define>
 	
 	</ui:composition>

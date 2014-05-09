@@ -20,7 +20,7 @@ import dk.in2isoft.onlineobjects.util.Messages;
 @FacesComponent(value=MapComponent.FAMILY)
 public class MapComponent extends AbstractComponent {
 
-	public static final String FAMILY = "onlineobjects.box";
+	public static final String FAMILY = "onlineobjects.map";
 	
 	private String variant;
 	private String name;

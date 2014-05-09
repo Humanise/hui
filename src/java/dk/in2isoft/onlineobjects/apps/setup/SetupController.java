@@ -8,8 +8,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.lucene.document.Document;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
@@ -17,6 +17,7 @@ import org.joda.time.format.PeriodFormatterBuilder;
 import com.google.common.collect.Lists;
 
 import dk.in2isoft.commons.lang.Code;
+import dk.in2isoft.commons.lang.HTMLWriter;
 import dk.in2isoft.commons.lang.Mapper;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.in2igui.data.ItemData;
@@ -45,6 +46,7 @@ import dk.in2isoft.onlineobjects.model.Privilege;
 import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.annotations.Appearance;
+import dk.in2isoft.onlineobjects.modules.index.IndexManager;
 import dk.in2isoft.onlineobjects.modules.onlinepublisher.PublisherPerspective;
 import dk.in2isoft.onlineobjects.modules.scheduling.JobInfo;
 import dk.in2isoft.onlineobjects.modules.surveillance.LogEntry;
@@ -416,11 +418,7 @@ public class SetupController extends SetupControllerBase {
 	
 	@Path
 	public void changeAdminPassword(Request request) throws EndUserException {
-		String password = request.getString("password");
-		if (!ValidationUtil.isValidPassword(password)) {
-			throw new IllegalRequestException("Invalid password");
-		}
-		securityService.changePassword(SecurityService.ADMIN_USERNAME, password, request.getSession());
+		throw new IllegalRequestException("This is deprecated!");
 	}
 	
 	@Path
@@ -594,20 +592,80 @@ public class SetupController extends SetupControllerBase {
 	}
 	
 	private String buildRendering(InternetAddress address, String content) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("<h1>").append(StringEscapeUtils.escapeXml(address.getName())).append("</h1>");
-		sb.append("<p><a href='").append(StringEscapeUtils.escapeXml(address.getAddress())).append("'>").append(StringEscapeUtils.escapeXml(address.getAddress())).append("</a></p>");
+		HTMLWriter html = new HTMLWriter();
+		
+		html.startH1().text(address.getName()).endH1();
+		html.startP().startA().withHref(address.getAddress()).text(address.getAddress()).endA().endP();
 		if (Strings.isNotBlank(content)) {
 			String[] lines = StringUtils.split(content, "\n");
-			sb.append("<div class='body'>");
+			html.startDiv().withClass("body");
 			for (int i = 0; i < lines.length; i++) {
-				sb.append("<p>").append(StringEscapeUtils.escapeXml(lines[i])).append("</p>");
+				html.startP().text(lines[i]).endP();
 			}
-			sb.append("</div>");
+			html.endDiv();
 		} else {
-			sb.append("<p><em>No content</em></p>");
+			html.startP().text("No content").endP();
 		}
-		return sb.toString();
+		return html.toString();
+	}
+	
+	@Path
+	public List<ItemData> getIndexOptions(Request request) {
+		List<ItemData> options = Lists.newArrayList();
+		List<String> names = indexService.getIndexNames();
+		for (String name : names) {
+			ItemData item = new ItemData();
+			item.setTitle(name);
+			item.setValue(name);
+			options.add(item);
+		}
+		
+		return options;
+	}
+
+	@Path
+	public void getIndexDocuments(Request request) throws IOException, EndUserException {
+		String name = request.getString("name", "No name provided");
+		int page = request.getInt("page");
+		int count = request.getInt("count");
+		count = 30;
+		IndexManager manager = indexService.getIndex(name);
+		if (manager==null) {
+			throw new IllegalRequestException("No index manager width the name '"+name+"'");
+		}
+
+		ListWriter writer = new ListWriter(request);
+		SearchResult<Document> result = manager.getDocuments(page,count);
+		List<Document> list = result.getList();
+		writer.startList();
+		writer.window(result.getTotalCount(), count, page);
+		writer.startHeaders();
+		writer.header("ID", 30);
+		writer.header("Word");
+		writer.header("Text");
+		writer.endHeaders();
+		for (Document document : list) {
+			writer.startRow().cell(document.get("id")).cell(document.get("word")).cell(document.get("text"));
+			writer.endRow();			
+		}
+		writer.endList();
+	}
+	
+	@Path
+	public void getIndexStatistics(Request request) throws IOException, EndUserException {
+		String name = request.getString("name", "No name provided");
+		IndexManager manager = indexService.getIndex(name);
+		if (manager==null) {
+			throw new IllegalRequestException("No index manager width the name '"+name+"'");
+		}
+		ListWriter writer = new ListWriter(request);
+		writer.startList();
+		writer.startHeaders();
+		writer.header("Property", 30);
+		writer.header("Value");
+		writer.endHeaders();
+		writer.startRow().cell("Count").cell(manager.getDocumentCount()).endRow();
+		writer.endList();
 	}
 	
 }

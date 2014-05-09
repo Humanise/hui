@@ -23,6 +23,27 @@ public class HTMLWriter extends MarkupWriter {
 		endTag("div");
 		return this;
 	}
+
+	public HTMLWriter startUl() {
+		startTag("ul");
+		return this;
+	}
+
+	public HTMLWriter endUl() {
+		endTag("ul");
+		return this;
+	}
+
+
+	public HTMLWriter startLi() {
+		startTag("li");
+		return this;
+	}
+
+	public HTMLWriter endLi() {
+		endTag("li");
+		return this;
+	}
 	
 	public HTMLWriter startP() {
 		startTag("p");
@@ -31,6 +52,26 @@ public class HTMLWriter extends MarkupWriter {
 
 	public HTMLWriter endP() {
 		endTag("p");
+		return this;
+	}
+	
+	public HTMLWriter startStrong() {
+		startTag("strong");
+		return this;
+	}
+
+	public HTMLWriter endStrong() {
+		endTag("strong");
+		return this;
+	}
+	
+	public HTMLWriter startSpan() {
+		startTag("span");
+		return this;
+	}
+
+	public HTMLWriter endSpan() {
+		endTag("span");
 		return this;
 	}
 	
@@ -59,7 +100,8 @@ public class HTMLWriter extends MarkupWriter {
 		return this;
 	}
 
-	public HTMLWriter withHref(String href) {
+	public HTMLWriter withHref(Object href) {
+		
 		withAttribute("href", href);
 		return this;
 	}
@@ -84,6 +126,11 @@ public class HTMLWriter extends MarkupWriter {
 
 	public HTMLWriter withData(Object data) {
 		withAttribute("data", Strings.toJSON(data));
+		return this;
+	}
+
+	public HTMLWriter withData(String name,Object data) {
+		withAttribute("data-"+name, Strings.toJSON(data));
 		return this;
 	}
 }

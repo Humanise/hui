@@ -40,7 +40,13 @@ public class WordIndexDocumentBuilder implements IndexDocumentBuilder<Word> {
 		doc.add(new TextField("glossary", glossary, Field.Store.YES));
 		doc.add(new TextField("language", languageCode, Field.Store.YES));
 		doc.add(new TextField("category", categoryCode, Field.Store.YES));
+		doc.add(new TextField("letter", getLetter(word.getText()), Field.Store.YES));
 		return doc;
+	}
+
+	private String getLetter(String text) {
+		String letter = Strings.getAlphabethStartLetter(text);
+		return letter;
 	}
 	
 	public Document build(WordListPerspective perspective) throws ModelException {
@@ -53,8 +59,9 @@ public class WordIndexDocumentBuilder implements IndexDocumentBuilder<Word> {
 		doc.add(new TextField("text", text.toString(), Field.Store.YES));
 		doc.add(new TextField("word", Strings.asNonNull(perspective.getText()), Field.Store.YES));
 		doc.add(new TextField("glossary", Strings.asNonNull(perspective.getGlossary()), Field.Store.YES));
-		doc.add(new TextField("language", Strings.asNonNull(perspective.getLanguage()), Field.Store.YES));
-		doc.add(new TextField("category", Strings.asNonNull(perspective.getLexicalCategory()), Field.Store.YES));
+		doc.add(new TextField("language", Strings.asNonBlank(perspective.getLanguage(),"none"), Field.Store.YES));
+		doc.add(new TextField("category", Strings.asNonBlank(perspective.getLexicalCategory(),"none"), Field.Store.YES));
+		doc.add(new TextField("letter", getLetter(perspective.getText()), Field.Store.YES));
 		return doc;
 	}
 	

@@ -122,7 +122,7 @@ public class In2iGui {
 	
 	private void setHeaders(HttpServletRequest request, HttpServletResponse response) {
 		String accept = request.getHeader("Accept");
-		if (accept!=null && accept.indexOf("application/xhtml+xml")!=-1) {
+		if (false && accept!=null && accept.indexOf("application/xhtml+xml")!=-1) {
 			response.setContentType("application/xhtml+xml");
 		} else {
 			response.setContentType("text/html");

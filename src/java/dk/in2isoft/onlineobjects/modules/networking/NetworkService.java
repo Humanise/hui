@@ -10,10 +10,12 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.log4j.Logger;
 
 import dk.in2isoft.commons.http.HeaderUtil;
@@ -76,7 +78,7 @@ public class NetworkService {
 		NetworkResponse response = new NetworkResponse();
 		InputStream input = null;
 		InputStreamReader reader = null;
-		GetMethod method = null;
+		HttpGet method = null;
 		OutputStream output = null;
 		try {
 			File file = File.createTempFile("networkservice", "tmp");
@@ -84,13 +86,12 @@ public class NetworkService {
 			String encoding = null;
 			String contentType = null;
 			if (url.getProtocol().equals("http")) {
-				HttpClient client = new HttpClient();
-				client.getParams().setSoTimeout(5000);
-				client.getParams().setConnectionManagerTimeout(5000);
-				method = new GetMethod(url.toURI().toString());
-				int code = client.executeMethod(method);
+				CloseableHttpClient client = HttpClients.createDefault();
+				method = new HttpGet(url.toURI());
+				CloseableHttpResponse res = client.execute(method);
+				int code = res.getStatusLine().getStatusCode();
 				if (code == 200) {
-					Header header = method.getResponseHeader("Content-Type");
+					org.apache.http.Header header = res.getFirstHeader("Content-Type");
 					if (header!=null) {
 						contentType = HeaderUtil.getContentTypesMimeType(header.getValue());
 						String contentTypeEncoding = HeaderUtil.getContentTypeEncoding(header.getValue());
@@ -100,7 +101,8 @@ public class NetworkService {
 					}
 					response.setState(State.SUCCESS);
 				}
-				input = method.getResponseBodyAsStream();
+				HttpEntity entity = res.getEntity();
+				input = entity.getContent();
 			} else {
 				input = url.openStream();
 				response.setState(State.SUCCESS);

@@ -50,6 +50,7 @@
 		        <key column="id"/>
 		        <property name="username"/>
 		        <property name="password"/>
+		        <property name="salt"/>
 		    </joined-subclass>
 	
 		    <joined-subclass name="dk.in2isoft.onlineobjects.model.Person" table="person">

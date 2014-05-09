@@ -8,7 +8,6 @@ import org.apache.lucene.document.Document;
 
 import com.google.common.collect.Maps;
 
-import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.events.ModelEventListener;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.model.Entity;
@@ -19,8 +18,6 @@ import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
 public class WordIndexer implements ModelEventListener {
 		
 	private WordIndexDocumentBuilder documentBuilder;
-	
-	private ModelService modelService;
 	
 	private IndexManager indexManager;
 	
@@ -129,9 +126,5 @@ public class WordIndexer implements ModelEventListener {
 	
 	public void setDocumentBuilder(WordIndexDocumentBuilder documentBuilder) {
 		this.documentBuilder = documentBuilder;
-	}
-	
-	public void setModelService(ModelService modelService) {
-		this.modelService = modelService;
 	}
 }

@@ -78,6 +78,7 @@ public class PhotosControllerBase extends ApplicationController {
 		publicScript.addPath("hui","js","ImageViewer.js");
 		publicScript.addPath("hui","js","Box.js");
 		publicScript.addPath("WEB-INF","core","web","js","onlineobjects.js");
+		publicScript.addPath("WEB-INF","core","web","js","oo_topbar.js");
 		publicScript.addPath("WEB-INF","core","web","js","oo_gallery.js");
 		publicScript.addPath("WEB-INF","core","web","js","oo_map.js");
 		publicScript.addPath("WEB-INF","core","web","js","oo_photoviewer.js");
@@ -104,6 +105,7 @@ public class PhotosControllerBase extends ApplicationController {
 		privateScript.addPath("hui","js","Pages.js");
 		privateScript.addPath("hui","js","Drawing.js");
 		privateScript.addPath("hui","js","ProgressIndicator.js");
+		privateScript.addPath("hui","js","NumberValidator.js");
 		privateScript.addPath("WEB-INF","core","web","js","oo_inlineeditor.js");
 		privateScript.addPath("WEB-INF","core","web","js","oo_permissions.js");
 		privateScript.addPath("WEB-INF","core","web","js","oo_finder.js");

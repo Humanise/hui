@@ -22,7 +22,58 @@ public class TestStrings extends TestCase {
 		assertEquals("", Strings.concatWords(new String[] {}));
 		assertEquals("Jonas Munk", Strings.concatWords(new String[] {"","Jonas"," ","Munk","   ",null}));
 	}
+	
+	@Test
+	public void testEquals() {
+		assertTrue(Strings.equals(null, null));
+		assertTrue(Strings.equals("", ""));
+		assertTrue(Strings.equals("human", "human"));
 
+		assertFalse(Strings.equals("", null));
+		assertFalse(Strings.equals("", " "));
+		assertFalse(Strings.equals("human", "cow"));
+	}
+	
+	@Test
+	public void testDeAccent() {
+		assertEquals(null, Strings.deAccent(null));
+		assertEquals("", Strings.deAccent(""));
+		assertEquals(" ", Strings.deAccent(" "));
+		assertEquals("a", Strings.deAccent("a"));
+		assertEquals("u", Strings.deAccent("ü"));
+		assertEquals("a", Strings.deAccent("å"));
+		assertEquals("0", Strings.deAccent("0"));
+	}
+	
+	@Test
+	public void testGetAlphabethStartLetter() {
+		assertEquals("none", Strings.getAlphabethStartLetter(null));
+		assertEquals("none", Strings.getAlphabethStartLetter(""));
+		assertEquals("none", Strings.getAlphabethStartLetter("   "));
+
+		assertEquals("number", Strings.getAlphabethStartLetter("1"));
+		assertEquals("other", Strings.getAlphabethStartLetter("&"));
+		
+		assertEquals("a", Strings.getAlphabethStartLetter("   a"));
+		assertEquals("a", Strings.getAlphabethStartLetter("A"));
+		assertEquals("e", Strings.getAlphabethStartLetter("élisabeth"));
+		assertEquals("o", Strings.getAlphabethStartLetter("örkner"));
+		assertEquals("e", Strings.getAlphabethStartLetter("élisabeth"));
+		assertEquals("o", Strings.getAlphabethStartLetter("õstlund"));
+		assertEquals("a", Strings.getAlphabethStartLetter("änglamark-deo"));
+		assertEquals("a", Strings.getAlphabethStartLetter("ángeles"));
+		assertEquals("u", Strings.getAlphabethStartLetter("überkikset"));
+		assertEquals("o", Strings.getAlphabethStartLetter("özenbas"));
+		assertEquals("e", Strings.getAlphabethStartLetter("écriture"));
+		assertEquals("a", Strings.getAlphabethStartLetter("ästa"));
+		assertEquals("e", Strings.getAlphabethStartLetter("épiceries"));
+		
+		// Suspect...
+		assertEquals("other", Strings.getAlphabethStartLetter("þoddi"));
+	}
+
+	
+	 
 	@Test
 	public void testSimplifyURL() {
 		assertEquals(

@@ -14,20 +14,53 @@
 		<ui:define name="body">
 			
 			<div class="words">
-				<h1 class="words">#{msg.words}</h1>
+				<div class="words_front_top">
+				<h1 class="words_front_title">#{msg.words}</h1>
 				<form class="words_search" method="get" action="#{wordsSearchView.localContext}/#{wordsLayoutView.language}/search/">
 					<p>
 						<input type="text" name="text" value="#{wordsSearchView.text}" class="words_search_input"/>
 						<input type="submit" value="Search" class="words_search_button"/>
 					</p>
 				</form>
-			
-				<h2 class="words">#{msg.index}</h2>
-				<p class="words_paging words_index">
-					<c:forEach items="#{wordsIndexView.alphabeth}" var="char">
-						<o:link href="/#{wordsLayoutView.language}/index/#{char.value}/">#{char.label}</o:link>
-					</c:forEach>
-				</p>
+				</div>
+				
+				<div class="words_front_letters">
+					<h2 class="words_front_letters_title">#{msg.index}</h2>
+					<p class="words_front_letters_links">
+						<c:forEach items="#{wordsFrontView.alphabeth}" var="char">
+							<o:link 
+								styleClass="words_front_letters_link"
+								href="/#{wordsLayoutView.language}/search/?letter=#{char.value}">
+								<o:out value="#{char.label}"/>
+							</o:link>
+						</c:forEach>
+					</p>
+				</div>
+				
+				<div class="words_front_filter">
+					<p class="words_front_filter_links">
+						<c:forEach items="#{wordsFrontView.languages}" var="char">
+							<o:link 
+								styleClass="words_front_filter_link"
+								href="/#{wordsLayoutView.language}/search/?language=#{char.value}">
+								<o:out value="#{char.label}"/>
+							</o:link>
+						</c:forEach>
+					</p>
+				</div>
+				
+				<div class="words_front_filter">
+					<p class="words_front_filter_links">
+						<c:forEach items="#{wordsFrontView.categories}" var="char">
+							<o:link 
+								styleClass="words_front_filter_link"
+								href="/#{wordsLayoutView.language}/search/?category=#{char.value}">
+								<o:out value="#{char.label}"/>
+							</o:link>
+						</c:forEach>
+					</p>
+				</div>
+				
 				<h2 class="words">#{msg.latest_words}</h2>
 				<ul class="words_list">
 					<c:forEach items="#{wordsFrontView.latestWords}" var="word">
@@ -46,11 +79,6 @@
 							</c:if>
 						</li>
 					</c:forEach>
-				</ul>
-				<h2 class="words">Links</h2>
-				<ul class="words_list">
-					<li><o:link href="http://www.gigadictionary.org/">Gigadictionary</o:link></li>
-					<li><o:link href="http://wordnet.dk/">WordNet.dk</o:link></li>
 				</ul>
 			</div>
 		</ui:define>
