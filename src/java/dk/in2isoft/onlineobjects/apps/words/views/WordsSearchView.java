@@ -1,15 +1,10 @@
 package dk.in2isoft.onlineobjects.apps.words.views;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.index.IndexableField;
-import org.apache.lucene.queryparser.flexible.standard.QueryParserUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -26,11 +21,9 @@ import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.model.Language;
 import dk.in2isoft.onlineobjects.model.LexicalCategory;
-import dk.in2isoft.onlineobjects.modules.index.IndexManager;
-import dk.in2isoft.onlineobjects.modules.index.IndexSearchResult;
-import dk.in2isoft.onlineobjects.modules.index.IndexService;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
-import dk.in2isoft.onlineobjects.modules.language.WordListPerspectiveQuery;
+import dk.in2isoft.onlineobjects.modules.language.WordQuery;
+import dk.in2isoft.onlineobjects.modules.language.WordService;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.ui.jsf.model.Option;
 import dk.in2isoft.onlineobjects.util.Messages;
@@ -39,7 +32,7 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 
 	private static final int PAGING = 10;
 	private ModelService modelService;
-	private IndexService indexService;
+	private WordService wordService;
 	
 	private static final Logger log = LoggerFactory.getLogger(WordsSearchView.class);
 	
@@ -75,78 +68,16 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 		
 		languageOptions = buildLanguageOptions(request);
 		categoryOptions = buildCategoryOptions(request);
+		
+		WordQuery query = new WordQuery().withText(text).withLetter(letter).withCategory(category).withLanguage(language).withPage(page).withPageSize(20);
+		SearchResult<WordListPerspective> result = wordService.search(query);
 
-		
-		IndexManager index = indexService.getIndex(IndexService.WORDS_INDEX);
-		final List<Long> ids = Lists.newArrayList();
-		
-		StringBuilder searchQuery = new StringBuilder();
-		if (StringUtils.isNotBlank(text)) {
-			searchQuery.append("(word:").append(QueryParserUtil.escape(text)).append("^4").append(" OR word:").append(QueryParserUtil.escape(text)).append("*^4 OR ").append(QueryParserUtil.escape(text)).append("*)");
-		}
-		if (StringUtils.isNotBlank(letter)) {
-			if (searchQuery.length()>0) {
-				searchQuery.append(" AND ");
-			}
-			searchQuery.append("(letter:").append(QueryParserUtil.escape(letter)).append(")");
-		}
-				
-		if (Strings.isNotBlank(language)) {
-			if (searchQuery.length()>0) {
-				searchQuery.append(" AND ");
-			}
-			searchQuery.append("language:").append(language);
-		}
-		if (Strings.isNotBlank(category)) {
-			if (searchQuery.length()>0) {
-				searchQuery.append(" AND ");
-			}
-			searchQuery.append("category:").append(category);
-		}
-		effectiveQuery = searchQuery.toString();
-		SearchResult<IndexSearchResult> indexResult = index.search(effectiveQuery,page,20);
-		if (indexResult.getTotalCount()==0) {
-			return;
-		}
-		for (IndexSearchResult item : indexResult.getList()) {
-			Document document = item.getDocument();
-			IndexableField field = document.getField("id");
-			ids.add(Long.parseLong(field.stringValue()));
-		}
-		WordListPerspectiveQuery query = new WordListPerspectiveQuery().withPaging(0, 20).orderByUpdated();
-		if (!ids.isEmpty()) {
-			query.withIds(ids);
-		}
-		if ("symbol".equals(request.getString("start"))) {
-			query.startingWithSymbol();
-		}
-		if (request.isSet("language")) {
-			
-		}
-		SearchResult<WordListPerspective> result = modelService.search(query);
 		this.list = result.getList();
-		this.count = indexResult.getTotalCount();
+		this.count = result.getTotalCount();
 		
-		Collections.sort(this.list, new Comparator<WordListPerspective>() {
-
-			public int compare(WordListPerspective o1, WordListPerspective o2) {
-				int index1 = ids.indexOf(o1.getId());
-				int index2 = ids.indexOf(o2.getId());
-				if (index1>index2) {
-					return 1;
-				} else if (index2>index1) {
-					return -1;
-				}
-				return 0;
-			}
-		});
 		
-		if (ids.size()!=result.getTotalCount()) {
-			log.error("IDs="+ids.size()+", results="+result.getTotalCount());
-			log.error(ids.toString());
-		}
 		
-		effectiveQuery+= " ("+indexResult.getTotalCount()+")";
+		effectiveQuery = result.getDescription();
 	}
 	
 	private List<String> categoryCodes;
@@ -370,7 +301,7 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 		this.modelService = modelService;
 	}
 	
-	public void setIndexService(IndexService indexService) {
-		this.indexService = indexService;
+	public void setWordService(WordService wordService) {
+		this.wordService = wordService;
 	}
 }

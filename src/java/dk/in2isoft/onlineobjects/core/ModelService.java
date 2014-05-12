@@ -64,6 +64,8 @@ public class ModelService {
 	private Collection<ModelClassInfo> modelClassInfo;
 	private List<Class<?>> classes = Lists.newArrayList(); 
 	private List<Class<? extends Entity>> entityClasses = Lists.newArrayList(); 
+	
+	private static final ThreadLocal<String> threadIsDirty = new ThreadLocal<String>();
 
 	static {
 		try {
@@ -174,6 +176,7 @@ public class ModelService {
 	}
 
 	private Session getSession() {
+		threadIsDirty.set("started");
 		Session session = sessionFactory.getCurrentSession();
 		if (!session.getTransaction().isActive()) {
 			session.beginTransaction();
@@ -204,6 +207,17 @@ public class ModelService {
 				tx.rollback();
 			}
 			log.debug("Commit transaction!");
+		}
+	}
+	
+	public void startThread() {
+		threadIsDirty.set("newborn");
+	}
+	
+	public void commitThread() {
+		String dirty = threadIsDirty.get();
+		if ("started".equals(dirty)) {
+			commit();
 		}
 	}
 

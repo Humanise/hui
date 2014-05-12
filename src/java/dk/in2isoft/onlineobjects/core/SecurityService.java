@@ -224,9 +224,12 @@ public class SecurityService {
 
 	private User getInitialUser() {
 		if (configurationService.isDevelopmentMode()) {
-			User user = modelService.getUser(configurationService.getDevelopmentUser());
-			if (user!=null) {
-				return user;
+			String developmentUser = configurationService.getDevelopmentUser();
+			if (Strings.isNotBlank(developmentUser)) {
+				User user = modelService.getUser(developmentUser);
+				if (user!=null) {
+					return user;
+				}
 			}
 		}
 		return getPublicUser();

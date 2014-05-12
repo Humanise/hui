@@ -13,6 +13,7 @@ import dk.in2isoft.onlineobjects.apps.videosharing.Path;
 import dk.in2isoft.onlineobjects.apps.words.WordsController;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SearchResult;
+import dk.in2isoft.onlineobjects.core.exceptions.ExplodingClusterFuckException;
 import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
@@ -24,7 +25,7 @@ import dk.in2isoft.onlineobjects.model.Pile;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
-import dk.in2isoft.onlineobjects.modules.language.WordListPerspectiveQuery;
+import dk.in2isoft.onlineobjects.modules.language.WordQuery;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.util.Messages;
 
@@ -52,15 +53,14 @@ public class ModelController extends ModelControllerBase {
 	}
 	
 	@Path(start="listWords")
-	public void listWords(Request request) throws IOException, ModelException {
+	public void listWords(Request request) throws IOException, ModelException, ExplodingClusterFuckException {
 		String text = request.getString("text");
 		int page = request.getInt("page");
 		String language = request.getString("language");
 		Locale locale = new Locale(language);
 		
-		WordListPerspectiveQuery query = new WordListPerspectiveQuery();
-		query.withPaging(page, 50).startingWith(text.toLowerCase()).orderByText();
-		SearchResult<WordListPerspective> result = modelService.search(query);
+		WordQuery query = new WordQuery().withPage(page).withPageSize(50).withText(text);
+		SearchResult<WordListPerspective> result = wordService.search(query);
 		
 		Messages msg = new Messages(WordsController.class);
 		Messages langMsg = new Messages(Language.class);

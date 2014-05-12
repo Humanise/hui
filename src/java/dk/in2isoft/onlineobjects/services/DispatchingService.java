@@ -52,6 +52,7 @@ public class DispatchingService {
 				
 			}
 		}
+		modelService.startThread();
 		
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
@@ -85,10 +86,11 @@ public class DispatchingService {
 				}
 			}
 		}
+		
 
 		if (shouldCommit!=null) {
 			if (shouldCommit) {
-				modelService.commit();
+				modelService.commitThread();
 			} else {
 				modelService.rollBack();				
 			}

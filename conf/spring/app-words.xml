@@ -27,6 +27,11 @@
 		<property name="configurationService" ref="configurationService"/>
 	</bean>
 	
+	<bean id="wordService" class="dk.in2isoft.onlineobjects.modules.language.WordService">
+		<property name="index" ref="wordsIndex"/>
+		<property name="modelService" ref="modelService"/>
+	</bean>
+	
 	<bean id="wordIndexJob" class="dk.in2isoft.onlineobjects.apps.words.index.WordIndexJob">
 	</bean>
 
@@ -47,7 +52,7 @@
 		class="dk.in2isoft.onlineobjects.apps.words.views.WordsSearchView"
 		scope="request">
 		<property name="modelService" ref="modelService" />
-		<property name="indexService" ref="indexService" />
+		<property name="wordService" ref="wordService" />
 	</bean>
 
 	<bean id="wordsFrontView" class="dk.in2isoft.onlineobjects.apps.words.views.WordsFrontView">

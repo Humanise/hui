@@ -4,6 +4,7 @@ import dk.in2isoft.onlineobjects.apps.community.services.MemberService;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.modules.inbox.InboxService;
+import dk.in2isoft.onlineobjects.modules.language.WordService;
 import dk.in2isoft.onlineobjects.service.ServiceController;
 import dk.in2isoft.onlineobjects.services.ConversionService;
 import dk.in2isoft.onlineobjects.services.LanguageService;
@@ -18,6 +19,7 @@ public class ModelControllerBase extends ServiceController {
 	protected MemberService memberService;
 	protected SecurityService securityService;
 	protected InboxService inboxService;
+	protected WordService wordService;
 
 	public ModelControllerBase() {
 		super("model");
@@ -61,5 +63,9 @@ public class ModelControllerBase extends ServiceController {
 	
 	public void setInboxService(InboxService inboxService) {
 		this.inboxService = inboxService;
+	}
+	
+	public void setWordService(WordService wordService) {
+		this.wordService = wordService;
 	}
 }

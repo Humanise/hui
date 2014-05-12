@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,8 +39,10 @@ public class ApplicationResponder extends AbstractControllerResponder implements
 	private HashMap<String, ApplicationController> controllers;
 	private DispatchingService dispatchingService;
 	
+	private Map<String,Method> methods;
+	
 	public ApplicationResponder() {
-
+		methods = new HashMap<String, Method>();
 	}
 	
 	public void afterPropertiesSet() throws Exception {
@@ -151,12 +154,19 @@ public class ApplicationResponder extends AbstractControllerResponder implements
 	private boolean callApplicationMethod(ApplicationController controller, String methodName, Request request)
 			throws EndUserException, InvocationTargetException {
 		try {
+			Method cached = methods.get(methodName);
+			if (cached!=null) {
+				cached.invoke(controller, new Object[] { request });
+				return true;
+			}
 			Class<? extends ApplicationController> appClass = controller.getClass();
 			Method method = appClass.getDeclaredMethod(methodName, args);
 			boolean accessible = method.isAccessible();
-			if (!accessible)
-				return false;
+			if (!accessible) {
+				return false;				
+			}
 			method.invoke(controller, new Object[] { request });
+			methods.put(methodName, method);
 			return true;
 		} catch (IllegalAccessException e) {
 			return false;
