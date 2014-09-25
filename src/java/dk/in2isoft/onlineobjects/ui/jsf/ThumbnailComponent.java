@@ -15,6 +15,7 @@ import dk.in2isoft.commons.jsf.StyleBuilder;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.commons.lang.Numbers;
 import dk.in2isoft.onlineobjects.model.Image;
+import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
 
 @FacesComponent(value = ThumbnailComponent.FAMILY)
@@ -64,8 +65,27 @@ public class ThumbnailComponent extends AbstractComponent {
 		Image image = getBinding("image");
 		StyleBuilder style = new StyleBuilder();
 		style.withWidth(width).withHeight(height);
+		
+		
+		Double rotation = null;
+		boolean rotated = false;
+		double imageHeight = 0;
+		double imageWidth = 0;
+
+		if (image!=null) {
+			rotation = image.getPropertyDoubleValue(Property.KEY_PHOTO_ROTATION);
+			rotated = (rotation!=null && (rotation==-90 || rotation==90));
+			imageHeight = (double)image.getHeight();
+			imageWidth = (double)image.getWidth();
+			if (rotated) {
+				double temp = imageHeight;
+				imageHeight = imageWidth;
+				imageWidth = temp;
+				
+			}
+		}
 		if (image!=null && responsive) {
-			double percent = (((double)image.getHeight())/(double)image.getWidth()) * 100;
+			double percent = (imageHeight/imageWidth) * 100;
 			style.withRule("padding-bottom: "+percent+"%;");
 		}
 		ClassBuilder cls = new ClassBuilder("oo_thumbnail").add("oo_thumbnail",variant);
@@ -92,15 +112,18 @@ public class ThumbnailComponent extends AbstractComponent {
 			ImageService imageService = getBean(ImageService.class);
 			boolean valid = imageService.hasImageFile(image);
 			if (valid) {
+				boolean flipVertically = image.getPropertyBooleanValue(Property.KEY_PHOTO_FLIP_VERTICALLY);
+				boolean flipHorizontally = image.getPropertyBooleanValue(Property.KEY_PHOTO_FLIP_HORIZONTALLY);
+				
 				int wdth = 0;
 				if (width==null) {
-					wdth = (int) (((double)height/(double)image.getHeight())*(double)image.getWidth());
+					wdth = (int) (((double)height/imageHeight)*imageWidth);
 				} else {
 					wdth = width;
 				}
 				int hght = 0;
 				if (height==null) {
-					hght = (int) (((double)width/(double)image.getWidth())*(double)image.getHeight());
+					hght = (int) (((double)width/imageWidth)*imageHeight);
 				} else {
 					hght = height;
 				}
@@ -112,6 +135,15 @@ public class ThumbnailComponent extends AbstractComponent {
 				url.append("/service/image/id").append(image.getId()).append("width").append(wdth).append("height").append(hght);
 				if (sharpen > 0) {
 					url.append("sharpen").append(Numbers.formatDecimal(sharpen,2));
+				}
+				if (rotation!=null) {
+					url.append("rotation").append(rotation);
+				}
+				if (flipHorizontally) {
+					url.append("-fliph");
+				}
+				if (flipVertically) {
+					url.append("-flipv");
 				}
 				url.append("cropped.jpg");
 				out.startElement("img").withAttribute("src", url).withAttribute("alt", image.getName());

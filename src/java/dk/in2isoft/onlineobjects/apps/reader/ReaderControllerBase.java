@@ -37,6 +37,7 @@ public abstract class ReaderControllerBase extends ApplicationController {
 		publicScript = new Blend("reader_public_script");
 		publicScript.addPath("hui","js","hui.js");
 		publicScript.addPath("hui","js","hui_animation.js");
+		publicScript.addPath("hui","js","hui_require.js");
 		publicScript.addPath("hui","js","ui.js");
 		publicScript.addPath("hui","js","Button.js");
 		publicScript.addPath("hui","js","BoundPanel.js");
@@ -49,12 +50,16 @@ public abstract class ReaderControllerBase extends ApplicationController {
 		publicScript.addPath("hui","js","DropDown.js");
 		publicScript.addPath("hui","js","Pages.js");
 		publicScript.addPath("hui","js","Fragment.js");
+		publicScript.addPath("hui","js","Diagram.js");
+		publicScript.addPath("hui","js","Drawing.js");
 		publicScript.addPath("hui","js","Window.js");
 		publicScript.addPath("hui","js","Overlay.js");
 		publicScript.addPath("hui","js","hui_color.js");
 		publicScript.addPath("WEB-INF","core","web","js","onlineobjects.js");
 		publicScript.addPath("WEB-INF","core","web","js","oo_topbar.js");
 		publicScript.addPath("WEB-INF","core","web","js","oo_selection.js");
+		publicScript.addPath("WEB-INF","core","web","js","oo_inspector.js");
+		publicScript.addPath("WEB-INF","core","web","js","oo_wordfinder.js");
 		publicScript.addPath("WEB-INF","apps","reader","web","js","reader.js");
 
 	
@@ -70,6 +75,7 @@ public abstract class ReaderControllerBase extends ApplicationController {
 		publicStyle.addHUICSS("pages.css");
 		publicStyle.addHUICSS("window.css");
 		publicStyle.addHUICSS("dropdown.css");
+		publicStyle.addHUICSS("diagram.css");
 		publicStyle.addHUICSS("bar.css");
 		publicStyle.addHUICSS("overlay.css");
 		publicStyle.addPath("WEB-INF","apps","reader","web","css","reader.css");

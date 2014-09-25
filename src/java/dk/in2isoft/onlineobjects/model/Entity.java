@@ -67,6 +67,10 @@ public class Entity extends Item {
 		return null;
 	}
 	
+	public boolean getPropertyBooleanValue(String key) {
+		return "true".equals(getPropertyValue(key));
+	}
+	
 	public Date getPropertyDateValue(String key) {
 		for (Iterator<Property> iter = properties.iterator(); iter.hasNext();) {
 			Property element = iter.next();
@@ -126,6 +130,21 @@ public class Entity extends Item {
 			Property element = iter.next();
 			if (element!=null && element.getKey().equals(key)) {
 				element.setValue(value);
+				found=true;
+				break;
+			}
+		}
+		if (!found) {
+			properties.add(new Property(key,value));
+		}
+	}
+
+	public void overrideFirstProperty(String key, Double value) {
+		boolean found = false;
+		for (Iterator<Property> iter = properties.iterator(); iter.hasNext();) {
+			Property element = iter.next();
+			if (element!=null && element.getKey().equals(key)) {
+				element.setDoubleValue(value);
 				found=true;
 				break;
 			}

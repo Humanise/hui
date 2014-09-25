@@ -161,7 +161,7 @@ oo.PhotoViewer.prototype = {
 			for (var i=0; i < this.images.length; i++) {
 				hui.cls.add(this.thumbItems[i],'oo_photoviewer_thumb_loading');
 				hui.cls.add(this.imageItems[i],'oo_photoviewer_photo_loading');
-				urls.push(oo.baseContext+'/service/image/id'+this.images[i].id+'width'+this.size.width+'height'+this.size.height+'.jpg');
+				urls.push(oo.baseContext+'/service/image/id'+this.images[i].id+'width'+this.size.width+'height'+this.size.height+'_inherit.jpg');
 			};
 			var preloader = new hui.Preloader();
 			preloader.setDelegate({
@@ -214,7 +214,7 @@ oo.PhotoViewer.prototype = {
 				html : '<span></span>',
 				parent : this.thumbs,
 				style : {
-					backgroundImage : 'url('+oo.baseContext+'/service/image/id'+image.id+'width100height100sharpen1.0cropped.jpg'+')'
+					backgroundImage : 'url('+oo.baseContext+'/service/image/id'+image.id+'width100height100sharpen1.0cropped_inherit.jpg'+')'
 				}
 			});
 			this.thumbItems.push(t);

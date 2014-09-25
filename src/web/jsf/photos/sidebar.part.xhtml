@@ -29,10 +29,10 @@
 				</o:link>
 			</li>
 		</ul>
-		<h2>
-			<o:out value="#{msg.albums}"/>
+		<h2 class="photos_sidebar_title">
+			<span class="photos_sidebar_title_text"><o:out value="#{msg.albums}"/></span>
 			<c:if test="#{photosLayoutView.modifiable}">
-				<o:link name="addImageGallery" plain="true">
+				<o:link name="addImageGallery" plain="true" styleClass="photos_sidebar_title_action">
 					<o:icon icon="add"/>
 				</o:link>
 			</c:if>

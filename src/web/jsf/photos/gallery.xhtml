@@ -30,26 +30,47 @@
 				</c:if>
 				<div class="photos_gallery_bar">
 					<div class="photos_gallery_bar_left">
-					<o:link plain="true" name="present"><o:icon icon="present"/><strong>#{msg.present}</strong></o:link>
+						<o:link plain="true" name="present" styleClass="photos_gallery_bar_button"><o:icon icon="present"/><strong>#{msg.present}</strong></o:link>
+						
+						<span class="photos_gallery_bar_view">
+							<strong class="photos_gallery_bar_view_label">View:</strong>
+							<o:link plain="true" href="?view=grid" styleClass="photos_gallery_bar_view_item #{photosGalleryView.view=='grid' ? 'photos_gallery_bar_view_item_selected' : ''}">
+								<o:icon icon="view_grid" size="20"/>
+							</o:link>
+							<o:link plain="true" href="?view=masonry" styleClass="photos_gallery_bar_view_item #{photosGalleryView.view=='masonry' ? 'photos_gallery_bar_view_item_selected' : ''}">
+								<o:icon icon="view_masonry" size="20"/>
+							</o:link>
+							<o:link plain="true" href="?view=list" styleClass="photos_gallery_bar_view_item #{photosGalleryView.view=='list' ? 'photos_gallery_bar_view_item_selected' : ''}">
+								<o:icon icon="view_list" size="20"/>
+							</o:link>
+						</span>
 					</div>
 					<div class="photos_gallery_bar_right">
 					<c:if test="#{photosGalleryView.modifiable}">
-						<o:link plain="true" name="addToGallery"><o:icon icon="add"/><strong>#{msg.add_photos}</strong></o:link>
-						<o:link plain="true" name="deleteGallery"><o:icon icon="delete"/><strong>#{msg.delete_gallery}</strong></o:link>
+						<o:link plain="true" name="addToGallery" styleClass="photos_gallery_bar_button"><o:icon icon="add"/><strong>#{msg.add_photos}</strong></o:link>
+						<o:link plain="true" name="deleteGallery" styleClass="photos_gallery_bar_button"><o:icon icon="delete"/><strong>#{msg.delete_gallery}</strong></o:link>
 					</c:if>
 					</div>
 				</div>
-				<div id="photos_gallery_images">
-					<o:gallery name="gallery"
-						size="130"
-						model="#{photosGalleryView.listModel}"
-						href="/#{wordsLayoutView.language}/photo/[id].html"
-						removable="#{photosGalleryView.modifiable}"
-						movable="#{photosGalleryView.modifiable}"
-						variant="shadow"
-					/>
-				</div>
-				<div id="log"></div>
+				<c:choose>
+					<c:when test="#{photosGalleryView.view=='list'}">
+					</c:when>
+					<c:when test="#{photosGalleryView.view=='masonry'}">
+						<o:masonry list="#{photosGalleryView.masonryList}"/>
+					</c:when>
+					<c:otherwise>
+						<div id="photos_gallery_images">
+							<o:gallery name="gallery"
+								size="130"
+								model="#{photosGalleryView.listModel}"
+								href="/#{wordsLayoutView.language}/photo/[id].html?context=#{photosGalleryView.imageGallery.id}"
+								removable="#{photosGalleryView.modifiable}"
+								movable="#{photosGalleryView.modifiable}"
+								variant="shadow"
+							/>
+						</div>					
+					</c:otherwise>
+				</c:choose>
 			</div>
 		</ui:define>
 		

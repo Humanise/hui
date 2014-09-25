@@ -1,4 +1,4 @@
-package dk.in2isoft.onlineobjects.modules.photos;
+package dk.in2isoft.onlineobjects.modules.index;
 
 public class IndexQuery {
 

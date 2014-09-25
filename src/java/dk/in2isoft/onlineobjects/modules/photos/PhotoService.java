@@ -28,7 +28,7 @@ public class PhotoService {
 	private ModelService modelService;
 	private SecurityService securityService;
 
-	public SearchResult<Image> search(PhotoQuery query) {
+	public SearchResult<Image> search(PhotoIndexQuery query) {
 		Query<Image> modelQuery = Query.of(Image.class).withPaging(query.getPage(), query.getPageSize()).orderByCreated().descending();
 		try {
 			BooleanQuery combined = new BooleanQuery();

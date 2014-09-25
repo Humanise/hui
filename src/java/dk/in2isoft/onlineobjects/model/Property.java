@@ -30,6 +30,9 @@ public class Property {
 	public static final String KEY_PHOTO_CAMERA_MODEL = "photo.camera.model";
 	public static final String KEY_PHOTO_CAMERA_MAKE = "photo.camera.make";
 	public static final String KEY_PHOTO_TAKEN = "photo.taken";
+	public static final String KEY_PHOTO_ROTATION = "photo.rotation";
+	public static final String KEY_PHOTO_FLIP_VERTICALLY = "photo.flip.vertically";
+	public static final String KEY_PHOTO_FLIP_HORIZONTALLY = "photo.flip.horizontally";
 
 	public static final String KEY_INTERNETADDRESS_CONTENT = "internetaddress.content";
 	public static final String KEY_INTERNETADDRESS_ENCODING = "internetaddress.encoding";
@@ -52,9 +55,16 @@ public class Property {
 		this.value = value;
 		this.key = key;
 	}
+	
 	public Property(String key, Date value) {
 		super();
 		this.dateValue = value;
+		this.key = key;
+	}
+
+	public Property(String key, Double value) {
+		super();
+		this.doubleValue = value;
 		this.key = key;
 	}
 

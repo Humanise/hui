@@ -19,9 +19,11 @@ import dk.in2isoft.onlineobjects.model.ImageGallery;
 import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
+import dk.in2isoft.onlineobjects.modules.photos.SimplePhotoPerspective;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.ui.jsf.ListModel;
 import dk.in2isoft.onlineobjects.ui.jsf.ListModelResult;
+import dk.in2isoft.onlineobjects.ui.jsf.model.MasonryItem;
 import dk.in2isoft.onlineobjects.util.Dates;
 
 public class PhotosGalleryView extends AbstractManagedBean implements InitializingBean {
@@ -38,10 +40,12 @@ public class PhotosGalleryView extends AbstractManagedBean implements Initializi
 	private boolean modifiable;
 
 	private ListModel<Image> listModel;
+	private List<Image> images;
 	
 	private Date from;
 	private Date to;
 	private String info;
+	private String view;
 	
 
 	public void afterPropertiesSet() throws Exception {
@@ -60,7 +64,7 @@ public class PhotosGalleryView extends AbstractManagedBean implements Initializi
 			username = user.getUsername();
 			modifiable = user!=null && user.getId()==session.getIdentity();
 			List<Relation> childRelations = modelService.getChildRelations(imageGallery, Image.class, session);
-			final List<Image> images = Lists.newArrayList();
+			images = Lists.newArrayList();
 			for (Relation relation : childRelations) {
 				Image image = (Image) relation.getSubEntity();
 				Date date = image.getPropertyDateValue(Property.KEY_PHOTO_TAKEN);
@@ -96,7 +100,36 @@ public class PhotosGalleryView extends AbstractManagedBean implements Initializi
 				}
 				info = sb.toString();
 			}
+			
+			view = request.getString("view");
+			if (Strings.isBlank(view)) {
+				view = "grid";
+			}
 		}
+	}
+	
+	private List<MasonryItem> masonryList;
+	
+	public List<MasonryItem> getMasonryList() {
+		if (masonryList==null) {
+			masonryList = Lists.newArrayList();
+			String language = getRequest().getLanguage();
+			masonryList = Lists.newArrayList();
+			for (Image image : images) {
+				MasonryItem item = new MasonryItem();
+				item.id = image.getId();
+				item.height = image.getHeight();
+				item.width = image.getWidth();
+				item.title = image.getName();
+				item.href = "/" + language + "/photo/" + item.id + ".html";
+				masonryList.add(item);
+			}
+		}
+		return masonryList;
+	}
+	
+	public String getView() {
+		return view;
 	}
 	
 	public String getInfo() {

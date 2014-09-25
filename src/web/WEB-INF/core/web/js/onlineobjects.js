@@ -1,4 +1,12 @@
 var oo = {
+	$ready : function() {
+		if (hui.browser.touch) {
+			hui.cls.add(document.body,'oo_touch');
+		}
+		if (window.devicePixelRatio==2) {
+			hui.cls.add(document.body,'oo_retina');
+		}     
+	},
 	buildThumbnail : function(options) {
 		var t = hui.build('span',{'class':'oo_thumbnail oo_thumbnail_frame'});
 		var height = options.height;
@@ -142,6 +150,7 @@ var oo = {
 	}
 	
 }
+hui.ui.listen(oo)
 
 if (false) {	
 	hui.ui.listen({
@@ -210,181 +219,8 @@ oo.Link.prototype = {
 }
 
 
-oo.WordFinder = function() {
-	this.name = 'oo_wordfinder';
-	hui.ui.extend(this);
-	var win = this._finder = hui.ui.Window.create({title:{en:'Add word',da:'Tilføj ord'},width:300});
-	
-	
-	var bar = hui.ui.Bar.create({variant:'window'});
-	
-	var pages = hui.ui.Pages.create();
-
-	var add = hui.ui.Button.create({text:'New word',small:true,listener:{$click:function() {
-		pages.next();
-	}}});
-	bar.add(add);
-	win.add(bar);
-	
-	var search = hui.ui.SearchField.create();
-	bar.addToRight(search);
-	
-	win.add(pages);
-	
-	var src = new hui.ui.Source({url:oo.baseContext+'/service/model/listWords'});
-	var list = hui.ui.List.create({source:src});
-	var overflow = hui.ui.Overflow.create({height:300});
-	overflow.add(list)
-	pages.add(overflow);
-	
-	
-	var form = hui.ui.Formula.create({padding:10});
-	form.buildGroup({},[
-		{type:'TextField',label:'Text',options:{}},
-		{type:'DropDown',label:'Sprog',options:{
-			items:[{text:'English',value:'en'},{text:'Danish',value:'da'}]
-		}}
-	])
-	pages.add(form);
-	
-	return;
-	this._finder = hui.ui.Finder.create({
-		title : {en:'Add word',da:'Tilføj ord'},
-		list : {url : oo.baseContext+'/service/model/listWords',pageParameter:'page'},
-		search : {parameter:'text'}
-	});
-	this._finder.listen({
-		$select : function(value) {
-			this._finder.clear();
-			this._finder.hide();
-			this.fire('select',{id:value.id});
-		}.bind(this)
-	})
-}
-
-oo.WordFinder.show = function() {
-	if (!this._instance) {
-		this._instance = new oo.WordFinder();
-	}
-	this._instance.show();
-}
-
-oo.WordFinder.prototype = {
-	show : function() {
-		this._finder.show();
-	}
-}
-
-
-
-oo.WordGetter = function() {
-	this.name = 'wordFinder';
-	hui.ui.extend(this);
-	hui.ui.listen(this);
-	this.pages = hui.ui.get('wordFinderPages');
-	this.form = hui.ui.get('wordFinderForm');
-	this.list = hui.ui.get('wordFinderList');
-}
-
-oo.WordGetter.prototype = {
-	show : function(callback) {
-		hui.ui.get('wordFinderListSource').setParameter('language',oo.language);
-		hui.log(hui.ui.get('wordFinderListSource').parameters)
-		hui.ui.get('wordFinderWindow').show();
-		hui.ui.get('wordFinderSearch').focus();
-		this.callback = callback;
-	},
-	_found : function(obj) {
-		if (this.callback) {
-			this.callback(obj);
-		} else {
-			this.fire('found',obj);
-		}
-		hui.ui.get('wordFinderWindow').hide();
-	},
-	$click$wordFinderCancel : function() {
-		this.pages.next();
-	},
-	$click$wordFinderAdd : function() {
-		this._addWord();
-	},
-	$click$wordFinderEmpty : function() {
-		this._addWord();
-	},
-	_addWord : function() {
-		this.pages.goTo('new');
-		var text = hui.ui.get('wordFinderSearch').getValue();
-		this.form.setValues({
-			text : text
-		})
-		this.form.focus();		
-	},
-	$valueChanged$wordFinderSearch : function() {
-		hui.ui.get('wordFinderList').resetState();
-		this.pages.goTo('list');
-	},
-	$select$wordFinderList : function() {
-		var row = this.list.getFirstSelection();
-		if (row) {
-			this._found(row);
-		}
-	},
-	$submit$wordFinderForm : function(form) {
-		var values = form.getValues();
-		if (hui.isBlank(values.text) || hui.isBlank(values.language)) {
-			hui.ui.showMessage({text:'Please provide the text and language',duration:2000,icon:'common/warning'});
-			form.focus();
-			return;
-		}
-		hui.ui.request({
-			url : oo.baseContext+'/service/model/addWord',
-			parameters : values,
-			$object : this._found.bind(this),
-			$failure : function() {
-				hui.ui.showMessage({text:'Unable to add word',duration:2000,icon:'common/warning'});
-			}
-		})
-	}
-}
 
 
 
 
 
-
-
-oo.Words = function(options) {
-	this.options = options;
-	this.element = hui.get(options.element);
-	this.name = options.name;
-	hui.ui.extend(this);
-	this._addBehavior();
-}
-
-oo.Words.prototype = {
-	_addBehavior : function() {
-		hui.listen(this.element,'click',this._onClick.bind(this));
-	},
-	_onClick : function(e) {
-		e = hui.event(e);
-		var a = e.findByTag('a');
-		if (a) {
-			e.stop();
-			if (hui.cls.has(a,'oo_words_add')) {
-				this._showFinder();
-			} else {
-				hui.ui.confirmOverlay({element:a,text:'Delete word?',$ok : function() {
-					this.fire('delete',{id:parseInt(a.getAttribute('data')),callback:this._reload.bind(this)});
-				}.bind(this)})
-			}
-		}
-	},
-	_showFinder : function() {
-		hui.ui.get('wordFinder').show(function(value) {
-			this.fire('add',{id:value.id,callback:this._reload.bind(this)});
-		}.bind(this))
-	},
-	_reload : function() {
-		oo.update({id:this.element.id,$success : this._addBehavior.bind(this)});
-	}
-}

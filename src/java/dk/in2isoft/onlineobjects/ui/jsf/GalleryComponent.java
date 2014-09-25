@@ -14,6 +14,7 @@ import dk.in2isoft.commons.jsf.Components;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.model.Image;
+import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.ui.jsf.model.ImageContainer;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
 
@@ -165,8 +166,19 @@ public class GalleryComponent extends AbstractComponent {
 		StringBuilder url = new StringBuilder();
 		url.append(Components.getRequest().getBaseContext());
 		url.append("/service/image/id").append(image.getId()).append("width").append(width).append("height").append(height);
+		Double rotation = image.getPropertyDoubleValue(Property.KEY_PHOTO_ROTATION);
+		if (rotation!=null) {
+			url.append("rotation").append(rotation);
+		}
 		url.append("sharpen1.0");
-		url.append("cropped.jpg");
+		url.append("cropped");
+		if ("true".equals(image.getPropertyValue(Property.KEY_PHOTO_FLIP_HORIZONTALLY))) {
+			url.append("-fliph");
+		}
+		if ("true".equals(image.getPropertyValue(Property.KEY_PHOTO_FLIP_VERTICALLY))) {
+			url.append("-flipv");
+		}
+		url.append(".jpg");
 		return url.toString();
 	}
 

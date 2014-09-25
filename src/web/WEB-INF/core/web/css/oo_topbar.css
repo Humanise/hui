@@ -34,7 +34,7 @@ a.oo_topbar_logo
 }
 
 
-a.oo_topbar_logo em
+.oo_topbar_logo_icon
 {
 	font-family: 'OnlineObjects';
 	font-style: normal;
@@ -46,6 +46,7 @@ a.oo_topbar_logo em
 	font-size: 22px;
 	width: 22px;
 	height: 22px;
+	line-height: 1;
 }
 
 div.oo_topbar:hover a.oo_topbar_logo,
@@ -77,9 +78,12 @@ div.oo_topbar strong span span
 	font-weight: 200;
 }
 
-a.oo_topbar_logo:hover strong
+.oo_topbar_logo:hover {
+	background: #f3f3f3;
+}
+
+.oo_topbar_logo:hover strong
 {
-	text-decoration: underline;
 	color: #333;
 }
 
@@ -132,7 +136,7 @@ div.oo_topbar li a
 
 div.oo_topbar li a:hover
 {
-	text-decoration: underline;
+	background: #f3f3f3;
 }
 
 div.oo_topbar:hover li a

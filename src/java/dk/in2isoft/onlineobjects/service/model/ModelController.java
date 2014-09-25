@@ -8,11 +8,15 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 
 import dk.in2isoft.commons.lang.Strings;
+import dk.in2isoft.in2igui.data.Diagram;
 import dk.in2isoft.in2igui.data.ListWriter;
+import dk.in2isoft.in2igui.data.Node;
 import dk.in2isoft.onlineobjects.apps.videosharing.Path;
 import dk.in2isoft.onlineobjects.apps.words.WordsController;
+import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SearchResult;
+import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.core.exceptions.ExplodingClusterFuckException;
 import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
@@ -22,6 +26,7 @@ import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.Language;
 import dk.in2isoft.onlineobjects.model.LexicalCategory;
 import dk.in2isoft.onlineobjects.model.Pile;
+import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
@@ -59,7 +64,8 @@ public class ModelController extends ModelControllerBase {
 		String language = request.getString("language");
 		Locale locale = new Locale(language);
 		
-		WordQuery query = new WordQuery().withPage(page).withPageSize(50).withText(text);
+		int pageSize = 20;
+		WordQuery query = new WordQuery().withPage(page).withPageSize(pageSize).withText(text);
 		SearchResult<WordListPerspective> result = wordService.search(query);
 		
 		Messages msg = new Messages(WordsController.class);
@@ -146,5 +152,49 @@ public class ModelController extends ModelControllerBase {
 		long id = request.getLong("id");
 		User user = request.getSession().getUser();
 		inboxService.remove(user,id);
+	}
+	
+	@Path
+	public Diagram diagram(Request request) throws IllegalRequestException, ModelException, SecurityException {
+		Long id = request.getLong("id");
+		Diagram diagram = new Diagram();
+		
+		// TODO Security breach!
+		Privileged privileged = securityService.getAdminPrivileged();
+		Entity entity = modelService.get(Entity.class, id, privileged);
+		if (entity==null) {
+			throw new IllegalRequestException("Not found");
+		}
+
+		Node center = new Node();
+		center.setId(id);
+		center.setTitle(entity.getName());
+		diagram.addNode(center);
+		
+		List<Relation> childRelations = modelService.getChildRelations(entity);
+		for (Relation relation : childRelations) {
+			Entity other = relation.getSubEntity();
+
+			Node otherNode = new Node();
+			otherNode.setId(other.getId());
+			otherNode.setTitle(other.getName());
+			otherNode.addProperty("type", other.getClass().getSimpleName());
+			diagram.addNode(otherNode);
+			diagram.addEdge(center, relation.getKind(), otherNode);
+		}
+		
+		List<Relation> parentRelations = modelService.getParentRelations(entity);
+		for (Relation relation : parentRelations) {
+			Entity other = relation.getSuperEntity();
+
+			Node otherNode = new Node();
+			otherNode.setId(other.getId());
+			otherNode.setTitle(other.getName());
+			otherNode.addProperty("type", other.getClass().getSimpleName());
+			diagram.addNode(otherNode);
+			diagram.addEdge(otherNode, relation.getKind(), center);
+		}
+		
+		return diagram;
 	}
 }

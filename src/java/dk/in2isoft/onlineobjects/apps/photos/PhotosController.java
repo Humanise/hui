@@ -14,6 +14,7 @@ import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.core.exceptions.ContentNotFoundException;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
+import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.model.Entity;
@@ -28,6 +29,7 @@ import dk.in2isoft.onlineobjects.ui.ScriptWriter;
 import dk.in2isoft.onlineobjects.ui.StylesheetWriter;
 import dk.in2isoft.onlineobjects.ui.data.SimpleEntityPerspective;
 import dk.in2isoft.onlineobjects.util.images.ImageInfo.ImageLocation;
+import dk.in2isoft.onlineobjects.util.images.ImageMetaData;
 
 
 public class PhotosController extends PhotosControllerBase {
@@ -258,4 +260,15 @@ public class PhotosController extends PhotosControllerBase {
 		return list;
 	}
 
+	@Path
+	public ImageMetaData getMetaData(Request request) throws ModelException, SecurityException, IllegalRequestException {
+		Long imageId = request.getLong("imageId");
+		Image image = modelService.get(Image.class, imageId, request.getSession());
+		if (image==null) {
+			throw new IllegalRequestException("Unabe to load image");
+		}
+		
+		ImageMetaData metaData = imageService.getMetaData(image);
+		return metaData;
+	}
 }

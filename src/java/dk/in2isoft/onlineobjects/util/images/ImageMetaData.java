@@ -11,6 +11,10 @@ public class ImageMetaData {
 	private String cameraModel;
 	private Double latitude;
 	private Double longitude;
+	private Integer orientation;
+	private Integer rotation;
+	private Boolean flippedVertically;
+	private Boolean flippedHorizontally;
 	
 	public void setDateTime(Date dateTime) {
 		this.dateTime = dateTime;
@@ -74,6 +78,38 @@ public class ImageMetaData {
 
 	public String[] getKeywords() {
 		return keywords;
+	}
+
+	public Integer getOrientation() {
+		return orientation;
+	}
+
+	public void setOrientation(Integer orientation) {
+		this.orientation = orientation;
+	}
+
+	public Integer getRotation() {
+		return rotation;
+	}
+
+	public void setRotation(Integer rotation) {
+		this.rotation = rotation;
+	}
+
+	public Boolean getFlippedVertically() {
+		return flippedVertically;
+	}
+
+	public void setFlippedVertically(Boolean flipped) {
+		this.flippedVertically = flipped;
+	}
+
+	public Boolean getFlippedHorizontally() {
+		return flippedHorizontally;
+	}
+
+	public void setFlippedHorizontally(Boolean flippedHorizontally) {
+		this.flippedHorizontally = flippedHorizontally;
 	}
 	
 }

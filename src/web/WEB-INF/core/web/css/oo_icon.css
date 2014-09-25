@@ -1,4 +1,4 @@
-span.oo_icon
+.oo_icon
 {
 	font-family: 'OnlineObjects';
 	display: inline-block;
@@ -6,7 +6,7 @@ span.oo_icon
 	-webkit-font-smoothing: antialiased;
 }
 
-span.oo_icon_12
+.oo_icon_12
 {
 	font-size: 12px;
 	line-height: 12px;
@@ -14,7 +14,7 @@ span.oo_icon_12
 	height: 12px;
 }
 
-span.oo_icon_16
+.oo_icon_16
 {
 	font-size: 16px;
 	line-height: 16px;
@@ -22,7 +22,15 @@ span.oo_icon_16
 	height: 16px;
 }
 
-span.oo_icon_32
+.oo_icon_20
+{
+	font-size: 20px;
+	line-height: 20px;
+	width: 20px;
+	height: 20px;
+}
+
+.oo_icon_32
 {
 	font-size: 32px;
 	line-height: 32px;
@@ -30,7 +38,7 @@ span.oo_icon_32
 	height: 32px;
 }
 
-span.oo_icon_48
+.oo_icon_48
 {
 	font-size: 48px;
 	line-height: 48px;
@@ -38,18 +46,17 @@ span.oo_icon_48
 	height: 48px;
 }
 
-
-/************ Named icons ***************/
-
-.oo_icon_arrow_right, .oo_icon_arrow_left, .oo_icon_download, .oo_icon_expand, .oo_icon_user, .oo_icon_onlineobjects, .oo_icon_at, .oo_icon_globe, .oo_icon_envelope, .oo_icon_tag, .oo_icon_globus, .oo_icon_phone, .oo_icon_warning, .oo_icon_camera, .oo_icon_file, .oo_icon_time, .oo_icon_dimensions, .oo_icon_book, .oo_icon_delete, .oo_icon_share, .oo_icon_album, .oo_icon_add, .oo_icon_edit, .oo_icon_present, .oo_icon_info, .oo_icon_photos, .oo_icon_close, .oo_icon_gear, .oo_icon_info_light, .oo_icon_first, .oo_icon_statistics, .oo_icon_search, .oo_icon_marker, .oo_icon_inbox, .oo_icon_locked, .oo_icon_support, .oo_icon_list_bullet, .oo_icon_humanise {
-	font-family: 'OnlineObjects';
-	speak: none;
-	font-style: normal;
-	font-weight: normal;
-	font-variant: normal;
-	text-transform: none;
-	line-height: 1;
-	-webkit-font-smoothing: antialiased;
+.oo_icon_view_grid:before {
+	content: "\e600";
+}
+.oo_icon_view_list:before {
+	content: "\e601";
+}
+.oo_icon_view_cards:before {
+	content: "\e602";
+}
+.oo_icon_view_masonry:before {
+	content: "\e603";
 }
 .oo_icon_arrow_right:before {
 	content: "\3e";

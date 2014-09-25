@@ -35,6 +35,7 @@ public class ConfigurationService implements InitializingBean {
 	private String rootDomain;
 	private Integer port;
 	private boolean startScheduling;
+	private boolean simulateSlowRequest;
 	
 	private File tempDir;
 
@@ -250,5 +251,13 @@ public class ConfigurationService implements InitializingBean {
 
 	public void setStartScheduling(boolean startScheduling) {
 		this.startScheduling = startScheduling;
+	}
+
+	public boolean isSimulateSlowRequest() {
+		return simulateSlowRequest;
+	}
+
+	public void setSimulateSlowRequest(boolean simulateSlowRequest) {
+		this.simulateSlowRequest = simulateSlowRequest;
 	}
 }

@@ -35,14 +35,16 @@
 					<c:if test="#{not photosPhotoView.vertical}">
 						<o:thumbnail image="#{photosPhotoView.image}" className="photos_photo_image_vertical" width="980" present="true" frame="false" responsive="true"/>
 					</c:if>
-					<div class="photos_controller oo_faded">
+					<div class="photos_controls">
+					<div class="photos_controller">
 						<o:link href="/service/image/id#{photosPhotoView.image.id}.jpg?download=true" core="true" plain="true"><i>d</i></o:link>
 						<o:link href="/service/image/id#{photosPhotoView.image.id}.jpg" core="true" plain="true"><i>x</i></o:link>
 					</div>
-					<div class="photos_controller photos_controller_top oo_faded">
+					<div class="photos_controller photos_controller_direction">
 						<o:link href="/#{wordsLayoutView.language}/photo/#{photosPhotoView.previousId}.html" plain="true"><i>&lt;</i></o:link>
 						<o:link href="/#{wordsLayoutView.language}/photo/#{photosPhotoView.nextId}.html" plain="true"><i>&gt;</i></o:link>
-					</div> 
+					</div>
+					</div>
 				</div>
 				
 				<div class="photos_photo">
@@ -89,6 +91,8 @@
 							<o:map name="theMap" location="#{photosPhotoView.mapPoint}" dynamic="false" editable="#{photosPhotoView.canModify}"/>
 						</div>
 					</div>
+					
+					
 					<div class="photos_photo_right">
 						<div class="photos_photo_right_body">
 						<div class="photos_profile">
@@ -120,23 +124,26 @@
 								</ul>
 							</div>
 						</c:if>
-						<div class="photos_photo_properties oo_faded">
+						
+						
+						<div class="photos_photo_properties">
 							<o:block id="properties">
 								<c:forEach items="#{photosPhotoView.properties}" var="prop">
 									<p class="photos_photo_property"><strong>#{prop.label}:</strong> #{prop.value}</p>
 								</c:forEach>
-								<c:if test="#{photosPhotoView.canModify}">
-								<p><gui:button text="Synchronize" name="syncMetaData" small="true" variant="light"/></p>
-								</c:if>
 							</o:block>
 							<c:if test="#{photosPhotoView.canModify}">
-								<div style="background: #f6f6f6; border: 1px solid #eee; border-radius: 5px; margin-top: 30px; padding: 5px 12px 7px 12px;">
+							<o:link name="viewMetaData">Meta data</o:link>
+								<div style="background: #f6f6f6; border: 1px solid #eee; border-width: 1px 0; margin: 30px -20px 0; padding: 5px 20px 7px;">
 									<h2 style="font-weight: 200; font-size: 12pt; line-height: 24px; border-bottom: 1px solid #ddd; color: #666; margin: 0 0 8px;">Anyone can...</h2>
 									<p style="margin: 5px 0;">
 										<gui:checkbox label="See the photo" name="publicAccess" value="#{not photosPhotoView.secret}"/>
 									</p>
 									<h2 style="font-weight: 200; font-size: 12pt; line-height: 24px; border-bottom: 1px solid #ddd; color: #666; margin: 10px 0 8px;">Actions</h2>
-									<p style="margin: 0;"><gui:button text="Delete" name="deletePhoto"/></p>
+									<p style="margin: 0;">
+										<gui:button text="Delete" name="deletePhoto" small="true" variant="light" right="4"/>								
+										<gui:button text="Synchronize" name="syncMetaData" small="true" variant="light" right="4"/>
+									</p>
 								</div>
 							</c:if>
 						</div>

@@ -117,7 +117,7 @@ public class ApplicationResponder extends AbstractControllerResponder implements
 					request.redirectFromBase("service/authentication/?redirect="+request.getRequest().getRequestURI()+"&action=appAccessDenied&faultyuser="+request.getSession().getUser().getUsername());
 					return;
 				} else {
-					throw new IllegalRequestException("Application «"+application+"» denied access to user «"+request.getSession().getUser().getUsername()+"»");
+					throw new IllegalRequestException("Application '"+application+"' denied access to user '"+request.getSession().getUser().getUsername()+"'");
 				}
 			}
 			String language = controller.getLanguage(request);

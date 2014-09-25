@@ -17,6 +17,7 @@ public class SourceComponent extends AbstractComponent {
 
 	private String name;
 	private String url;
+	private Integer delay;
 	private boolean lazy;
 
 	public SourceComponent() {
@@ -28,11 +29,12 @@ public class SourceComponent extends AbstractComponent {
 		name = (String) state[0];
 		url = (String) state[1];
 		lazy = (Boolean) state[2];
+		delay = (Integer) state[3];
 	}
 
 	@Override
 	public Object[] saveState() {
-		return new Object[] { name, url, lazy };
+		return new Object[] { name, url, lazy, delay };
 	}
 
 	@Override
@@ -41,6 +43,9 @@ public class SourceComponent extends AbstractComponent {
 		out.startNewObject("hui.ui.Source").property("name", name).comma().property("lazy", lazy);
 		out.comma().property("url", getUrl(context));
 		out.comma().propertyRaw("parameters", buildParameters());
+		if (delay!=null) {
+			out.comma().property("delay", delay);
+		}
 		out.endNewObject();
 		out.endScript();
 	}
@@ -92,4 +97,11 @@ public class SourceComponent extends AbstractComponent {
 		this.lazy = lazy;
 	}
 	
+	public void setDelay(Integer delay) {
+		this.delay = delay;
+	}
+	
+	public Integer getDelay() {
+		return delay;
+	}
 }

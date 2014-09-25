@@ -159,5 +159,20 @@ var photoView = {
 				}.bind(this)
 			})
 		}.bind(this)})
+	},
+	
+	$click$viewMetaData : function(button) {
+		hui.ui.request({
+			url : oo.appContext+'/getMetaData',
+			parameters : {imageId : this.imageId},
+			$object : function(data) {
+				var html = '';
+				hui.each(data,function(key,value) {
+					html+='<p class="photos_photo_property"><strong>' + key + ':</strong> ' + value + '</p>';
+				})
+				hui.build('div',{html:html,parent:hui.get('properties')});
+			}
+		});
+		button.setEnabled(false);
 	}
 };

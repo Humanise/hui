@@ -1,6 +1,6 @@
 package dk.in2isoft.onlineobjects.modules.language;
 
-import dk.in2isoft.onlineobjects.modules.photos.IndexQuery;
+import dk.in2isoft.onlineobjects.modules.index.IndexQuery;
 
 public class WordQuery extends IndexQuery {
 	private String letter;

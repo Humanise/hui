@@ -80,6 +80,7 @@ public class WordsControllerBase extends ApplicationController {
 		publicScript.addPath("hui","js","ProgressBar.js");
 		publicScript.addPath("WEB-INF","core","web","js","onlineobjects.js");
 		publicScript.addPath("WEB-INF","core","web","js","oo_topbar.js");
+		publicScript.addPath("WEB-INF","core","web","js","oo_wordfinder.js");
 		publicScript.addPath("WEB-INF","apps","words","web","style","js","words.js");
 	}
 

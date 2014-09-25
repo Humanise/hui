@@ -24,7 +24,8 @@ var accountView = {
 				hui.ui.msg({text:'Your password is changed',icon:'common/success',duration:3000});
 				form.reset();
 			},
-			$failure : function() {
+			$failure : function(e) {
+				hui.log(e);
 				hui.ui.msg({text:'Unable to change password',icon:'common/warning',duration:3000});
 				form.focus();
 			}
@@ -64,8 +65,9 @@ var passwordView = {
 					document.location = oo.baseContext+'/';					
 				},1000);
 			},
-			$failure : function() {
-				hui.ui.msg.fail({text:{da:'Det lykkedes ikke, ',en:'Your password is changed'}});
+			$failure : function(a,b) {
+				hui.log(a);
+				hui.ui.msg.fail({text:{da:'Det lykkedes ikke, ',en:'It failed'}});
 				form.focus();
 			}
 		})

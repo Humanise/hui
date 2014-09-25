@@ -13,6 +13,7 @@ public class ImageInfo {
 	private String cameraModel;
 	private Collection<String> tags;
 	private ImageLocation location;
+	private Double rotation;
 
 	public void setName(String name) {
 		this.name = name;
@@ -76,6 +77,14 @@ public class ImageInfo {
 
 	public ImageLocation getLocation() {
 		return location;
+	}
+
+	public Double getRotation() {
+		return rotation;
+	}
+
+	public void setRotation(Double rotation) {
+		this.rotation = rotation;
 	}
 
 	public static class ImageLocation {

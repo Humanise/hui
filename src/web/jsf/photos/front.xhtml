@@ -14,10 +14,13 @@
 		<ui:define name="body">
 		<div class="photos_front">
 			<o:header>#{msg.photos}</o:header>
+			<o:masonry list="#{photosFrontView.masonryList}"/>
+			<ui:remove>
 			<o:gallery model="#{photosFrontView.imageList}"
 				variant="shadow"
 				href="/#{wordsLayoutView.language}/photo/[id].html"
 			/>
+			</ui:remove>
 			</div>
 		</ui:define>
 	

@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.util.CharArraySet;
 import org.apache.lucene.document.Document;
@@ -19,14 +18,13 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
+import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.index.MultiFields;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.NumericRangeQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
@@ -56,6 +54,7 @@ public class IndexManager {
 	}
 	
 	public IndexManager(String directoryName) {
+		this();
 		this.directoryName = directoryName;
 	}
 
@@ -119,7 +118,7 @@ public class IndexManager {
 			writer = openWriter();
 			document.add(new StringField("id", String.valueOf(entity.getId()),Store.YES));
 			document.add(new StringField("type", String.valueOf(entity.getType()),Store.YES));
-			writer.updateDocument(new Term("id",String.valueOf(entity.getId())),document);
+			writer.updateDocument(new Term("id",String.valueOf(entity.getId())),document,analyzer);
 			writer.commit();
 		} catch (IOException e) {
 			throw new ExplodingClusterFuckException("Unable to update document: "+entity,e);

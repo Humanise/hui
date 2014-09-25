@@ -79,6 +79,11 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 			}
 			
 			imageInfo = imageService.getImageInfo(image);
+			
+			if (imageInfo.getRotation()!=null && (Math.abs(imageInfo.getRotation())==90)) {
+				vertical=!vertical;
+			}
+			
 			location = modelService.getParent(image, Location.class);
 
 			user = modelService.getOwner(image);
@@ -118,6 +123,9 @@ public class PhotosPhotoView extends AbstractManagedBean implements Initializing
 			}
 			if (Strings.isNotBlank(imageInfo.getCameraModel())) {
 				properties.add(new SelectItem(imageInfo.getCameraModel(),"Camera"));
+			}
+			if (imageInfo.getRotation()!=null) {
+				properties.add(new SelectItem(imageInfo.getRotation(),"Rotation"));
 			}
 			if (location!=null) {
 				mapPoint = new MapPoint();

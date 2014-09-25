@@ -50,7 +50,36 @@
 	{
 		padding: 0 15px;
 	}
+}
+
+
+.oo_touch .photos_controls {
+	opacity: 1;
+	background: #fff;
+	border-bottom: 1px solid #eee;
+	overflow: hidden;
+	-webkit-transition: none;
+	-moz-transition: none;
+}
 	
+.oo_touch .photos_controller {
+	position: static;
+	background: none;
+	float: left;
+}
+	
+.oo_touch .photos_controller a {
+	text-shadow: none;
+	color: #999;
+}
+	
+.oo_touch .photos_controller_direction {
+	float: right;
+}
+
+.oo_touch .photos_controller_direction a
+{
+	width: 40px;
 }
 
 /* iPad */

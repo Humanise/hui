@@ -16,7 +16,7 @@ import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.modules.language.WordCloudQuery;
-import dk.in2isoft.onlineobjects.modules.photos.PhotoQuery;
+import dk.in2isoft.onlineobjects.modules.photos.PhotoIndexQuery;
 import dk.in2isoft.onlineobjects.modules.photos.PhotoService;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.ui.data.CloudItem;
@@ -100,7 +100,7 @@ public class PhotosUserView extends AbstractManagedBean implements InitializingB
 
 			@Override
 			public ListModelResult<Image> getResult() {
-				PhotoQuery query = new PhotoQuery().withPage(getPage()).withPageSize(getPageSize()).withOwner(user).withViewer(getRequest().getSession());
+				PhotoIndexQuery query = new PhotoIndexQuery().withPage(getPage()).withPageSize(getPageSize()).withOwner(user).withViewer(getRequest().getSession());
 				query.withText(text);
 				if (wordId!=null) {
 					query.withWordId(wordId);

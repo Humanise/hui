@@ -93,7 +93,12 @@ var controller = {
 	_currentArticle : null,
 	
 	$clickIcon$list : function(info) {
-		window.open(info.data);
+		hui.log(info);
+		if (info.data == 'graph') {
+			new oo.Inspector.inspect({id:info.row.id})
+		} else {
+			window.open(info.data);			
+		}
 	},
 	$open$list : function(info) {
 		this._loadArticle(info.id);

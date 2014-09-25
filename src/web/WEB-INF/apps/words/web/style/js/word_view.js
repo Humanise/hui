@@ -54,7 +54,7 @@ var wordView = {
 			this._attach();
 		}.bind(this)});
 	},
-	
+		
 	$click$visitRelationButton : function() {
 		document.location = this.activeRelationUrl;
 	},
@@ -84,9 +84,7 @@ var wordView = {
 	
 	addRelation : function(options) {
 		this.wordInfo = options;
-		hui.ui.get('wordFinder').show(this.$select$oo_wordfinder.bind(this))
-		return;
-		oo.WordGetter.show();
+		hui.ui.get('wordFinder').show(this.$select$oo_wordfinder.bind(this));
 	},
 	
 	$click$toggleExpanded : function() {

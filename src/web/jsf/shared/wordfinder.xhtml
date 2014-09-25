@@ -11,7 +11,7 @@
 	
 		<f:loadBundle basename="dk.in2isoft.onlineobjects.ui.jsf.msg.WordFinderComponent" var="msgWordFinder"/>
 	
-		<gui:source name="wordFinderListSource" url="#{wordsWordView.baseContext}/service/model/listWords" lazy="true">
+		<gui:source name="wordFinderListSource" url="#{wordsWordView.baseContext}/service/model/listWords" lazy="true" delay="400">
 			<gui:parameter key="text" value="@wordFinderSearch.value"/>
 			<gui:parameter key="page" value="@wordFinderList.window.page"/>
 		</gui:source>
@@ -25,7 +25,6 @@
 			</gui:bar>
 			<gui:pages name="wordFinderPages">
 				<gui:page key="list">
-					<gui:overflow height="400">
 						<gui:list source="wordFinderListSource" name="wordFinderList">
 							<f:facet name="empty">
 								<div style="padding: 20px; text-align: center;">
@@ -34,7 +33,6 @@
 								</div>
 							</f:facet>
 						</gui:list>
-					</gui:overflow>
 				</gui:page>
 				<gui:page key="new">
 					<div style="padding: 10px">
@@ -60,7 +58,7 @@
 			</gui:pages>
 		</gui:window>
 		<o:script>
-			new oo.WordGetter();
+			new oo.WordFinder();
 		</o:script>
 	</ui:composition>
 	

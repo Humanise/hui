@@ -19,6 +19,7 @@ import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.lang.Rational;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataException;
 import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.GpsDirectory;
@@ -40,6 +41,20 @@ import dk.in2isoft.onlineobjects.services.StorageService;
 import dk.in2isoft.onlineobjects.util.images.ImageInfo.ImageLocation;
 
 public class ImageService extends AbstractCommandLineInterface {
+	
+	private static final int NONE = 0;
+	private static final int HORIZONTAL = 1;
+	private static final int VERTICAL = 2;
+	private static final int[][] EXIF_ORIENTATION = new int[][] {
+	    new int[] {  0, NONE},
+	    new int[] {  0, HORIZONTAL},
+	    new int[] {180, NONE},
+	    new int[] {  0, VERTICAL},
+	    new int[] { 90, HORIZONTAL},
+	    new int[] { 90, NONE},
+	    new int[] {-90, HORIZONTAL},
+	    new int[] {-90, NONE},
+	};
 
 	private static Logger log = Logger.getLogger(ImageService.class);
 	
@@ -85,6 +100,10 @@ public class ImageService extends AbstractCommandLineInterface {
 			return null;
 		}
 	}
+
+	public ImageMetaData getMetaData(Image image) {
+		return getMetaData(getImageFile(image));
+	}
 	
 	public ImageMetaData getMetaData(File file) {
 		ImageMetaData imageMetaData = new ImageMetaData();
@@ -104,6 +123,22 @@ public class ImageService extends AbstractCommandLineInterface {
 				}
 				if (exifDirectory.containsTag(ExifIFD0Directory.TAG_MODEL)) {
 					imageMetaData.setCameraModel(exifDirectory.getString(ExifIFD0Directory.TAG_MODEL));
+				}
+				if (exifDirectory.containsTag(ExifIFD0Directory.TAG_ORIENTATION)) {
+					int orientation = exifDirectory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
+					imageMetaData.setOrientation(orientation);
+					if (orientation>0 && orientation<=EXIF_ORIENTATION.length) {
+						orientation--;
+						int degrees = EXIF_ORIENTATION[orientation][0];
+						imageMetaData.setRotation(degrees);
+				        switch (EXIF_ORIENTATION[orientation][1]) {
+				            case HORIZONTAL:
+				                imageMetaData.setFlippedHorizontally(true);
+				                break;
+				            case VERTICAL:
+				                imageMetaData.setFlippedVertically(true);
+				        }
+					}
 				}
 			}
 			if (iptcDirectory!=null) {
@@ -147,6 +182,8 @@ public class ImageService extends AbstractCommandLineInterface {
 		} catch (JpegProcessingException e) {
 			log.error(e.getMessage(), e);
 		} catch (IOException e) {
+			log.error(e.getMessage(), e);
+		} catch (MetadataException e) {
 			log.error(e.getMessage(), e);
 		}
 		return imageMetaData;
@@ -201,6 +238,15 @@ public class ImageService extends AbstractCommandLineInterface {
 			image.overrideFirstProperty(Image.PROPERTY_DESCRIPTION, metaData.getCaption());
 			modified = true;
 		}
+		if (metaData.getRotation()!=null) {
+			image.overrideFirstProperty(Property.KEY_PHOTO_ROTATION, metaData.getRotation().doubleValue());
+		}
+		if (Boolean.TRUE.equals(metaData.getFlippedHorizontally())) {
+			image.overrideFirstProperty(Property.KEY_PHOTO_FLIP_HORIZONTALLY, "true");
+		}
+		if (Boolean.TRUE.equals(metaData.getFlippedVertically())) {
+			image.overrideFirstProperty(Property.KEY_PHOTO_FLIP_VERTICALLY, "true");
+		}
 		if (modified) {
 			modelService.updateItem(image, priviledged);
 		}
@@ -229,6 +275,7 @@ public class ImageService extends AbstractCommandLineInterface {
 		if (location!=null) {
 			info.setLocation(new ImageLocation(location.getLatitude(), location.getLongitude()));
 		}
+		info.setRotation(image.getPropertyDoubleValue(Property.KEY_PHOTO_ROTATION));
 		return info;
 	}
 	

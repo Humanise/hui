@@ -52,10 +52,10 @@ hui.ui.Source.prototype = {
 	/** Refreshes the data source */
 	refresh : function() {
 		if (this.options.delay<1) {
-			this.refresh();			
+			this._refresh();			
 		} else {
 			window.clearTimeout(this._refreshDelay);
-			this._refreshDelay = window.setTimeout(this.refresh.bind(this),this.options.delay);
+			this._refreshDelay = window.setTimeout(this._refresh.bind(this),this.options.delay);
 		}
 	},
 	_refresh : function() {

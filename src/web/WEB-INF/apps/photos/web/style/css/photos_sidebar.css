@@ -49,6 +49,27 @@ p.photos_sidebar_profile_link
 	font-size: 12px;	
 }
 
+.photos_sidebar_title
+{
+	border-bottom: 1px solid #eee;
+	margin: 20px -5px 10px;
+	position: relative;
+}
+
+.photos_sidebar_title_text
+{
+	position: absolute;
+	background: #fff;
+	margin: 0;
+	font-size: 12px;
+	line-height: 1;
+	margin-top: -6px;
+	padding: 0 4px;
+	margin-left: 16px;
+	font-weight: normal;
+	color: #999;
+}
+
 div.photos_sidebar_galleries
 {
 	border-top: 1px solid #eee;
@@ -56,23 +77,15 @@ div.photos_sidebar_galleries
 	margin: 5px;
 }
 
-div.photos_sidebar_galleries h2
-{
-	color: #ccc;
-	font-size: 14pt;
-	line-height: 30px;
-	font-weight: 100;
-	margin: 10px 0 5px;
-	position: relative;
-}
-
-div.photos_sidebar_galleries h2 a
+.photos_sidebar_title_action
 {
 	position: absolute;
-	right: 0;
-	top: 5px;
+	right: 5px;
+	top: -11px;
 	color: #ddd;
 	font-size: 0;
+	background: #fff;
+	padding: 3px;
 }
 
 div.photos_sidebar_galleries h2 a:hover
@@ -135,27 +148,26 @@ div.photos_sidebar_galleries a.photos_sidebar_selected span.oo_icon
 .photos_sidebar_cloud
 {
 	text-align: center;
-	font-size: 12px;
+	font-size: 14px;
 	padding: 0 10px 20px;
 }
 
 .photos_sidebar_cloud > a
 {
-	color: #333;
 	display: inline-block;
 	vertical-align: middle;
 	line-height: 1;
 	text-decoration: none;
 }
 
-.photos_sidebar_cloud_0 { font-size: 1em; }
-.photos_sidebar_cloud_1 { font-size: 1.1em; }
-.photos_sidebar_cloud_2 { font-size: 1.2em; }
-.photos_sidebar_cloud_3 { font-size: 1.3em; }
-.photos_sidebar_cloud_4 { font-size: 1.4em; }
-.photos_sidebar_cloud_5 { font-size: 1.5em; }
-.photos_sidebar_cloud_6 { font-size: 1.6em; }
-.photos_sidebar_cloud_7 { font-size: 1.7em; }
-.photos_sidebar_cloud_8 { font-size: 1.8em; }
-.photos_sidebar_cloud_9 { font-size: 1.9em; }
-.photos_sidebar_cloud_10 { font-size: 2em; }
+.photos_sidebar_cloud_0 { font-size: 1em; color: #aaa;}
+.photos_sidebar_cloud_1 { font-size: 1.1em; color: #999;}
+.photos_sidebar_cloud_2 { font-size: 1.2em; color: #888;}
+.photos_sidebar_cloud_3 { font-size: 1.3em; color: #777; }
+.photos_sidebar_cloud_4 { font-size: 1.4em; color: #666; }
+.photos_sidebar_cloud_5 { font-size: 1.5em; color: #555; }
+.photos_sidebar_cloud_6 { font-size: 1.6em; color: #444; }
+.photos_sidebar_cloud_7 { font-size: 1.7em; color: #333; }
+.photos_sidebar_cloud_8 { font-size: 1.8em; color: #222; }
+.photos_sidebar_cloud_9 { font-size: 1.9em; color: #111; }
+.photos_sidebar_cloud_10 { font-size: 2em; color: #000; }

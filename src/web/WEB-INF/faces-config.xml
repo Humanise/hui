@@ -146,6 +146,10 @@ http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
     	<component-type>onlineobjects.selection</component-type>
     	<component-class>dk.in2isoft.onlineobjects.ui.jsf.SelectionComponent</component-class>
   	</component>
+    <component>
+    	<component-type>onlineobjects.masonry</component-type>
+    	<component-class>dk.in2isoft.onlineobjects.ui.jsf.MasonryComponent</component-class>
+  	</component>
   	
   	
   	

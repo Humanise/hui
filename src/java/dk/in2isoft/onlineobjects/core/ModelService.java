@@ -31,6 +31,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.exception.JDBCConnectionException;
 import org.hibernate.exception.SQLGrammarException;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.proxy.AbstractLazyInitializer;
@@ -179,7 +180,11 @@ public class ModelService {
 		threadIsDirty.set("started");
 		Session session = sessionFactory.getCurrentSession();
 		if (!session.getTransaction().isActive()) {
-			session.beginTransaction();
+			try {
+				session.beginTransaction();
+			} catch (JDBCConnectionException e) {
+				// TODO Handle this somehow
+			}
 			log.debug("Begin transaction!");
 		}
 		return session;
@@ -438,7 +443,7 @@ public class ModelService {
 		q.setString("kind", relationKind);
 		List<Relation> result = q.list();
 		for (int i = 0; i < result.size(); i++) {
-			getSession().getTransaction().rollback();
+			//getSession().getTransaction().rollback();
 			result.set(i, getSubject(result.get(i)));
 		}
 		return result;
@@ -451,7 +456,7 @@ public class ModelService {
 		q.setEntity("entity", entity);
 		List<Relation> result = q.list();
 		for (int i = 0; i < result.size(); i++) {
-			getSession().getTransaction().rollback();
+			//getSession().getTransaction().rollback();
 			result.set(i, getSubject(result.get(i)));
 		}
 		return result;

@@ -90,17 +90,18 @@ div.photos_gallery_bar_right
 	padding-right: 5px;
 }
 
-div.photos_gallery_bar a
+.photos_gallery_bar_button
 {
 	text-decoration: none;
 	display: inline-block;
+	vertical-align: top;
 	height: 26px;
 	color: #666;
 	font-size: 10pt;
 	padding: 0 8px;
 }
 
-div.photos_gallery_bar a:hover
+.photos_gallery_bar_button:hover
 {
 	background: #fafafa;
 	border: 1px solid #eee;
@@ -117,9 +118,39 @@ div.photos_gallery_bar a strong
 	font-weight: normal;
 }
 
-div.photos_gallery_bar a span.oo_icon
+.photos_gallery_bar_button .oo_icon
 {
 	vertical-align: top;
 	margin-right: 3px;
 	margin-top: 6px;
+}
+
+.photos_gallery_bar_view {
+	display: inline-block;
+	border-left: 1px solid #eee;
+	margin-left: 5px;
+	padding-left: 10px;
+}
+
+.photos_gallery_bar_view_label {
+	line-height: 26px;
+	display: inline-block;
+	font-size: 14px;
+	vertical-align: top;
+	font-weight: normal;
+	padding-right: 3px;
+	color: #999;
+}
+
+.photos_gallery_bar_view_item {
+	color: #bbb;
+	display: inline-block;
+	vertical-align: top;
+	padding: 3px;
+}
+
+
+.photos_gallery_bar_view_item:hover,
+.photos_gallery_bar_view_item_selected {
+	color: #000;
 }

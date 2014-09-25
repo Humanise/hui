@@ -10,6 +10,7 @@ import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.exceptions.ContentNotFoundException;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.model.Image;
+import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.service.ServiceController;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
@@ -28,6 +29,7 @@ public class ImageController extends ServiceController {
 	private Pattern thumbnailPattern;
 	private Pattern sharpenPattern;
 	private Pattern sepiaPattern;
+	private Pattern rotationPattern;
 
 	public ImageController() {
 		super("image");
@@ -37,39 +39,45 @@ public class ImageController extends ServiceController {
 		thumbnailPattern = Pattern.compile("thumbnail([0-9]+)");
 		sharpenPattern = Pattern.compile("sharpen([0-9]+\\.[0-9]+)");
 		sepiaPattern = Pattern.compile("sepia([0-9]+\\.[0-9]+)");
+		rotationPattern = Pattern.compile("rotation([\\-]?[0-9]+\\.[0-9]+)");
 	}
 
 	@Override
 	public void unknownRequest(Request request) throws IOException, EndUserException {
-		if (false) {
+		if (configurationService.isSimulateSlowRequest()) {
 			try {
 				Thread.sleep(Math.round(Math.random()*3000+1000));
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			} catch (InterruptedException ignore) {}
 		}
 		String[] path = request.getLocalPath();
+		Parameters param = new Parameters();
 		if (path.length>0) {
 			String subject = path[path.length-1];
-			long id = Long.valueOf(match(idPattern,subject));
-			int width = parseInt(match(widthPattern,subject));
-			int height = parseInt(match(heightPattern,subject));
-			int thumbnail = parseInt(match(thumbnailPattern,subject));
-			float sharpen = parseFloat(match(sharpenPattern,subject));
-			float sepia = parseFloat(match(sepiaPattern,subject));
-			boolean cropped = subject.indexOf("cropped")!=-1;
-			process(request,id,thumbnail,width,height,cropped,sharpen,sepia);
+			param.id = Long.valueOf(match(idPattern,subject));
+			param.width = parseInt(match(widthPattern,subject));
+			param.height = parseInt(match(heightPattern,subject));
+			param.thumbnail = parseInt(match(thumbnailPattern,subject));
+			param.sharpen = parseFloat(match(sharpenPattern,subject));
+			param.sepia = parseFloat(match(sepiaPattern,subject));
+			param.cropped = subject.indexOf("cropped")!=-1;
+			param.rotation = parseFloat(match(rotationPattern,subject));
+			param.verticalFlip = subject.contains("flipv");
+			param.horizontalFlip = subject.contains("fliph");
+			param.inherit = subject.contains("inherit");
 		} else {
-			long id = request.getLong("id");
-			int thumbnail = request.getInt("thumbnail");
-			int width = request.getInt("width");
-			int height = request.getInt("height");
-			boolean cropped = request.getBoolean("cropped");
-			float sharpen = request.getFloat("sharpen");
-			float sepia = request.getFloat("sepia");
-			process(request,id,thumbnail,width,height,cropped,sharpen,sepia);
+			param.id = request.getLong("id");
+			param.thumbnail = request.getInt("thumbnail");
+			param.width = request.getInt("width");
+			param.height = request.getInt("height");
+			param.cropped = request.getBoolean("cropped");
+			param.sharpen = request.getFloat("sharpen");
+			param.sepia = request.getFloat("sepia");
+			param.rotation = request.getFloat("rotation");
+			param.verticalFlip = request.getBoolean("flipVertically");
+			param.horizontalFlip = request.getBoolean("flipHorizontally");
+			param.inherit = request.getBoolean("inherit");
 		}
+		process(request,param);
 	}
 	
 	private int parseInt(String str) {
@@ -100,26 +108,41 @@ public class ImageController extends ServiceController {
 		return null;
 	}
 
-	private void process(Request request, long id, int thumbnail, int width, int height, boolean cropped, float sharpen, float sepia) throws IOException, EndUserException {		
+	private void process(Request request, Parameters parameters) throws IOException, EndUserException {		
 		File file;
-		Image image = modelService.get(Image.class, id, request.getSession());
+		Image image = modelService.get(Image.class, parameters.id, request.getSession());
 		if (image==null) {
-			throw new ContentNotFoundException("The image could not be found, id="+id);
+			throw new ContentNotFoundException("The image could not be found, id="+parameters.id);
 		}
 		String mime;
 		ImageTransformation trans = new ImageTransformation();
-		trans.setCropped(cropped);
-		if (thumbnail>0) {
-			trans.setHeight(thumbnail);
-			trans.setWidth(thumbnail);
+		trans.setCropped(parameters.cropped);
+		if (parameters.thumbnail>0) {
+			trans.setHeight(parameters.thumbnail);
+			trans.setWidth(parameters.thumbnail);
 		} else {
-			trans.setHeight(height);
-			trans.setWidth(width);
+			trans.setHeight(parameters.height);
+			trans.setWidth(parameters.width);
 		}
-		trans.setSharpen(sharpen);
-		trans.setSepia(sepia);
+		trans.setSharpen(parameters.sharpen);
+		trans.setSepia(parameters.sepia);
+		trans.setRotation(parameters.rotation);
+		trans.setFlipHorizontally(parameters.horizontalFlip);
+		trans.setFlipVertically(parameters.verticalFlip);
+		if (parameters.inherit) {
+			boolean flipVertically = image.getPropertyBooleanValue(Property.KEY_PHOTO_FLIP_VERTICALLY);
+			boolean flipHorizontally = image.getPropertyBooleanValue(Property.KEY_PHOTO_FLIP_HORIZONTALLY);
+			Double rotation = image.getPropertyDoubleValue(Property.KEY_PHOTO_ROTATION);
+			trans.setFlipHorizontally(flipHorizontally);
+			trans.setFlipVertically(flipVertically);
+			if (rotation!=null) {
+				trans.setRotation(rotation.longValue());
+			}
+		}
+		
+		
 		if (trans.isTransformed()) {
-			file = imageTransformationService.transform(id, trans);
+			file = imageTransformationService.transform(parameters.id, trans);
 			mime = "image/jpeg";			
 		} else {
 			file = imageService.getImageFile(image);
@@ -134,23 +157,31 @@ public class ImageController extends ServiceController {
 		pusher.push(request.getResponse(), mime);
 	}
 
+	// Wiring...
+	
 	public void setImageService(ImageService imageService) {
 		this.imageService = imageService;
-	}
-
-	public ImageService getImageService() {
-		return imageService;
 	}
 
 	public void setModelService(ModelService modelService) {
 		this.modelService = modelService;
 	}
 
-	public ModelService getModelService() {
-		return modelService;
-	}
-
 	public void setImageTransformationService(ImageTransformationService imageTransformationService) {
 		this.imageTransformationService = imageTransformationService;
+	}
+	
+	private class Parameters {
+		long id;
+		int width;
+		int height;
+		int thumbnail;
+		float sharpen;
+		float sepia;
+		boolean cropped;
+		float rotation;
+		boolean verticalFlip;
+		boolean horizontalFlip;
+		boolean inherit;
 	}
 }

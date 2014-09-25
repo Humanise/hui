@@ -54,6 +54,15 @@ public class ImageTransformationService extends AbstractCommandLineInterface {
 		if (transformation.getSepia()>0) {
 			sb.append("_sepia").append(transformation.getSepia());
 		}
+		if (transformation.getRotation()!=0) {
+			sb.append("_rotation").append(transformation.getRotation());
+		}
+		if (transformation.isFlipHorizontally()) {
+			sb.append("_flip-h");
+		}
+		if (transformation.isFlipVertically()) {
+			sb.append("_flip-v");
+		}
 		return sb.toString();
 	}
 	
@@ -61,13 +70,16 @@ public class ImageTransformationService extends AbstractCommandLineInterface {
 		StringBuilder sb = new StringBuilder();
 		sb.append(configurationService.getImageMagickPath());
 		sb.append("/convert");
+		if (transform.getRotation()!=0) {
+			sb.append(" -rotate ").append(transform.getRotation()).append("");
+		}
 		if (transform.getHeight()>0 && transform.getWidth()>0) {
 			int width = transform.getWidth();
 			int height = transform.getHeight();
 			if (transform.isCropped()) {
 				sb.append(" -size ").append(width * 3).append("x").append(height * 3);
 				sb.append(" ").append(original.getAbsolutePath()).append(" -thumbnail x").append(height * 2);
-				sb.append("   -resize ").append(width * 2).append("x<   -resize 50% -gravity center -crop ").append(width).append("x").append(height);
+				sb.append("   -resize ").append(width * 2).append("x< -resize 50% -gravity center -crop ").append(width).append("x").append(height);
 				sb.append("+0+0  +repage ");
 			} else {
 				sb.append(" -thumbnail ").append(width).append("x").append(height);
@@ -81,6 +93,12 @@ public class ImageTransformationService extends AbstractCommandLineInterface {
 		}
 		if (transform.getSepia()>0) {
 			sb.append(" -sepia-tone ").append(Math.round(transform.getSepia()*100)).append("%");
+		}
+		if (transform.isFlipHorizontally()) {
+			sb.append(" -flop");
+		}
+		if (transform.isFlipVertically()) {
+			sb.append(" -flip");
 		}
 		sb.append(" ").append(converted.getAbsolutePath());
 		

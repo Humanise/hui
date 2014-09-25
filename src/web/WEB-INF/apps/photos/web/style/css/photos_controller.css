@@ -1,6 +1,12 @@
+.photos_controls
+{
+	opacity: 0;
+	-webkit-transition: opacity 1s;
+	-moz-transition: opacity 1s;
+	-webkit-font-smoothing: antialiased;
+}
 
-
-div.photos_controller
+.photos_controller
 {
 	height: 44px;
 	background: rgba(0,0,0,.2);
@@ -10,33 +16,24 @@ div.photos_controller
 	bottom: 10px;
 	right: 10px;
 	padding: 0 4px;
-	opacity: 0;
-	-webkit-transition: opacity 1s;
-	-moz-transition: opacity 1s;
-	-webkit-font-smoothing: antialiased;
 }
 
-div.photos_photo_image:hover div.photos_controller
+div.photos_photo_image:hover .photos_controls
 {
 	opacity: 1;
 }
 
-body.oo_fade div.photos_photo_image:hover div.photos_controller
-{
-	opacity: 0;
-}
-
-body.oo_msie8 div.photos_controller
+body.oo_msie8 div.photos_controls
 {
 	display: none;
 }
 
-body.oo_msie8 div.photos_photo_image:hover div.photos_controller
+body.oo_msie8 div.photos_photo_image:hover div.photos_controls
 {
 	display: block;	
 }
 
-div.photos_controller a
+.photos_controller a
 {
 	vertical-align: middle;
 	display: inline-block;
@@ -53,7 +50,7 @@ div.photos_controller a
 	outline: none;
 }
 
-div.photos_controller i
+.photos_controller i
 {
 	font-family: 'OnlineObjects';
 	font-style: normal;
@@ -61,28 +58,28 @@ div.photos_controller i
 	text-align: center;
 }
 
-div.photos_controller a:hover
+.photos_controller a:hover
 {
 	font-size: 40px;
 }
 
-div.photos_controller a:active
+.photos_controller a:active
 {
 	font-size: 30px;
 }
 
 
 
-div.photos_controller_top
+.photos_controller_direction
 {
 	bottom: none;
 	top: 10px;
 	padding: 0;
 }
 
-div.photos_controller_top a
+.photos_controller_direction a
 {
-	width: 34px;
+	/*width: 34px;*/
 }
 
 div.photos_photo div.oo_map

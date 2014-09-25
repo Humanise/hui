@@ -24,7 +24,6 @@ import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.in2igui.data.ItemData;
 import dk.in2isoft.in2igui.data.ListWriter;
-import dk.in2isoft.onlineobjects.apps.reader.index.ReaderIndexDocumentBuilder;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.ArticlePerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.FeedPerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.WordPerspective;
@@ -54,7 +53,6 @@ import dk.in2isoft.onlineobjects.modules.language.WordByInternetAddressQuery;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspectiveQuery;
 import dk.in2isoft.onlineobjects.modules.networking.NetworkResponse;
-import dk.in2isoft.onlineobjects.services.SemanticService;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.ui.ScriptWriter;
 import dk.in2isoft.onlineobjects.ui.StylesheetWriter;
@@ -132,7 +130,10 @@ public class ReaderController extends ReaderControllerBase {
 			}
 			writer.endCell();
 			writer.startCell();
-			writer.startIcons().startIcon().revealing().withAction().withIcon("monochrome/view").withData(address.getAddress()).endIcon().endIcons();
+			writer.startIcons();
+			writer.startIcon().revealing().withAction().withIcon("monochrome/view").withData(address.getAddress()).endIcon();
+			writer.startIcon().revealing().withAction().withIcon("monochrome/graph").withData(address.getAddress()).endIcon();
+			writer.endIcons();
 			writer.endCell();
 			writer.endRow();
 		}
@@ -217,7 +218,10 @@ public class ReaderController extends ReaderControllerBase {
 			}
 			writer.endCell();
 			writer.startCell();
-			writer.startIcons().startIcon().revealing().withAction().withIcon("monochrome/view").withData(address.getAddress()).endIcon().endIcons();
+			writer.startIcons();
+			writer.startIcon().revealing().withAction().withIcon("monochrome/view").withData(address.getAddress()).endIcon();
+			writer.startIcon().revealing().withAction().withIcon("monochrome/graph").withData("graph").endIcon();
+			writer.endIcons();
 			writer.endCell();
 			writer.endRow();
 		}

@@ -43,6 +43,7 @@ public class PhotosControllerBase extends ApplicationController {
 		publicStyle.addCoreCSS("oo_words.css");
 		publicStyle.addCoreCSS("oo_map.css");
 		publicStyle.addCoreCSS("oo_photoviewer.css");
+		publicStyle.addCoreCSS("oo_masonry.css");
 		publicStyle.addPath("WEB-INF","apps","photos","web","style","css","style.css");
 		publicStyle.addPath("WEB-INF","apps","photos","web","style","css","photos_front.css");
 		publicStyle.addPath("WEB-INF","apps","photos","web","style","css","photos_controller.css");
@@ -82,6 +83,7 @@ public class PhotosControllerBase extends ApplicationController {
 		publicScript.addPath("WEB-INF","core","web","js","oo_gallery.js");
 		publicScript.addPath("WEB-INF","core","web","js","oo_map.js");
 		publicScript.addPath("WEB-INF","core","web","js","oo_photoviewer.js");
+		publicScript.addPath("WEB-INF","core","web","js","oo_masonry.js");
 		publicScript.addPath("WEB-INF","apps","photos","web","style","js","photo_view.js");
 		publicScript.addPath("WEB-INF","apps","photos","web","style","js","gallery_view.js");
 		publicScript.addPath("WEB-INF","apps","photos","web","style","js","layout_view.js");
@@ -109,6 +111,8 @@ public class PhotosControllerBase extends ApplicationController {
 		privateScript.addPath("WEB-INF","core","web","js","oo_inlineeditor.js");
 		privateScript.addPath("WEB-INF","core","web","js","oo_permissions.js");
 		privateScript.addPath("WEB-INF","core","web","js","oo_finder.js");
+		privateScript.addPath("WEB-INF","core","web","js","oo_wordfinder.js");
+		privateScript.addPath("WEB-INF","core","web","js","oo_words.js");
 
 	}
 
