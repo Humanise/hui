@@ -159,7 +159,7 @@
 			<span class="hui_field_middle"><span class="hui_field_middle"><span class="hui_field_content">
 				<span class="hui_formula_text_multiline">
 				<xsl:text disable-output-escaping='yes'>
-				<![CDATA[<textarea class="hui_formula_text" rows="]]><xsl:value-of select="@lines"/><![CDATA[">]]><xsl:value-of select="@value"/><![CDATA[</textarea>]]>
+				<![CDATA[<textarea class="hui_formula_text" rows="]]></xsl:text><xsl:value-of select="@lines"/><xsl:text disable-output-escaping='yes'><![CDATA[">]]></xsl:text><xsl:value-of select="@value"/><xsl:text disable-output-escaping='yes'><![CDATA[</textarea>]]>
 				</xsl:text>
 				</span>
 			</span></span></span>
@@ -325,6 +325,34 @@
 	</script>
 </xsl:template>
 
+
+
+
+
+<!--doc title:'Object input' class:'hui.ui.ObjectInput' module:'input'
+<object-input name="«text»" key="«text»"/>
+-->
+<xsl:template match="gui:object-input">
+	<span class="hui_objectinput" id="{generate-id()}">
+        <span class="hui_objectinput_text">No value</span>
+        <a class="hui_button hui_button_small hui_objectinput_choose" href="javascript://"><span><span>Vælg...</span></span></a>
+        <a class="hui_button hui_button_small hui_objectinput_remove" href="javascript://"><span><span>Remove</span></span></a>
+		<xsl:comment/>
+	</span>
+	<script type="text/javascript">
+		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.ObjectInput({
+			element:'<xsl:value-of select="generate-id()"/>'
+			<xsl:if test="@name">,name:'<xsl:value-of select="@name"/>'</xsl:if>
+			<xsl:if test="@key">,key:'<xsl:value-of select="@key"/>'</xsl:if>
+            <xsl:if test="gui:finder">
+                ,finder : {
+                    url : '<xsl:value-of select="gui:finder/@url"/>'
+                }
+            </xsl:if>
+		});
+		<xsl:call-template name="gui:createobject"/>
+	</script>
+</xsl:template>
 
 
 
@@ -658,14 +686,16 @@
 <image-input name="«text»" source="«url»"/>
 -->
 <xsl:template match="gui:image-input">
-	<div class="hui_imageinput" id="{generate-id()}" tabindex="0">
+	<span class="hui_imageinput" id="{generate-id()}" tabindex="0">
 		<xsl:if test="@size">
 			<xsl:attribute name="style">
 				<xsl:text>width:</xsl:text><xsl:value-of select="@size"/><xsl:text>px; height:</xsl:text><xsl:value-of select="@size"/><xsl:text>px;</xsl:text>
 			</xsl:attribute>
 		</xsl:if>
+		<a href="javascript://" class="hui_imageinput_clear">
 		<xsl:comment/>
-	</div>
+		</a>
+	</span>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.ImageInput({
 			element : '<xsl:value-of select="generate-id()"/>',
@@ -678,6 +708,7 @@
 			</xsl:if>
 			<xsl:if test="gui:finder">
 				,finder : {
+                    url : '<xsl:value-of select="gui:finder/@url"/>',
 					title : '<xsl:value-of select="gui:finder/@title"/>',
 					list : {url:'<xsl:value-of select="gui:finder/@list-url"/>'},
 					selection : {
@@ -716,19 +747,23 @@
 
 
 
-<!--doc title:'Object input' class:'hui.ui.ObjectInput' module:'input'
-<object-input name="«text»"/>
+<!--doc title:'Object input' class:'hui.ui.LinkInput' module:'input'
+<link-input name="«text»" key="«text»">
+    <type···>
+        <finder···>
+    </type>
+</link-input>
 -->
-<xsl:template match="gui:object-input">
-	<div class="hui_objectinput" id="{generate-id()}">
+<xsl:template match="gui:link-input">
+	<div class="hui_linkinput" id="{generate-id()}">
 		<a id="{generate-id()}" href="javascript://" class="hui_dropdown">
 			<span><span><strong><xsl:comment/></strong></span></span>
 		</a>
-		<span class="hui_objectinput_body">
+		<span class="hui_linkinput_body">
 		<input spellcheck="false" style="display:none;"/>
-		<span class="hui_objectinput_object" style="display:none;">
-			<span class="hui_objectinput_icon hui_icon_16"><xsl:comment/></span>
-			<span class="hui_objectinput_title"><xsl:comment/></span>
+		<span class="hui_linkinput_object" style="display:none;">
+			<span class="hui_linkinput_icon hui_icon_16"><xsl:comment/></span>
+			<span class="hui_linkinput_title"><xsl:comment/></span>
 			<xsl:comment/>
 		</span>
 		</span>
@@ -744,6 +779,7 @@
 					lookupUrl : '<xsl:value-of select="@lookup-url"/>'
 					<xsl:if test="gui:finder">
 						,finderOptions : {
+							url : '<xsl:value-of select="gui:finder/@url"/>',
 							title : '<xsl:value-of select="gui:finder/@title"/>',
 							list : {url:'<xsl:value-of select="gui:finder/@list-url"/>'},
 							selection : {
@@ -756,7 +792,7 @@
 					</xsl:if>
 				})
 			</xsl:for-each>
-			var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.ObjectInput({
+			var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.LinkInput({
 				element : '<xsl:value-of select="generate-id()"/>',
 				name : '<xsl:value-of select="@name"/>',
 				key : '<xsl:value-of select="@key"/>',

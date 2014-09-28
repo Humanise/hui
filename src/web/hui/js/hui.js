@@ -124,7 +124,7 @@ hui.defer = function(func,bind) {
  */
 hui.override = function(original,subject) {
 	if (subject) {
-		for (prop in subject) {
+		for (var prop in subject) {
 			original[prop] = subject[prop];
 		}
 	}
@@ -174,6 +174,11 @@ hui.intOrString = function(str) {
 		}
 	}
 	return str;
+}
+
+hui.between = function(min,value,max) {
+	var result = Math.min(max,Math.max(min,value));
+	return isNaN(result) ? min : result;
 }
 
 /**
@@ -890,7 +895,7 @@ hui.build = function(name,options,doc) {
 	var doc = doc || document,
 		e = doc.createElement(name);
 	if (options) {
-		for (prop in options) {
+		for (var prop in options) {
 			if (prop=='text') {
 				e.appendChild(doc.createTextNode(options.text));
 			} else if (prop=='html') {
@@ -1448,11 +1453,32 @@ hui.stop = function(event) {
     event.stopped = true;
 }
 
+hui._defered = [];
+
+hui._ready = document.readyState == 'complete' || document.readyState == 'interactive';
+
+hui.onReady = function(func) {
+	if (hui._ready) {
+		func();
+	} else {
+		hui._defered.push(func);
+	}
+	if (hui._defered.length==1) {
+		hui._onReady(function() {
+  			hui._ready = true;
+			for (var i = 0; i < hui._defered.length; i++) {
+				hui._defered[i]();
+			}
+            hui._defered = null;
+		})
+	}
+}
+
 /**
  * Execute a function when the DOM is ready
  * @param delegate The function to execute
  */
-hui.onReady = function(delegate) {
+hui._onReady = function(delegate) {
 	if(window.addEventListener) {
 		window.addEventListener('DOMContentLoaded',delegate,false);
 	}
@@ -1582,7 +1608,7 @@ hui.request = function(options) {
 			body = new FormData();
 			body.append('file', options.file);
 			if (options.parameters) {
-				for (param in options.parameters) {
+				for (var param in options.parameters) {
 					body.append(param, options.parameters[param]);
 				}
 			}
@@ -1611,7 +1637,7 @@ hui.request = function(options) {
 		body = '';
 	}
 	if (options.headers) {
-		for (name in options.headers) {
+		for (var name in options.headers) {
 			transport.setRequestHeader(name, options.headers[name]);
 		}
 	}
@@ -1648,7 +1674,7 @@ hui.request.isXMLResponse = function(t) {
 hui.request._buildPostBody = function(parameters) {
 	if (!parameters) return null;
 	var output = '';
-	for (param in parameters) {
+	for (var param in parameters) {
 		if (output.length>0) output+='&';
 		output+=encodeURIComponent(param)+'=';
 		if (parameters[param]!==undefined && parameters[param]!==null) {
@@ -1726,7 +1752,7 @@ hui.style = {
 		};
 	},
 	set : function(element,styles) {
-		for (style in styles) {
+		for (var style in styles) {
 			if (style==='transform') {
 				element.style['webkitTransform'] = styles[style];
 			} else if (style==='opacity') {
@@ -2404,10 +2430,22 @@ hui.xml = {
 		} else if (document.implementation && document.implementation.createDocument) {
 			try {
 			  	var pro = new XSLTProcessor();
-			  	pro.importStylesheet(xsl);	
+                pro.setParameter(null,'dev','true');
+                pro.setParameter(null,'profile','true');
+                pro.setParameter(null,'version','true');
+                pro.setParameter(null,'pathVersion','true');
+                pro.setParameter(null,'context','true');
+                pro.setParameter(null,'language','true');
+			  	pro.importStylesheet(xsl);
+/*		'<xsl:variable name="profile">'.$profile.'</xsl:variable>'.
+		'<xsl:variable name="version">'.SystemInfo::getDate().'</xsl:variable>'.
+		'<xsl:variable name="pathVersion">'.$pathVersion.'</xsl:variable>'.
+		'<xsl:variable name="context">'.$context.'</xsl:variable>'.
+		'<xsl:variable name="language">'.InternalSession::getLanguage().'</xsl:variable>';)*/
 				var ownerDocument = document;//.implementation.createDocument("", "test", null); 
 			    return pro.transformToFragment(xml,ownerDocument);				
 			} catch (e) {
+				hui.log('Transform exception...');
 				hui.log(e);
 				throw e;
 			}

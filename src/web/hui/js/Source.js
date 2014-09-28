@@ -5,7 +5,12 @@ hui.ui.Source = function(options) {
 	this.options = hui.override({url:null,dwr:null,parameters:[],lazy:false},options);
 	this.name = options.name;
 	this.data = null;
-	this.parameters = this.options.parameters;
+	this.parameters = [];
+    // Clone parameters so the can be reused
+    for (var i = 0; i < this.options.parameters.length; i++) {
+        var p = this.options.parameters[i]
+        this.parameters.push({key:p.key,value:p.value});
+    }
 	hui.ui.extend(this);
 	if (options.delegate) {
 		this.listen(options.delegate);
@@ -125,7 +130,6 @@ hui.ui.Source.prototype = {
 			args[args.length-1]=function(r) {self.parseDWR(r)};
 			this.busy=true;
 			hui.ui.callDelegates(this,'sourceIsBusy');
-			hui.log(args)
 			facade[method].apply(facade,args);
 		}
 	},

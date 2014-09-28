@@ -124,7 +124,7 @@ hui.defer = function(func,bind) {
  */
 hui.override = function(original,subject) {
 	if (subject) {
-		for (prop in subject) {
+		for (var prop in subject) {
 			original[prop] = subject[prop];
 		}
 	}
@@ -174,6 +174,11 @@ hui.intOrString = function(str) {
 		}
 	}
 	return str;
+}
+
+hui.between = function(min,value,max) {
+	var result = Math.min(max,Math.max(min,value));
+	return isNaN(result) ? min : result;
 }
 
 /**
@@ -890,12 +895,12 @@ hui.build = function(name,options,doc) {
 	var doc = doc || document,
 		e = doc.createElement(name);
 	if (options) {
-		for (prop in options) {
+		for (var prop in options) {
 			if (prop=='text') {
 				e.appendChild(doc.createTextNode(options.text));
 			} else if (prop=='html') {
 				e.innerHTML=options.html;
-			} else if (prop=='parent') {
+			} else if (prop=='parent' && hui.isDefined(options.parent)) {
 				options.parent.appendChild(e);
 			} else if (prop=='parentFirst') {
 				if (options.parentFirst.childNodes.length==0) {
@@ -1448,11 +1453,32 @@ hui.stop = function(event) {
     event.stopped = true;
 }
 
+hui._defered = [];
+
+hui._ready = document.readyState == 'complete' || document.readyState == 'interactive';
+
+hui.onReady = function(func) {
+	if (hui._ready) {
+		func();
+	} else {
+		hui._defered.push(func);
+	}
+	if (hui._defered.length==1) {
+		hui._onReady(function() {
+  			hui._ready = true;
+			for (var i = 0; i < hui._defered.length; i++) {
+				hui._defered[i]();
+			}
+            hui._defered = null;
+		})
+	}
+}
+
 /**
  * Execute a function when the DOM is ready
  * @param delegate The function to execute
  */
-hui.onReady = function(delegate) {
+hui._onReady = function(delegate) {
 	if(window.addEventListener) {
 		window.addEventListener('DOMContentLoaded',delegate,false);
 	}
@@ -1582,7 +1608,7 @@ hui.request = function(options) {
 			body = new FormData();
 			body.append('file', options.file);
 			if (options.parameters) {
-				for (param in options.parameters) {
+				for (var param in options.parameters) {
 					body.append(param, options.parameters[param]);
 				}
 			}
@@ -1611,7 +1637,7 @@ hui.request = function(options) {
 		body = '';
 	}
 	if (options.headers) {
-		for (name in options.headers) {
+		for (var name in options.headers) {
 			transport.setRequestHeader(name, options.headers[name]);
 		}
 	}
@@ -1648,7 +1674,7 @@ hui.request.isXMLResponse = function(t) {
 hui.request._buildPostBody = function(parameters) {
 	if (!parameters) return null;
 	var output = '';
-	for (param in parameters) {
+	for (var param in parameters) {
 		if (output.length>0) output+='&';
 		output+=encodeURIComponent(param)+'=';
 		if (parameters[param]!==undefined && parameters[param]!==null) {
@@ -1726,7 +1752,7 @@ hui.style = {
 		};
 	},
 	set : function(element,styles) {
-		for (style in styles) {
+		for (var style in styles) {
 			if (style==='transform') {
 				element.style['webkitTransform'] = styles[style];
 			} else if (style==='opacity') {
@@ -2404,10 +2430,22 @@ hui.xml = {
 		} else if (document.implementation && document.implementation.createDocument) {
 			try {
 			  	var pro = new XSLTProcessor();
-			  	pro.importStylesheet(xsl);	
+                pro.setParameter(null,'dev','true');
+                pro.setParameter(null,'profile','true');
+                pro.setParameter(null,'version','true');
+                pro.setParameter(null,'pathVersion','true');
+                pro.setParameter(null,'context','true');
+                pro.setParameter(null,'language','true');
+			  	pro.importStylesheet(xsl);
+/*		'<xsl:variable name="profile">'.$profile.'</xsl:variable>'.
+		'<xsl:variable name="version">'.SystemInfo::getDate().'</xsl:variable>'.
+		'<xsl:variable name="pathVersion">'.$pathVersion.'</xsl:variable>'.
+		'<xsl:variable name="context">'.$context.'</xsl:variable>'.
+		'<xsl:variable name="language">'.InternalSession::getLanguage().'</xsl:variable>';)*/
 				var ownerDocument = document;//.implementation.createDocument("", "test", null); 
 			    return pro.transformToFragment(xml,ownerDocument);				
 			} catch (e) {
+				hui.log('Transform exception...');
 				hui.log(e);
 				throw e;
 			}
@@ -2515,7 +2553,7 @@ hui.animate = function(options,property,value,duration,delegate) {
 			item.animate(null,'','',options.duration,options);
 		} else {
 			var o = options;
-			for (prop in options.css) {
+			for (var prop in options.css) {
 				item.animate(null,options.css[prop],prop,options.duration,o);
 				o = hui.override({},options);
 				o.$complete = undefined;
@@ -3155,7 +3193,7 @@ hui.Color = function(str) {
 			processor = color_defs[i].process,
 			bits = re.exec(str);
         if (bits) {
-            channels = processor(bits);
+            var channels = processor(bits);
             this.r = channels[0];
             this.g = channels[1];
             this.b = channels[2];
@@ -3529,20 +3567,6 @@ hui.ui = {
 	}
 }
 
-hui.onReady(function() {
-	hui.listen(window,'resize',hui.ui._resize);
-	hui.ui.reLayout();
-	hui.ui.domReady = true;
-	if (window.parent && window.parent.hui && window.parent.hui.ui) {
-		window.parent.hui.ui._frameLoaded(window);
-	}
-	for (var i=0; i < hui.ui.delayedUntilReady.length; i++) {
-		hui.ui.delayedUntilReady[i]();
-	};
-	// Call super delegates after delayedUntilReady...
-	hui.ui.callSuperDelegates(this,'ready');
-});
-
 /**
  * Get a widget by name
  * @param nameOrWidget {Widget | String} Get a widget by name, if the parameter is already a widget it is returned
@@ -3651,18 +3675,17 @@ hui.ui.confirmOverlay = function(options) {
  * @param widget {Widget} The widget to destroy 
  */
 hui.ui.destroy = function(widget) {
-	var objects = hui.ui.objects;
-	delete(objects[widget.name]);
+    if (typeof(widget.destroy)=='function') {
+        widget.destroy();
+    }
+	delete(hui.ui.objects[widget.name]);
 }
 
 hui.ui.destroyDescendants = function(widgetOrElement) {
 	var desc = hui.ui.getDescendants(widgetOrElement);
 	var objects = hui.ui.objects;
 	for (var i=0; i < desc.length; i++) {
-		var obj  = delete(objects[desc[i].name]);
-		if (!obj) {
-			hui.log('not found: '+desc[i].name);
-		}
+        hui.ui.destroy(desc[i]);
 	};
 }
 
@@ -3749,15 +3772,6 @@ hui.ui.reLayout = function() {
 			obj['$$layout']();
 		}
 	};
-	return;
-	var all = hui.ui.objects,
-		obj;
-	for (key in all) {
-		obj = all[key];
-		if (obj['$$layout']) {
-			obj['$$layout']();
-		}
-	}
 }
 
 
@@ -3868,7 +3882,7 @@ hui.ui.getText = function(key) {
 }
 
 hui.ui.getTranslated = function(value) {
-	if (!hui.isDefined(value) || hui.isString(value)) {
+	if (!hui.isDefined(value) || hui.isString(value) || typeof(value) == 'number') {
 		return value;
 	}
 	if (value[hui.ui.language]) {
@@ -3877,7 +3891,7 @@ hui.ui.getTranslated = function(value) {
 	if (value[null]) {
 		return value[null];
 	}
-	for (key in value) {
+	for (var key in value) {
 		return value[key];
 	}
 }
@@ -4209,6 +4223,13 @@ hui.ui.extend = function(obj,options) {
 			return this.element;
 		}
 	}
+	if (!obj.destroy) {
+		obj.destroy = function() {
+            if (this.element) {
+                hui.dom.remove(this.element)
+            }
+		}
+	}
 	if (!obj.valueForProperty) {
 		obj.valueForProperty = function(p) {return this[p]};
 	}
@@ -4236,7 +4257,7 @@ hui.ui.callDescendants = function(obj,method,value,event) {
 	var d = hui.ui.getDescendants(obj);
 	for (var i=0; i < d.length; i++) {
 		if (d[i][method]) {
-			thisResult = d[i][method](value,event);
+			d[i][method](value,event);
 		}
 	};
 };
@@ -4562,6 +4583,22 @@ hui.ui.require = function(names,func) {
 	};
 	hui.require(names,func);
 }
+
+
+
+hui.onReady(function() {
+	hui.listen(window,'resize',hui.ui._resize);
+	hui.ui.reLayout();
+	hui.ui.domReady = true;
+	if (window.parent && window.parent.hui && window.parent.hui.ui) {
+		window.parent.hui.ui._frameLoaded(window);
+	}
+	for (var i=0; i < hui.ui.delayedUntilReady.length; i++) {
+		hui.ui.delayedUntilReady[i]();
+	};
+	// Call super delegates after delayedUntilReady...
+	hui.ui.callSuperDelegates(this,'ready');
+});
 
 /* EOF */
 
@@ -5389,7 +5426,7 @@ hui.ui.Overlay.prototype = {
 			hui.style.set(this.element,{display : 'block',opacity : 0});
 			hui.animate(this.element,'opacity',1,150);
 		}
-		var zIndex = hui.ui.nextAlertIndex();
+		var zIndex = options.zIndex === undefined ? options.zIndex : hui.ui.nextAlertIndex();
 		if (this.options.modal) {
 			this.element.style.zIndex = hui.ui.nextAlertIndex();
 			hui.ui.showCurtain({ widget : this, zIndex : zIndex });
@@ -5468,7 +5505,7 @@ hui.ui.Overlay.prototype = {
  * }
  *
  * <strong>Events:</strong>
- * $click(button) - When the button is clicked (and possibly confirmed)
+ * $click(button) - When the button is clicked (and confirmed)
  * </pre>
  * @param options {Object} The options
  * @constructor
@@ -5483,7 +5520,7 @@ hui.ui.Button = function(options) {
 	if (options.listener) {
 		this.listen(options.listener);
 	}
-}
+};
 
 /**
  * Creates a new button
@@ -5497,7 +5534,9 @@ hui.ui.Button = function(options) {
  *  name : «String»,
  *  data : «Object»,
  *  confirm : {text : «String», okText : «String», cancelText : «String»},
- *  submit : «Boolean»
+ *  submit : «Boolean»,
+ *
+ *  listener : «Object»
  * }
  * </pre>
  */
@@ -5532,7 +5571,7 @@ hui.ui.Button.create = function(options) {
 		hui.dom.addText(inner,text);
 	}
 	return new hui.ui.Button(options);
-}
+};
 
 hui.ui.Button.prototype = {
 	_attach : function() {
@@ -5635,7 +5674,7 @@ hui.ui.Button.prototype = {
 	getData : function() {
 		return this.options.data;
 	}
-}
+};
 
 ////////////////////////////////// Buttons /////////////////////////////
 
@@ -5645,15 +5684,15 @@ hui.ui.Buttons = function(options) {
 	this.element = hui.get(options.element);
 	this.body = hui.get.firstByClass(this.element,'hui_buttons_body');
 	hui.ui.extend(this);
-}
+};
 
 hui.ui.Buttons.create = function(options) {
 	options = hui.override({top:0},options);
 	var e = options.element = hui.build('div',{'class':'hui_buttons'});
-	if (options.align=='right') {
+	if (options.align==='right') {
 		hui.cls.add(e,'hui_buttons_right');
 	}
-	if (options.align=='center') {
+	if (options.align==='center') {
 		hui.cls.add(e,'hui_buttons_center');
 	}
 	if (options.top > 0) {
@@ -5661,14 +5700,14 @@ hui.ui.Buttons.create = function(options) {
 	}
 	hui.build('div',{'class':'hui_buttons_body',parent:e});
 	return new hui.ui.Buttons(options);
-}
+};
 
 hui.ui.Buttons.prototype = {
 	add : function(widget) {
 		this.body.appendChild(widget.element);
 		return this;
 	}
-}
+};
 
 /* EOF */
 

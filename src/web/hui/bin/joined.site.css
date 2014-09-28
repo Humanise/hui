@@ -628,6 +628,9 @@ div.hui_buttons_center a.hui_button
 	margin: 0px 1px 0px 1px;
 }
 
+
+/**************** Standard button ************/
+
 a.hui_button
 {
 	background: url('../gfx/button.png') top left no-repeat;
@@ -1319,7 +1322,7 @@ textarea.hui_formula_text::-webkit-scrollbar
 textarea.hui_formula_text::-webkit-scrollbar-thumb
 {
     background: #ccc -webkit-gradient(linear, 0% 0%, 100% 0%, from(#fff), to(rgb(240, 240, 240)));  
-    -webkit-border-radius: 7px;
+    border-radius: 7px;
 	border: 1px solid #ddd;
 }
 

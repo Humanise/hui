@@ -9,7 +9,7 @@
  * }
  *
  * <strong>Events:</strong>
- * $click(button) - When the button is clicked (and possibly confirmed)
+ * $click(button) - When the button is clicked (and confirmed)
  * </pre>
  * @param options {Object} The options
  * @constructor
@@ -24,7 +24,7 @@ hui.ui.Button = function(options) {
 	if (options.listener) {
 		this.listen(options.listener);
 	}
-}
+};
 
 /**
  * Creates a new button
@@ -38,7 +38,9 @@ hui.ui.Button = function(options) {
  *  name : «String»,
  *  data : «Object»,
  *  confirm : {text : «String», okText : «String», cancelText : «String»},
- *  submit : «Boolean»
+ *  submit : «Boolean»,
+ *
+ *  listener : «Object»
  * }
  * </pre>
  */
@@ -73,7 +75,7 @@ hui.ui.Button.create = function(options) {
 		hui.dom.addText(inner,text);
 	}
 	return new hui.ui.Button(options);
-}
+};
 
 hui.ui.Button.prototype = {
 	_attach : function() {
@@ -176,7 +178,7 @@ hui.ui.Button.prototype = {
 	getData : function() {
 		return this.options.data;
 	}
-}
+};
 
 ////////////////////////////////// Buttons /////////////////////////////
 
@@ -186,15 +188,15 @@ hui.ui.Buttons = function(options) {
 	this.element = hui.get(options.element);
 	this.body = hui.get.firstByClass(this.element,'hui_buttons_body');
 	hui.ui.extend(this);
-}
+};
 
 hui.ui.Buttons.create = function(options) {
 	options = hui.override({top:0},options);
 	var e = options.element = hui.build('div',{'class':'hui_buttons'});
-	if (options.align=='right') {
+	if (options.align==='right') {
 		hui.cls.add(e,'hui_buttons_right');
 	}
-	if (options.align=='center') {
+	if (options.align==='center') {
 		hui.cls.add(e,'hui_buttons_center');
 	}
 	if (options.top > 0) {
@@ -202,13 +204,13 @@ hui.ui.Buttons.create = function(options) {
 	}
 	hui.build('div',{'class':'hui_buttons_body',parent:e});
 	return new hui.ui.Buttons(options);
-}
+};
 
 hui.ui.Buttons.prototype = {
 	add : function(widget) {
 		this.body.appendChild(widget.element);
 		return this;
 	}
-}
+};
 
 /* EOF */

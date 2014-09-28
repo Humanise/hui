@@ -90,7 +90,7 @@
 			<xsl:choose>
 				<xsl:when test="$dev='true'">
 					<script type="text/javascript">
-						_context = '<xsl:value-of select="$context"/>/hui/';
+						_context = '<xsl:value-of select="$context"/>/hui';
 					</script>
 					<script src="{$context}/hui/bin/development.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 				</xsl:when>
@@ -128,6 +128,10 @@
 			<xsl:if test="//gui:pages">
 				<link rel="stylesheet" href="{$context}/hui/{$pathVersion}css/pages.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
 				<script src="{$context}/hui/{$pathVersion}js/Pages.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+			</xsl:if>
+			<xsl:if test="//gui:object-input">
+				<link rel="stylesheet" href="{$context}/hui/{$pathVersion}css/objectinput.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
+				<script src="{$context}/hui/{$pathVersion}js/ObjectInput.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
 			</xsl:if>
 	
 			<xsl:for-each select="gui:localize[@source]">
@@ -1253,7 +1257,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
 					<xsl:text> hui_segmented_</xsl:text><xsl:value-of select="@variant"/>
 				</xsl:if>
 				<xsl:if test="not(@variant)">
-					<xsl:text> hui_segmented_standard</xsl:text><xsl:value-of select="@variant"/>
+					<xsl:text> hui_segmented_standard</xsl:text>
 				</xsl:if>
 			</xsl:attribute>
 			<xsl:for-each select="gui:item">

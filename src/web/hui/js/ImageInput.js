@@ -10,17 +10,20 @@ hui.ui.ImageInput = function(options) {
 	this.value = null;
 	this.thumbnailsLoaded = false;
 	hui.ui.extend(this);
-	this._addBehavior();
+	this._attach();
 }
 
 hui.ui.ImageInput.prototype = {
-	_addBehavior : function() {
+	_attach : function() {
 		hui.listen(this.element,'click',this._showPicker.bind(this));
+		hui.listen(hui.get.firstByTag(this.element,'a'),'click',this._clear.bind(this));
 	},
+    /** @Deprecated */
 	setObject : function(obj) {
 		this.value = obj;
 		this._updateUI();
 	},
+    /** @Deprecated */
 	getObject : function() {
 		return this.value;
 	},
@@ -30,11 +33,16 @@ hui.ui.ImageInput.prototype = {
 	setValue : function(obj) {
 		this.setObject(obj);
 	},
+	_clear : function(e) {
+		hui.stop(e);
+		this.reset();
+	},
 	reset : function() {
 		this.value = null;
 		this._updateUI();
 	},
 	_updateUI : function() {
+		hui.cls.set(this.element,'hui_imageinput_full',this.value!==null);
 		if (this.value==null) {
 			this.element.style.backgroundImage = '';
 		} else {
@@ -94,7 +102,7 @@ hui.ui.ImageInput.prototype = {
 	_hidePicker : function() {
 		this.picker.hide();
 	},
-		/** @private */
+    /** @private */
 	$visibilityChanged : function() {
 		if (this.picker && !hui.dom.isVisible(this.element)) {
 			this.picker.hide();
@@ -123,7 +131,10 @@ hui.ui.ImageInput.prototype = {
 			var id = parseInt(images[i].getAttribute('id'));
 			var img = {id:id};
 			var url = hui.ui.resolveImageUrl(this,img,48,48);
-			var thumb = hui.build('div',{'class':'hui_imageinput_thumbnail',style:'background-image:url('+url+')'});
+			var thumb = hui.build('div',{
+                'class' : 'hui_imageinput_thumbnail',
+                style : 'background-image:url('+url+')'
+            });
 			thumb.huiObject = {'id':id};
 			thumb.onclick = function() {
 				self.setObject(this.huiObject);

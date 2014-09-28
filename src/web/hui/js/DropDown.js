@@ -262,6 +262,7 @@ hui.ui.DropDown.prototype = {
 			hui.listen(e,'mousedown',function(e) {
 				hui.stop(e);
 				self._itemClicked(item,i);
+				hui.listenOnce(document.body,'mouseup',function(e) {hui.stop(e)});
 			})
 			if (i==self.index) {
 				hui.cls.add(e,'hui_selected')
@@ -284,5 +285,11 @@ hui.ui.DropDown.prototype = {
 		hui.ui.callAncestors(this,'childValueChanged',this.value);
 		this.fire('valueChanged',this.value);
 		hui.ui.firePropertyChange(this,'value',this.value);
-	}
+	},
+    destroy : function() {
+        hui.dom.remove(this.element);
+        if (this.selector) {
+            hui.dom.remove(this.selector);
+        }
+    }
 }

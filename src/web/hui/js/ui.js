@@ -30,20 +30,6 @@ hui.ui = {
 	}
 }
 
-hui.onReady(function() {
-	hui.listen(window,'resize',hui.ui._resize);
-	hui.ui.reLayout();
-	hui.ui.domReady = true;
-	if (window.parent && window.parent.hui && window.parent.hui.ui) {
-		window.parent.hui.ui._frameLoaded(window);
-	}
-	for (var i=0; i < hui.ui.delayedUntilReady.length; i++) {
-		hui.ui.delayedUntilReady[i]();
-	};
-	// Call super delegates after delayedUntilReady...
-	hui.ui.callSuperDelegates(this,'ready');
-});
-
 /**
  * Get a widget by name
  * @param nameOrWidget {Widget | String} Get a widget by name, if the parameter is already a widget it is returned
@@ -152,18 +138,17 @@ hui.ui.confirmOverlay = function(options) {
  * @param widget {Widget} The widget to destroy 
  */
 hui.ui.destroy = function(widget) {
-	var objects = hui.ui.objects;
-	delete(objects[widget.name]);
+    if (typeof(widget.destroy)=='function') {
+        widget.destroy();
+    }
+	delete(hui.ui.objects[widget.name]);
 }
 
 hui.ui.destroyDescendants = function(widgetOrElement) {
 	var desc = hui.ui.getDescendants(widgetOrElement);
 	var objects = hui.ui.objects;
 	for (var i=0; i < desc.length; i++) {
-		var obj  = delete(objects[desc[i].name]);
-		if (!obj) {
-			hui.log('not found: '+desc[i].name);
-		}
+        hui.ui.destroy(desc[i]);
 	};
 }
 
@@ -250,15 +235,6 @@ hui.ui.reLayout = function() {
 			obj['$$layout']();
 		}
 	};
-	return;
-	var all = hui.ui.objects,
-		obj;
-	for (key in all) {
-		obj = all[key];
-		if (obj['$$layout']) {
-			obj['$$layout']();
-		}
-	}
 }
 
 
@@ -369,7 +345,7 @@ hui.ui.getText = function(key) {
 }
 
 hui.ui.getTranslated = function(value) {
-	if (!hui.isDefined(value) || hui.isString(value)) {
+	if (!hui.isDefined(value) || hui.isString(value) || typeof(value) == 'number') {
 		return value;
 	}
 	if (value[hui.ui.language]) {
@@ -378,7 +354,7 @@ hui.ui.getTranslated = function(value) {
 	if (value[null]) {
 		return value[null];
 	}
-	for (key in value) {
+	for (var key in value) {
 		return value[key];
 	}
 }
@@ -710,6 +686,13 @@ hui.ui.extend = function(obj,options) {
 			return this.element;
 		}
 	}
+	if (!obj.destroy) {
+		obj.destroy = function() {
+            if (this.element) {
+                hui.dom.remove(this.element)
+            }
+		}
+	}
 	if (!obj.valueForProperty) {
 		obj.valueForProperty = function(p) {return this[p]};
 	}
@@ -737,7 +720,7 @@ hui.ui.callDescendants = function(obj,method,value,event) {
 	var d = hui.ui.getDescendants(obj);
 	for (var i=0; i < d.length; i++) {
 		if (d[i][method]) {
-			thisResult = d[i][method](value,event);
+			d[i][method](value,event);
 		}
 	};
 };
@@ -1063,5 +1046,21 @@ hui.ui.require = function(names,func) {
 	};
 	hui.require(names,func);
 }
+
+
+
+hui.onReady(function() {
+	hui.listen(window,'resize',hui.ui._resize);
+	hui.ui.reLayout();
+	hui.ui.domReady = true;
+	if (window.parent && window.parent.hui && window.parent.hui.ui) {
+		window.parent.hui.ui._frameLoaded(window);
+	}
+	for (var i=0; i < hui.ui.delayedUntilReady.length; i++) {
+		hui.ui.delayedUntilReady[i]();
+	};
+	// Call super delegates after delayedUntilReady...
+	hui.ui.callSuperDelegates(this,'ready');
+});
 
 /* EOF */

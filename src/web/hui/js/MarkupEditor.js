@@ -4,17 +4,17 @@
  */
 hui.ui.MarkupEditor = function(options) {
 	this.name = options.name;
-	this.options = hui.override({debug:false,value:'',autoHideToolbar:true},options);
-	if (this.options.replace) {
-		this.options.replace = hui.get(options.replace);
-		this.options.element = hui.build('div',{className:'hui_markupeditor '+this.options.replace.className});
-		this.options.replace.parentNode.insertBefore(this.options.element,this.options.replace);
-		this.options.replace.style.display='none';
-		this.options.value = this.options.replace.innerHTML;
+	this.options = options = hui.override({debug:false,value:'',autoHideToolbar:true},options);
+	if (options.replace) {
+		options.replace = hui.get(options.replace);
+		options.element = hui.build('div',{'class':'hui_markupeditor '+options.replace.className});
+		options.replace.parentNode.insertBefore(options.element,options.replace);
+		options.replace.style.display='none';
+		options.value = this.options.replace.innerHTML;
 	}
 	this.ready = false;
 	this.pending = [];
-	this.element = hui.get(this.options.element);
+	this.element = hui.get(options.element);
 	if (hui.browser.msie) {
 		this.impl = hui.ui.MarkupEditor.MSIE;
 	} else {
@@ -25,8 +25,8 @@ hui.ui.MarkupEditor = function(options) {
         controller : this,
         $ready : this._ready.bind(this)
     });
-	if (this.options.value) {
-		this.setValue(this.options.value);
+	if (options.value) {
+		this.setValue(options.value);
 	}
 	hui.ui.extend(this);
 }
@@ -70,7 +70,7 @@ hui.ui.MarkupEditor.prototype = {
 		this.temporaryLink = null;
 		this._valueChanged();
         this._refreshInfoWindow();
-        this.bar.setBlock(this._getFirstBlock());
+        this.bar && this.bar.setBlock(this._getFirstBlock());
     },
     _getFirstBlock : function() {
         var path = this.impl.getPath();
@@ -87,10 +87,15 @@ hui.ui.MarkupEditor.prototype = {
 	/** Remove the widget from the DOM */
 	destroy : function() {
 		hui.dom.remove(this.element);
-		hui.ui.destroy(this);
 		if (this.options.replace) {
 			this.options.replace.style.display='';
 		}
+        var dest = ['colorPicker','_infoWindow','bar','impl'];
+        for (var i = dest.length - 1; i >= 0; i--) {
+            if (this[dest[i]]) {
+                this[dest[i]].destroy();
+            }
+        }
 	},
     
 	/** Get the HTML value */
@@ -143,11 +148,13 @@ hui.ui.MarkupEditor.prototype = {
 		this._valueChanged();
         this._refreshInfoWindow();
 		this.impl.restoreSelection();
+		this.impl._selectionChanged();
 	},
     _changeBlock : function(tag) {
         var block = this._getFirstBlock();
         if (block) {
-            hui.dom.changeTag(block,tag);            
+            block = hui.dom.changeTag(block,tag);
+			this.impl.selectNode(block);
         }
     },
 	_showColorPicker : function() {
@@ -183,19 +190,17 @@ hui.ui.MarkupEditor.prototype = {
 				$changed : function() {
 					this._highlightNode(null)
 					this.temporaryLink = null;
-					hui.log('success');
 					this._valueChanged();
 				}.bind(this),
 				$cancel : function() {
 					this._highlightNode(null)
-					hui.log('cancelled');
 					this.temporaryLink = null;
 					this._valueChanged();
 				}.bind(this),
                 $remove : function() {
                     // TODO: Standardise this
                     this.impl._unWrap(this.temporaryLink);
-                    this._refreshInfoWindow();
+					this.impl._selectionChanged();
                 }.bind(this)
 			});
 		} else if (!this.linkEditor) {
@@ -340,6 +345,9 @@ hui.ui.MarkupEditor.Bar.prototype = {
         if (value) {
             this.blockSelector.setValue(value.tagName.toLowerCase());            
         }
+    },
+    destroy : function() {
+        this.bar.destroy();
     }
 }
 
@@ -372,11 +380,14 @@ hui.ui.MarkupEditor.Info.prototype = {
     updatePath : function(path) {
         var html = '';
         for (var i = path.length - 1; i >= 0; i--) {
-            html+='<a data-index="' + i + '">' + path[i].tagName + '<a> ';
+            html+='<a data-index="' + i + '" href="javascript://">' + path[i].tagName + '</a> ';
         }
         this._path.innerHTML = html;
         this.tag = path[0];
-        this._css.setValue(this.tag.getAttribute('style'));
+        this._css.setValue(this.tag ? this.tag.getAttribute('style') : '');
+    },
+    destroy : function() {
+        this._window.destroy();
     }
 }
 
@@ -400,8 +411,8 @@ hui.ui.MarkupEditor.webkit = {
 		hui.listen(this.element,'blur',function() {
 			ctrl.implBlurred();
 		});
-		hui.listen(this.element,'keyup',this._keyUp.bind(this));
-		hui.listen(this.element,'mouseup',this._selectionChanged.bind(this));
+		hui.listen(this.element,'keyup',this._change.bind(this));
+		hui.listen(this.element,'mouseup',this._change.bind(this));
 		options.$ready();
 	},
 	saveSelection : function() {
@@ -413,6 +424,7 @@ hui.ui.MarkupEditor.webkit = {
 	focus : function() {
 		this.element.focus();
         this._selectionChanged();
+        this.controller.implFocused();
 	},
 	format : function(info) {
 		if (info.key=='strong' || info.key=='em') {
@@ -424,14 +436,17 @@ hui.ui.MarkupEditor.webkit = {
             var node = this._getSelectedNode();
             if (node.tagName=='B') {
                 node = hui.dom.changeTag(node,'strong');
-        		var selection = window.getSelection();
-    			selection.selectAllChildren(node);
+				this.selectNode(node);
             } else if (node.tagName=='I') {
                 node = hui.dom.changeTag(node,'em');
-        		var selection = window.getSelection();
-    			selection.selectAllChildren(node);
+				this.selectNode(node);
             }
+			this.controller._valueChanged();
 		}
+        this._selectionChanged();
+	},
+	selectNode : function(node) {
+		window.getSelection().selectAllChildren(node);
         this._selectionChanged();
 	},
 	getOrCreateLink : function() {
@@ -440,6 +455,7 @@ hui.ui.MarkupEditor.webkit = {
 			return node;
 		}
 		document.execCommand('createLink',null,'#');
+        this._selectionChanged();
 		return this._getSelectedNode();
 	},
 	_getSelectedNode : function() {
@@ -466,10 +482,11 @@ hui.ui.MarkupEditor.webkit = {
 	align : function(value) {
 		var x = {center:'justifycenter',justify:'justifyfull',left:'justifyleft',right:'justifyright'};
 		document.execCommand(x[value],null,null);
+        this._updateInlinePanel();
 	},
-	_keyUp : function() {
+	_change : function() {
 		this.controller.implValueChanged();
-		this._selectionChanged();
+		this._selectionChanged();		
 	},
 	_wrapInTag : function(tag) {
 		var selection = window.getSelection();
@@ -519,27 +536,29 @@ hui.ui.MarkupEditor.webkit = {
 		}
         return ancestor;
     },
+	_buildInlinePanel : function() {
+        this._inlinePanel = hui.ui.BoundPanel.create({variant:'light'});
+        var content = hui.build('div',{
+            'class' : 'hui_markupeditor_inlinepanel',
+            html : '<a href="javascript://" data="bold"><strong>Bold</strong></a><a href="javascript://" data="italic"><em>Italic</em></a>'
+        });
+        hui.listen(content,'mousedown',function(e) {
+            e = hui.event(e);
+            e.stop();
+            var a = e.findByTag('a');
+            if (a) {
+                this.saveSelection();
+                this.format({key:a.getAttribute('data')})
+                this.restoreSelection();
+				this._selectionChanged();
+            }
+        }.bind(this))
+        this._inlinePanel.add(content);
+	},
     _updateInlinePanel : function() {
 		var selection = window.getSelection();
-        if(!this._inlinePanel) {
-            this._inlinePanel = hui.ui.BoundPanel.create({variant:'light'});
-            var content = hui.build('div',{
-                'class' : 'hui_markupeditor_inlinepanel',
-                html : '<a href="javascript://" data="bold"><strong>Bold</strong></a><a href="javascript://" data="italic"><em>Italic</em></a>'
-            });
-            hui.listen(content,'mousedown',function(e) {
-                e = hui.event(e);
-                e.stop();
-                var a = e.findByTag('a');
-                if (a) {
-                    this.saveSelection();
-                    this.format({key:a.getAttribute('data')})
-                    this.restoreSelection();
-                }
-            }.bind(this))
-            this._inlinePanel.add(content);
-        }
-		if (selection.rangeCount<1) {
+		this._inlinePanel || this._buildInlinePanel();
+		if (selection.rangeCount < 1) {
             this._inlinePanel.hide();
             return;
         }
@@ -549,7 +568,7 @@ hui.ui.MarkupEditor.webkit = {
             return;            
         }
         var rects = range.getClientRects();
-        if (rects.length>0) {
+        if (rects.length > 0) {
             var rect = rects[0];
             this._inlinePanel.position({rect:rect,position:'vertical'});
             this._inlinePanel.show();
@@ -557,15 +576,31 @@ hui.ui.MarkupEditor.webkit = {
         
     },
 	_selectionChanged : function() {
+		var sel = window.getSelection();
+		var hash = this._hash(sel);
+		var node = sel.anchorNode ? sel.anchorNode.parentNode : null;
+		var latest = this._latestSelection;
+		if (latest) {
+			if (node == latest.node && latest.hash == hash) {
+				return;
+			}
+		}
+		this._latestSelection = {node:node,hash:hash};
         var path = [],
             tag = this._getAncestor();
-        while (tag !== this.element) {
+        while (tag && tag !== this.element) {
             path.push(tag);
             tag = tag.parentNode;
         }
         this.path = path;
         this.controller.implSelectionChanged();
         this._updateInlinePanel();
+	},
+	_storeSelection : function(selection) {
+		
+	},
+	_hash : function(sel) {
+		return sel.anchorOffset+':'+sel.baseOffset+':'+sel.extentOffset;
 	},
 	removeFormat : function() {
 		document.execCommand('removeFormat',null,null);
@@ -580,6 +615,11 @@ hui.ui.MarkupEditor.webkit = {
 	},
     getPath : function() {
         return this.path;
+    },
+    destroy : function() {
+        if (this._inlinePanel) {
+            this._inlinePanel.destroy();
+        }
     }
 }
 
@@ -679,6 +719,9 @@ hui.ui.MarkupEditor.MSIE = {
 	},
     getPath : function() {
         return [];
+    },
+    destroy : function() {
+        
     }
 }
 

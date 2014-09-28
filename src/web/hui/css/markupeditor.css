@@ -13,14 +13,26 @@ div.hui_markupeditor
 	border-radius: 3px;
 }
 
-div.hui_markupeditor_path
+.hui_markupeditor_path
 {
 	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
-    font-size: 12px;
+    font-size: 0;
+	text-align: left;
 }
 
-div.hui_markupeditor_inlinepanel a
+.hui_markupeditor_path a {
+    display: inline-block;
+    height: 18px;
+    line-height: 18px;
+    padding: 0 3px;
+    font-size: 12px;
+    color: #333;
+    text-decoration: none;
+}
+
+.hui_markupeditor_inlinepanel a
 {
+	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
     color: #333;
     padding: 3px 5px;
     display: inline-block;

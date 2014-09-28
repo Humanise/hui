@@ -16,6 +16,9 @@ hui.ui.Window = function(options) {
 	this.visible = false;
 	hui.ui.extend(this);
 	this._addBehavior();
+	if (options.listener) {
+		this.listen(options.listener);
+	}
 }
 
 hui.ui.Window.create = function(options) {
@@ -28,6 +31,7 @@ hui.ui.Window.create = function(options) {
 	html+='<span class="hui_window_title">'+hui.ui.getTranslated(options.title)+'</span></div></div></div>'+
 		'<div class="hui_window_content"><div class="hui_window_content"><div class="hui_window_body" style="'+
 		(options.width ? 'width:'+options.width+'px;':'')+
+		(options.height ? 'height:'+options.height+'px;':'')+
 		(options.padding ? 'padding:'+options.padding+'px;':'')+
 		(options.padding ? 'padding-bottom:'+Math.max(0,options.padding-2)+'px;':'')+
 		'">'+
@@ -50,7 +54,7 @@ hui.ui.Window.prototype = {
 		if (this.close) {
 			hui.listen(this.close,'click',function(e) {
 				this.hide();
-				this.fire('userClosedWindow');
+				this.fire('userClosedWindow'); // TODO maybe rename to closeByUser
 			}.bind(this));
 			hui.listen(this.close,'mousedown',function(e) {hui.stop(e)});
 		}
@@ -66,7 +70,7 @@ hui.ui.Window.prototype = {
 		});
 	},
 	setTitle : function(title) {
-		hui.dom.setText(this.title,title);
+		hui.dom.setText(this.title,hui.ui.getTranslated(title));
 	},
 	_positionInView : function() {
 		var scrollTop = hui.window.getScrollTop();
@@ -196,7 +200,10 @@ hui.ui.Window.prototype = {
 	_onAfterMove : function() {
 		hui.ui.callDescendants(this,'$$parentMoved');
 		hui.cls.remove(this.element,'hui_window_dragging');
-	}
+	},
+    destroy : function() {
+        hui.dom.remove(this.element);
+    }
 }
 
 /* EOF */

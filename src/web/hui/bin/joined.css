@@ -308,6 +308,9 @@ div.hui_buttons_center a.hui_button
 	margin: 0px 1px 0px 1px;
 }
 
+
+/**************** Standard button ************/
+
 a.hui_button
 {
 	background: url('../gfx/button.png') top left no-repeat;
@@ -1087,7 +1090,7 @@ textarea.hui_formula_text::-webkit-scrollbar
 textarea.hui_formula_text::-webkit-scrollbar-thumb
 {
     background: #ccc -webkit-gradient(linear, 0% 0%, 100% 0%, from(#fff), to(rgb(240, 240, 240)));  
-    -webkit-border-radius: 7px;
+    border-radius: 7px;
 	border: 1px solid #ddd;
 }
 
@@ -3045,8 +3048,7 @@ div.hui_list_selection a
 	margin-top: 4px;
 	line-height: 16px;
 	padding: 0px 4px;
-	-webkit-border-radius: 4px;
-	-moz-border-radius: 4px;
+    border-radius: 4px;
 }
 
 div.hui_list_selection span
@@ -3416,6 +3418,8 @@ div.hui_selection
 	min-height: 18px;
 	padding: 1px 5px 1px 6px;
 	overflow: hidden;
+	word-break: break-word;
+	word-wrap: break-word;
 }
 
 div.hui_selection span.hui_disclosure
@@ -3443,8 +3447,6 @@ strong.hui_selection_badge
 	color: #fff;
 	font-size: 11px;
 	padding: 0 4px;
-	-moz-border-radius: 8px;
-	-webkit-border-radius: 7px;
 	border-radius: 7px;
 	min-width: 10px;
 	text-align: center;
@@ -3578,8 +3580,9 @@ div.hui_window_dark .hui_selection_item span
 	margin-top: 4px;
 }
 
-div.hui_imageinput
+.hui_imageinput
 {
+	display: inline-block;
 	width: 50px;
 	height: 50px;
 	border: 1px solid #ddd;
@@ -3587,6 +3590,33 @@ div.hui_imageinput
 	background: #fff center center no-repeat;
 	margin-top: 2px;
 	padding: 1px;
+	position: relative;
+}
+
+.hui_imageinput:focus
+{
+	outline: none;
+	border-color: #2678ff;
+	outline: 4px auto #2678ff;
+}
+
+.hui_imageinput_clear {
+	position: absolute;
+	width: 16px;
+	height: 16px;
+	background: url('../icons/common/delete16.png');
+	top:-8px;
+	right: -8px;
+	display: none;
+	outline: none;
+}
+
+.hui_imageinput_clear:hover {
+	background-position: 0 -16px;
+}
+
+.hui_imageinput_full:hover > .hui_imageinput_clear {
+	display: block;
 }
 
 .hui_imageinput_thumbs
@@ -4240,9 +4270,7 @@ div.hui_menu
 	background: #fff;
 	background: rgba(255,255,255,.95);
 	border: 1px solid #bbb;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-	-ms-border-radius: 5px;
+    border-radius: 5px;
 	border-radius: 5px;
 	-webkit-box-shadow: 0px 2px 5px rgba(0,0,0,.15);
 	-moz-box-shadow: 0px 2px 5px rgba(0,0,0,.15);
@@ -4834,11 +4862,9 @@ table.hui_calendar_weekview div.hui_calendar_event
 	border: 1px solid #acbbd4;
 	width: 100%;
 	margin-left: -1px;
-	/*-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;*/
+	-moz-box-sizing: border-box;
 	box-sizing: border-box;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
+	border-radius: 5px;
 	color: #112039;
 	font-size: 9pt;
 	line-height: 12px;
@@ -6323,8 +6349,6 @@ span.hui_segmented a
 	text-decoration: none;
 	color: #333;
 	padding: 0 3px;
-	-moz-border-radius: 2px;
-	-webkit-border-radius: 2px;
 	border-radius: 2px;
 	outline: none;
 }
@@ -6945,9 +6969,9 @@ input.hui_tokenfield_token
 	width: 50px;
 	margin: 0 5px 5px 0;
 	padding: 1px 0px;
-	-moz-border-radius: 2px;
-	-webkit-border-radius: 2px;
+    border-radius: 2px;
 	-webkit-box-shadow: inset 0 1px 3px #ddd;
+    box-shadow: inset 0 1px 3px #ddd;
 	font-size: 9pt;
 	text-indent: 2px;
 }
@@ -7498,18 +7522,18 @@ div.hui_codeinput textarea:focus
 }
 
 
-div.hui_objectinput
+div.hui_linkinput
 {
 	position: relative;
 	font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
 }
 
-div.hui_objectinput_busy
+div.hui_linkinput_busy
 {
 	opacity: .5;
 }
 
-span.hui_objectinput_body
+span.hui_linkinput_body
 {
 	margin-left: 106px;
 	position: absolute;
@@ -7519,7 +7543,7 @@ span.hui_objectinput_body
 	height: 23px;
 }
 
-div.hui_objectinput input
+div.hui_linkinput input
 {
 	box-sizing: border-box;
 	-moz-box-sizing: border-box;
@@ -7538,18 +7562,18 @@ div.hui_objectinput input
 	width: 100%;
 }
 
-div.hui_objectinput a.hui_dropdown
+div.hui_linkinput a.hui_dropdown
 {
 	width: 100px;
 }
 
-span.hui_objectinput_object
+span.hui_linkinput_object
 {
 	margin-top: 3px;
 	display: inline-block;
 }
 
-span.hui_objectinput_title
+span.hui_linkinput_title
 {
 	font-size: 12px;
 	margin-left: 3px;
@@ -7732,18 +7756,37 @@ div.hui_markupeditor
 	border-radius: 3px;
 }
 
-div.hui_markupeditor_path
+.hui_markupeditor_path
 {
 	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
-    font-size: 12px;
+    font-size: 0;
+	text-align: left;
 }
 
-div.hui_markupeditor_inlinepanel a
+.hui_markupeditor_path a {
+    display: inline-block;
+    height: 18px;
+    line-height: 18px;
+    padding: 0 3px;
+    font-size: 12px;
+    color: #333;
+    text-decoration: none;
+}
+
+.hui_markupeditor_inlinepanel a
 {
+	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
     color: #333;
     padding: 3px 5px;
     display: inline-block;
     font-size: 12px;
     text-decoration: none;
+}
+
+.hui_objectinput_text {
+    font-size: 12px;
+    display: inline-block;
+    vertical-align: middle;
+	line-height: 16px;
 }
 
