@@ -40,6 +40,9 @@ public class MemberService {
 		if (!Strings.isNotBlank(password)) {
 			throw new IllegalRequestException("Password is not provided","noPassword");
 		}
+		if (!ValidationUtil.isValidPassword(password)) {
+			throw new IllegalRequestException("Password is not valid","invalidPassword");
+		}
 	}
 
 	public void validateNewMember(String username, String password, String fullName, String email) throws IllegalRequestException {
@@ -66,6 +69,16 @@ public class MemberService {
 
 	public User signUp(UserSession session, String username, String password, String fullName, String email) throws EndUserException {
 
+		User user = createMember(session, username, password, fullName, email);
+
+		securityService.changeUser(session, username, password);
+
+		return user;
+	}
+
+	public User createMember(UserSession session, String username,
+			String password, String fullName, String email)
+			throws IllegalRequestException, EndUserException, ModelException {
 		validateNewMember(username, password, fullName, email);
 		
 		User existing = modelService.getUser(username);
@@ -79,35 +92,32 @@ public class MemberService {
 		user.setPassword(password);
 		modelService.createItem(user, session);
 
-		securityService.changeUser(session, username, password);
-
 		// Create a person
 		Person person = new Person();
 		person.setFullName(fullName);
-		modelService.createItem(person, session);
+		modelService.createItem(person, user);
 		
 		// Create email
 		EmailAddress emailAddress = new EmailAddress();
 		emailAddress.setAddress(email);
-		modelService.createItem(emailAddress, session);
+		modelService.createItem(emailAddress, user);
 		
 		// Create relation between person and email
-		modelService.createRelation(person, emailAddress, session);
+		modelService.createRelation(person, emailAddress, user);
 
 		// Create relation between user and person
-		modelService.createRelation(user, person, Relation.KIND_SYSTEM_USER_SELF, session);
+		modelService.createRelation(user, person, Relation.KIND_SYSTEM_USER_SELF, user);
 
 		// Create a web site
 		WebSite site = new WebSite();
 		site.setName(buildWebSiteTitle(fullName));
-		modelService.createItem(site, session);
+		modelService.createItem(site, user);
 		securityService.grantPublicPrivileges(site, true, false, false);
 
 		// Create relation between user and web site
-		modelService.createRelation(user, site,session);
+		modelService.createRelation(user, site,user);
 
-		webModelService.createWebPageOnSite(site.getId(),ImageGallery.class, session);
-		
+		webModelService.createWebPageOnSite(site.getId(),ImageGallery.class, user);
 		return user;
 	}
 

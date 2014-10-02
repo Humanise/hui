@@ -1,12 +1,14 @@
 package dk.in2isoft.onlineobjects.core;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.exceptions.ExplodingClusterFuckException;
@@ -29,6 +31,8 @@ public class SecurityService {
 
 	public static final String ADMIN_USERNAME = "admin";
 	public static final String PUBLIC_USERNAME = "public";
+	
+	public static Set<String> RESERVED_USERNAMES = Sets.newHashSet(ADMIN_USERNAME,PUBLIC_USERNAME);
 	
 	private ModelService modelService;
 	private ConfigurationService configurationService;
@@ -303,5 +307,9 @@ public class SecurityService {
 	
 	public void setPasswordRecoveryService(PasswordRecoveryService passwordRecoveryService) {
 		this.passwordRecoveryService = passwordRecoveryService;
+	}
+
+	public boolean canChangeUsername(User user) {
+		return !SecurityService.RESERVED_USERNAMES.contains(user.getUsername());
 	}
 }

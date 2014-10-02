@@ -63,5 +63,36 @@ hui.ui.listen({
 	},
 	$select$selection : function() {
 		list.resetState();
-	}
+	},
+  
+  
+  // Members...
+  
+  $click$newMember : function() {
+    memberWindow.show();
+    memberFormula.reset();
+    memberFormula.focus();
+  },
+  
+  $submit$memberFormula : function() {
+    var values = memberFormula.getValues();
+		memberWindow.setBusy('Creating');
+
+		hui.ui.request({
+			url : 'createMember',
+			parameters : values,
+			$success : function(user) {
+				memberFormula.reset();
+				memberWindow.hide();
+				listSource.refresh();
+			},
+      $failure : function() {
+        hui.ui.msg.fail({text:'Unable to create member'});
+      },
+      $finally : function() {
+    		memberWindow.setBusy(false);
+      }
+		})
+    
+  }
 });

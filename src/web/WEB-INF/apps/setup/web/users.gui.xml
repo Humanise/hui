@@ -15,7 +15,7 @@
 	<structure>
 		<top>
 			<toolbar>
-				<icon icon="common/new" text="Add user" name="newUser" disabled="true"/>
+				<icon icon="common/new" text="Add member" name="newMember"/>
 				<right>
 					<field label="Search">
 						<searchfield name="search" expanded-width="200"/>
@@ -73,4 +73,28 @@
 			</buttons>
 		</formula>
 	</window>
+
+	<window name="memberWindow" title="New member" padding="5" width="300">
+		<formula name="memberFormula">
+			<fields>
+				<field label="Name:">
+					<text-input key="name"/>
+				</field>
+				<field label="E-mail:">
+					<text-input key="email"/>
+				</field>
+				<field label="Username:">
+					<text-input key="username"/>
+				</field>
+				<field label="Password:">
+					<text-input key="password" secret="true"/>
+				</field>
+			</fields>
+			<buttons top="10">
+				<button title="Cancel" name="cancelMember"/>
+				<button title="Create" submit="true" highlighted="true"/>
+			</buttons>
+		</formula>
+	</window>
+
 </gui>

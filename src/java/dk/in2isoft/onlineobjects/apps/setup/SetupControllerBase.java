@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Locale;
 
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
+import dk.in2isoft.onlineobjects.apps.community.services.MemberService;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.modules.index.IndexService;
 import dk.in2isoft.onlineobjects.modules.localization.LocalizationService;
@@ -19,6 +20,7 @@ public abstract class SetupControllerBase extends ApplicationController {
 	protected SurveillanceService surveillanceService;
 	protected LocalizationService localizationService;
 	protected OnlinePublisherService onlinePublisherService;
+	protected MemberService memberService;
 	protected IndexService indexService;
 
 	public SetupControllerBase() {
@@ -61,5 +63,9 @@ public abstract class SetupControllerBase extends ApplicationController {
 	
 	public void setIndexService(IndexService indexService) {
 		this.indexService = indexService;
+	}
+	
+	public void setMemberService(MemberService memberService) {
+		this.memberService = memberService;
 	}
 }

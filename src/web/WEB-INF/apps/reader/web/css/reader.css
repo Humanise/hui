@@ -60,6 +60,26 @@ div.sidebar div.block ul li strong
 	vertical-align: middle;
 }
 
+.reader_feeds {
+    position: relative;
+}
+
+.reader_feeds_add {
+    color: #999;
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    display: none;
+}
+
+.reader_feeds_add:hover {
+    color: #333;
+}
+
+.reader_feeds:hover .reader_feeds_add {
+    display: block;
+}
+
 
 /* Actions */
 

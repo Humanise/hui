@@ -169,6 +169,7 @@ public class ModelController extends ModelControllerBase {
 		Node center = new Node();
 		center.setId(id);
 		center.setTitle(entity.getName());
+		center.addProperty("type", entity.getClass().getSimpleName());
 		diagram.addNode(center);
 		
 		List<Relation> childRelations = modelService.getChildRelations(entity);

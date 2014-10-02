@@ -140,12 +140,12 @@ public class LanguageService {
 			Word word = new Word();
 			word.setText(text);
 			modelService.createItem(word, session);
-			securityService.grantPublicPrivileges(word, true, true, false);
+			securityService.grantPublicPrivileges(word, true, false, false);
 			Relation languageRelation = modelService.createRelation(language, word, session);
-			securityService.grantPublicPrivileges(languageRelation, true, true, false);
+			securityService.grantPublicPrivileges(languageRelation, true, false, false);
 			if (lexicalCategory!=null) {
 				Relation categoryRelation = modelService.createRelation(lexicalCategory, word, session);
-				securityService.grantPublicPrivileges(categoryRelation, true, true, false);
+				securityService.grantPublicPrivileges(categoryRelation, true, false, false);
 			}
 			ensureOriginator(word, session);
 			return word;

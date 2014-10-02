@@ -17,10 +17,6 @@ public class Language extends Entity {
 		return TYPE;
 	}
 
-	public String getIcon() {
-		return "Element/Generic";
-	}
-
 	public void setCode(String code) {
 		this.code = code;
 	}

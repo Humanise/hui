@@ -95,7 +95,7 @@ var controller = {
 	$clickIcon$list : function(info) {
 		hui.log(info);
 		if (info.data == 'graph') {
-			new oo.Inspector.inspect({id:info.row.id})
+			oo.Inspector.inspect({id:info.row.id})
 		} else {
 			window.open(info.data);			
 		}

@@ -54,7 +54,6 @@ import dk.in2isoft.onlineobjects.modules.surveillance.RequestInfo;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.util.Dates;
 import dk.in2isoft.onlineobjects.util.Messages;
-import dk.in2isoft.onlineobjects.util.ValidationUtil;
 
 public class SetupController extends SetupControllerBase {
 	
@@ -235,7 +234,9 @@ public class SetupController extends SetupControllerBase {
 		if (user==null) {
 			throw new ContentNotFoundException("User not found (id="+perspective.getId()+")");
 		}
-		user.setUsername(perspective.getUsername());
+		if (securityService.canChangeUsername(user)) {
+			user.setUsername(perspective.getUsername());			
+		}
 		user.setName(perspective.getName());
 		modelService.updateItem(user, request.getSession());
 		
@@ -668,4 +669,13 @@ public class SetupController extends SetupControllerBase {
 		writer.endList();
 	}
 	
+	@Path
+	public void createMember(Request request) throws IOException, EndUserException {
+		UserSession session = request.getSession();
+		String username = request.getString("username", "No username");
+		String password = request.getString("password", "No password");
+		String fullName = request.getString("name", "No full name");
+		String email = request.getString("email", "No e-mail");
+		memberService.createMember(session, username, password, fullName, email);
+	}
 }

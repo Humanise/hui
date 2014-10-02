@@ -5,13 +5,14 @@ email.defaultSenderAddress=my@mail.com
 email.defaultSenderName=My Name
 
 baseUrl=www.myhost.com
+basePath=
 developmentMode=false
 storagePath=/path/to/storage
 rootDomain=myhost.com
 port=
 
-imagemagick.path/opt/local/bin
-graphviz.path>/opt/local/bin
+imagemagick.path=/opt/local/bin
+graphviz.path=/opt/local/bin
 
 development.user=public
 

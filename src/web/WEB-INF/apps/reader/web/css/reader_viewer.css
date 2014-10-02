@@ -112,6 +112,25 @@
 	text-decoration: underline;
 }
 
+.reader_viewer_view {
+    position: absolute;
+    right: 10px;
+    bottom: 5px;
+}
+
+.reader_viewer_view_option {
+    font-size: 12px;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #666;
+    font-weight: 600;
+}
+
+.reader_viewer_view_option-selected {
+    font-weight: 800;
+    color: #000;
+}
+
 
 .reader_viewer_content
 {

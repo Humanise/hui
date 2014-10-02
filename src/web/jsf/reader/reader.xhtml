@@ -14,7 +14,7 @@
 				<div class="reader_actions">
 					<gui:button variant="light" text="Re-index" small="true" name="reindexButton"/>
 					<gui:button variant="light" text="Remove" small="true" name="removeButton">
-						<gui:confirm text="Er du sikker?"/>
+						<gui:confirm text="Are you sure?"/>
 					</gui:button>
 					<gui:button variant="light" text="Add..." small="true" name="addButton"/>
 				</div>
@@ -37,6 +37,10 @@
 						<div class="reader_viewer_info">
 							<div id="info"></div>
 							<a class="reader_viewer_close oo_icon oo_icon_close" href="javascript://"></a>
+                            <div class="reader_viewer_view">
+                                <a href="javascript://" class="reader_viewer_view_option reader_viewer_view_option-text reader_viewer_view_option-selected">Text</a>
+                                <a href="javascript://" class="reader_viewer_view_option reader_viewer_view_option-web">Web</a>
+                            </div>
 						</div>
 						<div id="rendering" class="reader_viewer_content"></div>
 					</div>
@@ -55,10 +59,10 @@
 			<div class="sidebar">
 				<div class="block reader_feeds">
 					<h3>Feeds</h3>
+    				<o:link name="addFeed" plain="true" styleClass="reader_feeds_add">
+    					<o:icon icon="add"/>
+    				</o:link>
 					<o:selection name="feeds" source="feedSource"/>
-					<div class="reader_feeds_button">
-						<gui:button name="addFeed" text="Add feed" variant="light" small="true"/>
-					</div>
 				</div>
 				<div class="block">
 					<h3>Tags</h3>
