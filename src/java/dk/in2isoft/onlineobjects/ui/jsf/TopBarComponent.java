@@ -46,7 +46,8 @@ public class TopBarComponent extends AbstractComponent {
 		
 		out.startDiv("oo_topbar oo_faded").withId(getClientId());
 		out.startA("oo_topbar_logo").withHref(configurationService.getApplicationContext("front", null, request));
-		out.startEm("oo_topbar_logo_icon oo_icon_onlineobjects").endEm().startStrong().startSpan().write("Online").startSpan().write("Objects").endSpan().endSpan().endStrong();
+		out.startEm("oo_topbar_logo_icon oo_icon_onlineobjects").endEm();
+		out.startStrong().startSpan().text("Online").startSpan().text("Objects").endSpan().endSpan().endStrong();
 		out.endA();
 
 		out.startUl("oo_topbar_left");
