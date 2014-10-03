@@ -24,3 +24,12 @@
 	font-weight: 200;
 	color: #999;
 }
+
+.account_secret {
+	-webkit-appearance: none;
+	display: block;
+	font-family: monospace;
+	width: 100%;
+	font-size: 14px;
+	border: 1px solid #eee;
+}

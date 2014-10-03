@@ -7,8 +7,6 @@
 	xmlns:gui="http://www.in2isoft.dk/in2igui"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 >
-	
-	
 	<ui:composition template="templates/plain.xhtml">
 				
 		<ui:define name="body">
@@ -37,6 +35,8 @@
 								<gui:button text="#{msg.change_password}" submit="true" variant="paper"/>
 							</div>
 						</gui:formula>
+						<p><textarea id="secret" class="account_secret">#{accountSettingsView.secret}</textarea></p>
+						<p><gui:button text="#{msg.new_secret}" name="newSecret" variant="paper"/></p>
 					</c:when>
 					<c:otherwise>
 						<p>Not allowed</p>

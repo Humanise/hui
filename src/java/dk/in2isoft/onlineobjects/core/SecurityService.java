@@ -15,9 +15,9 @@ import dk.in2isoft.onlineobjects.core.exceptions.ExplodingClusterFuckException;
 import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
-import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.Item;
 import dk.in2isoft.onlineobjects.model.Privilege;
+import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.services.ConfigurationService;
 import dk.in2isoft.onlineobjects.services.PasswordRecoveryService;
@@ -226,6 +226,16 @@ public class SecurityService {
 		return adminPrivileged;
 	}
 
+	public User getUserBySecret(String secret) {
+		if (Strings.isBlank(secret)) {
+			return null;
+		}
+		Query<User> query = Query.after(User.class).withCustomProperty(Property.KEY_AUTHENTICATION_SECRET, secret);
+		// TODO Should this use a privileged?
+		SearchResult<User> result = modelService.search(query);
+		return result.getFirst();		
+	}
+
 	private User getInitialUser() {
 		if (configurationService.isDevelopmentMode()) {
 			String developmentUser = configurationService.getDevelopmentUser();
@@ -285,6 +295,21 @@ public class SecurityService {
 		}
 		return false;
 	}
+
+	public boolean canChangeUsername(User user) {
+		return !SecurityService.RESERVED_USERNAMES.contains(user.getUsername());
+	}
+
+	public String generateNewSecret(User user) throws ModelException, SecurityException {
+		User reloaded = modelService.get(User.class, user.getId(), user);
+		if (reloaded!=null) {
+			String secret = Strings.generateRandomString(50);
+			reloaded.overrideFirstProperty(Property.KEY_AUTHENTICATION_SECRET, secret);
+			modelService.updateItem(reloaded, user);
+			return secret;
+		}
+		return null;
+	}
 	
 	
 	// Wiring...
@@ -307,9 +332,5 @@ public class SecurityService {
 	
 	public void setPasswordRecoveryService(PasswordRecoveryService passwordRecoveryService) {
 		this.passwordRecoveryService = passwordRecoveryService;
-	}
-
-	public boolean canChangeUsername(User user) {
-		return !SecurityService.RESERVED_USERNAMES.contains(user.getUsername());
 	}
 }

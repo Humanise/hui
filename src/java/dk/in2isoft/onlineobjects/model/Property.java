@@ -3,6 +3,8 @@ package dk.in2isoft.onlineobjects.model;
 import java.util.Date;
 
 public class Property {
+
+	public static final String KEY_AUTHENTICATION_SECRET = "authentication.secret";
 	
 	public static final String KEY_COMMON_TAG = "common.tag";
 	public static final String KEY_COMMON_PREFERRED = "common.preferred";

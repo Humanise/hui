@@ -379,12 +379,18 @@ public class ModelService {
 	}
 
 	public Relation createRelation(Entity parent, Entity child, Privileged privileged) throws ModelException {
+		if (parent==null || child==null) {
+			return null;
+		}
 		Relation relation = new Relation(parent, child);
 		createItem(relation, privileged);
 		return relation;
 	}
 
 	public Relation createRelation(Entity parent, Entity child, String kind, Privileged privileged) throws ModelException {
+		if (parent==null || child==null) {
+			return null;
+		}
 		Relation relation = new Relation(parent, child);
 		relation.setKind(kind);
 		createItem(relation, privileged);

@@ -30,6 +30,18 @@ var accountView = {
 				form.focus();
 			}
 		})
+	},
+	$click$newSecret : function() {
+
+		hui.ui.request({
+			url : oo.baseContext+'/generateNewSecret',
+			$object : function(info) {
+				hui.get('secret').value = info;
+			},
+			$failure : function(e) {
+				hui.ui.msg.fail({text:'Unable to generate secret'});
+			}
+		})
 	}
 };
 

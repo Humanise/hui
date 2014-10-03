@@ -8,6 +8,7 @@ import dk.in2isoft.onlineobjects.core.exceptions.ExplodingClusterFuckException;
 import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
+import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.ui.ScriptWriter;
 import dk.in2isoft.onlineobjects.ui.StylesheetWriter;
@@ -45,6 +46,12 @@ public class AccountController extends AccountControllerBase {
 		String key = request.getString("key", "Key must be provided");
 		String password = request.getString("password", "Password must be provided");
 		securityService.changePasswordUsingKey(key, password, request.getSession());
+	}
+	
+	@Path
+	public String generateNewSecret(Request request) throws IllegalRequestException, SecurityException, ModelException, ExplodingClusterFuckException {
+		User user = request.getSession().getUser();
+		return securityService.generateNewSecret(user);
 	}
 	
 	

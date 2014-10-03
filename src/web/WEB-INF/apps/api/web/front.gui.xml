@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<gui xmlns="uri:hui" state="persons" title="Bookmarks" padding="10">
+<gui xmlns="uri:hui" state="persons" title="OnlineObjects API" padding="10">
 	<controller name="controller" source="js/controller.js"/>
 	
 	<structure>

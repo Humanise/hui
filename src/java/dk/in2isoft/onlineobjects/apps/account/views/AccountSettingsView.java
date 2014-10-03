@@ -7,6 +7,7 @@ import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.model.EmailAddress;
 import dk.in2isoft.onlineobjects.model.Person;
+import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
 
@@ -29,12 +30,21 @@ public class AccountSettingsView extends AbstractManagedBean implements Initiali
 		if (user.getUsername().equals(SecurityService.PUBLIC_USERNAME)) {
 			return;
 		}
+		// Reload the user to get the latest properties and ensure it exists
+		user = modelService.get(User.class, user.getId(), user);
+		if (user==null) {
+			return;
+		}
 		allowed = true;
 		person = modelService.getChild(user, Relation.KIND_SYSTEM_USER_SELF, Person.class);
 		email = modelService.getChild(user, Relation.KIND_SYSTEM_USER_EMAIL, EmailAddress.class);
 		if (email!=null) {
 			primaryEmail = email.getAddress();
 		}
+	}
+	
+	public String getSecret() {
+		return user.getPropertyValue(Property.KEY_AUTHENTICATION_SECRET);
 	}
 	
 	public boolean isAllowed() {

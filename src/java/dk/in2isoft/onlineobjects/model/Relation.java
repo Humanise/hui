@@ -38,6 +38,8 @@ public class Relation extends Item {
 	public static final String KIND_EVENT_ATTENDEE = "event.attendee";
 	public static final String KIND_EVENT_ORGANIZER = "event.organizer";
 	
+	public static final String KIND_STRUCTURE_CONTAINS = "structure.contains";
+	
 	private Entity superEntity;
 
 	private Entity subEntity;

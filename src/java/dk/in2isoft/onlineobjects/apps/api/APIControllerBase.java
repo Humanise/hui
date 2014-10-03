@@ -6,6 +6,8 @@ import java.util.Locale;
 import com.google.common.collect.Lists;
 
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
+import dk.in2isoft.onlineobjects.core.SecurityService;
+import dk.in2isoft.onlineobjects.modules.inbox.InboxService;
 import dk.in2isoft.onlineobjects.modules.networking.HTMLService;
 import dk.in2isoft.onlineobjects.services.LanguageService;
 import dk.in2isoft.onlineobjects.ui.Blend;
@@ -15,6 +17,8 @@ public abstract class APIControllerBase extends ApplicationController {
 	
 	protected LanguageService languageService;
 	protected HTMLService htmlService;
+	protected SecurityService securityService;
+	protected InboxService inboxService;
 
 	protected static final Blend publicScript;
 	
@@ -50,6 +54,14 @@ public abstract class APIControllerBase extends ApplicationController {
 	
 	public void setHtmlService(HTMLService htmlService) {
 		this.htmlService = htmlService;
+	}
+	
+	public void setSecurityService(SecurityService securityService) {
+		this.securityService = securityService;
+	}
+	
+	public void setInboxService(InboxService inboxService) {
+		this.inboxService = inboxService;
 	}
 
 }
