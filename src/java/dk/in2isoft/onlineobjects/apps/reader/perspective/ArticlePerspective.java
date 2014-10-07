@@ -2,6 +2,7 @@ package dk.in2isoft.onlineobjects.apps.reader.perspective;
 
 import java.util.List;
 
+import dk.in2isoft.onlineobjects.core.Pair;
 import dk.in2isoft.onlineobjects.ui.data.Option;
 
 public class ArticlePerspective {
@@ -10,6 +11,7 @@ public class ArticlePerspective {
 	private String title;
 	private String rendering;
 	private String info;
+	private List<Pair<Long,String>> quotes;
 	private List<Option> tags;
 	private List<Option> words;
 
@@ -60,4 +62,13 @@ public class ArticlePerspective {
 	public void setInfo(String info) {
 		this.info = info;
 	}
+
+	public List<Pair<Long,String>> getQuotes() {
+		return quotes;
+	}
+
+	public void setQuotes(List<Pair<Long,String>> quotes) {
+		this.quotes = quotes;
+	}
+	
 }

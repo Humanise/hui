@@ -24,7 +24,7 @@
 					<gui:searchfield name="search" placeholder="Search" adaptive="true"/>
 				</div>
 				
-				<gui:source name="listSource" url="#{wordsWordView.baseContext}/searchAddresses">
+				<gui:source name="listSource" url="#{readerView.baseContext}/searchAddresses">
 					<gui:parameter key="page" value="@list.window.page"/>
 					<gui:parameter key="text" value="@search.value"/>
 					<gui:parameter key="tags" value="@tags.value"/>
@@ -50,13 +50,26 @@
 		
 		<ui:define name="sidebar">
 		
-			<gui:source name="tagSource" url="#{wordsWordView.baseContext}/getWordCloud">
+			<gui:source name="tagSource" url="#{readerView.baseContext}/getWordCloud">
 			</gui:source>
 		
-			<gui:source name="feedSource" url="#{wordsWordView.baseContext}/getFeeds">
+			<gui:source name="feedSource" url="#{readerView.baseContext}/getFeeds">
+			</gui:source>
+
+			<gui:source name="typesSource" url="#{readerView.baseContext}/getTypeOptions">
 			</gui:source>
 				
 			<div class="sidebar">
+				<div class="block">
+					<h3>Types</h3>
+					<o:selection name="types" source="typesSource"/>
+				</div>
+				<div class="block">
+					<h3>Contexts</h3>
+					<o:selection name="contexts">
+                        <gui:source name="contextsSource" url="#{readerView.baseContext}/getContextOptions"/>
+                    </o:selection>
+				</div>
 				<div class="block reader_feeds">
 					<h3>Feeds</h3>
     				<o:link name="addFeed" plain="true" styleClass="reader_feeds_add">

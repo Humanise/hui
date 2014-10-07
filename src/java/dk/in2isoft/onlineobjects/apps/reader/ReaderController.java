@@ -28,6 +28,7 @@ import dk.in2isoft.onlineobjects.apps.reader.perspective.ArticlePerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.FeedPerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.WordPerspective;
 import dk.in2isoft.onlineobjects.apps.videosharing.Path;
+import dk.in2isoft.onlineobjects.core.Pair;
 import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.Results;
@@ -40,6 +41,7 @@ import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.core.exceptions.NetworkException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
+import dk.in2isoft.onlineobjects.model.HtmlPart;
 import dk.in2isoft.onlineobjects.model.InternetAddress;
 import dk.in2isoft.onlineobjects.model.Pile;
 import dk.in2isoft.onlineobjects.model.Property;
@@ -56,6 +58,7 @@ import dk.in2isoft.onlineobjects.modules.networking.NetworkResponse;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.ui.ScriptWriter;
 import dk.in2isoft.onlineobjects.ui.StylesheetWriter;
+import dk.in2isoft.onlineobjects.ui.data.Option;
 import dk.in2isoft.onlineobjects.ui.data.SimpleEntityPerspective;
 
 
@@ -108,7 +111,7 @@ public class ReaderController extends ReaderControllerBase {
 			writer.startRow().withId(address.getId());
 			writer.startCell().startLine();
 			if (Strings.isBlank(address.getName())) {
-				writer.text("«No name»");
+				writer.text("No name");
 			} else {
 				writer.text(address.getName());
 			}
@@ -193,15 +196,22 @@ public class ReaderController extends ReaderControllerBase {
 		});
 		
 		for (InternetAddress address : list) {
+			
 			writer.startRow().withId(address.getId());
 			writer.startCell().startLine();
 			if (Strings.isBlank(address.getName())) {
-				writer.text("«No name»");
+				writer.text("No name");
 			} else {
 				writer.text(address.getName());
 			}
 			writer.endLine();
-			writer.startLine().dimmed().minor().text(Strings.simplifyURL(address.getAddress())).endLine();
+			writer.startLine().dimmed().minor();
+			writer.text(Strings.simplifyURL(address.getAddress()));
+			List<HtmlPart> quotes = modelService.getChildren(address, Relation.KIND_STRUCTURE_CONTAINS, HtmlPart.class,request.getSession());
+			if (quotes.size()>0) {
+				writer.text(" (").text(quotes.size()).text(")");
+			}
+			writer.endLine();
 			List<Word> words = modelService.getChildren(address, Word.class, request.getSession());
 			if (Code.isNotEmpty(words)) {
 				HTMLWriter wordLine = new HTMLWriter(); 
@@ -269,6 +279,22 @@ public class ReaderController extends ReaderControllerBase {
 		return options;
 	}
 
+	@Path
+	public List<Option> getTypeOptions(Request request) throws ModelException {
+		List<Option> options = Lists.newArrayList();
+		options.add(new Option("Pages","pages"));
+		options.add(new Option("Quotes","quotes"));
+		return options;
+	}
+
+	@Path
+	public List<Option> getContextOptions(Request request) throws ModelException {
+		List<Option> options = Lists.newArrayList();
+		options.add(new Option("Inbox","inbox"));
+		options.add(new Option("Verified","verified"));
+		return options;
+	}
+
 	private Pile getFeedPile(UserSession session) throws ModelException {
 		return pileService.getOrCreateUsersPile("feeds", session.getUser(), session);
 	}
@@ -311,6 +337,12 @@ public class ReaderController extends ReaderControllerBase {
 		
 		ArticlePerspective article = new ArticlePerspective();
 		
+		List<HtmlPart> quotes = modelService.getChildren(address, Relation.KIND_STRUCTURE_CONTAINS, HtmlPart.class,request.getSession());
+		List<Pair<Long,String>> x = Lists.newArrayList();
+		for (HtmlPart htmlPart : quotes) {
+			x.add(Pair.of(htmlPart.getId(), htmlPart.getHtml()));
+		}
+		article.setQuotes(x);
 		
 		article.setInfo(buildInfo(document, address, session));
 		article.setId(address.getId());
@@ -379,9 +411,6 @@ public class ReaderController extends ReaderControllerBase {
 	}
 
 	private String buildRendering(HTMLDocument document, InternetAddress address) {
-		if (!true) {
-			return document.getExtractedMarkup();
-		}
 		String content = document.getExtractedContents();
 		
 		HTMLWriter writer = new HTMLWriter();

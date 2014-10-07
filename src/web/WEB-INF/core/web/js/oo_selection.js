@@ -41,7 +41,7 @@ oo.Selection.prototype = {
 			var option = this.options[i];
 			var html = '<a class="oo_selection_link" href="javascript://" data-index="'+i+'">'+
 				'<span class="oo_selection_icon oo_icon oo_icon_12 oo_icon_tag"></span>'+
-				'<span class="oo_selection_text">' + hui.string.escape(option.title) + '</span>';
+				'<span class="oo_selection_text">' + hui.string.escape(option.title || option.label) + '</span>';
 			if (option.badge) {
 				html+= '<span class="oo_selection_badge">' + hui.string.escape(option.badge) + '</span>';
 			}
