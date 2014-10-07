@@ -76,6 +76,10 @@ var controller = {
 		hui.ui.get('list').resetState();
 	},
 	
+	$valueChanged$context : function() {
+		hui.ui.get('list').resetState();
+	},
+	
 	$click$removeButton : function() {
 		var obj = hui.ui.get('list').getFirstSelection();
 		hui.ui.request({

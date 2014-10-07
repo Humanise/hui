@@ -148,13 +148,14 @@ public class ReaderController extends ReaderControllerBase {
 		
 		int page = request.getInt("page");
 		String text = request.getString("text");
+		String context = request.getString("context");
 		int pageSize = 30;
 		
 		List<Long> tagIDs = request.getLongList("tags");
 
 		ListWriter writer = new ListWriter(request);
 		
-		final List<Long> ids = find(request, text);
+		final List<Long> ids = find(request, text, context);
 		
 		if (!Strings.isBlank(text) && ids.isEmpty()) {
 			ids.add(-1l);
@@ -238,9 +239,9 @@ public class ReaderController extends ReaderControllerBase {
 		writer.endList();
 	}
 
-	private List<Long> find(Request request, String text) throws ExplodingClusterFuckException {
+	private List<Long> find(Request request, String text, String context) throws ExplodingClusterFuckException {
 		IndexManager index = getIndex(request);
-		if (Strings.isBlank(text)) {
+		if (Strings.isBlank(text) && Strings.isBlank(context)) {
 			return index.getAllIds();
 		}
 		final List<Long> ids = Lists.newArrayList();
@@ -258,12 +259,26 @@ public class ReaderController extends ReaderControllerBase {
 			indexQuery.append(" OR text:").append(QueryParserUtil.escape(string)).append("*");
 			indexQuery.append(")");
 		}
+		if ("inbox".equals(context)) {
+			if (indexQuery.length()>0) {
+				indexQuery.append(" AND ");
+			}
+			indexQuery.append("inbox:yes");
+		}
+		else if ("verified".equals(context)) {
+			if (indexQuery.length()>0) {
+				indexQuery.append(" AND ");
+			}
+			indexQuery.append("inbox:no");
+		}
+		log.info(indexQuery.toString());
 		SearchResult<IndexSearchResult> search = index.search(indexQuery.toString(), 0, Integer.MAX_VALUE);
 		for (IndexSearchResult row : search.getList()) {
 			Document document = row.getDocument();
 			IndexableField field = document.getField("id");
 			ids.add(Long.parseLong(field.stringValue()));
 		}
+		log.info(ids);
 		return ids;
 	}
 	

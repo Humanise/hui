@@ -15,8 +15,12 @@ import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.model.InternetAddress;
+import dk.in2isoft.onlineobjects.model.Pile;
 import dk.in2isoft.onlineobjects.model.Property;
+import dk.in2isoft.onlineobjects.model.Relation;
+import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.Word;
+import dk.in2isoft.onlineobjects.modules.inbox.InboxService;
 import dk.in2isoft.onlineobjects.modules.index.IndexDocumentBuilder;
 import dk.in2isoft.onlineobjects.services.StorageService;
 
@@ -25,6 +29,7 @@ public class ReaderIndexDocumentBuilder implements IndexDocumentBuilder<Internet
 	private StorageService storageService;
 	private ModelService modelService;
 	private SecurityService securityService;
+	private InboxService inboxService;
 	
 	public Document build(InternetAddress address) throws ModelException {
 		
@@ -46,6 +51,12 @@ public class ReaderIndexDocumentBuilder implements IndexDocumentBuilder<Internet
 			wordStr.append(word.getText());
 		}
 		doc.add(new TextField("words", wordStr.toString(), Field.Store.NO));
+
+		User owner = modelService.getOwner(address);
+		Pile inbox = inboxService.getOrCreateInbox(owner);
+		Relation relation = modelService.getRelation(inbox, address);
+		//System.out.println(relation==null);
+		doc.add(new TextField("inbox", relation!=null ? "yes" : "no", Field.Store.YES));
 		return doc;
 	}
 
@@ -74,5 +85,9 @@ public class ReaderIndexDocumentBuilder implements IndexDocumentBuilder<Internet
 	
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
+	}
+	
+	public void setInboxService(InboxService inboxService) {
+		this.inboxService = inboxService;
 	}
 }

@@ -159,6 +159,9 @@ public class Strings {
 	}
 
 	public static String[] getWords(String query) {
+		if (Strings.isBlank(query)) {
+			return new String[] {};
+		}
 		return query.trim().split("\\W+");
 	}
 

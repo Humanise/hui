@@ -2,6 +2,7 @@ package dk.in2isoft.onlineobjects.services;
 
 import java.io.File;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationListener;
@@ -38,10 +39,25 @@ public class StorageService implements InitializingBean,ApplicationListener<Cont
 	}
 	
 	public File getItemFolder(long id) {
-		File folder = new File(items,String.valueOf(id));
+		String idstr = String.valueOf(id);
+		File subFolder = getSubFolder(idstr);
+		File itemFolder = new File(subFolder,idstr);
+		if (!itemFolder.exists()) {
+			if (!itemFolder.mkdirs()) {
+				throw new IllegalStateException("Could not create item directory in storage!");
+			}
+		}
+		return itemFolder;
+	}
+	
+	public File getSubFolder(String id) {
+		
+		String subFolderName = id.substring(0, Math.min(3, id.length()));
+		subFolderName = StringUtils.leftPad(subFolderName, 3, '0');
+		File folder = new File(items,subFolderName);
 		if (!folder.exists()) {
 			if (!folder.mkdirs()) {
-				throw new IllegalStateException("Could not create items diractory in storage!");
+				throw new IllegalStateException("Could not create item subdirectory in storage: " + folder.getAbsolutePath());
 			}
 		}
 		return folder;

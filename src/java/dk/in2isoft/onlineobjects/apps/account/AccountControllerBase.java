@@ -19,7 +19,7 @@ public abstract class AccountControllerBase extends ApplicationController {
 
 	static {
 
-		publicScript = new Blend("reader_public_script");
+		publicScript = new Blend("account_public_script");
 		publicScript.addPath("hui","js","hui.js");
 		publicScript.addPath("hui","js","hui_animation.js");
 		publicScript.addPath("hui","js","ui.js");
@@ -43,7 +43,7 @@ public abstract class AccountControllerBase extends ApplicationController {
 		publicScript.addPath("WEB-INF","apps","account","web","js","account.js");
 
 
-		publicStyle = new Blend("reader_public_style");
+		publicStyle = new Blend("account_public_style");
 		publicStyle.addBasicCSS();
 		publicStyle.addCoreCSS("oo_font.css");
 		publicStyle.addCoreCSS("oo_icon.css");
