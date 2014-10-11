@@ -122,6 +122,10 @@ var controller = {
 			$object : function(article) {
 				hui.ui.hideMessage();
 				this._drawArticle(article);
+			}.bind(this),
+			$failure : function() {
+				this._hideViewer();
+				hui.ui.msg.fail({text:'Sorry!'});
 			}.bind(this)
 		})
 	},
@@ -130,7 +134,16 @@ var controller = {
 		this._currentArticle = article;
 		var rendering = hui.get('rendering');
 		var info = hui.get('info');
-		rendering.innerHTML = article.rendering;
+		var html = '';
+		if (article.quotes) {
+			html+='<div class="reader_viewer_quotes">';
+			for (var i = 0; i < article.quotes.length; i++) {
+				html += '<blockquote class="reader_viewer_quote" data-id="' + article.quotes[i].key + '">' + article.quotes[i].value + '</blockquote>';
+			}			
+			html+='</div>';
+		}
+		html+=article.rendering;
+		rendering.innerHTML = html;
 		info.innerHTML = article.info;
 	},
 	

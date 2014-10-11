@@ -1,10 +1,10 @@
 @font-face {
 	font-family: 'OnlineObjects';
-	src:url('fonts/OnlineObjects.eot?5bgc2f');
-	src:url('fonts/OnlineObjects.eot?#iefix5bgc2f') format('embedded-opentype'),
-		url('fonts/OnlineObjects.woff?5bgc2f') format('woff'),
-		url('fonts/OnlineObjects.ttf?5bgc2f') format('truetype'),
-		url('fonts/OnlineObjects.svg?5bgc2f#OnlineObjects') format('svg');
+	src:url('fonts/OnlineObjects.eot?4034sd');
+	src:url('fonts/OnlineObjects.eot?#iefix4034sd') format('embedded-opentype'),
+		url('fonts/OnlineObjects.woff?4034sd') format('woff'),
+		url('fonts/OnlineObjects.ttf?4034sd') format('truetype'),
+		url('fonts/OnlineObjects.svg?4034sd#OnlineObjects') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -23,6 +23,45 @@
 	-moz-osx-font-smoothing: grayscale;
 }
 
+.oo_icon_close_line:before {
+	content: "\e610";
+}
+.oo_icon_view_line:before {
+	content: "\e60d";
+}
+.oo_icon_delete_line:before {
+	content: "\e60e";
+}
+.oo_icon_archive_line:before {
+	content: "\e60f";
+}
+.oo_icon_document_line:before {
+	content: "\e604";
+}
+.oo_icon_relations_line:before {
+	content: "\e605";
+}
+.oo_icon_bubble_line:before {
+	content: "\e606";
+}
+.oo_icon_gear_line:before {
+	content: "\e607";
+}
+.oo_icon_documents_line:before {
+	content: "\e608";
+}
+.oo_icon_star_line:before {
+	content: "\e609";
+}
+.oo_icon_tag_line:before {
+	content: "\e60a";
+}
+.oo_icon_inbox_line:before {
+	content: "\e60b";
+}
+.oo_icon_add_line:before {
+	content: "\e60c";
+}
 .oo_icon_view_grid:before {
 	content: "\e600";
 }

@@ -1,11 +1,18 @@
-div.reader
+.reader
 {
 	padding: 20px;
 }
 
-div.reader h1.oo_header
-{
-	margin-bottom: 20px;
+.reader_top {
+	overflow: hidden;
+	border-bottom: 1px solid #eee;
+	padding-bottom: 10px;
+	margin: -10px -10px 10px;
+}
+
+.reader_search {
+	float: left;
+	width: 200px;
 }
 
 .reader_modal {
@@ -34,7 +41,7 @@ div.sidebar div.block h3
 {
 	text-transform: uppercase;
 	color: #999;
-	margin: 0;
+	margin: 0 0 3px;
 	font-weight: 400;
 	font-size: 12px;
 }
@@ -86,6 +93,26 @@ div.sidebar div.block ul li strong
 .reader_actions
 {
 	float: right;
+}
+
+.reader_action {
+	margin-left: 10px;
+	color: #999;
+	text-decoration: none;
+	font-size: 0;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.reader_action:hover {
+	color: #000;
+}
+
+.reader_action_text {
+	line-height: 20px;
+	vertical-align: middle;
+	font-size: 14px;
+	margin-left: 5px;
 }
 
 .reader_actions .hui_button

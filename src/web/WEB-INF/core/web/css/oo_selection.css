@@ -18,7 +18,7 @@
 
 .oo_selection_text
 {
-	line-height: 1em;
+	line-height: 16px;
 }
 
 .oo_selection_link:hover
@@ -30,6 +30,7 @@
 {
 	color: rgba(0,0,0,.2);
 	margin-right: 5px;
+	vertical-align: top;
 }
 
 .oo_selection_badge

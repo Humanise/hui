@@ -9,6 +9,9 @@ oo.Selection = function(options) {
 	this.options = [];
 	this.selections = [];
 	this.value = [];
+	if (options.value) {
+		this.value.push(options.value);
+	}
 	hui.ui.extend(this);
 	this._attach();
 }
@@ -35,18 +38,22 @@ oo.Selection.prototype = {
 	},
 	_render : function() {
 		this.selections = [];
-		this.value = [];
 		hui.dom.clear(this.list);
 		for (var i=0; i < this.options.length; i++) {
 			var option = this.options[i];
+			var icon = option.icon || 'tag_line';
 			var html = '<a class="oo_selection_link" href="javascript://" data-index="'+i+'">'+
-				'<span class="oo_selection_icon oo_icon oo_icon_12 oo_icon_tag"></span>'+
-				'<span class="oo_selection_text">' + hui.string.escape(option.title || option.label) + '</span>';
+				'<span class="oo_selection_icon oo_icon oo_icon_16 oo_icon_' + icon + '"></span>'+
+				'<span class="oo_selection_text">' + hui.string.escape(option.text || option.title || option.label) + '</span>';
 			if (option.badge) {
 				html+= '<span class="oo_selection_badge">' + hui.string.escape(option.badge) + '</span>';
 			}
 			html+= '</a>';
-			hui.build('li',{'class':'oo_selection_option',html:html,parent:this.list});
+			var li = hui.build('li',{'class':'oo_selection_option',html:html,parent:this.list});
+			if (hui.array.contains(this.value,option.value)) {
+				hui.array.add(this.selections,i);
+				hui.cls.add(li,'oo_selection_option_selected');
+			}
 		};
 		
 	},

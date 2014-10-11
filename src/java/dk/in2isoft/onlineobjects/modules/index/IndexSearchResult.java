@@ -1,6 +1,8 @@
 package dk.in2isoft.onlineobjects.modules.index;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexableField;
 
 public class IndexSearchResult {
 
@@ -27,6 +29,25 @@ public class IndexSearchResult {
 
 	public void setDocument(Document document) {
 		this.document = document;
+	}
+
+	public Long getLong(String string) {
+		IndexableField field = document.getField(string);
+		if (field!=null) {
+			String value = field.stringValue();
+			if (StringUtils.isNumeric(value)) {
+				return Long.parseLong(value);
+			}
+		}
+		return null;
+	}
+
+	public String getString(String string) {
+		IndexableField field = document.getField(string);
+		if (field!=null) {
+			return field.stringValue();
+		}
+		return null;
 	}
 
 }

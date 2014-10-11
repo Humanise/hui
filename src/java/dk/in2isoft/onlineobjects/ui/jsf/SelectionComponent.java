@@ -20,6 +20,7 @@ public class SelectionComponent extends AbstractComponent {
 	private String variant;
 	private String source;
 	private String name;
+	private Object value;
 	
 	public SelectionComponent() {
 		super(FAMILY);
@@ -31,11 +32,12 @@ public class SelectionComponent extends AbstractComponent {
 		variant = (String) state[1];
 		source = (String) state[2];
 		name = (String) state[3];
+		value = state[4];
 	}
 
 	@Override
 	public Object[] saveState() {
-		return new Object[] {styleClass,variant,source,name};
+		return new Object[] {styleClass,variant,source,name,value};
 	}
 	
 	@Override
@@ -60,6 +62,9 @@ public class SelectionComponent extends AbstractComponent {
 		out.startNewObject("oo.Selection").property("element", getClientId());
 		if (Strings.isNotBlank(name)) {
 			out.comma().property("name", name);
+		}
+		if (value!=null) {
+			out.comma().property("value", value.toString());
 		}
 		if (Strings.isNotBlank(sourceName)) {
 			out.comma().property("source", sourceName);
@@ -103,5 +108,13 @@ public class SelectionComponent extends AbstractComponent {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Object getValue() {
+		return value;
+	}
+
+	public void setValue(Object value) {
+		this.value = value;
 	}
 }

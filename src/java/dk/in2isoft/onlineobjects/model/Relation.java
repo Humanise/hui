@@ -1,5 +1,7 @@
 package dk.in2isoft.onlineobjects.model;
 
+import dk.in2isoft.commons.lang.Strings;
+
 public class Relation extends Item {
 
 	public static final String TYPE = Item.TYPE+"/Relation";
@@ -91,6 +93,16 @@ public class Relation extends Item {
 	@Override
 	public String toString() {
 		return super.toString()+" : "+this.superEntity.toString()+" --> "+this.subEntity.toString()+" ["+this.kind+"]";
+	}
+
+	public boolean matches(Class<? extends Entity> superClass, String kind, Class<? extends Entity> subClass) {
+		boolean matches = true;
+		if (kind!=null) {
+			matches &= Strings.equals(kind, this.kind);
+		}
+		matches &= superEntity.getClass().isAssignableFrom(superClass);
+		matches &= subEntity.getClass().isAssignableFrom(subClass);
+		return matches;
 	}
 
 	

@@ -11,33 +11,44 @@
 				
 		<ui:define name="body">
 			<div class="reader">
-				<div class="reader_actions">
-					<gui:button variant="light" text="Re-index" small="true" name="reindexButton"/>
-					<gui:button variant="light" text="Remove" small="true" name="removeButton">
-						<gui:confirm text="Are you sure?"/>
-					</gui:button>
-					<gui:button variant="light" text="Add..." small="true" name="addButton"/>
-				</div>
-				<o:header>Reader</o:header>
+				<div class="reader_top">
+					<div class="reader_actions">
+						<o:link name="removeButton" plain="true" styleClass="reader_action">
+							<o:icon icon="delete_line" size="20"/>
+							<span class="reader_action_text">Remove</span>
+							<gui:confirm text="Are you sure?"/>
+						</o:link>
+						<o:link name="addButton" plain="true" styleClass="reader_action">
+							<o:icon icon="add_line" size="20"/>
+							<span class="reader_action_text">Add page</span>
+						</o:link>
+						<o:link name="reindexButton" plain="true" styleClass="reader_action">
+							<o:icon icon="gear_line" size="20"/>
+							<gui:confirm text="Re-index - realy?"/>
+						</o:link>
+					</div>
 				
-				<div>
-					<gui:searchfield name="search" placeholder="Search" adaptive="true"/>
+					<div class="reader_search">
+						<gui:searchfield name="search" placeholder="Search" adaptive="true"/>
+					</div>
 				</div>
-				
-				<gui:source name="listSource" url="#{readerView.baseContext}/searchAddresses">
-					<gui:parameter key="page" value="@list.window.page"/>
-					<gui:parameter key="text" value="@search.value"/>
-					<gui:parameter key="tags" value="@tags.value"/>
-					<gui:parameter key="context" value="@contexts.value"/>
-				</gui:source>
 				<div class="reader_list">
+				
+					<gui:source name="listSource" url="#{readerView.baseContext}/searchAddresses">
+						<gui:parameter key="page" value="@list.window.page"/>
+						<gui:parameter key="text" value="@search.value"/>
+						<gui:parameter key="tags" value="@tags.value"/>
+						<gui:parameter key="subset" value="@subsets.value"/>
+						<gui:parameter key="type" value="@types.value"/>
+					</gui:source>
+					
 					<gui:list name="list" source="listSource" variant="light"/>
 				</div>
 				<div id="viewer" class="reader_viewer">
 					<div class="reader_viewer_frame">
 						<div class="reader_viewer_info">
 							<div id="info"></div>
-							<a class="reader_viewer_close oo_icon oo_icon_close" href="javascript://"></a>
+							<a class="reader_viewer_close oo_icon oo_icon_close_line" href="javascript://"></a>
                             <div class="reader_viewer_view">
                                 <a href="javascript://" class="reader_viewer_view_option reader_viewer_view_option-text reader_viewer_view_option-selected">Text</a>
                                 <a href="javascript://" class="reader_viewer_view_option reader_viewer_view_option-web">Web</a>
@@ -57,24 +68,24 @@
 			<gui:source name="feedSource" url="#{readerView.baseContext}/getFeeds">
 			</gui:source>
 
-			<gui:source name="typesSource" url="#{readerView.baseContext}/getTypeOptions">
-			</gui:source>
+			
 				
 			<div class="sidebar">
 				<div class="block">
-					<h3>Types</h3>
-					<o:selection name="types" source="typesSource"/>
-				</div>
-				<div class="block">
-					<h3>Contexts</h3>
-					<o:selection name="contexts">
+					<o:selection name="subsets" value="everything">
                         <gui:source name="contextsSource" url="#{readerView.baseContext}/getContextOptions"/>
                     </o:selection>
+				</div>
+				<div class="block">
+					<h3>Types</h3>
+					<o:selection name="types" value="pages" source="typesSource">
+						<gui:source name="typesSource" url="#{readerView.baseContext}/getTypeOptions"/>
+					</o:selection>
 				</div>
 				<div class="block reader_feeds">
 					<h3>Feeds</h3>
     				<o:link name="addFeed" plain="true" styleClass="reader_feeds_add">
-    					<o:icon icon="add"/>
+    					<o:icon icon="add_line"/>
     				</o:link>
 					<o:selection name="feeds" source="feedSource"/>
 				</div>
@@ -89,12 +100,10 @@
 			
 			<gui:boundPanel name="newFeedPanel" variant="light" width="300" modal="true">
 				<gui:formula name="newFeedForm">
-					<gui:fields>
-						<gui:field label="Address">
-							<gui:textInput key="url"/>
-						</gui:field>
-					</gui:fields>
-					<gui:buttons>
+					<gui:field label="Address">
+						<gui:textInput key="url" multiline="true"/>
+					</gui:field>
+					<gui:buttons top="10">
 						<gui:button submit="true" text="Add" variant="light"/>
 					</gui:buttons>
 				</gui:formula>

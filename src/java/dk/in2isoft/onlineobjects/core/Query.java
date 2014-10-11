@@ -1,5 +1,6 @@
 package dk.in2isoft.onlineobjects.core;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -84,7 +85,7 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 		return this;
 	}
 	
-	public Query<T> withIds(List<Long> ids) {
+	public Query<T> withIds(Collection<Long> ids) {
 		this.ids = ids.toArray(new Long[] {});
 		return this;
 	}

@@ -187,33 +187,33 @@ if (false) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 oo.Link = function(options) {
+	this.options = options;
 	this.element = hui.get(options.element);
 	this.name = options.name;
 	hui.ui.extend(this);
-	this._addBehavior();
+	this._attach();
 }
 
 oo.Link.prototype = {
-	_addBehavior : function() {
+	_attach : function() {
 		hui.listen(this.element,'click',this._onClick.bind(this));
 	},
 	_onClick : function(e) {
 		hui.stop(e)
+		if (this.options.confirm) {
+			hui.ui.confirmOverlay({
+				widget : this,
+				text : this.options.confirm.text,
+				okText : this.options.confirm.okText,
+				cancelText : this.options.confirm.cancelText,
+				onOk : this._click.bind(this)
+			});
+		} else {
+			this._click();
+		}
+	},
+	_click : function() {
 		this.fire('click');
 	}
 }

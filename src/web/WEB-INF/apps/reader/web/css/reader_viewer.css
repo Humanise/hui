@@ -160,3 +160,13 @@
 {
 	margin: 5px 0;
 }
+
+.reader_viewer_quote {
+	position: relative;
+}
+
+.reader_viewer_quote:before {
+	content: '\201F';
+	position: absolute;
+	
+}

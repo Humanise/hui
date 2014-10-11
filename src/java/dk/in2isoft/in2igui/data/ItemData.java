@@ -1,7 +1,7 @@
 package dk.in2isoft.in2igui.data;
 
-public class ItemData {
-	private String title;
+public class ItemData implements Option {
+	private String text;
 	private long id;
 	private String icon;
 	private Object value;
@@ -10,13 +10,32 @@ public class ItemData {
 
 	public ItemData() {
 	}
-
-	public String getTitle() {
-		return title;
+	
+	public ItemData(Object value) {
+		this.value = value;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
+	public String getTitle() {
+		return text;
+	}
+
+	@Deprecated
+	public void setTitle(String text) {
+		this.text = text;
+	}
+
+	@Override
+	public String getText() {
+		return text;
+	}
+	
+	public void setText(String text) {
+		this.text = text;
+	}
+	
+	public ItemData withText(String text) {
+		this.text = text;
+		return this;
 	}
 
 	public long getId() {
@@ -33,6 +52,11 @@ public class ItemData {
 
 	public void setIcon(String icon) {
 		this.icon = icon;
+	}
+	
+	public ItemData withIcon(String icon) {
+		this.icon = icon;
+		return this;
 	}
 
 	public Object getValue() {

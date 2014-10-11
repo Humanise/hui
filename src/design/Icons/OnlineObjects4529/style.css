@@ -1,0 +1,102 @@
+@font-face {
+	font-family: 'OnlineObjects';
+	src:url('fonts/OnlineObjects.eot');
+	src:url('fonts/OnlineObjects.eot?#iefix') format('embedded-opentype'),
+		url('fonts/OnlineObjects.woff') format('woff'),
+		url('fonts/OnlineObjects.ttf') format('truetype'),
+		url('fonts/OnlineObjects.svg#OnlineObjects') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+/* Use the following CSS code if you want to use data attributes for inserting your icons */
+[data-icon]:before {
+	font-family: 'OnlineObjects';
+	content: attr(data-icon);
+	speak: none;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+}
+
+/* Use the following CSS code if you want to have a class per icon */
+/*
+Instead of a list of all class selectors,
+you can use the generic selector below, but it's slower:
+[class*="oo_font_"] {
+*/
+.oo_font_arrow_right, .oo_font_arrow_left, .oo_font_download, .oo_font_expand, .oo_font_user, .oo_font_onlineobjects, .oo_font_at, .oo_font_globe, .oo_font_envelope, .oo_font_tag, .oo_font_globus, .oo_font_phone, .oo_font_warning, .oo_font_camera, .oo_font_file, .oo_font_time, .oo_font_dimensions, .oo_font_book, .oo_font_delete, .oo_font_share, .oo_font_album {
+	font-family: 'OnlineObjects';
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+}
+.oo_font_arrow_right:before {
+	content: "\3e";
+}
+.oo_font_arrow_left:before {
+	content: "\3c";
+}
+.oo_font_download:before {
+	content: "\64";
+}
+.oo_font_expand:before {
+	content: "\78";
+}
+.oo_font_user:before {
+	content: "\75";
+}
+.oo_font_onlineobjects:before {
+	content: "\a4";
+}
+.oo_font_at:before {
+	content: "\40";
+}
+.oo_font_globe:before {
+	content: "\67";
+}
+.oo_font_envelope:before {
+	content: "\65";
+}
+.oo_font_tag:before {
+	content: "\74";
+}
+.oo_font_globus:before {
+	content: "\47";
+}
+.oo_font_phone:before {
+	content: "\70";
+}
+.oo_font_warning:before {
+	content: "\77";
+}
+.oo_font_camera:before {
+	content: "\63";
+}
+.oo_font_file:before {
+	content: "\66";
+}
+.oo_font_time:before {
+	content: "\54";
+}
+.oo_font_dimensions:before {
+	content: "\44";
+}
+.oo_font_book:before {
+	content: "\62";
+}
+.oo_font_delete:before {
+	content: "\2a";
+}
+.oo_font_share:before {
+	content: "\23";
+}
+.oo_font_album:before {
+	content: "\2b";
+}

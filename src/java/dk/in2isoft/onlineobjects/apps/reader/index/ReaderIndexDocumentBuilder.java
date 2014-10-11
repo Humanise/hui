@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 
 import dk.in2isoft.commons.lang.Files;
@@ -49,6 +50,7 @@ public class ReaderIndexDocumentBuilder implements IndexDocumentBuilder<Internet
 				wordStr.append(" ");
 			}
 			wordStr.append(word.getText());
+			doc.add(new StringField("word", String.valueOf(word.getId()), Field.Store.NO));
 		}
 		doc.add(new TextField("words", wordStr.toString(), Field.Store.NO));
 

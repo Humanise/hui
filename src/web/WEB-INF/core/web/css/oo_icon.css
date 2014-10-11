@@ -46,6 +46,45 @@
 	height: 48px;
 }
 
+.oo_icon_close_line:before {
+	content: "\e610";
+}
+.oo_icon_view_line:before {
+	content: "\e60d";
+}
+.oo_icon_delete_line:before {
+	content: "\e60e";
+}
+.oo_icon_archive_line:before {
+	content: "\e60f";
+}
+.oo_icon_document_line:before {
+	content: "\e604";
+}
+.oo_icon_relations_line:before {
+	content: "\e605";
+}
+.oo_icon_bubble_line:before {
+	content: "\e606";
+}
+.oo_icon_gear_line:before {
+	content: "\e607";
+}
+.oo_icon_documents_line:before {
+	content: "\e608";
+}
+.oo_icon_star_line:before {
+	content: "\e609";
+}
+.oo_icon_tag_line:before {
+	content: "\e60a";
+}
+.oo_icon_inbox_line:before {
+	content: "\e60b";
+}
+.oo_icon_add_line:before {
+	content: "\e60c";
+}
 .oo_icon_view_grid:before {
 	content: "\e600";
 }

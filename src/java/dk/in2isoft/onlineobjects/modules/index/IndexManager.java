@@ -34,6 +34,8 @@ import org.apache.lucene.store.SimpleFSDirectory;
 import org.apache.lucene.util.Bits;
 import org.apache.lucene.util.Version;
 
+import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 
 import dk.in2isoft.commons.lang.Strings;
@@ -116,8 +118,7 @@ public class IndexManager {
 		IndexWriter writer = null;
 		try {
 			writer = openWriter();
-			document.add(new StringField("id", String.valueOf(entity.getId()),Store.YES));
-			document.add(new StringField("type", String.valueOf(entity.getType()),Store.YES));
+			populate(entity, document);
 			writer.updateDocument(new Term("id",String.valueOf(entity.getId())),document,analyzer);
 			writer.commit();
 		} catch (IOException e) {
@@ -125,6 +126,11 @@ public class IndexManager {
 		} finally {
 			closeWriter(writer);
 		}
+	}
+
+	private void populate(Entity entity, Document document) {
+		document.add(new StringField("id", String.valueOf(entity.getId()),Store.YES));
+		document.add(new StringField("type", entity.getClass().getSimpleName().toLowerCase(),Store.YES));
 	}
 	
 	public synchronized void update(Map<Entity ,Document> map) throws EndUserException  {
@@ -135,8 +141,7 @@ public class IndexManager {
 			for (Entry<Entity, Document> entry : entries) {
 				Document document = entry.getValue();
 				Entity entity = entry.getKey();
-				document.add(new StringField("id", String.valueOf(entity.getId()),Store.YES));
-				document.add(new StringField("type", String.valueOf(entity.getType()),Store.YES));
+				populate(entity, document);
 				writer.updateDocument(new Term("id",String.valueOf(entity.getId())),document);				
 			}
 			writer.commit();
@@ -216,7 +221,7 @@ public class IndexManager {
 		return null;
 	}
 
-	public SearchResult<IndexSearchResult> search(String text, int start, int size) throws ExplodingClusterFuckException {
+	public SearchResult<IndexSearchResult> search(String text, int page, int size) throws ExplodingClusterFuckException {
 
 		if (Strings.isBlank(text)) {
 			return new SearchResult<IndexSearchResult>(new ArrayList<IndexSearchResult>(), 0);
@@ -225,24 +230,24 @@ public class IndexManager {
 		QueryParser parser = new QueryParser(Version.LUCENE_40, field , analyzer);
 		try {
 			Query query = parser.parse(text);
-			return search(query, start, size);
+			return search(query, page, size);
 		} catch (ParseException e) {
 			List<IndexSearchResult> found = Lists.newArrayList();
 			return new SearchResult<IndexSearchResult>(found, 0);
 		}
 	}
 	
-	public SearchResult<IndexSearchResult> search(Query query, int start, int size) throws ExplodingClusterFuckException {
+	public SearchResult<IndexSearchResult> search(Query query, int page, int size) throws ExplodingClusterFuckException {
 		List<IndexSearchResult> found = Lists.newArrayList();
 		int total = 0;
 		IndexReader reader = null;
 		try {
 			reader = openReader();
 			IndexSearcher searcher = new IndexSearcher(reader);
-			int end = (start+1)*size;
+			int end = (page+1) * size;
 			TopDocs topDocs = searcher.search(query , 100000);
 			ScoreDoc[] scoreDocs = topDocs.scoreDocs;
-			for (int i = start*size; i < Math.min(scoreDocs.length,end); i++) {
+			for (int i = page * size; i < Math.min(scoreDocs.length,end); i++) {
 				Document document = reader.document(scoreDocs[i].doc);
 				found.add(new IndexSearchResult(document, scoreDocs[i].score));
 			}
@@ -268,6 +273,29 @@ public class IndexManager {
 			    Document document = reader.document(i);
 				IndexableField field = document.getField("id");
 				ids.add(Long.parseLong(field.stringValue()));
+			}
+		} catch (IOException e) {
+			throw new ExplodingClusterFuckException("Error while reading from index",e);
+		} finally {
+			closeReader(reader);
+		}
+		return ids;
+	}
+
+	public ListMultimap<String, Long> getIdsByType() throws ExplodingClusterFuckException {
+		ListMultimap<String, Long> ids = LinkedListMultimap.create();
+		IndexReader reader = null;
+		try {
+			reader = openReader();
+			Bits liveDocs = MultiFields.getLiveDocs(reader);
+			for (int i=0; i<reader.maxDoc(); i++) {
+			    if (liveDocs != null && !liveDocs.get(i))
+			        continue;
+
+			    Document document = reader.document(i);
+				IndexableField field = document.getField("id");
+				IndexableField typeField = document.getField("type");
+				ids.put(typeField.stringValue(),Long.parseLong(field.stringValue()));
 			}
 		} catch (IOException e) {
 			throw new ExplodingClusterFuckException("Error while reading from index",e);

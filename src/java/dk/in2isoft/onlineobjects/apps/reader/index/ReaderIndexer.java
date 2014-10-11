@@ -4,13 +4,18 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.TextField;
 
+import dk.in2isoft.commons.lang.Strings;
+import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.events.ModelEventListener;
 import dk.in2isoft.onlineobjects.core.events.ModelPrivilegesEventListener;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.model.Entity;
+import dk.in2isoft.onlineobjects.model.HtmlPart;
 import dk.in2isoft.onlineobjects.model.InternetAddress;
 import dk.in2isoft.onlineobjects.model.Item;
 import dk.in2isoft.onlineobjects.model.Relation;
@@ -19,7 +24,7 @@ import dk.in2isoft.onlineobjects.modules.index.IndexManager;
 import dk.in2isoft.onlineobjects.modules.index.IndexService;
 
 public class ReaderIndexer implements ModelEventListener, ModelPrivilegesEventListener {
-		
+
 	private ReaderIndexDocumentBuilder documentBuilder;
 	
 	private IndexService indexService;
@@ -48,6 +53,26 @@ public class ReaderIndexer implements ModelEventListener, ModelPrivilegesEventLi
 			}
 		} catch (EndUserException e) {
 			log.error("Unable to reindex: "+address, e);
+		}
+	}
+	
+	public void index(HtmlPart part) {
+		try {
+			User owner = modelService.getOwner(part);
+			if (owner!=null) {
+				String text = new HTMLDocument(part.getHtml()).getExtractedContents();
+				List<InternetAddress> parents = modelService.getParents(part, Relation.KIND_STRUCTURE_CONTAINS, InternetAddress.class, owner);
+				if (parents.isEmpty()) {
+					return; // TODO For now we only consider those contained in addresses
+				}
+				Document doc = new Document();
+				doc.add(new TextField("title", Strings.asNonBlank(part.getName(),"blank"), Field.Store.YES));
+				doc.add(new TextField("text", Strings.asNonBlank(text,""), Field.Store.NO));
+				
+				getIndexManager(owner).update(part, doc);
+			}
+		} catch (EndUserException e) {
+			log.error("Unable to reindex: "+part, e);
 		}
 	}
 	
@@ -84,6 +109,9 @@ public class ReaderIndexer implements ModelEventListener, ModelPrivilegesEventLi
 		}
 		if (relation.getSubEntity() instanceof InternetAddress) {
 			index((InternetAddress) relation.getSubEntity());
+		}
+		if (relation.matches(InternetAddress.class,Relation.KIND_STRUCTURE_CONTAINS,HtmlPart.class)) {
+			index((HtmlPart) relation.getSubEntity());
 		}
 	}
 

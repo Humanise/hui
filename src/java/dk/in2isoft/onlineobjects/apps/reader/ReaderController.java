@@ -11,10 +11,11 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.index.IndexableField;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.queryparser.flexible.standard.QueryParserUtil;
 
+import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 
 import dk.in2isoft.commons.lang.Code;
@@ -24,6 +25,7 @@ import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.in2igui.data.ItemData;
 import dk.in2isoft.in2igui.data.ListWriter;
+import dk.in2isoft.onlineobjects.apps.reader.index.ReaderQuery;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.ArticlePerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.FeedPerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.WordPerspective;
@@ -41,6 +43,7 @@ import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.core.exceptions.NetworkException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
+import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.HtmlPart;
 import dk.in2isoft.onlineobjects.model.InternetAddress;
 import dk.in2isoft.onlineobjects.model.Pile;
@@ -58,7 +61,6 @@ import dk.in2isoft.onlineobjects.modules.networking.NetworkResponse;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.ui.ScriptWriter;
 import dk.in2isoft.onlineobjects.ui.StylesheetWriter;
-import dk.in2isoft.onlineobjects.ui.data.Option;
 import dk.in2isoft.onlineobjects.ui.data.SimpleEntityPerspective;
 
 
@@ -79,112 +81,108 @@ public class ReaderController extends ReaderControllerBase {
 	}
 	
 	@Path
-	public void listAddresses(Request request) throws IOException, ModelException {
+	public void searchAddresses(Request request) throws IOException, ModelException, ExplodingClusterFuckException {
 		
 		int page = request.getInt("page");
-		String text = request.getString("text");
 		int pageSize = 30;
 		
-		List<Long> tagIDs = request.getLongList("tags");
+		ReaderQuery rQuery = new ReaderQuery();
+		rQuery.setText(request.getString("text"));
+		rQuery.setSubset(request.getString("subset"));
+		rQuery.setType(request.getString("type"));
+		rQuery.setPage(page);
+		rQuery.setPageSize(pageSize);
+		rQuery.setType(request.getString("type"));
+		rQuery.setWordIds(request.getLongList("tags"));
+
+		
+		final ListMultimap<String, Long> idsByType = find(request, rQuery);
+		final List<Long> ids = Lists.newArrayList(idsByType.values());
+
+		List<Entity> list = Lists.newArrayList();
+		int totalCount = idsByType.get("total").iterator().next().intValue(); // TODO
+		{
+			List<Long> addressIds = idsByType.get(InternetAddress.class.getSimpleName().toLowerCase());
+			if (!addressIds.isEmpty()) {
+				Query<InternetAddress> query = Query.after(InternetAddress.class).withIds(addressIds).withPrivileged(request.getSession());
+				
+				list.addAll(modelService.search(query).getList());
+			}
+		}
+		{
+			List<Long> partIds = idsByType.get(HtmlPart.class.getSimpleName().toLowerCase());
+			if (!partIds.isEmpty()) {
+				Query<HtmlPart> query = Query.after(HtmlPart.class).withIds(partIds).withPrivileged(request.getSession());
+				
+				list.addAll(modelService.search(query).getList());
+			}
+		}
+			
+		sortByIds(list, ids);
+		
 
 		ListWriter writer = new ListWriter(request);
-		
-		Query<InternetAddress> query = Query.after(InternetAddress.class).withWords(text).withPrivileged(request.getSession()).withPaging(page, 30);
-		
-		if (!tagIDs.isEmpty()) {
-			List<Word> words = modelService.list(Query.after(Word.class).withIds(tagIDs));
-			query.withChildren(words);
-		}
-		
-		SearchResult<InternetAddress> result = modelService.search(query);
-		
 		writer.startList();
-		writer.window(result.getTotalCount(), pageSize, page);
+		writer.window(totalCount, pageSize, page);
 		
 		writer.startHeaders();
 		writer.header("Title").header("",1);
 		writer.endHeaders();
-		
-		
-		
-		for (InternetAddress address : result.getList()) {
-			writer.startRow().withId(address.getId());
+		for (Entity entity : list) {
+			InternetAddress address = null;
+			if (entity instanceof InternetAddress) {
+				address = (InternetAddress) entity;
+			}
+			writer.startRow().withId(entity.getId());
 			writer.startCell().startLine();
-			if (Strings.isBlank(address.getName())) {
+			if (Strings.isBlank(entity.getName())) {
 				writer.text("No name");
 			} else {
-				writer.text(address.getName());
+				writer.text(entity.getName());
 			}
 			writer.endLine();
-			writer.startLine().dimmed().minor().text(Strings.simplifyURL(address.getAddress())).endLine();
-			List<Word> words = modelService.getChildren(address, Word.class, request.getSession());
-			if (Code.isNotEmpty(words)) {
-				HTMLWriter wordLine = new HTMLWriter(); 
-				wordLine.startP().withClass("reader_list_words");
-				for (Iterator<Word> i = words.iterator(); i.hasNext();) {
-					Word word = i.next();
-					wordLine.startVoidA().withClass("reader_list_word").withData("id", word.getId()).text(word.getText()).endA();
-					if (i.hasNext()) {
-						writer.text(" ");
-					}
+
+			if (address!=null) {
+				writer.startLine().dimmed().minor();
+				writer.text(Strings.simplifyURL(address.getAddress()));
+				List<HtmlPart> quotes = modelService.getChildren(address, Relation.KIND_STRUCTURE_CONTAINS, HtmlPart.class,request.getSession());
+				if (quotes.size()>0) {
+					writer.text(" (").text(quotes.size()).text(")");
 				}
-				wordLine.endP();
-				writer.html(wordLine);
+				writer.endLine();
+				List<Word> words = modelService.getChildren(address, Word.class, request.getSession());
+				if (Code.isNotEmpty(words)) {
+					HTMLWriter wordLine = new HTMLWriter(); 
+					wordLine.startP().withClass("reader_list_words");
+					for (Iterator<Word> i = words.iterator(); i.hasNext();) {
+						Word word = i.next();
+						wordLine.startVoidA().withClass("reader_list_word").withData("id", word.getId()).text(word.getText()).endA();
+						if (i.hasNext()) {
+							writer.text(" ");
+						}
+					}
+					wordLine.endP();
+					writer.html(wordLine);
+				}
 			}
 			writer.endCell();
 			writer.startCell();
 			writer.startIcons();
-			writer.startIcon().revealing().withAction().withIcon("monochrome/view").withData(address.getAddress()).endIcon();
-			writer.startIcon().revealing().withAction().withIcon("monochrome/graph").withData(address.getAddress()).endIcon();
+			if (address!=null) {
+				writer.startIcon().revealing().withAction().withIcon("monochrome/view").withData(address.getAddress()).endIcon();
+			}
+			writer.startIcon().revealing().withAction().withIcon("monochrome/graph").withData("graph").endIcon();
 			writer.endIcons();
 			writer.endCell();
 			writer.endRow();
 		}
 		writer.endList();
 	}
-	
-	@Path
-	public void searchAddresses(Request request) throws IOException, ModelException, ExplodingClusterFuckException {
-		
-		int page = request.getInt("page");
-		String text = request.getString("text");
-		String context = request.getString("context");
-		int pageSize = 30;
-		
-		List<Long> tagIDs = request.getLongList("tags");
 
-		ListWriter writer = new ListWriter(request);
-		
-		final List<Long> ids = find(request, text, context);
-		
-		if (!Strings.isBlank(text) && ids.isEmpty()) {
-			ids.add(-1l);
-		}
-		
-		Query<InternetAddress> query = Query.after(InternetAddress.class).withIds(ids).withPrivileged(request.getSession()).withPaging(page, 30);
-		
-		if (!tagIDs.isEmpty()) {
-			List<Word> words = modelService.list(Query.after(Word.class).withIds(tagIDs));
-			query.withChildren(words);
-		}
-		
-		SearchResult<InternetAddress> result = modelService.search(query);
-		
-		writer.startList();
-		writer.window(result.getTotalCount(), pageSize, page);
-		
-		writer.startHeaders();
-		writer.header("Title").header("",1);
-		writer.endHeaders();
-		
-		
-		
-		List<InternetAddress> list = result.getList();
-		
+	private void sortByIds(List<Entity> list, final List<Long> ids) {
+		Collections.sort(list, new Comparator<Entity>() {
 
-		Collections.sort(list, new Comparator<InternetAddress>() {
-
-			public int compare(InternetAddress o1, InternetAddress o2) {
+			public int compare(Entity o1, Entity o2) {
 				int index1 = ids.indexOf(o1.getId());
 				int index2 = ids.indexOf(o2.getId());
 				if (index1>index2) {
@@ -195,59 +193,34 @@ public class ReaderController extends ReaderControllerBase {
 				return 0;
 			}
 		});
-		
-		for (InternetAddress address : list) {
-			
-			writer.startRow().withId(address.getId());
-			writer.startCell().startLine();
-			if (Strings.isBlank(address.getName())) {
-				writer.text("No name");
-			} else {
-				writer.text(address.getName());
-			}
-			writer.endLine();
-			writer.startLine().dimmed().minor();
-			writer.text(Strings.simplifyURL(address.getAddress()));
-			List<HtmlPart> quotes = modelService.getChildren(address, Relation.KIND_STRUCTURE_CONTAINS, HtmlPart.class,request.getSession());
-			if (quotes.size()>0) {
-				writer.text(" (").text(quotes.size()).text(")");
-			}
-			writer.endLine();
-			List<Word> words = modelService.getChildren(address, Word.class, request.getSession());
-			if (Code.isNotEmpty(words)) {
-				HTMLWriter wordLine = new HTMLWriter(); 
-				wordLine.startP().withClass("reader_list_words");
-				for (Iterator<Word> i = words.iterator(); i.hasNext();) {
-					Word word = i.next();
-					wordLine.startVoidA().withClass("reader_list_word").withData("id", word.getId()).text(word.getText()).endA();
-					if (i.hasNext()) {
-						writer.text(" ");
-					}
-				}
-				wordLine.endP();
-				writer.html(wordLine);
-			}
-			writer.endCell();
-			writer.startCell();
-			writer.startIcons();
-			writer.startIcon().revealing().withAction().withIcon("monochrome/view").withData(address.getAddress()).endIcon();
-			writer.startIcon().revealing().withAction().withIcon("monochrome/graph").withData("graph").endIcon();
-			writer.endIcons();
-			writer.endCell();
-			writer.endRow();
-		}
-		writer.endList();
 	}
 
-	private List<Long> find(Request request, String text, String context) throws ExplodingClusterFuckException {
+	private ListMultimap<String, Long> find(Request request, ReaderQuery query) throws ExplodingClusterFuckException {
 		IndexManager index = getIndex(request);
-		if (Strings.isBlank(text) && Strings.isBlank(context)) {
-			return index.getAllIds();
+		if (Strings.isBlank(query.getText()) && Strings.isBlank(query.getSubset())) {
+			return index.getIdsByType();
 		}
-		final List<Long> ids = Lists.newArrayList();
-		StringBuilder indexQuery = new StringBuilder();
+		final ListMultimap<String, Long> ids = LinkedListMultimap.create();
 		
-		String[] textParts = Strings.getWords(text);
+		String indexQuery = buildQuery(query);
+		log.info(indexQuery.toString());
+		SearchResult<IndexSearchResult> search = index.search(indexQuery.toString(), query.getPage(), query.getPageSize());
+		for (IndexSearchResult row : search.getList()) {
+			Long id = row.getLong("id");
+			String type2 = row.getString("type");
+			ids.put(type2, id);
+		}
+		ids.put("total", Long.valueOf(search.getTotalCount()));
+		log.info(ids);
+		return ids;
+	}
+
+	private String buildQuery(ReaderQuery query) {
+		String[] textParts = Strings.getWords(query.getText());
+
+		StringBuilder indexQuery = new StringBuilder();
+		String tp = "pages".equals(query.getType()) ? InternetAddress.class.getSimpleName() : HtmlPart.class.getSimpleName();
+		indexQuery.append("type:").append(QueryParser.escape(tp)).append(""); // TODO Why doesn't this work?
 		
 		for (String string : textParts) {
 			if (indexQuery.length()>0) {
@@ -259,27 +232,27 @@ public class ReaderController extends ReaderControllerBase {
 			indexQuery.append(" OR text:").append(QueryParserUtil.escape(string)).append("*");
 			indexQuery.append(")");
 		}
-		if ("inbox".equals(context)) {
+		if (query.getWordIds()!=null) {
+			for (Long id : query.getWordIds()) {
+				if (indexQuery.length()>0) {
+					indexQuery.append(" AND ");
+				}
+				indexQuery.append("word:").append(id);
+			}
+		}
+		if ("inbox".equals(query.getSubset())) {
 			if (indexQuery.length()>0) {
 				indexQuery.append(" AND ");
 			}
 			indexQuery.append("inbox:yes");
 		}
-		else if ("verified".equals(context)) {
+		else if ("verified".equals(query.getSubset())) {
 			if (indexQuery.length()>0) {
 				indexQuery.append(" AND ");
 			}
 			indexQuery.append("inbox:no");
 		}
-		log.info(indexQuery.toString());
-		SearchResult<IndexSearchResult> search = index.search(indexQuery.toString(), 0, Integer.MAX_VALUE);
-		for (IndexSearchResult row : search.getList()) {
-			Document document = row.getDocument();
-			IndexableField field = document.getField("id");
-			ids.add(Long.parseLong(field.stringValue()));
-		}
-		log.info(ids);
-		return ids;
+		return indexQuery.toString();
 	}
 	
 	@Path
@@ -295,18 +268,20 @@ public class ReaderController extends ReaderControllerBase {
 	}
 
 	@Path
-	public List<Option> getTypeOptions(Request request) throws ModelException {
-		List<Option> options = Lists.newArrayList();
-		options.add(new Option("Pages","pages"));
-		options.add(new Option("Quotes","quotes"));
+	public List<ItemData> getTypeOptions(Request request) throws ModelException {
+		List<ItemData> options = Lists.newArrayList();
+		options.add(new ItemData("pages").withText("Pages").withIcon("document_line"));
+		options.add(new ItemData("quotes").withText("Quotes").withIcon("bubble_line"));
 		return options;
 	}
 
 	@Path
-	public List<Option> getContextOptions(Request request) throws ModelException {
-		List<Option> options = Lists.newArrayList();
-		options.add(new Option("Inbox","inbox"));
-		options.add(new Option("Verified","verified"));
+	public List<ItemData> getContextOptions(Request request) throws ModelException {
+		List<ItemData> options = Lists.newArrayList();
+		options.add(new ItemData("everything").withText("Everything").withIcon("documents_line"));
+		options.add(new ItemData("inbox").withText("Inbox").withIcon("inbox_line"));
+		options.add(new ItemData("verified").withText("Archive").withIcon("archive_line"));
+		options.add(new ItemData("favorites").withText("Favorites").withIcon("star_line"));
 		return options;
 	}
 
@@ -537,16 +512,30 @@ public class ReaderController extends ReaderControllerBase {
 	
 	@Path
 	public void reIndex(Request request) throws EndUserException {
+		Privileged privileged = request.getSession();
 		readerIndexer.clear(request.getSession());
-		Query<InternetAddress> query = Query.after(InternetAddress.class).withPrivileged(request.getSession());
-		Results<InternetAddress> scroll = modelService.scroll(query);
-		try {
-			while (scroll.next()) {
-				InternetAddress address = scroll.get();
-				readerIndexer.index(address);
+		{
+			Query<InternetAddress> query = Query.after(InternetAddress.class).withPrivileged(privileged);
+			Results<InternetAddress> scroll = modelService.scroll(query);
+			try {
+				while (scroll.next()) {
+					InternetAddress address = scroll.get();
+					readerIndexer.index(address);
+				}
+			} finally {
+				scroll.close();
 			}
-		} finally {
-			scroll.close();
+		}
+		{
+			Query<HtmlPart> query = Query.after(HtmlPart.class).withPrivileged(request.getSession());
+			Results<HtmlPart> scroll = modelService.scroll(query);
+			try {
+				while (scroll.next()) {
+					readerIndexer.index(scroll.get());
+				}
+			} finally {
+				scroll.close();
+			}
 		}
 	}
 
