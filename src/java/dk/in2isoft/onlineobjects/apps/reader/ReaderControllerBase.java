@@ -60,6 +60,7 @@ public abstract class ReaderControllerBase extends ApplicationController {
 		publicScript.addPath("WEB-INF","core","web","js","oo_selection.js");
 		publicScript.addPath("WEB-INF","core","web","js","oo_inspector.js");
 		publicScript.addPath("WEB-INF","core","web","js","oo_wordfinder.js");
+		publicScript.addPath("WEB-INF","core","web","js","oo_customview.js");
 		publicScript.addPath("WEB-INF","apps","reader","web","js","reader.js");
 
 	

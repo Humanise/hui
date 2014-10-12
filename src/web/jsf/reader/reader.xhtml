@@ -43,18 +43,35 @@
 					</gui:source>
 					
 					<gui:list name="list" source="listSource" variant="light"/>
+                    
+                    <div id="cust"></div>
+                    <script>
+                    new oo.CustomView({element:'cust',source:'listSource'})
+                    </script>
 				</div>
+                
 				<div id="viewer" class="reader_viewer">
 					<div class="reader_viewer_frame">
 						<div class="reader_viewer_info">
 							<div id="info"></div>
 							<a class="reader_viewer_close oo_icon oo_icon_close_line" href="javascript://"></a>
-                            <div class="reader_viewer_view">
-                                <a href="javascript://" class="reader_viewer_view_option reader_viewer_view_option-text reader_viewer_view_option-selected">Text</a>
-                                <a href="javascript://" class="reader_viewer_view_option reader_viewer_view_option-web">Web</a>
+                            <div class="reader_viewer_actions">
+        						<o:link name="quoteButton" plain="true" styleClass="reader_viewer_action">
+        							<o:icon icon="bubble_line" size="16"/>
+        						</o:link>
+        						<o:link name="archiveButton" plain="true" styleClass="reader_viewer_action">
+        							<o:icon icon="archive_line" size="16"/>
+        						</o:link>
+                                <div class="reader_viewer_view">
+                                    <a href="javascript://" class="reader_viewer_view_option reader_viewer_view_option-text reader_viewer_view_option-selected">Text</a>
+                                    <a href="javascript://" class="reader_viewer_view_option reader_viewer_view_option-web">Web</a>
+                                </div>
                             </div>
 						</div>
 						<div id="rendering" class="reader_viewer_content"></div>
+                        <div class="reader_viewer_sidebar">
+                        
+                        </div>
 					</div>
 				</div>
 			</div>

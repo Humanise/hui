@@ -61,7 +61,7 @@ public class SourceComponent extends AbstractComponent {
 				if (!first) {
 					sb.append(",");
 				}
-				sb.append("{key:'").append(parameter.getKey()).append("',value:'").append(parameter.getValue()).append("'}");
+				sb.append("{key:'").append(parameter.getKey()).append("',value:'").append(parameter.getValue()).append("',separate:true").append("}");
 				first = false;
 			}
 		}

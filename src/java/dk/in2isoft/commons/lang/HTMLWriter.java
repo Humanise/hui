@@ -54,7 +54,17 @@ public class HTMLWriter extends MarkupWriter {
 		endTag("p");
 		return this;
 	}
+
+	public HTMLWriter startBlockquote() {
+		startTag("blockquote");
+		return this;
+	}
 	
+	public HTMLWriter endBlockquote() {
+		endTag("blockquote");
+		return this;
+	}
+
 	public HTMLWriter startStrong() {
 		startTag("strong");
 		return this;

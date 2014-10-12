@@ -89,18 +89,16 @@ public class ReaderController extends ReaderControllerBase {
 		ReaderQuery rQuery = new ReaderQuery();
 		rQuery.setText(request.getString("text"));
 		rQuery.setSubset(request.getString("subset"));
-		rQuery.setType(request.getString("type"));
+		rQuery.setType(request.getStrings("type"));
 		rQuery.setPage(page);
 		rQuery.setPageSize(pageSize);
-		rQuery.setType(request.getString("type"));
-		rQuery.setWordIds(request.getLongList("tags"));
+		rQuery.setWordIds(request.getLongs("tags"));
 
 		
 		final ListMultimap<String, Long> idsByType = find(request, rQuery);
 		final List<Long> ids = Lists.newArrayList(idsByType.values());
 
 		List<Entity> list = Lists.newArrayList();
-		int totalCount = idsByType.get("total").iterator().next().intValue(); // TODO
 		{
 			List<Long> addressIds = idsByType.get(InternetAddress.class.getSimpleName().toLowerCase());
 			if (!addressIds.isEmpty()) {
@@ -121,6 +119,8 @@ public class ReaderController extends ReaderControllerBase {
 		sortByIds(list, ids);
 		
 
+		int totalCount = idsByType.get("total").iterator().next().intValue(); // TODO
+
 		ListWriter writer = new ListWriter(request);
 		writer.startList();
 		writer.window(totalCount, pageSize, page);
@@ -133,7 +133,7 @@ public class ReaderController extends ReaderControllerBase {
 			if (entity instanceof InternetAddress) {
 				address = (InternetAddress) entity;
 			}
-			writer.startRow().withId(entity.getId());
+			writer.startRow().withId(entity.getId()).withKind(entity.getClass().getSimpleName());
 			writer.startCell().startLine();
 			if (Strings.isBlank(entity.getName())) {
 				writer.text("No name");
@@ -219,8 +219,20 @@ public class ReaderController extends ReaderControllerBase {
 		String[] textParts = Strings.getWords(query.getText());
 
 		StringBuilder indexQuery = new StringBuilder();
-		String tp = "pages".equals(query.getType()) ? InternetAddress.class.getSimpleName() : HtmlPart.class.getSimpleName();
-		indexQuery.append("type:").append(QueryParser.escape(tp)).append(""); // TODO Why doesn't this work?
+		
+		Collection<String> types = query.getType();
+		if (types!=null && !types.isEmpty()) {
+			indexQuery.append("(");
+			for (Iterator<String> i = types.iterator(); i.hasNext();) {
+				String type = (String) i.next();
+				String tp = "pages".equals(type) ? InternetAddress.class.getSimpleName() : HtmlPart.class.getSimpleName();
+				indexQuery.append("type:").append(QueryParser.escape(tp)).append("");	
+				if (i.hasNext()) {
+					indexQuery.append(" OR ");					
+				}
+			}			
+			indexQuery.append(")");
+		}
 		
 		for (String string : textParts) {
 			if (indexQuery.length()>0) {
@@ -319,32 +331,57 @@ public class ReaderController extends ReaderControllerBase {
 	@Path
 	public ArticlePerspective loadArticle(Request request) throws IOException, ModelException, SecurityException {
 		Long id = request.getLong("id");
-		
 		UserSession session = request.getSession();
+
 		InternetAddress address = modelService.get(InternetAddress.class, id, session);
+		
+		if (address==null) {
+			Query<InternetAddress> query = Query.after(InternetAddress.class).withChild(id, Relation.KIND_STRUCTURE_CONTAINS);
+			address = modelService.search(query).getFirst();
+		}
+
 				
 		HTMLDocument document = getHTMLDocument(address, session);
 		
 		ArticlePerspective article = new ArticlePerspective();
 		
 		List<HtmlPart> quotes = modelService.getChildren(address, Relation.KIND_STRUCTURE_CONTAINS, HtmlPart.class,request.getSession());
-		List<Pair<Long,String>> x = Lists.newArrayList();
+		List<Pair<Long,String>> quoteList = Lists.newArrayList();
 		for (HtmlPart htmlPart : quotes) {
-			x.add(Pair.of(htmlPart.getId(), htmlPart.getHtml()));
+			quoteList.add(Pair.of(htmlPart.getId(), htmlPart.getHtml()));
 		}
-		article.setQuotes(x);
+		article.setQuotes(quoteList);
 		
 		article.setInfo(buildInfo(document, address, session));
 		article.setId(address.getId());
 		if (document!=null) {
 			article.setTitle(document.getTitle());
-			article.setRendering(buildRendering(document, address));
+			article.setRendering(buildRendering(document, address, quotes));
 		} else {
 			article.setTitle(address.getName());
 		}
 		
 		return article;
 	}
+	
+	@Path
+	public ArticlePerspective addQuote(Request request) throws IOException, ModelException, SecurityException {
+		Long id = request.getLong("id");
+		String text = request.getString("text");
+		if (Strings.isNotBlank(text)) {
+			Privileged session = request.getSession();
+			InternetAddress address = modelService.get(InternetAddress.class, id, session);
+			if (address!=null) {
+				HtmlPart part = new HtmlPart();
+				part.setName(StringUtils.abbreviate(text, 50));
+				part.setHtml(text);
+				modelService.createItem(part, session);
+				modelService.createRelation(address, part, Relation.KIND_STRUCTURE_CONTAINS, session);				
+			}
+		}
+		
+		return loadArticle(request);
+	}	
 	
 	private HTMLDocument getHTMLDocument(InternetAddress address, Privileged privileged) throws SecurityException, ModelException {
 		
@@ -400,19 +437,23 @@ public class ReaderController extends ReaderControllerBase {
 		return writer.toString();
 	}
 
-	private String buildRendering(HTMLDocument document, InternetAddress address) {
+	private String buildRendering(HTMLDocument document, InternetAddress address, List<HtmlPart> quotes) {
 		String content = document.getExtractedContents();
 		
 		HTMLWriter writer = new HTMLWriter();
+		writer.startDiv().withClass("body");
+		
+		for (HtmlPart part : quotes) {
+			writer.startBlockquote().withData("id", part.getId()).text(part.getHtml()).endBlockquote();
+		}
 		
 		if (Strings.isNotBlank(content)) {
 			String[] lines = StringUtils.split(content, "\n");
-			writer.startDiv().withClass("body");
 			for (int i = 0; i < lines.length; i++) {
 				writer.startP().text(lines[i]).endP();
 			}
-			writer.endDiv();
 		}
+		writer.endDiv();
 		return writer.toString();
 	}
 	
@@ -438,10 +479,17 @@ public class ReaderController extends ReaderControllerBase {
 		Long id = request.getLong("id");
 		Code.checkNotNull(id, "No id provided");
 		
-		InternetAddress address = modelService.get(InternetAddress.class, id, request.getSession());
+		Privileged privileged = request.getSession();
+		InternetAddress address = modelService.get(InternetAddress.class, id, privileged);
 		Code.checkNotNull(id, "Address not found");
 		
-		modelService.deleteEntity(address, request.getSession());
+		List<HtmlPart> children = modelService.getChildren(address, Relation.KIND_STRUCTURE_CONTAINS, HtmlPart.class, privileged);
+		
+		modelService.deleteEntity(address, privileged);
+		
+		for (HtmlPart htmlPart : children) {
+			modelService.deleteEntity(htmlPart, privileged);
+		}
 	}
 
 	@Path

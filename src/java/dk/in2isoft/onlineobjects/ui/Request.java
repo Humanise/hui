@@ -252,12 +252,25 @@ public class Request {
 			return value;
 		}
 	}
+	
+	public List<String> getStrings(String name) {
+		List<String> strings = Lists.newArrayList();
+		String[] values = request.getParameterValues(name);
+		if (values!=null) {
+			for (String value : values) {
+				if (Strings.isNotBlank(value)) {
+					strings.add(value);
+				}
+			}
+		}
+		return strings;
+	}
 
 	public Long getLong(String key) {
 		return getLong(key, 0l);
 	}
 
-	public List<Long> getLongList(String key) {
+	public List<Long> getLongsByComma(String key) {
 		List<Long> found = Lists.newArrayList();
 		String str = getString(key);
 		String[] parts = str.split(",");
@@ -270,7 +283,22 @@ public class Request {
 		}
 		return found;
 	}
-
+	
+	public List<Long> getLongs(String key) {
+		List<Long> found = Lists.newArrayList();
+		String[] values = request.getParameterValues(key);
+		if (values!=null) {
+			for (String value : values) {
+				try {
+					found.add(Long.parseLong(value));
+				} catch (NumberFormatException e) {
+					// ignore
+				}			
+			}
+		}
+		return found;
+	}
+	
 	public Long getLong(String key, Long whenNullOrInvalid) {
 		String value = request.getParameter(key);
 		if (Strings.isBlank(value)) {
@@ -435,4 +463,5 @@ public class Request {
 		getLong("wordId");
 		getObject("enrichment", Pair.class);
 	}
+
 }

@@ -1,11 +1,12 @@
 package dk.in2isoft.onlineobjects.apps.reader.index;
 
+import java.util.Collection;
 import java.util.List;
 
 public class ReaderQuery {
 
 	private String text;
-	private String type;
+	private Collection<String> type;
 	private String subset;
 	private int page;
 	private int pageSize;
@@ -19,11 +20,11 @@ public class ReaderQuery {
 		this.text = text;
 	}
 
-	public String getType() {
+	public Collection<String> getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public void setType(Collection<String> type) {
 		this.type = type;
 	}
 

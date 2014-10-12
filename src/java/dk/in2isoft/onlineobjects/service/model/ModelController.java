@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
+import dk.in2isoft.commons.lang.Code;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.in2igui.data.Diagram;
 import dk.in2isoft.in2igui.data.ListWriter;
@@ -16,7 +17,6 @@ import dk.in2isoft.onlineobjects.apps.words.WordsController;
 import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SearchResult;
-import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.core.exceptions.ExplodingClusterFuckException;
 import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
@@ -119,12 +119,11 @@ public class ModelController extends ModelControllerBase {
 	@Path(start="listInbox")
 	public void listInbox(Request request) throws IOException, ModelException {
 		int page = request.getInt("page");
-		String language = request.getString("language");
 		
 		User user = request.getSession().getUser();
 		Pile inbox = inboxService.getOrCreateInbox(user);
 		
-		List<Image> items = modelService.getChildren(inbox, Image.class, user);
+		List<Entity> items = modelService.getChildren(inbox, Entity.class, user);
 
 		ListWriter writer = new ListWriter(request);
 		writer.startList();
@@ -145,7 +144,16 @@ public class ModelController extends ModelControllerBase {
 		}
 		writer.endList();
 	}
-	
+
+	@Path
+	public void removeEntity(Request request) throws IllegalRequestException, ModelException, SecurityException {
+
+		long id = request.getLong("id");
+		Entity entity = modelService.get(Entity.class, id, request.getSession());
+		Code.checkNotNull(entity, "Entity not found");
+		modelService.deleteEntity(entity, request.getSession());
+	}
+
 	@Path
 	public void removeFromInbox(Request request) throws IllegalRequestException, ModelException, SecurityException {
 

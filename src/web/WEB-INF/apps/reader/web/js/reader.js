@@ -8,7 +8,7 @@ var controller = {
 		
 		this.viewer = hui.get('viewer');
 		hui.listen(document.body,'click',this._click.bind(this));
-		//this._loadArticle(3141);
+		this._loadArticle(112);
 		var textListener = function() {
 			var selection = hui.selection.getText();
 			if (!hui.isBlank(selection)) {
@@ -82,8 +82,12 @@ var controller = {
 	
 	$click$removeButton : function() {
 		var obj = hui.ui.get('list').getFirstSelection();
+        var url = '/removeInternetAddress';
+        if (obj.kind == 'HtmlPart') {
+            url = '/service/model/removeEntity';
+        }
 		hui.ui.request({
-			url : '/removeInternetAddress',
+			url : url,
 			parameters : {id:obj.id},
 			$success : function() {
 				hui.ui.get('tagSource').refresh();
@@ -106,61 +110,6 @@ var controller = {
 	},
 	$open$list : function(info) {
 		this._loadArticle(info.id);
-	},
-	
-	_loadArticle : function(id) {
-		hui.ui.showMessage({text:'Loading...',busy:true});
-		hui.get('info').innerHTML = '<h1>Loading...</h1>';
-		var rendering = hui.get('rendering');
-		rendering.innerHTML='';
-		this.viewer.style.display='block';
-		this.viewerVisible = true;
-		hui.cls.add(document.body,'reader_modal');
-		hui.ui.request({
-			url : '/loadArticle',
-			parameters : {id:id},
-			$object : function(article) {
-				hui.ui.hideMessage();
-				this._drawArticle(article);
-			}.bind(this),
-			$failure : function() {
-				this._hideViewer();
-				hui.ui.msg.fail({text:'Sorry!'});
-			}.bind(this)
-		})
-	},
-	
-	_drawArticle : function(article) {
-		this._currentArticle = article;
-		var rendering = hui.get('rendering');
-		var info = hui.get('info');
-		var html = '';
-		if (article.quotes) {
-			html+='<div class="reader_viewer_quotes">';
-			for (var i = 0; i < article.quotes.length; i++) {
-				html += '<blockquote class="reader_viewer_quote" data-id="' + article.quotes[i].key + '">' + article.quotes[i].value + '</blockquote>';
-			}			
-			html+='</div>';
-		}
-		html+=article.rendering;
-		rendering.innerHTML = html;
-		info.innerHTML = article.info;
-	},
-	
-	_reloadInfo : function() {
-		var info = hui.get('info');
-		info.style.opacity='.5';
-		hui.ui.request({
-			url : '/loadArticle',
-			parameters : {id:this._currentArticle.id},
-			$object : function(article) {
-				this._currentArticle = article;
-				info.innerHTML = article.info;
-			}.bind(this),
-			$finally : function() {
-				info.style.opacity='';
-			}
-		})
 	},
 		
 	$click$addFeed : function(button) {
@@ -291,7 +240,90 @@ var controller = {
 			url : '/reIndex',
 			message : {start:'Indexing',success:'Finished'}
 		});
-	}
+	},
+	
+	_loadArticle : function(id) {
+		hui.ui.showMessage({text:'Loading...',busy:true});
+		hui.get('info').innerHTML = '<h1>Loading...</h1>';
+		var rendering = hui.get('rendering');
+		rendering.innerHTML = '';
+		this.viewer.style.display = 'block';
+		this.viewerVisible = true;
+		hui.cls.add(document.body,'reader_modal');
+		hui.ui.request({
+			url : '/loadArticle',
+			parameters : {id:id},
+			$object : function(article) {
+				hui.ui.hideMessage();
+				this._drawArticle(article);
+			}.bind(this),
+			$failure : function() {
+				this._hideViewer();
+				hui.ui.msg.fail({text:'Sorry!'});
+			}.bind(this)
+		})
+	},
+	
+	_drawArticle : function(article) {
+		this._currentArticle = article;
+		var rendering = hui.get('rendering');
+		var info = hui.get('info');
+		var html = '';
+        /*
+		if (article.quotes) {
+			html+='<div class="reader_viewer_quotes">';
+			for (var i = 0; i < article.quotes.length; i++) {
+				html += '<blockquote class="reader_viewer_quote" data-id="' + article.quotes[i].key + '">' + article.quotes[i].value + '</blockquote>';
+			}			
+			html+='</div>';
+		}*/
+		html+=article.rendering;
+		rendering.innerHTML = html;
+		info.innerHTML = article.info;
+	},
+	
+	_reloadInfo : function() {
+		var info = hui.get('info');
+		info.style.opacity = '.5';
+		hui.ui.request({
+			url : '/loadArticle',
+			parameters : {id:this._currentArticle.id},
+			$object : function(article) {
+				this._currentArticle = article;
+				info.innerHTML = article.info;
+			}.bind(this),
+			$finally : function() {
+				info.style.opacity='';
+			}
+		})
+	},
+    
+    // Viewer
+    
+    $click$archiveButton : function() {
+		hui.ui.request({
+			url : '/service/model/removeFromInbox',
+			parameters : {id:this._currentArticle.id},
+            $success : function() {
+				hui.ui.get('listSource').refresh();
+                hui.ui.msg.success({text:'Archived'});
+            }
+        });
+    },
+    
+    $click$quoteButton : function() {
+        var parameters = {
+            id : this._currentArticle.id,
+            text : this.text
+        }
+		hui.ui.request({
+			url : '/addQuote',
+			parameters : parameters,
+			$object : function(article) {
+				this._drawArticle(article);
+			}.bind(this)
+		})
+    }
 }
 
 hui.ui.listen(controller);

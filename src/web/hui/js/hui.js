@@ -1674,13 +1674,24 @@ hui.request.isXMLResponse = function(t) {
 hui.request._buildPostBody = function(parameters) {
 	if (!parameters) return null;
 	var output = '';
-	for (var param in parameters) {
-		if (output.length>0) output+='&';
-		output+=encodeURIComponent(param)+'=';
-		if (parameters[param]!==undefined && parameters[param]!==null) {
-			output+=encodeURIComponent(parameters[param]);
-		}
-	}
+    if (hui.isArray(parameters)) {
+        for (var i = 0; i < parameters.length; i++) {
+            var param = parameters[i];
+    		if (i > 0) {output += '&'};
+    		output+=encodeURIComponent(param.name)+'=';
+    		if (param.value!==undefined && param.value!==null) {
+    			output+=encodeURIComponent(param.value);
+    		}
+        }
+    } else {
+    	for (var param in parameters) {
+    		if (output.length > 0) {output += '&'};
+    		output+=encodeURIComponent(param)+'=';
+    		if (parameters[param]!==undefined && parameters[param]!==null) {
+    			output+=encodeURIComponent(parameters[param]);
+    		}
+    	}        
+    }
 	return output;
 }
 

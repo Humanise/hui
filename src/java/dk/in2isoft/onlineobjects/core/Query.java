@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
 import org.hibernate.Session;
 
 import com.google.common.collect.Lists;
@@ -11,6 +12,7 @@ import com.google.common.collect.Lists;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.FieldLimitation.Function;
 import dk.in2isoft.onlineobjects.model.Entity;
+import dk.in2isoft.onlineobjects.model.HtmlPart;
 import dk.in2isoft.onlineobjects.model.Privilege;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
@@ -223,6 +225,12 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 		super.child = entity;
 		return this;
 	}
+	
+	public Query<T> withChild(Long id, String kind) {
+		children.add(new Other(id, kind));
+		return this;
+	}
+
 
 	public Query<T> withChild(Entity item, String relationKind) {
 		child = item;
@@ -494,4 +502,5 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 			return relationKind;
 		}
 	}
+
 }

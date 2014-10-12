@@ -81,6 +81,10 @@ public class LinkComponent extends AbstractComponent {
 	public String getName() {
 		return name;
 	}
+	
+	public void setClass(String cls) {
+		this.styleClass = cls;
+	}
 
 	public void setClick(String click) {
 		this.click = click;
