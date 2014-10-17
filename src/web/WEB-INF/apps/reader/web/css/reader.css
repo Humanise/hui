@@ -190,3 +190,38 @@ div.sidebar div.block ul li strong
 {
 	text-shadow: none;
 }
+
+/** View **/
+
+.reader_viewer_view_item {
+	text-transform: uppercase;
+	text-decoration: none;
+	color: #333;
+	font-size: 12px;
+}
+
+.reader_viewer_view_item_selected {
+	font-weight: 800;
+}
+
+.reader_viewer_perpective {
+	display: none;
+}
+
+.reader_viewer_content_formatted > .reader_viewer_perpective_formatted,
+.reader_viewer_content_text > .reader_viewer_perpective_text,
+.reader_viewer_content_web > .reader_viewer_perpective_web
+{
+	display: block;
+}
+
+.reader_viewer_perpective_web {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	width: 100%;
+	height: 100%;
+	border: none;
+}

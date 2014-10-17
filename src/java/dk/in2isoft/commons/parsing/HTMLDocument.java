@@ -1,7 +1,6 @@
 
 package dk.in2isoft.commons.parsing;
 
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,9 +20,11 @@ import org.xml.sax.SAXException;
 
 import com.google.common.collect.Lists;
 
+import de.l3s.boilerpipe.BoilerpipeExtractor;
 import de.l3s.boilerpipe.BoilerpipeProcessingException;
 import de.l3s.boilerpipe.document.TextDocument;
 import de.l3s.boilerpipe.extractors.ArticleExtractor;
+import de.l3s.boilerpipe.extractors.CommonExtractors;
 import de.l3s.boilerpipe.sax.BoilerpipeSAXInput;
 import de.l3s.boilerpipe.sax.HTMLHighlighter;
 import dk.in2isoft.commons.lang.Strings;
@@ -119,23 +120,79 @@ public class HTMLDocument extends XMLDocument {
     }
     
     public String getExtractedMarkup() {
-		final HTMLHighlighter highlighted = HTMLHighlighter.newExtractingInstance();
-		highlighted.setOutputHighlightOnly(false);
-		highlighted.setPreHighlight("<span style='background: red'>");
-		highlighted.setPostHighlight("</span>");
-		
-		String html = getRawString();
+    	
+    	String rawString = getRawString();
+    	if (Strings.isBlank(rawString)) {
+    		return "";
+    	}
+    	final BoilerpipeExtractor extractor = CommonExtractors.ARTICLE_EXTRACTOR;
+    	
+		final de.l3s.boilerpipe.sax.HTMLDocument htmlDoc = new de.l3s.boilerpipe.sax.HTMLDocument(rawString);
+
 		TextDocument doc;
 		try {
-			doc = new BoilerpipeSAXInput(new InputSource(new StringReader(html))).getTextDocument();
-			return highlighted.process(doc, html);
+			doc = new BoilerpipeSAXInput(htmlDoc.toInputSource()).getTextDocument();
+			extractor.process(doc);
+
+			final InputSource is = htmlDoc.toInputSource();
+	    	
+	    	
+			final HTMLHighlighter highlighted = HTMLHighlighter.newExtractingInstance();
+			highlighted.setOutputHighlightOnly(true);
+			highlighted.setExtraStyleSheet("");
+			
+			String extracted = highlighted.process(doc, is);
+			HTMLDocument inner = new HTMLDocument(extracted);
+			nu.xom.Document xomDoc = inner.getXOMDocument();
+
+			XPathContext context = new XPathContext("html", xomDoc.getRootElement().getNamespaceURI());
+
+			removeTags(xomDoc, "script", context);
+			removeTags(xomDoc, "style", context);
+			removeTags(xomDoc, "link", context);
+			removeTags(xomDoc, "iframe", context);
+			
+			removeAttributes(xomDoc, "style", context);
+			removeAttributes(xomDoc, "class", context);
+			removeAttributes(xomDoc, "id", context);
+			
+			StringBuilder body = new StringBuilder();
+			Nodes query = xomDoc.getDocument().query("//html:body", context);
+			for (int i = 0; i < query.size(); i++) {
+				nu.xom.Node node = query.get(i);
+				body.append(node.toXML());
+			}
+			
+			return body.toString();
+			
 		} catch (BoilerpipeProcessingException e) {
-			log.error("Unable to extract markup", e);
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} catch (SAXException e) {
-			log.error("Unable to extract markup", e);
-		};
-		return null;
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "";
     }
+	
+	private void removeAttributes(nu.xom.Document doc, String name, XPathContext context) {
+		Nodes nodes = doc.getRootElement().query("//html:*[@"+name+"]",context );
+		for (int i = 0; i < nodes.size(); i++) {
+			Element node = (Element) nodes.get(i);
+			Attribute attribute = node.getAttribute(name);
+			if (attribute!=null) {
+				node.removeAttribute(attribute);
+			}
+		}
+	}
+
+	private void removeTags(nu.xom.Document doc, String name, XPathContext context) {
+		Nodes nodes = doc.getRootElement().query("//html:"+name,context );
+		for (int i = 0; i < nodes.size(); i++) {
+			nu.xom.Node node = nodes.get(i);
+			node.getParent().removeChild(node);
+		}
+	}
     
     private void traverse(nu.xom.Node parent, StringBuffer data) {
     	if (parent==null) return;

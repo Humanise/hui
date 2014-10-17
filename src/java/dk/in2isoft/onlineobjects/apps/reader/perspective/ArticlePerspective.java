@@ -9,8 +9,12 @@ public class ArticlePerspective {
 
 	private long id;
 	private String title;
+	private String url;
 	private String rendering;
+	private String text;
 	private String info;
+	private boolean inbox;
+	private boolean favorite;
 	private List<Pair<Long,String>> quotes;
 	private List<Option> tags;
 	private List<Option> words;
@@ -69,6 +73,38 @@ public class ArticlePerspective {
 
 	public void setQuotes(List<Pair<Long,String>> quotes) {
 		this.quotes = quotes;
+	}
+
+	public String getText() {
+		return text;
+	}
+
+	public void setText(String text) {
+		this.text = text;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public boolean isInbox() {
+		return inbox;
+	}
+
+	public void setInbox(boolean inbox) {
+		this.inbox = inbox;
+	}
+
+	public boolean isFavorite() {
+		return favorite;
+	}
+
+	public void setFavorite(boolean favorite) {
+		this.favorite = favorite;
 	}
 	
 }

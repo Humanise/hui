@@ -42,12 +42,7 @@
 						<gui:parameter key="type" value="@types.value"/>
 					</gui:source>
 					
-					<gui:list name="list" source="listSource" variant="light"/>
-                    
-                    <div id="cust"></div>
-                    <script>
-                    new oo.CustomView({element:'cust',source:'listSource'})
-                    </script>
+					<gui:list name="list" source="listSource" variant="light"/>                    
 				</div>
                 
 				<div id="viewer" class="reader_viewer">
@@ -59,16 +54,24 @@
         						<o:link name="quoteButton" plain="true" styleClass="reader_viewer_action">
         							<o:icon icon="bubble_line" size="16"/>
         						</o:link>
-        						<o:link name="archiveButton" plain="true" styleClass="reader_viewer_action">
-        							<o:icon icon="archive_line" size="16"/>
+        						<o:link name="inboxButton" plain="true" id="reader_viewer_inbox" styleClass="reader_viewer_action">
+        							<o:icon icon="inbox_line" size="16"/>
         						</o:link>
-                                <div class="reader_viewer_view">
-                                    <a href="javascript://" class="reader_viewer_view_option reader_viewer_view_option-text reader_viewer_view_option-selected">Text</a>
-                                    <a href="javascript://" class="reader_viewer_view_option reader_viewer_view_option-web">Web</a>
-                                </div>
+        						<o:link name="favoriteButton" plain="true" id="reader_viewer_favorite" styleClass="reader_viewer_action">
+        							<o:icon icon="star_line" size="16"/>
+        						</o:link>
+                                <span class="reader_viewer_view" id="reader_viewer_view">
+                                    <a href="#" data-value="text" class="reader_viewer_view_item">Text</a>
+                                    <a href="#" data-value="formatted" class="reader_viewer_view_item reader_viewer_view_item_selected">Formatted</a>
+                                    <a href="#" data-value="web" class="reader_viewer_view_item">Web</a>
+                                </span>
                             </div>
 						</div>
-						<div id="rendering" class="reader_viewer_content"></div>
+						<div class="reader_viewer_content reader_viewer_content_formatted" id="viewer_content">
+							<div class="reader_viewer_perpective reader_viewer_perpective_formatted" id="viewer_formatted"></div>
+							<div class="reader_viewer_perpective reader_viewer_perpective_text" id="viewer_text"></div>
+							<iframe class="reader_viewer_perpective reader_viewer_perpective_web" id="viewer_frame"></iframe>
+						</div>
                         <div class="reader_viewer_sidebar">
                         
                         </div>
@@ -78,15 +81,6 @@
 		</ui:define>
 		
 		<ui:define name="sidebar">
-		
-			<gui:source name="tagSource" url="#{readerView.baseContext}/getWordCloud">
-			</gui:source>
-		
-			<gui:source name="feedSource" url="#{readerView.baseContext}/getFeeds">
-			</gui:source>
-
-			
-				
 			<div class="sidebar">
 				<div class="block">
 					<o:selection name="subsets" value="everything">
@@ -95,7 +89,7 @@
 				</div>
 				<div class="block">
 					<h3>Types</h3>
-					<o:selection name="types" value="pages" source="typesSource">
+					<o:selection name="types" value="pages">
 						<gui:source name="typesSource" url="#{readerView.baseContext}/getTypeOptions"/>
 					</o:selection>
 				</div>
@@ -104,11 +98,15 @@
     				<o:link name="addFeed" plain="true" styleClass="reader_feeds_add">
     					<o:icon icon="add_line"/>
     				</o:link>
-					<o:selection name="feeds" source="feedSource"/>
+					<o:selection name="feeds">		
+						<gui:source name="feedSource" url="#{readerView.baseContext}/getFeeds"/>
+					</o:selection>
 				</div>
 				<div class="block">
 					<h3>Tags</h3>
-					<o:selection name="tags" source="tagSource"/>
+					<o:selection name="tags">
+						<gui:source name="tagSource" url="#{readerView.baseContext}/getWordCloud"/>
+					</o:selection>
 				</div>
 			</div>
 		</ui:define>

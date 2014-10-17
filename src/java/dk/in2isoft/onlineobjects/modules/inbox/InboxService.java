@@ -25,14 +25,14 @@ public class InboxService {
 	}
 
 	public Pile getOrCreateInbox(User privileged) throws ModelException {
-		Query<Pile> query = Query.after(Pile.class).withParent(privileged, "personal.inbox").withPrivileged(privileged);
+		Query<Pile> query = Query.after(Pile.class).withParent(privileged, Relation.KIND_SYSTEM_USER_INBOX).withPrivileged(privileged);
 		Pile inbox = modelService.getFirst(query);
 		if (inbox==null) {
 			inbox = new Pile();
 			inbox.setName("Inbox for "+privileged.getUsername());
 			modelService.createItem(inbox, privileged);
 			modelService.grantFullPrivileges(inbox, privileged);
-			modelService.createRelation(privileged, inbox, "personal.inbox", privileged);
+			modelService.createRelation(privileged, inbox, Relation.KIND_SYSTEM_USER_INBOX, privileged);
 		}
 		return inbox;
 	}

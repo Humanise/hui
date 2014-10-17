@@ -171,7 +171,7 @@ hui.ui.listen({
 			onAbort : function() {
 				this._removeProgress(progress);
 			}.bind(this),
-			onSuccess : function(t) {
+			$success : function(t) {
 				var info = hui.string.fromJSON(t.responseText);
 				if (info.entity) {
 					this.loadWidget({id:info.entity.id,position:pos});

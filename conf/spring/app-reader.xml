@@ -19,6 +19,6 @@
    		<property name="storageService" ref="storageService"/>
    		<property name="modelService" ref="modelService"/>
    		<property name="securityService" ref="securityService"/>
-   		<property name="inboxService" ref="inboxService"/>
+   		<property name="pileService" ref="pileService"/>
    	</bean>
 </beans>

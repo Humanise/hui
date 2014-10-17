@@ -127,6 +127,11 @@ public class HTMLWriter extends MarkupWriter {
 		}
 		return this;
 	}
+	
+	public HTMLWriter html(String str) {
+		raw(str);
+		return this;
+	}
 
 
 	@Override

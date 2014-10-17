@@ -65,12 +65,12 @@ public class ReaderIndexer implements ModelEventListener, ModelPrivilegesEventLi
 				if (parents.isEmpty()) {
 					return; // TODO For now we only consider those contained in addresses
 				}
-				InternetAddress address = parents.get(0);
 				
 				Document doc = new Document();
 				doc.add(new TextField("title", Strings.asNonBlank(part.getName(),"blank"), Field.Store.YES));
 				doc.add(new TextField("text", Strings.asNonBlank(text,""), Field.Store.NO));
 				doc.add(new TextField("inbox", "no", Field.Store.YES));
+				doc.add(new TextField("favorit", "no", Field.Store.YES));
 
 				getIndexManager(owner).update(part, doc);
 			}

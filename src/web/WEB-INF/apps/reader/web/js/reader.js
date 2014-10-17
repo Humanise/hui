@@ -7,8 +7,10 @@ var controller = {
 	$ready : function() {
 		
 		this.viewer = hui.get('viewer');
+		this.viewerContent = hui.get('viewer_content');
+		this.viewerFrame = hui.get('viewer_frame');
+		
 		hui.listen(document.body,'click',this._click.bind(this));
-		this._loadArticle(112);
 		var textListener = function() {
 			var selection = hui.selection.getText();
 			if (!hui.isBlank(selection)) {
@@ -24,6 +26,13 @@ var controller = {
 				this._hideViewer();
 			}
 		}.bind(this));
+		//this._loadArticle(1590);
+		new oo.Segmented({
+			name : 'readerViewerView',
+			element : hui.get('reader_viewer_view'),
+			selectedClass : 'reader_viewer_view_item_selected',
+			value : 'formatted'
+		});
 	},
 	
 	_click : function(e) {
@@ -60,12 +69,6 @@ var controller = {
 			e.stop();
 			this._hideViewer();
 		}
-	},
-	
-	_hideViewer : function() {
-		viewer.style.display='none';
-		hui.cls.remove(document.body,'reader_modal');
-		this.viewerVisible = false;
 	},
 	
 	$valueChanged$search : function() {
@@ -241,12 +244,14 @@ var controller = {
 			message : {start:'Indexing',success:'Finished'}
 		});
 	},
+    
+    // Viewer
 	
 	_loadArticle : function(id) {
 		hui.ui.showMessage({text:'Loading...',busy:true});
 		hui.get('info').innerHTML = '<h1>Loading...</h1>';
-		var rendering = hui.get('rendering');
-		rendering.innerHTML = '';
+		hui.get('viewer_formatted').innerHTML = '';
+		hui.get('viewer_text').innerHTML = '';
 		this.viewer.style.display = 'block';
 		this.viewerVisible = true;
 		hui.cls.add(document.body,'reader_modal');
@@ -266,20 +271,16 @@ var controller = {
 	
 	_drawArticle : function(article) {
 		this._currentArticle = article;
-		var rendering = hui.get('rendering');
-		var info = hui.get('info');
-		var html = '';
-        /*
-		if (article.quotes) {
-			html+='<div class="reader_viewer_quotes">';
-			for (var i = 0; i < article.quotes.length; i++) {
-				html += '<blockquote class="reader_viewer_quote" data-id="' + article.quotes[i].key + '">' + article.quotes[i].value + '</blockquote>';
-			}			
-			html+='</div>';
-		}*/
-		html+=article.rendering;
-		rendering.innerHTML = html;
-		info.innerHTML = article.info;
+		hui.get('viewer_formatted').innerHTML = article.rendering;
+		hui.get('viewer_text').innerHTML = article.text;
+		hui.get('info').innerHTML = article.info;
+		hui.cls.set(hui.get('reader_viewer_inbox'),'reader_viewer_action_selected',article.inbox);
+		hui.cls.set(hui.get('reader_viewer_favorite'),'reader_viewer_action_selected',article.favorite);
+		var view = hui.ui.get('readerViewerView').getValue();
+		if (view === 'web') {
+			this.viewerFrame.src = article.url;
+		}
+		this.frameSet = view === 'web';
 	},
 	
 	_reloadInfo : function() {
@@ -297,19 +298,57 @@ var controller = {
 			}
 		})
 	},
-    
-    // Viewer
-    
-    $click$archiveButton : function() {
+	
+	_hideViewer : function() {
+		viewer.style.display='none';
+		hui.cls.remove(document.body,'reader_modal');
+		this.viewerVisible = false;
+		this.viewerFrame.src = "about:blank";
+	},
+	_lockViewer : function() {
+		this._viewerLocked = true;
+		hui.cls.add(this.viewer,'reader_viewer_locked');
+	},
+	_unlockViewer : function() {
+		this._viewerLocked = false;
+		hui.cls.remove(this.viewer,'reader_viewer_locked');
+	},
+	$click$favoriteButton : function() {
+		if (this._viewerLocked) {return}
+		this._lockViewer();
+		var newValue = !this._currentArticle.favorite;
+		hui.cls.set(hui.get('reader_viewer_favorite'),'reader_viewer_action_selected',newValue);
 		hui.ui.request({
-			url : '/service/model/removeFromInbox',
-			parameters : {id:this._currentArticle.id},
+			url : '/changeFavoriteStatus',
+			parameters : {id:this._currentArticle.id,favorite:newValue},
             $success : function() {
+				this._currentArticle.favorite = newValue;
 				hui.ui.get('listSource').refresh();
-                hui.ui.msg.success({text:'Archived'});
-            }
+                hui.ui.msg.success({text:newValue ? 'Added to favorites' : 'Removed from favorites'});
+            }.bind(this),
+			$finally : function() {
+				this._unlockViewer();
+			}.bind(this)
         });
-    },
+	},
+	$click$inboxButton : function() {
+		if (this._viewerLocked) {return}
+		this._lockViewer();
+		var newValue = !this._currentArticle.inbox;
+		hui.cls.set(hui.get('reader_viewer_inbox'),'reader_viewer_action_selected',newValue);
+		hui.ui.request({
+			url : '/changeInboxStatus',
+			parameters : {id:this._currentArticle.id,inbox:newValue},
+            $success : function() {
+				this._currentArticle.inbox = newValue;
+				hui.ui.get('listSource').refresh();
+                hui.ui.msg.success({text:newValue ? 'Added to inbox' : 'Removed from inbox'});
+            }.bind(this),
+			$finally : function() {
+				this._unlockViewer();
+			}.bind(this)
+        });
+	},
     
     $click$quoteButton : function() {
         var parameters = {
@@ -323,7 +362,51 @@ var controller = {
 				this._drawArticle(article);
 			}.bind(this)
 		})
-    }
+    },
+	$valueChanged$readerViewerView : function(value) {
+		
+		this.viewerContent.className = 'reader_viewer_content reader_viewer_content_'+value;
+		if (!this.frameSet && value === 'web') {
+			this.viewerFrame.src = this._currentArticle.url;
+			this.frameSet = true;
+		}
+	}
 }
 
 hui.ui.listen(controller);
+
+oo.Segmented = function(options) {
+	this.options = hui.override({selectedClass:'oo_segmented_item_selected'},options);
+	this.name = options.name;
+	this.element = hui.get(options.element);
+	this.current = hui.get.firstByClass(this.element,this.options.selectedClass);
+	this.value = options.value || (this.current ? this.current.getAttribute('data-value') : null);
+	hui.ui.extend(this);
+	this._attach();
+}
+
+oo.Segmented.prototype = {
+	_attach : function() {
+		hui.listen(this.element,'click',this._click.bind(this));
+	},
+	_click : function(e) {
+		e = hui.event(e);
+		e.stop();
+		var a = e.findByTag('a');
+		if (a) {
+			this._change(a);
+		}
+	},
+	_change : function(node) {
+		if (this.current) {
+			hui.cls.remove(this.current,this.options.selectedClass);
+		}
+		this.value = node.getAttribute('data-value');
+		hui.cls.add(node,this.options.selectedClass);
+		this.fireValueChange();
+		this.current = node;
+	},
+	getValue : function() {
+		return this.value;
+	}
+}

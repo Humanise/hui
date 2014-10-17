@@ -114,7 +114,7 @@ public class ApplicationResponder extends AbstractControllerResponder implements
 			request.setApplication(application);
 			if (!controller.isAllowed(request)) {
 				if (controller.askForUserChange(request)) {
-					request.redirectFromBase("service/authentication/?redirect="+request.getRequest().getRequestURI()+"&action=appAccessDenied&faultyuser="+request.getSession().getUser().getUsername());
+					request.redirectFromBase("/service/authentication/?redirect="+request.getRequest().getRequestURI()+"&action=appAccessDenied&faultyuser="+request.getSession().getUser().getUsername());
 					return;
 				} else {
 					throw new IllegalRequestException("Application '"+application+"' denied access to user '"+request.getSession().getUser().getUsername()+"'");

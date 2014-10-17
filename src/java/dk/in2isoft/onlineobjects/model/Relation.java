@@ -10,7 +10,8 @@ public class Relation extends Item {
 	public static final String KIND_COMMON_ORIGINATOR = "common.originator";
 	public static final String KIND_COMMON_AUTHOR = "common.author";
 	public static final String KIND_COMMON_SOURCE = "common.source";
-
+	
+	public static final String KIND_STRUCTURE_CONTAINS = "structure.contains";
 	public static final String KIND_STRUCTURE_SPECIALIZATION = "structure.specialization";
 	
 	public static final String KIND_SEMANTICS_ANALOGOUS = "semantics.analogous";
@@ -22,9 +23,13 @@ public class Relation extends Item {
 
 	public static final String KIND_WEB_CONTENT = "web.content";
 	public static final String KIND_WEB_PRIMARY = "web.primary";
+	
 	public static final String KIND_SYSTEM_USER_SELF = "system.user.self";
 	public static final String KIND_SYSTEM_USER_EMAIL = "system.user.email";
 	public static final String KIND_SYSTEM_USER_IMAGE = "system.user.image";
+	public static final String KIND_SYSTEM_USER_FAVORITES = "system.user.favorites";
+	public static final String KIND_SYSTEM_USER_INBOX = "personal.inbox"; // TODO Rename to system.user.inbox
+	
 	public static final String KIND_INIVATION_INVITER = "invitation.inviter";
 	public static final String KIND_INIVATION_INVITED = "invitation.invited";
 	
@@ -39,8 +44,7 @@ public class Relation extends Item {
 
 	public static final String KIND_EVENT_ATTENDEE = "event.attendee";
 	public static final String KIND_EVENT_ORGANIZER = "event.organizer";
-	
-	public static final String KIND_STRUCTURE_CONTAINS = "structure.contains";
+
 	
 	private Entity superEntity;
 

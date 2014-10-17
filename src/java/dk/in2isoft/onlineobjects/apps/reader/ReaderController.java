@@ -203,7 +203,6 @@ public class ReaderController extends ReaderControllerBase {
 		final ListMultimap<String, Long> ids = LinkedListMultimap.create();
 		
 		String indexQuery = buildQuery(query);
-		log.info(indexQuery.toString());
 		SearchResult<IndexSearchResult> search = index.search(indexQuery.toString(), query.getPage(), query.getPageSize());
 		for (IndexSearchResult row : search.getList()) {
 			Long id = row.getLong("id");
@@ -211,7 +210,6 @@ public class ReaderController extends ReaderControllerBase {
 			ids.put(type2, id);
 		}
 		ids.put("total", Long.valueOf(search.getTotalCount()));
-		log.info(ids);
 		return ids;
 	}
 
@@ -258,7 +256,13 @@ public class ReaderController extends ReaderControllerBase {
 			}
 			indexQuery.append("inbox:yes");
 		}
-		else if ("verified".equals(query.getSubset())) {
+		if ("favorite".equals(query.getSubset())) {
+			if (indexQuery.length()>0) {
+				indexQuery.append(" AND ");
+			}
+			indexQuery.append("favorite:yes");
+		}
+		else if ("archive".equals(query.getSubset())) {
 			if (indexQuery.length()>0) {
 				indexQuery.append(" AND ");
 			}
@@ -292,13 +296,13 @@ public class ReaderController extends ReaderControllerBase {
 		List<ItemData> options = Lists.newArrayList();
 		options.add(new ItemData("everything").withText("Everything").withIcon("documents_line"));
 		options.add(new ItemData("inbox").withText("Inbox").withIcon("inbox_line"));
-		options.add(new ItemData("verified").withText("Archive").withIcon("archive_line"));
-		options.add(new ItemData("favorites").withText("Favorites").withIcon("star_line"));
+		options.add(new ItemData("archive").withText("Archive").withIcon("archive_line"));
+		options.add(new ItemData("favorite").withText("Favorites").withIcon("star_line"));
 		return options;
 	}
 
 	private Pile getFeedPile(UserSession session) throws ModelException {
-		return pileService.getOrCreateUsersPile("feeds", session.getUser(), session);
+		return pileService.getOrCreatePileByKey("feeds", session.getUser());
 	}
 	
 	@Path
@@ -329,7 +333,32 @@ public class ReaderController extends ReaderControllerBase {
 	}
 	
 	@Path
-	public ArticlePerspective loadArticle(Request request) throws IOException, ModelException, SecurityException {
+	public void changeFavoriteStatus(Request request) throws ModelException, SecurityException, IllegalRequestException {
+		Long id = request.getLong("id");
+		boolean favorite = request.getBoolean("favorite");
+
+		UserSession session = request.getSession();
+		
+		InternetAddress address = modelService.get(InternetAddress.class, id, session);
+		Code.checkNotNull(address, "Address not found");
+		
+		pileService.addOrRemoveFromPile(session.getUser(), Relation.KIND_SYSTEM_USER_FAVORITES,address,favorite);
+	}
+	
+	@Path
+	public void changeInboxStatus(Request request) throws ModelException, SecurityException, IllegalRequestException {
+		Long id = request.getLong("id");
+		boolean inbox = request.getBoolean("inbox");
+
+		UserSession session = request.getSession();
+		
+		InternetAddress address = modelService.get(InternetAddress.class, id, session);
+		Code.checkNotNull(address, "Address not found");
+		pileService.addOrRemoveFromPile(session.getUser(), Relation.KIND_SYSTEM_USER_INBOX,address,inbox);
+	}
+	
+	@Path
+	public ArticlePerspective loadArticle(Request request) throws IOException, ModelException, SecurityException, IllegalRequestException {
 		Long id = request.getLong("id");
 		UserSession session = request.getSession();
 
@@ -339,11 +368,26 @@ public class ReaderController extends ReaderControllerBase {
 			Query<InternetAddress> query = Query.after(InternetAddress.class).withChild(id, Relation.KIND_STRUCTURE_CONTAINS);
 			address = modelService.search(query).getFirst();
 		}
-
+		Code.checkNotNull(address, "Not found");
 				
 		HTMLDocument document = getHTMLDocument(address, session);
 		
 		ArticlePerspective article = new ArticlePerspective();
+		
+		article.setUrl(address.getAddress());
+		
+		Pile inbox = pileService.getOrCreatePileByRelation(session.getUser(), Relation.KIND_SYSTEM_USER_INBOX);
+		Pile favorites = pileService.getOrCreatePileByRelation(session.getUser(), Relation.KIND_SYSTEM_USER_FAVORITES);
+		
+		
+		List<Pile> piles = modelService.getParents(address, Pile.class, session);
+		for (Pile pile : piles) {
+			if (pile.getId()==inbox.getId()) {
+				article.setInbox(true);
+			} else if (pile.getId()==favorites.getId()) {
+				article.setFavorite(true);
+			}
+		}
 		
 		List<HtmlPart> quotes = modelService.getChildren(address, Relation.KIND_STRUCTURE_CONTAINS, HtmlPart.class,request.getSession());
 		List<Pair<Long,String>> quoteList = Lists.newArrayList();
@@ -356,7 +400,8 @@ public class ReaderController extends ReaderControllerBase {
 		article.setId(address.getId());
 		if (document!=null) {
 			article.setTitle(document.getTitle());
-			article.setRendering(buildRendering(document, address, quotes));
+			article.setRendering(buildRendering(document, address, quotes,true));
+			article.setText(buildRendering(document, address, quotes,false));
 		} else {
 			article.setTitle(address.getName());
 		}
@@ -365,7 +410,7 @@ public class ReaderController extends ReaderControllerBase {
 	}
 	
 	@Path
-	public ArticlePerspective addQuote(Request request) throws IOException, ModelException, SecurityException {
+	public ArticlePerspective addQuote(Request request) throws IOException, ModelException, SecurityException, IllegalRequestException {
 		Long id = request.getLong("id");
 		String text = request.getString("text");
 		if (Strings.isNotBlank(text)) {
@@ -437,20 +482,27 @@ public class ReaderController extends ReaderControllerBase {
 		return writer.toString();
 	}
 
-	private String buildRendering(HTMLDocument document, InternetAddress address, List<HtmlPart> quotes) {
-		String content = document.getExtractedContents();
+	private String buildRendering(HTMLDocument document, InternetAddress address, List<HtmlPart> quotes, boolean markup) {
 		
 		HTMLWriter writer = new HTMLWriter();
 		writer.startDiv().withClass("body");
-		
-		for (HtmlPart part : quotes) {
-			writer.startBlockquote().withData("id", part.getId()).text(part.getHtml()).endBlockquote();
-		}
-		
-		if (Strings.isNotBlank(content)) {
-			String[] lines = StringUtils.split(content, "\n");
-			for (int i = 0; i < lines.length; i++) {
-				writer.startP().text(lines[i]).endP();
+
+		if (markup) {
+			for (HtmlPart part : quotes) {
+				writer.startBlockquote().withData("id", part.getId()).withClass("reader_viewer_quote").text(part.getHtml()).endBlockquote();
+			}
+			String content = document.getExtractedMarkup();
+			writer.html(content);
+		} else {
+			for (HtmlPart part : quotes) {
+				writer.startBlockquote().withData("id", part.getId()).withClass("reader_viewer_quote").text(part.getHtml()).endBlockquote();
+			}
+			String content = document.getExtractedContents();
+			if (Strings.isNotBlank(content)) {
+				String[] lines = StringUtils.split(content, "\n");
+				for (int i = 0; i < lines.length; i++) {
+					writer.startP().text(lines[i]).endP();
+				}
 			}
 		}
 		writer.endDiv();

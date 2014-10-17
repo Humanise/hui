@@ -23,6 +23,7 @@ import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.modules.inbox.InboxService;
 import dk.in2isoft.onlineobjects.modules.index.IndexDocumentBuilder;
+import dk.in2isoft.onlineobjects.services.PileService;
 import dk.in2isoft.onlineobjects.services.StorageService;
 
 public class ReaderIndexDocumentBuilder implements IndexDocumentBuilder<InternetAddress> {
@@ -30,7 +31,7 @@ public class ReaderIndexDocumentBuilder implements IndexDocumentBuilder<Internet
 	private StorageService storageService;
 	private ModelService modelService;
 	private SecurityService securityService;
-	private InboxService inboxService;
+	private PileService pileService;
 	
 	public Document build(InternetAddress address) throws ModelException {
 		
@@ -55,10 +56,25 @@ public class ReaderIndexDocumentBuilder implements IndexDocumentBuilder<Internet
 		doc.add(new TextField("words", wordStr.toString(), Field.Store.NO));
 
 		User owner = modelService.getOwner(address);
-		Pile inbox = inboxService.getOrCreateInbox(owner);
-		Relation relation = modelService.getRelation(inbox, address);
-		//System.out.println(relation==null);
-		doc.add(new TextField("inbox", relation!=null ? "yes" : "no", Field.Store.YES));
+
+		
+		Pile inbox = pileService.getOrCreatePileByRelation(owner, Relation.KIND_SYSTEM_USER_INBOX);
+		Pile favorites = pileService.getOrCreatePileByRelation(owner, Relation.KIND_SYSTEM_USER_FAVORITES);
+		
+		boolean inboxed = false;
+		boolean favorited = false;
+		
+		List<Pile> piles = modelService.getParents(address, Pile.class, owner);
+		for (Pile pile : piles) {
+			if (pile.getId()==inbox.getId()) {
+				inboxed = true;
+			} else if (pile.getId()==favorites.getId()) {
+				favorited = true;
+			}
+		}
+		
+		doc.add(new TextField("inbox", inboxed ? "yes" : "no", Field.Store.YES));
+		doc.add(new TextField("favorite", favorited ? "yes" : "no", Field.Store.YES));
 		return doc;
 	}
 
@@ -88,8 +104,8 @@ public class ReaderIndexDocumentBuilder implements IndexDocumentBuilder<Internet
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
 	}
-	
-	public void setInboxService(InboxService inboxService) {
-		this.inboxService = inboxService;
+
+	public void setPileService(PileService pilService) {
+		this.pileService = pilService;
 	}
 }

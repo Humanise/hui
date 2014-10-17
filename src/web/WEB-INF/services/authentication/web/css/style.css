@@ -20,12 +20,13 @@ label
 	font-weight: 300;
 }
 
-p.buttons
+.buttons
 {
 	text-align: right;
+	margin: 10px 0 0;
 }
 
-p.buttons a.oo_link
+.buttons a.oo_link
 {
 	display: inline-block;
 	vertical-align: middle;
