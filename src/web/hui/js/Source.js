@@ -107,7 +107,7 @@ hui.ui.Source.prototype = {
 				method : 'post',
 				url : this.options.url,
 				parameters : prms,
-				onSuccess : this.parse.bind(this),
+				$success : this.parse.bind(this),
 				onException : function(e,t) {
 					hui.log('Exception while loading source...')
 					hui.log(e)
