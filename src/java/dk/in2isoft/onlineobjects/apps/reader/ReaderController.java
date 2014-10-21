@@ -63,29 +63,28 @@ import dk.in2isoft.onlineobjects.ui.ScriptWriter;
 import dk.in2isoft.onlineobjects.ui.StylesheetWriter;
 import dk.in2isoft.onlineobjects.ui.data.SimpleEntityPerspective;
 
-
 public class ReaderController extends ReaderControllerBase {
-	
+
 	private static Logger log = Logger.getLogger(ReaderController.class);
 
-	@Path(expression="/script.[0-9]+.js")
+	@Path(expression = "/script.[0-9]+.js")
 	public void script(Request request) throws IOException, EndUserException {
 		ScriptWriter writer = new ScriptWriter(request, configurationService);
 		writer.write(publicScript);
 	}
 
-	@Path(expression="/style.[0-9]+.css")
+	@Path(expression = "/style.[0-9]+.css")
 	public void style(Request request) throws IOException, EndUserException {
 		StylesheetWriter writer = new StylesheetWriter(request, configurationService);
 		writer.write(publicStyle);
 	}
-	
+
 	@Path
 	public void searchAddresses(Request request) throws IOException, ModelException, ExplodingClusterFuckException {
-		
+
 		int page = request.getInt("page");
 		int pageSize = 30;
-		
+
 		ReaderQuery rQuery = new ReaderQuery();
 		rQuery.setText(request.getString("text"));
 		rQuery.setSubset(request.getString("subset"));
@@ -94,7 +93,6 @@ public class ReaderController extends ReaderControllerBase {
 		rQuery.setPageSize(pageSize);
 		rQuery.setWordIds(request.getLongs("tags"));
 
-		
 		final ListMultimap<String, Long> idsByType = find(request, rQuery);
 		final List<Long> ids = Lists.newArrayList(idsByType.values());
 
@@ -103,7 +101,7 @@ public class ReaderController extends ReaderControllerBase {
 			List<Long> addressIds = idsByType.get(InternetAddress.class.getSimpleName().toLowerCase());
 			if (!addressIds.isEmpty()) {
 				Query<InternetAddress> query = Query.after(InternetAddress.class).withIds(addressIds).withPrivileged(request.getSession());
-				
+
 				list.addAll(modelService.search(query).getList());
 			}
 		}
@@ -111,22 +109,21 @@ public class ReaderController extends ReaderControllerBase {
 			List<Long> partIds = idsByType.get(HtmlPart.class.getSimpleName().toLowerCase());
 			if (!partIds.isEmpty()) {
 				Query<HtmlPart> query = Query.after(HtmlPart.class).withIds(partIds).withPrivileged(request.getSession());
-				
+
 				list.addAll(modelService.search(query).getList());
 			}
 		}
-			
+
 		sortByIds(list, ids);
-		
 
 		int totalCount = idsByType.get("total").iterator().next().intValue(); // TODO
 
 		ListWriter writer = new ListWriter(request);
 		writer.startList();
 		writer.window(totalCount, pageSize, page);
-		
+
 		writer.startHeaders();
-		writer.header("Title").header("",1);
+		writer.header("Title").header("", 1);
 		writer.endHeaders();
 		for (Entity entity : list) {
 			InternetAddress address = null;
@@ -142,17 +139,17 @@ public class ReaderController extends ReaderControllerBase {
 			}
 			writer.endLine();
 
-			if (address!=null) {
+			if (address != null) {
 				writer.startLine().dimmed().minor();
 				writer.text(Strings.simplifyURL(address.getAddress()));
-				List<HtmlPart> quotes = modelService.getChildren(address, Relation.KIND_STRUCTURE_CONTAINS, HtmlPart.class,request.getSession());
-				if (quotes.size()>0) {
+				List<HtmlPart> quotes = modelService.getChildren(address, Relation.KIND_STRUCTURE_CONTAINS, HtmlPart.class, request.getSession());
+				if (quotes.size() > 0) {
 					writer.text(" (").text(quotes.size()).text(")");
 				}
 				writer.endLine();
 				List<Word> words = modelService.getChildren(address, Word.class, request.getSession());
 				if (Code.isNotEmpty(words)) {
-					HTMLWriter wordLine = new HTMLWriter(); 
+					HTMLWriter wordLine = new HTMLWriter();
 					wordLine.startP().withClass("reader_list_words");
 					for (Iterator<Word> i = words.iterator(); i.hasNext();) {
 						Word word = i.next();
@@ -168,7 +165,7 @@ public class ReaderController extends ReaderControllerBase {
 			writer.endCell();
 			writer.startCell();
 			writer.startIcons();
-			if (address!=null) {
+			if (address != null) {
 				writer.startIcon().revealing().withAction().withIcon("monochrome/view").withData(address.getAddress()).endIcon();
 			}
 			writer.startIcon().revealing().withAction().withIcon("monochrome/graph").withData("graph").endIcon();
@@ -185,9 +182,9 @@ public class ReaderController extends ReaderControllerBase {
 			public int compare(Entity o1, Entity o2) {
 				int index1 = ids.indexOf(o1.getId());
 				int index2 = ids.indexOf(o2.getId());
-				if (index1>index2) {
+				if (index1 > index2) {
 					return 1;
-				} else if (index2>index1) {
+				} else if (index2 > index1) {
 					return -1;
 				}
 				return 0;
@@ -201,7 +198,7 @@ public class ReaderController extends ReaderControllerBase {
 			return index.getIdsByType();
 		}
 		final ListMultimap<String, Long> ids = LinkedListMultimap.create();
-		
+
 		String indexQuery = buildQuery(query);
 		SearchResult<IndexSearchResult> search = index.search(indexQuery.toString(), query.getPage(), query.getPageSize());
 		for (IndexSearchResult row : search.getList()) {
@@ -217,23 +214,23 @@ public class ReaderController extends ReaderControllerBase {
 		String[] textParts = Strings.getWords(query.getText());
 
 		StringBuilder indexQuery = new StringBuilder();
-		
+
 		Collection<String> types = query.getType();
-		if (types!=null && !types.isEmpty()) {
+		if (types != null && !types.isEmpty()) {
 			indexQuery.append("(");
 			for (Iterator<String> i = types.iterator(); i.hasNext();) {
 				String type = (String) i.next();
 				String tp = "pages".equals(type) ? InternetAddress.class.getSimpleName() : HtmlPart.class.getSimpleName();
-				indexQuery.append("type:").append(QueryParser.escape(tp)).append("");	
+				indexQuery.append("type:").append(QueryParser.escape(tp)).append("");
 				if (i.hasNext()) {
-					indexQuery.append(" OR ");					
+					indexQuery.append(" OR ");
 				}
-			}			
+			}
 			indexQuery.append(")");
 		}
-		
+
 		for (String string : textParts) {
-			if (indexQuery.length()>0) {
+			if (indexQuery.length() > 0) {
 				indexQuery.append(" AND ");
 			}
 			indexQuery.append("(");
@@ -242,35 +239,34 @@ public class ReaderController extends ReaderControllerBase {
 			indexQuery.append(" OR text:").append(QueryParserUtil.escape(string)).append("*");
 			indexQuery.append(")");
 		}
-		if (query.getWordIds()!=null) {
+		if (query.getWordIds() != null) {
 			for (Long id : query.getWordIds()) {
-				if (indexQuery.length()>0) {
+				if (indexQuery.length() > 0) {
 					indexQuery.append(" AND ");
 				}
 				indexQuery.append("word:").append(id);
 			}
 		}
 		if ("inbox".equals(query.getSubset())) {
-			if (indexQuery.length()>0) {
+			if (indexQuery.length() > 0) {
 				indexQuery.append(" AND ");
 			}
 			indexQuery.append("inbox:yes");
 		}
 		if ("favorite".equals(query.getSubset())) {
-			if (indexQuery.length()>0) {
+			if (indexQuery.length() > 0) {
 				indexQuery.append(" AND ");
 			}
 			indexQuery.append("favorite:yes");
-		}
-		else if ("archive".equals(query.getSubset())) {
-			if (indexQuery.length()>0) {
+		} else if ("archive".equals(query.getSubset())) {
+			if (indexQuery.length() > 0) {
 				indexQuery.append(" AND ");
 			}
 			indexQuery.append("inbox:no");
 		}
 		return indexQuery.toString();
 	}
-	
+
 	@Path
 	public List<FeedPerspective> getFeeds(Request request) throws ModelException {
 		UserSession session = request.getSession();
@@ -304,7 +300,7 @@ public class ReaderController extends ReaderControllerBase {
 	private Pile getFeedPile(UserSession session) throws ModelException {
 		return pileService.getOrCreatePileByKey("feeds", session.getUser());
 	}
-	
+
 	@Path
 	public void addFeed(Request request) throws ModelException, IllegalRequestException, NetworkException {
 		String url = request.getString("url");
@@ -324,91 +320,90 @@ public class ReaderController extends ReaderControllerBase {
 		} catch (URISyntaxException e) {
 			throw new IllegalRequestException("The URL is not well formed");
 		} catch (IOException e) {
-			throw new NetworkException("Unable to fetch "+url);
+			throw new NetworkException("Unable to fetch " + url);
 		} finally {
-			if (response!=null) {
+			if (response != null) {
 				response.cleanUp();
 			}
 		}
 	}
-	
+
 	@Path
 	public void changeFavoriteStatus(Request request) throws ModelException, SecurityException, IllegalRequestException {
 		Long id = request.getLong("id");
 		boolean favorite = request.getBoolean("favorite");
 
 		UserSession session = request.getSession();
-		
+
 		InternetAddress address = modelService.get(InternetAddress.class, id, session);
 		Code.checkNotNull(address, "Address not found");
-		
-		pileService.addOrRemoveFromPile(session.getUser(), Relation.KIND_SYSTEM_USER_FAVORITES,address,favorite);
+
+		pileService.addOrRemoveFromPile(session.getUser(), Relation.KIND_SYSTEM_USER_FAVORITES, address, favorite);
 	}
-	
+
 	@Path
 	public void changeInboxStatus(Request request) throws ModelException, SecurityException, IllegalRequestException {
 		Long id = request.getLong("id");
 		boolean inbox = request.getBoolean("inbox");
 
 		UserSession session = request.getSession();
-		
+
 		InternetAddress address = modelService.get(InternetAddress.class, id, session);
 		Code.checkNotNull(address, "Address not found");
-		pileService.addOrRemoveFromPile(session.getUser(), Relation.KIND_SYSTEM_USER_INBOX,address,inbox);
+		pileService.addOrRemoveFromPile(session.getUser(), Relation.KIND_SYSTEM_USER_INBOX, address, inbox);
 	}
-	
+
 	@Path
 	public ArticlePerspective loadArticle(Request request) throws IOException, ModelException, SecurityException, IllegalRequestException {
 		Long id = request.getLong("id");
 		UserSession session = request.getSession();
 
 		InternetAddress address = modelService.get(InternetAddress.class, id, session);
-		
-		if (address==null) {
+
+		if (address == null) {
 			Query<InternetAddress> query = Query.after(InternetAddress.class).withChild(id, Relation.KIND_STRUCTURE_CONTAINS);
 			address = modelService.search(query).getFirst();
 		}
 		Code.checkNotNull(address, "Not found");
-				
+
 		HTMLDocument document = getHTMLDocument(address, session);
-		
+
 		ArticlePerspective article = new ArticlePerspective();
-		
+
 		article.setUrl(address.getAddress());
-		
+
 		Pile inbox = pileService.getOrCreatePileByRelation(session.getUser(), Relation.KIND_SYSTEM_USER_INBOX);
 		Pile favorites = pileService.getOrCreatePileByRelation(session.getUser(), Relation.KIND_SYSTEM_USER_FAVORITES);
-		
-		
+
 		List<Pile> piles = modelService.getParents(address, Pile.class, session);
 		for (Pile pile : piles) {
-			if (pile.getId()==inbox.getId()) {
+			if (pile.getId() == inbox.getId()) {
 				article.setInbox(true);
-			} else if (pile.getId()==favorites.getId()) {
+			} else if (pile.getId() == favorites.getId()) {
 				article.setFavorite(true);
 			}
 		}
-		
-		List<HtmlPart> quotes = modelService.getChildren(address, Relation.KIND_STRUCTURE_CONTAINS, HtmlPart.class,request.getSession());
-		List<Pair<Long,String>> quoteList = Lists.newArrayList();
+
+		List<HtmlPart> quotes = modelService.getChildren(address, Relation.KIND_STRUCTURE_CONTAINS, HtmlPart.class, request.getSession());
+		List<Pair<Long, String>> quoteList = Lists.newArrayList();
 		for (HtmlPart htmlPart : quotes) {
 			quoteList.add(Pair.of(htmlPart.getId(), htmlPart.getHtml()));
 		}
 		article.setQuotes(quoteList);
-		
+
 		article.setInfo(buildInfo(document, address, session));
 		article.setId(address.getId());
-		if (document!=null) {
+		if (document != null) {
 			article.setTitle(document.getTitle());
-			article.setRendering(buildRendering(document, address, quotes,true));
-			article.setText(buildRendering(document, address, quotes,false));
+			article.setRendering(buildRendering(document, address, quotes, true));
+			article.setText(buildRendering(document, address, quotes, false));
 		} else {
 			article.setTitle(address.getName());
 		}
-		
+
 		return article;
 	}
-	
+
 	@Path
 	public ArticlePerspective addQuote(Request request) throws IOException, ModelException, SecurityException, IllegalRequestException {
 		Long id = request.getLong("id");
@@ -416,31 +411,31 @@ public class ReaderController extends ReaderControllerBase {
 		if (Strings.isNotBlank(text)) {
 			Privileged session = request.getSession();
 			InternetAddress address = modelService.get(InternetAddress.class, id, session);
-			if (address!=null) {
+			if (address != null) {
 				HtmlPart part = new HtmlPart();
 				part.setName(StringUtils.abbreviate(text, 50));
 				part.setHtml(text);
 				modelService.createItem(part, session);
-				modelService.createRelation(address, part, Relation.KIND_STRUCTURE_CONTAINS, session);				
+				modelService.createRelation(address, part, Relation.KIND_STRUCTURE_CONTAINS, session);
 			}
 		}
-		
+
 		return loadArticle(request);
-	}	
-	
+	}
+
 	private HTMLDocument getHTMLDocument(InternetAddress address, Privileged privileged) throws SecurityException, ModelException {
-		
+
 		File folder = storageService.getItemFolder(address);
-		File original = new File(folder,"original");
+		File original = new File(folder, "original");
 		String encoding = address.getPropertyValue(Property.KEY_INTERNETADDRESS_ENCODING);
 		if (Strings.isBlank(encoding)) {
 			encoding = Strings.UTF8;
 		}
 		if (!original.exists()) {
 			NetworkResponse response = networkService.getSilently(address.getAddress());
-			if (response!=null && response.isSuccess()) {
+			if (response != null && response.isSuccess()) {
 				File temp = response.getFile();
-				if (!Files.copy(temp,original)) {
+				if (!Files.copy(temp, original)) {
 					response.cleanUp();
 					return null;
 				}
@@ -466,9 +461,9 @@ public class ReaderController extends ReaderControllerBase {
 		}
 		{
 			User admin = modelService.getUser(SecurityService.ADMIN_USERNAME);
-			List<Word> words = modelService.getChildren(address, Word.class,admin);
+			List<Word> words = modelService.getChildren(address, Word.class, admin);
 			for (Word word : words) {
-				if (word==null || address==null) {
+				if (word == null || address == null) {
 					continue;
 				}
 				writer.startVoidA().withData(word.getId()).withClass("word");
@@ -478,12 +473,12 @@ public class ReaderController extends ReaderControllerBase {
 		}
 		writer.startA().withClass("add").text("Add word").endA();
 		writer.endP();
-		
+
 		return writer.toString();
 	}
 
 	private String buildRendering(HTMLDocument document, InternetAddress address, List<HtmlPart> quotes, boolean markup) {
-		
+
 		HTMLWriter writer = new HTMLWriter();
 		writer.startDiv().withClass("body");
 
@@ -508,37 +503,37 @@ public class ReaderController extends ReaderControllerBase {
 		writer.endDiv();
 		return writer.toString();
 	}
-	
+
 	@Path
 	public SimpleEntityPerspective addInternetAddress(Request request) throws ModelException {
 		String url = request.getString("url");
-		
+
 		InternetAddress internetAddress = new InternetAddress();
 		internetAddress.setAddress(url);
 		HTMLDocument doc = htmlService.getDocumentSilently(url);
-		if (doc!=null) {
+		if (doc != null) {
 			internetAddress.setName(doc.getTitle());
 		} else {
 			internetAddress.setName(Strings.simplifyURL(url));
 		}
 		modelService.createItem(internetAddress, request.getSession());
-		
+
 		return SimpleEntityPerspective.create(internetAddress);
 	}
-	
+
 	@Path
 	public void removeInternetAddress(Request request) throws ModelException, IllegalRequestException, SecurityException {
 		Long id = request.getLong("id");
 		Code.checkNotNull(id, "No id provided");
-		
+
 		Privileged privileged = request.getSession();
 		InternetAddress address = modelService.get(InternetAddress.class, id, privileged);
 		Code.checkNotNull(id, "Address not found");
-		
+
 		List<HtmlPart> children = modelService.getChildren(address, Relation.KIND_STRUCTURE_CONTAINS, HtmlPart.class, privileged);
-		
+
 		modelService.deleteEntity(address, privileged);
-		
+
 		for (HtmlPart htmlPart : children) {
 			modelService.deleteEntity(htmlPart, privileged);
 		}
@@ -552,7 +547,7 @@ public class ReaderController extends ReaderControllerBase {
 		InternetAddress internetAddress = modelService.get(InternetAddress.class, internetAddressId, session);
 		Word word = modelService.get(Word.class, wordId, session);
 		Relation relation = modelService.getRelation(internetAddress, word);
-		if (relation==null) {
+		if (relation == null) {
 			modelService.createRelation(internetAddress, word, session);
 		}
 	}
@@ -565,7 +560,7 @@ public class ReaderController extends ReaderControllerBase {
 		InternetAddress internetAddress = modelService.get(InternetAddress.class, internetAddressId, session);
 		Word word = modelService.get(Word.class, wordId, session);
 		Relation relation = modelService.getRelation(internetAddress, word);
-		if (relation!=null) {
+		if (relation != null) {
 			modelService.deleteRelation(relation, modelService.getUser(SecurityService.ADMIN_USERNAME));
 		}
 	}
@@ -585,13 +580,13 @@ public class ReaderController extends ReaderControllerBase {
 		}
 		modelService.updateItem(internetAddress, session);
 	}
-	
+
 	@Path
 	public WordPerspective getWordInfo(Request request) throws ModelException {
 		WordListPerspectiveQuery query = new WordListPerspectiveQuery();
 		query.withIds(Lists.newArrayList(request.getLong("id")));
 		WordListPerspective row = modelService.search(query).getFirst();
-		if (row!=null) {
+		if (row != null) {
 			HTMLWriter html = new HTMLWriter();
 			html.startDiv().withClass("word_rendering");
 			html.startH1().text(row.getText()).endH1();
@@ -603,13 +598,13 @@ public class ReaderController extends ReaderControllerBase {
 		}
 		return null;
 	}
-	
+
 	@Path
 	public List<ItemData> getWordCloud(Request request) throws ModelException {
 		WordByInternetAddressQuery query = new WordByInternetAddressQuery(request.getSession());
 		return modelService.list(query);
 	}
-	
+
 	@Path
 	public void reIndex(Request request) throws EndUserException {
 		Privileged privileged = request.getSession();
@@ -640,6 +635,6 @@ public class ReaderController extends ReaderControllerBase {
 	}
 
 	private IndexManager getIndex(Request request) {
-		return indexService.getIndex("app-reader-user-"+request.getSession().getIdentity());
+		return indexService.getIndex("app-reader-user-" + request.getSession().getIdentity());
 	}
 }

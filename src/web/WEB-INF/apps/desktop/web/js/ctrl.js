@@ -162,13 +162,13 @@ hui.ui.listen({
 			method : 'post',
 			file : file,
 			url : 'uploadFile',
-			onProgress : function(current,total) {
+			$progress : function(current,total) {
 				progress.setValue(current/total);
 			},
-			onLoad : function() {
+			$load : function() {
 				//hui.ui.showMessage({text:'Uploading',busy:true})
 			},
-			onAbort : function() {
+			$abort : function() {
 				this._removeProgress(progress);
 			}.bind(this),
 			$success : function(t) {
@@ -180,7 +180,7 @@ hui.ui.listen({
 				}
 				this._removeProgress(progress);
 			}.bind(this),
-			onFailure : function() {
+			$failure : function() {
 				this._removeProgress(progress);
 				hui.ui.showMessage({text:'The upload failed',duration:3000})
 			}.bind(this)
