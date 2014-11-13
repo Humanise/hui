@@ -128,7 +128,7 @@
 							<div class="panel_body">
 								<h2>#{msg.lexical_categories}</h2>
 								<ul class="selection">
-									<c:forEach items="#{wordsWordView.categories}" var="cat">
+									<c:forEach items="#{wordFinderView.categories}" var="cat">
 										<c:if test="#{not empty cat.value}">
 											<li><a rel="#{cat.value}"><strong>#{cat.label} :</strong> #{cat.description}</a></li>
 										</c:if>
@@ -141,7 +141,7 @@
 							<div class="panel_body">
 								<h2>#{msg.languages}</h2>
 								<ul class="selection">
-									<c:forEach items="#{wordsWordView.languages}" var="cat">
+									<c:forEach items="#{wordFinderView.languages}" var="cat">
 										<li><a rel="#{cat.value}"><strong>#{cat.label}</strong></a></li>
 									</c:forEach>
 								</ul>
@@ -163,10 +163,10 @@
 							<gui:formula name="addVariantForm">
 								<gui:fields>
 									<gui:field label="#{msg.language}">
-										<gui:dropDown key="language" items="#{wordsWordView.languages}"/>
+										<gui:dropDown key="language" items="#{wordFinderView.languages}"/>
 									</gui:field>
 									<gui:field label="#{msg.category}">
-										<gui:dropDown key="category" items="#{wordsWordView.categories}"/>
+										<gui:dropDown key="category" items="#{wordFinderView.categories}"/>
 									</gui:field>
 								</gui:fields>
 								<gui:button text="#{msg.add}" name="addVariantButton" highlighted="true"/>

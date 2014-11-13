@@ -10,4 +10,6 @@
 
 	<bean class="dk.in2isoft.onlineobjects.modules.language.LanguageConsistencyChecker" autowire="byType"/>
 	
+	<!-- App scoped bean to support wordfinder.xhtml -->
+	<bean id="wordFinderView" class="dk.in2isoft.onlineobjects.ui.controllers.WordFinderView" scope="application" autowire="byType"/>
 </beans>

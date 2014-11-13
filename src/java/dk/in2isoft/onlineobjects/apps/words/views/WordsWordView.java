@@ -23,9 +23,7 @@ import dk.in2isoft.onlineobjects.apps.words.views.util.RelationOption;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
-import dk.in2isoft.onlineobjects.model.InternetAddress;
 import dk.in2isoft.onlineobjects.model.Language;
-import dk.in2isoft.onlineobjects.model.LexicalCategory;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.modules.language.WordImpression;
@@ -34,7 +32,6 @@ import dk.in2isoft.onlineobjects.modules.language.WordImpression.WordRelationGro
 import dk.in2isoft.onlineobjects.modules.language.WordRelationRow;
 import dk.in2isoft.onlineobjects.modules.language.WordRelationsQuery;
 import dk.in2isoft.onlineobjects.services.LanguageService;
-import dk.in2isoft.onlineobjects.ui.jsf.model.Option;
 import dk.in2isoft.onlineobjects.util.Messages;
 
 public class WordsWordView extends AbstractView implements InitializingBean {
@@ -45,8 +42,7 @@ public class WordsWordView extends AbstractView implements InitializingBean {
 	private String text;
 	private List<WordImpression> words;
 	private Language language;
-	private List<Option> categories;
-	private List<Option> languages;
+	
 	private List<RelationOption> relationOptions;
 	private List<String> RELATIONS_BOTH_WAYS = Lists.newArrayList(Relation.KIND_SEMANTICS_EQUIVALENT, Relation.KIND_SEMANTICS_SYNONYMOUS, Relation.KIND_SEMANTICS_ANTONYMOUS);
 	private List<String> RELATIONS_ONE_WAY = Lists.newArrayList(Relation.KIND_SEMANTICS_MORPHEME, Relation.KIND_SEMANTICS_GENRALTIZATION);
@@ -203,46 +199,6 @@ public class WordsWordView extends AbstractView implements InitializingBean {
 			}
 		}
 		return false;
-	}
-	
-	public List<Option> getCategories() {
-		if (categories!=null) return categories;
-		Locale locale = getLocale();
-
-		Messages msg = new Messages(LexicalCategory.class);
-		categories = Lists.newArrayList();
-
-		Option unknown = new Option();
-		unknown.setLabel(msg.get("code","none", locale));
-		categories.add(unknown);
-		
-		Query<LexicalCategory> query = Query.of(LexicalCategory.class).orderByName();
-		List<LexicalCategory> list = modelService.list(query);
-		for (LexicalCategory category : list) {
-			Option option = new Option();
-			option.setValue(category.getCode());
-			option.setLabel(msg.get("code",category.getCode(), locale));
-			option.setDescription(msg.get("code",category.getCode()+"_description", locale));
-			categories.add(option);
-		}
-		return categories;
-	}
-	
-	public List<Option> getLanguages() {
-		if (languages!=null) return languages;
-
-		Messages msg = new Messages(Language.class);
-		languages = Lists.newArrayList();
-		Query<Language> query = Query.of(Language.class).orderByName();
-		List<Language> list = modelService.list(query);
-		Locale locale = getLocale();
-		for (Language category : list) {
-			Option option = new Option();
-			option.setValue(category.getCode());
-			option.setLabel(msg.get("code",category.getCode(), locale));
-			languages.add(option);
-		}
-		return languages;
 	}
 	
 	public List<RelationOption> getRelationOptions() {

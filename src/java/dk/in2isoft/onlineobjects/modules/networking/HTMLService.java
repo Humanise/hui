@@ -57,7 +57,14 @@ public class HTMLService {
 
 
 	public HTMLDocument getDocumentSilently(String uri) {
-		return getDocumentSilently(URI.create(uri));
+		if (uri!=null) {
+			try {
+				return getDocumentSilently(URI.create(uri));
+			} catch (IllegalArgumentException e) {
+				log.warn("Silent document fetch failed for: " + uri,e);
+			}
+		}
+		return null;
 	}
 
 

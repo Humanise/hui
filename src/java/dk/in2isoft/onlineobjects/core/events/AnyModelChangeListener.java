@@ -1,15 +1,21 @@
 package dk.in2isoft.onlineobjects.core.events;
 
+import java.util.Collection;
+
+import com.google.common.collect.Sets;
+
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Item;
 import dk.in2isoft.onlineobjects.model.Relation;
 
 public abstract class AnyModelChangeListener implements ModelEventListener {
 
-	private Class<? extends Item> type;
+	private Collection<Class<? extends Item>> types = Sets.newHashSet();
 	
-	public AnyModelChangeListener(Class<? extends Item> type) {
-		this.type = type;
+	public AnyModelChangeListener(Class<? extends Item>... types) {
+		for (Class<? extends Item> type : types) {
+			this.types.add(type);
+		}
 	}
 	
 	public void entityWasCreated(Entity entity) {
@@ -17,7 +23,7 @@ public abstract class AnyModelChangeListener implements ModelEventListener {
 	}
 
 	private void checkEntity(Entity entity) {
-		if (entity.getClass().equals(type)) {
+		if (types.isEmpty() || types.contains(entity.getClass())) {
 			this.itemWasChanged(entity);
 		}
 	}
@@ -37,10 +43,10 @@ public abstract class AnyModelChangeListener implements ModelEventListener {
 	}
 
 	private void checkRelation(Relation relation) {
-		if (relation.getSuperEntity().getClass().equals(type)) {
+		if (types.isEmpty() || types.contains(relation.getSuperEntity().getClass())) {
 			this.itemWasChanged(relation.getSuperEntity());
 		}
-		if (relation.getSubEntity().getClass().equals(type)) {
+		if (types.isEmpty() || types.contains(relation.getSubEntity().getClass())) {
 			this.itemWasChanged(relation.getSubEntity());
 		}
 	}

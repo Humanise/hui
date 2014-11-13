@@ -109,6 +109,25 @@ public class HTMLWriter extends MarkupWriter {
 		endTag("h1");
 		return this;
 	}
+	public HTMLWriter startH2() {
+		startTag("h2");
+		return this;
+	}
+
+	public HTMLWriter endH2() {
+		endTag("h2");
+		return this;
+	}
+
+	public HTMLWriter startH3() {
+		startTag("h3");
+		return this;
+	}
+
+	public HTMLWriter endH3() {
+		endTag("h3");
+		return this;
+	}
 
 	public HTMLWriter withHref(Object href) {
 		

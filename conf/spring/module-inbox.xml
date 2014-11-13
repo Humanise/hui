@@ -8,6 +8,7 @@
 
 	<bean id="inboxService" class="dk.in2isoft.onlineobjects.modules.inbox.InboxService">
 		<property name="modelService" ref="modelService"/>
+		<property name="eventService" ref="eventService"/>
 	</bean>
 	
 </beans>

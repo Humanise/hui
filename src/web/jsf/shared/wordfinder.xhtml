@@ -11,7 +11,7 @@
 	
 		<f:loadBundle basename="dk.in2isoft.onlineobjects.ui.jsf.msg.WordFinderComponent" var="msgWordFinder"/>
 	
-		<gui:source name="wordFinderListSource" url="#{wordsWordView.baseContext}/service/model/listWords" lazy="true" delay="400">
+		<gui:source name="wordFinderListSource" url="#{wordFinderView.baseContext}/service/model/listWords" lazy="true" delay="400">
 			<gui:parameter key="text" value="@wordFinderSearch.value"/>
 			<gui:parameter key="page" value="@wordFinderList.window.page"/>
 		</gui:source>
@@ -42,10 +42,10 @@
 									<gui:textInput key="text"/>
 								</gui:field>
 								<gui:field label="#{msgWordFinder['language']}">
-									<gui:dropDown key="language" value="da" items="#{wordsWordView.languages}"/>
+									<gui:dropDown key="language" value="da" items="#{wordFinderView.languages}"/>
 								</gui:field>
 								<gui:field label="#{msgWordFinder['category']}">
-									<gui:dropDown key="category" items="#{wordsWordView.categories}"/>
+									<gui:dropDown key="category" items="#{wordFinderView.categories}"/>
 								</gui:field>
 							</gui:fields>
 							<gui:buttons align="right">

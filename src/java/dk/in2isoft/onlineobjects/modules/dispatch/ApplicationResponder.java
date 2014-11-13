@@ -25,7 +25,6 @@ import com.google.common.collect.Multimap;
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
 import dk.in2isoft.onlineobjects.core.exceptions.ContentNotFoundException;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
-import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
 import dk.in2isoft.onlineobjects.model.Application;
 import dk.in2isoft.onlineobjects.services.DispatchingService;
 import dk.in2isoft.onlineobjects.ui.Request;
@@ -117,7 +116,9 @@ public class ApplicationResponder extends AbstractControllerResponder implements
 					request.redirectFromBase("/service/authentication/?redirect="+request.getRequest().getRequestURI()+"&action=appAccessDenied&faultyuser="+request.getSession().getUser().getUsername());
 					return;
 				} else {
-					throw new IllegalRequestException("Application '"+application+"' denied access to user '"+request.getSession().getUser().getUsername()+"'");
+					dk.in2isoft.onlineobjects.core.exceptions.SecurityException exception = new dk.in2isoft.onlineobjects.core.exceptions.SecurityException("Application '"+application+"' denied access to user '"+request.getSession().getUser().getUsername()+"'");
+					exception.setLog(controller.logAccessExceptions());
+					throw exception;
 				}
 			}
 			String language = controller.getLanguage(request);

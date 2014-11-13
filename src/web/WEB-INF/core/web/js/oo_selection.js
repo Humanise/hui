@@ -55,7 +55,7 @@ oo.Selection.prototype = {
 				hui.cls.add(li,'oo_selection_option_selected');
 			}
 		};
-		
+		this.fireSizeChange();
 	},
 	getValue : function() {
 		return this.value;

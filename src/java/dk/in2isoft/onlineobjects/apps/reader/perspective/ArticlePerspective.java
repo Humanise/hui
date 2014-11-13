@@ -10,11 +10,16 @@ public class ArticlePerspective {
 	private long id;
 	private String title;
 	private String url;
-	private String rendering;
-	private String text;
+	
 	private String info;
+	private String header;
+	
+	private String formatted;
+	private String text;
+	
 	private boolean inbox;
 	private boolean favorite;
+	
 	private List<Pair<Long,String>> quotes;
 	private List<Option> tags;
 	private List<Option> words;
@@ -35,12 +40,12 @@ public class ArticlePerspective {
 		this.title = title;
 	}
 
-	public String getRendering() {
-		return rendering;
+	public String getFormatted() {
+		return formatted;
 	}
 
-	public void setRendering(String rendering) {
-		this.rendering = rendering;
+	public void setFormatted(String rendering) {
+		this.formatted = rendering;
 	}
 
 	public List<Option> getTags() {
@@ -105,6 +110,14 @@ public class ArticlePerspective {
 
 	public void setFavorite(boolean favorite) {
 		this.favorite = favorite;
+	}
+
+	public String getHeader() {
+		return header;
+	}
+
+	public void setHeader(String header) {
+		this.header = header;
 	}
 	
 }

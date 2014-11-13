@@ -11,7 +11,7 @@ import dk.in2isoft.onlineobjects.test.plain.TestFileService;
 import dk.in2isoft.onlineobjects.test.plain.TestGraphService;
 import dk.in2isoft.onlineobjects.test.plain.TestHeaderUtil;
 import dk.in2isoft.onlineobjects.test.plain.TestImageService;
-import dk.in2isoft.onlineobjects.test.plain.TestLangUtil;
+import dk.in2isoft.onlineobjects.test.plain.TestValidationUtil;
 import dk.in2isoft.onlineobjects.test.plain.TestRegExp;
 import dk.in2isoft.onlineobjects.test.plain.TestRegExpUtil;
 import dk.in2isoft.onlineobjects.test.plain.TestRestUtil;
@@ -25,7 +25,7 @@ import dk.in2isoft.onlineobjects.test.plain.TestYoutubeService;
 	TestFileService.class, 
 	TestGraphService.class,
 	TestImageService.class,
-	TestLangUtil.class,
+	TestValidationUtil.class,
 	TestRegExp.class, 
 	TestRegExpUtil.class, 
 	TestRestUtil.class,

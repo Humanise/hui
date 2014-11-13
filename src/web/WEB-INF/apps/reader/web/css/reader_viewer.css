@@ -1,11 +1,10 @@
 .reader_viewer
 {
-	position: fixed;
+	position: absolute;
 	top: 0px;
 	left: 0px;
 	right: 0px;
-	bottom: 0px;	
-	background: rgba(0,0,0,.2);
+	bottom: 0px;
 	display: none;
 	z-index: 200;
 }
@@ -13,21 +12,19 @@
 .reader_viewer_frame
 {
 	position: absolute;
-	top: 20px;
-	left: 20px;
-	right: 20px;
-	bottom: 20px;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
 	background: #fff;
-	box-shadow: 0 0 20px rgba(0,0,0,.2);
 }
 
-.reader_viewer_info
+.reader_viewer_header
 {
 	position: absolute;
-	height: 100px;
+	height: 65px;
 	border-bottom: 1px solid #eee;
 	width: 100%;
-	padding: 10px 20px;
 	box-sizing: border-box;
 	background: #fafafa;
 }
@@ -37,9 +34,9 @@
 	text-decoration: none;
 	color: #999;
 	position: absolute;
-	right: 14px;
-	top: 14px;
-	font-size: 24px;
+	right: 10px;
+	top: 10px;
+	font-size: 20px;
 }
 
 .reader_viewer_close:hover
@@ -47,28 +44,64 @@
 	color: #666;
 }
 
-.reader_viewer_info h1
+.reader_viewer_header h1
 {
 	font-size: 24px;
 	font-weight: 200;
-	margin: 0 30px 0 0;
+	margin: 0 40px 0 0;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	line-height: 32px;
+	padding: 5px 0 0 10px;
 }
 
-.reader_viewer_info p
+.reader_viewer_header p
 {
 	font-size: 11px;
-	margin: 3px 0;
+	margin: 5px 320px 0 0;
+	padding-left: 10px;
 }
 
-.reader_viewer_info p.tags
+.reader_viewer_header .link {
+	white-space: nowrap;
+	overflow: hidden;	
+}
+
+.reader_viewer_header .link a
 {
-	margin-top: 10px;
+	color: #999;
+	text-decoration: none;
 }
 
-.reader_viewer_info p.tags a
+.reader_viewer_header .link a:hover
+{
+	text-decoration: underline;
+}
+
+
+/********************* Info ********************/
+
+.reader_viewer_info {
+	padding: 10px;
+}
+
+.info_header {
+	margin: 0;
+	font-size: 12px;
+	line-height: 1;
+	text-transform: uppercase;
+	font-weight: 400;
+	color: #999;
+}
+
+.info_tags
+{
+	margin-top: 5px;
+	font-size: 0;
+}
+
+.info_tags_item
 {
 	display: inline-block;
 	height: 16px;
@@ -80,20 +113,22 @@
 	color: #666;
 	text-decoration: none;
 	background: #fff;
+	overflow: hidden;
+	margin: 0 3px 3px 0;
 }
 
-.reader_viewer_info p.tags a.tag
+.info_tag
 {
 	font-style: italic;
 }
 
-.reader_viewer_info p.tags a.add
+.info_tags_add
 {
 	border-style: dashed;
 	color: #bbb;
 }
 
-.reader_viewer_info p.tags a:hover
+.info_tags_item:hover
 {
 	cursor: pointer;
 	background: #f6f6f6;
@@ -101,31 +136,21 @@
 	color: #666;
 }
 
-.reader_viewer_info p.link {
-	white-space: nowrap;
-	overflow: hidden;	
-}
 
-.reader_viewer_info p.link a
-{
-	color: #999;
-	text-decoration: none;
-}
-
-.reader_viewer_info p.link a:hover
-{
-	text-decoration: underline;
-}
+/****************** Actions *******************/
 
 .reader_viewer_actions {
     position: absolute;
-    right: 10px;
+    right: 5px;
     bottom: 5px;
+	font-size: 0;
 }
 
 .reader_viewer_action {
     color: #999;
     margin-right: 10px;
+	vertical-align: middle;
+	display: inline-block;
 }
 
 .reader_viewer_action:hover {
@@ -139,42 +164,59 @@
 
 .reader_viewer_view {
     display: inline-block;
+	vertical-align: middle;
+	font-size: 0;
 }
 
-.reader_viewer_view_option {
-    font-size: 12px;
-    text-transform: uppercase;
-    text-decoration: none;
-    color: #666;
-    font-weight: 600;
+.reader_viewer_view_item {
+	text-transform: uppercase;
+	text-decoration: none;
+	color: #333;
+	font-size: 14px;
+	padding: 0 3px;
 }
 
-.reader_viewer_view_option-selected {
-    font-weight: 800;
-    color: #000;
+.reader_viewer_view_item_selected {
+	color: #36f;
 }
-
 
 .reader_viewer_content
 {
-	position: fixed;
-	padding: 20px 30px 20px;
-	top: 120px;
-	bottom: 20px;
-	left: 20px;
-	right: 230px;
+	padding: 0;
+	top: 65px;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
 	overflow: auto;
 	box-sizing: border-box;
+	position: absolute;
+	background: #fff;
 }
 
-.reader_viewer_sidebar {
+/** View **/
+
+
+
+.reader_viewer_perpective {
+	display: none;
+}
+
+.reader_viewer_content_formatted > .reader_viewer_perpective_formatted,
+.reader_viewer_content_text > .reader_viewer_perpective_text,
+.reader_viewer_content_web > .reader_viewer_perpective_web
+{
+	display: block;
+}
+
+.reader_viewer_perpective_web {
 	position: absolute;
-	padding: 20px 30px 20px;
-	top: 110px;
-    border-left: 1px solid #eee;
-	bottom: 10px;
-	width: 150px;
-	right: 0px;    
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	width: 100%;
+	height: 100%;
+	border: none;
 }
 
 /**************** Text *******************/
@@ -182,9 +224,22 @@
 .reader_viewer_perpective_text {
 	font-size: 11pt;
 	font-weight: 300;
+	padding: 20px;
+}
+
+.reader_viewer_perpective_text em {
+	background: yellow;
+	font-style: normal;
 }
 
 /************** Formatted ****************/
+
+.reader_viewer_content_formatted
+{
+	font-size: 11pt;
+	font-weight: 300;
+	padding: 20px;
+}
 
 .reader_viewer_content_formatted h1,
 .reader_viewer_content_formatted h2,
@@ -200,12 +255,6 @@
 
 .reader_viewer_content_formatted strong {
 	font-weight: 600;
-}
-
-.reader_viewer_content_formatted
-{
-	font-size: 11pt;
-	font-weight: 300;
 }
 
 .reader_viewer_content_formatted p

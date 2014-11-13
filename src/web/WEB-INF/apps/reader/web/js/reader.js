@@ -9,6 +9,7 @@ var controller = {
 		this.viewer = hui.get('viewer');
 		this.viewerContent = hui.get('viewer_content');
 		this.viewerFrame = hui.get('viewer_frame');
+		this.viewerSpinner = hui.get('viewer_spinner');
 		
 		hui.listen(document.body,'click',this._click.bind(this));
 		var textListener = function() {
@@ -33,6 +34,27 @@ var controller = {
 			selectedClass : 'reader_viewer_view_item_selected',
 			value : 'formatted'
 		});
+		this._view();
+	},
+	
+	_view : function() {
+
+		
+		var self = this;
+		hui.ui.get('listView').listen({
+			$clickItem : function(info) {
+				var event = info.event;
+				var a = event.findByTag('a');
+				if (hui.cls.has(a,'list_item_word')) {
+					var id = parseInt(a.getAttribute('data-id'));
+					hui.ui.get('tags').selectById(id,event.shiftKey);
+				} else if (hui.cls.has(a,'list_item_address_link')) {
+					window.open(a.href);
+				} else {
+					self._loadArticle(info.item);					
+				}
+			}
+		})
 	},
 	
 	_click : function(e) {
@@ -49,14 +71,14 @@ var controller = {
 		var a = e.findByTag('a');
 		if (a) {
 			e.stop();
-			if (hui.cls.has(a,'add')) {
+			if (hui.cls.has(a,'info_tags_add')) {
 				hui.ui.get('wordFinder').show();
 				hui.ui.get('wordFinderSearch').setValue(this.text);
 			}
-			if (hui.cls.has(a,'word')) {
+			if (hui.cls.has(a,'info_word')) {
 				this._clickWord(a);
 			}
-			if (hui.cls.has(a,'tag')) {
+			if (hui.cls.has(a,'info_tag')) {
 				this._clickTag(a);
 			}
 			if (hui.cls.has(a,'reader_viewer_close')) {
@@ -72,48 +94,40 @@ var controller = {
 	},
 	
 	$valueChanged$search : function() {
-		hui.ui.get('list').resetState();
+		hui.ui.get('listView').reset();
 	},
 	
 	$valueChanged$tags : function() {
-		hui.ui.get('list').resetState();
+		hui.ui.get('listView').reset();
 	},
 	
-	$valueChanged$context : function() {
-		hui.ui.get('list').resetState();
+	$valueChanged$subsets : function() {
+		hui.ui.get('listView').reset();
+	},
+	
+	$valueChanged$types : function() {
+		hui.ui.get('listView').reset();
 	},
 	
 	$click$removeButton : function() {
-		var obj = hui.ui.get('list').getFirstSelection();
         var url = '/removeInternetAddress';
-        if (obj.kind == 'HtmlPart') {
-            url = '/service/model/removeEntity';
-        }
+        //if (obj.kind == 'HtmlPart') {
+         //   url = '/service/model/removeEntity';
+        //}
+		this._hideViewer();
 		hui.ui.request({
 			url : url,
-			parameters : {id:obj.id},
+			parameters : {id:this._currentArticle.id},
 			$success : function() {
+				hui.ui.get('listView').reset();
 				hui.ui.get('tagSource').refresh();
-				hui.ui.get('listSource').refresh();
-			}
+			}.bind(this)
 		})
 	},
 	
 	// List...
 	
 	_currentArticle : null,
-	
-	$clickIcon$list : function(info) {
-		hui.log(info);
-		if (info.data == 'graph') {
-			oo.Inspector.inspect({id:info.row.id})
-		} else {
-			window.open(info.data);			
-		}
-	},
-	$open$list : function(info) {
-		this._loadArticle(info.id);
-	},
 		
 	$click$addFeed : function(button) {
 		hui.ui.get('newFeedPanel').show({target:button})
@@ -158,7 +172,7 @@ var controller = {
 			$object : function(info) {
 				hui.ui.showMessage({text:'Address added',icon:'common/success',duration:3000});
 				hui.ui.get('listSource').refresh();
-				this._loadArticle(info.id);
+				this._loadArticle(info);
 			}.bind(this),
 			$failure : function() {
 				hui.ui.showMessage({text:'Address could not be added',icon:'common/warning',duration:3000});
@@ -247,44 +261,51 @@ var controller = {
     
     // Viewer
 	
-	_loadArticle : function(id) {
-		hui.ui.showMessage({text:'Loading...',busy:true});
-		hui.get('info').innerHTML = '<h1>Loading...</h1>';
+	_loadArticle : function(object) {
+		hui.get('viewer_header').innerHTML = '<h1>' + hui.string.escape(object.title) + '</h1>';
 		hui.get('viewer_formatted').innerHTML = '';
 		hui.get('viewer_text').innerHTML = '';
+		hui.get('viewer_info').innerHTML = ''
 		this.viewer.style.display = 'block';
 		this.viewerVisible = true;
 		hui.cls.add(document.body,'reader_modal');
+		hui.cls.add(this.viewerSpinner,'oo_spinner_visible');
+		var self = this;
 		hui.ui.request({
 			url : '/loadArticle',
-			parameters : {id:id},
+			parameters : {id:object.id},
 			$object : function(article) {
-				hui.ui.hideMessage();
-				this._drawArticle(article);
-			}.bind(this),
+				self._drawArticle(article);
+			},
 			$failure : function() {
-				this._hideViewer();
+				self._hideViewer();
 				hui.ui.msg.fail({text:'Sorry!'});
-			}.bind(this)
+			},
+			$finally : function() {
+				hui.cls.remove(self.viewerSpinner,'oo_spinner_visible');
+			}
 		})
 	},
 	
 	_drawArticle : function(article) {
 		this._currentArticle = article;
-		hui.get('viewer_formatted').innerHTML = article.rendering;
+		hui.get('viewer_formatted').innerHTML = article.formatted;
 		hui.get('viewer_text').innerHTML = article.text;
-		hui.get('info').innerHTML = article.info;
+		hui.get('viewer_header').innerHTML = article.header;
+		hui.get('viewer_info').innerHTML = article.info;
+		
 		hui.cls.set(hui.get('reader_viewer_inbox'),'reader_viewer_action_selected',article.inbox);
 		hui.cls.set(hui.get('reader_viewer_favorite'),'reader_viewer_action_selected',article.favorite);
 		var view = hui.ui.get('readerViewerView').getValue();
 		if (view === 'web') {
-			this.viewerFrame.src = article.url;
+			// TODO Find a way to handle errors
+			this.viewerFrame.setAttribute('src',article.url);		
 		}
 		this.frameSet = view === 'web';
 	},
 	
 	_reloadInfo : function() {
-		var info = hui.get('info');
+		var info = hui.get('viewer_info');
 		info.style.opacity = '.5';
 		hui.ui.request({
 			url : '/loadArticle',
@@ -304,6 +325,7 @@ var controller = {
 		hui.cls.remove(document.body,'reader_modal');
 		this.viewerVisible = false;
 		this.viewerFrame.src = "about:blank";
+		hui.get('viewer_info').innerHTML = ''
 	},
 	_lockViewer : function() {
 		this._viewerLocked = true;
@@ -349,6 +371,10 @@ var controller = {
 			}.bind(this)
         });
 	},
+	
+	$click$inspectButton : function() {
+		oo.Inspector.inspect({id:this._currentArticle.id})
+	},
     
     $click$quoteButton : function() {
         var parameters = {
@@ -375,38 +401,3 @@ var controller = {
 
 hui.ui.listen(controller);
 
-oo.Segmented = function(options) {
-	this.options = hui.override({selectedClass:'oo_segmented_item_selected'},options);
-	this.name = options.name;
-	this.element = hui.get(options.element);
-	this.current = hui.get.firstByClass(this.element,this.options.selectedClass);
-	this.value = options.value || (this.current ? this.current.getAttribute('data-value') : null);
-	hui.ui.extend(this);
-	this._attach();
-}
-
-oo.Segmented.prototype = {
-	_attach : function() {
-		hui.listen(this.element,'click',this._click.bind(this));
-	},
-	_click : function(e) {
-		e = hui.event(e);
-		e.stop();
-		var a = e.findByTag('a');
-		if (a) {
-			this._change(a);
-		}
-	},
-	_change : function(node) {
-		if (this.current) {
-			hui.cls.remove(this.current,this.options.selectedClass);
-		}
-		this.value = node.getAttribute('data-value');
-		hui.cls.add(node,this.options.selectedClass);
-		this.fireValueChange();
-		this.current = node;
-	},
-	getValue : function() {
-		return this.value;
-	}
-}

@@ -8,77 +8,6 @@
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 >
 	<ui:composition template="templates/plain.xhtml">
-				
-		<ui:define name="body">
-			<div class="reader">
-				<div class="reader_top">
-					<div class="reader_actions">
-						<o:link name="removeButton" plain="true" styleClass="reader_action">
-							<o:icon icon="delete_line" size="20"/>
-							<span class="reader_action_text">Remove</span>
-							<gui:confirm text="Are you sure?"/>
-						</o:link>
-						<o:link name="addButton" plain="true" styleClass="reader_action">
-							<o:icon icon="add_line" size="20"/>
-							<span class="reader_action_text">Add page</span>
-						</o:link>
-						<o:link name="reindexButton" plain="true" styleClass="reader_action">
-							<o:icon icon="gear_line" size="20"/>
-							<gui:confirm text="Re-index - realy?"/>
-						</o:link>
-					</div>
-				
-					<div class="reader_search">
-						<gui:searchfield name="search" placeholder="Search" adaptive="true"/>
-					</div>
-				</div>
-				<div class="reader_list">
-				
-					<gui:source name="listSource" url="#{readerView.baseContext}/searchAddresses">
-						<gui:parameter key="page" value="@list.window.page"/>
-						<gui:parameter key="text" value="@search.value"/>
-						<gui:parameter key="tags" value="@tags.value"/>
-						<gui:parameter key="subset" value="@subsets.value"/>
-						<gui:parameter key="type" value="@types.value"/>
-					</gui:source>
-					
-					<gui:list name="list" source="listSource" variant="light"/>                    
-				</div>
-                
-				<div id="viewer" class="reader_viewer">
-					<div class="reader_viewer_frame">
-						<div class="reader_viewer_info">
-							<div id="info"></div>
-							<a class="reader_viewer_close oo_icon oo_icon_close_line" href="javascript://"></a>
-                            <div class="reader_viewer_actions">
-        						<o:link name="quoteButton" plain="true" styleClass="reader_viewer_action">
-        							<o:icon icon="bubble_line" size="16"/>
-        						</o:link>
-        						<o:link name="inboxButton" plain="true" id="reader_viewer_inbox" styleClass="reader_viewer_action">
-        							<o:icon icon="inbox_line" size="16"/>
-        						</o:link>
-        						<o:link name="favoriteButton" plain="true" id="reader_viewer_favorite" styleClass="reader_viewer_action">
-        							<o:icon icon="star_line" size="16"/>
-        						</o:link>
-                                <span class="reader_viewer_view" id="reader_viewer_view">
-                                    <a href="#" data-value="text" class="reader_viewer_view_item">Text</a>
-                                    <a href="#" data-value="formatted" class="reader_viewer_view_item reader_viewer_view_item_selected">Formatted</a>
-                                    <a href="#" data-value="web" class="reader_viewer_view_item">Web</a>
-                                </span>
-                            </div>
-						</div>
-						<div class="reader_viewer_content reader_viewer_content_formatted" id="viewer_content">
-							<div class="reader_viewer_perpective reader_viewer_perpective_formatted" id="viewer_formatted"></div>
-							<div class="reader_viewer_perpective reader_viewer_perpective_text" id="viewer_text"></div>
-							<iframe class="reader_viewer_perpective reader_viewer_perpective_web" id="viewer_frame"></iframe>
-						</div>
-                        <div class="reader_viewer_sidebar">
-                        
-                        </div>
-					</div>
-				</div>
-			</div>
-		</ui:define>
 		
 		<ui:define name="sidebar">
 			<div class="sidebar">
@@ -104,10 +33,117 @@
 				</div>
 				<div class="block">
 					<h3>Tags</h3>
+					<div style="margin: 0 -10px">
+					<gui:overflow height="400">
+					<div style="padding: 0 10px">
 					<o:selection name="tags">
 						<gui:source name="tagSource" url="#{readerView.baseContext}/getWordCloud"/>
 					</o:selection>
+					</div>
+					</gui:overflow>
+					</div>
 				</div>
+			</div>
+		</ui:define>
+				
+		<ui:define name="body">
+			<div class="reader">
+			</div>
+		</ui:define>
+		
+		<ui:define name="list">
+
+			<gui:source name="listSource" url="#{readerView.baseContext}/listAddressObjects">
+				<gui:parameter key="page" value="@listView.page"/>
+				<gui:parameter key="pageSize" value="@listView.pageSize"/>
+				<gui:parameter key="text" value="@search.value"/>
+				<gui:parameter key="tags" value="@tags.value"/>
+				<gui:parameter key="subset" value="@subsets.value"/>
+				<gui:parameter key="type" value="@types.value"/>
+			</gui:source>
+			
+
+			<div class="reader_list_top">
+				<div class="reader_actions">
+					<o:link name="addButton" plain="true" styleClass="reader_action">
+						<o:icon icon="add_line" size="20"/>
+						<span class="reader_action_text">Add page</span>
+					</o:link>
+					<o:link name="reindexButton" plain="true" styleClass="reader_action">
+						<o:icon icon="gear_line" size="20"/>
+						<gui:confirm text="Re-index - realy?"/>
+					</o:link>
+				</div>
+			
+				<div class="reader_search">
+					<gui:searchfield name="search" placeholder="Search" adaptive="true"/>
+				</div>
+			</div>
+			<div class="reader_list_middle">
+			<gui:overflow full="true" shadowVariant="white">
+				<div id="my_view" class="oo_view">
+					<div class="oo_spinner"></div>
+				</div>
+				<script>
+				var view = new oo.View({
+					name : 'listView',
+					element : 'my_view',
+					pageSize : 20,
+					source : hui.ui.get('listSource'),
+					emptyHtml : '<div class="list_item_pending"></div>',
+					$render : function(info) {
+						return info.html;
+					}
+				});
+				</script>
+			</gui:overflow>
+			</div>
+		</ui:define>
+		
+		<ui:define name="viewer">
+			<div id="viewer" class="reader_viewer">
+				<div class="reader_viewer_frame">
+					<div class="reader_viewer_header">
+						<div id="viewer_header"></div>
+						<a class="reader_viewer_close oo_icon oo_icon_close_line" href="javascript://"></a>
+	                    <div class="reader_viewer_actions">
+							<o:link name="removeButton" plain="true" styleClass="reader_viewer_action">
+								<o:icon icon="delete_line" size="16"/>
+								<gui:confirm text="Are you sure?"/>
+							</o:link>
+							<o:link name="quoteButton" plain="true" styleClass="reader_viewer_action">
+								<o:icon icon="bubble_line" size="16"/>
+							</o:link>
+							<o:link name="inspectButton" plain="true" styleClass="reader_viewer_action">
+								<o:icon icon="relations_line" size="16"/>
+							</o:link>
+							<o:link name="inboxButton" plain="true" id="reader_viewer_inbox" styleClass="reader_viewer_action">
+								<o:icon icon="inbox_line" size="16"/>
+							</o:link>
+							<o:link name="favoriteButton" plain="true" id="reader_viewer_favorite" styleClass="reader_viewer_action">
+								<o:icon icon="star_line" size="16"/>
+							</o:link>
+	                        <span class="reader_viewer_view" id="reader_viewer_view">
+	                            <a href="#" data-value="text" class="reader_viewer_view_item">Text</a>
+	                            <a href="#" data-value="formatted" class="reader_viewer_view_item reader_viewer_view_item_selected">Formatted</a>
+	                            <a href="#" data-value="web" class="reader_viewer_view_item">Web</a>
+	                        </span>
+	                    </div>
+					</div>
+					<div class="reader_viewer_content reader_viewer_content_formatted" id="viewer_content">
+						<div class="oo_spinner" id="viewer_spinner"></div>
+						<div class="reader_viewer_perpective reader_viewer_perpective_formatted" id="viewer_formatted"></div>
+						<div class="reader_viewer_perpective reader_viewer_perpective_text" id="viewer_text"></div>
+						<iframe class="reader_viewer_perpective reader_viewer_perpective_web" id="viewer_frame"></iframe>
+					</div>
+				</div>
+			</div>
+		</ui:define>
+		
+		
+		<ui:define name="info">
+			<div id="viewer_info" class="reader_viewer_info">
+				
 			</div>
 		</ui:define>
 

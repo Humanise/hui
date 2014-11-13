@@ -80,6 +80,11 @@ public class WordsController extends WordsControllerBase {
 		return super.isAllowed(request);
 	}
 	
+	@Override
+	public boolean logAccessExceptions() {
+		return false;
+	}
+	
 	@Path(start="diagram.json")
 	public void getDiagram(Request request) throws ModelException, IOException {
 		String text = request.getString("word");

@@ -13,7 +13,7 @@ import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 import dk.in2isoft.onlineobjects.util.ValidationUtil;
 
-public class TestLangUtil extends AbstractSpringTestCase {
+public class TestValidationUtil extends AbstractSpringTestCase {
 	
 	//private static Logger log = Logger.getLogger(TestLangUtil.class);
 	
@@ -60,16 +60,5 @@ public class TestLangUtil extends AbstractSpringTestCase {
 		assertFalse(ValidationUtil.isValidPassword("abBC12+"));
 
 		assertTrue(ValidationUtil.isValidPassword("abcABC123-+&"));
-	}
-
-	@Test
-	public void testSplitWords() {
-		assertEquals(Arrays.toString(Strings.getWords("a b c")), Arrays.toString(new String[] {"a","b","c"}));
-		assertEquals(Arrays.toString(Strings.getWords("a b    c")), Arrays.toString(new String[] {"a","b","c"}));
-		assertEquals(Arrays.toString(Strings.getWords("")), Arrays.toString(new String[] {}));
-		assertEquals(Arrays.toString(Strings.getWords("a b \nc")), Arrays.toString(new String[] {"a","b","c"}));
-		assertEquals(Arrays.toString(Strings.getWords("a b \nc")), Arrays.toString(new String[] {"a","b","c"}));
-		assertEquals(Arrays.toString(Strings.getWords("a b. c")), Arrays.toString(new String[] {"a","b","c"}));
-		assertEquals(Arrays.toString(Strings.getWords("  a b \nc  ")), Arrays.toString(new String[] {"a","b","c"}));
 	}
 }

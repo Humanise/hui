@@ -17,11 +17,10 @@ public class EventService {
 	
 	
 	public EventService() {
-		// TODO Auto-generated constructor stub
 	}
 	
 	public void setModelEventListeners(List<ModelEventListener> modelEventListeners) {
-		this.modelEventListeners = modelEventListeners;
+		this.modelEventListeners.addAll(modelEventListeners);
 	}
 	
 	public void addModelEventListener(ModelEventListener listener) {

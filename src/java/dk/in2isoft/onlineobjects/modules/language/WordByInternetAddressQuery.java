@@ -9,7 +9,7 @@ import dk.in2isoft.onlineobjects.core.Privileged;
 public class WordByInternetAddressQuery implements CustomQuery<ItemData> {
 
 	private static String SQL = "select word.id as word_id,word.text,count(internetaddress.id) as count from word,relation,internetaddress,privilege "+
-			" where internetaddress.id = relation.super_entity_id and relation.sub_entity_id=word.id and privilege.object = internetaddress.id and privilege.subject=:privileged"+ 
+			" where privilege.subject=:privileged and privilege.alter=true and internetaddress.id = relation.super_entity_id and relation.sub_entity_id=word.id and privilege.object = internetaddress.id"+ 
 			" group by word.id,word.text order by word.text";
 	
 	private long privileged;

@@ -21,4 +21,7 @@
    		<property name="securityService" ref="securityService"/>
    		<property name="pileService" ref="pileService"/>
    	</bean>
+   	
+   	<bean id="readerView" scope="request" class="dk.in2isoft.onlineobjects.apps.reader.views.ReaderView">
+   	</bean>
 </beans>

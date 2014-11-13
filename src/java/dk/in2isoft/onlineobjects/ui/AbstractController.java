@@ -135,4 +135,8 @@ public abstract class AbstractController {
 	public void setConfigurationService(ConfigurationService configurationService) {
 		this.configurationService = configurationService;
 	}
+	
+	public boolean logAccessExceptions() {
+		return true;
+	}
 }

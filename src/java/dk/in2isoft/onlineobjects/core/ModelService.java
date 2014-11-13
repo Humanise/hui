@@ -552,7 +552,8 @@ public class ModelService {
 				}
 			}
 		} catch (org.hibernate.exception.GenericJDBCException e) {
-			log.error("Unable to get user: "+username+" / session.active="+session.getTransaction().isActive(),e);
+			boolean active = session!=null && session.getTransaction()!=null ? session.getTransaction().isActive() : false;
+			log.error("Unable to get user: "+username+" / session.active="+active,e);
 			Throwable cause = e.getCause();
 			if (cause instanceof BatchUpdateException) {
 				BatchUpdateException batchUpdateException = (BatchUpdateException) cause;

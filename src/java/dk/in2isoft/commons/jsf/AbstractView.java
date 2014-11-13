@@ -25,7 +25,7 @@ public class AbstractView {
 		return Request.get((HttpServletRequest) context.getRequest(),(HttpServletResponse) context.getResponse());
 	}
 	
-	protected Locale getLocale() {
+	public Locale getLocale() {
 		return FacesContext.getCurrentInstance().getViewRoot().getLocale();
 	}
 	

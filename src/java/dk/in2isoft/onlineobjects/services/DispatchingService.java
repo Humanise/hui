@@ -129,6 +129,10 @@ public class DispatchingService {
 			if (ex instanceof ContentNotFoundException) {
 				log.error(ex.getMessage()+" : "+request.getRequest().getRequestURL().toString());
 				surveillanceService.surveyNotFound(request);
+			} else if (ex instanceof EndUserException) {
+				if (((EndUserException) ex).isLog()) {
+					log.error(ex.toString(), ex);				
+				}
 			} else {
 				log.error(ex.toString(), ex);				
 			}

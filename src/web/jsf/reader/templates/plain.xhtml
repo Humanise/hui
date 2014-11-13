@@ -5,7 +5,7 @@
 	xmlns:gui="http://www.in2isoft.dk/in2igui"
 	xmlns:o="http://www.onlineobjects.com/jsf" 
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
-	locale="#{wordsLayoutView.language}"
+	locale="#{readerView.locale}"
 >
 
 	<o:doctype/>
@@ -22,15 +22,22 @@
 		</h:head>
 		<o:body>
 			<o:topBar/>
-			<o:layout variant="paper">
-				<f:facet name="sidebar">
+			<div class="reader_layout">
+				<div class="reader_layout_navigation">
 					<ui:insert name="sidebar"/>
-				</f:facet>
-				<ui:insert name="body"/>
-			</o:layout>
-			<o:footer/>
-			<o:analytics/>
-			<ui:insert name="bottom"/>
+				</div>
+				<div class="reader_layout_list">
+					<ui:insert name="list"/>
+				</div>
+				<div class="reader_layout_viewer">
+					<ui:insert name="viewer"/>
+				</div>
+				<div class="reader_layout_info">
+					<ui:insert name="info"/>
+				</div>
+			</div>
+				<ui:insert name="bottom"/>
+				<o:analytics/>
 		</o:body>
 	</html>
 

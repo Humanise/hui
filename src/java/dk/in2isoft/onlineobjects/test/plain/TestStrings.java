@@ -1,5 +1,9 @@
 package dk.in2isoft.onlineobjects.test.plain;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.Arrays;
+
 import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
@@ -70,6 +74,18 @@ public class TestStrings extends TestCase {
 		
 		// Suspect...
 		assertEquals("other", Strings.getAlphabethStartLetter("þoddi"));
+	}
+
+	@Test
+	public void testSplitWords() {
+		assertEquals(Arrays.toString(Strings.getWords("a b c")), Arrays.toString(new String[] {"a","b","c"}));
+		assertEquals(Arrays.toString(Strings.getWords("a b    c")), Arrays.toString(new String[] {"a","b","c"}));
+		assertEquals(Arrays.toString(Strings.getWords("")), Arrays.toString(new String[] {}));
+		assertEquals(Arrays.toString(Strings.getWords("a b \nc")), Arrays.toString(new String[] {"a","b","c"}));
+		assertEquals(Arrays.toString(Strings.getWords("a b \nc")), Arrays.toString(new String[] {"a","b","c"}));
+		assertEquals(Arrays.toString(Strings.getWords("a b. c")), Arrays.toString(new String[] {"a","b","c"}));
+		assertEquals(Arrays.toString(Strings.getWords("  a b \nc  ")), Arrays.toString(new String[] {"a","b","c"}));
+		assertEquals(Arrays.toString(Strings.getWords("Han vandt 1.000-meter-loebet")), Arrays.toString(new String[] {"Han","vandt","1.000-meter-loebet"}));
 	}
 
 	

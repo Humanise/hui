@@ -1,27 +1,46 @@
 package dk.in2isoft.onlineobjects.modules.inbox;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.InitializingBean;
 
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Query;
+import dk.in2isoft.onlineobjects.core.events.AnyModelChangeListener;
+import dk.in2isoft.onlineobjects.core.events.EventService;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.model.Entity;
+import dk.in2isoft.onlineobjects.model.Item;
 import dk.in2isoft.onlineobjects.model.Pile;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
 
-public class InboxService {
+public class InboxService implements InitializingBean {
 
 	private static Logger log = Logger.getLogger(InboxService.class);
 	
 	private ModelService modelService;
+
+	private EventService eventService;
 	
-	//private Map<Long,Integer> counts;
+	private Map<Long,Integer> counts;
 	
 	public InboxService() {
 		super();
-		//counts = new HashMap<Long, Integer>();
+		counts = new HashMap<Long, Integer>();
+	}
+	
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		eventService.addModelEventListener(new AnyModelChangeListener() {
+			@Override
+			public void itemWasChanged(Item item) {
+				counts.clear();
+			}
+		});
 	}
 
 	public Pile getOrCreateInbox(User privileged) throws ModelException {
@@ -44,11 +63,17 @@ public class InboxService {
 	}
 	
 	public int getCount(User user) throws ModelException {
+		if (counts.containsKey(user.getId())) {
+			return counts.get(user.getId());
+		}
+		
 		// TODO Optimize this by caching id=count
 		Pile inbox = getOrCreateInbox(user);
 		Query<Entity> query = Query.after(Entity.class).withParent(inbox).withPrivileged(user);
 		//List<Entity> list = modelService.list(query);
-		return modelService.count(query).intValue();
+		int count = modelService.count(query).intValue();
+		counts.put(user.getId(), count);
+		return count;
 	}
 	
 	public int getCountSilently(User user) {
@@ -63,10 +88,6 @@ public class InboxService {
 		}
 	}
 	
-	public void setModelService(ModelService modelService) {
-		this.modelService = modelService;
-	}
-
 	public boolean remove(User user, long id) throws ModelException, SecurityException {
 		Pile inbox = getOrCreateInbox(user);
 		Entity entity = modelService.get(Entity.class, id, user);
@@ -76,5 +97,15 @@ public class InboxService {
 		}
 		modelService.deleteRelation(relation, user);
 		return true;
+	}
+	
+	// Wiring...
+
+	public void setModelService(ModelService modelService) {
+		this.modelService = modelService;
+	}
+
+	public void setEventService(EventService eventService) {
+		this.eventService = eventService;
 	}
 }

@@ -328,11 +328,18 @@ hui.string = {
 	 * @returns {String} The escaped text
 	 */
 	escape : function(str) {
-		if (!hui.isDefined(str)) {return ''};
-		return str.replace(/&/g,'&amp;').
-			replace(/>/g,'&gt;').
-			replace(/</g,'&lt;').
-			replace(/"/g,'&quot;')
+		if (!hui.isString(str)) {return str};
+		var tagsToReplace = {
+		        '&': '&amp;',
+		        '<': '&lt;',
+		        '>': '&gt;',
+		        '"': '&quot;',
+			    "'": '&#x27;',
+			    '`': '&#x60;'
+		    };
+	    return str.replace(/[&<>'`"]/g, function(tag) {
+	        return tagsToReplace[tag] || tag;
+	    });
 	},
 	/**
 	 * Converts a JSON string into an object
@@ -1455,7 +1462,8 @@ hui.stop = function(event) {
 
 hui._defered = [];
 
-hui._ready = document.readyState == 'complete' || document.readyState == 'interactive';
+hui._ready = document.readyState == 'complete';// || document.readyState;
+// TODO Maybe interactive is too soon???
 
 hui.onReady = function(func) {
 	if (hui._ready) {
@@ -1570,7 +1578,8 @@ hui._onReady = function(delegate) {
  */
 hui.request = function(options) {
 	options = hui.override({method:'POST',async:true,headers:{Ajax:true}},options);
-	var transport = hui.request.createTransport();
+	var transport = hui.request.createTransport(options);
+	if (!transport) {return;}
 	transport.onreadystatechange = function() {
 		try {
 			if (transport.readyState == 4) {
@@ -1714,16 +1723,11 @@ hui.request.createTransport = function() {
 		}
 		else if (window.ActiveXObject) {
 			return hui.request._getActiveX();
-		} else {
-			// Could not create transport
-			this.delegate.onError(this);
 		}
 	}
 	catch (ex) {
-		if (this.delegate.onError) {
-			this.delegate.onError(this,ex);
-		}
 	}
+	return null;
 }
 
 hui.request._getActiveX = function() {
@@ -5263,21 +5267,24 @@ hui.ui.getAncestors = function(widget) {
 }
 
 hui.ui.getDescendants = function(widgetOrElement) {
-	var desc = [],e = widgetOrElement.getElement ? widgetOrElement.getElement() : widgetOrElement;
-	if (e) {
-		var d = e.getElementsByTagName('*');
-		var o = [];
-		for (var key in hui.ui.objects) {
-			o.push(hui.ui.objects[key]);
-		}
-		for (var i=0; i < d.length; i++) {
-			for (var j=0; j < o.length; j++) {
-				if (d[i]==o[j].element) {
-					desc.push(o[j]);
-				}
-			};
+	var desc = [];
+	if (widgetOrElement) {
+		var e = widgetOrElement.getElement ? widgetOrElement.getElement() : widgetOrElement;
+		if (e) {
+			var d = e.getElementsByTagName('*');
+			var o = [];
+			for (var key in hui.ui.objects) {
+				o.push(hui.ui.objects[key]);
+			}
+			for (var i=0; i < d.length; i++) {
+				for (var j=0; j < o.length; j++) {
+					if (d[i]==o[j].element) {
+						desc.push(o[j]);
+					}
+				};
 			
-		};
+			};
+		}
 	}
 	return desc;
 }
@@ -5727,16 +5734,16 @@ hui.ui.positionAtElement = function(element,target,options) {
 //////////////////// Delegating ////////////////////
 
 hui.ui.extend = function(obj,options) {
-	if (!obj.name) {
-		hui.ui.latestObjectIndex++;
-		obj.name = 'unnamed'+hui.ui.latestObjectIndex;
-	}
 	if (options!==undefined) {
 		if (obj.options) {
 			obj.options = hui.override(obj.options,options);
 		}
 		obj.element = hui.get(options.element);
 		obj.name = options.name;
+	}
+	if (!obj.name) {
+		hui.ui.latestObjectIndex++;
+		obj.name = 'unnamed'+hui.ui.latestObjectIndex;
 	}
 	if (hui.ui.objects[obj.name]) {
 		hui.log('Widget replaced: '+obj.name,hui.ui.objects[obj.name]);

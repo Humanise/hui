@@ -22,12 +22,14 @@ import dk.in2isoft.commons.lang.Code;
 import dk.in2isoft.commons.lang.Files;
 import dk.in2isoft.commons.lang.HTMLWriter;
 import dk.in2isoft.commons.lang.Strings;
+import dk.in2isoft.commons.lang.TextDecorator;
 import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.in2igui.data.ItemData;
 import dk.in2isoft.in2igui.data.ListWriter;
 import dk.in2isoft.onlineobjects.apps.reader.index.ReaderQuery;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.ArticlePerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.FeedPerspective;
+import dk.in2isoft.onlineobjects.apps.reader.perspective.ListItemPerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.WordPerspective;
 import dk.in2isoft.onlineobjects.apps.videosharing.Path;
 import dk.in2isoft.onlineobjects.core.Pair;
@@ -62,6 +64,7 @@ import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.ui.ScriptWriter;
 import dk.in2isoft.onlineobjects.ui.StylesheetWriter;
 import dk.in2isoft.onlineobjects.ui.data.SimpleEntityPerspective;
+import dk.in2isoft.onlineobjects.ui.data.ViewResult;
 
 public class ReaderController extends ReaderControllerBase {
 
@@ -78,13 +81,8 @@ public class ReaderController extends ReaderControllerBase {
 		StylesheetWriter writer = new StylesheetWriter(request, configurationService);
 		writer.write(publicStyle);
 	}
-
-	@Path
-	public void searchAddresses(Request request) throws IOException, ModelException, ExplodingClusterFuckException {
-
-		int page = request.getInt("page");
-		int pageSize = 30;
-
+	
+	private Pair<Integer,List<Entity>> search(Request request, int page, int pageSize) throws ExplodingClusterFuckException {
 		ReaderQuery rQuery = new ReaderQuery();
 		rQuery.setText(request.getString("text"));
 		rQuery.setSubset(request.getString("subset"));
@@ -117,6 +115,81 @@ public class ReaderController extends ReaderControllerBase {
 		sortByIds(list, ids);
 
 		int totalCount = idsByType.get("total").iterator().next().intValue(); // TODO
+		
+		return Pair.of(totalCount, list);
+	}
+
+	@Path
+	public ViewResult listAddressObjects(Request request) throws IOException, ModelException, ExplodingClusterFuckException {
+		
+		int page = request.getInt("page");
+		int pageSize = request.getInt("pageSize");
+		if (pageSize==0) {
+			pageSize = 30;
+		}
+
+		Pair<Integer,List<Entity>> pair = search(request, page, pageSize);
+		
+		ViewResult result = new ViewResult();
+		result.setTotal(pair.getKey());
+		
+		List<Entity> entities = pair.getValue();
+		List<ListItemPerspective> list = Lists.newArrayList();
+		for (Entity entity : entities) {
+			
+			ListItemPerspective perspective = new ListItemPerspective();
+			perspective.setId(entity.getId());
+			perspective.setTitle(entity.getName());
+			
+			InternetAddress address = null;
+			
+			HTMLWriter writer = new HTMLWriter();
+			writer.startDiv().withClass("list_item");
+			writer.startH2().withClass("list_item_title").text(entity.getName()).endH2();
+			
+			if (entity instanceof InternetAddress) {
+				address = (InternetAddress) entity;
+				perspective.setUrl(address.getAddress());
+				perspective.setAddress(Strings.simplifyURL(address.getAddress()));
+				writer.startP().withClass("list_item_address").startA().withClass("list_item_address_link").withHref(address.getAddress()).text(Strings.simplifyURL(address.getAddress())).endA().endP();
+			} else if (entity instanceof HtmlPart) {
+				HtmlPart htmlPart = (HtmlPart) entity;
+				writer.startP().withClass("list_item_quote").text(htmlPart.getHtml()).endP();
+			}
+
+			List<Word> words = modelService.getChildren(entity, Word.class, request.getSession());
+			if (Code.isNotEmpty(words)) {
+				writer.startP().withClass("list_item_words");
+				List<Pair<Long, String>> tags = Lists.newArrayList();
+				for (Iterator<Word> i = words.iterator(); i.hasNext();) {
+					Word word = i.next();
+					tags.add(Pair.of(word.getId(), word.getText()));
+					writer.startA().withClass("list_item_word").withData("id", word.getId()).text(word.getText()).endA();
+					if (i.hasNext()) writer.text(" \u00B7 ");
+				}
+				perspective.setTags(tags);
+				writer.endP();
+			}
+			writer.endDiv();
+			perspective.setHtml(writer.toString());
+			list.add(perspective);
+		}
+		result.setItems(list);
+
+		return result;
+	}
+
+	@Path
+	public void listAddresses(Request request) throws IOException, ModelException, ExplodingClusterFuckException {
+
+		int page = request.getInt("page");
+		int pageSize = 30;
+
+		Pair<Integer,List<Entity>> pair = search(request, page, pageSize);
+		
+		int totalCount = pair.getKey();
+		List<Entity> list = pair.getValue();
+		
 
 		ListWriter writer = new ListWriter(request);
 		writer.startList();
@@ -355,6 +428,7 @@ public class ReaderController extends ReaderControllerBase {
 
 	@Path
 	public ArticlePerspective loadArticle(Request request) throws IOException, ModelException, SecurityException, IllegalRequestException {
+
 		Long id = request.getLong("id");
 		UserSession session = request.getSession();
 
@@ -391,11 +465,12 @@ public class ReaderController extends ReaderControllerBase {
 		}
 		article.setQuotes(quoteList);
 
+		article.setHeader(buildHeader(address));
 		article.setInfo(buildInfo(document, address, session));
 		article.setId(address.getId());
 		if (document != null) {
 			article.setTitle(document.getTitle());
-			article.setRendering(buildRendering(document, address, quotes, true));
+			article.setFormatted(buildRendering(document, address, quotes, true));
 			article.setText(buildRendering(document, address, quotes, false));
 		} else {
 			article.setTitle(address.getName());
@@ -446,16 +521,22 @@ public class ReaderController extends ReaderControllerBase {
 		return new HTMLDocument(Files.readString(original, encoding));
 	}
 
-	private String buildInfo(HTMLDocument document, InternetAddress address, UserSession session) throws ModelException {
+	private String buildHeader(InternetAddress address) {
 		HTMLWriter writer = new HTMLWriter();
 		writer.startH1().text(address.getName()).endH1();
 		writer.startP().withClass("link").startA().withHref(address.getAddress()).text(address.getAddress()).endA().endP();
-		writer.startP().withClass("tags");
+		return writer.toString();
+	}
+
+	private String buildInfo(HTMLDocument document, InternetAddress address, UserSession session) throws ModelException {
+		HTMLWriter writer = new HTMLWriter();
+		writer.startH2().withClass("info_header").text("Tags").endH2();
+		writer.startP().withClass("tags info_tags");
 		{
 			List<String> tags = address.getPropertyValues(Property.KEY_COMMON_TAG);
 			if (!tags.isEmpty()) {
 				for (String string : tags) {
-					writer.startVoidA().withClass("tag").withData(string).text(string).endA().text(" ");
+					writer.startVoidA().withClass("tag info_tags_item info_tag").withData(string).text(string).endA().text(" ");
 				}
 			}
 		}
@@ -466,12 +547,12 @@ public class ReaderController extends ReaderControllerBase {
 				if (word == null || address == null) {
 					continue;
 				}
-				writer.startVoidA().withData(word.getId()).withClass("word");
+				writer.startVoidA().withData(word.getId()).withClass("info_tags_item info_word word");
 				writer.text(word.getText()).endA().text(" ");
 			}
 
 		}
-		writer.startA().withClass("add").text("Add word").endA();
+		writer.startA().withClass("add info_tags_item info_tags_add").text("Add word").endA();
 		writer.endP();
 
 		return writer.toString();
@@ -489,15 +570,14 @@ public class ReaderController extends ReaderControllerBase {
 			String content = document.getExtractedMarkup();
 			writer.html(content);
 		} else {
+			TextDecorator decorator = new TextDecorator();
 			for (HtmlPart part : quotes) {
 				writer.startBlockquote().withData("id", part.getId()).withClass("reader_viewer_quote").text(part.getHtml()).endBlockquote();
+				decorator.addHighlight(part.getHtml());
 			}
 			String content = document.getExtractedContents();
 			if (Strings.isNotBlank(content)) {
-				String[] lines = StringUtils.split(content, "\n");
-				for (int i = 0; i < lines.length; i++) {
-					writer.startP().text(lines[i]).endP();
-				}
+				writer.html(decorator.process(content));
 			}
 		}
 		writer.endDiv();

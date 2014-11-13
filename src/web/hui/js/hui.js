@@ -328,11 +328,18 @@ hui.string = {
 	 * @returns {String} The escaped text
 	 */
 	escape : function(str) {
-		if (!hui.isDefined(str)) {return ''};
-		return str.replace(/&/g,'&amp;').
-			replace(/>/g,'&gt;').
-			replace(/</g,'&lt;').
-			replace(/"/g,'&quot;')
+		if (!hui.isString(str)) {return str};
+		var tagsToReplace = {
+		        '&': '&amp;',
+		        '<': '&lt;',
+		        '>': '&gt;',
+		        '"': '&quot;',
+			    "'": '&#x27;',
+			    '`': '&#x60;'
+		    };
+	    return str.replace(/[&<>'`"]/g, function(tag) {
+	        return tagsToReplace[tag] || tag;
+	    });
 	},
 	/**
 	 * Converts a JSON string into an object
@@ -1455,7 +1462,8 @@ hui.stop = function(event) {
 
 hui._defered = [];
 
-hui._ready = document.readyState == 'complete' || document.readyState == 'interactive';
+hui._ready = document.readyState == 'complete';// || document.readyState;
+// TODO Maybe interactive is too soon???
 
 hui.onReady = function(func) {
 	if (hui._ready) {
