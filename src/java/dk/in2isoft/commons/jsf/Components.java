@@ -1,6 +1,7 @@
 package dk.in2isoft.commons.jsf;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.el.ValueExpression;
@@ -16,6 +17,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import dk.in2isoft.commons.lang.Code;
+import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.ui.Request;
 
 public class Components {
@@ -91,5 +93,29 @@ public class Components {
 			}
 		}
 		return null;
+	}
+	
+	public static String buildLanguageUrl(Request request, Locale locale) {
+		String[] path = request.getLocalPath();
+		StringBuilder url = new StringBuilder();
+		url.append("/");
+		url.append(request.getLocalContext());
+		for (int i = 0; i < path.length; i++) {
+			if (i==0) {
+				if (path[i].length()==2) {
+					url.append(locale.getLanguage());
+				} else {
+					url.append(path[i]);
+				}
+			} else {
+				url.append(path[i]);
+			}
+			url.append("/");
+		}
+		String queryString = request.getRequest().getQueryString();
+		if (Strings.isNotBlank(queryString)) {
+			url.append("?").append(queryString);			
+		}
+		return url.toString();
 	}
 }

@@ -248,4 +248,11 @@
 			<renderer-type>onlineobjects.selection</renderer-type>
 		</component>
 	</tag>
+	<tag>
+		<tag-name>metatags</tag-name>
+		<component>
+			<component-type>onlineobjects.metatags</component-type>
+			<renderer-type>onlineobjects.metatags</renderer-type>
+		</component>
+	</tag>
 </facelet-taglib>

@@ -1,3 +1,12 @@
+html,body {
+	position:fixed;
+	overflow:hidden;
+	right: 0;
+	left: 0;
+	bottom: 0;
+	top: 0;
+}
+
 .reader_layout
 {
 	position: fixed;
@@ -9,37 +18,78 @@
 }
 
 .reader_layout_navigation {
+	width: 20%;
 	height: 100%;
 	position: absolute;
-	width: 199px;
 	border-right: 1px solid #eee;
+	box-sizing: border-box;
 }
 
 .reader_layout_list {
-	height: 100%;
+	top: 0;
+	bottom: 100px;
+	width: 30%;
 	position: absolute;
-	width: 399px;
-	left: 200px;
+	left: 20%;
 	background: #fff;
 	border-right: 1px solid #eee;
+	box-sizing: border-box;
 }
 
 .reader_layout_viewer {
+	right: 0;
 	position: absolute;
-	right: 201px;
-	left: 600px;
-	height: 100%;
+	left: 50%;
+	top: 0;
+	bottom: 100px;
 }
 
 .reader_layout_info {
 	position: absolute;
 	right: 0px;
-	width: 200px;
-	height: 100%;
+	left: 20%;
+	bottom: 0;
+	height: 100px;
 	background: #fff;
-	border-left: 1px solid #eee;
+	border-top: 1px solid #eee;
+	box-sizing: border-box;
 }
 
+@media screen and (min-width: 1000px) {
+
+	.reader_layout_navigation {
+		width: 199px;
+	}
+
+	.reader_layout_list {
+		position: absolute;
+		width: 399px;
+		bottom: 0;
+		left: 200px;
+	}
+
+	.reader_layout_info {
+		left: 599px;
+	}
+	.reader_layout_viewer {
+		left: 599px;
+	}
+}
+
+@media screen and (min-width: 1600px) {
+
+	.reader_layout_viewer {
+		right: 200px;
+		bottom: 0;
+	}
+	.reader_layout_info {
+		width: 200px;
+		height: 100%;
+		left: auto;
+		border-top: none;
+		border-left: 1px solid #eee;
+	}
+}
 
 /*********************** List ***********************/
 

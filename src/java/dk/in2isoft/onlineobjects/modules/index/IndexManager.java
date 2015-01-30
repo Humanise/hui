@@ -71,13 +71,13 @@ public class IndexManager {
 	
 	private void ensureIndex() throws ExplodingClusterFuckException {
 		Directory directory = getIndexFile();
-		if (!DirectoryReader.indexExists(directory)) {
-			try {
+		try {
+			if (!DirectoryReader.indexExists(directory)) {
 				openWriter().close();
-			} catch (IOException e) {
-				throw new ExplodingClusterFuckException("Unable to ensure index", e);
-			}
-		}		
+			}		
+		} catch (IOException e) {
+			throw new ExplodingClusterFuckException("Unable to ensure index", e);
+		}
 	}
 	
 	private IndexReader openReader() throws ExplodingClusterFuckException {
@@ -213,6 +213,7 @@ public class IndexManager {
 	public Query buildQuery(String text) {
 		String field = "text";
 		QueryParser parser = new QueryParser(Version.LUCENE_40, field , analyzer);
+		parser.setAllowLeadingWildcard(true);
 		try {
 			return parser.parse(text);
 		} catch (ParseException e) {
@@ -228,6 +229,7 @@ public class IndexManager {
 		}
 		String field = "text";
 		QueryParser parser = new QueryParser(Version.LUCENE_40, field , analyzer);
+		parser.setAllowLeadingWildcard(true);
 		try {
 			Query query = parser.parse(text);
 			return search(query, page, size);

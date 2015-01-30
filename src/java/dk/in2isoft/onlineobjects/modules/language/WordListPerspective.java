@@ -5,11 +5,13 @@ import dk.in2isoft.commons.lang.Strings;
 public class WordListPerspective {
 
 	private String text;
+	private String highlightedText;
 	private String urlPart;
 	private long id;
 	private String lexicalCategory;
 	private String language;
 	private String glossary;
+	private String highlightedGlossary;
 
 	public String getText() {
 		return text;
@@ -62,5 +64,21 @@ public class WordListPerspective {
 	@Override
 	public String toString() {
 		return Strings.concatWords(text,language,lexicalCategory,glossary);
+	}
+
+	public String getHighlightedText() {
+		return highlightedText;
+	}
+
+	public void setHighlightedText(String highlightedText) {
+		this.highlightedText = highlightedText;
+	}
+
+	public String getHighlightedGlossary() {
+		return highlightedGlossary;
+	}
+
+	public void setHighlightedGlossary(String highlightedGlossary) {
+		this.highlightedGlossary = highlightedGlossary;
 	}
 }

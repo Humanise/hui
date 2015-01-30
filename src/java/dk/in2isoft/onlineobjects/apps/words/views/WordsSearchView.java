@@ -5,8 +5,6 @@ import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
 import com.google.common.collect.Lists;
@@ -34,11 +32,13 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 	private ModelService modelService;
 	private WordService wordService;
 	
-	private static final Logger log = LoggerFactory.getLogger(WordsSearchView.class);
+	//private static final Logger log = LoggerFactory.getLogger(WordsSearchView.class);
 	
 	private List<WordListPerspective> list;
 	private int count;
 	private int page;
+	
+	private String title;
 	
 	private String text;
 	private String letter;
@@ -46,12 +46,17 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 	
 	private int pageSize = 20;
 	private List<Option> pages;
+
+	private String nextPage;
+	private String previousPage;
 	
 	private List<Option> languageOptions;
 	private List<Option> categoryOptions;
 	private List<Option> letterOptions;
 	private String category;
 	private String effectiveQuery;
+	private Messages wordsMsg;
+	private String description;
 			
 	public void afterPropertiesSet() throws Exception {
 		Request request = getRequest();
@@ -65,6 +70,10 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 		if (localPath.length>2) {
 			page = Math.max(0, NumberUtils.toInt(localPath[2])-1);
 		}
+
+		wordsMsg = new Messages(WordsController.class);
+		languageMsg = new Messages(Language.class);
+		categoryMsg = new Messages(LexicalCategory.class);
 		
 		languageOptions = buildLanguageOptions(request);
 		categoryOptions = buildCategoryOptions(request);
@@ -74,12 +83,82 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 
 		this.list = result.getList();
 		this.count = result.getTotalCount();
-		
-		
+
+		highlight();
 		
 		effectiveQuery = result.getDescription();
+		
+		buildTitle();
+		buildPages();
+	}
+
+	private void highlight() {
+		String[] words = Strings.getWords(text);
+		for (WordListPerspective row : this.list) {
+			row.setHighlightedText(Strings.highlight(row.getText(), words));
+			row.setHighlightedGlossary(Strings.highlight(row.getGlossary(), words));
+		}
+			
 	}
 	
+	private void buildTitle() {
+		Locale locale = getLocale();
+		if (Strings.isBlank(language) && Strings.isBlank(category) && Strings.isBlank(letter) && Strings.isBlank(text)) {
+			this.title = wordsMsg.get("searching", locale);
+			return;
+		}
+		StringBuilder title = new StringBuilder();
+		if (Strings.isNotBlank(category)) {
+			title.append(categoryMsg.get("code",category+".plural", locale));
+		} else {
+			title.append(wordsMsg.get("any_words", locale));
+		}
+		if (Strings.isNotBlank(language)) {
+			title.append(" ").append(wordsMsg.get("in", locale));
+			title.append(" ");
+			title.append(languageMsg.get("code",language, locale).toLowerCase(locale));
+		}
+		if (Strings.isNotBlank(letter)) {
+			title.append(" ");
+			title.append(wordsMsg.get("starting_with", locale));
+			title.append(" ");
+			if (letter.equals("other")) {
+				title.append(wordsMsg.get("other_letter", locale));
+			} else if (letter.equals("number")) {
+				title.append(wordsMsg.get("number_letter", locale));
+			} else {
+				title.append(letter.toUpperCase(locale));				
+			}
+		}
+		if (Strings.isNotBlank(text)) {
+			title.append(" ");
+			if (Strings.isBlank(letter)) {
+				title.append(wordsMsg.get("containing", locale));
+			} else {
+				title.append(wordsMsg.get("and_contains", locale));
+			}
+			String[] words = Strings.getWords(text);
+			for (int i = 0; i < words.length; i++) {
+				String word = words[i];
+				if (i > 0) {
+					title.append(" ").append(wordsMsg.get("and", locale));					
+				}
+				title.append(" ");
+				title.append("\"").append(word).append("\"");
+			}
+		}
+		this.title = title.toString();
+		this.description = title.toString();
+	}
+	
+	public String getTitle() {
+		return this.title;
+	}
+	
+	public String getDescription() {
+		return this.description;
+	}
+
 	private List<String> categoryCodes;
 	
 	/** TODO: Optimize this, central cache */
@@ -98,6 +177,8 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 	}
 	
 	private List<String> languageCodes;
+	private Messages languageMsg;
+	private Messages categoryMsg;
 	
 	/** TODO: Optimize this, central cache */
 	private List<String> getLanguageCodes() {
@@ -116,8 +197,6 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 	
 	private List<Option> buildCategoryOptions(Request request) {
 		List<Option> options = Lists.newArrayList();
-		Messages msg = new Messages(LexicalCategory.class);
-		Messages wordsMsg = new Messages(WordsController.class);
 		Locale locale = getLocale();
 		{
 			Option option = new Option();
@@ -129,7 +208,7 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 		for (String code : getCategoryCodes()) {
 			Option option = new Option();
 			option.setValue(buildUrl(request, text, language, code,letter));
-			option.setLabel(msg.get("code",code, locale));
+			option.setLabel(categoryMsg.get("code",code, locale));
 			option.setSelected(code.equals(category));
 			options.add(option);
 		}
@@ -155,8 +234,6 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 
 	private List<Option> buildLanguageOptions(Request request) {
 		List<Option> options = Lists.newArrayList();
-		Messages wordsMsg = new Messages(WordsController.class);
-		Messages msg = new Messages(Language.class);
 		Locale locale = getLocale();
 		{
 			Option option = new Option();
@@ -168,7 +245,7 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 		for (String code : getLanguageCodes()) {
 			Option option = new Option();
 			option.setValue(buildUrl(request, text, code, category,letter));
-			option.setLabel(msg.get("code",code, locale));
+			option.setLabel(languageMsg.get("code",code, locale));
 			option.setSelected(code.equals(language));
 			options.add(option);
 		}
@@ -254,38 +331,55 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 		return letter;
 	}
 	
-	public List<Option> getPages() {
-		
-		if (pages==null) {
-			pages = Lists.newArrayList();
-			int pageCount = (int) Math.ceil(count/pageSize)+1;
-			if (pageCount>1) {
-			
-				int min = Math.max(1,page-PAGING);
-				int max = Math.min(pageCount, page+PAGING);
-				if (min>1) {
-					pages.add(buildOption(1));
-				}
-				if (min>2) {
-					pages.add(null);
-				}
-				for (int i = min; i <= max; i++) {
-					pages.add(buildOption(i));
-				}
-				if (max<pageCount-1) {
-					pages.add(null);
-				}
-				if (max<pageCount) {
-					pages.add(buildOption(pageCount));
-				}
+	private void buildPages() {
+		pages = Lists.newArrayList();
+		int pageCount = (int) Math.ceil(count/pageSize)+1;
+		if (pageCount>1) {
+			int min = Math.max(1,page-PAGING);
+			int max = Math.min(pageCount, page+PAGING);
+			if (min>1) {
+				pages.add(buildOption(1));
+			}
+			if (min>2) {
+				pages.add(null);
+			}
+			for (int i = min; i <= max; i++) {
+				pages.add(buildOption(i));
+			}
+			if (max<pageCount-1) {
+				pages.add(null);
+			}
+			if (max<pageCount) {
+				pages.add(buildOption(pageCount));
+			}
+			if (page>0) {
+				previousPage = buildOption(page).getValue().toString();
+			}
+			if (page+1<max) {
+				nextPage = buildOption(page+2).getValue().toString();
 			}
 		}
+		
+	}
+	
+	public List<Option> getPages() {
 		return pages;
+	}
+	
+	public String getNextPage() {
+		return nextPage;
+	}
+	
+	public String getPreviousPage() {
+		return previousPage;
 	}
 	
 	private Option buildOption(int num) {
 		Option option = new Option();
-		UrlBuilder url = new UrlBuilder(getRequest().getBaseContext()).folder(getRequest().getLanguage()).folder("search").folder(num);
+		UrlBuilder url = new UrlBuilder(getRequest().getBaseContext()).folder(getRequest().getLanguage()).folder("search");
+		if (num>1) {
+			url.folder(num);
+		}
 		url.parameter("text", text).parameter("category", category).parameter("language", language).parameter("letter", letter);
 		option.setValue(url.toString());
 		option.setLabel(num+"");

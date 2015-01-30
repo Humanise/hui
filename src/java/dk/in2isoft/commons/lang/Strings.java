@@ -5,13 +5,19 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
+
+import dk.in2isoft.onlineobjects.core.Pair;
 
 public class Strings {
 
@@ -162,7 +168,7 @@ public class Strings {
 		if (Strings.isBlank(query)) {
 			return new String[] {};
 		}
-		return query.trim().split("\\W+");
+		return query.trim().split("\\s+");
 	}
 
 	public static String[] combine(Object... strings) {
@@ -276,5 +282,62 @@ public class Strings {
 
 	public static String[] toArray(List<String> list) {
 		return (String[]) list.toArray();
+	}
+
+	public static String highlight(String text, String[] words) {
+		if (text==null) {
+			return null;
+		}
+		if (words==null || words.length==0) {
+			return text;
+		}
+		// TODO Consider using a primitive array
+		List<Pair<Integer,Integer>> positions = Lists.newArrayList(); 
+		String lower = text.toLowerCase();
+		for (int i = 0; i < words.length; i++) {
+			String word = words[i].toLowerCase();
+			int start = 0;
+			while (start!=-1) {
+				start = lower.indexOf(word,start);
+				if (start!=-1) {
+					int end = start+word.length();
+					positions.add(Pair.of(start, end));
+					start++;
+				}
+			}
+		}
+		if (positions.isEmpty()) {
+			return text;
+		}
+		Collections.sort(positions, new Comparator<Pair<Integer,Integer>>() {
+
+			@Override
+			public int compare(Pair<Integer, Integer> o1, Pair<Integer, Integer> o2) {
+				int comparison = o1.getKey().compareTo(o2.getKey());
+				if (comparison==0) {
+					return o2.getValue().compareTo(o1.getValue());
+				}
+				return comparison;
+			}
+			
+		});
+
+		StringBuilder out = new StringBuilder();
+		int pos = 0;
+		for (Pair<Integer, Integer> position : positions) {
+			int from = position.getKey();
+			int to = position.getValue();
+			if (from >= pos) {
+				String sub = text.substring(pos, from);
+				out.append(StringEscapeUtils.escapeXml(sub));
+				out.append("<em>");
+				out.append(StringEscapeUtils.escapeXml(text.substring(from, to)));
+				out.append("</em>");
+				pos = to;
+			}
+			
+		}
+		out.append(text.substring(pos));
+		return out.toString();
 	}
 }

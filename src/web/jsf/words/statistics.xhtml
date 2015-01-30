@@ -10,7 +10,9 @@
 	
 	
 	<ui:composition template="templates/plain.xhtml">
-				
+		
+		<ui:define name="title">#{msg.statistics} - </ui:define>
+		
 		<ui:define name="body">
 			<div class="words">
 				<h1 class="words">#{msg.statistics} <span>» #{msg.words}</span></h1>

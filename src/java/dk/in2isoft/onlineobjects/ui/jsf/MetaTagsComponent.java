@@ -13,14 +13,13 @@ import dk.in2isoft.commons.jsf.Components;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.onlineobjects.services.ConfigurationService;
 import dk.in2isoft.onlineobjects.ui.Request;
-import dk.in2isoft.onlineobjects.util.Messages;
 
-@FacesComponent(value=FooterComponent.FAMILY)
-public class FooterComponent extends AbstractComponent {
+@FacesComponent(value=MetaTagsComponent.FAMILY)
+public class MetaTagsComponent extends AbstractComponent {
 
-	public static final String FAMILY = "onlineobjects.footer";
+	public static final String FAMILY = "onlineobjects.metatags";
 		
-	public FooterComponent() {
+	public MetaTagsComponent() {
 		super(FAMILY);
 	}
 
@@ -36,33 +35,24 @@ public class FooterComponent extends AbstractComponent {
 	@Override
 	protected void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
 		
+		
+		writer.startElement("meta").withAttribute("http-equiv", "Content-Type").withAttribute("content", "text/html; charset=utf-8").endElement("meta");
+		writer.startElement("meta").withAttribute("name", "viewport").withAttribute("content", "user-scalable=yes, width=device-width, initial-scale = 1, maximum-scale = 10, minimum-scale = 0.2").endElement("meta");
 		ConfigurationService bean = getBean(ConfigurationService.class);
 		Collection<Locale> locales = bean.getApplicationLocales(getRequest().getApplication());
 		Request request = getRequest();
-		writer.startDiv("oo_footer");
 		if (locales!=null) {
-			Messages msg = getMessages();
-			writer.startP("oo_footer");
 			for (Iterator<Locale> i = locales.iterator(); i.hasNext();) {
 				Locale locale = i.next();
 				boolean selected = (locale.equals(request.getLocale()));
-				if (selected) {
-					writer.startStrong();
-					writer.text(msg.get(locale.getLanguage(), locale));
-					writer.endStrong();
-				} else {
-					writer.startA().withHref(Components.buildLanguageUrl(request, locale)).startSpan();
-					writer.text(msg.get(locale.getLanguage(), locale));
-					writer.endSpan().endA();
-				}
-				if (i.hasNext()) {
-					writer.text(" \u00B7 ");
+				if (!selected) {
+					writer.startElement("link").withAttribute("rel", "alternate");
+					writer.withAttribute("hreflang", locale.getLanguage());
+					writer.withHref(Components.buildLanguageUrl(request, locale));
+					writer.endElement("link");					
 				}
 			}
-			writer.endP();
 		}
-		writer.startP("oo_footer_logo").startA().withHref("http://www.humanise.dk/").startSpan("oo_icon oo_icon_humanise").endSpan().startStrong().text("Humanise").endStrong().endA().endP();
-		writer.endDiv();
 	}
 
 	@Override

@@ -10,7 +10,18 @@
 	
 	
 	<ui:composition template="templates/plain.xhtml">
-				
+		
+		<ui:define name="title">#{wordsSearchView.title} - </ui:define>
+		
+		<ui:define name="head">
+			<c:if test="#{not empty(wordsSearchView.previousPage)}">
+				<link rel="prev" href="#{wordsSearchView.previousPage}" />
+			</c:if>
+			<c:if test="#{not empty(wordsSearchView.nextPage)}">
+				<link rel="next" href="#{wordsSearchView.nextPage}" />
+			</c:if>
+		</ui:define>
+		
 		<ui:define name="body">
 			
 			<div class="words words_searchpage">
@@ -35,6 +46,15 @@
 						<o:link styleClass="#{option.selected ? 'words_paging_selected' : ''}" href="#{option.value}">#{option.label}</o:link>
 					</c:forEach>
 				</p>
+				<h2 class="words_search_description">#{wordsSearchView.description}</h2>
+				<ui:remove>
+				<c:if test="#{not empty(wordsSearchView.previousPage)}">
+					<a href="#{wordsSearchView.previousPage}">Previous</a>
+				</c:if>
+				<c:if test="#{not empty(wordsSearchView.nextPage)}">
+					<a href="#{wordsSearchView.nextPage}">Next</a>
+				</c:if>
+				</ui:remove>
 				<div class="words_search_filters">
 					<h2><span>#{msg.filters}</span></h2>
 					<h3><span>#{msg.languages}</span></h3>
@@ -54,7 +74,7 @@
 				<ul class="words_list">
 					<c:forEach items="#{wordsSearchView.list}" var="word">
 						<li>
-							<o:link href="/#{wordsLayoutView.language}/word/#{word.urlPart}.html">#{word.text}</o:link>
+							<o:link href="/#{wordsLayoutView.language}/word/#{word.urlPart}.html"><o:out value="#{word.highlightedText}" escape="false"/></o:link>
 							<span class="words_list_info">
 							<c:if test="#{not empty word.lexicalCategory}">
 								— #{msgCategory[o:join('code.',word.lexicalCategory)]}
@@ -64,7 +84,7 @@
 							</c:if>
 							</span>
 							<c:if test="#{not empty word.glossary}">
-							<span class="words_list_glossary">&#65374; <span>#{word.glossary}</span></span>
+							<span class="words_list_glossary">&#65374; <span><o:out value="#{word.highlightedGlossary}" escape="false"/></span></span>
 							</c:if>
 						</li>
 					</c:forEach>

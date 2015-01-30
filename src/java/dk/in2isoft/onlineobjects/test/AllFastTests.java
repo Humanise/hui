@@ -11,6 +11,7 @@ import dk.in2isoft.onlineobjects.test.plain.TestFileService;
 import dk.in2isoft.onlineobjects.test.plain.TestGraphService;
 import dk.in2isoft.onlineobjects.test.plain.TestHeaderUtil;
 import dk.in2isoft.onlineobjects.test.plain.TestImageService;
+import dk.in2isoft.onlineobjects.test.plain.TestStrings;
 import dk.in2isoft.onlineobjects.test.plain.TestValidationUtil;
 import dk.in2isoft.onlineobjects.test.plain.TestRegExp;
 import dk.in2isoft.onlineobjects.test.plain.TestRegExpUtil;
@@ -33,7 +34,8 @@ import dk.in2isoft.onlineobjects.test.plain.TestYoutubeService;
 	TestHeaderUtil.class,
 	TestURLUtil.class,
 	TestYoutubeService.class,
-	TestHTMLParsing.class
+	TestHTMLParsing.class,
+	TestStrings.class
 })
 public class AllFastTests {
 

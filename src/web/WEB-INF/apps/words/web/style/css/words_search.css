@@ -47,6 +47,13 @@ input.words_search_button
 	-webkit-background-clip: border-box;
 }
 
+.words_search_description {
+	font-style: italic;
+	color: #666;
+	font-weight: normal;
+	font-size: 1em;
+}
+
 p.words_search_query
 {
 	font-size: 9px;

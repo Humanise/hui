@@ -83,9 +83,39 @@ public class TestStrings extends TestCase {
 		assertEquals(Arrays.toString(Strings.getWords("")), Arrays.toString(new String[] {}));
 		assertEquals(Arrays.toString(Strings.getWords("a b \nc")), Arrays.toString(new String[] {"a","b","c"}));
 		assertEquals(Arrays.toString(Strings.getWords("a b \nc")), Arrays.toString(new String[] {"a","b","c"}));
-		assertEquals(Arrays.toString(Strings.getWords("a b. c")), Arrays.toString(new String[] {"a","b","c"}));
+		assertEquals(Arrays.toString(Strings.getWords("a b. c")), Arrays.toString(new String[] {"a","b.","c"}));
+		assertEquals(Arrays.toString(Strings.getWords("Der gik en gøgler")), Arrays.toString(new String[] {"Der","gik","en","gøgler"}));
 		assertEquals(Arrays.toString(Strings.getWords("  a b \nc  ")), Arrays.toString(new String[] {"a","b","c"}));
 		assertEquals(Arrays.toString(Strings.getWords("Han vandt 1.000-meter-loebet")), Arrays.toString(new String[] {"Han","vandt","1.000-meter-loebet"}));
+	}
+
+	@Test
+	public void testHighlight() {
+		{
+			String text = null;
+			String result = Strings.highlight(text, new String[] {"a"});
+			assertEquals(null, result);
+		}
+		{
+			String text = null;
+			String result = Strings.highlight(text, null);
+			assertEquals(null, result);
+		}
+		{
+			String text = "Der var engang en mand";
+			String result = Strings.highlight(text, null);
+			assertEquals(text, result);
+		}
+		{
+			String text = "Der var engang en mand";
+			String result = Strings.highlight(text, new String[] {"a"});
+			assertEquals("Der v<em>a</em>r eng<em>a</em>ng en m<em>a</em>nd", result);
+		}
+		{
+			String text = "Der var engang en mand";
+			String result = Strings.highlight(text, new String[] {"ng","ma","A","mand","ga","d"});
+			assertEquals("<em>D</em>er v<em>a</em>r e<em>ng</em><em>a</em><em>ng</em> en <em>mand</em>", result);
+		}
 	}
 
 	

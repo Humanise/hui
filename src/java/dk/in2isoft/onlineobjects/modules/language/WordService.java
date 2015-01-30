@@ -69,7 +69,33 @@ public class WordService {
 		
 		StringBuilder searchQuery = new StringBuilder();
 		if (StringUtils.isNotBlank(text)) {
-			searchQuery.append("(word:").append(QueryParserUtil.escape(text)).append("^4").append(" OR word:").append(QueryParserUtil.escape(text)).append("*^4 OR ").append(QueryParserUtil.escape(text)).append("*)");
+			String[] words = Strings.getWords(text);
+			if (words.length>1) {
+				searchQuery.append("word:");
+				for (String word : words) {
+					searchQuery.append(QueryParserUtil.escape(word));
+				}
+				searchQuery.append("^7 OR ");
+				searchQuery.append("word:");
+				for (String word : words) {
+					searchQuery.append(QueryParserUtil.escape(word));
+				}
+				searchQuery.append("*^6 OR ");
+				searchQuery.append("word:");
+				for (String word : words) {
+					searchQuery.append(QueryParserUtil.escape(word)).append("*");
+				}
+				searchQuery.append("^5 OR ");
+			}
+			for (int i = 0; i < words.length; i++) {
+				String word = words[i];
+				if (i > 0) {
+					searchQuery.append(" AND ");
+				}
+				searchQuery.append("(word:").append(QueryParserUtil.escape(word)).append("^4").append(" OR word:").append(QueryParserUtil.escape(word)).append("*^4 OR ").append(QueryParserUtil.escape(word)).append("*");
+				searchQuery.append(" OR word:*").append(QueryParserUtil.escape(word)).append("*");
+				searchQuery.append(")");
+			}
 		}
 		if (StringUtils.isNotBlank(letter)) {
 			if (searchQuery.length()>0) {
