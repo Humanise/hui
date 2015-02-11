@@ -153,6 +153,13 @@ p.words_filter a:hover span
 
 p.words_filter a.words_filter_selected span
 {
+	color: #fff;
+	background: #333;
+	border: 1px solid #333;
+}
+
+p.words_filter a.words_filter_selected_default span
+{
 	color: #000;
 	background: #f9f9f9;
 	border: 1px solid #eee;

@@ -202,6 +202,7 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 			Option option = new Option();
 			option.setValue(buildUrl(request, text, language, null,letter));
 			option.setLabel(wordsMsg.get("any", locale));
+			option.setKey("default");
 			option.setSelected(StringUtils.isBlank(category));
 			options.add(option);			
 		}
@@ -239,6 +240,7 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 			Option option = new Option();
 			option.setValue(buildUrl(request, text, null, category,letter));
 			option.setLabel(wordsMsg.get("any", locale));
+			option.setKey("default");
 			option.setSelected(StringUtils.isBlank(language));
 			options.add(option);			
 		}
@@ -264,6 +266,7 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 		{
 			Option option = new Option();
 			option.setLabel("Any");
+			option.setKey("default");
 			option.setSelected(Strings.isBlank(letter));
 			option.setValue(buildUrl(request, text, language, category, null));
 			options.add(option);
@@ -382,6 +385,7 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 		}
 		url.parameter("text", text).parameter("category", category).parameter("language", language).parameter("letter", letter);
 		option.setValue(url.toString());
+		option.setKey(num==1 ? "default" : null);
 		option.setLabel(num+"");
 		option.setSelected(page==num-1);
 		return option;

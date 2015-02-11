@@ -43,7 +43,7 @@
 				</form>
 				<p class="words_paging words_index">
 					<c:forEach items="#{wordsSearchView.letterOptions}" var="option">
-						<o:link styleClass="#{option.selected ? 'words_paging_selected' : ''}" href="#{option.value}">#{option.label}</o:link>
+						<o:link styleClass="#{option.selected ? 'words_paging_selected' : ''}#{option.selected and option.key=='default' ? ' words_paging_selected_default' : ''}" href="#{option.value}">#{option.label}</o:link>
 					</c:forEach>
 				</p>
 				<h2 class="words_search_description">#{wordsSearchView.description}</h2>
@@ -60,13 +60,13 @@
 					<h3><span>#{msg.languages}</span></h3>
 					<p class="words_filter">
 						<c:forEach items="#{wordsSearchView.languageOptions}" var="option">
-							<o:link styleClass="#{option.selected ? 'words_filter_selected' : ''}" href="#{option.value}">#{option.label}</o:link>
+							<o:link styleClass="#{option.selected ? 'words_filter_selected' : ''}#{option.selected and option.key=='default' ? ' words_filter_selected_default' : ''}" href="#{option.value}">#{option.label}</o:link>
 						</c:forEach>
 					</p>
 					<h3><span>#{msg.lexical_categories}</span></h3>
 					<p class="words_filter">
 						<c:forEach items="#{wordsSearchView.categoryOptions}" var="option">
-							<o:link styleClass="#{option.selected ? 'words_filter_selected' : ''}" href="#{option.value}">#{option.label}</o:link>
+							<o:link styleClass="#{option.selected ? 'words_filter_selected' : ''}#{option.selected and option.key=='default' ? ' words_filter_selected_default' : ''}" href="#{option.value}">#{option.label}</o:link>
 						</c:forEach>
 					</p>
 				</div>
@@ -90,15 +90,23 @@
 					</c:forEach>
 				</ul>
 				<p class="words_paging">
+				<c:if test="#{not empty(wordsSearchView.previousPage)}">
+					<o:link styleClass="words_paging_previous" href="#{wordsSearchView.previousPage}">#{msg.previous}</o:link>
+					<em>·</em>
+				</c:if>
 				<c:forEach items="#{wordsSearchView.pages}" var="page">
 					<c:choose>
 						<c:when test="#{page==null}"><em>···</em></c:when>
 						<c:otherwise>
-							<o:link href="#{page.value}" styleClass="#{page.selected ? 'words_paging_selected' : ''}">#{page.label}</o:link>
+							<o:link href="#{page.value}" styleClass="#{page.selected ? 'words_paging_selected' : ''}#{page.selected and page.key=='default' ? ' words_paging_selected_default' : ''}">#{page.label}</o:link>
 						</c:otherwise>
 					</c:choose>
 					#{' '}
 				</c:forEach>
+				<c:if test="#{not empty(wordsSearchView.nextPage)}">
+					<em>·</em>
+					<o:link styleClass="words_paging_next" href="#{wordsSearchView.nextPage}">#{msg.next}</o:link>
+				</c:if>
 				</p>
 				<p class="words_search_query">#{wordsSearchView.effectiveQuery}</p>
 			</div>

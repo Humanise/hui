@@ -94,6 +94,7 @@ public class WordService {
 				}
 				searchQuery.append("(word:").append(QueryParserUtil.escape(word)).append("^4").append(" OR word:").append(QueryParserUtil.escape(word)).append("*^4 OR ").append(QueryParserUtil.escape(word)).append("*");
 				searchQuery.append(" OR word:*").append(QueryParserUtil.escape(word)).append("*");
+				searchQuery.append(" OR *").append(QueryParserUtil.escape(word)).append("*");
 				searchQuery.append(")");
 			}
 		}
