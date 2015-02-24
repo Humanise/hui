@@ -5,12 +5,12 @@ import java.util.Date;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.lang.time.DateFormatUtils;
-
-import com.sun.xml.internal.ws.api.streaming.XMLStreamWriterFactory;
 
 import dk.in2isoft.commons.lang.Strings;
 
@@ -19,7 +19,13 @@ public class FeedWriter {
 	private XMLStreamWriter writer;
 
 	public FeedWriter(HttpServletResponse response) throws IOException {
-		writer = XMLStreamWriterFactory.create(response.getOutputStream());
+		try {
+			writer = XMLOutputFactory.newInstance().createXMLStreamWriter(response.getOutputStream());
+		} catch (XMLStreamException e) {
+			throw new IOException(e);
+		} catch (FactoryConfigurationError e) {
+			throw new IOException(e);
+		}
 	}
 
 	public void startFeed() throws XMLStreamException {		
