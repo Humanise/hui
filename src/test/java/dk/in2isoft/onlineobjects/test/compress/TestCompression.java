@@ -28,7 +28,7 @@ public class TestCompression extends AbstractSpringTestCase {
 		StringWriter writer = new StringWriter();
 		compressor.compress(writer, 1);
 		reader.close();
-		org.junit.Assert.assertEquals("body{background:red;}}", writer.toString());
+		org.junit.Assert.assertEquals("body{background:red}", writer.toString());
 	}
 
 	@Test
@@ -44,6 +44,6 @@ public class TestCompression extends AbstractSpringTestCase {
 		boolean preserveStringLiterals = false;
 		compressor.compress(writer, linebreak, munge, warn, preserveAllSemiColons, preserveStringLiterals);
 		reader.close();
-		org.junit.Assert.assertEquals("var i=0;function x(A){var B=0;return B*2}", writer.toString());
+		org.junit.Assert.assertEquals("var i=0;function x(a){var b=0;return b*2};", writer.toString());
 	}
 }

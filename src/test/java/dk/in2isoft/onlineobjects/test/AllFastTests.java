@@ -11,13 +11,13 @@ import dk.in2isoft.onlineobjects.test.plain.TestFileService;
 import dk.in2isoft.onlineobjects.test.plain.TestGraphService;
 import dk.in2isoft.onlineobjects.test.plain.TestHeaderUtil;
 import dk.in2isoft.onlineobjects.test.plain.TestImageService;
-import dk.in2isoft.onlineobjects.test.plain.TestStrings;
-import dk.in2isoft.onlineobjects.test.plain.TestValidationUtil;
 import dk.in2isoft.onlineobjects.test.plain.TestRegExp;
 import dk.in2isoft.onlineobjects.test.plain.TestRegExpUtil;
 import dk.in2isoft.onlineobjects.test.plain.TestRestUtil;
 import dk.in2isoft.onlineobjects.test.plain.TestSemanticService;
+import dk.in2isoft.onlineobjects.test.plain.TestStrings;
 import dk.in2isoft.onlineobjects.test.plain.TestURLUtil;
+import dk.in2isoft.onlineobjects.test.plain.TestValidationUtil;
 import dk.in2isoft.onlineobjects.test.plain.TestYoutubeService;
 
 @RunWith(Suite.class)

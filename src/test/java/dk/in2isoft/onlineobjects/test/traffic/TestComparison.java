@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -45,7 +46,7 @@ public class TestComparison extends AbstractSpringTestCase {
 	@Autowired
 	private HTMLService htmlService;
 	
-	//@Test
+	@Test
 	public void testWikipedia() throws Exception {
 		
 		List<String> urls = Lists.newArrayList(
@@ -105,6 +106,7 @@ public class TestComparison extends AbstractSpringTestCase {
 		return urls;
 	}
 	
+	@Ignore
 	@Test
 	public void testFeed() throws Exception {
 		

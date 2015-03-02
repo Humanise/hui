@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -22,6 +21,7 @@ import opennlp.tools.util.InvalidFormatException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -32,13 +32,15 @@ import dk.in2isoft.onlineobjects.util.semantics.Language;
 
 public class SemanticService {
 	
-	public static final String WORD_EXPRESSION = "[0-9a-zA-Z\u0027\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF\\-\u02BC’]+";
+	public static final String WORD_EXPRESSION = "[0-9a-zA-Z\u0027\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF\\-\u02BC\u2019]+";
 	
 	private ConfigurationService configurationService;
 
 	private static Pattern wordPattern = Pattern.compile(WORD_EXPRESSION);
 	
 	private static Pattern abbrPattern = Pattern.compile("[A-Z]+");
+	
+	private static final Logger log = Logger.getLogger(SemanticService.class);
 
 	public String[] getWords(String text, Language language) {
 		List<String> list = Lists.newArrayList();
@@ -221,13 +223,16 @@ public class SemanticService {
 	
 	public SentenceModel getSentenceModel(Locale locale) {
 		File file = configurationService.getFile("WEB-INF","data","models",locale.getLanguage()+"-sent.bin");
-		
+		if (!file.exists()) {
+			log.error("Unable to find sentence model: " + file);
+		}
 		//File file = getTestFile("web/WEB-INF/data/models/en-sent.bin");
 		InputStream modelIn = null;
 		try {
 			modelIn = new FileInputStream(file);
 			return new SentenceModel(modelIn);
 		} catch (FileNotFoundException e) {
+			
 		} catch (InvalidFormatException e) {
 		} catch (IOException e) {
 		} finally {

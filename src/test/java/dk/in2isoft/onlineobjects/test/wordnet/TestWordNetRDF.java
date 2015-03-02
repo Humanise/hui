@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
@@ -56,9 +58,9 @@ public class TestWordNetRDF extends AbstractTestCase {
 	}
 
 	private static void read(String fileName) throws FileNotFoundException, IOException {
-		FileReader reader = new FileReader(new File("/Users/jbm/Development/Workspace/onlineobjects/testdata/DanNet-2.1_owl/"+fileName));
-		model.read(reader, "UTF-8");
-		reader.close();
+		InputStream url = ClassLoader.getSystemResourceAsStream("DanNet-2.1_owl/"+fileName);
+		model.read(url, "UTF-8");
+		url.close();
 		log.info("imported: "+fileName+" : "+new Duration(watch.getTime()));
 	}
 	

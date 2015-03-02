@@ -5,12 +5,14 @@ import org.geonames.Toponym;
 import org.geonames.ToponymSearchCriteria;
 import org.geonames.ToponymSearchResult;
 import org.geonames.WebService;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
 
+@Ignore
 public class TestGeonames extends AbstractSpringTestCase {
 
 	private static final Logger log = Logger.getLogger(TestGeonames.class);

@@ -31,7 +31,7 @@ public class InformationSpiderJob extends ServiceBackedJob implements Interrupta
 				"http://www.b.dk/feeds/rss/Kronikker",
 				"http://alistapart.com/site/rss",
 				"http://www.bt.dk/bt/seneste/rss",
-				"https://www.sciencenews.org/feeds/headlines.rss",
+				//"https://www.sciencenews.org/feeds/headlines.rss",
 				"http://www.smashingmagazine.com/feed/",
 				"http://www.conservationmagazine.org/feed/",
 				"http://feeds.reuters.com/reuters/technologyNews?format=xml",

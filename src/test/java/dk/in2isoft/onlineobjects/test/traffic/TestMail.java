@@ -26,6 +26,7 @@ import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.SimpleEmail;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -34,6 +35,7 @@ import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
 
+@Ignore
 public class TestMail extends AbstractSpringTestCase {
 	
 	private static final Logger log = Logger.getLogger(TestMail.class);

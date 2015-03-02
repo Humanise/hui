@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -11,6 +12,7 @@ import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.services.EmailService;
 import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 
+@Ignore
 public class TestEmailService extends AbstractSpringTestCase {
 	
 	@Autowired
