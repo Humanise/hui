@@ -98,8 +98,8 @@ public class Components {
 	public static String buildLanguageUrl(Request request, Locale locale) {
 		String[] path = request.getLocalPath();
 		StringBuilder url = new StringBuilder();
-		url.append("/");
 		url.append(request.getLocalContext());
+		url.append("/");
 		for (int i = 0; i < path.length; i++) {
 			if (i==0) {
 				if (path[i].length()==2) {

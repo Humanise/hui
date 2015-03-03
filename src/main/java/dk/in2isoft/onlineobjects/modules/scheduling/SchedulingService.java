@@ -40,7 +40,7 @@ public class SchedulingService implements ApplicationListener<ContextRefreshedEv
 
 	private final static Logger log = Logger.getLogger(SchedulingService.class);
 	
-	private  Buffer liveLog = BufferUtils.synchronizedBuffer(new CircularFifoBuffer(200));
+	private Buffer liveLog = BufferUtils.synchronizedBuffer(new CircularFifoBuffer(200));
 	
 	private SchedulingSupportFacade schedulingSupportFacade;
 	
@@ -102,17 +102,30 @@ public class SchedulingService implements ApplicationListener<ContextRefreshedEv
 	}
 	
 	public void log(String text, Key<?> key) {
-		liveLog.add(new LogEntry(text,key.getName(),key.getGroup()));
+		if (key==null) {
+			log(text);
+		} else {
+			liveLog.add(new LogEntry(text,key.getName(),key.getGroup()));			
+		}
 	}
 
 	public void warn(String text, Key<?> key) {
-		LogEntry entry = new LogEntry(text,key.getName(),key.getGroup());
+		LogEntry entry;
+		if (key!=null) {
+			entry = new LogEntry(text,key.getName(),key.getGroup());			
+		} else {
+			entry = new LogEntry(text);
+		}
 		entry.setLevel(LogEntry.Level.warn);
 		liveLog.add(entry);
 	}
 
 	public void error(String text, Key<?> key) {
-		LogEntry entry = new LogEntry(text,key.getName(),key.getGroup());
+		LogEntry entry = new LogEntry(text);
+		if (key!=null) {
+			entry.setName(key.getName());
+			entry.setGroup(key.getName());			
+		}
 		entry.setLevel(LogEntry.Level.error);
 		liveLog.add(entry);
 	}

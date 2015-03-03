@@ -27,11 +27,11 @@
 				<div class="words_front_letters">
 					<h2 class="words_front_letters_title">#{msg.index}</h2>
 					<p class="words_front_letters_links">
-						<c:forEach items="#{wordsFrontView.alphabeth}" var="char">
+						<c:forEach items="#{wordsFrontView.alphabeth}" var="chr">
 							<o:link 
 								styleClass="words_front_letters_link"
-								href="/#{wordsLayoutView.language}/search/?letter=#{char.value}">
-								<o:out value="#{char.label}"/>
+								href="/#{wordsLayoutView.language}/search/?letter=#{chr.value}">
+								<o:out value="#{chr.label}"/>
 							</o:link>
 						</c:forEach>
 					</p>
@@ -39,11 +39,11 @@
 				
 				<div class="words_front_filter">
 					<p class="words_front_filter_links">
-						<c:forEach items="#{wordsFrontView.languages}" var="char">
+						<c:forEach items="#{wordsFrontView.languages}" var="lng">
 							<o:link 
 								styleClass="words_front_filter_link"
-								href="/#{wordsLayoutView.language}/search/?language=#{char.value}">
-								<o:out value="#{char.label}"/>
+								href="/#{wordsLayoutView.language}/search/?language=#{lng.value}">
+								<o:out value="#{lng.label}"/>
 							</o:link>
 						</c:forEach>
 					</p>
@@ -51,11 +51,11 @@
 				
 				<div class="words_front_filter">
 					<p class="words_front_filter_links">
-						<c:forEach items="#{wordsFrontView.categories}" var="char">
+						<c:forEach items="#{wordsFrontView.categories}" var="cat">
 							<o:link 
 								styleClass="words_front_filter_link"
-								href="/#{wordsLayoutView.language}/search/?category=#{char.value}">
-								<o:out value="#{char.label}"/>
+								href="/#{wordsLayoutView.language}/search/?category=#{cat.value}">
+								<o:out value="#{cat.label}"/>
 							</o:link>
 						</c:forEach>
 					</p>

@@ -5,9 +5,9 @@ import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.junit.Test;
 
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
-import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
+import dk.in2isoft.onlineobjects.test.AbstractSpringTask;
 
-public class TestExportSchema extends AbstractSpringTestCase {
+public class TestExportSchema extends AbstractSpringTask {
 	
 	@Test
 	public void run() throws ModelException {

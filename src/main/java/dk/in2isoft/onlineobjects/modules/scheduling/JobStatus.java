@@ -45,6 +45,14 @@ public class JobStatus {
 		schedulingService.error(string, key);
 		log.error(string+" - "+key.getName()+" : "+key.getGroup(), e);
 	}
+	
+	public void setKey(Key<?> key) {
+		this.key = key;
+	}
+	
+	public void setLog(Logger log) {
+		this.log = log;
+	}
 
 	public static JobStatus get(JobExecutionContext context) {
 		return (JobStatus) context.get("status");

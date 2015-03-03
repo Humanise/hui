@@ -48,9 +48,9 @@ import dk.in2isoft.onlineobjects.modules.dannet.DanNetGlossary;
 import dk.in2isoft.onlineobjects.modules.dannet.DanNetUtil;
 import dk.in2isoft.onlineobjects.services.ConfigurationService;
 import dk.in2isoft.onlineobjects.services.LanguageService;
-import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
+import dk.in2isoft.onlineobjects.test.AbstractSpringTask;
 
-public class TestWordNetImporter extends AbstractSpringTestCase {
+public class TestWordNetImporter extends AbstractSpringTask {
 	
 	private static final Logger log = Logger.getLogger(TestWordNetImporter.class);
 	private static Model model;
