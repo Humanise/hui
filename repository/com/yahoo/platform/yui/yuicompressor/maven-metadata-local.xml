@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>com.yahoo.platform.yui</groupId>
+  <artifactId>yuicompressor</artifactId>
+  <versioning>
+    <release>2.4.8pre</release>
+    <versions>
+      <version>2.4.8pre</version>
+    </versions>
+    <lastUpdated>20150303074627</lastUpdated>
+  </versioning>
+</metadata>

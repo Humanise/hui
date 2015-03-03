@@ -53,6 +53,10 @@
       <id>boilerpipe</id>
       <url>https://boilerpipe.googlecode.com/svn/repo/</url>
     </repository>
+	<repository>
+	  <id>local-repository</id>
+	  <url>file://${basedir}/repository</url>
+	</repository>
   </repositories>
   
   <dependencies>
@@ -73,24 +77,12 @@
         <groupId>nu.xom</groupId>
         <artifactId>xom</artifactId>
         <version>1.2.8</version>
-        <scope>system</scope>
-        <systemPath>${project.basedir}/lib/xom-1.2.8.jar</systemPath>
     </dependency>
 
     <dependency>
         <groupId>com.yahoo.platform.yui</groupId>
-        <artifactId>yui</artifactId>
+        <artifactId>yuicompressor</artifactId>
         <version>2.4.8pre</version>
-        <scope>system</scope>
-        <systemPath>${project.basedir}/lib/yuicompressor-2.4.8pre.jar</systemPath>
-    </dependency>
-
-    <dependency>
-        <groupId>nu.xom</groupId>
-        <artifactId>xom</artifactId>
-        <version>1.2.8</version>
-        <scope>system</scope>
-        <systemPath>${project.basedir}/lib/xom-1.2.8.jar</systemPath>
     </dependency>
     
     <!-- Servlet stuff -->
@@ -211,11 +203,6 @@
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-commons-annotations</artifactId>
         <version>3.2.0.Final</version>
-    </dependency>
-    <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-core</artifactId>
-        <version>3.6.10.Final</version>
     </dependency>
     <dependency>
         <groupId>org.hibernate</groupId>
