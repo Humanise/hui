@@ -74,8 +74,8 @@
 					</ul>
 						<h3><span>Index</span></h3>
 					<ul class="words_sidebar_index">
-						<c:forEach items="#{wordsLayoutView.alphabeth}" var="char">
-							<li class="#{char.value=='_' ? 'words_sidebar_index_symbols' : ''}"><o:link href="/#{wordsLayoutView.language}/search/?letter=#{char.value}">#{char.label}</o:link></li>
+						<c:forEach items="#{wordsLayoutView.alphabeth}" var="chr">
+							<li class="#{chr.value=='_' ? 'words_sidebar_index_symbols' : ''}"><o:link href="/#{wordsLayoutView.language}/search/?letter=#{chr.value}">#{chr.label}</o:link></li>
 						</c:forEach>
 					</ul>
 					<c:if test="#{wordsLayoutView.loggedIn}">
@@ -91,7 +91,7 @@
 							<li>
 								<o:link plain="true" name="import">
 									<o:icon icon="gear"/>
-									<span class="words_menu">#{msg.import}</span>
+									<span class="words_menu">#{msg['import']}</span>
 								</o:link>
 							</li>
 						</ul>
