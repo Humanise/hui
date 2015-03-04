@@ -9,10 +9,10 @@ import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.Components;
 import dk.in2isoft.commons.jsf.TagWriter;
 
-@FacesComponent(value=LinkComponent.TYPE)
+@FacesComponent(FieldComponent.TYPE)
 public class FieldComponent extends AbstractComponent {
 
-	public static final String TYPE = "hui.fields";
+	public static final String TYPE = "hui.field";
 	
 	private String label;
 

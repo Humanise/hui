@@ -14,7 +14,7 @@ import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.onlineobjects.services.ConfigurationService;
 import dk.in2isoft.onlineobjects.ui.Request;
 
-@FacesComponent(value=MetaTagsComponent.FAMILY)
+@FacesComponent(MetaTagsComponent.FAMILY)
 public class MetaTagsComponent extends AbstractComponent {
 
 	public static final String FAMILY = "onlineobjects.metatags";

@@ -8,7 +8,7 @@ import javax.faces.context.FacesContext;
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.TagWriter;
 
-@FacesComponent(value=LinkComponent.TYPE)
+@FacesComponent(FieldsComponent.TYPE)
 public class FieldsComponent extends AbstractComponent {
 
 	public static final String TYPE = "hui.fields";

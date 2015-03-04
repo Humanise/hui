@@ -2,12 +2,16 @@ package dk.in2isoft.onlineobjects.ui.jsf;
 
 import java.util.Map;
 
+import javax.faces.component.FacesComponent;
 import javax.faces.component.html.HtmlBody;
 
 import dk.in2isoft.commons.lang.Strings;
 
+@FacesComponent(BodyComponent.TYPE)
 public class BodyComponent extends HtmlBody {
 
+	public static final String TYPE = "onlineobjects.body";
+	
 	public java.lang.String getStyleClass() {
 		String styleClass = super.getStyleClass();
 		Map<String, String> map = getFacesContext().getExternalContext().getRequestHeaderMap();
