@@ -9,7 +9,7 @@
         http://www.directwebremoting.org/schema/spring-dwr
     	http://www.directwebremoting.org/schema/spring-dwr-2.0.xsd
     ">
-    
+    <!-- 
     <dwr:configuration>
 	    <dwr:convert type="bean" class="java.lang.Class"/>
 	    
@@ -114,5 +114,5 @@
     	 	<dwr:filter class="dk.in2isoft.onlineobjects.ui.DWRFilter"/>
     	 </dwr:remote>
    	</bean>
-	
+	-->
 </beans>

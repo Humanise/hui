@@ -78,9 +78,10 @@ public class Components {
 	public static <T> T getBean(Class<T> type) {
 		ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
 		WebApplicationContext webApplicationContext = WebApplicationContextUtils.getWebApplicationContext((ServletContext) context.getContext());
-		Map<?,?> beans = webApplicationContext.getBeansOfType(type);
+		
+		Map<String,T> beans = webApplicationContext.getBeansOfType(type);
 		if (!beans.isEmpty()) {
-			return Code.cast(beans.values().iterator().next());
+			return beans.values().iterator().next();
 		}
 		return null;
 	}

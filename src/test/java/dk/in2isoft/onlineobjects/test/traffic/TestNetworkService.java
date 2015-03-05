@@ -19,13 +19,13 @@ public class TestNetworkService extends AbstractSpringTestCase {
 	
 	@Test
 	public void testGetString() throws Exception {
-		String string = networkService.getStringSilently("http://test.onlineobjects.com/files/html/simple_utf8.html");
+		String string = networkService.getStringSilently("http://test.humanise.dk/files/html/simple_utf8.html");
 		Assert.assertTrue(Strings.isNotBlank(string));
 	}
 	
 	@Test
 	public void testGetStringFail() throws Exception {
-		Assert.assertNull(networkService.getStringSilently("http://test.onlineobjects.com/jashfjkafhdasjfahkfdsd.html"));
+		Assert.assertNull(networkService.getStringSilently("http://test.humanise.dk/jashfjkafhdasjfahkfdsd.html"));
 		Assert.assertNull(networkService.getStringSilently(null));
 		Assert.assertNull(networkService.getStringSilently(""));
 		Assert.assertNull(networkService.getStringSilently(""));
@@ -38,7 +38,7 @@ public class TestNetworkService extends AbstractSpringTestCase {
 
 	@Test
 	public void testResponseUTF8() throws Exception {
-		NetworkResponse response = networkService.get("http://test.onlineobjects.com/files/html/simple_utf8.html");
+		NetworkResponse response = networkService.get("http://test.humanise.dk/files/html/simple_utf8.html");
 		Assert.assertTrue(response.isSuccess());
 		Assert.assertEquals("text/html", response.getMimeType());
 		Assert.assertEquals(Strings.UTF8,response.getEncoding());
@@ -50,7 +50,7 @@ public class TestNetworkService extends AbstractSpringTestCase {
 
 	@Test
 	public void testResponseISO() throws Exception {
-		NetworkResponse response = networkService.get("http://test.onlineobjects.com/files/html/simple_iso-8859-1.html");
+		NetworkResponse response = networkService.get("http://test.humanise.dk/files/html/simple_iso-8859-1.html");
 		Assert.assertTrue(response.isSuccess());
 		Assert.assertEquals("text/html", response.getMimeType());
 		Assert.assertEquals(Strings.ISO_8859_1,response.getEncoding());
