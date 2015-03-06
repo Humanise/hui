@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletResponse;
 
 public class GZIPResponseStream extends ServletOutputStream {
@@ -75,5 +76,16 @@ public class GZIPResponseStream extends ServletOutputStream {
 
 	public void reset() {
 		// noop
+	}
+
+	@Override
+	public boolean isReady() {
+		return true;
+	}
+
+	@Override
+	public void setWriteListener(WriteListener arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 }
