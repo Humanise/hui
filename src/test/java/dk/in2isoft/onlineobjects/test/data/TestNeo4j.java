@@ -8,9 +8,9 @@ import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.graphdb.traversal.TraversalDescription;
-import org.neo4j.kernel.EmbeddedGraphDatabase;
-import org.neo4j.kernel.impl.traversal.TraversalDescriptionImpl;
+import org.neo4j.kernel.impl.traversal.MonoDirectionalTraversalDescription;
 import org.neo4j.tooling.GlobalGraphOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -28,9 +28,8 @@ public class TestNeo4j extends AbstractSpringTestCase {
 	public void testSetup() {
 		File storageDir = configurationService.getStorageDir();
 		File file = new File(storageDir,"test.db");
-		GraphDatabaseService graphDb = new EmbeddedGraphDatabase(file.getAbsolutePath());
-		Transaction tx = graphDb.beginTx();
-		try
+		GraphDatabaseService graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(file.getAbsolutePath());
+		try (Transaction tx = graphDb.beginTx())
 		{
 		   Node firstNode = graphDb.createNode();
 		   firstNode.setProperty("word", "albert");
@@ -39,7 +38,6 @@ public class TestNeo4j extends AbstractSpringTestCase {
 		}
 		finally
 		{
-		   tx.finish();
 		   graphDb.shutdown();
 		}
 
@@ -50,13 +48,12 @@ public class TestNeo4j extends AbstractSpringTestCase {
 	public void testSearch() {
 		File storageDir = configurationService.getStorageDir();
 		File file = new File(storageDir,"words.db");
-		GraphDatabaseService graphDb = new EmbeddedGraphDatabase(file.getAbsolutePath());
-		Transaction tx = graphDb.beginTx();
-		try
+		GraphDatabaseService graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(file.getAbsolutePath());
+		try (Transaction tx = graphDb.beginTx())
 		{
 			GlobalGraphOperations operations = GlobalGraphOperations.at(graphDb);
 			Iterable<Node> allNodes = operations.getAllNodes();
-			TraversalDescription td = new TraversalDescriptionImpl();
+			TraversalDescription td = new MonoDirectionalTraversalDescription();
 			td.breadthFirst();
 			for (Node node : allNodes) {
 				log.info("ID: "+node.getId());
@@ -68,7 +65,6 @@ public class TestNeo4j extends AbstractSpringTestCase {
 		}
 		finally
 		{
-		   tx.finish();
 		   graphDb.shutdown();
 		}
 

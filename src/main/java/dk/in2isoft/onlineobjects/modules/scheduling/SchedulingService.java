@@ -28,7 +28,10 @@ import org.quartz.impl.matchers.GroupMatcher;
 import org.quartz.utils.Key;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ApplicationContextEvent;
+import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -36,7 +39,7 @@ import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.modules.surveillance.LogEntry;
 import dk.in2isoft.onlineobjects.services.ConfigurationService;
 
-public class SchedulingService implements ApplicationListener<ContextRefreshedEvent>, InitializingBean {
+public class SchedulingService implements ApplicationListener<ApplicationContextEvent>, InitializingBean {
 
 	private final static Logger log = Logger.getLogger(SchedulingService.class);
 	
@@ -52,40 +55,56 @@ public class SchedulingService implements ApplicationListener<ContextRefreshedEv
 	
 	private Map<JobKey,String> triggerDescriptions = Maps.newHashMap();
 
-	public void onApplicationEvent(ContextRefreshedEvent event) {
-		try {
-			if (jobDescriptions!=null) {
-				for (JobDescription desc : jobDescriptions) {
-					JobDetail job = JobBuilder.newJob(desc.getJobClass())
-						    .withIdentity(desc.getName(), desc.getGroup()).storeDurably()
-						    .build();
-					if (desc.getProperties()!=null) {
-						job.getJobDataMap().putAll(desc.getProperties());
-					}
-					job.getJobDataMap().put("schedulingSupportFacade", schedulingSupportFacade);
-					scheduler.addJob(job, true);
-					if (Strings.isNotBlank(desc.getCron()) || desc.getRepeatMinutes()>0) {
-						if (Strings.isNotBlank(desc.getCron())) {
-							CronScheduleBuilder schedule = CronScheduleBuilder.cronSchedule(desc.getCron());
-							scheduler.scheduleJob(TriggerBuilder.newTrigger().forJob(job).withSchedule(schedule).build());
-							triggerDescriptions.put(job.getKey(), "cron: "+desc.getCron());
-						} else if (desc.getRepeatMinutes()>0) {
-							SimpleScheduleBuilder schedule = SimpleScheduleBuilder.repeatMinutelyForever(desc.getRepeatMinutes());
-							SimpleTrigger trigger = TriggerBuilder.newTrigger().forJob(job).withSchedule(schedule).withIdentity(desc.getName(), desc.getGroup()).build();
-							scheduler.scheduleJob(trigger);
-							triggerDescriptions.put(job.getKey(), "min:  "+desc.getRepeatMinutes());
+	public void onApplicationEvent(ApplicationContextEvent event) {
+		
+		if (event instanceof ContextRefreshedEvent) {
+			try {
+				if (jobDescriptions!=null) {
+					for (JobDescription desc : jobDescriptions) {
+						JobDetail job = JobBuilder.newJob(desc.getJobClass())
+							    .withIdentity(desc.getName(), desc.getGroup()).storeDurably()
+							    .build();
+						if (desc.getProperties()!=null) {
+							job.getJobDataMap().putAll(desc.getProperties());
 						}
-						if (desc.isPaused() || !configurationService.isStartScheduling()) {
-							scheduler.pauseJob(job.getKey());
+						job.getJobDataMap().put("schedulingSupportFacade", schedulingSupportFacade);
+						scheduler.addJob(job, true);
+						if (Strings.isNotBlank(desc.getCron()) || desc.getRepeatMinutes()>0) {
+							if (Strings.isNotBlank(desc.getCron())) {
+								CronScheduleBuilder schedule = CronScheduleBuilder.cronSchedule(desc.getCron());
+								scheduler.scheduleJob(TriggerBuilder.newTrigger().forJob(job).withSchedule(schedule).build());
+								triggerDescriptions.put(job.getKey(), "cron: "+desc.getCron());
+							} else if (desc.getRepeatMinutes()>0) {
+								SimpleScheduleBuilder schedule = SimpleScheduleBuilder.repeatMinutelyForever(desc.getRepeatMinutes());
+								SimpleTrigger trigger = TriggerBuilder.newTrigger().forJob(job).withSchedule(schedule).withIdentity(desc.getName(), desc.getGroup()).build();
+								scheduler.scheduleJob(trigger);
+								triggerDescriptions.put(job.getKey(), "min:  "+desc.getRepeatMinutes());
+							}
+							if (desc.isPaused() || !configurationService.isStartScheduling()) {
+								scheduler.pauseJob(job.getKey());
+							}
 						}
 					}
 				}
+				scheduler.start();
+			} catch (SchedulerException e) {
+				log.error("Problem starting scheduler", e);
 			}
-			scheduler.start();
-		} catch (SchedulerException e) {
-			log.error("Problem starting scheduler", e);
+		}
+		if (event instanceof ContextClosedEvent) {
+			if (scheduler!=null) {
+				try {
+					log.info("Shutting down scheduler");
+					scheduler.shutdown();
+					log.info("Scheduler is shut down");
+				} catch (SchedulerException e) {
+					log.error("Problem shutting down scheduler", e);
+				}
+			}
 		}
 	}
+	
+	
 	
 	public void afterPropertiesSet() throws Exception {
 		SchedulerFactory sf = new StdSchedulerFactory();

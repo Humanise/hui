@@ -3,27 +3,13 @@ package dk.in2isoft.onlineobjects.services;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.index.lucene.LuceneIndexService;
 import org.springframework.beans.factory.InitializingBean;
 
 public class DictionaryService implements InitializingBean {
 
-	private LuceneIndexService index;
-
-	//private ConfigurationService configurationService;
-
 	private GraphDatabaseService database;
 	
 	public void afterPropertiesSet() throws Exception {
-		/*
-		File storageDir = configurationService.getStorageDir();
-		File file = new File(storageDir,"dictionary.db");
-		try {
-			//database = new EmbeddedGraphDatabase(file.getAbsolutePath());
-			//index = new LuceneIndexService( database );
-		} catch (TransactionFailureException e) {
-			
-		}*/
 	}
 
 	public void setConfigurationService(ConfigurationService configurationService) {
@@ -31,20 +17,15 @@ public class DictionaryService implements InitializingBean {
 	}
 	
 	public void addWord(String word) {
-		Transaction tx = database.beginTx();
-		try {
+		try (Transaction tx = database.beginTx()) {
 			Node node = database.createNode();
 			node.setProperty("word", word);
-			index.index(node, "word", word);
 			tx.success();
-		} finally {
-			tx.finish();
 		}
 	}
 	
 	public Node getWord(String word) {
-		Transaction tx = database.beginTx();
-		try {
+		try (Transaction tx = database.beginTx()) {
 			@SuppressWarnings("deprecation")
 			Iterable<Node> nodes = database.getAllNodes();
 			for (Node node : nodes) {
@@ -55,21 +36,8 @@ public class DictionaryService implements InitializingBean {
 				}
 			}
 			tx.success();
-		} finally {
-			tx.finish();
 		}
 		return null;
-		/*
-		Node result = null;
-		Transaction tx = database.beginTx();
-		try {
-			result = index.getSingleNode("word", word);
-			tx.success();
-		} finally {
-			tx.finish();
-			database.shutdown();
-		}
-		return result;*/
 	}
 	
 	public void shutDown() {

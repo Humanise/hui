@@ -12,7 +12,6 @@ import com.google.common.collect.Lists;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.FieldLimitation.Function;
 import dk.in2isoft.onlineobjects.model.Entity;
-import dk.in2isoft.onlineobjects.model.HtmlPart;
 import dk.in2isoft.onlineobjects.model.Privilege;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;

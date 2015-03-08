@@ -1,12 +1,8 @@
 package dk.in2isoft.onlineobjects.test.wordnet;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.joda.time.Duration;

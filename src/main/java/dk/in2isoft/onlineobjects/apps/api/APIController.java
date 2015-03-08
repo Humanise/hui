@@ -21,7 +21,6 @@ import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.service.language.TextAnalysis;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.ui.ScriptWriter;
-import dk.in2isoft.onlineobjects.util.ValidationUtil;
 
 
 public class APIController extends APIControllerBase {

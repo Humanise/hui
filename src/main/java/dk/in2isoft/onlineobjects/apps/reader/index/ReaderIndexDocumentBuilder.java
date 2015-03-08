@@ -21,7 +21,6 @@ import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.Word;
-import dk.in2isoft.onlineobjects.modules.inbox.InboxService;
 import dk.in2isoft.onlineobjects.modules.index.IndexDocumentBuilder;
 import dk.in2isoft.onlineobjects.services.PileService;
 import dk.in2isoft.onlineobjects.services.StorageService;

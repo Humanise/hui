@@ -13,7 +13,6 @@ import dk.in2isoft.commons.jsf.Components;
 import dk.in2isoft.commons.jsf.StyleBuilder;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.commons.lang.Strings;
-import dk.in2isoft.onlineobjects.util.Messages;
 
 @FacesComponent(value=ButtonComponent.TYPE)
 public class ButtonComponent extends AbstractComponent {

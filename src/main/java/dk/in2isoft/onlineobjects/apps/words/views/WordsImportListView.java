@@ -18,7 +18,6 @@ import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.apps.words.importing.WordsImporter;
 import dk.in2isoft.onlineobjects.apps.words.perspectives.WordImportProspectPerspective;
 import dk.in2isoft.onlineobjects.core.ModelService;
-import dk.in2isoft.onlineobjects.core.Pair;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
 import dk.in2isoft.onlineobjects.model.Language;

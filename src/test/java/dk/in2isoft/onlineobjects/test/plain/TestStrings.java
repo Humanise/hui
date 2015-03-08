@@ -1,7 +1,5 @@
 package dk.in2isoft.onlineobjects.test.plain;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.Arrays;
 
 import junit.framework.TestCase;

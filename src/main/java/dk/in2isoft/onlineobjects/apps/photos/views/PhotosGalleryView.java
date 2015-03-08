@@ -19,7 +19,6 @@ import dk.in2isoft.onlineobjects.model.ImageGallery;
 import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
-import dk.in2isoft.onlineobjects.modules.photos.SimplePhotoPerspective;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.ui.jsf.ListModel;
 import dk.in2isoft.onlineobjects.ui.jsf.ListModelResult;
