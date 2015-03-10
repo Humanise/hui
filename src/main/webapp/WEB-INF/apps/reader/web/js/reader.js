@@ -38,8 +38,6 @@ var controller = {
 	},
 	
 	_view : function() {
-
-		
 		var self = this;
 		hui.ui.get('listView').listen({
 			$clickItem : function(info) {
@@ -50,7 +48,7 @@ var controller = {
 					hui.ui.get('tags').selectById(id,event.shiftKey);
 				} else if (hui.cls.has(a,'list_item_address_link')) {
 					window.open(a.href);
-				} else {
+				} else if (info.item) {
 					self._loadArticle(info.item);					
 				}
 			}
@@ -262,6 +260,7 @@ var controller = {
     // Viewer
 	
 	_loadArticle : function(object) {
+    object = object || {};
 		hui.get('viewer_header').innerHTML = '<h1>' + hui.string.escape(object.title) + '</h1>';
 		hui.get('viewer_formatted').innerHTML = '';
 		hui.get('viewer_text').innerHTML = '';

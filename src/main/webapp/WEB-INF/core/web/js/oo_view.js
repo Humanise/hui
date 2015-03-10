@@ -49,7 +49,7 @@ oo.View.prototype = {
 	_reveal : function() {
 		var limit = this.container.scrollTop + this.container.clientHeight;
 		if (limit <= this.maxRevealed) {
-			//return;
+			return;
 		}
 		this.maxRevealed = limit;
 		var diff = this.renderingPosition - limit;

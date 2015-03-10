@@ -13,8 +13,8 @@
 			<div class="sidebar">
 				<div class="block">
 					<o:selection name="subsets" value="everything">
-                        <gui:source name="contextsSource" url="#{readerView.baseContext}/getContextOptions"/>
-                    </o:selection>
+              <gui:source name="contextsSource" url="#{readerView.baseContext}/getContextOptions"/>
+          </o:selection>
 				</div>
 				<div class="block">
 					<h3>Types</h3>
@@ -34,13 +34,13 @@
 				<div class="block">
 					<h3>Tags</h3>
 					<div style="margin: 0 -10px">
-					<gui:overflow height="400">
-					<div style="padding: 0 10px">
-					<o:selection name="tags">
-						<gui:source name="tagSource" url="#{readerView.baseContext}/getWordCloud"/>
-					</o:selection>
-					</div>
-					</gui:overflow>
+  					<gui:overflow height="400">
+    					<div style="padding: 0 10px">
+      					<o:selection name="tags">
+      						<gui:source name="tagSource" url="#{readerView.baseContext}/getWordCloud"/>
+      					</o:selection>
+    					</div>
+  					</gui:overflow>
 					</div>
 				</div>
 			</div>
@@ -105,30 +105,30 @@
 				<div class="reader_viewer_frame">
 					<div class="reader_viewer_header">
 						<div id="viewer_header"></div>
-						<a class="reader_viewer_close oo_icon oo_icon_close_line" href="javascript://"></a>
-	                    <div class="reader_viewer_actions">
-							<o:link name="removeButton" plain="true" styleClass="reader_viewer_action">
-								<o:icon icon="delete_line" size="16"/>
-								<gui:confirm text="Are you sure?"/>
-							</o:link>
-							<o:link name="quoteButton" plain="true" styleClass="reader_viewer_action">
-								<o:icon icon="bubble_line" size="16"/>
-							</o:link>
-							<o:link name="inspectButton" plain="true" styleClass="reader_viewer_action">
-								<o:icon icon="relations_line" size="16"/>
-							</o:link>
-							<o:link name="inboxButton" plain="true" id="reader_viewer_inbox" styleClass="reader_viewer_action">
-								<o:icon icon="inbox_line" size="16"/>
-							</o:link>
-							<o:link name="favoriteButton" plain="true" id="reader_viewer_favorite" styleClass="reader_viewer_action">
-								<o:icon icon="star_line" size="16"/>
-							</o:link>
-	                        <span class="reader_viewer_view" id="reader_viewer_view">
-	                            <a href="#" data-value="text" class="reader_viewer_view_item">Text</a>
-	                            <a href="#" data-value="formatted" class="reader_viewer_view_item reader_viewer_view_item_selected">Formatted</a>
-	                            <a href="#" data-value="web" class="reader_viewer_view_item">Web</a>
-	                        </span>
-	                    </div>
+              <a class="reader_viewer_close oo_icon oo_icon_close_line" href="javascript://"></a>
+              <div class="reader_viewer_actions">
+  							<o:link name="removeButton" plain="true" styleClass="reader_viewer_action">
+  								<o:icon icon="delete_line" size="16"/>
+  								<gui:confirm text="Are you sure?"/>
+  							</o:link>
+  							<o:link name="quoteButton" plain="true" styleClass="reader_viewer_action">
+  								<o:icon icon="bubble_line" size="16"/>
+  							</o:link>
+  							<o:link name="inspectButton" plain="true" styleClass="reader_viewer_action">
+  								<o:icon icon="relations_line" size="16"/>
+  							</o:link>
+  							<o:link name="inboxButton" plain="true" id="reader_viewer_inbox" styleClass="reader_viewer_action">
+  								<o:icon icon="inbox_line" size="16"/>
+  							</o:link>
+  							<o:link name="favoriteButton" plain="true" id="reader_viewer_favorite" styleClass="reader_viewer_action">
+  								<o:icon icon="star_line" size="16"/>
+  							</o:link>
+                <span class="reader_viewer_view" id="reader_viewer_view">
+                  <a href="#" data-value="text" class="reader_viewer_view_item">Text</a>
+                  <a href="#" data-value="formatted" class="reader_viewer_view_item reader_viewer_view_item_selected">Formatted</a>
+                  <a href="#" data-value="web" class="reader_viewer_view_item">Web</a>
+                </span>
+            </div>
 					</div>
 					<div class="reader_viewer_content reader_viewer_content_formatted" id="viewer_content">
 						<div class="oo_spinner" id="viewer_spinner"></div>
