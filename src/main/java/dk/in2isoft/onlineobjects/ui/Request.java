@@ -1,6 +1,9 @@
 package dk.in2isoft.onlineobjects.ui;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 
@@ -462,6 +465,19 @@ public class Request {
 	public void enrich() throws IOException, EndUserException {
 		getLong("wordId");
 		getObject("enrichment", Pair.class);
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("URI: ").append(request.getRequestURI()).append("\n");
+		
+		Enumeration<String> parameterNames = request.getParameterNames();
+		while (parameterNames.hasMoreElements()) {
+			String name = parameterNames.nextElement();
+			sb.append("\n").append(name).append(":").append(String.join(",", request.getParameterValues(name)));
+		}
+		return sb.toString();
 	}
 
 }
