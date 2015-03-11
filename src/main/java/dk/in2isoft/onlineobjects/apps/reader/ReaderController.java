@@ -268,7 +268,9 @@ public class ReaderController extends ReaderControllerBase {
 	private ListMultimap<String, Long> find(Request request, ReaderQuery query) throws ExplodingClusterFuckException {
 		IndexManager index = getIndex(request);
 		if (Strings.isBlank(query.getText()) && Strings.isBlank(query.getSubset())) {
-			return index.getIdsByType();
+			ListMultimap<String, Long> idsByType = index.getIdsByType();
+			idsByType.put("total",Long.valueOf(idsByType.size()));
+			return idsByType;
 		}
 		final ListMultimap<String, Long> ids = LinkedListMultimap.create();
 
