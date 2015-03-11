@@ -16,7 +16,7 @@
 				<h1 class="words">#{msg.index} <span>» #{msg.words}</span></h1>
 				<p class="words_paging words_index">
 					<c:forEach items="#{wordsIndexView.alphabeth}" var="chr">
-						<o:link styleClass="#{chr.value == wordsIndexView.character ? 'words_paging_selected' : ''}" href="/en/index/#{char.value}/">#{char.label}</o:link>
+						<o:link styleClass="#{chr.value == wordsIndexView.character ? 'words_paging_selected' : ''}" href="/en/index/#{chr.value}/">#{chr.label}</o:link>
 					</c:forEach>
 				</p>
 				<ul class="words_list">
