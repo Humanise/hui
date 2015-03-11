@@ -4,7 +4,7 @@
 	<groupId>org.onlineobjects</groupId>
 	<artifactId>OnlineObjects</artifactId>
 	<packaging>war</packaging>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.0</version>
 	<name>OnlineObjects</name>
 	<url>http://www.onlineobjects.com</url>
 
