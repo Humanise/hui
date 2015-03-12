@@ -117,6 +117,7 @@ public class CommunityDAO extends AbstractDAO {
 		}
 	}
 
+	@Deprecated
 	public UserProfileInfo build(Person person,Privileged priviledged) throws ModelException {
 		ModelService model = Core.getInstance().getModel();
 		UserProfileInfo info = new UserProfileInfo();

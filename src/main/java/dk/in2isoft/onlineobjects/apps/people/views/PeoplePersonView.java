@@ -6,7 +6,6 @@ import org.springframework.beans.factory.InitializingBean;
 
 import com.google.common.collect.Lists;
 
-import dk.in2isoft.onlineobjects.apps.community.CommunityDAO;
 import dk.in2isoft.onlineobjects.apps.community.UserProfileInfo;
 import dk.in2isoft.onlineobjects.apps.community.jsf.AbstractManagedBean;
 import dk.in2isoft.onlineobjects.core.ModelService;
@@ -22,6 +21,7 @@ import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.RemoteAccount;
 import dk.in2isoft.onlineobjects.model.User;
+import dk.in2isoft.onlineobjects.services.PersonService;
 import dk.in2isoft.onlineobjects.services.RemoteDataService;
 import dk.in2isoft.onlineobjects.ui.jsf.ListModel;
 import dk.in2isoft.onlineobjects.ui.jsf.ListModelResult;
@@ -29,7 +29,7 @@ import dk.in2isoft.onlineobjects.util.remote.RemoteAccountInfo;
 
 public class PeoplePersonView extends AbstractManagedBean implements InitializingBean {
 	
-	private CommunityDAO communityDAO;
+	private PersonService personService;
 	private ModelService modelService;
 	private RemoteDataService remoteDataService;
 	private SecurityService securityService;
@@ -118,7 +118,7 @@ public class PeoplePersonView extends AbstractManagedBean implements Initializin
 	
 	public UserProfileInfo getInfo() throws ModelException {
 		if (profileInfo==null) {
-			this.profileInfo = communityDAO.build(getPerson(),getRequest().getSession());
+			this.profileInfo = personService.getProfileInfo(getPerson(),getRequest().getSession());
 		}
 		return this.profileInfo;
 	}
@@ -151,12 +151,8 @@ public class PeoplePersonView extends AbstractManagedBean implements Initializin
 		return remoteAccountInfo;
 	}
 
-	public void setCommunityDAO(CommunityDAO communityDAO) {
-		this.communityDAO = communityDAO;
-	}
-
-	public CommunityDAO getCommunityDAO() {
-		return communityDAO;
+	public void setPersonService(PersonService personService) {
+		this.personService = personService;
 	}
 
 	public void setModelService(ModelService modelService) {
