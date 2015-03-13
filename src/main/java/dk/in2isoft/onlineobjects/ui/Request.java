@@ -54,6 +54,8 @@ public class Request {
 	private String domainName;
 	
 	private String application;
+
+	private String uri;
 	
 	private Request(HttpServletRequest request, HttpServletResponse response) {
 		super();
@@ -121,10 +123,15 @@ public class Request {
 		}
 		relativePath = path.toString();
 		locale = new Locale("en");
+		this.uri = uri;
 	}
 	
 	public String getLanguage() {
 		return locale.getLanguage();
+	}
+	
+	public String getUri() {
+		return uri;
 	}
 	
 	public void setLanguage(String language) {

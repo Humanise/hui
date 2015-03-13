@@ -98,6 +98,8 @@ public class Components {
 	
 	public static String buildLanguageUrl(Request request, Locale locale) {
 		String[] path = request.getLocalPath();
+		String requestURI = request.getUri();
+		boolean endsWithSlash = requestURI.endsWith("/");
 		StringBuilder url = new StringBuilder();
 		url.append(request.getLocalContext());
 		url.append("/");
@@ -111,7 +113,9 @@ public class Components {
 			} else {
 				url.append(path[i]);
 			}
-			url.append("/");
+			if (i < path.length - 1 || endsWithSlash) {
+				url.append("/");
+			}
 		}
 		String queryString = request.getRequest().getQueryString();
 		if (Strings.isNotBlank(queryString)) {

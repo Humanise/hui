@@ -9,7 +9,6 @@ import java.util.Locale;
 import org.apache.commons.lang.time.StopWatch;
 import org.springframework.beans.factory.InitializingBean;
 
-import com.google.common.base.Function;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
@@ -47,15 +46,7 @@ public class WordsWordView extends AbstractView implements InitializingBean {
 	private List<String> RELATIONS_BOTH_WAYS = Lists.newArrayList(Relation.KIND_SEMANTICS_EQUIVALENT, Relation.KIND_SEMANTICS_SYNONYMOUS, Relation.KIND_SEMANTICS_ANTONYMOUS);
 	private List<String> RELATIONS_ONE_WAY = Lists.newArrayList(Relation.KIND_SEMANTICS_MORPHEME, Relation.KIND_SEMANTICS_GENRALTIZATION);
 	
-	private static final Comparator<WordRelation> ORDERING;
-	static {
-
-		ORDERING = Ordering.natural().onResultOf(new Function<WordRelation, String>() {
-			public String apply(WordRelation relation) {
-				return relation.getWord().getText();
-			}
-		});
-	}
+	private static final Comparator<WordRelation> ORDERING = Ordering.natural().onResultOf(relation -> relation.getWord().getText());
 	
 	public void afterPropertiesSet() throws Exception {
 		StopWatch watch = new StopWatch();
@@ -81,7 +72,7 @@ public class WordsWordView extends AbstractView implements InitializingBean {
 					int limit = 30;
 					int index = 0;
 					for (WordRelation relation : relations) {
-						StringBuilder href = new StringBuilder("/").append(locale.getLanguage()).append("/word/").append(Strings.encodeURL(relation.getWord().getText())).append(".html#").append(relation.getWord().getId()); 
+						StringBuilder href = new StringBuilder("/").append(locale.getLanguage()).append("/word/").append(Strings.encodeURL(relation.getWord().getText().toLowerCase())).append(".html#").append(relation.getWord().getId()); 
 						html.startA().withHref(href).withClass("words_word_relation oo_link").withData("relation",relation.getId()).withData("word",relation.getWord().getId());
 						html.startSpan().text(relation.getWord().getText()).endSpan();
 						html.endA();
