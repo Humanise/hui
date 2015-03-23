@@ -2,9 +2,6 @@
 var hui = {
 	/** @namespace */
 	browser : {},
-	ELEMENT_NODE : 1,
-	ATTRIBUTE_NODE : 2,
-	TEXT_NODE : 3,
 	KEY_BACKSPACE : 8,
     KEY_TAB : 9,
     KEY_RETURN : 13,
@@ -25,6 +22,8 @@ var hui = {
 
 
 //////////////////////// Browser //////////////////////////
+
+// TODO make this easier to optimize
 
 /** If the browser is opera */
 hui.browser.opera = /opera/i.test(navigator.userAgent);
@@ -70,14 +69,14 @@ hui.browser.animation = !hui.browser.msie6 && !hui.browser.msie7 && !hui.browser
 
 hui.browser.wordbreak = !hui.browser.msie6 && !hui.browser.msie7 && !hui.browser.msie8;
 
-hui.browser.touch = "ontouchstart" in window || window.DocumentTouch && document instanceof DocumentTouch;
+hui.browser.touch = (!!('ontouchstart' in window) || (!!('onmsgesturechange' in window) && !!window.navigator.maxTouchPoints)) ? true : false;
 
 (function() {
 	var result = /Safari\/([\d.]+)/.exec(navigator.userAgent);
 	if (result) {
 		hui.browser.webkitVersion = parseFloat(result[1]);
 	}
-})()
+})();
 
 
 
@@ -101,8 +100,8 @@ hui.log = function(obj) {
 		} else {
 			console.log(arguments);			
 		}
-	} catch (ignore) {};
-}
+	} catch (ignore) {}
+};
 
 /**
  * Defer a function so it will fire when the current "thread" is done
@@ -114,7 +113,7 @@ hui.defer = function(func,bind) {
 		func = func.bind(bind);
 	}
 	window.setTimeout(func);
-}
+};
 
 /**
  * Override the properties on the first argument with properties from the last object
@@ -129,7 +128,7 @@ hui.override = function(original,subject) {
 		}
 	}
 	return original;
-}
+};
 
 /**
  * Loop through items in array or properties in an object.
@@ -139,16 +138,21 @@ hui.override = function(original,subject) {
  * @param {Function} func The callback to handle each item
  */
 hui.each = function(items,func) {
+    var i;
 	if (hui.isArray(items)) {		
-		for (var i=0; i < items.length; i++) {
+		for (i = 0; i < items.length; i++) {
 			func(items[i],i);
-		};
+		}
+    } else if (items instanceof NodeList) {
+		for (i = 0; i < items.length; i++) {
+			func(items.item(i),i);
+		}
 	} else {
 		for (var key in items) {
 			func(key,items[key]);
 		}
 	}
-}
+};
 
 /**
  * Return text if condition is met
@@ -157,7 +161,7 @@ hui.each = function(items,func) {
  */
 hui.when = function(condition,text) {
 	return condition ? text : '';
-}
+};
 
 /**
  * Converts a string to an int if it is only digits, otherwise remains a string
@@ -174,11 +178,39 @@ hui.intOrString = function(str) {
 		}
 	}
 	return str;
-}
+};
 
+/** 
+ * Make sure a number is between a min / max
+ */
 hui.between = function(min,value,max) {
 	var result = Math.min(max,Math.max(min,value));
 	return isNaN(result) ? min : result;
+};
+
+/**
+ * Fit a box inside a container while preserving aspect ratio (note: expects sane input)
+ * @param {Object} box The box to scale {width : 200, height : 100}
+ * @param {Object} container The container to fit the box inside {width : 20, height : 40}
+ * @returns {Object} An object of the new box {width : 20, height : 10}
+ */
+hui.fit = function(box,container,options) {
+  options = options || {};
+  var boxRatio = box.width / box.height;
+  var containerRatio = container.width / container.height;
+  var width, height;
+  if (options.upscale===false && box.width<=container.width && box.height<=container.height) {
+    width = box.width;
+    height = box.height;
+  }
+  else if (boxRatio > containerRatio) {
+    width = container.width;
+    height = Math.round(container.width/box.width * box.height);
+  } else {
+    width = Math.round(container.height/box.height * box.width);
+    height = container.height;
+  }
+  return {width : width, height : height};
 }
 
 /**
@@ -189,8 +221,8 @@ hui.isBlank = function(str) {
 	if (str===null || typeof(str)==='undefined' || str==='') {
 		return true;
 	}
-	return typeof(str)=='string' && hui.string.trim(str).length==0;
-}
+	return typeof(str)=='string' && hui.string.trim(str).length === 0;
+};
 
 /**
  * Checks that an object is not null and not undefined
@@ -198,7 +230,7 @@ hui.isBlank = function(str) {
  */
 hui.isDefined = function(obj) {
 	return obj!==null && typeof(obj)!=='undefined';
-}
+};
 
 
 
@@ -208,14 +240,14 @@ hui.isDefined = function(obj) {
  */
 hui.isString = function(obj) {
 	return typeof(obj)==='string';
-}
+};
 
 /**
  * Checks if an object is an array
  * @param {Object} obj The object to check
  */
 hui.isArray = function(obj) {
-	if (obj==null || obj==undefined) {
+	if (obj === null || obj === undefined) {
 		return false;
 	}
 	if (obj.constructor == Array) {
@@ -223,7 +255,7 @@ hui.isArray = function(obj) {
 	} else {
 		return Object.prototype.toString.call(obj) === '[object Array]';
 	}
-}
+};
 
 ///////////////////////// Strings ///////////////////////
 
@@ -237,7 +269,7 @@ hui.string = {
 	 * @returns {Boolean} True if «str» starts with «start»
 	 */
 	startsWith : function(str,start) {
-		if (!typeof(str)=='string' || !typeof(start)=='string') {
+		if (typeof(str) !== 'string' || typeof(start) !== 'string') {
 			return false;
 		}
 		return (str.match("^"+start)==start);
@@ -249,7 +281,7 @@ hui.string = {
 	 * @returns {Boolean} True if «str» ends with «end»
 	 */
 	endsWith : function(str,end) {
-		if (!typeof(str)=='string' || !typeof(end)=='string') {
+		if (typeof(str) !== 'string' || typeof(end) !== 'string') {
 			return false;
 		}
 		return (str.match(end+"$")==end);
@@ -261,12 +293,12 @@ hui.string = {
 	 * @returns {String} The camelized string
 	 */
 	camelize : function(str) {
-		if (str.indexOf('-')==-1) {return str}
+		if (str.indexOf('-')==-1) {
+            return str;
+        }
 	    var oStringList = str.split('-');
 
-	    var camelizedString = str.indexOf('-') == 0
-	      ? oStringList[0].charAt(0).toUpperCase() + oStringList[0].substring(1)
-	      : oStringList[0];
+	    var camelizedString = str.indexOf('-') === 0 ? oStringList[0].charAt(0).toUpperCase() + oStringList[0].substring(1) : oStringList[0];
 
 	    for (var i = 1, len = oStringList.length; i < len; i++) {
 	      var s = oStringList[i];
@@ -282,10 +314,10 @@ hui.string = {
 	 */
 	trim : function(str) {
 		if (str===null || str===undefined) {
-			return ''
+			return '';
 		}
-		if (typeof(str)!='string') {
-			str=new String(str)
+		if (typeof(str) != 'string') {
+			str = String(str);
 		}
 		return str.replace(/^[\s\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000]+|[\s\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000]+$/g, '');
 	},
@@ -307,9 +339,9 @@ hui.string = {
 	 * @returns {String} The shortened text, '' if undefined or null string
 	 */
 	shorten : function(str,length) {
-		if (!hui.isDefined(str)) {return ''};
+		if (!hui.isDefined(str)) {return '';}
 		if (str.length > length) {
-			return str.substring(0,length-3)+'...';
+			return str.substring(0,length-3) + '...';
 		}
 		return str;
 	},
@@ -319,7 +351,7 @@ hui.string = {
 	 * @returns {String} The escaped text
 	 */
 	escapeHTML : function(str) {
-		if (str===null || str===undefined) {return ''};
+		if (str===null || str===undefined) {return '';}
 	   	return hui.build('div',{text:str}).innerHTML;
 	},
 	/**
@@ -330,13 +362,13 @@ hui.string = {
 	escape : function(str) {
 		if (!hui.isString(str)) {return str};
 		var tagsToReplace = {
-		        '&': '&amp;',
-		        '<': '&lt;',
-		        '>': '&gt;',
-		        '"': '&quot;',
-			    "'": '&#x27;',
-			    '`': '&#x60;'
-		    };
+	        '&': '&amp;',
+	        '<': '&lt;',
+	        '>': '&gt;',
+	        '"': '&quot;',
+		    "'": '&#x27;',
+		    '`': '&#x60;'
+	    };
 	    return str.replace(/[&<>'`"]/g, function(tag) {
 	        return tagsToReplace[tag] || tag;
 	    });
@@ -363,7 +395,7 @@ hui.string = {
 	toJSON : function(obj) {
 		return JSON.stringify(obj);
 	}
-}
+};
 
 
 
@@ -386,7 +418,7 @@ hui.array = {
 				if (!hui.array.contains(arr,value[i])) {
 					arr.push(value);
 				}
-			};
+			}
 		} else {
 			if (!hui.array.contains(arr,value)) {
 				arr.push(value);
@@ -400,12 +432,7 @@ hui.array = {
 	 * @returns {boolean} true if the value is in the array
 	 */
 	contains : function(arr,value) {
-		for (var i=0; i < arr.length; i++) {
-			if (arr[i]===value) {
-				return true;
-			}
-		};
-		return false;
+		return hui.array.indexOf(arr,value) !== -1;
 	},
 	/**
 	 * Add or remove a value from an array.
@@ -430,7 +457,7 @@ hui.array = {
 			if (arr[i]==value) {
 				arr.splice(i,1);
 			}
-		};
+		}
 	},
 	/**
 	 * Find the first index of a value in an array, -1 if not found
@@ -443,7 +470,7 @@ hui.array = {
 			if (arr[i]===value) {
 				return i;
 			}
-		};
+		}
 		return -1;
 	},
 	/**
@@ -454,11 +481,11 @@ hui.array = {
 	toIntegers : function(str) {
 		var array = str.split(',');
 		for (var i = array.length - 1; i >= 0; i--){
-			array[i] = parseInt(array[i]);
-		};
+			array[i] = parseInt(array[i],10);
+		}
 		return array;
 	}
-}
+};
 
 
 
@@ -474,10 +501,10 @@ hui.array = {
 /** @namespace */
 hui.dom = {
 	isElement : function(node,name) {
-		return node.nodeType==hui.ELEMENT_NODE && (name===undefined ? true : node.nodeName.toLowerCase()==name);
+		return node.nodeType==1 && (name===undefined ? true : node.nodeName.toLowerCase()==name);
 	},
 	isDefinedText : function(node) {
-		return node.nodeType==hui.TEXT_NODE && node.nodeValue.length>0;
+		return node.nodeType==3 && node.nodeValue.length>0;
 	},
 	addText : function(node,text) {
 		node.appendChild(document.createTextNode(text));
@@ -486,10 +513,10 @@ hui.dom = {
 	firstChild : function(node) {
 		var children = node.childNodes;
 		for (var i=0; i < children.length; i++) {
-			if (children[i].nodeType==hui.ELEMENT_NODE) {
+			if (children[i].nodeType==1) {
 				return children[i];
 			}
-		};
+		}
 		return null;
 	},
 	parseToNode : function(html) {
@@ -500,7 +527,7 @@ hui.dom = {
 		var children = node.childNodes;
 		for (var i = children.length - 1; i >= 0; i--) {
 			children[i].parentNode.removeChild(children[i]);
-		};
+		}
 	},
 	remove : function(node) {
 		if (node.parentNode) {
@@ -562,13 +589,13 @@ hui.dom = {
 		}
 	},
 	setText : function(node,text) {
-		if (text==undefined || text==null) {
+		if (text===undefined || text===null) {
 			text = '';
 		}
 		var c = node.childNodes;
 		var updated = false;
 		for (var i = c.length - 1; i >= 0; i--){
-			if (!updated && c[i].nodeType==hui.TEXT_NODE) {
+			if (!updated && c[i].nodeType === 3) {
 				c[i].nodeValue=text;
 				updated = true;
 			} else {
@@ -583,12 +610,12 @@ hui.dom = {
 		var txt = '';
 		var c = node.childNodes;
 		for (var i=0; i < c.length; i++) {
-			if (c[i].nodeType==hui.TEXT_NODE && c[i].nodeValue!=null) {
-				txt+=c[i].nodeValue;
-			} else if (c[i].nodeType==hui.ELEMENT_NODE) {
-				txt+=hui.dom.getText(c[i]);
+			if (c[i].nodeType === 3 && c[i].nodeValue !== null) {
+				txt+= c[i].nodeValue;
+			} else if (c[i].nodeType == 1) {
+				txt+= hui.dom.getText(c[i]);
 			}
-		};
+		}
 		return txt;
 	},
 	isVisible : function(node) {
@@ -609,7 +636,7 @@ hui.dom = {
 		}
 		return false;
 	}
-}
+};
 
 
 
@@ -630,10 +657,10 @@ hui.form = {
 			if (hui.isDefined(inputs[i].name)) {
 				params[inputs[i].name] = inputs[i].value;
 			}
-		};
+		}
 		return params;
 	}
-}
+};
 
 
 
@@ -657,7 +684,7 @@ hui.get = function(id) {
 		return document.getElementById(id);
 	}
 	return id;
-}
+};
 
 /**
  * Get array of child elements of «node», not a NodeList
@@ -669,9 +696,9 @@ hui.get.children = function(node) {
 		if (hui.dom.isElement(x[i])) {
 			children.push(x[i]);
 		}
-	};
+	}
 	return children;
-}
+};
 
 hui.get.ancestors = function(element) {
 	var ancestors = [];
@@ -681,7 +708,7 @@ hui.get.ancestors = function(element) {
 		parent = parent.parentNode;
 	}
 	return ancestors;
-}
+};
 
 /**
  * Find the first ancestor with a given class (including self)
@@ -694,7 +721,7 @@ hui.get.firstAncestorByClass = function(element,className) {
 		element = element.parentNode;
 	}
 	return null;
-}
+};
 
 hui.get.next = function(element) {
 	if (!element) {
@@ -714,7 +741,7 @@ hui.get.next = function(element) {
     	return next;
 	}
 	return null;
-}
+};
 
 hui.get.previous = function(element) {
 	if (!element) {
@@ -734,7 +761,7 @@ hui.get.previous = function(element) {
     	return previous;
 	}
 	return null;
-}
+};
 
 hui.get.before = function(element) {
 	var elements = [];
@@ -746,10 +773,10 @@ hui.get.before = function(element) {
 			} else if (nodes[i].nodeType===1) {
 				elements.push(nodes[i]);
 			}
-		};
+		}
 	}
 	return elements;
-}
+};
 
 /**
  * Find all sibling elements after «element»
@@ -762,11 +789,11 @@ hui.get.after = function(element) {
 		next = hui.get.next(next);
 	}
 	return elements;
-}
+};
 
 hui.get.firstByClass = function(parentElement,className,tag) {
 	parentElement = hui.get(parentElement) || document.body;
-	if (document.querySelector) {
+  if (parentElement.querySelector) {
 		return parentElement.querySelector((tag ? tag+'.' : '.')+className);
 	} else {
 		var children = parentElement.getElementsByTagName(tag || '*');
@@ -777,27 +804,28 @@ hui.get.firstByClass = function(parentElement,className,tag) {
 		}
 	}
 	return null;
-}
+};
 
 hui.get.byClass = function(parentElement,className,tag) {
 	parentElement = hui.get(parentElement) || document.body;
-	if (document.querySelectorAll) {
+    var i;
+	if (parentElement.querySelectorAll) {
 		var nl = parentElement.querySelectorAll((tag ? tag+'.' : '.')+className);
 		// Important to convert into array...
 		var l=[];
-		for(var i=0, ll=nl.length; i!=ll; l.push(nl[i++]));
+		for(i=0, ll=nl.length; i!=ll; l.push(nl[i++]));
 		return l;
 	} else {
 		var children = parentElement.getElementsByTagName(tag || '*'),
 		out = [];
-		for (var i=0;i<children.length;i++) {
+		for (i=0;i<children.length;i++) {
 			if (hui.cls.has(children[i],className)) {
-				out[out.length]=children[i];
+				out[out.length] = children[i];
 			}
 		}
 		return out;
 	}
-}
+};
 
 /**
  * Get array of descendants of «node» with the name «name»
@@ -810,12 +838,12 @@ hui.get.byTag = function(node,name) {
 		l=[];
 	for(var i=0, ll=nl.length; i!=ll; l.push(nl[i++]));
 	return l;
-}
+};
 
 hui.get.byId = function(e,id) {
 	var children = e.childNodes;
 	for (var i = children.length - 1; i >= 0; i--) {
-		if (children[i].nodeType===hui.ELEMENT_NODE && children[i].getAttribute('id')===id) {
+		if (children[i].nodeType===1 && children[i].getAttribute('id')===id) {
 			return children[i];
 		} else {
 			var found = hui.get.byId(children[i],id);
@@ -825,7 +853,7 @@ hui.get.byId = function(e,id) {
 		}
 	}
 	return null;
-}
+};
 
 hui.get.firstParentByTag = function(node,tag) {
 	var parent = node;
@@ -836,7 +864,7 @@ hui.get.firstParentByTag = function(node,tag) {
 		parent = parent.parentNode;
 	}
 	return null;
-}
+};
 
 hui.get.firstParentByClass = function(node,tag) {
 	var parent = node;
@@ -847,7 +875,7 @@ hui.get.firstParentByClass = function(node,tag) {
 		parent = parent.parentNode;
 	}
 	return null;
-}
+};
 
 /**
  * Find first descendant by tag (excluding self)
@@ -857,17 +885,25 @@ hui.get.firstParentByClass = function(node,tag) {
  */
 hui.get.firstByTag = function(node,tag) {
 	node = hui.get(node) || document.body;
-	if (document.querySelector && tag!=='*') {
+	if (node.querySelector && tag!=='*') {
 		return node.querySelector(tag);
 	}
 	var children = node.getElementsByTagName(tag);
 	return children[0];
-}
+};
 
 
 hui.get.firstChild = hui.dom.firstChild;
 
+hui.find = function(selector,context) {
+  return (context || document).querySelector(selector);
+}
 
+hui.collect = function(selectors,context) {
+  for (key in selectors) {
+    selectors[key] = hui.get.firstByClass(context,selectors[key]);
+  }
+}
 
 
 
@@ -899,8 +935,8 @@ hui.get.firstChild = hui.dom.firstChild;
  */
 hui.build = function(name,options,doc) {
 	
-	var doc = doc || document,
-		e = doc.createElement(name);
+	doc = doc || document;
+    var e = doc.createElement(name);
 	if (options) {
 		for (var prop in options) {
 			if (prop=='text') {
@@ -910,7 +946,7 @@ hui.build = function(name,options,doc) {
 			} else if (prop=='parent' && hui.isDefined(options.parent)) {
 				options.parent.appendChild(e);
 			} else if (prop=='parentFirst') {
-				if (options.parentFirst.childNodes.length==0) {
+				if (options.parentFirst.childNodes.length === 0) {
 					options.parentFirst.appendChild(e);
 				} else {
 					options.parentFirst.insertBefore(e,options.parentFirst.childNodes[0]);
@@ -931,7 +967,7 @@ hui.build = function(name,options,doc) {
 		}
 	}
 	return e;
-}
+};
 
 
 
@@ -951,7 +987,7 @@ hui.position = {
 		if (element) {
 			var top = element.offsetTop,
 				tempEl = element.offsetParent;
-			while (tempEl != null) {
+			while (tempEl !== null) {
 				top += tempEl.offsetTop;
 				tempEl = tempEl.offsetParent;
 			}
@@ -964,7 +1000,7 @@ hui.position = {
 		if (element) {
 			var left = element.offsetLeft,
 				tempEl = element.offsetParent;
-			while (tempEl != null) {
+			while (tempEl !== null) {
 				left += tempEl.offsetLeft;
 				tempEl = tempEl.offsetParent;
 			}
@@ -976,7 +1012,7 @@ hui.position = {
 		return {
 			left : hui.position.getLeft(element),
 			top : hui.position.getTop(element)
-		}
+		};
 	},
 	getScrollOffset : function(element) {
 	    element = hui.get(element);
@@ -985,7 +1021,7 @@ hui.position = {
 	      top += element.scrollTop  || 0;
 	      left += element.scrollLeft || 0;
 	      element = element.parentNode;
-		  if (element.tagName=='HTML') {
+		  if (element.tagName === 'HTML') {
 			  break; // TODO Temporary hack - Chrome has the same scrollTop on html as on body
 		  }
 	    } while (element);
@@ -1019,10 +1055,10 @@ hui.position = {
 			var w = hui.window.getViewWidth();
 			if (left + src.clientWidth > w) {
 				left = w - src.clientWidth - (options.viewPartMargin || 0);
-				hui.log(options.viewPartMargin)
+				//hui.log(options.viewPartMargin)
 			}
-			if (left < 0) {left=0}
-			if (top < 0) {top=0}
+			if (left < 0) {left=0;}
+			if (top < 0) {top=0;}
 			
 			var height = hui.window.getViewHeight();
 			var vertMax = hui.window.getScrollTop()+hui.window.getViewHeight()-src.clientHeight,
@@ -1043,10 +1079,10 @@ hui.position = {
 					height-=sib.offsetHeight;
 				}
 			}
-		};
+		}
 		return height;
 	}
-}
+};
 
 
 
@@ -1106,7 +1142,7 @@ hui.window = {
 				if (pos<1) {
 					window.setTimeout(func);
 				}
-			}
+			};
 			func();
 		}
 	},
@@ -1134,7 +1170,7 @@ hui.window = {
 			return document.body.clientWidth;
 		}
 	}
-}
+};
 
 
 
@@ -1161,7 +1197,7 @@ hui.cls = {
 	has : function(element, className) {
 		element = hui.get(element);
 		if (!element || !element.className) {
-			return false
+			return false;
 		}
 		if (element.hasClassName) {
 			return element.hasClassName(className);
@@ -1185,7 +1221,7 @@ hui.cls = {
 	add : function(element, className) {
 	    element = hui.get(element);
 		if (!element) {
-			return
+			return;
 		}
 		if (element.addClassName) {
 			element.addClassName(className);
@@ -1200,7 +1236,7 @@ hui.cls = {
 	 */
 	remove : function(element, className) {
 		element = hui.get(element);
-		if (!element || !element.className) {return};
+		if (!element || !element.className) {return;}
 		if (element.removeClassName) {
 			element.removeClassName(className);
 		}
@@ -1245,7 +1281,7 @@ hui.cls = {
 			hui.cls.remove(element,className);
 		}
 	}
-}
+};
 
 
 
@@ -1275,7 +1311,7 @@ hui.listen = function(element,type,listener,useCapture) {
 	} else {
 		element.attachEvent('on'+type, listener);
 	}
-}
+};
 
 /**
  * Add an event listener to an element, it will only fire once
@@ -1286,11 +1322,11 @@ hui.listen = function(element,type,listener,useCapture) {
 hui.listenOnce = function(element,type,listener) {	
 	var func = null;
 	func = function(e) {
-		hui.unListen(element,type,func)
+		hui.unListen(element,type,func);
 		listener(e);
-	}
+	};
 	hui.listen(element,type,func);
-}
+};
 
 /**
  * Remove an event listener from an element
@@ -1306,7 +1342,7 @@ hui.unListen = function(el,type,listener,useCapture) {
 	} else {
 		el.detachEvent('on'+type, listener);
 	}
-}
+};
 
 /** Creates an event wrapper for an event
  * @param event The DOM event
@@ -1317,7 +1353,7 @@ hui.event = function(event) {
 		return event;
 	}
 	return new hui.Event(event);
-}
+};
 
 /** @constructor
  * Wrapper for events
@@ -1358,7 +1394,7 @@ hui.Event = function(event) {
 	this.rightKey = event.keyCode==39;
 	/** The key code */
 	this.keyCode = event.keyCode;
-}
+};
 
 hui.Event.prototype = {
 	/**
@@ -1403,7 +1439,7 @@ hui.Event.prototype = {
 	 * @returns {Element} The found element or null
 	 */
 	findByClass : function(cls) {
-		return hui.get.firstAncestorByClass(this.element,cls)
+		return hui.get.firstAncestorByClass(this.element,cls);
 	},
 	/** Finds the nearest ancester with a certain tag name
 	 * @param tag The tag name
@@ -1425,7 +1461,7 @@ hui.Event.prototype = {
 			if (parent.tagName && parent.tagName.toLowerCase()==tag) {
 				if (func(parent)) {
 					return parent;
-				};
+				}
 			}
 			parent = parent.parentNode;
 		}
@@ -1446,19 +1482,19 @@ hui.Event.prototype = {
 	stop : function() {
 		hui.stop(this.event);
 	}
-}
+};
 
 /** 
  * Stops an event from propagating
  * @param event A standard DOM event, NOT an hui.Event
  */
 hui.stop = function(event) {
-	if (!event) {event = window.event};
-	if (event.stopPropagation) {event.stopPropagation()};
-	if (event.preventDefault) {event.preventDefault()};
+	if (!event) {event = window.event;}
+	if (event.stopPropagation) {event.stopPropagation();}
+	if (event.preventDefault) {event.preventDefault();}
 	event.cancelBubble = true;
     event.stopped = true;
-}
+};
 
 hui._defered = [];
 
@@ -1478,9 +1514,9 @@ hui.onReady = function(func) {
 				hui._defered[i]();
 			}
             hui._defered = null;
-		})
+		});
 	}
-}
+};
 
 /**
  * Execute a function when the DOM is ready
@@ -1528,7 +1564,7 @@ hui._onReady = function(delegate) {
 			window.onload = delegate;
 		}
 	}
-}
+};
 
 
 
@@ -1578,7 +1614,7 @@ hui._onReady = function(delegate) {
  */
 hui.request = function(options) {
 	options = hui.override({method:'POST',async:true,headers:{Ajax:true}},options);
-	var transport = hui.request.createTransport(options);
+	var transport = hui.request.createTransport();
 	if (!transport) {return;}
 	transport.onreadystatechange = function() {
 		try {
@@ -1589,17 +1625,17 @@ hui.request = function(options) {
 					options.$forbidden(transport);
 				} else if (transport.status !== 0 && options.$failure) {
 					options.$failure(transport);
-				} else if (transport.status == 0 && options.$abort) {
+				} else if (transport.status === 0 && options.$abort) {
 					options.$abort(transport);
 				}
-				if (options['$finally']) {
-					options['$finally']();
+				if (options.$finally) {
+					options.$finally();
 				}
 			}
 			//hui.request._forget(transport);
 		} catch (e) {
 			if (options.$exception) {
-				options.$exception(e,transport)
+				options.$exception(e,transport);
 			} else {
 				throw e;
 			}
@@ -1653,7 +1689,8 @@ hui.request = function(options) {
 	//hui.request._transports.push(transport);
 	//hui.log('Add: '+hui.request._transports.length);
 	return transport;
-}
+};
+
 /*
 hui.request._transports = [];
 
@@ -1677,23 +1714,24 @@ hui.request.abort = function() {
  */
 hui.request.isXMLResponse = function(t) {
 	return t.responseXML && t.responseXML.documentElement && t.responseXML.documentElement.nodeName!='parsererror';
-}
+};
 
 hui.request._buildPostBody = function(parameters) {
 	if (!parameters) return null;
-	var output = '';
+	var output = '',
+        param;
     if (hui.isArray(parameters)) {
         for (var i = 0; i < parameters.length; i++) {
-            var param = parameters[i];
-    		if (i > 0) {output += '&'};
+            param = parameters[i];
+    		if (i > 0) {output += '&';}
     		output+=encodeURIComponent(param.name)+'=';
     		if (param.value!==undefined && param.value!==null) {
     			output+=encodeURIComponent(param.value);
     		}
         }
     } else {
-    	for (var param in parameters) {
-    		if (output.length > 0) {output += '&'};
+    	for (param in parameters) {
+    		if (output.length > 0) {output += '&';}
     		output+=encodeURIComponent(param)+'=';
     		if (parameters[param]!==undefined && parameters[param]!==null) {
     			output+=encodeURIComponent(parameters[param]);
@@ -1701,7 +1739,7 @@ hui.request._buildPostBody = function(parameters) {
     	}        
     }
 	return output;
-}
+};
 
 /**
  * Creates a new XMLHttpRequest
@@ -1711,7 +1749,7 @@ hui.request.createTransport = function() {
 	try {
 		if (window.XMLHttpRequest) {
 			var req = new XMLHttpRequest();
-			if (req.readyState == null) {
+			if (req.readyState === null) {
 				req.readyState = 1;
 				req.addEventListener("load", function () {
 					req.readyState = 4;
@@ -1728,7 +1766,7 @@ hui.request.createTransport = function() {
 	catch (ex) {
 	}
 	return null;
-}
+};
 
 hui.request._getActiveX = function() {
 	var prefixes = ["MSXML2", "Microsoft", "MSXML", "MSXML3"];
@@ -1736,9 +1774,9 @@ hui.request._getActiveX = function() {
 		try {
 			return new ActiveXObject(prefixes[i] + ".XmlHttp");
 		}
-		catch (ex) {};
+		catch (ex) {}
 	}
-}
+};
 
 
 
@@ -1763,12 +1801,12 @@ hui.style = {
 			if (value) {
 				target.style[hui.string.camelize(property)] = value;
 			}
-		};
+		}
 	},
 	set : function(element,styles) {
 		for (var style in styles) {
 			if (style==='transform') {
-				element.style['webkitTransform'] = styles[style];
+				element.style.webkitTransform = styles[style];
 			} else if (style==='opacity') {
 				hui.style.setOpacity(element,styles[style]);
 			} else {
@@ -1804,21 +1842,21 @@ hui.style = {
 	setOpacity : function(element,opacity) {
 		if (!hui.browser.opacity) {
 			if (opacity==1) {
-				element.style['filter']=null;
+				element.style.filter = null;
 			} else {
-				element.style['filter']='alpha(opacity='+(opacity*100)+')';
+				element.style.filter = 'alpha(opacity='+(opacity*100)+')';
 			}
 		} else {
-			element.style['opacity']=opacity;
+			element.style.opacity = opacity;
 		}
 	},
     length : function(value) {
-        if (typeof(value)==='number') {
-            return value+'px';
+        if (typeof(value) === 'number') {
+            return value + 'px';
         }
         return value;
     }
-}
+};
 
 
 
@@ -1853,7 +1891,7 @@ hui.frame = {
 	        return frame.contentWindow;
 	    }
 	}
-}
+};
 
 
 
@@ -1903,13 +1941,13 @@ hui.selection = {
 		return {
 			node : hui.selection.getNode(doc),
 			text : hui.selection.getText(doc)
-		}
+		};
 	},
 	enable : function(on) {
 		document.onselectstart = on ? null : function () { return false; };
 		document.body.style.webkitUserSelect = on ? null : 'none';
 	}
-}
+};
 
 
 
@@ -2014,7 +2052,7 @@ hui.effect = {
 		},options.duration || 1000);
 	
 	}
-}
+};
 
 
 
@@ -2028,7 +2066,7 @@ hui.document = {
 	 * Get the height of the document (including the invisble part)
 	 */
 	getWidth : function() {
-		return Math.max(document.body.clientWidth,document.documentElement.clientWidth,document.documentElement.scrollWidth)
+		return Math.max(document.body.clientWidth,document.documentElement.clientWidth,document.documentElement.scrollWidth);
 	},
 	/**
 	 * Get the width of the document (including the invisble part)
@@ -2051,7 +2089,7 @@ hui.document = {
 			return Math.max(document.body.clientHeight,document.documentElement.clientHeight,document.documentElement.scrollHeight);
 		}
 	}
-}
+};
 
 
 
@@ -2070,47 +2108,65 @@ hui.drag = {
 	 *  <em>see hui.drag.start for more options</em>
 	 * }
 	 * @param {Object} options The options
+	 * @param {Element} options.element The element to attach to
 	 */
 	register : function(options) {
-		hui.listen(options.element,'mousedown',function(e) {
+		var touch = options.touch && hui.browser.touch;
+		hui.listen(options.element,touch ? 'touchstart' : 'mousedown',function(e) {
+			e = hui.event(e);
+			// TODO This shuould be a hui.Event
 			if (options.$check && options.$check(e)===false) {
 				return;
 			}
-			hui.stop(e);
-			hui.drag.start(options);
-		})
+			e.stop();
+			hui.drag.start(options,e);
+		});
 	},
 	/** Start dragging
 	 * <pre><strong>options:</strong> {
 	 *  onBeforeMove : function(event), // Called when the cursor moves for the first time
 	 *  onMove : function(event), // Called when the cursor moves
 	 *  onAfterMove : function(event), // Called if the cursor has moved
+   *  onNotMoved : function(event), // Called if the cursor has not moved
 	 *  onEnd : function(event), // Called when the mouse is released, even if the cursor has not moved
 	 * }
 	 * @param {Object} options The options
 	 */
-	start : function(options) {
+	start : function(options,e) {
 		var target = hui.browser.msie ? document : window;
-		
+		var touch = options.touch && hui.browser.touch;
 		if (options.onStart) {
 			options.onStart();
 		}
+		var latest = {
+			x: e.getLeft(),
+			y: e.getTop(),
+			time: Date.now()
+		};
+		var initial = latest;
 		var mover,
 			upper,
 			moved = false;
 		mover = function(e) {
 			e = hui.event(e);
 			e.stop(e);
+/*
+			var pos = {x:e.getLeft(),y:e.getTop(),time: Date.now()};
+			
+			var speed = (latest.x - pos.x) / (latest.time - pos.time);
+			hui.log(speed);
+			latest = pos;
+*/			
 			if (!moved && options.onBeforeMove) {
 				options.onBeforeMove(e);
 			}
 			moved = true;
 			options.onMove(e);
 		}.bind(this);
-		hui.listen(target,'mousemove',mover);
+		hui.listen(target,touch ? 'touchmove' : 'mousemove',mover);
 		upper = function() {
-			hui.unListen(target,'mousemove',mover);
-			hui.unListen(target,'mouseup',upper);
+			hui.unListen(target,touch ? 'touchmove' : 'mousemove',mover);
+			hui.unListen(target,touch ? 'touchend' : 'mouseup',upper);
 			if (options.onEnd) {
 				options.onEnd();
 			}
@@ -2121,8 +2177,8 @@ hui.drag = {
 				options.onNotMoved();
 			}
 			hui.selection.enable(true);
-		}.bind(this)
-		hui.listen(target,'mouseup',upper);
+		}.bind(this);
+		hui.listen(target,touch ? 'touchend' : 'mouseup',upper);
 		hui.selection.enable(false);
 	},
 	
@@ -2146,7 +2202,9 @@ hui.drag = {
 			return;
 		}
 		hui.drag._nativeListeners.push(options);
-		if (hui.drag._nativeListeners.length>1) {return};
+		if (hui.drag._nativeListeners.length>1) {
+            return;
+        }
 		hui.listen(document.body,'dragenter',function(e) {
 			var l = hui.drag._nativeListeners;
 			var found = null;
@@ -2154,12 +2212,12 @@ hui.drag = {
 				var lmnt = l[i].element;
 				if (hui.dom.isDescendantOrSelf(e.target,lmnt)) {
 					found = l[i];
-					if (hui.drag._activeDrop==null || hui.drag._activeDrop!=found) {
+					if (hui.drag._activeDrop === null || hui.drag._activeDrop != found) {
 						hui.cls.add(lmnt,found.hoverClass);
 					}
 					break;
 				}
-			};
+			}
 			if (hui.drag._activeDrop) {
 				//var foundElement = found ? found.element : null;
 				if (hui.drag._activeDrop!=found) {
@@ -2193,7 +2251,7 @@ hui.drag = {
 		});
 		
 		hui.listen(document.body,'drop',function(e) {
-			var event = hui.event(e)
+			var event = hui.event(e);
 			event.stop();
 			var options = hui.drag._activeDrop;
 			hui.drag._activeDrop = null;
@@ -2203,10 +2261,10 @@ hui.drag = {
 					options.$drop(e,{event:event});
 				}
 				if (e.dataTransfer) {
-					hui.log(e.dataTransfer.types)
+					hui.log(e.dataTransfer.types);
 					if (options.$dropFiles && e.dataTransfer.files && e.dataTransfer.files.length>0) {
 						options.$dropFiles(e.dataTransfer.files,{event:event});
-					} else if (options.$dropURL && e.dataTransfer.types!=null && (hui.array.contains(e.dataTransfer.types,'public.url') || hui.array.contains(e.dataTransfer.types,'text/uri-list'))) {
+					} else if (options.$dropURL && e.dataTransfer.types !== null && (hui.array.contains(e.dataTransfer.types,'public.url') || hui.array.contains(e.dataTransfer.types,'text/uri-list'))) {
 						var url = e.dataTransfer.getData('public.url');
 						var uriList = e.dataTransfer.getData('text/uri-list');
 						if (url && !hui.string.startsWith(url,'data:')) {
@@ -2214,14 +2272,14 @@ hui.drag = {
 						} else if (uriList && !hui.string.startsWith(url,'data:')) {
 							options.$dropURL(uriList,{event:event});
 						}
-					} else if (options.$dropText && e.dataTransfer.types!=null && hui.array.contains(e.dataTransfer.types,'text/plain')) {
-						options.$dropText(e.dataTransfer.getData('text/plain'),{event:event})
+					} else if (options.$dropText && e.dataTransfer.types !== null && hui.array.contains(e.dataTransfer.types,'text/plain')) {
+						options.$dropText(e.dataTransfer.getData('text/plain'),{event:event});
 					}
 				}
 			}
 		});
 	}
-}
+};
 
 
 
@@ -2229,7 +2287,7 @@ hui.drag = {
 
 /** @constructor
  * A preloader for images
- * Events: imageDidLoad(index), imageDidGiveError(index), imageDidAbort(index)
+ * Events: imageDidLoad(index), imageDidGiveError(index), imageDidAbort(index), allImagesDidLoad
  * @param options {context:«prefix for urls»}
  */
 hui.Preloader = function(options) {
@@ -2237,7 +2295,7 @@ hui.Preloader = function(options) {
 	this.delegate = {};
 	this.images = [];
 	this.loaded = 0;
-}
+};
 
 hui.Preloader.prototype = {
 	/** Add images either as a single url or an array of urls */
@@ -2245,7 +2303,7 @@ hui.Preloader.prototype = {
 		if (typeof(imageOrImages)=='object') {
 			for (var i=0; i < imageOrImages.length; i++) {
 				this.images.push(imageOrImages[i]);
-			};
+			}
 		} else {
 			this.images.push(imageOrImages);
 		}
@@ -2261,6 +2319,9 @@ hui.Preloader.prototype = {
 		startIndex = startIndex || 0;
 		var self = this;
 		this.obs = [];
+		var onLoad = function() {self._imageChanged(this.huiPreloaderIndex,'imageDidLoad');};
+		var onError = function() {self._imageChanged(this.huiPreloaderIndex,'imageDidGiveError');};
+		var onAbort = function() {self._imageChanged(this.huiPreloaderIndex,'imageDidAbort');};
 		for (var i=startIndex; i < this.images.length+startIndex; i++) {
 			var index=i;
 			if (index>=this.images.length) {
@@ -2268,12 +2329,12 @@ hui.Preloader.prototype = {
 			}
 			var img = new Image();
 			img.huiPreloaderIndex = index;
-			img.onload = function() {self._imageChanged(this.huiPreloaderIndex,'imageDidLoad')};
-			img.onerror = function() {self._imageChanged(this.huiPreloaderIndex,'imageDidGiveError')};
-			img.onabort = function() {self._imageChanged(this.huiPreloaderIndex,'imageDidAbort')};
+			img.onload = onLoad;
+			img.onerror = onError;
+			img.onabort = onAbort;
 			img.src = (this.options.context ? this.options.context : '')+this.images[index];
 			this.obs.push(img);
-		};
+		}
 	},
 	_imageChanged : function(index,method) {
 		this.loaded++;
@@ -2284,7 +2345,7 @@ hui.Preloader.prototype = {
 			this.delegate.allImagesDidLoad();
 		}
 	}
-}
+};
 
 
 
@@ -2314,7 +2375,7 @@ hui.cookie = {
 			while (c.charAt(0)==' ') {
 				c = c.substring(1,c.length);
 			}
-			if (c.indexOf(nameEQ) == 0) {
+			if (c.indexOf(nameEQ) === 0) {
 				return c.substring(nameEQ.length,c.length);
 			}
 		}
@@ -2324,7 +2385,7 @@ hui.cookie = {
 	clear : function(name) {
 		this.set(name,"",-1);
 	}
-}
+};
 
 
 
@@ -2342,7 +2403,7 @@ hui.location = {
 			if (parms[i].name==name) {
 				return parms[i].value;
 			}
-		};
+		}
 		return null;
 	},
 	/** Set an URL parameter - initiates a new request */
@@ -2355,7 +2416,7 @@ hui.location = {
 				found=true;
 				break;
 			}
-		};
+		}
 		if (!found) {
 			parms.push({name:name,value:value});
 		}
@@ -2401,9 +2462,9 @@ hui.location = {
 	setParameters : function(parms) {
 		var query = '';
 		for (var i=0; i < parms.length; i++) {
-			query+= i==0 ? '?' : '&';
+			query+= i === 0 ? '?' : '&';
 			query+=parms[i].name+'='+parms[i].value;
-		};
+		}
 		document.location.search=query;
 	},
 	/** Checks if a parameter exists with the value 'true' or 1 */
@@ -2414,7 +2475,7 @@ hui.location = {
 	/** Checks if a parameter exists with the value 'true' or 1 */
 	getInt : function(name) {
 		var value = parseInt(hui.location.getParameter(name));
-		if (value!==NaN) {
+		if (!isNaN(value)) {
 			return value;
 		}
 		return null;
@@ -2430,110 +2491,15 @@ hui.location = {
 			if (name) {
 				parsed.push({name:name,value:value});
 			}
-		};
+		}
 		return parsed;
 	}	
 };
 
 
 
-hui.xml = {
-	transform : function(xml,xsl) {
-		if (window.ActiveXObject) {
-			return xml.transformNode(xsl);
-		} else if (document.implementation && document.implementation.createDocument) {
-			try {
-			  	var pro = new XSLTProcessor();
-                pro.setParameter(null,'dev','true');
-                pro.setParameter(null,'profile','true');
-                pro.setParameter(null,'version','true');
-                pro.setParameter(null,'pathVersion','true');
-                pro.setParameter(null,'context','true');
-                pro.setParameter(null,'language','true');
-			  	pro.importStylesheet(xsl);
-/*		'<xsl:variable name="profile">'.$profile.'</xsl:variable>'.
-		'<xsl:variable name="version">'.SystemInfo::getDate().'</xsl:variable>'.
-		'<xsl:variable name="pathVersion">'.$pathVersion.'</xsl:variable>'.
-		'<xsl:variable name="context">'.$context.'</xsl:variable>'.
-		'<xsl:variable name="language">'.InternalSession::getLanguage().'</xsl:variable>';)*/
-				var ownerDocument = document;//.implementation.createDocument("", "test", null); 
-			    return pro.transformToFragment(xml,ownerDocument);				
-			} catch (e) {
-				hui.log('Transform exception...');
-				hui.log(e);
-				throw e;
-			}
-		} else {
-			hui.log('No XSLT!');
-		}
-	},
-	parse : function(xml) {
-		var doc;
-		try {
-		if (window.DOMParser) {
-  			var parser = new DOMParser();
-  			doc = parser.parseFromString(xml,"text/xml");
-			var errors = doc.getElementsByTagName('parsererror');
-			if (errors.length>0 && errors[0].textContent) {
-				hui.log(errors[0].textContent)
-				return null;
-			}
-  		} else {
-  			doc = new ActiveXObject("Microsoft.XMLDOM");
-			doc.async = false;
-  			doc.loadXML(xml); 
-  		}
-		} catch (e) {
-			return null;
-		}
-		return doc;
-	},
-	serialize : function(node) {
-  		try {
-      		return (new XMLSerializer()).serializeToString(node);
-  		} catch (e) {
-     		try {
-        		return node.xml;
-     		}
-     		catch (e) {}
-     	}
-		return null;
-   	}
-}
-
-
-
-
-
-
-
-
-if (!Function.prototype.bind) {
-	Function.prototype.bind = function () {
-	    if (arguments.length < 2 && arguments[0] === undefined) {
-	        return this;
-	    }
-	    var thisObj = this,
-	    args = Array.prototype.slice.call(arguments),
-	    obj = args.shift();
-	    return function () {
-	        return thisObj.apply(obj, args.concat(Array.prototype.slice.call(arguments)));
-	    };
-	};
-
-	Function.bind = function() {
-	    var args = Array.prototype.slice.call(arguments);
-	    return Function.prototype.bind.apply(args.shift(), args);
-	}
-}
-
-if (!Function.prototype.argumentNames) {
-	Function.prototype.argumentNames = function() {
-		var names = this.toString().match(/^[\s\(]*function[^(]*\(([^)]*)\)/)[1]
-			.replace(/\/\/.*?[\r\n]|\/\*(?:.|[\r\n])*?\*\//g, '')
-			.replace(/\s+/g, '').split(',');
-		return names.length == 1 && !names[0] ? [] : names;
-	}
+if (window.define) {
+	define('hui');
 }
 
 /////////////////////////// Animation ///////////////////////////
@@ -2547,6 +2513,7 @@ if (!Function.prototype.argumentNames) {
  *  ease : function(num) {},
  *  $complete : function() {}
  *}
+ * TODO Document options.property, options.value
  * 
  * @param {Element | Object} options Options or an element
  * @param {String} style The css property
@@ -2640,7 +2607,7 @@ hui.animation._ieOpacityUpdater = function(element,v,work) {
 hui.animation._render = function() {
 	hui.animation.running = true;
 	var next = false,
-		stamp = new Date().getTime();
+	stamp = Date.now();
 	for (var id in hui.animation.objects) {
 		var obj = hui.animation.objects[id];
 		if (obj.work) {
@@ -2771,7 +2738,7 @@ hui.animation.Item.prototype.animate = function(from,to,property,duration,delega
 		work.unit = null;
 		work.updater = hui.animation._propertyUpater;
 	}
-	work.start = new Date().getTime();
+	work.start = Date.now();
 	if (delegate && delegate.delay) {
 		work.start+=delegate.delay;
 	}
@@ -3105,6 +3072,11 @@ hui.ease = {
 	}
 };
 
+if (!Date.now) {
+  Date.now = function now() {
+    return new Date().getTime();
+  };
+}
 
 (function() {
     var lastTime = 0;
@@ -3118,7 +3090,7 @@ hui.ease = {
     }
     if (!window.requestAnimationFrame) {
         window.requestAnimationFrame = function(callback, element) {
-            var currTime = new Date().getTime();
+            var currTime = Date.now();
             var timeToCall = Math.max(0, 16 - (currTime - lastTime));
             var id = window.setTimeout(function() { callback(currTime + timeToCall); },
               0);
@@ -3580,6 +3552,70 @@ hui.store = {
 
 }
 
+
+hui.xml = {
+/*	transform : function(xml,xsl) {
+		if (window.ActiveXObject) {
+			return xml.transformNode(xsl);
+		} else if (document.implementation && document.implementation.createDocument) {
+			try {
+			  	var pro = new XSLTProcessor();
+                pro.setParameter(null,'dev','true');
+                pro.setParameter(null,'profile','true');
+                pro.setParameter(null,'version','true');
+                pro.setParameter(null,'pathVersion','true');
+                pro.setParameter(null,'context','true');
+                pro.setParameter(null,'language','true');
+			  	pro.importStylesheet(xsl);
+//		'<xsl:variable name="profile">'.$profile.'</xsl:variable>'.
+//		'<xsl:variable name="version">'.SystemInfo::getDate().'</xsl:variable>'.
+//		'<xsl:variable name="pathVersion">'.$pathVersion.'</xsl:variable>'.
+//		'<xsl:variable name="context">'.$context.'</xsl:variable>'.
+//		'<xsl:variable name="language">'.InternalSession::getLanguage().'</xsl:variable>';)
+				var ownerDocument = document;//.implementation.createDocument("", "test", null); 
+			    return pro.transformToFragment(xml,ownerDocument);				
+			} catch (e) {
+				hui.log('Transform exception...');
+				hui.log(e);
+				throw e;
+			}
+		} else {
+			hui.log('No XSLT!');
+		}
+	},*/
+	parse : function(xml) {
+		var doc;
+		try {
+		if (window.DOMParser) {
+  			var parser = new DOMParser();
+  			doc = parser.parseFromString(xml,"text/xml");
+			var errors = doc.getElementsByTagName('parsererror');
+			if (errors.length>0 && errors[0].textContent) {
+				hui.log(errors[0].textContent);
+				return null;
+			}
+  		} else {
+  			doc = new ActiveXObject("Microsoft.XMLDOM");
+			doc.async = false;
+  			doc.loadXML(xml); 
+  		}
+		} catch (e) {
+			return null;
+		}
+		return doc;
+	},
+	serialize : function(node) {
+  		try {
+      		return (new XMLSerializer()).serializeToString(node);
+  		} catch (e) {
+     		try {
+        		return node.xml;
+     		}
+     		catch (ex) {}
+     	}
+		return null;
+   	}
+};
 
 /**
  * SWFUpload: http://www.swfupload.org, http://swfupload.googlecode.com
@@ -4402,283 +4438,6 @@ SWFUpload.prototype.debug = function (message) {
 
 
 /*
-    json2.js
-    2008-01-17
-
-    Public Domain
-
-    No warranty expressed or implied. Use at your own risk.
-
-    See http://www.JSON.org/js.html
-
-    This file creates a global JSON object containing two methods:
-
-        JSON.stringify(value, whitelist)
-            value       any JavaScript value, usually an object or array.
-
-            whitelist   an optional array prameter that determines how object
-                        values are stringified.
-
-            This method produces a JSON text from a JavaScript value.
-            There are three possible ways to stringify an object, depending
-            on the optional whitelist parameter.
-
-            If an object has a toJSON method, then the toJSON() method will be
-            called. The value returned from the toJSON method will be
-            stringified.
-
-            Otherwise, if the optional whitelist parameter is an array, then
-            the elements of the array will be used to select members of the
-            object for stringification.
-
-            Otherwise, if there is no whitelist parameter, then all of the
-            members of the object will be stringified.
-
-            Values that do not have JSON representaions, such as undefined or
-            functions, will not be serialized. Such values in objects will be
-            dropped; in arrays will be replaced with null.
-            JSON.stringify(undefined) returns undefined. Dates will be
-            stringified as quoted ISO dates.
-
-            Example:
-
-            var text = JSON.stringify(['e', {pluribus: 'unum'}]);
-            // text is '["e",{"pluribus":"unum"}]'
-
-        JSON.parse(text, filter)
-            This method parses a JSON text to produce an object or
-            array. It can throw a SyntaxError exception.
-
-            The optional filter parameter is a function that can filter and
-            transform the results. It receives each of the keys and values, and
-            its return value is used instead of the original value. If it
-            returns what it received, then structure is not modified. If it
-            returns undefined then the member is deleted.
-
-            Example:
-
-            // Parse the text. If a key contains the string 'date' then
-            // convert the value to a date.
-
-            myData = JSON.parse(text, function (key, value) {
-                return key.indexOf('date') >= 0 ? new Date(value) : value;
-            });
-
-    This is a reference implementation. You are free to copy, modify, or
-    redistribute.
-
-    Use your own copy. It is extremely unwise to load third party
-    code into your pages.
-*/
-
-/*jslint evil: true */
-
-/*global JSON */
-
-/*members "\b", "\t", "\n", "\f", "\r", "\"", JSON, "\\", apply,
-    charCodeAt, floor, getUTCDate, getUTCFullYear, getUTCHours,
-    getUTCMinutes, getUTCMonth, getUTCSeconds, hasOwnProperty, join, length,
-    parse, propertyIsEnumerable, prototype, push, replace, stringify, test,
-    toJSON, toString
-*/
-
-if (!this.JSON) {
-
-    JSON = function () {
-
-        function f(n) {    // Format integers to have at least two digits.
-            return n < 10 ? '0' + n : n;
-        }
-
-        Date.prototype.toJSON = function () {
-
-// Eventually, this method will be based on the date.toISOString method.
-
-            return this.getUTCFullYear()   + '-' +
-                 f(this.getUTCMonth() + 1) + '-' +
-                 f(this.getUTCDate())      + 'T' +
-                 f(this.getUTCHours())     + ':' +
-                 f(this.getUTCMinutes())   + ':' +
-                 f(this.getUTCSeconds())   + 'Z';
-        };
-
-
-        var m = {    // table of character substitutions
-            '\b': '\\b',
-            '\t': '\\t',
-            '\n': '\\n',
-            '\f': '\\f',
-            '\r': '\\r',
-            '"' : '\\"',
-            '\\': '\\\\'
-        };
-
-        function stringify(value, whitelist) {
-            var a,          // The array holding the partial texts.
-                i,          // The loop counter.
-                k,          // The member key.
-                l,          // Length.
-                r = /["\\\x00-\x1f\x7f-\x9f]/g,
-                v;          // The member value.
-
-            switch (typeof value) {
-            case 'string':
-
-// If the string contains no control characters, no quote characters, and no
-// backslash characters, then we can safely slap some quotes around it.
-// Otherwise we must also replace the offending characters with safe sequences.
-
-                return r.test(value) ?
-                    '"' + value.replace(r, function (a) {
-                        var c = m[a];
-                        if (c) {
-                            return c;
-                        }
-                        c = a.charCodeAt();
-                        return '\\u00' + Math.floor(c / 16).toString(16) +
-                                                   (c % 16).toString(16);
-                    }) + '"' :
-                    '"' + value + '"';
-
-            case 'number':
-
-// JSON numbers must be finite. Encode non-finite numbers as null.
-
-                return isFinite(value) ? String(value) : 'null';
-
-            case 'boolean':
-            case 'null':
-                return String(value);
-
-            case 'object':
-
-// Due to a specification blunder in ECMAScript,
-// typeof null is 'object', so watch out for that case.
-
-                if (!value) {
-                    return 'null';
-                }
-
-// If the object has a toJSON method, call it, and stringify the result.
-
-                if (typeof value.toJSON === 'function') {
-                    return stringify(value.toJSON());
-                }
-                a = [];
-                if (typeof value.length === 'number' &&
-                        !(value.propertyIsEnumerable('length'))) {
-
-// The object is an array. Stringify every element. Use null as a placeholder
-// for non-JSON values.
-
-                    l = value.length;
-                    for (i = 0; i < l; i += 1) {
-                        a.push(stringify(value[i], whitelist) || 'null');
-                    }
-
-// Join all of the elements together and wrap them in brackets.
-
-                    return '[' + a.join(',') + ']';
-                }
-                if (whitelist) {
-
-// If a whitelist (array of keys) is provided, use it to select the components
-// of the object.
-
-                    l = whitelist.length;
-                    for (i = 0; i < l; i += 1) {
-                        k = whitelist[i];
-                        if (typeof k === 'string') {
-                            v = stringify(value[k], whitelist);
-                            if (v) {
-                                a.push(stringify(k) + ':' + v);
-                            }
-                        }
-                    }
-                } else {
-
-// Otherwise, iterate through all of the keys in the object.
-
-                    for (k in value) {
-                        if (typeof k === 'string') {
-                            v = stringify(value[k], whitelist);
-                            if (v) {
-                                a.push(stringify(k) + ':' + v);
-                            }
-                        }
-                    }
-                }
-
-// Join all of the member texts together and wrap them in braces.
-
-                return '{' + a.join(',') + '}';
-            }
-        }
-
-        return {
-            stringify: stringify,
-            parse: function (text, filter) {
-                var j;
-
-                function walk(k, v) {
-                    var i, n;
-                    if (v && typeof v === 'object') {
-                        for (i in v) {
-                            if (Object.prototype.hasOwnProperty.apply(v, [i])) {
-                                n = walk(i, v[i]);
-                                if (n !== undefined) {
-                                    v[i] = n;
-                                }
-                            }
-                        }
-                    }
-                    return filter(k, v);
-                }
-
-
-// Parsing happens in three stages. In the first stage, we run the text against
-// regular expressions that look for non-JSON patterns. We are especially
-// concerned with '()' and 'new' because they can cause invocation, and '='
-// because it can cause mutation. But just to be safe, we want to reject all
-// unexpected forms.
-
-// We split the first stage into 4 regexp operations in order to work around
-// crippling inefficiencies in IE's and Safari's regexp engines. First we
-// replace all backslash pairs with '@' (a non-JSON character). Second, we
-// replace all simple value tokens with ']' characters. Third, we delete all
-// open brackets that follow a colon or comma or that begin the text. Finally,
-// we look to see that the remaining characters are only whitespace or ']' or
-// ',' or ':' or '{' or '}'. If that is so, then the text is safe for eval.
-
-                if (/^[\],:{}\s]*$/.test(text.replace(/\\./g, '@').
-replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').
-replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
-
-// In the second stage we use the eval function to compile the text into a
-// JavaScript structure. The '{' operator is subject to a syntactic ambiguity
-// in JavaScript: it can begin a block or an object literal. We wrap the text
-// in parens to eliminate the ambiguity.
-
-                    j = eval('(' + text + ')');
-
-// In the optional third stage, we recursively walk the new structure, passing
-// each name/value pair to a filter function for possible transformation.
-
-                    return typeof filter === 'function' ? walk('', j) : j;
-                }
-
-// If the text is not JSON parseable, then a SyntaxError is thrown.
-
-                throw new SyntaxError('parseJSON');
-            }
-        };
-    }();
-}
-
-
-
-
-/*
  * Copyright (C) 2004 Baron Schwartz <baron at sequent dot org>
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -5118,7 +4877,7 @@ hui.ui = {
 		reload_page : {en:'Reload page',da:'Indæs siden igen'},
 		access_denied : {en:'Access denied, maybe you are nolonger logged in',da:'Adgang nægtet, du er måske ikke længere logget ind'}
 	}
-}
+};
 
 /**
  * Get a widget by name
@@ -5150,7 +4909,7 @@ hui.ui.onReady = function(func) {
 
 hui.ui._frameLoaded = function(win) {
 	hui.ui.callSuperDelegates(this,'frameLoaded',win);
-}
+};
 
 /** @private */
 hui.ui._resize = function() {
@@ -5159,12 +4918,11 @@ hui.ui._resize = function() {
 	if (!hui.ui._resizeFirst) {
 		this._delayedResize = window.setTimeout(hui.ui._afterResize,1000);
 	}
-}
+};
 
 hui.ui._afterResize = function() {
-	hui.log('afterResize')
 	hui.ui.callSuperDelegates(hui.ui,'$afterResize');
-}
+};
 
 /**
  * Show a confirming overlay
@@ -5203,7 +4961,7 @@ hui.ui.confirmOverlay = function(options) {
 		if (options.onOk) {
 			options.onOk();
 		}
-		if (options['$ok']) {
+		else if (options.$ok) {
 			options.$ok();
 		}
 		overlay.hide();
@@ -5214,14 +4972,14 @@ hui.ui.confirmOverlay = function(options) {
 		if (options.onCancel) {
 			options.onCancel();
 		}
-		if (options['$cancel']) {
+		else if (options.$cancel) {
 			options.$cancel();
 		}
 		overlay.hide();
 	});
 	overlay.add(cancel);
 	overlay.show({element:node});
-}
+};
 
 /**
  * Unregisters a widget
@@ -5232,15 +4990,15 @@ hui.ui.destroy = function(widget) {
         widget.destroy();
     }
 	delete(hui.ui.objects[widget.name]);
-}
+};
 
 hui.ui.destroyDescendants = function(widgetOrElement) {
 	var desc = hui.ui.getDescendants(widgetOrElement);
 	var objects = hui.ui.objects;
 	for (var i=0; i < desc.length; i++) {
         hui.ui.destroy(desc[i]);
-	};
-}
+	}
+};
 
 /** Gets all ancestors of a widget
 	@param {Widget} widget A widget
@@ -5264,7 +5022,7 @@ hui.ui.getAncestors = function(widget) {
 		}
 	}
 	return desc;
-}
+};
 
 hui.ui.getDescendants = function(widgetOrElement) {
 	var desc = [];
@@ -5282,12 +5040,11 @@ hui.ui.getDescendants = function(widgetOrElement) {
 						desc.push(o[j]);
 					}
 				};
-			
 			};
 		}
 	}
 	return desc;
-}
+};
 
 hui.ui.getAncestor = function(widget,cls) {
 	var a = hui.ui.getAncestors(widget);
@@ -5295,9 +5052,9 @@ hui.ui.getAncestor = function(widget,cls) {
 		if (hui.cls.has(a[i].getElement(),cls)) {
 			return a[i];
 		}
-	};
+	}
 	return null;
-}
+};
 
 
 
@@ -5318,17 +5075,17 @@ hui.ui.changeState = function(state) {
 	hui.ui.state=state;
 	
 	this.reLayout();
-}
+};
 
 hui.ui.reLayout = function() {
 	var widgets = hui.ui.getDescendants(document.body);
 	for (var i=0; i < widgets.length; i++) {
 		var obj = widgets[i];
-		if (obj['$$layout']) {
-			obj['$$layout']();
+		if (obj.$$layout) {
+			obj.$$layout();
 		}
-	};
-}
+	}
+};
 
 
 
@@ -5373,8 +5130,8 @@ hui.ui.showCurtain = function(options) {
 		}
 		body.appendChild(widget.curtain);
 		hui.listen(widget.curtain,'click',function() {
-			if (widget['$curtainWasClicked']) {
-				widget['$curtainWasClicked']();
+			if (widget.$curtainWasClicked) {
+				widget.$curtainWasClicked();
 			}
 		});
 	}
@@ -5410,7 +5167,7 @@ hui.ui.showCurtain = function(options) {
 		curtain.style.display='block';
 		hui.animate(curtain,'opacity',0.7,1000,{ease:hui.ease.slowFastSlow});
 	}
-}
+};
 
 hui.ui.hideCurtain = function(widget) {
 	if (widget.curtain) {
@@ -5428,14 +5185,14 @@ hui.ui.hideCurtain = function(widget) {
  * @returns {String} The localized string
  */
 hui.ui.getText = function(key) {
-	var x = this.texts[key];
-	if (!x) {return key}
-	if (x[this.language]) {
-		return x[this.language];
+	var parts = this.texts[key];
+	if (!parts) {return key;}
+	if (parts[this.language]) {
+		return parts[this.language];
 	} else {
-		return x['en'];
+		return parts.en;
 	}
-}
+};
 
 hui.ui.getTranslated = function(value) {
 	if (!hui.isDefined(value) || hui.isString(value) || typeof(value) == 'number') {
@@ -5450,7 +5207,7 @@ hui.ui.getTranslated = function(value) {
 	for (var key in value) {
 		return value[key];
 	}
-}
+};
 
 
 
@@ -5494,7 +5251,7 @@ hui.ui.confirm = function(options) {
 		hui.ui.callDelegates(alert,'ok');
 	}});
 	alert.show();
-}
+};
 
 hui.ui.alert = function(options) {
 	if (!this.alertBox) {
@@ -5569,12 +5326,12 @@ hui.ui.msg = hui.ui.showMessage;
 hui.ui.msg.success = function(options) {
 	options = hui.override({icon:'common/success',duration:2000},options);
 	hui.ui.msg(options);
-}
+};
 
 hui.ui.msg.fail = function(options) {
 	options = hui.override({icon:'common/warning',duration:3000},options);
 	hui.ui.msg(options);
-}
+};
 
 hui.ui.hideMessage = function() {
 	window.clearTimeout(hui.ui.messageDelayTimer);
@@ -5636,7 +5393,7 @@ hui.ui.getElement = function(widgetOrElement) {
 		return widgetOrElement.getElement();
 	}
 	return null;
-}
+};
 
 hui.ui.isWithin = function(e,element) {
 	e = hui.event(e);
@@ -5689,7 +5446,7 @@ hui.ui.keyboardTarget = null; // The widget currently accepting keyboard input
 
 hui.ui.setKeyboardTarget = function(widget) {
 	hui.ui.keyboardTarget = widget;
-}
+};
 
 
 /**
@@ -5699,7 +5456,7 @@ hui.ui.setKeyboardTarget = function(widget) {
 hui.ui.stress = function(widget) {
 	var e = hui.ui.getElement(widget);
 	hui.effect.wiggle({element:e,duration:1000});
-}
+};
 
 
 //////////////////////////// Positioning /////////////////////////////
@@ -5753,41 +5510,41 @@ hui.ui.extend = function(obj,options) {
 	obj.listen = function(delegate) {
 		hui.array.add(this.delegates,delegate);
 		return this;
-	}
+	};
 	obj.unListen = function(delegate) {
 		hui.array.remove(this.delegates,delegate);
-	}
+	};
 	obj.clearListeners = function() {
 		this.delegates = [];
-	}
+	};
 	obj.fire = function(method,value,event) {
 		return hui.ui.callDelegates(this,method,value,event);
-	}
+	};
 	obj.fireValueChange = function() {
 		obj.fire('valueChanged',obj.value);
 		hui.ui.firePropertyChange(obj,'value',obj.value);
 		hui.ui.callAncestors(obj,'childValueChanged',obj.value);
-	}
+	};
 	obj.fireProperty = function(key,value) {
 		hui.ui.firePropertyChange(this,key,value);
-	}
+	};
 	obj.fireSizeChange = function() {
 		hui.ui.callAncestors(obj,'$$childSizeChanged');
-	}
+	};
 	if (!obj.getElement) {
 		obj.getElement = function() {
 			return this.element;
-		}
+		};
 	}
 	if (!obj.destroy) {
 		obj.destroy = function() {
             if (this.element) {
-                hui.dom.remove(this.element)
+                hui.dom.remove(this.element);
             }
-		}
+		};
 	}
 	if (!obj.valueForProperty) {
-		obj.valueForProperty = function(p) {return this[p]};
+		obj.valueForProperty = function(p) {return this[p];};
 	}
 };
 
@@ -5799,7 +5556,7 @@ hui.ui.callAncestors = function(obj,method,value,event) {
 		if (d[i][method]) {
 			d[i][method](value,event);
 		}
-	};
+	}
 };
 
 /** Send a message to all descendants of a widget */
@@ -5807,7 +5564,7 @@ hui.ui.callDescendants = function(obj,method,value,event) {
 	if (typeof(value)=='undefined') {
 		value=obj;
 	}
-	if (!method[0]=='$') {
+	if (method[0] !== '$') {
 		method = '$'+method;
 	}
 	var d = hui.ui.getDescendants(obj);
@@ -5815,13 +5572,13 @@ hui.ui.callDescendants = function(obj,method,value,event) {
 		if (d[i][method]) {
 			d[i][method](value,event);
 		}
-	};
+	}
 };
 
 /** Signal that a widget has changed visibility */
 hui.ui.callVisible = function(widget) {
 	hui.ui.callDescendants(widget,'$visibilityChanged');
-}
+};
 
 /** Listen for global events */
 hui.ui.listen = function(delegate) {
@@ -5829,21 +5586,21 @@ hui.ui.listen = function(delegate) {
 		delegate.$ready();
 	}
 	hui.ui.delegates.push(delegate);
-}
+};
 
 hui.ui.unListen = function(listener) {
 	hui.array.remove(hui.ui.delegates,listener);
-}
+};
 
 hui.ui.callDelegates = function(obj,method,value,event) {
 	if (typeof(value)=='undefined') {
 		value=obj;
 	}
-	var result = undefined;
+	var result;
 	if (obj.delegates) {
 		for (var i=0; i < obj.delegates.length; i++) {
 			var delegate = obj.delegates[i],
-				thisResult = undefined,
+				thisResult,
 				x = '$'+method+'$'+obj.name;
 			if (obj.name && delegate[x]) {
 				thisResult = delegate[x](value,event);
@@ -5853,7 +5610,7 @@ hui.ui.callDelegates = function(obj,method,value,event) {
 			if (result===undefined && thisResult!==undefined && typeof(thisResult)!='undefined') {
 				result = thisResult;
 			}
-		};
+		}
 	}
 	var superResult = hui.ui.callSuperDelegates(obj,method,value,event);
 	if (result===undefined && superResult!==undefined) {
@@ -5873,7 +5630,7 @@ hui.ui.tellContainers = function(event,value) {
 			//hui.log('Unable to callContainers')
 		}
 	}
-}
+};
 
 hui.ui._tellContainers = function(event,value) {
 	hui.ui.callSuperDelegates({},event,value);
@@ -5884,14 +5641,14 @@ hui.ui._tellContainers = function(event,value) {
 			//hui.log('Unable to callContainers')
 		}
 	}
-}
+};
 
 hui.ui.callSuperDelegates = function(obj,method,value,event) {
 	if (typeof(value)=='undefined') value=obj;
-	var result = undefined;
+	var result;
 	for (var i=0; i < hui.ui.delegates.length; i++) {
-		var delegate = hui.ui.delegates[i];
-		var thisResult = undefined;
+		var delegate = hui.ui.delegates[i],
+            thisResult;
 		if (obj.name && delegate['$'+method+'$'+obj.name]) {
 			thisResult = delegate['$'+method+'$'+obj.name](value,event);
 		} else if (delegate['$'+method]) {
@@ -5900,7 +5657,7 @@ hui.ui.callSuperDelegates = function(obj,method,value,event) {
 		if (result===undefined && thisResult!==undefined && typeof(thisResult)!='undefined') {
 			result = thisResult;
 		}
-	};
+	}
 	return result;
 };
 
@@ -5909,7 +5666,7 @@ hui.ui.resolveImageUrl = function(widget,img,width,height) {
 		if (widget.delegates[i].$resolveImageUrl) {
 			return widget.delegates[i].$resolveImageUrl(img,width,height);
 		}
-	};
+	}
 	for (var j=0; j < hui.ui.delegates.length; j++) {
 		var delegate = hui.ui.delegates[j];
 		if (delegate.$resolveImageUrl) {
@@ -5928,8 +5685,8 @@ hui.ui.include = function(options) {
 			hui.dom.runScripts(container);
 			options.$success();
 		}
-	})
-},
+	});
+};
 
 
 
@@ -5978,7 +5735,7 @@ hui.ui.handleRequestError = function(widget) {
 			}
 		});
 	}
-}
+};
 
 hui.ui.handleForbidden = function(widget) {
 	hui.log('General access denied received');
@@ -5994,7 +5751,7 @@ hui.ui.handleForbidden = function(widget) {
 			}
 		});
 	}
-}
+};
 
 hui.ui.request = function(options) {
 	options = hui.override({method:'post',parameters:{}},options);
@@ -6049,7 +5806,7 @@ hui.ui.request = function(options) {
 	};
 	options.$failure = function(t) {
 		if (typeof(failure)=='string') {
-			hui.ui.callDelegates(t,'failure$'+failure)
+			hui.ui.callDelegates(t,'failure$'+failure);
 		} else if (typeof(failure)=='function') {
 			failure(t);
 		} else {
@@ -6058,7 +5815,7 @@ hui.ui.request = function(options) {
 			}
 			hui.ui.handleRequestError();
 		}
-	}
+	};
 	options.$exception = options.$exception || function(e,t) {
 		hui.log(e);
 		hui.log(t);
@@ -6074,7 +5831,7 @@ hui.ui.request = function(options) {
 			options.$failure(t);
 			hui.ui.handleForbidden();
 		}
-	}
+	};
 	if (options.message && options.message.start) {
 		hui.ui.msg({text:options.message.start,busy:true,delay:options.message.delay});
 	}
@@ -6093,7 +5850,7 @@ hui.ui.parseSubItems = function(parent,array) {
 	for (var i=0; i < children.length; i++) {
 		var node = children[i];
 		if (node.nodeType==1 && node.nodeName=='title') {
-			array.push({title:node.getAttribute('title'),type:'title'})
+			array.push({title:node.getAttribute('title'),type:'title'});
 		} else if (node.nodeType==1 && node.nodeName=='item') {
 			var sub = [];
 			hui.ui.parseSubItems(node,sub);
@@ -6107,26 +5864,8 @@ hui.ui.parseSubItems = function(parent,array) {
 				children : sub
 			});
 		}
-	};
-}
-
-/** A bundle of strings
- * @constructor
- */
-hui.ui.Bundle = function(strings) {
-	this.strings = strings;
-}
-
-hui.ui.Bundle.prototype = {
-	get : function(key) {
-		var values = this.strings[key];
-		if (values) {
-			return values[hui.ui.language];
-		}
-		hui.log(key+' not found for language:'+hui.ui.language);
-		return key;
 	}
-}
+};
 
 /**
  * Import some widgets by name
@@ -6136,11 +5875,13 @@ hui.ui.Bundle.prototype = {
 hui.ui.require = function(names,func) {
 	for (var i = names.length - 1; i >= 0; i--){
 		names[i] = hui.ui.context+'hui/js/'+names[i]+'.js';
-	};
+	}
 	hui.require(names,func);
+};
+
+if (window.define) {
+	define('hui.ui');
 }
-
-
 
 hui.onReady(function() {
 	hui.listen(window,'resize',hui.ui._resize);
@@ -6151,7 +5892,7 @@ hui.onReady(function() {
 	}
 	for (var i=0; i < hui.ui.delayedUntilReady.length; i++) {
 		hui.ui.delayedUntilReady[i]();
-	};
+	}
 	// Call super delegates after delayedUntilReady...
 	hui.ui.callSuperDelegates(this,'ready');
 });
@@ -6369,6 +6110,15 @@ hui.ui.Source.prototype = {
 	}
 }
 
+// TODO Remove this when DWR support is removed
+if (!Function.prototype.argumentNames) {
+	Function.prototype.argumentNames = function() {
+		var names = this.toString().match(/^[\s\(]*function[^(]*\(([^)]*)\)/)[1]
+			.replace(/\/\/.*?[\r\n]|\/\*(?:.|[\r\n])*?\*\//g, '')
+			.replace(/\s+/g, '').split(',');
+		return names.length == 1 && !names[0] ? [] : names;
+	}
+}
 /* EOF */
 
 /** Send a global drag and drop message */
@@ -7404,7 +7154,7 @@ hui.ui.List.prototype = {
 				if (child.getAttribute('icon')) {
 					obj.appendChild(hui.ui.createIcon(child.getAttribute('icon'),16));
 				}
-				if (child.firstChild && child.firstChild.nodeType==hui.TEXT_NODE && child.firstChild.nodeValue.length>0) {
+				if (child.firstChild && child.firstChild.nodeType===3 && child.firstChild.nodeValue.length>0) {
 					hui.dom.addText(obj,child.firstChild.nodeValue);
 				}
 				cell.appendChild(obj);
@@ -9322,7 +9072,10 @@ hui.ui.Toolbar.Icon = function(options) {
 	this.element.tabIndex=this.enabled ? 0 : -1;
 	this.icon = hui.get.firstByClass(this.element,'hui_icon');
 	hui.ui.extend(this);
-	this.addBehavior();
+  if (options.listener) {
+    this.listen(options.listener);
+  }
+	this._attach();
 }
 
 hui.ui.Toolbar.Icon.create = function(options) {
@@ -9340,11 +9093,10 @@ hui.ui.Toolbar.Icon.create = function(options) {
 }
 
 hui.ui.Toolbar.Icon.prototype = {
-	/** @private */
-	addBehavior : function() {
+	_attach : function() {
 		var self = this;
 		this.element.onclick = function() {
-			self.wasClicked();
+			self._click();
 		}
 	},
 	/** Sets wether the icon should be enabled */
@@ -9398,25 +9150,24 @@ hui.ui.Toolbar.Icon.prototype = {
 		hui.cls.set(this.element,'hui_toolbar_icon_selected',selected);
 	},
 	/** @private */
-	wasClicked : function() {
+	_click : function() {
 		if (this.enabled) {
 			if (this.options.confirm) {
 				hui.ui.confirmOverlay({
-					widget:this,
-					text:this.options.confirm.text,
-					okText:this.options.confirm.okText,
-					cancelText:this.options.confirm.cancelText,
-					onOk:this.fireClick.bind(this)
+					widget : this,
+					text : this.options.confirm.text,
+					okText : this.options.confirm.okText,
+					cancelText : this.options.confirm.cancelText,
+					onOk : this._fireClick.bind(this)
 				});
 			} else {
-				this.fireClick();
+				this._fireClick();
 			}
 		}
 	},
-	/** @private */
-	fireClick : function() {
-		hui.ui.callDelegates(this,'toolbarIconWasClicked');
-		hui.ui.callDelegates(this,'click');
+	_fireClick : function() {
+		this.fire('toolbarIconWasClicked'); // TODO deprecated
+		this.fire('click');
 	}
 }
 
@@ -9499,6 +9250,7 @@ hui.ui.ImageInput.prototype = {
 	_clear : function(e) {
 		hui.stop(e);
 		this.reset();
+		this._fireChange();
 	},
 	reset : function() {
 		this.value = null;
@@ -9820,7 +9572,7 @@ hui.ui.BoundPanel.prototype = {
             };
             nodeOffset = {
                 left : options.rect.left, 
-                top : options.rect.top,                
+                top : options.rect.top
             };
             nodeScrollOffset = {left: 0, top: 0};
 		} else {
@@ -9979,32 +9731,25 @@ hui.ui.ImageViewer = function(options) {
 	
 	// Collect elements ...
 	this.element = hui.get(options.element);
+
+  hui.collect(this.nodes,this.element);
+
 	this.box = this.options.box;
-	this.viewer = hui.get.firstByClass(this.element,'hui_imageviewer_viewer');
-	this.innerViewer = hui.get.firstByClass(this.element,'hui_imageviewer_inner_viewer');
-	
-	this.status = hui.get.firstByClass(this.element,'hui_imageviewer_status');
-	
-	this.previousControl = hui.get.firstByClass(this.element,'hui_imageviewer_previous');
-	this.controller = hui.get.firstByClass(this.element,'hui_imageviewer_controller');
-	this.nextControl = hui.get.firstByClass(this.element,'hui_imageviewer_next');
-	this.playControl = hui.get.firstByClass(this.element,'hui_imageviewer_play');
-	this.closeControl = hui.get.firstByClass(this.element,'hui_imageviewer_close');
-	
-	this.text = hui.get.firstByClass(this.element,'hui_imageviewer_text');
 	
 	// State ...
 	this.dirty = false;
 	this.width = 600;
 	this.height = 460;
 	this.index = 0;
+	this.position = 0; // pixels
 	this.playing = false;
 	this.name = options.name;
-	this.images = options.images;
+	this.images = options.images || [];
 	
 	// Behavior ...
 	this.box.listen(this);
-	this._addBehavior();
+	this._attach();
+	this._attachDrag();
 	hui.ui.extend(this);
 	
 	if (options.listener) {
@@ -10036,20 +9781,32 @@ hui.ui.ImageViewer.create = function(options) {
 }
 
 hui.ui.ImageViewer.prototype = {
+	nodes : {
+		viewer : 'hui_imageviewer_viewer',
+		innerViewer : 'hui_imageviewer_inner_viewer',
 
-	_addBehavior : function() {
+		status : 'hui_imageviewer_status',
+		text : 'hui_imageviewer_text',
+
+		previous : 'hui_imageviewer_previous',
+		controller : 'hui_imageviewer_controller',
+		next : 'hui_imageviewer_next',
+		play : 'hui_imageviewer_play',
+		close : 'hui_imageviewer_close'
+	},
+	_attach : function() {
 		var self = this;
-		this.nextControl.onclick = function() {
+		this.nodes.next.onclick = function() {
 			self.next(true);
 		}
-		this.previousControl.onclick = function() {
+		this.nodes.previous.onclick = function() {
 			self.previous(true);
 		}
-		this.playControl.onclick = function() {
+		this.nodes.play.onclick = function() {
 			self.playOrPause();
 		}
-		this.closeControl.onclick = this.hide.bind(this);
-		hui.listen(this.viewer,'click',this._zoom.bind(this));
+		this.nodes.close.onclick = this.hide.bind(this);
+
 		this._timer = function() {
 			self.next(false);
 		}
@@ -10065,86 +9822,116 @@ hui.ui.ImageViewer.prototype = {
 				self.playOrPause();
 			}
 		},
-		hui.listen(this.viewer,'mousemove',this._onMouseMove.bind(this));
-		hui.listen(this.controller,'mouseover',function() {
+		hui.listen(this.nodes.viewer,'mousemove',this._onMouseMove.bind(this));
+		hui.listen(this.nodes.controller,'mouseover',function() {
 			self.overController = true;
 		});
-		hui.listen(this.controller,'mouseout',function() {
+		hui.listen(this.nodes.controller,'mouseout',function() {
 			self.overController = false;
 		});
-		hui.listen(this.viewer,'mouseout',function(e) {
-			if (!hui.ui.isWithin(e,this.viewer)) {
+		hui.listen(this.nodes.viewer,'mouseout',function(e) {
+			if (!hui.ui.isWithin(e,this.nodes.viewer)) {
 				self._hideController();
 			}
 		}.bind(this));
+	},
+	_attachDrag : function() {
+		var initial = 0;
+		var scrl = 0;
+		var viewer = this.nodes.viewer;
+		var inner = this.nodes.innerViewer;
+		var max = 0;
+		hui.drag.register({
+			touch : true,
+			element : this.nodes.innerViewer,
+			onBeforeMove : function(e) {
+				initial = e.getLeft();
+				scrl = this.position;
+				max = (this.images.length-1) * this.width * -1;
+				hui.log('max='+max)
+			}.bind(this),
+			onMove : function(e) {
+				var pos = (scrl - (initial - e.getLeft()));
+				if (pos > 0) {
+					pos = (Math.exp(pos * -0.013) -1) * -80;
+				}
+				if (pos < max) {
+					pos = (Math.exp((pos - max) * 0.013) -1) * 80 + max;
+				}
+				this.position = pos;
+				inner.style.marginLeft = pos + 'px';
+			}.bind(this),
+			onAfterMove : function() {
+				var num = Math.round(this.position * -1 / this.width);
+				this.index = num;
+				this._goToImage(true,num,false,true);
+			}.bind(this),
+			onNotMoved : this._zoom.bind(this)
+		})
 	},
 	_onMouseMove : function() {
 		window.clearTimeout(this.ctrlHider);
 		if (this._shouldShowController()) {
 			this.ctrlHider = window.setTimeout(this._hideController.bind(this),2000);
-			if (hui.browser.msie) {
-				this.controller.style.display='block';
+			if (!hui.browser.opacity) {
+				this.nodes.controller.style.display='block';
 			} else {
-				hui.effect.fadeIn({element:this.controller,duration:200});
+				hui.effect.fadeIn({element:this.nodes.controller,duration:200});
 			}
 		}
 	},
 	_hideController : function() {
 		if (!this.overController) {
-			if (hui.browser.msie) {
-				this.controller.style.display='none';
+			if (!hui.browser.opacity) {
+				this.nodes.controller.style.display='none';
 			} else {
-				hui.effect.fadeOut({element:this.controller,duration:500});
+				hui.effect.fadeOut({element:this.nodes.controller,duration:500});
 			}
 		}
 	},
 	_getLargestSize : function(canvas,image) {
-		if (image.width<=canvas.width && image.height<=canvas.height) {
-			return {width:image.width,height:image.height};
-		} else if (canvas.width/canvas.height>image.width/image.height) {
-			return {width:Math.round(canvas.height/image.height*image.width),height:canvas.height};
-		} else if (canvas.width/canvas.height<image.width/image.height) {
-			return {width:canvas.width,height:Math.round(canvas.width/image.width*image.height)};
-		} else {
-			return {width:canvas.width,height:canvas.height};
-		}
+		return hui.fit(image,canvas,{upscale:false});
 	},
 	_calculateSize : function() {
 		var snap = this.options.sizeSnap;
 		var newWidth = hui.window.getViewWidth() - this.options.perimeter;
 		newWidth = Math.floor(newWidth / snap) * snap;
-		newWidth = Math.min(newWidth , this.options.maxWidth);
+		newWidth = Math.min(newWidth, this.options.maxWidth);
 		var newHeight = hui.window.getViewHeight() - this.options.perimeter;
 		newHeight = Math.floor(newHeight / snap) * snap;
-		newHeight = Math.min(newHeight , this.options.maxHeight);
+		newHeight = Math.min(newHeight, this.options.maxHeight);
 		var maxWidth = 0;
 		var maxHeight = 0;
-		for (var i=0; i < this.images.length; i++) {
-			var dims = this._getLargestSize({ width : newWidth, height : newHeight}, this.images[i] );
-			maxWidth = Math.max(maxWidth , dims.width);
-			maxHeight = Math.max(maxHeight , dims.height);
+		for (var i = 0; i < this.images.length; i++) {
+			var dims = this._getLargestSize({
+				width: newWidth,
+				height: newHeight
+			}, this.images[i]);
+			maxWidth = Math.max(maxWidth, dims.width);
+			maxHeight = Math.max(maxHeight, dims.height);
 		};
-		newHeight = Math.floor( Math.min(newHeight , maxHeight) );
-		newWidth = Math.floor( Math.min(newWidth , maxWidth) );
-		
+		newHeight = Math.floor(Math.min(newHeight, maxHeight));
+		newWidth = Math.floor(Math.min(newWidth, maxWidth));
+
 		if (newWidth != this.width || newHeight != this.height) {
 			this.width = newWidth;
 			this.height = newHeight;
 			this.dirty = true;
 		}
+
 	},
 	_updateUI : function() {
 		if (this.dirty) {
-			this.innerViewer.innerHTML='';
+			this.nodes.innerViewer.innerHTML='';
 			for (var i=0; i < this.images.length; i++) {
 				var element = hui.build('div',{'class':'hui_imageviewer_image'});
 				hui.style.set(element,{width: (this.width + this.options.margin) + 'px',height : (this.height-1)+'px' });
-				this.innerViewer.appendChild(element);
+				this.nodes.innerViewer.appendChild(element);
 			};
 			if (this._shouldShowController()) {
-				this.controller.style.display='block';
+				this.nodes.controller.style.display='block';
 			} else {
-				this.controller.style.display='none';
+				this.nodes.controller.style.display='none';
 			}
 			this.dirty = false;
 			this._preload();
@@ -10153,29 +9940,47 @@ hui.ui.ImageViewer.prototype = {
 	_shouldShowController : function() {
 		return this.images.length>1;
 	},
-	_goToImage : function(animate,num,user) {	
+	_goToImage : function(animate,num,user,drag) {
+		var target = this.position = this.index * (this.width + this.options.margin) * -1;
 		if (animate) {
-			if (num>1) {
-				hui.animate(this.viewer,'scrollLeft',this.index*(this.width+this.options.margin),Math.min(num*this.options.transitionReturn,2000),{ease:this.options.easeReturn});				
+			var duration, ease;
+			if (drag) {
+				duration = 200;
+				ease = hui.ease.fastSlow;
+				ease = hui.ease.quadOut;
+			}
+			else if (num > 1) {
+				duration = Math.min(num * this.options.transitionReturn, 2000)
+				ease = this.options.easeReturn;
 			} else {
-				var end = this.index==0 || this.index==this.images.length-1;
-				var ease = (end ? this.options.easeEnd : this.options.ease);
+				var end = this.index == 0 || this.index == this.images.length - 1;
+				ease = (end ? this.options.easeEnd : this.options.ease);
 				if (!user) {
 					ease = this.options.easeAuto;
 				}
-				hui.animate(this.viewer,'scrollLeft',this.index*(this.width+this.options.margin),(end ? this.options.transitionEnd : this.options.transition),{ease:ease});
+				duration = (end ? this.options.transitionEnd : this.options.transition);
 			}
+			hui.animate({
+				node : this.nodes.innerViewer, 
+				css : {marginLeft : target + 'px'}, 
+				duration : duration,
+				ease : ease
+			});
 		} else {
-			this.viewer.scrollLeft = this.index*(this.width+this.options.margin);
+			this.nodes.innerViewer.style.marginLeft = target + 'px';
 		}
+		this._drawText();
+	},
+	
+	_drawText : function() {
 		var text = this.images[this.index].text;
 		if (text) {
-			this.text.innerHTML = text;
-			this.text.style.display = 'block';
+			this.nodes.text.innerHTML = text;
+			this.nodes.text.style.display = 'block';
 		} else {
-			this.text.innerHTML = '';
-			this.text.style.display = 'none';
-		}
+			this.nodes.text.innerHTML = '';
+			this.nodes.text.style.display = 'none';
+		}		
 	},
 	
 	// Show / hide ...
@@ -10200,9 +10005,9 @@ hui.ui.ImageViewer.prototype = {
 		this._updateUI();
 		var margin = this.options.margin;
 		hui.style.set(this.element, {width:(this.width+margin)+'px',height:(this.height+margin*2-1)+'px'});
-		hui.style.set(this.viewer, {width:(this.width+margin)+'px',height:(this.height-1)+'px'});
-		hui.style.set(this.innerViewer, {width:((this.width+margin)*this.images.length)+'px',height:(this.height-1)+'px'});
-		hui.style.set(this.controller, {marginLeft:((this.width-180)/2+margin*0.5)+'px',display:'none'});
+		hui.style.set(this.nodes.viewer, {width:(this.width+margin)+'px',height:(this.height-1)+'px'});
+		hui.style.set(this.nodes.innerViewer, {width:((this.width+margin)*this.images.length)+'px',height:(this.height-1)+'px'});
+		hui.style.set(this.nodes.controller, {marginLeft:((this.width-180)/2+margin*0.5)+'px',display:'none'});
 		this.box.show();
 		this._goToImage(false,0,false);
 		hui.listen(document,'keydown',this._keyListener);
@@ -10293,13 +10098,13 @@ hui.ui.ImageViewer.prototype = {
 		}
 		this.next(false);
 		this.playing=true;
-		this.playControl.className='hui_imageviewer_pause';
+		this.nodes.play.className='hui_imageviewer_pause';
 	},
 	/** Pauseslideshow */
 	pause : function() {
 		window.clearInterval(this.interval);
 		this.interval = null;
-		this.playControl.className='hui_imageviewer_play';
+		this.nodes.play.className='hui_imageviewer_play';
 		this.playing = false;
 	},
 	/** Start or pause slideshow */
@@ -10366,30 +10171,30 @@ hui.ui.ImageViewer.prototype = {
 				loader.addImages(url);
 			}
 		};
-		this.status.innerHTML = '0%';
-		this.status.style.display = '';
+		this.nodes.status.innerHTML = '0%';
+		this.nodes.status.style.display = '';
 		loader.load(this.index);
 	},
 	/** @private */
 	allImagesDidLoad : function() {
-		this.status.style.display = 'none';
+		this.nodes.status.style.display = 'none';
 	},
 	/** @private */
 	imageDidLoad : function(loaded,total,index) {
-		this.status.innerHTML = Math.round(loaded/total*100)+'%';
+		this.nodes.status.innerHTML = Math.round(loaded/total*100)+'%';
 		var url = hui.ui.resolveImageUrl(this,this.images[index],this.width,this.height);
 		url = url.replace(/&amp;/g,'&');
-		this.innerViewer.childNodes[index].style.backgroundImage="url('"+url+"')";
-		hui.cls.set(this.innerViewer.childNodes[index],'hui_imageviewer_image_abort',false);
-		hui.cls.set(this.innerViewer.childNodes[index],'hui_imageviewer_image_error',false);
+		this.nodes.innerViewer.childNodes[index].style.backgroundImage="url('"+url+"')";
+		hui.cls.set(this.nodes.innerViewer.childNodes[index],'hui_imageviewer_image_abort',false);
+		hui.cls.set(this.nodes.innerViewer.childNodes[index],'hui_imageviewer_image_error',false);
 	},
 	/** @private */
 	imageDidGiveError : function(loaded,total,index) {
-		hui.cls.set(this.innerViewer.childNodes[index],'hui_imageviewer_image_error',true);
+		hui.cls.set(this.nodes.innerViewer.childNodes[index],'hui_imageviewer_image_error',true);
 	},
 	/** @private */
 	imageDidAbort : function(loaded,total,index) {
-		hui.cls.set(this.innerViewer.childNodes[index],'hui_imageviewer_image_abort',true);
+		hui.cls.set(this.nodes.innerViewer.childNodes[index],'hui_imageviewer_image_abort',true);
 	},
 	
 	
@@ -10405,7 +10210,7 @@ hui.ui.ImageViewer.prototype = {
 		if (!this.zoomer) {
 			this.zoomer = hui.build('div',{
 				'class' : 'hui_imageviewer_zoomer',
-				style : 'width:'+this.viewer.clientWidth+'px;height:'+this.viewer.clientHeight+'px'
+				'style' : 'width:'+this.nodes.viewer.clientWidth+'px;height:'+this.nodes.viewer.clientHeight+'px'
 			});
 			this.element.insertBefore(this.zoomer,hui.dom.firstChild(this.element));
 			hui.listen(this.zoomer,'mousemove',this._onZoomMove.bind(this));
@@ -10416,7 +10221,7 @@ hui.ui.ImageViewer.prototype = {
 		this.pause();
 		var size = this._getLargestSize({width:2000,height:2000},img);
 		var url = hui.ui.resolveImageUrl(this,img,size.width,size.height);
-		this.zoomer.innerHTML = '<div style="width:'+size.width+'px;height:'+size.height+'px; margin: 0 auto;"><img src="'+url+'"/></div>';
+		this.zoomer.innerHTML = '<div style="width:'+size.width+'px;height:'+size.height+'px; margin: 0 auto;"><img src="'+url+'" style="margin-top: '+ Math.max(0,Math.round((this.nodes.viewer.clientHeight-size.height)/2)) + 'px" /></div>';
 		this.zoomer.style.display = 'block';
 		this.zoomInfo = {width:size.width,height:size.height};
 		this._onZoomMove(e);
@@ -12765,7 +12570,7 @@ hui.ui.Box.prototype = {
 	shake : function() {
 		hui.effect.shake({element:this.element});
 	},
-	
+
 	/**
 	 * Adds the box to the end of the body
 	 */
@@ -12793,13 +12598,17 @@ hui.ui.Box.prototype = {
 			hui.ui.showCurtain({widget:this,zIndex:index});
 		}
 		if (this.options.absolute) {
-			hui.style.set(e,{display:'block',visibility:'hidden'});
+			hui.style.set(e,{ display : 'block', visibility : 'hidden' });
 			var w = e.clientWidth;
-			var top = (hui.window.getViewHeight()-e.clientHeight)/2+hui.window.getScrollTop();
-			hui.style.set(e,{'marginLeft':(w/-2)+'px',top:top+'px'});
-			hui.style.set(e,{display:'block',visibility:'visible'});
+			var top = (hui.window.getViewHeight() - e.clientHeight) / 2 + hui.window.getScrollTop();
+			hui.style.set(e,{
+				marginLeft : (w/-2)+'px',
+				top : top+'px',
+				display : 'block',
+				visibility : 'visible'
+			});
 		} else {
-			e.style.display='block';
+			e.style.display = 'block';
 		}
 		this.visible = true;
 		hui.ui.callVisible(this);
@@ -14465,10 +14274,10 @@ hui.ui.MarkupEditor.prototype = {
 	},
 	_showBar : function() {
 		if (!this.bar) {
-            this.bar = new hui.ui.MarkupEditor.Bar({
-                $clickButton : this._buttonClicked.bind(this),
-                $changeBlock : this._changeBlock.bind(this),
-            })
+			this.bar = new hui.ui.MarkupEditor.Bar({
+				$clickButton : this._buttonClicked.bind(this),
+				$changeBlock : this._changeBlock.bind(this)
+			})
 		}
 		this.bar.show(this);
 	},
@@ -14501,7 +14310,7 @@ hui.ui.MarkupEditor.prototype = {
     },
 	_showColorPicker : function() {
 		if (!this.colorPicker) {
-			this.colorPicker = hui.ui.Window.create();
+			this.colorPicker = hui.ui.Window.create({title:{en:'Color',da:'Farve'}});
 			var picker = hui.ui.ColorPicker.create();
 			picker.listen(this);
 			this.colorPicker.add(picker);
@@ -16471,7 +16280,7 @@ hui.ui.TextField = function(options) {
 	this.placeholder = hui.get.firstByClass(this.element,'hui_field_placeholder');
 	this.value = this.input.value;
     this.modified = false;
-	this._addBehavior();
+	this._attach();
 }
 
 
@@ -16515,29 +16324,34 @@ hui.ui.TextField.create = function(options) {
 }
 
 hui.ui.TextField.prototype = {
-	_addBehavior : function() {
+	_attach : function() {
 		if (this.placeholder) {
 			var self = this;
 			hui.ui.onReady(function() {
 				window.setTimeout(function() {
 					self.value = self.input.value;
 					self._updateClass();
-				},500);
+				}, 500);
 			});
 		}
-		hui.ui.addFocusClass({element:this.input,classElement:this.element,'class':'hui_field_focused',widget:this});
-		hui.listen(this.input,'keyup',this._onKeyUp.bind(this));
-		hui.listen(this.input,'keydown',this._onKeyDown.bind(this));
+		hui.ui.addFocusClass({
+			element: this.input,
+			classElement: this.element,
+			'class': 'hui_field_focused',
+			widget: this
+		});
+		hui.listen(this.input, 'keyup', this._onKeyUp.bind(this));
+		hui.listen(this.input, 'keydown', this._onKeyDown.bind(this));
 		var p = this.element.getElementsByTagName('em')[0];
 		if (p) {
 			this._updateClass();
-			hui.listen(p,'mousedown',function() {
+			hui.listen(p, 'mousedown', function() {
 				window.setTimeout(function() {
 					this.input.focus();
 					this.input.select();
-				}.bind(this)
-			)}.bind(this));
-			hui.listen(p,'mouseup',function() {
+				}.bind(this))
+			}.bind(this));
+			hui.listen(p, 'mouseup', function() {
 				this.input.focus();
 				this.input.select();
 			}.bind(this));
@@ -17884,7 +17698,7 @@ hui.ui.Split.prototype = {
     			},
     			onMove : function(e) {
     			    hui.log('moving')
-    			},
+    			}
      			//onMove : this._onMove.bind(this),
     			//onAfterMove : this._onAfterMove.bind(this)
     		});            
@@ -18785,6 +18599,1042 @@ hui.ui.Chart.Util.convertData = function(obj) {
 	return data;
 }
 
+// MSIE 8-
+if (!Function.prototype.bind) {
+	Function.prototype.bind = function () {
+	    if (arguments.length < 2 && arguments[0] === undefined) {
+	        return this;
+	    }
+	    var thisObj = this,
+	    args = Array.prototype.slice.call(arguments),
+	    obj = args.shift();
+	    return function () {
+	        return thisObj.apply(obj, args.concat(Array.prototype.slice.call(arguments)));
+	    };
+	};
+
+	Function.bind = function() {
+	    var args = Array.prototype.slice.call(arguments);
+	    return Function.prototype.bind.apply(args.shift(), args);
+	};
+}
+
+// MSIE 7-
+// https://gist.github.com/chrisjlee/8960575
+if (!document.querySelectorAll) {
+  document.querySelectorAll = function (selectors) {
+    var style = document.createElement('style'), elements = [], element;
+    document.documentElement.firstChild.appendChild(style);
+    document._qsa = [];
+ 
+    style.styleSheet.cssText = selectors + '{x-qsa:expression(document._qsa && document._qsa.push(this))}';
+    window.scrollBy(0, 0);
+    style.parentNode.removeChild(style);
+ 
+    while (document._qsa.length) {
+      element = document._qsa.shift();
+      element.style.removeAttribute('x-qsa');
+      elements.push(element);
+    }
+    document._qsa = null;
+    return elements;
+  };
+}
+ 
+if (!document.querySelector) {
+  document.querySelector = function (selectors) {
+    var elements = document.querySelectorAll(selectors);
+    return (elements.length) ? elements[0] : null;
+  };
+}
+
+if (!Array.prototype.forEach) {
+
+  Array.prototype.forEach = function(callback, thisArg) {
+
+    var T, k;
+
+    if (this == null) {
+      throw new TypeError(' this is null or not defined');
+    }
+
+    // 1. Let O be the result of calling ToObject passing the |this| value as the argument.
+    var O = Object(this);
+
+    // 2. Let lenValue be the result of calling the Get internal method of O with the argument "length".
+    // 3. Let len be ToUint32(lenValue).
+    var len = O.length >>> 0;
+
+    // 4. If IsCallable(callback) is false, throw a TypeError exception.
+    // See: http://es5.github.com/#x9.11
+    if (typeof callback !== "function") {
+      throw new TypeError(callback + ' is not a function');
+    }
+
+    // 5. If thisArg was supplied, let T be thisArg; else let T be undefined.
+    if (arguments.length > 1) {
+      T = thisArg;
+    }
+
+    // 6. Let k be 0
+    k = 0;
+
+    // 7. Repeat, while k < len
+    while (k < len) {
+
+      var kValue;
+
+      // a. Let Pk be ToString(k).
+      //   This is implicit for LHS operands of the in operator
+      // b. Let kPresent be the result of calling the HasProperty internal method of O with argument Pk.
+      //   This step can be combined with c
+      // c. If kPresent is true, then
+      if (k in O) {
+
+        // i. Let kValue be the result of calling the Get internal method of O with argument Pk.
+        kValue = O[k];
+
+        // ii. Call the Call internal method of callback with T as the this value and
+        // argument list containing kValue, k, and O.
+        callback.call(T, kValue, k, O);
+      }
+      // d. Increase k by 1.
+      k++;
+    }
+    // 8. return undefined
+  };
+}
+
+if (!Array.prototype.indexOf)
+{
+  Array.prototype.indexOf = function(elt /*, from*/)
+  {
+    var len = this.length >>> 0;
+    var from = Number(arguments[1]) || 0;
+    from = (from < 0)
+         ? Math.ceil(from)
+         : Math.floor(from);
+    if (from < 0)
+      from += len;
+ 
+    for (; from < len; from++)
+    {
+      if (from in this &&
+          this[from] === elt)
+        return from;
+    }
+    return -1;
+  };
+}
+
+/*! JSON v3.3.2 | http://bestiejs.github.io/json3 | Copyright 2012-2014, Kit Cambridge | http://kit.mit-license.org */
+;(function () {
+  // Detect the `define` function exposed by asynchronous module loaders. The
+  // strict `define` check is necessary for compatibility with `r.js`.
+  var isLoader = typeof define === "function" && define.amd;
+
+  // A set of types used to distinguish objects from primitives.
+  var objectTypes = {
+    "function": true,
+    "object": true
+  };
+
+  // Detect the `exports` object exposed by CommonJS implementations.
+  var freeExports = objectTypes[typeof exports] && exports && !exports.nodeType && exports;
+
+  // Use the `global` object exposed by Node (including Browserify via
+  // `insert-module-globals`), Narwhal, and Ringo as the default context,
+  // and the `window` object in browsers. Rhino exports a `global` function
+  // instead.
+  var root = objectTypes[typeof window] && window || this,
+      freeGlobal = freeExports && objectTypes[typeof module] && module && !module.nodeType && typeof global == "object" && global;
+
+  if (freeGlobal && (freeGlobal["global"] === freeGlobal || freeGlobal["window"] === freeGlobal || freeGlobal["self"] === freeGlobal)) {
+    root = freeGlobal;
+  }
+
+  // Public: Initializes JSON 3 using the given `context` object, attaching the
+  // `stringify` and `parse` functions to the specified `exports` object.
+  function runInContext(context, exports) {
+    context || (context = root["Object"]());
+    exports || (exports = root["Object"]());
+
+    // Native constructor aliases.
+    var Number = context["Number"] || root["Number"],
+        String = context["String"] || root["String"],
+        Object = context["Object"] || root["Object"],
+        Date = context["Date"] || root["Date"],
+        SyntaxError = context["SyntaxError"] || root["SyntaxError"],
+        TypeError = context["TypeError"] || root["TypeError"],
+        Math = context["Math"] || root["Math"],
+        nativeJSON = context["JSON"] || root["JSON"];
+
+    // Delegate to the native `stringify` and `parse` implementations.
+    if (typeof nativeJSON == "object" && nativeJSON) {
+      exports.stringify = nativeJSON.stringify;
+      exports.parse = nativeJSON.parse;
+    }
+
+    // Convenience aliases.
+    var objectProto = Object.prototype,
+        getClass = objectProto.toString,
+        isProperty, forEach, undef;
+
+    // Test the `Date#getUTC*` methods. Based on work by @Yaffle.
+    var isExtended = new Date(-3509827334573292);
+    try {
+      // The `getUTCFullYear`, `Month`, and `Date` methods return nonsensical
+      // results for certain dates in Opera >= 10.53.
+      isExtended = isExtended.getUTCFullYear() == -109252 && isExtended.getUTCMonth() === 0 && isExtended.getUTCDate() === 1 &&
+        // Safari < 2.0.2 stores the internal millisecond time value correctly,
+        // but clips the values returned by the date methods to the range of
+        // signed 32-bit integers ([-2 ** 31, 2 ** 31 - 1]).
+        isExtended.getUTCHours() == 10 && isExtended.getUTCMinutes() == 37 && isExtended.getUTCSeconds() == 6 && isExtended.getUTCMilliseconds() == 708;
+    } catch (exception) {}
+
+    // Internal: Determines whether the native `JSON.stringify` and `parse`
+    // implementations are spec-compliant. Based on work by Ken Snyder.
+    function has(name) {
+      if (has[name] !== undef) {
+        // Return cached feature test result.
+        return has[name];
+      }
+      var isSupported;
+      if (name == "bug-string-char-index") {
+        // IE <= 7 doesn't support accessing string characters using square
+        // bracket notation. IE 8 only supports this for primitives.
+        isSupported = "a"[0] != "a";
+      } else if (name == "json") {
+        // Indicates whether both `JSON.stringify` and `JSON.parse` are
+        // supported.
+        isSupported = has("json-stringify") && has("json-parse");
+      } else {
+        var value, serialized = '{"a":[1,true,false,null,"\\u0000\\b\\n\\f\\r\\t"]}';
+        // Test `JSON.stringify`.
+        if (name == "json-stringify") {
+          var stringify = exports.stringify, stringifySupported = typeof stringify == "function" && isExtended;
+          if (stringifySupported) {
+            // A test function object with a custom `toJSON` method.
+            (value = function () {
+              return 1;
+            }).toJSON = value;
+            try {
+              stringifySupported =
+                // Firefox 3.1b1 and b2 serialize string, number, and boolean
+                // primitives as object literals.
+                stringify(0) === "0" &&
+                // FF 3.1b1, b2, and JSON 2 serialize wrapped primitives as object
+                // literals.
+                stringify(new Number()) === "0" &&
+                stringify(new String()) == '""' &&
+                // FF 3.1b1, 2 throw an error if the value is `null`, `undefined`, or
+                // does not define a canonical JSON representation (this applies to
+                // objects with `toJSON` properties as well, *unless* they are nested
+                // within an object or array).
+                stringify(getClass) === undef &&
+                // IE 8 serializes `undefined` as `"undefined"`. Safari <= 5.1.7 and
+                // FF 3.1b3 pass this test.
+                stringify(undef) === undef &&
+                // Safari <= 5.1.7 and FF 3.1b3 throw `Error`s and `TypeError`s,
+                // respectively, if the value is omitted entirely.
+                stringify() === undef &&
+                // FF 3.1b1, 2 throw an error if the given value is not a number,
+                // string, array, object, Boolean, or `null` literal. This applies to
+                // objects with custom `toJSON` methods as well, unless they are nested
+                // inside object or array literals. YUI 3.0.0b1 ignores custom `toJSON`
+                // methods entirely.
+                stringify(value) === "1" &&
+                stringify([value]) == "[1]" &&
+                // Prototype <= 1.6.1 serializes `[undefined]` as `"[]"` instead of
+                // `"[null]"`.
+                stringify([undef]) == "[null]" &&
+                // YUI 3.0.0b1 fails to serialize `null` literals.
+                stringify(null) == "null" &&
+                // FF 3.1b1, 2 halts serialization if an array contains a function:
+                // `[1, true, getClass, 1]` serializes as "[1,true,],". FF 3.1b3
+                // elides non-JSON values from objects and arrays, unless they
+                // define custom `toJSON` methods.
+                stringify([undef, getClass, null]) == "[null,null,null]" &&
+                // Simple serialization test. FF 3.1b1 uses Unicode escape sequences
+                // where character escape codes are expected (e.g., `\b` => `\u0008`).
+                stringify({ "a": [value, true, false, null, "\x00\b\n\f\r\t"] }) == serialized &&
+                // FF 3.1b1 and b2 ignore the `filter` and `width` arguments.
+                stringify(null, value) === "1" &&
+                stringify([1, 2], null, 1) == "[\n 1,\n 2\n]" &&
+                // JSON 2, Prototype <= 1.7, and older WebKit builds incorrectly
+                // serialize extended years.
+                stringify(new Date(-8.64e15)) == '"-271821-04-20T00:00:00.000Z"' &&
+                // The milliseconds are optional in ES 5, but required in 5.1.
+                stringify(new Date(8.64e15)) == '"+275760-09-13T00:00:00.000Z"' &&
+                // Firefox <= 11.0 incorrectly serializes years prior to 0 as negative
+                // four-digit years instead of six-digit years. Credits: @Yaffle.
+                stringify(new Date(-621987552e5)) == '"-000001-01-01T00:00:00.000Z"' &&
+                // Safari <= 5.1.5 and Opera >= 10.53 incorrectly serialize millisecond
+                // values less than 1000. Credits: @Yaffle.
+                stringify(new Date(-1)) == '"1969-12-31T23:59:59.999Z"';
+            } catch (exception) {
+              stringifySupported = false;
+            }
+          }
+          isSupported = stringifySupported;
+        }
+        // Test `JSON.parse`.
+        if (name == "json-parse") {
+          var parse = exports.parse;
+          if (typeof parse == "function") {
+            try {
+              // FF 3.1b1, b2 will throw an exception if a bare literal is provided.
+              // Conforming implementations should also coerce the initial argument to
+              // a string prior to parsing.
+              if (parse("0") === 0 && !parse(false)) {
+                // Simple parsing test.
+                value = parse(serialized);
+                var parseSupported = value["a"].length == 5 && value["a"][0] === 1;
+                if (parseSupported) {
+                  try {
+                    // Safari <= 5.1.2 and FF 3.1b1 allow unescaped tabs in strings.
+                    parseSupported = !parse('"\t"');
+                  } catch (exception) {}
+                  if (parseSupported) {
+                    try {
+                      // FF 4.0 and 4.0.1 allow leading `+` signs and leading
+                      // decimal points. FF 4.0, 4.0.1, and IE 9-10 also allow
+                      // certain octal literals.
+                      parseSupported = parse("01") !== 1;
+                    } catch (exception) {}
+                  }
+                  if (parseSupported) {
+                    try {
+                      // FF 4.0, 4.0.1, and Rhino 1.7R3-R4 allow trailing decimal
+                      // points. These environments, along with FF 3.1b1 and 2,
+                      // also allow trailing commas in JSON objects and arrays.
+                      parseSupported = parse("1.") !== 1;
+                    } catch (exception) {}
+                  }
+                }
+              }
+            } catch (exception) {
+              parseSupported = false;
+            }
+          }
+          isSupported = parseSupported;
+        }
+      }
+      return has[name] = !!isSupported;
+    }
+
+    if (!has("json")) {
+      // Common `[[Class]]` name aliases.
+      var functionClass = "[object Function]",
+          dateClass = "[object Date]",
+          numberClass = "[object Number]",
+          stringClass = "[object String]",
+          arrayClass = "[object Array]",
+          booleanClass = "[object Boolean]";
+
+      // Detect incomplete support for accessing string characters by index.
+      var charIndexBuggy = has("bug-string-char-index");
+
+      // Define additional utility methods if the `Date` methods are buggy.
+      if (!isExtended) {
+        var floor = Math.floor;
+        // A mapping between the months of the year and the number of days between
+        // January 1st and the first of the respective month.
+        var Months = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+        // Internal: Calculates the number of days between the Unix epoch and the
+        // first day of the given month.
+        var getDay = function (year, month) {
+          return Months[month] + 365 * (year - 1970) + floor((year - 1969 + (month = +(month > 1))) / 4) - floor((year - 1901 + month) / 100) + floor((year - 1601 + month) / 400);
+        };
+      }
+
+      // Internal: Determines if a property is a direct property of the given
+      // object. Delegates to the native `Object#hasOwnProperty` method.
+      if (!(isProperty = objectProto.hasOwnProperty)) {
+        isProperty = function (property) {
+          var members = {}, constructor;
+          if ((members.__proto__ = null, members.__proto__ = {
+            // The *proto* property cannot be set multiple times in recent
+            // versions of Firefox and SeaMonkey.
+            "toString": 1
+          }, members).toString != getClass) {
+            // Safari <= 2.0.3 doesn't implement `Object#hasOwnProperty`, but
+            // supports the mutable *proto* property.
+            isProperty = function (property) {
+              // Capture and break the object's prototype chain (see section 8.6.2
+              // of the ES 5.1 spec). The parenthesized expression prevents an
+              // unsafe transformation by the Closure Compiler.
+              var original = this.__proto__, result = property in (this.__proto__ = null, this);
+              // Restore the original prototype chain.
+              this.__proto__ = original;
+              return result;
+            };
+          } else {
+            // Capture a reference to the top-level `Object` constructor.
+            constructor = members.constructor;
+            // Use the `constructor` property to simulate `Object#hasOwnProperty` in
+            // other environments.
+            isProperty = function (property) {
+              var parent = (this.constructor || constructor).prototype;
+              return property in this && !(property in parent && this[property] === parent[property]);
+            };
+          }
+          members = null;
+          return isProperty.call(this, property);
+        };
+      }
+
+      // Internal: Normalizes the `for...in` iteration algorithm across
+      // environments. Each enumerated key is yielded to a `callback` function.
+      forEach = function (object, callback) {
+        var size = 0, Properties, members, property;
+
+        // Tests for bugs in the current environment's `for...in` algorithm. The
+        // `valueOf` property inherits the non-enumerable flag from
+        // `Object.prototype` in older versions of IE, Netscape, and Mozilla.
+        (Properties = function () {
+          this.valueOf = 0;
+        }).prototype.valueOf = 0;
+
+        // Iterate over a new instance of the `Properties` class.
+        members = new Properties();
+        for (property in members) {
+          // Ignore all properties inherited from `Object.prototype`.
+          if (isProperty.call(members, property)) {
+            size++;
+          }
+        }
+        Properties = members = null;
+
+        // Normalize the iteration algorithm.
+        if (!size) {
+          // A list of non-enumerable properties inherited from `Object.prototype`.
+          members = ["valueOf", "toString", "toLocaleString", "propertyIsEnumerable", "isPrototypeOf", "hasOwnProperty", "constructor"];
+          // IE <= 8, Mozilla 1.0, and Netscape 6.2 ignore shadowed non-enumerable
+          // properties.
+          forEach = function (object, callback) {
+            var isFunction = getClass.call(object) == functionClass, property, length;
+            var hasProperty = !isFunction && typeof object.constructor != "function" && objectTypes[typeof object.hasOwnProperty] && object.hasOwnProperty || isProperty;
+            for (property in object) {
+              // Gecko <= 1.0 enumerates the `prototype` property of functions under
+              // certain conditions; IE does not.
+              if (!(isFunction && property == "prototype") && hasProperty.call(object, property)) {
+                callback(property);
+              }
+            }
+            // Manually invoke the callback for each non-enumerable property.
+            for (length = members.length; property = members[--length]; hasProperty.call(object, property) && callback(property));
+          };
+        } else if (size == 2) {
+          // Safari <= 2.0.4 enumerates shadowed properties twice.
+          forEach = function (object, callback) {
+            // Create a set of iterated properties.
+            var members = {}, isFunction = getClass.call(object) == functionClass, property;
+            for (property in object) {
+              // Store each property name to prevent double enumeration. The
+              // `prototype` property of functions is not enumerated due to cross-
+              // environment inconsistencies.
+              if (!(isFunction && property == "prototype") && !isProperty.call(members, property) && (members[property] = 1) && isProperty.call(object, property)) {
+                callback(property);
+              }
+            }
+          };
+        } else {
+          // No bugs detected; use the standard `for...in` algorithm.
+          forEach = function (object, callback) {
+            var isFunction = getClass.call(object) == functionClass, property, isConstructor;
+            for (property in object) {
+              if (!(isFunction && property == "prototype") && isProperty.call(object, property) && !(isConstructor = property === "constructor")) {
+                callback(property);
+              }
+            }
+            // Manually invoke the callback for the `constructor` property due to
+            // cross-environment inconsistencies.
+            if (isConstructor || isProperty.call(object, (property = "constructor"))) {
+              callback(property);
+            }
+          };
+        }
+        return forEach(object, callback);
+      };
+
+      // Public: Serializes a JavaScript `value` as a JSON string. The optional
+      // `filter` argument may specify either a function that alters how object and
+      // array members are serialized, or an array of strings and numbers that
+      // indicates which properties should be serialized. The optional `width`
+      // argument may be either a string or number that specifies the indentation
+      // level of the output.
+      if (!has("json-stringify")) {
+        // Internal: A map of control characters and their escaped equivalents.
+        var Escapes = {
+          92: "\\\\",
+          34: '\\"',
+          8: "\\b",
+          12: "\\f",
+          10: "\\n",
+          13: "\\r",
+          9: "\\t"
+        };
+
+        // Internal: Converts `value` into a zero-padded string such that its
+        // length is at least equal to `width`. The `width` must be <= 6.
+        var leadingZeroes = "000000";
+        var toPaddedString = function (width, value) {
+          // The `|| 0` expression is necessary to work around a bug in
+          // Opera <= 7.54u2 where `0 == -0`, but `String(-0) !== "0"`.
+          return (leadingZeroes + (value || 0)).slice(-width);
+        };
+
+        // Internal: Double-quotes a string `value`, replacing all ASCII control
+        // characters (characters with code unit values between 0 and 31) with
+        // their escaped equivalents. This is an implementation of the
+        // `Quote(value)` operation defined in ES 5.1 section 15.12.3.
+        var unicodePrefix = "\\u00";
+        var quote = function (value) {
+          var result = '"', index = 0, length = value.length, useCharIndex = !charIndexBuggy || length > 10;
+          var symbols = useCharIndex && (charIndexBuggy ? value.split("") : value);
+          for (; index < length; index++) {
+            var charCode = value.charCodeAt(index);
+            // If the character is a control character, append its Unicode or
+            // shorthand escape sequence; otherwise, append the character as-is.
+            switch (charCode) {
+              case 8: case 9: case 10: case 12: case 13: case 34: case 92:
+                result += Escapes[charCode];
+                break;
+              default:
+                if (charCode < 32) {
+                  result += unicodePrefix + toPaddedString(2, charCode.toString(16));
+                  break;
+                }
+                result += useCharIndex ? symbols[index] : value.charAt(index);
+            }
+          }
+          return result + '"';
+        };
+
+        // Internal: Recursively serializes an object. Implements the
+        // `Str(key, holder)`, `JO(value)`, and `JA(value)` operations.
+        var serialize = function (property, object, callback, properties, whitespace, indentation, stack) {
+          var value, className, year, month, date, time, hours, minutes, seconds, milliseconds, results, element, index, length, prefix, result;
+          try {
+            // Necessary for host object support.
+            value = object[property];
+          } catch (exception) {}
+          if (typeof value == "object" && value) {
+            className = getClass.call(value);
+            if (className == dateClass && !isProperty.call(value, "toJSON")) {
+              if (value > -1 / 0 && value < 1 / 0) {
+                // Dates are serialized according to the `Date#toJSON` method
+                // specified in ES 5.1 section 15.9.5.44. See section 15.9.1.15
+                // for the ISO 8601 date time string format.
+                if (getDay) {
+                  // Manually compute the year, month, date, hours, minutes,
+                  // seconds, and milliseconds if the `getUTC*` methods are
+                  // buggy. Adapted from @Yaffle's `date-shim` project.
+                  date = floor(value / 864e5);
+                  for (year = floor(date / 365.2425) + 1970 - 1; getDay(year + 1, 0) <= date; year++);
+                  for (month = floor((date - getDay(year, 0)) / 30.42); getDay(year, month + 1) <= date; month++);
+                  date = 1 + date - getDay(year, month);
+                  // The `time` value specifies the time within the day (see ES
+                  // 5.1 section 15.9.1.2). The formula `(A % B + B) % B` is used
+                  // to compute `A modulo B`, as the `%` operator does not
+                  // correspond to the `modulo` operation for negative numbers.
+                  time = (value % 864e5 + 864e5) % 864e5;
+                  // The hours, minutes, seconds, and milliseconds are obtained by
+                  // decomposing the time within the day. See section 15.9.1.10.
+                  hours = floor(time / 36e5) % 24;
+                  minutes = floor(time / 6e4) % 60;
+                  seconds = floor(time / 1e3) % 60;
+                  milliseconds = time % 1e3;
+                } else {
+                  year = value.getUTCFullYear();
+                  month = value.getUTCMonth();
+                  date = value.getUTCDate();
+                  hours = value.getUTCHours();
+                  minutes = value.getUTCMinutes();
+                  seconds = value.getUTCSeconds();
+                  milliseconds = value.getUTCMilliseconds();
+                }
+                // Serialize extended years correctly.
+                value = (year <= 0 || year >= 1e4 ? (year < 0 ? "-" : "+") + toPaddedString(6, year < 0 ? -year : year) : toPaddedString(4, year)) +
+                  "-" + toPaddedString(2, month + 1) + "-" + toPaddedString(2, date) +
+                  // Months, dates, hours, minutes, and seconds should have two
+                  // digits; milliseconds should have three.
+                  "T" + toPaddedString(2, hours) + ":" + toPaddedString(2, minutes) + ":" + toPaddedString(2, seconds) +
+                  // Milliseconds are optional in ES 5.0, but required in 5.1.
+                  "." + toPaddedString(3, milliseconds) + "Z";
+              } else {
+                value = null;
+              }
+            } else if (typeof value.toJSON == "function" && ((className != numberClass && className != stringClass && className != arrayClass) || isProperty.call(value, "toJSON"))) {
+              // Prototype <= 1.6.1 adds non-standard `toJSON` methods to the
+              // `Number`, `String`, `Date`, and `Array` prototypes. JSON 3
+              // ignores all `toJSON` methods on these objects unless they are
+              // defined directly on an instance.
+              value = value.toJSON(property);
+            }
+          }
+          if (callback) {
+            // If a replacement function was provided, call it to obtain the value
+            // for serialization.
+            value = callback.call(object, property, value);
+          }
+          if (value === null) {
+            return "null";
+          }
+          className = getClass.call(value);
+          if (className == booleanClass) {
+            // Booleans are represented literally.
+            return "" + value;
+          } else if (className == numberClass) {
+            // JSON numbers must be finite. `Infinity` and `NaN` are serialized as
+            // `"null"`.
+            return value > -1 / 0 && value < 1 / 0 ? "" + value : "null";
+          } else if (className == stringClass) {
+            // Strings are double-quoted and escaped.
+            return quote("" + value);
+          }
+          // Recursively serialize objects and arrays.
+          if (typeof value == "object") {
+            // Check for cyclic structures. This is a linear search; performance
+            // is inversely proportional to the number of unique nested objects.
+            for (length = stack.length; length--;) {
+              if (stack[length] === value) {
+                // Cyclic structures cannot be serialized by `JSON.stringify`.
+                throw TypeError();
+              }
+            }
+            // Add the object to the stack of traversed objects.
+            stack.push(value);
+            results = [];
+            // Save the current indentation level and indent one additional level.
+            prefix = indentation;
+            indentation += whitespace;
+            if (className == arrayClass) {
+              // Recursively serialize array elements.
+              for (index = 0, length = value.length; index < length; index++) {
+                element = serialize(index, value, callback, properties, whitespace, indentation, stack);
+                results.push(element === undef ? "null" : element);
+              }
+              result = results.length ? (whitespace ? "[\n" + indentation + results.join(",\n" + indentation) + "\n" + prefix + "]" : ("[" + results.join(",") + "]")) : "[]";
+            } else {
+              // Recursively serialize object members. Members are selected from
+              // either a user-specified list of property names, or the object
+              // itself.
+              forEach(properties || value, function (property) {
+                var element = serialize(property, value, callback, properties, whitespace, indentation, stack);
+                if (element !== undef) {
+                  // According to ES 5.1 section 15.12.3: "If `gap` {whitespace}
+                  // is not the empty string, let `member` {quote(property) + ":"}
+                  // be the concatenation of `member` and the `space` character."
+                  // The "`space` character" refers to the literal space
+                  // character, not the `space` {width} argument provided to
+                  // `JSON.stringify`.
+                  results.push(quote(property) + ":" + (whitespace ? " " : "") + element);
+                }
+              });
+              result = results.length ? (whitespace ? "{\n" + indentation + results.join(",\n" + indentation) + "\n" + prefix + "}" : ("{" + results.join(",") + "}")) : "{}";
+            }
+            // Remove the object from the traversed object stack.
+            stack.pop();
+            return result;
+          }
+        };
+
+        // Public: `JSON.stringify`. See ES 5.1 section 15.12.3.
+        exports.stringify = function (source, filter, width) {
+          var whitespace, callback, properties, className;
+          if (objectTypes[typeof filter] && filter) {
+            if ((className = getClass.call(filter)) == functionClass) {
+              callback = filter;
+            } else if (className == arrayClass) {
+              // Convert the property names array into a makeshift set.
+              properties = {};
+              for (var index = 0, length = filter.length, value; index < length; value = filter[index++], ((className = getClass.call(value)), className == stringClass || className == numberClass) && (properties[value] = 1));
+            }
+          }
+          if (width) {
+            if ((className = getClass.call(width)) == numberClass) {
+              // Convert the `width` to an integer and create a string containing
+              // `width` number of space characters.
+              if ((width -= width % 1) > 0) {
+                for (whitespace = "", width > 10 && (width = 10); whitespace.length < width; whitespace += " ");
+              }
+            } else if (className == stringClass) {
+              whitespace = width.length <= 10 ? width : width.slice(0, 10);
+            }
+          }
+          // Opera <= 7.54u2 discards the values associated with empty string keys
+          // (`""`) only if they are used directly within an object member list
+          // (e.g., `!("" in { "": 1})`).
+          return serialize("", (value = {}, value[""] = source, value), callback, properties, whitespace, "", []);
+        };
+      }
+
+      // Public: Parses a JSON source string.
+      if (!has("json-parse")) {
+        var fromCharCode = String.fromCharCode;
+
+        // Internal: A map of escaped control characters and their unescaped
+        // equivalents.
+        var Unescapes = {
+          92: "\\",
+          34: '"',
+          47: "/",
+          98: "\b",
+          116: "\t",
+          110: "\n",
+          102: "\f",
+          114: "\r"
+        };
+
+        // Internal: Stores the parser state.
+        var Index, Source;
+
+        // Internal: Resets the parser state and throws a `SyntaxError`.
+        var abort = function () {
+          Index = Source = null;
+          throw SyntaxError();
+        };
+
+        // Internal: Returns the next token, or `"$"` if the parser has reached
+        // the end of the source string. A token may be a string, number, `null`
+        // literal, or Boolean literal.
+        var lex = function () {
+          var source = Source, length = source.length, value, begin, position, isSigned, charCode;
+          while (Index < length) {
+            charCode = source.charCodeAt(Index);
+            switch (charCode) {
+              case 9: case 10: case 13: case 32:
+                // Skip whitespace tokens, including tabs, carriage returns, line
+                // feeds, and space characters.
+                Index++;
+                break;
+              case 123: case 125: case 91: case 93: case 58: case 44:
+                // Parse a punctuator token (`{`, `}`, `[`, `]`, `:`, or `,`) at
+                // the current position.
+                value = charIndexBuggy ? source.charAt(Index) : source[Index];
+                Index++;
+                return value;
+              case 34:
+                // `"` delimits a JSON string; advance to the next character and
+                // begin parsing the string. String tokens are prefixed with the
+                // sentinel `@` character to distinguish them from punctuators and
+                // end-of-string tokens.
+                for (value = "@", Index++; Index < length;) {
+                  charCode = source.charCodeAt(Index);
+                  if (charCode < 32) {
+                    // Unescaped ASCII control characters (those with a code unit
+                    // less than the space character) are not permitted.
+                    abort();
+                  } else if (charCode == 92) {
+                    // A reverse solidus (`\`) marks the beginning of an escaped
+                    // control character (including `"`, `\`, and `/`) or Unicode
+                    // escape sequence.
+                    charCode = source.charCodeAt(++Index);
+                    switch (charCode) {
+                      case 92: case 34: case 47: case 98: case 116: case 110: case 102: case 114:
+                        // Revive escaped control characters.
+                        value += Unescapes[charCode];
+                        Index++;
+                        break;
+                      case 117:
+                        // `\u` marks the beginning of a Unicode escape sequence.
+                        // Advance to the first character and validate the
+                        // four-digit code point.
+                        begin = ++Index;
+                        for (position = Index + 4; Index < position; Index++) {
+                          charCode = source.charCodeAt(Index);
+                          // A valid sequence comprises four hexdigits (case-
+                          // insensitive) that form a single hexadecimal value.
+                          if (!(charCode >= 48 && charCode <= 57 || charCode >= 97 && charCode <= 102 || charCode >= 65 && charCode <= 70)) {
+                            // Invalid Unicode escape sequence.
+                            abort();
+                          }
+                        }
+                        // Revive the escaped character.
+                        value += fromCharCode("0x" + source.slice(begin, Index));
+                        break;
+                      default:
+                        // Invalid escape sequence.
+                        abort();
+                    }
+                  } else {
+                    if (charCode == 34) {
+                      // An unescaped double-quote character marks the end of the
+                      // string.
+                      break;
+                    }
+                    charCode = source.charCodeAt(Index);
+                    begin = Index;
+                    // Optimize for the common case where a string is valid.
+                    while (charCode >= 32 && charCode != 92 && charCode != 34) {
+                      charCode = source.charCodeAt(++Index);
+                    }
+                    // Append the string as-is.
+                    value += source.slice(begin, Index);
+                  }
+                }
+                if (source.charCodeAt(Index) == 34) {
+                  // Advance to the next character and return the revived string.
+                  Index++;
+                  return value;
+                }
+                // Unterminated string.
+                abort();
+              default:
+                // Parse numbers and literals.
+                begin = Index;
+                // Advance past the negative sign, if one is specified.
+                if (charCode == 45) {
+                  isSigned = true;
+                  charCode = source.charCodeAt(++Index);
+                }
+                // Parse an integer or floating-point value.
+                if (charCode >= 48 && charCode <= 57) {
+                  // Leading zeroes are interpreted as octal literals.
+                  if (charCode == 48 && ((charCode = source.charCodeAt(Index + 1)), charCode >= 48 && charCode <= 57)) {
+                    // Illegal octal literal.
+                    abort();
+                  }
+                  isSigned = false;
+                  // Parse the integer component.
+                  for (; Index < length && ((charCode = source.charCodeAt(Index)), charCode >= 48 && charCode <= 57); Index++);
+                  // Floats cannot contain a leading decimal point; however, this
+                  // case is already accounted for by the parser.
+                  if (source.charCodeAt(Index) == 46) {
+                    position = ++Index;
+                    // Parse the decimal component.
+                    for (; position < length && ((charCode = source.charCodeAt(position)), charCode >= 48 && charCode <= 57); position++);
+                    if (position == Index) {
+                      // Illegal trailing decimal.
+                      abort();
+                    }
+                    Index = position;
+                  }
+                  // Parse exponents. The `e` denoting the exponent is
+                  // case-insensitive.
+                  charCode = source.charCodeAt(Index);
+                  if (charCode == 101 || charCode == 69) {
+                    charCode = source.charCodeAt(++Index);
+                    // Skip past the sign following the exponent, if one is
+                    // specified.
+                    if (charCode == 43 || charCode == 45) {
+                      Index++;
+                    }
+                    // Parse the exponential component.
+                    for (position = Index; position < length && ((charCode = source.charCodeAt(position)), charCode >= 48 && charCode <= 57); position++);
+                    if (position == Index) {
+                      // Illegal empty exponent.
+                      abort();
+                    }
+                    Index = position;
+                  }
+                  // Coerce the parsed value to a JavaScript number.
+                  return +source.slice(begin, Index);
+                }
+                // A negative sign may only precede numbers.
+                if (isSigned) {
+                  abort();
+                }
+                // `true`, `false`, and `null` literals.
+                if (source.slice(Index, Index + 4) == "true") {
+                  Index += 4;
+                  return true;
+                } else if (source.slice(Index, Index + 5) == "false") {
+                  Index += 5;
+                  return false;
+                } else if (source.slice(Index, Index + 4) == "null") {
+                  Index += 4;
+                  return null;
+                }
+                // Unrecognized token.
+                abort();
+            }
+          }
+          // Return the sentinel `$` character if the parser has reached the end
+          // of the source string.
+          return "$";
+        };
+
+        // Internal: Parses a JSON `value` token.
+        var get = function (value) {
+          var results, hasMembers;
+          if (value == "$") {
+            // Unexpected end of input.
+            abort();
+          }
+          if (typeof value == "string") {
+            if ((charIndexBuggy ? value.charAt(0) : value[0]) == "@") {
+              // Remove the sentinel `@` character.
+              return value.slice(1);
+            }
+            // Parse object and array literals.
+            if (value == "[") {
+              // Parses a JSON array, returning a new JavaScript array.
+              results = [];
+              for (;; hasMembers || (hasMembers = true)) {
+                value = lex();
+                // A closing square bracket marks the end of the array literal.
+                if (value == "]") {
+                  break;
+                }
+                // If the array literal contains elements, the current token
+                // should be a comma separating the previous element from the
+                // next.
+                if (hasMembers) {
+                  if (value == ",") {
+                    value = lex();
+                    if (value == "]") {
+                      // Unexpected trailing `,` in array literal.
+                      abort();
+                    }
+                  } else {
+                    // A `,` must separate each array element.
+                    abort();
+                  }
+                }
+                // Elisions and leading commas are not permitted.
+                if (value == ",") {
+                  abort();
+                }
+                results.push(get(value));
+              }
+              return results;
+            } else if (value == "{") {
+              // Parses a JSON object, returning a new JavaScript object.
+              results = {};
+              for (;; hasMembers || (hasMembers = true)) {
+                value = lex();
+                // A closing curly brace marks the end of the object literal.
+                if (value == "}") {
+                  break;
+                }
+                // If the object literal contains members, the current token
+                // should be a comma separator.
+                if (hasMembers) {
+                  if (value == ",") {
+                    value = lex();
+                    if (value == "}") {
+                      // Unexpected trailing `,` in object literal.
+                      abort();
+                    }
+                  } else {
+                    // A `,` must separate each object member.
+                    abort();
+                  }
+                }
+                // Leading commas are not permitted, object property names must be
+                // double-quoted strings, and a `:` must separate each property
+                // name and value.
+                if (value == "," || typeof value != "string" || (charIndexBuggy ? value.charAt(0) : value[0]) != "@" || lex() != ":") {
+                  abort();
+                }
+                results[value.slice(1)] = get(lex());
+              }
+              return results;
+            }
+            // Unexpected token encountered.
+            abort();
+          }
+          return value;
+        };
+
+        // Internal: Updates a traversed object member.
+        var update = function (source, property, callback) {
+          var element = walk(source, property, callback);
+          if (element === undef) {
+            delete source[property];
+          } else {
+            source[property] = element;
+          }
+        };
+
+        // Internal: Recursively traverses a parsed JSON object, invoking the
+        // `callback` function for each value. This is an implementation of the
+        // `Walk(holder, name)` operation defined in ES 5.1 section 15.12.2.
+        var walk = function (source, property, callback) {
+          var value = source[property], length;
+          if (typeof value == "object" && value) {
+            // `forEach` can't be used to traverse an array in Opera <= 8.54
+            // because its `Object#hasOwnProperty` implementation returns `false`
+            // for array indices (e.g., `![1, 2, 3].hasOwnProperty("0")`).
+            if (getClass.call(value) == arrayClass) {
+              for (length = value.length; length--;) {
+                update(value, length, callback);
+              }
+            } else {
+              forEach(value, function (property) {
+                update(value, property, callback);
+              });
+            }
+          }
+          return callback.call(source, property, value);
+        };
+
+        // Public: `JSON.parse`. See ES 5.1 section 15.12.2.
+        exports.parse = function (source, callback) {
+          var result, value;
+          Index = 0;
+          Source = "" + source;
+          result = get(lex());
+          // If a JSON string contains multiple tokens, it is invalid.
+          if (lex() != "$") {
+            abort();
+          }
+          // Reset the parser state.
+          Index = Source = null;
+          return callback && getClass.call(callback) == functionClass ? walk((value = {}, value[""] = result, value), "", callback) : result;
+        };
+      }
+    }
+
+    exports["runInContext"] = runInContext;
+    return exports;
+  }
+
+  if (freeExports && !isLoader) {
+    // Export for CommonJS environments.
+    runInContext(root, freeExports);
+  } else {
+    // Export for web browsers and JavaScript engines.
+    var nativeJSON = root.JSON,
+        previousJSON = root["JSON3"],
+        isRestored = false;
+
+    var JSON3 = runInContext(root, (root["JSON3"] = {
+      // Public: Restores the original value of the global `JSON` object and
+      // returns a reference to the `JSON3` object.
+      "noConflict": function () {
+        if (!isRestored) {
+          isRestored = true;
+          root.JSON = nativeJSON;
+          root["JSON3"] = previousJSON;
+          nativeJSON = previousJSON = null;
+        }
+        return JSON3;
+      }
+    }));
+
+    root.JSON = {
+      "parse": JSON3.parse,
+      "stringify": JSON3.stringify
+    };
+  }
+
+  // Export for asynchronous module loaders.
+  if (isLoader) {
+    define(function () {
+      return JSON3;
+    });
+  }
+}).call(this);
+
+/**
+* @preserve HTML5 Shiv 3.7.2 | @afarkas @jdalton @jon_neal @rem | MIT/GPL2 Licensed
+*/
+!function(a,b){function c(a,b){var c=a.createElement("p"),d=a.getElementsByTagName("head")[0]||a.documentElement;return c.innerHTML="x<style>"+b+"</style>",d.insertBefore(c.lastChild,d.firstChild)}function d(){var a=t.elements;return"string"==typeof a?a.split(" "):a}function e(a,b){var c=t.elements;"string"!=typeof c&&(c=c.join(" ")),"string"!=typeof a&&(a=a.join(" ")),t.elements=c+" "+a,j(b)}function f(a){var b=s[a[q]];return b||(b={},r++,a[q]=r,s[r]=b),b}function g(a,c,d){if(c||(c=b),l)return c.createElement(a);d||(d=f(c));var e;return e=d.cache[a]?d.cache[a].cloneNode():p.test(a)?(d.cache[a]=d.createElem(a)).cloneNode():d.createElem(a),!e.canHaveChildren||o.test(a)||e.tagUrn?e:d.frag.appendChild(e)}function h(a,c){if(a||(a=b),l)return a.createDocumentFragment();c=c||f(a);for(var e=c.frag.cloneNode(),g=0,h=d(),i=h.length;i>g;g++)e.createElement(h[g]);return e}function i(a,b){b.cache||(b.cache={},b.createElem=a.createElement,b.createFrag=a.createDocumentFragment,b.frag=b.createFrag()),a.createElement=function(c){return t.shivMethods?g(c,a,b):b.createElem(c)},a.createDocumentFragment=Function("h,f","return function(){var n=f.cloneNode(),c=n.createElement;h.shivMethods&&("+d().join().replace(/[\w\-:]+/g,function(a){return b.createElem(a),b.frag.createElement(a),'c("'+a+'")'})+");return n}")(t,b.frag)}function j(a){a||(a=b);var d=f(a);return!t.shivCSS||k||d.hasCSS||(d.hasCSS=!!c(a,"article,aside,dialog,figcaption,figure,footer,header,hgroup,main,nav,section{display:block}mark{background:#FF0;color:#000}template{display:none}")),l||i(a,d),a}var k,l,m="3.7.2",n=a.html5||{},o=/^<|^(?:button|map|select|textarea|object|iframe|option|optgroup)$/i,p=/^(?:a|b|code|div|fieldset|h1|h2|h3|h4|h5|h6|i|label|li|ol|p|q|span|strong|style|table|tbody|td|th|tr|ul)$/i,q="_html5shiv",r=0,s={};!function(){try{var a=b.createElement("a");a.innerHTML="<xyz></xyz>",k="hidden"in a,l=1==a.childNodes.length||function(){b.createElement("a");var a=b.createDocumentFragment();return"undefined"==typeof a.cloneNode||"undefined"==typeof a.createDocumentFragment||"undefined"==typeof a.createElement}()}catch(c){k=!0,l=!0}}();var t={elements:n.elements||"abbr article aside audio bdi canvas data datalist details dialog figcaption figure footer header hgroup main mark meter nav output picture progress section summary template time video",version:m,shivCSS:n.shivCSS!==!1,supportsUnknownElements:l,shivMethods:n.shivMethods!==!1,type:"default",shivDocument:j,createElement:g,createDocumentFragment:h,addElements:e};a.html5=t,j(b)}(this,document);
+
 /** A diagram
  * @constructor
  */
@@ -19500,6 +20350,7 @@ hui.ui.Diagram.util = {
 		hui.cls.add(obj.element,'hui_diagram_dragable');
 		var dragState = null;
 		hui.drag.register({
+			touch : true,
 			element : obj.element,
 			onStart : function() {
 				hui.cls.add(obj.element,'hui_diagram_dragging');

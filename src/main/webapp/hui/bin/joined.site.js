@@ -2,9 +2,6 @@
 var hui = {
 	/** @namespace */
 	browser : {},
-	ELEMENT_NODE : 1,
-	ATTRIBUTE_NODE : 2,
-	TEXT_NODE : 3,
 	KEY_BACKSPACE : 8,
     KEY_TAB : 9,
     KEY_RETURN : 13,
@@ -25,6 +22,8 @@ var hui = {
 
 
 //////////////////////// Browser //////////////////////////
+
+// TODO make this easier to optimize
 
 /** If the browser is opera */
 hui.browser.opera = /opera/i.test(navigator.userAgent);
@@ -70,14 +69,14 @@ hui.browser.animation = !hui.browser.msie6 && !hui.browser.msie7 && !hui.browser
 
 hui.browser.wordbreak = !hui.browser.msie6 && !hui.browser.msie7 && !hui.browser.msie8;
 
-hui.browser.touch = "ontouchstart" in window || window.DocumentTouch && document instanceof DocumentTouch;
+hui.browser.touch = (!!('ontouchstart' in window) || (!!('onmsgesturechange' in window) && !!window.navigator.maxTouchPoints)) ? true : false;
 
 (function() {
 	var result = /Safari\/([\d.]+)/.exec(navigator.userAgent);
 	if (result) {
 		hui.browser.webkitVersion = parseFloat(result[1]);
 	}
-})()
+})();
 
 
 
@@ -101,8 +100,8 @@ hui.log = function(obj) {
 		} else {
 			console.log(arguments);			
 		}
-	} catch (ignore) {};
-}
+	} catch (ignore) {}
+};
 
 /**
  * Defer a function so it will fire when the current "thread" is done
@@ -114,7 +113,7 @@ hui.defer = function(func,bind) {
 		func = func.bind(bind);
 	}
 	window.setTimeout(func);
-}
+};
 
 /**
  * Override the properties on the first argument with properties from the last object
@@ -129,7 +128,7 @@ hui.override = function(original,subject) {
 		}
 	}
 	return original;
-}
+};
 
 /**
  * Loop through items in array or properties in an object.
@@ -139,16 +138,21 @@ hui.override = function(original,subject) {
  * @param {Function} func The callback to handle each item
  */
 hui.each = function(items,func) {
+    var i;
 	if (hui.isArray(items)) {		
-		for (var i=0; i < items.length; i++) {
+		for (i = 0; i < items.length; i++) {
 			func(items[i],i);
-		};
+		}
+    } else if (items instanceof NodeList) {
+		for (i = 0; i < items.length; i++) {
+			func(items.item(i),i);
+		}
 	} else {
 		for (var key in items) {
 			func(key,items[key]);
 		}
 	}
-}
+};
 
 /**
  * Return text if condition is met
@@ -157,7 +161,7 @@ hui.each = function(items,func) {
  */
 hui.when = function(condition,text) {
 	return condition ? text : '';
-}
+};
 
 /**
  * Converts a string to an int if it is only digits, otherwise remains a string
@@ -174,11 +178,39 @@ hui.intOrString = function(str) {
 		}
 	}
 	return str;
-}
+};
 
+/** 
+ * Make sure a number is between a min / max
+ */
 hui.between = function(min,value,max) {
 	var result = Math.min(max,Math.max(min,value));
 	return isNaN(result) ? min : result;
+};
+
+/**
+ * Fit a box inside a container while preserving aspect ratio (note: expects sane input)
+ * @param {Object} box The box to scale {width : 200, height : 100}
+ * @param {Object} container The container to fit the box inside {width : 20, height : 40}
+ * @returns {Object} An object of the new box {width : 20, height : 10}
+ */
+hui.fit = function(box,container,options) {
+  options = options || {};
+  var boxRatio = box.width / box.height;
+  var containerRatio = container.width / container.height;
+  var width, height;
+  if (options.upscale===false && box.width<=container.width && box.height<=container.height) {
+    width = box.width;
+    height = box.height;
+  }
+  else if (boxRatio > containerRatio) {
+    width = container.width;
+    height = Math.round(container.width/box.width * box.height);
+  } else {
+    width = Math.round(container.height/box.height * box.width);
+    height = container.height;
+  }
+  return {width : width, height : height};
 }
 
 /**
@@ -189,8 +221,8 @@ hui.isBlank = function(str) {
 	if (str===null || typeof(str)==='undefined' || str==='') {
 		return true;
 	}
-	return typeof(str)=='string' && hui.string.trim(str).length==0;
-}
+	return typeof(str)=='string' && hui.string.trim(str).length === 0;
+};
 
 /**
  * Checks that an object is not null and not undefined
@@ -198,7 +230,7 @@ hui.isBlank = function(str) {
  */
 hui.isDefined = function(obj) {
 	return obj!==null && typeof(obj)!=='undefined';
-}
+};
 
 
 
@@ -208,14 +240,14 @@ hui.isDefined = function(obj) {
  */
 hui.isString = function(obj) {
 	return typeof(obj)==='string';
-}
+};
 
 /**
  * Checks if an object is an array
  * @param {Object} obj The object to check
  */
 hui.isArray = function(obj) {
-	if (obj==null || obj==undefined) {
+	if (obj === null || obj === undefined) {
 		return false;
 	}
 	if (obj.constructor == Array) {
@@ -223,7 +255,7 @@ hui.isArray = function(obj) {
 	} else {
 		return Object.prototype.toString.call(obj) === '[object Array]';
 	}
-}
+};
 
 ///////////////////////// Strings ///////////////////////
 
@@ -237,7 +269,7 @@ hui.string = {
 	 * @returns {Boolean} True if «str» starts with «start»
 	 */
 	startsWith : function(str,start) {
-		if (!typeof(str)=='string' || !typeof(start)=='string') {
+		if (typeof(str) !== 'string' || typeof(start) !== 'string') {
 			return false;
 		}
 		return (str.match("^"+start)==start);
@@ -249,7 +281,7 @@ hui.string = {
 	 * @returns {Boolean} True if «str» ends with «end»
 	 */
 	endsWith : function(str,end) {
-		if (!typeof(str)=='string' || !typeof(end)=='string') {
+		if (typeof(str) !== 'string' || typeof(end) !== 'string') {
 			return false;
 		}
 		return (str.match(end+"$")==end);
@@ -261,12 +293,12 @@ hui.string = {
 	 * @returns {String} The camelized string
 	 */
 	camelize : function(str) {
-		if (str.indexOf('-')==-1) {return str}
+		if (str.indexOf('-')==-1) {
+            return str;
+        }
 	    var oStringList = str.split('-');
 
-	    var camelizedString = str.indexOf('-') == 0
-	      ? oStringList[0].charAt(0).toUpperCase() + oStringList[0].substring(1)
-	      : oStringList[0];
+	    var camelizedString = str.indexOf('-') === 0 ? oStringList[0].charAt(0).toUpperCase() + oStringList[0].substring(1) : oStringList[0];
 
 	    for (var i = 1, len = oStringList.length; i < len; i++) {
 	      var s = oStringList[i];
@@ -282,10 +314,10 @@ hui.string = {
 	 */
 	trim : function(str) {
 		if (str===null || str===undefined) {
-			return ''
+			return '';
 		}
-		if (typeof(str)!='string') {
-			str=new String(str)
+		if (typeof(str) != 'string') {
+			str = String(str);
 		}
 		return str.replace(/^[\s\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000]+|[\s\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000]+$/g, '');
 	},
@@ -307,9 +339,9 @@ hui.string = {
 	 * @returns {String} The shortened text, '' if undefined or null string
 	 */
 	shorten : function(str,length) {
-		if (!hui.isDefined(str)) {return ''};
+		if (!hui.isDefined(str)) {return '';}
 		if (str.length > length) {
-			return str.substring(0,length-3)+'...';
+			return str.substring(0,length-3) + '...';
 		}
 		return str;
 	},
@@ -319,7 +351,7 @@ hui.string = {
 	 * @returns {String} The escaped text
 	 */
 	escapeHTML : function(str) {
-		if (str===null || str===undefined) {return ''};
+		if (str===null || str===undefined) {return '';}
 	   	return hui.build('div',{text:str}).innerHTML;
 	},
 	/**
@@ -330,13 +362,13 @@ hui.string = {
 	escape : function(str) {
 		if (!hui.isString(str)) {return str};
 		var tagsToReplace = {
-		        '&': '&amp;',
-		        '<': '&lt;',
-		        '>': '&gt;',
-		        '"': '&quot;',
-			    "'": '&#x27;',
-			    '`': '&#x60;'
-		    };
+	        '&': '&amp;',
+	        '<': '&lt;',
+	        '>': '&gt;',
+	        '"': '&quot;',
+		    "'": '&#x27;',
+		    '`': '&#x60;'
+	    };
 	    return str.replace(/[&<>'`"]/g, function(tag) {
 	        return tagsToReplace[tag] || tag;
 	    });
@@ -363,7 +395,7 @@ hui.string = {
 	toJSON : function(obj) {
 		return JSON.stringify(obj);
 	}
-}
+};
 
 
 
@@ -386,7 +418,7 @@ hui.array = {
 				if (!hui.array.contains(arr,value[i])) {
 					arr.push(value);
 				}
-			};
+			}
 		} else {
 			if (!hui.array.contains(arr,value)) {
 				arr.push(value);
@@ -400,12 +432,7 @@ hui.array = {
 	 * @returns {boolean} true if the value is in the array
 	 */
 	contains : function(arr,value) {
-		for (var i=0; i < arr.length; i++) {
-			if (arr[i]===value) {
-				return true;
-			}
-		};
-		return false;
+		return hui.array.indexOf(arr,value) !== -1;
 	},
 	/**
 	 * Add or remove a value from an array.
@@ -430,7 +457,7 @@ hui.array = {
 			if (arr[i]==value) {
 				arr.splice(i,1);
 			}
-		};
+		}
 	},
 	/**
 	 * Find the first index of a value in an array, -1 if not found
@@ -443,7 +470,7 @@ hui.array = {
 			if (arr[i]===value) {
 				return i;
 			}
-		};
+		}
 		return -1;
 	},
 	/**
@@ -454,11 +481,11 @@ hui.array = {
 	toIntegers : function(str) {
 		var array = str.split(',');
 		for (var i = array.length - 1; i >= 0; i--){
-			array[i] = parseInt(array[i]);
-		};
+			array[i] = parseInt(array[i],10);
+		}
 		return array;
 	}
-}
+};
 
 
 
@@ -474,10 +501,10 @@ hui.array = {
 /** @namespace */
 hui.dom = {
 	isElement : function(node,name) {
-		return node.nodeType==hui.ELEMENT_NODE && (name===undefined ? true : node.nodeName.toLowerCase()==name);
+		return node.nodeType==1 && (name===undefined ? true : node.nodeName.toLowerCase()==name);
 	},
 	isDefinedText : function(node) {
-		return node.nodeType==hui.TEXT_NODE && node.nodeValue.length>0;
+		return node.nodeType==3 && node.nodeValue.length>0;
 	},
 	addText : function(node,text) {
 		node.appendChild(document.createTextNode(text));
@@ -486,10 +513,10 @@ hui.dom = {
 	firstChild : function(node) {
 		var children = node.childNodes;
 		for (var i=0; i < children.length; i++) {
-			if (children[i].nodeType==hui.ELEMENT_NODE) {
+			if (children[i].nodeType==1) {
 				return children[i];
 			}
-		};
+		}
 		return null;
 	},
 	parseToNode : function(html) {
@@ -500,7 +527,7 @@ hui.dom = {
 		var children = node.childNodes;
 		for (var i = children.length - 1; i >= 0; i--) {
 			children[i].parentNode.removeChild(children[i]);
-		};
+		}
 	},
 	remove : function(node) {
 		if (node.parentNode) {
@@ -562,13 +589,13 @@ hui.dom = {
 		}
 	},
 	setText : function(node,text) {
-		if (text==undefined || text==null) {
+		if (text===undefined || text===null) {
 			text = '';
 		}
 		var c = node.childNodes;
 		var updated = false;
 		for (var i = c.length - 1; i >= 0; i--){
-			if (!updated && c[i].nodeType==hui.TEXT_NODE) {
+			if (!updated && c[i].nodeType === 3) {
 				c[i].nodeValue=text;
 				updated = true;
 			} else {
@@ -583,12 +610,12 @@ hui.dom = {
 		var txt = '';
 		var c = node.childNodes;
 		for (var i=0; i < c.length; i++) {
-			if (c[i].nodeType==hui.TEXT_NODE && c[i].nodeValue!=null) {
-				txt+=c[i].nodeValue;
-			} else if (c[i].nodeType==hui.ELEMENT_NODE) {
-				txt+=hui.dom.getText(c[i]);
+			if (c[i].nodeType === 3 && c[i].nodeValue !== null) {
+				txt+= c[i].nodeValue;
+			} else if (c[i].nodeType == 1) {
+				txt+= hui.dom.getText(c[i]);
 			}
-		};
+		}
 		return txt;
 	},
 	isVisible : function(node) {
@@ -609,7 +636,7 @@ hui.dom = {
 		}
 		return false;
 	}
-}
+};
 
 
 
@@ -630,10 +657,10 @@ hui.form = {
 			if (hui.isDefined(inputs[i].name)) {
 				params[inputs[i].name] = inputs[i].value;
 			}
-		};
+		}
 		return params;
 	}
-}
+};
 
 
 
@@ -657,7 +684,7 @@ hui.get = function(id) {
 		return document.getElementById(id);
 	}
 	return id;
-}
+};
 
 /**
  * Get array of child elements of «node», not a NodeList
@@ -669,9 +696,9 @@ hui.get.children = function(node) {
 		if (hui.dom.isElement(x[i])) {
 			children.push(x[i]);
 		}
-	};
+	}
 	return children;
-}
+};
 
 hui.get.ancestors = function(element) {
 	var ancestors = [];
@@ -681,7 +708,7 @@ hui.get.ancestors = function(element) {
 		parent = parent.parentNode;
 	}
 	return ancestors;
-}
+};
 
 /**
  * Find the first ancestor with a given class (including self)
@@ -694,7 +721,7 @@ hui.get.firstAncestorByClass = function(element,className) {
 		element = element.parentNode;
 	}
 	return null;
-}
+};
 
 hui.get.next = function(element) {
 	if (!element) {
@@ -714,7 +741,7 @@ hui.get.next = function(element) {
     	return next;
 	}
 	return null;
-}
+};
 
 hui.get.previous = function(element) {
 	if (!element) {
@@ -734,7 +761,7 @@ hui.get.previous = function(element) {
     	return previous;
 	}
 	return null;
-}
+};
 
 hui.get.before = function(element) {
 	var elements = [];
@@ -746,10 +773,10 @@ hui.get.before = function(element) {
 			} else if (nodes[i].nodeType===1) {
 				elements.push(nodes[i]);
 			}
-		};
+		}
 	}
 	return elements;
-}
+};
 
 /**
  * Find all sibling elements after «element»
@@ -762,11 +789,11 @@ hui.get.after = function(element) {
 		next = hui.get.next(next);
 	}
 	return elements;
-}
+};
 
 hui.get.firstByClass = function(parentElement,className,tag) {
 	parentElement = hui.get(parentElement) || document.body;
-	if (document.querySelector) {
+  if (parentElement.querySelector) {
 		return parentElement.querySelector((tag ? tag+'.' : '.')+className);
 	} else {
 		var children = parentElement.getElementsByTagName(tag || '*');
@@ -777,27 +804,28 @@ hui.get.firstByClass = function(parentElement,className,tag) {
 		}
 	}
 	return null;
-}
+};
 
 hui.get.byClass = function(parentElement,className,tag) {
 	parentElement = hui.get(parentElement) || document.body;
-	if (document.querySelectorAll) {
+    var i;
+	if (parentElement.querySelectorAll) {
 		var nl = parentElement.querySelectorAll((tag ? tag+'.' : '.')+className);
 		// Important to convert into array...
 		var l=[];
-		for(var i=0, ll=nl.length; i!=ll; l.push(nl[i++]));
+		for(i=0, ll=nl.length; i!=ll; l.push(nl[i++]));
 		return l;
 	} else {
 		var children = parentElement.getElementsByTagName(tag || '*'),
 		out = [];
-		for (var i=0;i<children.length;i++) {
+		for (i=0;i<children.length;i++) {
 			if (hui.cls.has(children[i],className)) {
-				out[out.length]=children[i];
+				out[out.length] = children[i];
 			}
 		}
 		return out;
 	}
-}
+};
 
 /**
  * Get array of descendants of «node» with the name «name»
@@ -810,12 +838,12 @@ hui.get.byTag = function(node,name) {
 		l=[];
 	for(var i=0, ll=nl.length; i!=ll; l.push(nl[i++]));
 	return l;
-}
+};
 
 hui.get.byId = function(e,id) {
 	var children = e.childNodes;
 	for (var i = children.length - 1; i >= 0; i--) {
-		if (children[i].nodeType===hui.ELEMENT_NODE && children[i].getAttribute('id')===id) {
+		if (children[i].nodeType===1 && children[i].getAttribute('id')===id) {
 			return children[i];
 		} else {
 			var found = hui.get.byId(children[i],id);
@@ -825,7 +853,7 @@ hui.get.byId = function(e,id) {
 		}
 	}
 	return null;
-}
+};
 
 hui.get.firstParentByTag = function(node,tag) {
 	var parent = node;
@@ -836,7 +864,7 @@ hui.get.firstParentByTag = function(node,tag) {
 		parent = parent.parentNode;
 	}
 	return null;
-}
+};
 
 hui.get.firstParentByClass = function(node,tag) {
 	var parent = node;
@@ -847,7 +875,7 @@ hui.get.firstParentByClass = function(node,tag) {
 		parent = parent.parentNode;
 	}
 	return null;
-}
+};
 
 /**
  * Find first descendant by tag (excluding self)
@@ -857,17 +885,25 @@ hui.get.firstParentByClass = function(node,tag) {
  */
 hui.get.firstByTag = function(node,tag) {
 	node = hui.get(node) || document.body;
-	if (document.querySelector && tag!=='*') {
+	if (node.querySelector && tag!=='*') {
 		return node.querySelector(tag);
 	}
 	var children = node.getElementsByTagName(tag);
 	return children[0];
-}
+};
 
 
 hui.get.firstChild = hui.dom.firstChild;
 
+hui.find = function(selector,context) {
+  return (context || document).querySelector(selector);
+}
 
+hui.collect = function(selectors,context) {
+  for (key in selectors) {
+    selectors[key] = hui.get.firstByClass(context,selectors[key]);
+  }
+}
 
 
 
@@ -899,8 +935,8 @@ hui.get.firstChild = hui.dom.firstChild;
  */
 hui.build = function(name,options,doc) {
 	
-	var doc = doc || document,
-		e = doc.createElement(name);
+	doc = doc || document;
+    var e = doc.createElement(name);
 	if (options) {
 		for (var prop in options) {
 			if (prop=='text') {
@@ -910,7 +946,7 @@ hui.build = function(name,options,doc) {
 			} else if (prop=='parent' && hui.isDefined(options.parent)) {
 				options.parent.appendChild(e);
 			} else if (prop=='parentFirst') {
-				if (options.parentFirst.childNodes.length==0) {
+				if (options.parentFirst.childNodes.length === 0) {
 					options.parentFirst.appendChild(e);
 				} else {
 					options.parentFirst.insertBefore(e,options.parentFirst.childNodes[0]);
@@ -931,7 +967,7 @@ hui.build = function(name,options,doc) {
 		}
 	}
 	return e;
-}
+};
 
 
 
@@ -951,7 +987,7 @@ hui.position = {
 		if (element) {
 			var top = element.offsetTop,
 				tempEl = element.offsetParent;
-			while (tempEl != null) {
+			while (tempEl !== null) {
 				top += tempEl.offsetTop;
 				tempEl = tempEl.offsetParent;
 			}
@@ -964,7 +1000,7 @@ hui.position = {
 		if (element) {
 			var left = element.offsetLeft,
 				tempEl = element.offsetParent;
-			while (tempEl != null) {
+			while (tempEl !== null) {
 				left += tempEl.offsetLeft;
 				tempEl = tempEl.offsetParent;
 			}
@@ -976,7 +1012,7 @@ hui.position = {
 		return {
 			left : hui.position.getLeft(element),
 			top : hui.position.getTop(element)
-		}
+		};
 	},
 	getScrollOffset : function(element) {
 	    element = hui.get(element);
@@ -985,7 +1021,7 @@ hui.position = {
 	      top += element.scrollTop  || 0;
 	      left += element.scrollLeft || 0;
 	      element = element.parentNode;
-		  if (element.tagName=='HTML') {
+		  if (element.tagName === 'HTML') {
 			  break; // TODO Temporary hack - Chrome has the same scrollTop on html as on body
 		  }
 	    } while (element);
@@ -1019,10 +1055,10 @@ hui.position = {
 			var w = hui.window.getViewWidth();
 			if (left + src.clientWidth > w) {
 				left = w - src.clientWidth - (options.viewPartMargin || 0);
-				hui.log(options.viewPartMargin)
+				//hui.log(options.viewPartMargin)
 			}
-			if (left < 0) {left=0}
-			if (top < 0) {top=0}
+			if (left < 0) {left=0;}
+			if (top < 0) {top=0;}
 			
 			var height = hui.window.getViewHeight();
 			var vertMax = hui.window.getScrollTop()+hui.window.getViewHeight()-src.clientHeight,
@@ -1043,10 +1079,10 @@ hui.position = {
 					height-=sib.offsetHeight;
 				}
 			}
-		};
+		}
 		return height;
 	}
-}
+};
 
 
 
@@ -1106,7 +1142,7 @@ hui.window = {
 				if (pos<1) {
 					window.setTimeout(func);
 				}
-			}
+			};
 			func();
 		}
 	},
@@ -1134,7 +1170,7 @@ hui.window = {
 			return document.body.clientWidth;
 		}
 	}
-}
+};
 
 
 
@@ -1161,7 +1197,7 @@ hui.cls = {
 	has : function(element, className) {
 		element = hui.get(element);
 		if (!element || !element.className) {
-			return false
+			return false;
 		}
 		if (element.hasClassName) {
 			return element.hasClassName(className);
@@ -1185,7 +1221,7 @@ hui.cls = {
 	add : function(element, className) {
 	    element = hui.get(element);
 		if (!element) {
-			return
+			return;
 		}
 		if (element.addClassName) {
 			element.addClassName(className);
@@ -1200,7 +1236,7 @@ hui.cls = {
 	 */
 	remove : function(element, className) {
 		element = hui.get(element);
-		if (!element || !element.className) {return};
+		if (!element || !element.className) {return;}
 		if (element.removeClassName) {
 			element.removeClassName(className);
 		}
@@ -1245,7 +1281,7 @@ hui.cls = {
 			hui.cls.remove(element,className);
 		}
 	}
-}
+};
 
 
 
@@ -1275,7 +1311,7 @@ hui.listen = function(element,type,listener,useCapture) {
 	} else {
 		element.attachEvent('on'+type, listener);
 	}
-}
+};
 
 /**
  * Add an event listener to an element, it will only fire once
@@ -1286,11 +1322,11 @@ hui.listen = function(element,type,listener,useCapture) {
 hui.listenOnce = function(element,type,listener) {	
 	var func = null;
 	func = function(e) {
-		hui.unListen(element,type,func)
+		hui.unListen(element,type,func);
 		listener(e);
-	}
+	};
 	hui.listen(element,type,func);
-}
+};
 
 /**
  * Remove an event listener from an element
@@ -1306,7 +1342,7 @@ hui.unListen = function(el,type,listener,useCapture) {
 	} else {
 		el.detachEvent('on'+type, listener);
 	}
-}
+};
 
 /** Creates an event wrapper for an event
  * @param event The DOM event
@@ -1317,7 +1353,7 @@ hui.event = function(event) {
 		return event;
 	}
 	return new hui.Event(event);
-}
+};
 
 /** @constructor
  * Wrapper for events
@@ -1358,7 +1394,7 @@ hui.Event = function(event) {
 	this.rightKey = event.keyCode==39;
 	/** The key code */
 	this.keyCode = event.keyCode;
-}
+};
 
 hui.Event.prototype = {
 	/**
@@ -1403,7 +1439,7 @@ hui.Event.prototype = {
 	 * @returns {Element} The found element or null
 	 */
 	findByClass : function(cls) {
-		return hui.get.firstAncestorByClass(this.element,cls)
+		return hui.get.firstAncestorByClass(this.element,cls);
 	},
 	/** Finds the nearest ancester with a certain tag name
 	 * @param tag The tag name
@@ -1425,7 +1461,7 @@ hui.Event.prototype = {
 			if (parent.tagName && parent.tagName.toLowerCase()==tag) {
 				if (func(parent)) {
 					return parent;
-				};
+				}
 			}
 			parent = parent.parentNode;
 		}
@@ -1446,19 +1482,19 @@ hui.Event.prototype = {
 	stop : function() {
 		hui.stop(this.event);
 	}
-}
+};
 
 /** 
  * Stops an event from propagating
  * @param event A standard DOM event, NOT an hui.Event
  */
 hui.stop = function(event) {
-	if (!event) {event = window.event};
-	if (event.stopPropagation) {event.stopPropagation()};
-	if (event.preventDefault) {event.preventDefault()};
+	if (!event) {event = window.event;}
+	if (event.stopPropagation) {event.stopPropagation();}
+	if (event.preventDefault) {event.preventDefault();}
 	event.cancelBubble = true;
     event.stopped = true;
-}
+};
 
 hui._defered = [];
 
@@ -1478,9 +1514,9 @@ hui.onReady = function(func) {
 				hui._defered[i]();
 			}
             hui._defered = null;
-		})
+		});
 	}
-}
+};
 
 /**
  * Execute a function when the DOM is ready
@@ -1528,7 +1564,7 @@ hui._onReady = function(delegate) {
 			window.onload = delegate;
 		}
 	}
-}
+};
 
 
 
@@ -1578,7 +1614,7 @@ hui._onReady = function(delegate) {
  */
 hui.request = function(options) {
 	options = hui.override({method:'POST',async:true,headers:{Ajax:true}},options);
-	var transport = hui.request.createTransport(options);
+	var transport = hui.request.createTransport();
 	if (!transport) {return;}
 	transport.onreadystatechange = function() {
 		try {
@@ -1589,17 +1625,17 @@ hui.request = function(options) {
 					options.$forbidden(transport);
 				} else if (transport.status !== 0 && options.$failure) {
 					options.$failure(transport);
-				} else if (transport.status == 0 && options.$abort) {
+				} else if (transport.status === 0 && options.$abort) {
 					options.$abort(transport);
 				}
-				if (options['$finally']) {
-					options['$finally']();
+				if (options.$finally) {
+					options.$finally();
 				}
 			}
 			//hui.request._forget(transport);
 		} catch (e) {
 			if (options.$exception) {
-				options.$exception(e,transport)
+				options.$exception(e,transport);
 			} else {
 				throw e;
 			}
@@ -1653,7 +1689,8 @@ hui.request = function(options) {
 	//hui.request._transports.push(transport);
 	//hui.log('Add: '+hui.request._transports.length);
 	return transport;
-}
+};
+
 /*
 hui.request._transports = [];
 
@@ -1677,23 +1714,24 @@ hui.request.abort = function() {
  */
 hui.request.isXMLResponse = function(t) {
 	return t.responseXML && t.responseXML.documentElement && t.responseXML.documentElement.nodeName!='parsererror';
-}
+};
 
 hui.request._buildPostBody = function(parameters) {
 	if (!parameters) return null;
-	var output = '';
+	var output = '',
+        param;
     if (hui.isArray(parameters)) {
         for (var i = 0; i < parameters.length; i++) {
-            var param = parameters[i];
-    		if (i > 0) {output += '&'};
+            param = parameters[i];
+    		if (i > 0) {output += '&';}
     		output+=encodeURIComponent(param.name)+'=';
     		if (param.value!==undefined && param.value!==null) {
     			output+=encodeURIComponent(param.value);
     		}
         }
     } else {
-    	for (var param in parameters) {
-    		if (output.length > 0) {output += '&'};
+    	for (param in parameters) {
+    		if (output.length > 0) {output += '&';}
     		output+=encodeURIComponent(param)+'=';
     		if (parameters[param]!==undefined && parameters[param]!==null) {
     			output+=encodeURIComponent(parameters[param]);
@@ -1701,7 +1739,7 @@ hui.request._buildPostBody = function(parameters) {
     	}        
     }
 	return output;
-}
+};
 
 /**
  * Creates a new XMLHttpRequest
@@ -1711,7 +1749,7 @@ hui.request.createTransport = function() {
 	try {
 		if (window.XMLHttpRequest) {
 			var req = new XMLHttpRequest();
-			if (req.readyState == null) {
+			if (req.readyState === null) {
 				req.readyState = 1;
 				req.addEventListener("load", function () {
 					req.readyState = 4;
@@ -1728,7 +1766,7 @@ hui.request.createTransport = function() {
 	catch (ex) {
 	}
 	return null;
-}
+};
 
 hui.request._getActiveX = function() {
 	var prefixes = ["MSXML2", "Microsoft", "MSXML", "MSXML3"];
@@ -1736,9 +1774,9 @@ hui.request._getActiveX = function() {
 		try {
 			return new ActiveXObject(prefixes[i] + ".XmlHttp");
 		}
-		catch (ex) {};
+		catch (ex) {}
 	}
-}
+};
 
 
 
@@ -1763,12 +1801,12 @@ hui.style = {
 			if (value) {
 				target.style[hui.string.camelize(property)] = value;
 			}
-		};
+		}
 	},
 	set : function(element,styles) {
 		for (var style in styles) {
 			if (style==='transform') {
-				element.style['webkitTransform'] = styles[style];
+				element.style.webkitTransform = styles[style];
 			} else if (style==='opacity') {
 				hui.style.setOpacity(element,styles[style]);
 			} else {
@@ -1804,21 +1842,21 @@ hui.style = {
 	setOpacity : function(element,opacity) {
 		if (!hui.browser.opacity) {
 			if (opacity==1) {
-				element.style['filter']=null;
+				element.style.filter = null;
 			} else {
-				element.style['filter']='alpha(opacity='+(opacity*100)+')';
+				element.style.filter = 'alpha(opacity='+(opacity*100)+')';
 			}
 		} else {
-			element.style['opacity']=opacity;
+			element.style.opacity = opacity;
 		}
 	},
     length : function(value) {
-        if (typeof(value)==='number') {
-            return value+'px';
+        if (typeof(value) === 'number') {
+            return value + 'px';
         }
         return value;
     }
-}
+};
 
 
 
@@ -1853,7 +1891,7 @@ hui.frame = {
 	        return frame.contentWindow;
 	    }
 	}
-}
+};
 
 
 
@@ -1903,13 +1941,13 @@ hui.selection = {
 		return {
 			node : hui.selection.getNode(doc),
 			text : hui.selection.getText(doc)
-		}
+		};
 	},
 	enable : function(on) {
 		document.onselectstart = on ? null : function () { return false; };
 		document.body.style.webkitUserSelect = on ? null : 'none';
 	}
-}
+};
 
 
 
@@ -2014,7 +2052,7 @@ hui.effect = {
 		},options.duration || 1000);
 	
 	}
-}
+};
 
 
 
@@ -2028,7 +2066,7 @@ hui.document = {
 	 * Get the height of the document (including the invisble part)
 	 */
 	getWidth : function() {
-		return Math.max(document.body.clientWidth,document.documentElement.clientWidth,document.documentElement.scrollWidth)
+		return Math.max(document.body.clientWidth,document.documentElement.clientWidth,document.documentElement.scrollWidth);
 	},
 	/**
 	 * Get the width of the document (including the invisble part)
@@ -2051,7 +2089,7 @@ hui.document = {
 			return Math.max(document.body.clientHeight,document.documentElement.clientHeight,document.documentElement.scrollHeight);
 		}
 	}
-}
+};
 
 
 
@@ -2070,47 +2108,65 @@ hui.drag = {
 	 *  <em>see hui.drag.start for more options</em>
 	 * }
 	 * @param {Object} options The options
+	 * @param {Element} options.element The element to attach to
 	 */
 	register : function(options) {
-		hui.listen(options.element,'mousedown',function(e) {
+		var touch = options.touch && hui.browser.touch;
+		hui.listen(options.element,touch ? 'touchstart' : 'mousedown',function(e) {
+			e = hui.event(e);
+			// TODO This shuould be a hui.Event
 			if (options.$check && options.$check(e)===false) {
 				return;
 			}
-			hui.stop(e);
-			hui.drag.start(options);
-		})
+			e.stop();
+			hui.drag.start(options,e);
+		});
 	},
 	/** Start dragging
 	 * <pre><strong>options:</strong> {
 	 *  onBeforeMove : function(event), // Called when the cursor moves for the first time
 	 *  onMove : function(event), // Called when the cursor moves
 	 *  onAfterMove : function(event), // Called if the cursor has moved
+   *  onNotMoved : function(event), // Called if the cursor has not moved
 	 *  onEnd : function(event), // Called when the mouse is released, even if the cursor has not moved
 	 * }
 	 * @param {Object} options The options
 	 */
-	start : function(options) {
+	start : function(options,e) {
 		var target = hui.browser.msie ? document : window;
-		
+		var touch = options.touch && hui.browser.touch;
 		if (options.onStart) {
 			options.onStart();
 		}
+		var latest = {
+			x: e.getLeft(),
+			y: e.getTop(),
+			time: Date.now()
+		};
+		var initial = latest;
 		var mover,
 			upper,
 			moved = false;
 		mover = function(e) {
 			e = hui.event(e);
 			e.stop(e);
+/*
+			var pos = {x:e.getLeft(),y:e.getTop(),time: Date.now()};
+			
+			var speed = (latest.x - pos.x) / (latest.time - pos.time);
+			hui.log(speed);
+			latest = pos;
+*/			
 			if (!moved && options.onBeforeMove) {
 				options.onBeforeMove(e);
 			}
 			moved = true;
 			options.onMove(e);
 		}.bind(this);
-		hui.listen(target,'mousemove',mover);
+		hui.listen(target,touch ? 'touchmove' : 'mousemove',mover);
 		upper = function() {
-			hui.unListen(target,'mousemove',mover);
-			hui.unListen(target,'mouseup',upper);
+			hui.unListen(target,touch ? 'touchmove' : 'mousemove',mover);
+			hui.unListen(target,touch ? 'touchend' : 'mouseup',upper);
 			if (options.onEnd) {
 				options.onEnd();
 			}
@@ -2121,8 +2177,8 @@ hui.drag = {
 				options.onNotMoved();
 			}
 			hui.selection.enable(true);
-		}.bind(this)
-		hui.listen(target,'mouseup',upper);
+		}.bind(this);
+		hui.listen(target,touch ? 'touchend' : 'mouseup',upper);
 		hui.selection.enable(false);
 	},
 	
@@ -2146,7 +2202,9 @@ hui.drag = {
 			return;
 		}
 		hui.drag._nativeListeners.push(options);
-		if (hui.drag._nativeListeners.length>1) {return};
+		if (hui.drag._nativeListeners.length>1) {
+            return;
+        }
 		hui.listen(document.body,'dragenter',function(e) {
 			var l = hui.drag._nativeListeners;
 			var found = null;
@@ -2154,12 +2212,12 @@ hui.drag = {
 				var lmnt = l[i].element;
 				if (hui.dom.isDescendantOrSelf(e.target,lmnt)) {
 					found = l[i];
-					if (hui.drag._activeDrop==null || hui.drag._activeDrop!=found) {
+					if (hui.drag._activeDrop === null || hui.drag._activeDrop != found) {
 						hui.cls.add(lmnt,found.hoverClass);
 					}
 					break;
 				}
-			};
+			}
 			if (hui.drag._activeDrop) {
 				//var foundElement = found ? found.element : null;
 				if (hui.drag._activeDrop!=found) {
@@ -2193,7 +2251,7 @@ hui.drag = {
 		});
 		
 		hui.listen(document.body,'drop',function(e) {
-			var event = hui.event(e)
+			var event = hui.event(e);
 			event.stop();
 			var options = hui.drag._activeDrop;
 			hui.drag._activeDrop = null;
@@ -2203,10 +2261,10 @@ hui.drag = {
 					options.$drop(e,{event:event});
 				}
 				if (e.dataTransfer) {
-					hui.log(e.dataTransfer.types)
+					hui.log(e.dataTransfer.types);
 					if (options.$dropFiles && e.dataTransfer.files && e.dataTransfer.files.length>0) {
 						options.$dropFiles(e.dataTransfer.files,{event:event});
-					} else if (options.$dropURL && e.dataTransfer.types!=null && (hui.array.contains(e.dataTransfer.types,'public.url') || hui.array.contains(e.dataTransfer.types,'text/uri-list'))) {
+					} else if (options.$dropURL && e.dataTransfer.types !== null && (hui.array.contains(e.dataTransfer.types,'public.url') || hui.array.contains(e.dataTransfer.types,'text/uri-list'))) {
 						var url = e.dataTransfer.getData('public.url');
 						var uriList = e.dataTransfer.getData('text/uri-list');
 						if (url && !hui.string.startsWith(url,'data:')) {
@@ -2214,14 +2272,14 @@ hui.drag = {
 						} else if (uriList && !hui.string.startsWith(url,'data:')) {
 							options.$dropURL(uriList,{event:event});
 						}
-					} else if (options.$dropText && e.dataTransfer.types!=null && hui.array.contains(e.dataTransfer.types,'text/plain')) {
-						options.$dropText(e.dataTransfer.getData('text/plain'),{event:event})
+					} else if (options.$dropText && e.dataTransfer.types !== null && hui.array.contains(e.dataTransfer.types,'text/plain')) {
+						options.$dropText(e.dataTransfer.getData('text/plain'),{event:event});
 					}
 				}
 			}
 		});
 	}
-}
+};
 
 
 
@@ -2229,7 +2287,7 @@ hui.drag = {
 
 /** @constructor
  * A preloader for images
- * Events: imageDidLoad(index), imageDidGiveError(index), imageDidAbort(index)
+ * Events: imageDidLoad(index), imageDidGiveError(index), imageDidAbort(index), allImagesDidLoad
  * @param options {context:«prefix for urls»}
  */
 hui.Preloader = function(options) {
@@ -2237,7 +2295,7 @@ hui.Preloader = function(options) {
 	this.delegate = {};
 	this.images = [];
 	this.loaded = 0;
-}
+};
 
 hui.Preloader.prototype = {
 	/** Add images either as a single url or an array of urls */
@@ -2245,7 +2303,7 @@ hui.Preloader.prototype = {
 		if (typeof(imageOrImages)=='object') {
 			for (var i=0; i < imageOrImages.length; i++) {
 				this.images.push(imageOrImages[i]);
-			};
+			}
 		} else {
 			this.images.push(imageOrImages);
 		}
@@ -2261,6 +2319,9 @@ hui.Preloader.prototype = {
 		startIndex = startIndex || 0;
 		var self = this;
 		this.obs = [];
+		var onLoad = function() {self._imageChanged(this.huiPreloaderIndex,'imageDidLoad');};
+		var onError = function() {self._imageChanged(this.huiPreloaderIndex,'imageDidGiveError');};
+		var onAbort = function() {self._imageChanged(this.huiPreloaderIndex,'imageDidAbort');};
 		for (var i=startIndex; i < this.images.length+startIndex; i++) {
 			var index=i;
 			if (index>=this.images.length) {
@@ -2268,12 +2329,12 @@ hui.Preloader.prototype = {
 			}
 			var img = new Image();
 			img.huiPreloaderIndex = index;
-			img.onload = function() {self._imageChanged(this.huiPreloaderIndex,'imageDidLoad')};
-			img.onerror = function() {self._imageChanged(this.huiPreloaderIndex,'imageDidGiveError')};
-			img.onabort = function() {self._imageChanged(this.huiPreloaderIndex,'imageDidAbort')};
+			img.onload = onLoad;
+			img.onerror = onError;
+			img.onabort = onAbort;
 			img.src = (this.options.context ? this.options.context : '')+this.images[index];
 			this.obs.push(img);
-		};
+		}
 	},
 	_imageChanged : function(index,method) {
 		this.loaded++;
@@ -2284,7 +2345,7 @@ hui.Preloader.prototype = {
 			this.delegate.allImagesDidLoad();
 		}
 	}
-}
+};
 
 
 
@@ -2314,7 +2375,7 @@ hui.cookie = {
 			while (c.charAt(0)==' ') {
 				c = c.substring(1,c.length);
 			}
-			if (c.indexOf(nameEQ) == 0) {
+			if (c.indexOf(nameEQ) === 0) {
 				return c.substring(nameEQ.length,c.length);
 			}
 		}
@@ -2324,7 +2385,7 @@ hui.cookie = {
 	clear : function(name) {
 		this.set(name,"",-1);
 	}
-}
+};
 
 
 
@@ -2342,7 +2403,7 @@ hui.location = {
 			if (parms[i].name==name) {
 				return parms[i].value;
 			}
-		};
+		}
 		return null;
 	},
 	/** Set an URL parameter - initiates a new request */
@@ -2355,7 +2416,7 @@ hui.location = {
 				found=true;
 				break;
 			}
-		};
+		}
 		if (!found) {
 			parms.push({name:name,value:value});
 		}
@@ -2401,9 +2462,9 @@ hui.location = {
 	setParameters : function(parms) {
 		var query = '';
 		for (var i=0; i < parms.length; i++) {
-			query+= i==0 ? '?' : '&';
+			query+= i === 0 ? '?' : '&';
 			query+=parms[i].name+'='+parms[i].value;
-		};
+		}
 		document.location.search=query;
 	},
 	/** Checks if a parameter exists with the value 'true' or 1 */
@@ -2414,7 +2475,7 @@ hui.location = {
 	/** Checks if a parameter exists with the value 'true' or 1 */
 	getInt : function(name) {
 		var value = parseInt(hui.location.getParameter(name));
-		if (value!==NaN) {
+		if (!isNaN(value)) {
 			return value;
 		}
 		return null;
@@ -2430,110 +2491,15 @@ hui.location = {
 			if (name) {
 				parsed.push({name:name,value:value});
 			}
-		};
+		}
 		return parsed;
 	}	
 };
 
 
 
-hui.xml = {
-	transform : function(xml,xsl) {
-		if (window.ActiveXObject) {
-			return xml.transformNode(xsl);
-		} else if (document.implementation && document.implementation.createDocument) {
-			try {
-			  	var pro = new XSLTProcessor();
-                pro.setParameter(null,'dev','true');
-                pro.setParameter(null,'profile','true');
-                pro.setParameter(null,'version','true');
-                pro.setParameter(null,'pathVersion','true');
-                pro.setParameter(null,'context','true');
-                pro.setParameter(null,'language','true');
-			  	pro.importStylesheet(xsl);
-/*		'<xsl:variable name="profile">'.$profile.'</xsl:variable>'.
-		'<xsl:variable name="version">'.SystemInfo::getDate().'</xsl:variable>'.
-		'<xsl:variable name="pathVersion">'.$pathVersion.'</xsl:variable>'.
-		'<xsl:variable name="context">'.$context.'</xsl:variable>'.
-		'<xsl:variable name="language">'.InternalSession::getLanguage().'</xsl:variable>';)*/
-				var ownerDocument = document;//.implementation.createDocument("", "test", null); 
-			    return pro.transformToFragment(xml,ownerDocument);				
-			} catch (e) {
-				hui.log('Transform exception...');
-				hui.log(e);
-				throw e;
-			}
-		} else {
-			hui.log('No XSLT!');
-		}
-	},
-	parse : function(xml) {
-		var doc;
-		try {
-		if (window.DOMParser) {
-  			var parser = new DOMParser();
-  			doc = parser.parseFromString(xml,"text/xml");
-			var errors = doc.getElementsByTagName('parsererror');
-			if (errors.length>0 && errors[0].textContent) {
-				hui.log(errors[0].textContent)
-				return null;
-			}
-  		} else {
-  			doc = new ActiveXObject("Microsoft.XMLDOM");
-			doc.async = false;
-  			doc.loadXML(xml); 
-  		}
-		} catch (e) {
-			return null;
-		}
-		return doc;
-	},
-	serialize : function(node) {
-  		try {
-      		return (new XMLSerializer()).serializeToString(node);
-  		} catch (e) {
-     		try {
-        		return node.xml;
-     		}
-     		catch (e) {}
-     	}
-		return null;
-   	}
-}
-
-
-
-
-
-
-
-
-if (!Function.prototype.bind) {
-	Function.prototype.bind = function () {
-	    if (arguments.length < 2 && arguments[0] === undefined) {
-	        return this;
-	    }
-	    var thisObj = this,
-	    args = Array.prototype.slice.call(arguments),
-	    obj = args.shift();
-	    return function () {
-	        return thisObj.apply(obj, args.concat(Array.prototype.slice.call(arguments)));
-	    };
-	};
-
-	Function.bind = function() {
-	    var args = Array.prototype.slice.call(arguments);
-	    return Function.prototype.bind.apply(args.shift(), args);
-	}
-}
-
-if (!Function.prototype.argumentNames) {
-	Function.prototype.argumentNames = function() {
-		var names = this.toString().match(/^[\s\(]*function[^(]*\(([^)]*)\)/)[1]
-			.replace(/\/\/.*?[\r\n]|\/\*(?:.|[\r\n])*?\*\//g, '')
-			.replace(/\s+/g, '').split(',');
-		return names.length == 1 && !names[0] ? [] : names;
-	}
+if (window.define) {
+	define('hui');
 }
 
 /////////////////////////// Animation ///////////////////////////
@@ -2547,6 +2513,7 @@ if (!Function.prototype.argumentNames) {
  *  ease : function(num) {},
  *  $complete : function() {}
  *}
+ * TODO Document options.property, options.value
  * 
  * @param {Element | Object} options Options or an element
  * @param {String} style The css property
@@ -2640,7 +2607,7 @@ hui.animation._ieOpacityUpdater = function(element,v,work) {
 hui.animation._render = function() {
 	hui.animation.running = true;
 	var next = false,
-		stamp = new Date().getTime();
+	stamp = Date.now();
 	for (var id in hui.animation.objects) {
 		var obj = hui.animation.objects[id];
 		if (obj.work) {
@@ -2771,7 +2738,7 @@ hui.animation.Item.prototype.animate = function(from,to,property,duration,delega
 		work.unit = null;
 		work.updater = hui.animation._propertyUpater;
 	}
-	work.start = new Date().getTime();
+	work.start = Date.now();
 	if (delegate && delegate.delay) {
 		work.start+=delegate.delay;
 	}
@@ -3105,6 +3072,11 @@ hui.ease = {
 	}
 };
 
+if (!Date.now) {
+  Date.now = function now() {
+    return new Date().getTime();
+  };
+}
 
 (function() {
     var lastTime = 0;
@@ -3118,7 +3090,7 @@ hui.ease = {
     }
     if (!window.requestAnimationFrame) {
         window.requestAnimationFrame = function(callback, element) {
-            var currTime = new Date().getTime();
+            var currTime = Date.now();
             var timeToCall = Math.max(0, 16 - (currTime - lastTime));
             var id = window.setTimeout(function() { callback(currTime + timeToCall); },
               0);
@@ -3579,7 +3551,7 @@ hui.ui = {
 		reload_page : {en:'Reload page',da:'Indæs siden igen'},
 		access_denied : {en:'Access denied, maybe you are nolonger logged in',da:'Adgang nægtet, du er måske ikke længere logget ind'}
 	}
-}
+};
 
 /**
  * Get a widget by name
@@ -3611,7 +3583,7 @@ hui.ui.onReady = function(func) {
 
 hui.ui._frameLoaded = function(win) {
 	hui.ui.callSuperDelegates(this,'frameLoaded',win);
-}
+};
 
 /** @private */
 hui.ui._resize = function() {
@@ -3620,12 +3592,11 @@ hui.ui._resize = function() {
 	if (!hui.ui._resizeFirst) {
 		this._delayedResize = window.setTimeout(hui.ui._afterResize,1000);
 	}
-}
+};
 
 hui.ui._afterResize = function() {
-	hui.log('afterResize')
 	hui.ui.callSuperDelegates(hui.ui,'$afterResize');
-}
+};
 
 /**
  * Show a confirming overlay
@@ -3664,7 +3635,7 @@ hui.ui.confirmOverlay = function(options) {
 		if (options.onOk) {
 			options.onOk();
 		}
-		if (options['$ok']) {
+		else if (options.$ok) {
 			options.$ok();
 		}
 		overlay.hide();
@@ -3675,14 +3646,14 @@ hui.ui.confirmOverlay = function(options) {
 		if (options.onCancel) {
 			options.onCancel();
 		}
-		if (options['$cancel']) {
+		else if (options.$cancel) {
 			options.$cancel();
 		}
 		overlay.hide();
 	});
 	overlay.add(cancel);
 	overlay.show({element:node});
-}
+};
 
 /**
  * Unregisters a widget
@@ -3693,15 +3664,15 @@ hui.ui.destroy = function(widget) {
         widget.destroy();
     }
 	delete(hui.ui.objects[widget.name]);
-}
+};
 
 hui.ui.destroyDescendants = function(widgetOrElement) {
 	var desc = hui.ui.getDescendants(widgetOrElement);
 	var objects = hui.ui.objects;
 	for (var i=0; i < desc.length; i++) {
         hui.ui.destroy(desc[i]);
-	};
-}
+	}
+};
 
 /** Gets all ancestors of a widget
 	@param {Widget} widget A widget
@@ -3725,7 +3696,7 @@ hui.ui.getAncestors = function(widget) {
 		}
 	}
 	return desc;
-}
+};
 
 hui.ui.getDescendants = function(widgetOrElement) {
 	var desc = [];
@@ -3743,12 +3714,11 @@ hui.ui.getDescendants = function(widgetOrElement) {
 						desc.push(o[j]);
 					}
 				};
-			
 			};
 		}
 	}
 	return desc;
-}
+};
 
 hui.ui.getAncestor = function(widget,cls) {
 	var a = hui.ui.getAncestors(widget);
@@ -3756,9 +3726,9 @@ hui.ui.getAncestor = function(widget,cls) {
 		if (hui.cls.has(a[i].getElement(),cls)) {
 			return a[i];
 		}
-	};
+	}
 	return null;
-}
+};
 
 
 
@@ -3779,17 +3749,17 @@ hui.ui.changeState = function(state) {
 	hui.ui.state=state;
 	
 	this.reLayout();
-}
+};
 
 hui.ui.reLayout = function() {
 	var widgets = hui.ui.getDescendants(document.body);
 	for (var i=0; i < widgets.length; i++) {
 		var obj = widgets[i];
-		if (obj['$$layout']) {
-			obj['$$layout']();
+		if (obj.$$layout) {
+			obj.$$layout();
 		}
-	};
-}
+	}
+};
 
 
 
@@ -3834,8 +3804,8 @@ hui.ui.showCurtain = function(options) {
 		}
 		body.appendChild(widget.curtain);
 		hui.listen(widget.curtain,'click',function() {
-			if (widget['$curtainWasClicked']) {
-				widget['$curtainWasClicked']();
+			if (widget.$curtainWasClicked) {
+				widget.$curtainWasClicked();
 			}
 		});
 	}
@@ -3871,7 +3841,7 @@ hui.ui.showCurtain = function(options) {
 		curtain.style.display='block';
 		hui.animate(curtain,'opacity',0.7,1000,{ease:hui.ease.slowFastSlow});
 	}
-}
+};
 
 hui.ui.hideCurtain = function(widget) {
 	if (widget.curtain) {
@@ -3889,14 +3859,14 @@ hui.ui.hideCurtain = function(widget) {
  * @returns {String} The localized string
  */
 hui.ui.getText = function(key) {
-	var x = this.texts[key];
-	if (!x) {return key}
-	if (x[this.language]) {
-		return x[this.language];
+	var parts = this.texts[key];
+	if (!parts) {return key;}
+	if (parts[this.language]) {
+		return parts[this.language];
 	} else {
-		return x['en'];
+		return parts.en;
 	}
-}
+};
 
 hui.ui.getTranslated = function(value) {
 	if (!hui.isDefined(value) || hui.isString(value) || typeof(value) == 'number') {
@@ -3911,7 +3881,7 @@ hui.ui.getTranslated = function(value) {
 	for (var key in value) {
 		return value[key];
 	}
-}
+};
 
 
 
@@ -3955,7 +3925,7 @@ hui.ui.confirm = function(options) {
 		hui.ui.callDelegates(alert,'ok');
 	}});
 	alert.show();
-}
+};
 
 hui.ui.alert = function(options) {
 	if (!this.alertBox) {
@@ -4030,12 +4000,12 @@ hui.ui.msg = hui.ui.showMessage;
 hui.ui.msg.success = function(options) {
 	options = hui.override({icon:'common/success',duration:2000},options);
 	hui.ui.msg(options);
-}
+};
 
 hui.ui.msg.fail = function(options) {
 	options = hui.override({icon:'common/warning',duration:3000},options);
 	hui.ui.msg(options);
-}
+};
 
 hui.ui.hideMessage = function() {
 	window.clearTimeout(hui.ui.messageDelayTimer);
@@ -4097,7 +4067,7 @@ hui.ui.getElement = function(widgetOrElement) {
 		return widgetOrElement.getElement();
 	}
 	return null;
-}
+};
 
 hui.ui.isWithin = function(e,element) {
 	e = hui.event(e);
@@ -4150,7 +4120,7 @@ hui.ui.keyboardTarget = null; // The widget currently accepting keyboard input
 
 hui.ui.setKeyboardTarget = function(widget) {
 	hui.ui.keyboardTarget = widget;
-}
+};
 
 
 /**
@@ -4160,7 +4130,7 @@ hui.ui.setKeyboardTarget = function(widget) {
 hui.ui.stress = function(widget) {
 	var e = hui.ui.getElement(widget);
 	hui.effect.wiggle({element:e,duration:1000});
-}
+};
 
 
 //////////////////////////// Positioning /////////////////////////////
@@ -4214,41 +4184,41 @@ hui.ui.extend = function(obj,options) {
 	obj.listen = function(delegate) {
 		hui.array.add(this.delegates,delegate);
 		return this;
-	}
+	};
 	obj.unListen = function(delegate) {
 		hui.array.remove(this.delegates,delegate);
-	}
+	};
 	obj.clearListeners = function() {
 		this.delegates = [];
-	}
+	};
 	obj.fire = function(method,value,event) {
 		return hui.ui.callDelegates(this,method,value,event);
-	}
+	};
 	obj.fireValueChange = function() {
 		obj.fire('valueChanged',obj.value);
 		hui.ui.firePropertyChange(obj,'value',obj.value);
 		hui.ui.callAncestors(obj,'childValueChanged',obj.value);
-	}
+	};
 	obj.fireProperty = function(key,value) {
 		hui.ui.firePropertyChange(this,key,value);
-	}
+	};
 	obj.fireSizeChange = function() {
 		hui.ui.callAncestors(obj,'$$childSizeChanged');
-	}
+	};
 	if (!obj.getElement) {
 		obj.getElement = function() {
 			return this.element;
-		}
+		};
 	}
 	if (!obj.destroy) {
 		obj.destroy = function() {
             if (this.element) {
-                hui.dom.remove(this.element)
+                hui.dom.remove(this.element);
             }
-		}
+		};
 	}
 	if (!obj.valueForProperty) {
-		obj.valueForProperty = function(p) {return this[p]};
+		obj.valueForProperty = function(p) {return this[p];};
 	}
 };
 
@@ -4260,7 +4230,7 @@ hui.ui.callAncestors = function(obj,method,value,event) {
 		if (d[i][method]) {
 			d[i][method](value,event);
 		}
-	};
+	}
 };
 
 /** Send a message to all descendants of a widget */
@@ -4268,7 +4238,7 @@ hui.ui.callDescendants = function(obj,method,value,event) {
 	if (typeof(value)=='undefined') {
 		value=obj;
 	}
-	if (!method[0]=='$') {
+	if (method[0] !== '$') {
 		method = '$'+method;
 	}
 	var d = hui.ui.getDescendants(obj);
@@ -4276,13 +4246,13 @@ hui.ui.callDescendants = function(obj,method,value,event) {
 		if (d[i][method]) {
 			d[i][method](value,event);
 		}
-	};
+	}
 };
 
 /** Signal that a widget has changed visibility */
 hui.ui.callVisible = function(widget) {
 	hui.ui.callDescendants(widget,'$visibilityChanged');
-}
+};
 
 /** Listen for global events */
 hui.ui.listen = function(delegate) {
@@ -4290,21 +4260,21 @@ hui.ui.listen = function(delegate) {
 		delegate.$ready();
 	}
 	hui.ui.delegates.push(delegate);
-}
+};
 
 hui.ui.unListen = function(listener) {
 	hui.array.remove(hui.ui.delegates,listener);
-}
+};
 
 hui.ui.callDelegates = function(obj,method,value,event) {
 	if (typeof(value)=='undefined') {
 		value=obj;
 	}
-	var result = undefined;
+	var result;
 	if (obj.delegates) {
 		for (var i=0; i < obj.delegates.length; i++) {
 			var delegate = obj.delegates[i],
-				thisResult = undefined,
+				thisResult,
 				x = '$'+method+'$'+obj.name;
 			if (obj.name && delegate[x]) {
 				thisResult = delegate[x](value,event);
@@ -4314,7 +4284,7 @@ hui.ui.callDelegates = function(obj,method,value,event) {
 			if (result===undefined && thisResult!==undefined && typeof(thisResult)!='undefined') {
 				result = thisResult;
 			}
-		};
+		}
 	}
 	var superResult = hui.ui.callSuperDelegates(obj,method,value,event);
 	if (result===undefined && superResult!==undefined) {
@@ -4334,7 +4304,7 @@ hui.ui.tellContainers = function(event,value) {
 			//hui.log('Unable to callContainers')
 		}
 	}
-}
+};
 
 hui.ui._tellContainers = function(event,value) {
 	hui.ui.callSuperDelegates({},event,value);
@@ -4345,14 +4315,14 @@ hui.ui._tellContainers = function(event,value) {
 			//hui.log('Unable to callContainers')
 		}
 	}
-}
+};
 
 hui.ui.callSuperDelegates = function(obj,method,value,event) {
 	if (typeof(value)=='undefined') value=obj;
-	var result = undefined;
+	var result;
 	for (var i=0; i < hui.ui.delegates.length; i++) {
-		var delegate = hui.ui.delegates[i];
-		var thisResult = undefined;
+		var delegate = hui.ui.delegates[i],
+            thisResult;
 		if (obj.name && delegate['$'+method+'$'+obj.name]) {
 			thisResult = delegate['$'+method+'$'+obj.name](value,event);
 		} else if (delegate['$'+method]) {
@@ -4361,7 +4331,7 @@ hui.ui.callSuperDelegates = function(obj,method,value,event) {
 		if (result===undefined && thisResult!==undefined && typeof(thisResult)!='undefined') {
 			result = thisResult;
 		}
-	};
+	}
 	return result;
 };
 
@@ -4370,7 +4340,7 @@ hui.ui.resolveImageUrl = function(widget,img,width,height) {
 		if (widget.delegates[i].$resolveImageUrl) {
 			return widget.delegates[i].$resolveImageUrl(img,width,height);
 		}
-	};
+	}
 	for (var j=0; j < hui.ui.delegates.length; j++) {
 		var delegate = hui.ui.delegates[j];
 		if (delegate.$resolveImageUrl) {
@@ -4389,8 +4359,8 @@ hui.ui.include = function(options) {
 			hui.dom.runScripts(container);
 			options.$success();
 		}
-	})
-},
+	});
+};
 
 
 
@@ -4439,7 +4409,7 @@ hui.ui.handleRequestError = function(widget) {
 			}
 		});
 	}
-}
+};
 
 hui.ui.handleForbidden = function(widget) {
 	hui.log('General access denied received');
@@ -4455,7 +4425,7 @@ hui.ui.handleForbidden = function(widget) {
 			}
 		});
 	}
-}
+};
 
 hui.ui.request = function(options) {
 	options = hui.override({method:'post',parameters:{}},options);
@@ -4510,7 +4480,7 @@ hui.ui.request = function(options) {
 	};
 	options.$failure = function(t) {
 		if (typeof(failure)=='string') {
-			hui.ui.callDelegates(t,'failure$'+failure)
+			hui.ui.callDelegates(t,'failure$'+failure);
 		} else if (typeof(failure)=='function') {
 			failure(t);
 		} else {
@@ -4519,7 +4489,7 @@ hui.ui.request = function(options) {
 			}
 			hui.ui.handleRequestError();
 		}
-	}
+	};
 	options.$exception = options.$exception || function(e,t) {
 		hui.log(e);
 		hui.log(t);
@@ -4535,7 +4505,7 @@ hui.ui.request = function(options) {
 			options.$failure(t);
 			hui.ui.handleForbidden();
 		}
-	}
+	};
 	if (options.message && options.message.start) {
 		hui.ui.msg({text:options.message.start,busy:true,delay:options.message.delay});
 	}
@@ -4554,7 +4524,7 @@ hui.ui.parseSubItems = function(parent,array) {
 	for (var i=0; i < children.length; i++) {
 		var node = children[i];
 		if (node.nodeType==1 && node.nodeName=='title') {
-			array.push({title:node.getAttribute('title'),type:'title'})
+			array.push({title:node.getAttribute('title'),type:'title'});
 		} else if (node.nodeType==1 && node.nodeName=='item') {
 			var sub = [];
 			hui.ui.parseSubItems(node,sub);
@@ -4568,26 +4538,8 @@ hui.ui.parseSubItems = function(parent,array) {
 				children : sub
 			});
 		}
-	};
-}
-
-/** A bundle of strings
- * @constructor
- */
-hui.ui.Bundle = function(strings) {
-	this.strings = strings;
-}
-
-hui.ui.Bundle.prototype = {
-	get : function(key) {
-		var values = this.strings[key];
-		if (values) {
-			return values[hui.ui.language];
-		}
-		hui.log(key+' not found for language:'+hui.ui.language);
-		return key;
 	}
-}
+};
 
 /**
  * Import some widgets by name
@@ -4597,11 +4549,13 @@ hui.ui.Bundle.prototype = {
 hui.ui.require = function(names,func) {
 	for (var i = names.length - 1; i >= 0; i--){
 		names[i] = hui.ui.context+'hui/js/'+names[i]+'.js';
-	};
+	}
 	hui.require(names,func);
+};
+
+if (window.define) {
+	define('hui.ui');
 }
-
-
 
 hui.onReady(function() {
 	hui.listen(window,'resize',hui.ui._resize);
@@ -4612,7 +4566,7 @@ hui.onReady(function() {
 	}
 	for (var i=0; i < hui.ui.delayedUntilReady.length; i++) {
 		hui.ui.delayedUntilReady[i]();
-	};
+	}
 	// Call super delegates after delayedUntilReady...
 	hui.ui.callSuperDelegates(this,'ready');
 });
@@ -4660,32 +4614,25 @@ hui.ui.ImageViewer = function(options) {
 	
 	// Collect elements ...
 	this.element = hui.get(options.element);
+
+  hui.collect(this.nodes,this.element);
+
 	this.box = this.options.box;
-	this.viewer = hui.get.firstByClass(this.element,'hui_imageviewer_viewer');
-	this.innerViewer = hui.get.firstByClass(this.element,'hui_imageviewer_inner_viewer');
-	
-	this.status = hui.get.firstByClass(this.element,'hui_imageviewer_status');
-	
-	this.previousControl = hui.get.firstByClass(this.element,'hui_imageviewer_previous');
-	this.controller = hui.get.firstByClass(this.element,'hui_imageviewer_controller');
-	this.nextControl = hui.get.firstByClass(this.element,'hui_imageviewer_next');
-	this.playControl = hui.get.firstByClass(this.element,'hui_imageviewer_play');
-	this.closeControl = hui.get.firstByClass(this.element,'hui_imageviewer_close');
-	
-	this.text = hui.get.firstByClass(this.element,'hui_imageviewer_text');
 	
 	// State ...
 	this.dirty = false;
 	this.width = 600;
 	this.height = 460;
 	this.index = 0;
+	this.position = 0; // pixels
 	this.playing = false;
 	this.name = options.name;
-	this.images = options.images;
+	this.images = options.images || [];
 	
 	// Behavior ...
 	this.box.listen(this);
-	this._addBehavior();
+	this._attach();
+	this._attachDrag();
 	hui.ui.extend(this);
 	
 	if (options.listener) {
@@ -4717,20 +4664,32 @@ hui.ui.ImageViewer.create = function(options) {
 }
 
 hui.ui.ImageViewer.prototype = {
+	nodes : {
+		viewer : 'hui_imageviewer_viewer',
+		innerViewer : 'hui_imageviewer_inner_viewer',
 
-	_addBehavior : function() {
+		status : 'hui_imageviewer_status',
+		text : 'hui_imageviewer_text',
+
+		previous : 'hui_imageviewer_previous',
+		controller : 'hui_imageviewer_controller',
+		next : 'hui_imageviewer_next',
+		play : 'hui_imageviewer_play',
+		close : 'hui_imageviewer_close'
+	},
+	_attach : function() {
 		var self = this;
-		this.nextControl.onclick = function() {
+		this.nodes.next.onclick = function() {
 			self.next(true);
 		}
-		this.previousControl.onclick = function() {
+		this.nodes.previous.onclick = function() {
 			self.previous(true);
 		}
-		this.playControl.onclick = function() {
+		this.nodes.play.onclick = function() {
 			self.playOrPause();
 		}
-		this.closeControl.onclick = this.hide.bind(this);
-		hui.listen(this.viewer,'click',this._zoom.bind(this));
+		this.nodes.close.onclick = this.hide.bind(this);
+
 		this._timer = function() {
 			self.next(false);
 		}
@@ -4746,86 +4705,116 @@ hui.ui.ImageViewer.prototype = {
 				self.playOrPause();
 			}
 		},
-		hui.listen(this.viewer,'mousemove',this._onMouseMove.bind(this));
-		hui.listen(this.controller,'mouseover',function() {
+		hui.listen(this.nodes.viewer,'mousemove',this._onMouseMove.bind(this));
+		hui.listen(this.nodes.controller,'mouseover',function() {
 			self.overController = true;
 		});
-		hui.listen(this.controller,'mouseout',function() {
+		hui.listen(this.nodes.controller,'mouseout',function() {
 			self.overController = false;
 		});
-		hui.listen(this.viewer,'mouseout',function(e) {
-			if (!hui.ui.isWithin(e,this.viewer)) {
+		hui.listen(this.nodes.viewer,'mouseout',function(e) {
+			if (!hui.ui.isWithin(e,this.nodes.viewer)) {
 				self._hideController();
 			}
 		}.bind(this));
+	},
+	_attachDrag : function() {
+		var initial = 0;
+		var scrl = 0;
+		var viewer = this.nodes.viewer;
+		var inner = this.nodes.innerViewer;
+		var max = 0;
+		hui.drag.register({
+			touch : true,
+			element : this.nodes.innerViewer,
+			onBeforeMove : function(e) {
+				initial = e.getLeft();
+				scrl = this.position;
+				max = (this.images.length-1) * this.width * -1;
+				hui.log('max='+max)
+			}.bind(this),
+			onMove : function(e) {
+				var pos = (scrl - (initial - e.getLeft()));
+				if (pos > 0) {
+					pos = (Math.exp(pos * -0.013) -1) * -80;
+				}
+				if (pos < max) {
+					pos = (Math.exp((pos - max) * 0.013) -1) * 80 + max;
+				}
+				this.position = pos;
+				inner.style.marginLeft = pos + 'px';
+			}.bind(this),
+			onAfterMove : function() {
+				var num = Math.round(this.position * -1 / this.width);
+				this.index = num;
+				this._goToImage(true,num,false,true);
+			}.bind(this),
+			onNotMoved : this._zoom.bind(this)
+		})
 	},
 	_onMouseMove : function() {
 		window.clearTimeout(this.ctrlHider);
 		if (this._shouldShowController()) {
 			this.ctrlHider = window.setTimeout(this._hideController.bind(this),2000);
-			if (hui.browser.msie) {
-				this.controller.style.display='block';
+			if (!hui.browser.opacity) {
+				this.nodes.controller.style.display='block';
 			} else {
-				hui.effect.fadeIn({element:this.controller,duration:200});
+				hui.effect.fadeIn({element:this.nodes.controller,duration:200});
 			}
 		}
 	},
 	_hideController : function() {
 		if (!this.overController) {
-			if (hui.browser.msie) {
-				this.controller.style.display='none';
+			if (!hui.browser.opacity) {
+				this.nodes.controller.style.display='none';
 			} else {
-				hui.effect.fadeOut({element:this.controller,duration:500});
+				hui.effect.fadeOut({element:this.nodes.controller,duration:500});
 			}
 		}
 	},
 	_getLargestSize : function(canvas,image) {
-		if (image.width<=canvas.width && image.height<=canvas.height) {
-			return {width:image.width,height:image.height};
-		} else if (canvas.width/canvas.height>image.width/image.height) {
-			return {width:Math.round(canvas.height/image.height*image.width),height:canvas.height};
-		} else if (canvas.width/canvas.height<image.width/image.height) {
-			return {width:canvas.width,height:Math.round(canvas.width/image.width*image.height)};
-		} else {
-			return {width:canvas.width,height:canvas.height};
-		}
+		return hui.fit(image,canvas,{upscale:false});
 	},
 	_calculateSize : function() {
 		var snap = this.options.sizeSnap;
 		var newWidth = hui.window.getViewWidth() - this.options.perimeter;
 		newWidth = Math.floor(newWidth / snap) * snap;
-		newWidth = Math.min(newWidth , this.options.maxWidth);
+		newWidth = Math.min(newWidth, this.options.maxWidth);
 		var newHeight = hui.window.getViewHeight() - this.options.perimeter;
 		newHeight = Math.floor(newHeight / snap) * snap;
-		newHeight = Math.min(newHeight , this.options.maxHeight);
+		newHeight = Math.min(newHeight, this.options.maxHeight);
 		var maxWidth = 0;
 		var maxHeight = 0;
-		for (var i=0; i < this.images.length; i++) {
-			var dims = this._getLargestSize({ width : newWidth, height : newHeight}, this.images[i] );
-			maxWidth = Math.max(maxWidth , dims.width);
-			maxHeight = Math.max(maxHeight , dims.height);
+		for (var i = 0; i < this.images.length; i++) {
+			var dims = this._getLargestSize({
+				width: newWidth,
+				height: newHeight
+			}, this.images[i]);
+			maxWidth = Math.max(maxWidth, dims.width);
+			maxHeight = Math.max(maxHeight, dims.height);
 		};
-		newHeight = Math.floor( Math.min(newHeight , maxHeight) );
-		newWidth = Math.floor( Math.min(newWidth , maxWidth) );
-		
+		newHeight = Math.floor(Math.min(newHeight, maxHeight));
+		newWidth = Math.floor(Math.min(newWidth, maxWidth));
+
 		if (newWidth != this.width || newHeight != this.height) {
 			this.width = newWidth;
 			this.height = newHeight;
 			this.dirty = true;
 		}
+
 	},
 	_updateUI : function() {
 		if (this.dirty) {
-			this.innerViewer.innerHTML='';
+			this.nodes.innerViewer.innerHTML='';
 			for (var i=0; i < this.images.length; i++) {
 				var element = hui.build('div',{'class':'hui_imageviewer_image'});
 				hui.style.set(element,{width: (this.width + this.options.margin) + 'px',height : (this.height-1)+'px' });
-				this.innerViewer.appendChild(element);
+				this.nodes.innerViewer.appendChild(element);
 			};
 			if (this._shouldShowController()) {
-				this.controller.style.display='block';
+				this.nodes.controller.style.display='block';
 			} else {
-				this.controller.style.display='none';
+				this.nodes.controller.style.display='none';
 			}
 			this.dirty = false;
 			this._preload();
@@ -4834,29 +4823,47 @@ hui.ui.ImageViewer.prototype = {
 	_shouldShowController : function() {
 		return this.images.length>1;
 	},
-	_goToImage : function(animate,num,user) {	
+	_goToImage : function(animate,num,user,drag) {
+		var target = this.position = this.index * (this.width + this.options.margin) * -1;
 		if (animate) {
-			if (num>1) {
-				hui.animate(this.viewer,'scrollLeft',this.index*(this.width+this.options.margin),Math.min(num*this.options.transitionReturn,2000),{ease:this.options.easeReturn});				
+			var duration, ease;
+			if (drag) {
+				duration = 200;
+				ease = hui.ease.fastSlow;
+				ease = hui.ease.quadOut;
+			}
+			else if (num > 1) {
+				duration = Math.min(num * this.options.transitionReturn, 2000)
+				ease = this.options.easeReturn;
 			} else {
-				var end = this.index==0 || this.index==this.images.length-1;
-				var ease = (end ? this.options.easeEnd : this.options.ease);
+				var end = this.index == 0 || this.index == this.images.length - 1;
+				ease = (end ? this.options.easeEnd : this.options.ease);
 				if (!user) {
 					ease = this.options.easeAuto;
 				}
-				hui.animate(this.viewer,'scrollLeft',this.index*(this.width+this.options.margin),(end ? this.options.transitionEnd : this.options.transition),{ease:ease});
+				duration = (end ? this.options.transitionEnd : this.options.transition);
 			}
+			hui.animate({
+				node : this.nodes.innerViewer, 
+				css : {marginLeft : target + 'px'}, 
+				duration : duration,
+				ease : ease
+			});
 		} else {
-			this.viewer.scrollLeft = this.index*(this.width+this.options.margin);
+			this.nodes.innerViewer.style.marginLeft = target + 'px';
 		}
+		this._drawText();
+	},
+	
+	_drawText : function() {
 		var text = this.images[this.index].text;
 		if (text) {
-			this.text.innerHTML = text;
-			this.text.style.display = 'block';
+			this.nodes.text.innerHTML = text;
+			this.nodes.text.style.display = 'block';
 		} else {
-			this.text.innerHTML = '';
-			this.text.style.display = 'none';
-		}
+			this.nodes.text.innerHTML = '';
+			this.nodes.text.style.display = 'none';
+		}		
 	},
 	
 	// Show / hide ...
@@ -4881,9 +4888,9 @@ hui.ui.ImageViewer.prototype = {
 		this._updateUI();
 		var margin = this.options.margin;
 		hui.style.set(this.element, {width:(this.width+margin)+'px',height:(this.height+margin*2-1)+'px'});
-		hui.style.set(this.viewer, {width:(this.width+margin)+'px',height:(this.height-1)+'px'});
-		hui.style.set(this.innerViewer, {width:((this.width+margin)*this.images.length)+'px',height:(this.height-1)+'px'});
-		hui.style.set(this.controller, {marginLeft:((this.width-180)/2+margin*0.5)+'px',display:'none'});
+		hui.style.set(this.nodes.viewer, {width:(this.width+margin)+'px',height:(this.height-1)+'px'});
+		hui.style.set(this.nodes.innerViewer, {width:((this.width+margin)*this.images.length)+'px',height:(this.height-1)+'px'});
+		hui.style.set(this.nodes.controller, {marginLeft:((this.width-180)/2+margin*0.5)+'px',display:'none'});
 		this.box.show();
 		this._goToImage(false,0,false);
 		hui.listen(document,'keydown',this._keyListener);
@@ -4974,13 +4981,13 @@ hui.ui.ImageViewer.prototype = {
 		}
 		this.next(false);
 		this.playing=true;
-		this.playControl.className='hui_imageviewer_pause';
+		this.nodes.play.className='hui_imageviewer_pause';
 	},
 	/** Pauseslideshow */
 	pause : function() {
 		window.clearInterval(this.interval);
 		this.interval = null;
-		this.playControl.className='hui_imageviewer_play';
+		this.nodes.play.className='hui_imageviewer_play';
 		this.playing = false;
 	},
 	/** Start or pause slideshow */
@@ -5047,30 +5054,30 @@ hui.ui.ImageViewer.prototype = {
 				loader.addImages(url);
 			}
 		};
-		this.status.innerHTML = '0%';
-		this.status.style.display = '';
+		this.nodes.status.innerHTML = '0%';
+		this.nodes.status.style.display = '';
 		loader.load(this.index);
 	},
 	/** @private */
 	allImagesDidLoad : function() {
-		this.status.style.display = 'none';
+		this.nodes.status.style.display = 'none';
 	},
 	/** @private */
 	imageDidLoad : function(loaded,total,index) {
-		this.status.innerHTML = Math.round(loaded/total*100)+'%';
+		this.nodes.status.innerHTML = Math.round(loaded/total*100)+'%';
 		var url = hui.ui.resolveImageUrl(this,this.images[index],this.width,this.height);
 		url = url.replace(/&amp;/g,'&');
-		this.innerViewer.childNodes[index].style.backgroundImage="url('"+url+"')";
-		hui.cls.set(this.innerViewer.childNodes[index],'hui_imageviewer_image_abort',false);
-		hui.cls.set(this.innerViewer.childNodes[index],'hui_imageviewer_image_error',false);
+		this.nodes.innerViewer.childNodes[index].style.backgroundImage="url('"+url+"')";
+		hui.cls.set(this.nodes.innerViewer.childNodes[index],'hui_imageviewer_image_abort',false);
+		hui.cls.set(this.nodes.innerViewer.childNodes[index],'hui_imageviewer_image_error',false);
 	},
 	/** @private */
 	imageDidGiveError : function(loaded,total,index) {
-		hui.cls.set(this.innerViewer.childNodes[index],'hui_imageviewer_image_error',true);
+		hui.cls.set(this.nodes.innerViewer.childNodes[index],'hui_imageviewer_image_error',true);
 	},
 	/** @private */
 	imageDidAbort : function(loaded,total,index) {
-		hui.cls.set(this.innerViewer.childNodes[index],'hui_imageviewer_image_abort',true);
+		hui.cls.set(this.nodes.innerViewer.childNodes[index],'hui_imageviewer_image_abort',true);
 	},
 	
 	
@@ -5086,7 +5093,7 @@ hui.ui.ImageViewer.prototype = {
 		if (!this.zoomer) {
 			this.zoomer = hui.build('div',{
 				'class' : 'hui_imageviewer_zoomer',
-				style : 'width:'+this.viewer.clientWidth+'px;height:'+this.viewer.clientHeight+'px'
+				'style' : 'width:'+this.nodes.viewer.clientWidth+'px;height:'+this.nodes.viewer.clientHeight+'px'
 			});
 			this.element.insertBefore(this.zoomer,hui.dom.firstChild(this.element));
 			hui.listen(this.zoomer,'mousemove',this._onZoomMove.bind(this));
@@ -5097,7 +5104,7 @@ hui.ui.ImageViewer.prototype = {
 		this.pause();
 		var size = this._getLargestSize({width:2000,height:2000},img);
 		var url = hui.ui.resolveImageUrl(this,img,size.width,size.height);
-		this.zoomer.innerHTML = '<div style="width:'+size.width+'px;height:'+size.height+'px; margin: 0 auto;"><img src="'+url+'"/></div>';
+		this.zoomer.innerHTML = '<div style="width:'+size.width+'px;height:'+size.height+'px; margin: 0 auto;"><img src="'+url+'" style="margin-top: '+ Math.max(0,Math.round((this.nodes.viewer.clientHeight-size.height)/2)) + 'px" /></div>';
 		this.zoomer.style.display = 'block';
 		this.zoomInfo = {width:size.width,height:size.height};
 		this._onZoomMove(e);
@@ -5168,7 +5175,7 @@ hui.ui.Box.prototype = {
 	shake : function() {
 		hui.effect.shake({element:this.element});
 	},
-	
+
 	/**
 	 * Adds the box to the end of the body
 	 */
@@ -5196,13 +5203,17 @@ hui.ui.Box.prototype = {
 			hui.ui.showCurtain({widget:this,zIndex:index});
 		}
 		if (this.options.absolute) {
-			hui.style.set(e,{display:'block',visibility:'hidden'});
+			hui.style.set(e,{ display : 'block', visibility : 'hidden' });
 			var w = e.clientWidth;
-			var top = (hui.window.getViewHeight()-e.clientHeight)/2+hui.window.getScrollTop();
-			hui.style.set(e,{'marginLeft':(w/-2)+'px',top:top+'px'});
-			hui.style.set(e,{display:'block',visibility:'visible'});
+			var top = (hui.window.getViewHeight() - e.clientHeight) / 2 + hui.window.getScrollTop();
+			hui.style.set(e,{
+				marginLeft : (w/-2)+'px',
+				top : top+'px',
+				display : 'block',
+				visibility : 'visible'
+			});
 		} else {
-			e.style.display='block';
+			e.style.display = 'block';
 		}
 		this.visible = true;
 		hui.ui.callVisible(this);
