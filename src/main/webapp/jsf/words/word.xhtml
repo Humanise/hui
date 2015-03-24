@@ -43,7 +43,7 @@
 										</c:if>
 									</p>
 									<p class="words_word_info">
-										<strong class="words_word_info" title="#{word.word.id}">#{word.word.text}</strong>
+										<strong class="words_word_info" title="#{word.word.id}">#{word.word.text}<c:if test="#{word.trademark}"><sup>&#174;</sup></c:if></strong>
 										<c:if test="#{word.lexicalCategory!=null}">
 											<span class="words_word_info">
 												<span>—</span>
