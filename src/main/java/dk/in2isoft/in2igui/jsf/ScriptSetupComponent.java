@@ -32,6 +32,7 @@ public class ScriptSetupComponent extends AbstractComponent {
 	@Override
 	public void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
 		Request request = Components.getRequest();
+
 		writer.startScript().newLine();
 		writer.write("hui.ui.context = '").write(request.getBaseContext()).write("';").newLine();
 		writer.write("hui.ui.language = '").write(request.getLanguage()).write("';").newLine();

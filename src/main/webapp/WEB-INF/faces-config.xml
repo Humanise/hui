@@ -182,6 +182,10 @@
     	<component-class>dk.in2isoft.in2igui.jsf.ScriptSetupComponent</component-class>
   	</component>
     <component>
+	    <component-type>hui.compatibility</component-type>
+    	<component-class>dk.in2isoft.in2igui.jsf.CompatibilityComponent</component-class>
+  	</component>
+    <component>
 	    <component-type>hui.importStyle</component-type>
     	<component-class>dk.in2isoft.in2igui.jsf.ImportStyleComponent</component-class>
   	</component>

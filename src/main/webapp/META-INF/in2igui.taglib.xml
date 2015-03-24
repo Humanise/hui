@@ -23,6 +23,13 @@
     </component>
   </tag>
   <tag>
+    <tag-name>compatibility</tag-name>
+    <component>
+      <component-type>hui.compatibility</component-type>
+      <renderer-type>hui.compatibility</renderer-type>
+    </component>
+  </tag>
+  <tag>
     <tag-name>button</tag-name>
     <component>
       <component-type>hui.button</component-type>
