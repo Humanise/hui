@@ -12,6 +12,7 @@ public class WordImpression {
 	private Word word;
 	private LexicalCategory lexicalCategory;
 	private List<WordRelationGroup> relations;
+	private boolean trademark;
 	private String glossary;
 	private List<String> examples;
 	private String dataSource;
@@ -89,6 +90,14 @@ public class WordImpression {
 
 	public String getSourceTitle() {
 		return sourceTitle;
+	}
+
+	public boolean isTrademark() {
+		return trademark;
+	}
+
+	public void setTrademark(boolean trademark) {
+		this.trademark = trademark;
 	}
 
 	public static class WordRelationGroup {

@@ -43,6 +43,8 @@ public class LanguageService {
 	
 	private Set<Locale> locales = Sets.newHashSet(new Locale("en","US"),new Locale("da","DK"));
 	
+	private List<String> trademarks = Lists.newArrayList("rockwool");
+	
 	public Language getLanguageForCode(String code) {
 		Query<Language> query = Query.of(Language.class).withField(Language.CODE, code);
 		return modelService.search(query).getFirst();
@@ -67,6 +69,9 @@ public class LanguageService {
 	
 	public WordImpression getImpression(Word word) throws ModelException {
 		WordImpression impression = new WordImpression();
+		if (trademarks.contains(word.getText().toLowerCase())) {
+			impression.setTrademark(true);
+		}
 		impression.setWord(word);
 		impression.setLanguage(modelService.getParent(word, Language.class));
 		impression.setLexicalCategory(modelService.getParent(word, LexicalCategory.class));
