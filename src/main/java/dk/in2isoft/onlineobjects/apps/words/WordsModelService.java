@@ -64,9 +64,13 @@ public class WordsModelService {
 	public Diagram getDiagram(String text) throws ModelException {
 		Messages msg = new Messages(WordsController.class);
 		Diagram diagram = new Diagram();
+		diagram.setMaxNodeCount(100);
 		Query<Word> query = Query.of(Word.class).withFieldLowercase(Word.TEXT_FIELD, text);
 		List<Word> words = modelService.search(query).getList();
 		for (Word word : words) {
+			if (diagram.isFull()) {
+				break;
+			}
 			Node wordNode = new Node();
 			wordNode.setId(word.getId());
 			wordNode.setTitle(word.getText());
@@ -77,6 +81,9 @@ public class WordsModelService {
 			
 			List<Relation> childRelations = modelService.getChildRelations(word, Word.class);
 			for (Relation relation : childRelations) {
+				if (diagram.isFull()) {
+					break;
+				}
 				Entity child = relation.getSubEntity();
 				Node childNode = new Node();
 				childNode.setId(child.getId());
@@ -86,19 +93,24 @@ public class WordsModelService {
 				diagram.addNode(childNode);
 				diagram.addEdge(wordNode,msg.get(relation.getKind()+".reverse", locale),childNode);
 				
-				Language language = modelService.getParent(child, Language.class);
-				if (language!=null) {
-					Node langNode = new Node();
-					langNode.setId(language.getId());
-					langNode.setTitle(language.getName());
-					langNode.addProperty("Type", "Language");
-					diagram.addNode(langNode);
-					diagram.addEdge(childNode,langNode);
+				if (!diagram.isFull()) {
+					Language language = modelService.getParent(child, Language.class);
+					if (language!=null) {
+						Node langNode = new Node();
+						langNode.setId(language.getId());
+						langNode.setTitle(language.getName());
+						langNode.addProperty("Type", "Language");
+						diagram.addNode(langNode);
+						diagram.addEdge(childNode,langNode);
+					}
 				}
 			}
 			
 			List<Relation> parentRelations = modelService.getParentRelations(word, Word.class);
 			for (Relation relation : parentRelations) {
+				if (diagram.isFull()) {
+					break;
+				}
 				Entity parent = relation.getSuperEntity();
 				Node childNode = new Node();
 				childNode.setId(parent.getId());
@@ -107,7 +119,8 @@ public class WordsModelService {
 				childNode.setData(getData(parent));
 				diagram.addNode(childNode);
 				diagram.addEdge(wordNode,msg.get(relation.getKind(), locale),childNode);
-				
+
+				if (!diagram.isFull()) {
 				Language language = modelService.getParent(parent, Language.class);
 				if (language!=null) {
 					Node langNode = new Node();
@@ -117,44 +130,53 @@ public class WordsModelService {
 					diagram.addNode(langNode);
 					diagram.addEdge(childNode,langNode);
 				}
-			}
-			
-			Language language = modelService.getParent(word, Language.class);
-			if (language!=null) {
-				Node langNode = new Node();
-				langNode.setId(language.getId());
-				langNode.setTitle(language.getName());
-				langNode.addProperty("Type", "Language");
-				diagram.addNode(langNode);
-				diagram.addEdge(wordNode,langNode);
-			}
-			LexicalCategory category = modelService.getParent(word, LexicalCategory.class);
-			if (category!=null) {
-				Node categoryNode = new Node();
-				categoryNode.setId(category.getId());
-				categoryNode.setTitle(category.getName());
-				categoryNode.addProperty("Type", "Lexical category");
-				diagram.addNode(categoryNode);
-				diagram.addEdge(wordNode,"Category",categoryNode);
-
-				LexicalCategory superCategory = modelService.getParent(category, Relation.KIND_STRUCTURE_SPECIALIZATION, LexicalCategory.class);
-				if (superCategory!=null) {
-					Node superNode = new Node();
-					superNode.setId(superCategory.getId());
-					superNode.setTitle(superCategory.getName());
-					superNode.addProperty("Type", "Lexical category");
-					diagram.addNode(superNode);
-					diagram.addEdge(superNode,"Specialization",categoryNode);
 				}
 			}
-			User user = modelService.getChild(word, Relation.KIND_COMMON_ORIGINATOR, User.class);
-			if (user!=null) {
-				Node userNode = new Node();
-				userNode.setId(user.getId());
-				userNode.setTitle(user.getName());
-				userNode.addProperty("Type", "User");
-				diagram.addNode(userNode);
-				diagram.addEdge(wordNode,"Originator",userNode);
+
+			if (!diagram.isFull()) {
+				Language language = modelService.getParent(word, Language.class);
+				if (language!=null) {
+					Node langNode = new Node();
+					langNode.setId(language.getId());
+					langNode.setTitle(language.getName());
+					langNode.addProperty("Type", "Language");
+					diagram.addNode(langNode);
+					diagram.addEdge(wordNode,langNode);
+				}
+			}
+			if (!diagram.isFull()) {
+				LexicalCategory category = modelService.getParent(word, LexicalCategory.class);
+				if (category!=null) {
+					Node categoryNode = new Node();
+					categoryNode.setId(category.getId());
+					categoryNode.setTitle(category.getName());
+					categoryNode.addProperty("Type", "Lexical category");
+					diagram.addNode(categoryNode);
+					diagram.addEdge(wordNode,"Category",categoryNode);
+
+					if (!diagram.isFull()) {
+						LexicalCategory superCategory = modelService.getParent(category, Relation.KIND_STRUCTURE_SPECIALIZATION, LexicalCategory.class);
+						if (superCategory!=null) {
+							Node superNode = new Node();
+							superNode.setId(superCategory.getId());
+							superNode.setTitle(superCategory.getName());
+							superNode.addProperty("Type", "Lexical category");
+							diagram.addNode(superNode);
+							diagram.addEdge(superNode,"Specialization",categoryNode);
+						}
+					}
+				}
+			}
+			if (!diagram.isFull()) {
+				User user = modelService.getChild(word, Relation.KIND_COMMON_ORIGINATOR, User.class);
+				if (user!=null) {
+					Node userNode = new Node();
+					userNode.setId(user.getId());
+					userNode.setTitle(user.getName());
+					userNode.addProperty("Type", "User");
+					diagram.addNode(userNode);
+					diagram.addEdge(wordNode,"Originator",userNode);
+				}
 			}
 		}
 		return diagram;
