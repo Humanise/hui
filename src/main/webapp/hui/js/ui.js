@@ -83,7 +83,8 @@ hui.ui._afterResize = function() {
  *  text : «String», // the text message
  *  okText : «String», // text of OK button
  *  cancelText «String», // text of cancel button
- *  $ok: «Function» // called when user clicks the OK button
+ *  $ok: «Function», // called when user clicks the OK button
+ *  $cancel: «Function» // called when user clicks the Cancel button
  * }
  * </pre>
  * @param options {Object} The options
@@ -697,6 +698,9 @@ hui.ui.extend = function(obj,options) {
 	if (!obj.valueForProperty) {
 		obj.valueForProperty = function(p) {return this[p];};
 	}
+	if (obj.nodes && obj.element) {
+		obj.nodes = hui.collect(obj.nodes,obj.element);
+	}
 };
 
 /** Send a message to all ancestors of a widget */
@@ -1031,7 +1035,7 @@ hui.ui.require = function(names,func) {
 };
 
 if (window.define) {
-	define('hui.ui');
+	define('hui.ui',hui.ui);
 }
 
 hui.onReady(function() {
