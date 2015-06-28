@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:oo="http://www.onlineobjects.com/jsf" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:gui="http://www.in2isoft.dk/in2igui"
+>
+	<ui:composition template="template.xhtml">
+		<ui:param name="tab" value="overview"/>
+		
+		<ui:define name="title">
+			#{userProfileView.person.fullName}<h:outputText value=" &#187; "/>
+		</ui:define>
+		
+		<ui:define name="content">
+			<c:if test="#{userProfileView.user!=null}">
+				<div class="profile_view">
+					<div class="content_body">
+						<div class="profile_view_left">
+							<div class="profile_image" id="profileImage">
+								<c:if test="#{userProfileView.image!=null}">
+									<div class="profile_image_photo" style="background: url('#{baseView.baseContext}/service/image/id#{userProfileView.image.id}width90height105cropped.jpg')"></div>
+								</c:if>
+							</div>
+							<ui:fragment rendered="#{userProfileView.canModify}">
+								<p style="margin: 10px 0 0; text-align: center;"><gui:button text="Skift billede" variant="paper" name="changeImage" small="true"/></p>
+							</ui:fragment>
+						</div>
+						<div class="profile_info">
+							<div id="profileContainer">
+								<div id="profileInfo" class="rendering">
+									<h1>#{userProfileView.person.fullName}</h1>
+									<ul class="icons">
+										<li class="url">
+											<oo:link href="/#{userProfileView.user.username}/site/">Hjemmeside</oo:link>
+										</li>
+									</ul>
+									<c:if test="#{userProfileView.info.resume!=null &amp;&amp; fn:length(userProfileView.info.resume)>0}">
+									<p class="resume">&#34;#{userProfileView.info.resume}&#34;</p>
+									</c:if>
+									<ul class="icons">
+										<c:if test="#{fn:length(userProfileView.info.emails)>1}">
+											<c:forEach items="#{userProfileView.info.emails}" var="item">
+												<li class="mail"><a href="mailto:#{item.address}" class="oo_link"><span>#{item.address}</span></a></li>
+											</c:forEach>
+										</c:if>
+										<c:if test="#{fn:length(userProfileView.info.urls)>0}">
+											<c:forEach items="#{userProfileView.info.urls}" var="item">
+												<li class="url"><a href="#{item.address}" class="oo_link"><span>#{item.address}</span></a></li>
+											</c:forEach>
+										</c:if>
+										<c:if test="#{fn:length(userProfileView.info.phones)>0}">
+											<c:forEach items="#{userProfileView.info.phones}" var="item">
+												<li class="phone">#{item.number}</li>
+											</c:forEach>
+										</c:if>
+									</ul>
+									<c:if test="#{userProfileView.info.sex!=null}">
+										<p><span class="label">Køn: </span>#{userProfileView.info.sex ? 'Mand' : 'Kvinde'}</p>
+									</c:if>
+									<c:if test="#{fn:length(userProfileView.info.interests)>0}">
+										<p><span class="label">Interesser: </span>
+											<c:forEach items="#{userProfileView.info.interests}" var="item">
+												#{item}
+											</c:forEach>
+										</p>
+									</c:if>
+									<c:if test="#{fn:length(userProfileView.info.music)>0}">
+										<p><span class="label">Yndlingsmusik: </span>
+											<c:forEach items="#{userProfileView.info.music}" var="item">
+												#{item}
+											</c:forEach>
+										</p>
+									</c:if>
+									<ui:fragment rendered="#{userProfileView.canModify}">
+										<p style="margin-top: 20px;"><gui:button text="Rediger profil" variant="paper" name="editProfile" small="true"/></p>
+									</ui:fragment>
+								</div>
+							</div>
+						</div>
+					</div>
+					<h:panelGroup rendered="#{not empty userProfileView.latestImages.result.list}">
+					<div class="content_body images">
+						<h2>Seneste billeder</h2>
+						<oo:gallery model="#{userProfileView.latestImages}" var="image">
+							<oo:thumbnail image="#{image}" width="68" height="68" href="/photo/#{image.id}.html" app="photos"/>
+						</oo:gallery>
+					</div>
+					</h:panelGroup>
+				</div>
+			</c:if>
+		</ui:define>
+	</ui:composition>
+</html>

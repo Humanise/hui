@@ -1,0 +1,192 @@
+
+
+/***************************** Rendering ********************************/
+
+div.rendering h1
+{
+	margin: 0px;
+	font-weight: normal;
+	font-size: 16pt;
+	color: #446688;
+	font-family: Georgia, 'Palatino','Times', serif;
+}
+
+div.rendering p
+{
+	margin: 0px 0px 5px;
+	font-size: 10pt;
+}
+
+div.rendering p.resume
+{
+	color: #345;
+	font-family: Georgia, 'Palatino','Times', serif;
+	font-size: 11pt;
+	font-style: italic;
+	margin-bottom: 20px;
+	line-height: 1.5em;
+}
+
+div.rendering p.tags
+{
+	font-size: 0;
+	color: #fff;
+}
+
+div.rendering a.tag
+{
+	font-size: 11px;
+	background: #f6f6f6;
+	text-decoration: none;
+	border: 1px solid #ddd;
+	-moz-border-radius: 8px;
+	-webkit-border-radius: 8px;
+	padding: 0 8px;
+	height: 16px;
+	line-height: 16px;
+	color: #123;
+	letter-spacing: 1px;
+	margin-right: 4px;
+	margin-bottom: 4px;
+	display: inline-block;
+}
+
+div.rendering a.tag:hover
+{
+	background: #daeaf0;
+	border: 1px solid #8a9;
+}
+
+div.rendering a.tag:focus
+{
+	border: 1px solid #03f;
+	-moz-box-shadow: 0px 0px 3px #03f;
+	outline: none;
+}
+
+div.rendering .minor
+{
+	font-size: 9pt;
+}
+
+div.rendering .dimmed
+{
+	color: #999;
+}
+
+div.rendering p span.label
+{
+	color: #999;
+}
+
+div.rendering ul.icons
+{
+	list-style: none;
+	margin: 0 0 10px;
+	padding: 0;
+	font-size: 10pt;
+}
+
+div.rendering ul.icons li
+{
+	padding-left: 24px;
+	height: 20px;
+}
+
+div.rendering li.mail
+{
+	background: url('../gfx/dimmed_icons.png') -2px -100px no-repeat;
+}
+
+div.rendering li.url
+{
+	background: url('../gfx/dimmed_icons.png') -2px -2px no-repeat;
+}
+
+div.rendering li.phone
+{
+	background: url('../gfx/dimmed_icons.png') -2px -50px no-repeat;
+}
+
+/***************************** Formula ********************************/
+
+table.formula th
+{
+	text-align: right;
+	font-weight: normal;
+	font-size: 13px;
+}
+
+/************************** User ****************************/
+
+div.user
+{
+	font-size: 10pt;
+	overflow: hidden;
+}
+
+div.user p
+{
+	margin: 0px;
+	margin-left: 66px;
+}
+
+div.user p.username
+{
+	font-size: 10px;
+	color: #999;
+}
+
+div.user p.website
+{
+	margin-top: 10px;
+	font-size: 11px;
+}
+
+div.user p.website a
+{
+	color: #ccc;
+}
+
+div.user p.website span
+{
+	color: #666;
+}
+
+div.user p.website *:hover
+{
+	color: #0033AA;
+}
+
+div.user .oo_thumbnail
+{
+	float: left;
+}
+
+/****************************** Mini search results *****************************/
+
+div.mini_searchresult ol
+{
+	list-style: none;
+	padding: 0;
+	margin: 5px 0 0;
+}
+
+div.mini_searchresult li
+{
+	padding: 3px 0;
+	margin: 0;
+	overflow: hidden;
+	font-size: 9pt;
+}
+
+div.mini_searchresult img
+{
+	float: left;
+	width: 40px;
+	height: 40px;
+	padding: 3px;
+	border: 1px solid #abc;
+	background: #fff;
+	margin-right: 7px;
+}

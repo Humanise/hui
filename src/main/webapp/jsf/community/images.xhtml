@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:oo="http://www.onlineobjects.com/jsf" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core">
+	<ui:composition template="chrome.xhtml">
+		<ui:param name="top" value="images"/>
+		
+		<ui:define name="title">
+			Billeder<h:outputText value=" &#187; "/>
+		</ui:define>
+		
+		<ui:define name="body">
+			<ul class="breadcrumb">
+				<li><a href="#{baseView.baseContext}/">OnlineMe</a></li>
+				<li><a href="#{baseView.baseContext}/images.html">Billeder</a></li>
+			</ul>
+			<div class="content_body">
+				<h1 class="header">Billeder</h1>
+				<oo:gallery model="#{imagesView.imageList}" var="item">
+					<h:panelGroup rendered="#{not empty item.user}">
+						<oo:thumbnail image="#{item.image}" width="68" height="68" href="/#{item.user.username}/images/#{item.image.id}.html"/>
+					</h:panelGroup>
+					<h:panelGroup rendered="#{empty item.user}">
+						<oo:thumbnail image="#{item.image}" width="68" height="68"/>
+					</h:panelGroup>
+				</oo:gallery>
+			</div>
+		</ui:define>
+		
+	</ui:composition>
+</html>

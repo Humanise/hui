@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:o="http://www.onlineobjects.com/jsf" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:gui="http://www.in2isoft.dk/in2igui"
+>
+	<ui:composition template="../template.xhtml">
+		
+		<ui:define name="head">
+			<o:script src="/style/js/video.js"/>
+			<o:script>
+				videoView.videoId = #{videosharingVideoView.videoInfo.id};
+			</o:script>
+		</ui:define>
+		
+		<ui:define name="inner_body">
+			<div id="video">
+				<ui:include src="../../parts/largevideo.xhtml">
+					<ui:param name="video" value="#{videosharingVideoView.videoInfo}"/>
+				</ui:include>
+			</div>
+			<o:block top="5">
+				<ui:fragment rendered="#{videosharingVideoView.canEdit}">
+					<gui:button text="Set poster" name="showPosterPanel" small="true" rounded="true"/>
+					<gui:button text="Delete" name="deleteVideo" small="true" rounded="true" rendered="#{videosharingVideoView.canEdit}"/>
+				</ui:fragment>
+			</o:block>
+			<ui:fragment rendered="#{not empty videosharingVideoView.usersVideos}">
+				<h2 style="margin: 20px 0 10px; color: #333333; font-size: 16px; border-bottom: 1px solid #C7E2E1;">More videos from this user</h2>
+				<ui:include src="../../parts/compact_videogrid.xhtml">
+					<ui:param name="videos" value="#{videosharingVideoView.usersVideos}"/>
+				</ui:include>
+			</ui:fragment>
+			<ui:fragment rendered="#{not empty videosharingVideoView.usersVideos}">
+				<h2 style="margin: 20px 0 10px; color: #333333; font-size: 16px; border-bottom: 1px solid #C7E2E1;">Related videos</h2>
+				<ui:include src="../../parts/compact_videogrid.xhtml">
+					<ui:param name="videos" value="#{videosharingVideoView.relatedVideos}"/>
+				</ui:include>
+			</ui:fragment>
+			<div id="comments" class="comments">
+				<h2>Comments</h2>
+				<o:block rendered="#{empty videosharingVideoView.comments}" style="padding: 0 5px;">
+					<p style="font-size: 12px; color: #333;">No comments yet, be the first!</p>
+				</o:block>
+				<o:list variant="bordered" rendered="#{not empty videosharingVideoView.comments}">
+					<ui:repeat value="#{videosharingVideoView.comments}" var="comment">
+					<o:listItem>
+					<o:article styleClass="comment">
+						<o:block rendered="#{videosharingVideoView.canEdit}" float="right">
+							<gui:button text="Delete" click="videoView.deleteComment(#{comment.id})" small="true" rounded="true"/>
+						</o:block>
+						<p>
+							<strong><o:out value="#{comment.name}"/></strong><span class="date"> (<o:date value="#{comment.created}"/>)</span>
+						</p>
+						<p class="text"><o:out value="#{comment.text}"/></p>
+					</o:article>
+					</o:listItem>
+					</ui:repeat>
+				</o:list>
+			</div>
+			<o:block top="10">
+				<gui:button text="Add comment" name="addComment" small="true" rounded="true"/>
+			</o:block>
+		</ui:define>
+	</ui:composition>
+</html>

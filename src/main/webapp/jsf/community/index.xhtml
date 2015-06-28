@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:gui="http://www.in2isoft.dk/in2igui"
+>
+	<ui:composition template="chrome.xhtml">
+		
+		<ui:define name="style">
+			<link rel="stylesheet" href="#{baseView.localContext}/css/home.css?#{lifeCycleService.startTime.time}" type="text/css" media="screen" charset="utf-8"/>
+		</ui:define>
+		
+		<ui:define name="scripts">
+			<script type="text/javascript" src="#{baseView.localContext}/js/home.js?#{lifeCycleService.startTime.time}"></script>
+		</ui:define>
+		
+		<ui:define name="body">
+			<div class="home_intro">
+				<ui:remove>
+				<h2 class="home_signup">opret gratis profil...</h2>
+				<form action="signup" method="get" accept-charset="utf-8" id="signup" class="home_signup">
+					<table>
+						<tbody>
+						<tr><th>Navn:</th><td><gui:textfield placeholderx="F.eks: Jens Petersen" name="casingSignupName"/></td></tr>
+						<tr><th>E-mail:</th><td><gui:textfield placeholderx="F.eks: jens@mail.dk" name="casingSignupEmail"/></td></tr>
+						<tr><th>Brugernavn:</th><td><gui:textfield placeholder="Kun små bogstaver og tal" name="casingSignupUsername"/></td></tr>
+						<tr><th>Kodeord:</th><td><gui:textfield placeholder="Gerne med tal og tegn" secret="true" name="casingSignupPassword"/></td></tr>
+						</tbody>
+					</table>
+					<p><gui:button text="Opret profil" highlighted="true" name="casingSignUp"/><input type="submit" value="Tilmeld" class="submit"/></p>
+				</form>
+				</ui:remove>
+			</div>
+			<div class="home_latest">
+				<div class="home_filter">
+					<gui:searchfield name="filter" width="120" expandedWidth="200" placeholder="Filtrér..."/>
+				</div>
+				<div class="section">
+					<div class="section_head"><h2>Billeder</h2></div>
+					<div class="section_body"><div id="images_container"></div></div>
+				</div>
+				<div class="section">
+					<div class="section_head"><h2>Brugere</h2></div>
+					<div class="section_body"><div id="users_container"></div></div>
+				</div>
+				<div class="section">
+					<div class="section_head"><h2>Nøgleord</h2></div>
+					<div id="tags_container" class="cloud"></div>
+				</div>
+			</div>
+		</ui:define>
+		
+		
+		<ui:define name="sidebar">
+		</ui:define>
+	</ui:composition>
+</html>

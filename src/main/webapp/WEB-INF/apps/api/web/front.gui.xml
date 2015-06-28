@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gui xmlns="uri:hui" state="persons" title="OnlineObjects API" padding="10">
+	<controller name="controller" source="js/controller.js"/>
+	
+	<structure>
+		<top>
+		</top>
+		<middle>
+			<left>
+				<overflow>
+					<selection value="textAnalysis" name="selection">
+						<item icon="common/internet" title="Text analysis" value="textAnalysis"/>
+						<item icon="common/internet" title="Extract text" value="textExtraction"/>
+						
+					</selection>
+				</overflow>
+			</left>
+			<center>
+				<pages name="pages" height="full">
+					<page key="textAnalysis">
+						<split>
+							<row height="30%">
+								<overflow>
+								<formula name="textAnalysisFormula" padding="10">
+									<fields>
+										<field label="URL">
+											<text-input key="url"/>
+										</field>
+										<field label="Text">
+											<text-input key="text" breaks="true"/>
+										</field>
+									</fields>
+									<buttons>
+										<button title="Go" highlighted="true" submit="true"/>
+									</buttons>
+								</formula>
+								</overflow>
+							</row>
+							<row>
+								<code-input name="textAnalysisOutput"/>
+							</row>
+						</split>
+					</page>
+					
+					<page key="textExtraction">
+						<formula name="textExtractionFormula">
+							<fields>
+								<field label="URL">
+									<text-input key="url"/>
+								</field>
+								<field label="Result">
+									<code-input name="textExtractionOutput"/>
+								</field>
+							</fields>
+							<buttons>
+								<button title="Go" highlighted="true" submit="true"/>
+							</buttons>
+						</formula>
+					</page>
+					
+				</pages>
+			</center>
+		</middle>
+		<bottom>
+		</bottom>
+	</structure>
+
+	<window name="bookmarkWindow" title="Bogmærke" width="500">
+		<space all="5">
+			<formula name="bookmarkFormula">
+				<fields>
+					<field label="Navn">
+						<text-input key="name"/>
+					</field>
+					<field label="Adresse">
+						<text-input key="address"/>
+					</field>
+					<field label="Beskrivelse">
+						<text-input key="description" multiline="true"/>
+					</field>
+					<field label="Nøgleord">
+						<tokens key="tags"/>
+					</field>
+					<buttons>
+						<button title="Slet" name="deleteBookmark"/>
+						<button title="Annuller" name="cancelBookmark"/>
+						<button title="Gem" highlighted="true" name="saveBookmark"/>
+					</buttons>
+				</fields>
+			</formula>
+		</space>
+	</window>
+	
+</gui>

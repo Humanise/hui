@@ -1,0 +1,239 @@
+div.oo_gallery_navigator
+{
+	overflow: hidden;
+	height: 22px;
+	font-size: 0;
+	margin-bottom: 10px;
+}
+
+a.oo_gallery_slideshow
+{
+	color: #ddd;
+	font-size: 11pt;
+	display: inline-block;
+	vertical-align: middle;
+	height: 16px;
+}
+
+a.oo_gallery_slideshow span
+{
+	color: #333;
+}
+
+span.oo_gallery_pages
+{
+	vertical-align: middle;
+	display: inline-block;
+	font-size: 0;
+	margin-right: 20px;
+}
+
+span.oo_gallery_pages a
+{
+	color: #666;
+	padding: 0 3px;
+	display: inline-block;
+	height: 20px;
+	line-height: 20px;
+	border-radius: 3px;
+	font-size: 12pt;
+	min-width: 14px;
+	text-align: center;
+	border: 1px solid #fff;
+	text-decoration: none;
+	font-weight: 300;
+}
+
+span.oo_gallery_pages a:hover
+{
+	color: #08C;
+	border-radius: 3px;
+	background: #fafafa;
+	border: 1px solid #eee;
+	font-weight: 400;
+}
+
+span.oo_gallery_pages a.oo_selected
+{
+	color: #333;
+	background: #f6f6f6;
+	border: 1px solid #ddd;
+	font-weight: bold;
+	font-weight: 400;
+}
+
+div.oo_gallery ol
+{
+	padding: 5px 13px 10px;
+	font-size: 0;
+	color: rgba(0,0,0,0);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+div.oo_gallery li
+{
+	display: inline-block;
+	vertical-align: top;
+}
+
+body.oo_msie7 div.oo_gallery li
+{
+	display: inline;
+}
+
+div.oo_gallery ol span.oo_thumbnail
+{
+	margin: 0px 10px 10px 0;
+}
+
+/********/
+
+span.oo_gallery_photo
+{
+	display: inline-block;
+	font-size: 0;
+	position: relative;
+}
+
+span.oo_gallery_photo img
+{
+	border: none;
+}
+
+div.oo_gallery_frame span.oo_gallery_photo
+{
+	padding: 4px;
+	border: 1px solid #ddd;
+	border-color: #EEEEEE #DDDDDD #CCCCCC;
+	margin: 0px 10px 10px 0;
+}
+
+div.oo_gallery_shadow span.oo_gallery_photo
+{
+	margin: 0px 20px 20px 0;
+	box-shadow: 0 1px 4px rgba(0,0,0,.2);
+}
+
+div.oo_gallery_shadow ol
+{
+	margin-right: -20px;
+}
+
+span.oo_gallery_hover
+{
+	display: none;
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
+span.oo_gallery_photo:hover span.oo_gallery_hover
+{
+	display: block;
+}
+
+span.oo_gallery_hover a
+{
+	margin: 2px;
+	border-radius: 4px;
+	display: inline-block;
+	height: 22px;
+	padding: 0 3px;
+	line-height: 21px;
+	font-size: 11px;
+	color: #333;
+	background: rgba(255,255,255,.5);
+	text-decoration: none;
+	text-shadow: 0 0 6px #fff;
+	font-size: 0;
+}
+
+span.oo_gallery_hover a span.oo_icon
+{
+	margin-top: 3px;
+}
+
+span.oo_gallery_hover a:hover
+{
+	background: rgba(255,255,255,.8);
+}
+
+/******* Incoming *****/
+
+span.oo_gallery_incoming
+{
+	font-size: 0;
+	border: 1px dashed #ddd;
+	background: #fafafa;
+	border-radius: 5px;
+	display: inline-block;
+}
+
+span.oo_gallery_incoming span
+{
+	display: inline-block;
+	font-size: 12px;
+	margin: -1px;
+}
+
+div.oo_gallery_shadow span.oo_gallery_incoming
+{
+	margin: 0 20px 20px 0;
+}
+
+
+
+/************ Drag/drop **************/
+
+body.oo_gallery_dragging,
+body.oo_gallery_dragging span.oo_gallery_dummy a
+{
+	cursor: move;
+	cursor: -webkit-grabbing;
+}
+
+span.oo_gallery_dummy
+{
+	position: absolute;
+	opacity: .7;
+	box-shadow: 0 5px 15px rgba(0,0,0,.2);
+	font-size: 0;
+	cursor: move;
+	cursor: -webkit-grabbing;
+}
+
+span.oo_gallery_dragged
+{
+	opacity: .3;
+}
+
+div.oo_gallery_busy,
+div.oo_gallery_busy span.oo_gallery_photo
+{
+	cursor: wait;
+}
+
+div.oo_gallery_busy span.oo_gallery_hover
+{
+	visibility: hidden;
+}
+
+
+@media screen and (max-width: 600px) {
+	div.oo_gallery ol
+	{
+		margin: 0 -15px;
+		text-align: center;
+	}
+
+	div.oo_gallery ol span.oo_gallery_photo,
+	div.oo_gallery ol span.oo_thumbnail
+	{
+		margin: 0 0 1px 1px;
+		padding: 0;
+		border: none;
+		box-shadow: none;
+	}
+}

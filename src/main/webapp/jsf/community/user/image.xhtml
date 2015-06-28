@@ -1,0 +1,146 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:o="http://www.onlineobjects.com/jsf" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:gui="http://www.in2isoft.dk/in2igui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+>
+	<ui:composition template="template.xhtml">
+		<ui:param name="tab" value="none"/>
+		
+		<ui:define name="title">
+			#{imageView.image.name}<h:outputText value=" &#187; "/>#{imageView.person.fullName}<h:outputText value=" &#187; "/>
+		</ui:define>
+		
+		<ui:define name="breadcrumb">
+			<li><a href="#{baseView.baseContext}/#{userProfileView.user.username}/images.html">Billeder</a></li>
+			<c:if test="#{not empty imageView.image}">
+			<li><a href="#{baseView.baseContext}/#{userProfileView.user.username}/images/#{imageView.imageId}.html">#{imageView.image.name}</a></li>
+			</c:if>
+		</ui:define>
+		
+		<ui:define name="content">
+			<c:if test="#{empty imageView.image}">
+				<h2 class="message">Billedet blev ikke fundet</h2>
+			</c:if>
+			<c:if test="#{not empty imageView.image}">
+				<div class="content_body image_view">
+					<h1>#{imageView.image.name}</h1>
+					<p class="image_by"><span>Tilføjet </span><strong><h:outputText value="#{imageView.image.created}"><f:convertDateTime pattern="EEEE 'd'. d.  MMMM yyyy" locale="da_DK"/></h:outputText></strong> af <o:link href="/#{imageView.user.username}/">#{imageView.person.fullName}</o:link></p>
+					<div class="image_preview">
+						<o:thumbnail image="#{imageView.image}" width="748" zoom="true" frame="false"/>
+						<p class="image_actions oo_faded" style="float: right; padding-right: 10px;">
+							<o:link href="/service/image/id#{imageView.image.id}.jpg" core="true">Fuld størrelse</o:link>
+							<h:outputText value=" "/>
+							<o:link href="/service/image/id#{imageView.image.id}.jpg?download=true" core="true">Download</o:link>
+						</p>
+						<h:panelGroup rendered="#{not empty imageView.location}">
+							<div id="map_canvas" style="width:100%; height:300px; margin-top: 30px;"></div>
+							<p class="image_actions oo_faded">
+								<o:link href="/map.html#image=#{imageView.image.id}">Stort kort</o:link>
+							</p>
+						</h:panelGroup>
+					</div>
+					<div id="imageContainer" class="container">
+						<div class="rendering" id="imageProperties" style="margin-top: 10px;">
+							<c:if test="#{not empty imageView.description}">
+								<p class="resume">&#34;#{imageView.description}&#34;</p>
+							</c:if>
+							<c:if test="#{not empty imageView.imageInfo.tags}">
+								<p class="tags">
+									<c:forEach items="#{imageView.imageInfo.tags}" var="tag">
+										<a class="tag" href="#{baseView.baseContext}/search.html?tag=#{tag}"><span>#{tag}</span></a><h:outputText value=" "/>
+									</c:forEach>
+								</p>
+							</c:if>
+							<p><span class="label">Info: </span>#{imageView.image.width} &#215; #{imageView.image.height} (#{imageView.megaPixels} Megapixel), #{imageView.image.contentType}</p>
+							<h:panelGroup rendered="#{not empty imageView.imageInfo.taken}">
+								<p><span class="label">Dato: </span><h:outputText value="#{imageView.imageInfo.taken}"><f:convertDateTime pattern="EEEE 'd'. d.  MMMM yyyy 'kl.' HH:mm:ss" locale="da_DK"/></h:outputText></p>
+							</h:panelGroup>
+					
+							<h:panelGroup rendered="#{not empty imageView.imageInfo.cameraMake}">
+								<p><span class="label">Kameraproducent:</span> #{imageView.imageInfo.cameraMake}</p>
+							</h:panelGroup>
+							<h:panelGroup rendered="#{not empty imageView.imageInfo.cameraModel}">
+								<p><span class="label">Kameramodel:</span> #{imageView.imageInfo.cameraModel}</p>
+							</h:panelGroup>
+							<h:panelGroup rendered="#{not empty imageView.location}">
+								<p>
+									<span class="label">Breddegrad: </span>
+									<h:outputText value="#{imageView.location.latitudeDegrees}">
+										<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
+									</h:outputText><span>&#176; </span>
+									<h:outputText value="#{imageView.location.latitudeMinutes}">
+										<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
+									</h:outputText><span>' </span>
+									<h:outputText value="#{imageView.location.latitudeSeconds}">
+										<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
+									</h:outputText><span>" </span>
+									#{imageView.location.latitudeNorth ? 'Nord' : 'Syd'}
+									<span class="minor dimmed">(<h:outputText value="#{imageView.location.latitude}">
+										<f:convertNumber minFractionDigits="2" maxFractionDigits="8"/>
+									</h:outputText>)</span>
+								</p>
+								<p>
+									<span class="label">Længdegrad: </span>
+									<h:outputText value="#{imageView.location.longitudeDegrees}">
+										<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
+									</h:outputText><span>&#176; </span>
+									<h:outputText value="#{imageView.location.longitudeMinutes}">
+										<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
+									</h:outputText><span>' </span>
+									<h:outputText value="#{imageView.location.longitudeSeconds}">
+										<f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
+									</h:outputText><span>" </span>
+									#{imageView.location.longitudeEast ? 'Øst' : 'Vest'}
+									<span class="minor dimmed">(<h:outputText value="#{imageView.location.longitude}">
+										<f:convertNumber minFractionDigits="2" maxFractionDigits="8"/>
+									</h:outputText>)</span>
+								</p>
+							</h:panelGroup>
+							<h:panelGroup rendered="#{imageView.canModify}">
+								<script type="text/javascript" src="#{baseView.localContext}/js/imageview.js"></script>
+								<script type="text/javascript" charset="utf-8">
+									oo.community.ImgeView.id=#{imageView.image.id};
+								</script>
+								<div class="editbutton oo_faded">
+									<gui:button text="Rediger egenskaber..." name="editImage" small="true"/>
+									<gui:button text="Gør privat" name="makeNonPublic" small="true" rendered="#{!imageView.secret}"/>
+									<gui:button text="Gør offentlig" name="makePublic" small="true" rendered="#{imageView.secret}"/>
+								</div>
+							</h:panelGroup>
+						</div>
+						<div id="imageEditor" style="display: none;"></div>
+					</div>
+				</div>
+			</c:if>
+		</ui:define>
+		
+		<ui:define name="last">
+			<h:panelGroup rendered="#{not empty imageView.location || imageView.canModify}">
+				<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+			</h:panelGroup>
+			<h:panelGroup rendered="#{not empty imageView.location}">
+				<script type="text/javascript">
+				  hui.ui.onReady(function() {
+				    var myLatlng = new google.maps.LatLng(#{imageView.location.latitude}, #{imageView.location.longitude});
+				    var myOptions = {
+				      zoom: 15,
+				      center: myLatlng,
+				      mapTypeId: google.maps.MapTypeId.SATELLITE
+				    }
+				    var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+				    var marker = new google.maps.Marker({
+				        position: myLatlng, 
+				        map: map,
+				        title:"#{imageView.image.name}"
+				    });   
+				  });
+				</script>
+			</h:panelGroup>
+		</ui:define>
+
+	</ui:composition>
+</html>

@@ -1,0 +1,49 @@
+/********************** Image view ******************/
+
+div.image_view h1
+{
+	margin: 0;
+	font-weight: 200;
+	margin-top: -7px;
+}
+
+p.image_by
+{
+	font-size: 10pt;
+	font-weight: 200;
+	color: #999;
+	margin: 0 0 10px;
+}
+
+p.image_by strong
+{
+	font-weight: 400;
+	color: #333;
+}
+
+p.image_by a
+{
+	font-weight: 400;
+} 
+
+div.image_preview
+{
+	margin: 0 -14px;
+}
+
+div.image_view p.fileinfo
+{
+	margin-bottom: 20px;
+}
+
+div.image_view div.editbutton
+{
+	margin-top: 20px;
+}
+
+div.image_view p.image_actions
+{
+	font-size: 10pt;
+	text-align: center;
+	margin: 5px 0;
+}

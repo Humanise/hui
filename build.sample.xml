@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="deploy" name="OnlineObjects 2" basedir=".">
+
+    <target name="init">
+    	<property name="dest" value="/Users/jbm/Midlertidigt"/> 
+    	<property name="jetty" value="/Users/jbm/Udvikling/jetty-6.1.15"/> 
+    </target>
+	
+    <target name="deploy" depends="init">
+    	<delete dir="${dest}/OnlineObjects"/>
+    	<delete dir="${dest}/OnlineObjects_temp"/>
+		<mkdir dir="${dest}/OnlineObjects_temp/classes" />
+		<copy todir="${dest}/OnlineObjects/onlineobjects/WEB-INF">
+			<fileset dir="${basedir}/src/web/WEB-INF" excludes="**/.*"/>
+		</copy>
+		<copy todir="${dest}/OnlineObjects/onlineobjects/META-INF">
+			<fileset dir="${basedir}/src/web/META-INF" excludes="**/.*"/>
+		</copy>
+		<copy todir="${dest}/OnlineObjects/onlineobjects/WEB-INF/lib">
+			<fileset dir="${basedir}/lib" excludes="*sources.jar *javadoc.jar"/>
+		</copy>
+		<copy todir="${dest}/OnlineObjects/onlineobjects/WEB-INF/lib">
+			<fileset dir="${basedir}/libdep" excludes="*source*.jar *javadoc*.jar javax.servlet.* validation-api*"/>
+		</copy>
+		<copy todir="${dest}/OnlineObjects/onlineobjects/hui">
+			<fileset dir="${basedir}/src/web/hui" excludes="**/CVS"/>
+		</copy>
+		<copy todir="${dest}/OnlineObjects/onlineobjects/jsf">
+			<fileset dir="${basedir}/src/web/jsf" excludes="**/CVS"/>
+		</copy>
+    	
+        <javac
+            destdir="${dest}/OnlineObjects_temp/classes"
+            debug="on">
+            <classpath>
+                <fileset dir="${basedir}/lib">
+                    <include name="**/*.jar"/>
+                </fileset>
+        		<pathelement location="${basedir}/src/java"/>
+        		<pathelement location="${basedir}/src/web/WEB-INF/classes"/>
+        		<pathelement location="${jetty}/lib/servlet-api-2.5-20081211.jar"/>
+        		<pathelement location="${jetty}/lib/jetty-6.1.15.jar"/>
+        		<pathelement location="${jetty}/lib/jetty-util-6.1.15.jar"/>
+        		<pathelement location="${jetty}/lib/jsp-2.1/jsp-2.1-glassfish-9.1.1.B51.25.p1.jar"/>
+        		<pathelement location="${jetty}/lib/jsp-2.1/jsp-api-2.1-glassfish-9.1.1.B51.25.p1.jar"/>
+            </classpath>
+        	<src path="${basedir}/src/java"/>
+    	    <include name="dk/**"/>
+        </javac>
+    	
+    	<jar destfile="${dest}/OnlineObjects/onlineobjects/WEB-INF/lib/onlineobjects.jar" basedir="${dest}/OnlineObjects_temp/classes"></jar>
+        <copy tofile="${dest}/OnlineObjects/onlineobjects/WEB-INF/classes/model.hbm.xml" file="${basedir}/conf/model.hbm.xml" />
+        <copy tofile="${dest}/OnlineObjects/onlineobjects/WEB-INF/classes/model.xml" file="${basedir}/conf/model.xml" />
+        <copy tofile="${dest}/OnlineObjects/onlineobjects/WEB-INF/classes/applicationContext.xml" file="${basedir}/conf/applicationContext.xml" />
+
+		<copy todir="${dest}/OnlineObjects/onlineobjects/WEB-INF/classes/spring">
+			<fileset dir="${basedir}/conf/spring" excludes="**/CVS"/>
+    	</copy>
+		<copy todir="${dest}/OnlineObjects/onlineobjects/WEB-INF/classes">
+			<fileset dir="${basedir}/src/java" includes="**/*.html"/>
+    	</copy>
+		<copy todir="${dest}/OnlineObjects/onlineobjects/WEB-INF/classes">
+			<fileset dir="${basedir}/src/java" includes="**/*.properties"/>
+    	</copy>
+    	
+    	<copy tofile="${dest}/OnlineObjects/onlineobjects/WEB-INF/classes/configuration.properties" file="${basedir}/conf/configuration.properties.deployed" />
+		<copy tofile="${dest}/OnlineObjects/onlineobjects/WEB-INF/classes/log4j.properties" file="${basedir}/conf/log4j.properties.deployed" />
+        <copy tofile="${dest}/OnlineObjects/onlineobjects/WEB-INF/classes/hibernate.cfg.xml" file="${basedir}/conf/hibernate.cfg.xml.deployed" />
+        <copy tofile="${dest}/OnlineObjects/onlineobjects/WEB-INF/classes/onlineobjects.cfg.xml" file="${basedir}/conf/onlineobjects.cfg.xml.deployed" />
+    	<delete dir="${dest}/OnlineObjects_temp"/>
+    	<zip destfile="${dest}/deployed.zip" >
+    		<fileset dir="${dest}/OnlineObjects"/>
+    	</zip>
+    	<!--
+    	<delete dir="${dest}/OnlineObjects"/>
+    	-->
+    </target>
+	
+	<target name="schema-update" description="Generates SQL" depends="init">
+		<taskdef name="hibernatetool" classname="org.hibernate.tool.ant.HibernateToolTask" classpathref="classpath" />
+		<mkdir dir="${basedir}/sql" />
+		<hibernatetool destdir="${basedir}/sql">
+			<classpath>
+			  <path location="${basedir}/bin"/>
+			 </classpath>
+			<annotationconfiguration 
+				configurationfile="${basedir}/bin/hibernate.cfg.xml"/>
+			<hbm2ddl 
+				export="true" 
+				outputfilename="db_update.sql"
+				format="true"
+				drop="true"
+			/>
+		</hibernatetool>
+	</target>
+    
+	<target name="schema-drop" description="Generates SQL" depends="init">
+		<taskdef name="hibernatetool" 
+		         classname="org.hibernate.tool.ant.HibernateToolTask" 
+		         classpathref="classpath" />
+		<mkdir dir="${basedir}/sql" />
+		<hibernatetool destdir="${basedir}/sql">
+			<classpath>
+			  <path location="${basedir}/bin"/>
+			 </classpath>
+			<annotationconfiguration 
+				configurationfile="${basedir}/bin/hibernate.cfg.xml"/>
+			<hbm2ddl 
+				export="false" 
+				outputfilename="db_new.sql"
+				format="true"
+				drop="false"
+			/>
+		</hibernatetool>
+	</target>
+</project>

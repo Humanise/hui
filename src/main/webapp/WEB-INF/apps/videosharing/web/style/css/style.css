@@ -1,0 +1,294 @@
+@import url('chart.css');
+@import url('navigation.css');
+@import url('videoitem.css');
+@import url('videoinfo.css');
+@import url('profile.css');
+@import url('rating.css');
+@import url('top.css');
+@import url('footer.css');
+
+html
+{
+	height: 100%;
+}
+
+body
+{
+	margin: 0;
+	min-height: 100%;
+	height: 100%;
+	font-family: Helvetica,Arial,sans-serif;
+	background: url('../gfx/gradients.png') 0 -416px repeat-x;
+}
+
+div.body
+{
+	width: 980px;
+	margin: 0 auto;
+}
+
+div.header
+{
+	position: relative;
+	height: 95px;
+}
+
+div.header h1
+{
+	margin: 0;
+	color: #78e;
+	position: absolute;
+	top: 10px;
+	color: transparent;
+	background: url('../gfx/logo.png');
+	width: 157px;
+	height: 43px;
+	font-size: 0;
+}
+
+div.header h1 a
+{
+	display: block;
+	width: 157px;
+	height: 43px;
+	text-decoration: none;
+}
+
+div.header h1 a span
+{
+	visibility: hidden;
+}
+
+span.divider
+{
+	display: inline-block;
+	height: 21px;
+	border-left: 1px solid #c7e2e1;
+	vertical-align: middle;
+	margin: 0 5px;
+}
+
+h2.block
+{
+	font-weight: normal;
+	text-transform: uppercase;
+	margin: 0 0 10px;
+	font-size: 18px;
+	line-height: 30px;
+	border-bottom: 1px solid #C7E2E1;
+	font-family: 'Gotham Rounded',Helvetica,Arial,sans-serif;
+}
+
+
+
+/************************ main **************************/
+
+div.main
+{
+	padding: 0px 0px 30px;
+	overflow: hidden;
+}
+
+div.content
+{
+	padding-top: 20px;
+}
+
+div.content_sidebar
+{
+	float: left;
+	width: 600px;
+	padding-top: 20px;
+}
+
+div.sidebar
+{
+	float: right;
+	width: 340px;
+}
+
+/*************************** Front **********************/
+
+div.front_splash
+{
+	height: 322px;
+	background: url('../gfx/splash.jpg');
+}
+
+div.front_animation
+{
+	width: 640px;
+	height: 322px;
+	position: absolute;
+	margin-left: -1px;
+}
+
+/************************* Comments *********************/
+
+div.comments
+{
+	padding-top: 20px;
+}
+
+div.comments h2
+{
+	font-size: 16px;
+	margin: 0;
+	color: #333;
+	border-bottom: 1px solid #C7E2E1;
+}
+
+div.comments ol.oo_list_bordered
+{
+	border: none;
+}
+
+div.comment
+{
+	padding: 5px 5px;
+}
+
+div.comment p.text
+{
+	line-height: 1.3em;
+}
+
+div.comment span.date
+{
+	color: #999;
+}
+
+/***************************** Signup ***************************/
+
+div.signup
+{
+	float: right;
+	width: 340px;
+	background: url('../gfx/GetProfileBG.jpg');
+	height: 322px;
+}
+
+div.signup_body
+{
+	padding: 20px;
+}
+
+div.signup h2
+{
+	color: #000;
+	font-size: 28px;
+	font-weight: normal;
+	margin: 25px 0 10px;
+	text-align: center;
+	text-shadow: 0 2px 5px #FFFF00;
+	visibility: hidden;
+}
+
+div.signup table
+{
+	width: 100%;
+	margin-bottom: 5px;
+}
+
+div.signup th
+{
+	width: 70px;
+	text-align: right;
+	font-size: 12px;
+	height: 34px;
+}
+
+div.signup th label
+{
+	color: #fff;
+	background: rgba(0,100,0,.2);
+	padding: 0 3px;
+	-moz-border-radius: 3px;
+}
+
+div.signup a.in2igui_button
+{
+	margin-left: 76px;
+}
+
+
+/***************************** Override OO **********************/
+
+ol.oo_list_bordered
+{
+	border-color: #C7E2E1;
+}
+
+ol.oo_list_bordered li.oo_list_item
+{
+	border-color: #C7E2E1;
+	padding: 5px 0;
+	font-size: 0;
+}
+
+a.oo_link
+{
+	color: #eee;
+}
+
+a.oo_link span
+{
+	color: #FF0133;
+}
+
+div.oo_article h1
+{
+	color: #01aea8;
+	margin: 0;
+}
+
+/****************** Info blocks *******************/
+
+ol.infoblocks
+{
+	margin-top: 20px;
+}
+
+ol.infoblocks li.oo_list_item
+{
+	padding: 10px 5px;
+}
+
+ol.infoblocks h3
+{
+	margin: 0 0 5px;
+	font-size: 18px;
+	color: #EA2F00;
+	color: #FF3401;
+}
+
+ol.infoblocks p
+{
+	font-size: 12px;
+	color: #666;
+	line-height: 1.3em;
+	margin: 0;
+}
+
+/********************************* Mocks ******************************/
+
+div.mock_contest_payment
+{
+	width: 650px;
+	height: 580px;
+	background: url('../gfx/mock/contest_payment.png') center center no-repeat;
+}
+
+div.mock_rate_signup
+{
+	width: 650px;
+	height: 540px;
+	background: url('../gfx/mock/rate_signup.png') center center no-repeat;
+}
+
+div.mock_registration
+{
+	height: 322px;
+	width: 340px;
+	background: url('../gfx/mock/registration.png') center center no-repeat;
+}

@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:o="http://www.onlineobjects.com/jsf" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:gui="http://www.in2isoft.dk/in2igui"
+>
+	<ui:composition template="template.xhtml">
+		
+		<ui:param name="tab" value="users"/>
+
+		<ui:define name="head">
+			<o:script src="/style/js/profile.js"/>
+			<o:script>
+				profileView.canModify = #{videosharingProfileView.canModify};
+			</o:script>
+		</ui:define>
+		
+		<ui:define name="inner_body">
+			<ul class="profile_badges">
+				<li class="contest">
+					<div><span class="count">00<strong>2</strong></span></div>
+					<p>In contest</p>
+				</li>
+				<li class="video">
+					<div><span class="count">00<strong>8</strong></span></div>
+					<p>Video</p>
+				</li>
+				<li class="audio">
+					<div><span class="count">0<strong>13</strong></span></div>
+					<p>Audio</p>
+				</li>
+				<li class="favorites">
+					<div><span class="count">0<strong>48</strong></span></div>
+					<p>Favorites</p>
+				</li>
+			</ul>
+			<div class="profile_badges"></div>
+			<div style="font-size: 0; border-bottom: 1px solid #eee; margin: 10px 0 20px;"></div>
+			<ui:include src="../parts/videogrid.xhtml">
+				<ui:param name="videos" value="#{videosharingProfileView.usersVideos}"/>
+			</ui:include>
+			<o:block rendered="#{videosharingProfileView.canModify}" style="padding-top: 6px;">
+				<gui:button text="Add video" name="showUpload" small="true" rounded="true"/>
+			</o:block>
+		</ui:define>
+		
+		<ui:define name="left">
+			<ui:fragment rendered="#{videosharingProfileView.canModify}">
+				<div class="profile_completeness"></div>
+			</ui:fragment>
+		</ui:define>
+		
+	</ui:composition>
+</html>

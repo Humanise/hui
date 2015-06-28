@@ -1,0 +1,66 @@
+<f:view contentType="text/html"
+ xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:o="http://www.onlineobjects.com/jsf" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:gui="http://www.in2isoft.dk/in2igui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	locale="#{wordsLayoutView.language}"
+>
+<f:loadBundle basename="dk.in2isoft.onlineobjects.apps.front.msg.FrontController" var="msg"/>
+
+<o:doctype/>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<o:metatags/>
+	<title>OnlineObjects</title>
+	<o:fonts/>
+	<o:stylesheet href="/style.css" integrateCache="true"/>
+	<o:script src="/script.js" integrateCache="true"/>
+	<link rel="apple-touch-icon" sizes="60x60" href="/core/gfx/icons/iOS/OnlineObjects/OnlineObjects-60.png"/>
+	<link rel="apple-touch-icon" sizes="120x120" href="/core/gfx/icons/iOS/OnlineObjects/OnlineObjects-60@2x.png"/>
+	<link rel="apple-touch-icon" sizes="180x180" href="/core/gfx/icons/iOS/OnlineObjects/OnlineObjects-60@3x.png"/>
+	<link rel="apple-touch-icon" sizes="76x76" href="/core/gfx/icons/iOS/OnlineObjects/OnlineObjects-76.png"/>
+	<link rel="apple-touch-icon" sizes="152x152" href="/core/gfx/icons/iOS/OnlineObjects/OnlineObjects-76@2x.png"/>
+	<link rel="apple-touch-icon" sizes="512x512" href="/core/gfx/icons/iOS/OnlineObjects/OnlineObjects-AppStore.png"/>
+	<link rel="apple-touch-icon" sizes="1024x1024" href="/core/gfx/icons/iOS/OnlineObjects/OnlineObjects-AppStore@2x.png"/>
+</head>
+<body>
+	<div id="container">
+		<div id="logo">
+			<span class="oo_icon">&#xa4;</span>
+		</div>
+		<h1 id="title">OnlineObjects</h1>
+		<p id="slogan">#{msg.subtitle}</p>
+	</div>
+	<ul>
+		<li>
+			<o:link plain="true" app="people" href="/">
+				<o:icon size="48" icon="user"/>
+				<strong>#{msg.people}</strong>
+			</o:link>
+		</li>
+		<li>
+			<o:link plain="true" app="words" href="/">
+				<o:icon size="48" icon="book"/>
+				<strong>#{msg.words}</strong>
+			</o:link>
+		</li>
+		<li>
+			<o:link plain="true" app="photos" href="/">
+				<o:icon size="48" icon="camera"/>
+				<strong>#{msg.photos}</strong>
+			</o:link>
+		</li>
+	</ul>
+	<p class="language">
+		<o:link href="/da/">Dansk</o:link>
+		<o:out value="#{' '}"/>
+		<o:link href="/en/">English</o:link>
+	</p>
+	<o:analytics/>
+</body>
+</html>
+</f:view>

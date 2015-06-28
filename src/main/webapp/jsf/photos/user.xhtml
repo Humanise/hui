@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:o="http://www.onlineobjects.com/jsf" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:gui="http://www.in2isoft.dk/in2igui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+>
+	<ui:composition template="templates/plain.xhtml">
+		
+		<ui:define name="title">#{photosUserView.personName} - </ui:define>
+		
+		<ui:define name="scripts">
+		</ui:define>
+		
+		<ui:define name="body">
+			<div class="photos_user">
+				<o:header>#{photosUserView.personName}</o:header>
+				<form action="#{photosUserView.root}" class="photos_search">
+					<input name="text" value="#{photosUserView.text}" class="photos_search_text"/>
+					<input type="submit" value="#{msg.search}" class="photos_search_button"/>
+				</form>
+				<o:gallery model="#{photosUserView.imageList}"
+					variant="shadow"
+					href="/#{wordsLayoutView.language}/photo/[id].html"
+					>
+				</o:gallery>
+			</div>
+		</ui:define>
+		
+		<ui:define name="sidebar">
+			<ui:include src="sidebar.part.xhtml"/>
+			<div class="photos_sidebar_cloud">
+				<c:forEach items="#{photosUserView.cloud}" var="item">
+					<a class="photos_sidebar_cloud_#{item.level}" href="#{photosUserView.root}?wordId=#{item.object.id}"><o:out value="#{item.object.text}"/></a>
+				</c:forEach>
+			</div>
+		</ui:define>
+		
+	</ui:composition>
+</html>

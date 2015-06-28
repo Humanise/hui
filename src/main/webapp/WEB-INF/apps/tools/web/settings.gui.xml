@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gui xmlns="uri:hui" title="Indstillinger">
+	<dwr base="/dwr/">
+		<interface name="CoreSecurity"/>
+		<interface name="AppCommunity"/>
+	</dwr>
+	<controller name="controller" source="../controller.js"/>
+	<controller name="settingsController" source="../settings.js"/>
+	<bar>
+		<button text="Offentligt" icon="inset/public" name="barPublic"/>
+		<button text="Hjemmeside" icon="inset/globe" name="barWebsite"/>
+		<button text="Værktøjer" icon="inset/tools" name="barTools" highlighted="true"/>
+		<right>
+			<button text="{username}" icon="inset/user" name="barUser"/>
+			<button text="Log ud" icon="inset/cross" name="barLogOut"/>
+		</right>
+	</bar>
+	<div style="position: fixed; top: 30px; bottom: 0; width: 100%">
+		<structure>
+			<top>
+			<toolbar>
+				<icon icon="common/settings" title="Indstillinger" selected="true"/>
+				<divider/>
+				<icon icon="common/person" title="Personer" name="toolPersons"/>
+				<icon icon="common/image" title="Billeder" name="toolImages"/>
+				<icon icon="common/internet" title="Bogmærker" name="toolBookmarks"/>
+				<right>
+					<icon icon="common/close" title="Tilbage til website" name="close"/>
+				</right>
+			</toolbar>
+			</top>
+			<middle>
+				<center>
+				<space height="20"/>
+				<box width="600" title="Indstillinger">
+					<formula name="personFormula">
+						<space all="10">
+							<header>Navn</header>
+							<group>
+								<text label="Præfiks" name="namePrefix"/>
+								<text label="Fornavn" name="givenName"/>
+								<text label="Efternavn" name="familyName"/>
+								<text label="Suffiks" name="nameSuffix"/>
+							</group>
+							<header>E-post</header>
+							<group>
+							<objectlist name="mails">
+								<text label="E-post" key="address"/>
+								<text label="Kontekst" key="context"/>
+							</objectlist>
+							</group>
+							<header>Andre kontoer</header>
+							<group>
+							<objectlist name="accounts">
+								<text label="Brugernavn" key="username"/>
+								<text label="Domæne" key="domain"/>
+							</objectlist>
+							</group>
+							<group>
+								<button title="Gem" name="savePerson" highlighted="true"/>
+							</group>
+						</space>
+					</formula>
+				</box>
+				</center>
+			</middle>
+		</structure>
+	</div>
+</gui>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+    ">
+
+   	<bean id="photosController" class="dk.in2isoft.onlineobjects.apps.photos.PhotosController" autowire="byType"/>
+   	
+   	<bean id="photoService" class="dk.in2isoft.onlineobjects.modules.photos.PhotoService">
+   		<property name="indexManager" ref="photosIndex"/>
+   		<property name="modelService" ref="modelService"/>
+   		<property name="securityService" ref="securityService"/>
+   	</bean>
+   	
+   	<!-- Views -->
+   	
+   	<bean id="photosFrontView" class="dk.in2isoft.onlineobjects.apps.photos.views.PhotosFrontView" scope="request">
+   		<property name="modelService" ref="modelService"/>
+   		<property name="securityService" ref="securityService"/>
+   	</bean>
+   	
+   	<bean id="photosPhotoView" class="dk.in2isoft.onlineobjects.apps.photos.views.PhotosPhotoView" scope="request">
+   		<property name="modelService" ref="modelService"/>
+   		<property name="securityService" ref="securityService"/>
+   		<property name="imageService" ref="imageService"/>
+   		<property name="personService" ref="personService"/>
+   	</bean>
+   	
+   	<bean id="photosUserView" class="dk.in2isoft.onlineobjects.apps.photos.views.PhotosUserView" scope="request">
+   		<property name="modelService" ref="modelService"/>
+   		<property name="photoService" ref="photoService"/>
+   		<property name="securityService" ref="securityService"/>
+   	</bean>
+   	
+   	<bean id="photosLayoutView" class="dk.in2isoft.onlineobjects.apps.photos.views.PhotosLayoutView" scope="request">
+   		<property name="modelService" ref="modelService"/>
+   		<property name="photosGalleryView" ref="photosGalleryView"/>
+   		<property name="personService" ref="personService"/>
+   	</bean>
+
+   	<bean id="photosGalleryView" class="dk.in2isoft.onlineobjects.apps.photos.views.PhotosGalleryView" scope="request">
+   		<property name="modelService" ref="modelService"/>
+   	</bean>   	
+   	
+   	<!-- Indexing -->
+   	
+   	<bean id="photoIndexer" class="dk.in2isoft.onlineobjects.modules.index.ConfigurableIndexer">
+		<property name="indexManager" ref="photosIndex" />
+		<property name="type" value="dk.in2isoft.onlineobjects.model.Image"/>
+		<property name="documentBuilder">
+			<bean class="dk.in2isoft.onlineobjects.modules.index.PhotoIndexDocumentBuilder">
+   				<property name="modelService" ref="modelService"/>
+   				<property name="securityService" ref="securityService"/>
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="photosIndex" class="dk.in2isoft.onlineobjects.modules.index.IndexManager">
+		<property name="directoryName"><util:constant static-field="dk.in2isoft.onlineobjects.modules.index.IndexService.PHOTOS_INDEX"/></property>
+		<property name="configurationService" ref="configurationService"/>
+	</bean>
+
+   	<bean class="dk.in2isoft.onlineobjects.modules.scheduling.JobDescription">
+		<property name="jobClass" value="dk.in2isoft.onlineobjects.modules.index.ConfigurableIndexJob"/>
+		<property name="properties">
+			<map>
+				<entry key="configurableIndexer" value-ref="photoIndexer"/>
+			</map>
+		</property>
+		<property name="name" value="index-photos"/>
+		<property name="group" value="core"/>
+	</bean>
+ 
+   	
+</beans>

@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:oo="http://www.onlineobjects.com/jsf" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:gui="http://www.in2isoft.dk/in2igui"
+>
+	<ui:composition template="chrome.xhtml">
+		<ui:param name="top" value="front"/>
+		
+		<ui:define name="head">
+			<script src="#{baseView.localContext}/js/invitation.js?#{lifeCycleService.startTime.time}" type="text/javascript" charset="utf-8"></script>
+			<script type="text/javascript">
+				oo.community.Invitation.code='#{invitationView.code}';
+			</script>
+		</ui:define>
+		
+		<ui:define name="body">
+			<div class="content_body">
+				<h:panelGroup rendered="#{empty invitationView.invitation}">
+					<div class="article">
+						<h1 class="header">Invitationen blev ikke fundet</h1>
+						<p>Det var desværre ikke muligt at finde invitationen. Den er muligvis blevet fjernet efter den er blevet afsendt. <a href="http://www.in2isoft.dk/kontakt/">Kontakt os venligst</a> hvis du mener det er en fejl.</p>
+					</div>
+				</h:panelGroup>
+				<h:panelGroup rendered="#{not empty invitationView.invitation}">
+					<h:panelGroup rendered="#{invitationView.invitation.state=='accepted'}">
+						<div class="article">
+							<h1 class="header">Invitationen er allerede blevet accepteret</h1>
+							<p>Denne invitation er allerede blevet accepteret. <a class="link" href="http://www.in2isoft.dk/kontakt/"><span>Kontakt os venligst
+</span></a> hvis du mener det er en fejl.</p>
+						</div>
+					</h:panelGroup>
+					<h:panelGroup rendered="#{invitationView.invitation.state=='active'}">
+						<div class="article">
+							<h1 class="header">Invitation til <span class="logo">Online<span>Me</span></span></h1>
+							<p>Hej #{invitationView.person.fullName}.</p>
+							<p><a class="link" href="#{baseView.localContext}/#{invitationView.inviterUser.username}"><span>#{invitationView.inviterPerson.fullName}</span></a> har inviteret dig til at blive bruger af <span class="logo">Online<span>Me</span></span>. Systemet kan anvendes til at lave hjemmesider og dele information.</p>
+							<h:panelGroup rendered="#{not empty invitationView.invitation.message}">
+								<p>#{invitationView.inviterPerson.givenName} har følgende besked til dig...</p>
+								<blockquote class="note">“<h:outputText value="#{invitationView.formattedMessage}" escape="false"/>”</blockquote>
+							</h:panelGroup>
+							<h2 class="header">Tilmeld dig her...</h2>
+						</div>
+						<table class="formula">
+							<tbody>
+							<tr>
+								<th>Brugernavn:</th>
+								<td><gui:textfield name="invitationUsername" width="150" value="#{invitationView.newUsername}"/></td>
+							</tr>
+							<tr>
+								<th>Kodeord:</th>
+								<td><gui:textfield name="invitationPassword" secret="true" width="150"/></td>
+							</tr>
+							<tr>
+								<th>Kodeord (gentag):</th>
+								<td><gui:textfield name="invitationPasswordAgain" secret="true" width="150"/></td>
+							</tr>
+							</tbody>
+							<tfoot>
+								<td colspan="2" style="text-align: right;">
+									<gui:button text="Tilmeld" name="changePassword"/>
+								</td>
+							</tfoot>
+						</table>
+					</h:panelGroup>
+				</h:panelGroup>
+				<h:panelGroup rendered="#{not empty passwordRecovery.user}">
+					<div class="article">
+						<h1 class="header">Skift kodeord</h1>
+						<p>Du kan nu ændre dig kodeord for brugeren "<a class="link" href="#{baseView.localContext}/#{passwordRecovery.user.username}"><span>#{passwordRecovery.user.username}</span></a>". Skriv det nye kodeord nedenunder or klik på "Skift kodeord".</p>
+					</div>
+				</h:panelGroup>
+			</div>
+		</ui:define>
+		
+	</ui:composition>
+</html>

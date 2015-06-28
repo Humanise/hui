@@ -1,0 +1,129 @@
+div.people_person
+{
+	padding: 20px;
+}
+
+div.people_person div.thumbnail
+{
+	float: left;
+	width: 60px;
+	height: 60px;
+	border: 1px solid #ddd;
+	margin: 0px 5px 5px 0px;
+	background: #fff;
+	padding: 4px;
+}
+
+
+div.people_person_left
+{
+	width: 155px;
+	float: left;
+}
+
+div.people_person div.people_person_image
+{
+	width: 150px;
+	height: 190px;
+	border: 1px solid #ddd;
+	border-color: #eee #ddd #ccc;
+	background: url('../gfx/profile_large.png') center center no-repeat;
+}
+
+div.people_person div.people_person_image_photo
+{
+	width: 140px;
+	height: 180px;
+	margin: 5px 0 0 5px;
+}
+
+div.people_person_info
+{
+	margin-left: 180px;
+}
+
+div.people_person_info h1
+{
+}
+
+div.people_person div.profile h2
+{
+	margin: 0px;
+	font-weight: normal;
+	font-size: 16pt;
+	margin: 0 0 10px;
+	color: #999;
+}
+
+p.people_person_resume
+{
+	color: #345;
+	font-size: 11pt;
+	font-style: italic;
+	line-height: 1.5em;
+	margin: 10px 0 20px;
+	font-weight: 300;
+}
+
+p.people_person_property
+{
+	font-size: 11pt;
+	font-weight: 200;
+}
+
+p.people_person_property span
+{
+	color: #999;
+}
+
+
+
+ul.people_person_contact
+{
+	list-style: none;
+	margin: 0 0 10px;
+	padding: 0;
+	font-size: 10pt;
+}
+
+ul.people_person_contact li
+{
+	padding-bottom: 3px;
+}
+
+ul.people_person_contact span.oo_icon
+{
+	margin-right: 5px;
+	color: #ddd;
+}
+
+ul.people_person_contact a.oo_link
+{
+	vertical-align: middle;
+}
+
+
+div.people_person_photos h2
+{
+	margin-bottom: 20px;
+}
+
+p.people_person_photos_more
+{
+	font-size: 10pt;
+}
+
+
+@media screen and (max-width: 600px) {
+	div.people_person_left
+	{
+		float: none;
+		width: auto;
+	}
+	
+	div.people_person_info
+	{
+		margin: 20px 0 0;
+	}
+	
+}

@@ -1,0 +1,30 @@
+div.widget_image
+{
+	width: 300px;
+	position: absolute;
+	height: 100px;
+	padding: 10px;
+	background: #fff;
+	border-radius: 3px;
+}
+
+div.widget_image img
+{
+	position: absolute;
+}
+
+div.widget_image_info
+{
+	margin-left: 110px;
+}
+
+div.widget_image_info h1
+{
+	margin: 0;
+	font-size: 14px;
+	width: 100%;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-weight: 600;
+}

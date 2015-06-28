@@ -1,0 +1,86 @@
+p.words_paging
+{
+	color: #ddd;
+	font-size: 0;
+	cursor: default;
+}
+
+p.words_paging em
+{
+	font-style: normal;
+	font-size: 12pt;
+	margin: 0 3px;
+}
+
+p.words_paging a
+{
+	display: inline-block;
+}
+
+p.words_paging a span
+{
+	color: #666;
+	padding: 0 3px;
+	display: inline-block;
+	height: 20px;
+	line-height: 19px;
+	border-radius: 3px;
+	font-size: 12pt;
+	min-width: 14px;
+	text-align: center;
+}
+
+p.words_paging a:hover span
+{
+	color: #08C;
+	border-radius: 3px;
+	background: #eee;
+}
+
+p.words_paging a:active
+{
+	outline: none;
+}
+
+p.words_paging a:active span
+{
+	background: #ddd;
+}
+
+p.words_paging a.words_paging_selected span
+{
+	color: #fff;
+	background: #333;
+	border: 1px solid #333;
+	margin: -1px;
+}
+
+p.words_paging a.words_paging_selected_default span
+{
+	color: #000;
+	background: #f6f6f6;
+	border: 1px solid #ddd;
+	margin: -1px;
+}
+
+p.words_paging a.words_paging_selected:active
+{
+	outline: none;
+}
+
+p.words_paging a.words_paging_selected:active span
+{
+	background: #eee;
+	border: 1px solid #ddd;	
+	outline: none;
+}
+
+.words_paging_previous > span:before {
+	margin-right: 3px;
+	content: '«';
+}
+
+.words_paging_next > span:after {
+	margin-left: 3px;
+	content: '»';
+}

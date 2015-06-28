@@ -1,0 +1,119 @@
+div.videogrid
+{
+	overflow: hidden;
+	padding: 3px 0 0 3px;
+}
+
+div.videogrid_cell
+{
+	float: left;
+	width: 129px;
+	height: 220px;
+	margin-right: 20px;
+}
+
+div.videogrid_cell_contest .oo_thumbnail
+{
+	border: 3px solid #0c0;
+	margin: -3px 0 0 -3px;
+	-webkit-border-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#66FF00), color-stop(0.5, #66FF00), color-stop(0.5, #01B101), to(#01B101)) 3 3 3 3 repeat repeat;
+}
+
+div.videogrid_cell_contest p.icons
+{
+	background: url('../gfx/icons/contest.png') 20px 1px no-repeat;
+}
+
+div.videogrid_compact div.videogrid_cell
+{
+	height: 160px;
+}
+
+/****************** videoitem *******************/
+
+div.videoitem
+{
+	padding-top: 1px;
+}
+
+div.videoitem h3 a
+{
+	color: #eee;
+	font-size: 14px;
+}
+
+div.videoitem h3 a span
+{
+	color: #333;
+}
+
+div.videoitem p.user
+{
+	font-size: 14px;
+}
+
+div.videoitem p.user a span
+{
+	color: #333;
+	font-weight: bold;
+}
+
+div.videoitem p.stats
+{
+	margin-top: 5px;
+	color: #333;
+	font-size: 12px;
+}
+
+div.videoitem span.rating
+{
+	background: url('../gfx/rating_small.png');
+	vertical-align: middle;
+	display: inline-block;
+	width: 78px;
+	height: 15px;
+}
+
+div.videoitem span.views em
+{
+	color: #FF3401;
+	font-style: normal;
+	margin-right: 5px;
+}
+
+div.videoitem span.adds em
+{
+	color: #059ba6;
+	font-style: normal;
+	margin-right: 5px;
+}
+
+div.videoitem p.info
+{
+	color:#666666;
+	font-size:11px;
+	margin-top:5px;
+}
+
+div.videoitem p.icons
+{
+	height: 15px;
+	margin-top: 3px;
+}
+
+div.videoitem p.icons span.video
+{
+	background: url('../gfx/icons/video.png') no-repeat;
+	height: 11px;
+	width: 16px;
+	display: inline-block;
+}
+
+div.videoitem p.icons span.audio
+{
+	background: url('../gfx/icons/audio.png') no-repeat;
+	height: 14px;
+	width: 14px;
+	display: inline-block;
+	margin-top: 1px;
+}

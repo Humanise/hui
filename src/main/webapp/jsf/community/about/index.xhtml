@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<html 
+	xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:oo="http://www.onlineobjects.com/jsf" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:gui="http://www.in2isoft.dk/in2igui"
+>
+	<ui:composition template="../chrome.xhtml">
+		<ui:param name="top" value="about"/>
+		
+		<ui:define name="title">
+			Kort<h:outputText value=" &#187; "/>
+		</ui:define>
+		
+		<ui:define name="body">
+			<ul class="breadcrumb">
+				<li><a href="#{baseView.baseContext}/">OnlineMe</a></li>
+				<li><a href="#{baseView.baseContext}/about/">Om OnlineMe</a></li>
+			</ul>
+			<div class="article" style="padding: 20px;">
+				<h1>Hvad er OnlineMe?</h1>
+				<p>OnlineMe er et <strong>eksperiment</strong> hvor vi vil forsøge at lave en service hvor personer kan samle og udstille oplysninger om sig selv.</p>				
+				<h2>Udvikling</h2>
+				<p>Systemet udvikles løbende med kort tid mellem opdateringer.</p>
+				<p><oo:link href="http://www.in2isoft.dk/support/onlineme/opdateringer.html">Læse mere om udviklingen af OnlineMe</oo:link></p>
+			</div>
+		</ui:define>
+		
+	</ui:composition>
+</html>

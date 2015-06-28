@@ -1,0 +1,96 @@
+
+
+.words_front_top
+{
+	max-width: 700px;
+	margin: 0 auto 50px;
+}
+
+.words_front_title
+{
+	text-align: center;
+	font-size: 72pt;
+	margin: 0;
+	font-weight: 100;
+}
+
+/***************** Letters ***************/
+
+.words_front_letters
+{
+	width: 50%;
+	text-align: center;
+	float: right;
+	-webkit-font-smoothing: antialiased;
+}
+
+.words_front_letters_title
+{
+	display: none;
+}
+
+a.words_front_letters_link > span
+{
+	color: #666;
+	padding: 0 8px;
+	display: inline-block;
+	height: 42px;
+	line-height: 42px;
+	border-radius: 3px;
+	font-size: 24pt;
+	text-transform: uppercase;
+}
+
+.words_front_letters_link:hover > span
+{
+	color: #08C;
+	border-radius: 3px;
+	background: #eee;	
+}
+
+
+/***************** Languages ***************/
+
+.words_front_filter
+{
+	width: 50%;
+	float: right;
+	clear: right;
+	-webkit-font-smoothing: antialiased;
+}
+
+.words_front_filter_links
+{
+	text-align: center;
+}
+
+a.words_front_filter_link > span
+{
+	color: #666;
+	padding: 0 8px;
+	display: inline-block;
+	height: 32px;
+	line-height: 32px;
+	border-radius: 3px;
+	font-size: 14pt;
+}
+
+.words_front_filter_link:hover > span
+{
+	color: #08C;
+	border-radius: 3px;
+	background: #eee;	
+}
+
+@media screen and (max-width: 600px) {
+	.words_front_title
+	{
+		font-size: 54pt;
+	}
+	.words_front_filter,
+	.words_front_letters
+	{
+		float: none;
+		width: auto;
+	}
+}

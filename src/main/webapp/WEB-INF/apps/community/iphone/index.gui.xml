@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<iphone xmlns="uri:In2iPhone" xmlns:gui="uri:hui" title="OnlineObjects">
+	<!--
+	<gui:dwr base="/dwr/">
+		<gui:interface name="Common"/>
+		<gui:interface name="AppCommunity"/>
+	</gui:dwr>
+	-->
+	<controller name="controller" source="../iphone/js/controller.js"/>
+	<pages>
+		<page name="front">
+			<toolbar></toolbar>
+			<header>OnlineObjects</header>
+			<buttonlist>
+				<button title="Log på" icon="common/security" name="frontLogin"/>
+				<button title="Søgning" icon="common/search"/>
+			</buttonlist>
+			<gui:space height="10"/>
+			<buttonlist>
+				<button title="Brugere" icon="common/user" name="frontUsers"/>
+				<button title="Billeder" icon="common/image"/>
+				<button title="Hjemmesider" icon="common/internet"/>
+				<button title="Designs" icon="common/color"/>
+			</buttonlist>
+			<gui:space height="10"/>
+			<button title="Kontakt" icon="common/email"/>
+			<gui:space height="10"/>
+			<button title="Administration" icon="common/settings" disabled="true"/>
+		</page>
+		<page name="login">
+			<toolbar>
+				<button title="Tilbage" name="loginBack"/>
+			</toolbar>
+			<header>Users</header>
+		</page>
+		<page name="users">
+			<toolbar></toolbar>
+			<header>Users</header>
+			<button title="Tilbage" icon="common/email" name="usersBack"/>
+		</page>
+	</pages>
+</iphone>

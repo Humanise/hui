@@ -1,0 +1,55 @@
+p.oo_words
+{
+	font-size: 0;
+}
+
+a.oo_words_word
+{
+	background: #fff;
+	border: 1px solid #eee;
+	border-radius: 8px;
+	display: inline-block;
+	height: 16px;
+	line-height: 16px;
+	font-size: 12px;
+	font-weight: 200;
+	padding: 0 7px;
+	margin: 0 2px 2px 0;
+	color: #333;
+	text-decoration: none;
+	vertical-align: middle;
+}
+
+a.oo_words_word:hover
+{
+	border: 1px solid #ddd;
+}
+
+a.oo_words_add
+{
+	background: #fff;
+	border: 1px dashed #eee;
+	border-radius: 8px;
+	display: inline-block;
+	height: 16px;
+	line-height: 16px;
+	font-size: 12px;
+	font-weight: 200;
+	padding: 0 7px;
+	margin: 0 2px 2px 0;
+	color: #999;
+	text-decoration: none;
+	vertical-align: middle;
+	text-transform: lowercase;
+}
+
+a.oo_words_add:hover
+{
+	border: 1px solid #ddd;
+	color: #333;
+}
+
+a.oo_words_add:hover
+{
+	background-position: 0 -16px;
+}

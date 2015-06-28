@@ -1,0 +1,153 @@
+@font-face {
+	font-family: 'OnlineObjects';
+	src:url('fonts/OnlineObjects.eot');
+	src:url('fonts/OnlineObjects.eot?#iefix') format('embedded-opentype'),
+		url('fonts/OnlineObjects.woff') format('woff'),
+		url('fonts/OnlineObjects.ttf') format('truetype'),
+		url('fonts/OnlineObjects.svg#OnlineObjects') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+/* Use the following CSS code if you want to use data attributes for inserting your icons */
+[data-icon]:before {
+	font-family: 'OnlineObjects';
+	content: attr(data-icon);
+	speak: none;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+}
+
+/* Use the following CSS code if you want to have a class per icon */
+/*
+Instead of a list of all class selectors,
+you can use the generic selector below, but it's slower:
+[class*="oo_icon_"] {
+*/
+.oo_icon_arrow_right, .oo_icon_arrow_left, .oo_icon_download, .oo_icon_expand, .oo_icon_user, .oo_icon_onlineobjects, .oo_icon_at, .oo_icon_globe, .oo_icon_envelope, .oo_icon_tag, .oo_icon_globus, .oo_icon_phone, .oo_icon_warning, .oo_icon_camera, .oo_icon_file, .oo_icon_time, .oo_icon_dimensions, .oo_icon_book, .oo_icon_delete, .oo_icon_share, .oo_icon_album, .oo_icon_add, .oo_icon_edit, .oo_icon_present, .oo_icon_info, .oo_icon_photos, .oo_icon_close, .oo_icon_gear, .oo_icon_info_light, .oo_icon_first, .oo_icon_statistics, .oo_icon_search, .oo_icon_marker, .oo_icon_inbox, .oo_icon_locked, .oo_icon_support, .oo_icon_list_bullet, .oo_icon_humanise {
+	font-family: 'OnlineObjects';
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+}
+.oo_icon_arrow_right:before {
+	content: "\3e";
+}
+.oo_icon_arrow_left:before {
+	content: "\3c";
+}
+.oo_icon_download:before {
+	content: "\64";
+}
+.oo_icon_expand:before {
+	content: "\78";
+}
+.oo_icon_user:before {
+	content: "\75";
+}
+.oo_icon_onlineobjects:before {
+	content: "\a4";
+}
+.oo_icon_at:before {
+	content: "\40";
+}
+.oo_icon_globe:before {
+	content: "\67";
+}
+.oo_icon_envelope:before {
+	content: "\65";
+}
+.oo_icon_tag:before {
+	content: "\74";
+}
+.oo_icon_globus:before {
+	content: "\47";
+}
+.oo_icon_phone:before {
+	content: "\70";
+}
+.oo_icon_warning:before {
+	content: "\77";
+}
+.oo_icon_camera:before {
+	content: "\63";
+}
+.oo_icon_file:before {
+	content: "\66";
+}
+.oo_icon_time:before {
+	content: "\54";
+}
+.oo_icon_dimensions:before {
+	content: "\44";
+}
+.oo_icon_book:before {
+	content: "\62";
+}
+.oo_icon_delete:before {
+	content: "\2a";
+}
+.oo_icon_share:before {
+	content: "\23";
+}
+.oo_icon_album:before {
+	content: "\6c";
+}
+.oo_icon_add:before {
+	content: "\2b";
+}
+.oo_icon_edit:before {
+	content: "\3d";
+}
+.oo_icon_present:before {
+	content: "\21";
+}
+.oo_icon_info:before {
+	content: "\69";
+}
+.oo_icon_photos:before {
+	content: "\5e";
+}
+.oo_icon_close:before {
+	content: "\6b";
+}
+.oo_icon_gear:before {
+	content: "\22";
+}
+.oo_icon_info_light:before {
+	content: "\27";
+}
+.oo_icon_first:before {
+	content: "\28";
+}
+.oo_icon_statistics:before {
+	content: "\25";
+}
+.oo_icon_search:before {
+	content: "\24";
+}
+.oo_icon_marker:before {
+	content: "\26";
+}
+.oo_icon_inbox:before {
+	content: "\29";
+}
+.oo_icon_locked:before {
+	content: "\2c";
+}
+.oo_icon_support:before {
+	content: "\2d";
+}
+.oo_icon_list_bullet:before {
+	content: "\2e";
+}
+.oo_icon_humanise:before {
+	content: "\2f";
+}

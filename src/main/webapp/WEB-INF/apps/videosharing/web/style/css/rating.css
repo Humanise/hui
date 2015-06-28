@@ -1,0 +1,94 @@
+span.rating
+{
+	display: inline-block;
+	font-size: 0;
+	height: 28px;
+	vertical-align: middle;
+}
+
+span.rating strong
+{
+	font-size: 14px;
+	vertical-align: middle;
+	padding: 0 5px 0 0;
+}
+
+span.rating a.bar
+{
+	vertical-align: middle;
+	display: inline-block;
+	height: 28px;
+	width: 8px;
+	background: #ddd;
+	border-right: 1px solid #fff;
+	border-left: 1px solid #fff;
+	text-decoration: none;
+	color: transparent;
+}
+
+span.rating a.plus_selected
+{
+	background: red;
+}
+
+span.rating a.minus_selected
+{
+	background: #555;
+}
+
+span.rating a.bar:hover
+{
+	background: #bbb;
+}
+
+span.rating a.plus_selected:hover
+{
+	background: #a00;
+}
+
+span.rating a.minus_selected:hover
+{
+	background: #000;
+}
+
+span.rating em
+{
+	font-style: normal;
+	font-weight: bold;
+	font-size: 24px;
+	margin-left: 10px;
+	vertical-align: middle;
+}
+
+a.rate_up
+{
+	background:url("../gfx/icons/up_red.png") repeat scroll 0 0 transparent;
+	font-size:0;
+	height:12px;
+	display: inline-block;
+	right:80px;
+	top:15px;
+	width:12px;
+	vertical-align: middle;
+	margin-left: 10px;
+	text-decoration: none;
+}
+
+a.rate_down
+{
+	background:url("../gfx/icons/down.png") repeat scroll 0 0 transparent;
+	font-size:0;
+	height:12px;
+	display: inline-block;
+	right:80px;
+	top:15px;
+	width:12px;
+	vertical-align: middle;
+	margin-left: 10px;
+	text-decoration: none;
+}
+
+a.rate_up span, a.rate_down span
+{
+	visibility: hidden;
+}

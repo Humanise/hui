@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+    ">
+
+   	<bean id="accountController" class="dk.in2isoft.onlineobjects.apps.account.AccountController" autowire="byType"/>
+   	
+   	<bean id="accountSettingsView" class="dk.in2isoft.onlineobjects.apps.account.views.AccountSettingsView" scope="request">
+   		<property name="modelService" ref="modelService"/>
+   	</bean>
+   	
+   	<bean id="accountPasswordView" class="dk.in2isoft.onlineobjects.apps.account.views.AccountPasswordView" scope="request">
+   		<property name="passwordRecoveryService" ref="passwordRecoveryService"/>
+   	</bean>
+   	
+   	
+</beans>

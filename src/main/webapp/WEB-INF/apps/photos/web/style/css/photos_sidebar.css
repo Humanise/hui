@@ -1,0 +1,173 @@
+div.photos_sidebar_profile
+{
+	padding: 5px 10px 5px;
+}
+
+div.photos_sidebar_profile_image
+{
+	float: left;
+}
+
+div.photos_sidebar_profile_body
+{
+	margin-left: 60px;
+}
+
+p.photos_sidebar_profile_name
+{
+	margin: 0 0 3px;
+	font-size: 16px;
+	font-weight: 500;
+	line-height: 14px;
+	font-weight: 400;
+}
+
+p.photos_sidebar_profile_user
+{
+	margin: 0;
+	font-size: 0;
+}
+
+p.photos_sidebar_profile_user span
+{
+	color: #aaa;
+	margin-right: 3px;	
+}
+
+p.photos_sidebar_profile_user strong
+{
+	display: inline-block;
+	vertical-align: middle;
+	font-weight: 400;
+	font-size: 9pt;
+	color: #999;
+}
+
+p.photos_sidebar_profile_link
+{
+	margin: 5px 0;
+	font-size: 12px;	
+}
+
+.photos_sidebar_title
+{
+	border-bottom: 1px solid #eee;
+	margin: 20px -5px 10px;
+	position: relative;
+}
+
+.photos_sidebar_title_text
+{
+	position: absolute;
+	background: #fff;
+	margin: 0;
+	font-size: 12px;
+	line-height: 1;
+	margin-top: -6px;
+	padding: 0 4px;
+	margin-left: 16px;
+	font-weight: normal;
+	color: #999;
+}
+
+div.photos_sidebar_galleries
+{
+	border-top: 1px solid #eee;
+	padding: 10px 5px;
+	margin: 5px;
+}
+
+.photos_sidebar_title_action
+{
+	position: absolute;
+	right: 5px;
+	top: -11px;
+	color: #ddd;
+	font-size: 0;
+	background: #fff;
+	padding: 3px;
+}
+
+div.photos_sidebar_galleries h2 a:hover
+{
+	color: #333;
+}
+
+div.photos_sidebar_galleries ul
+{
+	list-style: none;
+	margin: 0;
+	padding: 0px;
+	font-size: 12px;
+}
+
+div.photos_sidebar_galleries li
+{
+}
+
+div.photos_sidebar_galleries ul a
+{
+	text-decoration: none;
+	color: #333;
+	display: block;
+	padding: 2px 0;
+}
+
+div.photos_sidebar_galleries ul a:hover,
+div.photos_sidebar_galleries ul a:hover span.oo_icon
+{
+	color: #000;
+}
+
+div.photos_sidebar_galleries ul a:focus
+{
+	text-shadow: #3366ff 0px 0px 2px;
+	color: #002244;
+	outline: none;
+}
+
+div.photos_sidebar_galleries ul a span.oo_icon
+{
+	color: #ccc;
+	margin-right: 4px;
+	font-weight: normal;
+	margin-top: -1px;
+}
+
+a.photos_sidebar_selected
+{
+	font-weight: bold;
+	color: #000;
+}
+
+div.photos_sidebar_galleries a.photos_sidebar_selected span.oo_icon
+{
+	color: #333;
+}
+
+.photos_sidebar_cloud
+{
+	text-align: center;
+	font-size: 14px;
+	padding: 0 10px 20px;
+}
+
+.photos_sidebar_cloud > a
+{
+	display: inline-block;
+	vertical-align: middle;
+	line-height: 1;
+	text-decoration: none;
+}
+
+.photos_sidebar_cloud_0 { font-size: 1em; color: #aaa;}
+.photos_sidebar_cloud_1 { font-size: 1.1em; color: #999;}
+.photos_sidebar_cloud_2 { font-size: 1.2em; color: #888;}
+.photos_sidebar_cloud_3 { font-size: 1.3em; color: #777; }
+.photos_sidebar_cloud_4 { font-size: 1.4em; color: #666; }
+.photos_sidebar_cloud_5 { font-size: 1.5em; color: #555; }
+.photos_sidebar_cloud_6 { font-size: 1.6em; color: #444; }
+.photos_sidebar_cloud_7 { font-size: 1.7em; color: #333; }
+.photos_sidebar_cloud_8 { font-size: 1.8em; color: #222; }
+.photos_sidebar_cloud_9 { font-size: 1.9em; color: #111; }
+.photos_sidebar_cloud_10 { font-size: 2em; color: #000; }

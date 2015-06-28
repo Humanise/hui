@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gui xmlns="uri:hui" state="persons" title="Persons">
+	<dwr base="/dwr/">
+		<interface name="CoreSecurity"/>
+		<interface name="AppCommunity"/>
+	</dwr>
+	<controller name="controller" source="../../gui/private/controller.js"/>
+	<controller name="personsController" source="../../gui/private/persons.js"/>
+	<bar>
+		<button text="Offentligt" icon="inset/public" name="barPublic"/>
+		<button text="Hjemmeside" icon="inset/globe" name="barWebsite"/>
+		<button text="Værktøjer" icon="inset/tools" name="barTools" highlighted="true"/>
+		<right>
+			<button text="{username}" icon="inset/user" name="barUser"/>
+			<button text="Log ud" icon="inset/cross" name="barLogOut"/>
+		</right>
+	</bar>
+
+	<toolbar variant="dock">
+		<icon icon="common/image" title="Billeder" name="toolImages"/>
+		<icon icon="common/person" title="Personer" selected="true" name="toolPersons"/>
+		<icon icon="common/internet" title="Bogmærker" name="toolBookmarks"/>
+		<icon icon="common/settings" title="Integration" name="toolIntegration"/>
+	</toolbar>
+
+	<div style="position: fixed; top: 90px; bottom: 0; left: 0; right: 0; padding: 10px;">
+		<structure>
+			<top>
+				<toolbar>
+					<icon icon="common/person" overlay="new" title="Ny person" name="newPerson"/>
+					<icon icon="common/letter" overlay="new" title="Ny invitation" name="newInvitation"/>
+				</toolbar>
+			</top>
+			<middle>
+				<left>
+					<selection value="persons">
+						<item icon="common/person" title="Alle personer" value="persons"/>
+						<item icon="common/letter" title="Invitationer" value="invitations"/>
+					</selection>
+				</left>
+				<center>
+					<overflow>
+						<list name="personList" state="persons">
+							<column title="Navn" key="name"/>
+							<column title="E-mail" key="email"/>
+							<column title="Telefon" key="phone"/>
+						</list>
+						<list name="invitationList" state="invitations">
+							<column title="Dato" key="created"/>
+							<column title="Inviteret" key="person"/>
+							<column title="Status" key="state"/>
+						</list>
+					</overflow>
+				</center>
+			</middle>
+			<bottom/>
+		</structure>
+	</div>
+
+	<window name="personWindow" title="Person" width="400" padding="5">
+		<formula name="personFormula">			
+			<columns space="10">
+				<column>
+					<fields labels="above">
+						<field label="Fornavn">
+							<text-input key="givenName"/>
+						</field>
+					</fields>
+				</column>
+				<column>
+					<fields labels="above">
+						<field label="Fornavn">
+							<text-input key="additionalName"/>
+						</field>
+					</fields>
+				</column>
+				<column>
+					<fields labels="above">
+						<field label="Efternavn">
+							<text-input key="familyName"/>
+						</field>
+					</fields>
+				</column>
+			</columns>
+			<columns space="10">
+				<column>
+					<fields labels="above">
+						<field label="Præfiks">
+							<text-input key="namePrefix"/>
+						</field>
+					</fields>
+				</column>
+				<column>
+					<fields labels="above">
+						<field label="Postfiks">
+							<text-input key="nameSuffix"/>
+						</field>
+					</fields>
+				</column>
+			</columns>
+			<space height="10"/>
+			<columns space="10">
+				<column>
+					<objectlist name="personEmails">
+						<text label="E-mail" key="address"/>
+						<text label="Kontekst" key="context"/>
+					</objectlist>
+				</column>
+				<column>
+					<objectlist name="personPhones">
+						<text label="Telefon" key="number"/>
+						<text label="Kontekst" key="context"/>
+					</objectlist>
+				</column>
+			</columns>
+			<buttons top="5">
+				<button title="Annuller" name="cancelPerson"/>
+				<button title="Gem" highlighted="true" name="savePerson"/>
+			</buttons>
+		</formula>
+	</window>
+
+	<window name="invitationWindow" title="Ny invitation" width="300" padding="10">
+		<formula name="invitationFormula">
+			<fields>
+				<field label="Navn">
+					<text-input key="name"/>
+				</field>
+				<field label="E-mail">
+					<text-input key="email"/>
+				</field>
+				<field label="Besked">
+					<text-input key="message" multiline="true"/>
+				</field>
+				<buttons>
+					<button title="Send" highlighted="true" name="sendInvitation"/>
+				</buttons>
+			</fields>
+		</formula>
+	</window>
+
+</gui>

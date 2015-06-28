@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<html
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:gui="http://www.in2isoft.dk/in2igui"
+>
+	<ui:composition template="../chrome.xhtml">
+		<ui:param name="top" value="users"/>
+		
+		<ui:define name="head">
+			<link rel="stylesheet" href="#{baseView.localContext}/css/userprofile.css" type="text/css" media="screen" charset="utf-8"/>
+			<script type="text/javascript" src="#{baseView.localContext}/js/userprofile.js"></script>
+		</ui:define>
+		
+		<ui:define name="body">
+			<c:if test="#{not userProfileView.found}">
+				<h2 class="message">Brugeren blev ikke fundet</h2>
+			</c:if>
+			<c:if test="#{userProfileView.found}"> 
+				<ul class="breadcrumb">
+					<li><a href="#{baseView.baseContext}/">OnlineMe</a></li>
+					<li><a href="#{baseView.baseContext}/users.html/">Brugere</a></li>
+					<li><a href="#{baseView.baseContext}/#{userProfileView.user.username}/">#{userProfileView.person.fullName}</a></li>
+					<ui:insert name="breadcrumb"/>
+				</ul>
+				<ui:remove>
+				<ui:fragment rendered="#{tab!='none'}">
+					<ul class="tabs oo_faded" style="margin-top: 10px;">
+						<li class="#{tab=='overview' ? 'highlighted' : ''}"><a href="#{baseView.baseContext}/#{userProfileView.user.username}/">Overblik</a></li>
+						<li class="#{tab=='images' ? 'highlighted' : ''}"><a href="#{baseView.baseContext}/#{userProfileView.user.username}/images.html">Billeder</a></li>
+						<ui:remove>
+						<li class="#{tab=='remote' ? 'highlighted' : ''}"><a href="#{baseView.baseContext}/#{userProfileView.user.username}/remote.html">Andet</a></li>
+						</ui:remove>
+					</ul>
+				</ui:fragment>
+				</ui:remove>
+				<div>
+					<ui:insert name="content"/>
+				</div>
+			</c:if>
+		</ui:define>
+	</ui:composition>
+</html>

@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:o="http://www.onlineobjects.com/jsf" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:gui="http://www.in2isoft.dk/in2igui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+>
+	<ui:composition template="templates/plain.xhtml">
+		
+		<ui:define name="title">#{wordsIndexView.character} - </ui:define>
+		
+		<ui:define name="body">
+			<div class="words">
+				<h1 class="words">#{msg.index} <span>» #{msg.words}</span></h1>
+				<p class="words_paging words_index">
+					<c:forEach items="#{wordsIndexView.alphabeth}" var="chr">
+						<o:link styleClass="#{chr.value == wordsIndexView.character ? 'words_paging_selected' : ''}" href="/en/index/#{chr.value}/">#{chr.label}</o:link>
+					</c:forEach>
+				</p>
+				<ul class="words_list">
+					<c:forEach items="#{wordsIndexView.list}" var="word">
+						<li>
+							<o:link href="/#{wordsLayoutView.language}/word/#{word.urlPart}.html">#{word.text}</o:link>
+							<span class="words_list_info">
+							<c:if test="#{not empty word.lexicalCategory}">
+								— #{msgCategory[o:join('code.',word.lexicalCategory)]}
+							</c:if>
+							<c:if test="#{not empty word.language}">
+							– #{msgLanguage[o:join("code.",word.language)]}
+							</c:if>
+							</span>
+							<c:if test="#{not empty word.glossary}">
+							<span class="words_list_glossary">&#65374; <span>#{word.glossary}</span></span>
+							</c:if>
+						</li>
+					</c:forEach>
+				</ul>
+				<p class="words_paging">
+				<c:forEach items="#{wordsIndexView.pages}" var="page">
+					<c:choose>
+						<c:when test="#{page==null}"><em>···</em></c:when>
+						<c:otherwise>
+							<o:link href="#{page.value}/" styleClass="#{page.selected ? 'words_paging_selected' : ''}">#{page.label}</o:link>
+						</c:otherwise>
+					</c:choose>
+					#{' '}
+				</c:forEach>
+				</p>
+			</div>
+		</ui:define>
+		
+	</ui:composition>
+</html>

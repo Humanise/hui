@@ -1,0 +1,47 @@
+span.oo_navigator_pages
+{
+	display: block;
+	height: 22px;
+	font-size: 0;
+	margin-right: 20px;
+	margin-bottom: 10px;
+}
+
+span.oo_navigator_pages a
+{
+	display: inline-block;
+	vertical-align: top;
+	font-weight: 200;
+}
+
+span.oo_navigator_pages a span
+{
+	color: #666;
+	padding: 0 3px;
+	display: inline-block;
+	height: 20px;
+	line-height: 20px;
+	border-radius: 3px;
+	font-size: 12pt;
+	min-width: 14px;
+	text-align: center;
+	border: 1px solid #fff;
+}
+
+span.oo_navigator_pages a:hover span
+{
+	color: #08C;
+	border-radius: 3px;
+	background: #fafafa;
+	border: 1px solid #eee;
+}
+
+span.oo_navigator_pages a.oo_navigator_selected span,
+span.oo_navigator_pages a.oo_navigator_selected:hover span
+{
+	color: #333;
+	background: #f6f6f6;
+	border: 1px solid #ddd;
+	font-weight: bold;
+	font-weight: 400;
+}

@@ -1,0 +1,51 @@
+ul.words_menu
+{
+	color: #BBBBBB;
+    font-size: 0;
+    line-height: 24px;
+    list-style-type: none;
+    margin: 0;
+    padding: 10px 0 0 10px;
+}
+
+ul.words_menu span.oo_icon
+{
+	margin-right: 8px;
+	color: #bbb;
+}
+
+ul.words_menu li a
+{
+	text-decoration: none;
+	font-size: 0;
+	color: #333;
+	display: block;
+}
+
+span.words_menu
+{
+	font-size: 12pt;
+	color: #08c;
+	vertical-align: middle;
+}
+
+ul.words_menu li a:hover span.oo_icon
+{
+	color: #666;
+}
+
+ul.words_menu li a:hover span.words_menu
+{
+	color: #000;
+}
+
+a.words_menu_selected span.words_menu
+{
+	font-weight: bold;
+	color: #333;
+}
+
+a.words_menu_selected span.oo_icon
+{
+	color: #333;
+}

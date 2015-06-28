@@ -1,0 +1,196 @@
+div.oo_layout
+{
+	width: 980px;
+	margin: 0 auto;
+	background: #fff;
+	margin-top: 20px;
+}
+
+
+div.oo_layout_middle
+{
+	overflow: hidden;
+}
+
+div.oo_layout_body_sidebar
+{
+	width: 780px;
+	float: left;
+}
+
+div.oo_layout_sidebar
+{
+	width: 200px;
+	float: left;
+}
+
+
+
+/***************** Rounded ***************/
+
+div.oo_layout_rounded
+{
+	width: 980px;
+	box-shadow: 0px 1px 3px 0px #999;
+	-webkit-box-shadow: 0px 1px 3px #999;
+	border-radius: 5px;
+}
+
+div.oo_layout_rounded div.oo_layout_top
+{
+	height: 32px;
+	border-bottom: 1px solid #ddd;
+}
+
+div.oo_layout_rounded div.oo_layout_bottom
+{
+	height: 32px;
+	border-top: 1px solid #ddd;
+}
+
+body.oo_msie div.oo_layout_rounded
+{
+	box-shadow: 0px 1px 6px 0px #999;	
+}
+
+body.oo_msie7 div.oo_layout_rounded,
+body.oo_msie8 div.oo_layout_rounded
+{
+	border: 1px solid #ddd;
+}
+
+div.oo_layout_rounded div.oo_layout_middle
+{
+	background: url('../gfx/sidebar.png') 780px top repeat-y;
+	border-radius: 0 0 5px 0;
+}
+
+/***************** Paper ***************/
+
+div.oo_layout_paper
+{
+	width: 1018px;
+	background: url('../gfx/layout_paper.png') 0 0 repeat-y;
+	margin: 10px auto 0;
+}
+
+div.oo_layout_paper div.oo_layout_top
+{
+	height: 14px;
+	background: url('../gfx/layout_paper.png') -1018px 0;
+}
+
+div.oo_layout_paper div.oo_layout_bottom
+{
+	height: 14px;
+	background: url('../gfx/layout_paper.png') -2036px 0;
+}
+
+div.oo_layout_paper div.oo_layout_middle
+{
+	padding: 0 10px;
+}
+
+div.oo_layout_paper div.oo_layout_body
+{
+	min-height: 640px;
+}
+
+div.oo_layout_paper div.oo_layout_body_sidebar
+{
+	width: 797px;
+	border-right: 1px solid #eee;
+	float: left;
+}
+
+div.oo_layout_paper div.oo_layout_sidebar
+{
+	width: 200px;
+	border-left: 1px solid #eee;
+	float: left;
+	margin-left: -1px;
+}
+
+
+
+div.oo_layout_paper div.oo_layout_left
+{
+	margin-top: 14px;
+	height: 616px;
+	width: 9px;
+	position: absolute;
+	background: url('../gfx/layout_paper_effect.png');
+}
+
+div.oo_layout_paper div.oo_layout_right
+{
+	margin-top: -618px;
+	margin-left: 1009px;
+	height: 616px;
+	width: 9px;
+	position: absolute;
+	background: url('../gfx/layout_paper_effect.png') -9px 0;
+}
+
+@media screen and (max-width: 1018px) {
+	div.oo_layout_paper
+	{
+		width: auto;
+		background: #fff;
+		margin: 0;
+		border-bottom: 1px solid #eee;
+		border-top: 1px solid #eee;
+	}
+	
+	div.oo_layout_paper div.oo_layout_bottom,
+	div.oo_layout_paper div.oo_layout_top
+	{
+		display: none;
+	}
+	
+	div.oo_layout_paper div.oo_layout_middle
+	{
+		padding: 0;
+	}
+	
+	div.oo_layout_paper div.oo_layout_sidebar
+	{
+		position: absolute;
+		float: none;
+		right: 0;
+		top: 38px;
+	}
+	
+	div.oo_layout_paper div.oo_layout_body_sidebar
+	{
+		float: none;
+		width: auto;
+		margin-right: 200px;
+		overflow: hidden;
+	}
+	
+	div.oo_layout_paper div.oo_layout_right,
+	div.oo_layout_paper div.oo_layout_left
+	{
+		display: none;
+	}
+}
+
+@media screen and (max-width: 600px) {
+
+	div.oo_layout_paper div.oo_layout_body
+	{
+		margin: 0;
+		border: none;
+		min-height: 0;
+	}
+	
+	div.oo_layout_paper div.oo_layout_sidebar
+	{
+		position: static;
+		top: 0;
+		border: none;
+		width: auto;
+	}
+	
+}

@@ -1,0 +1,52 @@
+<!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 2.0//EN" "http://www.getahead.ltd.uk/dwr//dwr20.dtd">
+<dwr>
+  <allow>
+    <create creator="new" javascript="CoreSecurity" scope="application">
+      <param name="class" value="dk.in2isoft.onlineobjects.remoting.SecurityRemotingFacade"/>
+    </create>
+    <create creator="new" javascript="CorePublishing" scope="application">
+      <param name="class" value="dk.in2isoft.onlineobjects.publishing.remoting.PublishingRemotingFacade"/>
+    </create>
+    <create creator="new" javascript="Common" scope="application">
+      <param name="class" value="dk.in2isoft.onlineobjects.remoting.CommonRemotingFacade"/>
+    </create>
+    <create creator="new" javascript="Desktop" scope="application">
+      <param name="class" value="dk.in2isoft.onlineobjects.apps.desktop.RemotingFacade"/>
+    </create>
+    <create creator="new" javascript="AppCommunity" scope="application">
+      <param name="class" value="dk.in2isoft.onlineobjects.apps.community.remoting.CommunityRemotingFacade"/>
+    </create>
+    <create creator="new" javascript="AppSchool" scope="application">
+      <param name="class" value="dk.in2isoft.onlineobjects.apps.school.SchoolRemotingFacade"/>
+    </create>
+    <create creator="new" javascript="AppSetup" scope="application">
+      <param name="class" value="dk.in2isoft.onlineobjects.apps.setup.SetupRemotingFacade"/>
+    </create>
+    <create creator="new" javascript="ImageGalleryDocument" scope="application">
+      <param name="class" value="dk.in2isoft.onlineobjects.publishing.imagegallery.ImageGalleryRemotingFacade"/>
+    </create>
+    <create creator="new" javascript="CompoundDocumentDocument" scope="application">
+      <param name="class" value="dk.in2isoft.onlineobjects.publishing.compounddocument.CompoundDocumentRemotingFacade"/>
+    </create>
+    <create creator="new" javascript="Parts" scope="application">
+      <param name="class" value="dk.in2isoft.onlineobjects.publishing.PartRemotingFacade"/>
+    </create>
+    <convert converter="bean" match="dk.in2isoft.onlineobjects.apps.desktop.SearchResult"/>
+    <convert converter="bean" match="dk.in2isoft.onlineobjects.apps.desktop.Window"/>
+    <convert converter="bean" match="dk.in2isoft.onlineobjects.apps.desktop.EntityWindow"/>
+    <convert converter="bean" match="dk.in2isoft.onlineobjects.apps.desktop.WindowProperty"/>
+    
+    <convert converter="bean" match="dk.in2isoft.onlineobjects.publishing.remoting.*"/>
+    
+    <convert match="dk.in2isoft.onlineobjects.apps.community.views.ImageInfo" converter="bean"/>
+    
+    <convert converter="bean" match="dk.in2isoft.onlineobjects.ui.AsynchronousProcessDescriptor"/>
+    <convert converter="bean" match="dk.in2isoft.onlineobjects.model.*">
+    	<param name="exclude" value="getImageFile"/>
+    </convert>
+    <convert converter="bean" match="dk.in2isoft.*"/>
+    <convert match="java.lang.Exception" converter="exception">
+    	<param name='exclude' value='stackTrace'/>
+    </convert>
+  </allow>
+</dwr>

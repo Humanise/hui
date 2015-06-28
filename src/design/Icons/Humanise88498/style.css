@@ -1,0 +1,53 @@
+@font-face {
+	font-family: 'Humanise';
+	src:url('fonts/Humanise.eot');
+	src:url('fonts/Humanise.eot?#iefix') format('embedded-opentype'),
+		url('fonts/Humanise.woff') format('woff'),
+		url('fonts/Humanise.ttf') format('truetype'),
+		url('fonts/Humanise.svg#Humanise') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+/* Use the following CSS code if you want to use data attributes for inserting your icons */
+[data-icon]:before {
+	font-family: 'Humanise';
+	content: attr(data-icon);
+	speak: none;
+	font-weight: normal;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+}
+
+/* Use the following CSS code if you want to have a class per icon */
+/*
+Instead of a list of all class selectors,
+you can use the generic selector below, but it's slower:
+[class*="hui_font_"]:before {
+*/
+.hui_font_arrow_right:before, .hui_font_arrow_left:before, .hui_font_download:before, .hui_font_expand:before, .hui_font_user:before, .hui_font_onlineobjects:before {
+	font-family: 'Humanise';
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+}
+.hui_font_arrow_right:before {
+	content: "\3e";
+}
+.hui_font_arrow_left:before {
+	content: "\3c";
+}
+.hui_font_download:before {
+	content: "\64";
+}
+.hui_font_expand:before {
+	content: "\78";
+}
+.hui_font_user:before {
+	content: "\75";
+}
+.hui_font_onlineobjects:before {
+	content: "\a4";
+}
