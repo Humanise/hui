@@ -189,7 +189,9 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 
 	public Query<T> withParent(Entity entity) {
 		//super.parent = entity;
-		this.parents.add(new Other(entity,null));
+		if (entity!=null) {
+			this.parents.add(new Other(entity,null));
+		}
 		return this;
 	}
 

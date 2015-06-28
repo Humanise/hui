@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.google.common.collect.Maps;
 
 import dk.in2isoft.commons.lang.Code;
@@ -26,6 +28,7 @@ import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.Language;
 import dk.in2isoft.onlineobjects.model.LexicalCategory;
 import dk.in2isoft.onlineobjects.model.Pile;
+import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.Word;
@@ -98,6 +101,23 @@ public class ModelController extends ModelControllerBase {
 			writer.endRow();
 		}
 		writer.endList();
+	}
+
+	@Path
+	public void addTag(Request request) throws ModelException, SecurityException {
+		String tag = request.getString("tag");
+		Long id = request.getLong("id",null);
+		if (StringUtils.isBlank(tag)) {
+			return;
+		}
+		Entity entity = modelService.get(Entity.class, id, request.getSession());
+		if (entity!=null) {
+			List<String> existingTags = entity.getPropertyValues(Property.KEY_COMMON_TAG);
+			if (!existingTags.contains(tag)) {
+				entity.addProperty(Property.KEY_COMMON_TAG, tag);
+				modelService.updateItem(entity, request.getSession());
+			}
+		}
 	}
 
 	@Path

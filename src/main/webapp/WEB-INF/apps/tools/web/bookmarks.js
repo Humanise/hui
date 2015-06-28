@@ -6,24 +6,35 @@ hui.ui.listen({
 	
 	
 	$drop$internetAddress$tag : function(dragged,dropped) {
-		Common.addTag(dragged.id,dropped.value,function() {
-			this.refreshAll();
-		}.bind(this));
+        hui.ui.request({
+			message : {start:'Adding tag...',success:'Tag added'},
+            url : '../service/model/addTag',
+            parameters : {
+                id : dragged.id,
+                tag : dropped.value
+            },
+            $success : function() {
+                this.refreshAll();
+            }.bind(this)
+        });
 	},
-	$submit$quickEnter : function() {
-		var url = quickEnter.getValue();
-		hui.ui.showMessage({text:'Anaylserer adresse...'});
-		AppCommunity.lookupInternetAddress(url,function(obj) {
-			quickEnter.setValue();
-			hui.ui.hideMessage();
-			this.bookmarkId = null;
-			bookmarkFormula.reset();
-			bookmarkFormula.setValues(obj);
-			bookmarkWindow.show();
-			bookmarkFormula.focus();
-			deleteBookmark.setEnabled(false);
-		}.bind(this));
-	},
+    $submit$quickAdd : function(field) {
+        var value = field.getValue();
+        if (!hui.isBlank(value)) {
+            hui.ui.request({
+			    message : {start:'Adding address',success:'The address is added'},
+                url : '../addInternetAddress',
+                parameters : {url:value},
+                $success : function() {
+                    field.setValue();
+			        this.refreshAll();
+                }.bind(this),
+                $failure : function() {
+                    hui.ui.msg.fail({text:'Unable to create address'});
+                }
+            })
+        }
+    },
 	$select$selection : function() {
 		bookmarksList.resetState();
 	},
@@ -49,17 +60,32 @@ hui.ui.listen({
 	},
 	$click$cancelBookmark : function() {
 		this.bookmarkId = null;
+		bookmarkFormula.reset();
 		bookmarkWindow.hide();
 	},
 	$click$deleteItem : function() {
 		var obj = bookmarksList.getFirstSelection();
-		if (obj) {
-			Common.deleteEntity(obj.id,this.refreshAll.bind(this));
-			if (obj.id==this.bookmarkId) {
-				this.$click$cancelBookmark();
-			}
-		}
+        this._deleteEntity({
+            id: obj.id,
+            $success : function() {
+                this.$click$cancelBookmark();
+    			this.refreshAll();
+            }.bind(this)
+        })
 	},
+    
+    _deleteEntity : function(options) {
+        hui.ui.request({
+			message : {start:'Removing...',success:'Removed!'},
+            url : '../service/model/removeEntity',
+            parameters : {id:options.id},
+            $success : options.$success,
+            $failure : function() {
+                hui.ui.msg.fail({text:'Unable to remove item'});
+            }
+        });
+    },
+    
 	$click$itemInfo : function() {
 		var obj = bookmarksList.getFirstSelection();
 		this.editBookmark(obj.id);
@@ -69,10 +95,13 @@ hui.ui.listen({
 		window.open(obj.data.address);
 	},
 	$click$deleteBookmark : function() {
-		Common.deleteEntity(this.bookmarkId,function() {
-			this.$click$cancelBookmark();
-			this.refreshAll();
-		}.bind(this));
+        this._deleteEntity({
+            id: this.bookmarkId,
+            $success : function() {
+    			this.$click$cancelBookmark();
+    			this.refreshAll();
+            }.bind(this)
+        });
 	},
 	$open$bookmarksList : function(obj) {
 		this.editBookmark(obj.id);
@@ -80,24 +109,33 @@ hui.ui.listen({
 	refreshAll : function() {
 		bookmarksSource.refresh();
 		tagsSource.refresh();
+		wordsSource.refresh();
 	},
 	editBookmark : function(id) {
-		AppCommunity.getInternetAddress(id,function(obj) {
-			this.bookmarkId = obj.id;
-			bookmarkFormula.reset();
-			bookmarkFormula.setValues(obj);
-			bookmarkWindow.show();
-			deleteBookmark.setEnabled(true);			
-		}.bind(this));
+        hui.ui.request({
+            url : '../getInternetAddress',
+            parameters : {id:id},
+            $object : function(obj) {
+    			this.bookmarkId = obj.id;
+    			bookmarkFormula.reset();
+    			bookmarkFormula.setValues(obj);
+    			bookmarkWindow.show();
+    			deleteBookmark.setEnabled(true);                
+            }.bind(this)
+        })
 	},
 	$click$saveBookmark : function() {
 		var obj = bookmarkFormula.getValues();
 		obj.id = this.bookmarkId;
-		AppCommunity.saveInternetAddress(obj,function() {
-			bookmarkFormula.reset();
-			bookmarkWindow.hide();
-			this.refreshAll();
-		}.bind(this));
+        hui.ui.request({
+            url : '../saveInternetAddress',
+            json : {data:obj},
+            $success : function() {
+    			bookmarkFormula.reset();
+    			bookmarkWindow.hide();
+    			this.refreshAll();                
+            }.bind(this)
+        });
 	},
 	////////////////// Import ///////////////
 	$click$import : function() {

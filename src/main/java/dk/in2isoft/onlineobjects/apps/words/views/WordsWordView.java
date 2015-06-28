@@ -53,8 +53,8 @@ public class WordsWordView extends AbstractView implements InitializingBean {
 		watch.start();
 		String[] path = getRequest().getLocalPath();
 		Locale locale = getRequest().getLocale();
-		if (path.length==3) {
-			text = path[2].replaceAll(".html", "").toLowerCase();
+		text = getWord(path);
+		if (text!=null) {
 			words = languageService.getImpressions(Query.of(Word.class).withFieldLowercase(Word.TEXT_FIELD, text));
 			for (WordImpression impression : words) {
 				Multimap<String, WordRelation> map = getRelationsNew(impression);
@@ -117,6 +117,17 @@ public class WordsWordView extends AbstractView implements InitializingBean {
 		}
 		watch.stop();
 		//System.out.println(watch.getTime()+"ms");
+	}
+	
+	private String getWord(String[] path) {
+		if (path.length > 2) {
+			StringBuilder str = new StringBuilder(path[2]); 
+			for (int i = 3; i < path.length; i++) {
+				str.append("/").append(path[i]);
+			}
+			return str.toString().replaceAll(".html", "").toLowerCase();
+		}
+		return null;
 	}
 
 	private Multimap<String, WordRelation> getRelationsNew(WordImpression impression) throws ModelException {

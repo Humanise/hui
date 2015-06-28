@@ -1,6 +1,7 @@
 package dk.in2isoft.onlineobjects.apps.tools;
 
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
+import dk.in2isoft.onlineobjects.modules.information.InformationService;
 import dk.in2isoft.onlineobjects.services.ImportService;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
@@ -9,6 +10,7 @@ public abstract class ToolsControllerBase extends ApplicationController {
 
 	protected ImportService importService;
 	protected ImageService imageService;
+	protected InformationService informationService;
 	
 	public ToolsControllerBase() {
 		super("tools");
@@ -29,5 +31,9 @@ public abstract class ToolsControllerBase extends ApplicationController {
 	
 	public void setImageService(ImageService imageService) {
 		this.imageService = imageService;
+	}
+	
+	public void setInformationService(InformationService informationService) {
+		this.informationService = informationService;
 	}
 }

@@ -1,27 +1,23 @@
-div.oo_topbar
+.oo_topbar
 {
 	font-family: 'Open Sans','Helvetica Neue','Helvetica',Arial,sans-serif;
 	overflow: hidden;
 	border-bottom: 1px solid #fafafa;
+	height: 31px;
 	font-size: 0;
 	-webkit-transition: background 1s,border-color 1s, opacity 1s;
 	-moz-transition: background 1s,border-color 1s, opacity 1s;
 	-ms-transition: background 1s,border-color 1s, opacity 1s;
 }
 
-body.oo_fade div.oo_topbar
-{
-	opacity: 0;
-}
-
-div.oo_topbar:hover
+.oo_topbar:hover
 {
 	background: #fff;
 	box-shadow: 0 0 4px rgba(0,0,0,.1);
 	border-bottom: 1px solid #ddd;
 }
 
-a.oo_topbar_logo
+.oo_topbar_logo
 {
 	float: left;
 	font-weight: 300;
@@ -40,7 +36,7 @@ a.oo_topbar_logo
 	font-style: normal;
 	font-weight: normal;
 	-webkit-font-smoothing: antialiased;
-	margin: 3px 4px 0 -2px;
+	margin: 4px 4px 0 -2px;
 	vertical-align: top;
 	display: inline-block;
 	font-size: 22px;
@@ -150,22 +146,23 @@ div.oo_topbar a.oo_topbar_selected
 	color: #333;
 }
 
-ul.oo_topbar_left
+.oo_topbar_left
 {
 	float: left;
 }
 
-ul.oo_topbar_right
+.oo_topbar_right
 {
 	list-style: none;
 	margin: 0;
 	padding: 0;
-	float: right;
+	
 	font-size: 11pt;
 	right: 0;
 	top: 0;
 	height: 30px;
 	line-height: 30px;
+	position: absolute;
 }
 
 span.oo_topbar_right a
@@ -182,6 +179,8 @@ a.oo_topbar_user span
 	margin-top: 7px;
 	vertical-align: top
 }
+
+/** Info panel **/
 
 div.oo_topbar_info_busy
 {

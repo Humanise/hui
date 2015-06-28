@@ -43,6 +43,7 @@ public class TopBarComponent extends AbstractComponent {
 		//boolean developmentMode = configurationService.isDevelopmentMode();
 		Request request = Request.get(context);
 		Messages msg = new Messages(this);
+		boolean publicUser = !request.isLoggedIn();
 		
 		out.startDiv("oo_topbar oo_faded").withId(getClientId());
 		out.startA("oo_topbar_logo").withHref(configurationService.getApplicationContext("front", null, request));
@@ -73,17 +74,22 @@ public class TopBarComponent extends AbstractComponent {
 		}		
 		
 		out.endUl();
-		out.startUl("oo_topbar_right");
 
-
-		if (request.isUser("public")) {
-			out.startLi().startVoidA("oo_topbar_login").withAttribute("data", "login").write("Log in").endA().endLi();
-		} else {
+		if (!publicUser && !privateApps.isEmpty()) {
+			out.startUl("oo_topbar_private");
 			for (String app : privateApps) {			
 				out.startLi("oo_topbar_"+app).startA(request.isApplication(app) ? "oo_topbar_selected" : null);
 				out.withHref(configurationService.getApplicationContext(app, null, request));
 				out.text(msg.get("app_"+app, request.getLocale())).endA().endLi();
 			}
+			out.endUl();			
+		}
+		
+		
+		out.startUl("oo_topbar_right");
+		if (publicUser) {
+			out.startLi().startVoidA("oo_topbar_login").withAttribute("data", "login").write("Log in").endA().endLi();
+		} else {
 			User user = request.getSession().getUser();
 			InboxService inboxService = Components.getBean(InboxService.class);
 			int count = inboxService.getCountSilently(user);

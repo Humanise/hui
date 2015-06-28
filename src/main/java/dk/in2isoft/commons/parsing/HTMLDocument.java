@@ -164,13 +164,11 @@ public class HTMLDocument extends XMLDocument {
 			}
 			
 			return body.toString();
-			
+		} catch (IllegalArgumentException e) {
+			// TODO May fail at de.l3s.boilerpipe.sax.HTMLHighlighter.process(HTMLHighlighter.java:126)
+			// java.lang.IllegalArgumentException: Illegal group reference
 		} catch (BoilerpipeProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		return "";
     }

@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gui xmlns="uri:hui" state="persons" title="Bookmarks">
-	<dwr base="/dwr/">
-		<interface name="Common"/>
-		<interface name="AppCommunity"/>
-		<interface name="CoreSecurity"/>
-	</dwr>
 	<controller name="controller" source="../controller.js"/>
 	<controller source="../bookmarks.js"/>
-	<source name="bookmarksSource" dwr="AppCommunity.listPrivateBookmarks">
+
+	<source name="bookmarksSource" url="../listPrivateBookmarks">
 		<parameter key="search" value="@searchfield.value"/>
+		<parameter key="word" value="@wordSelection.value"/>
 		<parameter key="tag" value="@tagSelection.value"/>
 		<parameter key="page" value="@bookmarksList.window.page"/>
 	</source>
-	<source name="tagsSource" dwr="Common.getTagItemsWithCount">
-		<parameter key="simpleName" value="InternetAddress"/>
-	</source>
+
+	<source name="wordsSource" url="../getInternetAddressWordCloud"/>
+
+	<source name="tagsSource" url="../getInternetAddressTagCloud"/>
+
 	<bar>
 		<button text="Offentligt" icon="inset/public" name="barPublic"/>
 		<button text="Hjemmeside" icon="inset/globe" name="barWebsite"/>
@@ -46,7 +45,7 @@
 					<icon icon="common/view" title="Vis" name="showItem" disabled="true"/>
 					<divider/>
 					<field label="Hurtig oprettelse">
- 						<searchfield width="200" placeholder="Indsæt url..." name="quickEnter"/>
+ 						<text-input name="quickAdd" width="200"/>
 					</field>
 					<right>
 						<field label="Søgning">
@@ -61,7 +60,8 @@
 					<overflow>
 						<selection value="all" name="selection">
 							<item icon="common/internet" title="Alle bogmærker" value="all"/>
-							<title>Nøgleord</title>
+							<title>Ord</title>
+							<items source="wordsSource" name="wordSelection"/>
 							<items source="tagsSource" name="tagSelection"/>
 						</selection>
 					</overflow>

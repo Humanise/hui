@@ -92,7 +92,7 @@ public class WordsControllerBase extends ApplicationController {
 		addJsfMatcher("/<language>/search", "search.xhtml");
 		addJsfMatcher("/<language>/about", "about.xhtml");
 		addJsfMatcher("/<language>/search/<integer>", "search.xhtml");
-		addJsfMatcher("/<language>/word/<no-dot>.html", "word.xhtml");
+		addJsfMatcher("/<language>/word/<any>", "word.xhtml");
 		addJsfMatcher("/<language>/import/<folder>", "import.xhtml");
 		addJsfMatcher("/<language>/importlist/<folder>", "importList.xhtml");
 		addJsfMatcher("/<language>/index/<folder>", "index.xhtml");

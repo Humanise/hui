@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gui xmlns="uri:hui" state="persons" title="Images">
-	<dwr base="/dwr/">
-		<interface name="Common"/>
-		<interface name="AppCommunity"/>
-		<interface name="CoreSecurity"/>
-	</dwr>
+
 	<controller name="controller" source="../controller.js"/>
 	<controller name="imagesController" source="../images.js"/>
-	<source name="imagesSource" dwr="AppCommunity.listImages">
-		<parameter key="search" value="@searchfield.value"/>
+	<source name="imagesSource" url="../listImages">
+		<parameter key="text" value="@searchfield.value"/>
 		<parameter key="tag" value="@tagSelection.value"/>
 	</source>
-	<source name="tagsSource" dwr="Common.getTagItemsWithCount">
-		<parameter key="simpleName" value="Image"/>
-	</source>
+
+	<source name="tagsSource" url="../getImageTags"/>
+
 	<bar>
 		<button text="Offentligt" icon="inset/public" name="barPublic"/>
 		<button text="Hjemmeside" icon="inset/globe" name="barWebsite"/>

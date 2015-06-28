@@ -11,7 +11,7 @@ var controller = {
 		this.viewerFrame = hui.get('viewer_frame');
 		this.viewerSpinner = hui.get('viewer_spinner');
 		
-		hui.listen(document.body,'click',this._click.bind(this));
+		hui.listen(hui.get.firstByClass('reader_layout'),'click',this._click.bind(this));
 		var textListener = function() {
 			var selection = hui.selection.getText();
 			if (!hui.isBlank(selection)) {

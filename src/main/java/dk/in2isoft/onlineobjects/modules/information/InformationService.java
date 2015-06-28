@@ -1,9 +1,12 @@
 package dk.in2isoft.onlineobjects.modules.information;
 
+import java.net.URI;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.httpclient.URIException;
+import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -11,10 +14,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.sun.syndication.feed.rss.Item;
 
+import dk.in2isoft.commons.http.URLUtil;
 import dk.in2isoft.commons.lang.Counter;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.onlineobjects.core.ModelService;
+import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
@@ -33,6 +38,7 @@ import dk.in2isoft.onlineobjects.modules.surveillance.SurveillanceService;
 import dk.in2isoft.onlineobjects.services.FeedService;
 import dk.in2isoft.onlineobjects.services.LanguageService;
 import dk.in2isoft.onlineobjects.services.SemanticService;
+import dk.in2isoft.onlineobjects.util.ValidationUtil;
 
 public class InformationService {
 
@@ -164,6 +170,24 @@ public class InformationService {
 			modelService.commit();
 		}
 	}
+	
+	public InternetAddress addInternetAddress(String url, Privileged privileged) throws ModelException {
+		if (!URLUtil.isValidHttpUrl(url)) {
+			throw new IllegalArgumentException("URL not valid: " + url);
+		}
+		InternetAddress internetAddress = new InternetAddress();
+		internetAddress.setAddress(url);
+		HTMLDocument doc = htmlService.getDocumentSilently(url);
+		if (doc != null) {
+			internetAddress.setName(doc.getTitle());
+		} else {
+			internetAddress.setName(Strings.simplifyURL(url));
+		}
+		modelService.createItem(internetAddress, privileged);
+		return internetAddress;
+	}
+	
+	// Wiring...
 	
 	public void setFeedService(FeedService feedService) {
 		this.feedService = feedService;
