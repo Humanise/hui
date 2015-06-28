@@ -1,2 +1,2 @@
 # hui
-Humanize User Interface
+Humanise User Interface
