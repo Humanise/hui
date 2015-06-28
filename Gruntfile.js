@@ -1,72 +1,32 @@
 module.exports = function(grunt) {
   
-  var clients = {
-    humanise : {
-      folder: 'www.humanise.dk',
-      database : 'www_humanise_dk'
-    },
-    lottemunk : {
-      folder: 'www.lottemunk.dk',
-      database : 'www_lottemunk_dk'
-    },
-    fynbogaard : {
-      folder : 'www.fynbogaard.dk',
-      database : 'www_fynbogaard_dk'
-    }
-  }
-
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     jshint: {
-      all: ['Grunfile.js', 'drupal-common/src/*']
+        all: ['js/*.js']
     },
     watch: {
-      humanise: {
-        files: ['style/humanise/sass/**/*.scss'],
-        tasks: ['compass:humanise'],
-        options: {
-          spawn: false,
-        }
-      },
-      karenslyst: {
-        files: ['style/karenslyst/sass/**/*.scss'],
-        tasks: ['compass:karenslyst'],
-        options: {
-          spawn: false,
-        }
-      },
-      fynbogaarden: {
-        files: ['style/fynbogaarden/sass/**/*.scss'],
-        tasks: ['compass:fynbogaarden'],
+      scss: {
+        files: ['scss/**/*.scss'],
+        tasks: ['compass'],
         options: {
           spawn: false,
         }
       }
+    },
+    qunit: {
+        all: ['test/phantom/*.html']
     },
     compass: {
-      humanise: {
+      full: {
         options: {
-          sassDir: "style/humanise/sass",
-          cssDir: "style/humanise/css",
-			    noLineComments: true,
-        }
-      },
-      karenslyst: {
-        options: {
-          sassDir: "style/karenslyst/sass",
-          cssDir: "style/karenslyst/css",
-			    noLineComments: true,
-        }
-      },
-      fynbogaarden: {
-        options: {
-          sassDir: "style/fynbogaarden/sass",
-          cssDir: "style/fynbogaarden/css",
+          sassDir: "scss",
+          cssDir: "css",
 			    noLineComments: true,
         }
       }
-    },
+    }/*,
     shell: {
       transfer : {
         command : function(client) {
@@ -86,7 +46,7 @@ module.exports = function(grunt) {
           return '/Users/jbm/Scripts/sites/switch.sh ' + clients[client].folder
         }
       }
-    }
+    }*/
   });
 
   // Load plugins.
@@ -94,6 +54,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-symlink');
   grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-shell');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-compass');
@@ -104,18 +65,6 @@ module.exports = function(grunt) {
   // Default task(s).
   grunt.registerTask('default', 'Standard tasks', ['watch']);
   
-  grunt.registerTask('default', 'Standard tasks', ['watch']);
-  
-  grunt.registerTask('switch', 'Switch to another client', function(client) {
-    grunt.task.run('shell:switch:'+client);
-  });
-  
-  grunt.registerTask('transfer', 'Transfer from production to local', function(client) {
-    grunt.task.run('shell:transfer:'+client);
-  });
-  
-  grunt.registerTask('deploy', 'Standard tasks', function() {
-    
-  });
+  grunt.registerTask('test', ['qunit']);
 
 };
