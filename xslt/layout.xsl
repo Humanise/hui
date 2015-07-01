@@ -144,6 +144,40 @@
 </xsl:template>
 
 
+<!--doc title:'Rows' module:'layout'
+<rows space="«pixels»" flexible="«boolean»" height="«'full'»">
+    <column width="«css-length»">
+        ···
+    </column>
+    <column width="«css-length»">
+    ···
+    </column>
+</row>
+-->
+<xsl:template match="gui:rows">
+  <div>
+    <xsl:attribute name="class">
+      <xsl:text>hui_rows</xsl:text>
+    </xsl:attribute>
+    <xsl:apply-templates select="gui:row"/>
+  </div>
+</xsl:template>
+
+<xsl:template match="gui:rows/gui:row">
+  <div>
+    <xsl:attribute name="class">
+      <xsl:text>hui_rows_row</xsl:text>
+      <xsl:if test="@size='adapt'">
+        <xsl:text> hui_rows_row-adapt</xsl:text>        
+      </xsl:if>
+      <xsl:if test="@size='min'">
+        <xsl:text> hui_rows_row-min</xsl:text>        
+      </xsl:if>
+    </xsl:attribute>
+    <xsl:apply-templates/>
+		<xsl:comment/>
+  </div>
+</xsl:template>
 
 <!--doc title:'Header' module:'layout'
 <header icon="«icon»">«text»</header>
