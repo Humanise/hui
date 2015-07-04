@@ -7486,7 +7486,7 @@ div.hui_structure_left
   position: absolute;
   width: 16px;
   height: 16px;
-  box-shadow: inset 0px -3px 5px #dddddd, 0 1px 3px rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0px -3px 5px #ddd, 0 1px 3px rgba(0, 0, 0, 0.5);
   border-radius: 50%;
   left: 5px;
   top: 0;
@@ -7809,15 +7809,30 @@ div.hui_markupeditor
 }
 
 .hui_rows {
-  display: flex;
+  overflow: hidden;
 }
 
-.hui_rows_row-min {
+.hui_rows_row {
+  overflow: hidden;
+}
+
+/*
+.hui_rows
+{
+	display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.hui_rows_row-min
+{
   flex-shrink: 1;
 }
 
-.hui_rows_row-adapt {
-  flex-grow: 1000;
-}
+.hui_rows_row-adapt
+{
+  flex-grow: 1;
+}*/
 
 

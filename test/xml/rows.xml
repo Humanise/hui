@@ -13,8 +13,8 @@
 		</top>
 		<middle>
 			<left>
-        <rows>
-          <row size="min">
+        <rows height="full">
+          <row min="100" max="content">
       				<selection value="all" name="selector">
       					<item icon="common/time" title="Altid" value="all"/>
       					<item icon="common/folder" title="Database" value="database"/>
@@ -27,12 +27,12 @@
       					<item icon="common/person" title="Alle objekter" value="c"/>
       				</selection>
           </row>
-          <row size="min">
+          <row size="content">
             <bar variant="layout">
               <searchfield adaptive="true"/>
             </bar>
           </row>
-          <row size="adapt">
+          <row>
             <overflow>
       				<selection value="all" name="selector">
       					<item icon="common/time" title="Altid" value="all"/>
@@ -47,7 +47,7 @@
       				</selection>
             </overflow>
           </row>
-          <row size="min">
+          <row min="content" max="content">
             <datepicker/>
           </row>
         </rows>
