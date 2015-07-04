@@ -27,6 +27,11 @@
       					<item icon="common/person" title="Alle objekter" value="c"/>
       				</selection>
           </row>
+          <row size="min">
+            <bar variant="layout">
+              <searchfield adaptive="true"/>
+            </bar>
+          </row>
           <row size="adapt">
             <overflow>
       				<selection value="all" name="selector">
@@ -48,9 +53,18 @@
         </rows>
 			</left>
 			<center>
-				<overflow>
-					<calendar name="calendar" endHour="17" startHour="7"/>
-				</overflow>
+        <rows>
+          <row size="min">
+            <bar variant="layout">
+              <searchfield adaptive="true"/>
+            </bar>
+          </row>
+          <row size="adapt">        
+    				<overflow>
+    					<calendar name="calendar" endHour="17" startHour="7"/>
+    				</overflow>
+          </row>
+        </rows>
 			</center>
 		</middle>
 		<bottom>

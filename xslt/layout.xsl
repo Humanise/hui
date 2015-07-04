@@ -155,12 +155,21 @@
 </row>
 -->
 <xsl:template match="gui:rows">
-  <div>
+  <div id="{generate-id()}">
     <xsl:attribute name="class">
       <xsl:text>hui_rows</xsl:text>
     </xsl:attribute>
     <xsl:apply-templates select="gui:row"/>
   </div>
+	<script type="text/javascript">
+    (function() {
+  		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Rows({
+  			element : '<xsl:value-of select="generate-id()"/>',
+  			<xsl:if test="@name">,name:'<xsl:value-of select="@name"/>'</xsl:if>
+  		});
+  		<xsl:call-template name="gui:createobject"/>
+    })()
+	</script>
 </xsl:template>
 
 <xsl:template match="gui:rows/gui:row">
