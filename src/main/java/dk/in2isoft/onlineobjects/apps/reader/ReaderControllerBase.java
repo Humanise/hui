@@ -39,6 +39,7 @@ public abstract class ReaderControllerBase extends ApplicationController {
 		publicScript.addPath("hui","js","hui_animation.js");
 		publicScript.addPath("hui","js","hui_require.js");
 		publicScript.addPath("hui","js","ui.js");
+		publicScript.addPath("hui","js","Component.js");
 		publicScript.addPath("hui","js","Button.js");
 		publicScript.addPath("hui","js","BoundPanel.js");
 		publicScript.addPath("hui","js","TextField.js");
@@ -54,6 +55,7 @@ public abstract class ReaderControllerBase extends ApplicationController {
 		publicScript.addPath("hui","js","Drawing.js");
 		publicScript.addPath("hui","js","Window.js");
 		publicScript.addPath("hui","js","Overlay.js");
+		publicScript.addPath("hui","js","Rows.js");
 		publicScript.addPath("hui","js","hui_color.js");
 		publicScript.addPath("WEB-INF","core","web","js","onlineobjects.js");
 		publicScript.addPath("WEB-INF","core","web","js","oo_topbar.js");
@@ -82,6 +84,7 @@ public abstract class ReaderControllerBase extends ApplicationController {
 		publicStyle.addHUICSS("diagram.css");
 		publicStyle.addHUICSS("bar.css");
 		publicStyle.addHUICSS("overlay.css");
+		publicStyle.addHUICSS("rows.css");
 		publicStyle.addPath("WEB-INF","apps","reader","web","css","reader.css");
 		publicStyle.addPath("WEB-INF","apps","reader","web","css","reader_viewer.css");
 

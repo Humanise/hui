@@ -129,6 +129,10 @@ div.word_rendering h1
 	margin: 0;
 }
 
+div.sidebar {
+  height: 100%;
+  overflow: hidden;
+}
 
 div.sidebar div.block
 {

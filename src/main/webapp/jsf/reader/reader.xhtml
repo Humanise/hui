@@ -11,38 +11,44 @@
 		
 		<ui:define name="sidebar">
 			<div class="sidebar">
-				<div class="block">
-					<o:selection name="subsets" value="everything">
-              <gui:source name="contextsSource" url="#{readerView.baseContext}/getContextOptions"/>
-          </o:selection>
-				</div>
-				<div class="block">
-					<h3>Types</h3>
-					<o:selection name="types" value="pages">
-						<gui:source name="typesSource" url="#{readerView.baseContext}/getTypeOptions"/>
-					</o:selection>
-				</div>
-				<div class="block reader_feeds">
-					<h3>Feeds</h3>
-    				<o:link name="addFeed" plain="true" styleClass="reader_feeds_add">
-    					<o:icon icon="add_line"/>
-    				</o:link>
-					<o:selection name="feeds">		
-						<gui:source name="feedSource" url="#{readerView.baseContext}/getFeeds"/>
-					</o:selection>
-				</div>
-				<div class="block">
-					<h3>Tags</h3>
-					<div style="margin: 0 -10px">
-  					<gui:overflow height="400">
-    					<div style="padding: 0 10px">
-      					<o:selection name="tags">
-      						<gui:source name="tagSource" url="#{readerView.baseContext}/getWordCloud"/>
-      					</o:selection>
-    					</div>
-  					</gui:overflow>
-					</div>
-				</div>
+        <gui:rows>
+          <gui:row height="content">
+    				<div class="block">
+    					<o:selection name="subsets" value="everything">
+                  <gui:source name="contextsSource" url="#{readerView.baseContext}/getContextOptions"/>
+              </o:selection>
+    				</div>
+    				<div class="block">
+    					<h3>Types</h3>
+    					<o:selection name="types" value="pages">
+    						<gui:source name="typesSource" url="#{readerView.baseContext}/getTypeOptions"/>
+    					</o:selection>
+    				</div>
+    				<div class="block reader_feeds">
+    					<h3>Feeds</h3>
+        				<o:link name="addFeed" plain="true" styleClass="reader_feeds_add">
+        					<o:icon icon="add_line"/>
+        				</o:link>
+    					<o:selection name="feeds">		
+    						<gui:source name="feedSource" url="#{readerView.baseContext}/getFeeds"/>
+    					</o:selection>
+    				</div>
+          </gui:row>
+          <gui:row>
+      			<gui:overflow full="true">
+      				<div class="block">
+      					<h3>Tags</h3>
+      					<div style="margin: 0 -10px">
+        					<div style="padding: 0 10px">
+          					<o:selection name="tags">
+          						<gui:source name="tagSource" url="#{readerView.baseContext}/getWordCloud"/>
+          					</o:selection>
+        					</div>
+      					</div>
+      				</div>
+            </gui:overflow>
+          </gui:row>
+        </gui:rows>
 			</div>
 		</ui:define>
 				

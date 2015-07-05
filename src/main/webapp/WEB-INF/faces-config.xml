@@ -277,5 +277,13 @@
 	    <component-type>hui.confirm</component-type>
     	<component-class>dk.in2isoft.in2igui.jsf.ConfirmComponent</component-class>
   	</component>
+    <component>
+	    <component-type>hui.rows</component-type>
+    	<component-class>dk.in2isoft.in2igui.jsf.RowsComponent</component-class>
+  	</component>
+    <component>
+	    <component-type>hui.row</component-type>
+    	<component-class>dk.in2isoft.in2igui.jsf.RowComponent</component-class>
+  	</component>
 
 </faces-config>

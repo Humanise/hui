@@ -232,4 +232,18 @@
       <renderer-type>hui.confirm</renderer-type>
     </component>
   </tag>
+  <tag>
+    <tag-name>rows</tag-name>
+    <component>
+      <component-type>hui.rows</component-type>
+      <renderer-type>hui.rows</renderer-type>
+    </component>
+  </tag>
+  <tag>
+    <tag-name>row</tag-name>
+    <component>
+      <component-type>hui.row</component-type>
+      <renderer-type>hui.row</renderer-type>
+    </component>
+  </tag>
 </facelet-taglib>
