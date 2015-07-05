@@ -47,19 +47,19 @@
       				</selection>
             </overflow>
           </row>
-          <row min="content" max="content">
+          <row size="content">
             <datepicker/>
           </row>
         </rows>
 			</left>
 			<center>
         <rows>
-          <row size="min">
+          <row size="content">
             <bar variant="layout">
               <searchfield adaptive="true"/>
             </bar>
           </row>
-          <row size="adapt">        
+          <row>        
     				<overflow>
     					<calendar name="calendar" endHour="17" startHour="7"/>
     				</overflow>

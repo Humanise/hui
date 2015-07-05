@@ -183,6 +183,15 @@
         <xsl:text> hui_rows_row-min</xsl:text>        
       </xsl:if>
     </xsl:attribute>
+    <xsl:attribute name="data">
+      <xsl:text>{"min":"</xsl:text>
+      <xsl:value-of select="@min"/>
+      <xsl:text>","max":"</xsl:text>
+      <xsl:value-of select="@max"/>
+      <xsl:text>","size":"</xsl:text>
+      <xsl:value-of select="@size"/>
+      <xsl:text>"}</xsl:text>
+    </xsl:attribute>
     <xsl:apply-templates/>
 		<xsl:comment/>
   </div>
