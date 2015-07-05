@@ -57,6 +57,9 @@
       }
       return height;
     },
+    $$childSizeChanged : function() {
+      this.$$layout();
+    },
     $$layout : function() {
       var fullHeight = this.element.parentNode.clientHeight;
       this.element.style.height = fullHeight + 'px';
