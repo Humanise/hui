@@ -30,7 +30,7 @@
       var fixedHeight = 0;
       for (var i = 0; i < count; i++) {
         var row = this.rows[i];
-        if (row.size=='content') {
+        if (row.height=='content') {
           var contentHeight = this._getContentHeight(row.node);
           fixedHeight += contentHeight;
           sizes.push(contentHeight);
