@@ -217,6 +217,21 @@
 		        <key column="id"/>
 		        <property name="code"/>
 		    </joined-subclass>
+		    
+		    <joined-subclass name="dk.in2isoft.onlineobjects.model.Hypothesis" table="hypothesis">
+		        <key column="id"/>
+		        <property name="text"/>
+		    </joined-subclass>
+		    
+		    <joined-subclass name="dk.in2isoft.onlineobjects.model.Question" table="question">
+		        <key column="id"/>
+		        <property name="text"/>
+		    </joined-subclass>
+		    
+		    <joined-subclass name="dk.in2isoft.onlineobjects.model.Statement" table="statement">
+		        <key column="id"/>
+		        <property name="text"/>
+		    </joined-subclass>
 
 	    </joined-subclass>
 	    
