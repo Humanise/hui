@@ -27,7 +27,7 @@
       					<item icon="common/person" title="Alle objekter" value="c"/>
       				</selection>
           </row>
-          <row size="content">
+          <row height="content">
             <bar variant="layout">
               <searchfield adaptive="true"/>
             </bar>
@@ -47,14 +47,14 @@
       				</selection>
             </overflow>
           </row>
-          <row size="content">
+          <row height="content">
             <datepicker/>
           </row>
         </rows>
 			</left>
 			<center>
         <rows>
-          <row size="content">
+          <row height="content">
             <bar variant="layout">
               <searchfield adaptive="true"/>
             </bar>
