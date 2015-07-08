@@ -4,7 +4,7 @@ oo.TopBar = function(options) {
 	hui.ui.extend(this);
 	this._addBehavior();
 	hui.ui.listen(this);
-}
+};
 
 oo.TopBar.prototype = {
 	_addBehavior : function() {
@@ -229,4 +229,4 @@ oo.TopBar.prototype = {
 		}
 		this._inboxPanel.show({target:a});
 	}
-}
+};
