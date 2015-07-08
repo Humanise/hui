@@ -28,6 +28,7 @@ import de.l3s.boilerpipe.extractors.CommonExtractors;
 import de.l3s.boilerpipe.sax.BoilerpipeSAXInput;
 import de.l3s.boilerpipe.sax.HTMLHighlighter;
 import dk.in2isoft.commons.lang.Strings;
+import dk.in2isoft.onlineobjects.modules.information.Readability;
 
 public class HTMLDocument extends XMLDocument {
 	
@@ -117,6 +118,13 @@ public class HTMLDocument extends XMLDocument {
 			log.error("Unable to extract text", e);
 		}
     	return null;
+    }
+    
+    public String getReadableMarkup() {
+		String rawString = getRawString();
+		Readability r = new Readability(rawString);
+		r.init();
+		return r.getBody();
     }
     
     public String getExtractedMarkup() {
