@@ -11,10 +11,14 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Readability {
 
     private static final String CONTENT_SCORE = "readabilityContentScore";
+    
+    final Logger log = LoggerFactory.getLogger(Readability.class);
 
     private final Document mDocument;
     private String mBodyCache;
@@ -117,11 +121,11 @@ public class Readability {
     }
 
     public final String getBody() {
-    	Elements bodies = mDocument.getElementsByTag("body");
-    	if (!bodies.isEmpty()) {
-    		return bodies.get(0).html();
+    	Element body = mDocument.body();
+    	if (body!=null) {
+    		return body.html();
     	}
-        return mDocument.html();
+        return null;
     }
 
     /**
@@ -532,23 +536,14 @@ public class Readability {
         if (e == null) {
             return;
         }
-
-        Element cur = e.children().first();
-
-        // Remove any root styles, if we're able.
-        if (!"readability-styled".equals(e.className())) {
-            e.removeAttr("style");
-        }
-
-        // Go until there are no more child nodes
-        while (cur != null) {
-            // Remove style attributes
-            if (!"readability-styled".equals(cur.className())) {
-                cur.removeAttr("style");
+        
+        Elements elements = e.getAllElements();
+        for (Element element : elements) {
+            if (!"readability-styled".equals(element.className())) {
+                e.removeAttr("style");
             }
-            cleanStyles(cur);
-            cur = cur.nextElementSibling();
-        }
+			element.removeAttr("style");
+		}
     }
 
     /**
@@ -753,8 +748,7 @@ public class Readability {
      * @param t
      */
     protected void dbg(String msg, Throwable t) {
-        System.out.println(msg + (t != null ? ("\n" + t.getMessage()) : "")
-                + (t != null ? ("\n" + t.getStackTrace()) : ""));
+    	log.info(msg,t);
     }
 
     private static class Patterns {
