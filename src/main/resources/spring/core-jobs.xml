@@ -28,6 +28,12 @@
 	</bean>
 
 	<bean class="dk.in2isoft.onlineobjects.modules.scheduling.JobDescription">
+		<property name="jobClass" value="dk.in2isoft.onlineobjects.modules.information.QuoteConversionJob"/>
+		<property name="name" value="quoteconversion"/>
+		<property name="group" value="core"/>
+	</bean>
+
+	<bean class="dk.in2isoft.onlineobjects.modules.scheduling.JobDescription">
 		<property name="jobClass" value="dk.in2isoft.onlineobjects.modules.information.InformationSpiderJob"/>
 		<property name="name" value="informationspider"/>
 		<property name="group" value="core"/>
