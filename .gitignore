@@ -3,3 +3,8 @@
 .settings
 target
 build.xml
+log4j.properties
+hibernate.cfg.xml
+configuration.properties
+configuration.test.properties
+test.properties
