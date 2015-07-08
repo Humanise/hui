@@ -46,11 +46,11 @@ import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.core.exceptions.NetworkException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.model.Entity;
-import dk.in2isoft.onlineobjects.model.HtmlPart;
 import dk.in2isoft.onlineobjects.model.InternetAddress;
 import dk.in2isoft.onlineobjects.model.Pile;
 import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.model.Relation;
+import dk.in2isoft.onlineobjects.model.Statement;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.modules.feeds.Feed;
@@ -104,9 +104,9 @@ public class ReaderController extends ReaderControllerBase {
 			}
 		}
 		{
-			List<Long> partIds = idsByType.get(HtmlPart.class.getSimpleName().toLowerCase());
+			List<Long> partIds = idsByType.get(Statement.class.getSimpleName().toLowerCase());
 			if (!partIds.isEmpty()) {
-				Query<HtmlPart> query = Query.after(HtmlPart.class).withIds(partIds).withPrivileged(request.getSession());
+				Query<Statement> query = Query.after(Statement.class).withIds(partIds).withPrivileged(request.getSession());
 
 				list.addAll(modelService.search(query).getList());
 			}
@@ -152,9 +152,9 @@ public class ReaderController extends ReaderControllerBase {
 				perspective.setUrl(address.getAddress());
 				perspective.setAddress(Strings.simplifyURL(address.getAddress()));
 				writer.startP().withClass("list_item_address").startA().withClass("list_item_address_link").withHref(address.getAddress()).text(Strings.simplifyURL(address.getAddress())).endA().endP();
-			} else if (entity instanceof HtmlPart) {
-				HtmlPart htmlPart = (HtmlPart) entity;
-				writer.startP().withClass("list_item_quote").text(htmlPart.getHtml()).endP();
+			} else if (entity instanceof Statement) {
+				Statement htmlPart = (Statement) entity;
+				writer.startP().withClass("list_item_quote").text(htmlPart.getText()).endP();
 			}
 
 			List<Word> words = modelService.getChildren(entity, Word.class, request.getSession());
@@ -215,7 +215,7 @@ public class ReaderController extends ReaderControllerBase {
 			if (address != null) {
 				writer.startLine().dimmed().minor();
 				writer.text(Strings.simplifyURL(address.getAddress()));
-				List<HtmlPart> quotes = modelService.getChildren(address, Relation.KIND_STRUCTURE_CONTAINS, HtmlPart.class, request.getSession());
+				List<Statement> quotes = modelService.getChildren(address, Relation.KIND_STRUCTURE_CONTAINS, Statement.class, request.getSession());
 				if (quotes.size() > 0) {
 					writer.text(" (").text(quotes.size()).text(")");
 				}
@@ -295,7 +295,7 @@ public class ReaderController extends ReaderControllerBase {
 			indexQuery.append("(");
 			for (Iterator<String> i = types.iterator(); i.hasNext();) {
 				String type = (String) i.next();
-				String tp = "pages".equals(type) ? InternetAddress.class.getSimpleName() : HtmlPart.class.getSimpleName();
+				String tp = "pages".equals(type) ? InternetAddress.class.getSimpleName() : Statement.class.getSimpleName();
 				indexQuery.append("type:").append(QueryParser.escape(tp)).append("");
 				if (i.hasNext()) {
 					indexQuery.append(" OR ");
@@ -460,10 +460,10 @@ public class ReaderController extends ReaderControllerBase {
 			}
 		}
 
-		List<HtmlPart> quotes = modelService.getChildren(address, Relation.KIND_STRUCTURE_CONTAINS, HtmlPart.class, request.getSession());
+		List<Statement> quotes = modelService.getChildren(address, Relation.KIND_STRUCTURE_CONTAINS, Statement.class, request.getSession());
 		List<Pair<Long, String>> quoteList = Lists.newArrayList();
-		for (HtmlPart htmlPart : quotes) {
-			quoteList.add(Pair.of(htmlPart.getId(), htmlPart.getHtml()));
+		for (Statement htmlPart : quotes) {
+			quoteList.add(Pair.of(htmlPart.getId(), htmlPart.getText()));
 		}
 		article.setQuotes(quoteList);
 
@@ -489,9 +489,9 @@ public class ReaderController extends ReaderControllerBase {
 			Privileged session = request.getSession();
 			InternetAddress address = modelService.get(InternetAddress.class, id, session);
 			if (address != null) {
-				HtmlPart part = new HtmlPart();
+				Statement part = new Statement();
 				part.setName(StringUtils.abbreviate(text, 50));
-				part.setHtml(text);
+				part.setText(text);
 				modelService.createItem(part, session);
 				modelService.createRelation(address, part, Relation.KIND_STRUCTURE_CONTAINS, session);
 			}
@@ -560,22 +560,22 @@ public class ReaderController extends ReaderControllerBase {
 		return writer.toString();
 	}
 
-	private String buildRendering(HTMLDocument document, InternetAddress address, List<HtmlPart> quotes, boolean markup) {
+	private String buildRendering(HTMLDocument document, InternetAddress address, List<Statement> quotes, boolean markup) {
 
 		HTMLWriter writer = new HTMLWriter();
 		writer.startDiv().withClass("body");
 
 		if (markup) {
-			for (HtmlPart part : quotes) {
-				writer.startBlockquote().withData("id", part.getId()).withClass("reader_viewer_quote").text(part.getHtml()).endBlockquote();
+			for (Statement part : quotes) {
+				writer.startBlockquote().withData("id", part.getId()).withClass("reader_viewer_quote").text(part.getText()).endBlockquote();
 			}
-			String content = document.getExtractedMarkup();
+			String content = document.getReadableMarkup();
 			writer.html(content);
 		} else {
 			TextDecorator decorator = new TextDecorator();
-			for (HtmlPart part : quotes) {
-				writer.startBlockquote().withData("id", part.getId()).withClass("reader_viewer_quote").text(part.getHtml()).endBlockquote();
-				decorator.addHighlight(part.getHtml());
+			for (Statement part : quotes) {
+				writer.startBlockquote().withData("id", part.getId()).withClass("reader_viewer_quote").text(part.getText()).endBlockquote();
+				decorator.addHighlight(part.getText());
 			}
 			String content = document.getExtractedContents();
 			if (Strings.isNotBlank(content)) {
@@ -612,11 +612,11 @@ public class ReaderController extends ReaderControllerBase {
 		InternetAddress address = modelService.get(InternetAddress.class, id, privileged);
 		Code.checkNotNull(id, "Address not found");
 
-		List<HtmlPart> children = modelService.getChildren(address, Relation.KIND_STRUCTURE_CONTAINS, HtmlPart.class, privileged);
+		List<Statement> children = modelService.getChildren(address, Relation.KIND_STRUCTURE_CONTAINS, Statement.class, privileged);
 
 		modelService.deleteEntity(address, privileged);
 
-		for (HtmlPart htmlPart : children) {
+		for (Statement htmlPart : children) {
 			modelService.deleteEntity(htmlPart, privileged);
 		}
 	}
@@ -666,7 +666,8 @@ public class ReaderController extends ReaderControllerBase {
 	@Path
 	public WordPerspective getWordInfo(Request request) throws ModelException {
 		WordListPerspectiveQuery query = new WordListPerspectiveQuery();
-		query.withIds(Lists.newArrayList(request.getLong("id")));
+		Long id = request.getLong("id");
+		query.withIds(Lists.newArrayList(id));
 		WordListPerspective row = modelService.search(query).getFirst();
 		if (row != null) {
 			HTMLWriter html = new HTMLWriter();
@@ -678,6 +679,7 @@ public class ReaderController extends ReaderControllerBase {
 			perspective.setId(row.getId());
 			return perspective;
 		}
+		log.warn("Word not found: id=" + id);
 		return null;
 	}
 
@@ -704,11 +706,12 @@ public class ReaderController extends ReaderControllerBase {
 			}
 		}
 		{
-			Query<HtmlPart> query = Query.after(HtmlPart.class).withPrivileged(request.getSession());
-			Results<HtmlPart> scroll = modelService.scroll(query);
+			Query<Statement> query = Query.after(Statement.class).withPrivileged(request.getSession());
+			Results<Statement> scroll = modelService.scroll(query);
 			try {
 				while (scroll.next()) {
-					readerIndexer.index(scroll.get());
+					Statement statement = scroll.get();
+					readerIndexer.index(statement);
 				}
 			} finally {
 				scroll.close();

@@ -14,9 +14,9 @@ import dk.in2isoft.onlineobjects.apps.videosharing.Path;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
-import dk.in2isoft.onlineobjects.model.HtmlPart;
 import dk.in2isoft.onlineobjects.model.InternetAddress;
 import dk.in2isoft.onlineobjects.model.Relation;
+import dk.in2isoft.onlineobjects.model.Statement;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.service.language.TextAnalysis;
 import dk.in2isoft.onlineobjects.ui.Request;
@@ -89,9 +89,9 @@ public class APIController extends APIControllerBase {
 				inboxService.add(user, address);
 			}
 			if (Strings.isNotBlank(quote)) {
-				HtmlPart part = new HtmlPart();
+				Statement part = new Statement();
 				part.setName(StringUtils.abbreviate(quote, 50));
-				part.setHtml(quote);
+				part.setText(quote);
 				modelService.createItem(part, user);
 				modelService.createRelation(address, part, Relation.KIND_STRUCTURE_CONTAINS, user);
 			}

@@ -15,10 +15,10 @@ import dk.in2isoft.onlineobjects.core.events.ModelEventListener;
 import dk.in2isoft.onlineobjects.core.events.ModelPrivilegesEventListener;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.model.Entity;
-import dk.in2isoft.onlineobjects.model.HtmlPart;
 import dk.in2isoft.onlineobjects.model.InternetAddress;
 import dk.in2isoft.onlineobjects.model.Item;
 import dk.in2isoft.onlineobjects.model.Relation;
+import dk.in2isoft.onlineobjects.model.Statement;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.modules.index.IndexManager;
 import dk.in2isoft.onlineobjects.modules.index.IndexService;
@@ -56,16 +56,11 @@ public class ReaderIndexer implements ModelEventListener, ModelPrivilegesEventLi
 		}
 	}
 	
-	public void index(HtmlPart part) {
+	public void index(Statement part) {
 		try {
 			User owner = modelService.getOwner(part);
 			if (owner!=null) {
-				String text = new HTMLDocument(part.getHtml()).getExtractedContents();
-				List<InternetAddress> parents = modelService.getParents(part, Relation.KIND_STRUCTURE_CONTAINS, InternetAddress.class, owner);
-				if (parents.isEmpty()) {
-					return; // TODO For now we only consider those contained in addresses
-				}
-				
+				String text = part.getText();				
 				Document doc = new Document();
 				doc.add(new TextField("title", Strings.asNonBlank(part.getName(),"blank"), Field.Store.YES));
 				doc.add(new TextField("text", Strings.asNonBlank(text,""), Field.Store.NO));
@@ -113,8 +108,8 @@ public class ReaderIndexer implements ModelEventListener, ModelPrivilegesEventLi
 		if (relation.getSubEntity() instanceof InternetAddress) {
 			index((InternetAddress) relation.getSubEntity());
 		}
-		if (relation.matches(InternetAddress.class,Relation.KIND_STRUCTURE_CONTAINS,HtmlPart.class)) {
-			index((HtmlPart) relation.getSubEntity());
+		if (relation.matches(InternetAddress.class,Relation.KIND_STRUCTURE_CONTAINS,Statement.class)) {
+			index((Statement) relation.getSubEntity());
 		}
 	}
 
