@@ -188,8 +188,8 @@
       <xsl:value-of select="@min"/>
       <xsl:text>","max":"</xsl:text>
       <xsl:value-of select="@max"/>
-      <xsl:text>","size":"</xsl:text>
-      <xsl:value-of select="@size"/>
+      <xsl:text>","height":"</xsl:text>
+      <xsl:value-of select="@height"/>
       <xsl:text>"}</xsl:text>
     </xsl:attribute>
     <xsl:apply-templates/>
