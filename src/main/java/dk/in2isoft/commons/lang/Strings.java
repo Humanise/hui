@@ -42,8 +42,9 @@ public class Strings {
 	
 	
 	public static final String[] ALPHABETH = {"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z",Strings.UNICODE_AE,Strings.UNICODE_OE,Strings.UNICODE_AA};
-	public static final Object RIGHT_ARROW = "\u279D";
+	public static final String TRIANGLE_HEADED_RIGHTWARDS_ARROW = "\u279D";
 	
+	public static final Object RIGHTWARDS_ARROW = "\u2192";
 	
 	// private static Logger log = Logger.getLogger(LangUtil.class);
 
