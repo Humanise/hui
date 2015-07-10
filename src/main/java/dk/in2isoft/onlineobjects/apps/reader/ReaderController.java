@@ -9,6 +9,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import nu.xom.Document;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.queryparser.classic.QueryParser;
@@ -21,9 +23,11 @@ import com.google.common.collect.Lists;
 import dk.in2isoft.commons.lang.Code;
 import dk.in2isoft.commons.lang.Files;
 import dk.in2isoft.commons.lang.HTMLWriter;
+import dk.in2isoft.commons.lang.StringSearcher;
+import dk.in2isoft.commons.lang.StringSearcher.Result;
 import dk.in2isoft.commons.lang.Strings;
-import dk.in2isoft.commons.lang.TextDecorator;
 import dk.in2isoft.commons.parsing.HTMLDocument;
+import dk.in2isoft.commons.xml.DecoratedDocument;
 import dk.in2isoft.in2igui.data.ItemData;
 import dk.in2isoft.in2igui.data.ListWriter;
 import dk.in2isoft.onlineobjects.apps.reader.index.ReaderQuery;
@@ -564,24 +568,25 @@ public class ReaderController extends ReaderControllerBase {
 
 		HTMLWriter writer = new HTMLWriter();
 		writer.startDiv().withClass("body");
-
-		if (markup) {
-			for (Statement part : quotes) {
-				writer.startBlockquote().withData("id", part.getId()).withClass("reader_viewer_quote").text(part.getText()).endBlockquote();
-			}
-			String content = document.getReadableMarkup();
-			writer.html(content);
-		} else {
-			TextDecorator decorator = new TextDecorator();
-			for (Statement part : quotes) {
-				writer.startBlockquote().withData("id", part.getId()).withClass("reader_viewer_quote").text(part.getText()).endBlockquote();
-				decorator.addHighlight(part.getText());
-			}
-			String content = document.getExtractedContents();
-			if (Strings.isNotBlank(content)) {
-				writer.html(decorator.process(content));
+		for (Statement part : quotes) {
+			writer.startBlockquote().withData("id", part.getId()).withClass("reader_viewer_quote").text(part.getText()).endBlockquote();
+		}
+		
+		String string = markup ? document.getReadableMarkup() : "<body>" + document.getExtractedContents().replaceAll("\n", "<br/>") + "</body>";
+		Document xomDocument = new HTMLDocument(string).getXOMDocument();
+		
+		DecoratedDocument decorated = new DecoratedDocument(xomDocument);
+		String text = decorated.getText();
+		StringSearcher searcher = new StringSearcher();
+		for (Statement part : quotes) {
+			List<Result> found = searcher.search(part.getText(),text);
+			for (Result result : found) {
+				decorated.decorate(result.getFrom(), result.getTo(), "em");
 			}
 		}
+		decorated.build();
+		writer.html(decorated.getDocument().toXML());
+
 		writer.endDiv();
 		return writer.toString();
 	}
