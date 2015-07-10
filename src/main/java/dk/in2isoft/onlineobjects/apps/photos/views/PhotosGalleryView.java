@@ -94,7 +94,7 @@ public class PhotosGalleryView extends AbstractManagedBean implements Initializi
 				
 				sb.append(fromShort);
 				if (!fromShort.equals(toShort)) {
-					sb.append(" ").append(Strings.RIGHT_ARROW).append(" ");
+					sb.append(" ").append(Strings.RIGHTWARDS_ARROW).append(" ");
 					sb.append(toShort);
 				}
 				info = sb.toString();
