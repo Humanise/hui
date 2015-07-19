@@ -21,7 +21,6 @@
         info.node = node;
         this.rows.push(info);
       }
-      hui.log(this.rows);
     },
     _findSizes : function(fullHeight) {
       var sizes = [];
@@ -46,7 +45,6 @@
           sizes[i] = 1 / remainder * remainingHeight;
         }
       }
-      hui.log(sizes);
       this.sizes = sizes;
     },
     _getContentHeight : function(node) {
