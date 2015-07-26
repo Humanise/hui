@@ -7,6 +7,7 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.tika.language.LanguageIdentifier;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
@@ -157,6 +158,11 @@ public class LanguageService {
 		} else {
 			return list.iterator().next();
 		}
+	}
+	
+	public Locale getLocale(String text) {
+		LanguageIdentifier id = new LanguageIdentifier(text);
+		return new Locale(id.getLanguage());
 	}
 	
 	public TextAnalysis analyse(String text) throws ModelException {
