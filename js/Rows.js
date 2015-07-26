@@ -21,7 +21,6 @@
         info.node = node;
         this.rows.push(info);
       }
-      hui.log(this.rows);
     },
     _findSizes : function(fullHeight) {
       var sizes = [];
@@ -30,7 +29,7 @@
       var fixedHeight = 0;
       for (var i = 0; i < count; i++) {
         var row = this.rows[i];
-        if (row.size=='content') {
+        if (row.height=='content') {
           var contentHeight = this._getContentHeight(row.node);
           fixedHeight += contentHeight;
           sizes.push(contentHeight);
@@ -46,7 +45,6 @@
           sizes[i] = 1 / remainder * remainingHeight;
         }
       }
-      hui.log(sizes);
       this.sizes = sizes;
     },
     _getContentHeight : function(node) {
@@ -56,6 +54,9 @@
         height += children[i].clientHeight;
       }
       return height;
+    },
+    $$childSizeChanged : function() {
+      this.$$layout();
     },
     $$layout : function() {
       var fullHeight = this.element.parentNode.clientHeight;
