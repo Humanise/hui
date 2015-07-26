@@ -2,7 +2,6 @@ package dk.in2isoft.onlineobjects.test.plain;
 
 import java.util.Locale;
 
-import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,7 @@ import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 
 public class TestLanguageService extends AbstractSpringTestCase {
 	
-	private static Logger log = Logger.getLogger(TestLanguageService.class);
+	//private static Logger log = Logger.getLogger(TestLanguageService.class);
 	
 	@Autowired
 	private LanguageService languageService;

@@ -118,7 +118,6 @@ public class TestMail extends AbstractSpringTestCase {
 						log.info("Content: "+content);
 					}
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}

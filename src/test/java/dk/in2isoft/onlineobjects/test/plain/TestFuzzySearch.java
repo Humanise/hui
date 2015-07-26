@@ -10,15 +10,13 @@ import nu.xom.ValidityException;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import dk.in2isoft.commons.lang.StringSearcher;
 import dk.in2isoft.commons.lang.StringSearcher.Result;
 
 public class TestFuzzySearch extends TestCase {
 
-	private Logger log = LoggerFactory.getLogger(TestFuzzySearch.class);
+	//private Logger log = LoggerFactory.getLogger(TestFuzzySearch.class);
 
 	@Test
 	public void testGettingText() throws MalformedURLException, IOException, ValidityException, ParsingException {
@@ -31,11 +29,11 @@ public class TestFuzzySearch extends TestCase {
 			Assert.assertEquals("text\n\nspread", first.getText());
 		}
 		{
-			String text = "Han boede på en æbleø med	en lille sø og et højt træ";
+			String text = "Han boede på en æbleø med\ten lille\nsø og et højt træ";
 			List<Result> search = searcher.search("æbleø med en lille sø", text);
 			Assert.assertEquals(search.size(), 1);
 			Result first = search.get(0);
-			Assert.assertEquals("æbleø med	en lille sø", first.getText());
+			Assert.assertEquals("æbleø med\ten lille\nsø", first.getText());
 		}
 	}
 }
