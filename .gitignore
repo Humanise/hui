@@ -8,3 +8,4 @@ hibernate.cfg.xml
 configuration.properties
 configuration.test.properties
 test.properties
+.externalToolBuilders
