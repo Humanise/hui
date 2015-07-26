@@ -11,7 +11,7 @@ var controller = {
 		this.viewerFrame = hui.get('viewer_frame');
 		this.viewerSpinner = hui.get('viewer_spinner');
 		
-		hui.listen(hui.get.firstByClass('reader_layout'),'click',this._click.bind(this));
+		hui.listen(hui.get.firstByClass(document.body,'reader_layout'),'click',this._click.bind(this));
 		var textListener = function() {
 			var selection = hui.selection.getText();
 			if (!hui.isBlank(selection)) {
@@ -259,32 +259,37 @@ var controller = {
     
     // Viewer
 	
-	_loadArticle : function(object) {
-    object = object || {};
-		hui.get('viewer_header').innerHTML = '<h1>' + hui.string.escape(object.title) + '</h1>';
-		hui.get('viewer_formatted').innerHTML = '';
-		hui.get('viewer_text').innerHTML = '';
-		hui.get('viewer_info').innerHTML = ''
-		this.viewer.style.display = 'block';
-		this.viewerVisible = true;
-		hui.cls.add(document.body,'reader_modal');
-		hui.cls.add(this.viewerSpinner,'oo_spinner_visible');
-		var self = this;
-		hui.ui.request({
-			url : '/loadArticle',
-			parameters : {id:object.id},
-			$object : function(article) {
-				self._drawArticle(article);
-			},
-			$failure : function() {
-				self._hideViewer();
-				hui.ui.msg.fail({text:'Sorry!'});
-			},
-			$finally : function() {
-				hui.cls.remove(self.viewerSpinner,'oo_spinner_visible');
-			}
-		})
+	_loadArticle: function(object) {
+	  object = object || {};
+	  hui.get('viewer_header').innerHTML = '<h1>' + hui.string.escape(object.title) + '</h1>';
+	  hui.get('viewer_formatted').innerHTML = '';
+	  hui.get('viewer_text').innerHTML = '';
+	  hui.get('viewer_info').innerHTML = ''
+	  this.viewer.style.display = 'block';
+	  this.viewerVisible = true;
+	  hui.cls.add(document.body, 'reader_modal');
+	  hui.cls.add(this.viewerSpinner, 'oo_spinner_visible');
+	  var self = this;
+	  hui.ui.request({
+	    url: '/loadArticle',
+	    parameters: {
+	      id: object.id
+	    },
+	    $object: function(article) {
+	      self._drawArticle(article);
+	    },
+	    $failure: function() {
+	      self._hideViewer();
+	      hui.ui.msg.fail({
+	        text: 'Sorry!'
+	      });
+	    },
+	    $finally: function() {
+	      hui.cls.remove(self.viewerSpinner, 'oo_spinner_visible');
+	    }
+	  })
 	},
+
 	
 	_drawArticle : function(article) {
 		this._currentArticle = article;
@@ -375,19 +380,19 @@ var controller = {
 		oo.Inspector.inspect({id:this._currentArticle.id})
 	},
     
-    $click$quoteButton : function() {
-        var parameters = {
-            id : this._currentArticle.id,
-            text : this.text
-        }
-		hui.ui.request({
-			url : '/addQuote',
-			parameters : parameters,
-			$object : function(article) {
-				this._drawArticle(article);
-			}.bind(this)
-		})
-    },
+  $click$quoteButton : function() {
+      var parameters = {
+          id : this._currentArticle.id,
+          text : this.text
+      }
+	hui.ui.request({
+		url : '/addQuote',
+		parameters : parameters,
+		$object : function(article) {
+			this._drawArticle(article);
+		}.bind(this)
+	})
+  },
 	$valueChanged$readerViewerView : function(value) {
 		
 		this.viewerContent.className = 'reader_viewer_content reader_viewer_content_'+value;
