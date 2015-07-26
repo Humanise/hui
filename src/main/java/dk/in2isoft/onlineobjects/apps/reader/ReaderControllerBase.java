@@ -37,6 +37,7 @@ public abstract class ReaderControllerBase extends ApplicationController {
 	protected LanguageService languageService;
 	protected SemanticService semanticService;
 	protected WordService wordService;
+	protected ReaderArticleBuilder articleBuilder;
 	
 	static {
 
@@ -175,5 +176,9 @@ public abstract class ReaderControllerBase extends ApplicationController {
 	
 	public void setWordService(WordService wordService) {
 		this.wordService = wordService;
+	}
+	
+	public void setArticleBuilder(ReaderArticleBuilder articleBuilder) {
+		this.articleBuilder = articleBuilder;
 	}
 }

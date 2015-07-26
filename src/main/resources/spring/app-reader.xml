@@ -7,6 +7,8 @@
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
     ">
 
+   	<bean class="dk.in2isoft.onlineobjects.apps.reader.ReaderArticleBuilder" autowire="byType"/>
+
    	<bean id="readerController" class="dk.in2isoft.onlineobjects.apps.reader.ReaderController" autowire="byType"/>
    	
    	<bean class="dk.in2isoft.onlineobjects.apps.reader.index.ReaderIndexer">

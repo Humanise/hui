@@ -1,22 +1,14 @@
 package dk.in2isoft.onlineobjects.apps.reader;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import nu.xom.Document;
-import opennlp.tools.util.Span;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.queryparser.flexible.standard.QueryParserUtil;
@@ -26,13 +18,9 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 
 import dk.in2isoft.commons.lang.Code;
-import dk.in2isoft.commons.lang.Files;
 import dk.in2isoft.commons.lang.HTMLWriter;
-import dk.in2isoft.commons.lang.StringSearcher;
-import dk.in2isoft.commons.lang.StringSearcher.Result;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.commons.parsing.HTMLDocument;
-import dk.in2isoft.commons.xml.DecoratedDocument;
 import dk.in2isoft.in2igui.data.ItemData;
 import dk.in2isoft.in2igui.data.ListWriter;
 import dk.in2isoft.onlineobjects.apps.reader.index.ReaderQuery;
@@ -56,21 +44,17 @@ import dk.in2isoft.onlineobjects.core.exceptions.NetworkException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.InternetAddress;
-import dk.in2isoft.onlineobjects.model.LexicalCategory;
 import dk.in2isoft.onlineobjects.model.Pile;
 import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.Statement;
-import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.modules.feeds.Feed;
 import dk.in2isoft.onlineobjects.modules.index.IndexManager;
 import dk.in2isoft.onlineobjects.modules.index.IndexSearchResult;
 import dk.in2isoft.onlineobjects.modules.language.WordByInternetAddressQuery;
-import dk.in2isoft.onlineobjects.modules.language.WordCategoryPerspectiveQuery;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspectiveQuery;
-import dk.in2isoft.onlineobjects.modules.language.WordQuery;
 import dk.in2isoft.onlineobjects.modules.networking.NetworkResponse;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.ui.ScriptWriter;
@@ -164,9 +148,11 @@ public class ReaderController extends ReaderControllerBase {
 				perspective.setUrl(address.getAddress());
 				perspective.setAddress(Strings.simplifyURL(address.getAddress()));
 				writer.startP().withClass("list_item_address").startA().withClass("list_item_address_link").withHref(address.getAddress()).text(Strings.simplifyURL(address.getAddress())).endA().endP();
+				perspective.setType("address");
 			} else if (entity instanceof Statement) {
 				Statement htmlPart = (Statement) entity;
 				writer.startP().withClass("list_item_quote").text(htmlPart.getText()).endP();
+				perspective.setType("statement");
 			}
 
 			List<Word> words = modelService.getChildren(entity, Word.class, request.getSession());
@@ -442,60 +428,19 @@ public class ReaderController extends ReaderControllerBase {
 
 	@Path
 	public ArticlePerspective loadArticle(Request request) throws IOException, ModelException, SecurityException, IllegalRequestException, ExplodingClusterFuckException {
-		StopWatch watch = new StopWatch();
-		watch.start();
-		Long id = request.getLong("id");
+		Long articleId = request.getLong("id",null);
+		Long statementId = request.getLong("statementId", null);
 		UserSession session = request.getSession();
-
-		InternetAddress address = modelService.get(InternetAddress.class, id, session);
-
-		if (address == null) {
-			Query<InternetAddress> query = Query.after(InternetAddress.class).withChild(id, Relation.KIND_STRUCTURE_CONTAINS);
-			address = modelService.search(query).getFirst();
-		}
-		Code.checkNotNull(address, "Not found");
-
-		HTMLDocument document = getHTMLDocument(address, session);
-
-		ArticlePerspective article = new ArticlePerspective();
-
-		article.setUrl(address.getAddress());
-
-		Pile inbox = pileService.getOrCreatePileByRelation(session.getUser(), Relation.KIND_SYSTEM_USER_INBOX);
-		Pile favorites = pileService.getOrCreatePileByRelation(session.getUser(), Relation.KIND_SYSTEM_USER_FAVORITES);
-
-		List<Pile> piles = modelService.getParents(address, Pile.class, session);
-		for (Pile pile : piles) {
-			if (pile.getId() == inbox.getId()) {
-				article.setInbox(true);
-			} else if (pile.getId() == favorites.getId()) {
-				article.setFavorite(true);
-			}
-		}
-
-		List<Statement> quotes = modelService.getChildren(address, Relation.KIND_STRUCTURE_CONTAINS, Statement.class, session);
-		List<Pair<Long, String>> quoteList = Lists.newArrayList();
-		for (Statement htmlPart : quotes) {
-			quoteList.add(Pair.of(htmlPart.getId(), htmlPart.getText()));
-		}
-		article.setQuotes(quoteList);
-
-		article.setHeader(buildHeader(address));
-		article.setInfo(buildInfo(document, address, session));
-		article.setId(address.getId());
 		
-		watch.split();
-		log.trace("Base: "+watch.getSplitTime());
-		if (document != null) {
-			article.setTitle(document.getTitle());
-			buildRendering(document, address, quotes, article, watch);
-		} else {
-			article.setTitle(address.getName());
+		if (articleId==null && statementId==null) {
+			throw new IllegalRequestException("No id provided");
 		}
-		
-		watch.stop();
-		log.trace("Total: "+watch.getTime());
-		return article;
+		if (articleId==null) {
+			Query<InternetAddress> query = Query.after(InternetAddress.class).withChild(statementId, Relation.KIND_STRUCTURE_CONTAINS);
+			InternetAddress address = modelService.search(query).getFirst();
+			articleId = address.getId();
+		}
+		return articleBuilder.getArticlePerspective(articleId, session);
 	}
 
 	@Path
@@ -515,194 +460,6 @@ public class ReaderController extends ReaderControllerBase {
 		}
 
 		return loadArticle(request);
-	}
-
-	private HTMLDocument getHTMLDocument(InternetAddress address, Privileged privileged) throws SecurityException, ModelException {
-
-		File folder = storageService.getItemFolder(address);
-		File original = new File(folder, "original");
-		String encoding = address.getPropertyValue(Property.KEY_INTERNETADDRESS_ENCODING);
-		if (Strings.isBlank(encoding)) {
-			encoding = Strings.UTF8;
-		}
-		if (!original.exists()) {
-			NetworkResponse response = networkService.getSilently(address.getAddress());
-			if (response != null && response.isSuccess()) {
-				File temp = response.getFile();
-				if (!Files.copy(temp, original)) {
-					response.cleanUp();
-					return null;
-				}
-				address.overrideFirstProperty(Property.KEY_INTERNETADDRESS_ENCODING, encoding);
-				modelService.updateItem(address, privileged);
-			}
-		}
-		return new HTMLDocument(Files.readString(original, encoding));
-	}
-
-	private String buildHeader(InternetAddress address) {
-		HTMLWriter writer = new HTMLWriter();
-		writer.startH1().text(address.getName()).endH1();
-		writer.startP().withClass("link").startA().withHref(address.getAddress()).text(address.getAddress()).endA().endP();
-		return writer.toString();
-	}
-
-	private String buildInfo(HTMLDocument document, InternetAddress address, UserSession session) throws ModelException {
-		HTMLWriter writer = new HTMLWriter();
-		writer.startH2().withClass("info_header").text("Authors").endH2();
-		writer.startP().withClass("tags info_authors");
-		writer.text("No author");
-		writer.endP();
-		writer.startH2().withClass("info_header").text("Tags").endH2();
-		writer.startP().withClass("tags info_tags");
-		{
-			List<String> tags = address.getPropertyValues(Property.KEY_COMMON_TAG);
-			if (!tags.isEmpty()) {
-				for (String string : tags) {
-					writer.startVoidA().withClass("tag info_tags_item info_tag").withData(string).text(string).endA().text(" ");
-				}
-			}
-		}
-		{
-			User admin = modelService.getUser(SecurityService.ADMIN_USERNAME);
-			List<Word> words = modelService.getChildren(address, Word.class, admin);
-			for (Word word : words) {
-				if (word == null || address == null) {
-					continue;
-				}
-				writer.startVoidA().withData(word.getId()).withClass("info_tags_item info_word word");
-				writer.text(word.getText()).endA().text(" ");
-			}
-
-		}
-		writer.startA().withClass("add info_tags_item info_tags_add").text("Add word").endA();
-		writer.endP();
-
-		return writer.toString();
-	}
-
-	private void buildRendering(HTMLDocument document, InternetAddress address, List<Statement> statements, ArticlePerspective article, StopWatch watch) throws ModelException, ExplodingClusterFuckException {
-
-		{
-			String extractedMarkup = document.getExtractedMarkup();
-			String readableMarkup = document.getReadableMarkup();
-			String string = readableMarkup.length() > extractedMarkup.length() ? readableMarkup : extractedMarkup;
-			article.setFormatted(annotate(statements, string, watch));
-		}
-		{
-			String string = "<body>" + document.getExtractedContents().replaceAll("\n", "<br/><br/>") + "</body>";
-			article.setText(annotate(statements, string, watch));
-		}
-	}
-
-	private String annotate(List<Statement> statements, String string, StopWatch watch) throws ModelException, ExplodingClusterFuckException {
-		Document xomDocument = new HTMLDocument(string).getXOMDocument();
-		watch.split();
-		log.trace("Parsed HTML: "+watch.getSplitTime());
-		
-		DecoratedDocument decorated = new DecoratedDocument(xomDocument);
-		String text = decorated.getText();
-		watch.split();
-		log.trace("Decorated: "+watch.getSplitTime());
-		
-
-		Locale locale = languageService.getLocale(text);
-		watch.split();
-		log.trace("Get locale: "+watch.getSplitTime());
-		
-		if (!false) {
-			annotatePeople(watch, decorated, text, locale);
-		}
-
-		StringSearcher searcher = new StringSearcher();
-		for (Statement statement : statements) {
-			List<Result> found = searcher.search(statement.getText(),text);
-			for (Result result : found) {
-				Map<String, Object> attributes = new HashMap<>();
-				attributes.put("data-id", statement.getId());
-				attributes.put("class", "quote");
-				decorated.decorate(result.getFrom(), result.getTo(), "mark", attributes);
-			}
-			if (found.isEmpty()) {
-				log.warn("Statement not found: " + statement.getText());
-				log.warn("Text: " + text);
-			}
-		}
-		decorated.build();
-		return decorated.getDocument().toXML();
-	}
-
-	private void annotatePeople(StopWatch watch, DecoratedDocument decorated, String text, Locale locale) throws ExplodingClusterFuckException, ModelException {
-		List<Span> nounSpans = Lists.newArrayList();
-		
-		List<String> nouns = Lists.newArrayList();
-		
-		Span[] sentences = semanticService.getSentencePositions(text, locale);
-		watch.split();
-		log.trace("Sentences: "+watch.getSplitTime());
-		for (Span sentence : sentences) {
-			//decorated.decorate(sentence.getStart(), sentence.getEnd(), "mark", getClassMap("sentence") );
-
-			String sentenceText = sentence.getCoveredText(text).toString();
-			Span[] sentenceTokenPositions = semanticService.getTokenSpans(sentenceText, locale);
-			String[] sentenceTokens = semanticService.spansToStrings(sentenceTokenPositions, sentenceText);
-			String[] partOfSpeach = semanticService.getPartOfSpeach(sentenceTokens, locale);
-			for (int i = 0; i < sentenceTokenPositions.length; i++) {
-				String token = sentenceTokens[i];
-				if (!Character.isUpperCase(token.charAt(0))) {
-					continue;
-				}
-				if (!partOfSpeach[i].startsWith("N")) {
-					continue;
-				}
-				boolean prev = i>0 && partOfSpeach[i-1].startsWith("N") && Character.isUpperCase(sentenceTokens[i-1].charAt(0));
-				boolean next = i<sentenceTokenPositions.length-1 && partOfSpeach[i+1].startsWith("N") && Character.isUpperCase(sentenceTokens[i+1].charAt(0));
-				if (!(prev || next)) {
-					continue;
-				}
-				nouns.add(token);
-				Span spn = new Span(sentenceTokenPositions[i].getStart()+sentence.getStart(),sentenceTokenPositions[i].getEnd()+sentence.getStart(),token);
-				nounSpans.add(spn);
-			}
-		}
-		watch.split();
-		log.trace("Part of speech: "+watch.getSplitTime());
-		List<WordListPerspective> names = findNames(nouns);
-
-		watch.split();
-		log.trace("Find names: "+watch.getSplitTime());
-		
-		for (Span span : nounSpans) {
-			String cls = "noun";
-			if (isPerson(span.getType(),names)) {
-				cls = "person";
-			}
-			decorated.decorate(span.getStart(), span.getEnd(), "mark", getClassMap(cls) );
-		}
-	}
-
-	private List<WordListPerspective> findNames(List<String> words) throws ModelException, ExplodingClusterFuckException {
-		if (Code.isEmpty(words)) {
-			
-		}
-		WordCategoryPerspectiveQuery query = new WordCategoryPerspectiveQuery().withWords(words);
-		query.withCategories(LexicalCategory.CODE_PROPRIUM_FIRST,LexicalCategory.CODE_PROPRIUM_MIDDLE, LexicalCategory.CODE_PROPRIUM_LAST);
-		return modelService.search(query).getList();
-	}
-
-	private boolean isPerson(String token, List<WordListPerspective> words) {
-		for (WordListPerspective word : words) {
-			if (word.getText().equalsIgnoreCase(token)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private Map<String, Object> getClassMap(Object cls) {
-		Map<String, Object> attributes = new HashMap<>();
-		attributes.put("class", cls );
-		return attributes;
 	}
 
 	@Path
