@@ -52,31 +52,15 @@ public class DecoratedDocument {
 		for (int i = 0; i < nodes.size(); i++) {
 			Text node = (Text) nodes.get(i);
 			if (i>0) {
-				boolean newLine = false;
-				ParentNode parent = node.getParent();
-				if (parent instanceof Element) {
-					Element element = (Element) parent;
-					if (!INLINES.contains(element.getLocalName().toLowerCase())) {
-						newLine = true;
-					}
-				}
-				Node previous = getPrevious(node);
-				if (previous!=null) {
-					if (previous instanceof Text) {
-						newLine = false;
-					} else if (previous instanceof Element) {
-						Element element = (Element) previous;
-						if (INLINES.contains(element.getLocalName().toLowerCase())) {
-							newLine = false;
-						}
-					}
-					
-				}
+				boolean newLine = isNewline(node);
+				
 				if (newLine) {
 					allText.append("\n\n");
 					pos+=2;
 				}
 			}
+			
+			
 			Fragment fragment = new Fragment();
 			fragment.node = node;
 			fragment.from = pos;
@@ -88,6 +72,35 @@ public class DecoratedDocument {
 		}
 		this.text = allText.toString();
 		//log.info("Fragments: "+fragments);
+	}
+
+	private boolean isNewline(Node node) {
+		Node previous = getPrevious(node);
+		if (previous!=null) {
+			if (previous instanceof Text) {
+				return false;
+			} else if (previous instanceof Element) {
+				Element element = (Element) previous;
+				return !isInline(element);
+			}
+		}
+		ParentNode parent = node.getParent();
+		if (parent==null) {
+			return false;
+		}
+		if (!isInline(parent)) {
+			return true;
+		} else {
+			return isNewline(parent);
+		}
+	}
+
+	private boolean isInline(Node node) {
+		if (node instanceof Element) {
+			Element element = (Element) node;
+			return INLINES.contains(element.getLocalName().toLowerCase());
+		}
+		return false;
 	}
 	
 	private Node getPrevious(Node node) {
