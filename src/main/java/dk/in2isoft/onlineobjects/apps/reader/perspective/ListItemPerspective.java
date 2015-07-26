@@ -12,6 +12,7 @@ public class ListItemPerspective {
 	private String address;
 	private List<Pair<Long,String>> tags;
 	private String html;
+	private String type;
 
 	public String getUrl() {
 		return url;
@@ -59,5 +60,13 @@ public class ListItemPerspective {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 }
