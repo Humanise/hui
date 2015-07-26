@@ -85,7 +85,6 @@ public class GZIPResponseStream extends ServletOutputStream {
 
 	@Override
 	public void setWriteListener(WriteListener arg0) {
-		// TODO Auto-generated method stub
-		
+		output.setWriteListener(arg0);
 	}
 }
