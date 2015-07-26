@@ -11,10 +11,13 @@ import dk.in2isoft.onlineobjects.apps.reader.index.ReaderIndexer;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.modules.index.IndexService;
+import dk.in2isoft.onlineobjects.modules.language.WordService;
 import dk.in2isoft.onlineobjects.modules.networking.HTMLService;
 import dk.in2isoft.onlineobjects.modules.networking.NetworkService;
 import dk.in2isoft.onlineobjects.services.FeedService;
+import dk.in2isoft.onlineobjects.services.LanguageService;
 import dk.in2isoft.onlineobjects.services.PileService;
+import dk.in2isoft.onlineobjects.services.SemanticService;
 import dk.in2isoft.onlineobjects.services.StorageService;
 import dk.in2isoft.onlineobjects.ui.Blend;
 import dk.in2isoft.onlineobjects.ui.Request;
@@ -31,6 +34,9 @@ public abstract class ReaderControllerBase extends ApplicationController {
 	protected StorageService storageService;
 	protected IndexService indexService;
 	protected ReaderIndexer readerIndexer;
+	protected LanguageService languageService;
+	protected SemanticService semanticService;
+	protected WordService wordService;
 	
 	static {
 
@@ -157,5 +163,17 @@ public abstract class ReaderControllerBase extends ApplicationController {
 	
 	public void setReaderIndexer(ReaderIndexer readerIndexer) {
 		this.readerIndexer = readerIndexer;
+	}
+	
+	public void setLanguageService(LanguageService languageService) {
+		this.languageService = languageService;
+	}
+	
+	public void setSemanticService(SemanticService semanticService) {
+		this.semanticService = semanticService;
+	}
+	
+	public void setWordService(WordService wordService) {
+		this.wordService = wordService;
 	}
 }
