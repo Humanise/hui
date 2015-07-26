@@ -46,6 +46,18 @@ public class TestDecoratedDocument extends AbstractSpringTestCase {
 	}
 
 	@Test
+	public void testX() throws MalformedURLException, IOException, ValidityException, ParsingException {
+		String xml = "<?xml version=\"1.0\"?><p>Depending on the complexity of the table reference, some databases also accept sophisticated table references in other statements, such as INSERT, UPDATE, DELETE, MERGE. See <a shape=\"rect\" href=\"http://docs.oracle.com/cd/B28359_01/server.111/b28286/statements_8004.htm#i2126726\">Oracle’s manuals for instance</a>, explaining how to create updatable views.</p>";
+		Builder builder = new Builder();
+		Document document = builder.build(new StringReader(xml));
+		DecoratedDocument decorated = new DecoratedDocument(document);
+		String text = decorated.getText();
+		Assert.assertEquals("Depending on the complexity of the table reference, some databases also accept sophisticated table references in other statements, such as INSERT, UPDATE, DELETE, MERGE. See \n\nOracle’s manuals for instance\n\n, explaining how to create updatable views.", text);
+	}
+	
+	
+
+	@Test
 	public void testNested() throws MalformedURLException, IOException, ValidityException, ParsingException {
 		String xml = "<?xml version=\"1.0\"?><body><p>This is some text</p><p>spread over multiple lines</p></body>";
 		DecoratedDocument decorated = DecoratedDocument.parse(xml);
@@ -77,5 +89,19 @@ public class TestDecoratedDocument extends AbstractSpringTestCase {
 		String result = decorated.getDocument().toXML();
 		log.info(result);
 		Assert.assertEquals("<?xml version=\"1.0\"?>\n<body><p>This is some <span><strong>t</strong></span><em><span><strong>ex</strong></span></em><span><strong>t</strong></span></p><p><strong>spread</strong> over <u>multiple</u> lines</p></body>\n", result);
+	}
+	
+	@Test
+	public void testGetText() throws MalformedURLException, IOException, ValidityException, ParsingException {
+		{
+			String xml = "<?xml version=\"1.0\"?><body><p>This is some text</p><p>spread over multiple lines</p></body>";
+			DecoratedDocument decorated = DecoratedDocument.parse(xml);
+			Assert.assertEquals("This is some text\n\nspread over multiple lines", decorated.getText());
+		}
+		{
+			String xml = "<?xml version=\"1.0\"?><body><p>This is some <span>text</span></p><p>spread over <em>multiple</em> lines</p></body>";
+			DecoratedDocument decorated = DecoratedDocument.parse(xml);
+			Assert.assertEquals("This is some text\n\nspread over multiple lines", decorated.getText());
+		}
 	}
 }

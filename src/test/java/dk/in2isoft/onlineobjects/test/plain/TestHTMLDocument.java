@@ -46,6 +46,8 @@ public class TestHTMLDocument extends AbstractSpringTestCase {
 		Assert.assertTrue(ArrayUtils.contains(words, "FBI-folkene"));
 		Assert.assertFalse(ArrayUtils.contains(words, "-"));
 	}
+	
+	// Wiring...
 
 	public void setSemanticService(SemanticService semanticService) {
 		this.semanticService = semanticService;

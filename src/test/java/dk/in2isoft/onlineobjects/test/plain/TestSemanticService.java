@@ -10,6 +10,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Locale;
 
+import opennlp.tools.util.Span;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
@@ -21,6 +23,8 @@ import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.services.SemanticService;
 import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
+import dk.in2isoft.onlineobjects.util.semantics.Danish;
+import dk.in2isoft.onlineobjects.util.semantics.Language;
 
 public class TestSemanticService extends AbstractSpringTestCase {
 	
@@ -64,7 +68,7 @@ public class TestSemanticService extends AbstractSpringTestCase {
 	}
 		
 	@Test
-	public void testSentences() throws IOException {		
+	public void testSentences() throws IOException {
 		{
 			String text = "Eat my shorts. He's a guy - and is called Mr. White, she's a girl and from the U.S.S.R.";
 			String[] sentences = semanticService.getSentences(text, Locale.ENGLISH);
@@ -86,6 +90,53 @@ public class TestSemanticService extends AbstractSpringTestCase {
 			Assert.assertTrue(Strings.contains("Den 58-årige Chávez blev hasteopereret 11. december i Havana i Cuba og har ifølge officielle venezuelanske kilder haft problemer med at trække vejret efterfølgende.",sentences));
 			logSentences(sentences);
 		}
+	}
+	
+	@Test
+	public void testTokens() {
+		String text = "Men hun er ikke afvisende over for, at menneskesmuglere har fokus på velfærdsydelserne i EU. Hun opfordrer derfor Støjberg til at granske fordelingen af flygtninge i Europa og sammenligne den med graden af sociale ydelser og chancerne for familiesammenføring.";
+		Locale locale = new Locale("da");
+		String[] words = semanticService.getTokensAsString(text, locale);
+		StringBuilder annotated = new StringBuilder();
+		for (int i = 0; i < words.length; i++) {
+			annotated.append(words[i]);
+			annotated.append("|");
+		}
+		String[] unique = semanticService.getUniqueWordsWithoutPunctuation(words);
+		Assert.assertEquals("at", unique[7]);
+		log.info(annotated.toString());		
+	}
+	
+	@Test
+	public void testPartOfSpeach() {
+		String text = "Den 58-årige Chávez blev hasteopereret 11. december i Havana i Cuba og har ifølge officielle venezuelanske kilder haft problemer med at trække vejret efterfølgende.";
+		Locale locale = new Locale("da");
+		Span[] spans = semanticService.getTokenSpans(text, locale);
+		String[] words = semanticService.spansToStrings(spans, text);
+		String[] partOfSpeach = semanticService.getPartOfSpeach(words, locale);
+		assertEquals(words.length, partOfSpeach.length);
+		StringBuilder annotated = new StringBuilder();
+		for (int i = 0; i < words.length; i++) {
+			annotated.append(words[i] + " ["+partOfSpeach[i]+"] ");
+		}
+		log.info(annotated.toString());
+		
+		// TODO: This page explains the tags: http://paula.petcu.tm.ro/init/default/post/opennlp-part-of-speech-tags
+	}
+
+	@Test
+	public void testPartOfSpeachEnglish() {
+		String text = "Peter and Mary bought a new car today from a car shop in San Francisco.";
+		Locale locale = Locale.ENGLISH;
+		Span[] spans = semanticService.getTokenSpans(text, locale);
+		String[] words = semanticService.spansToStrings(spans, text);
+		String[] partOfSpeach = semanticService.getPartOfSpeach(words, locale);
+		assertEquals(words.length, partOfSpeach.length);
+		StringBuilder annotated = new StringBuilder();
+		for (int i = 0; i < words.length; i++) {
+			annotated.append(words[i] + " ["+partOfSpeach[i]+"] ");
+		}
+		log.info(annotated.toString());
 	}
 	
 	private void logSentences(String[] sentences) {
