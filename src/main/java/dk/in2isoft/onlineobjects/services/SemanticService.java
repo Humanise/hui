@@ -2,7 +2,6 @@ package dk.in2isoft.onlineobjects.services;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
@@ -11,20 +10,26 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import opennlp.tools.postag.POSModel;
+import opennlp.tools.postag.POSTaggerME;
 import opennlp.tools.sentdetect.SentenceDetectorME;
 import opennlp.tools.sentdetect.SentenceModel;
-import opennlp.tools.util.InvalidFormatException;
+import opennlp.tools.tokenize.Tokenizer;
+import opennlp.tools.tokenize.TokenizerME;
+import opennlp.tools.tokenize.TokenizerModel;
+import opennlp.tools.util.Span;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.Pair;
@@ -33,6 +38,8 @@ import dk.in2isoft.onlineobjects.util.semantics.Language;
 public class SemanticService {
 	
 	public static final String WORD_EXPRESSION = "[0-9a-zA-Z\u0027\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF\\-\u02BC\u2019]+";
+
+	private static final Set<String> PUNCTUATION = Sets.newHashSet(".",";",":",",","-","–");
 	
 	private ConfigurationService configurationService;
 
@@ -80,6 +87,16 @@ public class SemanticService {
 		List<String> list = Lists.newArrayList();
 		for (String word : words) {
 			if (!list.contains(word)) {
+				list.add(word);
+			}
+		}
+		return list.toArray(new String[]{});
+	}
+
+	public String[] getUniqueWordsWithoutPunctuation(String[] words) {
+		Set<String> list = Sets.newLinkedHashSet();
+		for (String word : words) {
+			if (!PUNCTUATION.contains(word)) {
 				list.add(word);
 			}
 		}
@@ -220,23 +237,89 @@ public class SemanticService {
 		SentenceDetectorME sentenceDetector = new SentenceDetectorME(model);
 		return sentenceDetector.sentDetect(text);
 	}
+
+	public Span[] getSentencePositions(String text, Locale locale) {
+		//text = ensureSentenceStop(text);
+		SentenceModel model = getSentenceModel(locale);
+		SentenceDetectorME sentenceDetector = new SentenceDetectorME(model);
+		return sentenceDetector.sentPosDetect(text);
+	}
 	
-	public SentenceModel getSentenceModel(Locale locale) {
-		File file = configurationService.getFile("WEB-INF","data","models",locale.getLanguage()+"-sent.bin");
-		if (!file.exists()) {
-			log.error("Unable to find sentence model: " + file);
+	public Span[] getTokenSpans(String text, Locale locale) {
+		TokenizerModel model = getTokenizerModel(locale);
+		Tokenizer tokenizer = new TokenizerME(model);
+		return tokenizer.tokenizePos(text);
+	}
+	
+	public String[] getTokensAsString(String text, Locale locale) {
+		TokenizerModel model = getTokenizerModel(locale);
+		Tokenizer tokenizer = new TokenizerME(model);
+		return tokenizer.tokenize(text);
+	}
+	
+	public String[] spansToStrings(Span[] spans, String text) {
+		return Span.spansToStrings(spans, text);
+	}
+	
+	public String[] getPartOfSpeach(String[] sentence, Locale locale) {
+		POSModel model = getPartOfSpeachModel(locale);
+		POSTaggerME tagger = new POSTaggerME(model);
+		String[] tags = tagger.tag(sentence);
+		return tags;
+	}
+	
+	private final Map<Locale,SentenceModel> sentenceModels = Maps.newHashMap(); 
+	
+	public synchronized SentenceModel getSentenceModel(Locale locale) {
+		if (sentenceModels.containsKey(locale)) {
+			return sentenceModels.get(locale);
 		}
-		//File file = getTestFile("web/WEB-INF/data/models/en-sent.bin");
-		InputStream modelIn = null;
-		try {
-			modelIn = new FileInputStream(file);
-			return new SentenceModel(modelIn);
-		} catch (FileNotFoundException e) {
-			
-		} catch (InvalidFormatException e) {
+
+		File file = configurationService.getFile("WEB-INF","data","models",locale.getLanguage()+"-sent.bin");
+
+		try (InputStream modelIn = new FileInputStream(file)){
+		  SentenceModel model = new SentenceModel(modelIn);
+		  sentenceModels.put(locale, model);
+		  return model;
+		}
+		catch (IOException e) {
+		  log.error("Unable to load model",e);
+		}
+		return null;
+	}
+	
+	private final Map<Locale,POSModel> posModels = Maps.newHashMap(); 
+	
+	private synchronized POSModel getPartOfSpeachModel(Locale locale) {
+		if (posModels.containsKey(locale)) {
+			return posModels.get(locale);
+		}
+		File file = configurationService.getFile("WEB-INF","data","models",locale.getLanguage()+"-pos-maxent.bin");
+
+		try (InputStream modelIn = new FileInputStream(file)){
+		  POSModel model = new POSModel(modelIn);
+		  posModels.put(locale, model);
+		  return model;
+		}
+		catch (IOException e) {
+		  log.error("Unable to load model",e);
+		}
+		return null;
+	}
+	
+	private final Map<Locale,TokenizerModel> tokenizerModels = Maps.newHashMap(); 
+	
+	private synchronized TokenizerModel getTokenizerModel(Locale locale) {
+		if (tokenizerModels.containsKey(locale)) {
+			return tokenizerModels.get(locale);
+		}
+		File file = configurationService.getFile("WEB-INF","data","models",locale.getLanguage()+"-token.bin");
+		try (InputStream modelIn = new FileInputStream(file)) {
+			TokenizerModel model = new TokenizerModel(modelIn);
+			tokenizerModels.put(locale, model);
+			return model;
 		} catch (IOException e) {
-		} finally {
-			IOUtils.closeQuietly(modelIn);
+			log.error("Unable to load tokenizer model", e);
 		}
 		return null;
 	}
