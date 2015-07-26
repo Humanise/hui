@@ -669,13 +669,14 @@ public class ModelService {
 
 	@SuppressWarnings("unchecked")
 	public <T> SearchResult<T> search(CustomQuery<T> query) throws ModelException {
+		String sql = query.getSQL();
 		try {
 			int totalCount = count(query);
 
-			SQLQuery sql = getSession().createSQLQuery(query.getSQL());
-			query.setParameters(sql);
+			SQLQuery sqlQuery = getSession().createSQLQuery(sql);
+			query.setParameters(sqlQuery);
 
-			List<Object[]> rows = sql.list();
+			List<Object[]> rows = sqlQuery.list();
 			List<T> result = Lists.newArrayList();
 			for (Object[] t : rows) {
 				result.add(query.convert(t));
@@ -683,7 +684,7 @@ public class ModelService {
 
 			return new SearchResult<T>(result, totalCount);
 		} catch (HibernateException e) {
-			throw new ModelException("Error executing SQL", e);
+			throw new ModelException("Error executing SQL: "+sql, e);
 		}
 	}
 
