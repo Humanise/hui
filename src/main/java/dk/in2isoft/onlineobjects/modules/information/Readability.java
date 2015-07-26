@@ -748,7 +748,7 @@ public class Readability {
      * @param t
      */
     protected void dbg(String msg, Throwable t) {
-    	log.info(msg,t);
+    	log.debug(msg,t);
     }
 
     private static class Patterns {
