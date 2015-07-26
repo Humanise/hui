@@ -150,8 +150,8 @@ public class Strings {
 		return new String(pw);
 	}
 	
-	public static boolean isDefined(String[] words) {
-		return words != null && words.length > 0;
+	public static boolean isDefined(String[] strings) {
+		return strings != null && strings.length > 0;
 	}
 
 	public static boolean isNotBlank(String str) {
