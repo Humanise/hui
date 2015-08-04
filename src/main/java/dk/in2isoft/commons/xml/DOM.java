@@ -7,6 +7,10 @@ import nu.xom.Attribute;
 import nu.xom.Element;
 import nu.xom.Node;
 import nu.xom.ParentNode;
+import nu.xom.XMLException;
+import nu.xom.converters.DOMConverter;
+
+import org.w3c.dom.Document;
 
 public class DOM {
 
@@ -20,6 +24,14 @@ public class DOM {
 			node = node.getParent();
 		}
 		return ancestors;
+	}
+	
+	public static nu.xom.Document toXOM(Document domDocument) {
+		try {
+			return DOMConverter.convert(domDocument);
+		} catch (XMLException e) {
+			return null;
+		}
 	}
 	
 	public static Element findCommonAncestor(Node first, Node second) {
