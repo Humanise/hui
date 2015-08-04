@@ -40,6 +40,14 @@ public class Strings {
 	public static final String UNICODE_TRADEMARK = "\u2122";
 	public static final String UNICODE_REGISTERED_TRADEMARK = "\u00AE";
 	
+	public static final String LEFT_DOUBLE_QUOTATION_MARK = "\u201C";
+	public static final String RIGHT_DOUBLE_QUOTATION_MARK = "\u201D";
+
+	public static final String LEFT_SINGLE_QUOTATION_MARK = "\u2018";
+	public static final String RIGHT_SINGLE_QUOTATION_MARK = "\u2019";
+	public static final String SINGLE_HIGH_REVERSED_9_QUOTATION_MARK = "\u201B";
+	public static final String SINGLE_LOW_9_QUOTATION_MARK = "\u201A";
+	public static final String DOUBLE_LOW_9_QUOTATION_MARK = "\u201E";
 	
 	public static final String[] ALPHABETH = {"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z",Strings.UNICODE_AE,Strings.UNICODE_OE,Strings.UNICODE_AA};
 	public static final String TRIANGLE_HEADED_RIGHTWARDS_ARROW = "\u279D";
