@@ -17,7 +17,7 @@
 		<property name="indexManager" ref="wordsIndex" />
 		<property name="documentBuilder">
 			<bean class="dk.in2isoft.onlineobjects.modules.index.WordIndexDocumentBuilder">
-				<property name="languageService" ref="languageService"/>
+				<property name="wordService" ref="wordService"/>
 			</bean>
 		</property>
 	</bean>
@@ -30,6 +30,8 @@
 	<bean id="wordService" class="dk.in2isoft.onlineobjects.modules.language.WordService">
 		<property name="index" ref="wordsIndex"/>
 		<property name="modelService" ref="modelService"/>
+		<property name="languageService" ref="languageService"/>
+		<property name="securityService" ref="securityService"/>
 	</bean>
 	
 	<bean id="wordIndexJob" class="dk.in2isoft.onlineobjects.apps.words.index.WordIndexJob">
@@ -39,7 +41,7 @@
 
 	<bean id="wordsWordView" class="dk.in2isoft.onlineobjects.apps.words.views.WordsWordView" scope="request">
 		<property name="modelService" ref="modelService" />
-		<property name="languageService" ref="languageService" />
+		<property name="wordService" ref="wordService" />
 	</bean>
 
 	<bean id="wordsIndexView"

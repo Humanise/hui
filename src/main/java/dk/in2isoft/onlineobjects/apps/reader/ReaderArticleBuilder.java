@@ -144,10 +144,6 @@ public class ReaderArticleBuilder {
 
 	private String buildInfo(HTMLDocument document, InternetAddress address, UserSession session) throws ModelException {
 		HTMLWriter writer = new HTMLWriter();
-		writer.startH2().withClass("info_header").text("Authors").endH2();
-		writer.startP().withClass("tags info_authors");
-		writer.text("No author");
-		writer.endP();
 		writer.startH2().withClass("info_header").text("Tags").endH2();
 		writer.startP().withClass("tags info_tags");
 		{
@@ -232,34 +228,42 @@ public class ReaderArticleBuilder {
 		
 		List<String> nouns = Lists.newArrayList();
 		
-		Span[] sentences = semanticService.getSentencePositions(text, locale);
-		watch.split();
-		log.trace("Sentences: "+watch.getSplitTime());
-		for (Span sentence : sentences) {
-			//decorated.decorate(sentence.getStart(), sentence.getEnd(), "mark", getClassMap("sentence") );
+		String[] lines = text.split("\\n");
+		int pos = 0;
+		for (String line : lines) {
+			Span[] sentences = semanticService.getSentencePositions(line, locale);
+			watch.split();
+			log.trace("Sentences: "+watch.getSplitTime());
+			for (Span sentence : sentences) {
+				//decorated.decorate(sentence.getStart(), sentence.getEnd(), "mark", getClassMap("sentence") );
 
-			String sentenceText = sentence.getCoveredText(text).toString();
-			Span[] sentenceTokenPositions = semanticService.getTokenSpans(sentenceText, locale);
-			String[] sentenceTokens = semanticService.spansToStrings(sentenceTokenPositions, sentenceText);
-			String[] partOfSpeach = semanticService.getPartOfSpeach(sentenceTokens, locale);
-			for (int i = 0; i < sentenceTokenPositions.length; i++) {
-				String token = sentenceTokens[i];
-				if (!Character.isUpperCase(token.charAt(0))) {
-					continue;
+				String sentenceText = sentence.getCoveredText(line).toString();
+				Span[] sentenceTokenPositions = semanticService.getTokenSpans(sentenceText, locale);
+				String[] sentenceTokens = semanticService.spansToStrings(sentenceTokenPositions, sentenceText);
+				String[] partOfSpeach = semanticService.getPartOfSpeach(sentenceTokens, locale);
+				for (int i = 0; i < sentenceTokenPositions.length; i++) {
+					String token = sentenceTokens[i];
+					if (!Character.isUpperCase(token.charAt(0))) {
+						continue;
+					}
+					if (!partOfSpeach[i].startsWith("N")) {
+						continue;
+					}
+					boolean prev = i>0 && partOfSpeach[i-1].startsWith("N") && Character.isUpperCase(sentenceTokens[i-1].charAt(0));
+					boolean next = i<sentenceTokenPositions.length-1 && partOfSpeach[i+1].startsWith("N") && Character.isUpperCase(sentenceTokens[i+1].charAt(0));
+					if (!(prev || next)) {
+						continue;
+					}
+					nouns.add(token);
+					Span spn = new Span(sentenceTokenPositions[i].getStart()+sentence.getStart()+pos,sentenceTokenPositions[i].getEnd()+sentence.getStart()+pos,token);
+					nounSpans.add(spn);
 				}
-				if (!partOfSpeach[i].startsWith("N")) {
-					continue;
-				}
-				boolean prev = i>0 && partOfSpeach[i-1].startsWith("N") && Character.isUpperCase(sentenceTokens[i-1].charAt(0));
-				boolean next = i<sentenceTokenPositions.length-1 && partOfSpeach[i+1].startsWith("N") && Character.isUpperCase(sentenceTokens[i+1].charAt(0));
-				if (!(prev || next)) {
-					continue;
-				}
-				nouns.add(token);
-				Span spn = new Span(sentenceTokenPositions[i].getStart()+sentence.getStart(),sentenceTokenPositions[i].getEnd()+sentence.getStart(),token);
-				nounSpans.add(spn);
 			}
+			pos+=1;
+			pos+=line.length();
 		}
+		
+
 		watch.split();
 		log.trace("Part of speech: "+watch.getSplitTime());
 		List<WordListPerspective> names = findNames(nouns);

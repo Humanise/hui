@@ -32,8 +32,7 @@ public class TestDecoratedDocument extends AbstractSpringTestCase {
 		Document document = builder.build(new StringReader(xml));
 		DecoratedDocument decorated = new DecoratedDocument(document);
 		String text = decorated.getText();
-		Assert.assertEquals("This is some text\n\nspread over multiple lines",
-				text);
+		Assert.assertEquals("This is some text\n\nspread over multiple lines",text);
 		{
 			String find = "text\n\nspread";
 			int start = text.indexOf(find);

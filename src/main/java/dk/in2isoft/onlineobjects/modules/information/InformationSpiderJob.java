@@ -45,6 +45,7 @@ public class InformationSpiderJob extends ServiceBackedJob implements Interrupta
 				"http://jp.dk/international/?service=rssfeed",
 				"http://wp-tfap.appspot.com/?feed=tfa&type=rss2" // Wikipedia featured article
 			);
+		feeds = Lists.newArrayList("http://www.dr.dk/nyheder/service/feeds/allenyheder");
 		JobStatus status = getStatus(context);
 		int size = feeds.size();
 		status.log("Starting information spider");

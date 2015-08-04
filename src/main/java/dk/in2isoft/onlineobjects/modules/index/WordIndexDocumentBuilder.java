@@ -12,15 +12,15 @@ import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.modules.language.WordImpression;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
-import dk.in2isoft.onlineobjects.services.LanguageService;
+import dk.in2isoft.onlineobjects.modules.language.WordService;
 
 public class WordIndexDocumentBuilder implements IndexDocumentBuilder<Word> {
 	
-	private LanguageService languageService;
+	private WordService wordService;
 
 	public Document build(Word word) throws ModelException {
 		
-		WordImpression impression = languageService.getImpression(word);
+		WordImpression impression = wordService.getImpression(word);
 		StringBuilder text = new StringBuilder();
 		text.append(word.getText()).append(" ");
 		String glossary = word.getPropertyValue(Property.KEY_SEMANTICS_GLOSSARY);
@@ -64,8 +64,8 @@ public class WordIndexDocumentBuilder implements IndexDocumentBuilder<Word> {
 		doc.add(new TextField("letter", getLetter(perspective.getText()), Field.Store.YES));
 		return doc;
 	}
-	
-	public void setLanguageService(LanguageService languageService) {
-		this.languageService = languageService;
+
+	public void setWordService(WordService wordService) {
+		this.wordService = wordService;
 	}
 }

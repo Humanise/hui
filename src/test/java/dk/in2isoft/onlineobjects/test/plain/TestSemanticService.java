@@ -2,6 +2,7 @@ package dk.in2isoft.onlineobjects.test.plain;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -9,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Locale;
+import java.util.stream.Stream;
 
 import opennlp.tools.util.Span;
 
@@ -20,11 +22,11 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import dk.in2isoft.commons.lang.Strings;
+import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
+import dk.in2isoft.onlineobjects.services.LanguageService;
 import dk.in2isoft.onlineobjects.services.SemanticService;
 import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
-import dk.in2isoft.onlineobjects.util.semantics.Danish;
-import dk.in2isoft.onlineobjects.util.semantics.Language;
 
 public class TestSemanticService extends AbstractSpringTestCase {
 	
@@ -32,6 +34,9 @@ public class TestSemanticService extends AbstractSpringTestCase {
 	
 	@Autowired
 	private SemanticService semanticService;
+
+	@Autowired
+	private LanguageService languageService;
 	
 	@Test
 	public void testGetWords() throws EndUserException, FileNotFoundException, IOException {
@@ -51,7 +56,7 @@ public class TestSemanticService extends AbstractSpringTestCase {
 		
 		assertArrayEquals(new String[] {"Æblet","på","øen","Åen","ændrer","søen","Østers","får","ællinger"},semanticService.getWords("Æblet på øen. Åen ændrer søen. Østers får ællinger."));
 
-		String text = IOUtils.toString(new FileReader(getTestFile("loremipsum.txt")));
+		String text = getTestFileAsString("loremipsum.txt");
 		String[] words = semanticService.getWords(text);
 		assertEquals(69, words.length);
 		String[] uniqueWords = semanticService.getUniqueWords(words);
@@ -61,7 +66,96 @@ public class TestSemanticService extends AbstractSpringTestCase {
 	}
 
 	@Test
-	public void testAbbreviations() throws EndUserException, FileNotFoundException, IOException {
+	public void testIsWord() throws Exception {
+		assertFalse(semanticService.isWordToken(null));
+		assertFalse(semanticService.isWordToken(""));
+		assertFalse(semanticService.isWordToken("."));
+		assertFalse(semanticService.isWordToken(","));
+		assertFalse(semanticService.isWordToken(":"));
+
+		assertTrue(semanticService.isWordToken("abe"));
+		assertTrue(semanticService.isWordToken("Abe"));
+		assertTrue(semanticService.isWordToken("Abe."));
+	}
+
+	@Test
+	public void testStripQuotes() throws Exception {
+		assertEquals(null,semanticService.stripQuotes(null));
+		assertEquals("",semanticService.stripQuotes(""));
+		assertEquals("Abe",semanticService.stripQuotes("Abe"));
+		assertEquals("Abe",semanticService.stripQuotes("'Abe'"));
+		assertEquals("Abe",semanticService.stripQuotes("«Abe»'"));
+		assertEquals("Abe",semanticService.stripQuotes("’Abe’"));
+		assertEquals("Abe",semanticService.stripQuotes("(Abe)"));
+		assertEquals("Abe",semanticService.stripQuotes("--Abe))"));
+		assertEquals("Abe",semanticService.stripQuotes("Abe.."));
+		assertEquals("maximalism",semanticService.stripQuotes("“maximalism”"));
+		
+		assertEquals("U.S.A.",semanticService.stripQuotes("U.S.A."));
+	}
+	@Test
+	public void testGetNaturalWords() throws Exception {
+		{
+			String text = getTestFileAsString("texts/australien.da.txt");
+			Locale locale = languageService.getLocale(text);
+			assertEquals("da",locale.getLanguage());
+			String[] wordTokens = semanticService.getNaturalWords(text, locale);
+			log.info(Strings.concatWords(wordTokens));
+		}
+		{
+			String text = getTestFileAsString("texts/chavez.da.txt");
+			Locale locale = languageService.getLocale(text);
+			assertEquals("da",locale.getLanguage());
+			String[] wordTokens = semanticService.getNaturalWords(text, locale);
+			log.info(Strings.concatWords(wordTokens));
+		}
+		{
+			String text = getTestFileAsString("texts/chavez.da.txt");
+			Locale locale = languageService.getLocale(text);
+			assertEquals("da",locale.getLanguage());
+			String[] wordTokens = semanticService.getTokensAsString(text, locale);
+			log.info(Strings.concatWords(wordTokens));
+		}
+		{
+			String html = getTestFileAsString("articles/the-characteristics-of-minimalism-in-web-design-nngroup-com.html");
+			HTMLDocument doc = new HTMLDocument(html);
+			String text = doc.getExtractedContents();
+			Locale locale = languageService.getLocale(text);
+			assertEquals("en",locale.getLanguage());
+			String[] naturalWords = semanticService.getNaturalWords(text, locale);
+			log.info(Strings.concatWords(naturalWords));
+		}
+	}
+
+	@Test
+	public void testIsNaturalWord() throws EndUserException, FileNotFoundException, IOException {
+		assertFalse(semanticService.isRegularWord(null));
+		assertFalse(semanticService.isRegularWord(""));
+		assertFalse(semanticService.isRegularWord(" "));
+		assertFalse(semanticService.isRegularWord("1"));
+		assertFalse(semanticService.isRegularWord("1.5"));
+		assertFalse(semanticService.isRegularWord("1:5"));
+		assertFalse(semanticService.isRegularWord("15/4/1980"));
+		assertFalse(semanticService.isRegularWord("1,4"));
+		assertFalse(semanticService.isRegularWord("192.168.1.14"));
+		assertFalse(semanticService.isRegularWord("45,-"));
+		assertFalse(semanticService.isRegularWord("54:26:96:da:e2:95"));
+		assertFalse(semanticService.isRegularWord("jonasmunk@mac.com"));
+
+		assertFalse(semanticService.isRegularWord("15m"));
+		assertFalse(semanticService.isRegularWord("15hz"));
+		assertFalse(semanticService.isRegularWord("15mm"));
+		assertFalse(semanticService.isRegularWord("15lbs"));
+		assertFalse(semanticService.isRegularWord("15th"));
+		assertFalse(semanticService.isRegularWord("21st"));
+
+		assertTrue(semanticService.isRegularWord("Ape"));
+		assertTrue(semanticService.isRegularWord("I"));
+		assertTrue(semanticService.isRegularWord("100-dollar-bill"));
+	}
+
+	@Test
+	public void testIsAbbreviation() throws EndUserException, FileNotFoundException, IOException {
 		assertTrue(semanticService.isAbbreviation("BC"));
 		assertTrue(semanticService.isAbbreviation("NATO"));
 		assertTrue(semanticService.isAbbreviation("FN"));
@@ -74,6 +168,16 @@ public class TestSemanticService extends AbstractSpringTestCase {
 			String[] sentences = semanticService.getSentences(text, Locale.ENGLISH);
 			Assert.assertTrue(sentences.length==2);
 			logSentences(sentences);
+		}
+		{
+			String text = "Just as flat design is a reaction to skeuomorphism, minimalism is a reaction to maximalism. In both cases, we strongly advise a balanced approach. A minimalist design strategy can be a powerful tool, but only when it’s framed by the needs of your users—minimalism for minimalism’s sake alone doesn’t help users.";
+			Locale locale = Locale.ENGLISH;
+			String[] sentences = semanticService.getSentences(text, locale);
+			String[] expected = {"Just as flat design is a reaction to skeuomorphism, minimalism is a reaction to maximalism.",
+					"In both cases, we strongly advise a balanced approach.",
+					"A minimalist design strategy can be a powerful tool, but only when it’s framed by the needs of your users—minimalism for minimalism’s sake alone doesn’t help users."
+					};
+			Assert.assertArrayEquals(expected, sentences);
 		}
 		{
 			String[] sentences = getSentences(getTestFile("texts/obama_drone.en.txt"), new Locale("en"));

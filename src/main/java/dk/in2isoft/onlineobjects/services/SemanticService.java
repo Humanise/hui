@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import opennlp.tools.postag.POSModel;
 import opennlp.tools.postag.POSTaggerME;
@@ -39,15 +41,32 @@ public class SemanticService {
 	
 	public static final String WORD_EXPRESSION = "[0-9a-zA-Z\u0027\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF\\-\u02BC\u2019]+";
 
+	public static final String QUOTES = "'\"«»’[]()-" +
+		Strings.LEFT_DOUBLE_QUOTATION_MARK +
+		Strings.RIGHT_DOUBLE_QUOTATION_MARK +
+
+		Strings.LEFT_SINGLE_QUOTATION_MARK +
+		Strings.RIGHT_SINGLE_QUOTATION_MARK +
+		Strings.SINGLE_HIGH_REVERSED_9_QUOTATION_MARK +
+		Strings.SINGLE_LOW_9_QUOTATION_MARK +
+		Strings.DOUBLE_LOW_9_QUOTATION_MARK;
+
+	
 	private static final Set<String> PUNCTUATION = Sets.newHashSet(".",";",":",",","-","–");
+	
+	private static final Pattern NON_WORD_PATTERN = Pattern.compile("[^\\p{L}\\p{Lu}0-9]+");
+	private static final Pattern NUMBER_CODE_PATTERN = Pattern.compile("[^\\p{L}\\p{Lu}]+");
+	private static final Pattern MAC_PATTERN = Pattern.compile("^[a-zA-Z0-9]{2}:[a-zA-Z0-9]{2}:[a-zA-Z0-9]{2}:[a-zA-Z0-9]{2}:[a-zA-Z0-9]{2}:[a-zA-Z0-9]{2}$");
 	
 	private ConfigurationService configurationService;
 
 	private static Pattern wordPattern = Pattern.compile(WORD_EXPRESSION);
 	
-	private static Pattern abbrPattern = Pattern.compile("[A-Z]+");
+	private static Pattern ABBREVIATION_PATTERN = Pattern.compile("[A-Z]+");
 	
 	private static final Logger log = Logger.getLogger(SemanticService.class);
+
+	private static final Pattern NUMBER_WITH_UNIT_PATTERN = Pattern.compile("[0-9]+[A-Za-z]+");
 
 	public String[] getWords(String text, Language language) {
 		List<String> list = Lists.newArrayList();
@@ -71,12 +90,47 @@ public class SemanticService {
 	}
 	
 	public boolean isAbbreviation(String word) {
-		return abbrPattern.matcher(word).matches();
+		return ABBREVIATION_PATTERN.matcher(word).matches();
 	}
 	
-	public String[] getNaturalWords(String text) {
-		String[] words = StringUtils.splitPreserveAllTokens(text, " ");
-		return words;
+	public boolean isNumberWithUnit(String word) {
+		return NUMBER_WITH_UNIT_PATTERN.matcher(word).matches();
+	}
+
+	/**
+	 * A regular word is an "old school" word - not a number, date, duration, length, email, ip-address etc.
+	 * I.e. a "non-technical" or cryptic word.
+	 * @param text
+	 * @return
+	 */
+	public boolean isRegularWord(String text) {
+		return Strings.isNotBlank(text) && !NUMBER_CODE_PATTERN.matcher(text).matches() && !isMacAddress(text) && !text.contains("@") && !isNumberWithUnit(text);
+	}
+	
+	public boolean isMacAddress(String text) {
+		return text!=null && text.length()==17 && MAC_PATTERN.matcher(text).matches();
+	}
+	
+	/**
+	 * Checks that a string is not pure punctuation etc.
+	 * @param str
+	 * @return
+	 */
+	public boolean isWordToken(String str) {
+		if (str==null || str.length()==0) {
+			return false;
+		}
+		return !NON_WORD_PATTERN.matcher(str).matches();
+	}
+	
+	public String stripQuotes(String str) {
+		if (str==null) {
+			return null;
+		}
+		if (str.endsWith("..") || str.startsWith(".")) {
+			str = StringUtils.strip(str, ".");
+		}
+		return StringUtils.strip(str, QUOTES);
 	}
 	
 	public String[] getWords(String text) {
@@ -89,6 +143,14 @@ public class SemanticService {
 			if (!list.contains(word)) {
 				list.add(word);
 			}
+		}
+		return list.toArray(new String[]{});
+	}
+
+	public String[] getUniqueWordsLowercased(String[] words) {
+		Set<String> list = Sets.newHashSet();
+		for (String word : words) {
+			list.add(word.toLowerCase());
 		}
 		return list.toArray(new String[]{});
 	}
@@ -323,14 +385,6 @@ public class SemanticService {
 		}
 		return null;
 	}
-	
-	
-	
-	// Wiring...
-	
-	public void setConfigurationService(ConfigurationService configurationService) {
-		this.configurationService = configurationService;
-	}
 
 	public String[] getLines(String text) {
 		return text.split("\r?\n|\r");
@@ -348,5 +402,25 @@ public class SemanticService {
 			}
 		}
 		return lines;
+	}
+
+	public String[] getNaturalWords(String text, Locale locale) {
+		String[] tokens = getTokensAsString(text, locale);
+		List<String> list = Arrays.asList(tokens);
+		List<String> array = list.stream().
+				filter(str -> isWordToken(str)).
+				map(str -> stripQuotes(str)).
+				filter(str -> isRegularWord(str)).
+				collect(Collectors.toList());
+
+		return array.toArray(new String[] {});
+	}
+	
+	
+	
+	// Wiring...
+	
+	public void setConfigurationService(ConfigurationService configurationService) {
+		this.configurationService = configurationService;
 	}
 }

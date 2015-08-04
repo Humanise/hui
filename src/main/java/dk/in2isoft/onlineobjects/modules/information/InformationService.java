@@ -1,12 +1,9 @@
 package dk.in2isoft.onlineobjects.modules.information;
 
-import java.net.URI;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
-import org.apache.commons.httpclient.URIException;
-import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -38,7 +35,6 @@ import dk.in2isoft.onlineobjects.modules.surveillance.SurveillanceService;
 import dk.in2isoft.onlineobjects.services.FeedService;
 import dk.in2isoft.onlineobjects.services.LanguageService;
 import dk.in2isoft.onlineobjects.services.SemanticService;
-import dk.in2isoft.onlineobjects.util.ValidationUtil;
 
 public class InformationService {
 
@@ -101,7 +97,6 @@ public class InformationService {
 				}
 				String contents = doc.getExtractedContents();
 				
-				
 				InternetAddress internetAddress = new InternetAddress();
 				internetAddress.setAddress(link);
 				internetAddress.setName(doc.getTitle());
@@ -111,32 +106,17 @@ public class InformationService {
 				if (Strings.isBlank(contents)) {
 					status.warn("No content: "+link);
 				} else {
-				
-					String[] allWords = semanticService.getWords(contents);
-					semanticService.lowercaseWords(allWords);
-					List<String> uniqueWords = Lists.newArrayList(semanticService.getUniqueWords(allWords));
+					Locale locale = languageService.getLocale(contents);
 					
-					
-					// Ignore malformed words
-					String[] chars = {"'","-","’"};
-					
-					for (Iterator<String> i = uniqueWords.iterator(); i.hasNext();) {
-						String string = i.next();
-						for (String symbol : chars) {
-							if (string.startsWith(symbol) || string.endsWith(symbol)) {
-								i.remove();
-								break;
-							}						
-						}
-					}
-					
+					String[] allWords = semanticService.getNaturalWords(contents, locale);
+					List<String> uniqueWords = Lists.newArrayList(semanticService.getUniqueWordsLowercased(allWords));
+										
 					
 					WordListPerspectiveQuery perspectiveQuery = new WordListPerspectiveQuery().withWords(uniqueWords).orderByText();
 					List<WordListPerspective> list = modelService.list(perspectiveQuery);
 					Set<String> found = Sets.newHashSet();
 					for (WordListPerspective perspective : list) {
-						String foundLower = perspective.getText().toLowerCase();
-						found.add(foundLower);
+						found.add(perspective.getText().toLowerCase());
 					}
 					int wordsCreated = 0;
 					Counter<String> languages = languageService.countLanguages(list);

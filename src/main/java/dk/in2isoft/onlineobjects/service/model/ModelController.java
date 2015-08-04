@@ -126,7 +126,7 @@ public class ModelController extends ModelControllerBase {
 		String language = request.getString("language");
 		String category = request.getString("category");
 		
-		Word word = languageService.createWord(language, category, text, request.getSession());
+		Word word = wordService.createWord(language, category, text, request.getSession());
 		request.sendObject(word);
 	}
 

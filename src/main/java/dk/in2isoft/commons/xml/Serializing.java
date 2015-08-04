@@ -16,8 +16,11 @@ import nu.xom.Document;
 import nu.xom.converters.DOMConverter;
 
 import org.apache.xerces.dom.DOMImplementationImpl;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSException;
 import org.w3c.dom.ls.LSSerializer;
 
 public class Serializing {
@@ -61,5 +64,28 @@ public class Serializing {
 		} catch (Exception e) {
 			return null;
 		}
+	}
+
+	public static String toString(NodeList nodes) {
+		StringBuilder str = new StringBuilder();
+			DOMImplementationRegistry reg;
+			try {
+				reg = DOMImplementationRegistry.newInstance();
+				DOMImplementationLS impl = (DOMImplementationLS) reg.getDOMImplementation("LS");
+				LSSerializer serializer = impl.createLSSerializer();
+				for (int i = 0; i < nodes.getLength(); i++) {
+					Node node = nodes.item(i);
+					try {
+						str.append(serializer.writeToString(node));
+					} catch (LSException e) {
+						//TODO: It looks like text nodes cannot be serialized
+						//str.append("<!-- "+node.getNodeValue()+" : "+e.getMessage()+" -->");
+					}
+				}
+			} catch (ClassNotFoundException | InstantiationException
+					| IllegalAccessException | ClassCastException e) {
+				// TODO Auto-generated catch block
+			}
+			return str.toString().replaceFirst("<\\?[^\\?]+\\?>[\n ]*", "");
 	}
 }

@@ -8,11 +8,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
+import org.jsoup.helper.W3CDom;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import dk.in2isoft.commons.parsing.HTMLDocument;
 
 public class Readability {
 
@@ -120,12 +123,18 @@ public class Readability {
         return mDocument.html();
     }
 
-    public final String getBody() {
+    public final String getBodyHtml() {
     	Element body = mDocument.body();
     	if (body!=null) {
     		return body.html();
     	}
         return null;
+    }
+
+    public final org.w3c.dom.Document getDomDocument() {
+    	
+    	HTMLDocument htmlDocument = new HTMLDocument(mDocument.html());
+		return htmlDocument.getDOMDocument();
     }
 
     /**

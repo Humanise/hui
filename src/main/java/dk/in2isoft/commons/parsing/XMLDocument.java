@@ -29,6 +29,9 @@ public class XMLDocument extends TextDocument {
             nu.xom.Document xom = getXOMDocument();
             if (xom!=null) {
             	DOMDocument = DOMConverter.convert(xom,DOMImplementationImpl.getDOMImplementation());
+            	if (DOMDocument==null) {
+            		log.info(xom.toXML());
+            	}
             }
         }
 	    return DOMDocument;

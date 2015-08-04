@@ -30,13 +30,13 @@ import dk.in2isoft.onlineobjects.modules.language.WordImpression.WordRelation;
 import dk.in2isoft.onlineobjects.modules.language.WordImpression.WordRelationGroup;
 import dk.in2isoft.onlineobjects.modules.language.WordRelationRow;
 import dk.in2isoft.onlineobjects.modules.language.WordRelationsQuery;
-import dk.in2isoft.onlineobjects.services.LanguageService;
+import dk.in2isoft.onlineobjects.modules.language.WordService;
 import dk.in2isoft.onlineobjects.util.Messages;
 
 public class WordsWordView extends AbstractView implements InitializingBean {
 
 	private ModelService modelService;
-	private LanguageService languageService;
+	private WordService wordService;
 	
 	private String text;
 	private List<WordImpression> words;
@@ -55,7 +55,7 @@ public class WordsWordView extends AbstractView implements InitializingBean {
 		Locale locale = getRequest().getLocale();
 		text = getWord(path);
 		if (text!=null) {
-			words = languageService.getImpressions(Query.of(Word.class).withFieldLowercase(Word.TEXT_FIELD, text));
+			words = wordService.getImpressions(Query.of(Word.class).withFieldLowercase(Word.TEXT_FIELD, text));
 			for (WordImpression impression : words) {
 				Multimap<String, WordRelation> map = getRelationsNew(impression);
 				List<WordRelationGroup> relationsList = Lists.newArrayList();
@@ -241,12 +241,14 @@ public class WordsWordView extends AbstractView implements InitializingBean {
 	public Language getLanguage() {
 		return language;
 	}
+	
+	// Wiring...
 
 	public void setModelService(ModelService modelService) {
 		this.modelService = modelService;
 	}
 	
-	public void setLanguageService(LanguageService languageService) {
-		this.languageService = languageService;
+	public void setWordService(WordService wordService) {
+		this.wordService = wordService;
 	}
 }

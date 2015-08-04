@@ -2,9 +2,11 @@ package dk.in2isoft.onlineobjects.test;
 
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -34,6 +36,13 @@ public abstract class AbstractSpringTestCase extends AbstractJUnit4SpringContext
 	protected File getTestFile(String name) throws IOException {
 		File file = context.getResource(name).getFile();
 		return file;
+	}
+	
+	protected String getTestFileAsString(String name) throws IOException {
+		File file = getTestFile(name);
+		try (FileReader reader = new FileReader(file)) {
+			return IOUtils.toString(reader);
+		}
 	}
 
 	protected Privileged getPublicUser() {
@@ -66,6 +75,10 @@ public abstract class AbstractSpringTestCase extends AbstractJUnit4SpringContext
 
 	protected void print(String string, Object object) {
 		System.out.println(string+": "+object);
+	}
+
+	protected File getResourcesDir() {
+		return new File(getProperty("test.resources.dir"));
 	}
 
 	protected String getProperty(String name) {

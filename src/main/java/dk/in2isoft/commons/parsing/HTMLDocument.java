@@ -3,6 +3,7 @@ package dk.in2isoft.commons.parsing;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import nu.xom.Attribute;
 import nu.xom.Element;
@@ -19,6 +20,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import de.l3s.boilerpipe.BoilerpipeExtractor;
 import de.l3s.boilerpipe.BoilerpipeProcessingException;
@@ -28,6 +30,7 @@ import de.l3s.boilerpipe.extractors.CommonExtractors;
 import de.l3s.boilerpipe.sax.BoilerpipeSAXInput;
 import de.l3s.boilerpipe.sax.HTMLHighlighter;
 import dk.in2isoft.commons.lang.Strings;
+import dk.in2isoft.commons.xml.Serializing;
 import dk.in2isoft.onlineobjects.modules.information.Readability;
 
 public class HTMLDocument extends XMLDocument {
@@ -124,7 +127,9 @@ public class HTMLDocument extends XMLDocument {
 		String rawString = getRawString();
 		Readability r = new Readability(rawString);
 		r.init();
-		return r.getBody();
+		Document dom = r.getDomDocument();
+		log.info(Serializing.toString(dom));
+		return cleanAndGetBody(dom);
     }
     
     public String getExtractedMarkup() {
@@ -151,27 +156,9 @@ public class HTMLDocument extends XMLDocument {
 			
 			String extracted = highlighted.process(doc, is);
 			HTMLDocument inner = new HTMLDocument(extracted);
-			nu.xom.Document xomDoc = inner.getXOMDocument();
+			Document domDoc = inner.getDOMDocument();
 
-			XPathContext context = new XPathContext("html", xomDoc.getRootElement().getNamespaceURI());
-
-			removeTags(xomDoc, "script", context);
-			removeTags(xomDoc, "style", context);
-			removeTags(xomDoc, "link", context);
-			removeTags(xomDoc, "iframe", context);
-			
-			removeAttributes(xomDoc, "style", context);
-			removeAttributes(xomDoc, "class", context);
-			removeAttributes(xomDoc, "id", context);
-			
-			StringBuilder body = new StringBuilder();
-			Nodes query = xomDoc.getDocument().query("//html:body", context);
-			for (int i = 0; i < query.size(); i++) {
-				nu.xom.Node node = query.get(i);
-				body.append(node.toXML());
-			}
-			
-			return body.toString();
+			return cleanAndGetBody(domDoc);
 		} catch (IllegalArgumentException e) {
 			// TODO May fail at de.l3s.boilerpipe.sax.HTMLHighlighter.process(HTMLHighlighter.java:126)
 			// java.lang.IllegalArgumentException: Illegal group reference
@@ -180,6 +167,51 @@ public class HTMLDocument extends XMLDocument {
 		}
 		return "";
     }
+
+	private String cleanAndGetBody(Document doc) {
+		//clean(doc);
+		NodeList nodes = doc.getElementsByTagName("*");
+		int length = nodes.getLength();
+		Set<Node> nodesToRemove = Sets.newHashSet();
+		for (int i = 0; i < length; i++) {
+			Node node = nodes.item(i);
+			
+			if (node.getNodeName().equalsIgnoreCase("div")) {
+				nodesToRemove.add(node);
+			}
+			
+			NamedNodeMap attributes = node.getAttributes();
+			Set<String> atts = Sets.newHashSet();
+			for (int j = 0; j < attributes.getLength(); j++) {
+				atts.add(attributes.item(j).getNodeName());
+			}
+			for (String string : atts) {
+				attributes.removeNamedItem(string);
+			}
+		}
+		
+		
+		NodeList bodies = doc.getElementsByTagName("body");
+		if (bodies.getLength()>0) {
+			NodeList childNodes = bodies.item(0).getChildNodes();
+			return Serializing.toString(childNodes);
+		} else {
+			log.info(Serializing.toString(doc));
+		}
+		return null;
+	}
+
+	private void clean(nu.xom.Document xomDoc) {
+		XPathContext context = new XPathContext("html", xomDoc.getRootElement().getNamespaceURI());
+		removeTags(xomDoc, "script", context);
+		removeTags(xomDoc, "style", context);
+		removeTags(xomDoc, "link", context);
+		removeTags(xomDoc, "iframe", context);
+		
+		removeAttributes(xomDoc, "style", context);
+		removeAttributes(xomDoc, "class", context);
+		removeAttributes(xomDoc, "id", context);
+	}
 	
 	private void removeAttributes(nu.xom.Document doc, String name, XPathContext context) {
 		Nodes nodes = doc.getRootElement().query("//html:*[@"+name+"]",context );
