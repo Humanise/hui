@@ -65,7 +65,6 @@ public class TestHTMLDocument extends AbstractSpringTestCase {
 		for (File file : htmlFiles) {
 			HTMLDocument doc = htmlService.getDocumentSilently(file, Strings.UTF8);
 			Assert.assertNotNull(doc);
-			log.info(doc.getTitle());
 			{
 				File out = new File(folder,file.getName()+".extracted");
 				try (FileWriter w = new FileWriter(out)) {

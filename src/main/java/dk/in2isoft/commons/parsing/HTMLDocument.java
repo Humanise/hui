@@ -13,13 +13,16 @@ import nu.xom.XPathContext;
 
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 import de.l3s.boilerpipe.BoilerpipeExtractor;
@@ -169,14 +172,17 @@ public class HTMLDocument extends XMLDocument {
     }
 
 	private String cleanAndGetBody(Document doc) {
-		//clean(doc);
 		NodeList nodes = doc.getElementsByTagName("*");
 		int length = nodes.getLength();
 		Set<Node> nodesToRemove = Sets.newHashSet();
+		Multimap<String, String> ats = HashMultimap.create();
+		ats.put("a", "href");
+		ats.put("img", "src");
+		ats.put("img", "title");
 		for (int i = 0; i < length; i++) {
 			Node node = nodes.item(i);
-			
-			if (node.getNodeName().equalsIgnoreCase("div")) {
+			String nodeName = node.getNodeName().toLowerCase();
+			if (nodeName.equals("div")) {
 				nodesToRemove.add(node);
 			}
 			
@@ -186,10 +192,23 @@ public class HTMLDocument extends XMLDocument {
 				atts.add(attributes.item(j).getNodeName());
 			}
 			for (String string : atts) {
-				attributes.removeNamedItem(string);
+				if (!ats.containsEntry(nodeName, string)) {
+					attributes.removeNamedItem(string);
+				}
 			}
 		}
 		
+		for (Node node : nodesToRemove) {
+			Node parent = node.getParentNode();
+			if (parent!=null) {
+				while (node.getFirstChild()!=null) {
+					Node child = node.getFirstChild();
+					node.removeChild(child);
+					parent.insertBefore(child, node);
+				}
+				parent.removeChild(node);
+			}
+		}
 		
 		NodeList bodies = doc.getElementsByTagName("body");
 		if (bodies.getLength()>0) {
@@ -199,37 +218,6 @@ public class HTMLDocument extends XMLDocument {
 			log.info(Serializing.toString(doc));
 		}
 		return null;
-	}
-
-	private void clean(nu.xom.Document xomDoc) {
-		XPathContext context = new XPathContext("html", xomDoc.getRootElement().getNamespaceURI());
-		removeTags(xomDoc, "script", context);
-		removeTags(xomDoc, "style", context);
-		removeTags(xomDoc, "link", context);
-		removeTags(xomDoc, "iframe", context);
-		
-		removeAttributes(xomDoc, "style", context);
-		removeAttributes(xomDoc, "class", context);
-		removeAttributes(xomDoc, "id", context);
-	}
-	
-	private void removeAttributes(nu.xom.Document doc, String name, XPathContext context) {
-		Nodes nodes = doc.getRootElement().query("//html:*[@"+name+"]",context );
-		for (int i = 0; i < nodes.size(); i++) {
-			Element node = (Element) nodes.get(i);
-			Attribute attribute = node.getAttribute(name);
-			if (attribute!=null) {
-				node.removeAttribute(attribute);
-			}
-		}
-	}
-
-	private void removeTags(nu.xom.Document doc, String name, XPathContext context) {
-		Nodes nodes = doc.getRootElement().query("//html:"+name,context );
-		for (int i = 0; i < nodes.size(); i++) {
-			nu.xom.Node node = nodes.get(i);
-			node.getParent().removeChild(node);
-		}
 	}
     
     private void traverse(nu.xom.Node parent, StringBuffer data) {

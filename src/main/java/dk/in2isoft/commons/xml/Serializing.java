@@ -15,9 +15,14 @@ import javax.xml.transform.stream.StreamResult;
 import nu.xom.Document;
 import nu.xom.converters.DOMConverter;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.xerces.dom.DOMImplementationImpl;
+import org.w3c.dom.Comment;
+import org.w3c.dom.DOMConfiguration;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSException;
@@ -68,24 +73,33 @@ public class Serializing {
 
 	public static String toString(NodeList nodes) {
 		StringBuilder str = new StringBuilder();
-			DOMImplementationRegistry reg;
-			try {
-				reg = DOMImplementationRegistry.newInstance();
-				DOMImplementationLS impl = (DOMImplementationLS) reg.getDOMImplementation("LS");
-				LSSerializer serializer = impl.createLSSerializer();
-				for (int i = 0; i < nodes.getLength(); i++) {
-					Node node = nodes.item(i);
-					try {
-						str.append(serializer.writeToString(node));
-					} catch (LSException e) {
-						//TODO: It looks like text nodes cannot be serialized
-						//str.append("<!-- "+node.getNodeValue()+" : "+e.getMessage()+" -->");
+		DOMImplementationRegistry reg;
+		try {
+			reg = DOMImplementationRegistry.newInstance();
+			DOMImplementationLS impl = (DOMImplementationLS) reg.getDOMImplementation("LS");
+			LSSerializer serializer = impl.createLSSerializer();
+			DOMConfiguration config = serializer.getDomConfig();
+			config.setParameter("xml-declaration", false);
+			config.setParameter("namespaces", false);
+			for (int i = 0; i < nodes.getLength(); i++) {
+				Node node = nodes.item(i);
+				try {
+					if (node instanceof Element) {
+						str.append(serializer.writeToString(node));						
 					}
+					if (node instanceof Text) {
+						str.append(StringEscapeUtils.escapeXml(node.getNodeValue()));
+					}
+				} catch (LSException e) {
+					//e.printStackTrace();
+					//TODO: It looks like text nodes cannot be serialized
+					//str.append("<!-- "+node.getClass()+" : "+node.getNodeValue()+" : "+e.getMessage()+" -->");
 				}
-			} catch (ClassNotFoundException | InstantiationException
-					| IllegalAccessException | ClassCastException e) {
-				// TODO Auto-generated catch block
 			}
-			return str.toString().replaceFirst("<\\?[^\\?]+\\?>[\n ]*", "");
+		} catch (ClassNotFoundException | InstantiationException
+				| IllegalAccessException | ClassCastException e) {
+			// TODO Auto-generated catch block
+		}
+		return str.toString();//.replaceAll("<\\?xml[^\\?]+\\?>[\n ]*", "");
 	}
 }
