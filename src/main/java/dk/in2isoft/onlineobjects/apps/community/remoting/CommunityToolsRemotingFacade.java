@@ -6,6 +6,7 @@ import dk.in2isoft.in2igui.data.ListDataRow;
 import dk.in2isoft.in2igui.data.ListObjects;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
+import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
 import dk.in2isoft.onlineobjects.model.RemoteAccount;
 import dk.in2isoft.onlineobjects.ui.AbstractRemotingFacade;
 
@@ -27,8 +28,11 @@ public class CommunityToolsRemotingFacade extends AbstractRemotingFacade {
 	
 	public void saveAccount(RemoteAccount dummy) throws EndUserException {
 		RemoteAccount account;
-		if (dummy.getId()>0) {
+		if (dummy.getId() > 0) {
 			account = modelService.get(RemoteAccount.class, dummy.getId(), getRequest().getSession());
+			if (account==null) {
+				throw new IllegalRequestException("Not found");
+			}
 		} else {
 			account = new RemoteAccount();			
 		}

@@ -36,6 +36,7 @@ import dk.in2isoft.onlineobjects.core.Results;
 import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.UserSession;
+import dk.in2isoft.onlineobjects.core.exceptions.ContentNotFoundException;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.core.exceptions.ExplodingClusterFuckException;
 import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
@@ -427,7 +428,7 @@ public class ReaderController extends ReaderControllerBase {
 	}
 
 	@Path
-	public ArticlePerspective loadArticle(Request request) throws IOException, ModelException, SecurityException, IllegalRequestException, ExplodingClusterFuckException {
+	public ArticlePerspective loadArticle(Request request) throws IOException, ModelException, SecurityException, IllegalRequestException, ExplodingClusterFuckException, ContentNotFoundException {
 		Long articleId = request.getLong("id",null);
 		Long statementId = request.getLong("statementId", null);
 		UserSession session = request.getSession();
@@ -438,13 +439,16 @@ public class ReaderController extends ReaderControllerBase {
 		if (articleId==null) {
 			Query<InternetAddress> query = Query.after(InternetAddress.class).withChild(statementId, Relation.KIND_STRUCTURE_CONTAINS);
 			InternetAddress address = modelService.search(query).getFirst();
+			if (address==null) {
+				throw new ContentNotFoundException();
+			}
 			articleId = address.getId();
 		}
 		return articleBuilder.getArticlePerspective(articleId, session);
 	}
 
 	@Path
-	public ArticlePerspective addQuote(Request request) throws IOException, ModelException, SecurityException, IllegalRequestException, ExplodingClusterFuckException {
+	public ArticlePerspective addQuote(Request request) throws IOException, ModelException, SecurityException, IllegalRequestException, ExplodingClusterFuckException, ContentNotFoundException {
 		Long id = request.getLong("id");
 		String text = request.getString("text");
 		if (Strings.isNotBlank(text)) {
@@ -524,11 +528,14 @@ public class ReaderController extends ReaderControllerBase {
 	}
 
 	@Path
-	public void removeTag(Request request) throws ModelException, SecurityException {
+	public void removeTag(Request request) throws ModelException, SecurityException, IllegalRequestException {
 		Long internetAddressId = request.getLong("internetAddressId");
 		String tag = request.getString("tag");
 		UserSession session = request.getSession();
 		InternetAddress internetAddress = modelService.get(InternetAddress.class, internetAddressId, session);
+		if (internetAddress==null) {
+			throw new IllegalRequestException("Not found");
+		}
 		Collection<Property> properties = internetAddress.getProperties();
 		for (Iterator<Property> i = properties.iterator(); i.hasNext();) {
 			Property property = i.next();

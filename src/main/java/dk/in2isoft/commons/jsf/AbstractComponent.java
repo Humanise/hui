@@ -9,6 +9,8 @@ import javax.faces.component.UIComponent;
 import javax.faces.component.UIComponentBase;
 import javax.faces.context.FacesContext;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -95,7 +97,7 @@ public abstract class AbstractComponent extends UIComponentBase {
 		getChildren().add(child);
 	}
 	
-	public <T> T getBinding(String name) {
+	public <T> @Nullable T getBinding(String name) {
 		ValueExpression valueExpression = this.getValueExpression(name);
 		if (valueExpression!=null) {
 			return Code.cast(valueExpression.getValue(FacesContext.getCurrentInstance().getELContext()));
@@ -103,7 +105,7 @@ public abstract class AbstractComponent extends UIComponentBase {
 		return null;
 	};
 
-	public <T> T getBean(Class<?> cls) {
+	public <T> @Nullable T getBean(Class<?> cls) {
 		WebApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(Components.getRequest().getRequest().getSession().getServletContext());
 		Map<?,?> beansOfType = context.getBeansOfType(cls);
 		if (beansOfType.isEmpty()) {
@@ -117,11 +119,15 @@ public abstract class AbstractComponent extends UIComponentBase {
 		return new Messages(getClass());
 	}
 	
-	public <T> T getExpression(String name, T localValue, FacesContext context) {
+	public boolean getExpression(@NonNull String name, boolean localValue, FacesContext context) {
 		return Components.getExpressionValue(this, name, localValue, context);
 	};
 
-	public <T> T getExpression(String name, FacesContext context) {
+	public @Nullable <T> T getExpression(@NonNull String name, T localValue, FacesContext context) {
+		return Components.getExpressionValue(this, name, localValue, context);
+	};
+
+	public @Nullable <T> T getExpression(@NonNull String name, FacesContext context) {
 		return Components.getExpressionValue(this, name, null, context);
 	};
 

@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -34,11 +36,11 @@ public class Components {
 		return localValue;
 	}
 
-	public static <T> T  getExpressionValue(UIComponent component, String name, FacesContext context) {
+	public static <T> @Nullable T getExpressionValue(UIComponent component, String name, FacesContext context) {
 		return getExpressionValue(component, name, null, context);
 	}
 	
-	public static <T> T  getExpressionValue(UIComponent component, String name, T localValue, FacesContext context) {
+	public static <T> @Nullable T getExpressionValue(UIComponent component, @NonNull String name, @Nullable T localValue, FacesContext context) {
 
 		ValueExpression valueExpression = component.getValueExpression(name);
 		if (valueExpression != null) {
@@ -50,7 +52,19 @@ public class Components {
 		return localValue;
 	}
 
-	public static <T> T  getService(Class<T> service, FacesContext context) {
+	public static boolean getExpressionValue(@NonNull UIComponent component, @NonNull String name, boolean localValue, @NonNull FacesContext context) {
+
+		ValueExpression valueExpression = component.getValueExpression(name);
+		if (valueExpression != null) {
+			Object value = valueExpression.getValue(context.getELContext());
+			if (value != null) {
+				return Code.cast(value);
+			}
+		}
+		return localValue;
+	}
+
+	public static <T> @Nullable T getService(Class<T> service, FacesContext context) {
 		String simpleName = service.getSimpleName();
 		String name = simpleName.substring(0, 1).toLowerCase()+simpleName.substring(1);
 		ValueExpression valueExpression = context.getApplication().getExpressionFactory().createValueExpression(context.getELContext(),"#{"+name+"}",service);
@@ -75,7 +89,7 @@ public class Components {
 		return Request.get((HttpServletRequest) context.getRequest(), (HttpServletResponse) context.getResponse());
 	}
 	
-	public static <T> T getBean(Class<T> type) {
+	public static <T> @Nullable T getBean(Class<T> type) {
 		ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
 		WebApplicationContext webApplicationContext = WebApplicationContextUtils.getWebApplicationContext((ServletContext) context.getContext());
 		
@@ -86,7 +100,7 @@ public class Components {
 		return null;
 	}
 
-	public static <T> T getChild(UIComponent component, Class<T> type) {
+	public static <T> @Nullable T getChild(UIComponent component, Class<T> type) {
 		List<UIComponent> children = component.getChildren();
 		for (UIComponent child : children) {
 			if (child.getClass().isAssignableFrom(type)) {

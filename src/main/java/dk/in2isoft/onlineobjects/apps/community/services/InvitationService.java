@@ -67,7 +67,7 @@ public class InvitationService {
 		String url = "http://"+ configurationService.getBaseUrl() + "/invitation.html?code=" + invitation.getCode();
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("invited-name", person.getName());
-		parameters.put("inviter-name", inviterPerson.getFullName());
+		parameters.put("inviter-name", inviterPerson!=null ? inviterPerson.getFullName() : "");
 		parameters.put("inviter-url", inviterUrl);
 		parameters.put("invite-url", url);
 		parameters.put("base-url", configurationService.getBaseUrl());

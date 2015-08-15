@@ -215,9 +215,12 @@ public class PhotosController extends PhotosControllerBase {
 	}
 	
 	@Path
-	public void addImagesToGallery(Request request) throws SecurityException, ModelException, ContentNotFoundException {
+	public void addImagesToGallery(Request request) throws SecurityException, ModelException, ContentNotFoundException, IllegalRequestException {
 		UserSession session = request.getSession();
 		GalleryModificationRequest per = request.getObject("info", GalleryModificationRequest.class);
+		if (per==null) {
+			throw new IllegalRequestException("Malformed data");
+		}
 		ImageGallery gallery = modelService.getRequired(ImageGallery.class, per.getGalleryId(), session);
 		float position = getMaxImagePosition(gallery);
 		int num = 0;

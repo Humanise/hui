@@ -20,6 +20,8 @@ import nu.xom.ParsingException;
 import nu.xom.ValidityException;
 
 import org.apache.log4j.Logger;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -348,7 +350,7 @@ public class ModelService {
 
 	@SuppressWarnings("unchecked")
 	@Deprecated
-	public <T extends Entity> T get(Class<T> entityClass, Long id) throws ModelException {
+	public <T extends Entity> @Nullable T get(Class<T> entityClass, Long id) throws ModelException {
 		T entity = (T) getSession().get(entityClass, id);
 		if (entity != null) {
 			return entity;
@@ -357,7 +359,8 @@ public class ModelService {
 		}
 	}
 
-	public <T extends Entity> T getRequired(Class<T> entityClass, Long id, Privileged privileged) throws ModelException,ContentNotFoundException {
+	public <T extends Entity> @NonNull T getRequired(@NonNull Class<T> entityClass, @NonNull Long id, @NonNull Privileged privileged) throws ModelException,ContentNotFoundException {
+		@Nullable
 		T found = get(entityClass, id, privileged);
 		if (found==null) {
 			throw new ContentNotFoundException(entityClass, id);
@@ -365,7 +368,7 @@ public class ModelService {
 		return found;
 	}
 	
-	public <T extends Entity> T get(Class<T> entityClass, Long id, Privileged privileged) throws ModelException {
+	public <T extends Entity> @Nullable T get(@NonNull Class<T> entityClass, @NonNull Long id, @NonNull Privileged privileged) throws ModelException {
 		dk.in2isoft.onlineobjects.core.Query<T> query = dk.in2isoft.onlineobjects.core.Query.of(entityClass);
 		if (!privileged.isSuper()) {
 			query.withPrivileged(privileged,securityService.getPublicUser());
@@ -494,11 +497,11 @@ public class ModelService {
 		return list(q);
 	}
 
-	public <T extends Entity> T getParent(Entity entity, Class<T> classObj) throws ModelException {
+	public <T extends Entity> @Nullable T getParent(Entity entity, Class<T> classObj) throws ModelException {
 		return getParent(entity, null, classObj);
 	}
 
-	public <T extends Entity> T getParent(Entity entity, String kind, Class<T> classObj) throws ModelException {
+	public <T extends Entity> @Nullable T getParent(Entity entity, String kind, Class<T> classObj) throws ModelException {
 		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.of(classObj);
 		q.withChild(entity,kind).withPaging(0, 1);
 		List<T> supers = list(q);
@@ -509,11 +512,11 @@ public class ModelService {
 		}
 	}
 
-	public <T extends Entity> T getChild(Entity entity, Class<T> classObj) throws ModelException {
+	public @Nullable <T extends Entity> T getChild(Entity entity, @NonNull Class<T> classObj) throws ModelException {
 		return getChild(entity, null, classObj);
 	}
 
-	public <T extends Entity> T getChild(Entity entity, String kind, Class<T> classObj) throws ModelException {
+	public <T extends Entity> @Nullable T getChild(Entity entity, String kind, Class<T> classObj) throws ModelException {
 		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.of(classObj);
 		q.withParent(entity,kind).withPaging(0, 1);
 		List<T> supers = list(q);
@@ -715,7 +718,7 @@ public class ModelService {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> T getFirst(ItemQuery<T> query) {
+	public <T> @Nullable T getFirst(ItemQuery<T> query) {
 		Query q = query.createItemQuery(getSession());
 		q.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		Object result = q.uniqueResult();

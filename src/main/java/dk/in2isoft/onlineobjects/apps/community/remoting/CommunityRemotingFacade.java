@@ -142,9 +142,9 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 			row.put("code", invitation.getCode());
 			row.put("state", invitation.getState());
 			Person invited = (Person) modelService.getChild(invitation, Person.class);
-			row.put("person", invited.getName());
+			row.put("person", invited!=null ? invited.getName() : null);
 			EmailAddress email = (EmailAddress) modelService.getChild(invited, EmailAddress.class);
-			row.put("email", email.getAddress());
+			row.put("email", email!=null ? email.getAddress(): null);
 			invites.add(row);
 		}
 		return invites;
@@ -342,10 +342,13 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 		return info;
 	}
 	
-	public void saveInternetAddress(InternetAddressInfo info) throws ModelException, SecurityException {
+	public void saveInternetAddress(InternetAddressInfo info) throws ModelException, SecurityException, IllegalRequestException {
 		InternetAddress address;
 		if (info.getId()!=null) {
 			address = modelService.get(InternetAddress.class, info.getId(), getRequest().getSession());
+			if (address==null) {
+				throw new IllegalRequestException("Not found");
+			}
 		} else {
 			address = new InternetAddress();
 		}

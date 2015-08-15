@@ -7,6 +7,7 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 
 import org.apache.log4j.Logger;
+import org.eclipse.jdt.annotation.Nullable;
 
 import com.google.common.collect.Lists;
 
@@ -61,7 +62,7 @@ public class SessionService {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends SubSession> T  getSubSession(String id, Class<T> type) {
+	public <T extends SubSession> @Nullable T getSubSession(String id, Class<T> type) {
 		for (SubSession subSession : subSessions) {
 			if (subSession.getId().equals(id) && type.isAssignableFrom(subSession.getClass())) {
 				return (T) subSession;

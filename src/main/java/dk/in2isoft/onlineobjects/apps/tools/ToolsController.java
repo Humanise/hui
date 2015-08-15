@@ -150,11 +150,17 @@ public class ToolsController extends ToolsControllerBase {
 	}
 	
 	@Path
-	public void saveInternetAddress(Request request) throws ModelException, SecurityException {
+	public void saveInternetAddress(Request request) throws ModelException, SecurityException, IllegalRequestException {
 		InternetAddressInfo info = request.getObject("data", InternetAddressInfo.class);
+		if (info==null) {
+			throw new IllegalRequestException("Malformed data");
+		}
 		InternetAddress address;
 		if (info.getId()!=null) {
 			address = modelService.get(InternetAddress.class, info.getId(), request.getSession());
+			if (address==null) {
+				throw new IllegalRequestException("Not found");
+			}
 		} else {
 			address = new InternetAddress();
 		}

@@ -67,7 +67,9 @@ public class ReaderArticleBuilder {
 		StopWatch watch = new StopWatch();
 		watch.start();
 		InternetAddress address = modelService.get(InternetAddress.class, id, session);
-		Code.checkNotNull(address, "Not found");
+		if (address==null) {
+			throw new IllegalRequestException("Not found");
+		}
 
 		HTMLDocument document = getHTMLDocument(address, session);
 

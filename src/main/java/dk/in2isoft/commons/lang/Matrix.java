@@ -2,6 +2,8 @@ package dk.in2isoft.commons.lang;
 
 import java.util.List;
 
+import org.eclipse.jdt.annotation.Nullable;
+
 import com.google.common.collect.Lists;
 
 public class Matrix<X, Y, V> {
@@ -43,7 +45,7 @@ public class Matrix<X, Y, V> {
 		return list;
 	}
 	
-	public V getValue(X x,Y y) {
+	public @Nullable V getValue(X x,Y y) {
 		for (MatrixEntry<X,Y,V> entry : entries) {
 			if (entry.getX().equals(x) && entry.getY().equals(y)) {
 				return entry.getValue();
@@ -65,7 +67,9 @@ public class Matrix<X, Y, V> {
 		for (Y y : yList) {
 			sb.append(toCell(y.toString()));
 			for (X x : xList) {
-				sb.append(" | ").append(toCell(getValue(x, y).toString()));
+				@Nullable
+				V value = getValue(x, y);
+				sb.append(" | ").append(toCell(value==null ? "" : value.toString()));
 			}
 			sb.append("\n");
 		}

@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -451,7 +453,8 @@ public class Request {
 		response.getWriter().write(json);
 	}
 
-	public <T> T getObject(String name, Class<T> type) {
+	
+	@Nullable public <T> T getObject(String name, Class<@NonNull T> type) {
 		try {
 			Gson gson = new Gson();
 			return gson.fromJson(getString(name), type);

@@ -141,24 +141,28 @@ public class GalleryComponent extends AbstractComponent {
 		} else if (object instanceof ImageContainer) {
 			image = ((ImageContainer) object).getImage();
 		}
-		String url = getUrl(image,width,height);
 		out.startSpan("oo_gallery_photo");
-		if (removable) {
-			out.startSpan("oo_gallery_hover");
-			out.startVoidA("oo_gallery_remove").rel("remove").data(image.getId());
-			out.startSpan("oo_icon oo_icon_16 oo_icon_delete").endSpan();
+		if (image!=null) {
+			String url = getUrl(image,width,height);
+			if (removable) {
+				out.startSpan("oo_gallery_hover");
+				out.startVoidA("oo_gallery_remove").rel("remove").data(image.getId());
+				out.startSpan("oo_icon oo_icon_16 oo_icon_delete").endSpan();
+				out.endA();
+				out.endSpan();
+			}
+			out.startA().withHref(getHref(href,image));
+			ImageService imageService = getBean(ImageService.class);
+			if (imageService!=null) {
+				boolean valid = imageService.hasImageFile(image);
+				out.startImg();
+				if (valid) {
+					out.src(url);
+				}
+				out.alt(image.getName()).withStyle("width: "+width+"px; height: "+height+"px;").endImg();
+			}
 			out.endA();
-			out.endSpan();
 		}
-		out.startA().withHref(getHref(href,image));
-		ImageService imageService = getBean(ImageService.class);
-		boolean valid = imageService.hasImageFile(image);
-		out.startImg();
-		if (valid) {
-			out.src(url);
-		}
-		out.alt(image.getName()).withStyle("width: "+width+"px; height: "+height+"px;").endImg();
-		out.endA();
 		out.endSpan();
 	}
 

@@ -2,6 +2,8 @@ package dk.in2isoft.onlineobjects.core;
 
 import java.util.List;
 
+import org.eclipse.jdt.annotation.Nullable;
+
 import com.google.common.collect.Lists;
 
 public class SearchResult<T> {
@@ -26,7 +28,7 @@ public class SearchResult<T> {
 		return result;
 	}
 
-	public T getFirst() {
+	public @Nullable T getFirst() {
 		if (result.size()>0) {
 			return result.get(0);
 		}

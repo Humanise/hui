@@ -35,9 +35,9 @@ public class ImportStyleComponent extends AbstractComponent {
 	public void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
 		Request request = Components.getRequest();
 		LifeCycleService lifeCycleService = getBean(LifeCycleService.class);
-		String stamp = "?"+lifeCycleService.getStartTime().getTime();
+		String stamp = lifeCycleService !=null ? "?"+lifeCycleService.getStartTime().getTime() : "";
 		ConfigurationService configurationService = getBean(ConfigurationService.class);
-		boolean developmentMode = configurationService.isDevelopmentMode();
+		boolean developmentMode = configurationService!=null ? configurationService.isDevelopmentMode() : false;
 		//developmentMode = false;
 		if (developmentMode) {
 			writer.writeStylesheet(request.getBaseContext()+"/hui/css/dev.css"+stamp).newLine();
