@@ -8,12 +8,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.junit.Assert;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import dk.in2isoft.commons.lang.Strings;
@@ -24,7 +21,7 @@ import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 
 public class TestHTMLDocument extends AbstractSpringTestCase {
 	
-	private static Logger log = LoggerFactory.getLogger(TestHTMLDocument.class);
+	//private static Logger log = LoggerFactory.getLogger(TestHTMLDocument.class);
 	
 	@Autowired
 	private HTMLService htmlService;

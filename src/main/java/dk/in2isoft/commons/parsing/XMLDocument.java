@@ -39,21 +39,17 @@ public class XMLDocument extends TextDocument {
 	
 	public nu.xom.Document getXOMDocument() {
 		if (XOMDocument == null) {
-			StringReader reader = null;
-			try {
-				Parser tagsoup = new Parser();
-				Builder bob = new Builder(tagsoup);
-				String rawString = getRawString();
-				if (rawString!=null) {
-					reader = new StringReader(rawString);
+			String rawString = getRawString();
+			if (rawString!=null) {
+				try (StringReader reader = new StringReader(rawString)){
+					Parser tagsoup = new Parser();
+					Builder bob = new Builder(tagsoup);
 					XOMDocument = bob.build(reader);
+				} catch (ParsingException e) {
+					log.error(e);
+				} catch (IOException e) {
+					log.error(e);
 				}
-			} catch (ParsingException e) {
-				log.error(e);
-			} catch (IOException e) {
-				log.error(e);
-			} finally {
-				IOUtils.closeQuietly(reader);
 			}
 		}
 		return XOMDocument;

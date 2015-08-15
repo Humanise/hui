@@ -1,6 +1,8 @@
 package dk.in2isoft.commons.xml;
 
 import java.io.File;
+import java.io.StringWriter;
+import java.io.Writer;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
@@ -17,7 +19,6 @@ import nu.xom.converters.DOMConverter;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.xerces.dom.DOMImplementationImpl;
-import org.w3c.dom.Comment;
 import org.w3c.dom.DOMConfiguration;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -26,7 +27,10 @@ import org.w3c.dom.Text;
 import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSException;
+import org.w3c.dom.ls.LSOutput;
 import org.w3c.dom.ls.LSSerializer;
+
+import dk.in2isoft.commons.lang.Strings;
 
 public class Serializing {
 
@@ -65,7 +69,12 @@ public class Serializing {
 			DOMImplementationRegistry reg = DOMImplementationRegistry.newInstance();
 			DOMImplementationLS impl = (DOMImplementationLS) reg.getDOMImplementation("LS");
 			LSSerializer serializer = impl.createLSSerializer();
-			return serializer.writeToString(doc);
+			LSOutput output =  impl.createLSOutput();
+			output.setEncoding(Strings.UTF8);
+			Writer writer = new StringWriter();
+			output.setCharacterStream(writer);
+			serializer.write(doc, output);
+			return writer.toString();
 		} catch (Exception e) {
 			return null;
 		}

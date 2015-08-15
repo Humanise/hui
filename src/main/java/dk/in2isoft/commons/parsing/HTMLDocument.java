@@ -3,7 +3,6 @@ package dk.in2isoft.commons.parsing;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import nu.xom.Attribute;
 import nu.xom.Element;
@@ -13,17 +12,13 @@ import nu.xom.XPathContext;
 
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
-import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 
 import de.l3s.boilerpipe.BoilerpipeExtractor;
 import de.l3s.boilerpipe.BoilerpipeProcessingException;
@@ -33,6 +28,7 @@ import de.l3s.boilerpipe.extractors.CommonExtractors;
 import de.l3s.boilerpipe.sax.BoilerpipeSAXInput;
 import de.l3s.boilerpipe.sax.HTMLHighlighter;
 import dk.in2isoft.commons.lang.Strings;
+import dk.in2isoft.commons.xml.DocumentCleaner;
 import dk.in2isoft.commons.xml.Serializing;
 import dk.in2isoft.onlineobjects.modules.information.Readability;
 
@@ -131,7 +127,6 @@ public class HTMLDocument extends XMLDocument {
 		Readability r = new Readability(rawString);
 		r.init();
 		Document dom = r.getDomDocument();
-		log.info(Serializing.toString(dom));
 		return cleanAndGetBody(dom);
     }
     
@@ -172,43 +167,9 @@ public class HTMLDocument extends XMLDocument {
     }
 
 	private String cleanAndGetBody(Document doc) {
-		NodeList nodes = doc.getElementsByTagName("*");
-		int length = nodes.getLength();
-		Set<Node> nodesToRemove = Sets.newHashSet();
-		Multimap<String, String> ats = HashMultimap.create();
-		ats.put("a", "href");
-		ats.put("img", "src");
-		ats.put("img", "title");
-		for (int i = 0; i < length; i++) {
-			Node node = nodes.item(i);
-			String nodeName = node.getNodeName().toLowerCase();
-			if (nodeName.equals("div")) {
-				nodesToRemove.add(node);
-			}
-			
-			NamedNodeMap attributes = node.getAttributes();
-			Set<String> atts = Sets.newHashSet();
-			for (int j = 0; j < attributes.getLength(); j++) {
-				atts.add(attributes.item(j).getNodeName());
-			}
-			for (String string : atts) {
-				if (!ats.containsEntry(nodeName, string)) {
-					attributes.removeNamedItem(string);
-				}
-			}
-		}
 		
-		for (Node node : nodesToRemove) {
-			Node parent = node.getParentNode();
-			if (parent!=null) {
-				while (node.getFirstChild()!=null) {
-					Node child = node.getFirstChild();
-					node.removeChild(child);
-					parent.insertBefore(child, node);
-				}
-				parent.removeChild(node);
-			}
-		}
+		DocumentCleaner cleaner = new DocumentCleaner();
+		cleaner.clean(doc);
 		
 		NodeList bodies = doc.getElementsByTagName("body");
 		if (bodies.getLength()>0) {
