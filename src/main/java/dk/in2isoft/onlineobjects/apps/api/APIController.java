@@ -105,6 +105,6 @@ public class APIController extends APIControllerBase {
 		if (doc==null) {
 			return null;
 		}
-		return doc.getExtractedContents();
+		return doc.getExtractedText();
 	}
 }

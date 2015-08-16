@@ -7,7 +7,6 @@ import nu.xom.Builder;
 import nu.xom.ParsingException;
 import nu.xom.converters.DOMConverter;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.apache.xerces.dom.DOMImplementationImpl;
 import org.ccil.cowan.tagsoup.Parser;

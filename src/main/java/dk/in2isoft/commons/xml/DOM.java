@@ -1,6 +1,7 @@
 package dk.in2isoft.commons.xml;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,18 +10,24 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import nu.xom.Attribute;
+import nu.xom.Builder;
 import nu.xom.Element;
 import nu.xom.Node;
 import nu.xom.ParentNode;
+import nu.xom.ParsingException;
+import nu.xom.ValidityException;
 import nu.xom.XMLException;
 import nu.xom.converters.DOMConverter;
 
 import org.apache.tools.ant.filters.StringInputStream;
+import org.ccil.cowan.tagsoup.Parser;
 import org.eclipse.jdt.annotation.Nullable;
+import org.jdom2.input.DOMBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 import dk.in2isoft.commons.lang.Strings;
 
@@ -47,8 +54,28 @@ public class DOM {
 			return null;
 		}
 	}
+	
+	public static org.jdom2.Document toJDOM(Document domDocument) {
+		DOMBuilder jdomBuilder = new DOMBuilder();
+        return jdomBuilder.build(domDocument);
+	}
 
-	public static @Nullable Document parse(String string) {
+	public static nu.xom.Document parseXOM(String string) {
+
+		try (StringReader reader = new StringReader(string)) {
+			Builder bob = new Builder();
+			return bob.build(reader);
+		} catch (ValidityException e) {
+			
+		} catch (ParsingException e) {
+			
+		} catch (IOException e) {
+			
+		}
+		return null;
+	}
+
+	public static @Nullable Document parseDOM(String string) {
 		if (Strings.isNotBlank(string)) {
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			try {

@@ -2,14 +2,11 @@ package dk.in2isoft.onlineobjects.test.plain;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
-
-import com.google.common.collect.Sets;
 
 import dk.in2isoft.commons.xml.DOM;
 import dk.in2isoft.commons.xml.DocumentCleaner;
@@ -36,7 +33,7 @@ public class TestDocumentCleaner extends AbstractSpringTestCase {
 				+ "<p><a href=\"http://www.somewhere.com/\">This is a link</a></p>"
 				+ "</body></html>";
 
-		Document document = DOM.parse(xml);
+		Document document = DOM.parseDOM(xml);
 
 		DocumentCleaner cleaner = new DocumentCleaner();
 		cleaner.clean(document);

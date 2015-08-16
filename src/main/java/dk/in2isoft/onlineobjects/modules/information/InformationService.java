@@ -95,7 +95,7 @@ public class InformationService {
 					modelService.commit();
 					continue;
 				}
-				String contents = doc.getExtractedContents();
+				String contents = doc.getExtractedText();
 				
 				InternetAddress internetAddress = new InternetAddress();
 				internetAddress.setAddress(link);

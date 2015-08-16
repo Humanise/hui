@@ -41,7 +41,7 @@ public class HTMLDocumentImporter implements ImportTransport, TextImporter {
 					HTMLDocument doc = htmlService.getDocumentSilently(item.getUri());
 					if (doc!=null) {
 						combined.append("\n");
-						combined.append(doc.getExtractedContents());
+						combined.append(doc.getExtractedText());
 						this.title = doc.getTitle();
 					}
 				}
@@ -55,7 +55,7 @@ public class HTMLDocumentImporter implements ImportTransport, TextImporter {
 		
 		HTMLDocument doc = htmlService.getDocumentSilently(url);
 
-		this.text = doc.getExtractedContents();
+		this.text = doc.getExtractedText();
 		this.title = doc.getTitle();
 		status = Status.success;
 	}

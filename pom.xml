@@ -40,19 +40,6 @@
 				</configuration>
 			</plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<!-- DO NOT include log4j.properties file in your Jar -->
-					<excludes>
-						<exclude>**/log4j.properties</exclude>
-					</excludes>
-					<archive>
-						<!-- <manifest> <mainClass>com.mkyong.core.utils.App</mainClass> </manifest> -->
-					</archive>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 
@@ -78,10 +65,10 @@
 			<id>boilerpipe</id>
 			<url>https://boilerpipe.googlecode.com/svn/repo/</url>
 		</repository>
-    <repository>
-      <id>clojars.org</id>
-      <url>http://clojars.org/repo</url>
-    </repository>
+		<repository>
+			<id>clojars.org</id>
+			<url>http://clojars.org/repo</url>
+		</repository>
 		<repository>
 			<id>local-repository</id>
 			<url>file://${basedir}/repository</url>
@@ -101,6 +88,12 @@
 			<groupId>nu.xom</groupId>
 			<artifactId>xom</artifactId>
 			<version>1.2.8</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jdom</groupId>
+			<artifactId>jdom2</artifactId>
+			<version>2.0.6</version>
 		</dependency>
 
 		<dependency>
@@ -335,13 +328,9 @@
 			<version>1.9</version>
 		</dependency>
 
-		<!-- TODO: This may be usefull but has a lot of deps - so not enabled 		
-		<dependency>
-			<groupId>org.apache.tika</groupId>
-			<artifactId>tika-parsers</artifactId>
-			<version>1.9</version>
-		</dependency>
-		-->
+		<!-- TODO: This may be usefull but has a lot of deps - so not enabled <dependency> 
+			<groupId>org.apache.tika</groupId> <artifactId>tika-parsers</artifactId> 
+			<version>1.9</version> </dependency> -->
 
 		<dependency>
 			<groupId>org.apache.opennlp</groupId>
@@ -375,13 +364,8 @@
 			<version>0.9.4</version>
 		</dependency>
 
-	    <!-- 
-	    <dependency>
-	      <groupId>com.aliasi</groupId>
-	      <artifactId>lingpipe</artifactId>
-	      <version>4.0.1</version>
-	    </dependency>
-	    -->
+		<!-- <dependency> <groupId>com.aliasi</groupId> <artifactId>lingpipe</artifactId> 
+			<version>4.0.1</version> </dependency> -->
 
 		<!-- Microsoft -->
 

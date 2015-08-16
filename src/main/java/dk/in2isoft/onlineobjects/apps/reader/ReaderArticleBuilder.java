@@ -7,6 +7,10 @@ import java.util.Locale;
 import java.util.Map;
 
 import nu.xom.Document;
+import nu.xom.Element;
+import nu.xom.Node;
+import nu.xom.Nodes;
+import nu.xom.XPathContext;
 import opennlp.tools.util.Span;
 
 import org.apache.commons.lang.time.StopWatch;
@@ -23,6 +27,7 @@ import dk.in2isoft.commons.lang.StringSearcher.Result;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.commons.xml.DecoratedDocument;
+import dk.in2isoft.commons.xml.DocumentCleaner;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.ArticlePerspective;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Pair;
@@ -177,19 +182,33 @@ public class ReaderArticleBuilder {
 	private void buildRendering(HTMLDocument document, InternetAddress address, List<Statement> statements, ArticlePerspective article, StopWatch watch) throws ModelException, ExplodingClusterFuckException {
 
 		{
-			String extractedMarkup = document.getExtractedMarkup();
-			String readableMarkup = document.getReadableMarkup();
-			String string = readableMarkup.length() > extractedMarkup.length() ? readableMarkup : extractedMarkup;
-			article.setFormatted(annotate(statements, string, watch));
+			Document extracted = document.getExtracted();
+			article.setFormatted(annotate(statements, extracted, watch));
 		}
 		{
-			String string = "<body>" + document.getExtractedContents().replaceAll("\n", "<br/><br/>") + "</body>";
-			article.setText(annotate(statements, string, watch));
+			article.setText("");
 		}
 	}
+	
+	private String getBodyXML(Document document) {
+		StringBuilder sb = new StringBuilder();
+		XPathContext c = new XPathContext();
+		c.addNamespace("html", document.getRootElement().getNamespaceURI());
+		Nodes bodies = document.query("//html:body",c);
+		if (bodies.size()>0) {
+			Node node = bodies.get(0);
+			if (node instanceof Element) {
+				Element body = (Element) node;
+				Nodes children = body.query("*");
+				for (int i = 0; i < children.size(); i++) {
+					sb.append(children.get(i).toXML());
+				}
+			}
+		}
+		return sb.toString();
+	}
 
-	private String annotate(List<Statement> statements, String string, StopWatch watch) throws ModelException, ExplodingClusterFuckException {
-		Document xomDocument = new HTMLDocument(string).getXOMDocument();
+	private String annotate(List<Statement> statements, Document xomDocument, StopWatch watch) throws ModelException, ExplodingClusterFuckException {
 		watch.split();
 		log.trace("Parsed HTML: "+watch.getSplitTime());
 		
@@ -202,11 +221,12 @@ public class ReaderArticleBuilder {
 		Locale locale = languageService.getLocale(text);
 		watch.split();
 		log.trace("Get locale: "+watch.getSplitTime());
-		
-		if (!false) {
-			annotatePeople(watch, decorated, text, locale);
+		if (locale.getLanguage().equals("da") || locale.getLanguage().equals("en")) {
+			
+			if (!false) {
+				annotatePeople(watch, decorated, text, locale);
+			}
 		}
-
 		StringSearcher searcher = new StringSearcher();
 		for (Statement statement : statements) {
 			List<Result> found = searcher.search(statement.getText(),text);
@@ -222,7 +242,10 @@ public class ReaderArticleBuilder {
 			}
 		}
 		decorated.build();
-		return decorated.getDocument().toXML();
+		Document document = decorated.getDocument();
+		DocumentCleaner cleaner = new DocumentCleaner();
+		cleaner.clean(document);
+		return getBodyXML(document);
 	}
 
 	private void annotatePeople(StopWatch watch, DecoratedDocument decorated, String text, Locale locale) throws ExplodingClusterFuckException, ModelException {

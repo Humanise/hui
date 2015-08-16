@@ -11,6 +11,7 @@ import nu.xom.Text;
 import nu.xom.XPathContext;
 
 import org.apache.log4j.Logger;
+import org.jdom2.input.DOMBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -28,6 +29,7 @@ import de.l3s.boilerpipe.extractors.CommonExtractors;
 import de.l3s.boilerpipe.sax.BoilerpipeSAXInput;
 import de.l3s.boilerpipe.sax.HTMLHighlighter;
 import dk.in2isoft.commons.lang.Strings;
+import dk.in2isoft.commons.xml.DOM;
 import dk.in2isoft.commons.xml.DocumentCleaner;
 import dk.in2isoft.commons.xml.Serializing;
 import dk.in2isoft.onlineobjects.modules.information.Readability;
@@ -110,7 +112,7 @@ public class HTMLDocument extends XMLDocument {
         return text;
     }
     
-    public String getExtractedContents() {
+    public String getExtractedText() {
     	try {
 			String rawString = getRawString();
 			if (Strings.isNotBlank(rawString)) {
@@ -120,6 +122,15 @@ public class HTMLDocument extends XMLDocument {
 			log.error("Unable to extract text", e);
 		}
     	return null;
+    }
+    
+    public nu.xom.Document getExtracted() {
+		String rawString = getRawString();
+		Readability r = new Readability(rawString);
+		r.init();
+    	Document dom = r.getDomDocument();
+    	
+    	return DOM.toXOM(dom);
     }
     
     public String getReadableMarkup() {
@@ -158,10 +169,13 @@ public class HTMLDocument extends XMLDocument {
 
 			return cleanAndGetBody(domDoc);
 		} catch (IllegalArgumentException e) {
+			log.warn("Unable to extract markup", e);
 			// TODO May fail at de.l3s.boilerpipe.sax.HTMLHighlighter.process(HTMLHighlighter.java:126)
 			// java.lang.IllegalArgumentException: Illegal group reference
 		} catch (BoilerpipeProcessingException e) {
+			log.warn("Unable to extract markup", e);
 		} catch (SAXException e) {
+			log.warn("Unable to extract markup", e);
 		}
 		return "";
     }

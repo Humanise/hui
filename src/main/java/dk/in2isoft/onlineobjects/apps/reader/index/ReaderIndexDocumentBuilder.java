@@ -39,7 +39,7 @@ public class ReaderIndexDocumentBuilder implements IndexDocumentBuilder<Internet
 		HTMLDocument html = getHTMLDocument(address);
 		String text = null;
 		if (html!=null) {
-			text = html.getExtractedContents();
+			text = html.getExtractedText();
 		}
 		doc.add(new TextField("text", Strings.asNonBlank(text,""), Field.Store.NO));
 		Privileged admin = securityService.getAdminPrivileged();

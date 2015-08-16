@@ -119,7 +119,7 @@ public class TestSemanticService extends AbstractSpringTestCase {
 		{
 			String html = getTestFileAsString("articles/the-characteristics-of-minimalism-in-web-design-nngroup-com.html");
 			HTMLDocument doc = new HTMLDocument(html);
-			String text = doc.getExtractedContents();
+			String text = doc.getExtractedText();
 			Locale locale = languageService.getLocale(text);
 			assertEquals("en",locale.getLanguage());
 			String[] naturalWords = semanticService.getNaturalWords(text, locale);

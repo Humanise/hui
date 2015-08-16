@@ -128,7 +128,7 @@ public class TestComparison extends AbstractSpringTestCase {
 		for (String url : urls) {
 			HTMLDocument document = htmlService.getDocumentSilently(url);
 			if (document!=null) {
-				String text = document.getExtractedContents();
+				String text = document.getExtractedText();
 				docs.put(document.getTitle()+" : "+url, text);
 			}
 		}
