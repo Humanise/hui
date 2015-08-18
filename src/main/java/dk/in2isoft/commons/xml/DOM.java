@@ -51,6 +51,7 @@ public class DOM {
 		try {
 			return DOMConverter.convert(domDocument);
 		} catch (XMLException e) {
+			log.warn("Unable to convert DOM to XOM", e);
 			return null;
 		}
 	}
