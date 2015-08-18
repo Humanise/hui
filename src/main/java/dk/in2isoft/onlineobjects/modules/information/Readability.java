@@ -132,9 +132,13 @@ public class Readability {
     }
 
     public final org.w3c.dom.Document getDomDocument() {
-    	
     	HTMLDocument htmlDocument = new HTMLDocument(mDocument.html());
 		return htmlDocument.getDOMDocument();
+    }
+    
+    public final nu.xom.Document getXomDocument() {
+    	HTMLDocument htmlDocument = new HTMLDocument(mDocument.html());
+		return htmlDocument.getXOMDocument();
     }
 
     /**

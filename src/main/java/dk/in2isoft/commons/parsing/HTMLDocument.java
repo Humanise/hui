@@ -11,7 +11,6 @@ import nu.xom.Text;
 import nu.xom.XPathContext;
 
 import org.apache.log4j.Logger;
-import org.jdom2.input.DOMBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -126,12 +125,62 @@ public class HTMLDocument extends XMLDocument {
     
     public nu.xom.Document getExtracted() {
 		String rawString = getRawString();
-		Readability r = new Readability(rawString);
-		r.init();
-    	Document dom = r.getDomDocument();
-    	
-    	return DOM.toXOM(dom);
+		nu.xom.Document readabilityDocument = getExtractedByReadability(rawString);
+		nu.xom.Document boilerpipeDocument = getExtractedByBoilerpipe(rawString);
+		
+		int readLength = readabilityDocument==null ? 0 : readabilityDocument.toXML().length();
+		int boilLength = boilerpipeDocument==null ? 0 : boilerpipeDocument.toXML().length();
+		if (readLength > boilLength) {
+			return readabilityDocument;
+		}
+		return boilerpipeDocument;
     }
+
+	private nu.xom.Document getExtractedByReadability(String rawString) {
+		Readability readability = new Readability(rawString);
+		readability.init();
+    	nu.xom.Document readabilityDocument = readability.getXomDocument();
+		return readabilityDocument;
+	}
+
+    private nu.xom.Document getExtractedByBoilerpipe(String rawString) {
+    	
+    	if (Strings.isBlank(rawString)) {
+    		return null;
+    	}
+    	final BoilerpipeExtractor extractor = CommonExtractors.ARTICLE_EXTRACTOR;
+    	
+		final de.l3s.boilerpipe.sax.HTMLDocument htmlDoc = new de.l3s.boilerpipe.sax.HTMLDocument(rawString);
+
+		TextDocument doc;
+		try {
+			doc = new BoilerpipeSAXInput(htmlDoc.toInputSource()).getTextDocument();
+			extractor.process(doc);
+
+			final InputSource is = htmlDoc.toInputSource();
+	    	
+	    	
+			final HTMLHighlighter highlighted = HTMLHighlighter.newExtractingInstance();
+			highlighted.setOutputHighlightOnly(true);
+			highlighted.setExtraStyleSheet("");
+			
+			String extracted = highlighted.process(doc, is);
+			HTMLDocument inner = new HTMLDocument(extracted);
+			return inner.getXOMDocument();
+		} catch (IllegalArgumentException e) {
+			log.warn("Unable to extract markup", e);
+			// TODO May fail at de.l3s.boilerpipe.sax.HTMLHighlighter.process(HTMLHighlighter.java:126)
+			// java.lang.IllegalArgumentException: Illegal group reference
+		} catch (BoilerpipeProcessingException e) {
+			log.warn("Unable to extract markup", e);
+		} catch (SAXException e) {
+			log.warn("Unable to extract markup", e);
+		} catch (Exception e) {
+			log.warn("Unable to extract markup", e);			
+		}
+		return null;
+    }
+    
     
     public String getReadableMarkup() {
 		String rawString = getRawString();
@@ -168,6 +217,9 @@ public class HTMLDocument extends XMLDocument {
 			Document domDoc = inner.getDOMDocument();
 
 			return cleanAndGetBody(domDoc);
+		} catch (IndexOutOfBoundsException e) {
+			log.warn("Unable to extract markup", e);
+			// TODO May fail
 		} catch (IllegalArgumentException e) {
 			log.warn("Unable to extract markup", e);
 			// TODO May fail at de.l3s.boilerpipe.sax.HTMLHighlighter.process(HTMLHighlighter.java:126)

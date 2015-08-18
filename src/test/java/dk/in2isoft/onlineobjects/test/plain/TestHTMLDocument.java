@@ -8,6 +8,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
+import nu.xom.Document;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.commons.parsing.HTMLDocument;
+import dk.in2isoft.commons.xml.DocumentCleaner;
 import dk.in2isoft.onlineobjects.modules.networking.HTMLService;
 import dk.in2isoft.onlineobjects.services.SemanticService;
 import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
@@ -66,6 +69,15 @@ public class TestHTMLDocument extends AbstractSpringTestCase {
 				File out = new File(folder,file.getName()+".extracted");
 				try (FileWriter w = new FileWriter(out)) {
 					w.append(doc.getExtractedMarkup());
+				}
+			}
+			{
+				File out = new File(folder,file.getName()+".contents.html");
+				try (FileWriter w = new FileWriter(out)) {
+					Document extracted = doc.getExtracted();
+					DocumentCleaner cleaner = new DocumentCleaner();
+					cleaner.clean(extracted);
+					w.append(extracted.toXML());
 				}
 			}
 			{
