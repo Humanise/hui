@@ -1,6 +1,3 @@
-Updating dependencies...
-ant -f ivy.build.xml
-
 
 ================= Environment ================
 
@@ -12,6 +9,7 @@ export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF8"
 export MAVEN_OPTS="-XX:MaxPermSize=512m"
 
 
+================= Eclipse setup ============== 
 
 
 =========== Tomcat / Apache setup ============

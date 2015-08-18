@@ -15,22 +15,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import com.google.common.collect.Lists;
 
-import de.l3s.boilerpipe.BoilerpipeExtractor;
 import de.l3s.boilerpipe.BoilerpipeProcessingException;
-import de.l3s.boilerpipe.document.TextDocument;
 import de.l3s.boilerpipe.extractors.ArticleExtractor;
-import de.l3s.boilerpipe.extractors.CommonExtractors;
-import de.l3s.boilerpipe.sax.BoilerpipeSAXInput;
-import de.l3s.boilerpipe.sax.HTMLHighlighter;
 import dk.in2isoft.commons.lang.Strings;
-import dk.in2isoft.commons.xml.DOM;
-import dk.in2isoft.commons.xml.DocumentCleaner;
-import dk.in2isoft.commons.xml.Serializing;
+import dk.in2isoft.onlineobjects.modules.information.Boilerpipe;
 import dk.in2isoft.onlineobjects.modules.information.Readability;
 
 public class HTMLDocument extends XMLDocument {
@@ -125,126 +116,33 @@ public class HTMLDocument extends XMLDocument {
     
     public nu.xom.Document getExtracted() {
 		String rawString = getRawString();
-		nu.xom.Document readabilityDocument = getExtractedByReadability(rawString);
-		nu.xom.Document boilerpipeDocument = getExtractedByBoilerpipe(rawString);
-		
-		int readLength = readabilityDocument==null ? 0 : readabilityDocument.toXML().length();
-		int boilLength = boilerpipeDocument==null ? 0 : boilerpipeDocument.toXML().length();
-		if (readLength > boilLength) {
-			return readabilityDocument;
+		if (Strings.isBlank(rawString)) {
+			return null;
 		}
-		return boilerpipeDocument;
+		nu.xom.Document readabilityDocument = getExtractedByReadability(rawString);
+		
+		// TODO Use count text-nodes lengths to determine largest content 
+		int readLength = readabilityDocument==null ? 0 : readabilityDocument.toXML().length();
+		if (readLength < 2000) {
+			nu.xom.Document boilerpipeDocument = getExtractedByBoilerpipe(rawString);
+			int boilLength = boilerpipeDocument==null ? 0 : boilerpipeDocument.toXML().length();
+			if (readLength < boilLength) {
+				return boilerpipeDocument;
+			}
+		}
+		return readabilityDocument;
     }
 
-	private nu.xom.Document getExtractedByReadability(String rawString) {
-		Readability readability = new Readability(rawString);
-		readability.init();
-    	nu.xom.Document readabilityDocument = readability.getXomDocument();
-		return readabilityDocument;
+	private nu.xom.Document getExtractedByBoilerpipe(String html) {
+		Boilerpipe boiler = new Boilerpipe();
+		String extracted = boiler.extract(html);
+		return new HTMLDocument(extracted).getXOMDocument();
 	}
 
-    private nu.xom.Document getExtractedByBoilerpipe(String rawString) {
-    	
-    	if (Strings.isBlank(rawString)) {
-    		return null;
-    	}
-    	final BoilerpipeExtractor extractor = CommonExtractors.ARTICLE_EXTRACTOR;
-    	
-		final de.l3s.boilerpipe.sax.HTMLDocument htmlDoc = new de.l3s.boilerpipe.sax.HTMLDocument(rawString);
-
-		TextDocument doc;
-		try {
-			doc = new BoilerpipeSAXInput(htmlDoc.toInputSource()).getTextDocument();
-			extractor.process(doc);
-
-			final InputSource is = htmlDoc.toInputSource();
-	    	
-	    	
-			final HTMLHighlighter highlighted = HTMLHighlighter.newExtractingInstance();
-			highlighted.setOutputHighlightOnly(true);
-			highlighted.setExtraStyleSheet("");
-			
-			String extracted = highlighted.process(doc, is);
-			HTMLDocument inner = new HTMLDocument(extracted);
-			return inner.getXOMDocument();
-		} catch (IllegalArgumentException e) {
-			log.warn("Unable to extract markup", e);
-			// TODO May fail at de.l3s.boilerpipe.sax.HTMLHighlighter.process(HTMLHighlighter.java:126)
-			// java.lang.IllegalArgumentException: Illegal group reference
-		} catch (BoilerpipeProcessingException e) {
-			log.warn("Unable to extract markup", e);
-		} catch (SAXException e) {
-			log.warn("Unable to extract markup", e);
-		} catch (Exception e) {
-			log.warn("Unable to extract markup", e);			
-		}
-		return null;
-    }
-    
-    
-    public String getReadableMarkup() {
-		String rawString = getRawString();
-		Readability r = new Readability(rawString);
-		r.init();
-		Document dom = r.getDomDocument();
-		return cleanAndGetBody(dom);
-    }
-    
-    public String getExtractedMarkup() {
-    	
-    	String rawString = getRawString();
-    	if (Strings.isBlank(rawString)) {
-    		return "";
-    	}
-    	final BoilerpipeExtractor extractor = CommonExtractors.ARTICLE_EXTRACTOR;
-    	
-		final de.l3s.boilerpipe.sax.HTMLDocument htmlDoc = new de.l3s.boilerpipe.sax.HTMLDocument(rawString);
-
-		TextDocument doc;
-		try {
-			doc = new BoilerpipeSAXInput(htmlDoc.toInputSource()).getTextDocument();
-			extractor.process(doc);
-
-			final InputSource is = htmlDoc.toInputSource();
-	    	
-	    	
-			final HTMLHighlighter highlighted = HTMLHighlighter.newExtractingInstance();
-			highlighted.setOutputHighlightOnly(true);
-			highlighted.setExtraStyleSheet("");
-			
-			String extracted = highlighted.process(doc, is);
-			HTMLDocument inner = new HTMLDocument(extracted);
-			Document domDoc = inner.getDOMDocument();
-
-			return cleanAndGetBody(domDoc);
-		} catch (IndexOutOfBoundsException e) {
-			log.warn("Unable to extract markup", e);
-			// TODO May fail
-		} catch (IllegalArgumentException e) {
-			log.warn("Unable to extract markup", e);
-			// TODO May fail at de.l3s.boilerpipe.sax.HTMLHighlighter.process(HTMLHighlighter.java:126)
-			// java.lang.IllegalArgumentException: Illegal group reference
-		} catch (BoilerpipeProcessingException e) {
-			log.warn("Unable to extract markup", e);
-		} catch (SAXException e) {
-			log.warn("Unable to extract markup", e);
-		}
-		return "";
-    }
-
-	private String cleanAndGetBody(Document doc) {
-		
-		DocumentCleaner cleaner = new DocumentCleaner();
-		cleaner.clean(doc);
-		
-		NodeList bodies = doc.getElementsByTagName("body");
-		if (bodies.getLength()>0) {
-			NodeList childNodes = bodies.item(0).getChildNodes();
-			return Serializing.toString(childNodes);
-		} else {
-			log.info(Serializing.toString(doc));
-		}
-		return null;
+	private nu.xom.Document getExtractedByReadability(String html) {
+		Readability readability = new Readability(html);
+		readability.init();
+    	return readability.getXomDocument();
 	}
     
     private void traverse(nu.xom.Node parent, StringBuffer data) {

@@ -8,7 +8,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
-import org.jsoup.helper.W3CDom;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -91,9 +90,6 @@ public class Readability {
                 mDocument.body().html(mBodyCache);
                 init(true);
                 return;
-            } else {
-                articleContent
-                        .html("<p>Sorry, readability was unable to parse this page for content.</p>");
             }
         }
 

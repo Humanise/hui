@@ -1,5 +1,7 @@
 package dk.in2isoft.commons.xml;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -10,6 +12,9 @@ import nu.xom.Nodes;
 import nu.xom.ParentNode;
 import nu.xom.XPathContext;
 
+import org.neo4j.helpers.Strings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -22,8 +27,11 @@ import com.google.common.collect.Sets;
 
 public class DocumentCleaner {
 
-	Multimap<String, String> validAttributes = HashMultimap.create();
-	Set<String> validTags = Sets.newHashSet(); 
+	private Multimap<String, String> validAttributes = HashMultimap.create();
+	private Set<String> validTags = Sets.newHashSet();
+	private URI uri;
+	
+	private static final Logger log = LoggerFactory.getLogger(DocumentCleaner.class);
 
 	public DocumentCleaner() {
 		validAttributes.put("a", "href");
@@ -35,11 +43,23 @@ public class DocumentCleaner {
 		
 		validTags.addAll(Sets.newHashSet("html","head","body","title"));
 		validTags.addAll(Sets.newHashSet("h1","h2","h3","h4","h5","h6","p"));
-		validTags.addAll(Sets.newHashSet("strong","em","a","img"));
+		validTags.addAll(Sets.newHashSet("strong","em","a","img","br"));
 		validTags.addAll(Sets.newHashSet("table","tbody","tr","th","td","thead","tfoot","colgroup","col","caption"));
 		validTags.addAll(Sets.newHashSet("dl","dt","dd"));
 		validTags.addAll(Sets.newHashSet("ul","ol","li"));
 		validTags.addAll(Sets.newHashSet("blockquote","figure","pre","code"));
+	}
+	
+	public void setUrl(String url) {
+		if (Strings.isBlank(url)) {
+			uri = null;
+		} else {
+			try {
+				this.uri = new URI(url);
+			} catch (URISyntaxException e) {
+				log.warn("Illegal URI",e);
+			}
+		}
 	}
 	
 	public void clean(nu.xom.Document document) {
@@ -81,9 +101,25 @@ public class DocumentCleaner {
 				}
 			}
 		}
+		if (uri!=null) {
+			Nodes images = document.query("//html:img",context);
+			for (int i = 0; i < images.size(); i++) {
+				Element image = (Element) images.get(i);
+				Attribute attribute = image.getAttribute("src");
+				if (attribute!=null) {
+					String value = attribute.getValue();
+					try {
+						attribute.setValue(uri.resolve(value).toString());
+					} catch (IllegalArgumentException e) {
+						log.warn("Error resolving image URL",e);
+					}
+				}
+			}
+		}
 		
 	}
 	
+	@Deprecated
 	public void clean(Document document) {
 
 		NodeList nodes = document.getElementsByTagName("*");

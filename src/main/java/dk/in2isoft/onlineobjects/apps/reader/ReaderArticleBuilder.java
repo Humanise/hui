@@ -183,7 +183,18 @@ public class ReaderArticleBuilder {
 
 		{
 			Document extracted = document.getExtracted();
-			article.setFormatted(annotate(statements, extracted, watch));
+			if (extracted==null) {
+				article.setFormatted("<p><em>Unable to extract text.</em></p>");
+			} else {
+				Document annotated = annotate(statements, extracted, watch);
+	
+				DocumentCleaner cleaner = new DocumentCleaner();
+				cleaner.setUrl(address.getAddress());
+				cleaner.clean(annotated);
+				String serialized = getBodyXML(annotated);
+	
+				article.setFormatted(serialized);
+			}
 		}
 		{
 			article.setText("");
@@ -208,7 +219,7 @@ public class ReaderArticleBuilder {
 		return sb.toString();
 	}
 
-	private String annotate(List<Statement> statements, Document xomDocument, StopWatch watch) throws ModelException, ExplodingClusterFuckException {
+	private Document annotate(List<Statement> statements, Document xomDocument, StopWatch watch) throws ModelException, ExplodingClusterFuckException {
 		watch.split();
 		log.trace("Parsed HTML: "+watch.getSplitTime());
 		
@@ -243,9 +254,7 @@ public class ReaderArticleBuilder {
 		}
 		decorated.build();
 		Document document = decorated.getDocument();
-		DocumentCleaner cleaner = new DocumentCleaner();
-		cleaner.clean(document);
-		return getBodyXML(document);
+		return document;
 	}
 
 	private void annotatePeople(StopWatch watch, DecoratedDocument decorated, String text, Locale locale) throws ExplodingClusterFuckException, ModelException {

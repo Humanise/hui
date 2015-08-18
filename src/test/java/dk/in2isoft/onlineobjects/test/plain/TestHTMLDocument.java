@@ -66,24 +66,12 @@ public class TestHTMLDocument extends AbstractSpringTestCase {
 			HTMLDocument doc = htmlService.getDocumentSilently(file, Strings.UTF8);
 			Assert.assertNotNull(doc);
 			{
-				File out = new File(folder,file.getName()+".extracted");
-				try (FileWriter w = new FileWriter(out)) {
-					w.append(doc.getExtractedMarkup());
-				}
-			}
-			{
 				File out = new File(folder,file.getName()+".contents.html");
 				try (FileWriter w = new FileWriter(out)) {
 					Document extracted = doc.getExtracted();
 					DocumentCleaner cleaner = new DocumentCleaner();
 					cleaner.clean(extracted);
 					w.append(extracted.toXML());
-				}
-			}
-			{
-				File out = new File(folder,file.getName()+".readable");
-				try (FileWriter w = new FileWriter(out)) {
-					w.append(doc.getReadableMarkup());
 				}
 			}
 		}
