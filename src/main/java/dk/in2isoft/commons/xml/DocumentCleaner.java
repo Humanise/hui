@@ -43,6 +43,9 @@ public class DocumentCleaner {
 	}
 	
 	public void clean(nu.xom.Document document) {
+		if (document.getRootElement()==null) {
+			return;
+		}
 		XPathContext context = new XPathContext("html", document.getRootElement().getNamespaceURI());
 		Nodes nodes = document.query("//html:*",context);
 		int length = nodes.size();
@@ -97,8 +100,12 @@ public class DocumentCleaner {
 			Map<String,String> atts = Maps.newHashMap();
 			for (int j = 0; j < attributes.getLength(); j++) {
 				Node item = attributes.item(j);
-				if (!validAttributes.containsEntry(nodeName, item.getNodeName())) {
-					atts.put(item.getNodeName(),item.getNamespaceURI());
+				String localName = item.getLocalName();
+				if (localName==null) {
+					localName = item.getNodeName();
+				}
+				if (!validAttributes.containsEntry(nodeName, localName)) {
+					atts.put(localName,item.getNamespaceURI());
 				}
 			}
 			for (Entry<String, String> entry : atts.entrySet()) {
