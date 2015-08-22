@@ -7,7 +7,6 @@ import java.util.List;
 import nu.xom.Attribute;
 import nu.xom.Element;
 import nu.xom.Nodes;
-import nu.xom.Text;
 import nu.xom.XPathContext;
 
 import org.apache.log4j.Logger;
@@ -21,6 +20,7 @@ import com.google.common.collect.Lists;
 import de.l3s.boilerpipe.BoilerpipeProcessingException;
 import de.l3s.boilerpipe.extractors.ArticleExtractor;
 import dk.in2isoft.commons.lang.Strings;
+import dk.in2isoft.commons.xml.DocumentToText;
 import dk.in2isoft.onlineobjects.modules.information.Boilerpipe;
 import dk.in2isoft.onlineobjects.modules.information.Readability;
 
@@ -93,15 +93,9 @@ public class HTMLDocument extends XMLDocument {
     
     public String getText() {
         nu.xom.Document doc = getXOMDocument();
-        StringBuffer data = new StringBuffer();
-        traverse(doc,data);
-        String text = data.toString();
-        text = text.replaceAll("\\t"," ");
-        text = text.replaceAll("\\s{2,}", " ");
-        text = text.replaceAll("\\s{2,}", " ");
-        return text;
+        return new DocumentToText().getText(doc);
     }
-    
+        
     public String getExtractedText() {
     	try {
 			String rawString = getRawString();
@@ -144,27 +138,6 @@ public class HTMLDocument extends XMLDocument {
 		readability.init();
     	return readability.getXomDocument();
 	}
-    
-    private void traverse(nu.xom.Node parent, StringBuffer data) {
-    	if (parent==null) return;
-        int count = parent.getChildCount();
-        for (int i=0;i<count;i++) {
-            nu.xom.Node node = parent.getChild(i);
-            if (node instanceof Text) {
-                data.append(" ");
-                data.append(node.getValue().trim());
-            }
-            else {
-            	if (node instanceof Element) {
-            		Element element = (Element) node;
-            		if (!element.getLocalName().equals("script") && !element.getLocalName().equals("style")) {
-                        traverse(node,data);            			
-            		}
-            	}
-            }
-        }
-        
-    }
     
     public List<HTMLReference> getFeeds() {
 		List<HTMLReference> refs = Lists.newArrayList();

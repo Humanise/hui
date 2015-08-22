@@ -28,6 +28,7 @@ import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.commons.xml.DecoratedDocument;
 import dk.in2isoft.commons.xml.DocumentCleaner;
+import dk.in2isoft.commons.xml.DocumentToText;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.ArticlePerspective;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Pair;
@@ -186,18 +187,22 @@ public class ReaderArticleBuilder {
 			if (extracted==null) {
 				article.setFormatted("<p><em>Unable to extract text.</em></p>");
 			} else {
-				Document annotated = annotate(statements, extracted, watch);
-	
+
+				DocumentToText doc2txt = new DocumentToText();
+				String text = doc2txt.getText(extracted);
+				article.setText("<p>" + text.trim().replaceAll("\n\n", "</p><p>").replaceAll("\n", "<br/>") + "</p>");
+				
 				DocumentCleaner cleaner = new DocumentCleaner();
 				cleaner.setUrl(address.getAddress());
-				cleaner.clean(annotated);
+				cleaner.clean(extracted);
+				Document annotated = annotate(statements, extracted, watch);
+
+				
 				String serialized = getBodyXML(annotated);
 	
 				article.setFormatted(serialized);
+				
 			}
-		}
-		{
-			article.setText("");
 		}
 	}
 	
@@ -210,9 +215,11 @@ public class ReaderArticleBuilder {
 			Node node = bodies.get(0);
 			if (node instanceof Element) {
 				Element body = (Element) node;
-				Nodes children = body.query("*");
-				for (int i = 0; i < children.size(); i++) {
-					sb.append(children.get(i).toXML());
+				int childCount = body.getChildCount();
+				for (int i = 0; i < childCount; i++) {
+					Node child = body.getChild(i);
+					
+					sb.append(child.toXML());
 				}
 			}
 		}
