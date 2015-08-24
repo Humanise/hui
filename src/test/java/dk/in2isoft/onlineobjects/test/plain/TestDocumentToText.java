@@ -19,12 +19,13 @@ public class TestDocumentToText extends TestCase {
 				"<div><h1>Lorem  <span>ipsum</span></h1></div>" + 
 				"<p>Abe</p>" + 
 				"<div>Hest<br/>Hund</div>" +
+				"Flodhest"+
 				"<script>doSomething();</script>" +
 				"</body>" + 
 				"</html>";
 		nu.xom.Document document = DOM.parseXOM(xml);
 		String text = new DocumentToText().getText(document);
 		
-		Assert.assertEquals("Lorem ipsum\n\nAbe\nHest\nHund", text);
+		Assert.assertEquals("Lorem ipsum\n\nAbe\n\nHest\nHund\nFlodhest", text);
 	}
 }

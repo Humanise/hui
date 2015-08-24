@@ -61,6 +61,14 @@ public class DocumentToText {
 					if (!ignore.contains(name)) {
                         traverse(node,data);
             		}
+            		if (data.length() > 0) {
+            			if (singleBlocks.contains(name)) {
+            				newLines = Math.max(newLines, 1);
+            			}
+            			if (doubleBlocks.contains(name)) {
+            				newLines = Math.max(newLines, 2);
+            			}
+            		}
             	}
             }
         }
