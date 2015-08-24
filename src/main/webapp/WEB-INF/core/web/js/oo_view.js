@@ -8,6 +8,7 @@ oo.View = function(options) {
 	this.container = null;
 	this.itemElements = null; // The LIs
 	this.renderingPosition = 0;
+	this.maxRevealed = 0;
 	this._attach();
 }
 
@@ -54,27 +55,37 @@ oo.View.prototype = {
 		this.maxRevealed = limit;
 		var diff = this.renderingPosition - limit;
 		if (diff < 0) {
+			hui.log('oo.View._reveal: calling _loadMore:' + diff);
 			this._loadMore();
 		}
 	},
 	_loadMore : function() {
 		if (this.busy) {
+			hui.log('oo.View: im busy');
 			return;
 		}
-		hui.log('Loading more');
 		this.busy = true;
 		this.page++;
 		this.fireProperty('page',this.page);
+		hui.log('oo.View: Loading more: ' + this.page);
 	},
 	reset : function() {
-		this.page = 0;
-		this.fireProperty('page',this.page);
+		this.page = this.busy ? 0 : -1;
+		this.maxRevealed = 0;
 		this.renderingPosition = 0;
+
+		this._loadMore();
+		var parent = this.element.parentNode;
+		if (parent && hui.cls.has(parent,'hui_overflow')) {
+			parent.scrollTop = 0;
+		}
+		hui.log('oo.View: Resetting');
 	},
 	$sourceIsBusy : function() {
 		this._setBusy(true);
 	},
 	$objectsLoaded : function(result) {
+		hui.log('oo.View: objectsLoaded: page=' + this.page);
 		this._setBusy(false);
 		var ul;
 		if (this.page==0) {

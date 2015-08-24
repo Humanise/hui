@@ -10,17 +10,17 @@ public class ArticlePerspective {
 	private long id;
 	private String title;
 	private String url;
-	
+
 	private String info;
 	private String header;
-	
+
 	private String formatted;
 	private String text;
-	
+
 	private boolean inbox;
 	private boolean favorite;
-	
-	private List<Pair<Long,String>> quotes;
+
+	private List<StatementPerspective> quotes;
 	private List<Option> tags;
 	private List<Option> words;
 
@@ -72,11 +72,11 @@ public class ArticlePerspective {
 		this.info = info;
 	}
 
-	public List<Pair<Long,String>> getQuotes() {
+	public List<StatementPerspective> getQuotes() {
 		return quotes;
 	}
 
-	public void setQuotes(List<Pair<Long,String>> quotes) {
+	public void setQuotes(List<StatementPerspective> quotes) {
 		this.quotes = quotes;
 	}
 
@@ -119,5 +119,4 @@ public class ArticlePerspective {
 	public void setHeader(String header) {
 		this.header = header;
 	}
-	
 }

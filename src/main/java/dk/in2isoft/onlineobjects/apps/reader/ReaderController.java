@@ -569,6 +569,10 @@ public class ReaderController extends ReaderControllerBase {
 	@Path
 	public List<ItemData> getWordCloud(Request request) throws ModelException {
 		WordByInternetAddressQuery query = new WordByInternetAddressQuery(request.getSession());
+/*		List<ItemData> list = modelService.list(query);
+		Collections.sort(list, (o1, o2) -> {
+			return Strings.compareCaseless(o1.getText(),o2.getText());
+		});*/
 		return modelService.list(query);
 	}
 
