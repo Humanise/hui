@@ -353,4 +353,10 @@ public class Strings {
 		out.append(text.substring(pos));
 		return out.toString();
 	}
+
+	public static int compareCaseless(String a, String b) {
+		if (a==null) a = "";
+		if (b==null) b = "";
+		return a.toLowerCase().compareTo(b.toLowerCase());
+	}
 }
