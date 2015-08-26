@@ -75,8 +75,15 @@ public class LanguageService {
 	}
 	
 	public Locale getLocale(String text) {
+		if (Strings.isBlank(text)) {
+			return null;
+		}
 		LanguageIdentifier id = new LanguageIdentifier(text);
-		return new Locale(id.getLanguage());
+		String language = id.getLanguage();
+		if (Strings.isBlank(language)) {
+			return null;
+		}
+		return new Locale(language);
 	}
 	
 	public TextAnalysis analyse(String text) throws ModelException {
