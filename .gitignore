@@ -9,3 +9,7 @@ configuration.properties
 configuration.test.properties
 test.properties
 .externalToolBuilders
+src/main/resources/configuration.properties.deployed
+src/main/resources/hibernate.cfg.xml.deployed
+src/main/resources/log4j.properties.deployed
+src/main/resources/onlineobjects.cfg.xml.deployed
