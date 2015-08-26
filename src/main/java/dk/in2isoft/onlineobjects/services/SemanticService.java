@@ -315,6 +315,9 @@ public class SemanticService {
 	
 	public String[] getTokensAsString(String text, Locale locale) {
 		TokenizerModel model = getTokenizerModel(locale);
+		if (model == null) {
+			return null;
+		}
 		Tokenizer tokenizer = new TokenizerME(model);
 		return tokenizer.tokenize(text);
 	}
@@ -338,14 +341,17 @@ public class SemanticService {
 		}
 
 		File file = configurationService.getFile("WEB-INF","data","models",locale.getLanguage()+"-sent.bin");
-
-		try (InputStream modelIn = new FileInputStream(file)){
-		  SentenceModel model = new SentenceModel(modelIn);
-		  sentenceModels.put(locale, model);
-		  return model;
-		}
-		catch (IOException e) {
-		  log.error("Unable to load model",e);
+		if (file.exists()) {
+			try (InputStream modelIn = new FileInputStream(file)){
+			  SentenceModel model = new SentenceModel(modelIn);
+			  sentenceModels.put(locale, model);
+			  return model;
+			}
+			catch (IOException e) {
+			  log.error("Unable to load model",e);
+			}
+		} else {
+			sentenceModels.put(locale, null);
 		}
 		return null;
 	}
@@ -357,14 +363,17 @@ public class SemanticService {
 			return posModels.get(locale);
 		}
 		File file = configurationService.getFile("WEB-INF","data","models",locale.getLanguage()+"-pos-maxent.bin");
-
-		try (InputStream modelIn = new FileInputStream(file)){
-		  POSModel model = new POSModel(modelIn);
-		  posModels.put(locale, model);
-		  return model;
-		}
-		catch (IOException e) {
-		  log.error("Unable to load model",e);
+		if (file.exists()) {
+			try (InputStream modelIn = new FileInputStream(file)){
+			  POSModel model = new POSModel(modelIn);
+			  posModels.put(locale, model);
+			  return model;
+			}
+			catch (IOException e) {
+			  log.error("Unable to load model",e);
+			}
+		} else {
+			posModels.put(locale, null);
 		}
 		return null;
 	}
@@ -376,12 +385,16 @@ public class SemanticService {
 			return tokenizerModels.get(locale);
 		}
 		File file = configurationService.getFile("WEB-INF","data","models",locale.getLanguage()+"-token.bin");
-		try (InputStream modelIn = new FileInputStream(file)) {
-			TokenizerModel model = new TokenizerModel(modelIn);
-			tokenizerModels.put(locale, model);
-			return model;
-		} catch (IOException e) {
-			log.error("Unable to load tokenizer model", e);
+		if (file.exists()) {
+			try (InputStream modelIn = new FileInputStream(file)) {
+				TokenizerModel model = new TokenizerModel(modelIn);
+				tokenizerModels.put(locale, model);
+				return model;
+			} catch (IOException e) {
+				log.error("Unable to load tokenizer model", e);
+			}
+		} else {
+			tokenizerModels.put(locale, null);
 		}
 		return null;
 	}
@@ -406,6 +419,9 @@ public class SemanticService {
 
 	public String[] getNaturalWords(String text, Locale locale) {
 		String[] tokens = getTokensAsString(text, locale);
+		if (tokens==null) {
+			return new String[] {};
+		}
 		List<String> list = Arrays.asList(tokens);
 		List<String> array = list.stream().
 				filter(str -> isWordToken(str)).
