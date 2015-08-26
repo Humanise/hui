@@ -22,8 +22,8 @@
 		<middle>
 			<left>
 				<overflow>
-					<selection value="dk.in2isoft.onlineobjects.model.Entity" name="selection">
-						<item icon="common/user" title="All users" value="dk.in2isoft.onlineobjects.model.Entity"/>
+					<selection value="all" name="selection">
+						<item icon="view/list" title="Everything" value="all"/>
 					</selection>
 				</overflow>
 			</left>
