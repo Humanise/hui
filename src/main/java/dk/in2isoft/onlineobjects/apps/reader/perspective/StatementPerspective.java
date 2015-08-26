@@ -5,6 +5,7 @@ public class StatementPerspective {
 	private String text;
 	private long id;
 	private boolean found;
+	private int firstPosition;
 
 	public String getText() {
 		return text;
@@ -28,5 +29,13 @@ public class StatementPerspective {
 
 	public void setFound(boolean found) {
 		this.found = found;
+	}
+
+	public int getFirstPosition() {
+		return firstPosition;
+	}
+
+	public void setFirstPosition(int firstPosition) {
+		this.firstPosition = firstPosition;
 	}
 }
