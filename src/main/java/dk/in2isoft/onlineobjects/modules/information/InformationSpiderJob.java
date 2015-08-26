@@ -23,27 +23,31 @@ public class InformationSpiderJob extends ServiceBackedJob implements Interrupta
 		
 		List<String> feeds = Lists.newArrayList(
 
-				"http://feeds2.feedburner.com/3quarksdaily",
 				"http://daringfireball.net/index.xml",
 				"http://www.appleinsider.com/appleinsider.rss",
+
 				"http://politiken.dk/rss/senestenyt.rss",
+				"http://politiken.dk/rss/newsinenglish.rss",
+				"http://politiken.dk/rss/udland.rss",
+				"http://politiken.dk/rss/indland.rss",
+				"http://politiken.dk/rss/viden.rss",
+
 				"http://www.dr.dk/nyheder/service/feeds/allenyheder",
+				"http://borsen.dk/rss/",
 				"http://www.b.dk/feeds/rss/Kronikker",
-				"http://alistapart.com/site/rss",
 				"http://www.bt.dk/bt/seneste/rss",
-				//"https://www.sciencenews.org/feeds/headlines.rss",
+				"http://jp.dk/international/?service=rssfeed",
+				"http://jp.dk/nyviden/?service=rssfeed",
+
+				"http://alistapart.com/site/rss",
 				"http://www.smashingmagazine.com/feed/",
 				"http://www.conservationmagazine.org/feed/",
 				"http://feeds.reuters.com/reuters/technologyNews?format=xml",
 				"http://feeds.reuters.com/reuters/MostRead",
 				"http://rss.cnn.com/rss/edition.rss",
 				"http://rss.cnn.com/rss/cnn_latest.rss",
-				"http://politiken.dk/rss/newsinenglish.rss",
-				"http://politiken.dk/rss/udland.rss",
-				"http://politiken.dk/rss/indland.rss",
-				"http://politiken.dk/rss/viden.rss",
-				"http://jp.dk/international/?service=rssfeed",
 				"http://wp-tfap.appspot.com/?feed=tfa&type=rss2" // Wikipedia featured article
+				//"https://www.sciencenews.org/feeds/headlines.rss",
 			);
 		feeds = Lists.newArrayList("http://www.dr.dk/nyheder/service/feeds/allenyheder");
 		JobStatus status = getStatus(context);
