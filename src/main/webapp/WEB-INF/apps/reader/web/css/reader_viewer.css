@@ -341,17 +341,25 @@
 /**************** Quotes ***************/
 
 .reader_viewer_quote {
-	position: relative;
-	font-weight: 400;
+  position: relative;
+  font-weight: 400;
+  margin: 10px 0 10px 0px;
+  border-bottom: 1px solid rgb(236, 229, 213);
+  padding-bottom: 10px;
+  color: rgb(146, 137, 119);
+}
+
+.reader_viewer_quote-missing {
+  text-decoration: line-through;
 }
 
 .reader_viewer_quote:before {
   content: '\201C';
   position: absolute;
-  margin-left: -32px;
+  margin-left: -25px;
   font-size: 32pt;
   font-family: 'Georgia';
   line-height: 32px;
   top: 4px;
-  color: rgb(194, 172, 126);
+  color: rgb(146, 137, 119);
 }
