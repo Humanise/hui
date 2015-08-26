@@ -36,6 +36,8 @@ public class DocumentCleaner {
 	public DocumentCleaner() {
 		validAttributes.put("a", "href");
 		validAttributes.put("a", "title");
+		validAttributes.put("abbr", "title");
+		validAttributes.put("time", "datetime");
 		validAttributes.put("img", "src");
 		validAttributes.put("img", "title");
 		validAttributes.put("img", "width");
@@ -43,11 +45,14 @@ public class DocumentCleaner {
 		
 		validTags.addAll(Sets.newHashSet("html","head","body","title"));
 		validTags.addAll(Sets.newHashSet("h1","h2","h3","h4","h5","h6","p"));
-		validTags.addAll(Sets.newHashSet("strong","em","a","img","br"));
+		validTags.addAll(Sets.newHashSet("strong","em","a","img","br","hr"));
+		validTags.addAll(Sets.newHashSet("sub","sup","abbr","dfn"));
+		validTags.addAll(Sets.newHashSet("del","ins","cite","q"));
+		validTags.addAll(Sets.newHashSet("code","tt","kbd","samp","var","time"));
 		validTags.addAll(Sets.newHashSet("table","tbody","tr","th","td","thead","tfoot","colgroup","col","caption"));
 		validTags.addAll(Sets.newHashSet("dl","dt","dd"));
 		validTags.addAll(Sets.newHashSet("ul","ol","li"));
-		validTags.addAll(Sets.newHashSet("blockquote","figure","pre","code"));
+		validTags.addAll(Sets.newHashSet("blockquote","figure","figcaption","pre"));
 	}
 	
 	public void setUrl(String url) {
