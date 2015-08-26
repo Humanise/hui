@@ -48,6 +48,8 @@ public class InformationService {
 	private SurveillanceService surveillanceService;
 	private HTMLService htmlService;
 	
+	private Set<String> supportedLanguages = Sets.newHashSet("da","en");
+	
 	public void clearUnvalidatedWords() throws ModelException {
 		User admin = modelService.getUser(SecurityService.ADMIN_USERNAME);
 		Query<Word> query = Query.after(Word.class).withCustomProperty(Property.KEY_DATA_VALIDATED, "false");
@@ -107,34 +109,44 @@ public class InformationService {
 					status.warn("No content: "+link);
 				} else {
 					Locale locale = languageService.getLocale(contents);
-					
-					String[] allWords = semanticService.getNaturalWords(contents, locale);
-					List<String> uniqueWords = Lists.newArrayList(semanticService.getUniqueWordsLowercased(allWords));
-										
-					
-					WordListPerspectiveQuery perspectiveQuery = new WordListPerspectiveQuery().withWords(uniqueWords).orderByText();
-					List<WordListPerspective> list = modelService.list(perspectiveQuery);
-					Set<String> found = Sets.newHashSet();
-					for (WordListPerspective perspective : list) {
-						found.add(perspective.getText().toLowerCase());
-					}
 					int wordsCreated = 0;
-					Counter<String> languages = languageService.countLanguages(list);
-					String topLanguage = languages.getTop();
-					//Locale locale = languageService.getLocaleForCode(topLanguage);
-					for (String wordStr : uniqueWords) {
-						if (!found.contains(wordStr)) {
-							Word word = new Word();
-							word.setText(wordStr);
-							word.addProperty(Property.KEY_DATA_VALIDATED, "false");
-							word.addProperty(Property.KEY_WORD_SUGGESTION_LANGUAGE, topLanguage);
+					if (locale==null) {
+						status.warn("Unable to detect language: " + StringUtils.abbreviateMiddle(doc.getTitle(),"...", 50));
+					} else { 
+						if ("no".equals(locale.getLanguage())) {
+							locale = new Locale("da");
+							status.warn("Using danish instead of norwegian");						
+						}
+						if (!supportedLanguages.contains(locale.getLanguage())){
+							status.warn("Unsupported language: " + locale);						
+						} else {
+							String[] allWords = semanticService.getNaturalWords(contents, locale);
+							List<String> uniqueWords = Lists.newArrayList(semanticService.getUniqueWordsLowercased(allWords));
 							
-							modelService.createItem(word, admin);
-							securityService.grantPublicPrivileges(word, true, false, false);
-							status.log("New word found: "+word);
-							
-							modelService.createRelation(internetAddress, word, Relation.KIND_COMMON_SOURCE, admin);
-							wordsCreated++;
+							WordListPerspectiveQuery perspectiveQuery = new WordListPerspectiveQuery().withWords(uniqueWords).orderByText();
+							List<WordListPerspective> list = modelService.list(perspectiveQuery);
+							Set<String> found = Sets.newHashSet();
+							for (WordListPerspective perspective : list) {
+								found.add(perspective.getText().toLowerCase());
+							}
+							Counter<String> languages = languageService.countLanguages(list);
+							String topLanguage = languages.getTop();
+							//Locale locale = languageService.getLocaleForCode(topLanguage);
+							for (String wordStr : uniqueWords) {
+								if (!found.contains(wordStr)) {
+									Word word = new Word();
+									word.setText(wordStr);
+									word.addProperty(Property.KEY_DATA_VALIDATED, "false");
+									word.addProperty(Property.KEY_WORD_SUGGESTION_LANGUAGE, topLanguage);
+									
+									modelService.createItem(word, admin);
+									securityService.grantPublicPrivileges(word, true, false, false);
+									status.log("New word found: "+word);
+									
+									modelService.createRelation(internetAddress, word, Relation.KIND_COMMON_SOURCE, admin);
+									wordsCreated++;
+								}
+							}
 						}
 					}
 					surveillanceService.logInfo("Imported webpage", "Title: "+StringUtils.abbreviateMiddle(doc.getTitle(),"...", 50)+" - words: "+wordsCreated);
