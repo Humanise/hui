@@ -3,8 +3,6 @@ package dk.in2isoft.commons.http;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.neo4j.helpers.Strings;
-
 import dk.in2isoft.commons.lang.Files;
 
 public class URLUtil {

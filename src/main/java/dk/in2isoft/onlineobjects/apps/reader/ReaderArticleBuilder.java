@@ -56,7 +56,6 @@ import dk.in2isoft.onlineobjects.services.LanguageService;
 import dk.in2isoft.onlineobjects.services.PileService;
 import dk.in2isoft.onlineobjects.services.SemanticService;
 import dk.in2isoft.onlineobjects.services.StorageService;
-import dk.in2isoft.onlineobjects.ui.data.Option;
 
 public class ReaderArticleBuilder {
 

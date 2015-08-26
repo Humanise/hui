@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -33,19 +32,19 @@ public class DispatchingService {
 
 	private static Logger log = Logger.getLogger(DispatchingService.class);
 	
-	private static final Pattern SESSION_PATTERN = Pattern.compile("_sessionId=[^&]+");
-	
 	private ModelService modelService;
 	private SecurityService securityService;
 	private SurveillanceService surveillanceService;
 	private ConfigurationService configurationService;
 
 	private List<Responder> responders;
+	
+	private boolean sleep;
 		
 	
 	public boolean doFilter(HttpServletRequest servletRequest, HttpServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
 
-		if (!true) {
+		if (sleep) {
 			try {
 				Thread.sleep(1500);
 			} catch (InterruptedException e) {

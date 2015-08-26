@@ -20,14 +20,12 @@ import nu.xom.XMLException;
 import nu.xom.converters.DOMConverter;
 
 import org.apache.tools.ant.filters.StringInputStream;
-import org.ccil.cowan.tagsoup.Parser;
 import org.eclipse.jdt.annotation.Nullable;
 import org.jdom2.input.DOMBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
 
 import dk.in2isoft.commons.lang.Strings;
 

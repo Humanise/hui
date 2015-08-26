@@ -178,7 +178,7 @@ public class PhotosController extends PhotosControllerBase {
 	@Path
 	public void uploadToGallery(Request request) throws IOException, EndUserException {
 		DataImporter dataImporter = importService.createImporter();
-		ImportListener listener = new ImageGalleryImporter(modelService,imageService);
+		ImportListener<?> listener = new ImageGalleryImporter(modelService,imageService);
 		dataImporter.setListener(listener);
 		dataImporter.importMultipart(this, request);
 	}

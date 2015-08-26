@@ -8,7 +8,6 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
 
 import dk.in2isoft.commons.lang.Strings;
-import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.events.ModelEventListener;

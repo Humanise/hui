@@ -6,7 +6,6 @@ import org.joda.time.Period;
 
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.apps.community.UserProfileInfo;
-import dk.in2isoft.onlineobjects.core.Core;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
