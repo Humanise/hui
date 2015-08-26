@@ -1,6 +1,7 @@
 package dk.in2isoft.onlineobjects.apps.reader;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -13,7 +14,6 @@ import nu.xom.Nodes;
 import nu.xom.XPathContext;
 import opennlp.tools.util.Span;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +48,6 @@ import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.Statement;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.Word;
-import dk.in2isoft.onlineobjects.modules.information.QuoteConversionJob;
 import dk.in2isoft.onlineobjects.modules.language.WordCategoryPerspectiveQuery;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
 import dk.in2isoft.onlineobjects.modules.networking.NetworkResponse;
@@ -57,6 +56,7 @@ import dk.in2isoft.onlineobjects.services.LanguageService;
 import dk.in2isoft.onlineobjects.services.PileService;
 import dk.in2isoft.onlineobjects.services.SemanticService;
 import dk.in2isoft.onlineobjects.services.StorageService;
+import dk.in2isoft.onlineobjects.ui.data.Option;
 
 public class ReaderArticleBuilder {
 
@@ -199,18 +199,21 @@ public class ReaderArticleBuilder {
 				DocumentCleaner cleaner = new DocumentCleaner();
 				cleaner.setUrl(address.getAddress());
 				cleaner.clean(extracted);
-				Document annotated = annotate(article.getQuotes(), extracted, watch);
-
 				
+				Document annotated = annotate(article, extracted, watch);
 				
-				StringBuilder formatted = new StringBuilder();
+				HTMLWriter formatted = new HTMLWriter();
 				
 				for (StatementPerspective statement : article.getQuotes()) {
-					formatted.append("<blockquote>").append(StringEscapeUtils.escapeXml(statement.getText())).append("</blockquote>");
-					
+					String cls = "reader_viewer_quote";
+					if (!statement.isFound()) {
+						cls+=" reader_viewer_quote-missing";
+					}
+					formatted.startBlockquote().withClass(cls).withData("id", statement.getId());
+					formatted.text(statement.getText());
+					formatted.endBlockquote();
 				}
-				
-				formatted.append(getBodyXML(annotated));
+				formatted.html(getBodyXML(annotated));
 
 				article.setFormatted(formatted.toString());
 
@@ -238,9 +241,11 @@ public class ReaderArticleBuilder {
 		return sb.toString();
 	}
 
-	private Document annotate(List<StatementPerspective> list, Document xomDocument, StopWatch watch) throws ModelException, ExplodingClusterFuckException {
+	private Document annotate(ArticlePerspective article, Document xomDocument, StopWatch watch) throws ModelException, ExplodingClusterFuckException {
 		watch.split();
 		log.trace("Parsed HTML: " + watch.getSplitTime());
+		
+		List<StatementPerspective> statements = article.getQuotes();
 
 		DecoratedDocument decorated = new DecoratedDocument(xomDocument);
 		String text = decorated.getText();
@@ -257,18 +262,25 @@ public class ReaderArticleBuilder {
 			}
 		}
 		StringSearcher searcher = new StringSearcher();
-		for (StatementPerspective statement : list) {
+		for (StatementPerspective statement : statements) {
 			List<Result> found = searcher.search(statement.getText(), text);
+			statement.setFirstPosition(text.length());
 			for (Result result : found) {
 				Map<String, Object> attributes = new HashMap<>();
 				attributes.put("data-id", statement.getId());
 				attributes.put("class", "quote");
 				decorated.decorate(result.getFrom(), result.getTo(), "mark", attributes);
+				
+				statement.setFirstPosition(Math.min(result.getFrom(), statement.getFirstPosition()));
 			}
 			if (!found.isEmpty()) {
 				statement.setFound(true);
 			}
-		}
+		}		
+		
+		Collections.sort(statements,(a,b) -> {
+			return a.getFirstPosition() - b.getFirstPosition();
+		});
 		decorated.build();
 		Document document = decorated.getDocument();
 		return document;
