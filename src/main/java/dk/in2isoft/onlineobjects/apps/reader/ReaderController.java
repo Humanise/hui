@@ -452,6 +452,10 @@ public class ReaderController extends ReaderControllerBase {
 		Long id = request.getLong("id");
 		String text = request.getString("text");
 		if (Strings.isNotBlank(text)) {
+			if (text.length() > 10000) {
+				// TODO Handle this better
+				throw new IllegalRequestException("Text too long");
+			}
 			Privileged session = request.getSession();
 			InternetAddress address = modelService.get(InternetAddress.class, id, session);
 			if (address != null) {
