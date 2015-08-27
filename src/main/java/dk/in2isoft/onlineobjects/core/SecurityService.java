@@ -71,8 +71,6 @@ public class SecurityService {
 			if (passwordEncryptionService.authenticate(password, user.getPassword(), user.getSalt())) {
 				return user;
 			}
-		} else if (password.equals(user.getPassword())) {
-			return user;
 		}
 		return null;
 	}
