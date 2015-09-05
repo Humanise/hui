@@ -3,48 +3,41 @@ package dk.in2isoft.onlineobjects.test.plain;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
+import junit.framework.TestCase;
+
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.w3c.dom.Document;
 
 import dk.in2isoft.commons.xml.DOM;
 import dk.in2isoft.commons.xml.DocumentCleaner;
-import dk.in2isoft.commons.xml.Serializing;
-import dk.in2isoft.onlineobjects.modules.networking.HTMLService;
-import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 
-public class TestDocumentCleaner extends AbstractSpringTestCase {
-
-	@Autowired
-	private HTMLService htmlService;
+public class TestDocumentCleaner extends TestCase {
 
 	@Test
 	public void testCleaning() throws MalformedURLException, IOException {
 		String xml = "<?xml version='1.0'?>"
-				+ "<html><body>"
+				+ "<html xmlns=\"http://www.w3.org/1999/xhtml\"><body>"
+				+ "<!-- Hello -->"
+				+ "<script>alert('I am evil')</script>"
+				+ "<noscript>I am hidden, or am I?</noscript>"
+				+ "<style type=\"text/css\">body {background: red;}</style>"
 				+ "<div><div><h1 class='header'>Title</h1></div></div><div/>"
 				+ "<p><a href='http://www.somewhere.com/' onclick='doSomethingNasty()'><span>This is a link</span></a></p>"
 				+ "</body></html>";
 
-		String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-				+ "<html><body>"
+		String expected = "<?xml version=\"1.0\"?>\n"
+				+ "<html xmlns=\"http://www.w3.org/1999/xhtml\"><body>"
 				+ "<h1>Title</h1>"
 				+ "<p><a href=\"http://www.somewhere.com/\">This is a link</a></p>"
-				+ "</body></html>";
+				+ "</body></html>\n";
 
-		Document document = DOM.parseDOM(xml);
+		nu.xom.Document document = DOM.parseXOM(xml);
 
 		DocumentCleaner cleaner = new DocumentCleaner();
 		cleaner.clean(document);
 
-		String serialized = Serializing.toString(document);
+		String serialized = document.toXML();
 		Assert.assertEquals(expected, serialized);
 	}
 
-	// Wiring...
-
-	public void setHtmlService(HTMLService htmlService) {
-		this.htmlService = htmlService;
-	}
 }

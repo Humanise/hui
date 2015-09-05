@@ -7,9 +7,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import nu.xom.Attribute;
+import nu.xom.Comment;
 import nu.xom.Element;
 import nu.xom.Nodes;
 import nu.xom.ParentNode;
+import nu.xom.Text;
 import nu.xom.XPathContext;
 
 import org.neo4j.helpers.Strings;
@@ -29,6 +31,9 @@ public class DocumentCleaner {
 
 	private Multimap<String, String> validAttributes = HashMultimap.create();
 	private Set<String> validTags = Sets.newHashSet();
+	
+	private Set<String> bannedTags = Sets.newHashSet();
+
 	private URI uri;
 	
 	private static final Logger log = LoggerFactory.getLogger(DocumentCleaner.class);
@@ -53,6 +58,10 @@ public class DocumentCleaner {
 		validTags.addAll(Sets.newHashSet("dl","dt","dd"));
 		validTags.addAll(Sets.newHashSet("ul","ol","li"));
 		validTags.addAll(Sets.newHashSet("blockquote","figure","figcaption","pre"));
+		
+		bannedTags.add("script");
+		bannedTags.add("style");
+		bannedTags.add("noscript");
 	}
 	
 	public void setUrl(String url) {
@@ -71,13 +80,15 @@ public class DocumentCleaner {
 		if (document.getRootElement()==null) {
 			return;
 		}
-		XPathContext context = new XPathContext("html", document.getRootElement().getNamespaceURI());
-		Nodes nodes = document.query("//html:*",context);
+		Nodes nodes = document.query("//node()");
 		int length = nodes.size();
-		Set<Element> nodesToRemove = Sets.newHashSet();
+		Set<nu.xom.Node> nodesToRemove = Sets.newHashSet();
 		for (int i = 0; i < length; i++) {
 			nu.xom.Node node = nodes.get(i);
-			if (node instanceof Element) {
+			if (node instanceof Comment) {
+				nodesToRemove.add(node);
+			}
+			else if (node instanceof Element) {
 				Element element = (Element) node;
 				String nodeName = element.getLocalName().toLowerCase();
 				if (!validTags.contains(nodeName)) {
@@ -92,14 +103,38 @@ public class DocumentCleaner {
 					}
 				}
 				
-				for (Element toRemove : nodesToRemove) {
+				if (nodeName.equals("a")) {
+					if (element.getAttributeCount() == 0) {
+						nodesToRemove.add(element);
+					} else {
+						Attribute attribute = element.getAttribute("href");
+						if (attribute!=null) {
+							String value = attribute.getValue();
+							try {
+								attribute.setValue(uri.resolve(value).toString());
+							} catch (IllegalArgumentException e) {
+								log.warn("Error resolving link URL",e);
+							}
+						}
+					}
+				}
+				
+				for (nu.xom.Node toRemove : nodesToRemove) {
 					ParentNode parent = toRemove.getParent();
 					if (parent!=null) {
-						int index = parent.indexOf(toRemove);
-						while (toRemove.getChildCount()>0) {
-							nu.xom.Node child = toRemove.removeChild(0);
-							parent.insertChild(child, index);
-							index ++;
+						if (toRemove instanceof Element) {
+							Element elementToRemove = (Element) toRemove;
+							String tagName = elementToRemove.getLocalName().toLowerCase();
+							if (!bannedTags.contains(tagName)) {
+								int index = parent.indexOf(elementToRemove);
+								while (elementToRemove.getChildCount()>0) {
+									nu.xom.Node child = elementToRemove.removeChild(0);
+									if (parent instanceof Element || !(child instanceof Text)) {
+										parent.insertChild(child, index);
+									}
+									index ++;
+								}
+							}
 						}
 						parent.removeChild(toRemove);
 					}
@@ -107,7 +142,7 @@ public class DocumentCleaner {
 			}
 		}
 		if (uri!=null) {
-			Nodes images = document.query("//html:img",context);
+			Nodes images = document.query("//*[local-name()='img']");
 			for (int i = 0; i < images.size(); i++) {
 				Element image = (Element) images.get(i);
 				Attribute attribute = image.getAttribute("src");
