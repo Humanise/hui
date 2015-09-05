@@ -1,0 +1,338 @@
+<?xml version="1.0"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"><head><title>What Every App Developer Should Know About Android | Smashing Magazine</title></head><body>
+  
+   
+    <h1>What Every App Developer Should Know About Android | Smashing Magazine</h1>
+    
+      
+      <p>In today’s fast-paced mobile market, consumers have no patience for mobile apps that compromise their experience. “Crashes” and “Not working” are the <a href="http://news.sky.com/story/1320558/downloads-drop-as-appetite-for-new-apps-wanes">most common feedback</a><sup><a href="#1">1</a></sup> on Google Play for unstable or sluggish apps (including games). Those comments and ratings make hundreds of millions of potential downloaders skip those lousy apps. Sounds harsh, but that’s the way it is.</p> 
+      <p>An app succeeds not by chance. It is the result of the right decisions made at the right time. The <a href="http://www.appannie.com/indexes/all-stores/rank/overall/">most successful mobile app developers</a><sup><a href="#2">2</a></sup> understand the importance of performance, quality and robustness across the array of mobile devices that their customers use.</p> 
+      <p>Examples abound of just how easily a developer can go very, very wrong with their app. An app can behave differently on a <a href="http://www.androidcentral.com/devices">variety mobile devices</a><sup><a href="#3">3</a></sup>, even ones running the same OS version and identical hardware components.</p> 
+      <figure> 
+       <a href="http://www.smashingmagazine.com/wp-content/uploads/2014/09/01-testdroid-phones-opt.jpg"><img src="http://www.smashingmagazine.com/wp-content/uploads/2014/09/01-testdroid-phones-opt-500.jpg" width="500" height="333" /></a> 
+       <sup><a href="#4">4</a></sup> 
+       <figcaption>
+         Testdroid Cloud hosts hundreds of working Android and iOS devices. (Image credit: 
+        <a href="http://www.testdroid.com/">Testdroid</a> 
+        <sup><a href="#14">14</a></sup> 
+        <sup><a href="#5">5</a></sup>) ( 
+        <a href="http://www.smashingmagazine.com/wp-content/uploads/2014/09/01-testdroid-phones-opt.jpg">View large version</a> 
+        <sup><a href="#6">6</a></sup>) 
+       </figcaption> 
+      </figure> 
+      <p>During Q1 of this year (1 January to 31 March), we gathered a significant amount of data from <a href="http://www.testdroid.com/">Testdroid Cloud</a><sup><a href="#7">7</a></sup> on tests done by many mobile app and game developers. Testdroid Cloud is an online cloud-based platform for mobile developers to test that their apps work perfectly on the devices that their customers use.</p> 
+      <p>During this period, over 17.7 million tests were run on 288 distinct Android hardware models. To be clear, different versions of some popular models were tested but are counted in the data as one distinct device (such as the <a href="http://pdadb.net/index.php?m=specs&amp;id=4234">Samsung Galaxy S4 GT-i9505</a><sup><a href="#8">8</a></sup> running 4.2.2, API level 17). Some popular devices also had different versions of a single OS, such as the <a href="http://pdadb.net/index.php?m=specs&amp;id=3929">Google Nexus 7 ME370T</a><sup><a href="#9">9</a></sup> with Android OS version 4.1.2 (API level 16), 4.2.2 (API level 17) and 4.3 (API level 18).</p> 
+      <p>All tests were automated, using standard <a href="http://developer.android.com/tools/testing/testing_android.html#Instrumentation">Android instrumentation</a><sup><a href="#10">10</a></sup> and different <a href="http://en.wikipedia.org/wiki/Test_automation#Framework_approach_in_automation">test-automation frameworks</a><sup><a href="#11">11</a></sup>. In case you are not familiar with instrumentation, <a href="http://developer.android.com/tools/testing/testing_android.html">Android has a tutorial</a><sup><a href="#12">12</a></sup> that explains basic test automation. Also, the tests caught problems through logs, screenshots, performance analysis, and the success-failure rate of test runs.</p> 
+      <p><strong>Note:</strong> The data includes all test results, from the earliest stage (=APK ready) to when the application gets “finalized.” Therefore, it includes the exact problems that developers encountered during this process.</p> 
+      <figure> 
+       <a href="http://www.smashingmagazine.com/wp-content/uploads/2014/09/02-testdroid-infography-opt.jpg"><img src="http://www.smashingmagazine.com/wp-content/uploads/2014/09/02-testdroid-infography-opt-500.jpg" width="500" height="500" /></a> 
+       <sup><a href="#13">13</a></sup> 
+       <figcaption>
+         The research statistics, testbed and global coverage. (Image credit: 
+        <a href="http://www.testdroid.com/">Testdroid</a> 
+        <sup><a href="#14">14</a></sup> 
+        <sup><a href="#5">5</a></sup>) ( 
+        <a href="http://www.smashingmagazine.com/wp-content/uploads/2014/09/02-testdroid-infography-opt.jpg">View large version</a> 
+        <sup><a href="#15">15</a></sup>) 
+       </figcaption> 
+      </figure> 
+      <p>The goal for this research was to identify the most common problems and challenges that Android developers face with the devices they build for. The <a href="http://opensignal.com/reports/fragmentation-2013/">288 unique Android device models</a><sup><a href="#16">16</a></sup> represent a significant volume of Android use: approximately 92 to 97% of global Android volumes, depending on how it gets measured and what regions and markets are included. This research represents remarkable coverage of Android usage globally, and it shows the most obvious problems as well as the status of Android hardware and software from a developer’s point of view.</p> 
+      <p>We’ll dive deep into two areas of the research: Android <a href="http://en.wikipedia.org/wiki/Android_version_history">software</a><sup><a href="#17">17</a></sup> and <a href="http://tech.firstpost.com/news-analysis/all-you-need-to-know-about-mobile-phone-chipsets-27704.html">hardware</a><sup><a href="#18">18</a></sup>. The software section focuses on OS versions and OEM customizations, and the hardware section breaks down to the component level (display, memory, chipset, etc.).</p> 
+      <h3>Android Software</h3> 
+      <p>Your app is software, but a lot of other software is involved in mobile devices, too. And this “other” software can make your software perform differently (read “wrong”). What can you do to make sure your software works well with the rest of the software in devices today? Let’s first look at some of the most common software issues experienced by app developers.</p> 
+      <p>Android OS has been blamed for <a href="https://developer.android.com/about/dashboards/index.html">platform fragmentation</a><sup><a href="#19">19</a></sup>, making things very difficult for developers, users and pretty much every player in the ecosystem to keep up. However, that is not exactly the case. The OS very rarely makes things crack by itself — especially for app developers. More often it also involves OEM updates, hardware and many other factors — in addition to the OS.</p> 
+      <figure> 
+       <a href="http://www.smashingmagazine.com/wp-content/uploads/2014/09/03-android-os-distribution-opt.png"><img src="http://www.smashingmagazine.com/wp-content/uploads/2014/09/03-android-os-distribution-opt-500.png" width="500" height="182" /></a> 
+       <sup><a href="#20">20</a></sup> 
+       <figcaption>
+         Data collected for seven days, ending on 7 July 2014. (Image credit: 
+        <a href="https://developer.android.com/about/dashboards/index.html">Google</a> 
+        <sup><a href="#21">21</a></sup>) ( 
+        <a href="http://www.smashingmagazine.com/wp-content/uploads/2014/09/03-android-os-distribution-opt.png">View large version</a> 
+        <sup><a href="#22">22</a></sup>) 
+       </figcaption> 
+      </figure> 
+      <p>One reason why Android is tremendously popular among mobile enthusiasts and has quickly leaped ahead of Apple’s iOS in market share is because it comes in <a href="http://developer.android.com/training/design-navigation/multiple-sizes.html">devices of all shapes</a><sup><a href="#23">23</a></sup>, prices and forms, from tens of different OEMs.</p> 
+      <p>Also, the <a href="http://en.wikipedia.org/wiki/Android_(operating_system)#Software_stack">infrastructural software of Android</a><sup><a href="#24">24</a></sup> is robust, providing an excellent platform with a well-known Linux kernel, middleware and other software on top. In the following sections, we’ll look at the results of our research, broken down by OS version, OEM customizations and software dependencies.</p> 
+      <h4>How to Read the Graphs</h4> 
+      <p>The findings from this study are plotted on graphs. In those graphs, the dark black line is the median (50%) of the failure percentage of different devices in that group. The lines above the bars mark the upper quartile (75%), and the lines below mark the lower quartile (25%). The dashed lines are the maximum (top or right) and minimum (bottom or left). The circles represent outliers.</p> 
+      <h3>OS And Platform Versions</h3> 
+      <p>We’ll start with the most important factor in the problems experienced by app developers: <a href="http://en.wikipedia.org/wiki/Android_version_history">Android OS versions</a><sup><a href="#25">25</a></sup>. This dramatically affects which APIs developers can use and how those APIs are supported in variety of devices.</p> 
+      <p>Many developers have experienced all of the great new features, improvements and additions that <a href="http://www.smashingmagazine.com/2013/05/08/brave-new-world-designing-for-a-maturing-android/">Android has brought version by version</a><sup><a href="#26">26</a></sup>. Some late-comers have played with only the latest versions, but some have been developing apps since the early days as days of Cupcake (1.5) and Doughnut (1.6). Of course, these versions are not relevant anymore.</p> 
+      <p>The following table shows the release dates for the various OS versions (along with their code names) and notes why certain versions were excluded or were not used on the devices being tested.</p> 
+      <figure> 
+       <a href="http://www.smashingmagazine.com/wp-content/uploads/2014/09/04-q1-releasedates-opt.png"><img src="http://www.smashingmagazine.com/wp-content/uploads/2014/09/04-q1-releasedates-opt-500.png" width="500" height="360" /></a> 
+       <sup><a href="#27">27</a></sup> 
+       <figcaption>
+         The release version of each OS version. (Image credit: 
+        <a href="http://www.testdroid.com">Testdroid</a> 
+        <sup><a href="#75">75</a></sup> 
+        <sup><a href="#72">72</a></sup> 
+        <sup><a href="#69">69</a></sup> 
+        <sup><a href="#66">66</a></sup> 
+        <sup><a href="#62">62</a></sup> 
+        <sup><a href="#53">53</a></sup> 
+        <sup><a href="#49">49</a></sup> 
+        <sup><a href="#43">43</a></sup> 
+        <sup><a href="#31">31</a></sup> 
+        <sup><a href="#28">28</a></sup>) ( 
+        <a href="http://www.smashingmagazine.com/wp-content/uploads/2014/09/04-q1-releasedates-opt.png">View large version</a> 
+        <sup><a href="#29">29</a></sup>) 
+       </figcaption> 
+      </figure> 
+      <p>The most typical situation with app developers who want to maximize support for all possible variants is that they’ll start testing from version 4.0 (Ice Cream Sandwich, API level 14). However, if you really want to maximize coverage, start from version 2.3.3 (Gingerbread, API level 10) and test all possible combinations up to the latest release of Kit Kat (currently 4.4.4 and, hopefully soon, Android L). Versions older than 4.0 still have serious use — and will continue to for some time.</p> 
+      <figure> 
+       <a href="http://www.smashingmagazine.com/wp-content/uploads/2014/09/05-q1-failed-releaseVersion-opt.png"><img src="http://www.smashingmagazine.com/wp-content/uploads/2014/09/05-q1-failed-releaseVersion-color-opt-500.png" width="500" height="350" /></a> 
+       <sup><a href="#30">30</a></sup> 
+       <figcaption>
+         The failure rate of each OS version. (Image credit: 
+        <a href="http://www.testdroid.com">Testdroid</a> 
+        <sup><a href="#75">75</a></sup> 
+        <sup><a href="#72">72</a></sup> 
+        <sup><a href="#69">69</a></sup> 
+        <sup><a href="#66">66</a></sup> 
+        <sup><a href="#62">62</a></sup> 
+        <sup><a href="#53">53</a></sup> 
+        <sup><a href="#49">49</a></sup> 
+        <sup><a href="#43">43</a></sup> 
+        <sup><a href="#31">31</a></sup> 
+        <sup><a href="#28">28</a></sup>) ( 
+        <a href="http://www.smashingmagazine.com/wp-content/uploads/2014/09/05-q1-failed-releaseVersion-opt.png">View large version</a> 
+        <sup><a href="#32">32</a></sup>) 
+       </figcaption> 
+      </figure> 
+      <p>When it comes to the latest versions of Android — and let’s count Ice Cream Sandwich (<a href="http://en.wikipedia.org/wiki/Android_version_history#Android_4.0.3.E2.80.934.0.4_Ice_Cream_Sandwich_.28API_level_15.29">4.0.3 to 4.0.4</a><sup><a href="#33">33</a></sup>), Jelly Bean (<a href="http://en.wikipedia.org/wiki/Android_version_history#Android_4.1_Jelly_Bean_.28API_level_16.29">4.1.1 to 4.3</a><sup><a href="#34">34</a></sup>) and Kit Kat (<a href="http://en.wikipedia.org/wiki/Android_version_history#Android_4.4_KitKat_.28API_level_19.29">4.4 to 4.4.2</a><sup><a href="#35">35</a></sup>) among them — Ice Cream Sandwich is clearly the most robust platform. OEM updates were obviously the least problematic on this version, and the majority of tested apps worked very well on API level 15 (4.0.3 to 4.0.4).</p> 
+      <p>The upgrade to Jelly Bean and API level 16 didn’t significantly introduce new incompatibility issues, and the median failure percentage remained relatively low. However, API level 16 had many outlier cases, and for good reasons. For instance, more problems were reported with Vsync, extendable notifications and especially with support for the lock screen and home screen rotation.</p> 
+      <p>API level 17 brought improvements to the lock screen, and this version was generally stabile up to version 4.2.2. The failure rate went up when the majority of OEMs introduced their updates to this version. Apparently, it became more problematic for users than previous versions.</p> 
+      <p>Perhaps most surprisingly, the <a href="https://community.verizonwireless.com/thread/824084">failure rate went up</a><sup><a href="#36">36</a></sup> when Kit Kat API level 19 was released. The average failure percentage reached nearly the same level as it was with Gingerbread. Google patched Kit Kat quite quickly with two releases (4.4.1 and 4.4.2). Of those, 4.4.2 seemed to live much longer, and then the 4.4.3 update came out more than half a year later.</p> 
+      <h4>Key Findings From OS Versions</h4> 
+      <ul><li>On average, 23% of apps behave differently when a new version is installed. The median error percent was the smallest with Ice Cream Sandwich (1%), then Jelly Bean (8%), Honeycomb (8%), Kit Kat (21%) and, finally, Gingerbread (30%). This is actually lower than what was found in the study conducted with Q4 data (a 35% failure rate).</li><li>Despite old Android versions being used very little and Gingerbread being the oldest actively in use, some applications (40% of those tested) still work on even older versions (below 2.2). In other words, if an app works on version 2.2, then it will work 40% of the time in even older versions as well.</li><li>Over 50% of Android OS updates introduced problems that made apps fail in testing.</li><li>Testing failed 68% of the time when 5 apps were randomly picked out of 100.</li><li>The average duration of testing was 57 cycles per platform. Old versions were tested less than new ones: Gingerbread (12 test cycles), Ice Cream Sandwich (17), Jelly Bean (58) and Kit Kat (95).</li><li>An average testing cycle reduced 1.75% of bugs in the code overall.</li></ul> 
+      <p><strong>Note:</strong> A test cycle constitutes an iteration of a particular test script executed in one app version. When an app is changed and the test remains the same, that is counted as a new test cycle.</p> 
+      <h4>Tips and Takeaways</h4> 
+      <ul><li>For maximal coverage either geographically or globally, using as many physical devices as possible is recommended. Track your target audience’s use of different OS versions. The global status of versions is <a href="http://developer.android.com/about/dashboards/index.html">available on Google’s dashboard</a><sup><a href="#37">37</a></sup>.</li><li>All OS versions above 2.3.3 are still relevant. This will not likely change soon because users of Gingerbread and Ice Cream Sandwich represent nearly one quarter of all Android users, and many of them do not update (or would have done so already).</li><li>If you want to cover 66% of OS volume, then testing with Kit Kat (4.4.x) and Jelly Bean (4.1 to 4.3) is enough (covering API 16 to 19). </li><li>To cover 75% of OS volumes, then test from version 4.0.3 (API level 15).</li><li>We recommend testing the following devices to maximize coverage:</li></ul><ul><li>Amazon Kindle Fire D01400 — 2.3.4</li><li>HTC Desire HD A9191 — 2.3.5</li><li>Huawei Fusion 2 U8665 — 2.3.6</li><li>Sony Xperia U ST25i — 2.3.7</li><li>Asus Eee Pad Transformer TF101 — 4.0.3</li><li>LG Lucid 4G — 4.0.4</li><li>HTC One S X520e — 4.1.1</li><li>Motorola Droid XYBOARD 10.1 MX617 4.1.2</li><li>Acer Iconia B1-A71 — 4.2</li><li>BQ Aquaris 5 HD — 4.2.1</li><li>HTC One mini M4 — 4.2.2</li><li>Samsung Galaxy Note II GT-N7100 — 4.3</li><li>LG Google Nexus 5 D821 — 4.4</li><li>HTC One M8 — 4.4.2</li></ul> 
+       
+      <p><strong>Note:</strong> These devices were selected because they are a good base to test certain platform versions, with different OEM customizations included. These devices are not the most problematic; rather, they were selected because they provide <a href="http://opensignal.com/reports/fragmentation-2013/">great coverage</a><sup><a href="#38">38</a></sup> and are representative of similar devices (with the same version OS, from the same manufacturer, etc.).</p> 
+      <h3>OEM Customizations</h3> 
+      <p>One stumbling block with Android — like any open-source project — is its customizability, which exposes the entire platform to problems. What is called “fragmentation” by developers would be considered a point of differentiation for OEMs. In recent years, all <a href="http://www.tested.com/tech/android/460386-state-oem-skins-android/">Android OEMs have eagerly built their own UI layers</a><sup><a href="#39">39</a></sup>, skins and other middleware on top of vanilla Android. This is a significant source of the fragmentation that affects developers.</p> 
+      <p>In addition to UI layers, many OEMs have introduced <a href="http://forum.xda-developers.com/showthread.php?t=2570435">legacy software</a><sup><a href="#40">40</a></sup> — tailored to Android — and it, too, is preventing developers from building their apps to work identically across different brands of phones.</p> 
+      <p><a href="http://www.xda-developers.com/android/three-all-in-one-solutions-for-android-driver-issues/">Drivers also cause major problems</a><sup><a href="#41">41</a></sup>, many related to graphics. Certain chipset manufacturers have done an especially bad job at updating their graphics drivers, which makes the colors in apps, games and any graphic content inconsistent across phones. Developers might encounter entirely different color schemes on various Android devices, none close to what they intended.</p> 
+      <figure> 
+       <a href="http://www.smashingmagazine.com/wp-content/uploads/2014/09/06-q1-failed-oneCore-color-opt.png"><img src="http://www.smashingmagazine.com/wp-content/uploads/2014/09/06-q1-failed-oneCore-color-opt-500.png" width="500" height="362" /></a> 
+       <sup><a href="#42">42</a></sup> 
+       <figcaption>
+         Failure rate by OEM. (Image credit: 
+        <a href="http://www.testdroid.com">Testdroid</a> 
+        <sup><a href="#75">75</a></sup> 
+        <sup><a href="#72">72</a></sup> 
+        <sup><a href="#69">69</a></sup> 
+        <sup><a href="#66">66</a></sup> 
+        <sup><a href="#62">62</a></sup> 
+        <sup><a href="#53">53</a></sup> 
+        <sup><a href="#49">49</a></sup> 
+        <sup><a href="#43">43</a></sup> 
+        <sup><a href="#31">31</a></sup> 
+        <sup><a href="#28">28</a></sup>) ( 
+        <a href="http://www.smashingmagazine.com/wp-content/uploads/2014/09/06-q1-failed-oneCore-color-opt.png">View large version</a> 
+        <sup><a href="#44">44</a></sup>) 
+       </figcaption> 
+      </figure> 
+      <h4>Key Findings Related to OEM Customizations</h4> 
+      <ul><li>No surprise, Samsung devices are among the most robust and the most problematic. For example, Galaxy Nexus GT-I9250 is one of the most robust devices in all categories, while the Samsung Infuse 4G SGH-I997 failed the most in those same categories.</li><li>Asus devices, along with Xiaomi devices, are the most robust. Xiaomi implements Android differently, however; for instance, pop-ups make the controllability of some devices impossible.</li><li>Coolpad has, by volume, the most problems. Among the biggest brands, HTC has the least error-prone devices.</li><li>All of the big brands — HTC, Samsung, Sony and LG — have customizations that are problematic for certain types of applications. For example, Sony’s customizations breaks some basic functionality, such as viewing PDFs. Samsung’s customizations has problems with taking photos with the camera and interrupting calls.</li></ul> 
+      <h4>Tips and Takeaways</h4> 
+      <ul><li>The most common misconception is that Nexus devices are the best for testing. Those devices typically have the latest OS version and little to no OEM customization.</li><li>Pay attention to carrier- and operator-branded devices as well. Some of them implement Android totally differently, regardless of the name of the device or brand.</li></ul> 
+      <h3>Dependencies On Other Software</h3> 
+      <p>Some applications require access to other apps. For example, many apps and games incorporate social media, and in the worst implementations, developers have assumed that every device integrates popular social media apps. Some devices come with those social media apps preinstalled, but if not, then your application just won’t work properly. Unfortunately, problems with software dependency turn into problems for app developers.</p> 
+      <h4>Key Findings Related to Dependencies on Other Software</h4> 
+      <ul><li>92% of apps integrate with the given platform to show ads.</li><li>65% of apps integrate with at least one social media platform.</li><li>48% of apps integrate with at least two social media platforms.</li><li>33% of apps integrate with at least three or more social media platforms.</li></ul> 
+      <h4>Tips and Takeaways</h4> 
+      <p>Check whether the software that your application depends on is installed on all devices. Do not assume that all of those third-party apps and other software exist on every device!</p> 
+      <h3>Android Hardware</h3> 
+      <p>The Android device eco-system continues to grow and evolve. Many handset manufacturers continue to churn out devices with amazing specifications and hardware and with different form factors. Naturally, the <a href="http://opensignal.com/reports/fragmentation-2013/">sheer number of possible device configurations</a><sup><a href="#45">45</a></sup> presents a challenge to developers. Ensuring that an application works well on the widest range of devices is crucial and is the easiest way to avoid frustrating end users.</p> 
+      <p>Most developer carefully weigh the <a href="http://insights.wired.com/profiles/blogs/the-best-advice-for-app-developers-skip-emulators#axzz38bhWO19j">pros and cons of testing on emulators and testing on real devices</a><sup><a href="#46">46</a></sup> to follow the right strategy. Typically, emulators are used in initial stages of development, while real devices are brought in later in the game. Your choice of platform on which to build your next big thing should be as honest as possible — from day one. In our experience, that is a cornerstone of creating a successful app — and gaining those hundreds of millions of downloads.</p> 
+      <h4>Screen Resolution, Display and Colors</h4> 
+      <p>The key to success with any app — especially games — is to get the UI and graphics right. This is a challenge because there are a lot of different resolutions, a lot of ways to present content and, naturally, a lot of different hardware.</p> 
+      <p>With new high-end devices gaining popularity among users, the Android eco-system seems to be quickly headed towards high-resolution displays. High-resolution screens obviously make for a better user experience, but to take advantage of this, developers need to <a href="http://testdroid.com/testdroid/5876/test-early-test-often-testing-as-part-of-your-app-development">update their apps and test for them</a><sup><a href="#47">47</a></sup>.</p> 
+      <figure> 
+       <a href="http://www.smashingmagazine.com/wp-content/uploads/2014/09/07-color-error-opt.jpg"><img src="http://www.smashingmagazine.com/wp-content/uploads/2014/09/07-color-error-opt-500.jpg" width="500" height="276" /></a> 
+       <sup><a href="#48">48</a></sup> 
+       <figcaption>
+         Can you see the difference? An identical app is running on three different Android devices with the same OS version and hardware specifications. (Image credit: 
+        <a href="http://www.testdroid.com">Testdroid</a> 
+        <sup><a href="#75">75</a></sup> 
+        <sup><a href="#72">72</a></sup> 
+        <sup><a href="#69">69</a></sup> 
+        <sup><a href="#66">66</a></sup> 
+        <sup><a href="#62">62</a></sup> 
+        <sup><a href="#53">53</a></sup> 
+        <sup><a href="#49">49</a></sup> 
+        <sup><a href="#43">43</a></sup> 
+        <sup><a href="#31">31</a></sup> 
+        <sup><a href="#28">28</a></sup>) ( 
+        <a href="http://www.smashingmagazine.com/wp-content/uploads/2014/09/07-color-error-opt.jpg">View large version</a> 
+        <sup><a href="#50">50</a></sup>) 
+       </figcaption> 
+      </figure> 
+      <p>However, <a href="http://developer.android.com/guide/practices/screens_support.html#testing">display resolution</a><sup><a href="#51">51</a></sup> is not always the cause of headaches for developers. In fact, applications fail more often because of screen orientation, density, color and the overall quality of the device’s screen. For example, many games suffer from poor-quality displays. For instance, a button in a certain part of the UI might get shown in a different shade than the one intended by the designer — or, in some cases, a totally different color.</p> 
+      <p>This is a common issue. It can result not only from hardware components, but also when display drivers are implemented incorrectly. Graphical content could even be invisible in some apps because of color brightness or low pixel density. This kind of failure is apparent from screenshots in our tests.</p> 
+      <figure> 
+       <a href="http://www.smashingmagazine.com/wp-content/uploads/2014/09/08-q1-failed-screenReso-opt.png"><img src="http://www.smashingmagazine.com/wp-content/uploads/2014/09/08-q1-failed-screenReso-opt-500.png" width="500" height="362" /></a> 
+       <sup><a href="#52">52</a></sup> 
+       <figcaption>
+         Failure rate by screen resolution. (Image credit: 
+        <a href="http://www.testdroid.com">Testdroid</a> 
+        <sup><a href="#75">75</a></sup> 
+        <sup><a href="#72">72</a></sup> 
+        <sup><a href="#69">69</a></sup> 
+        <sup><a href="#66">66</a></sup> 
+        <sup><a href="#62">62</a></sup> 
+        <sup><a href="#53">53</a></sup> 
+        <sup><a href="#49">49</a></sup> 
+        <sup><a href="#43">43</a></sup> 
+        <sup><a href="#31">31</a></sup> 
+        <sup><a href="#28">28</a></sup>) ( 
+        <a href="http://www.smashingmagazine.com/wp-content/uploads/2014/09/08-q1-failed-screenReso-opt.png">View large version</a> 
+        <sup><a href="#54">54</a></sup>) 
+       </figcaption> 
+      </figure> 
+      <p>No surprise that as the display resolution gets higher, apps present fewer problems. There are a few exceptions to this, but they can be attributed to how <a href="http://developer.android.com/about/dashboards/index.html">certain OEMs use various resolutions</a><sup><a href="#55">55</a></sup> in both low- and high-end devices.</p> 
+      <p>The Android OS provides a <a href="http://www.smashingmagazine.com/2014/01/10/four-ways-to-build-a-mobile-app-part2-native-android/">environment to develop apps consistently</a><sup><a href="#56">56</a></sup> across devices, and it handles most of the work of adjusting each application’s UI to the given screen. Also, it comes with APIs that enables the developer to optimize an application’s UI for a <a href="http://www.smashingmagazine.com/2012/06/01/getting-to-know-android/">particular screen size or density</a><sup><a href="#57">57</a></sup>. For example, you might want one UI for tablets and another for handsets. Although the OS scales and resizes to make an application work on different screens, you should still <a href="http://www.androiduipatterns.com/">optimize your application for different screen sizes</a><sup><a href="#58">58</a></sup> and densities. In doing so, you’ll improve the user experience on all devices, and users will believe that your application was designed for their particular device, rather than simply stretched to fit their screen.</p> 
+      <h4>Key Findings Related to Screen Resolution</h4> 
+      <ul><li>The median of error was the smallest in resolutions of 2560 × 1600 pixels (0.4%), then 1280 × 800 (0.7%) and 1280 × 720 pixels (1.5%). It was highest in resolutions of 400 × 240 (45%) and 320 × 240 pixels (44%).</li><li>The most typical problem relates not to resolution or the scaling of graphical content, but to how content adjusts to the orientation of the screen. According to our data, problems with screen orientation are 78% more likely than problems with the scaling of graphical content.</li><li>Wrong color themes and color sets were reported in 18% of devices, while 24% of apps appeared correctly on all 288 different devices.</li><li>In some cases, an Android OS update or OEM update fixed a display issue, but the percentage was relatively low (6%).</li><li>Apps worked nearly the same on high- and low-end devices (based on chipset) with the same resolution (just a 2% difference).</li><li>In general, the bigger a device’s display, the more likely an app will perform better.</li></ul> 
+      <h4>Tips and Takeaways</h4> 
+      <ul><li>Design graphical content for multiple screen sizes, but make it scale to different sizes automatically. This is strictly a design issue.</li><li>Many problems with resolution, display and color can be avoided by designing an application correctly in the first place and by testing it thoroughly on real Android devices. Emulators won’t yield reliable results or lead to a robust application.</li></ul> 
+      <h4>Memory</h4> 
+      <p>Anything can happen when an Android device <a href="https://source.android.com/devices/low-ram.html">runs out of memory</a><sup><a href="#59">59</a></sup>. So, how does your application work when a device is low on memory?</p> 
+      <p>Developers deal with this problem rather often. Many apps won’t run on certain Android devices because they consume too much memory. Typically, the <a href="http://www.appannie.com/indexes/all-stores/rank/overall/">most popular apps</a><sup><a href="#60">60</a></sup> — ones rated with four and five stars — do not have this problem because memory management has been implemented the right way, or else they have been excluded from being downloaded on low-end devices entirely. Too many of today’s apps were originally developed for high-end devices and can’t be run on low-end devices. What is clear is that you can easily tackle this problem by checking how your app works with different memory capacities.</p> 
+      <p>Memory seems to significantly affect how a device copes with an application. If a device’s RAM is equal to or less than 512 MB, then the device will crash 40% of the time when certain applications are running.</p> 
+      <figure> 
+       <a href="http://www.smashingmagazine.com/wp-content/uploads/2014/09/09-q1-failed-ram-opt.png"><img src="http://www.smashingmagazine.com/wp-content/uploads/2014/09/09-q1-failed-ram-opt-500.png" width="500" height="351" /></a> 
+       <sup><a href="#61">61</a></sup> 
+       <figcaption>
+         Failure rate of apps by memory size of device. (Image credit: 
+        <a href="http://www.testdroid.com">Testdroid</a> 
+        <sup><a href="#75">75</a></sup> 
+        <sup><a href="#72">72</a></sup> 
+        <sup><a href="#69">69</a></sup> 
+        <sup><a href="#66">66</a></sup> 
+        <sup><a href="#62">62</a></sup> 
+        <sup><a href="#53">53</a></sup> 
+        <sup><a href="#49">49</a></sup> 
+        <sup><a href="#43">43</a></sup> 
+        <sup><a href="#31">31</a></sup> 
+        <sup><a href="#28">28</a></sup>) ( 
+        <a href="http://www.smashingmagazine.com/wp-content/uploads/2014/09/09-q1-failed-ram-opt.png">View large version</a> 
+        <sup><a href="#63">63</a></sup>) 
+       </figcaption> 
+      </figure> 
+      <p>If a device’s RAM is higher than 512 MB, then the device will crash approximately 10% of the time. That is statistically significant.</p> 
+      <h4>Key Findings Related to RAM</h4> 
+      <ul><li>The median of error was lowest with RAM of 1024 MB (1%), then 1536 MB (3%) and next 768 MB (16%). It was highest with RAM of 336 (45%) and 168 MB (44%).</li><li>Approximately 10% of apps run on devices with more than 512 MB crash due memory-related issues.</li><li>Many OEMs do not give their devices the 512 MB of RAM that Google recommends as the minimum. Such devices are 87% more likely to have problems than devices with more memory.</li><li>The probability of failure drops 41% for devices that contain more than 576 MB of memory.</li></ul> 
+      <h4>Chipsets</h4> 
+      <p>The difference in performance between <a href="http://tech.firstpost.com/news-analysis/all-you-need-to-know-about-mobile-phone-chipsets-27704.html">silicon chipsets</a><sup><a href="#64">64</a></sup> (CPU, GPU, etc.) is pretty amazing. This is not necessarily obvious to end users. Some people pay too much attention to the CPU’s clock rate, rather than the chipset and other factors that affect the performance of the device.</p> 
+      <p>Imagine developing something that is targeted at high-end devices but that runs on low-end hardware. It simply wouldn’t work. The user experience would obviously suffer because a high-end app running on a low-end chipset with a low clock-frequency rate would suffer in performance. Many apps suffer severely because the activities on screen are synced with the clock, and the UI can’t refresh quickly enough to keep up with it. For users, this translates into poorly implemented graphics, blinking screens and general slowness.</p> 
+      <figure> 
+       <a href="http://www.smashingmagazine.com/wp-content/uploads/2014/09/10-q1-failed-cpu-opt.png"><img src="http://www.smashingmagazine.com/wp-content/uploads/2014/09/10-q1-failed-cpu-opt-500.png" width="500" height="364" /></a> 
+       <sup><a href="#65">65</a></sup> 
+       <figcaption>
+         Failure rate of apps by device clock rate. (Image credit: 
+        <a href="http://www.testdroid.com">Testdroid</a> 
+        <sup><a href="#75">75</a></sup> 
+        <sup><a href="#72">72</a></sup> 
+        <sup><a href="#69">69</a></sup> 
+        <sup><a href="#66">66</a></sup> 
+        <sup><a href="#62">62</a></sup> 
+        <sup><a href="#53">53</a></sup> 
+        <sup><a href="#49">49</a></sup> 
+        <sup><a href="#43">43</a></sup> 
+        <sup><a href="#31">31</a></sup> 
+        <sup><a href="#28">28</a></sup>) ( 
+        <a href="http://www.smashingmagazine.com/wp-content/uploads/2014/09/10-q1-failed-cpu-opt.png">View large version</a> 
+        <sup><a href="#67">67</a></sup>) 
+       </figcaption> 
+      </figure> 
+      <p>Let’s first look at the clock rate of devices that we tested.</p> 
+      <p>To compare chipsets more easily, we categorized them based on their number of cores: single, dual and quad.</p> 
+      <figure> 
+       <a href="http://www.smashingmagazine.com/wp-content/uploads/2014/09/11-q1-failed-oneCore-opt.png"><img src="http://www.smashingmagazine.com/wp-content/uploads/2014/09/11-q1-failed-oneCore-opt-500.png" width="500" height="362" /></a> 
+       <sup><a href="#68">68</a></sup> 
+       <figcaption>
+         Failure rate by single-core chipset. (Image credit: 
+        <a href="http://www.testdroid.com">Testdroid</a> 
+        <sup><a href="#75">75</a></sup> 
+        <sup><a href="#72">72</a></sup> 
+        <sup><a href="#69">69</a></sup> 
+        <sup><a href="#66">66</a></sup> 
+        <sup><a href="#62">62</a></sup> 
+        <sup><a href="#53">53</a></sup> 
+        <sup><a href="#49">49</a></sup> 
+        <sup><a href="#43">43</a></sup> 
+        <sup><a href="#31">31</a></sup> 
+        <sup><a href="#28">28</a></sup>) ( 
+        <a href="http://www.smashingmagazine.com/wp-content/uploads/2014/09/11-q1-failed-oneCore-opt.png">View large version</a> 
+        <sup><a href="#70">70</a></sup>) 
+       </figcaption> 
+      </figure> 
+      <figure> 
+       <a href="http://www.smashingmagazine.com/wp-content/uploads/2014/09/12-q1-failed-dualCore-opt.png"><img src="http://www.smashingmagazine.com/wp-content/uploads/2014/09/12-q1-failed-dualCore-opt-500.png" width="500" height="349" /></a> 
+       <sup><a href="#71">71</a></sup> 
+       <figcaption>
+         Failure rate by dual-core chipset. (Image credit: 
+        <a href="http://www.testdroid.com">Testdroid</a> 
+        <sup><a href="#75">75</a></sup> 
+        <sup><a href="#72">72</a></sup> 
+        <sup><a href="#69">69</a></sup> 
+        <sup><a href="#66">66</a></sup> 
+        <sup><a href="#62">62</a></sup> 
+        <sup><a href="#53">53</a></sup> 
+        <sup><a href="#49">49</a></sup> 
+        <sup><a href="#43">43</a></sup> 
+        <sup><a href="#31">31</a></sup> 
+        <sup><a href="#28">28</a></sup>) ( 
+        <a href="http://www.smashingmagazine.com/wp-content/uploads/2014/09/12-q1-failed-dualCore-opt.png">View large version</a> 
+        <sup><a href="#73">73</a></sup>) 
+       </figcaption> 
+      </figure> 
+      <figure> 
+       <a href="http://www.smashingmagazine.com/wp-content/uploads/2014/09/13-q1-failed-quadcore-opt.png"><img src="http://www.smashingmagazine.com/wp-content/uploads/2014/09/13-q1-failed-quadcore-opt-500.png" height="347" /></a> 
+       <sup><a href="#74">74</a></sup> 
+       <figcaption>
+         Failure rate by quad-core chipset. (Image credit: 
+        <a href="http://www.testdroid.com">Testdroid</a> 
+        <sup><a href="#75">75</a></sup> 
+        <sup><a href="#72">72</a></sup> 
+        <sup><a href="#69">69</a></sup> 
+        <sup><a href="#66">66</a></sup> 
+        <sup><a href="#62">62</a></sup> 
+        <sup><a href="#53">53</a></sup> 
+        <sup><a href="#49">49</a></sup> 
+        <sup><a href="#43">43</a></sup> 
+        <sup><a href="#31">31</a></sup> 
+        <sup><a href="#28">28</a></sup>) ( 
+        <a href="http://www.smashingmagazine.com/wp-content/uploads/2014/09/13-q1-failed-quadcore-opt.png">View large version</a> 
+        <sup><a href="#76">76</a></sup>) 
+       </figcaption> 
+      </figure> 
+      <p>Unlike the CPU architecture in chipsets — which is manufactured primarily by <a href="http://www.arm.com">ARM</a><sup><a href="#77">77</a></sup> — the graphics portion is manufactured by multiple vendors, which gives some semiconductor companies the flexibility to pick and choose which GPU goes best with the CPU in their chipsets.</p> 
+      <p>Back in the day, the primary job of the graphics card was to render high-end graphical content and 3-D images on the screen. Today, GPUs are used for much more than games and are as crucial as the CPU, if not more so.</p> 
+      <p>Today, all of the recent Android OS versions — Ice Cream Sandwich, Jelly Bean, Kit Kat and so on — rely heavily on the GPU because the interface and all animations are rendered on it, which is how you’re able to achieve transition effects that are buttery smooth. Today’s devices have many more GPU cores than CPU cores, so all graphics and rendering-intensive tasks are handled by them.</p> 
+      <h4>Key Findings Related to Chipset</h4> 
+      <ul><li><strong>Single core</strong><br />The median of error was lowest in Intel Atom Z2420 (0.2%), then in Qualcomm Snapdragon S2 MSM8255T (1.1%). </li><li><strong>Dual core</strong><br />The median of error was lowest in MediaTek MT8317 (0.3%), then in Intel Atom Z2560 (0.4%).</li><li><strong>Quad core</strong><br />The median of error was lowest in both MediaTek MT8125 (0.2%) and Qualcomm Snapdragon 600 APQ8064AB and APQ8064T (0.2%).</li><li>Many high-end devices are updated to the latest version of Android and get the latest OEM updates, which makes them more vulnerable to problems (67%) than low-end devices with the original OS version.</li><li>Clock rate doesn’t directly correlate with performance. Some benchmarks show significant improvement in performance, even when the user experience and the apps on those chipsets and devices don’t improve significantly.</li><li>Power consumption is naturally a bigger problem in some batteries, and some devices run out of battery life quickly. However, this is tightly related to the quality and age of the battery and cannot be attributed solely to the chipset.</li></ul> 
+      <h4>Tips and Takeaways</h4> 
+      <ul><li>Thoroughly test your application on all kinds of devices — low end, mid-range and high end — if it has heavy graphics (such as apps with video streaming) or uses the GPU heavily, to ensure maximal performance across an ecosystem.</li><li>Do not assume that your app works across different chipsets. Chipsets have a lot of differences between them!</li></ul> 
+      <h4>Other Hardware (Sensors, GPS, Wi-Fi, etc.)</h4> 
+      <p>Misbehaving sensors — and we’re not talking about sensors that are <a href="http://android.stackexchange.com/questions/59532/how-can-i-calibrate-the-tilting-sensor-on-android">poorly calibrated</a><sup><a href="#78">78</a></sup> or that cannot be calibrated — cause various problems in games that take input from the way the user handles the device. With GPS, the known problems are navigating indoors and not being able to reach satellites from some locations. To take a similar example with media streaming, video that is meant to be viewed in landscape mode might work well in landscape mode, but the user would have to rotate the device 180 degrees to see it right. Frankly, there is no way to properly test orientation with an emulator; also, things related to the accelerometer, geo-location and push notifications cannot be emulated or could yield inaccurate results.</p> 
+      <p>Network issues come up every now and then, and a slow network will very likely affect the usability and experience of your application.</p> 
+      <h3>Conclusion</h3> 
+      <p>In this article, we’ve focused on two areas — Android software and hardware — and what app developers need to know about both. The Android eco-system is constantly changing and new devices, OS versions and hardware come out every week. This naturally presents a big challenge to application developers.</p> 
+      <p>Testing on real devices prior to launch will make your app significantly more robust. In the next article, we will dive deep into this topic, covering the most essential testing methods, frameworks, devices and other infrastructure required to maximize testing.</p> 
+      <p>How do you test mobile apps, and what devices do you use and why? Let us know which aspects of mobile app testing you would like us to cover in the next article.</p> 
+      <p><em>(da, al, ml, il)</em></p> 
+      <h4>Footnotes</h4> 
+      <ol><li><a href="#note-1">1 http://news.sky.com/story/1320558/downloads-drop-as-appetite-for-new-apps-wanes</a></li><li><a href="#note-2">2 http://www.appannie.com/indexes/all-stores/rank/overall/</a></li><li><a href="#note-3">3 http://www.androidcentral.com/devices</a></li><li><a href="#note-4">4 http://www.smashingmagazine.com/wp-content/uploads/2014/09/01-testdroid-phones-opt.jpg</a></li><li><a href="#note-5">5 http://www.testdroid.com/</a></li><li><a href="#note-6">6 http://www.smashingmagazine.com/wp-content/uploads/2014/09/01-testdroid-phones-opt.jpg</a></li><li><a href="#note-7">7 http://www.testdroid.com/</a></li><li><a href="#note-8">8 http://pdadb.net/index.php?m=specs&amp;id=4234</a></li><li><a href="#note-9">9 http://pdadb.net/index.php?m=specs&amp;id=3929</a></li><li><a href="#note-10">10 http://developer.android.com/tools/testing/testing_android.html#Instrumentation</a></li><li><a href="#note-11">11 http://en.wikipedia.org/wiki/Test_automation#Framework_approach_in_automation</a></li><li><a href="#note-12">12 http://developer.android.com/tools/testing/testing_android.html</a></li><li><a href="#note-13">13 http://www.smashingmagazine.com/wp-content/uploads/2014/09/02-testdroid-infography-opt.jpg</a></li><li><a href="#note-14">14 http://www.testdroid.com/</a></li><li><a href="#note-15">15 http://www.smashingmagazine.com/wp-content/uploads/2014/09/02-testdroid-infography-opt.jpg</a></li><li><a href="#note-16">16 http://opensignal.com/reports/fragmentation-2013/</a></li><li><a href="#note-17">17 http://en.wikipedia.org/wiki/Android_version_history</a></li><li><a href="#note-18">18 http://tech.firstpost.com/news-analysis/all-you-need-to-know-about-mobile-phone-chipsets-27704.html</a></li><li><a href="#note-19">19 https://developer.android.com/about/dashboards/index.html</a></li><li><a href="#note-20">20 http://www.smashingmagazine.com/wp-content/uploads/2014/09/03-android-os-distribution-opt.png</a></li><li><a href="#note-21">21 https://developer.android.com/about/dashboards/index.html</a></li><li><a href="#note-22">22 http://www.smashingmagazine.com/wp-content/uploads/2014/09/03-android-os-distribution-opt.png</a></li><li><a href="#note-23">23 http://developer.android.com/training/design-navigation/multiple-sizes.html</a></li><li><a href="#note-24">24 http://en.wikipedia.org/wiki/Android_(operating_system)#Software_stack</a></li><li><a href="#note-25">25 http://en.wikipedia.org/wiki/Android_version_history</a></li><li><a href="#note-26">26 http://www.smashingmagazine.com/2013/05/08/brave-new-world-designing-for-a-maturing-android/</a></li><li><a href="#note-27">27 http://www.smashingmagazine.com/wp-content/uploads/2014/09/04-q1-releasedates-opt.png</a></li><li><a href="#note-28">28 http://www.testdroid.com</a></li><li><a href="#note-29">29 http://www.smashingmagazine.com/wp-content/uploads/2014/09/04-q1-releasedates-opt.png</a></li><li><a href="#note-30">30 http://www.smashingmagazine.com/wp-content/uploads/2014/09/05-q1-failed-releaseVersion-opt.png</a></li><li><a href="#note-31">31 http://www.testdroid.com</a></li><li><a href="#note-32">32 http://www.smashingmagazine.com/wp-content/uploads/2014/09/05-q1-failed-releaseVersion-opt.png</a></li><li><a href="#note-33">33 http://en.wikipedia.org/wiki/Android_version_history#Android_4.0.3.E2.80.934.0.4_Ice_Cream_Sandwich_.28API_level_15.29</a></li><li><a href="#note-34">34 http://en.wikipedia.org/wiki/Android_version_history#Android_4.1_Jelly_Bean_.28API_level_16.29</a></li><li><a href="#note-35">35 http://en.wikipedia.org/wiki/Android_version_history#Android_4.4_KitKat_.28API_level_19.29</a></li><li><a href="#note-36">36 https://community.verizonwireless.com/thread/824084</a></li><li><a href="#note-37">37 http://developer.android.com/about/dashboards/index.html</a></li><li><a href="#note-38">38 http://opensignal.com/reports/fragmentation-2013/</a></li><li><a href="#note-39">39 http://www.tested.com/tech/android/460386-state-oem-skins-android/</a></li><li><a href="#note-40">40 http://forum.xda-developers.com/showthread.php?t=2570435</a></li><li><a href="#note-41">41 http://www.xda-developers.com/android/three-all-in-one-solutions-for-android-driver-issues/</a></li><li><a href="#note-42">42 http://www.smashingmagazine.com/wp-content/uploads/2014/09/06-q1-failed-oneCore-color-opt.png</a></li><li><a href="#note-43">43 http://www.testdroid.com</a></li><li><a href="#note-44">44 http://www.smashingmagazine.com/wp-content/uploads/2014/09/06-q1-failed-oneCore-color-opt.png</a></li><li><a href="#note-45">45 http://opensignal.com/reports/fragmentation-2013/</a></li><li><a href="#note-46">46 http://insights.wired.com/profiles/blogs/the-best-advice-for-app-developers-skip-emulators#axzz38bhWO19j</a></li><li><a href="#note-47">47 http://testdroid.com/testdroid/5876/test-early-test-often-testing-as-part-of-your-app-development</a></li><li><a href="#note-48">48 http://www.smashingmagazine.com/wp-content/uploads/2014/09/07-color-error-opt.jpg</a></li><li><a href="#note-49">49 http://www.testdroid.com</a></li><li><a href="#note-50">50 http://www.smashingmagazine.com/wp-content/uploads/2014/09/07-color-error-opt.jpg</a></li><li><a href="#note-51">51 http://developer.android.com/guide/practices/screens_support.html#testing</a></li><li><a href="#note-52">52 http://www.smashingmagazine.com/wp-content/uploads/2014/09/08-q1-failed-screenReso-opt.png</a></li><li><a href="#note-53">53 http://www.testdroid.com</a></li><li><a href="#note-54">54 http://www.smashingmagazine.com/wp-content/uploads/2014/09/08-q1-failed-screenReso-opt.png</a></li><li><a href="#note-55">55 http://developer.android.com/about/dashboards/index.html</a></li><li><a href="#note-56">56 http://www.smashingmagazine.com/2014/01/10/four-ways-to-build-a-mobile-app-part2-native-android/</a></li><li><a href="#note-57">57 http://www.smashingmagazine.com/2012/06/01/getting-to-know-android/</a></li><li><a href="#note-58">58 http://www.androiduipatterns.com/</a></li><li><a href="#note-59">59 https://source.android.com/devices/low-ram.html</a></li><li><a href="#note-60">60 http://www.appannie.com/indexes/all-stores/rank/overall/</a></li><li><a href="#note-61">61 http://www.smashingmagazine.com/wp-content/uploads/2014/09/09-q1-failed-ram-opt.png</a></li><li><a href="#note-62">62 http://www.testdroid.com</a></li><li><a href="#note-63">63 http://www.smashingmagazine.com/wp-content/uploads/2014/09/09-q1-failed-ram-opt.png</a></li><li><a href="#note-64">64 http://tech.firstpost.com/news-analysis/all-you-need-to-know-about-mobile-phone-chipsets-27704.html</a></li><li><a href="#note-65">65 http://www.smashingmagazine.com/wp-content/uploads/2014/09/10-q1-failed-cpu-opt.png</a></li><li><a href="#note-66">66 http://www.testdroid.com</a></li><li><a href="#note-67">67 http://www.smashingmagazine.com/wp-content/uploads/2014/09/10-q1-failed-cpu-opt.png</a></li><li><a href="#note-68">68 http://www.smashingmagazine.com/wp-content/uploads/2014/09/11-q1-failed-oneCore-opt.png</a></li><li><a href="#note-69">69 http://www.testdroid.com</a></li><li><a href="#note-70">70 http://www.smashingmagazine.com/wp-content/uploads/2014/09/11-q1-failed-oneCore-opt.png</a></li><li><a href="#note-71">71 http://www.smashingmagazine.com/wp-content/uploads/2014/09/12-q1-failed-dualCore-opt.png</a></li><li><a href="#note-72">72 http://www.testdroid.com</a></li><li><a href="#note-73">73 http://www.smashingmagazine.com/wp-content/uploads/2014/09/12-q1-failed-dualCore-opt.png</a></li><li><a href="#note-74">74 http://www.smashingmagazine.com/wp-content/uploads/2014/09/13-q1-failed-quadcore-opt.png</a></li><li><a href="#note-75">75 http://www.testdroid.com</a></li><li><a href="#note-76">76 http://www.smashingmagazine.com/wp-content/uploads/2014/09/13-q1-failed-quadcore-opt.png</a></li><li><a href="#note-77">77 http://www.arm.com</a></li><li><a href="#note-78">78 http://android.stackexchange.com/questions/59532/how-can-i-calibrate-the-tilting-sensor-on-android</a></li></ol> 
+      <p><a href="#top" title="Jump to the top of the page">↑ Back to top</a><a href="https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Fwww.smashingmagazine.com%2F2014%2F10%2F02%2Fwhat-every-app-developer-should-know-about-android%2F&amp;source=tweetbutton&amp;text=What%20Every%20App%20Developer%20Should%20Know%20About%20Android&amp;url=http%3A%2F%2Fwww.smashingmagazine.com%2F2014%2F10%2F02%2Fwhat-every-app-developer-should-know-about-android%2F&amp;via=smashingmag" title="Share on Twitter!">Share on Twitter</a></p> 
+     
+    
+   
+  
+ </body></html>
