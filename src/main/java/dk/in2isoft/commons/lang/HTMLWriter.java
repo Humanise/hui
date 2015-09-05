@@ -167,4 +167,9 @@ public class HTMLWriter extends MarkupWriter {
 		withAttribute("data-"+name, Strings.toJSON(data));
 		return this;
 	}
+
+	public HTMLWriter withTitle(Object value) {
+		withAttribute("title", value);
+		return this;
+	}
 }
