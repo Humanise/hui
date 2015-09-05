@@ -11,6 +11,7 @@ import java.net.MalformedURLException;
 import nu.xom.Document;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.dom4j.DocumentException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.commons.xml.DocumentCleaner;
+import dk.in2isoft.onlineobjects.modules.information.ContentExtractor;
 import dk.in2isoft.onlineobjects.modules.networking.HTMLService;
 import dk.in2isoft.onlineobjects.services.SemanticService;
 import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
@@ -61,15 +63,25 @@ public class TestHTMLDocument extends AbstractSpringTestCase {
 		File[] htmlFiles = folder.listFiles((FileFilter) pathname -> {
 			return pathname.getName().endsWith("html");
 		});
+		DocumentCleaner cleaner = new DocumentCleaner();
 		
 		for (File file : htmlFiles) {
 			HTMLDocument doc = htmlService.getDocumentSilently(file, Strings.UTF8);
 			Assert.assertNotNull(doc);
 			{
-				File out = new File(folder,file.getName()+".contents.html");
+				File out = new File(folder,file.getName()+".contents.htm");
 				try (FileWriter w = new FileWriter(out)) {
 					Document extracted = doc.getExtracted();
-					DocumentCleaner cleaner = new DocumentCleaner();
+					cleaner.clean(extracted);
+					w.append(extracted.toXML());
+				}
+			}
+			{
+				File out = new File(folder,file.getName()+".extracted.htm");
+				try (FileWriter w = new FileWriter(out)) {
+					Document document = doc.getXOMDocument();
+					ContentExtractor x = new ContentExtractor();
+					Document extracted = x.extract(document);
 					cleaner.clean(extracted);
 					w.append(extracted.toXML());
 				}

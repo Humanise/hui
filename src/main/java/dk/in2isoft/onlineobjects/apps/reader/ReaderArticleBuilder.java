@@ -48,6 +48,7 @@ import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.Statement;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.Word;
+import dk.in2isoft.onlineobjects.modules.information.ContentExtractor;
 import dk.in2isoft.onlineobjects.modules.language.WordCategoryPerspectiveQuery;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
 import dk.in2isoft.onlineobjects.modules.networking.NetworkResponse;
@@ -148,7 +149,7 @@ public class ReaderArticleBuilder {
 	private String buildHeader(InternetAddress address) {
 		HTMLWriter writer = new HTMLWriter();
 		writer.startH1().text(address.getName()).endH1();
-		writer.startP().withClass("link").startA().withHref(address.getAddress()).text(address.getAddress()).endA().endP();
+		writer.startP().withClass("link").startA().withTitle(address.getAddress()).withHref(address.getAddress()).text(Strings.simplifyURL(address.getAddress())).endA().endP();
 		return writer.toString();
 	}
 
@@ -186,7 +187,10 @@ public class ReaderArticleBuilder {
 			ExplodingClusterFuckException {
 
 		{
-			Document extracted = document.getExtracted();
+			Document xom = document.getXOMDocument();
+			ContentExtractor extractor = new ContentExtractor();
+			Document extracted = extractor.extract(xom);
+			//Document extracted = document.getExtracted();
 			if (extracted == null) {
 				article.setFormatted("<p><em>Unable to extract text.</em></p>");
 			} else {
