@@ -32,6 +32,7 @@ public class AccountSettingsView extends AbstractManagedBean implements Initiali
 		}
 		// Reload the user to get the latest properties and ensure it exists
 		user = modelService.get(User.class, user.getId(), user);
+		// TODO (jm) The user may not have access to itself!!!
 		if (user==null) {
 			return;
 		}
