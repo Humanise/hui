@@ -25,31 +25,28 @@ public class Readability {
     private final Document mDocument;
     private String mBodyCache;
 
+    public Readability(Document doc) {
+    	super();
+    	mDocument = doc;
+    	init(false);
+    }
+
     public Readability(String html) {
-        super();
-        mDocument = Jsoup.parse(html);
+    	this(Jsoup.parse(html));
     }
 
     public Readability(String html, String baseUri) {
-        super();
-        mDocument = Jsoup.parse(html, baseUri);
+        this(Jsoup.parse(html, baseUri));
     }
 
-    public Readability(File in, String charsetName, String baseUri)
-            throws IOException {
-        super();
-        mDocument = Jsoup.parse(in, charsetName, baseUri);
+    public Readability(File in, String charsetName, String baseUri) throws IOException {
+        this(Jsoup.parse(in, charsetName, baseUri));
     }
 
     public Readability(URL url, int timeoutMillis) throws IOException {
-        super();
-        mDocument = Jsoup.parse(url, timeoutMillis);
+        this(Jsoup.parse(url, timeoutMillis));
     }
 
-    public Readability(Document doc) {
-        super();
-        mDocument = doc;
-    }
 
     // @formatter:off
     /**
@@ -101,13 +98,6 @@ public class Readability {
         /* Clear the old HTML, insert the new content. */
         mDocument.body().html("");
         mDocument.body().prependChild(overlay);
-    }
-
-    /**
-     * Runs readability.
-     */
-    public final void init() {
-        init(false);
     }
 
     /**

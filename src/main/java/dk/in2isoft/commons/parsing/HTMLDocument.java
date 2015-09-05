@@ -135,7 +135,6 @@ public class HTMLDocument extends XMLDocument {
 
 	private nu.xom.Document getExtractedByReadability(String html) {
 		Readability readability = new Readability(html);
-		readability.init();
     	return readability.getXomDocument();
 	}
     
