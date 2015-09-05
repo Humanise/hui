@@ -338,6 +338,11 @@
 	display: inline-block;
 }
 
+.reader_viewer_content_formatted img {
+  height: auto;
+  max-width: 100%;
+}
+
 /**************** Quotes ***************/
 
 .reader_viewer_quote {
