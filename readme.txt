@@ -9,7 +9,11 @@ export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF8"
 export MAVEN_OPTS="-XX:MaxPermSize=512m"
 
 
-================= Eclipse setup ============== 
+================= Maven ============== 
+
+Installing local jar
+
+mvn install:install-file -Dfile=/Users/jonasmunk/Downloads/XOM/xom-1.2.10.jar -Dsources=/Users/jonasmunk/Downloads/XOM/xom-1.2.10.sources.jar -DgroupId=nu.xom -DartifactId=xom -Dversion=1.2.10 -Dpackaging=jar -DlocalRepositoryPath=repository
 
 
 =========== Tomcat / Apache setup ============
