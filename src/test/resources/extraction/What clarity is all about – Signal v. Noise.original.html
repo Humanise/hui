@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+  <script type='text/javascript'> var Timing = {times:{}}; Timing.mark = function(e,t)  { if(!t) {t = new Date().getTime()}; Timing.times[e] = t}; Timing.mark('firstbyte')</script>
+  <head>
+  
+  <meta charset="utf-8">
+
+  
+  <link rel="dns-prefetch" href="use.typekit.net" />
+  <link rel="dns-prefetch" href="p.typekit.net" />
+  <link rel="dns-prefetch" href="s3.amazonaws.com" />
+  <link rel="preconnect" href="https://p.typekit.net" />
+  <link rel="preconnect" href="https://dash.37signals.com" />
+  <link rel="preconnect" href="https://in.getclicky.com" />
+
+  
+  <link href="//signalvnoise.com/assets/application-4d9edb9055dd20f143cdef8111ce762c.css" media="screen" rel="stylesheet" type="text/css" />
+
+  
+
+  
+  <script src="//signalvnoise.com/assets/application-7805e73ebc1d60e2c73d297c97fbe860.js" type="text/javascript"></script>
+  <script type="text/javascript" src="//use.typekit.net/kxs4ufr.js" onload="try{Typekit.load({async:false});}catch(e){}"></script>
+  <![if !IE]>
+  <script async type="text/javascript" src="/static/highlight.pack.js" onload="hljs.initHighlightingOnLoad();"></script>
+  <![endif]>
+
+  
+  
+
+  
+  <meta name="viewport" id="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=10.0,initial-scale=1.0" />
+  <meta property="og:site_name" content="Signal v. Noise by Basecamp" />
+  <meta property="twitter:card" content="summary" />
+  <meta property="twitter:site" content="@basecamp" />
+  
+    <title>What clarity is all about – Signal v. Noise</title>
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://signalvnoise.com/posts/3144-what-clarity-is-all-about" />
+    <meta property="og:title" content="What clarity is all about" />
+    <meta property="og:description" content="What if every question you asked your customers was multiple choice? And every question had an &#8220;I&#8217;m confused&#8221; option. How often would your customers choose that option?
+
+
+	If your whole business was laid out flat &#8211; every product, every promise, every price, every rule, every…" />
+    <meta property="og:image" content="https://s3.amazonaws.com/37assets/svn/995-avatar.154.gif" />
+    
+      <meta property="twitter:creator" content="@jasonfried" />
+    
+  
+  <meta property="fb:admins" content="555561089" />
+  <link rel="publisher" href="https://plus.google.com/+basecamp" />
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://signalvnoise.com/posts.rss" />
+</head>
+
+  <body class="perma">
+
+    <header class="masthead">
+  <p>
+    <span class="visible-desktop">You&rsquo;re reading</span>
+    <a href="https://signalvnoise.com/">Signal v. Noise</a><span class="visible-tablet">, a publication <a href="/writers/">about</a> the web</span>
+    by <a href="https://basecamp.com/?source=SvN">Basecamp</a>
+    <span class="visible-tablet"> since 1999.</span>
+    <span class="happyday visible-desktop">Happy <span class="happyday--dayofweek"></span>!</span>
+  </p>
+
+  
+</header>
+
+
+    <div class="container">
+      <div class="content">
+        
+
+<article class="post instapaper_body"  id="article_3144">
+  
+    <header class="post-header" id="article_3144">
+  <h1 class="waveform Business">
+    
+    What clarity is all about
+  </h1>
+
+  <div class="post-header-info">
+    
+      <figure class="post-header-info-avatar">
+        <a href="/writers/jf"><img alt="Jason Fried" height="30" src="https://s3.amazonaws.com/37assets/svn/995-avatar.154.gif" width="30" /></a>
+      </figure>
+
+      <a href="/writers/jf" id="Jason Fried">Jason Fried</a> <em>wrote this on</em> <span class="post-date">Mar 22 2012</span>
+    
+
+    <span class="post-header-info-discuss"><a href="https://signalvnoise.com/posts/3144-what-clarity-is-all-about?26#comments">26 comments</a></span>
+
+    
+  </div>
+
+  <ul class="post-share-buttons">
+    <span data-page-url="https://signalvnoise.com/posts/3144-what-clarity-is-all-about" />
+
+    <li>
+      <a class="post-share-button-twitter" title="Tweet this!" href="https://twitter.com/intent/tweet?related=jasonfried%2Cbasecamp&text=%E2%80%9CWhat+clarity+is+all+about%E2%80%9D&url=https%3A%2F%2Fsignalvnoise.com%2Fposts%2F3144-what-clarity-is-all-about">
+        <span class="icon-social"></span>
+        <span class="share-text">Tweet</span>
+        <span data-share-counter="twitter">&nbsp;</span>
+      </a>
+    </li>
+
+    <li>
+      <a class="post-share-button-facebook" title="Share this on Facebook!" href="https://www.facebook.com/dialog/share?app_id=1469212193379905&caption=What+clarity+is+all+about&display=popup&href=https%3A%2F%2Fsignalvnoise.com%2Fposts%2F3144-what-clarity-is-all-about&redirect_uri=https%3A%2F%2Fsignalvnoise.com%2Fposts%2F3144-what-clarity-is-all-about" target="_blank">
+        <span class="icon-social"></span>
+        <span class="share-text">Share on Facebook</span>
+        <span data-share-counter="facebook">&nbsp;</span>
+      </a>
+    </li>
+
+    <li>
+      <a class="post-share-button-linkedin" title="Share this with your network on LinkedIn!" href="https://www.linkedin.com/shareArticle?mini=true&source=Signal+v.+Noise&title=What+clarity+is+all+about&url=https%3A%2F%2Fsignalvnoise.com%2Fposts%2F3144-what-clarity-is-all-about" target="_blank">
+        <span class="icon-social"></span>
+        <span class="share-text">Share on LinkedIn</span>
+        <span data-share-counter="linkedin">&nbsp;</span>
+      </a>
+    </li>
+  </ul>
+</header>
+
+<div class="post-content">
+  <p>What if every question you asked your customers was multiple choice? And every question had an &#8220;I&#8217;m confused&#8221; option. How often would your customers choose that option?</p>
+
+
+	<p>If your whole business was laid out flat &#8211; every product, every promise, every price, every rule, every condition all on one surface &#8211; and you superimposed a heat map layer over it, where would the confusion hot spots be?</p>
+
+
+	<p>Everything you do as a business includes multiple choices for your customers. It doesn&#8217;t matter if you give them the choices &#8211; they have the choices. Features, benefits, prices, promises, support, etc. They can love it, hate it, be indifferent, etc. But they can also be confused. And &#8220;I&#8217;m confused&#8221; is the worst option of all. If your customers are confused, you&#8217;re in deep trouble. &#8220;I give up, unhappily&#8221; is next.</p>
+
+
+	<p>This is what clarity is all about. It&#8217;s about eliminating &#8220;I&#8217;m confused&#8221; answers. Lots of people think simplicity is the opposite of confusion (&#8220;It&#8217;s confusing, let&#8217;s make this simpler&#8221;). It&#8217;s not. The opposite of confusion is clarity.</p>
+
+      <div class="post-content-extended" id="extended">
+        
+      </div>
+    </div> 
+  
+</article>
+
+<section class="post-comments">
+  <div class="post-comments-info">
+    
+
+
+    
+      <a href="/writers/jf">Jason Fried</a> wrote <em>this on</em> Mar 22 2012
+      <em>There are</em> <span class="post-comments-info-expandable">26 comments</span>.
+    
+  </div>
+
+  <div class="post-comments-all" data-comments id="comments">
+  <div class="post-comment" id="comment_73890">
+  <div class="post-comment-header">
+    
+          <h3 class="post-comment-header-author">javier</h3>
+      <span class="post-comment-header-date">on 22 Mar 12</span>
+      </div>
+
+  <div class="post-comment-body">
+    <p>I’m confused, why is there not anymore a free account for basecamp?</p>
+  </div>
+</div>
+<div class="post-comment" id="comment_73891">
+  <div class="post-comment-header">
+    
+          <h3 class="post-comment-header-author">Rick</h3>
+      <span class="post-comment-header-date">on 22 Mar 12</span>
+      </div>
+
+  <div class="post-comment-body">
+    <p>I’m confused.</p>
+  </div>
+</div>
+<div class="post-comment" id="comment_73892">
+  <div class="post-comment-header">
+    
+          <h3 class="post-comment-header-author"><a href="http://twitter.com/drale2k" only_path="true" rel="nofollow">Drazen Mokic</a></h3>
+      <span class="post-comment-header-date">on 22 Mar 12</span>
+      </div>
+
+  <div class="post-comment-body">
+    <p>Please add back Textile or even better, Markup to the new Basecamp. Our old “writeboards” look horrible now that all the formatations are gone and having to use the mouse constantly to format text everywhere is really annoying.</p>
+
+
+	<p>I understand the problem, so i am not confused but i hate it :)</p>
+  </div>
+</div>
+<div class="post-comment" id="comment_73893">
+  <div class="post-comment-header">
+    
+          <h3 class="post-comment-header-author"><a href="http://twitter.com/drale2k" only_path="true" rel="nofollow">Drazen Mokic</a></h3>
+      <span class="post-comment-header-date">on 22 Mar 12</span>
+      </div>
+
+  <div class="post-comment-body">
+    <p>I meant “Markdown”, not “Markup”</p>
+  </div>
+</div>
+<div class="post-comment" id="comment_73894">
+  <div class="post-comment-header">
+    
+          <h3 class="post-comment-header-author">Kathy Sierra</h3>
+      <span class="post-comment-header-date">on 22 Mar 12</span>
+      </div>
+
+  <div class="post-comment-body">
+    <p>Yes. I once suggested (not entirely joking) that apps and websites have a WTF button to give users a chance to say “I’m confused”. It was meant to reflect not just the user’s state (confusion) but also the most significant attribute: how they FEEL about that state.</p>
+
+
+	<p>We keep creating content, copy, FAQs etc. as if users and potential customers are always intellectually curious about our options/UI and completely ignoring the emotional states our UX provokes. A user should be able to “tell” us not just what they are thinking (e.g. “I have no idea what to do NEXT”), but also tell us how they FEEL about that. Because what we do (or rather what our software does) in response should more closely resemble what a real human would do under those circumstances. For example, if a customer said, “HELP! I’m LOST!”, a face-to-face person might respond differently than, say, giving them a link to an FAQ. Software could at least provide more context-sensitive responses or, you know, actually ask them another clarifying question.</p>
+
+
+	<p>But then, the real goal is to keep reducing the places where users feel the need to press the WTF button :). (but not everyone has the luxury of fixing their product or site, but upgrading our support docs/site is usually do-able)</p>
+
+
+	<p>Thanks for the post.</p>
+  </div>
+</div>
+<div class="post-comment" id="comment_73895">
+  <div class="post-comment-header">
+    
+          <h3 class="post-comment-header-author">Bill Wagner</h3>
+      <span class="post-comment-header-date">on 22 Mar 12</span>
+      </div>
+
+  <div class="post-comment-body">
+    <p>Great post! 
+My favorite case study involving clarity is the way Toyota re-imagined the way customers pick options for new cars.
+Instead of presenting customers with an ala carte list of 100+ options for their new car and a corresponding 2-week lead time to find and deliver the desired combination of options, they began offering standardized options packages that simplified the product selection process while streamlining manufacturing and inventory management. See any similarities to the way Jason and crew have simplified project management software?
+And in the Toyota example, clarity was delivered when John and Jane Q. Public no longer needed a mechanical engineering degree to pick out a new car. More isn’t always better, sometimes it’s just… more.</p>
+  </div>
+</div>
+<div class="post-comment" id="comment_73896">
+  <div class="post-comment-header">
+    
+          <h3 class="post-comment-header-author">fafkulec</h3>
+      <span class="post-comment-header-date">on 22 Mar 12</span>
+      </div>
+
+  <div class="post-comment-body">
+    <p>I’m often confused about pricing plans. Why do they force me to make a decision upfront? Why do they force me even to do any math? Some time ago I had to choose git repo hosting. Just look at those pricing plans and see confusion vs clarity defined.
+https://github.com/plans
+http://repositoryhosting.com/
+The same thing is with mobile providers, ISPs, gym subscription etc.</p>
+  </div>
+</div>
+<div class="post-comment" id="comment_73897">
+  <div class="post-comment-header">
+    
+          <h3 class="post-comment-header-author">internetfavs.com</h3>
+      <span class="post-comment-header-date">on 22 Mar 12</span>
+      </div>
+
+  <div class="post-comment-body">
+    <p>great post!</p>
+  </div>
+</div>
+<div class="post-comment" id="comment_73899">
+  <div class="post-comment-header">
+    
+          <h3 class="post-comment-header-author"><a href="http://www.bloggersmakemoney.com" only_path="true" rel="nofollow">Wade</a></h3>
+      <span class="post-comment-header-date">on 22 Mar 12</span>
+      </div>
+
+  <div class="post-comment-body">
+    <p>Giving customers a choice is a bad decision I have always thought.  Just give them an option to buy one thing!</p>
+  </div>
+</div>
+<div class="post-comment" id="comment_73900">
+  <div class="post-comment-header">
+    
+          <h3 class="post-comment-header-author">David Andersen</h3>
+      <span class="post-comment-header-date">on 23 Mar 12</span>
+      </div>
+
+  <div class="post-comment-body">
+    <p>Kathy Sierra for president.</p>
+
+
+	<p>I can’t count the number of times I’ve thought “this software is sofa king crap.”</p>
+  </div>
+</div>
+<div class="post-comment" id="comment_73903">
+  <div class="post-comment-header">
+    
+          <h3 class="post-comment-header-author"><a href="http://hammerproject.com" only_path="true" rel="nofollow">matt kocaj</a></h3>
+      <span class="post-comment-header-date">on 23 Mar 12</span>
+      </div>
+
+  <div class="post-comment-body">
+    <p>Boom! Love it.</p>
+  </div>
+</div>
+<div class="post-comment" id="comment_73906">
+  <div class="post-comment-header">
+    
+          <h3 class="post-comment-header-author"><a href="http://madeofcode.com" only_path="true" rel="nofollow">Mark Dodwell</a></h3>
+      <span class="post-comment-header-date">on 23 Mar 12</span>
+      </div>
+
+  <div class="post-comment-body">
+    <p>If confusion is the worst intellectual response to UI, I think frustration is the worst emotional response.</p>
+  </div>
+</div>
+<div class="post-comment" id="comment_73910">
+  <div class="post-comment-header">
+    
+          <h3 class="post-comment-header-author"><a href="http://www.yohami.com/blog" only_path="true" rel="nofollow">YOHAMI</a></h3>
+      <span class="post-comment-header-date">on 23 Mar 12</span>
+      </div>
+
+  <div class="post-comment-body">
+    <p>Love it.</p>
+  </div>
+</div>
+<div class="post-comment" id="comment_73911">
+  <div class="post-comment-header">
+    
+          <h3 class="post-comment-header-author"><a href="http://www.hvitur.is/" only_path="true" rel="nofollow">Jon Agust Arason</a></h3>
+      <span class="post-comment-header-date">on 23 Mar 12</span>
+      </div>
+
+  <div class="post-comment-body">
+    <p>This all makes the way “I’m confused/Tilt/WTF” option/feature, does it not?</p>
+
+
+	<p>Our purpose as information workers (for those here in question) is to add value to the information – and that value is for the user. Key ingredients in that value would be clarity and brevity. Just like curry really.</p>
+
+
+	<p>But, the information-design as such should be focused on the user interactions. Where the user interactions would be in a funnel where there would be no room for “mistakes or confusion”.</p>
+
+
+	<p>Apple products are a great example of this. Variations. No real choices.</p>
+
+
+	<p>Guidance with clarity for the sake of sanity. Necessary and useful – Then let it be beautiful.</p>
+  </div>
+</div>
+<div class="post-comment" id="comment_73913">
+  <div class="post-comment-header">
+    
+          <h3 class="post-comment-header-author"><a href="http://www.smibs.tv" only_path="true" rel="nofollow">Peter Urban</a></h3>
+      <span class="post-comment-header-date">on 23 Mar 12</span>
+      </div>
+
+  <div class="post-comment-body">
+    <p>Spot on. While everyone focuses on simplicity not all things / products / processes can be simple in nature but usually there is no excuse why clarity is lacking  – except laziness, lack of budget / focus and a million other things that have nothing to do with the problem at hand.</p>
+  </div>
+</div>
+<div class="post-comment" id="comment_73916">
+  <div class="post-comment-header">
+    
+          <h3 class="post-comment-header-author"><a href="http://communicationrising.com/" only_path="true" rel="nofollow">CRising</a></h3>
+      <span class="post-comment-header-date">on 24 Mar 12</span>
+      </div>
+
+  <div class="post-comment-body">
+    <p>Clarity indeed!</p>
+  </div>
+</div>
+<div class="post-comment" id="comment_73918">
+  <div class="post-comment-header">
+    
+          <h3 class="post-comment-header-author"><a href="http://stuck-on-amber.tumblr.com/" only_path="true" rel="nofollow">Fabrice Dubois</a></h3>
+      <span class="post-comment-header-date">on 25 Mar 12</span>
+      </div>
+
+  <div class="post-comment-body">
+    <p>I agree, simplicity is not clarity. You can have a very simple choice (A or B) but with an unclear meaning: “Please select (A) Extended room or (B) Mini-suite”.</p>
+  </div>
+</div>
+<div class="post-comment" id="comment_73919">
+  <div class="post-comment-header">
+    
+          <h3 class="post-comment-header-author"><a href="http://www.idyllic-software.com" only_path="true" rel="nofollow">Ruby on Rails</a></h3>
+      <span class="post-comment-header-date">on 26 Mar 12</span>
+      </div>
+
+  <div class="post-comment-body">
+    <p>I agree from the product aspect of clarity. However, at times, customers are not clear themselves as to what they are trying to solve and what are they evaluating the situation against. You have to educate them about “success factor” of the evaluation and how your product or services can help. Of course you must pursue educating effort only if you strongly believe your services or products can help :-)</p>
+  </div>
+</div>
+<div class="post-comment" id="comment_73921">
+  <div class="post-comment-header">
+    
+          <h3 class="post-comment-header-author"><a href="http://www.svitla.com" only_path="true" rel="nofollow">Mike Ellison</a></h3>
+      <span class="post-comment-header-date">on 26 Mar 12</span>
+      </div>
+
+  <div class="post-comment-body">
+    <p>Cool, I always try eliminate “I’m confused” options and didn’t know that it’s called clarity</p>
+  </div>
+</div>
+<div class="post-comment" id="comment_73925">
+  <div class="post-comment-header">
+    
+          <h3 class="post-comment-header-author"><a href="http://tnypxl.com" only_path="true" rel="nofollow">Arik Jones</a></h3>
+      <span class="post-comment-header-date">on 27 Mar 12</span>
+      </div>
+
+  <div class="post-comment-body">
+    <p>I think this is the first time I’ve seen spam on this blog. They didn’t even try to be slick about it.</p>
+  </div>
+</div>
+<div class="post-comment" id="comment_73926">
+  <div class="post-comment-header">
+    
+          <h3 class="post-comment-header-author">GeeIWonder</h3>
+      <span class="post-comment-header-date">on 27 Mar 12</span>
+      </div>
+
+  <div class="post-comment-body">
+    <p>@Arik.</p>
+
+
+	<p>Yup. They nailed the clarity!</p>
+  </div>
+</div>
+<div class="post-comment" id="comment_73928">
+  <div class="post-comment-header">
+    
+          <h3 class="post-comment-header-author"><a href="http://www.zersys.com/" only_path="true" rel="nofollow">Julianne Kibble</a></h3>
+      <span class="post-comment-header-date">on 28 Mar 12</span>
+      </div>
+
+  <div class="post-comment-body">
+    <p>Hell yeah  ! the worst answer you receive from someone “I am confused ”. Many a times I have notice people doing it on purpose not just in business but in personal relationships also.</p>
+  </div>
+</div>
+<div class="post-comment" id="comment_73929">
+  <div class="post-comment-header">
+    
+          <h3 class="post-comment-header-author"> Melisa Clubb</h3>
+      <span class="post-comment-header-date">on 28 Mar 12</span>
+      </div>
+
+  <div class="post-comment-body">
+    <p>People should have clarity about things which they are determined to do. ” I AM CONFUSED ” is  loser’s attitude.
+<a href="http://www.zersys.com/">Clarity is winners’ attitude</a></p>
+  </div>
+</div>
+<div class="post-comment" id="comment_73934">
+  <div class="post-comment-header">
+    
+          <h3 class="post-comment-header-author"><a href="http://Fid.se" only_path="true" rel="nofollow">Fredrik falkman</a></h3>
+      <span class="post-comment-header-date">on 28 Mar 12</span>
+      </div>
+
+  <div class="post-comment-body">
+    <p>As much as I love you guys (read the book, etc.), I’m a bit confused about the overlapping but not integrated functionality of sme of you’re products. I’m sure that you have good reasons and I’m just starting to explore base camp and contemplating using Highrise. Have been wanting to for some time but haven’t had suitable teams to do it with. I would need to se a good example of how to use your products together or, as I perceive it ( maybe wrongly) allong side each other. A bit confused.</p>
+  </div>
+</div>
+<div class="post-comment basecamper" id="comment_73935">
+  <div class="post-comment-header">
+    
+          <h3 class="post-comment-header-author">JF</h3>
+      <span class="post-comment-header-date">on 28 Mar 12</span>
+      </div>
+
+  <div class="post-comment-body">
+    <p>Fredrik: We agree. It’s confusing. We want to remove that confusion. There are a variety of strategies we’re considering.</p>
+  </div>
+</div>
+<div class="post-comment" id="comment_73943">
+  <div class="post-comment-header">
+    
+          <h3 class="post-comment-header-author"><a href="http://paulmederos.com" only_path="true" rel="nofollow">Paul Mederos</a></h3>
+      <span class="post-comment-header-date">on 29 Mar 12</span>
+      </div>
+
+  <div class="post-comment-body">
+    <p>@Jon agreed!</p>
+
+
+	<p>@Fredrik I’ve wondered the same thing. Can’t wait to see what they roll out in the future to address this!</p>
+
+
+	<p>People seem to think there is black/white. It’s either Simple or Complex. It’s either Orderly or Chaotic. In truth, it can be Complex but also Orderly. I think that’s what we should strive for in clarity.</p>
+  </div>
+</div>
+
+</div>
+
+
+      <div class="post-comments-form" data-comments-form>
+      <h2>This discussion <em>is</em> closed.</h2>
+    </div>
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+
+      var all_comments = $('[data-comments]');
+      var comment_form = $('[data-comments-form]');
+      var expandable = $('.post-comments-info-expandable');
+
+      function expand_comments() {
+        all_comments.fadeIn();
+        comment_form.fadeIn();
+      }
+
+      expandable.click(function(){
+        expand_comments();
+        $(this).removeClass('post-comments-info-expandable').addClass('expanded');
+        window.location.hash = "#comments"
+      });
+
+      $('[data-elastic]').elastic();
+    });
+  </script>
+</section>
+
+<section class="post-author">
+  <figure class="post-author-avatar">
+    <a href="/writers/jf"><img alt="Jason Fried" height="100" src="https://s3.amazonaws.com/37assets/svn/995-avatar.154.gif" width="100" /></a>
+  </figure>
+
+  <div class="post-author-bio">
+    <h2>About Jason Fried</h2>
+    <p>Jason co-founded Basecamp back in 1999. He also co-authored <a href="http://37signals.com/rework">REWORK</a>, the New York Times bestselling book on running a "right-sized" business. Co-founded, co-authored... Can he do anything on his own?</p>
+    <p>Read all of <a href="/writers/jf">Jason Fried&rsquo;s posts</a>, and <a href="https://twitter.com/jasonfried">follow Jason Fried on Twitter</a>.</p>
+  </div>
+</section>
+
+<section class="post-similar-articles">
+  
+    If you liked this <a href="/Business">Business</a> post by Jason Fried, you&rsquo;ll probably like reading
+    <a href='/posts/3272-announcing-the-second-switch-workshop-gain-fresh-insight-into-why-customers-choose-or-leave-your-product'>Announcing the second "Switch Workshop": Gain fresh insight into why customers choose, or leave, your product.</a>, <a href='/posts/3770-big-news-for-highrise'>Big news for Highrise</a>, and <a href='/posts/3194-backstage-an-inside-look-at-how-we-use-basecamp'>Backstage: An inside look at how we use Basecamp</a>  
+</section>
+
+      </div>
+
+      <footer class="footer">
+  <section class="footer-browse">
+    <div class="footer-browse-best">
+      <h3><strong>New here?</strong> Start with our <span class="visible-desktop">best</span> hits:</h3>
+      <ul>
+        <li><a href='/posts/1619-theres-always-time-to-launch-your-dream'>There's always time to launch your dream</a></li><li><a href='/posts/2746-all-the-wrong-things-we-did-with-rework'>All the &ldquo;wrong&rdquo; things we did with REWORK</a></li><li><a href='/posts/1748-forget-the-resume-kill-on-the-cover-letter'>Forget the resume, kill on the cover letter</a></li><li><a href='/posts/2628-how-to-hire-a-programmer-when-youre-not-a-programmer'>How to hire a programmer when you're not a programmer</a></li><li><a href='/posts/2314-why-is-business-writing-so-awful'>Why is business writing so awful?</a></li>
+        <li><a href="https://signalvnoise.com/popular">&hellip; all of &ldquo;The Best of Signal v. Noise&rdquo;</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-browse-latest">
+      <h3><strong>Back again?</strong> Catch <span class="visible-desktop">up on</span> our latest<span class="visible-desktop"> posts</span>:</h3>
+      <ul>
+        
+          <li><a href="https://signalvnoise.com/posts/3931-putting-on-the-shipping-goggles">Putting on the shipping goggles</a></li>
+        
+          <li><a href="https://signalvnoise.com/posts/3930-growing-our-audience-for-the-distance">Growing our audience for The Distance</a></li>
+        
+          <li><a href="https://signalvnoise.com/posts/3897-go-at-basecamp">Go at Basecamp</a></li>
+        
+          <li><a href="https://signalvnoise.com/posts/3928-somethings-coming-6">Something's coming 6</a></li>
+        
+          <li><a href="https://signalvnoise.com/posts/3927-can-old-world-be-more-modern-than-new-school">Can old world be more modern than new school?</a></li>
+        
+        <li><a href="https://signalvnoise.com/archives">&hellip; all posts on Signal v. Noise</a></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="footer-search">
+    <h2>Search<span class="visible-desktop"> for articles or writers</span></h2>
+    <form method="get" action="https://www.google.com/search">
+      <input type="hidden" name="sitesearch" value="signalvnoise.com" />
+      <input name="q" placeholder="Search Signal v. Noise&hellip;" type="text" />
+    </form>
+  </section>
+
+  <section class="footer-categories">
+    <ul>
+      <h2>Explore<span class="visible-desktop"> 15 years of</span> Signal v. Noise</h2>
+
+      
+        <li><a href="https://signalvnoise.com/business">Business</a></li>
+      
+        <li><a href="https://signalvnoise.com/design">Design</a></li>
+      
+        <li><a href="https://signalvnoise.com/programming">Programming</a></li>
+      
+        <li><a href="https://signalvnoise.com/support">Support</a></li>
+      
+        <li><a href="https://signalvnoise.com/sysadmin">Sysadmin</a></li>
+      
+        <li><a href="https://signalvnoise.com/writing">Writing</a></li>
+      
+
+      <li><a href="https://signalvnoise.com/popular">Best of</a></li>
+      <li><a href="https://signalvnoise.com/archives">Everything</a></li>
+    </ul>
+  </section>
+
+  <section class="footer-copyright">
+    <p>
+      Meet <a href="/writers/">the writers</a> of <a href="https://signalvnoise.com/">Signal v. Noise</a>.
+      If you like what you&rsquo;re reading, check out <a href="https://basecamp.com/books?source=SvN">our best-selling books REWORK and REMOTE</a>.
+    </p>
+    <p>
+      Content copyright &copy;1999-2015 <a href="https://basecamp.com/?source=SvN">Basecamp</a>.
+      Subscribe to our <a href="https://signalvnoise.com/posts.rss">RSS</a>.
+    </p>
+    <p>Enjoy your <span class="happyday--dayofweek"></span>.</p>
+  </section>
+</footer>
+
+    </div>
+
+    <script src="//www.google-analytics.com/urchin.js" type="text/javascript"></script>
+    <script type="text/javascript">_uacct = "UA-1876445-3"; urchinTracker();</script>
+    <script type="text/javascript">
+      var clicky={log:function(){return},goal:function(){return}};var clicky_site_id=66390688;(function(){var e=document.createElement("script");e.type="text/javascript";e.async=true;e.src=document.location.protocol=="https:"?"https://static.getclicky.com/js?forceCacheBuster=true":"http://static.getclicky.com/js?forceCacheBuster=true";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(e)})()
+    </script>
+    <noscript><p><img alt="Clicky" width="1" height="1" src="//in.getclicky.com/66390688ns.gif" /></p></noscript>
+    <script type="text/javascript">
+      /* <![CDATA[ */
+      var google_conversion_id=986221142;var google_conversion_language="en";var google_conversion_format="3";var google_conversion_color="666666";var google_conversion_label="7RE4CNLIgQMQ1pSi1gM";var google_conversion_value=0
+      /* ]]> */
+    </script>
+    <script type="text/javascript" src="//www.googleadservices.com/pagead/conversion.js"></script>
+    <noscript><div style="display:inline;"><img height="1" width="1" style="border-style:none;" alt="" src="http://www.googleadservices.com/pagead/conversion/986221142/?label=7RE4CNLIgQMQ1pSi1gM&amp;guid=ON&amp;script=0"/></div></noscript>
+  </body>
+  <script type='text/javascript'> Timing.mark('lastbyte'); if(typeof(Beanstalk) != 'undefined') {Beanstalk.Timing.init(Timing.times);} </script>
+</html>

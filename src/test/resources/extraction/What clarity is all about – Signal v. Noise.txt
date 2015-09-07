@@ -1,0 +1,9 @@
+What clarity is all about
+Jason Fried wrote this on Mar 22 2012
+
+What if every question you asked your customers was multiple choice? And every question had an “I’m confused” option. How often would your customers choose that option?
+If your whole business was laid out flat – every product, every promise, every price, every rule, every condition all on one surface – and you superimposed a heat map layer over it, where would the confusion hot spots be?
+
+Everything you do as a business includes multiple choices for your customers. It doesn’t matter if you give them the choices – they have the choices. Features, benefits, prices, promises, support, etc. They can love it, hate it, be indifferent, etc. But they can also be confused. And “I’m confused” is the worst option of all. If your customers are confused, you’re in deep trouble. “I give up, unhappily” is next.
+
+This is what clarity is all about. It’s about eliminating “I’m confused” answers. Lots of people think simplicity is the opposite of confusion (“It’s confusing, let’s make this simpler”). It’s not. The opposite of confusion is clarity.

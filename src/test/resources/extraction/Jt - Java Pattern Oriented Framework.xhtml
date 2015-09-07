@@ -1,0 +1,432 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Jt - Java Pattern Oriented Framework</title><link rel="schema.DC" href="http://purl.org/DC/elements/1.0/" /><link rel="SHORTCUT ICON" href="//www.ibm.com/favicon.ico" /><meta name="DC.Rights" content="© Copyright IBM Corporation 2010" /><meta name="Keywords" content="design patterns, Java, messaging design pattern, SOA, ESB, tttwsca" /><meta name="DC.Date" scheme="iso8601" content="2010-05-27" /><meta name="Source" content="v17 delivery:developerWorks" /><meta name="Security" content="Public" /><meta name="Abstract" content="Jt is a design pattern framework for the rapid implementation of Java applications. The framework architecture is based on a messaging design pattern which is utilized to implement many well-known design patterns, in addition to SOA and ESB capabilities." /><meta name="Description" content="Jt is a design pattern framework for the rapid implementation of Java applications. The framework architecture is based on a messaging design pattern which is utilized to implement many well-known design patterns, in addition to SOA and ESB capabilities." /><meta name="IBM.Effective" scheme="W3CDTF" content="2010-05-27" /><meta name="Owner" content="developerWorks Content/Raleigh/IBM" /><meta name="DC.Language" scheme="rfc1766" content="en" /><meta name="IBM.SpecialPurpose" content="SP001" /><meta name="IBM.Country" content="ZZ" /><meta name="Robots" content="index,follow" /><meta name="DC.Type" scheme="IBM_ContentClassTaxonomy" content="CT316" /><meta name="DC.Subject" scheme="IBM_SubjectTaxonomy" content="TT700,SW666" /><meta name="dW.ContentArea" content="4" /><meta name="dW.Topic" content="18,34" /><meta name="IBM.WTMCategory" scheme="IBM_WTMCategory" content="SOFDCSOAZZ" /><!-- SITE MON : START (DO NOT DELETE) --><!-- developerWorks monitoring token --><!-- SITE MON : END (DO NOT DELETE) --><link rel="canonical" href="http://www.ibm.com/developerworks/library/ws-designpattern/index.html" /><!-- HEADER_SCRIPTS_AND_CSS_INCLUDE --><link href="//1.www.s81c.com/common/v17/css/www.css" rel="stylesheet" title="www" type="text/css" /><!--  Masthead/footer  --><link href="//dw1.s81c.com/developerworks/css/dw-mf/v17/dw-mfN2015-01.css" rel="stylesheet" title="www" type="text/css" /><link href="//dw1.s81c.com/developerworks/css/v17/dw-article-6.css" rel="stylesheet" title="www" type="text/css" /><link href="//dw1.s81c.com/developerworks/css/v17/dw-common-features.css" rel="stylesheet" title="www" type="text/css" /><link href="//dw1.s81c.com/developerworks/css/v17/dw-bluemix-regbar.css" media="screen,projection" rel="stylesheet" title="www" type="text/css" /><script type="text/javascript" src="//1.www.s81c.com/common/js/dojo/www.js">//</script><script type="text/javascript" src="//dw1.s81c.com/developerworks/js/v17/dw-www-v2.js">//</script><script type="text/javascript">dojo.addOnLoad(function(){var dw_lang="en_US";var dw_source="dw";var dw_content=window.location.pathname.split("/")[window.location.pathname.split("/").length-2];if(dw_content=="library"){dw_content=window.location.pathname.split("/")[window.location.pathname.split("/").length-1];dw_content=window.location.pathname.split("/")[window.location.pathname.split("/").length-3]+"-"+dw_content.substring(0,dw_content.indexOf(".html"))}var lnkID="article-rbar-bmix-home-regbar";dojo.attr(dojo.query(".dw-regbar-btn")[0],"id",lnkID);var lnkHref=dojo.attr(dojo.byId(lnkID),"href")+"?lang="+dw_lang+"&amp;ca="+dw_source+"-_-bluemix-_-"+dw_content+"-_-regbar-article";dojo.attr(dojo.byId(lnkID),"href",lnkHref);dojo.attr(dojo.byId(lnkID),"onclick","trkOBL('"+lnkHref+"','"+lnkID+"'); return false;");var rbstate=dojo.cookie("dwspck");if(rbstate==undefined)rbstate=0;rbstate=Number(rbstate);if(rbstate&gt;=2)rbstate=0;if(rbstate==1){dojo.destroy("dw-regbar");return}var dwRegbarShow=dojo.animateProperty({node:"dw-regbar",duration:1000,delay:1000,properties:{opacity:{start:0,end:1},top:0}});var ibmTopSlideDown=dojo.animateProperty({node:"ibm-top",duration:1000,delay:1000,properties:{marginTop:{start:0,end:42}}});dwRegbarShow.play();ibmTopSlideDown.play();dwHideRegbar=function(){var dwRegbarHide=dojo.animateProperty({node:"dw-regbar",duration:1000,delay:0,properties:{opacity:{start:1,end:0},top:-100}});var ibmTopSlideUp=dojo.animateProperty({node:"ibm-top",duration:1000,delay:0,properties:{marginTop:{start:42,end:0}}});dwRegbarHide.play();ibmTopSlideUp.play();setTimeout(function(){dojo.destroy("dw-regbar")},1000);dojo.cookie("dwspck","1",{expires:3650,path:"/"})}});</script><script type="text/javascript">
+//  ibmweb.config.set({ sbs: { enabled: false }});
+</script><!-- Continuous Feedback Survey (jpp 08/17/15 --><script type="text/javascript">
+    ibmweb.config.set({
+        opinionlab: {
+            intercept: {
+                percent: 15,
+                start: "August 17 2015",
+                stop: "September 20 2015",
+                presentDelay: 20,
+                invitation: {
+                    title: "Tell developerWorks what you think",
+                    content: "We want your feedback to help us improve developerWorks. Please take a few minutes to complete our brief survey.",
+                    yes_label: "Yes",
+                    no_label: "No Thanks"
+                },
+                survey: {
+                    type: "sg",
+                    id: "s3/2265135/CCF-article-3Q-2015",
+                    width: 720,
+                    height: 600
+                }
+            }
+        }
+    });
+</script><script type="text/javascript">document.write('&lt;link href="//dw1.s81c.com/developerworks/css/v17/dw-article-social-a.css" rel="stylesheet" title="www" type="text/css"/&gt;');dojo.addOnLoad(function(){var dw_lang="en_US";var dw_source="dw";var dw_register="Sign up for a free Bluemix trial";var dw_connect="Connect with Bluemix developers";var dw_vp="Develop and deploy your next&lt;br/&gt;app on the IBM Bluemix&lt;br/&gt;cloud platform.";var dw_cta="Start your free trial";var dw_tile_alt="Develop and deploy your next app on the IBM Bluemix cloud platform. Start building for free.";var dw_videopr="It's never been easier&lt;br/&gt;to build and deploy your apps in the cloud.&lt;br/&gt;";var dw_videopr_cta="Start your free trial";var dw_video_ytlink="Watch on YouTube";var dw_campaign="bluemix";var dw_content=window.location.pathname.split("/")[window.location.pathname.split("/").length-2];if(dw_content=="library"){dw_content=window.location.pathname.split("/")[window.location.pathname.split("/").length-1];dw_content=window.location.pathname.split("/")[window.location.pathname.split("/").length-3]+"-"+dw_content.substring(0,dw_content.indexOf(".html"))}var bluDevComURL="https://developer.ibm.com/bluemix/";var bluLink="https://www.bluemix.net/";var lnkID;var lnkIDd;var lnkIDt;var bLinkEnd;var bLinkTemp;var idTrkr=[];var idCnt;var artTop=dojo.query("div.ibm-col-1-1")[0];var artChildren=dojo.query(artTop).children();var edgy=false;if(dojo.hasClass(artChildren[0],"ibm-inset"))edgy=true;if((artChildren[0].nodeName=="H2")&amp;&amp;(dojo.hasClass(artChildren[1],"ibm-inset")))edgy=true;if(dojo.hasClass(artChildren[0],"codesection"))edgy=true;if((artChildren[0].nodeName=="H5")&amp;&amp;(dojo.hasClass(artChildren[1],"codesection")))edgy=true;if((artChildren[0].nodeName=="H5")&amp;&amp;(artChildren[1].width&gt;=701))edgy=true;if(artChildren[1].width&gt;=701)edgy=true;if(dojo.hasClass(artChildren[0],"ibm-data-table"))edgy=true;if((artChildren[0].nodeName=="H5")&amp;&amp;(dojo.hasClass(artChildren[1],"ibm-data-table")))edgy=true;if(!(edgy)){var sBarAB='&lt;div class="dw-article-sidebar dw-bluemix" id="dwc-exp-a"&gt;'+'&lt;img src="//dw1.s81c.com/developerworks/i/bluemix-graphic.png" height="64" width="64" alt=""/&gt;'+'&lt;p&gt;'+dw_vp+'&lt;/p&gt;'+'&lt;p class="ibm-button-link-alternate dw-button-green"&gt;'+'&lt;a id="tutc-sbar-bmix-home-btn-ABa" href="'+bluLink+'" class="dw-button-large"&gt;'+dw_cta+'&lt;/a&gt;&lt;/p&gt;&lt;/div&gt;';dojo.place(sBarAB,artTop,"first")}dojo.forEach(dojo.query("#ibm-content-main a"),function(item,index){var dw_medium="article";var bLink=dojo.attr(item,"href");var linkClass=dojo.attr(item,"class");if((dojo.attr(item,"id")!=null)&amp;&amp;(dojo.attr(item,"id").indexOf("-sbar-")&gt;-1))dw_medium="sidebar";if((dojo.attr(item,"id")!=null)&amp;&amp;(dojo.attr(item,"id").indexOf("-vpromo-")&gt;-1))dw_medium="video-promotion";if(bLink&amp;&amp;(bLink.indexOf("//bluemix.net")&gt;-1))bLink=bLink.replace("//bluemix.net","//www.bluemix.net");if(bLink&amp;&amp;(bLink.indexOf("//ace.ng.bluemix.net")&gt;-1))bLink=bLink.replace("//ace.ng.bluemix.net","//www.bluemix.net");if(bLink&amp;&amp;(bLink.indexOf("//console.ng.bluemix.net")&gt;-1))bLink=bLink.replace("//console.ng.bluemix.net","//www.bluemix.net");if(bLink&amp;&amp;((bLink.indexOf("//www.bluemix.net")&gt;-1)||(bLink.indexOf("//www.ng.bluemix.net")&gt;-1)||(bLink.indexOf("//hub.jazz.net")&gt;-1)||(bLink.indexOf("//developer.ibm.com/open")&gt;-1))){bLinkEnd="";bLink=bLink.split("?");if((bLink[1])&amp;&amp;(bLink[1].indexOf("repository=")!=-1)){var deployBtn=true;bLink[0]=bLink[0]+"?"+bLink[1];bLink[1]=null}if((bLink[1])&amp;&amp;(bLink[1].indexOf("/")!=-1))bLinkEnd=bLink[1].substring(bLink[1].indexOf("/"));if(dojo.attr(item,"id")==null){bLinkTemp=bLink[0]+bLinkEnd;if(bLinkTemp.indexOf(".bluemix")!=-1){lnkIDd="bmix";if(bLinkTemp.indexOf("/#/solutions")!=-1){lnkIDd=lnkIDd+"-solution"}else if(bLinkTemp.indexOf("/solutions")!=-1){lnkIDd=lnkIDd+"-solution"}else if(bLinkTemp.indexOf("/#/store")!=-1){lnkIDd=lnkIDd+"-service"}else if(bLinkTemp.indexOf("/catalog")!=-1){lnkIDd=lnkIDd+"-service"}else if(bLinkTemp.indexOf("/docs")!=-1){lnkIDd=lnkIDd+"-docs"}else{lnkIDd=lnkIDd+"-home"}}else if(bLinkTemp.indexOf("//hub.jazz.net/")&gt;-1){if((bLinkTemp.indexOf("//hub.jazz.net/git")&gt;-1)||(bLinkTemp.indexOf("//hub.jazz.net/project")&gt;-1)){lnkIDd=deployBtn?"devops-deploy":"devops-code"}else{lnkIDd=bLinkTemp.substring(bLinkTemp.indexOf("hub.jazz.net/")+13);lnkIDd=lnkIDd==""?"devops-home":"devops-"+lnkIDd.split("/")[0]}}else if(bLinkTemp.indexOf("//developer.ibm.com/open")&gt;-1){lnkIDd=bLinkTemp.substring(bLinkTemp.indexOf("developer.ibm.com/open/")+23);if(lnkIDd.indexOf("/")!=-1)lnkIDd=lnkIDd.substring(0,lnkIDd.indexOf("/"));lnkIDd=lnkIDd.replace(/-/g,"");if(lnkIDd=="")lnkIDd="home";lnkIDd="dwopen-"+lnkIDd}if(dojo.attr(dojo.query(item).parent()[0],"class").indexOf("ibm-button")!=-1){lnkIDt="btn"}else{lnkIDt="txt"}}bLink=bLink[0];if(bLink.indexOf("//developer.ibm.com/open")==-1){if(bLink.indexOf("//hub.jazz.net")&gt;-1){if(!(deployBtn)&amp;&amp;((bLink.indexOf("//hub.jazz.net/git")&gt;-1)||(bLink.indexOf("//hub.jazz.net/project")&gt;-1))){bLink="https://login.jazz.net/psso/proxy/jazzregister?utm_source="+dw_source+"&amp;utm_medium="+dw_medium+"&amp;utm_content="+dw_content+"&amp;utm_campaign="+dw_campaign+"&amp;redirect_uri="+bLink}else{if(deployBtn){bLink=bLink+"&amp;cm_mmc="+dw_source+"-_-"+dw_campaign+"-_-"+dw_content+"-_-"+dw_medium}else{bLink=bLink+"?utm_source="+dw_source+"&amp;utm_campaign="+dw_campaign+"&amp;utm_content="+dw_content+"&amp;utm_medium="+dw_medium}}}else{if(bLink.indexOf("/#/")==-1){if(bLink.substring(bLink.length-7)=="/docs/#"){bLink=bLink.replace("/docs/#","/docs/"+"?cm_mmc="+dw_source+"-_-"+dw_campaign+"-_-"+dw_content+"-_-"+dw_medium)}else if(bLink.substring(bLink.length-5)=="/docs"){bLink=bLink.replace("/docs","/docs/"+"?cm_mmc="+dw_source+"-_-"+dw_campaign+"-_-"+dw_content+"-_-"+dw_medium)}else{bLink=bLink+"?cm_mmc="+dw_source+"-_-"+dw_campaign+"-_-"+dw_content+"-_-"+dw_medium}}else{bLink=bLink.substring(0,bLink.indexOf("#"))+"?cm_mmc="+dw_source+"-_-"+dw_campaign+"-_-"+dw_content+"-_-"+dw_medium+bLink.substring(bLink.indexOf("#")-1)}}if(bLinkEnd)bLink=bLink+bLinkEnd;if(linkClass.indexOf("bluemix-home")==-1){if((bLink.indexOf("#")==-1)&amp;&amp;(bLink.indexOf("/solutions")==-1)&amp;&amp;(bLink.indexOf("/catalog")==-1)&amp;&amp;(bLink.indexOf("//www.bluemix.net/")!=-1)){bLink=bLink.replace("//www.bluemix.net/","//developer.ibm.com/sso/bmregistration");if(bLink.indexOf("http://")==0)bLink=bLink.replace("http://","https://");if(bLink.indexOf("//")==0)bLink=bLink.replace("//","https://");if(bLink.indexOf("?cm_mmc=")!=-1)bLink=bLink.replace("?cm_mmc=","?lang="+dw_lang+"&amp;ca=")}if((bLink.indexOf("#")==-1)&amp;&amp;(bLink.indexOf("/solutions")==-1)&amp;&amp;(bLink.indexOf("//www.bluemix.net?")!=-1)){bLink=bLink.replace("//www.bluemix.net","//developer.ibm.com/sso/bmregistration");if(bLink.indexOf("http://")==0)bLink=bLink.replace("http://","https://");if(bLink.indexOf("//")==0)bLink=bLink.replace("//","https://");if(bLink.indexOf("?cm_mmc=")!=-1)bLink=bLink.replace("?cm_mmc=","?lang="+dw_lang+"&amp;ca=")}}if((bLink.indexOf("#")!=-1)&amp;&amp;(bLink.indexOf("solutions")!=-1)){bLinkTemp=bLink.substring(0,bLink.indexOf("?"));bLink=bLink.substring(bLink.indexOf("/#/")+3,bLink.length);bLink=bLinkTemp+bLink;bLinkTemp=bLink.substring(0,bLink.indexOf("solution="));bLink=bLink.substring(bLink.indexOf("/solution=")+10,bLink.length);bLink=bLinkTemp+bLink;bLink=bLink+"?cm_mmc="+dw_source+"-_-"+dw_campaign+"-_-"+dw_content+"-_-"+dw_medium}if((bLink.indexOf("#")!=-1)&amp;&amp;(bLink.indexOf("store")!=-1)){if(bLink.indexOf("&amp;cloudOEPaneId=store")!=-1){bLinkTemp=bLink.split("&amp;cloudOEPaneId=store");bLink=bLinkTemp[0]}bLinkTemp=bLink.substring(bLink.indexOf("serviceOfferingGuid=")+20,bLink.length);bLink=bLink.substring(0,bLink.indexOf(".net/")+5)+"catalog/"+bLinkTemp+"?cm_mmc="+dw_source+"-_-"+dw_campaign+"-_-"+dw_content+"-_-"+dw_medium}}if(dojo.attr(item,"id")==null){lnkID="tutc-main-"+lnkIDd+"-"+lnkIDt;idCnt=0;dojo.forEach(idTrkr,function(item,index){if(item.indexOf(lnkID)!=-1){idCnt++}});if(idCnt&gt;0){lnkID=lnkID+"-"+idCnt}dojo.attr(item,"id",lnkID);idTrkr.push(lnkID)}else{lnkID=dojo.attr(item,"id")}dojo.attr(item,"href",bLink);dojo.attr(item,"onclick","trkOBL('"+bLink+"','"+lnkID+"'); return false;");}});var istndom=setInterval(function(){if(!!dojo.byId('ibm-social-tools')){var ibmsi=["print","email","facebook","twitter","linkedin","googleplus"];dojo.forEach(ibmsi,function(item,index){var siHref=escape(dojo.attr(dojo.query("#ibm-social-tools .ibm-share-"+item)[0],"href"));var siID="ibmShare-A-"+item;siHref=siHref.replace(/%250A/g," ");siHref=siHref.replace(/%2520%2520/g,"");dojo.attr(dojo.query("#ibm-social-tools .ibm-share-"+item)[0],"onclick","trkOBL('"+siHref+"','"+siID+"');")});clearInterval(istndom)}},1000);var dwistndom=setInterval(function(){if(!!dojo.byId('dw-ibm-social-tools')){var dwibmsi=["facebook","twitter","linkedin","googleplus"];dojo.forEach(dwibmsi,function(item,index){var dwsiHref=escape(dojo.attr(dojo.query("#dw-ibm-social-tools .ibm-share-"+item)[0],"href"));if(item=="twitter"){function shortcheck(){if(dwsiHref.indexOf("//ibm.co/")!=-1){dwsiHref=dwsiHref.replace(/%250A/g," ");dwsiHref=dwsiHref.replace(/%2520%2520/g,"");dwsiHrefS=dwsiHref.substring(dwsiHref.indexOf("http%3A//twitter.com/%3Fstatus%3D")+33);dwsiHrefS=dwsiHrefS.split("%2520-%2520")[0];dwsiHrefT=dwsiHref.substring(dwsiHref.indexOf("%2520-%2520")+11);dwsiHref="http%3A//twitter.com/%3Fstatus%3D"+dwsiHrefT+"%2520"+dwsiHrefS;dwsiHrefL=unescape(unescape(dwsiHrefT+"%2520"+dwsiHrefS));if(dwsiHrefL.length&lt;=119){if(dwsiHrefL.length&lt;=115){dwsiHref=dwsiHref+" via IBM @developerWorks"}else{dwsiHref=dwsiHref+" via @developerWorks"}}var dwsiID="dwShare-A-"+item;dojo.attr(dojo.query("#dw-ibm-social-tools .ibm-share-"+item)[0],"onclick","trkOBL('"+dwsiHref+"','"+dwsiID+"');");dojo.removeAttr(dojo.query("#dw-ibm-social-tools .ibm-share-"+item)[0],"target");dojo.attr(dojo.query("#dw-ibm-social-tools .ibm-share-"+item)[0],"href","javascript:void(0)");return}else{setTimeout(function(){dwsiHref=escape(dojo.attr(dojo.query("#dw-ibm-social-tools .ibm-share-"+item)[0],"href"));shortcheck()},500)}}shortcheck()}else{dwsiHref=dwsiHref.replace(/%250A/g," ");dwsiHref=dwsiHref.replace(/%2520%2520/g,"");var dwsiID="dwShare-A-"+item;dojo.attr(dojo.query("#dw-ibm-social-tools .ibm-share-"+item)[0],"onclick","trkOBL('"+dwsiHref+"','"+dwsiID+"');");dojo.removeAttr(dojo.query("#dw-ibm-social-tools .ibm-share-"+item)[0],"target");dojo.attr(dojo.query("#dw-ibm-social-tools .ibm-share-"+item)[0],"href","javascript:void(0)")}});clearInterval(dwistndom)}},1000);});</script><!-- LEADSPACE_STYLES --></head><body id="ibm-com">
+<div class="dw-home-band" id="dw-regbar" aria-labelledby="dw-regbar-vp" role="complementary">
+    <div class="ibm-columns">
+        <div class="ibm-col-6-6">
+            <span id="dw-regbar-bluemix">IBM <strong>Bluemix</strong></span>
+            <span id="dw-regbar-vp">Develop in the cloud at the click of a button!</span>
+            <p class="ibm-button-link-alternate dw-button-green">
+                <a shape="rect" class="dw-button-large dw-regbar-btn" href="https://developer.ibm.com/sso/bmregistration">Start your free trial</a>                
+            </p>               
+        </div>
+    </div> 
+<a shape="rect" onclick="dwHideRegbar();" role="button"><span id="dw-close-regbar" aria-label="Close the registration bar" title="Close the registration bar" role="button" /></a>    
+</div>	<div class="ibm-landing-page" id="ibm-top">
+
+<!-- MASTHEAD_BEGIN -->		
+<div id="ibm-masthead">
+
+	<!-- TOP ROW -->    
+	<div id="dw-masthead-top-row">
+		<ul id="ibm-mast-options-dw" role="toolbar" aria-label="Masthead navigation"><li id="dw-mast-top-4" role="presentation">
+				<a shape="rect" tabindex="0" href="http://www.ibm.com/developerworks/"><img src="//dw1.s81c.com/developerworks/i/mf/dwn-dw-badge.png" width="43" height="22" alt="dW" aria-label="dW" /></a>
+			</li><li id="dw-mast-top-0" role="presentation">
+				<div id="dw-mast-signin">
+					<a shape="rect" tabindex="2" class="dw-mf-noscript" id="dw-mf-signin-link" href="#" title="Sign in requires JavaScript">Sign in</a>
+					<span class="dw-mf-signin-spacer">|</span>
+					<a shape="rect" tabindex="3" class="dw-mf-noscript" id="dw-mf-reg-link" href="#" title="Register requires JavaScript">Register</a>
+				</div>        
+				<div class="dw-mf-hide" id="dw-mast-auth-link">
+					<a shape="rect" tabindex="2" class="authenticated ibm-active" href="#" role="button" />
+					<ul class="dw-mf-hide" id="dw-mast-auth-menu"><li class="dw-mast-auth-menu-title" aria-hidden="true">developerWorks Community</li><li>
+							<span class="dw-mast-auth-menu-arrow" aria-hidden="true">›</span><a shape="rect" tabindex="3" href="/developerworks/community/profiles/html/myProfileView.do?lang=en">My profile</a>
+						</li><li>
+							<span class="dw-mast-auth-menu-arrow" aria-hidden="true">›</span><a shape="rect" tabindex="4" href="/developerworks/community/groups/service/html/mycommunities?lang=en">My communities</a>
+						</li><li>
+							<span class="dw-mast-auth-menu-arrow" aria-hidden="true">›</span><a shape="rect" tabindex="5" href="/developerworks/community/news/?lang=en">Settings</a>
+						</li><li class="dw-mast-auth-menu-divider"><hr /></li><li>
+							<span class="dw-mast-auth-menu-arrow" aria-hidden="true">›</span><a shape="rect" tabindex="6" id="dw-mast-signout-link" href="#">Sign out</a>
+						</li></ul>
+				</div>
+			</li><li id="dw-mast-top-1">
+				<div />
+			</li><li id="dw-mast-top-3" role="presentation">
+				<a shape="rect" tabindex="1" href="http://www.ibm.com">IBM</a>
+			</li></ul>
+	</div>
+
+    <!-- BOTTOM ROW -->
+	<div id="ibm-universal-nav-dw" aria-label="Site map">
+		<ul id="ibm-unav-links-dw"><li id="ibm-unav-home-dwlogo">
+				<a shape="rect" href="http://www.ibm.com/developerworks/"><img src="//dw1.s81c.com/developerworks/i/mf/dwn-dw-wordmark.png" width="225" height="28" alt="developerWorks®" /></a>
+			</li></ul>
+		<ul id="ibm-menu-links-dw" role="toolbar" aria-label="Site map"><li id="dw-mast-nav-0" role="presentation"><a shape="rect" tabindex="0" href="http://www.ibm.com/developerworks/topics/">Technical topics</a></li><li id="dw-mast-nav-1" role="presentation"><a shape="rect" tabindex="0" href="http://www.ibm.com/developerworks/downloads/">Evaluation software</a></li><li id="dw-mast-nav-2" role="presentation"><a shape="rect" tabindex="0" href="http://www.ibm.com/developerworks/community/index.html">Community</a></li><li id="dw-mast-nav-3" role="presentation"><a shape="rect" tabindex="0" href="http://www.ibm.com/developerworks/events/">Events</a></li></ul>
+		<form enctype="application/x-www-form-urlencoded" method="get" id="ibm-search-form" action="//www.ibm.com/search/csass/search/" name="form1" aria-label="IBM developerWorks Search" role="search">
+			<p>
+				<label for="q"><span class="ibm-access">Search developerWorks</span></label>
+				<input maxlength="100" type="text" id="q" name="q" value="Search developerWorks" />
+				<input type="hidden" name="sn" value="dw" />
+				<input type="hidden" name="lang" value="en" />
+				<input type="hidden" name="cc" value="US" />
+				<input type="hidden" name="en" value="utf" />
+				<input type="hidden" name="hpp" value="20" />
+				<input type="hidden" name="dws" value="dw" />
+				<input type="submit" class="ibm-btn-search" id="ibm-search" value="Submit" />
+			</p>
+		</form>
+	</div>	
+  
+</div>
+<div class="ibm-access" id="fdiv" /><!-- MASTHEAD_END -->
+	    
+<!-- LAYOUT -->
+<!-- LEADSPACE_BEGIN --> 
+<div id="ibm-leadspace-head">
+	<!-- LEADSPACE_BODY_BEGIN --> 
+	<div id="ibm-leadspace-body">
+		<!-- Navigation_Trail_BEGIN -->
+      <ul id="ibm-navigation-trail"><li><a shape="rect" href="http://www.ibm.com/developerworks/">developerWorks</a></li><li><a shape="rect" href="http://www.ibm.com/developerworks/topics/">Technical topics</a></li><li><a shape="rect" href="http://www.ibm.com/developerworks/webservices/">SOA and web services</a></li><li><a shape="rect" href="http://www.ibm.com/developerworks/webservices/library/">Technical library</a></li></ul>
+		<!-- END_Navigation_Trail -->
+			<!-- Title_Subtitle -->
+			<h1>Jt - Java Pattern Oriented Framework</h1><p><em><span>An application of the Messaging Design Pattern</span></em></p>
+	</div>
+	<!-- LEADSPACE_BODY_END --> 
+	<!-- SUMMARY_BEGIN -->
+	<div class="dw-summary-columns" id="dw-summary-area">
+		<div class="ibm-col-6-4">
+		<p>Jt is a design pattern framework for the rapid implementation of Java applications. The framework architecture is based on a messaging design pattern which is utilized to implement many well-known design patterns, in addition to SOA and ESB capabilities.</p>
+		<p class="ibm-no-print ibm-ind-link">
+
+			<a shape="rect" class="ibm-pdf-link" href="ws-designpattern-pdf.pdf">PDF</a> (235 KB) <span class="dw-summary-bar">|</span>
+			<span id="nCmts" />
+		</p>
+		    <div id="dw-social-tools-container"><span class="dw-social-lead-in">Share:</span></div>
+		</div>
+		<div class="ibm-col-6-2 dw-toc-margin">
+			<p class="dw-summary-author"><a shape="rect" class="ibm-popup-link" href="#authorN10024" onclick="ibmweb.overlay.show('authorN10024',this);return false;">Al Galvis</a> (<a shape="rect" href="mailto:jtowner@dev.java.net?subject=Jt - Java Pattern Oriented Framework">jtowner@dev.java.net</a>), Consultant, 				IBM</p>
+<div class="ibm-common-overlay" id="authorN10024"><div class="ibm-head"><p><a shape="rect" class="ibm-common-overlay-close" href="#close">Close [x]</a></p></div><div class="ibm-body"><div class="ibm-main"><div class="ibm-title"><!--this is where the h2 usually
+                                    goes--></div><div class="ibm-container ibm-alternate"><div class="ibm-container-body">
+<p><!--.-->
+Al Galvis have had several roles over a period of many years in the computer industry. Roles include Computer Science Professor, Computer Scientist at research facilities and roles as a technical consultant and architect for
+several major corporations.</p><br clear="none" /><br clear="none" /></div></div></div></div><div class="ibm-footer"><!----></div></div>
+			<p class="dw-summary-date">27 May 2010</p>
+			
+				<p>Also available in <a shape="rect" href="http://www.ibm.com/developerworks/jp/webservices/library/ws-designpattern/">Japanese</a></p>
+
+			<div class="ibm-container" id="dw-toc" aria-hidden="true"><div class="ibm-container-body"><ul class="ibm-twisty"><li><a shape="rect" class="ibm-twisty-trigger" href="#toggle"><img src="//www.ibm.com/i/c.gif" alt="-" /></a><span class="ibm-twisty-head">Table of contents</span><div class="ibm-twisty-body"><ul class="ibm-link-list" style="font-size:0.8em"><li><a shape="rect" class="ibm-anchor-down-em-link" href="#N10038">Overview</a></li><li><a shape="rect" class="ibm-anchor-down-em-link" href="#N1004F">Messaging Design Pattern
+    (MDP)</a></li><li><a shape="rect" class="ibm-anchor-down-em-link" href="#N100B1">Design Pattern
+    implementation</a></li><li><a shape="rect" class="ibm-anchor-down-em-link" href="#N100DD">Web Services and transparent
+    access</a></li><li><a shape="rect" class="ibm-anchor-down-em-link" href="#N1011E">Framework Security </a></li><li><a shape="rect" class="ibm-anchor-down-em-link" href="#N10128">Asynchronous messaging,
+       two-way messaging and multithreading</a></li><li><a shape="rect" class="ibm-anchor-down-em-link" href="#N10132">Performance,
+       scalability and fault-tolerant considerations</a></li><li><a shape="rect" class="ibm-anchor-down-em-link" href="#N1013C">Enterprise Service Bus (ESB)
+    capabilities</a></li><li><a shape="rect" class="ibm-anchor-down-em-link" href="#resources">Resources</a></li><li><a shape="rect" class="ibm-anchor-down-em-link" href="#icomments">Comments</a></li></ul></div></li></ul></div></div>
+		</div>
+	</div>
+	<!-- SUMMARY_END -->
+</div>
+<!-- LEADSPACE_END -->
+
+<div id="ibm-pcon">
+
+<!-- BEGIN_IBM-CONTENT -->
+<div id="ibm-content">
+
+<!-- BEGIN_IBM-CONTENT-BODY -->
+<div id="ibm-content-body">
+
+<!-- BEGIN_IBM-CONTENT-MAIN -->
+<div id="ibm-content-main">
+
+<!-- 1_1_COLUMN_BEGIN -->
+<div class="ibm-columns">
+<div class="ibm-col-1-1">
+
+<h2 id="N10038">Overview</h2><p>Jt is a Design Pattern Framework for the rapid implementation of Java applications. Jt has been utilized in several large mission critical systems. The framework addresses the following goals:</p><ol><li>The framework architecture is based on a messaging design pattern: framework
+    components are able to interchange information and perform computations by sending,
+    receiving and processing messages. A messaging API provides simplicity, strong encapsulation and loose coupling; framework components can be interchangeably plugged into complex framework applications using a "lego/messaging" architecture. Framework messages can be processed synchronously or asynchronously. The framework takes full advantage of the power and simplicity of the messaging design pattern/API.</li><li>The design pattern framework uses messaging to implement and/or facilitate the implementation of well-known design patterns like Gang Of Four design patterns (GoF) and J2EE Design patterns. The framework itself is conceived and implemented, from the ground up, based on design patterns. The framework also facilitates and accelerates the implementation of applications based on design patterns.</li><li>The framework lego/messaging architecture provides transparent and secure access to remote components: remote framework objects are treated as local objects. Design patterns implemented by the framework (messaging, adapters, remote proxies and facades) make this possible by hiding the complexities associated with remote APIs. Built-in components for message encryption and authentication are provided. </li><li>The framework provides transparent integration with other technologies via framework
+adapters, proxies and the implementation of related design patterns. These technologies include BPM,  Data Access Object implementations (DAO), Model View Controller implementations (MVC), EJBs, JSP, AJAX, ESB,  JMS, XML, REST and Web Services. </li><li>The framework is designed to be lightweight and fast (low overhead/small footprint).</li><li>The framework messaging/lego architecture improves and simplifies design/development efforts. There is a tight correspondence between UML design diagrams and the framework messaging based applications and components needed for the implementation. The framework provides wizards and automated capabilities for generating framework applications. Framework components can be easily added to BPM/BPEL process diagrams. In future versions of the framework, it should be possible for application modules to be generated directly from the UML design diagrams.  This goal is still work in progress.</li><li>The framework messaging architecture facilitates testing and debugging efforts. The framework provides capabilities for testing components as independent units by sending messages to the component and verifying the expected reply messages.</li></ol><div class="ibm-alternate-rule"><hr /></div><p class="ibm-ind-link ibm-back-to-top"><a shape="rect" class="ibm-anchor-up-link" href="#ibm-content">Back to top</a></p><h2 id="N1004F">Messaging Design Pattern
+    (MDP)</h2><p><strong>Intent</strong>: The messaging design pattern allows the interchange of information (i.e. messages) between components and applications. </p><p><strong>Motivations (forces)</strong>:  This design pattern can be applied to solve a great variety of problems in many diverse scenarios. A messaging paradigm is widely used in nature and the real world. Messages are interchanged all around us. Entities are constantly sending, receiving and processing messages. Human beings for instance:  when we watch TV, listen to music, talk over the phone, or communicate via the internet. Right now, you are reading this written message. Since computer applications seek to model the real world, it is only natural to design and write applications using a messaging approach. We can argue that this approach provides a more complete and accurate representation (i.e. model) of the real world. As a consequence, software engineering processes are significantly improved by the use of the messaging design pattern.</p><p><strong>Participants:</strong></p><p>Message Sender: Component that sends the message.</p><p>Message Recipient (Receiver): Component that receives the input message and may produce a reply (output message) after processing it.  The input message, general in nature, may contain any type of information. The component may be instructed to perform computations based on the input message. </p><p>Messenger: Intermediary that transfers the message from the sender to the recipient. The sender and the recipient don’t need to be concerned about how the message is transferred (communication protocol, message format, encryption/security mechanism, etc.) and the transformations performed on the message along the way. This is the messenger’s purpose and responsibility. Similar to the real world, it is often the case that the messenger is not required. The message can be sent directly to the message recipient. Several modes of communication are possible: synchronous, asynchronous and two-way messaging.</p><p>Message: any piece of information (i.e. data) that needs to be interchanged between
+    sender and recipient. Two messages are usually involved: input message and output
+    message (or reply message). The reply message is not required.</p><h5 id="fig1">Figure 1. Messaging Interface</h5><img alt="Messaging Interface" src="JtInterfaceClass.jpg" width="137" /><h5 id="fig2">Figure 2. Messaging Design Pattern (synchronous mode)</h5><img alt="Messaging Design Pattern (synchronous mode)" src="JtInterface1.gif" width="580" /><h5 id="fig3">Figure 3. Messaging Design Pattern (synchronous mode without messenger involved)</h5><img alt="Messaging Design Pattern (synchronous mode without messenger involved)" src="JtInterface.gif" width="304" /><p><strong>Consequences:</strong></p><ul class="ibm-bullet-list"><li>Encapsulation. The messaging design pattern maximizes encapsulation. Each component is a self-contained/independent unit. The only mechanism of communication with other components and applications is via messaging.</li><li>Decoupling. MDP minimizes coupling. Again each component is a self-contained unit that can perform independently from the rest of the system.</li><li>Reusability. MDP improves reusability. This is similar to the building blocks in a “Lego” set. Very complex models can be built based on simple pieces that share a simple way of interconnecting them (i.e. common interface). The power of the approach is derived from the number of combinations in which these toy pieces can be assembled. Components that use the messaging design pattern can be interchangeably plugged into complex applications. The components can be assembled in a limitless variety of configurations. The user of a component only needs to know the input/output messages that the component handles. Applications are also able to reuse components from other applications at the component level: a single component can be extracted from another application, provided that the messaging design pattern is being used. </li><li>QA/Testing process. MDP facilitates testing and debugging efforts. Components are tested as independent units by sending messages to the component and verifying the expected reply messages (black-box testing). In general, unit testing can be performed via a testing harness. No need to include testing code inside the component code which can be time consuming and lead to the unexpected introduction of software defects. </li><li>Design process. MDP improves and simplifies the design process. The bulk of the design work becomes defining the set of components needed to meet the system requirements and the input/output messages that each component needs to handle. There is a tight correspondence between UML design diagrams and the components needed for the implementation. Since all components share the same messaging interface, they can also be easily added to BPM/BPEL diagrams. As mentioned earlier, this is similar to building blocks that can be reused and connected in many different ways.</li><li>Development process. Since each component that relies on messaging is self-contained, a large team of people can cooperate in the development effort without stepping on each other's code/work. In the ideal situation, responsibility for one component/package can be given to an individual. The rest of the team only needs to know the input/output messages that someone else’s component is designed to handle. No need to change someone else’s code. The need for creating, maintaining and merging several versions of the code is also minimized or eliminated. Testing/QA engineers can do their testing independently via a testing harness. In general, there is no need to add testing code. </li><li>Logging and Debugging. Since all the components use the same messaging interface, messages can be logged automatically. This minimizes the need for print/logging statements inside the code which can be time consuming and error-prone. By taking a look at the messages being logged, the user is usually able to quickly track down the message/component that is causing the problem (with minimum or no extra effort). </li><li>Speed of development and cost. Because of all the reasons outlined above, the messaging design pattern is able to substantially improve the speed of development and reduce cost. </li><li>Quality and software maintenance. Quality and software maintenance efforts are also improved as a result of the all of the above.</li><li>In order to take full advantage of this design pattern, people need to think in terms of messaging when they model, design and build software applications: independent entities (i.e. components) interchanging messages among each other.  This may require learning time and training. Although a messaging approach is natural, intuitive, and consistent with the real world, traditional approaches are based on libraries and method/procedure invocation (both local and remote).</li><li>MDP behaves like a state machine. Therefore it can be extended to provide fault-tolerant capabilities in a very natural and intuitive fashion by replicating components and coordinating their interaction via consensus algorithms. Adding fault-tolerant characteristics to a program that doesn’t use MDP is, in general, a difficult undertaking. </li></ul><h3 id="N100A0">Implementation and Code
+    Examples:</h3><p>The messaging design pattern is implemented using the Jt messaging interface (JtInterface). This interface consists of a single method:</p><h5 id="listing1">Listing 1. Messaging Interface</h5><div class="codesection"><pre class="displaycode">public interface JtInterface  {
+
+/**
+  * Jt messaging interface used for the implementation
+  * of the messaging design pattern.
+  * Process an input message and return a reply (output message). 
+  */
+
+  Object processMessage (Object message); 
+}</pre></div><p>The messaging interface (JtInterface) is simple but powerful. The simplicity of this interface can be deceiving. One method is all that is needed! It acts as a universal messaging interface that applies to remote and local framework components. This interface handles any type of message (Object class). Although a Java implementation is presented here, MDP and the associated framework can be implemented using any computer language or technology. </p><div class="ibm-alternate-rule"><hr /></div><p class="ibm-ind-link ibm-back-to-top"><a shape="rect" class="ibm-anchor-up-link" href="#ibm-content">Back to top</a></p><h2 id="N100B1">Design Pattern
+    implementation</h2><p>As stated earlier, MDP has been used to implement and/or facilitate the implementation of other well-known design patterns like Gang of Four design patterns (GoF), DAO, J2EE Design patterns, etc. A couple of patterns will be used to illustrate how this is accomplished. The same concepts apply to the implementation of many others. The Jt framework employs these patterns for the implementation of advanced capabilities. </p><h3 id="N100B9">Proxy</h3><p>The messaging design pattern facilitates the implementation of Proxy. Under the messaging paradigm, Proxy is mainly responsible for forwarding the input message to the real subject. </p><h5 id="fig4">Figure 4. MDP implementation of Proxy</h5><img alt="MDP implementation of Proxy" src="JtProxy.gif" width="580" /><h3 id="N100CB">Adapter</h3><p>The messaging design pattern facilitates the implementation of Adapter. The main purpose of Adapter becomes the transformation of messages between Sender and Receiver so that these components can be interconnected.  </p><h5 id="fig5">Figure 5. MDP implementation of Adapter</h5><img alt="MDP implementation of Adapter" src="JtAdapter.gif" width="580" /><div class="ibm-alternate-rule"><hr /></div><p class="ibm-ind-link ibm-back-to-top"><a shape="rect" class="ibm-anchor-up-link" href="#ibm-content">Back to top</a></p><h2 id="N100DD">Web Services and transparent
+    access</h2><p>Notice that MDP sender and receiver don't need to be running on the same host. Messages
+    can be sent to remote components. MDP doesn't impose limitations in this regard. Using a real-world analogy, you can communicate with a friend across the room or thousands of miles away via a phone/internet conversation. MDP is able to handle all these scenarios. You and your friend don’t need to be concerned as to how your conversation is transmitted (technologies, communication protocols, security mechanisms, etc). As it should be, all of this is transparent to you.</p><p>As Figure 6 shows, the messaging design pattern and several of the other design patterns discussed earlier can be combined to implement access to remote components. MDP is able to provide transparent and secure access to remote components/services regardless of the protocol and communication technology being used: remote component are treated as local components. Messages can be transferred via web services, REST, EJBs, RMI, HTTP, Sockets, SSL or any similar communication interface. The design patterns discussed above make this possible by hiding the complexities associated with remote APIs. </p><h5 id="fig6">Figure 6. MDP transparent access to distributed components/services</h5><img alt="MDP transparent access to distributed components/services" src="JtRemoteProxy1.gif" width="580" /><p>For clarity sake the messenger component and the intrinsic <code>processMessage()</code> method have
+    been removed from this and the following UML diagrams. Although asynchronous messaging
+    is supported, only synchronous messaging is shown.</p><ol><li>Proxy: the message is sent to the remote component via its proxy.</li><li>Remote Adapter : adapter responsible for interfacing with the remote API by converting the messages.</li><li>Façade: forward the message to the appropriate remote component. It usually provides security capabilities as well.</li></ol><p>Going back to our real-world analogy, the framework maintained by the phone company
+       will require some sort of <em>registry</em> (phone book) so that other participants can be located. Each entity will have associated a phone number or ID. A simple naming mechanism is all that is required. In some cases we may need to provide a city code and/or country code.  The postal service and your internet service provider also use a relatively simple naming scheme. </p><p>Other service providers take advantage of the framework and use custom
+        <em>authentication/authorization</em> mechanisms. Your banking institution, for
+        instance, makes use of the phone system and has <em>Access Management</em> mechanisms for authorization and authentication purposes. We are required to provide some piece of information to authenticate our identity before being granted access to an account. </p><p>The additional framework components required are not too different from the ones outline above. The façade component is usually responsible for security (messaging authorization and authentication).  Before the message is forwarded to the receiver, Facade performs decryption, authorization and authentication on it.</p><h5 id="fig7">Figure 7. MDP secure access to distributed components/services</h5><img alt="MDP secure access to distributed components/services" src="JtFacade1.gif" width="580" /><p>The following are the components involved:</p><p>MessageCipher: component responsible for decrypting the input message and encrypting the reply message. This component can be configured to use a specific encryption scheme.</p><p>Component Registry: allows the system to register and look up components by ID.</p><p>AccessManager:  responsible for granting/denying access to remote components. It authorizes and authenticates each message received. If the access manager is unable to authenticate the message, it never reaches the receiver. </p><div class="ibm-alternate-rule"><hr /></div><p class="ibm-ind-link ibm-back-to-top"><a shape="rect" class="ibm-anchor-up-link" href="#ibm-content">Back to top</a></p><h2 id="N1011E">Framework Security </h2><p>MDP can deal with security challenges in a natural and intuitive manner. It provides end-to-end, non-repudiation and message-level security (as opposed to transport level security). It can also be used for selective encryption so that only sensitive portions of the message are encrypted. Well-known security mechanisms fit well with MDP. On the other hand, our model is not limited to a specific message format (XML, SOAP, etc.). Any message format and RESTful services can be accommodated. This includes proprietary and custom message formats.</p><p>Notice that under a messaging paradigm; most of the security aspects can be made
+        transparent to message sender and receiver. For instance, sender and receiver
+        don't need to be overly concerned as to whether or not security is being used and
+        how it is being implemented. The framework provides the required security components and mechanisms ("plumbing").  Using our real-world analogy, in general you and your friend don't need to be concerned if the service provider is encrypting your conversation because of privacy and security considerations. The Jt framework also uses declarative security which avoids the need for error-prone security coding. Finally, custom security mechanisms can be accommodated based on specific requirements. </p><div class="ibm-alternate-rule"><hr /></div><p class="ibm-ind-link ibm-back-to-top"><a shape="rect" class="ibm-anchor-up-link" href="#ibm-content">Back to top</a></p><h2 id="N10128">Asynchronous messaging,
+       two-way messaging and multithreading</h2><p>Now consider your email or postal mailbox. Messages can be sent asynchronously and
+        placed in a message queue or pile until you are ready to "process" them.  MDP is
+        able to handle the complexities associated with and asynchronous messaging and
+        multithreading. Framework components are able to execute in a separate/independent
+        thread. This is a natural representation of the real world: each component
+        (entity) is a self-contained unit able to execute independently for the rest of
+        the system. Messages can be processed asynchronously using the component’s own independent thread.  This capability is implemented in the context of the Jt framework via a messaging queue. The component does not need to add separate logic to manage multithreading which is time consuming, complex and prone to error.</p><p>You can also decide to send a message back asynchronously establishing a two-way communication. MDP is able to model two-way asynchronous messaging in which components and applications communicate with each other. A combination of synchronous and asynchronous messaging is also possible. Consider the case where a co-worker or supervisor comes to check on progress while you are reading your email messages.</p><div class="ibm-alternate-rule"><hr /></div><p class="ibm-ind-link ibm-back-to-top"><a shape="rect" class="ibm-anchor-up-link" href="#ibm-content">Back to top</a></p><h2 id="N10132">Performance,
+       scalability and fault-tolerant considerations</h2><p>The MDP model is simple yet versatile and robust. It is able to handle complex
+        issues associated with distributed applications.  MDP is compatible with common
+        scalability and availability mechanisms (clustering, load balancing, failover, caching, etc). For instance, SOA and ESB applications based on MDP can run on a cluster of computers to improve reliability and availability. You also have the flexibility of choosing and combining protocols and technology while using MDP. You are not limited to a specific technology or protocol. Your choices will depend on the specific performance and availability requirements. </p><p>MDP can also be extended in a very natural way to provide fault-tolerant capabilities and techniques. The replicated state machine approach is a general method for implementing fault-tolerant systems by replicating components and coordinating their interaction via consensus algorithms. Framework components happen to behave like a state machine: input message, output message and component state are part of the model. </p><div class="ibm-alternate-rule"><hr /></div><p class="ibm-ind-link ibm-back-to-top"><a shape="rect" class="ibm-anchor-up-link" href="#ibm-content">Back to top</a></p><h2 id="N1013C">Enterprise Service Bus (ESB)
+    capabilities</h2><p>The Jt Design Pattern Framework is also a messaging engine that provides Enterprise Service Bus (ESB) capabilities. It features transparent access to components running inside remote applications. Framework components (local and remote) are able to interchange messages securely. The Jt framework also allows you to connect heterogeneous applications regardless of the technologies being used, including JMS, Web Services, EJB, REST, HTTP, EJBs, etc. Design patterns implemented by the framework (messaging, adapters, remote proxies, strategy, facades, etc.) make this possible. The Jt Enterprise Service Bus implementation consists of the following main components: </p><ul class="ibm-bullet-list"><li>Enterprise Service Bus Adapter</li><li>JMS Adapters (point-to-point and publish-subscribe)</li><li>EJB Adapter</li><li>EJB Proxy</li><li>RESTful web services Adapter</li><li>Secure web services Adapter (Axis) </li><li>Axis Proxy </li><li>Message Cipher </li><li>Message Authenticator</li><li>Access Manager</li><li>Data Access Objects</li><li>Java Mail Adapter</li><li>XML/Component transformer</li></ul><p>These components can be interchangeably plugged into complex framework applications
+      using the "lego/messaging" architecture. They can be assembled in a variety of configurations to meet specific business requirements. In this case, these building blocks have been put together to implement the Enterprise Service Bus (ESB) capabilities.</p><p>The framework ESB adapter connects applications to the Jt enterprise service bus.
+        The ESB adapter can be configured to use any strategy for interchanging messages:  JMS, secure Axis Web services, EJBs, secure Restful web services, HTTP, etc. Custom/proprietary strategies and protocols may also be used. The ESB adapter and the other ESB components are also responsible for automatically converting the messages to the appropriate format/protocol.</p><!--CMA ID: true--><!--Site ID: 1--><!--XSLT stylesheet used to transform this file:
+        dw-document-html-7.0.xsl-->
+
+
+</div>
+</div>
+<!-- 1_1_COLUMN_END -->
+
+<!-- SPLIT_COLUMNS_BEGIN -->
+<div class="ibm-columns">
+
+<!-- 6_4_COLUMN_BEGIN -->
+<div class="ibm-col-6-4">
+
+<h2 class="ibm-rule" id="resources">Resources</h2><h3 class="dw-resources-category-heading">Learn</h3><ul class="ibm-bullet-list"><li> Download sources, documentation and project information from  the Jt Design Pattern Framework
+ <a shape="rect" href="http://jt.dev.java.net/">project's page</a>.</li><li>
+ "<a shape="rect" href="http://jt.dev.java.net/files/documents/5553/150311/designPatterns.pdf">Messaging Design Pattern and Pattern
+ Implementation</a>":  Read about how the messaging design pattern is employed in the implementation of other design patterns including GoF, DAO and J2EE patterns.</li><li>
+ "<a shape="rect" href="http://jt.dev.java.net/servlets/ProjectDocumentList">Complete Jt Code examples</a>":  Reliable File Transfer system based on ESB and web services.</li><li>
+ "<a shape="rect" href="http://jt.dev.java.net/servlets/ProjectDocumentList">Complete Jt Code examples</a>":  Jt Wizard for automated generation of framework applications.</li><li> In the
+<a shape="rect" href="http://www.ibm.com/developerworks/webservices">SOA and Web services area 
+on developerWorks</a>, get the resources you need to advance your skills.</li><li> Browse the
+<a shape="rect" href="http://www.ibm.com/developerworks/apps/SendTo?bookstore=safari">technology 
+bookstore</a> for books on these and other technical topics. </li></ul><h3 class="dw-resources-category-heading">Discuss</h3><ul class="ibm-bullet-list"><li> Check out
+<a shape="rect" href="http://www.ibm.com/developerworks/blogs/">developerWorks
+blogs</a> and get involved in the
+<a shape="rect" href="http://www.ibm.com/developerworks/community">developerWorks community</a>. 
+    </li></ul>
+
+<!-- INLINE_COMMENTS_BEGIN -->
+<h2 class="ibm-alternate-rule ibm-no-print" id="icomments">Comments</h2>
+    
+<div class="ibm-no-print" id="dw-icomments-container">	
+	<div id="threadShow" />
+</div>
+<!-- Sign in OVERLAY STARTS HERE -->
+    
+<!-- Sign in OVERLAY STARTS HERE -->
+<div class="ibm-common-overlay" id="signin_overlay">
+<div class="ibm-head">
+<p><a shape="rect" class="ibm-common-overlay-close" href="#" onclick="dwsi.siInst.clearForm();">Close [x]</a></p>
+</div>
+<div class="ibm-body">
+<div class="ibm-main">
+ <div class="ibm-title">
+<h2>developerWorks: Sign in</h2>
+<div class="no-display" id="ibm-overlay-error-signin" />
+</div>
+<div class="ibm-container ibm-alternate ibm-buttons-last">
+<div class="ibm-container-body">
+<p class="ibm-overlay-intro">Required fields are indicated with an asterisk (<span class="ibm-required">*</span>).</p> 
+<form enctype="application/x-www-form-urlencoded" method="post" class="ibm-column-form" id="sFormId" action="" name="sForm" onsubmit="return false;">
+<p><label for="ibmid">IBM ID:<span class="ibm-required">*</span></label><span><input type="text" class="required" id="ibmid" name="ibm-id" size="25" value="" onkeypress="dwsi.siInst.handleEP(event,this.form);" /><br clear="none" /><a shape="rect" class="ibm-forward-link" onclick="window.location='/developerworks/dwwi/DWAuthRouter?m=reg&amp;d='+encodeURIComponent(location.protocol + '//' + location.hostname + location.pathname + '#icomments'); return false;" href="#">Need an IBM ID?</a> <br clear="none" /><a shape="rect" class="ibm-forward-link" href="/developerworks/dwwi/jsp/WSHelp.jsp?lang=en_US">Forgot your IBM ID?</a></span>   
+</p> 
+<p><label for="password">Password:<span class="ibm-required">*</span></label><span><input type="password" class="required" id="password" name="password" size="25" value="" onkeypress="dwsi.siInst.handleEP(event,this.form);" /><br clear="none" /><a shape="rect" class="ibm-forward-link" href="#" onclick="(function () {window.location='https://www.ibm.com/account/profile?page=forgot&amp;lang=en_US&amp;appname=ibm&amp;required=null&amp;d='+encodeURIComponent(dwsi.siInst.getAuthUrl())+'%3Fm%3Dloginpage%26lang%3Den_US%26d%3D'+encodeURIComponent(location.href);})();">Forgot your password?</a><br clear="none" /><a shape="rect" class="ibm-forward-link" href="#" onclick="(function () {window.location='https://www.ibm.com/account/profile?page=chpw&amp;lang=en_US&amp;appname=ibm&amp;required=null&amp;d='+encodeURIComponent(location.href);})();">Change your password</a></span></p> 
+<p class="dw-perm-box">
+	<span><input type="checkbox" id="perm" name="perm_name" /><label for="perm"> Keep me signed in.</label></span>
+</p>
+<p>By clicking <strong>Submit</strong>, you agree to the <a shape="rect" href="https://www.ibm.com/developerworks/community/terms/">developerWorks terms of use</a>.</p>
+<div class="ibm-buttons-row">
+   <p><input type="submit" class="ibm-btn-arrow-pri" name="ibm-submit" value="Submit" onclick="dwsi.siInst.signin();return false;" /><span class="ibm-sep"> </span>
+<input type="button" class="ibm-btn-cancel-sec" value="Cancel" name="ibm-cancel" onclick="dwsi.siInst.clearForm();ibmweb.overlay.hide('signin_overlay');return false;" /></p>
+</div>
+</form>
+<div class="ibm-overlay-rule"><hr /></div>
+<p>The first time you sign into developerWorks, a profile is created for you.  <strong>Information in your profile (your name, country/region, and company name) is displayed to the public and will accompany any content you post, unless you opt to hide your company name</strong>.  You may update your IBM account at any time.</p>
+<div><p class="dw-c-overlay-secure">All information submitted is secure.</p></div>
+</div>
+</div>
+</div>
+</div>
+<div class="ibm-footer" />
+</div>
+<!-- Display name OVERLAY STARTS HERE -->
+<div class="ibm-common-overlay" id="displayname_overlay">
+<div class="ibm-head">
+<p><a shape="rect" class="ibm-common-overlay-close" href="#" onclick="dwsi.siInst.clearForm();">Close [x]</a></p>
+</div>
+<div class="ibm-body">
+<div class="ibm-main">
+<div class="ibm-title">
+<h2>Choose your display name</h2><br clear="none" /><br clear="none" />
+<div class="no-display" id="ibm-overlay-error-dname" />
+</div>
+<div class="ibm-container ibm-alternate ibm-buttons-last">
+<div class="ibm-container-body">
+<p class="ibm-overlay-intro">The first time you sign in to developerWorks, a profile is created for you, so you need to choose a display name.  Your display name accompanies the content you post on developerWorks.</p>
+<p><strong>Please choose a display name between 3-31 characters</strong>. Your display name must be unique in the developerWorks community and should not be your email address for privacy reasons.</p>
+<p class="ibm-overlay-intro">Required fields are indicated with an asterisk (<span class="ibm-required">*</span>).</p> 
+<form enctype="application/x-www-form-urlencoded" method="post" class="ibm-column-form" id="dFormId" action="" name="dForm" onsubmit="return false;">
+<p><label for="displayname">Display name:<span class="ibm-required">*</span></label><span><input type="text" id="displayname" name="displayname" size="25" value="" onkeypress="dwsi.siInst.handleEP(event,this.form);" /></span><span class="ibm-form-note">(Must be between 3 – 31 characters.)</span>
+</p>
+<p>By clicking <strong>Submit</strong>, you agree to the <a shape="rect" href="https://www.ibm.com/developerworks/community/terms/">developerWorks terms of use</a>.</p>
+<div class="ibm-buttons-row">
+   <p><input type="submit" class="ibm-btn-arrow-pri" name="ibm-submit" value="Submit" onclick="dwsi.siInst.signin();return false;" /><span class="ibm-sep"> </span>
+<input type="button" class="ibm-btn-cancel-sec" value="Cancel" name="ibm-cancel" onclick="dwsi.siInst.clearForm();ibmweb.overlay.hide('displayname_overlay');return false;" /></p>
+</div>
+</form>
+<div class="ibm-overlay-rule"><hr /></div>
+<div><p class="dw-c-overlay-secure">All information submitted is secure.</p></div>
+</div>
+</div>
+</div>
+</div>
+<div class="ibm-footer" />
+</div>
+
+
+<!-- INLINE_COMMENTS_END -->
+
+</div>
+<!-- 6_4_COLUMN_END -->
+
+<!-- 6_2_COLUMN_BEGIN -->
+<div class="ibm-col-6-2">
+
+<!-- Next_Steps -->
+<!-- Dig_Deeper -->
+
+<!-- DIG_DEEPER_START -->
+<h2 class="ibm-rule">Dig deeper into SOA and web services on developerWorks</h2>
+<ul class="ibm-link-list"><li class="ibm-first"><a shape="rect" class="ibm-forward-link" href="http://www.ibm.com/developerworks/webservices/">Overview</a></li><li><a shape="rect" class="ibm-forward-link" href="http://www.ibm.com/developerworks/webservices/newto/">New to SOA and web services</a></li><li><a shape="rect" class="ibm-forward-link" href="http://www.ibm.com/developerworks/webservices/library/">Technical library (tutorials and more)</a></li><li><a shape="rect" class="ibm-forward-link" href="http://www.ibm.com/developerworks/webservices/find/downloads/">Downloads and products</a></li><li><a shape="rect" class="ibm-forward-link" href="http://www.ibm.com/developerworks/webservices/find/projects/">Open source projects</a></li><li><a shape="rect" class="ibm-forward-link" href="http://www.ibm.com/developerworks/webservices/standards/">Standards</a></li><li><a shape="rect" class="ibm-forward-link" href="http://www.ibm.com/developerworks/webservices/find/events/">Events</a></li></ul>
+<!-- DIG_DEEPER_END -->
+<!-- Promotion_Module -->
+    
+<!-- PROMOTION_MODULE_START -->
+<div class="ibm-alternate-rule"><hr /></div>
+<ul class="ibm-portrait-module-list"><li><img height="60" width="60" src="//dw1.s81c.com/developerworks/i/sm-f-bluemixdev60.png" alt="" />
+<h3><a shape="rect" class="ibm-feature-link" href="https://developer.ibm.com/bluemix/">Bluemix Developers Community</a></h3>
+<p>Get samples, articles, product docs, and community resources to help build, deploy, and manage your cloud apps.</p>
+</li><li><img height="60" width="60" src="//www.ibm.com/developerworks/i/sm-f-dwnewsletters60.png" alt="" />
+<h3><a shape="rect" class="ibm-feature-link" href="http://ibmdeveloperworks.mkt6741.com/dWdWWeeklyNewsletterSubscriptionPage/">developerWorks Weekly Newsletter</a></h3>
+<p>Keep up with the best and latest technical info to help you tackle your development challenges.</p></li><!-- <li><img height="60" width="60" src="//www.ibm.com/developerworks/i/sm-f-dwlabs60.png" alt=""/>
+<h3><a class="ibm-feature-link" href="http://www.ibm.com/developerworks/labs/?ca=dti-tiles-labs">developerWorks Labs</a></h3>
+<p>Experiment with new directions in software development.</p></li> --><li><img height="60" width="60" src="//www.ibm.com/developerworks/i/sm-f-jazzhub2.png" alt="" />
+<h3><a shape="rect" class="ibm-feature-link" href="https://hub.jazz.net/?utm_source=developerWorks&amp;utm_medium=ad&amp;utm_campaign=dW+tiny+ad">DevOps Services</a></h3>
+<p>Software development in the cloud.  Register today to create a project.</p></li><li><img height="60" width="60" src="//www.ibm.com/developerworks/i/sm-f-evaluationsoftware60.png" alt="" />
+<h3><a shape="rect" class="ibm-feature-link" href="http://www.ibm.com/developerworks/downloads/?ca=dti-tiles-evaluate">IBM evaluation software</a></h3>
+<p>Evaluate IBM software and solutions, and transform challenges into opportunities.</p></li></ul>
+<!-- PROMOTION_MODULE_END -->
+</div>
+<!-- 6_2_COLUMN_END -->
+
+</div>
+<!-- SPLIT_COLUMNS_END -->
+
+<!-- BOTTOM_BACK_TO_TOP -->
+<div class="ibm-columns">
+<div class="ibm-col-1-1">
+	<div class="ibm-alternate-rule"><hr /></div><p class="ibm-ind-link ibm-back-to-top"><a shape="rect" class="ibm-anchor-up-link" href="#ibm-content">Back to top</a></p>
+</div>
+</div>
+
+<!-- Rating_Meta_BEGIN -->
+<!--Rating_Meta_BEGIN--><div class="metavalue">static.content.url=http://www.ibm.com/developerworks/js/artrating/</div><div class="metavalue">SITE_ID=1</div><div class="metavalue">Zone=SOA and web services</div><div class="metavalue">ArticleID=492260</div><div class="metavalue">ArticleTitle=Jt - Java Pattern Oriented Framework</div><div class="metavalue">publish-date=05272010</div><script language="javascript" type="text/javascript">document.write('&lt;div class="metavalue"&gt;url='+location.href.replace(/&lt;/g,'%3C')+'&lt;/div&gt;');</script><!--Rating_Meta_END-->
+<!-- Rating_Meta_END -->
+
+</div>
+<!-- END_IBM_CONTENT_MAIN -->
+
+</div>
+<!-- END_IBM_CONTENT_BODY -->
+
+</div>
+<!-- END_IBM_CONTENT -->
+
+</div>
+<!-- END_IBM_PCON -->
+<!-- FOOTER_BEGIN -->
+<div id="ibm-footer"><!-- IBM footer container; disabled --></div>
+
+<div id="ibm-footer-module-dwwrapper" role="contentinfo" aria-label="developerWorks Footer">
+
+<div id="ibm-footer-module-dw">
+	<div class="dw-footer-columns">
+		<div class="dw-footer-col-6-1">
+			<ul><li><a shape="rect" tabindex="0" href="http://www.ibm.com/developerworks/aboutdw/">About</a></li><li><a shape="rect" tabindex="0" href="https://www.ibm.com/developerworks/feedback">Help</a></li><li><a shape="rect" tabindex="0" href="http://www.ibm.com/developerworks/aboutdw/contacts.html">Contact us</a></li><li><a shape="rect" tabindex="0" href="https://www.ibm.com/developerworks/ideas">Submit content</a></li></ul>
+		</div>
+		<div class="dw-footer-col-6-2">
+			<ul><li><a shape="rect" tabindex="0" href="http://www.ibm.com/developerworks/feeds/">Feeds</a></li><li><a shape="rect" tabindex="0" href="http://www.ibm.com/developerworks/newsletter/">Newsletters</a></li><li><a shape="rect" tabindex="0" class="ibm-twitter-link" href="http://twitter.com/developerWorks" target="_blank">Follow</a></li><li><a shape="rect" tabindex="0" class="ibm-facebook-link" href="http://www.facebook.com/developerworks" target="_blank">Like</a></li></ul>
+		</div>
+		<div class="dw-footer-col-6-3">
+			<ul><li><a shape="rect" tabindex="0" href="https://www.ibm.com/developerworks/community/report/">Report abuse</a></li><li><a shape="rect" tabindex="0" href="https://www.ibm.com/developerworks/community/terms/use/">Terms of use</a></li><li><a shape="rect" tabindex="0" href="https://www.ibm.com/developerworks/community/terms/thirdparty/">Third party notice</a></li><li><a shape="rect" tabindex="0" href="http://www.ibm.com/privacy/">IBM privacy</a></li><li><a shape="rect" tabindex="0" href="http://www.ibm.com/accessibility/">IBM accessibility</a></li></ul>
+		</div>
+		<div class="dw-footer-col-6-4">
+			<ul><li><a shape="rect" tabindex="0" href="http://www.ibm.com/ibm/university/academic/pub/page/academic_initiative">Faculty</a></li><li><a shape="rect" tabindex="0" href="http://asmarterplanet.com/studentsfor/">Students</a></li><li><a shape="rect" tabindex="0" href="http://www.ibm.com/isv/">Business Partners</a></li></ul>
+		</div>
+		<div class="dw-footer-col-6-5">
+			<ul><li class="dw-footer-lang-head">Select a language:</li><li><a shape="rect" tabindex="0" href="http://www.ibm.com/developerworks/">English</a></li><li><a shape="rect" tabindex="0" lang="zh" href="http://www.ibm.com/developerworks/cn/">中文</a></li><li><a shape="rect" tabindex="0" lang="ja" href="http://www.ibm.com/developerworks/jp/">日本語</a></li><li><a shape="rect" tabindex="0" lang="ru" href="http://www.ibm.com/developerworks/ru/">Русский</a></li><li><a shape="rect" tabindex="0" lang="pt" href="http://www.ibm.com/developerworks/br/">Português (Brasil)</a></li><li><a shape="rect" tabindex="0" lang="es" href="http://www.ibm.com/developerworks/ssa/">Español</a></li><li><a shape="rect" tabindex="0" lang="vi" href="http://www.ibm.com/developerworks/vn/">Việt</a></li></ul>
+		</div>
+		<div class="dw-footer-col-6-6">
+			<img src="//dw1.s81c.com/developerworks/i/mf/dwn-ibm-logo-v17.png" alt="IBM®" width="223" height="46" />
+			<img class="dw-preload" src="//1.www.s81c.com/i/v17/icons/ibm_sprite_social_blue_ON.png" alt="" width="1" height="1" />
+			<img class="dw-preload" src="//dw1.s81c.com/developerworks/i/mf/arrow-down-active.gif" alt="" width="1" height="1" />			
+		</div>
+	</div>
+</div>
+
+</div><!-- FOOTER_END -->
+
+<!-- END_IBM-TOP -->
+</div>
+
+<!-- SCRIPTS_INCLUDE_BEGIN -->
+<script type="text/javascript" src="/developerworks/js/v17/dw-comments.js">//</script>
+<script type="text/javascript" language="JavaScript">
+		dojo.ready(function(){
+		rBHash = typeof rBHash == "undefined" ? {} : rBHash;
+		rBHash['viperLang'] = 'en';
+		rBHash['urlLang'] = 'en';
+		rBHash['dwwi2Lang'] = 'en_US';
+		rBHash['appCode'] = 'dwmav';
+		rBHash['signoutUrl'] = (location.host.toLowerCase() === "www.ibm.com" || location.host.toLowerCase() === "developer.ibm.com") ? 'http://www.ibm.com/developerworks/' : ''; 
+		dwsi.siInst = new dwweb.dynnav.dwsi();
+		dwsi.siInst.initSI();		
+
+		// construct the comment widget
+		dwc &amp;&amp; new dwc.comments('threadShow','95%',5,'nCmts','icomments');
+		});
+</script>
+<script type="text/javascript">(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-41146412-3','auto');ga('require','linkid','linkid.js');var dcdate="2010-05-27";ga('set','dimension1',dcdate);var dw_canonical="http://www.ibm.com/developerworks/library/ws-designpattern/index.html";dw_canonical=dw_canonical.substring(dw_canonical.indexOf(".ibm.com")+8);ga('send','pageview',{'page':dw_canonical,'dimension1':dcdate});var trkOBL=function(url,id){id=id.split("-");if(id[0].indexOf("Share")&gt;-1){var cat="Share from toolbar";if(id[0]=="dwShare")cat="Share from summary";var act="Color toolbar";if(id[1]=="B")act="Gray toolbar";var label=id[2];var ab=0;ga('send','event',cat,act,label,ab,{'page':dw_canonical});if(id[0]=="dwShare"){url=unescape(url);if(label='twitter'&amp;&amp;url.indexOf("%2F%2Fwww.ibm.com%2Fdeveloperworks%2F")&gt;-1){var ohref=url.substring(url.indexOf("=http")+1,url.indexOf(".html")+5);ohref=unescape(ohref);var bitly=new ibmweb.bitly({url:ohref,onSuccess:function(){url=url.replace(/http%3A%2F%2Fwww.ibm.com%2Fdeveloperworks%2F(.*)%20-%20/,this.shorturl+'%20-%20');window.open(url)}});bitly.shorten()}else{window.open(url)}}}else{var cat="Rich tutorial";if(id[0]=="tutc")cat="Classic tutorial";if(id[0]=="lpzone")cat="Zone landing";if(id[0]=="lptrial")cat="Trial landing";if(id[0]=="lpgen")cat="Generic landing";var act="Bluemix";if(id[2]=="devops")act="Devops";if(id[2]=="ask")act="Ask";if(id[2]=="dwopen")act="dW_Open";act=act+' '+id[3];if(id[4]){var label=id[4];if(label=="btn")label="button";if(label=="txt")label="text link";if(label=="bnr")label="banner";if(label=="tl")label="tile";if(label=="regbar")label="registration bar";if(label=="spop")label="scroll pop";if(label=="vp")label="video promotion"}var ab=0;if(id[5]){if(id[5]=="ABa")ab=1;if(id[5]=="ABb")ab=2;if(id[5]=="ABc")ab=3;if(id[5]=="ABd")ab=4;if(id[5]=="ABe")ab=5;if(id[5]=="ABf")ab=6;if(id[5]=="ABg")ab=7;if(id[5]=="ABh")ab=8}ga('send','event',cat,act,label,ab,{'page':dw_canonical,'hitCallback':function(){document.location=url}})}}</script>
+
+
+<script type="text/javascript" src="/developerworks/js/v17/dw-event-tagging.js">//</script>
+<!-- BEGIN: Use this section to set page specific variables for the Unica Page Tag -->
+<script language="JavaScript">var NTPT_PGEXTRA="ibmSkillLevel=3&amp;ibmCmaId=492260&amp;ibmContentAreas=webservices";</script>
+<!--END --><!-- SCRIPTS_INCLUDE_END -->
+
+<div id="ibm-metrics">
+<script src="//dw1.s81c.com/common/stats/stats.js" type="text/javascript">//</script>
+</div>
+
+</body></html>
