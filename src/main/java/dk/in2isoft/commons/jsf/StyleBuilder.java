@@ -60,6 +60,13 @@ public class StyleBuilder {
 		return this;
 	}
 
+	public StyleBuilder withPadding(Number bottom) {
+		if (bottom!=null) {
+			sb.append("padding:").append(bottom).append("px;");
+		}
+		return this;
+	}
+
 	public StyleBuilder withBackgroundImage(String url) {
 		sb.append("background-image: url('").append(url).append("');");
 		return this;
@@ -70,5 +77,9 @@ public class StyleBuilder {
 			sb.append(style);
 		}
 		return this;
+	}
+
+	public boolean isEmpty() {
+		return sb.length() == 0;
 	}
 }

@@ -36,14 +36,14 @@ public class ClassBuilder {
 		return this;
 	}
 	
-	public ClassBuilder add(String prefix, String name) {
-		if (StringUtils.isBlank(name)) {
+	public ClassBuilder add(String prefix, String variant) {
+		if (StringUtils.isBlank(variant)) {
 			return this;
 		}
 		if (sb.length()>0) {
 			sb.append(" ");
 		}
-		sb.append(prefix).append("_").append(name);
+		sb.append(prefix).append("_").append(variant);
 		return this;
 	}
 	
