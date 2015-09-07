@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.commons.xml.DocumentCleaner;
-import dk.in2isoft.onlineobjects.modules.information.ContentExtractor;
+import dk.in2isoft.onlineobjects.modules.information.SimpleContentExtractor;
 import dk.in2isoft.onlineobjects.modules.networking.HTMLService;
 import dk.in2isoft.onlineobjects.services.SemanticService;
 import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
@@ -80,7 +80,7 @@ public class TestHTMLDocument extends AbstractSpringTestCase {
 				File out = new File(folder,file.getName()+".extracted.htm");
 				try (FileWriter w = new FileWriter(out)) {
 					Document document = doc.getXOMDocument();
-					ContentExtractor x = new ContentExtractor();
+					SimpleContentExtractor x = new SimpleContentExtractor();
 					Document extracted = x.extract(document);
 					cleaner.clean(extracted);
 					w.append(extracted.toXML());

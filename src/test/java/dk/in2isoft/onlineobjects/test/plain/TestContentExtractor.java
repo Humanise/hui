@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.commons.xml.DOM;
-import dk.in2isoft.onlineobjects.modules.information.ContentExtractor;
+import dk.in2isoft.onlineobjects.modules.information.SimpleContentExtractor;
 import dk.in2isoft.onlineobjects.modules.networking.HTMLService;
 import dk.in2isoft.onlineobjects.test.AbstractSpringTestCase;
 
@@ -25,6 +25,7 @@ public class TestContentExtractor extends AbstractSpringTestCase {
 	public void testSimple() throws MalformedURLException, IOException {
 		String xml = "<?xml version='1.0'?>"
 				+ "<html xmlns='http://www.w3.org/1999/xhtml'><body>"
+				+ "<div role='banner'>I am a banner</div>"
 				+ "<div>"
 				+ "<h1>This is the title</h1>"
 				+ "<p>Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Nulla vitae elit libero, a pharetra augue.</p>"
@@ -36,7 +37,7 @@ public class TestContentExtractor extends AbstractSpringTestCase {
 
 		Document document = DOM.parseXOM(xml);
 
-		ContentExtractor extractor = new ContentExtractor();
+		SimpleContentExtractor extractor = new SimpleContentExtractor();
 		
 		Document extracted = extractor.extract(document);
 		
