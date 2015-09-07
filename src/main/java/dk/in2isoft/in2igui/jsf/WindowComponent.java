@@ -6,6 +6,8 @@ import javax.faces.component.FacesComponent;
 import javax.faces.context.FacesContext;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
+import dk.in2isoft.commons.jsf.ClassBuilder;
+import dk.in2isoft.commons.jsf.StyleBuilder;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=WindowComponent.TYPE)
@@ -15,7 +17,9 @@ public class WindowComponent extends AbstractComponent {
 
 	private String title;
 	private String name;
+	private String variant;
 	private int width;
+	private int padding;
 
 	public WindowComponent() {
 		super(TYPE);
@@ -26,12 +30,14 @@ public class WindowComponent extends AbstractComponent {
 		name = (String) state[0];
 		width = (Integer) state[1];
 		title = (String) state[2];
+		padding = (Integer) state[3];
+		variant = (String) state[4];
 	}
 
 	@Override
 	public Object[] saveState() {
 		return new Object[] {
-			name, width, title
+			name, width, title, padding, variant
 		};
 	}
 	
@@ -39,15 +45,23 @@ public class WindowComponent extends AbstractComponent {
 	public void encodeBegin(FacesContext context, TagWriter out) throws IOException {
 		String title = getTitle(context);
 		String id = getClientId();
-		out.startDiv().withClass("hui_window").withId(id).withStyle("display:none;");
+		ClassBuilder cls = new ClassBuilder("hui_window").add("hui_window", variant);
+		out.startDiv(cls).withId(id).withStyle("display:none;");
 		out.startDiv("hui_window_front");
 		out.startDiv("hui_window_close").endDiv();
 		out.startDiv("hui_window_titlebar").startDiv().startDiv();
 		out.startSpan("hui_window_title").text(title).endSpan();
 		out.endDiv().endDiv().endDiv();
 		out.startDiv("hui_window_content").startDiv("hui_window_content").startDiv("hui_window_body");
+		StyleBuilder style = new StyleBuilder();
 		if (width>0) {
-			out.withStyle("width:"+width+"px;");
+			style.withWidth(width);
+		}
+		if (padding > 0) {
+			style.withPadding(padding);
+		}
+		if (!style.isEmpty()) {
+			out.withStyle(style);
 		}
 	}
 	
@@ -87,6 +101,14 @@ public class WindowComponent extends AbstractComponent {
 	public void setWidth(int width) {
 		this.width = width;
 	}
+	
+	public int getPadding() {
+		return padding;
+	}
+	
+	public void setPadding(int padding) {
+		this.padding = padding;
+	}
 
 	public String getTitle(FacesContext context) {
 		return getExpression("title", title, context);
@@ -98,6 +120,14 @@ public class WindowComponent extends AbstractComponent {
 
 	public void setTitle(String title) {
 		this.title = title;
+	}
+
+	public String getVariant() {
+		return variant;
+	}
+
+	public void setVariant(String variant) {
+		this.variant = variant;
 	}
 
 }
