@@ -327,6 +327,16 @@
 			<artifactId>tika-core</artifactId>
 			<version>1.9</version>
 		</dependency>
+		
+		<!-- 
+		<dependency>
+			<groupId>org.apache.tika</groupId>
+			<artifactId>tika-parsers</artifactId>
+			<version>1.9</version>
+		</dependency>
+		-->
+
+		
 
 		<!-- TODO: This may be usefull but has a lot of deps - so not enabled <dependency> 
 			<groupId>org.apache.tika</groupId> <artifactId>tika-parsers</artifactId> 
@@ -362,6 +372,12 @@
 			<groupId>org.apache.jena</groupId>
 			<artifactId>jena-iri</artifactId>
 			<version>0.9.4</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>info.debatty</groupId>
+		    <artifactId>java-string-similarity</artifactId>
+		    <version>0.12</version>
 		</dependency>
 
 		<!-- <dependency> <groupId>com.aliasi</groupId> <artifactId>lingpipe</artifactId> 
