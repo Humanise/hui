@@ -12,7 +12,6 @@ import nu.xom.Element;
 import nu.xom.Nodes;
 import nu.xom.ParentNode;
 import nu.xom.Text;
-import nu.xom.XPathContext;
 
 import org.neo4j.helpers.Strings;
 import org.slf4j.Logger;
@@ -31,6 +30,7 @@ public class DocumentCleaner {
 
 	private Multimap<String, String> validAttributes = HashMultimap.create();
 	private Set<String> validTags = Sets.newHashSet();
+	private Set<String> validLeaves = Sets.newHashSet();
 	
 	private Set<String> bannedTags = Sets.newHashSet();
 
@@ -62,6 +62,11 @@ public class DocumentCleaner {
 		bannedTags.add("script");
 		bannedTags.add("style");
 		bannedTags.add("noscript");
+
+		validLeaves.add("hr");
+		validLeaves.add("br");
+		validLeaves.add("img");
+		validLeaves.add("col");
 	}
 	
 	public void setUrl(String url) {
@@ -106,14 +111,14 @@ public class DocumentCleaner {
 				if (nodeName.equals("a")) {
 					if (element.getAttributeCount() == 0) {
 						nodesToRemove.add(element);
-					} else {
+					} else if (uri!=null) {
 						Attribute attribute = element.getAttribute("href");
 						if (attribute!=null) {
 							String value = attribute.getValue();
 							try {
 								attribute.setValue(uri.resolve(value).toString());
 							} catch (IllegalArgumentException e) {
-								log.warn("Error resolving link URL",e);
+								log.warn("Error resolving link URL: "+e.getMessage());
 							}
 						}
 					}
@@ -156,7 +161,27 @@ public class DocumentCleaner {
 				}
 			}
 		}
-		
+		removeLeaves(document);
+	}
+	
+	private void removeLeaves(nu.xom.Document document) {
+		boolean modified = false;
+
+		Nodes leaves = document.query("//*[not(node())]");
+		for (int i = 0; i < leaves.size(); i++) {
+			Element node = (Element) leaves.get(i);
+			String name = node.getLocalName().toLowerCase();
+			if (!validLeaves.contains(name)) {
+				ParentNode parent = node.getParent();
+				if (parent instanceof Element) {
+					parent.removeChild(node);
+					modified = true;
+				}
+			}
+		}
+		if (modified) {
+			removeLeaves(document);
+		}
 	}
 	
 	@Deprecated
