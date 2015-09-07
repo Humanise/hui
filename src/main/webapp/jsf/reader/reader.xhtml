@@ -75,9 +75,8 @@
 						<o:icon icon="add_line" size="20"/>
 						<span class="reader_action_text">Add page</span>
 					</o:link>
-					<o:link name="reindexButton" plain="true" styleClass="reader_action">
+					<o:link name="settingsIcon" plain="true" styleClass="reader_action">
 						<o:icon icon="gear_line" size="20"/>
-						<gui:confirm text="Re-index - realy?"/>
 					</o:link>
 				</div>
 			
@@ -184,6 +183,46 @@
 					</div>
 				</gui:formula>
 			</gui:boundPanel>
+
+			<gui:window name="addressInfoWindow" title="Address" variant="light" width="300" modal="true" padding="5">
+				<gui:formula name="addressInfoForm">
+        <gui:fields>
+					<gui:field label="Title">
+            <gui:textInput key="title" multiline="true"/>
+          </gui:field>
+					<gui:field label="Address">
+            <gui:textInput key="address" multiline="true"/>
+          </gui:field>
+          <gui:field label="Encoding">
+            <gui:dropDown key="encoding">
+            
+            </gui:dropDown>
+          </gui:field>
+        </gui:fields>
+					<gui:buttons>
+						<gui:button text="Cancel" name="cancelAddressInfo" variant="light"/>
+						<gui:button submit="true" text="Save" highlighted="true" variant="light"/>
+					</gui:buttons>
+				</gui:formula>
+			</gui:window>
+
+			<gui:window name="settingsWindow" title="Settings" variant="light" width="300" modal="true" padding="5">
+				<gui:formula name="settingsForm">
+          <gui:fields>
+            <gui:field label="Extraction algorithm">
+              <gui:dropDown name="extractionAlgorithm"
+                value="#{readerView.extractionAlgorithm}"
+                items="#{readerView.extractionAlgorithms}"
+              />
+            </gui:field>
+          </gui:fields>
+					<gui:buttons>
+						<gui:button text="Re-index" name="reIndexButton" variant="light">
+              <gui:confirm text="Are you sure?"/>
+            </gui:button>
+					</gui:buttons>
+				</gui:formula>
+			</gui:window>
 			
 			<ui:include src="../shared/wordfinder.xhtml"/>
 			

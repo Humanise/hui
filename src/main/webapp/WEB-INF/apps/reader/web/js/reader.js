@@ -108,10 +108,10 @@ var controller = {
 	},
 
 	$click$removeButton : function() {
-        var url = '/removeInternetAddress';
-        //if (obj.kind == 'HtmlPart') {
-         //   url = '/service/model/removeEntity';
-        //}
+		var url = '/removeInternetAddress';
+		//if (obj.kind == 'HtmlPart') {
+		 //	  url = '/service/model/removeEntity';
+		//}
 		this._hideViewer();
 		hui.ui.request({
 			url : url,
@@ -171,9 +171,9 @@ var controller = {
 				hui.ui.showMessage({text:'Address added',icon:'common/success',duration:3000});
 				hui.ui.get('listSource').refresh();
 				this._loadArticle({
-          id:info.id,
-          type:'address'
-        });
+					id : info.id,
+					type : 'address'
+				});
 			}.bind(this),
 			$failure : function() {
 				hui.ui.showMessage({text:'Address could not be added',icon:'common/warning',duration:3000});
@@ -252,50 +252,67 @@ var controller = {
 			}.bind(this)
 		})
 	},
+	
+	// Settings
+	
+	$click$settingsIcon : function() {
+		hui.ui.get('settingsWindow').show();
+	},
 
-	$click$reindexButton : function() {
+	$click$reIndexButton : function() {
 		hui.ui.request({
 			url : '/reIndex',
 			message : {start:'Indexing',success:'Finished'}
 		});
 	},
 
-    // Viewer
+	// Viewer
+	
+	_viewedItem : null,
+  
+	$valueChanged$extractionAlgorithm : function() {
+		if (this._viewedItem) {
+			this._loadArticle(this._viewedItem);
+		}
+	},
 
 	_loadArticle: function(object) {
-	  object = object || {};
-	  hui.get('viewer_header').innerHTML = '<h1>' + hui.string.escape(object.title) + '</h1>';
-	  hui.get('viewer_formatted').innerHTML = '';
-	  hui.get('viewer_text').innerHTML = '';
-	  hui.get('viewer_info').innerHTML = ''
-	  this.viewer.style.display = 'block';
-	  this.viewerVisible = true;
-	  hui.cls.add(document.body, 'reader_modal');
-	  hui.cls.add(this.viewerSpinner, 'oo_spinner_visible');
-	  var self = this;
-    var parameters = {};
-    if (object.type=='address') {
-      parameters.id = object.id;
-    }
-    if (object.type=='statement') {
-      parameters.statementId = object.id;
-    }
-	  hui.ui.request({
-	    url: '/loadArticle',
-	    parameters: parameters,
-	    $object: function(article) {
-	      self._drawArticle(article);
-	    },
-	    $failure: function() {
-	      self._hideViewer();
-	      hui.ui.msg.fail({
-	        text: 'Sorry!'
-	      });
-	    },
-	    $finally: function() {
-	      hui.cls.remove(self.viewerSpinner, 'oo_spinner_visible');
-	    }
-	  })
+		this._viewedItem = object;
+		object = object || {};
+		hui.get('viewer_header').innerHTML = '<h1>' + hui.string.escape(object.title) + '</h1>';
+		hui.get('viewer_formatted').innerHTML = '';
+		hui.get('viewer_text').innerHTML = '';
+		hui.get('viewer_info').innerHTML = ''
+		this.viewer.style.display = 'block';
+		this.viewerVisible = true;
+		hui.cls.add(document.body, 'reader_modal');
+		hui.cls.add(this.viewerSpinner, 'oo_spinner_visible');
+		var self = this;
+		var parameters = {
+			algorithm : hui.ui.get('extractionAlgorithm').getValue()
+		};
+		if (object.type=='address') {
+			parameters.id = object.id;
+		}
+		if (object.type=='statement') {
+			parameters.statementId = object.id;
+		}
+		hui.ui.request({
+			url: '/loadArticle',
+			parameters: parameters,
+			$object: function(article) {
+			  self._drawArticle(article);
+			},
+			$failure: function() {
+				self._hideViewer();
+				hui.ui.msg.fail({
+					text: 'Sorry!'
+				});
+			},
+			$finally: function() {
+			  hui.cls.remove(self.viewerSpinner, 'oo_spinner_visible');
+			}
+		});
 	},
 
 
@@ -338,6 +355,7 @@ var controller = {
 		this.viewerVisible = false;
 		this.viewerFrame.src = "about:blank";
 		hui.get('viewer_info').innerHTML = ''
+		this._viewedItem = null;
 	},
 	_lockViewer : function() {
 		this._viewerLocked = true;
@@ -355,15 +373,15 @@ var controller = {
 		hui.ui.request({
 			url : '/changeFavoriteStatus',
 			parameters : {id:this._currentArticle.id,favorite:newValue},
-            $success : function() {
+			$success : function() {
 				this._currentArticle.favorite = newValue;
 				hui.ui.get('listSource').refresh();
-                hui.ui.msg.success({text:newValue ? 'Added to favorites' : 'Removed from favorites'});
-            }.bind(this),
+				hui.ui.msg.success({text:newValue ? 'Added to favorites' : 'Removed from favorites'});
+			}.bind(this),
 			$finally : function() {
 				this._unlockViewer();
 			}.bind(this)
-        });
+		});
 	},
 	$click$inboxButton : function() {
 		if (this._viewerLocked) {return}
@@ -373,34 +391,34 @@ var controller = {
 		hui.ui.request({
 			url : '/changeInboxStatus',
 			parameters : {id:this._currentArticle.id,inbox:newValue},
-            $success : function() {
+			$success : function() {
 				this._currentArticle.inbox = newValue;
 				hui.ui.get('listSource').refresh();
-                hui.ui.msg.success({text:newValue ? 'Added to inbox' : 'Removed from inbox'});
-            }.bind(this),
+				hui.ui.msg.success({text:newValue ? 'Added to inbox' : 'Removed from inbox'});
+			}.bind(this),
 			$finally : function() {
 				this._unlockViewer();
 			}.bind(this)
-        });
+		});
 	},
 
 	$click$inspectButton : function() {
 		oo.Inspector.inspect({id:this._currentArticle.id})
 	},
 
-  $click$quoteButton : function() {
-      var parameters = {
-          id : this._currentArticle.id,
-          text : this.text
-      }
-	hui.ui.request({
-		url : '/addQuote',
-		parameters : parameters,
-		$object : function(article) {
-			this._drawArticle(article);
-		}.bind(this)
-	})
-  },
+	$click$quoteButton : function() {
+		var parameters = {
+			id : this._currentArticle.id,
+			text : this.text
+		}
+		hui.ui.request({
+			url : '/addQuote',
+			parameters : parameters,
+			$object : function(article) {
+				this._drawArticle(article);
+			}.bind(this)
+		})
+	},
 	$valueChanged$readerViewerView : function(value) {
 
 		this.viewerContent.className = 'reader_viewer_content reader_viewer_content_'+value;

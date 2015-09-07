@@ -431,6 +431,7 @@ public class ReaderController extends ReaderControllerBase {
 	public ArticlePerspective loadArticle(Request request) throws IOException, ModelException, SecurityException, IllegalRequestException, ExplodingClusterFuckException, ContentNotFoundException {
 		Long articleId = request.getLong("id",null);
 		Long statementId = request.getLong("statementId", null);
+		String algorithm = request.getString("algorithm");
 		UserSession session = request.getSession();
 		
 		if (articleId==null && statementId==null) {
@@ -444,7 +445,7 @@ public class ReaderController extends ReaderControllerBase {
 			}
 			articleId = address.getId();
 		}
-		return articleBuilder.getArticlePerspective(articleId, session);
+		return articleBuilder.getArticlePerspective(articleId, algorithm, session);
 	}
 
 	@Path

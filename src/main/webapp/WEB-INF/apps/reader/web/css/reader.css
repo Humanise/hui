@@ -337,7 +337,7 @@ div.sidebar div.block ul li strong
 
 .list_item_address_link:hover {
 	color: #36f;
-	border-bottom: 1px solid #36f;
+	text-decoration: underline;
 }
 
 .list_item_words {

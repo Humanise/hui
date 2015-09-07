@@ -49,6 +49,7 @@ import dk.in2isoft.onlineobjects.model.Statement;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.modules.information.ContentExtractor;
+import dk.in2isoft.onlineobjects.modules.information.SimpleContentExtractor;
 import dk.in2isoft.onlineobjects.modules.language.WordCategoryPerspectiveQuery;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
 import dk.in2isoft.onlineobjects.modules.networking.NetworkResponse;
@@ -68,8 +69,9 @@ public class ReaderArticleBuilder {
 	private StorageService storageService;
 	private LanguageService languageService;
 	private SemanticService semanticService;
+	private Map<String,ContentExtractor> contentExtractors;
 
-	public ArticlePerspective getArticlePerspective(Long id, UserSession session) throws ModelException, IllegalRequestException, SecurityException, ExplodingClusterFuckException {
+	public ArticlePerspective getArticlePerspective(Long id, String algorithm, UserSession session) throws ModelException, IllegalRequestException, SecurityException, ExplodingClusterFuckException {
 		StopWatch watch = new StopWatch();
 		watch.start();
 		InternetAddress address = modelService.get(InternetAddress.class, id, session);
@@ -113,7 +115,7 @@ public class ReaderArticleBuilder {
 		log.trace("Base: " + watch.getSplitTime());
 		if (document != null) {
 			article.setTitle(document.getTitle());
-			buildRendering(document, address, article, watch);
+			buildRendering(document, address, article, algorithm, watch);
 		} else {
 			article.setTitle(address.getName());
 		}
@@ -128,9 +130,6 @@ public class ReaderArticleBuilder {
 		File folder = storageService.getItemFolder(address);
 		File original = new File(folder, "original");
 		String encoding = address.getPropertyValue(Property.KEY_INTERNETADDRESS_ENCODING);
-		if (Strings.isBlank(encoding)) {
-			encoding = Strings.UTF8;
-		}
 		if (!original.exists()) {
 			NetworkResponse response = networkService.getSilently(address.getAddress());
 			if (response != null && response.isSuccess()) {
@@ -139,9 +138,15 @@ public class ReaderArticleBuilder {
 					response.cleanUp();
 					return null;
 				}
+				if (response.getEncoding()!=null) {
+					encoding = response.getEncoding();
+				}
 				address.overrideFirstProperty(Property.KEY_INTERNETADDRESS_ENCODING, encoding);
 				modelService.updateItem(address, privileged);
 			}
+		}
+		if (Strings.isBlank(encoding)) {
+			encoding = Strings.UTF8;
 		}
 		return new HTMLDocument(Files.readString(original, encoding));
 	}
@@ -183,14 +188,17 @@ public class ReaderArticleBuilder {
 		return writer.toString();
 	}
 
-	private void buildRendering(HTMLDocument document, InternetAddress address, ArticlePerspective article, StopWatch watch) throws ModelException,
+	private void buildRendering(HTMLDocument document, InternetAddress address, ArticlePerspective article, String algorithm, StopWatch watch) throws ModelException,
 			ExplodingClusterFuckException {
 
 		{
 			Document xom = document.getXOMDocument();
-			ContentExtractor extractor = new ContentExtractor();
+			ContentExtractor extractor = contentExtractors.get(algorithm);
+			if (extractor==null) {
+				log.warn("Unknown extrator: " + algorithm);
+				extractor = new SimpleContentExtractor();
+			}
 			Document extracted = extractor.extract(xom);
-			//Document extracted = document.getExtracted();
 			if (extracted == null) {
 				article.setFormatted("<p><em>Unable to extract text.</em></p>");
 			} else {
@@ -258,10 +266,12 @@ public class ReaderArticleBuilder {
 		Locale locale = languageService.getLocale(text);
 		watch.split();
 		log.trace("Get locale: " + watch.getSplitTime());
-		if (locale.getLanguage().equals("da") || locale.getLanguage().equals("en")) {
-
-			if (!false) {
-				annotatePeople(watch, decorated, text, locale);
+		if (locale!=null) {
+			if (locale.getLanguage().equals("da") || locale.getLanguage().equals("en")) {
+	
+				if (!false) {
+					annotatePeople(watch, decorated, text, locale);
+				}
 			}
 		}
 		StringSearcher searcher = new StringSearcher();
@@ -394,5 +404,13 @@ public class ReaderArticleBuilder {
 
 	public void setStorageService(StorageService storageService) {
 		this.storageService = storageService;
+	}
+	
+	public void setContentExtractors(Map<String,ContentExtractor> contentExtractors) {
+		this.contentExtractors = contentExtractors;
+	}
+	
+	public Map<String,ContentExtractor> getContentExtractors() {
+		return contentExtractors;
 	}
 }

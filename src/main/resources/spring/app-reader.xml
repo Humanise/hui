@@ -7,7 +7,21 @@
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
     ">
 
-   	<bean class="dk.in2isoft.onlineobjects.apps.reader.ReaderArticleBuilder" autowire="byType"/>
+   	<bean id="readerArticleBuilder" class="dk.in2isoft.onlineobjects.apps.reader.ReaderArticleBuilder" autowire="byType">
+   		<property name="contentExtractors">
+   			<map>
+   				<entry key="OnlineObjects">
+   					<bean class="dk.in2isoft.onlineobjects.modules.information.SimpleContentExtractor"/>
+   				</entry>
+   				<entry key="Boilerpipe">
+   					<bean class="dk.in2isoft.onlineobjects.modules.information.Boilerpipe"/>
+   				</entry>
+   				<entry key="Readability">
+   					<bean class="dk.in2isoft.onlineobjects.modules.information.ReadabilityExtractor"/>
+   				</entry>
+   			</map>
+   		</property>
+   	</bean>
 
    	<bean id="readerController" class="dk.in2isoft.onlineobjects.apps.reader.ReaderController" autowire="byType"/>
    	
@@ -25,5 +39,6 @@
    	</bean>
    	
    	<bean id="readerView" scope="request" class="dk.in2isoft.onlineobjects.apps.reader.views.ReaderView">
+   		<property name="builder" ref="readerArticleBuilder"/>
    	</bean>
 </beans>
