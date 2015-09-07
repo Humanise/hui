@@ -1,5 +1,7 @@
 package dk.in2isoft.onlineobjects.modules.information;
 
+import nu.xom.Document;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
@@ -13,7 +15,7 @@ import de.l3s.boilerpipe.sax.HTMLDocument;
 import de.l3s.boilerpipe.sax.HTMLHighlighter;
 import dk.in2isoft.commons.lang.Strings;
 
-public class Boilerpipe {
+public class Boilerpipe implements ContentExtractor {
 
 	private static final Logger log = LoggerFactory.getLogger(Boilerpipe.class);
 
@@ -52,4 +54,10 @@ public class Boilerpipe {
 		}
 		return null;
     }
+
+	@Override
+	public Document extract(Document document) {
+		String extracted = extract(document.toXML());
+		return new dk.in2isoft.commons.parsing.HTMLDocument(extracted).getXOMDocument();
+	}
 }
