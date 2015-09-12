@@ -84,16 +84,15 @@ public class TestExtractionComparison extends AbstractSpringTestCase {
 					
 					String text = docToText.getText(extracted);
 					if (Strings.isBlank(text)) {
-						log.warn("Skipping:" + baseName + " - " + extractor.getName());
-					} else {
-						double comparison = l.similarity(idealText, text);//semanticService.compare(idealText, text, null);
-						if (Double.isNaN(comparison)) {
-							log.warn("Extracted:" + text);
-						} else {
-							extractor.addComparison(comparison);						
-						}
-						log.info(baseName + " - " + extractor.getName() + "- : " + comparison);
+						log.warn("Blank: " + baseName + " - " + extractor.getName());
 					}
+					double comparison = l.similarity(idealText, text);//semanticService.compare(idealText, text, null);
+					if (Double.isNaN(comparison)) {
+						log.warn("Extracted:" + text);
+					} else {
+						extractor.addComparison(comparison);						
+					}
+					log.info(baseName + " - " + extractor.getName() + "- : " + comparison);
 				}
 			}
 		}
