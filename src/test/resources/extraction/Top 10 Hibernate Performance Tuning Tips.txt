@@ -1,0 +1,45 @@
+Sunday, January 23, 2011
+
+Top 10 Hibernate Performance Tuning Tips
+
+(1) Avoid join duplicates (AKA cartesian products) due to joins along two or more parallel to-many associations; use Exists-subqueries, multiple queries or fetch="subselect" (see (2)) instead - whatever is most appropriate in the specific situation. Join duplicates are already pretty bad in plain SQL, but things get even worse when they occur within Hibernate, because of unnecessary mapping workload and child collections containing duplicates.
+
+(2) Define lazy loading as the preferred association loading strategy, and consider applying fetch="subselect" rather than "select" resp. "batch-size". Configure eager loading only for special associations, but join-fetch selectively on a per-query basis.
+
+(3) In case of read-only services with huge query resultsets, use projections and fetch into flat DTOs (e.g. via AliasToBean-ResultTransformer), instead of loading thousands of mapped objects into the Session.
+
+(4) Take advantage of HQL Bulk Update and Delete statements, as well as Insert-By-Select (supported by HQL as well).
+
+(5) Set FlushMode to "Never" on Queries and Criteria, when flushing is not necessary at this point.
+
+(6) Set ReadOnly to "true" on Queries and Criteria, when objects returned will never be modified.
+
+(7) Consider clearing the whole Session after flushing, or evict on a per-object basis, once objects are not longer needed.
+
+(8) Define a suitable value for jdbc.batch_size (resp. adonet.batch_size under NHibernate).
+
+(9) Use Hibernate Query-Cache and Second Level Caching where appropriate (but go sure you are aware of the consequences).
+
+(10) Set hibernate.show_sql to "false" and ensure that Hibernate logging is running at the lowest possible loglevel (also check log4j/log4net root logger configuration).
+
+Special Addendum:
+
+NHibernate's 2.x ProjectionList implementation added considerable runtime-overhead, namely by invoking some reflection API calls for every resultset row. This might slow down queries with large resultsets.
+
+As those reflection API calls were invariant in regard to the resultset rows being iterated over (as a matter of fact, what these calls actually did was to gather resultset column schema information), and I needed an immediate fix and did not have time to wait for any NHibernate patch, I forked my own ProjectionList from NHibernate's code, did all those reflection calls once, and re-used the result from that point on. Now I doubt this is still an issue under NHibernate 3.x (and I think Hibernate under Java was never affected), but if you are using NHibernate 2.x and your profiling tool shows lots of CPU cycles being burnt in ProjectionList, you might want to give this approach a try.
+
+All those advices are Hibernate-specific. For additional database tuning posts on this blog, please read:
+Missing Indices
+The Importance Of Choosing The Right Clustered Index
+More Performance Tuning
+SqlServer: Favor Inline UDFs Over Table Variables
+SqlServer Standard Edition DOES Support Indexed Views
+Is "Select Distinct" a Code Smell?
+Tips For Lightning-Fast Insert Performance On SQL Server
+
+More Hibernate postings:
+Hibernate Reverse Engineering And SqlServer Identity Columns
+Implementing Equals And HashCode In Hibernate POCOs/POJOs
+NHibernate Criteria-Query: Child Collection Not Populated Despite FetchMode.Join When Criteria Exists For Child Table
+Hibernate: Joins Without Associations
+Fetching Strategies In Hibernate
