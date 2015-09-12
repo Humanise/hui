@@ -15,6 +15,9 @@ import nu.xom.Nodes;
 import nu.xom.ParentNode;
 import nu.xom.Text;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
@@ -26,7 +29,7 @@ import dk.in2isoft.onlineobjects.core.Pair;
 
 public class SimpleContentExtractor implements ContentExtractor {
 	
-	//private static final Logger log = LoggerFactory.getLogger(SimpleContentExtractor.class);
+	private static final Logger log = LoggerFactory.getLogger(SimpleContentExtractor.class);
 	
 	private Set<String> illegals = Sets.newHashSet("script","style","noscript");
 
@@ -45,7 +48,11 @@ public class SimpleContentExtractor implements ContentExtractor {
 				
 		Pair<Document,Element> pair = createEmptyDocument(document);
 		Element body = pair.getValue();
-		body.appendChild(nearestAncestor.copy());
+		if (nearestAncestor!=null) {
+			body.appendChild(nearestAncestor.copy());
+		} else {
+			log.warn("No acestor found: longestText.size: " + longestText.size());
+		}
 		
 		return pair.getKey();
 	}
