@@ -99,7 +99,7 @@ hui.log = function(obj) {
 
 /**
  * Defer a function so it will fire when the current "thread" is done
- * @param {Function} func The fundtion to defer
+ * @param {Function} func The function to defer
  * @param {Object} ?bind Optional, the object to bind "this" to
  */
 hui.defer = function(func,bind) {
@@ -1527,6 +1527,18 @@ hui.onReady = function(func) {
 		});
 	}
 };
+
+hui.onDraw = function(func) {
+  window.setTimeout(func,13);
+}
+
+hui.onDraw = (function(vendors,window) {
+  var found = window.requestAnimationFrame;
+  for(var x = 0; x < vendors.length && !found; ++x) {
+      found = window[vendors[x]+'RequestAnimationFrame'];
+  }
+  return found ? found.bind(window) : hui.onDraw;
+})(['ms', 'moz', 'webkit', 'o'],window);
 
 /**
  * Execute a function when the DOM is ready
