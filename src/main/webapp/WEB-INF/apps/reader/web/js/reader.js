@@ -88,8 +88,15 @@ var controller = {
 		} else if (hui.cls.has(e.element,'reader_viewer')) {
 			e.stop();
 			this._hideViewer();
+		} else if (hui.cls.has(e.element,'reader_viewer_quote')) {
+			e.stop();
+			this._highlightQuote(e.element.getAttribute('data-id'));
 		}
 	},
+  
+  _highlightQuote : function(id) {
+    var mark = document.querySelector('mark[data-id="' + id + '"]');
+  },
 
 	$valueChanged$search : function() {
 		hui.ui.get('listView').reset();
