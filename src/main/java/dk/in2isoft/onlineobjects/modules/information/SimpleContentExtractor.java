@@ -25,6 +25,8 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Sets;
 
+import dk.in2isoft.commons.lang.Strings;
+import dk.in2isoft.commons.xml.HTML;
 import dk.in2isoft.onlineobjects.core.Pair;
 
 public class SimpleContentExtractor implements ContentExtractor {
@@ -41,9 +43,9 @@ public class SimpleContentExtractor implements ContentExtractor {
 		if (heading!=null) {
 			longestText.add(heading);
 		}
-//		for (Element element : longestText) {
-//			log.info(element.toXML());
-//		}
+/*		for (Element element : longestText) {
+			log.info(element.toXML());
+		}*/
 		Element nearestAncestor = findNearestAncestor(longestText);
 				
 		Pair<Document,Element> pair = createEmptyDocument(document);
@@ -51,7 +53,7 @@ public class SimpleContentExtractor implements ContentExtractor {
 		if (nearestAncestor!=null) {
 			body.appendChild(nearestAncestor.copy());
 		} else {
-			log.warn("No acestor found: longestText.size: " + longestText.size());
+			log.warn("No ancestor found: longestText.size: " + longestText.size());
 		}
 		
 		return pair.getKey();
@@ -162,11 +164,13 @@ public class SimpleContentExtractor implements ContentExtractor {
 			root = articles.get(0);
 		}
 		Multimap<Integer, Element> map = HashMultimap.create();
-		Nodes ps = root.query(".//*[local-name()='p']");
+		Nodes ps = root.query(".//*");
 		for (int i = 0; i < ps.size(); i++) {
 			Element p = (Element) ps.get(i);
-			int length = getTextLength(p);
-			map.put(length, p);
+			if (!HTML.INLINE_TEXT.contains(p.getLocalName().toLowerCase())) {
+				int length = getTextLength(p);
+				map.put(length, p);
+			}
 		}
 		
 		List<Element> lst = Lists.newArrayList(); 
@@ -208,22 +212,25 @@ public class SimpleContentExtractor implements ContentExtractor {
 		
 		return common;
 	}
-	
+		
 	private int getTextLength(Node node) {
 		int length = 0;
 		if (node instanceof Text) {
 			String value = node.getValue();
-			length += value==null ? 0 : value.trim().length(); 
-		} else {
-			if (node instanceof Element) {
-				String name = ((Element) node).getLocalName().toLowerCase();
-				if (illegals.contains(name)) {
-					return 0;
-				}
-			}
+			length += Strings.getVisibleLength(value); 
+		} else if (node instanceof Element) {
 			int count = node.getChildCount();
 			for (int i = 0; i < count; i++) {
-				length+=getTextLength(node.getChild(i));
+				Node child = node.getChild(i);
+				if (child instanceof Element) {
+					String name = ((Element) child).getLocalName().toLowerCase();
+					if (HTML.INLINE_TEXT.contains(name)) {
+						length+=getTextLength(child);
+					}
+				} else if (child instanceof Text) {
+					length+=getTextLength(child);
+				}
+				
 			}
 		}
 		return length;

@@ -359,4 +359,18 @@ public class Strings {
 		if (b==null) b = "";
 		return a.toLowerCase().compareTo(b.toLowerCase());
 	}
+	
+	public static int getVisibleLength(String text) {
+		if (text==null || text.length()==0) {
+			return 0;
+		}
+		int length = 0;
+        for (int i = 0; i < text.length(); i++) {
+            if (Character.isWhitespace(text.charAt(i)) == false) {
+                length++;
+            }
+        }
+        return length;
+	}
+
 }
