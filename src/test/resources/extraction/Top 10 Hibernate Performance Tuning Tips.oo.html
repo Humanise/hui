@@ -1,2 +1,1573 @@
 <?xml version="1.0"?>
-<html xmlns="http://www.w3.org/1999/xhtml" />
+<html xmlns="http://www.w3.org/1999/xhtml"><body><body>
+<h3>
+Top 10 Hibernate Performance Tuning Tips
+</h3>
+
+
+
+
+(1) Avoid join duplicates (AKA cartesian products) due to joins along two or more parallel to-many associations; use Exists-subqueries, multiple queries or fetch="subselect" (see (2)) instead - whatever is most appropriate in the specific situation. Join duplicates are already pretty bad in plain SQL, but things get even worse when they occur within Hibernate, because of unnecessary mapping workload and child collections containing duplicates.<br /><br />(2) Define lazy loading as the preferred association loading strategy, and consider applying fetch="subselect" rather than "select" resp. "batch-size". Configure eager loading only for special associations, but join-fetch selectively on a per-query basis.<br /><br />(3) In case of read-only services with huge query resultsets, use projections and fetch into flat DTOs (e.g. via AliasToBean-ResultTransformer), instead of loading thousands of mapped objects into the Session.<br /><br />(4) Take advantage of HQL Bulk Update and Delete statements, as well as Insert-By-Select (supported by HQL as well).<br /><br />(5) Set FlushMode to "Never" on Queries and Criteria, when flushing is not necessary at this point.<br /><br />(6) Set ReadOnly to "true" on Queries and Criteria, when objects returned will never be modified.<br /><br />(7) Consider clearing the whole Session after flushing, or evict on a per-object basis, once objects are not longer needed.<br /><br />(8) Define a suitable value for jdbc.batch_size (resp. adonet.batch_size under NHibernate).<br /><br />(9) Use Hibernate Query-Cache and Second Level Caching where appropriate (but <a href="http://www.javalobby.org/java/forums/t48846.html">go sure you are aware of the consequences</a>).<br /><br /><strong>(10)</strong> Set <strong>hibernate.show_sql to "false"</strong> and ensure that Hibernate logging is running at the <strong>lowest possible loglevel</strong> (also check log4j/log4net root logger configuration).<br /><br /><strong>Special Addendum:</strong><br /><br />NHibernate's 2.x <strong>ProjectionList implementation added considerable runtime-overhead</strong>, namely by invoking some reflection API calls for every resultset row. This might slow down queries with large resultsets.<br /><br />As those reflection API calls were invariant in regard to the resultset rows being iterated over (as a matter of fact, what these calls actually did was to gather resultset column schema information), and I needed an immediate fix and did not have time to wait for any NHibernate patch, I forked my own ProjectionList from NHibernate's code, did all those reflection calls once, and re-used the result from that point on. Now I doubt this is still an issue under NHibernate 3.x (and I think Hibernate under Java was never affected), but if you are using NHibernate 2.x and your profiling tool shows lots of CPU cycles being burnt in ProjectionList, you might want to give this approach a try.<br /><br />All those advices are Hibernate-specific. For additional database tuning posts on this blog, please read:<br /><ul><li><a href="http://arnosoftwaredev.blogspot.com/2007/03/hints-and-pitfalls-in-database.html">Missing Indices</a></li><li><a href="http://arnosoftwaredev.blogspot.com/2007/10/hints-and-pitfalls-in-database.html">The Importance Of Choosing The Right Clustered Index</a></li><li><a href="http://arnosoftwaredev.blogspot.com/2007/06/more-performance-tuning.html">More Performance Tuning</a></li><li><a href="http://arnosoftwaredev.blogspot.com/2010/09/sqlserver-favor-inline-udfs-over-table.html">SqlServer: Favor Inline UDFs Over Table Variables</a></li><li><a href="http://arnosoftwaredev.blogspot.com/2010/09/sqlserver-standard-edition-does-support.html">SqlServer Standard Edition DOES Support Indexed Views</a></li><li><a href="http://arnosoftwaredev.blogspot.com/2011/01/is-select-distinct-code-smell.html">Is "Select Distinct" a Code Smell?</a></li><li><a href="http://arnosoftwaredev.blogspot.com/2011/10/tips-for-lightning-fast-insert.html">Tips For Lightning-Fast Insert Performance On SQL Server</a></li></ul><br />More Hibernate postings:<br /><ul><li><a href="http://arnosoftwaredev.blogspot.com/2006/12/hibernate-reverse-engineering-and.html">Hibernate Reverse Engineering And SqlServer Identity Columns</a></li><li><a href="http://arnosoftwaredev.blogspot.com/2009/05/implementing-equals-and-hashcode-in.html">Implementing Equals And HashCode In Hibernate POCOs/POJOs</a></li><li><a href="http://arnosoftwaredev.blogspot.com/2009/06/nhibernate-criteria-query-child.html">NHibernate Criteria-Query: Child Collection Not Populated Despite FetchMode.Join When Criteria Exists For Child Table</a></li><li><a href="http://arnosoftwaredev.blogspot.com/2010/10/hibernate-joins-without-associations.html">Hibernate: Joins Without Associations</a></li><li><a href="http://arnosoftwaredev.blogspot.com/2011/01/fetching-strategies-in-hibernate.html">Fetching Strategies In Hibernate</a></li></ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      
+
+
+
+
+<a href="http://arnosoftwaredev.blogspot.dk/2011/01/is-select-distinct-code-smell.html" title="Newer Post">Newer Post</a>
+
+
+<a href="http://arnosoftwaredev.blogspot.dk/2011/01/fetching-strategies-in-hibernate.html" title="Older Post">Older Post</a>
+
+<a href="http://arnosoftwaredev.blogspot.dk/">Home</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<a href="//www.blogger.com/rearrange?blogID=8490763&amp;widgetType=AdSense&amp;widgetId=AdSense1&amp;action=editWidget&amp;sectionId=sidebar-right-1" title="Edit">
+<img height="18" src="//img1.blogblog.com/img/icon18_wrench_allbkg.png" width="18" />
+</a>
+
+
+
+
+
+<h2>About Me</h2>
+
+<a href="https://www.blogger.com/profile/10541039623935410561"><img height="80" src="http://2.bp.blogspot.com/-UKUyxa36j1s/VO36eeKhMII/AAAAAAAAAs0/C4wuzifSou8/s80/arno_victoria.jpg" width="80" /></a>
+<dl><dt>
+<a href="https://www.blogger.com/profile/10541039623935410561">
+Arno
+</a>
+</dt></dl>
+<a href="https://www.blogger.com/profile/10541039623935410561">View my complete profile</a>
+
+
+
+<a href="//www.blogger.com/rearrange?blogID=8490763&amp;widgetType=Profile&amp;widgetId=Profile1&amp;action=editWidget&amp;sectionId=sidebar-right-1" title="Edit">
+<img height="18" src="//img1.blogblog.com/img/icon18_wrench_allbkg.png" width="18" />
+</a>
+
+
+
+
+
+<h2>Contact</h2>
+
+ 
+
+
+
+
+
+<a href="//www.blogger.com/rearrange?blogID=8490763&amp;widgetType=HTML&amp;widgetId=HTML1&amp;action=editWidget&amp;sectionId=sidebar-right-1" title="Edit">
+<img height="18" src="//img1.blogblog.com/img/icon18_wrench_allbkg.png" width="18" />
+</a>
+
+
+
+
+
+<h2>Subscribe To</h2>
+
+
+
+
+
+<img src="https://img2.blogblog.com/img/widgets/arrow_dropdown.gif" />
+<img src="https://img1.blogblog.com/img/icon_feed12.png" />
+Posts
+
+
+<a href="https://www.netvibes.com/subscribe.php?url=http%3A%2F%2Farnosoftwaredev.blogspot.com%2Ffeeds%2Fposts%2Fdefault">
+<img src="https://img1.blogblog.com/img/widgets/subscribe-netvibes.png" />
+</a>
+<a href="https://add.my.yahoo.com/content?url=http%3A%2F%2Farnosoftwaredev.blogspot.com%2Ffeeds%2Fposts%2Fdefault">
+<img src="https://img1.blogblog.com/img/widgets/subscribe-yahoo.png" />
+</a>
+<a href="http://arnosoftwaredev.blogspot.com/feeds/posts/default">
+<img src="https://img1.blogblog.com/img/icon_feed12.png" />
+                    Atom
+                  </a>
+
+
+
+
+
+
+
+<img src="https://img2.blogblog.com/img/widgets/arrow_dropdown.gif" />
+
+<img src="https://img1.blogblog.com/img/icon_feed12.png" />
+Posts
+
+
+
+
+
+
+
+
+
+
+<img src="https://img2.blogblog.com/img/widgets/arrow_dropdown.gif" />
+<img src="https://img1.blogblog.com/img/icon_feed12.png" />
+Comments
+
+
+<a href="https://www.netvibes.com/subscribe.php?url=http%3A%2F%2Farnosoftwaredev.blogspot.com%2Ffeeds%2F276723037937029165%2Fcomments%2Fdefault">
+<img src="https://img1.blogblog.com/img/widgets/subscribe-netvibes.png" />
+</a>
+<a href="https://add.my.yahoo.com/content?url=http%3A%2F%2Farnosoftwaredev.blogspot.com%2Ffeeds%2F276723037937029165%2Fcomments%2Fdefault">
+<img src="https://img1.blogblog.com/img/widgets/subscribe-yahoo.png" />
+</a>
+<a href="http://arnosoftwaredev.blogspot.com/feeds/276723037937029165/comments/default">
+<img src="https://img1.blogblog.com/img/icon_feed12.png" />
+                    Atom
+                  </a>
+
+
+
+
+
+
+
+<img src="https://img2.blogblog.com/img/widgets/arrow_dropdown.gif" />
+
+<img src="https://img1.blogblog.com/img/icon_feed12.png" />
+Comments
+
+
+
+
+
+
+
+
+
+
+
+
+<a href="//www.blogger.com/rearrange?blogID=8490763&amp;widgetType=Subscribe&amp;widgetId=Subscribe1&amp;action=editWidget&amp;sectionId=sidebar-right-1" title="Edit">
+<img height="18" src="//img1.blogblog.com/img/icon18_wrench_allbkg.png" width="18" />
+</a>
+
+
+
+
+<h2>Blog Archive</h2>
+
+
+
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/search?updated-min=2015-01-01T00:00:00%2B01:00&amp;updated-max=2016-01-01T00:00:00%2B01:00&amp;max-results=4">
+2015
+</a>
+(4)
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2015_08_01_archive.html">
+August
+</a>
+(2)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2015_06_01_archive.html">
+June
+</a>
+(1)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2015_05_01_archive.html">
+May
+</a>
+(1)
+</li></ul>
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/search?updated-min=2014-01-01T00:00:00%2B01:00&amp;updated-max=2015-01-01T00:00:00%2B01:00&amp;max-results=9">
+2014
+</a>
+(9)
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2014_10_01_archive.html">
+October
+</a>
+(1)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2014_09_01_archive.html">
+September
+</a>
+(2)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2014_08_01_archive.html">
+August
+</a>
+(3)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2014_07_01_archive.html">
+July
+</a>
+(1)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2014_06_01_archive.html">
+June
+</a>
+(1)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2014_02_01_archive.html">
+February
+</a>
+(1)
+</li></ul>
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/search?updated-min=2013-01-01T00:00:00%2B01:00&amp;updated-max=2014-01-01T00:00:00%2B01:00&amp;max-results=13">
+2013
+</a>
+(13)
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2013_10_01_archive.html">
+October
+</a>
+(6)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2013_09_01_archive.html">
+September
+</a>
+(4)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2013_06_01_archive.html">
+June
+</a>
+(1)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2013_05_01_archive.html">
+May
+</a>
+(1)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2013_04_01_archive.html">
+April
+</a>
+(1)
+</li></ul>
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/search?updated-min=2012-01-01T00:00:00%2B01:00&amp;updated-max=2013-01-01T00:00:00%2B01:00&amp;max-results=4">
+2012
+</a>
+(4)
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2012_10_01_archive.html">
+October
+</a>
+(2)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2012_07_01_archive.html">
+July
+</a>
+(1)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2012_06_01_archive.html">
+June
+</a>
+(1)
+</li></ul>
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ▼ 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/search?updated-min=2011-01-01T00:00:00%2B01:00&amp;updated-max=2012-01-01T00:00:00%2B01:00&amp;max-results=16">
+2011
+</a>
+(16)
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2011_12_01_archive.html">
+December
+</a>
+(3)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2011_11_01_archive.html">
+November
+</a>
+(1)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2011_10_01_archive.html">
+October
+</a>
+(1)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2011_09_01_archive.html">
+September
+</a>
+(2)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2011_07_01_archive.html">
+July
+</a>
+(2)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2011_06_01_archive.html">
+June
+</a>
+(1)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2011_02_01_archive.html">
+February
+</a>
+(2)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ▼ 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2011_01_01_archive.html">
+January
+</a>
+(4)
+<ul><li><a href="http://arnosoftwaredev.blogspot.dk/2011/01/sqlserver-when-querying-previously.html">SqlServer: When querying previously inserted rows ...</a></li><li><a href="http://arnosoftwaredev.blogspot.dk/2011/01/is-select-distinct-code-smell.html">Is "Select Distinct" a Code Smell?</a></li><li><a href="http://arnosoftwaredev.blogspot.dk/2011/01/hibernate-performance-tips.html">Top 10 Hibernate Performance Tuning Tips</a></li><li><a href="http://arnosoftwaredev.blogspot.dk/2011/01/fetching-strategies-in-hibernate.html">Fetching Strategies In Hibernate</a></li></ul>
+</li></ul>
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/search?updated-min=2010-01-01T00:00:00%2B01:00&amp;updated-max=2011-01-01T00:00:00%2B01:00&amp;max-results=12">
+2010
+</a>
+(12)
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2010_11_01_archive.html">
+November
+</a>
+(2)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2010_10_01_archive.html">
+October
+</a>
+(4)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2010_09_01_archive.html">
+September
+</a>
+(3)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2010_08_01_archive.html">
+August
+</a>
+(1)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2010_05_01_archive.html">
+May
+</a>
+(1)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2010_03_01_archive.html">
+March
+</a>
+(1)
+</li></ul>
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/search?updated-min=2009-01-01T00:00:00%2B01:00&amp;updated-max=2010-01-01T00:00:00%2B01:00&amp;max-results=11">
+2009
+</a>
+(11)
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2009_06_01_archive.html">
+June
+</a>
+(6)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2009_05_01_archive.html">
+May
+</a>
+(1)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2009_04_01_archive.html">
+April
+</a>
+(1)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2009_03_01_archive.html">
+March
+</a>
+(1)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2009_02_01_archive.html">
+February
+</a>
+(1)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2009_01_01_archive.html">
+January
+</a>
+(1)
+</li></ul>
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/search?updated-min=2008-01-01T00:00:00%2B01:00&amp;updated-max=2009-01-01T00:00:00%2B01:00&amp;max-results=15">
+2008
+</a>
+(15)
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2008_12_01_archive.html">
+December
+</a>
+(3)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2008_09_01_archive.html">
+September
+</a>
+(1)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2008_07_01_archive.html">
+July
+</a>
+(2)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2008_06_01_archive.html">
+June
+</a>
+(4)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2008_05_01_archive.html">
+May
+</a>
+(1)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2008_04_01_archive.html">
+April
+</a>
+(1)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2008_03_01_archive.html">
+March
+</a>
+(1)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2008_02_01_archive.html">
+February
+</a>
+(1)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2008_01_01_archive.html">
+January
+</a>
+(1)
+</li></ul>
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/search?updated-min=2007-01-01T00:00:00%2B01:00&amp;updated-max=2008-01-01T00:00:00%2B01:00&amp;max-results=46">
+2007
+</a>
+(46)
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2007_12_01_archive.html">
+December
+</a>
+(1)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2007_11_01_archive.html">
+November
+</a>
+(2)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2007_10_01_archive.html">
+October
+</a>
+(5)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2007_09_01_archive.html">
+September
+</a>
+(6)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2007_08_01_archive.html">
+August
+</a>
+(5)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2007_07_01_archive.html">
+July
+</a>
+(5)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2007_06_01_archive.html">
+June
+</a>
+(7)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2007_05_01_archive.html">
+May
+</a>
+(2)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2007_04_01_archive.html">
+April
+</a>
+(2)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2007_03_01_archive.html">
+March
+</a>
+(4)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2007_02_01_archive.html">
+February
+</a>
+(5)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2007_01_01_archive.html">
+January
+</a>
+(2)
+</li></ul>
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/search?updated-min=2006-01-01T00:00:00%2B01:00&amp;updated-max=2007-01-01T00:00:00%2B01:00&amp;max-results=50">
+2006
+</a>
+(79)
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2006_12_01_archive.html">
+December
+</a>
+(5)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2006_11_01_archive.html">
+November
+</a>
+(8)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2006_10_01_archive.html">
+October
+</a>
+(10)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2006_09_01_archive.html">
+September
+</a>
+(3)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2006_08_01_archive.html">
+August
+</a>
+(4)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2006_07_01_archive.html">
+July
+</a>
+(2)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2006_06_01_archive.html">
+June
+</a>
+(5)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2006_05_01_archive.html">
+May
+</a>
+(7)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2006_04_01_archive.html">
+April
+</a>
+(12)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2006_03_01_archive.html">
+March
+</a>
+(11)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2006_02_01_archive.html">
+February
+</a>
+(4)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2006_01_01_archive.html">
+January
+</a>
+(8)
+</li></ul>
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/search?updated-min=2005-01-01T00:00:00%2B01:00&amp;updated-max=2006-01-01T00:00:00%2B01:00&amp;max-results=50">
+2005
+</a>
+(100)
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2005_12_01_archive.html">
+December
+</a>
+(7)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2005_11_01_archive.html">
+November
+</a>
+(11)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2005_10_01_archive.html">
+October
+</a>
+(5)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2005_09_01_archive.html">
+September
+</a>
+(4)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2005_08_01_archive.html">
+August
+</a>
+(8)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2005_07_01_archive.html">
+July
+</a>
+(10)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2005_06_01_archive.html">
+June
+</a>
+(2)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2005_05_01_archive.html">
+May
+</a>
+(2)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2005_04_01_archive.html">
+April
+</a>
+(8)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2005_03_01_archive.html">
+March
+</a>
+(11)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2005_02_01_archive.html">
+February
+</a>
+(15)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2005_01_01_archive.html">
+January
+</a>
+(17)
+</li></ul>
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/search?updated-min=2004-01-01T00:00:00%2B01:00&amp;updated-max=2005-01-01T00:00:00%2B01:00&amp;max-results=50">
+2004
+</a>
+(53)
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2004_12_01_archive.html">
+December
+</a>
+(8)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2004_11_01_archive.html">
+November
+</a>
+(16)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2004_10_01_archive.html">
+October
+</a>
+(25)
+</li></ul>
+<ul><li>
+<a href="javascript:void(0)">
+
+
+        ► 
+      
+
+</a>
+<a href="http://arnosoftwaredev.blogspot.dk/2004_09_01_archive.html">
+September
+</a>
+(4)
+</li></ul>
+</li></ul>
+
+
+
+
+
+<a href="//www.blogger.com/rearrange?blogID=8490763&amp;widgetType=BlogArchive&amp;widgetId=BlogArchive1&amp;action=editWidget&amp;sectionId=sidebar-right-1" title="Edit">
+<img height="18" src="//img1.blogblog.com/img/icon18_wrench_allbkg.png" width="18" />
+</a>
+
+
+
+
+
+<h2>Blogroll</h2>
+
+<ul><li><a href="http://never-despair.blogspot.com/">My Private Weblog</a></li><li><a href="http://www.codinghorror.com/blog/">Jeff Atwood</a></li><li><a href="http://blogs.msdn.com/oldnewthing/">Raymond Chen</a></li><li><a href="http://blogs.tedneward.com/">Ted Neward</a></li><li><a href="http://biztech.ericsink.com/index.html">Eric Sink</a></li><li><a href="http://www.joelonsoftware.com/">Joel Spolsky</a></li><li><a href="http://thedailywtf.com/">The Daily WTF</a></li><li><a href="http://eeichinger.blogspot.com/">Erich Eichinger</a></li><li><a href="http://ppenz.blogspot.com/">Peter Penz</a></li><li><a href="http://woecki.blogspot.com/">Woecki</a></li></ul>
+
+
+
+<a href="//www.blogger.com/rearrange?blogID=8490763&amp;widgetType=LinkList&amp;widgetId=LinkList1&amp;action=editWidget&amp;sectionId=sidebar-right-1" title="Edit">
+<img height="18" src="//img1.blogblog.com/img/icon18_wrench_allbkg.png" width="18" />
+</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Awesome Inc. template. Powered by <a href="https://www.blogger.com">Blogger</a>.
+
+
+
+
+<a href="//www.blogger.com/rearrange?blogID=8490763&amp;widgetType=Attribution&amp;widgetId=Attribution1&amp;action=editWidget&amp;sectionId=footer-3" title="Edit">
+<img height="18" src="//img1.blogblog.com/img/icon18_wrench_allbkg.png" width="18" />
+</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body></body></html>
