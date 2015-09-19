@@ -135,7 +135,6 @@ public class ReaderController extends ReaderControllerBase {
 		for (Entity entity : entities) {
 			
 			ListItemPerspective perspective = new ListItemPerspective();
-			perspective.setId(entity.getId());
 			perspective.setTitle(entity.getName());
 			
 			InternetAddress address = null;
@@ -145,15 +144,22 @@ public class ReaderController extends ReaderControllerBase {
 			writer.startH2().withClass("list_item_title").text(entity.getName()).endH2();
 			
 			if (entity instanceof InternetAddress) {
+				perspective.setAddressId(entity.getId());
 				address = (InternetAddress) entity;
 				perspective.setUrl(address.getAddress());
 				perspective.setAddress(Strings.simplifyURL(address.getAddress()));
 				writer.startP().withClass("list_item_address").startA().withClass("list_item_address_link").withHref(address.getAddress()).text(Strings.simplifyURL(address.getAddress())).endA().endP();
 				perspective.setType("address");
 			} else if (entity instanceof Statement) {
+				perspective.setStatementId(entity.getId());
 				Statement htmlPart = (Statement) entity;
 				writer.startP().withClass("list_item_quote").text(htmlPart.getText()).endP();
 				perspective.setType("statement");
+				Query<InternetAddress> query = Query.after(InternetAddress.class).withChild(entity, Relation.KIND_STRUCTURE_CONTAINS);
+				InternetAddress addr = modelService.search(query).getFirst();
+				if (addr!=null) {
+					perspective.setAddressId(addr.getId());
+				}
 			}
 
 			List<Word> words = modelService.getChildren(entity, Word.class, request.getSession());

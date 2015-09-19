@@ -6,7 +6,8 @@ import dk.in2isoft.onlineobjects.core.Pair;
 
 public class ListItemPerspective {
 	
-	private long id;
+	private long statementId;
+	private long addressId;
 	private String title;
 	private String url;
 	private String address;
@@ -54,19 +55,27 @@ public class ListItemPerspective {
 		this.html = html;
 	}
 
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
 	public String getType() {
 		return type;
 	}
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public long getStatementId() {
+		return statementId;
+	}
+
+	public void setStatementId(long statementId) {
+		this.statementId = statementId;
+	}
+
+	public long getAddressId() {
+		return addressId;
+	}
+
+	public void setAddressId(long addressId) {
+		this.addressId = addressId;
 	}
 }

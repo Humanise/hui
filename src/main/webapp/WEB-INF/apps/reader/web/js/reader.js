@@ -90,12 +90,40 @@ var controller = {
 			this._hideViewer();
 		} else if (hui.cls.has(e.element,'reader_viewer_quote')) {
 			e.stop();
-			this._highlightQuote(e.element.getAttribute('data-id'));
+			this._highlightStatement(e.element.getAttribute('data-id'));
 		}
 	},
-  
-  _highlightQuote : function(id) {
-    var mark = document.querySelector('mark[data-id="' + id + '"]');
+
+  _highlightStatement : function(id) {
+    if (id==null || id==undefined) {
+      return;
+    }
+    var marks = document.querySelectorAll('mark[data-id="' + id + '"]');
+    if (marks.length==0) {
+      return;
+    }
+    var mark = marks[0];
+    var content = hui.get('viewer_content');
+    var top = content.clientHeight / -2;
+    var parent = mark.parentNode;
+    while (parent && parent!==content) {
+      top += parent.offsetTop;
+      parent = parent.offsetParent;
+    }
+    top = Math.max(0, Math.round(top));
+    var dur = Math.min(1500,Math.abs(top - content.scrollTop));
+    hui.animate({
+      node : content,
+      property : 'scrollTop',
+      value : top,
+      duration : dur,
+      ease : hui.ease.slowFastSlow,
+      $complete : function() {
+        for (var i = 0; i < marks.length; i++) {
+          hui.effect.wiggle({element:marks[i]});
+        }
+      }
+    });
   },
 
 	$valueChanged$search : function() {
@@ -259,9 +287,9 @@ var controller = {
 			}.bind(this)
 		})
 	},
-	
+
 	// Settings
-	
+
 	$click$settingsIcon : function() {
 		hui.ui.get('settingsWindow').show();
 	},
@@ -274,9 +302,9 @@ var controller = {
 	},
 
 	// Viewer
-	
+
 	_viewedItem : null,
-  
+
 	$valueChanged$extractionAlgorithm : function() {
 		if (this._viewedItem) {
 			this._loadArticle(this._viewedItem);
@@ -284,6 +312,13 @@ var controller = {
 	},
 
 	_loadArticle: function(object) {
+    if (!object.addressId) {
+      return;
+    }
+    if (this._viewedItem && this._viewedItem.addressId == object.addressId) {
+      this._highlightStatement(object.statementId);
+      return;
+    }
 		this._viewedItem = object;
 		object = object || {};
 		hui.get('viewer_header').innerHTML = '<h1>' + hui.string.escape(object.title) + '</h1>';
@@ -298,17 +333,21 @@ var controller = {
 		var parameters = {
 			algorithm : hui.ui.get('extractionAlgorithm').getValue()
 		};
-		if (object.type=='address') {
-			parameters.id = object.id;
-		}
-		if (object.type=='statement') {
-			parameters.statementId = object.id;
+		if (object.addressId) {
+			parameters.id = object.addressId;
+		} else {
+		  return;
 		}
 		hui.ui.request({
 			url: '/loadArticle',
 			parameters: parameters,
 			$object: function(article) {
 			  self._drawArticle(article);
+        if (object.statementId) {
+          window.setTimeout(function() {
+            self._highlightStatement(object.statementId);
+          },500)
+        }
 			},
 			$failure: function() {
 				self._hideViewer();

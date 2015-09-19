@@ -92,6 +92,7 @@ public abstract class ReaderControllerBase extends ApplicationController {
 		publicStyle.addHUICSS("bar.css");
 		publicStyle.addHUICSS("overlay.css");
 		publicStyle.addHUICSS("rows.css");
+		publicStyle.addHUICSS("effects.css");
 		publicStyle.addPath("WEB-INF","apps","reader","web","css","reader.css");
 		publicStyle.addPath("WEB-INF","apps","reader","web","css","reader_viewer.css");
 
