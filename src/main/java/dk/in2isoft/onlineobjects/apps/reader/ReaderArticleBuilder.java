@@ -80,6 +80,8 @@ public class ReaderArticleBuilder {
 		}
 
 		HTMLDocument document = getHTMLDocument(address, session);
+		
+		ArticleData data = buildData(address);
 
 		ArticlePerspective article = new ArticlePerspective();
 
@@ -108,14 +110,14 @@ public class ReaderArticleBuilder {
 		article.setQuotes(quoteList);
 
 		article.setHeader(buildHeader(address));
-		article.setInfo(buildInfo(document, address, session));
+		article.setInfo(buildInfo(document, data, session));
 		article.setId(address.getId());
 
 		watch.split();
 		log.trace("Base: " + watch.getSplitTime());
 		if (document != null) {
 			article.setTitle(document.getTitle());
-			buildRendering(document, address, article, algorithm, watch);
+			buildRendering(document, data, article, algorithm, watch);
 		} else {
 			article.setTitle(address.getName());
 		}
@@ -123,6 +125,14 @@ public class ReaderArticleBuilder {
 		watch.stop();
 		log.trace("Total: " + watch.getTime());
 		return article;
+	}
+	
+	private ArticleData buildData(InternetAddress address) throws ModelException {
+		ArticleData data = new ArticleData();
+		User admin = modelService.getUser(SecurityService.ADMIN_USERNAME);
+		data.address = address;
+		data.keywords = modelService.getChildren(address, Word.class, admin);
+		return data;
 	}
 
 	private HTMLDocument getHTMLDocument(InternetAddress address, Privileged privileged) throws SecurityException, ModelException {
@@ -158,40 +168,34 @@ public class ReaderArticleBuilder {
 		return writer.toString();
 	}
 
-	private String buildInfo(HTMLDocument document, InternetAddress address, UserSession session) throws ModelException {
+	private String buildInfo(HTMLDocument document, ArticleData data, UserSession session) throws ModelException {
 		HTMLWriter writer = new HTMLWriter();
 		writer.startH2().withClass("info_header").text("Tags").endH2();
 		writer.startP().withClass("tags info_tags");
-		{
-			List<String> tags = address.getPropertyValues(Property.KEY_COMMON_TAG);
-			if (!tags.isEmpty()) {
-				for (String string : tags) {
-					writer.startVoidA().withClass("tag info_tags_item info_tag").withData(string).text(string).endA().text(" ");
-				}
-			}
-		}
-		{
-			User admin = modelService.getUser(SecurityService.ADMIN_USERNAME);
-			List<Word> words = modelService.getChildren(address, Word.class, admin);
-			for (Word word : words) {
-				if (word == null || address == null) {
-					continue;
-				}
-				writer.startVoidA().withData(word.getId()).withClass("info_tags_item info_word word");
-				writer.text(word.getText()).endA().text(" ");
-			}
 
+		List<String> tags = data.address.getPropertyValues(Property.KEY_COMMON_TAG);
+		if (!tags.isEmpty()) {
+			for (String string : tags) {
+				writer.startVoidA().withClass("tag info_tags_item info_tag").withData(string).text(string).endA().text(" ");
+			}
 		}
+
+		for (Word word : data.keywords) {
+			writer.startVoidA().withData(word.getId()).withClass("info_tags_item info_word word");
+			writer.text(word.getText()).endA().text(" ");
+		}
+
 		writer.startA().withClass("add info_tags_item info_tags_add").text("Add word").endA();
 		writer.endP();
 
 		return writer.toString();
 	}
 
-	private void buildRendering(HTMLDocument document, InternetAddress address, ArticlePerspective article, String algorithm, StopWatch watch) throws ModelException,
+	private void buildRendering(HTMLDocument document, ArticleData data, ArticlePerspective article, String algorithm, StopWatch watch) throws ModelException,
 			ExplodingClusterFuckException {
 
 		{
+			
 			Document xom = document.getXOMDocument();
 			ContentExtractor extractor = contentExtractors.get(algorithm);
 			if (extractor==null) {
@@ -208,10 +212,10 @@ public class ReaderArticleBuilder {
 				article.setText("<p>" + text.trim().replaceAll("\n\n", "</p><p>").replaceAll("\n", "<br/>") + "</p>");
 
 				DocumentCleaner cleaner = new DocumentCleaner();
-				cleaner.setUrl(address.getAddress());
+				cleaner.setUrl(data.address.getAddress());
 				cleaner.clean(extracted);
 				
-				Document annotated = annotate(article, extracted, watch);
+				Document annotated = annotate(article, data, extracted, watch);
 				
 				HTMLWriter formatted = new HTMLWriter();
 				
@@ -222,9 +226,12 @@ public class ReaderArticleBuilder {
 					}
 					formatted.startBlockquote().withClass(cls).withData("id", statement.getId());
 					formatted.text(statement.getText());
+					formatted.startVoidA().withData("id", statement.getId()).withClass("oo_icon oo_icon_info_light reader_viewer_quote_icon js_action").endA();
 					formatted.endBlockquote();
 				}
+				formatted.startDiv().withClass("reader_viewer_body");
 				formatted.html(getBodyXML(annotated));
+				formatted.endDiv();
 
 				article.setFormatted(formatted.toString());
 
@@ -252,7 +259,7 @@ public class ReaderArticleBuilder {
 		return sb.toString();
 	}
 
-	private Document annotate(ArticlePerspective article, Document xomDocument, StopWatch watch) throws ModelException, ExplodingClusterFuckException {
+	private Document annotate(ArticlePerspective article, ArticleData data, Document xomDocument, StopWatch watch) throws ModelException, ExplodingClusterFuckException {
 		watch.split();
 		log.trace("Parsed HTML: " + watch.getSplitTime());
 		
@@ -260,6 +267,7 @@ public class ReaderArticleBuilder {
 
 		DecoratedDocument decorated = new DecoratedDocument(xomDocument);
 		String text = decorated.getText();
+		String textLowercased = text.toLowerCase();
 		watch.split();
 		log.trace("Decorated: " + watch.getSplitTime());
 
@@ -289,7 +297,16 @@ public class ReaderArticleBuilder {
 			if (!found.isEmpty()) {
 				statement.setFound(true);
 			}
-		}		
+		}
+		for (Word keyword : data.keywords) {
+			List<Result> found = searcher.search(keyword.getText().toLowerCase(), textLowercased);
+			for (Result result : found) {
+				Map<String, Object> attributes = new HashMap<>();
+				attributes.put("data-id", keyword.getId());
+				attributes.put("class", "word");
+				decorated.decorate(result.getFrom(), result.getTo(), "span", attributes);
+			}
+		}
 		
 		Collections.sort(statements,(a,b) -> {
 			return a.getFirstPosition() - b.getFirstPosition();
@@ -378,6 +395,11 @@ public class ReaderArticleBuilder {
 		Map<String, Object> attributes = new HashMap<>();
 		attributes.put("class", cls);
 		return attributes;
+	}
+	
+	private class ArticleData {
+		InternetAddress address;
+		List<Word> keywords;
 	}
 
 	// Wiring...
