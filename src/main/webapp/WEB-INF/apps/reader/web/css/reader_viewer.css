@@ -219,6 +219,10 @@
   margin: 0 -3px;
 }
 
+.reader_viewer_content .word {
+  border-bottom: 5px solid rgb(236, 232, 205);
+}
+
 .reader_viewer_content .person::before {
   content: 'P';
   display: inline-block;
@@ -291,67 +295,73 @@
 	padding: 20px 40px;
 }
 
-.reader_viewer_content_formatted h1 {
+.reader_videwer_body {
+  line-height: 1.5;
+}
+
+.reader_viewer_body h1 {
 	font-size: 24pt;  
 	font-weight: bolder;
 }
 
-.reader_viewer_content_formatted h2,
-.reader_viewer_content_formatted h3,
-.reader_viewer_content_formatted h4,
-.reader_viewer_content_formatted h5,
-.reader_viewer_content_formatted h6
+.reader_viewer_body h2,
+.reader_viewer_body h3,
+.reader_viewer_body h4,
+.reader_viewer_body h5,
+.reader_viewer_body h6
 {
 	font-weight: bold;
 	margin: 40px 0 0;
 }
 
-.reader_viewer_content_formatted h2 {
+.reader_viewer_body h2 {
 	font-size: 20pt;
 }
 
-.reader_viewer_content_formatted h3 {
+.reader_viewer_body h3 {
 	font-size: 16pt;
 }
 
-.reader_viewer_content_formatted h4,
-.reader_viewer_content_formatted h5,
-.reader_viewer_content_formatted h6 {
+.reader_viewer_body h4,
+.reader_viewer_body h5,
+.reader_viewer_body h6 {
 	font-size: 14pt;  
 }
 
-.reader_viewer_content_formatted strong {
+.reader_viewer_body strong {
 	font-weight: 600;
 }
 
-.reader_viewer_content_formatted p
+.reader_viewer_body p
 {
-	margin: 5px 0;
+	margin: 5px 0 15px;
 }
 
-.reader_viewer_content_formatted a
+.reader_viewer_body a
 {
-	color: inherit;
+	color: #0059CA;
 	text-decoration: none;
 	border-bottom: 1px solid rgba(0,0,0,.2);
 	line-height: 1em;
 	display: inline-block;
 }
 
-.reader_viewer_content_formatted img {
+.reader_viewer_body img {
   height: auto;
   max-width: 100%;
+  filter: grayscale(1) sepia(0.2);
+  -webkit-filter: grayscale(1) sepia(0.2);
 }
 
 /**************** Quotes ***************/
 
 .reader_viewer_quote {
   position: relative;
-  font-weight: 400;
+  font-weight: 300;
   margin: 10px 0 10px 0px;
   border-bottom: 1px solid rgb(236, 229, 213);
   padding-bottom: 10px;
-  color: rgb(146, 137, 119);
+  color: #928977;
 }
 
 .reader_viewer_quote-missing {
@@ -366,5 +376,17 @@
   font-family: 'Georgia';
   line-height: 32px;
   top: 4px;
-  color: rgb(146, 137, 119);
+  color: #928977;
 }
+
+.reader_viewer_quote_icon {
+  margin-left: 5px;
+  text-decoration: none;
+  color: #C5C0A5;
+  margin-top: -2px;
+}
+
+.reader_viewer_quote_icon:hover {
+  color: #3E3626;
+}
+

@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.queryparser.flexible.standard.QueryParserUtil;
+import org.eclipse.jdt.annotation.Nullable;
 
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
@@ -27,6 +28,7 @@ import dk.in2isoft.onlineobjects.apps.reader.index.ReaderQuery;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.ArticlePerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.FeedPerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.ListItemPerspective;
+import dk.in2isoft.onlineobjects.apps.reader.perspective.StatementEditPerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.WordPerspective;
 import dk.in2isoft.onlineobjects.apps.videosharing.Path;
 import dk.in2isoft.onlineobjects.core.Pair;
@@ -615,6 +617,54 @@ public class ReaderController extends ReaderControllerBase {
 				scroll.close();
 			}
 		}
+	}
+	
+	@Path
+	public StatementEditPerspective loadStatement(Request request) throws ModelException, IllegalRequestException {
+		Long id = request.getLong("id");
+		if (id==null) {
+			throw new IllegalRequestException("No id");
+		}
+		@Nullable
+		Statement statement = modelService.get(Statement.class, id, request.getSession());
+		if (statement==null) {
+			throw new IllegalRequestException("Statement not found");			
+		}
+		StatementEditPerspective perspective = new StatementEditPerspective();
+		perspective.setText(statement.getText());
+		perspective.setId(id);
+		return perspective;
+	}
+	
+	@Path
+	public void saveStatement(Request request) throws ModelException, IllegalRequestException, SecurityException {
+		StatementEditPerspective perspective = request.getObject("data", StatementEditPerspective.class);
+		long id = perspective.getId();
+		if (id<1) {
+			throw new IllegalRequestException("No id");
+		}
+		String text = perspective.getText();
+		if (Strings.isBlank(text)) {
+			throw new IllegalRequestException("The text is empty");
+		}
+		Statement statement = modelService.get(Statement.class, id, request.getSession());
+		statement.setName(StringUtils.abbreviate(text, 50));
+		statement.setText(text);
+		modelService.updateItem(statement, request.getSession());
+	}
+	
+	@Path
+	public void deleteStatement(Request request) throws IllegalRequestException, ModelException, SecurityException {
+		Long id = request.getLong("id");
+		if (id==null) {
+			throw new IllegalRequestException("No id");
+		}
+		@Nullable
+		Statement statement = modelService.get(Statement.class, id, request.getSession());
+		if (statement==null) {
+			throw new IllegalRequestException("Statement not found");
+		}
+		modelService.deleteEntity(statement, request.getSession());
 	}
 
 	private IndexManager getIndex(Request request) {

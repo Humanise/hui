@@ -223,6 +223,22 @@
 					</gui:buttons>
 				</gui:formula>
 			</gui:window>
+
+			<window name="statementWindow" title="Statement" variant="light" width="500" modal="true" padding="5" xmlns="http://www.in2isoft.dk/in2igui">
+				<formula name="statementForm">
+          <fields labels="above">
+            <field label="Text">
+              <textInput key="text" multiline="true" maxHeight="600"/>
+            </field>
+          </fields>
+					<buttons>
+						<button text="Delete" name="deleteStatement" variant="light">
+              <confirm text="Are you sure?"/>
+            </button>
+						<button text="Save" submit="true" variant="light" highlighted="true"/>
+					</buttons>
+				</formula>
+			</window>
 			
 			<ui:include src="../shared/wordfinder.xhtml"/>
 			
