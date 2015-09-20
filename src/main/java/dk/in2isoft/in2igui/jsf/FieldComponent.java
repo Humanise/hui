@@ -3,11 +3,13 @@ package dk.in2isoft.in2igui.jsf;
 import java.io.IOException;
 
 import javax.faces.component.FacesComponent;
+import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.Components;
 import dk.in2isoft.commons.jsf.TagWriter;
+import dk.in2isoft.commons.lang.Strings;
 
 @FacesComponent(FieldComponent.TYPE)
 public class FieldComponent extends AbstractComponent {
@@ -32,20 +34,39 @@ public class FieldComponent extends AbstractComponent {
 		};
 	}
 	
+	private boolean isAbove() {
+		UIComponent parent = this.getParent();
+		if (parent!=null && parent instanceof FieldsComponent) {
+			return ((FieldsComponent) parent).isLabelsAbove();
+		}
+		return false;
+	}
+	
 	@Override
 	public void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
-		
 		String label = getLabel(context);
-		writer.startElement("tr");
-		writer.startElement("th").withClass("hui_formula_middle");
-		writer.startElement("label").withClass("hui_formula_field").text(label).endElement("label");
-		writer.endElement("th");
-		writer.startElement("td").withClass("hui_formula_field");
+		if (isAbove()) {
+			writer.startDiv("hui_formula_field");
+			if (Strings.isNotBlank(label)) {
+				writer.startElement("label").withClass("hui_formula_field").text(label).endElement("label");
+			}
+			writer.startDiv("hui_formula_field_body");
+		} else {
+			writer.startElement("tr");
+			writer.startElement("th").withClass("hui_formula_middle");
+			writer.startElement("label").withClass("hui_formula_field").text(label).endElement("label");
+			writer.endElement("th");
+			writer.startElement("td").withClass("hui_formula_field");
+		}
 	}
 
 	@Override
 	protected void encodeEnd(FacesContext context, TagWriter writer) throws IOException {
-		writer.endElement("td").endElement("tr");
+		if (isAbove()) {
+			writer.endDiv().endDiv();
+		} else {
+			writer.endElement("td").endElement("tr");
+		}
 	}
 
 	public String getLabel() {

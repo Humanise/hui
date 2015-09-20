@@ -12,6 +12,8 @@ import dk.in2isoft.commons.jsf.TagWriter;
 public class FieldsComponent extends AbstractComponent {
 
 	public static final String TYPE = "hui.fields";
+	
+	private String labels;
 
 	public FieldsComponent() {
 		super(TYPE);
@@ -19,21 +21,39 @@ public class FieldsComponent extends AbstractComponent {
 	
 	@Override
 	public void restoreState(Object[] state) {
+		labels = (String) state[0];
 	}
 
 	@Override
 	public Object[] saveState() {
 		return new Object[] {
+			labels
 		};
+	}
+	
+	public boolean isLabelsAbove() {
+		return "above".equals(labels);
 	}
 	
 	@Override
 	public void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
-		writer.startElement("table").withClass("hui_formula_fields");
+		if (!isLabelsAbove()) {
+			writer.startElement("table").withClass("hui_formula_fields");
+		}
 	}
 	
 	@Override
 	protected void encodeEnd(FacesContext context, TagWriter writer) throws IOException {
-		writer.endElement("table");
+		if (!isLabelsAbove()) {
+			writer.endElement("table");
+		}
+	}
+
+	public String getLabels() {
+		return labels;
+	}
+
+	public void setLabels(String labels) {
+		this.labels = labels;
 	}
 }
