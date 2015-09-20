@@ -99,7 +99,7 @@ hui.log = function(obj) {
 
 /**
  * Defer a function so it will fire when the current "thread" is done
- * @param {Function} func The fundtion to defer
+ * @param {Function} func The function to defer
  * @param {Object} ?bind Optional, the object to bind "this" to
  */
 hui.defer = function(func,bind) {
@@ -1528,6 +1528,18 @@ hui.onReady = function(func) {
 	}
 };
 
+hui.onDraw = function(func) {
+  window.setTimeout(func,13);
+}
+
+hui.onDraw = (function(vendors,window) {
+  var found = window.requestAnimationFrame;
+  for(var x = 0; x < vendors.length && !found; ++x) {
+      found = window[vendors[x]+'RequestAnimationFrame'];
+  }
+  return found ? found.bind(window) : hui.onDraw;
+})(['ms', 'moz', 'webkit', 'o'],window);
+
 /**
  * Execute a function when the DOM is ready
  * @param delegate The function to execute
@@ -2619,7 +2631,7 @@ hui.animation._render = function() {
 		}
 	}
 	if (next) {
-		window.requestAnimationFrame(hui.animation._render);
+		hui.onDraw(hui.animation._render);
 	} else {
 		hui.animation.running = false;
 	}
@@ -3037,31 +3049,6 @@ if (!Date.now) {
     return new Date().getTime();
   };
 }
-
-(function() {
-    var lastTime = 0;
-    var vendors = ['ms', 'moz', 'webkit', 'o'];
-    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
-        window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
-        window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame']
-                                   || window[vendors[x]+'CancelRequestAnimationFrame'];
-    }
-	if (!window.requestAnimationFrame) {
-        window.requestAnimationFrame = function(callback, element) {
-            var currTime = Date.now();
-            var timeToCall = Math.max(0, 16 - (currTime - lastTime));
-            var id = window.setTimeout(function() { callback(currTime + timeToCall); },
-              0);
-            lastTime = currTime + timeToCall;
-            return id;
-        };
-    }
-    if (!window.cancelAnimationFrame) {
-        window.cancelAnimationFrame = function(id) {
-            clearTimeout(id);
-        };
-    }
-}());
 
 /** @constructor
  * @param str The color like red or rgb(255, 0, 0) or #ff0000 or rgb(100%, 0%, 0%)
@@ -6391,7 +6378,7 @@ hui.ui.Window.prototype = {
 	hide : function() {
 		if (!this.visible) return;
 		if (hui.browser.opacity) {
-			hui.animate(this.element,'opacity',0,100,{onComplete:function() {
+			hui.animate(this.element,'opacity',0,100,{$complete:function() {
 				this.element.style.display='none';
 				hui.ui.callVisible(this);
 			}.bind(this)});
@@ -6446,8 +6433,8 @@ hui.ui.Window.prototype = {
 			}
 			curtain.innerHTML = hui.isString(stringOrBoolean) ? '<span>'+stringOrBoolean+'</span>' : '<span></span>';
 			curtain.style.display = '';
-			curtain.style.height = this.content.clientHeight+'px';
-			curtain.style.width = this.content.clientWidth+'px';			
+			//curtain.style.height = this.content.clientHeight+'px';
+			//curtain.style.width = this.content.clientWidth+'px';			
 		}.bind(this),300);
 	},
 	
@@ -17969,7 +17956,7 @@ hui.ui.ObjectInput.prototype = {
         this.value = value;
         this._render();
     }
-}
+};
 
 (function (_super) {
 
