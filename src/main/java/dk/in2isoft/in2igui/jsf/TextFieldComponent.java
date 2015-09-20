@@ -23,6 +23,7 @@ public class TextFieldComponent extends AbstractComponent {
 	private boolean secret;
 	private String placeholder;
 	private int width;
+	private Integer maxHeight;
 	private String value;
 	private boolean adaptive = true;
 	private boolean multiline;
@@ -34,7 +35,7 @@ public class TextFieldComponent extends AbstractComponent {
 	@Override
 	public Object[] saveState() {
 		return new Object[] {
-			name,secret,placeholder,width,value,inputName,adaptive,multiline
+			name,secret,placeholder,width,value,inputName,adaptive,multiline,maxHeight
 		};
 	}
 	
@@ -47,7 +48,8 @@ public class TextFieldComponent extends AbstractComponent {
 		value = (String) state[4];
 		inputName = (String) state[5];
 		adaptive = (Boolean) state[6];
-		multiline = (Boolean) state[6];
+		multiline = (Boolean) state[7];
+		maxHeight = (Integer) state[8];
 	}
 
 	@Override
@@ -101,6 +103,9 @@ public class TextFieldComponent extends AbstractComponent {
 		}
 		if (key!=null) {
 			writer.write(",key:'"+StringEscapeUtils.escapeJavaScript(key)+"'");
+		}
+		if (maxHeight!=null) {
+			writer.write(",maxHeight:"+maxHeight);
 		}
 		writer.write("});");
 		writer.endScopedScript();
@@ -176,5 +181,13 @@ public class TextFieldComponent extends AbstractComponent {
 	
 	public void setMultiline(boolean multiline) {
 		this.multiline = multiline;
+	}
+	
+	public void setMaxHeight(Integer maxHeight) {
+		this.maxHeight = maxHeight;
+	}
+	
+	public Integer getMaxHeight() {
+		return maxHeight;
 	}
 }
