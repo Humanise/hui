@@ -112,9 +112,8 @@
 						<div id="viewer_header"></div>
               <a class="reader_viewer_close oo_icon oo_icon_close_line" href="javascript://"></a>
               <div class="reader_viewer_actions">
-  							<o:link name="removeButton" plain="true" styleClass="reader_viewer_action">
-  								<o:icon icon="delete_line" size="16"/>
-  								<gui:confirm text="Are you sure?"/>
+  							<o:link name="infoButton" plain="true" styleClass="reader_viewer_action">
+  								<o:icon icon="info_light" size="16"/>
   							</o:link>
   							<o:link name="quoteButton" plain="true" styleClass="reader_viewer_action">
   								<o:icon icon="bubble_line" size="16"/>
@@ -186,20 +185,19 @@
 
 			<gui:window name="addressInfoWindow" title="Address" variant="light" width="300" modal="true" padding="5">
 				<gui:formula name="addressInfoForm">
-        <gui:fields>
-					<gui:field label="Title">
-            <gui:textInput key="title" multiline="true"/>
-          </gui:field>
-					<gui:field label="Address">
-            <gui:textInput key="address" multiline="true"/>
-          </gui:field>
-          <gui:field label="Encoding">
-            <gui:dropDown key="encoding">
-            
-            </gui:dropDown>
-          </gui:field>
-        </gui:fields>
+          <gui:fields labels="above">
+  					<gui:field label="Title">
+              <gui:textInput key="title" multiline="true"/>
+            </gui:field>
+  					<gui:field label="Address">
+              <gui:textInput key="address" multiline="true"/>
+            </gui:field>
+          </gui:fields>
+
 					<gui:buttons>
+						<gui:button text="Delete" name="deleteAddressInfo" variant="light">
+              <gui:confirm text="Are you sure?"/>
+            </gui:button>
 						<gui:button text="Cancel" name="cancelAddressInfo" variant="light"/>
 						<gui:button submit="true" text="Save" highlighted="true" variant="light"/>
 					</gui:buttons>

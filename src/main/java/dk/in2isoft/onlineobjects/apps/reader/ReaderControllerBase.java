@@ -75,6 +75,7 @@ public abstract class ReaderControllerBase extends ApplicationController {
 		publicScript.addPath("WEB-INF","core","web","js","oo_view.js");
 		publicScript.addPath("WEB-INF","apps","reader","web","js","reader.js");
 		publicScript.addPath("WEB-INF","apps","reader","web","js","statements.js");
+		publicScript.addPath("WEB-INF","apps","reader","web","js","address_info.js");
 
 	
 		publicStyle = new Blend("reader_public_style");

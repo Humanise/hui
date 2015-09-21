@@ -1,5 +1,6 @@
 package dk.in2isoft.onlineobjects.apps.reader;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Collection;
@@ -143,7 +144,11 @@ public class ReaderController extends ReaderControllerBase {
 			
 			HTMLWriter writer = new HTMLWriter();
 			writer.startDiv().withClass("list_item");
-			writer.startH2().withClass("list_item_title").text(entity.getName()).endH2();
+			String title = entity.getName();
+			if (Strings.isBlank(title)) {
+				title = "-- empty --";
+			}
+			writer.startH2().withClass("list_item_title").text(title).endH2();
 			
 			if (entity instanceof InternetAddress) {
 				perspective.setAddressId(entity.getId());
@@ -438,13 +443,14 @@ public class ReaderController extends ReaderControllerBase {
 	@Path
 	public ArticlePerspective loadArticle(Request request) throws IOException, ModelException, SecurityException, IllegalRequestException, ExplodingClusterFuckException, ContentNotFoundException {
 		Long articleId = request.getLong("id",null);
-		Long statementId = request.getLong("statementId", null);
+		//Long statementId = request.getLong("statementId", null);
 		String algorithm = request.getString("algorithm");
 		UserSession session = request.getSession();
 		
-		if (articleId==null && statementId==null) {
+		if (articleId==null) {
 			throw new IllegalRequestException("No id provided");
 		}
+		/*
 		if (articleId==null) {
 			Query<InternetAddress> query = Query.after(InternetAddress.class).withChild(statementId, Relation.KIND_STRUCTURE_CONTAINS);
 			InternetAddress address = modelService.search(query).getFirst();
@@ -452,12 +458,12 @@ public class ReaderController extends ReaderControllerBase {
 				throw new ContentNotFoundException();
 			}
 			articleId = address.getId();
-		}
+		}*/
 		return articleBuilder.getArticlePerspective(articleId, algorithm, session);
 	}
 
 	@Path
-	public ArticlePerspective addQuote(Request request) throws IOException, ModelException, SecurityException, IllegalRequestException, ExplodingClusterFuckException, ContentNotFoundException {
+	public void addQuote(Request request) throws IOException, ModelException, SecurityException, IllegalRequestException, ExplodingClusterFuckException, ContentNotFoundException {
 		Long id = request.getLong("id");
 		String text = request.getString("text");
 		if (Strings.isNotBlank(text)) {
@@ -475,8 +481,6 @@ public class ReaderController extends ReaderControllerBase {
 				modelService.createRelation(address, part, Relation.KIND_STRUCTURE_CONTAINS, session);
 			}
 		}
-
-		return loadArticle(request);
 	}
 
 	@Path
@@ -634,6 +638,37 @@ public class ReaderController extends ReaderControllerBase {
 		perspective.setText(statement.getText());
 		perspective.setId(id);
 		return perspective;
+	}
+	
+	@Path
+	public void saveAddress(Request request) throws ModelException, IllegalRequestException, SecurityException {
+		Long id = request.getId();
+		if (id == null) {
+			throw new IllegalRequestException("Invalid ID");
+		}
+		String title = request.getString("title");
+		if (Strings.isBlank(title)) {
+			throw new IllegalRequestException("The title is empty");
+		}
+		String address = request.getString("address");
+		// TODO Validat URL?
+		if (Strings.isBlank(address)) {
+			throw new IllegalRequestException("The address is empty");
+		}
+		InternetAddress internetAddress = modelService.get(InternetAddress.class, id, request.getSession());
+		if (internetAddress==null) {
+			throw new IllegalRequestException("The address was not found");
+		}
+		internetAddress.setName(title);
+		boolean addressChanged = !Strings.equals(address, internetAddress.getAddress());
+		modelService.updateItem(internetAddress, request.getSession());
+		if (addressChanged) {
+			File itemFolder = storageService.getItemFolder(internetAddress.getId());
+			File original = new File(itemFolder, "original");
+			if (original.exists() && !original.delete()) {
+				log.error("Unable to delete original for internetAddress=" + internetAddress.getId());
+			}
+		}
 	}
 	
 	@Path

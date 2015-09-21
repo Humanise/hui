@@ -27,7 +27,6 @@ var controller = {
         this._hideViewer();
       }
     }.bind(this));
-    //this._loadArticle(1590);
     new oo.Segmented({
       name : 'readerViewerView',
       element : hui.get('reader_viewer_view'),
@@ -35,6 +34,11 @@ var controller = {
       value : 'formatted'
     });
     this._view();
+		if (hui.location.getBoolean('dev')) {
+			window.setTimeout(function() {
+		    this._loadArticle({addressId:2698752});			
+			}.bind(this))			
+		}
   },
 
   _view : function() {
@@ -105,6 +109,22 @@ var controller = {
 		this._reloadArticle();
 		this._reloadList();
 	},
+	
+	addressWillBeDeleted : function() {
+		this._lockViewer();
+	},
+	
+	addressWasDeleted : function() {
+		this._unlockViewer();
+		this._reloadList();
+    hui.ui.get('tagSource').refresh();
+		this._hideViewer();
+	},
+	
+	addressChanged : function(deleted) {
+		this._reloadArticle();
+		this._reloadList();
+	},
 
   _highlightStatement : function(id) {
     if (id==null || id==undefined) {
@@ -152,22 +172,6 @@ var controller = {
 
   $valueChanged$types : function() {
     hui.ui.get('listView').reset();
-  },
-
-  $click$removeButton : function() {
-    var url = '/removeInternetAddress';
-    //if (obj.kind == 'HtmlPart') {
-     //   url = '/service/model/removeEntity';
-    //}
-    this._hideViewer();
-    hui.ui.request({
-      url : url,
-      parameters : {id:this._currentArticle.id},
-      $success : function() {
-        hui.ui.get('listView').reset();
-        hui.ui.get('tagSource').refresh();
-      }.bind(this)
-    })
   },
 
   // List...
@@ -223,8 +227,7 @@ var controller = {
         hui.ui.showMessage({text:'Address added',icon:'common/success',duration:3000});
         this._reloadList();
         this._loadArticle({
-          id : info.id,
-          type : 'address'
+          addressId : info.id
         });
       }.bind(this),
       $failure : function() {
@@ -342,9 +345,10 @@ var controller = {
       this._highlightStatement(object.statementId);
       return;
     }
+		addressInfoController.clear();
     this._viewedItem = object;
     object = object || {};
-    hui.get('viewer_header').innerHTML = '<h1>' + hui.string.escape(object.title) + '</h1>';
+    hui.get('viewer_header').innerHTML = '<h1>' + hui.string.escape(object.title || 'Loading...') + '</h1>';
     hui.get('viewer_formatted').innerHTML = '';
     hui.get('viewer_text').innerHTML = '';
     hui.get('viewer_info').innerHTML = ''
@@ -425,6 +429,7 @@ var controller = {
     this.viewerFrame.src = "about:blank";
     hui.get('viewer_info').innerHTML = ''
     this._viewedItem = null;
+		addressInfoController.clear();
   },
   _lockViewer : function() {
     this._viewerLocked = true;
@@ -474,8 +479,18 @@ var controller = {
   $click$inspectButton : function() {
     oo.Inspector.inspect({id:this._currentArticle.id})
   },
+	
+	$click$infoButton : function() {
+		if (!this._currentArticle) {
+			return;
+		}
+		addressInfoController.edit(this._currentArticle);
+	},
 
   $click$quoteButton : function() {
+		if (hui.isBlank(this.text)) {
+			return;
+		}
     var parameters = {
       id : this._currentArticle.id,
       text : this.text
@@ -483,8 +498,8 @@ var controller = {
     hui.ui.request({
       url : '/addQuote',
       parameters : parameters,
-      $object : function(article) {
-        this._drawArticle(article);
+      $success : function() {
+        this._reloadArticle();
       }.bind(this)
     })
   },

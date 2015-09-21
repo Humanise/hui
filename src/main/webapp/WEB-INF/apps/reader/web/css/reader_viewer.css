@@ -9,6 +9,18 @@
 	z-index: 200;
 }
 
+.reader_viewer_locked::before
+{
+  content: '';
+  background-color: rgba(255, 255, 255, 0.5);
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 1;
+}
+
 .reader_viewer_frame
 {
 	position: absolute;
@@ -335,6 +347,12 @@
 .reader_viewer_body p
 {
 	margin: 5px 0 15px;
+}
+
+.reader_viewer_body pre
+{
+  max-width: 100%;
+  overflow: auto;
 }
 
 .reader_viewer_body a
