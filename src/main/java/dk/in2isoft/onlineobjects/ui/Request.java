@@ -309,6 +309,18 @@ public class Request {
 		return found;
 	}
 	
+	/**
+	 * The request parameter "id" as a positive Long or null if invalid
+	 * @return
+	 */
+	public Long getId() {
+		Long id = getLong("id", null);
+		if (id!=null && id<1) {
+			id = null;
+		}
+		return id;
+	}
+	
 	public Long getLong(String key, Long whenNullOrInvalid) {
 		String value = request.getParameter(key);
 		if (Strings.isBlank(value)) {
