@@ -140,6 +140,7 @@ public class TestSemanticService extends AbstractSpringTestCase {
 		assertFalse(semanticService.isRegularWord("45,-"));
 		assertFalse(semanticService.isRegularWord("54:26:96:da:e2:95"));
 		assertFalse(semanticService.isRegularWord("jonasmunk@mac.com"));
+		assertFalse(semanticService.isRegularWord("0-521-20693-6"));
 
 		assertFalse(semanticService.isRegularWord("15m"));
 		assertFalse(semanticService.isRegularWord("15hz"));
@@ -147,10 +148,12 @@ public class TestSemanticService extends AbstractSpringTestCase {
 		assertFalse(semanticService.isRegularWord("15lbs"));
 		assertFalse(semanticService.isRegularWord("15th"));
 		assertFalse(semanticService.isRegularWord("21st"));
+		assertFalse(semanticService.isRegularWord("/ritzau/"));
 
 		assertTrue(semanticService.isRegularWord("Ape"));
 		assertTrue(semanticService.isRegularWord("I"));
 		assertTrue(semanticService.isRegularWord("100-dollar-bill"));
+		assertTrue(semanticService.isRegularWord("0-412-42830-x"));
 	}
 
 	@Test

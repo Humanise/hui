@@ -104,11 +104,19 @@ public class SemanticService {
 	 * @return
 	 */
 	public boolean isRegularWord(String text) {
-		return Strings.isNotBlank(text) && !NUMBER_CODE_PATTERN.matcher(text).matches() && !isMacAddress(text) && !text.contains("@") && !isNumberWithUnit(text);
+		return Strings.isNotBlank(text) && !NUMBER_CODE_PATTERN.matcher(text).matches() && !isMacAddress(text) && !text.contains("@") && !isNumberWithUnit(text) && !isHashTag(text) && !isSourceTag(text);
 	}
 	
 	public boolean isMacAddress(String text) {
 		return text!=null && text.length()==17 && MAC_PATTERN.matcher(text).matches();
+	}
+	
+	public boolean isHashTag(String text) {
+		return text!=null && text.startsWith("#");
+	}
+	
+	public boolean isSourceTag(String text) {
+		return text!=null && text.startsWith("/");
 	}
 	
 	/**
@@ -124,6 +132,16 @@ public class SemanticService {
 	}
 	
 	public String stripQuotes(String str) {
+		if (str==null) {
+			return null;
+		}
+		if (str.endsWith("..") || str.startsWith(".")) {
+			str = StringUtils.strip(str, ".");
+		}
+		return StringUtils.strip(str, QUOTES);
+	}
+	
+	public String stripWeirdStuff(String str) {
 		if (str==null) {
 			return null;
 		}
@@ -426,6 +444,7 @@ public class SemanticService {
 		List<String> array = list.stream().
 				filter(str -> isWordToken(str)).
 				map(str -> stripQuotes(str)).
+				map(str -> stripWeirdStuff(str)).
 				filter(str -> isRegularWord(str)).
 				collect(Collectors.toList());
 
