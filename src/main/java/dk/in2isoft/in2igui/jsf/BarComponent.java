@@ -7,10 +7,16 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
+import dk.in2isoft.commons.jsf.Dependencies;
 import dk.in2isoft.commons.jsf.StyleBuilder;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=BarComponent.TYPE)
+@Dependencies(
+		js = {"/hui/js/bar.js"},
+		css = {"/hui/css/bar.css"},
+		components = {HUIComponent.class}
+	)
 public class BarComponent extends AbstractComponent {
 
 	public static final String TYPE = "hui.bar";

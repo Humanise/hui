@@ -48,6 +48,8 @@ public class ConfigurationService implements InitializingBean {
 	
 	private LifeCycleService lifeCycleService;
 
+	private boolean optimizeResources;
+
 
 	public void afterPropertiesSet() throws Exception {
 		storageDir = new File(storagePath);
@@ -118,6 +120,14 @@ public class ConfigurationService implements InitializingBean {
 
 	public boolean isDevelopmentMode() {
 		return developmentMode;
+	}
+
+	public boolean isOptimizeResources() {
+		return optimizeResources;
+	}
+	
+	public void setOptimizeResources(boolean optimizeResources) {
+		this.optimizeResources = optimizeResources;
 	}
 
 	public void setStoragePath(String storagePath) {

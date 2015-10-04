@@ -10,11 +10,13 @@ import org.apache.commons.lang.StringUtils;
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.ClassBuilder;
 import dk.in2isoft.commons.jsf.Components;
+import dk.in2isoft.commons.jsf.Dependencies;
 import dk.in2isoft.commons.jsf.StyleBuilder;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.commons.lang.Strings;
 
-@FacesComponent(value=ButtonComponent.TYPE)
+@FacesComponent(value = ButtonComponent.TYPE)
+@Dependencies(js = { "/hui/js/hui_animation.js", "/hui/js/button.js" }, css = { "/hui/css/button.css" }, components = { HUIComponent.class })
 public class ButtonComponent extends AbstractComponent {
 
 	public static final String TYPE = "hui.button";
@@ -25,6 +27,7 @@ public class ButtonComponent extends AbstractComponent {
 	private boolean small;
 	private boolean mini;
 	private boolean tiny;
+	private boolean disabled;
 	private String click;
 	private boolean submit;
 	private String styleClass;
@@ -35,7 +38,7 @@ public class ButtonComponent extends AbstractComponent {
 	public ButtonComponent() {
 		super(TYPE);
 	}
-	
+
 	@Override
 	public void restoreState(Object[] state) {
 		text = (String) state[0];
@@ -50,17 +53,45 @@ public class ButtonComponent extends AbstractComponent {
 		right = (Integer) state[9];
 		mini = (Boolean) state[10];
 		tiny = (Boolean) state[11];
+		disabled = (Boolean) state[12];
 	}
 
 	@Override
 	public Object[] saveState() {
-		return new Object[] {
-			text,name,highlighted,small,click,styleClass,submit,variant,left,right,mini,tiny
-		};
+		return new Object[] { text, name, highlighted, small, click, styleClass, submit, variant, left, right, mini, tiny, disabled };
 	}
-	
+
 	@Override
 	public void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
+		encodeMarkup(context, writer);
+		String id = getClientId();
+		writer.startScopedScript();
+		writer.write("var " + id + " = new hui.ui.Button({element:'").write(id).write("'");
+		writer.write(",submit:" + submit);
+		String name = getName(context);
+		if (name != null) {
+			writer.write(",name:'" + name + "'");
+		}
+		if (styleClass != null) {
+			writer.write(",class:'" + styleClass + "'");
+		}
+		ConfirmComponent confirm = Components.getChild(this, ConfirmComponent.class);
+		if (confirm != null) {
+			String confirmation = Strings.asNonBlank(confirm.getText(context), "Are you sure?");
+			String okText = Strings.asNonBlank(confirm.getOkText(context), "OK");
+			String canceltext = Strings.asNonBlank(confirm.getOkText(context), "Cancel");
+			writer.write(",confirm:{text:'").writeScriptString(confirmation).write("',okText:'").writeScriptString(okText).write("',cancelText:'").writeScriptString(canceltext)
+					.write("'}");
+		}
+		writer.write("});");
+		String click = getClick(context);
+		if (StringUtils.isNotBlank(click)) {
+			writer.write("\n" + id + ".listen({$click:function(widget) {").write(click).write("}});");
+		}
+		writer.endScopedScript();
+	}
+
+	public void encodeMarkup(FacesContext context, TagWriter writer) throws IOException {
 		String id = getClientId();
 		ClassBuilder cls = new ClassBuilder("hui_button").add(styleClass).add("hui_button", variant);
 		if (small) {
@@ -83,13 +114,9 @@ public class ButtonComponent extends AbstractComponent {
 				cls.add("hui_button_highlighted").add("hui_button_highlighted", variant);
 			}
 		}
-		if (isNotBlank(styleClass)) {
-			writer.startVoidA(styleClass);
-		} else {
-			writer.startVoidA(cls);
-		}
+		writer.startVoidA(cls);
 		writer.withId(id);
-		if (left!=null || right!=null) {
+		if (left != null || right != null) {
 			StyleBuilder css = new StyleBuilder();
 			css.withMarginLeft(left).withMarginRight(right);
 			writer.withStyle(css);
@@ -97,29 +124,6 @@ public class ButtonComponent extends AbstractComponent {
 		String text = getText(context);
 		writer.startSpan().startSpan().write(text).endSpan().endSpan();
 		writer.endA();
-		writer.startScopedScript();
-		writer.write("var "+id+" = new hui.ui.Button({element:'").write(id).write("'");
-		writer.write(",submit:"+submit);
-		String name = getName(context);
-		if (name!=null) {
-			writer.write(",name:'"+name+"'");
-		}
-		if (styleClass!=null) {
-			writer.write(",class:'"+styleClass+"'");
-		}
-		ConfirmComponent confirm = Components.getChild(this,ConfirmComponent.class);
-		if (confirm!=null) {
-			String confirmation = Strings.asNonBlank(confirm.getText(context), "Are you sure?");
-			String okText = Strings.asNonBlank(confirm.getOkText(context), "OK");
-			String canceltext = Strings.asNonBlank(confirm.getOkText(context), "Cancel");
-			writer.write(",confirm:{text:'").writeScriptString(confirmation).write("',okText:'").writeScriptString(okText).write("',cancelText:'").writeScriptString(canceltext).write("'}");
-		}
-		writer.write("});");
-		String click = getClick(context);
-		if (StringUtils.isNotBlank(click)) {
-			writer.write("\n"+id+".listen({$click:function(widget) {").write(click).write("}});");
-		}
-		writer.endScopedScript();
 	}
 
 	public void setHighlighted(boolean highlighted) {
@@ -169,9 +173,9 @@ public class ButtonComponent extends AbstractComponent {
 	public String getClick() {
 		return click;
 	}
-	
+
 	public String getClick(FacesContext context) {
-		return getExpression("click",click,context);
+		return getExpression("click", click, context);
 	}
 
 	public void setSubmit(boolean submit) {
@@ -189,11 +193,11 @@ public class ButtonComponent extends AbstractComponent {
 	public String getStyleClass() {
 		return styleClass;
 	}
-	
+
 	public void setVariant(String variant) {
 		this.variant = variant;
 	}
-	
+
 	public String getVariant() {
 		return variant;
 	}
@@ -221,12 +225,20 @@ public class ButtonComponent extends AbstractComponent {
 	public void setMini(boolean mini) {
 		this.mini = mini;
 	}
-	
+
 	public boolean isTiny() {
 		return tiny;
 	}
-	
+
 	public void setTiny(boolean tiny) {
 		this.tiny = tiny;
+	}
+
+	public boolean isDisabled() {
+		return disabled;
+	}
+
+	public void setDisabled(boolean disabled) {
+		this.disabled = disabled;
 	}
 }

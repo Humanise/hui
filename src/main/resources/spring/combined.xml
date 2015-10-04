@@ -44,6 +44,7 @@
 		<property name="rootDomain" value="${rootDomain}"/>
 		<property name="developmentMode" value="${developmentMode}"/>
 		<property name="developmentUser" value="${development.user}"/>
+		<property name="optimizeResources" value="${optimizeResources}"/>
 		<property name="imageMagickPath" value="${imagemagick.path}"/>
 		<property name="graphvizPath" value="${graphviz.path}"/>
 		<property name="analyticsCode" value="${analytics.code}"/>
@@ -137,6 +138,8 @@
 	<bean id="informationService" class="dk.in2isoft.onlineobjects.modules.information.InformationService" autowire="byType"/>
 	
 	<bean id="pileService" class="dk.in2isoft.onlineobjects.services.PileService" autowire="byType"/>
+
+	<bean id="dependencyService" class="dk.in2isoft.onlineobjects.ui.DependencyService" autowire="byType"/>
 
 	
 	<!-- Tools -->

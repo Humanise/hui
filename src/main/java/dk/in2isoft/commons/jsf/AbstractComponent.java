@@ -1,6 +1,8 @@
 package dk.in2isoft.commons.jsf;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -81,12 +83,17 @@ public abstract class AbstractComponent extends UIComponentBase {
 	
 	@Override
 	public final void encodeEnd(FacesContext context) throws IOException {
-		if (isRendered()) {
+		if (isRendered() && shouldEncodeChildren()) {
 			TagWriter writer = new TagWriter(this,context);
 			encodeEnd(context,writer);
 			super.encodeEnd(context);
 		}
 	}
+	
+	protected boolean shouldEncodeChildren() {
+		return true;
+	}
+	
 	protected void encodeBegin(FacesContext context, TagWriter out) throws IOException {};
 
 	protected void encodeChildren(FacesContext context, TagWriter out) throws IOException {};

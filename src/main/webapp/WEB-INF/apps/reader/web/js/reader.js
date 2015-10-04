@@ -36,7 +36,8 @@ var controller = {
     this._view();
 		if (hui.location.getBoolean('dev')) {
 			window.setTimeout(function() {
-		    this._loadArticle({addressId:2698752});			
+		    this._loadArticle({addressId:2698752});
+        statementController.edit(2751699);
 			}.bind(this))			
 		}
   },

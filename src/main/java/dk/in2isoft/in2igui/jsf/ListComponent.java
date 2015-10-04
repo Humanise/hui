@@ -8,9 +8,15 @@ import javax.faces.context.FacesContext;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.ClassBuilder;
+import dk.in2isoft.commons.jsf.Dependencies;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=ListComponent.TYPE)
+@Dependencies(
+		js = {"/hui/js/list.js"},
+		css = {"/hui/css/list.css"},
+		components = {HUIComponent.class,SourceComponent.class,IconComponent.class}
+	)
 public class ListComponent extends AbstractComponent {
 
 	public static final String TYPE = "hui.list";

@@ -238,5 +238,5 @@ hui.ui.Finder.prototype = {
         this.uploadPanel.hide();
 		this.fire('select',obj);
     }
-}
+};
 

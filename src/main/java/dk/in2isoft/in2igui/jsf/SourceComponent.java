@@ -8,9 +8,11 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
+import dk.in2isoft.commons.jsf.Dependencies;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=SourceComponent.TYPE)
+@Dependencies(js = { "/hui/js/source.js" }, components = {HUIComponent.class})
 public class SourceComponent extends AbstractComponent {
 
 	public static final String TYPE = "hui.source";

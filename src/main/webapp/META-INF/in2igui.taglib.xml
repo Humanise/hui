@@ -246,4 +246,11 @@
       <renderer-type>hui.row</renderer-type>
     </component>
   </tag>
+  <tag>
+    <tag-name>objectInput</tag-name>
+    <component>
+      <component-type>hui.objectInput</component-type>
+      <renderer-type>hui.objectInput</renderer-type>
+    </component>
+  </tag>
 </facelet-taglib>

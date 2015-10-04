@@ -318,6 +318,14 @@ public class TagWriter {
 		return write("'").write(name).write("':'").write(StringEscapeUtils.escapeJavaScript(value)).write("'");
 	}
 
+	public TagWriter startObjectProperty(String name) throws IOException {
+		return write("'").write(name).write("':{");
+	}
+
+	public TagWriter endObjectProperty() throws IOException {
+		return write("}");
+	}
+
 	public TagWriter propertyRaw(String name, String value) throws IOException {
 		return write("'").write(name).write("':").write(value);
 	}
@@ -345,6 +353,10 @@ public class TagWriter {
 
 	public void flush() throws IOException {
 		this.writer.flush();
+	}
+
+	public TagWriter href(String url) throws IOException {
+		return withHref(url);
 	}
 
 }

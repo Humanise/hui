@@ -1,6 +1,7 @@
 package dk.in2isoft.onlineobjects.service.model;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -12,6 +13,7 @@ import com.google.common.collect.Maps;
 import dk.in2isoft.commons.lang.Code;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.in2igui.data.Diagram;
+import dk.in2isoft.in2igui.data.FinderConfiguration;
 import dk.in2isoft.in2igui.data.ListWriter;
 import dk.in2isoft.in2igui.data.Node;
 import dk.in2isoft.onlineobjects.apps.videosharing.Path;
@@ -225,5 +227,48 @@ public class ModelController extends ModelControllerBase {
 		}
 		
 		return diagram;
+	}
+
+	@Path
+	public FinderConfiguration finder(Request request) throws IllegalRequestException, ModelException, SecurityException {
+
+		String type = request.getString("type");
+		
+		FinderConfiguration config = new FinderConfiguration();
+		config.setTitle("Find " + type);
+		config.setListUrl("/service/model/finderList?type=" + type);
+		config.setSearchParameter("text");
+		return config;
+	}
+	
+	@Path
+	public <E extends Entity> void finderList(Request request) throws IOException, ModelException, ExplodingClusterFuckException {
+		String type = request.getString("type");
+		Class<? extends Entity> entityClass = modelService.getEntityClass(type);
+		
+		String text = request.getString("text");
+		int page = request.getInt("page");
+		
+		Query<? extends Entity> query = Query.after(entityClass).withPaging(page, 20).withWords(text).withPrivileged(request.getSession());
+		SearchResult<? extends Entity> result = modelService.search(query);
+
+
+		ListWriter out = new ListWriter(request);
+		out.startList();
+		out.window(result.getTotalCount(),50,page);
+		out.startHeaders().header("Title").endHeaders();		
+		
+		for (Entity entity : result.getList()) {
+			String kind = entity.getClass().getSimpleName().toLowerCase();
+			Map<String,Object> data = new HashMap<>();
+			data.put("title", entity.getName());
+			data.put("icon", entity.getIcon());
+			out.startRow().withId(entity.getId()).withKind(kind).withData(data);
+			out.startCell().withIcon(entity.getIcon());
+			out.startLine().text(entity.getName()).endLine();
+			out.endCell();
+			out.endRow();
+		}
+		out.endList();
 	}
 }

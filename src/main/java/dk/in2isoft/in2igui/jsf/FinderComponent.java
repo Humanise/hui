@@ -7,14 +7,23 @@ import javax.faces.context.FacesContext;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.Components;
+import dk.in2isoft.commons.jsf.Dependencies;
 import dk.in2isoft.commons.jsf.TagWriter;
+import dk.in2isoft.in2igui.data.FinderConfiguration;
+import dk.in2isoft.in2igui.data.FinderConfiguration.FinderListConfiguration;
+import dk.in2isoft.in2igui.data.FinderConfiguration.FinderSearchConfiguration;
 
 @FacesComponent(value=FinderComponent.TYPE)
+@Dependencies(
+	js = {"/hui/js/finder.js"},
+	components = {HUIComponent.class,ListComponent.class,WindowComponent.class,ButtonComponent.class,SearchFieldComponent.class,SourceComponent.class,UploadComponent.class,LayoutComponent.class,OverflowComponent.class,BarComponent.class,SelectionComponent.class}
+)
 public class FinderComponent extends AbstractComponent {
 
 	public static final String TYPE = "hui.finder";
 
 	private String name;
+	private String url;
 
 	public FinderComponent() {
 		super(TYPE);
@@ -23,25 +32,48 @@ public class FinderComponent extends AbstractComponent {
 	@Override
 	public void restoreState(Object[] state) {
 		name = (String) state[0];
+		url = (String) state[1];
 	}
 
 	@Override
 	public Object[] saveState() {
 		return new Object[] {
-			name
+			name, url
 		};
 	}
 	
 	@Override
-	public void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
-		writer.startScopedScript();
-		writer.write("new hui.ui.Finder({");
+	public void encodeBegin(FacesContext context, TagWriter out) throws IOException {
+		FinderConfiguration config = Components.getExpressionValue(this, "config", context); 
+
 		String name = getName(context);
-		if (name!=null) {
-			writer.write("name:'"+name+"'");
+		
+		out.startScopedScript();
+		out.startNewObject("hui.ui.Finder");
+		out.property("name", name);
+		String url = getUrl(context);
+		if (isNotBlank(url)) {
+			out.comma().property("url", url);
 		}
-		writer.write("});");
-		writer.endScopedScript();
+		if (config!=null) {
+			if (isNotBlank(config.getUrl())) {
+				out.comma().property("url", config.getUrl());
+			}
+			FinderListConfiguration list = config.getList();
+			if (list!=null && list.getUrl()!=null) {
+				out.comma().startObjectProperty("list").property("url", list.getUrl()).endObjectProperty();
+			}
+			FinderSearchConfiguration search = config.getSearch();
+			if (search!=null && isNotBlank(search.getParameter())) {
+				out.comma().startObjectProperty("search").property("parameter", search.getParameter()).endObjectProperty();
+			}
+		}
+		out.endNewObject();
+		out.endScopedScript();
+	}
+
+	public String buildConfig(FacesContext context) {
+		return "{todo:true}";
 	}
 
 	public void setName(String name) {
@@ -53,6 +85,19 @@ public class FinderComponent extends AbstractComponent {
 	}
 
 	public String getName(FacesContext context) {
-		return Components.getBindingAsString(this, "name", name, context);
+		return Components.getExpressionValue(this, "name", name, context);
 	}
+	
+	public String getUrl() {
+		return url;
+	}
+	
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public String getUrl(FacesContext context) {
+		return Components.getExpressionValue(this, "url", url, context);
+	}
+	
 }

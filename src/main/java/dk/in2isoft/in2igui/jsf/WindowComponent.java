@@ -7,10 +7,12 @@ import javax.faces.context.FacesContext;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.ClassBuilder;
+import dk.in2isoft.commons.jsf.Dependencies;
 import dk.in2isoft.commons.jsf.StyleBuilder;
 import dk.in2isoft.commons.jsf.TagWriter;
 
-@FacesComponent(value=WindowComponent.TYPE)
+@FacesComponent(value = WindowComponent.TYPE)
+@Dependencies(js = { "/hui/js/hui_animation.js", "/hui/js/window.js" }, css = { "/hui/css/window.css" }, components = {HUIComponent.class})
 public class WindowComponent extends AbstractComponent {
 
 	public static final String TYPE = "hui.window";
@@ -24,7 +26,7 @@ public class WindowComponent extends AbstractComponent {
 	public WindowComponent() {
 		super(TYPE);
 	}
-	
+
 	@Override
 	public void restoreState(Object[] state) {
 		name = (String) state[0];
@@ -36,11 +38,9 @@ public class WindowComponent extends AbstractComponent {
 
 	@Override
 	public Object[] saveState() {
-		return new Object[] {
-			name, width, title, padding, variant
-		};
+		return new Object[] { name, width, title, padding, variant };
 	}
-	
+
 	@Override
 	public void encodeBegin(FacesContext context, TagWriter out) throws IOException {
 		String title = getTitle(context);
@@ -54,7 +54,7 @@ public class WindowComponent extends AbstractComponent {
 		out.endDiv().endDiv().endDiv();
 		out.startDiv("hui_window_content").startDiv("hui_window_content").startDiv("hui_window_body");
 		StyleBuilder style = new StyleBuilder();
-		if (width>0) {
+		if (width > 0) {
 			style.withWidth(width);
 		}
 		if (padding > 0) {
@@ -64,7 +64,7 @@ public class WindowComponent extends AbstractComponent {
 			out.withStyle(style);
 		}
 	}
-	
+
 	@Override
 	protected void encodeEnd(FacesContext context, TagWriter out) throws IOException {
 		out.endDiv().endDiv().endDiv();
@@ -75,8 +75,8 @@ public class WindowComponent extends AbstractComponent {
 		String name = getName(context);
 		out.startNewObject("hui.ui.Window");
 		out.property("element", getClientId());
-		if (name!=null) {
-			out.comma().property("name",name);
+		if (name != null) {
+			out.comma().property("name", name);
 		}
 		out.endNewObject();
 		out.endScopedScript();
@@ -101,11 +101,11 @@ public class WindowComponent extends AbstractComponent {
 	public void setWidth(int width) {
 		this.width = width;
 	}
-	
+
 	public int getPadding() {
 		return padding;
 	}
-	
+
 	public void setPadding(int padding) {
 		this.padding = padding;
 	}

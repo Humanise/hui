@@ -63,6 +63,11 @@ public abstract class ReaderControllerBase extends ApplicationController {
 		publicScript.addPath("hui","js","Window.js");
 		publicScript.addPath("hui","js","Overlay.js");
 		publicScript.addPath("hui","js","Rows.js");
+		publicScript.addPath("hui","js","Finder.js");
+		publicScript.addPath("hui","js","Selection.js");
+		publicScript.addPath("hui","js","Bar.js");
+		publicScript.addPath("hui","js","Layout.js");
+		publicScript.addPath("hui","js","ObjectInput.js");
 		publicScript.addPath("hui","js","hui_color.js");
 		publicScript.addPath("WEB-INF","core","web","js","onlineobjects.js");
 		publicScript.addPath("WEB-INF","core","web","js","oo_topbar.js");
@@ -86,13 +91,16 @@ public abstract class ReaderControllerBase extends ApplicationController {
 		publicStyle.addHUICSS("icon.css");
 		publicStyle.addHUICSS("list.css");
 		publicStyle.addHUICSS("searchfield.css");
+		publicStyle.addHUICSS("selection.css");
 		publicStyle.addHUICSS("overflow.css");
 		publicStyle.addHUICSS("pages.css");
 		publicStyle.addHUICSS("window.css");
 		publicStyle.addHUICSS("dropdown.css");
 		publicStyle.addHUICSS("diagram.css");
+		publicStyle.addHUICSS("objectinput.css");
 		publicStyle.addHUICSS("bar.css");
 		publicStyle.addHUICSS("overlay.css");
+		publicStyle.addHUICSS("layout.css");
 		publicStyle.addHUICSS("rows.css");
 		publicStyle.addHUICSS("effects.css");
 		publicStyle.addPath("WEB-INF","apps","reader","web","css","reader.css");

@@ -32,6 +32,13 @@
 		</component>
 	</tag>
 	<tag>
+		<tag-name>head</tag-name>
+		<component>
+			<component-type>onlineobjects.head</component-type>
+			<renderer-type>onlineobjects.head</renderer-type>
+		</component>
+	</tag>
+	<tag>
 		<tag-name>list</tag-name>
 		<component>
 			<component-type>onlineobjects.list</component-type>

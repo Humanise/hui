@@ -6,9 +6,15 @@ import javax.faces.component.FacesComponent;
 import javax.faces.context.FacesContext;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
+import dk.in2isoft.commons.jsf.Dependencies;
 import dk.in2isoft.commons.jsf.TagWriter;
 
-@FacesComponent(value=OverflowComponent.TYPE)
+@FacesComponent(OverflowComponent.TYPE)
+@Dependencies(
+	js = {"/hui/js/overflow.js"},
+	css = {"/hui/css/overflow.css"},
+	components = {HUIComponent.class}
+)
 public class OverflowComponent extends AbstractComponent {
 
 	public static final String TYPE = "hui.overflow";

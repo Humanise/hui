@@ -3,17 +3,20 @@ package dk.in2isoft.in2igui.jsf;
 import java.io.IOException;
 
 import javax.faces.component.FacesComponent;
-import javax.faces.component.UIComponentBase;
 import javax.faces.context.FacesContext;
 
 import org.apache.commons.lang.StringEscapeUtils;
 
+import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.Components;
+import dk.in2isoft.commons.jsf.Dependencies;
 import dk.in2isoft.commons.jsf.TagWriter;
 
-@FacesComponent(value="hui.searchfield")
-public class SearchFieldComponent extends UIComponentBase {
+@FacesComponent(SearchFieldComponent.TYPE)
+@Dependencies(js = { "/hui/js/hui_animation.js", "/hui/js/searchfield.js" }, css = { "/hui/css/searchfield.css" }, components = { HUIComponent.class })
+public class SearchFieldComponent extends AbstractComponent {
 
+	protected static final String TYPE = "hui.searchfield";
 	private String name;
 	private String placeholder;
 	private int width;
@@ -21,45 +24,38 @@ public class SearchFieldComponent extends UIComponentBase {
 	private String value;
 	private boolean adaptive;
 
-	@Override
-	public Object saveState(FacesContext context) {
-		Object[] state = new Object[] {
-			super.saveState(context),name,placeholder,width,value,expandedWidth,adaptive
-		};
-		return state;
-	}
-	
-	@Override
-	public void restoreState(FacesContext context, Object state) {
-		Object[] values = (Object[]) state;
-		super.restoreState(context, values[0]);
-		name = (String) values[1];
-		placeholder = (String) values[2];
-		width = (Integer) values[3];
-		value = (String) values[4];
-		expandedWidth = (Integer) values[5];
-		adaptive = (Boolean) values[6];
-	}
-	
-	@Override
-	public String getFamily() {
-		return "hui.searchfield";
+	public SearchFieldComponent() {
+		super(TYPE);
 	}
 
 	@Override
-	public void encodeBegin(FacesContext context) throws IOException {
+	protected Object[] saveState() {
+		return new Object[] { name, placeholder, width, value, expandedWidth, adaptive };
+	}
+
+	@Override
+	public void restoreState(Object[] values) {
+		name = (String) values[0];
+		placeholder = (String) values[1];
+		width = (Integer) values[2];
+		value = (String) values[3];
+		expandedWidth = (Integer) values[4];
+		adaptive = (Boolean) values[5];
+	}
+
+	@Override
+	public void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
 		String id = getClientId();
 		String value = Components.getBindingAsString(this, "value", this.value, context);
-		TagWriter writer = new TagWriter(this,context);
 		writer.startSpan(adaptive ? "hui_searchfield hui_searchfield_adaptive" : "hui_searchfield").withId(id);
-		if (width>0) {
-			writer.withStyle("width: "+width+"px;");
+		if (width > 0) {
+			writer.withStyle("width: " + width + "px;");
 		}
 		writer.startEm("hui_searchfield_placeholder").write(placeholder).endEm();
 		writer.startVoidA("hui_searchfield_reset").endA();
 		writer.startSpan().startSpan();
 		writer.startElement("input");
-		if (value!=null) {
+		if (value != null) {
 			writer.withAttribute("value", value);
 		}
 		writer.endElement("input");
@@ -68,14 +64,14 @@ public class SearchFieldComponent extends UIComponentBase {
 		writer.write("new hui.ui.SearchField({element:'");
 		writer.write(id);
 		writer.write("'");
-		if (name!=null) {
-			writer.write(",name:'"+StringEscapeUtils.escapeJavaScript(name)+"'");
+		if (name != null) {
+			writer.write(",name:'" + StringEscapeUtils.escapeJavaScript(name) + "'");
 		}
-		if (placeholder!=null) {
-			writer.write(",placeholder:'"+StringEscapeUtils.escapeJavaScript(placeholder)+"'");
+		if (placeholder != null) {
+			writer.write(",placeholder:'" + StringEscapeUtils.escapeJavaScript(placeholder) + "'");
 		}
-		if (expandedWidth>0) {
-			writer.write(",expandedWidth:"+expandedWidth);
+		if (expandedWidth > 0) {
+			writer.write(",expandedWidth:" + expandedWidth);
 		}
 		writer.write("});");
 		writer.endScopedScript();
@@ -129,5 +125,4 @@ public class SearchFieldComponent extends UIComponentBase {
 		return adaptive;
 	}
 
-	
 }

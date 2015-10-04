@@ -70,6 +70,12 @@ var statementController = {
 	$userClosedWindow$statementWindow : function() {
 		this._reset();
 	},
+  $render$statementAuthor : function(item) {
+    return {
+      icon: 'common/person',
+      text: item.title
+    }
+  },
 	_tellMainController : function() {
 		controller.statementChanged();
 	}

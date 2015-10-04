@@ -96,6 +96,10 @@
     	<component-class>dk.in2isoft.onlineobjects.ui.jsf.DocTypeComponent</component-class>
   	</component>
     <component>
+    	<component-type>onlineobjects.head</component-type>
+    	<component-class>dk.in2isoft.onlineobjects.ui.jsf.HeadComponent</component-class>
+  	</component>
+    <component>
     	<component-type>onlineobjects.map</component-type>
     	<component-class>dk.in2isoft.onlineobjects.ui.jsf.MapComponent</component-class>
   	</component>
@@ -284,6 +288,10 @@
     <component>
 	    <component-type>hui.row</component-type>
     	<component-class>dk.in2isoft.in2igui.jsf.RowComponent</component-class>
+  	</component>
+    <component>
+	    <component-type>hui.objectInput</component-type>
+    	<component-class>dk.in2isoft.in2igui.jsf.ObjectInputComponent</component-class>
   	</component>
 
 </faces-config>

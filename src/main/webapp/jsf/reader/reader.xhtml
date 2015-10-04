@@ -228,6 +228,11 @@
             <field label="Text">
               <textInput key="text" multiline="true" maxHeight="600"/>
             </field>
+            <field label="Author">
+              <objectInput key="author" name="statementAuthor">
+                <finder name="authorFinder" url="service/model/finder?type=Person"/>
+              </objectInput>
+            </field>
           </fields>
 					<buttons>
 						<button text="Delete" name="deleteStatement" variant="light">
