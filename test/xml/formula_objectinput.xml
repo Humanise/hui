@@ -10,6 +10,11 @@
             <finder title="Select person" list-url="data/list_users.xml"/>
           </object-input>
         </field>
+        <field label="Others">
+          <object-input key="others" multi="true">
+            <finder title="Select person" list-url="data/list_users.xml"/>
+          </object-input>
+        </field>
       </fields>
     </formula>
   </box>
