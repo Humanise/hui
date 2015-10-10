@@ -51,19 +51,22 @@ public class HeadComponent extends AbstractComponent {
 		});
 		ConfigurationService configurationService = getBean(ConfigurationService.class);
 		
-		for (String url : graph.getStyles()) {
-		 	out.startElement("link").rel("stylesheet").type("text/css").href(url).endElement("link");
-		}
 		
-		if (false && configurationService.isDevelopmentMode()) {
+		if (!configurationService.isOptimizeResources()) {
 			for (String url : graph.getScripts()) {
 			 	out.startScript().src(url).endScript();
+			}
+			for (String url : graph.getStyles()) {
+			 	out.startElement("link").rel("stylesheet").type("text/css").href(url).endElement("link");
 			}
 		} else {
 			DependencyService dependencyService = getBean(DependencyService.class);
 			
-			String scriptHash = dependencyService.handleScripts(graph);
-		 	out.startScript().src("/service/dependency/"+configurationService.getDeploymentId()+"/"+scriptHash+".js").endScript();
+			String scriptUrl = dependencyService.handleScripts(graph);
+		 	out.startScript().src(scriptUrl).endScript();
+
+			String styleUrl = dependencyService.handleStyles(graph);
+		 	out.startElement("link").rel("stylesheet").type("text/css").href(styleUrl).endElement("link");
 		}
 		out.endElement("head");
 	}

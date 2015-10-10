@@ -1,6 +1,7 @@
 package dk.in2isoft.onlineobjects.ui;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -62,12 +63,18 @@ public class StylesheetWriter {
 
 	public void write(Blend blend) throws IOException {
 		List<String[]> paths = blend.getPaths();
+		String hash = blend.getHash();
+		write(paths, hash);
+	}
+
+	public void write(List<String[]> paths, String hash)
+			throws IOException, FileNotFoundException {
 		if (configurationService.isDevelopmentMode()) {
 			for (String[] path : paths) {
 				write(this.writer,path);
 			}
 		} else {
-			String name = blend.getHash()+"_"+configurationService.getDeploymentId()+".css";
+			String name = hash+"_"+configurationService.getDeploymentId()+".css";
 			File file = new File(configurationService.getTempDir(),name);
 			if (!file.exists()) {
 				StringWriter writer = new StringWriter();
