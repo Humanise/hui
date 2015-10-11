@@ -66,3 +66,5 @@ oo.WordFinder.prototype = {
 		})
 	}
 }
+
+new oo.WordFinder();

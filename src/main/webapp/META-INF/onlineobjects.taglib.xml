@@ -262,4 +262,11 @@
 			<renderer-type>onlineobjects.metatags</renderer-type>
 		</component>
 	</tag>
+	<tag>
+		<tag-name>dependency</tag-name>
+		<component>
+			<component-type>onlineobjects.dependency</component-type>
+			<renderer-type>onlineobjects.dependency</renderer-type>
+		</component>
+	</tag>
 </facelet-taglib>

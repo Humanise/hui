@@ -7,9 +7,12 @@ import javax.faces.context.FacesContext;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.Components;
+import dk.in2isoft.commons.jsf.Dependencies;
+import dk.in2isoft.commons.jsf.ScriptWriter;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=DiagramComponent.TYPE)
+@Dependencies(js = { "/hui/js/hui_animation.js", "/hui/js/hui_require.js", "/hui/js/Drawing.js", "/hui/js/Diagram.js" }, css = { "/hui/css/diagram.css" }, components = { HUIComponent.class })
 public class DiagramComponent extends AbstractComponent {
 
 	public static final String TYPE = "hui.button";
@@ -36,14 +39,14 @@ public class DiagramComponent extends AbstractComponent {
 	public void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
 		String id = getClientId();
 		writer.startDiv().withClass("hui_diagram").withId(id).withStyle("height: 400px;").endDiv();
-		writer.startScopedScript();
-		writer.write("new hui.ui.Diagram({element:'").write(id).write("'");
+		
+		ScriptWriter js = writer.getScriptWriter();
+		js.startNewObject("hui.ui.Diagram").property("element", id);
 		String name = getName(context);
 		if (name!=null) {
-			writer.write(",name:'"+name+"'");
+			js.comma().property("name", name);
 		}
-		writer.write("});");
-		writer.endScopedScript();
+		js.endNewObject();
 	}
 
 	public void setName(String name) {

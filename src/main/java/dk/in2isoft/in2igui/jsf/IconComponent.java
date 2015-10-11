@@ -12,13 +12,13 @@ import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=IconComponent.TYPE)
 @Dependencies(
-	js = {"/hui/js/icon.js"},
+	js = {"/hui/js/Icon.js"},
 	css = {"/hui/css/icon.css"},
 	components = {HUIComponent.class}
 )
 public class IconComponent extends AbstractComponent {
 
-	public static final String TYPE = "hui.layout";
+	public static final String TYPE = "hui.icon";
 
 	private String name;
 

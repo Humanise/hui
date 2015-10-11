@@ -11,12 +11,13 @@ import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.ClassBuilder;
 import dk.in2isoft.commons.jsf.Components;
 import dk.in2isoft.commons.jsf.Dependencies;
+import dk.in2isoft.commons.jsf.ScriptWriter;
 import dk.in2isoft.commons.jsf.StyleBuilder;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.commons.lang.Strings;
 
 @FacesComponent(value = ButtonComponent.TYPE)
-@Dependencies(js = { "/hui/js/hui_animation.js", "/hui/js/button.js" }, css = { "/hui/css/button.css" }, components = { HUIComponent.class })
+@Dependencies(js = { "/hui/js/hui_animation.js", "/hui/js/Button.js" }, css = { "/hui/css/button.css" }, components = { HUIComponent.class })
 public class ButtonComponent extends AbstractComponent {
 
 	public static final String TYPE = "hui.button";
@@ -62,33 +63,32 @@ public class ButtonComponent extends AbstractComponent {
 	}
 
 	@Override
-	public void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
-		encodeMarkup(context, writer);
+	public void encodeBegin(FacesContext context, TagWriter out) throws IOException {
+		encodeMarkup(context, out);
 		String id = getClientId();
-		writer.startScopedScript();
-		writer.write("var " + id + " = new hui.ui.Button({element:'").write(id).write("'");
-		writer.write(",submit:" + submit);
+		ScriptWriter js = out.getScriptWriter();
+		js.startNewObject(id, "hui.ui.Button").property("element", id);
+		js.comma().property("submit", submit);
 		String name = getName(context);
 		if (name != null) {
-			writer.write(",name:'" + name + "'");
+			js.comma().property("name", name);
 		}
 		if (styleClass != null) {
-			writer.write(",class:'" + styleClass + "'");
+			js.comma().property("class", styleClass);
 		}
 		ConfirmComponent confirm = Components.getChild(this, ConfirmComponent.class);
 		if (confirm != null) {
 			String confirmation = Strings.asNonBlank(confirm.getText(context), "Are you sure?");
 			String okText = Strings.asNonBlank(confirm.getOkText(context), "OK");
 			String canceltext = Strings.asNonBlank(confirm.getOkText(context), "Cancel");
-			writer.write(",confirm:{text:'").writeScriptString(confirmation).write("',okText:'").writeScriptString(okText).write("',cancelText:'").writeScriptString(canceltext)
+			js.write(",confirm:{text:'").writeScriptString(confirmation).write("',okText:'").writeScriptString(okText).write("',cancelText:'").writeScriptString(canceltext)
 					.write("'}");
 		}
-		writer.write("});");
+		js.endNewObject();
 		String click = getClick(context);
 		if (StringUtils.isNotBlank(click)) {
-			writer.write("\n" + id + ".listen({$click:function(widget) {").write(click).write("}});");
+			js.write("\n" + id + ".listen({$click:function(widget) {").write(click).write("}});");
 		}
-		writer.endScopedScript();
 	}
 
 	public void encodeMarkup(FacesContext context, TagWriter writer) throws IOException {

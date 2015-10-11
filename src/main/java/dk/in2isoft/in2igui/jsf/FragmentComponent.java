@@ -6,9 +6,11 @@ import javax.faces.component.FacesComponent;
 import javax.faces.context.FacesContext;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
+import dk.in2isoft.commons.jsf.Dependencies;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=FragmentComponent.TYPE)
+@Dependencies(js = { "/hui/js/Fragment.js" }, components = { HUIComponent.class })
 public class FragmentComponent extends AbstractComponent {
 
 	public static final String TYPE = "hui.fragment";
@@ -39,9 +41,7 @@ public class FragmentComponent extends AbstractComponent {
 	@Override
 	protected void encodeEnd(FacesContext context, TagWriter out) throws IOException {
 		out.endDiv();
-		out.startScript();
-		out.startNewObject("hui.ui.Fragment").property("element", getClientId()).comma().property("name", name).endNewObject();
-		out.endScript();
+		out.getScriptWriter().startNewObject("hui.ui.Fragment").property("element", getClientId()).comma().property("name", name).endNewObject();
 	}
 
 	public void setName(String name) {

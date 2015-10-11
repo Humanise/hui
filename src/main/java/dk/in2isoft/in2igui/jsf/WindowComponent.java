@@ -8,11 +8,12 @@ import javax.faces.context.FacesContext;
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.ClassBuilder;
 import dk.in2isoft.commons.jsf.Dependencies;
+import dk.in2isoft.commons.jsf.ScriptWriter;
 import dk.in2isoft.commons.jsf.StyleBuilder;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value = WindowComponent.TYPE)
-@Dependencies(js = { "/hui/js/hui_animation.js", "/hui/js/window.js" }, css = { "/hui/css/window.css" }, components = {HUIComponent.class})
+@Dependencies(js = { "/hui/js/hui_animation.js", "/hui/js/Window.js" }, css = { "/hui/css/window.css" }, components = {HUIComponent.class})
 public class WindowComponent extends AbstractComponent {
 
 	public static final String TYPE = "hui.window";
@@ -71,15 +72,14 @@ public class WindowComponent extends AbstractComponent {
 		out.startDiv("hui_window_bottom").startDiv("hui_window_bottom").startDiv("hui_window_bottom").endDiv().endDiv().endDiv();
 		out.endDiv();
 		out.endDiv();
-		out.startScopedScript();
+		ScriptWriter js = out.getScriptWriter();
 		String name = getName(context);
-		out.startNewObject("hui.ui.Window");
-		out.property("element", getClientId());
+		js.startNewObject("hui.ui.Window");
+		js.property("element", getClientId());
 		if (name != null) {
-			out.comma().property("name", name);
+			js.comma().property("name", name);
 		}
-		out.endNewObject();
-		out.endScopedScript();
+		js.endNewObject();
 	}
 
 	public void setName(String name) {

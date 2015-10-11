@@ -10,6 +10,8 @@ import org.apache.commons.lang.StringUtils;
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.ClassBuilder;
 import dk.in2isoft.commons.jsf.Components;
+import dk.in2isoft.commons.jsf.Dependencies;
+import dk.in2isoft.commons.jsf.ScriptWriter;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.in2igui.jsf.ConfirmComponent;
@@ -17,6 +19,7 @@ import dk.in2isoft.onlineobjects.services.ConfigurationService;
 import dk.in2isoft.onlineobjects.ui.Request;
 
 @FacesComponent(value = LinkComponent.FAMILY)
+@Dependencies(css={"/WEB-INF/core/web/css/oo_link.css"},components={OnlineObjectsComponent.class})
 public class LinkComponent extends AbstractComponent {
 
 	public static final String FAMILY = "onlineobjects.link";
@@ -122,17 +125,16 @@ public class LinkComponent extends AbstractComponent {
 		}
 		out.endA();
 		if (Strings.isNotBlank(name)) {
-			out.startScript();
-			out.startNewObject("oo.Link").property("element", getClientId()).comma().property("name", name);
+			ScriptWriter js = out.getScriptWriter();
+			js.startNewObject("oo.Link").property("element", getClientId()).comma().property("name", name);
 			ConfirmComponent confirm = Components.getChild(this,ConfirmComponent.class);
 			if (confirm!=null) {
 				String confirmation = Strings.asNonBlank(confirm.getText(context), "Are you sure?");
 				String okText = Strings.asNonBlank(confirm.getOkText(context), "OK");
 				String canceltext = Strings.asNonBlank(confirm.getOkText(context), "Cancel");
-				out.write(",confirm:{text:'").writeScriptString(confirmation).write("',okText:'").writeScriptString(okText).write("',cancelText:'").writeScriptString(canceltext).write("'}");
+				js.write(",confirm:{text:'").writeScriptString(confirmation).write("',okText:'").writeScriptString(okText).write("',cancelText:'").writeScriptString(canceltext).write("'}");
 			}
-			out.endNewObject();
-			out.endScript();
+			js.endNewObject();
 		}
 	}
 

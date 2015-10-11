@@ -10,19 +10,19 @@ import dk.in2isoft.commons.jsf.Components;
 import dk.in2isoft.commons.jsf.Dependencies;
 import dk.in2isoft.commons.jsf.TagWriter;
 
-@FacesComponent(value=LayoutComponent.TYPE)
+@FacesComponent(value=ProgressBarComponent.TYPE)
 @Dependencies(
-	js = {"/hui/js/Layout.js"},
-	css = {"/hui/css/layout.css"},
+	js = {"/hui/js/ProgressBar.js"},
+	css = {"/hui/css/progressbar.css"},
 	components = {HUIComponent.class}
 )
-public class LayoutComponent extends AbstractComponent {
+public class ProgressBarComponent extends AbstractComponent {
 
-	public static final String TYPE = "hui.layout";
+	public static final String TYPE = "hui.progressbar";
 
 	private String name;
 
-	public LayoutComponent() {
+	public ProgressBarComponent() {
 		super(TYPE);
 	}
 	

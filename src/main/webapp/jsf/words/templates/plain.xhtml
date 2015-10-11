@@ -12,17 +12,28 @@
 <f:loadBundle basename="dk.in2isoft.onlineobjects.model.msg.Language" var="msgLanguage"/>
 <f:loadBundle basename="dk.in2isoft.onlineobjects.model.msg.LexicalCategory" var="msgCategory"/>
 
+<o:dependency src="/WEB-INF/apps/words/web/style/css/words.css"/>
+<o:dependency src="/WEB-INF/apps/words/web/style/css/words_sidebar.css"/>
+<o:dependency src="/WEB-INF/apps/words/web/style/css/words_front.css"/>
+<o:dependency src="/WEB-INF/apps/words/web/style/css/words_search.css"/>
+<o:dependency src="/WEB-INF/apps/words/web/style/css/words_word.css"/>
+<o:dependency src="/WEB-INF/apps/words/web/style/css/words_statistics.css"/>
+<o:dependency src="/WEB-INF/apps/words/web/style/css/words_layout.css"/>
+<o:dependency src="/WEB-INF/apps/words/web/style/css/words_paging.css"/>
+<o:dependency src="/WEB-INF/apps/words/web/style/css/words_list.css"/>
+<o:dependency src="/WEB-INF/apps/words/web/style/css/words_import.css"/>
+<o:dependency src="/WEB-INF/apps/words/web/style/css/words_menu.css"/>
+<o:dependency src="/WEB-INF/apps/words/web/style/css/words_about.css"/>
+<o:dependency src="/WEB-INF/apps/words/web/style/js/words.js"/>
 
 <o:doctype/>
 <html xmlns="http://www.w3.org/1999/xhtml">
-	<h:head>
+	<o:head>
 		<o:metatags/>
 		<title><ui:insert name="title"/>#{msg.words} - OnlineObjects</title>
 		<ui:insert name="head"/>
-		<o:stylesheet href="/style.css" integrateCache="true"/>
 		<o:fonts additional="Lora:400,700,400italic,700italic"/>
 		<gui:compatibility/>
-		<o:script src="/script.js" integrateCache="true"/>
 		<gui:scriptSetup/>
 		<o:scriptSetup/>
 		<ui:insert name="scripts"/>
@@ -33,7 +44,7 @@
 		<link rel="apple-touch-icon" sizes="152x152" href="/core/gfx/icons/iOS/Words/Words-76@2x.png"/>
 		<link rel="apple-touch-icon" sizes="512x512" href="/core/gfx/icons/iOS/Words/Words-AppStore.png"/>
 		<link rel="apple-touch-icon" sizes="1024x1024" href="/core/gfx/icons/iOS/Words/Words-AppStore@2x.png"/>
-	</h:head>
+	</o:head>
 	<o:body>
 		<o:topBar/>
 		<o:layout variant="paper">

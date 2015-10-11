@@ -7,9 +7,11 @@ import javax.faces.context.FacesContext;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.Components;
+import dk.in2isoft.commons.jsf.Dependencies;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=BoxComponent.TYPE)
+@Dependencies(js = { "/hui/js/Box.js" }, css = { "/hui/css/box.css" }, components = { HUIComponent.class })
 public class BoxComponent extends AbstractComponent {
 
 	public static final String TYPE = "hui.box";
@@ -34,16 +36,6 @@ public class BoxComponent extends AbstractComponent {
 
 	@Override
 	public void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
-		String id = getClientId();
-		writer.startDiv().withClass("hui_diagram").withId(id).withStyle("height: 400px;").endDiv();
-		writer.startScopedScript();
-		writer.write("new hui.ui.Diagram({element:'").write(id).write("'");
-		String name = getName(context);
-		if (name!=null) {
-			writer.write(",name:'"+name+"'");
-		}
-		writer.write("});");
-		writer.endScopedScript();
 	}
 
 	public void setName(String name) {

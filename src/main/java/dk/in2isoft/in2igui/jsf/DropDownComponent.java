@@ -11,10 +11,13 @@ import org.apache.commons.lang.StringEscapeUtils;
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.ClassBuilder;
 import dk.in2isoft.commons.jsf.Components;
+import dk.in2isoft.commons.jsf.Dependencies;
+import dk.in2isoft.commons.jsf.ScriptWriter;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.onlineobjects.ui.jsf.model.Option;
 
 @FacesComponent(value=DropDownComponent.TYPE)
+@Dependencies(js = { "/hui/js/hui_animation.js", "/hui/js/DropDown.js" }, css = { "/hui/css/dropdown.css" }, components = { HUIComponent.class })
 public class DropDownComponent extends AbstractComponent {
 
 	public static final String TYPE = "hui.dropDown";
@@ -48,27 +51,25 @@ public class DropDownComponent extends AbstractComponent {
 		writer.startVoidA(cls).withId(id);
 		writer.startSpan().startSpan().startStrong().endStrong().endSpan().endSpan();
 		writer.endA();
+		ScriptWriter js = writer.getScriptWriter();
 		
-		writer.startScopedScript();
-		String items = getItems(context);
-		
-		writer.startNewObject("hui.ui.DropDown").property("element", id);
+		js.startNewObject("hui.ui.DropDown").property("element", id);
 		
 		if (name!=null) {
-			writer.comma().property("name",name);
+			js.comma().property("name",name);
 		}
 		if (key!=null) {
-			writer.comma().property("key",key);
+			js.comma().property("key",key);
 		}
+		String items = getItems(context);
 		if (items!=null) {
-			writer.comma().propertyRaw("items", items);
+			js.comma().propertyRaw("items", items);
 		}
 		Object value = getValue(context);
 		if (value!=null) {
-			writer.comma().property("value", value.toString());
+			js.comma().property("value", value.toString());
 		}
-		writer.write("});");
-		writer.endScopedScript();
+		js.endNewObject();
 	}
 	
 	private String getItems(FacesContext context) {

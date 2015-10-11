@@ -10,12 +10,14 @@ import javax.faces.context.FacesContext;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.Components;
+import dk.in2isoft.commons.jsf.Dependencies;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.onlineobjects.services.ConfigurationService;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.util.Messages;
 
 @FacesComponent(value=FooterComponent.FAMILY)
+@Dependencies(css={"/WEB-INF/core/web/css/oo_footer.css"},components={OnlineObjectsComponent.class, IconComponent.class})
 public class FooterComponent extends AbstractComponent {
 
 	public static final String FAMILY = "onlineobjects.footer";

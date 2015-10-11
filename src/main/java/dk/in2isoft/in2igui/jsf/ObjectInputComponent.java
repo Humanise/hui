@@ -3,14 +3,10 @@ package dk.in2isoft.in2igui.jsf;
 import java.io.IOException;
 
 import javax.faces.component.FacesComponent;
-import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-
-import org.eclipse.jdt.annotation.Nullable;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.Components;
-import dk.in2isoft.commons.jsf.StyleBuilder;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=ObjectInputComponent.TYPE)

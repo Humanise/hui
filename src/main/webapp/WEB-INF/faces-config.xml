@@ -151,6 +151,10 @@
     	<component-type>onlineobjects.metatags</component-type>
     	<component-class>dk.in2isoft.onlineobjects.ui.jsf.MetaTagsComponent</component-class>
   	</component>
+    <component>
+    	<component-type>onlineobjects.dependency</component-type>
+    	<component-class>dk.in2isoft.onlineobjects.ui.jsf.DependencyComponent</component-class>
+  	</component>
   	
   	
     <component>

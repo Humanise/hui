@@ -8,11 +8,13 @@ import javax.faces.event.ListenerFor;
 import javax.faces.event.PostAddToViewEvent;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
+import dk.in2isoft.commons.jsf.Dependencies;
+import dk.in2isoft.commons.jsf.ScriptWriter;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.commons.lang.Strings;
 
-@ListenerFor(systemEventClass=PostAddToViewEvent.class)
 @FacesComponent(value=PagesComponent.FAMILY)
+@Dependencies(js = { "/hui/js/hui_animation.js", "/hui/js/Pages.js" }, css = { "/hui/css/pages.css" }, components = { HUIComponent.class })
 public class PagesComponent extends AbstractComponent {
 
 	public static final String FAMILY = "hui.pages";
@@ -27,14 +29,6 @@ public class PagesComponent extends AbstractComponent {
 	public void restoreState(Object[] state) {
 		name = (String) state[0];
 	}
-	/*
-	public void processEvent(ComponentSystemEvent event) throws AbortProcessingException {
-		if (event instanceof PostAddToViewEvent) {
-			requireScript("/hui/ext/Pages.js");
-			requireStylesheet("/hui/ext/pages.css");
-	    }
-	    super.processEvent(event);
-	};*/
 
 	@Override
 	public Object[] saveState() {
@@ -49,12 +43,12 @@ public class PagesComponent extends AbstractComponent {
 	@Override
 	protected void encodeEnd(FacesContext context, TagWriter out) throws IOException {
 		out.endDiv();
-		out.startScript();
-		out.startNewObject("hui.ui.Pages").property("element", getClientId());
+		ScriptWriter js = out.getScriptWriter();
+		js.startNewObject("hui.ui.Pages").property("element", getClientId());
 		if (Strings.isNotBlank(name)) {
-			out.comma().property("name", name);
+			js.comma().property("name", name);
 		}
-		out.endNewObject().endScript();
+		js.endNewObject();
 	}
 
 	public void setName(String name) {

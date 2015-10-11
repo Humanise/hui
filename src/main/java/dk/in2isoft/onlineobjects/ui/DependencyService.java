@@ -12,6 +12,7 @@ import dk.in2isoft.onlineobjects.services.ConfigurationService;
 
 public class DependencyService {
 	
+	public static final String[] TAIL_PATH = new String[] {"WEB-INF","core","web","js","tail.js"};
 	private Map<String,String[]> storedScripts = new HashMap<>();
 	private Map<String,String[]> storedStyles = new HashMap<>();
 
@@ -50,6 +51,7 @@ public class DependencyService {
 		for (String url : urls) {
 			paths.add(url.split("\\/"));
 		}
+		paths.add(TAIL_PATH);
 		w.write(paths, hash);
 	}
 

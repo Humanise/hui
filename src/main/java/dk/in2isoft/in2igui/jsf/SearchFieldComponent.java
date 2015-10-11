@@ -5,15 +5,14 @@ import java.io.IOException;
 import javax.faces.component.FacesComponent;
 import javax.faces.context.FacesContext;
 
-import org.apache.commons.lang.StringEscapeUtils;
-
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.Components;
 import dk.in2isoft.commons.jsf.Dependencies;
+import dk.in2isoft.commons.jsf.ScriptWriter;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(SearchFieldComponent.TYPE)
-@Dependencies(js = { "/hui/js/hui_animation.js", "/hui/js/searchfield.js" }, css = { "/hui/css/searchfield.css" }, components = { HUIComponent.class })
+@Dependencies(js = { "/hui/js/hui_animation.js", "/hui/js/SearchField.js" }, css = { "/hui/css/searchfield.css" }, components = { HUIComponent.class })
 public class SearchFieldComponent extends AbstractComponent {
 
 	protected static final String TYPE = "hui.searchfield";
@@ -60,21 +59,19 @@ public class SearchFieldComponent extends AbstractComponent {
 		}
 		writer.endElement("input");
 		writer.endSpan().endSpan().endSpan();
-		writer.startScopedScript();
-		writer.write("new hui.ui.SearchField({element:'");
-		writer.write(id);
-		writer.write("'");
+		
+		ScriptWriter js = writer.getScriptWriter();
+		js.startNewObject("hui.ui.SearchField").property("element", id);
 		if (name != null) {
-			writer.write(",name:'" + StringEscapeUtils.escapeJavaScript(name) + "'");
+			js.comma().property("name", name);
 		}
 		if (placeholder != null) {
-			writer.write(",placeholder:'" + StringEscapeUtils.escapeJavaScript(placeholder) + "'");
+			js.comma().property("placeholder", placeholder);
 		}
 		if (expandedWidth > 0) {
-			writer.write(",expandedWidth:" + expandedWidth);
+			js.comma().property("expandedWidth", expandedWidth);
 		}
-		writer.write("});");
-		writer.endScopedScript();
+		js.endNewObject();
 	}
 
 	public void setName(String name) {

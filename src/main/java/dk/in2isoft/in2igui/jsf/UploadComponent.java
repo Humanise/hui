@@ -6,10 +6,13 @@ import javax.faces.component.FacesComponent;
 import javax.faces.context.FacesContext;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
+import dk.in2isoft.commons.jsf.Dependencies;
+import dk.in2isoft.commons.jsf.ScriptWriter;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.commons.lang.Strings;
 
 @FacesComponent(value=UploadComponent.TYPE)
+@Dependencies(js = { "/hui/js/hui_animation.js", "/hui/js/Upload.js" }, css = { "/hui/css/upload.css" }, components = { HUIComponent.class, IconComponent.class, ProgressBarComponent.class, ButtonComponent.class })
 public class UploadComponent extends AbstractComponent {
 
 	public static final String TYPE = "hui.upload";
@@ -49,19 +52,17 @@ public class UploadComponent extends AbstractComponent {
 		out.endDiv();
 		
 		// Script...
-		out.startScopedScript();
-		out.startNewObject("hui.ui.Upload");
-		out.property("element", id);
+		ScriptWriter js = out.getScriptWriter();
+		js.startNewObject("hui.ui.Upload");
+		js.property("element", id);
 		String name = getName(context);
 		if (name!=null) {
-			out.comma().property("name",name);
+			js.comma().property("name",name);
 		}
 		if (Strings.isNotBlank(url)) {
-			out.comma().property("url",url);
+			js.comma().property("url",url);
 		}
-		out.endNewObject();
-		
-		out.endScopedScript();
+		js.endNewObject();
 	}
 
 	public void setName(String name) {

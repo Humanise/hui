@@ -137,4 +137,31 @@ public class Components {
 		}
 		return url.toString();
 	}
+	
+	public static ScriptWriter getScriptWriter(FacesContext context) {
+		Map<String, Object> map = context.getExternalContext().getRequestMap();
+		ScriptWriter writer;
+		Object object = map.get("ScriptWriter");
+		if (object==null || !(object instanceof ScriptWriter)) {
+			writer = new ScriptWriter();
+			map.put("ScriptWriter", writer);
+		} else {
+			writer = (ScriptWriter) object;
+		}
+		return writer;
+	}
+
+	public static DependencyGraph getDependencyGraph(FacesContext context) {
+
+		Map<String, Object> map = context.getExternalContext().getRequestMap();
+		DependencyGraph graph;
+		Object object = map.get("DependencyGraph");
+		if (object==null || !(object instanceof DependencyGraph)) {
+			graph = new DependencyGraph();
+			map.put("DependencyGraph", graph);
+		} else {
+			graph = (DependencyGraph) object;
+		}
+		return graph;
+	}
 }

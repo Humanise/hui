@@ -34,6 +34,8 @@ public class ScriptSetupComponent extends AbstractComponent {
 		Request request = Components.getRequest();
 
 		writer.startScript().newLine();
+		writer.write("window.hui = window.hui || {};").newLine();
+		writer.write("hui.ui = hui.ui || {};").newLine();
 		writer.write("hui.ui.context = '").write(request.getBaseContext()).write("';").newLine();
 		writer.write("hui.ui.language = '").write(request.getLanguage()).write("';").newLine();
 		writer.endScript().newLine();

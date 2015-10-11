@@ -240,3 +240,4 @@ hui.ui.Finder.prototype = {
     }
 };
 
+window.define && define('hui.ui.Finder',hui.ui.Finder);

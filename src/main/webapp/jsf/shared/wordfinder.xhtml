@@ -25,14 +25,14 @@
 			</gui:bar>
 			<gui:pages name="wordFinderPages">
 				<gui:page key="list">
-						<gui:list source="wordFinderListSource" name="wordFinderList">
-							<f:facet name="empty">
-								<div style="padding: 20px; text-align: center;">
-									<p>#{msgWordFinder['not_found']}</p>
-									<gui:button small="true" name="wordFinderEmpty" text="#{msgWordFinder['add_word']}"/>
-								</div>
-							</f:facet>
-						</gui:list>
+					<gui:list source="wordFinderListSource" name="wordFinderList">
+						<f:facet name="empty">
+							<div style="padding: 20px; text-align: center;">
+								<p>#{msgWordFinder['not_found']}</p>
+								<gui:button small="true" name="wordFinderEmpty" text="#{msgWordFinder['add_word']}"/>
+							</div>
+						</f:facet>
+					</gui:list>
 				</gui:page>
 				<gui:page key="new">
 					<div style="padding: 10px">
@@ -57,9 +57,7 @@
 				</gui:page>
 			</gui:pages>
 		</gui:window>
-		<o:script>
-			new oo.WordFinder();
-		</o:script>
+		<o:dependency src="/WEB-INF/core/web/js/oo_wordfinder.js"/>
 	</ui:composition>
 	
 </html>

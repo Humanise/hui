@@ -19,7 +19,7 @@ public class DependencyController extends ServiceController {
 	private DependencyService dependencyService;
 	
 	private Pattern scriptPattern = Pattern.compile(SCRIPT_PATH);
-	private Pattern stylePattern = Pattern.compile(SCRIPT_PATH);
+	private Pattern stylePattern = Pattern.compile(STYLE_PATH);
 
 	public DependencyController() {
 		super("dependency");

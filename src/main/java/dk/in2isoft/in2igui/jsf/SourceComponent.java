@@ -9,10 +9,11 @@ import javax.faces.context.FacesContext;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.Dependencies;
+import dk.in2isoft.commons.jsf.ScriptWriter;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=SourceComponent.TYPE)
-@Dependencies(js = { "/hui/js/source.js" }, components = {HUIComponent.class})
+@Dependencies(js = { "/hui/js/Source.js" }, components = {HUIComponent.class})
 public class SourceComponent extends AbstractComponent {
 
 	public static final String TYPE = "hui.source";
@@ -41,15 +42,15 @@ public class SourceComponent extends AbstractComponent {
 
 	@Override
 	public void encodeBegin(FacesContext context, TagWriter out) throws IOException {
-		out.startScript();
-		out.startNewObject("hui.ui.Source").property("name", name).comma().property("lazy", lazy);
-		out.comma().property("url", getUrl(context));
-		out.comma().propertyRaw("parameters", buildParameters());
+		ScriptWriter js = out.getScriptWriter();
+		
+		js.startNewObject("hui.ui.Source").property("name", name).comma().property("lazy", lazy);
+		js.comma().property("url", getUrl(context));
+		js.comma().propertyRaw("parameters", buildParameters());
 		if (delay!=null) {
-			out.comma().property("delay", delay);
+			js.comma().property("delay", delay);
 		}
-		out.endNewObject();
-		out.endScript();
+		js.endNewObject();
 	}
 	
 	private String buildParameters() {

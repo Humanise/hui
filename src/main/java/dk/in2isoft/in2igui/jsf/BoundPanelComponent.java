@@ -8,9 +8,12 @@ import javax.faces.context.FacesContext;
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.ClassBuilder;
 import dk.in2isoft.commons.jsf.Components;
+import dk.in2isoft.commons.jsf.Dependencies;
+import dk.in2isoft.commons.jsf.ScriptWriter;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=BoundPanelComponent.TYPE)
+@Dependencies(js = { "/hui/js/hui_animation.js", "/hui/js/BoundPanel.js" }, css = { "/hui/css/boundpanel.css" }, components = { HUIComponent.class })
 public class BoundPanelComponent extends AbstractComponent {
 
 	public static final String TYPE = "hui.boundPanel";
@@ -60,24 +63,24 @@ public class BoundPanelComponent extends AbstractComponent {
 		out.endDiv().endDiv().endDiv();
 		out.startDiv("hui_boundpanel_bottom").startDiv().startDiv().endDiv().endDiv().endDiv();
 		out.endDiv();
-		out.startScopedScript();
-		out.startNewObject("hui.ui.BoundPanel");
-		out.property("element", getClientId());
-		out.comma().property("hideOnClick", hideOnClick);
+		ScriptWriter js = out.getScriptWriter();
+		
+		js.startNewObject("hui.ui.BoundPanel");
+		js.property("element", getClientId());
+		js.comma().property("hideOnClick", hideOnClick);
 		if ("true".equals(modal)) {
-			out.comma().property("modal", true);
+			js.comma().property("modal", true);
 		} else if (modal!=null) {
-			out.comma().property("modal", modal);			
+			js.comma().property("modal", modal);			
 		}
 		String name = getName(context);
 		if (name!=null) {
-			out.comma().property("name",name);
+			js.comma().property("name",name);
 		}
 		if (variant!=null) {
-			out.comma().property("variant",variant);
+			js.comma().property("variant",variant);
 		}
-		out.endNewObject();
-		out.endScopedScript();
+		js.endNewObject();
 	}
 
 	public void setName(String name) {

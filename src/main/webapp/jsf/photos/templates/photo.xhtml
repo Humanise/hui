@@ -11,18 +11,13 @@
 
 <o:doctype/>
 <html xmlns="http://www.w3.org/1999/xhtml">
-	<h:head>
+	<o:head>
 		<o:metatags/>
 		<title><ui:insert name="title"/>#{msg.photos} - OnlineObjects</title>
 		<o:fonts/>
-		<o:stylesheet href="/style.css" integrateCache="true"/>
-		<o:stylesheet href="/style_private.css" integrateCache="true" rendered="#{o:loggedIn()}"/>
-		<o:script src="/script.js" integrateCache="true"/>
-		<o:script src="/script_private.js" integrateCache="true" rendered="#{o:loggedIn()}"/>
 		<gui:scriptSetup/>
 		<o:scriptSetup/>
-		<ui:insert name="scripts"/>
-	</h:head>
+	</o:head>
 	<o:body>
 		<o:topBar/>
 		<div class="photos_layout">

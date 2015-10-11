@@ -12,11 +12,17 @@ public class TagWriter {
 
 	private ResponseWriter writer;
 	private UIComponent component;
+	private ScriptWriter scriptWriter;
 
 	public TagWriter(UIComponent component, FacesContext context) {
 		super();
 		this.writer = context.getResponseWriter();
 		this.component = component;
+		this.scriptWriter = Components.getScriptWriter(context);		
+	}
+	
+	public ScriptWriter getScriptWriter() {
+		return scriptWriter;
 	}
 	
 	public TagWriter startElement(String name) throws IOException {

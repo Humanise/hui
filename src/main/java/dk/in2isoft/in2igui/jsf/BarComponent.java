@@ -13,7 +13,7 @@ import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=BarComponent.TYPE)
 @Dependencies(
-		js = {"/hui/js/bar.js"},
+		js = {"/hui/js/Bar.js"},
 		css = {"/hui/css/bar.css"},
 		components = {HUIComponent.class}
 	)

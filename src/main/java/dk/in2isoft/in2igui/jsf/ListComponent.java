@@ -9,11 +9,12 @@ import javax.faces.context.FacesContext;
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.ClassBuilder;
 import dk.in2isoft.commons.jsf.Dependencies;
+import dk.in2isoft.commons.jsf.ScriptWriter;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=ListComponent.TYPE)
 @Dependencies(
-		js = {"/hui/js/list.js"},
+		js = {"/hui/js/List.js"},
 		css = {"/hui/css/list.css"},
 		components = {HUIComponent.class,SourceComponent.class,IconComponent.class}
 	)
@@ -70,18 +71,17 @@ public class ListComponent extends AbstractComponent {
 	protected void encodeEnd(FacesContext context, TagWriter out) throws IOException {
 		out.endDiv();
 		out.endDiv();
-		out.startScopedScript();
-		out.startNewObject("hui.ui.List");
-		out.property("element", getClientId());
+		ScriptWriter js = out.getScriptWriter();
+		js.startNewObject("hui.ui.List");
+		js.property("element", getClientId());
 		String name = getName(context);
 		if (name!=null) {
-			out.comma().property("name",name);
+			js.comma().property("name",name);
 		}
 		if (source!=null) {
-			out.comma().propertyRaw("source", "hui.ui.get('"+source+"')");
+			js.comma().propertyRaw("source", "hui.ui.get('"+source+"')");
 		}
-		out.endNewObject();
-		out.endScopedScript();
+		js.endNewObject();
 	}
 
 	public void setName(String name) {

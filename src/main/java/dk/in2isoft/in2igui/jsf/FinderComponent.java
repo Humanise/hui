@@ -8,6 +8,7 @@ import javax.faces.context.FacesContext;
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.Components;
 import dk.in2isoft.commons.jsf.Dependencies;
+import dk.in2isoft.commons.jsf.ScriptWriter;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.in2igui.data.FinderConfiguration;
 import dk.in2isoft.in2igui.data.FinderConfiguration.FinderListConfiguration;
@@ -15,7 +16,7 @@ import dk.in2isoft.in2igui.data.FinderConfiguration.FinderSearchConfiguration;
 
 @FacesComponent(value=FinderComponent.TYPE)
 @Dependencies(
-	js = {"/hui/js/finder.js"},
+	js = {"/hui/js/Finder.js"},
 	components = {HUIComponent.class,ListComponent.class,WindowComponent.class,ButtonComponent.class,SearchFieldComponent.class,SourceComponent.class,UploadComponent.class,LayoutComponent.class,OverflowComponent.class,BarComponent.class,SelectionComponent.class}
 )
 public class FinderComponent extends AbstractComponent {
@@ -48,28 +49,29 @@ public class FinderComponent extends AbstractComponent {
 
 		String name = getName(context);
 		
-		out.startScopedScript();
-		out.startNewObject("hui.ui.Finder");
-		out.property("name", name);
+		
+		ScriptWriter js = out.getScriptWriter();
+		
+		js.startNewObject("hui.ui.Finder");
+		js.property("name", name);
 		String url = getUrl(context);
 		if (isNotBlank(url)) {
-			out.comma().property("url", url);
+			js.comma().property("url", url);
 		}
 		if (config!=null) {
 			if (isNotBlank(config.getUrl())) {
-				out.comma().property("url", config.getUrl());
+				js.comma().property("url", config.getUrl());
 			}
 			FinderListConfiguration list = config.getList();
 			if (list!=null && list.getUrl()!=null) {
-				out.comma().startObjectProperty("list").property("url", list.getUrl()).endObjectProperty();
+				js.comma().startObjectProperty("list").property("url", list.getUrl()).endObjectProperty();
 			}
 			FinderSearchConfiguration search = config.getSearch();
 			if (search!=null && isNotBlank(search.getParameter())) {
-				out.comma().startObjectProperty("search").property("parameter", search.getParameter()).endObjectProperty();
+				js.comma().startObjectProperty("search").property("parameter", search.getParameter()).endObjectProperty();
 			}
 		}
-		out.endNewObject();
-		out.endScopedScript();
+		js.endNewObject();
 	}
 
 	public String buildConfig(FacesContext context) {

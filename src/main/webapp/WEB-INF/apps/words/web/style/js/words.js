@@ -1,3 +1,6 @@
+require(['all'],function() {
+
+
 var wordsApp = {
 	$ready : function() {
 		hui.drag.listen({
@@ -78,3 +81,6 @@ var wordsApp = {
 }
 
 hui.ui.listen(wordsApp);
+
+  
+})

@@ -7,9 +7,11 @@ import javax.faces.context.FacesContext;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.ClassBuilder;
+import dk.in2isoft.commons.jsf.Dependencies;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=IconComponent.FAMILY)
+@Dependencies(css={"/WEB-INF/core/web/css/oo_icon.css","/WEB-INF/core/web/css/oo_font.css"},components={OnlineObjectsComponent.class})
 public class IconComponent extends AbstractComponent {
 
 

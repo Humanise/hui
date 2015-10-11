@@ -5,13 +5,19 @@ import java.io.IOException;
 import javax.faces.component.FacesComponent;
 import javax.faces.context.FacesContext;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.Components;
+import dk.in2isoft.commons.jsf.Dependencies;
+import dk.in2isoft.commons.jsf.ScriptWriter;
 import dk.in2isoft.commons.jsf.TagWriter;
 
+@Dependencies(
+		js = {"/hui/js/TextField.js"},
+		css = {"/hui/css/formula.css"},
+		components = {HUIComponent.class}
+	)
 @FacesComponent(value=TextFieldComponent.TYPE)
 public class TextFieldComponent extends AbstractComponent {
 
@@ -96,19 +102,18 @@ public class TextFieldComponent extends AbstractComponent {
 		} else {
 			writer.endSpan();
 		}
-		writer.startScopedScript();
-		writer.write("new hui.ui.TextField({element:'").write(id).write("'");
+		ScriptWriter js = writer.getScriptWriter();
+		js.startNewObject("hui.ui.TextField").property("element", id);
 		if (name!=null) {
-			writer.write(",name:'"+StringEscapeUtils.escapeJavaScript(name)+"'");
+			js.comma().property("name", name);
 		}
 		if (key!=null) {
-			writer.write(",key:'"+StringEscapeUtils.escapeJavaScript(key)+"'");
+			js.comma().property("key", key);
 		}
 		if (maxHeight!=null) {
-			writer.write(",maxHeight:"+maxHeight);
+			js.comma().property("maxHeight", maxHeight);
 		}
-		writer.write("});");
-		writer.endScopedScript();
+		js.endNewObject();
 	}
 
 	public void setName(String name) {

@@ -1,6 +1,6 @@
-var wordView = {
+var wordView = window.wordView = {
 	language : null,
-	text : null,
+	text : undefined,
 	activeRelation : null,
 	activeRelationUrl : null,
 	
@@ -14,6 +14,13 @@ var wordView = {
 			}
 		}
 	},
+  
+  getText : function() {
+    if (this.text == undefined) {
+      this.text = hui.get.firstByClass(document.body,'words_word').getAttribute('data-text');
+    }
+    return this.text;
+  },
 
 	_attach : function() {
 		hui.listen('word','click',function(e) {
@@ -50,7 +57,7 @@ var wordView = {
 	
 	_update : function(options) {
 		oo.update({ id : 'word', $success : function() {
-			hui.ui.showMessage({text:options.text,icon:'common/success',duration:2000});
+			hui.ui.showMessage({text : options.text, icon : 'common/success', duration : 2000});
 			this._attach();
 		}.bind(this)});
 	},
@@ -132,7 +139,7 @@ var wordView = {
 		var diagram = hui.ui.get('diagram');
 		hui.ui.request({
 			url : oo.appContext+'/diagram.json',
-			parameters : {word:this.text},
+			parameters : {word:this.getText()},
 			$object : function(data) {
 				diagram.$objectsLoaded(data);				
 			}
@@ -168,7 +175,11 @@ var wordView = {
 		
 		hui.ui.request({
 			url : oo.appContext+'/createWord',
-			parameters : { language : values.language, category : values.category, text : this.text },
+			parameters : {
+        language : values.language,
+        category : values.category, 
+        text : this.getText()
+      },
 			$success : function(id) {
 				this._update({text:{en:'The variant has been added',da:'Varianten er tilføjet'}});
 			}.bind(this),
@@ -259,4 +270,4 @@ var wordView = {
 	}
 };
 
-hui.ui.listen(wordView)
+hui.ui.listen(wordView);

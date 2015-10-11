@@ -11,7 +11,7 @@ import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(OverflowComponent.TYPE)
 @Dependencies(
-	js = {"/hui/js/overflow.js"},
+	js = {"/hui/js/Overflow.js"},
 	css = {"/hui/css/overflow.css"},
 	components = {HUIComponent.class}
 )

@@ -9,18 +9,16 @@
 >
 	<ui:composition template="templates/plain.xhtml">
 		
-		<ui:define name="scripts">
-			<o:script src="/style/js/word_view.js"/>
-		</ui:define>
 		
 		<ui:define name="title">#{wordsWordView.text} - </ui:define>
 		
 		<ui:define name="body">
+      <o:dependency src="/WEB-INF/apps/words/web/style/js/word_view.js"/>
+
+      <gui:confirm/>
+
 			<div class="words">
-				<o:script>
-					wordView.text = "#{wordsWordView.text}";
-				</o:script>
-				<div id="word" class="words_word">
+				<div id="word" class="words_word" data-text="#{wordsWordView.text}">
 					<o:link name="toggleExpanded" styleClass="words_word_expand" plain="true">
 						<o:icon icon="info"/>
 					</o:link>
