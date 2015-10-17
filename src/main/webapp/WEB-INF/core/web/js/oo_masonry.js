@@ -188,4 +188,4 @@ oo.Masonry.prototype = {
 			'</p>'+
 		'</div>';
 	}
-}
+};

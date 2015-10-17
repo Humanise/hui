@@ -61,26 +61,12 @@ import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspectiveQuery;
 import dk.in2isoft.onlineobjects.modules.networking.NetworkResponse;
 import dk.in2isoft.onlineobjects.ui.Request;
-import dk.in2isoft.onlineobjects.ui.ScriptWriter;
-import dk.in2isoft.onlineobjects.ui.StylesheetWriter;
 import dk.in2isoft.onlineobjects.ui.data.SimpleEntityPerspective;
 import dk.in2isoft.onlineobjects.ui.data.ViewResult;
 
 public class ReaderController extends ReaderControllerBase {
 
 	private static Logger log = Logger.getLogger(ReaderController.class);
-
-	@Path(expression = "/script.[0-9]+.js")
-	public void script(Request request) throws IOException, EndUserException {
-		ScriptWriter writer = new ScriptWriter(request, configurationService);
-		writer.write(publicScript);
-	}
-
-	@Path(expression = "/style.[0-9]+.css")
-	public void style(Request request) throws IOException, EndUserException {
-		StylesheetWriter writer = new StylesheetWriter(request, configurationService);
-		writer.write(publicStyle);
-	}
 	
 	private Pair<Integer,List<Entity>> search(Request request, int page, int pageSize) throws ExplodingClusterFuckException {
 		ReaderQuery rQuery = new ReaderQuery();

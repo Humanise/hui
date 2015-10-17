@@ -15,7 +15,7 @@ import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.ui.jsf.model.MasonryItem;
 
 @FacesComponent(value=MasonryComponent.FAMILY)
-@Dependencies(js = { "/WEB-INF/core/web/js/oo_masonry.js" }, css = { "/WEB-INF/core/web/css/oo_masonry.css" }, components = { OnlineObjectsComponent.class })
+@Dependencies(js = { "/WEB-INF/core/web/js/oo_masonry.js" }, css = { "/WEB-INF/core/web/css/oo_masonry.css" }, requires = { OnlineObjectsComponent.class })
 public class MasonryComponent extends AbstractComponent {
 
 	public static final String FAMILY = "onlineobjects.masonry";
@@ -47,11 +47,11 @@ public class MasonryComponent extends AbstractComponent {
 		
 		out.endDiv();
 		
-		ScriptWriter js = out.getScriptWriter();		
+		ScriptWriter js = out.getScriptWriter().startScript();		
 		js.startNewObject("oo.Masonry").property("element", getClientId());
 		if (Strings.isNotBlank(name)) {
 			js.comma().property("name", name);
 		}
-		js.endNewObject();
+		js.endNewObject().endScript();
 	}
 }

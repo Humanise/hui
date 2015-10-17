@@ -12,7 +12,7 @@ import dk.in2isoft.commons.jsf.ScriptWriter;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(SearchFieldComponent.TYPE)
-@Dependencies(js = { "/hui/js/hui_animation.js", "/hui/js/SearchField.js" }, css = { "/hui/css/searchfield.css" }, components = { HUIComponent.class })
+@Dependencies(js = { "/hui/js/hui_animation.js", "/hui/js/SearchField.js" }, css = { "/hui/css/searchfield.css" }, requires = { HUIComponent.class })
 public class SearchFieldComponent extends AbstractComponent {
 
 	protected static final String TYPE = "hui.searchfield";
@@ -60,7 +60,7 @@ public class SearchFieldComponent extends AbstractComponent {
 		writer.endElement("input");
 		writer.endSpan().endSpan().endSpan();
 		
-		ScriptWriter js = writer.getScriptWriter();
+		ScriptWriter js = writer.getScriptWriter().startScript();
 		js.startNewObject("hui.ui.SearchField").property("element", id);
 		if (name != null) {
 			js.comma().property("name", name);
@@ -71,7 +71,7 @@ public class SearchFieldComponent extends AbstractComponent {
 		if (expandedWidth > 0) {
 			js.comma().property("expandedWidth", expandedWidth);
 		}
-		js.endNewObject();
+		js.endNewObject().endScript();
 	}
 
 	public void setName(String name) {

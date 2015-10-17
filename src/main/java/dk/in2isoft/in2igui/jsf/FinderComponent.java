@@ -17,7 +17,7 @@ import dk.in2isoft.in2igui.data.FinderConfiguration.FinderSearchConfiguration;
 @FacesComponent(value=FinderComponent.TYPE)
 @Dependencies(
 	js = {"/hui/js/Finder.js"},
-	components = {HUIComponent.class,ListComponent.class,WindowComponent.class,ButtonComponent.class,SearchFieldComponent.class,SourceComponent.class,UploadComponent.class,LayoutComponent.class,OverflowComponent.class,BarComponent.class,SelectionComponent.class}
+	requires = {HUIComponent.class}, uses = {ListComponent.class,WindowComponent.class,ButtonComponent.class,SearchFieldComponent.class,SourceComponent.class,UploadComponent.class,LayoutComponent.class,OverflowComponent.class,BarComponent.class,SelectionComponent.class}
 )
 public class FinderComponent extends AbstractComponent {
 
@@ -50,7 +50,7 @@ public class FinderComponent extends AbstractComponent {
 		String name = getName(context);
 		
 		
-		ScriptWriter js = out.getScriptWriter();
+		ScriptWriter js = out.getScriptWriter().startScript();
 		
 		js.startNewObject("hui.ui.Finder");
 		js.property("name", name);
@@ -71,7 +71,7 @@ public class FinderComponent extends AbstractComponent {
 				js.comma().startObjectProperty("search").property("parameter", search.getParameter()).endObjectProperty();
 			}
 		}
-		js.endNewObject();
+		js.endNewObject().endScript();
 	}
 
 	public String buildConfig(FacesContext context) {

@@ -20,17 +20,8 @@ import dk.in2isoft.onlineobjects.model.Statement;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.service.language.TextAnalysis;
 import dk.in2isoft.onlineobjects.ui.Request;
-import dk.in2isoft.onlineobjects.ui.ScriptWriter;
-
 
 public class APIController extends APIControllerBase {
-
-
-	@Path(expression="/script.[0-9]+.js")
-	public void script(Request request) throws IOException, EndUserException {
-		ScriptWriter writer = new ScriptWriter(request, configurationService);
-		writer.write(publicScript);
-	}
 
 	@Path(expression="/")
 	public void front(Request request) throws IOException {
@@ -67,9 +58,9 @@ public class APIController extends APIControllerBase {
 		
 		// TODO Validate URL
 		
-		System.out.println(url);
-		System.out.println(quote);
-		System.out.println(secret);
+		//System.out.println(url);
+		//System.out.println(quote);
+		//System.out.println(secret);
 				
 		User user = securityService.getUserBySecret(secret);
 		if (user!=null) {

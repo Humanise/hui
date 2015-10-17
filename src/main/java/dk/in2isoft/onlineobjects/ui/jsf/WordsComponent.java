@@ -7,12 +7,16 @@ import javax.faces.component.FacesComponent;
 import javax.faces.context.FacesContext;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
+import dk.in2isoft.commons.jsf.Dependencies;
+import dk.in2isoft.commons.jsf.ScriptWriter;
 import dk.in2isoft.commons.jsf.TagWriter;
+import dk.in2isoft.in2igui.jsf.OverlayComponent;
 import dk.in2isoft.onlineobjects.core.Pair;
 import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.util.Messages;
 
 @FacesComponent(value=WordsComponent.FAMILY)
+@Dependencies(js = { "/WEB-INF/core/web/js/oo_words.js" }, css = { "/WEB-INF/core/web/css/oo_words.css" }, requires = { OnlineObjectsComponent.class}, uses = { OverlayComponent.class })
 public class WordsComponent extends AbstractComponent {
 
 	public static final String FAMILY = "onlineobjects.words";
@@ -53,13 +57,12 @@ public class WordsComponent extends AbstractComponent {
 		}
 		out.endP();
 		if (editable) {
-			out.startScript();
-			out.startNewObject("oo.Words").property("element", id);
+			ScriptWriter js = out.getScriptWriter().startScript();
+			js.startNewObject("oo.Words").property("element", id);
 			if (name!=null) {
-				out.comma().property("name", name);
+				js.comma().property("name", name);
 			}
-			out.endNewObject();
-			out.endScript();
+			js.endNewObject().endScript();
 		}
 	}
 

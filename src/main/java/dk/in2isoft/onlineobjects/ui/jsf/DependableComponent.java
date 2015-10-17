@@ -7,4 +7,6 @@ public interface DependableComponent {
 	String[] getScripts(FacesContext context);
 
 	String[] getStyles(FacesContext context);
+
+	Class<?>[] getComponents(FacesContext context);
 }

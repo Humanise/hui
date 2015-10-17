@@ -7,12 +7,15 @@ import javax.faces.context.FacesContext;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.Components;
+import dk.in2isoft.commons.jsf.Dependencies;
+import dk.in2isoft.commons.jsf.ScriptWriter;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.in2igui.jsf.CheckboxComponent;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.model.Entity;
 
 @FacesComponent(value=PermissionsComponent.FAMILY)
+@Dependencies(js = { "/WEB-INF/core/web/js/oo_permissions.js" }, requires = { OnlineObjectsComponent.class}, uses = { CheckboxComponent.class })
 public class PermissionsComponent extends AbstractComponent {
 
 
@@ -44,8 +47,8 @@ public class PermissionsComponent extends AbstractComponent {
 		check.setValue(publicView);
 		check.encodeAll(context);
 		out.endDiv();
-		out.startScript();
-		out.startNewObject("oo.Permissions").property("element", getClientId()).comma().property("entityId", entity.getId()).endNewObject();
-		out.endScript();
+		ScriptWriter js = out.getScriptWriter().startScript();
+		js.startNewObject("oo.Permissions").property("element", getClientId()).comma().property("entityId", entity.getId()).endNewObject();
+		js.endScript();
 	}
 }

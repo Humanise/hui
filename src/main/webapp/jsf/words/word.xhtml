@@ -13,8 +13,7 @@
 		<ui:define name="title">#{wordsWordView.text} - </ui:define>
 		
 		<ui:define name="body">
-      <o:dependency src="/WEB-INF/apps/words/web/style/js/word_view.js"/>
-
+      <o:dependency from="local" src="/js/word_view.js"/>
       <gui:confirm/>
 
 			<div class="words">
@@ -122,7 +121,7 @@
 					</p>
 					<gui:diagram name="diagram"/>
 					<c:if test="#{wordsLayoutView.loggedIn}">
-						<gui:boundPanel name="wordEditor" hideOnClick="true" width="400">
+						<gui:boundPanel name="wordEditor" hideOnClick="true" width="400" variant="light">
 							<div class="panel_body">
 								<h2>#{msg.lexical_categories}</h2>
 								<ul class="selection">
@@ -135,7 +134,7 @@
 							</div>
 						</gui:boundPanel>
 					
-						<gui:boundPanel name="languagePanel" hideOnClick="true" width="200">
+						<gui:boundPanel name="languagePanel" hideOnClick="true" width="200" variant="light">
 							<div class="panel_body">
 								<h2>#{msg.languages}</h2>
 								<ul class="selection">
@@ -146,7 +145,7 @@
 							</div>
 						</gui:boundPanel>
 					
-						<gui:boundPanel name="relationKindPanel" modal="transparent" width="200">
+						<gui:boundPanel name="relationKindPanel" modal="transparent" width="200" variant="light">
 							<div class="panel_body" onclick="wordView.selectRelationKind(event)">
 								<h2>#{msg.relation_kind}</h2>
 								<ul class="selection">

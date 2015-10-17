@@ -71,6 +71,7 @@ oo.update = function(options) {
 	}
 	hui.ui.request({
 		url : document.location+'',
+    headers : {'OnlineObjects-Scripts' : 'united'},
 		$success : function(t) {
 			var e = hui.build('div',{html:t.responseText});
 			for (var i=0; i < nodes.length; i++) {

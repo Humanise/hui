@@ -11,11 +11,10 @@
 	
 	<f:loadBundle basename="dk.in2isoft.onlineobjects.service.authentication.views.msg.AuthenticationLoginView" var="msg"/>
 	
-	<head>
-		<title>OnlineObjects</title>
-		<o:stylesheet href="/style.css" integrateCache="true"/>
-		<o:script src="/script.js" integrateCache="true"/>
-	</head>
+	<o:head>
+		<title>Authentication - OnlineObjects</title>
+  	<o:fonts/>
+	</o:head>
 	
 	<o:body>
 		
@@ -41,6 +40,8 @@
 				</p>
 			</gui:formula>
 		</div>
+    <o:dependency src="/WEB-INF/services/authentication/web/css/style.css"/>
+    <o:dependency src="/WEB-INF/services/authentication/web/js/login.js"/>
 	</o:body>
 	
 </html>

@@ -25,11 +25,11 @@ oo.Words.prototype = {
 		}
 	},
 	_showFinder : function() {
-		hui.ui.get('wordFinder').show(function(value) {
+		oo.WordFinder.get().show(function(value) {
 			this.fire('add',{id:value.id,callback:this._reload.bind(this)});
 		}.bind(this))
 	},
 	_reload : function() {
-		oo.update({id:this.element.id,$success : this._addBehavior.bind(this)});
+		oo.update({id:this.element.id,$success : this._attach.bind(this)});
 	}
-}
+};

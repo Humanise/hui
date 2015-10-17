@@ -10,7 +10,6 @@ import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.modules.inbox.InboxService;
 import dk.in2isoft.onlineobjects.modules.networking.HTMLService;
 import dk.in2isoft.onlineobjects.services.LanguageService;
-import dk.in2isoft.onlineobjects.ui.Blend;
 import dk.in2isoft.onlineobjects.ui.Request;
 
 public abstract class APIControllerBase extends ApplicationController {
@@ -19,17 +18,6 @@ public abstract class APIControllerBase extends ApplicationController {
 	protected HTMLService htmlService;
 	protected SecurityService securityService;
 	protected InboxService inboxService;
-
-	protected static final Blend publicScript;
-	
-	static {
-
-		publicScript = new Blend("api_public_script");
-		publicScript.addPath("hui","js","hui.js");
-		publicScript.addPath("hui","js","hui_animation.js");
-		publicScript.addPath("hui","js","ui.js");
-		publicScript.addPath("WEB-INF","apps","api","web","js","script.js");
-	}
 	
 	public APIControllerBase() {
 		super("api");

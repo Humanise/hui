@@ -11,7 +11,7 @@ import dk.in2isoft.commons.jsf.Dependencies;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=BoxComponent.TYPE)
-@Dependencies(js = { "/hui/js/Box.js" }, css = { "/hui/css/box.css" }, components = { HUIComponent.class })
+@Dependencies(js = { "/hui/js/Box.js" }, css = { "/hui/css/box.css" }, requires = { HUIComponent.class })
 public class BoxComponent extends AbstractComponent {
 
 	public static final String TYPE = "hui.box";

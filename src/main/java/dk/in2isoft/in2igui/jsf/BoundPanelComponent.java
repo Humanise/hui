@@ -13,7 +13,7 @@ import dk.in2isoft.commons.jsf.ScriptWriter;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=BoundPanelComponent.TYPE)
-@Dependencies(js = { "/hui/js/hui_animation.js", "/hui/js/BoundPanel.js" }, css = { "/hui/css/boundpanel.css" }, components = { HUIComponent.class })
+@Dependencies(js = { "/hui/js/hui_animation.js", "/hui/js/BoundPanel.js" }, css = { "/hui/css/boundpanel.css" }, requires = { HUIComponent.class })
 public class BoundPanelComponent extends AbstractComponent {
 
 	public static final String TYPE = "hui.boundPanel";
@@ -64,7 +64,7 @@ public class BoundPanelComponent extends AbstractComponent {
 		out.startDiv("hui_boundpanel_bottom").startDiv().startDiv().endDiv().endDiv().endDiv();
 		out.endDiv();
 		ScriptWriter js = out.getScriptWriter();
-		
+		js.startScript();
 		js.startNewObject("hui.ui.BoundPanel");
 		js.property("element", getClientId());
 		js.comma().property("hideOnClick", hideOnClick);
@@ -81,6 +81,7 @@ public class BoundPanelComponent extends AbstractComponent {
 			js.comma().property("variant",variant);
 		}
 		js.endNewObject();
+		js.endScript();
 	}
 
 	public void setName(String name) {

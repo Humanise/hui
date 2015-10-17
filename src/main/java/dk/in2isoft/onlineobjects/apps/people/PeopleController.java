@@ -11,36 +11,9 @@ import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.modules.images.ImageImporter;
 import dk.in2isoft.onlineobjects.modules.importing.DataImporter;
 import dk.in2isoft.onlineobjects.ui.Request;
-import dk.in2isoft.onlineobjects.ui.ScriptWriter;
-import dk.in2isoft.onlineobjects.ui.StylesheetWriter;
 
 
 public class PeopleController extends PeopleControllerBase {
-	
-
-	@Path(expression="/style.[0-9]+.css")
-	public void style(Request request) throws IOException, EndUserException {
-		StylesheetWriter writer = new StylesheetWriter(request, configurationService);
-		writer.write(publicStyle);
-	}
-
-	@Path(expression="/style_private.[0-9]+.css")
-	public void stylePrivate(Request request) throws IOException, EndUserException {
-		StylesheetWriter writer = new StylesheetWriter(request, configurationService);
-		writer.write(privateStyle);
-	}
-
-	@Path(expression="/script.[0-9]+.js")
-	public void script(Request request) throws IOException, EndUserException {
-		ScriptWriter writer = new ScriptWriter(request, configurationService);	
-		writer.write(publicScript);
-	}
-
-	@Path(expression="/script_private.[0-9]+.js")
-	public void scriptPrivate(Request request) throws IOException, EndUserException {
-		ScriptWriter writer = new ScriptWriter(request, configurationService);
-		writer.write(privateScript);
-	}
 	
 
 	@Path

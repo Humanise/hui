@@ -15,7 +15,7 @@ import dk.in2isoft.commons.jsf.TagWriter;
 @Dependencies(
 		js = {"/hui/js/Bar.js"},
 		css = {"/hui/css/bar.css"},
-		components = {HUIComponent.class}
+		requires = {HUIComponent.class}
 	)
 public class BarComponent extends AbstractComponent {
 

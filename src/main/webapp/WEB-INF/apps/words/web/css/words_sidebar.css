@@ -28,16 +28,16 @@ div.words_sidebar h3 span
 	color: #ccc;
 }
 
-ul.words_sidebar_index
+.words_sidebar_index
 {
 	list-style: none;
 	padding: 0;
-	margin: 10px -7px;
+	margin: 15px -7px 10px;
 	text-align: center;
 	font-size: 0;
 }
 
-ul.words_sidebar_index li
+.words_sidebar_index li
 {
 	display: inline-block;
 }
@@ -47,15 +47,16 @@ body.oo_msie7 ul.words_sidebar_index li
 	display: inline;
 }
 
-ul.words_sidebar_index a
+.words_sidebar_index a
 {
 	display: block;
 	width: 28px;
 	text-align: center;
-	font-size: 20pt;
+	font-size: 16pt;
 	height: 38px;
 	line-height: 38px;
 	border-radius: 3px;
+  text-decoration: none;
 }
 
 li.words_sidebar_index_symbols a

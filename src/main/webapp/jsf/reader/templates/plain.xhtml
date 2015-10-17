@@ -10,16 +10,13 @@
 
 	<o:doctype/>
 	<html xmlns="http://www.w3.org/1999/xhtml">
-		<h:head>
+		<o:head>
 			<meta name="viewport" content="user-scalable=yes, width=device-width, initial-scale = 1, maximum-scale = 10, minimum-scale = 0.2"/>
-			<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 			<title>Reader - OnlineObjects</title>
-			<o:stylesheet href="/style.css" integrateCache="true"/>
 			<o:fonts additional="Merriweather:400,300,300italic,400italic,700,700italic,900,900italic"/>
-			<o:script src="/script.js" integrateCache="true"/>
 			<gui:scriptSetup/>
 			<o:scriptSetup/>
-		</h:head>
+    </o:head>
 		<o:body>
 			<o:topBar/>
 			<div class="reader_layout">
@@ -41,4 +38,15 @@
 		</o:body>
 	</html>
 
+  <o:dependency from="core" src="/js/oo_view.js"/>
+  <o:dependency from="core" src="/js/oo_segmented.js"/>
+  <o:dependency from="local" src="/js/reader.js"/>
+  <o:dependency from="local" src="/js/address_info.js"/>
+  <o:dependency from="local" src="/js/statements.js"/>
+  <o:dependency from="local" src="/js/statements.js"/>
+
+  <o:dependency src="/hui/css/effects.css"/>
+  <o:dependency from="local" src="/css/reader.css"/>
+  <o:dependency from="local" src="/css/reader_viewer.css"/>
+      
 </f:view>

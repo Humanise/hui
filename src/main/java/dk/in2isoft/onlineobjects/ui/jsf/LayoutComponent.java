@@ -9,10 +9,9 @@ import javax.faces.context.FacesContext;
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.Dependencies;
 import dk.in2isoft.commons.jsf.TagWriter;
-import dk.in2isoft.in2igui.jsf.HUIComponent;
 
 @FacesComponent(value=LayoutComponent.FAMILY)
-@Dependencies(css={"/WEB-INF/core/web/css/oo_layout.css"},components={OnlineObjectsComponent.class})
+@Dependencies(css={"/WEB-INF/core/web/css/oo_layout.css"},requires={OnlineObjectsComponent.class})
 public class LayoutComponent extends AbstractComponent {
 
 	public static final String FAMILY = "onlineobjects.layout";

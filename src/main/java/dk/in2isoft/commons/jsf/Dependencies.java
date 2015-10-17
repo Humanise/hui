@@ -13,5 +13,6 @@ public @interface Dependencies {
 
 	String[] js() default {};
 	String[] css() default {};
-	Class<? extends AbstractComponent>[] components() default {};
+	Class<? extends AbstractComponent>[] requires() default {};
+	Class<? extends AbstractComponent>[] uses() default {};
 }

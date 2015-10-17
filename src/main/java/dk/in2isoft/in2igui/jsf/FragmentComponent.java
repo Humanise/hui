@@ -10,7 +10,7 @@ import dk.in2isoft.commons.jsf.Dependencies;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=FragmentComponent.TYPE)
-@Dependencies(js = { "/hui/js/Fragment.js" }, components = { HUIComponent.class })
+@Dependencies(js = { "/hui/js/Fragment.js" }, requires = { HUIComponent.class })
 public class FragmentComponent extends AbstractComponent {
 
 	public static final String TYPE = "hui.fragment";
@@ -41,7 +41,7 @@ public class FragmentComponent extends AbstractComponent {
 	@Override
 	protected void encodeEnd(FacesContext context, TagWriter out) throws IOException {
 		out.endDiv();
-		out.getScriptWriter().startNewObject("hui.ui.Fragment").property("element", getClientId()).comma().property("name", name).endNewObject();
+		out.getScriptWriter().startScript().startNewObject("hui.ui.Fragment").property("element", getClientId()).comma().property("name", name).endNewObject().endScript();
 	}
 
 	public void setName(String name) {

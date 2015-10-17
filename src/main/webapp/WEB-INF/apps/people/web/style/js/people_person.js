@@ -6,6 +6,9 @@ var personView = {
 		this.container = hui.get('profileContainer');
 		this.profileInfo = hui.get('profileInfo');
 		this.editLink = hui.get('editProfile');
+    
+    this.userId = parseInt(this.container.getAttribute('data-id'),10);
+    
 		this._attach();
 	},
 	

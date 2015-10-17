@@ -1,35 +1,39 @@
-.account
-{
-	padding: 20px 20px 20px;
+.account_box {
+  box-shadow: 0 1px 3px rgba(0,0,0,.2);
+  border-radius: 3px;
+  background: #fff;
+  width: 500px;
+  margin: 20px auto;
 }
 
-.account_title
-{
-	margin: -3px -10px 10px;
-	font-family: 'Lato','Hevetica',Arial,sans-serif;
-	font-weight: 100;
-	line-height: 24px;
-	border-bottom: 1px solid #eee;
-	padding: 0 10px 12px;
+.account {
+  padding: 20px 20px 20px;
 }
 
-.account_user
-{
-	font-size: 11pt;
-	font-weight: 200;
+.account_title {
+  margin: -3px -10px 10px;
+  font-family: 'Lato','Hevetica',Arial,sans-serif;
+  font-weight: 100;
+  line-height: 24px;
+  border-bottom: 1px solid #eee;
+  padding: 0 10px 12px;
 }
 
-.account_user_label
-{
-	font-weight: 200;
-	color: #999;
+.account_user {
+  font-size: 11pt;
+  font-weight: 200;
+}
+
+.account_user_label {
+  font-weight: 200;
+  color: #999;
 }
 
 .account_secret {
-	-webkit-appearance: none;
-	display: block;
-	font-family: monospace;
-	width: 100%;
-	font-size: 14px;
-	border: 1px solid #eee;
+  -webkit-appearance: none;
+  display: block;
+  font-family: monospace;
+  width: 100%;
+  font-size: 14px;
+  border: 1px solid #eee;
 }

@@ -17,7 +17,7 @@ import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.onlineobjects.ui.jsf.model.Option;
 
 @FacesComponent(value=DropDownComponent.TYPE)
-@Dependencies(js = { "/hui/js/hui_animation.js", "/hui/js/DropDown.js" }, css = { "/hui/css/dropdown.css" }, components = { HUIComponent.class })
+@Dependencies(js = { "/hui/js/hui_animation.js", "/hui/js/DropDown.js" }, css = { "/hui/css/dropdown.css" }, requires = { HUIComponent.class })
 public class DropDownComponent extends AbstractComponent {
 
 	public static final String TYPE = "hui.dropDown";
@@ -51,7 +51,7 @@ public class DropDownComponent extends AbstractComponent {
 		writer.startVoidA(cls).withId(id);
 		writer.startSpan().startSpan().startStrong().endStrong().endSpan().endSpan();
 		writer.endA();
-		ScriptWriter js = writer.getScriptWriter();
+		ScriptWriter js = writer.getScriptWriter().startScript();
 		
 		js.startNewObject("hui.ui.DropDown").property("element", id);
 		
@@ -69,7 +69,7 @@ public class DropDownComponent extends AbstractComponent {
 		if (value!=null) {
 			js.comma().property("value", value.toString());
 		}
-		js.endNewObject();
+		js.endNewObject().endScript();
 	}
 	
 	private String getItems(FacesContext context) {

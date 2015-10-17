@@ -17,7 +17,7 @@ import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.commons.lang.Strings;
 
 @FacesComponent(value = ButtonComponent.TYPE)
-@Dependencies(js = { "/hui/js/hui_animation.js", "/hui/js/Button.js" }, css = { "/hui/css/button.css" }, components = { HUIComponent.class })
+@Dependencies(js = { "/hui/js/hui_animation.js", "/hui/js/Button.js" }, css = { "/hui/css/button.css" }, requires = { HUIComponent.class })
 public class ButtonComponent extends AbstractComponent {
 
 	public static final String TYPE = "hui.button";
@@ -67,6 +67,7 @@ public class ButtonComponent extends AbstractComponent {
 		encodeMarkup(context, out);
 		String id = getClientId();
 		ScriptWriter js = out.getScriptWriter();
+		js.startScript();
 		js.startNewObject(id, "hui.ui.Button").property("element", id);
 		js.comma().property("submit", submit);
 		String name = getName(context);
@@ -84,11 +85,12 @@ public class ButtonComponent extends AbstractComponent {
 			js.write(",confirm:{text:'").writeScriptString(confirmation).write("',okText:'").writeScriptString(okText).write("',cancelText:'").writeScriptString(canceltext)
 					.write("'}");
 		}
-		js.endNewObject();
 		String click = getClick(context);
 		if (StringUtils.isNotBlank(click)) {
-			js.write("\n" + id + ".listen({$click:function(widget) {").write(click).write("}});");
+			js.comma().write("listener : {$click:function(widget) {").write(click).write("}}");
 		}
+		js.endNewObject();
+		js.endScript();
 	}
 
 	public void encodeMarkup(FacesContext context, TagWriter writer) throws IOException {

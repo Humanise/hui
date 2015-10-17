@@ -8,11 +8,14 @@ import javax.faces.context.FacesContext;
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.ClassBuilder;
 import dk.in2isoft.commons.jsf.Components;
+import dk.in2isoft.commons.jsf.Dependencies;
+import dk.in2isoft.commons.jsf.ScriptWriter;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.in2igui.jsf.SourceComponent;
 
 @FacesComponent(value=SelectionComponent.FAMILY)
+@Dependencies(css={"/WEB-INF/core/web/css/oo_selection.css"},js={"/WEB-INF/core/web/js/oo_selection.js"},requires={OnlineObjectsComponent.class})
 public class SelectionComponent extends AbstractComponent {
 
 	public static final String FAMILY = "onlineobjects.selection";
@@ -57,20 +60,20 @@ public class SelectionComponent extends AbstractComponent {
 				sourceName = sourceComponent.getName();
 			}
 		}
-		
-		out.startScopedScript();
-		out.startNewObject("oo.Selection").property("element", getClientId());
+		ScriptWriter js = out.getScriptWriter();
+		js.startScript();
+		js.startNewObject("oo.Selection").property("element", getClientId());
 		if (Strings.isNotBlank(name)) {
-			out.comma().property("name", name);
+			js.comma().property("name", name);
 		}
 		if (value!=null) {
-			out.comma().property("value", value.toString());
+			js.comma().property("value", value.toString());
 		}
 		if (Strings.isNotBlank(sourceName)) {
-			out.comma().property("source", sourceName);
+			js.comma().property("source", sourceName);
 		}
-		out.endNewObject();
-		out.endScopedScript();
+		js.endNewObject();
+		js.endScript();
 	}
 	
 	@Override

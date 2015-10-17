@@ -19,7 +19,7 @@ import dk.in2isoft.onlineobjects.services.ConfigurationService;
 import dk.in2isoft.onlineobjects.ui.Request;
 
 @FacesComponent(value = LinkComponent.FAMILY)
-@Dependencies(css={"/WEB-INF/core/web/css/oo_link.css"},components={OnlineObjectsComponent.class})
+@Dependencies(css={"/WEB-INF/core/web/css/oo_link.css"},requires={OnlineObjectsComponent.class})
 public class LinkComponent extends AbstractComponent {
 
 	public static final String FAMILY = "onlineobjects.link";
@@ -126,6 +126,7 @@ public class LinkComponent extends AbstractComponent {
 		out.endA();
 		if (Strings.isNotBlank(name)) {
 			ScriptWriter js = out.getScriptWriter();
+			js.startScript();
 			js.startNewObject("oo.Link").property("element", getClientId()).comma().property("name", name);
 			ConfirmComponent confirm = Components.getChild(this,ConfirmComponent.class);
 			if (confirm!=null) {
@@ -135,6 +136,7 @@ public class LinkComponent extends AbstractComponent {
 				js.write(",confirm:{text:'").writeScriptString(confirmation).write("',okText:'").writeScriptString(okText).write("',cancelText:'").writeScriptString(canceltext).write("'}");
 			}
 			js.endNewObject();
+			js.endScript();
 		}
 	}
 

@@ -10,6 +10,8 @@
 	<ui:composition template="templates/plain.xhtml">
 				
 		<ui:define name="body">
+      <o:dependency src="/WEB-INF/apps/people/web/style/css/people_list.css"/>
+      
 			<div class="people_list">
 				<o:header>People</o:header>
 				<o:navigator model="#{peopleListView.userList}" var="list">

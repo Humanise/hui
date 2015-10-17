@@ -2,18 +2,51 @@ package dk.in2isoft.commons.jsf;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.io.Writer;
 
 import org.apache.commons.lang.StringEscapeUtils;
 
 public class ScriptWriter {
 	
-	private StringWriter writer;
+	private Writer writer;
+	private boolean partial;
+	private boolean started;
+
+	public ScriptWriter startScript() throws IOException {
+		if (started) {
+			throw new IllegalStateException("Script writer already started");
+		}
+		started = true;
+		if (partial) {
+			writer.write("<script>");
+		}
+		return this;
+	}
+
+	public ScriptWriter endScript() throws IOException {
+		if (!started) {
+			throw new IllegalStateException("Script writer not started");
+		}
+		started = false;
+		if (partial) {
+			writer.write("</script>");
+		}
+		return this;
+	}
 	
 	public ScriptWriter() {
-		writer = new StringWriter();
+		this.writer = new StringWriter();
+	}
+	
+	public ScriptWriter(Writer writer) {
+		this.partial = true;
+		this.writer = writer;
 	}
 	
 	public ScriptWriter write(Object str) throws IOException {
+		if (!started) {
+			throw new IllegalStateException("Script writer not started");
+		}
 		if (str!=null) {
 			writer.write(str.toString());
 		}

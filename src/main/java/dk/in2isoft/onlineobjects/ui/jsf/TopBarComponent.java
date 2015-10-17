@@ -17,6 +17,7 @@ import dk.in2isoft.in2igui.jsf.BoxComponent;
 import dk.in2isoft.in2igui.jsf.ButtonComponent;
 import dk.in2isoft.in2igui.jsf.FormulaComponent;
 import dk.in2isoft.in2igui.jsf.ListComponent;
+import dk.in2isoft.in2igui.jsf.MessageComponent;
 import dk.in2isoft.in2igui.jsf.SourceComponent;
 import dk.in2isoft.in2igui.jsf.TextFieldComponent;
 import dk.in2isoft.onlineobjects.core.SecurityService;
@@ -27,8 +28,8 @@ import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.util.Messages;
 
 @FacesComponent(value = TopBarComponent.FAMILY)
-@Dependencies(js = { "/WEB-INF/core/web/js/oo_topbar.js" }, css = { "/WEB-INF/core/web/css/oo_topbar.css" }, components = { OnlineObjectsComponent.class,
-		BoundPanelComponent.class, FormulaComponent.class, TextFieldComponent.class, ButtonComponent.class, BoxComponent.class, ListComponent.class, SourceComponent.class })
+@Dependencies(js = { "/WEB-INF/core/web/js/oo_topbar.js" }, css = { "/WEB-INF/core/web/css/oo_topbar.css" }, requires = { OnlineObjectsComponent.class }, uses = {
+		BoundPanelComponent.class, FormulaComponent.class, TextFieldComponent.class, ButtonComponent.class, BoxComponent.class, ListComponent.class, SourceComponent.class, MessageComponent.class, LinkComponent.class })
 public class TopBarComponent extends AbstractComponent {
 
 	public static final String FAMILY = "onlineobjects.topBar";
@@ -111,6 +112,6 @@ public class TopBarComponent extends AbstractComponent {
 	@Override
 	protected void encodeEnd(FacesContext context, TagWriter writer) throws IOException {
 		writer.endDiv();
-		writer.getScriptWriter().startNewObject("oo.TopBar").property("element", getClientId()).endNewObject();
+		writer.getScriptWriter().startScript().startNewObject("oo.TopBar").property("element", getClientId()).endNewObject().endScript();
 	}
 }

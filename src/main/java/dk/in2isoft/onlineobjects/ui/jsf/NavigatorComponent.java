@@ -9,10 +9,12 @@ import javax.faces.render.Renderer;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.Components;
+import dk.in2isoft.commons.jsf.Dependencies;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.onlineobjects.model.Image;
 
 @FacesComponent(value = NavigatorComponent.FAMILY)
+@Dependencies(css={"/WEB-INF/core/web/css/oo_navigator.css"},requires={OnlineObjectsComponent.class})
 public class NavigatorComponent extends AbstractComponent {
 
 	public static final String FAMILY = "onlineobjects.navigator";

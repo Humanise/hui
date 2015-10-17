@@ -11,7 +11,7 @@ import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.in2igui.jsf.HUIComponent;
 
 @FacesComponent(value=OnlineObjectsComponent.FAMILY)
-@Dependencies(js={"/WEB-INF/core/web/js/onlineobjects.js"}, css = {"/WEB-INF/core/web/css/common.css"},components={HUIComponent.class})
+@Dependencies(js={"/WEB-INF/core/web/js/onlineobjects.js"}, css = {"/WEB-INF/core/web/css/common.css"},requires={HUIComponent.class})
 public class OnlineObjectsComponent extends AbstractComponent {
 
 	public static final String FAMILY = "onlineobjects.oo";

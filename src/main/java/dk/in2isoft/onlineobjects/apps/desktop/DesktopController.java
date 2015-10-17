@@ -32,22 +32,8 @@ import dk.in2isoft.onlineobjects.modules.importing.HttpImportTransport;
 import dk.in2isoft.onlineobjects.modules.importing.ImportSession;
 import dk.in2isoft.onlineobjects.modules.importing.UploadImportTransport;
 import dk.in2isoft.onlineobjects.ui.Request;
-import dk.in2isoft.onlineobjects.ui.ScriptWriter;
-import dk.in2isoft.onlineobjects.ui.StylesheetWriter;
 
 public class DesktopController extends DesktopControlerBase {
-	
-	@Path(expression="/script.[0-9]+.js")
-	public void script(Request request) throws IOException, EndUserException {
-		ScriptWriter writer = new ScriptWriter(request, configurationService);
-		writer.write(publicScript);
-	}
-
-	@Path(expression="/style.[0-9]+.css")
-	public void style(Request request) throws IOException, EndUserException {
-		StylesheetWriter writer = new StylesheetWriter(request, configurationService);
-		writer.write(publicStyle);
-	}
 
 	@Override
 	public void unknownRequest(Request request) throws IOException, EndUserException {

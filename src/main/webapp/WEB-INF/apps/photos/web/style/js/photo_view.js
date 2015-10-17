@@ -4,6 +4,12 @@ var photoView = {
 	username : null,
 	
 	$ready : function() {
+    var data = hui.get.firstByClass(document.body, 'js-data');
+
+		photoView.editable = data.getAttribute('data-editable') == 'true';
+		photoView.imageId = parseInt(data.getAttribute('data-id'),10);
+		photoView.username = data.getAttribute('data-username');
+    
 		if (this.editable) {
 			new oo.InlineEditor({
 				element : 'editableTitle',
@@ -161,7 +167,7 @@ var photoView = {
 		}.bind(this)})
 	},
 	
-	$click$viewMetaData : function(button) {
+	$click$viewMetaData : function() {
 		hui.ui.request({
 			url : oo.appContext+'/getMetaData',
 			parameters : {imageId : this.imageId},
@@ -173,6 +179,7 @@ var photoView = {
 				hui.build('div',{html:html,parent:hui.get('properties')});
 			}
 		});
-		button.setEnabled(false);
 	}
 };
+
+hui.ui.listen(photoView);

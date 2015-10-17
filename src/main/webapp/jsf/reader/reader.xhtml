@@ -89,18 +89,6 @@
 				<div id="my_view" class="oo_view">
 					<div class="oo_spinner"></div>
 				</div>
-				<script>
-				var view = new oo.View({
-					name : 'listView',
-					element : 'my_view',
-					pageSize : 20,
-					source : hui.ui.get('listSource'),
-					emptyHtml : '<div class="list_item_pending"></div>',
-					$render : function(info) {
-						return info.html;
-					}
-				});
-				</script>
 			</gui:overflow>
 			</div>
 		</ui:define>

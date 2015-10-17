@@ -11,14 +11,19 @@ import javax.faces.context.FacesContext;
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.ClassBuilder;
 import dk.in2isoft.commons.jsf.Components;
+import dk.in2isoft.commons.jsf.Dependencies;
+import dk.in2isoft.commons.jsf.ScriptWriter;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.commons.lang.Strings;
+import dk.in2isoft.in2igui.jsf.ProgressIndicatorComponent;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.ui.jsf.model.ImageContainer;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
 
 @FacesComponent(value = GalleryComponent.FAMILY)
+@Dependencies(js = { "/WEB-INF/core/web/js/oo_gallery.js" }, css = { "/WEB-INF/core/web/css/oo_gallery.css" }, requires = { OnlineObjectsComponent.class }, uses = {
+		IconComponent.class, ProgressIndicatorComponent.class })
 public class GalleryComponent extends AbstractComponent {
 
 	public static final String FAMILY = "onlineobjects.gallery";
@@ -34,7 +39,7 @@ public class GalleryComponent extends AbstractComponent {
 	public GalleryComponent() {
 		super(FAMILY);
 	}
-	
+
 	@Override
 	public void restoreState(Object[] state) {
 		var = (String) state[0];
@@ -63,7 +68,6 @@ public class GalleryComponent extends AbstractComponent {
 		Object value = expression.getValue(getFacesContext().getELContext());
 		return (ListModel<Image>) value;
 	}
-	 
 
 	@Override
 	public void encodeChildren(FacesContext context, TagWriter out) throws IOException {
@@ -73,13 +77,13 @@ public class GalleryComponent extends AbstractComponent {
 			return;
 		}
 		decodeRequest(context, model);
-				
+
 		String href = getHref(context);
-		
+
 		ListModelResult<?> result = model.getResult();
 		String id = getClientId();
 
-		ClassBuilder cls = ClassBuilder.with("oo_gallery").add("oo_gallery",variant);
+		ClassBuilder cls = ClassBuilder.with("oo_gallery").add("oo_gallery", variant);
 		out.startDiv(cls).withId(id);
 		encodePaging(out, result.getTotalCount(), model.getPage(), model.getPageSize());
 		out.startOl();
@@ -89,22 +93,21 @@ public class GalleryComponent extends AbstractComponent {
 		int num = 0;
 		for (Object object : result.getList()) {
 			out.startLi();
-			
-			
+
 			int childCount = getChildCount();
-			if (childCount==0) {
+			if (childCount == 0) {
 				encodeImage(out, width, height, href, object, isRemovable(context));
 			} else {
-				if (var!=null) {
+				if (var != null) {
 					context.getExternalContext().getRequestMap().put(var, object);
 				}
 				for (UIComponent child : children) {
 					child.encodeAll(context);
-				}				
+				}
 			}
-			
+
 			out.endLi();
-			if (num>0) {
+			if (num > 0) {
 				imageArray.append(",");
 			}
 			Image image = null;
@@ -114,24 +117,22 @@ public class GalleryComponent extends AbstractComponent {
 			if (object instanceof ImageContainer) {
 				image = ((ImageContainer) object).getImage();
 			}
-			if (image!=null) {
-				imageArray.append("{id:").append(image.getId()).append(",width:")
-				.append(image.getWidth()).append(",height:")
-				.append(image.getHeight()).append("}");
+			if (image != null) {
+				imageArray.append("{id:").append(image.getId()).append(",width:").append(image.getWidth()).append(",height:").append(image.getHeight()).append("}");
 				num++;
 			}
 		}
 		imageArray.append("]");
 		out.endOl();
 		out.endDiv();
-		out.startScopedScript();
-		out.startNewObject("oo.Gallery");
+		ScriptWriter js = out.getScriptWriter().startScript();
+		js.startNewObject("oo.Gallery");
 		if (Strings.isNotBlank(name)) {
-			out.property("name", name).comma();
+			js.property("name", name).comma();
 		}
-		out.property("movable", isMovable(context)).comma();
-		out.property("element", id).comma().propertyRaw("images", imageArray.toString()).comma().property("width", width).comma().property("height", height).endNewObject();
-		out.endScopedScript();
+		js.property("movable", isMovable(context)).comma();
+		js.property("element", id).comma().propertyRaw("images", imageArray.toString()).comma().property("width", width).comma().property("height", height).endNewObject();
+		js.endScript();
 	}
 
 	private void encodeImage(TagWriter out, int width, int height, String href, Object object, boolean removable) throws IOException {
@@ -142,8 +143,8 @@ public class GalleryComponent extends AbstractComponent {
 			image = ((ImageContainer) object).getImage();
 		}
 		out.startSpan("oo_gallery_photo");
-		if (image!=null) {
-			String url = getUrl(image,width,height);
+		if (image != null) {
+			String url = getUrl(image, width, height);
 			if (removable) {
 				out.startSpan("oo_gallery_hover");
 				out.startVoidA("oo_gallery_remove").rel("remove").data(image.getId());
@@ -151,15 +152,15 @@ public class GalleryComponent extends AbstractComponent {
 				out.endA();
 				out.endSpan();
 			}
-			out.startA().withHref(getHref(href,image));
+			out.startA().withHref(getHref(href, image));
 			ImageService imageService = getBean(ImageService.class);
-			if (imageService!=null) {
+			if (imageService != null) {
 				boolean valid = imageService.hasImageFile(image);
 				out.startImg();
 				if (valid) {
 					out.src(url);
 				}
-				out.alt(image.getName()).withStyle("width: "+width+"px; height: "+height+"px;").endImg();
+				out.alt(image.getName()).withStyle("width: " + width + "px; height: " + height + "px;").endImg();
 			}
 			out.endA();
 		}
@@ -171,7 +172,7 @@ public class GalleryComponent extends AbstractComponent {
 		url.append(Components.getRequest().getBaseContext());
 		url.append("/service/image/id").append(image.getId()).append("width").append(width).append("height").append(height);
 		Double rotation = image.getPropertyDoubleValue(Property.KEY_PHOTO_ROTATION);
-		if (rotation!=null) {
+		if (rotation != null) {
 			url.append("rotation").append(rotation);
 		}
 		url.append("sharpen1.0");
@@ -187,17 +188,17 @@ public class GalleryComponent extends AbstractComponent {
 	}
 
 	private Object getHref(String str, Image image) {
-		if (str==null) {
+		if (str == null) {
 			return null;
 		}
 		return str.replaceAll("\\[id\\]", String.valueOf(image.getId()));
 	}
 
 	private void encodePaging(TagWriter writer, int totalCount, int page, int pageSize) throws IOException {
-		if (totalCount==0) {
+		if (totalCount == 0) {
 			return;
 		}
-		//Messages msg = new Messages(this);
+		// Messages msg = new Messages(this);
 		int pages = (int) Math.ceil((double) totalCount / (double) pageSize);
 		if (pages > 1) {
 			writer.startDiv("oo_gallery_navigator");
@@ -213,12 +214,13 @@ public class GalleryComponent extends AbstractComponent {
 			writer.endSpan();
 			writer.endDiv();
 		}
-		//writer.startVoidA("oo_gallery_slideshow").startSpan().write(msg.get("slideshow", getLocale())).endSpan().endA();
+		// writer.startVoidA("oo_gallery_slideshow").startSpan().write(msg.get("slideshow",
+		// getLocale())).endSpan().endA();
 	}
 
 	private void decodeRequest(FacesContext context, ListModel<Image> model) {
 		int page = Components.getIntParameter("page");
-		if (page>0) {
+		if (page > 0) {
 			model.setPage(page - 1);
 		}
 	}
@@ -250,11 +252,11 @@ public class GalleryComponent extends AbstractComponent {
 	public void setVar(String var) {
 		this.var = var;
 	}
-	
+
 	public String getHref() {
 		return href;
 	}
-	
+
 	public String getHref(FacesContext context) {
 		return Components.getExpressionValue(this, "href", href, context);
 	}
@@ -262,11 +264,11 @@ public class GalleryComponent extends AbstractComponent {
 	public void setHref(String href) {
 		this.href = href;
 	}
-	
+
 	public String getVariant() {
 		return variant;
 	}
-	
+
 	public void setVariant(String variant) {
 		this.variant = variant;
 	}
@@ -298,10 +300,10 @@ public class GalleryComponent extends AbstractComponent {
 	public void setHeight(int height) {
 		this.height = height;
 	}
-	
+
 	public void setSize(int size) {
 		this.width = size;
 		this.height = size;
 	}
-	
+
 }

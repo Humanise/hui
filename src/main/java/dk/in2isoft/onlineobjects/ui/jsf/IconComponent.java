@@ -11,7 +11,7 @@ import dk.in2isoft.commons.jsf.Dependencies;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=IconComponent.FAMILY)
-@Dependencies(css={"/WEB-INF/core/web/css/oo_icon.css","/WEB-INF/core/web/css/oo_font.css"},components={OnlineObjectsComponent.class})
+@Dependencies(css={"/WEB-INF/core/web/css/oo_icon.css","/WEB-INF/core/web/css/oo_font.css"},requires={OnlineObjectsComponent.class})
 public class IconComponent extends AbstractComponent {
 
 

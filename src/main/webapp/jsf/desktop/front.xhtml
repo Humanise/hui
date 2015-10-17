@@ -9,7 +9,7 @@
 	xmlns:gui="http://www.in2isoft.dk/in2igui"
 	xmlns:c="http://java.sun.com/jsp/jstl/core">
 	
-	<head>
+	<o:head>
 		<title>OnlineObjects</title>
 		<o:stylesheet href="/style.css" integrateCache="true"/>
 		<o:fonts/>
@@ -17,13 +17,30 @@
 		<o:script src="/script.js" integrateCache="true"/>
 		<gui:scriptSetup/>
 		<o:scriptSetup/>
-	</head>
+	</o:head>
 	
-	<body>
+	<o:body plain="true">
 		<o:topBar/>
 		<div class="dock">
 			<a class="add" href="javascript:desktop.add()">+</a>
 		</div>
-	</body>
+    <o:dependency src="/hui/js/Input.js"/>
+    <o:dependency src="/hui/js/Drawing.js"/>
+    <o:dependency src="/hui/js/ProgressIndicator.js"/>
+
+    <o:dependency src="/WEB-INF/apps/desktop/web/css/desktop.css"/>
+    <o:dependency src="/WEB-INF/apps/desktop/web/css/widget.css"/>
+    <o:dependency src="/WEB-INF/apps/desktop/web/css/dock.css"/>
+    <o:dependency src="/WEB-INF/apps/desktop/web/css/desktop_list.css"/>
+    <o:dependency src="/WEB-INF/apps/desktop/web/css/desktop_searchbar.css"/>
+    <o:dependency src="/WEB-INF/apps/desktop/web/css/desktop_widget_image.css"/>
+    
+    <o:dependency src="/WEB-INF/apps/desktop/web/js/ctrl.js"/>
+    <o:dependency src="/WEB-INF/apps/desktop/web/js/desktop.js"/>
+    <o:dependency src="/WEB-INF/apps/desktop/web/js/desktop_list.js"/>
+    <o:dependency src="/WEB-INF/apps/desktop/web/js/desktop_searchbar.js"/>
+    <o:dependency src="/WEB-INF/apps/desktop/web/js/desktop_widget_bookmarks.js"/>
+    <o:dependency src="/WEB-INF/apps/desktop/web/js/desktop_widget_image.js"/>
+	</o:body>
 	
 </html>

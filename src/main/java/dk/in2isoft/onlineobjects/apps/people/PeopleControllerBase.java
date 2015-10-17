@@ -13,7 +13,6 @@ import dk.in2isoft.onlineobjects.core.exceptions.ContentNotFoundException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.services.ImportService;
-import dk.in2isoft.onlineobjects.ui.Blend;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
 
@@ -23,58 +22,6 @@ public class PeopleControllerBase extends ApplicationController {
 	protected SecurityService securityService;
 	protected CommunityDAO communityDAO;
 	protected ImportService importService;
-
-	protected static Blend publicStyle;
-	protected static Blend privateStyle;
-	protected static Blend publicScript;
-	protected static Blend privateScript;
-	
-	static {
-		publicStyle = new Blend("people_public_style");
-		publicStyle.addBasicCSS();
-		publicStyle.addHUICSS("imageviewer.css");
-		publicStyle.addHUICSS("box.css");
-		publicStyle.addCoreCSS("oo_navigator.css");
-		publicStyle.addCoreCSS("oo_thumbnail.css");
-		publicStyle.addCoreCSS("oo_list.css");
-		publicStyle.addCoreCSS("oo_rendering.css");
-		publicStyle.addCoreCSS("oo_splitleft.css");
-		publicStyle.addCoreCSS("oo_gallery.css");
-		publicStyle.addPath("WEB-INF","apps","people","web","style","css","people_person.css");
-		publicStyle.addPath("WEB-INF","apps","people","web","style","css","people_list.css");
-		
-		privateStyle = new Blend("people_private_style");
-		privateStyle.addPath("hui","css","upload.css");
-		privateStyle.addPath("hui","css","dropdown.css");
-		privateStyle.addPath("hui","css","tokenfield.css");
-
-		publicScript = new Blend("people_public_script");
-		publicScript.addPath("hui","js","hui.js");
-		publicScript.addPath("hui","js","hui_animation.js");
-		publicScript.addPath("hui","js","ui.js");
-		publicScript.addPath("hui","js","Button.js");
-		publicScript.addPath("hui","js","BoundPanel.js");
-		publicScript.addPath("hui","js","TextField.js");
-		publicScript.addPath("hui","js","Formula.js");
-		publicScript.addPath("hui","js","ImageViewer.js");
-		publicScript.addPath("hui","js","Box.js");
-		publicScript.addPath("WEB-INF","core","web","js","onlineobjects.js");
-		publicScript.addPath("WEB-INF","core","web","js","oo_topbar.js");
-		publicScript.addPath("WEB-INF","core","web","js","oo_gallery.js");
-		publicScript.addPath("WEB-INF","core","web","js","oo_map.js");
-		
-		privateScript = new Blend("people_private_script");
-		privateScript.addPath("hui","js","hui_color.js");
-		privateScript.addPath("hui","js","Upload.js");
-		privateScript.addPath("hui","js","ObjectList.js");
-		privateScript.addPath("hui","js","Input.js");
-		privateScript.addPath("hui","js","DropDown.js");
-		privateScript.addPath("hui","js","TokenField.js");
-		privateScript.addPath("hui","js","Overlay.js");
-		privateScript.addPath("hui","js","ProgressBar.js");
-		privateScript.addPath("WEB-INF","apps","people","web","style","js","people_person.js");
-
-	}
 
 	public PeopleControllerBase() {
 		super("people");

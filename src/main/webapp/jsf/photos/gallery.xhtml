@@ -11,19 +11,16 @@
 		
 		<ui:define name="title">#{photosGalleryView.title} - </ui:define>
 		
-		<ui:define name="scripts">
-			<c:if test="#{not empty photosGalleryView.imageGallery}">
-				<o:script>
-					galleryView.galleryId = #{photosGalleryView.imageGallery.id};
-					galleryView.editable = #{photosGalleryView.modifiable};
-					galleryView.username = '#{photosGalleryView.username}';
-					hui.ui.listen(galleryView);
-				</o:script>
-			</c:if>
-		</ui:define>
-		
 		<ui:define name="body">
-			<div class="photos_gallery">
+      <o:dependency src="/WEB-INF/apps/photos/web/style/css/photos_sidebar.css"/>
+      <o:dependency src="/WEB-INF/apps/photos/web/style/css/photos_gallery.css"/>
+      <o:dependency src="/WEB-INF/core/web/css/oo_photoviewer.css"/>
+
+      <o:dependency src="/WEB-INF/core/web/js/oo_inlineeditor.js"/>
+      <o:dependency src="/WEB-INF/core/web/js/oo_photoviewer.js"/>
+      <o:dependency src="/WEB-INF/apps/photos/web/style/js/gallery_view.js"/>
+
+			<div class="photos_gallery js-gallery" data-id="#{photosGalleryView.imageGallery.id}" data-username="#{photosGalleryView.username}" data-editable="#{photosGalleryView.modifiable}">
 				<o:header id="editableTitle">#{photosGalleryView.title}</o:header>
 				<c:if test="#{not empty photosGalleryView.info}">
 					<p class="photos_gallery_info"><o:out value="#{photosGalleryView.info}"/></p>

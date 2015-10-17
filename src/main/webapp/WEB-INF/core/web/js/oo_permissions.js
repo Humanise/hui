@@ -15,4 +15,4 @@ oo.Permissions = function(options) {
 
 		}
 	})
-}
+};

@@ -5,6 +5,7 @@ import java.io.IOException;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringEscapeUtils;
 
@@ -18,7 +19,13 @@ public class TagWriter {
 		super();
 		this.writer = context.getResponseWriter();
 		this.component = component;
-		this.scriptWriter = Components.getScriptWriter(context);		
+		HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
+		String scriptHeader = request.getHeader("OnlineObjects-Scripts");
+		if ("united".equals(scriptHeader) || context.getPartialViewContext().isAjaxRequest()) {
+			this.scriptWriter = new ScriptWriter(this.writer);
+		} else {
+			this.scriptWriter = Components.getScriptWriter(context);
+		}
 	}
 	
 	public ScriptWriter getScriptWriter() {
@@ -315,6 +322,7 @@ public class TagWriter {
 	public TagWriter comma() throws IOException {
 		return write(",");
 	}
+	/*
 
 	public TagWriter startNewObject(String name) throws IOException {
 		return write("new ").write(name).write("({");
@@ -356,6 +364,7 @@ public class TagWriter {
 	public TagWriter endNewObject() throws IOException {
 		return write("})");
 	}
+	*/
 
 	public void flush() throws IOException {
 		this.writer.flush();

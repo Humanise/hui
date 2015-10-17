@@ -99,4 +99,4 @@ oo.Map.prototype = {
 			//hui.ui.showMessage({text:'The map is updated',icon:'common/success'});
 		}});
 	}
-}
+};

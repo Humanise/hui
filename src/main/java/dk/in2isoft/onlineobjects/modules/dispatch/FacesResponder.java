@@ -13,21 +13,12 @@ public class FacesResponder implements Responder {
 
 	public boolean applies(Request request) {
 		String localPathAsString = request.getRequest().getRequestURI();
-		return localPathAsString.indexOf("javax.faces.resource") != -1;
+		return localPathAsString.startsWith("/faces/");
 	}
 	
 	public Boolean dispatch(Request request, FilterChain chain) throws IOException, EndUserException {
 		String localPath = request.getRequest().getRequestURI();
-		int index = localPath.indexOf("javax.faces.resource");
-		if (index==-1) {
-			//index = localPath.indexOf("jsf");
-		}
-		if (index==-1) {
-			index=0;
-		}
-		String substring = "/faces/"+localPath.substring(index);
-		// log.debug("/faces/"+substring);
-		RequestDispatcher requestDispatcher = request.getRequest().getRequestDispatcher(substring);
+		RequestDispatcher requestDispatcher = request.getRequest().getRequestDispatcher(localPath);
 		try {
 			requestDispatcher.forward(request.getRequest(), request.getResponse());
 		} catch (ServletException e) {

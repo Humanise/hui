@@ -12,7 +12,7 @@ import dk.in2isoft.commons.jsf.ScriptWriter;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=DiagramComponent.TYPE)
-@Dependencies(js = { "/hui/js/hui_animation.js", "/hui/js/hui_require.js", "/hui/js/Drawing.js", "/hui/js/Diagram.js" }, css = { "/hui/css/diagram.css" }, components = { HUIComponent.class })
+@Dependencies(js = { "/hui/js/hui_animation.js", "/hui/js/hui_require.js", "/hui/js/Diagram.js" }, css = { "/hui/css/diagram.css" }, requires = { HUIComponent.class }, uses = {DrawingComponent.class})
 public class DiagramComponent extends AbstractComponent {
 
 	public static final String TYPE = "hui.button";
@@ -40,13 +40,13 @@ public class DiagramComponent extends AbstractComponent {
 		String id = getClientId();
 		writer.startDiv().withClass("hui_diagram").withId(id).withStyle("height: 400px;").endDiv();
 		
-		ScriptWriter js = writer.getScriptWriter();
+		ScriptWriter js = writer.getScriptWriter().startScript();
 		js.startNewObject("hui.ui.Diagram").property("element", id);
 		String name = getName(context);
 		if (name!=null) {
 			js.comma().property("name", name);
 		}
-		js.endNewObject();
+		js.endNewObject().endScript();
 	}
 
 	public void setName(String name) {

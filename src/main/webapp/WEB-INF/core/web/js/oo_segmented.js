@@ -32,4 +32,4 @@ oo.Segmented.prototype = {
 	getValue : function() {
 		return this.value;
 	}
-}
+};

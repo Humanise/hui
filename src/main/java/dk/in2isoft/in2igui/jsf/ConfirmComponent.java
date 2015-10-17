@@ -8,7 +8,7 @@ import dk.in2isoft.commons.jsf.Components;
 import dk.in2isoft.commons.jsf.Dependencies;
 
 @FacesComponent(value=ConfirmComponent.TYPE)
-@Dependencies(js = { "/hui/js/hui_color.js", "/hui/js/hui_animation.js", "/hui/js/Overlay.js" }, css = { "/hui/css/overlay.css" }, components = { HUIComponent.class, ButtonComponent.class })
+@Dependencies(requires = { HUIComponent.class }, uses = { OverlayComponent.class, ButtonComponent.class })
 public class ConfirmComponent extends AbstractComponent {
 
 	public static final String TYPE = "hui.confirm";

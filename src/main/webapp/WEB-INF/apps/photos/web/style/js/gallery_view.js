@@ -4,6 +4,11 @@ var galleryView = {
 	username : null,
 	
 	$ready : function() {
+    var data = hui.get.firstByClass(document.body,'js-gallery');
+    this.galleryId = parseInt(data.getAttribute('data-id'),10);
+    this.username = data.getAttribute('data-username');
+    this.editable = data.getAttribute('data-editable') == 'true';
+    
 		if (this.editable) {
 			new oo.InlineEditor({
 				element : 'editableTitle',
@@ -64,7 +69,7 @@ var galleryView = {
 			}.bind(this),
 			$failure : function() {
 				this._uploadEnded(item,false)
-			},
+			}.bind(this),
 			$progress : function(loaded,total) {
 				item.$progress(loaded/total);
 			}
@@ -166,3 +171,5 @@ var galleryView = {
 		});
 	}
 }
+
+hui.ui.listen(galleryView);

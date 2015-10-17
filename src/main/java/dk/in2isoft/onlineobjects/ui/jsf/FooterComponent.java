@@ -17,7 +17,7 @@ import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.util.Messages;
 
 @FacesComponent(value=FooterComponent.FAMILY)
-@Dependencies(css={"/WEB-INF/core/web/css/oo_footer.css"},components={OnlineObjectsComponent.class, IconComponent.class})
+@Dependencies(css={"/WEB-INF/core/web/css/oo_footer.css"},requires={OnlineObjectsComponent.class}, uses = { IconComponent.class })
 public class FooterComponent extends AbstractComponent {
 
 	public static final String FAMILY = "onlineobjects.footer";

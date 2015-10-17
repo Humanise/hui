@@ -19,12 +19,17 @@ import dk.in2isoft.onlineobjects.services.ConfigurationService;
 import dk.in2isoft.onlineobjects.ui.DependencyService;
 
 @FacesComponent(BodyComponent.TYPE)
-@Dependencies(css={"/WEB-INF/core/web/css/oo_body.css"},components={OnlineObjectsComponent.class})
+@Dependencies(css={"/WEB-INF/core/web/css/oo_body.css"},requires={OnlineObjectsComponent.class})
 public class BodyComponent extends HtmlBody {
 
 	public static final String TYPE = "onlineobjects.body";
 	
+	private boolean plain;
+	
 	public java.lang.String getStyleClass() {
+		if (plain) {
+			return null;
+		}
 		String styleClass = super.getStyleClass();
 		Map<String, String> map = getFacesContext().getExternalContext().getRequestHeaderMap();
 		String cls = "oo";
@@ -77,12 +82,20 @@ public class BodyComponent extends HtmlBody {
 			String scriptUrl = dependencyService.handleScripts(graph);
 		 	out.startScript().withAttribute("async", "async").src(scriptUrl).endScript();
 		}
-		
 		String js = writer.toString();
 		if (Strings.isNotBlank(js)) {
 			out.startScopedScript().write("require(['all'],function() {").write(js).write("});").endScopedScript();
 		}
+		out.flush();
 		
 		super.encodeEnd(context);
+	}
+
+	public boolean isPlain() {
+		return plain;
+	}
+
+	public void setPlain(boolean plain) {
+		this.plain = plain;
 	}
 }

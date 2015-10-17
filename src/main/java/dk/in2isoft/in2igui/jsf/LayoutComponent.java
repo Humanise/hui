@@ -10,12 +10,8 @@ import dk.in2isoft.commons.jsf.Components;
 import dk.in2isoft.commons.jsf.Dependencies;
 import dk.in2isoft.commons.jsf.TagWriter;
 
-@FacesComponent(value=LayoutComponent.TYPE)
-@Dependencies(
-	js = {"/hui/js/Layout.js"},
-	css = {"/hui/css/layout.css"},
-	components = {HUIComponent.class}
-)
+@FacesComponent(value = LayoutComponent.TYPE)
+@Dependencies(js = { "/hui/js/Layout.js" }, css = { "/hui/css/layout.css" }, requires = { HUIComponent.class })
 public class LayoutComponent extends AbstractComponent {
 
 	public static final String TYPE = "hui.layout";
@@ -25,7 +21,7 @@ public class LayoutComponent extends AbstractComponent {
 	public LayoutComponent() {
 		super(TYPE);
 	}
-	
+
 	@Override
 	public void restoreState(Object[] state) {
 		name = (String) state[0];
@@ -33,11 +29,9 @@ public class LayoutComponent extends AbstractComponent {
 
 	@Override
 	public Object[] saveState() {
-		return new Object[] {
-			name
-		};
+		return new Object[] { name };
 	}
-	
+
 	@Override
 	public void encodeBegin(FacesContext context, TagWriter out) throws IOException {
 		// TODO Not implemented yet
@@ -54,5 +48,5 @@ public class LayoutComponent extends AbstractComponent {
 	public String getName(FacesContext context) {
 		return Components.getExpressionValue(this, "name", name, context);
 	}
-	
+
 }

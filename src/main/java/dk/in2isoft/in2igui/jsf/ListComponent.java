@@ -14,9 +14,9 @@ import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=ListComponent.TYPE)
 @Dependencies(
-		js = {"/hui/js/List.js"},
+		js = {"/hui/js/DragDrop.js", "/hui/js/List.js"},
 		css = {"/hui/css/list.css"},
-		components = {HUIComponent.class,SourceComponent.class,IconComponent.class}
+				requires = {HUIComponent.class}, uses = {SourceComponent.class,IconComponent.class}
 	)
 public class ListComponent extends AbstractComponent {
 
@@ -71,7 +71,7 @@ public class ListComponent extends AbstractComponent {
 	protected void encodeEnd(FacesContext context, TagWriter out) throws IOException {
 		out.endDiv();
 		out.endDiv();
-		ScriptWriter js = out.getScriptWriter();
+		ScriptWriter js = out.getScriptWriter().startScript();
 		js.startNewObject("hui.ui.List");
 		js.property("element", getClientId());
 		String name = getName(context);
@@ -81,7 +81,7 @@ public class ListComponent extends AbstractComponent {
 		if (source!=null) {
 			js.comma().propertyRaw("source", "hui.ui.get('"+source+"')");
 		}
-		js.endNewObject();
+		js.endNewObject().endScript();
 	}
 
 	public void setName(String name) {

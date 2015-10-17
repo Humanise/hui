@@ -13,16 +13,12 @@ import dk.in2isoft.commons.jsf.Dependencies;
 import dk.in2isoft.commons.jsf.ScriptWriter;
 import dk.in2isoft.commons.jsf.TagWriter;
 
-@Dependencies(
-		js = {"/hui/js/TextField.js"},
-		css = {"/hui/css/formula.css"},
-		components = {HUIComponent.class}
-	)
-@FacesComponent(value=TextFieldComponent.TYPE)
+@Dependencies(js = { "/hui/js/TextField.js" }, css = { "/hui/css/formula.css" }, requires = { HUIComponent.class })
+@FacesComponent(value = TextFieldComponent.TYPE)
 public class TextFieldComponent extends AbstractComponent {
 
 	static final String TYPE = "hui.textfield";
-	
+
 	private String name;
 	private String key;
 	private String inputName;
@@ -33,18 +29,16 @@ public class TextFieldComponent extends AbstractComponent {
 	private String value;
 	private boolean adaptive = true;
 	private boolean multiline;
-	
+
 	public TextFieldComponent() {
 		super(TYPE);
 	}
 
 	@Override
 	public Object[] saveState() {
-		return new Object[] {
-			name,secret,placeholder,width,value,inputName,adaptive,multiline,maxHeight
-		};
+		return new Object[] { name, secret, placeholder, width, value, inputName, adaptive, multiline, maxHeight };
 	}
-	
+
 	@Override
 	public void restoreState(Object[] state) {
 		name = (String) state[0];
@@ -68,8 +62,8 @@ public class TextFieldComponent extends AbstractComponent {
 			writer.startSpan("hui_field");
 		}
 		writer.withId(id);
-		if (width>0) {
-			writer.withStyle("width: "+width+"px;");
+		if (width > 0) {
+			writer.withStyle("width: " + width + "px;");
 		}
 		if (StringUtils.isNotBlank(placeholder)) {
 			writer.startEm("hui_field_placeholder").write(placeholder).endEm();
@@ -86,10 +80,10 @@ public class TextFieldComponent extends AbstractComponent {
 			if (secret) {
 				writer.withAttribute("type", "password");
 			}
-			if (value!=null) {
+			if (value != null) {
 				writer.withAttribute("value", value);
 			}
-			if (inputName!=null) {
+			if (inputName != null) {
 				writer.withAttribute("name", inputName);
 			}
 			writer.endElement("input");
@@ -102,18 +96,18 @@ public class TextFieldComponent extends AbstractComponent {
 		} else {
 			writer.endSpan();
 		}
-		ScriptWriter js = writer.getScriptWriter();
+		ScriptWriter js = writer.getScriptWriter().startScript();
 		js.startNewObject("hui.ui.TextField").property("element", id);
-		if (name!=null) {
+		if (name != null) {
 			js.comma().property("name", name);
 		}
-		if (key!=null) {
+		if (key != null) {
 			js.comma().property("key", key);
 		}
-		if (maxHeight!=null) {
+		if (maxHeight != null) {
 			js.comma().property("maxHeight", maxHeight);
 		}
-		js.endNewObject();
+		js.endNewObject().endScript();
 	}
 
 	public void setName(String name) {
@@ -179,19 +173,19 @@ public class TextFieldComponent extends AbstractComponent {
 	public String getKey() {
 		return key;
 	}
-	
+
 	public boolean isMultiline() {
 		return multiline;
 	}
-	
+
 	public void setMultiline(boolean multiline) {
 		this.multiline = multiline;
 	}
-	
+
 	public void setMaxHeight(Integer maxHeight) {
 		this.maxHeight = maxHeight;
 	}
-	
+
 	public Integer getMaxHeight() {
 		return maxHeight;
 	}

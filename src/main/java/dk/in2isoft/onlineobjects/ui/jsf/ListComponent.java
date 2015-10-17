@@ -11,9 +11,11 @@ import org.apache.commons.lang.StringUtils;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.ClassBuilder;
+import dk.in2isoft.commons.jsf.Dependencies;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=ListComponent.FAMILY)
+@Dependencies(css={"/WEB-INF/core/web/css/oo_list.css"},requires={OnlineObjectsComponent.class})
 public class ListComponent extends AbstractComponent {
 
 

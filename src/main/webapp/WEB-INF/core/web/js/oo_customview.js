@@ -18,4 +18,4 @@ oo.CustomView.prototype = {
     $objectsLoaded : function() {
         
     }
-}
+};

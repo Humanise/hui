@@ -10,4 +10,4 @@ oo.Diagram.get = function(options) {
 		this._singleton = oo.Diagram.create(options);
 	}
 	return this._singleton;
-}
+};

@@ -10,14 +10,17 @@ import javax.faces.event.ListenerFor;
 import javax.faces.event.PostAddToViewEvent;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
+import dk.in2isoft.commons.jsf.Dependencies;
+import dk.in2isoft.commons.jsf.ScriptWriter;
 import dk.in2isoft.commons.jsf.TagWriter;
-import dk.in2isoft.commons.lang.Strings;
+import dk.in2isoft.in2igui.jsf.BoundPanelComponent;
 import dk.in2isoft.onlineobjects.ui.jsf.model.MapPoint;
 import dk.in2isoft.onlineobjects.util.Locations;
 import dk.in2isoft.onlineobjects.util.Messages;
 
 @ListenerFor(systemEventClass=PostAddToViewEvent.class)
 @FacesComponent(value=MapComponent.FAMILY)
+@Dependencies(js = { "/WEB-INF/core/web/js/oo_map.js" }, css = { "/WEB-INF/core/web/css/oo_map.css" }, requires = { OnlineObjectsComponent.class} ,uses= { BoundPanelComponent.class })
 public class MapComponent extends AbstractComponent {
 
 	public static final String FAMILY = "onlineobjects.map";
@@ -76,18 +79,19 @@ public class MapComponent extends AbstractComponent {
 			out.startVoidA("oo_map_add").text(msg.get("add_location", context.getViewRoot().getLocale())).endA();
 		}
 		out.endDiv();
-		out.startScript();
-		out.startNewObject("oo.Map").property("element", getClientId());
-		out.comma().property("dynamic", dynamic);
-		out.comma().property("editable", editable);
-		out.comma().property("info", buildInfo(point));
-		if (Strings.isNotBlank(name)) {
-			out.comma().property("name", name);
+		
+		ScriptWriter js = out.getScriptWriter().startScript();
+		js.startNewObject("oo.Map").property("element", getClientId());
+		js.comma().property("dynamic", dynamic);
+		js.comma().property("editable", editable);
+		js.comma().property("info", buildInfo(point));
+		if (isNotBlank(name)) {
+			js.comma().property("name", name);
 		}
 		if (point!=null) {
-			out.write(",location:{latitude:"+point.getLatitude()+",longitude:"+point.getLongitude()+"}");
+			js.write(",location:{latitude:"+point.getLatitude()+",longitude:"+point.getLongitude()+"}");
 		}
-		out.endNewObject().endScript();
+		js.endNewObject().endScript();
 		
 	}
 	

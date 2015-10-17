@@ -22,6 +22,4 @@ oo.Fragment.prototype = {
 	setHTML : function(html) {
 		this.element.innerHTML = html;
 	}
-}
-
-/* EOF */
+};

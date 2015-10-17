@@ -7,9 +7,16 @@ import javax.faces.context.FacesContext;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.Components;
+import dk.in2isoft.commons.jsf.Dependencies;
+import dk.in2isoft.commons.jsf.ScriptWriter;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=ObjectInputComponent.TYPE)
+@Dependencies(
+		js = {"/hui/js/ObjectInput.js"},
+		css = {"/hui/css/objectinput.css"},
+		requires = {HUIComponent.class}
+	)
 public class ObjectInputComponent extends AbstractComponent {
 
 	public static final String TYPE = "hui.objectInput";
@@ -56,17 +63,18 @@ public class ObjectInputComponent extends AbstractComponent {
 	@Override
 	protected void encodeEnd(FacesContext context, TagWriter writer) throws IOException {
 		writer.endDiv();
-		writer.startScopedScript();
-		writer.startNewObject("hui.ui.ObjectInput").property("id", getClientId()).comma().property("name", name);
+		ScriptWriter js = writer.getScriptWriter();
+		js.startScript();
+		js.startNewObject("hui.ui.ObjectInput").property("id", getClientId()).comma().property("name", name);
 		FinderComponent finder = Components.getChild(this, FinderComponent.class);
 		if (finder!=null) {
 			String finderName = finder.getName(context);
 			if (finderName!=null) {
-				writer.comma().property("finder", finderName);
+				js.comma().property("finder", finderName);
 			}
 		}
-		writer.endNewObject();
-		writer.endScopedScript();
+		js.endNewObject();
+		js.endScript();
 		
 	}
 

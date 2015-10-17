@@ -7,13 +7,14 @@ import javax.faces.context.FacesContext;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.Dependencies;
+import dk.in2isoft.commons.jsf.ScriptWriter;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(OverflowComponent.TYPE)
 @Dependencies(
 	js = {"/hui/js/Overflow.js"},
 	css = {"/hui/css/overflow.css"},
-	components = {HUIComponent.class}
+	requires = {HUIComponent.class}
 )
 public class OverflowComponent extends AbstractComponent {
 
@@ -62,15 +63,14 @@ public class OverflowComponent extends AbstractComponent {
 	protected void encodeEnd(FacesContext context, TagWriter out) throws IOException {
 		out.startDiv("hui_overflow_bottom").endDiv();
 		out.endDiv();
-		out.startScopedScript();
-		out.startNewObject("hui.ui.Overflow");
-		out.property("element", getClientId());
+		ScriptWriter js = out.getScriptWriter().startScript();
+		js.startNewObject("hui.ui.Overflow");
+		js.property("element", getClientId());
 		String name = getName(context);
 		if (name!=null) {
-			out.comma().property("name",name);
+			js.comma().property("name",name);
 		}
-		out.endNewObject();
-		out.endScopedScript();
+		js.endNewObject().endScript();
 	}
 
 	public void setName(String name) {

@@ -1,5 +1,6 @@
 package dk.in2isoft.onlineobjects.apps.developer.views;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.InitializingBean;
@@ -39,12 +40,8 @@ public class DeveloperView extends AbstractManagedBean implements InitializingBe
 		return list;
 	}
 	
-	public void setSecurityService(SecurityService securityService) {
-		this.securityService = securityService;
-	}
-	
-	public void setModelService(ModelService modelService) {
-		this.modelService = modelService;
+	public Date getNow() {
+		return new Date();
 	}
 	
 	public class Item {
@@ -76,5 +73,15 @@ public class DeveloperView extends AbstractManagedBean implements InitializingBe
 		public boolean isPublicCanViewPerson() {
 			return publicCanViewPerson;
 		}
+	}
+	
+	// Wiring...
+	
+	public void setSecurityService(SecurityService securityService) {
+		this.securityService = securityService;
+	}
+	
+	public void setModelService(ModelService modelService) {
+		this.modelService = modelService;
 	}
 }

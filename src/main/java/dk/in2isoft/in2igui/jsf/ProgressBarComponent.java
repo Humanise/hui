@@ -14,7 +14,7 @@ import dk.in2isoft.commons.jsf.TagWriter;
 @Dependencies(
 	js = {"/hui/js/ProgressBar.js"},
 	css = {"/hui/css/progressbar.css"},
-	components = {HUIComponent.class}
+	requires = {HUIComponent.class}
 )
 public class ProgressBarComponent extends AbstractComponent {
 

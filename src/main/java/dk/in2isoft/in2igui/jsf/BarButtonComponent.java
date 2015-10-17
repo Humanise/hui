@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
 import dk.in2isoft.commons.jsf.Components;
+import dk.in2isoft.commons.jsf.ScriptWriter;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=BarButtonComponent.TYPE)
@@ -41,37 +42,36 @@ public class BarButtonComponent extends AbstractComponent {
 	}
 	
 	@Override
-	public void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
+	public void encodeBegin(FacesContext context, TagWriter out) throws IOException {
 		String id = getClientId();
 		boolean highlighted = isHighlighted(context);
 		if (highlighted) {
-			writer.startVoidA("hui_bar_button hui_bar_button_highlighted");
+			out.startVoidA("hui_bar_button hui_bar_button_highlighted");
 		} else {
-			writer.startVoidA("hui_bar_button");
+			out.startVoidA("hui_bar_button");
 		}
-		writer.withId(id);
+		out.withId(id);
 		if (StringUtils.isNotBlank(icon)) {
-			writer.startSpan("hui_icon_1");
+			out.startSpan("hui_icon_1");
 			String contextPath = Components.getRequest().getBaseContext();
 			StringBuffer url = new StringBuffer();
 			url.append("background-image: url('");
 			url.append(contextPath);
 			url.append("/hui/icons/").append(icon).append("16.png");
 			url.append("');");
-			writer.withStyle(url).endSpan();
+			out.withStyle(url).endSpan();
 		}
 		String text = getText(context);
-		writer.startSpan("hui_bar_button_text").write(text).endSpan();
-		writer.endA();
-		writer.startScopedScript();
-		writer.write("new hui.ui.Bar.Button({element:'");
-		writer.write(id);
-		writer.write("'");
-		if (name!=null) {
-			writer.write(",name:'"+name+"'");
+		out.startSpan("hui_bar_button_text").write(text).endSpan();
+		out.endA();
+		ScriptWriter js = out.getScriptWriter();
+		js.startScript();
+		js.startNewObject("hui.ui.Bar.Button").property("element", id);
+		if (isNotBlank(name)) {
+			js.comma().property("name", name);
 		}
-		writer.write("});");
-		writer.endScopedScript();
+		js.endNewObject();
+		js.endScript();
 	}
 
 	public void setHighlighted(boolean highlighted) {

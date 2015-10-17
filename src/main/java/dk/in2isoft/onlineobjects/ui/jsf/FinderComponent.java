@@ -6,16 +6,18 @@ import javax.faces.component.FacesComponent;
 import javax.faces.context.FacesContext;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
+import dk.in2isoft.commons.jsf.Dependencies;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.in2igui.jsf.BarComponent;
 import dk.in2isoft.in2igui.jsf.ButtonComponent;
+import dk.in2isoft.in2igui.jsf.GalleryComponent;
 import dk.in2isoft.in2igui.jsf.OverflowComponent;
 import dk.in2isoft.in2igui.jsf.SourceComponent;
 import dk.in2isoft.in2igui.jsf.WindowComponent;
-import dk.in2isoft.in2igui.jsf.GalleryComponent;
 import dk.in2isoft.onlineobjects.ui.Request;
 
 @FacesComponent(FinderComponent.FAMILY)
+@Dependencies(js = { "/WEB-INF/core/web/js/oo_finder.js" }, requires = { OnlineObjectsComponent.class}, uses = { WindowComponent.class, ButtonComponent.class, SourceComponent.class, OverflowComponent.class, GalleryComponent.class })
 public class FinderComponent extends AbstractComponent {
 
 	public static final String FAMILY = "onlineobjects.finder";
@@ -73,10 +75,9 @@ public class FinderComponent extends AbstractComponent {
 		
 		window.encodeAll(context);
 		
-		out.startScript();
-		out.startNewObject("oo.Finder").property("name", name).comma().property("element", getClientId()).endNewObject();
-		out.endScript();
 		out.endDiv();
+
+		out.getScriptWriter().startScript().startNewObject("oo.Finder").property("name", name).comma().property("element", getClientId()).endNewObject().endScript();
 	}
 	
 	public String getName() {

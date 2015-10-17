@@ -12,7 +12,7 @@ import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.commons.lang.Strings;
 
 @FacesComponent(value=FormulaComponent.TYPE)
-@Dependencies(js = { "/hui/js/Formula.js" }, css = { "/hui/css/formula.css" }, components = {HUIComponent.class})
+@Dependencies(js = { "/hui/js/Formula.js" }, css = { "/hui/css/formula.css" }, requires = {HUIComponent.class})
 public class FormulaComponent extends AbstractComponent {
 
 	public static final String TYPE = "hui.formula";
@@ -54,12 +54,12 @@ public class FormulaComponent extends AbstractComponent {
 	@Override
 	protected void encodeEnd(FacesContext context, TagWriter out) throws IOException {
 		out.endElement("form");
-		ScriptWriter js = out.getScriptWriter();
+		ScriptWriter js = out.getScriptWriter().startScript();
 		js.startNewObject("hui.ui.Formula").property("element", getClientId());
 		if (name!=null) {
 			js.comma().property("name", name);
 		}		
-		js.endNewObject();
+		js.endNewObject().endScript();
 	}
 
 	public void setName(String name) {

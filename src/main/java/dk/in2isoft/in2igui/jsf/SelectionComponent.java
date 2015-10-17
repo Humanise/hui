@@ -11,7 +11,7 @@ import dk.in2isoft.commons.jsf.Dependencies;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value = SelectionComponent.TYPE)
-@Dependencies(js = { "/hui/js/Selection.js" }, css = { "/hui/css/selection.css" }, components = {HUIComponent.class, SourceComponent.class })
+@Dependencies(js = { "/hui/js/Selection.js" }, css = { "/hui/css/selection.css" }, requires = { HUIComponent.class }, uses = { SourceComponent.class })
 public class SelectionComponent extends AbstractComponent {
 
 	public static final String TYPE = "hui.selection";

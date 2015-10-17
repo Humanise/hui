@@ -232,7 +232,10 @@
 }
 
 .reader_viewer_content .word {
-  border-bottom: 5px solid rgb(236, 232, 205);
+  background-color: rgb(245, 241, 223);
+  padding: 0 3px;
+  margin: 0 -3px;
+  border-radius: 10px;
 }
 
 .reader_viewer_content .person::before {

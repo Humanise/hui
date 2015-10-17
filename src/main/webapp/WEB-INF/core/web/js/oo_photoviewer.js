@@ -222,4 +222,4 @@ oo.PhotoViewer.prototype = {
 		};
 		this._redraw();
 	}
-}
+};

@@ -119,4 +119,4 @@ oo.View.prototype = {
 			this._reveal();			
 		}
 	}
-}
+};

@@ -10,11 +10,6 @@
 	
 	
 	<ui:composition template="templates/plain.xhtml">
-		
-		<ui:define name="scripts">
-			<o:stylesheet href="/style/css/words_enrich.css"/>
-			<o:script src="/style/js/enrich_view.js"/>
-		</ui:define>
 
 			
 		<ui:define name="body">
@@ -29,6 +24,9 @@
 				<p id="actions">
 				</p>
 			</div>
+
+      <o:dependency from="local" src="/css/words_enrich.css"/>
+      <o:dependency from="local" src="/js/enrich_view.css"/>
 		</ui:define>
 	
 	</ui:composition>

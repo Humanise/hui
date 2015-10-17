@@ -1,3 +1,16 @@
+require(['all'],function() {
+  var view = new oo.View({
+  	name : 'listView',
+  	element : 'my_view',
+  	pageSize : 20,
+  	source : hui.ui.get('listSource'),
+  	emptyHtml : '<div class="list_item_pending"></div>',
+  	$render : function(info) {
+  		return info.html;
+  	}
+  });  
+})
+
 var controller = {
 
   viewer : null,

@@ -30,7 +30,7 @@ public class GZIPResponseStream extends ServletOutputStream {
 
 	public void close() throws IOException {
 		if (closed) {
-			throw new IOException("This output stream has already been closed");
+			//throw new IOException("This output stream has already been closed");
 		}
 		gzipstream.finish();
 

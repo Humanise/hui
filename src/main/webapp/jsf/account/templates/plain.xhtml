@@ -11,19 +11,17 @@
 
 <o:doctype/>
 <html xmlns="http://www.w3.org/1999/xhtml">
-	<h:head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<o:head>
 		<title><ui:insert name="title"/>Account - OnlineObjects</title>
-		<o:stylesheet href="/style.css" integrateCache="true"/>
 		<o:fonts/>
-		<o:script src="/script.js" integrateCache="true"/>
 		<o:scriptSetup/>
 		<ui:insert name="scripts"/>
-	</h:head>
+  </o:head>
 	<o:body>
 		<o:topBar/>
-		
-		<div style="box-shadow: 0 1px 3px rgba(0,0,0,.2); border-radius: 3px; background: #fff; width: 500px; margin: 20px auto;">
+    <o:dependency src="/WEB-INF/apps/account/web/css/account.css"/>
+	
+		<div class="account_box">
 			<ui:insert name="body"/>
 		</div>
 		<o:footer/>

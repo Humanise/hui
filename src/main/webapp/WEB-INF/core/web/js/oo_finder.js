@@ -29,4 +29,4 @@ oo.Finder.prototype = {
 		this.window.show();
 	}
 	
-}
+};

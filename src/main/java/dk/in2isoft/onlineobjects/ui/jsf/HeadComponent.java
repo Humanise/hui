@@ -24,6 +24,8 @@ import dk.in2isoft.onlineobjects.ui.ScriptCompressor;
 public class HeadComponent extends AbstractComponent {
 
 	public static final String FAMILY = "onlineobjects.head";
+	
+	//private static final Logger log = LoggerFactory.getLogger(HeadComponent.class);
 
 	public HeadComponent() {
 		super(FAMILY);
@@ -49,9 +51,7 @@ public class HeadComponent extends AbstractComponent {
 		DependencyGraph graph = Components.getDependencyGraph(context);
 
 		context.getViewRoot().visitTree(new FullVisitContext(context), (visitContext, component) -> {
-			//if (component instanceof AbstractComponent) {
-				visit(component.getClass(), component, graph, context);
-			//}
+			visit(component.getClass(), component, graph, context);
 			return VisitResult.ACCEPT;
 		});
 		ConfigurationService configurationService = getBean(ConfigurationService.class);
@@ -87,25 +87,33 @@ public class HeadComponent extends AbstractComponent {
 			
 	}
 
-	private void visit(Class<? extends UIComponent> componentClass, UIComponent componentInstance, DependencyGraph graph, FacesContext context) {
-		if (!graph.isVisited(componentClass.getClass())) {
+	private void visit(Class<?> componentClass, UIComponent componentInstance, DependencyGraph graph, FacesContext context) {
+		if (!graph.isVisited(componentClass)) {
+			graph.markVisited(componentClass);
 			Dependencies annotation = componentClass.getAnnotation(Dependencies.class);
 			if (annotation != null) {
-				Class<? extends AbstractComponent>[] components = annotation.components();
-				if (components != null) {
-					for (Class<? extends AbstractComponent> depComponentClass : components) {
-						visit(depComponentClass, null, graph, context);
-					}
+				for (Class<? extends AbstractComponent> depComponentClass : annotation.requires()) {
+					visit(depComponentClass, null, graph, context);
 				}
+
 				graph.addScripts(annotation.js());
 				graph.addStyles(annotation.css());
+
+				for (Class<? extends AbstractComponent> depComponentClass : annotation.uses()) {
+					visit(depComponentClass, null, graph, context);
+				}
 			}
-			if (componentInstance instanceof DependableComponent) {
-				DependableComponent dep = (DependableComponent) componentInstance;
-				graph.addScripts(dep.getScripts(context));
-				graph.addStyles(dep.getStyles(context));
+		}
+		if (componentInstance instanceof DependableComponent) {
+			DependableComponent dep = (DependableComponent) componentInstance;
+			graph.addScripts(dep.getScripts(context));
+			graph.addStyles(dep.getStyles(context));
+			Class<?>[] components = dep.getComponents(context);
+			if (components!=null) {
+				for (Class<?> cls : components) {
+					visit(cls, null, graph, context);
+				}
 			}
-			graph.markVisited(componentClass);
 		}
 	}
 }

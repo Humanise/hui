@@ -6,10 +6,13 @@ import javax.faces.component.FacesComponent;
 import javax.faces.context.FacesContext;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
+import dk.in2isoft.commons.jsf.Dependencies;
+import dk.in2isoft.commons.jsf.ScriptWriter;
 import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.in2igui.data.LocationData;
 
 @FacesComponent(value="hui.locationInput")
+@Dependencies(js = { "/hui/js/hui_require.js",  "/hui/js/LocationField.js", "/hui/js/LocationPicker.js", "/hui/js/Input.js", "/hui/js/NumberValidator.js" }, css = { "/hui/css/locationfield.css" }, requires = { HUIComponent.class}, uses = { LocationPickerComponent.class })
 public class LocationInputComponent extends AbstractComponent {
 
 	public LocationInputComponent() {
@@ -56,21 +59,20 @@ public class LocationInputComponent extends AbstractComponent {
 		
 		LocationData location = getBinding("value");
 		
-		out.startScopedScript();
-		out.startNewObject("hui.ui.LocationField").property("element", getClientId());
+		ScriptWriter js = out.getScriptWriter().startScript();
+		js.startNewObject("hui.ui.LocationField").property("element", getClientId());
 		if (name!=null) {
-			out.comma().property("name", name);
+			js.comma().property("name", name);
 		}
 		if (key!=null) {
-			out.comma().property("key", key);
+			js.comma().property("key", key);
 		}
 		if (location!=null) {
-			out.write(",value:{");
-			out.property("latitude", location.getLatitude()).comma().property("longitude", location.getLongitude());
-			out.write("}");
+			js.write(",value:{");
+			js.property("latitude", location.getLatitude()).comma().property("longitude", location.getLongitude());
+			js.write("}");
 		}
-		out.write("});");
-		out.endScopedScript();
+		js.write("});").endScript();
 	}
 
 	public void setName(String name) {

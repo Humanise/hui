@@ -14,7 +14,7 @@ import dk.in2isoft.commons.jsf.TagWriter;
 @Dependencies(
 	js = {"/hui/js/Icon.js"},
 	css = {"/hui/css/icon.css"},
-	components = {HUIComponent.class}
+	requires = {HUIComponent.class}
 )
 public class IconComponent extends AbstractComponent {
 

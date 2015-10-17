@@ -55,4 +55,4 @@ oo.InlineEditor.prototype = {
 		}
 		this.editing = false;
 	}
-}
+};

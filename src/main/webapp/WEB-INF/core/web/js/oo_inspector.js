@@ -36,4 +36,4 @@ oo.Inspector.prototype = {
 	show : function() {
 		this.window.show();
 	}
-}
+};

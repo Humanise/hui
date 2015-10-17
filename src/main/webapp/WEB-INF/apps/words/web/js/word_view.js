@@ -91,7 +91,7 @@ var wordView = window.wordView = {
 	
 	addRelation : function(options) {
 		this.wordInfo = options;
-		hui.ui.get('wordFinder').show(this.$select$oo_wordfinder.bind(this));
+		oo.WordFinder.get().show(this.$select$oo_wordfinder.bind(this));
 	},
 	
 	$click$toggleExpanded : function() {

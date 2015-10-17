@@ -6,9 +6,12 @@ import javax.faces.component.FacesComponent;
 import javax.faces.context.FacesContext;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
+import dk.in2isoft.commons.jsf.Dependencies;
+import dk.in2isoft.commons.jsf.ScriptWriter;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=CheckboxComponent.TYPE)
+@Dependencies(js = { "/hui/js/Checkbox.js" }, css = { "/hui/css/checkbox.css" }, requires = { HUIComponent.class })
 public class CheckboxComponent extends AbstractComponent {
 
 	public static final String TYPE = "hui.checkbox";
@@ -46,19 +49,18 @@ public class CheckboxComponent extends AbstractComponent {
 		out.write(label);
 		out.endA();
 		
-		out.startScopedScript();
-		out.startNewObject("hui.ui.Checkbox").property("element", id);
+		ScriptWriter js = out.getScriptWriter().startScript();
+		js.startNewObject("hui.ui.Checkbox").property("element", id);
 		if (name!=null) {
-			out.comma().property("name", name);
+			js.comma().property("name", name);
 		}
 		if (key!=null) {
-			out.comma().property("key", key);
+			js.comma().property("key", key);
 		}
 		if (value!=null) {
-			out.comma().property("value", value);
+			js.comma().property("value", value);
 		}
-		out.endNewObject();
-		out.endScopedScript();
+		js.endNewObject().endScript();
 	}
 	
 	public void setName(String name) {

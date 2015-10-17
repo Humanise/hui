@@ -6,6 +6,7 @@ import javax.faces.component.FacesComponent;
 import javax.faces.context.FacesContext;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
+import dk.in2isoft.commons.jsf.ScriptWriter;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=FragmentComponent.FAMILY)
@@ -33,12 +34,13 @@ public class FragmentComponent extends AbstractComponent {
 	public void encodeBegin(FacesContext context, TagWriter out) throws IOException {
 		out.startDiv("oo_fragment").withId(getClientId());
 		out.endDiv();
-		out.startScript();
-		out.startNewObject("oo.Fragment").property("element", getClientId());
+		ScriptWriter js = out.getScriptWriter();
+		js.startScript();
+		js.startNewObject("oo.Fragment").property("element", getClientId());
 		if (name!=null) {
-			out.comma().property("name", name);
+			js.comma().property("name", name);
 		}
-		out.endNewObject().endScript();
+		js.endNewObject().endScript();
 		
 	}
 	

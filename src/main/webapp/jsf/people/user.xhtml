@@ -16,10 +16,19 @@
 		</ui:define>
 		
 		<ui:define name="body">
+
+      <o:dependency src="/WEB-INF/apps/people/web/style/css/people_person.css"/>
+      <c:if test="#{peoplePersonView.canModify}">
+        <o:dependency src="/WEB-INF/apps/people/web/style/js/people_person.js"/>
+        <o:dependency src="/hui/js/ObjectList.js"/>
+        <o:dependency src="/hui/js/Input.js"/>
+        <o:dependency src="/hui/js/ProgressBar.js"/>
+        <o:dependency src="/hui/js/Upload.js"/>
+        <o:dependency src="/hui/css/upload.css"/>
+        <o:dependency src="/hui/css/progressbar.css"/>
+      </c:if>
+      
 			<c:if test="#{peoplePersonView.user!=null}">
-				<o:script rendered="#{o:loggedIn()}">
-					personView.userId = #{peoplePersonView.user.id};
-				</o:script>
 				<div class="people_person">
 					<div class="people_person_left">
 						<div class="people_person_image" id="profileImage">
@@ -32,7 +41,7 @@
 						</ui:fragment>
 					</div>
 					<div class="people_person_info">
-						<div id="profileContainer">
+						<div id="profileContainer" data-id="#{peoplePersonView.user.id}">
 							<div id="profileInfo">
 								<o:header>#{peoplePersonView.person.fullName}</o:header>
 								<c:if test="#{peoplePersonView.info.resume!=null &amp;&amp; fn:length(peoplePersonView.info.resume)>0}">

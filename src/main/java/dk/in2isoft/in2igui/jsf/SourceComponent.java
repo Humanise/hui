@@ -13,7 +13,7 @@ import dk.in2isoft.commons.jsf.ScriptWriter;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value=SourceComponent.TYPE)
-@Dependencies(js = { "/hui/js/Source.js" }, components = {HUIComponent.class})
+@Dependencies(js = { "/hui/js/Source.js" }, requires = {HUIComponent.class})
 public class SourceComponent extends AbstractComponent {
 
 	public static final String TYPE = "hui.source";
@@ -42,7 +42,7 @@ public class SourceComponent extends AbstractComponent {
 
 	@Override
 	public void encodeBegin(FacesContext context, TagWriter out) throws IOException {
-		ScriptWriter js = out.getScriptWriter();
+		ScriptWriter js = out.getScriptWriter().startScript();
 		
 		js.startNewObject("hui.ui.Source").property("name", name).comma().property("lazy", lazy);
 		js.comma().property("url", getUrl(context));
@@ -50,7 +50,7 @@ public class SourceComponent extends AbstractComponent {
 		if (delay!=null) {
 			js.comma().property("delay", delay);
 		}
-		js.endNewObject();
+		js.endNewObject().endScript();
 	}
 	
 	private String buildParameters() {

@@ -8,10 +8,12 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
 import dk.in2isoft.commons.jsf.AbstractComponent;
+import dk.in2isoft.commons.jsf.Dependencies;
 import dk.in2isoft.commons.jsf.StyleBuilder;
 import dk.in2isoft.commons.jsf.TagWriter;
 
 @FacesComponent(value = SplitLeftComponent.FAMILY)
+@Dependencies(css={"/WEB-INF/core/web/css/oo_splitleft.css"},requires={OnlineObjectsComponent.class})
 public class SplitLeftComponent extends AbstractComponent {
 
 	public static final String FAMILY = "onlineobjects.splitleft";

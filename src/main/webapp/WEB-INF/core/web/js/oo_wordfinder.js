@@ -7,6 +7,11 @@ oo.WordFinder = function() {
 	this.list = hui.ui.get('wordFinderList');
 }
 
+oo.WordFinder.get = function() {
+  this.instance = this.instance || new oo.WordFinder();
+  return this.instance
+}
+
 oo.WordFinder.prototype = {
 	show : function(callback) {
 		hui.ui.get('wordFinderListSource').setParameter('language',oo.language);
@@ -65,6 +70,4 @@ oo.WordFinder.prototype = {
 			}
 		})
 	}
-}
-
-new oo.WordFinder();
+};

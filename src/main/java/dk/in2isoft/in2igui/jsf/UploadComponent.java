@@ -12,7 +12,7 @@ import dk.in2isoft.commons.jsf.TagWriter;
 import dk.in2isoft.commons.lang.Strings;
 
 @FacesComponent(value=UploadComponent.TYPE)
-@Dependencies(js = { "/hui/js/hui_animation.js", "/hui/js/Upload.js" }, css = { "/hui/css/upload.css" }, components = { HUIComponent.class, IconComponent.class, ProgressBarComponent.class, ButtonComponent.class })
+@Dependencies(js = { "/hui/js/hui_animation.js", "/hui/js/Upload.js" }, css = { "/hui/css/upload.css" }, requires = { HUIComponent.class}, uses = { IconComponent.class, ProgressBarComponent.class, ButtonComponent.class })
 public class UploadComponent extends AbstractComponent {
 
 	public static final String TYPE = "hui.upload";
@@ -52,7 +52,7 @@ public class UploadComponent extends AbstractComponent {
 		out.endDiv();
 		
 		// Script...
-		ScriptWriter js = out.getScriptWriter();
+		ScriptWriter js = out.getScriptWriter().startScript();
 		js.startNewObject("hui.ui.Upload");
 		js.property("element", id);
 		String name = getName(context);
@@ -62,7 +62,7 @@ public class UploadComponent extends AbstractComponent {
 		if (Strings.isNotBlank(url)) {
 			js.comma().property("url",url);
 		}
-		js.endNewObject();
+		js.endNewObject().endScript();
 	}
 
 	public void setName(String name) {

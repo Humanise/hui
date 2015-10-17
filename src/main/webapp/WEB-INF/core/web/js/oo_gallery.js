@@ -220,4 +220,4 @@ oo.Gallery.prototype = {
 			}
 		}
 	}
-}
+};
