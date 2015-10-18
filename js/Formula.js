@@ -181,7 +181,7 @@ hui.ui.Formula.Group.prototype = {
 		td.appendChild(b.getElement());
 		return b;
 	}
-}
+};
 
 ///////////////////////// Field //////////////////////////
 
@@ -200,4 +200,4 @@ hui.ui.Formula.Field.prototype = {
     setVisible : function(visible) {
         this.element.style.display = visible ? '' : 'none';
     }
-}
+};

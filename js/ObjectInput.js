@@ -1,4 +1,4 @@
-(function (_super) {
+;(function (_super) {
 
   /**
    * A component for attaching objects
@@ -6,6 +6,7 @@
    */
   hui.ui.ObjectInput = function(options) {
     this.options = hui.override({},options);
+    this.key = options.key;
     this.value = [];
     if (options.value) {
       this.value.push(options.value);
@@ -38,7 +39,7 @@
         element: hui.get.firstByClass(this.element, 'hui_objectinput_remove')
       });
       this.remove.listen({
-        $click: this._remove.bind(this)
+        $click: this.reset.bind(this)
       });
       hui.listen(this.nodes.list,'click',this._clickList.bind(this));
     },
@@ -59,11 +60,10 @@
       var del = e.findByClass('hui_objectinput_delete');
       if (del) {
         var item = e.findByClass('hui_objectinput_object');
-        alert(item.getAttribute('data-index'));
+        var idx = parseInt(item.getAttribute('data-index'),10);
+        this.value.splice(idx,1);
+        this._render();
       }
-    },
-    _remove: function() {
-      this.setValue(null);
     },
     _found: function(object) {
       this.finder.hide();
@@ -76,12 +76,11 @@
       for (var i = 0; i < this.value.length; i++) {
         var item = this.value[i];
         item = this.fire('render',item) || item;
-        hui.log(item);
         var html = ''
         var obj = hui.build('div',{'class':'hui_objectinput_object',parent:this.nodes.list,'data-index':i});
         item.icon && obj.appendChild(hui.ui.createIcon(item.icon,16));
-        obj.appendChild(document.createTextNode(item.text || item.title));
-        var del = hui.ui.createIcon('common/delete',16,'a');
+        obj.appendChild(hui.build('span',{'class':'hui_objectinput_title',text:item.text || item.title}));
+        var del = hui.ui.createIcon('monochrome/delete',16,'a');
         hui.cls.add(del,'hui_objectinput_delete');
         del.href = '#';
         obj.appendChild(del);
@@ -95,6 +94,9 @@
     },
     getValue : function() {
       return this.value;
+    },
+    reset : function() {
+      this.setValue(null);
     }
   }
 
