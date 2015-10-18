@@ -37,6 +37,22 @@ public class TestStrings extends TestCase {
 	}
 	
 	@Test
+	public void testIsInteger() {
+		assertTrue(Strings.isInteger("0"));
+		assertTrue(Strings.isInteger("-0"));
+		assertTrue(Strings.isInteger("12"));
+		assertTrue(Strings.isInteger("-12"));
+		assertTrue(Strings.isInteger("4564843156"));
+
+		assertFalse(Strings.isInteger(null));
+		assertFalse(Strings.isInteger(""));
+		assertFalse(Strings.isInteger("one"));
+		assertFalse(Strings.isInteger("12px"));
+		assertFalse(Strings.isInteger("1.2"));
+		assertFalse(Strings.isInteger("1.2"));
+	}
+	
+	@Test
 	public void testDeAccent() {
 		assertEquals(null, Strings.deAccent(null));
 		assertEquals("", Strings.deAccent(""));

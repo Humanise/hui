@@ -17,8 +17,8 @@
 	</o:head>
 	
 	<o:body>
-		
-		<div class="box">
+
+		<o:box width="400" margin="20" padding="20">
 			<o:header>#{msg.access_control}</o:header>
 			<p class="current_user">#{msg.current_user}: #{authenticationLoginView.currentUserName}</p>
 			<c:if test="#{not empty authenticationLoginView.message}">
@@ -39,7 +39,7 @@
 					<gui:button text="#{msg.log_in}" submit="true"/>
 				</p>
 			</gui:formula>
-		</div>
+		</o:box>
     <o:dependency src="/WEB-INF/services/authentication/web/css/style.css"/>
     <o:dependency src="/WEB-INF/services/authentication/web/js/login.js"/>
 	</o:body>

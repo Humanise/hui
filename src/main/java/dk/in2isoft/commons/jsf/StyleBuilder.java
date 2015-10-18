@@ -14,6 +14,11 @@ public class StyleBuilder {
 		}
 		return this;
 	}
+
+	public StyleBuilder withWidth(String width) {
+		sb.append("width:").append(width).append(";");
+		return this;
+	}
 	
 	public StyleBuilder withHeight(Number height) {
 		if (height!=null) {
@@ -64,6 +69,11 @@ public class StyleBuilder {
 		if (bottom!=null) {
 			sb.append("padding:").append(bottom).append("px;");
 		}
+		return this;
+	}
+
+	public StyleBuilder withPadding(String string) {
+		sb.append("padding:").append(string).append(";");
 		return this;
 	}
 

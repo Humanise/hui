@@ -373,4 +373,8 @@ public class Strings {
         return length;
 	}
 
+	public static boolean isInteger(String str) {
+		return str!=null && str.matches("[-]?[0-9]+");
+	}
+
 }

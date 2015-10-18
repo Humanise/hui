@@ -145,6 +145,11 @@ public abstract class AbstractComponent extends UIComponentBase {
 	protected boolean isNotBlank(String string) {
 		return Strings.isNotBlank(string);
 	}
+
+
+	protected boolean isInteger(String str) {
+		return Strings.isInteger(str);
+	}
 	
 	protected void requireScript(String string) {
         FacesContext context = getFacesContext();

@@ -10,7 +10,7 @@
 	<ui:composition template="templates/plain.xhtml">
 				
 		<ui:define name="body">
-			<div class="account">
+			<o:box width="500" padding="20" margin="20">
 				<h1 class="account_title">#{msg.account}</h1>
 				<p class="account_user"><strong class="account_user_label">#{msg.username}:</strong> #{accountSettingsView.user.username}</p>
 
@@ -21,7 +21,7 @@
 								<gui:textInput key="mail" value="#{accountSettingsView.primaryEmail}"/>
 							</gui:field>
 							<div style="margin: 5px 0 20px -2px">
-								<gui:button text="#{msg.change}" submit="true" variant="paper"/>
+								<gui:button text="#{msg.change}" submit="true" variant="light"/>
 							</div>
 						</gui:formula>
 						<gui:formula name="passwordForm">
@@ -32,17 +32,17 @@
 								<gui:textInput key="newPassword" secret="true"/>
 							</gui:field>
 							<div style="margin: 5px 0 0 -2px">
-								<gui:button text="#{msg.change_password}" submit="true" variant="paper"/>
+								<gui:button text="#{msg.change_password}" submit="true" variant="light"/>
 							</div>
 						</gui:formula>
 						<p><textarea id="secret" class="account_secret">#{accountSettingsView.secret}</textarea></p>
-						<p><gui:button text="#{msg.new_secret}" name="newSecret" variant="paper"/></p>
+						<p><gui:button text="#{msg.new_secret}" name="newSecret" variant="light"/></p>
 					</c:when>
 					<c:otherwise>
 						<p>Not allowed</p>
 					</c:otherwise>
 				</c:choose>
-			</div>
+			</o:box>
 
       <o:dependency src="/WEB-INF/apps/account/web/js/account.js"/>
 		</ui:define>
