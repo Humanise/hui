@@ -36,7 +36,6 @@ public class MetaTagsComponent extends AbstractComponent {
 	protected void encodeBegin(FacesContext context, TagWriter writer) throws IOException {
 		
 		
-		writer.startElement("meta").withAttribute("http-equiv", "Content-Type").withAttribute("content", "text/html; charset=utf-8").endElement("meta");
 		writer.startElement("meta").withAttribute("name", "viewport").withAttribute("content", "user-scalable=yes, width=device-width, initial-scale = 1, maximum-scale = 10, minimum-scale = 0.2").endElement("meta");
 		ConfigurationService bean = getBean(ConfigurationService.class);
 		Collection<Locale> locales = bean.getApplicationLocales(getRequest().getApplication());
