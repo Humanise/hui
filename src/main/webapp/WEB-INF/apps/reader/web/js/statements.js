@@ -29,14 +29,17 @@ var statementController = {
 	_setObject : function(object) {
 		this.object = object;
 		this.form.setValues({
-			text: object.text
+			text: object.text,
+      authors: object.authors
 		});
 	},
 	$submit$statementForm : function() {
 		var form = hui.ui.get('statementForm');
+    var values = this.form.getValues();
 		var data = {
 			id : this.object.id,
-			text : this.form.getValues().text
+			text : values.text,
+      authors : values.authors
 		};
     this.window.setBusy(true);
     hui.ui.request({
@@ -73,7 +76,7 @@ var statementController = {
   $render$statementAuthor : function(item) {
     return {
       icon: 'common/person',
-      text: item.title
+      text: item.name || item.title || item.text
     }
   },
 	_tellMainController : function() {

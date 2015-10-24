@@ -13,9 +13,10 @@ require(['all'],function() {
       hui.log(values);
     },
     $render$authorInput : function(obj) {
+      hui.log(obj);
       return {
         icon : 'monochrome/person',
-        text : obj.title + '!'
+        text : (obj.title || obj.name) + '!'
       };
     },
     $click$changeObjectInputFormula : function() {

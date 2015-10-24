@@ -9,6 +9,7 @@ public class FinderConfiguration {
 	private String selectionParameter;
 	private FinderListConfiguration list;
 	private FinderSearchConfiguration search;
+	private FinderCreationConfiguration creation;
 	
 	public FinderConfiguration() {
 	}
@@ -74,6 +75,14 @@ public class FinderConfiguration {
 	public FinderListConfiguration getList() {
 		return list;
 	}
+	
+	public FinderCreationConfiguration getCreation() {
+		return creation;
+	}
+	
+	public void setCreation(FinderCreationConfiguration creation) {
+		this.creation = creation;
+	}
 
 	public class FinderListConfiguration {
 		private String url;
@@ -97,5 +106,36 @@ public class FinderConfiguration {
 		public void setParameter(String parameter) {
 			this.parameter = parameter;
 		}
+	}
+
+	public class FinderCreationConfiguration {
+		private String url;
+		private String button;
+		private Object formula;
+
+		public String getUrl() {
+			return url;
+		}
+
+		public void setUrl(String url) {
+			this.url = url;
+		}
+
+		public String getButton() {
+			return button;
+		}
+
+		public void setButton(String button) {
+			this.button = button;
+		}
+
+		public Object getFormula() {
+			return formula;
+		}
+
+		public void setFormula(Object formula) {
+			this.formula = formula;
+		}
+
 	}
 }
