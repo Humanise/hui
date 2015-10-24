@@ -6,8 +6,12 @@ hui.ui.Formula = function(options) {
 	this.options = options;
 	hui.ui.extend(this,options);
 	this.addBehavior();
+  // TODO Deprecated
 	if (options.listener) {
 		this.listen(options.listener);
+	}
+	if (options.listen) {
+		this.listen(options.listen);
 	}
 }
 
