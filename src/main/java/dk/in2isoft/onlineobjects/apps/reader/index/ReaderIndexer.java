@@ -5,17 +5,20 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Privileged;
+import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.events.ModelEventListener;
 import dk.in2isoft.onlineobjects.core.events.ModelPrivilegesEventListener;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.InternetAddress;
 import dk.in2isoft.onlineobjects.model.Item;
+import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.Statement;
 import dk.in2isoft.onlineobjects.model.User;
@@ -35,6 +38,9 @@ public class ReaderIndexer implements ModelEventListener, ModelPrivilegesEventLi
 	public void entityWasCreated(Entity entity) {
 		if (entity instanceof InternetAddress) {
 			index((InternetAddress) entity);
+		}
+		if (entity instanceof Statement) {
+			index((Statement) entity);
 		}
 	}
 	
@@ -59,12 +65,22 @@ public class ReaderIndexer implements ModelEventListener, ModelPrivilegesEventLi
 		try {
 			User owner = modelService.getOwner(part);
 			if (owner!=null) {
-				String text = part.getText();				
+				StringBuilder text = new StringBuilder();
+				if (part.getText()!=null) {
+					text.append(part.getText());
+				}
 				Document doc = new Document();
 				doc.add(new TextField("title", Strings.asNonBlank(part.getName(),"blank"), Field.Store.YES));
-				doc.add(new TextField("text", Strings.asNonBlank(text,""), Field.Store.NO));
 				doc.add(new TextField("inbox", "no", Field.Store.YES));
 				doc.add(new TextField("favorit", "no", Field.Store.YES));
+
+				Query<Person> authors = Query.of(Person.class).from(part, Relation.KIND_COMMON_AUTHOR).withPrivileged(owner);
+				List<Person> people = modelService.list(authors);
+				for (Person person : people) {
+					doc.add(new StringField("author", String.valueOf(person.getId()), Field.Store.NO));
+					text.append(" ").append(person.getFullName());
+				}
+				doc.add(new TextField("text", Strings.asNonBlank(text.toString(),""), Field.Store.NO));
 
 				getIndexManager(owner).update(part, doc);
 			}
@@ -80,7 +96,10 @@ public class ReaderIndexer implements ModelEventListener, ModelPrivilegesEventLi
 	public void entityWasUpdated(Entity entity) {
 		if (entity instanceof InternetAddress) {
 			index((InternetAddress) entity);
-		}		
+		}
+		if (entity instanceof Statement) {
+			index((Statement) entity);
+		}
 	}
 
 	public void entityWasDeleted(Entity entity) {
@@ -89,7 +108,7 @@ public class ReaderIndexer implements ModelEventListener, ModelPrivilegesEventLi
 	
 	@Override
 	public void allPrivilegesWasRemoved(Item item, List<User> users) {
-		if (item instanceof InternetAddress) {
+		if (item instanceof InternetAddress || item instanceof Statement) {
 			for (User user : users) {
 				try {
 					getIndexManager(user).delete(item.getId());
@@ -107,7 +126,10 @@ public class ReaderIndexer implements ModelEventListener, ModelPrivilegesEventLi
 		if (relation.getTo() instanceof InternetAddress) {
 			index((InternetAddress) relation.getTo());
 		}
-		if (relation.matches(InternetAddress.class,Relation.KIND_STRUCTURE_CONTAINS,Statement.class)) {
+		if (relation.getFrom() instanceof Statement) {
+			index((Statement) relation.getFrom());
+		}
+		if (relation.getTo() instanceof Statement) {
 			index((Statement) relation.getTo());
 		}
 	}
@@ -119,14 +141,26 @@ public class ReaderIndexer implements ModelEventListener, ModelPrivilegesEventLi
 		if (relation.getTo() instanceof InternetAddress) {
 			index((InternetAddress) relation.getTo());
 		}
+		if (relation.getFrom() instanceof Statement) {
+			index((Statement) relation.getFrom());
+		}
+		if (relation.getTo() instanceof Statement) {
+			index((Statement) relation.getTo());
+		}
 	}
 
 	public void relationWasDeleted(Relation relation) {
-		if (relation.getFrom() instanceof InternetAddress) {
-			index((InternetAddress) relation.getFrom());
+		if (relation.getFrom() instanceof Statement) {
+			index((Statement) relation.getFrom());
 		}
-		if (relation.getTo() instanceof InternetAddress) {
-			index((InternetAddress) relation.getTo());
+		if (relation.getTo() instanceof Statement) {
+			index((Statement) relation.getTo());
+		}
+		if (relation.getFrom() instanceof Statement) {
+			index((Statement) relation.getFrom());
+		}
+		if (relation.getTo() instanceof Statement) {
+			index((Statement) relation.getTo());
 		}
 	}
 

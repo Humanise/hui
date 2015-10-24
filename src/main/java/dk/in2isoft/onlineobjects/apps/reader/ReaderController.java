@@ -25,8 +25,8 @@ import dk.in2isoft.commons.lang.HTMLWriter;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.in2igui.data.ItemData;
-import dk.in2isoft.in2igui.data.ListWriter;
 import dk.in2isoft.onlineobjects.apps.reader.index.ReaderQuery;
+import dk.in2isoft.onlineobjects.apps.reader.perspective.AddressEditPerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.ArticlePerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.FeedPerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.ListItemPerspective;
@@ -71,15 +71,16 @@ public class ReaderController extends ReaderControllerBase {
 	private static Logger log = Logger.getLogger(ReaderController.class);
 	
 	private Pair<Integer,List<Entity>> search(Request request, int page, int pageSize) throws ExplodingClusterFuckException {
-		ReaderQuery rQuery = new ReaderQuery();
-		rQuery.setText(request.getString("text"));
-		rQuery.setSubset(request.getString("subset"));
-		rQuery.setType(request.getStrings("type"));
-		rQuery.setPage(page);
-		rQuery.setPageSize(pageSize);
-		rQuery.setWordIds(request.getLongs("tags"));
+		ReaderQuery readerQuery = new ReaderQuery();
+		readerQuery.setText(request.getString("text"));
+		readerQuery.setSubset(request.getString("subset"));
+		readerQuery.setType(request.getStrings("type"));
+		readerQuery.setPage(page);
+		readerQuery.setPageSize(pageSize);
+		readerQuery.setWordIds(request.getLongs("tags"));
+		readerQuery.setAuthorIds(request.getLongs("authors"));
 
-		final ListMultimap<String, Long> idsByType = find(request, rQuery);
+		final ListMultimap<String, Long> idsByType = find(request, readerQuery);
 		final List<Long> ids = Lists.newArrayList(idsByType.values());
 
 		List<Entity> list = Lists.newArrayList();
@@ -136,9 +137,9 @@ public class ReaderController extends ReaderControllerBase {
 			if (Strings.isBlank(title)) {
 				title = "-- empty --";
 			}
-			writer.startH2().withClass("list_item_title").text(title).endH2();
 			
 			if (entity instanceof InternetAddress) {
+				writer.startH2().withClass("reader_list_title").text(title).endH2();
 				perspective.setAddressId(entity.getId());
 				address = (InternetAddress) entity;
 				perspective.setUrl(address.getAddress());
@@ -146,11 +147,24 @@ public class ReaderController extends ReaderControllerBase {
 				writer.startP().withClass("list_item_address").startA().withClass("list_item_address_link").withHref(address.getAddress()).text(Strings.simplifyURL(address.getAddress())).endA().endP();
 				perspective.setType("address");
 			} else if (entity instanceof Statement) {
+				Query<Person> personQuery = Query.after(Person.class).from(entity, Relation.KIND_COMMON_AUTHOR).withPrivileged(request.getSession());
+				List<Person> authors = modelService.list(personQuery);
 				perspective.setStatementId(entity.getId());
 				Statement htmlPart = (Statement) entity;
-				writer.startP().withClass("list_item_quote").text(htmlPart.getText()).endP();
+				writer.startP().withClass("reader_list_quote").text(htmlPart.getText()).endP();
+				if (Code.isNotEmpty(authors)) {
+					writer.startDiv().withClass("reader_list_authors");
+					for (Iterator<Person> i = authors.iterator(); i.hasNext();) {
+						Person person = (Person) i.next();
+						writer.text(person.getFullName());
+						if (i.hasNext()) {
+							writer.text(", ");
+						}
+					}
+					writer.endDiv();
+				}
 				perspective.setType("statement");
-				Query<InternetAddress> query = Query.after(InternetAddress.class).to(entity, Relation.KIND_STRUCTURE_CONTAINS);
+				Query<InternetAddress> query = Query.after(InternetAddress.class).to(entity, Relation.KIND_STRUCTURE_CONTAINS).withPrivileged(request.getSession());
 				InternetAddress addr = modelService.search(query).getFirst();
 				if (addr!=null) {
 					perspective.setAddressId(addr.getId());
@@ -180,6 +194,7 @@ public class ReaderController extends ReaderControllerBase {
 	}
 
 	@Path
+	/*
 	public void listAddresses(Request request) throws IOException, ModelException, ExplodingClusterFuckException {
 
 		int page = request.getInt("page");
@@ -247,7 +262,7 @@ public class ReaderController extends ReaderControllerBase {
 			writer.endRow();
 		}
 		writer.endList();
-	}
+	}*/
 
 	private void sortByIds(List<Entity> list, final List<Long> ids) {
 		Collections.sort(list, new Comparator<Entity>() {
@@ -320,6 +335,14 @@ public class ReaderController extends ReaderControllerBase {
 					indexQuery.append(" AND ");
 				}
 				indexQuery.append("word:").append(id);
+			}
+		}
+		if (query.getAuthorIds() != null) {
+			for (Long id : query.getAuthorIds()) {
+				if (indexQuery.length() > 0) {
+					indexQuery.append(" AND ");
+				}
+				indexQuery.append("author:").append(id);
 			}
 		}
 		if ("inbox".equals(query.getSubset())) {
@@ -625,12 +648,10 @@ public class ReaderController extends ReaderControllerBase {
 		StatementEditPerspective perspective = new StatementEditPerspective();
 		perspective.setText(statement.getText());
 		perspective.setId(id);
-		Query<Person> query = Query.of(Person.class).from(statement,Relation.KIND_COMMON_AUTHOR);
-		query.withPrivileged(request.getSession());
-		List<Person> people = modelService.list(query);
+		List<Person> people = getAuthors(statement, request.getSession());
 		List<ItemData> authors = people.stream().map((Person p) -> {
 			ItemData option = new ItemData();
-			option.setValue(p.getId());
+			option.setId(p.getId());
 			option.setText(p.getFullName());
 			return option;
 		}).collect(Collectors.toList());
@@ -638,29 +659,31 @@ public class ReaderController extends ReaderControllerBase {
 		
 		return perspective;
 	}
+
+	private List<Person> getAuthors(Entity entity, Privileged privileged) {
+		Query<Person> query = Query.of(Person.class).from(entity,Relation.KIND_COMMON_AUTHOR).withPrivileged(privileged);
+		List<Person> people = modelService.list(query);
+		return people;
+	}
 	
 	@Path
 	public void saveAddress(Request request) throws ModelException, IllegalRequestException, SecurityException {
-		Long id = request.getId();
-		if (id == null) {
-			throw new IllegalRequestException("Invalid ID");
-		}
-		String title = request.getString("title");
-		if (Strings.isBlank(title)) {
-			throw new IllegalRequestException("The title is empty");
-		}
-		String address = request.getString("address");
-		// TODO Validat URL?
-		if (Strings.isBlank(address)) {
-			throw new IllegalRequestException("The address is empty");
-		}
-		InternetAddress internetAddress = modelService.get(InternetAddress.class, id, request.getSession());
+		AddressEditPerspective perspective = request.getObject("data", AddressEditPerspective.class);
+		AddressEditPerspective.validate(perspective);
+		UserSession privileged = request.getSession();
+		InternetAddress internetAddress = modelService.get(InternetAddress.class, perspective.getId(), privileged);
 		if (internetAddress==null) {
 			throw new IllegalRequestException("The address was not found");
 		}
-		internetAddress.setName(title);
-		boolean addressChanged = !Strings.equals(address, internetAddress.getAddress());
-		modelService.updateItem(internetAddress, request.getSession());
+		internetAddress.setName(perspective.getTitle());
+		boolean addressChanged = !Strings.equals(perspective.getAddress(), internetAddress.getAddress());
+		internetAddress.setAddress(perspective.getAddress());
+		
+		modelService.updateItem(internetAddress, privileged);
+		
+		Collection<Long> ids = ItemData.getIds(perspective.getAuthors());
+		modelService.syncRelationsFrom(internetAddress, Person.class, Relation.KIND_COMMON_AUTHOR, ids , privileged);
+		
 		if (addressChanged) {
 			File itemFolder = storageService.getItemFolder(internetAddress.getId());
 			File original = new File(itemFolder, "original");
@@ -668,8 +691,9 @@ public class ReaderController extends ReaderControllerBase {
 				log.error("Unable to delete original for internetAddress=" + internetAddress.getId());
 			}
 		}
+
 	}
-	
+
 	@Path
 	public void saveStatement(Request request) throws ModelException, IllegalRequestException, SecurityException {
 		StatementEditPerspective perspective = request.getObject("data", StatementEditPerspective.class);
@@ -686,33 +710,9 @@ public class ReaderController extends ReaderControllerBase {
 		statement.setName(StringUtils.abbreviate(text, 50));
 		statement.setText(text);
 		
-		Collection<Long> ids = Lists.newArrayList();
-		List<ItemData> authors = perspective.getAuthors();
-		if (authors!=null) {
-			for (ItemData author : authors) {
-				ids.add(author.getId());
-			}
-		}
 		modelService.updateItem(statement, privileged);
-		syncRelationsFrom(statement, Person.class, Relation.KIND_COMMON_AUTHOR, ids , privileged);
-	}
-	
-	private <T extends Entity> void syncRelationsFrom(Entity fromEntity, Class<T> toType, String relationKind, Collection<Long> ids, Privileged privileged) throws ModelException, SecurityException {
-		List<Relation> relations = modelService.getChildRelations(fromEntity, Person.class, relationKind, privileged);
-		List<Long> toAdd = Lists.newArrayList();
-		toAdd.addAll(ids);
-		for (Relation relation : relations) {
-			if (!ids.contains(relation.getTo().getId())) {
-				modelService.deleteRelation(relation, privileged);
-				toAdd.remove(relation.getTo().getId());
-			}
-		}
-		if (!toAdd.isEmpty()) {
-			List<T> list = modelService.list(Query.of(toType).withIds(toAdd));
-			for (T t : list) {
-				modelService.createRelation(fromEntity, t, relationKind, privileged);
-			}
-		}
+		Collection<Long> ids = ItemData.getIds(perspective.getAuthors());
+		modelService.syncRelationsFrom(statement, Person.class, Relation.KIND_COMMON_AUTHOR, ids , privileged);
 	}
 	
 	@Path

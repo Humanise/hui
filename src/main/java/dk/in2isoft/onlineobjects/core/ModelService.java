@@ -49,6 +49,7 @@ import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Item;
+import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.Privilege;
 import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.model.Relation;
@@ -328,6 +329,25 @@ public class ModelService {
 		item.setUpdated(new Date());
 		session.update(item);
 		eventService.fireItemWasUpdated(item);
+	}
+
+	
+	public <T extends Entity> void syncRelationsFrom(Entity fromEntity, Class<T> toType, String relationKind, Collection<Long> ids, Privileged privileged) throws ModelException, SecurityException {
+		List<Relation> relations = this.getChildRelations(fromEntity, Person.class, relationKind, privileged);
+		List<Long> toAdd = Lists.newArrayList();
+		toAdd.addAll(ids);
+		for (Relation relation : relations) {
+			if (!ids.contains(relation.getTo().getId())) {
+				this.deleteRelation(relation, privileged);
+				toAdd.remove(relation.getTo().getId());
+			}
+		}
+		if (!toAdd.isEmpty()) {
+			List<T> list = this.list(dk.in2isoft.onlineobjects.core.Query.of(toType).withIds(toAdd));
+			for (T t : list) {
+				this.createRelation(fromEntity, t, relationKind, privileged);
+			}
+		}
 	}
 	
 	public boolean canUpdate(Item item, Privileged privileged) {

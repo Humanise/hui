@@ -1,5 +1,10 @@
 package dk.in2isoft.in2igui.data;
 
+import java.util.Collection;
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
 public class ItemData implements Option {
 	private String text;
 	private long id;
@@ -81,5 +86,15 @@ public class ItemData implements Option {
 
 	public String getKind() {
 		return kind;
+	}
+
+	public static Collection<Long> getIds(List<ItemData> items) {
+		Collection<Long> ids = Lists.newArrayList();
+		if (items!=null) {
+			for (ItemData itemData : items) {
+				ids.add(itemData.getId());
+			}
+		}
+		return ids;
 	}
 }

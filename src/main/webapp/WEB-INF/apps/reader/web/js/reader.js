@@ -347,6 +347,7 @@ var controller = {
 	
 	_reloadArticle : function() {
 		var obj = this._viewedItem;
+    obj.statementId = undefined; // Avoid scroll
 		this._viewedItem = null;
 		this._loadArticle(obj);
 	},

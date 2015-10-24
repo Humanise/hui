@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import nu.xom.Document;
 import nu.xom.Element;
@@ -30,18 +31,22 @@ import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.commons.xml.DecoratedDocument;
 import dk.in2isoft.commons.xml.DocumentCleaner;
 import dk.in2isoft.commons.xml.DocumentToText;
+import dk.in2isoft.in2igui.data.ItemData;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.ArticlePerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.StatementPerspective;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Privileged;
+import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.core.exceptions.ExplodingClusterFuckException;
 import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
+import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.InternetAddress;
 import dk.in2isoft.onlineobjects.model.LexicalCategory;
+import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.Pile;
 import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.model.Relation;
@@ -85,7 +90,9 @@ public class ReaderArticleBuilder {
 
 		ArticlePerspective article = new ArticlePerspective();
 
+		article.setTitle(address.getName());
 		article.setUrl(address.getAddress());
+		article.setAuthors(getAuthors(address, session));
 
 		Pile inbox = pileService.getOrCreatePileByRelation(session.getUser(), Relation.KIND_SYSTEM_USER_INBOX);
 		Pile favorites = pileService.getOrCreatePileByRelation(session.getUser(), Relation.KIND_SYSTEM_USER_FAVORITES);
@@ -99,15 +106,7 @@ public class ReaderArticleBuilder {
 			}
 		}
 
-		List<Statement> statements = modelService.getChildren(address, Relation.KIND_STRUCTURE_CONTAINS, Statement.class, session);
-		List<StatementPerspective> quoteList = Lists.newArrayList();
-		for (Statement statement : statements) {
-			StatementPerspective statementPerspective = new StatementPerspective();
-			statementPerspective.setText(statement.getText());
-			statementPerspective.setId(statement.getId());
-			quoteList.add(statementPerspective);
-		}
-		article.setQuotes(quoteList);
+		loadStatements(address, article, session);
 
 		article.setHeader(buildHeader(address));
 		article.setInfo(buildInfo(document, data, session));
@@ -116,15 +115,37 @@ public class ReaderArticleBuilder {
 		watch.split();
 		log.trace("Base: " + watch.getSplitTime());
 		if (document != null) {
-			article.setTitle(document.getTitle());
 			buildRendering(document, data, article, algorithm, watch);
-		} else {
-			article.setTitle(address.getName());
 		}
 
 		watch.stop();
 		log.trace("Total: " + watch.getTime());
 		return article;
+	}
+
+	private List<ItemData> getAuthors(Entity address, UserSession session) {
+		Query<Person> query = Query.of(Person.class).from(address,Relation.KIND_COMMON_AUTHOR).withPrivileged(session);
+		List<Person> people = modelService.list(query);
+		List<ItemData> authors = people.stream().map((Person p) -> {
+			ItemData option = new ItemData();
+			option.setValue(p.getId());
+			option.setText(p.getFullName());
+			return option;
+		}).collect(Collectors.toList());
+		return authors;
+	}
+
+	private void loadStatements(InternetAddress address, ArticlePerspective article, UserSession session) throws ModelException {
+		List<Statement> statements = modelService.getChildren(address, Relation.KIND_STRUCTURE_CONTAINS, Statement.class, session);
+		List<StatementPerspective> quoteList = Lists.newArrayList();
+		for (Statement statement : statements) {
+			StatementPerspective statementPerspective = new StatementPerspective();
+			statementPerspective.setText(statement.getText());
+			statementPerspective.setId(statement.getId());
+			statementPerspective.setAuthors(getAuthors(statement, session));
+			quoteList.add(statementPerspective);
+		}
+		article.setQuotes(quoteList);
 	}
 	
 	private ArticleData buildData(InternetAddress address) throws ModelException {
@@ -226,6 +247,16 @@ public class ReaderArticleBuilder {
 					}
 					formatted.startBlockquote().withClass(cls).withData("id", statement.getId());
 					formatted.text(statement.getText());
+					List<ItemData> authors = statement.getAuthors();
+					if (authors!=null && !authors.isEmpty()) {
+						formatted.startSpan().text(" - ");
+						for (int i = 0; i < authors.size(); i++) {
+							if (i > 0) {
+								formatted.text(", ");
+							}
+							formatted.text(authors.get(i).getText());
+						}
+					}
 					formatted.startVoidA().withData("id", statement.getId()).withClass("oo_icon oo_icon_info_light reader_viewer_quote_icon js_action").endA();
 					formatted.endBlockquote();
 				}

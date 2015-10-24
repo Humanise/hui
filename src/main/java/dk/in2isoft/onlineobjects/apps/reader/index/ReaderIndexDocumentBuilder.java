@@ -13,9 +13,11 @@ import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Privileged;
+import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.model.InternetAddress;
+import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.Pile;
 import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.model.Relation;
@@ -37,24 +39,32 @@ public class ReaderIndexDocumentBuilder implements IndexDocumentBuilder<Internet
 		Document doc = new Document();
 		doc.add(new TextField("title", Strings.asNonBlank(address.getName(),"blank"), Field.Store.YES));
 		HTMLDocument html = getHTMLDocument(address);
-		String text = null;
+		StringBuilder text = new StringBuilder();
 		if (html!=null) {
-			text = html.getExtractedText();
+			text.append(html.getExtractedText());
 		}
-		doc.add(new TextField("text", Strings.asNonBlank(text,""), Field.Store.NO));
+		
 		Privileged admin = securityService.getAdminPrivileged();
 		List<Word> words = modelService.getChildren(address, Word.class,admin);
-		StringBuilder wordStr = new StringBuilder();
+		StringBuilder wordText = new StringBuilder();
 		for (Word word : words) {
-			if (wordStr.length()>0) {
-				wordStr.append(" ");
+			if (wordText.length()>0) {
+				wordText.append(" ");
 			}
-			wordStr.append(word.getText());
+			wordText.append(word.getText());
 			doc.add(new StringField("word", String.valueOf(word.getId()), Field.Store.NO));
 		}
-		doc.add(new TextField("words", wordStr.toString(), Field.Store.NO));
+		doc.add(new TextField("words", wordText.toString(), Field.Store.NO));
 
 		User owner = modelService.getOwner(address);
+
+		Query<Person> authors = Query.of(Person.class).from(address, Relation.KIND_COMMON_AUTHOR).withPrivileged(owner);
+		List<Person> people = modelService.list(authors);
+		for (Person person : people) {
+			doc.add(new StringField("author", String.valueOf(person.getId()), Field.Store.NO));
+			text.append(" ").append(person.getFullName());
+		}
+		doc.add(new TextField("text", Strings.asNonBlank(text.toString(),""), Field.Store.NO));
 
 		
 		Pile inbox = pileService.getOrCreatePileByRelation(owner, Relation.KIND_SYSTEM_USER_INBOX);

@@ -3,18 +3,14 @@ package dk.in2isoft.onlineobjects.apps.reader.index;
 import java.util.Collection;
 import java.util.List;
 
-public class ReaderQuery {
+import dk.in2isoft.onlineobjects.modules.index.IndexQuery;
 
-	private String text;
+public class ReaderQuery extends IndexQuery {
+
 	private Collection<String> type;
 	private String subset;
-	private int page;
-	private int pageSize;
 	private List<Long> wordIds;
-
-	public String getText() {
-		return text;
-	}
+	private List<Long> authorIds;
 
 	public void setText(String text) {
 		this.text = text;
@@ -36,16 +32,8 @@ public class ReaderQuery {
 		this.subset = subset;
 	}
 
-	public int getPage() {
-		return page;
-	}
-
 	public void setPage(int page) {
 		this.page = page;
-	}
-
-	public int getPageSize() {
-		return pageSize;
 	}
 
 	public void setPageSize(int pageSize) {
@@ -58,6 +46,14 @@ public class ReaderQuery {
 
 	public void setWordIds(List<Long> wordIds) {
 		this.wordIds = wordIds;
+	}
+
+	public List<Long> getAuthorIds() {
+		return authorIds;
+	}
+
+	public void setAuthorIds(List<Long> authorIds) {
+		this.authorIds = authorIds;
 	}
 
 }

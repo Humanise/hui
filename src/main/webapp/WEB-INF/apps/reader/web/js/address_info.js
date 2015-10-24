@@ -12,7 +12,8 @@ var addressInfoController = {
 		this.id = data.id;
 		this.form.setValues({
 			title : data.title,
-			address: data.url
+			address: data.url,
+      authors : data.authors
 		});
 		this.window.show();
 	},
@@ -38,7 +39,7 @@ var addressInfoController = {
 		this.window.setBusy(true);
     hui.ui.request({
       url : '/saveAddress',
-      parameters : data,
+      json : {data : data},
       $success : function() {
         this._reset();
 				this.window.hide();
@@ -71,6 +72,13 @@ var addressInfoController = {
 	$userClosedWindow$addressInfoWindow : function() {
 		this._reset();
 	},
+
+  $render$addressAuthor : function(item) {
+    return {
+      icon: 'common/person',
+      text: item.name || item.title || item.text
+    }
+  },
 	
 	_tellMainController : function() {
 		controller.addressChanged();
