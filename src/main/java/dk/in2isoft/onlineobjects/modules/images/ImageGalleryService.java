@@ -74,8 +74,8 @@ public class ImageGalleryService {
 
 			@Override
 			public int compare(Relation o1, Relation o2) {
-				int index1 = imageIds.indexOf(o1.getSubEntity().getId());
-				int index2 = imageIds.indexOf(o2.getSubEntity().getId());
+				int index1 = imageIds.indexOf(o1.getTo().getId());
+				int index2 = imageIds.indexOf(o2.getTo().getId());
 				return index1-index2;
 			}
 		});

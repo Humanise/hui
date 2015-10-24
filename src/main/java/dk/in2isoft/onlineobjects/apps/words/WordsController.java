@@ -129,13 +129,13 @@ public class WordsController extends WordsControllerBase {
 		Locale locale = new Locale(request.getString("language"));
 		
 		Relation relation = modelService.getRelation(relationid);
-		Entity subEntity = relation.getSubEntity();
-		Entity superEntity = relation.getSuperEntity();
+		Entity to = relation.getTo();
+		Entity from = relation.getFrom();
 		Entity word = null;
-		if (subEntity.getId()==wordId) {
-			word = subEntity;
-		} else if (superEntity.getId()==wordId) {
-			word = superEntity;
+		if (to.getId()==wordId) {
+			word = to;
+		} else if (from.getId()==wordId) {
+			word = from;
 		} else {
 			throw new IllegalRequestException("Word not found");
 		}

@@ -38,8 +38,8 @@ public class UserQuery implements PairQuery<User, Person> {
 			hql.from(Privilege.class,"userPrivilege");
 			hql.from(User.class,"publicUser");
 		}
-		hql.where("rel.subEntity=person");
-		hql.where("rel.superEntity=user");
+		hql.where("rel.to=person");
+		hql.where("rel.from=user");
 		
 		if (username!=null) {
 			hql.where("user.username=:username");

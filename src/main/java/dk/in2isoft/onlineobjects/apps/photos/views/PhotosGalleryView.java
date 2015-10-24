@@ -65,7 +65,7 @@ public class PhotosGalleryView extends AbstractManagedBean implements Initializi
 			List<Relation> childRelations = modelService.getChildRelations(imageGallery, Image.class, session);
 			images = Lists.newArrayList();
 			for (Relation relation : childRelations) {
-				Image image = (Image) relation.getSubEntity();
+				Image image = (Image) relation.getTo();
 				Date date = image.getPropertyDateValue(Property.KEY_PHOTO_TAKEN);
 				if (date!=null) {
 					if (from==null || from.after(date)) {

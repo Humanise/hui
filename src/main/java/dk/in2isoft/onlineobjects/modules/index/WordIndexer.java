@@ -92,29 +92,29 @@ public class WordIndexer implements ModelEventListener {
 	}
 
 	public void relationWasCreated(Relation relation) {
-		if (relation.getSuperEntity() instanceof Word) {
-			indexWord((Word) relation.getSuperEntity());
+		if (relation.getFrom() instanceof Word) {
+			indexWord((Word) relation.getFrom());
 		}
-		if (relation.getSubEntity() instanceof Word) {
-			indexWord((Word) relation.getSubEntity());
+		if (relation.getTo() instanceof Word) {
+			indexWord((Word) relation.getTo());
 		}
 	}
 
 	public void relationWasUpdated(Relation relation) {
-		if (relation.getSuperEntity() instanceof Word) {
-			indexWord((Word) relation.getSuperEntity());
+		if (relation.getFrom() instanceof Word) {
+			indexWord((Word) relation.getFrom());
 		}
-		if (relation.getSubEntity() instanceof Word) {
-			indexWord((Word) relation.getSubEntity());
+		if (relation.getTo() instanceof Word) {
+			indexWord((Word) relation.getTo());
 		}
 	}
 
 	public void relationWasDeleted(Relation relation) {
-		if (relation.getSuperEntity() instanceof Word) {
-			indexWord((Word) relation.getSuperEntity());
+		if (relation.getFrom() instanceof Word) {
+			indexWord((Word) relation.getFrom());
 		}
-		if (relation.getSubEntity() instanceof Word) {
-			indexWord((Word) relation.getSubEntity());
+		if (relation.getTo() instanceof Word) {
+			indexWord((Word) relation.getTo());
 		}
 	}
 

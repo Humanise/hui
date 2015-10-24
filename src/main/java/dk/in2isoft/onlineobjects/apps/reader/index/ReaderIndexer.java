@@ -101,32 +101,32 @@ public class ReaderIndexer implements ModelEventListener, ModelPrivilegesEventLi
 	}
 
 	public void relationWasCreated(Relation relation) {
-		if (relation.getSuperEntity() instanceof InternetAddress) {
-			index((InternetAddress) relation.getSuperEntity());
+		if (relation.getFrom() instanceof InternetAddress) {
+			index((InternetAddress) relation.getFrom());
 		}
-		if (relation.getSubEntity() instanceof InternetAddress) {
-			index((InternetAddress) relation.getSubEntity());
+		if (relation.getTo() instanceof InternetAddress) {
+			index((InternetAddress) relation.getTo());
 		}
 		if (relation.matches(InternetAddress.class,Relation.KIND_STRUCTURE_CONTAINS,Statement.class)) {
-			index((Statement) relation.getSubEntity());
+			index((Statement) relation.getTo());
 		}
 	}
 
 	public void relationWasUpdated(Relation relation) {
-		if (relation.getSuperEntity() instanceof InternetAddress) {
-			index((InternetAddress) relation.getSuperEntity());
+		if (relation.getFrom() instanceof InternetAddress) {
+			index((InternetAddress) relation.getFrom());
 		}
-		if (relation.getSubEntity() instanceof InternetAddress) {
-			index((InternetAddress) relation.getSubEntity());
+		if (relation.getTo() instanceof InternetAddress) {
+			index((InternetAddress) relation.getTo());
 		}
 	}
 
 	public void relationWasDeleted(Relation relation) {
-		if (relation.getSuperEntity() instanceof InternetAddress) {
-			index((InternetAddress) relation.getSuperEntity());
+		if (relation.getFrom() instanceof InternetAddress) {
+			index((InternetAddress) relation.getFrom());
 		}
-		if (relation.getSubEntity() instanceof InternetAddress) {
-			index((InternetAddress) relation.getSubEntity());
+		if (relation.getTo() instanceof InternetAddress) {
+			index((InternetAddress) relation.getTo());
 		}
 	}
 

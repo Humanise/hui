@@ -43,11 +43,11 @@ public abstract class AnyModelChangeListener implements ModelEventListener {
 	}
 
 	private void checkRelation(Relation relation) {
-		if (types.isEmpty() || types.contains(relation.getSuperEntity().getClass())) {
-			this.itemWasChanged(relation.getSuperEntity());
+		if (types.isEmpty() || types.contains(relation.getFrom().getClass())) {
+			this.itemWasChanged(relation.getFrom());
 		}
-		if (types.isEmpty() || types.contains(relation.getSubEntity().getClass())) {
-			this.itemWasChanged(relation.getSubEntity());
+		if (types.isEmpty() || types.contains(relation.getTo().getClass())) {
+			this.itemWasChanged(relation.getTo());
 		}
 	}
 

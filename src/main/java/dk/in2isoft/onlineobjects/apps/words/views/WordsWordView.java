@@ -108,7 +108,7 @@ public class WordsWordView extends AbstractView implements InitializingBean {
 				
 				List<Relation> parentRelations = modelService.getParentRelations(impression.getWord(), InternetAddress.class);
 				for (Relation parentRelation : parentRelations) {
-					System.out.println("Parent: "+parentRelation.getSuperEntity()+ " --- "+parentRelation.getKind());
+					System.out.println("Parent: "+parentRelation.getFrom()+ " --- "+parentRelation.getKind());
 				}*/
 				
 				
@@ -167,7 +167,7 @@ public class WordsWordView extends AbstractView implements InitializingBean {
 		for (Relation relation : children) {
 			WordRelation rel = new WordRelation();
 			rel.setId(relation.getId());
-			rel.setWord((Word) relation.getSubEntity());
+			rel.setWord((Word) relation.getTo());
 			
 			if (!contains(map, relation.getKind(), rel)) {
 				if (RELATIONS_ONE_WAY.contains(relation.getKind())) {
@@ -181,7 +181,7 @@ public class WordsWordView extends AbstractView implements InitializingBean {
 		for (Relation relation : parents) {
 			WordRelation rel = new WordRelation();
 			rel.setId(relation.getId());
-			rel.setWord((Word) relation.getSuperEntity());
+			rel.setWord((Word) relation.getFrom());
 			if (!contains(map, relation.getKind(), rel)) {
 				if (RELATIONS_ONE_WAY.contains(relation.getKind())) {
 					map.put(relation.getKind()+".reverse", rel);

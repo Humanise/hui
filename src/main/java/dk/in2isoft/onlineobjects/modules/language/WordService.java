@@ -200,9 +200,9 @@ public class WordService {
 		if (language==null) {
 			throw new IllegalRequestException("Unsupported language ("+languageCode+")");
 		}
-		Query<Word> query = Query.of(Word.class).withField(Word.TEXT_FIELD, text).withParent(language);
+		Query<Word> query = Query.of(Word.class).withField(Word.TEXT_FIELD, text).from(language);
 		if (lexicalCategory!=null) {
-			query.withParent(lexicalCategory);
+			query.from(lexicalCategory);
 		}
 		List<Word> list = modelService.list(query);
 		if (list.size()==0) {

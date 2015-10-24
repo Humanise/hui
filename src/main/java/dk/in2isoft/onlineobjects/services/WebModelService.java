@@ -129,7 +129,7 @@ public class WebModelService {
 	
 	private int getIndexOfNode(List<Relation> relations, WebNode node) {
 		for (int i	= 0; i < relations.size(); i++) {
-			if (relations.get(i).getSubEntity().getId()==node.getId()) {
+			if (relations.get(i).getTo().getId()==node.getId()) {
 				return i;
 			}
 		}

@@ -44,7 +44,7 @@ public class InboxService implements InitializingBean {
 	}
 
 	public Pile getOrCreateInbox(User privileged) throws ModelException {
-		Query<Pile> query = Query.after(Pile.class).withParent(privileged, Relation.KIND_SYSTEM_USER_INBOX).withPrivileged(privileged);
+		Query<Pile> query = Query.after(Pile.class).from(privileged, Relation.KIND_SYSTEM_USER_INBOX).withPrivileged(privileged);
 		Pile inbox = modelService.getFirst(query);
 		if (inbox==null) {
 			inbox = new Pile();
@@ -69,7 +69,7 @@ public class InboxService implements InitializingBean {
 		
 		// TODO Optimize this by caching id=count
 		Pile inbox = getOrCreateInbox(user);
-		Query<Entity> query = Query.after(Entity.class).withParent(inbox).withPrivileged(user);
+		Query<Entity> query = Query.after(Entity.class).from(inbox).withPrivileged(user);
 		//List<Entity> list = modelService.list(query);
 		int count = modelService.count(query).intValue();
 		counts.put(user.getId(), count);

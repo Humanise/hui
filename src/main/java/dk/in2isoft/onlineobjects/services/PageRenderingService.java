@@ -75,7 +75,7 @@ public class PageRenderingService {
 		Element nodes = new Element("nodes", NAMESPACE);
 		List<Relation> childRelations = modelService.getChildRelations(site, WebNode.class);
 		for (Relation relation : childRelations) {
-			nodes.appendChild(conversionService.generateXML(relation.getSubEntity()));
+			nodes.appendChild(conversionService.generateXML(relation.getTo()));
 		}
 		context.appendChild(nodes);
 		root.appendChild(context);

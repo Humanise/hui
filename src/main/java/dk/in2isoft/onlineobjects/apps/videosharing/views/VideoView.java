@@ -58,18 +58,18 @@ public class VideoView extends AbstractManagedBean implements InitializingBean {
 		if (video==null) {
 			throw new ContentNotFoundException("The video does not excist");
 		}
-		Query<Comment> commentQuery = Query.of(Comment.class).withParent(video).orderByCreated().descending();
+		Query<Comment> commentQuery = Query.of(Comment.class).from(video).orderByCreated().descending();
 		comments = modelService.list(commentQuery);
 		canEdit = user.getId()==getRequest().getSession().getUser().getId();
 		
 		videoInfo = videoService.getInfo(video,getRequest());
 		
 		if (!isPublicUser()) {
-			Query<Rating> q = Query.of(Rating.class).withParent(video).withPrivileged(getRequest().getSession());
+			Query<Rating> q = Query.of(Rating.class).from(video).withPrivileged(getRequest().getSession());
 			rating = modelService.search(q).getFirst();
 		}
 
-		Query<Rating> q = Query.of(Rating.class).withParent(video);
+		Query<Rating> q = Query.of(Rating.class).from(video);
 		SearchResult<Rating> search = modelService.search(q);
 		averageRating = 0;
 		List<Rating> ratings = search.getList();

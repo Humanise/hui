@@ -9,15 +9,15 @@ import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Location;
 import dk.in2isoft.onlineobjects.model.Relation;
 
-public class  LocationQuery<T extends Entity> implements PairQuery<Location, T> {
-	
+public class LocationQuery<T extends Entity> implements PairQuery<Location, T> {
+
 	private String[] words;
 	private int pageNumber;
 	private int pageSize;
 	private Class<T> cls;
 	private GeoLatLng northEast;
 	private GeoLatLng southWest;
-	
+
 	public LocationQuery(Class<T> cls) {
 		this.cls = cls;
 	}
@@ -31,18 +31,21 @@ public class  LocationQuery<T extends Entity> implements PairQuery<Location, T> 
 		StringBuilder hql = new StringBuilder("select location,entity from ");
 		return createQuery(session, hql, false);
 	}
-	
-	public Query createQuery(Session session,StringBuilder hql, boolean ignorePaging) {
+
+	public Query createQuery(Session session, StringBuilder hql,
+			boolean ignorePaging) {
 		hql.append(Location.class.getName()).append(" as location");
 		hql.append(",").append(cls.getName()).append(" as entity");
 		hql.append(",").append(Relation.class.getName()).append(" as rel");
-		hql.append(" where rel.subEntity=entity and rel.superEntity=location");
+		hql.append(" where rel.to=entity and rel.from=location");
 		if (Strings.isDefined(words)) {
 			for (int i = 0; i < words.length; i++) {
-				hql.append(" and (lower(entity.name) like lower(:word" + i + ") or lower(location.name) like lower(:word" + i + "))");
+				hql.append(" and (lower(entity.name) like lower(:word" + i
+						+ ") or lower(location.name) like lower(:word" + i
+						+ "))");
 			}
 		}
-		if (northEast!=null && southWest!=null) {
+		if (northEast != null && southWest != null) {
 			hql.append(" and location.latitude>:minLatitude and location.latitude<:maxLatitude");
 			hql.append(" and location.longitude>:minLongitude and location.longitude<:maxLongitude");
 		}
@@ -60,7 +63,7 @@ public class  LocationQuery<T extends Entity> implements PairQuery<Location, T> 
 				q.setString("word" + i, "%" + word + "%");
 			}
 		}
-		if (northEast!=null && southWest!=null) {
+		if (northEast != null && southWest != null) {
 			q.setDouble("minLongitude", southWest.getLng());
 			q.setDouble("maxLongitude", northEast.getLng());
 			q.setDouble("minLatitude", southWest.getLat());
@@ -82,7 +85,7 @@ public class  LocationQuery<T extends Entity> implements PairQuery<Location, T> 
 		return this;
 	}
 
-	public LocationQuery<T> withBounds(GeoLatLng northEast,GeoLatLng southWest) {
+	public LocationQuery<T> withBounds(GeoLatLng northEast, GeoLatLng southWest) {
 		this.northEast = northEast;
 		this.southWest = southWest;
 		return this;

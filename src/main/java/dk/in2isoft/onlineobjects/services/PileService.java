@@ -27,7 +27,7 @@ public class PileService {
 	}
 	
 	public Pile getOrCreatePileByKey(String key, User user) throws ModelException {
-		Query<Pile> query = Query.after(Pile.class).withCustomProperty(Pile.PROPERTY_KEY, key).withParent(user);
+		Query<Pile> query = Query.after(Pile.class).withCustomProperty(Pile.PROPERTY_KEY, key).from(user);
 		Pile first = modelService.search(query).getFirst();
 		if (first==null) {
 			first = new Pile();
@@ -40,7 +40,7 @@ public class PileService {
 	}
 
 	public Pile getOrCreatePileByRelation(User user, String relationKind) throws ModelException {
-		Query<Pile> query = Query.after(Pile.class).withParent(user, relationKind).withPrivileged(user);
+		Query<Pile> query = Query.after(Pile.class).from(user, relationKind).withPrivileged(user);
 		Pile pile = modelService.getFirst(query);
 		if (pile==null) {
 			pile = new Pile();

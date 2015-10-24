@@ -239,8 +239,8 @@
 	        <key column="id"/>
 		    <property name="kind"/>
 		    <property name="position"/>
-	        <many-to-one name="superEntity" column="super_entity_id" not-null="true" lazy="false" fetch="join"/>
-	        <many-to-one name="subEntity" column="sub_entity_id" not-null="true" lazy="false" fetch="join"/>
+	        <many-to-one name="from" column="super_entity_id" not-null="true" lazy="false" fetch="join"/>
+	        <many-to-one name="to" column="sub_entity_id" not-null="true" lazy="false" fetch="join"/>
 	    </joined-subclass>
     
     </class>

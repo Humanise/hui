@@ -39,7 +39,7 @@ public class ImageGalleryRemotingFacade extends AbstractRemotingFacade {
 		List<Relation> relations = modelService.getChildRelations(gallery);
 		for (int i = 0; i < ids.length; i++) {
 			for (Relation relation : relations) {
-				if (relation.getSubEntity().getId() == ids[i]) {
+				if (relation.getTo().getId() == ids[i]) {
 					relation.setPosition(i + 1);
 					modelService.updateItem(relation, getUserSession());
 				}

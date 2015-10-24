@@ -111,7 +111,7 @@ public class ToolsController extends ToolsControllerBase {
 		if (wordId!=null) {
 			Word word = modelService.get(Word.class, wordId, request.getSession());
 			if (word!=null) {
-				query.withChild(word);
+				query.to(word);
 			}
 		}
 		SearchResult<InternetAddress> result = modelService.search(query);

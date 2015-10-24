@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -48,6 +49,7 @@ import dk.in2isoft.onlineobjects.core.exceptions.NetworkException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.InternetAddress;
+import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.Pile;
 import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.model.Relation;
@@ -148,7 +150,7 @@ public class ReaderController extends ReaderControllerBase {
 				Statement htmlPart = (Statement) entity;
 				writer.startP().withClass("list_item_quote").text(htmlPart.getText()).endP();
 				perspective.setType("statement");
-				Query<InternetAddress> query = Query.after(InternetAddress.class).withChild(entity, Relation.KIND_STRUCTURE_CONTAINS);
+				Query<InternetAddress> query = Query.after(InternetAddress.class).to(entity, Relation.KIND_STRUCTURE_CONTAINS);
 				InternetAddress addr = modelService.search(query).getFirst();
 				if (addr!=null) {
 					perspective.setAddressId(addr.getId());
@@ -623,6 +625,17 @@ public class ReaderController extends ReaderControllerBase {
 		StatementEditPerspective perspective = new StatementEditPerspective();
 		perspective.setText(statement.getText());
 		perspective.setId(id);
+		Query<Person> query = Query.of(Person.class).from(statement,Relation.KIND_COMMON_AUTHOR);
+		query.withPrivileged(request.getSession());
+		List<Person> people = modelService.list(query);
+		List<ItemData> authors = people.stream().map((Person p) -> {
+			ItemData option = new ItemData();
+			option.setValue(p.getId());
+			option.setText(p.getFullName());
+			return option;
+		}).collect(Collectors.toList());
+		perspective.setAuthors(authors);
+		
 		return perspective;
 	}
 	
@@ -668,10 +681,38 @@ public class ReaderController extends ReaderControllerBase {
 		if (Strings.isBlank(text)) {
 			throw new IllegalRequestException("The text is empty");
 		}
-		Statement statement = modelService.get(Statement.class, id, request.getSession());
+		Privileged privileged = request.getSession();
+		Statement statement = modelService.get(Statement.class, id, privileged);
 		statement.setName(StringUtils.abbreviate(text, 50));
 		statement.setText(text);
-		modelService.updateItem(statement, request.getSession());
+		
+		Collection<Long> ids = Lists.newArrayList();
+		List<ItemData> authors = perspective.getAuthors();
+		if (authors!=null) {
+			for (ItemData author : authors) {
+				ids.add(author.getId());
+			}
+		}
+		modelService.updateItem(statement, privileged);
+		syncRelationsFrom(statement, Person.class, Relation.KIND_COMMON_AUTHOR, ids , privileged);
+	}
+	
+	private <T extends Entity> void syncRelationsFrom(Entity fromEntity, Class<T> toType, String relationKind, Collection<Long> ids, Privileged privileged) throws ModelException, SecurityException {
+		List<Relation> relations = modelService.getChildRelations(fromEntity, Person.class, relationKind, privileged);
+		List<Long> toAdd = Lists.newArrayList();
+		toAdd.addAll(ids);
+		for (Relation relation : relations) {
+			if (!ids.contains(relation.getTo().getId())) {
+				modelService.deleteRelation(relation, privileged);
+				toAdd.remove(relation.getTo().getId());
+			}
+		}
+		if (!toAdd.isEmpty()) {
+			List<T> list = modelService.list(Query.of(toType).withIds(toAdd));
+			for (T t : list) {
+				modelService.createRelation(fromEntity, t, relationKind, privileged);
+			}
+		}
 	}
 	
 	@Path

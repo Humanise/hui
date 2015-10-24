@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import dk.in2isoft.commons.lang.Code;
@@ -16,6 +17,7 @@ import dk.in2isoft.in2igui.data.Diagram;
 import dk.in2isoft.in2igui.data.FinderConfiguration;
 import dk.in2isoft.in2igui.data.ListWriter;
 import dk.in2isoft.in2igui.data.Node;
+import dk.in2isoft.in2igui.data.FinderConfiguration.FinderCreationConfiguration;
 import dk.in2isoft.onlineobjects.apps.videosharing.Path;
 import dk.in2isoft.onlineobjects.apps.words.WordsController;
 import dk.in2isoft.onlineobjects.core.Privileged;
@@ -29,6 +31,7 @@ import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.Language;
 import dk.in2isoft.onlineobjects.model.LexicalCategory;
+import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.Pile;
 import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.model.Relation;
@@ -204,7 +207,7 @@ public class ModelController extends ModelControllerBase {
 		
 		List<Relation> childRelations = modelService.getChildRelations(entity);
 		for (Relation relation : childRelations) {
-			Entity other = relation.getSubEntity();
+			Entity other = relation.getTo();
 
 			Node otherNode = new Node();
 			otherNode.setId(other.getId());
@@ -216,7 +219,7 @@ public class ModelController extends ModelControllerBase {
 		
 		List<Relation> parentRelations = modelService.getParentRelations(entity);
 		for (Relation relation : parentRelations) {
-			Entity other = relation.getSuperEntity();
+			Entity other = relation.getFrom();
 
 			Node otherNode = new Node();
 			otherNode.setId(other.getId());
@@ -238,6 +241,24 @@ public class ModelController extends ModelControllerBase {
 		config.setTitle("Find " + type);
 		config.setListUrl("/service/model/finderList?type=" + type);
 		config.setSearchParameter("text");
+		
+		if (Person.class.getSimpleName().equals(type)) {
+			FinderCreationConfiguration creation = config.new FinderCreationConfiguration();
+			creation.setUrl("/service/model/createFromFinder?type=" + type);
+			creation.setButton("Add "+type);
+			List<Object> formula = Lists.newArrayList();
+			{
+				Map<String,Object> field = Maps.newHashMap();
+				field.put("type","TextInput");
+				field.put("label","Full name");
+				Map<String,Object> options = Maps.newHashMap();
+				options.put("key","fullName");
+				field.put("options", options);
+				formula.add(field);
+			}
+			creation.setFormula(formula);
+			config.setCreation(creation);
+		}
 		return config;
 	}
 	
@@ -270,5 +291,17 @@ public class ModelController extends ModelControllerBase {
 			out.endRow();
 		}
 		out.endList();
+	}
+	
+	@Path
+	public Object createFromFinder(Request request) throws IllegalRequestException, ModelException {
+		String type = request.getString("type", "No type provided");
+		if (Person.class.getSimpleName().equals(type)) {
+			Person person = new Person();
+			person.setFullName(request.getString("fullName", "No name"));
+			modelService.createItem(person, request.getSession());
+			return person;
+		}
+		throw new IllegalRequestException("Unknown type");
 	}
 }

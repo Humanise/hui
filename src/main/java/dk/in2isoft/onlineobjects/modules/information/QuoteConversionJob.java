@@ -37,14 +37,14 @@ public class QuoteConversionJob extends ServiceBackedJob {
 				List<Relation> relations = modelService.getRelations(part);
 				for (Relation relation : relations) {
 					if (Relation.KIND_STRUCTURE_CONTAINS.equals(relation.getKind())) {
-						if (relation.getSuperEntity().getClass().equals(InternetAddress.class)) {
+						if (relation.getFrom().getClass().equals(InternetAddress.class)) {
 							User owner = modelService.getOwner(part);
 							
 							Statement statement = new Statement();
 							statement.setText(part.getHtml());
 							statement.setName(StringUtils.abbreviate(part.getHtml(), 50));
 							modelService.createItem(statement, owner);
-							modelService.createRelation(relation.getSuperEntity(), statement, Relation.KIND_STRUCTURE_CONTAINS, owner);
+							modelService.createRelation(relation.getFrom(), statement, Relation.KIND_STRUCTURE_CONTAINS, owner);
 							modelService.deleteEntity(part, owner);
 							status.log("Converted: " + part.getHtml());
 						}

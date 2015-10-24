@@ -30,7 +30,7 @@ public class OnlinePublisherService {
 
 	public List<InternetAddress> getSites(Privileged privileged) throws ModelException {
 		Pile pile = getPile(privileged);
-		Query<InternetAddress> query = Query.after(InternetAddress.class).withParent(pile);
+		Query<InternetAddress> query = Query.after(InternetAddress.class).from(pile);
 		return modelService.list(query);
 	}
 

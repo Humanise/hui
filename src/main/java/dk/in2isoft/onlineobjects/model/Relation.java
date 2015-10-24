@@ -46,9 +46,9 @@ public class Relation extends Item {
 	public static final String KIND_EVENT_ORGANIZER = "event.organizer";
 
 	
-	private Entity superEntity;
+	private Entity from;
 
-	private Entity subEntity;
+	private Entity to;
 
 	private String kind;
 	
@@ -57,9 +57,9 @@ public class Relation extends Item {
 	public Relation() {
 	}
 
-	public Relation(Entity superEntity, Entity subEntity) {
-		this.superEntity = superEntity;
-		this.subEntity = subEntity;
+	public Relation(Entity from, Entity to) {
+		this.from = from;
+		this.to = to;
 	}
 
 	public String getKind() {
@@ -78,34 +78,34 @@ public class Relation extends Item {
 		this.position = order;
 	}
 
-	public Entity getSubEntity() {
-		return subEntity;
+	public Entity getTo() {
+		return to;
 	}
 
-	public void setSubEntity(Entity subEntity) {
-		this.subEntity = subEntity;
+	public void setTo(Entity to) {
+		this.to = to;
 	}
 
-	public Entity getSuperEntity() {
-		return superEntity;
+	public Entity getFrom() {
+		return from;
 	}
 
-	public void setSuperEntity(Entity superEntity) {
-		this.superEntity = superEntity;
+	public void setFrom(Entity from) {
+		this.from = from;
 	}
 
 	@Override
 	public String toString() {
-		return super.toString()+" : "+this.superEntity.toString()+" --> "+this.subEntity.toString()+" ["+this.kind+"]";
+		return super.toString()+" : "+this.from.toString()+" --> "+this.to.toString()+" ["+this.kind+"]";
 	}
 
-	public boolean matches(Class<? extends Entity> superClass, String kind, Class<? extends Entity> subClass) {
+	public boolean matches(Class<? extends Entity> fromClass, String kind, Class<? extends Entity> toClass) {
 		boolean matches = true;
 		if (kind!=null) {
 			matches &= Strings.equals(kind, this.kind);
 		}
-		matches &= superEntity.getClass().isAssignableFrom(superClass);
-		matches &= subEntity.getClass().isAssignableFrom(subClass);
+		matches &= from.getClass().isAssignableFrom(fromClass);
+		matches &= to.getClass().isAssignableFrom(toClass);
 		return matches;
 	}
 

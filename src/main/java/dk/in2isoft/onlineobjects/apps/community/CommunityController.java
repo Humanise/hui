@@ -225,8 +225,8 @@ public class CommunityController extends ApplicationController {
 		Query<Relation> rq = Query.of(Relation.class).withPaging(0, 1000);
 		List<Relation> relations = modelService.list(rq);
 		for (Relation relation : relations) {
-			Entity sub = relation.getSubEntity();
-			Entity supr = relation.getSuperEntity();
+			Entity sub = relation.getTo();
+			Entity supr = relation.getFrom();
 			sb.append(supr.getId());
 			sb.append(" -> ");
 			sb.append(sub.getId());
@@ -238,7 +238,7 @@ public class CommunityController extends ApplicationController {
 			sb.append("\" ];");
 		}
 		for (Relation relation : relations) {
-			Entity child = relation.getSubEntity();
+			Entity child = relation.getTo();
 			if (!added.contains(child.getId())) {
 				sb.append(child.getId()).append(" [shape=box,fontname=\"Arial\",label=\"").append(
 						child.getClass().getSimpleName());
@@ -248,7 +248,7 @@ public class CommunityController extends ApplicationController {
 				sb.append("\"];");
 				added.add(child.getId());
 			}
-			Entity parent = relation.getSuperEntity();
+			Entity parent = relation.getFrom();
 			if (!added.contains(parent.getId())) {
 				sb.append(parent.getId()).append(" [shape=box,fontname=\"Arial\",label=\"").append(
 						parent.getClass().getSimpleName());

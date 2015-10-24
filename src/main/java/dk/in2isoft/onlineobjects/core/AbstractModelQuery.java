@@ -21,9 +21,9 @@ public abstract class AbstractModelQuery<T> implements ModelQuery {
 	protected Date createdFrom;
 	protected Date createdTo;
 	//protected Entity parent;
-	protected String parentKind;
-	protected Entity child;
-	protected String childKind;
+	protected String fromKind;
+	protected Entity toEntity;
+	protected String toKind;
 	protected Long[] ids;
 
 	public Class<T> getClazz() {
@@ -66,8 +66,8 @@ public abstract class AbstractModelQuery<T> implements ModelQuery {
 		return parent;
 	}*/
 	
-	public Entity getChild() {
-		return child;
+	public Entity getToEntity() {
+		return toEntity;
 	}
 
 	abstract public Query createItemQuery(Session session);

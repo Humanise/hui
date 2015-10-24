@@ -78,29 +78,29 @@ public class ConfigurableIndexer<E extends Entity> implements ModelEventListener
 	}
 
 	public void relationWasCreated(Relation relation) {
-		if (type.isAssignableFrom(relation.getSuperEntity().getClass())) {
-			index((E) relation.getSuperEntity());
+		if (type.isAssignableFrom(relation.getFrom().getClass())) {
+			index((E) relation.getFrom());
 		}
-		if (type.isAssignableFrom(relation.getSubEntity().getClass())) {
-			index((E) relation.getSubEntity());
+		if (type.isAssignableFrom(relation.getTo().getClass())) {
+			index((E) relation.getTo());
 		}
 	}
 
 	public void relationWasUpdated(Relation relation) {
-		if (type.isAssignableFrom(relation.getSuperEntity().getClass())) {
-			index((E) relation.getSuperEntity());
+		if (type.isAssignableFrom(relation.getFrom().getClass())) {
+			index((E) relation.getFrom());
 		}
-		if (type.isAssignableFrom(relation.getSubEntity().getClass())) {
-			index((E) relation.getSubEntity());
+		if (type.isAssignableFrom(relation.getTo().getClass())) {
+			index((E) relation.getTo());
 		}
 	}
 
 	public void relationWasDeleted(Relation relation) {
-		if (type.isAssignableFrom(relation.getSuperEntity().getClass())) {
-			index((E) relation.getSuperEntity());
+		if (type.isAssignableFrom(relation.getFrom().getClass())) {
+			index((E) relation.getFrom());
 		}
-		if (type.isAssignableFrom(relation.getSubEntity().getClass())) {
-			index((E) relation.getSubEntity());
+		if (type.isAssignableFrom(relation.getTo().getClass())) {
+			index((E) relation.getTo());
 		}
 	}
 

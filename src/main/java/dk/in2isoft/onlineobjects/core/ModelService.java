@@ -280,14 +280,14 @@ public class ModelService {
 	private void removeAllRelations(Entity entity) {
 		Session session = getSession();
 		{
-			String hql = "delete Privilege p where p.object in (select relation.id from Relation relation where relation.superEntity=:entity or relation.subEntity=:entity)";
+			String hql = "delete Privilege p where p.object in (select relation.id from Relation relation where relation.from=:entity or relation.to=:entity)";
 			Query q = session.createQuery(hql);
 			q.setEntity("entity", entity);
 			int count = q.executeUpdate();
 			log.info("Deleting relation privileges for: " + entity.getClass().getName() + "; count: " + count);
 		}
 		{
-			String hql = "delete Relation relation where relation.superEntity=:entity or relation.subEntity=:entity)";
+			String hql = "delete Relation relation where relation.from=:entity or relation.to=:entity)";
 			Query q = session.createQuery(hql);
 			q.setEntity("entity", entity);
 			int count = q.executeUpdate();
@@ -402,7 +402,7 @@ public class ModelService {
 
 	@SuppressWarnings("unchecked")
 	public List<Relation> getRelations(Entity entity) throws ModelException {
-		String hql = "from Relation as relation where relation.superEntity=:entity or relation.subEntity=:entity order by relation.position";
+		String hql = "from Relation as relation where relation.from=:entity or relation.to=:entity order by relation.position";
 		Query q = getSession().createQuery(hql);
 		q.setEntity("entity", entity);
 		List<Relation> result = q.list();
@@ -411,7 +411,7 @@ public class ModelService {
 
 	@SuppressWarnings("unchecked")
 	public List<Relation> getChildRelations(Entity entity) throws ModelException {
-		String hql = "from Relation as relation where relation.superEntity=? order by relation.position";
+		String hql = "from Relation as relation where relation.from=? order by relation.position";
 		Query q = getSession().createQuery(hql);
 		q.setEntity(0, entity);
 		List<Relation> result = q.list();
@@ -422,7 +422,7 @@ public class ModelService {
 	}
 
 	public List<Relation> getChildRelations(Entity entity, Class<?> clazz) throws ModelException {
-		String hql = "select relation from Relation as relation,"+clazz.getName()+" child where relation.superEntity=:entity and relation.subEntity=child order by relation.position";
+		String hql = "select relation from Relation as relation,"+clazz.getName()+" child where relation.from=:entity and relation.to=child order by relation.position";
 		Query q = getSession().createQuery(hql);
 		q.setEntity("entity", entity);
 		List<Relation> result = Code.castList(q.list());
@@ -433,7 +433,7 @@ public class ModelService {
 	}
 
 	public List<Relation> getChildRelations(Entity entity, Class<?> clazz, Privileged privileged) throws ModelException {
-		String hql = "select relation from Relation as relation,"+clazz.getName()+" child,Privilege as priv where relation.superEntity=:entity and relation.subEntity=child and priv.object=relation.subEntity and priv.subject=:privileged order by relation.position";
+		String hql = "select relation from Relation as relation,"+clazz.getName()+" child,Privilege as priv where relation.from=:entity and relation.to=child and priv.object=relation.to and priv.subject=:privileged order by relation.position";
 		Query q = getSession().createQuery(hql);
 		q.setEntity("entity", entity);
 		q.setLong("privileged", privileged.getIdentity());
@@ -444,9 +444,22 @@ public class ModelService {
 		return result;
 	}
 
+	public List<Relation> getChildRelations(Entity entity, Class<?> clazz, String relationKind, Privileged privileged) throws ModelException {
+		String hql = "select relation from Relation as relation,"+clazz.getName()+" child,Privilege as priv where relation.from=:entity and relation.to=child and relation.kind=:kind and priv.object=relation.to and priv.subject=:privileged order by relation.position";
+		Query q = getSession().createQuery(hql);
+		q.setEntity("entity", entity);
+		q.setString("kind", relationKind);
+		q.setLong("privileged", privileged.getIdentity());
+		List<Relation> result = Code.castList(q.list());
+		for (int i = 0; i < result.size(); i++) {
+			result.set(i, getSubject(result.get(i)));
+		}
+		return result;
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<Relation> getChildRelations(Entity entity, Class<?> clazz,String relationKind) throws ModelException {
-		String hql = "select relation from Relation as relation,"+clazz.getName()+" child where relation.superEntity=:entity and relation.subEntity=child and relation.kind=:kind order by relation.position";
+		String hql = "select relation from Relation as relation,"+clazz.getName()+" child where relation.from=:entity and relation.to=child and relation.kind=:kind order by relation.position";
 		Query q = getSession().createQuery(hql);
 		q.setEntity("entity", entity);
 		q.setString("kind", relationKind);
@@ -460,7 +473,7 @@ public class ModelService {
 
 	@SuppressWarnings("unchecked")
 	public List<Relation> getParentRelations(Entity entity, Class<?> clazz) throws ModelException {
-		String hql = "select relation from Relation as relation,"+clazz.getName()+" child where relation.subEntity=:entity and relation.superEntity=child order by relation.position";
+		String hql = "select relation from Relation as relation,"+clazz.getName()+" child where relation.to=:entity and relation.from=child order by relation.position";
 		Query q = getSession().createQuery(hql);
 		q.setEntity("entity", entity);
 		List<Relation> result = q.list();
@@ -473,14 +486,14 @@ public class ModelService {
 
 	public <T> List<T> getParents(Entity entity, Class<T> classObj) throws ModelException {
 		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.of(classObj);
-		q.withChild(entity);
+		q.to(entity);
 		return list(q);
 	}
 
 
 	public <T> List<T> getParents(Entity entity, Class<T> classObj, Privileged privileged) throws ModelException {
 		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.of(classObj);
-		q.withChild(entity);
+		q.to(entity);
 		if (!privileged.isSuper()) {
 			q.withPrivileged(privileged);
 		}
@@ -490,7 +503,7 @@ public class ModelService {
 
 	public <T> List<T> getParents(Entity entity, String kind, Class<T> classObj, Privileged privileged) throws ModelException {
 		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.of(classObj);
-		q.withChild(entity,kind);
+		q.to(entity,kind);
 		if (!privileged.isSuper()) {
 			q.withPrivileged(privileged);
 		}
@@ -503,7 +516,7 @@ public class ModelService {
 
 	public <T extends Entity> @Nullable T getParent(Entity entity, String kind, Class<T> classObj) throws ModelException {
 		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.of(classObj);
-		q.withChild(entity,kind).withPaging(0, 1);
+		q.to(entity,kind).withPaging(0, 1);
 		List<T> supers = list(q);
 		if (!supers.isEmpty()) {
 			return supers.get(0);
@@ -518,7 +531,7 @@ public class ModelService {
 
 	public <T extends Entity> @Nullable T getChild(Entity entity, String kind, Class<T> classObj) throws ModelException {
 		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.of(classObj);
-		q.withParent(entity,kind).withPaging(0, 1);
+		q.from(entity,kind).withPaging(0, 1);
 		List<T> supers = list(q);
 		if (!supers.isEmpty()) {
 			return supers.get(0);
@@ -530,7 +543,7 @@ public class ModelService {
 	@SuppressWarnings("unchecked")
 	public List<Relation> getParentRelations(Entity entity) throws ModelException {
 		Session session = getSession();
-		Query q = session.createQuery("from Relation as relation where relation.subEntity=?");
+		Query q = session.createQuery("from Relation as relation where relation.to=?");
 		q.setEntity(0, entity);
 		List<Relation> result = q.list();
 		return result;
@@ -812,7 +825,7 @@ public class ModelService {
 
 	public List<Entity> getChildren(Entity item, String relationKind, Privileged privileged) throws ModelException {
 		dk.in2isoft.onlineobjects.core.Query<Entity> q = dk.in2isoft.onlineobjects.core.Query.of(Entity.class);
-		q.withParent(item,relationKind);
+		q.from(item,relationKind);
 		if (!privileged.isSuper()) {
 			q.withPrivileged(privileged,securityService.getPublicUser());
 		}
@@ -824,19 +837,19 @@ public class ModelService {
 	 */
 	public List<Entity> getChildren(Entity item, String relationKind) throws ModelException {
 		dk.in2isoft.onlineobjects.core.Query<Entity> q = dk.in2isoft.onlineobjects.core.Query.of(Entity.class);
-		q.withParent(item,relationKind);
+		q.from(item,relationKind);
 		return list(q);
 	}
 
 	public <T> List<T> getChildren(Entity item, String relationKind, Class<T> classObj) throws ModelException {
 		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.of(classObj);
-		q.withParent(item,relationKind);
+		q.from(item,relationKind);
 		return list(q);
 	}
 
 	public <T> List<T> getChildren(Entity item, String relationKind, Class<T> classObj, Privileged privileged) throws ModelException {
 		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.of(classObj);
-		q.withParent(item,relationKind);
+		q.from(item,relationKind);
 		if (!privileged.isSuper()) {
 			q.withPrivileged(privileged,securityService.getPublicUser());
 		}
@@ -846,13 +859,13 @@ public class ModelService {
 	@Deprecated
 	public <T> List<T> getChildren(Entity entity, Class<T> classObj) throws ModelException {
 		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.of(classObj);
-		q.withParent(entity);
+		q.from(entity);
 		return list(q);
 	}
 
 	public <T> List<T> getChildren(Entity entity, Class<T> classObj, Privileged privileged) throws ModelException {
 		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.of(classObj);
-		q.withParent(entity);
+		q.from(entity);
 		if (!privileged.isSuper()) {
 			q.withPrivileged(privileged,securityService.getPublicUser());
 		}
@@ -861,13 +874,13 @@ public class ModelService {
 
 	public <T> List<T> getChildrenOrdered(Entity entity, Class<T> classObj) throws ModelException {
 		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.of(classObj);
-		q.withParent(entity).inPosition();
+		q.from(entity).inPosition();
 		return list(q);
 	}
 
 	public <T> List<T> getChildrenOrdered(Entity entity, Class<T> classObj, Privileged privileged) throws ModelException {
 		dk.in2isoft.onlineobjects.core.Query<T> q = dk.in2isoft.onlineobjects.core.Query.of(classObj);
-		q.withParent(entity).inPosition();
+		q.from(entity).inPosition();
 		q.withPrivileged(privileged);
 		return list(q);
 	}
@@ -941,7 +954,7 @@ public class ModelService {
 	public Relation getRelation(Entity parent, Entity child) {
 		Session session = getSession();
 		StringBuilder hql = new StringBuilder("from Relation as r ");
-		hql.append(" where r.superEntity.id=:parent and r.subEntity.id=:child");
+		hql.append(" where r.from.id=:parent and r.to.id=:child");
 		Query q = session.createQuery(hql.toString());
 		q.setLong("parent", parent.getId());
 		q.setLong("child", child.getId());
@@ -967,7 +980,7 @@ public class ModelService {
 	public Relation getRelation(Entity parent, Entity child, String kind) {
 		Session session = getSession();
 		StringBuilder hql = new StringBuilder("from Relation as r ");
-		hql.append(" where r.superEntity.id=:parent and r.subEntity.id=:child and r.kind=:kind");
+		hql.append(" where r.from.id=:parent and r.to.id=:child and r.kind=:kind");
 		Query q = session.createQuery(hql.toString());
 		q.setLong("parent", parent.getId());
 		q.setLong("child", child.getId());

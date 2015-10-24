@@ -84,7 +84,7 @@ public class WordsModelService {
 				if (diagram.isFull()) {
 					break;
 				}
-				Entity child = relation.getSubEntity();
+				Entity child = relation.getTo();
 				Node childNode = new Node();
 				childNode.setId(child.getId());
 				childNode.setTitle(child.getName());
@@ -111,7 +111,7 @@ public class WordsModelService {
 				if (diagram.isFull()) {
 					break;
 				}
-				Entity parent = relation.getSuperEntity();
+				Entity parent = relation.getFrom();
 				Node childNode = new Node();
 				childNode.setId(parent.getId());
 				childNode.setTitle(parent.getName());
@@ -200,9 +200,9 @@ public class WordsModelService {
 		if (language==null) {
 			throw new IllegalRequestException("Unsupported language ("+languageCode+")");
 		}
-		Query<Word> query = Query.of(Word.class).withField(Word.TEXT_FIELD, text).withParent(language);
+		Query<Word> query = Query.of(Word.class).withField(Word.TEXT_FIELD, text).from(language);
 		if (lexicalCategory!=null) {
-			query.withParent(lexicalCategory);
+			query.from(lexicalCategory);
 		}
 		List<Word> list = modelService.list(query);
 		if (list.size()==0) {
