@@ -51,7 +51,6 @@ import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Item;
 import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.Privilege;
-import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.util.ModelClassInfo;
@@ -905,15 +904,6 @@ public class ModelService {
 		return list(q);
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<Property> getProperties(String key) {
-		Session session = getSession();
-		String hql = "from Property";
-		Query q = session.createQuery(hql);
-		// q.setString("key", key);
-		return q.list();
-	}
-
 	public Map<String, Float> getPropertyCloud(String key, String query, Class<? extends Entity> cls) {
 		Map<String, Float> cloud = new LinkedHashMap<String, Float>();
 		Session session = getSession();
@@ -971,13 +961,13 @@ public class ModelService {
 		return list;
 	}
 
-	public Relation getRelation(Entity parent, Entity child) {
+	public Relation getRelation(Entity from, Entity to) {
 		Session session = getSession();
 		StringBuilder hql = new StringBuilder("from Relation as r ");
-		hql.append(" where r.from.id=:parent and r.to.id=:child");
+		hql.append(" where r.from.id=:from and r.to.id=:to");
 		Query q = session.createQuery(hql.toString());
-		q.setLong("parent", parent.getId());
-		q.setLong("child", child.getId());
+		q.setLong("from", from.getId());
+		q.setLong("to", to.getId());
 		List<Relation> list = list(q, Relation.class);
 		if (list.size() > 0) {
 			return getSubject(list.get(0));
@@ -997,13 +987,13 @@ public class ModelService {
 		return null;
 	}
 
-	public Relation getRelation(Entity parent, Entity child, String kind) {
+	public Relation getRelation(Entity from, Entity to, String kind) {
 		Session session = getSession();
 		StringBuilder hql = new StringBuilder("from Relation as r ");
-		hql.append(" where r.from.id=:parent and r.to.id=:child and r.kind=:kind");
+		hql.append(" where r.from.id=:from and r.to.id=:to and r.kind=:kind");
 		Query q = session.createQuery(hql.toString());
-		q.setLong("parent", parent.getId());
-		q.setLong("child", child.getId());
+		q.setLong("from", from.getId());
+		q.setLong("to", to.getId());
 		q.setString("kind", kind);
 		List<Relation> list = list(q, Relation.class);
 		if (list.size() > 0) {

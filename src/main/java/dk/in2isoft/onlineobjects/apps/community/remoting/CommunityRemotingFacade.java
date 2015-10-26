@@ -231,11 +231,6 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 		return result;
 	}
 
-	public List<Property> getLatestTags() throws EndUserException {
-		List<Property> tags = modelService.getProperties(Property.KEY_COMMON_TAG);
-		return tags;
-	}
-
 	public Map<String, Float> getTagCloud(String query) throws EndUserException {
 		return modelService.getPropertyCloud(Property.KEY_COMMON_TAG,query,Image.class);
 	}
