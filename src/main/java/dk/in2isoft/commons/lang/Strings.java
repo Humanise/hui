@@ -268,6 +268,27 @@ public class Strings {
 		
 		return simplified.toString();
 	}
+	
+	public static String getSimplifiedDomain(String url) {
+		if (Strings.isBlank(url)) {
+			return "";
+		}
+		if (url.indexOf("?")!=-1) {
+			url = url.substring(0,url.indexOf("?"));
+		}
+		if (url.indexOf("#")!=-1) {
+			url = url.substring(0,url.indexOf("#"));
+		}
+
+		url = url.trim();
+		url = url.replaceFirst("^[a-z]+://", "");
+		url = url.replaceFirst("^www\\.", "");
+		String[] parts = url.split("/");
+		if (parts.length>0) {
+			return parts[0];
+		}
+		return null;
+	}
 
 	public static String asNonNull(String string) {
 		if (string==null) {

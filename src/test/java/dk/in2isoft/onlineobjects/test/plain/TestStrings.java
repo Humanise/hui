@@ -178,4 +178,31 @@ public class TestStrings extends TestCase {
 				);
 		}
 	}
+	 
+	@Test
+	public void testGetSimplifiedDomain() {
+		assertEquals(
+				"",
+				Strings.getSimplifiedDomain("")
+			);
+		assertEquals(
+				"",
+				Strings.getSimplifiedDomain(null)
+			);
+		assertEquals(
+				"",
+				Strings.getSimplifiedDomain("   \n")
+			);
+		assertEquals(
+				"whatwg.org", 
+				Strings.getSimplifiedDomain("http://www.whatwg.org/specs/web-apps/current-work/#media-data")
+			);
+		{
+			String url = "http://developer.apple.com/safari/library/documentation/QuickTime/Conceptual/QTScripting_JavaScript/aQTScripting_Javascro_AIntro/Introduction%20to%20JavaScript%20QT.html";
+			assertEquals(
+					"developer.apple.com", 
+					Strings.getSimplifiedDomain(url)
+				);
+		}
+	}
 }
