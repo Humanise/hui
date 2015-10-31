@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import dk.in2isoft.commons.lang.Strings;
@@ -36,5 +37,41 @@ public class TestPerson extends AbstractSpringTestCase {
 		
 		modelService.deleteEntity(person, priviledged);
 		modelService.commit();
+	}
+	
+	@Test
+	public void testName() {
+		{
+			Person person = new Person();
+			person.setFullName("Ludwig Mies van der Rohe");
+			assertEquals("Ludwig", person.getGivenName());
+			assertEquals("Mies van der", person.getAdditionalName());
+			assertEquals("Rohe", person.getFamilyName());
+			
+			person.setFullName(null);
+			Assert.assertNull(person.getGivenName());
+			Assert.assertNull(person.getAdditionalName());
+			Assert.assertNull(person.getFamilyName());
+			
+			person.setFullName("");
+			Assert.assertNull(person.getGivenName());
+			Assert.assertNull(person.getAdditionalName());
+			Assert.assertNull(person.getFamilyName());
+			
+			person.setFullName("Jonas Munk");
+			assertEquals("Jonas", person.getGivenName());
+			assertEquals(null, person.getAdditionalName());
+			assertEquals("Munk", person.getFamilyName());
+			
+			person.setFullName("Jonas");
+			assertEquals("Jonas", person.getGivenName());
+			assertEquals(null, person.getAdditionalName());
+			assertEquals(null, person.getFamilyName());
+			
+			person.setFullName("  Jonas \n\tBrinkmann  \nMunk   \n");
+			assertEquals("Jonas", person.getGivenName());
+			assertEquals("Brinkmann", person.getAdditionalName());
+			assertEquals("Munk", person.getFamilyName());
+		}
 	}
 }

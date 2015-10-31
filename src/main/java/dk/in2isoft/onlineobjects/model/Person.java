@@ -7,12 +7,12 @@ import org.apache.commons.lang.StringUtils;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.model.annotations.Appearance;
 
-@Appearance(icon="common/person")
+@Appearance(icon = "common/person")
 public class Person extends Entity {
 
-	public static String TYPE = Entity.TYPE+"/Person";
-	public static String NAMESPACE = Entity.NAMESPACE+"Person/";
-	
+	public static String TYPE = Entity.TYPE + "/Person";
+	public static String NAMESPACE = Entity.NAMESPACE + "Person/";
+
 	private String givenName;
 	private String familyName;
 	private String additionalName;
@@ -26,13 +26,13 @@ public class Person extends Entity {
 	}
 
 	public String getType() {
-		return super.getType()+"/Person";
+		return super.getType() + "/Person";
 	}
 
 	public String getIcon() {
 		return "common/person";
 	}
-	
+
 	public String getGivenName() {
 		return givenName;
 	}
@@ -77,36 +77,39 @@ public class Person extends Entity {
 		this.nameSuffix = nameSuffix;
 		updateName();
 	}
-	
+
 	public void setFullName(String fullName) {
-		if (fullName==null) {
-			setGivenName(null);
-			setFamilyName(null);
-			setAdditionalName(null);
+		setGivenName(null);
+		setFamilyName(null);
+		setAdditionalName(null);
+		if (fullName == null) {
 			return;
 		}
 		String[] names = StringUtils.split(fullName);
-		if (names==null || names.length==0) {
-			setGivenName(null);
-			setFamilyName(null);
-		}
-		if (names.length>0) {
+		if (names.length > 0) {
 			setGivenName(names[0]);
 		}
-		if (names.length>1) {
-			setFamilyName(names[names.length-1]);
+		if (names.length > 1) {
+			setFamilyName(names[names.length - 1]);
 		}
-		if (names.length>2) {
-			setAdditionalName(names[names.length-2]);
+		if (names.length > 2) {
+			StringBuilder additional = new StringBuilder();
+			for (int i = 1; i < names.length - 1; i++) {
+				if (additional.length() > 0) {
+					additional.append(" ");
+				}
+				additional.append(names[i]);
+			}
+			setAdditionalName(additional.toString());
 		}
 	}
 
 	public String getFullName() {
-		return Strings.concatWords(new String[] {givenName,additionalName,familyName});
+		return Strings.concatWords(new String[] { givenName, additionalName, familyName });
 	}
 
 	private void updateName() {
-		setName(Strings.concatWords(new String[] {namePrefix, givenName,additionalName,familyName,nameSuffix}));
+		setName(Strings.concatWords(new String[] { namePrefix, givenName, additionalName, familyName, nameSuffix }));
 	}
 
 	public Boolean getSex() {
