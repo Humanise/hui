@@ -1,10 +1,10 @@
 @font-face {
 	font-family: 'OnlineObjects';
-	src:url('fonts/OnlineObjects.eot?4034sd');
-	src:url('fonts/OnlineObjects.eot?#iefix4034sd') format('embedded-opentype'),
-		url('fonts/OnlineObjects.woff?4034sd') format('woff'),
-		url('fonts/OnlineObjects.ttf?4034sd') format('truetype'),
-		url('fonts/OnlineObjects.svg?4034sd#OnlineObjects') format('svg');
+	src:url('fonts/OnlineObjects.eot?dgyjx9');
+	src:url('fonts/OnlineObjects.eot?dgyjx9#iefix') format('embedded-opentype'),
+		url('fonts/OnlineObjects.ttf?dgyjx9') format('truetype'),
+		url('fonts/OnlineObjects.woff?dgyjx9') format('woff'),
+		url('fonts/OnlineObjects.svg?dgyjx9#OnlineObjects') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -23,6 +23,9 @@
 	-moz-osx-font-smoothing: grayscale;
 }
 
+.oo_icon_trash:before {
+	content: "\e900";
+}
 .oo_icon_close_line:before {
 	content: "\e610";
 }
@@ -61,6 +64,15 @@
 }
 .oo_icon_add_line:before {
 	content: "\e60c";
+}
+.oo_icon_hypothesis:before {
+	content: "\e901";
+}
+.oo_icon_quote:before {
+	content: "\e902";
+}
+.oo_icon_question:before {
+	content: "\e903";
 }
 .oo_icon_view_grid:before {
 	content: "\e600";
@@ -188,3 +200,4 @@
 .oo_icon_humanise:before {
 	content: "\2f";
 }
+
