@@ -8,12 +8,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.queryparser.flexible.standard.QueryParserUtil;
 import org.eclipse.jdt.annotation.Nullable;
 
 import com.google.common.collect.LinkedListMultimap;
@@ -36,7 +35,6 @@ import dk.in2isoft.onlineobjects.apps.videosharing.Path;
 import dk.in2isoft.onlineobjects.core.Pair;
 import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.Query;
-import dk.in2isoft.onlineobjects.core.Results;
 import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.UserSession;
@@ -48,10 +46,12 @@ import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.core.exceptions.NetworkException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.model.Entity;
+import dk.in2isoft.onlineobjects.model.Hypothesis;
 import dk.in2isoft.onlineobjects.model.InternetAddress;
 import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.Pile;
 import dk.in2isoft.onlineobjects.model.Property;
+import dk.in2isoft.onlineobjects.model.Question;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.Statement;
 import dk.in2isoft.onlineobjects.model.Word;
@@ -84,20 +84,37 @@ public class ReaderController extends ReaderControllerBase {
 		final List<Long> ids = Lists.newArrayList(idsByType.values());
 
 		List<Entity> list = Lists.newArrayList();
+		UserSession session = request.getSession();
 		{
 			List<Long> addressIds = idsByType.get(InternetAddress.class.getSimpleName().toLowerCase());
 			if (!addressIds.isEmpty()) {
-				Query<InternetAddress> query = Query.after(InternetAddress.class).withIds(addressIds).withPrivileged(request.getSession());
+				Query<InternetAddress> query = Query.after(InternetAddress.class).withIds(addressIds).withPrivileged(session);
 
-				list.addAll(modelService.search(query).getList());
+				list.addAll(modelService.list(query));
 			}
 		}
 		{
 			List<Long> partIds = idsByType.get(Statement.class.getSimpleName().toLowerCase());
 			if (!partIds.isEmpty()) {
-				Query<Statement> query = Query.after(Statement.class).withIds(partIds).withPrivileged(request.getSession());
+				Query<Statement> query = Query.after(Statement.class).withIds(partIds).withPrivileged(session);
 
-				list.addAll(modelService.search(query).getList());
+				list.addAll(modelService.list(query));
+			}
+		}
+		{
+			List<Long> partIds = idsByType.get(Question.class.getSimpleName().toLowerCase());
+			if (!partIds.isEmpty()) {
+				Query<Question> query = Query.after(Question.class).withIds(partIds).withPrivileged(session);
+
+				list.addAll(modelService.list(query));
+			}
+		}
+		{
+			List<Long> partIds = idsByType.get(Hypothesis.class.getSimpleName().toLowerCase());
+			if (!partIds.isEmpty()) {
+				Query<Hypothesis> query = Query.after(Hypothesis.class).withIds(partIds).withPrivileged(session);
+
+				list.addAll(modelService.list(query));
 			}
 		}
 
@@ -132,7 +149,7 @@ public class ReaderController extends ReaderControllerBase {
 			InternetAddress address = null;
 			
 			HTMLWriter writer = new HTMLWriter();
-			writer.startDiv().withClass("list_item");
+			writer.startDiv().withClass("reader_list_item");
 			String title = entity.getName();
 			if (Strings.isBlank(title)) {
 				title = "-- empty --";
@@ -144,7 +161,7 @@ public class ReaderController extends ReaderControllerBase {
 				address = (InternetAddress) entity;
 				perspective.setUrl(address.getAddress());
 				perspective.setAddress(Strings.simplifyURL(address.getAddress()));
-				writer.startP().withClass("list_item_address").startA().withClass("list_item_address_link").withHref(address.getAddress()).text(Strings.simplifyURL(address.getAddress())).endA().endP();
+				writer.startP().withClass("reader_list_address").startA().withClass("reader_list_address_link").withHref(address.getAddress()).text(Strings.getSimplifiedDomain(address.getAddress())).endA().endP();
 				perspective.setType("address");
 			} else if (entity instanceof Statement) {
 				Query<Person> personQuery = Query.after(Person.class).from(entity, Relation.KIND_COMMON_AUTHOR).withPrivileged(request.getSession());
@@ -169,16 +186,26 @@ public class ReaderController extends ReaderControllerBase {
 				if (addr!=null) {
 					perspective.setAddressId(addr.getId());
 				}
+			} else if (entity instanceof Question) {
+				perspective.setType("question");
+				perspective.setQuestionId(entity.getId());
+				Question question = (Question) entity;
+				writer.startP().withClass("reader_list_question").text(question.getText()).endP();
+			} else if (entity instanceof Hypothesis) {
+				perspective.setType("hypothesis");
+				perspective.setHypothesisId(entity.getId());
+				Hypothesis question = (Hypothesis) entity;
+				writer.startP().withClass("reader_list_hypothesis").text(question.getText()).endP();
 			}
 
 			List<Word> words = modelService.getChildren(entity, Word.class, request.getSession());
 			if (Code.isNotEmpty(words)) {
-				writer.startP().withClass("list_item_words");
+				writer.startP().withClass("reader_list_words");
 				List<Pair<Long, String>> tags = Lists.newArrayList();
 				for (Iterator<Word> i = words.iterator(); i.hasNext();) {
 					Word word = i.next();
 					tags.add(Pair.of(word.getId(), word.getText()));
-					writer.startA().withClass("list_item_word").withData("id", word.getId()).text(word.getText()).endA();
+					writer.startA().withClass("reader_list_word").withData("id", word.getId()).text(word.getText()).endA();
 					if (i.hasNext()) writer.text(" \u00B7 ");
 				}
 				perspective.setTags(tags);
@@ -192,77 +219,6 @@ public class ReaderController extends ReaderControllerBase {
 
 		return result;
 	}
-
-	@Path
-	/*
-	public void listAddresses(Request request) throws IOException, ModelException, ExplodingClusterFuckException {
-
-		int page = request.getInt("page");
-		int pageSize = 30;
-
-		Pair<Integer,List<Entity>> pair = search(request, page, pageSize);
-		
-		int totalCount = pair.getKey();
-		List<Entity> list = pair.getValue();
-		
-
-		ListWriter writer = new ListWriter(request);
-		writer.startList();
-		writer.window(totalCount, pageSize, page);
-
-		writer.startHeaders();
-		writer.header("Title").header("", 1);
-		writer.endHeaders();
-		for (Entity entity : list) {
-			InternetAddress address = null;
-			if (entity instanceof InternetAddress) {
-				address = (InternetAddress) entity;
-			}
-			writer.startRow().withId(entity.getId()).withKind(entity.getClass().getSimpleName());
-			writer.startCell().startLine();
-			if (Strings.isBlank(entity.getName())) {
-				writer.text("No name");
-			} else {
-				writer.text(entity.getName());
-			}
-			writer.endLine();
-
-			if (address != null) {
-				writer.startLine().dimmed().minor();
-				writer.text(Strings.simplifyURL(address.getAddress()));
-				List<Statement> quotes = modelService.getChildren(address, Relation.KIND_STRUCTURE_CONTAINS, Statement.class, request.getSession());
-				if (quotes.size() > 0) {
-					writer.text(" (").text(quotes.size()).text(")");
-				}
-				writer.endLine();
-				List<Word> words = modelService.getChildren(address, Word.class, request.getSession());
-				if (Code.isNotEmpty(words)) {
-					HTMLWriter wordLine = new HTMLWriter();
-					wordLine.startP().withClass("reader_list_words");
-					for (Iterator<Word> i = words.iterator(); i.hasNext();) {
-						Word word = i.next();
-						wordLine.startVoidA().withClass("reader_list_word").withData("id", word.getId()).text(word.getText()).endA();
-						if (i.hasNext()) {
-							writer.text(" ");
-						}
-					}
-					wordLine.endP();
-					writer.html(wordLine);
-				}
-			}
-			writer.endCell();
-			writer.startCell();
-			writer.startIcons();
-			if (address != null) {
-				writer.startIcon().revealing().withAction().withIcon("monochrome/view").withData(address.getAddress()).endIcon();
-			}
-			writer.startIcon().revealing().withAction().withIcon("monochrome/graph").withData("graph").endIcon();
-			writer.endIcons();
-			writer.endCell();
-			writer.endRow();
-		}
-		writer.endList();
-	}*/
 
 	private void sortByIds(List<Entity> list, final List<Long> ids) {
 		Collections.sort(list, new Comparator<Entity>() {
@@ -289,80 +245,15 @@ public class ReaderController extends ReaderControllerBase {
 		}
 		final ListMultimap<String, Long> ids = LinkedListMultimap.create();
 
-		String indexQuery = buildQuery(query);
+		String indexQuery = ReaderQuery.build(query);
 		SearchResult<IndexSearchResult> search = index.search(indexQuery.toString(), query.getPage(), query.getPageSize());
 		for (IndexSearchResult row : search.getList()) {
 			Long id = row.getLong("id");
-			String type2 = row.getString("type");
-			ids.put(type2, id);
+			String type = row.getString("type");
+			ids.put(type, id);
 		}
 		ids.put("total", Long.valueOf(search.getTotalCount()));
 		return ids;
-	}
-
-	private String buildQuery(ReaderQuery query) {
-		String[] textParts = Strings.getWords(query.getText());
-
-		StringBuilder indexQuery = new StringBuilder();
-
-		Collection<String> types = query.getType();
-		if (types != null && !types.isEmpty()) {
-			indexQuery.append("(");
-			for (Iterator<String> i = types.iterator(); i.hasNext();) {
-				String type = (String) i.next();
-				String tp = "pages".equals(type) ? InternetAddress.class.getSimpleName() : Statement.class.getSimpleName();
-				indexQuery.append("type:").append(QueryParser.escape(tp)).append("");
-				if (i.hasNext()) {
-					indexQuery.append(" OR ");
-				}
-			}
-			indexQuery.append(")");
-		}
-
-		for (String string : textParts) {
-			if (indexQuery.length() > 0) {
-				indexQuery.append(" AND ");
-			}
-			indexQuery.append("(");
-			indexQuery.append("title:").append(QueryParserUtil.escape(string)).append("*^4");
-			indexQuery.append(" OR words:").append(QueryParserUtil.escape(string)).append("*^2");
-			indexQuery.append(" OR text:").append(QueryParserUtil.escape(string)).append("*");
-			indexQuery.append(")");
-		}
-		if (query.getWordIds() != null) {
-			for (Long id : query.getWordIds()) {
-				if (indexQuery.length() > 0) {
-					indexQuery.append(" AND ");
-				}
-				indexQuery.append("word:").append(id);
-			}
-		}
-		if (query.getAuthorIds() != null) {
-			for (Long id : query.getAuthorIds()) {
-				if (indexQuery.length() > 0) {
-					indexQuery.append(" AND ");
-				}
-				indexQuery.append("author:").append(id);
-			}
-		}
-		if ("inbox".equals(query.getSubset())) {
-			if (indexQuery.length() > 0) {
-				indexQuery.append(" AND ");
-			}
-			indexQuery.append("inbox:yes");
-		}
-		if ("favorite".equals(query.getSubset())) {
-			if (indexQuery.length() > 0) {
-				indexQuery.append(" AND ");
-			}
-			indexQuery.append("favorite:yes");
-		} else if ("archive".equals(query.getSubset())) {
-			if (indexQuery.length() > 0) {
-				indexQuery.append(" AND ");
-			}
-			indexQuery.append("inbox:no");
-		}
-		return indexQuery.toString();
 	}
 
 	@Path
@@ -380,8 +271,11 @@ public class ReaderController extends ReaderControllerBase {
 	@Path
 	public List<ItemData> getTypeOptions(Request request) throws ModelException {
 		List<ItemData> options = Lists.newArrayList();
-		options.add(new ItemData("pages").withText("Pages").withIcon("document_line"));
-		options.add(new ItemData("quotes").withText("Quotes").withIcon("bubble_line"));
+		options.add(new ItemData("any").withText("Any").withIcon("documents_line"));
+		options.add(new ItemData(InternetAddress.class.getSimpleName()).withText("Pages").withIcon("document_line"));
+		options.add(new ItemData(Statement.class.getSimpleName()).withText("Quotes").withIcon("quote"));
+		options.add(new ItemData(Question.class.getSimpleName()).withText("Questions").withIcon("question"));
+		options.add(new ItemData(Hypothesis.class.getSimpleName()).withText("Theories").withIcon("hypothesis"));
 		return options;
 	}
 
@@ -478,6 +372,7 @@ public class ReaderController extends ReaderControllerBase {
 		Long id = request.getLong("id");
 		String text = request.getString("text");
 		if (Strings.isNotBlank(text)) {
+			text = text.trim();
 			if (text.length() > 10000) {
 				// TODO Handle this better
 				throw new IllegalRequestException("Text too long");
@@ -607,31 +502,7 @@ public class ReaderController extends ReaderControllerBase {
 	@Path
 	public void reIndex(Request request) throws EndUserException {
 		Privileged privileged = request.getSession();
-		readerIndexer.clear(request.getSession());
-		{
-			Query<InternetAddress> query = Query.after(InternetAddress.class).withPrivileged(privileged);
-			Results<InternetAddress> scroll = modelService.scroll(query);
-			try {
-				while (scroll.next()) {
-					InternetAddress address = scroll.get();
-					readerIndexer.index(address);
-				}
-			} finally {
-				scroll.close();
-			}
-		}
-		{
-			Query<Statement> query = Query.after(Statement.class).withPrivileged(request.getSession());
-			Results<Statement> scroll = modelService.scroll(query);
-			try {
-				while (scroll.next()) {
-					Statement statement = scroll.get();
-					readerIndexer.index(statement);
-				}
-			} finally {
-				scroll.close();
-			}
-		}
+		readerIndexer.reIndex(privileged);
 	}
 	
 	@Path
@@ -640,22 +511,47 @@ public class ReaderController extends ReaderControllerBase {
 		if (id==null) {
 			throw new IllegalRequestException("No id");
 		}
+		UserSession session = request.getSession();
 		@Nullable
-		Statement statement = modelService.get(Statement.class, id, request.getSession());
+		Statement statement = modelService.get(Statement.class, id, session);
 		if (statement==null) {
 			throw new IllegalRequestException("Statement not found");			
 		}
 		StatementEditPerspective perspective = new StatementEditPerspective();
 		perspective.setText(statement.getText());
 		perspective.setId(id);
-		List<Person> people = getAuthors(statement, request.getSession());
-		List<ItemData> authors = people.stream().map((Person p) -> {
+		{
+			List<Person> people = getAuthors(statement, session);
+			perspective.setAuthors(people.stream().map((Person p) -> {
+				ItemData option = new ItemData();
+				option.setId(p.getId());
+				option.setText(p.getFullName());
+				option.setIcon(p.getIcon());
+				return option;
+			}).collect(Collectors.toList()));
+		}
+		List<Question> questions = modelService.list(Query.after(Question.class).from(statement,Relation.ANSWERS).withPrivileged(session));
+		perspective.setQuestions(questions.stream().map((Question q) -> {
 			ItemData option = new ItemData();
-			option.setId(p.getId());
-			option.setText(p.getFullName());
+			option.setId(q.getId());
+			option.setText(q.getText());
+			option.setIcon(q.getIcon());
 			return option;
-		}).collect(Collectors.toList());
-		perspective.setAuthors(authors);
+		}).collect(Collectors.toList()));
+
+		Function<Hypothesis, ? extends ItemData> hypothesisMapper = (Hypothesis q) -> {
+			ItemData option = new ItemData();
+			option.setId(q.getId());
+			option.setText(q.getText());
+			option.setIcon(q.getIcon());
+			return option;
+		};
+		
+		List<Hypothesis> supports = modelService.list(Query.after(Hypothesis.class).from(statement,Relation.SUPPORTS).withPrivileged(session));
+		perspective.setSupports(supports.stream().map(hypothesisMapper).collect(Collectors.toList()));
+		
+		List<Hypothesis> contradicts = modelService.list(Query.after(Hypothesis.class).from(statement,Relation.CONTRADTICS).withPrivileged(session));
+		perspective.setContradicts(contradicts.stream().map(hypothesisMapper).collect(Collectors.toList()));
 		
 		return perspective;
 	}
@@ -682,7 +578,7 @@ public class ReaderController extends ReaderControllerBase {
 		modelService.updateItem(internetAddress, privileged);
 		
 		Collection<Long> ids = ItemData.getIds(perspective.getAuthors());
-		modelService.syncRelationsFrom(internetAddress, Person.class, Relation.KIND_COMMON_AUTHOR, ids , privileged);
+		modelService.syncRelationsFrom(internetAddress, Relation.KIND_COMMON_AUTHOR, Person.class, ids , privileged);
 		
 		if (addressChanged) {
 			File itemFolder = storageService.getItemFolder(internetAddress.getId());
@@ -712,7 +608,16 @@ public class ReaderController extends ReaderControllerBase {
 		
 		modelService.updateItem(statement, privileged);
 		Collection<Long> ids = ItemData.getIds(perspective.getAuthors());
-		modelService.syncRelationsFrom(statement, Person.class, Relation.KIND_COMMON_AUTHOR, ids , privileged);
+		modelService.syncRelationsFrom(statement, Relation.KIND_COMMON_AUTHOR, Person.class, ids , privileged);
+
+		Collection<Long> questionIds = ItemData.getIds(perspective.getQuestions());
+		modelService.syncRelationsFrom(statement, Relation.ANSWERS, Question.class, questionIds , privileged);
+
+		Collection<Long> supportsIds = ItemData.getIds(perspective.getSupports());
+		modelService.syncRelationsFrom(statement, Relation.SUPPORTS, Hypothesis.class, supportsIds , privileged);
+
+		Collection<Long> contradictsIds = ItemData.getIds(perspective.getContradicts());
+		modelService.syncRelationsFrom(statement, Relation.CONTRADTICS, Hypothesis.class, contradictsIds , privileged);
 	}
 	
 	@Path

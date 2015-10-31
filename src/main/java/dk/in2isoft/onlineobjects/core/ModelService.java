@@ -331,13 +331,14 @@ public class ModelService {
 	}
 
 	
-	public <T extends Entity> void syncRelationsFrom(Entity fromEntity, Class<T> toType, String relationKind, Collection<Long> ids, Privileged privileged) throws ModelException, SecurityException {
-		List<Relation> relations = this.getChildRelations(fromEntity, Person.class, relationKind, privileged);
+	public <T extends Entity> void syncRelationsFrom(Entity fromEntity, String relationKind, Class<T> toType, Collection<Long> ids, Privileged privileged) throws ModelException, SecurityException {
+		List<Relation> relations = this.getChildRelations(fromEntity, toType, relationKind, privileged);
 		List<Long> toAdd = Lists.newArrayList();
 		toAdd.addAll(ids);
 		for (Relation relation : relations) {
 			if (!ids.contains(relation.getTo().getId())) {
 				this.deleteRelation(relation, privileged);
+			} else {
 				toAdd.remove(relation.getTo().getId());
 			}
 		}

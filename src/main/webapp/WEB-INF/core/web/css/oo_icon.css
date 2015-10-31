@@ -46,6 +46,9 @@
 	height: 48px;
 }
 
+.oo_icon_trash:before {
+	content: "\e900";
+}
 .oo_icon_close_line:before {
 	content: "\e610";
 }
@@ -84,6 +87,15 @@
 }
 .oo_icon_add_line:before {
 	content: "\e60c";
+}
+.oo_icon_hypothesis:before {
+	content: "\e901";
+}
+.oo_icon_quote:before {
+	content: "\e902";
+}
+.oo_icon_question:before {
+	content: "\e903";
 }
 .oo_icon_view_grid:before {
 	content: "\e600";

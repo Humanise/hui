@@ -1,91 +1,22 @@
-/* Hacks */
+/** Item **/
 
-.reader_list div.hui_list td {
-	padding-top: 5px;
-	padding-bottom: 5px;
-}
-
-.reader_list div.hui_list tr.hui_list_selected,
-.reader_list div.hui_list tr.hui_list_selected:hover
-{
-	background: #f6f8ff;
-}
-
-.reader_list p.hui_list_line
-{
-	font-weight: 300;
-	font-family: 'Open Sans','Helvetica Neue','Helvetica',Arial,sans-serif;
-	font-size: 13pt;
-	color: #333;
-}
-
-.reader_list p.hui_list_minor
-{
-	font-weight: 400;
-	font-size: 9pt;
-	color: #999;	
-}
-
-.reader_list div.hui_list tr.hui_list_selected p.hui_list_line
-{
-	color: #000;
-	text-shadow: none;
-}
-
-.reader_list div.hui_list tr.hui_list_selected p.hui_list_dimmed
-{
-	color: rgba(0,0,0,.5);
-}
-
-.reader_list_words {
-	font-size: 10px;
-	margin: 6px 0 0 0;
-	text-align: right;
-}
-
-.reader_list_word
-{
-	border-radius: 8px;
-	padding: 0 6px;
-	margin-right: 2px;
-	height: 14px;
-	display: inline-block;
-	background: rgba(0,0,0,.02);
-	border: 1px solid rgba(0,0,0,.04);
-	line-height: 14px;
-	text-decoration: none;
-	color: #333;
-	cursor: pointer;
-}
-
-.reader_list_word:hover {
-	background: rgba(0,0,0,.05);
-	border: 1px solid rgba(0,0,0,.07);
-}
-
-.hui_list_selected .reader_list_word
-{
-	text-shadow: none;
-}
-
-/** List item **/
-
-.list_item {
+.reader_list_item {
 	border-bottom: 1px solid #eee;
 	padding: 5px 10px;
 	overflow: hidden;
 	cursor: pointer;
 }
 
-.list_item_pending {
+.reader_list_item:hover {
+	background: #fafafa;
+}
+
+.reader_list_pending {
 	border-bottom: 1px solid #eee;
 	height: 49px;
 }
 
 
-.list_item:hover {
-	background: #fafafa;
-}
 
 .reader_list_title {
 	margin: 0 0 5px;
@@ -95,13 +26,13 @@
 	line-height: 18px;
 }
 
-.list_item_address {
+.reader_list_address {
 	margin: 0;
 	font-size: 12px;
 	float: left;
 }
 
-.list_item_address_link {
+.reader_list_address_link {
 	text-decoration: none;
 	color: #aaa;
 	font-weight: 300;
@@ -109,25 +40,25 @@
 	line-height: 1;
 }
 
-.list_item_address_link:hover {
+.reader_list_address_link:hover {
 	color: #36f;
 	text-decoration: underline;
 }
 
-.list_item_words {
+.reader_list_words {
 	margin: 0;
 	font-size: 12px;
 	color: #999;
 	text-align: right;
 }
 
-.list_item_word {
+.reader_list_word {
 	display: inline-block;
 	line-height: 1;
 	border-bottom: 1px solid #eee;
 }
 
-.list_item_word:hover {
+.reader_list_word:hover {
 	color: #36f;
 	border-bottom-color: #36f;
 }
@@ -136,7 +67,52 @@
 	font-family: Georgia, sans-serif;
 	margin: 5px;
 	line-height: 1.2;
+  margin-left: 5px;
 	font-size: 18px;
+}
+
+.reader_list_quote::before {
+	font-family: 'OnlineObjects';
+  content: '\e902';
+  float: right;
+  font-size: 24px;
+  margin-left: 5px;
+  color: #ddd;
+  line-height: 1em;
+}
+
+.reader_list_question {
+	font-family: Georgia, sans-serif;
+	margin: 5px;
+	line-height: 1.2;
+	font-size: 18px;
+}
+
+.reader_list_question::before {
+	font-family: 'OnlineObjects';
+  content: '\e903';
+  float: right;
+  font-size: 24px;
+  margin-left: 5px;
+  color: #ddd;
+  line-height: 1em;
+}
+
+.reader_list_hypothesis {
+	font-family: Georgia, sans-serif;
+	margin: 5px;
+	line-height: 1.2;
+	font-size: 18px;
+}
+
+.reader_list_hypothesis::before {
+	font-family: 'OnlineObjects';
+  content: '\e901';
+  float: right;
+  font-size: 24px;
+  margin-left: 5px;
+  color: #ddd;
+  line-height: 1em;
 }
 
 .reader_list_authors {

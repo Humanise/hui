@@ -30,7 +30,10 @@ var statementController = {
 		this.object = object;
 		this.form.setValues({
 			text: object.text,
-      authors: object.authors
+      authors: object.authors,
+      questions: object.questions,
+      supports: object.supports,
+      contradicts: object.contradicts
 		});
 	},
 	$submit$statementForm : function() {
@@ -39,7 +42,10 @@ var statementController = {
 		var data = {
 			id : this.object.id,
 			text : values.text,
-      authors : values.authors
+      authors : values.authors,
+      questions : values.questions,
+      supports : values.supports,
+      contradicts : values.contradicts
 		};
     this.window.setBusy(true);
     hui.ui.request({

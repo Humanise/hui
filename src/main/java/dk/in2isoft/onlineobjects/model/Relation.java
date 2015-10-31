@@ -10,6 +10,12 @@ public class Relation extends Item {
 	public static final String KIND_COMMON_ORIGINATOR = "common.originator";
 	public static final String KIND_COMMON_AUTHOR = "common.author";
 	public static final String KIND_COMMON_SOURCE = "common.source";
+
+	public static final String ANSWERS = "information.answers"; /* A answers B */
+	public static final String KIND_INFORMATION_ABOUT = "information.about"; /* A is about B */
+
+	public static final String SUPPORTS = "information.supports"; /* A is supported by B - for, validates*/ 
+	public static final String CONTRADTICS = "information.contradicts"; /* A is contradicted by B - */
 	
 	public static final String KIND_STRUCTURE_CONTAINS = "structure.contains";
 	public static final String KIND_STRUCTURE_SPECIALIZATION = "structure.specialization";

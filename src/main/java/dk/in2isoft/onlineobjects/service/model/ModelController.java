@@ -28,12 +28,14 @@ import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.model.Entity;
+import dk.in2isoft.onlineobjects.model.Hypothesis;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.Language;
 import dk.in2isoft.onlineobjects.model.LexicalCategory;
 import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.Pile;
 import dk.in2isoft.onlineobjects.model.Property;
+import dk.in2isoft.onlineobjects.model.Question;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.Word;
@@ -245,7 +247,7 @@ public class ModelController extends ModelControllerBase {
 		if (Person.class.getSimpleName().equals(type)) {
 			FinderCreationConfiguration creation = config.new FinderCreationConfiguration();
 			creation.setUrl("/service/model/createFromFinder?type=" + type);
-			creation.setButton("Add "+type);
+			creation.setButton("New person");
 			List<Object> formula = Lists.newArrayList();
 			{
 				Map<String,Object> field = Maps.newHashMap();
@@ -258,6 +260,41 @@ public class ModelController extends ModelControllerBase {
 			}
 			creation.setFormula(formula);
 			config.setCreation(creation);
+		}
+		if (Question.class.getSimpleName().equals(type)) {
+			FinderCreationConfiguration creation = config.new FinderCreationConfiguration();
+			creation.setUrl("/service/model/createFromFinder?type=" + type);
+			creation.setButton("New question");
+			List<Object> formula = Lists.newArrayList();
+			{
+				Map<String,Object> field = Maps.newHashMap();
+				field.put("type","TextInput");
+				field.put("label","Question");
+				Map<String,Object> options = Maps.newHashMap();
+				options.put("key","text");
+				field.put("options", options);
+				formula.add(field);
+			}
+			creation.setFormula(formula);
+			config.setCreation(creation);
+		}
+		if (Hypothesis.class.getSimpleName().equals(type)) {
+			FinderCreationConfiguration creation = config.new FinderCreationConfiguration();
+			creation.setUrl("/service/model/createFromFinder?type=" + type);
+			creation.setButton("New hypothesis");
+			List<Object> formula = Lists.newArrayList();
+			{
+				Map<String,Object> field = Maps.newHashMap();
+				field.put("type","TextInput");
+				field.put("label","Hypothesis");
+				Map<String,Object> options = Maps.newHashMap();
+				options.put("key","text");
+				field.put("options", options);
+				formula.add(field);
+			}
+			creation.setFormula(formula);
+			config.setCreation(creation);
+			
 		}
 		return config;
 	}
@@ -301,6 +338,22 @@ public class ModelController extends ModelControllerBase {
 			person.setFullName(request.getString("fullName", "No name"));
 			modelService.createItem(person, request.getSession());
 			return person;
+		}
+		if (Question.class.getSimpleName().equals(type)) {
+			Question question = new Question();
+			String text = request.getString("text", "No question");
+			question.setText(text);
+			question.setName(text);
+			modelService.createItem(question, request.getSession());
+			return question;
+		}
+		if (Hypothesis.class.getSimpleName().equals(type)) {
+			Hypothesis hypothesis = new Hypothesis();
+			String text = request.getString("text", "No hypothesis");
+			hypothesis.setText(text);
+			hypothesis.setName(text);
+			modelService.createItem(hypothesis, request.getSession());
+			return hypothesis;
 		}
 		throw new IllegalRequestException("Unknown type");
 	}

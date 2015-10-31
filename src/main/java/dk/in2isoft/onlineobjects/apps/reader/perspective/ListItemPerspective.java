@@ -8,6 +8,8 @@ public class ListItemPerspective {
 	
 	private long statementId;
 	private long addressId;
+	private long questionId;
+	private long hypothesisId;
 	private String title;
 	private String url;
 	private String address;
@@ -77,5 +79,21 @@ public class ListItemPerspective {
 
 	public void setAddressId(long addressId) {
 		this.addressId = addressId;
+	}
+
+	public long getQuestionId() {
+		return questionId;
+	}
+
+	public void setQuestionId(long questionId) {
+		this.questionId = questionId;
+	}
+
+	public long getHypothesisId() {
+		return hypothesisId;
+	}
+
+	public void setHypothesisId(long hypothesisId) {
+		this.hypothesisId = hypothesisId;
 	}
 }

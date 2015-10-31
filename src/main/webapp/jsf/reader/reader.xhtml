@@ -20,7 +20,7 @@
     				</div>
     				<div class="block">
     					<h3>Types</h3>
-    					<o:selection name="types" value="pages">
+    					<o:selection name="types" value="any">
     						<gui:source name="typesSource" url="#{readerView.baseContext}/getTypeOptions"/>
     					</o:selection>
     				</div>
@@ -159,6 +159,11 @@
 				</gui:buttons>
 			</gui:boundPanel>
 
+			<gui:boundPanel name="peekPanel" variant="light" width="200" modal="true">
+				<gui:fragment name="peekRendering"/>
+        <div style="height: 300px"></div>
+			</gui:boundPanel>
+
 			<gui:boundPanel name="addPanel" variant="light" width="300" modal="true">
 				<gui:formula name="addForm">
 					<gui:textInput key="url" multiline="true"/>
@@ -224,6 +229,21 @@
             <field label="Author">
               <objectInput key="authors" name="statementAuthor">
                 <finder name="statementAuthorFinder" url="/service/model/finder?type=Person"/>
+              </objectInput>
+            </field>
+            <field label="Answers the question">
+              <objectInput key="questions" name="statementQuestions">
+                <finder name="statementQuestionFinder" url="/service/model/finder?type=Question"/>
+              </objectInput>
+            </field>
+            <field label="Supports the theory">
+              <objectInput key="supports" name="statementSupports">
+                <finder name="statementSupportFinder" url="/service/model/finder?type=Hypothesis"/>
+              </objectInput>
+            </field>
+            <field label="Contradicts the theory">
+              <objectInput key="contradicts" name="statementContradicts">
+                <finder name="statementContradictionFinder" url="/service/model/finder?type=Hypothesis"/>
               </objectInput>
             </field>
           </fields>

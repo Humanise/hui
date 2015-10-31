@@ -12,13 +12,16 @@ import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.Query;
+import dk.in2isoft.onlineobjects.core.Results;
 import dk.in2isoft.onlineobjects.core.events.ModelEventListener;
 import dk.in2isoft.onlineobjects.core.events.ModelPrivilegesEventListener;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.model.Entity;
+import dk.in2isoft.onlineobjects.model.Hypothesis;
 import dk.in2isoft.onlineobjects.model.InternetAddress;
 import dk.in2isoft.onlineobjects.model.Item;
 import dk.in2isoft.onlineobjects.model.Person;
+import dk.in2isoft.onlineobjects.model.Question;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.Statement;
 import dk.in2isoft.onlineobjects.model.User;
@@ -35,17 +38,61 @@ public class ReaderIndexer implements ModelEventListener, ModelPrivilegesEventLi
 	
 	private static final Logger log = Logger.getLogger(ReaderIndexer.class);
 	
-	public void entityWasCreated(Entity entity) {
-		if (entity instanceof InternetAddress) {
-			index((InternetAddress) entity);
-		}
-		if (entity instanceof Statement) {
-			index((Statement) entity);
-		}
-	}
-	
 	public void clear(Privileged privileged) throws EndUserException {
 		getIndexManager(privileged).clear();
+	}
+	
+	public void reIndex(Privileged privileged) throws EndUserException {
+
+		clear(privileged);
+		{
+			Query<InternetAddress> query = Query.after(InternetAddress.class).withPrivileged(privileged);
+			Results<InternetAddress> scroll = modelService.scroll(query);
+			try {
+				while (scroll.next()) {
+					InternetAddress address = scroll.get();
+					index(address);
+				}
+			} finally {
+				scroll.close();
+			}
+		}
+		{
+			Query<Statement> query = Query.after(Statement.class).withPrivileged(privileged);
+			Results<Statement> scroll = modelService.scroll(query);
+			try {
+				while (scroll.next()) {
+					Statement statement = scroll.get();
+					index(statement);
+				}
+			} finally {
+				scroll.close();
+			}
+		}
+		{
+			Query<Question> query = Query.after(Question.class).withPrivileged(privileged);
+			Results<Question> scroll = modelService.scroll(query);
+			try {
+				while (scroll.next()) {
+					Question question = scroll.get();
+					index(question);
+				}
+			} finally {
+				scroll.close();
+			}
+		}
+		{
+			Query<Hypothesis> query = Query.after(Hypothesis.class).withPrivileged(privileged);
+			Results<Hypothesis> scroll = modelService.scroll(query);
+			try {
+				while (scroll.next()) {
+					Hypothesis question = scroll.get();
+					index(question);
+				}
+			} finally {
+				scroll.close();
+			}
+		}
 	}
 	
 	public void index(InternetAddress address) {
@@ -61,20 +108,20 @@ public class ReaderIndexer implements ModelEventListener, ModelPrivilegesEventLi
 		}
 	}
 	
-	public void index(Statement part) {
+	public void index(Question question) {
 		try {
-			User owner = modelService.getOwner(part);
+			User owner = modelService.getOwner(question);
 			if (owner!=null) {
 				StringBuilder text = new StringBuilder();
-				if (part.getText()!=null) {
-					text.append(part.getText());
+				if (question.getText()!=null) {
+					text.append(question.getText());
 				}
 				Document doc = new Document();
-				doc.add(new TextField("title", Strings.asNonBlank(part.getName(),"blank"), Field.Store.YES));
+				doc.add(new TextField("title", Strings.asNonBlank(question.getName(),"blank"), Field.Store.YES));
 				doc.add(new TextField("inbox", "no", Field.Store.YES));
-				doc.add(new TextField("favorit", "no", Field.Store.YES));
+				doc.add(new TextField("favorite", "no", Field.Store.YES));
 
-				Query<Person> authors = Query.of(Person.class).from(part, Relation.KIND_COMMON_AUTHOR).withPrivileged(owner);
+				Query<Person> authors = Query.of(Person.class).from(question, Relation.KIND_COMMON_AUTHOR).withPrivileged(owner);
 				List<Person> people = modelService.list(authors);
 				for (Person person : people) {
 					doc.add(new StringField("author", String.valueOf(person.getId()), Field.Store.NO));
@@ -82,33 +129,103 @@ public class ReaderIndexer implements ModelEventListener, ModelPrivilegesEventLi
 				}
 				doc.add(new TextField("text", Strings.asNonBlank(text.toString(),""), Field.Store.NO));
 
-				getIndexManager(owner).update(part, doc);
+				getIndexManager(owner).update(question, doc);
 			}
 		} catch (EndUserException e) {
-			log.error("Unable to reindex: "+part, e);
+			log.error("Unable to reindex: "+question, e);
+		}
+	}
+	
+	public void index(Hypothesis question) {
+		try {
+			User owner = modelService.getOwner(question);
+			if (owner!=null) {
+				StringBuilder text = new StringBuilder();
+				if (question.getText()!=null) {
+					text.append(question.getText());
+				}
+				Document doc = new Document();
+				doc.add(new TextField("title", Strings.asNonBlank(question.getName(),"blank"), Field.Store.YES));
+				doc.add(new TextField("inbox", "no", Field.Store.YES));
+				doc.add(new TextField("favorite", "no", Field.Store.YES));
+
+				Query<Person> authors = Query.of(Person.class).from(question, Relation.KIND_COMMON_AUTHOR).withPrivileged(owner);
+				List<Person> people = modelService.list(authors);
+				for (Person person : people) {
+					doc.add(new StringField("author", String.valueOf(person.getId()), Field.Store.NO));
+					text.append(" ").append(person.getFullName());
+				}
+				doc.add(new TextField("text", Strings.asNonBlank(text.toString(),""), Field.Store.NO));
+
+				getIndexManager(owner).update(question, doc);
+			}
+		} catch (EndUserException e) {
+			log.error("Unable to reindex: "+question, e);
+		}
+	}
+	
+	public void index(Statement statement) {
+		try {
+			User owner = modelService.getOwner(statement);
+			if (owner!=null) {
+				StringBuilder text = new StringBuilder();
+				if (statement.getText()!=null) {
+					text.append(statement.getText());
+				}
+				Document doc = new Document();
+				doc.add(new TextField("title", Strings.asNonBlank(statement.getName(),"blank"), Field.Store.YES));
+				doc.add(new TextField("inbox", "no", Field.Store.YES));
+				doc.add(new TextField("favorite", "no", Field.Store.YES));
+
+				Query<Person> authors = Query.of(Person.class).from(statement, Relation.KIND_COMMON_AUTHOR).withPrivileged(owner);
+				List<Person> people = modelService.list(authors);
+				for (Person person : people) {
+					doc.add(new StringField("author", String.valueOf(person.getId()), Field.Store.NO));
+					text.append(" ").append(person.getFullName());
+				}
+				doc.add(new TextField("text", Strings.asNonBlank(text.toString(),""), Field.Store.NO));
+
+				getIndexManager(owner).update(statement, doc);
+			}
+		} catch (EndUserException e) {
+			log.error("Unable to reindex: "+statement, e);
 		}
 	}
 	
 	private IndexManager getIndexManager(Privileged privileged) {
 		return indexService.getIndex("app-reader-user-"+privileged.getIdentity());
 	}
+	
+	public void entityWasCreated(Entity entity) {
+		check(entity);
+	}
 
 	public void entityWasUpdated(Entity entity) {
+		check(entity);
+	}
+
+	private void check(Entity entity) {
 		if (entity instanceof InternetAddress) {
 			index((InternetAddress) entity);
 		}
 		if (entity instanceof Statement) {
 			index((Statement) entity);
 		}
+		if (entity instanceof Question) {
+			index((Question) entity);
+		}
+		if (entity instanceof Hypothesis) {
+			index((Hypothesis) entity);
+		}
 	}
 
 	public void entityWasDeleted(Entity entity) {
-		// see: allPrivilegesWasRemoved
+		/** @see ReaderIndexer#allPrivilegesWasRemoved */
 	}
 	
 	@Override
 	public void allPrivilegesWasRemoved(Item item, List<User> users) {
-		if (item instanceof InternetAddress || item instanceof Statement) {
+		if (item instanceof InternetAddress || item instanceof Statement || item instanceof Question) {
 			for (User user : users) {
 				try {
 					getIndexManager(user).delete(item.getId());
@@ -120,48 +237,18 @@ public class ReaderIndexer implements ModelEventListener, ModelPrivilegesEventLi
 	}
 
 	public void relationWasCreated(Relation relation) {
-		if (relation.getFrom() instanceof InternetAddress) {
-			index((InternetAddress) relation.getFrom());
-		}
-		if (relation.getTo() instanceof InternetAddress) {
-			index((InternetAddress) relation.getTo());
-		}
-		if (relation.getFrom() instanceof Statement) {
-			index((Statement) relation.getFrom());
-		}
-		if (relation.getTo() instanceof Statement) {
-			index((Statement) relation.getTo());
-		}
+		check(relation.getFrom());
+		check(relation.getTo());
 	}
 
 	public void relationWasUpdated(Relation relation) {
-		if (relation.getFrom() instanceof InternetAddress) {
-			index((InternetAddress) relation.getFrom());
-		}
-		if (relation.getTo() instanceof InternetAddress) {
-			index((InternetAddress) relation.getTo());
-		}
-		if (relation.getFrom() instanceof Statement) {
-			index((Statement) relation.getFrom());
-		}
-		if (relation.getTo() instanceof Statement) {
-			index((Statement) relation.getTo());
-		}
+		check(relation.getFrom());
+		check(relation.getTo());
 	}
 
 	public void relationWasDeleted(Relation relation) {
-		if (relation.getFrom() instanceof Statement) {
-			index((Statement) relation.getFrom());
-		}
-		if (relation.getTo() instanceof Statement) {
-			index((Statement) relation.getTo());
-		}
-		if (relation.getFrom() instanceof Statement) {
-			index((Statement) relation.getFrom());
-		}
-		if (relation.getTo() instanceof Statement) {
-			index((Statement) relation.getTo());
-		}
+		check(relation.getFrom());
+		check(relation.getTo());
 	}
 
 	// Wiring...

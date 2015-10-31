@@ -19,6 +19,7 @@
 .oo_selection_text
 {
 	line-height: 16px;
+  vertical-align: middle;
 }
 
 .oo_selection_link:hover
