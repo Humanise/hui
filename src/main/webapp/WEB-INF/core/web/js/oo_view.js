@@ -1,5 +1,5 @@
 oo.View = function(options) {
-	this.options = {selectedClass:'oo_segmented_item_selected',emptyHtml:'',pageSize:10};
+	this.options = {emptyHtml:'',pageSize:10};
 	hui.ui.extend(this,options);
 	this.items = [];
 	this.page = 0;
