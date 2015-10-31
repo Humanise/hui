@@ -172,8 +172,6 @@ hui.ui.Window.prototype = {
 			}
 			curtain.innerHTML = hui.isString(stringOrBoolean) ? '<span>'+stringOrBoolean+'</span>' : '<span></span>';
 			curtain.style.display = '';
-			//curtain.style.height = this.content.clientHeight+'px';
-			//curtain.style.width = this.content.clientWidth+'px';			
 		}.bind(this),300);
 	},
 	
