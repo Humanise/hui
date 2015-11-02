@@ -82,16 +82,19 @@ var readerViewer = {
   },
 
   $valueChanged$extractionAlgorithm : function() {
-    if (this._viewedItem) {
-      this.load(this._viewedItem);
-    }
+    this.reload();
+  },
+  $valueChanged$highlightRendering : function() {
+    this.reload();
   },
 	
 	reload : function() {
 		var obj = this._viewedItem;
-    obj.statementId = undefined; // Avoid scroll
-		this._viewedItem = null;
-		this.load(obj);
+    if (obj) {
+      obj.statementId = undefined; // Avoid scroll
+  		this._viewedItem = null;
+  		this.load(obj);
+    }
 	},
 
   load: function(object) {
@@ -115,7 +118,8 @@ var readerViewer = {
     hui.cls.add(this.viewerSpinner, 'oo_spinner_visible');
     var self = this;
     var parameters = {
-      algorithm : hui.ui.get('extractionAlgorithm').getValue()
+      algorithm : hui.ui.get('extractionAlgorithm').getValue(),
+      highlight : hui.ui.get('highlightRendering').getValue()
     };
     if (object.addressId) {
       parameters.id = object.addressId;

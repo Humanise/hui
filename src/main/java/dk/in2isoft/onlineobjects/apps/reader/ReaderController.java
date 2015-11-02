@@ -249,13 +249,14 @@ public class ReaderController extends ReaderControllerBase {
 	@Path
 	public ArticlePerspective loadArticle(Request request) throws IOException, ModelException, SecurityException, IllegalRequestException, ExplodingClusterFuckException, ContentNotFoundException {
 		Long articleId = request.getLong("id",null);
+		boolean hightlight = request.getBoolean("highlight");
 		String algorithm = request.getString("algorithm");
 		UserSession session = request.getSession();
 		
 		if (articleId==null) {
 			throw new IllegalRequestException("No id provided");
 		}
-		return articleBuilder.getArticlePerspective(articleId, algorithm, session);
+		return articleBuilder.getArticlePerspective(articleId, algorithm, hightlight, session);
 	}
 
 	@Path

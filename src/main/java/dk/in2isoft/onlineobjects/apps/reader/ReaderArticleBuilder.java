@@ -76,7 +76,7 @@ public class ReaderArticleBuilder {
 	private SemanticService semanticService;
 	private Map<String,ContentExtractor> contentExtractors;
 
-	public ArticlePerspective getArticlePerspective(Long id, String algorithm, UserSession session) throws ModelException, IllegalRequestException, SecurityException, ExplodingClusterFuckException {
+	public ArticlePerspective getArticlePerspective(Long id, String algorithm, boolean highlight, UserSession session) throws ModelException, IllegalRequestException, SecurityException, ExplodingClusterFuckException {
 		StopWatch watch = new StopWatch();
 		watch.start();
 		InternetAddress address = modelService.get(InternetAddress.class, id, session);
@@ -115,7 +115,7 @@ public class ReaderArticleBuilder {
 		watch.split();
 		log.trace("Base: " + watch.getSplitTime());
 		if (document != null) {
-			buildRendering(document, data, article, algorithm, watch);
+			buildRendering(document, data, article, algorithm, highlight, watch);
 		}
 
 		watch.stop();
@@ -212,7 +212,7 @@ public class ReaderArticleBuilder {
 		return writer.toString();
 	}
 
-	private void buildRendering(HTMLDocument document, ArticleData data, ArticlePerspective article, String algorithm, StopWatch watch) throws ModelException,
+	private void buildRendering(HTMLDocument document, ArticleData data, ArticlePerspective article, String algorithm, boolean highlight, StopWatch watch) throws ModelException,
 			ExplodingClusterFuckException {
 
 		{
@@ -236,7 +236,7 @@ public class ReaderArticleBuilder {
 				cleaner.setUrl(data.address.getAddress());
 				cleaner.clean(extracted);
 				
-				Document annotated = annotate(article, data, extracted, watch);
+				Document annotated = annotate(article, data, highlight, extracted, watch);
 				
 				HTMLWriter formatted = new HTMLWriter();
 				
@@ -290,7 +290,7 @@ public class ReaderArticleBuilder {
 		return sb.toString();
 	}
 
-	private Document annotate(ArticlePerspective article, ArticleData data, Document xomDocument, StopWatch watch) throws ModelException, ExplodingClusterFuckException {
+	private Document annotate(ArticlePerspective article, ArticleData data, boolean highlight, Document xomDocument, StopWatch watch) throws ModelException, ExplodingClusterFuckException {
 		watch.split();
 		log.trace("Parsed HTML: " + watch.getSplitTime());
 		
@@ -305,12 +305,9 @@ public class ReaderArticleBuilder {
 		Locale locale = languageService.getLocale(text);
 		watch.split();
 		log.trace("Get locale: " + watch.getSplitTime());
-		if (locale!=null) {
+		if (highlight && locale!=null) {
 			if (locale.getLanguage().equals("da") || locale.getLanguage().equals("en")) {
-	
-				if (!false) {
-					annotatePeople(watch, decorated, text, locale);
-				}
+				annotatePeople(watch, decorated, text, locale);
 			}
 		}
 		StringSearcher searcher = new StringSearcher();

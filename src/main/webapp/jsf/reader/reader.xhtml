@@ -202,23 +202,26 @@
 				</formula>
 			</window>
 
-			<gui:window name="settingsWindow" title="Settings" variant="light" width="300" modal="true" padding="5">
-				<gui:formula name="settingsForm">
-          <gui:fields>
-            <gui:field label="Extraction algorithm">
-              <gui:dropDown name="extractionAlgorithm"
+			<window name="settingsWindow" title="Settings" variant="light" width="300" modal="true" padding="5" xmlns="http://www.in2isoft.dk/in2igui">
+				<formula name="settingsForm">
+          <fields>
+            <field label="Extraction algorithm">
+              <dropDown name="extractionAlgorithm"
                 value="#{readerView.extractionAlgorithm}"
                 items="#{readerView.extractionAlgorithms}"
               />
-            </gui:field>
-          </gui:fields>
-					<gui:buttons>
-						<gui:button text="Re-index" name="reIndexButton" variant="light">
-              <gui:confirm text="Are you sure?"/>
-            </gui:button>
-					</gui:buttons>
-				</gui:formula>
-			</gui:window>
+            </field>
+            <field label="Highlight">
+              <checkbox name="highlightRendering"/>
+            </field>
+          </fields>
+					<buttons>
+						<button text="Re-index" name="reIndexButton" variant="light">
+              <confirm text="Are you sure?"/>
+            </button>
+					</buttons>
+				</formula>
+			</window>
 
 			<window name="statementWindow" title="Statement" variant="light" width="500" modal="true" padding="5" xmlns="http://www.in2isoft.dk/in2igui">
 				<formula name="statementForm">
