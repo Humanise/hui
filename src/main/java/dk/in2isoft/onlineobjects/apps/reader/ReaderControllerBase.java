@@ -19,7 +19,6 @@ import dk.in2isoft.onlineobjects.services.LanguageService;
 import dk.in2isoft.onlineobjects.services.PileService;
 import dk.in2isoft.onlineobjects.services.SemanticService;
 import dk.in2isoft.onlineobjects.services.StorageService;
-import dk.in2isoft.onlineobjects.ui.Blend;
 import dk.in2isoft.onlineobjects.ui.Request;
 
 public abstract class ReaderControllerBase extends ApplicationController {
@@ -35,6 +34,7 @@ public abstract class ReaderControllerBase extends ApplicationController {
 	protected SemanticService semanticService;
 	protected WordService wordService;
 	protected ReaderArticleBuilder articleBuilder;
+	protected ReaderSearcher readerSearcher;
 
 	public ReaderControllerBase() {
 		super("reader");
@@ -119,5 +119,9 @@ public abstract class ReaderControllerBase extends ApplicationController {
 	
 	public void setArticleBuilder(ReaderArticleBuilder articleBuilder) {
 		this.articleBuilder = articleBuilder;
+	}
+	
+	public void setReaderSearcher(ReaderSearcher readerSearcher) {
+		this.readerSearcher = readerSearcher;
 	}
 }

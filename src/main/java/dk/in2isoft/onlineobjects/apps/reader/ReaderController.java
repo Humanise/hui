@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
@@ -15,8 +13,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.jdt.annotation.Nullable;
 
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 
 import dk.in2isoft.commons.lang.Code;
@@ -24,7 +20,6 @@ import dk.in2isoft.commons.lang.HTMLWriter;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.in2igui.data.ItemData;
-import dk.in2isoft.onlineobjects.apps.reader.index.ReaderQuery;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.AddressEditPerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.ArticlePerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.FeedPerspective;
@@ -35,7 +30,6 @@ import dk.in2isoft.onlineobjects.apps.videosharing.Path;
 import dk.in2isoft.onlineobjects.core.Pair;
 import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.Query;
-import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.core.exceptions.ContentNotFoundException;
@@ -56,8 +50,6 @@ import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.Statement;
 import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.modules.feeds.Feed;
-import dk.in2isoft.onlineobjects.modules.index.IndexManager;
-import dk.in2isoft.onlineobjects.modules.index.IndexSearchResult;
 import dk.in2isoft.onlineobjects.modules.language.WordByInternetAddressQuery;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspectiveQuery;
@@ -70,63 +62,8 @@ public class ReaderController extends ReaderControllerBase {
 
 	private static Logger log = Logger.getLogger(ReaderController.class);
 	
-	private Pair<Integer,List<Entity>> search(Request request, int page, int pageSize) throws ExplodingClusterFuckException {
-		ReaderQuery readerQuery = new ReaderQuery();
-		readerQuery.setText(request.getString("text"));
-		readerQuery.setSubset(request.getString("subset"));
-		readerQuery.setType(request.getStrings("type"));
-		readerQuery.setPage(page);
-		readerQuery.setPageSize(pageSize);
-		readerQuery.setWordIds(request.getLongs("tags"));
-		readerQuery.setAuthorIds(request.getLongs("authors"));
-
-		final ListMultimap<String, Long> idsByType = find(request, readerQuery);
-		final List<Long> ids = Lists.newArrayList(idsByType.values());
-
-		List<Entity> list = Lists.newArrayList();
-		UserSession session = request.getSession();
-		{
-			List<Long> addressIds = idsByType.get(InternetAddress.class.getSimpleName().toLowerCase());
-			if (!addressIds.isEmpty()) {
-				Query<InternetAddress> query = Query.after(InternetAddress.class).withIds(addressIds).withPrivileged(session);
-
-				list.addAll(modelService.list(query));
-			}
-		}
-		{
-			List<Long> partIds = idsByType.get(Statement.class.getSimpleName().toLowerCase());
-			if (!partIds.isEmpty()) {
-				Query<Statement> query = Query.after(Statement.class).withIds(partIds).withPrivileged(session);
-
-				list.addAll(modelService.list(query));
-			}
-		}
-		{
-			List<Long> partIds = idsByType.get(Question.class.getSimpleName().toLowerCase());
-			if (!partIds.isEmpty()) {
-				Query<Question> query = Query.after(Question.class).withIds(partIds).withPrivileged(session);
-
-				list.addAll(modelService.list(query));
-			}
-		}
-		{
-			List<Long> partIds = idsByType.get(Hypothesis.class.getSimpleName().toLowerCase());
-			if (!partIds.isEmpty()) {
-				Query<Hypothesis> query = Query.after(Hypothesis.class).withIds(partIds).withPrivileged(session);
-
-				list.addAll(modelService.list(query));
-			}
-		}
-
-		sortByIds(list, ids);
-
-		int totalCount = idsByType.get("total").iterator().next().intValue(); // TODO
-		
-		return Pair.of(totalCount, list);
-	}
-
 	@Path
-	public ViewResult listAddressObjects(Request request) throws IOException, ModelException, ExplodingClusterFuckException {
+	public ViewResult list(Request request) throws IOException, ModelException, ExplodingClusterFuckException {
 		
 		int page = request.getInt("page");
 		int pageSize = request.getInt("pageSize");
@@ -134,7 +71,7 @@ public class ReaderController extends ReaderControllerBase {
 			pageSize = 30;
 		}
 
-		Pair<Integer,List<Entity>> pair = search(request, page, pageSize);
+		Pair<Integer,List<Entity>> pair = readerSearcher.search(request, page, pageSize);
 		
 		ViewResult result = new ViewResult();
 		result.setTotal(pair.getKey());
@@ -218,42 +155,6 @@ public class ReaderController extends ReaderControllerBase {
 		result.setItems(list);
 
 		return result;
-	}
-
-	private void sortByIds(List<Entity> list, final List<Long> ids) {
-		Collections.sort(list, new Comparator<Entity>() {
-
-			public int compare(Entity o1, Entity o2) {
-				int index1 = ids.indexOf(o1.getId());
-				int index2 = ids.indexOf(o2.getId());
-				if (index1 > index2) {
-					return 1;
-				} else if (index2 > index1) {
-					return -1;
-				}
-				return 0;
-			}
-		});
-	}
-
-	private ListMultimap<String, Long> find(Request request, ReaderQuery query) throws ExplodingClusterFuckException {
-		IndexManager index = getIndex(request);
-		if (Strings.isBlank(query.getText()) && Strings.isBlank(query.getSubset())) {
-			ListMultimap<String, Long> idsByType = index.getIdsByType();
-			idsByType.put("total",Long.valueOf(idsByType.size()));
-			return idsByType;
-		}
-		final ListMultimap<String, Long> ids = LinkedListMultimap.create();
-
-		String indexQuery = ReaderQuery.build(query);
-		SearchResult<IndexSearchResult> search = index.search(indexQuery.toString(), query.getPage(), query.getPageSize());
-		for (IndexSearchResult row : search.getList()) {
-			Long id = row.getLong("id");
-			String type = row.getString("type");
-			ids.put(type, id);
-		}
-		ids.put("total", Long.valueOf(search.getTotalCount()));
-		return ids;
 	}
 
 	@Path
@@ -348,22 +249,12 @@ public class ReaderController extends ReaderControllerBase {
 	@Path
 	public ArticlePerspective loadArticle(Request request) throws IOException, ModelException, SecurityException, IllegalRequestException, ExplodingClusterFuckException, ContentNotFoundException {
 		Long articleId = request.getLong("id",null);
-		//Long statementId = request.getLong("statementId", null);
 		String algorithm = request.getString("algorithm");
 		UserSession session = request.getSession();
 		
 		if (articleId==null) {
 			throw new IllegalRequestException("No id provided");
 		}
-		/*
-		if (articleId==null) {
-			Query<InternetAddress> query = Query.after(InternetAddress.class).withChild(statementId, Relation.KIND_STRUCTURE_CONTAINS);
-			InternetAddress address = modelService.search(query).getFirst();
-			if (address==null) {
-				throw new ContentNotFoundException();
-			}
-			articleId = address.getId();
-		}*/
 		return articleBuilder.getArticlePerspective(articleId, algorithm, session);
 	}
 
@@ -632,9 +523,5 @@ public class ReaderController extends ReaderControllerBase {
 			throw new IllegalRequestException("Statement not found");
 		}
 		modelService.deleteEntity(statement, request.getSession());
-	}
-
-	private IndexManager getIndex(Request request) {
-		return indexService.getIndex("app-reader-user-" + request.getSession().getIdentity());
 	}
 }

@@ -2,8 +2,6 @@ var readerViewer = {
 
   _viewedItem : null,
   
-
-
   $ready : function() {
 
     this.viewer = hui.get('viewer');

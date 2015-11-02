@@ -30,6 +30,11 @@
    		<property name="indexService" ref="indexService"/>
    		<property name="modelService" ref="modelService"/>
    	</bean>
+   	
+   	<bean class="dk.in2isoft.onlineobjects.apps.reader.ReaderSearcher">
+   		<property name="indexService" ref="indexService"/>
+   		<property name="modelService" ref="modelService"/>
+   	</bean>
 
    	<bean id="readerIndexDocumentBuilder" class="dk.in2isoft.onlineobjects.apps.reader.index.ReaderIndexDocumentBuilder">
    		<property name="storageService" ref="storageService"/>
