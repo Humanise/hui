@@ -225,7 +225,7 @@ public class ReaderIndexer implements ModelEventListener, ModelPrivilegesEventLi
 	
 	@Override
 	public void allPrivilegesWasRemoved(Item item, List<User> users) {
-		if (item instanceof InternetAddress || item instanceof Statement || item instanceof Question) {
+		if (item instanceof InternetAddress || item instanceof Statement || item instanceof Question || item instanceof Hypothesis) {
 			for (User user : users) {
 				try {
 					getIndexManager(user).delete(item.getId());
