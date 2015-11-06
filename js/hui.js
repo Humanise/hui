@@ -1,31 +1,26 @@
 /** @namespace */
-var hui = {
-	/** @namespace */
-	browser : {},
-	KEY_BACKSPACE : 8,
-    KEY_TAB : 9,
-    KEY_RETURN : 13,
-    KEY_ESC : 27,
-    KEY_LEFT : 37,
-    KEY_UP : 38,
-    KEY_RIGHT : 39,
-    KEY_DOWN : 40,
-    KEY_DELETE : 46,
-    KEY_HOME : 36,
-    KEY_END : 35,
-    KEY_PAGEUP : 33,
-    KEY_PAGEDOWN : 34,
-    KEY_INSERT : 45
-};
+window.hui = window.hui || {};
 
 
 
+(function(hui,agent,window) {
+  hui.KEY_BACKSPACE = 8;
+  hui.KEY_TAB = 9;
+  hui.KEY_RETURN = 13;
+  hui.KEY_ESC = 27;
+  hui.KEY_LEFT = 37;
+  hui.KEY_UP = 38;
+  hui.KEY_RIGHT = 39;
+  hui.KEY_DOWN = 40;
+  hui.KEY_DELETE = 46;
+  hui.KEY_HOME = 36;
+  hui.KEY_END = 35;
+  hui.KEY_PAGEUP = 33;
+  hui.KEY_PAGEDOWN = 34;
+  hui.KEY_INSERT = 45;
 
-//////////////////////// Browser //////////////////////////
-
-// TODO make this easier to optimize
-
-(function(browser,agent,window) {
+  var browser = hui.browser = {};
+  
 	/** If the browser is any version of InternetExplorer */
 	browser.msie = !/opera/i.test(agent) && /MSIE/.test(agent) || /Trident/.test(agent);
 	/** If the browser is InternetExplorer 6 */
@@ -74,7 +69,7 @@ var hui = {
 	if (result) {
 		browser.webkitVersion = parseFloat(result[1]);
 	}
-})(hui.browser,navigator.userAgent,window);
+})(hui,navigator.userAgent,window);
 
 
 
@@ -1214,6 +1209,9 @@ hui.cls = {
 		if (element.className==className) {
 			return true;
 		}
+    if (element.className.animVal!==undefined) {
+      return false; // TODO (handle SVG stuff)
+    }
 		var a = element.className.split(/\s+/);
 		for (var i = 0; i < a.length; i++) {
 			if (a[i] == className) {
@@ -1545,7 +1543,10 @@ hui.onDraw = (function(vendors,window) {
  * @param delegate The function to execute
  */
 hui._onReady = function(delegate) {
-	if(window.addEventListener) {
+  if (document.readyState == 'interactive') {
+    window.setTimeout(delegate);
+  }
+	else if(window.addEventListener) {
 		window.addEventListener('DOMContentLoaded',delegate,false);
 	}
 	else if(typeof document.addEventListener != 'undefined')

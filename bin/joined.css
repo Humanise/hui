@@ -631,7 +631,7 @@ a.hui_button_light, a.hui_button_light span
 	line-height: 24px;
 	font-family: Georgia,serif;
 	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
-	font-size: 14px;
+	font-size: 13px;
 }
 
 a.hui_button_light, a.hui_button_light:focus
@@ -2670,6 +2670,7 @@ div.hui_window_back
   left: 5px;
   right: 5px;
 	background: rgba(233, 233, 234, .7);
+  z-index: 1;
 }
 
 .hui_window_busy span
@@ -7821,6 +7822,32 @@ div.hui_markupeditor
   vertical-align: middle;
   line-height: 16px;
   padding-left: 2px;
+}
+
+.hui_objectinput_object {
+  font-size: 12px;
+  line-height: 1;
+  margin-bottom: 3px;
+  padding-left: 2px;
+}
+
+.hui_objectinput_title {
+  margin: 0 3px;
+  cursor: default;
+  vertical-align: middle;
+}
+
+.hui_objectinput_delete {
+  visibility: hidden;
+  margin-left: 5px;
+}
+
+.hui_objectinput_object:hover .hui_objectinput_delete {
+  visibility: visible;
+}
+
+.hui_objectinput_actions .hui_button {
+  margin: 0;
 }
 
 .hui_rows {

@@ -139,6 +139,7 @@ div.hui_window_back
   left: 5px;
   right: 5px;
 	background: rgba(233, 233, 234, .7);
+  z-index: 1;
 }
 
 .hui_window_busy span
