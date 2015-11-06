@@ -18074,9 +18074,17 @@ hui.ui.NumberValidator.prototype = {
     reset : function() {
       this.setValue(null);
     }
+<<<<<<< HEAD
   }
 
   hui.extend(hui.ui.ObjectInput, _super);
+=======
+  };
+
+  hui.extend(hui.ui.ObjectInput, _super);
+
+})(hui.ui.Component);
+>>>>>>> 2225f9571375e5bd9d712022f9e92861d2d5faa8
 
 })(hui.ui.Component);
 
