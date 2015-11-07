@@ -27,6 +27,7 @@ import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.modules.index.IndexManager;
+import dk.in2isoft.onlineobjects.modules.index.IndexSearchQuery;
 import dk.in2isoft.onlineobjects.modules.index.IndexSearchResult;
 import dk.in2isoft.onlineobjects.services.LanguageService;
 
@@ -41,8 +42,10 @@ public class WordService {
 	
 	public SearchResult<WordListPerspective> search(WordQuery query) throws ExplodingClusterFuckException, ModelException {
 		final List<Long> ids = Lists.newArrayList();
-		String searchQuery = buildQuery(query);
-		SearchResult<IndexSearchResult> indexResult = index.search(searchQuery,query.getPage(),query.getPageSize());
+		IndexSearchQuery searchQuery = buildQuery(query);
+		searchQuery.setPage(query.getPage());
+		searchQuery.setPageSize(query.getPageSize());
+		SearchResult<IndexSearchResult> indexResult = index.search(searchQuery);
 		if (indexResult.getTotalCount()==0) {
 			return SearchResult.empty();
 		}
@@ -51,7 +54,7 @@ public class WordService {
 			IndexableField field = document.getField("id");
 			ids.add(Long.parseLong(field.stringValue()));
 		}
-		WordListPerspectiveQuery listQuery = new WordListPerspectiveQuery().withPaging(0, query.getPageSize()).orderByUpdated();
+		WordListPerspectiveQuery listQuery = new WordListPerspectiveQuery().withPaging(0, query.getPageSize()).orderByText();
 		if (!ids.isEmpty()) {
 			listQuery.withIds(ids);
 		}
@@ -71,17 +74,19 @@ public class WordService {
 			}
 		});
 		result.setTotalCount(indexResult.getTotalCount());
-		result.setDescription(searchQuery);
+		result.setDescription(searchQuery.getQuery());
 		return result;
 	}
 	
-	private String buildQuery(WordQuery query) {
+	private IndexSearchQuery buildQuery(WordQuery query) {
 
 		String text = query.getText();
 		String letter = query.getLetter();
 		String language = query.getLanguage();
 		String category = query.getCategory();
 		String[] words = query.getWords();
+		
+		boolean order = true;
 		
 		StringBuilder searchQuery = new StringBuilder();
 		if (StringUtils.isNotBlank(text)) {
@@ -113,6 +118,7 @@ public class WordService {
 				searchQuery.append(" OR *").append(QueryParserUtil.escape(word)).append("*");
 				searchQuery.append(")");
 			}
+			order = false;
 		}
 		if (StringUtils.isNotBlank(letter)) {
 			if (searchQuery.length()>0) {
@@ -146,8 +152,13 @@ public class WordService {
 				searchQuery.append("\"").append(QueryParserUtil.escape(words[i])).append("\"");
 			}
 			searchQuery.append(")");
+			order = false;
 		}
-		return searchQuery.toString();
+		IndexSearchQuery isq = new IndexSearchQuery(searchQuery.toString());
+		if (order) {
+			isq.addStringOrdering("word");
+		}
+		return isq;
 	}
 	
 	public WordImpression getImpression(Word word) throws ModelException {

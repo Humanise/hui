@@ -129,8 +129,6 @@
 	
 	<bean id="userService" class="dk.in2isoft.onlineobjects.modules.user.UserService" autowire="byType"/>
 	
-	<bean id="dictionaryService" class="dk.in2isoft.onlineobjects.services.DictionaryService" autowire="byType"/>
-	
 	<bean id="consistencyService" class="dk.in2isoft.onlineobjects.services.ConsistencyService" autowire="byType"/>
 
 	<bean id="sessionService" class="dk.in2isoft.onlineobjects.services.SessionService" autowire="byType"/>

@@ -27,6 +27,7 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
@@ -177,7 +178,7 @@ public class IndexManager {
 	public Document getDocument(Entity entity) {
 		TermQuery query = new TermQuery(new Term("id", String.valueOf(entity.getId())));
 		try {
-			SearchResult<IndexSearchResult> search = search(query, 0, 1);
+			SearchResult<IndexSearchResult> search = search(query, null, 0, 1);
 			IndexSearchResult first = search.getFirst();
 			if (first!=null) {
 				return first.getDocument();				
@@ -190,7 +191,7 @@ public class IndexManager {
 	
 	public List<Long> getIds(String text, int start, int size) throws ExplodingClusterFuckException {
 		List<Long> ids = Lists.newArrayList();
-		SearchResult<IndexSearchResult> searchResult = search(text, start, size);
+		SearchResult<IndexSearchResult> searchResult = search(text, null, start, size);
 		for (IndexSearchResult item : searchResult.getList()) {
 			Document document = item.getDocument();
 			IndexableField field = document.getField("id");
@@ -201,7 +202,7 @@ public class IndexManager {
 	
 	public List<Long> getIds(Query query, int start, int size) throws ExplodingClusterFuckException {
 		List<Long> ids = Lists.newArrayList();
-		SearchResult<IndexSearchResult> searchResult = search(query, start, size);
+		SearchResult<IndexSearchResult> searchResult = search(query, null, start, size);
 		for (IndexSearchResult item : searchResult.getList()) {
 			Document document = item.getDocument();
 			IndexableField field = document.getField("id");
@@ -222,7 +223,12 @@ public class IndexManager {
 		return null;
 	}
 
-	public SearchResult<IndexSearchResult> search(String text, int page, int size) throws ExplodingClusterFuckException {
+	public SearchResult<IndexSearchResult> search(IndexSearchQuery query) throws ExplodingClusterFuckException {
+		return search(query.getQuery(), query.getSort(), query.getPage(), query.getPageSize());
+	}
+
+	@Deprecated
+	public SearchResult<IndexSearchResult> search(String text, Sort sort, int page, int size) throws ExplodingClusterFuckException {
 
 		if (Strings.isBlank(text)) {
 			return new SearchResult<IndexSearchResult>(new ArrayList<IndexSearchResult>(), 0);
@@ -232,14 +238,14 @@ public class IndexManager {
 		parser.setAllowLeadingWildcard(true);
 		try {
 			Query query = parser.parse(text);
-			return search(query, page, size);
+			return search(query, sort, page, size);
 		} catch (ParseException e) {
 			List<IndexSearchResult> found = Lists.newArrayList();
 			return new SearchResult<IndexSearchResult>(found, 0);
 		}
 	}
 	
-	public SearchResult<IndexSearchResult> search(Query query, int page, int size) throws ExplodingClusterFuckException {
+	public SearchResult<IndexSearchResult> search(Query query, Sort sort, int page, int size) throws ExplodingClusterFuckException {
 		List<IndexSearchResult> found = Lists.newArrayList();
 		int total = 0;
 		IndexReader reader = null;
@@ -247,7 +253,13 @@ public class IndexManager {
 			reader = openReader();
 			IndexSearcher searcher = new IndexSearcher(reader);
 			int end = (page+1) * size;
-			TopDocs topDocs = searcher.search(query , 100000);
+			TopDocs topDocs = null;
+			int n = 1000000;
+			if (sort!=null) {
+				topDocs = searcher.search(query, n, sort);
+			} else {
+				topDocs = searcher.search(query , n);
+			}
 			ScoreDoc[] scoreDocs = topDocs.scoreDocs;
 			for (int i = page * size; i < Math.min(scoreDocs.length,end); i++) {
 				Document document = reader.document(scoreDocs[i].doc);

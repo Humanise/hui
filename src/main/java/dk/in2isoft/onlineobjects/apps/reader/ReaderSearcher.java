@@ -22,6 +22,7 @@ import dk.in2isoft.onlineobjects.model.InternetAddress;
 import dk.in2isoft.onlineobjects.model.Question;
 import dk.in2isoft.onlineobjects.model.Statement;
 import dk.in2isoft.onlineobjects.modules.index.IndexManager;
+import dk.in2isoft.onlineobjects.modules.index.IndexSearchQuery;
 import dk.in2isoft.onlineobjects.modules.index.IndexSearchResult;
 import dk.in2isoft.onlineobjects.modules.index.IndexService;
 import dk.in2isoft.onlineobjects.ui.Request;
@@ -111,8 +112,10 @@ public class ReaderSearcher {
 		}
 		final ListMultimap<String, Long> ids = LinkedListMultimap.create();
 
-		String indexQuery = ReaderQuery.build(query);
-		SearchResult<IndexSearchResult> search = index.search(indexQuery.toString(), query.getPage(), query.getPageSize());
+		IndexSearchQuery indexQuery = new IndexSearchQuery(ReaderQuery.build(query));
+		indexQuery.setPage(query.getPage());
+		indexQuery.setPageSize(query.getPageSize());
+		SearchResult<IndexSearchResult> search = index.search(indexQuery);
 		for (IndexSearchResult row : search.getList()) {
 			Long id = row.getLong("id");
 			String type = row.getString("type");

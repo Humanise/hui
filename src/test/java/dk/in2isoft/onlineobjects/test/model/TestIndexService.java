@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import dk.in2isoft.commons.parsing.HTMLDocument;
+import dk.in2isoft.onlineobjects.apps.reader.index.ReaderQuery;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SearchResult;
@@ -21,6 +22,7 @@ import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.InternetAddress;
 import dk.in2isoft.onlineobjects.modules.index.IndexManager;
+import dk.in2isoft.onlineobjects.modules.index.IndexSearchQuery;
 import dk.in2isoft.onlineobjects.modules.index.IndexSearchResult;
 import dk.in2isoft.onlineobjects.modules.index.IndexService;
 import dk.in2isoft.onlineobjects.modules.networking.HTMLService;
@@ -89,7 +91,10 @@ public class TestIndexService extends AbstractSpringTestCase {
 		}
 		assertEquals(2, index.getDocumentCount());
 		
-		SearchResult<IndexSearchResult> found = index.search("a*",0,10);
+		IndexSearchQuery indexQuery = new IndexSearchQuery("a*");
+		indexQuery.setPage(0);
+		indexQuery.setPageSize(10);
+		SearchResult<IndexSearchResult> found = index.search(indexQuery);
 		assertEquals(1, found.getTotalCount());
 	}
 
