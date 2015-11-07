@@ -103,9 +103,6 @@
   							<o:link name="infoButton" plain="true" styleClass="reader_viewer_action">
   								<o:icon icon="info_light" size="16"/>
   							</o:link>
-  							<o:link name="quoteButton" plain="true" styleClass="reader_viewer_action">
-  								<o:icon icon="bubble_line" size="16"/>
-  							</o:link>
   							<o:link name="inspectButton" plain="true" styleClass="reader_viewer_action">
   								<o:icon icon="relations_line" size="16"/>
   							</o:link>
@@ -162,6 +159,21 @@
 			<gui:boundPanel name="peekPanel" variant="light" width="200" modal="true">
 				<gui:fragment name="peekRendering"/>
         <div style="height: 300px"></div>
+			</gui:boundPanel>
+
+			<gui:boundPanel name="selectionPanel" variant="light">
+  			<o:link name="quoteFromSelection" plain="true" class="reader_context_icon">
+  				<o:icon icon="quote"/>
+  			</o:link>
+  			<o:link name="questionFromSelection" plain="true" class="reader_context_icon">
+  				<o:icon icon="question"/>
+  			</o:link>
+  			<o:link name="hypothesisFromSelection" plain="true" class="reader_context_icon">
+  				<o:icon icon="hypothesis"/>
+  			</o:link>
+  			<o:link name="personFromSelection" plain="true" class="reader_context_icon">
+  				<o:icon icon="user"/>
+  			</o:link>
 			</gui:boundPanel>
 
 			<gui:boundPanel name="addPanel" variant="light" width="300" modal="true">

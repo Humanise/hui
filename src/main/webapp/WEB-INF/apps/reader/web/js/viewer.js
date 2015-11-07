@@ -1,32 +1,60 @@
 var readerViewer = {
 
   _viewedItem : null,
+  text : '',
+
+  nodes : {
+    content : null
+  },
+  widgets : {
+    selectionPanel : null,
+  },
   
   $ready : function() {
 
     this.viewer = hui.get('viewer');
-    this.viewerContent = hui.get('viewer_content');
+    this.viewerContent = this.nodes.content =  hui.get('viewer_content');
     this.viewerFrame = hui.get('viewer_frame');
     this.viewerSpinner = hui.get('viewer_spinner');
-
-    var textListener = function() {
-      var selection = hui.selection.getText();
-      if (!hui.isBlank(selection)) {
-        this.text = selection;
-        hui.log(this.text);
-      }
-    }.bind(this);
-    hui.listen(this.viewer,'mouseup',textListener);
-    hui.listen(window,'keyup',textListener);
     hui.listen(window,'keydown',function(e) {
       e = hui.event(e);
       if (this.viewerVisible && e.escapeKey) {
         this._hideViewer();
       }
     }.bind(this));
+    
+    this.widgets.selectionPanel = hui.ui.get('selectionPanel');
 
     hui.listen(this.viewer,'click',this._click.bind(this));
     hui.listen(hui.get('viewer_info'),'click',this._clickInfo.bind(this));
+    this._listenForText();
+  },
+  
+  _listenForText : function() {
+    var textListener = function() {
+      var selection = document.getSelection();
+      this.text = '';
+      var panel = this.widgets.selectionPanel;
+      if (selection.type == 'Range' && selection.rangeCount == 1) {
+        var range = selection.getRangeAt(0);
+        var common = range.commonAncestorContainer;
+        if (hui.dom.isDescendantOrSelf(common,this.nodes.content)) {
+          this.text = hui.selection.getText();
+          var rects = range.getClientRects();
+          if (rects.length > 0) {
+            panel.position({
+              rect : rects[0],
+              position : 'vertical'
+            });
+            panel.show();
+            return;
+          }
+        }
+      }
+      panel.hide();
+    }.bind(this);
+    hui.listen(document.body,'mouseup',textListener);
+    hui.listen(window,'keyup',textListener);
   },
   
   _click : function(e) {
@@ -89,43 +117,46 @@ var readerViewer = {
   },
 	
 	reload : function() {
-		var obj = this._viewedItem;
-    if (obj) {
-      obj.statementId = undefined; // Avoid scroll
-  		this._viewedItem = null;
-  		this.load(obj);
+    if (this._viewedItem) {
+  		this.load({
+        addressId : this._viewedItem.addressId,
+        reload : true
+      });
     }
 	},
 
   load: function(object) {
-    if (!object.addressId) {
+    if (!object || !object.addressId) {
       return;
     }
-    if (this._viewedItem && this._viewedItem.addressId == object.addressId) {
-      this._highlightStatement(object.statementId);
-      return;
+    if (this._viewedItem) {
+      if (this._viewedItem.addressId == object.addressId) {
+        if (object.statementId) {
+          this._highlightStatement(object.statementId);
+          return;
+        }
+      } else {
+        hui.get('viewer_formatted').innerHTML = '';
+        hui.get('viewer_text').innerHTML = '';
+        hui.get('viewer_header').innerHTML = '';
+        hui.get('viewer_info').innerHTML = '';
+        this.viewerContent.scrollTop = 0;
+      }
     }
 		addressInfoController.clear();
-    this._viewedItem = object;
-    object = object || {};
+    this._viewedItem = {addressId : object.addressId};
+    this._lockViewer();
     hui.get('viewer_header').innerHTML = '<h1>' + hui.string.escape(object.title || 'Loading...') + '</h1>';
-    hui.get('viewer_formatted').innerHTML = '';
-    hui.get('viewer_text').innerHTML = '';
-    hui.get('viewer_info').innerHTML = ''
     this.viewer.style.display = 'block';
     this.viewerVisible = true;
-    hui.cls.add(document.body, 'reader_modal');
     hui.cls.add(this.viewerSpinner, 'oo_spinner_visible');
-    var self = this;
     var parameters = {
+      id : object.addressId,
       algorithm : hui.ui.get('extractionAlgorithm').getValue(),
       highlight : hui.ui.get('highlightRendering').getValue()
     };
-    if (object.addressId) {
-      parameters.id = object.addressId;
-    } else {
-      return;
-    }
+
+    var self = this;
     hui.ui.request({
       url: '/loadArticle',
       parameters: parameters,
@@ -144,6 +175,7 @@ var readerViewer = {
         });
       },
       $finally: function() {
+        self._unlockViewer();
         hui.cls.remove(self.viewerSpinner, 'oo_spinner_visible');
       }
     });
@@ -227,7 +259,6 @@ var readerViewer = {
 
   _hideViewer : function() {
     viewer.style.display='none';
-    hui.cls.remove(document.body,'reader_modal');
     this.viewerVisible = false;
     this.viewerFrame.src = "about:blank";
     hui.get('viewer_info').innerHTML = ''
@@ -235,15 +266,15 @@ var readerViewer = {
 		addressInfoController.clear();
   },
   _lockViewer : function() {
-    this._viewerLocked = true;
+    this._locked = true;
     hui.cls.add(this.viewer,'reader_viewer_locked');
   },
   _unlockViewer : function() {
-    this._viewerLocked = false;
+    this._locked = false;
     hui.cls.remove(this.viewer,'reader_viewer_locked');
   },
   $click$favoriteButton : function() {
-    if (this._viewerLocked) {return}
+    if (this._locked) {return}
     this._lockViewer();
     var newValue = !this._currentArticle.favorite;
     hui.cls.set(hui.get('reader_viewer_favorite'),'reader_viewer_action_selected',newValue);
@@ -261,7 +292,7 @@ var readerViewer = {
     });
   },
   $click$inboxButton : function() {
-    if (this._viewerLocked) {return}
+    if (this._locked) {return}
     this._lockViewer();
     var newValue = !this._currentArticle.inbox;
     hui.cls.set(hui.get('reader_viewer_inbox'),'reader_viewer_action_selected',newValue);
@@ -289,8 +320,8 @@ var readerViewer = {
 		}
 		addressInfoController.edit(this._currentArticle);
 	},
-
-  $click$quoteButton : function() {
+  
+  $click$quoteFromSelection : function() {
 		if (hui.isBlank(this.text)) {
 			return;
 		}
@@ -298,13 +329,18 @@ var readerViewer = {
       id : this._currentArticle.id,
       text : this.text
     }
+    this._lockViewer();
+    var panel = this.widgets.selectionPanel;
     hui.ui.request({
       url : '/addQuote',
       parameters : parameters,
       $success : function() {
         this.reload();
+      }.bind(this),
+      $finally : function() {
+        panel.hide();
       }.bind(this)
-    })
+    })    
   },
   $valueChanged$readerViewerView : function(value) {
 
@@ -367,3 +403,11 @@ var readerViewer = {
   },
 }
 hui.ui.listen(readerViewer);
+
+var addressSelection = {
+  _check : function() {
+		var selection = window.getSelection();
+		if (selection.rangeCount<1) {return}
+  }
+}
+hui.ui.listen(addressSelection);

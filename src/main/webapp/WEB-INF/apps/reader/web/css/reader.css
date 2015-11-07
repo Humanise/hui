@@ -113,10 +113,6 @@ html,body {
 	margin: 8px 0 0 7px;
 }
 
-.reader_modal {
-	overflow: hidden;
-}
-
 div.word_rendering
 {
 	font-size: 12px;
