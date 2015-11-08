@@ -223,3 +223,27 @@
 .oo_icon_humanise:before {
 	content: "\2f";
 }
+.oo_icon_tag_line_selected:before {
+	content: "\e904";
+}
+.oo_icon_follow:before {
+	content: "\e905";
+}
+.oo_icon_archive_line_selected:before {
+	content: "\e906";
+}
+.oo_icon_more:before {
+	content: "\e907";
+}
+.oo_icon_document_line_selected:before {
+	content: "\e908";
+}
+.oo_icon_documents_line_selected:before {
+	content: "\e909";
+}
+.oo_icon_star_line_selected:before {
+	content: "\e90a";
+}
+.oo_icon_inbox_line_selected:before {
+	content: "\e90b";
+}
