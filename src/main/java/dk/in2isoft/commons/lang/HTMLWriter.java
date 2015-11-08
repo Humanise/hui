@@ -159,12 +159,14 @@ public class HTMLWriter extends MarkupWriter {
 	}
 
 	public HTMLWriter withData(Object data) {
-		withAttribute("data", Strings.toJSON(data));
+		String value = data !=null && data instanceof String ? data.toString() : Strings.toJSON(data); 
+		withAttribute("data", value);
 		return this;
 	}
 
 	public HTMLWriter withData(String name,Object data) {
-		withAttribute("data-"+name, Strings.toJSON(data));
+		String value = data !=null && data instanceof String ? data.toString() : Strings.toJSON(data); 
+		withAttribute("data-"+name, value);
 		return this;
 	}
 
