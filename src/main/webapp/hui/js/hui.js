@@ -1317,15 +1317,18 @@ hui.cls = {
  * @param {Element} element The element to listen on
  * @param {String} type The event to listen for
  * @param {Function} listener The function to be called
- * @param {boolean} ?useCapture If the listener should "capture"
+ * @param {object} ?bindTo Bind the listener to it
  */
-hui.listen = function(element,type,listener,useCapture) {
+hui.listen = function(element,type,listener,bindTo) {
 	element = hui.get(element);
 	if (!element) {
 		return;
 	}
+  if (bindTo) {
+    listener = listener.bind(bindTo)
+  }
 	if(document.addEventListener) {
-		element.addEventListener(type,listener,useCapture ? true : false);
+		element.addEventListener(type,listener);
 	} else {
 		element.attachEvent('on'+type, listener);
 	}
