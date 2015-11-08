@@ -6,6 +6,7 @@ import dk.in2isoft.onlineobjects.core.Pair;
 
 public class ListItemPerspective {
 	
+	private long id;
 	private long statementId;
 	private long addressId;
 	private long questionId;
@@ -95,5 +96,13 @@ public class ListItemPerspective {
 
 	public void setHypothesisId(long hypothesisId) {
 		this.hypothesisId = hypothesisId;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 }

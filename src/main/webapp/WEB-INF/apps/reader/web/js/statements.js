@@ -1,4 +1,6 @@
-var statementController = {	
+var statementController = {
+  name : 'statementEditor',
+
 	window : null,
 	form : null,
 
@@ -54,7 +56,7 @@ var statementController = {
       $success : function() {
         this._reset();
 				this.window.hide();
-				this._tellMainController();
+				this._notify();
       }.bind(this),
       $finally : function() {
         this.window.setBusy(false);
@@ -69,7 +71,7 @@ var statementController = {
       $success : function(obj) {
         this._reset();
 				this.window.hide();
-				this._tellMainController();
+				this._notify();
       }.bind(this),
       $finally : function() {
         this.window.setBusy(false);
@@ -85,8 +87,8 @@ var statementController = {
       text: item.name || item.title || item.text
     }
   },
-	_tellMainController : function() {
-		controller.statementChanged();
+	_notify : function() {
+    hui.ui.callDelegates(this,'statementChanged');
 	}
 }
 

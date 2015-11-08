@@ -1,0 +1,33 @@
+.reader_view
+{
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	display: none;
+	z-index: 200;
+  background-color: #FFFCEC;
+}
+
+.reader_view_head
+{
+  border-bottom: 1px solid #E4E1D1;
+  padding: 10px;
+  background: #F5F2E3;
+}
+
+.reader_view_close
+{
+	text-decoration: none;
+	color: #999;
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	font-size: 20px;
+}
+
+.reader_view_close:hover
+{
+	color: #666;
+}

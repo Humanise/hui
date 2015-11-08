@@ -41,21 +41,6 @@
 	background: #fafafa;
 }
 
-.reader_viewer_close
-{
-	text-decoration: none;
-	color: #999;
-	position: absolute;
-	right: 10px;
-	top: 10px;
-	font-size: 20px;
-}
-
-.reader_viewer_close:hover
-{
-	color: #666;
-}
-
 .reader_viewer_header h1
 {
 	font-size: 24px;

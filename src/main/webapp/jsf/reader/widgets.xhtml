@@ -1,0 +1,151 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:o="http://www.onlineobjects.com/jsf" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:gui="http://www.in2isoft.dk/in2igui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+>
+	<ui:composition>
+			
+			<gui:boundPanel name="newFeedPanel" variant="light" width="300" modal="true">
+				<gui:formula name="newFeedForm">
+					<gui:field label="Address">
+						<gui:textInput key="url" multiline="true"/>
+					</gui:field>
+					<gui:buttons top="10">
+						<gui:button submit="true" text="Add" variant="light"/>
+					</gui:buttons>
+				</gui:formula>
+			</gui:boundPanel>
+
+			<gui:boundPanel name="wordPanel" variant="light" width="200" modal="true">
+				<gui:fragment name="wordRendering"/>
+				<gui:buttons align="right">
+					<gui:button text="Remove" variant="light" small="true" name="removeWord"/>
+				</gui:buttons>
+			</gui:boundPanel>
+
+			<gui:boundPanel name="peekPanel" variant="light" width="200" modal="true">
+				<gui:fragment name="peekRendering"/>
+        <div style="height: 300px"></div>
+			</gui:boundPanel>
+
+			<gui:boundPanel name="selectionPanel" variant="light">
+  			<o:link name="quoteFromSelection" plain="true" class="reader_context_icon">
+  				<o:icon icon="quote"/>
+  			</o:link>
+  			<o:link name="tagFromSelection" plain="true" class="reader_context_icon">
+  				<o:icon icon="tag_line"/>
+  			</o:link>
+  			<o:link name="questionFromSelection" plain="true" class="reader_context_icon">
+  				<o:icon icon="question"/>
+  			</o:link>
+  			<o:link name="hypothesisFromSelection" plain="true" class="reader_context_icon">
+  				<o:icon icon="hypothesis"/>
+  			</o:link>
+  			<o:link name="personFromSelection" plain="true" class="reader_context_icon">
+  				<o:icon icon="user"/>
+  			</o:link>
+			</gui:boundPanel>
+
+			<gui:boundPanel name="addPanel" variant="light" width="300" modal="true">
+				<gui:formula name="addForm">
+					<gui:textInput key="url" multiline="true"/>
+					<div style="padding: 5px 2px 2px 0">
+						<gui:buttons>
+							<gui:button text="Cancel" variant="light" name="cancelAddPanel" rendered="false"/>
+							<gui:button submit="true" text="Add" variant="light"/>
+						</gui:buttons>
+					</div>
+				</gui:formula>
+			</gui:boundPanel>
+
+			<window name="addressInfoWindow" title="Address" variant="light" width="400" modal="true" padding="5" xmlns="http://www.in2isoft.dk/in2igui">
+				<formula name="addressInfoForm">
+          <fields labels="above">
+  					<field label="Title">
+              <textInput key="title" multiline="true"/>
+            </field>
+  					<field label="Address">
+              <textInput key="address" multiline="true"/>
+            </field>
+            <field label="Author">
+              <objectInput key="authors" name="addressAuthor">
+                <finder name="addressAuthorFinder" url="/service/model/finder?type=Person"/>
+              </objectInput>
+            </field>
+          </fields>
+
+					<buttons>
+						<button text="Delete" name="deleteAddressInfo" variant="light">
+              <confirm text="Are you sure?"/>
+            </button>
+						<button text="Cancel" name="cancelAddressInfo" variant="light"/>
+						<button submit="true" text="Save" highlighted="true" variant="light"/>
+					</buttons>
+				</formula>
+			</window>
+
+			<window name="settingsWindow" title="Settings" variant="light" width="300" modal="true" padding="5" xmlns="http://www.in2isoft.dk/in2igui">
+				<formula name="settingsForm">
+          <fields>
+            <field label="Extraction algorithm">
+              <dropDown name="extractionAlgorithm"
+                value="#{readerView.extractionAlgorithm}"
+                items="#{readerView.extractionAlgorithms}"
+              />
+            </field>
+            <field label="Highlight">
+              <checkbox name="highlightRendering"/>
+            </field>
+          </fields>
+					<buttons>
+						<button text="Re-index" name="reIndexButton" variant="light">
+              <confirm text="Are you sure?"/>
+            </button>
+					</buttons>
+				</formula>
+			</window>
+
+			<window name="statementWindow" title="Statement" variant="light" width="500" modal="true" padding="5" xmlns="http://www.in2isoft.dk/in2igui">
+				<formula name="statementForm">
+          <fields labels="above">
+            <field label="Text">
+              <textInput key="text" multiline="true" maxHeight="600"/>
+            </field>
+            <field label="Author">
+              <objectInput key="authors" name="statementAuthor">
+                <finder name="statementAuthorFinder" url="/service/model/finder?type=Person"/>
+              </objectInput>
+            </field>
+            <field label="Answers the question">
+              <objectInput key="questions" name="statementQuestions">
+                <finder name="statementQuestionFinder" url="/service/model/finder?type=Question"/>
+              </objectInput>
+            </field>
+            <field label="Supports the theory">
+              <objectInput key="supports" name="statementSupports">
+                <finder name="statementSupportFinder" url="/service/model/finder?type=Hypothesis"/>
+              </objectInput>
+            </field>
+            <field label="Contradicts the theory">
+              <objectInput key="contradicts" name="statementContradicts">
+                <finder name="statementContradictionFinder" url="/service/model/finder?type=Hypothesis"/>
+              </objectInput>
+            </field>
+          </fields>
+					<buttons>
+						<button text="Delete" name="deleteStatement" variant="light">
+              <confirm text="Are you sure?"/>
+            </button>
+						<button text="Save" submit="true" variant="light" highlighted="true"/>
+					</buttons>
+				</formula>
+			</window>
+      
+		
+	</ui:composition>
+	
+</html>

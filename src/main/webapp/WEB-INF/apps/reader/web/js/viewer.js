@@ -4,29 +4,26 @@ var readerViewer = {
   text : '',
 
   nodes : {
-    content : null
+    viewer : '.reader_viewer',
+    content : '.reader_viewer_content',
+    info : '.reader_viewer_info'
   },
+
   widgets : {
     selectionPanel : null,
   },
   
   $ready : function() {
 
-    this.viewer = hui.get('viewer');
-    this.viewerContent = this.nodes.content =  hui.get('viewer_content');
+    this.nodes = hui.collect(this.nodes);
+    
     this.viewerFrame = hui.get('viewer_frame');
     this.viewerSpinner = hui.get('viewer_spinner');
-    hui.listen(window,'keydown',function(e) {
-      e = hui.event(e);
-      if (this.viewerVisible && e.escapeKey) {
-        this._hideViewer();
-      }
-    }.bind(this));
     
     this.widgets.selectionPanel = hui.ui.get('selectionPanel');
 
-    hui.listen(this.viewer,'click',this._click.bind(this));
-    hui.listen(hui.get('viewer_info'),'click',this._clickInfo.bind(this));
+    hui.listen(this.nodes.viewer,'click',this._click.bind(this));
+    hui.listen(this.nodes.info,'click',this._clickInfo.bind(this));
     this._listenForText();
   },
   
@@ -63,10 +60,7 @@ var readerViewer = {
     var a = e.findByTag('a');
     if (a) {
       e.stop();
-      if (hui.cls.has(a,'reader_viewer_close')) {
-        this._hideViewer();
-      }
-      else if (hui.cls.has(a,'reader_viewer_quote_icon')) {
+      if (hui.cls.has(a,'reader_viewer_quote_icon')) {
         this._editStatement({link:a});
       }
       else if (hui.cls.has(a.parentNode,'link')) {
@@ -108,6 +102,10 @@ var readerViewer = {
       }
     }
   },
+  
+  $statementChanged$statementEditor : function() {
+    this.reload();
+  },
 
   $valueChanged$extractionAlgorithm : function() {
     this.reload();
@@ -118,19 +116,19 @@ var readerViewer = {
 	
 	reload : function() {
     if (this._viewedItem) {
-  		this.load({
-        addressId : this._viewedItem.addressId,
+  		this.show({
+        id : this._viewedItem.id,
         reload : true
       });
     }
 	},
 
-  load: function(object) {
-    if (!object || !object.addressId) {
+  show: function(object) {
+    if (!object || !object.id) {
       return;
     }
     if (this._viewedItem) {
-      if (this._viewedItem.addressId == object.addressId) {
+      if (this._viewedItem.id == object.id) {
         if (object.statementId) {
           this._highlightStatement(object.statementId);
           return;
@@ -139,19 +137,19 @@ var readerViewer = {
         hui.get('viewer_formatted').innerHTML = '';
         hui.get('viewer_text').innerHTML = '';
         hui.get('viewer_header').innerHTML = '';
-        hui.get('viewer_info').innerHTML = '';
-        this.viewerContent.scrollTop = 0;
+        this.nodes.info.innerHTML = '';
+        this.nodes.content.scrollTop = 0;
       }
     }
 		addressInfoController.clear();
-    this._viewedItem = {addressId : object.addressId};
+    this._viewedItem = {id : object.id};
     this._lockViewer();
     hui.get('viewer_header').innerHTML = '<h1>' + hui.string.escape(object.title || 'Loading...') + '</h1>';
-    this.viewer.style.display = 'block';
+    this.nodes.viewer.style.display = 'block';
     this.viewerVisible = true;
     hui.cls.add(this.viewerSpinner, 'oo_spinner_visible');
     var parameters = {
-      id : object.addressId,
+      id : object.id,
       algorithm : hui.ui.get('extractionAlgorithm').getValue(),
       highlight : hui.ui.get('highlightRendering').getValue()
     };
@@ -169,7 +167,7 @@ var readerViewer = {
         }
       },
       $failure: function() {
-        self._hideViewer();
+        self.hide();
         hui.ui.msg.fail({
           text: 'Sorry!'
         });
@@ -187,7 +185,7 @@ var readerViewer = {
     hui.get('viewer_formatted').innerHTML = article.formatted;
     hui.get('viewer_text').innerHTML = article.text;
     hui.get('viewer_header').innerHTML = article.header;
-    hui.get('viewer_info').innerHTML = article.info;
+    this.nodes.info.innerHTML = article.info;
 
     hui.cls.set(hui.get('reader_viewer_inbox'),'reader_viewer_action_selected',article.inbox);
     hui.cls.set(hui.get('reader_viewer_favorite'),'reader_viewer_action_selected',article.favorite);
@@ -232,7 +230,7 @@ var readerViewer = {
   },
 
   _reloadInfo : function() {
-    var info = hui.get('viewer_info');
+    var info = this.nodes.info;
     info.style.opacity = '.5';
     hui.ui.request({
       url : '/loadArticle',
@@ -256,8 +254,25 @@ var readerViewer = {
 	_editStatement : function(options) {
 		statementController.edit(options.link.getAttribute('data-id'));
 	},
+  
+  $click$closeAddress : function() {
+    this.hide();
+  },
+  
+  $addressWillBeDeleted$addressEditor : function() {
+    this._lockViewer();
+  },
 
-  _hideViewer : function() {
+	$addressWasDeleted$addressEditor : function() {
+    this.hide();
+  },
+	
+	$addressChanged$addressEditor : function() {
+		this.reload();
+	},
+
+  hide : function() {
+    this._unlockViewer();
     viewer.style.display='none';
     this.viewerVisible = false;
     this.viewerFrame.src = "about:blank";
@@ -267,11 +282,11 @@ var readerViewer = {
   },
   _lockViewer : function() {
     this._locked = true;
-    hui.cls.add(this.viewer,'reader_viewer_locked');
+    hui.cls.add(this.nodes.viewer,'reader_viewer_locked');
   },
   _unlockViewer : function() {
     this._locked = false;
-    hui.cls.remove(this.viewer,'reader_viewer_locked');
+    hui.cls.remove(this.nodes.viewer,'reader_viewer_locked');
   },
   $click$favoriteButton : function() {
     if (this._locked) {return}
@@ -344,7 +359,7 @@ var readerViewer = {
   },
   $valueChanged$readerViewerView : function(value) {
 
-    this.viewerContent.className = 'reader_viewer_content reader_viewer_content_'+value;
+    this.nodes.content.className = 'reader_viewer_content reader_viewer_content_'+value;
     if (!this.frameSet && value === 'web') {
       this.viewerFrame.src = this._currentArticle.url;
       this.frameSet = true;
@@ -355,7 +370,7 @@ var readerViewer = {
 
   $found$wordFinder : function(obj) {
     var p = {
-      internetAddressId : this._viewedItem.addressId,
+      internetAddressId : this._viewedItem.id,
       wordId : obj.id
     }
     hui.ui.request({

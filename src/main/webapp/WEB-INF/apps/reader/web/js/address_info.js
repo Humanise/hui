@@ -1,4 +1,6 @@
 var addressInfoController = {
+  name : 'addressEditor',
+  
 	window : null,
 	form : null,
 	id : null,
@@ -43,7 +45,7 @@ var addressInfoController = {
       $success : function() {
         this._reset();
 				this.window.hide();
-				this._tellMainController();
+        hui.ui.callDelegates(this,'addressChanged');
       }.bind(this),
       $finally : function() {
         this.window.setBusy(false);
@@ -55,12 +57,12 @@ var addressInfoController = {
 		var data = {
 			id : this.id
 		};
-    controller.addressWillBeDeleted();
+    hui.ui.callDelegates(this,'addressWillBeDeleted');
     hui.ui.request({
       url : '/removeInternetAddress',
       parameters : data,
       $success : function() {
-        controller.addressWasDeleted();
+        hui.ui.callDelegates(this,'addressWasDeleted');
 				this.clear();
       }.bind(this)
     })
@@ -78,11 +80,7 @@ var addressInfoController = {
       icon: 'common/person',
       text: item.name || item.title || item.text
     }
-  },
-	
-	_tellMainController : function() {
-		controller.addressChanged();
-	}
+  }
 }
 
 hui.ui.listen(addressInfoController);

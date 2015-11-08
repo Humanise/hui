@@ -11,7 +11,7 @@ require(['all'],function() {
   });  
 })
 
-var controller = {
+var reader = {
 
   viewer : null,
   viewerVisible : false,
@@ -28,10 +28,13 @@ var controller = {
     });
 		if (hui.location.getBoolean('dev')) {
 			window.setTimeout(function() {
-		    readerViewer.load({addressId:2698752});
+		    readerViewer.show({addressId:2698752});
         statementController.edit(2751699);
 			}.bind(this))			
 		}
+    hui.listen(window,'popstate',function(e) {
+      hui.log(e);
+    })
   },
   
   $clickItem$listView : function(info) {
@@ -43,7 +46,27 @@ var controller = {
     } else if (hui.cls.has(a,'reader_list_address_link')) {
       window.open(a.href);
     } else if (info.item) {
-      readerViewer.load(info.item);
+      this.view(info.item);
+    }
+  },
+  
+  _activeViewer : null,
+
+  view : function(options) {
+    if (options.type == 'Statement' && options.addressId) {
+      options.id = options.addressId;
+      options.type = 'InternetAddress';
+    }
+    var viewers = {
+      InternetAddress : readerViewer,
+      Question : questionViewer
+    }
+    if (this._activeViewer) {
+      this._activeViewer.hide();
+    }
+    this._activeViewer = viewers[options.type];
+    if (this._activeViewer) {
+      this._activeViewer.show(options);
     }
   },
 
@@ -55,25 +78,17 @@ var controller = {
       hui.ui.get('tags').selectById(id,e.shiftKey);
     }
   },
-	
-	statementChanged : function() {
-		readerViewer.reload();
+  
+  $statementChanged$statementEditor : function() {
 		this._reloadList();
-	},
+  },
 	
-	addressWillBeDeleted : function() {
-		this._lockViewer();
-	},
-	
-	addressWasDeleted : function() {
-		this._unlockViewer();
+	$addressWasDeleted$addressEditor : function() {
 		this._reloadList();
     hui.ui.get('tagSource').refresh();
-		this._hideViewer();
 	},
 	
-	addressChanged : function(deleted) {
-		readerViewer.reload();
+	$addressChanged$addressEditor : function() {
 		this._reloadList();
 	},
 
@@ -145,8 +160,9 @@ var controller = {
       $object : function(info) {
         hui.ui.showMessage({text:'Address added',icon:'common/success',duration:3000});
         this._reloadList();
-        readerViewer.load({
-          addressId : info.id
+        readerViewer.show({
+          id : info.id,
+          type: 'InternetAddress'
         });
       }.bind(this),
       $failure : function() {
@@ -190,5 +206,5 @@ var controller = {
   }
 }
 
-hui.ui.listen(controller);
+hui.ui.listen(reader);
 
