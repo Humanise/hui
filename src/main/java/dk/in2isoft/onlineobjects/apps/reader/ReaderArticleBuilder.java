@@ -218,6 +218,10 @@ public class ReaderArticleBuilder {
 		{
 			
 			Document xom = document.getXOMDocument();
+			if (xom==null) {
+				log.warn("No XOM document");
+				return;
+			}
 			ContentExtractor extractor = contentExtractors.get(algorithm);
 			if (extractor==null) {
 				log.warn("Unknown extrator: " + algorithm);
