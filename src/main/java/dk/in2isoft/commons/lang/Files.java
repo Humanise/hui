@@ -122,4 +122,19 @@ public class Files {
 		}
 		return false;
 	}
+
+	public static boolean checkSensitivity(File file) {
+		if (file.exists()) {
+			File[] files = file.getParentFile().listFiles();
+			String absolutePath = file.getAbsolutePath();
+			if (files != null) {
+				for (File prospect : files) {
+					if (prospect.getAbsolutePath().equals(absolutePath)) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
 }
