@@ -16,6 +16,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
+import dk.in2isoft.commons.lang.Files;
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
 import dk.in2isoft.onlineobjects.core.exceptions.ConfigurationException;
 import dk.in2isoft.onlineobjects.ui.Request;
@@ -98,7 +99,14 @@ public class ConfigurationService implements InitializingBean {
 			name.append(File.separatorChar);
 			name.append(path[i]);
 		}
-		return new File(name.toString());
+		File file = new File(name.toString());
+		if (isDevelopmentMode()) {
+			// If in dev mode, check that it exists
+			if (!Files.checkSensitivity(file)) {
+				throw new IllegalStateException("Not exact case: " + file.getAbsolutePath());
+			}
+		}
+		return file;
 	}
 	
 	public String getDeploymentId() {
