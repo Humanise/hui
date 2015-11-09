@@ -79,11 +79,17 @@
 .oo_icon_star_line:before {
 	content: "\e609";
 }
+.oo_icon_star_line.oo_icon-selected:before {
+	content: "\e90a";
+}
 .oo_icon_tag_line:before {
 	content: "\e60a";
 }
 .oo_icon_inbox_line:before {
 	content: "\e60b";
+}
+.oo_icon_inbox_line.oo_icon-selected:before {
+	content: "\e90b";
 }
 .oo_icon_add_line:before {
 	content: "\e60c";

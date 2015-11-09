@@ -1,4 +1,4 @@
-var readerViewer = {
+var internetAddressViewer = {
 
   _viewedItem : null,
   text : '',
@@ -179,6 +179,17 @@ var readerViewer = {
     });
   },
 
+  _markInbox : function(checked) {
+    var link = hui.ui.get('inboxButton');
+    hui.cls.set(link.element,'reader_viewer_action_selected',checked);
+    hui.cls.set(hui.get.firstByClass(link.element,'oo_icon'),'oo_icon-selected',checked);
+  },
+
+  _markFavorite : function(checked) {
+    var link = hui.ui.get('favoriteButton');
+    hui.cls.set(link.element,'reader_viewer_action_selected',checked);
+    hui.cls.set(hui.get.firstByClass(link.element,'oo_icon'),'oo_icon-selected',checked);
+  },
 
   _drawArticle : function(article) {
     this._currentArticle = article;
@@ -186,9 +197,8 @@ var readerViewer = {
     hui.get('viewer_text').innerHTML = article.text;
     hui.get('viewer_header').innerHTML = article.header;
     this.nodes.info.innerHTML = article.info;
-
-    hui.cls.set(hui.get('reader_viewer_inbox'),'reader_viewer_action_selected',article.inbox);
-    hui.cls.set(hui.get('reader_viewer_favorite'),'reader_viewer_action_selected',article.favorite);
+    this._markInbox(article.inbox);
+    this._markFavorite(article.favorite);
     var view = hui.ui.get('readerViewerView').getValue();
     if (view === 'web') {
       // TODO Find a way to handle errors
@@ -292,7 +302,7 @@ var readerViewer = {
     if (this._locked) {return}
     this._lockViewer();
     var newValue = !this._currentArticle.favorite;
-    hui.cls.set(hui.get('reader_viewer_favorite'),'reader_viewer_action_selected',newValue);
+    this._markFavorite(newValue);
     hui.ui.request({
       url : '/changeFavoriteStatus',
       parameters : {id:this._currentArticle.id,favorite:newValue},
@@ -310,7 +320,7 @@ var readerViewer = {
     if (this._locked) {return}
     this._lockViewer();
     var newValue = !this._currentArticle.inbox;
-    hui.cls.set(hui.get('reader_viewer_inbox'),'reader_viewer_action_selected',newValue);
+    this._markInbox(newValue);
     hui.ui.request({
       url : '/changeInboxStatus',
       parameters : {id:this._currentArticle.id,inbox:newValue},
@@ -417,7 +427,7 @@ var readerViewer = {
     })
   },
 }
-hui.ui.listen(readerViewer);
+hui.ui.listen(internetAddressViewer);
 
 var addressSelection = {
   _check : function() {

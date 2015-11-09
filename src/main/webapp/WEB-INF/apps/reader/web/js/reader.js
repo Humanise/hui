@@ -28,7 +28,7 @@ var reader = {
     });
 		if (hui.location.getBoolean('dev')) {
 			window.setTimeout(function() {
-		    readerViewer.show({addressId:2698752});
+		    internetAddressViewer.show({addressId:2698752});
         statementController.edit(2751699);
 			}.bind(this))			
 		}
@@ -58,7 +58,7 @@ var reader = {
       options.type = 'InternetAddress';
     }
     var viewers = {
-      InternetAddress : readerViewer,
+      InternetAddress : internetAddressViewer,
       Question : questionViewer
     }
     if (this._activeViewer) {
@@ -160,7 +160,7 @@ var reader = {
       $object : function(info) {
         hui.ui.showMessage({text:'Address added',icon:'common/success',duration:3000});
         this._reloadList();
-        readerViewer.show({
+        internetAddressViewer.show({
           id : info.id,
           type: 'InternetAddress'
         });
