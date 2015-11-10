@@ -22,8 +22,8 @@ import dk.in2isoft.commons.lang.HTMLWriter;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.in2igui.data.ItemData;
-import dk.in2isoft.onlineobjects.apps.reader.perspective.AddressEditPerspective;
-import dk.in2isoft.onlineobjects.apps.reader.perspective.ArticlePerspective;
+import dk.in2isoft.onlineobjects.apps.reader.perspective.InternetAddressEditPerspective;
+import dk.in2isoft.onlineobjects.apps.reader.perspective.InternetAddressViewPerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.FeedPerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.ListItemPerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.QuestionViewPerspective;
@@ -250,7 +250,7 @@ public class ReaderController extends ReaderControllerBase {
 	}
 
 	@Path
-	public ArticlePerspective loadArticle(Request request) throws IOException, ModelException, SecurityException, IllegalRequestException, ExplodingClusterFuckException,
+	public InternetAddressViewPerspective loadArticle(Request request) throws IOException, ModelException, SecurityException, IllegalRequestException, ExplodingClusterFuckException,
 			ContentNotFoundException {
 		Long articleId = request.getLong("id", null);
 		boolean hightlight = request.getBoolean("highlight");
@@ -512,8 +512,8 @@ public class ReaderController extends ReaderControllerBase {
 
 	@Path
 	public void saveAddress(Request request) throws ModelException, IllegalRequestException, SecurityException {
-		AddressEditPerspective perspective = request.getObject("data", AddressEditPerspective.class);
-		AddressEditPerspective.validate(perspective);
+		InternetAddressEditPerspective perspective = request.getObject("data", InternetAddressEditPerspective.class);
+		InternetAddressEditPerspective.validate(perspective);
 		UserSession privileged = request.getSession();
 		InternetAddress internetAddress = modelService.get(InternetAddress.class, perspective.getId(), privileged);
 		if (internetAddress == null) {

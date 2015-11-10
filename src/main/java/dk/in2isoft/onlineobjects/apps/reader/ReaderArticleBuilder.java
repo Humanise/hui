@@ -32,7 +32,7 @@ import dk.in2isoft.commons.xml.DecoratedDocument;
 import dk.in2isoft.commons.xml.DocumentCleaner;
 import dk.in2isoft.commons.xml.DocumentToText;
 import dk.in2isoft.in2igui.data.ItemData;
-import dk.in2isoft.onlineobjects.apps.reader.perspective.ArticlePerspective;
+import dk.in2isoft.onlineobjects.apps.reader.perspective.InternetAddressViewPerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.StatementPerspective;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Privileged;
@@ -76,7 +76,7 @@ public class ReaderArticleBuilder {
 	private SemanticService semanticService;
 	private Map<String,ContentExtractor> contentExtractors;
 
-	public ArticlePerspective getArticlePerspective(Long id, String algorithm, boolean highlight, UserSession session) throws ModelException, IllegalRequestException, SecurityException, ExplodingClusterFuckException {
+	public InternetAddressViewPerspective getArticlePerspective(Long id, String algorithm, boolean highlight, UserSession session) throws ModelException, IllegalRequestException, SecurityException, ExplodingClusterFuckException {
 		StopWatch watch = new StopWatch();
 		watch.start();
 		InternetAddress address = modelService.get(InternetAddress.class, id, session);
@@ -88,7 +88,7 @@ public class ReaderArticleBuilder {
 		
 		ArticleData data = buildData(address);
 
-		ArticlePerspective article = new ArticlePerspective();
+		InternetAddressViewPerspective article = new InternetAddressViewPerspective();
 
 		article.setTitle(address.getName());
 		article.setUrl(address.getAddress());
@@ -135,7 +135,7 @@ public class ReaderArticleBuilder {
 		return authors;
 	}
 
-	private void loadStatements(InternetAddress address, ArticlePerspective article, UserSession session) throws ModelException {
+	private void loadStatements(InternetAddress address, InternetAddressViewPerspective article, UserSession session) throws ModelException {
 		List<Statement> statements = modelService.getChildren(address, Relation.KIND_STRUCTURE_CONTAINS, Statement.class, session);
 		List<StatementPerspective> quoteList = Lists.newArrayList();
 		for (Statement statement : statements) {
@@ -212,7 +212,7 @@ public class ReaderArticleBuilder {
 		return writer.toString();
 	}
 
-	private void buildRendering(HTMLDocument document, ArticleData data, ArticlePerspective article, String algorithm, boolean highlight, StopWatch watch) throws ModelException,
+	private void buildRendering(HTMLDocument document, ArticleData data, InternetAddressViewPerspective article, String algorithm, boolean highlight, StopWatch watch) throws ModelException,
 			ExplodingClusterFuckException {
 
 		{
@@ -294,7 +294,7 @@ public class ReaderArticleBuilder {
 		return sb.toString();
 	}
 
-	private Document annotate(ArticlePerspective article, ArticleData data, boolean highlight, Document xomDocument, StopWatch watch) throws ModelException, ExplodingClusterFuckException {
+	private Document annotate(InternetAddressViewPerspective article, ArticleData data, boolean highlight, Document xomDocument, StopWatch watch) throws ModelException, ExplodingClusterFuckException {
 		watch.split();
 		log.trace("Parsed HTML: " + watch.getSplitTime());
 		

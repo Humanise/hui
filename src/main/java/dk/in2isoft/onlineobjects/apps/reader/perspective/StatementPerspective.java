@@ -4,8 +4,8 @@ import java.util.List;
 
 import dk.in2isoft.in2igui.data.ItemData;
 
-
 public class StatementPerspective {
+
 	private String text;
 	private long id;
 	private boolean found;

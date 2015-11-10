@@ -6,7 +6,7 @@ import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.in2igui.data.ItemData;
 import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
 
-public class AddressEditPerspective {
+public class InternetAddressEditPerspective {
 
 	private long id;
 	private String title;
@@ -45,7 +45,7 @@ public class AddressEditPerspective {
 		this.address = address;
 	}
 	
-	public static void validate(AddressEditPerspective perspective) throws IllegalRequestException {
+	public static void validate(InternetAddressEditPerspective perspective) throws IllegalRequestException {
 		if (perspective==null) {
 			throw new IllegalRequestException("No data");
 		}

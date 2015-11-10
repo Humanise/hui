@@ -5,7 +5,7 @@ import java.util.List;
 import dk.in2isoft.in2igui.data.ItemData;
 import dk.in2isoft.onlineobjects.ui.data.Option;
 
-public class ArticlePerspective {
+public class InternetAddressViewPerspective {
 
 	private long id;
 	private String title;
