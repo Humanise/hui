@@ -905,10 +905,21 @@ hui.find = function(selector,context) {
 	return (context || document).querySelector(selector);
 }
 
+if (document.querySelector) {
+  hui.find = function(selector,context) {
+    context = context || document.documentElement;
+    if (selector[0] == '.') {
+      return hui.get.firstByClass(context,selector.substr(1));
+    } else {
+      return hui.get.firstByTag(context,selector);
+    }
+  }
+}
+
 hui.collect = function(selectors,context) {
 	var copy = {};
 	for (key in selectors) {
-		copy[key] = hui.get.firstByClass(context,selectors[key]);
+		copy[key] = hui.find(selectors[key],context);
 	}
 	return copy;
 }
@@ -1306,15 +1317,18 @@ hui.cls = {
  * @param {Element} element The element to listen on
  * @param {String} type The event to listen for
  * @param {Function} listener The function to be called
- * @param {boolean} ?useCapture If the listener should "capture"
+ * @param {object} ?bindTo Bind the listener to it
  */
-hui.listen = function(element,type,listener,useCapture) {
+hui.listen = function(element,type,listener,bindTo) {
 	element = hui.get(element);
 	if (!element) {
 		return;
 	}
+  if (bindTo) {
+    listener = listener.bind(bindTo)
+  }
 	if(document.addEventListener) {
-		element.addEventListener(type,listener,useCapture ? true : false);
+		element.addEventListener(type,listener);
 	} else {
 		element.attachEvent('on'+type, listener);
 	}

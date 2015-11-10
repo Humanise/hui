@@ -905,10 +905,21 @@ hui.find = function(selector,context) {
 	return (context || document).querySelector(selector);
 }
 
+if (document.querySelector) {
+  hui.find = function(selector,context) {
+    context = context || document.documentElement;
+    if (selector[0] == '.') {
+      return hui.get.firstByClass(context,selector.substr(1));
+    } else {
+      return hui.get.firstByTag(context,selector);
+    }
+  }
+}
+
 hui.collect = function(selectors,context) {
 	var copy = {};
 	for (key in selectors) {
-		copy[key] = hui.get.firstByClass(context,selectors[key]);
+		copy[key] = hui.find(selectors[key],context);
 	}
 	return copy;
 }
@@ -1306,15 +1317,18 @@ hui.cls = {
  * @param {Element} element The element to listen on
  * @param {String} type The event to listen for
  * @param {Function} listener The function to be called
- * @param {boolean} ?useCapture If the listener should "capture"
+ * @param {object} ?bindTo Bind the listener to it
  */
-hui.listen = function(element,type,listener,useCapture) {
+hui.listen = function(element,type,listener,bindTo) {
 	element = hui.get(element);
 	if (!element) {
 		return;
 	}
+  if (bindTo) {
+    listener = listener.bind(bindTo)
+  }
 	if(document.addEventListener) {
-		element.addEventListener(type,listener,useCapture ? true : false);
+		element.addEventListener(type,listener);
 	} else {
 		element.attachEvent('on'+type, listener);
 	}
@@ -17093,7 +17107,6 @@ hui.ui.Finder.prototype = {
       this.fire('select',row);
     }
   },
-<<<<<<< HEAD
 
   _showUpload : function(button) {
     if (!this.uploadPanel) {
@@ -17160,74 +17173,6 @@ hui.ui.Finder.prototype = {
   }
 };
 
-=======
-
-  _showUpload : function(button) {
-    if (!this.uploadPanel) {
-      var options = this.options.upload;
-      var panel = this.uploadPanel = hui.ui.BoundPanel.create({padding:5,width:300,modal:true});
-      this.uploader = hui.ui.Upload.create({
-        url : options.url,
-        placeholder : options.placeholder,
-        chooseButton : {en:'Choose file...',da:'Vælg fil...'}
-      });
-      this.uploader.listen({
-        $uploadDidComplete : function(file) {
-          this._uploadSuccess(hui.string.fromJSON(file.request.responseText));
-        }.bind(this)
-      })
-      panel.add(this.uploader);
-    }
-    this.uploadPanel.show({target:button});
-  },
-  _uploadSuccess : function(obj) {
-    this.uploadPanel.hide();
-    this.fire('select',obj);
-  },
-  _showCreation : function(button) {
-    if (!this._createPanel) {
-      var form = this._createForm = hui.ui.Formula.create({listen:{$submit:this._create.bind(this)}});
-      form.buildGroup({above:true},this.options.creation.formula);
-      var panel = this._createPanel = hui.ui.BoundPanel.create({padding:5,width:300,modal:true});
-      panel.add(form);
-      var buttons = hui.ui.Buttons.create();
-      buttons.add(hui.ui.Button.create({
-        text:'Cancel',
-        listen: { $click : function() { 
-          form.reset();
-          panel.hide(); 
-        } }
-      }));
-      buttons.add(hui.ui.Button.create({text:'Create',highlighted:true,submit:true}));
-      form.add(buttons);
-    }
-    this._createPanel.show({target:button});
-    this._createForm.focus();
-  },
-  _create : function(form) {
-    var values = this._createForm.getValues();
-    this._createForm.reset();
-    this._createPanel.hide();
-    this.window.setBusy(true);
-    var self = this;
-    hui.ui.request({
-      url : this.options.creation.url,
-      parameters : values,
-      $object : function(obj) {
-        hui.log('Created',obj)
-        self.fire('select',obj);
-      },
-      $failure : function() {
-        
-      },
-      $finally : function() {
-        self.window.setBusy(false);
-      }
-    })
-  }
-};
-
->>>>>>> 2225f9571375e5bd9d712022f9e92861d2d5faa8
 window.define && define('hui.ui.Finder',hui.ui.Finder);
 
 /**
@@ -18063,8 +18008,8 @@ hui.ui.NumberValidator.prototype = {
       })
     }
     this.nodes = {
-      text : 'hui_objectinput_text',
-      list : 'hui_objectinput_list'
+      text : '.hui_objectinput_text',
+      list : '.hui_objectinput_list'
     };
     this.choose = null;
     this.remove = null;
@@ -18143,19 +18088,12 @@ hui.ui.NumberValidator.prototype = {
     reset : function() {
       this.setValue(null);
     }
-<<<<<<< HEAD
-  }
-
-  hui.extend(hui.ui.ObjectInput, _super);
-=======
   };
 
   hui.extend(hui.ui.ObjectInput, _super);
 
 })(hui.ui.Component);
->>>>>>> 2225f9571375e5bd9d712022f9e92861d2d5faa8
 
-})(hui.ui.Component);
 
 (function (_super) {
 
