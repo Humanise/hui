@@ -8,6 +8,7 @@
 	/*display: none;*/
 	z-index: 200;
   background-color: #FFFCEC;
+  overflow: auto;
 }
 
 .reader_question_body {
