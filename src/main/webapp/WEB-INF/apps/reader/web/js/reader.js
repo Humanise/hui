@@ -27,14 +27,15 @@ var reader = {
       value : 'formatted'
     });
 		if (hui.location.getBoolean('dev')) {
+      /*
 			window.setTimeout(function() {
 		    internetAddressViewer.show({addressId:2698752});
         statementController.edit(2751699);
+			}.bind(this))*/
+			window.setTimeout(function() {
+        this.view({type:'Question',id:2800932});
 			}.bind(this))			
 		}
-			window.setTimeout(function() {
-    this.view({type:'Question',id:2800932});
-			}.bind(this))			
     hui.listen(window,'popstate',function(e) {
       hui.log(e);
     })
