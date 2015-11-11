@@ -2039,13 +2039,22 @@ hui.effect = {
 	 * @param {Object} options {element : «Element», duration : «milliseconds» }
 	 */
 	shake : function(options) {
-		var e = hui.ui.getElement(options.element);
-		hui.cls.add(options.element,'hui_effect_shake');
+    this._do(options.element,'hui_effect_shake',options.duration || 1000);
+	},
+	/**
+	 * Make an element shake
+	 * @param {Object} options {element : «Element», duration : «milliseconds» }
+	 */
+	tada : function(options) {
+    this._do(options.element,'hui_effect_tada',1000);
+	},
+  _do : function(e,cls,time) {
+    e = hui.ui.getElement(e);
+		hui.cls.add(e,cls);
 		window.setTimeout(function() {
-			hui.cls.remove(options.element,'hui_effect_shake');
-		},options.duration || 1000);
-	
-	}
+			hui.cls.remove(e,cls);
+		},time);    
+  }
 };
 
 
