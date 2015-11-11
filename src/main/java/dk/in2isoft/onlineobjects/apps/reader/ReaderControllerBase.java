@@ -8,6 +8,8 @@ import com.google.common.collect.Lists;
 
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
 import dk.in2isoft.onlineobjects.apps.reader.index.ReaderIndexer;
+import dk.in2isoft.onlineobjects.apps.reader.perspective.InternetAddressViewPerspectiveBuilder;
+import dk.in2isoft.onlineobjects.apps.reader.perspective.QuestionViewPerspectiveBuilder;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.modules.index.IndexService;
@@ -33,8 +35,9 @@ public abstract class ReaderControllerBase extends ApplicationController {
 	protected LanguageService languageService;
 	protected SemanticService semanticService;
 	protected WordService wordService;
-	protected ReaderArticleBuilder articleBuilder;
+	protected InternetAddressViewPerspectiveBuilder internetAddressViewPerspectiveBuilder;
 	protected ReaderSearcher readerSearcher;
+	protected QuestionViewPerspectiveBuilder questionViewPerspectiveBuilder;
 
 	public ReaderControllerBase() {
 		super("reader");
@@ -117,11 +120,15 @@ public abstract class ReaderControllerBase extends ApplicationController {
 		this.wordService = wordService;
 	}
 	
-	public void setArticleBuilder(ReaderArticleBuilder articleBuilder) {
-		this.articleBuilder = articleBuilder;
+	public void setInternetAddressViewPerspectiveBuilder(InternetAddressViewPerspectiveBuilder articleBuilder) {
+		this.internetAddressViewPerspectiveBuilder = articleBuilder;
 	}
 	
 	public void setReaderSearcher(ReaderSearcher readerSearcher) {
 		this.readerSearcher = readerSearcher;
+	}
+	
+	public void setQuestionViewPerspectiveBuilder(QuestionViewPerspectiveBuilder questionViewPerspectiveBuilder) {
+		this.questionViewPerspectiveBuilder = questionViewPerspectiveBuilder;
 	}
 }

@@ -360,7 +360,7 @@ public class Request {
 
 	public Boolean getBoolean(String key, Boolean whenNullOrInvalid) {
 		String value = request.getParameter(key);
-		if (value==null || "false".equals(value)) {
+		if ("false".equals(value)) {
 			return false;
 		} else if ("true".equals(value)) {
 			return true;

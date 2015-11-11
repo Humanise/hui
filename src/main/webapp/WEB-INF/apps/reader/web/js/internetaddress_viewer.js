@@ -233,7 +233,7 @@ var internetAddressViewer = {
       ease : hui.ease.slowFastSlow,
       $complete : function() {
         for (var i = 0; i < marks.length; i++) {
-          hui.effect.wiggle({element:marks[i]});
+          hui.effect.tada({element:marks[i]});
         }
       }
     });
@@ -305,7 +305,7 @@ var internetAddressViewer = {
     this._markFavorite(newValue);
     hui.ui.request({
       url : '/changeFavoriteStatus',
-      parameters : {id:this._currentArticle.id,favorite:newValue},
+      parameters : {id:this._currentArticle.id,favorite:newValue,type:'InternetAddress'},
       $success : function() {
         this._currentArticle.favorite = newValue;
         hui.ui.get('listSource').refresh();
@@ -323,7 +323,7 @@ var internetAddressViewer = {
     this._markInbox(newValue);
     hui.ui.request({
       url : '/changeInboxStatus',
-      parameters : {id:this._currentArticle.id,inbox:newValue},
+      parameters : {id:this._currentArticle.id,inbox:newValue,type:'InternetAddress'},
       $success : function() {
         this._currentArticle.inbox = newValue;
         hui.ui.get('listSource').refresh();

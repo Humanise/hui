@@ -47,6 +47,7 @@ public class ObjectInputComponent extends AbstractComponent {
 			choose.setStyleClass("hui_objectinput_choose");
 			choose.encodeMarkup(context, out);
 		}
+		/*
 		{
 			ButtonComponent choose = new ButtonComponent();
 			choose.setSmall(true);
@@ -54,7 +55,7 @@ public class ObjectInputComponent extends AbstractComponent {
 			choose.setDisabled(true);
 			choose.setStyleClass("hui_objectinput_remove");
 			choose.encodeMarkup(context, out);
-		}
+		}*/
 		out.endDiv();
 	}
 

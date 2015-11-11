@@ -32,6 +32,9 @@ var reader = {
         statementController.edit(2751699);
 			}.bind(this))			
 		}
+			window.setTimeout(function() {
+    this.view({type:'Question',id:2800932});
+			}.bind(this))			
     hui.listen(window,'popstate',function(e) {
       hui.log(e);
     })
@@ -67,6 +70,11 @@ var reader = {
     this._activeViewer = viewers[options.type];
     if (this._activeViewer) {
       this._activeViewer.show(options);
+    }
+  },
+  edit : function(options) {
+    if (options.type == 'Question') {
+      questionEditor.edit(options.id);
     }
   },
 

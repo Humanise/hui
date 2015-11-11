@@ -1,4 +1,4 @@
-package dk.in2isoft.onlineobjects.apps.reader;
+package dk.in2isoft.onlineobjects.apps.reader.perspective;
 
 import java.io.File;
 import java.util.Collections;
@@ -32,8 +32,7 @@ import dk.in2isoft.commons.xml.DecoratedDocument;
 import dk.in2isoft.commons.xml.DocumentCleaner;
 import dk.in2isoft.commons.xml.DocumentToText;
 import dk.in2isoft.in2igui.data.ItemData;
-import dk.in2isoft.onlineobjects.apps.reader.perspective.InternetAddressViewPerspective;
-import dk.in2isoft.onlineobjects.apps.reader.perspective.StatementPerspective;
+import dk.in2isoft.onlineobjects.apps.reader.ReaderModelService;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.Query;
@@ -47,7 +46,6 @@ import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.InternetAddress;
 import dk.in2isoft.onlineobjects.model.LexicalCategory;
 import dk.in2isoft.onlineobjects.model.Person;
-import dk.in2isoft.onlineobjects.model.Pile;
 import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.Statement;
@@ -60,23 +58,22 @@ import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
 import dk.in2isoft.onlineobjects.modules.networking.NetworkResponse;
 import dk.in2isoft.onlineobjects.modules.networking.NetworkService;
 import dk.in2isoft.onlineobjects.services.LanguageService;
-import dk.in2isoft.onlineobjects.services.PileService;
 import dk.in2isoft.onlineobjects.services.SemanticService;
 import dk.in2isoft.onlineobjects.services.StorageService;
 
-public class ReaderArticleBuilder {
+public class InternetAddressViewPerspectiveBuilder {
 
-	private static final Logger log = LoggerFactory.getLogger(ReaderArticleBuilder.class);
+	private static final Logger log = LoggerFactory.getLogger(InternetAddressViewPerspectiveBuilder.class);
 
 	private ModelService modelService;
-	private PileService pileService;
 	private NetworkService networkService;
 	private StorageService storageService;
 	private LanguageService languageService;
 	private SemanticService semanticService;
 	private Map<String,ContentExtractor> contentExtractors;
+	private ReaderModelService readerModelService;
 
-	public InternetAddressViewPerspective getArticlePerspective(Long id, String algorithm, boolean highlight, UserSession session) throws ModelException, IllegalRequestException, SecurityException, ExplodingClusterFuckException {
+	public InternetAddressViewPerspective build(Long id, String algorithm, boolean highlight, UserSession session) throws ModelException, IllegalRequestException, SecurityException, ExplodingClusterFuckException {
 		StopWatch watch = new StopWatch();
 		watch.start();
 		InternetAddress address = modelService.get(InternetAddress.class, id, session);
@@ -94,17 +91,7 @@ public class ReaderArticleBuilder {
 		article.setUrl(address.getAddress());
 		article.setAuthors(getAuthors(address, session));
 
-		Pile inbox = pileService.getOrCreatePileByRelation(session.getUser(), Relation.KIND_SYSTEM_USER_INBOX);
-		Pile favorites = pileService.getOrCreatePileByRelation(session.getUser(), Relation.KIND_SYSTEM_USER_FAVORITES);
-
-		List<Pile> piles = modelService.getParents(address, Pile.class, session);
-		for (Pile pile : piles) {
-			if (pile.getId() == inbox.getId()) {
-				article.setInbox(true);
-			} else if (pile.getId() == favorites.getId()) {
-				article.setFavorite(true);
-			}
-		}
+		readerModelService.categorize(address, article, session);
 
 		loadStatements(address, article, session);
 
@@ -447,9 +434,9 @@ public class ReaderArticleBuilder {
 	public void setNetworkService(NetworkService networkService) {
 		this.networkService = networkService;
 	}
-
-	public void setPileService(PileService pileService) {
-		this.pileService = pileService;
+	
+	public void setReaderModelService(ReaderModelService readerModelService) {
+		this.readerModelService = readerModelService;
 	}
 
 	public void setSemanticService(SemanticService semanticService) {

@@ -144,6 +144,27 @@
 					</buttons>
 				</formula>
 			</window>
+
+			<window name="questionWindow" title="Question" variant="light" width="500" modal="true" padding="5" xmlns="http://www.in2isoft.dk/in2igui">
+				<formula name="questionForm">
+          <fields labels="above">
+            <field label="Text">
+              <textInput key="text" multiline="true" maxHeight="600"/>
+            </field>
+            <field label="Author">
+              <objectInput key="authors" name="questionAuthor">
+                <finder name="questionAuthorFinder" url="/service/model/finder?type=Person"/>
+              </objectInput>
+            </field>
+          </fields>
+					<buttons>
+						<button text="Delete" name="deleteQuestion" variant="light">
+              <confirm text="Are you sure?"/>
+            </button>
+						<button text="Save" submit="true" variant="light" highlighted="true"/>
+					</buttons>
+				</formula>
+			</window>
       
 		
 	</ui:composition>

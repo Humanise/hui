@@ -1,6 +1,7 @@
 var questionViewer = {
   id : null,
   data : null,
+  locked : false,
   
   nodes : {
     root : '.reader_question',
@@ -17,6 +18,54 @@ var questionViewer = {
     this.hide();
   },
   
+  $click$questionInfo : function() {
+    reader.edit({type:'Question',id:this.id});
+  },
+
+  $click$questionFavorite : function(icon) {
+    if (this.locked) {return;}
+    var newValue = !this.data.favorite;
+    icon.setSelected(newValue);
+    this.changeStatus({ id : this.id, favorite : newValue, type : 'Question',
+      $success : function() {
+        this.data.favorite = newValue;
+      }.bind(this)
+    })
+  },
+
+  $click$questionInbox : function(icon) {
+    if (this.locked) {return;}
+    var newValue = !this.data.inbox;
+    icon.setSelected(newValue);
+    this.changeStatus({ id : this.id, inbox : newValue, type : 'Question',
+      $success : function() {
+        this.data.inbox = newValue;
+      }.bind(this)
+    })
+  },
+
+  changeStatus : function(options) {
+    this._lock();
+    hui.ui.request({
+      url : '/changeStatus',
+      parameters : options,
+      $success : function() {
+        hui.ui.get('listSource').refresh();
+        options.$success();
+      }.bind(this),
+      $finally : function() {
+        this._unlock();
+      }.bind(this)
+    });
+  },
+  
+  _lock : function() {
+    this.locked = true;
+  },
+  _unlock : function() {
+    this.locked = false;    
+  },
+  
   _attach : function() {
     hui.listen(this.nodes.body,'click',this._click,this);
   },
@@ -26,8 +75,16 @@ var questionViewer = {
     var clickable = e.findByClass('js-clickable');
     if (clickable) {
       var data = hui.string.fromJSON(clickable.getAttribute('data'));
-      reader.view(data);
+      if (data.type=='Statement') {
+        statementController.edit(data.id);
+      } else {
+        reader.view(data);
+      }
     }
+  },
+  
+  $questionChanged$questionEditor : function() {
+    this._load();
   },
   
   show : function(options) {
@@ -42,7 +99,7 @@ var questionViewer = {
   
   _load : function() {
     hui.ui.request({
-      url : '/loadQuestion',
+      url : '/viewQuestion',
       parameters : {id:this.id},
       $object : function(data) {
         this.data = data;
@@ -56,6 +113,8 @@ var questionViewer = {
   _render : function() {
     hui.dom.setText(this.nodes.text,this.data.text);
     this.nodes.body.innerHTML = this.data.rendering;
+    hui.ui.get('questionFavorite').setSelected(this.data.favorite);
+    hui.ui.get('questionInbox').setSelected(this.data.inbox);
   }
 }
 

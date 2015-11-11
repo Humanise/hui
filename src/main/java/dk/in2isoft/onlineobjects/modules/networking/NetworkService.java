@@ -85,9 +85,10 @@ public class NetworkService {
 			file.deleteOnExit();
 			String encoding = null;
 			String contentType = null;
-			if (url.getProtocol().equals("http")) {
+			if (url.getProtocol().equals("http") || url.getProtocol().equals("https")) {
 				CloseableHttpClient client = HttpClients.createDefault();
 				method = new HttpGet(url.toURI());
+				method.addHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.80 Safari/537.36");
 				CloseableHttpResponse res = client.execute(method);
 				int code = res.getStatusLine().getStatusCode();
 				if (code == 200) {

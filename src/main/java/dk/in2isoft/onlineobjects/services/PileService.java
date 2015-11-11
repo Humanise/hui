@@ -52,10 +52,6 @@ public class PileService {
 		return pile;
 	}
 
-	public void setModelService(ModelService modelService) {
-		this.modelService = modelService;
-	}
-
 	public void addOrRemoveFromPile(User user, String relationKind, Entity enity, boolean add) throws ModelException, SecurityException {
 		Pile favorites = this.getOrCreatePileByRelation(user, relationKind);
 		Relation relation = modelService.getRelation(favorites, enity);
@@ -65,5 +61,11 @@ public class PileService {
 			modelService.deleteRelation(relation, user);
 		}
 		
+	}
+	
+	// Wiring...
+
+	public void setModelService(ModelService modelService) {
+		this.modelService = modelService;
 	}
 }

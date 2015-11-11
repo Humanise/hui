@@ -7,7 +7,7 @@
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
     ">
 
-   	<bean id="readerArticleBuilder" class="dk.in2isoft.onlineobjects.apps.reader.ReaderArticleBuilder" autowire="byType">
+   	<bean id="internetAddressViewPerspectiveBuilder" class="dk.in2isoft.onlineobjects.apps.reader.perspective.InternetAddressViewPerspectiveBuilder" autowire="byType">
    		<property name="contentExtractors">
    			<map>
    				<entry key="OnlineObjects">
@@ -22,13 +22,18 @@
    			</map>
    		</property>
    	</bean>
+   	
+   	<bean id="questionViewPerspectiveBuilder" class="dk.in2isoft.onlineobjects.apps.reader.perspective.QuestionViewPerspectiveBuilder" autowire="byType"/>
 
    	<bean id="readerController" class="dk.in2isoft.onlineobjects.apps.reader.ReaderController" autowire="byType"/>
+   	
+   	<bean id="readerModelService" class="dk.in2isoft.onlineobjects.apps.reader.ReaderModelService" autowire="byType"/>
    	
    	<bean class="dk.in2isoft.onlineobjects.apps.reader.index.ReaderIndexer">
    		<property name="documentBuilder" ref="readerIndexDocumentBuilder"/>
    		<property name="indexService" ref="indexService"/>
    		<property name="modelService" ref="modelService"/>
+   		<property name="pileService" ref="pileService"/>
    	</bean>
    	
    	<bean class="dk.in2isoft.onlineobjects.apps.reader.ReaderSearcher">
@@ -44,6 +49,6 @@
    	</bean>
    	
    	<bean id="readerView" scope="request" class="dk.in2isoft.onlineobjects.apps.reader.views.ReaderView">
-   		<property name="builder" ref="readerArticleBuilder"/>
+   		<property name="builder" ref="internetAddressViewPerspectiveBuilder"/>
    	</bean>
 </beans>

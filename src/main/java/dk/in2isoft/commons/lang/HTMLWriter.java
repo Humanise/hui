@@ -2,6 +2,9 @@ package dk.in2isoft.commons.lang;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Map;
+
+import com.google.common.collect.Maps;
 
 import dk.in2isoft.in2igui.data.MarkupWriter;
 
@@ -162,6 +165,20 @@ public class HTMLWriter extends MarkupWriter {
 		String value = data !=null && data instanceof String ? data.toString() : Strings.toJSON(data); 
 		withAttribute("data", value);
 		return this;
+	}
+
+	public HTMLWriter withData(Object... data) {
+		return withData(buildData(data));
+	}
+	
+	private Map<String, Object> buildData(Object... parts) {
+		Map<String, Object> data = Maps.newHashMap();
+		for (int i = 0; i < parts.length; i++) {
+			if (parts[i]!=null && i + 1 < parts.length) {
+				data.put(parts[i].toString(), parts[i+1]);
+			}
+		}
+		return data;
 	}
 
 	public HTMLWriter withData(String name,Object data) {

@@ -8,13 +8,13 @@ import org.springframework.beans.factory.InitializingBean;
 import com.google.common.collect.Lists;
 
 import dk.in2isoft.commons.jsf.AbstractView;
-import dk.in2isoft.onlineobjects.apps.reader.ReaderArticleBuilder;
+import dk.in2isoft.onlineobjects.apps.reader.perspective.InternetAddressViewPerspectiveBuilder;
 import dk.in2isoft.onlineobjects.modules.information.ContentExtractor;
 import dk.in2isoft.onlineobjects.ui.jsf.model.Option;
 
 public class ReaderView extends AbstractView implements InitializingBean {
 	
-	private ReaderArticleBuilder builder;
+	private InternetAddressViewPerspectiveBuilder builder;
 	
 	private String extractionAlgorithm;
 
@@ -41,7 +41,7 @@ public class ReaderView extends AbstractView implements InitializingBean {
 		return extractionOptions;
 	}
 	
-	public void setBuilder(ReaderArticleBuilder builder) {
+	public void setBuilder(InternetAddressViewPerspectiveBuilder builder) {
 		this.builder = builder;
 	}
 }

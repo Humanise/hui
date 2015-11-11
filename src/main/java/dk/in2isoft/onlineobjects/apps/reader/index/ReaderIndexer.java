@@ -16,25 +16,28 @@ import dk.in2isoft.onlineobjects.core.Results;
 import dk.in2isoft.onlineobjects.core.events.ModelEventListener;
 import dk.in2isoft.onlineobjects.core.events.ModelPrivilegesEventListener;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
+import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Hypothesis;
 import dk.in2isoft.onlineobjects.model.InternetAddress;
 import dk.in2isoft.onlineobjects.model.Item;
 import dk.in2isoft.onlineobjects.model.Person;
+import dk.in2isoft.onlineobjects.model.Pile;
 import dk.in2isoft.onlineobjects.model.Question;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.Statement;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.modules.index.IndexManager;
 import dk.in2isoft.onlineobjects.modules.index.IndexService;
+import dk.in2isoft.onlineobjects.services.PileService;
 
 public class ReaderIndexer implements ModelEventListener, ModelPrivilegesEventListener {
 
 	private ReaderIndexDocumentBuilder documentBuilder;
 	
 	private IndexService indexService;
-	
 	private ModelService modelService;
+	private PileService pileService;
 	
 	private static final Logger log = Logger.getLogger(ReaderIndexer.class);
 	
@@ -118,8 +121,7 @@ public class ReaderIndexer implements ModelEventListener, ModelPrivilegesEventLi
 				}
 				Document doc = new Document();
 				doc.add(new TextField("title", Strings.asNonBlank(question.getName(),"blank"), Field.Store.YES));
-				doc.add(new TextField("inbox", "no", Field.Store.YES));
-				doc.add(new TextField("favorite", "no", Field.Store.YES));
+				indexStatus(doc, question, owner);
 
 				Query<Person> authors = Query.of(Person.class).from(question, Relation.KIND_COMMON_AUTHOR).withPrivileged(owner);
 				List<Person> people = modelService.list(authors);
@@ -136,20 +138,19 @@ public class ReaderIndexer implements ModelEventListener, ModelPrivilegesEventLi
 		}
 	}
 	
-	public void index(Hypothesis question) {
+	public void index(Hypothesis hypothesis) {
 		try {
-			User owner = modelService.getOwner(question);
+			User owner = modelService.getOwner(hypothesis);
 			if (owner!=null) {
 				StringBuilder text = new StringBuilder();
-				if (question.getText()!=null) {
-					text.append(question.getText());
+				if (hypothesis.getText()!=null) {
+					text.append(hypothesis.getText());
 				}
 				Document doc = new Document();
-				doc.add(new TextField("title", Strings.asNonBlank(question.getName(),"blank"), Field.Store.YES));
-				doc.add(new TextField("inbox", "no", Field.Store.YES));
-				doc.add(new TextField("favorite", "no", Field.Store.YES));
+				doc.add(new TextField("title", Strings.asNonBlank(hypothesis.getName(),"blank"), Field.Store.YES));
+				indexStatus(doc, hypothesis, owner);
 
-				Query<Person> authors = Query.of(Person.class).from(question, Relation.KIND_COMMON_AUTHOR).withPrivileged(owner);
+				Query<Person> authors = Query.of(Person.class).from(hypothesis, Relation.KIND_COMMON_AUTHOR).withPrivileged(owner);
 				List<Person> people = modelService.list(authors);
 				for (Person person : people) {
 					doc.add(new StringField("author", String.valueOf(person.getId()), Field.Store.NO));
@@ -157,10 +158,10 @@ public class ReaderIndexer implements ModelEventListener, ModelPrivilegesEventLi
 				}
 				doc.add(new TextField("text", Strings.asNonBlank(text.toString(),""), Field.Store.NO));
 
-				getIndexManager(owner).update(question, doc);
+				getIndexManager(owner).update(hypothesis, doc);
 			}
 		} catch (EndUserException e) {
-			log.error("Unable to reindex: "+question, e);
+			log.error("Unable to reindex: "+hypothesis, e);
 		}
 	}
 	
@@ -174,8 +175,7 @@ public class ReaderIndexer implements ModelEventListener, ModelPrivilegesEventLi
 				}
 				Document doc = new Document();
 				doc.add(new TextField("title", Strings.asNonBlank(statement.getName(),"blank"), Field.Store.YES));
-				doc.add(new TextField("inbox", "no", Field.Store.YES));
-				doc.add(new TextField("favorite", "no", Field.Store.YES));
+				indexStatus(doc, statement, owner);
 
 				Query<Person> authors = Query.of(Person.class).from(statement, Relation.KIND_COMMON_AUTHOR).withPrivileged(owner);
 				List<Person> people = modelService.list(authors);
@@ -190,6 +190,26 @@ public class ReaderIndexer implements ModelEventListener, ModelPrivilegesEventLi
 		} catch (EndUserException e) {
 			log.error("Unable to reindex: "+statement, e);
 		}
+	}
+	
+	private void indexStatus(Document doc, Entity entity, User owner) throws ModelException {
+
+		Pile inbox = pileService.getOrCreatePileByRelation(owner, Relation.KIND_SYSTEM_USER_INBOX);
+		Pile favorites = pileService.getOrCreatePileByRelation(owner, Relation.KIND_SYSTEM_USER_FAVORITES);
+		
+		boolean inboxed = false;
+		boolean favorited = false;
+		
+		List<Pile> piles = modelService.getParents(entity, Pile.class, owner);
+		for (Pile pile : piles) {
+			if (pile.getId()==inbox.getId()) {
+				inboxed = true;
+			} else if (pile.getId()==favorites.getId()) {
+				favorited = true;
+			}
+		}
+		doc.add(new TextField("inbox", inboxed ? "yes" : "no", Field.Store.YES));
+		doc.add(new TextField("favorite", favorited ? "yes" : "no", Field.Store.YES));
 	}
 	
 	private IndexManager getIndexManager(Privileged privileged) {
@@ -263,5 +283,9 @@ public class ReaderIndexer implements ModelEventListener, ModelPrivilegesEventLi
 	
 	public void setModelService(ModelService modelService) {
 		this.modelService = modelService;
+	}
+	
+	public void setPileService(PileService pileService) {
+		this.pileService = pileService;
 	}
 }
