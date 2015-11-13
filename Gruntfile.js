@@ -16,7 +16,7 @@ module.exports = function(grunt) {
       }
     },
     sass: {
-      dist: {
+      reader: {
         options : {sourcemap:'none'},
         files: [{
           expand: true,
