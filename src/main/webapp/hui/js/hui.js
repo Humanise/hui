@@ -936,7 +936,7 @@ hui.collect = function(selectors,context) {
 /**
  * Builds an element with the «name» and «options»
  *
- * @param {String} name The name of the new element
+ * @param {String} name The name of the new element (. adds class)
  * @param {Object} options The options
  * @param {String} options.html Inner HTML
  * @param {String} options.text Inner text
@@ -949,9 +949,20 @@ hui.collect = function(selectors,context) {
  * @returns {Element} The new element
  */
 hui.build = function(name,options,doc) {
-	
 	doc = doc || document;
-    var e = doc.createElement(name);
+  var cls = '';
+	if (name.indexOf('.') !== -1) {
+	  var split = name.split('.');
+    name = split[0];
+    for (var i = 1; i < split.length; i++) {
+      if (i>1) {cls+=' '};
+      cls+=split[i];
+    }
+	}
+  var e = doc.createElement(name);
+  if (cls) {
+    e.className = cls;
+  }
 	if (options) {
 		for (var prop in options) {
 			if (prop=='text') {
@@ -1036,7 +1047,7 @@ hui.position = {
 	      top += element.scrollTop  || 0;
 	      left += element.scrollLeft || 0;
 	      element = element.parentNode;
-		  if (element.tagName === 'HTML') {
+		  if (element && element.tagName === 'HTML') {
 			  break; // TODO Temporary hack - Chrome has the same scrollTop on html as on body
 		  }
 	    } while (element);
