@@ -27,9 +27,15 @@
 				</gui:buttons>
 			</gui:boundPanel>
 
-			<gui:boundPanel name="peekPanel" variant="light" width="200" modal="true">
-				<gui:fragment name="peekRendering"/>
-        <div style="height: 300px"></div>
+			<gui:boundPanel name="peekPanel" variant="light" width="300" hideOnClick="true">
+  			<gui:pages name="peekPages">
+  				<gui:page key="selector">
+            <div class="js-peek-selector reader_peek_selector"></div>
+          </gui:page>
+  				<gui:page key="view">
+            <gui:fragment name="peekRendering"/>          
+          </gui:page>
+        </gui:pages>
 			</gui:boundPanel>
 
 			<gui:boundPanel name="selectionPanel" variant="light">

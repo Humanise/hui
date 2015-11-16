@@ -1,16 +1,20 @@
 var internetAddressViewer = {
+  
+  name : 'internetAddressViewer',
 
   _viewedItem : null,
+  _currentArticle : null,
   text : '',
 
   nodes : {
-    viewer : '.reader_viewer',
+    viewer : '.js_internetaddress_viewer',
     content : '.reader_viewer_content',
-    info : '.reader_viewer_info'
+    info : '.reader_viewer_info',
+    header : '.js_internetaddress_header'
   },
 
   widgets : {
-    selectionPanel : null,
+    selectionPanel : null
   },
   
   $ready : function() {
@@ -25,6 +29,13 @@ var internetAddressViewer = {
     hui.listen(this.nodes.viewer,'click',this._click.bind(this));
     hui.listen(this.nodes.info,'click',this._clickInfo.bind(this));
     this._listenForText();
+
+    this.widgets.viewSelection = new oo.Segmented({
+      name : 'internetAddressViewSelection',
+      element : hui.find('.js_internetaddress_viewselector'),
+      selectedClass : 'reader_view_segmented_item-selected',
+      value : 'formatted'
+    });
   },
   
   _listenForText : function() {
@@ -57,30 +68,54 @@ var internetAddressViewer = {
   _click : function(e) {
 
     e = hui.event(e);
-    var a = e.findByTag('a');
-    if (a) {
+    var items = this._findClickedItems(e);
+    if (items.length > 0 && !this.text) {
       e.stop();
-      if (hui.cls.has(a,'reader_viewer_quote_icon')) {
-        this._editStatement({link:a});
+      hui.log(items);
+      var first = items[0]
+      if (e.altKey && first.info.type == 'Statement') {
+        statementController.edit(first.info.id);
+      } else {
+        reader.peek({items:items});
       }
-      else if (hui.cls.has(a.parentNode,'link')) {
-        window.open(a.href)
-      }
-    } else if (hui.cls.has(e.element,'reader_viewer_quote')) {
-      e.stop();
-      this._highlightStatement(e.element.getAttribute('data-id'));
+      return;
     } else {
-      var mark = e.findByTag('mark');
-      if (mark) {
-        if (e.altKey && hui.cls.has(mark,'quote')) {
-          this._peek({
-            type : 'statement',
-            node : mark,
-            id : parseInt(mark.getAttribute('data-id'), 10)
-          });
+      var action = e.findByClass('js_reader_action');
+      if (action) {
+        var data = hui.string.fromJSON(action.getAttribute('data'));
+        if (data) {
+          e.stop();
+          this._performAction(data);
         }
       }
     }
+  },
+  _performAction : function(data) {
+    if (data.action == 'highlightStatement') {
+      this._highlightStatement(data.id);
+    }
+    else if (data.action == 'editStatement') {
+      reader.edit({type:'Statement',id:data.id});
+    }
+    else if (data.action == 'openUrl') {
+      window.open(data.url);
+    }
+  },
+  _findClickedItems : function(e) {
+    var found = [],
+      p = e.element,
+      viewer = this.nodes.viewer
+
+    while (p && p != viewer) {
+      if (hui.cls.has(p,'js_reader_item')) {
+        found.push({
+          node : p,
+          info : hui.string.fromJSON(p.getAttribute('data-info'))
+        });
+      }
+      p = p.parentNode;
+    }
+    return found;
   },
   
   _clickInfo : function(e) {
@@ -134,17 +169,20 @@ var internetAddressViewer = {
           return;
         }
       } else {
+        hui.log('New object - resetting');
         hui.get('viewer_formatted').innerHTML = '';
         hui.get('viewer_text').innerHTML = '';
-        hui.get('viewer_header').innerHTML = '';
+        this.nodes.header.innerHTML = '';
         this.nodes.info.innerHTML = '';
         this.nodes.content.scrollTop = 0;
       }
+    } else {
+      hui.log('No viewed item');
     }
 		addressInfoController.clear();
     this._viewedItem = {id : object.id};
     this._lockViewer();
-    hui.get('viewer_header').innerHTML = '<h1>' + hui.string.escape(object.title || 'Loading...') + '</h1>';
+    this.nodes.header.innerHTML = '<h1>' + hui.string.escape(object.title || 'Loading...') + '</h1>';
     this.nodes.viewer.style.display = 'block';
     this.viewerVisible = true;
     hui.cls.add(this.viewerSpinner, 'oo_spinner_visible');
@@ -181,25 +219,23 @@ var internetAddressViewer = {
 
   _markInbox : function(checked) {
     var link = hui.ui.get('inboxButton');
-    hui.cls.set(link.element,'reader_viewer_action_selected',checked);
-    hui.cls.set(hui.get.firstByClass(link.element,'oo_icon'),'oo_icon-selected',checked);
+    link.setSelected(checked);
   },
 
   _markFavorite : function(checked) {
     var link = hui.ui.get('favoriteButton');
-    hui.cls.set(link.element,'reader_viewer_action_selected',checked);
-    hui.cls.set(hui.get.firstByClass(link.element,'oo_icon'),'oo_icon-selected',checked);
+    link.setSelected(checked);
   },
 
   _drawArticle : function(article) {
     this._currentArticle = article;
     hui.get('viewer_formatted').innerHTML = article.formatted;
     hui.get('viewer_text').innerHTML = article.text;
-    hui.get('viewer_header').innerHTML = article.header;
+    this.nodes.header.innerHTML = article.header;
     this.nodes.info.innerHTML = article.info;
     this._markInbox(article.inbox);
     this._markFavorite(article.favorite);
-    var view = hui.ui.get('readerViewerView').getValue();
+    var view = this.widgets.viewSelection.getValue();
     if (view === 'web') {
       // TODO Find a way to handle errors
       this.viewerFrame.setAttribute('src',article.url);
@@ -238,28 +274,6 @@ var internetAddressViewer = {
       }
     });
   },
-
-  _reloadInfo : function() {
-    var info = this.nodes.info;
-    info.style.opacity = '.5';
-    hui.ui.request({
-      url : '/loadArticle',
-      parameters : {id:this._currentArticle.id},
-      $object : function(article) {
-        this._currentArticle = article;
-        info.innerHTML = article.info;
-      }.bind(this),
-      $finally : function() {
-        info.style.opacity='';
-      }
-    })
-  },
-  
-  _peek : function(options) {
-    statementController.edit(options.id);
-    // TODO:
-    //hui.ui.get('peekPanel').show({target:options.node});
-  },
 	
 	_editStatement : function(options) {
 		statementController.edit(options.link.getAttribute('data-id'));
@@ -283,12 +297,13 @@ var internetAddressViewer = {
 
   hide : function() {
     this._unlockViewer();
-    viewer.style.display='none';
+    this.nodes.viewer.style.display='none';
     this.viewerVisible = false;
     this.viewerFrame.src = "about:blank";
     hui.get('viewer_info').innerHTML = ''
     this._viewedItem = null;
 		addressInfoController.clear();
+    reader.PeekController.hide();
   },
   _lockViewer : function() {
     this._locked = true;
@@ -361,13 +376,20 @@ var internetAddressViewer = {
       parameters : parameters,
       $success : function() {
         this.reload();
+        hui.ui.callDelegates(this,'statementChanged');
       }.bind(this),
       $finally : function() {
         panel.hide();
       }.bind(this)
     })    
   },
-  $valueChanged$readerViewerView : function(value) {
+  $click$tagFromSelection : function() {
+    var finder = oo.WordFinder.get();
+    finder.show();
+    finder.setSearch(this.text);
+  },
+
+  $valueChanged$internetAddressViewSelection : function(value) {
 
     this.nodes.content.className = 'reader_viewer_content reader_viewer_content_'+value;
     if (!this.frameSet && value === 'web') {
@@ -387,7 +409,7 @@ var internetAddressViewer = {
       url : '/addWord',
       parameters : p,
       $success : function() {
-        this._reloadInfo();
+        this.reload();
         hui.ui.get('tagSource').refresh();
         hui.ui.get('listSource').refresh();
       }.bind(this)
@@ -420,7 +442,7 @@ var internetAddressViewer = {
         internetAddressId : this._currentArticle.id
       },
       $success : function(obj) {
-        this._reloadInfo();
+        this.reload();
         hui.ui.get('tagSource').refresh();
         hui.ui.get('listSource').refresh();
       }.bind(this)

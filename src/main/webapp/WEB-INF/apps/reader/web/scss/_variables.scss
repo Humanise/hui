@@ -1,6 +1,15 @@
+$list-title-color: #0055B5;
+
 $view-background-color: #FFFCEC;
 
+$view-dark-background-color: #F5F2E2;
+$view-dark-dimmed-color: #B3B09D;
+$view-dark-action-color: #A79F89;
+$view-dark-action-color-hover: darken($view-dark-action-color, 30%);
+
 $view-text-color: #3A3326;
+
+$view-section-header-color: #B7B09A;
 
 $view-effect-color: #E2DBC5;
 
@@ -8,10 +17,23 @@ $view-action-color: #AD9F76;
 
 $view-action-color-hover: darken($view-action-color, 30%);
 
-$view-action-selected-color: #D64B21;
+$view-action-selected-color: #A53125; //#c88f35; //#D64B21;
 
 $view-action-selected-color-hover: darken($view-action-selected-color, 10%);
 
 $view-dimmed-color: #D8D3B8;
 
 $font-sans: 'Open Sans', Arial, Helvetica, sans-serif;
+
+$font-serif: 'Merriweather';
+
+$icons : (
+  quote : '\e902',
+  hypothesis : '\e901',
+  question : '\e903'
+);
+
+@mixin icon($key) {
+  font-family: 'OnlineObjects';
+  content: map-get($icons,$key);
+}

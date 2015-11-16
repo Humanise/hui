@@ -57,7 +57,7 @@ var questionEditor = {
       }.bind(this)
     });
 	},
-	$click$deleteStatement : function() {
+	$click$deleteQuestion : function() {
     this.window.setBusy(true);
     hui.ui.request({
       url : '/deleteQuestion',

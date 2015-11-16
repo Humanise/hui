@@ -14,9 +14,108 @@
 
 .reader_view_head
 {
-  border-bottom: 1px solid #E4E1D1;
-  padding: 10px;
-  background: #F5F2E3;
+  position: absolute;
+  height: 65px;
+  border-bottom: 1px solid #ECE5D5;
+  width: 100%;
+  box-sizing: border-box;
+  background: $view-dark-background-color;
+}  
+
+.reader_view_head_info {
+  h1
+  {
+  	font-size: 24px;
+  	font-weight: 200;
+  	margin: 0 40px 0 0;
+  	white-space: nowrap;
+  	overflow: hidden;
+  	text-overflow: ellipsis;
+  	line-height: 32px;
+  	padding: 5px 0 0 10px;
+    color: $view-text-color;
+  }
+
+  p
+  {
+  	font-size: 11px;
+  	margin: 5px 320px 0 0;
+  	padding-left: 10px;
+  	white-space: nowrap;
+  	overflow: hidden;
+    
+    > a {
+      text-decoration: none;
+      color: $view-dark-dimmed-color;
+    }
+  }
+  
+  &:hover {
+    p > a {
+      color: #8C876C;
+      box-shadow: inset 0 -1px 0 rgba(0,0,0,.1);
+      &:hover {
+        color: #36f;        
+      }
+    }
+  }
+}
+
+.reader_view_head_actions {
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  font-size: 0;
+}
+
+.reader_view_head_action {
+  color: $view-dark-action-color;
+  margin-right: 10px;
+	vertical-align: middle;
+	display: inline-block;
+  cursor: pointer;
+  &:hover {
+    color: $view-dark-action-color-hover;    
+  }
+
+  &:active {
+    transform: scale(.8);
+  }
+  
+  &.oo_icon-selected {
+    color: $view-action-selected-color;
+    
+    &:hover {
+      color: $view-action-selected-color-hover;
+    }
+  }
+}
+
+.reader_view_segmented {
+  display: inline-block;
+	vertical-align: middle;
+	font-size: 0;
+  
+  &_item {
+  	text-transform: uppercase;
+  	text-decoration: none;
+    color: $view-dark-action-color;
+  	font-size: 14px;
+  	padding: 0 3px;
+    
+    &:hover {
+      color: $view-dark-action-color-hover;    
+    }
+  
+    &-selected {
+    	color: $view-action-selected-color;
+      font-weight: 600;
+      
+      &:hover {
+        color: $view-action-selected-color-hover;
+      }
+    }
+  }
 }
 
 .reader_view_close
@@ -31,4 +130,29 @@
   &:hover {
   	color: $view-action-color-hover;    
   }
+}
+
+.reader_view_picture {
+  display: inline-block;
+  position: relative;
+  background: $view-dark-background-color;
+  width: 100%;
+  font-size: 0;
+  
+  &_body {
+    display: inline-block;    
+  }
+
+  &_img {
+    position: absolute;
+    width: 100%;
+    height: auto;
+  }
+}
+
+.reader_view_img {
+  height: auto;
+  max-width: 100%;
+  filter: grayscale(1) sepia(0.2);
+  -webkit-filter: grayscale(1) sepia(0.2);
 }

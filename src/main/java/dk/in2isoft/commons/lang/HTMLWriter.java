@@ -167,16 +167,17 @@ public class HTMLWriter extends MarkupWriter {
 		return this;
 	}
 
-	public HTMLWriter withData(Object... data) {
+	public HTMLWriter withDataMap(Object... data) {
 		return withData(buildData(data));
 	}
 	
 	private Map<String, Object> buildData(Object... parts) {
-		Map<String, Object> data = Maps.newHashMap();
+		Map<String, Object> data = Maps.newLinkedHashMap();
 		for (int i = 0; i < parts.length; i++) {
 			if (parts[i]!=null && i + 1 < parts.length) {
 				data.put(parts[i].toString(), parts[i+1]);
 			}
+			i++;
 		}
 		return data;
 	}

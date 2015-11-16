@@ -9,9 +9,76 @@
   background-color: #FFFCEC; }
 
 .reader_view_head {
-  border-bottom: 1px solid #E4E1D1;
-  padding: 10px;
-  background: #F5F2E3; }
+  position: absolute;
+  height: 65px;
+  border-bottom: 1px solid #ECE5D5;
+  width: 100%;
+  box-sizing: border-box;
+  background: #F5F2E2; }
+
+.reader_view_head_info h1 {
+  font-size: 24px;
+  font-weight: 200;
+  margin: 0 40px 0 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 32px;
+  padding: 5px 0 0 10px;
+  color: #3A3326; }
+.reader_view_head_info p {
+  font-size: 11px;
+  margin: 5px 320px 0 0;
+  padding-left: 10px;
+  white-space: nowrap;
+  overflow: hidden; }
+  .reader_view_head_info p > a {
+    text-decoration: none;
+    color: #B3B09D; }
+.reader_view_head_info:hover p > a {
+  color: #8C876C;
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.1); }
+  .reader_view_head_info:hover p > a:hover {
+    color: #36f; }
+
+.reader_view_head_actions {
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  font-size: 0; }
+
+.reader_view_head_action {
+  color: #A79F89;
+  margin-right: 10px;
+  vertical-align: middle;
+  display: inline-block;
+  cursor: pointer; }
+  .reader_view_head_action:hover {
+    color: #565141; }
+  .reader_view_head_action:active {
+    transform: scale(0.8); }
+  .reader_view_head_action.oo_icon-selected {
+    color: #A53125; }
+    .reader_view_head_action.oo_icon-selected:hover {
+      color: #7b251c; }
+
+.reader_view_segmented {
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 0; }
+  .reader_view_segmented_item {
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #A79F89;
+    font-size: 14px;
+    padding: 0 3px; }
+    .reader_view_segmented_item:hover {
+      color: #565141; }
+    .reader_view_segmented_item-selected {
+      color: #A53125;
+      font-weight: 600; }
+      .reader_view_segmented_item-selected:hover {
+        color: #7b251c; }
 
 .reader_view_close {
   text-decoration: none;
@@ -22,3 +89,22 @@
   font-size: 20px; }
   .reader_view_close:hover {
     color: #564e34; }
+
+.reader_view_picture {
+  display: inline-block;
+  position: relative;
+  background: #F5F2E2;
+  width: 100%;
+  font-size: 0; }
+  .reader_view_picture_body {
+    display: inline-block; }
+  .reader_view_picture_img {
+    position: absolute;
+    width: 100%;
+    height: auto; }
+
+.reader_view_img {
+  height: auto;
+  max-width: 100%;
+  filter: grayscale(1) sepia(0.2);
+  -webkit-filter: grayscale(1) sepia(0.2); }

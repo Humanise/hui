@@ -115,6 +115,9 @@ public class ReaderSearcher {
 		IndexSearchQuery indexQuery = new IndexSearchQuery(ReaderQuery.build(query));
 		indexQuery.setPage(query.getPage());
 		indexQuery.setPageSize(query.getPageSize());
+		if (Strings.isBlank(query.getText())) {
+			indexQuery.addLongOrdering("created",true);
+		}
 		SearchResult<IndexSearchResult> search = index.search(indexQuery);
 		for (IndexSearchResult row : search.getList()) {
 			Long id = row.getLong("id");

@@ -1,0 +1,28 @@
+.reader_peek_selector_item {
+  font-size: 12px;
+  display: block; }
+
+.reader_peek_view {
+  font-size: 12px; }
+
+.reader_peek_rendering {
+  margin: 3px 3px 10px; }
+  .reader_peek_rendering h2 {
+    line-height: 1.2;
+    font-size: 14px;
+    font-family: 'Open Sans';
+    font-weight: 600;
+    margin: 0; }
+  .reader_peek_rendering p {
+    margin: 0;
+    color: #666; }
+
+.reader_peek_action {
+  display: inline-block;
+  color: inherit;
+  text-decoration: none;
+  border: 1px solid #eee;
+  line-height: 20px;
+  padding: 0 8px;
+  margin: 3px;
+  border-radius: 3px; }

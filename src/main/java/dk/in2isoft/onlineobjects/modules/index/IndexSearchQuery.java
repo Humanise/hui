@@ -34,6 +34,10 @@ public class IndexSearchQuery {
 		sort.setSort(new SortField(field, Type.STRING));
 	}
 	
+	public void addLongOrdering(String field, boolean reverse) {
+		sort.setSort(new SortField(field, Type.LONG, reverse));
+	}
+	
 	public Sort getSort() {
 		return sort;
 	}

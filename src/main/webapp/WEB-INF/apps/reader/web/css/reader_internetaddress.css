@@ -1,0 +1,69 @@
+@charset "UTF-8";
+.reader_internetaddress_quote {
+  position: relative;
+  font-weight: 300;
+  margin: 10px 0 10px 0px;
+  border-bottom: 1px solid #E2DBC5;
+  padding-bottom: 10px;
+  color: #3A3326; }
+  .reader_internetaddress_quote:before {
+    font-family: 'OnlineObjects';
+    content: "";
+    position: absolute;
+    margin-left: -25px;
+    font-size: 20px;
+    line-height: 1em;
+    top: -1px;
+    color: #E2DBC5; }
+  .reader_internetaddress_quote-missing {
+    text-decoration: line-through; }
+
+.reader_internetaddress_quote_icon {
+  margin-left: 5px;
+  text-decoration: none;
+  color: #D8D3B8;
+  margin-top: -2px; }
+  .reader_internetaddress_quote:hover .reader_internetaddress_quote_icon {
+    color: #AD9F76; }
+    .reader_internetaddress_quote:hover .reader_internetaddress_quote_icon:hover {
+      color: #564e34; }
+
+.reader_internetaddress_perspective-formatted {
+  padding: 20px 40px; }
+
+.reader_internetaddress_body {
+  font-weight: 300;
+  line-height: 1.4; }
+  .reader_internetaddress_body h1 {
+    font-size: 24pt;
+    font-weight: bolder; }
+  .reader_internetaddress_body h2,
+  .reader_internetaddress_body h3,
+  .reader_internetaddress_body h4,
+  .reader_internetaddress_body h5,
+  .reader_internetaddress_body h6 {
+    font-weight: bold;
+    margin: 40px 0 0; }
+  .reader_internetaddress_body h2 {
+    font-size: 20pt; }
+  .reader_internetaddress_body h3 {
+    font-size: 16pt; }
+  .reader_internetaddress_body h4,
+  .reader_internetaddress_body h5,
+  .reader_internetaddress_body h6 {
+    font-size: 14pt; }
+  .reader_internetaddress_body strong {
+    font-weight: 600; }
+  .reader_internetaddress_body p {
+    margin: 5px 0 15px; }
+  .reader_internetaddress_body pre {
+    max-width: 100%;
+    overflow: auto; }
+  .reader_internetaddress_body a {
+    color: #1454A5;
+    text-decoration: none;
+    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    line-height: 1em;
+    display: inline-block; }
+    .reader_internetaddress_body a:hover {
+      color: #0071FF; }

@@ -26,6 +26,7 @@ import dk.in2isoft.onlineobjects.apps.reader.perspective.FeedPerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.InternetAddressEditPerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.InternetAddressViewPerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.ListItemPerspective;
+import dk.in2isoft.onlineobjects.apps.reader.perspective.PeekPerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.QuestionEditPerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.QuestionViewPerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.StatementEditPerspective;
@@ -59,6 +60,7 @@ import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspectiveQuery;
 import dk.in2isoft.onlineobjects.modules.networking.NetworkResponse;
 import dk.in2isoft.onlineobjects.ui.Request;
+import dk.in2isoft.onlineobjects.ui.data.Data;
 import dk.in2isoft.onlineobjects.ui.data.SimpleEntityPerspective;
 import dk.in2isoft.onlineobjects.ui.data.ViewResult;
 
@@ -111,7 +113,7 @@ public class ReaderController extends ReaderControllerBase {
 				List<Person> authors = modelService.list(personQuery);
 				perspective.setStatementId(entity.getId());
 				Statement htmlPart = (Statement) entity;
-				writer.startP().withClass("reader_list_quote").text(htmlPart.getText()).endP();
+				writer.startP().withClass("reader_list_text reader_list_quote").text(htmlPart.getText()).endP();
 				if (Code.isNotEmpty(authors)) {
 					writer.startDiv().withClass("reader_list_authors");
 					for (Iterator<Person> i = authors.iterator(); i.hasNext();) {
@@ -131,11 +133,11 @@ public class ReaderController extends ReaderControllerBase {
 			} else if (entity instanceof Question) {
 				perspective.setQuestionId(entity.getId());
 				Question question = (Question) entity;
-				writer.startP().withClass("reader_list_question").text(question.getText()).endP();
+				writer.startP().withClass("reader_list_text reader_list_question").text(question.getText()).endP();
 			} else if (entity instanceof Hypothesis) {
 				perspective.setHypothesisId(entity.getId());
 				Hypothesis question = (Hypothesis) entity;
-				writer.startP().withClass("reader_list_hypothesis").text(question.getText()).endP();
+				writer.startP().withClass("reader_list_text reader_list_hypothesis").text(question.getText()).endP();
 			}
 
 			List<Word> words = modelService.getChildren(entity, Word.class, request.getSession());
@@ -159,6 +161,67 @@ public class ReaderController extends ReaderControllerBase {
 		result.setItems(list);
 
 		return result;
+	}
+	
+	@Path
+	public PeekPerspective peek(Request request) throws ModelException {
+		String type = request.getString("type");
+		Long id = request.getId();
+		PeekPerspective perspective = new PeekPerspective();
+		HTMLWriter rendering = new HTMLWriter();
+		Privileged privileged = request.getSession();
+		if ("Link".equals(type)) {
+			String url = request.getString("url");
+			if (Strings.isBlank(url)) {
+				rendering.startH2().text("Empty").endH2();				
+			} else {
+				InternetAddress found = modelService.getFirst(Query.after(InternetAddress.class).withField(InternetAddress.FIELD_ADDRESS, url).withPrivileged(privileged ));
+				perspective.addAction("Open", "open");
+				if (found!=null) {
+					rendering.startH2().text(found.getName()).endH2();
+					rendering.startP().text("Known page").endP();
+					perspective.setId(found.getId());
+					perspective.setType(InternetAddress.class.getSimpleName());
+					perspective.addAction("View", "view");
+				} else {
+					rendering.startH2().text(Strings.simplifyURL(url)).endH2();
+					rendering.startP().text("External web page").endP();
+					Data data = new Data().add("url", url);
+					perspective.setData(data);
+					perspective.setType("Link");
+					perspective.addAction("Import", "import");
+				}
+			}
+		} else if (Statement.class.getSimpleName().equals(type)) {
+			Statement statement = modelService.get(Statement.class, id, privileged);
+			if (statement!=null) {
+				rendering.startH2().text(StringUtils.abbreviate(statement.getText(), 50)).endH2();
+				rendering.startP().text(Statement.class.getSimpleName()).endP();
+				perspective.setId(statement.getId());
+				perspective.setType(Statement.class.getSimpleName());
+				perspective.addAction("Edit", "edit");
+			}
+		} else if (Word.class.getSimpleName().equals(type)) {
+			WordListPerspectiveQuery query = new WordListPerspectiveQuery();
+			query.withId(id);
+			List<WordListPerspective> list = modelService.list(query);
+			if (!list.isEmpty()) {
+				WordListPerspective word = list.get(0);
+				rendering.startH2().text(word.getText()).endH2();
+				rendering.startP().text("Word: ").text(word.getLanguage()).text(" · ").text(word.getLexicalCategory()).text(" · ").text(word.getGlossary()).endP();
+				perspective.setType(Word.class.getSimpleName());
+				perspective.setId(word.getId());
+				perspective.setData(Data.of("text",word.getText()));
+				perspective.addAction("Remove", "remove");
+				perspective.addAction("List", "list");
+				perspective.addAction("Search", "search");
+				perspective.addAction("View", "view");
+			}
+		} else {
+			rendering.startH2().text("Unknown type").endH2();
+		}
+		perspective.setRendering(rendering.toString());
+		return perspective;
 	}
 
 	@Path
@@ -325,8 +388,11 @@ public class ReaderController extends ReaderControllerBase {
 	}
 
 	@Path
-	public SimpleEntityPerspective addInternetAddress(Request request) throws ModelException {
+	public SimpleEntityPerspective addInternetAddress(Request request) throws ModelException, IllegalRequestException {
 		String url = request.getString("url");
+		if (Strings.isBlank(url)) {
+			throw new IllegalRequestException("No URL");
+		}
 
 		InternetAddress internetAddress = new InternetAddress();
 		internetAddress.setAddress(url);

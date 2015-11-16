@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.LongField;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 
@@ -84,6 +85,8 @@ public class ReaderIndexDocumentBuilder implements IndexDocumentBuilder<Internet
 		
 		doc.add(new TextField("inbox", inboxed ? "yes" : "no", Field.Store.YES));
 		doc.add(new TextField("favorite", favorited ? "yes" : "no", Field.Store.YES));
+		doc.add(new LongField("updated", address.getUpdated().getTime(), Field.Store.YES));
+		doc.add(new LongField("created", address.getCreated().getTime(), Field.Store.YES));
 		return doc;
 	}
 

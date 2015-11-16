@@ -199,4 +199,11 @@ public class WordListPerspectiveQuery implements CustomQuery<WordListPerspective
 		return this;
 	}
 
+	public void withId(Long id) {
+		if (this.ids==null) {
+			this.ids = Lists.newArrayList();
+		}
+		this.ids.add(id);
+	}
+
 }

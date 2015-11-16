@@ -8,13 +8,16 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import nu.xom.Attribute;
 import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Node;
 import nu.xom.Nodes;
+import nu.xom.ParentNode;
 import nu.xom.XPathContext;
 import opennlp.tools.util.Span;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -172,7 +175,7 @@ public class InternetAddressViewPerspectiveBuilder {
 	private String buildHeader(InternetAddress address) {
 		HTMLWriter writer = new HTMLWriter();
 		writer.startH1().text(address.getName()).endH1();
-		writer.startP().withClass("link").startA().withTitle(address.getAddress()).withHref(address.getAddress()).text(Strings.simplifyURL(address.getAddress())).endA().endP();
+		writer.startP().startA().withClass("js_reader_action").withDataMap("action","openUrl","url",address.getAddress()).withTitle(address.getAddress()).withHref(address.getAddress()).text(Strings.simplifyURL(address.getAddress())).endA().endP();
 		return writer.toString();
 	}
 
@@ -230,30 +233,36 @@ public class InternetAddressViewPerspectiveBuilder {
 				Document annotated = annotate(article, data, highlight, extracted, watch);
 				
 				HTMLWriter formatted = new HTMLWriter();
-				
-				for (StatementPerspective statement : article.getQuotes()) {
-					String cls = "reader_viewer_quote";
-					if (!statement.isFound()) {
-						cls+=" reader_viewer_quote-missing";
-					}
-					formatted.startBlockquote().withClass(cls).withData("id", statement.getId());
-					formatted.text(statement.getText());
-					List<ItemData> authors = statement.getAuthors();
-					if (authors!=null && !authors.isEmpty()) {
-						formatted.startSpan().text(" - ");
-						for (int i = 0; i < authors.size(); i++) {
-							if (i > 0) {
-								formatted.text(", ");
-							}
-							formatted.text(authors.get(i).getText());
-						}
-					}
-					formatted.startVoidA().withData("id", statement.getId()).withClass("oo_icon oo_icon_info_light reader_viewer_quote_icon js_action").endA();
-					formatted.endBlockquote();
-				}
-				formatted.startDiv().withClass("reader_viewer_body");
+				formatted.startDiv().withClass("reader_internetaddress_body");
 				formatted.html(getBodyXML(annotated));
 				formatted.endDiv();
+				
+				List<StatementPerspective> quotes = article.getQuotes();
+				
+				if (!quotes.isEmpty()) {
+					formatted.startDiv().withClass("reader_internetaddress_footer");
+					for (StatementPerspective statement : quotes) {
+						String cls = "js_reader_action reader_internetaddress_quote";
+						if (!statement.isFound()) {
+							cls+=" reader_internetaddress_quote-missing";
+						}
+						formatted.startBlockquote().withClass(cls).withDataMap("action","highlightStatement","id",statement.getId());
+						formatted.text(statement.getText());
+						List<ItemData> authors = statement.getAuthors();
+						if (authors!=null && !authors.isEmpty()) {
+							formatted.startSpan().text(" - ");
+							for (int i = 0; i < authors.size(); i++) {
+								if (i > 0) {
+									formatted.text(", ");
+								}
+								formatted.text(authors.get(i).getText());
+							}
+						}
+						formatted.startVoidA().withClass("oo_icon oo_icon_info_light reader_internetaddress_quote_icon js_reader_action").withDataMap("action","editStatement","id",statement.getId()).endA();
+						formatted.endBlockquote();
+					}
+					formatted.endDiv();
+				}
 
 				article.setFormatted(formatted.toString());
 
@@ -306,9 +315,15 @@ public class InternetAddressViewPerspectiveBuilder {
 			List<Result> found = searcher.search(statement.getText(), text);
 			statement.setFirstPosition(text.length());
 			for (Result result : found) {
+				Map<String, Object> info = new HashMap<>();
+				info.put("id", statement.getId());
+				info.put("type", Statement.class.getSimpleName());
+				info.put("description", "Statement: " + StringUtils.abbreviate(statement.getText(), 30));
+				
 				Map<String, Object> attributes = new HashMap<>();
 				attributes.put("data-id", statement.getId());
-				attributes.put("class", "quote");
+				attributes.put("class", "quote js_reader_item");
+				attributes.put("data-info", Strings.toJSON(info));
 				decorated.decorate(result.getFrom(), result.getTo(), "mark", attributes);
 				
 				statement.setFirstPosition(Math.min(result.getFrom(), statement.getFirstPosition()));
@@ -320,9 +335,15 @@ public class InternetAddressViewPerspectiveBuilder {
 		for (Word keyword : data.keywords) {
 			List<Result> found = searcher.search(keyword.getText().toLowerCase(), textLowercased);
 			for (Result result : found) {
+				Map<String, Object> info = new HashMap<>();
+				info.put("id", keyword.getId());
+				info.put("type", Word.class.getSimpleName());
+				info.put("description", "Word: " + StringUtils.abbreviate(keyword.getText(), 30));
+				
 				Map<String, Object> attributes = new HashMap<>();
 				attributes.put("data-id", keyword.getId());
-				attributes.put("class", "word");
+				attributes.put("class", "word js_reader_item");
+				attributes.put("data-info", Strings.toJSON(info));
 				decorated.decorate(result.getFrom(), result.getTo(), "span", attributes);
 			}
 		}
@@ -332,7 +353,58 @@ public class InternetAddressViewPerspectiveBuilder {
 		});
 		decorated.build();
 		Document document = decorated.getDocument();
+		annotateLinks(document);
 		return document;
+	}
+
+	private void annotateLinks(Document document) {
+		XPathContext context = new XPathContext();
+		String namespaceURI = document.getRootElement().getNamespaceURI();
+		context.addNamespace("html", namespaceURI);
+		Nodes links = document.query("//html:a", context);
+		for (int i = 0; i < links.size(); i++) {
+			Element node = (Element) links.get(i);
+			String href = node.getAttributeValue("href");
+			if (href!=null && href.startsWith("http")) {
+				log.info(href);
+				Map<String, Object> info = new HashMap<>();
+				info.put("type", "Link");
+				info.put("url", href);
+				info.put("description", "Link: " + Strings.simplifyURL(href));
+				node.addAttribute(new Attribute("class", "js_reader_item"));
+				node.addAttribute(new Attribute("data-info", Strings.toJSON(info)));
+			}
+		}
+		Nodes images = document.query("//html:img", context);
+		List<Element> imgs = Lists.newArrayList();
+		for (int i = 0; i < images.size(); i++) {
+			Element node = (Element) images.get(i);
+			imgs.add(node);
+		}
+		for (Element node : imgs) {
+			String width = node.getAttributeValue("width");
+			String height = node.getAttributeValue("height");
+			if (Strings.isInteger(width) && Strings.isInteger(height)) {
+				float ratio = Float.parseFloat(height) / Float.parseFloat(width);
+				Element wrapper = new Element("span", namespaceURI);
+				wrapper.addAttribute(new Attribute("style", "max-width: " + width + "px;"));
+				wrapper.addAttribute(new Attribute("class", "reader_view_picture"));
+				ParentNode parent = node.getParent();
+				parent.insertChild(wrapper, parent.indexOf(node));
+				
+				Element body = new Element("span", namespaceURI);
+				body.addAttribute(new Attribute("class","reader_view_picture_body"));
+				body.addAttribute(new Attribute("style", "padding-bottom: "+ (ratio * 100) + "%;"));
+				
+				body.appendChild(parent.removeChild(node));
+				wrapper.appendChild(body);
+
+				node.addAttribute(new Attribute("class", "reader_view_picture_img"));
+			} else {
+				node.addAttribute(new Attribute("class", "reader_view_img"));
+			}
+		}
+		
 	}
 
 	private void annotatePeople(StopWatch watch, DecoratedDocument decorated, String text, Locale locale) throws ExplodingClusterFuckException, ModelException {

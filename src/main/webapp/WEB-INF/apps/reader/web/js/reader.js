@@ -20,12 +20,6 @@ var reader = {
   $ready : function() {
 
     hui.listen(hui.get.firstByClass(document.body,'reader_layout'),'click',this._click.bind(this));
-    new oo.Segmented({
-      name : 'readerViewerView',
-      element : hui.get('reader_viewer_view'),
-      selectedClass : 'reader_viewer_view_item_selected',
-      value : 'formatted'
-    });
 		if (hui.location.getBoolean('dev')) {
       /*
 			window.setTimeout(function() {
@@ -65,10 +59,11 @@ var reader = {
       InternetAddress : internetAddressViewer,
       Question : questionViewer
     }
-    if (this._activeViewer) {
+    var newViewer = viewers[options.type];
+    if (this._activeViewer && newViewer!==this._activeViewer) {
       this._activeViewer.hide();
     }
-    this._activeViewer = viewers[options.type];
+    this._activeViewer = newViewer;
     if (this._activeViewer) {
       this._activeViewer.show(options);
     }
@@ -76,6 +71,21 @@ var reader = {
   edit : function(options) {
     if (options.type == 'Question') {
       questionEditor.edit(options.id);
+    }
+    else if (options.type == 'Statement') {
+      statementController.edit(options.id);
+    }
+  },
+  peek : function(options) {
+    reader.PeekController.peek(options);
+  },
+
+  search : function(options) {
+    if (options.text!==undefined) {
+      hui.ui.get('search').setValue(options.text);
+    }
+    if (options.tag!==undefined) {
+      hui.ui.get('tags').selectById(options.tag);
     }
   },
 
@@ -100,6 +110,9 @@ var reader = {
 	$addressChanged$addressEditor : function() {
 		this._reloadList();
 	},
+  $statementChanged$internetAddressViewer : function() {
+		this._reloadList();
+  },
 
   $valueChanged$search : function() {
     hui.ui.get('listView').reset();
@@ -162,14 +175,19 @@ var reader = {
     hui.ui.get('addPanel').hide();
     var values = form.getValues();
     form.reset();
+    this.importURL({url:values.url})
+  },
+  
+  importURL : function(options) {
+
     hui.ui.request({
       message : {start:'Adding address'},
       url : '/addInternetAddress',
-      parameters : {url:values.url},
+      parameters : {url:options.url},
       $object : function(info) {
         hui.ui.showMessage({text:'Address added',icon:'common/success',duration:3000});
         this._reloadList();
-        internetAddressViewer.show({
+        this.view({
           id : info.id,
           type: 'InternetAddress'
         });

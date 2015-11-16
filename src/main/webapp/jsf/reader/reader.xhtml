@@ -94,34 +94,26 @@
 		</ui:define>
 		
 		<ui:define name="viewer">
-			<div id="viewer" class="reader_viewer">
+			<div class="reader_view js_internetaddress_viewer">
 				<div class="reader_viewer_frame">
-					<div class="reader_viewer_header">
-						<div id="viewer_header"></div>
+					<div class="reader_view_head">
+						<div class="js_internetaddress_header reader_view_head_info"></div>
               <o:link name="closeAddress" plain="true" styleClass="reader_view_close oo_icon oo_icon_close_line"/>
-              <div class="reader_viewer_actions">
-  							<o:link name="infoButton" plain="true" styleClass="reader_viewer_action">
-  								<o:icon icon="info_light" size="16"/>
-  							</o:link>
-  							<o:link name="inspectButton" plain="true" styleClass="reader_viewer_action">
-  								<o:icon icon="relations_line" size="16"/>
-  							</o:link>
-  							<o:link name="inboxButton" plain="true" styleClass="reader_viewer_action">
-  								<o:icon icon="inbox_line" size="16"/>
-  							</o:link>
-  							<o:link name="favoriteButton" plain="true" id="reader_viewer_favorite" styleClass="reader_viewer_action">
-  								<o:icon icon="star_line" size="16"/>
-  							</o:link>
-                <span class="reader_viewer_view" id="reader_viewer_view">
-                  <a href="#" data-value="text" class="reader_viewer_view_item">Text</a>
-                  <a href="#" data-value="formatted" class="reader_viewer_view_item reader_viewer_view_item_selected">Formatted</a>
-                  <a href="#" data-value="web" class="reader_viewer_view_item">Web</a>
+              <div class="reader_view_head_actions">
+								<o:icon icon="info_light" size="16" name="infoButton" styleClass="reader_view_head_action"/>
+								<o:icon icon="relations_line" size="16" name="inspectButton" styleClass="reader_view_head_action"/>
+								<o:icon icon="inbox_line" size="16" name="inboxButton" styleClass="reader_view_head_action"/>
+								<o:icon icon="star_line" size="16" name="favoriteButton" styleClass="reader_view_head_action"/>
+                <span class="reader_view_segmented js_internetaddress_viewselector" id="reader_viewer_view">
+                  <a href="#" data-value="text" class="reader_view_segmented_item">Text</a>
+                  <a href="#" data-value="formatted" class="reader_view_segmented_item reader_view_segmented_item-selected">Formatted</a>
+                  <a href="#" data-value="web" class="reader_view_segmented_item">Web</a>
                 </span>
             </div>
 					</div>
 					<div class="reader_viewer_content reader_viewer_content_formatted" id="viewer_content">
 						<div class="oo_spinner" id="viewer_spinner"></div>
-						<div class="reader_viewer_perpective reader_viewer_perpective_formatted" id="viewer_formatted"></div>
+						<div class="reader_viewer_perpective reader_viewer_perpective_formatted reader_internetaddress_perspective-formatted" id="viewer_formatted"></div>
 						<div class="reader_viewer_perpective reader_viewer_perpective_text" id="viewer_text"></div>
 						<iframe class="reader_viewer_perpective reader_viewer_perpective_web" id="viewer_frame"></iframe>
 					</div>

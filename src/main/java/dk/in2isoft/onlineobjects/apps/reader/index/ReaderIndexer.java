@@ -5,6 +5,8 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.IntField;
+import org.apache.lucene.document.LongField;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 
@@ -210,6 +212,8 @@ public class ReaderIndexer implements ModelEventListener, ModelPrivilegesEventLi
 		}
 		doc.add(new TextField("inbox", inboxed ? "yes" : "no", Field.Store.YES));
 		doc.add(new TextField("favorite", favorited ? "yes" : "no", Field.Store.YES));
+		doc.add(new LongField("updated", entity.getUpdated().getTime(), Field.Store.YES));
+		doc.add(new LongField("created", entity.getCreated().getTime(), Field.Store.YES));
 	}
 	
 	private IndexManager getIndexManager(Privileged privileged) {

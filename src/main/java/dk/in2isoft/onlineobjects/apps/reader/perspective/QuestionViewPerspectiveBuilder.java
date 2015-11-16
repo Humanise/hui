@@ -39,11 +39,13 @@ public class QuestionViewPerspectiveBuilder {
 		List<Statement> answers = modelService.getParents(question, Relation.ANSWERS, Statement.class, session);
 
 		HTMLWriter html = new HTMLWriter();
+		
+		html.startH2().withClass("reader_question_header").text("Answers").endH2();
 
 		for (Statement statement : answers) {
 			html.startDiv().withData("id", statement.getId()).withClass("reader_question_answer");
 			html.startP().withClass("reader_question_answer_text").text(statement.getText());
-			html.startSpan().withClass("oo_icon oo_icon_16 oo_icon_info_light js-clickable").withData("id",statement.getId(),"type",statement.getClass().getSimpleName()).endSpan();
+			html.startSpan().withClass("oo_icon oo_icon_16 oo_icon_info_light js-clickable").withDataMap("id",statement.getId(),"type",statement.getClass().getSimpleName()).endSpan();
 			html.endP();
 			List<Person> authors = modelService.getChildren(statement, Relation.KIND_COMMON_AUTHOR, Person.class, session);
 			List<InternetAddress> addresses = modelService.getParents(statement, Relation.KIND_STRUCTURE_CONTAINS, InternetAddress.class, session);
