@@ -191,4 +191,4 @@ oo.Link.prototype = {
 	_click : function() {
 		this.fire('click');
 	}
-}
+};

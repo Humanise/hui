@@ -19,7 +19,7 @@ mvn install:install-file -Dfile=/Users/jonasmunk/Downloads/XOM/xom-1.2.10.jar -D
 
 sudo npm install
 
-sudo gem install -n /usr/local/bin
+sudo gem install compass -n /usr/local/bin
 
 =========== Tomcat / Apache setup ============
 
