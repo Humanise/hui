@@ -185,7 +185,7 @@ a.oo_topbar_user span
 div.oo_topbar_info_busy
 {
 	height: 60px;
-	background: url('../../hui/gfx/progress/spinner_white_24.gif') center center no-repeat;
+	background: url('../../../hui/gfx/progress/spinner_white_24.gif') center center no-repeat;
 }
 
 div.oo_topbar_info
@@ -196,22 +196,25 @@ div.oo_topbar_info
 
 div.oo_topbar_info_photo
 {
-	width: 50px;
+	width: 60px;
 	height: 60px;
 	float: left;
-	background: #eee;
 	font-size: 0;
 }
 
 div.oo_topbar_info_photo div
 {
-	width: 50px;
+	width: 60px;
 	height: 60px;	
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.3);
+  border-radius: 50%;
+  overflow: hidden;
+  background: #eee;
 }
 
 div.oo_topbar_info_content
 {
-	margin-left: 60px;
+	margin-left: 70px;
 	padding-bottom: 10px;
 }
 

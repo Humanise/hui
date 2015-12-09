@@ -1,11 +1,14 @@
 package dk.in2isoft.onlineobjects.service.authentication;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import dk.in2isoft.commons.lang.Strings;
@@ -17,6 +20,7 @@ import dk.in2isoft.onlineobjects.model.Person;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.service.authentication.perspectives.UserInfoPerspective;
 import dk.in2isoft.onlineobjects.ui.Request;
+import dk.in2isoft.onlineobjects.ui.data.Option;
 
 public class AuthenticationController extends AuthenticationControllerBase {
 
@@ -75,6 +79,7 @@ public class AuthenticationController extends AuthenticationControllerBase {
 		User user = request.getSession().getUser();
 		Image image = memberService.getUsersProfilePhoto(user);
 		Person person = memberService.getUsersPerson(user);
+		String language = request.getString("language");
 		
 		UserInfoPerspective info = new UserInfoPerspective();
 		info.setUsername(user.getUsername());
@@ -86,6 +91,10 @@ public class AuthenticationController extends AuthenticationControllerBase {
 		} else {
 			info.setFullName(user.getName());
 		}
+		List<Option> links = new ArrayList<>();
+		links.add(Option.of("Account", configurationService.getApplicationContext("account", null, request)));
+		links.add(Option.of("Profile", configurationService.getApplicationContext("people", null, request)));
+		info.setLinks(links);
 		request.sendObject(info);
 	}
 	

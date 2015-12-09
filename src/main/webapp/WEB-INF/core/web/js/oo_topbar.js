@@ -62,18 +62,21 @@ oo.TopBar.prototype = {
 		var node = this._userInfoBlock;
 		hui.ui.request({
 			url : oo.baseContext+'/service/authentication/getUserInfo',
+      parameters : {language : oo.language},
 			$object : function(info) {
 				hui.cls.remove(node,'oo_topbar_info_busy')
 				var html = '<div class="oo_topbar_info_photo">';
 				if (info.photoId) {
-					html+='<div style="background: url('+oo.baseContext+'/service/image/id'+info.photoId+'width50height60sharpen0.7cropped.jpg)"></div>';
+					html+='<div style="background-image: url('+oo.baseContext+'/service/image/id'+info.photoId+'width60height60sharpen0.7cropped.jpg)"></div>';
 				}
 				html+='</div><div class="oo_topbar_info_content">'+
 					'<p class="oo_topbar_info_name">'+hui.string.escape(info.fullName)+'</p>'+
-					'<p class="oo_topbar_info_username">'+hui.string.escape(info.username)+'</p>'+
-					'<p class="oo_topbar_info_account"><strong>&rsaquo;</strong> <a href="http://account.'+oo.baseDomainContext+'/'+oo.language+'/?_sessionId='+oo.session+'"><span>Account</span></a></p>'+
-					'<p class="oo_topbar_info_account"><strong>&rsaquo;</strong> <a href="http://people.'+oo.baseDomainContext+'/'+oo.language+'/'+info.username+'/?_sessionId='+oo.session+'"><span>Profile</span></a></p>'+
-					'</div>';
+        '<p class="oo_topbar_info_username">'+hui.string.escape(info.username)+'</p>';
+        for (var i = 0; i < info.links.length; i++) {
+          var link = info.links[i];
+					html += '<p class="oo_topbar_info_account"><strong>&rsaquo;</strong> <a href="' + link.value + '"><span>' + hui.string.escape(link.label) + '</span></a></p>';
+        }
+				html += '</div>';
 				node.innerHTML = html;
 				
 			}.bind(this),
