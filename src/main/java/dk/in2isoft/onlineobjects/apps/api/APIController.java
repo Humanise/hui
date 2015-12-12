@@ -15,6 +15,7 @@ import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.model.InternetAddress;
+import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.Statement;
 import dk.in2isoft.onlineobjects.model.User;
@@ -48,6 +49,19 @@ public class APIController extends APIControllerBase {
 		response.setContentType("text/plain");
 		PrintWriter writer = response.getWriter();
 		writer.write(extractText(url));
+	}
+	
+	@Path(start={"v1.0","html","extract"})
+	public ClientKeyResponse getSecret(Request request) throws IOException, EndUserException {
+		String username = request.getString("username");
+		String password = request.getString("password");
+		
+		User user = securityService.getUser(username, password);
+		String secret = user.getPropertyValue(Property.KEY_AUTHENTICATION_SECRET);
+		
+		ClientKeyResponse response = new ClientKeyResponse();
+		response.setSecret(secret);
+		return response;
 	}
 	
 	@Path(start={"v1.0","bookmark"})
