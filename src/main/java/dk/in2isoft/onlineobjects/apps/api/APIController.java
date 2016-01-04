@@ -55,21 +55,40 @@ public class APIController extends APIControllerBase {
 		PrintWriter writer = response.getWriter();
 		writer.write(extractText(url));
 	}
-
-	@Path(start = { "v1.0", "html", "extract" })
+    
+	@Path(start={"v1.0","authentication"})
 	public ClientKeyResponse getSecret(Request request) throws IOException, EndUserException {
 		String username = request.getString("username");
 		String password = request.getString("password");
-
+		String clientId = request.getString("client");
+		
 		User user = securityService.getUser(username, password);
+		if (user==null) {
+			try {
+				Thread.sleep(1500);
+			} catch (InterruptedException e) {
+				
+			}
+			throw new SecurityException("User not found");
+		}
 		String secret = user.getPropertyValue(Property.KEY_AUTHENTICATION_SECRET);
 
 		ClientKeyResponse response = new ClientKeyResponse();
 		response.setSecret(secret);
 		return response;
 	}
-
-	@Path(start = { "v1.0", "bookmark" })
+	
+	@Path(start={"v1.0","validateClient"})
+	public void validateClient(Request request) throws IOException, EndUserException {
+		String clientId = request.getString("client");
+		
+		User user = securityService.getUserBySecret(clientId);
+		if (user==null) {
+			throw new SecurityException("User not found");
+		}
+	}
+	
+	@Path(start={"v1.0","bookmark"})
 	public void bookmark(Request request) throws IOException, EndUserException {
 		String url = request.getString("url", "An URL parameters must be provided");
 		String quote = request.getString("quote");
