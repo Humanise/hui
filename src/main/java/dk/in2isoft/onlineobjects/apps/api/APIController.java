@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.collect.Lists;
+
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.in2igui.FileBasedInterface;
@@ -146,7 +148,11 @@ public class APIController extends APIControllerBase {
 		ReaderQuery query = new ReaderQuery();
 		query.setPage(page);
 		query.setPageSize(pageSize);
-		return readerSearcher.search(query, user);
+		query.setSubset("everything");
+		query.setType(Lists.newArrayList("any"));
+		query.setText(request.getString("text"));
+		SearchResult<Entity> result = readerSearcher.search(query, user);
+		return result;
 	}
 
 	private String extractText(String url) {
