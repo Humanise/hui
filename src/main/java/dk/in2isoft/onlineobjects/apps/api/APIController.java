@@ -2,6 +2,8 @@ package dk.in2isoft.onlineobjects.apps.api;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -10,10 +12,13 @@ import org.apache.commons.lang.StringUtils;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.in2igui.FileBasedInterface;
+import dk.in2isoft.onlineobjects.apps.reader.index.ReaderQuery;
 import dk.in2isoft.onlineobjects.apps.videosharing.Path;
 import dk.in2isoft.onlineobjects.core.Query;
+import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
+import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.InternetAddress;
 import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.model.Relation;
@@ -24,14 +29,14 @@ import dk.in2isoft.onlineobjects.ui.Request;
 
 public class APIController extends APIControllerBase {
 
-	@Path(expression="/")
+	@Path(expression = "/")
 	public void front(Request request) throws IOException {
 
-		FileBasedInterface ui = new FileBasedInterface(getFile("web","front.gui.xml"));
+		FileBasedInterface ui = new FileBasedInterface(getFile("web", "front.gui.xml"));
 		ui.render(request.getRequest(), request.getResponse());
 	}
 
-	@Path(start={"v1.0","language","analyse"})
+	@Path(start = { "v1.0", "language", "analyse" })
 	public TextAnalysis analyse(Request request) throws IOException, EndUserException {
 		String text = request.getString("text");
 		String url = request.getString("url");
@@ -40,8 +45,8 @@ public class APIController extends APIControllerBase {
 		}
 		return languageService.analyse(text);
 	}
-	
-	@Path(start={"v1.0","html","extract"})
+
+	@Path(start = { "v1.0", "html", "extract" })
 	public void extractText(Request request) throws IOException, EndUserException {
 		String url = request.getString("url", "An URL parameters must be provided");
 		HttpServletResponse response = request.getResponse();
@@ -50,47 +55,47 @@ public class APIController extends APIControllerBase {
 		PrintWriter writer = response.getWriter();
 		writer.write(extractText(url));
 	}
-	
-	@Path(start={"v1.0","html","extract"})
+
+	@Path(start = { "v1.0", "html", "extract" })
 	public ClientKeyResponse getSecret(Request request) throws IOException, EndUserException {
 		String username = request.getString("username");
 		String password = request.getString("password");
-		
+
 		User user = securityService.getUser(username, password);
 		String secret = user.getPropertyValue(Property.KEY_AUTHENTICATION_SECRET);
-		
+
 		ClientKeyResponse response = new ClientKeyResponse();
 		response.setSecret(secret);
 		return response;
 	}
-	
-	@Path(start={"v1.0","bookmark"})
+
+	@Path(start = { "v1.0", "bookmark" })
 	public void bookmark(Request request) throws IOException, EndUserException {
 		String url = request.getString("url", "An URL parameters must be provided");
 		String quote = request.getString("quote");
 		String secret = request.getString("secret");
-		
+
 		// TODO Validate URL
-		
-		//System.out.println(url);
-		//System.out.println(quote);
-		//System.out.println(secret);
-				
+
+		// System.out.println(url);
+		// System.out.println(quote);
+		// System.out.println(secret);
+
 		User user = securityService.getUserBySecret(secret);
-		if (user!=null) {
+		if (user != null) {
 			Query<InternetAddress> query = Query.after(InternetAddress.class).withPrivileged(user).withField(InternetAddress.FIELD_ADDRESS, url);
 			InternetAddress address = modelService.search(query).getFirst();
-			if (address==null) {
+			if (address == null) {
 				address = new InternetAddress();
 				address.setAddress(url);
 				HTMLDocument doc = htmlService.getDocumentSilently(url);
-				if (doc!=null) {
+				if (doc != null) {
 					address.setName(doc.getTitle());
 				} else {
 					address.setName(Strings.simplifyURL(url));
 				}
 				modelService.createItem(address, user);
-				
+
 				inboxService.add(user, address);
 			}
 			if (Strings.isNotBlank(quote)) {
@@ -103,11 +108,31 @@ public class APIController extends APIControllerBase {
 		} else {
 			throw new SecurityException("No user found with that secret key");
 		}
-}
-	
+	}
+
+	@Path(start = { "v1.0", "knowledge", "list" })
+	public SearchResult<Entity> knowledgeList(Request request) throws IOException, EndUserException {
+		String secret = request.getString("secret");
+		User user = securityService.getUserBySecret(secret);
+		if (user==null) {
+			throw new SecurityException("User not found");
+		}
+		
+		int page = request.getInt("page");
+		int pageSize = request.getInt("pageSize");
+		if (pageSize == 0) {
+			pageSize = 30;
+		}
+
+		ReaderQuery query = new ReaderQuery();
+		query.setPage(page);
+		query.setPageSize(pageSize);
+		return readerSearcher.search(query, user);
+	}
+
 	private String extractText(String url) {
 		HTMLDocument doc = htmlService.getDocumentSilently(url);
-		if (doc==null) {
+		if (doc == null) {
 			return null;
 		}
 		return doc.getExtractedText();

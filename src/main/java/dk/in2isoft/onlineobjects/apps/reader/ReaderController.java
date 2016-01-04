@@ -35,6 +35,7 @@ import dk.in2isoft.onlineobjects.apps.videosharing.Path;
 import dk.in2isoft.onlineobjects.core.Pair;
 import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.Query;
+import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.core.exceptions.ContentNotFoundException;
@@ -69,7 +70,7 @@ public class ReaderController extends ReaderControllerBase {
 	private static Logger log = Logger.getLogger(ReaderController.class);
 
 	@Path
-	public ViewResult list(Request request) throws IOException, ModelException, ExplodingClusterFuckException {
+	public ViewResult list(Request request) throws IOException, ModelException, ExplodingClusterFuckException, SecurityException {
 
 		int page = request.getInt("page");
 		int pageSize = request.getInt("pageSize");
@@ -77,12 +78,12 @@ public class ReaderController extends ReaderControllerBase {
 			pageSize = 30;
 		}
 
-		Pair<Integer, List<Entity>> pair = readerSearcher.search(request, page, pageSize);
+		SearchResult<Entity> found = readerSearcher.search(request, page, pageSize);
 
 		ViewResult result = new ViewResult();
-		result.setTotal(pair.getKey());
+		result.setTotal(found.getTotalCount());
 
-		List<Entity> entities = pair.getValue();
+		List<Entity> entities = found.getList();
 		List<ListItemPerspective> list = Lists.newArrayList();
 		for (Entity entity : entities) {
 

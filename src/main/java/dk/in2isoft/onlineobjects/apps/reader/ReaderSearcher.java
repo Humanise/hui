@@ -11,11 +11,12 @@ import com.google.common.collect.Lists;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.apps.reader.index.ReaderQuery;
 import dk.in2isoft.onlineobjects.core.ModelService;
-import dk.in2isoft.onlineobjects.core.Pair;
+import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.core.exceptions.ExplodingClusterFuckException;
+import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Hypothesis;
 import dk.in2isoft.onlineobjects.model.InternetAddress;
@@ -32,7 +33,7 @@ public class ReaderSearcher {
 	private ModelService modelService;
 	private IndexService indexService;
 	
-	public Pair<Integer,List<Entity>> search(Request request, int page, int pageSize) throws ExplodingClusterFuckException {
+	public SearchResult<Entity> search(Request request, int page, int pageSize) throws ExplodingClusterFuckException, SecurityException {
 		ReaderQuery readerQuery = new ReaderQuery();
 		readerQuery.setText(request.getString("text"));
 		readerQuery.setSubset(request.getString("subset"));
@@ -41,16 +42,23 @@ public class ReaderSearcher {
 		readerQuery.setPageSize(pageSize);
 		readerQuery.setWordIds(request.getLongs("tags"));
 		readerQuery.setAuthorIds(request.getLongs("authors"));
+		UserSession session = request.getSession();
+		
+		return search(readerQuery, session);
+	}
 
-		final ListMultimap<String, Long> idsByType = find(request, readerQuery);
+	public SearchResult<Entity> search(ReaderQuery readerQuery, Privileged privileged) throws ExplodingClusterFuckException, SecurityException {
+		if (privileged==null) {
+			throw new SecurityException("No privileged provided");
+		}
+		final ListMultimap<String, Long> idsByType = find(privileged, readerQuery);
 		final List<Long> ids = Lists.newArrayList(idsByType.values());
 
 		List<Entity> list = Lists.newArrayList();
-		UserSession session = request.getSession();
 		{
 			List<Long> addressIds = idsByType.get(InternetAddress.class.getSimpleName().toLowerCase());
 			if (!addressIds.isEmpty()) {
-				Query<InternetAddress> query = Query.after(InternetAddress.class).withIds(addressIds).withPrivileged(session);
+				Query<InternetAddress> query = Query.after(InternetAddress.class).withIds(addressIds).withPrivileged(privileged);
 
 				list.addAll(modelService.list(query));
 			}
@@ -58,7 +66,7 @@ public class ReaderSearcher {
 		{
 			List<Long> partIds = idsByType.get(Statement.class.getSimpleName().toLowerCase());
 			if (!partIds.isEmpty()) {
-				Query<Statement> query = Query.after(Statement.class).withIds(partIds).withPrivileged(session);
+				Query<Statement> query = Query.after(Statement.class).withIds(partIds).withPrivileged(privileged);
 
 				list.addAll(modelService.list(query));
 			}
@@ -66,7 +74,7 @@ public class ReaderSearcher {
 		{
 			List<Long> partIds = idsByType.get(Question.class.getSimpleName().toLowerCase());
 			if (!partIds.isEmpty()) {
-				Query<Question> query = Query.after(Question.class).withIds(partIds).withPrivileged(session);
+				Query<Question> query = Query.after(Question.class).withIds(partIds).withPrivileged(privileged);
 
 				list.addAll(modelService.list(query));
 			}
@@ -74,7 +82,7 @@ public class ReaderSearcher {
 		{
 			List<Long> partIds = idsByType.get(Hypothesis.class.getSimpleName().toLowerCase());
 			if (!partIds.isEmpty()) {
-				Query<Hypothesis> query = Query.after(Hypothesis.class).withIds(partIds).withPrivileged(session);
+				Query<Hypothesis> query = Query.after(Hypothesis.class).withIds(partIds).withPrivileged(privileged);
 
 				list.addAll(modelService.list(query));
 			}
@@ -84,7 +92,8 @@ public class ReaderSearcher {
 
 		int totalCount = idsByType.get("total").iterator().next().intValue(); // TODO
 		
-		return Pair.of(totalCount, list);
+		
+		return new SearchResult<>(list, totalCount);
 	}
 
 	private void sortByIds(List<Entity> list, final List<Long> ids) {
@@ -103,8 +112,8 @@ public class ReaderSearcher {
 		});
 	}
 
-	private ListMultimap<String, Long> find(Request request, ReaderQuery query) throws ExplodingClusterFuckException {
-		IndexManager index = getIndex(request);
+	private ListMultimap<String, Long> find(Privileged privileged, ReaderQuery query) throws ExplodingClusterFuckException {
+		IndexManager index = getIndex(privileged);
 		if (Strings.isBlank(query.getText()) && Strings.isBlank(query.getSubset())) {
 			ListMultimap<String, Long> idsByType = index.getIdsByType();
 			idsByType.put("total",Long.valueOf(idsByType.size()));
@@ -128,8 +137,8 @@ public class ReaderSearcher {
 		return ids;
 	}
 
-	private IndexManager getIndex(Request request) {
-		return indexService.getIndex("app-reader-user-" + request.getSession().getIdentity());
+	private IndexManager getIndex(Privileged privileged) {
+		return indexService.getIndex("app-reader-user-" + privileged.getIdentity());
 	}
 	
 	// Wiring...

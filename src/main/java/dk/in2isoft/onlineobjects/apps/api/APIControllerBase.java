@@ -6,6 +6,7 @@ import java.util.Locale;
 import com.google.common.collect.Lists;
 
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
+import dk.in2isoft.onlineobjects.apps.reader.ReaderSearcher;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.modules.inbox.InboxService;
 import dk.in2isoft.onlineobjects.modules.networking.HTMLService;
@@ -18,6 +19,8 @@ public abstract class APIControllerBase extends ApplicationController {
 	protected HTMLService htmlService;
 	protected SecurityService securityService;
 	protected InboxService inboxService;
+	
+	protected ReaderSearcher readerSearcher;
 	
 	public APIControllerBase() {
 		super("api");
@@ -50,6 +53,10 @@ public abstract class APIControllerBase extends ApplicationController {
 	
 	public void setInboxService(InboxService inboxService) {
 		this.inboxService = inboxService;
+	}
+	
+	public void setReaderSearcher(ReaderSearcher readerSearcher) {
+		this.readerSearcher = readerSearcher;
 	}
 
 }

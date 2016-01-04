@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gui xmlns="uri:hui" title="Scheduler" padding="10">
-	<dwr base="/dwr/">
-		<interface name="AppSetup"/>
-	</dwr>
+
 	<controller source="surveillance.js"/>
 	<source name="listSource" url="getSurveillanceList">
 		<parameter key="kind" value="@selection.value"/>

@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gui xmlns="uri:hui" title="Scheduler" padding="10">
-	<dwr base="/dwr/">
-		<interface name="AppSetup"/>
-	</dwr>
 	<controller name="controller" source="scheduler.js"/>
 	<source url="listJobs" name="listSource"/>
 	<source url="listJobLog" name="logListSource"/>
