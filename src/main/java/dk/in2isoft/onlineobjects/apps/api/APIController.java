@@ -21,8 +21,10 @@ import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.model.Entity;
+import dk.in2isoft.onlineobjects.model.Hypothesis;
 import dk.in2isoft.onlineobjects.model.InternetAddress;
 import dk.in2isoft.onlineobjects.model.Property;
+import dk.in2isoft.onlineobjects.model.Question;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.Statement;
 import dk.in2isoft.onlineobjects.model.User;
@@ -132,7 +134,7 @@ public class APIController extends APIControllerBase {
 	}
 
 	@Path(start = { "v1.0", "knowledge", "list" })
-	public SearchResult<Entity> knowledgeList(Request request) throws IOException, EndUserException {
+	public SearchResult<KnowledgeListRow> knowledgeList(Request request) throws IOException, EndUserException {
 		String secret = request.getString("secret");
 		User user = securityService.getUserBySecret(secret);
 		if (user==null) {
@@ -151,8 +153,35 @@ public class APIController extends APIControllerBase {
 		query.setSubset("everything");
 		query.setType(Lists.newArrayList("any"));
 		query.setText(request.getString("text"));
-		SearchResult<Entity> result = readerSearcher.search(query, user);
-		return result;
+		SearchResult<Entity> searchResult = readerSearcher.search(query, user);
+		
+		List<KnowledgeListRow> list = new ArrayList<>();
+		for (Entity entity : searchResult.getList()) {
+			KnowledgeListRow row = new KnowledgeListRow();
+			row.id = entity.getId();
+			row.type = entity.getClass().getSimpleName();
+			if (entity instanceof InternetAddress) {
+				InternetAddress address = (InternetAddress) entity;
+				row.url = address.getAddress();
+				row.text = address.getName();
+			}
+			else if (entity instanceof Statement) {
+				row.text = ((Statement) entity).getText();
+				Query<InternetAddress> q = Query.after(InternetAddress.class).to(entity, Relation.KIND_STRUCTURE_CONTAINS).withPrivileged(request.getSession());
+				InternetAddress addr = modelService.search(q).getFirst();
+				if (addr != null) {
+					row.url = addr.getAddress();
+				}
+			}
+			else if (entity instanceof Question) {
+				row.text = ((Question) entity).getText();
+			}
+			else if (entity instanceof Hypothesis) {
+				row.text = ((Hypothesis) entity).getText();
+			}
+			list.add(row);
+		}
+		return new SearchResult<>(list, searchResult.getTotalCount());
 	}
 
 	private String extractText(String url) {
