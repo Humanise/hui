@@ -10,15 +10,15 @@ import dk.in2isoft.commons.jsf.Components;
 import dk.in2isoft.commons.jsf.Dependencies;
 import dk.in2isoft.commons.jsf.TagWriter;
 
-@FacesComponent(value = LayoutComponent.TYPE)
-@Dependencies(js = { "/hui/js/Layout.js" }, css = { "/hui/css/layout.css" }, requires = { HUIComponent.class })
-public class LayoutComponent extends AbstractComponent {
+@FacesComponent(value = StructureComponent.TYPE)
+@Dependencies(js = { "/hui/js/Structure.js" }, css = { "/hui/css/structure.css" }, requires = { HUIComponent.class })
+public class StructureComponent extends AbstractComponent {
 
-	public static final String TYPE = "hui.layout";
+	public static final String TYPE = "hui.structure";
 
 	private String name;
 
-	public LayoutComponent() {
+	public StructureComponent() {
 		super(TYPE);
 	}
 

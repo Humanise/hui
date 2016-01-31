@@ -18,7 +18,7 @@ import dk.in2isoft.in2igui.data.FinderConfiguration.FinderSearchConfiguration;
 @Dependencies(js = { "/hui/js/Finder.js" }, requires = { HUIComponent.class }, uses = {
 		ListComponent.class, WindowComponent.class, ButtonComponent.class,
 		SearchFieldComponent.class, SourceComponent.class,
-		UploadComponent.class, LayoutComponent.class, OverflowComponent.class,
+		UploadComponent.class, StructureComponent.class, OverflowComponent.class,
 		BarComponent.class, SelectionComponent.class, BoundPanelComponent.class, TextFieldComponent.class })
 public class FinderComponent extends AbstractComponent {
 
