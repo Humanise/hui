@@ -4,8 +4,6 @@ import java.lang.reflect.Method;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.directwebremoting.WebContextFactory;
-
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
@@ -19,11 +17,11 @@ public abstract class AbstractRemotingFacade {
 	}
 	
 	protected Request getRequest() {
-		return Request.get(WebContextFactory.get().getHttpServletRequest(),WebContextFactory.get().getHttpServletResponse());
+		return null;
 	}
 	
 	protected HttpServletRequest getHttpRequest() {
-		return WebContextFactory.get().getHttpServletRequest();
+		return null;
 	}
 
 	public void setModelService(ModelService modelService) {
