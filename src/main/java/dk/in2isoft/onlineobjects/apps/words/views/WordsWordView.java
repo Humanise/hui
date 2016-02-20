@@ -43,8 +43,11 @@ public class WordsWordView extends AbstractView implements InitializingBean {
 	private Language language;
 	
 	private List<RelationOption> relationOptions;
-	private List<String> RELATIONS_BOTH_WAYS = Lists.newArrayList(Relation.KIND_SEMANTICS_EQUIVALENT, Relation.KIND_SEMANTICS_SYNONYMOUS, Relation.KIND_SEMANTICS_ANTONYMOUS);
-	private List<String> RELATIONS_ONE_WAY = Lists.newArrayList(Relation.KIND_SEMANTICS_MORPHEME, Relation.KIND_SEMANTICS_GENRALTIZATION);
+	private List<String> RELATIONS_UNDIRECTED = Lists.newArrayList(Relation.KIND_SEMANTICS_EQUIVALENT, Relation.KIND_SEMANTICS_SYNONYMOUS, Relation.KIND_SEMANTICS_ANTONYMOUS);
+	private List<String> RELATIONS_DIRECTED = Lists.newArrayList(Relation.KIND_SEMANTICS_MORPHEME, Relation.KIND_SEMANTICS_GENRALTIZATION, Relation.KIND_SEMANTICS_DISCIPLINE, Relation.KIND_SEMANTICS_CONTAINS);
+	private List<String> RELATIONS_OUTGOING = Lists.newArrayList(Relation.KIND_SEMANTICS_EQUIVALENT, Relation.KIND_SEMANTICS_SYNONYMOUS, Relation.KIND_SEMANTICS_ANTONYMOUS, Relation.KIND_SEMANTICS_MORPHEME, Relation.KIND_SEMANTICS_GENRALTIZATION, Relation.KIND_SEMANTICS_CONTAINS, Relation.KIND_SEMANTICS_DISCIPLINE);
+	private List<String> RELATIONS_INCOMING = Lists.newArrayList(Relation.KIND_SEMANTICS_EQUIVALENT, Relation.KIND_SEMANTICS_SYNONYMOUS, Relation.KIND_SEMANTICS_ANTONYMOUS, Relation.KIND_SEMANTICS_MORPHEME, Relation.KIND_SEMANTICS_GENRALTIZATION, Relation.KIND_SEMANTICS_CONTAINS);
+	
 	
 	private static final Comparator<WordRelation> ORDERING = Ordering.natural().onResultOf(relation -> relation.getWord().getText());
 	
@@ -57,7 +60,7 @@ public class WordsWordView extends AbstractView implements InitializingBean {
 		if (text!=null) {
 			words = wordService.getImpressions(Query.of(Word.class).withFieldLowercase(Word.TEXT_FIELD, text));
 			for (WordImpression impression : words) {
-				Multimap<String, WordRelation> map = getRelationsNew(impression);
+				Multimap<String, WordRelation> map = getRelations(impression);
 				List<WordRelationGroup> relationsList = Lists.newArrayList();
 				for (String kind : map.keySet()) {
 					WordRelationGroup group = new WordRelationGroup();
@@ -130,25 +133,27 @@ public class WordsWordView extends AbstractView implements InitializingBean {
 		return null;
 	}
 
-	private Multimap<String, WordRelation> getRelationsNew(WordImpression impression) throws ModelException {
+	private Multimap<String, WordRelation> getRelations(WordImpression impression) throws ModelException {
 		Multimap<String, WordRelation> map = HashMultimap.create();
 		
 		WordRelationsQuery query = new WordRelationsQuery(impression.getWord());
+		query.setOutgoingKinds(RELATIONS_OUTGOING);
+		query.setIncomingKinds(RELATIONS_INCOMING);
 		List<WordRelationRow> rows = modelService.list(query);
 		for (WordRelationRow row : rows) {
 			WordRelation relation = new WordRelation();
 			relation.setId(row.getRelationId());
 			Word word = new Word();
 			String kind = row.getRelationKind();
-			if (row.getSuperId()==impression.getWord().getId()) {
-				word.setId(row.getSubId());
-				word.setText(row.getSubText());
-				if (RELATIONS_ONE_WAY.contains(kind)) {
+			if (row.getFromId()==impression.getWord().getId()) {
+				word.setId(row.getToId());
+				word.setText(row.getToText());
+			} else {
+				word.setId(row.getFromId());
+				word.setText(row.getFromText());
+				if (RELATIONS_DIRECTED.contains(kind)) {
 					kind = kind+".reverse";
 				}
-			} else {
-				word.setId(row.getSuperId());
-				word.setText(row.getSuperText());
 			}
 			relation.setWord(word);
 			if (!contains(map, kind, relation)) {
@@ -209,13 +214,13 @@ public class WordsWordView extends AbstractView implements InitializingBean {
 		Messages msg = new Messages(WordsController.class);
 		relationOptions = Lists.newArrayList();
 		Locale locale = getLocale();
-		for (String kind : RELATIONS_BOTH_WAYS) {
+		for (String kind : RELATIONS_UNDIRECTED) {
 			RelationOption option = new RelationOption();
 			option.setKind(kind);
 			option.setLabel(msg.get(kind, locale));
 			relationOptions.add(option);
 		}
-		for (String kind : RELATIONS_ONE_WAY) {
+		for (String kind : RELATIONS_DIRECTED) {
 			RelationOption option = new RelationOption();
 			option.setKind(kind);
 			option.setLabel(msg.get(kind, locale));

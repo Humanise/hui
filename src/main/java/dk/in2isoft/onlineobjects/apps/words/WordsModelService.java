@@ -63,6 +63,7 @@ public class WordsModelService {
 
 	public Diagram getDiagram(String text) throws ModelException {
 		Messages msg = new Messages(WordsController.class);
+		boolean showLanguage = false;
 		Diagram diagram = new Diagram();
 		diagram.setMaxNodeCount(100);
 		Query<Word> query = Query.of(Word.class).withFieldLowercase(Word.TEXT_FIELD, text);
@@ -79,8 +80,8 @@ public class WordsModelService {
 			diagram.addNode(wordNode);
 			Locale locale = new Locale("en");
 			
-			List<Relation> childRelations = modelService.getChildRelations(word, Word.class);
-			for (Relation relation : childRelations) {
+			List<Relation> relationsAwayFrom = modelService.getRelationsFrom(word, Word.class);
+			for (Relation relation : relationsAwayFrom) {
 				if (diagram.isFull()) {
 					break;
 				}
@@ -91,9 +92,9 @@ public class WordsModelService {
 				childNode.addProperty("Type", "Word");
 				childNode.setData(getData(child));
 				diagram.addNode(childNode);
-				diagram.addEdge(wordNode,msg.get(relation.getKind()+".reverse", locale),childNode);
+				diagram.addEdge(wordNode,msg.get(relation.getKind(), locale),childNode);
 				
-				if (!diagram.isFull()) {
+				if (!diagram.isFull() && showLanguage) {
 					Language language = modelService.getParent(child, Language.class);
 					if (language!=null) {
 						Node langNode = new Node();
@@ -106,7 +107,7 @@ public class WordsModelService {
 				}
 			}
 			
-			List<Relation> parentRelations = modelService.getParentRelations(word, Word.class);
+			List<Relation> parentRelations = modelService.getRelationsTo(word, Word.class);
 			for (Relation relation : parentRelations) {
 				if (diagram.isFull()) {
 					break;
@@ -118,22 +119,22 @@ public class WordsModelService {
 				childNode.addProperty("Type", "Word");
 				childNode.setData(getData(parent));
 				diagram.addNode(childNode);
-				diagram.addEdge(wordNode,msg.get(relation.getKind(), locale),childNode);
+				diagram.addEdge(wordNode,msg.get(relation.getKind()+".reverse", locale),childNode);
 
-				if (!diagram.isFull()) {
-				Language language = modelService.getParent(parent, Language.class);
-				if (language!=null) {
-					Node langNode = new Node();
-					langNode.setId(language.getId());
-					langNode.setTitle(language.getName());
-					langNode.addProperty("Type", "Language");
-					diagram.addNode(langNode);
-					diagram.addEdge(childNode,langNode);
-				}
+				if (!diagram.isFull() && showLanguage) {
+					Language language = modelService.getParent(parent, Language.class);
+					if (language!=null) {
+						Node langNode = new Node();
+						langNode.setId(language.getId());
+						langNode.setTitle(language.getName());
+						langNode.addProperty("Type", "Language");
+						diagram.addNode(langNode);
+						diagram.addEdge(childNode,langNode);
+					}
 				}
 			}
 
-			if (!diagram.isFull()) {
+			if (!diagram.isFull() && showLanguage) {
 				Language language = modelService.getParent(word, Language.class);
 				if (language!=null) {
 					Node langNode = new Node();
@@ -263,7 +264,7 @@ public class WordsModelService {
 				throw new IllegalRequestException("Unsupported language ("+languageCode+")");
 			}
 		}
-		List<Relation> parents = modelService.getParentRelations(word, Language.class);
+		List<Relation> parents = modelService.getRelationsTo(word, Language.class);
 		modelService.deleteRelations(parents, privileged);
 		if (language!=null) {
 			Relation relation = modelService.createRelation(language, word, privileged);
@@ -282,7 +283,7 @@ public class WordsModelService {
 		if (lexicalCategory==null) {
 			throw new IllegalRequestException("Unsupported category ("+category+")");
 		}
-		List<Relation> parents = modelService.getParentRelations(word, LexicalCategory.class);
+		List<Relation> parents = modelService.getRelationsTo(word, LexicalCategory.class);
 		modelService.deleteRelations(parents, privileged);
 		Relation categoryRelation = modelService.createRelation(lexicalCategory, word, privileged);
 		securityService.grantPublicPrivileges(categoryRelation, true, true, false);
