@@ -22,18 +22,17 @@ public class WordIndexer implements ModelEventListener {
 	private IndexManager indexManager;
 	
 	private static final Logger log = Logger.getLogger(WordIndexer.class);
+	
+	private boolean enabled;
 
 	public void clear() throws EndUserException {
 		indexManager.clear();
 	}
 	
-	public void entityWasCreated(Entity entity) {
-		if (entity instanceof Word) {
-			indexWord((Word) entity);
-		}
-	}
-	
 	public void indexWord(Word word) {
+		if (!enabled) {
+			return;
+		}
 		try {
 			Document document = documentBuilder.build(word);
 			log.debug("Re-indexing : "+word);
@@ -44,6 +43,9 @@ public class WordIndexer implements ModelEventListener {
 	}
 
 	public void indexWordPerspectives(List<WordListPerspective> words) {
+		if (!enabled) {
+			return;
+		}
 		try {
 			Map<Entity,Document> map = Maps.newHashMap();
 			for (WordListPerspective perspective : words) {
@@ -62,6 +64,9 @@ public class WordIndexer implements ModelEventListener {
 	}
 
 	public void indexWords(List<Word> words) {
+		if (!enabled) {
+			return;
+		}
 		try {
 			Map<Entity,Document> map = Maps.newHashMap();
 			for (Word word : words) {
@@ -73,6 +78,14 @@ public class WordIndexer implements ModelEventListener {
 		} catch (EndUserException e) {
 			log.error("Unable to reindex", e);
 		}			
+	}
+	
+	// Listeners
+	
+	public void entityWasCreated(Entity entity) {
+		if (entity instanceof Word) {
+			indexWord((Word) entity);
+		}
 	}
 
 	public void entityWasUpdated(Entity entity) {
@@ -116,6 +129,12 @@ public class WordIndexer implements ModelEventListener {
 		if (relation.getTo() instanceof Word) {
 			indexWord((Word) relation.getTo());
 		}
+	}
+
+	// Settings
+	
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 
 	// Wiring...

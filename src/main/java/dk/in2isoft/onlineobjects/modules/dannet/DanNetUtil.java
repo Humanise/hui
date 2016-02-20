@@ -2,6 +2,8 @@ package dk.in2isoft.onlineobjects.modules.dannet;
 
 import org.apache.commons.lang.StringEscapeUtils;
 
+import com.hp.hpl.jena.rdf.model.Model;
+
 import dk.in2isoft.commons.lang.Strings;
 
 public class DanNetUtil {
@@ -28,9 +30,14 @@ public class DanNetUtil {
 						examples= usage.split("\\|\\|");
 					}
 					for (String string : examples) {
-						string = string.trim();
-						if (Strings.isNotBlank(string)) {
-							output.getExamples().add(string);
+						
+						String[] sub = string.split("\\|\\|");
+						for (String subThing : sub) {
+							subThing = subThing.trim();
+							if (Strings.isNotBlank(subThing)) {
+								output.getExamples().add(subThing);
+							}
+							
 						}
 					}
 				}
