@@ -332,7 +332,7 @@ public class ModelService {
 
 	
 	public <T extends Entity> void syncRelationsFrom(Entity fromEntity, String relationKind, Class<T> toType, Collection<Long> ids, Privileged privileged) throws ModelException, SecurityException {
-		List<Relation> relations = this.getChildRelations(fromEntity, toType, relationKind, privileged);
+		List<Relation> relations = this.getRelationsFrom(fromEntity, toType, relationKind, privileged);
 		List<Long> toAdd = Lists.newArrayList();
 		toAdd.addAll(ids);
 		for (Relation relation : relations) {
@@ -410,11 +410,11 @@ public class ModelService {
 		return relation;
 	}
 
-	public Relation createRelation(Entity parent, Entity child, String kind, Privileged privileged) throws ModelException {
-		if (parent==null || child==null) {
+	public Relation createRelation(Entity from, Entity to, String kind, Privileged privileged) throws ModelException {
+		if (from==null || to==null) {
 			return null;
 		}
-		Relation relation = new Relation(parent, child);
+		Relation relation = new Relation(from, to);
 		relation.setKind(kind);
 		createItem(relation, privileged);
 		return relation;
@@ -430,7 +430,7 @@ public class ModelService {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Relation> getChildRelations(Entity entity) throws ModelException {
+	public List<Relation> getRelationsFrom(Entity entity) throws ModelException {
 		String hql = "from Relation as relation where relation.from=? order by relation.position";
 		Query q = getSession().createQuery(hql);
 		q.setEntity(0, entity);
@@ -441,7 +441,7 @@ public class ModelService {
 		return result;
 	}
 
-	public List<Relation> getChildRelations(Entity entity, Class<?> clazz) throws ModelException {
+	public List<Relation> getRelationsFrom(Entity entity, Class<?> clazz) throws ModelException {
 		String hql = "select relation from Relation as relation,"+clazz.getName()+" child where relation.from=:entity and relation.to=child order by relation.position";
 		Query q = getSession().createQuery(hql);
 		q.setEntity("entity", entity);
@@ -452,7 +452,7 @@ public class ModelService {
 		return result;
 	}
 
-	public List<Relation> getChildRelations(Entity entity, Class<?> clazz, Privileged privileged) throws ModelException {
+	public List<Relation> getRelationsFrom(Entity entity, Class<?> clazz, Privileged privileged) throws ModelException {
 		String hql = "select relation from Relation as relation,"+clazz.getName()+" child,Privilege as priv where relation.from=:entity and relation.to=child and priv.object=relation.to and priv.subject=:privileged order by relation.position";
 		Query q = getSession().createQuery(hql);
 		q.setEntity("entity", entity);
@@ -464,7 +464,7 @@ public class ModelService {
 		return result;
 	}
 
-	public List<Relation> getChildRelations(Entity entity, Class<?> clazz, String relationKind, Privileged privileged) throws ModelException {
+	public List<Relation> getRelationsFrom(Entity entity, Class<?> clazz, String relationKind, Privileged privileged) throws ModelException {
 		String hql = "select relation from Relation as relation,"+clazz.getName()+" child,Privilege as priv where relation.from=:entity and relation.to=child and relation.kind=:kind and priv.object=relation.to and priv.subject=:privileged order by relation.position";
 		Query q = getSession().createQuery(hql);
 		q.setEntity("entity", entity);
@@ -478,8 +478,8 @@ public class ModelService {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Relation> getChildRelations(Entity entity, Class<?> clazz,String relationKind) throws ModelException {
-		String hql = "select relation from Relation as relation,"+clazz.getName()+" child where relation.from=:entity and relation.to=child and relation.kind=:kind order by relation.position";
+	public List<Relation> getRelationsFrom(Entity entity, Class<?> clazz,String relationKind) throws ModelException {
+		String hql = "select relation from Relation as relation,"+clazz.getName()+" other where relation.from=:entity and relation.to=other and relation.kind=:kind order by relation.position";
 		Query q = getSession().createQuery(hql);
 		q.setEntity("entity", entity);
 		q.setString("kind", relationKind);
@@ -492,10 +492,33 @@ public class ModelService {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Relation> getParentRelations(Entity entity, Class<?> clazz) throws ModelException {
+	public List<Relation> getRelationsTo(Entity entity, Class<?> clazz) throws ModelException {
 		String hql = "select relation from Relation as relation,"+clazz.getName()+" child where relation.to=:entity and relation.from=child order by relation.position";
 		Query q = getSession().createQuery(hql);
 		q.setEntity("entity", entity);
+		List<Relation> result = q.list();
+		for (int i = 0; i < result.size(); i++) {
+			//getSession().getTransaction().rollback();
+			result.set(i, getSubject(result.get(i)));
+		}
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Relation> getRelationsTo(Entity entity) throws ModelException {
+		Session session = getSession();
+		Query q = session.createQuery("from Relation as relation where relation.to=?");
+		q.setEntity(0, entity);
+		List<Relation> result = q.list();
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Relation> getRelationsTo(Entity entity, Class<?> clazz,String relationKind) throws ModelException {
+		String hql = "select relation from Relation as relation,"+clazz.getName()+" other where relation.to=:entity and relation.from=other and relation.kind=:kind order by relation.position";
+		Query q = getSession().createQuery(hql);
+		q.setEntity("entity", entity);
+		q.setString("kind", relationKind);
 		List<Relation> result = q.list();
 		for (int i = 0; i < result.size(); i++) {
 			//getSession().getTransaction().rollback();
@@ -558,15 +581,6 @@ public class ModelService {
 		} else {
 			return null;
 		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<Relation> getParentRelations(Entity entity) throws ModelException {
-		Session session = getSession();
-		Query q = session.createQuery("from Relation as relation where relation.to=?");
-		q.setEntity(0, entity);
-		List<Relation> result = q.list();
-		return result;
 	}
 
 	public User getUser(String username) {

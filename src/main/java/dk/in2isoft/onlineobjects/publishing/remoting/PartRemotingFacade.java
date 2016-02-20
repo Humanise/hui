@@ -37,7 +37,7 @@ public class PartRemotingFacade extends AbstractRemotingFacade {
 		}
 		updateProperties(part, properties);
 		UserSession priviledged = getUserSession();
-		List<Relation> relations = modelService.getChildRelations(part, Image.class);
+		List<Relation> relations = modelService.getRelationsFrom(part, Image.class);
 		for (Relation relation : relations) {
 			modelService.deleteRelation(relation, priviledged);
 		}

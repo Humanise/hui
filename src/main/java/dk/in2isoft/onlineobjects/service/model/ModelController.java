@@ -207,7 +207,7 @@ public class ModelController extends ModelControllerBase {
 		center.addProperty("type", entity.getClass().getSimpleName());
 		diagram.addNode(center);
 		
-		List<Relation> childRelations = modelService.getChildRelations(entity);
+		List<Relation> childRelations = modelService.getRelationsFrom(entity);
 		for (Relation relation : childRelations) {
 			Entity other = relation.getTo();
 
@@ -219,7 +219,7 @@ public class ModelController extends ModelControllerBase {
 			diagram.addEdge(center, relation.getKind(), otherNode);
 		}
 		
-		List<Relation> parentRelations = modelService.getParentRelations(entity);
+		List<Relation> parentRelations = modelService.getRelationsTo(entity);
 		for (Relation relation : parentRelations) {
 			Entity other = relation.getFrom();
 

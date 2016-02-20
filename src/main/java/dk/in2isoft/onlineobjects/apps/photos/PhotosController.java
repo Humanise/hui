@@ -221,7 +221,7 @@ public class PhotosController extends PhotosControllerBase {
 	
 	private float getMaxImagePosition(Entity gallery) throws ModelException {
 		float max = 0;
-		List<Relation> relations = modelService.getChildRelations(gallery,Image.class);
+		List<Relation> relations = modelService.getRelationsFrom(gallery,Image.class);
 		for (Relation relation : relations) {
 			max = Math.max(max, relation.getPosition());
 		}

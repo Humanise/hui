@@ -62,7 +62,7 @@ public class PhotosGalleryView extends AbstractManagedBean implements Initializi
 			user = modelService.getOwner(imageGallery);
 			username = user.getUsername();
 			modifiable = user!=null && user.getId()==session.getIdentity();
-			List<Relation> childRelations = modelService.getChildRelations(imageGallery, Image.class, session);
+			List<Relation> childRelations = modelService.getRelationsFrom(imageGallery, Image.class, session);
 			images = Lists.newArrayList();
 			for (Relation relation : childRelations) {
 				Image image = (Image) relation.getTo();

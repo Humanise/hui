@@ -66,7 +66,7 @@ public class WebModelService {
 		modelService.createItem(node,priviledged);
 		
 		// Update positions of nodes
-		List<Relation> relations = modelService.getChildRelations(site,WebNode.class);
+		List<Relation> relations = modelService.getRelationsFrom(site,WebNode.class);
 		int position = 1;
 		for (Relation relation : relations) {
 			relation.setPosition(position);
@@ -97,7 +97,7 @@ public class WebModelService {
 	public void moveNodeUp(WebNode node, Privileged priviledged) throws ModelException, SecurityException {
 
 		WebSite site = modelService.getParent(node, WebSite.class);
-		List<Relation> relations = modelService.getChildRelations(site,WebNode.class);
+		List<Relation> relations = modelService.getRelationsFrom(site,WebNode.class);
 		int index = getIndexOfNode(relations,node);
 		if (index>0) {
 			Relation relation = relations.remove(index);
@@ -109,7 +109,7 @@ public class WebModelService {
 	public void moveNodeDown(WebNode node, Privileged priviledged) throws ModelException, SecurityException {
 
 		WebSite site = modelService.getParent(node, WebSite.class);
-		List<Relation> relations = modelService.getChildRelations(site,WebNode.class);
+		List<Relation> relations = modelService.getRelationsFrom(site,WebNode.class);
 		int index = getIndexOfNode(relations,node);
 		if (index<relations.size()-1) {
 			Relation relation = relations.remove(index);

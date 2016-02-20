@@ -44,7 +44,7 @@ class VideoPosterImporter extends ImageImporter {
 		if (!modelService.canUpdate(video,request.getSession())) {
 			throw new SecurityException("You cannot do this!");
 		}
-		List<Relation> list = modelService.getChildRelations(video, Image.class);
+		List<Relation> list = modelService.getRelationsFrom(video, Image.class);
 		for (Relation relation : list) {
 			modelService.deleteRelation(relation, request.getSession());
 		}

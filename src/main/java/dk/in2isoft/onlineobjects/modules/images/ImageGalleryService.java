@@ -69,7 +69,7 @@ public class ImageGalleryService {
 	public void changeSequence(long galleryId, final List<Long> imageIds, Privileged privileged) throws ModelException, ContentNotFoundException, SecurityException {
 		ImageGallery gallery = modelService.getRequired(ImageGallery.class, galleryId, privileged);
 		
-		List<Relation> relations = modelService.getChildRelations(gallery, Image.class, privileged);
+		List<Relation> relations = modelService.getRelationsFrom(gallery, Image.class, privileged);
 		Collections.sort(relations, new Comparator<Relation>() {
 
 			@Override

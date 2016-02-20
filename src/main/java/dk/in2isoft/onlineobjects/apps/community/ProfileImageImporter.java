@@ -26,7 +26,7 @@ public class ProfileImageImporter extends ImageImporter {
 	protected void postProcessImage(Image image, Map<String,String> parameters, Request request) throws EndUserException {
 
 		Entity user = request.getSession().getUser();
-		List<Relation> list = modelService.getChildRelations(user, Image.class, Relation.KIND_SYSTEM_USER_IMAGE);
+		List<Relation> list = modelService.getRelationsFrom(user, Image.class, Relation.KIND_SYSTEM_USER_IMAGE);
 		for (Relation relation : list) {
 			modelService.deleteRelation(relation, request.getSession());
 		}

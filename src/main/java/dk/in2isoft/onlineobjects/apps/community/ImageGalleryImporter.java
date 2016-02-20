@@ -33,7 +33,7 @@ public class ImageGalleryImporter extends ImageImporter {
 
 	private float getMaxImagePosition(Entity gallery) throws EndUserException {
 		// TODO : Consider only images (URGENT)
-		List<Relation> relations = modelService.getChildRelations(gallery);
+		List<Relation> relations = modelService.getRelationsFrom(gallery);
 		if (relations.size() > 0) {
 			return relations.get(relations.size() - 1).getPosition();
 		} else {

@@ -5,11 +5,11 @@ public class WordRelationRow {
 	private long relationId;
 	private String relationKind;
 
-	private long superId;
-	private String superText;
+	private long fromId;
+	private String fromText;
 
-	private long subId;
-	private String subText;
+	private long toId;
+	private String toText;
 
 	public long getRelationId() {
 		return relationId;
@@ -27,36 +27,36 @@ public class WordRelationRow {
 		this.relationKind = relationKind;
 	}
 
-	public long getSuperId() {
-		return superId;
+	public long getFromId() {
+		return fromId;
 	}
 
-	public void setSuperId(long superId) {
-		this.superId = superId;
+	public void setFromId(long superId) {
+		this.fromId = superId;
 	}
 
-	public String getSuperText() {
-		return superText;
+	public String getFromText() {
+		return fromText;
 	}
 
-	public void setSuperText(String superText) {
-		this.superText = superText;
+	public void setFromText(String superText) {
+		this.fromText = superText;
 	}
 
-	public long getSubId() {
-		return subId;
+	public long getToId() {
+		return toId;
 	}
 
-	public void setSubId(long subId) {
-		this.subId = subId;
+	public void setToId(long subId) {
+		this.toId = subId;
 	}
 
-	public String getSubText() {
-		return subText;
+	public String getToText() {
+		return toText;
 	}
 
-	public void setSubText(String subText) {
-		this.subText = subText;
+	public void setToText(String subText) {
+		this.toText = subText;
 	}
 
 }
