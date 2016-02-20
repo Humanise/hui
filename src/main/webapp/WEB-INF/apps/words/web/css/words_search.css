@@ -62,7 +62,7 @@ p.words_search_query
 }
 
 
-div.words_search_filters
+.words_search_filters
 {
 	float: right;
 	border: 1px solid #eee;
@@ -72,7 +72,7 @@ div.words_search_filters
 	margin-left: 20px;
 }
 
-div.words_search_filters h2
+.words_search_filters h2
 {
 	text-align: center;
 	font-weight: 200;
@@ -81,7 +81,7 @@ div.words_search_filters h2
 	font-size: 0;
 }
 
-div.words_search_filters h2 span
+.words_search_filters h2 span
 {
 	position: relative;
 	color: #ccc;
@@ -94,7 +94,7 @@ div.words_search_filters h2 span
 }
 
 
-div.words_search_filters h3
+.words_search_filters h3
 {
 	margin: 0px 0 15px;
 	font-weight: 200;
@@ -104,7 +104,7 @@ div.words_search_filters h3
 	font-size: 0;
 }
 
-div.words_search_filters h3 span
+.words_search_filters h3 span
 {
 	background: #fff;
 	font-size: 14px;
@@ -116,7 +116,7 @@ div.words_search_filters h3 span
 }
 
 
-p.words_filter
+.words_filter
 {
 	margin: 5px;
 	font-size: 0;
@@ -124,13 +124,13 @@ p.words_filter
 	text-align: center;
 }
 
-p.words_filter a
+.words_filter a
 {
 	display: inline-block;
 	padding: 0 3px;
 }
 
-p.words_filter a span
+.words_filter a span
 {
 	color: #999;
 	padding: 0 6px;
@@ -144,21 +144,21 @@ p.words_filter a span
 	border: 1px solid #fff;
 }
 
-p.words_filter a:hover span
+.words_filter a:hover span
 {
 	color: #08C;
 	border-radius: 3px;
 	background: #f3f3f3;
 }
 
-p.words_filter a.words_filter_selected span
+.words_filter a.words_filter_selected span
 {
 	color: #fff;
 	background: #333;
 	border: 1px solid #333;
 }
 
-p.words_filter a.words_filter_selected_default span
+.words_filter a.words_filter_selected_default span
 {
 	color: #000;
 	background: #f9f9f9;
@@ -166,7 +166,7 @@ p.words_filter a.words_filter_selected_default span
 }
 
 @media screen and (max-width: 800px) {
-	div.words_search_filters
+	.words_search_filters
 	{
 		float: none;
 		width: auto;
@@ -174,7 +174,22 @@ p.words_filter a.words_filter_selected_default span
 		margin: 0;
 	}
 	
-	div.words_search_filters h2
+	.words_search_filters h2
+	{
+		display: none;
+	}
+}
+
+@media screen and (max-width: 600px) {
+	.words_search_filters
+	{
+		float: none;
+		width: auto;
+		border: none;
+		margin: 0;
+	}
+	
+	.words_search_filters h2
 	{
 		display: none;
 	}

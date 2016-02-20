@@ -35,16 +35,16 @@ public class TestRelations extends AbstractSpringTestCase {
 		modelService.createItem(person, priviledged);
 		modelService.createRelation(page, person, priviledged);
 		{
-			List<Relation> childRelations = modelService.getChildRelations(page);
+			List<Relation> childRelations = modelService.getRelationsFrom(page);
 			assertTrue(childRelations.size() == 2);
 		}
 		{
-			List<Relation> childRelations = modelService.getChildRelations(page, WebNode.class);
+			List<Relation> childRelations = modelService.getRelationsFrom(page, WebNode.class);
 			assertTrue(childRelations.size() == 1);
 			assertTrue(childRelations.get(0).getTo() instanceof WebNode);
 		}
 		{
-			List<Relation> childRelations = modelService.getChildRelations(page, Person.class);
+			List<Relation> childRelations = modelService.getRelationsFrom(page, Person.class);
 			assertTrue(childRelations.size() == 1);
 			assertTrue(childRelations.get(0).getTo() instanceof Person);
 		}
