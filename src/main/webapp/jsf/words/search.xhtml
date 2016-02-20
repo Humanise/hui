@@ -46,15 +46,6 @@
 						<o:link styleClass="#{option.selected ? 'words_paging_selected' : ''}#{option.selected and option.key=='default' ? ' words_paging_selected_default' : ''}" href="#{option.value}">#{option.label}</o:link>
 					</c:forEach>
 				</p>
-				<h2 class="words_search_description">#{wordsSearchView.description}</h2>
-				<ui:remove>
-				<c:if test="#{not empty(wordsSearchView.previousPage)}">
-					<a href="#{wordsSearchView.previousPage}">Previous</a>
-				</c:if>
-				<c:if test="#{not empty(wordsSearchView.nextPage)}">
-					<a href="#{wordsSearchView.nextPage}">Next</a>
-				</c:if>
-				</ui:remove>
 				<div class="words_search_filters">
 					<h2><span>#{msg.filters}</span></h2>
 					<h3><span>#{msg.languages}</span></h3>
@@ -70,6 +61,15 @@
 						</c:forEach>
 					</p>
 				</div>
+				<h2 class="words_search_description">#{wordsSearchView.description}</h2>
+				<ui:remove>
+				<c:if test="#{not empty(wordsSearchView.previousPage)}">
+					<a href="#{wordsSearchView.previousPage}">Previous</a>
+				</c:if>
+				<c:if test="#{not empty(wordsSearchView.nextPage)}">
+					<a href="#{wordsSearchView.nextPage}">Next</a>
+				</c:if>
+				</ui:remove>
 
 				<ul class="words_list">
 					<c:forEach items="#{wordsSearchView.list}" var="word">
