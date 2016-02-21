@@ -23,7 +23,7 @@ public class WordIndexer implements ModelEventListener {
 	
 	private static final Logger log = Logger.getLogger(WordIndexer.class);
 	
-	private boolean enabled;
+	private boolean enabled = true;
 
 	public void clear() throws EndUserException {
 		indexManager.clear();
