@@ -35,7 +35,7 @@ public class FontsComponent extends AbstractComponent {
 		if (Strings.isNotBlank(additional)) {
 			text+="|"+additional;
 		}
-		out.startElement("link").withHref("http://fonts.googleapis.com/css?family="+text).rel("stylesheet").type("text/css").endElement("link");
+		out.startElement("link").withHref("https://fonts.googleapis.com/css?family="+text).rel("stylesheet").type("text/css").endElement("link");
 	}
 
 	public String getAdditional() {
