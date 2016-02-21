@@ -2,7 +2,6 @@ var personsController = {
 	activePerson : 0,
 	
 	$ready : function() {
-		this.refreshPersonList();
 	},
 	
 	$select : function(item) {
@@ -18,18 +17,6 @@ var personsController = {
 		this.editPerson(obj.id);
 	},
 	
-	refreshPersonList : function() {
-		AppCommunity.listPersons(function(list) {
-			personList.setObjects(list);
-		});
-	},
-	
-	refreshInvitationList : function() {
-		AppCommunity.getInvitations(function(invites) {
-			invitationList.setObjects(invites);
-		});
-	},
-	
 	//////////////////////////////// Persons /////////////////////////////
 	
 	$click$newPerson : function() {
@@ -42,6 +29,21 @@ var personsController = {
 		personFormula.reset();
 		personWindow.hide();
 	},
+  $click$deletePerson : function() {
+    personWindow.setBusy(true);
+    hui.ui.request({
+      url : '/deletePerson',
+      parameters : {id:this.activePerson},
+      $success : function() {
+    		personFormula.reset();
+    		personWindow.hide();
+        personList.refresh();
+      },
+      $finally : function() {
+        personWindow.setBusy(false);
+      }
+    }); 
+  },
 	$click$savePerson : function() {
 		var person = personFormula.getValues();
 		person.id=this.activePerson;
@@ -59,11 +61,15 @@ var personsController = {
 		this.activePerson = id;
 		personFormula.reset();
 		personWindow.show();
-		AppCommunity.loadPerson(id,function(person) {
-			personFormula.setValues(person.person);
-			personEmails.setValue(person.emails);
-			personPhones.setValue(person.phones);
-		});
+    hui.ui.request({
+      url : '/loadPerson',
+      parameters : {id:id},
+      $object : function(person) {
+  			personFormula.setValues(person.person);
+  			personEmails.setValue(person.emails);
+  			personPhones.setValue(person.phones);
+  		}
+    });
 	},
 	
 	///////////////////////////// Invitations /////////////////////////////

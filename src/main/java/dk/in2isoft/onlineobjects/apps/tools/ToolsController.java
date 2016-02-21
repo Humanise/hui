@@ -1,6 +1,7 @@
 package dk.in2isoft.onlineobjects.apps.tools;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -15,17 +16,24 @@ import dk.in2isoft.in2igui.data.ItemData;
 import dk.in2isoft.in2igui.data.ListData;
 import dk.in2isoft.in2igui.data.ListDataRow;
 import dk.in2isoft.in2igui.data.ListObjects;
+import dk.in2isoft.in2igui.data.ListWriter;
 import dk.in2isoft.onlineobjects.apps.community.remoting.InternetAddressInfo;
 import dk.in2isoft.onlineobjects.apps.videosharing.Path;
+import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SearchResult;
+import dk.in2isoft.onlineobjects.core.UserSession;
+import dk.in2isoft.onlineobjects.core.exceptions.ContentNotFoundException;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
+import dk.in2isoft.onlineobjects.model.EmailAddress;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Image;
 import dk.in2isoft.onlineobjects.model.InternetAddress;
+import dk.in2isoft.onlineobjects.model.Person;
+import dk.in2isoft.onlineobjects.model.PhoneNumber;
 import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.modules.images.ImageImporter;
@@ -98,6 +106,49 @@ public class ToolsController extends ToolsControllerBase {
 	}
 	
 	@Path
+	public void listPersons(Request request) throws EndUserException, IOException {
+		String text = request.getString("text");
+		UserSession session = request.getSession();
+		Query<Person> query = new Query<Person>(Person.class).withPrivileged(session);
+		query.withWords(text);
+		List<Person> persons = modelService.list(query);
+		
+		ListWriter out = new ListWriter(request);
+		out.startList();
+		out.startHeaders().header("Name").header("Addresses").endHeaders();
+		for (Person person : persons) {
+			out.startRow().withId(person.getId());
+			out.startCell().text(person.getFullName()).endCell();
+			Long addressCount = modelService.count(Query.after(InternetAddress.class).to(person).withPrivileged(session));
+			out.startCell().text(addressCount).endCell();
+			out.endRow();
+		}
+		out.endList();
+	}
+
+	@Path
+	public Map<String,Object> loadPerson(Request request) throws ModelException, ContentNotFoundException, IllegalRequestException {
+		Long id = request.getId();
+		
+		Map<String,Object> data = new HashMap<String, Object>();
+		Privileged privileged = request.getSession();
+		Person person = modelService.getRequired(Person.class, id, privileged);
+		data.put("person", person);
+		List<EmailAddress> emails = modelService.getChildren(person, EmailAddress.class, privileged);
+		data.put("emails", emails);
+		List<PhoneNumber> phones = modelService.getChildren(person, PhoneNumber.class, privileged);
+		data.put("phones", phones);
+		return data;
+	}
+	
+	@Path
+	public void deletePerson(Request request) throws ModelException, ContentNotFoundException, SecurityException, IllegalRequestException {
+		Long id = request.getId();
+		Person person = modelService.getRequired(Person.class, id, request.getSession());
+		modelService.deleteEntity(person, request.getSession());
+	}
+	
+	@Path
 	public ListData listPrivateBookmarks(Request request) throws EndUserException {
 		String search = request.getString("search");
 		String tag = request.getString("tag");
@@ -150,17 +201,14 @@ public class ToolsController extends ToolsControllerBase {
 	}
 	
 	@Path
-	public void saveInternetAddress(Request request) throws ModelException, SecurityException, IllegalRequestException {
+	public void saveInternetAddress(Request request) throws ModelException, SecurityException, IllegalRequestException, ContentNotFoundException {
 		InternetAddressInfo info = request.getObject("data", InternetAddressInfo.class);
 		if (info==null) {
 			throw new IllegalRequestException("Malformed data");
 		}
 		InternetAddress address;
 		if (info.getId()!=null) {
-			address = modelService.get(InternetAddress.class, info.getId(), request.getSession());
-			if (address==null) {
-				throw new IllegalRequestException("Not found");
-			}
+			address = modelService.getRequired(InternetAddress.class, info.getId(), request.getSession());
 		} else {
 			address = new InternetAddress();
 		}

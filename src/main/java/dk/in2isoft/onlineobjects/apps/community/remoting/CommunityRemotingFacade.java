@@ -355,7 +355,7 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 	}
 	
 	/////////////////////// Persons /////////////// 
-	
+	/*
 	public Map<String,Object> loadPerson(long id) throws ModelException {
 		Map<String,Object> data = new HashMap<String, Object>();
 		Person person = modelService.get(Person.class, id, getRequest().getSession());
@@ -365,7 +365,7 @@ public class CommunityRemotingFacade extends AbstractRemotingFacade {
 		List<PhoneNumber> phones = modelService.getChildren(person, PhoneNumber.class);
 		data.put("phones", phones);
 		return data;
-	}
+	}*/
 	
 	public Map<String,Object> getImage(long id) throws ModelException {
 		Map<String,Object> data = new HashMap<String, Object>();

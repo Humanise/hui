@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gui xmlns="uri:hui" state="persons" title="Persons">
-	<dwr base="/dwr/">
-		<interface name="CoreSecurity"/>
-		<interface name="AppCommunity"/>
-	</dwr>
 	<controller name="controller" source="../controller.js"/>
 	<controller name="personsController" source="../persons.js"/>
+  
+  <source name="personListSource" url="../listPersons"/>
+  
 	<bar>
 		<button text="Offentligt" icon="inset/public" name="barPublic"/>
 		<button text="Hjemmeside" icon="inset/globe" name="barWebsite"/>
@@ -40,11 +39,7 @@
 				</left>
 				<center>
 					<overflow>
-						<list name="personList" state="persons">
-							<column title="Navn" key="name"/>
-							<column title="E-mail" key="email"/>
-							<column title="Telefon" key="phone"/>
-						</list>
+						<list name="personList" state="persons" source="personListSource"/>
 						<list name="invitationList" state="invitations">
 							<column title="Dato" key="created"/>
 							<column title="Inviteret" key="person"/>
@@ -59,7 +54,7 @@
 
 	<window name="personWindow" title="Person" width="400" padding="5">
 		<formula name="personFormula">			
-			<columns space="10">
+			<columns space="10" flexible="true">
 				<column>
 					<fields labels="above">
 						<field label="Fornavn">
@@ -82,7 +77,7 @@
 					</fields>
 				</column>
 			</columns>
-			<columns space="10">
+			<columns space="10" flexible="true">
 				<column>
 					<fields labels="above">
 						<field label="Præfiks">
@@ -99,7 +94,7 @@
 				</column>
 			</columns>
 			<space height="10"/>
-			<columns space="10">
+			<columns space="10" flexible="true">
 				<column>
 					<objectlist name="personEmails">
 						<text label="E-mail" key="address"/>
@@ -114,6 +109,9 @@
 				</column>
 			</columns>
 			<buttons top="5">
+				<button title="Slet" name="deletePerson">
+          <confirm text="Er du sikker?"/>
+        </button>
 				<button title="Annuller" name="cancelPerson"/>
 				<button title="Gem" highlighted="true" name="savePerson"/>
 			</buttons>
