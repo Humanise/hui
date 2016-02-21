@@ -5,14 +5,14 @@ var controller = {
 	},
 	$select$list : function() {
 		var item = list.getFirstSelection();
-		if (item.data.status=='PAUSED') {
+		if (item && item.data && item.data.status=='PAUSED') {
 			pause.setLabel('Resume');
 			pause.setIcon('common/move_right');
 		} else {
 			pause.setLabel('Pause');
 			pause.setIcon('common/pause');
 		}
-		interrupt.setEnabled(item.data.running);
+    interrupt.setEnabled(item && item.data.running);
 		pause.setEnabled(item!=null);
 		start.setEnabled(item!=null);
 	},
