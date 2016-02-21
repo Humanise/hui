@@ -8,6 +8,7 @@ import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.apps.community.UserProfileInfo;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Privileged;
+import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.model.Address;
@@ -30,12 +31,26 @@ public class PersonService {
 		return modelService.getChild(person, Property.KEY_COMMON_PREFERRED, Address.class);
 	}
 	
+	public Person getOrCreatePerson(String text, Privileged privileged) throws ModelException {
+		if (Strings.isBlank(text) || privileged == null) {
+			return null;
+		}
+		text = text.replaceAll("[\\s]+", " ").trim();
+		Query<Person> query = Query.after(Person.class).withName(text).withPrivileged(privileged);
+		Person person = modelService.getFirst(query);
+		if (person==null) {
+			person = new Person();
+			person.setFullName(text);
+			modelService.createItem(person, privileged);
+		}
+		return person;
+	}
+	
 	public String getFullPersonName(Person person, int maxLength) {
 		String fullName = person.getFullName();
 		String given = person.getGivenName();
 		String givenFirst = abbreviate(given);
 		String family = person.getFamilyName();
-		String familyFirst = abbreviate(family);
 		String additional = person.getAdditionalName();
 		String additionalFirst = abbreviate(additional);
 		if (fullName.length()>maxLength) {

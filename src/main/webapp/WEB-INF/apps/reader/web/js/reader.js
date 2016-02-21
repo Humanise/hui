@@ -57,7 +57,8 @@ var reader = {
     }
     var viewers = {
       InternetAddress : internetAddressViewer,
-      Question : questionViewer
+      Question : questionViewer,
+      Hypothesis : hypothesisViewer
     }
     var newViewer = viewers[options.type];
     if (this._activeViewer && newViewer!==this._activeViewer) {
@@ -69,11 +70,15 @@ var reader = {
     }
   },
   edit : function(options) {
-    if (options.type == 'Question') {
-      questionEditor.edit(options.id);
-    }
-    else if (options.type == 'Statement') {
-      statementController.edit(options.id);
+    var editors = {
+      Question : questionEditor,
+      Statement : statementController,
+      Hypothesis : hypothesisEditor
+    };
+    for (key in editors) {
+      if (options.type == key) {
+        editors[key].edit(options.id);
+      }
     }
   },
   peek : function(options) {
@@ -110,7 +115,16 @@ var reader = {
 	$addressChanged$addressEditor : function() {
 		this._reloadList();
 	},
+  $addressChanged$internetAddressViewer : function() {
+		this._reloadList();
+	},
   $statementChanged$internetAddressViewer : function() {
+		this._reloadList();
+  },
+  $questionChanged$questionEditor : function() {
+		this._reloadList();
+  },
+  $hypothesisChanged$hypothesisEditor : function() {
 		this._reloadList();
   },
 

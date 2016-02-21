@@ -8,6 +8,7 @@ import dk.in2isoft.onlineobjects.modules.language.WordService;
 import dk.in2isoft.onlineobjects.service.ServiceController;
 import dk.in2isoft.onlineobjects.services.ConversionService;
 import dk.in2isoft.onlineobjects.services.LanguageService;
+import dk.in2isoft.onlineobjects.services.PersonService;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
 
 public class ModelControllerBase extends ServiceController {
@@ -20,6 +21,7 @@ public class ModelControllerBase extends ServiceController {
 	protected SecurityService securityService;
 	protected InboxService inboxService;
 	protected WordService wordService;
+	protected PersonService personService; 
 
 	public ModelControllerBase() {
 		super("model");
@@ -67,5 +69,9 @@ public class ModelControllerBase extends ServiceController {
 	
 	public void setWordService(WordService wordService) {
 		this.wordService = wordService;
+	}
+	
+	public void setPersonService(PersonService personService) {
+		this.personService = personService;
 	}
 }

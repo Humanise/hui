@@ -313,10 +313,18 @@ public class Request {
 	 * The request parameter "id" as a positive Long or null if invalid
 	 * @return
 	 */
-	public Long getId() {
-		Long id = getLong("id", null);
+	public Long getId(Long dflt) {
+		Long id = getLong("id", dflt);
 		if (id!=null && id<1) {
 			id = null;
+		}
+		return id;
+	}
+	
+	public Long getId() throws IllegalRequestException {
+		Long id = getId(null);
+		if (id == null) {
+			throw new IllegalRequestException("No id");
 		}
 		return id;
 	}

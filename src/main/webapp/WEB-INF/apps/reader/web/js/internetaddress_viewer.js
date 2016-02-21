@@ -261,6 +261,14 @@ var internetAddressViewer = {
     }
     top = Math.max(0, Math.round(top));
     var dur = Math.min(1500,Math.abs(top - content.scrollTop));
+    
+    var blink = function(node) {
+      hui.cls.add(node,'is-highlighted');
+      window.setTimeout(function() {
+        hui.cls.remove(node,'is-highlighted');
+      },600);
+    }
+    
     hui.animate({
       node : content,
       property : 'scrollTop',
@@ -269,7 +277,7 @@ var internetAddressViewer = {
       ease : hui.ease.slowFastSlow,
       $complete : function() {
         for (var i = 0; i < marks.length; i++) {
-          hui.effect.tada({element:marks[i]});
+          blink(marks[i]);
         }
       }
     });
@@ -382,6 +390,50 @@ var internetAddressViewer = {
         panel.hide();
       }.bind(this)
     })    
+  },
+  $click$hypothesisFromSelection : function() {
+		if (hui.isBlank(this.text)) {
+			return;
+		}
+    var parameters = {
+      id : this._currentArticle.id,
+      text : this.text
+    }
+    this._lockViewer();
+    var panel = this.widgets.selectionPanel;
+    hui.ui.request({
+      url : '/addHypothesis',
+      parameters : parameters,
+      $success : function() {
+        this.reload();
+        hui.ui.callDelegates(this,'hypothesisChanged');
+      }.bind(this),
+      $finally : function() {
+        panel.hide();
+      }.bind(this)
+    });
+  },
+  $click$personFromSelection : function() {
+		if (hui.isBlank(this.text)) {
+			return;
+		}
+    var parameters = {
+      id : this._currentArticle.id,
+      text : this.text
+    }
+    this._lockViewer();
+    var panel = this.widgets.selectionPanel;
+    hui.ui.request({
+      url : '/addPerson',
+      parameters : parameters,
+      $success : function() {
+        this.reload();
+        hui.ui.callDelegates(this,'addressChanged');
+      }.bind(this),
+      $finally : function() {
+        panel.hide();
+      }.bind(this)
+    });
   },
   $click$tagFromSelection : function() {
     var finder = oo.WordFinder.get();

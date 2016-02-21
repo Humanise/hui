@@ -1,12 +1,12 @@
-var questionViewer = {
+var hypothesisViewer = {
   id : null,
   data : null,
   locked : false,
   
   nodes : {
-    root : '.js_question',
-    text : '.js_question_text',
-    body : '.js_question_body'
+    root : '.js_hypothesis',
+    text : '.js_hypothesis_text',
+    body : '.js_hypothesis_body'
   },
   
   $ready : function() {
@@ -18,26 +18,26 @@ var questionViewer = {
     this.hide();
   },
   
-  $click$questionInfo : function() {
-    reader.edit({type:'Question',id:this.id});
+  $click$hypothesisInfo : function() {
+    reader.edit({type:'Hypothesis',id:this.id});
   },
 
-  $click$questionFavorite : function(icon) {
+  $click$hypothesisFavorite : function(icon) {
     if (this.locked) {return;}
     var newValue = !this.data.favorite;
     icon.setSelected(newValue);
-    this.changeStatus({ id : this.id, favorite : newValue, type : 'Question',
+    this.changeStatus({ id : this.id, favorite : newValue, type : 'Hypothesis',
       $success : function() {
         this.data.favorite = newValue;
       }.bind(this)
     })
   },
 
-  $click$questionInbox : function(icon) {
+  $click$hypothesisInbox : function(icon) {
     if (this.locked) {return;}
     var newValue = !this.data.inbox;
     icon.setSelected(newValue);
-    this.changeStatus({ id : this.id, inbox : newValue, type : 'Question',
+    this.changeStatus({ id : this.id, inbox : newValue, type : 'Hypothesis',
       $success : function() {
         this.data.inbox = newValue;
       }.bind(this)
@@ -83,7 +83,11 @@ var questionViewer = {
     }
   },
   
-  $questionChanged$questionEditor : function() {
+  $hypothesisChanged$hypothesisEditor : function() {
+    this._load();
+  },
+  
+  $statementChanged$statementEditor : function() {
     this._load();
   },
   
@@ -99,7 +103,7 @@ var questionViewer = {
   
   _load : function() {
     hui.ui.request({
-      url : '/viewQuestion',
+      url : '/viewHypothesis',
       parameters : {id:this.id},
       $object : function(data) {
         this.data = data;
@@ -113,9 +117,9 @@ var questionViewer = {
   _render : function() {
     hui.dom.setText(this.nodes.text,this.data.text);
     this.nodes.body.innerHTML = this.data.rendering;
-    hui.ui.get('questionFavorite').setSelected(this.data.favorite);
-    hui.ui.get('questionInbox').setSelected(this.data.inbox);
+    hui.ui.get('hypothesisFavorite').setSelected(this.data.favorite);
+    hui.ui.get('hypothesisInbox').setSelected(this.data.inbox);
   }
 }
 
-hui.ui.listen(questionViewer);
+hui.ui.listen(hypothesisViewer);

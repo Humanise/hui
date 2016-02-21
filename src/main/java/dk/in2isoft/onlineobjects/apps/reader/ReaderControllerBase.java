@@ -8,6 +8,7 @@ import com.google.common.collect.Lists;
 
 import dk.in2isoft.onlineobjects.apps.ApplicationController;
 import dk.in2isoft.onlineobjects.apps.reader.index.ReaderIndexer;
+import dk.in2isoft.onlineobjects.apps.reader.perspective.HypothesisViewPerspectiveBuilder;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.InternetAddressViewPerspectiveBuilder;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.QuestionViewPerspectiveBuilder;
 import dk.in2isoft.onlineobjects.core.SecurityService;
@@ -18,6 +19,7 @@ import dk.in2isoft.onlineobjects.modules.networking.HTMLService;
 import dk.in2isoft.onlineobjects.modules.networking.NetworkService;
 import dk.in2isoft.onlineobjects.services.FeedService;
 import dk.in2isoft.onlineobjects.services.LanguageService;
+import dk.in2isoft.onlineobjects.services.PersonService;
 import dk.in2isoft.onlineobjects.services.PileService;
 import dk.in2isoft.onlineobjects.services.SemanticService;
 import dk.in2isoft.onlineobjects.services.StorageService;
@@ -38,6 +40,9 @@ public abstract class ReaderControllerBase extends ApplicationController {
 	protected InternetAddressViewPerspectiveBuilder internetAddressViewPerspectiveBuilder;
 	protected ReaderSearcher readerSearcher;
 	protected QuestionViewPerspectiveBuilder questionViewPerspectiveBuilder;
+	protected HypothesisViewPerspectiveBuilder hypothesisViewPerspectiveBuilder;
+	protected PersonService personService;
+	protected ReaderModelService readerModelService;
 
 	public ReaderControllerBase() {
 		super("reader");
@@ -130,5 +135,17 @@ public abstract class ReaderControllerBase extends ApplicationController {
 	
 	public void setQuestionViewPerspectiveBuilder(QuestionViewPerspectiveBuilder questionViewPerspectiveBuilder) {
 		this.questionViewPerspectiveBuilder = questionViewPerspectiveBuilder;
+	}
+	
+	public void setHypothesisViewPerspectiveBuilder(HypothesisViewPerspectiveBuilder hypothesisViewPerspectiveBuilder) {
+		this.hypothesisViewPerspectiveBuilder = hypothesisViewPerspectiveBuilder;
+	}
+	
+	public void setPersonService(PersonService personService) {
+		this.personService = personService;
+	}
+	
+	public void setReaderModelService(ReaderModelService readerModelService) {
+		this.readerModelService = readerModelService;
 	}
 }

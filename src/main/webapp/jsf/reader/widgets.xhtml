@@ -171,6 +171,27 @@
 					</buttons>
 				</formula>
 			</window>
+
+			<window name="hypothesisWindow" title="Hypothesis" variant="light" width="500" modal="true" padding="5" xmlns="http://www.in2isoft.dk/in2igui">
+				<formula name="hypothesisForm">
+          <fields labels="above">
+            <field label="Text">
+              <textInput key="text" multiline="true" maxHeight="600"/>
+            </field>
+            <field label="Author">
+              <objectInput key="authors" name="hypothesisAuthor">
+                <finder name="hypothesisAuthorFinder" url="/service/model/finder?type=Person"/>
+              </objectInput>
+            </field>
+          </fields>
+					<buttons>
+						<button text="Delete" name="deleteHypothesis" variant="light">
+              <confirm text="Are you sure?"/>
+            </button>
+						<button text="Save" submit="true" variant="light" highlighted="true"/>
+					</buttons>
+				</formula>
+			</window>
       
 		
 	</ui:composition>

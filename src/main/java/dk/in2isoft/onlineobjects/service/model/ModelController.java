@@ -305,7 +305,7 @@ public class ModelController extends ModelControllerBase {
 		Class<? extends Entity> entityClass = modelService.getEntityClass(type);
 		
 		String text = request.getString("text");
-		int page = request.getInt("page");
+		int page = request.getInt("windowPage");
 		
 		Query<? extends Entity> query = Query.after(entityClass).withPaging(page, 20).withWords(text).withPrivileged(request.getSession());
 		SearchResult<? extends Entity> result = modelService.search(query);
@@ -313,7 +313,7 @@ public class ModelController extends ModelControllerBase {
 
 		ListWriter out = new ListWriter(request);
 		out.startList();
-		out.window(result.getTotalCount(),50,page);
+		out.window(result.getTotalCount(),20,page);
 		out.startHeaders().header("Title").endHeaders();		
 		
 		for (Entity entity : result.getList()) {
@@ -335,9 +335,9 @@ public class ModelController extends ModelControllerBase {
 		String type = request.getString("type", "No type provided");
 		if (Person.class.getSimpleName().equals(type)) {
 			Person person = new Person();
-			person.setFullName(request.getString("fullName", "No name"));
 			modelService.createItem(person, request.getSession());
-			return person;
+			String name = request.getString("fullName", "No name");
+			return personService.getOrCreatePerson(name, request.getSession());
 		}
 		if (Question.class.getSimpleName().equals(type)) {
 			Question question = new Question();

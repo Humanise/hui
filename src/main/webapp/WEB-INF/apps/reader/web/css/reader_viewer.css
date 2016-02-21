@@ -98,67 +98,7 @@
   font-size: 12pt;
 }
 
-.reader_viewer_content .quote {
-  background: rgba(255, 203, 0, 0.5);
-  font-style: normal;
-  border-radius: 6px;
-  padding: 0 3px;
-  margin: 0 -3px;
-}
 
-.reader_viewer_content .person {
-  background: rgba(0, 90, 255, 0.1);
-  font-style: normal;
-  border-radius: 6px;
-  padding: 0 3px;
-  margin: 0 -3px;
-}
-
-.reader_viewer_content .noun {
-  background: rgba(0, 90, 255, 0.1);
-  font-style: normal;
-  border-radius: 6px;
-  padding: 0 3px;
-  margin: 0 -3px;
-}
-
-.reader_viewer_content .word {
-  background-color: rgb(245, 241, 223);
-  padding: 0 3px;
-  margin: 0 -3px;
-  border-radius: 10px;
-}
-
-.reader_viewer_content .person::before {
-  content: 'P';
-  display: inline-block;
-  background: rgb(109, 150, 226);
-  border-radius: 2px;
-  font-size: 11px;
-  vertical-align: middle;
-  width: 12px;
-  height: 12px;
-  color: #fff;
-  text-align: center;
-  font-family: Verdana;
-  line-height: 12px;
-  margin-right: 0.3em;
-  border: 1px solid rgb(94, 129, 195);
-}
-
-.reader_viewer_content .sentence {
-  background: none;
-}
-
-.reader_viewer_content .sentence::before {
-  content: '{';
-  color: #999;
-}
-
-.reader_viewer_content .sentence::after {
-  content: '}';
-  color: #999;
-}
 
 /** View **/
 

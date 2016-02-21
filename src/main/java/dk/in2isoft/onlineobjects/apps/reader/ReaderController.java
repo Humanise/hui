@@ -23,6 +23,8 @@ import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.in2igui.data.ItemData;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.FeedPerspective;
+import dk.in2isoft.onlineobjects.apps.reader.perspective.HypothesisEditPerspective;
+import dk.in2isoft.onlineobjects.apps.reader.perspective.HypothesisViewPerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.InternetAddressEditPerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.InternetAddressViewPerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.ListItemPerspective;
@@ -101,6 +103,7 @@ public class ReaderController extends ReaderControllerBase {
 				title = "-- empty --";
 			}
 
+			UserSession session = request.getSession();
 			if (entity instanceof InternetAddress) {
 				writer.startH2().withClass("reader_list_title").text(title).endH2();
 				perspective.setAddressId(entity.getId());
@@ -110,23 +113,10 @@ public class ReaderController extends ReaderControllerBase {
 				writer.startP().withClass("reader_list_address").startA().withClass("reader_list_address_link").withHref(address.getAddress())
 						.text(Strings.getSimplifiedDomain(address.getAddress())).endA().endP();
 			} else if (entity instanceof Statement) {
-				Query<Person> personQuery = Query.after(Person.class).from(entity, Relation.KIND_COMMON_AUTHOR).withPrivileged(request.getSession());
-				List<Person> authors = modelService.list(personQuery);
 				perspective.setStatementId(entity.getId());
 				Statement htmlPart = (Statement) entity;
 				writer.startP().withClass("reader_list_text reader_list_quote").text(htmlPart.getText()).endP();
-				if (Code.isNotEmpty(authors)) {
-					writer.startDiv().withClass("reader_list_authors");
-					for (Iterator<Person> i = authors.iterator(); i.hasNext();) {
-						Person person = (Person) i.next();
-						writer.text(person.getFullName());
-						if (i.hasNext()) {
-							writer.text(", ");
-						}
-					}
-					writer.endDiv();
-				}
-				Query<InternetAddress> query = Query.after(InternetAddress.class).to(entity, Relation.KIND_STRUCTURE_CONTAINS).withPrivileged(request.getSession());
+				Query<InternetAddress> query = Query.after(InternetAddress.class).to(entity, Relation.KIND_STRUCTURE_CONTAINS).withPrivileged(session);
 				InternetAddress addr = modelService.search(query).getFirst();
 				if (addr != null) {
 					perspective.setAddressId(addr.getId());
@@ -140,8 +130,9 @@ public class ReaderController extends ReaderControllerBase {
 				Hypothesis question = (Hypothesis) entity;
 				writer.startP().withClass("reader_list_text reader_list_hypothesis").text(question.getText()).endP();
 			}
+			writeAuthors(entity, writer, session);
 
-			List<Word> words = modelService.getChildren(entity, Word.class, request.getSession());
+			List<Word> words = modelService.getChildren(entity, Word.class, session);
 			if (Code.isNotEmpty(words)) {
 				writer.startP().withClass("reader_list_words");
 				List<Pair<Long, String>> tags = Lists.newArrayList();
@@ -163,9 +154,24 @@ public class ReaderController extends ReaderControllerBase {
 
 		return result;
 	}
+
+	private void writeAuthors(Entity entity, HTMLWriter writer, UserSession session) {
+		List<Person> authors = readerModelService.getAuthors(entity, session);
+		if (Code.isNotEmpty(authors)) {
+			writer.startDiv().withClass("reader_list_authors");
+			for (Iterator<Person> i = authors.iterator(); i.hasNext();) {
+				Person person = (Person) i.next();
+				writer.startSpan().text(person.getFullName()).endSpan();
+				if (i.hasNext()) {
+					writer.text(", ");
+				}
+			}
+			writer.endDiv();
+		}
+	}
 	
 	@Path
-	public PeekPerspective peek(Request request) throws ModelException {
+	public PeekPerspective peek(Request request) throws ModelException, IllegalRequestException {
 		String type = request.getString("type");
 		Long id = request.getId();
 		PeekPerspective perspective = new PeekPerspective();
@@ -196,8 +202,13 @@ public class ReaderController extends ReaderControllerBase {
 		} else if (Statement.class.getSimpleName().equals(type)) {
 			Statement statement = modelService.get(Statement.class, id, privileged);
 			if (statement!=null) {
-				rendering.startH2().text(StringUtils.abbreviate(statement.getText(), 50)).endH2();
-				rendering.startP().text(Statement.class.getSimpleName()).endP();
+				rendering.startH2().text(StringUtils.abbreviate(statement.getText(), 100)).endH2();
+				rendering.startP().text(Statement.class.getSimpleName());
+				List<Person> authors = readerModelService.getAuthors(statement, privileged);
+				for (Person person : authors) {
+					rendering.text(", ").text(person.getFullName());
+				}
+				rendering.endP();
 				perspective.setId(statement.getId());
 				perspective.setType(Statement.class.getSimpleName());
 				perspective.addAction("Edit", "edit");
@@ -295,9 +306,6 @@ public class ReaderController extends ReaderControllerBase {
 		String type = request.getString("type");
 		Boolean favorite = request.getBoolean("favorite",null);
 		Boolean inbox = request.getBoolean("inbox",null);
-		if (id == null) {
-			throw new IllegalRequestException("Invalid id");
-		}
 		if (inbox==null && favorite==null) {
 			return;
 		}
@@ -305,7 +313,7 @@ public class ReaderController extends ReaderControllerBase {
 		UserSession session = request.getSession();
 		Entity entity = null;
 		@SuppressWarnings("unchecked")
-		Set<Class<? extends Entity>> types = Sets.newHashSet(InternetAddress.class, Question.class, Statement.class);
+		Set<Class<? extends Entity>> types = Sets.newHashSet(InternetAddress.class, Question.class, Statement.class, Hypothesis.class);
 		for (Class<? extends Entity> cls : types) {
 			if (cls.getSimpleName().equals(type)) {
 				entity = modelService.get(cls, id, session);
@@ -322,53 +330,54 @@ public class ReaderController extends ReaderControllerBase {
 	}
 
 	@Path
-	public void changeFavoriteStatus(Request request) throws ModelException, SecurityException, IllegalRequestException {
-		Long id = request.getLong("id");
+	public void changeFavoriteStatus(Request request) throws ModelException, SecurityException, IllegalRequestException, ContentNotFoundException {
+		Long id = request.getId();
 		boolean favorite = request.getBoolean("favorite");
 
 		UserSession session = request.getSession();
 
-		InternetAddress address = modelService.get(InternetAddress.class, id, session);
-		Code.checkNotNull(address, "Address not found");
-
+		InternetAddress address = modelService.getRequired(InternetAddress.class, id, session);
+		
 		pileService.addOrRemoveFromPile(session.getUser(), Relation.KIND_SYSTEM_USER_FAVORITES, address, favorite);
 	}
 
 	@Path
-	public void changeInboxStatus(Request request) throws ModelException, SecurityException, IllegalRequestException {
-		Long id = request.getLong("id");
+	public void changeInboxStatus(Request request) throws ModelException, SecurityException, IllegalRequestException, ContentNotFoundException {
+		Long id = request.getId();
 		boolean inbox = request.getBoolean("inbox");
 
 		UserSession session = request.getSession();
 
-		InternetAddress address = modelService.get(InternetAddress.class, id, session);
-		Code.checkNotNull(address, "Address not found");
+		InternetAddress address = modelService.getRequired(InternetAddress.class, id, session);
 		pileService.addOrRemoveFromPile(session.getUser(), Relation.KIND_SYSTEM_USER_INBOX, address, inbox);
 	}
 
 	@Path
 	public InternetAddressViewPerspective loadArticle(Request request) throws IOException, ModelException, SecurityException, IllegalRequestException, ExplodingClusterFuckException,
 			ContentNotFoundException {
-		Long articleId = request.getLong("id", null);
+		Long articleId = request.getId();
 		boolean hightlight = request.getBoolean("highlight");
 		String algorithm = request.getString("algorithm");
 		UserSession session = request.getSession();
 
-		if (articleId == null) {
-			throw new IllegalRequestException("No id provided");
-		}
 		return internetAddressViewPerspectiveBuilder.build(articleId, algorithm, hightlight, session);
 	}
 
 	@Path
-	public QuestionViewPerspective viewQuestion(Request request) throws ModelException, IllegalRequestException {
-		Long id = request.getLong("id", null);
+	public QuestionViewPerspective viewQuestion(Request request) throws ModelException, ContentNotFoundException, IllegalRequestException {
+		Long id = request.getId();
 		return questionViewPerspectiveBuilder.build(id, request.getSession());
 	}
 
 	@Path
+	public HypothesisViewPerspective viewHypothesis(Request request) throws ModelException, ContentNotFoundException, IllegalRequestException {
+		Long id = request.getId();
+		return hypothesisViewPerspectiveBuilder.build(id, request.getSession());
+	}
+
+	@Path
 	public void addQuote(Request request) throws IOException, ModelException, SecurityException, IllegalRequestException, ExplodingClusterFuckException, ContentNotFoundException {
-		Long id = request.getLong("id");
+		Long id = request.getId();
 		String text = request.getString("text");
 		if (Strings.isNotBlank(text)) {
 			text = text.trim();
@@ -377,14 +386,75 @@ public class ReaderController extends ReaderControllerBase {
 				throw new IllegalRequestException("Text too long");
 			}
 			Privileged session = request.getSession();
-			InternetAddress address = modelService.get(InternetAddress.class, id, session);
-			if (address != null) {
-				Statement part = new Statement();
-				part.setName(StringUtils.abbreviate(text, 50));
-				part.setText(text);
-				modelService.createItem(part, session);
-				modelService.createRelation(address, part, Relation.KIND_STRUCTURE_CONTAINS, session);
+			InternetAddress address = modelService.getRequired(InternetAddress.class, id, session);
+
+			Statement part = new Statement();
+			part.setName(StringUtils.abbreviate(text, 50));
+			part.setText(text);
+			modelService.createItem(part, session);
+			modelService.createRelation(address, part, Relation.KIND_STRUCTURE_CONTAINS, session);
+		}
+	}
+
+	@Path
+	public void addHypothesis(Request request) throws IOException, ModelException, SecurityException, IllegalRequestException, ExplodingClusterFuckException, ContentNotFoundException {
+		Long id = request.getId();
+		String text = request.getString("text");
+		if (Strings.isNotBlank(text)) {
+			text = text.trim();
+			if (text.length() > 10000) {
+				// TODO Handle this better
+				throw new IllegalRequestException("Text too long");
 			}
+			Privileged session = request.getSession();
+			InternetAddress address = modelService.getRequired(InternetAddress.class, id, session);
+			Hypothesis part = new Hypothesis();
+			part.setName(StringUtils.abbreviate(text, 50));
+			part.setText(text);
+			modelService.createItem(part, session);
+			modelService.createRelation(address, part, Relation.KIND_STRUCTURE_CONTAINS, session);
+		}
+	}
+
+	@Path
+	public void addQuestion(Request request) throws IOException, ModelException, SecurityException, IllegalRequestException, ExplodingClusterFuckException, ContentNotFoundException {
+		Long id = request.getId();
+		String text = request.getString("text");
+		if (Strings.isNotBlank(text)) {
+			text = text.trim();
+			if (text.length() > 10000) {
+				// TODO Handle this better
+				throw new IllegalRequestException("Text too long");
+			}
+			Privileged session = request.getSession();
+			InternetAddress address = modelService.getRequired(InternetAddress.class, id, session);
+			Question part = new Question();
+			part.setName(StringUtils.abbreviate(text, 50));
+			part.setText(text);
+			modelService.createItem(part, session);
+			modelService.createRelation(address, part, Relation.KIND_STRUCTURE_CONTAINS, session);
+		}
+	}
+
+	@Path
+	public void addPerson(Request request) throws IOException, ModelException, SecurityException, IllegalRequestException, ExplodingClusterFuckException, ContentNotFoundException {
+		Long id = request.getId();
+		String text = request.getString("text");
+		if (Strings.isNotBlank(text)) {
+			text = text.trim();
+			if (text.length() > 100) {
+				// TODO Handle this better
+				throw new IllegalRequestException("Text too long");
+			}
+			Privileged session = request.getSession();
+			InternetAddress address = modelService.getRequired(InternetAddress.class, id, session);
+			Person person = personService.getOrCreatePerson(text, session);
+			Relation relation = modelService.getRelation(address, person, Relation.KIND_COMMON_AUTHOR);
+			if (relation==null) {
+				modelService.createRelation(address, person, Relation.KIND_COMMON_AUTHOR, session);				
+			}
+		} else {
+			throw new IllegalRequestException("Text is empty");
 		}
 	}
 
@@ -409,13 +479,11 @@ public class ReaderController extends ReaderControllerBase {
 	}
 
 	@Path
-	public void removeInternetAddress(Request request) throws ModelException, IllegalRequestException, SecurityException {
-		Long id = request.getLong("id");
-		Code.checkNotNull(id, "No id provided");
+	public void removeInternetAddress(Request request) throws ModelException, IllegalRequestException, SecurityException, ContentNotFoundException {
+		Long id = request.getId();
 
 		Privileged privileged = request.getSession();
-		InternetAddress address = modelService.get(InternetAddress.class, id, privileged);
-		Code.checkNotNull(id, "Address not found");
+		InternetAddress address = modelService.getRequired(InternetAddress.class, id, privileged);
 
 		List<Statement> children = modelService.getChildren(address, Relation.KIND_STRUCTURE_CONTAINS, Statement.class, privileged);
 
@@ -453,14 +521,11 @@ public class ReaderController extends ReaderControllerBase {
 	}
 
 	@Path
-	public void removeTag(Request request) throws ModelException, SecurityException, IllegalRequestException {
+	public void removeTag(Request request) throws ModelException, SecurityException, IllegalRequestException, ContentNotFoundException {
 		Long internetAddressId = request.getLong("internetAddressId");
 		String tag = request.getString("tag");
 		UserSession session = request.getSession();
-		InternetAddress internetAddress = modelService.get(InternetAddress.class, internetAddressId, session);
-		if (internetAddress == null) {
-			throw new IllegalRequestException("Not found");
-		}
+		InternetAddress internetAddress = modelService.getRequired(InternetAddress.class, internetAddressId, session);
 		Collection<Property> properties = internetAddress.getProperties();
 		for (Iterator<Property> i = properties.iterator(); i.hasNext();) {
 			Property property = i.next();
@@ -472,9 +537,9 @@ public class ReaderController extends ReaderControllerBase {
 	}
 
 	@Path
-	public WordPerspective getWordInfo(Request request) throws ModelException {
+	public WordPerspective getWordInfo(Request request) throws ModelException, IllegalRequestException {
 		WordListPerspectiveQuery query = new WordListPerspectiveQuery();
-		Long id = request.getLong("id");
+		Long id = request.getId();
 		query.withIds(Lists.newArrayList(id));
 		WordListPerspective row = modelService.search(query).getFirst();
 		if (row != null) {
@@ -509,50 +574,15 @@ public class ReaderController extends ReaderControllerBase {
 	}
 
 	@Path
-	public QuestionEditPerspective editQuestion(Request request) throws ModelException, IllegalRequestException {
-		Long id = request.getLong("id");
-		if (id == null) {
-			throw new IllegalRequestException("No id");
-		}
+	public StatementEditPerspective loadStatement(Request request) throws ModelException, IllegalRequestException, ContentNotFoundException {
+		Long id = request.getId();
 		UserSession session = request.getSession();
-		@Nullable
-		Question statement = modelService.get(Question.class, id, session);
-		if (statement == null) {
-			throw new IllegalRequestException("Statement not found");
-		}
-		QuestionEditPerspective perspective = new QuestionEditPerspective();
-		perspective.setText(statement.getText());
-		perspective.setId(id);
-		{
-			List<Person> people = getAuthors(statement, session);
-			perspective.setAuthors(people.stream().map((Person p) -> {
-				ItemData option = new ItemData();
-				option.setId(p.getId());
-				option.setText(p.getFullName());
-				option.setIcon(p.getIcon());
-				return option;
-			}).collect(Collectors.toList()));
-		}
-		return perspective;
-	}
-
-	@Path
-	public StatementEditPerspective loadStatement(Request request) throws ModelException, IllegalRequestException {
-		Long id = request.getLong("id");
-		if (id == null) {
-			throw new IllegalRequestException("No id");
-		}
-		UserSession session = request.getSession();
-		@Nullable
-		Statement statement = modelService.get(Statement.class, id, session);
-		if (statement == null) {
-			throw new IllegalRequestException("Statement not found");
-		}
+		Statement statement = modelService.getRequired(Statement.class, id, session);
 		StatementEditPerspective perspective = new StatementEditPerspective();
 		perspective.setText(statement.getText());
 		perspective.setId(id);
 		{
-			List<Person> people = getAuthors(statement, session);
+			List<Person> people = readerModelService.getAuthors(statement, session);
 			perspective.setAuthors(people.stream().map((Person p) -> {
 				ItemData option = new ItemData();
 				option.setId(p.getId());
@@ -585,12 +615,6 @@ public class ReaderController extends ReaderControllerBase {
 		perspective.setContradicts(contradicts.stream().map(hypothesisMapper).collect(Collectors.toList()));
 
 		return perspective;
-	}
-
-	private List<Person> getAuthors(Entity entity, Privileged privileged) {
-		Query<Person> query = Query.of(Person.class).from(entity, Relation.KIND_COMMON_AUTHOR).withPrivileged(privileged);
-		List<Person> people = modelService.list(query);
-		return people;
 	}
 
 	@Path
@@ -666,7 +690,13 @@ public class ReaderController extends ReaderControllerBase {
 	}
 
 	@Path
-	public void saveQuestion(Request request) throws ModelException, IllegalRequestException, SecurityException {
+	public QuestionEditPerspective editQuestion(Request request) throws ModelException, IllegalRequestException, ContentNotFoundException {
+		Long id = request.getId();
+		return readerModelService.getQuestionEditPerspective(id, request.getSession());
+	}
+
+	@Path
+	public void saveQuestion(Request request) throws ModelException, IllegalRequestException, SecurityException, ContentNotFoundException {
 		QuestionEditPerspective perspective = request.getObject("data", QuestionEditPerspective.class);
 		long id = perspective.getId();
 		if (id < 1) {
@@ -677,7 +707,7 @@ public class ReaderController extends ReaderControllerBase {
 			throw new IllegalRequestException("The text is empty");
 		}
 		Privileged privileged = request.getSession();
-		Question question = modelService.get(Question.class, id, privileged);
+		Question question = modelService.getRequired(Question.class, id, privileged);
 		question.setName(StringUtils.abbreviate(text, 50));
 		question.setText(text);
 
@@ -687,16 +717,43 @@ public class ReaderController extends ReaderControllerBase {
 	}
 
 	@Path
-	public void deleteQuestion(Request request) throws IllegalRequestException, ModelException, SecurityException {
-		Long id = request.getLong("id");
-		if (id == null) {
+	public void deleteQuestion(Request request) throws IllegalRequestException, ModelException, SecurityException, ContentNotFoundException {
+		Long id = request.getId();
+		Question question = modelService.getRequired(Question.class, id, request.getSession());
+		modelService.deleteEntity(question, request.getSession());
+	}
+
+	@Path
+	public HypothesisEditPerspective editHypothesis(Request request) throws ModelException, IllegalRequestException, ContentNotFoundException {
+		Long id = request.getId();
+		return readerModelService.getHypothesisEditPerspective(id, request.getSession());
+	}
+
+	@Path
+	public void saveHypothesis(Request request) throws ModelException, IllegalRequestException, SecurityException, ContentNotFoundException {
+		HypothesisEditPerspective perspective = request.getObject("data", HypothesisEditPerspective.class);
+		long id = perspective.getId();
+		if (id < 1) {
 			throw new IllegalRequestException("No id");
 		}
-		@Nullable
-		Question question = modelService.get(Question.class, id, request.getSession());
-		if (question == null) {
-			throw new IllegalRequestException("Question not found");
+		String text = perspective.getText();
+		if (Strings.isBlank(text)) {
+			throw new IllegalRequestException("The text is empty");
 		}
+		Privileged privileged = request.getSession();
+		Hypothesis hypothesis = modelService.getRequired(Hypothesis.class, id, privileged);
+		hypothesis.setName(StringUtils.abbreviate(text, 50));
+		hypothesis.setText(text);
+
+		modelService.updateItem(hypothesis, privileged);
+		Collection<Long> ids = ItemData.getIds(perspective.getAuthors());
+		modelService.syncRelationsFrom(hypothesis, Relation.KIND_COMMON_AUTHOR, Person.class, ids, privileged);
+	}
+
+	@Path
+	public void deleteHypothesis(Request request) throws IllegalRequestException, ModelException, SecurityException, ContentNotFoundException {
+		Long id = request.getId();
+		Hypothesis question = modelService.getRequired(Hypothesis.class, id, request.getSession());
 		modelService.deleteEntity(question, request.getSession());
 	}
 }

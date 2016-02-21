@@ -24,6 +24,7 @@
    	</bean>
    	
    	<bean id="questionViewPerspectiveBuilder" class="dk.in2isoft.onlineobjects.apps.reader.perspective.QuestionViewPerspectiveBuilder" autowire="byType"/>
+   	<bean class="dk.in2isoft.onlineobjects.apps.reader.perspective.HypothesisViewPerspectiveBuilder" autowire="byType"/>
 
    	<bean id="readerController" class="dk.in2isoft.onlineobjects.apps.reader.ReaderController" autowire="byType"/>
    	
