@@ -151,7 +151,7 @@ public class TestWordNetImporter extends AbstractSpringTask {
 		//consideredWords.add("tidsmåler");
 		//consideredWords.add("krat");
 		
-
+/*
 		clearSynonyms = false;
 		clearDisciplines = false;
 		clearGeneralizations = false;
@@ -160,7 +160,7 @@ public class TestWordNetImporter extends AbstractSpringTask {
 		createGeneralizations = false;
 		//createSynonyms = false;
 		updateProperties = false;
-		
+*/		
 		//createSynonyms = false;
 		
 		// Loop through all words
@@ -289,8 +289,8 @@ public class TestWordNetImporter extends AbstractSpringTask {
 
 							List<Node> generalizations = getRelatedSenses(synset, hyponymOf, Direction.out);
 							for (Node specialization : generalizations) {
-								print(" - sense - synset - specialization - synset - sense", getLabel(specialization));
-								createSpecialization(localWord, specialization);
+								print(" - sense - synset - generalization - synset - sense", getLabel(specialization));
+								createGeneralization(localWord, specialization);
 							}
 						}
 						if (createSynonyms) {
@@ -328,7 +328,7 @@ public class TestWordNetImporter extends AbstractSpringTask {
 					modelService.commit();
 					modelService.clearAndFlush();
 				}
-				log.info((Math.round((float) num)/((float) total)*100)+"%");
+				print((Math.round((float) num)/((float) total)*100)+"%");
 			}
 		}
 
@@ -488,7 +488,7 @@ public class TestWordNetImporter extends AbstractSpringTask {
 			localWord.addProperty(Property.KEY_DATA_SOURCE, sense.getURI());
 			modelService.createItem(localWord, publicUser);
 		} else {
-			print("found",localWord);
+			//print("found",localWord);
 		}
 		return localWord;
 	}
