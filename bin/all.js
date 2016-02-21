@@ -80,7 +80,7 @@ window.hui = window.hui || {};
  * @param {Object} obj The object to log
  */
 hui.log = function(obj) {
-	try {
+	if (window.console && window.console.log) {
 		if (arguments.length==1) {
 			console.log(obj);
 		}
@@ -89,7 +89,7 @@ hui.log = function(obj) {
 		} else {
 			console.log(arguments);			
 		}
-	} catch (ignore) {}
+	}
 };
 
 /**
@@ -525,9 +525,9 @@ hui.dom = {
 		}
 		return null;
 	},
-	parseToNode : function(html) {
+	parse : function(html) {
 		var dummy = hui.build('div',{html:html});
-		return hui.get.firstChild(dummy,'table');
+		return hui.get.firstChild(dummy);
 	},
 	clear : function(node) {
 		var children = node.childNodes;
@@ -1665,27 +1665,18 @@ hui.request = function(options) {
 	var transport = new XMLHttpRequest();
 	if (!transport) {return;}
 	transport.onreadystatechange = function() {
-		try {
-			if (transport.readyState == 4) {
-				if (transport.status == 200 && options.$success) {
-					options.$success(transport);
-				} else if (transport.status == 403 && options.$forbidden) {
-					options.$forbidden(transport);
-				} else if (transport.status !== 0 && options.$failure) {
-					options.$failure(transport);
-				} else if (transport.status === 0 && options.$abort) {
-					options.$abort(transport);
-				}
-				if (options.$finally) {
-					options.$finally();
-				}
+		if (transport.readyState == 4) {
+			if (transport.status == 200 && options.$success) {
+				options.$success(transport);
+			} else if (transport.status == 403 && options.$forbidden) {
+				options.$forbidden(transport);
+			} else if (transport.status !== 0 && options.$failure) {
+				options.$failure(transport);
+			} else if (transport.status === 0 && options.$abort) {
+				options.$abort(transport);
 			}
-			//hui.request._forget(transport);
-		} catch (e) {
-			if (options.$exception) {
-				options.$exception(e,transport);
-			} else {
-				throw e;
+			if (options.$finally) {
+				options.$finally();
 			}
 		}
 	};
@@ -5955,7 +5946,7 @@ hui.ui.Component.prototype = {
  * @constructor
  */
 hui.ui.Source = function(options) {
-	this.options = hui.override({url:null,dwr:null,parameters:[],lazy:false},options);
+	this.options = hui.override({url:null,parameters:[],lazy:false},options);
 	this.name = options.name;
 	this.data = null;
 	this.parameters = [];
@@ -6064,37 +6055,22 @@ hui.ui.Source.prototype = {
 				$exception : function(e,t) {
 					hui.log('Exception while loading source...')
 					hui.log(e)
-					self.end();
+					self._end();
 				},
 				$forbidden : function() {
 					hui.ui.handleForbidden(self);
 					hui.ui.callDelegates(self,'sourceFailed');
-					self.end();
+					self._end();
 				},
 				$failure : function(t) {
 					hui.log('sourceFailed');
 					hui.ui.callDelegates(self,'sourceFailed');
-					self.end();
+					self._end();
 				}
 			});
-		} else if (this.options.dwr) {
-			var pair = this.options.dwr.split('.');
-			var facade = eval(pair[0]);
-			var method = pair[1];
-			var args = facade[method].argumentNames();
-			for (var k=0; k < args.length; k++) {
-				if (this.parameters[k]) {
-					args[k]=this.parameters[k].value===undefined ? null : this.parameters[k].value;
-				}
-			};
-			args[args.length-1]=function(r) {self.parseDWR(r)};
-			this.busy=true;
-			hui.ui.callDelegates(this,'sourceIsBusy');
-			facade[method].apply(facade,args);
 		}
 	},
-	/** @private */
-	end : function() {
+	_end : function() {
 		this.busy = false;
 		hui.ui.callDelegates(this,'sourceIsNotBusy');
 		if (this.pendingRefresh) {
@@ -6113,7 +6089,7 @@ hui.ui.Source.prototype = {
 			}
 			this.fire('objectsLoaded',json);
 		}
-		this.end();
+		this._end();
 	},
 	/** @private */
 	parseXML : function(doc) {
@@ -6125,12 +6101,6 @@ hui.ui.Source.prototype = {
 		} else if (doc.documentElement.tagName=='articles') {
 			this.fire('articlesLoaded',doc);
 		}
-	},
-	/** @private */
-	parseDWR : function(data) {
-		this.data = data;
-		this.fire('objectsLoaded',data);
-		this.end();
 	},
 	addParameter : function(parm) {
 		this.parameters.push(parm);
@@ -6159,16 +6129,6 @@ hui.ui.Source.prototype = {
 			}
 		};
 		this.refreshLater();
-	}
-}
-
-// TODO Remove this when DWR support is removed
-if (!Function.prototype.argumentNames) {
-	Function.prototype.argumentNames = function() {
-		var names = this.toString().match(/^[\s\(]*function[^(]*\(([^)]*)\)/)[1]
-			.replace(/\/\/.*?[\r\n]|\/\*(?:.|[\r\n])*?\*\//g, '')
-			.replace(/\s+/g, '').split(',');
-		return names.length == 1 && !names[0] ? [] : names;
 	}
 }
 /* EOF */
@@ -12439,7 +12399,7 @@ hui.ui.Layout = function(options) {
 hui.ui.Layout.create = function(options) {
 	options = hui.override({text:'',highlighted:false,enabled:true},options);
 	
-	options.element = hui.dom.parseToNode('<table class="hui_layout"><tbody class="hui_layout"><tr class="hui_layout_middle"><td class="hui_layout_middle">'+
+	options.element = hui.dom.parse('<table class="hui_layout"><tbody class="hui_layout"><tr class="hui_layout_middle"><td class="hui_layout_middle">'+
 			'<table class="hui_layout_middle"><tr>'+
 			'<td class="hui_layout_left hui_context_sidebar"><div class="hui_layout_left"></div></td>'+
 			'<td class="hui_layout_center"></td>'+
@@ -16978,11 +16938,11 @@ hui.ui.Finder.prototype = {
   },
   _buildBody : function() {
     var opts = this.options;
-    var layout = hui.ui.Layout.create();
+    var layout = hui.ui.Structure.create();
     this.window.add(layout);
 
     var left = hui.ui.Overflow.create({dynamic:true});
-    layout.addToLeft(left);
+    layout.addLeft(left);
 
     var list = this.list = hui.ui.List.create();
 
@@ -16996,7 +16956,7 @@ hui.ui.Finder.prototype = {
       var bar = hui.ui.Bar.create({
         variant: 'layout'
       });
-      layout.addToCenter(bar);
+      layout.addCenter(bar);
       if (opts.search) {
         var search = hui.ui.SearchField.create({
           expandedWidth: 200
@@ -17010,7 +16970,7 @@ hui.ui.Finder.prototype = {
       }
     }
     var right = hui.ui.Overflow.create({dynamic:true});
-    layout.addToCenter(right);
+    layout.addCenter(right);
     right.add(this.list);
 
 
@@ -17213,7 +17173,29 @@ hui.ui.Structure = function(options) {
 	hui.ui.extend(this);
 }
 
+hui.ui.Structure.create = function(options) {
+	options = hui.override({},options);
+	
+	options.element = hui.dom.parse('<div class="hui_structure">'+
+			'<div class="hui_structure_middle">'+
+			'<div class="hui_structure_left"></div>'+
+			'<div class="hui_structure_center"></div>'+
+			'</div>'+
+			'</div>');
+	return new hui.ui.Structure(options);
+}
+
 hui.ui.Structure.prototype = {
+	
+	addLeft : function(widget) {
+		var tbody = hui.get.firstByClass(this.element,'hui_structure_left');
+		tbody.appendChild(widget.element);
+	},
+	
+	addCenter : function(widget) {
+		var tbody = hui.get.firstByClass(this.element,'hui_structure_center');
+		tbody.appendChild(widget.element);
+	},
 	$$layout : function() {
 		var t = hui.get.firstByClass(this.element,'hui_structure_top');
 		var b = hui.get.firstByClass(this.element,'hui_structure_bottom');
