@@ -171,7 +171,7 @@ public class ReaderController extends ReaderControllerBase {
 	}
 	
 	@Path
-	public PeekPerspective peek(Request request) throws ModelException, IllegalRequestException {
+	public PeekPerspective peek(Request request) throws ModelException, IllegalRequestException, ContentNotFoundException {
 		String type = request.getString("type");
 		Long id = request.getId();
 		PeekPerspective perspective = new PeekPerspective();
@@ -200,19 +200,29 @@ public class ReaderController extends ReaderControllerBase {
 				}
 			}
 		} else if (Statement.class.getSimpleName().equals(type)) {
-			Statement statement = modelService.get(Statement.class, id, privileged);
-			if (statement!=null) {
-				rendering.startH2().text(StringUtils.abbreviate(statement.getText(), 100)).endH2();
-				rendering.startP().text(Statement.class.getSimpleName());
-				List<Person> authors = readerModelService.getAuthors(statement, privileged);
-				for (Person person : authors) {
-					rendering.text(", ").text(person.getFullName());
-				}
-				rendering.endP();
-				perspective.setId(statement.getId());
-				perspective.setType(Statement.class.getSimpleName());
-				perspective.addAction("Edit", "edit");
+			Statement statement = modelService.getRequired(Statement.class, id, privileged);
+			rendering.startH2().text(StringUtils.abbreviate(statement.getText(), 100)).endH2();
+			rendering.startP().text(Statement.class.getSimpleName());
+			List<Person> authors = readerModelService.getAuthors(statement, privileged);
+			for (Person person : authors) {
+				rendering.text(", ").text(person.getFullName());
 			}
+			rendering.endP();
+			perspective.setId(statement.getId());
+			perspective.setType(Statement.class.getSimpleName());
+			perspective.addAction("Edit", "edit");
+		} else if (Hypothesis.class.getSimpleName().equals(type)) {
+			Hypothesis hypothesis = modelService.getRequired(Hypothesis.class, id, privileged);
+			rendering.startH2().text(StringUtils.abbreviate(hypothesis.getText(), 100)).endH2();
+			rendering.startP().text(Hypothesis.class.getSimpleName());
+			List<Person> authors = readerModelService.getAuthors(hypothesis, privileged);
+			for (Person person : authors) {
+				rendering.text(", ").text(person.getFullName());
+			}
+			rendering.endP();
+			perspective.setId(hypothesis.getId());
+			perspective.setType(Hypothesis.class.getSimpleName());
+			perspective.addAction("Edit", "edit");
 		} else if (Word.class.getSimpleName().equals(type)) {
 			WordListPerspectiveQuery query = new WordListPerspectiveQuery();
 			query.withId(id);

@@ -303,6 +303,10 @@ var internetAddressViewer = {
 		this.reload();
 	},
 
+	$hypothesisChanged : function() {
+		this.reload();
+	},
+
   hide : function() {
     this._unlockViewer();
     this.nodes.viewer.style.display='none';

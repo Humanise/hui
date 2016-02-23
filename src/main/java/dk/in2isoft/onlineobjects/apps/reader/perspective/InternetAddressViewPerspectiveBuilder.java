@@ -46,6 +46,7 @@ import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.model.Entity;
+import dk.in2isoft.onlineobjects.model.Hypothesis;
 import dk.in2isoft.onlineobjects.model.InternetAddress;
 import dk.in2isoft.onlineobjects.model.LexicalCategory;
 import dk.in2isoft.onlineobjects.model.Person;
@@ -136,6 +137,16 @@ public class InternetAddressViewPerspectiveBuilder {
 			quoteList.add(statementPerspective);
 		}
 		article.setQuotes(quoteList);
+		
+		List<Hypothesis> hypotheses = modelService.getChildren(address, Relation.KIND_STRUCTURE_CONTAINS, Hypothesis.class, session);
+		List<StatementPerspective> perpectives = hypotheses.stream().map((Hypothesis hypothesis) -> {
+			StatementPerspective perspective = new StatementPerspective();
+			perspective.setText(hypothesis.getText());
+			perspective.setId(hypothesis.getId());
+			perspective.setAuthors(getAuthors(hypothesis, session));
+			return perspective;
+		}).collect(Collectors.toList());
+		article.setHypotheses(perpectives);
 	}
 	
 	private ArticleData buildData(InternetAddress address) throws ModelException {
@@ -322,7 +333,7 @@ public class InternetAddressViewPerspectiveBuilder {
 				
 				Map<String, Object> attributes = new HashMap<>();
 				attributes.put("data-id", statement.getId());
-				attributes.put("class", "quote js_reader_item");
+				attributes.put("class", "reader_text_quote js_reader_item");
 				attributes.put("data-info", Strings.toJSON(info));
 				decorated.decorate(result.getFrom(), result.getTo(), "mark", attributes);
 				
@@ -330,6 +341,27 @@ public class InternetAddressViewPerspectiveBuilder {
 			}
 			if (!found.isEmpty()) {
 				statement.setFound(true);
+			}
+		}
+		for (StatementPerspective hypothesis : article.getHypotheses()) {
+			List<Result> found = searcher.search(hypothesis.getText(), text);
+			hypothesis.setFirstPosition(text.length());
+			for (Result result : found) {
+				Map<String, Object> info = new HashMap<>();
+				info.put("id", hypothesis.getId());
+				info.put("type", Hypothesis.class.getSimpleName());
+				info.put("description", "Hypothesis: " + StringUtils.abbreviate(hypothesis.getText(), 30));
+				
+				Map<String, Object> attributes = new HashMap<>();
+				attributes.put("data-id", hypothesis.getId());
+				attributes.put("class", "reader_text_hypothesis js_reader_item");
+				attributes.put("data-info", Strings.toJSON(info));
+				decorated.decorate(result.getFrom(), result.getTo(), "mark", attributes);
+				
+				hypothesis.setFirstPosition(Math.min(result.getFrom(), hypothesis.getFirstPosition()));
+			}
+			if (!found.isEmpty()) {
+				hypothesis.setFound(true);
 			}
 		}
 		for (Word keyword : data.keywords) {
@@ -342,7 +374,7 @@ public class InternetAddressViewPerspectiveBuilder {
 				
 				Map<String, Object> attributes = new HashMap<>();
 				attributes.put("data-id", keyword.getId());
-				attributes.put("class", "word js_reader_item");
+				attributes.put("class", "reader_text_word js_reader_item");
 				attributes.put("data-info", Strings.toJSON(info));
 				decorated.decorate(result.getFrom(), result.getTo(), "span", attributes);
 			}

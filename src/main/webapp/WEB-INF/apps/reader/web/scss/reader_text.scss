@@ -1,0 +1,84 @@
+.reader_text {
+  
+  &_quote {
+    background: rgba(255, 203, 0, 0.5);
+    font-style: normal;
+    border-radius: 6px;
+    padding: 0 3px;
+    margin: 0 -3px;
+    transition: background-color .3s;
+    
+    &.is-highlighted {
+      background-color: #FF92AB;
+      color: #940028;
+    }
+  }
+
+  &_hypothesis {
+    background: rgba(175, 191, 40, 0.5);
+    font-style: normal;
+    border-radius: 6px;
+    padding: 0 3px;
+    margin: 0 -3px;
+    transition: background-color .3s;
+    
+    &.is-highlighted {
+      background-color: #FF92AB;
+      color: #940028;
+    }
+  }
+
+  &_word {
+    background-color: rgb(245, 241, 223);
+    padding: 0 3px;
+    margin: 0 -3px;
+    border-radius: 10px;
+  }
+
+  .person {
+    background: rgba(0, 90, 255, 0.1);
+    font-style: normal;
+    border-radius: 6px;
+    padding: 0 3px;
+    margin: 0 -3px;
+    
+    &:before {
+      content: 'P';
+      display: inline-block;
+      background: rgb(109, 150, 226);
+      border-radius: 2px;
+      font-size: 11px;
+      vertical-align: middle;
+      width: 12px;
+      height: 12px;
+      color: #fff;
+      text-align: center;
+      font-family: Verdana;
+      line-height: 12px;
+      margin-right: 0.3em;
+      border: 1px solid rgb(94, 129, 195);
+    }
+  }
+
+  .noun {
+    background: rgba(0, 90, 255, 0.1);
+    font-style: normal;
+    border-radius: 6px;
+    padding: 0 3px;
+    margin: 0 -3px;
+  }
+
+  .sentence {
+    background: none;
+  }
+
+  .sentence::before {
+    content: '{';
+    color: #999;
+  }
+
+  .sentence::after {
+    content: '}';
+    color: #999;
+  }
+}

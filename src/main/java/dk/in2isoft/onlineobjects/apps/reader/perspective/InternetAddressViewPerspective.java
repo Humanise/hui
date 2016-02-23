@@ -21,6 +21,7 @@ public class InternetAddressViewPerspective implements CategorizableViewPerspect
 	private boolean favorite;
 
 	private List<StatementPerspective> quotes;
+	private List<StatementPerspective> hypotheses;
 	private List<Option> words;
 	private List<ItemData> authors;
 
@@ -118,5 +119,13 @@ public class InternetAddressViewPerspective implements CategorizableViewPerspect
 
 	public void setAuthors(List<ItemData> authors) {
 		this.authors = authors;
+	}
+
+	public List<StatementPerspective> getHypotheses() {
+		return hypotheses;
+	}
+
+	public void setHypotheses(List<StatementPerspective> hypotheses) {
+		this.hypotheses = hypotheses;
 	}
 }

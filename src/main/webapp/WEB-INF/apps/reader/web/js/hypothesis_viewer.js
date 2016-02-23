@@ -2,6 +2,7 @@ var hypothesisViewer = {
   id : null,
   data : null,
   locked : false,
+  visible : false,
   
   nodes : {
     root : '.js_hypothesis',
@@ -87,7 +88,7 @@ var hypothesisViewer = {
     this._load();
   },
   
-  $statementChanged$statementEditor : function() {
+  $hypothesisChanged$statementEditor : function() {
     this._load();
   },
   
@@ -96,12 +97,18 @@ var hypothesisViewer = {
     this.nodes.root.style.display = 'block';
     hui.dom.setText(this.nodes.text,options.placeholder || 'Loading...');
     this._load();
+    this.visible = true;
   },
   hide : function(e) {
     this.nodes.root.style.display = 'none';
+    this.visible = false;
+    this.id = null;
   },
   
   _load : function() {
+    if (!this.visible || !this.id) {
+      return;
+    }
     hui.ui.request({
       url : '/viewHypothesis',
       parameters : {id:this.id},

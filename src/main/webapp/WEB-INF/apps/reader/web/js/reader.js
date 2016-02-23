@@ -102,29 +102,22 @@ var reader = {
       hui.ui.get('tags').selectById(id,e.shiftKey);
     }
   },
-  
-  $statementChanged$statementEditor : function() {
-		this._reloadList();
-  },
-	
+  	
 	$addressWasDeleted$addressEditor : function() {
 		this._reloadList();
     hui.ui.get('tagSource').refresh();
 	},
 	
-	$addressChanged$addressEditor : function() {
+	$addressChanged : function() {
 		this._reloadList();
 	},
-  $addressChanged$internetAddressViewer : function() {
-		this._reloadList();
-	},
-  $statementChanged$internetAddressViewer : function() {
+  $statementChanged : function() {
 		this._reloadList();
   },
-  $questionChanged$questionEditor : function() {
+  $questionChanged : function() {
 		this._reloadList();
   },
-  $hypothesisChanged$hypothesisEditor : function() {
+  $hypothesisChanged : function() {
 		this._reloadList();
   },
 

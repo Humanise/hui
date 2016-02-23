@@ -1,0 +1,60 @@
+.reader_text_quote {
+  background: rgba(255, 203, 0, 0.5);
+  font-style: normal;
+  border-radius: 6px;
+  padding: 0 3px;
+  margin: 0 -3px;
+  transition: background-color .3s; }
+  .reader_text_quote.is-highlighted {
+    background-color: #FF92AB;
+    color: #940028; }
+.reader_text_hypothesis {
+  background: rgba(175, 191, 40, 0.5);
+  font-style: normal;
+  border-radius: 6px;
+  padding: 0 3px;
+  margin: 0 -3px;
+  transition: background-color .3s; }
+  .reader_text_hypothesis.is-highlighted {
+    background-color: #FF92AB;
+    color: #940028; }
+.reader_text_word {
+  background-color: #f5f1df;
+  padding: 0 3px;
+  margin: 0 -3px;
+  border-radius: 10px; }
+.reader_text .person {
+  background: rgba(0, 90, 255, 0.1);
+  font-style: normal;
+  border-radius: 6px;
+  padding: 0 3px;
+  margin: 0 -3px; }
+  .reader_text .person:before {
+    content: 'P';
+    display: inline-block;
+    background: #6d96e2;
+    border-radius: 2px;
+    font-size: 11px;
+    vertical-align: middle;
+    width: 12px;
+    height: 12px;
+    color: #fff;
+    text-align: center;
+    font-family: Verdana;
+    line-height: 12px;
+    margin-right: 0.3em;
+    border: 1px solid #5e81c3; }
+.reader_text .noun {
+  background: rgba(0, 90, 255, 0.1);
+  font-style: normal;
+  border-radius: 6px;
+  padding: 0 3px;
+  margin: 0 -3px; }
+.reader_text .sentence {
+  background: none; }
+.reader_text .sentence::before {
+  content: '{';
+  color: #999; }
+.reader_text .sentence::after {
+  content: '}';
+  color: #999; }
