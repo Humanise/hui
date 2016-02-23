@@ -2,11 +2,7 @@ package dk.in2isoft.onlineobjects.apps.reader.perspective;
 
 import java.util.List;
 
-import org.eclipse.jdt.annotation.Nullable;
-
 import dk.in2isoft.commons.lang.HTMLWriter;
-import dk.in2isoft.onlineobjects.apps.reader.ReaderModelService;
-import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.core.exceptions.ContentNotFoundException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
@@ -16,15 +12,8 @@ import dk.in2isoft.onlineobjects.model.Statement;
 
 public class QuestionViewPerspectiveBuilder extends EntityViewPerspectiveBuilder {
 
-	private ModelService modelService;
-	private ReaderModelService readerModelService;
-
 	public QuestionViewPerspective build(long id, UserSession session) throws ModelException, ContentNotFoundException {
-		@Nullable
-		Question question = modelService.get(Question.class, id, session);
-		if (question == null) {
-			throw new ContentNotFoundException(Question.class, id);
-		}
+		Question question = modelService.getRequired(Question.class, id, session);
 		QuestionViewPerspective perspective = new QuestionViewPerspective();
 		perspective.setId(id);
 		perspective.setText(question.getText());
