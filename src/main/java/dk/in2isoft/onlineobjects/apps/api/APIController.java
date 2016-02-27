@@ -16,6 +16,7 @@ import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.in2igui.FileBasedInterface;
 import dk.in2isoft.onlineobjects.apps.reader.index.ReaderQuery;
 import dk.in2isoft.onlineobjects.apps.videosharing.Path;
+import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
@@ -28,6 +29,7 @@ import dk.in2isoft.onlineobjects.model.Question;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.Statement;
 import dk.in2isoft.onlineobjects.model.User;
+import dk.in2isoft.onlineobjects.modules.language.WordModification;
 import dk.in2isoft.onlineobjects.service.language.TextAnalysis;
 import dk.in2isoft.onlineobjects.ui.Request;
 
@@ -135,11 +137,7 @@ public class APIController extends APIControllerBase {
 
 	@Path(start = { "v1.0", "knowledge", "list" })
 	public SearchResult<KnowledgeListRow> knowledgeList(Request request) throws IOException, EndUserException {
-		String secret = request.getString("secret");
-		User user = securityService.getUserBySecret(secret);
-		if (user==null) {
-			throw new SecurityException("User not found");
-		}
+		User user = getUserForSecretKey(request);
 		
 		int page = request.getInt("page");
 		int pageSize = request.getInt("pageSize");
@@ -182,6 +180,23 @@ public class APIController extends APIControllerBase {
 			list.add(row);
 		}
 		return new SearchResult<>(list, searchResult.getTotalCount());
+	}
+
+	private User getUserForSecretKey(Request request) throws SecurityException {
+		String secret = request.getString("secret");
+		User user = securityService.getUserBySecret(secret);
+		if (user==null) {
+			throw new SecurityException("User not found");
+		}
+		return user;
+	}
+
+	@Path(start = { "v1.0", "words", "import" })
+	public void importWord(Request request) throws IOException, EndUserException {
+		User user = getUserForSecretKey(request);
+		Privileged privileged = securityService.getAdminPrivileged();
+		WordModification modification = request.getObject("modification", WordModification.class);
+		wordService.updateWord(modification , privileged);
 	}
 
 	private String extractText(String url) {

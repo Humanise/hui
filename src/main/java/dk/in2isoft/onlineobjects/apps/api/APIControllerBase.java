@@ -9,6 +9,7 @@ import dk.in2isoft.onlineobjects.apps.ApplicationController;
 import dk.in2isoft.onlineobjects.apps.reader.ReaderSearcher;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.modules.inbox.InboxService;
+import dk.in2isoft.onlineobjects.modules.language.WordService;
 import dk.in2isoft.onlineobjects.modules.networking.HTMLService;
 import dk.in2isoft.onlineobjects.services.LanguageService;
 import dk.in2isoft.onlineobjects.ui.Request;
@@ -19,6 +20,7 @@ public abstract class APIControllerBase extends ApplicationController {
 	protected HTMLService htmlService;
 	protected SecurityService securityService;
 	protected InboxService inboxService;
+	protected WordService wordService;
 	
 	protected ReaderSearcher readerSearcher;
 	
@@ -57,6 +59,10 @@ public abstract class APIControllerBase extends ApplicationController {
 	
 	public void setReaderSearcher(ReaderSearcher readerSearcher) {
 		this.readerSearcher = readerSearcher;
+	}
+	
+	public void setWordService(WordService wordService) {
+		this.wordService = wordService;
 	}
 
 }

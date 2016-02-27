@@ -53,8 +53,8 @@ public class LanguageConsistencyChecker implements ConsistencyChecker {
 		categories.put(LexicalCategory.CODE_ONOMATOPOEIA, "Sound word");
 
 		languages = Maps.newHashMap();
-		languages.put("en", "English");
-		languages.put("da", "Dansk");
+		languages.put(Language.ENGLISH, "English");
+		languages.put(Language.DANISH, "Dansk");
 		languages.put("de", "Deutch");
 		languages.put("fr", "Fran\u00E7ais");
 		languages.put("es", "Espa\u00F1ol");

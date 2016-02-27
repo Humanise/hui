@@ -401,11 +401,11 @@ public class ModelService {
 		return null;
 	}
 
-	public Relation createRelation(Entity parent, Entity child, Privileged privileged) throws ModelException {
-		if (parent==null || child==null) {
+	public Relation createRelation(Entity from, Entity to, Privileged privileged) throws ModelException {
+		if (from==null || to==null) {
 			return null;
 		}
-		Relation relation = new Relation(parent, child);
+		Relation relation = new Relation(from, to);
 		createItem(relation, privileged);
 		return relation;
 	}

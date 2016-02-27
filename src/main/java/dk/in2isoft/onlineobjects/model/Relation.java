@@ -7,9 +7,9 @@ public class Relation extends Item {
 	public static final String TYPE = Item.TYPE+"/Relation";
 	public static final String NAMESPACE = Item.NAMESPACE+"Relation/";
 
-	public static final String KIND_COMMON_ORIGINATOR = "common.originator";
+	public static final String KIND_COMMON_ORIGINATOR = "common.originator"; /* A comes from B; the originator of A is B; A is made by B */
 	public static final String KIND_COMMON_AUTHOR = "common.author";
-	public static final String KIND_COMMON_SOURCE = "common.source";
+	public static final String KIND_COMMON_SOURCE = "common.source"; /* The source of A is B */
 
 	public static final String ANSWERS = "information.answers"; /* A answers B */
 	public static final String KIND_INFORMATION_ABOUT = "information.about"; /* A is about B */

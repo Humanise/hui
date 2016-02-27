@@ -1,5 +1,6 @@
 package dk.in2isoft.onlineobjects.util;
 
+import java.net.URI;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
@@ -30,5 +31,15 @@ public class ValidationUtil {
 			return false;
 		}
 		return PASSWORD.matcher(password).matches();
+	}
+
+	public static boolean isWellFormedURI(String str) {
+		try {
+			URI.create(str);
+			return true;
+		} catch (Exception e) {
+			
+		}
+		return false;
 	}
 }

@@ -34,6 +34,9 @@ public class LanguageService {
 	private Set<Locale> locales = Sets.newHashSet(new Locale("en","US"),new Locale("da","DK"));
 		
 	public Language getLanguageForCode(String code) {
+		if (Strings.isBlank(code)) {
+			return null;
+		}
 		Query<Language> query = Query.of(Language.class).withField(Language.CODE, code);
 		return modelService.search(query).getFirst();
 	}

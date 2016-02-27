@@ -8,11 +8,15 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.queryparser.flexible.standard.QueryParserUtil;
+import org.eclipse.jdt.annotation.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.ModelService;
+import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.SecurityService;
@@ -20,6 +24,8 @@ import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.core.exceptions.ExplodingClusterFuckException;
 import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
+import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
+import dk.in2isoft.onlineobjects.model.InternetAddress;
 import dk.in2isoft.onlineobjects.model.Language;
 import dk.in2isoft.onlineobjects.model.LexicalCategory;
 import dk.in2isoft.onlineobjects.model.Property;
@@ -30,9 +36,12 @@ import dk.in2isoft.onlineobjects.modules.index.IndexManager;
 import dk.in2isoft.onlineobjects.modules.index.IndexSearchQuery;
 import dk.in2isoft.onlineobjects.modules.index.IndexSearchResult;
 import dk.in2isoft.onlineobjects.services.LanguageService;
+import dk.in2isoft.onlineobjects.util.ValidationUtil;
 
 public class WordService {
 	
+	private static final Logger log = LoggerFactory.getLogger(WordService.class);
+
 	private IndexManager index;
 	private ModelService modelService;
 	private LanguageService languageService;
@@ -175,7 +184,7 @@ public class WordService {
 		String dataSource = word.getPropertyValue(Property.KEY_DATA_SOURCE);
 		impression.setDataSource(dataSource);
 		if (Strings.isNotBlank(dataSource)) {
-			impression.setSourceTitle("WordNet.dk");
+			impression.setSourceTitle(dataSource.startsWith("WID") ? "wordnet.princeton.edu" : "WordNet.dk");
 		}
 		return impression;
 	}
@@ -232,6 +241,214 @@ public class WordService {
 		} else {
 			return list.iterator().next();
 		}
+	}
+
+	public void updateWord(WordModification modification, Privileged privileged) throws ModelException, IllegalRequestException, SecurityException {		
+		WordListPerspectiveQuery query = new WordListPerspectiveQuery();
+		query.withWord(modification.text.toLowerCase());
+		log.debug("Searching for: " + modification.text);
+		List<WordListPerspective> list = modelService.list(query);
+		log.debug("Found: " + list.size());
+		
+		InternetAddress source = null;
+		if (Strings.isNotBlank(modification.source)) {
+			if (ValidationUtil.isWellFormedURI(modification.source)) {
+				source = getSource(modification.source, privileged);
+			}
+		}
+		
+		//Word word = getWordBySourceId(modification.sourceId, privileged);
+		
+		List<WordMatch> matches = Lists.newArrayList();
+		for (WordListPerspective perspective : list) {
+			WordMatch match = new WordMatch();
+			if (!perspective.getText().equalsIgnoreCase(modification.text)) {
+				log.warn("Skipping because text is different: " + Strings.toJSON(perspective));
+				continue;
+			}
+			if (!Strings.isBlank(perspective.getLanguage())) {
+				if (!perspective.getLanguage().equals(modification.language)) {
+					log.warn("Skipping because language is different: " + Strings.toJSON(perspective));
+					continue;
+				}
+				match.language = true;
+			}
+			// Only look at category if set
+			if (!Strings.isBlank(modification.lexicalCategory)) {
+				if (!Strings.isBlank(perspective.getLexicalCategory())) {
+					if (!modification.lexicalCategory.equals(perspective.getLexicalCategory())) {
+						log.warn("Skipping because category is different: " + Strings.toJSON(perspective));
+						continue;
+					}
+				}
+				// Category matches if found is uncategorized or is equal to the modification
+				match.category = Strings.isBlank(perspective.getLexicalCategory()) || Strings.equals(modification.lexicalCategory, perspective.getLexicalCategory());
+			}
+			
+			Word word = modelService.get(Word.class, perspective.getId(), privileged);
+			match.word = word;
+			String sourceId = word.getPropertyValue(Property.KEY_DATA_SOURCE);
+			if (Strings.isNotBlank(sourceId)) {
+				if (Strings.equals(modification.sourceId, sourceId)) {
+					match.source = true;
+				} else {
+					log.warn("Skipping because source is different: " + Strings.toJSON(perspective));
+					continue;
+				}
+			}
+			if (Strings.isNotBlank(perspective.getGlossary()) && !match.source) {
+				// Skip words that have a glossary 
+				log.warn("Skipping because it has a glossary: " + Strings.toJSON(perspective));
+				continue;
+			}
+			// TODO: Check glossary - fail or skip if it is already set with something else
+			
+			match.text = perspective.getText().equals(modification.text);
+			match.perspective = perspective;
+			matches.add(match);				
+		}
+		Word word;
+		if (!matches.isEmpty()) {
+			Collections.sort(matches);
+			log.info("Mathces: " + Strings.toJSON(matches));
+			
+			WordMatch best = matches.get(0);
+			log.info("Best match: " + Strings.toJSON(best.perspective));
+			word = best.word;
+		} else {
+			log.debug("No matches for " + modification.text);
+			word = new Word();
+			word.setText(modification.text);
+			modelService.createItem(word, privileged);
+		}
+		updateWord(word,modification,source,privileged);
+	}
+
+	private @Nullable InternetAddress getSource(String src, Privileged privileged) throws ModelException {
+		Query<InternetAddress> query = Query.after(InternetAddress.class).withField(InternetAddress.FIELD_ADDRESS, src);
+		List<InternetAddress> list = modelService.list(query);
+		for (InternetAddress address : list) {
+			Query<Word> wordQuery = Query.after(Word.class).to(address, Relation.KIND_COMMON_SOURCE);
+			Long num = modelService.count(wordQuery);
+			if (num > 0) {
+				return address;
+			}
+		}
+		InternetAddress address = new InternetAddress();
+		address.setAddress(src);
+		address.setName(Strings.simplifyURL(src));
+		modelService.createItem(address, privileged);
+		securityService.grantPublicPrivileges(address, true, false, false);
+		return address;
+	}
+	
+	private void updateWord(Word word, WordModification modification, InternetAddress source, Privileged privileged) throws ModelException, IllegalRequestException, SecurityException {
+		Language language = languageService.getLanguageForCode(modification.language);
+		if (language == null) {
+			throw new IllegalRequestException("No language in modification");
+		}
+		LexicalCategory category = null;
+		String categoryCode = modification.lexicalCategory;
+		if (Strings.isNotBlank(categoryCode)) {
+			category = languageService.getLexcialCategoryForCode(categoryCode);
+			if (category==null) {
+				throw new IllegalRequestException("Unsupported category: " + categoryCode);
+			}
+			changeCategory(word, category, privileged);
+		}
+		changeLanguage(word, language, privileged);
+		if (Strings.isNotBlank(modification.glossary)) {
+			// TODO: Only modify if needed + remove others
+			word.removeProperties(Property.KEY_SEMANTICS_GLOSSARY);
+			word.addProperty(Property.KEY_SEMANTICS_GLOSSARY, modification.glossary);
+			modelService.updateItem(word, privileged);
+		}
+		if (Strings.isNotBlank(modification.sourceId)) {
+			// TODO: Only modify if needed + remove others
+			word.removeProperties(Property.KEY_DATA_SOURCE);
+			word.addProperty(Property.KEY_DATA_SOURCE, modification.sourceId);
+			modelService.updateItem(word, privileged);
+		}
+		if (source!=null) {
+			Relation existing = modelService.getRelation(word, source, Relation.KIND_COMMON_SOURCE);
+			if (existing==null) {
+				modelService.createRelation(word, source, Relation.KIND_COMMON_SOURCE, privileged);
+			}
+		}
+		List<Relation> originators = modelService.getRelationsFrom(word, InternetAddress.class, Relation.KIND_COMMON_ORIGINATOR);
+		log.info("Word->InternetAddress originator count: " + originators.size());
+		for (Relation relation : originators) {
+			modelService.deleteRelation(relation, privileged);
+		}
+		modelService.getChildren(word, Relation.KIND_COMMON_ORIGINATOR, InternetAddress.class);
+		securityService.grantPublicPrivileges(word, true, false, false);
+	}
+	
+	private void changeLanguage(Word word, Language language, Privileged privileged) throws ModelException, SecurityException {
+		List<Relation> parents = modelService.getRelationsTo(word, Language.class);
+		boolean found = false;
+		for (Relation relation : parents) {
+			if (!relation.getFrom().equals(language)) {
+				modelService.deleteRelation(relation, privileged);
+			} else {
+				found = true;
+			}
+		}
+		if (!found) {
+			Relation relation = modelService.createRelation(language, word, privileged);
+			securityService.grantPublicPrivileges(relation, true, false, false);
+		}
+	}
+
+	private void changeCategory(Word word, LexicalCategory category, Privileged privileged) throws ModelException, SecurityException {
+		List<Relation> parents = modelService.getRelationsTo(word, LexicalCategory.class);
+		boolean found = false;
+		for (Relation relation : parents) {
+			if (!relation.getFrom().equals(category)) {
+				modelService.deleteRelation(relation, privileged);
+			} else {
+				found = true;
+			}
+		}
+		if (!found) {
+			Relation relation = modelService.createRelation(category, word, privileged);
+			securityService.grantPublicPrivileges(relation, true, false, false);
+		}
+	}
+
+	class WordMatch implements Comparable<WordMatch> {
+		Word word;
+		WordListPerspective perspective;
+		boolean source;
+		boolean text;
+		boolean language;
+		boolean category;
+		
+		@Override
+		public int compareTo(WordMatch other) {
+			int score = getScore(this); 
+			int otherScore = getScore(other);
+			if (score == otherScore) {
+				return this.word.getCreated().compareTo(other.word.getCreated());
+			}
+			return score > otherScore ? -1 : 1;
+		}
+		
+		private int getScore(WordMatch other) {
+			return (other.source ? 10 : 0) + (other.text ? 1 : 0) + (other.language ? 1 : 0) + (other.category ? 1 : 0);
+		}
+	}
+	
+	private Word getWordBySourceId(String sourceId, Privileged privileged) {
+		Query<Word> query = Query.after(Word.class).withCustomProperty(Property.KEY_DATA_SOURCE, sourceId).withPrivileged(privileged);
+		List<Word> list = modelService.list(query);
+		if (!list.isEmpty()) {
+			if (list.size() > 1) {
+				log.warn("Found " + list.size() + " word with source ID=" + sourceId + ", max 1 expected");
+			}
+			return list.get(0);
+		}
+		return null;
 	}
 	
 	private void ensureOriginator(Word word, UserSession session) throws ModelException {

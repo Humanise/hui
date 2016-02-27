@@ -63,7 +63,7 @@ public class WordsModelService {
 
 	public Diagram getDiagram(String text) throws ModelException {
 		Messages msg = new Messages(WordsController.class);
-		boolean showLanguage = false;
+		boolean showLanguage = !false;
 		Diagram diagram = new Diagram();
 		diagram.setMaxNodeCount(100);
 		Query<Word> query = Query.of(Word.class).withFieldLowercase(Word.TEXT_FIELD, text);
@@ -102,7 +102,7 @@ public class WordsModelService {
 						langNode.setTitle(language.getName());
 						langNode.addProperty("Type", "Language");
 						diagram.addNode(langNode);
-						diagram.addEdge(childNode,langNode);
+						diagram.addEdge(langNode,childNode);
 					}
 				}
 			}
@@ -129,7 +129,7 @@ public class WordsModelService {
 						langNode.setTitle(language.getName());
 						langNode.addProperty("Type", "Language");
 						diagram.addNode(langNode);
-						diagram.addEdge(childNode,langNode);
+						diagram.addEdge(langNode,childNode);
 					}
 				}
 			}
@@ -142,7 +142,7 @@ public class WordsModelService {
 					langNode.setTitle(language.getName());
 					langNode.addProperty("Type", "Language");
 					diagram.addNode(langNode);
-					diagram.addEdge(wordNode,langNode);
+					diagram.addEdge(langNode, wordNode);
 				}
 			}
 			if (!diagram.isFull()) {
