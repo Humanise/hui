@@ -27,6 +27,7 @@ a.oo_link > span
 
 /**************** Titles **************/
 
+.words_title,
 h1.words
 {
 	margin: 0;
@@ -35,6 +36,7 @@ h1.words
 	line-height: 1;
 }
 
+.words_title span,
 h1.words span
 {
 	color: #aaa;
@@ -48,6 +50,7 @@ h2.words
 }
 
 @media screen and (max-width: 600px) {
+  .words_title,
 	h1.words
 	{
 		font-size: 2em;
@@ -55,18 +58,6 @@ h2.words
 }
 
 /*********** index *********/
-
-p.words_index
-{
-	margin: 10px 0;
-	text-transform: uppercase;
-}
-
-.words_searchpage .words_index > a:first-child > span
-{
-	text-transform: none;
-	padding: 0 5px;
-}
 
 
 

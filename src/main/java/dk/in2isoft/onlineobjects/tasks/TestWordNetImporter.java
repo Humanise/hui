@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang.NumberUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
@@ -21,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Sets;
 
-import dk.in2isoft.commons.http.URLUtil;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.SecurityService;
@@ -53,14 +51,16 @@ public class TestWordNetImporter extends AbstractSpringTask {
 	public void before() {
 		//words.add("cat");
 		//words.add("dog");
-		skip = 2700;
+		skip = 58740;
+		skip = 85593;
 		//rows = 10;
 		//words.add("'s Gravenhage".toLowerCase());
+		//updateLocally = true;
 	}
 	
 	@Test
 	public void run() throws Exception {
-		File file = new File("/Users/jonasmunk/Midlertidigt/wordnet_3.1");
+		File file = new File("/Users/jbm/Midlertidigt/wordnet_3.1");
 		IDictionary dict = new Dictionary(file);
 		dict.open();
 		
@@ -108,13 +108,11 @@ public class TestWordNetImporter extends AbstractSpringTask {
 				mod.glossary = word.getSynset().getGloss();
 				if (updateLocally) {
 					wordService.updateWord(mod,privileged);
+					modelService.commit();
 				} else {
 					callServer(mod);
 				}
 			}
-		}
-		if (updateLocally) {
-			modelService.commit();
 		}
 	}
 

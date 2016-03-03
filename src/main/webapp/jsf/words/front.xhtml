@@ -16,10 +16,14 @@
 			<div class="words">
 				<div class="words_front_top">
 				<h1 class="words_front_title">#{msg.words}</h1>
-				<form class="words_search" method="get" action="#{wordsSearchView.localContext}/#{wordsLayoutView.language}/search/">
-					<p>
-						<input type="text" name="text" value="#{wordsSearchView.text}" class="words_search_input"/>
-						<input type="submit" value="Search" class="words_search_button"/>
+				<form class="words_search_form" method="get" action="#{wordsSearchView.localContext}/#{wordsLayoutView.language}/search/">
+					<p class="words_search_form_items">
+            <span class="words_search_form_item">
+              <input type="text" name="text" value="#{wordsSearchView.text}" class="words_search_form_input"/>
+            </span>
+            <span class="words_search_form_item">
+              <input type="submit" value="Search" class="words_search_form_button"/>
+            </span>
 					</p>
 				</form>
 				</div>

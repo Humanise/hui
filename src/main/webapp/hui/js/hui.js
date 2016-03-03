@@ -905,6 +905,13 @@ hui.find = function(selector,context) {
 	return (context || document).querySelector(selector);
 }
 
+hui.findAll = function(selector,context) {
+	var nl = (context || document).querySelectorAll(selector),
+    l=[];
+  for(var i=0, ll=nl.length; i!=ll; l.push(nl[i++]));
+  return l;
+}
+
 if (!document.querySelector) {
   hui.find = function(selector,context) {
     context = context || document.documentElement;

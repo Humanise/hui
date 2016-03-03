@@ -1,0 +1,42 @@
+$link-color: #08c;
+
+@mixin border-box {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+}
+
+@mixin vertical-gradient($from,$to) {
+	background: -webkit-gradient(linear, 0% 0%, 0% 100% , from($from), to($to));
+	background: -moz-linear-gradient(top, $from, $from);
+	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr=$from, endColorstr=$to);
+}
+
+@mixin when($params:()) {
+  @if (map-has-key($params, width)) {
+    @media screen and (min-width: #{map-get($params,'width')}) {
+      @content;
+    }
+  }
+  @else {
+    @content;
+  }
+}
+
+@mixin icon($icon) {
+  content: $icon;
+  font-family: 'OnlineObjects';
+  display: inline-block;
+  vertical-align: middle;
+  -webkit-font-smoothing: antialiased;
+  @content;
+}
+
+@mixin icon-before($icon) {
+  &:before {
+    @include icon($icon) {
+      line-height: 1;
+      font-weight: normal;
+      @content;
+    }
+  }
+}

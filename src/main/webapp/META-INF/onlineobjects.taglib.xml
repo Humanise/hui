@@ -269,4 +269,11 @@
 			<renderer-type>onlineobjects.dependency</renderer-type>
 		</component>
 	</tag>
+	<tag>
+		<tag-name>filters</tag-name>
+		<component>
+			<component-type>onlineobjects.filters</component-type>
+			<renderer-type>onlineobjects.filters</renderer-type>
+		</component>
+	</tag>
 </facelet-taglib>

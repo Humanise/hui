@@ -7,4 +7,5 @@ public class WordModification {
 	public String language;
 	public String glossary;
 	public String sourceId;
+	public boolean clearOriginators;
 }

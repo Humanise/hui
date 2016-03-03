@@ -7,15 +7,39 @@ module.exports = function(grunt) {
         all: ['js/*.js']
     },
     watch: {
-      scss: {
-        files: ['src/main/webapp/WEB-INF/apps/reader/web/scss/**/*.scss'],
+      core: {
+        files: ['src/main/webapp/WEB-INF/core/web/scss/**/*.scss'],
         tasks: ['sass'],
+        options: {
+          spawn: false,
+        }
+      },
+      reader: {
+        files: ['src/main/webapp/WEB-INF/apps/reader/web/scss/**/*.scss'],
+        tasks: ['sass:reader'],
+        options: {
+          spawn: false,
+        }
+      },
+      words: {
+        files: ['src/main/webapp/WEB-INF/apps/words/web/scss/**/*.scss'],
+        tasks: ['sass:words'],
         options: {
           spawn: false,
         }
       }
     },
     sass: {
+      core: {
+        options : {sourcemap:'none'},
+        files: [{
+          expand: true,
+          cwd: 'src/main/webapp/WEB-INF/core/web/scss/',
+          src: ['*.scss'],
+          dest: 'src/main/webapp/WEB-INF/core/web/css',
+          ext: '.css'
+        }]
+      },
       reader: {
         options : {sourcemap:'none'},
         files: [{
@@ -23,6 +47,16 @@ module.exports = function(grunt) {
           cwd: 'src/main/webapp/WEB-INF/apps/reader/web/scss/',
           src: ['*.scss'],
           dest: 'src/main/webapp/WEB-INF/apps/reader/web/css',
+          ext: '.css'
+        }]
+      },
+      words: {
+        options : {sourcemap:'none'},
+        files: [{
+          expand: true,
+          cwd: 'src/main/webapp/WEB-INF/apps/words/web/scss/',
+          src: ['*.scss'],
+          dest: 'src/main/webapp/WEB-INF/apps/words/web/css',
           ext: '.css'
         }]
       }

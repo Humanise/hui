@@ -905,6 +905,13 @@ hui.find = function(selector,context) {
 	return (context || document).querySelector(selector);
 }
 
+hui.findAll = function(selector,context) {
+	var nl = (context || document).querySelectorAll(selector),
+    l=[];
+  for(var i=0, ll=nl.length; i!=ll; l.push(nl[i++]));
+  return l;
+}
+
 if (!document.querySelector) {
   hui.find = function(selector,context) {
     context = context || document.documentElement;
@@ -4890,12 +4897,14 @@ hui.ui._resize = function() {
 	hui.ui.reLayout();
 	window.clearTimeout(this._delayedResize);
 	if (!hui.ui._resizeFirst) {
-		this._delayedResize = window.setTimeout(hui.ui._afterResize,1000);
+		this._delayedResize = window.setTimeout(hui.ui._afterResize,500);
 	}
 };
 
 hui.ui._afterResize = function() {
-	hui.ui.callSuperDelegates(hui.ui,'$afterResize');
+  hui.onDraw(function() {
+  	hui.ui.callSuperDelegates(hui.ui,'$afterResize');    
+  })
 };
 
 /**

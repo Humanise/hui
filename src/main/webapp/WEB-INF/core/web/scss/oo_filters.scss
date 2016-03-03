@@ -1,0 +1,218 @@
+@import 'shared';
+
+@include when {
+  .oo_filters_bar {
+    font-size: 0;
+    margin: 5px -5px 5px 0;
+
+    &_item {
+      display: inline-block;
+      border: 1px solid #fff;
+      height: 24px;
+      line-height: 24px;
+      padding: 0 26px 0 7px;
+      color: #666;
+      position: relative;
+      cursor: pointer;
+      -webkit-user-select: none;
+      border-radius: 3px;
+      font-weight: 400;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      overflow: hidden;
+      white-space: nowrap;
+        
+      @include icon-before('\e911') {
+        position: absolute;
+        right: 0px;
+        top: 50%;
+        margin-top: -10px;
+        font-size: 11px;
+        padding: 4px 6px;
+        color: #666;
+      }
+        
+      &.is-open {
+        border-color: #eee;
+      
+        &:before {
+          content: '\e914';
+        }
+      }
+    
+      &.is-active {
+        background: #333;
+        border: none;
+        margin: 1px;
+        color: #fff;
+        
+        &:before {
+          color: inherit;
+          background: #333;
+        }
+      }
+    }
+  }
+  
+  .oo_filters_body {
+    overflow: hidden;
+    height: 0;
+    position: relative;
+    transition: height .3s;
+  }
+  
+  .oo_filters {
+    
+    &_filter {
+      opacity: 0;
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      font-size: 0;
+      transition: opacity .3s;
+      
+      &.is-visible {
+        opacity: 1;
+        z-index: 1;
+      }
+    }
+    
+    &_option {
+      display: inline-block;
+      font-size: 15px;
+      color: #333;
+      padding: 0 5px;
+      text-decoration: none;
+      border-radius: 3px;
+      line-height: 22px;
+      height: 22px;
+      border: 1px solid #fff;
+      
+      &-index {
+        text-transform: uppercase;
+      }
+    
+      &:hover {
+        background: #f3f3f3;
+      }
+      
+      &.is-selected {
+        background: #000;
+        border: 1px solid #000;
+        color: #fff;
+      }
+      
+      &-any {
+        text-transform: none;
+        &.is-selected {
+          background: #f9f9f9;
+          border: 1px solid #eee;
+          color: #000;
+        }
+      }
+    }
+
+    &_title {
+      display: none;
+    }
+  }
+  
+  .oo_filters_intro {
+    margin: 40px 0;
+    text-align: center;
+    font-size: 0;
+    
+    &_title {
+      border-bottom: 1px solid #eee;
+      height: 0;
+      margin-bottom: 20px;
+      
+      &_text {
+        background: #fff;
+        position: relative;
+        display: inline-block;
+        padding: 0 5px;
+        line-height: 20px;
+        top: -10px;
+        color: #999;
+        font-style: italic;
+        font-size: 16px;
+      }
+    }
+    
+    &_option {
+      display: inline-block;
+      font-size: 16px;
+      color: #333;
+      padding: 0 7px;
+      text-decoration: none;
+      border-radius: 3px;
+      line-height: 22px;
+      height: 22px;
+
+      &-index {
+        font-size: 20px;
+        padding: 0 6px;
+      }
+    
+      &:hover {
+        background: #f3f3f3;
+      }
+    }
+  }
+}
+
+@include when(( width: 760px )) {
+  .oo_filters_bar {
+    display: none;
+  }
+  
+  .oo_filters_body {
+    overflow: visible;
+    height: auto !important;
+    position: static;
+  }
+  
+  .oo_filters_filter {
+    opacity: 1;
+    position: static;
+    transition: opacity 0s;
+    
+    &-index {
+      margin-top: 10px;
+    }
+
+    &-block {
+      float: right;
+      width: 40%;
+      clear: right;
+      text-align: center;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      padding-left: 20px;
+    }
+  }
+
+  .oo_filters {
+    &_title-block {
+      display: block;
+      border-bottom: 1px solid #eee;
+      height: 0;
+      margin-bottom: 20px;
+      margin-top: 20px;
+    }
+  }
+  
+  .oo_filters_title_text {
+    display: inline-block;
+    line-height: 20px;
+    background: #fff;
+    padding: 0 6px;
+    color: #999;
+    top: -10px;
+    position: relative;
+    font-size: 16px;
+    font-style: italic;
+  }
+}

@@ -1,0 +1,175 @@
+@import 'shared';
+
+@include when {
+  .words_search_form {
+    display: table;
+    width: 100%;
+  	margin: 10px 0 0;
+
+    &_items
+    {
+    	margin-right: 100px;
+    	position: relative;
+      display: table-row;
+    }
+  
+    &_item {
+      display: table-cell;
+      vertical-align: top;
+    
+      &:nth-child(2) {
+        width: 1%;
+        padding-left: 5px;
+      }
+    }
+
+    &_input
+    {
+    	display: block;
+    	width: 100%;
+    	margin-right: 70px;
+    	border: 1px solid #ddd;
+    	line-height: 24px;
+    	padding: 3px 0 3px 6px;
+    	border-radius: 2px;
+    	font-size: 13pt;
+    	box-shadow: inset 0 1px 2px #eee;
+    	font-family: Georgia;
+    	vertical-align: top;
+      -webkit-appearance: none;
+    	margin: 0;
+    	height: 32px;
+    	@include border-box;
+    }
+
+    &_button
+    {
+    	border: 1px solid #ddd;
+    	border-radius: 3px;
+    	height: 32px;
+    	box-sizing: border-box;
+    	-moz-box-sizing: border-box;
+    	vertical-align: top;
+    	margin: 0;
+    	padding: 0 15px;
+    	font-size: 13pt;
+    	font-family: Georgia;
+    	color: #333;
+      -webkit-appearance: none;
+      @include vertical-gradient(#ffffff,#f6f6f6);
+      cursor: pointer;
+      min-width: 70px;
+  
+      &:hover {
+        @include vertical-gradient(#f6f6f6,#eeeeee);
+        border: 1px solid #d6d6d6;
+      }
+    }
+  }
+
+  .words_search_description {
+  	font-style: italic;
+  	color: #666;
+  	font-weight: normal;
+  	font-size: 1em;
+
+    background: #fafafa;
+    margin: 5px -10px;
+    padding: 7px 10px;
+    border: 1px solid #eee;
+    border-width: 1px 0;
+  
+    &_text {
+      display: inline;
+      font-size: inherit;
+      font-weight: inherit;
+      margin-right: 10px;
+    }
+  
+    &_reset {
+      color: $link-color;
+      text-decoration: none;
+      font-style: normal;
+      text-transform: uppercase;
+      font-size: 12px;
+      display: inline-block;
+      vertical-align: middle;
+      
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+  
+  .words_search_body {
+    
+  }
+
+  .words_search_query
+  {
+  	font-size: 9px;
+  	color: #ddd;
+  	font-family: Monaco;
+    
+    &:hover {
+      color: #666;
+    }
+  }
+  
+  .words_search_filters {
+    margin: 20px 0;
+    font-size: 0;
+    text-align: center;
+    
+    a {
+      display: inline-block;
+      font-size: 22px;
+      padding: 0 4px;
+      min-width: 20px;
+      text-transform: uppercase;
+      color: #666;
+      text-decoration: none;
+      
+      &:first-child {
+        display: none;
+      }
+    }
+  }
+  
+  .words_search_empty {
+    text-align: center;
+    margin: 40px 5%;
+    font-size: 18px;
+    font-style: italic;
+    color: #999;
+  }
+}
+
+@include when(( width: 600px )) {
+  .words_search_description {
+    background: none;
+    margin: 10px 0;
+    border: none;
+    padding: 0;
+  }
+  
+  .words_search_form {
+
+    &_item {
+    
+      &:nth-child(2) {
+        padding-left: 10px;
+      }
+    }
+  }
+}
+
+
+@include when(( width: 760px )) {
+
+  .words_search_empty {
+    text-align: left;
+    margin: 40px 0;
+  }
+
+}

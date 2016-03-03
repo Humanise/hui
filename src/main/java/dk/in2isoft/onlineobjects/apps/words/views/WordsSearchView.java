@@ -23,6 +23,9 @@ import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
 import dk.in2isoft.onlineobjects.modules.language.WordQuery;
 import dk.in2isoft.onlineobjects.modules.language.WordService;
 import dk.in2isoft.onlineobjects.ui.Request;
+import dk.in2isoft.onlineobjects.ui.jsf.model.Filters;
+import dk.in2isoft.onlineobjects.ui.jsf.model.Filters.Filter;
+import dk.in2isoft.onlineobjects.ui.jsf.model.Filters.Variant;
 import dk.in2isoft.onlineobjects.ui.jsf.model.Option;
 import dk.in2isoft.onlineobjects.util.Messages;
 
@@ -33,7 +36,7 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 	private WordService wordService;
 	
 	//private static final Logger log = LoggerFactory.getLogger(WordsSearchView.class);
-	
+		
 	private List<WordListPerspective> list;
 	private int count;
 	private int page;
@@ -43,6 +46,7 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 	private String text;
 	private String letter;
 	private String language;
+	private String category;
 	
 	private int pageSize = 20;
 	private List<Option> pages;
@@ -53,7 +57,6 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 	private List<Option> languageOptions;
 	private List<Option> categoryOptions;
 	private List<Option> letterOptions;
-	private String category;
 	private String effectiveQuery;
 	private Messages wordsMsg;
 	private String description;
@@ -157,6 +160,18 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 	
 	public String getDescription() {
 		return this.description;
+	}
+	
+	public boolean isClean() {
+		boolean blank = Strings.isBlank(text);
+		blank &= Strings.isBlank(letter);
+		blank &= Strings.isBlank(language);
+		blank &= Strings.isBlank(category);
+		return blank;
+	}
+	
+	public boolean isBlank() {
+		return list.isEmpty();
 	}
 
 	private List<String> categoryCodes;
@@ -265,7 +280,7 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 		List<Option> options = Lists.newArrayList();
 		{
 			Option option = new Option();
-			option.setLabel("Any");
+			option.setLabel(translate("any"));
 			option.setKey("default");
 			option.setSelected(Strings.isBlank(letter));
 			option.setValue(buildUrl(request, text, language, category, null));
@@ -293,6 +308,10 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 			options.add(option);
 		}
 		return options;
+	}
+
+	private String translate(String key) {
+		return wordsMsg.get(key, getLocale());
 	}
 	
 	public List<Option> getLetterOptions() {
@@ -334,9 +353,56 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 		return letter;
 	}
 	
+	public Filters getFilters() {
+		Filters filters = new Filters();
+		{
+			Filter filter = new Filter(getLetterOptions());
+			filter.setVariant(Variant.index);
+			filter.setTitle(translate("letters"));
+			if (Strings.isBlank(letter)) {
+				filter.setLabel(translate("letter"));
+			} else {
+				filter.setActive(true);
+				if ("number".equals(letter)) {
+					filter.setLabel("#");
+				}
+				else if ("other".equals(letter)) {
+					filter.setLabel("&");
+				}
+				else {
+					filter.setLabel(letter.toUpperCase());
+				}
+			}
+			filters.addFilter(filter);
+		}
+		{
+			Filter filter = new Filter(getLanguageOptions());
+			filter.setTitle(translate("languages"));
+			if (Strings.isBlank(language)) {
+				filter.setLabel(translate("language"));
+			} else {
+				filter.setActive(true);
+				filter.setLabel(languageMsg.get("code", language, getLocale()));
+			}
+			filters.addFilter(filter);
+		}
+		{
+			Filter filter = new Filter(getCategoryOptions());
+			filter.setTitle(translate("categories"));
+			if (Strings.isBlank(category)) {
+				filter.setLabel(translate("category"));
+			} else {
+				filter.setActive(true);
+				filter.setLabel(categoryMsg.get("code", category, getLocale()));
+			}
+			filters.addFilter(filter);
+		}
+		return filters;
+	}
+	
 	private void buildPages() {
 		pages = Lists.newArrayList();
-		int pageCount = (int) Math.ceil(count/pageSize)+1;
+		int pageCount = (int) Math.ceil((float)count/(float)pageSize);
 		if (pageCount>1) {
 			int min = Math.max(1,page-PAGING);
 			int max = Math.min(pageCount, page+PAGING);

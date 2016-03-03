@@ -375,12 +375,14 @@ public class WordService {
 				modelService.createRelation(word, source, Relation.KIND_COMMON_SOURCE, privileged);
 			}
 		}
-		List<Relation> originators = modelService.getRelationsFrom(word, InternetAddress.class, Relation.KIND_COMMON_ORIGINATOR);
-		log.info("Word->InternetAddress originator count: " + originators.size());
-		for (Relation relation : originators) {
-			modelService.deleteRelation(relation, privileged);
+		if (modification.clearOriginators) {
+			List<Relation> originators = modelService.getRelationsFrom(word, InternetAddress.class, Relation.KIND_COMMON_ORIGINATOR);
+			log.info("Word->InternetAddress originator count: " + originators.size());
+			for (Relation relation : originators) {
+				modelService.deleteRelation(relation, privileged);
+			}
 		}
-		modelService.getChildren(word, Relation.KIND_COMMON_ORIGINATOR, InternetAddress.class);
+		//modelService.getChildren(word, Relation.KIND_COMMON_ORIGINATOR, InternetAddress.class);
 		securityService.grantPublicPrivileges(word, true, false, false);
 	}
 	
