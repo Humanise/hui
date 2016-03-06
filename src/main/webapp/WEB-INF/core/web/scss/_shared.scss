@@ -1,4 +1,6 @@
 $link-color: #08c;
+$default-font-family: 'Open Sans','Helvetica Neue','Helvetica',Arial,sans-serif;
+
 
 @mixin border-box {
 	box-sizing: border-box;
@@ -7,8 +9,9 @@ $link-color: #08c;
 
 @mixin vertical-gradient($from,$to) {
 	background: -webkit-gradient(linear, 0% 0%, 0% 100% , from($from), to($to));
-	background: -moz-linear-gradient(top, $from, $from);
-	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr=$from, endColorstr=$to);
+	background: -moz-linear-gradient(top, $from, $to);
+	background: linear-gradient($from, $to);
+	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr=#{$from}, endColorstr=#{$to});
 }
 
 @mixin when($params:()) {

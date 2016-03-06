@@ -43,14 +43,16 @@
     color: #333;
     -webkit-appearance: none;
     background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#ffffff), to(#f6f6f6));
-    background: -moz-linear-gradient(top, #ffffff, #ffffff);
-    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr=$from, endColorstr=$to);
+    background: -moz-linear-gradient(top, #ffffff, #f6f6f6);
+    background: linear-gradient(#ffffff, #f6f6f6);
+    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr=#ffffff, endColorstr=#f6f6f6);
     cursor: pointer;
     min-width: 70px; }
     .words_search_form_button:hover {
       background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#f6f6f6), to(#eeeeee));
-      background: -moz-linear-gradient(top, #f6f6f6, #f6f6f6);
-      filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr=$from, endColorstr=$to);
+      background: -moz-linear-gradient(top, #f6f6f6, #eeeeee);
+      background: linear-gradient(#f6f6f6, #eeeeee);
+      filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr=#f6f6f6, endColorstr=#eeeeee);
       border: 1px solid #d6d6d6; }
 
 .words_search_description {
