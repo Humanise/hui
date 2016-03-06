@@ -173,7 +173,6 @@ public class ReaderController extends ReaderControllerBase {
 	@Path
 	public PeekPerspective peek(Request request) throws ModelException, IllegalRequestException, ContentNotFoundException {
 		String type = request.getString("type");
-		Long id = request.getId();
 		PeekPerspective perspective = new PeekPerspective();
 		HTMLWriter rendering = new HTMLWriter();
 		Privileged privileged = request.getSession();
@@ -200,6 +199,7 @@ public class ReaderController extends ReaderControllerBase {
 				}
 			}
 		} else if (Statement.class.getSimpleName().equals(type)) {
+			Long id = request.getId();
 			Statement statement = modelService.getRequired(Statement.class, id, privileged);
 			rendering.startH2().text(StringUtils.abbreviate(statement.getText(), 100)).endH2();
 			rendering.startP().text(Statement.class.getSimpleName());
@@ -212,6 +212,7 @@ public class ReaderController extends ReaderControllerBase {
 			perspective.setType(Statement.class.getSimpleName());
 			perspective.addAction("Edit", "edit");
 		} else if (Hypothesis.class.getSimpleName().equals(type)) {
+			Long id = request.getId();
 			Hypothesis hypothesis = modelService.getRequired(Hypothesis.class, id, privileged);
 			rendering.startH2().text(StringUtils.abbreviate(hypothesis.getText(), 100)).endH2();
 			rendering.startP().text(Hypothesis.class.getSimpleName());
@@ -224,6 +225,7 @@ public class ReaderController extends ReaderControllerBase {
 			perspective.setType(Hypothesis.class.getSimpleName());
 			perspective.addAction("Edit", "edit");
 		} else if (Word.class.getSimpleName().equals(type)) {
+			Long id = request.getId();
 			WordListPerspectiveQuery query = new WordListPerspectiveQuery();
 			query.withId(id);
 			List<WordListPerspective> list = modelService.list(query);
