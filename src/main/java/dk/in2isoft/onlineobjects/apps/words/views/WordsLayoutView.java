@@ -10,7 +10,7 @@ import org.springframework.beans.factory.InitializingBean;
 import com.google.common.collect.Lists;
 
 import dk.in2isoft.commons.jsf.AbstractView;
-import dk.in2isoft.commons.lang.Strings;
+import dk.in2isoft.onlineobjects.apps.words.views.util.WordsInterfaceHelper;
 import dk.in2isoft.onlineobjects.model.Language;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.ui.jsf.model.Option;
@@ -19,16 +19,8 @@ import dk.in2isoft.onlineobjects.util.Messages;
 public class WordsLayoutView extends AbstractView implements InitializingBean {
 
 	private Messages msg;
-
-	private static List<Option> alphabeth;
-	static {
-		alphabeth = Lists.newArrayList();
-		for (String character : Strings.ALPHABETH) {
-			alphabeth.add(new Option(character, character));
-		}
-		alphabeth.add(new Option("other","&"));
-	}
-		
+	private WordsInterfaceHelper wordsInterfaceHelper;
+	
 	public void afterPropertiesSet() throws Exception {
 		msg = new Messages(Language.class);
 	}
@@ -81,7 +73,7 @@ public class WordsLayoutView extends AbstractView implements InitializingBean {
 	}
 	
 	public List<Option> getAlphabeth() {
-		return alphabeth;
+		return wordsInterfaceHelper.getLetterOptions(getLocale());
 	}
 	
 	public boolean isLoggedIn() {
@@ -90,5 +82,9 @@ public class WordsLayoutView extends AbstractView implements InitializingBean {
 
 	public String getLanguage() {
 		return getRequest().getLanguage();
+	}
+	
+	public void setWordsInterfaceHelper(WordsInterfaceHelper wordsInterfaceHelper) {
+		this.wordsInterfaceHelper = wordsInterfaceHelper;
 	}
 }

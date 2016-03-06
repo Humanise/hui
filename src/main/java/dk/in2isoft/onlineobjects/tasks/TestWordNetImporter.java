@@ -37,6 +37,10 @@ import edu.mit.jwi.item.POS;
 
 public class TestWordNetImporter extends AbstractSpringTask {
 	
+	
+	private POS category = POS.NOUN;
+	private String categoryCode = LexicalCategory.CODE_NOMEN;
+
 	private static final Logger log = LoggerFactory.getLogger(TestWordNetImporter.class);
 	
 	private WordService wordService;
@@ -51,30 +55,34 @@ public class TestWordNetImporter extends AbstractSpringTask {
 	public void before() {
 		//words.add("cat");
 		//words.add("dog");
-		skip = 58740;
-		skip = 85593;
-		//rows = 10;
+		//skip = 85593;
+		rows = 10;
 		//words.add("'s Gravenhage".toLowerCase());
-		//updateLocally = true;
+		updateLocally = true;
+		
+		category = POS.VERB;
+		categoryCode = LexicalCategory.CODE_VERBUM;
+		
+		//words.add("java");
 	}
 	
 	@Test
 	public void run() throws Exception {
-		File file = new File("/Users/jbm/Midlertidigt/wordnet_3.1");
+		File file = new File("/Users/jonasmunk/Midlertidigt/wordnet_3.1");
 		IDictionary dict = new Dictionary(file);
 		dict.open();
 		
 		Privileged privileged = securityService.getAdminPrivileged();
 		int total = 0;
 		{
-			Iterator<IIndexWord> wordIterator = dict.getIndexWordIterator(POS.NOUN);
+			Iterator<IIndexWord> wordIterator = dict.getIndexWordIterator(category);
 			while (wordIterator.hasNext()) {
 				wordIterator.next();
 				total++;
 			}
 		}
 		int num = 0;
-		Iterator<IIndexWord> wordIterator = dict.getIndexWordIterator(POS.NOUN);
+		Iterator<IIndexWord> wordIterator = dict.getIndexWordIterator(category);
 		for (;wordIterator.hasNext() && skip>0; skip--) {
 			wordIterator.next();
 			num++;
@@ -104,7 +112,7 @@ public class TestWordNetImporter extends AbstractSpringTask {
 				mod.sourceId = wordID.toString(); // TODO
 				mod.text = getText(word.getLemma());
 				mod.language = Language.ENGLISH;
-				mod.lexicalCategory = LexicalCategory.CODE_NOMEN;
+				mod.lexicalCategory = categoryCode;
 				mod.glossary = word.getSynset().getGloss();
 				if (updateLocally) {
 					wordService.updateWord(mod,privileged);

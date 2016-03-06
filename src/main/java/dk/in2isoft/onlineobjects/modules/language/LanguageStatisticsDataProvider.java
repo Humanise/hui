@@ -1,5 +1,6 @@
-package dk.in2isoft.onlineobjects.apps.words.views.util;
+package dk.in2isoft.onlineobjects.modules.language;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -14,24 +15,32 @@ import com.google.common.collect.Multimap;
 import dk.in2isoft.commons.lang.Counter;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
+import dk.in2isoft.onlineobjects.model.Item;
 import dk.in2isoft.onlineobjects.model.Language;
 import dk.in2isoft.onlineobjects.model.LexicalCategory;
+import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.modules.caching.CachedDataProvider;
-import dk.in2isoft.onlineobjects.modules.language.WordStatistic;
-import dk.in2isoft.onlineobjects.modules.language.WordStatisticsQuery;
 import dk.in2isoft.onlineobjects.ui.jsf.model.Option;
 import dk.in2isoft.onlineobjects.util.Messages;
 
-public class StatisticsDataProvider extends CachedDataProvider<Map<Locale,List<LanguageStatistic>>> {
+public class LanguageStatisticsDataProvider extends CachedDataProvider<LanguageStatistics> {
 
 	private ModelService modelService;
 	
+	private Locale[] locales = {new Locale("en"),new Locale("da")};
+	
 	@Override
-	public Map<Locale,List<LanguageStatistic>> buildData() {
+	protected Collection<Class<? extends Item>> getObservedTypes() {
+		Collection<Class<? extends Item>> types = new ArrayList<>();
+		types.add(Word.class);
+		return types;
+	}
+		
+	@Override
+	protected LanguageStatistics buildData() {
+		LanguageStatistics statistics = new LanguageStatistics();
 		try {
 			Map<Locale,List<LanguageStatistic>> temp = Maps.newHashMap();
-			Locale[] locales = {new Locale("en"),new Locale("da")};
-			
 			Messages lexMsg = new Messages(LexicalCategory.class);
 			Messages langMsg = new Messages(Language.class);
 			Counter<String> counter = new Counter<String>();
@@ -42,6 +51,7 @@ public class StatisticsDataProvider extends CachedDataProvider<Map<Locale,List<L
 				counter.add(statistic.getLanguage(),statistic.getCount());
 			}
 			Map<String, Integer> map = counter.getMap();
+			statistics.setLanguageCounts(map);
 			for (Locale locale : locales) {
 				List<LanguageStatistic> languageStatistics = Lists.newArrayList();
 				temp.put(locale, languageStatistics);
@@ -60,14 +70,21 @@ public class StatisticsDataProvider extends CachedDataProvider<Map<Locale,List<L
 						option.setValue(statistic.getCount());
 						categories.add(option);
 					}
+					categories.sort((a,b)->{
+						return ((Integer)b.getValue()).compareTo((Integer)a.getValue());
+					});
 					langStat.setCategories(categories);
 				}
+				languageStatistics.sort((a,b) -> {
+					return b.getTotal() - a.getTotal();
+				});
 			}
-			return temp;
+			statistics.setCategoriesByLanguage(temp);
 			
 		} catch (ModelException e) {
 			return null;
 		}
+		return statistics;
 	}
 
 	public void setModelService(ModelService modelService) {

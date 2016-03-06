@@ -13,8 +13,8 @@ import dk.in2isoft.commons.jsf.AbstractView;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.apps.words.WordsController;
 import dk.in2isoft.onlineobjects.apps.words.views.util.UrlBuilder;
+import dk.in2isoft.onlineobjects.apps.words.views.util.WordsInterfaceHelper;
 import dk.in2isoft.onlineobjects.core.ModelService;
-import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.model.Language;
@@ -34,6 +34,7 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 	private static final int PAGING = 10;
 	private ModelService modelService;
 	private WordService wordService;
+	private WordsInterfaceHelper wordsInterfaceHelper;
 	
 	//private static final Logger log = LoggerFactory.getLogger(WordsSearchView.class);
 		
@@ -172,44 +173,11 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 	
 	public boolean isBlank() {
 		return list.isEmpty();
-	}
-
-	private List<String> categoryCodes;
+	}	
 	
-	/** TODO: Optimize this, central cache */
-	private List<String> getCategoryCodes() {
-		if (categoryCodes==null) {
-			Query<LexicalCategory> query = Query.of(LexicalCategory.class).orderByName();
-			List<LexicalCategory> list = modelService.list(query);
-			List<String> codes = Lists.newArrayList();
-	
-			for (LexicalCategory item : list) {
-				codes.add(item.getCode());
-			}
-			categoryCodes = codes;
-		}
-		return categoryCodes;
-	}
-	
-	private List<String> languageCodes;
 	private Messages languageMsg;
 	private Messages categoryMsg;
-	
-	/** TODO: Optimize this, central cache */
-	private List<String> getLanguageCodes() {
-		if (languageCodes==null) {
-			Query<Language> query = Query.of(Language.class).orderByName();
-			List<Language> list = modelService.list(query);
-			List<String> codes = Lists.newArrayList();
-	
-			for (Language item : list) {
-				codes.add(item.getCode());
-			}
-			languageCodes = codes;
-		}
-		return languageCodes;
-	}
-	
+		
 	private List<Option> buildCategoryOptions(Request request) {
 		List<Option> options = Lists.newArrayList();
 		Locale locale = getLocale();
@@ -221,19 +189,13 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 			option.setSelected(StringUtils.isBlank(category));
 			options.add(option);			
 		}
-		for (String code : getCategoryCodes()) {
+		for (Option cat : wordsInterfaceHelper.getCategoryOptions(locale)) {
 			Option option = new Option();
+			String code = cat.getValue().toString();
 			option.setValue(buildUrl(request, text, language, code,letter));
 			option.setLabel(categoryMsg.get("code",code, locale));
 			option.setSelected(code.equals(category));
 			options.add(option);
-		}
-		{
-			Option option = new Option();
-			option.setValue(buildUrl(request, text, language, "none",letter));
-			option.setLabel(wordsMsg.get("none", locale));
-			option.setSelected("none".equals(category));
-			options.add(option);			
 		}
 		return options;
 	}
@@ -259,19 +221,13 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 			option.setSelected(StringUtils.isBlank(language));
 			options.add(option);			
 		}
-		for (String code : getLanguageCodes()) {
+		for (Option lang : wordsInterfaceHelper.getLanguageOptions(locale)) {
 			Option option = new Option();
-			option.setValue(buildUrl(request, text, code, category,letter));
-			option.setLabel(languageMsg.get("code",code, locale));
-			option.setSelected(code.equals(language));
+			String value = lang.getValue().toString();
+			option.setValue(buildUrl(request, text, value, category,letter));
+			option.setLabel(languageMsg.get("code",value, locale));
+			option.setSelected(value.equals(language));
 			options.add(option);
-		}
-		{
-			Option option = new Option();
-			option.setValue(buildUrl(request, text, "none", category,letter));
-			option.setLabel(wordsMsg.get("none", locale));
-			option.setSelected("none".equals(language));
-			options.add(option);			
 		}
 		return options;
 	}
@@ -286,25 +242,12 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 			option.setValue(buildUrl(request, text, language, category, null));
 			options.add(option);
 		}
-		for (String character : Strings.ALPHABETH) {
+		List<Option> letters = wordsInterfaceHelper.getLetterOptions(getLocale());
+		for (Option character : letters) {
 			Option option = new Option();
-			option.setLabel(character);
-			option.setSelected(character.equals(letter));
-			option.setValue(buildUrl(request, text, language, category, character));
-			options.add(option);
-		}
-		{
-			Option option = new Option();
-			option.setLabel("&");
-			option.setSelected("other".equals(letter));
-			option.setValue(buildUrl(request, text, language, category, "other"));
-			options.add(option);
-		}
-		{
-			Option option = new Option();
-			option.setLabel("#");
-			option.setSelected("number".equals(letter));
-			option.setValue(buildUrl(request, text, language, category, "number"));
+			option.setLabel(character.getLabel());
+			option.setSelected(character.getValue().equals(letter));
+			option.setValue(buildUrl(request, text, language, category, character.getValue().toString()));
 			options.add(option);
 		}
 		return options;
@@ -467,5 +410,9 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 	
 	public void setWordService(WordService wordService) {
 		this.wordService = wordService;
+	}
+	
+	public void setWordsInterfaceHelper(WordsInterfaceHelper wordsInterfaceHelper) {
+		this.wordsInterfaceHelper = wordsInterfaceHelper;
 	}
 }

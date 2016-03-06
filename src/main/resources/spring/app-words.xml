@@ -6,37 +6,49 @@
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
     ">
 
-	<bean id="wordsController" class="dk.in2isoft.onlineobjects.apps.words.WordsController" autowire="byType" />
-	
-	<bean id="wordsModelService" class="dk.in2isoft.onlineobjects.apps.words.WordsModelService" autowire="byType" />
+	<bean id="wordsController" class="dk.in2isoft.onlineobjects.apps.words.WordsController"
+		autowire="byType" />
+
+	<bean id="wordsModelService" class="dk.in2isoft.onlineobjects.apps.words.WordsModelService"
+		autowire="byType" />
 
 	<bean id="wordIndexer" class="dk.in2isoft.onlineobjects.modules.index.WordIndexer">
 		<property name="indexManager" ref="wordsIndex" />
 		<property name="documentBuilder">
-			<bean class="dk.in2isoft.onlineobjects.modules.index.WordIndexDocumentBuilder">
-				<property name="wordService" ref="wordService"/>
+			<bean
+				class="dk.in2isoft.onlineobjects.modules.index.WordIndexDocumentBuilder">
+				<property name="wordService" ref="wordService" />
 			</bean>
 		</property>
 	</bean>
-		
+
 	<bean id="wordsIndex" class="dk.in2isoft.onlineobjects.modules.index.IndexManager">
-		<property name="directoryName"><util:constant static-field="dk.in2isoft.onlineobjects.modules.index.IndexService.WORDS_INDEX"/></property>
-		<property name="configurationService" ref="configurationService"/>
+		<property name="directoryName">
+			<util:constant
+				static-field="dk.in2isoft.onlineobjects.modules.index.IndexService.WORDS_INDEX" />
+		</property>
+		<property name="configurationService" ref="configurationService" />
 	</bean>
-	
+
 	<bean id="wordService" class="dk.in2isoft.onlineobjects.modules.language.WordService">
-		<property name="index" ref="wordsIndex"/>
-		<property name="modelService" ref="modelService"/>
-		<property name="languageService" ref="languageService"/>
-		<property name="securityService" ref="securityService"/>
+		<property name="index" ref="wordsIndex" />
+		<property name="modelService" ref="modelService" />
+		<property name="languageService" ref="languageService" />
+		<property name="securityService" ref="securityService" />
 	</bean>
-	
+
 	<bean id="wordIndexJob" class="dk.in2isoft.onlineobjects.apps.words.index.WordIndexJob">
 	</bean>
 
-	<bean id="wordsLayoutView" class="dk.in2isoft.onlineobjects.apps.words.views.WordsLayoutView" scope="request"/>
+	<bean id="wordsLayoutView"
+		class="dk.in2isoft.onlineobjects.apps.words.views.WordsLayoutView"
+		scope="request">
+		<property name="wordsInterfaceHelper" ref="wordsInterfaceHelper"/>
+	</bean>
 
-	<bean id="wordsWordView" class="dk.in2isoft.onlineobjects.apps.words.views.WordsWordView" scope="request">
+	<bean id="wordsWordView"
+		class="dk.in2isoft.onlineobjects.apps.words.views.WordsWordView"
+		scope="request">
 		<property name="modelService" ref="modelService" />
 		<property name="wordService" ref="wordService" />
 	</bean>
@@ -52,30 +64,43 @@
 		scope="request">
 		<property name="modelService" ref="modelService" />
 		<property name="wordService" ref="wordService" />
+		<property name="wordsInterfaceHelper" ref="wordsInterfaceHelper"/>
 	</bean>
 
-	<bean id="wordsFrontView" class="dk.in2isoft.onlineobjects.apps.words.views.WordsFrontView">
+	<bean id="wordsInterfaceHelper"
+		class="dk.in2isoft.onlineobjects.apps.words.views.util.WordsInterfaceHelper"
+		autowire="byType" />
+
+	<bean id="wordsFrontView"
+		class="dk.in2isoft.onlineobjects.apps.words.views.WordsFrontView">
+		<property name="modelService" ref="modelService" />
+		<property name="eventService" ref="eventService" />
+		<property name="wordsInterfaceHelper" ref="wordsInterfaceHelper" />
+	</bean>
+
+	<bean id="languageStatisticsDataProvider"
+		class="dk.in2isoft.onlineobjects.modules.language.LanguageStatisticsDataProvider">
 		<property name="modelService" ref="modelService" />
 		<property name="eventService" ref="eventService" />
 	</bean>
 
-	<bean id="wordsStatisticsView" class="dk.in2isoft.onlineobjects.apps.words.views.WordsStatisticsView">
-		<property name="statisticsDataProvider">
-			<bean class="dk.in2isoft.onlineobjects.apps.words.views.util.StatisticsDataProvider">
-				<property name="modelService" ref="modelService" />
-				<property name="eventService" ref="eventService" />
-			</bean>
-		</property>
+	<bean id="wordsStatisticsView"
+		class="dk.in2isoft.onlineobjects.apps.words.views.WordsStatisticsView">
+		<property name="statisticsDataProvider" ref="languageStatisticsDataProvider" />
 	</bean>
 
-	<bean id="wordsImportView" class="dk.in2isoft.onlineobjects.apps.words.views.WordsImportView" scope="request">
+	<bean id="wordsImportView"
+		class="dk.in2isoft.onlineobjects.apps.words.views.WordsImportView"
+		scope="request">
 		<property name="modelService" ref="modelService" />
 		<property name="languageService" ref="languageService" />
 		<property name="importService" ref="importService" />
 		<property name="semanticService" ref="semanticService" />
 	</bean>
 
-	<bean id="wordsImportListView" class="dk.in2isoft.onlineobjects.apps.words.views.WordsImportListView" scope="request">
+	<bean id="wordsImportListView"
+		class="dk.in2isoft.onlineobjects.apps.words.views.WordsImportListView"
+		scope="request">
 		<property name="modelService" ref="modelService" />
 		<property name="languageService" ref="languageService" />
 		<property name="importService" ref="importService" />

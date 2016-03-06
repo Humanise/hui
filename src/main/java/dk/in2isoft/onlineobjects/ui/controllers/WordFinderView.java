@@ -17,6 +17,7 @@ import dk.in2isoft.onlineobjects.core.events.EventService;
 import dk.in2isoft.onlineobjects.model.Item;
 import dk.in2isoft.onlineobjects.model.Language;
 import dk.in2isoft.onlineobjects.model.LexicalCategory;
+import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.ui.jsf.model.Option;
 import dk.in2isoft.onlineobjects.util.Messages;
 
@@ -34,17 +35,15 @@ public class WordFinderView extends AbstractView implements InitializingBean {
 	}
 	
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void afterPropertiesSet() throws Exception {
-
-		eventService.addModelEventListener(new AnyModelChangeListener(Language.class,LexicalCategory.class) {
+		eventService.addModelEventListener(new AnyModelChangeListener() {
 			@Override
 			public void itemWasChanged(Item item) {
 				categories.clear();
 				languages.clear();
 			}
-		});
+		}.addType(Word.class).addType(LexicalCategory.class));
 	}
 	
 	public List<Option> getCategories() {

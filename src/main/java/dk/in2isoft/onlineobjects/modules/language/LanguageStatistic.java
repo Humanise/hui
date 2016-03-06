@@ -1,4 +1,4 @@
-package dk.in2isoft.onlineobjects.apps.words.views.util;
+package dk.in2isoft.onlineobjects.modules.language;
 
 import java.util.List;
 

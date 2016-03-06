@@ -12,12 +12,24 @@ public abstract class AnyModelChangeListener implements ModelEventListener {
 
 	private Collection<Class<? extends Item>> types = Sets.newHashSet();
 	
-	public AnyModelChangeListener(Class<? extends Item>... types) {
+	public AnyModelChangeListener() {
+	}
+
+	public AnyModelChangeListener(Class<? extends Item> type) {
+		this.types.add(type);
+	}
+
+	public AnyModelChangeListener(Collection<Class<? extends Item>> types) {
 		for (Class<? extends Item> type : types) {
 			this.types.add(type);
 		}
 	}
 	
+	public AnyModelChangeListener addType(Class<? extends Item> type) {
+		this.types.add(type);
+		return this;
+	}
+
 	public void entityWasCreated(Entity entity) {
 		checkEntity(entity);
 	}

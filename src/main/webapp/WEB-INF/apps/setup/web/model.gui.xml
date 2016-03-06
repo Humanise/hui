@@ -12,7 +12,7 @@
 	<structure>
 		<top>
 			<toolbar>
-				<icon icon="common/new" text="Hey"/>
+				<icon icon="common/info" name="infoTool" text="Info"/>
 				<right>
 					<field label="Search">
 						<searchfield name="search" expandedWidth="200"/>
@@ -49,6 +49,9 @@
 				</field>
 			</fields>
 			<buttons>
+				<button title="Delete" name="deleteEntity">
+          <confirm text="Are you sure?"/>
+        </button>
 				<button title="Update" name="updateEntity" highlighted="true"/>
 			</buttons>
 		</formula>

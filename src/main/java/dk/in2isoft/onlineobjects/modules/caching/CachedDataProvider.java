@@ -1,57 +1,75 @@
 package dk.in2isoft.onlineobjects.modules.caching;
 
+import java.util.Collection;
+import java.util.Set;
+
 import org.springframework.beans.factory.InitializingBean;
+
+import com.google.common.collect.Sets;
 
 import dk.in2isoft.onlineobjects.core.events.AnyModelChangeListener;
 import dk.in2isoft.onlineobjects.core.events.EventService;
 import dk.in2isoft.onlineobjects.model.Item;
-import dk.in2isoft.onlineobjects.model.Word;
 
 public abstract class CachedDataProvider<T> implements InitializingBean {
 
-	public enum state {empty,ok,dirty,busy};
-	
+	public enum state {
+		empty, ok, dirty, busy
+	};
+
 	private EventService eventService;
-	
+	private Set<Runnable> listeners = Sets.newHashSet();
+
 	private String key;
-	
+
 	private T data;
-	
+
 	private long buildTime = -1;
 	private long changeTime = 0;
-	
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		eventService.addModelEventListener(new AnyModelChangeListener(Word.class) {
+		eventService.addModelEventListener(new AnyModelChangeListener(getObservedTypes()) {
 			@Override
 			public void itemWasChanged(Item item) {
 				changeTime = System.currentTimeMillis();
+				tell();
 			}
 		});
 	}
-	
+
+	protected abstract Collection<Class<? extends Item>> getObservedTypes();
+
 	public T getData() {
-		if (data==null) {
+		if (data == null) {
 			buildTime = System.currentTimeMillis();
 			data = buildData();
-		} else if (changeTime>=buildTime) {
+			tell();
+		} else if (changeTime >= buildTime) {
 			rebuild();
 		}
 		return data;
 	}
-	
+
 	private void rebuild() {
 		buildTime = System.currentTimeMillis();
 		Runnable job = new Runnable() {
-			
+
 			@Override
 			public void run() {
 				data = buildData();
+				tell();
 			}
-			
+
 		};
 		Thread t = new Thread(job);
-        t.start();
+		t.start();
+	}
+	
+	private void tell() {
+		for (Runnable runnable : listeners) {
+			runnable.run();
+		}
 	}
 
 	public String getKey() {
@@ -61,12 +79,16 @@ public abstract class CachedDataProvider<T> implements InitializingBean {
 	public void setKey(String key) {
 		this.key = key;
 	}
-	
-	public abstract T buildData();
-	
-	
+
+	protected abstract T buildData();
+
+
+	public void addListener(Runnable listener) {
+		listeners.add(listener);
+	}
+
 	// Wiring ...
-		
+
 	public void setEventService(EventService eventService) {
 		this.eventService = eventService;
 	}
