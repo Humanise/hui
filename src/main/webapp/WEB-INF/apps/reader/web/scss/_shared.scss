@@ -1,3 +1,5 @@
+@import '../../../../core/web/scss/shared';
+
 $list-title-color: #0055B5;
 
 $view-background-color: #FFFCEC;
@@ -22,8 +24,6 @@ $view-action-selected-color: #A53125; //#c88f35; //#D64B21;
 $view-action-selected-color-hover: darken($view-action-selected-color, 10%);
 
 $view-dimmed-color: #D8D3B8;
-
-$font-sans: 'Open Sans', Arial, Helvetica, sans-serif;
 
 $font-serif: 'Merriweather';
 
