@@ -567,10 +567,10 @@
 		</dependency>
 		<!-- Caching -->
 		<dependency>
-			<groupId>net.sf.ehcache</groupId>
-			<artifactId>ehcache-core</artifactId>
-			<version>2.0.0</version>
-		</dependency>
+	      <groupId>net.sf.ehcache</groupId>
+	      <artifactId>ehcache</artifactId>
+	      <version>2.10.0</version>
+	    </dependency>      
 		<!-- Velocity -->
 		<dependency>
 			<groupId>org.apache.velocity</groupId>

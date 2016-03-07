@@ -19,53 +19,9 @@
     </o:head>
 		<o:body>
 			<o:topBar/>
-			<div class="reader_layout">
-				<div class="reader_layout_navigation">
-					<ui:insert name="sidebar"/>
-				</div>
-				<div class="reader_layout_list">
-					<ui:insert name="list"/>
-				</div>
-				<div class="reader_layout_viewer">
-					<ui:insert name="viewer"/>
-				</div>
-				<div class="reader_layout_info">
-					<ui:insert name="info"/>
-				</div>
-			</div>
-				<ui:insert name="bottom"/>
-				<o:analytics/>
+			<ui:insert name="body"/>
+			<o:analytics/>
 		</o:body>
 	</html>
-
-  <o:dependency from="core" src="/js/oo_view.js"/>
-  <o:dependency from="core" src="/js/oo_segmented.js"/>
-  <o:dependency from="core" src="/js/oo_inspector.js"/>
-  <o:dependency from="local" src="/js/reader.js"/>
-  <o:dependency from="local" src="/js/reader_peek.js"/>
-  <o:dependency from="local" src="/js/address_info.js"/>
-  <o:dependency from="local" src="/js/statements.js"/>
-  <o:dependency from="local" src="/js/internetaddress_viewer.js"/>
-  
-  <o:dependency from="local" src="/js/question_viewer.js"/>
-  <o:dependency from="local" src="/js/question_editor.js"/>
-  
-  <o:dependency from="local" src="/js/hypothesis_viewer.js"/>
-  <o:dependency from="local" src="/js/hypothesis_editor.js"/>
-  
-  <o:dependency src="/hui/js/hui_require.js"/>
-  <o:dependency src="/hui/js/Diagram.js"/>
-  <o:dependency src="/hui/js/Drawing.js"/>
-
-  <o:dependency src="/hui/css/effects.css"/>
-  <o:dependency src="/hui/css/diagram.css"/>
-  <o:dependency from="local" src="/css/reader.css"/>
-  <o:dependency from="local" src="/css/reader_view.css"/>
-  <o:dependency from="local" src="/css/reader_viewer.css"/>
-  <o:dependency from="local" src="/css/reader_list.css"/>
-  <o:dependency from="local" src="/css/reader_entity.css"/>
-  <o:dependency from="local" src="/css/reader_internetaddress.css"/>
-  <o:dependency from="local" src="/css/reader_peek.css"/>
-  <o:dependency from="local" src="/css/reader_text.css"/>
       
 </f:view>

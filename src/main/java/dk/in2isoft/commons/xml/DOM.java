@@ -13,10 +13,12 @@ import nu.xom.Attribute;
 import nu.xom.Builder;
 import nu.xom.Element;
 import nu.xom.Node;
+import nu.xom.Nodes;
 import nu.xom.ParentNode;
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
 import nu.xom.XMLException;
+import nu.xom.XPathContext;
 import nu.xom.converters.DOMConverter;
 
 import org.apache.tools.ant.filters.StringInputStream;
@@ -111,5 +113,25 @@ public class DOM {
 		} else {
 			attribute.setValue(attribute.getValue() + " " + value);
 		}
+	}
+
+	public static String getBodyXML(nu.xom.Document document) {
+		StringBuilder sb = new StringBuilder();
+		XPathContext c = new XPathContext();
+		c.addNamespace("html", document.getRootElement().getNamespaceURI());
+		Nodes bodies = document.query("//html:body", c);
+		if (bodies.size() > 0) {
+			Node node = bodies.get(0);
+			if (node instanceof Element) {
+				Element body = (Element) node;
+				int childCount = body.getChildCount();
+				for (int i = 0; i < childCount; i++) {
+					Node child = body.getChild(i);
+
+					sb.append(child.toXML());
+				}
+			}
+		}
+		return sb.toString();
 	}
 }

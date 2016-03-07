@@ -9,5 +9,7 @@
 	<bean class="dk.in2isoft.onlineobjects.modules.networking.NetworkService" autowire="byType"/>
 	
 	<bean class="dk.in2isoft.onlineobjects.modules.networking.HTMLService" autowire="byType"/>
+	
+	<bean id="internetAddressService" class="dk.in2isoft.onlineobjects.modules.networking.InternetAddressService" autowire="byType"/>
 
 </beans>

@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:o="http://www.onlineobjects.com/jsf"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:gui="http://www.in2isoft.dk/in2igui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+>
+	<ui:composition template="templates/plain.xhtml">
+
+		<ui:define name="body">
+
+      <div class="reader_analyze">
+        <h1 class="reader_analyze_title">#{readerAnalyzeView.title}</h1>
+
+        <div class="reader_analyze_block">
+          <h2 class="reader_analyze_block_title">Properties</h2>
+          <table>
+            <c:forEach items="#{readerAnalyzeView.properties}" var="prop">
+              <tr>
+                <th>#{prop.key}</th>
+                <td>#{prop.value}</td>
+              </tr>
+            </c:forEach>
+          </table>
+        </div>
+        
+        <div class="reader_analyze_block">
+          <h2 class="reader_analyze_block_title">Text</h2>
+          <div class="reader_analyze_text">#{readerAnalyzeView.text}</div>
+        </div>
+
+        <div class="reader_analyze_block">
+          <h2 class="reader_analyze_block_title">Simple words</h2>
+          <div class="reader_analyze_words">
+            <c:forEach items="#{readerAnalyzeView.simpleWords}" var="word">
+              <span class="reader_analyze_word">#{word}</span>
+            </c:forEach>
+          </div>
+        </div>
+
+        <div class="reader_analyze_block">
+          <h2 class="reader_analyze_block_title">Natural words</h2>
+          <div class="reader_analyze_words">
+            <c:forEach items="#{readerAnalyzeView.naturalWords}" var="word">
+              <span class="reader_analyze_word">#{word}</span>
+            </c:forEach>
+          </div>
+        </div>
+
+        <div class="reader_analyze_block">
+          <h2 class="reader_analyze_block_title">Sentences</h2>
+          <div class="reader_analyze_sentences">
+            <c:forEach items="#{readerAnalyzeView.sentences}" var="sentence">
+              <p class="reader_analyze_sentence">#{sentence}</p>
+            </c:forEach>
+          </div>
+        </div>
+
+        <div class="reader_analyze_block">
+          <h2 class="reader_analyze_block_title">Sentences</h2>
+          <div class="reader_analyze_sentences">
+            <c:forEach items="#{readerAnalyzeView.taggedSentences}" var="sentence">
+              <p class="reader_analyze_sentence">
+                <c:forEach items="#{sentence}" var="part">
+                  <span class="reader_analyze_part">#{part.text}<span class="reader_analyze_part_info">#{part.partOfSpeech}</span></span>
+                </c:forEach>
+              </p>
+            </c:forEach>
+          </div>
+        </div>
+
+        <div class="reader_analyze_block">
+          <h2 class="reader_analyze_block_title">HTML</h2>
+          <div class="reader_analyze_html"><o:out value="#{readerAnalyzeView.html}" escape="false"/></div>
+        </div>
+      </div>
+
+      <o:dependency from="local" src="/css/reader_analyze.css"/>
+		</ui:define>
+
+	</ui:composition>
+
+
+</html>

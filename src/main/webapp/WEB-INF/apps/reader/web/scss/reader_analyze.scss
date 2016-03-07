@@ -1,0 +1,76 @@
+@import 'shared';
+
+@include when {
+  .reader_analyze {
+    background: #fff;
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    
+    &_title {
+      border-bottom: 1px solid #eee;
+      margin: 0 0 20px;
+    }
+    
+    &_block {
+      border: 1px solid #eee;
+      margin: 20px 0;
+      padding: 5px;
+
+      &_title {
+        margin: 0;
+        border-bottom: 1px solid #eee;
+        
+      }
+    }
+
+    &_text {
+      max-height: 200px;
+      overflow: auto;
+      white-space: pre;
+      font-family: $monospace-font-family;
+      font-size: 12px;
+    }
+
+    &_html {
+      max-height: 200px;
+      overflow: auto;
+    }
+
+    &_words {
+      padding: 5px 0;
+    }
+    
+    &_word {
+      background: #eee;
+      border-radius: 3px;
+      display: inline-block;
+      margin: 2px 1px;
+      padding: 2px 3px;
+      line-height: 1;
+      font-size: 14px;
+    }
+    
+    &_part {
+      display: inline-block;
+      margin: 2px 1px 11px;
+      padding: 0;
+      line-height: 1;
+      font-size: 14px;
+      position: relative;
+      min-width: 20px;
+      text-align: center;
+
+      &_info {
+        position: absolute;
+        color: #999;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        font-size: 10px;
+        margin-top: 2px;
+      }
+    }
+  }
+}

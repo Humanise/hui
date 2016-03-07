@@ -1,0 +1,71 @@
+<f:view contentType="text/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:gui="http://www.in2isoft.dk/in2igui"
+	xmlns:o="http://www.onlineobjects.com/jsf" 
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	locale="#{readerView.locale}"
+>
+
+	<o:doctype/>
+	<html xmlns="http://www.w3.org/1999/xhtml">
+		<o:head>
+			<meta name="viewport" content="user-scalable=yes, width=device-width, initial-scale = 1, maximum-scale = 10, minimum-scale = 0.2"/>
+			<title>Reader - OnlineObjects</title>
+			<o:fonts additional="Merriweather:400,300,300italic,400italic,700,700italic,900,900italic;Lora:400,700,400italic,700italic"/>
+			<gui:scriptSetup/>
+			<o:scriptSetup/>
+    </o:head>
+		<o:body>
+			<o:topBar/>
+			<div class="reader_layout">
+				<div class="reader_layout_navigation">
+					<ui:insert name="sidebar"/>
+				</div>
+				<div class="reader_layout_list">
+					<ui:insert name="list"/>
+				</div>
+				<div class="reader_layout_viewer">
+					<ui:insert name="viewer"/>
+				</div>
+				<div class="reader_layout_info">
+					<ui:insert name="info"/>
+				</div>
+			</div>
+				<ui:insert name="bottom"/>
+				<o:analytics/>
+		</o:body>
+	</html>
+
+  <o:dependency from="core" src="/js/oo_view.js"/>
+  <o:dependency from="core" src="/js/oo_segmented.js"/>
+  <o:dependency from="core" src="/js/oo_inspector.js"/>
+  <o:dependency from="local" src="/js/reader.js"/>
+  <o:dependency from="local" src="/js/reader_peek.js"/>
+  <o:dependency from="local" src="/js/address_info.js"/>
+  <o:dependency from="local" src="/js/statements.js"/>
+  <o:dependency from="local" src="/js/internetaddress_viewer.js"/>
+  
+  <o:dependency from="local" src="/js/question_viewer.js"/>
+  <o:dependency from="local" src="/js/question_editor.js"/>
+  
+  <o:dependency from="local" src="/js/hypothesis_viewer.js"/>
+  <o:dependency from="local" src="/js/hypothesis_editor.js"/>
+  
+  <o:dependency src="/hui/js/hui_require.js"/>
+  <o:dependency src="/hui/js/Diagram.js"/>
+  <o:dependency src="/hui/js/Drawing.js"/>
+
+  <o:dependency src="/hui/css/effects.css"/>
+  <o:dependency src="/hui/css/diagram.css"/>
+  <o:dependency from="local" src="/css/reader.css"/>
+  <o:dependency from="local" src="/css/reader_view.css"/>
+  <o:dependency from="local" src="/css/reader_viewer.css"/>
+  <o:dependency from="local" src="/css/reader_list.css"/>
+  <o:dependency from="local" src="/css/reader_entity.css"/>
+  <o:dependency from="local" src="/css/reader_internetaddress.css"/>
+  <o:dependency from="local" src="/css/reader_peek.css"/>
+  <o:dependency from="local" src="/css/reader_text.css"/>
+      
+</f:view>

@@ -372,6 +372,13 @@ var internetAddressViewer = {
 		}
 		addressInfoController.edit(this._currentArticle);
 	},
+	
+	$click$analyzeButton : function() {
+		if (!this._currentArticle) {
+			return;
+		}
+		window.open('/en/analyze?id=' + this._currentArticle.id);
+	},
   
   $click$quoteFromSelection : function() {
 		if (hui.isBlank(this.text)) {

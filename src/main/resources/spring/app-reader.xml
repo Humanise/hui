@@ -52,4 +52,6 @@
    	<bean id="readerView" scope="request" class="dk.in2isoft.onlineobjects.apps.reader.views.ReaderView">
    		<property name="builder" ref="internetAddressViewPerspectiveBuilder"/>
    	</bean>
+   	
+   	<bean id="readerAnalyzeView" scope="request" class="dk.in2isoft.onlineobjects.apps.reader.views.ReaderAnalyzeView" autowire="byType"/>
 </beans>

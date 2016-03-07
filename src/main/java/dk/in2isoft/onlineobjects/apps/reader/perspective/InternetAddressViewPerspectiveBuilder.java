@@ -1,21 +1,11 @@
 package dk.in2isoft.onlineobjects.apps.reader.perspective;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import nu.xom.Attribute;
-import nu.xom.Document;
-import nu.xom.Element;
-import nu.xom.Node;
-import nu.xom.Nodes;
-import nu.xom.ParentNode;
-import nu.xom.XPathContext;
-import opennlp.tools.util.Span;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.StopWatch;
@@ -25,19 +15,18 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 
 import dk.in2isoft.commons.lang.Code;
-import dk.in2isoft.commons.lang.Files;
 import dk.in2isoft.commons.lang.HTMLWriter;
 import dk.in2isoft.commons.lang.StringSearcher;
 import dk.in2isoft.commons.lang.StringSearcher.Result;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.commons.parsing.HTMLDocument;
+import dk.in2isoft.commons.xml.DOM;
 import dk.in2isoft.commons.xml.DecoratedDocument;
 import dk.in2isoft.commons.xml.DocumentCleaner;
 import dk.in2isoft.commons.xml.DocumentToText;
 import dk.in2isoft.in2igui.data.ItemData;
 import dk.in2isoft.onlineobjects.apps.reader.ReaderModelService;
 import dk.in2isoft.onlineobjects.core.ModelService;
-import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.UserSession;
@@ -59,23 +48,27 @@ import dk.in2isoft.onlineobjects.modules.information.ContentExtractor;
 import dk.in2isoft.onlineobjects.modules.information.SimpleContentExtractor;
 import dk.in2isoft.onlineobjects.modules.language.WordCategoryPerspectiveQuery;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
-import dk.in2isoft.onlineobjects.modules.networking.NetworkResponse;
-import dk.in2isoft.onlineobjects.modules.networking.NetworkService;
+import dk.in2isoft.onlineobjects.modules.networking.InternetAddressService;
 import dk.in2isoft.onlineobjects.services.LanguageService;
 import dk.in2isoft.onlineobjects.services.SemanticService;
-import dk.in2isoft.onlineobjects.services.StorageService;
+import nu.xom.Attribute;
+import nu.xom.Document;
+import nu.xom.Element;
+import nu.xom.Nodes;
+import nu.xom.ParentNode;
+import nu.xom.XPathContext;
+import opennlp.tools.util.Span;
 
 public class InternetAddressViewPerspectiveBuilder {
 
 	private static final Logger log = LoggerFactory.getLogger(InternetAddressViewPerspectiveBuilder.class);
 
 	private ModelService modelService;
-	private NetworkService networkService;
-	private StorageService storageService;
 	private LanguageService languageService;
 	private SemanticService semanticService;
 	private Map<String,ContentExtractor> contentExtractors;
 	private ReaderModelService readerModelService;
+	private InternetAddressService internetAddressService;
 
 	public InternetAddressViewPerspective build(Long id, String algorithm, boolean highlight, UserSession session) throws ModelException, IllegalRequestException, SecurityException, ExplodingClusterFuckException {
 		StopWatch watch = new StopWatch();
@@ -85,7 +78,7 @@ public class InternetAddressViewPerspectiveBuilder {
 			throw new IllegalRequestException("Not found");
 		}
 
-		HTMLDocument document = getHTMLDocument(address, session);
+		HTMLDocument document = internetAddressService.getHTMLDocument(address, session);
 		
 		ArticleData data = buildData(address);
 
@@ -157,32 +150,6 @@ public class InternetAddressViewPerspectiveBuilder {
 		return data;
 	}
 
-	private HTMLDocument getHTMLDocument(InternetAddress address, Privileged privileged) throws SecurityException, ModelException {
-
-		File folder = storageService.getItemFolder(address);
-		File original = new File(folder, "original");
-		String encoding = address.getPropertyValue(Property.KEY_INTERNETADDRESS_ENCODING);
-		if (!original.exists()) {
-			NetworkResponse response = networkService.getSilently(address.getAddress());
-			if (response != null && response.isSuccess()) {
-				File temp = response.getFile();
-				if (!Files.copy(temp, original)) {
-					response.cleanUp();
-					return null;
-				}
-				if (response.getEncoding()!=null) {
-					encoding = response.getEncoding();
-				}
-				address.overrideFirstProperty(Property.KEY_INTERNETADDRESS_ENCODING, encoding);
-				modelService.updateItem(address, privileged);
-			}
-		}
-		if (Strings.isBlank(encoding)) {
-			encoding = Strings.UTF8;
-		}
-		return new HTMLDocument(Files.readString(original, encoding));
-	}
-
 	private String buildHeader(InternetAddress address) {
 		HTMLWriter writer = new HTMLWriter();
 		writer.startH1().text(address.getName()).endH1();
@@ -245,7 +212,7 @@ public class InternetAddressViewPerspectiveBuilder {
 				
 				HTMLWriter formatted = new HTMLWriter();
 				formatted.startDiv().withClass("reader_internetaddress_body");
-				formatted.html(getBodyXML(annotated));
+				formatted.html(DOM.getBodyXML(annotated));
 				formatted.endDiv();
 				
 				List<StatementPerspective> quotes = article.getQuotes();
@@ -279,26 +246,6 @@ public class InternetAddressViewPerspectiveBuilder {
 
 			}
 		}
-	}
-
-	private String getBodyXML(Document document) {
-		StringBuilder sb = new StringBuilder();
-		XPathContext c = new XPathContext();
-		c.addNamespace("html", document.getRootElement().getNamespaceURI());
-		Nodes bodies = document.query("//html:body", c);
-		if (bodies.size() > 0) {
-			Node node = bodies.get(0);
-			if (node instanceof Element) {
-				Element body = (Element) node;
-				int childCount = body.getChildCount();
-				for (int i = 0; i < childCount; i++) {
-					Node child = body.getChild(i);
-
-					sb.append(child.toXML());
-				}
-			}
-		}
-		return sb.toString();
 	}
 
 	private Document annotate(InternetAddressViewPerspective article, ArticleData data, boolean highlight, Document xomDocument, StopWatch watch) throws ModelException, ExplodingClusterFuckException {
@@ -398,7 +345,6 @@ public class InternetAddressViewPerspectiveBuilder {
 			Element node = (Element) links.get(i);
 			String href = node.getAttributeValue("href");
 			if (href!=null && href.startsWith("http")) {
-				log.info(href);
 				Map<String, Object> info = new HashMap<>();
 				info.put("type", "Link");
 				info.put("url", href);
@@ -534,10 +480,6 @@ public class InternetAddressViewPerspectiveBuilder {
 	public void setModelService(ModelService modelService) {
 		this.modelService = modelService;
 	}
-
-	public void setNetworkService(NetworkService networkService) {
-		this.networkService = networkService;
-	}
 	
 	public void setReaderModelService(ReaderModelService readerModelService) {
 		this.readerModelService = readerModelService;
@@ -546,9 +488,9 @@ public class InternetAddressViewPerspectiveBuilder {
 	public void setSemanticService(SemanticService semanticService) {
 		this.semanticService = semanticService;
 	}
-
-	public void setStorageService(StorageService storageService) {
-		this.storageService = storageService;
+	
+	public void setInternetAddressService(InternetAddressService internetAddressService) {
+		this.internetAddressService = internetAddressService;
 	}
 	
 	public void setContentExtractors(Map<String,ContentExtractor> contentExtractors) {
