@@ -30,6 +30,7 @@ public class HTMLDocument extends XMLDocument {
 
 	private String title;
     private String contentType;
+    private String originalUrl;
 	
 	public HTMLDocument(String raw) {
 		super(raw);
@@ -204,5 +205,13 @@ public class HTMLDocument extends XMLDocument {
 	public static HTMLDocument fromContent(String content) {
 		
 		return null;
+	}
+
+	public String getOriginalUrl() {
+		return originalUrl;
+	}
+
+	public void setOriginalUrl(String originalUrl) {
+		this.originalUrl = originalUrl;
 	}
 }

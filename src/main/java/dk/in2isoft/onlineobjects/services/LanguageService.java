@@ -88,7 +88,21 @@ public class LanguageService {
 		}
 		return new Locale(language);
 	}
-	
+
+	public Locale getSupportedLocale(Locale loc) {
+		if (loc != null) {
+			String language = loc.getLanguage();
+			if ("no".equals(language) || "sv".equals(language)) {
+				return getLocaleForCode("da");
+			}
+			if ("en".equals(language) || "da".equals(language)) {
+				return loc;
+			}
+		}
+
+		return getLocaleForCode("en");
+	}
+
 	public TextAnalysis analyse(String text) throws ModelException {
 		String[] words = semanticService.getWords(text);
 		
@@ -152,4 +166,6 @@ public class LanguageService {
 	public void setSemanticService(SemanticService semanticService) {
 		this.semanticService = semanticService;
 	}
+
+
 }

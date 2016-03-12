@@ -16,15 +16,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import opennlp.tools.postag.POSModel;
-import opennlp.tools.postag.POSTaggerME;
-import opennlp.tools.sentdetect.SentenceDetectorME;
-import opennlp.tools.sentdetect.SentenceModel;
-import opennlp.tools.tokenize.Tokenizer;
-import opennlp.tools.tokenize.TokenizerME;
-import opennlp.tools.tokenize.TokenizerModel;
-import opennlp.tools.util.Span;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -36,6 +27,14 @@ import com.google.common.collect.Sets;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.Pair;
 import dk.in2isoft.onlineobjects.util.semantics.Language;
+import opennlp.tools.postag.POSModel;
+import opennlp.tools.postag.POSTaggerME;
+import opennlp.tools.sentdetect.SentenceDetectorME;
+import opennlp.tools.sentdetect.SentenceModel;
+import opennlp.tools.tokenize.Tokenizer;
+import opennlp.tools.tokenize.TokenizerME;
+import opennlp.tools.tokenize.TokenizerModel;
+import opennlp.tools.util.Span;
 
 public class SemanticService {
 	
@@ -68,6 +67,7 @@ public class SemanticService {
 
 	private static final Pattern NUMBER_WITH_UNIT_PATTERN = Pattern.compile("[0-9]+[A-Za-z]+");
 
+	/* TODO: Use a list instead - performance */
 	public String[] getWords(String text, Language language) {
 		List<String> list = Lists.newArrayList();
 		Matcher m = wordPattern.matcher(text);
@@ -221,6 +221,13 @@ public class SemanticService {
 		String[] words2 = getWords(text2,language);
 		String[] allWords = (String[]) ArrayUtils.addAll(words1, words2);
 		allWords = getUniqueWords(allWords);
+		
+		return compare(words1, words2);
+	}
+	
+	public double compare(String[] words1, String[] words2) {
+		String[] allWords = (String[]) ArrayUtils.addAll(words1, words2);
+		allWords = getUniqueWords(allWords);
 
 		double[] freq1 = getFrequency(allWords,words1);
 		double[] freq2 = getFrequency(allWords,words2);
@@ -228,9 +235,18 @@ public class SemanticService {
 		double[] norm1 = normalize(freq1);
 		double[] norm2 = normalize(freq2);
 		
-		return findDotProduct(norm1,norm2);
+		double comparison = findDotProduct(norm1,norm2);
+		if (Double.isNaN(comparison)) {
+			// TODO: Maybe div-by-zero in normalize
+			return 0;
+		}
+		return comparison;
 	}
-	
+
+	public double compare(List<String> words1, List<String> words2) {
+		return compare(Strings.toArray(words1),Strings.toArray(words2));
+	}
+
 	private double[] getFrequency(String[] keys,String[] words) {
 		double[] freq = new double[keys.length];
 		for (int i=0;i<words.length;i++) {

@@ -1,6 +1,10 @@
 package dk.in2isoft.onlineobjects.core;
 
-public class Pair<K,V> {
+import java.io.Serializable;
+
+public class Pair<K,V> implements Serializable {
+
+	private static final long serialVersionUID = 5984618679818077327L;
 
 	private K key;
 	private V value;

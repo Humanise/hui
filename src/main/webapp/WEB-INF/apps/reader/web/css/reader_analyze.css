@@ -40,7 +40,11 @@
     font-size: 14px;
     position: relative;
     min-width: 20px;
-    text-align: center; }
+    text-align: center;
+    color: #333; }
+    .reader_analyze_part.is-significant {
+      font-weight: 800;
+      color: #000; }
     .reader_analyze_part_info {
       position: absolute;
       color: #999;

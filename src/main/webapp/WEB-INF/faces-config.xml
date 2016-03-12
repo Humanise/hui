@@ -155,6 +155,11 @@
     	<component-type>onlineobjects.dependency</component-type>
     	<component-class>dk.in2isoft.onlineobjects.ui.jsf.DependencyComponent</component-class>
   	</component>
+    <component>
+    	<component-type>onlineobjects.filters</component-type>
+    	<component-class>dk.in2isoft.onlineobjects.ui.jsf.FiltersComponent</component-class>
+  	</component>
+  	
   	
   	
     <component>

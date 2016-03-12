@@ -42,7 +42,9 @@ public class InternetAddressService {
 		if (Strings.isBlank(encoding)) {
 			encoding = Strings.UTF8;
 		}
-		return new HTMLDocument(Files.readString(original, encoding));
+		HTMLDocument htmlDocument = new HTMLDocument(Files.readString(original, encoding));
+		htmlDocument.setOriginalUrl(address.getAddress());
+		return htmlDocument;
 	}
 	
 	// Wiring...

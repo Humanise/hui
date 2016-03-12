@@ -84,6 +84,12 @@
 		<property name="eventService" ref="eventService" />
 	</bean>
 
+	<bean id="languageFacetsDataProvider"
+		class="dk.in2isoft.onlineobjects.modules.language.LanguageFacetsDataProvider">
+		<property name="modelService" ref="modelService" />
+		<property name="eventService" ref="eventService" />
+	</bean>
+
 	<bean id="wordsStatisticsView"
 		class="dk.in2isoft.onlineobjects.apps.words.views.WordsStatisticsView">
 		<property name="statisticsDataProvider" ref="languageStatisticsDataProvider" />

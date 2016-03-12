@@ -41,6 +41,13 @@
 	</bean>
 
 	<bean class="dk.in2isoft.onlineobjects.modules.scheduling.JobDescription">
+		<property name="jobClass" value="dk.in2isoft.onlineobjects.modules.information.SimilarityJob"/>
+		<property name="name" value="similaritycalculator"/>
+		<property name="group" value="core"/>
+		<property name="repeatMinutes" value="1"/>
+	</bean>
+
+	<bean class="dk.in2isoft.onlineobjects.modules.scheduling.JobDescription">
 		<property name="jobClass" value="dk.in2isoft.onlineobjects.apps.words.index.WordIndexJob"/>
 		<property name="name" value="index-words"/>
 		<property name="group" value="core"/>

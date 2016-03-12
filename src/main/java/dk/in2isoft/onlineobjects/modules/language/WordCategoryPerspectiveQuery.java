@@ -1,6 +1,7 @@
 package dk.in2isoft.onlineobjects.modules.language;
 
 import java.math.BigInteger;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -66,7 +67,7 @@ public class WordCategoryPerspectiveQuery implements CustomQuery<WordListPerspec
 		}
 	}
 	
-	public WordCategoryPerspectiveQuery withWords(List<String> str) {
+	public WordCategoryPerspectiveQuery withWords(Collection<String> str) {
 		for (String string : str) {
 			words.add(string.toLowerCase());
 		}

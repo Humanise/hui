@@ -1,8 +1,11 @@
 package dk.in2isoft.onlineobjects.apps.words.views.util;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.InitializingBean;
 
@@ -11,19 +14,16 @@ import com.google.common.collect.Maps;
 
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.apps.words.WordsController;
-import dk.in2isoft.onlineobjects.core.ModelService;
-import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.model.Language;
 import dk.in2isoft.onlineobjects.model.LexicalCategory;
-import dk.in2isoft.onlineobjects.modules.language.LanguageStatistics;
+import dk.in2isoft.onlineobjects.modules.language.LanguageFacetsDataProvider;
 import dk.in2isoft.onlineobjects.modules.language.LanguageStatisticsDataProvider;
 import dk.in2isoft.onlineobjects.ui.jsf.model.Option;
 import dk.in2isoft.onlineobjects.util.Messages;
 
 public class WordsInterfaceHelper implements InitializingBean {
 
-	private LanguageStatisticsDataProvider languageStatisticsDataProvider;
-	private ModelService modelService;
+	private LanguageFacetsDataProvider languageFacetsDataProvider;
 
 	private Map<String,List<Option>> languagesCache = Maps.newHashMap();
 	private Map<String,List<Option>> categoriesCache = Maps.newHashMap();
@@ -45,7 +45,7 @@ public class WordsInterfaceHelper implements InitializingBean {
 	
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		languageStatisticsDataProvider.addListener(() -> {
+		languageFacetsDataProvider.addListener(() -> {
 			languagesCache.clear();
 			categoriesCache.clear();
 		});
@@ -68,46 +68,27 @@ public class WordsInterfaceHelper implements InitializingBean {
 	}
 	
 	private List<Option> buildLanguageOptions(Locale locale) {
-		List<Option> options = Lists.newArrayList();
-		LanguageStatistics data = languageStatisticsDataProvider.getData();
-		
-		for (String language : data.getLanguages()) {
+		return languageFacetsDataProvider.getData().keySet().stream().distinct().map(code -> {
 			Option option = new Option();
-			option.setValue(language);
-			option.setLabel(languageMessages.get("code",language, locale));
-			options.add(option);
-		}
-		return options;
+			option.setValue(code);
+			option.setLabel(languageMessages.get("code",code, locale));
+			return option;
+		}).sorted((a,b) -> a.getLabel().compareTo(b.getLabel())).collect(Collectors.toList());
 	}
 
 	private List<Option> buildCategoryOptions(Locale locale) {
-		List<Option> options = Lists.newArrayList();
-		Query<LexicalCategory> query = Query.of(LexicalCategory.class).orderByName();
-		List<LexicalCategory> list = modelService.list(query);
-		for (LexicalCategory item : list) {
+		return languageFacetsDataProvider.getData().values().stream().distinct().map(code -> {
 			Option option = new Option();
-			option.setValue(item.getCode());
-			option.setLabel(categoryMessages.get("code",item.getCode(), locale));
-			options.add(option);
-		}
-		{
-			Option option = new Option();
-			option.setValue("none");
-			option.setLabel(wordsMessages.get("none", locale));
-			options.add(option);			
-		}
-		return options;
-	}
-
-	
-	public void setLanguageStatisticsDataProvider(LanguageStatisticsDataProvider languageStatisticsDataProvider) {
-		this.languageStatisticsDataProvider = languageStatisticsDataProvider;
+			option.setValue(code);
+			option.setLabel(categoryMessages.get("code",code, locale));
+			return option;
+		}).sorted((a,b) -> a.getLabel().compareTo(b.getLabel())).collect(Collectors.toList());
 	}
 	
-	public void setModelService(ModelService modelService) {
-		this.modelService = modelService;
+	public void setLanguageFacetsDataProvider(LanguageFacetsDataProvider languageFacetsDataProvider) {
+		this.languageFacetsDataProvider = languageFacetsDataProvider;
 	}
-
+	
 	public List<Option> getLetterOptions(Locale locale) {
 		return alphabeth;
 	}

@@ -60,6 +60,12 @@
       position: relative;
       min-width: 20px;
       text-align: center;
+      color: #333;
+      
+      &.is-significant {
+        font-weight: 800;
+        color: #000;
+      }
 
       &_info {
         position: absolute;

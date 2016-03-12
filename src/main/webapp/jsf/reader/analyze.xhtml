@@ -12,7 +12,9 @@
 		<ui:define name="body">
 
       <div class="reader_analyze">
-        <h1 class="reader_analyze_title">#{readerAnalyzeView.title}</h1>
+        <h1 class="reader_analyze_title">#{readerAnalyzeView.analytics.documentTitle}</h1>
+
+        <p>#{readerAnalyzeView.message}</p>
 
         <div class="reader_analyze_block">
           <h2 class="reader_analyze_block_title">Properties</h2>
@@ -28,13 +30,23 @@
         
         <div class="reader_analyze_block">
           <h2 class="reader_analyze_block_title">Text</h2>
-          <div class="reader_analyze_text">#{readerAnalyzeView.text}</div>
+          <div class="reader_analyze_text">#{readerAnalyzeView.analytics.text}</div>
         </div>
 
         <div class="reader_analyze_block">
+          <h2 class="reader_analyze_block_title">Names</h2>
+          <div class="reader_analyze_words">
+            <c:forEach items="#{readerAnalyzeView.names}" var="word">
+              <span class="reader_analyze_word">#{word}</span>
+            </c:forEach>
+          </div>
+        </div>
+
+        <ui:remove>
+        <div class="reader_analyze_block">
           <h2 class="reader_analyze_block_title">Simple words</h2>
           <div class="reader_analyze_words">
-            <c:forEach items="#{readerAnalyzeView.simpleWords}" var="word">
+            <c:forEach items="#{readerAnalyzeView.analytics.simpleWords}" var="word">
               <span class="reader_analyze_word">#{word}</span>
             </c:forEach>
           </div>
@@ -43,17 +55,31 @@
         <div class="reader_analyze_block">
           <h2 class="reader_analyze_block_title">Natural words</h2>
           <div class="reader_analyze_words">
-            <c:forEach items="#{readerAnalyzeView.naturalWords}" var="word">
+            <c:forEach items="#{readerAnalyzeView.analytics.naturalWords}" var="word">
               <span class="reader_analyze_word">#{word}</span>
             </c:forEach>
           </div>
         </div>
+        <div class="reader_analyze_block">
+          <h2 class="reader_analyze_block_title">Word frequency</h2>
+          <div class="reader_analyze_overflow">
+          <table>
+            <c:forEach items="#{readerAnalyzeView.analytics.wordFrequency}" var="prop">
+              <tr>
+                <th>#{prop.key}</th>
+                <td>#{prop.value}</td>
+              </tr>
+            </c:forEach>
+          </table>
+          </div>
+        </div>
+        </ui:remove>
 
         <div class="reader_analyze_block">
-          <h2 class="reader_analyze_block_title">Sentences</h2>
-          <div class="reader_analyze_sentences">
-            <c:forEach items="#{readerAnalyzeView.sentences}" var="sentence">
-              <p class="reader_analyze_sentence">#{sentence}</p>
+          <h2 class="reader_analyze_block_title">Name candidates</h2>
+          <div class="reader_analyze_overflow">
+            <c:forEach items="#{readerAnalyzeView.analytics.nameCandidates}" var="candidate">
+              <p>#{candidate}</p>
             </c:forEach>
           </div>
         </div>
@@ -61,10 +87,10 @@
         <div class="reader_analyze_block">
           <h2 class="reader_analyze_block_title">Sentences</h2>
           <div class="reader_analyze_sentences">
-            <c:forEach items="#{readerAnalyzeView.taggedSentences}" var="sentence">
+            <c:forEach items="#{readerAnalyzeView.analytics.taggedSentences}" var="sentence">
               <p class="reader_analyze_sentence">
                 <c:forEach items="#{sentence}" var="part">
-                  <span class="reader_analyze_part">#{part.text}<span class="reader_analyze_part_info">#{part.partOfSpeech}</span></span>
+                  <span class="reader_analyze_part #{part.significant ? 'is-significant' : ''}">#{part.text}<span class="reader_analyze_part_info">#{part.partOfSpeech}</span></span>
                 </c:forEach>
               </p>
             </c:forEach>
@@ -72,8 +98,59 @@
         </div>
 
         <div class="reader_analyze_block">
+          <h2 class="reader_analyze_block_title">Significant words</h2>
+          <div class="reader_analyze_sentences">
+            <c:forEach items="#{readerAnalyzeView.analytics.significantWords}" var="part">
+              <span class="reader_analyze_part">#{part.text}<span class="reader_analyze_part_info">#{part.partOfSpeech}</span></span>
+            </c:forEach>
+          </div>
+        </div>
+
+        <div class="reader_analyze_block">
+          <h2 class="reader_analyze_block_title">Word frequency</h2>
+          <div class="reader_analyze_overflow">
+          <table>
+            <c:forEach items="#{readerAnalyzeView.analytics.significantWordFrequency}" var="prop">
+              <tr>
+                <th>#{prop.key.text} [#{prop.key.partOfSpeech}]</th>
+                <td>#{prop.value}</td>
+              </tr>
+            </c:forEach>
+          </table>
+          </div>
+        </div>
+
+        <div class="reader_analyze_block">
+          <h2 class="reader_analyze_block_title">Words by part of speech</h2>
+          <div class="reader_analyze_overflow">
+          <table>
+            <c:forEach items="#{readerAnalyzeView.wordsByPartOfSpeech}" var="prop">
+              <tr>
+                <th>#{prop.key}</th>
+                <td>#{prop.value}</td>
+              </tr>
+            </c:forEach>
+          </table>
+          </div>
+        </div>
+
+        <div class="reader_analyze_block">
+          <h2 class="reader_analyze_block_title">Similar</h2>
+          <div class="reader_analyze_overflow">
+          <table>
+            <c:forEach items="#{readerAnalyzeView.similar}" var="prop">
+              <tr>
+                <th>#{prop.key.name}</th>
+                <td>#{prop.value}</td>
+              </tr>
+            </c:forEach>
+          </table>
+          </div>
+        </div>
+
+        <div class="reader_analyze_block">
           <h2 class="reader_analyze_block_title">HTML</h2>
-          <div class="reader_analyze_html"><o:out value="#{readerAnalyzeView.html}" escape="false"/></div>
+          <div class="reader_analyze_html"><o:out value="#{readerAnalyzeView.analytics.html}" escape="false"/></div>
         </div>
       </div>
 

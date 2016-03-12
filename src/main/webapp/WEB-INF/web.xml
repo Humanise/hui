@@ -1,32 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
           http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-    version="3.0">
-   
-   	<display-name>OnlineObjects</display-name>
+	version="3.0" metadata-complete="true">
+	<absolute-ordering />
+
+	<display-name>OnlineObjects</display-name>
 	<description>Web Application Foundation Framework</description>
 	<context-param>
 		<param-name>webmaster</param-name>
 		<param-value>webmaster@onlineobjects.com</param-value>
 	</context-param>
-	
+
 
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
-	
+
 	<listener>
 		<listener-class>dk.in2isoft.onlineobjects.core.SystemLoader</listener-class>
 	</listener>
-	
+
 	<listener>
 		<listener-class>dk.in2isoft.onlineobjects.core.SessionListener</listener-class>
 	</listener>
-	
 
 
-  <!-- Filters -->
+
+	<!-- Filters -->
 	<filter>
 		<filter-name>Compress</filter-name>
 		<filter-class>dk.in2isoft.onlineobjects.ui.GZIPFilter</filter-class>
@@ -48,40 +49,38 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
-    <!-- Faces -->
-	
-    <context-param>
-        <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
-        <param-value>server</param-value>
-    </context-param>
-    <!-- context-param>
-        <param-name>javax.faces.PROJECT_STAGE</param-name>
-        <param-value>Development</param-value>
-    </context-param-->
-    <context-param>
-    	<param-name>javax.faces.DEFAULT_SUFFIX</param-name>
-    	<param-value>.html .xhtml</param-value>
-  	</context-param>
-  	<context-param>
-  		<param-name>javax.faces.SEPARATOR_CHAR</param-name>
-  		<param-value>x</param-value>
-  	</context-param>
- 
-    <context-param>
-        <param-name>javax.faces.FACELETS_LIBRARIES</param-name>
-        <param-value>/META-INF/onlineobjects.taglib.xml;/META-INF/in2igui.taglib.xml</param-value>
-    </context-param>
+	<!-- Faces -->
 
-    <servlet>
-        <servlet-name>Faces Servlet</servlet-name>
-        <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
-    </servlet>
+	<context-param>
+		<param-name>javax.faces.STATE_SAVING_METHOD</param-name>
+		<param-value>server</param-value>
+	</context-param>
+	<!-- context-param> <param-name>javax.faces.PROJECT_STAGE</param-name> <param-value>Development</param-value> 
+		</context-param -->
+	<context-param>
+		<param-name>javax.faces.DEFAULT_SUFFIX</param-name>
+		<param-value>.html .xhtml</param-value>
+	</context-param>
+	<context-param>
+		<param-name>javax.faces.SEPARATOR_CHAR</param-name>
+		<param-value>x</param-value>
+	</context-param>
 
-    <servlet-mapping>
-        <servlet-name>Faces Servlet</servlet-name>
-        <url-pattern>/faces/*</url-pattern>
-    </servlet-mapping>
-	
+	<context-param>
+		<param-name>javax.faces.FACELETS_LIBRARIES</param-name>
+		<param-value>/META-INF/onlineobjects.taglib.xml;/META-INF/in2igui.taglib.xml</param-value>
+	</context-param>
+
+	<servlet>
+		<servlet-name>Faces Servlet</servlet-name>
+		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>Faces Servlet</servlet-name>
+		<url-pattern>/faces/*</url-pattern>
+	</servlet-mapping>
+
 
 
 
@@ -91,12 +90,12 @@
 		<param-name>contextConfigLocation</param-name>
 		<param-value>classpath:applicationContext.xml</param-value>
 	</context-param>
-	
+
 	<session-config>
 		<session-timeout>150</session-timeout>
 	</session-config>
-  
-  <!-- Establish the default MIME type mappings -->
+
+	<!-- Establish the default MIME type mappings -->
 	<mime-mapping>
 		<extension>txt</extension>
 		<mime-type>text/plain</mime-type>
@@ -433,5 +432,5 @@
 		<extension>woff</extension>
 		<mime-type>application/x-font-woff</mime-type>
 	</mime-mapping>
-	
+
 </web-app>

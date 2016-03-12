@@ -8,13 +8,16 @@ import junit.framework.TestCase;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.w3c.dom.Document;
 
 import com.google.common.collect.Sets;
 
 import dk.in2isoft.commons.xml.DOM;
 import dk.in2isoft.commons.xml.Serializing;
+import dk.in2isoft.onlineobjects.test.FastTests;
 
+@Category(FastTests.class)
 public class TestDOM extends TestCase {
 
 	@Test

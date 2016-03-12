@@ -19,7 +19,6 @@ import dk.in2isoft.commons.lang.HTMLWriter;
 import dk.in2isoft.commons.lang.StringSearcher;
 import dk.in2isoft.commons.lang.StringSearcher.Result;
 import dk.in2isoft.commons.lang.Strings;
-import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.commons.xml.DOM;
 import dk.in2isoft.commons.xml.DecoratedDocument;
 import dk.in2isoft.commons.xml.DocumentCleaner;
@@ -45,7 +44,8 @@ import dk.in2isoft.onlineobjects.model.Statement;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.modules.information.ContentExtractor;
-import dk.in2isoft.onlineobjects.modules.information.SimpleContentExtractor;
+import dk.in2isoft.onlineobjects.modules.language.TextDocumentAnalytics;
+import dk.in2isoft.onlineobjects.modules.language.TextDocumentAnalyzer;
 import dk.in2isoft.onlineobjects.modules.language.WordCategoryPerspectiveQuery;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
 import dk.in2isoft.onlineobjects.modules.networking.InternetAddressService;
@@ -69,6 +69,7 @@ public class InternetAddressViewPerspectiveBuilder {
 	private Map<String,ContentExtractor> contentExtractors;
 	private ReaderModelService readerModelService;
 	private InternetAddressService internetAddressService;
+	private TextDocumentAnalyzer textDocumentAnalyzer;
 
 	public InternetAddressViewPerspective build(Long id, String algorithm, boolean highlight, UserSession session) throws ModelException, IllegalRequestException, SecurityException, ExplodingClusterFuckException {
 		StopWatch watch = new StopWatch();
@@ -78,7 +79,9 @@ public class InternetAddressViewPerspectiveBuilder {
 			throw new IllegalRequestException("Not found");
 		}
 
-		HTMLDocument document = internetAddressService.getHTMLDocument(address, session);
+		TextDocumentAnalytics analytics = textDocumentAnalyzer.analyze(address, session);
+		Document xom = DOM.parseXOM(analytics.getXml());
+		//HTMLDocument document = internetAddressService.getHTMLDocument(address, session);
 		
 		ArticleData data = buildData(address);
 
@@ -93,13 +96,13 @@ public class InternetAddressViewPerspectiveBuilder {
 		loadStatements(address, article, session);
 
 		article.setHeader(buildHeader(address));
-		article.setInfo(buildInfo(document, data, session));
+		article.setInfo(buildInfo(data, session));
 		article.setId(address.getId());
 
 		watch.split();
 		log.trace("Base: " + watch.getSplitTime());
-		if (document != null) {
-			buildRendering(document, data, article, algorithm, highlight, watch);
+		if (xom != null) {
+			buildRendering(xom, data, article, algorithm, highlight, watch);
 		}
 
 		watch.stop();
@@ -157,7 +160,7 @@ public class InternetAddressViewPerspectiveBuilder {
 		return writer.toString();
 	}
 
-	private String buildInfo(HTMLDocument document, ArticleData data, UserSession session) throws ModelException {
+	private String buildInfo(ArticleData data, UserSession session) throws ModelException {
 		HTMLWriter writer = new HTMLWriter();
 		writer.startH2().withClass("info_header").text("Tags").endH2();
 		writer.startP().withClass("tags info_tags");
@@ -180,22 +183,23 @@ public class InternetAddressViewPerspectiveBuilder {
 		return writer.toString();
 	}
 
-	private void buildRendering(HTMLDocument document, ArticleData data, InternetAddressViewPerspective article, String algorithm, boolean highlight, StopWatch watch) throws ModelException,
+	private void buildRendering(Document xom, ArticleData data, InternetAddressViewPerspective article, String algorithm, boolean highlight, StopWatch watch) throws ModelException,
 			ExplodingClusterFuckException {
 
 		{
-			
-			Document xom = document.getXOMDocument();
 			if (xom==null) {
 				log.warn("No XOM document");
 				return;
 			}
+			/*
 			ContentExtractor extractor = contentExtractors.get(algorithm);
 			if (extractor==null) {
 				log.warn("Unknown extrator: " + algorithm);
 				extractor = new SimpleContentExtractor();
 			}
 			Document extracted = extractor.extract(xom);
+			*/
+			Document extracted = xom;
 			if (extracted == null) {
 				article.setFormatted("<p><em>Unable to extract text.</em></p>");
 			} else {
@@ -499,5 +503,9 @@ public class InternetAddressViewPerspectiveBuilder {
 	
 	public Map<String,ContentExtractor> getContentExtractors() {
 		return contentExtractors;
+	}
+	
+	public void setTextDocumentAnalyzer(TextDocumentAnalyzer analyzer) {
+		this.textDocumentAnalyzer = analyzer;
 	}
 }

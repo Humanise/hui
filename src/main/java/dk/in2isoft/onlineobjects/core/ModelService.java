@@ -477,6 +477,19 @@ public class ModelService {
 		return result;
 	}
 
+	public List<Relation> getRelationsTo(Entity entity, Class<?> clazz, String relationKind, Privileged privileged) throws ModelException {
+		String hql = "select relation from Relation as relation,"+clazz.getName()+" child,Privilege as priv where relation.to=:entity and relation.from=child and relation.kind=:kind and priv.object=relation.from and priv.subject=:privileged order by relation.position";
+		Query q = getSession().createQuery(hql);
+		q.setEntity("entity", entity);
+		q.setString("kind", relationKind);
+		q.setLong("privileged", privileged.getIdentity());
+		List<Relation> result = Code.castList(q.list());
+		for (int i = 0; i < result.size(); i++) {
+			result.set(i, getSubject(result.get(i)));
+		}
+		return result;
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<Relation> getRelationsFrom(Entity entity, Class<?> clazz,String relationKind) throws ModelException {
 		String hql = "select relation from Relation as relation,"+clazz.getName()+" other where relation.from=:entity and relation.to=other and relation.kind=:kind order by relation.position";
