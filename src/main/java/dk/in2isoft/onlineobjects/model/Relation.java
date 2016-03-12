@@ -62,6 +62,8 @@ public class Relation extends Item {
 	
 	private float position;
 
+	private Double strength;
+
 	public Relation() {
 	}
 
@@ -115,6 +117,18 @@ public class Relation extends Item {
 		matches &= from.getClass().isAssignableFrom(fromClass);
 		matches &= to.getClass().isAssignableFrom(toClass);
 		return matches;
+	}
+
+	public Double getStrength() {
+		return strength;
+	}
+
+	public void setStrength(Double strength) {
+		this.strength = strength;
+	}
+
+	public void setKind(Kind kind) {
+		this.kind = kind.toString();
 	}
 
 	

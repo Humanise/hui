@@ -104,7 +104,7 @@ create table privilege (id int8 not null, object int8, subject int8, delete bool
 create table property (id int8 not null, key varchar(255), value varchar(4000), doubleValue float8, dateValue timestamp, enity_id int8, sortorder int4, primary key (id))
 create table question (id int8 not null, text varchar(10000), primary key (id))
 create table rating (id int8 not null, rating float8, primary key (id))
-create table relation (id int8 not null, kind varchar(255), position float4, super_entity_id int8 not null, sub_entity_id int8 not null, primary key (id))
+create table relation (id int8 not null, kind varchar(255), position float4, strength float8, super_entity_id int8 not null, sub_entity_id int8 not null, primary key (id))
 create table remoteaccount (id int8 not null, username varchar(255), domain varchar(255), primary key (id))
 create table statement (id int8 not null, text varchar(10000), primary key (id))
 create table topic (id int8 not null, primary key (id))

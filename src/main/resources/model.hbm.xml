@@ -239,6 +239,7 @@
 	        <key column="id"/>
 		    <property name="kind"/>
 		    <property name="position"/>
+		    <property name="strength"/>
 	        <many-to-one name="from" column="super_entity_id" not-null="true" lazy="false" fetch="join"/>
 	        <many-to-one name="to" column="sub_entity_id" not-null="true" lazy="false" fetch="join"/>
 	    </joined-subclass>
