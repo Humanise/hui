@@ -1,0 +1,40 @@
+@include when {
+
+  .reader_sidebar {
+    height: 100%;
+    overflow: hidden;
+    
+    &_block {
+    	padding: 10px 10px 10px 15px;      
+    }
+    
+    &_title {
+    	text-transform: uppercase;
+    	color: #999;
+    	margin: 0 0 3px;
+    	font-weight: 400;
+    	font-size: 12px;      
+    }
+    
+    &_feeds {
+      position: relative;
+
+      &_add {
+        color: #999;
+        position: absolute;
+        top: 5px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity, .3s;
+        
+        &:hover {
+          color: #333;          
+        }
+      }
+      
+      &:hover .reader_sidebar_feeds_add {
+        opacity: 1;
+      }
+    }
+  }
+}

@@ -10,23 +10,23 @@
 	<ui:composition template="templates/layout.xhtml">
 		
 		<ui:define name="sidebar">
-			<div class="sidebar">
+			<div class="reader_sidebar">
         <gui:rows>
           <gui:row height="content">
-    				<div class="block">
+    				<div class="reader_sidebar_block">
     					<o:selection name="subsets" value="everything">
                   <gui:source name="contextsSource" url="#{readerView.baseContext}/getContextOptions"/>
               </o:selection>
     				</div>
-    				<div class="block">
-    					<h3>Types</h3>
+    				<div class="reader_sidebar_block">
+    					<h3 class="reader_sidebar_title">Types</h3>
     					<o:selection name="types" value="any">
     						<gui:source name="typesSource" url="#{readerView.baseContext}/getTypeOptions"/>
     					</o:selection>
     				</div>
-    				<div class="block reader_feeds">
-    					<h3>Feeds</h3>
-        				<o:link name="addFeed" plain="true" styleClass="reader_feeds_add">
+    				<div class="reader_sidebar_block reader_sidebar_feeds">
+    					<h3 class="reader_sidebar_title">Feeds</h3>
+        				<o:link name="addFeed" plain="true" styleClass="reader_sidebar_feeds_add">
         					<o:icon icon="add_line"/>
         				</o:link>
     					<o:selection name="feeds">		
@@ -36,8 +36,8 @@
           </gui:row>
           <gui:row>
       			<gui:overflow full="true">
-      				<div class="block">
-      					<h3>Tags</h3>
+      				<div class="reader_sidebar_block">
+      					<h3 class="reader_sidebar_title">Tags</h3>
       					<div style="margin: 0 -10px">
         					<div style="padding: 0 10px">
           					<o:selection name="tags">
@@ -70,17 +70,17 @@
 			
 
 			<div class="reader_list_top">
-				<div class="reader_actions">
-					<o:link name="addButton" plain="true" styleClass="reader_action">
+				<div class="reader_list_actions">
+					<o:link name="addButton" plain="true" styleClass="reader_list_action">
 						<o:icon icon="add_line" size="20"/>
-						<span class="reader_action_text">Add page</span>
+						<span class="reader_list_action_text">Add page</span>
 					</o:link>
-					<o:link name="settingsIcon" plain="true" styleClass="reader_action">
+					<o:link name="settingsIcon" plain="true" styleClass="reader_list_action">
 						<o:icon icon="gear_line" size="20"/>
 					</o:link>
 				</div>
 			
-				<div class="reader_search">
+				<div class="reader_list_search">
 					<gui:searchfield name="search" placeholder="Search" adaptive="true"/>
 				</div>
 			</div>
@@ -95,7 +95,6 @@
 		
 		<ui:define name="viewer">
 			<div class="reader_view js_internetaddress_viewer">
-				<div class="reader_viewer_frame">
 					<div class="reader_view_head">
 						<div class="js_internetaddress_header reader_view_head_info"></div>
               <o:link name="closeAddress" plain="true" styleClass="reader_view_close oo_icon oo_icon_close_line"/>
@@ -118,7 +117,6 @@
 						<div class="reader_viewer_perpective reader_viewer_perpective_text" id="viewer_text"></div>
 						<iframe class="reader_viewer_perpective reader_viewer_perpective_web" id="viewer_frame"></iframe>
 					</div>
-				</div>
 			</div>
       
       <div class="reader_view reader_entity js_question">
@@ -149,7 +147,7 @@
 		
 		
 		<ui:define name="info">
-			<div id="viewer_info" class="reader_viewer_info">
+			<div class="reader_meta js-internetaddress-meta">
 				
 			</div>
 		</ui:define>

@@ -2,6 +2,7 @@ package dk.in2isoft.onlineobjects.modules.language;
 
 import java.util.List;
 
+import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Language;
 import dk.in2isoft.onlineobjects.model.LexicalCategory;
 import dk.in2isoft.onlineobjects.model.User;
@@ -15,6 +16,7 @@ public class WordImpression {
 	private boolean trademark;
 	private String glossary;
 	private List<String> examples;
+	private Entity source;
 	private String dataSource;
 	private String sourceTitle;
 	private Language language;
@@ -98,6 +100,14 @@ public class WordImpression {
 
 	public void setTrademark(boolean trademark) {
 		this.trademark = trademark;
+	}
+
+	public Entity getSource() {
+		return source;
+	}
+
+	public void setSource(Entity source) {
+		this.source = source;
 	}
 
 	public static class WordRelationGroup {

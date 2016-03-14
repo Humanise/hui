@@ -6,6 +6,7 @@ import org.apache.lucene.document.TextField;
 
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
+import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Language;
 import dk.in2isoft.onlineobjects.model.LexicalCategory;
 import dk.in2isoft.onlineobjects.model.Property;
@@ -33,6 +34,9 @@ public class WordIndexDocumentBuilder implements IndexDocumentBuilder<Word> {
 		String categoryCode = category == null ? "none" : category.getCode();
 		Language language = impression.getLanguage();
 		String languageCode = language == null ? "none" : language.getCode();
+		
+		Entity source = impression.getSource();
+		String src = source!=null ? String.valueOf(source.getId()) : "none";
 
 		Document doc = new Document();
 		doc.add(new TextField("text", text.toString(), Field.Store.YES));
@@ -41,6 +45,7 @@ public class WordIndexDocumentBuilder implements IndexDocumentBuilder<Word> {
 		doc.add(new TextField("language", languageCode, Field.Store.YES));
 		doc.add(new TextField("category", categoryCode, Field.Store.YES));
 		doc.add(new TextField("letter", getLetter(word.getText()), Field.Store.YES));
+		doc.add(new TextField("source", src, Field.Store.YES));
 		return doc;
 	}
 
@@ -62,6 +67,7 @@ public class WordIndexDocumentBuilder implements IndexDocumentBuilder<Word> {
 		doc.add(new TextField("language", Strings.asNonBlank(perspective.getLanguage(),"none"), Field.Store.YES));
 		doc.add(new TextField("category", Strings.asNonBlank(perspective.getLexicalCategory(),"none"), Field.Store.YES));
 		doc.add(new TextField("letter", getLetter(perspective.getText()), Field.Store.YES));
+		doc.add(new TextField("source", perspective.getSourceId()==null ? "none" : String.valueOf(perspective.getSourceId()), Field.Store.YES));
 		return doc;
 	}
 

@@ -48,6 +48,7 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 	private String letter;
 	private String language;
 	private String category;
+	private String source;
 	
 	private int pageSize = 20;
 	private List<Option> pages;
@@ -68,6 +69,7 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 		letter = request.getString("letter");
 		language = request.getString("language");
 		category = request.getString("category");
+		source = request.getString("source");
 		
 		String[] localPath = request.getLocalPath();
 		page = 0;
@@ -82,7 +84,7 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 		languageOptions = buildLanguageOptions(request);
 		categoryOptions = buildCategoryOptions(request);
 		
-		WordQuery query = new WordQuery().withText(text).withLetter(letter).withCategory(category).withLanguage(language).withPage(page).withPageSize(20);
+		WordQuery query = new WordQuery().withText(text).withLetter(letter).withCategory(category).withLanguage(language).withSource(source).withPage(page).withPageSize(20);
 		SearchResult<WordListPerspective> result = wordService.search(query);
 
 		this.list = result.getList();
@@ -168,6 +170,7 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 		blank &= Strings.isBlank(letter);
 		blank &= Strings.isBlank(language);
 		blank &= Strings.isBlank(category);
+		blank &= Strings.isBlank(source);
 		return blank;
 	}
 	

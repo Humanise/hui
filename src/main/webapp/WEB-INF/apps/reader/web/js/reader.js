@@ -8,7 +8,7 @@ require(['all'],function() {
   	$render : function(info) {
   		return info.html;
   	}
-  });  
+  });
 })
 
 var reader = {
@@ -20,34 +20,35 @@ var reader = {
   $ready : function() {
 
     hui.listen(hui.get.firstByClass(document.body,'reader_layout'),'click',this._click.bind(this));
-		if (hui.location.getBoolean('dev')) {
-      /*
-			window.setTimeout(function() {
-		    internetAddressViewer.show({addressId:2698752});
-        statementController.edit(2751699);
-			}.bind(this))*/
-			window.setTimeout(function() {
-        this.view({type:'Question',id:2800932});
-			}.bind(this))			
+
+    var id = hui.location.getInt('id');
+    var type = hui.location.getParameter('type');
+		if (type && id) {
+      window.setTimeout(function() {
+        this.view({type:type,id:id});
+      }.bind(this))
 		}
     hui.listen(window,'popstate',function(e) {
       hui.log(e);
-    })
+      this.view(e.state);
+    }.bind(this))
   },
-  
+
   $clickItem$listView : function(info) {
     var event = info.event;
     var a = event.findByTag('a');
-    if (hui.cls.has(a,'reader_list_word')) {
+    if (hui.cls.has(a,'js-reader-list-word')) {
       var id = parseInt(a.getAttribute('data-id'));
       hui.ui.get('tags').selectById(id,event.shiftKey);
-    } else if (hui.cls.has(a,'reader_list_address_link')) {
+    } else if (hui.cls.has(a,'js-reader-list-author')) {
+      this.search({text:hui.dom.getText(a)});
+    } else if (hui.cls.has(a,'js-reader-list-link')) {
       window.open(a.href);
     } else if (info.item) {
       this.view(info.item);
     }
   },
-  
+
   _activeViewer : null,
 
   view : function(options) {
@@ -67,6 +68,7 @@ var reader = {
     this._activeViewer = newViewer;
     if (this._activeViewer) {
       this._activeViewer.show(options);
+      history.pushState(options,'TODO','./?type='+options.type+'&id='+options.id);
     }
   },
   edit : function(options) {
@@ -81,6 +83,24 @@ var reader = {
       }
     }
   },
+
+  remove : function(options) {
+    if (options.type=='Word' && options.context.type=='InternetAddress') {
+      hui.ui.request({
+        url : '/removeWord',
+        message : {start:'Removing',success:'Removed'},
+        parameters : {
+          wordId : options.id,
+          internetAddressId : options.context.id
+        },
+        $success : function(obj) {
+          hui.ui.callDelegates(this,'addressChanged');
+          hui.ui.callDelegates(this,'wordChanged');
+        }.bind(this)
+      })
+    }
+  },
+
   peek : function(options) {
     reader.PeekController.peek(options);
   },
@@ -102,15 +122,18 @@ var reader = {
       hui.ui.get('tags').selectById(id,e.shiftKey);
     }
   },
-  	
+
 	$addressWasDeleted$addressEditor : function() {
 		this._reloadList();
     hui.ui.get('tagSource').refresh();
 	},
-	
+
 	$addressChanged : function() {
 		this._reloadList();
 	},
+  $wordChanged : function() {
+    hui.ui.get('tagSource').refresh();
+  },
   $statementChanged : function() {
 		this._reloadList();
   },
@@ -161,7 +184,7 @@ var reader = {
       }
     })
   },
-	
+
 	_reloadList : function() {
 		hui.ui.get('listView').reset();
     hui.ui.get('listSource').refresh();
@@ -184,7 +207,7 @@ var reader = {
     form.reset();
     this.importURL({url:values.url})
   },
-  
+
   importURL : function(options) {
 
     hui.ui.request({

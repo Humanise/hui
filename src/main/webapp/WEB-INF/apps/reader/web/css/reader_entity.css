@@ -28,9 +28,9 @@
     .reader_entity_actions .oo_icon:active {
       transform: scale(0.8); }
     .reader_entity_actions .oo_icon.oo_icon-selected {
-      color: #A53125; }
+      color: #5D583F; }
       .reader_entity_actions .oo_icon.oo_icon-selected:hover {
-        color: #7b251c; }
+        color: #3f3b2a; }
 .reader_entity_body {
   padding: 20px;
   font-family: "Merriweather"; }

@@ -12,6 +12,7 @@ public class WordListPerspective {
 	private String language;
 	private String glossary;
 	private String highlightedGlossary;
+	private Long sourceId;
 
 	public String getText() {
 		return text;
@@ -80,5 +81,13 @@ public class WordListPerspective {
 
 	public void setHighlightedGlossary(String highlightedGlossary) {
 		this.highlightedGlossary = highlightedGlossary;
+	}
+
+	public Long getSourceId() {
+		return sourceId;
+	}
+
+	public void setSourceId(Long sourceId) {
+		this.sourceId = sourceId;
 	}
 }

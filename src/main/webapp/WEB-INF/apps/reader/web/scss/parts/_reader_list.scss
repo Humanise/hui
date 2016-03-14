@@ -1,0 +1,55 @@
+@include when {
+  .reader_list_top {
+  	overflow: hidden;
+  	border-bottom: 1px solid #eee;
+  	position: relative;
+  	height: 40px;
+  }
+
+  .reader_list_middle {
+  	position: absolute;
+  	top: 41px;
+  	bottom: 0;
+  	width: 100%;
+  }
+
+  .reader_list_search {
+  	float: left;
+  	width: 200px;
+  	margin: 8px 0 0 7px;
+  }
+
+
+  /* Actions */
+
+  .reader_list_actions
+  {
+  	float: right;
+  	margin: 7px 10px 0 0;
+  }
+
+  .reader_list_action {
+  	margin-left: 10px;
+  	color: #999;
+  	text-decoration: none;
+  	font-size: 0;
+  	display: inline-block;
+  	vertical-align: middle;
+  }
+
+  .reader_list_action:hover {
+  	color: #000;
+  }
+
+  .reader_list_action_text {
+  	line-height: 20px;
+  	vertical-align: middle;
+  	font-size: 14px;
+  	margin-left: 5px;
+  }
+
+  .reader_list_actions .hui_button
+  {
+  	margin-left: 5px;
+  }
+}

@@ -21,7 +21,7 @@
 			</gui:boundPanel>
 
 			<gui:boundPanel name="wordPanel" variant="light" width="200" modal="true">
-				<gui:fragment name="wordRendering"/>
+				<gui:fragment name="wordRendering" styleClass="word_rendering"/>
 				<gui:buttons align="right">
 					<gui:button text="Remove" variant="light" small="true" name="removeWord"/>
 				</gui:buttons>
@@ -39,21 +39,26 @@
 			</gui:boundPanel>
 
 			<gui:boundPanel name="selectionPanel" variant="light">
-  			<o:link name="quoteFromSelection" plain="true" class="reader_context_icon">
-  				<o:icon icon="quote"/>
-  			</o:link>
-  			<o:link name="tagFromSelection" plain="true" class="reader_context_icon">
-  				<o:icon icon="tag_line"/>
-  			</o:link>
-  			<o:link name="questionFromSelection" plain="true" class="reader_context_icon">
-  				<o:icon icon="question"/>
-  			</o:link>
-  			<o:link name="hypothesisFromSelection" plain="true" class="reader_context_icon">
-  				<o:icon icon="hypothesis"/>
-  			</o:link>
-  			<o:link name="personFromSelection" plain="true" class="reader_context_icon">
-  				<o:icon icon="user"/>
-  			</o:link>
+        <div class="reader_selection">
+    			<o:link name="quoteFromSelection" plain="true" class="reader_selection_icon">
+    				<o:icon icon="quote"/>
+    			</o:link>
+    			<o:link name="tagFromSelection" plain="true" class="reader_selection_icon">
+    				<o:icon icon="tag_line"/>
+    			</o:link>
+    			<o:link name="questionFromSelection" plain="true" class="reader_selection_icon">
+    				<o:icon icon="question"/>
+    			</o:link>
+    			<o:link name="hypothesisFromSelection" plain="true" class="reader_selection_icon">
+    				<o:icon icon="hypothesis"/>
+    			</o:link>
+    			<o:link name="personFromSelection" plain="true" class="reader_selection_icon">
+    				<o:icon icon="user"/>
+    			</o:link>
+    			<o:link name="searchFromSelection" plain="true" class="reader_selection_icon">
+    				<o:icon icon="search_line"/>
+    			</o:link>
+        </div>
 			</gui:boundPanel>
 
 			<gui:boundPanel name="addPanel" variant="light" width="300" modal="true">

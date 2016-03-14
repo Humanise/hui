@@ -253,3 +253,15 @@
 .oo_icon_inbox_line_selected:before {
 	content: "\e90b";
 }
+.oo_icon_user_line:before {
+    content: "\e915";
+}
+.oo_icon_menu:before {
+    content: "\e916";
+}
+.oo_icon_cross:before {
+    content: "\e917";
+}
+.oo_icon_search_line:before {
+    content: "\e90c";
+}

@@ -1,10 +1,12 @@
 package dk.in2isoft.onlineobjects.apps.reader.perspective;
 
+import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
@@ -26,6 +28,7 @@ import dk.in2isoft.commons.xml.DocumentToText;
 import dk.in2isoft.in2igui.data.ItemData;
 import dk.in2isoft.onlineobjects.apps.reader.ReaderModelService;
 import dk.in2isoft.onlineobjects.core.ModelService;
+import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.UserSession;
@@ -44,6 +47,8 @@ import dk.in2isoft.onlineobjects.model.Statement;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.modules.information.ContentExtractor;
+import dk.in2isoft.onlineobjects.modules.information.SimilarityQuery;
+import dk.in2isoft.onlineobjects.modules.information.SimilarityQuery.Similarity;
 import dk.in2isoft.onlineobjects.modules.language.TextDocumentAnalytics;
 import dk.in2isoft.onlineobjects.modules.language.TextDocumentAnalyzer;
 import dk.in2isoft.onlineobjects.modules.language.WordCategoryPerspectiveQuery;
@@ -102,7 +107,7 @@ public class InternetAddressViewPerspectiveBuilder {
 		watch.split();
 		log.trace("Base: " + watch.getSplitTime());
 		if (xom != null) {
-			buildRendering(xom, data, article, algorithm, highlight, watch);
+			buildRendering(xom, data, article, algorithm, highlight, watch, session);
 		}
 
 		watch.stop();
@@ -115,7 +120,7 @@ public class InternetAddressViewPerspectiveBuilder {
 		List<Person> people = modelService.list(query);
 		List<ItemData> authors = people.stream().map((Person p) -> {
 			ItemData option = new ItemData();
-			option.setValue(p.getId());
+			option.setId(p.getId());
 			option.setText(p.getFullName());
 			return option;
 		}).collect(Collectors.toList());
@@ -162,28 +167,27 @@ public class InternetAddressViewPerspectiveBuilder {
 
 	private String buildInfo(ArticleData data, UserSession session) throws ModelException {
 		HTMLWriter writer = new HTMLWriter();
-		writer.startH2().withClass("info_header").text("Tags").endH2();
-		writer.startP().withClass("tags info_tags");
+		writer.startH2().withClass("reader_meta_header").text("Tags").endH2();
+		writer.startP().withClass("reader_meta_tags");
 
 		List<String> tags = data.address.getPropertyValues(Property.KEY_COMMON_TAG);
 		if (!tags.isEmpty()) {
 			for (String string : tags) {
-				writer.startVoidA().withClass("tag info_tags_item info_tag").withData(string).text(string).endA().text(" ");
+				writer.startVoidA().withClass("reader_meta_tags_item is-tag").withData(string).text(string).endA().text(" ");
 			}
 		}
 
 		for (Word word : data.keywords) {
-			writer.startVoidA().withData(word.getId()).withClass("info_tags_item info_word word");
+			writer.startVoidA().withData(word.getId()).withClass("reader_meta_tags_item is-word");
 			writer.text(word.getText()).endA().text(" ");
 		}
 
-		writer.startA().withClass("add info_tags_item info_tags_add").text("Add word").endA();
+		writer.startA().withClass("reader_meta_tags_item is-add").text("Add word").endA();
 		writer.endP();
-
 		return writer.toString();
 	}
 
-	private void buildRendering(Document xom, ArticleData data, InternetAddressViewPerspective article, String algorithm, boolean highlight, StopWatch watch) throws ModelException,
+	private void buildRendering(Document xom, ArticleData data, InternetAddressViewPerspective article, String algorithm, boolean highlight, StopWatch watch, Privileged session) throws ModelException,
 			ExplodingClusterFuckException {
 
 		{
@@ -245,7 +249,28 @@ public class InternetAddressViewPerspectiveBuilder {
 					}
 					formatted.endDiv();
 				}
+				
 
+				
+				List<Similarity> list = modelService.list(new SimilarityQuery().withId(data.address.getId()));
+				List<Long> ids = list.stream().map(e -> e.getId()).collect(Collectors.toList());
+				List<InternetAddress> list2 = modelService.list(Query.after(InternetAddress.class).withPrivileged(session).withIds(ids));
+				
+				Function<Long,String> find = id -> {
+					for (InternetAddress internetAddress : list2) {
+						if (internetAddress.getId()==id) {
+							return internetAddress.getName();
+						}
+					}
+					return "- not found -";
+				};
+				
+				NumberFormat numberFormat = NumberFormat.getPercentInstance();
+				
+				for (Similarity similarity : list) {
+					formatted.startDiv().withClass("reader_meta_similar").text(numberFormat.format(similarity.getSimilarity())).text(" \u00B7 ").text(find.apply(similarity.getId())).endDiv();
+				}
+				
 				article.setFormatted(formatted.toString());
 
 			}

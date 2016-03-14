@@ -1,0 +1,85 @@
+@include when {
+  .reader_layout
+  {
+  	position: fixed;
+  	top: 30px;
+  	bottom: 0;
+  	left: 0;
+  	right: 0;
+  	border-top: 1px solid #eee;
+  }
+
+  .reader_layout_navigation {
+  	width: 20%;
+  	height: 100%;
+  	position: absolute;
+  	border-right: 1px solid #eee;
+  	box-sizing: border-box;
+  }
+
+  .reader_layout_list {
+  	top: 0;
+  	bottom: 100px;
+  	width: 30%;
+  	position: absolute;
+  	left: 20%;
+  	background: #fff;
+  	border-right: 1px solid #eee;
+  	box-sizing: border-box;
+  }
+
+  .reader_layout_viewer {
+  	right: 0;
+  	position: absolute;
+  	left: 50%;
+  	top: 0;
+  	bottom: 100px;
+  }
+
+  .reader_layout_info {
+  	position: absolute;
+  	right: 0px;
+  	left: 20%;
+  	bottom: 0;
+  	height: 100px;
+  	background: #fff;
+  	border-top: 1px solid #eee;
+  	box-sizing: border-box;
+  }
+}
+
+@include when (( width: 1000px )) {
+
+	.reader_layout_navigation {
+		width: 199px;
+	}
+
+	.reader_layout_list {
+		position: absolute;
+		width: 399px;
+		bottom: 0;
+		left: 200px;
+	}
+
+	.reader_layout_info {
+		left: 599px;
+	}
+	.reader_layout_viewer {
+		left: 599px;
+	}
+  
+}
+
+@include when (( width: 1600px )) {
+	.reader_layout_viewer {
+		right: 200px;
+		bottom: 0;
+	}
+	.reader_layout_info {
+		width: 200px;
+		height: 100%;
+		left: auto;
+		border-top: none;
+		border-left: 1px solid #eee;
+	}
+}

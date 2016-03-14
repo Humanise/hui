@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -30,6 +31,7 @@ import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Hypothesis;
 import dk.in2isoft.onlineobjects.model.Image;
+import dk.in2isoft.onlineobjects.model.Kind;
 import dk.in2isoft.onlineobjects.model.Language;
 import dk.in2isoft.onlineobjects.model.LexicalCategory;
 import dk.in2isoft.onlineobjects.model.Person;
@@ -194,9 +196,7 @@ public class ModelController extends ModelControllerBase {
 		Long id = request.getLong("id");
 		Diagram diagram = new Diagram();
 		
-		// TODO Security breach!
-		Privileged privileged = securityService.getAdminPrivileged();
-		Entity entity = modelService.get(Entity.class, id, privileged);
+		Entity entity = modelService.get(Entity.class, id, request.getSession());
 		if (entity==null) {
 			throw new IllegalRequestException("Not found");
 		}
@@ -207,8 +207,10 @@ public class ModelController extends ModelControllerBase {
 		center.addProperty("type", entity.getClass().getSimpleName());
 		diagram.addNode(center);
 		
-		List<Relation> childRelations = modelService.getRelationsFrom(entity);
-		for (Relation relation : childRelations) {
+		Predicate<? super Relation> filterDissimilar = e -> {
+			return Kind.similarity.toString().equals(e.getKind()) ? e.getStrength() > 0.5 : true;
+		};
+		modelService.getRelationsFrom(entity).stream().filter(filterDissimilar).limit(20).forEach(relation -> {
 			Entity other = relation.getTo();
 
 			Node otherNode = new Node();
@@ -216,11 +218,10 @@ public class ModelController extends ModelControllerBase {
 			otherNode.setTitle(other.getName());
 			otherNode.addProperty("type", other.getClass().getSimpleName());
 			diagram.addNode(otherNode);
-			diagram.addEdge(center, relation.getKind(), otherNode);
-		}
-		
-		List<Relation> parentRelations = modelService.getRelationsTo(entity);
-		for (Relation relation : parentRelations) {
+			diagram.addEdge(center, relation.getKind(), otherNode);			
+		});;
+
+		modelService.getRelationsTo(entity).stream().filter(filterDissimilar).limit(20).forEach(relation -> {
 			Entity other = relation.getFrom();
 
 			Node otherNode = new Node();
@@ -229,7 +230,7 @@ public class ModelController extends ModelControllerBase {
 			otherNode.addProperty("type", other.getClass().getSimpleName());
 			diagram.addNode(otherNode);
 			diagram.addEdge(otherNode, relation.getKind(), center);
-		}
+		});
 		
 		return diagram;
 	}

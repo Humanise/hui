@@ -1,0 +1,30 @@
+@import 'shared';
+
+@include when {
+  .oo_spinner {
+  	position: absolute;
+  	left: 50%;
+  	top: 20%;
+  	width: 32px;
+  	height: 32px;
+  	margin: -16px 0 0 -16px;
+  	border-radius: 50%;
+  	border: 5px dotted rgba(0,0,0,.2);
+  	display: none;
+  }
+
+  .oo_spinner_visible {
+  	display: block;
+    -webkit-animation: spin-in .5s 1 ease-in, spin 2s infinite linear;
+  }
+
+  @-webkit-keyframes spin {
+  	0% {-webkit-transform:rotate(0deg);}
+  	100% {-webkit-transform:rotate(-360deg);}
+  }
+
+  @-webkit-keyframes spin-in {
+  	0% {-webkit-transform:rotate(0deg) scale(.5); opacity: 0;}
+  	100% {-webkit-transform:rotate(-90deg) scale(1); opacity: 1;}
+  }
+}

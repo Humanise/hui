@@ -9,7 +9,7 @@ var internetAddressViewer = {
   nodes : {
     viewer : '.js_internetaddress_viewer',
     content : '.reader_viewer_content',
-    info : '.reader_viewer_info',
+    meta : '.js-internetaddress-meta',
     header : '.js_internetaddress_header'
   },
 
@@ -27,7 +27,7 @@ var internetAddressViewer = {
     this.widgets.selectionPanel = hui.ui.get('selectionPanel');
 
     hui.listen(this.nodes.viewer,'click',this._click.bind(this));
-    hui.listen(this.nodes.info,'click',this._clickInfo.bind(this));
+    hui.listen(this.nodes.meta,'click',this._clickInfo.bind(this));
     this._listenForText();
 
     this.widgets.viewSelection = new oo.Segmented({
@@ -76,7 +76,7 @@ var internetAddressViewer = {
       if (e.altKey && first.info.type == 'Statement') {
         statementController.edit(first.info.id);
       } else {
-        reader.peek({items:items});
+        reader.peek({items:items,context:{type:'InternetAddress',id:this._viewedItem.id}});
       }
       return;
     } else {
@@ -124,21 +124,25 @@ var internetAddressViewer = {
     var a = e.findByTag('a');
     if (a) {
       e.stop();
-      if (hui.cls.has(a,'info_tags_add')) {
+      if (hui.cls.has(a,'is-add')) {
         var finder = oo.WordFinder.get();
         finder.show();
         finder.setSearch(this.text);
       }
-      else if (hui.cls.has(a,'info_word')) {
+      else if (hui.cls.has(a,'is-word')) {
         this._clickWord(a);
       }
-      else if (hui.cls.has(a,'info_tag')) {
+      else if (hui.cls.has(a,'is-tag')) {
         this._clickTag(a);
       }
     }
   },
   
   $statementChanged$statementEditor : function() {
+    this.reload();
+  },
+  
+  $wordChanged : function() {
     this.reload();
   },
 
@@ -173,7 +177,7 @@ var internetAddressViewer = {
         hui.get('viewer_formatted').innerHTML = '';
         hui.get('viewer_text').innerHTML = '';
         this.nodes.header.innerHTML = '';
-        this.nodes.info.innerHTML = '';
+        this.nodes.meta.innerHTML = '';
         this.nodes.content.scrollTop = 0;
       }
     } else {
@@ -232,7 +236,7 @@ var internetAddressViewer = {
     hui.get('viewer_formatted').innerHTML = article.formatted;
     hui.get('viewer_text').innerHTML = article.text;
     this.nodes.header.innerHTML = article.header;
-    this.nodes.info.innerHTML = article.info;
+    this.nodes.meta.innerHTML = article.info;
     this._markInbox(article.inbox);
     this._markFavorite(article.favorite);
     var view = this.widgets.viewSelection.getValue();
@@ -312,18 +316,18 @@ var internetAddressViewer = {
     this.nodes.viewer.style.display='none';
     this.viewerVisible = false;
     this.viewerFrame.src = "about:blank";
-    hui.get('viewer_info').innerHTML = ''
+    this.nodes.meta.innerHTML = ''
     this._viewedItem = null;
 		addressInfoController.clear();
     reader.PeekController.hide();
   },
   _lockViewer : function() {
     this._locked = true;
-    hui.cls.add(this.nodes.viewer,'reader_viewer_locked');
+    hui.cls.add(this.nodes.viewer,'is-locked');
   },
   _unlockViewer : function() {
     this._locked = false;
-    hui.cls.remove(this.nodes.viewer,'reader_viewer_locked');
+    hui.cls.remove(this.nodes.viewer,'is-locked');
   },
   $click$favoriteButton : function() {
     if (this._locked) {return}
@@ -451,6 +455,9 @@ var internetAddressViewer = {
     finder.show();
     finder.setSearch(this.text);
   },
+  $click$searchFromSelection : function() {
+    reader.search({text:this.text});
+  },
 
   $valueChanged$internetAddressViewSelection : function(value) {
 
@@ -482,35 +489,18 @@ var internetAddressViewer = {
   _activeWordId : null,
 
   _clickWord : function(node) {
-    var panel = hui.ui.get('wordPanel'),
-      rendering = hui.ui.get('wordRendering');
-    rendering.setHTML('<div>Loading: '+node.getAttribute('data')+'</div>');
-    panel.show({target:node,modal:true});
-    this._activeWordId = node.getAttribute('data');
-    hui.ui.request({
-      url : '/getWordInfo',
-      parameters : {id:this._activeWordId},
-      $object : function(obj) {
-        rendering.setHTML(obj.rendering);
-      }
-    })
-  },
-  $click$removeWord : function() {
-    hui.ui.get('wordPanel').hide();
-    hui.ui.request({
-      url : '/removeWord',
-      message : {start:'Removing',success:'Removed'},
-      parameters : {
-        wordId : this._activeWordId,
-        internetAddressId : this._currentArticle.id
+    
+    reader.peek({
+      item:{
+        info : {
+          id : node.getAttribute('data'),
+          type: 'Word'        
+        },
+        node: node
       },
-      $success : function(obj) {
-        this.reload();
-        hui.ui.get('tagSource').refresh();
-        hui.ui.get('listSource').refresh();
-      }.bind(this)
-    })
-  },
+      context:{type:'InternetAddress',id:this._viewedItem.id}
+    });
+  }
 }
 hui.ui.listen(internetAddressViewer);
 

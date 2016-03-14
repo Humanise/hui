@@ -29,7 +29,7 @@ reader.PeekController = {
 
   peek: function(options) {
     this.options = options;
-    var items = options.items;
+    var items = options.items || [options.item];
     if (items.length > 1) {
       var selector = this.nodes.selector;
       selector.innerHTML = '';
@@ -104,6 +104,9 @@ reader.PeekController = {
       }
       else if (action=='list') {
         reader.search({tag:item.id});
+      }
+      else if (action=='remove') {
+        reader.remove({type:item.type,id:item.id,context:this.options.context});
       }
     }
     else if (action == 'view') {

@@ -32,7 +32,6 @@ import dk.in2isoft.onlineobjects.apps.reader.perspective.PeekPerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.QuestionEditPerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.QuestionViewPerspective;
 import dk.in2isoft.onlineobjects.apps.reader.perspective.StatementEditPerspective;
-import dk.in2isoft.onlineobjects.apps.reader.perspective.WordPerspective;
 import dk.in2isoft.onlineobjects.apps.videosharing.Path;
 import dk.in2isoft.onlineobjects.core.Pair;
 import dk.in2isoft.onlineobjects.core.Privileged;
@@ -102,7 +101,7 @@ public class ReaderController extends ReaderControllerBase {
 			if (Strings.isBlank(title)) {
 				title = "-- empty --";
 			}
-
+			String url = null;
 			UserSession session = request.getSession();
 			if (entity instanceof InternetAddress) {
 				writer.startH2().withClass("reader_list_title").text(title).endH2();
@@ -110,8 +109,7 @@ public class ReaderController extends ReaderControllerBase {
 				address = (InternetAddress) entity;
 				perspective.setUrl(address.getAddress());
 				perspective.setAddress(Strings.simplifyURL(address.getAddress()));
-				writer.startP().withClass("reader_list_address").startA().withClass("reader_list_address_link").withHref(address.getAddress())
-						.text(Strings.getSimplifiedDomain(address.getAddress())).endA().endP();
+				url = address.getAddress();
 			} else if (entity instanceof Statement) {
 				perspective.setStatementId(entity.getId());
 				Statement htmlPart = (Statement) entity;
@@ -130,7 +128,7 @@ public class ReaderController extends ReaderControllerBase {
 				Hypothesis question = (Hypothesis) entity;
 				writer.startP().withClass("reader_list_text reader_list_hypothesis").text(question.getText()).endP();
 			}
-			writeAuthors(entity, writer, session);
+			writeSource(entity,url, writer, session);
 
 			List<Word> words = modelService.getChildren(entity, Word.class, session);
 			if (Code.isNotEmpty(words)) {
@@ -139,9 +137,10 @@ public class ReaderController extends ReaderControllerBase {
 				for (Iterator<Word> i = words.iterator(); i.hasNext();) {
 					Word word = i.next();
 					tags.add(Pair.of(word.getId(), word.getText()));
-					writer.startA().withClass("reader_list_word").withData("id", word.getId()).text(word.getText()).endA();
-					if (i.hasNext())
-						writer.text(" \u00B7 ");
+					writer.startA().withClass("reader_list_word js-reader-list-word").withData("id", word.getId()).text(word.getText()).endA();
+					if (i.hasNext()) {
+						writer.text(" " + Strings.MIDDLE_DOT + " ");
+					}
 				}
 				perspective.setTags(tags);
 				writer.endP();
@@ -155,18 +154,24 @@ public class ReaderController extends ReaderControllerBase {
 		return result;
 	}
 
-	private void writeAuthors(Entity entity, HTMLWriter writer, UserSession session) {
+	private void writeSource(Entity entity, String url, HTMLWriter writer, UserSession session) {
 		List<Person> authors = readerModelService.getAuthors(entity, session);
-		if (Code.isNotEmpty(authors)) {
-			writer.startDiv().withClass("reader_list_authors");
-			for (Iterator<Person> i = authors.iterator(); i.hasNext();) {
-				Person person = (Person) i.next();
-				writer.startSpan().text(person.getFullName()).endSpan();
-				if (i.hasNext()) {
-					writer.text(", ");
-				}
+		if (Code.isNotEmpty(authors) || url!=null) {
+			boolean first = true;
+			writer.startP().withClass("reader_list_source");
+			if (url!=null) {
+				writer.startA().withClass("reader_list_link js-reader-list-link").withHref(url).text(Strings.getSimplifiedDomain(url)).endA();
+				first = false;
 			}
-			writer.endDiv();
+			for (Iterator<Person> i = authors.iterator(); i.hasNext();) {
+				if (!first) {
+					writer.text(" " + Strings.MIDDLE_DOT + " ");
+				}
+				Person person = (Person) i.next();
+				writer.startA().withClass("reader_list_author js-reader-list-author").withDataMap("id",person.getId()).text(person.getFullName()).endA();
+				first = false;
+			}
+			writer.endP();
 		}
 	}
 	
@@ -546,26 +551,6 @@ public class ReaderController extends ReaderControllerBase {
 			}
 		}
 		modelService.updateItem(internetAddress, session);
-	}
-
-	@Path
-	public WordPerspective getWordInfo(Request request) throws ModelException, IllegalRequestException {
-		WordListPerspectiveQuery query = new WordListPerspectiveQuery();
-		Long id = request.getId();
-		query.withIds(Lists.newArrayList(id));
-		WordListPerspective row = modelService.search(query).getFirst();
-		if (row != null) {
-			HTMLWriter html = new HTMLWriter();
-			html.startDiv().withClass("word_rendering");
-			html.startH1().text(row.getText()).endH1();
-			html.endDiv();
-			WordPerspective perspective = new WordPerspective();
-			perspective.setRendering(html.toString());
-			perspective.setId(row.getId());
-			return perspective;
-		}
-		log.warn("Word not found: id=" + id);
-		return null;
 	}
 
 	@Path

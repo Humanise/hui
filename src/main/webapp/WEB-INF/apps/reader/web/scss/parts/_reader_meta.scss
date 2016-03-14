@@ -1,0 +1,51 @@
+@include when {
+  .reader_meta {
+  	padding: 10px;
+
+    &_header {
+    	margin: 0;
+    	font-size: 12px;
+    	line-height: 1;
+    	text-transform: uppercase;
+    	font-weight: 400;
+    	color: #999;
+    }
+
+    &_tags {
+    	margin-top: 5px;
+    	font-size: 0;
+      
+      &_item {
+      	display: inline-block;
+      	height: 16px;
+      	line-height: 16px;
+      	border-radius: 8px;
+      	border: 1px solid #eee;
+      	padding: 0 10px;
+      	font-size: 11px;
+      	color: #666;
+      	text-decoration: none;
+      	background: #fff;
+      	overflow: hidden;
+      	margin: 0 3px 3px 0;
+
+        &:hover {
+        	cursor: pointer;
+        	background: #f6f6f6;
+        	border-color: #ddd;
+        	color: #666;
+        }
+
+        &.is-tag
+        {
+        	font-style: italic;
+        }
+      
+        &.is-add {
+        	border-style: dashed;
+        	color: #bbb;
+        }
+      }
+    }
+  }
+}

@@ -74,7 +74,31 @@ html, body {
     left: auto;
     border-top: none;
     border-left: 1px solid #eee; } }
-/*********************** List ***********************/
+.reader_sidebar {
+  height: 100%;
+  overflow: hidden; }
+  .reader_sidebar_block {
+    padding: 10px 10px 10px 15px; }
+  .reader_sidebar_title {
+    text-transform: uppercase;
+    color: #999;
+    margin: 0 0 3px;
+    font-weight: 400;
+    font-size: 12px; }
+  .reader_sidebar_feeds {
+    position: relative; }
+    .reader_sidebar_feeds_add {
+      color: #999;
+      position: absolute;
+      top: 5px;
+      right: 10px;
+      opacity: 0;
+      transition: opacity, .3s; }
+      .reader_sidebar_feeds_add:hover {
+        color: #333; }
+    .reader_sidebar_feeds:hover .reader_sidebar_feeds_add {
+      opacity: 1; }
+
 .reader_list_top {
   overflow: hidden;
   border-bottom: 1px solid #eee;
@@ -87,70 +111,17 @@ html, body {
   bottom: 0;
   width: 100%; }
 
-.reader_search {
+.reader_list_search {
   float: left;
   width: 200px;
   margin: 8px 0 0 7px; }
 
-div.word_rendering {
-  font-size: 12px;
-  padding: 5px; }
-
-div.word_rendering h1 {
-  font-size: 12px;
-  margin: 0; }
-
-div.sidebar {
-  height: 100%;
-  overflow: hidden; }
-
-div.sidebar div.block {
-  padding: 10px 10px 10px 15px; }
-
-div.sidebar div.block h3 {
-  text-transform: uppercase;
-  color: #999;
-  margin: 0 0 3px;
-  font-weight: 400;
-  font-size: 12px; }
-
-div.sidebar div.block ul {
-  list-style: none;
-  padding: 5px 0;
-  margin: 0;
-  font-size: 12px; }
-
-div.sidebar div.block ul li span.oo_icon {
-  color: #ccc; }
-
-div.sidebar div.block ul li strong {
-  font-weight: 400;
-  display: inline-block;
-  margin-left: 4px;
-  vertical-align: middle; }
-
-.reader_feeds {
-  position: relative; }
-
-.reader_feeds_add {
-  color: #999;
-  position: absolute;
-  top: 5px;
-  right: 10px;
-  display: none; }
-
-.reader_feeds_add:hover {
-  color: #333; }
-
-.reader_feeds:hover .reader_feeds_add {
-  display: block; }
-
 /* Actions */
-.reader_actions {
+.reader_list_actions {
   float: right;
   margin: 7px 10px 0 0; }
 
-.reader_action {
+.reader_list_action {
   margin-left: 10px;
   color: #999;
   text-decoration: none;
@@ -158,42 +129,59 @@ div.sidebar div.block ul li strong {
   display: inline-block;
   vertical-align: middle; }
 
-.reader_action:hover {
+.reader_list_action:hover {
   color: #000; }
 
-.reader_action_text {
+.reader_list_action_text {
   line-height: 20px;
   vertical-align: middle;
   font-size: 14px;
   margin-left: 5px; }
 
-.reader_actions .hui_button {
+.reader_list_actions .hui_button {
   margin-left: 5px; }
 
-.oo_spinner {
-  position: absolute;
-  left: 50%;
-  top: 20%;
-  width: 32px;
-  height: 32px;
-  margin: -16px 0 0 -16px;
-  border-radius: 50%;
-  border: 5px dotted rgba(0, 0, 0, 0.2);
-  display: none; }
+.reader_selection {
+  font-size: 0; }
+  .reader_selection_icon {
+    color: #666;
+    display: inline-block;
+    padding: 3px; }
+    .reader_selection_icon:hover {
+      color: #000; }
 
-.oo_spinner_visible {
-  display: block;
-  -webkit-animation: spin-in .5s 1 ease-in, spin 2s infinite linear; }
-
-@-webkit-keyframes spin {
-  0% {
-    -webkit-transform: rotate(0deg); }
-  100% {
-    -webkit-transform: rotate(-360deg); } }
-@-webkit-keyframes spin-in {
-  0% {
-    -webkit-transform: rotate(0deg) scale(0.5);
-    opacity: 0; }
-  100% {
-    -webkit-transform: rotate(-90deg) scale(1);
-    opacity: 1; } }
+.reader_meta {
+  padding: 10px; }
+  .reader_meta_header {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1;
+    text-transform: uppercase;
+    font-weight: 400;
+    color: #999; }
+  .reader_meta_tags {
+    margin-top: 5px;
+    font-size: 0; }
+    .reader_meta_tags_item {
+      display: inline-block;
+      height: 16px;
+      line-height: 16px;
+      border-radius: 8px;
+      border: 1px solid #eee;
+      padding: 0 10px;
+      font-size: 11px;
+      color: #666;
+      text-decoration: none;
+      background: #fff;
+      overflow: hidden;
+      margin: 0 3px 3px 0; }
+      .reader_meta_tags_item:hover {
+        cursor: pointer;
+        background: #f6f6f6;
+        border-color: #ddd;
+        color: #666; }
+      .reader_meta_tags_item.is-tag {
+        font-style: italic; }
+      .reader_meta_tags_item.is-add {
+        border-style: dashed;
+        color: #bbb; }

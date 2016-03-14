@@ -7,6 +7,7 @@ public class WordQuery extends IndexQuery {
 	private String category;
 	private String language;
 	private String[] words;
+	private String source;
 
 	public WordQuery withText(String text) {
 		this.text = text;
@@ -46,6 +47,11 @@ public class WordQuery extends IndexQuery {
 		return this;
 	}
 	
+	public WordQuery withSource(String source) {
+		this.source = source;
+		return this;
+	}
+	
 	public String getLanguage() {
 		return language;
 	}
@@ -57,5 +63,13 @@ public class WordQuery extends IndexQuery {
 	public WordQuery withWords(String[] words) {
 		this.words = words;
 		return this;
+	}
+
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
 	}
 }

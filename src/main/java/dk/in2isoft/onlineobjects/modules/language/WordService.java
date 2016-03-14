@@ -25,6 +25,7 @@ import dk.in2isoft.onlineobjects.core.exceptions.ExplodingClusterFuckException;
 import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
+import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.InternetAddress;
 import dk.in2isoft.onlineobjects.model.Language;
 import dk.in2isoft.onlineobjects.model.LexicalCategory;
@@ -94,6 +95,7 @@ public class WordService {
 		String language = query.getLanguage();
 		String category = query.getCategory();
 		String[] words = query.getWords();
+		String source = query.getSource();
 		
 		boolean order = true;
 		
@@ -148,6 +150,12 @@ public class WordService {
 			}
 			searchQuery.append("category:").append(category);
 		}
+		if (Strings.isNotBlank(source)) {
+			if (searchQuery.length()>0) {
+				searchQuery.append(" AND ");
+			}
+			searchQuery.append("source:").append(source);
+		}
 		if (Strings.isDefined(words)) {
 			if (searchQuery.length()>0) {
 				searchQuery.append(" AND ");
@@ -179,6 +187,7 @@ public class WordService {
 		impression.setLanguage(modelService.getParent(word, Language.class));
 		impression.setLexicalCategory(modelService.getParent(word, LexicalCategory.class));
 		impression.setOriginator(modelService.getChild(word, User.class));
+		impression.setSource(modelService.getChild(word, Relation.KIND_COMMON_SOURCE, Entity.class));
 		impression.setGlossary(word.getPropertyValue(Property.KEY_SEMANTICS_GLOSSARY));
 		impression.setExamples(word.getPropertyValues(Property.KEY_SEMANTICS_EXAMPLE));
 		String dataSource = word.getPropertyValue(Property.KEY_DATA_SOURCE);

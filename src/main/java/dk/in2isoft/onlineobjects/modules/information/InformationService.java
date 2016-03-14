@@ -31,7 +31,7 @@ import dk.in2isoft.onlineobjects.model.Property;
 import dk.in2isoft.onlineobjects.model.Relation;
 import dk.in2isoft.onlineobjects.model.User;
 import dk.in2isoft.onlineobjects.model.Word;
-import dk.in2isoft.onlineobjects.modules.information.SimilarityQuery.SimilarityResult;
+import dk.in2isoft.onlineobjects.modules.information.MissingSimilarityQuery.SimilarityResult;
 import dk.in2isoft.onlineobjects.modules.language.TextDocumentAnalytics;
 import dk.in2isoft.onlineobjects.modules.language.TextDocumentAnalyzer;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
@@ -198,7 +198,7 @@ public class InformationService {
 		try {
 			@NonNull
 			Privileged admin = securityService.getAdminPrivileged();
-			SimilarityQuery simQuery = new SimilarityQuery();
+			MissingSimilarityQuery simQuery = new MissingSimilarityQuery();
 			List<SimilarityResult> results = modelService.list(simQuery);
 			int index = 0;
 			int total = results.size();

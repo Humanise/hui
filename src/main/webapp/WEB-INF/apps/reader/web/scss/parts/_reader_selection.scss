@@ -1,0 +1,15 @@
+@include when {
+  .reader_selection {
+    font-size: 0;
+
+    &_icon {
+      color: #666;
+      display: inline-block;
+      padding: 3px;
+
+      &:hover {
+        color: #000;
+      }
+    }
+  }
+}

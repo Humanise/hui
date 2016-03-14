@@ -1,83 +1,11 @@
 @import 'shared';
 
-.reader_viewer_locked::before
-{
-  content: '';
-  /*background-color: rgba(255, 255, 255, 0.5);*/
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  z-index: 1;
-}
 
-.reader_viewer_frame
-{
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	right: 0px;
-	bottom: 0px;
-	background: #fff;
-}
 
 
 /********************* Info ********************/
 
-.reader_viewer_info {
-	padding: 10px;
-}
 
-.info_header {
-	margin: 0;
-	font-size: 12px;
-	line-height: 1;
-	text-transform: uppercase;
-	font-weight: 400;
-	color: #999;
-}
-
-.info_tags
-{
-	margin-top: 5px;
-	font-size: 0;
-}
-
-.info_tags_item
-{
-	display: inline-block;
-	height: 16px;
-	line-height: 16px;
-	border-radius: 8px;
-	border: 1px solid #eee;
-	padding: 0 10px;
-	font-size: 11px;
-	color: #666;
-	text-decoration: none;
-	background: #fff;
-	overflow: hidden;
-	margin: 0 3px 3px 0;
-}
-
-.info_tag
-{
-	font-style: italic;
-}
-
-.info_tags_add
-{
-	border-style: dashed;
-	color: #bbb;
-}
-
-.info_tags_item:hover
-{
-	cursor: pointer;
-	background: #f6f6f6;
-	border-color: #ddd;
-	color: #666;
-}
 
 
 /****************** Actions *******************/
@@ -133,19 +61,4 @@
 .reader_viewer_perpective_text {
 	font-weight: 300;
 	padding: 20px 40px;
-}
-
-
-/**************** Quotes ***************/
-
-
-
-.reader_context_icon {
-  color: #666;
-  display: inline-block;
-  padding: 3px;
-}
-
-.reader_context_icon:hover {
-  color: #000;
 }

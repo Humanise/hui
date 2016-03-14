@@ -9,7 +9,8 @@
     _attach : function() {
       hui.listen(this.element,'click',this._click,this)
     },
-    _click : function() {
+    _click : function(e) {
+      hui.stop(e);
       this.fire('click');
     },
     setSelected : function(sel) {

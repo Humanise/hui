@@ -54,6 +54,7 @@ public class Strings {
 	public static final String TRIANGLE_HEADED_RIGHTWARDS_ARROW = "\u279D";
 	
 	public static final Object RIGHTWARDS_ARROW = "\u2192";
+	public static final String MIDDLE_DOT = "\u00B7";
 	
 	// private static Logger log = Logger.getLogger(LangUtil.class);
 
@@ -324,7 +325,7 @@ public class Strings {
 			return null;
 		}
 		if (words==null || words.length==0) {
-			return text;
+			return StringEscapeUtils.escapeXml(text);
 		}
 		// TODO Consider using a primitive array
 		List<Pair<Integer,Integer>> positions = Lists.newArrayList(); 
@@ -344,6 +345,8 @@ public class Strings {
 		if (positions.isEmpty()) {
 			return text;
 		}
+		
+		
 		Collections.sort(positions, new Comparator<Pair<Integer,Integer>>() {
 
 			@Override

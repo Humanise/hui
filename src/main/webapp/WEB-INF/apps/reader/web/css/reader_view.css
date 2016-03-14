@@ -7,6 +7,14 @@
   display: none;
   z-index: 200;
   background-color: #FFFCEC; }
+  .reader_view.is-locked::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 1; }
 
 .reader_view_head {
   position: absolute;
@@ -58,9 +66,9 @@
   .reader_view_head_action:active {
     transform: scale(0.8); }
   .reader_view_head_action.oo_icon-selected {
-    color: #A53125; }
+    color: #5D583F; }
     .reader_view_head_action.oo_icon-selected:hover {
-      color: #7b251c; }
+      color: #3f3b2a; }
 
 .reader_view_segmented {
   display: inline-block;
@@ -75,10 +83,10 @@
     .reader_view_segmented_item:hover {
       color: #565141; }
     .reader_view_segmented_item-selected {
-      color: #A53125;
+      color: #5D583F;
       font-weight: 600; }
       .reader_view_segmented_item-selected:hover {
-        color: #7b251c; }
+        color: #3f3b2a; }
 
 .reader_view_close {
   text-decoration: none;

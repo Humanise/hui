@@ -15,6 +15,7 @@ import dk.in2isoft.commons.lang.Code;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.CustomQuery;
 import dk.in2isoft.onlineobjects.model.Entity;
+import dk.in2isoft.onlineobjects.model.Relation;
 
 public class WordListPerspectiveQuery implements CustomQuery<WordListPerspective> {
 
@@ -57,6 +58,7 @@ public class WordListPerspectiveQuery implements CustomQuery<WordListPerspective
 	" left outer JOIN language on (word_language.super_entity_id=language.id)"+
 	
 	" left JOIN relation as word_category on (word_category.sub_entity_id=word.id and word_category.super_entity_id in (select id from lexicalcategory))"+
+	" left JOIN relation as word_source on (word_source.super_entity_id=word.id and word_source.kind='" + Relation.KIND_COMMON_SOURCE + "')"+
 	" left JOIN lexicalcategory on word_category.super_entity_id=lexicalcategory.id"+
 	" left JOIN property on word.id=property.enity_id and property.key='semantics.glossary'";
 
@@ -68,6 +70,10 @@ public class WordListPerspectiveQuery implements CustomQuery<WordListPerspective
 		impression.setLanguage((String) row[2]);
 		impression.setLexicalCategory((String) row[3]);
 		impression.setGlossary((String) row[5]);
+		Number sourceId = (Number) row[6];
+		if (sourceId!=null) {
+			impression.setSourceId(sourceId.longValue());
+		}
 		return impression;
 	}
 	
@@ -106,7 +112,7 @@ public class WordListPerspectiveQuery implements CustomQuery<WordListPerspective
 
 	public String getSQL() {
 		StringBuilder sql = new StringBuilder();
-		sql.append("select word.id, word.text, language.code as language, lexicalcategory.code as category,item.created,property.value as glossary ");
+		sql.append("select word.id, word.text, language.code as language, lexicalcategory.code as category,item.created,property.value as glossary, word_source.sub_entity_id as source ");
 		sql.append(SQL);
 		sql.append(buildWhere());
 		sql.append(" order by "+this.ordering+" ");

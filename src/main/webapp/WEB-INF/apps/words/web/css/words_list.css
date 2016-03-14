@@ -20,20 +20,23 @@
   border-bottom: 1px solid #eee;
   padding-bottom: 5px; }
 
-span.words_list_info {
+.words_list_info {
   color: #999;
   font-size: 10px; }
 
-span.words_list_glossary {
+.words_list_glossary {
   color: #ccc;
   margin-left: 10px;
   line-height: 14px;
   font-size: 10px; }
 
-span.words_list_glossary span {
+.words_list_glossary span {
   font-size: 13px;
   color: #333;
   margin-left: 5px; }
+
+.words_list_unvalidated {
+  color: red; }
 
 @media screen and (min-width: 600px) {
   .words_list {
