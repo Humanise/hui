@@ -1,10 +1,10 @@
 @font-face {
     font-family: 'OnlineObjects';
-    src:    url('fonts/OnlineObjects.eot?31s1uo');
-    src:    url('fonts/OnlineObjects.eot?31s1uo#iefix') format('embedded-opentype'),
-        url('fonts/OnlineObjects.ttf?31s1uo') format('truetype'),
-        url('fonts/OnlineObjects.woff?31s1uo') format('woff'),
-        url('fonts/OnlineObjects.svg?31s1uo#OnlineObjects') format('svg');
+    src:    url('fonts/OnlineObjects.eot?8f7ozt');
+    src:    url('fonts/OnlineObjects.eot?8f7ozt#iefix') format('embedded-opentype'),
+        url('fonts/OnlineObjects.ttf?8f7ozt') format('truetype'),
+        url('fonts/OnlineObjects.woff?8f7ozt') format('woff'),
+        url('fonts/OnlineObjects.svg?8f7ozt#OnlineObjects') format('svg');
     font-weight: normal;
     font-style: normal;
 }
@@ -24,6 +24,15 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+.oo_icon_user_line:before {
+    content: "\e915";
+}
+.oo_icon_menu:before {
+    content: "\e916";
+}
+.oo_icon_cross:before {
+    content: "\e917";
+}
 .oo_icon_tag_line_selected:before {
     content: "\e904";
 }
@@ -90,7 +99,7 @@
 .oo_icon_add_line:before {
     content: "\e60c";
 }
-.oo_icon_search2:before {
+.oo_icon_search_line:before {
     content: "\e90c";
 }
 .oo_icon_arrow_bold_down:before {
