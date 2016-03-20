@@ -10,13 +10,13 @@ public class WordEnrichmentQuery implements CustomQuery<WordEnrichmentPerspectiv
 	private static String SQL = "select entity.id,word.text from entity "+
 			"inner join word on word.id=entity.id "+
 			"inner join property "+
-			"on entity.id=property.enity_id "+
+			"on entity.id=property.entity_id "+
 			"and property.key='word.suggestion.language' "+
 			"and property.value='da' "+
 			"where entity.id not in (select "+
 				"relation.sub_entity_id from property,pile,relation "+
 				"where property.key='key' and property.value='words.postponed' "+
-				"and pile.id=property.enity_id and relation.super_entity_id=pile.id"+
+				"and pile.id=property.entity_id and relation.super_entity_id=pile.id"+
 			") "+
 			"order by word.text asc limit 1";
 	

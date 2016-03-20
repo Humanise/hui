@@ -41,7 +41,7 @@
 	        <property name="name"/>
 	        
 			<list name="properties" table="property" cascade="all-delete-orphan" lazy="false" fetch="join">
-			    <key column="enity_id"/>
+			    <key column="entity_id"/>
 			    <list-index column="sortorder"/>
 			    <one-to-many class="dk.in2isoft.onlineobjects.model.Property"/>
 			</list>

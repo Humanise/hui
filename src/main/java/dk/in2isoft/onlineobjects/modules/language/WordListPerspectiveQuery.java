@@ -60,7 +60,7 @@ public class WordListPerspectiveQuery implements CustomQuery<WordListPerspective
 	" left JOIN relation as word_category on (word_category.sub_entity_id=word.id and word_category.super_entity_id in (select id from lexicalcategory))"+
 	" left JOIN relation as word_source on (word_source.super_entity_id=word.id and word_source.kind='" + Relation.KIND_COMMON_SOURCE + "')"+
 	" left JOIN lexicalcategory on word_category.super_entity_id=lexicalcategory.id"+
-	" left JOIN property on word.id=property.enity_id and property.key='semantics.glossary'";
+	" left JOIN property on word.id=property.entity_id and property.key='semantics.glossary'";
 
 	public WordListPerspective convert(Object[] row) {
 		WordListPerspective impression = new WordListPerspective();

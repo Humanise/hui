@@ -101,7 +101,7 @@ create table person (id int8 not null, givenName varchar(255), familyName varcha
 create table phonenumber (id int8 not null, number varchar(255), context varchar(255), primary key (id))
 create table pile (id int8 not null, primary key (id))
 create table privilege (id int8 not null, object int8, subject int8, delete bool, view bool, alter bool, reference bool, primary key (id))
-create table property (id int8 not null, key varchar(255), value varchar(4000), doubleValue float8, dateValue timestamp, enity_id int8, sortorder int4, primary key (id))
+create table property (id int8 not null, key varchar(255), value varchar(4000), doubleValue float8, dateValue timestamp, entity_id int8, sortorder int4, primary key (id))
 create table question (id int8 not null, text varchar(10000), primary key (id))
 create table rating (id int8 not null, rating float8, primary key (id))
 create table relation (id int8 not null, kind varchar(255), position float4, strength float8, super_entity_id int8 not null, sub_entity_id int8 not null, primary key (id))
@@ -137,7 +137,7 @@ alter table location add constraint FK714F9FB5E94A3D71 foreign key (id) referenc
 alter table person add constraint FKC4E39B55E94A3D71 foreign key (id) references entity
 alter table phonenumber add constraint FKEF7FCE37E94A3D71 foreign key (id) references entity
 alter table pile add constraint FK348132E94A3D71 foreign key (id) references entity
-alter table property add constraint FKC4CDDDD559D64C8B foreign key (enity_id) references entity
+alter table property add constraint FKC4CDDDD559D64C8B foreign key (entity_id) references entity
 alter table question add constraint FKBA823BE6E94A3D71 foreign key (id) references entity
 alter table rating add constraint FKC815B19DE94A3D71 foreign key (id) references entity
 alter table relation add constraint FKDEF3F9FCAC959B89 foreign key (super_entity_id) references entity

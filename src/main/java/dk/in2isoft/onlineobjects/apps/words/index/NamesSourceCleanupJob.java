@@ -43,7 +43,7 @@ public class NamesSourceCleanupJob extends ServiceBackedJob implements Interrupt
 			LexicalCategory first = languageService.getLexcialCategoryForCode(LexicalCategory.CODE_PROPRIUM_FIRST);
 			LexicalCategory last = languageService.getLexcialCategoryForCode(LexicalCategory.CODE_PROPRIUM_LAST);
 			List<? extends Entity> categories = Lists.newArrayList(first,last);
-			//select word.id,relation.kind from word inner join property on property.enity_id=word.id and property.key='data.source' and property.value like 'http://www.wordnet.dk/%' left join relation on relation.super_entity_id=word.id and relation.kind='common.source' where relation.kind is null
+			//select word.id,relation.kind from word inner join property on property.entity_id=word.id and property.key='data.source' and property.value like 'http://www.wordnet.dk/%' left join relation on relation.super_entity_id=word.id and relation.kind='common.source' where relation.kind is null
 			Query<Word> query = Query.after(Word.class).to(categories);
 			int total = modelService.count(query).intValue();
 

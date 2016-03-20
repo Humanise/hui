@@ -32,7 +32,7 @@ public class WordnetSourceCleanupJob extends ServiceBackedJob implements Interru
 			String src = "http://wordnet.dk/";
 			Privileged admin = schedulingSupportFacade.getSecurityService().getAdminPrivileged();
 			InternetAddress source = wordService.getSource(src , admin );
-			//select word.id,relation.kind from word inner join property on property.enity_id=word.id and property.key='data.source' and property.value like 'http://www.wordnet.dk/%' left join relation on relation.super_entity_id=word.id and relation.kind='common.source' where relation.kind is null
+			//select word.id,relation.kind from word inner join property on property.entity_id=word.id and property.key='data.source' and property.value like 'http://www.wordnet.dk/%' left join relation on relation.super_entity_id=word.id and relation.kind='common.source' where relation.kind is null
 			Query<Word> query = Query.after(Word.class).withCustomProperty(Property.KEY_DATA_SOURCE, Comparison.LIKE, "http://www.wordnet.dk/%");
 			int total = modelService.count(query).intValue();
 
