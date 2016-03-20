@@ -1,7 +1,7 @@
 .words_list {
   color: #ddd;
   font-size: 11pt;
-  margin: 20px 0 20px 0;
+  margin: 10px 0 20px 0;
   padding: 0;
   list-style: none; }
 
@@ -41,6 +41,7 @@
 @media screen and (min-width: 600px) {
   .words_list {
     list-style: disc;
+    margin-top: 20px;
     margin-left: 25px; }
 
   .words_list li {

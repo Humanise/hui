@@ -24,13 +24,13 @@
 		
 		<ui:define name="body">
 			
-			<div class="words words_searchpage">
+			<div class="words words_search">
         <c:choose>
           <c:when test="${not empty(wordsSearchView.description)}">
-				    <p class="words_title">#{msg.searching} <span>» #{msg.words}</span></p>
+				    <p class="words_search_title">#{msg.search_for_words}</p>
           </c:when>
           <c:otherwise>
-            <h1 class="words_title">#{msg.searching} <span>» #{msg.words}</span></h1>
+            <h1 class="words_search_title">#{msg.search_for_words}</h1>
           </c:otherwise>
         </c:choose>
         

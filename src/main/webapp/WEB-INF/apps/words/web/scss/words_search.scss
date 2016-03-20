@@ -1,6 +1,17 @@
 @import 'shared';
 
 @include when {
+  .words_search {
+    -webkit-tap-highlight-color: transparent;
+    
+    &_title {
+      font-size: 28px;
+      line-height: 1;
+      margin: 0;
+      font-weight: normal;
+    }
+  }
+  
   .words_search_form {
     display: table;
     width: 100%;
@@ -71,13 +82,15 @@
   	font-style: italic;
   	color: #666;
   	font-weight: normal;
-  	font-size: 1em;
+  	font-size: 14px;
+    line-height: 20px;
 
     background: #fafafa;
-    margin: 5px -10px;
+    margin: 10px -10px;
     padding: 7px 10px;
     border: 1px solid #eee;
     border-width: 1px 0;
+    overflow: hidden;
   
     &_text {
       display: inline;
@@ -94,6 +107,9 @@
       font-size: 12px;
       display: inline-block;
       vertical-align: middle;
+      float: right;
+      padding: 5px;
+      margin: -5px 0;
       
       &:hover {
         text-decoration: underline;
@@ -146,11 +162,24 @@
 }
 
 @include when(( width: 600px )) {
+
+  .words_search {
+    
+    &_title {
+      font-size: 32px;
+    }
+  }
+
+
   .words_search_description {
     background: none;
     margin: 10px 0;
     border: none;
     padding: 0;
+    
+    &_reset {
+      float: none;
+    }
   }
   
   .words_search_form {
@@ -172,4 +201,14 @@
     margin: 40px 0;
   }
 
+}
+
+@include when(( width: 800px )) {
+
+  .words_search {
+    
+    &_title {
+      font-size: 48px;
+    }
+  }
 }

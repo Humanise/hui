@@ -4,4 +4,5 @@ body.oo
 	background: #fafafa;
 	margin: 0;
 	padding: 0;
+  -webkit-text-size-adjust: none;
 }
