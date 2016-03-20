@@ -710,15 +710,18 @@ public class ModelService {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public <T> List<T> list(CustomQuery<T> query) throws ModelException {
 		try {
 			SQLQuery sql = getSession().createSQLQuery(query.getSQL());
 			query.setParameters(sql);
-			List<Object[]> list = sql.list();
+			List<?> list = sql.list();
 			List<T> result = Lists.newArrayList();
-			for (Object[] t : list) {
-				result.add(query.convert(t));
+			for (Object t : list) {
+				if (t instanceof Object[]) {
+					result.add(query.convert((Object[]) t));					
+				} else {
+					result.add(query.convert(new Object[] {t}));
+				}
 			}
 			return result;
 		} catch (SQLGrammarException e) {
