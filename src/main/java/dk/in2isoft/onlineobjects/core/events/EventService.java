@@ -1,7 +1,7 @@
 package dk.in2isoft.onlineobjects.core.events;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.log4j.Logger;
 
@@ -12,7 +12,7 @@ import dk.in2isoft.onlineobjects.model.User;
 
 public class EventService {
 
-	private List<ModelEventListener> modelEventListeners = new ArrayList<ModelEventListener>();
+	private List<ModelEventListener> modelEventListeners = new CopyOnWriteArrayList<ModelEventListener>();
 	private static Logger log = Logger.getLogger(EventService.class);
 	
 	
