@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.queryparser.flexible.standard.QueryParserUtil;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -187,7 +188,7 @@ public class WordService {
 		impression.setLanguage(modelService.getParent(word, Language.class));
 		impression.setLexicalCategory(modelService.getParent(word, LexicalCategory.class));
 		impression.setOriginator(modelService.getChild(word, User.class));
-		impression.setSource(modelService.getChild(word, Relation.KIND_COMMON_SOURCE, Entity.class));
+		impression.setSource(modelService.getChild(word, Relation.KIND_COMMON_SOURCE, InternetAddress.class));
 		impression.setGlossary(word.getPropertyValue(Property.KEY_SEMANTICS_GLOSSARY));
 		impression.setExamples(word.getPropertyValues(Property.KEY_SEMANTICS_EXAMPLE));
 		String dataSource = word.getPropertyValue(Property.KEY_DATA_SOURCE);
@@ -333,7 +334,7 @@ public class WordService {
 		updateWord(word,modification,source,privileged);
 	}
 
-	private @Nullable InternetAddress getSource(String src, Privileged privileged) throws ModelException {
+	public @NonNull InternetAddress getSource(String src, Privileged privileged) throws ModelException {
 		Query<InternetAddress> query = Query.after(InternetAddress.class).withField(InternetAddress.FIELD_ADDRESS, src);
 		List<InternetAddress> list = modelService.list(query);
 		for (InternetAddress address : list) {
@@ -378,12 +379,7 @@ public class WordService {
 			word.addProperty(Property.KEY_DATA_SOURCE, modification.sourceId);
 			modelService.updateItem(word, privileged);
 		}
-		if (source!=null) {
-			Relation existing = modelService.getRelation(word, source, Relation.KIND_COMMON_SOURCE);
-			if (existing==null) {
-				modelService.createRelation(word, source, Relation.KIND_COMMON_SOURCE, privileged);
-			}
-		}
+		updateSource(word, source, privileged);
 		if (modification.clearOriginators) {
 			List<Relation> originators = modelService.getRelationsFrom(word, InternetAddress.class, Relation.KIND_COMMON_ORIGINATOR);
 			log.info("Word->InternetAddress originator count: " + originators.size());
@@ -393,6 +389,25 @@ public class WordService {
 		}
 		//modelService.getChildren(word, Relation.KIND_COMMON_ORIGINATOR, InternetAddress.class);
 		securityService.grantPublicPrivileges(word, true, false, false);
+	}
+
+	public void updateSource(Word word, Entity source, Privileged privileged) throws ModelException, SecurityException {
+		if (source!=null) {
+			Relation existing = modelService.getRelation(word, source, Relation.KIND_COMMON_SOURCE);
+			boolean create = false;
+			if (existing==null) {
+				create = true;
+			}
+			else if (existing.getTo().getId()!=source.getId()) {
+				modelService.deleteRelation(existing, privileged);
+				create = true;
+			}
+
+			if (create) {
+				Relation relation = modelService.createRelation(word, source, Relation.KIND_COMMON_SOURCE, privileged);
+				securityService.grantPublicPrivileges(relation, true, false, false);
+			}
+		}
 	}
 	
 	private void changeLanguage(Word word, Language language, Privileged privileged) throws ModelException, SecurityException {

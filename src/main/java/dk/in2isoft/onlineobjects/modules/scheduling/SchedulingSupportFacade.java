@@ -3,14 +3,17 @@ package dk.in2isoft.onlineobjects.modules.scheduling;
 import java.util.Collection;
 
 import dk.in2isoft.onlineobjects.core.ModelService;
+import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.modules.index.ConfigurableIndexer;
 import dk.in2isoft.onlineobjects.modules.index.WordIndexer;
 import dk.in2isoft.onlineobjects.modules.information.InformationService;
+import dk.in2isoft.onlineobjects.modules.language.WordService;
 import dk.in2isoft.onlineobjects.modules.onlinepublisher.OnlinePublisherService;
 import dk.in2isoft.onlineobjects.modules.surveillance.SurveillanceService;
 import dk.in2isoft.onlineobjects.modules.synchronization.MailWatchingService;
 import dk.in2isoft.onlineobjects.services.FileService;
+import dk.in2isoft.onlineobjects.services.LanguageService;
 import dk.in2isoft.onlineobjects.util.images.ImageService;
 
 public class SchedulingSupportFacade {
@@ -24,7 +27,10 @@ public class SchedulingSupportFacade {
 	private WordIndexer wordIndexer;
 	private SchedulingService schedulingService;
 	private OnlinePublisherService onlinePublisherService;
+	private SecurityService securityService;
+	private WordService wordService;
 	private Collection<ConfigurableIndexer<? extends Entity>> configurableIndexers;
+	private LanguageService languageService;
 
 	public InformationService getInformationService() {
 		return informationService;
@@ -109,5 +115,29 @@ public class SchedulingSupportFacade {
 	
 	public void setConfigurableIndexers(Collection<ConfigurableIndexer<? extends Entity>> configurableIndexers) {
 		this.configurableIndexers = configurableIndexers;
+	}
+	
+	public void setWordService(WordService wordService) {
+		this.wordService = wordService;
+	}
+	
+	public WordService getWordService() {
+		return wordService;
+	}
+
+	public SecurityService getSecurityService() {
+		return securityService;
+	}
+
+	public void setSecurityService(SecurityService securityService) {
+		this.securityService = securityService;
+	}
+
+	public LanguageService getLanguageService() {
+		return this.languageService;
+	}
+	
+	public void setLanguageService(LanguageService languageService) {
+		this.languageService = languageService;
 	}
 }

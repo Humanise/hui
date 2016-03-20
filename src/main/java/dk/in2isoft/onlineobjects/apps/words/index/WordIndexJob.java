@@ -10,6 +10,7 @@ import org.quartz.UnableToInterruptJobException;
 import com.google.common.collect.Lists;
 
 import dk.in2isoft.onlineobjects.core.ModelService;
+import dk.in2isoft.onlineobjects.core.PropertyLimitation.Comparison;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.Results;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
@@ -41,6 +42,8 @@ public class WordIndexJob extends ServiceBackedJob implements InterruptableJob {
 		} catch (EndUserException e) {
 			status.error("Error while clearing index", e);
 		}
+		
+		Query.after(Word.class).withCustomProperty("common.source", Comparison.LIKE, "http://www.wordnet.dk/%");
 		
 		WordListPerspectiveQuery query = new WordListPerspectiveQuery().orderByUpdated();
 		int total = modelService.count(query);

@@ -103,7 +103,7 @@ public class ReaderIndexer implements ModelEventListener, ModelPrivilegesEventLi
 	public void index(InternetAddress address) {
 		try {
 			User owner = modelService.getOwner(address);
-			if (owner!=null) {
+			if (owner!=null && !owner.isSuper()) {
 				Document document = documentBuilder.build(address);
 				log.debug("Re-indexing : "+address);
 				getIndexManager(owner).update(address, document);

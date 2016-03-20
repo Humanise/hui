@@ -71,6 +71,9 @@
 												</a>
 											 </span>
 										</c:if>
+      							<c:if test="#{empty word.source}">
+											<span class="words_word_info"><span>—</span> <span class="words_word_unvalidated">#{msg.unvalidated}</span></span>
+      							</c:if>
 										<gui:button variant="light" name="delete#{word.word.id}" tiny="true" text="#{msg.remove}" left="10" 
 											click="wordView.deleteWord({id:#{word.word.id}})"
 											rendered="#{wordsLayoutView.loggedIn}"

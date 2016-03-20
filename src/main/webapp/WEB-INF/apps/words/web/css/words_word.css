@@ -102,6 +102,10 @@ span.words_word_info span
 	margin: 0 3px;
 }
 
+.words_word_unvalidated {
+  color: red;
+}
+
 li.words_word_variant
 {
 	margin-bottom: 25px;

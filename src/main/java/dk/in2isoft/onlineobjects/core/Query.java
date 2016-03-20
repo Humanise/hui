@@ -11,6 +11,7 @@ import com.google.common.collect.Lists;
 
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.FieldLimitation.Function;
+import dk.in2isoft.onlineobjects.core.PropertyLimitation.Comparison;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Privilege;
 import dk.in2isoft.onlineobjects.model.Relation;
@@ -152,6 +153,15 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 		PropertyLimitation limitation = new PropertyLimitation();
 		limitation.setKey(key);
 		limitation.setValue(value);
+		customProperties.add(limitation);
+		return this;
+	}
+
+	public Query<T> withCustomProperty(String key, Comparison comparison,Object value) {
+		PropertyLimitation limitation = new PropertyLimitation();
+		limitation.setKey(key);
+		limitation.setValue(value);
+		limitation.setComparison(comparison);
 		customProperties.add(limitation);
 		return this;
 	}
@@ -321,7 +331,10 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 			hql.append(")");
 		}
 		if (customProperties.size() > 0) {
-			hql.append(" and p.key=:propertyKey and p.value=:propertyValue");
+			for (int i = 0; i < customProperties.size(); i++) {
+				PropertyLimitation propertyLimitation = customProperties.get(i);
+				hql.append(" and p.key=:propertyKey"+i+" and p.value " + propertyLimitation.getComparison() + " :propertyValue"+i);				
+			}
 		}
 		if (fieldLimitations.size() > 0) {
 			for (FieldLimitation limit : fieldLimitations) {
@@ -437,10 +450,11 @@ public class Query<T> extends AbstractModelQuery<T> implements IdQuery, ItemQuer
 			}
 		}
 		if (customProperties.size() > 0) {
-			// TODO: more than one property
-			PropertyLimitation entry = customProperties.iterator().next();
-			q.setString("propertyKey", entry.getKey());
-			q.setString("propertyValue", entry.getValue().toString());
+			for (int i = 0; i < customProperties.size(); i++) {
+				PropertyLimitation propertyLimitation = customProperties.get(i);
+				q.setString("propertyKey"+i, propertyLimitation.getKey());
+				q.setString("propertyValue"+i, propertyLimitation.getValue().toString());
+			}
 		}
 		if (createdFrom != null) {
 			q.setDate("createdFrom", createdFrom);

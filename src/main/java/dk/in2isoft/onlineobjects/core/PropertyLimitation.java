@@ -2,10 +2,24 @@ package dk.in2isoft.onlineobjects.core;
 
 public class PropertyLimitation {
 
+	public enum Comparison {
+		EQUALS ("="),/* LESSTHAN ("<"), MORETHAN (">"), IN (" in "),*/ LIKE (" like ");
+		
+		private String x;
+		Comparison(String x) {
+			this.x = x;
+		}
+	
+		public String toString() {
+			return x;
+		}
+	};
+
 	private Integer minimumOccurrence = 1;
 	private Integer maximumOccurrence;
 	private String key;
 	private Object value;
+	private Comparison comparison = Comparison.EQUALS;
 
 	public Integer getMinimumOccurrence() {
 		return minimumOccurrence;
@@ -37,5 +51,13 @@ public class PropertyLimitation {
 
 	public void setValue(Object value) {
 		this.value = value;
+	}
+
+	public Comparison getComparison() {
+		return comparison;
+	}
+
+	public void setComparison(Comparison comparison) {
+		this.comparison = comparison;
 	}
 }

@@ -52,6 +52,12 @@
 		<property name="name" value="index-words"/>
 		<property name="group" value="core"/>
 	</bean>
+
+	<bean class="dk.in2isoft.onlineobjects.modules.scheduling.JobDescription">
+		<property name="jobClass" value="dk.in2isoft.onlineobjects.apps.words.index.WordnetSourceCleanupJob"/>
+		<property name="name" value="wordnet-source-cleanup"/>
+		<property name="group" value="core"/>
+	</bean>
 	
 	
 
