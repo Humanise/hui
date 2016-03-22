@@ -2,6 +2,7 @@ package dk.in2isoft.onlineobjects.apps.api;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.collect.Lists;
+import com.google.gson.reflect.TypeToken;
 
+import dk.in2isoft.commons.lang.Code;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.commons.parsing.HTMLDocument;
 import dk.in2isoft.in2igui.FileBasedInterface;
@@ -20,6 +23,7 @@ import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.Query;
 import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
+import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
 import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.model.Entity;
 import dk.in2isoft.onlineobjects.model.Hypothesis;
@@ -193,10 +197,21 @@ public class APIController extends APIControllerBase {
 
 	@Path(start = { "v1.0", "words", "import" })
 	public void importWord(Request request) throws IOException, EndUserException {
-		User user = getUserForSecretKey(request);
+		getUserForSecretKey(request);
 		Privileged privileged = securityService.getAdminPrivileged();
 		WordModification modification = request.getObject("modification", WordModification.class);
-		wordService.updateWord(modification , privileged);
+		Type listType = new TypeToken<List<WordModification>>() {}.getType();
+		List<WordModification> modifications = request.getObject("modifications", listType);
+		if (modification!=null) {
+			wordService.updateWord(modification , privileged);
+		} else if (Code.isNotEmpty(modifications)) {
+			for (WordModification wordModification : modifications) {
+				wordService.updateWord(wordModification , privileged);
+			}
+		} else {
+			throw new IllegalRequestException("No modifications provided");
+		}
+		
 	}
 
 	private String extractText(String url) {

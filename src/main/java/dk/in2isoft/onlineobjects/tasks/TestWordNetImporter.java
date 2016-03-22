@@ -55,10 +55,10 @@ public class TestWordNetImporter extends AbstractSpringTask {
 	public void before() {
 		//words.add("cat");
 		//words.add("dog");
-		//skip = 85593;
-		rows = 10;
+		skip = 1900;
+		//rows = 10;
 		//words.add("'s Gravenhage".toLowerCase());
-		updateLocally = true;
+		updateLocally = !true;
 		
 		category = POS.VERB;
 		categoryCode = LexicalCategory.CODE_VERBUM;
@@ -68,7 +68,7 @@ public class TestWordNetImporter extends AbstractSpringTask {
 	
 	@Test
 	public void run() throws Exception {
-		File file = new File("/Users/jonasmunk/Midlertidigt/wordnet_3.1");
+		File file = new File("/Users/jbm/Midlertidigt/wordnet_3.1");
 		IDictionary dict = new Dictionary(file);
 		dict.open();
 		
