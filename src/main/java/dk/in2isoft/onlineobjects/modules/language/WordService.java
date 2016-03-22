@@ -10,12 +10,14 @@ import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.queryparser.flexible.standard.QueryParserUtil;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.hibernate.SQLQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
 import dk.in2isoft.commons.lang.Strings;
+import dk.in2isoft.onlineobjects.core.CustomQuery;
 import dk.in2isoft.onlineobjects.core.ModelService;
 import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.Query;
@@ -338,9 +340,30 @@ public class WordService {
 		Query<InternetAddress> query = Query.after(InternetAddress.class).withField(InternetAddress.FIELD_ADDRESS, src);
 		List<InternetAddress> list = modelService.list(query);
 		for (InternetAddress address : list) {
-			Query<Word> wordQuery = Query.after(Word.class).to(address, Relation.KIND_COMMON_SOURCE);
-			Long num = modelService.count(wordQuery);
-			if (num > 0) {
+			CustomQuery<Long> q = new CustomQuery<Long>() {
+
+				@Override
+				public String getSQL() {
+					return "select count(relation.id) from relation where relation.kind='common.source' and relation.sub_entity_id=:id";
+				}
+
+				@Override
+				public String getCountSQL() {
+					return null;
+				}
+
+				@Override
+				public Long convert(Object[] row) {
+					return ((Number) row[0]).longValue();
+				}
+
+				@Override
+				public void setParameters(SQLQuery sql) {
+					sql.setLong("id", address.getId());
+				}
+			};
+			List<Long> num = modelService.list(q);
+			if (!num.isEmpty() && num.get(0) > 0) {
 				return address;
 			}
 		}
