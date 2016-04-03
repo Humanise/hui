@@ -68,7 +68,7 @@ public class TestWordNetImporter extends AbstractSpringTask {
 	
 	@Test
 	public void run() throws Exception {
-		File file = new File("/Users/jonasmunk/Midlertidigt/wordnet_3.1");
+		File file = new File(getProperty("wordNetDataDir"));
 		IDictionary dict = new Dictionary(file);
 		dict.open();
 		
