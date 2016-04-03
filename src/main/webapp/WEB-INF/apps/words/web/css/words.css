@@ -10,19 +10,6 @@ div.words
 	}
 }
 
-/***************** Links ***************/
-
-a.oo_link
-{
-	color: #ddd;
-	color: rgba(0,0,0,.1);
-}
-
-a.oo_link > span
-{
-	color: #08c;
-}
-
 
 
 /**************** Titles **************/

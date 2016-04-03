@@ -1,0 +1,22 @@
+@import 'shared';
+
+@include when {
+
+  .oo_link
+  {
+  	color: #ccc;
+    color: rgba(0,0,0,.1);
+    
+    > span {
+    	color: #08c;      
+    }
+    
+    &:hover {
+      color: #7CACC3;
+      
+      > span {
+      	color: #00476B;        
+      }
+    }
+  }
+}
