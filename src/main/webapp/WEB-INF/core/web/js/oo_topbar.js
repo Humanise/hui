@@ -67,14 +67,14 @@ oo.TopBar.prototype = {
 				hui.cls.remove(node,'oo_topbar_info_busy')
 				var html = '<div class="oo_topbar_info_photo">';
 				if (info.photoId) {
-					html+='<div style="background-image: url('+oo.baseContext+'/service/image/id'+info.photoId+'width60height60sharpen0.7cropped.jpg)"></div>';
+					html+='<div class="oo_topbar_info_photo_img" style="background-image: url('+oo.baseContext+'/service/image/id'+info.photoId+'width60height60sharpen0.7cropped.jpg)"></div>';
 				}
 				html+='</div><div class="oo_topbar_info_content">'+
 					'<p class="oo_topbar_info_name">'+hui.string.escape(info.fullName)+'</p>'+
         '<p class="oo_topbar_info_username">'+hui.string.escape(info.username)+'</p>';
         for (var i = 0; i < info.links.length; i++) {
           var link = info.links[i];
-					html += '<p class="oo_topbar_info_account"><strong>&rsaquo;</strong> <a href="' + link.value + '"><span>' + hui.string.escape(link.label) + '</span></a></p>';
+					html += '<p class="oo_topbar_info_account"><a class="oo_link" href="' + link.value + '"><span class="oo_link_text">' + hui.string.escape(link.label) + '</span></a></p>';
         }
 				html += '</div>';
 				node.innerHTML = html;

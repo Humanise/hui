@@ -2,109 +2,72 @@
   font-family: "Open Sans", "Helvetica Neue", "Helvetica", Arial, sans-serif;
   overflow: hidden;
   border-bottom: 1px solid #fafafa;
-  height: 31px;
+  height: 30px;
   font-size: 0;
-  -webkit-transition: background 1s,border-color 1s, opacity 1s;
-  -moz-transition: background 1s,border-color 1s, opacity 1s;
-  -ms-transition: background 1s,border-color 1s, opacity 1s; }
+  white-space: nowrap;
+  -moz-transition: background 1s, border-color 1s, opacity 1s, box-shadow 1s;
+  -o-transition: background 1s, border-color 1s, opacity 1s, box-shadow 1s;
+  -webkit-transition: background 1s, border-color 1s, opacity 1s, box-shadow 1s;
+  transition: background 1s, border-color 1s, opacity 1s, box-shadow 1s; }
   .oo_topbar:hover {
     background: #fff;
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
     border-bottom: 1px solid #ddd; }
   .oo_topbar_logo {
-    float: left;
+    display: inline-block;
     font-weight: 300;
     height: 30px;
     line-height: 30px;
-    padding: 0 10px;
+    padding: 0 5px 0 10px;
     font-size: 12pt;
     color: #bbb;
-    text-decoration: none; }
+    text-decoration: none;
+    -moz-transition: color 0.3s;
+    -o-transition: color 0.3s;
+    -webkit-transition: color 0.3s;
+    transition: color 0.3s; }
+    .oo_topbar_logo:hover {
+      background: #f3f3f3;
+      color: #333; }
     .oo_topbar_logo_icon {
       font-family: 'OnlineObjects';
       font-style: normal;
       font-weight: normal;
       -webkit-font-smoothing: antialiased;
-      margin: 4px 4px 0 -2px;
+      margin: 4px 0 0 -2px;
       vertical-align: top;
       display: inline-block;
       font-size: 22px;
       width: 22px;
       height: 22px;
       line-height: 1; }
+    .oo_topbar_logo_text {
+      display: none; }
+  .oo_topbar_item {
+    display: inline-block;
+    font-size: 11pt;
+    height: 30px;
+    line-height: 30px;
+    padding: 0 5px;
+    text-decoration: none;
+    color: #bbb;
+    font-weight: 300; }
+    .oo_topbar_item:hover {
+      background: #f3f3f3;
+      color: #333; }
 
-div.oo_topbar:hover a.oo_topbar_logo,
-div.oo_topbar:hover a.oo_topbar_logo em {
-  -webkit-transition-property: color;
-  -webkit-transition-duration: 1s;
-  -moz-transition-property: color;
-  -moz-transition-duration: 1s;
-  -ms-transition-property: color;
-  -ms-transition-duration: 1s;
-  color: #999; }
-
-body.oo_msie7 div.oo_topbar strong {
-  display: inline; }
-
-div.oo_topbar strong span {
-  font-weight: 400;
-  letter-spacing: 1px; }
-
-div.oo_topbar strong span span {
-  font-weight: 200; }
-
-.oo_topbar_logo:hover {
-  background: #f3f3f3; }
-
-.oo_topbar_logo:hover strong {
-  color: #333; }
-
-a.oo_topbar_logo:hover em {
-  color: #666; }
-
-div.oo_topbar ul {
+.oo_topbar_menu {
   display: inline-block;
   list-style: none;
   margin: 0;
   padding: 0; }
-
-body.oo_msie7 div.oo_topbar ul {
-  display: inline; }
-
-div.oo_topbar li {
-  display: inline-block; }
-
-body.oo_msie7 div.oo_topbar li {
-  display: inline; }
-
-div.oo_topbar li a {
-  display: block;
-  font-size: 11pt;
-  height: 30px;
-  line-height: 30px;
-  padding: 0 10px;
-  color: #bbb;
-  text-decoration: none;
-  font-weight: 300;
-  -webkit-transition-property: color;
-  -webkit-transition-duration: 1s;
-  -moz-transition-property: color;
-  -moz-transition-duration: 1s;
-  -ms-transition-property: color;
-  -ms-transition-duration: 1s; }
-
-div.oo_topbar li a:hover {
-  background: #f3f3f3; }
-
-div.oo_topbar:hover li a {
-  color: #333; }
-
-div.oo_topbar a.oo_topbar_selected {
-  font-weight: 400;
-  color: #333; }
-
-.oo_topbar_left {
-  float: left; }
+  .oo_topbar_menu_item {
+    display: inline-block; }
+  .oo_topbar_menu_link {
+    text-decoration: none; }
+    .oo_topbar_menu_link.is-selected {
+      font-weight: 400;
+      color: #333; }
 
 .oo_topbar_right {
   list-style: none;
@@ -116,84 +79,72 @@ div.oo_topbar a.oo_topbar_selected {
   height: 30px;
   line-height: 30px;
   position: absolute; }
+  .oo_topbar_right_item {
+    display: inline-block; }
 
-span.oo_topbar_right a {
-  display: block;
-  padding: 0 10px;
-  color: #999;
-  text-decoration: none; }
-
-a.oo_topbar_user span {
+.oo_topbar_user_icon {
   margin-right: 4px;
   margin-top: 7px;
   vertical-align: top; }
 
-/** Info panel **/
-div.oo_topbar_info_busy {
-  height: 60px;
-  background: url("../../../hui/gfx/progress/spinner_white_24.gif") center center no-repeat; }
-
-div.oo_topbar_info {
-  overflow: hidden;
-  font-family: 'Open Sans'; }
-
-div.oo_topbar_info_photo {
-  width: 60px;
-  height: 60px;
-  float: left;
-  font-size: 0; }
-
-div.oo_topbar_info_photo div {
-  width: 60px;
-  height: 60px;
-  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.3);
-  border-radius: 50%;
-  overflow: hidden;
-  background: #eee; }
-
-div.oo_topbar_info_content {
-  margin-left: 70px;
-  padding-bottom: 10px; }
-
-div.oo_topbar_info p {
-  font-size: 9pt;
-  margin: 0; }
-
-div.oo_topbar_info p.oo_topbar_info_name {
-  font-size: 14px;
-  font-weight: 400;
-  margin-top: -3px; }
-
-p.oo_topbar_info_username {
-  color: #666; }
-
-div.oo_topbar_info p.oo_topbar_info_account {
-  margin-top: 5px; }
-
-p.oo_topbar_info_account a {
-  color: #ddd; }
-
-p.oo_topbar_info_account a span,
-p.oo_topbar_info_account a:hover {
-  color: #08c; }
-
-p.oo_topbar_info_account strong {
-  font-size: 21px;
-  display: inline-block;
-  line-height: 11px;
-  color: #aaa;
+.oo_topbar_inbox {
+  height: 20px;
+  background: #eee;
+  line-height: 20px;
+  font-size: 11px;
+  vertical-align: top;
+  margin-top: 6px;
+  border-radius: 10px;
+  padding: 0 5px;
+  margin-right: 3px;
   font-weight: normal;
-  vertical-align: top; }
+  display: inline-block;
+  text-decoration: none;
+  color: #999; }
+  .oo_topbar_inbox:hover {
+    background: #ddd; }
 
-div.oo_topbar_info_buttons {
-  font-size: 0;
-  text-align: right; }
-
-div.oo_topbar_info_buttons a {
-  margin-left: 5px; }
+/** Info panel **/
+.oo_topbar_info {
+  overflow: hidden;
+  font-family: "Open Sans", "Helvetica Neue", "Helvetica", Arial, sans-serif; }
+  .oo_topbar_info_busy {
+    height: 60px;
+    background: url("../../../hui/gfx/progress/spinner_white_24.gif") center center no-repeat; }
+  .oo_topbar_info_photo {
+    width: 60px;
+    height: 60px;
+    float: left;
+    font-size: 0; }
+    .oo_topbar_info_photo_img {
+      width: 60px;
+      height: 60px;
+      box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.3);
+      border-radius: 50%;
+      overflow: hidden;
+      background: #eee; }
+  .oo_topbar_info_content {
+    margin-left: 70px;
+    padding-bottom: 10px; }
+  .oo_topbar_info_name {
+    font-size: 14px;
+    font-weight: 400;
+    margin: -3px 0 0; }
+  .oo_topbar_info_username {
+    color: #666;
+    margin: 0;
+    font-size: 12px; }
+  .oo_topbar_info_account {
+    margin: 3px 0 0;
+    font-size: 12px; }
+  .oo_topbar_info_buttons {
+    font-size: 0;
+    text-align: right; }
+    .oo_topbar_info_buttons a {
+      margin-left: 5px; }
 
 /************ Login *************/
-div.oo_topbar_login_success {
+.oo_topbar_login_success {
   height: 50px;
   font-size: 12pt;
   color: #999;
@@ -204,23 +155,20 @@ div.oo_topbar_login_success {
   font-size: 9pt;
   float: right;
   margin-top: 10px; }
+  .oo_topbar_forgot_intro {
+    font-size: 10pt;
+    line-height: 12pt;
+    text-align: center;
+    margin: 5px 0 20px;
+    color: #333; }
 
-.op_topbar_forgot_intro {
-  font-size: 10pt;
-  line-height: 12pt;
-  text-align: center;
-  margin: 5px 0 20px;
-  color: #333; }
-
-@media screen and (max-width: 500px) {
-  div.oo_topbar strong {
-    padding: 0 0 0 5px; }
-
-  div.oo_topbar li a {
-    padding: 0 5px; }
-
-  div.oo_topbar strong {
-    display: none; }
-
-  a.oo_topbar_logo {
-    padding: 0 0 0 10px; } }
+@media screen and (min-width: 500px) {
+  .oo_topbar_item {
+    padding: 0 10px; }
+  .oo_topbar_logo_text {
+    display: inline-block;
+    font-weight: 200;
+    letter-spacing: 1px;
+    margin-left: 5px; }
+  .oo_topbar_logo_part {
+    font-weight: 400; } }
