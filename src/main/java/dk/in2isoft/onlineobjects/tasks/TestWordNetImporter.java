@@ -55,10 +55,10 @@ public class TestWordNetImporter extends AbstractSpringTask {
 	public void before() {
 		//words.add("cat");
 		//words.add("dog");
-		//skip = 85593;
-		rows = 10;
+		skip = 1900;
+		//rows = 10;
 		//words.add("'s Gravenhage".toLowerCase());
-		updateLocally = true;
+		updateLocally = !true;
 		
 		category = POS.VERB;
 		categoryCode = LexicalCategory.CODE_VERBUM;

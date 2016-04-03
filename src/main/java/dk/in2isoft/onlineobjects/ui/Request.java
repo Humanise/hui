@@ -1,6 +1,7 @@
 package dk.in2isoft.onlineobjects.ui;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
@@ -28,6 +29,7 @@ import dk.in2isoft.onlineobjects.core.SecurityService;
 import dk.in2isoft.onlineobjects.core.UserSession;
 import dk.in2isoft.onlineobjects.core.exceptions.EndUserException;
 import dk.in2isoft.onlineobjects.core.exceptions.IllegalRequestException;
+import dk.in2isoft.onlineobjects.modules.language.WordModification;
 
 public class Request {
 
@@ -473,6 +475,15 @@ public class Request {
 
 	
 	@Nullable public <T> T getObject(String name, Class<@NonNull T> type) {
+		try {
+			Gson gson = new Gson();
+			return gson.fromJson(getString(name), type);
+		} catch (JsonSyntaxException e) {
+			return null;
+		}
+	}
+
+	public List<WordModification> getObject(String name, Type type) {
 		try {
 			Gson gson = new Gson();
 			return gson.fromJson(getString(name), type);
