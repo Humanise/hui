@@ -84,7 +84,9 @@ public class WordsSearchView extends AbstractView implements InitializingBean {
 		languageOptions = buildLanguageOptions(request);
 		categoryOptions = buildCategoryOptions(request);
 		
+		
 		WordQuery query = new WordQuery().withText(text).withLetter(letter).withCategory(category).withLanguage(language).withSource(source).withPage(page).withPageSize(20);
+		query.cached(request.getBoolean("cached"));
 		SearchResult<WordListPerspective> result = wordService.search(query);
 
 		this.list = result.getList();

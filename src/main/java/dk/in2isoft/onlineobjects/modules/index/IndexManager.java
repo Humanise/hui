@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.lang.time.StopWatch;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.util.CharArraySet;
 import org.apache.lucene.document.Document;
@@ -34,6 +35,8 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.SimpleFSDirectory;
 import org.apache.lucene.util.Bits;
 import org.apache.lucene.util.Version;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
@@ -51,6 +54,8 @@ public class IndexManager {
 	private ConfigurationService configurationService;
 	private String directoryName = "index";
 	private StandardAnalyzer analyzer;
+	
+	private static final Logger log = LoggerFactory.getLogger(IndexManager.class);
 	
 	public IndexManager() {
 		analyzer = new StandardAnalyzer(Version.LUCENE_40, CharArraySet.EMPTY_SET);
@@ -255,10 +260,16 @@ public class IndexManager {
 			int end = (page+1) * size;
 			TopDocs topDocs = null;
 			int n = 1000000;
+			StopWatch watch = new StopWatch();
+			watch.start();
 			if (sort!=null) {
 				topDocs = searcher.search(query, n, sort);
 			} else {
 				topDocs = searcher.search(query , n);
+			}
+			watch.stop();
+			if (log.isTraceEnabled()) {
+				log.trace("Search time: "+watch.getTime());
 			}
 			ScoreDoc[] scoreDocs = topDocs.scoreDocs;
 			for (int i = page * size; i < Math.min(scoreDocs.length,end); i++) {

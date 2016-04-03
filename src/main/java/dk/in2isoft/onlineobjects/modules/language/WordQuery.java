@@ -8,6 +8,7 @@ public class WordQuery extends IndexQuery {
 	private String language;
 	private String[] words;
 	private String source;
+	private boolean cached;
 
 	public WordQuery withText(String text) {
 		this.text = text;
@@ -46,7 +47,16 @@ public class WordQuery extends IndexQuery {
 		this.language = language;
 		return this;
 	}
+
+	public WordQuery cached(boolean cached) {
+		this.cached = cached;
+		return this;
+	}
 	
+	public boolean isCached() {
+		return cached;
+	}
+
 	public WordQuery withSource(String source) {
 		this.source = source;
 		return this;

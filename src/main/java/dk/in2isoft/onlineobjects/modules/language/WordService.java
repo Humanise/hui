@@ -1,10 +1,10 @@
 package dk.in2isoft.onlineobjects.modules.language;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.StopWatch;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.queryparser.flexible.standard.QueryParserUtil;
@@ -52,10 +52,12 @@ public class WordService {
 	private List<String> trademarks = Lists.newArrayList("rockwool");
 	
 	public SearchResult<WordListPerspective> search(WordQuery query) throws ExplodingClusterFuckException, ModelException {
+		StopWatch watch = new StopWatch();
 		final List<Long> ids = Lists.newArrayList();
 		IndexSearchQuery searchQuery = buildQuery(query);
 		searchQuery.setPage(query.getPage());
 		searchQuery.setPageSize(query.getPageSize());
+		watch.start();
 		SearchResult<IndexSearchResult> indexResult = index.search(searchQuery);
 		if (indexResult.getTotalCount()==0) {
 			return SearchResult.empty();
@@ -65,24 +67,36 @@ public class WordService {
 			IndexableField field = document.getField("id");
 			ids.add(Long.parseLong(field.stringValue()));
 		}
-		WordListPerspectiveQuery listQuery = new WordListPerspectiveQuery().withPaging(0, query.getPageSize()).orderByText();
-		if (!ids.isEmpty()) {
-			listQuery.withIds(ids);
-		}
-		SearchResult<WordListPerspective> result = modelService.search(listQuery);
-		
-		Collections.sort(result.getList(), new Comparator<WordListPerspective>() {
-
-			public int compare(WordListPerspective o1, WordListPerspective o2) {
-				int index1 = ids.indexOf(o1.getId());
-				int index2 = ids.indexOf(o2.getId());
-				if (index1>index2) {
-					return 1;
-				} else if (index2>index1) {
-					return -1;
-				}
-				return 0;
+		watch.stop();
+		log.trace("Index query time="+watch.getTime());
+		SearchResult<WordListPerspective> result;
+		watch.reset();
+		watch.start();
+		if (query.isCached()) {
+			WordListPerspectiveViewQuery listQuery = new WordListPerspectiveViewQuery().withPaging(0, query.getPageSize()).orderByText();
+			if (!ids.isEmpty()) {
+				listQuery.withIds(ids);
 			}
+			result = modelService.search(listQuery);
+		} else {
+			WordListPerspectiveQuery listQuery = new WordListPerspectiveQuery().withPaging(0, query.getPageSize()).orderByText();
+			if (!ids.isEmpty()) {
+				listQuery.withIds(ids);
+			}
+			result = modelService.search(listQuery);
+		}
+		watch.stop();
+		log.trace("Database query time="+watch.getTime());
+		
+		Collections.sort(result.getList(), (o1, o2) -> {
+			int index1 = ids.indexOf(o1.getId());
+			int index2 = ids.indexOf(o2.getId());
+			if (index1>index2) {
+				return 1;
+			} else if (index2>index1) {
+				return -1;
+			}
+			return 0;
 		});
 		result.setTotalCount(indexResult.getTotalCount());
 		result.setDescription(searchQuery.getQuery());
@@ -253,19 +267,25 @@ public class WordService {
 		}
 	}
 
-	public void updateWord(WordModification modification, Privileged privileged) throws ModelException, IllegalRequestException, SecurityException {		
+	public void updateWord(WordModification modification, Privileged privileged) throws ModelException, IllegalRequestException, SecurityException {
+		StopWatch watch = new StopWatch();
 		WordListPerspectiveQuery query = new WordListPerspectiveQuery();
 		query.withWord(modification.text.toLowerCase());
 		log.debug("Searching for: " + modification.text);
+		watch.start();
 		List<WordListPerspective> list = modelService.list(query);
-		log.debug("Found: " + list.size());
-		
+		watch.stop();
+		log.info("Found: " + list.size() + ", time=" + watch.getTime());
+		watch.reset();
+		watch.start();
 		InternetAddress source = null;
 		if (Strings.isNotBlank(modification.source)) {
 			if (ValidationUtil.isWellFormedURI(modification.source)) {
 				source = getSource(modification.source, privileged);
 			}
 		}
+		watch.stop();
+		log.info("Source lookup time=" + watch.getTime());
 		
 		//Word word = getWordBySourceId(modification.sourceId, privileged);
 		

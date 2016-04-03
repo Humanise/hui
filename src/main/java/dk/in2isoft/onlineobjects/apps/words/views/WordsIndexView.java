@@ -14,6 +14,7 @@ import dk.in2isoft.onlineobjects.core.SearchResult;
 import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspective;
 import dk.in2isoft.onlineobjects.modules.language.WordListPerspectiveQuery;
+import dk.in2isoft.onlineobjects.modules.language.WordListPerspectiveViewQuery;
 import dk.in2isoft.onlineobjects.ui.Request;
 import dk.in2isoft.onlineobjects.ui.jsf.model.Option;
 
@@ -53,7 +54,7 @@ public class WordsIndexView extends AbstractView implements InitializingBean {
 			if (localPath.length>3) {
 				page = Math.max(0, NumberUtils.toInt(localPath[3])-1);
 			}
-			WordListPerspectiveQuery query = new WordListPerspectiveQuery().withPaging(page, 20);
+			WordListPerspectiveViewQuery query = new WordListPerspectiveViewQuery().withPaging(page, 20);
 			if ("_".equals(character)) {
 				query.startingWithSymbol();
 			} else {
