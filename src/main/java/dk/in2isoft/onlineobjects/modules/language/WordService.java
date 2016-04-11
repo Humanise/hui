@@ -9,7 +9,6 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.queryparser.flexible.standard.QueryParserUtil;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.hibernate.SQLQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,10 +49,25 @@ public class WordService {
 	private ModelService modelService;
 	private LanguageService languageService;
 	private SecurityService securityService;
+	
+	private boolean enableMaterializedView;
 
 	private List<String> trademarks = Lists.newArrayList("rockwool");
 	
 	public SearchResult<WordListPerspective> search(WordQuery query) throws ExplodingClusterFuckException, ModelException {
+		
+		if (enableMaterializedView && Strings.isBlank(query.getText())) {
+			WordListPerspectiveViewQuery listQuery = new WordListPerspectiveViewQuery().withPaging(query.getPage(), query.getPageSize()).orderByText();
+			String letter = query.getLetter();
+			if ("other".equals(letter)) {
+				letter = "?";
+			}
+			if ("number".equals(letter)) {
+				letter = "#";
+			}
+			listQuery.startingWith(letter).withLanguage(query.getLanguage()).withCategory(query.getCategory());
+			return modelService.search(listQuery);
+		}
 		StopWatch watch = new StopWatch();
 		final List<Long> ids = Lists.newArrayList();
 		IndexSearchQuery searchQuery = buildQuery(query);
@@ -142,7 +156,7 @@ public class WordService {
 					searchQuery.append(" AND ");
 				}
 				searchQuery.append("(word:").append(QueryParserUtil.escape(word)).append("^4").append(" OR word:").append(QueryParserUtil.escape(word)).append("*^4 OR ").append(QueryParserUtil.escape(word)).append("*");
-				searchQuery.append(" OR word:*").append(QueryParserUtil.escape(word)).append("*");
+				searchQuery.append(" OR word:*").append(QueryParserUtil.escape(word)).append("*^4");
 				searchQuery.append(" OR *").append(QueryParserUtil.escape(word)).append("*");
 				searchQuery.append(")");
 			}

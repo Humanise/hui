@@ -15,7 +15,6 @@ import dk.in2isoft.commons.lang.Code;
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.CustomQuery;
 import dk.in2isoft.onlineobjects.model.Entity;
-import dk.in2isoft.onlineobjects.model.Relation;
 
 public class WordListPerspectiveViewQuery implements CustomQuery<WordListPerspective> {
 
@@ -43,6 +42,10 @@ public class WordListPerspectiveViewQuery implements CustomQuery<WordListPerspec
 	
 	private String startingWith;
 	
+	private String language;
+	
+	private String category;
+
 	private boolean startingWithSymbol;
 	
 	private List<String> words;
@@ -66,20 +69,28 @@ public class WordListPerspectiveViewQuery implements CustomQuery<WordListPerspec
 	
 	public String getCountSQL() {
 		StringBuilder sql = new StringBuilder();
-		sql.append("select count(id) as num from view_word_list");
+		sql.append("select count(id) as num from word_list_view");
 		sql.append(buildWhere());
 		return sql.toString();
 	}
 	
 	private String buildWhere() {
 		StringBuilder sql = new StringBuilder();
-		if (startingWith!=null) {
+		if (Strings.isNotBlank(startingWith)) {
 			sql.append(sql.length()>0 ? " and " : " where ");
 			sql.append(" letter=:startingWith"); 
 		}
 		if (startingWithSymbol) {
 			sql.append(sql.length()>0 ? " and " : " where ");
 			sql.append(" (letter='?' or letter='#')");
+		}
+		if (Strings.isNotBlank(language)) {
+			sql.append(sql.length()>0 ? " and " : " where ");
+			sql.append(" language=:language");
+		}
+		if (Strings.isNotBlank(category)) {
+			sql.append(sql.length()>0 ? " and " : " where ");
+			sql.append(" category=:category");
 		}
 		if (words!=null) {
 			sql.append(sql.length()>0 ? " and " : " where ");
@@ -99,7 +110,7 @@ public class WordListPerspectiveViewQuery implements CustomQuery<WordListPerspec
 
 	public String getSQL() {
 		StringBuilder sql = new StringBuilder();
-		sql.append("select id, text, language, category, created, glossary, source from view_word_list");
+		sql.append("select id, text, language, category, created, glossary, source from word_list_view");
 		sql.append(buildWhere());
 		sql.append(" order by "+this.ordering+" ");
 		if (pageSize>0) {
@@ -112,8 +123,14 @@ public class WordListPerspectiveViewQuery implements CustomQuery<WordListPerspec
 	}
 	
 	public void setParameters(SQLQuery sql) {
-		if (startingWith!=null) {
-			sql.setString("startingWith", startingWith+"%");
+		if (Strings.isNotBlank(startingWith)) {
+			sql.setString("startingWith", startingWith);
+		}
+		if (Strings.isNotBlank(language)) {
+			sql.setString("language", language);
+		}
+		if (Strings.isNotBlank(category)) {
+			sql.setString("category", category);
 		}
 		if (Code.isNotEmpty(words)) {
 			sql.setParameterList("words", words, new StringType());
@@ -158,6 +175,15 @@ public class WordListPerspectiveViewQuery implements CustomQuery<WordListPerspec
 		return this;
 	}
 
+	public WordListPerspectiveViewQuery withLanguage(String language) {
+		this.language = language;
+		return this;
+	}
+
+	public WordListPerspectiveViewQuery withCategory(String category) {
+		this.category = category;
+		return this;
+	}
 
 	public WordListPerspectiveViewQuery withWord(String word) {
 		this.words = Lists.newArrayList(word);
