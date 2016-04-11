@@ -522,7 +522,7 @@ public class WordService {
 		}
 	}
 	
-	private Word getWordBySourceId(String sourceId, Privileged privileged) {
+	public Word getWordBySourceId(String sourceId, Privileged privileged) {
 		Query<Word> query = Query.after(Word.class).withCustomProperty(Property.KEY_DATA_SOURCE, sourceId).withPrivileged(privileged);
 		List<Word> list = modelService.list(query);
 		if (!list.isEmpty()) {

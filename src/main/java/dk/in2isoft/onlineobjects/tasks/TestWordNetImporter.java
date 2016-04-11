@@ -3,6 +3,7 @@ package dk.in2isoft.onlineobjects.tasks;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -18,22 +19,33 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import dk.in2isoft.commons.lang.Strings;
 import dk.in2isoft.onlineobjects.core.Privileged;
 import dk.in2isoft.onlineobjects.core.SecurityService;
+import dk.in2isoft.onlineobjects.core.exceptions.ModelException;
+import dk.in2isoft.onlineobjects.core.exceptions.SecurityException;
 import dk.in2isoft.onlineobjects.model.Language;
 import dk.in2isoft.onlineobjects.model.LexicalCategory;
+import dk.in2isoft.onlineobjects.model.Relation;
+import dk.in2isoft.onlineobjects.model.Word;
 import dk.in2isoft.onlineobjects.modules.language.WordModification;
+import dk.in2isoft.onlineobjects.modules.language.WordRelationModification;
 import dk.in2isoft.onlineobjects.modules.language.WordService;
 import dk.in2isoft.onlineobjects.test.AbstractSpringTask;
 import edu.mit.jwi.Dictionary;
 import edu.mit.jwi.IDictionary;
 import edu.mit.jwi.item.IIndexWord;
+import edu.mit.jwi.item.ISynset;
+import edu.mit.jwi.item.ISynsetID;
 import edu.mit.jwi.item.IWord;
 import edu.mit.jwi.item.IWordID;
 import edu.mit.jwi.item.POS;
+import edu.mit.jwi.item.Pointer;
+import edu.mit.jwi.item.Synset;
+import edu.mit.jwi.item.WordID;
 
 public class TestWordNetImporter extends AbstractSpringTask {
 	
@@ -50,18 +62,20 @@ public class TestWordNetImporter extends AbstractSpringTask {
 	int skip = 0;
 	int rows = Integer.MAX_VALUE;
 	private boolean updateLocally;
+	private boolean updateBaseInfo;
+	private boolean updateRelations;
 	
 	@Before
 	public void before() {
 		//words.add("cat");
-		//words.add("dog");
-		skip = 1900;
-		//rows = 10;
+		words.add("frank");
+		//skip = 9755;
+		//rows = 20;
 		//words.add("'s Gravenhage".toLowerCase());
-		updateLocally = !true;
+		updateRelations = true;
 		
-		category = POS.VERB;
-		categoryCode = LexicalCategory.CODE_VERBUM;
+		category = POS.NOUN;
+		categoryCode = LexicalCategory.CODE_NOMEN;
 		
 		//words.add("java");
 	}
@@ -87,6 +101,8 @@ public class TestWordNetImporter extends AbstractSpringTask {
 			wordIterator.next();
 			num++;
 		}
+		List<WordModification> wordModifications = Lists.newArrayList();
+		//List<WordRelationModification> relationModifications = Lists.newArrayList();
 		for (;wordIterator.hasNext() && rows>0; rows--) {
 			num++;
 			
@@ -107,37 +123,116 @@ public class TestWordNetImporter extends AbstractSpringTask {
 				print("· · Glossary: " + word.getSynset().getGloss());
 				print("· · ID: " + wordID);
 				
-				WordModification mod = new WordModification();
-				mod.source = "http://wordnet.princeton.edu";
-				mod.sourceId = wordID.toString(); // TODO
-				mod.text = getText(word.getLemma());
-				mod.language = Language.ENGLISH;
-				mod.lexicalCategory = categoryCode;
-				mod.glossary = word.getSynset().getGloss();
-				if (updateLocally) {
-					wordService.updateWord(mod,privileged);
-					modelService.commit();
-				} else {
-					callServer(mod);
+				if (updateBaseInfo) {
+					WordModification mod = new WordModification();
+					mod.source = "http://wordnet.princeton.edu";
+					mod.sourceId = wordID.toString(); // TODO
+					mod.text = getText(word.getLemma());
+					mod.language = Language.ENGLISH;
+					mod.lexicalCategory = categoryCode;
+					mod.glossary = word.getSynset().getGloss();
+					if (updateLocally) {
+						wordService.updateWord(mod,privileged);
+						modelService.commit();
+					} else {
+						wordModifications.add(mod);
+						if (wordModifications.size()>=10) {
+							boolean success = callServer(wordModifications);
+							while (!success) {
+								print("Server failed, trying again...");
+								Thread.sleep(1000 * 5);
+								success = callServer(wordModifications);
+							}
+							wordModifications.clear();
+						}
+					}
+				}
+				if (updateRelations) {
+					List<IWord> wordsFromSameSynset = word.getSynset().getWords();
+					for (IWord wordFromSynset : wordsFromSameSynset) {
+						print("· · Synonym: " + getText(wordFromSynset.getLemma()));
+						
+						WordRelationModification modification = WordRelationModification.create(getSourceId(word.getID()),Relation.KIND_SEMANTICS_SYNONYMOUS,getSourceId(wordFromSynset.getID()));
+						update(modification);
+						modelService.commit();
+					}
+					Collection<Pointer> pointers = Pointer.values();
+					for (Pointer pointer : pointers) {
+						List<IWordID> hypernyms = word.getRelatedWords(pointer);
+						for (IWordID hypernymId : hypernyms) {
+							IWord hypernym = dict.getWord(hypernymId);
+							print("· · " + pointer.getName() + ": " + getText(hypernym.getLemma()));
+						}
+						
+					}
+					for (Pointer pointer : pointers) {
+						List<ISynsetID> relatedSynsets = word.getSynset().getRelatedSynsets(pointer);
+						for (ISynsetID relatedSynsetId : relatedSynsets) {
+							ISynset relatedSynset = dict.getSynset(relatedSynsetId);
+							String wds = relatedSynset.getWords().stream().map((a) -> getText(a.getLemma())).reduce("", (a,b) -> {return a.length()>0 ? a + "," + b : b;});
+							print("· · " + pointer.getName() + ": " + wds);
+						}
+						
+					}
 				}
 			}
 		}
+		if (updateBaseInfo) {
+			if (!updateLocally && !wordModifications.isEmpty()) {
+				callServer(wordModifications);
+			}
+		}
+	}
+	
+    private String getSourceId(IWordID wordID) {
+    	StringBuilder sb = new StringBuilder();
+    	sb.append(WordID.wordIDPrefix);
+    	sb.append(Synset.zeroFillOffset(wordID.getSynsetID().getOffset()));
+    	sb.append('-');
+    	sb.append(Character.toUpperCase(wordID.getPOS().getTag()));
+    	sb.append('-');
+    	sb.append(WordID.unknownWordNumber);
+        sb.append('-');
+        sb.append(wordID.getLemma());
+        return sb.toString();
+    }
+	
+	private void update(WordRelationModification modification) throws ModelException, SecurityException {
+		Privileged admin = securityService.getAdminPrivileged();
+		Word from = wordService.getWordBySourceId(modification.getFromSourceId(), admin);
+		if (from==null) {
+			return;
+		}
+		Word to = wordService.getWordBySourceId(modification.getToSourceId(), admin);
+		if (to==null) {
+			return;
+		}
+		String kind = modification.getRelationKind();
+		boolean bidirectional = Relation.KIND_SEMANTICS_SYNONYMOUS.equals(kind);
+		if (modelService.getRelation(from, to, kind)!=null) {
+			return;
+		}
+		if (bidirectional && modelService.getRelation(to, from, kind)!=null) {
+			return;
+		}
+		Relation relation = modelService.createRelation(from, to, kind, admin);
+		securityService.makePublicVisible(relation, admin);
 	}
 
 	private float percent(int total, int num) {
 		return Math.round(((float)num)/((float)total)*100*100)/(float)100;
 	}
 	
-	private void callServer(WordModification modification) {
+	private boolean callServer(List<WordModification> modification) {
 		String secret = getProperty("remoteApiSecret");
 		if (Strings.isBlank(secret)) {
 			log.error("No secret");
-			return;
+			return false;
 		}
 		String url = getProperty("remoteApiUrl");
 		if (Strings.isBlank(url)) {
 			log.error("No url");
-			return;
+			return false;
 		}
 		
 		if (!url.endsWith("/")) {
@@ -149,22 +244,25 @@ public class TestWordNetImporter extends AbstractSpringTask {
 		HttpUriRequest method = RequestBuilder.post()
                 .setUri(URI.create(url))
                 .addParameter("secret", secret)
-                .addParameter("modification", Strings.toJSON(modification))
+                .addParameter("modifications", Strings.toJSON(modification))
                 .build();
 		
 		CloseableHttpClient client = HttpClients.createDefault();
 		
-		log.info("Calling server:" + modification.text);
+		log.info("Calling server:" + modification.size());
 		try (CloseableHttpResponse response = client.execute(method)) {
 			int statusCode = response.getStatusLine().getStatusCode();
 			if (statusCode == 200) {
-				log.info("Success from server:" + modification.text);
+				log.info("Success from server:" + modification.size());
+				return true;
 			} else {
 				log.info("Failure from server: " + statusCode);
+				return false;
 			}
 		} catch (IOException e) {
 			log.error("Error calling server", e);
-		}
+			return false;
+			}
 	}
 
 	private void print(String msg) {
