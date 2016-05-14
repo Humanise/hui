@@ -87,10 +87,53 @@ hui.log = function(obj) {
 		else if (arguments.length==2) {
 			console.log(arguments[0],arguments[1]);
 		} else {
-			console.log(arguments);			
+			console.log(arguments);
 		}
 	}
 };
+
+hui._demanded = [];
+
+hui.define = function(name,obj) {
+  var demanded = hui._demanded;
+  for (var i = demanded.length - 1; i >= 0; i--) {
+    var d = demanded[i]
+    hui.array.remove(d.requirements,name);
+    if (d.requirements.length == 0) {
+      d.callback();
+      demanded.splice(i,1);
+    }
+  }
+}
+
+hui.demand = function() {
+  var names = arguments[0];
+  var callback = arguments[1];
+  var found = [];
+  for (var i = 0; i < names.length; i++) {
+    var vld = hui.evaluate(names[i]);
+    if (!vld) {
+      found = false;
+      break;
+    }
+    found[i] = vld;
+  }
+  if (found) {
+    callback(found);
+  } else {
+    hui.log('deferring: ' + names);
+    hui._demanded.push({requirements:names,callback:callback})
+  }
+}
+
+hui.evaluate = function(expression) {
+  var path = expression.split('.');
+  var cur = window;
+  for (var i = 0; i < path.length && cur!==undefined; i++) {
+    cur = cur[path[i]];
+  }
+  return cur;
+}
 
 /**
  * Defer a function so it will fire when the current "thread" is done
@@ -1547,7 +1590,7 @@ hui.stop = function(event) {
     event.stopped = true;
 };
 
-hui._defered = [];
+hui._ = hui._ || [];
 
 hui._ready = document.readyState == 'complete';// || document.readyState;
 // TODO Maybe interactive is too soon???
@@ -1556,16 +1599,7 @@ hui.onReady = function(func) {
 	if (hui._ready) {
 		func();
 	} else {
-		hui._defered.push(func);
-	}
-	if (hui._defered.length==1) {
-		hui._onReady(function() {
-  			hui._ready = true;
-			for (var i = 0; i < hui._defered.length; i++) {
-				hui._defered[i]();
-			}
-            hui._defered = null;
-		});
+		hui._.push(func);
 	}
 };
 
@@ -1631,7 +1665,6 @@ hui._onReady = function(delegate) {
 		}
 	}
 };
-
 
 
 
@@ -2513,11 +2546,18 @@ hui.location = {
 			}
 		}
 		return parsed;
-	}	
+	}
 };
-
 
 
 if (window.define) {
 	define('hui',hui);
 }
+
+hui._onReady(function() {
+	hui._ready = true;
+	for (var i = 0; i < hui._.length; i++) {
+		hui._[i]();
+	}
+  delete hui._;
+});
