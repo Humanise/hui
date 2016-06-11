@@ -54,7 +54,7 @@ hui.ui.Links.prototype = {
 				if (this.selectedIndex===row.hui_index) {
 					this.selectedIndex=null;
 				}
-				this.build();				
+				this.build();
 			}.bind(this)});
 		} else {
 			this.selectAndGetRow(e);
@@ -81,7 +81,7 @@ hui.ui.Links.prototype = {
 			item = this.items[i];
 			row = hui.build('div',{'class':'hui_links_row'});
 			row.hui_index = i;
-			
+
 			row.appendChild(hui.ui.createIcon(item.icon,16));
 			text = hui.build('div',{'class':'hui_links_text',text:item.text});
 			row.appendChild(text);
@@ -108,28 +108,28 @@ hui.ui.Links.prototype = {
 			var g = form.buildGroup({above:false},[
 				{label:'Tekst',type:'TextField',options:{key:'text'}}
 			]);
-			
-			var url = hui.ui.TextField.create({key:'url'});
+
+			var url = hui.ui.TextInput.create({key:'url'});
 			g.add(url,'URL');
 			this.inputs['url'] = url;
-			
-			var email = hui.ui.TextField.create({key:'email'});
+
+			var email = hui.ui.TextInput.create({key:'email'});
 			g.add(email,'E-mail');
 			this.inputs['email'] = email;
-			
+
 			page = hui.ui.DropDown.create({key:'page',source:this.options.pageSource});
 			g.add(page,'Side');
 			this.inputs['page'] = page;
-			
+
 			file = hui.ui.DropDown.create({key:'file',source:this.options.fileSource});
 			g.add(file,'Fil');
 			this.inputs['file'] = file;
-			
+
 			var self = this;
 			hui.each(this.inputs,function(key,value) {
 				value.listen({$valueChanged:function(){self.changeType(key)}});
 			});
-			
+
 			g.createButtons().add(hui.ui.Button.create({text:'Gem',submit:true,highlighted:true}));
 			this.editForm.listen({$submit:this.saveLink.bind(this)});
 			win.add(form);

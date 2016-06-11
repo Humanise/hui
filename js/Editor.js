@@ -214,13 +214,13 @@ hui.ui.Editor.prototype = {
 			var w = this.columnEditor = hui.ui.Window.create({name:'columnEditor',title:'Rediger kolonne',width:200});
 			var f = this.columnEditorForm = hui.ui.Formula.create();
 			var g = f.createGroup();
-			var width = hui.ui.TextField.create({label:'Bredde',key:'width'});
+			var width = hui.ui.TextInput.create({label:'Bredde',key:'width'});
 			width.listen({$valueChanged:function(v) {this.changeColumnWidth(v)}.bind(this)})
 			g.add(width);
-			var marginLeft = hui.ui.TextField.create({label:'Venstremargen',key:'left'});
+			var marginLeft = hui.ui.TextInput.create({label:'Venstremargen',key:'left'});
 			marginLeft.listen({$valueChanged:function(v) {this.changeColumnLeftMargin(v)}.bind(this)})
 			g.add(marginLeft);
-			var marginRight = hui.ui.TextField.create({label:'Højremargen',key:'right'});
+			var marginRight = hui.ui.TextInput.create({label:'Højremargen',key:'right'});
 			marginRight.listen({$valueChanged:this.changeColumnRightMargin.bind(this)})
 			g.add(marginRight);
 			w.add(f);
