@@ -14221,7 +14221,7 @@ hui.ui.Links.prototype = {
 				if (this.selectedIndex===row.hui_index) {
 					this.selectedIndex=null;
 				}
-				this.build();				
+				this.build();
 			}.bind(this)});
 		} else {
 			this.selectAndGetRow(e);
@@ -14248,7 +14248,7 @@ hui.ui.Links.prototype = {
 			item = this.items[i];
 			row = hui.build('div',{'class':'hui_links_row'});
 			row.hui_index = i;
-			
+
 			row.appendChild(hui.ui.createIcon(item.icon,16));
 			text = hui.build('div',{'class':'hui_links_text',text:item.text});
 			row.appendChild(text);
@@ -14275,28 +14275,28 @@ hui.ui.Links.prototype = {
 			var g = form.buildGroup({above:false},[
 				{label:'Tekst',type:'TextField',options:{key:'text'}}
 			]);
-			
-			var url = hui.ui.TextField.create({key:'url'});
+
+			var url = hui.ui.TextInput.create({key:'url'});
 			g.add(url,'URL');
 			this.inputs['url'] = url;
-			
-			var email = hui.ui.TextField.create({key:'email'});
+
+			var email = hui.ui.TextInput.create({key:'email'});
 			g.add(email,'E-mail');
 			this.inputs['email'] = email;
-			
+
 			page = hui.ui.DropDown.create({key:'page',source:this.options.pageSource});
 			g.add(page,'Side');
 			this.inputs['page'] = page;
-			
+
 			file = hui.ui.DropDown.create({key:'file',source:this.options.fileSource});
 			g.add(file,'Fil');
 			this.inputs['file'] = file;
-			
+
 			var self = this;
 			hui.each(this.inputs,function(key,value) {
 				value.listen({$valueChanged:function(){self.changeType(key)}});
 			});
-			
+
 			g.createButtons().add(hui.ui.Button.create({text:'Gem',submit:true,highlighted:true}));
 			this.editForm.listen({$submit:this.saveLink.bind(this)});
 			win.add(form);
@@ -16487,16 +16487,16 @@ hui.ui.NumberField.prototype = {
  * @constructor
  */
 hui.ui.TextField = function(options) {
-	this.options = hui.override({label:null,key:null,lines:1,maxHeight:100,animateUserChange:true},options);
-	this.element = hui.get(options.element);
-	this.name = options.name;
-	hui.ui.extend(this);
-	this.input = hui.get.firstByClass(this.element,'hui_formula_text');
-	this.multiline = this.input.tagName.toLowerCase() == 'textarea';
-	this.placeholder = hui.get.firstByClass(this.element,'hui_field_placeholder');
-	this.value = this.input.value;
+  this.options = hui.override({label:null,key:null,lines:1,maxHeight:100,animateUserChange:true},options);
+  this.element = hui.get(options.element);
+  this.name = options.name;
+  hui.ui.extend(this);
+  this.input = hui.get.firstByClass(this.element,'hui_formula_text');
+  this.multiline = this.input.tagName.toLowerCase() == 'textarea';
+  this.placeholder = hui.get.firstByClass(this.element,'hui_field_placeholder');
+  this.value = this.input.value;
     this.modified = false;
-	this._attach();
+  this._attach();
 }
 
 // TODO: Temporarily until TextField is renamed to TextInput
@@ -16519,206 +16519,211 @@ hui.ui.TextInput = hui.ui.TextField;
  * </pre>
  */
 hui.ui.TextField.create = function(options) {
-	options = hui.override({lines:1},options);
-	var node,input;
-	if (options.lines>1 || options.multiline) {
-		input = hui.build('textarea',
-			{'class':'hui_formula_text','rows':options.lines,style:'height: 32px;'}
-		);
-		node = hui.build('span',{'class':'hui_formula_text_multiline'});
-		node.appendChild(input);
-	} else {
-		input = hui.build('input',{'class':'hui_formula_text'});
-		if (options.secret) {
-			input.setAttribute('type','password');
-		}
-		node = hui.build('span',{'class':'hui_field_singleline'});
-		node.appendChild(input);
-	}
-	if (options.value!==undefined) {
-		input.value=options.value;
-	}
-	options.element = hui.ui.wrapInField(node);
-	return new hui.ui.TextField(options);
+  options = hui.override({lines:1},options);
+  var node,input;
+  if (options.lines>1 || options.multiline) {
+    input = hui.build('textarea',
+      {'class':'hui_formula_text','rows':options.lines,style:'height: 32px;'}
+    );
+    node = hui.build('span',{'class':'hui_formula_text_multiline'});
+    node.appendChild(input);
+  } else {
+    input = hui.build('input',{'class':'hui_formula_text'});
+    if (options.secret) {
+      input.setAttribute('type','password');
+    }
+    node = hui.build('span',{'class':'hui_field_singleline'});
+    node.appendChild(input);
+  }
+  if (options.value!==undefined) {
+    input.value=options.value;
+  }
+  options.element = hui.ui.wrapInField(node);
+  return new hui.ui.TextField(options);
 }
 
 hui.ui.TextField.prototype = {
-	_attach : function() {
-		if (this.placeholder) {
-			var self = this;
-			hui.ui.onReady(function() {
-				window.setTimeout(function() {
-					self.value = self.input.value;
-					self._updateClass();
-				}, 500);
-			});
-		}
-		hui.ui.addFocusClass({
-			element: this.input,
-			classElement: this.element,
-			'class': 'hui_field_focused',
-			widget: this
-		});
-		hui.listen(this.input, 'keyup', this._onKeyUp.bind(this));
-		hui.listen(this.input, 'keydown', this._onKeyDown.bind(this));
-		var p = this.element.getElementsByTagName('em')[0];
-		if (p) {
-			this._updateClass();
-			hui.listen(p, 'mousedown', function() {
-				window.setTimeout(function() {
-					this.input.focus();
-					this.input.select();
-				}.bind(this))
-			}.bind(this));
-			hui.listen(p, 'mouseup', function() {
-				this.input.focus();
-				this.input.select();
-			}.bind(this));
-		}
-	},
-	_updateClass : function() {
-		hui.cls.set(this.element,'hui_field_dirty',this.value.length>0);
-	},
-	_onKeyDown : function(e) {
-		if (!this.multiline && e.keyCode===hui.KEY_RETURN) {
-			hui.stop(e);
-			this.fire('submit');
-			var form = hui.ui.getAncestor(this,'hui_formula');
-			if (form) {form.submit();}
-			return;
-		}
-	},
-	_onKeyUp : function(e) {
-		if (this.input.value==this.value) {return;}
-		this.value=this.input.value;
-		this._updateClass();
-		this._expand(this.options.animateUserChange);
-		hui.ui.callAncestors(this,'childValueChanged',this.input.value);
-		this.fire('valueChanged',this.input.value);
-        this.modified = true;
-	},
-	/** Focus the text field */
-	focus : function() {
-		try {
-			this.input.focus();
-		} catch (e) {}
-	},
-	/** Select the text in the text field */
-	select : function() {
-		try {
-			this.input.focus();
-			this.input.select();
-		} catch (e) {}
-	},
-	/** Clear the value of the text field */
-	reset : function() {
-		this.setValue('');
-	},
-    isModified : function() {
-        return this.modified;
-    },
-	/** Draw attention to the field */
-	stress : function() {
-		hui.ui.stress(this);
-	},
-	/** Set the value of the field
-	 * @value {String} The value 
-	 */
-	setValue : function(value) {
-		if (value===undefined || value===null) {
-			value='';
-		}
-		this.value = value;
-		this.input.value = value;
-		this._expand(this.options.animateValueChange);
+  _attach : function() {
+    if (this.placeholder || this.input.type=='password') {
+      var self = this;
+      hui.ui.onReady(function() {
+        window.setTimeout(function() {
+          self.value = self.input.value;
+          console.log(self.value);
+          self._updateClass();
+        }, 500);
+      });
+    }
+    hui.ui.addFocusClass({
+      element: this.input,
+      classElement: this.element,
+      'class': 'hui_field_focused',
+      widget: this
+    });
+    hui.listen(this.input, 'keyup', this._onKeyUp.bind(this));
+    hui.listen(this.input, 'keydown', this._onKeyDown.bind(this));
+    hui.listen(this.input, 'change', this._onChange.bind(this));
+    var p = this.element.getElementsByTagName('em')[0];
+    if (p) {
+      this._updateClass();
+      hui.listen(p, 'mousedown', function() {
+        window.setTimeout(function() {
+          this.input.focus();
+          this.input.select();
+        }.bind(this))
+      }.bind(this));
+      hui.listen(p, 'mouseup', function() {
+        this.input.focus();
+        this.input.select();
+      }.bind(this));
+    }
+  },
+  _updateClass : function() {
+    hui.cls.set(this.element,'hui_field_dirty',this.value.length>0);
+  },
+  _onKeyDown : function(e) {
+    if (!this.multiline && e.keyCode===hui.KEY_RETURN) {
+      hui.stop(e);
+      this.fire('submit');
+      var form = hui.ui.getAncestor(this,'hui_formula');
+      if (form) {form.submit();}
+      return;
+    }
+  },
+  _onChange : function(e) {
+    this._onKeyUp(e);
+  },
+  _onKeyUp : function(e) {
+    if (this.input.value==this.value) {return;}
+    this.value=this.input.value;
+    this._updateClass();
+    this._expand(this.options.animateUserChange);
+    hui.ui.callAncestors(this,'childValueChanged',this.input.value);
+    this.fire('valueChanged',this.input.value);
+    this.modified = true;
+  },
+  /** Focus the text field */
+  focus : function() {
+    try {
+      this.input.focus();
+    } catch (e) {}
+  },
+  /** Select the text in the text field */
+  select : function() {
+    try {
+      this.input.focus();
+      this.input.select();
+    } catch (e) {}
+  },
+  /** Clear the value of the text field */
+  reset : function() {
+    this.setValue('');
+  },
+  isModified : function() {
+      return this.modified;
+  },
+  /** Draw attention to the field */
+  stress : function() {
+    hui.ui.stress(this);
+  },
+  /** Set the value of the field
+   * @value {String} The value
+   */
+  setValue : function(value) {
+    if (value===undefined || value===null) {
+      value='';
+    }
+    this.value = value;
+    this.input.value = value;
+    this._expand(this.options.animateValueChange);
         this.modified = false;
-	},
-	/** Get the value
-	 * @returns {String} The value
-	 */
-	getValue : function() {
-		return this.input.value;
-	},
-	getLabel : function() {
-		return this.options.label;
-	},
-	/** Check if the value is empty ('' / the empty string)
-	 * @returns {Boolean} True if the value the empty string 
-	 */
-	isEmpty : function() {
-		return this.input.value=='';
-	},
-	/** Check if the value has any non-white-space characters
-	 * @returns {Boolean} True if the value is blank
-	 */
-	isBlank : function() {
-		return hui.isBlank(this.input.value);
-	},
-	/** Mark the field with error
-	 * @value {String | Boolean} The error message or true to mark the field
-	 */
-	setError : function(error) {
-		var isError = error ? true : false;
-		hui.cls.set(this.element,'hui_field_error',isError);
-		if (typeof(error) == 'string') {
-			hui.ui.showToolTip({text:error,element:this.element,key:this.name});
-		}
-		if (!isError) {
-			hui.ui.hideToolTip({key:this.name});
-		}
-	},
-	
-	
-	// Expanding...
-	
-	/** @private */
-	$visibilityChanged : function() {
-		if (hui.dom.isVisible(this.element)) {
-			window.setTimeout(this._expand.bind(this));
-		}
-	},
-	_expand : function(animate) {
-		if (!this.multiline || !hui.dom.isVisible(this.element)) {
-			return
-		};
-		var textHeight = this._getTextAreaHeight(this.input);
-		textHeight = Math.max(32,textHeight);
-		textHeight = Math.min(textHeight,this.options.maxHeight);
-		if (animate) {
-			this._updateOverflow();
-			hui.animate(this.input,'height',textHeight+'px',300,{
+  },
+  /** Get the value
+   * @returns {String} The value
+   */
+  getValue : function() {
+    return this.input.value;
+  },
+  getLabel : function() {
+    return this.options.label;
+  },
+  /** Check if the value is empty ('' / the empty string)
+   * @returns {Boolean} True if the value the empty string
+   */
+  isEmpty : function() {
+    return this.input.value=='';
+  },
+  /** Check if the value has any non-white-space characters
+   * @returns {Boolean} True if the value is blank
+   */
+  isBlank : function() {
+    return hui.isBlank(this.input.value);
+  },
+  /** Mark the field with error
+   * @value {String | Boolean} The error message or true to mark the field
+   */
+  setError : function(error) {
+    var isError = error ? true : false;
+    hui.cls.set(this.element,'hui_field_error',isError);
+    if (typeof(error) == 'string') {
+      hui.ui.showToolTip({text:error,element:this.element,key:this.name});
+    }
+    if (!isError) {
+      hui.ui.hideToolTip({key:this.name});
+    }
+  },
+
+
+  // Expanding...
+
+  /** @private */
+  $visibilityChanged : function() {
+    if (hui.dom.isVisible(this.element)) {
+      window.setTimeout(this._expand.bind(this));
+    }
+  },
+  _expand : function(animate) {
+    if (!this.multiline || !hui.dom.isVisible(this.element)) {
+      return
+    };
+    var textHeight = this._getTextAreaHeight(this.input);
+    textHeight = Math.max(32,textHeight);
+    textHeight = Math.min(textHeight,this.options.maxHeight);
+    if (animate) {
+      this._updateOverflow();
+      hui.animate(this.input,'height',textHeight+'px',300,{
                 ease : hui.ease.slowFastSlow,
                 $complete : function() {
                     this._updateOverflow();
-				}.bind(this)
-			});
-		} else {
-			this.input.style.height = textHeight+'px';
-			this._updateOverflow();
-		}
-	},
-    _getTextAreaHeight : function(input) {
-    	var t = this.textAreaDummy;
-    	if (!t) {
-    		t = this.textAreaDummy = document.createElement('div');
-    		t.className='hui_textarea_dummy';
-    		document.body.appendChild(t);
-    	}
-    	var html = input.value;
-    	if (html[html.length-1]==='\n') {
-    		html+='x';
-    	}
-    	html = hui.string.escape(html).replace(/\n/g,'<br/>');
-    	t.innerHTML = html;
-    	t.style.width=(input.clientWidth)+'px';
-    	return t.clientHeight;
-    },
-	_updateOverflow : function() {
-		if (!this.multiline) {
-			return;
-		}
-		this.input.style.overflowY = this.input.clientHeight >= this.options.maxHeight ? 'auto' : 'hidden';
-	}
+        }.bind(this)
+      });
+    } else {
+      this.input.style.height = textHeight+'px';
+      this._updateOverflow();
+    }
+  },
+  _getTextAreaHeight : function(input) {
+    var t = this.textAreaDummy;
+    if (!t) {
+      t = this.textAreaDummy = document.createElement('div');
+      t.className='hui_textarea_dummy';
+      document.body.appendChild(t);
+    }
+    var html = input.value;
+    if (html[html.length-1]==='\n') {
+      html+='x';
+    }
+    html = hui.string.escape(html).replace(/\n/g,'<br/>');
+    t.innerHTML = html;
+    t.style.width=(input.clientWidth)+'px';
+    return t.clientHeight;
+  },
+  _updateOverflow : function() {
+    if (!this.multiline) {
+      return;
+    }
+    this.input.style.overflowY = this.input.clientHeight >= this.options.maxHeight ? 'auto' : 'hidden';
+  }
 }
 
 /** @constructor */
@@ -20942,24 +20947,8 @@ hui.ui.Drawing.prototype = {
 }
 
 hui.ui.Drawing._build = function(options) {
-	if (false && (hui.browser.msie8 || hui.browser.msie7 || hui.browser.msie6)) {
-		var line = document.createElement("v:line");
-		line.setAttribute('from','0 0');
-		line.setAttribute('to','100 100');
-		line.setAttribute("fillcolor","#FF0000");
-		line.setAttribute("strokeweight","2pt");
-		return line;
-			
-		var frag = document.createDocumentFragment();
-		frag.insertAdjacentHTML('beforeEnd',
-			'<v:rect id="myRect" fillcolor="blue" style="top:10px;left:15px;width:50px;height:30px;position:absolute;"></biv:rect>'
-		);
-		document.body.appendChild(frag);
-		return document.getElementById('myRect');
-	} else {
-		var node = document.createElementNS('http://www.w3.org/2000/svg',options.tag);
-	}
-	if (options.attributes) {
+	var node = document.createElementNS('http://www.w3.org/2000/svg',options.tag);
+  if (options.attributes) {
 		for (var att in options.attributes) {
 			node.setAttribute(att,options.attributes[att]);
 		}
@@ -20969,11 +20958,6 @@ hui.ui.Drawing._build = function(options) {
 	}
 	return node;
 }
-
-if (hui.browser.msie8) {
-	document.namespaces.add('v', 'urn:schemas-microsoft-com:vml', "#default#VML");
-}
-
 
 
 // Line
@@ -21538,13 +21522,13 @@ hui.ui.Editor.prototype = {
 			var w = this.columnEditor = hui.ui.Window.create({name:'columnEditor',title:'Rediger kolonne',width:200});
 			var f = this.columnEditorForm = hui.ui.Formula.create();
 			var g = f.createGroup();
-			var width = hui.ui.TextField.create({label:'Bredde',key:'width'});
+			var width = hui.ui.TextInput.create({label:'Bredde',key:'width'});
 			width.listen({$valueChanged:function(v) {this.changeColumnWidth(v)}.bind(this)})
 			g.add(width);
-			var marginLeft = hui.ui.TextField.create({label:'Venstremargen',key:'left'});
+			var marginLeft = hui.ui.TextInput.create({label:'Venstremargen',key:'left'});
 			marginLeft.listen({$valueChanged:function(v) {this.changeColumnLeftMargin(v)}.bind(this)})
 			g.add(marginLeft);
-			var marginRight = hui.ui.TextField.create({label:'Højremargen',key:'right'});
+			var marginRight = hui.ui.TextInput.create({label:'Højremargen',key:'right'});
 			marginRight.listen({$valueChanged:this.changeColumnRightMargin.bind(this)})
 			g.add(marginRight);
 			w.add(f);
