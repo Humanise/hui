@@ -78,24 +78,8 @@ hui.ui.Drawing.prototype = {
 }
 
 hui.ui.Drawing._build = function(options) {
-	if (false && (hui.browser.msie8 || hui.browser.msie7 || hui.browser.msie6)) {
-		var line = document.createElement("v:line");
-		line.setAttribute('from','0 0');
-		line.setAttribute('to','100 100');
-		line.setAttribute("fillcolor","#FF0000");
-		line.setAttribute("strokeweight","2pt");
-		return line;
-			
-		var frag = document.createDocumentFragment();
-		frag.insertAdjacentHTML('beforeEnd',
-			'<v:rect id="myRect" fillcolor="blue" style="top:10px;left:15px;width:50px;height:30px;position:absolute;"></biv:rect>'
-		);
-		document.body.appendChild(frag);
-		return document.getElementById('myRect');
-	} else {
-		var node = document.createElementNS('http://www.w3.org/2000/svg',options.tag);
-	}
-	if (options.attributes) {
+	var node = document.createElementNS('http://www.w3.org/2000/svg',options.tag);
+  if (options.attributes) {
 		for (var att in options.attributes) {
 			node.setAttribute(att,options.attributes[att]);
 		}
@@ -105,11 +89,6 @@ hui.ui.Drawing._build = function(options) {
 	}
 	return node;
 }
-
-if (hui.browser.msie8) {
-	document.namespaces.add('v', 'urn:schemas-microsoft-com:vml', "#default#VML");
-}
-
 
 
 // Line
