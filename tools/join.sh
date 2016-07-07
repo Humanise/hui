@@ -7,7 +7,7 @@ import sys
 
 pathname = os.path.dirname(sys.argv[0])
 base = os.path.abspath(pathname)+'/..'
-    
+
 def joinStyle(files,more='') :
     destination = codecs.open(base+'/bin/joined'+more+'.css', mode='w')
     dev = codecs.open(base+'/bin/development'+more+'.css', mode='w')
@@ -20,7 +20,7 @@ def joinStyle(files,more='') :
         destination.write(file.read())
         destination.write('\n\n')
         file.close();
-    
+
     destination.close();
     dev.close();
 
@@ -37,7 +37,7 @@ def joinScript(files,more='') :
         destination.write(file.read())
         destination.write('\n\n')
         file.close();
-    
+
     destination.close();
     dev.close();
 
@@ -221,7 +221,7 @@ print('Joining all JavaScript')
 allFiles = [];
 for file in jsFiles :
     allFiles.append(file)
-    
+
 files = os.listdir(base+'/js')
 
 for file in files :
@@ -230,7 +230,7 @@ for file in files :
         if not path in allFiles :
             allFiles.append(path)
             print('- '+path)
-    
+
 files = os.listdir(base+'/ext')
 
 for file in files :
