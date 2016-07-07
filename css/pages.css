@@ -1,13 +1,9 @@
-div.hui_pages
-{
-}
-
-div.hui_pages_full
+.hui_pages_full
 {
 	height: 100%;
 }
 
-div.hui_pages_full div.hui_pages_page
+.hui_pages_full .hui_pages_page
 {
 	height: 100%;
 	overflow: hidden;

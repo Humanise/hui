@@ -3,7 +3,7 @@
  * @constructor
  */
 hui.ui.CodeInput = function(options) {
-  this.options = hui.override({},options);  
+  this.options = hui.override({},options);
   this.name = options.name;
   var e = this.element = hui.get(options.element);
   this.textarea = hui.get.firstByTag(e,'textarea');
@@ -17,10 +17,10 @@ hui.ui.CodeInput = function(options) {
 
 hui.ui.CodeInput.create = function(options) {
   options = options || {};
-  options.element = hui.build('div',{className:'hui_codeinput',html:'<textarea spellcheck="false"></textarea>'});
-    if (options.height) {
-        hui.get.firstByTag(options.element,'textarea').style.height = hui.style.length(options.height);
-    }
+  options.element = hui.build('div',{className:'hui_codeinput',html:'<textarea class="hui_codeinput_input" spellcheck="false"></textarea>'});
+  if (options.height) {
+    options.element.style.height = hui.style.length(options.height);
+  }
   return new hui.ui.CodeInput(options);
 };
 
@@ -29,7 +29,7 @@ hui.ui.CodeInput.prototype = {
     hui.listen(this.textarea,'keydown',this._onKeyDown.bind(this));
     hui.listen(this.textarea,'keyup',this._onKeyUp.bind(this));
   },
-  
+
   getValue : function() {
     return this.textarea.value;
   },
@@ -53,7 +53,7 @@ hui.ui.CodeInput.prototype = {
       this.fireValueChange();
     }
   },
-  
+
   _onKeyDown: function(evt) {
     var tab = String.fromCharCode(9);
     var e = window.event || evt;
@@ -65,7 +65,7 @@ hui.ui.CodeInput.prototype = {
         e.preventDefault();
         var ss = t.selectionStart;
         var se = t.selectionEnd;
-        // Multi line selection 
+        // Multi line selection
         if (ss != se && t.value.slice(ss, se).indexOf("\n") != -1) {
           if (ss > 0) {
             ss = t.value.slice(0, ss).lastIndexOf("\n") + 1;
@@ -92,7 +92,7 @@ hui.ui.CodeInput.prototype = {
             t.selectionEnd = se + (tab.length * sel.split("\n").length);
           }
         }
-        // Single line selection 
+        // Single line selection
         else {
           if (e.shiftKey) {
             var brt = t.value.slice(0, ss);
@@ -118,7 +118,7 @@ hui.ui.CodeInput.prototype = {
         var br = document.body.createTextRange();
         br.moveToElementText(t);
         br.setEndPoint("EndToStart", r);
-        //Single line selection 
+        //Single line selection
         if (r.text.length == 0 || r.text.indexOf("\n") == -1) {
           if (e.shiftKey) {
             var ch = br.text.slice(br.text.length - 1, br.text.length);
@@ -138,7 +138,7 @@ hui.ui.CodeInput.prototype = {
           nr.setEndPoint("EndToEnd", r);
           nr.select();
         }
-        //Multi line selection 
+        //Multi line selection
         else {
           if (e.shiftKey) {
             var a = r.text.split("\r\n")
