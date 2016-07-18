@@ -19,9 +19,9 @@ hui.ui = {
 	latestTopIndex : 2000,
 	toolTips : {},
 	confirmOverlays : {},
-	
+
 	delayedUntilReady : [],
-	
+
 	texts : {
 		request_error : {en:'An error occurred on the server',da:'Der skete en fejl på serveren'},
 		'continue' : {en:'Continue',da:'Fortsæt'},
@@ -72,7 +72,7 @@ hui.ui._resize = function() {
 
 hui.ui._afterResize = function() {
   hui.onDraw(function() {
-  	hui.ui.callSuperDelegates(hui.ui,'$afterResize');    
+    hui.ui.callSuperDelegates(hui.ui,'$afterResize');
   })
 };
 
@@ -136,7 +136,7 @@ hui.ui.confirmOverlay = function(options) {
 
 /**
  * Unregisters a widget
- * @param widget {Widget} The widget to destroy 
+ * @param widget {Widget} The widget to destroy
  */
 hui.ui.destroy = function(widget) {
   if (typeof(widget.destroy)=='function') {
@@ -226,7 +226,7 @@ hui.ui.changeState = function(state) {
 		}
 	}
 	hui.ui.state=state;
-	
+
 	this.reLayout();
 };
 
@@ -246,22 +246,22 @@ hui.ui.reLayout = function() {
 
 hui.ui.nextIndex = function() {
 	hui.ui.latestIndex++;
-	return 	hui.ui.latestIndex;
+	return hui.ui.latestIndex;
 };
 
 hui.ui.nextPanelIndex = function() {
 	hui.ui.latestPanelIndex++;
-	return 	hui.ui.latestPanelIndex;
+	return hui.ui.latestPanelIndex;
 };
 
 hui.ui.nextAlertIndex = function() {
 	hui.ui.latestAlertIndex++;
-	return 	hui.ui.latestAlertIndex;
+	return hui.ui.latestAlertIndex;
 };
 
 hui.ui.nextTopIndex = function() {
 	hui.ui.latestTopIndex++;
-	return 	hui.ui.latestTopIndex;
+	return hui.ui.latestTopIndex;
 };
 
 
@@ -276,7 +276,7 @@ hui.ui.showCurtain = function(options) {
 	var widget = options.widget;
 	if (!widget.curtain) {
 		widget.curtain = hui.build('div',{'class':'hui_curtain',style:'z-index:none'});
-		
+
 		var body = hui.get.firstByClass(document.body,'hui_body');
 		if (!body) {
 			body=document.body;
@@ -314,7 +314,7 @@ hui.ui.showCurtain = function(options) {
 	}
 	curtain.style.zIndex=options.zIndex;
 	if (options.transparent) {
-		curtain.style.display='block';		
+		curtain.style.display='block';
 	} else {
 		hui.style.setOpacity(curtain,0);
 		curtain.style.display='block';
@@ -383,7 +383,7 @@ hui.ui.confirm = function(options) {
 			hui.ui.callDelegates(alert,'cancel');
 		}});
 		alert.addButton(cancel);
-	
+
 		ok = hui.ui.Button.create({name:name+'_ok',text : options.ok || 'OK',highlighted:options.highlighted==='ok'});
 		alert.addButton(ok);
 	} else {
@@ -705,7 +705,7 @@ hui.ui.registerComponent = function(component) {
 	if (hui.ui.objects[component.name]) {
 		hui.log('Widget replaced: '+component.name,hui.ui.objects[component.name]);
 	}
-	hui.ui.objects[component.name] = component;  
+	hui.ui.objects[component.name] = component;
 };
 
 /** Send a message to all ancestors of a widget */
