@@ -4946,9 +4946,9 @@ hui.ui = {
 	latestTopIndex : 2000,
 	toolTips : {},
 	confirmOverlays : {},
-	
+
 	delayedUntilReady : [],
-	
+
 	texts : {
 		request_error : {en:'An error occurred on the server',da:'Der skete en fejl på serveren'},
 		'continue' : {en:'Continue',da:'Fortsæt'},
@@ -4971,6 +4971,9 @@ hui.ui.get = function(nameOrComponent) {
 	}
 };
 
+hui.ui.is = function(component, constructor) {
+  return component.__proto__ == constructor.prototype;
+}
 
 /**
  * Called when the DOM is ready and hui.ui is ready
@@ -4999,7 +5002,7 @@ hui.ui._resize = function() {
 
 hui.ui._afterResize = function() {
   hui.onDraw(function() {
-  	hui.ui.callSuperDelegates(hui.ui,'$afterResize');    
+    hui.ui.callSuperDelegates(hui.ui,'$afterResize');
   })
 };
 
@@ -5063,7 +5066,7 @@ hui.ui.confirmOverlay = function(options) {
 
 /**
  * Unregisters a widget
- * @param widget {Widget} The widget to destroy 
+ * @param widget {Widget} The widget to destroy
  */
 hui.ui.destroy = function(widget) {
   if (typeof(widget.destroy)=='function') {
@@ -5136,6 +5139,16 @@ hui.ui.getAncestor = function(widget,cls) {
 	return null;
 };
 
+hui.ui.getComponents = function(predicate) {
+  var comps = [];
+  var o = hui.ui.objects;
+	for (var key in o) {
+    if (predicate(o[key])) {
+      comps.push(o[key]);
+    }
+  }
+  return comps;
+}
 
 
 hui.ui.changeState = function(state) {
@@ -5153,7 +5166,7 @@ hui.ui.changeState = function(state) {
 		}
 	}
 	hui.ui.state=state;
-	
+
 	this.reLayout();
 };
 
@@ -5173,22 +5186,22 @@ hui.ui.reLayout = function() {
 
 hui.ui.nextIndex = function() {
 	hui.ui.latestIndex++;
-	return 	hui.ui.latestIndex;
+	return hui.ui.latestIndex;
 };
 
 hui.ui.nextPanelIndex = function() {
 	hui.ui.latestPanelIndex++;
-	return 	hui.ui.latestPanelIndex;
+	return hui.ui.latestPanelIndex;
 };
 
 hui.ui.nextAlertIndex = function() {
 	hui.ui.latestAlertIndex++;
-	return 	hui.ui.latestAlertIndex;
+	return hui.ui.latestAlertIndex;
 };
 
 hui.ui.nextTopIndex = function() {
 	hui.ui.latestTopIndex++;
-	return 	hui.ui.latestTopIndex;
+	return hui.ui.latestTopIndex;
 };
 
 
@@ -5203,7 +5216,7 @@ hui.ui.showCurtain = function(options) {
 	var widget = options.widget;
 	if (!widget.curtain) {
 		widget.curtain = hui.build('div',{'class':'hui_curtain',style:'z-index:none'});
-		
+
 		var body = hui.get.firstByClass(document.body,'hui_body');
 		if (!body) {
 			body=document.body;
@@ -5241,7 +5254,7 @@ hui.ui.showCurtain = function(options) {
 	}
 	curtain.style.zIndex=options.zIndex;
 	if (options.transparent) {
-		curtain.style.display='block';		
+		curtain.style.display='block';
 	} else {
 		hui.style.setOpacity(curtain,0);
 		curtain.style.display='block';
@@ -5310,7 +5323,7 @@ hui.ui.confirm = function(options) {
 			hui.ui.callDelegates(alert,'cancel');
 		}});
 		alert.addButton(cancel);
-	
+
 		ok = hui.ui.Button.create({name:name+'_ok',text : options.ok || 'OK',highlighted:options.highlighted==='ok'});
 		alert.addButton(ok);
 	} else {
@@ -5632,7 +5645,7 @@ hui.ui.registerComponent = function(component) {
 	if (hui.ui.objects[component.name]) {
 		hui.log('Widget replaced: '+component.name,hui.ui.objects[component.name]);
 	}
-	hui.ui.objects[component.name] = component;  
+	hui.ui.objects[component.name] = component;
 };
 
 /** Send a message to all ancestors of a widget */
@@ -6003,7 +6016,7 @@ hui.ui.Component = function(options) {
 	this.element = hui.get(options.element);
   this.delegates = [];
   if (this.nodes) {
-  	this.nodes = hui.collect(this.nodes,this.element);
+    this.nodes = hui.collect(this.nodes,this.element);
   }
   if (options.listen) {
     this.listen(options.listen);
@@ -6020,7 +6033,7 @@ hui.ui.Component.prototype = {
     this.delegates.push(listener);
   },
   fire : function(name,value,event) {
-  		return hui.ui.callDelegates(this,name,value,event);
+    return hui.ui.callDelegates(this,name,value,event);
   },
   /**
    * Get the components root element
@@ -6416,10 +6429,11 @@ hui.ui.Window.prototype = {
 			hui.listen(this.close,'mousedown',function(e) {hui.stop(e)});
 		}
 		hui.drag.register({
+      touch: true,
 			element : this.titlebar,
 			onStart : this._onDragStart.bind(this) ,
 			onBeforeMove : this._onBeforeMove.bind(this) ,
- 			onMove : this._onMove.bind(this),
+      onMove : this._onMove.bind(this),
 			onAfterMove : this._onAfterMove.bind(this)
 		});
 		hui.listen(this.element,'mousedown',function() {
@@ -6460,7 +6474,7 @@ hui.ui.Window.prototype = {
 			}
 			if (!this.element.style.left) {
 				this.element.style.left = Math.round((hui.window.getViewWidth()-width)/2)+'px';
-			}			
+			}
 		}
 		if (hui.browser.opacity) {
 			hui.animate(this.element,'opacity',1,0);
@@ -6531,7 +6545,7 @@ hui.ui.Window.prototype = {
 			curtain.style.display = '';
 		}.bind(this),300);
 	},
-	
+
 	move : function(point) {
 		hui.style.set(this.element,{top:point.top+'px',left:point.left+'px'});
 	},
@@ -8472,19 +8486,19 @@ hui.ui.Alert.prototype = {
  * @constructor
  */
 hui.ui.Button = function(options) {
-	this.options = options;
-	this.name = options.name;
-	this.element = hui.get(options.element);
-	this.enabled = !hui.cls.has(this.element,'hui_button_disabled');
-	hui.ui.extend(this);
-	this._attach();
+  this.options = options;
+  this.name = options.name;
+  this.element = hui.get(options.element);
+  this.enabled = !hui.cls.has(this.element,'hui_button_disabled');
+  hui.ui.extend(this);
+  this._attach();
   // TODO: Deprecated!
-	if (options.listener) {
-		this.listen(options.listener);
-	}
-	if (options.listen) {
-		this.listen(options.listen);
-	}
+  if (options.listener) {
+    this.listen(options.listener);
+  }
+  if (options.listen) {
+    this.listen(options.listen);
+  }
 };
 
 /**
@@ -8506,172 +8520,179 @@ hui.ui.Button = function(options) {
  * </pre>
  */
 hui.ui.Button.create = function(options) {
-	options = hui.override({text:'',highlighted:false,enabled:true},options);
-	var className = 'hui_button'+(options.highlighted ? ' hui_button_highlighted' : '');
-	if (options.variant) {
-		className+=' hui_button_'+options.variant;
-	}
-	if (options.small && options.variant) {
-		className+=' hui_button_small_'+options.variant;
-	}
-	if (options.small) {
-		className+=' hui_button_small'+(options.highlighted ? ' hui_button_small_highlighted' : '');
-	}
-	if (!options.enabled) {
-		className+=' hui_button_disabled';
-	}
-	var text = options.text ? hui.ui.getTranslated(options.text) : null;
-	if (options.title) { // Deprecated
-		text = hui.ui.getTranslated(options.title);
-	}
-	var element = options.element = hui.build('a',{'class':className,href:'javascript://'});
-	var inner = hui.build('span',{parent:hui.build('span',{parent:element})});
-	if (options.icon) {
-		var icon = hui.build('em',{parent:inner,'class':'hui_button_icon',style:'background-image:url('+hui.ui.getIconUrl(options.icon,16)+')'});
-		if (!text) {
-			hui.cls.add(icon,'hui_button_icon_notext');
-		}
-	}
-	if (text) {
-		hui.dom.addText(inner,text);
-	}
-	return new hui.ui.Button(options);
+  options = hui.override({text:'',highlighted:false,enabled:true},options);
+  var className = 'hui_button'+(options.highlighted ? ' hui_button_highlighted' : '');
+  if (options.variant) {
+    className+=' hui_button_'+options.variant;
+  }
+  if (options.small && options.variant) {
+    className+=' hui_button_small_'+options.variant;
+  }
+  if (options.small) {
+    className+=' hui_button_small'+(options.highlighted ? ' hui_button_small_highlighted' : '');
+  }
+  if (!options.enabled) {
+    className+=' hui_button_disabled';
+  }
+  var text = options.text ? hui.ui.getTranslated(options.text) : null;
+  if (options.title) { // Deprecated
+    text = hui.ui.getTranslated(options.title);
+  }
+  var element = options.element = hui.build('a',{'class':className,href:'javascript://'});
+  var inner = hui.build('span',{parent:hui.build('span',{parent:element})});
+  if (options.icon) {
+    var icon = hui.build('em',{parent:inner,'class':'hui_button_icon',style:'background-image:url('+hui.ui.getIconUrl(options.icon,16)+')'});
+    if (!text) {
+      hui.cls.add(icon,'hui_button_icon_notext');
+    }
+  }
+  if (text) {
+    hui.dom.addText(inner,text);
+  }
+  return new hui.ui.Button(options);
 };
 
 hui.ui.Button.prototype = {
-	_attach : function() {
-		var self = this;
-		hui.listen(this.element,'mousedown',function(e) {
-			hui.stop(e);
-		});
-		hui.listen(this.element,'click',function(e) {
-			hui.stop(e);
-			self._onClick(e);
-		});
-	},
-	_onClick : function(e) {
-		if (this.enabled) {
-			var alt = false;
-			if (e) {
-				alt = hui.event(e).altKey;
-			}
-			if (this.options.confirm && !alt) {
-				hui.ui.confirmOverlay({
-					widget : this,
-					text : this.options.confirm.text,
-					okText : this.options.confirm.okText,
-					cancelText : this.options.confirm.cancelText,
-					onOk : this._fireClick.bind(this)
-				});
-			} else {
-				this._fireClick();
-			}
-		} else {
-			this.element.blur();
-		}
-	},
-	_fireClick : function() {
-		this.fire('click',this);
-		if (this.options.submit) {
-			var form = hui.ui.getAncestor(this,'hui_formula');
-			if (form) {
-				form.submit();
-			} else {
-				hui.log('No form found to submit');
-			}
-		}
-	},
-	/** Registers a function as a click listener or issues a click
-	 * @param func? {Function} The function to run when clicked, leave out to issue a click
-	 */
-	click : function(func) {
-		if (func) {
-			this.listen({$click:func});
-			return this;
-		} else {
-			this._onClick();
-		}
-	},
-	/** Focus the button */
-	focus : function() {
-		this.element.focus();
-	},
-	/** Registers a function as a click handler
-	 * @param func {Function} The fundtion to invoke when clicked click
-	 */
-	onClick : function(func) {
-		this.listen({$click:func});
-	},
-	/** Enables or disables the button
-	 * @param enabled {Boolean} If the button should be enabled
-	 */
-	setEnabled : function(enabled) {
-		this.enabled = enabled;
-		this._updateUI();
-	},
-	/** Enables the button */
-	enable : function() {
-		this.setEnabled(true);
-	},
-	/** Disables the button */
-	disable : function() {
-		this.setEnabled(false);
-	},
-	/** Sets whether the button is highlighted
-	 * @param highlighted {Boolean} If the button should be highlighted
-	 */
-	setHighlighted : function(highlighted) {
-		hui.cls.set(this.element,'hui_button_highlighted',highlighted);
-	},
-	_updateUI : function() {
-		hui.cls.set(this.element,'hui_button_disabled',!this.enabled);
-	},
-	/** Sets the button text
-	 * @param
-	 */
-	setText : function(text) {
-		hui.dom.setText(this.element.getElementsByTagName('span')[1], hui.ui.getTranslated(text));
-	},
-	/**
-	 * Get the data object for the button
-	 * @returns {Object} The data object
-	 */
-	getData : function() {
-		return this.options.data;
-	}
+  _attach : function() {
+    var self = this;
+    hui.listen(this.element,'mousedown',function(e) {
+      hui.stop(e);
+    });
+    hui.listen(this.element,'click',function(e) {
+      hui.stop(e);
+      self._onClick(e);
+    });
+  },
+  _onClick : function(e) {
+    if (this.enabled) {
+      var alt = false;
+      if (e) {
+        alt = hui.event(e).altKey;
+      }
+      if (this.options.confirm && !alt) {
+        hui.ui.confirmOverlay({
+          widget : this,
+          text : this.options.confirm.text,
+          okText : this.options.confirm.okText,
+          cancelText : this.options.confirm.cancelText,
+          onOk : this._fireClick.bind(this)
+        });
+      } else {
+        this._fireClick();
+      }
+    } else {
+      this.element.blur();
+    }
+  },
+  _fireClick : function() {
+    this.fire('click',this);
+    if (this.options.submit) {
+      var form = hui.ui.getAncestor(this,'hui_formula');
+      if (form) {
+        form.submit();
+      } else {
+        hui.log('No form found to submit');
+      }
+    }
+  },
+  /** Registers a function as a click listener or issues a click
+   * @param func? {Function} The function to run when clicked, leave out to issue a click
+   */
+  click : function(func) {
+    if (func) {
+      this.listen({$click:func});
+      return this;
+    } else {
+      this._onClick();
+    }
+  },
+  /** Focus the button */
+  focus : function() {
+    this.element.focus();
+  },
+  /** Registers a function as a click handler
+   * @param func {Function} The fundtion to invoke when clicked click
+   */
+  onClick : function(func) {
+    this.listen({$click:func});
+  },
+  /** Enables or disables the button
+   * @param enabled {Boolean} If the button should be enabled
+   */
+  setEnabled : function(enabled) {
+    this.enabled = enabled;
+    this._updateUI();
+  },
+  /** Enables the button */
+  enable : function() {
+    this.setEnabled(true);
+  },
+  /** Disables the button */
+  disable : function() {
+    this.setEnabled(false);
+  },
+  /** Sets whether the button is highlighted
+   * @param highlighted {Boolean} If the button should be highlighted
+   */
+  setHighlighted : function(highlighted) {
+    hui.cls.set(this.element,'hui_button_highlighted',highlighted);
+  },
+  _updateUI : function() {
+    hui.cls.set(this.element,'hui_button_disabled',!this.enabled);
+  },
+  /** Sets the button text
+   * @param
+   */
+  setText : function(text) {
+    hui.dom.setText(this.element.getElementsByTagName('span')[1], hui.ui.getTranslated(text));
+  },
+  /**
+   * Get the data object for the button
+   * @returns {Object} The data object
+   */
+  getData : function() {
+    return this.options.data;
+  },
+  /**
+   * Get the role of the button
+   * @returns {String} The role
+   */
+  getRole : function() {
+    return this.options.role;
+  }
 };
 
 ////////////////////////////////// Buttons /////////////////////////////
 
 /** @constructor */
 hui.ui.Buttons = function(options) {
-	this.name = options.name;
-	this.element = hui.get(options.element);
-	this.body = hui.get.firstByClass(this.element,'hui_buttons_body');
-	hui.ui.extend(this);
+  this.name = options.name;
+  this.element = hui.get(options.element);
+  this.body = hui.get.firstByClass(this.element,'hui_buttons_body');
+  hui.ui.extend(this);
 };
 
 hui.ui.Buttons.create = function(options) {
-	options = hui.override({top:0},options);
-	var e = options.element = hui.build('div',{'class':'hui_buttons'});
-	if (options.align==='right') {
-		hui.cls.add(e,'hui_buttons_right');
-	}
-	if (options.align==='center') {
-		hui.cls.add(e,'hui_buttons_center');
-	}
-	if (options.top > 0) {
-		e.style.paddingTop=options.top+'px';
-	}
-	hui.build('div',{'class':'hui_buttons_body',parent:e});
-	return new hui.ui.Buttons(options);
+  options = hui.override({top:0},options);
+  var e = options.element = hui.build('div',{'class':'hui_buttons'});
+  if (options.align==='right') {
+    hui.cls.add(e,'hui_buttons_right');
+  }
+  if (options.align==='center') {
+    hui.cls.add(e,'hui_buttons_center');
+  }
+  if (options.top > 0) {
+    e.style.paddingTop=options.top+'px';
+  }
+  hui.build('div',{'class':'hui_buttons_body',parent:e});
+  return new hui.ui.Buttons(options);
 };
 
 hui.ui.Buttons.prototype = {
-	add : function(widget) {
-		this.body.appendChild(widget.element);
-		return this;
-	}
+  add : function(widget) {
+    this.body.appendChild(widget.element);
+    return this;
+  }
 };
 
 /* EOF */
@@ -8681,27 +8702,27 @@ hui.ui.Buttons.prototype = {
  * @param {Object} options The options : {value:null}
  */
 hui.ui.Selection = function(options) {
-	this.options = hui.override({value:null},options);
-	this.element = hui.get(options.element);
-	this.name = options.name;
-	this.items = [];
-	this.subItems = [];
-	this.busy = 0;
-	this.selection=null;
-	if (options.items && options.items.length>0) {
-		for (var i=0; i < options.items.length; i++) {
-			var item = options.items[i];
-			this.items.push(item);
-			var element = hui.get(item.id);
-			item.element = element;
-			this.addItemBehavior(element,item);
-		};
-		this.selection = this._getSelectionWithValue(this.options.value);
-		this._updateUI();
-	} else if (this.options.value!=null) {
-		this.selection = {value:this.options.value};
-	}
-	hui.ui.extend(this);
+  this.options = hui.override({value:null},options);
+  this.element = hui.get(options.element);
+  this.name = options.name;
+  this.items = [];
+  this.subItems = [];
+  this.busy = 0;
+  this.selection=null;
+  if (options.items && options.items.length>0) {
+    for (var i=0; i < options.items.length; i++) {
+      var item = options.items[i];
+      this.items.push(item);
+      var element = hui.get(item.id);
+      item.element = element;
+      this.addItemBehavior(element,item);
+    };
+    this.selection = this._getSelectionWithValue(this.options.value);
+    this._updateUI();
+  } else if (this.options.value!=null) {
+    this.selection = {value:this.options.value};
+  }
+  hui.ui.extend(this);
 }
 
 /**
@@ -8709,214 +8730,214 @@ hui.ui.Selection = function(options) {
  * @param {Object} options The options : {width:0}
  */
 hui.ui.Selection.create = function(options) {
-	options = hui.override({width:0},options);
-	var e = options.element = hui.build('div',{'class':'hui_selection'});
-	if (options.width>0) {
-		e.style.width = options.width+'px';
-	}
-	return new hui.ui.Selection(options);
+  options = hui.override({width:0},options);
+  var e = options.element = hui.build('div',{'class':'hui_selection'});
+  if (options.width>0) {
+    e.style.width = options.width+'px';
+  }
+  return new hui.ui.Selection(options);
 }
 
 hui.ui.Selection.prototype = {
-	/** Get the selected item
-	 * @returns {Object} The selected item, null if no selection */
-	getValue : function() {
-		return this.selection;
-	},
-	valueForProperty : function(p) {
-		if (p==='value') {
-			return this.selection ? this.selection.value : null;
-		} else if (p==='kind') {
-			return this.selection ? this.selection.kind : null;
-		}
-		return undefined;
-	},
-	/** Set the selected item
-	 * @param {Object} value The selected item */
-	setValue : function(value) {
-		var item = this._getSelectionWithValue(value);
-		if (item===null) {
-			this.selection = null;
-		} else {
-			this.selection = item;
-			this.kind=item.kind;
-		}
-		this._updateUI();
-		this.fireChange();
-	},
-	_getSelectionWithValue : function(value) {
-		var i;
-		for (i=0; i < this.items.length; i++) {
-			if (this.items[i].value==value) {
-				return this.items[i];
-			}
-		};
-		for (i=0; i < this.subItems.length; i++) {
-			var items = this.subItems[i].items;
-			for (var j=0; j < items.length; j++) {
-				if (items[j].value==value) {
-					return items[j];
-				}
-			};
-		};
-		return null;
-	},
-	/** Changes selection to the first item */
-	selectFirst : function() {
-		var i;
-		for (i=0; i < this.items.length; i++) {
-			this.changeSelection(this.items[i]);
-			return;
-		};
-		for (i=0; i < this.subItems.length; i++) {
-			var items = this.subItems[i].items;
-			for (var j=0; j < items.length; j++) {
-				this.changeSelection(items[j]);
-				return;
-			};
-		};
-	},
-	/** Set the value to null */
-	reset : function() {
-		this.setValue(null);
-	},
-	
-	addItems : function(options) {
-		options.element = hui.build('div',{parent:this.element});
-		var items = new hui.ui.Selection.Items(options);
-		items.parent = this;
-		this.subItems.push(items);
-	},
-	
-	_updateUI : function() {
-		var i;
-		for (i=0; i < this.items.length; i++) {
-			hui.cls.set(this.items[i].element,'hui_selected',this.isSelection(this.items[i]));
-		};
-		for (i=0; i < this.subItems.length; i++) {
-			this.subItems[i]._updateUI();
-		};
-	},
-	/** @private */
-	changeSelection : function(item) {
-		for (var i=0; i < this.subItems.length; i++) {
-			this.subItems[i].selectionChanged(this.selection,item);
-		};
-		this.selection = item;
-		this._updateUI();
-		this.fireChange();
-	},
-	/** @private */
-	fireChange : function() {
-		this.fire('select',this.selection);
-		this.fireProperty('value',this.selection ? this.selection.value : null);
-		this.fireProperty('kind',this.selection ? this.selection.kind : null);
-		for (var i=0; i < this.subItems.length; i++) {
-			this.subItems[i].parentValueChanged();
-		};
-	},
-	/** @private */
-	registerItems : function(items) {
-		items.parent = this;
-		this.subItems.push(items);
-	},
-	/** @private
-	
-	registerItem : function(id,title,icon,badge,value,kind) {
-		var element = hui.get(id);
-		var item = {id:id,title:title,icon:icon,badge:badge,element:element,value:value,kind:kind};
-		this.items.push(item);
-		this.addItemBehavior(element,item);
-		this.selection = this._getSelectionWithValue(this.options.value);
-	},
-	*/
-	/** @private */
-	addItemBehavior : function(node,item) {
-		hui.listen(node,'click',function() {
-			this.itemWasClicked(item);
-		}.bind(this));
-		hui.listen(node,'dblclick',function(e) {
-			hui.stop(e);
-			hui.selection.clear();
-			this._onDoubleClick(item);
-		}.bind(this));
-		node.dragDropInfo = item;
-	},
-	/** Untested!! */
-	setObjects : function(items) {
-		this.items = [];
-		hui.each(items,function(item) {
-			this.items.push(item);
-			var node = hui.build('div',{'class':'hui_selection_item'});
-			item.element = node;
-			this.element.appendChild(node);
-			var inner = hui.build('span',{'class':'hui_selection_label',text:item.title || item.text || ''});
-			if (item.icon) {
-				node.appendChild(hui.ui.createIcon(item.icon,16));
-			}
-			node.appendChild(inner);
-			hui.listen(node,'click',function() {
-				this.itemWasClicked(item);
-			}.bind(this));
-			hui.listen(node,'dblclick',function(e) {
-				hui.stop(e);
-				this._onDoubleClick(item);
-			}.bind(this));
-		}.bind(this));
-		this.fireSizeChange();
-	},
-	/** @private */
-	isSelection : function(item) {
-		if (this.selection===null) {
-			return false;
-		}
-		var selected = item.value==this.selection.value;
-		if (this.selection.kind) {
-			selected = selected && item.kind==this.selection.kind;
-		}
-		return selected;
-	},
-	
-	/** @private */
-	itemWasClicked : function(item) {
-		if (this.busy>0) {return}
-		this.changeSelection(item);
-	},
-	_onDoubleClick : function(item) {
-		if (this.busy>0) {return}
-		this.fire('open',item);
-	},
-	_setBusy : function(busy) {
-		this.busy+= busy ? 1 : -1;
-		window.clearTimeout(this.busytimer);
-		if (this.busy>0) {
-			var e = this.element;
-			this.busytimer = window.setTimeout(function() {
-				hui.cls.add(e,'hui_selection_busy');
-			},300);
-		} else {
-			hui.cls.remove(this.element,'hui_selection_busy');
-			this.fire('loaded');
-		}
-	},
-	_checkValue : function() {
-		if (!this.selection) {return}
-		var item = this._getSelectionWithValue(this.selection.value);
-		if (!item) {
-			hui.log('Value not found: '+this.selection.value);
-			if (!this.busy) {
-				this.selectFirst();
-			} else {
-				hui.log('Will not select first since im still busy');
-			}
-		}
-	},
-	show : function() {
-		this.element.style.display='';
-	},
-	hide : function() {
-		this.element.style.display='none';
-	}
+  /** Get the selected item
+   * @returns {Object} The selected item, null if no selection */
+  getValue : function() {
+    return this.selection;
+  },
+  valueForProperty : function(p) {
+    if (p==='value') {
+      return this.selection ? this.selection.value : null;
+    } else if (p==='kind') {
+      return this.selection ? this.selection.kind : null;
+    }
+    return undefined;
+  },
+  /** Set the selected item
+   * @param {Object} value The selected item */
+  setValue : function(value) {
+    var item = this._getSelectionWithValue(value);
+    if (item===null) {
+      this.selection = null;
+    } else {
+      this.selection = item;
+      this.kind=item.kind;
+    }
+    this._updateUI();
+    this.fireChange();
+  },
+  _getSelectionWithValue : function(value) {
+    var i;
+    for (i=0; i < this.items.length; i++) {
+      if (this.items[i].value==value) {
+        return this.items[i];
+      }
+    };
+    for (i=0; i < this.subItems.length; i++) {
+      var items = this.subItems[i].items;
+      for (var j=0; j < items.length; j++) {
+        if (items[j].value==value) {
+          return items[j];
+        }
+      };
+    };
+    return null;
+  },
+  /** Changes selection to the first item */
+  selectFirst : function() {
+    var i;
+    for (i=0; i < this.items.length; i++) {
+      this.changeSelection(this.items[i]);
+      return;
+    };
+    for (i=0; i < this.subItems.length; i++) {
+      var items = this.subItems[i].items;
+      for (var j=0; j < items.length; j++) {
+        this.changeSelection(items[j]);
+        return;
+      };
+    };
+  },
+  /** Set the value to null */
+  reset : function() {
+    this.setValue(null);
+  },
+
+  addItems : function(options) {
+    options.element = hui.build('div',{parent:this.element});
+    var items = new hui.ui.Selection.Items(options);
+    items.parent = this;
+    this.subItems.push(items);
+  },
+
+  _updateUI : function() {
+    var i;
+    for (i=0; i < this.items.length; i++) {
+      hui.cls.set(this.items[i].element,'hui_selected',this.isSelection(this.items[i]));
+    };
+    for (i=0; i < this.subItems.length; i++) {
+      this.subItems[i]._updateUI();
+    };
+  },
+  /** @private */
+  changeSelection : function(item) {
+    for (var i=0; i < this.subItems.length; i++) {
+      this.subItems[i].selectionChanged(this.selection,item);
+    };
+    this.selection = item;
+    this._updateUI();
+    this.fireChange();
+  },
+  /** @private */
+  fireChange : function() {
+    this.fire('select',this.selection);
+    this.fireProperty('value',this.selection ? this.selection.value : null);
+    this.fireProperty('kind',this.selection ? this.selection.kind : null);
+    for (var i=0; i < this.subItems.length; i++) {
+      this.subItems[i].parentValueChanged();
+    };
+  },
+  /** @private */
+  registerItems : function(items) {
+    items.parent = this;
+    this.subItems.push(items);
+  },
+  /** @private
+
+  registerItem : function(id,title,icon,badge,value,kind) {
+    var element = hui.get(id);
+    var item = {id:id,title:title,icon:icon,badge:badge,element:element,value:value,kind:kind};
+    this.items.push(item);
+    this.addItemBehavior(element,item);
+    this.selection = this._getSelectionWithValue(this.options.value);
+  },
+  */
+  /** @private */
+  addItemBehavior : function(node,item) {
+    hui.listen(node,'click',function() {
+      this.itemWasClicked(item);
+    }.bind(this));
+    hui.listen(node,'dblclick',function(e) {
+      hui.stop(e);
+      hui.selection.clear();
+      this._onDoubleClick(item);
+    }.bind(this));
+    node.dragDropInfo = item;
+  },
+  /** Untested!! */
+  setObjects : function(items) {
+    this.items = [];
+    hui.each(items,function(item) {
+      this.items.push(item);
+      var node = hui.build('div',{'class':'hui_selection_item'});
+      item.element = node;
+      this.element.appendChild(node);
+      var inner = hui.build('span',{'class':'hui_selection_label',text:item.title || item.text || ''});
+      if (item.icon) {
+        node.appendChild(hui.ui.createIcon(item.icon,16));
+      }
+      node.appendChild(inner);
+      hui.listen(node,'click',function() {
+        this.itemWasClicked(item);
+      }.bind(this));
+      hui.listen(node,'dblclick',function(e) {
+        hui.stop(e);
+        this._onDoubleClick(item);
+      }.bind(this));
+    }.bind(this));
+    this.fireSizeChange();
+  },
+  /** @private */
+  isSelection : function(item) {
+    if (this.selection===null) {
+      return false;
+    }
+    var selected = item.value==this.selection.value;
+    if (this.selection.kind) {
+      selected = selected && item.kind==this.selection.kind;
+    }
+    return selected;
+  },
+
+  /** @private */
+  itemWasClicked : function(item) {
+    if (this.busy>0) {return}
+    this.changeSelection(item);
+  },
+  _onDoubleClick : function(item) {
+    if (this.busy>0) {return}
+    this.fire('open',item);
+  },
+  _setBusy : function(busy) {
+    this.busy+= busy ? 1 : -1;
+    window.clearTimeout(this.busytimer);
+    if (this.busy>0) {
+      var e = this.element;
+      this.busytimer = window.setTimeout(function() {
+        hui.cls.add(e,'hui_selection_busy');
+      },300);
+    } else {
+      hui.cls.remove(this.element,'hui_selection_busy');
+      this.fire('loaded');
+    }
+  },
+  _checkValue : function() {
+    if (!this.selection) {return}
+    var item = this._getSelectionWithValue(this.selection.value);
+    if (!item) {
+      hui.log('Value not found: '+this.selection.value);
+      if (!this.busy) {
+        this.selectFirst();
+      } else {
+        hui.log('Will not select first since im still busy');
+      }
+    }
+  },
+  show : function() {
+    this.element.style.display='';
+  },
+  hide : function() {
+    this.element.style.display='none';
+  }
 }
 
 /////////////////////////// Items ///////////////////////////
@@ -8927,181 +8948,181 @@ hui.ui.Selection.prototype = {
  * @param {Object} options The options : {element,name,source}
  */
 hui.ui.Selection.Items = function(options) {
-	this.options = hui.override({source:null},options);
-	this.element = hui.get(options.element);
-	this.title = hui.get(this.element.id+'_title');
-	this.name = options.name;
-	this.disclosed = {};
-	this.parent = null;
-	this.items = [];
-	hui.ui.extend(this);
-	if (this.options.source) {
-		this.options.source.listen(this);
-	}
+  this.options = hui.override({source:null},options);
+  this.element = hui.get(options.element);
+  this.title = hui.get(this.element.id+'_title');
+  this.name = options.name;
+  this.disclosed = {};
+  this.parent = null;
+  this.items = [];
+  hui.ui.extend(this);
+  if (this.options.source) {
+    this.options.source.listen(this);
+  }
 }
 
 hui.ui.Selection.Items.prototype = {
-	/**
-	 * Refresh the underlying source
-	 */
-	refresh : function() {
-		if (this.options.source) {
-			this.options.source.refresh();
-		}
-	},
-	/** @private */
-	$objectsLoaded : function(objects) {
-		this.$itemsLoaded(objects);
-	},
-	/** @private */
-	$itemsLoaded : function(items) {
-		this.items = [];
-		this.element.innerHTML='';
-		this.buildLevel(this.element,items,0,true);
-		if (this.title) {
-			this.title.style.display=this.items.length>0 ? 'block' : 'none';
-		}
-		this.parent._updateUI();
-		this.parent._checkValue();
-		this.fireSizeChange();
-	},
-	$sourceIsBusy : function() {
-		this.parent._setBusy(true);
-	},
-	/** @private */
-	$sourceIsNotBusy : function() {
-		this.parent._setBusy(false);
-	},
-	/** @private */
-	$sourceShouldRefresh : function() {
-		return hui.dom.isVisible(this.element);
-	},
-	/** @private */
-	$visibilityChanged : function() {
-		if (hui.dom.isVisible(this.element)) {
-			if (this.options.source) {
-				// If there is a source, make sure it is initially 
-				this.options.source.refreshFirst();
-			}			
-		}
-	},
-	/** @private */
-	buildLevel : function(parent,items,inc,open) {
-		if (!items) return;
-		var hierarchical = this.isHierarchy(items);
-		var level = hui.build('div',{'class':'hui_selection_level',style:(open ? 'display:block' : 'display:none'),parent:parent});
-		hui.each(items,function(item) {
+  /**
+   * Refresh the underlying source
+   */
+  refresh : function() {
+    if (this.options.source) {
+      this.options.source.refresh();
+    }
+  },
+  /** @private */
+  $objectsLoaded : function(objects) {
+    this.$itemsLoaded(objects);
+  },
+  /** @private */
+  $itemsLoaded : function(items) {
+    this.items = [];
+    this.element.innerHTML='';
+    this.buildLevel(this.element,items,0,true);
+    if (this.title) {
+      this.title.style.display=this.items.length>0 ? 'block' : 'none';
+    }
+    this.parent._updateUI();
+    this.parent._checkValue();
+    this.fireSizeChange();
+  },
+  $sourceIsBusy : function() {
+    this.parent._setBusy(true);
+  },
+  /** @private */
+  $sourceIsNotBusy : function() {
+    this.parent._setBusy(false);
+  },
+  /** @private */
+  $sourceShouldRefresh : function() {
+    return hui.dom.isVisible(this.element);
+  },
+  /** @private */
+  $visibilityChanged : function() {
+    if (hui.dom.isVisible(this.element)) {
+      if (this.options.source) {
+        // If there is a source, make sure it is initially
+        this.options.source.refreshFirst();
+      }
+    }
+  },
+  /** @private */
+  buildLevel : function(parent,items,inc,open) {
+    if (!items) return;
+    var hierarchical = this.isHierarchy(items);
+    var level = hui.build('div',{'class':'hui_selection_level',style:(open ? 'display:block' : 'display:none'),parent:parent});
+    hui.each(items,function(item) {
       var text = item.text || item.title || '';
-			if (item.type=='title') {
-				hui.build('div',{'class':'hui_selection_title',html:'<span>'+text+'</span>',parent:level});
-				return;
-			}
-			var hasChildren = item.children && item.children.length>0;
-			var left = inc*16+6;
-			if (!hierarchical && inc>0 || hierarchical && !hasChildren) {
-				left+=13;
-			}
-			var node = hui.build('div',{'class':'hui_selection_item'});
-			node.style.paddingLeft = left+'px';
-			if (item.badge) {
-				node.appendChild(hui.build('strong',{'class':'hui_selection_badge',text:item.badge}));
-			}
-			var subOpen = false;
-			if (hierarchical && hasChildren) {
-				var self = this;
-				subOpen = this.disclosed[item.value]
-				var cls = this.disclosed[item.value] ? 'hui_disclosure hui_disclosure_open' : 'hui_disclosure';
-				var disc = hui.build('span',{'class':cls,parent:node});
-				hui.listen(disc,'click',function(e) {
-					hui.stop(e);
-					self.toggle(disc,item);
-				});
-			}
-			var inner = hui.build('span',{'class':'hui_selection_label',text:text});
-			if (item.icon) {
-				node.appendChild(hui.build('span',{'class':'hui_icon_1',style:'background-image: url('+hui.ui.getIconUrl(item.icon,16)+')'}));
-			}
-			node.appendChild(inner);
-			hui.listen(node,'click',function(e) {
-				this.parent.itemWasClicked(item);
-			}.bind(this));
-			hui.listen(node,'dblclick',function(e) {
-				hui.stop(e);
-				hui.selection.clear();
-				this.parent._onDoubleClick(item);
-			}.bind(this));
-			level.appendChild(node);
-			var info = {title:text,icon:item.icon,badge:item.badge,kind:item.kind,element:node,value:item.value};
-			node.dragDropInfo = info;
-			this.items.push(info);
-			this.buildLevel(level,item.children,inc+1,subOpen);
-		}.bind(this));
-	},
-	/** @private */
-	toggle : function(node,item) {
-		if (hui.cls.has(node,'hui_disclosure_open')) {
-			this.disclosed[item.value] = false;
-			hui.get.next(node.parentNode).style.display='none';
-			hui.cls.remove(node,'hui_disclosure_open');
-		} else {
-			this.disclosed[item.value] = true;
-			hui.get.next(node.parentNode).style.display='block';
-			hui.cls.add(node,'hui_disclosure_open');
-		}
-		this.parent.fireSizeChange();
-	},
-	/** @private */
-	isHierarchy : function(items) {
-		if (!items) {return false};
-		for (var i=0; i < items.length; i++) {
-			if (items[i]!==null && items[i].children && items[i].children.length>0) {
-				return true;
-			}
-		};
-		return false;
-	},
-	/** Get the selection of this items group
-	 * @returns {Object} The selected item or null */
-	getValue : function() {
-		if (this.parent.selection==null) {
-			return null;
-		}
-		for (var i=0; i < this.items.length; i++) {
-			if (this.items[i].value == this.parent.selection.value) {
-				return this.items[i];
-			}
-		};
-		return null;
-	},
-	_updateUI : function() {
-		for (var i=0; i < this.items.length; i++) {
-			hui.cls.set(this.items[i].element,'hui_selected',this.parent.isSelection(this.items[i]));
-		};
-	},
-	/** @private */
-	selectionChanged : function(oldSelection,newSelection) {
-		for (var i=0; i < this.items.length; i++) {
-			var value = this.items[i].value;
-			if (value == newSelection.value) {
-				this.fireProperty('value',newSelection.value);
-				return;
-			}
-		};
-		this.fireProperty('value',null);
-	},
-	/**
-	 * Called when the parent changes value, must fire its new value
-	 * @private
-	 */
-	parentValueChanged : function() {
-		for (var i=0; i < this.items.length; i++) {
-			if (this.parent.isSelection(this.items[i])) {
-				this.fireProperty('value',this.items[i].value);
-				return;
-			}
-		};
-		this.fireProperty('value',null);
-	}
+      if (item.type=='title') {
+        hui.build('div',{'class':'hui_selection_title',html:'<span>'+text+'</span>',parent:level});
+        return;
+      }
+      var hasChildren = item.children && item.children.length>0;
+      var left = inc*16+6;
+      if (!hierarchical && inc>0 || hierarchical && !hasChildren) {
+        left+=13;
+      }
+      var node = hui.build('div',{'class':'hui_selection_item'});
+      node.style.paddingLeft = left+'px';
+      if (item.badge) {
+        node.appendChild(hui.build('strong',{'class':'hui_selection_badge',text:item.badge}));
+      }
+      var subOpen = false;
+      if (hierarchical && hasChildren) {
+        var self = this;
+        subOpen = this.disclosed[item.value]
+        var cls = this.disclosed[item.value] ? 'hui_disclosure hui_disclosure_open' : 'hui_disclosure';
+        var disc = hui.build('span',{'class':cls,parent:node});
+        hui.listen(disc,'click',function(e) {
+          hui.stop(e);
+          self.toggle(disc,item);
+        });
+      }
+      var inner = hui.build('span',{'class':'hui_selection_label',text:text});
+      if (item.icon) {
+        node.appendChild(hui.build('span',{'class':'hui_icon_1',style:'background-image: url('+hui.ui.getIconUrl(item.icon,16)+')'}));
+      }
+      node.appendChild(inner);
+      hui.listen(node,'click',function(e) {
+        this.parent.itemWasClicked(item);
+      }.bind(this));
+      hui.listen(node,'dblclick',function(e) {
+        hui.stop(e);
+        hui.selection.clear();
+        this.parent._onDoubleClick(item);
+      }.bind(this));
+      level.appendChild(node);
+      var info = {title:text,icon:item.icon,badge:item.badge,kind:item.kind,element:node,value:item.value};
+      node.dragDropInfo = info;
+      this.items.push(info);
+      this.buildLevel(level,item.children,inc+1,subOpen);
+    }.bind(this));
+  },
+  /** @private */
+  toggle : function(node,item) {
+    if (hui.cls.has(node,'hui_disclosure_open')) {
+      this.disclosed[item.value] = false;
+      hui.get.next(node.parentNode).style.display='none';
+      hui.cls.remove(node,'hui_disclosure_open');
+    } else {
+      this.disclosed[item.value] = true;
+      hui.get.next(node.parentNode).style.display='block';
+      hui.cls.add(node,'hui_disclosure_open');
+    }
+    this.parent.fireSizeChange();
+  },
+  /** @private */
+  isHierarchy : function(items) {
+    if (!items) {return false};
+    for (var i=0; i < items.length; i++) {
+      if (items[i]!==null && items[i].children && items[i].children.length>0) {
+        return true;
+      }
+    };
+    return false;
+  },
+  /** Get the selection of this items group
+   * @returns {Object} The selected item or null */
+  getValue : function() {
+    if (this.parent.selection==null) {
+      return null;
+    }
+    for (var i=0; i < this.items.length; i++) {
+      if (this.items[i].value == this.parent.selection.value) {
+        return this.items[i];
+      }
+    };
+    return null;
+  },
+  _updateUI : function() {
+    for (var i=0; i < this.items.length; i++) {
+      hui.cls.set(this.items[i].element,'hui_selected',this.parent.isSelection(this.items[i]));
+    };
+  },
+  /** @private */
+  selectionChanged : function(oldSelection,newSelection) {
+    for (var i=0; i < this.items.length; i++) {
+      var value = this.items[i].value;
+      if (value == newSelection.value) {
+        this.fireProperty('value',newSelection.value);
+        return;
+      }
+    };
+    this.fireProperty('value',null);
+  },
+  /**
+   * Called when the parent changes value, must fire its new value
+   * @private
+   */
+  parentValueChanged : function() {
+    for (var i=0; i < this.items.length; i++) {
+      if (this.parent.isSelection(this.items[i])) {
+        this.fireProperty('value',this.items[i].value);
+        return;
+      }
+    };
+    this.fireProperty('value',null);
+  }
 }
 /* EOF */
 
@@ -17402,7 +17423,7 @@ hui.ui.Slider.prototype = {
  * @constructor
  */
 hui.ui.CodeInput = function(options) {
-  this.options = hui.override({},options);  
+  this.options = hui.override({},options);
   this.name = options.name;
   var e = this.element = hui.get(options.element);
   this.textarea = hui.get.firstByTag(e,'textarea');
@@ -17416,10 +17437,10 @@ hui.ui.CodeInput = function(options) {
 
 hui.ui.CodeInput.create = function(options) {
   options = options || {};
-  options.element = hui.build('div',{className:'hui_codeinput',html:'<textarea spellcheck="false"></textarea>'});
-    if (options.height) {
-        hui.get.firstByTag(options.element,'textarea').style.height = hui.style.length(options.height);
-    }
+  options.element = hui.build('div',{className:'hui_codeinput',html:'<textarea class="hui_codeinput_input" spellcheck="false"></textarea>'});
+  if (options.height) {
+    options.element.style.height = hui.style.length(options.height);
+  }
   return new hui.ui.CodeInput(options);
 };
 
@@ -17428,7 +17449,7 @@ hui.ui.CodeInput.prototype = {
     hui.listen(this.textarea,'keydown',this._onKeyDown.bind(this));
     hui.listen(this.textarea,'keyup',this._onKeyUp.bind(this));
   },
-  
+
   getValue : function() {
     return this.textarea.value;
   },
@@ -17452,7 +17473,7 @@ hui.ui.CodeInput.prototype = {
       this.fireValueChange();
     }
   },
-  
+
   _onKeyDown: function(evt) {
     var tab = String.fromCharCode(9);
     var e = window.event || evt;
@@ -17464,7 +17485,7 @@ hui.ui.CodeInput.prototype = {
         e.preventDefault();
         var ss = t.selectionStart;
         var se = t.selectionEnd;
-        // Multi line selection 
+        // Multi line selection
         if (ss != se && t.value.slice(ss, se).indexOf("\n") != -1) {
           if (ss > 0) {
             ss = t.value.slice(0, ss).lastIndexOf("\n") + 1;
@@ -17491,7 +17512,7 @@ hui.ui.CodeInput.prototype = {
             t.selectionEnd = se + (tab.length * sel.split("\n").length);
           }
         }
-        // Single line selection 
+        // Single line selection
         else {
           if (e.shiftKey) {
             var brt = t.value.slice(0, ss);
@@ -17517,7 +17538,7 @@ hui.ui.CodeInput.prototype = {
         var br = document.body.createTextRange();
         br.moveToElementText(t);
         br.setEndPoint("EndToStart", r);
-        //Single line selection 
+        //Single line selection
         if (r.text.length == 0 || r.text.indexOf("\n") == -1) {
           if (e.shiftKey) {
             var ch = br.text.slice(br.text.length - 1, br.text.length);
@@ -17537,7 +17558,7 @@ hui.ui.CodeInput.prototype = {
           nr.setEndPoint("EndToEnd", r);
           nr.select();
         }
-        //Multi line selection 
+        //Multi line selection
         else {
           if (e.shiftKey) {
             var a = r.text.split("\r\n")
