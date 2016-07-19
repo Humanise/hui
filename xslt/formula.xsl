@@ -670,6 +670,7 @@
 		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Button({
 			element:'<xsl:value-of select="generate-id()"/>'
 			<xsl:if test="@name">,name:'<xsl:value-of select="@name"/>'</xsl:if>
+			<xsl:if test="@role">,role:'<xsl:value-of select="@role"/>'</xsl:if>
 			<xsl:if test="@submit='true'">,submit:true</xsl:if>
 			<xsl:if test="gui:confirm">
 				,confirm:{text:'<xsl:value-of select="gui:confirm/@text"/>',okText:'<xsl:value-of select="gui:confirm/@ok"/>',cancelText:'<xsl:value-of select="gui:confirm/@cancel"/>'}

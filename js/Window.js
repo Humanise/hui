@@ -59,10 +59,11 @@ hui.ui.Window.prototype = {
 			hui.listen(this.close,'mousedown',function(e) {hui.stop(e)});
 		}
 		hui.drag.register({
+      touch: true,
 			element : this.titlebar,
 			onStart : this._onDragStart.bind(this) ,
 			onBeforeMove : this._onBeforeMove.bind(this) ,
- 			onMove : this._onMove.bind(this),
+      onMove : this._onMove.bind(this),
 			onAfterMove : this._onAfterMove.bind(this)
 		});
 		hui.listen(this.element,'mousedown',function() {
@@ -103,7 +104,7 @@ hui.ui.Window.prototype = {
 			}
 			if (!this.element.style.left) {
 				this.element.style.left = Math.round((hui.window.getViewWidth()-width)/2)+'px';
-			}			
+			}
 		}
 		if (hui.browser.opacity) {
 			hui.animate(this.element,'opacity',1,0);
@@ -174,7 +175,7 @@ hui.ui.Window.prototype = {
 			curtain.style.display = '';
 		}.bind(this),300);
 	},
-	
+
 	move : function(point) {
 		hui.style.set(this.element,{top:point.top+'px',left:point.left+'px'});
 	},

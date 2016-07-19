@@ -15,7 +15,7 @@ hui.ui.Component = function(options) {
 	this.element = hui.get(options.element);
   this.delegates = [];
   if (this.nodes) {
-  	this.nodes = hui.collect(this.nodes,this.element);
+    this.nodes = hui.collect(this.nodes,this.element);
   }
   if (options.listen) {
     this.listen(options.listen);
@@ -32,7 +32,7 @@ hui.ui.Component.prototype = {
     this.delegates.push(listener);
   },
   fire : function(name,value,event) {
-  		return hui.ui.callDelegates(this,name,value,event);
+    return hui.ui.callDelegates(this,name,value,event);
   },
   /**
    * Get the components root element

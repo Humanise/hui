@@ -44,6 +44,9 @@ hui.ui.get = function(nameOrComponent) {
 	}
 };
 
+hui.ui.is = function(component, constructor) {
+  return component.__proto__ == constructor.prototype;
+}
 
 /**
  * Called when the DOM is ready and hui.ui is ready
@@ -209,6 +212,16 @@ hui.ui.getAncestor = function(widget,cls) {
 	return null;
 };
 
+hui.ui.getComponents = function(predicate) {
+  var comps = [];
+  var o = hui.ui.objects;
+	for (var key in o) {
+    if (predicate(o[key])) {
+      comps.push(o[key]);
+    }
+  }
+  return comps;
+}
 
 
 hui.ui.changeState = function(state) {

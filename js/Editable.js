@@ -21,16 +21,16 @@
     getValue : function() {
       return this.value;
     },
-  	fireValueChange : function() {
-  		this.fire('valueChanged',this.value);
-  		hui.ui.firePropertyChange(this,'value',this.value);
-  		hui.ui.callAncestors(this,'childValueChanged',this.value);
-  	},
+    fireValueChange : function() {
+      this.fire('valueChanged',this.value);
+      hui.ui.firePropertyChange(this,'value',this.value);
+      hui.ui.callAncestors(this,'childValueChanged',this.value);
+    },
     getElement : function() {
       return _super.prototype.getElement.call(this);
     }
   }
 
   hui.extend(hui.ui.Editable, _super);
-  
+
 })(hui.ui.Component)
