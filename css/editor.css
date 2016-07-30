@@ -20,6 +20,7 @@ textarea.hui_editor_html
 .hui_editor_part_active
 {
 	outline: 1px dashed #3875d7;
+  outline-offset: -1px;
 }
 
 div.hui_overlay_icon:hover
@@ -32,17 +33,20 @@ div.hui_overlay_icon:hover
 {
 	/*background: url('../gfx/hover_bg.png');*/
 	outline: 1px dashed rgba(0,0,0,.2);
+  outline-offset: -1px;
 }
 
 .hui_editor_column_hover
 {
 	/*outline: 1px dashed #3875d7;*/
 	outline: 1px dashed rgba(0,0,0,.2);
+  outline-offset: -1px;
 }
 
 .hui_editor_column_edit
 {
 	outline: 2px dashed #3875d7 !important;
+  outline-offset: -2px;
 }
 
 div.hui_editor_drop_placeholder
