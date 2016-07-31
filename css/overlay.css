@@ -6,6 +6,7 @@ div.hui_overlay
 	background: url('../gfx/overlay_24.png') left top no-repeat;
 	padding-left: 7px;
 	font-size: 0;
+  z-index: 1;
 }
 
 div.hui_inner_overlay
