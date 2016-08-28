@@ -1,6 +1,5 @@
-if (window.hui===undefined) {
-    hui = {};
-}
+/** @namespace */
+window.hui = window.hui || {};
 
 hui._ready = false;
 
@@ -8,7 +7,7 @@ hui.ready = function(delegate) {
 	if (window.addEventListener) {
 		window.addEventListener('DOMContentLoaded',delegate,false);
 	}
-    else if(document.addEventListener) {
+  else if(document.addEventListener) {
 		document.addEventListener('load', delegate, false);
 	}
 	else if(typeof window.attachEvent != 'undefined') {
@@ -24,5 +23,5 @@ hui.ready = function(delegate) {
 		} else {
 			window.onload = delegate;
 		}
-	}  
+	}
 };
