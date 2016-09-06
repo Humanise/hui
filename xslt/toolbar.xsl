@@ -103,7 +103,7 @@
 		</xsl:attribute>
 		<span class="hui_toolbar_inner_icon">
 			<span class="hui_toolbar_inner_icon">
-			<span class="hui_icon" style="background-image: url('{$context}/hui/icons/{@icon}32.png')">
+			<span class="hui_icon" style="background-image: url('{$context}/hui/icons/{@icon}32.png'); background-image: -webkit-image-set(url('{$context}/hui/icons/{@icon}32.png') 1x, url('{$context}/hui/icons/{@icon}32x2.png') 2x);">
 				<xsl:if test="@overlay">
 					<span class="hui_icon_overlay" style="background-image: url('{$context}/hui/icons/overlay/{@overlay}32.png')"><xsl:comment/></span>
 				</xsl:if>
