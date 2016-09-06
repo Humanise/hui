@@ -1,0 +1,24 @@
+.hui_numberinput {
+  display: inline-block;
+  vertical-align: middle;
+  width: 100%;
+  position: relative; }
+  .hui_numberinput_up, .hui_numberinput_down {
+    position: absolute;
+    right: 0;
+    width: 18px;
+    height: 13px;
+    background: no-repeat;
+    background-size: 6px;
+    opacity: .5;
+    cursor: pointer; }
+    .hui_numberinput_up:hover, .hui_numberinput_down:hover {
+      opacity: .8; }
+  .hui_numberinput_up {
+    top: 0;
+    background-image: url("../gfx/up.svg");
+    background-position: 50% 5px; }
+  .hui_numberinput_down {
+    bottom: 0;
+    background-image: url("../gfx/down.svg");
+    background-position: 50% 2px; }

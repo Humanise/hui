@@ -155,38 +155,30 @@
 <xsl:template name="gui:text" match="gui:textfield | gui:text-input">
 	<xsl:choose>
 		<xsl:when test="@lines>1 or @multiline='true' or @breaks='true'">
-			<div class="hui_field hui_longfield" id="{generate-id()}">
-			
-			<span class="hui_field_top"><span><span><xsl:comment/></span></span></span>
-			<span class="hui_field_middle"><span class="hui_field_middle"><span class="hui_field_content">
-				<span class="hui_formula_text_multiline">
-				<xsl:text disable-output-escaping='yes'>
-				<![CDATA[<textarea class="hui_formula_text" rows="]]></xsl:text><xsl:value-of select="@lines"/><xsl:text disable-output-escaping='yes'><![CDATA[">]]></xsl:text><xsl:value-of select="@value"/><xsl:text disable-output-escaping='yes'><![CDATA[</textarea>]]>
-				</xsl:text>
-				</span>
-			</span></span></span>
-			<span class="hui_field_bottom"><span><span><xsl:comment/></span></span></span>
-			</div>
+			<xsl:text disable-output-escaping='yes'>
+			<![CDATA[<textarea class="hui_textinput" rows="]]></xsl:text>
+				<xsl:value-of select="@lines"/><xsl:text>"</xsl:text>
+				<xsl:text> id="</xsl:text><xsl:value-of select="generate-id()"/><xsl:text>"</xsl:text>
+				<xsl:if test="@placeholder!=''">
+					<xsl:text> placeholder="</xsl:text><xsl:value-of select="@placeholder"/><xsl:text>"</xsl:text>
+				</xsl:if>
+				<xsl:text disable-output-escaping='yes'><![CDATA[>]]></xsl:text><xsl:value-of select="@value"/><xsl:text disable-output-escaping='yes'><![CDATA[</textarea>]]>
+			</xsl:text>
 		</xsl:when>
 		<xsl:otherwise>
-			<div class="hui_field" id="{generate-id()}">
+			<input class="hui_textinput" value="{@value}" id="{generate-id()}">
 				<xsl:if test="@width">
 					<xsl:attribute name="style">width: <xsl:value-of select="@width"/>px;</xsl:attribute>
 				</xsl:if>
-			<span class="hui_field_top"><span><span><xsl:comment/></span></span></span>
-			<span class="hui_field_middle"><span class="hui_field_middle"><span class="hui_field_content">
-				<span class="hui_field_singleline">
-				<input class="hui_formula_text" value="{@value}">
-					<xsl:if test="@secret='true'"><xsl:attribute name="type">password</xsl:attribute></xsl:if>
-					<xsl:if test="@correction='false'">
-						<xsl:attribute name="autocapitalize">off</xsl:attribute>
-						<xsl:attribute name="autocorrect">off</xsl:attribute>
-					</xsl:if>
-				</input>
-				</span>
-			</span></span></span>
-			<span class="hui_field_bottom"><span><span><xsl:comment/></span></span></span>
-			</div>
+				<xsl:if test="@secret='true'"><xsl:attribute name="type">password</xsl:attribute></xsl:if>
+				<xsl:if test="@placeholder!=''">
+					<xsl:attribute name="placeholder"><xsl:value-of select="@placeholder"/></xsl:attribute>
+				</xsl:if>
+				<xsl:if test="@correction='false'">
+					<xsl:attribute name="autocapitalize">off</xsl:attribute>
+					<xsl:attribute name="autocorrect">off</xsl:attribute>
+				</xsl:if>
+			</input>
 		</xsl:otherwise>
 	</xsl:choose>
 	<script type="text/javascript">
@@ -211,16 +203,10 @@
 <datetime-input name="«text»" key="«text»" return-type="«'date' | 'seconds'»"/>
 -->
 <xsl:template name="gui:datetime" match="gui:datetime-input">
-	<div class="hui_field hui_datetime" id="{generate-id()}">
-		<span class="hui_field_top"><span><span><xsl:comment/></span></span></span>
-		<span class="hui_field_middle"><span class="hui_field_middle"><span class="hui_field_content">
-			<span class="hui_field_singleline">
-				<input type="text" class="hui_formula_text"/>
-				<a class="hui_datetime" href="javascript://" tabindex="-1"><span><xsl:comment/></span></a>
-			</span>
-		</span></span></span>
-		<span class="hui_field_bottom"><span><span><xsl:comment/></span></span></span>
-	</div>
+	<span class="hui_datetime" id="{generate-id()}">
+		<input type="text" class="hui_textinput"/>
+		<a class="hui_datetime_selector" href="javascript://" tabindex="-1"><xsl:comment/></a>
+	</span>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.DateTimeField({
 			element:'<xsl:value-of select="generate-id()"/>',
@@ -245,10 +231,13 @@
 			<xsl:attribute name="style">width:<xsl:value-of select="@width"/>px;</xsl:attribute>
 		</xsl:if>
 		<xsl:attribute name="class">
-			<xsl:text>hui_numberfield</xsl:text>
-			<xsl:if test="@adaptive='true' or @width"><xsl:text> hui_numberfield_adaptive</xsl:text></xsl:if>
+			<xsl:text>hui_numberinput</xsl:text>
+			<xsl:if test="@adaptive='true'"><xsl:text> hui_numberinput-adaptive</xsl:text></xsl:if>
 		</xsl:attribute>
-		<span><span><input type="text" value="{@value}"/><em class="hui_numberfield_units"><xsl:comment/></em><a class="hui_numberfield_up"><xsl:comment/></a><a class="hui_numberfield_down"><xsl:comment/></a></span></span>
+		<input class="hui_textinput" type="text" value="{@value}"/>
+		<span class="hui_numberinput_units"><xsl:comment/></span>
+		<a class="hui_numberinput_up"><xsl:comment/></a>
+		<a class="hui_numberinput_down"><xsl:comment/></a>
 	</span>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.NumberField({
@@ -281,13 +270,11 @@
 			<xsl:attribute name="style">width:<xsl:value-of select="@width"/>px;</xsl:attribute>
 		</xsl:if>
 		<xsl:attribute name="class">
-			<xsl:text>hui_style_length hui_numberfield x</xsl:text>
+			<xsl:text>hui_style_length hui_numberinput </xsl:text>
 		</xsl:attribute>
-		<span><span>
-			<input type="text" value="{@value}"/>
-			<a class="hui_numberfield_up"><xsl:comment/></a>
-			<a class="hui_numberfield_down"><xsl:comment/></a>
-		</span></span>
+			<input class="hui_textinput" type="text" value="{@value}"/>
+			<a class="hui_numberinput_up"><xsl:comment/></a>
+			<a class="hui_numberinput_down"><xsl:comment/></a>
 	</span>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.StyleLength({
@@ -309,12 +296,8 @@
 -->
 <xsl:template match="gui:color-input">
 	<span class="hui_colorinput" id="{generate-id()}">
-		<span class="hui_field_top"><span><span><xsl:comment/></span></span></span>
-			<span class="hui_field_middle"><span class="hui_field_middle"><span class="hui_field_content">
-				<span class="hui_field_singleline"><input type="text" value="{@value}"/></span>
-			</span></span></span>
-		<span class="hui_field_bottom"><span><span><xsl:comment/></span></span></span>
-		<a class="hui_colorinput" href="javascript://" tabindex="-1"><xsl:comment/></a>
+		<input class="hui_textinput" type="text" value="{@value}"/>
+		<a class="hui_colorinput_color" href="javascript://" tabindex="-1"><xsl:comment/></a>
 	</span>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.ColorInput({
@@ -337,10 +320,10 @@
 <xsl:template match="gui:object-input">
 	<div class="hui_objectinput" id="{generate-id()}">
     <div class="hui_objectinput_list">
-      <span class="hui_objectinput_text">No value</span>      
+      <span class="hui_objectinput_text">No value</span>
     </div>
-    <a class="hui_button hui_button_small hui_objectinput_choose" href="javascript://"><span><span>Select...</span></span></a>
-    <a class="hui_button hui_button_disabled hui_button_small hui_objectinput_remove" href="javascript://"><span><span>Remove</span></span></a>
+    <a class="hui_button hui_button_small hui_objectinput_choose" href="javascript://">Select...</a>
+    <a class="hui_button hui_is_disabled hui_button_small hui_objectinput_remove" href="javascript://">Remove</a>
 		<xsl:comment/>
 	</div>
 
@@ -350,17 +333,17 @@
 			<xsl:if test="@name">,name:'<xsl:value-of select="@name"/>'</xsl:if>
 			<xsl:if test="@key">,key:'<xsl:value-of select="@key"/>'</xsl:if>
       <xsl:if test="gui:finder">
-          ,finder : {
-            url : '<xsl:value-of select="gui:finder/@url"/>',
-  					title : '<xsl:value-of select="gui:finder/@title"/>',
-  					list : {url:'<xsl:value-of select="gui:finder/@list-url"/>'},
-  					selection : {
-  						url : '<xsl:value-of select="gui:finder/@selection-url"/>',
-  						value : '<xsl:value-of select="gui:finder/@selection-value"/>',
-  						parameter : '<xsl:value-of select="gui:finder/@selection-parameter"/>'
-  					},
-  					search : {parameter : '<xsl:value-of select="gui:finder/@search-parameter"/>'}
-          }
+        ,finder : {
+          url : '<xsl:value-of select="gui:finder/@url"/>',
+          title : '<xsl:value-of select="gui:finder/@title"/>',
+          list : {url:'<xsl:value-of select="gui:finder/@list-url"/>'},
+          selection : {
+            url : '<xsl:value-of select="gui:finder/@selection-url"/>',
+            value : '<xsl:value-of select="gui:finder/@selection-value"/>',
+            parameter : '<xsl:value-of select="gui:finder/@selection-parameter"/>'
+          },
+          search : {parameter : '<xsl:value-of select="gui:finder/@search-parameter"/>'}
+        }
       </xsl:if>
 		});
 		<xsl:call-template name="gui:createobject"/>
@@ -389,23 +372,17 @@
 </xsl:template>
 
 
-<!--doc title:'Location input' class:'hui.ui.LocationField' module:'input'
+<!--doc title:'Location input' class:'hui.ui.LocationInput' module:'input'
 <location-input name="«text»" key="«text»" />
 -->
 <xsl:template match="gui:location-input">
-	<span class="hui_locationfield" id="{generate-id()}">
-		
-		<span class="hui_field_top"><span><span><xsl:comment/></span></span></span>
-			<span class="hui_field_middle"><span class="hui_field_middle"><span class="hui_field_content">
-				<span>
-					<span class="hui_locationfield_latitude"><span><input/></span></span><span class="hui_locationfield_longitude"><span><input/></span></span>
-				</span>
-			</span></span></span>
-			<span class="hui_field_bottom"><span><span><xsl:comment/></span></span></span>
-		<a class="hui_locationfield_picker" href="javascript://"><xsl:comment/></a>
+	<span class="hui_locationinput" id="{generate-id()}">
+		<span class="hui_locationinput_latitude"><span><input/></span></span>
+		<span class="hui_locationinput_longitude"><span><input/></span></span>
+		<a class="hui_locationinput_picker" href="javascript://"><xsl:comment/></a>
 	</span>
 	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.LocationField({
+		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.LocationInput({
 			element:'<xsl:value-of select="generate-id()"/>'
 			<xsl:if test="@name">,name:'<xsl:value-of select="@name"/>'</xsl:if>
 			<xsl:if test="@key">,key:'<xsl:value-of select="@key"/>'</xsl:if>
@@ -433,8 +410,8 @@
 			<xsl:when test="@adaptive='true'">hui_dropdown hui_dropdown_adaptive</xsl:when>
 			<xsl:otherwise>hui_dropdown</xsl:otherwise>
 		</xsl:choose>
-	</xsl:attribute>	
-	<span><span><strong><xsl:comment/></strong></span></span>
+	</xsl:attribute>
+	<strong><xsl:comment/></strong>
 	</a>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.DropDown(
@@ -448,7 +425,6 @@
 		});
 		with(<xsl:value-of select="generate-id()"/>_obj) {
 			<xsl:for-each select="gui:item">
-				
 				addItem({
 					title : '<xsl:value-of select="@title"/><xsl:value-of select="@label"/><xsl:value-of select="@text"/>',
 					value : hui.intOrString('<xsl:call-template name="gui:escapeScript"><xsl:with-param name="text" select="@value"/></xsl:call-template>')
@@ -520,8 +496,10 @@
 			<xsl:text>hui_checkbox</xsl:text>
 			<xsl:if test="@value='true'"> hui_checkbox_selected</xsl:if>
 		</xsl:attribute>
-		<span><span><xsl:comment/></span></span>
-		<xsl:value-of select="@title"/><xsl:value-of select="@text"/><xsl:value-of select="@label"/>
+		<span class="hui_checkbox_button"><xsl:comment/></span>
+		<xsl:if test="@text!='' or @title!='' or @label!=''">
+			<span class="hui_checkbox_label"><xsl:value-of select="@title"/><xsl:value-of select="@text"/></span>
+		</xsl:if>
 	</a>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Checkbox({
@@ -579,7 +557,10 @@
 
 <xsl:template match="gui:checkboxes/gui:item">
 	<a class="hui_checkbox" href="javascript:void(0);">
-		<span><span></span></span><xsl:value-of select="@title"/><xsl:value-of select="@text"/>
+		<span class="hui_checkbox_button"><xsl:comment/></span>
+		<xsl:if test="@text!='' or @title!='' or @label!=''">
+			<span class="hui_checkbox_label"><xsl:value-of select="@title"/><xsl:value-of select="@text"/></span>
+		</xsl:if>
 	</a>
 </xsl:template>
 
@@ -631,41 +612,53 @@
 </button>
 -->
 <xsl:template match="gui:button" name="gui:button">
+  <xsl:variable name="size">
+    <xsl:choose>
+			<xsl:when test="@large='true' or ../@large='true'">large</xsl:when>
+			<xsl:when test="@regular='true' or ../@regular='true'">regular</xsl:when>
+			<xsl:when test="@small='true' or ../@small='true'">small</xsl:when>
+			<xsl:when test="@mini='true' or ../@mini='true'">mini</xsl:when>
+			<xsl:when test="@tiny='true' or ../@tiny='true'">tiny</xsl:when>
+    </xsl:choose>
+  </xsl:variable>
 	<a id="{generate-id()}" href="javascript://">
 		<xsl:attribute name="class">
 			<xsl:text>hui_button</xsl:text>
 			<xsl:if test="@variant">
 				<xsl:text> hui_button_</xsl:text><xsl:value-of select="@variant"/>
 			</xsl:if>
-			<xsl:if test="@disabled='true'"> hui_button_disabled</xsl:if>
+			<xsl:if test="@disabled='true'"> hui_is_disabled</xsl:if>
 			<xsl:choose>
 				<xsl:when test="@variant and @small='true'">
 					<xsl:text> hui_button_small_</xsl:text><xsl:value-of select="@variant"/>
 				</xsl:when>
-				<xsl:when test="@variant and @mini='true'">
-					<xsl:text> hui_button_mini_</xsl:text><xsl:value-of select="@variant"/>
-				</xsl:when>
 				<xsl:when test="@small='true' and @highlighted='true'">
-					<xsl:text> hui_button_small hui_button_small_highlighted</xsl:text>
+					<xsl:text> hui_button_small hui_is_highlighted</xsl:text>
 				</xsl:when>
 				<xsl:when test="@small='true' or ../@small='true'">
 					<xsl:text> hui_button_small</xsl:text>
 				</xsl:when>
+				<xsl:when test="@mini='true' or ../@mini='true'">
+					<xsl:text> hui_button_mini</xsl:text>
+				</xsl:when>
+				<xsl:when test="@tiny='true' or ../@tiny='true'">
+					<xsl:text> hui_button_tiny</xsl:text>
+				</xsl:when>
 				<xsl:when test="@highlighted='true'">
-					<xsl:text> hui_button_highlighted</xsl:text>
+					<xsl:text> hui_is_highlighted</xsl:text>
 				</xsl:when>
 			</xsl:choose>
 		</xsl:attribute>
-		<span><span>
-			<xsl:if test="@icon"><em style="background-image: url('{$context}/hui/icons/{@icon}16.png')">
+		<xsl:if test="@disabled='true'"><xsl:attribute name="tabindex">-1</xsl:attribute></xsl:if>
+			<xsl:if test="@icon"><span style="background-image: url('{$context}/hui/icons/{@icon}16.png')">
 				<xsl:attribute name="class">
 					<xsl:text>hui_button_icon</xsl:text>
 					<xsl:if test="(not(@title) or @title='') and (not(@text) or @text='')"><xsl:text> hui_button_icon_notext</xsl:text></xsl:if>
 				</xsl:attribute>
 				<xsl:comment/>
-			</em></xsl:if>
+			</span></xsl:if>
 		<xsl:value-of select="@title"/><xsl:value-of select="@text"/>
-	</span></span></a>
+  </a>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Button({
 			element:'<xsl:value-of select="generate-id()"/>'

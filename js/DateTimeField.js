@@ -18,16 +18,16 @@ hui.ui.DateTimeField = function(o) {
 }
 
 hui.ui.DateTimeField.create = function(options) {
-	var node = hui.build('span',{'class':'hui_field_singleline'});
-	hui.build('input',{'class':'hui_formula_text',parent:node});
-	hui.build('a',{'class':'hui_datetime',href:'javascript://',tabIndex:'-1',html:'<span></span>',parent:node});
-	options.element = hui.ui.wrapInField(node);
+	options = options || {};
+	var node = hui.build('span',{'class':'hui_datetime'});
+	hui.build('input',{'class':'hui_textinput',parent:node});
+	hui.build('a',{'class':'hui_datetime_selector',href:'javascript://',tabIndex:'-1',parent:node});
+	options.element = node;
 	return new hui.ui.DateTimeField(options);
 }
 
 hui.ui.DateTimeField.prototype = {
 	_addBehavior : function() {
-		hui.ui.addFocusClass({element:this.input,classElement:this.element,'class':'hui_field_focused'});
 		hui.listen(this.input,'blur',this._onBlur.bind(this));
 		hui.listen(this.input,'keyup',this._parse.bind(this));
 		hui.listen(this.input,'focus',this._onFocus.bind(this));

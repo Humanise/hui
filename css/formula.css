@@ -125,11 +125,6 @@ table.hui_formula_fields_above div.hui_tokenfield
 	margin-bottom: 2px;
 }
 
-form.hui_formula div.hui_field
-{
-	font-size: 0;
-}
-
 form.hui_formula select
 {
 	font-size: 9pt;
@@ -215,149 +210,16 @@ div.hui_formula_field_compact div.hui_formula_field_body
 	padding: 0;
 }
 
-/*************************************** Field **********************************/
-
-span.hui_field
-{
-	display: inline-block;
-	vertical-align: middle;
-}
-
-
-span.hui_field_top, span.hui_field_top span
-{
-	display: block;
-	font-size: 0;
-	background: url('../gfx/field.png') left -5px no-repeat;
-	height: 5px;
-}
-
-span.hui_field_top span
-{
-	background-position: 100% -10px;
-}
-
-span.hui_field_top span span
-{
-	background-position: 0 0;
-	background-repeat: repeat;
-	margin: 0 5px;
-}
-
-span.hui_field_bottom, span.hui_field_bottom span
-{
-	display: block;
-	font-size: 0;
-	background: url('../gfx/field.png') 0 -20px no-repeat;
-	height: 5px;
-}
-
-span.hui_field_bottom span
-{
-	background-position: 100% -25px;
-	background-repeat: no-repeat;
-}
-
-span.hui_field_bottom span span
-{
-	background-position: 0 -15px;
-	background-repeat: repeat-x;
-	margin: 0 5px;
-}
-
-span.hui_field_middle
-{
-	display: block;
-	background: url('../gfx/field.png') 0 -30px no-repeat;
-}
-
-span.hui_field_middle span.hui_field_middle
-{
-	display: block;
-	background: url('../gfx/field.png') 100% -427px no-repeat;
-}
-
-span.hui_field_content
-{
-	display: block;
-	margin: 0 5px;
-	background: #fff;
-}
-
-.hui_field_focused span.hui_field_top
-{
-	background-position: 0 -832px;
-}
-
-.hui_field_focused span.hui_field_top span
-{
-	background-position: 100% -837px;
-}
-
-.hui_field_focused span.hui_field_top span span
-{
-	background-position: 100% -827px;
-}
-
-.hui_field_focused span.hui_field_bottom
-{
-	background-position: 0 -847px;
-}
-
-.hui_field_focused span.hui_field_bottom span
-{
-	background-position: 100% -852px;
-}
-
-.hui_field_focused span.hui_field_bottom span span
-{
-	background-position: 100% -842px;
-}
-
-.hui_field_focused span.hui_field_middle
-{
-	background-position: 0 -857px;
-}
-
-.hui_field_focused span.hui_field_middle span.hui_field_middle
-{
-	background-position: 100% -1254px;
-}
-
-span.hui_field_singleline
-{
-	background: none;
-	height: 16px;
-	font-size: 0;
-	display: block;
-}
-
-em.hui_field_placeholder
-{
-	position: absolute;
-	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
-	color: #999;
-	font-style: normal;
-	font-size: 12px;
-	margin-left: 7px;
-	margin-top: 5px;
-}
-
-.hui_field_focused em.hui_field_placeholder, .hui_field_dirty em.hui_field_placeholder
-{
-	display: none;
-}
-
 /************************************** Buttons *********************************/
 
-form.hui_formula div.hui_buttons_body
+form.hui_formula .hui_buttons
 {
-	float: right;
+	text-align: right;
 }
 
 .hui_formula .hui_button
 {
-	margin-left: 2px;
+	margin-left: 4px;
 	margin-right: 0px;
 }
 
@@ -406,27 +268,29 @@ table.hui_objectlist th.hui_objectlist1
 	padding-left: 0px;
 }
 
-a.hui_datetime
-{
-	position: absolute;
-	margin-left: -17px;
-	margin-top: -1px;
-	font-size: 0;
-	cursor: pointer;
-	padding: 2px;
+span.hui_datetime {
+	display: block;
 }
 
-a.hui_datetime span,
-body .hui_context_dark a.hui_datetime span
+.hui_datetime_selector
 {
+	position: absolute;
+	margin-left: -19px;
+	margin-top: 6px;
+	font-size: 0;
+	cursor: pointer;
 	background: url('../icons/input/datetime14.png') no-repeat;
 	display: inline-block;
 	width: 14px;
 	height: 14px;
 }
 
-a.hui_datetime:hover span,
-body .hui_context_dark a.hui_datetime:hover span
+a.hui_datetime span,
+body .hui_context_dark a.hui_datetime span
+{
+}
+
+.hui_datetime_selector:hover
 {
 	background-position: 0 -14px;
 }
@@ -460,35 +324,4 @@ body .hui_context_dark label.hui_formula_field,
 {
 	color: #fff;
 	background: none;
-}
-
-.hui_context_dark .hui_formula_text
-{
-	color: #fff;
-}
-
-.hui_context_dark div.hui_field span
-{
-	background-image: url('../gfx/field_dark.png');
-}
-
-.hui_context_dark div.hui_field span.hui_field_singleline, 
-.hui_context_dark div.hui_field span.hui_formula_text_multiline
-{
-	background: none;
-}
-
-.hui_context_dark div.hui_field span.hui_field_content
-{
-	background: #222222;
-}
-
-.hui_context_dark div.hui_field span.hui_field_singleline
-{
-	background: none;
-}
-
-.hui_context_dark a.hui_checkbox
-{
-	color: #fff;
 }

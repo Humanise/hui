@@ -1,0 +1,37 @@
+@import 'tools';
+
+.hui_colorinput
+{
+	display: inline-block;
+	position: relative;
+	vertical-align: middle;
+	padding-right: 28px;
+
+	input {
+		font-size: 9pt;
+		font-family: Monaco,monospace;
+		width: 62px;
+	}
+}
+
+
+.hui_colorinput_color
+{
+	top: -1px;
+	right: 0px;
+	position: absolute;
+	width: 24px;
+	height: 24px;
+	border: 1px solid rgba(0,0,0,.2);
+	border-radius: 2px;
+	margin-left: 3px;
+	margin-top: 1px;
+	text-decoration: none;
+	font-size: 14px;
+	font-family: Tahoma;
+	text-align: center;
+	color: #ccc;
+	line-height: 24px;
+	outline: none;
+	background: #eee;
+}

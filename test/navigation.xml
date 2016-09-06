@@ -29,6 +29,7 @@
         <item icon="common/page" title="bar" value="html/bar.html"/>
         <item icon="common/page" title="boundpanel" value="html/boundpanel.html"/>
         <item icon="common/page" title="boundpanel_long" value="html/boundpanel_long.html"/>
+        <item icon="common/page" title="button" value="html/button.html"/>
         <item icon="common/page" title="chart" value="html/chart.html"/>
         <item icon="common/page" title="colorpicker" value="html/colorpicker.html"/>
         <item icon="common/page" title="diagram" value="html/diagram.html"/>

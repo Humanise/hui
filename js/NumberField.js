@@ -9,8 +9,8 @@ hui.ui.NumberField = function(o) {
 	this.name = o.name;
 	var e = this.element = hui.get(o.element);
 	this.input = hui.get.firstByTag(e,'input');
-	this.up = hui.get.firstByClass(e,'hui_numberfield_up');
-	this.down = hui.get.firstByClass(e,'hui_numberfield_down');
+	this.up = hui.get.firstByClass(e,'hui_numberinput_up');
+	this.down = hui.get.firstByClass(e,'hui_numberinput_down');
 	if (hui.isString(this.options.value)) {
 		this.value = parseInt(this.options.value,10);
 	} else {
@@ -26,8 +26,8 @@ hui.ui.NumberField = function(o) {
 /** Creates a new number field */
 hui.ui.NumberField.create = function(o) {
 	o.element = hui.build('span',{
-		'class':'hui_numberfield',
-		html:'<span><span><input type="text" value="'+(o.value!==undefined ? o.value : '0')+'"/><a class="hui_numberfield_up"></a><a class="hui_numberfield_down"></a></span></span>'
+		'class':'hui_numberinput',
+		html:'<input class="hui_textinput" type="text" value="'+(o.value!==undefined ? o.value : '0')+'"/><a class="hui_numberinput_up"></a><a class="hui_numberinput_down"></a>'
 	});
 	return new hui.ui.NumberField(o);
 }
@@ -44,14 +44,12 @@ hui.ui.NumberField.prototype = {
 		//hui.listen(this.down,'dblclick',this.upEvent.bind(this));
 	},
 	_onBlur : function() {
-		hui.cls.remove(this.element,'hui_numberfield_focused');
 		this._updateField();
 		if (this.sliderPanel) {
 			this.sliderPanel.hide();
 		}
 	},
 	_onFocus : function() {
-		hui.cls.add(this.element,'hui_numberfield_focused');
 		this._showSlider();
 		this._updateSlider();
 	},

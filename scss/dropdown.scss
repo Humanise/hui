@@ -1,0 +1,124 @@
+@import 'tools';
+
+.hui_dropdown
+{
+	@include control-base;
+  color: $text-color;
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 12px;
+  height: 26px;
+  line-height: 24px;
+  cursor: pointer;
+  text-decoration: none;
+  font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  white-space: nowrap;
+  padding: 0 24px 0 7px;
+  box-sizing: border-box;
+  text-shadow: 0 -1px 0 rgba(255,255,255,.5);
+	max-width: 100%;
+	position: relative;
+
+	&:after {
+		content: '';
+		position: absolute;
+		width: 8px;
+		height: 8px;
+		background: url("../gfx/drop.svg");
+		background-size: contain;
+		top: 8px;
+		right: 7px;
+		opacity: .6;
+	};
+
+  &:hover {
+    @include control-hover;
+  }
+
+	&:focus {
+    @include control-focus;
+	}
+
+	&:active {
+    @include control-active;
+	}
+
+	strong {
+		display: block;
+		overflow: hidden;
+		font-weight: normal;
+		height: 100%;
+		width: 100%;
+	}
+	&_placeholder {
+		color: #999;
+		font-size: 11px;
+		line-height: 24px;
+		display: block;
+		font-style: italic;
+		padding-right: 2px;
+	}
+}
+
+.hui_dropdown_selector
+{
+	position: absolute;
+	display: none;
+	top: 0;
+	left: 0;
+	background: #fff;
+	border: 1px solid #ddd;
+	font-size: 12px;
+	-webkit-box-shadow: 0px 2px 6px rgba(0,0,0,.1);
+	-webkit-border: none;
+	-moz-box-shadow: 0px 2px 6px rgba(0,0,0,.1);
+	overflow: auto;
+	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+	text-align: left;
+}
+
+div.hui_dropdown_selector a
+{
+	padding: 2px 5px;
+	display: block;
+	text-decoration: none;
+	color: #333;
+	min-height: 15px;
+}
+
+div.hui_dropdown_selector a.hui_selected
+{
+	background: #eee;
+	color: #000;
+	font-weight: bold;
+}
+
+div.hui_dropdown_selector a:hover
+{
+	background-color: #3875d7;
+	color: #fff;
+}
+
+/* Adaptive */
+
+a.hui_dropdown_adaptive
+{
+	width: 100%;
+}
+
+
+/** Mini bar variant **/
+
+.hui_dropdown_bar_mini
+{
+    vertical-align: top;
+    margin-top: 0px;
+    background: none;
+    height: 22px;
+    font-size: 11px;
+    line-height: 22px;
+		border: none;
+		box-shadow: none;
+}

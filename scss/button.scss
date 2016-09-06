@@ -1,0 +1,299 @@
+@import 'tools';
+
+.hui_buttons
+{
+	font-size: 0;
+	line-height: 0;
+	white-space: nowrap;
+
+  .hui_button {
+    margin-right: 4px;
+  }
+
+  &_right {
+    text-align: right;
+
+    .hui_button {
+      margin: 0px 0px 0px 4px;
+    }
+  }
+
+  &_center {
+    text-align: center;
+
+    .hui_button {
+      margin: 0px 2px 0px 2px;
+    }
+  }
+}
+
+/**************** Standard button ************/
+
+.hui_button
+{
+  color: $text-color;
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 12px;
+  height: 24px;
+  line-height: 24px;
+  cursor: pointer;
+  text-decoration: none;
+  font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  white-space: nowrap;
+  @include vertical-gradient(#fcfcfd, #e3e7ea);
+  border: 1px solid #ccc;
+  border-color: #e3e3e3 #ccc #bbb;
+  border-radius: 3px;
+  padding: 0 10px;
+  box-shadow: 0 1px 1px rgba(0,0,0,.1);
+  -webkit-appearance: none;
+  box-sizing: content-box;
+  text-shadow: 0 -1px 0 rgba(255,255,255,.5);
+
+  &:hover {
+    border-color: #d2d2d2 #b7b7b7 #9c9c9c;
+    background: linear-gradient(#f9f9f9, #d5dade);
+  }
+
+  &:active {
+    border-color: #9c9c9c #b7b7b7 #aeaeae;
+    background: linear-gradient(#d1d4d6, #f1f2f3);
+    background: linear-gradient(#f1f2f3, #d1d4d6);
+    box-shadow: inset 0 1px 4px rgba(0,0,0,.2);
+    text-shadow: none;
+    line-height: 26px;
+  }
+
+  &:focus {
+    border: 1px solid $focus-color;
+    box-shadow: 0 0 2px $focus-color,inset 0 0 2px $focus-color;
+    outline: none;
+  }
+
+  &.hui_is_highlighted
+  {
+    box-shadow: 0 1px 1px rgba(0,0,0,.1), inset 0 0 5px #6ede4a;
+    border-color: #adcaba #9fc1b1 #99ada2;
+
+    &:focus {
+      box-shadow: inset 0 0 5px #6ede4a, 0 0 2px $focus-color,inset 0 0 2px $focus-color;
+      border-color: $focus-color;
+    }
+  }
+
+  &.hui_is_disabled {
+    &, &:hover {
+      cursor: default;
+      background: #f9f9f9;
+      color: #999;
+      border: 1px solid #e3e3e3;
+      box-shadow: none;
+    }
+  }
+
+  &_small {
+    font-size: 11px;
+    height: 20px;
+    line-height: 20px;
+    padding: 0 7px;
+
+    &:active {
+      line-height: 21px;
+    }
+
+    .hui_button_icon {
+      margin-top: 2px;
+    }
+  }
+
+  &_mini {
+    font-size: 9px;
+    height: 16px;
+    line-height: 16px;
+    padding: 0 5px;
+    box-shadow: 0 1px 0 rgba(0,0,0,.05);
+
+    &:active {
+      line-height: 17px;
+    }
+  }
+
+  &_tiny {
+    font-size: 8px;
+    height: 14px;
+    line-height: 14px;
+    padding: 0 5px;
+    box-shadow: none;
+
+    &::active {
+      line-height: 15px;
+    }
+  }
+
+}
+
+.hui_button_icon
+{
+	padding: 0px;
+	margin: 4px 5px 0px -2px;
+	width: 16px;
+	height: 16px;
+	display: inline-block;
+	vertical-align: top;
+}
+
+.hui_button_icon_notext
+{
+	margin: 4px -3px 0px -3px;
+}
+
+.hui_button:hover .hui_button_icon
+{
+	background-position: 0 -16px;
+}
+
+
+
+
+.hui_button_light
+{
+	border: 1px solid #ddd;
+	border-radius: 3px;
+  @include vertical-gradient(#ffffff, #f6f6f6);
+	color: #333;
+  box-shadow: none;
+
+  &:focus {
+    border: 1px solid $focus-color;
+    box-shadow: 0 0 2px $focus-color,inset 0 0 2px $focus-color;
+    outline: none;
+  }
+
+  &:active {
+    @include vertical-gradient(#eeeeee, #fafafa);
+  }
+
+  &:hover {
+    border-color: #dadada;
+    @include vertical-gradient(#fafafa, #eeeeee);
+  }
+}
+
+
+/** Icon **/
+
+a.hui_button_light em.hui_button_icon
+{
+	margin-left: -6px;
+    margin-right: 5px;
+    margin-top: 5px;
+}
+
+a.hui_button_light em.hui_button_icon_notext
+{
+    margin-right: -5px;
+}
+
+
+.hui_context_dark {
+  .hui_button {
+    border-color: #232323 #040404 #000000;
+    @include vertical-gradient(#5c5f63, #4f5152);
+    color: #fff;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 1px #666, inset 0 1px 0 #888;
+    border-radius: 3px;
+
+    &:focus {
+      border-color: $dark-focus-color;
+      box-shadow: 0 0 2px $dark-focus-color,inset 0 0 2px $dark-focus-color;
+    }
+
+    &:hover {
+      box-shadow: 0 0 1px #666, inset 0 1px 0 #666;
+      @include vertical-gradient(darken(#5c5f63,5%), darken(#4f5152,5%));
+    }
+
+    &:active {
+      box-shadow: 0 0 1px #666, inset 0 2px 6px rgba(0,0,0,.3);
+      border-color: #000;
+    }
+
+    &.hui_is_highlighted {
+      /*
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1), inset 0 0 3px #66b94b;
+      border-color: #2c3831 #222b26 #232b27;
+      @include vertical-gradient(#36634e, #2b4e38);*/
+
+      box-shadow: inset 0 1px 0px rgb(46, 162, 255), 0 0px 1px rgba(255, 255, 255, 0.35);
+      border-color: #002752 #003361 #000000;
+      @include vertical-gradient(#0a71ec, #005694);
+
+      &:focus {
+        border-color: $dark-focus-color;
+        box-shadow: 0 0 2px $dark-focus-color,inset 0 0 2px $dark-focus-color;
+      }
+
+      &:hover {
+        box-shadow: inset 0 1px 0px darken(rgb(46, 162, 255),5%), 0 0px 1px rgba(255, 255, 255, 0.35);
+        @include vertical-gradient(darken(#0a71ec,5%), darken(#005694,5%));
+      }
+      &:active {
+        box-shadow: 0 0 1px #666, inset 0 2px 6px rgba(0,0,0,.3);
+      }
+    }
+
+    &.hui_is_disabled {
+			&, &:hover {
+				border-color: #111;
+				background: #333;
+				color: #999;
+				box-shadow: none;
+			}
+    }
+  }
+}
+
+
+
+
+
+/** Small bar **/
+
+a.hui_button_bar
+{
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	background: none;
+	height: 26px;
+	line-height: 26px;
+	font-family: Georgia,serif;
+	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+	font-size: 14px;
+	border-color: #ccc #d7d7d7 #ccc;
+  @include vertical-gradient(#fdfdfd, #e6e6e6);
+}
+
+a.hui_button_bar span
+{
+	background: none;
+	color: #333;
+}
+
+a.hui_button_small_bar, a.hui_button_small_bar span
+{
+	height: 20px;
+	line-height: 20px;
+}
+
+a.hui_button_small_bar span span
+{
+	margin: 0;
+	padding: 0 7px;
+	font-size: 11px;
+	line-height: 17px;
+	text-shadow: 0 1px 0 #fff;
+}

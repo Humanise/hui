@@ -1,0 +1,76 @@
+@import 'tools';
+
+/******************************** Location *************************/
+
+.hui_locationinput
+{
+	padding-right: 18px;
+	position: relative;
+	display: inline-block;
+	width: 100%;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-color: #bbb #ccc #e3e3e3;
+  border-radius: 2px;
+  height: 26px;
+	font-size: 0;
+
+	&-focused {
+		border: 1px solid $focus-color;
+		box-shadow: 0 0 2px $focus-color,inset 0 0 2px $focus-color;
+		outline: none;
+	}
+
+	input {
+		border: 0;
+		margin: 0;
+		padding: 0;
+		width: 100%;
+		background: none;
+		height: 16px;
+		outline: none;
+		font-family: $font;
+		font-size: 12px;
+	}
+
+}
+
+
+.hui_locationinput_picker
+{
+	background-image: url('../icons/geo/map16.png');
+	width: 16px;
+	height: 16px;
+	position: absolute;
+	right: 4px;
+	top: 4px;
+	font-size: 0;
+
+	&:hover {
+		background-position: 0 -16px;
+	}
+}
+
+.hui_locationinput_latitude,
+.hui_locationinput_longitude
+{
+	display: inline-block;
+	height: 16px;
+	width: 50%;
+	position: relative;
+	box-sizing: border-box;
+	padding-left: 20px;
+	margin-top: 3px;
+}
+
+.hui_locationinput_latitude
+{
+	background: url('../icons/monochrome/latitude16.png') 2px top no-repeat;
+}
+
+.hui_locationinput_longitude
+{
+	background: url('../icons/monochrome/longitude16.png') 2px top no-repeat;
+}

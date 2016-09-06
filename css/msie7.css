@@ -104,7 +104,7 @@ textarea.hui_formula_text
 	overflow-y: auto;
 }
 
-span.hui_field_content, div.hui_list, div.hui_box_middle
+div.hui_list, div.hui_box_middle
 {
 	zoom: 1;
 }

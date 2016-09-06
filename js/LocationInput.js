@@ -4,7 +4,7 @@
  * An input component for geo-location
  * @constructor
  */
-hui.ui.LocationField = function(options) {
+hui.ui.LocationInput = function(options) {
 	this.options = hui.override({value:null},options);
 	this.name = options.name;
 	this.element = hui.get(options.element);
@@ -19,20 +19,17 @@ hui.ui.LocationField = function(options) {
 	this._addBehavior();
 }
 
-hui.ui.LocationField.create = function(options) {
+hui.ui.LocationInput.create = function(options) {
 	options = options || {};
-	var e = options.element = hui.build('span',{'class':'hui_locationfield'});
-	var b = hui.build('span',{html:'<span class="hui_locationfield_latitude"><span><input/></span></span><span class="hui_locationfield_longitude"><span><input/></span></span>'});
-	e.appendChild(hui.ui.wrapInField(b));
-	e.appendChild(hui.build('a',{'class':'hui_locationfield_picker',href:'javascript:void(0);'}));
-	return new hui.ui.LocationField(options);
+  options.element = hui.build('span',{'class':'hui_locationinput', html:'<span class="hui_locationinput_latitude"><span><input autocomplete="off"></span></span><span class="hui_locationinput_longitude"><span><input autocomplete="off"></span></span><a class="hui_locationinput_picker" href="javascript://"></a>'});
+	return new hui.ui.LocationInput(options);
 }
 
-hui.ui.LocationField.prototype = {
+hui.ui.LocationInput.prototype = {
 	_addBehavior : function() {
 		hui.listen(this.chooser,'click',this._showPicker.bind(this));
-		hui.ui.addFocusClass({element:this.latField.element,classElement:this.element,'class':'hui_field_focused'});
-		hui.ui.addFocusClass({element:this.lngField.element,classElement:this.element,'class':'hui_field_focused'});
+		hui.ui.addFocusClass({element:this.latField.element,classElement:this.element,'class':'hui_locationinput-focused'});
+		hui.ui.addFocusClass({element:this.lngField.element,classElement:this.element,'class':'hui_locationinput-focused'});
 	},
 	getLabel : function() {
 		return this.options.label;

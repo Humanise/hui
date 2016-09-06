@@ -36,14 +36,13 @@ hui.ui.DropDown.create = function(options) {
 	}
 	options.element = hui.build('a',{
 		'class':cls,href:'javascript://',
-		html:'<span><span><strong></strong></span></span>'
+		html:'<strong></strong>'
 	});
 	return new hui.ui.DropDown(options);
 }
 
 hui.ui.DropDown.prototype = {
 	_attach : function() {
-		hui.ui.addFocusClass({element:this.element,'class':'hui_dropdown_focused'});
 		hui.listen(this.element,'click',this._click.bind(this));
 		hui.listen(this.element,'blur',this._hideSelector.bind(this));
 		hui.listen(this.element,'keydown',this._keyDown.bind(this));
@@ -69,7 +68,7 @@ hui.ui.DropDown.prototype = {
 			hui.dom.addText(this.inner,hui.string.wrap(text));
 		} else if (this.options.placeholder) {
 			this.inner.innerHTML='';
-			this.inner.appendChild(hui.build('em',{text:hui.string.escape(this.options.placeholder)}));
+			this.inner.appendChild(hui.build('span',{'class':'hui_dropdown_placeholder',text:hui.string.escape(this.options.placeholder)}));
 		} else {
 			this.inner.innerHTML='';
 		}
@@ -106,7 +105,7 @@ hui.ui.DropDown.prototype = {
 		this._buildSelector();
 		var el = this.element, s=this.selector;
 		if (this.options.focus) {
-			el.focus();			
+			el.focus();
 		}
 		if (!this.items) return;
 		var docHeight = hui.document.getHeight();
@@ -132,7 +131,7 @@ hui.ui.DropDown.prototype = {
 		this._selectorVisible = true;
 	},
 	_hideSelector : function() {
-		hui.unListen(document.body,'mousedown',this._hider);					
+		hui.unListen(document.body,'mousedown',this._hider);
 		if (!this.selector) {return}
 		this.selector.style.display = 'none';
 		this._selectorVisible = false;

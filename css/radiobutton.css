@@ -1,91 +1,61 @@
 /******************************* Radio button **************************/
+.hui_radiobuttons {
+  vertical-align: middle;
+  display: inline-block;
+  font-size: 0; }
+  .hui_radiobuttons_disabled {
+    opacity: .5; }
 
-span.hui_radiobuttons
-{
-	vertical-align: middle;
-	display: inline-block;
-	font-size: 0;
-}
-
-a.hui_radiobutton
-{
-	overflow: hidden;
-	margin-right: 10px;
-	font-size: 10pt;
-	cursor: default;
-	color: #004A80;
-	display: inline-block;
-	cursor: pointer;
-}
-
-span.hui_radiobutton_button
-{
-	vertical-align: top;
-	display: inline-block;
-	background: url('../gfx/radiobutton.png') no-repeat;
-	width: 20px;
-	height: 20px;
-	margin-right: 3px;
-}
-
-span.hui_radiobutton_button span
-{
-	display: inline-block;
-	width: 20px;
-	height: 20px;
-}
-
-a.hui_radiobutton:hover span.hui_radiobutton_button
-{
-	background-position: 0 -20px;
-}
-
-a.hui_radiobutton:active span.hui_radiobutton_button
-{
-	background-position: 0 -40px;
-}
-
-a.hui_radiobutton:focus
-{
-	outline: none;
-}
-
-
-a.hui_radiobutton:focus span.hui_radiobutton_label
-{
-	text-shadow: #3366ff 0px 0px 2px;
-	color: #002244;
-}
-
-a.hui_radiobutton:focus span.hui_radiobutton_button
-{
-	background-position: 0 -60px;
-}
-
-a.hui_radiobutton:hover:focus span.hui_radiobutton_button
-{
-	background-position: 0 -80px;
-}
-
-a.hui_radiobutton:actve:focus span.hui_radiobutton_button
-{
-	background-position: 0 -100px;
-}
-
-span.hui_radiobutton_label
-{
-	vertical-align: top;
-	display: inline-block;
-	height: 20px;
-	line-height: 20px;
-}
-
-a.hui_radiobutton_selected span.hui_radiobutton_button span
-{
-	background: url('../gfx/radiobutton.png') 0 -120px no-repeat;
-}
-
-span.hui_radiobuttons_disabled
-{
-	opacity: .5;
-}
+.hui_radiobutton {
+  margin-right: 10px;
+  font-size: 10pt;
+  cursor: default;
+  display: inline-block;
+  cursor: pointer; }
+  .hui_radiobutton_button {
+    width: 16px;
+    height: 16px;
+    background-color: #fcfcfd;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#fcfcfd), to(#e3e7ea));
+    background-image: -webkit-linear-gradient(top, #fcfcfd, #e3e7ea);
+    background-image: -moz-linear-gradient(top, #fcfcfd, #e3e7ea);
+    background-image: -ms-linear-gradient(top, #fcfcfd, #e3e7ea);
+    background-image: -o-linear-gradient(top, #fcfcfd, #e3e7ea);
+    background-image: linear-gradient(top, #fcfcfd, #e3e7ea);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fcfcfd', endColorstr='#e3e7ea');
+    border: 1px solid #ccc;
+    border-color: #e3e3e3 #ccc #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1); }
+    .hui_radiobutton_selected .hui_radiobutton_button:before {
+      content: '';
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: #333;
+      border-radius: 50%;
+      top: 4px;
+      left: 4px; }
+  .hui_radiobutton:hover .hui_radiobutton_button {
+    border-color: #d2d2d2 #b7b7b7 #9c9c9c;
+    background: linear-gradient(#f9f9f9, #d5dade); }
+  .hui_radiobutton:focus {
+    outline: none; }
+  .hui_radiobutton:focus .hui_radiobutton_button {
+    border: 1px solid #0069ff;
+    box-shadow: 0 0 2px #0069ff, inset 0 0 2px #0069ff;
+    outline: none; }
+  .hui_radiobutton:active .hui_radiobutton_button {
+    border-color: #9c9c9c #b7b7b7 #aeaeae;
+    background: linear-gradient(#f1f2f3, #d1d4d6);
+    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.2); }
+  .hui_radiobutton_label {
+    vertical-align: top;
+    display: inline-block;
+    height: 18px;
+    color: #004a80;
+    line-height: 18px;
+    margin-left: 5px; }

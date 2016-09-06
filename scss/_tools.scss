@@ -1,7 +1,48 @@
 $sidebar-color : #EBF0F7;
 $border-color : #ddd;
+$focus-color: #0069ff;//#39f;
+$dark-focus-color: #65a5ff;
+$text-color: #004a80;
+$font: "Lucida Grande","Lucida Sans Unicode",sans-serif;
 
 @mixin border-box {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
+}
+
+@mixin vertical-gradient($start-colour, $end-colour) {
+    background-color: $start-colour;
+    background-image: -webkit-gradient(linear, left top, left bottom, from($start-colour), to($end-colour));
+    background-image: -webkit-linear-gradient(top, $start-colour, $end-colour);
+    background-image:    -moz-linear-gradient(top, $start-colour, $end-colour);
+    background-image:     -ms-linear-gradient(top, $start-colour, $end-colour);
+    background-image:      -o-linear-gradient(top, $start-colour, $end-colour);
+    background-image:         linear-gradient(top, $start-colour, $end-colour);
+    filter:            progid:DXImageTransform.Microsoft.gradient(startColorstr='#{$start-colour}', endColorstr='#{$end-colour}');
+}
+
+@mixin control-hover {
+  border-color: #d2d2d2 #b7b7b7 #9c9c9c;
+  background: linear-gradient(#f9f9f9, #d5dade);
+}
+
+@mixin control-base {
+  @include vertical-gradient(#fcfcfd, #e3e7ea);
+  border: 1px solid #ccc;
+  border-color: #e3e3e3 #ccc #bbb;
+  border-radius: 3px;
+  box-shadow: 0 1px 1px rgba(0,0,0,.1);
+}
+
+@mixin control-focus {
+  border: 1px solid $focus-color;
+  box-shadow: 0 0 2px $focus-color,inset 0 0 2px $focus-color;
+  outline: none;
+}
+
+@mixin control-active {
+  border-color: #9c9c9c #b7b7b7 #aeaeae;
+  background: linear-gradient(#f1f2f3, #d1d4d6);
+  box-shadow: inset 0 1px 4px rgba(0,0,0,.2);
+  text-shadow: none;
 }

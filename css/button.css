@@ -1,533 +1,257 @@
-
-div.hui_buttons
-{
-	overflow: hidden;
-	font-size: 0;
-	line-height: 0;
-	white-space: nowrap;
-}
-
-div.hui_buttons_right div.hui_buttons_body
-{
-	text-align: right;
-}
-
-div.hui_buttons_center div.hui_buttons_body
-{
-	text-align: center;
-}
-
-div.hui_buttons a.hui_button
-{
-	margin-right: 2px;
-}
-
-div.hui_buttons_right a.hui_button
-{
-	margin: 0px 0px 0px 2px;
-}
-
-div.hui_buttons_center a.hui_button
-{
-	margin: 0px 1px 0px 1px;
-}
+.hui_buttons {
+  font-size: 0;
+  line-height: 0;
+  white-space: nowrap; }
+  .hui_buttons .hui_button {
+    margin-right: 4px; }
+  .hui_buttons_right {
+    text-align: right; }
+    .hui_buttons_right .hui_button {
+      margin: 0px 0px 0px 4px; }
+  .hui_buttons_center {
+    text-align: center; }
+    .hui_buttons_center .hui_button {
+      margin: 0px 2px 0px 2px; }
 
 /**************** Standard button ************/
+.hui_button {
+  color: #004a80;
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 12px;
+  height: 24px;
+  line-height: 24px;
+  cursor: pointer;
+  text-decoration: none;
+  font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  white-space: nowrap;
+  background-color: #fcfcfd;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#fcfcfd), to(#e3e7ea));
+  background-image: -webkit-linear-gradient(top, #fcfcfd, #e3e7ea);
+  background-image: -moz-linear-gradient(top, #fcfcfd, #e3e7ea);
+  background-image: -ms-linear-gradient(top, #fcfcfd, #e3e7ea);
+  background-image: -o-linear-gradient(top, #fcfcfd, #e3e7ea);
+  background-image: linear-gradient(top, #fcfcfd, #e3e7ea);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fcfcfd', endColorstr='#e3e7ea');
+  border: 1px solid #ccc;
+  border-color: #e3e3e3 #ccc #bbb;
+  border-radius: 3px;
+  padding: 0 10px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  -webkit-appearance: none;
+  box-sizing: content-box;
+  text-shadow: 0 -1px 0 rgba(255, 255, 255, 0.5); }
+  .hui_button:hover {
+    border-color: #d2d2d2 #b7b7b7 #9c9c9c;
+    background: linear-gradient(#f9f9f9, #d5dade); }
+  .hui_button:active {
+    border-color: #9c9c9c #b7b7b7 #aeaeae;
+    background: linear-gradient(#d1d4d6, #f1f2f3);
+    background: linear-gradient(#f1f2f3, #d1d4d6);
+    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.2);
+    text-shadow: none;
+    line-height: 26px; }
+  .hui_button:focus {
+    border: 1px solid #0069ff;
+    box-shadow: 0 0 2px #0069ff, inset 0 0 2px #0069ff;
+    outline: none; }
+  .hui_button.hui_is_highlighted {
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1), inset 0 0 5px #6ede4a;
+    border-color: #adcaba #9fc1b1 #99ada2; }
+    .hui_button.hui_is_highlighted:focus {
+      box-shadow: inset 0 0 5px #6ede4a, 0 0 2px #0069ff, inset 0 0 2px #0069ff;
+      border-color: #0069ff; }
+  .hui_button.hui_is_disabled, .hui_button.hui_is_disabled:hover {
+    cursor: default;
+    background: #f9f9f9;
+    color: #999;
+    border: 1px solid #e3e3e3;
+    box-shadow: none; }
+  .hui_button_small {
+    font-size: 11px;
+    height: 20px;
+    line-height: 20px;
+    padding: 0 7px; }
+    .hui_button_small:active {
+      line-height: 21px; }
+    .hui_button_small .hui_button_icon {
+      margin-top: 2px; }
+  .hui_button_mini {
+    font-size: 9px;
+    height: 16px;
+    line-height: 16px;
+    padding: 0 5px;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05); }
+    .hui_button_mini:active {
+      line-height: 17px; }
+  .hui_button_tiny {
+    font-size: 8px;
+    height: 14px;
+    line-height: 14px;
+    padding: 0 5px;
+    box-shadow: none; }
+    .hui_button_tiny::active {
+      line-height: 15px; }
 
-a.hui_button
-{
-	background: url('../gfx/button.png') top left no-repeat;
-	color: #004a80;
-	display: inline-block;
-	vertical-align: middle;
-	font-size: 12px;
-	height: 28px;
-	line-height: 28px;
-	cursor: pointer;
-	text-decoration: none;
-	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	white-space: nowrap;
-}
+.hui_button_icon {
+  padding: 0px;
+  margin: 4px 5px 0px -2px;
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  vertical-align: top; }
 
-a.hui_button span
-{
-	background-image: url('../gfx/button.png');	
-	background-repeat: no-repeat;
-	display: inline-block;
-	background-position: right -56px;
-	background-repeat: no-repeat;
-	height: 28px;
-}
+.hui_button_icon_notext {
+  margin: 4px -3px 0px -3px; }
 
-a.hui_button span span
-{
-	background-position: 0px -28px;
-	background-repeat: repeat-x;
-	margin: 0px 5px;
-	padding: 0px 5px;
-}
+.hui_button:hover .hui_button_icon {
+  background-position: 0 -16px; }
 
-em.hui_button_icon
-{
-	padding: 0px;
-	margin: 6px 3px 0px -2px;
-	width: 16px;
-	height: 16px;
-	display: inline-block;
-	vertical-align: top;
-}
-
-em.hui_button_icon_notext
-{
-	margin: 6px -3px 0px -3px;
-}
-
-a.hui_button:hover em.hui_button_icon
-{
-	background-position: 0 -16px;
-}
-
-a.hui_button:hover
-{
-	background-position: 0px -84px;
-}
-
-a.hui_button:hover span
-{
-	background-position: 100% -140px;
-}
-
-a.hui_button:hover span span
-{
-	background-position: 0px -112px;
-	background-repeat: repeat-x;
-}
-
-a.hui_button:active
-{
-	background-position: 0px -168px;
-	outline: none;
-}
-
-a.hui_button:active span
-{
-	background-position: 100% -224px;
-}
-
-a.hui_button:active span span
-{
-	background-position: 0px -196px;
-	background-repeat: repeat-x;
-}
-
-a.hui_button:focus
-{
-	background-position: 0px -252px;
-	outline: none;
-}
-
-a.hui_button:focus span
-{
-	background-position: 100% -308px;
-}
-
-a.hui_button:focus span span
-{
-	background-position: 0px -280px;
-	background-repeat: repeat-x;
-}
-
-a.hui_button:focus:hover
-{
-	background-position: 0px -336px;
-	outline: none;
-}
-
-a.hui_button:focus:hover span
-{
-	background-position: 100% -392px;
-}
-
-a.hui_button:focus:hover span span
-{
-	background-position: 0px -364px;
-	background-repeat: repeat-x;
-}
-
-a.hui_button:active:focus
-{
-	background-position: 0px -420px;
-	outline: none;
-}
-
-a.hui_button:active:focus span
-{
-	background-position: 100% -476px;
-}
-
-a.hui_button:active:focus span span
-{
-	background-position: 0px -448px;
-	background-repeat: repeat-x;
-}
-
-a.hui_button_highlighted, a.hui_button_highlighted span
-{
-	background-image: url('../gfx/button_highlighted.png');
-	color: #152;
-}
-
-a.hui_button_disabled
-{
-	color: #666;
-	opacity: .5;
-	cursor: default;
-}
-
-a.hui_button_disabled:hover
-{
-	background-position: top left;
-}
-
-a.hui_button_disabled:hover span
-{
-	background-position: 100% -56px;
-}
-
-a.hui_button_disabled:hover span span
-{
-	background-position: 0px -28px;
-}
-
-a.hui_button_small
-{
-	height: 24px;
-	background-image: url('../gfx/button_small.png');
-	line-height: 0;
-	font-size: 0;
-}
-
-a.hui_button_small span
-{
-	height: 24px;
-	background-image: url('../gfx/button_small.png');
-	background-position: right -24px;
-}
-
-a.hui_button_small span span
-{
-	background-position: left -48px;
-	margin: 0 12px;
-	padding: 0 3px;
-	font-size: 12px;
-	line-height: 23px;
-	text-shadow: 0 1px 0 #FFFFFF;
-}
-
-a.hui_button_small:hover
-{
-	background-position: left -72px;
-}
-
-a.hui_button_small:hover span
-{
-	background-position: right -96px;
-}
-
-a.hui_button_small:hover span span
-{
-	background-position: left -120px;
-}
-
-a.hui_button_small:active
-{
-	background-position: left -144px;
-}
-
-a.hui_button_small:active span
-{
-	background-position: right -168px;
-}
-
-a.hui_button_small:active span span
-{
-	background-position: left -192px;
-}
-
-
-a.hui_button_small:focus
-{
-	background-position: left -216px;
-}
-
-a.hui_button_small:focus span
-{
-	background-position: right -240px;
-}
-
-a.hui_button_small:focus span span
-{
-	background-position: left -264px;
-}
-
-a.hui_button_small:focus:hover
-{
-	background-position: left -288px;
-}
-
-a.hui_button_small:focus:hover span
-{
-	background-position: right -312px;
-}
-
-a.hui_button_small:focus:hover span span
-{
-	background-position: left -336px;
-}
-
-a.hui_button_small:focus:active
-{
-	background-position: left -360px;
-}
-
-a.hui_button_small:focus:active span
-{
-	background-position: right -384px;
-}
-
-a.hui_button_small:focus:active span span
-{
-	background-position: left -408px;
-}
-
-a.hui_button_small_highlighted, a.hui_button_small_highlighted span
-{
-	background-image: url('../gfx/button_small_highlighted.png');
-	color: #152;
-}
-
-a.hui_button_small em.hui_button_icon
-{
-	margin-left: -3px;
-    margin-top: 4px;
-}
-
-a.hui_button_small em.hui_button_icon_notext
-{
-    margin-right: -4px;
-    margin-left: -4px;
-}
-
-/*****************************************/
-/*
-a.hui_button_highlighted {
-    -webkit-animation-name: hui_pulse;
-    -webkit-animation-duration: 2s;
-    -webkit-animation-iteration-count: infinite;
-    -webkit-animation-timing-function: ease-in-out;
-}
-
-
-
-@-webkit-keyframes hui_pulse {
-	0% {
-	  opacity: 1;
-	}
-	50% {
-	  opacity: .8;
-	}
-	100% {
-	  opacity: 1;
-	}
-}*/
-
-a.hui_button_light {
-  margin: 2px;
-}
-
-a.hui_button_light, a.hui_button_light span
-{
-	background: none;
-	height: 24px;
-	line-height: 24px;
-	font-family: Georgia,serif;
-	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
-	font-size: 13px;
-}
-
-a.hui_button_light, a.hui_button_light:focus
-{
-	border: 1px solid #ddd;
-	border-radius: 3px;
-    background: -webkit-gradient(linear, 0% 0%, 0% 100% , from(#fff), to(#f6f6f6));
-	background: -moz-linear-gradient(top, #fff, #f6f6f6);
-    filter: progid:DXImageTransform.Microsoft.gradient (GradientType=0, startColorstr=#ffffff, endColorstr=#f6f6f6);
-	-webkit-background-clip: border-box;
-	color: #333;
-	/*-webkit-box-shadow: 0px 1px 3px #eee;*/
-}
-
-a.hui_button_light:hover
-{
-	border-color: #dadada;
-    background: -webkit-gradient(linear, 0% 0%, 0% 100% , from(#fafafa), to(#eee));
-	background: -moz-linear-gradient(top, #fafafa, #eee);
-    filter: progid:DXImageTransform.Microsoft.gradient (GradientType=0, startColorstr=#fafafa, endColorstr=#eeeeee);
-}
-
-a.hui_button_light:active
-{
-	border-color: #dadada;
-  background: -webkit-gradient(linear, 0% 0%, 0% 100% , from(#eee), to(#fafafa));
-	background: -moz-linear-gradient(top, #eee, #fafafa);
-  filter: progid:DXImageTransform.Microsoft.gradient (GradientType=0, startColorstr=#eeeeee, endColorstr=#fafafa);
-}
-
-a.hui_button_light:focus
-{
-  border-color: rgb(0, 105, 255);
-  box-shadow: 0 0 1px 1px rgba(1,105,255,0.6), inset 0 0 1px 1px rgba(1,105,255,0.6);
-}
-
-
+.hui_button_light {
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  background-color: #ffffff;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#f6f6f6));
+  background-image: -webkit-linear-gradient(top, #ffffff, #f6f6f6);
+  background-image: -moz-linear-gradient(top, #ffffff, #f6f6f6);
+  background-image: -ms-linear-gradient(top, #ffffff, #f6f6f6);
+  background-image: -o-linear-gradient(top, #ffffff, #f6f6f6);
+  background-image: linear-gradient(top, #ffffff, #f6f6f6);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#f6f6f6');
+  color: #333;
+  box-shadow: none; }
+  .hui_button_light:focus {
+    border: 1px solid #0069ff;
+    box-shadow: 0 0 2px #0069ff, inset 0 0 2px #0069ff;
+    outline: none; }
+  .hui_button_light:active {
+    background-color: #eeeeee;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#eeeeee), to(#fafafa));
+    background-image: -webkit-linear-gradient(top, #eeeeee, #fafafa);
+    background-image: -moz-linear-gradient(top, #eeeeee, #fafafa);
+    background-image: -ms-linear-gradient(top, #eeeeee, #fafafa);
+    background-image: -o-linear-gradient(top, #eeeeee, #fafafa);
+    background-image: linear-gradient(top, #eeeeee, #fafafa);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#fafafa'); }
+  .hui_button_light:hover {
+    border-color: #dadada;
+    background-color: #fafafa;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#fafafa), to(#eeeeee));
+    background-image: -webkit-linear-gradient(top, #fafafa, #eeeeee);
+    background-image: -moz-linear-gradient(top, #fafafa, #eeeeee);
+    background-image: -ms-linear-gradient(top, #fafafa, #eeeeee);
+    background-image: -o-linear-gradient(top, #fafafa, #eeeeee);
+    background-image: linear-gradient(top, #fafafa, #eeeeee);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fafafa', endColorstr='#eeeeee'); }
 
 /** Icon **/
+a.hui_button_light em.hui_button_icon {
+  margin-left: -6px;
+  margin-right: 5px;
+  margin-top: 5px; }
 
-a.hui_button_light em.hui_button_icon
-{
-	margin-left: -6px;
-    margin-right: 5px;
-    margin-top: 5px;
-}
+a.hui_button_light em.hui_button_icon_notext {
+  margin-right: -5px; }
 
-a.hui_button_light em.hui_button_icon_notext
-{
-    margin-right: -5px;
-}
-
-
-
-
-
-/** Small light **/
-
-a.hui_button_small_light, a.hui_button_small_light span
-{
-	height: 20px;
-	line-height: 18px;
-}
-
-a.hui_button_small_light span span
-{
-	margin: 0;
-	padding: 0 5px;
-	font-size: 11px;
-	line-height: 18px;
-}
-
-
-
-
-
-/** Mini light **/
-
-a.hui_button_mini_light
-{
-	border-radius: 16px;
-}
-
-a.hui_button_mini_light, a.hui_button_mini_light span
-{
-	height: 16px;
-	line-height: 16px;
-	font-size: 0;
-}
-
-a.hui_button_mini_light span span
-{
-	margin: 0;
-	padding: 0 10px;
-	font-size: 10px;
-	line-height: 16px;
-}
-
-
-/** Tiny light **/
-
-a.hui_button_tiny_light
-{
-	border-radius: 14px;
-}
-
-a.hui_button_tiny_light, a.hui_button_tiny_light span
-{
-	height: 14px;
-	line-height: 14px;
-	font-size: 0;
-}
-
-a.hui_button_tiny_light span span
-{
-	margin: 0;
-	padding: 0 8px;
-	font-size: 10px;
-	line-height: 14px;
-}
-
-
-
-
-.hui_context_dark a.hui_button,
-.hui_context_dark a.hui_button span
-{
-	background-image: url('../gfx/button_overlay.png');
-	color: #fff;
-}
-
-.hui_context_dark a.hui_button_highlighted, 
-.hui_context_dark a.hui_button_highlighted span
-{
-	background-image: url('../gfx/button_overlay_highlighted.png');
-}
-
+.hui_context_dark .hui_button {
+  border-color: #232323 #040404 #000000;
+  background-color: #5c5f63;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#5c5f63), to(#4f5152));
+  background-image: -webkit-linear-gradient(top, #5c5f63, #4f5152);
+  background-image: -moz-linear-gradient(top, #5c5f63, #4f5152);
+  background-image: -ms-linear-gradient(top, #5c5f63, #4f5152);
+  background-image: -o-linear-gradient(top, #5c5f63, #4f5152);
+  background-image: linear-gradient(top, #5c5f63, #4f5152);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#5c5f63', endColorstr='#4f5152');
+  color: #fff;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 1px #666, inset 0 1px 0 #888;
+  border-radius: 3px; }
+  .hui_context_dark .hui_button:focus {
+    border-color: #65a5ff;
+    box-shadow: 0 0 2px #65a5ff, inset 0 0 2px #65a5ff; }
+  .hui_context_dark .hui_button:hover {
+    box-shadow: 0 0 1px #666, inset 0 1px 0 #666;
+    background-color: #505256;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#505256), to(#424445));
+    background-image: -webkit-linear-gradient(top, #505256, #424445);
+    background-image: -moz-linear-gradient(top, #505256, #424445);
+    background-image: -ms-linear-gradient(top, #505256, #424445);
+    background-image: -o-linear-gradient(top, #505256, #424445);
+    background-image: linear-gradient(top, #505256, #424445);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#505256', endColorstr='#424445'); }
+  .hui_context_dark .hui_button:active {
+    box-shadow: 0 0 1px #666, inset 0 2px 6px rgba(0, 0, 0, 0.3);
+    border-color: #000; }
+  .hui_context_dark .hui_button.hui_is_highlighted {
+    /*
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1), inset 0 0 3px #66b94b;
+    border-color: #2c3831 #222b26 #232b27;
+    @include vertical-gradient(#36634e, #2b4e38);*/
+    box-shadow: inset 0 1px 0px #2ea2ff, 0 0px 1px rgba(255, 255, 255, 0.35);
+    border-color: #002752 #003361 #000000;
+    background-color: #0a71ec;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#0a71ec), to(#005694));
+    background-image: -webkit-linear-gradient(top, #0a71ec, #005694);
+    background-image: -moz-linear-gradient(top, #0a71ec, #005694);
+    background-image: -ms-linear-gradient(top, #0a71ec, #005694);
+    background-image: -o-linear-gradient(top, #0a71ec, #005694);
+    background-image: linear-gradient(top, #0a71ec, #005694);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0a71ec', endColorstr='#005694'); }
+    .hui_context_dark .hui_button.hui_is_highlighted:focus {
+      border-color: #65a5ff;
+      box-shadow: 0 0 2px #65a5ff, inset 0 0 2px #65a5ff; }
+    .hui_context_dark .hui_button.hui_is_highlighted:hover {
+      box-shadow: inset 0 1px 0px #1597ff, 0 0px 1px rgba(255, 255, 255, 0.35);
+      background-color: #0965d4;
+      background-image: -webkit-gradient(linear, left top, left bottom, from(#0965d4), to(#00477b));
+      background-image: -webkit-linear-gradient(top, #0965d4, #00477b);
+      background-image: -moz-linear-gradient(top, #0965d4, #00477b);
+      background-image: -ms-linear-gradient(top, #0965d4, #00477b);
+      background-image: -o-linear-gradient(top, #0965d4, #00477b);
+      background-image: linear-gradient(top, #0965d4, #00477b);
+      filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0965d4', endColorstr='#00477b'); }
+    .hui_context_dark .hui_button.hui_is_highlighted:active {
+      box-shadow: 0 0 1px #666, inset 0 2px 6px rgba(0, 0, 0, 0.3); }
+  .hui_context_dark .hui_button.hui_is_disabled, .hui_context_dark .hui_button.hui_is_disabled:hover {
+    border-color: #111;
+    background: #333;
+    color: #999;
+    box-shadow: none; }
 
 /** Small bar **/
+a.hui_button_bar {
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  background: none;
+  height: 26px;
+  line-height: 26px;
+  font-family: Georgia,serif;
+  font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+  font-size: 14px;
+  border-color: #ccc #d7d7d7 #ccc;
+  background-color: #fdfdfd;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#fdfdfd), to(#e6e6e6));
+  background-image: -webkit-linear-gradient(top, #fdfdfd, #e6e6e6);
+  background-image: -moz-linear-gradient(top, #fdfdfd, #e6e6e6);
+  background-image: -ms-linear-gradient(top, #fdfdfd, #e6e6e6);
+  background-image: -o-linear-gradient(top, #fdfdfd, #e6e6e6);
+  background-image: linear-gradient(top, #fdfdfd, #e6e6e6);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fdfdfd', endColorstr='#e6e6e6'); }
 
-a.hui_button_bar
-{
-	border: 1px solid #ddd;
-	border-radius: 3px;
-	background: none;
-	height: 26px;
-	line-height: 26px;
-	font-family: Georgia,serif;
-	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
-	font-size: 14px;
-	border-color: #ccc #d7d7d7 #ccc;
-    background: -webkit-gradient(linear, 0% 0%, 0% 100% , from(#fdfdfd), to(#e6e6e6));
-	background: -moz-linear-gradient(top, #fafafa, #eee);
-    filter: progid:DXImageTransform.Microsoft.gradient (GradientType=0, startColorstr=#fafafa, endColorstr=#eeeeee);
-}
+a.hui_button_bar span {
+  background: none;
+  color: #333; }
 
-a.hui_button_bar span
-{
-	background: none;
-	color: #333;
-}
+a.hui_button_small_bar, a.hui_button_small_bar span {
+  height: 20px;
+  line-height: 20px; }
 
-a.hui_button_small_bar, a.hui_button_small_bar span
-{
-	height: 20px;
-	line-height: 20px;
-}
-
-a.hui_button_small_bar span span
-{
-	margin: 0;
-	padding: 0 7px;
-	font-size: 11px;
-	line-height: 17px;
-	text-shadow: 0 1px 0 #fff;
-}
+a.hui_button_small_bar span span {
+  margin: 0;
+  padding: 0 7px;
+  font-size: 11px;
+  line-height: 17px;
+  text-shadow: 0 1px 0 #fff; }

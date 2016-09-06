@@ -578,16 +578,6 @@ hui.ui.createIcon = function(icon,size,tag) {
 	return hui.build(tag || 'span',{'class':'hui_icon hui_icon_'+size,style:'background-image: url('+hui.ui.getIconUrl(icon,size)+')'});
 };
 
-hui.ui.wrapInField = function(element) {
-	var w = hui.build('div',{'class':'hui_field',html:
-		'<span class="hui_field_top"><span><span></span></span></span>'+
-		'<span class="hui_field_middle"><span class="hui_field_middle"><span class="hui_field_content"></span></span></span>'+
-		'<span class="hui_field_bottom"><span><span></span></span></span>'
-	});
-	hui.get.firstByClass(w,'hui_field_content').appendChild(element);
-	return w;
-};
-
 /**
  * Add focus class to an element
  * @param options {Object} {element : «Element», class : «String»}

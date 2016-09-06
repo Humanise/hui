@@ -5505,16 +5505,6 @@ hui.ui.createIcon = function(icon,size,tag) {
 	return hui.build(tag || 'span',{'class':'hui_icon hui_icon_'+size,style:'background-image: url('+hui.ui.getIconUrl(icon,size)+')'});
 };
 
-hui.ui.wrapInField = function(element) {
-	var w = hui.build('div',{'class':'hui_field',html:
-		'<span class="hui_field_top"><span><span></span></span></span>'+
-		'<span class="hui_field_middle"><span class="hui_field_middle"><span class="hui_field_content"></span></span></span>'+
-		'<span class="hui_field_bottom"><span><span></span></span></span>'
-	});
-	hui.get.firstByClass(w,'hui_field_content').appendChild(element);
-	return w;
-};
-
 /**
  * Add focus class to an element
  * @param options {Object} {element : «Element», class : «String»}
@@ -7988,12 +7978,10 @@ hui.ui.ObjectList.Text.prototype = {
 		return new hui.ui.ObjectList.Text(this.key);
 	},
 	getElement : function() {
-		var input = hui.build('input',{'class':'hui_formula_text'});
-		var field = hui.ui.wrapInField(input);
+		var input = hui.build('input',{'class':'hui_textinput'});
 		this.wrapper = new hui.ui.Input({element:input});
 		this.wrapper.listen(this);
-		hui.ui.addFocusClass({element:input,classElement:field,'class':'hui_field_focused'});
-		return field;
+		return input;
 	},
 	$valueChanged : function(value) {
 		this.value = value;
@@ -8084,14 +8072,13 @@ hui.ui.DropDown.create = function(options) {
 	}
 	options.element = hui.build('a',{
 		'class':cls,href:'javascript://',
-		html:'<span><span><strong></strong></span></span>'
+		html:'<strong></strong>'
 	});
 	return new hui.ui.DropDown(options);
 }
 
 hui.ui.DropDown.prototype = {
 	_attach : function() {
-		hui.ui.addFocusClass({element:this.element,'class':'hui_dropdown_focused'});
 		hui.listen(this.element,'click',this._click.bind(this));
 		hui.listen(this.element,'blur',this._hideSelector.bind(this));
 		hui.listen(this.element,'keydown',this._keyDown.bind(this));
@@ -8117,7 +8104,7 @@ hui.ui.DropDown.prototype = {
 			hui.dom.addText(this.inner,hui.string.wrap(text));
 		} else if (this.options.placeholder) {
 			this.inner.innerHTML='';
-			this.inner.appendChild(hui.build('em',{text:hui.string.escape(this.options.placeholder)}));
+			this.inner.appendChild(hui.build('span',{'class':'hui_dropdown_placeholder',text:hui.string.escape(this.options.placeholder)}));
 		} else {
 			this.inner.innerHTML='';
 		}
@@ -8154,7 +8141,7 @@ hui.ui.DropDown.prototype = {
 		this._buildSelector();
 		var el = this.element, s=this.selector;
 		if (this.options.focus) {
-			el.focus();			
+			el.focus();
 		}
 		if (!this.items) return;
 		var docHeight = hui.document.getHeight();
@@ -8180,7 +8167,7 @@ hui.ui.DropDown.prototype = {
 		this._selectorVisible = true;
 	},
 	_hideSelector : function() {
-		hui.unListen(document.body,'mousedown',this._hider);					
+		hui.unListen(document.body,'mousedown',this._hider);
 		if (!this.selector) {return}
 		this.selector.style.display = 'none';
 		this._selectorVisible = false;
@@ -8521,7 +8508,7 @@ hui.ui.Button = function(options) {
  */
 hui.ui.Button.create = function(options) {
   options = hui.override({text:'',highlighted:false,enabled:true},options);
-  var className = 'hui_button'+(options.highlighted ? ' hui_button_highlighted' : '');
+  var className = 'hui_button'+(options.highlighted ? ' hui_is_highlighted' : '');
   if (options.variant) {
     className+=' hui_button_'+options.variant;
   }
@@ -8529,7 +8516,7 @@ hui.ui.Button.create = function(options) {
     className+=' hui_button_small_'+options.variant;
   }
   if (options.small) {
-    className+=' hui_button_small'+(options.highlighted ? ' hui_button_small_highlighted' : '');
+    className+=' hui_button_small';
   }
   if (!options.enabled) {
     className+=' hui_button_disabled';
@@ -8539,15 +8526,14 @@ hui.ui.Button.create = function(options) {
     text = hui.ui.getTranslated(options.title);
   }
   var element = options.element = hui.build('a',{'class':className,href:'javascript://'});
-  var inner = hui.build('span',{parent:hui.build('span',{parent:element})});
   if (options.icon) {
-    var icon = hui.build('em',{parent:inner,'class':'hui_button_icon',style:'background-image:url('+hui.ui.getIconUrl(options.icon,16)+')'});
+    var icon = hui.build('span',{parent:element,'class':'hui_button_icon',style:'background-image:url('+hui.ui.getIconUrl(options.icon,16)+')'});
     if (!text) {
       hui.cls.add(icon,'hui_button_icon_notext');
     }
   }
   if (text) {
-    hui.dom.addText(inner,text);
+    hui.dom.addText(element,text);
   }
   return new hui.ui.Button(options);
 };
@@ -10800,7 +10786,6 @@ hui.ui.Menu.prototype = {
 hui.ui.Overlay = function(options) {
 	this.options = options;
 	this.element = hui.get(options.element);
-	this.content = hui.get.byClass(this.element,'hui_inner_overlay')[1];
 	this.name = options.name;
 	this.icons = {};
 	this.visible = false;
@@ -10813,7 +10798,11 @@ hui.ui.Overlay = function(options) {
  */
 hui.ui.Overlay.create = function(options) {
 	options = options || {};
-	var e = options.element = hui.build('div',{className:'hui_overlay'+(options.variant ? ' hui_overlay_'+options.variant : ''),style:'display:none',html:'<div class="hui_inner_overlay"><div class="hui_inner_overlay"></div></div>'});
+  var cls = 'hui_overlay'+(options.variant ? ' hui_overlay_'+options.variant : '');
+  if (!options.variant) {
+    cls += ' hui_context_dark';
+  }
+	var e = options.element = hui.build('div',{className:cls,style:'display:none'});
 	document.body.appendChild(e);
 	return new hui.ui.Overlay(options);
 }
@@ -10841,13 +10830,13 @@ hui.ui.Overlay.prototype = {
 			self._iconWasClicked(key,e);
 		});
 		this.icons[key]=element;
-		this.content.appendChild(element);
+		this.element.appendChild(element);
 	},
 	addText : function(text) {
-		this.content.appendChild(hui.build('span',{'class':'hui_overlay_text',text:text}));
+		this.element.appendChild(hui.build('span',{'class':'hui_overlay_text',text:text}));
 	},
 	add : function(widget) {
-		this.content.appendChild(widget.getElement());
+		this.element.appendChild(widget.getElement());
 	},
 	hideIcons : function(keys) {
 		for (var i=0; i < keys.length; i++) {
@@ -10938,8 +10927,8 @@ hui.ui.Overlay.prototype = {
 		this.visible = false;
 	},
 	clear : function() {
-		hui.ui.destroyDescendants(this.content);
-		this.content.innerHTML='';
+		hui.ui.destroyDescendants(this.element);
+		this.element.innerHTML='';
 	}
 };
 
@@ -15432,7 +15421,7 @@ hui.ui.ColorPicker.prototype = {
  * An input component for geo-location
  * @constructor
  */
-hui.ui.LocationField = function(options) {
+hui.ui.LocationInput = function(options) {
 	this.options = hui.override({value:null},options);
 	this.name = options.name;
 	this.element = hui.get(options.element);
@@ -15447,20 +15436,17 @@ hui.ui.LocationField = function(options) {
 	this._addBehavior();
 }
 
-hui.ui.LocationField.create = function(options) {
+hui.ui.LocationInput.create = function(options) {
 	options = options || {};
-	var e = options.element = hui.build('span',{'class':'hui_locationfield'});
-	var b = hui.build('span',{html:'<span class="hui_locationfield_latitude"><span><input/></span></span><span class="hui_locationfield_longitude"><span><input/></span></span>'});
-	e.appendChild(hui.ui.wrapInField(b));
-	e.appendChild(hui.build('a',{'class':'hui_locationfield_picker',href:'javascript:void(0);'}));
-	return new hui.ui.LocationField(options);
+  options.element = hui.build('span',{'class':'hui_locationinput', html:'<span class="hui_locationinput_latitude"><span><input autocomplete="off"></span></span><span class="hui_locationinput_longitude"><span><input autocomplete="off"></span></span><a class="hui_locationinput_picker" href="javascript://"></a>'});
+	return new hui.ui.LocationInput(options);
 }
 
-hui.ui.LocationField.prototype = {
+hui.ui.LocationInput.prototype = {
 	_addBehavior : function() {
 		hui.listen(this.chooser,'click',this._showPicker.bind(this));
-		hui.ui.addFocusClass({element:this.latField.element,classElement:this.element,'class':'hui_field_focused'});
-		hui.ui.addFocusClass({element:this.lngField.element,classElement:this.element,'class':'hui_field_focused'});
+		hui.ui.addFocusClass({element:this.latField.element,classElement:this.element,'class':'hui_locationinput-focused'});
+		hui.ui.addFocusClass({element:this.lngField.element,classElement:this.element,'class':'hui_locationinput-focused'});
 	},
 	getLabel : function() {
 		return this.options.label;
@@ -15526,7 +15512,7 @@ hui.ui.LocationField.prototype = {
  * @constructor
  */
 hui.ui.StyleLength = function(o) {
-	this.options = hui.override({value:null,min:0,max:1000,units:['px','pt','em','%'],initialValue:null,defaultUnit:'px',allowNull:false},o);	
+	this.options = hui.override({value:null,min:0,max:1000,units:['px','pt','em','%'],initialValue:null,defaultUnit:'px',allowNull:false},o);
 	this.name = o.name;
 	var e = this.element = hui.get(o.element);
 	this.input = hui.get.firstByTag(e,'input');
@@ -15539,7 +15525,7 @@ hui.ui.StyleLength = function(o) {
 }
 
 hui.ui.StyleLength.create = function(options) {
-	options.element = hui.build('span',{'class':'hui_style_length hui_numberfield',html:'<span><span><input type="text"/><a class="hui_numberfield_up"></a><a class="hui_numberfield_down"></a></span></span>'})
+	options.element = hui.build('span',{'class':'hui_style_length hui_numberinput',html:'<input class="hui_textinput" type="text"/><a class="hui_numberinput_up"></a><a class="hui_numberinput_down"></a>'})
 	return new hui.ui.StyleLength(options);
 }
 
@@ -15547,7 +15533,6 @@ hui.ui.StyleLength.prototype = {
 	/** @private */
 	_addBehavior : function() {
 		var e = this.element;
-		hui.listen(this.input,'focus',function() {hui.cls.add(e,'hui_numberfield_focused')});
 		hui.listen(this.input,'blur',this._onBlur.bind(this));
 		hui.listen(this.input,'keyup',this.keyEvent.bind(this));
 		hui.listen(this.up,'mousedown',this._upEvent.bind(this));
@@ -15574,7 +15559,6 @@ hui.ui.StyleLength.prototype = {
 		return parsed;
 	},
 	_onBlur : function() {
-		hui.cls.remove(this.element,'hui_numberfield_focused');
 		this._updateInput();
 	},
 	/** @private */
@@ -15632,9 +15616,9 @@ hui.ui.StyleLength.prototype = {
 		}
 		this._updateInput();
 	},
-	
+
 	// Public
-	
+
 	setInitialValue : function(value) {
 		this.options.initialValue = value;
 	},
@@ -15648,7 +15632,7 @@ hui.ui.StyleLength.prototype = {
 	focus : function() {
 		try {
 			this.input.focus();
-		} catch (e) {}		
+		} catch (e) {}
 	},
 	reset : function() {
 		this.setValue('');
@@ -15675,10 +15659,11 @@ hui.ui.DateTimeField = function(o) {
 }
 
 hui.ui.DateTimeField.create = function(options) {
-	var node = hui.build('span',{'class':'hui_field_singleline'});
-	hui.build('input',{'class':'hui_formula_text',parent:node});
-	hui.build('a',{'class':'hui_datetime',href:'javascript://',tabIndex:'-1',html:'<span></span>',parent:node});
-	options.element = hui.ui.wrapInField(node);
+	options = options || {};
+	var node = hui.build('span',{'class':'hui_datetime'});
+	hui.build('input',{'class':'hui_textinput',parent:node});
+	hui.build('a',{'class':'hui_datetime_selector',href:'javascript://',tabIndex:'-1',parent:node});
+	options.element = node;
 	return new hui.ui.DateTimeField(options);
 }
 
@@ -15923,7 +15908,7 @@ hui.ui.TokenField.prototype = {
 	_updateUI : function() {
 		this.element.innerHTML='';
 		hui.each(this.value,function(value,i) {
-			var input = hui.build('input',{'class':'hui_tokenfield_token',parent:this.element});
+			var input = hui.build('input',{'class':'hui_textinput',parent:this.element,style:{width:'50px'}});
 			if (this.options.width) {
 				input.style.width=this.options.width+'px';
 			}
@@ -15953,7 +15938,7 @@ hui.ui.TokenField.prototype = {
 		};
 	},
 	_addField : function() {
-		var input = hui.build('input',{'class':'hui_tokenfield_token'});
+		var input = hui.build('input',{'class':'hui_textinput',style:{width:'50px'}});
 		if (this.options.width) {
 			input.style.width = this.options.width+'px';
 		}
@@ -16062,7 +16047,7 @@ hui.ui.Checkboxes.create = function(o) {
   o.element = hui.build('div',{'class':o.vertical ? 'hui_checkboxes hui_checkboxes_vertical' : 'hui_checkboxes'});
   if (o.items) {
     hui.each(o.items,function(item) {
-      var node = hui.build('a',{'class':'hui_checkbox',href:'javascript:void(0);',html:'<span><span></span></span>'+item.title});
+      var node = hui.build('a',{'class':'hui_checkbox',href:'javascript:void(0);',html:'<span class="hui_checkbox_button"></span><span class="hui_checkbox_label">'+hui.string.escape(item.title)+'</span>'});
       hui.ui.addFocusClass({element:node,'class':'hui_checkbox_focused'});
       o.element.appendChild(node);
     });
@@ -16161,7 +16146,7 @@ hui.ui.Checkboxes.prototype = {
   /** @private */
   $itemsLoaded : function(items) {
     hui.each(items,function(item) {
-      var node = hui.build('a',{'class':'hui_checkbox',href:'javascript:void(0);',html:'<span><span></span></span>'+hui.string.escape(item.title)});
+      var node = hui.build('a',{'class':'hui_checkbox',href:'javascript:void(0);',html:'<span class="hui_checkbox_button"></span><span class="hui_checkbox_label">'+hui.string.escape(item.title)+'</span>'});
       hui.listen(node,'click',function(e) {
         hui.stop(e);
         this.flipValue(item.value);
@@ -16205,7 +16190,7 @@ hui.ui.Checkboxes.Items.prototype = {
     this.element.innerHTML='';
     var self = this;
     hui.each(items,function(item) {
-      var node = hui.build('a',{'class':'hui_checkbox',href:'javascript://',html:'<span><span></span></span>'+item.title});
+      var node = hui.build('a',{'class':'hui_checkbox',href:'javascript://',html:'<span class="hui_checkbox_button"></span><span class="hui_checkbox_label">'+hui.string.escape(item.title)+'</span>'});
       hui.listen(node,'click',function(e) {
         hui.stop(e);
         node.focus();
@@ -16312,8 +16297,8 @@ hui.ui.NumberField = function(o) {
 	this.name = o.name;
 	var e = this.element = hui.get(o.element);
 	this.input = hui.get.firstByTag(e,'input');
-	this.up = hui.get.firstByClass(e,'hui_numberfield_up');
-	this.down = hui.get.firstByClass(e,'hui_numberfield_down');
+	this.up = hui.get.firstByClass(e,'hui_numberinput_up');
+	this.down = hui.get.firstByClass(e,'hui_numberinput_down');
 	if (hui.isString(this.options.value)) {
 		this.value = parseInt(this.options.value,10);
 	} else {
@@ -16329,8 +16314,8 @@ hui.ui.NumberField = function(o) {
 /** Creates a new number field */
 hui.ui.NumberField.create = function(o) {
 	o.element = hui.build('span',{
-		'class':'hui_numberfield',
-		html:'<span><span><input type="text" value="'+(o.value!==undefined ? o.value : '0')+'"/><a class="hui_numberfield_up"></a><a class="hui_numberfield_down"></a></span></span>'
+		'class':'hui_numberinput',
+		html:'<input class="hui_textinput" type="text" value="'+(o.value!==undefined ? o.value : '0')+'"/><a class="hui_numberinput_up"></a><a class="hui_numberinput_down"></a>'
 	});
 	return new hui.ui.NumberField(o);
 }
@@ -16347,14 +16332,12 @@ hui.ui.NumberField.prototype = {
 		//hui.listen(this.down,'dblclick',this.upEvent.bind(this));
 	},
 	_onBlur : function() {
-		hui.cls.remove(this.element,'hui_numberfield_focused');
 		this._updateField();
 		if (this.sliderPanel) {
 			this.sliderPanel.hide();
 		}
 	},
 	_onFocus : function() {
-		hui.cls.add(this.element,'hui_numberfield_focused');
 		this._showSlider();
 		this._updateSlider();
 	},
@@ -16512,7 +16495,7 @@ hui.ui.TextField = function(options) {
   this.element = hui.get(options.element);
   this.name = options.name;
   hui.ui.extend(this);
-  this.input = hui.get.firstByClass(this.element,'hui_formula_text');
+  this.input = this.element;
   this.multiline = this.input.tagName.toLowerCase() == 'textarea';
   this.placeholder = hui.get.firstByClass(this.element,'hui_field_placeholder');
   this.value = this.input.value;
@@ -16544,22 +16527,18 @@ hui.ui.TextField.create = function(options) {
   var node,input;
   if (options.lines>1 || options.multiline) {
     input = hui.build('textarea',
-      {'class':'hui_formula_text','rows':options.lines,style:'height: 32px;'}
+      {'class':'hui_textinput','rows':options.lines}
     );
-    node = hui.build('span',{'class':'hui_formula_text_multiline'});
-    node.appendChild(input);
   } else {
-    input = hui.build('input',{'class':'hui_formula_text'});
+    input = hui.build('input',{'class':'hui_textinput'});
     if (options.secret) {
       input.setAttribute('type','password');
     }
-    node = hui.build('span',{'class':'hui_field_singleline'});
-    node.appendChild(input);
   }
   if (options.value!==undefined) {
     input.value=options.value;
   }
-  options.element = hui.ui.wrapInField(node);
+  options.element = input;
   return new hui.ui.TextField(options);
 }
 
@@ -16708,7 +16687,7 @@ hui.ui.TextField.prototype = {
       return
     };
     var textHeight = this._getTextAreaHeight(this.input);
-    textHeight = Math.max(32,textHeight);
+    textHeight = Math.max(38,textHeight);
     textHeight = Math.min(textHeight,this.options.maxHeight);
     if (animate) {
       this._updateOverflow();
@@ -16834,8 +16813,11 @@ hui.ui.ColorInput = function(options) {
 
 hui.ui.ColorInput.create = function(options) {
 	options = options || {};
-	var e = options.element = hui.build('span',{'class':'hui_colorinput',html:'<span class="hui_field_top"><span><span></span></span></span><span class="hui_field_middle"><span class="hui_field_middle"><span class="hui_field_content"><span class="hui_field_singleline"><input type="text" value=""/></span></span></span></span><span class="hui_field_bottom"><span><span></span></span></span><a tabindex="-1" class="hui_colorinput" href="javascript://"></a>'});
-		
+	var e = options.element = hui.build(
+    'span', {
+      'class' : 'hui_colorinput',
+      html : '<input class="hui_textinput" type="text" value=""/><a tabindex="-1" class="hui_colorinput_color" href="javascript://"></a>'
+    });
 	return new hui.ui.ColorInput(options);
 }
 
@@ -16847,9 +16829,9 @@ hui.ui.ColorInput.prototype = {
 	_syncInput : function() {
 		this.input.setValue(this.value);
 	},
-	_syncColorButton : function() {		
+	_syncColorButton : function() {
 		this.button.innerHTML = this.value ? '' : '?';
-		this.button.style.backgroundColor = this.value ? this.value : '';	
+		this.button.style.backgroundColor = this.value ? this.value : '';
 	},
 	_onInputChange : function(value) {
 		var changed = value!=this.value;
@@ -16861,14 +16843,14 @@ hui.ui.ColorInput.prototype = {
 	},
 	_fireChange : function() {
 		hui.ui.callAncestors(this,'childValueChanged',this.value);
-		this.fire('valueChanged',this.value)		
+		this.fire('valueChanged',this.value)
 	},
 	_onBlur : function() {
 		hui.Color.parse(this.value);
 	},
 	_onButtonClick : function() {
 		if (hui.window.getViewHeight()<200) {
-			this.fire('clickPicker',this.value)		
+			this.fire('clickPicker',this.value)
 			return; // TODO: mini picker
 		}
 		if (!this.panel) {
@@ -16886,9 +16868,9 @@ hui.ui.ColorInput.prototype = {
 		this.setValue(color);
 		this._fireChange();
 	},
-	
+
 	// Public...
-	
+
 	getValue : function() {
 		return this.value;
 	},
@@ -16900,7 +16882,7 @@ hui.ui.ColorInput.prototype = {
 	focus : function() {
 		try {
 			this.input.focus();
-		} catch (e) {}		
+		} catch (e) {}
 	},
 	reset : function() {
 		this.setValue('');
@@ -22849,9 +22831,8 @@ hui.onReady(function() {
   }
 })
 
-if (window.hui===undefined) {
-    hui = {};
-}
+/** @namespace */
+window.hui = window.hui || {};
 
 hui._ready = false;
 
@@ -22859,7 +22840,7 @@ hui.ready = function(delegate) {
 	if (window.addEventListener) {
 		window.addEventListener('DOMContentLoaded',delegate,false);
 	}
-    else if(document.addEventListener) {
+  else if(document.addEventListener) {
 		document.addEventListener('load', delegate, false);
 	}
 	else if(typeof window.attachEvent != 'undefined') {
@@ -22875,7 +22856,7 @@ hui.ready = function(delegate) {
 		} else {
 			window.onload = delegate;
 		}
-	}  
+	}
 };
 
 hui.Color.table = {

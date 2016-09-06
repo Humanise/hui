@@ -44,13 +44,13 @@
 @import url(../css/links.css);
 @import url(../css/effects.css);
 @import url(../css/colorpicker.css);
-@import url(../css/locationfield.css);
+@import url(../css/locationinput.css);
 @import url(../css/tokenfield.css);
 @import url(../css/checkbox.css);
 @import url(../css/checkboxes.css);
 @import url(../css/infoview.css);
 @import url(../css/radiobutton.css);
-@import url(../css/numberfield.css);
+@import url(../css/numberinput.css);
 @import url(../css/rendering.css);
 @import url(../css/colorinput.css);
 @import url(../css/structure.css);
@@ -64,3 +64,4 @@
 @import url(../css/markupeditor.css);
 @import url(../css/objectinput.css);
 @import url(../css/rows.css);
+@import url(../css/textinput.css);

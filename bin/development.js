@@ -51,7 +51,7 @@ document.write('<script type="text/javascript" src="'+_context+'/js/Link.js"></s
 document.write('<script type="text/javascript" src="'+_context+'/js/Links.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/js/MarkupEditor.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/js/ColorPicker.js"></script>');
-document.write('<script type="text/javascript" src="'+_context+'/js/LocationField.js"></script>');
+document.write('<script type="text/javascript" src="'+_context+'/js/LocationInput.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/js/StyleLength.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/js/DateTimeField.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/js/TokenField.js"></script>');

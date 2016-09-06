@@ -3,10 +3,11 @@
 <gui xmlns="uri:hui" pad="10" title="Formula">
 	<controller name="controller" source="formula.js"/>
 	<source name="itemsSource" url="data/source_items.xml"/>
-	
+
 	<space height="30"/>
 	<box width="800" title="Special inputs" variant="textured" padding="10">
-		<text-input/>
+		<text-input width="100"/>
+		<button text="Click me"/>
 		<checkbox/><checkbox/>
 		<radiobuttons>
 			<item text="Hey" value="1"/>
@@ -30,9 +31,9 @@
 		<searchfield/>
 		<slider key="slider" width="100"/>
 	</box>
-	
+
 	<space height="30"/>
-	
+
 	<box width="600" title="Special inputs" variant="textured" padding="10">
 		<formula name="formulatore">
 			<fields labels="above">
@@ -78,9 +79,43 @@
 				</field>
 			</fields>
 			<buttons>
+				<button click="createDateInput()" text="Create"/>
 				<button click="hui.log(dateForm.getValues())" text="Data"/>
 			</buttons>
 		</formula>
+		<div id="abc"></div>
+		<script>
+			function createDateInput() {
+				var f = hui.ui.DateTimeField.create();
+				hui.find('#abc').appendChild(f.element);
+			}
+		</script>
+	</box>
+
+	<space height="30"/>
+
+	<box width="600" title="Location" variant="textured" padding="10">
+		<formula name="locationForm">
+			<fields labels="above">
+				<field label="Seconds:">
+					<location-input key="one"/>
+				</field>
+				<field label="Date:">
+					<location-input key="two"/>
+				</field>
+			</fields>
+			<buttons>
+				<button click="createLocationInput()" text="Create"/>
+				<button click="hui.log(locationForm.getValues())" text="Data"/>
+			</buttons>
+		</formula>
+		<div id="locationContainer"></div>
+		<script>
+			function createLocationInput() {
+				var f = hui.ui.LocationField.create();
+				hui.find('#locationContainer').appendChild(f.element);
+			}
+		</script>
 	</box>
 
 	<space height="30"/>
@@ -132,8 +167,8 @@
 	</box>
 
 	<space height="30"/>
-	
-	<box width="600" title="Text" variant="textured" padding="10">
+
+	<box width="600" title="Text input" variant="textured" padding="10">
 		<formula name="textForm">
 			<fields labels="above">
 				<field label="Username:">
@@ -142,8 +177,17 @@
 				<field label="Password:">
 					<text-input secret="true" key="password"/>
 				</field>
+				<field label="Field:">
+					<text-input key="something"/>
+				</field>
+				<field label="Placeholder:">
+					<text-input key="with_placeholder" placeholder="This is the placeholder"/>
+				</field>
 				<field label="Note:">
 					<text-input multiline="true" key="note"/>
+				</field>
+				<field label="Placeholder:">
+					<text-input multiline="true" key="note_with_placeholder" placeholder="This is the placeholder"/>
 				</field>
 			</fields>
 			<buttons>
@@ -153,8 +197,8 @@
 	</box>
 
 	<space height="30"/>
-	
-	<box width="600" title="Text" variant="textured" padding="10">
+
+	<box width="600" title="Checkboxes" variant="textured" padding="10">
 		<formula name="checkForm">
 			<fields labels="above">
 				<field label="Internal access:">
@@ -177,7 +221,7 @@
 	</box>
 
 	<space height="30"/>
-	
+
 	<box width="600" title="Text" variant="textured" padding="10">
 		<formula name="otherForm">
 			<fields labels="above">
@@ -200,14 +244,14 @@
 			</buttons>
 		</formula>
 	</box>
-	
+
 	<space height="30"/>
 
 	<box width="600" title="Drop downs" variant="textured" padding="10">
 		<formula name="dateForm">
 			<fields labels="above">
 				<field label="No initial value:">
-					<dropdown key="template">
+					<dropdown key="template" placeholder="Holding the place">
 						<item title="Lorem inpsum" value="1"/>
 						<item title="Consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua" value="2"/>
 						<item title="Ut enim ad minim veniam" value="3"/>
@@ -292,7 +336,7 @@
 	</box>
 
 	<space height="30"/>
-	
+
 	<box width="600" title="Text" variant="textured" padding="10">
 		<formula name="objectListForm">
 			<fields labels="above">
@@ -312,7 +356,7 @@
 			</buttons>
 		</formula>
 	</box>
-	
+
 	<space height="30"/>
 
 	<box width="600" title="Title with toolbars" variant="textured">
@@ -418,11 +462,11 @@
 			</tab>
 		</tabs>
 	</box>
-	
+
 	<window name="log" width="400" padding="5" title="Log">
 		<textfield label="Notat:" lines="6" name="logfield"/>
 	</window>
-	
+
 	<script>
 		var logForm = function(name) {
 			var values = hui.get(name).getValues();
@@ -431,9 +475,9 @@
 		}
 		hui.onReady(function() {
 		//win.show()
-		}) 
+		})
 	</script>
-	
+
 	<window name="win" width="400" padding="10" variant="dark">
 		<formula name="formula2">
 			<fields>

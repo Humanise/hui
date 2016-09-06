@@ -96,7 +96,7 @@ jsFiles = [
     'js/Links.js',
     'js/MarkupEditor.js',
     'js/ColorPicker.js',
-    'js/LocationField.js',
+    'js/LocationInput.js',
     'js/StyleLength.js',
     'js/DateTimeField.js',
     'js/TokenField.js',
@@ -183,13 +183,13 @@ cssFiles = [
     'links',
     'effects',
     'colorpicker',
-    'locationfield',
+    'locationinput',
     'tokenfield',
     'checkbox',
     'checkboxes',
     'infoview',
     'radiobutton',
-    'numberfield',
+    'numberinput',
     'rendering',
     'colorinput',
     'structure',
@@ -202,7 +202,8 @@ cssFiles = [
     'columns',
     'markupeditor',
     'objectinput',
-    'rows'
+    'rows',
+    'textinput'
 ]
 
 cssFilesSite = [

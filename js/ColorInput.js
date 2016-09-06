@@ -27,22 +27,24 @@ hui.ui.ColorInput = function(options) {
 
 hui.ui.ColorInput.create = function(options) {
 	options = options || {};
-	var e = options.element = hui.build('span',{'class':'hui_colorinput',html:'<span class="hui_field_top"><span><span></span></span></span><span class="hui_field_middle"><span class="hui_field_middle"><span class="hui_field_content"><span class="hui_field_singleline"><input type="text" value=""/></span></span></span></span><span class="hui_field_bottom"><span><span></span></span></span><a tabindex="-1" class="hui_colorinput" href="javascript://"></a>'});
-		
+	var e = options.element = hui.build(
+    'span', {
+      'class' : 'hui_colorinput',
+      html : '<input class="hui_textinput" type="text" value=""/><a tabindex="-1" class="hui_colorinput_color" href="javascript://"></a>'
+    });
 	return new hui.ui.ColorInput(options);
 }
 
 hui.ui.ColorInput.prototype = {
 	_addBehavior : function() {
-		hui.ui.addFocusClass({element:this.input.element,classElement:this.element,'class':'hui_field_focused'});
 		hui.listen(this.button, 'click',this._onButtonClick.bind(this));
 	},
 	_syncInput : function() {
 		this.input.setValue(this.value);
 	},
-	_syncColorButton : function() {		
+	_syncColorButton : function() {
 		this.button.innerHTML = this.value ? '' : '?';
-		this.button.style.backgroundColor = this.value ? this.value : '';	
+		this.button.style.backgroundColor = this.value ? this.value : '';
 	},
 	_onInputChange : function(value) {
 		var changed = value!=this.value;
@@ -54,14 +56,14 @@ hui.ui.ColorInput.prototype = {
 	},
 	_fireChange : function() {
 		hui.ui.callAncestors(this,'childValueChanged',this.value);
-		this.fire('valueChanged',this.value)		
+		this.fire('valueChanged',this.value)
 	},
 	_onBlur : function() {
 		hui.Color.parse(this.value);
 	},
 	_onButtonClick : function() {
 		if (hui.window.getViewHeight()<200) {
-			this.fire('clickPicker',this.value)		
+			this.fire('clickPicker',this.value)
 			return; // TODO: mini picker
 		}
 		if (!this.panel) {
@@ -79,9 +81,9 @@ hui.ui.ColorInput.prototype = {
 		this.setValue(color);
 		this._fireChange();
 	},
-	
+
 	// Public...
-	
+
 	getValue : function() {
 		return this.value;
 	},
@@ -93,7 +95,7 @@ hui.ui.ColorInput.prototype = {
 	focus : function() {
 		try {
 			this.input.focus();
-		} catch (e) {}		
+		} catch (e) {}
 	},
 	reset : function() {
 		this.setValue('');

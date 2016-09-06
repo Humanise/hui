@@ -4,7 +4,6 @@
 hui.ui.Overlay = function(options) {
 	this.options = options;
 	this.element = hui.get(options.element);
-	this.content = hui.get.byClass(this.element,'hui_inner_overlay')[1];
 	this.name = options.name;
 	this.icons = {};
 	this.visible = false;
@@ -17,7 +16,11 @@ hui.ui.Overlay = function(options) {
  */
 hui.ui.Overlay.create = function(options) {
 	options = options || {};
-	var e = options.element = hui.build('div',{className:'hui_overlay'+(options.variant ? ' hui_overlay_'+options.variant : ''),style:'display:none',html:'<div class="hui_inner_overlay"><div class="hui_inner_overlay"></div></div>'});
+  var cls = 'hui_overlay'+(options.variant ? ' hui_overlay_'+options.variant : '');
+  if (!options.variant) {
+    cls += ' hui_context_dark';
+  }
+	var e = options.element = hui.build('div',{className:cls,style:'display:none'});
 	document.body.appendChild(e);
 	return new hui.ui.Overlay(options);
 }
@@ -45,13 +48,13 @@ hui.ui.Overlay.prototype = {
 			self._iconWasClicked(key,e);
 		});
 		this.icons[key]=element;
-		this.content.appendChild(element);
+		this.element.appendChild(element);
 	},
 	addText : function(text) {
-		this.content.appendChild(hui.build('span',{'class':'hui_overlay_text',text:text}));
+		this.element.appendChild(hui.build('span',{'class':'hui_overlay_text',text:text}));
 	},
 	add : function(widget) {
-		this.content.appendChild(widget.getElement());
+		this.element.appendChild(widget.getElement());
 	},
 	hideIcons : function(keys) {
 		for (var i=0; i < keys.length; i++) {
@@ -142,8 +145,8 @@ hui.ui.Overlay.prototype = {
 		this.visible = false;
 	},
 	clear : function() {
-		hui.ui.destroyDescendants(this.content);
-		this.content.innerHTML='';
+		hui.ui.destroyDescendants(this.element);
+		this.element.innerHTML='';
 	}
 };
 

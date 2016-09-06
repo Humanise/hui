@@ -1,0 +1,50 @@
+@import 'tools';
+
+.hui_checkbox
+{
+	font-size: 10pt;
+	line-height: 16px;
+	cursor: pointer;
+	color: $text-color;
+	display: inline-block;
+	outline: none;
+	text-decoration: none;
+	vertical-align: middle;
+
+	&_button {
+		width: 16px;
+		height: 16px;
+		@include control-base;
+		display: inline-block;
+		position: relative;
+		vertical-align: middle;
+	}
+	&_label {
+		margin-left: 5px;
+	}
+
+  &:hover &_button {
+		@include control-hover;
+  }
+
+	&:focus &_button {
+    @include control-focus;
+	}
+
+	&:active &_button {
+    @include control-active;
+	}
+
+	&_selected &_button {
+		&:before {
+			content: '';
+			position: absolute;
+			width: 12px;
+			height: 12px;
+			background: url("../gfx/check.svg");
+			background-size: contain;
+			top: 2px;
+			left: 2px;
+		};
+	}
+}

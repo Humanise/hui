@@ -152,12 +152,10 @@ hui.ui.ObjectList.Text.prototype = {
 		return new hui.ui.ObjectList.Text(this.key);
 	},
 	getElement : function() {
-		var input = hui.build('input',{'class':'hui_formula_text'});
-		var field = hui.ui.wrapInField(input);
+		var input = hui.build('input',{'class':'hui_textinput'});
 		this.wrapper = new hui.ui.Input({element:input});
 		this.wrapper.listen(this);
-		hui.ui.addFocusClass({element:input,classElement:field,'class':'hui_field_focused'});
-		return field;
+		return input;
 	},
 	$valueChanged : function(value) {
 		this.value = value;

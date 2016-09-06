@@ -20,7 +20,7 @@ hui.ui.TextField = function(options) {
   this.element = hui.get(options.element);
   this.name = options.name;
   hui.ui.extend(this);
-  this.input = hui.get.firstByClass(this.element,'hui_formula_text');
+  this.input = this.element;
   this.multiline = this.input.tagName.toLowerCase() == 'textarea';
   this.placeholder = hui.get.firstByClass(this.element,'hui_field_placeholder');
   this.value = this.input.value;
@@ -52,22 +52,18 @@ hui.ui.TextField.create = function(options) {
   var node,input;
   if (options.lines>1 || options.multiline) {
     input = hui.build('textarea',
-      {'class':'hui_formula_text','rows':options.lines,style:'height: 32px;'}
+      {'class':'hui_textinput','rows':options.lines}
     );
-    node = hui.build('span',{'class':'hui_formula_text_multiline'});
-    node.appendChild(input);
   } else {
-    input = hui.build('input',{'class':'hui_formula_text'});
+    input = hui.build('input',{'class':'hui_textinput'});
     if (options.secret) {
       input.setAttribute('type','password');
     }
-    node = hui.build('span',{'class':'hui_field_singleline'});
-    node.appendChild(input);
   }
   if (options.value!==undefined) {
     input.value=options.value;
   }
-  options.element = hui.ui.wrapInField(node);
+  options.element = input;
   return new hui.ui.TextField(options);
 }
 
@@ -216,7 +212,7 @@ hui.ui.TextField.prototype = {
       return
     };
     var textHeight = this._getTextAreaHeight(this.input);
-    textHeight = Math.max(32,textHeight);
+    textHeight = Math.max(38,textHeight);
     textHeight = Math.min(textHeight,this.options.maxHeight);
     if (animate) {
       this._updateOverflow();

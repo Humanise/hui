@@ -28,18 +28,6 @@ form.hui_formula .checkbox
 	padding: 2px 0px;
 }
 
-
-span.hui_field_singleline
-{
-	position: relative;
-	height: 16px;
-}
-
-span.hui_field_singleline input
-{
-	position: absolute;
-}
-
 a.hui_button
 {
 	line-height: 27px;

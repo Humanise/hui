@@ -43,7 +43,7 @@ hui.ui.TokenField.prototype = {
 	_updateUI : function() {
 		this.element.innerHTML='';
 		hui.each(this.value,function(value,i) {
-			var input = hui.build('input',{'class':'hui_tokenfield_token',parent:this.element});
+			var input = hui.build('input',{'class':'hui_textinput',parent:this.element,style:{width:'50px'}});
 			if (this.options.width) {
 				input.style.width=this.options.width+'px';
 			}
@@ -73,7 +73,7 @@ hui.ui.TokenField.prototype = {
 		};
 	},
 	_addField : function() {
-		var input = hui.build('input',{'class':'hui_tokenfield_token'});
+		var input = hui.build('input',{'class':'hui_textinput',style:{width:'50px'}});
 		if (this.options.width) {
 			input.style.width = this.options.width+'px';
 		}
