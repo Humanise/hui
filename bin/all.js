@@ -15669,7 +15669,6 @@ hui.ui.DateTimeField.create = function(options) {
 
 hui.ui.DateTimeField.prototype = {
 	_addBehavior : function() {
-		hui.ui.addFocusClass({element:this.input,classElement:this.element,'class':'hui_field_focused'});
 		hui.listen(this.input,'blur',this._onBlur.bind(this));
 		hui.listen(this.input,'keyup',this._parse.bind(this));
 		hui.listen(this.input,'focus',this._onFocus.bind(this));
@@ -16823,7 +16822,6 @@ hui.ui.ColorInput.create = function(options) {
 
 hui.ui.ColorInput.prototype = {
 	_addBehavior : function() {
-		hui.ui.addFocusClass({element:this.input.element,classElement:this.element,'class':'hui_field_focused'});
 		hui.listen(this.button, 'click',this._onButtonClick.bind(this));
 	},
 	_syncInput : function() {
