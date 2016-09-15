@@ -56,11 +56,20 @@
 						for (var i=0; i < sizes.length; i++) {
 							var size = sizes[i];
 							hui.build('a',{
-								'class' : 'icon icon'+size,
+								'class' : 'icon',
 								style : "background-image:url('../icons/"+group+"/"+icon+size+".png'); width:"+size+"px;height:"+size+"px;",
 								parent : groupNode,
 								title : group+'/'+icon
 							});
+							if (size==32) {
+								hui.build('a',{
+									'class' : 'icon',
+									style : "background-image:url('../icons/"+group+"/"+icon+size+"x2.png'); width:"+(size*2)+"px;height:"+(size*2)+"px;",
+									parent : groupNode,
+									title : group+'/'+icon
+								});
+							}
+							continue;
 							hui.build('a',{
 								'class' : 'icon icon'+size,
 								style : "background-image:url('../icons/"+group+"/"+icon+size+".svg'); width:"+size+"px;height:"+size+"px;",
