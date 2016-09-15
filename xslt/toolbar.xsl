@@ -142,15 +142,15 @@
 		<xsl:attribute name="class">
 			<xsl:text>hui_searchfield</xsl:text>
 			<xsl:if test="@adaptive='true'">
-				<xsl:text> hui_searchfield_adaptive</xsl:text>
+				<xsl:text> hui_searchfield-adaptive</xsl:text>
 			</xsl:if>
 		</xsl:attribute>
 		<xsl:if test="@width">
 			<xsl:attribute name="style">width:<xsl:value-of select="@width"/>px;</xsl:attribute>
 		</xsl:if>
-		<em class="hui_searchfield_placeholder"><xsl:value-of select="@placeholder"/><xsl:comment/></em>
+		<span class="hui_searchfield_placeholder"><xsl:value-of select="@placeholder"/><xsl:comment/></span>
 		<a class="hui_searchfield_reset"><xsl:comment/></a>
-		<span><span><input type="text"/></span></span>
+		<input class="hui_searchfield_input" type="text"/>
 	</span>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.SearchField({

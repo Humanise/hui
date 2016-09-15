@@ -5,7 +5,7 @@ hui.ui.SearchField = function(options) {
 	this.name = options.name;
 	this.field = hui.get.firstByTag(this.element,'input');
 	this.value = this.field.value;
-	this.adaptive = hui.cls.has(this.element,'hui_searchfield_adaptive');
+	this.adaptive = hui.cls.has(this.element,'hui_searchfield-adaptive');
 	this.initialWidth = null;
 	hui.ui.extend(this);
 	this._addBehavior();
@@ -17,10 +17,9 @@ hui.ui.SearchField = function(options) {
 
 hui.ui.SearchField.create = function(options) {
 	options = options || {};
-	
 	options.element = hui.build('span',{
-		'class' : options.adaptive ? 'hui_searchfield hui_searchfield_adaptive' : 'hui_searchfield',
-		html : '<em class="hui_searchfield_placeholder"></em><a href="javascript:void(0);" class="hui_searchfield_reset"></a><span><span><input type="text"/></span></span>'
+		'class' : options.adaptive ? 'hui_searchfield hui_searchfield-adaptive' : 'hui_searchfield',
+		html : '<span class="hui_searchfield_placeholder"></span><a href="javascript:void(0);" class="hui_searchfield_reset"></a><input class="hui_searchfield_input" type="text"/>'
 	});
 	return new hui.ui.SearchField(options);
 }
@@ -97,14 +96,13 @@ hui.ui.SearchField.prototype = {
 	_updateClass : function() {
 		var className = 'hui_searchfield';
 		if (this.adaptive) {
-			className+=' hui_searchfield_adaptive';
+			className+=' hui_searchfield-adaptive';
 		}
-		if (this.focused && this.value!='') {
-			className+=' hui_searchfield_focus_dirty';
-		} else if (this.focused) {
-			className+=' hui_searchfield_focus';
-		} else if (this.value!='') {
-			className+=' hui_searchfield_dirty';
+    if (this.focused) {
+			className+=' hui_searchfield-focus';
+		}
+    if (this.value!='') {
+			className+=' hui_searchfield-dirty';
 		}
 		this.element.className=className;
 	},

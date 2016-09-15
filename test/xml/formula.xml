@@ -14,6 +14,7 @@
 			<item text="Hey" value="2"/>
 		</radiobuttons>
 		<color-input/>
+		<searchfield placeholder="Search here" expanded-width="200"/>
 		<dropdown key="template">
 			<item title="Lorem inpsum" value="1"/>
 			<item title="Consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua" value="2"/>
@@ -39,6 +40,9 @@
 			<fields labels="above">
 				<field label="Color:">
 					<color-input key="color"/>
+				</field>
+				<field label="Adpative search:">
+					<searchfield key="search" adaptive="true"/>
 				</field>
 				<field label="Location:">
 					<location-input key="location"/>

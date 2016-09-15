@@ -498,7 +498,7 @@
 		</xsl:attribute>
 		<span class="hui_checkbox_button"><xsl:comment/></span>
 		<xsl:if test="@text!='' or @title!='' or @label!=''">
-			<span class="hui_checkbox_label"><xsl:value-of select="@title"/><xsl:value-of select="@text"/></span>
+			<span class="hui_checkbox_label"><xsl:value-of select="@title"/><xsl:value-of select="@text"/><xsl:value-of select="@label"/></span>
 		</xsl:if>
 	</a>
 	<script type="text/javascript">
