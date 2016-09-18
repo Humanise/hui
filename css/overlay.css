@@ -17,7 +17,7 @@
 	width: 32px;
 	height: 32px;
 	float: left;
-	margin: 3px 1px 0px;
+	margin: 3px 3px 0px;
 }
 
 .hui_overlay .hui_button
@@ -52,13 +52,7 @@
 	border-radius: 4px;
 	padding: 0 3px;
 	height: 36px;
-}
-
-.hui_overlay_light .hui_inner_overlay
-{
-	background: none;
-	padding: 0;
-	height: 36px;
+  box-shadow: none;
 }
 
 .hui_overlay_light .hui_overlay_icon

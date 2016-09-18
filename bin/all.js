@@ -21720,7 +21720,7 @@ hui.ui.Editor.prototype = {
 			hui.cls.remove(this.hoveredPart.element,'hui_editor_part_hover');
 		}
 		if (!this.partControls && this.hoveredPart) {
-			hui.cls.remove(this.hoveredPart.element,'hui_editor_part_hover');			
+			hui.cls.remove(this.hoveredPart.element,'hui_editor_part_hover');
 		}
 	},
 	showPartEditControls : function() {
@@ -21728,7 +21728,7 @@ hui.ui.Editor.prototype = {
 			this.partEditControls = hui.ui.Overlay.create({name:'huiEditorPartEditActions',variant:'light',zIndex:100});
 			this.partEditControls.addIcon('save','common/ok');
 			this.partEditControls.addIcon('cancel','common/stop');
-			this.partEditControls.addIcon('info','common/info_small');
+			this.partEditControls.addIcon('info','common/info');
 			this.partEditControls.listen(this);
 		}
 		this.partEditControls.showAtElement(this.activePart.element,{'horizontal':'right','vertical':'topOutside'});

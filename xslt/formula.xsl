@@ -628,13 +628,8 @@
 				<xsl:text> hui_button_</xsl:text><xsl:value-of select="@variant"/>
 			</xsl:if>
 			<xsl:if test="@disabled='true'"> hui_is_disabled</xsl:if>
+			<xsl:if test="@highlighted='true'"> hui_is_highlighted</xsl:if>
 			<xsl:choose>
-				<xsl:when test="@variant and @small='true'">
-					<xsl:text> hui_button_small_</xsl:text><xsl:value-of select="@variant"/>
-				</xsl:when>
-				<xsl:when test="@small='true' and @highlighted='true'">
-					<xsl:text> hui_button_small hui_is_highlighted</xsl:text>
-				</xsl:when>
 				<xsl:when test="@small='true' or ../@small='true'">
 					<xsl:text> hui_button_small</xsl:text>
 				</xsl:when>
@@ -643,9 +638,6 @@
 				</xsl:when>
 				<xsl:when test="@tiny='true' or ../@tiny='true'">
 					<xsl:text> hui_button_tiny</xsl:text>
-				</xsl:when>
-				<xsl:when test="@highlighted='true'">
-					<xsl:text> hui_is_highlighted</xsl:text>
 				</xsl:when>
 			</xsl:choose>
 		</xsl:attribute>

@@ -12,7 +12,7 @@ from xml.sax.saxutils import escape
 pathname = os.path.dirname(sys.argv[0])
 base = os.path.abspath(pathname)+'/..'
 
-iconReg = re.compile('([^0-9]+)([0-9]+).png')
+iconReg = re.compile('^([^0-9]+)([0-9]+).png')
 
 dictionary = {}
 
