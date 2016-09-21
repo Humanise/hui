@@ -87,8 +87,7 @@ div.hui_toolbar_dock
 
 a.hui_toolbar_icon
 {
-	margin-top: 1px;
-	height: 55px;
+	height: 56px;
 	vertical-align: middle;
 	display: inline-block;
 	font-size: 0px;
@@ -128,7 +127,7 @@ a.hui_toolbar_icon span.hui_toolbar_inner_icon
 
 a.hui_toolbar_icon span.hui_toolbar_inner_icon span.hui_toolbar_inner_icon
 {
-	padding: 5px 0 0;
+	padding: 6px 0 0;
 	height: 50px;
 	margin: 0 7px;
 }

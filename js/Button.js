@@ -61,7 +61,7 @@ hui.ui.Button.create = function(options) {
     className+=' hui_button_small';
   }
   if (!options.enabled) {
-    className+=' hui_button_disabled';
+    className+=' hui_is_disabled';
   }
   var text = options.text ? hui.ui.getTranslated(options.text) : null;
   if (options.title) { // Deprecated
@@ -163,10 +163,10 @@ hui.ui.Button.prototype = {
    * @param highlighted {Boolean} If the button should be highlighted
    */
   setHighlighted : function(highlighted) {
-    hui.cls.set(this.element,'hui_button_highlighted',highlighted);
+    hui.cls.set(this.element,'hui_is_highlighted',highlighted);
   },
   _updateUI : function() {
-    hui.cls.set(this.element,'hui_button_disabled',!this.enabled);
+    hui.cls.set(this.element,'hui_is_disabled',!this.enabled);
   },
   /** Sets the button text
    * @param

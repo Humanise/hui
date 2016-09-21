@@ -316,26 +316,22 @@
 			<xsl:if test="@absolute='true'"><xsl:text> hui_box_absolute</xsl:text></xsl:if>
 		</xsl:attribute>
 		<xsl:attribute name="style">
-		<xsl:if test="@width">width: <xsl:value-of select="@width"/>px;</xsl:if>
-		<xsl:if test="@top">padding-top: <xsl:value-of select="@top"/>px;</xsl:if>
+      <xsl:if test="@width">width: <xsl:value-of select="@width"/>px;</xsl:if>
+      <xsl:if test="@top">margin-top: <xsl:value-of select="@top"/>px;</xsl:if>
 		</xsl:attribute>
 		<xsl:if test="@closable='true'"><a class="hui_box_close" href="javascript://"><xsl:comment/></a></xsl:if>
-		<div class="hui_box_top"><div><div><xsl:comment/></div></div></div>
-		<div class="hui_box_middle"><div class="hui_box_middle">
-			<xsl:if test="@title or gui:toolbar">
-				<div class="hui_box_header">
-					<xsl:attribute name="class">hui_box_header<xsl:if test="gui:toolbar"> hui_box_header_toolbar</xsl:if></xsl:attribute>
-					<xsl:apply-templates select="gui:toolbar"/>
-					<strong class="hui_box_title"><xsl:value-of select="@title"/></strong>
-				</div>
-			</xsl:if>
-			<div class="hui_box_body">
-				<xsl:if test="@padding"><xsl:attribute name="style">padding: <xsl:value-of select="@padding"/>px;</xsl:attribute></xsl:if>
-				<xsl:apply-templates select="child::*[not(name()='toolbar')]"/>
-				<xsl:comment/>
+		<xsl:if test="@title or gui:toolbar">
+			<div class="hui_box_header">
+				<xsl:attribute name="class">hui_box_header<xsl:if test="gui:toolbar"> hui_box_header_toolbar</xsl:if></xsl:attribute>
+				<xsl:apply-templates select="gui:toolbar"/>
+				<strong class="hui_box_title"><xsl:value-of select="@title"/></strong>
 			</div>
-		</div></div>
-		<div class="hui_box_bottom"><div><div><xsl:comment/></div></div></div>
+		</xsl:if>
+		<div class="hui_box_body">
+			<xsl:if test="@padding"><xsl:attribute name="style">padding: <xsl:value-of select="@padding"/>px;</xsl:attribute></xsl:if>
+			<xsl:apply-templates select="child::*[not(name()='toolbar')]"/>
+			<xsl:comment/>
+		</div>
 	</div>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Box({

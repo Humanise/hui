@@ -1566,8 +1566,7 @@ div.hui_toolbar_dock
 
 a.hui_toolbar_icon
 {
-	margin-top: 1px;
-	height: 55px;
+	height: 56px;
 	vertical-align: middle;
 	display: inline-block;
 	font-size: 0px;
@@ -1607,7 +1606,7 @@ a.hui_toolbar_icon span.hui_toolbar_inner_icon
 
 a.hui_toolbar_icon span.hui_toolbar_inner_icon span.hui_toolbar_inner_icon
 {
-	padding: 5px 0 0;
+	padding: 6px 0 0;
 	height: 50px;
 	margin: 0 7px;
 }
@@ -4433,228 +4432,93 @@ a.hui_datepicker_next
 	cursor: pointer;
 }
 
-/************************** Box *************************/
+.hui_box {
+  margin: 0 auto;
+  text-align: left;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  background: #fff; }
 
-.hui_box
-{
-	margin: 0 auto;
-	text-align: left;
-}
+.hui_box_close {
+  width: 29px;
+  height: 31px;
+  background: url("../gfx/box_close.png") left top no-repeat;
+  position: absolute;
+  margin: -15px 0 0 -15px;
+  z-index: 200; }
 
-.hui_box_close
-{
-	width: 29px;
-	height: 31px;
-	background: url('../gfx/box_close.png') left top no-repeat;
-	position: absolute;
-	margin: -10px 0 0 -10px;
-	z-index: 200;
-}
+.hui_box_close:hover {
+  background-position: 0 -31px; }
 
-.hui_box_close:hover
-{
-	background-position: 0 -31px;
-}
+.hui_box_close:focus {
+  background-position: 0 -62px;
+  outline: none; }
 
-.hui_box_close:focus
-{
-	background-position: 0 -62px;
-	outline: none;
-}
+.hui_box_close:focus:hover {
+  background-position: 0 -93px;
+  outline: none; }
 
-.hui_box_close:focus:hover
-{
-	background-position: 0 -93px;
-	outline: none;
-}
-
-.hui_box_absolute
-{
-	position: absolute;
-	left: 50%;
-	top: -10000px;
-	margin-left: -1000px;
-	visibility: hidden;
-}
+.hui_box_absolute {
+  position: absolute;
+  left: 50%;
+  top: -10000px;
+  margin-left: -1000px;
+  visibility: hidden; }
 
 /****************************** Plain ****************************/
+.hui_box_plain {
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3); }
 
-.hui_box_plain
-{
-    box-shadow: 0 5px 20px rgba(0,0,0,.3);
-}
-
-.hui_box_close_plain
-{
-	margin: -15px 0 0 -15px;
-}
+.hui_box_close_plain {
+  margin: -15px 0 0 -15px; }
 
 /****************************** Standard ****************************/
+.hui_box_textured {
+  background: #f3f3f3; }
 
-.hui_box_top
-{
-	height: 5px;
-	background: url('../gfx/box_shadow.png') left top no-repeat;
-	padding-left: 18px;
-}
+.hui_box_textured .hui_box_body {
+  border: 1px solid #fff; }
 
-.hui_box_top div
-{
-	height: 5px;
-	background: url('../gfx/box_shadow.png') right -5px no-repeat;
-	padding-right: 18px;
-}
+.hui_box_header {
+  height: 56px;
+  background-color: #d1dae5;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#d1dae5), to(#b6c0cc));
+  background-image: -webkit-linear-gradient(top, #d1dae5, #b6c0cc);
+  background-image: -moz-linear-gradient(top, #d1dae5, #b6c0cc);
+  background-image: -ms-linear-gradient(top, #d1dae5, #b6c0cc);
+  background-image: -o-linear-gradient(top, #d1dae5, #b6c0cc);
+  background-image: linear-gradient(top, #d1dae5, #b6c0cc);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#d1dae5', endColorstr='#b6c0cc');
+  border: 1px solid #b6c1d0;
+  border-color: #c4cbd4 #acb2bb #a3aab3;
+  font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28); }
 
-.hui_box_top div div
-{
-	background: url('../gfx/box_shadow.png') left -10px repeat-x;
-	padding: 0px;
-}
+.hui_box_title {
+  float: left;
+  height: 58px;
+  line-height: 58px;
+  font-size: 12pt;
+  color: #44474c;
+  font-weight: normal;
+  padding: 0px 15px;
+  text-shadow: rgba(255, 255, 255, 0.5) 0px 1px 0px; }
 
-.hui_box_bottom
-{
-	height: 13px;
-	background: url('../gfx/box_shadow.png') left -15px no-repeat;
-	padding-left: 18px;
-}
+.hui_box_header_toolbar .hui_box_title {
+  float: right; }
 
-.hui_box_bottom div
-{
-	height: 13px;
-	background: url('../gfx/box_shadow.png') right -28px no-repeat;
-	padding-right: 18px;
-}
+.hui_box_header .hui_toolbar {
+  float: left; }
 
-.hui_box_bottom div div
-{
-	background: url('../gfx/box_shadow.png') left -41px repeat-x;
-	padding: 0px;
-}
-
-.hui_box_middle
-{
-	background: url('../gfx/box_shadow.png') left -54px repeat-y;
-	padding-left: 7px;
-}
-
-.hui_box_middle .hui_box_middle
-{
-	background: url('../gfx/box_shadow.png') right -54px repeat-y;
-	padding: 0px 7px 0px 0px;
-}
-
-.hui_box_body
-{
-	padding: 0px;
-	background: #fff;
-}
-
-.hui_box_textured .hui_box_body
-{
-	background: #f3f3f3;
-	border: 1px solid #fff;
-}
-
-.hui_box_header
-{
-	height: 58px;
-	background: url('../gfx/box_toolbar.png') left top repeat-x;
-	border: 1px solid #b6c1d0;
-	border-width: 0px 1px;
-	font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
-}
-
-.hui_box_title
-{
-	float: left;
-	height: 58px;
-	line-height: 58px;
-	font-size: 12pt;
-	color: #44474c;
-	font-weight: normal;
-	padding: 0px 15px;
-	text-shadow: rgba(255,255,255,.5) 0px 1px 0px;
-}
-
-.hui_box_header_toolbar .hui_box_title
-{
-	float: right;
-}
-
-.hui_box_header .hui_toolbar
-{
-	float: left;
-}
-
-.hui_box_header a.hui_toolbar_icon_selected
-{
-    background-color: rgba(119, 142, 169, 0.5);
-}
+.hui_box_header a.hui_toolbar_icon_selected {
+  background-color: rgba(119, 142, 169, 0.5); }
 
 /***************************** Rounded ************************/
+.hui_box_rounded {
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-top-color: #e6e6e6; }
 
-
-.hui_box_rounded .hui_box_top,
-.hui_box_rounded .hui_box_top div
-{
-	font-size: 0;
-	background: url('../gfx/box_rounded.png') no-repeat;
-	height: 7px;
-	padding: 0;
-}
-
-.hui_box_rounded .hui_box_top div
-{
-	background-position: right -7px;
-}
-
-.hui_box_rounded .hui_box_top div div
-{
-	background-position: left -14px;
-	background-repeat: repeat-x;
-	margin: 0 8px;
-}
-
-.hui_box_rounded .hui_box_bottom,
-.hui_box_rounded .hui_box_bottom div
-{
-	font-size: 0;
-	background: url('../gfx/box_rounded.png') left -21px no-repeat;
-	height: 10px;
-	padding: 0;
-}
-
-.hui_box_rounded .hui_box_bottom div
-{
-	background-position: right -31px;
-	padding: 0;
-}
-
-.hui_box_rounded .hui_box_bottom div div
-{
-	background-position: left -41px;
-	background-repeat: repeat-x;
-	margin: 0 8px;
-}
-
-.hui_box_rounded .hui_box_middle
-{
-	background: url('../gfx/box_rounded_middle.png') repeat-y;
-	padding: 0;
-}
-
-.hui_box_rounded .hui_box_middle .hui_box_middle
-{
-	background: url('../gfx/box_rounded_middle.png') right repeat-y;
-}
-
-.hui_box_rounded .hui_box_body
-{
-	margin: 0 3px;
-	background: #fff;
-	padding: 1px 0;
-	overflow: hidden;
-}
 
 table.hui_wizard, td.hui_wizard
 {
@@ -4742,10 +4606,11 @@ ul.hui_wizard a.hui_selected
   box-sizing: border-box;
   text-shadow: 0 -1px 0 rgba(255, 255, 255, 0.5);
   width: 100px;
-  height: 24px;
-  border-radius: 13px;
+  height: 22px;
+  border-radius: 11px;
   position: relative;
-  padding: 0 4px 0 21px; }
+  padding: 0 4px 0 20px;
+  font-size: 0; }
   .hui_searchfield:before {
     content: '';
     position: absolute;
@@ -4753,23 +4618,23 @@ ul.hui_wizard a.hui_selected
     height: 13px;
     background: url("../gfx/search.svg") no-repeat;
     background-size: contain;
-    top: 5px;
-    left: 5px;
+    top: 4px;
+    left: 4px;
     opacity: .5; }
   .hui_searchfield_input {
     border: none;
     background: none;
     font-size: 12px;
     height: 16px;
-    margin: 3px 0 0;
+    margin: 2px 0 0;
     padding: 0;
     width: 100%;
     outline: none;
     font-family: inherit; }
   .hui_searchfield_reset {
     position: absolute;
-    right: 5px;
-    top: 5px;
+    right: 4px;
+    top: 4px;
     width: 12px;
     height: 12px;
     display: none;
@@ -4788,9 +4653,9 @@ ul.hui_wizard a.hui_selected
     color: #999;
     font-size: 11px;
     line-height: 16px;
-    left: 21px;
+    left: 20px;
     height: 16px;
-    top: 3px; }
+    top: 2px; }
     .hui_searchfield-dirty .hui_searchfield_placeholder, .hui_searchfield-focus .hui_searchfield_placeholder {
       display: none; }
   .hui_searchfield-adaptive {
@@ -5462,7 +5327,7 @@ div.hui_bar_layout span.hui_segmented_inset
 
 div.hui_bar_layout span.hui_searchfield
 {
-	margin-top: 2px;
+	margin-top: 3px;
 }
 
 /******************* Mini variant *****************/
