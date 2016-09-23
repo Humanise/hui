@@ -19,8 +19,10 @@
 		position: relative;
 		vertical-align: middle;
 	}
+
 	&_label {
 		margin-left: 5px;
+		vertical-align: middle;
 	}
 
   &:hover &_button {
