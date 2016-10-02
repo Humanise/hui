@@ -1015,7 +1015,8 @@ body .hui_context_dark label.hui_formula_field,
     height: 8px;
     background: url("../gfx/drop.svg");
     background-size: contain;
-    top: 8px;
+    top: 50%;
+    margin-top: -4px;
     right: 7px;
     opacity: .6; }
   .hui_dropdown:hover {
@@ -1039,10 +1040,12 @@ body .hui_context_dark label.hui_formula_field,
   .hui_dropdown_placeholder {
     color: #999;
     font-size: 11px;
-    line-height: 24px;
     display: block;
     font-style: italic;
     padding-right: 2px; }
+  .hui_dropdown.hui_is_small {
+    height: 22px;
+    line-height: 20px; }
 
 .hui_dropdown_selector {
   position: absolute;
@@ -6172,6 +6175,10 @@ div.hui_infoview_click:hover
     bottom: 0;
     background-image: url("../gfx/down.svg");
     background-position: 50% 2px; }
+  .hui_numberinput.hui_is_small .hui_numberinput_up {
+    background-position: 50% 4px; }
+  .hui_numberinput.hui_is_small .hui_numberinput_down {
+    background-position: 50% 4px; }
 
 
 div.hui_rendering
@@ -6720,6 +6727,9 @@ div.hui_markupeditor
 
 input.hui_textinput {
   height: 26px; }
+  input.hui_textinput.hui_is_small {
+    height: 22px;
+    font-size: 11px; }
 
 textarea.hui_textinput {
   height: 38px;

@@ -25,6 +25,9 @@
 
 input.hui_textinput {
   height: 26px; }
+  input.hui_textinput.hui_is_small {
+    height: 22px;
+    font-size: 11px; }
 
 textarea.hui_textinput {
   height: 38px;
