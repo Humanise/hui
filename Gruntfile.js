@@ -42,6 +42,21 @@ module.exports = function(grunt) {
       all : {
         command : 'tools/all.sh'
       }
+    },
+    uglify : {
+      'all' : {
+        files: [{
+          expand: true,
+          cwd: 'js',
+          src: '**/*.js',
+          dest: 'bin/js'
+        }]
+      },
+      some : {
+        files : {
+          'bin/minimised.js': ['js/hui.js', 'js/ui.js']
+        }
+      }
     }
   });
 

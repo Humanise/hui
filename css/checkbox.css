@@ -26,7 +26,8 @@
     position: relative;
     vertical-align: middle; }
   .hui_checkbox_label {
-    margin-left: 5px; }
+    margin-left: 5px;
+    vertical-align: middle; }
   .hui_checkbox:hover .hui_checkbox_button {
     border-color: #d2d2d2 #b7b7b7 #9c9c9c;
     background: linear-gradient(#f9f9f9, #d5dade); }

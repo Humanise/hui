@@ -960,10 +960,8 @@ hui.find = function(selector,context) {
 }
 
 hui.findAll = function(selector,context) {
-  var nl = (context || document).querySelectorAll(selector),
-    l=[];
-  for(var i=0, ll=nl.length; i!=ll; l.push(nl[i++]));
-  return l;
+  var nl = (context || document).querySelectorAll(selector);
+  return Array.prototype.slice.call(nl);
 }
 
 if (!document.querySelector) {

@@ -23,27 +23,20 @@
 	<div id="{generate-id()}">
 		<xsl:attribute name="class">
 			<xsl:text>hui_toolbar</xsl:text>
-			<xsl:if test="@labels='false'"><xsl:text> hui_toolbar_nolabels</xsl:text></xsl:if>
-			<xsl:if test="@border='top'"><xsl:text> hui_toolbar_border_top</xsl:text></xsl:if>
-			<xsl:if test="@border='bottom'"><xsl:text> hui_toolbar_border_bottom</xsl:text></xsl:if>
-			<xsl:if test="@centered='true'"><xsl:text> hui_toolbar_centered</xsl:text></xsl:if>
-			<xsl:if test="@variant"><xsl:text> hui_toolbar_</xsl:text><xsl:value-of select="@variant"/></xsl:if>
+			<xsl:if test="@labels='false'"><xsl:text> hui_toolbar-nolabels</xsl:text></xsl:if>
+			<xsl:if test="@border='top'"><xsl:text> hui_toolbar-border-top</xsl:text></xsl:if>
+			<xsl:if test="@border='bottom'"><xsl:text> hui_toolbar-border-bottom</xsl:text></xsl:if>
+			<xsl:if test="@centered='true'"><xsl:text> hui_toolbar-centered</xsl:text></xsl:if>
+			<xsl:if test="ancestor::gui:window"><xsl:text> hui_toolbar-window</xsl:text></xsl:if>
+			<xsl:if test="@variant"><xsl:text> hui_toolbar-</xsl:text><xsl:value-of select="@variant"/></xsl:if>
 		</xsl:attribute>
-		<div>
-			<xsl:attribute name="class">
-				<xsl:text>hui_toolbar_body</xsl:text>
-				<xsl:if test="@fixed-height='true'">
-					<xsl:text> hui_toolbar_body_fixed_height</xsl:text>
-				</xsl:if>
+		<xsl:if test="@left">
+			<xsl:attribute name="style">
+				<xsl:text>padding-left: </xsl:text><xsl:value-of select="@left"/><xsl:text>px;</xsl:text>
 			</xsl:attribute>
-			<xsl:if test="@left">
-				<xsl:attribute name="style">
-					<xsl:text>padding-left: </xsl:text><xsl:value-of select="@left"/><xsl:text>px;</xsl:text>
-				</xsl:attribute>
-			</xsl:if>
-			<xsl:apply-templates select="child::*[not(name()='right')]"/>
-			<xsl:apply-templates select="gui:right"/>
-		</div>
+		</xsl:if>
+		<xsl:apply-templates select="child::*[not(name()='right')]"/>
+		<xsl:apply-templates select="gui:right"/>
 	</div>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Toolbar({
@@ -60,7 +53,7 @@
 </xsl:template>
 
 <xsl:template match="gui:toolbar//gui:divider">
-	<span class="hui_divider"><xsl:comment /></span>
+	<span class="hui_toolbar_divider"><xsl:comment /></span>
 </xsl:template>
 
 <xsl:template match="gui:toolbar//gui:more">
@@ -70,10 +63,10 @@
 			<xsl:comment/>
 		</span>
 		<xsl:if test="@text">
-			<a class="hui_toolbar_more"><xsl:value-of select="@text"/></a>
+			<a class="hui_toolbar_more_toggle"><xsl:value-of select="@text"/></a>
 		</xsl:if>
 		<xsl:if test="not(@text)">
-			<a class="hui_toolbar_more hui_toolbar_more_default">···</a>
+			<a class="hui_toolbar_more_toggle">···</a>
 		</xsl:if>
 	</span>
 	<script type="text/javascript">
@@ -101,20 +94,16 @@
 			<xsl:if test="@selected='true'"> hui_toolbar_icon_selected</xsl:if>
 			<xsl:if test="@disabled='true'"> hui_toolbar_icon_disabled</xsl:if>
 		</xsl:attribute>
-		<span class="hui_toolbar_inner_icon">
-			<span class="hui_toolbar_inner_icon">
-			<span class="hui_icon" style="background-image: url('{$context}/hui/icons/{@icon}32.png'); background-image: -webkit-image-set(url('{$context}/hui/icons/{@icon}32.png') 1x, url('{$context}/hui/icons/{@icon}32x2.png') 2x);">
-				<xsl:if test="@overlay">
-					<span class="hui_icon_overlay" style="background-image: url('{$context}/hui/icons/overlay/{@overlay}32.png')"><xsl:comment/></span>
-				</xsl:if>
-				<xsl:if test="@badge!=''">
-					<span class="hui_icon_badge"><xsl:value-of select="@badge"/></span>
-				</xsl:if>
-				<xsl:comment/>
-			</span>
-			<strong><xsl:value-of select="@title"/><xsl:value-of select="@text"/></strong>
-			</span>
+		<span class="hui_icon" style="background-image: url('{$context}/hui/icons/{@icon}32.png'); background-image: -webkit-image-set(url('{$context}/hui/icons/{@icon}32.png') 1x, url('{$context}/hui/icons/{@icon}32x2.png') 2x);">
+			<xsl:if test="@overlay">
+				<span class="hui_icon_overlay" style="background-image: url('{$context}/hui/icons/overlay/{@overlay}32.png')"><xsl:comment/></span>
+			</xsl:if>
+			<xsl:if test="@badge!=''">
+				<span class="hui_icon_badge"><xsl:value-of select="@badge"/></span>
+			</xsl:if>
+			<xsl:comment/>
 		</span>
+		<span class="hui_toolbar_icon_text"><xsl:value-of select="@title"/><xsl:value-of select="@text"/></span>
 	</a>
 	<script type="text/javascript">
 		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Toolbar.Icon({
@@ -162,25 +151,6 @@
 	</script>
 </xsl:template>
 
-<!--doc title:'Toolbar badge' class:'hui.ui.Toolbar.Badge' module:'bar'
-<badge name="«text»" label="«text»" text="«text»" icon="«icon»"/>
--->
-<xsl:template match="gui:toolbar//gui:badge">
-	<div id="{generate-id()}" class="hui_toolbar_badge">
-		<div class="hui_toolbar_inner_badge"><div class="hui_toolbar_inner_badge">
-		<xsl:if test="@icon">
-			<div class="hui_toolbar_badge_icon" style="background-image: url('{$context}/hui/icons/{@icon}16.png')"><xsl:comment/></div>
-		</xsl:if>
-		<strong><xsl:value-of select="@label"/><xsl:comment/></strong>
-		<span><xsl:value-of select="@text"/><xsl:comment/></span>
-		</div></div>
-	</div>
-	<script type="text/javascript">
-		var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Toolbar.Badge({element:'<xsl:value-of select="generate-id()"/>',name:'<xsl:value-of select="@name"/>'});
-		<xsl:call-template name="gui:createobject"/>
-	</script>
-</xsl:template>
-
 
 <!--doc title:'Toolbar field' module:'bar'
 <toolbar···>
@@ -191,7 +161,7 @@
     ···
 </toolbar>
 -->
-<xsl:template match="gui:toolbar//gui:field">
+<xsl:template match="gui:toolbar//gui:field | gui:toolbar//gui:item">
 	<span class="hui_toolbar_item">
 		<span class="hui_toolbar_item_body"><xsl:apply-templates/></span>
 		<span class="hui_toolbar_label"><xsl:value-of select="@label"/></span>
@@ -221,7 +191,6 @@
 </toolbar>
 -->
 <xsl:template match="gui:toolbar//gui:grid">
-	<span class="hui_toolbar_grid">
 	<table class="hui_toolbar_grid">
 		<xsl:if test="@left or @right">
 		<xsl:attribute name="style">
@@ -235,7 +204,6 @@
 		</xsl:if>
 		<xsl:apply-templates/>
 	</table>
-	</span>
 </xsl:template>
 
 <xsl:template match="gui:toolbar//gui:grid/gui:row">
@@ -246,9 +214,9 @@
 
 <xsl:template match="gui:toolbar//gui:grid/gui:row/gui:cell">
 	<xsl:if test="@label">
-		<th><xsl:value-of select="@label"/></th>
+		<th class="hui_toolbar_grid_label"><xsl:value-of select="@label"/></th>
 	</xsl:if>
-	<td>
+	<td class="hui_toolbar_grid_cell">
 		<xsl:attribute name="style">
 			<xsl:if test="@width">width:<xsl:value-of select="@width"/>px;</xsl:if>
 			<xsl:if test="@left">padding-left:<xsl:value-of select="@left"/>px;</xsl:if>
@@ -259,7 +227,7 @@
 </xsl:template>
 
 <xsl:template match="gui:toolbar//gui:grid/gui:row/gui:cell/gui:label">
-	<label class="hui_toolbar_grid"><xsl:apply-templates/></label>
+	<label class="hui_toolbar_grid_label"><xsl:apply-templates/></label>
 </xsl:template>
 
 

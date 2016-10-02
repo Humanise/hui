@@ -82,3 +82,29 @@ a.hui_icon_labeled:hover span.hui_icon_128
 {
 	background-position: 0 -128px;
 }
+
+.hui_icon_overlay
+{
+	height: 32px;
+	width: 32px;
+	background: right bottom no-repeat;
+	display:inline-block;
+}
+
+.hui_icon_badge
+{
+	background: #f00;
+  background: -webkit-gradient(linear, left top, left bottom, from(#f69), to(#f03));
+  color: #fff;
+  display: inline-block;
+  font-size: 11px;
+  height: 14px;
+  line-height: 14px;
+  position: absolute;
+  padding: 0 5px;
+  border-radius: 7px;
+  font-family: Arial;
+  right: -5px;
+  bottom: -2px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}

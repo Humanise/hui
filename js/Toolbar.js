@@ -8,9 +8,13 @@ hui.ui.Toolbar = function(options) {
 
 hui.ui.Toolbar.create = function(options) {
 	options = options || {};
-	options.element = hui.build('div',{
-		'class' : options.labels ? 'hui_toolbar hui_toolbar_nolabels' : 'hui_toolbar'
-	});
+	var element = options.element = hui.build('div.hui_toolbar');
+  if (options.labels===false) {
+    hui.cls.add(element,'hui_toolbar-nolabels');
+  }
+  if (options.variant) {
+    hui.cls.add(element,'hui_toolbar-'+options.variant);
+  }
 	return new hui.ui.Toolbar(options);
 }
 
@@ -19,7 +23,7 @@ hui.ui.Toolbar.prototype = {
 		this.element.appendChild(widget.getElement());
 	},
 	addDivider : function() {
-		this.element.appendChild(hui.build('span',{'class':'hui_divider'}));
+		this.element.appendChild(hui.build('span.hui_toolbar_divider'));
 	},
 	setSelection : function(key) {
 		var desc = hui.ui.getDescendants(this);
@@ -38,46 +42,6 @@ hui.ui.Toolbar.prototype = {
 				return widget;
 			}
 		};
-	}
-}
-
-
-
-/////////////////////// Revealing toolbar ////////////////////////
-
-/** @constructor */
-hui.ui.RevealingToolbar = function(options) {
-	this.element = hui.get(options.element);
-	this.name = options.name;
-	hui.ui.extend(this);
-}
-
-hui.ui.RevealingToolbar.create = function(options) {
-	options = options || {};
-	options.element = hui.build( 'div', {
-		className : 'hui_revealing_toolbar',
-		style : 'display:none',
-		parent : document.body
-	});
-	var bar = new hui.ui.RevealingToolbar(options);
-	bar.setToolbar(hui.ui.Toolbar.create());
-	return bar;
-}
-
-hui.ui.RevealingToolbar.prototype = {
-	setToolbar : function(widget) {
-		this.toolbar = widget;
-		this.element.appendChild(widget.getElement());
-	},
-	getToolbar : function() {
-		return this.toolbar;
-	},
-	show : function(instantly) {
-		this.element.style.display='';
-		hui.animate(this.element,'height','58px',instantly ? 0 : 600,{ease:hui.ease.slowFastSlow});
-	},
-	hide : function() {
-		hui.animate(this.element,'height','0px',500,{ease:hui.ease.slowFastSlow,hideOnComplete:true});
 	}
 }
 
@@ -102,16 +66,12 @@ hui.ui.Toolbar.Icon = function(options) {
 }
 
 hui.ui.Toolbar.Icon.create = function(options) {
-	var element = options.element = hui.build('a',{'class':'hui_toolbar_icon'});
-	var icon = hui.build('span',{'class':'hui_icon',style:'background-image: url('+hui.ui.getIconUrl(options.icon,32)+')'});
-	var inner = hui.build('span',{'class':'hui_toolbar_inner_icon',parent:element});
-	var innerest = hui.build('span',{'class':'hui_toolbar_inner_icon',parent:inner});
-	var title = hui.build('strong',{text:options.title});
+	var element = options.element = hui.build('a.hui_toolbar_icon');
+	var icon = hui.build('span.hui_icon',{style:'background-image: url('+hui.ui.getIconUrl(options.icon,32)+')', parent: element});
 	if (options.overlay) {
-		hui.build('span',{'class':'hui_icon_overlay',parent:icon,style:'background-image: url('+hui.ui.getIconUrl('overlay/'+options.overlay,32)+')'});
+		hui.build('span.hui_icon_overlay',{parent:icon,style:'background-image: url('+hui.ui.getIconUrl('overlay/'+options.overlay,32)+')'});
 	}
-	innerest.appendChild(icon);
-	innerest.appendChild(title);
+	hui.build('span.hui_toolbar_icon_text',{text:options.title || options.text, parent:element});
 	return new hui.ui.Toolbar.Icon(options);
 }
 
@@ -195,41 +155,20 @@ hui.ui.Toolbar.Icon.prototype = {
 }
 
 
-
-//////////////////////// Badge ///////////////////////
-
-/** @constructor */
-hui.ui.Toolbar.Badge = function(options) {
-	this.element = hui.get(options.element);
-	this.name = options.name;
-	this.label = hui.get.firstByTag(this.element,'strong');
-	this.text = hui.get.firstByTag(this.element,'span');
-	hui.ui.extend(this);
-}
-
-hui.ui.Toolbar.Badge.prototype = {
-	setLabel : function(str) {
-		hui.dom.setText(this.label,str);
-	},
-	setText : function(str) {
-		hui.dom.setText(this.text,str);
-	}
-}
-
 //////////////////////// More ///////////////////////
 
 /** @constructor */
 hui.ui.Toolbar.More = function(options) {
 	this.element = hui.get(options.element);
 	this.name = options.name;
-	this.button = hui.get.firstByClass(this.element,'hui_toolbar_more');
+	this.button = hui.get.firstByClass(this.element,'hui_toolbar_more_toggle');
 	hui.listen(this.button,'click',this.toggle.bind(this));
 	hui.ui.extend(this);
 }
 
 hui.ui.Toolbar.More.prototype = {
 	toggle : function() {
-	 	hui.cls.toggle(this.element,'hui_toolbar_more_expanded');
+    hui.cls.toggle(this.element,'hui_is_expanded');
 	}
 }
 

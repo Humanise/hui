@@ -83,6 +83,32 @@ a.hui_icon_labeled:hover span.hui_icon_128
 	background-position: 0 -128px;
 }
 
+.hui_icon_overlay
+{
+	height: 32px;
+	width: 32px;
+	background: right bottom no-repeat;
+	display:inline-block;
+}
+
+.hui_icon_badge
+{
+	background: #f00;
+  background: -webkit-gradient(linear, left top, left bottom, from(#f69), to(#f03));
+  color: #fff;
+  display: inline-block;
+  font-size: 11px;
+  height: 14px;
+  line-height: 14px;
+  position: absolute;
+  padding: 0 5px;
+  border-radius: 7px;
+  font-family: Arial;
+  right: -5px;
+  bottom: -2px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
 div.hui_curtain
 {
 	width: 100%;
@@ -746,6 +772,7 @@ table.hui_formula_fields
 {
 	width: 100%;
 	font-size: 0;
+  border-collapse: collapse;
 }
 
 p.hui_formula_field_hint
@@ -775,7 +802,7 @@ label.hui_formula_field
 	color: #004A80;
 	font-size: 12px;
 	font-weight: normal;
-	line-height: 13px;
+	line-height: 16px;
 	display: inline-block;
 	padding-left: 2px;
 }
@@ -1174,7 +1201,8 @@ div.hui_message span.hui_icon
     position: relative;
     vertical-align: middle; }
   .hui_checkbox_label {
-    margin-left: 5px; }
+    margin-left: 5px;
+    vertical-align: middle; }
   .hui_checkbox:hover .hui_checkbox_button {
     border-color: #d2d2d2 #b7b7b7 #9c9c9c;
     background: linear-gradient(#f9f9f9, #d5dade); }

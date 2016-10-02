@@ -51,6 +51,7 @@ table.hui_formula_fields
 {
 	width: 100%;
 	font-size: 0;
+  border-collapse: collapse;
 }
 
 p.hui_formula_field_hint
@@ -80,7 +81,7 @@ label.hui_formula_field
 	color: #004A80;
 	font-size: 12px;
 	font-weight: normal;
-	line-height: 13px;
+	line-height: 16px;
 	display: inline-block;
 	padding-left: 2px;
 }
