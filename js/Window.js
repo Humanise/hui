@@ -205,4 +205,5 @@ hui.ui.Window.prototype = {
     }
 }
 
+hui.define && hui.define('hui.Window',hui.Window);
 /* EOF */

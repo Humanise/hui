@@ -6570,6 +6570,7 @@ hui.ui.Window.prototype = {
     }
 }
 
+hui.define && hui.define('hui.Window',hui.Window);
 /* EOF */
 
 /**
@@ -8407,8 +8408,8 @@ hui.ui.Alert.prototype = {
 	},
 	/** Hides the alert */
 	hide : function() {
-		hui.animate(this.element,'opacity',0,200,{hideOnComplete:true});
-		hui.animate(this.element,'margin-top','0px',200);
+		hui.animate(this.element,'opacity',0,100,{hideOnComplete:true});
+		hui.animate(this.element,'margin-top','0px',100);
 		hui.ui.hideCurtain(this);
 	},
 	/** Sets the alert title
@@ -8635,7 +8636,7 @@ hui.ui.Button.prototype = {
    * @param
    */
   setText : function(text) {
-    hui.dom.setText(this.element.getElementsByTagName('span')[1], hui.ui.getTranslated(text));
+    hui.dom.setText(this.element, hui.ui.getTranslated(text));
   },
   /**
    * Get the data object for the button

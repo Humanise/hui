@@ -71,8 +71,8 @@ hui.ui.Alert.prototype = {
 	},
 	/** Hides the alert */
 	hide : function() {
-		hui.animate(this.element,'opacity',0,200,{hideOnComplete:true});
-		hui.animate(this.element,'margin-top','0px',200);
+		hui.animate(this.element,'opacity',0,100,{hideOnComplete:true});
+		hui.animate(this.element,'margin-top','0px',100);
 		hui.ui.hideCurtain(this);
 	},
 	/** Sets the alert title
