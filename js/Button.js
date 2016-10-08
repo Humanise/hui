@@ -172,7 +172,7 @@ hui.ui.Button.prototype = {
    * @param
    */
   setText : function(text) {
-    hui.dom.setText(this.element.getElementsByTagName('span')[1], hui.ui.getTranslated(text));
+    hui.dom.setText(this.element, hui.ui.getTranslated(text));
   },
   /**
    * Get the data object for the button
