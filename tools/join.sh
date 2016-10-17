@@ -207,7 +207,7 @@ cssFiles = [
 ]
 
 cssFilesSite = [
-    'icon', 'curtain', 'imageviewer', 'editor', 'overlay', 'box', 'button', 'formula', 'message', 'searchfield', 'checkbox', 'checkboxes'
+    'icon', 'curtain', 'imageviewer', 'editor', 'overlay', 'box', 'button', 'formula', 'textinput', 'message', 'searchfield', 'checkbox', 'checkboxes'
 ]
 
 print('Joining JavaScript')

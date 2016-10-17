@@ -1049,6 +1049,42 @@ body .hui_context_dark label.hui_formula_field,
 }
 
 
+.hui_textinput {
+  color: #333;
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 12px;
+  text-decoration: none;
+  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  white-space: nowrap;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-color: #bbb #ccc #e3e3e3;
+  border-radius: 2px;
+  padding: 0 5px;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1);
+  -webkit-appearance: none;
+  box-sizing: border-box;
+  text-shadow: 0 -1px 0 rgba(255, 255, 255, 0.5);
+  width: 100%; }
+  .hui_textinput:focus {
+    border: 1px solid #0069ff;
+    box-shadow: 0 0 2px #0069ff, inset 0 0 2px #0069ff;
+    outline: none; }
+
+input.hui_textinput {
+  height: 26px; }
+  input.hui_textinput.hui_is_small {
+    height: 22px;
+    font-size: 11px; }
+
+textarea.hui_textinput {
+  height: 38px;
+  padding: 3px 5px; }
+
+
 
 div.hui_message
 {
