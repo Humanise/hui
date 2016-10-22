@@ -646,7 +646,7 @@
       <span class="hui_list_count"><xsl:comment/></span>
     </div>
     <div class="hui_list_body">
-      <table cellspacing="0" cellpadding="0">
+      <table class="hui_list_table">
         <thead>
           <tr>
           <xsl:apply-templates select="gui:column"/>
