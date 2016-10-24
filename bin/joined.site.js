@@ -1665,8 +1665,14 @@ hui._onReady = function(delegate) {
   }
   else if(typeof window.attachEvent != 'undefined')
   {
-    //.. win/ie
-    window.attachEvent('onload', delegate);
+    document.attachEvent("onreadystatechange", function(){
+      // check if the DOM is fully loaded
+      if(document.readyState === "complete"){
+        // remove the listener, to make sure it isn't fired in future
+        document.detachEvent("onreadystatechange", arguments.callee);
+        delegate();
+      }
+    });
   }
 
   //** remove this condition to degrade older browsers
