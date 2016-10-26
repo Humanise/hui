@@ -1396,9 +1396,9 @@ hui.on = function(node,event,func,bind) {
     hui.listen(node,'touchmove',function() {
       moved = true;
     },bind);
-    hui.listen(node,'touchcancel',function() {
-      console.log('cancel')
-    },bind);
+    /*hui.listen(node,'touchcancel',function() {
+      hui.log('cancel')
+    },bind);*/
     hui.listen(node,'touchend',function(ev) {
       touched = false;
       if (!moved) {
@@ -1412,7 +1412,7 @@ hui.on = function(node,event,func,bind) {
       }
     },bind);
   } else {
-    hui.listen(node,event,func,bind);      
+    hui.listen(node,event,func,bind);
   }
 }
 
