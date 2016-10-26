@@ -1,7 +1,7 @@
 hui.parallax = {
-  
+
   _listeners : [],
-  
+
   _init : function() {
     if (this._listening) {
       return;
@@ -31,7 +31,7 @@ hui.parallax = {
       if (l.debug && !l.debugElement) {
         l.debugElement = hui.build('div',{style:'position: absolute; border-top: 1px solid red; left: 0; right: 0;',parent:document.body});
       }
-      
+
       if (l.element) {
         var top = hui.position.getTop(l.element);
         top+= l.element.clientHeight/2;
@@ -44,19 +44,21 @@ hui.parallax = {
         l.$scroll( scroll );
         continue;
       }
-      
+
       var x = (pos-l.min)/(l.max-l.min);
       var y = hui.between(0,x,1);
-      
+
       if (l._latest!==y) {
         l.$scroll(y);
         l._latest=y;
       }
     }
   },
-  
+
   listen : function(info) {
     this._listeners.push(info);
     this._init();
   }
 };
+
+window.define && define('hui.parallax', hui.parallax);
