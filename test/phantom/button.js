@@ -10,9 +10,9 @@ QUnit.test( "Basic properties",
         button.setText('New label');
         assert.equal(hui.dom.getText(button.element),'New label','The text is changed');
 
-        assert.ok(!hui.cls.has(button.element,'hui_button_highlighted'),'Not highlighted from start');
+        assert.ok(!hui.cls.has(button.element,'hui_is_highlighted'),'Not highlighted from start');
         button.setHighlighted(true);
-        assert.ok(hui.cls.has(button.element,'hui_button_highlighted'),'Now highlighted');
+        assert.ok(hui.cls.has(button.element,'hui_is_highlighted'),'Now highlighted');
 
         assert.equal(button.getData(),data,'The data is intact');
     }
