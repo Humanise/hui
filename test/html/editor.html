@@ -9,53 +9,29 @@
 		<!--[if IE 7]>
 			<link rel="stylesheet" type="text/css" href="../../css/msie7.css"> </link>
 		<![endif]-->
-		<script charset="utf-8" type="text/javascript" src="../../js/hui.js"></script>
-		<script charset="utf-8" type="text/javascript" src="../../js/hui_animation.js"></script>
-		<script charset="utf-8" type="text/javascript" src="../../js/hui_color.js"></script>
-		<script charset="utf-8" type="text/javascript" src="../../js/ui.js"></script>
-		<script charset="utf-8" type="text/javascript" src="../../js/Alert.js"></script>
-		<script charset="utf-8" type="text/javascript" src="../../js/Button.js"></script>
-		<script charset="utf-8" type="text/javascript" src="../../js/Window.js"></script>
-		<script charset="utf-8" type="text/javascript" src="../../js/MarkupEditor.js"></script>
-		<script charset="utf-8" type="text/javascript" src="../../js/TextField.js"></script>
-		<script charset="utf-8" type="text/javascript" src="../../js/Bar.js"></script>
-		<script charset="utf-8" type="text/javascript" src="../../js/ColorPicker.js"></script>
-		<script charset="utf-8" type="text/javascript" src="../../js/Editor.js"></script>
-		<script charset="utf-8" type="text/javascript" src="../../js/Overlay.js"></script>
-		<script charset="utf-8" type="text/javascript" src="../../js/Menu.js"></script>
-		<script charset="utf-8" type="text/javascript" src="../../js/Formula.js"></script>
-		<script charset="utf-8" type="text/javascript" src="../../js/BoundPanel.js"></script>
-		<script charset="utf-8" type="text/javascript" src="../../js/DropDown.js"></script>
-		<script charset="utf-8" type="text/javascript" src="../../ext/Debugger.js"></script>
-		<script type="text/javascript" charset="utf-8">
+		<script type="text/javascript" src="../../js/hui.js"></script>
+		<script type="text/javascript" src="../../js/hui_animation.js"></script>
+		<script type="text/javascript" src="../../js/hui_color.js"></script>
+		<script type="text/javascript" src="../../js/ui.js"></script>
+		<script type="text/javascript" src="../../js/Alert.js"></script>
+		<script type="text/javascript" src="../../js/Button.js"></script>
+		<script type="text/javascript" src="../../js/Window.js"></script>
+		<script type="text/javascript" src="../../js/MarkupEditor.js"></script>
+		<script type="text/javascript" src="../../js/TextField.js"></script>
+		<script type="text/javascript" src="../../js/Bar.js"></script>
+		<script type="text/javascript" src="../../js/ColorPicker.js"></script>
+		<script type="text/javascript" src="../../js/Editor.js"></script>
+		<script type="text/javascript" src="../../js/Overlay.js"></script>
+		<script type="text/javascript" src="../../js/Menu.js"></script>
+		<script type="text/javascript" src="../../js/Formula.js"></script>
+		<script type="text/javascript" src="../../js/BoundPanel.js"></script>
+		<script type="text/javascript" src="../../js/DropDown.js"></script>
+		<script type="text/javascript" src="../../ext/Debugger.js"></script>
+		<script type="text/javascript">
 			hui.ui.state = '';
 			hui.ui.context = '../../..';
 		</script>
-
-		<script type="text/javascript" charset="utf-8">
-			hui.ui.onReady(function() {
-				var e = hui.ui.Editor.get();
-				e.addPartController('html','Text',hui.ui.Editor.Html);
-				e.addPartController('header','Header',hui.ui.Editor.Header);
-				e.ignite();
-				e.activate();
-			});
-			hui.ui.listen({
-				$partWasMoved : function(info) {
-					hui.ui.showMessage({text:'Moving',busy:true});
-					window.setTimeout(function() {
-						if (hui.cls.has(info.dragged,'nodrag')) {
-							hui.ui.showMessage({text:'I could not move it',duration:2000});
-							info.$failure()
-						} else {
-							hui.ui.hideMessage();
-							info.$success();
-						}
-					}
-					,Math.random()*1500);
-				}
-			})
-		</script>
+		<script type="text/javascript" src="editor.js"></script>
 		<style>
 			body
 			{
@@ -69,7 +45,7 @@
 			}
 			.column
 			{
-				vertical-align: top; 
+				vertical-align: top;
 				border: 1px solid transparent;
 			}
 			div.part

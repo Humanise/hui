@@ -30,18 +30,19 @@ hui.ui.Editor.get = function() {
 hui.ui.Editor.prototype = {
 	/** Start the editor */
 	ignite : function() {
-		hui.listen(window,'keydown',this._onKeyDown.bind(this));
-		hui.listen(window,'keyup',this._onKeyUp.bind(this));
+		//hui.listen(window,'keydown',this._onKeyDown.bind(this));
+		//hui.listen(window,'keyup',this._onKeyUp.bind(this));
 		this.reload();
 	},
+  /*
 	_onKeyDown : function(e) {
 		e = hui.event(e);
 		//this.live = e.altKey;
 	},
 	_onKeyUp : function(e) {
 		//this.live = false;
-	},
-	
+	},*/
+
 	addPartController : function(key,title,controller) {
 		this.partControllers.push({key:key,'title':title,'controller':controller});
 	},
@@ -142,10 +143,10 @@ hui.ui.Editor.prototype = {
 			this.partControls.hide();
 		}
 	},
-	
-	
+
+
 	///////////////////////// Columns ////////////////////////
-	
+
 	_onHoverColumn : function(column) {
 		if (this.hoveredColumn) {
 			hui.cls.remove(this.hoveredColumn,'hui_editor_column_hover');
@@ -156,12 +157,12 @@ hui.ui.Editor.prototype = {
 		}
 		hui.cls.add(column,'hui_editor_column_hover');
 	},
-	
+
 	_onBlurColumn : function(e) {
 		if (!this.active || !this.hoveredColumn || hui.ui.isWithin(e,this.hoveredColumn)) return;
 		hui.cls.remove(this.hoveredColumn,'hui_editor_column_hover');
 	},
-	
+
 	contextColumn : function(column,rowIndex,columnIndex,e) {
 		if (!this.active || this.activePart) return;
 		if (!this.columnMenu) {
@@ -193,9 +194,9 @@ hui.ui.Editor.prototype = {
 			this.fire('addPart',{'row':this.hoveredRow,'column':this.hoveredColumnIndex,'position':0,type:value});
 		}
 	},
-	
+
 	///////////////////// Column editor //////////////////////
-	
+
 	editColumn : function(rowIndex,columnIndex) {
 		this.closeColumn();
 		var row = hui.get.byClass(document.body,'row')[rowIndex];
@@ -246,7 +247,7 @@ hui.ui.Editor.prototype = {
 		this.activeColumn.setStyle({'paddingRight':margin});
 	},
 	///////////////////////// Parts //////////////////////////
-	
+
 	hoverPart : function(part,event) {
 		if (!this.active || this.activePart || !this.live || this.dragging || this.busy) {
 			return;
@@ -420,20 +421,20 @@ hui.ui.Editor.prototype = {
 		var info = {row:this.hoveredPart.row,column:this.hoveredPart.column,position:this.hoveredPart.position+1,type:value};
 		hui.ui.callDelegates(this,'addPart',info);
 	},
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
 	/**** Dragging ****/
-	
+
 	_dragInfo : null,
-	
+
 	_dropInfo : null,
-	
+
 	dragProxy : null,
-	
+
 	_startPartDrag : function(info) {
 		if (!this.active || this.activePart || !this.live) {
 			return true;
@@ -444,18 +445,18 @@ hui.ui.Editor.prototype = {
 			return;
 		}
 		e.stop();
-		
+
 		if (!this.dragProxy) {
 			this.dragProxy = hui.build('div',{'class':'hui_editor_dragproxy',parent:document.body,style:'display:none;'});
 		}
 		var proxy = this.dragProxy;
 		proxy.innerHTML = element.innerHTML;
-		
+
 		var pos = this._getPartPosition(element);
 		if (!pos) {
 			return;
 		}
-		
+
 		this._dragInfo = {
 			diffLeft : e.getLeft() - hui.position.getLeft(element),
 			diffTop : e.getTop() - hui.position.getTop(element),
@@ -472,17 +473,17 @@ hui.ui.Editor.prototype = {
 			onMove : this._onDrag.bind(this),
 			onAfterMove : this._onAfterDrag.bind(this),
 			onEnd : function() {
-				
+
 			}
 		},e);
 	},
 	_onBeforeDrag : function() {
 		var dragged = this._dragInfo.draggedElement,
 			proxy = this.dragProxy;
-		
-		
+
+
 		this._insertDropPlaceholders();
-		
+
 		hui.style.set(proxy,{
 			display : 'block',
 			visibility : 'visible',
@@ -493,13 +494,13 @@ hui.ui.Editor.prototype = {
 			padding : '1px',
 			opacity: 1
 		});
-		
+
 		//hui.animate({node:this.dragProxy,css:{transform:'scale(1.1)'},duration:1000,ease:hui.ease.slowFastSlow});
-		
+
 		hui.style.setOpacity(dragged,0.5);
-		
+
 		this._dragging = true;
-		
+
 		if (!this._dropMarker) {
 			this._dropMarker = hui.build('div',{'class':'hui_editor_dropmarker',parent:document.body});
 		}
@@ -525,7 +526,7 @@ hui.ui.Editor.prototype = {
 					//this._activeDragPlaceholder = info.placeholder;
 					this._dropInfo = info;
 					hui.style.set(this._dropMarker,{width:(info.right-info.left)+'px',left:info.left+'px',top:info.position+'px',display:'block'});
-				//}	
+				//}
 				break;
 			}
 		};
@@ -535,13 +536,13 @@ hui.ui.Editor.prototype = {
 			dragInfo = this._dragInfo,
 			dragged = this._dragInfo.draggedElement,
 			dropInfo = this._dropInfo;
-		
+
 		if (dropInfo) {
 			var newHeight = this._dragColumnHeights[dropInfo.rowIndex+'-'+dropInfo.columnIndex];
-			
+
 			var top = dropInfo.position,
 				left = dropInfo.left;
-				
+
 			if ((dragInfo.columnIndex == dropInfo.columnIndex && dragInfo.partIndex < dropInfo.partIndex) || dragInfo.rowIndex < dropInfo.rowIndex) {
 				top = top - dragInfo.initialHeight;
 			}
@@ -558,13 +559,13 @@ hui.ui.Editor.prototype = {
 				duration : 500,
 				ease : hui.ease.slowFastSlow
 			});
-			
+
 			var column = this._getColumn(dropInfo.rowIndex,dropInfo.columnIndex);
-			
+
 			var parts = hui.get.byClass(column,this.options.partClass);
-			
+
 			if (parts[dropInfo.partIndex] != dragged) {
-				this.fire('partWasMoved',{dragged:dragged,rowIndex : dropInfo.rowIndex,columnIndex : dropInfo.columnIndex,partIndex : dropInfo.partIndex, 
+				this.fire('partWasMoved',{dragged:dragged,rowIndex : dropInfo.rowIndex,columnIndex : dropInfo.columnIndex,partIndex : dropInfo.partIndex,
 					$success : function() {
 						dragged.style.webkitTransformOrigin='0 0';
 						var dummy = hui.build('div');
@@ -592,7 +593,7 @@ hui.ui.Editor.prototype = {
 						this._cleanDrag();
 					}.bind(this)
 				});
-			} else {	
+			} else {
 				this._cleanDrag();
 			}
 		}
@@ -623,7 +624,7 @@ hui.ui.Editor.prototype = {
 	_getPartPosition : function(element) {
 		var rows = hui.get.byClass(document.body,this.options.rowClass);
 		for (var i=0; i < rows.length; i++) {
-			
+
 			var columns = hui.get.byClass(rows[i],this.options.columnClass);
 			for (var j=0; j < columns.length; j++) {
 				var parts = hui.get.byClass(columns[j],this.options.partClass);
@@ -636,14 +637,14 @@ hui.ui.Editor.prototype = {
 		};
 		return null;
 	},
-	
-	
+
+
 	_activeDragPlaceholder : null,
-	
+
 	_dragInfo : null,
-	
+
 	_dragColumnHeights : null,
-	
+
 	_insertDropPlaceholders : function() {
 		var infos = this.dropTargets = [];
 		var colHeights = this._dragColumnHeights = {}
@@ -676,7 +677,7 @@ hui.ui.Editor.prototype = {
 					var right = left + part.clientWidth;
 					var top = previous ? hui.position.getTop(previous)+previous.clientHeight/2 : min;
 					var bottom = hui.position.getTop(part)+part.clientHeight/2;
-					
+
 					var info = {
 						rowIndex : i,
 						columnIndex : j,
@@ -770,7 +771,7 @@ hui.ui.Editor.Header.prototype = {
         options.callback();
 	},
 	cancel : function() {
-		
+
 	},
 	deactivate : function(callback) {
 		this.header.style.visibility='';
@@ -827,7 +828,7 @@ hui.ui.Editor.Html.prototype = {
 			this.value = value;
 		}
 		this.element.innerHTML = this.value;
-        options.callback();
+    options.callback();
 	},
 	deactivate : function(callback) {
 		if (this.editor) {
