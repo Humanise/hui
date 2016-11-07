@@ -11,7 +11,7 @@
     this.rows = [];
     this._attach();
   }
-  
+
   hui.ui.Rows.prototype = {
     _attach : function() {
       var children = hui.get.children(this.element);
