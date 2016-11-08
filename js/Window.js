@@ -54,7 +54,8 @@ hui.ui.Window.prototype = {
 		if (this.close) {
 			hui.listen(this.close,'click',function(e) {
 				this.hide();
-				this.fire('userClosedWindow'); // TODO maybe rename to closeByUser
+				this.fire('userClosedWindow'); // TODO: remove
+				this.fire('close');
 			}.bind(this));
 			hui.listen(this.close,'mousedown',function(e) {hui.stop(e)});
 		}

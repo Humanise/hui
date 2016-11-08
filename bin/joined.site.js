@@ -1396,9 +1396,9 @@ hui.on = function(node,event,func,bind) {
     hui.listen(node,'touchmove',function() {
       moved = true;
     },bind);
-    hui.listen(node,'touchcancel',function() {
-      console.log('cancel')
-    },bind);
+    /*hui.listen(node,'touchcancel',function() {
+      hui.log('cancel')
+    },bind);*/
     hui.listen(node,'touchend',function(ev) {
       touched = false;
       if (!moved) {
@@ -1412,7 +1412,7 @@ hui.on = function(node,event,func,bind) {
       }
     },bind);
   } else {
-    hui.listen(node,event,func,bind);      
+    hui.listen(node,event,func,bind);
   }
 }
 
@@ -1581,7 +1581,7 @@ hui.Event.prototype = {
     }
     return null;
   },
-  find : function(func) {
+  find : function(tag) {
     var parent = this.element;
     while (parent) {
       if (parent.tagName && parent.tagName.toLowerCase()==tag) {
@@ -3551,9 +3551,9 @@ hui.define && hui.define('hui.Color',hui.Color);
 
 
 hui.parallax = {
-  
+
   _listeners : [],
-  
+
   _init : function() {
     if (this._listening) {
       return;
@@ -3583,7 +3583,7 @@ hui.parallax = {
       if (l.debug && !l.debugElement) {
         l.debugElement = hui.build('div',{style:'position: absolute; border-top: 1px solid red; left: 0; right: 0;',parent:document.body});
       }
-      
+
       if (l.element) {
         var top = hui.position.getTop(l.element);
         top+= l.element.clientHeight/2;
@@ -3596,22 +3596,24 @@ hui.parallax = {
         l.$scroll( scroll );
         continue;
       }
-      
+
       var x = (pos-l.min)/(l.max-l.min);
       var y = hui.between(0,x,1);
-      
+
       if (l._latest!==y) {
         l.$scroll(y);
         l._latest=y;
       }
     }
   },
-  
+
   listen : function(info) {
     this._listeners.push(info);
     this._init();
   }
 };
+
+window.define && define('hui.parallax', hui.parallax);
 
 /**
   The namespace of the HUI framework

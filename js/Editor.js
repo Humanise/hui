@@ -17,6 +17,7 @@ hui.ui.Editor = function() {
 	this.activePart = null;
 	this.active = false;
 	this.live = true;
+  this.enableStructure = true;
 	hui.ui.extend(this);
 }
 
@@ -91,10 +92,10 @@ hui.ui.Editor.prototype = {
 			hui.listen(column,'mouseout',function(e) {
 				self._onBlurColumn(e);
 			});
-			/*
+			if (self.enableStructure)
 			hui.listen(column,'contextmenu',function(e) {
 				self.contextColumn(column,rowIndex,columnIndex,e);
-			});*/
+			});
 		});
 	},
 	_reloadParts : function(parts,row,column) {
@@ -167,9 +168,11 @@ hui.ui.Editor.prototype = {
 		if (!this.active || this.activePart) return;
 		if (!this.columnMenu) {
 			var menu = hui.ui.Menu.create({name:'huiEditorColumnMenu'});
-			menu.addItem({title:'Rediger kolonne',value:'editColumn'});
-			menu.addItem({title:'Slet kolonne',value:'removeColumn'});
-			menu.addItem({title:'Tilføj kolonne',value:'addColumn'});
+			menu.addItem({title:'Edit column',value:'editColumn'});
+			menu.addItem({title:'Remove column',value:'removeColumn'});
+			menu.addItem({title:'Add column',value:'addColumn'});
+			menu.addDivider();
+			menu.addItem({title:'Edit row',value:'editRow'});
 			menu.addDivider();
 			for (var i=0; i < this.partControllers.length; i++) {
 				var ctrl = this.partControllers[i];
@@ -183,69 +186,62 @@ hui.ui.Editor.prototype = {
 		this.columnMenu.showAtPointer(e);
 	},
 	/** @private */
-	$itemWasClicked$huiEditorColumnMenu : function(value) {
+	$select$huiEditorColumnMenu : function(value) {
 		if (value=='removeColumn') {
 			this.fire('removeColumn',{'row':this.hoveredRow,'column':this.hoveredColumnIndex});
 		} else if (value=='editColumn') {
 			this.editColumn(this.hoveredRow,this.hoveredColumnIndex);
 		} else if (value=='addColumn') {
 			this.fire('addColumn',{'row':this.hoveredRow,'position':this.hoveredColumnIndex+1});
+		} else if (value=='editRow') {
+			this.editRow(this.hoveredRow);
 		} else {
 			this.fire('addPart',{'row':this.hoveredRow,'column':this.hoveredColumnIndex,'position':0,type:value});
 		}
 	},
 
-	///////////////////// Column editor //////////////////////
+	///////////////////// Rows //////////////////////
+
+  _editedRow : null,
+
+  editRow : function(rowIndex) {
+		this.stopRowEditing();
+		var node = hui.get.byClass(this.element,this.options.rowClass)[rowIndex];
+    hui.cls.add(node,'hui_editor_row_edit');
+    this._editedRow = node;
+    var self = this;
+		this.fire('editRow',{'index' : rowIndex, node: node});
+  },
+  stopRowEditing : function() {
+    if (this._editedRow) {
+      hui.cls.remove(this._editedRow,'hui_editor_row_edit');
+      this._editedRow = null;
+    }
+  },
+
+	///////////////////// Columns //////////////////////
+
+  _editedColumn : null,
 
 	editColumn : function(rowIndex,columnIndex) {
-		this.closeColumn();
-		var row = hui.get.byClass(document.body,'row')[rowIndex];
-		var c = this.activeColumn = hui.get.byClass(row,'column')[columnIndex];
-		hui.cls.add(c,'hui_editor_column_edit');
-		this.showColumnWindow();
-		this.columnEditorForm.setValues({width:hui.style.get(c,'width'),paddingLeft:hui.style.get(c,'padding-left')});
+		this.stopColumnEditing();
+		var row = hui.get.byClass(this.element,this.options.rowClass)[rowIndex];
+    if (row) {
+      var node = hui.get.byClass(row,this.options.columnClass)[columnIndex];
+      if (node) {
+        this._editedColumn = node;
+        hui.cls.add(node,'hui_editor_column_edit');
+        this.fire('editColumn',{'rowIndex' : rowIndex, 'index' : columnIndex, node: node});
+      }
+    }
 	},
-	closeColumn : function() {
-		if (this.activeColumn) {
-			hui.cls.remove(this.activeColumn,'hui_editor_column_edit');
+	stopColumnEditing : function() {
+		if (this._editedColumn) {
+			hui.cls.remove(this._editedColumn,'hui_editor_column_edit');
+      this._editedColumn = null;
 		}
 	},
-	showColumnWindow : function() {
-		if (!this.columnEditor) {
-			var w = this.columnEditor = hui.ui.Window.create({name:'columnEditor',title:'Rediger kolonne',width:200});
-			var f = this.columnEditorForm = hui.ui.Formula.create();
-			var g = f.createGroup();
-			var width = hui.ui.TextInput.create({label:'Bredde',key:'width'});
-			width.listen({$valueChanged:function(v) {this.changeColumnWidth(v)}.bind(this)})
-			g.add(width);
-			var marginLeft = hui.ui.TextInput.create({label:'Venstremargen',key:'left'});
-			marginLeft.listen({$valueChanged:function(v) {this.changeColumnLeftMargin(v)}.bind(this)})
-			g.add(marginLeft);
-			var marginRight = hui.ui.TextInput.create({label:'Højremargen',key:'right'});
-			marginRight.listen({$valueChanged:this.changeColumnRightMargin.bind(this)})
-			g.add(marginRight);
-			w.add(f);
-			w.listen(this);
-		}
-		this.columnEditor.show();
-	},
-	/** @private */
-	$userClosedWindow$columnEditor : function() {
-		this.closeColumn();
-		var values = this.columnEditorForm.getValues();
-		values.row=this.hoveredRow;
-		values.column=this.hoveredColumnIndex;
-		this.fire('updateColumn',values);
-	},
-	changeColumnWidth : function(width) {
-		this.activeColumn.style.width=width;
-	},
-	changeColumnLeftMargin : function(margin) {
-		this.activeColumn.setStyle({'paddingLeft':margin});
-	},
-	changeColumnRightMargin : function(margin) {
-		this.activeColumn.setStyle({'paddingRight':margin});
-	},
+
 	///////////////////////// Parts //////////////////////////
 
 	hoverPart : function(part,event) {
