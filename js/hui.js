@@ -1584,10 +1584,8 @@ hui.Event.prototype = {
   find : function(func) {
     var parent = this.element;
     while (parent) {
-      if (parent.tagName && parent.tagName.toLowerCase()==tag) {
-        if (func(parent)) {
-          return parent;
-        }
+      if (func(parent)) {
+        return parent;
       }
       parent = parent.parentNode;
     }

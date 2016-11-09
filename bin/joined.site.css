@@ -274,6 +274,13 @@ div.hui_overlay_icon:hover
   outline-offset: -2px;
 }
 
+
+.hui_editor_row_edit
+{
+	outline: 2px dashed #3875d7 !important;
+  outline-offset: -2px;
+}
+
 div.hui_editor_drop_placeholder
 {
 	position: relative;

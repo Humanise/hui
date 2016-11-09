@@ -18,5 +18,19 @@ hui.ui.listen({
 			}
 		}
 		,Math.random()*1500);
-	}
+	},
+  $editRow : function(info) {
+    var win = hui.ui.Window.create({padding:10});
+    var form = hui.ui.Formula.create();
+    var group = form.createGroup();
+    var field = hui.ui.CodeInput.create();
+    group.add(field)
+    win.add(form);
+    win.show();
+    win.listen({
+      $userClosedWindow : function() {
+        info.$complete();
+      }
+    })
+  }
 })
