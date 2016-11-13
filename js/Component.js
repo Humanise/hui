@@ -47,7 +47,7 @@ hui.ui.Component.prototype = {
     }
   },
 	valueForProperty : function(property) {
-	  return this[property];
+    return this[property];
 	},
 	fireValueChange : function() {
 		this.fire('valueChanged',this.value);
