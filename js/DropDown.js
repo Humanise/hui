@@ -11,7 +11,7 @@ hui.ui.DropDown = function(options) {
 	this.inner = e.getElementsByTagName('strong')[0];
 	this.items = options.items || [];
 	this.index = -1;
-	this.value = this.options.value || null;
+	this.value = hui.isDefined(this.options.value) ? this.options.value : null;
 	this.dirty = true;
 	this.busy = false;
 	hui.ui.extend(this);
@@ -38,7 +38,11 @@ hui.ui.DropDown.create = function(options) {
 		'class':cls,href:'javascript://',
 		html:'<strong></strong>'
 	});
-	return new hui.ui.DropDown(options);
+	var drop = new hui.ui.DropDown(options);
+  if (options.items) {
+    drop.setItems(options.items);
+  }
+  return drop;
 }
 
 hui.ui.DropDown.prototype = {
@@ -241,7 +245,7 @@ hui.ui.DropDown.prototype = {
 			if (this.options.source) {
 				// If there is a source, make sure it is initially 
 				this.options.source.refreshFirst();
-			}			
+			}
 		} else {
 			this._hideSelector();
 		}
@@ -285,10 +289,10 @@ hui.ui.DropDown.prototype = {
 		this.fire('valueChanged',this.value);
 		hui.ui.firePropertyChange(this,'value',this.value);
 	},
-    destroy : function() {
-        hui.dom.remove(this.element);
-        if (this.selector) {
-            hui.dom.remove(this.selector);
-        }
+  destroy : function() {
+    hui.dom.remove(this.element);
+    if (this.selector) {
+      hui.dom.remove(this.selector);
     }
+  }
 };
