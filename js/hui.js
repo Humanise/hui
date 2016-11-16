@@ -603,7 +603,7 @@ hui.dom = {
   },
   changeTag : function(node,tagName) {
     var replacement = hui.build(tagName);
-  
+
     // Copy the children
     while (node.firstChild) {
         replacement.appendChild(node.firstChild); // *Moves* the child
@@ -797,7 +797,7 @@ hui.get.next = function(element) {
   while (next && next.nodeType!=1) {
     next = next.nextSibling;
   }
-  if (next && next.nodeType==1) { 
+  if (next && next.nodeType==1) {
       return next;
   }
   return null;
@@ -817,7 +817,7 @@ hui.get.previous = function(element) {
   while (previous && previous.nodeType!=1) {
     previous = previous.previousSibling;
   }
-  if (previous && previous.nodeType==1) { 
+  if (previous && previous.nodeType==1) {
       return previous;
   }
   return null;
@@ -840,7 +840,7 @@ hui.get.before = function(element) {
 
 /**
  * Find all sibling elements after «element»
- */ 
+ */
 hui.get.after = function(element) {
   var elements = [];
   var next = hui.get.next(element);
@@ -1444,7 +1444,7 @@ hui.listen = function(element,type,listener,bindTo) {
  * @param {String} type The event to listen for
  * @param {Function} listener The function to be called
  */
-hui.listenOnce = function(element,type,listener) {  
+hui.listenOnce = function(element,type,listener) {
   var func = null;
   func = function(e) {
     hui.unListen(element,type,func);
@@ -1792,7 +1792,7 @@ hui.request = function(options) {
     if (options.$load) {
           transport.upload.addEventListener("load", function(e) {
         options.$load();
-      }, false); 
+      }, false);
     }
   } else if (method=='POST' && options.files) {
     body = new FormData();
@@ -1900,7 +1900,7 @@ hui.style = {
   /**
    * Get the computed style of an element
    * @param {Element} element The element
-   * @param {String} style The CSS property in the form font-size NOT fontSize; 
+   * @param {String} style The CSS property in the form font-size NOT fontSize;
    */
   get : function(element, style) {
     element = hui.get(element);
@@ -2121,7 +2121,7 @@ hui.effect = {
     window.setTimeout(function() {
       hui.cls.remove(options.element,'hui_effect_wiggle');
     },options.duration || 1000);
-  
+
   },
   /**
    * Make an element shake
