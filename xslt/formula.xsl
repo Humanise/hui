@@ -34,7 +34,7 @@
           ,state:'<xsl:value-of select="@state"/>'
         </xsl:if>
       });
-      <xsl:call-template name="gui:createobject"/>    
+      <xsl:call-template name="gui:createobject"/>
     }());
   </script>
 </xsl:template>
@@ -111,9 +111,9 @@
               ,state:'<xsl:value-of select="@state"/>'
             </xsl:if>
           });
-          <xsl:call-template name="gui:createobject"/>    
+          <xsl:call-template name="gui:createobject"/>
         }());
-      </script>        
+      </script>
     </xsl:if>
 </xsl:template>
 
@@ -136,9 +136,9 @@
         <xsl:text> hui_formula_field_compact</xsl:text>
       </xsl:if>
     </xsl:attribute>
-        <xsl:if test="@label">
-        <label class="hui_formula_field"><xsl:value-of select="@label"/></label>            
-        </xsl:if>
+    <xsl:if test="@label">
+      <label class="hui_formula_field"><xsl:value-of select="@label"/></label>
+    </xsl:if>
     <div class="hui_formula_field_body"><xsl:apply-templates/></div>
     <xsl:if test="@hint"><p class="hui_formula_field_hint"><xsl:value-of select="@hint"/></p></xsl:if>
   </div>

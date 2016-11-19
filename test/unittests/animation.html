@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<script src="head.js"></script>
+  <title>Animation test</title>
+  <link rel="stylesheet" href="lib/qunit.css">
 	<style>
 		body
 		{
@@ -20,59 +21,76 @@
 	</style>
 </head>
 <body>
+  <div id="qunit"></div>
+  <div id="qunit-fixture"></div>
+
 	<div id="one">
 		Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 	</div>
-	
+
 	<div id="two" style="padding: 10px; padding-left: 20px;">
-		
+
 	</div>
-	
+
+  <script src="lib/compat.js"></script>
+  <script src="lib/qunit.js"></script>
+  <script src="lib/syn.js"></script>
+
+  <script src="../../js/hui.js"></script>
+  <script src="../../js/hui_animation.js"></script>
+  <script src="../../js/hui_color.js"></script>
+
 	<script type="text/javascript">
-		hui.test.run([
-			2000,
-			function() { // parsing
-				var parsed;
-				
-				parsed = hui.animation._parseStyle('12px');
-				hui.test.assertEquals(parsed.unit,'px');
-				hui.test.assertEquals(parsed.value,12);
 
-				parsed = hui.animation._parseStyle('12.4%');
-				hui.test.assertEquals(parsed.unit,'%');
-				hui.test.assertEquals(parsed.value,12.4);
+  QUnit.test( "Parsing", function( assert ) {
 
-				parsed = hui.animation._parseStyle('#f00');
-				hui.test.assertEquals(parsed.unit,null);
-				hui.test.assertEquals(parsed.value.red,255);
-				hui.test.assertEquals(parsed.value.green,0);
-				hui.test.assertEquals(parsed.value.blue,0);
+		var parsed;
 
-				parsed = hui.animation._parseStyle('blue');
-				hui.test.assertEquals(parsed.unit,null);
-				hui.test.assertEquals(parsed.value.red,0);
-				hui.test.assertEquals(parsed.value.green,0);
-				hui.test.assertEquals(parsed.value.blue,255);
-			},
-			function() { // One		
-				hui.animate('one','width','200px',1000);
-			},
-			1100,
-			function() { // Two
-				hui.test.assertEquals(hui.get('one').clientWidth,220);
-			},
-			function() {
-				hui.animate({node:'one',css:{width:'500px',color:'green',borderWidth:'10px',opacity:0,transform:'rotate(90deg)'},duration:1000});
-			},
-			500,
-			function() {
-				hui.animate({node:'one',css:{width:'250px'},duration:1000});
-			},
-			1000,
-			function() {
-				hui.test.assertEquals(hui.get('one').clientWidth,270);
-			}
-		]);
+		parsed = hui.animation._parseStyle('12px');
+		assert.strictEqual(parsed.unit, 'px');
+		assert.strictEqual(parsed.value, 12);
+
+		parsed = hui.animation._parseStyle('12.4%');
+		assert.strictEqual(parsed.unit, '%');
+		assert.strictEqual(parsed.value, 12.4);
+
+		parsed = hui.animation._parseStyle('#f00');
+		assert.strictEqual(parsed.unit, null);
+		assert.strictEqual(parsed.value.red, 255);
+		assert.strictEqual(parsed.value.green, 0);
+		assert.strictEqual(parsed.value.blue, 0);
+
+		parsed = hui.animation._parseStyle('blue');
+		assert.strictEqual(parsed.unit, null);
+		assert.strictEqual(parsed.value.red, 0);
+		assert.strictEqual(parsed.value.green, 0);
+		assert.strictEqual(parsed.value.blue, 255);
+
+  });
+
+  QUnit.test( "Width", function( assert ) {
+    assert.expect(1);
+    var done = assert.async();
+    hui.animate('one','width','200px',500, {$complete : function() {
+      assert.strictEqual(hui.get('one').style.width, '200px', 'Final width is correct');
+      done();
+    }});
+  });
+
+  QUnit.test( "Multiple", function( assert ) {
+    assert.expect(1);
+    var done = assert.async();
+    hui.animate({
+      node : 'one',
+      css : {width : '500px', color : 'green', borderWidth : '10px', opacity : 0, transform : 'rotate(90deg)'},
+      duration : 400,
+      $complete : function() {
+        assert.strictEqual(hui.get('one').clientWidth, 520);
+        done();
+      }
+    });
+  });
+
 	</script>
 </body>
 </html>

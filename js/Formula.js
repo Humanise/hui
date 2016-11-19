@@ -201,7 +201,7 @@ hui.ui.Formula.Field = function(options) {
 }
 
 hui.ui.Formula.Field.prototype = {
-    setVisible : function(visible) {
-        this.element.style.display = visible ? '' : 'none';
-    }
+  setVisible : function(visible) {
+    this.element.style.display = visible ? '' : 'none';
+  }
 };

@@ -37,7 +37,13 @@ module.exports = function(grunt) {
       }
     },
     qunit: {
-      all: ['test/phantom/*.html']
+      local: ['test/unittests/*.html'],
+      live : {
+        options : {
+          urls: [
+          ]
+        }
+      }
     },
     jsdoc : {
       dist : {
@@ -121,9 +127,14 @@ module.exports = function(grunt) {
 
   //grunt.registerTask('test', ['qunit']);
   grunt.registerTask('test', 'Run tests', function(testname) {
-    if(!!testname) {
-      grunt.config('qunit.all', ['test/phantom/' + testname + '.html']);
+    var tests = grunt.file.expand('test/unittests/*.html');
+    if (!!testname) {
+      tests = ['test/unittests/' + testname + '.html']
     }
-    grunt.task.run('qunit:all');
+    for (var i = 0; i < tests.length; i++) {
+      tests[i] = 'http://hui.local/' + tests[i]
+    }
+    grunt.config('qunit.live.options.urls', tests);
+    grunt.task.run('qunit:live');
   });
 };

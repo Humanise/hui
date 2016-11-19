@@ -1,77 +1,39 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<script src="head.js"></script>
+  <title>DOM test</title>
+  <link rel="stylesheet" href="lib/qunit.css">
 </head>
 <body>
-	
+  <div id="qunit"></div>
+  <div id="qunit-fixture"></div>
+
 	<div id="hey"></div>
-	
-	
+
+
 	<div id="containsSiblings">
 		<span id="hasSiblings"></span>
 		<!-- this is a comment -->
 		This is a text node
 		<hr/>
 	</div>
-	
+
 	<div id="hasClass" class="myclass">
-		
+
 	</div>
-	
+
 	<div id="alsoHasClass" class="myclass myotherclass">
-		
+
 	</div>
-	
-	
-	
-	
-	
-	
-	
-	<script type="text/javascript">
-		var assert = hui.test.assert;
 
-		hui.test.run([
 
-			function() {
-				var hey = hui.get('hey');
-				assert.defined( hey, 'Find by id' );
-				
-				assert.equals( hey, hui.get(hey), 'Get the same' );
-			},
+  <script src="lib/compat.js"></script>
+  <script src="lib/qunit.js"></script>
+  <script src="lib/syn.js"></script>
+  <script src="../../js/hui.js"></script>
+  <script src="dom.js"></script>
 
-			function() {
-				var node = hui.get('hasSiblings');
-				var next = hui.get.next(node);
-				assert.equals(next.nodeName,'HR','The next is an <hr/>');
-				var last = hui.get.next(next);
-				assert.equals(last,null,'There should be no more');
-			},
 
-			function() {
-				var node = hui.get('hasClass');
-				assert.true(hui.cls.has(node,'myclass'),'Node should have class');
-				assert.false(hui.cls.has(node,'dsjadha'),'Node should not have class');
-			},
 
-			function() {
-				var node = hui.get('alsoHasClass');
-				assert.true(hui.cls.has(node,'myclass'),'Node should have class');
-				assert.true(hui.cls.has(node,'myotherclass'),'Node should have class');
-				assert.false(hui.cls.has(node,'dsjadha'),'Node should not have class');
-			},
-			
-			function() {
-				var built = hui.build('div',{'class':'hippodippelidoo golbetop dypludido',text:'this is the text',parent:document.body});
-				var found = hui.get.firstByClass(document.body,'hippodippelidoo');
-				assert.equals(built,found)
-				
-				assert.equals('this is the text',hui.dom.getText(built));
-				hui.dom.setText(built,'Fermentum Lorem Parturient Cursus');
-				assert.equals('Fermentum Lorem Parturient Cursus',hui.dom.getText(built));
-			}
-		]);
-	</script>
 </body>
 </html>

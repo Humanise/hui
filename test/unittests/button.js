@@ -18,10 +18,10 @@ QUnit.test( "Basic properties",
     }
 )
 
-QUnit.asyncTest( "Clicking",
+QUnit.test( "Clicking",
     function( assert ) {
-        expect(3);
-
+        assert.expect(3);
+        var done = assert.async();
         // Create a button
         var button = hui.ui.Button.create({text:'My other button',name:'benjamin',small:true});
         document.body.appendChild(button.element);
@@ -40,18 +40,19 @@ QUnit.asyncTest( "Clicking",
         hui.ui.listen({
             $click$benjamin : function() {
                 assert.ok(true,'A third click listener was called');
+                done();
             }
         })
 
         syn.click({},button.element,function() {
-            QUnit.start();
         });
     }
 );
 
-QUnit.asyncTest( "Enable / disable",
+QUnit.test( "Enable / disable",
     function( assert ) {
-        expect(2);
+        assert.expect(2);
+        var done = assert.async();
 
         // Create a button
         var button = hui.ui.Button.create({text:'My skizo button'});
@@ -68,16 +69,17 @@ QUnit.asyncTest( "Enable / disable",
             syn.click({},button.element,function() {
                 button.enable();
                 syn.click({},button.element,function() {
-                    QUnit.start();
+                    done();
                 });
             });
         });
     }
 );
 
-QUnit.asyncTest( "Overlay",
+QUnit.test( "Overlay",
     function( assert ) {
-        expect(5);
+        assert.expect(5);
+        var done = assert.async();
 
         // Create a button
         var button = hui.ui.Button.create({text:'I need confirmation',confirm:{text:'Really?'}});
@@ -106,7 +108,7 @@ QUnit.asyncTest( "Overlay",
                                 // Click "Cancel"
                                 syn.click({},buttons[1],function() {
                                     assert.ok(!hui.dom.isVisible(overlay),'The overlay should be invisible')
-                                    QUnit.start();
+                                    done()
                                 });
                             },500);
                         });
