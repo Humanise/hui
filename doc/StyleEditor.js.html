@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: StyleEditor.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: StyleEditor.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>(function (_super) {
+
+  /**
+   * Vertical rows
+   * @class
+   * @augments hui.ui.Component
+   * @param {Object} options
+   */
+  hui.ui.StyleEditor = function(options) {
+    _super.call(this, options);
+    this.value = null;
+    this.components = options.components;
+    this._attach();
+  }
+
+  hui.ui.StyleEditor.create = function(options) {
+    options = options || {};
+    var element = hui.build('div.hui_styleeditor');
+    options.element = element;
+    return new hui.ui.StyleEditor(options);
+  }
+
+  hui.ui.StyleEditor.prototype = {
+    _attach : function() {
+      var self = this;
+      hui.on(this.element, 'click', function(e) {
+        e = hui.event(e);
+        var query = e.findByClass('hui_styleeditor_query');
+        if (query) {
+          self.editQuery(parseInt(query.getAttribute('data-index'), 10));
+        }
+      })
+    },
+    editQuery : function(index) {
+      var query = this.value.queries[index];
+      var win = hui.ui.Window.create({
+        title : this._getQueryDescription(query),
+        width: 400,
+        padding: 10
+      });
+      var self = this;
+      var overflow = hui.ui.Overflow.create({height: 400});
+      win.add(overflow);
+      hui.each(this.components,function(component) {
+        var form = hui.ui.Formula.create();
+        form.buildGroup({above:false},[{
+          type : 'DropDown', label: 'Display:', options : {key:'display', value:'', items:[
+            {value:'',text:'Unchanged'}, {value:'block',text:'Block'}, {value:'flex',text:'Flex'}
+          ]}
+        },{
+          type : 'DropDown', label: 'Flex direction:', options : {key:'flex-direction', value:'', items:[
+            {value:'',text:'Unchanged'},
+            {value:'row',text:'Row'},{value:'row-reverse',text:'Row reverse'},{value:'Column',text:'column'},{value:'column-reverse',text:'Column reverse'},
+            {value:'inherit',text:'Inherit'}, {value:'initial',text:'Initial'}, {value:'unset',text:'Unset'}, {value:'revert',text:'Revert'}
+          ]}
+        },{
+          type : 'StyleLength', label: 'Width:', options : {key:'width', value:''}
+        },{
+          type : 'StyleLength', label: 'Max width:', options : {key:'max-width', value:''}
+        },{
+          type : 'StyleLength', label: 'Min width:', options : {key:'min-width', value:''}
+        }])
+        overflow.add(hui.build('div',{text:component.description}));
+        overflow.add(form);
+        form.listen({
+          $valuesChanged : function(values) {
+            var rules = self._getRulesFor({query:index, component:component.name});
+            hui.log(component.name, values, rules);
+            hui.each(rules,function(rule) {
+              if (!hui.isBlank(values[rule.name])) {
+                rules.value = values[rule.name];
+                values[rule.name] = undefined;
+              }
+            })
+            hui.each(values,function(key,value) {
+              if (!hui.isBlank(value)) {
+                rules.push({name:key, value:value});
+              }
+            })
+            self.fireValueChange();
+          }
+        })
+      })
+      win.show();
+    },
+    setValue : function(value) {
+      this.value = value;
+      this.draw();
+    },
+    _getRulesFor : function(params) {
+      var query = this.value.queries[params.query];
+      var comps = query.components;
+      for (var i = 0; i &lt; comps.length; i++) {
+        if (comps[i].name == params.component) {
+          if (!comps[i].rules) {
+            comps[i].rules = [];
+          }
+          return comps[i].rules;
+        }
+      }
+      var rules = [];
+      query.components.push({name:params.component, rules:rules})
+      return rules;
+    },
+    draw : function() {
+      this.element.innerHTML = '';
+      if (this.value &amp;&amp; this.value.queries) {
+        for (var i = 0; i &lt; this.value.queries.length; i++) {
+          var query = this.value.queries[i];
+          hui.build('div.hui_styleeditor_query',{text:this._getQueryDescription(query), parent: this.element, 'data-index':i})
+        }
+      }
+    },
+    _getQueryDescription : function(query) {
+      var text = [];
+      var props = ['max-width','min-width','max-height','min-height'];
+      for (var i = 0; i &lt; props.length; i++) {
+        var prop = props[i];
+        if (query[prop]) {
+          text.push(prop + ': ' + query[prop]);
+        }
+      }
+      return text.join(', ');
+    },
+    $$childSizeChanged : function() {
+    },
+    $$layout : function() {
+    }
+  }
+
+  hui.extend(hui.ui.StyleEditor, _super);
+
+})(hui.ui.Component);</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="hui.animation.Item.html">Item</a></li><li><a href="hui.animation.Loop.html">Loop</a></li><li><a href="hui.Color.html">Color</a></li><li><a href="hui.Event.html">Event</a></li><li><a href="hui.Preloader.html">Preloader</a></li><li><a href="hui.ui.Alert.html">Alert</a></li><li><a href="hui.ui.Bar.html">Bar</a></li><li><a href="hui.ui.Bar.Button.html">Button</a></li><li><a href="hui.ui.Bar.Text.html">Text</a></li><li><a href="hui.ui.BoundPanel.html">BoundPanel</a></li><li><a href="hui.ui.Box.html">Box</a></li><li><a href="hui.ui.Button.html">Button</a></li><li><a href="hui.ui.Buttons.html">Buttons</a></li><li><a href="hui.ui.Calendar.html">Calendar</a></li><li><a href="hui.ui.Chart.html">Chart</a></li><li><a href="hui.ui.Checkbox.html">Checkbox</a></li><li><a href="hui.ui.Checkboxes.html">Checkboxes</a></li><li><a href="hui.ui.Checkboxes.Items.html">Items</a></li><li><a href="hui.ui.CodeInput.html">CodeInput</a></li><li><a href="hui.ui.ColorInput.html">ColorInput</a></li><li><a href="hui.ui.ColorPicker.html">ColorPicker</a></li><li><a href="hui.ui.Columns.html">Columns</a></li><li><a href="hui.ui.Component.html">Component</a></li><li><a href="hui.ui.DatePicker.html">DatePicker</a></li><li><a href="hui.ui.DateTimeField.html">DateTimeField</a></li><li><a href="hui.ui.Diagram.html">Diagram</a></li><li><a href="hui.ui.Diagram.Box.html">Box</a></li><li><a href="hui.ui.Diagram.Icon.html">Icon</a></li><li><a href="hui.ui.Dock.html">Dock</a></li><li><a href="hui.ui.Drawing.html">Drawing</a></li><li><a href="hui.ui.DropDown.html">DropDown</a></li><li><a href="hui.ui.Editable.html">Editable</a></li><li><a href="hui.ui.Editor.html">Editor</a></li><li><a href="hui.ui.Editor.Header.html">Header</a></li><li><a href="hui.ui.Editor.Html.html">Html</a></li><li><a href="hui.ui.Finder.html">Finder</a></li><li><a href="hui.ui.FontInput.html">FontInput</a></li><li><a href="hui.ui.FontPicker.html">FontPicker</a></li><li><a href="hui.ui.Formula.html">Formula</a></li><li><a href="hui.ui.Formula.Field.html">Field</a></li><li><a href="hui.ui.Formula.Group.html">Group</a></li><li><a href="hui.ui.Fragment.html">Fragment</a></li><li><a href="hui.ui.Gallery.html">Gallery</a></li><li><a href="hui.ui.Graph.html">Graph</a></li><li><a href="hui.ui.Icon.html">Icon</a></li><li><a href="hui.ui.IFrame.html">IFrame</a></li><li><a href="hui.ui.ImageInput.html">ImageInput</a></li><li><a href="hui.ui.ImageViewer.html">ImageViewer</a></li><li><a href="hui.ui.InfoView.html">InfoView</a></li><li><a href="hui.ui.Input.html">Input</a></li><li><a href="hui.ui.Layout.html">Layout</a></li><li><a href="hui.ui.Link.html">Link</a></li><li><a href="hui.ui.LinkInput.html">LinkInput</a></li><li><a href="hui.ui.Links.html">Links</a></li><li><a href="hui.ui.List.html">List</a></li><li><a href="hui.ui.LocationInput.html">LocationInput</a></li><li><a href="hui.ui.LocationPicker.html">LocationPicker</a></li><li><a href="hui.ui.MarkupEditor.html">MarkupEditor</a></li><li><a href="hui.ui.Menu.html">Menu</a></li><li><a href="hui.ui.NumberField.html">NumberField</a></li><li><a href="hui.ui.NumberValidator.html">NumberValidator</a></li><li><a href="hui.ui.ObjectInput.html">ObjectInput</a></li><li><a href="hui.ui.ObjectList.html">ObjectList</a></li><li><a href="hui.ui.ObjectList.Object.html">Object</a></li><li><a href="hui.ui.Overflow.html">Overflow</a></li><li><a href="hui.ui.Overlay.html">Overlay</a></li><li><a href="hui.ui.Pages.html">Pages</a></li><li><a href="hui.ui.Picker.html">Picker</a></li><li><a href="hui.ui.ProgressBar.html">ProgressBar</a></li><li><a href="hui.ui.ProgressIndicator.html">ProgressIndicator</a></li><li><a href="hui.ui.Radiobuttons.html">Radiobuttons</a></li><li><a href="hui.ui.Rendering.html">Rendering</a></li><li><a href="hui.ui.RevealingToolbar.html">RevealingToolbar</a></li><li><a href="hui.ui.Rows.html">Rows</a></li><li><a href="hui.ui.SearchField.html">SearchField</a></li><li><a href="hui.ui.Segmented.html">Segmented</a></li><li><a href="hui.ui.Selection.html">Selection</a></li><li><a href="hui.ui.Selection.Items.html">Items</a></li><li><a href="hui.ui.Skeleton.html">Skeleton</a></li><li><a href="hui.ui.Slider.html">Slider</a></li><li><a href="hui.ui.Source.html">Source</a></li><li><a href="hui.ui.Split.html">Split</a></li><li><a href="hui.ui.Structure.html">Structure</a></li><li><a href="hui.ui.StyleEditor.html">StyleEditor</a></li><li><a href="hui.ui.StyleLength.html">StyleLength</a></li><li><a href="hui.ui.Tab.html">Tab</a></li><li><a href="hui.ui.Tabs.html">Tabs</a></li><li><a href="hui.ui.TextField.html">TextField</a></li><li><a href="hui.ui.Tiles.html">Tiles</a></li><li><a href="hui.ui.TimeLine.html">TimeLine</a></li><li><a href="hui.ui.TokenField.html">TokenField</a></li><li><a href="hui.ui.Toolbar.html">Toolbar</a></li><li><a href="hui.ui.Toolbar.Icon.html">Icon</a></li><li><a href="hui.ui.Toolbar.More.html">More</a></li><li><a href="hui.ui.Upload.html">Upload</a></li><li><a href="hui.ui.Upload.Flash.html">Flash</a></li><li><a href="hui.ui.Upload.Frame.html">Frame</a></li><li><a href="hui.ui.Upload.HTML5.html">HTML5</a></li><li><a href="hui.ui.Upload.Item.html">Item</a></li><li><a href="hui.ui.VideoPlayer.html">VideoPlayer</a></li><li><a href="hui.ui.Window.html">Window</a></li><li><a href="hui.ui.Wizard.html">Wizard</a></li></ul><h3>Namespaces</h3><ul><li><a href="hui.animation.html">animation</a></li><li><a href="hui.array.html">array</a></li><li><a href="hui.cls.html">cls</a></li><li><a href="hui.cookie.html">cookie</a></li><li><a href="hui.document.html">document</a></li><li><a href="hui.dom.html">dom</a></li><li><a href="hui.drag.html">drag</a></li><li><a href="hui.ease.html">ease</a></li><li><a href="hui.effect.html">effect</a></li><li><a href="hui.form.html">form</a></li><li><a href="hui.frame.html">frame</a></li><li><a href="hui.location.html">location</a></li><li><a href="hui.position.html">position</a></li><li><a href="hui.selection.html">selection</a></li><li><a href="hui.string.html">string</a></li><li><a href="hui.style.html">style</a></li><li><a href="hui.test.html">test</a></li><li><a href="hui.ui.html">ui</a></li><li><a href="hui.ui.Flash.html">Flash</a></li><li><a href="hui.ui.Graph.D3.html">D3</a></li><li><a href="hui.ui.Graph.Protoviz.html">Protoviz</a></li><li><a href="hui.ui.Graph.Raphael.html">Raphael</a></li><li><a href="hui.ui.MarkupEditor.MSIE.html">MSIE</a></li><li><a href="hui.ui.MarkupEditor.util.html">util</a></li><li><a href="hui.ui.MarkupEditor.webkit.html">webkit</a></li><li><a href="hui.window.html">window</a></li><li><a href="window.hui.html">hui</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Sun Nov 20 2016 12:16:45 GMT+0100 (CET)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
