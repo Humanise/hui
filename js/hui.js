@@ -1,7 +1,8 @@
-/** @namespace */
+/**
+ * The root namespace of Humanise User Interface
+ * @namespace
+ */
 window.hui = window.hui || {};
-
-
 
 (function(hui,agent,window) {
   hui.KEY_BACKSPACE = 8;
@@ -19,6 +20,9 @@ window.hui = window.hui || {};
   hui.KEY_PAGEDOWN = 34;
   hui.KEY_INSERT = 45;
 
+  /**
+   * @namespace
+   */
   var browser = hui.browser = {};
 
   /** If the browser is any version of InternetExplorer */
@@ -72,8 +76,6 @@ window.hui = window.hui || {};
 })(hui,navigator.userAgent,window);
 
 
-
-////////////////////// Common ////////////////////////
 
 /**
  * Log something
@@ -346,7 +348,7 @@ hui.string = {
 
   /**
    * Make a string camelized
-   * @param {String} The string to camelize
+   * @param {String} str The string to camelize
    * @returns {String} The camelized string
    */
   camelize : function(str) {
@@ -1063,8 +1065,9 @@ hui.build = function(name,options,doc) {
 
 /////////////////////// Position ///////////////////////
 
-/** @namespace
+/** 
  * Functions for getting and changing the position of elements
+ * @namespace
  */
 hui.position = {
   getTop : function(element) {

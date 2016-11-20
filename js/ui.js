@@ -82,13 +82,13 @@ hui.ui._afterResize = function() {
 /**
  * Show a confirming overlay
  * <pre><strong>options:</strong> {
- *  element : «Element», // the element to show at
- *  widget : «Widget», // the widget to show at
- *  text : «String», // the text message
- *  okText : «String», // text of OK button
- *  cancelText «String», // text of cancel button
- *  $ok: «Function», // called when user clicks the OK button
- *  $cancel: «Function» // called when user clicks the Cancel button
+ *  element : Element, // the element to show at
+ *  widget : Widget, // the widget to show at
+ *  text : String, // the text message
+ *  okText : String, // text of OK button
+ *  cancelText String, // text of cancel button
+ *  $ok: Function, // called when user clicks the OK button
+ *  $cancel: Function // called when user clicks the Cancel button
  * }
  * </pre>
  * @param options {Object} The options
@@ -283,7 +283,7 @@ hui.ui.nextTopIndex = function() {
 
 /**
  * Shows a "curtain" behind an element
- * @param options { widget:«widget», color:«cssColor | 'auto'», zIndex:«cssZindex» }
+ * #param options { widget: Widget, color: String, zIndex: Number }
  */
 hui.ui.showCurtain = function(options) {
 	var widget = options.widget;
@@ -580,7 +580,7 @@ hui.ui.createIcon = function(icon,size,tag) {
 
 /**
  * Add focus class to an element
- * @param options {Object} {element : «Element», class : «String»}
+ * @param options {Object} {element : Element, class : String}
  */
 hui.ui.addFocusClass = function(options) {
 	var ce = options.classElement || options.element, c = options['class'];
