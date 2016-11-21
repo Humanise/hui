@@ -56,6 +56,8 @@
         },{
           type : 'StyleLength', label: 'Width:', options : {key:'width', value:''}
         },{
+          type : 'ColorInput', label: 'Text color:', options : {key:'color', value:''}
+        },{
           type : 'StyleLength', label: 'Max width:', options : {key:'max-width', value:''}
         },{
           type : 'StyleLength', label: 'Min width:', options : {key:'min-width', value:''}
@@ -67,8 +69,8 @@
             var rules = self._getRulesFor({query:index, component:component.name});
             hui.log(component.name, values, rules);
             hui.each(rules,function(rule) {
-              if (!hui.isBlank(values[rule.name])) {
-                rules.value = values[rule.name];
+              if (values[rule.name]!==undefined) {
+                rule.value = values[rule.name];
                 values[rule.name] = undefined;
               }
             })

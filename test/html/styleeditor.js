@@ -1,5 +1,6 @@
 hui.ui.listen({
   $ready : function() {
+
     var editor = hui.ui.StyleEditor.create({
       name : 'myStyleEditor',
       components : [
@@ -10,6 +11,13 @@ hui.ui.listen({
       ]
     });
     document.body.append(editor.getElement());
+
+    hui.build('div',{
+      'class' : 'js-output',
+      style : 'white-space: pre',
+      parent: document.body
+    });
+
     editor.setValue({
       queries : [{
         'max-width' : '500px',
@@ -35,7 +43,7 @@ hui.ui.listen({
     editor.editQuery(0)
   },
   $valueChanged$myStyleEditor : function(value) {
-    hui.find('.js-output').innerHTML = JSON.stringify(value,2);
+    hui.find('.js-output').innerHTML = JSON.stringify(value,null,2);
     hui.log(value)
   }
 })
