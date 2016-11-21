@@ -752,6 +752,9 @@
         <xsl:text> hui_codeinput-full</xsl:text>
       </xsl:if>
     </xsl:attribute>
+    <xsl:if test="@height!='' and @height!='full'">
+      <xsl:attribute name="style"><xsl:value-of select="concat('height:',@height,'px;')"/></xsl:attribute>
+    </xsl:if>
     <xsl:text disable-output-escaping='yes'><![CDATA[<textarea spellcheck="false" class="hui_codeinput_input"></textarea>]]></xsl:text>
   </div>
   <script type="text/javascript">
