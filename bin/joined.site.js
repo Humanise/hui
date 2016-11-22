@@ -1,7 +1,8 @@
-/** @namespace */
+/**
+ * The root namespace of Humanise User Interface
+ * @namespace
+ */
 window.hui = window.hui || {};
-
-
 
 (function(hui,agent,window) {
   hui.KEY_BACKSPACE = 8;
@@ -19,6 +20,9 @@ window.hui = window.hui || {};
   hui.KEY_PAGEDOWN = 34;
   hui.KEY_INSERT = 45;
 
+  /**
+   * @namespace
+   */
   var browser = hui.browser = {};
 
   /** If the browser is any version of InternetExplorer */
@@ -72,8 +76,6 @@ window.hui = window.hui || {};
 })(hui,navigator.userAgent,window);
 
 
-
-////////////////////// Common ////////////////////////
 
 /**
  * Log something
@@ -346,7 +348,7 @@ hui.string = {
 
   /**
    * Make a string camelized
-   * @param {String} The string to camelize
+   * @param {String} str The string to camelize
    * @returns {String} The camelized string
    */
   camelize : function(str) {
@@ -603,7 +605,7 @@ hui.dom = {
   },
   changeTag : function(node,tagName) {
     var replacement = hui.build(tagName);
-  
+
     // Copy the children
     while (node.firstChild) {
         replacement.appendChild(node.firstChild); // *Moves* the child
@@ -797,7 +799,7 @@ hui.get.next = function(element) {
   while (next && next.nodeType!=1) {
     next = next.nextSibling;
   }
-  if (next && next.nodeType==1) { 
+  if (next && next.nodeType==1) {
       return next;
   }
   return null;
@@ -817,7 +819,7 @@ hui.get.previous = function(element) {
   while (previous && previous.nodeType!=1) {
     previous = previous.previousSibling;
   }
-  if (previous && previous.nodeType==1) { 
+  if (previous && previous.nodeType==1) {
       return previous;
   }
   return null;
@@ -840,7 +842,7 @@ hui.get.before = function(element) {
 
 /**
  * Find all sibling elements after «element»
- */ 
+ */
 hui.get.after = function(element) {
   var elements = [];
   var next = hui.get.next(element);
@@ -1063,8 +1065,9 @@ hui.build = function(name,options,doc) {
 
 /////////////////////// Position ///////////////////////
 
-/** @namespace
+/** 
  * Functions for getting and changing the position of elements
+ * @namespace
  */
 hui.position = {
   getTop : function(element) {
@@ -1444,7 +1447,7 @@ hui.listen = function(element,type,listener,bindTo) {
  * @param {String} type The event to listen for
  * @param {Function} listener The function to be called
  */
-hui.listenOnce = function(element,type,listener) {  
+hui.listenOnce = function(element,type,listener) {
   var func = null;
   func = function(e) {
     hui.unListen(element,type,func);
@@ -1581,13 +1584,11 @@ hui.Event.prototype = {
     }
     return null;
   },
-  find : function(tag) {
+  find : function(func) {
     var parent = this.element;
     while (parent) {
-      if (parent.tagName && parent.tagName.toLowerCase()==tag) {
-        if (func(parent)) {
-          return parent;
-        }
+      if (func(parent)) {
+        return parent;
       }
       parent = parent.parentNode;
     }
@@ -1794,7 +1795,7 @@ hui.request = function(options) {
     if (options.$load) {
           transport.upload.addEventListener("load", function(e) {
         options.$load();
-      }, false); 
+      }, false);
     }
   } else if (method=='POST' && options.files) {
     body = new FormData();
@@ -1902,7 +1903,7 @@ hui.style = {
   /**
    * Get the computed style of an element
    * @param {Element} element The element
-   * @param {String} style The CSS property in the form font-size NOT fontSize; 
+   * @param {String} style The CSS property in the form font-size NOT fontSize;
    */
   get : function(element, style) {
     element = hui.get(element);
@@ -2123,7 +2124,7 @@ hui.effect = {
     window.setTimeout(function() {
       hui.cls.remove(options.element,'hui_effect_wiggle');
     },options.duration || 1000);
-  
+
   },
   /**
    * Make an element shake
@@ -3699,13 +3700,13 @@ hui.ui._afterResize = function() {
 /**
  * Show a confirming overlay
  * <pre><strong>options:</strong> {
- *  element : «Element», // the element to show at
- *  widget : «Widget», // the widget to show at
- *  text : «String», // the text message
- *  okText : «String», // text of OK button
- *  cancelText «String», // text of cancel button
- *  $ok: «Function», // called when user clicks the OK button
- *  $cancel: «Function» // called when user clicks the Cancel button
+ *  element : Element, // the element to show at
+ *  widget : Widget, // the widget to show at
+ *  text : String, // the text message
+ *  okText : String, // text of OK button
+ *  cancelText String, // text of cancel button
+ *  $ok: Function, // called when user clicks the OK button
+ *  $cancel: Function // called when user clicks the Cancel button
  * }
  * </pre>
  * @param options {Object} The options
@@ -3900,7 +3901,7 @@ hui.ui.nextTopIndex = function() {
 
 /**
  * Shows a "curtain" behind an element
- * @param options { widget:«widget», color:«cssColor | 'auto'», zIndex:«cssZindex» }
+ * #param options { widget: Widget, color: String, zIndex: Number }
  */
 hui.ui.showCurtain = function(options) {
 	var widget = options.widget;
@@ -4197,7 +4198,7 @@ hui.ui.createIcon = function(icon,size,tag) {
 
 /**
  * Add focus class to an element
- * @param options {Object} {element : «Element», class : «String»}
+ * @param options {Object} {element : Element, class : String}
  */
 hui.ui.addFocusClass = function(options) {
 	var ce = options.classElement || options.element, c = options['class'];

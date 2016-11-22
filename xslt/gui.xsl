@@ -44,7 +44,7 @@
           <link rel="stylesheet" href="{$context}/hui/{$pathVersion}bin/minimized.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
         </xsl:otherwise>
       </xsl:choose>
-  
+
       <xsl:comment><![CDATA[[if IE 8]>
         <link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$context"/><![CDATA[/hui/]]><xsl:value-of select="$pathVersion"/><![CDATA[css/msie8.css]]><![CDATA["> </link>
       <![endif]]]></xsl:comment>
@@ -54,7 +54,7 @@
       <xsl:comment><![CDATA[[if IE 7]>
         <link rel="stylesheet" type="text/css" href="]]><xsl:value-of select="$context"/><![CDATA[/hui/]]><xsl:value-of select="$pathVersion"/><![CDATA[css/msie7.css]]><![CDATA["> </link>
       <![endif]]]></xsl:comment>
-  
+
       <xsl:if test="//gui:graph">
         <link rel="stylesheet" href="{$context}/hui/{$pathVersion}css/graph.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
       </xsl:if>
@@ -76,7 +76,7 @@
       <xsl:if test="//gui:skeleton">
         <link rel="stylesheet" href="{$context}/hui/{$pathVersion}css/skeleton.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
       </xsl:if>
-  
+
       <xsl:for-each select="//gui:css">
         <link rel="stylesheet" href="{@url}" type="text/css" media="screen" title="no title" charset="utf-8"/>
       </xsl:for-each>
@@ -88,12 +88,12 @@
           <xsl:value-of select="."/>
         </style>
       </xsl:for-each>
-      
+
       <xsl:comment><![CDATA[[if lt IE 9]>
         <script type="text/javascript" src="]]><xsl:value-of select="$context"/><![CDATA[/hui/]]><xsl:value-of select="$pathVersion"/><![CDATA[bin/compatibility.min.js]]><![CDATA["></script>
       <![endif]]]></xsl:comment>
-            
-      
+
+
       <xsl:choose>
         <xsl:when test="$dev='true'">
           <script type="text/javascript">
@@ -107,9 +107,9 @@
       </xsl:choose>
 
       <xsl:for-each select="//gui:require">
-        <script src="{$context}/hui/{$pathVersion}{@path}" type="text/javascript" charset="utf-8"><xsl:comment/></script> 
+        <script src="{$context}/hui/{$pathVersion}{@path}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
       </xsl:for-each>
-  
+
       <xsl:if test="//gui:graph">
         <script src="{$context}/hui/{$pathVersion}js/Graph.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
       </xsl:if>
@@ -126,7 +126,7 @@
         <script src="{$context}/hui/{$pathVersion}js/KeyboardNavigator.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
       </xsl:if>
       <xsl:if test="//gui:diagram">
-        <script src="{$context}/hui/{$pathVersion}js/Drawing.js" type="text/javascript" charset="utf-8"><xsl:comment/></script> 
+        <script src="{$context}/hui/{$pathVersion}js/Drawing.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
         <script src="{$context}/hui/{$pathVersion}js/Diagram.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
       </xsl:if>
       <xsl:if test="//gui:tiles">
@@ -153,7 +153,7 @@
       <xsl:for-each select="gui:controller[@source]">
         <script src="{@source}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
       </xsl:for-each>
-  
+
       <script type="text/javascript">
         hui.ui.context = '<xsl:value-of select="$context"/>';
         <xsl:if test="@state">
@@ -170,7 +170,7 @@
           </xsl:if>
         </xsl:for-each>
       </script>
-  
+
       <xsl:call-template name="dwr-setup"/>
     </head>
     <body>
@@ -257,8 +257,8 @@
       <xsl:for-each select="gui:parameter">
         parameters.push({key:'<xsl:value-of select="@key"/>',value:'<xsl:value-of select="@value"/>'})
       </xsl:for-each>
-      
-    
+
+
       var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Source({
         name : '<xsl:value-of select="@name"/>',
         parameters : parameters
@@ -321,7 +321,7 @@
             listener['$<xsl:value-of select="local-name()"/>$<xsl:value-of select="../@for"/>']=function() {<xsl:apply-templates/>};
           </xsl:for-each>
           hui.ui.listen(listener);
-        })()    
+        })()
       </xsl:when>
       <xsl:otherwise>
         hui.ui.listen({
@@ -329,7 +329,7 @@
         });
       </xsl:otherwise>
     </xsl:choose>
-  </script> 
+  </script>
 </xsl:template>
 
 
@@ -375,7 +375,7 @@
 </xsl:template>
 
 <xsl:template name="gui:dock-internals">
-  <div class="">
+  <div>
     <xsl:attribute name="class">
       <xsl:text>hui_dock_internals</xsl:text>
       <xsl:choose>
@@ -399,49 +399,20 @@
     <div class="hui_dock_bar">
       <xsl:apply-templates select="child::*[not(name()='sidebar')]"/>
     </div>
-    <div class="hui_dock_body">     
+    <div class="hui_dock_body">
       <div class="hui_dock_progress"><xsl:comment/></div>
-      <iframe src="{@url}" frameborder="0" name="{@frame-name}"><xsl:comment/></iframe>
+      <xsl:choose>
+        <xsl:when test="@devices='true'">
+        <div class="hui_dock_devices">
+          <iframe src="{@url}" frameborder="0" name="{@frame-name}" class="hui_dock_frame"><xsl:comment/></iframe>
+        </div>
+        </xsl:when>
+        <xsl:otherwise>
+      <iframe src="{@url}" frameborder="0" name="{@frame-name}" class="hui_dock_frame"><xsl:comment/></iframe>
+        </xsl:otherwise>
+      </xsl:choose>
     </div>
   </div>
-</xsl:template>
-
-<xsl:template name="gui:dock-internalsx">
-  <table class="hui_dock">
-    <xsl:if test="not(gui:sidebar)">
-      <xsl:attribute name="id"><xsl:value-of select="generate-id()"/></xsl:attribute>
-    </xsl:if>
-    <xsl:attribute name="class">
-      <xsl:text>hui_dock</xsl:text>
-      <xsl:if test="gui:sidebar">
-        <xsl:text> hui_dock_with_sidebar</xsl:text>
-      </xsl:if>
-    </xsl:attribute>
-    <xsl:if test="@position='top' or not(@position)">
-      <thead>
-        <tr><td class="hui_dock_bar">
-          <xsl:if test="gui:toolbar">
-            <xsl:attribute name="style">height: 57px;</xsl:attribute>
-          </xsl:if>
-          <xsl:apply-templates/>
-        </td></tr>
-      </thead>
-    </xsl:if>
-    <xsl:if test="@position='bottom'">
-      <tfoot>
-        <xsl:if test="gui:tabs"><xsl:attribute name="class">hui_dock_tabs</xsl:attribute></xsl:if>
-        <tr><td class="hui_dock_bar">
-          <xsl:apply-templates select="child::*[not(name()='sidebar')]"/>
-        </td></tr>
-      </tfoot>
-    </xsl:if>
-    <tbody>
-      <tr><td>
-        <div class="hui_dock_progress"><xsl:comment/></div>
-        <iframe src="{@url}" frameborder="0" name="{@frame-name}"/>
-      </td></tr>
-    </tbody>
-  </table>
 </xsl:template>
 
 <xsl:template match="gui:dock/gui:sidebar">
@@ -522,7 +493,7 @@
     <xsl:call-template name="gui:createobject"/>
   </script>
 </xsl:template>
-  
+
 
 
 <!--doc title:'Selection' class:'hui.ui.Selection' module:'selection'
@@ -555,8 +526,8 @@
         kind : '<xsl:value-of select="@kind"/>'
       });
       </xsl:for-each>
-    
-    
+
+
     var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Selection({
       element : '<xsl:value-of select="generate-id()"/>',
       name : '<xsl:value-of select="@name"/>',
@@ -934,7 +905,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
 <xsl:template match="gui:richtext">
   <div class="hui_richtext" id="{generate-id()}">
     <div class="hui_richtext_toolbar" id="{generate-id()}_toolbar"><div class="hui_richtext_inner_toolbar"><div class="hui_richtext_toolbar_content" id="{generate-id()}_toolbar_content"><xsl:comment/></div></div></div>
-    <iframe id="{generate-id()}_iframe" style="width: 100%; height: {@heigth}px;" frameborder="0"/>   
+    <iframe id="{generate-id()}_iframe" style="width: 100%; height: {@heigth}px;" frameborder="0"/>
     <script type="text/javascript">
       var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.RichText({
         element:'<xsl:value-of select="generate-id()"/>',

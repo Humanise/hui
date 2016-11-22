@@ -1,7 +1,8 @@
-/** @namespace */
+/**
+ * The root namespace of Humanise User Interface
+ * @namespace
+ */
 window.hui = window.hui || {};
-
-
 
 (function(hui,agent,window) {
   hui.KEY_BACKSPACE = 8;
@@ -19,6 +20,9 @@ window.hui = window.hui || {};
   hui.KEY_PAGEDOWN = 34;
   hui.KEY_INSERT = 45;
 
+  /**
+   * @namespace
+   */
   var browser = hui.browser = {};
 
   /** If the browser is any version of InternetExplorer */
@@ -72,8 +76,6 @@ window.hui = window.hui || {};
 })(hui,navigator.userAgent,window);
 
 
-
-////////////////////// Common ////////////////////////
 
 /**
  * Log something
@@ -346,7 +348,7 @@ hui.string = {
 
   /**
    * Make a string camelized
-   * @param {String} The string to camelize
+   * @param {String} str The string to camelize
    * @returns {String} The camelized string
    */
   camelize : function(str) {
@@ -603,7 +605,7 @@ hui.dom = {
   },
   changeTag : function(node,tagName) {
     var replacement = hui.build(tagName);
-  
+
     // Copy the children
     while (node.firstChild) {
         replacement.appendChild(node.firstChild); // *Moves* the child
@@ -797,7 +799,7 @@ hui.get.next = function(element) {
   while (next && next.nodeType!=1) {
     next = next.nextSibling;
   }
-  if (next && next.nodeType==1) { 
+  if (next && next.nodeType==1) {
       return next;
   }
   return null;
@@ -817,7 +819,7 @@ hui.get.previous = function(element) {
   while (previous && previous.nodeType!=1) {
     previous = previous.previousSibling;
   }
-  if (previous && previous.nodeType==1) { 
+  if (previous && previous.nodeType==1) {
       return previous;
   }
   return null;
@@ -840,7 +842,7 @@ hui.get.before = function(element) {
 
 /**
  * Find all sibling elements after «element»
- */ 
+ */
 hui.get.after = function(element) {
   var elements = [];
   var next = hui.get.next(element);
@@ -1063,8 +1065,9 @@ hui.build = function(name,options,doc) {
 
 /////////////////////// Position ///////////////////////
 
-/** @namespace
+/** 
  * Functions for getting and changing the position of elements
+ * @namespace
  */
 hui.position = {
   getTop : function(element) {
@@ -1444,7 +1447,7 @@ hui.listen = function(element,type,listener,bindTo) {
  * @param {String} type The event to listen for
  * @param {Function} listener The function to be called
  */
-hui.listenOnce = function(element,type,listener) {  
+hui.listenOnce = function(element,type,listener) {
   var func = null;
   func = function(e) {
     hui.unListen(element,type,func);
@@ -1581,13 +1584,11 @@ hui.Event.prototype = {
     }
     return null;
   },
-  find : function(tag) {
+  find : function(func) {
     var parent = this.element;
     while (parent) {
-      if (parent.tagName && parent.tagName.toLowerCase()==tag) {
-        if (func(parent)) {
-          return parent;
-        }
+      if (func(parent)) {
+        return parent;
       }
       parent = parent.parentNode;
     }
@@ -1794,7 +1795,7 @@ hui.request = function(options) {
     if (options.$load) {
           transport.upload.addEventListener("load", function(e) {
         options.$load();
-      }, false); 
+      }, false);
     }
   } else if (method=='POST' && options.files) {
     body = new FormData();
@@ -1902,7 +1903,7 @@ hui.style = {
   /**
    * Get the computed style of an element
    * @param {Element} element The element
-   * @param {String} style The CSS property in the form font-size NOT fontSize; 
+   * @param {String} style The CSS property in the form font-size NOT fontSize;
    */
   get : function(element, style) {
     element = hui.get(element);
@@ -2123,7 +2124,7 @@ hui.effect = {
     window.setTimeout(function() {
       hui.cls.remove(options.element,'hui_effect_wiggle');
     },options.duration || 1000);
-  
+
   },
   /**
    * Make an element shake
@@ -5022,13 +5023,13 @@ hui.ui._afterResize = function() {
 /**
  * Show a confirming overlay
  * <pre><strong>options:</strong> {
- *  element : «Element», // the element to show at
- *  widget : «Widget», // the widget to show at
- *  text : «String», // the text message
- *  okText : «String», // text of OK button
- *  cancelText «String», // text of cancel button
- *  $ok: «Function», // called when user clicks the OK button
- *  $cancel: «Function» // called when user clicks the Cancel button
+ *  element : Element, // the element to show at
+ *  widget : Widget, // the widget to show at
+ *  text : String, // the text message
+ *  okText : String, // text of OK button
+ *  cancelText String, // text of cancel button
+ *  $ok: Function, // called when user clicks the OK button
+ *  $cancel: Function // called when user clicks the Cancel button
  * }
  * </pre>
  * @param options {Object} The options
@@ -5223,7 +5224,7 @@ hui.ui.nextTopIndex = function() {
 
 /**
  * Shows a "curtain" behind an element
- * @param options { widget:«widget», color:«cssColor | 'auto'», zIndex:«cssZindex» }
+ * #param options { widget: Widget, color: String, zIndex: Number }
  */
 hui.ui.showCurtain = function(options) {
 	var widget = options.widget;
@@ -5520,7 +5521,7 @@ hui.ui.createIcon = function(icon,size,tag) {
 
 /**
  * Add focus class to an element
- * @param options {Object} {element : «Element», class : «String»}
+ * @param options {Object} {element : Element, class : String}
  */
 hui.ui.addFocusClass = function(options) {
 	var ce = options.classElement || options.element, c = options['class'];
@@ -6051,7 +6052,7 @@ hui.ui.Component.prototype = {
     }
   },
 	valueForProperty : function(property) {
-	  return this[property];
+    return this[property];
 	},
 	fireValueChange : function() {
 		this.fire('valueChanged',this.value);
@@ -6785,9 +6786,9 @@ hui.ui.Formula.Field = function(options) {
 }
 
 hui.ui.Formula.Field.prototype = {
-    setVisible : function(visible) {
-        this.element.style.display = visible ? '' : 'none';
-    }
+  setVisible : function(visible) {
+    this.element.style.display = visible ? '' : 'none';
+  }
 };
 
 /**
@@ -8062,7 +8063,7 @@ hui.ui.DropDown = function(options) {
 	this.inner = e.getElementsByTagName('strong')[0];
 	this.items = options.items || [];
 	this.index = -1;
-	this.value = this.options.value || null;
+	this.value = hui.isDefined(this.options.value) ? this.options.value : null;
 	this.dirty = true;
 	this.busy = false;
 	hui.ui.extend(this);
@@ -8089,7 +8090,11 @@ hui.ui.DropDown.create = function(options) {
 		'class':cls,href:'javascript://',
 		html:'<strong></strong>'
 	});
-	return new hui.ui.DropDown(options);
+	var drop = new hui.ui.DropDown(options);
+  if (options.items) {
+    drop.setItems(options.items);
+  }
+  return drop;
 }
 
 hui.ui.DropDown.prototype = {
@@ -8292,7 +8297,7 @@ hui.ui.DropDown.prototype = {
 			if (this.options.source) {
 				// If there is a source, make sure it is initially 
 				this.options.source.refreshFirst();
-			}			
+			}
 		} else {
 			this._hideSelector();
 		}
@@ -8336,12 +8341,12 @@ hui.ui.DropDown.prototype = {
 		this.fire('valueChanged',this.value);
 		hui.ui.firePropertyChange(this,'value',this.value);
 	},
-    destroy : function() {
-        hui.dom.remove(this.element);
-        if (this.selector) {
-            hui.dom.remove(this.selector);
-        }
+  destroy : function() {
+    hui.dom.remove(this.element);
+    if (this.selector) {
+      hui.dom.remove(this.selector);
     }
+  }
 };
 
 /**
@@ -9457,333 +9462,342 @@ hui.ui.ImageInput.prototype = {
 /**
  * A bound panel is a panel that is shown at a certain place
  * @constructor
- * @param {Object} options { element: «Node | id», name: «String» }
+ * @param {Object} options The options
+ * @param {Node} options.element The root element
+ * @param {string} options.name The component name
  */
 hui.ui.BoundPanel = function(options) {
-	this.options = options;
-	this.element = hui.get(options.element);
-	this.name = options.name;
-	this.visible = false;
-	this.content = hui.get.firstByClass(this.element,'hui_boundpanel_content');
-	this.arrow = hui.get.firstByClass(this.element,'hui_boundpanel_arrow');
-	this.arrowWide = 37;
-	this.arrowNarrow = 18;
-	if (options.variant=='light') {
-		this.arrowWide = 23;
-		this.arrowNarrow = 12;
-	}
-	hui.ui.extend(this);
+  this.options = options;
+  this.element = hui.get(options.element);
+  this.name = options.name;
+  this.visible = false;
+  this.content = hui.get.firstByClass(this.element,'hui_boundpanel_content');
+  this.arrow = hui.get.firstByClass(this.element,'hui_boundpanel_arrow');
+  this.arrowWide = 37;
+  this.arrowNarrow = 18;
+  if (options.variant=='light') {
+    this.arrowWide = 23;
+    this.arrowNarrow = 12;
+  }
+  hui.ui.extend(this);
 };
 
 /**
  * Creates a new bound panel
- * <br/><strong>options:</strong> { name: «name», top: «pixels», left: «pixels», padding: «pixels», width: «pixels», hideOnClick: «boolean» }
+ *
  * @param {Object} options The options
+ * @param {String} options.name The component name
+ * @param {String} options.variant A visual variation
+ * @param {Number} options.left Pixels from left
+ * @param {Number} options.top Pixels from top
+ * @param {Number} options.width Width in pixels
+ * @param {Number} options.padding Padding in pixels
  */
 hui.ui.BoundPanel.create = function(options) {
-	options = hui.override({name:null, top:0, left:0, width:null, padding: null, modal: false, hideOnClick: false}, options);
+  options = hui.override({name:null, top:0, left:0, width:null, padding: null, modal: false, hideOnClick: false}, options);
 
-	
-	var html = 
-		'<div class="hui_boundpanel_arrow"></div>'+
-		'<div class="hui_boundpanel_top"><div><div></div></div></div>'+
-		'<div class="hui_boundpanel_body"><div class="hui_boundpanel_body"><div class="hui_boundpanel_body"><div class="hui_boundpanel_content" style="';
-	if (options.width) {
-		html+='width:'+options.width+'px;';
-	}
-	if (options.padding) {
-		html+='padding:'+options.padding+'px;';
-	}
-	html+='"></div></div></div></div>'+
-		'<div class="hui_boundpanel_bottom"><div><div></div></div></div>';
 
-	options.element = hui.build(
-		'div',{
-			'class' : options.variant ? 'hui_boundpanel hui_boundpanel_'+options.variant : 'hui_boundpanel',
-			style:'display:none;zIndex:'+hui.ui.nextPanelIndex()+';top:'+options.top+'px;left:'+options.left+'px',
-			html:html,
-			parent:document.body
-		}
-	);
-	return new hui.ui.BoundPanel(options);
+  var html =
+    '<div class="hui_boundpanel_arrow"></div>'+
+    '<div class="hui_boundpanel_top"><div><div></div></div></div>'+
+    '<div class="hui_boundpanel_body"><div class="hui_boundpanel_body"><div class="hui_boundpanel_body"><div class="hui_boundpanel_content" style="';
+  if (options.width) {
+    html+='width:'+options.width+'px;';
+  }
+  if (options.padding) {
+    html+='padding:'+options.padding+'px;';
+  }
+  html+='"></div></div></div></div>'+
+    '<div class="hui_boundpanel_bottom"><div><div></div></div></div>';
+
+  options.element = hui.build(
+    'div',{
+      'class' : options.variant ? 'hui_boundpanel hui_boundpanel_'+options.variant : 'hui_boundpanel',
+      style : 'display:none;zIndex:'+hui.ui.nextPanelIndex()+';top:'+options.top+'px;left:'+options.left+'px',
+      html : html,
+      parent : document.body
+    }
+  );
+  return new hui.ui.BoundPanel(options);
 };
 
-/********************************* Public methods ***********************************/
 
 hui.ui.BoundPanel.prototype = {
-	/** Show or hide the panel */
-	toggle : function() {
-		if (!this.visible) {
-			this.show();
-		} else {
-			this.hide();
-		}
-	},
-	/** Shows the panel */
-	show : function(options) {
-		options = options || {};
-		var target = options.target || this.options.target;
+  /**
+   * Show or hide the panel
+   */
+  toggle : function() {
+    if (!this.visible) {
+      this.show();
+    } else {
+      this.hide();
+    }
+  },
+  /** Shows the panel */
+  show : function(options) {
+    options = options || {};
+    var target = options.target || this.options.target;
 
-		if (target) {
-			if (target.nodeName) {
-				this.position(target);
-			} else {
-				this.position(hui.ui.get(target));
-			}
-		}
-		if (this.visible) {
-			this.element.style.zIndex = hui.ui.nextPanelIndex();
-			return;
-		}
-		if (hui.browser.opacity) {
-			hui.style.setOpacity(this.element,0);
-		}
-		var vert;
-		if (this.relativePosition=='left') {
-			vert = false;
-			this.element.style.marginLeft='20px';
-		} else if (this.relativePosition=='right') {
-			vert = false;
-			this.element.style.marginLeft='-20px';
-		} else if (this.relativePosition=='top') {
-			vert = true;
-			this.element.style.marginTop='20px';
-		} else if (this.relativePosition=='bottom') {
-			vert = true;
-			this.element.style.marginTop='-20px';
-		}
-		this.element.style.visibility = 'visible';
-		this.element.style.display = 'block';
-		var index = hui.ui.nextPanelIndex();
-		this.element.style.zIndex = index;
-		hui.ui.callVisible(this);
-		if (hui.browser.opacity) {
-			hui.animate(this.element,'opacity',1,300,{ease:hui.ease.fastSlow});
-		}
-		hui.animate(this.element,vert ? 'margin-top' : 'margin-left','0px',300,{ease:hui.ease.fastSlow});
-		this.visible=true;
-		if (this.options.modal) {
-			hui.ui.showCurtain({widget:this,zIndex:index-1,transparent:this.options.modal=='transparent',color:'auto'});
-		}
-		if (this.options.hideOnClick) {
-			this.hideListener = hui.listen(document.body,'click',function(e) {
-				if (!hui.ui.isWithin(e,this.element)) {
-					this.hide();
-				}
-			}.bind(this));
-		}
-	},
-	/** @private */
-	$curtainWasClicked : function() {
-		hui.ui.hideCurtain(this);
-		this.hide();
-	},
-	/** Hides the panel */
-	hide : function() {
-		if (!this.visible) {
-			return;
-		}
-		if (!hui.browser.opacity) {
-			this.element.style.display='none';
-			hui.ui.callVisible(this);
-		} else {
-			hui.animate(this.element,'opacity',0,100,{ease:hui.ease.slowFast,$complete:function() {
-				this.element.style.display='none';
-				hui.ui.callVisible(this);
-			}.bind(this)});
-		}
-		if (this.options.modal) {
-			hui.ui.hideCurtain(this);
-		}
-		this.visible=false;
-		hui.unListen(document.body,'click',this.hideListener);
-	},
-	/**
-	 * If the panel is currently visible
-	 */
-	isVisible : function() {
-		return this.visible;
-	},
-	/**
-	 * Adds a widget or element to the panel
-	 * @param {Node | Widget} child The object to add
-	 */
-	add : function(child) {
-		if (child.getElement) {
-			this.content.appendChild(child.getElement());
-		} else {
-			this.content.appendChild(child);
-		}
-	},
-	clear : function() {
-		hui.ui.destroyDescendants(this.content);
-		this.content.innerHTML='';
-	},
-	/**
-	 * Adds som vertical space to the panel
-	 * @param {pixels} height The height of the space in pixels
-	 */
-	addSpace : function(height) {
-		this.add(hui.build('div',{style:'font-size:0px;height:'+height+'px'}));
-	},
-	_getDimensions : function() {
-		var width, height;
-		if (this.element.style.display=='none') {
-			this.element.style.visibility='hidden';
-			this.element.style.display='block';
-			width = this.element.clientWidth;
-			height = this.element.clientHeight;
-			this.element.style.display='none';
-			this.element.style.visibility='';
-		} else {
-			width = this.element.clientWidth;
-			height = this.element.clientHeight;
-		}
-		return {width:width,height:height};
-	},
-	$$childSizeChanged : function() {
+    if (target) {
+      if (target.nodeName) {
+        this.position(target);
+      } else {
+        this.position(hui.ui.get(target));
+      }
+    }
+    if (this.visible) {
+      this.element.style.zIndex = hui.ui.nextPanelIndex();
+      return;
+    }
+    if (hui.browser.opacity) {
+      hui.style.setOpacity(this.element,0);
+    }
+    var vert;
+    if (this.relativePosition=='left') {
+      vert = false;
+      this.element.style.marginLeft='20px';
+    } else if (this.relativePosition=='right') {
+      vert = false;
+      this.element.style.marginLeft='-20px';
+    } else if (this.relativePosition=='top') {
+      vert = true;
+      this.element.style.marginTop='20px';
+    } else if (this.relativePosition=='bottom') {
+      vert = true;
+      this.element.style.marginTop='-20px';
+    }
+    this.element.style.visibility = 'visible';
+    this.element.style.display = 'block';
+    var index = hui.ui.nextPanelIndex();
+    this.element.style.zIndex = index;
+    hui.ui.callVisible(this);
+    if (hui.browser.opacity) {
+      hui.animate(this.element,'opacity',1,300,{ease:hui.ease.fastSlow});
+    }
+    hui.animate(this.element,vert ? 'margin-top' : 'margin-left','0px',300,{ease:hui.ease.fastSlow});
+    this.visible=true;
+    if (this.options.modal) {
+      hui.ui.showCurtain({widget:this,zIndex:index-1,transparent:this.options.modal=='transparent',color:'auto'});
+    }
+    if (this.options.hideOnClick) {
+      this.hideListener = hui.listen(document.body,'click',function(e) {
+        if (!hui.ui.isWithin(e,this.element)) {
+          this.hide();
+        }
+      }.bind(this));
+    }
+  },
+  /** @private */
+  $curtainWasClicked : function() {
+    hui.ui.hideCurtain(this);
+    this.hide();
+  },
+  /** Hides the panel */
+  hide : function() {
+    if (!this.visible) {
+      return;
+    }
+    if (!hui.browser.opacity) {
+      this.element.style.display='none';
+      hui.ui.callVisible(this);
+    } else {
+      hui.animate(this.element,'opacity',0,100,{ease:hui.ease.slowFast,$complete:function() {
+        this.element.style.display='none';
+        hui.ui.callVisible(this);
+      }.bind(this)});
+    }
+    if (this.options.modal) {
+      hui.ui.hideCurtain(this);
+    }
+    this.visible=false;
+    hui.unListen(document.body,'click',this.hideListener);
+  },
+  /**
+   * If the panel is currently visible
+   */
+  isVisible : function() {
+    return this.visible;
+  },
+  /**
+   * Adds a widget or element to the panel
+   * @param {Node | Widget} child The object to add
+   */
+  add : function(child) {
+    if (child.getElement) {
+      this.content.appendChild(child.getElement());
+    } else {
+      this.content.appendChild(child);
+    }
+  },
+  clear : function() {
+    hui.ui.destroyDescendants(this.content);
+    this.content.innerHTML='';
+  },
+  /**
+   * Adds som vertical space to the panel
+   * @param {pixels} height The height of the space in pixels
+   */
+  addSpace : function(height) {
+    this.add(hui.build('div',{style:'font-size:0px;height:'+height+'px'}));
+  },
+  _getDimensions : function() {
+    var width, height;
+    if (this.element.style.display=='none') {
+      this.element.style.visibility='hidden';
+      this.element.style.display='block';
+      width = this.element.clientWidth;
+      height = this.element.clientHeight;
+      this.element.style.display='none';
+      this.element.style.visibility='';
+    } else {
+      width = this.element.clientWidth;
+      height = this.element.clientHeight;
+    }
+    return {width:width,height:height};
+  },
+  $$childSizeChanged : function() {
     this._rePosition();
-	},
+  },
   $$layout : function() {
     this._rePosition();
   },
   _rePosition : function() {
     if (this._latest) {
       this.position(this._latest);
-    }    
+    }
   },
-	/** Position the panel at a node
-	 * @param {Node} node The node the panel should be positioned at 
-	 */
-	position : function(options) {
+  /** Position the panel at a node
+   * @param {Node} node The node the panel should be positioned at
+   */
+  position : function(options) {
     this._latest = options;
-		var node,
+    var node,
       position,
       nodeOffset,
       nodeScrollOffset;
-		if (options.getElement) {
-			node = options.getElement();
-		} else if (options.element) {
-			node = options.element;
-			position = options.position;
-		} else if (options.rect) {
-			position = options.position;
+    if (options.getElement) {
+      node = options.getElement();
+    } else if (options.element) {
+      node = options.element;
+      position = options.position;
+    } else if (options.rect) {
+      position = options.position;
       node = {
         offsetWidth : options.rect.width,
         offsetHeight : options.rect.height
       };
       nodeOffset = {
-        left : options.rect.left, 
+        left : options.rect.left,
         top : options.rect.top
       };
       nodeScrollOffset = {left: 0, top: 0};
-		} else {
-			node = hui.get(options);
-		}
-		
+    } else {
+      node = hui.get(options);
+    }
+
     if (!nodeOffset) {
-      nodeOffset = {left:hui.position.getLeft(node),top:hui.position.getTop(node)};            
+      nodeOffset = {left:hui.position.getLeft(node),top:hui.position.getTop(node)};
     }
     if (!nodeScrollOffset) {
       nodeScrollOffset = hui.position.getScrollOffset(node);
     }
-        
-		var windowScrollOffset = {left:hui.window.getScrollLeft(),top:hui.window.getScrollTop()};
-		var nodeLeft = nodeOffset.left-windowScrollOffset.left+hui.window.getScrollLeft();
-		var nodeWidth = node.clientWidth || node.offsetWidth;
-		var nodeHeight = node.clientHeight || node.offsetHeight;
-        
-		var panelDimensions = this._getDimensions();
-		var viewportWidth = hui.window.getViewWidth();
-		var viewportHeight = hui.window.getViewHeight();
-        
-		var arrowLeft, arrowTop, left, top;
-		var positionOnScreen = {
-			top : nodeOffset.top-windowScrollOffset.top-(nodeScrollOffset.top-windowScrollOffset.top)
-		};
-		var vertical = positionOnScreen.top / viewportHeight;
-		
-		if (position=='vertical') {
-			vertical = vertical > 0.5 ? 0.9 : 0.1;
-		}
-		var min, max;
-		if (vertical <= 0.1) {
-			this.relativePosition='top';
-			this.arrow.className = 'hui_boundpanel_arrow hui_boundpanel_arrow_top';
-			if (this.options.variant=='light') {
-				arrowTop = this.arrowNarrow*-1+1;
-			} else {
-				arrowTop = this.arrowNarrow*-1+2;
-			}
-			left = Math.min(viewportWidth-panelDimensions.width-2,Math.max(3,nodeLeft+(nodeWidth/2)-((panelDimensions.width)/2)));
-			arrowLeft = (nodeLeft+nodeWidth/2)-left-this.arrowNarrow;
-			top = nodeOffset.top+nodeHeight+8 - (nodeScrollOffset.top-windowScrollOffset.top);
-		}
-		else if (vertical >= 0.9) {
-			this.relativePosition='bottom';
-			this.arrow.className='hui_boundpanel_arrow hui_boundpanel_arrow_bottom';
-			if (this.options.variant=='light') {
-				arrowTop = panelDimensions.height-2;
-			} else {
-				arrowTop = panelDimensions.height-6;
-			}
-			left = Math.min(viewportWidth-panelDimensions.width-3,Math.max(3,nodeLeft+(nodeWidth/2)-((panelDimensions.width)/2)));
-			arrowLeft = (nodeLeft+nodeWidth/2)-left-this.arrowNarrow;
-			top = nodeOffset.top-panelDimensions.height - 5 - (nodeScrollOffset.top-windowScrollOffset.top);
-		}
-		else if (( nodeLeft + nodeWidth / 2 ) / viewportWidth < 0.5) {
-			this.relativePosition='left';
-			left = nodeLeft + nodeWidth + 10;
-			this.arrow.className = 'hui_boundpanel_arrow hui_boundpanel_arrow_left';
-			top = nodeOffset.top+(nodeHeight-panelDimensions.height) / 2;
-			//top = Math.min(top,viewportHeight-panelDimensions.height+(windowScrollOffset.top+nodeScrollOffset.top));
-			top-= (nodeScrollOffset.top-windowScrollOffset.top);
-			min = windowScrollOffset.top + 3;
-			max = windowScrollOffset.top + (viewportHeight-panelDimensions.height) - 3;
-			top = Math.min(Math.max(top,min),max);
-			arrowTop = nodeOffset.top - top;
-			arrowTop -= (nodeScrollOffset.top-windowScrollOffset.top);
-			arrowTop -= this.arrowWide / 2;
-			arrowTop += nodeHeight / 2;
-			if (this.options.variant == 'light') {
-				arrowLeft= -11;
-				arrowTop += 2;
-			} else {
-				arrowLeft = -14;
-			}
-		} else {
-			this.relativePosition = 'right';
-			left = nodeLeft - panelDimensions.width - 10;
-			this.arrow.className = 'hui_boundpanel_arrow hui_boundpanel_arrow_right';
-			top = nodeOffset.top + (nodeHeight-panelDimensions.height) / 2;
-			//top = Math.min(top,viewportHeight-panelDimensions.height+(windowScrollOffset.top+nodeScrollOffset.top));
-			top-= (nodeScrollOffset.top-windowScrollOffset.top);
-			min = windowScrollOffset.top + 3;
-			max = windowScrollOffset.top + (viewportHeight - panelDimensions.height)-3;
-			top = Math.min(Math.max(top,min),max);
-			arrowTop = nodeOffset.top-top;
-			arrowTop -= (nodeScrollOffset.top - windowScrollOffset.top);
-				arrowTop -= this.arrowWide/2;
-				arrowTop += nodeHeight/2;
-			if (this.options.variant == 'light') {
-				arrowLeft = panelDimensions.width - 1;
-				arrowTop += 2;
-			} else {
-				arrowLeft = panelDimensions.width - 4;
-			}
-		}
-		this.arrow.style.marginTop = arrowTop + 'px';
-		this.arrow.style.marginLeft = arrowLeft + 'px';
-		if (this.visible) {
-			hui.animate(this.element,'top',top+'px',500,{ease:hui.ease.fastSlow});
-			hui.animate(this.element,'left',left+'px',500,{ease:hui.ease.fastSlow});
-		} else {
-			this.element.style.top = top + 'px';
-			this.element.style.left = left + 'px';
-		}
-	},
+
+    var windowScrollOffset = {left:hui.window.getScrollLeft(),top:hui.window.getScrollTop()};
+    var nodeLeft = nodeOffset.left-windowScrollOffset.left+hui.window.getScrollLeft();
+    var nodeWidth = node.clientWidth || node.offsetWidth;
+    var nodeHeight = node.clientHeight || node.offsetHeight;
+
+    var panelDimensions = this._getDimensions();
+    var viewportWidth = hui.window.getViewWidth();
+    var viewportHeight = hui.window.getViewHeight();
+
+    var arrowLeft, arrowTop, left, top;
+    var positionOnScreen = {
+      top : nodeOffset.top-windowScrollOffset.top-(nodeScrollOffset.top-windowScrollOffset.top)
+    };
+    var vertical = positionOnScreen.top / viewportHeight;
+
+    if (position=='vertical') {
+      vertical = vertical > 0.5 ? 0.9 : 0.1;
+    }
+    var min, max;
+    if (vertical <= 0.1) {
+      this.relativePosition='top';
+      this.arrow.className = 'hui_boundpanel_arrow hui_boundpanel_arrow_top';
+      if (this.options.variant=='light') {
+        arrowTop = this.arrowNarrow*-1+1;
+      } else {
+        arrowTop = this.arrowNarrow*-1+2;
+      }
+      left = Math.min(viewportWidth-panelDimensions.width-2,Math.max(3,nodeLeft+(nodeWidth/2)-((panelDimensions.width)/2)));
+      arrowLeft = (nodeLeft+nodeWidth/2)-left-this.arrowNarrow;
+      top = nodeOffset.top+nodeHeight+8 - (nodeScrollOffset.top-windowScrollOffset.top);
+    }
+    else if (vertical >= 0.9) {
+      this.relativePosition='bottom';
+      this.arrow.className='hui_boundpanel_arrow hui_boundpanel_arrow_bottom';
+      if (this.options.variant=='light') {
+        arrowTop = panelDimensions.height-2;
+      } else {
+        arrowTop = panelDimensions.height-6;
+      }
+      left = Math.min(viewportWidth-panelDimensions.width-3,Math.max(3,nodeLeft+(nodeWidth/2)-((panelDimensions.width)/2)));
+      arrowLeft = (nodeLeft+nodeWidth/2)-left-this.arrowNarrow;
+      top = nodeOffset.top-panelDimensions.height - 5 - (nodeScrollOffset.top-windowScrollOffset.top);
+    }
+    else if (( nodeLeft + nodeWidth / 2 ) / viewportWidth < 0.5) {
+      this.relativePosition='left';
+      left = nodeLeft + nodeWidth + 10;
+      this.arrow.className = 'hui_boundpanel_arrow hui_boundpanel_arrow_left';
+      top = nodeOffset.top+(nodeHeight-panelDimensions.height) / 2;
+      //top = Math.min(top,viewportHeight-panelDimensions.height+(windowScrollOffset.top+nodeScrollOffset.top));
+      top-= (nodeScrollOffset.top-windowScrollOffset.top);
+      min = windowScrollOffset.top + 3;
+      max = windowScrollOffset.top + (viewportHeight-panelDimensions.height) - 3;
+      top = Math.min(Math.max(top,min),max);
+      arrowTop = nodeOffset.top - top;
+      arrowTop -= (nodeScrollOffset.top-windowScrollOffset.top);
+      arrowTop -= this.arrowWide / 2;
+      arrowTop += nodeHeight / 2;
+      if (this.options.variant == 'light') {
+        arrowLeft= -11;
+        arrowTop += 2;
+      } else {
+        arrowLeft = -14;
+      }
+    } else {
+      this.relativePosition = 'right';
+      left = nodeLeft - panelDimensions.width - 10;
+      this.arrow.className = 'hui_boundpanel_arrow hui_boundpanel_arrow_right';
+      top = nodeOffset.top + (nodeHeight-panelDimensions.height) / 2;
+      //top = Math.min(top,viewportHeight-panelDimensions.height+(windowScrollOffset.top+nodeScrollOffset.top));
+      top-= (nodeScrollOffset.top-windowScrollOffset.top);
+      min = windowScrollOffset.top + 3;
+      max = windowScrollOffset.top + (viewportHeight - panelDimensions.height)-3;
+      top = Math.min(Math.max(top,min),max);
+      arrowTop = nodeOffset.top-top;
+      arrowTop -= (nodeScrollOffset.top - windowScrollOffset.top);
+        arrowTop -= this.arrowWide/2;
+        arrowTop += nodeHeight/2;
+      if (this.options.variant == 'light') {
+        arrowLeft = panelDimensions.width - 1;
+        arrowTop += 2;
+      } else {
+        arrowLeft = panelDimensions.width - 4;
+      }
+    }
+    this.arrow.style.marginTop = arrowTop + 'px';
+    this.arrow.style.marginLeft = arrowLeft + 'px';
+    if (this.visible) {
+      hui.animate(this.element,'top',top+'px',500,{ease:hui.ease.fastSlow});
+      hui.animate(this.element,'left',left+'px',500,{ease:hui.ease.fastSlow});
+    } else {
+      this.element.style.top = top + 'px';
+      this.element.style.left = left + 'px';
+    }
+  },
   destroy : function() {
-		hui.ui.hideCurtain(this);
+    hui.ui.hideCurtain(this);
     hui.dom.remove(this.element);
   }
 };
@@ -12552,11 +12566,11 @@ hui.ui.Dock = function(options) {
 	hui.ui.extend(this);
 	this.busy = true;
 	hui.ui.listen(this);
-	this._addBehavior();
+	this._attach();
 }
 
 hui.ui.Dock.prototype = {
-	_addBehavior : function() {
+	_attach : function() {
 		if (this.resizer) {
 			this.sidebar = hui.get.firstByClass(this.element,'hui_dock_sidebar');
 			this.main = hui.get.firstByClass(this.element,'hui_dock_sidebar_main');
@@ -12601,8 +12615,8 @@ hui.ui.Dock.prototype = {
 		this.resizer.style.left = (width-5)+'px';
 	},
 	/** Change the url of the iframe
-	 * @param {String} url The url to change the iframe to
-	 */
+   * @param {String} url The url to change the iframe to
+   */
 	setUrl : function(url) {
 		this._setBusy(true);
 		/*
@@ -18168,7 +18182,7 @@ hui.ui.NumberValidator.prototype = {
     this.rows = [];
     this._attach();
   }
-  
+
   hui.ui.Rows.prototype = {
     _attach : function() {
       var children = hui.get.children(this.element);
@@ -23418,6 +23432,142 @@ hui.ui.RevealingToolbar.prototype = {
   }
 
   hui.extend(hui.ui.Skeleton, _super);
+
+})(hui.ui.Component);
+
+(function (_super) {
+
+  /**
+   * Vertical rows
+   * @class
+   * @augments hui.ui.Component
+   * @param {Object} options
+   */
+  hui.ui.StyleEditor = function(options) {
+    _super.call(this, options);
+    this.value = null;
+    this.components = options.components;
+    this._attach();
+  }
+
+  hui.ui.StyleEditor.create = function(options) {
+    options = options || {};
+    var element = hui.build('div.hui_styleeditor');
+    options.element = element;
+    return new hui.ui.StyleEditor(options);
+  }
+
+  hui.ui.StyleEditor.prototype = {
+    _attach : function() {
+      var self = this;
+      hui.on(this.element, 'click', function(e) {
+        e = hui.event(e);
+        var query = e.findByClass('hui_styleeditor_query');
+        if (query) {
+          self.editQuery(parseInt(query.getAttribute('data-index'), 10));
+        }
+      })
+    },
+    editQuery : function(index) {
+      var query = this.value.queries[index];
+      var win = hui.ui.Window.create({
+        title : this._getQueryDescription(query),
+        width: 400,
+        padding: 10
+      });
+      var self = this;
+      var overflow = hui.ui.Overflow.create({height: 400});
+      win.add(overflow);
+      hui.each(this.components,function(component) {
+        var form = hui.ui.Formula.create();
+        form.buildGroup({above:false},[{
+          type : 'DropDown', label: 'Display:', options : {key:'display', value:'', items:[
+            {value:'',text:'Unchanged'}, {value:'block',text:'Block'}, {value:'flex',text:'Flex'}
+          ]}
+        },{
+          type : 'DropDown', label: 'Flex direction:', options : {key:'flex-direction', value:'', items:[
+            {value:'',text:'Unchanged'},
+            {value:'row',text:'Row'},{value:'row-reverse',text:'Row reverse'},{value:'Column',text:'column'},{value:'column-reverse',text:'Column reverse'},
+            {value:'inherit',text:'Inherit'}, {value:'initial',text:'Initial'}, {value:'unset',text:'Unset'}, {value:'revert',text:'Revert'}
+          ]}
+        },{
+          type : 'StyleLength', label: 'Width:', options : {key:'width', value:''}
+        },{
+          type : 'ColorInput', label: 'Text color:', options : {key:'color', value:''}
+        },{
+          type : 'StyleLength', label: 'Max width:', options : {key:'max-width', value:''}
+        },{
+          type : 'StyleLength', label: 'Min width:', options : {key:'min-width', value:''}
+        }])
+        overflow.add(hui.build('div',{text:component.description}));
+        overflow.add(form);
+        form.listen({
+          $valuesChanged : function(values) {
+            var rules = self._getRulesFor({query:index, component:component.name});
+            hui.log(component.name, values, rules);
+            hui.each(rules,function(rule) {
+              if (values[rule.name]!==undefined) {
+                rule.value = values[rule.name];
+                values[rule.name] = undefined;
+              }
+            })
+            hui.each(values,function(key,value) {
+              if (!hui.isBlank(value)) {
+                rules.push({name:key, value:value});
+              }
+            })
+            self.fireValueChange();
+          }
+        })
+      })
+      win.show();
+    },
+    setValue : function(value) {
+      this.value = value;
+      this.draw();
+    },
+    _getRulesFor : function(params) {
+      var query = this.value.queries[params.query];
+      var comps = query.components;
+      for (var i = 0; i < comps.length; i++) {
+        if (comps[i].name == params.component) {
+          if (!comps[i].rules) {
+            comps[i].rules = [];
+          }
+          return comps[i].rules;
+        }
+      }
+      var rules = [];
+      query.components.push({name:params.component, rules:rules})
+      return rules;
+    },
+    draw : function() {
+      this.element.innerHTML = '';
+      if (this.value && this.value.queries) {
+        for (var i = 0; i < this.value.queries.length; i++) {
+          var query = this.value.queries[i];
+          hui.build('div.hui_styleeditor_query',{text:this._getQueryDescription(query), parent: this.element, 'data-index':i})
+        }
+      }
+    },
+    _getQueryDescription : function(query) {
+      var text = [];
+      var props = ['max-width','min-width','max-height','min-height'];
+      for (var i = 0; i < props.length; i++) {
+        var prop = props[i];
+        if (query[prop]) {
+          text.push(prop + ': ' + query[prop]);
+        }
+      }
+      return text.join(', ');
+    },
+    $$childSizeChanged : function() {
+    },
+    $$layout : function() {
+    }
+  }
+
+  hui.extend(hui.ui.StyleEditor, _super);
 
 })(hui.ui.Component);
 

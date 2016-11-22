@@ -18,11 +18,11 @@ hui.ui.Dock = function(options) {
 	hui.ui.extend(this);
 	this.busy = true;
 	hui.ui.listen(this);
-	this._addBehavior();
+	this._attach();
 }
 
 hui.ui.Dock.prototype = {
-	_addBehavior : function() {
+	_attach : function() {
 		if (this.resizer) {
 			this.sidebar = hui.get.firstByClass(this.element,'hui_dock_sidebar');
 			this.main = hui.get.firstByClass(this.element,'hui_dock_sidebar_main');
@@ -67,8 +67,8 @@ hui.ui.Dock.prototype = {
 		this.resizer.style.left = (width-5)+'px';
 	},
 	/** Change the url of the iframe
-	 * @param {String} url The url to change the iframe to
-	 */
+   * @param {String} url The url to change the iframe to
+   */
 	setUrl : function(url) {
 		this._setBusy(true);
 		/*
