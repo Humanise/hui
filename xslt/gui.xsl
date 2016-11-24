@@ -1355,6 +1355,20 @@ doc title:'Rich text' class:'hui.ui.RichText'
       </script>
   </xsl:template>
 
+  <xsl:template match="gui:media-simulator">
+    <div class="hui_mediasimulator">
+      <iframe class="hui_mediasimulator_frame" src="http://www.apple.com/"><xsl:comment/></iframe>
+    </div>
+    <script type="text/javascript">
+      (function() {
+        var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.MediaSimulator({
+        name : '<xsl:value-of select="@name"/>'
+      });
+      <xsl:call-template name="gui:createobject"/>
+      })();
+    </script>
+  </xsl:template>
+
   <xsl:template match="gui:managed">
     <xsl:apply-templates/>
     <script type="text/javascript">

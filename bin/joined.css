@@ -6512,8 +6512,6 @@ div.hui_markupeditor
   font-size: 12px;
   text-decoration: none;
   font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
-  -webkit-user-select: none;
-  -moz-user-select: none;
   white-space: nowrap;
   background: #fff;
   border: 1px solid #ccc;
