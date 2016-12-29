@@ -168,6 +168,8 @@ hui.ui.Editor.prototype = {
 		if (!this.active || this.activePart) return;
 		if (!this.columnMenu) {
 			var menu = hui.ui.Menu.create({name:'huiEditorColumnMenu'});
+			menu.addItem({title:'Edit part',value:'editSection'});
+			menu.addDivider();
 			menu.addItem({title:'Edit column',value:'editColumn'});
 			menu.addItem({title:'Remove column',value:'removeColumn'});
 			menu.addItem({title:'Add column',value:'addColumn'});
@@ -187,7 +189,9 @@ hui.ui.Editor.prototype = {
 	},
 	/** @private */
 	$select$huiEditorColumnMenu : function(value) {
-		if (value=='removeColumn') {
+		if (value=='editSection') {
+			this._editPart(this.hoveredPart);
+		} else if (value=='removeColumn') {
 			this.fire('removeColumn',{'row':this.hoveredRow,'column':this.hoveredColumnIndex});
 		} else if (value=='editColumn') {
 			this.editColumn(this.hoveredRow,this.hoveredColumnIndex);
