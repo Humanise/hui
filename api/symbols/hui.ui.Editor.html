@@ -408,7 +408,7 @@ ul.inheritsList
 	
 	<li><a href="../symbols/hui.ui.List.html">hui.ui.List</a></li>
 	
-	<li><a href="../symbols/hui.ui.LocationField.html">hui.ui.LocationField</a></li>
+	<li><a href="../symbols/hui.ui.LocationInput.html">hui.ui.LocationInput</a></li>
 	
 	<li><a href="../symbols/hui.ui.LocationPicker.html">hui.ui.LocationPicker</a></li>
 	
@@ -419,6 +419,8 @@ ul.inheritsList
 	<li><a href="../symbols/hui.ui.MarkupEditor.util.html">hui.ui.MarkupEditor.util</a></li>
 	
 	<li><a href="../symbols/hui.ui.MarkupEditor.webkit.html">hui.ui.MarkupEditor.webkit</a></li>
+	
+	<li><a href="../symbols/hui.ui.MediaSimulator.html">hui.ui.MediaSimulator</a></li>
 	
 	<li><a href="../symbols/hui.ui.Menu.html">hui.ui.Menu</a></li>
 	
@@ -472,6 +474,8 @@ ul.inheritsList
 	
 	<li><a href="../symbols/hui.ui.Structure.html">hui.ui.Structure</a></li>
 	
+	<li><a href="../symbols/hui.ui.StyleEditor.html">hui.ui.StyleEditor</a></li>
+	
 	<li><a href="../symbols/hui.ui.StyleLength.html">hui.ui.StyleLength</a></li>
 	
 	<li><a href="../symbols/hui.ui.Tab.html">hui.ui.Tab</a></li>
@@ -487,8 +491,6 @@ ul.inheritsList
 	<li><a href="../symbols/hui.ui.TokenField.html">hui.ui.TokenField</a></li>
 	
 	<li><a href="../symbols/hui.ui.Toolbar.html">hui.ui.Toolbar</a></li>
-	
-	<li><a href="../symbols/hui.ui.Toolbar.Badge.html">hui.ui.Toolbar.Badge</a></li>
 	
 	<li><a href="../symbols/hui.ui.Toolbar.Icon.html">hui.ui.Toolbar.Icon</a></li>
 	
@@ -534,7 +536,7 @@ ul.inheritsList
 				
 				
 				
-					<br /><i>Defined in: </i> &lt;tools/../bin/all.js&gt;.
+					<br /><i>Defined in: </i> &lt;./../bin/all.js&gt;.
 				
 			</p>
 
@@ -633,42 +635,6 @@ $addPart
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/hui.ui.Editor.html#changeColumnLeftMargin">changeColumnLeftMargin</a></b>(margin)
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/hui.ui.Editor.html#changeColumnRightMargin">changeColumnRightMargin</a></b>(margin)
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/hui.ui.Editor.html#changeColumnWidth">changeColumnWidth</a></b>(width)
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/hui.ui.Editor.html#closeColumn">closeColumn</a></b>()
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/hui.ui.Editor.html#contextColumn">contextColumn</a></b>(column, rowIndex, columnIndex, e)
 								</div>
 								<div class="description"></div>
@@ -697,6 +663,15 @@ $addPart
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/hui.ui.Editor.html#editColumn">editColumn</a></b>(rowIndex, columnIndex)
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/hui.ui.Editor.html#editRow">editRow</a></b>(rowIndex)
 								</div>
 								<div class="description"></div>
 							</td>
@@ -804,15 +779,6 @@ $addPart
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/hui.ui.Editor.html#showColumnWindow">showColumnWindow</a></b>()
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/hui.ui.Editor.html#showPartControls">showPartControls</a></b>()
 								</div>
 								<div class="description"></div>
@@ -823,6 +789,24 @@ $addPart
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/hui.ui.Editor.html#showPartEditControls">showPartEditControls</a></b>()
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/hui.ui.Editor.html#stopColumnEditing">stopColumnEditing</a></b>()
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/hui.ui.Editor.html#stopRowEditing">stopRowEditing</a></b>()
 								</div>
 								<div class="description"></div>
 							</td>
@@ -1063,139 +1047,6 @@ $addPart
 
 					<hr />
 				
-					<a name="changeColumnLeftMargin"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>changeColumnLeftMargin</b>(margin)
-					
-					</div>
-					<div class="description">
-						
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>margin</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="changeColumnRightMargin"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>changeColumnRightMargin</b>(margin)
-					
-					</div>
-					<div class="description">
-						
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>margin</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="changeColumnWidth"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>changeColumnWidth</b>(width)
-					
-					</div>
-					<div class="description">
-						
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>width</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="closeColumn"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>closeColumn</b>()
-					
-					</div>
-					<div class="description">
-						
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
 					<a name="contextColumn"> </a>
 					<div class="fixedFont">
 					
@@ -1338,6 +1189,42 @@ $addPart
 							
 								<dt>
 									<b>columnIndex</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="editRow"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>editRow</b>(rowIndex)
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>rowIndex</b>
 									
 								</dt>
 								<dd></dd>
@@ -1722,31 +1609,6 @@ $addPart
 
 					<hr />
 				
-					<a name="showColumnWindow"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>showColumnWindow</b>()
-					
-					</div>
-					<div class="description">
-						
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
 					<a name="showPartControls"> </a>
 					<div class="fixedFont">
 					
@@ -1795,6 +1657,56 @@ $addPart
 						
 						
 
+					<hr />
+				
+					<a name="stopColumnEditing"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>stopColumnEditing</b>()
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="stopRowEditing"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>stopRowEditing</b>()
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
 					
 				
 			
@@ -1809,7 +1721,7 @@ $addPart
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Sat Sep 03 2016 18:29:43 GMT+0200 (CEST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Thu Dec 29 2016 12:31:46 GMT+0100 (CET)
 		</div>
 	</body>
 </html>
