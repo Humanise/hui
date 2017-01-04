@@ -1,3 +1,5 @@
+hui.onReady(function() {
+
 /** @constructor
  * @param str The color like red or rgb(255, 0, 0) or #ff0000 or rgb(100%, 0%, 0%)
  */
@@ -250,4 +252,5 @@ hui.Color.rgb2hex = function(rgbary) {
   return c;
 };
 
-hui.define && hui.define('hui.Color',hui.Color);
+hui.define('hui.Color',hui.Color)
+})
