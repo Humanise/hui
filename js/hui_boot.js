@@ -1,5 +1,4 @@
-/** @namespace */
-window.hui = window.hui || {};
+hui = window.hui || {};
 
 hui._ready = false;
 

@@ -1,24 +1,24 @@
-hui.onReady(function() {
+hui = window.hui || {};
 
 /////////////////////////// Animation ///////////////////////////
 
 /**
  * Animate something
  * <pre><strong>options:</strong> {
- *  node : «Element», 
- *  css : { fontSize : '11px', color : '#f00', opacity : 0.5 }, 
- *  duration : 1000, // 1sec 
+ *  node : «Element»,
+ *  css : { fontSize : '11px', color : '#f00', opacity : 0.5 },
+ *  duration : 1000, // 1sec
  *  ease : function(num) {},
  *  $complete : function() {}
  *}
  * TODO Document options.property, options.value
- * 
+ * @memberof hui
+ *
  * @param {Element | Object} options Options or an element
  * @param {String} style The css property
  * @param {String} value The css value
  * @param {Number} duration The duration in milisecons
- * @param {Object} deleagte The options if first param is an element
- * 
+ * @param {Object} delegate The options if first param is an element
  */
 hui.animate = function(options, property, value, duration, delegate) {
   if (typeof(options) == 'string' || hui.dom.isElement(options)) {
@@ -46,7 +46,11 @@ hui.animation = {
   objects: {},
   running: false,
   latestId: 0,
-  /** Get an animation item for a node */
+
+  /**
+   * Get an animation item for a node
+   * @return hui.animation.Item
+   */
   get: function(element) {
     element = hui.get(element);
     if (!element.huiAnimationId) {
@@ -57,7 +61,10 @@ hui.animation = {
     }
     return this.objects[element.huiAnimationId];
   },
-  /** Start animating any pending tasks */
+
+  /**
+   * Start animating any pending tasks
+   */
   start: function() {
     if (!this.running) {
       hui.animation._render();
@@ -208,7 +215,7 @@ hui.animation._parseStyle = function(value) {
 
 ///////////////////////////// Item ///////////////////////////////
 
-/** 
+/**
  * An animation item describing what to animate on an element
  * @constructor
  */
@@ -505,8 +512,8 @@ hui.ease = {
   },
 
   backOut: function(/* Decimal? */n){
-    // summary: an easing function that pops past the range briefly, and 
-    //  slowly comes back. 
+    // summary: an easing function that pops past the range briefly, and
+    //  slowly comes back.
     n = n - 1;
     var s = 1.70158;
     return Math.pow(n, 2) * ((s + 1) * n + s) + 1;
@@ -539,7 +546,7 @@ hui.ease = {
   },
 
   elasticInOut: function(/* Decimal? */n){
-    // summary: An easing function that elasticly snaps around the value, near the beginning and end of the Animation   
+    // summary: An easing function that elasticly snaps around the value, near the beginning and end of the Animation
     if(n==0) return 0;
     n = n*2;
     if(n==2) return 1;
@@ -562,7 +569,7 @@ hui.ease = {
     // summary: An easing function that "bounces" near the end of an Animation
     var s=7.5625;
     var p=2.75;
-    var l; 
+    var l;
     if(n < (1 / p)){
       l = s*Math.pow(n, 2);
     }else if(n < (2 / p)){
@@ -590,5 +597,6 @@ if (!Date.now) {
   };
 }
 
-hui.define('hui.animation',hui.animation);
+hui.onReady(function() {
+  hui.define('hui.animation',hui.animation);
 })

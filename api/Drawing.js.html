@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>Humanise UI Source: Drawing.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.cosmo.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top navbar-inverse">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">Humanise UI</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="namespaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="hui.html">hui</a></li><li><a href="hui.animation.html">hui.animation</a></li><li><a href="hui.array.html">hui.array</a></li><li><a href="hui.browser.html">hui.browser</a></li><li><a href="hui.cls.html">hui.cls</a></li><li><a href="hui.cookie.html">hui.cookie</a></li><li><a href="hui.document.html">hui.document</a></li><li><a href="hui.dom.html">hui.dom</a></li><li><a href="hui.drag.html">hui.drag</a></li><li><a href="hui.ease.html">hui.ease</a></li><li><a href="hui.effect.html">hui.effect</a></li><li><a href="hui.form.html">hui.form</a></li><li><a href="hui.frame.html">hui.frame</a></li><li><a href="hui.location.html">hui.location</a></li><li><a href="hui.position.html">hui.position</a></li><li><a href="hui.selection.html">hui.selection</a></li><li><a href="hui.string.html">hui.string</a></li><li><a href="hui.style.html">hui.style</a></li><li><a href="hui.test.html">hui.test</a></li><li><a href="hui.ui.html">hui.ui</a></li><li><a href="hui.ui.Flash.html">hui.ui.Flash</a></li><li><a href="hui.ui.Graph.D3.html">hui.ui.Graph.D3</a></li><li><a href="hui.ui.Graph.Protoviz.html">hui.ui.Graph.Protoviz</a></li><li><a href="hui.ui.Graph.Raphael.html">hui.ui.Graph.Raphael</a></li><li><a href="hui.ui.MarkupEditor.MSIE.html">hui.ui.MarkupEditor.MSIE</a></li><li><a href="hui.ui.MarkupEditor.util.html">hui.ui.MarkupEditor.util</a></li><li><a href="hui.ui.MarkupEditor.webkit.html">hui.ui.MarkupEditor.webkit</a></li><li><a href="hui.window.html">hui.window</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="hui.animation.Item.html">hui.animation.Item</a></li><li><a href="hui.animation.Loop.html">hui.animation.Loop</a></li><li><a href="hui.Color.html">hui.Color</a></li><li><a href="hui.Event.html">hui.Event</a></li><li><a href="hui.Preloader.html">hui.Preloader</a></li><li><a href="hui.ui.Alert.html">hui.ui.Alert</a></li><li><a href="hui.ui.Bar.html">hui.ui.Bar</a></li><li><a href="hui.ui.Bar.Button.html">hui.ui.Bar.Button</a></li><li><a href="hui.ui.Bar.Text.html">hui.ui.Bar.Text</a></li><li><a href="hui.ui.BoundPanel.html">hui.ui.BoundPanel</a></li><li><a href="hui.ui.Box.html">hui.ui.Box</a></li><li><a href="hui.ui.Button.html">hui.ui.Button</a></li><li><a href="hui.ui.Buttons.html">hui.ui.Buttons</a></li><li><a href="hui.ui.Calendar.html">hui.ui.Calendar</a></li><li><a href="hui.ui.Chart.html">hui.ui.Chart</a></li><li><a href="hui.ui.Checkbox.html">hui.ui.Checkbox</a></li><li><a href="hui.ui.Checkboxes.html">hui.ui.Checkboxes</a></li><li><a href="hui.ui.Checkboxes.Items.html">hui.ui.Checkboxes.Items</a></li><li><a href="hui.ui.CodeInput.html">hui.ui.CodeInput</a></li><li><a href="hui.ui.ColorInput.html">hui.ui.ColorInput</a></li><li><a href="hui.ui.ColorPicker.html">hui.ui.ColorPicker</a></li><li><a href="hui.ui.Columns.html">hui.ui.Columns</a></li><li><a href="hui.ui.Component.html">hui.ui.Component</a></li><li><a href="hui.ui.DatePicker.html">hui.ui.DatePicker</a></li><li><a href="hui.ui.DateTimeField.html">hui.ui.DateTimeField</a></li><li><a href="hui.ui.Diagram.html">hui.ui.Diagram</a></li><li><a href="hui.ui.Diagram.Box.html">hui.ui.Diagram.Box</a></li><li><a href="hui.ui.Diagram.Icon.html">hui.ui.Diagram.Icon</a></li><li><a href="hui.ui.Dock.html">hui.ui.Dock</a></li><li><a href="hui.ui.Drawing.html">hui.ui.Drawing</a></li><li><a href="hui.ui.DropDown.html">hui.ui.DropDown</a></li><li><a href="hui.ui.Editable.html">hui.ui.Editable</a></li><li><a href="hui.ui.Editor.html">hui.ui.Editor</a></li><li><a href="hui.ui.Editor.Header.html">hui.ui.Editor.Header</a></li><li><a href="hui.ui.Editor.Html.html">hui.ui.Editor.Html</a></li><li><a href="hui.ui.Finder.html">hui.ui.Finder</a></li><li><a href="hui.ui.FontInput.html">hui.ui.FontInput</a></li><li><a href="hui.ui.FontPicker.html">hui.ui.FontPicker</a></li><li><a href="hui.ui.Formula.html">hui.ui.Formula</a></li><li><a href="hui.ui.Formula.Field.html">hui.ui.Formula.Field</a></li><li><a href="hui.ui.Formula.Group.html">hui.ui.Formula.Group</a></li><li><a href="hui.ui.Fragment.html">hui.ui.Fragment</a></li><li><a href="hui.ui.Gallery.html">hui.ui.Gallery</a></li><li><a href="hui.ui.Graph.html">hui.ui.Graph</a></li><li><a href="hui.ui.Icon.html">hui.ui.Icon</a></li><li><a href="hui.ui.IFrame.html">hui.ui.IFrame</a></li><li><a href="hui.ui.ImageInput.html">hui.ui.ImageInput</a></li><li><a href="hui.ui.ImageViewer.html">hui.ui.ImageViewer</a></li><li><a href="hui.ui.InfoView.html">hui.ui.InfoView</a></li><li><a href="hui.ui.Input.html">hui.ui.Input</a></li><li><a href="hui.ui.Layout.html">hui.ui.Layout</a></li><li><a href="hui.ui.Link.html">hui.ui.Link</a></li><li><a href="hui.ui.LinkInput.html">hui.ui.LinkInput</a></li><li><a href="hui.ui.Links.html">hui.ui.Links</a></li><li><a href="hui.ui.List.html">hui.ui.List</a></li><li><a href="hui.ui.LocationInput.html">hui.ui.LocationInput</a></li><li><a href="hui.ui.LocationPicker.html">hui.ui.LocationPicker</a></li><li><a href="hui.ui.MarkupEditor.html">hui.ui.MarkupEditor</a></li><li><a href="hui.ui.MediaSimulator.html">hui.ui.MediaSimulator</a></li><li><a href="hui.ui.Menu.html">hui.ui.Menu</a></li><li><a href="hui.ui.NumberField.html">hui.ui.NumberField</a></li><li><a href="hui.ui.NumberValidator.html">hui.ui.NumberValidator</a></li><li><a href="hui.ui.ObjectInput.html">hui.ui.ObjectInput</a></li><li><a href="hui.ui.ObjectList.html">hui.ui.ObjectList</a></li><li><a href="hui.ui.ObjectList.Object.html">hui.ui.ObjectList.Object</a></li><li><a href="hui.ui.Overflow.html">hui.ui.Overflow</a></li><li><a href="hui.ui.Overlay.html">hui.ui.Overlay</a></li><li><a href="hui.ui.Pages.html">hui.ui.Pages</a></li><li><a href="hui.ui.Picker.html">hui.ui.Picker</a></li><li><a href="hui.ui.ProgressBar.html">hui.ui.ProgressBar</a></li><li><a href="hui.ui.ProgressIndicator.html">hui.ui.ProgressIndicator</a></li><li><a href="hui.ui.Radiobuttons.html">hui.ui.Radiobuttons</a></li><li><a href="hui.ui.Rendering.html">hui.ui.Rendering</a></li><li><a href="hui.ui.RevealingToolbar.html">hui.ui.RevealingToolbar</a></li><li><a href="hui.ui.Rows.html">hui.ui.Rows</a></li><li><a href="hui.ui.SearchField.html">hui.ui.SearchField</a></li><li><a href="hui.ui.Segmented.html">hui.ui.Segmented</a></li><li><a href="hui.ui.Selection.html">hui.ui.Selection</a></li><li><a href="hui.ui.Selection.Items.html">hui.ui.Selection.Items</a></li><li><a href="hui.ui.Skeleton.html">hui.ui.Skeleton</a></li><li><a href="hui.ui.Slider.html">hui.ui.Slider</a></li><li><a href="hui.ui.Source.html">hui.ui.Source</a></li><li><a href="hui.ui.Split.html">hui.ui.Split</a></li><li><a href="hui.ui.Structure.html">hui.ui.Structure</a></li><li><a href="hui.ui.StyleEditor.html">hui.ui.StyleEditor</a></li><li><a href="hui.ui.StyleLength.html">hui.ui.StyleLength</a></li><li><a href="hui.ui.Tab.html">hui.ui.Tab</a></li><li><a href="hui.ui.Tabs.html">hui.ui.Tabs</a></li><li><a href="hui.ui.TextField.html">hui.ui.TextField</a></li><li><a href="hui.ui.Tiles.html">hui.ui.Tiles</a></li><li><a href="hui.ui.TimeLine.html">hui.ui.TimeLine</a></li><li><a href="hui.ui.TokenField.html">hui.ui.TokenField</a></li><li><a href="hui.ui.Toolbar.html">hui.ui.Toolbar</a></li><li><a href="hui.ui.Toolbar.Icon.html">hui.ui.Toolbar.Icon</a></li><li><a href="hui.ui.Toolbar.More.html">hui.ui.Toolbar.More</a></li><li><a href="hui.ui.Upload.html">hui.ui.Upload</a></li><li><a href="hui.ui.Upload.Flash.html">hui.ui.Upload.Flash</a></li><li><a href="hui.ui.Upload.Frame.html">hui.ui.Upload.Frame</a></li><li><a href="hui.ui.Upload.HTML5.html">hui.ui.Upload.HTML5</a></li><li><a href="hui.ui.Upload.Item.html">hui.ui.Upload.Item</a></li><li><a href="hui.ui.VideoPlayer.html">hui.ui.VideoPlayer</a></li><li><a href="hui.ui.Window.html">hui.ui.Window</a></li><li><a href="hui.ui.Wizard.html">hui.ui.Wizard</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+			
+
+		<h1 class="page-title">Source: Drawing.js</h1>
+    
+<section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">/**
+ * @constructor
+ */
+hui.ui.Drawing = function(options) {
+	this.options = hui.override({width:200,height:200},options);
+	this.element = hui.get(options.element);
+	hui.log({width:options.width,height:options.height})
+	this.svg = hui.ui.Drawing._build({tag:'svg',parent:this.element,attributes:{width:options.width,height:options.height}});
+	this.element.appendChild(this.svg);
+	this.name = options.name;
+	hui.ui.extend(this);
+}
+
+hui.ui.Drawing.create = function(options) {
+	options = options || {};
+	var e = options.element = hui.build('div',{'class':'hui_drawing',style:'position: relative; overflow: hidden;'});
+	if (options.height) {
+		e.style.height = options.height+'px';
+	}
+	if (options.width) {
+		e.style.width = options.width+'px';
+	}
+	if (options.parent) {
+		hui.get(options.parent).appendChild(e);
+	}
+	return new hui.ui.Drawing(options);
+}
+
+hui.ui.Drawing.prototype = {
+	setSize : function(width,height) {
+		this.svg.setAttribute('width',width);
+		this.svg.setAttribute('height',height);
+		this.svg.style.width = width+'px';
+		this.svg.style.height = height+'px';
+		this.element.style.width = width+'px';
+		this.element.style.height = height+'px';
+	},
+	clear : function() {
+		hui.dom.clear(this.svg);
+	},
+	addLine : function(options) {
+		options.parent = this.svg;
+		return hui.ui.Drawing.Line.create(options);
+	},
+	addRect : function(options) {
+		options.parent = this.svg;
+		return hui.ui.Drawing.Rect.create(options);
+	},
+	addCircle : function(options) {
+		options.parent = this.svg;
+		return hui.ui.Drawing.Circle.create(options);
+	},
+	addArc : function(options) {
+		options.parent = this.svg;
+		return hui.ui.Drawing.Arc.create(options);
+	},
+	addElement : function(options) {
+		var node = hui.build('div',{style:'position:absolute;left:0;top:0;',parent:this.element,html:options.html}),
+			element = new hui.ui.Drawing.Element(node);
+		if (options.movable) {
+			hui.drag.register({
+				element : node,
+				onBeforeMove : function(e) {
+					this.fire('shapeWillMove',{shape:element,event:e});
+				}.bind(this),
+				onMove : function(e) {
+					node.style.left = e.getLeft()+'px';
+					node.style.top = e.getTop()+'px';
+					this.fire('shapeMoved',{shape:element,event:e});
+				}.bind(this),
+				onAfterMove : function(e) {
+					this.fire('shapeWasMoved',{shape:element,event:e});
+				}.bind(this)
+			})
+		}
+		return element;
+	}
+}
+
+hui.ui.Drawing._build = function(options) {
+	var node = document.createElementNS('http://www.w3.org/2000/svg',options.tag);
+  if (options.attributes) {
+		for (var att in options.attributes) {
+			node.setAttribute(att,options.attributes[att]);
+		}
+	}
+	if (options.parent) {
+		options.parent.appendChild(node);
+	}
+	return node;
+}
+
+
+// Line
+
+hui.ui.Drawing.Line = function(options) {
+	this.node = options.node;
+	this.endNode = options.endNode;
+	this.from = options.from;
+	this.to = options.to;
+	this._updateEnds();
+}
+
+hui.ui.Drawing.Line.create = function(options) {
+	if (!options.from) {
+		options.from = {x:options.x1,y:options.y1};
+	}
+	if (!options.to) {
+		options.to = {x:options.x2,y:options.y2};
+	}
+	
+	var attributes = {
+		x1 : options.from.x.toFixed(10),
+		y1 : options.from.y.toFixed(10),
+		x2 : options.to.x.toFixed(10),
+		y2 : options.to.y.toFixed(10),
+		style : 'stroke:'+(options.color || '#000')+';stroke-width:'+(options.width || 1)
+	};
+		
+	options.node = hui.ui.Drawing._build({
+		tag : 'line',
+		parent : options.parent,
+		attributes : attributes
+	});
+	if (options.end) {
+		options.endNode = hui.ui.Drawing._build({
+			tag : 'path',
+			parent : options.parent,
+			attributes : {d:'M 0 -1 L 5 10 L -5 10',fill:options.color || '#000'}
+		})
+	}
+	return new hui.ui.Drawing.Line(options);
+}
+
+hui.ui.Drawing.Line.prototype = {
+	setFrom : function(point) {
+		this.from = point;
+		this.node.setAttribute('x1',point.x.toFixed(10));
+		this.node.setAttribute('y1',point.y.toFixed(10));
+		this._updateEnds();
+	},
+	getFrom : function() {
+		return this.from;
+	},
+	setTo : function(point) {
+		this.to = point;
+		this.node.setAttribute('x2',point.x.toFixed(10));
+		this.node.setAttribute('y2',point.y.toFixed(10));
+		this._updateEnds();
+	},
+	getTo : function() {
+		return this.to;
+	},
+	_updateEnds : function() {
+		//var deg = Math.atan((this.from.y-this.to.y) / (this.from.x-this.to.x)) * 180/Math.PI;
+		if (this.endNode) {
+			var deg = -90+Math.atan2(this.from.y-this.to.y, this.from.x-this.to.x)*180/Math.PI
+			this.endNode.setAttribute('transform','translate('+(this.to.x.toFixed(10))+','+(this.to.y.toFixed(10))+') rotate('+(deg)+')')
+
+		}
+	},
+	getDegree : function() {
+		return Math.atan((this.from.y-this.to.y) / (this.from.x-this.to.x)) * 180/Math.PI;
+	}
+}
+
+
+
+// Circle
+
+hui.ui.Drawing.Circle = function(options) {
+	this.node = options.node;
+	this.properties = {};
+}
+
+hui.ui.Drawing.Circle.create = function(options) {
+	var css = [];
+	if (options.stroke) {
+		if (options.stroke.color) {
+			css.push('stroke:'+options.stroke.color);
+		}
+		if (options.stroke.width) {
+			css.push('stroke-width:'+options.stroke.width);
+		}
+	}
+	if (options.fill) {
+		css.push('fill:'+options.fill);
+	}
+	options.node = hui.ui.Drawing._build({
+		tag : 'circle',
+		parent : options.parent,
+		attributes : {
+			cx : options.cx,
+			cy : options.cy,
+			r : options.r,
+			style : css.join(';')
+		}
+	});
+	return new hui.ui.Drawing.Circle(options);
+};
+
+hui.ui.Drawing.Circle.prototype = {
+	setRadius : function(radius) {
+		this.node.setAttribute("r",radius);
+	},
+	
+	setCenter : function(point) {
+		this.node.setAttribute('cx',point.x);
+		this.node.setAttribute('cy',point.y);
+	}
+}
+
+
+
+// Rect
+
+hui.ui.Drawing.Rect = function(options) {
+	this.node = options.node;
+}
+
+hui.ui.Drawing.Rect.create = function(options) {
+	var css = [];
+	if (options.stroke) {
+		if (options.stroke.color) {
+			css.push('stroke:'+options.stroke.color);
+		}
+		if (options.stroke.width) {
+			css.push('stroke-width:'+options.stroke.width);
+		}
+	}
+	if (options.fill) {
+		css.push('fill:'+options.fill);
+	}
+	options.node = hui.ui.Drawing._build({
+		tag : 'rect',
+		parent : options.parent,
+		attributes : {
+			x : options.x,
+			y : options.y,
+			width : options.width,
+			height : options.height,
+			style : css.join(';')
+		}
+	});
+	return new hui.ui.Drawing.Circle(options);
+};
+
+hui.ui.Drawing.Rect.prototype = {
+	setPosition : function(point) {
+		this.node.setAttribute('x',point.x);
+		this.node.setAttribute('y',point.y);
+	}
+}
+
+
+// Arc
+hui.ui.Drawing.Arc = function(options) {
+	this.node = options.node;
+	this.options = hui.override({
+		center : {x:100,y:100},
+  		startDegrees : 0,
+		endDegrees : 0,
+  		innerRadius : 0, 
+		outerRadius : 0,
+		fill : '#eee'
+	},options);
+	this._redraw();
+}
+
+hui.ui.Drawing.Arc.create = function(options) {
+	var css = [];
+	if (options.stroke) {
+		if (options.stroke.color) {
+			css.push('stroke:'+options.stroke.color);
+		}
+		if (options.stroke.width) {
+			css.push('stroke-width:'+options.stroke.width);
+		}
+	}
+	options.node = hui.ui.Drawing._build({ tag : 'path' ,parent : options.parent, attributes : {fill : options.fill || '#000', style:css.join(';')}});
+	var arc = new hui.ui.Drawing.Arc(options);
+	return arc;
+}
+
+hui.ui.Drawing.Arc.prototype = {
+	
+	update : function(options) {
+		this.options = hui.override(this.options,options);
+		this._redraw();
+	},
+	_redraw : function() {
+		var o = this.options,
+			cx = o.center.x,
+			cy = o.center.y,
+			startRadians = (o.startDegrees || 0) * Math.PI/180,
+			closeRadians = (o.endDegrees   || 0) * Math.PI/180,
+			r1 = o.innerRadius,
+			r2 = o.outerRadius;
+		
+		var points = [
+			[
+				cx + r2 * Math.cos(startRadians),
+				cy + r2 * Math.sin(startRadians)
+			],
+			[
+				cx + r2 * Math.cos(closeRadians),
+				cy + r2 * Math.sin(closeRadians)
+			],
+			[
+				cx + r1 * Math.cos(closeRadians),
+				cy + r1 * Math.sin(closeRadians)
+			],
+			[
+				cx + r1 * Math.cos(startRadians),
+				cy + r1 * Math.sin(startRadians)
+			]
+		];
+
+		var angleDiff = closeRadians - startRadians;
+		var largeArc = (angleDiff % (Math.PI*2)) > Math.PI ? 1 : 0;
+		var cmds = [
+			"M"+points[0].join(),									// Move to P0
+			"A"+[r2,r2,0,largeArc,1,points[1]].join(),				// Arc to  P1
+			"L"+points[2].join(),									// Line to P2
+			"A"+[r1,r1,0,largeArc,0,points[3]].join(),				// Arc to  P3
+			"z" 		                               				// Close path (Line to P0)
+		];		
+		this.node.setAttribute('d',cmds.join(' '));
+	}
+}
+
+
+
+// Element
+
+hui.ui.Drawing.Element = function(node) {
+	this.node = node;
+}
+
+hui.ui.Drawing.Element.prototype = {
+	setPosition : function(point) {
+		this.node.style.left = point.x+'px';
+		this.node.style.top = point.y+'px';
+	},
+	setCenter : function(point) {
+		this.node.style.left = (point.x - this.node.clientWidth/2)+'px';
+		this.node.style.top = (point.y - this.node.clientHeight/2)+'px';
+	}
+}
+
+
+hui.geometry = {
+	intersectLineLine : function(a1, a2, b1, b2) {
+    
+	    var ua_t = (b2.x - b1.x) * (a1.y - b1.y) - (b2.y - b1.y) * (a1.x - b1.x);
+	    var ub_t = (a2.x - a1.x) * (a1.y - b1.y) - (a2.y - a1.y) * (a1.x - b1.x);
+	    var u_b  = (b2.y - b1.y) * (a2.x - a1.x) - (b2.x - b1.x) * (a2.y - a1.y);
+
+	    if ( u_b != 0 ) {
+	        var ua = ua_t / u_b;
+	        var ub = ub_t / u_b;
+
+	        if ( 0 &lt;= ua &amp;&amp; ua &lt;= 1 &amp;&amp; 0 &lt;= ub &amp;&amp; ub &lt;= 1 ) {
+				return {
+	                    x : a1.x + ua * (a2.x - a1.x),
+	                    y : a1.y + ua * (a2.y - a1.y)
+	               }
+	        }
+	    }
+
+	    return null;
+	},
+	intersectLineRectangle : function(a1, a2, r1, r2) {
+	    var min        = {x : Math.min(r1.x,r2.x),y : Math.min(r1.y,r2.y)};
+	    var max        = {x : Math.max(r1.x,r2.x),y : Math.max(r1.y,r2.y)};
+	    var topRight   = {x: max.x, y: min.y };
+	    var bottomLeft = {x: min.x, y: max.y };
+    
+	    var inter1 = hui.geometry.intersectLineLine(min, topRight, a1, a2);
+	    var inter2 = hui.geometry.intersectLineLine(topRight, max, a1, a2);
+	    var inter3 = hui.geometry.intersectLineLine(max, bottomLeft, a1, a2);
+	    var inter4 = hui.geometry.intersectLineLine(bottomLeft, min, a1, a2);
+    
+	    var result = [];
+
+		if (inter1!=null) result.push(inter1);
+		if (inter2!=null) result.push(inter2);
+		if (inter3!=null) result.push(inter3);
+		if (inter4!=null) result.push(inter4);
+	    return result;
+	},
+	distance : function( point1, point2 ) {
+		var xs = point2.x - point1.x;
+
+		var ys = point2.y - point1.y;
+
+		return Math.sqrt( xs * xs + ys * ys );
+	}
+}
+</pre>
+    </article>
+</section>
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+
+	<span class="copyright">
+	DocStrap Copyright © 2012-2015 The contributors to the JSDoc3 and DocStrap projects.
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a>
+	
+		on Wed Jan 4th 2017
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
+</body>
+</html>

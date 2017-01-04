@@ -1,13 +1,10 @@
 /**
  * An alert
- * <pre><strong>options:</strong> {
- *  element : «Element | ID»,
- *  name : «String»,
- *  modal : «true | <strong>false</strong>»
- * }
- * </pre>
  * @constructor
  * @param {Object} options The options
+ * @param {Element} options.element The DOM node
+ * @param {String} options.name The component name
+ * @param {Boolean} options.modal If the alert i modal (false)
  */
 hui.ui.Alert = function(options) {
 	this.options = hui.override({modal:false},options);
@@ -36,7 +33,7 @@ hui.ui.Alert = function(options) {
  */
 hui.ui.Alert.create = function(options) {
 	options = hui.override({text:'',emotion:null,title:null},options);
-	
+
 	var element = options.element = hui.build('div',{'class':'hui_alert'});
 	var body = hui.build('div',{'class':'hui_alert_body',parent:element});
 	hui.build('div',{'class':'hui_alert_content',parent:body});
@@ -51,7 +48,7 @@ hui.ui.Alert.create = function(options) {
 	if (options.text) {
 		obj.setText(options.text);
 	}
-	
+
 	return obj;
 };
 
@@ -76,14 +73,14 @@ hui.ui.Alert.prototype = {
 		hui.ui.hideCurtain(this);
 	},
 	/** Sets the alert title
-	 * @param {String} text The new title
-	 */
+   * @param {String} text The new title
+   */
 	setTitle : function(text) {
 		if (!this.title) {
 			this.title = hui.build('h1',{parent:this.content});
 		}
 		hui.dom.setText(this.title,hui.ui.getTranslated(text));
-		
+
 	},
 	/** Sets the alert text
 	 * @param {String} text The new text

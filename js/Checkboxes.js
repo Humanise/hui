@@ -98,11 +98,17 @@ hui.ui.Checkboxes.prototype = {
   getLabel : function() {
     return this.options.label;
   },
-  /** @private @deprecated */
+  /**
+   * @private
+   * @deprecated
+   */
   setValues : function(values) {
     this.setValue(values);
   },
-  /** @private @deprecated */
+  /** 
+   * @private
+   * @deprecated
+   */
   getValues : function() {
     return this.values;
   },

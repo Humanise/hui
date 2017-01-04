@@ -7,15 +7,17 @@
 
   body {
     font-family: 'Open Sans', Arial, sans-serif;
-    margin: 20px 40px;
+    margin: 20px 10px;
+    text-align: center;
   }
 
   h1 {
     font-weight: 100;
     font-size: 48px;
+    font-size: 6vw;
     line-height: 1;
-    color: #333;
-    letter-spacing: -0.02em;
+    color: rgba(255,255,255,0);
+    letter-spacing: -10px;
   }
 
   h1 span {
@@ -25,6 +27,8 @@
   h1 span:first-letter {
     font-weight: 600;
     color: #000;
+    z-index: 1;
+    position: relative;
   }
 
   .logo {
@@ -41,40 +45,51 @@
     text-decoration: none;
     border-bottom: 1px solid #eee;
   }
+  a:hover {
+    border-color: #0065EA;
+  }
 
   ul {
     color: #aaa;
     font-size: 14px;
+    display: inline-block;
+    padding: 0;
   }
 
   li {
     margin: 5px 0;
+    text-align: left;
   }
   </style>
   <script>hui=window.hui||{_:[],onReady:function(f){this._.push(f)}};</script>
 </head>
 <body>
   <h1><span>Humanise</span> <span>User</span> <span>Interface</span></h1>
-  <p>The common language of machines and humans</p>
+  <p>The common language of humans and machines</p>
   <ul>
     <li><a href="demo/index.html">Demonstration</a></li>
     <li><a href="test/index.xml">Test site</a></li>
     <li><a href="api/index.html">JavaScript API</a></li>
-    <li><a href="docs/index.html">JavaScript API (alt)</a></li>
     <li><a href="api/xml/index.html">XML api</a>
   </ul>
   <script>
   hui.onReady(function() {
-    hui.build('link',{href:'https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800', rel:'stylesheet', type:'text/css',parent:document.head});
+    hui.build('link',{
+      href : 'https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800',
+      rel : 'stylesheet',
+      type : 'text/css',
+      parent : document.head
+    });
     hui.demand(['hui.animation','hui.Color'],function() {
       hui.animate({
         node : hui.find('h1'),
-        css : { 'font-size' : '56px', color: '#abf' },
-        duration : 300,
+        css : { 'letter-spacing' : '0px', color: '#ddd' },
+        ease : hui.ease.elastic,
+        duration : 2000,
         $complete : function() {
           hui.animate({
             node : hui.find('h1'),
-            css : { 'font-size' : '48px', color: '#000' },
+            css : { color: '#000' },
             duration : 300});
         }
       });

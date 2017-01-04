@@ -1,4 +1,4 @@
-hui.onReady(function() {
+hui = window.hui || {};
 
 /** @constructor
  * @param str The color like red or rgb(255, 0, 0) or #ff0000 or rgb(100%, 0%, 0%)
@@ -252,5 +252,6 @@ hui.Color.rgb2hex = function(rgbary) {
   return c;
 };
 
-hui.define('hui.Color',hui.Color)
+hui.onReady(function() {
+  hui.define('hui.Color',hui.Color)
 })

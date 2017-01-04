@@ -18,7 +18,7 @@
     _super.call(this, options);
     this._attach();
   }
-  
+
   hui.ui.Skeleton.prototype = {
     _attach : function() {
       var initial = 0,

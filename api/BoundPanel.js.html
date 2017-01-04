@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>Humanise UI Source: BoundPanel.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.cosmo.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top navbar-inverse">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">Humanise UI</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="namespaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="hui.html">hui</a></li><li><a href="hui.animation.html">hui.animation</a></li><li><a href="hui.array.html">hui.array</a></li><li><a href="hui.browser.html">hui.browser</a></li><li><a href="hui.cls.html">hui.cls</a></li><li><a href="hui.cookie.html">hui.cookie</a></li><li><a href="hui.document.html">hui.document</a></li><li><a href="hui.dom.html">hui.dom</a></li><li><a href="hui.drag.html">hui.drag</a></li><li><a href="hui.ease.html">hui.ease</a></li><li><a href="hui.effect.html">hui.effect</a></li><li><a href="hui.form.html">hui.form</a></li><li><a href="hui.frame.html">hui.frame</a></li><li><a href="hui.location.html">hui.location</a></li><li><a href="hui.position.html">hui.position</a></li><li><a href="hui.selection.html">hui.selection</a></li><li><a href="hui.string.html">hui.string</a></li><li><a href="hui.style.html">hui.style</a></li><li><a href="hui.test.html">hui.test</a></li><li><a href="hui.ui.html">hui.ui</a></li><li><a href="hui.ui.Flash.html">hui.ui.Flash</a></li><li><a href="hui.ui.Graph.D3.html">hui.ui.Graph.D3</a></li><li><a href="hui.ui.Graph.Protoviz.html">hui.ui.Graph.Protoviz</a></li><li><a href="hui.ui.Graph.Raphael.html">hui.ui.Graph.Raphael</a></li><li><a href="hui.ui.MarkupEditor.MSIE.html">hui.ui.MarkupEditor.MSIE</a></li><li><a href="hui.ui.MarkupEditor.util.html">hui.ui.MarkupEditor.util</a></li><li><a href="hui.ui.MarkupEditor.webkit.html">hui.ui.MarkupEditor.webkit</a></li><li><a href="hui.window.html">hui.window</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="hui.animation.Item.html">hui.animation.Item</a></li><li><a href="hui.animation.Loop.html">hui.animation.Loop</a></li><li><a href="hui.Color.html">hui.Color</a></li><li><a href="hui.Event.html">hui.Event</a></li><li><a href="hui.Preloader.html">hui.Preloader</a></li><li><a href="hui.ui.Alert.html">hui.ui.Alert</a></li><li><a href="hui.ui.Bar.html">hui.ui.Bar</a></li><li><a href="hui.ui.Bar.Button.html">hui.ui.Bar.Button</a></li><li><a href="hui.ui.Bar.Text.html">hui.ui.Bar.Text</a></li><li><a href="hui.ui.BoundPanel.html">hui.ui.BoundPanel</a></li><li><a href="hui.ui.Box.html">hui.ui.Box</a></li><li><a href="hui.ui.Button.html">hui.ui.Button</a></li><li><a href="hui.ui.Buttons.html">hui.ui.Buttons</a></li><li><a href="hui.ui.Calendar.html">hui.ui.Calendar</a></li><li><a href="hui.ui.Chart.html">hui.ui.Chart</a></li><li><a href="hui.ui.Checkbox.html">hui.ui.Checkbox</a></li><li><a href="hui.ui.Checkboxes.html">hui.ui.Checkboxes</a></li><li><a href="hui.ui.Checkboxes.Items.html">hui.ui.Checkboxes.Items</a></li><li><a href="hui.ui.CodeInput.html">hui.ui.CodeInput</a></li><li><a href="hui.ui.ColorInput.html">hui.ui.ColorInput</a></li><li><a href="hui.ui.ColorPicker.html">hui.ui.ColorPicker</a></li><li><a href="hui.ui.Columns.html">hui.ui.Columns</a></li><li><a href="hui.ui.Component.html">hui.ui.Component</a></li><li><a href="hui.ui.DatePicker.html">hui.ui.DatePicker</a></li><li><a href="hui.ui.DateTimeField.html">hui.ui.DateTimeField</a></li><li><a href="hui.ui.Diagram.html">hui.ui.Diagram</a></li><li><a href="hui.ui.Diagram.Box.html">hui.ui.Diagram.Box</a></li><li><a href="hui.ui.Diagram.Icon.html">hui.ui.Diagram.Icon</a></li><li><a href="hui.ui.Dock.html">hui.ui.Dock</a></li><li><a href="hui.ui.Drawing.html">hui.ui.Drawing</a></li><li><a href="hui.ui.DropDown.html">hui.ui.DropDown</a></li><li><a href="hui.ui.Editable.html">hui.ui.Editable</a></li><li><a href="hui.ui.Editor.html">hui.ui.Editor</a></li><li><a href="hui.ui.Editor.Header.html">hui.ui.Editor.Header</a></li><li><a href="hui.ui.Editor.Html.html">hui.ui.Editor.Html</a></li><li><a href="hui.ui.Finder.html">hui.ui.Finder</a></li><li><a href="hui.ui.FontInput.html">hui.ui.FontInput</a></li><li><a href="hui.ui.FontPicker.html">hui.ui.FontPicker</a></li><li><a href="hui.ui.Formula.html">hui.ui.Formula</a></li><li><a href="hui.ui.Formula.Field.html">hui.ui.Formula.Field</a></li><li><a href="hui.ui.Formula.Group.html">hui.ui.Formula.Group</a></li><li><a href="hui.ui.Fragment.html">hui.ui.Fragment</a></li><li><a href="hui.ui.Gallery.html">hui.ui.Gallery</a></li><li><a href="hui.ui.Graph.html">hui.ui.Graph</a></li><li><a href="hui.ui.Icon.html">hui.ui.Icon</a></li><li><a href="hui.ui.IFrame.html">hui.ui.IFrame</a></li><li><a href="hui.ui.ImageInput.html">hui.ui.ImageInput</a></li><li><a href="hui.ui.ImageViewer.html">hui.ui.ImageViewer</a></li><li><a href="hui.ui.InfoView.html">hui.ui.InfoView</a></li><li><a href="hui.ui.Input.html">hui.ui.Input</a></li><li><a href="hui.ui.Layout.html">hui.ui.Layout</a></li><li><a href="hui.ui.Link.html">hui.ui.Link</a></li><li><a href="hui.ui.LinkInput.html">hui.ui.LinkInput</a></li><li><a href="hui.ui.Links.html">hui.ui.Links</a></li><li><a href="hui.ui.List.html">hui.ui.List</a></li><li><a href="hui.ui.LocationInput.html">hui.ui.LocationInput</a></li><li><a href="hui.ui.LocationPicker.html">hui.ui.LocationPicker</a></li><li><a href="hui.ui.MarkupEditor.html">hui.ui.MarkupEditor</a></li><li><a href="hui.ui.MediaSimulator.html">hui.ui.MediaSimulator</a></li><li><a href="hui.ui.Menu.html">hui.ui.Menu</a></li><li><a href="hui.ui.NumberField.html">hui.ui.NumberField</a></li><li><a href="hui.ui.NumberValidator.html">hui.ui.NumberValidator</a></li><li><a href="hui.ui.ObjectInput.html">hui.ui.ObjectInput</a></li><li><a href="hui.ui.ObjectList.html">hui.ui.ObjectList</a></li><li><a href="hui.ui.ObjectList.Object.html">hui.ui.ObjectList.Object</a></li><li><a href="hui.ui.Overflow.html">hui.ui.Overflow</a></li><li><a href="hui.ui.Overlay.html">hui.ui.Overlay</a></li><li><a href="hui.ui.Pages.html">hui.ui.Pages</a></li><li><a href="hui.ui.Picker.html">hui.ui.Picker</a></li><li><a href="hui.ui.ProgressBar.html">hui.ui.ProgressBar</a></li><li><a href="hui.ui.ProgressIndicator.html">hui.ui.ProgressIndicator</a></li><li><a href="hui.ui.Radiobuttons.html">hui.ui.Radiobuttons</a></li><li><a href="hui.ui.Rendering.html">hui.ui.Rendering</a></li><li><a href="hui.ui.RevealingToolbar.html">hui.ui.RevealingToolbar</a></li><li><a href="hui.ui.Rows.html">hui.ui.Rows</a></li><li><a href="hui.ui.SearchField.html">hui.ui.SearchField</a></li><li><a href="hui.ui.Segmented.html">hui.ui.Segmented</a></li><li><a href="hui.ui.Selection.html">hui.ui.Selection</a></li><li><a href="hui.ui.Selection.Items.html">hui.ui.Selection.Items</a></li><li><a href="hui.ui.Skeleton.html">hui.ui.Skeleton</a></li><li><a href="hui.ui.Slider.html">hui.ui.Slider</a></li><li><a href="hui.ui.Source.html">hui.ui.Source</a></li><li><a href="hui.ui.Split.html">hui.ui.Split</a></li><li><a href="hui.ui.Structure.html">hui.ui.Structure</a></li><li><a href="hui.ui.StyleEditor.html">hui.ui.StyleEditor</a></li><li><a href="hui.ui.StyleLength.html">hui.ui.StyleLength</a></li><li><a href="hui.ui.Tab.html">hui.ui.Tab</a></li><li><a href="hui.ui.Tabs.html">hui.ui.Tabs</a></li><li><a href="hui.ui.TextField.html">hui.ui.TextField</a></li><li><a href="hui.ui.Tiles.html">hui.ui.Tiles</a></li><li><a href="hui.ui.TimeLine.html">hui.ui.TimeLine</a></li><li><a href="hui.ui.TokenField.html">hui.ui.TokenField</a></li><li><a href="hui.ui.Toolbar.html">hui.ui.Toolbar</a></li><li><a href="hui.ui.Toolbar.Icon.html">hui.ui.Toolbar.Icon</a></li><li><a href="hui.ui.Toolbar.More.html">hui.ui.Toolbar.More</a></li><li><a href="hui.ui.Upload.html">hui.ui.Upload</a></li><li><a href="hui.ui.Upload.Flash.html">hui.ui.Upload.Flash</a></li><li><a href="hui.ui.Upload.Frame.html">hui.ui.Upload.Frame</a></li><li><a href="hui.ui.Upload.HTML5.html">hui.ui.Upload.HTML5</a></li><li><a href="hui.ui.Upload.Item.html">hui.ui.Upload.Item</a></li><li><a href="hui.ui.VideoPlayer.html">hui.ui.VideoPlayer</a></li><li><a href="hui.ui.Window.html">hui.ui.Window</a></li><li><a href="hui.ui.Wizard.html">hui.ui.Wizard</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+			
+
+		<h1 class="page-title">Source: BoundPanel.js</h1>
+    
+<section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">/**
+ * A bound panel is a panel that is shown at a certain place
+ * @constructor
+ * @param {Object} options The options
+ * @param {Node} options.element The root element
+ * @param {string} options.name The component name
+ */
+hui.ui.BoundPanel = function(options) {
+  this.options = options;
+  this.element = hui.get(options.element);
+  this.name = options.name;
+  this.visible = false;
+  this.content = hui.get.firstByClass(this.element,'hui_boundpanel_content');
+  this.arrow = hui.get.firstByClass(this.element,'hui_boundpanel_arrow');
+  this.arrowWide = 37;
+  this.arrowNarrow = 18;
+  if (options.variant=='light') {
+    this.arrowWide = 23;
+    this.arrowNarrow = 12;
+  }
+  hui.ui.extend(this);
+};
+
+/**
+ * Creates a new bound panel
+ *
+ * @param {Object} options The options
+ * @param {String} options.name The component name
+ * @param {String} options.variant A visual variation
+ * @param {Number} options.left Pixels from left
+ * @param {Number} options.top Pixels from top
+ * @param {Number} options.width Width in pixels
+ * @param {Number} options.padding Padding in pixels
+ */
+hui.ui.BoundPanel.create = function(options) {
+  options = hui.override({name:null, top:0, left:0, width:null, padding: null, modal: false, hideOnClick: false}, options);
+
+
+  var html =
+    '&lt;div class="hui_boundpanel_arrow">&lt;/div>'+
+    '&lt;div class="hui_boundpanel_top">&lt;div>&lt;div>&lt;/div>&lt;/div>&lt;/div>'+
+    '&lt;div class="hui_boundpanel_body">&lt;div class="hui_boundpanel_body">&lt;div class="hui_boundpanel_body">&lt;div class="hui_boundpanel_content" style="';
+  if (options.width) {
+    html+='width:'+options.width+'px;';
+  }
+  if (options.padding) {
+    html+='padding:'+options.padding+'px;';
+  }
+  html+='">&lt;/div>&lt;/div>&lt;/div>&lt;/div>'+
+    '&lt;div class="hui_boundpanel_bottom">&lt;div>&lt;div>&lt;/div>&lt;/div>&lt;/div>';
+
+  options.element = hui.build(
+    'div',{
+      'class' : options.variant ? 'hui_boundpanel hui_boundpanel_'+options.variant : 'hui_boundpanel',
+      style : 'display:none;zIndex:'+hui.ui.nextPanelIndex()+';top:'+options.top+'px;left:'+options.left+'px',
+      html : html,
+      parent : document.body
+    }
+  );
+  return new hui.ui.BoundPanel(options);
+};
+
+
+hui.ui.BoundPanel.prototype = {
+  /**
+   * Show or hide the panel
+   */
+  toggle : function() {
+    if (!this.visible) {
+      this.show();
+    } else {
+      this.hide();
+    }
+  },
+  /** Shows the panel */
+  show : function(options) {
+    options = options || {};
+    var target = options.target || this.options.target;
+
+    if (target) {
+      if (target.nodeName) {
+        this.position(target);
+      } else {
+        this.position(hui.ui.get(target));
+      }
+    }
+    if (this.visible) {
+      this.element.style.zIndex = hui.ui.nextPanelIndex();
+      return;
+    }
+    if (hui.browser.opacity) {
+      hui.style.setOpacity(this.element,0);
+    }
+    var vert;
+    if (this.relativePosition=='left') {
+      vert = false;
+      this.element.style.marginLeft='20px';
+    } else if (this.relativePosition=='right') {
+      vert = false;
+      this.element.style.marginLeft='-20px';
+    } else if (this.relativePosition=='top') {
+      vert = true;
+      this.element.style.marginTop='20px';
+    } else if (this.relativePosition=='bottom') {
+      vert = true;
+      this.element.style.marginTop='-20px';
+    }
+    this.element.style.visibility = 'visible';
+    this.element.style.display = 'block';
+    var index = hui.ui.nextPanelIndex();
+    this.element.style.zIndex = index;
+    hui.ui.callVisible(this);
+    if (hui.browser.opacity) {
+      hui.animate(this.element,'opacity',1,300,{ease:hui.ease.fastSlow});
+    }
+    hui.animate(this.element,vert ? 'margin-top' : 'margin-left','0px',300,{ease:hui.ease.fastSlow});
+    this.visible=true;
+    if (this.options.modal) {
+      hui.ui.showCurtain({widget:this,zIndex:index-1,transparent:this.options.modal=='transparent',color:'auto'});
+    }
+    if (this.options.hideOnClick) {
+      this.hideListener = hui.listen(document.body,'click',function(e) {
+        if (!hui.ui.isWithin(e,this.element)) {
+          this.hide();
+        }
+      }.bind(this));
+    }
+  },
+  /** @private */
+  $curtainWasClicked : function() {
+    hui.ui.hideCurtain(this);
+    this.hide();
+  },
+  /** Hides the panel */
+  hide : function() {
+    if (!this.visible) {
+      return;
+    }
+    if (!hui.browser.opacity) {
+      this.element.style.display='none';
+      hui.ui.callVisible(this);
+    } else {
+      hui.animate(this.element,'opacity',0,100,{ease:hui.ease.slowFast,$complete:function() {
+        this.element.style.display='none';
+        hui.ui.callVisible(this);
+      }.bind(this)});
+    }
+    if (this.options.modal) {
+      hui.ui.hideCurtain(this);
+    }
+    this.visible=false;
+    hui.unListen(document.body,'click',this.hideListener);
+  },
+  /**
+   * If the panel is currently visible
+   */
+  isVisible : function() {
+    return this.visible;
+  },
+  /**
+   * Adds a widget or element to the panel
+   * @param {Node | Widget} child The object to add
+   */
+  add : function(child) {
+    if (child.getElement) {
+      this.content.appendChild(child.getElement());
+    } else {
+      this.content.appendChild(child);
+    }
+  },
+  clear : function() {
+    hui.ui.destroyDescendants(this.content);
+    this.content.innerHTML='';
+  },
+  /**
+   * Adds som vertical space to the panel
+   * @param {pixels} height The height of the space in pixels
+   */
+  addSpace : function(height) {
+    this.add(hui.build('div',{style:'font-size:0px;height:'+height+'px'}));
+  },
+  _getDimensions : function() {
+    var width, height;
+    if (this.element.style.display=='none') {
+      this.element.style.visibility='hidden';
+      this.element.style.display='block';
+      width = this.element.clientWidth;
+      height = this.element.clientHeight;
+      this.element.style.display='none';
+      this.element.style.visibility='';
+    } else {
+      width = this.element.clientWidth;
+      height = this.element.clientHeight;
+    }
+    return {width:width,height:height};
+  },
+  $$childSizeChanged : function() {
+    this._rePosition();
+  },
+  $$layout : function() {
+    this._rePosition();
+  },
+  _rePosition : function() {
+    if (this._latest) {
+      this.position(this._latest);
+    }
+  },
+  /** Position the panel at a node
+   * @param {Node} node The node the panel should be positioned at
+   */
+  position : function(options) {
+    this._latest = options;
+    var node,
+      position,
+      nodeOffset,
+      nodeScrollOffset;
+    if (options.getElement) {
+      node = options.getElement();
+    } else if (options.element) {
+      node = options.element;
+      position = options.position;
+    } else if (options.rect) {
+      position = options.position;
+      node = {
+        offsetWidth : options.rect.width,
+        offsetHeight : options.rect.height
+      };
+      nodeOffset = {
+        left : options.rect.left,
+        top : options.rect.top
+      };
+      nodeScrollOffset = {left: 0, top: 0};
+    } else {
+      node = hui.get(options);
+    }
+
+    if (!nodeOffset) {
+      nodeOffset = {left:hui.position.getLeft(node),top:hui.position.getTop(node)};
+    }
+    if (!nodeScrollOffset) {
+      nodeScrollOffset = hui.position.getScrollOffset(node);
+    }
+
+    var windowScrollOffset = {left:hui.window.getScrollLeft(),top:hui.window.getScrollTop()};
+    var nodeLeft = nodeOffset.left-windowScrollOffset.left+hui.window.getScrollLeft();
+    var nodeWidth = node.clientWidth || node.offsetWidth;
+    var nodeHeight = node.clientHeight || node.offsetHeight;
+
+    var panelDimensions = this._getDimensions();
+    var viewportWidth = hui.window.getViewWidth();
+    var viewportHeight = hui.window.getViewHeight();
+
+    var arrowLeft, arrowTop, left, top;
+    var positionOnScreen = {
+      top : nodeOffset.top-windowScrollOffset.top-(nodeScrollOffset.top-windowScrollOffset.top)
+    };
+    var vertical = positionOnScreen.top / viewportHeight;
+
+    if (position=='vertical') {
+      vertical = vertical > 0.5 ? 0.9 : 0.1;
+    }
+    var min, max;
+    if (vertical &lt;= 0.1) {
+      this.relativePosition='top';
+      this.arrow.className = 'hui_boundpanel_arrow hui_boundpanel_arrow_top';
+      if (this.options.variant=='light') {
+        arrowTop = this.arrowNarrow*-1+1;
+      } else {
+        arrowTop = this.arrowNarrow*-1+2;
+      }
+      left = Math.min(viewportWidth-panelDimensions.width-2,Math.max(3,nodeLeft+(nodeWidth/2)-((panelDimensions.width)/2)));
+      arrowLeft = (nodeLeft+nodeWidth/2)-left-this.arrowNarrow;
+      top = nodeOffset.top+nodeHeight+8 - (nodeScrollOffset.top-windowScrollOffset.top);
+    }
+    else if (vertical >= 0.9) {
+      this.relativePosition='bottom';
+      this.arrow.className='hui_boundpanel_arrow hui_boundpanel_arrow_bottom';
+      if (this.options.variant=='light') {
+        arrowTop = panelDimensions.height-2;
+      } else {
+        arrowTop = panelDimensions.height-6;
+      }
+      left = Math.min(viewportWidth-panelDimensions.width-3,Math.max(3,nodeLeft+(nodeWidth/2)-((panelDimensions.width)/2)));
+      arrowLeft = (nodeLeft+nodeWidth/2)-left-this.arrowNarrow;
+      top = nodeOffset.top-panelDimensions.height - 5 - (nodeScrollOffset.top-windowScrollOffset.top);
+    }
+    else if (( nodeLeft + nodeWidth / 2 ) / viewportWidth &lt; 0.5) {
+      this.relativePosition='left';
+      left = nodeLeft + nodeWidth + 10;
+      this.arrow.className = 'hui_boundpanel_arrow hui_boundpanel_arrow_left';
+      top = nodeOffset.top+(nodeHeight-panelDimensions.height) / 2;
+      //top = Math.min(top,viewportHeight-panelDimensions.height+(windowScrollOffset.top+nodeScrollOffset.top));
+      top-= (nodeScrollOffset.top-windowScrollOffset.top);
+      min = windowScrollOffset.top + 3;
+      max = windowScrollOffset.top + (viewportHeight-panelDimensions.height) - 3;
+      top = Math.min(Math.max(top,min),max);
+      arrowTop = nodeOffset.top - top;
+      arrowTop -= (nodeScrollOffset.top-windowScrollOffset.top);
+      arrowTop -= this.arrowWide / 2;
+      arrowTop += nodeHeight / 2;
+      if (this.options.variant == 'light') {
+        arrowLeft= -11;
+        arrowTop += 2;
+      } else {
+        arrowLeft = -14;
+      }
+    } else {
+      this.relativePosition = 'right';
+      left = nodeLeft - panelDimensions.width - 10;
+      this.arrow.className = 'hui_boundpanel_arrow hui_boundpanel_arrow_right';
+      top = nodeOffset.top + (nodeHeight-panelDimensions.height) / 2;
+      //top = Math.min(top,viewportHeight-panelDimensions.height+(windowScrollOffset.top+nodeScrollOffset.top));
+      top-= (nodeScrollOffset.top-windowScrollOffset.top);
+      min = windowScrollOffset.top + 3;
+      max = windowScrollOffset.top + (viewportHeight - panelDimensions.height)-3;
+      top = Math.min(Math.max(top,min),max);
+      arrowTop = nodeOffset.top-top;
+      arrowTop -= (nodeScrollOffset.top - windowScrollOffset.top);
+        arrowTop -= this.arrowWide/2;
+        arrowTop += nodeHeight/2;
+      if (this.options.variant == 'light') {
+        arrowLeft = panelDimensions.width - 1;
+        arrowTop += 2;
+      } else {
+        arrowLeft = panelDimensions.width - 4;
+      }
+    }
+    this.arrow.style.marginTop = arrowTop + 'px';
+    this.arrow.style.marginLeft = arrowLeft + 'px';
+    if (this.visible) {
+      hui.animate(this.element,'top',top+'px',500,{ease:hui.ease.fastSlow});
+      hui.animate(this.element,'left',left+'px',500,{ease:hui.ease.fastSlow});
+    } else {
+      this.element.style.top = top + 'px';
+      this.element.style.left = left + 'px';
+    }
+  },
+  destroy : function() {
+    hui.ui.hideCurtain(this);
+    hui.dom.remove(this.element);
+  }
+};</pre>
+    </article>
+</section>
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+
+	<span class="copyright">
+	DocStrap Copyright © 2012-2015 The contributors to the JSDoc3 and DocStrap projects.
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a>
+	
+		on Wed Jan 4th 2017
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
+</body>
+</html>

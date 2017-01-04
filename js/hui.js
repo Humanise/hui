@@ -2,7 +2,7 @@
  * The root namespace of Humanise User Interface
  * @namespace
  */
-window.hui = window.hui || {};
+hui = window.hui || {};
 
 (function(hui,agent,window) {
   hui.KEY_BACKSPACE = 8;
@@ -23,7 +23,8 @@ window.hui = window.hui || {};
   /**
    * @namespace
    */
-  var browser = hui.browser = {};
+  hui.browser = {};
+  var browser = hui.browser;
 
   /** If the browser is any version of InternetExplorer */
   browser.msie = !/opera/i.test(agent) && /MSIE/.test(agent) || /Trident/.test(agent);

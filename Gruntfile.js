@@ -1,5 +1,5 @@
 module.exports = function(grunt) {
-  
+
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
@@ -49,10 +49,9 @@ module.exports = function(grunt) {
       dist : {
         src: ['js/*.js'],
         options: {
-          destination: 'doc'
-          /*,
+          destination: 'api',
           template : "node_modules/ink-docstrap/template",
-          configure : "node_modules/ink-docstrap/template/jsdoc.conf.json"*/
+          configure : "api/jsdoc.conf.json"
         }
       }
     },

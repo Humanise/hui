@@ -142,16 +142,6 @@ hui.ui.Selection.prototype = {
     items.parent = this;
     this.subItems.push(items);
   },
-  /** @private
-
-  registerItem : function(id,title,icon,badge,value,kind) {
-    var element = hui.get(id);
-    var item = {id:id,title:title,icon:icon,badge:badge,element:element,value:value,kind:kind};
-    this.items.push(item);
-    this.addItemBehavior(element,item);
-    this.selection = this._getSelectionWithValue(this.options.value);
-  },
-  */
   /** @private */
   addItemBehavior : function(node,item) {
     hui.listen(node,'click',function() {

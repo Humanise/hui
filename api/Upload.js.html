@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>Humanise UI Source: Upload.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.cosmo.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top navbar-inverse">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">Humanise UI</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="namespaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="hui.html">hui</a></li><li><a href="hui.animation.html">hui.animation</a></li><li><a href="hui.array.html">hui.array</a></li><li><a href="hui.browser.html">hui.browser</a></li><li><a href="hui.cls.html">hui.cls</a></li><li><a href="hui.cookie.html">hui.cookie</a></li><li><a href="hui.document.html">hui.document</a></li><li><a href="hui.dom.html">hui.dom</a></li><li><a href="hui.drag.html">hui.drag</a></li><li><a href="hui.ease.html">hui.ease</a></li><li><a href="hui.effect.html">hui.effect</a></li><li><a href="hui.form.html">hui.form</a></li><li><a href="hui.frame.html">hui.frame</a></li><li><a href="hui.location.html">hui.location</a></li><li><a href="hui.position.html">hui.position</a></li><li><a href="hui.selection.html">hui.selection</a></li><li><a href="hui.string.html">hui.string</a></li><li><a href="hui.style.html">hui.style</a></li><li><a href="hui.test.html">hui.test</a></li><li><a href="hui.ui.html">hui.ui</a></li><li><a href="hui.ui.Flash.html">hui.ui.Flash</a></li><li><a href="hui.ui.Graph.D3.html">hui.ui.Graph.D3</a></li><li><a href="hui.ui.Graph.Protoviz.html">hui.ui.Graph.Protoviz</a></li><li><a href="hui.ui.Graph.Raphael.html">hui.ui.Graph.Raphael</a></li><li><a href="hui.ui.MarkupEditor.MSIE.html">hui.ui.MarkupEditor.MSIE</a></li><li><a href="hui.ui.MarkupEditor.util.html">hui.ui.MarkupEditor.util</a></li><li><a href="hui.ui.MarkupEditor.webkit.html">hui.ui.MarkupEditor.webkit</a></li><li><a href="hui.window.html">hui.window</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="hui.animation.Item.html">hui.animation.Item</a></li><li><a href="hui.animation.Loop.html">hui.animation.Loop</a></li><li><a href="hui.Color.html">hui.Color</a></li><li><a href="hui.Event.html">hui.Event</a></li><li><a href="hui.Preloader.html">hui.Preloader</a></li><li><a href="hui.ui.Alert.html">hui.ui.Alert</a></li><li><a href="hui.ui.Bar.html">hui.ui.Bar</a></li><li><a href="hui.ui.Bar.Button.html">hui.ui.Bar.Button</a></li><li><a href="hui.ui.Bar.Text.html">hui.ui.Bar.Text</a></li><li><a href="hui.ui.BoundPanel.html">hui.ui.BoundPanel</a></li><li><a href="hui.ui.Box.html">hui.ui.Box</a></li><li><a href="hui.ui.Button.html">hui.ui.Button</a></li><li><a href="hui.ui.Buttons.html">hui.ui.Buttons</a></li><li><a href="hui.ui.Calendar.html">hui.ui.Calendar</a></li><li><a href="hui.ui.Chart.html">hui.ui.Chart</a></li><li><a href="hui.ui.Checkbox.html">hui.ui.Checkbox</a></li><li><a href="hui.ui.Checkboxes.html">hui.ui.Checkboxes</a></li><li><a href="hui.ui.Checkboxes.Items.html">hui.ui.Checkboxes.Items</a></li><li><a href="hui.ui.CodeInput.html">hui.ui.CodeInput</a></li><li><a href="hui.ui.ColorInput.html">hui.ui.ColorInput</a></li><li><a href="hui.ui.ColorPicker.html">hui.ui.ColorPicker</a></li><li><a href="hui.ui.Columns.html">hui.ui.Columns</a></li><li><a href="hui.ui.Component.html">hui.ui.Component</a></li><li><a href="hui.ui.DatePicker.html">hui.ui.DatePicker</a></li><li><a href="hui.ui.DateTimeField.html">hui.ui.DateTimeField</a></li><li><a href="hui.ui.Diagram.html">hui.ui.Diagram</a></li><li><a href="hui.ui.Diagram.Box.html">hui.ui.Diagram.Box</a></li><li><a href="hui.ui.Diagram.Icon.html">hui.ui.Diagram.Icon</a></li><li><a href="hui.ui.Dock.html">hui.ui.Dock</a></li><li><a href="hui.ui.Drawing.html">hui.ui.Drawing</a></li><li><a href="hui.ui.DropDown.html">hui.ui.DropDown</a></li><li><a href="hui.ui.Editable.html">hui.ui.Editable</a></li><li><a href="hui.ui.Editor.html">hui.ui.Editor</a></li><li><a href="hui.ui.Editor.Header.html">hui.ui.Editor.Header</a></li><li><a href="hui.ui.Editor.Html.html">hui.ui.Editor.Html</a></li><li><a href="hui.ui.Finder.html">hui.ui.Finder</a></li><li><a href="hui.ui.FontInput.html">hui.ui.FontInput</a></li><li><a href="hui.ui.FontPicker.html">hui.ui.FontPicker</a></li><li><a href="hui.ui.Formula.html">hui.ui.Formula</a></li><li><a href="hui.ui.Formula.Field.html">hui.ui.Formula.Field</a></li><li><a href="hui.ui.Formula.Group.html">hui.ui.Formula.Group</a></li><li><a href="hui.ui.Fragment.html">hui.ui.Fragment</a></li><li><a href="hui.ui.Gallery.html">hui.ui.Gallery</a></li><li><a href="hui.ui.Graph.html">hui.ui.Graph</a></li><li><a href="hui.ui.Icon.html">hui.ui.Icon</a></li><li><a href="hui.ui.IFrame.html">hui.ui.IFrame</a></li><li><a href="hui.ui.ImageInput.html">hui.ui.ImageInput</a></li><li><a href="hui.ui.ImageViewer.html">hui.ui.ImageViewer</a></li><li><a href="hui.ui.InfoView.html">hui.ui.InfoView</a></li><li><a href="hui.ui.Input.html">hui.ui.Input</a></li><li><a href="hui.ui.Layout.html">hui.ui.Layout</a></li><li><a href="hui.ui.Link.html">hui.ui.Link</a></li><li><a href="hui.ui.LinkInput.html">hui.ui.LinkInput</a></li><li><a href="hui.ui.Links.html">hui.ui.Links</a></li><li><a href="hui.ui.List.html">hui.ui.List</a></li><li><a href="hui.ui.LocationInput.html">hui.ui.LocationInput</a></li><li><a href="hui.ui.LocationPicker.html">hui.ui.LocationPicker</a></li><li><a href="hui.ui.MarkupEditor.html">hui.ui.MarkupEditor</a></li><li><a href="hui.ui.MediaSimulator.html">hui.ui.MediaSimulator</a></li><li><a href="hui.ui.Menu.html">hui.ui.Menu</a></li><li><a href="hui.ui.NumberField.html">hui.ui.NumberField</a></li><li><a href="hui.ui.NumberValidator.html">hui.ui.NumberValidator</a></li><li><a href="hui.ui.ObjectInput.html">hui.ui.ObjectInput</a></li><li><a href="hui.ui.ObjectList.html">hui.ui.ObjectList</a></li><li><a href="hui.ui.ObjectList.Object.html">hui.ui.ObjectList.Object</a></li><li><a href="hui.ui.Overflow.html">hui.ui.Overflow</a></li><li><a href="hui.ui.Overlay.html">hui.ui.Overlay</a></li><li><a href="hui.ui.Pages.html">hui.ui.Pages</a></li><li><a href="hui.ui.Picker.html">hui.ui.Picker</a></li><li><a href="hui.ui.ProgressBar.html">hui.ui.ProgressBar</a></li><li><a href="hui.ui.ProgressIndicator.html">hui.ui.ProgressIndicator</a></li><li><a href="hui.ui.Radiobuttons.html">hui.ui.Radiobuttons</a></li><li><a href="hui.ui.Rendering.html">hui.ui.Rendering</a></li><li><a href="hui.ui.RevealingToolbar.html">hui.ui.RevealingToolbar</a></li><li><a href="hui.ui.Rows.html">hui.ui.Rows</a></li><li><a href="hui.ui.SearchField.html">hui.ui.SearchField</a></li><li><a href="hui.ui.Segmented.html">hui.ui.Segmented</a></li><li><a href="hui.ui.Selection.html">hui.ui.Selection</a></li><li><a href="hui.ui.Selection.Items.html">hui.ui.Selection.Items</a></li><li><a href="hui.ui.Skeleton.html">hui.ui.Skeleton</a></li><li><a href="hui.ui.Slider.html">hui.ui.Slider</a></li><li><a href="hui.ui.Source.html">hui.ui.Source</a></li><li><a href="hui.ui.Split.html">hui.ui.Split</a></li><li><a href="hui.ui.Structure.html">hui.ui.Structure</a></li><li><a href="hui.ui.StyleEditor.html">hui.ui.StyleEditor</a></li><li><a href="hui.ui.StyleLength.html">hui.ui.StyleLength</a></li><li><a href="hui.ui.Tab.html">hui.ui.Tab</a></li><li><a href="hui.ui.Tabs.html">hui.ui.Tabs</a></li><li><a href="hui.ui.TextField.html">hui.ui.TextField</a></li><li><a href="hui.ui.Tiles.html">hui.ui.Tiles</a></li><li><a href="hui.ui.TimeLine.html">hui.ui.TimeLine</a></li><li><a href="hui.ui.TokenField.html">hui.ui.TokenField</a></li><li><a href="hui.ui.Toolbar.html">hui.ui.Toolbar</a></li><li><a href="hui.ui.Toolbar.Icon.html">hui.ui.Toolbar.Icon</a></li><li><a href="hui.ui.Toolbar.More.html">hui.ui.Toolbar.More</a></li><li><a href="hui.ui.Upload.html">hui.ui.Upload</a></li><li><a href="hui.ui.Upload.Flash.html">hui.ui.Upload.Flash</a></li><li><a href="hui.ui.Upload.Frame.html">hui.ui.Upload.Frame</a></li><li><a href="hui.ui.Upload.HTML5.html">hui.ui.Upload.HTML5</a></li><li><a href="hui.ui.Upload.Item.html">hui.ui.Upload.Item</a></li><li><a href="hui.ui.VideoPlayer.html">hui.ui.VideoPlayer</a></li><li><a href="hui.ui.Window.html">hui.ui.Window</a></li><li><a href="hui.ui.Wizard.html">hui.ui.Wizard</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+			
+
+		<h1 class="page-title">Source: Upload.js</h1>
+    
+<section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">/**
+ * A component for uploading files 
+ * &lt;pre>&lt;strong>options:&lt;/strong> {
+ * url:'',
+ * parameters:{}}
+ *
+ * Events:
+ * uploadDidCompleteQueue - when all files are done
+ * uploadDidStartQueue - when the upload starts
+ * uploadDidComplete(file) - when a single file is successfull
+ * uploadDidFail(file) - when a single file fails
+ * &lt;/pre>
+ * @constructor
+ */
+hui.ui.Upload = function(options) {
+	this.options = hui.override({
+		url : '',
+		parameters : {},
+		multiple : false,
+		maxSize : "20480",
+		types : "*.*",
+		fieldName : 'file',
+		chooseButton : 'Choose files...'
+	},options);
+	this.element = hui.get(options.element);
+	this.itemContainer = hui.get.firstByClass(this.element,'hui_upload_items');
+	this.status = hui.get.firstByClass(this.element,'hui_upload_status');
+	this.placeholder = hui.get.firstByClass(this.element,'hui_upload_placeholder');
+	this.name = options.name;
+	this.items = [];
+	this.busy = false;
+	this._chooseImplementation();
+	hui.ui.extend(this);
+	this._addBehavior();
+}
+
+hui.ui.Upload.implementations = ['HTML5','Frame','Flash'];
+
+hui.ui.Upload.nameIndex = 0;
+
+/** Creates a new upload widget */
+hui.ui.Upload.create = function(options) {
+	options = options || {};
+	options.element = hui.build('div',{
+		'class':'hui_upload',
+		html : '&lt;div class="hui_upload_items">&lt;/div>'+
+		'&lt;div class="hui_upload_status">&lt;/div>'+
+		(options.placeholder ? '&lt;div class="hui_upload_placeholder">&lt;span class="hui_upload_icon">&lt;/span>'+
+			(options.placeholder.title ? '&lt;h2>'+hui.string.escape(hui.ui.getTranslated(options.placeholder.title))+'&lt;/h2>' : '')+
+			(options.placeholder.text ? '&lt;p>'+hui.string.escape(hui.ui.getTranslated(options.placeholder.text))+'&lt;/p>' : '')+
+		'&lt;/div>' : '')
+	});
+	return new hui.ui.Upload(options);
+}
+
+hui.ui.Upload.prototype = {
+	
+	/////////////// Public parts /////////////
+
+	/**
+	 * Change a parameter
+	 */
+	setParameter : function(name,value) {
+		this.options.parameters[name] = value;
+		if (this.impl.setParameter) {
+			this.impl.setParameter(name,value);			
+		}
+	},
+	
+	clear : function() {
+		for (var i=0; i &lt; this.items.length; i++) {
+			if (this.items[i]) {
+				this.items[i].destroy();
+			}
+		};
+		this.items = [];
+		this.itemContainer.style.display='none';
+		this.status.style.display='none';
+		if (this.placeholder) {
+			this.placeholder.style.display='block';
+		}
+	},
+	addDropTarget : function(options) {
+		if (options.element) {
+			hui.drag.listen({
+				element : options.element,
+				hoverClass : options.hoverClass,
+				$dropFiles : function(files) {
+					if (options.$drop) {
+						options.$drop();
+					}
+					this._transferFiles(files);
+				}.bind(this)
+			});
+		}
+	},
+	uploadFiles : function(files) {
+		this._transferFiles(files);
+	},
+
+	//////////////// Private parts ////////////////
+	
+	_chooseImplementation : function() {
+		var impls = hui.ui.Upload.implementations;
+		if (this.options.implementation) {
+			impls.splice(0,0,this.options.implementation);
+		}
+		
+		for (var i=0; i &lt; impls.length; i++) {
+			var impl = hui.ui.Upload[impls[i]];
+			var support = impl.support();
+			if (support.supported) {
+				if (!this.options.multiple) {
+					this.impl = new impl(this);
+					hui.log('Selected impl (single): '+impls[i]);
+					break;
+				} else if (this.options.multiple &amp;&amp; support.multiple) {
+					this.impl = new impl(this);
+					hui.log('Selected impl (multiple): '+impls[i]);
+					break;
+				}
+			}
+		};
+		if (!this.impl) {
+			hui.log('No implementation found, using frame');
+			this.impl = new hui.ui.Upload.Frame(this);
+		}
+	},
+	_addBehavior : function() {
+		if (!this.impl.initialize) {
+			alert(this.impl)
+			return;
+		}
+		hui.ui.onReady(function() {
+			this.impl.initialize();
+			hui.drag.listen({
+				element : this.element,
+				hoverClass : 'hui_upload_drop',
+				$dropFiles : this._transferFiles.bind(this)
+			});
+		}.bind(this));
+	},
+	
+	//////////////////////////// Dropping ///////////////////////
+
+/*	_onDrop : function(e) {
+		hui.log('Drop!')
+		hui.stop(e);
+			hui.log(e)
+		if (e.dataTransfer) {
+			var files = e.dataTransfer.files;
+			if (files &amp;&amp; files.length>0) {
+				this._transferFiles(files);
+			} else {
+				hui.log('No files...');
+				hui.log(e.dataTransfer.types)
+				if (hui.array.contains(e.dataTransfer.types,'image/tiff')) {
+					hui.log(e.dataTransfer.getData('image/tiff'))
+				}
+				hui.log(e.dataTransfer.getData('text/plain'))
+				hui.log(e.dataTransfer.getData('text/html'))
+				hui.log(e.dataTransfer.getData('url'))
+			}
+		} else {
+			hui.log(e)
+		}
+	},*/
+	_transferFiles : function(files) {
+		if (files.length>0) {
+			if (!this.options.multiple) {
+				this._transferFile(files[0]);
+			} else {
+				for (var i=0; i &lt; files.length; i++) {
+					var file = files[i];
+					this._transferFile(file);
+				};
+			}
+		}
+	},
+	_transferFile : function(file) {
+		hui.log(file)
+		var item = this.$_addItem({name:file.name,size:file.size});
+		hui.request({
+			method : 'post',
+			file : file,
+			url : this.options.url,
+			parameters : this.options.parameters,
+			$progress : function(current,total) {
+				item.updateProgress(current,total);
+			},
+			$load : function() {
+				hui.log('transferFile: load');
+			},
+			$abort : function() {
+				this.$_itemFail(item);
+				item.setError('Afbrudt')
+			}.bind(this),
+			$success : function(t) {
+				hui.log('transferFile: success');
+				item.data.request = t;
+				this.$_itemSuccess(item);
+			}.bind(this),
+			$failure : function() {
+				hui.log('transferFile: fail');
+				this.$_itemFail(item);
+			}.bind(this)
+		})
+	},
+
+	/////////////////////// Implementation ///////////////////////////
+	
+	/** @private */
+	$_addItem : function(info) {
+		if (!this.busy) {
+			this.fire('uploadDidStartQueue');
+			this.status.style.display='block';
+			this._setWidgetEnabled(false);
+			this.busy = true;
+		}
+		return this._addItem(info);
+	},
+	/** @private */
+	$_itemSuccess : function(item) {
+		var first = hui.get.firstByClass(this.itemContainer,'hui_upload_item_success');
+		item.setProgress(1);
+		item.setSuccess();
+		this.fire('uploadDidComplete',item.getInfo());
+		this._checkQueue();
+		var move = first!=null || this.items.length>1;
+		move = move &amp;&amp; item.element.nextSibling!=null;
+		
+		if (move &amp;&amp; (first==null || first!=item.element.nextSibling)) {
+			var parent = item.element.parentNode;
+			var height = item.element.clientHeight;
+			hui.animate({node:item.element,css:{height:'0px'},ease:hui.ease.slowFastSlow,duration:500,onComplete:function() {
+				parent.removeChild(item.element);
+				if (first) { 
+					parent.insertBefore(item.element,first);
+				} else {
+					parent.appendChild(item.element);
+				}
+				hui.animate({node:item.element,css:{height:height+'px'},ease:hui.ease.slowFastSlow,duration:200});
+			}});
+		}
+
+		
+	},
+	/** @private */
+	$_itemFail : function(item) {
+		item.setError('Upload af filen fejlede!');
+		this.fire('uploadDidFail',item.getInfo());
+		this._checkQueue();
+	},
+	
+	/*
+	_updateStatus : function() {
+		
+		if (this.items.length==0) {
+			this.status.style.display='none';
+		} else {
+			hui.dom.setText(this.status,'Status: '+Math.round(s.successful_uploads/this.items.length*100)+'%');
+			this.status.style.display='block';
+		}
+	},*/
+	
+	/** @private */
+	$_getButtonContainer : function() {
+		var buttonContainer = hui.build('span',{'class':'hui_upload_button'});
+		if (this.options.widget) {
+			var w = hui.ui.get(this.options.widget);
+			w.element.parentNode.insertBefore(buttonContainer,w.element);
+			w.element.parentNode.removeChild(w.element);
+			buttonContainer.appendChild(w.element);
+		} else {
+			buttonContainer.innerHTML='&lt;a href="javascript:void(0);" class="hui_button">&lt;span>&lt;span>'+hui.string.escape(hui.ui.getTranslated(this.options.chooseButton))+'&lt;/span>&lt;/span>&lt;/a>';
+			this.element.appendChild(buttonContainer);
+		}
+		return buttonContainer;
+	},
+	
+	_setWidgetEnabled : function(enabled) {
+		if (this.options.widget) {
+			var w = hui.ui.get(this.options.widget);
+			if (w &amp;&amp; w.setEnabled) {
+				w.setEnabled(enabled);
+			}
+		}
+	},
+	
+	_checkQueue : function() {
+		for (var i=0; i &lt; this.items.length; i++) {
+			if (!this.items[i].isFinished()) {
+				return;
+			}
+		};
+		this.busy = false;
+		this._setWidgetEnabled(true);
+		this.fire('uploadDidCompleteQueue');
+	},
+	
+		
+	//////////////////// Events //////////////
+		
+	/** @private */
+	_addItem : function(file) {
+		var index = file.index;
+		if (index===undefined) {
+			index = this.items.length;
+			file.index = index;
+		}
+		var rearrange = index>4;
+		var item = new hui.ui.Upload.Item(file,rearrange);
+		this.items[index] = item;
+		var first = hui.get.firstByClass(this.itemContainer,'hui_upload_item_success');
+		if (first) {
+			this.itemContainer.insertBefore(item.element,first);
+		} else {
+			this.itemContainer.appendChild(item.element);
+		}
+		this.itemContainer.style.display='block';
+		if (this.placeholder) {
+			this.placeholder.style.display='none';
+		}
+		return item;
+	}
+}
+
+
+
+
+/////////////////// Item ///////////////////
+
+/**
+ * @class
+ * @constructor
+ */
+hui.ui.Upload.Item = function(info,rearrange) {
+	this.data = info;
+	this.rearrange = rearrange;
+	this.element = hui.build('div',{className:'hui_upload_item'});
+	this.element.appendChild(hui.ui.createIcon('file/generic',32));
+	this.content = hui.build('div',{className:'hui_upload_item_content',parent:this.element});
+	this.progress = hui.ui.ProgressBar.create({small:true});
+	this.content.appendChild(this.progress.getElement());
+	var text = hui.build('p',{parent:this.content});
+	this.info = hui.build('strong',{parent:text});
+	this.status = hui.build('em',{parent:text});
+	if (info.name) {
+		hui.dom.setText(this.info,info.name);
+	}
+	this.finished = false;
+	this.error = false;
+}
+
+hui.ui.Upload.Item.prototype = {
+	getInfo : function() {
+		return this.data;
+	},
+	isFinished : function() {
+		return this.finished;
+	},
+	setError : function(error) {
+		this._setStatus(error || hui.ui.getTranslated({en:'Error',da:'Fejl'}));
+		hui.cls.add(this.element,'hui_upload_item_error');
+		this.progress.hide();
+		this.progress.setValue(0);
+		this.finished = true;
+	},
+	setSuccess : function(status) {
+		this._setStatus(hui.ui.getTranslated({en:'Complete',da:'Færdig'}));
+		this.progress.setValue(1);
+		this.finished = true;
+		hui.cls.add(this.element,'hui_upload_item_success');
+	},
+	updateProgress : function(complete,total) {
+		this.setProgress(complete/total);
+		return this;
+	},
+	setProgress : function(value) {
+		this._setStatus(hui.ui.getTranslated({en:'Transfering',da:'Overfører'}));
+		this.progress.setValue(Math.min(0.9999,value));
+		return this;
+	},
+	setWaiting : function() {
+		this._setStatus('Venter');
+		this.progress.setWaiting();
+		return this;
+	},
+	hide : function() {
+		this.element.hide();
+	},
+	destroy : function() {
+		hui.dom.remove(this.element);
+	},
+	_setStatus : function(text) {
+		if (this._status!==text) {
+			hui.dom.setText(this.status,text);
+			this._status = text;
+		}
+	}
+}
+
+//// Util ////
+
+hui.ui.Upload._nameIndex = 0;
+
+hui.ui.Upload._buildForm = function(widget) {
+	var options = widget.options;
+
+	hui.ui.Upload._nameIndex++;
+	var frameName = 'hui_upload_'+hui.ui.Upload._nameIndex;
+    hui.log('Frame: name='+frameName);
+
+	var form = hui.build('form');
+	form.setAttribute('action',options.url || '');
+	form.setAttribute('method','post');
+	form.setAttribute('enctype','multipart/form-data');
+	form.setAttribute('encoding','multipart/form-data');
+	form.setAttribute('target',frameName);
+	if (options.parameters) {
+		for (var key in options.parameters) {
+			var hidden = hui.build('input',{'type':'hidden','name':key});
+			hidden.value = options.parameters[key];
+			form.appendChild(hidden);
+		}
+	}
+	return form;
+}
+
+
+
+
+
+
+
+
+
+
+
+/////////////////////// Frame //////////////////////////
+
+/**
+ * @class
+ * @constructor
+ */
+hui.ui.Upload.Frame = function(parent) {
+	this.parent = parent;
+}
+
+hui.ui.Upload.Frame.support = function() {
+	return {supported:true,multiple:false};
+}
+
+hui.ui.Upload.Frame.prototype = {
+	
+	initialize : function() {
+		var options = this.parent.options;
+		
+		var form = this.form = hui.ui.Upload._buildForm(this.parent);
+		var frameName = form.getAttribute('target');
+		
+		var iframe = this.iframe = hui.build(
+            'iframe',{
+                name : frameName, 
+                id : frameName, 
+                src : hui.ui.context+'/hui/html/blank.html', 
+                style : 'display:none'
+            });
+		this.parent.element.appendChild(iframe);
+        var self = this;
+		hui.listen(iframe,'load',function() {self._uploadComplete()});
+		
+		this.fileInput = hui.build('input',{'type':'file','name':options.fieldName});
+		hui.listen(this.fileInput,'change',this._onSubmit.bind(this));
+		
+		form.appendChild(this.fileInput);
+		var span = hui.build('span',{'class':'hui_upload_button_input'});
+		span.appendChild(form);
+		var c = this.parent.$_getButtonContainer();		
+		c.insertBefore(span,c.firstChild);
+	},
+	setParameter : function(name,value) {
+		var existing = this.form.getElementsByTagName('input');
+		for (var i=0; i &lt; existing.length; i++) {
+			if (existing[i].name==name) {
+				existing[i].value = value;
+				return;
+			}
+		};
+		hui.build('input',{'type':'hidden','name':name,'value':value,parent:this.form});
+	},
+	
+	_rebuildParameters : function() {
+		// IE: set value of parms again since they disappear
+		if (hui.browser.msie) {
+			hui.each(this.parent.options.parameters,function(key,value) {
+				this.form[key].value = value;
+			}.bind(this));
+		}
+	},
+	_rebuildFileInput : function() {
+		var options = this.parent.options;
+		var old = this.fileInput;
+		this.fileInput = hui.build('input',{'type':'file','name':options.fieldName});
+		hui.listen(this.fileInput,'change',this._onSubmit.bind(this));
+		hui.dom.replaceNode(old,this.fileInput);
+		hui.log('Frame: input replaced');
+	},
+	_getFileName : function() {
+		return this.fileInput.value.split('\\').pop();
+	},
+	_onSubmit : function() {
+		this.form.style.display='none';
+		this.uploading = true;
+		this._rebuildParameters();
+		this.form.submit();
+		this.item = this.parent.$_addItem({name:this._getFileName()});
+		this.item.setWaiting();
+		this._rebuildFileInput();
+		hui.log('Frame: Upload started:'+this.uploading);
+	},
+	
+	_uploadComplete : function() {
+        hui.log('complete:'+this.uploading+' / '+this.parent.name);
+		if (!this.uploading) {
+			return;
+		}
+		this.uploading = false;
+		var success = this._isSuccessResponse();
+		hui.log('Frame: Upload complete: success='+success);
+		var item = this.item;
+		if (item) {
+			if (success) {
+				this.parent.$_itemSuccess(item);
+				hui.log('Frame: Upload succeeded');
+			} else {
+				this.parent.$_itemFail(item);
+				hui.log('Frame: Upload failed!');
+			}
+		}
+		this.iframe.src = hui.ui.context+'/hui/html/blank.html';
+		this.form.style.display = 'block';
+		this.form.reset();
+	},
+	_isSuccessResponse : function() {
+		var doc = hui.frame.getDocument(this.iframe);
+		return doc.body.innerHTML.indexOf('SUCCESS')!==-1;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/////////////////////// Flash //////////////////////////
+
+/**
+ * @class
+ * @constructor
+ */
+hui.ui.Upload.Flash = function(parent) {
+	this.parent = parent;
+	
+	this.items = [];
+}
+
+hui.ui.Upload.Flash.support = function() {
+	return {supported:hui.ui.Flash.getMajorVersion()>=10 &amp;&amp; window.SWFUpload!==undefined,multiple:true};
+}
+
+hui.ui.Upload.Flash.prototype = {
+	initialize : function() {
+		var options = this.parent.options;
+		
+		hui.log('Creating flash verison');
+		var url = this._getAbsoluteUrl(options.url);
+		var javaSession = hui.cookie.get('JSESSIONID');
+		if (javaSession) {
+			url+=';jsessionid='+javaSession;
+		}
+		var phpSession = hui.cookie.get('PHPSESSID');
+		if (phpSession) {
+			url+='?PHPSESSID='+phpSession;
+		}
+		var buttonContainer = hui.build('span',{'class':'hui_upload_button'});
+		var placeholder = hui.build('span',{'class':'hui_upload_button_object',parent:buttonContainer});
+		if (options.widget) {
+			var w = hui.ui.get(options.widget);
+			w.element.parentNode.insertBefore(buttonContainer,w.element);
+			w.element.parentNode.removeChild(w.element);
+			buttonContainer.appendChild(w.element);
+		} else {
+			buttonContainer.innerHTL='&lt;a href="javascript:void(0);" class="hui_button">&lt;span>&lt;span>'+options.chooseButton+'&lt;/span>&lt;/span>&lt;/a>';
+			this.parent.element.appendChild(buttonContainer);
+		}
+		
+		this.loader = new SWFUpload({
+			upload_url : url,
+			flash_url : hui.ui.context+"/hui/lib/swfupload/swfupload.swf",
+			file_size_limit : options.maxSize,
+			file_queue_limit : options.maxItems,
+			file_post_name : options.fieldName,
+			file_upload_limit : options.maxItems,
+			file_types : options.types,
+			debug : !true,
+			post_params : options.parameters,
+			button_placeholder_id : 'x',
+			button_placeholder : placeholder,
+			button_width : '100%',
+			button_height : 30,
+
+			swfupload_loaded_handler : this._onFlashLoaded.bind(this),
+			file_queued_handler : this._onFileQueued.bind(this),
+			file_queue_error_handler : this._onFileQueueError.bind(this),
+			file_dialog_complete_handler : this._onFileDialogComplete.bind(this),
+			upload_start_handler : this._onUploadStart.bind(this),
+			upload_progress_handler : this._onUploadProgress.bind(this),
+			upload_error_handler : this._onUploadError.bind(this),
+			upload_success_handler : this._onUploadSuccess.bind(this),
+			upload_complete_handler : this._onUploadComplete.bind(this)
+		});
+	},
+	setParameter : function(key,value) {
+		hui.log('Flash: Warning: cannot change parameters');
+	},
+	_getAbsoluteUrl : function(relative) {
+		var loc = new String(document.location);
+		var url = loc.slice(0,loc.lastIndexOf('/'));
+		while (relative.indexOf('../')===0) {
+			relative=relative.substring(3);
+			url = url.slice(0,url.lastIndexOf('/'));
+		}
+		url += '/'+relative;
+		return url;
+	},
+	
+	////// Flash listeners /////
+	
+	_onFlashLoaded : function() {
+		hui.log('Flash loaded');
+	},
+	_onFileQueued : function(file) {
+		var item = this.parent.$_addItem({name:file.name,size:file.size});
+		item.setWaiting();
+		this.items.push(item);
+	},
+	_onFileQueueError : function(file, error, message) {
+		hui.log('Flash: fileQueueError file:'+hui.string.toJSON(file)+', error:'+error+', message:'+message);
+		if (file!==null) {
+			var item = this.parent.$_addItem({name:file.name,size:file.size});
+			this.items.push(item);
+			this.parent.$_itemFail(item);
+			item.setError(hui.ui.Upload.Flash.errors[error]);
+		} else {
+			hui.ui.showMessage({text:hui.ui.Upload.Flash.errors[error],duration:4000});
+		}
+	},
+	_onFileDialogComplete : function() {
+		hui.log('Flash: fileDialogComplete');
+		this.loader.startUpload();
+	},
+	_onUploadStart : function() {
+
+	},
+	_onUploadProgress : function(file,complete,total) {
+		var item = this.items[file.index];
+		item.updateProgress(complete,total);
+	},
+	_onUploadError : function(file, error, message) {
+		hui.log('Flash: uploadError file:'+file+', error:'+error+', message:'+message);
+		if (file) {
+			var item = this.items[file.index];
+			this.parent.$_itemFail(item);
+			item.setError(hui.ui.Upload.Flash.errors[error]);
+		}
+	},
+	/** @private */
+	_onUploadSuccess : function(file,data) {
+		var item = this.items[file.index];
+		item.updateProgress(file.size,file.size);
+		this.parent.$_itemSuccess(item);
+	},
+	/** @private */
+	_onUploadComplete : function(file) {
+		this.loader.startUpload();		
+	}
+}
+
+!(function() {
+	var e = hui.ui.Upload.Flash.errors = {};
+	var s = hui.ui.Upload.Flash.status = {};
+	if (window.SWFUpload) {
+		e[SWFUpload.QUEUE_ERROR.QUEUE_LIMIT_EXCEEDED]			= 'Der er valgt for mange filer';
+		e[SWFUpload.QUEUE_ERROR.FILE_EXCEEDS_SIZE_LIMIT]		= 'Filen er for stor';
+		e[SWFUpload.QUEUE_ERROR.ZERO_BYTE_FILE]					= 'Filen er tom';
+		e[SWFUpload.QUEUE_ERROR.INVALID_FILETYPE]				= 'Filens type er ikke understøttet';
+		e[SWFUpload.UPLOAD_ERROR.HTTP_ERROR]					= 'Der skete en netværksfejl';
+		e[SWFUpload.UPLOAD_ERROR.MISSING_UPLOAD_URL]			= 'Upload-adressen findes ikke';
+		e[SWFUpload.UPLOAD_ERROR.IO_ERROR]						= 'Der skete en IO-fejl';
+		e[SWFUpload.UPLOAD_ERROR.SECURITY_ERROR]				= 'Der skete en sikkerhedsfejl';
+		e[SWFUpload.UPLOAD_ERROR.UPLOAD_LIMIT_EXCEEDED]			= 'Upload-størrelsen er overskredet';
+		e[SWFUpload.UPLOAD_ERROR.UPLOAD_FAILED]					= 'Upload af filen fejlede';
+		e[SWFUpload.UPLOAD_ERROR.SPECIFIED_FILE_ID_NOT_FOUND]	= 'Filens id kunne ikke findes';
+		e[SWFUpload.UPLOAD_ERROR.FILE_VALIDATION_FAILED]		= 'Validering af filen fejlede';
+		e[SWFUpload.UPLOAD_ERROR.FILE_CANCELLED]				= 'Filen blev afbrudt';
+		e[SWFUpload.UPLOAD_ERROR.UPLOAD_STOPPED]				= 'Upload af filen blev stoppet';
+		s[SWFUpload.FILE_STATUS.QUEUED] 		= 'I kø';
+		s[SWFUpload.FILE_STATUS.IN_PROGRESS] 	= 'I gang';
+		s[SWFUpload.FILE_STATUS.ERROR] 			= 'Filen gav fejl';
+		s[SWFUpload.FILE_STATUS.COMPLETE] 		= 'Færdig';
+		s[SWFUpload.FILE_STATUS.CANCELLED] 		= 'Afbrudt';
+	}
+})()
+
+
+
+
+
+
+
+
+//////////////////// HTML5 //////////////////////
+
+
+/**
+ * @class
+ * @constructor
+ */
+hui.ui.Upload.HTML5 = function(parent) {
+	this.parent = parent;
+}
+
+hui.ui.Upload.HTML5.support = function() {
+	var supported = window.File!==undefined &amp;&amp; (hui.browser.webkit || hui.browser.gecko || hui.browser.msie10 || hui.browser.msie11);//(window.File!==undefined &amp;&amp; window.FileReader!==undefined &amp;&amp; window.FileList!==undefined &amp;&amp; window.Blob!==undefined);
+	hui.log('HTML5: supported='+supported);
+	//supported = !true;
+	return {
+		supported : supported,
+		multiple : true
+	};
+}
+
+hui.ui.Upload.HTML5.prototype = {
+	initialize : function() {
+		var options = this.parent.options;
+		var span = hui.build('span',{'class':'hui_upload_button_input'});
+        this.form = hui.build('form',{'style':'display: inline-block; margin:0;',parent:span});
+		var ps = {'type':'file','name':options.fieldName,parent:this.form};
+		if (options.multiple) {
+			ps.multiple = 'multiple';
+		}
+		this.fileInput = hui.build('input',ps);
+		var c = this.parent.$_getButtonContainer();		
+		c.insertBefore(span,c.firstChild);
+		hui.listen(this.fileInput,'change',this._submit.bind(this));
+	},
+	_submit : function(e) {
+		var files = this.fileInput.files;
+		this.parent._transferFiles(files);
+        // TODO: reset/replace input field in IE
+        this._resetInput();
+	},
+    _resetInput : function() {
+        this.form.reset();
+    }
+}
+
+/* EOF */</pre>
+    </article>
+</section>
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+
+	<span class="copyright">
+	DocStrap Copyright © 2012-2015 The contributors to the JSDoc3 and DocStrap projects.
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a>
+	
+		on Wed Jan 4th 2017
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
+</body>
+</html>
