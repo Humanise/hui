@@ -1,36 +1,153 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:hui" targetNamespace="uri:hui" elementFormDefault="qualified">
 
-<xs:element name="gui">
-  <xs:complexType>
+  <xs:element name="gui" type="gui"/>
+  <xs:complexType name="gui">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="controller" type="controller"/>
+      <xs:element name="css"/>
+      <xs:element name="source" type="source"/>
+      <xs:element name="box"/>
+      <xs:element name="fragment"/>
+      <xs:element name="text"/>
+      <xs:element name="window" type="window"/>
+      <xs:element name="space" type="space"/>
+      <xs:element name="structure" type="structure"/>
+    </xs:choice>
     <xs:attribute name="padding" type="xs:positiveInteger"/>
     <xs:attribute name="background" type="xs:string"/>
-    <xs:sequence>
-      <!--
-      <xs:element name="orderperson" type="xs:string"/>
-      <xs:element name="shipto">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element name="name" type="xs:string"/>
-            <xs:element name="address" type="xs:string"/>
-            <xs:element name="city" type="xs:string"/>
-            <xs:element name="country" type="xs:string"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="item" maxOccurs="unbounded">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element name="title" type="xs:string"/>
-            <xs:element name="note" type="xs:string" minOccurs="0"/>
-            <xs:element name="quantity" type="xs:positiveInteger"/>
-            <xs:element name="price" type="xs:decimal"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-        -->
-    </xs:sequence>
+    <xs:attribute name="title" type="xs:string"/>
+    <xs:attribute name="state" type="xs:string"/>
   </xs:complexType>
-</xs:element>
+
+  <xs:element name="controller" type="controller"/>
+  <xs:complexType name="controller">
+    <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="source" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- Structure -->
+
+  <xs:element name="structure" type="structure"/>
+  <xs:complexType name="structure">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="top" type="structure_top"/>
+      <xs:element name="middle" type="structure_middle"/>
+    </xs:choice>
+    <xs:attribute name="name" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="structure_top">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="toolbar"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="structure_middle">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="left" type="structure_left"/>
+      <xs:element name="center" type="structure_center"/>
+      <xs:element name="middle" type="structure_right"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="structure_left">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="selection" type="selection"/>
+      <xs:element name="overflow" type="overflow"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="structure_center">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:any></xs:any>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="structure_right">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:any></xs:any>
+    </xs:choice>
+  </xs:complexType>
+
+  <!-- Overflow -->
+
+  <xs:element name="overflow" type="overflow"/>
+  <xs:complexType name="overflow">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:any></xs:any>
+    </xs:choice>
+    <xs:attribute name="name" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- Selection -->
+
+  <xs:element name="selection" type="selection"/>
+  <xs:complexType name="selection">
+    <xs:attribute name="name" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- Window -->
+
+  <xs:element name="window" type="window"/>
+  <xs:complexType name="window">
+    <xs:sequence>
+      <xs:element name="formula" type="formula"/>
+    </xs:sequence>
+    <xs:attribute name="title" type="xs:string"/>
+    <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="width" type="xs:string"/>
+    <xs:attribute name="padding" type="xs:positiveInteger"/>
+  </xs:complexType>
+
+  <!-- Formula -->
+
+  <xs:element name="formula" type="formula"/>
+  <xs:complexType name="formula">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="header"/>
+      <xs:element name="fields"/>
+      <xs:element name="text"/>
+      <xs:element name="buttons"/>
+      <xs:element name="fieldset" type="fieldset"/>
+      <xs:element name="space" type="space"/>
+    </xs:choice>
+    <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="state" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="fieldset">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="fields"/>
+    </xs:choice>
+    <xs:attribute name="legend" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="space">
+    <xs:attribute name="height" type="xs:positiveInteger"/>
+  </xs:complexType>
+
+  <xs:complexType name="source">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="parameter" type="parameter"/>
+    </xs:choice>
+    <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="url" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="parameter">
+    <xs:attribute name="key" type="xs:string"/>
+    <xs:attribute name="value" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:element name="text-input" type="text-input"/>
+  <xs:complexType name="text-input">
+    <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="key" type="xs:string"/>
+    <xs:attribute name="correction" type="xs:boolean"/>
+    <xs:attribute name="secret" type="xs:boolean"/>
+    <xs:attribute name="adaptive" type="xs:boolean"/>
+    <xs:attribute name="breaks" type="xs:boolean"/>
+  </xs:complexType>
 
 </xs:schema>
