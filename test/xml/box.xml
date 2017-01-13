@@ -15,10 +15,10 @@
 	</script>
 	<box width="500" padding="10" title="Title with toolbar" variant="textured" closable="true">
 		<toolbar>
-			<icon icon="common/color" title="Hep hey!" selected="true" name="icon1"/>
-			<icon icon="common/folder" title="Hep hey!" name="icon2"/>
-			<icon icon="common/settings" title="Disbaled" disabled="true"/>
-			<icon icon="common/view" title="Show hidden box" click="absoluteBox.show();"/>
+			<icon icon="common/color" text="Hep hey!" selected="true" name="icon1"/>
+			<icon icon="common/folder" text="Hep hey!" name="icon2"/>
+			<icon icon="common/settings" text="Disbaled" disabled="true"/>
+			<icon icon="common/view" text="Show hidden box" click="absoluteBox.show();"/>
 		</toolbar>
 		<formula>
 			<fields>
@@ -38,9 +38,9 @@
 					<tokens/>
 				</field>
 				<buttons top="10">
-					<button title="Annuller"/>
-					<button title="Slet"/>
-					<button title="Gem" highlighted="true"/>
+					<button text="Annuller"/>
+					<button text="Slet"/>
+					<button text="Gem" highlighted="true"/>
 				</buttons>
 			</fields>
 		</formula>
@@ -65,9 +65,9 @@
 					<tokens/>
 				</field>
 				<buttons top="10">
-					<button title="Gem" highlighted="true"/>
-					<button title="Slet"/>
-					<button title="Annuller"/>
+					<button text="Gem" highlighted="true"/>
+					<button text="Slet"/>
+					<button text="Annuller"/>
 				</buttons>
 			</fields>
 		</formula>
@@ -94,9 +94,9 @@
 					<tokens/>
 				</field>
 				<buttons top="10">
-					<button title="Gem" highlighted="true"/>
-					<button title="Slet"/>
-					<button title="Annuller"/>
+					<button text="Gem" highlighted="true"/>
+					<button text="Slet"/>
+					<button text="Annuller"/>
 				</buttons>
 			</fields>
 		</formula>

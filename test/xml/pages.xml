@@ -3,8 +3,8 @@
 <gui xmlns="uri:hui" padding="20" title="Pages">
 	<box width="600" title="Pages" variant="textured">
 		<toolbar>
-			<icon icon="common/previous" title="Previous" click="pages.next()"/>
-			<icon icon="common/next" title="Next" click="pages.previous()"/>
+			<icon icon="common/previous" text="Previous" click="pages.next()"/>
+			<icon icon="common/next" text="Next" click="pages.previous()"/>
 			<field label="Effect">
 				<segmented value="fade">
 					<item text="Fade" value="fade"/>

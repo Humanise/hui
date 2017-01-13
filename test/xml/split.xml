@@ -8,16 +8,16 @@
 	<structure>
 		<top>
 			<toolbar>
-				<icon icon="common/refresh" title="Refresh" click="list.refresh()"/>
+				<icon icon="common/refresh" text="Refresh" click="list.refresh()"/>
 			</toolbar>
 		</top>
 		<middle>
 			<left>
 				<overflow>
 				<selection value="user" name="selector">
-					<item icon="common/person" title="Brugere" value="user"/>
-					<item icon="common/folder" title="Database" value="database" kind="folder"/>
-					<item icon="common/person" title="Alle objekter" value="object"/>
+					<item icon="common/person" text="Brugere" value="user"/>
+					<item icon="common/folder" text="Database" value="database" kind="folder"/>
+					<item icon="common/person" text="Alle objekter" value="object"/>
 					<title>Hey</title>
 				</selection>
 				</overflow>

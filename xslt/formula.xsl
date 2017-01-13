@@ -156,8 +156,7 @@
   <xsl:choose>
     <xsl:when test="@lines>1 or @multiline='true' or @breaks='true'">
       <xsl:text disable-output-escaping='yes'>
-      <![CDATA[<textarea class="hui_textinput" rows="]]></xsl:text>
-        <xsl:value-of select="@lines"/><xsl:text>"</xsl:text>
+      <![CDATA[<textarea class="hui_textinput"]]></xsl:text>
         <xsl:text> id="</xsl:text><xsl:value-of select="generate-id()"/><xsl:text>"</xsl:text>
         <xsl:if test="@placeholder!=''">
           <xsl:text> placeholder="</xsl:text><xsl:value-of select="@placeholder"/><xsl:text>"</xsl:text>
@@ -549,10 +548,10 @@
       key:'<xsl:value-of select="@key"/>'
     });
     with (<xsl:value-of select="generate-id()"/>_obj) {
-      <xsl:for-each select="gui:items">
+      <xsl:for-each select="gui:items | gui:options"> <!-- TODO items is deprecated -->
         registerItems(<xsl:value-of select="generate-id()"/>_obj);
       </xsl:for-each>
-      <xsl:for-each select="gui:item">
+      <xsl:for-each select="gui:item | gui.option"> <!-- TODO item is deprecated -->
         registerItem({title:'<xsl:value-of select="@title"/><xsl:value-of select="@text"/>',value:hui.intOrString('<xsl:value-of select="@value"/>')});
       </xsl:for-each>
     }
@@ -560,7 +559,7 @@
   </script>
 </xsl:template>
 
-<xsl:template match="gui:checkboxes/gui:items">
+<xsl:template match="gui:checkboxes/gui:items | gui:checkboxes/gui:options">
   <span id="{generate-id()}">
     <xsl:comment/>
   </span>
@@ -570,7 +569,7 @@
   </script>
 </xsl:template>
 
-<xsl:template match="gui:checkboxes/gui:item">
+<xsl:template match="gui:checkboxes/gui:item | gui:checkboxes/gui:option">
   <a class="hui_checkbox" href="javascript:void(0);">
     <span class="hui_checkbox_button"><xsl:comment/></span>
     <xsl:if test="@text!='' or @title!='' or @label!=''">

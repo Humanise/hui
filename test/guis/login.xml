@@ -14,8 +14,8 @@
 					<text-input secret="true" name="password"/>
 				</field>
 				<buttons top="5">
-					<button title="Annuller"/>
-					<button title="Log in" name="login" submit="true" highlighted="true"/>
+					<button text="Annuller"/>
+					<button text="Log in" name="login" submit="true" highlighted="true"/>
 				</buttons>
 			</fields>
 		</formula>

@@ -2,6 +2,7 @@
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:hui" title="Toolbar" padding="10">
   <source name="itemsSource" url="data/source_items.xml"/>
+  <script url="shdha"/>
   <script>
     hui.ui.listen({
       $ready : function() {
@@ -21,20 +22,20 @@
   <structure>
     <top>
       <toolbar>
-        <icon icon="common/refresh" title="Refresh"/>
+        <icon icon="common/refresh" text="Refresh"/>
         <divider/>
-        <icon icon="common/user" title="Users" name="userIcon" overlay="new" selected="true" click="infoIcon.setSelected(false);userIcon.setSelected(true)"/>
-        <icon icon="common/info" title="Info" name="infoIcon" badge="99" click="infoIcon.setSelected(true);userIcon.setSelected(false)"/>
+        <icon icon="common/user" text="Users" name="userIcon" overlay="new" selected="true" click="infoIcon.setSelected(false);userIcon.setSelected(true)"/>
+        <icon icon="common/info" text="Info" name="infoIcon" badge="99" click="infoIcon.setSelected(true);userIcon.setSelected(false)"/>
         <divider/>
-        <field label="Venstre">
+        <item label="Venstre">
           <number-input width="70"/>
-        </field>
-        <field label="Width">
+        </item>
+        <item label="Width">
           <style-length-input width="70"/>
-        </field>
-        <field label="Billedgruppe">
+        </item>
+        <item label="Billedgruppe">
           <dropdown placeholder="Vælg..." source="itemsSource"/>
-        </field>
+        </item>
         <grid>
           <row>
             <cell label="Max antal:">
@@ -58,7 +59,7 @@
             </cell>
           </row>
         </grid>
-        <field label="Level">
+        <item label="Level">
           <segmented value="1">
             <item text="1" value="1"/>
             <item text="2" value="2"/>
@@ -67,13 +68,13 @@
             <item text="5" value="5"/>
             <item text="6" value="6"/>
           </segmented>
-        </field>
-        <button title="Small button" small="true"/>
-        <button title="Regular button"/>
+        </item>
+        <button text="Small button" small="true"/>
+        <button text="Regular button"/>
         <right>
-          <field label="Søgning">
+          <item label="Søgning">
             <searchfield expanded-width="200" placeholder="Search"/>
-          </field>
+          </item>
         </right>
       </toolbar>
     </top>
@@ -92,21 +93,21 @@
       </left>
       <center>
         <toolbar border="bottom">
-          <icon icon="common/folder" title="Folder"/>
-          <button title="Click me" small="true" rounded="true"/>
+          <icon icon="common/folder" text="Folder"/>
+          <button text="Click me" small="true"/>
           <dropdown placeholder="Vælg..." source="itemsSource"/>
           <!--<text-input width="100"/>-->
           <more text="More">
-            <button title="Click me" small="true" rounded="true"/>
+            <button text="Click me" small="true"/>
           </more>
           <divider/>
           <more>
-            <button title="Click me" small="true" rounded="true"/>
+            <button text="Click me" small="true"/>
           </more>
           <right>
-            <field label="Search">
+            <item label="Search">
             <searchfield expanded-width="200" placeholder="Search"/>
-            </field>
+            </item>
           </right>
         </toolbar>
 
@@ -138,20 +139,20 @@
             </row>
           </grid>
           <divider/>
-          <field label="amount">
+          <item label="amount">
             <number-input width="70" size="small"/>
-          </field>
-          
+          </item>
+
         </toolbar>
 
         <overflow>
 
           <box width="500" padding="10" top="20" title="Title with toolbar" variant="textured" closable="true">
             <toolbar>
-              <icon icon="common/color" title="Hep hey!" selected="true" name="icon1"/>
-              <icon icon="common/folder" title="Hep hey!" name="icon2" overlay="new"/>
-              <icon icon="common/settings" title="Disbaled" disabled="true"/>
-              <icon icon="common/view" title="Show hidden box"/>
+              <icon icon="common/color" text="Hep hey!" selected="true" name="icon1"/>
+              <icon icon="common/folder" text="Hep hey!" name="icon2" overlay="new"/>
+              <icon icon="common/settings" text="Disbaled" disabled="true"/>
+              <icon icon="common/view" text="Show hidden box"/>
             </toolbar>
             <formula>
               <fields>
@@ -161,18 +162,18 @@
                 <field label="Kodeord:">
                   <text-input/>
                 </field>
-                <buttons top="10">
-                  <button title="Annuller"/>
-                  <button title="Slet"/>
-                  <button title="Gem" highlighted="true"/>
-                </buttons>
               </fields>
+              <buttons top="10">
+                <button text="Annuller"/>
+                <button text="Slet"/>
+                <button text="Gem" highlighted="true"/>
+              </buttons>
             </formula>
           </box>
 
         </overflow>
         <toolbar border="top">
-          <button title="Click me" small="true" rounded="true"/>
+          <button text="Click me" small="true"/>
           <dropdown placeholder="Vælg..." source="itemsSource"/>
           <right>
             <searchfield expanded-width="200" placeholder="Search"/>
@@ -182,8 +183,8 @@
     </middle>
     <bottom>
       <toolbar>
-        <button title="Click me" small="true" rounded="true"/>
-        <button title="Click me" small="true" rounded="true"/>
+        <button text="Click me" small="true"/>
+        <button text="Click me" small="true"/>
         <right>
           <searchfield expanded-width="200" placeholder="Search"/>
         </right>
@@ -209,18 +210,16 @@
           <text-input key="title"/>
         </field>
         <field label="Beskrivelse:">
-          <text-input key="description" lines="5"/>
+          <text-input key="description" breaks="true"/>
         </field>
       </fields>
-      <fields>
-        <buttons>
-          <button name="cancelPage" title="Annuller"/>
-          <button name="deletePage" title="Slet">
-            <confirm text="Er du sikker? Det kan ikke fortrydes!" ok="Ja, slet side" cancel="Annuller"/>
-          </button>
-          <button name="savePage" title="Gem" highlighted="true"/>
-        </buttons>
-      </fields>
+      <buttons>
+        <button name="cancelPage" text="Annuller"/>
+        <button name="deletePage" text="Slet">
+          <confirm text="Er du sikker? Det kan ikke fortrydes!" ok="Ja, slet side" cancel="Annuller"/>
+        </button>
+        <button name="savePage" text="Gem" highlighted="true"/>
+      </buttons>
     </formula>
   </window>
 </gui>

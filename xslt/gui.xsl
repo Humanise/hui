@@ -80,14 +80,7 @@
       <xsl:for-each select="//gui:css">
         <link rel="stylesheet" href="{@url}" type="text/css" media="screen" title="no title" charset="utf-8"/>
       </xsl:for-each>
-      <xsl:for-each select="//gui:style[@source]">
-        <link rel="stylesheet" href="{@source}" type="text/css" media="screen" title="no title" charset="utf-8"/>
-      </xsl:for-each>
-      <xsl:for-each select="//gui:style[not(@source)]">
-        <style>
-          <xsl:value-of select="."/>
-        </style>
-      </xsl:for-each>
+      <xsl:apply-templates select="gui:style"/>
 
       <xsl:comment><![CDATA[[if lt IE 9]>
         <script type="text/javascript" src="]]><xsl:value-of select="$context"/><![CDATA[/hui/]]><xsl:value-of select="$pathVersion"/><![CDATA[bin/compatibility.min.js]]><![CDATA["></script>
@@ -153,6 +146,9 @@
       <xsl:for-each select="gui:controller[@source]">
         <script src="{@source}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
       </xsl:for-each>
+      <xsl:for-each select="gui:controller[@url]">
+        <script src="{@url}" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+      </xsl:for-each>
 
       <script type="text/javascript">
         hui.ui.context = '<xsl:value-of select="$context"/>';
@@ -162,7 +158,7 @@
         <xsl:if test="$language">
           hui.ui.language = '<xsl:value-of select="$language"/>';
         </xsl:if>
-        <xsl:for-each select="gui:controller[@source]">
+        <xsl:for-each select="gui:controller[@source]|gui:controller[@url]">
           <xsl:if test="@name">
           if (window['<xsl:value-of select="@name"/>']!==undefined) {
             hui.ui.listen(<xsl:value-of select="@name"/>);
@@ -170,6 +166,7 @@
           </xsl:if>
         </xsl:for-each>
       </script>
+      <xsl:apply-templates select="gui:script"/>
 
       <xsl:call-template name="dwr-setup"/>
     </head>
@@ -185,17 +182,15 @@
       </xsl:if>
       <xsl:choose>
         <xsl:when test="@padding">
-          <div style="padding: {@padding}px;" class="hui_body"><xsl:apply-templates/></div>
+          <div style="padding: {@padding}px;" class="hui_body"><xsl:apply-templates select="child::*[not(name()='style') and not(name()='script')]"/></div>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:apply-templates/>
+          <xsl:apply-templates select="child::*[not(name()='style') and not(name()='script')]"/>
         </xsl:otherwise>
       </xsl:choose>
     </body>
   </html>
 </xsl:template>
-
-<xsl:template match="gui:style"></xsl:template>
 
 <!--doc title:'DWR interface' module:'base'
 <dwr base="«url»">
@@ -296,13 +291,34 @@
 </script>
 -->
 <xsl:template match="gui:script">
-  <script type="text/javascript">
-    <xsl:apply-templates/>
-  </script>
+  <xsl:choose>
+    <xsl:when test="@url">
+      <script type="text/javascript" src="{@url}" charset="utf-8"><xsl:comment/></script>
+    </xsl:when>
+    <xsl:otherwise>
+      <script type="text/javascript">
+        <xsl:apply-templates/>
+      </script>
+    </xsl:otherwise>
+  </xsl:choose>
 </xsl:template>
 
 
-
+<xsl:template match="gui:style">
+  <xsl:choose>
+    <xsl:when test="@source"> <!-- deprecated -->
+      <link rel="stylesheet" href="{@source}" type="text/css" media="screen" title="no title" charset="utf-8"/>
+    </xsl:when>
+    <xsl:when test="@url">
+      <link rel="stylesheet" href="{@url}" type="text/css" media="screen" title="no title" charset="utf-8"/>
+    </xsl:when>
+    <xsl:otherwise>
+      <style>
+        <xsl:value-of select="."/>
+      </style>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
 
 <!--doc title:'Listener' module:'base'
 <listen>
@@ -516,10 +532,10 @@
   <script type="text/javascript">
     !function() {
       var items = [];
-      <xsl:for-each select="gui:item">
+      <xsl:for-each select="gui:item | gui:option">
       items.push({
         id : '<xsl:value-of select="generate-id()"/>',
-        title : '<xsl:value-of select="@title"/>',
+        title : '<xsl:value-of select="@title"/><xsl:value-of select="@text"/>',
         icon : '<xsl:value-of select="@icon"/>',
         badge : '<xsl:value-of select="@badge"/>',
         value : '<xsl:value-of select="@value"/>',
@@ -536,7 +552,7 @@
       <xsl:if test="@value">,value:'<xsl:value-of select="@value"/>'</xsl:if>
     });
     with (<xsl:value-of select="generate-id()"/>_obj) {
-      <xsl:for-each select="gui:items">
+      <xsl:for-each select="gui:items | gui:options">
         registerItems(<xsl:value-of select="generate-id()"/>_obj);
       </xsl:for-each>
     }
@@ -545,7 +561,7 @@
   </script>
 </xsl:template>
 
-<xsl:template match="gui:selection/gui:item">
+<xsl:template match="gui:selection/gui:item | gui:selection/gui:option">
   <div id="{generate-id()}">
     <xsl:attribute name="class">hui_selection_item<xsl:if test="@value=../@value"> hui_selected</xsl:if></xsl:attribute>
     <xsl:if test="@badge"><strong class="hui_selection_badge"><xsl:value-of select="@badge"/></strong></xsl:if>
@@ -557,7 +573,7 @@
       </span>
     </xsl:if>
     <span class="hui_selection_label">
-    <xsl:value-of select="@title"/><xsl:value-of select="@text"/>
+    <xsl:value-of select="@title"/><xsl:value-of select="@text"/> <!-- TODO title is deprecated -->
     </span>
   </div>
 </xsl:template>
@@ -569,7 +585,7 @@
     <items name="«text»" title="«text»" source="«source»" title="«text»" />
 </selection>
 -->
-<xsl:template match="gui:selection/gui:items">
+<xsl:template match="gui:selection/gui:items | gui:selection/gui:options">
   <xsl:if test="@title">
     <div class="hui_selection_title" id="{generate-id()}_title" style="display: none;"><span><xsl:value-of select="@title"/></span></div>
   </xsl:if>
@@ -1244,7 +1260,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
           <xsl:text> hui_segmented_standard</xsl:text>
         </xsl:if>
       </xsl:attribute>
-      <xsl:for-each select="gui:item">
+      <xsl:for-each select="gui:item | gui:option"> <!-- TODO item is deprecated -->
         <a href="javascript:void(0)" rel="{@value}">
           <xsl:if test="@value=../@value">
             <xsl:attribute name="class">hui_segmented_selected</xsl:attribute>

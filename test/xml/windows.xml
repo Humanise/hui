@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:hui" padding="10" title="Windows">
-	<controller name="controller" source="windows.js"/>
+	<controller name="controller" url="windows.js"/>
 	
 	<structure>
 		<top>
 			<toolbar>
-				<icon icon="common/folder" title="Mørk" overlay="new" click="dark.toggle()"/>
-				<icon icon="common/folder" title="Standard" click="standard.toggle()"/>
-				<icon icon="common/folder" title="Lys" click="light.toggle()"/>
-				<icon icon="common/folder" title="News" click="news.toggle()"/>
+				<icon icon="common/folder" text="Mørk" overlay="new" click="dark.toggle()"/>
+				<icon icon="common/folder" text="Standard" click="standard.toggle()"/>
+				<icon icon="common/folder" text="Lys" click="light.toggle()"/>
+				<icon icon="common/folder" text="News" click="news.toggle()"/>
 			</toolbar>
 		</top>
 		<middle>
@@ -27,7 +27,7 @@
 					<text-input/>
 				</field>
 				<field label="Notat:">
-					<text-input lines="6"/>
+					<text-input breaks="true"/>
 				</field>
 				<field label="Intern adgang:">
 					<checkbox/>
@@ -38,12 +38,12 @@
 				<field label="Tokens:">
 					<tokens/>
 				</field>
-				<buttons top="10">
-					<button title="Gem" highlighted="true"/>
-					<button title="Slet"/>
-					<button title="Annuller"/>
-				</buttons>
 			</fields>
+			<buttons top="10">
+				<button text="Gem" highlighted="true"/>
+				<button text="Slet"/>
+				<button text="Annuller"/>
+			</buttons>
 		</formula>
 	</window>
 	
@@ -57,7 +57,7 @@
 					<text-input/>
 				</field>
 				<field label="Notat:">
-					<text-input lines="6"/>
+					<text-input breaks="true"/>
 				</field>
 				<field label="Intern adgang:">
 					<checkbox/>
@@ -68,12 +68,12 @@
 				<field label="Tokens:">
 					<tokens/>
 				</field>
-				<buttons top="10">
-					<button title="Gem" highlighted="true"/>
-					<button title="Slet"/>
-					<button title="Annuller"/>
-				</buttons>
 			</fields>
+			<buttons top="10">
+				<button text="Gem" highlighted="true"/>
+				<button text="Slet"/>
+				<button text="Annuller"/>
+			</buttons>
 		</formula>
 	</window>
 	
@@ -87,7 +87,7 @@
 					<text-input/>
 				</field>
 				<field label="Notat:">
-					<text-input lines="6"/>
+					<text-input breaks="true"/>
 				</field>
 				<field label="Intern adgang:">
 					<checkbox/>
@@ -98,17 +98,17 @@
 				<field label="Tokens:">
 					<tokens/>
 				</field>
-				<buttons top="10">
-					<button title="Gem" highlighted="true"/>
-					<button title="Slet"/>
-					<button title="Annuller"/>
-				</buttons>
 			</fields>
+			<buttons top="10">
+				<button text="Gem" highlighted="true"/>
+				<button text="Slet"/>
+				<button text="Annuller"/>
+			</buttons>
 		</formula>
 	</window>
-	
+
 	<window name="flipper" width="300" title="Flipper" padding="5">
-		<button click="flipper.flip()" title="Flip"/>
+		<button click="flipper.flip()" text="Flip"/>
 		<back>
 			<formula>
 				<fields>
@@ -119,7 +119,7 @@
 						<text-input/>
 					</field>
 					<field label="Notat:">
-						<text-input lines="6"/>
+						<text-input breaks="true"/>
 					</field>
 					<field label="Intern adgang:">
 						<checkbox/>
@@ -130,12 +130,12 @@
 					<field label="Tokens:">
 						<tokens/>
 					</field>
-					<buttons top="10">
-						<button title="Gem" highlighted="true"/>
-						<button title="Slet"/>
-						<button title="Annuller" click="flipper.flip()"/>
-					</buttons>
 				</fields>
+				<buttons top="10">
+					<button text="Gem" highlighted="true"/>
+					<button text="Slet"/>
+					<button text="Annuller" click="flipper.flip()"/>
+				</buttons>
 			</formula>
 		</back>
 	</window>
@@ -150,7 +150,7 @@
 					<text-input/>
 				</field>
 				<field label="Notat:">
-					<text-input lines="6"/>
+					<text-input breaks="true"/>
 				</field>
 				<field label="Intern adgang:">
 					<checkbox/>
@@ -161,12 +161,12 @@
 				<field label="Tokens:">
 					<tokens/>
 				</field>
-				<buttons top="10">
-					<button title="Gem" highlighted="true"/>
-					<button title="Slet"/>
-					<button title="Annuller"/>
-				</buttons>
 			</fields>
+			<buttons top="10">
+				<button text="Gem" highlighted="true"/>
+				<button text="Slet"/>
+				<button text="Annuller"/>
+			</buttons>
 		</formula>
 	</window>
 

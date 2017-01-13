@@ -4,10 +4,10 @@
 	<structure>
 		<top>
 			<toolbar>
-				<icon icon="common/folder" title="Ny gruppe" name="newGroup" overlay="new"/>
-				<icon icon="common/folder" title="Ny type" name="newType" overlay="new"/>
+				<icon icon="common/folder" text="Ny gruppe" name="newGroup" overlay="new"/>
+				<icon icon="common/folder" text="Ny type" name="newType" overlay="new"/>
 				<right>
-					<search title="Søgning"/>
+					<searchfield title="Søgning"/>
 				</right>
 			</toolbar>
 		</top>

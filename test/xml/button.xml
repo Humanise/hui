@@ -13,8 +13,8 @@
     <buttons>
       <button name="one" title="Simple button"/>
       <button name="disabledButton" title="Disabled button" disabled="true"/>
-      <button title="Highlighted button" highlighted="true"/>
-      <button title="Highlighted button" highlighted="true" disabled="true"/>
+      <button text="Highlighted button" highlighted="true"/>
+      <button text="Highlighted button" highlighted="true" disabled="true"/>
     </buttons>
 
     <buttons top="10">
@@ -72,7 +72,7 @@
     </buttons>
 
 		<header>Actions</header>
-		<button title="Confirmation" click="hui.ui.showMessage({text:'Action approved!',duration:2000})">
+		<button text="Confirmation" click="hui.ui.showMessage({text:'Action approved!',duration:2000})">
 			<confirm text="Are you sure?" ok="Yes" cancel="No"/>
 		</button>
 
@@ -82,8 +82,8 @@
     <buttons>
       <button name="one" title="Simple button"/>
       <button name="disabledButton" title="Disabled button" disabled="true"/>
-      <button title="Highlighted button" highlighted="true"/>
-      <button title="Highlighted button" highlighted="true" disabled="true"/>
+      <button text="Highlighted button" highlighted="true"/>
+      <button text="Highlighted button" highlighted="true" disabled="true"/>
     </buttons>
 
     <buttons top="10">
@@ -141,7 +141,7 @@
     </buttons>
 
 		<header>Actions</header>
-		<button title="Confirmation" click="hui.ui.showMessage({text:'Action approved!',duration:2000})">
+		<button text="Confirmation" click="hui.ui.showMessage({text:'Action approved!',duration:2000})">
 			<confirm text="Are you sure?" ok="Yes" cancel="No"/>
 		</button>
     </div>

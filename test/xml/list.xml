@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:hui" title="List" padding="10">
-	<controller name="controller" source="list.js"/>
+	<controller name="controller" url="list.js"/>
   
 	<structure>
 		<top>
 		<toolbar>
-			<icon icon="common/refresh" title="Refresh" click="list.refresh()"/>
+			<icon icon="common/refresh" text="Refresh" click="list.refresh()"/>
 			<divider/>
 		</toolbar>
 		</top>

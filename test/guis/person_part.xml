@@ -4,11 +4,11 @@
 	<structure>
 		<top>
 			<toolbar>
-				<icon icon="common/stop" title="Annuler"/>
-				<icon icon="common/delete" title="Slet"/>
-				<icon icon="common/save" title="Gem"/>
+				<icon icon="common/stop" text="Annuler"/>
+				<icon icon="common/delete" text="Slet"/>
+				<icon icon="common/save" text="Gem"/>
 				<divider/>
-				<icon icon="common/person" title="Vælg person"/>
+				<icon icon="common/person" text="Vælg person"/>
 				<field label="Justering">
 					<dropdown>
 						<item value="left" title="Venstre"/>

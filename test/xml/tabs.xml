@@ -35,7 +35,7 @@
 				<formula>
 					<fields>
 						<field label="Note:">
-							<text-input lines="6"/>
+							<text-input breaks="true"/>
 						</field>
 						<field label="Checkbox:">
 							<checkbox/>

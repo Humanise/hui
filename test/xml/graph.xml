@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:hui" title="Graph">
-	<controller source="graph.js"/>
+	<controller url="graph.js"/>
 	<source url="data/graph_family.json" name="soirce"/>
 	<structure>
 		<top>
 			<toolbar>
-				<icon icon="common/refresh" title="Test"/>
+				<icon icon="common/refresh" text="Test"/>
 				<divider/>
 				<field label="View">
 					<segmented>

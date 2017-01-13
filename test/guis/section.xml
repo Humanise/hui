@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="../xml/setup.xsl"?>
-<gui xmlns="uri:hui" pad="10" title="Box">
+<gui xmlns="uri:hui" padding="10" title="Box">
 	<window name="sectionWindow" title="Section" width="300">
 		<toolbar left="5" variant="window">
 			<icon text="Margins" icon="common/info" selected="true"/>

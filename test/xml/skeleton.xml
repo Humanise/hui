@@ -2,7 +2,7 @@
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:hui" title="Skeleton">
 
-	<controller name="controller" source="skeleton.js"/>
+	<controller name="controller" url="skeleton.js"/>
 	<source name="itemsSource" url="data/source_items.xml"/>
 
 	<skeleton>

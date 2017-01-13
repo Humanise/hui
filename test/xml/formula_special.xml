@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:hui" padding="10" title="Formula (special)">
-	<controller name="controller" source="formula_special.js"/>
+	<controller name="controller" url="formula_special.js"/>
 	<source name="itemsSource" url="data/items_languages.xml"/>
 	<box width="600" title="Drop down" variant="textured" padding="10">
 		<toolbar>
-			<icon icon="common/folder" title="Show values" name="showValues"/>
-			<icon icon="common/folder" title="Build" name="build"/>
+			<icon icon="common/folder" text="Show values" name="showValues"/>
+			<icon icon="common/folder" text="Build" name="build"/>
 		</toolbar>
 		<formula name="formula">
 			<fields labels="above">

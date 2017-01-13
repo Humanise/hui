@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="../xml/setup.xsl"?>
 <gui xmlns="uri:hui" title="Animation">
-  <controller source="animation.js"/>
+  <controller url="animation.js"/>
 
 	<window name="settingsWindow" width="300" title="Settings">
     <formula name="settingsForm" padding="10">

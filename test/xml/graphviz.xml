@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:hui" padding="10" title="Graphviz">
-	<controller name="controller" source="graphviz.js"/>
+	<controller name="controller" url="graphviz.js"/>
 	<structure>
 		<top>
 		<toolbar>
-			<icon icon="common/smaller" title="Mindre" name="smaller"/>
-			<icon icon="common/larger" title="Større" name="larger"/>
+			<icon icon="common/smaller" text="Mindre" name="smaller"/>
+			<icon icon="common/larger" text="Større" name="larger"/>
 		</toolbar>
 		</top>
 		<middle>

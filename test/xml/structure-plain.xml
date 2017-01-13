@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:hui" title="Structure" padding="10">
-	<controller name="controller" source="list.js"/>
+	<controller name="controller" url="list.js"/>
 	<source name="itemsSource" url="data/source_items.xml"/>
 	<structure>
 		<middle>
@@ -18,17 +18,17 @@
 			</left>
 			<center>
 				<toolbar labels="false" border="bottom">
-					<button title="Opret"/>
-					<button title="Opret"/>
-					<button title="Opret"/>
+					<button text="Opret"/>
+					<button text="Opret"/>
+					<button text="Opret"/>
 				</toolbar>
 				<overflow>
 					<list name="list" url="data/list_users.xml"/>
 				</overflow>
 				<toolbar labels="false" border="top">
-					<button title="Opret"/>
-					<button title="Opret"/>
-					<button title="Opret"/>
+					<button text="Opret"/>
+					<button text="Opret"/>
+					<button text="Opret"/>
 				</toolbar>
 			</center>
 		</middle>

@@ -6,25 +6,25 @@
 	<source name="languagesSource" url="data/languages.xml"/>
 	<source name="designsSource" url="data/languages.xml"/>
 	<source name="setupsSource" url="data/languages.xml"/>
-    <controller source="sites.js"/>
+    <controller url="sites.js"/>
 	
 	<structure>
 		<top>
 			<toolbar>
-				<icon icon="common/page" title="Ny side" overlay="new" click="newPage.show()"/>
+				<icon icon="common/page" text="Ny side" overlay="new" click="newPage.show()"/>
 				<more>
-					<icon icon="common/hierarchy_item" title="Nyt punkt" overlay="new" click="newPage.show()"/>
-					<icon icon="common/hierarchy" title="Nyt hierarki" overlay="new" click="box.show()"/>
-					<icon icon="common/template" title="Ny skabelon" overlay="new" click="newPage.show()"/>
+					<icon icon="common/hierarchy_item" text="Nyt punkt" overlay="new" click="newPage.show()"/>
+					<icon icon="common/hierarchy" text="Nyt hierarki" overlay="new" click="box.show()"/>
+					<icon icon="common/template" text="Ny skabelon" overlay="new" click="newPage.show()"/>
 				</more>
 				<divider/>
-				<icon icon="common/edit" title="Edit" name="edit" disabled="true"/>
-				<icon icon="common/info" title="Info" name="info" disabled="true"/>
-				<icon icon="common/view" title="Show" name="view" disabled="true"/>
-				<icon icon="common/delete" title="Delete" name="delete" disabled="true">
+				<icon icon="common/edit" text="Edit" name="edit" disabled="true"/>
+				<icon icon="common/info" text="Info" name="info" disabled="true"/>
+				<icon icon="common/view" text="Show" name="view" disabled="true"/>
+				<icon icon="common/delete" text="Delete" name="delete" disabled="true">
 					<confirm text="Are you sure? It cannot be undone" ok="Yes, delete" cancel="Cancel"/>
 				</icon>
-				<icon icon="common/internet" overlay="upload" title="Udgiv ændringer" click="pages.next()"/>
+				<icon icon="common/internet" overlay="upload" text="Udgiv ændringer" click="pages.next()"/>
 				<right>
 					<field label="Søgning">
 						<searchfield/>
@@ -76,7 +76,7 @@
 								<formula>
 									<fields>
 										<field label="Beskrivelse:">
-											<text-input lines="6"/>
+											<text-input breaks="true"/>
 										</field>
 										<field label="Sti:">
 											<text-input/>
@@ -143,7 +143,7 @@
 				<formula padding="10">
 					<fields>
 						<field label="Beskrivelse:">
-							<text-input lines="6"/>
+							<text-input breaks="true"/>
 						</field>
 						<field label="Sti:">
 							<text-input name="newPagePath"/>
@@ -182,8 +182,8 @@
 			</column>
 			<column>
 				<buttons align="right">
-					<button title="Annuller"/>
-					<button title="Opret" highlighted="true"/>
+					<button text="Annuller"/>
+					<button text="Opret" highlighted="true"/>
 				</buttons>
 			</column>
 		</columns>
@@ -208,10 +208,10 @@
 			</step>
 		</wizard>
 		<buttons top="10" align="right">
-			<button title="Forrige" click="box.hide()"/>
-			<button title="Næste" click="box.hide()"/>
-			<button title="Annuller" click="box.hide()"/>
-			<button title="Gem" highlighted="true"/>
+			<button text="Forrige" click="box.hide()"/>
+			<button text="Næste" click="box.hide()"/>
+			<button text="Annuller" click="box.hide()"/>
+			<button text="Gem" highlighted="true"/>
 		</buttons>
 	</box>
 

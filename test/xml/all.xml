@@ -5,31 +5,32 @@
     div.x {margin: 30px}
     h2.x {margin-bottom: 10px; border-bottom: 1px solid #eee}
   </style>
+  <style url="nowhere.css"/>
 
   <div class="x"><h2 class="x">Bar</h2>
-  	<bar>
-  		<button icon="common/edit" text="Edit"/>
-  		<button icon="common/delete" text="Delete" selected="true"/>
-  		<button icon="common/color" text="Color"/>
-  		<button icon="common/internet"/>
-  		<button text="Only text"/>
-  		<checkbox text="djslkfjksdjl"/>
-  		<searchfield/>
-  		<dropdown value="1">
-  			<item value="1" title="My option"/>
-  		</dropdown>
-  		<segmented value="2">
-  			<item value="1" title="H1"/>
-  			<item value="2" title="H2"/>
-  			<item value="3" title="H3"/>
-  			<item value="4" icon="common/color"/>
-  		</segmented>
-  		<right>
-  			<button icon="common/delete" text="Hep hey!" highlighted="true"/>
-  			<button icon="common/delete" text="Hep hey!"/>
-  			<button icon="common/delete" text="Hep hey!"/>
-  		</right>
-  	</bar>
+    <bar>
+      <button icon="common/edit" text="Edit"/>
+      <button icon="common/delete" text="Delete" selected="true"/>
+      <button icon="common/color" text="Color"/>
+      <button icon="common/internet"/>
+      <button text="Only text"/>
+      <checkbox text="djslkfjksdjl"/>
+      <searchfield/>
+      <dropdown value="1">
+        <item value="1" title="My option"/>
+      </dropdown>
+      <segmented value="2">
+        <item value="1" title="H1"/>
+        <item value="2" title="H2"/>
+        <item value="3" title="H3"/>
+        <item value="4" icon="common/color"/>
+      </segmented>
+      <right>
+        <button icon="common/delete" text="Hep hey!" highlighted="true"/>
+        <button icon="common/delete" text="Hep hey!"/>
+        <button icon="common/delete" text="Hep hey!"/>
+      </right>
+    </bar>
   </div>
 
   <div class="x"><h2 class="x">Button</h2>
