@@ -2206,7 +2206,7 @@ hui.drag = {
    * @param {Object} options The options
    * @param {Element} options.element The element to attach to
    */
-  register : function(options) {
+  attach : function(options) {
     var touch = options.touch && hui.browser.touch;
     hui.listen(options.element,touch ? 'touchstart' : 'mousedown',function(e) {
       e = hui.event(e);
@@ -2218,22 +2218,30 @@ hui.drag = {
       hui.drag.start(options,e);
     });
   },
+  register : function(options) {
+    this.attach(options);
+  },
   /** Start dragging
    * <pre><strong>options:</strong> {
-   *  onBeforeMove : function(event), // Called when the cursor moves for the first time
-   *  onMove : function(event), // Called when the cursor moves
-   *  onAfterMove : function(event), // Called if the cursor has moved
-   *  onNotMoved : function(event), // Called if the cursor has not moved
-   *  onEnd : function(event), // Called when the mouse is released, even if the cursor has not moved
+   *  onBeforeMove ($firstMove) : function(event), // Called when the cursor moves for the first time
+   *  onMove ($move): function(event), // Called when the cursor moves
+   *  onAfterMove ($didMove): function(event), // Called if the cursor has moved
+   *  onNotMoved ($notMoved): function(event), // Called if the cursor has not moved
+   *  onEnd ($finally) : function(event), // Called when the mouse is released, even if the cursor has not moved
    * }
    * @param {Object} options The options
+   * @param {function} options.$before When the user starts interacting (mousedown/touchstart)
+   * @param {function} options.$startMove When the user starts moving (before first move - called once)
+   * @param {function} options.$move When the user moves
+   * @param {function} options.$endMove After a move has finished
+   * @param {function} options.$notMoved If the user started interacting but did not move (maybe treat as click/tap)
+   * @param {function} options.$finally After everything - moved or not
    */
   start : function(options,e) {
     var target = hui.browser.msie ? document : window;
     var touch = options.touch && hui.browser.touch;
-    if (options.onStart) {
-      options.onStart();
-    }
+    options.$before && options.$before();
+    options.onStart && options.onStart();
     var latest = {
       x: e.getLeft(),
       y: e.getTop(),
@@ -2246,25 +2254,27 @@ hui.drag = {
     mover = function(e) {
       e = hui.event(e);
       e.stop(e);
-      if (!moved && options.onBeforeMove) {
-        options.onBeforeMove(e);
+      if (!moved) {
+        options.onBeforeMove && options.onBeforeMove(e); // TODO: deprecated
+        options.$startMove && options.$startMove(e);
       }
       moved = true;
-      options.onMove(e);
+      options.onMove && options.onMove(e);
+      options.$move && options.$move(e);
     }.bind(this);
-    hui.listen(target,touch ? 'touchmove' : 'mousemove',mover);
+    hui.listen(document.body,touch ? 'touchmove' : 'mousemove',mover);
     upper = function() {
-      hui.unListen(target,touch ? 'touchmove' : 'mousemove',mover);
+      hui.unListen(document.body,touch ? 'touchmove' : 'mousemove',mover);
       hui.unListen(target,touch ? 'touchend' : 'mouseup',upper);
-      if (options.onEnd) {
-        options.onEnd();
+      options.onEnd && options.onEnd(); // TODO: deprecated
+      if (moved) {
+        options.onAfterMove && options.onAfterMove(); // TODO: deprecated
+        options.$endMove && options.$endMove();
+      } else {
+        options.onNotMoved && options.onNotMoved(); // TODO: deprecated
+        options.$notMoved && options.$notMoved();
       }
-      if (moved && options.onAfterMove) {
-        options.onAfterMove();
-      }
-      if (!moved && options.onNotMoved) {
-        options.onNotMoved();
-      }
+      options.$finally && options.$finally();
       hui.selection.enable(true);
     }.bind(this);
     hui.listen(target,touch ? 'touchend' : 'mouseup',upper);
@@ -5045,6 +5055,12 @@ hui.ui._resize = function() {
 hui.ui._afterResize = function() {
   hui.onDraw(function() {
     hui.ui.callSuperDelegates(hui.ui,'$afterResize');
+    for (key in hui.ui.objects) {
+      var component = hui.ui.objects[key];
+      if (component.$$draw) {
+        component.$$draw();
+      }
+    }
   })
 };
 
@@ -6476,11 +6492,11 @@ hui.ui.Window.prototype = {
 		}
 		hui.drag.register({
       touch: true,
-			element : this.titlebar,
-			onStart : this._onDragStart.bind(this) ,
-			onBeforeMove : this._onBeforeMove.bind(this) ,
-      onMove : this._onMove.bind(this),
-			onAfterMove : this._onAfterMove.bind(this)
+      element : this.titlebar,
+      $before : this._onDragStart.bind(this) ,
+      $startMove : this._onBeforeMove.bind(this) ,
+      $move : this._onMove.bind(this),
+      $endMove : this._onAfterMove.bind(this)
 		});
 		hui.listen(this.element,'mousedown',function() {
 			self.element.style.zIndex = hui.ui.nextPanelIndex();

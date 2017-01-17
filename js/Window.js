@@ -61,11 +61,11 @@ hui.ui.Window.prototype = {
 		}
 		hui.drag.register({
       touch: true,
-			element : this.titlebar,
-			onStart : this._onDragStart.bind(this) ,
-			onBeforeMove : this._onBeforeMove.bind(this) ,
-      onMove : this._onMove.bind(this),
-			onAfterMove : this._onAfterMove.bind(this)
+      element : this.titlebar,
+      $before : this._onDragStart.bind(this) ,
+      $startMove : this._onBeforeMove.bind(this) ,
+      $move : this._onMove.bind(this),
+      $endMove : this._onAfterMove.bind(this)
 		});
 		hui.listen(this.element,'mousedown',function() {
 			self.element.style.zIndex = hui.ui.nextPanelIndex();
