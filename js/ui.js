@@ -76,6 +76,12 @@ hui.ui._resize = function() {
 hui.ui._afterResize = function() {
   hui.onDraw(function() {
     hui.ui.callSuperDelegates(hui.ui,'$afterResize');
+    for (key in hui.ui.objects) {
+      var component = hui.ui.objects[key];
+      if (component.$$draw) {
+        component.$$draw();
+      }
+    }
   })
 };
 

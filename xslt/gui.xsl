@@ -69,6 +69,9 @@
       <xsl:if test="//gui:skeleton">
         <link rel="stylesheet" href="{$context}/hui/{$pathVersion}css/skeleton.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
       </xsl:if>
+      <xsl:if test="//gui:media-simulator">
+        <link rel="stylesheet" href="{$context}/hui/{$pathVersion}css/mediasimulator.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
+      </xsl:if>
 
       <xsl:for-each select="//gui:css">
         <link rel="stylesheet" href="{@url}" type="text/css" media="screen" title="no title" charset="utf-8"/>
@@ -131,6 +134,9 @@
       </xsl:if>
       <xsl:if test="//gui:managed">
         <script src="{$context}/hui/{$pathVersion}js/EditManager.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+      </xsl:if>
+      <xsl:if test="//gui:media-simulator">
+        <script src="{$context}/hui/{$pathVersion}js/MediaSimulator.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
       </xsl:if>
 
       <xsl:for-each select="gui:localize[@source]">
@@ -1362,14 +1368,23 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </xsl:template>
 
   <xsl:template match="gui:media-simulator">
-    <div class="hui_mediasimulator">
-      <iframe class="hui_mediasimulator_frame" src="http://www.apple.com/"><xsl:comment/></iframe>
+    <div class="hui_mediasimulator" id="{generate-id()}">
+      <div class="hui_mediasimulator_base">
+        <div class="hui_mediasimulator_bar">
+        </div>
+        <div class="hui_mediasimulator_handle hui_mediasimulator_handle-right"><xsl:comment/></div>
+        <div class="hui_mediasimulator_handle hui_mediasimulator_handle-bottom"><xsl:comment/></div>
+        <div class="hui_mediasimulator_body">
+          <iframe class="hui_mediasimulator_frame" src="{@url}"><xsl:comment/></iframe>
+        </div>
+      </div>
     </div>
     <script type="text/javascript">
       (function() {
         var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.MediaSimulator({
-        name : '<xsl:value-of select="@name"/>'
-      });
+          element : '<xsl:value-of select="generate-id()"/>',
+          name : '<xsl:value-of select="@name"/>'
+        });
       <xsl:call-template name="gui:createobject"/>
       })();
     </script>

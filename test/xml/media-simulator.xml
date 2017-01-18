@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="setup.xsl"?>
+<gui xmlns="uri:hui" title="Rendering">
+  <rows>
+    <row height="content">
+      <tabs small="true" below="true">
+        <tab title="Hey">
+          <toolbar variant="bar">
+            <icon icon="common/info" text="iPhone SE" click="simulator.setSize({width: 320, height: 568})"/>
+            <icon icon="common/info" text="iPhone 6s" click="simulator.setSize({width: 375, height: 667})"/>
+            <icon icon="common/info" text="iPhone 6s Plus" click="simulator.setSize({width: 414, height: 736})"/>
+            <icon icon="common/info" text="iPad" click="simulator.setSize({width: 768, height: 1024})"/>
+            <icon icon="common/info" text="iPad Pro" click="simulator.setSize({width: 1024, height: 1366})"/>
+            <icon icon="common/info" text="iPad Pro" click="simulator.setSize({width: 1024, height: 1366})"/>
+            <divider/>
+            <icon icon="common/info" text="Reset" click="simulator.setSize({})"/>
+          </toolbar>
+        </tab>
+      </tabs>
+    </row>
+    <row>
+      <media-simulator name="simulator" url="toolbar.xml"/>
+    </row>
+  </rows>
+	<script>
+		hui.ui.listen({
+			$click$changeViaHTML : function() {
+				rendering.setContent('<p>This is new content inserted</p>');
+			}
+		})
+	</script>
+
+</gui>

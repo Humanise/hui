@@ -37,44 +37,12 @@
 			</tab>
 		</tabs>
 	</dock>
-	
+
 	<boundpanel name="panel" width="200">
 		<text>
 			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
 		</text>
 		<button small="true" click="panel.hide()" text="Close"/>
 	</boundpanel>
-	
-	<script>
-		hui.ui.listen({
-			$click$publish : function() {
-				panel.position(publish);
-				panel.show();
-			},
-			$click$mini1 : function() {
-				mini1.setSelected(true);
-				mini2.setSelected(false);
-				mini3.setSelected(false);
-				mini4.setSelected(false);
-			},
-			$click$mini2 : function() {
-				mini1.setSelected(false);
-				mini2.setSelected(true);
-				mini3.setSelected(false);
-				mini4.setSelected(false);
-			},
-			$click$mini3 : function() {
-				mini1.setSelected(false);
-				mini2.setSelected(false);
-				mini3.setSelected(true);
-				mini4.setSelected(false);
-			},
-			$click$mini4 : function() {
-				mini1.setSelected(false);
-				mini2.setSelected(false);
-				mini3.setSelected(false);
-				mini4.setSelected(true);
-			}
-		})
-	</script>
+	<controller source="index.js"/>
 </gui>
