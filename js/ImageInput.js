@@ -71,7 +71,7 @@ hui.ui.ImageInput.prototype = {
 			this._showFinder();
 			return;
 		}
-		
+
 		if (!this.picker) {
 			var self = this;
 			this.picker = hui.ui.BoundPanel.create({modal:true});
@@ -121,7 +121,7 @@ hui.ui.ImageInput.prototype = {
 			$success : function(t) {
 				self._parse(t.responseXML);
 			},
-			url : this.options.source
+			url : this.options.url
 		});
 	},
 	_parse : function(doc) {
