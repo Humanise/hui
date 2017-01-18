@@ -90,16 +90,16 @@ hui.ui.Source.prototype = {
 			var prms = [];
 			for (var j=0; j < this.parameters.length; j++) {
 				var p = this.parameters[j];
-                if (hui.isArray(p.value) && p.separate) {
-                    for (var k = 0; k < p.value.length; k++) {
-        				prms.push({
-                            name : p.key,
-                            value : p.value[k]
-                        });
-                    }
-                } else {
-    				prms.push({name : p.key, value : p.value});
-                }
+        if (hui.isArray(p.value) && p.separate) {
+          for (var k = 0; k < p.value.length; k++) {
+            prms.push({
+              name : p.key,
+              value : p.value[k]
+            });
+          }
+        } else {
+          prms.push({name : p.key, value : p.value});
+        }
 			};
 			this.busy = true;
 			hui.ui.callDelegates(this,'sourceIsBusy');
@@ -149,12 +149,13 @@ hui.ui.Source.prototype = {
 	},
 	/** @private */
 	parseXML : function(doc) {
-		if (doc.documentElement.tagName=='items') {
+    var root = doc.documentElement.tagName;
+		if (root=='items' || root=='options') {
 			this.data = hui.ui.parseItems(doc);
-			this.fire('itemsLoaded',this.data);
-		} else if (doc.documentElement.tagName=='list') {
+			this.fire('optionsLoaded',this.data);
+		} else if (root=='list') {
 			this.fire('listLoaded',doc);
-		} else if (doc.documentElement.tagName=='articles') {
+		} else if (root=='articles') {
 			this.fire('articlesLoaded',doc);
 		}
 	},

@@ -97,7 +97,7 @@ hui.ui.Gallery.prototype = {
 		this.setObjects(objects);
 	},
 	/** @private */
-	$itemsLoaded : function(objects) {
+	$optionsLoaded : function(objects) {
 		this.setObjects(objects);
 	},
 	/** @private */

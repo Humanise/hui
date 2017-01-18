@@ -126,7 +126,7 @@ hui.ui.Checkboxes.prototype = {
     this.subItems.push(items);
   },
   /** @private */
-  $itemsLoaded : function(items) {
+  $optionsLoaded : function(items) {
     hui.each(items,function(item) {
       var node = hui.build('a',{'class':'hui_checkbox',href:'javascript:void(0);',html:'<span class="hui_checkbox_button"></span><span class="hui_checkbox_label">'+hui.string.escape(item.title)+'</span>'});
       hui.listen(node,'click',function(e) {
@@ -167,20 +167,21 @@ hui.ui.Checkboxes.Items.prototype = {
     }
   },
   /** @private */
-  $itemsLoaded : function(items) {
+  $optionsLoaded : function(items) {
     this.checkboxes = [];
     this.element.innerHTML='';
     var self = this;
     hui.each(items,function(item) {
-      var node = hui.build('a',{'class':'hui_checkbox',href:'javascript://',html:'<span class="hui_checkbox_button"></span><span class="hui_checkbox_label">'+hui.string.escape(item.title)+'</span>'});
+      var node = hui.build('a',{'class':'hui_checkbox',href:'javascript://',html:'<span class="hui_checkbox_button"></span><span class="hui_checkbox_label">'+hui.string.escape(item.text)+'</span>'});
+      var parsed = {title:item.title,element:node,value:hui.intOrString(item.value)}
       hui.listen(node,'click',function(e) {
         hui.stop(e);
         node.focus();
-        self._onItemClick(item)
+        self._onItemClick(parsed)
       });
       hui.ui.addFocusClass({element:node,'class':'hui_checkbox_focused'});
       self.element.appendChild(node);
-      self.checkboxes.push({title:item.title,element:node,value:item.value});
+      self.checkboxes.push(parsed);
     });
     this.parent._checkValues();
     this._updateUI();

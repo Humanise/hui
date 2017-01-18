@@ -263,10 +263,10 @@ hui.ui.Selection.Items.prototype = {
   },
   /** @private */
   $objectsLoaded : function(objects) {
-    this.$itemsLoaded(objects);
+    this.$optionsLoaded(objects);
   },
   /** @private */
-  $itemsLoaded : function(items) {
+  $optionsLoaded : function(items) {
     this.items = [];
     this.element.innerHTML='';
     this.buildLevel(this.element,items,0,true);

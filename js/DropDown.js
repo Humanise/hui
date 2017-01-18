@@ -222,7 +222,7 @@ hui.ui.DropDown.prototype = {
 		this._updateUI();
 	},
 	/** @private */
-	$itemsLoaded : function(items) {
+	$optionsLoaded : function(items) {
 		this.setItems(items);
 	},
 	/** @private */
