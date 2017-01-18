@@ -6,15 +6,6 @@
   text-align: left; }
   .hui_toolbar-centered {
     text-align: center; }
-  .hui_toolbar-nolabels {
-    height: auto; }
-    .hui_toolbar-nolabels .hui_toolbar_icon {
-      height: 40px; }
-      .hui_toolbar-nolabels .hui_toolbar_icon_text {
-        display: none; }
-    .hui_toolbar-nolabels .hui_toolbar_divider {
-      height: 30px;
-      margin-top: 3px; }
   .hui_toolbar-border-top {
     border-top: 1px solid #ddd;
     padding: 0;

@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:hui" targetNamespace="uri:hui" elementFormDefault="qualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns="uri:hui"
+  targetNamespace="uri:hui"
+  elementFormDefault="qualified"
+>
 
   <xs:element name="gui" type="gui"/>
   <xs:complexType name="gui">
@@ -7,19 +11,24 @@
       <xs:element name="controller" type="controller"/>
       <xs:element name="style" type="style"/>
       <xs:element name="script" type="script"/>
+      <xs:element name="listen" type="listen"/>
       <xs:element name="source" type="source"/>
       <xs:element name="box" type="box"/>
       <xs:element name="fragment" type="fragment"/>
+      <xs:element name="tiles" type="tiles"/>
       <xs:element name="text" type="text"/>
       <xs:element name="window" type="window"/>
       <xs:element name="space" type="space"/>
       <xs:element name="dock" type="dock"/>
       <xs:element name="structure" type="structure"/>
+      <xs:element name="columns" type="columns"/>
+      <xs:element name="skeleton" type="skeleton"/>
       <xs:element name="boundpanel" type="boundpanel"/>
       <xs:element name="managed" type="managed"/>
       <xs:element name="bar" type="bar"/>
       <xs:element name="toolbar" type="toolbar"/>
-      <xs:element name="fragment" type="fragment"/>
+      <xs:element name="tabs" type="tabs"/>
+      <xs:element name="menu" type="menu"/>
       <xs:element name="div" type="div"/>
     </xs:choice>
     <xs:attribute name="padding" type="xs:positiveInteger"/>
@@ -28,15 +37,67 @@
     <xs:attribute name="state" type="xs:string"/>
   </xs:complexType>
 
+  <xs:element name="subgui" type="subgui"/>
+  <xs:complexType name="subgui">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="window" type="window"/>
+      <xs:element name="source" type="source"/>
+      <xs:element name="boundpanel" type="boundpanel"/>
+      <xs:element name="menu" type="menu"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:element name="options" type="options"/>
+  <xs:complexType name="options">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="option" type="options_option"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="options_option">
+    <xs:attribute name="text" type="xs:string"/>
+    <xs:attribute name="value" type="xs:string"/>
+  </xs:complexType>
+
   <xs:element name="controller" type="controller"/>
   <xs:complexType name="controller">
     <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="url" type="xs:string"/>
   </xs:complexType>
 
+  <xs:element name="listen" type="listen"/>
+  <xs:complexType name="listen" mixed="true">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="set" type="listen_set"/>
+    </xs:choice>
+    <xs:attribute name="for" type="xs:string"/>
+    <xs:attribute name="on" type="xs:string"/>
+  </xs:complexType>
 
+  <xs:complexType name="listen_set">
+    <xs:attribute name="on" type="xs:string"/>
+    <xs:anyAttribute namespace="##local" processContents="lax"/>
+  </xs:complexType>
+
+  <xs:element name="space" type="space"/>
   <xs:complexType name="space">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:any></xs:any>
+    </xs:choice>
+    <xs:attribute name="all" type="xs:positiveInteger"/>
+    <xs:attribute name="top" type="xs:positiveInteger"/>
+    <xs:attribute name="bottom" type="xs:positiveInteger"/>
+    <xs:attribute name="left" type="xs:positiveInteger"/>
+    <xs:attribute name="right" type="xs:positiveInteger"/>
     <xs:attribute name="height" type="xs:positiveInteger"/>
+    <xs:attribute name="width" type="xs:positiveInteger"/>
+    <xs:attribute name="align">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="right"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="source">
@@ -63,6 +124,13 @@
       <xs:element name="bottom" type="structure_bottom"/>
     </xs:choice>
     <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="height">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="full|[0-9]+"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="structure_top">
@@ -75,6 +143,7 @@
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="button" type="button"/>
       <xs:element name="toolbar" type="toolbar"/>
+      <xs:element name="space" type="space"/>
     </xs:choice>
   </xs:complexType>
 
@@ -90,6 +159,8 @@
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="selection" type="selection"/>
       <xs:element name="overflow" type="overflow"/>
+      <xs:element name="bar" type="bar"/>
+      <xs:element name="rows" type="rows"/>
     </xs:choice>
   </xs:complexType>
 
@@ -105,6 +176,43 @@
     </xs:choice>
   </xs:complexType>
 
+  <!-- Skeleton -->
+
+  <xs:element name="skeleton" type="skeleton"/>
+  <xs:complexType name="skeleton">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="navigation" type="skeleton_navigation"/>
+      <xs:element name="results" type="skeleton_results"/>
+      <xs:element name="actions" type="skeleton_actions"/>
+      <xs:element name="content" type="skeleton_content"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="skeleton_navigation">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="overflow" type="overflow"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="skeleton_results">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="overflow" type="overflow"/>
+      <xs:element name="bar" type="bar"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="skeleton_actions">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="bar" type="bar"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="skeleton_content">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:any/>
+    </xs:choice>
+  </xs:complexType>
+
   <!-- Overflow -->
 
   <xs:element name="overflow" type="overflow"/>
@@ -113,15 +221,109 @@
       <xs:any></xs:any>
     </xs:choice>
     <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="state" type="xs:string"/>
+    <xs:attribute name="height">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="full|[0-9]+"/> <!-- TODO -->
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="max-height" type="xs:positiveInteger"/>
+    <xs:attribute name="min-height" type="xs:positiveInteger"/>
+    <xs:attribute name="shadow-variant">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="white"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="background">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="sand_grey"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
   </xs:complexType>
 
-  <!-- Overflow -->
+  <!-- Calendar -->
 
   <xs:element name="calendar" type="calendar"/>
   <xs:complexType name="calendar">
     <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="state" type="xs:string"/>
     <xs:attribute name="source" type="xs:string"/>
+    <xs:attribute name="start-hour" type="xs:positiveInteger"/>
+    <xs:attribute name="end-hour" type="xs:positiveInteger"/>
+  </xs:complexType>
+
+  <!-- Diagram -->
+
+  <xs:element name="diagram" type="diagram"/>
+  <xs:complexType name="diagram">
+    <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="source" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- Diagram -->
+
+  <xs:element name="timeline" type="timeline"/>
+  <xs:complexType name="timeline">
+    <xs:attribute name="name" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- Gallery -->
+
+  <xs:element name="gallery" type="gallery"/>
+  <xs:complexType name="gallery">
+    <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="source" type="xs:string"/>
+    <xs:attribute name="state" type="xs:string"/>
+    <xs:attribute name="padding" type="xs:positiveInteger"/>
+    <xs:attribute name="drop-files" type="xs:boolean"/>
+  </xs:complexType>
+
+  <!-- Iframe -->
+
+  <xs:element name="iframe" type="iframe"/>
+  <xs:complexType name="iframe">
+    <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="state" type="xs:string"/>
+    <xs:attribute name="url" type="xs:string"/>
+    <xs:attribute name="height" type="xs:positiveInteger"/>
+  </xs:complexType>
+
+  <!-- frames -->
+
+  <xs:element name="frames" type="frames"/>
+  <xs:complexType name="frames">
+    <xs:choice minOccurs="1" maxOccurs="unbounded">
+      <xs:element name="frame" type="frames_frame"/>
+      <xs:element name="script" type="script"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="frames_frame">
+    <xs:attribute name="scrolling" type="xs:boolean"/>
+    <xs:attribute name="url" type="xs:string"/>
+    <xs:attribute name="name" type="xs:string"/> <!-- TODO -->
+  </xs:complexType>
+
+  <!-- Graph -->
+
+  <xs:element name="graph" type="graph"/>
+  <xs:complexType name="graph">
+    <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="state" type="xs:string"/>
+    <xs:attribute name="source" type="xs:string"/>
+    <xs:attribute name="layout">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="d3"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
   </xs:complexType>
 
 
@@ -133,6 +335,19 @@
       <xs:element name="button" type="button"/>
     </xs:choice>
     <xs:attribute name="top" type="xs:integer"/>
+    <xs:attribute name="bottom" type="xs:positiveInteger"/>
+    <xs:attribute name="right" type="xs:integer"/>
+    <xs:attribute name="small" type="xs:boolean"/>
+    <xs:attribute name="tiny" type="xs:boolean"/>
+    <xs:attribute name="mini" type="xs:boolean"/>
+    <xs:attribute name="padding" type="xs:positiveInteger"/>
+    <xs:attribute name="align">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="center|right"/> <!-- TODO more options? -->
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
   </xs:complexType>
 
   <!-- Button -->
@@ -147,10 +362,13 @@
     <xs:attribute name="icon" type="xs:string"/>
     <xs:attribute name="role" type="xs:string"/>
     <xs:attribute name="click" type="xs:string"/> <!-- TODO -->
+    <xs:attribute name="url" type="xs:string"/>
     <xs:attribute name="submit" type="xs:boolean"/>
     <xs:attribute name="small" type="xs:boolean"/>
     <xs:attribute name="mini" type="xs:boolean"/>
+    <xs:attribute name="tiny" type="xs:boolean"/>
     <xs:attribute name="highlighted" type="xs:boolean"/>
+    <xs:attribute name="disabled" type="xs:boolean"/>
     <xs:attribute name="variant">
       <xs:simpleType>
         <xs:restriction base="xs:string">
@@ -166,6 +384,28 @@
     <xs:attribute name="text" type="xs:string"/>
     <xs:attribute name="ok" type="xs:string"/>
     <xs:attribute name="cancel" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- Menu -->
+
+  <xs:element name="menu" type="menu"/>
+  <xs:complexType name="menu">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="item" type="menu_item"/>
+      <xs:element name="divider" type="menu_divider"/>
+    </xs:choice>
+    <xs:attribute name="name" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="menu_item">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="item" type="menu_item"/>
+    </xs:choice>
+    <xs:attribute name="text" type="xs:string"/>
+    <xs:attribute name="value" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="menu_divider">
   </xs:complexType>
 
   <!-- Pages -->
@@ -184,6 +424,36 @@
       <xs:any></xs:any>
     </xs:choice>
     <xs:attribute name="key" type="xs:string"/>
+    <xs:attribute name="background">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="wood"/> <!-- TODO -->
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+
+  <!-- Wizard -->
+
+  <xs:element name="wizard" type="wizard"/>
+  <xs:complexType name="wizard">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="step" type="wizard_step"/>
+    </xs:choice>
+    <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="selection-width" type="xs:positiveInteger"/>
+    <xs:attribute name="bordered" type="xs:boolean"/>
+  </xs:complexType>
+
+  <xs:complexType name="wizard_step">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:any></xs:any>
+    </xs:choice>
+    <xs:attribute name="title" type="xs:string"/>
+    <xs:attribute name="icon" type="xs:string"/>
+    <xs:attribute name="key" type="xs:string"/>
+    <xs:attribute name="frame" type="xs:boolean"/>
+    <xs:attribute name="padding" type="xs:positiveInteger"/>
   </xs:complexType>
 
   <!-- Selection -->
@@ -193,15 +463,25 @@
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="option" type="selection_option"/>
       <xs:element name="options" type="selection_options"/>
+      <xs:element name="title" type="selection_title"/>
     </xs:choice>
     <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="value" type="xs:string"/>
     <xs:attribute name="top" type="xs:integer"/>
   </xs:complexType>
 
+  <xs:complexType name="selection_title">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
   <xs:complexType name="selection_option">
     <xs:attribute name="text" type="xs:string"/>
     <xs:attribute name="value" type="xs:string"/>
+    <xs:attribute name="kind" type="xs:string"/>
+    <xs:attribute name="badge" type="xs:string"/>
     <xs:attribute name="icon" type="xs:string"/>
   </xs:complexType>
 
@@ -220,6 +500,8 @@
     </xs:choice>
     <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="centered" type="xs:boolean"/>
+    <xs:attribute name="small" type="xs:boolean"/>
+    <xs:attribute name="below" type="xs:boolean"/>
   </xs:complexType>
 
   <xs:complexType name="tabs_tab">
@@ -230,6 +512,13 @@
     <xs:attribute name="source" type="xs:string"/>
     <xs:attribute name="title" type="xs:string"/>
     <xs:attribute name="padding" type="xs:positiveInteger"/>
+    <xs:attribute name="background">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="light"/> <!-- TODO -->
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
   </xs:complexType>
 
   <!-- Bar -->
@@ -242,12 +531,16 @@
       <xs:element name="button" type="bar_button"/>
       <xs:element name="checkbox" type="checkbox"/>
       <xs:element name="dropdown" type="dropdown"/>
+      <xs:element name="segmented" type="segmented"/>
+      <xs:element name="searchfield" type="searchfield"/>
     </xs:choice>
     <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="state" type="xs:string"/>
+    <xs:attribute name="visible" type="xs:boolean"/>
     <xs:attribute name="variant">
       <xs:simpleType>
         <xs:restriction base="xs:string">
-          <xs:pattern value="layout"/>
+          <xs:pattern value="layout|layout_mini|mini|window|window_mini"/> <!-- TODO -->
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
@@ -256,12 +549,21 @@
   <xs:complexType name="bar_right">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="button" type="bar_button"/>
+      <xs:element name="searchfield" type="searchfield"/>
+      <xs:element name="segmented" type="segmented"/>
     </xs:choice>
   </xs:complexType>
 
-
   <xs:complexType name="bar_text">
     <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="text" type="xs:string"/>
+    <xs:attribute name="variant">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="header"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
   </xs:complexType>
 
 
@@ -271,6 +573,7 @@
     <xs:attribute name="selected" type="xs:boolean"/>
     <xs:attribute name="text" type="xs:string"/>
     <xs:attribute name="icon" type="xs:string"/>
+    <xs:attribute name="small" type="xs:boolean"/>
     <xs:attribute name="click" type="xs:string"/> <!-- TODO -->
   </xs:complexType>
 
@@ -281,19 +584,39 @@
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="icon" type="toolbar_icon"/>
       <xs:element name="right" type="toolbar_right" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="more" type="toolbar_more"/>
       <xs:element name="item" type="toolbar_item"/>
       <xs:element name="divider" type="toolbar_divider"/>
+      <xs:element name="grid" type="toolbar_grid"/>
       <xs:element name="button" type="button"/>
     </xs:choice>
     <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="centered" type="xs:boolean"/>
+    <xs:attribute name="left" type="xs:positiveInteger"/>
+    <xs:attribute name="border">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="top|bottom"/> <!-- TODO Find a better way to do this -->
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="toolbar_right">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="icon" type="toolbar_icon"/>
       <xs:element name="item" type="toolbar_item"/>
+      <xs:element name="divider" type="toolbar_divider"/>
     </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="toolbar_more">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="icon" type="toolbar_icon"/>
+      <xs:element name="item" type="toolbar_item"/>
+      <xs:element name="button" type="button"/>
+    </xs:choice>
+    <xs:attribute name="text" type="xs:string"/>
   </xs:complexType>
 
   <xs:complexType name="toolbar_divider">
@@ -303,6 +626,14 @@
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="searchfield" type="searchfield"/>
       <xs:element name="segmented" type="segmented"/>
+      <xs:element name="checkbox" type="checkbox"/>
+      <xs:element name="dropdown" type="dropdown"/>
+      <xs:element name="number-input" type="number-input"/>
+      <xs:element name="checkboxes" type="checkboxes"/>
+      <xs:element name="text-input" type="text-input"/>
+      <xs:element name="font-input" type="font-input"/>
+      <xs:element name="color-input" type="color-input"/>
+      <xs:element name="style-length-input" type="style-length-input"/>
     </xs:choice>
     <xs:attribute name="label" type="xs:string"/>
   </xs:complexType>
@@ -312,6 +643,7 @@
       <xs:element name="confirm" type="confirm"/>
     </xs:choice>
     <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="key" type="xs:string"/>
     <xs:attribute name="icon" type="xs:string"/>
     <xs:attribute name="badge" type="xs:string"/>
     <xs:attribute name="overlay" type="xs:string"/>
@@ -321,20 +653,71 @@
     <xs:attribute name="selected" type="xs:boolean"/>
   </xs:complexType>
 
-  <!-- Bound panel -->
+  <xs:complexType name="toolbar_grid">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="row" type="toolbar_row"/>
+    </xs:choice>
+    <xs:attribute name="left" type="xs:positiveInteger"/>
+    <xs:attribute name="right" type="xs:positiveInteger"/>
+  </xs:complexType>
+
+  <xs:complexType name="toolbar_row">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="cell" type="toolbar_cell"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="toolbar_cell">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="label" type="toolbar_label"/>
+      <xs:element name="text-input" type="text-input"/>
+      <xs:element name="number-input" type="number-input"/>
+      <xs:element name="dropdown" type="dropdown"/>
+      <xs:element name="checkbox" type="checkbox"/>
+      <xs:element name="style-length-input" type="style-length-input"/>
+    </xs:choice>
+    <xs:attribute name="label" type="xs:string"/>
+    <xs:attribute name="width" type="xs:positiveInteger"/>
+    <xs:attribute name="right" type="xs:positiveInteger"/>
+  </xs:complexType>
+
+  <xs:complexType name="toolbar_label">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <!-- Search field -->
 
   <xs:element name="searchfield" type="searchfield"/>
   <xs:complexType name="searchfield">
     <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="placeholder" type="xs:string"/>
     <xs:attribute name="expanded-width" type="xs:integer"/>
+    <xs:attribute name="adaptive" type="xs:boolean"/>
   </xs:complexType>
 
   <!-- Bound panel -->
 
   <xs:element name="boundpanel" type="boundpanel"/>
   <xs:complexType name="boundpanel">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:any/>
+    </xs:choice>
     <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="target" type="xs:string"/>
+    <xs:attribute name="title" type="xs:string"/>
+    <xs:attribute name="modal" type="xs:boolean"/>
+    <xs:attribute name="width" type="xs:positiveInteger"/>
+    <xs:attribute name="padding" type="xs:positiveInteger"/>
+    <xs:attribute name="variant">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="light"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
   </xs:complexType>
 
   <!-- Dock -->
@@ -343,11 +726,20 @@
   <xs:complexType name="dock">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="tabs" type="tabs"/>
+      <xs:element name="sidebar" type="dock_sidebar"/>
     </xs:choice>
     <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="url" type="xs:string"/>
     <xs:attribute name="frame-name" type="xs:string"/>
     <xs:attribute name="position" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="dock_sidebar">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="bar" type="bar"/>
+      <xs:element name="overflow" type="overflow"/>
+    </xs:choice>
+    <xs:attribute name="collapsed" type="xs:boolean"/>
   </xs:complexType>
 
   <!-- Style -->
@@ -361,7 +753,7 @@
     </xs:simpleContent>
   </xs:complexType>
 
-  <!-- Style -->
+  <!-- Script -->
 
   <xs:element name="script" type="script"/>
   <xs:complexType name="script">
@@ -376,7 +768,72 @@
 
   <xs:element name="fragment" type="fragment"/>
   <xs:complexType name="fragment">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:any/>
+    </xs:choice>
     <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="state" type="xs:string"/>
+    <xs:attribute name="visible" type="xs:boolean"/>
+    <xs:attribute name="background">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="wood|vichy"/> <!-- TODO -->
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="height">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="full"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+
+  <!-- Rendering -->
+
+  <xs:element name="rendering" type="rendering"/>
+  <xs:complexType name="rendering">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:any/> <!-- TODO -->
+    </xs:choice>
+    <xs:attribute name="name" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- Datepicker -->
+
+  <xs:element name="datepicker" type="datepicker"/>
+  <xs:complexType name="datepicker">
+    <xs:attribute name="name" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- Datepicker -->
+
+  <xs:element name="links" type="links"/>
+  <xs:complexType name="links">
+    <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="page-source" type="xs:string"/>
+    <xs:attribute name="file-source" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- Picker -->
+
+  <xs:element name="picker" type="picker"/>
+  <xs:complexType name="picker">
+    <xs:choice minOccurs="1" maxOccurs="unbounded">
+      <xs:element name="item" type="picker_item"/>
+    </xs:choice>
+    <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="title" type="xs:string"/>
+    <xs:attribute name="shadow" type="xs:boolean"/>
+    <xs:attribute name="item-width" type="xs:positiveInteger"/>
+    <xs:attribute name="item-height" type="xs:positiveInteger"/>
+  </xs:complexType>
+
+  <xs:complexType name="picker_item">
+    <xs:attribute name="image" type="xs:string"/>
+    <xs:attribute name="value" type="xs:string"/>
+    <xs:attribute name="text" type="xs:string"/>
   </xs:complexType>
 
   <!-- Box -->
@@ -388,9 +845,17 @@
     </xs:choice>
     <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="title" type="xs:string"/>
+    <xs:attribute name="absolute" type="xs:boolean"/>
+    <xs:attribute name="modal" type="xs:boolean"/>
     <xs:attribute name="padding" type="xs:positiveInteger"/>
     <xs:attribute name="top" type="xs:positiveInteger"/>
-    <xs:attribute name="width" type="xs:integer"/>
+    <xs:attribute name="width">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="[0-9]+[%]?"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
     <xs:attribute name="closable" type="xs:boolean"/>
     <xs:attribute name="variant">
       <xs:simpleType>
@@ -401,7 +866,7 @@
     </xs:attribute>
   </xs:complexType>
 
-  <!-- rows -->
+  <!-- Rows -->
 
   <xs:element name="rows" type="rows"/>
   <xs:complexType name="rows">
@@ -421,6 +886,32 @@
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
+    <xs:attribute name="min" type="xs:integer"/>
+    <xs:attribute name="max">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="content"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+
+  <!-- Columns -->
+
+  <xs:element name="columns" type="columns"/>
+  <xs:complexType name="columns">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="column" type="columns_column"/>
+    </xs:choice>
+    <xs:attribute name="space" type="xs:positiveInteger"/>
+    <xs:attribute name="flexible" type="xs:boolean"/>
+  </xs:complexType>
+
+  <xs:complexType name="columns_column">
+    <xs:choice minOccurs="1" maxOccurs="unbounded">
+      <xs:any/>
+    </xs:choice>
+    <xs:attribute name="width" type="xs:string"/>
   </xs:complexType>
 
   <!-- Split -->
@@ -445,14 +936,113 @@
     </xs:attribute>
   </xs:complexType>
 
+  <!-- Tiles -->
+
+  <xs:element name="tiles" type="tiles"/>
+  <xs:complexType name="tiles">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="tile" type="tiles_tile"/>
+    </xs:choice>
+    <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="space" type="xs:positiveInteger"/>
+  </xs:complexType>
+
+  <xs:complexType name="tiles_tile">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="actions" type="tiles_actions" maxOccurs="1"/>
+      <xs:element name="title" type="tiles_title" maxOccurs="1"/>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:any/>
+      </xs:choice>
+    </xs:choice>
+    <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="width" type="xs:positiveInteger"/>
+    <xs:attribute name="height" type="xs:positiveInteger"/>
+    <xs:attribute name="top" type="xs:integer"/>
+    <xs:attribute name="left" type="xs:integer"/>
+    <xs:attribute name="background" type="xs:string"/>
+    <xs:attribute name="variant">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="light"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="tiles_actions">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="icon" type="tiles_icon"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="tiles_icon">
+    <xs:attribute name="icon" type="xs:string"/>
+    <xs:attribute name="key" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="tiles_title">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
   <!-- Text -->
 
   <xs:element name="text" type="text"/>
   <xs:complexType name="text">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="p" type="text_p"/>
+      <xs:element name="h" type="text_h"/>
+    </xs:choice>
+    <xs:attribute name="top" type="xs:positiveInteger"/>
     <xs:attribute name="align" type="xs:string"/>
   </xs:complexType>
 
+  <xs:complexType name="text_p" mixed="true">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="link" type="link"/>
+      <xs:element name="strong" type="strong"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="text_h" mixed="true">
+  </xs:complexType>
+
+  <xs:element name="link" type="link"/>
+  <xs:complexType name="link">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="name" type="xs:string"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <!-- Icon -->
+
+  <xs:element name="icon" type="icon"/>
+  <xs:complexType name="icon">
+    <xs:attribute name="icon" type="xs:string"/>
+    <xs:attribute name="text" type="xs:string"/>
+    <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="size">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="16|32|64"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+
   <!-- HTML stuff -->
+
+  <xs:element name="html" type="html"/>
+  <xs:complexType name="html" mixed="true">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:any/>
+    </xs:choice>
+  </xs:complexType>
 
   <xs:element name="div" type="div"/>
   <xs:complexType name="div" mixed="true">
@@ -460,14 +1050,58 @@
       <xs:any/>
     </xs:choice>
     <xs:attribute name="class" type="xs:string"/>
+    <xs:attribute name="style" type="xs:string"/>
+    <xs:attribute name="id" type="xs:string"/> <!-- TODO -->
+  </xs:complexType>
+
+  <xs:element name="p" type="p"/>
+  <xs:complexType name="p" mixed="true">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="span" type="span"/>
+      <xs:element name="strong" type="strong"/>
+      <xs:element name="em" type="em"/>
+    </xs:choice>
+    <xs:attribute name="class" type="xs:string"/>
+    <xs:attribute name="style" type="xs:string"/>
   </xs:complexType>
 
   <xs:element name="span" type="span"/>
   <xs:complexType name="span" mixed="true">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="span" type="span"/>
+      <xs:element name="strong" type="strong"/>
+      <xs:element name="em" type="em"/>
+      <xs:element name="icon" type="icon"/>
+      <xs:element name="button" type="button"/>
     </xs:choice>
     <xs:attribute name="class" type="xs:string"/>
+    <xs:attribute name="style" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:element name="em" type="em"/>
+  <xs:complexType name="em" mixed="true">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="span" type="span"/>
+    </xs:choice>
+    <xs:attribute name="class" type="xs:string"/>
+    <xs:attribute name="style" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:element name="img" type="img"/>
+  <xs:complexType name="img">
+    <xs:attribute name="src" type="xs:string"/>
+    <xs:attribute name="width" type="xs:positiveInteger"/>
+    <xs:attribute name="height" type="xs:positiveInteger"/>
+    <xs:attribute name="style" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:element name="strong" type="strong"/>
+  <xs:complexType name="strong" mixed="true">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="span" type="span"/>
+    </xs:choice>
+    <xs:attribute name="class" type="xs:string"/>
+    <xs:attribute name="style" type="xs:string"/>
   </xs:complexType>
 
   <xs:element name="h1" type="h1"/>
@@ -476,6 +1110,7 @@
       <xs:element name="span" type="span"/>
     </xs:choice>
     <xs:attribute name="class" type="xs:string"/>
+    <xs:attribute name="style" type="xs:string"/>
   </xs:complexType>
 
   <xs:element name="h2" type="h2"/>
@@ -484,16 +1119,57 @@
       <xs:element name="span" type="span"/>
     </xs:choice>
     <xs:attribute name="class" type="xs:string"/>
+    <xs:attribute name="style" type="xs:string"/>
   </xs:complexType>
 
-  <!-- Text -->
+  <!-- Chart -->
+
+  <xs:element name="chart" type="chart"/>
+  <xs:complexType name="chart">
+    <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="source" type="xs:string"/>
+    <xs:attribute name="height">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="full|[0-9]+"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+
+  <!-- List -->
 
   <xs:element name="list" type="list"/>
   <xs:complexType name="list">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="error" type="list_error"/>
+      <xs:element name="empty" type="list_empty"/>
+    </xs:choice>
     <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="state" type="xs:string"/>
     <xs:attribute name="source" type="xs:string"/>
+    <xs:attribute name="selectable" type="xs:boolean"/>
+    <xs:attribute name="visible" type="xs:boolean"/>
+    <xs:attribute name="indent" type="xs:positiveInteger"/>
+    <xs:attribute name="drop-files" type="xs:boolean"/>
     <xs:attribute name="url" type="xs:string"/> <!-- TODO -->
+    <xs:attribute name="variant">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="light|transparent"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="list_error">
+    <xs:attribute name="text" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="list_empty">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:any/> <!-- TODO -->
+    </xs:choice>
   </xs:complexType>
 
   <!-- Window -->
@@ -503,15 +1179,28 @@
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="back" type="window_back"/>
       <xs:element name="formula" type="formula"/>
+      <xs:element name="fields" type="fields"/>
+      <xs:element name="searchfield" type="searchfield"/>
       <xs:element name="text-input" type="text-input"/>
       <xs:element name="buttons" type="buttons"/>
       <xs:element name="button" type="button"/>
       <xs:element name="toolbar" type="toolbar"/>
+      <xs:element name="bar" type="bar"/>
+      <xs:element name="overflow" type="overflow"/>
+      <xs:element name="fragment" type="fragment"/>
+      <xs:element name="structure" type="structure"/>
+      <xs:element name="columns" type="columns"/>
+      <xs:element name="pages" type="pages"/>
+      <xs:element name="tabs" type="tabs"/>
+      <xs:element name="upload" type="upload"/>
+      <xs:element name="div" type="div"/>
+      <xs:element name="space" type="space"/>
     </xs:choice>
     <xs:attribute name="title" type="xs:string"/>
     <xs:attribute name="icon" type="xs:string"/>
     <xs:attribute name="name" type="xs:string"/>
-    <xs:attribute name="width" type="xs:string"/>
+    <xs:attribute name="width" type="xs:integer"/>
+    <xs:attribute name="closable" type="xs:boolean"/>
     <xs:attribute name="padding" type="xs:positiveInteger"/>
     <xs:attribute name="variant">
       <xs:simpleType>
@@ -537,12 +1226,61 @@
     </xs:choice>
     <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="value" type="xs:string"/>
+    <xs:attribute name="allow-null" type="xs:boolean"/>
+    <xs:attribute name="variant">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="inset"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="segmented_option">
     <xs:attribute name="icon" type="xs:string"/>
     <xs:attribute name="value" type="xs:string"/>
     <xs:attribute name="text" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- Upload -->
+
+  <xs:element name="upload" type="upload"/>
+  <xs:complexType name="upload">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="placeholder" type="upload_placeholder"/>
+    </xs:choice>
+    <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="url" type="xs:string"/>
+    <xs:attribute name="multiple" type="xs:boolean"/>
+    <xs:attribute name="widget" type="xs:string"/> <!-- TODO This should be called something else -->
+  </xs:complexType>
+
+  <xs:complexType name="upload_placeholder">
+    <xs:attribute name="title" type="xs:string"/>
+    <xs:attribute name="text" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- Finder -->
+
+  <xs:element name="finder" type="finder"/>
+  <xs:complexType name="finder">
+    <xs:attribute name="title" type="xs:string"/>
+    <xs:attribute name="url" type="xs:string"/>
+		<xs:attribute name="list-url" type="xs:string"/>
+		<xs:attribute name="selection-url" type="xs:string"/>
+		<xs:attribute name="selection-value" type="xs:string"/>
+		<xs:attribute name="selection-parameter" type="xs:string"/>
+		<xs:attribute name="search-parameter" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- Finder -->
+
+  <xs:element name="slider" type="slider"/>
+  <xs:complexType name="slider">
+    <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="key" type="xs:string"/>
+		<xs:attribute name="width" type="xs:positiveInteger"/>
+		<xs:attribute name="value" type="xs:float"/>
   </xs:complexType>
 
   <!-- Managed -->
@@ -565,10 +1303,13 @@
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="header"/>
       <xs:element name="fields" type="fields"/>
+      <xs:element name="field" type="field"/>
       <xs:element name="text" type="text"/>
       <xs:element name="buttons" type="buttons"/>
       <xs:element name="fieldset" type="fieldset"/>
       <xs:element name="space" type="space"/>
+      <xs:element name="tabs" type="tabs"/>
+      <xs:element name="columns" type="columns"/>
     </xs:choice>
     <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="state" type="xs:string"/>
@@ -582,6 +1323,7 @@
     <xs:attribute name="legend" type="xs:string"/>
   </xs:complexType>
 
+  <xs:element name="fields" type="fields"/>
   <xs:complexType name="fields">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="field" type="field"/>
@@ -601,34 +1343,59 @@
       <xs:any/>
     </xs:choice>
     <xs:attribute name="label" type="xs:string"/>
+    <xs:attribute name="hint" type="xs:string"/>
+    <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="state" type="xs:string"/>
+    <xs:attribute name="compact" type="xs:boolean"/> <!-- TODO -->
   </xs:complexType>
 
   <xs:element name="text-input" type="text-input"/>
   <xs:complexType name="text-input">
     <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="key" type="xs:string"/>
+    <xs:attribute name="value" type="xs:string"/>
+    <xs:attribute name="placeholder" type="xs:string"/>
     <xs:attribute name="correction" type="xs:boolean"/>
     <xs:attribute name="secret" type="xs:boolean"/>
     <xs:attribute name="adaptive" type="xs:boolean"/>
     <xs:attribute name="breaks" type="xs:boolean"/>
+    <xs:attribute name="width" type="xs:positiveInteger"/>
+    <xs:attribute name="max-height" type="xs:positiveInteger"/>
   </xs:complexType>
 
   <xs:element name="number-input" type="number-input"/>
   <xs:complexType name="number-input">
     <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="key" type="xs:string"/>
+    <xs:attribute name="value" type="xs:string"/> <!-- TODO -->
+    <xs:attribute name="max" type="xs:float"/>
+    <xs:attribute name="min" type="xs:float"/>
+    <xs:attribute name="tick-size" type="xs:float"/>
+    <xs:attribute name="width" type="xs:positiveInteger"/>
+    <xs:attribute name="decimals" type="xs:integer"/>
+    <xs:attribute name="allow-null" type="xs:boolean"/>
+    <xs:attribute name="adaptive" type="xs:boolean"/>
   </xs:complexType>
 
   <xs:element name="dropdown" type="dropdown"/>
   <xs:complexType name="dropdown">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="source" type="source" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="option" type="dropdown_option"/>
     </xs:choice>
     <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="value" type="xs:string"/>
     <xs:attribute name="key" type="xs:string"/>
     <xs:attribute name="source" type="xs:string"/>
+    <xs:attribute name="url" type="xs:string"/>
+    <xs:attribute name="adaptive" type="xs:boolean"/>
+    <xs:attribute name="width" type="xs:positiveInteger"/>
     <xs:attribute name="placeholder" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="dropdown_option">
+    <xs:attribute name="text" type="xs:string"/>
+    <xs:attribute name="value" type="xs:string"/>
   </xs:complexType>
 
   <xs:element name="tokens" type="tokens"/>
@@ -641,6 +1408,8 @@
   <xs:complexType name="checkbox">
     <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="key" type="xs:string"/>
+    <xs:attribute name="value" type="xs:string"/>
+    <xs:attribute name="text" type="xs:string"/>
   </xs:complexType>
 
   <xs:element name="checkboxes" type="checkboxes"/>
@@ -651,6 +1420,7 @@
     </xs:choice>
     <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="key" type="xs:string"/>
+    <xs:attribute name="max-height" type="xs:positiveInteger"/>
   </xs:complexType>
 
   <xs:complexType name="checkboxes_option">
@@ -662,16 +1432,36 @@
     <xs:attribute name="source" type="xs:string"/>
   </xs:complexType>
 
+
+  <xs:element name="radiobuttons" type="radiobuttons"/>
+  <xs:complexType name="radiobuttons">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="option" type="radiobuttons_option"/>
+    </xs:choice>
+    <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="key" type="xs:string"/>
+    <xs:attribute name="value" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="radiobuttons_option">
+    <xs:attribute name="text" type="xs:string"/>
+    <xs:attribute name="value" type="xs:string"/>
+  </xs:complexType>
+
   <xs:element name="style-length-input" type="style-length-input"/>
   <xs:complexType name="style-length-input">
     <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="key" type="xs:string"/>
+    <xs:attribute name="value" type="xs:string"/> <!-- TODO -->
+    <xs:attribute name="width" type="xs:positiveInteger"/>
+    <xs:attribute name="adaptive" type="xs:boolean"/>
   </xs:complexType>
 
   <xs:element name="color-input" type="color-input"/>
   <xs:complexType name="color-input">
     <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="key" type="xs:string"/>
+    <xs:attribute name="value" type="xs:string"/>
   </xs:complexType>
 
   <xs:element name="location-input" type="location-input"/>
@@ -684,30 +1474,87 @@
   <xs:complexType name="font-input">
     <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="key" type="xs:string"/>
+    <xs:attribute name="width" type="xs:positiveInteger"/>
   </xs:complexType>
 
   <xs:element name="object-input" type="object-input"/>
   <xs:complexType name="object-input">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="finder" type="finder"/>
+    </xs:choice>
     <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="key" type="xs:string"/>
   </xs:complexType>
 
-  <xs:element name="image-input" type="image-input"/>
-  <xs:complexType name="image-input">
+  <xs:element name="objectlist" type="objectlist"/>
+  <xs:complexType name="objectlist">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="text" type="objectlist_text"/>
+      <xs:element name="select" type="objectlist_select"/>
+    </xs:choice>
     <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="key" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="objectlist_text">
+    <xs:attribute name="label" type="xs:string"/>
+    <xs:attribute name="key" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="objectlist_select"> <!-- TODO -->
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="option" type="objectlist_option"/>
+    </xs:choice>
+    <xs:attribute name="label" type="xs:string"/>
+    <xs:attribute name="key" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="objectlist_option">
+    <xs:attribute name="text" type="xs:string"/>
+    <xs:attribute name="value" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:element name="image-input" type="image-input"/>
+  <xs:complexType name="image-input">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="finder" type="finder"/>
+    </xs:choice>
+    <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="key" type="xs:string"/>
+    <xs:attribute name="url" type="xs:string"/> <!-- TODO -->
+    <xs:attribute name="size" type="xs:positiveInteger"/>
   </xs:complexType>
 
   <xs:element name="datetime-input" type="datetime-input"/>
   <xs:complexType name="datetime-input">
     <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="key" type="xs:string"/>
+    <xs:attribute name="return-type">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="seconds"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
   </xs:complexType>
 
   <xs:element name="link-input" type="link-input"/>
   <xs:complexType name="link-input">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="type" type="link-input_type"/>
+    </xs:choice>
     <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="key" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="link-input_type">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="finder" type="finder"/>
+    </xs:choice>
+    <xs:attribute name="key" type="xs:string"/>
+    <xs:attribute name="label" type="xs:string"/>
+    <xs:attribute name="icon" type="xs:string"/>
+    <xs:attribute name="lookup-url" type="xs:string"/>
   </xs:complexType>
 
   <xs:element name="code-input" type="code-input"/>

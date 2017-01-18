@@ -14,18 +14,18 @@
 			<left>
 				<selection value="data/list_mixed.xml" name="selector">
 					<title>XML</title>
-					<item icon="common/folder" title="Users" value="data/list_users.xml"/>
-					<item icon="common/folder" title="Buttons" value="data/list_buttons.xml"/>
-					<item icon="common/folder" title="Icons" value="data/list_icons.xml"/>
-					<item icon="common/folder" title="Hierarchy" value="data/list_hierarchy.xml"/>
-					<item icon="common/folder" title="Mixed" value="data/list_mixed.xml"/>
-					<item icon="common/folder" title="Checkboxes" value="data/list_checkboxes.xml"/>
-					<item icon="common/folder" title="Ordering" value="data/list_ordering.xml"/>
+					<option icon="common/folder" text="Users" value="data/list_users.xml"/>
+					<option icon="common/folder" text="Buttons" value="data/list_buttons.xml"/>
+					<option icon="common/folder" text="Icons" value="data/list_icons.xml"/>
+					<option icon="common/folder" text="Hierarchy" value="data/list_hierarchy.xml"/>
+					<option icon="common/folder" text="Mixed" value="data/list_mixed.xml"/>
+					<option icon="common/folder" text="Checkboxes" value="data/list_checkboxes.xml"/>
+					<option icon="common/folder" text="Ordering" value="data/list_ordering.xml"/>
 					<title>JSON</title>
-					<item icon="common/folder" title="Icons" value="data/list_icons.json"/>
+					<option icon="common/folder" text="Icons" value="data/list_icons.json"/>
 					<title>Drop targets</title>
-					<item icon="common/folder" title="Folder" kind="folder"/>
-					<item icon="common/folder" title="Another folder" kind="folder"/>
+					<option icon="common/folder" text="Folder" kind="folder"/>
+					<option icon="common/folder" text="Another folder" kind="folder"/>
 				</selection>
 			</left>
 			<center>

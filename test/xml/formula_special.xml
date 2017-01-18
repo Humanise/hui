@@ -20,7 +20,7 @@
 					<location-input/>
 				</field>
 				<field label="Photo:">
-					<image-input source="data/source_images.xml" key="photo"/>
+					<image-input url="data/source_images.xml" key="photo"/>
 				</field>
 				<field label="Link:">
 					<link-input>

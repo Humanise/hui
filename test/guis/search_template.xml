@@ -11,17 +11,17 @@
 					<text-input/>
 				</field>
 				<field label="Tekst">
-					<text-input multiline="true"/>
+					<text-input breaks="true"/>
 				</field>
 			</fields>
 			<fieldset legend="Sider">
 				<fields>
 				<field label="Opførsel">
 					<dropdown value="inactive">
-						<item value="inactive" text="Inaktiv"/>
-						<item value="possible" text="Kan vælges"/>
-						<item value="active" text="Altid aktiv"/>
-						<item value="automatic" text="Valgt på forhånd"/>
+						<option value="inactive" text="Inaktiv"/>
+						<option value="possible" text="Kan vælges"/>
+						<option value="active" text="Altid aktiv"/>
+						<option value="automatic" text="Valgt på forhånd"/>
 					</dropdown>
 				</field>
 				<field label="Tekst">

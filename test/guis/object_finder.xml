@@ -7,18 +7,18 @@
 				<left>
 					<overflow height="400">
 					<selection value="latest">
-						<item text="Alle billeder" icon="common/image" value="all"/>
-						<item text="Seneste" icon="common/time" value="latest"/>
+						<option text="Alle billeder" icon="common/image" value="all"/>
+						<option text="Seneste" icon="common/time" value="latest"/>
 						<title>Grupper</title>
-						<item text="Personer" icon="common/folder" value="1"/>
+						<option text="Personer" icon="common/folder" value="1"/>
 					</selection>
 					</overflow>
 				</left>
 				<center>
 					<bar variant="layout">
 						<segmented>
-							<item icon="view/list" value="list"/>
-							<item icon="view/gallery" value="gallery"/>
+							<option icon="view/list" value="list"/>
+							<option icon="view/gallery" value="gallery"/>
 						</segmented>
 						<right>
 						<searchfield expanded-width="200"/>

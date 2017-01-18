@@ -4,7 +4,7 @@
 	<source name="hierarchySource" url="data/hierarchy.xml"/>
 	<source name="listSource" url="data/list_pages.xml"/>
 	<source name="languagesSource" url="data/languages.xml"/>
-	
+
 	<structure>
 		<top>
 			<toolbar>
@@ -23,9 +23,9 @@
 				</icon>
 				<icon icon="common/internet" overlay="upload" text="Udgiv ændringer" click="pages.next()"/>
 				<right>
-					<field label="Søgning">
+					<item label="Søgning">
 						<searchfield/>
-					</field>
+					</item>
 				</right>
 			</toolbar>
 		</top>
@@ -33,24 +33,24 @@
 			<left>
 				<overflow>
 					<selection value="user" name="selector">
-						<item icon="common/page" title="Alle sider" value="all"/>
-						<item icon="common/time" title="Seneste" badge="10" value="latest"/>
-						<item icon="common/draft" title="Klader" badge="5" value="drafts"/>
-						<item icon="common/duplicate" title="Skabeloner" badge="2" value="templates"/>
-						<item icon="common/star" title="Favorites" badge="12" value="favorites"/>
+						<option icon="common/page" text="Alle sider" value="all"/>
+						<option icon="common/time" text="Seneste" badge="10" value="latest"/>
+						<option icon="common/draft" text="Klader" badge="5" value="drafts"/>
+						<option icon="common/duplicate" text="Skabeloner" badge="2" value="templates"/>
+						<option icon="common/star" text="Favorites" badge="12" value="favorites"/>
 						<title>Hierarkier</title>
-						<items source="hierarchySource"/>
+						<options source="hierarchySource"/>
 						<title>Sprog</title>
-						<item icon="flag/dk" title="Dansk" value="da"/>
-						<item icon="flag/gb" title="Engelsk" value="en"/>
+						<option icon="flag/dk" text="Dansk" value="da"/>
+						<option icon="flag/gb" text="Engelsk" value="en"/>
 						<title>Grupper</title>
-						<item icon="common/folder" title="Mine sider" value="warnings"/>
+						<option icon="common/folder" text="Mine sider" value="warnings"/>
 						<title>Oversigter</title>
-						<item icon="monochrome/news" title="Nyheder" value="news"/>
-						<item icon="monochrome/warning" title="Advarsler" value="warnings"/>
-						<item icon="monochrome/edit" title="Ændret" value="changed"/>
-						<item icon="monochrome/delete" title="Uden menupunk" value="nomenu"/>
-						<item icon="monochrome/archive" title="Arkiveret" value="archive"/>
+						<option icon="monochrome/news" text="Nyheder" value="news"/>
+						<option icon="monochrome/warning" text="Advarsler" value="warnings"/>
+						<option icon="monochrome/edit" text="Ændret" value="changed"/>
+						<option icon="monochrome/delete" text="Uden menupunk" value="nomenu"/>
+						<option icon="monochrome/archive" text="Arkiveret" value="archive"/>
 					</selection>
 				</overflow>
 			</left>
@@ -69,7 +69,7 @@
 								</overflow>
 							</row>
 							<row>
-								
+
 								<bar variant="layout">
 									<text text="Jonas Munk"/>
 									<right>
@@ -77,7 +77,7 @@
 									</right>
 								</bar>
 								<overflow>
-									<columns height="full">
+									<columns>
 										<column>
 											<bar variant="layout">
 											</bar>
@@ -108,8 +108,8 @@
 														<text text="Permissions"/>
 														<right>
 															<segmented variant="inset">
-																<item text="Hep"/>
-																<item text="Hey"/>
+																<option text="Hep"/>
+																<option text="Hey"/>
 															</segmented>
 															<button text="Add permission" small="true"/>
 														</right>
@@ -122,59 +122,45 @@
 										</column>
 									</columns>
 								</overflow>
-								
+
 							</row>
 						</split>
 					</page>
-					
+
 					<page key="viewpage" background="wood">
 						<bar variant="layout">
 							<button text="Close" click="pages.next()" small="true"/>
 						</bar>
-						<columns flexible="true">
-							<column width="200px">
-							</column>
-							<column>
-								<box>
-								<formula>
-									<fields>
-										<field label="Beskrivelse:">
-											<text-input breaks="true"/>
-										</field>
-										<field label="Sti:">
-											<text-input/>
-										</field>
-										<!--
-										<field label="Nøgleord:">
-											<text-input/>
-										</field>
-										<field label="Dato:">
-											<datetime-input/>
-										</field>
-										-->
-										<field label="Sprog:">
-											<dropdown/>
-										</field>
-										<field label="Design:">
-											<dropdown/>
-										</field>
-										<field label="Opsætning:">
-											<dropdown/>
-										</field>
-										<field label="Inaktiv:">
-											<checkbox/>
-										</field>
-									</fields>
-								</formula>
-								</box>
-							</column>
-						</columns>
+						<box>
+						<formula>
+							<fields>
+								<field label="Beskrivelse:">
+									<text-input breaks="true"/>
+								</field>
+								<field label="Sti:">
+									<text-input/>
+								</field>
+								<field label="Sprog:">
+									<dropdown/>
+								</field>
+								<field label="Design:">
+									<dropdown/>
+								</field>
+								<field label="Opsætning:">
+									<dropdown/>
+								</field>
+								<field label="Inaktiv:">
+									<checkbox/>
+								</field>
+							</fields>
+						</formula>
+						</box>
 					</page>
 				</pages>
 			</center>
 		</middle>
 		<bottom>
-			
+
 		</bottom>
 	</structure>
 

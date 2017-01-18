@@ -9,12 +9,12 @@
 				<icon icon="common/save" text="Gem"/>
 				<divider/>
 				<icon icon="common/person" text="Vælg person"/>
-				<field label="Justering">
+				<item label="Justering">
 					<dropdown>
-						<item value="left" title="Venstre"/>
-						<item value="left" title="Højre"/>
+						<option value="left" text="Venstre"/>
+						<option value="left" text="Højre"/>
 					</dropdown>
-				</field>
+				</item>
 				<divider/>
 				<grid>
 					<row>

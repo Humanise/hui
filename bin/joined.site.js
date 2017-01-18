@@ -4660,7 +4660,7 @@ hui.ui.parseSubItems = function(parent,array) {
 		var node = children[i];
 		if (node.nodeType==1 && node.nodeName=='title') {
 			array.push({title:node.getAttribute('title'),type:'title'});
-		} else if (node.nodeType==1 && node.nodeName=='item') {
+		} else if (node.nodeType==1 && (node.nodeName=='item' || node.nodeName=='option')) {
 			var sub = [];
 			hui.ui.parseSubItems(node,sub);
 			array.push({

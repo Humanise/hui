@@ -7,12 +7,12 @@
     overlay.add(hui.ui.Button.create({text:'Highlighted',highlighted:true}));
     overlay.add(hui.ui.Button.create({text:'Normal'}));
     overlay.show();
-    
+
   </script>
 	<box width="800" title="Buttons" variant="textured" padding="10">
     <buttons>
-      <button name="one" title="Simple button"/>
-      <button name="disabledButton" title="Disabled button" disabled="true"/>
+      <button name="one" text="Simple button"/>
+      <button name="disabledButton" text="Disabled button" disabled="true"/>
       <button text="Highlighted button" highlighted="true"/>
       <button text="Highlighted button" highlighted="true" disabled="true"/>
     </buttons>
@@ -47,7 +47,7 @@
       <button text="Tiny disabled" disabled="true" tiny="true"/>
     </buttons>
 
-		<header>Light variant</header>
+		<text top="10"><h>Light variant</h></text>
 
     <buttons top="10">
       <button variant="light" text="Light"/>
@@ -71,17 +71,20 @@
       <button variant="light" text="Light (tiny + disabled)" tiny="true" disabled="true"/>
     </buttons>
 
-		<header>Actions</header>
+		<text top="10"><h>Actions</h></text>
 		<button text="Confirmation" click="hui.ui.showMessage({text:'Action approved!',duration:2000})">
 			<confirm text="Are you sure?" ok="Yes" cancel="No"/>
 		</button>
 
 	</box>
+  <style>
+    .dark {background: #222; padding: 10px;}
+  </style>
 	<box width="800" title="Buttons" variant="textured">
-    <div class="hui_context_dark" style="background: #222; padding: 10px;">
+    <div class="hui_context_dark dark">
     <buttons>
-      <button name="one" title="Simple button"/>
-      <button name="disabledButton" title="Disabled button" disabled="true"/>
+      <button name="one" text="Simple button"/>
+      <button name="disabledButton" text="Disabled button" disabled="true"/>
       <button text="Highlighted button" highlighted="true"/>
       <button text="Highlighted button" highlighted="true" disabled="true"/>
     </buttons>
@@ -116,7 +119,7 @@
       <button text="Tiny disabled" disabled="true" tiny="true"/>
     </buttons>
 
-		<header>Light variant</header>
+		<text top="10"><h>Light variant</h></text>
 
     <buttons top="10">
       <button variant="light" text="Light"/>
@@ -140,7 +143,8 @@
       <button variant="light" text="Light (tiny + disabled)" tiny="true" disabled="true"/>
     </buttons>
 
-		<header>Actions</header>
+		<text top="10"><h>Actions</h></text>
+
 		<button text="Confirmation" click="hui.ui.showMessage({text:'Action approved!',duration:2000})">
 			<confirm text="Are you sure?" ok="Yes" cancel="No"/>
 		</button>

@@ -5983,7 +5983,7 @@ hui.ui.parseSubItems = function(parent,array) {
 		var node = children[i];
 		if (node.nodeType==1 && node.nodeName=='title') {
 			array.push({title:node.getAttribute('title'),type:'title'});
-		} else if (node.nodeType==1 && node.nodeName=='item') {
+		} else if (node.nodeType==1 && (node.nodeName=='item' || node.nodeName=='option')) {
 			var sub = [];
 			hui.ui.parseSubItems(node,sub);
 			array.push({
@@ -6197,16 +6197,16 @@ hui.ui.Source.prototype = {
 			var prms = [];
 			for (var j=0; j < this.parameters.length; j++) {
 				var p = this.parameters[j];
-                if (hui.isArray(p.value) && p.separate) {
-                    for (var k = 0; k < p.value.length; k++) {
-        				prms.push({
-                            name : p.key,
-                            value : p.value[k]
-                        });
-                    }
-                } else {
-    				prms.push({name : p.key, value : p.value});
-                }
+        if (hui.isArray(p.value) && p.separate) {
+          for (var k = 0; k < p.value.length; k++) {
+            prms.push({
+              name : p.key,
+              value : p.value[k]
+            });
+          }
+        } else {
+          prms.push({name : p.key, value : p.value});
+        }
 			};
 			this.busy = true;
 			hui.ui.callDelegates(this,'sourceIsBusy');
@@ -6256,12 +6256,13 @@ hui.ui.Source.prototype = {
 	},
 	/** @private */
 	parseXML : function(doc) {
-		if (doc.documentElement.tagName=='items') {
+    var root = doc.documentElement.tagName;
+		if (root=='items' || root=='options') {
 			this.data = hui.ui.parseItems(doc);
-			this.fire('itemsLoaded',this.data);
-		} else if (doc.documentElement.tagName=='list') {
+			this.fire('optionsLoaded',this.data);
+		} else if (root=='list') {
 			this.fire('listLoaded',doc);
-		} else if (doc.documentElement.tagName=='articles') {
+		} else if (root=='articles') {
 			this.fire('articlesLoaded',doc);
 		}
 	},
@@ -8315,7 +8316,7 @@ hui.ui.DropDown.prototype = {
 		this._updateUI();
 	},
 	/** @private */
-	$itemsLoaded : function(items) {
+	$optionsLoaded : function(items) {
 		this.setItems(items);
 	},
 	/** @private */
@@ -9006,10 +9007,10 @@ hui.ui.Selection.Items.prototype = {
   },
   /** @private */
   $objectsLoaded : function(objects) {
-    this.$itemsLoaded(objects);
+    this.$optionsLoaded(objects);
   },
   /** @private */
-  $itemsLoaded : function(items) {
+  $optionsLoaded : function(items) {
     this.items = [];
     this.element.innerHTML='';
     this.buildLevel(this.element,items,0,true);
@@ -9409,7 +9410,7 @@ hui.ui.ImageInput.prototype = {
 			this._showFinder();
 			return;
 		}
-		
+
 		if (!this.picker) {
 			var self = this;
 			this.picker = hui.ui.BoundPanel.create({modal:true});
@@ -9459,7 +9460,7 @@ hui.ui.ImageInput.prototype = {
 			$success : function(t) {
 				self._parse(t.responseXML);
 			},
-			url : this.options.source
+			url : this.options.url
 		});
 	},
 	_parse : function(doc) {
@@ -10932,7 +10933,7 @@ hui.ui.Overlay.prototype = {
 
 
 /**
- * A component for uploading files 
+ * A component for uploading files
  * <pre><strong>options:</strong> {
  * url:'',
  * parameters:{}}
@@ -10987,19 +10988,19 @@ hui.ui.Upload.create = function(options) {
 }
 
 hui.ui.Upload.prototype = {
-	
+
 	/////////////// Public parts /////////////
 
 	/**
-	 * Change a parameter
-	 */
+   * Change a parameter
+   */
 	setParameter : function(name,value) {
 		this.options.parameters[name] = value;
 		if (this.impl.setParameter) {
-			this.impl.setParameter(name,value);			
+			this.impl.setParameter(name,value);
 		}
 	},
-	
+
 	clear : function() {
 		for (var i=0; i < this.items.length; i++) {
 			if (this.items[i]) {
@@ -11032,13 +11033,13 @@ hui.ui.Upload.prototype = {
 	},
 
 	//////////////// Private parts ////////////////
-	
+
 	_chooseImplementation : function() {
 		var impls = hui.ui.Upload.implementations;
 		if (this.options.implementation) {
 			impls.splice(0,0,this.options.implementation);
 		}
-		
+
 		for (var i=0; i < impls.length; i++) {
 			var impl = hui.ui.Upload[impls[i]];
 			var support = impl.support();
@@ -11073,7 +11074,7 @@ hui.ui.Upload.prototype = {
 			});
 		}.bind(this));
 	},
-	
+
 	//////////////////////////// Dropping ///////////////////////
 
 /*	_onDrop : function(e) {
@@ -11141,7 +11142,7 @@ hui.ui.Upload.prototype = {
 	},
 
 	/////////////////////// Implementation ///////////////////////////
-	
+
 	/** @private */
 	$_addItem : function(info) {
 		if (!this.busy) {
@@ -11161,13 +11162,13 @@ hui.ui.Upload.prototype = {
 		this._checkQueue();
 		var move = first!=null || this.items.length>1;
 		move = move && item.element.nextSibling!=null;
-		
+
 		if (move && (first==null || first!=item.element.nextSibling)) {
 			var parent = item.element.parentNode;
 			var height = item.element.clientHeight;
 			hui.animate({node:item.element,css:{height:'0px'},ease:hui.ease.slowFastSlow,duration:500,onComplete:function() {
 				parent.removeChild(item.element);
-				if (first) { 
+				if (first) {
 					parent.insertBefore(item.element,first);
 				} else {
 					parent.appendChild(item.element);
@@ -11176,7 +11177,7 @@ hui.ui.Upload.prototype = {
 			}});
 		}
 
-		
+
 	},
 	/** @private */
 	$_itemFail : function(item) {
@@ -11184,10 +11185,10 @@ hui.ui.Upload.prototype = {
 		this.fire('uploadDidFail',item.getInfo());
 		this._checkQueue();
 	},
-	
+
 	/*
 	_updateStatus : function() {
-		
+
 		if (this.items.length==0) {
 			this.status.style.display='none';
 		} else {
@@ -11195,7 +11196,7 @@ hui.ui.Upload.prototype = {
 			this.status.style.display='block';
 		}
 	},*/
-	
+
 	/** @private */
 	$_getButtonContainer : function() {
 		var buttonContainer = hui.build('span',{'class':'hui_upload_button'});
@@ -11210,7 +11211,7 @@ hui.ui.Upload.prototype = {
 		}
 		return buttonContainer;
 	},
-	
+
 	_setWidgetEnabled : function(enabled) {
 		if (this.options.widget) {
 			var w = hui.ui.get(this.options.widget);
@@ -11219,7 +11220,7 @@ hui.ui.Upload.prototype = {
 			}
 		}
 	},
-	
+
 	_checkQueue : function() {
 		for (var i=0; i < this.items.length; i++) {
 			if (!this.items[i].isFinished()) {
@@ -11230,10 +11231,10 @@ hui.ui.Upload.prototype = {
 		this._setWidgetEnabled(true);
 		this.fire('uploadDidCompleteQueue');
 	},
-	
-		
+
+
 	//////////////////// Events //////////////
-		
+
 	/** @private */
 	_addItem : function(file) {
 		var index = file.index;
@@ -11385,31 +11386,31 @@ hui.ui.Upload.Frame.support = function() {
 }
 
 hui.ui.Upload.Frame.prototype = {
-	
+
 	initialize : function() {
 		var options = this.parent.options;
-		
+
 		var form = this.form = hui.ui.Upload._buildForm(this.parent);
 		var frameName = form.getAttribute('target');
-		
+
 		var iframe = this.iframe = hui.build(
             'iframe',{
-                name : frameName, 
-                id : frameName, 
-                src : hui.ui.context+'/hui/html/blank.html', 
+                name : frameName,
+                id : frameName,
+                src : hui.ui.context+'/hui/html/blank.html',
                 style : 'display:none'
             });
 		this.parent.element.appendChild(iframe);
         var self = this;
 		hui.listen(iframe,'load',function() {self._uploadComplete()});
-		
+
 		this.fileInput = hui.build('input',{'type':'file','name':options.fieldName});
 		hui.listen(this.fileInput,'change',this._onSubmit.bind(this));
-		
+
 		form.appendChild(this.fileInput);
 		var span = hui.build('span',{'class':'hui_upload_button_input'});
 		span.appendChild(form);
-		var c = this.parent.$_getButtonContainer();		
+		var c = this.parent.$_getButtonContainer();
 		c.insertBefore(span,c.firstChild);
 	},
 	setParameter : function(name,value) {
@@ -11422,7 +11423,7 @@ hui.ui.Upload.Frame.prototype = {
 		};
 		hui.build('input',{'type':'hidden','name':name,'value':value,parent:this.form});
 	},
-	
+
 	_rebuildParameters : function() {
 		// IE: set value of parms again since they disappear
 		if (hui.browser.msie) {
@@ -11452,7 +11453,7 @@ hui.ui.Upload.Frame.prototype = {
 		this._rebuildFileInput();
 		hui.log('Frame: Upload started:'+this.uploading);
 	},
-	
+
 	_uploadComplete : function() {
         hui.log('complete:'+this.uploading+' / '+this.parent.name);
 		if (!this.uploading) {
@@ -11500,7 +11501,7 @@ hui.ui.Upload.Frame.prototype = {
  */
 hui.ui.Upload.Flash = function(parent) {
 	this.parent = parent;
-	
+
 	this.items = [];
 }
 
@@ -11511,7 +11512,7 @@ hui.ui.Upload.Flash.support = function() {
 hui.ui.Upload.Flash.prototype = {
 	initialize : function() {
 		var options = this.parent.options;
-		
+
 		hui.log('Creating flash verison');
 		var url = this._getAbsoluteUrl(options.url);
 		var javaSession = hui.cookie.get('JSESSIONID');
@@ -11533,7 +11534,7 @@ hui.ui.Upload.Flash.prototype = {
 			buttonContainer.innerHTL='<a href="javascript:void(0);" class="hui_button"><span><span>'+options.chooseButton+'</span></span></a>';
 			this.parent.element.appendChild(buttonContainer);
 		}
-		
+
 		this.loader = new SWFUpload({
 			upload_url : url,
 			flash_url : hui.ui.context+"/hui/lib/swfupload/swfupload.swf",
@@ -11573,9 +11574,9 @@ hui.ui.Upload.Flash.prototype = {
 		url += '/'+relative;
 		return url;
 	},
-	
+
 	////// Flash listeners /////
-	
+
 	_onFlashLoaded : function() {
 		hui.log('Flash loaded');
 	},
@@ -11622,7 +11623,7 @@ hui.ui.Upload.Flash.prototype = {
 	},
 	/** @private */
 	_onUploadComplete : function(file) {
-		this.loader.startUpload();		
+		this.loader.startUpload();
 	}
 }
 
@@ -11690,7 +11691,7 @@ hui.ui.Upload.HTML5.prototype = {
 			ps.multiple = 'multiple';
 		}
 		this.fileInput = hui.build('input',ps);
-		var c = this.parent.$_getButtonContainer();		
+		var c = this.parent.$_getButtonContainer();
 		c.insertBefore(span,c.firstChild);
 		hui.listen(this.fileInput,'change',this._submit.bind(this));
 	},
@@ -11872,7 +11873,7 @@ hui.ui.Gallery.prototype = {
 		this.setObjects(objects);
 	},
 	/** @private */
-	$itemsLoaded : function(objects) {
+	$optionsLoaded : function(objects) {
 		this.setObjects(objects);
 	},
 	/** @private */
@@ -16131,7 +16132,7 @@ hui.ui.Checkboxes.prototype = {
     this.subItems.push(items);
   },
   /** @private */
-  $itemsLoaded : function(items) {
+  $optionsLoaded : function(items) {
     hui.each(items,function(item) {
       var node = hui.build('a',{'class':'hui_checkbox',href:'javascript:void(0);',html:'<span class="hui_checkbox_button"></span><span class="hui_checkbox_label">'+hui.string.escape(item.title)+'</span>'});
       hui.listen(node,'click',function(e) {
@@ -16172,20 +16173,21 @@ hui.ui.Checkboxes.Items.prototype = {
     }
   },
   /** @private */
-  $itemsLoaded : function(items) {
+  $optionsLoaded : function(items) {
     this.checkboxes = [];
     this.element.innerHTML='';
     var self = this;
     hui.each(items,function(item) {
-      var node = hui.build('a',{'class':'hui_checkbox',href:'javascript://',html:'<span class="hui_checkbox_button"></span><span class="hui_checkbox_label">'+hui.string.escape(item.title)+'</span>'});
+      var node = hui.build('a',{'class':'hui_checkbox',href:'javascript://',html:'<span class="hui_checkbox_button"></span><span class="hui_checkbox_label">'+hui.string.escape(item.text)+'</span>'});
+      var parsed = {title:item.title,element:node,value:hui.intOrString(item.value)}
       hui.listen(node,'click',function(e) {
         hui.stop(e);
         node.focus();
-        self._onItemClick(item)
+        self._onItemClick(parsed)
       });
       hui.ui.addFocusClass({element:node,'class':'hui_checkbox_focused'});
       self.element.appendChild(node);
-      self.checkboxes.push({title:item.title,element:node,value:item.value});
+      self.checkboxes.push(parsed);
     });
     this.parent._checkValues();
     this._updateUI();

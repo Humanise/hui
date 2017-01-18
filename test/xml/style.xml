@@ -13,16 +13,16 @@
 			</item>
 			<item label="Alignment">
 				<segmented value="left" name="segmentedBar">
-					<item icon="edit/text_align_left" value="left"/>
-					<item icon="edit/text_align_center" value="center"/>
-					<item icon="edit/text_align_right" value="right"/>
+					<option icon="edit/text_align_left" value="left"/>
+					<option icon="edit/text_align_center" value="center"/>
+					<option icon="edit/text_align_right" value="right"/>
 				</segmented>
 			</item>
 			<item label="Alignment (allow null)">
 				<segmented value="left" name="segmentedBarNull" allow-null="true">
-					<item icon="edit/text_align_left" value="left"/>
-					<item icon="edit/text_align_center" value="center"/>
-					<item icon="edit/text_align_right" value="right"/>
+					<option icon="edit/text_align_left" value="left"/>
+					<option icon="edit/text_align_center" value="center"/>
+					<option icon="edit/text_align_right" value="right"/>
 				</segmented>
 			</item>
 		</toolbar>
@@ -44,9 +44,9 @@
 					</buttons>
 				</formula>
 				<segmented value="left" name="segmented">
-					<item icon="edit/text_align_left" value="left"/>
-					<item icon="edit/text_align_right" value="right"/>
-					<item title="Click me!"/>
+					<option icon="edit/text_align_left" value="left"/>
+					<option icon="edit/text_align_right" value="right"/>
+					<option text="Click me!"/>
 				</segmented>
 				<button click="segmented.setValue('right')" text="Set right" small="true"/>
 				<button click="alert(segmented.getValue())" text="Alert value" small="true"/>

@@ -43,10 +43,10 @@
             </cell>
             <cell label="Gruppe:">
               <dropdown value="1">
-                <item title="Lorem inpsum" value="1"/>
-                <item title="Consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua" value="2"/>
-                <item title="Ut enim ad minim veniam" value="3"/>
-                <item title="Excepteur sint occaecat" value="4"/>
+                <option text="Lorem inpsum" value="1"/>
+                <option text="Consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua" value="2"/>
+                <option text="Ut enim ad minim veniam" value="3"/>
+                <option text="Excepteur sint occaecat" value="4"/>
               </dropdown>
             </cell>
           </row>
@@ -61,12 +61,12 @@
         </grid>
         <item label="Level">
           <segmented value="1">
-            <item text="1" value="1"/>
-            <item text="2" value="2"/>
-            <item text="3" value="3"/>
-            <item text="4" value="4"/>
-            <item text="5" value="5"/>
-            <item text="6" value="6"/>
+            <option text="1" value="1"/>
+            <option text="2" value="2"/>
+            <option text="3" value="3"/>
+            <option text="4" value="4"/>
+            <option text="5" value="5"/>
+            <option text="6" value="6"/>
           </segmented>
         </item>
         <button text="Small button" small="true"/>
@@ -86,16 +86,14 @@
           <button icon="monochrome/warning" name="mini3"/>
           <button icon="monochrome/search" name="mini4"/>
         </bar>
-        <toolbar border="bottom" labels="false">
-          <icon icon="common/previous" />
-          <icon icon="common/next"/>
-        </toolbar>
       </left>
       <center>
         <toolbar border="bottom">
           <icon icon="common/folder" text="Folder"/>
           <button text="Click me" small="true"/>
-          <dropdown placeholder="Vælg..." source="itemsSource"/>
+          <item>
+            <dropdown placeholder="Vælg..." source="itemsSource"/>
+          </item>
           <!--<text-input width="100"/>-->
           <more text="More">
             <button text="Click me" small="true"/>
@@ -106,7 +104,7 @@
           </more>
           <right>
             <item label="Search">
-            <searchfield expanded-width="200" placeholder="Search"/>
+              <searchfield expanded-width="200" placeholder="Search"/>
             </item>
           </right>
         </toolbar>
@@ -121,10 +119,10 @@
               </cell>
               <cell label="Gruppe:">
                 <dropdown value="1">
-                  <item title="Lorem inpsum" value="1"/>
-                  <item title="Consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua" value="2"/>
-                  <item title="Ut enim ad minim veniam" value="3"/>
-                  <item title="Excepteur sint occaecat" value="4"/>
+                  <option text="Lorem inpsum" value="1"/>
+                  <option text="Consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua" value="2"/>
+                  <option text="Ut enim ad minim veniam" value="3"/>
+                  <option text="Excepteur sint occaecat" value="4"/>
                 </dropdown>
               </cell>
             </row>
@@ -139,8 +137,8 @@
             </row>
           </grid>
           <divider/>
-          <item label="amount">
-            <number-input width="70" size="small"/>
+          <item label="Amount">
+            <number-input width="70"/>
           </item>
 
         </toolbar>
@@ -174,9 +172,13 @@
         </overflow>
         <toolbar border="top">
           <button text="Click me" small="true"/>
-          <dropdown placeholder="Vælg..." source="itemsSource"/>
+          <item>
+            <dropdown placeholder="Vælg..." source="itemsSource"/>
+          </item>
           <right>
-            <searchfield expanded-width="200" placeholder="Search"/>
+            <item>
+              <searchfield expanded-width="200" placeholder="Search"/>
+            </item>
           </right>
         </toolbar>
       </center>
@@ -186,7 +188,9 @@
         <button text="Click me" small="true"/>
         <button text="Click me" small="true"/>
         <right>
-          <searchfield expanded-width="200" placeholder="Search"/>
+          <item>
+            <searchfield expanded-width="200" placeholder="Search"/>
+          </item>
         </right>
       </toolbar>
     </bottom>
@@ -196,9 +200,11 @@
     <toolbar centered="true">
       <icon icon="common/edit" text="Edit"/>
     </toolbar>
-    <toolbar labels="false">
+    <toolbar>
       <icon icon="common/info" text="Info"/>
-      <searchfield placeholder="Search"/>
+      <item>
+        <searchfield placeholder="Search"/>
+      </item>
       <button text="Button"/>
       <right>
         <icon icon="common/edit" text="Edit"/>

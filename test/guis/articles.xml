@@ -23,9 +23,9 @@
 				</icon>
 				<icon icon="common/internet" overlay="upload" text="Udgiv ændringer" click="pages.next()"/>
 				<right>
-					<field label="Søgning">
+					<item label="Søgning">
 						<searchfield name="search"/>
-					</field>
+					</item>
 				</right>
 			</toolbar>
 		</top>
@@ -33,22 +33,22 @@
 			<left>
 				<overflow>
 					<selection value="user" name="selector">
-						<item icon="common/page" title="Alle sider" value="all"/>
-						<item icon="common/time" title="Seneste" badge="10" value="latest"/>
-						<item icon="common/draft" title="Klader" badge="5" value="drafts"/>
-						<item icon="common/duplicate" title="Skabeloner" badge="2" value="templates"/>
-						<item icon="common/star" title="Favorites" badge="12" value="favorites"/>
+						<option icon="common/page" text="Alle sider" value="all"/>
+						<option icon="common/time" text="Seneste" badge="10" value="latest"/>
+						<option icon="common/draft" text="Klader" badge="5" value="drafts"/>
+						<option icon="common/duplicate" text="Skabeloner" badge="2" value="templates"/>
+						<option icon="common/star" text="Favorites" badge="12" value="favorites"/>
 						<title>Sprog</title>
-						<item icon="flag/dk" title="Dansk" value="da"/>
-						<item icon="flag/gb" title="Engelsk" value="en"/>
+						<option icon="flag/dk" text="Dansk" value="da"/>
+						<option icon="flag/gb" text="Engelsk" value="en"/>
 						<title>Grupper</title>
-						<item icon="common/folder" title="Mine sider" value="warnings"/>
+						<option icon="common/folder" text="Mine sider" value="warnings"/>
 						<title>Oversigter</title>
-						<item icon="monochrome/news" title="Nyheder" value="news"/>
-						<item icon="monochrome/warning" title="Advarsler" value="warnings"/>
-						<item icon="monochrome/edit" title="Ændret" value="changed"/>
-						<item icon="monochrome/delete" title="Uden menupunk" value="nomenu"/>
-						<item icon="monochrome/archive" title="Arkiveret" value="archive"/>
+						<option icon="monochrome/news" text="Nyheder" value="news"/>
+						<option icon="monochrome/warning" text="Advarsler" value="warnings"/>
+						<option icon="monochrome/edit" text="Ændret" value="changed"/>
+						<option icon="monochrome/delete" text="Uden menupunk" value="nomenu"/>
+						<option icon="monochrome/archive" text="Arkiveret" value="archive"/>
 					</selection>
 				</overflow>
 			</left>
@@ -59,60 +59,46 @@
 							<list name="list" source="listSource"/>
 						</overflow>
 					</page>
-					<page key="viewpage" background="wood">
+					<page key="viewpage">
 						<bar variant="layout">
 							<button text="Close" click="pages.next()" small="true"/>
 						</bar>
-						<columns flexible="true">
-							<column width="200px">
-							</column>
-							<column>
-								<box>
-								<formula>
-									<fields>
-										<field label="Beskrivelse:">
-											<text-input breaks="true"/>
-										</field>
-										<field label="Sti:">
-											<text-input/>
-										</field>
-										<!--
-										<field label="Nøgleord:">
-											<text-input/>
-										</field>
-										<field label="Dato:">
-											<datetime-input/>
-										</field>
-										-->
-										<field label="Sprog:">
-											<dropdown source="languagesSource"/>
-										</field>
-										<field label="Design:">
-											<dropdown/>
-										</field>
-										<field label="Opsætning:">
-											<dropdown/>
-										</field>
-										<field label="Inaktiv:">
-											<checkbox/>
-										</field>
-									</fields>
-								</formula>
-								</box>
-							</column>
-						</columns>
+						<box>
+						<formula>
+							<fields>
+								<field label="Beskrivelse:">
+									<text-input breaks="true"/>
+								</field>
+								<field label="Sti:">
+									<text-input/>
+								</field>
+								<field label="Sprog:">
+									<dropdown source="languagesSource"/>
+								</field>
+								<field label="Design:">
+									<dropdown/>
+								</field>
+								<field label="Opsætning:">
+									<dropdown/>
+								</field>
+								<field label="Inaktiv:">
+									<checkbox/>
+								</field>
+							</fields>
+						</formula>
+						</box>
 					</page>
 				</pages>
 			</center>
 		</middle>
 		<bottom>
-			
+
 		</bottom>
 	</structure>
-	
+
 	<window name="newPage" width="500" title="Ny side" padding="5">
 		<formula>
-			<fields labels="besides">
+			<fields labels="before">
 				<field label="Titel:">
 					<text-input/>
 				</field>
@@ -120,22 +106,22 @@
 		</formula>
 		<div style="padding: 10px; margin: 4px; background: #eee; box-shadow: inset 0 1px 5px rgba(0,0,0,.2); border-radius: 4px">
 		<wizard selection-width="150" name="wizard">
-			<step title="Menupunkt" icon="common/hierarchy" border="true">
+			<step title="Menupunkt" icon="common/hierarchy" frame="true">
 				<overflow height="200">
 					<text align="center">
 						<p>Vælg det menu-punkt den nye side vises under...</p>
 					</text>
 					<selection name="hierarchySelection">
-						<items source="hierarchySource"/>
+						<options source="hierarchySource"/>
 					</selection>
 				</overflow>
 				<buttons small="true" top="5">
 					<button text="Intet menupunkt"/>
 				</buttons>
 			</step>
-			<step title="Info" icon="common/info" border="true">
+			<step title="Info" icon="common/info" frame="true">
 				<overflow height="200">
-				<formula>
+				<formula padding="10">
 					<fields>
 						<field label="Beskrivelse:">
 							<text-input breaks="true"/>
@@ -172,7 +158,7 @@
 		<columns flexible="true">
 			<column>
 				<div style="margin: 3px;">
-					<checkbox label="Avanceret"/>
+					<checkbox text="Avanceret"/>
 				</div>
 			</column>
 			<column>
@@ -183,11 +169,13 @@
 			</column>
 		</columns>
 	</window>
-	
+
 	<box absolute="true" name="box" padding="10" modal="true" width="500" variant="textured" title="Ny side">
 		<wizard>
 			<step title="Vælg skabelon" icon="file/generic">
-				<picker title="Vælg skabelon"/>
+				<picker title="Vælg skabelon">
+          <item text="hello"/>
+        </picker>
 			</step>
 			<step title="Egenskaber">
 				<formula>

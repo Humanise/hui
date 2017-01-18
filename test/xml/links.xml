@@ -3,10 +3,10 @@
 <gui xmlns="uri:hui" title="Links">
 	<source name="pageSource" url="data/page_items.xml"/>
 	<source name="fileSource" url="data/source_items.xml"/>
-	<box width="300" title="Links">
-		<links name="myLinks" pageSource="pageSource" fileSource="fileSource"/>
-		<button click="myLinks.addLink()" title="Add link"/>
-		<button name="button" title="Set links!"/>
+	<box width="300" title="Links" top="40">
+		<links name="myLinks" page-source="pageSource" file-source="fileSource"/>
+		<button click="myLinks.addLink()" text="Add link"/>
+		<button name="button" text="Set links!"/>
 	</box>
 	<script>
 		hui.ui.listen({

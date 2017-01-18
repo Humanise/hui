@@ -11,21 +11,21 @@ xsi:noNamespaceSchemaLocation="../../xslt/schema.xsd">
 		<checkbox text="djslkfjksdjl"/>
 		<searchfield/>
 		<dropdown value="1">
-			<item value="1" title="My option"/>
+			<option value="1" text="My option"/>
 		</dropdown>
 		<segmented value="2">
-			<item value="1" title="H1"/>
-			<item value="2" title="H2"/>
-			<item value="3" title="H3"/>
-			<item value="4" icon="common/color"/>
+			<option value="1" text="H1"/>
+			<option value="2" text="H2"/>
+			<option value="3" text="H3"/>
+			<option value="4" icon="common/color"/>
 		</segmented>
 		<right>
-			<button icon="common/delete" text="Hep hey!" highlighted="true"/>
+			<button icon="common/delete" text="Hep hey!"/>
 			<button icon="common/delete" text="Hep hey!"/>
 			<button icon="common/delete" text="Hep hey!"/>
 		</right>
 	</bar>
-	
+
 	<bar variant="layout">
 		<button icon="common/edit" text="Edit"/>
 		<button icon="common/delete" text="Delete" selected="true"/>
@@ -35,23 +35,23 @@ xsi:noNamespaceSchemaLocation="../../xslt/schema.xsd">
 		<checkbox/>
 		<searchfield/>
 		<dropdown value="1">
-			<item value="1" title="My option"/>
+			<option value="1" text="My option"/>
 		</dropdown>
 		<segmented value="2">
-			<item value="1" title="H1"/>
-			<item value="2" title="H2"/>
-			<item value="3" title="H3"/>
-			<item value="4" icon="common/color"/>
+			<option value="1" text="H1"/>
+			<option value="2" text="H2"/>
+			<option value="3" text="H3"/>
+			<option value="4" icon="common/color"/>
 		</segmented>
 		<right>
-			<button icon="common/delete" text="Hep hey!" highlighted="true"/>
+			<button icon="common/delete" text="Hep hey!"/>
 			<button icon="common/delete" text="Hep hey!"/>
 			<button icon="common/delete" text="Hep hey!"/>
 		</right>
 	</bar>
-	
+
 	<space all="50">
-	
+
 	<bar variant="mini">
 		<button icon="common/edit" text="Edit"/>
 		<button icon="common/delete" text="Delete"/>
@@ -60,8 +60,8 @@ xsi:noNamespaceSchemaLocation="../../xslt/schema.xsd">
 		<checkbox/>
 	</bar>
 	</space>
-	
-	<window name="win" height="200" width="400">
+
+	<window name="win" width="400">
 		<bar variant="window_mini">
 			<button icon="common/delete" text="Delete" name="delete"/>
 			<button icon="colorpicker/wheel_saturated"/>
@@ -75,8 +75,8 @@ xsi:noNamespaceSchemaLocation="../../xslt/schema.xsd">
 			</text>
 		</space>
 	</window>
-	
-	<window name="win2" height="200" width="400">
+
+	<window name="win2" width="400">
 		<bar variant="window">
 			<searchfield/>
 			<button icon="common/delete" text="Delete"/>
@@ -89,20 +89,21 @@ xsi:noNamespaceSchemaLocation="../../xslt/schema.xsd">
 		</space>
 	</window>
 
-	<listen for="wheelBrightness">
-		<click>
-			wheelPastels.setSelected(false);
-			wheelBrightness.setSelected(true);
-		</click>
+	<listen for="click" on="wheelBrightness">
+    <set selected="false" on="wheelPastels"/>
+    <set selected="true" on="wheelBrightness"/>
 	</listen>
-	<listen for="wheelPastels">
-		<click>
-			wheelPastels.setSelected(true);
-			wheelBrightness.setSelected(false);
-		</click>
+	<listen for="click" on="wheelPastels">
+    <set selected="true" on="wheelPastels"/>
+    <set selected="false" on="wheelBrightness"/>
+    <set title="'Pastels!'" on="win"/>
 	</listen>
 	<script>
-		win.show();
-		win2.show();
+    hui.ui.listen({
+      $ready : function() {
+        win.show();
+        win2.show();
+      }
+    })
 	</script>
 </gui>

@@ -6,7 +6,6 @@
 		{
 			-webkit-perspective: 1000;
 		}
-		
 		.title,.text
 		{
 			font-family: 'Helvetica Neue'; font-weight: 100; color: #fff;
@@ -36,16 +35,16 @@
 				<actions>
 					<icon icon="monochrome/gear" key="settings"/>
 				</actions>
-				<p class="title">Help</p>
+				<div class="title">Help</div>
 				<formula padding="5">
 					<fields labels="above">
 						<field>
-							<text-input multiline="true"/>
+							<text-input breaks="true"/>
 						</field>
-						<buttons>
-							<button text="Send" highlighted="true" small="true"/>
-						</buttons>
 					</fields>
+					<buttons>
+						<button text="Send" highlighted="true" small="true"/>
+					</buttons>
 				</formula>
 			</tile>
 			<tile width="20" height="60" top="40" left="20" background="#0a3" name="newsTile">
@@ -57,21 +56,21 @@
 				<title>News</title>
 				<pages name="newsPages">
 					<page>
-						<p class="text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+						<div class="text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
 					</page>
 					<page>
-						<p class="text">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+						<div class="text">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</div>
 					</page>
 					<page>
 						<formula padding="5">
 							<fields labels="above">
 								<field>
-									<text-input multiline="true"/>
+									<text-input breaks="true"/>
 								</field>
-								<buttons>
-									<button text="Send" highlighted="true" small="true"/>
-								</buttons>
 							</fields>
+							<buttons>
+								<button text="Send" highlighted="true" small="true"/>
+							</buttons>
 						</formula>
 					</page>
 				</pages>
@@ -86,19 +85,19 @@
 				<list name="list" url="data/list_news.xml" selectable="false"/>
 			</tile>
 		</tiles>
-		
+
 		<boundpanel name="developmentPanel" width="200">
 			<formula name="developmentFormula">
 				<fields labels="above">
 					<field label="Title">
 						<text-input/>
 					</field>
-					<buttons>
-						<button text="Cancel" click="developmentPanel.hide()" small="true"/>
-						<button text="Save" highlighted="true" small="true"/>
-					</buttons>
 				</fields>
-			</formula>			
+				<buttons>
+					<button text="Cancel" click="developmentPanel.hide()" small="true"/>
+					<button text="Save" highlighted="true" small="true"/>
+				</buttons>
+			</formula>
 		</boundpanel>
 		<script>
 			hui.ui.listen({

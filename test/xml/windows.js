@@ -5,5 +5,6 @@ var controller = {
 		light.show();
 		flipper.show();*/
 		news.show();
+    nonClosable.show()
 	}
 }

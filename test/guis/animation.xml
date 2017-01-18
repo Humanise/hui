@@ -19,27 +19,25 @@
     </formula>
   </window>
 
-  <html>
-    <style>
-      .container {
-        width: 400px;
-        height: 20px;
-        background: #ddd;
-        margin: 30px;
-        padding: 0 10px;
-      }
-      
-      .box {
-        background: red;
-        width: 20px;
-        height: 20px;
-        position: relative;
-        left: -10px;
-      }
-    </style>
-    <div class="container">
-      <div class="box" id="subject1"></div>
-    </div>
-  </html>
+  <style>
+    .container {
+      width: 400px;
+      height: 20px;
+      background: #ddd;
+      margin: 30px;
+      padding: 0 10px;
+    }
+
+    .box {
+      background: red;
+      width: 20px;
+      height: 20px;
+      position: relative;
+      left: -10px;
+    }
+  </style>
+  <div class="container">
+    <div class="box" id="subject1"></div>
+  </div>
 
 </gui>

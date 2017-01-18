@@ -16,35 +16,40 @@
 				<divider/>
 				<icon icon="geo/map" text="Map"/>
 				<right>
-					<field label="Søgning">
+					<item label="Søgning">
 						<searchfield placeholder="Søg her..." expanded-width="200"/>
-					</field>
+					</item>
 				</right>
 			</toolbar>
-			<toolbar labels="false" border="top">
+			<toolbar border="top">
 				<button text="Opret"/>
 				<button text="Rediger" highlighted="true"/>
 				<button text="Opret" small="true"/>
 				<button icon="common/delete"/>
-				<button icon="common/delete" title=""/>
-				<button icon="common/delete" title="Delete"/>
-				<searchfield placeholder="Søg her..." expanded-width="200"/>
+				<button icon="common/delete" text=""/>
+				<button icon="common/delete" text="Delete"/>
+        <item>
+          <searchfield placeholder="Søg her..." expanded-width="200"/>
+        </item>
 			</toolbar>
 		</top>
 		<middle>
 			<left>
 				<overflow>
 				<selection value="user" name="selector">
-					<item icon="common/person" title="Brugere" value="user"/>
-					<item icon="common/folder" title="Database" value="database" kind="folder"/>
-					<item icon="common/person" title="Alle objekter" value="object"/>
+					<option icon="common/person" text
+            ="Brugere" value="user"/>
+					<option icon="common/folder" text
+            ="Database" value="database" kind="folder"/>
+					<option icon="common/person" text
+            ="Alle objekter" value="object"/>
 					<title>Hey</title>
-					<items source="itemsSource"/>
+					<options source="itemsSource"/>
 				</selection>
 				</overflow>
 			</left>
 			<center>
-				<toolbar labels="false" border="bottom">
+				<toolbar border="bottom">
 					<button text="Opret"/>
 					<button text="Opret"/>
 					<button text="Opret"/>
@@ -52,7 +57,7 @@
 				<overflow>
 					<list name="list" url="data/list_users.xml"/>
 				</overflow>
-				<toolbar labels="false" border="top">
+				<toolbar border="top">
 					<button text="Opret"/>
 					<button text="Opret"/>
 					<button text="Opret"/>
@@ -60,7 +65,7 @@
 			</center>
 		</middle>
 		<bottom>
-			<toolbar labels="false">
+			<toolbar>
 				<button text="Opret" small="true"/>
 			</toolbar>
 		</bottom>

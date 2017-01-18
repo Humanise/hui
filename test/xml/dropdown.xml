@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:hui" padding="10" title="Drop down">
-	<controller name="controller" source="dropdown.js"/>
+
+	<controller name="controller" url="dropdown.js"/>
 	<source name="itemsSource" url="data/items_languages.xml"/>
+
 	<box width="600" title="Drop down" variant="textured" padding="10">
 		<toolbar>
 			<icon icon="common/folder" text="Show values" name="showValues"/>
@@ -13,10 +15,10 @@
 			<fields labels="above">
 				<field label="Predefined items:">
 					<dropdown name="predefined" value="2">
-						<item title="Lorem inpsum" value="1"/>
-						<item title="Consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua" value="2"/>
-						<item title="Ut enim ad minim veniam" value="3"/>
-						<item title="Excepteur sint occaecat" value="4"/>
+						<option text="Lorem inpsum" value="1"/>
+						<option text="Consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua" value="2"/>
+						<option text="Ut enim ad minim veniam" value="3"/>
+						<option text="Excepteur sint occaecat" value="4"/>
 					</dropdown>
 				</field>
 				<field label="From source:">

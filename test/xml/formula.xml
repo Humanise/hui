@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
-<gui xmlns="uri:hui" padding="10" title="Formula">
+<gui xmlns="uri:hui" title="Formula">
 	<controller name="controller" url="formula.js"/>
 	<source name="itemsSource" url="data/source_items.xml"/>
 
-	<space height="30"/>
+	<space all="30">
 	<box width="800" title="Special inputs" variant="textured" padding="10">
 		<text-input width="100"/>
 		<button text="Click me"/>
 		<checkbox/><checkbox/>
 		<radiobuttons>
-			<item text="Hey" value="1"/>
-			<item text="Hey" value="2"/>
+			<option text="Hey" value="1"/>
+			<option text="Hey" value="2"/>
 		</radiobuttons>
 		<color-input/>
 		<searchfield placeholder="Search here" expanded-width="200"/>
 		<dropdown key="template">
-			<item title="Lorem inpsum" value="1"/>
-			<item title="Consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua" value="2"/>
-			<item title="Ut enim ad minim veniam" value="3"/>
-			<item title="Excepteur sint occaecat" value="4"/>
+			<option text="Lorem inpsum" value="1"/>
+			<option text="Consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua" value="2"/>
+			<option text="Ut enim ad minim veniam" value="3"/>
+			<option text="Excepteur sint occaecat" value="4"/>
 		</dropdown>
 		<button text="Click me">
 			<confirm text="Are you sure?"/>
@@ -42,7 +42,7 @@
 					<color-input key="color"/>
 				</field>
 				<field label="Adpative search:">
-					<searchfield key="search" adaptive="true"/>
+					<searchfield adaptive="true"/>
 				</field>
 				<field label="Location:">
 					<location-input key="location"/>
@@ -50,7 +50,7 @@
 				<field label="Slider:">
 					<slider key="slider" name="sliderTest" width="200"/>
 					<space width="10"/>
-					<number-input name="sliderValue" tick-size="0.1" decimals="2" min="0" max="1"/>
+					<number-input name="sliderValue" width="200" tick-size="0.1" decimals="2" min="0" max="1"/>
 					<script>
 						hui.ui.listen({
 							$valueChanged$sliderTest : function(value) {
@@ -76,10 +76,10 @@
 		<formula name="dateForm">
 			<fields labels="above">
 				<field label="Seconds:">
-					<datetime-input label="Date (secs):" key="date-seconds" return-type="seconds"/>
+					<datetime-input key="date-seconds" return-type="seconds"/>
 				</field>
 				<field label="Date:">
-					<datetime-input label="Date:" key="date"/>
+					<datetime-input key="date"/>
 				</field>
 			</fields>
 			<buttons>
@@ -87,11 +87,11 @@
 				<button click="hui.log(dateForm.getValues())" text="Data"/>
 			</buttons>
 		</formula>
-		<div id="abc"></div>
+		<div class="abc"></div>
 		<script>
 			function createDateInput() {
 				var f = hui.ui.DateTimeField.create();
-				hui.find('#abc').appendChild(f.element);
+				hui.find('.abc').appendChild(f.element);
 			}
 		</script>
 	</box>
@@ -113,11 +113,11 @@
 				<button click="hui.log(locationForm.getValues())" text="Data"/>
 			</buttons>
 		</formula>
-		<div id="locationContainer"></div>
+		<div class="locationContainer"></div>
 		<script>
 			function createLocationInput() {
 				var f = hui.ui.LocationField.create();
-				hui.find('#locationContainer').appendChild(f.element);
+				hui.find('.locationContainer').appendChild(f.element);
 			}
 		</script>
 	</box>
@@ -188,10 +188,10 @@
 					<text-input key="with_placeholder" placeholder="This is the placeholder"/>
 				</field>
 				<field label="Note:">
-					<text-input multiline="true" key="note"/>
+					<text-input breaks="true" key="note"/>
 				</field>
 				<field label="Placeholder:">
-					<text-input multiline="true" key="note_with_placeholder" placeholder="This is the placeholder"/>
+					<text-input breaks="true" key="note_with_placeholder" placeholder="This is the placeholder"/>
 				</field>
 			</fields>
 			<buttons>
@@ -213,8 +213,8 @@
 				</field>
 				<field label="Groups:">
 					<checkboxes key="groups">
-						<item title="Fixed" value="fixed"/>
-						<items source="itemsSource"/>
+						<option text="Fixed" value="fixed"/>
+						<options source="itemsSource"/>
 					</checkboxes>
 				</field>
 			</fields>
@@ -237,9 +237,9 @@
 				</field>
 				<field label="Radios:">
 					<radiobuttons key="radios">
-						<radiobutton label="Lorem" value="lorem"/>
-						<radiobutton label="Ipsum" value="ipsum"/>
-						<radiobutton label="Dolor" value="dolor"/>
+						<option text="Lorem" value="lorem"/>
+						<option text="Ipsum" value="ipsum"/>
+						<option text="Dolor" value="dolor"/>
 					</radiobuttons>
 				</field>
 			</fields>
@@ -256,80 +256,80 @@
 			<fields labels="above">
 				<field label="No initial value:">
 					<dropdown key="template" placeholder="Holding the place">
-						<item title="Lorem inpsum" value="1"/>
-						<item title="Consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua" value="2"/>
-						<item title="Ut enim ad minim veniam" value="3"/>
-						<item title="Excepteur sint occaecat" value="4"/>
+						<option text="Lorem inpsum" value="1"/>
+						<option text="Consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua" value="2"/>
+						<option text="Ut enim ad minim veniam" value="3"/>
+						<option text="Excepteur sint occaecat" value="4"/>
 					</dropdown>
 				</field>
 				<field label="Initial long value:">
 					<dropdown key="template" value="2">
-						<item title="Lorem inpsum" value="1"/>
-						<item title="Maecenas faucibus mollis interdum. Vestibulum id ligula porta felis euismod semper. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Nulla vitae elit libero, a pharetra augue." value="2"/>
-						<item title="Ut enim ad minim veniam" value="3"/>
-						<item title="Excepteur sint occaecat" value="4"/>
+						<option text="Lorem inpsum" value="1"/>
+						<option text="Maecenas faucibus mollis interdum. Vestibulum id ligula porta felis euismod semper. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Nulla vitae elit libero, a pharetra augue." value="2"/>
+						<option text="Ut enim ad minim veniam" value="3"/>
+						<option text="Excepteur sint occaecat" value="4"/>
 					</dropdown>
 				</field>
 				<field label="Initial long value:">
 					<dropdown key="template" value="2">
-						<item title="Lorem inpsum" value="1"/>
-						<item title="MaecenasfaucibusmollisinterdumVestibulumidligulaportafeliseuismodsemperMorbleorisusportaacconsecteturacvestibulumaterosNullavitaeelitliberoapharetraaugue" value="2"/>
-						<item title="Ut enim ad minim veniam" value="3"/>
-						<item title="Excepteur sint occaecat" value="4"/>
+						<option text="Lorem inpsum" value="1"/>
+						<option text="MaecenasfaucibusmollisinterdumVestibulumidligulaportafeliseuismodsemperMorbleorisusportaacconsecteturacvestibulumaterosNullavitaeelitliberoapharetraaugue" value="2"/>
+						<option text="Ut enim ad minim veniam" value="3"/>
+						<option text="Excepteur sint occaecat" value="4"/>
 					</dropdown>
 				</field>
 				<field label="Many items:">
 					<dropdown key="template" value="2">
-						<item title="Lorem inpsum" value="1"/>
-						<item title="Ut enim ad minim veniam" value="2"/>
-						<item title="Excepteur sint occaecat" value="3"/>
-						<item title="Mattis Egestas Inceptos" value="4"/>
-						<item title="Mattis Egestas Inceptos" value="5"/>
-						<item title="Mattis Egestas Inceptos" value="6"/>
-						<item title="Mattis Egestas Inceptos" value="7"/>
-						<item title="Mattis Egestas Inceptos" value="8"/>
-						<item title="Mattis Egestas Inceptos" value="9"/>
-						<item title="Mattis Egestas Inceptos" value="10"/>
-						<item title="Mattis Egestas Inceptos" value="11"/>
-						<item title="Mattis Egestas Inceptos" value="12"/>
-						<item title="Mattis Egestas Inceptos" value="13"/>
-						<item title="Mattis Egestas Inceptos" value="14"/>
-						<item title="Mattis Egestas Inceptos" value="15"/>
-						<item title="Mattis Egestas Inceptos" value="16"/>
-						<item title="Mattis Egestas Inceptos" value="17"/>
-						<item title="Mattis Egestas Inceptos" value="18"/>
-						<item title="Mattis Egestas Inceptos" value="19"/>
-						<item title="Mattis Egestas Inceptos" value="20"/>
-						<item title="Mattis Egestas Inceptos" value="21"/>
-						<item title="Mattis Egestas Inceptos" value="22"/>
-						<item title="Mattis Egestas Inceptos" value="23"/>
-						<item title="Mattis Egestas Inceptos" value="24"/>
-						<item title="Mattis Egestas Inceptos" value="25"/>
-						<item title="Mattis Egestas Inceptos" value="26"/>
-						<item title="Mattis Egestas Inceptos" value="27"/>
-						<item title="Mattis Egestas Inceptos" value="28"/>
-						<item title="Mattis Egestas Inceptos" value="29"/>
-						<item title="Mattis Egestas Inceptos" value="30"/>
-						<item title="Mattis Egestas Inceptos" value="31"/>
-						<item title="Mattis Egestas Inceptos" value="32"/>
-						<item title="Mattis Egestas Inceptos" value="33"/>
-						<item title="Mattis Egestas Inceptos" value="34"/>
-						<item title="Mattis Egestas Inceptos" value="35"/>
-						<item title="Mattis Egestas Inceptos" value="36"/>
-						<item title="Mattis Egestas Inceptos" value="37"/>
-						<item title="Mattis Egestas Inceptos" value="38"/>
-						<item title="Mattis Egestas Inceptos" value="39"/>
-						<item title="Mattis Egestas Inceptos" value="40"/>
-						<item title="Mattis Egestas Inceptos" value="41"/>
-						<item title="Mattis Egestas Inceptos" value="42"/>
-						<item title="Mattis Egestas Inceptos" value="43"/>
-						<item title="Mattis Egestas Inceptos" value="44"/>
-						<item title="Mattis Egestas Inceptos" value="45"/>
-						<item title="Mattis Egestas Inceptos" value="46"/>
-						<item title="Mattis Egestas Inceptos" value="47"/>
-						<item title="Mattis Egestas Inceptos" value="48"/>
-						<item title="Mattis Egestas Inceptos" value="49"/>
-						<item title="Mattis Egestas Inceptos" value="50"/>
+						<option text="Lorem inpsum" value="1"/>
+						<option text="Ut enim ad minim veniam" value="2"/>
+						<option text="Excepteur sint occaecat" value="3"/>
+						<option text="Mattis Egestas Inceptos" value="4"/>
+						<option text="Mattis Egestas Inceptos" value="5"/>
+						<option text="Mattis Egestas Inceptos" value="6"/>
+						<option text="Mattis Egestas Inceptos" value="7"/>
+						<option text="Mattis Egestas Inceptos" value="8"/>
+						<option text="Mattis Egestas Inceptos" value="9"/>
+						<option text="Mattis Egestas Inceptos" value="10"/>
+						<option text="Mattis Egestas Inceptos" value="11"/>
+						<option text="Mattis Egestas Inceptos" value="12"/>
+						<option text="Mattis Egestas Inceptos" value="13"/>
+						<option text="Mattis Egestas Inceptos" value="14"/>
+						<option text="Mattis Egestas Inceptos" value="15"/>
+						<option text="Mattis Egestas Inceptos" value="16"/>
+						<option text="Mattis Egestas Inceptos" value="17"/>
+						<option text="Mattis Egestas Inceptos" value="18"/>
+						<option text="Mattis Egestas Inceptos" value="19"/>
+						<option text="Mattis Egestas Inceptos" value="20"/>
+						<option text="Mattis Egestas Inceptos" value="21"/>
+						<option text="Mattis Egestas Inceptos" value="22"/>
+						<option text="Mattis Egestas Inceptos" value="23"/>
+						<option text="Mattis Egestas Inceptos" value="24"/>
+						<option text="Mattis Egestas Inceptos" value="25"/>
+						<option text="Mattis Egestas Inceptos" value="26"/>
+						<option text="Mattis Egestas Inceptos" value="27"/>
+						<option text="Mattis Egestas Inceptos" value="28"/>
+						<option text="Mattis Egestas Inceptos" value="29"/>
+						<option text="Mattis Egestas Inceptos" value="30"/>
+						<option text="Mattis Egestas Inceptos" value="31"/>
+						<option text="Mattis Egestas Inceptos" value="32"/>
+						<option text="Mattis Egestas Inceptos" value="33"/>
+						<option text="Mattis Egestas Inceptos" value="34"/>
+						<option text="Mattis Egestas Inceptos" value="35"/>
+						<option text="Mattis Egestas Inceptos" value="36"/>
+						<option text="Mattis Egestas Inceptos" value="37"/>
+						<option text="Mattis Egestas Inceptos" value="38"/>
+						<option text="Mattis Egestas Inceptos" value="39"/>
+						<option text="Mattis Egestas Inceptos" value="40"/>
+						<option text="Mattis Egestas Inceptos" value="41"/>
+						<option text="Mattis Egestas Inceptos" value="42"/>
+						<option text="Mattis Egestas Inceptos" value="43"/>
+						<option text="Mattis Egestas Inceptos" value="44"/>
+						<option text="Mattis Egestas Inceptos" value="45"/>
+						<option text="Mattis Egestas Inceptos" value="46"/>
+						<option text="Mattis Egestas Inceptos" value="47"/>
+						<option text="Mattis Egestas Inceptos" value="48"/>
+						<option text="Mattis Egestas Inceptos" value="49"/>
+						<option text="Mattis Egestas Inceptos" value="50"/>
 					</dropdown>
 				</field>
 			</fields>
@@ -348,9 +348,9 @@
 					<objectlist key="objectlist">
 						<text key="email" label="E-mail"/>
 						<select key="context" label="Context">
-							<option value="home" label="Home"/>
-							<option value="work" label="Work"/>
-							<option value="school" label="School"/>
+							<option value="home" text="Home"/>
+							<option value="work" text="Work"/>
+							<option value="school" text="School"/>
 						</select>
 					</objectlist>
 				</field>
@@ -378,18 +378,18 @@
 							<objectlist key="objectlist">
 								<text key="email" label="E-mail"/>
 								<select key="context" label="Context">
-									<option value="home" label="Home"/>
-									<option value="work" label="Work"/>
-									<option value="school" label="School"/>
+									<option value="home" text="Home"/>
+									<option value="work" text="Work"/>
+									<option value="school" text="School"/>
 								</select>
 							</objectlist>
 						</field>
-						<buttons top="10">
-							<button text="Gem" highlighted="true"/>
-							<button text="Slet"/>
-							<button text="Annuller"/>
-						</buttons>
 					</fields>
+					<buttons top="10">
+						<button text="Gem" highlighted="true"/>
+						<button text="Slet"/>
+						<button text="Annuller"/>
+					</buttons>
 				</formula>
 			</tab>
 			<tab title="Formula 2" padding="10">
@@ -421,7 +421,7 @@
 						</field>
 						<field label="Groups:">
 							<checkboxes key="groups">
-								<source url="source_items.xml"/>
+								<options source="itemsSource"/>
 							</checkboxes>
 						</field>
 						<field label="Tokens:">
@@ -429,34 +429,34 @@
 						</field>
 						<field label="Radios:">
 							<radiobuttons key="radios">
-								<radiobutton label="Lorem" value="lorem"/>
-								<radiobutton label="Ipsum" value="ipsum"/>
-								<radiobutton label="Dolor" value="dolor"/>
+								<option text="Lorem" value="lorem"/>
+								<option text="Ipsum" value="ipsum"/>
+								<option text="Dolor" value="dolor"/>
 							</radiobuttons>
 						</field>
 						<field label="Object list:">
 							<objectlist key="objectlist">
 								<text key="email" label="E-mail"/>
 								<select key="context" label="Context">
-									<option value="home" label="Home"/>
-									<option value="work" label="Work"/>
-									<option value="school" label="School"/>
+									<option value="home" text="Home"/>
+									<option value="work" text="Work"/>
+									<option value="school" text="School"/>
 								</select>
 							</objectlist>
 						</field>
-						<buttons top="10">
-							<button text="Gem" highlighted="true"/>
-							<button text="Slet"/>
-							<button text="Annuller"/>
-						</buttons>
 					</fields>
+					<buttons top="10">
+						<button text="Gem" highlighted="true"/>
+						<button text="Slet"/>
+						<button text="Annuller"/>
+					</buttons>
 				</formula>
 			</tab>
 			<tab title="Field" padding="10">
 				<formula name="formula2">
 					<fields>
 						<field label="Language">
-							<dropdown label="Template:" source="itemsSource" value="c"/>
+							<dropdown source="itemsSource" value="c"/>
 						</field>
 						<field label="Username" hint="This is a hint describing something">
 							<text-input key="username"/>
@@ -468,7 +468,11 @@
 	</box>
 
 	<window name="log" width="400" padding="5" title="Log">
-		<text-input label="Notat:" breaks="true" name="logfield"/>
+    <fields labels="above">
+      <field>
+        <text-input breaks="true" name="logfield"/>
+      </field>
+    </fields>
 	</window>
 
 	<script>
@@ -511,7 +515,7 @@
 				</field>
 				<field label="Groups:">
 					<checkboxes key="groups">
-						<source url="source_items.xml"/>
+						<options source="itemsSource"/>
 					</checkboxes>
 				</field>
 				<field label="Tokens:">
@@ -519,28 +523,29 @@
 				</field>
 				<field label="Radios:">
 					<radiobuttons key="radios">
-						<radiobutton label="Lorem" value="lorem"/>
-						<radiobutton label="Ipsum" value="ipsum"/>
-						<radiobutton label="Dolor" value="dolor"/>
+						<option text="Lorem" value="lorem"/>
+						<option text="Ipsum" value="ipsum"/>
+						<option text="Dolor" value="dolor"/>
 					</radiobuttons>
 				</field>
 				<field label="Object list:">
 					<objectlist key="objectlist">
 						<text key="email" label="E-mail"/>
 						<select key="context" label="Context">
-							<option value="home" label="Home"/>
-							<option value="work" label="Work"/>
-							<option value="school" label="School"/>
+							<option value="home" text="Home"/>
+							<option value="work" text="Work"/>
+							<option value="school" text="School"/>
 						</select>
 					</objectlist>
 				</field>
-				<buttons top="10">
-					<button text="Normal" click="win.setVariant(null)"/>
-					<button text="Dark" click="win.setVariant('dark')"/>
-					<button text="News" click="win.setVariant('news')"/>
-					<button text="Light" click="win.setVariant('light')" highlighted="true"/>
-				</buttons>
 			</fields>
+			<buttons top="10">
+				<button text="Normal" click="win.setVariant(null)"/>
+				<button text="Dark" click="win.setVariant('dark')"/>
+				<button text="News" click="win.setVariant('news')"/>
+				<button text="Light" click="win.setVariant('light')" highlighted="true"/>
+			</buttons>
 		</formula>
 	</window>
+  </space>
 </gui>

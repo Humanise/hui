@@ -14,8 +14,8 @@
 				</field>
 				<field label="Type:">
 					<dropdown value="0">
-						<item title="Other" value="0"/>
-						<item title="Work function" value="1"/>
+						<option text="Other" value="0"/>
+						<option text="Work function" value="1"/>
 					</dropdown>
 				</field>
 				<field label="Start date:">
@@ -24,6 +24,7 @@
 				<field label="End date:">
 					<datetime-input/>
 				</field>
+			</fields>
 				<buttons top="5">
 					<button text="Cancel"/>
 					<button text="Delete" click="hui.ui.showMessage({text:'Deleting...',busy:true,duration:3000})">
@@ -31,7 +32,6 @@
 					</button>
 					<button text="Create" highlighted="true"/>
 				</buttons>
-			</fields>
 		</formula>
 	</box>
 </gui>

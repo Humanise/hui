@@ -8,16 +8,16 @@
 			<left>
 				<overflow>
 				<selection value="user" name="selector">
-					<item icon="common/person" title="Brugere" value="user"/>
-					<item icon="common/folder" title="Database" value="database" kind="folder"/>
-					<item icon="common/person" title="Alle objekter" value="object"/>
+					<option icon="common/person" text="Brugere" value="user"/>
+					<option icon="common/folder" text="Database" value="database" kind="folder"/>
+					<option icon="common/person" text="Alle objekter" value="object"/>
 					<title>Hey</title>
-					<items source="itemsSource"/>
+					<options source="itemsSource"/>
 				</selection>
 				</overflow>
 			</left>
 			<center>
-				<toolbar labels="false" border="bottom">
+				<toolbar border="bottom">
 					<button text="Opret"/>
 					<button text="Opret"/>
 					<button text="Opret"/>
@@ -25,7 +25,7 @@
 				<overflow>
 					<list name="list" url="data/list_users.xml"/>
 				</overflow>
-				<toolbar labels="false" border="top">
+				<toolbar border="top">
 					<button text="Opret"/>
 					<button text="Opret"/>
 					<button text="Opret"/>

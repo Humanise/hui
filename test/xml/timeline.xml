@@ -8,17 +8,17 @@
 				<icon icon="common/folder" text="Ny gruppe" name="newGroup" overlay="new"/>
 				<icon icon="common/folder" text="Ny type" name="newType" overlay="new"/>
 				<right>
-					<searchfield title="Søgning"/>
+          <item label="Søgning">
+            <searchfield/>
+          </item>
 				</right>
 			</toolbar>
 		</top>
 		<middle>
 			<left>
-				<sidebar>
-					<selection value="all" name="selector">
-						<item icon="common/time" title="Altid" value="all"/>
-					</selection>
-				</sidebar>
+				<selection value="all" name="selector">
+					<option icon="common/time" text="Altid" value="all"/>
+				</selection>
 			</left>
 			<center>
 				<overflow>
@@ -27,7 +27,7 @@
 			</center>
 		</middle>
 		<bottom>
-			
+
 		</bottom>
 	</structure>
 </gui>

@@ -5,19 +5,28 @@
 	<controller name="controller" url="skeleton.js"/>
 	<source name="itemsSource" url="data/source_items.xml"/>
 
+  <style>
+    .article {
+      padding: 15px; font-family: Georgia;
+    }
+    .header {
+      font-weight: normal; margin: 0;
+    }
+  </style>
+
 	<skeleton>
 		<navigation>
 			<overflow>
 			<selection value="user" name="selector">
-				<item icon="common/person" title="Brugere" value="user"/>
-				<item icon="common/folder" title="Database" value="database" kind="folder"/>
-				<item icon="common/person" title="Alle objekter" value="object"/>
+				<option icon="common/person" text="Brugere" value="user"/>
+				<option icon="common/folder" text="Database" value="database" kind="folder"/>
+				<option icon="common/person" text="Alle objekter" value="object"/>
 				<title>Lorem ipsum</title>
-				<items source="itemsSource"/>
+				<options source="itemsSource"/>
 				<title>Lorem ipsum</title>
-				<items source="itemsSource"/>
+				<options source="itemsSource"/>
 				<title>Lorem ipsum</title>
-				<items source="itemsSource"/>
+				<options source="itemsSource"/>
 			</selection>
 			</overflow>
 		</navigation>
@@ -31,22 +40,21 @@
 		</results>
 		<actions>
       <bar variant="layout">
-      <button text="Click me" small="true"/>
-      <segmented>
-        <item text="List"/>
-        <item text="Grid"/>
-      </segmented>
-      <dropdown>
-        <item text="Hello"/>
-      </dropdown>
-      <button icon="common/new" variant="light" plain="true"/>
+        <button text="Click me" small="true"/>
+        <segmented>
+          <option text="List"/>
+          <option text="Grid"/>
+        </segmented>
+        <dropdown>
+          <option text="Hello"/>
+        </dropdown>
+        <button icon="common/new"/>
       </bar>
     </actions>
 		<content>
 			<overflow shadow-variant="white">
-      <html>
-        <div style="padding: 15px; font-family: Georgia;">
-          <h1 style="font-weight: normal; margin: 0">This is the content</h1>
+        <div class="article">
+          <h1 class="header">This is the content</h1>
           <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
           <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
           <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
@@ -54,7 +62,6 @@
           <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
           <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
         </div>
-      </html>
       </overflow>
     </content>
 	</skeleton>

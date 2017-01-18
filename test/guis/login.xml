@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="../xml/setup.xsl"?>
 <gui xmlns="uri:hui" padding="10" title="Box">
-	
 	<box width="300" padding="10" top="100" variant="rounded">
 		<formula name="formula">
 			<header>Log in to the system...</header>
@@ -13,11 +12,11 @@
 				<field label="Kodeord:">
 					<text-input secret="true" name="password"/>
 				</field>
-				<buttons top="5">
-					<button text="Annuller"/>
-					<button text="Log in" name="login" submit="true" highlighted="true"/>
-				</buttons>
 			</fields>
+			<buttons top="5">
+				<button text="Annuller"/>
+				<button text="Log in" name="login" submit="true" highlighted="true"/>
+			</buttons>
 		</formula>
 	</box>
 	<listen>

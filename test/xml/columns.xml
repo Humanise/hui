@@ -3,14 +3,10 @@
 <gui xmlns="uri:hui" title="Columns" padding="10">
 	<columns flexible="true" space="20">
 		<column>
-			<html xmlns="http://www.w3.org/1999/xhtml">
-				<div style="height: 100px; background: #abc;">Left</div>
-			</html>
+			<div style="height: 100px; background: #abc;">Left</div>
 		</column>
 		<column width="300px">
-			<html xmlns="http://www.w3.org/1999/xhtml">
-				<div style="height: 100px; background: #bcd;">Right (width=300px)</div>
-			</html>
+			<div style="height: 100px; background: #bcd;">Right (width=300px)</div>
 		</column>
 	</columns>
 </gui>

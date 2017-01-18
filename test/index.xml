@@ -2,10 +2,8 @@
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:hui" title="HUI tests">
 	<source url="navigation.xml" name="navSource"/>
-	<listen for="selector">
-		<select>
-			dock.setUrl(selector.getValue().value);
-		</select>
+	<listen for="select" on="selector">
+    <set url="selector.getValue().value" on="dock"/>
 	</listen>
 	<dock url="unittests/hui.html" name="dock" position="bottom" frame-name="Desktop">
 		<sidebar>
@@ -18,10 +16,10 @@
 			<overflow>
 			<selection name="selector">
 				<title>API</title>
-				<item icon="common/info" text="XML-format" value="../api/xml/index.html"/>
-				<item icon="common/info" text="JavaScript API" value="../api/index.html"/>
-				<item icon="common/color" text="Icons" value="../api/icons.html"/>
-				<items source="navSource"/>
+				<option icon="common/info" text="XML-format" value="../api/xml/index.html"/>
+				<option icon="common/info" text="JavaScript API" value="../api/index.html"/>
+				<option icon="common/color" text="Icons" value="../api/icons.html"/>
+				<options source="navSource"/>
 			</selection>
 			</overflow>
 			<bar variant="layout">

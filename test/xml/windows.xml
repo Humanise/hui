@@ -2,7 +2,7 @@
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:hui" padding="10" title="Windows">
 	<controller name="controller" url="windows.js"/>
-	
+
 	<structure>
 		<top>
 			<toolbar>
@@ -16,7 +16,7 @@
 		</middle>
 		<bottom/>
 	</structure>
-	
+
 	<window name="dark" width="300" title="Bruger" padding="5" variant="dark">
 		<formula>
 			<fields>
@@ -46,7 +46,7 @@
 			</buttons>
 		</formula>
 	</window>
-	
+
 	<window name="standard" width="300" title="Bruger" padding="5">
 		<formula>
 			<fields>
@@ -76,7 +76,7 @@
 			</buttons>
 		</formula>
 	</window>
-	
+
 	<window name="light" width="300" title="Bruger" padding="5" variant="light">
 		<formula>
 			<fields>
@@ -169,5 +169,8 @@
 			</buttons>
 		</formula>
 	</window>
+
+	<window name="nonClosable" width="300" title="I cannot be closed" padding="50" closable="false">
+  </window>
 
 </gui>

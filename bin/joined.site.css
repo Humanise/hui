@@ -1088,7 +1088,8 @@ input.hui_textinput {
 
 textarea.hui_textinput {
   height: 38px;
-  padding: 3px 5px; }
+  padding: 3px 5px;
+  resize: vertical; }
 
 
 
@@ -1270,8 +1271,9 @@ div.hui_message span.hui_icon
 
 .hui_checkboxes
 {
-	margin-bottom: 5px;
 	font-size: 0;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .hui_checkboxes .hui_checkbox

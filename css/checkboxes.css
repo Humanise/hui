@@ -1,7 +1,8 @@
 .hui_checkboxes
 {
-	margin-bottom: 5px;
 	font-size: 0;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .hui_checkboxes .hui_checkbox

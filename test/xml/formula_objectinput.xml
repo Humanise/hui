@@ -11,20 +11,22 @@
           </object-input>
         </field>
         <field label="Others">
-          <object-input key="others" multi="true">
+          <object-input key="others">
             <finder title="Select person" list-url="data/list_users.xml"/>
           </object-input>
+        </field>
+        <field>
+          <code-input name="debug"/>
         </field>
       </fields>
     </formula>
   </box>
 
-  <code-input name="debug"/>
   <script>
     hui.ui.listen({
-    	$valuesChanged$formula : function(values) {
-    		debug.setValue(hui.string.toJSON(values));
-    	}
+      $valuesChanged$formula : function(values) {
+        debug.setValue(hui.string.toJSON(values));
+      }
     });
   </script>
 

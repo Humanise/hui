@@ -6,28 +6,31 @@
 			<toolbar>
 				<icon icon="common/folder" text="Ny gruppe" name="newGroup" overlay="new"/>
 				<icon icon="common/folder" text="Ny type" name="newType" overlay="new"/>
-				<right>
-					<searchfield title="Søgning"/>
-				</right>
 			</toolbar>
 		</top>
 		<middle>
 			<left>
-				<selection value="all" name="selector">
-					<item icon="common/time" title="Altid" value="all"/>
-					<item icon="common/folder" title="Database" value="database"/>
-					<item icon="common/person" title="Alle objekter" value="object"/>
-				</selection>
-        <datepicker/>
+        <rows>
+          <row>
+            <selection value="all" name="selector">
+              <option icon="common/time" text="Altid" value="all"/>
+              <option icon="common/folder" text="Database" value="database"/>
+              <option icon="common/person" text="Alle objekter" value="object"/>
+            </selection>
+          </row>
+          <row height="content">
+            <datepicker/>
+          </row>
+        </rows>
 			</left>
 			<center>
 				<overflow>
-					<calendar name="calendar" endHour="17" startHour="7"/>
+					<calendar name="calendar" end-hour="17" start-hour="7"/>
 				</overflow>
 			</center>
 		</middle>
 		<bottom>
-			
+
 		</bottom>
 	</structure>
 </gui>
