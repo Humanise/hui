@@ -86,10 +86,10 @@
         <option icon="common/page" text="formula_objectinput" value="xml/formula_objectinput.xml"/>
         <option icon="common/page" text="formula_special" value="xml/formula_special.xml"/>
         <option icon="common/page" text="graph" value="xml/graph.xml"/>
-        <option icon="common/page" text="graphviz" value="xml/graphviz.xml"/>
         <option icon="common/page" text="layout" value="xml/layout.xml"/>
         <option icon="common/page" text="links" value="xml/links.xml"/>
         <option icon="common/page" text="list" value="xml/list.xml"/>
+        <option icon="common/page" text="media-simulator" value="xml/media-simulator.xml"/>
         <option icon="common/page" text="pages" value="xml/pages.xml"/>
         <option icon="common/page" text="picker" value="xml/picker.xml"/>
         <option icon="common/page" text="rendering" value="xml/rendering.xml"/>
@@ -118,6 +118,5 @@
         <option icon="common/page" text="search_template" value="guis/search_template.xml"/>
         <option icon="common/page" text="section" value="guis/section.xml"/>
         <option icon="common/page" text="sites" value="guis/sites.xml"/>
-        <option icon="common/page" text="starttool" value="guis/starttool.xml"/>
     </option>
 </options>
