@@ -5,7 +5,7 @@
     <row height="content">
       <tabs small="true" below="true">
         <tab title="Hey">
-          <toolbar variant="bar">
+          <toolbar>
             <icon icon="common/info" text="iPhone SE" click="simulator.setSize({width: 320, height: 568})"/>
             <icon icon="common/info" text="iPhone 6s" click="simulator.setSize({width: 375, height: 667})"/>
             <icon icon="common/info" text="iPhone 6s Plus" click="simulator.setSize({width: 414, height: 736})"/>
@@ -22,12 +22,4 @@
       <media-simulator name="simulator" url="toolbar.xml"/>
     </row>
   </rows>
-	<script>
-		hui.ui.listen({
-			$click$changeViaHTML : function() {
-				rendering.setContent('<p>This is new content inserted</p>');
-			}
-		})
-	</script>
-
 </gui>

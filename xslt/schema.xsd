@@ -9,6 +9,7 @@
   <xs:complexType name="gui">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="controller" type="controller"/>
+      <xs:element name="finder" type="finder"/>
       <xs:element name="style" type="style"/>
       <xs:element name="script" type="script"/>
       <xs:element name="listen" type="listen"/>
@@ -22,6 +23,7 @@
       <xs:element name="dock" type="dock"/>
       <xs:element name="structure" type="structure"/>
       <xs:element name="columns" type="columns"/>
+      <xs:element name="rows" type="rows"/>
       <xs:element name="skeleton" type="skeleton"/>
       <xs:element name="boundpanel" type="boundpanel"/>
       <xs:element name="managed" type="managed"/>
@@ -266,7 +268,15 @@
     <xs:attribute name="source" type="xs:string"/>
   </xs:complexType>
 
-  <!-- Diagram -->
+  <!-- Media simulator -->
+
+  <xs:element name="media-simulator" type="media-simulator"/>
+  <xs:complexType name="media-simulator">
+    <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="url" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- Timeline -->
 
   <xs:element name="timeline" type="timeline"/>
   <xs:complexType name="timeline">
@@ -427,7 +437,7 @@
     <xs:attribute name="background">
       <xs:simpleType>
         <xs:restriction base="xs:string">
-          <xs:pattern value="wood"/> <!-- TODO -->
+          <xs:pattern value="wood|sand_grey"/> <!-- TODO -->
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
@@ -777,7 +787,7 @@
     <xs:attribute name="background">
       <xs:simpleType>
         <xs:restriction base="xs:string">
-          <xs:pattern value="wood|vichy"/> <!-- TODO -->
+          <xs:pattern value="wood|vichy|linen"/> <!-- TODO -->
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
@@ -1264,6 +1274,7 @@
 
   <xs:element name="finder" type="finder"/>
   <xs:complexType name="finder">
+    <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="title" type="xs:string"/>
     <xs:attribute name="url" type="xs:string"/>
 		<xs:attribute name="list-url" type="xs:string"/>
@@ -1308,6 +1319,7 @@
       <xs:element name="buttons" type="buttons"/>
       <xs:element name="fieldset" type="fieldset"/>
       <xs:element name="space" type="space"/>
+      <xs:element name="overflow" type="overflow"/>
       <xs:element name="tabs" type="tabs"/>
       <xs:element name="columns" type="columns"/>
     </xs:choice>
@@ -1316,6 +1328,7 @@
     <xs:attribute name="padding" type="xs:positiveInteger"/>
   </xs:complexType>
 
+  <xs:element name="fieldset" type="fieldset"/>
   <xs:complexType name="fieldset">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="fields" type="fields"/>

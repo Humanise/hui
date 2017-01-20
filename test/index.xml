@@ -2,6 +2,7 @@
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:hui" title="HUI tests">
 	<source url="navigation.xml" name="navSource"/>
+	<controller url="index.js"/>
 	<listen for="select" on="selector">
     <set url="selector.getValue().value" on="dock"/>
 	</listen>
@@ -44,5 +45,4 @@
 		</text>
 		<button small="true" click="panel.hide()" text="Close"/>
 	</boundpanel>
-	<controller source="index.js"/>
 </gui>
