@@ -2157,18 +2157,21 @@ doc title:'Rich text' class:'hui.ui.RichText'
   <xsl:template match="gui:structure/gui:middle/gui:left">
     <div class="hui_structure_left hui_context_sidebar">
       <xsl:apply-templates/>
+      <xsl:comment/>
     </div>
   </xsl:template>
 
   <xsl:template match="gui:structure/gui:middle/gui:center">
     <div class="hui_structure_center">
       <xsl:apply-templates/>
+      <xsl:comment/>
     </div>
   </xsl:template>
 
   <xsl:template match="gui:structure/gui:middle/gui:right">
     <div class="hui_structure_right">
       <xsl:apply-templates/>
+      <xsl:comment/>
     </div>
   </xsl:template>
 
