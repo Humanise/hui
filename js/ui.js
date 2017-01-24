@@ -46,7 +46,7 @@ hui.ui.get = function(nameOrComponent) {
 
 hui.ui.is = function(component, constructor) {
   return component.__proto__ == constructor.prototype;
-}
+};
 
 /**
  * Called when the DOM is ready and hui.ui is ready
@@ -76,13 +76,13 @@ hui.ui._resize = function() {
 hui.ui._afterResize = function() {
   hui.onDraw(function() {
     hui.ui.callSuperDelegates(hui.ui,'$afterResize');
-    for (key in hui.ui.objects) {
+    for (var key in hui.ui.objects) {
       var component = hui.ui.objects[key];
       if (component.$$draw) {
         component.$$draw();
       }
     }
-  })
+  });
 };
 
 /**
@@ -227,7 +227,7 @@ hui.ui.getComponents = function(predicate) {
     }
   }
   return comps;
-}
+};
 
 
 hui.ui.changeState = function(state) {
