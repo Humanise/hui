@@ -7,12 +7,12 @@
  * @param {Object} options.listen A listener
  */
 hui.ui.Component = function(options) {
-	this.name = options.name;
-	if (!this.name) {
-		hui.ui.latestObjectIndex++;
-		this.name = 'unnamed'+hui.ui.latestObjectIndex;
-	}
-	this.element = hui.get(options.element);
+  this.name = options.name;
+  if (!this.name) {
+    hui.ui.latestObjectIndex++;
+    this.name = 'unnamed'+hui.ui.latestObjectIndex;
+  }
+  this.element = hui.get(options.element);
   this.delegates = [];
   if (this.nodes) {
     this.nodes = hui.collect(this.nodes,this.element);
@@ -53,21 +53,21 @@ hui.ui.Component.prototype = {
       hui.dom.remove(this.element);
     }
   },
-	valueForProperty : function(property) {
+  valueForProperty : function(property) {
     return this[property];
-	},
+  },
   /**
    * Notify others of a value change
    */
-	fireValueChange : function() {
-		this.fire('valueChanged',this.value);
-		hui.ui.firePropertyChange(this,'value',this.value);
-		hui.ui.callAncestors(this,'childValueChanged',this.value);
-	},
+  fireValueChange : function() {
+    this.fire('valueChanged',this.value);
+    hui.ui.firePropertyChange(this,'value',this.value);
+    hui.ui.callAncestors(this,'childValueChanged',this.value);
+  },
   /**
    * Notify others of a layout change
    */
-	fireSizeChange : function() {
-		hui.ui.callAncestors(this,'$$childSizeChanged');
-	}
+  fireSizeChange : function() {
+    hui.ui.callAncestors(this,'$$childSizeChanged');
+  }
 };

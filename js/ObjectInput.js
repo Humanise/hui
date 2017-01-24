@@ -26,7 +26,7 @@
     _super.call(this, options);
     this._attach();
   }
-  
+
   hui.ui.ObjectInput.prototype = {
     _attach: function() {
       this.choose = new hui.ui.Button({

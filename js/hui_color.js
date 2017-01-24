@@ -207,7 +207,7 @@ hui.Color.rgb2hsv = function(r, g, b) {
 
   r = (r / 255);
   g = (g / 255);
-  b = (b / 255);  
+  b = (b / 255);
 
   var min = Math.min(Math.min(r, g), b),
     max = Math.max(Math.max(r, g), b),
