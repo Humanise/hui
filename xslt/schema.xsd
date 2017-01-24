@@ -959,11 +959,14 @@
 
   <xs:complexType name="tiles_tile">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:any/>
+      <!--
       <xs:element name="actions" type="tiles_actions" maxOccurs="1"/>
       <xs:element name="title" type="tiles_title" maxOccurs="1"/>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:any/>
       </xs:choice>
+      -->
     </xs:choice>
     <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="width" type="xs:positiveInteger"/>
@@ -1159,6 +1162,7 @@
     <xs:attribute name="state" type="xs:string"/>
     <xs:attribute name="source" type="xs:string"/>
     <xs:attribute name="selectable" type="xs:boolean"/>
+    <xs:attribute name="remember" type="xs:boolean"/>
     <xs:attribute name="visible" type="xs:boolean"/>
     <xs:attribute name="indent" type="xs:positiveInteger"/>
     <xs:attribute name="drop-files" type="xs:boolean"/>
