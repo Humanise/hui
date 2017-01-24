@@ -118,7 +118,7 @@ hui.ui.Toolbar.Icon.prototype = {
 		}
 	},
 	setLabel : function(label) {
-		var e = hui.get.firstByTag(this.element,'strong');
+		var e = hui.get.firstByClass(this.element,'hui_toolbar_icon_text');
 		hui.dom.setText(e,label);
 	},
 	setIcon : function(icon) {
