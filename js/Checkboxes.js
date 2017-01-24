@@ -105,7 +105,7 @@ hui.ui.Checkboxes.prototype = {
   setValues : function(values) {
     this.setValue(values);
   },
-  /** 
+  /**
    * @private
    * @deprecated
    */

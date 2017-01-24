@@ -74,7 +74,7 @@ hui.ui.LocationPicker.prototype = {
       loc = this._buildLatLng(loc);
       if (!this.marker) {
           this.marker = new google.maps.Marker({
-              position: loc, 
+              position: loc,
               map: this.map
           });
       } else {

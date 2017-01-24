@@ -277,9 +277,9 @@ hui.ui.Finder.prototype = {
       var buttons = hui.ui.Buttons.create();
       buttons.add(hui.ui.Button.create({
         text:'Cancel',
-        listen: { $click : function() { 
+        listen: { $click : function() {
           form.reset();
-          panel.hide(); 
+          panel.hide();
         } }
       }));
       buttons.add(hui.ui.Button.create({text:'Create',highlighted:true,submit:true}));
@@ -302,7 +302,7 @@ hui.ui.Finder.prototype = {
         self.fire('select',obj);
       },
       $failure : function() {
-        
+
       },
       $finally : function() {
         self.window.setBusy(false);

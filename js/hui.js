@@ -1066,7 +1066,7 @@ hui.build = function(name,options,doc) {
 
 /////////////////////// Position ///////////////////////
 
-/** 
+/**
  * Functions for getting and changing the position of elements
  * @namespace
  */
@@ -1630,11 +1630,11 @@ hui._ready = document.readyState == 'complete';// || document.readyState;
 // TODO Maybe interactive is too soon???
 
 hui.onReady = function(func) {
-	if (hui._ready) {
-		func();
-	} else {
-		hui._.push(func);
-	}
+  if (hui._ready) {
+    func();
+  } else {
+    hui._.push(func);
+  }
 };
 
 hui.onDraw = function(func) {

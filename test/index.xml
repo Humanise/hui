@@ -21,7 +21,10 @@
 				<option icon="common/info" text="JavaScript API" value="../api/index.html"/>
 				<option icon="common/color" text="Icons" value="../api/icons.html"/>
 				<options source="navSource"/>
+				<options name="componentOptions"/>
 			</selection>
+      <selection name="componentSelector">
+      </selection>
 			</overflow>
 			<bar variant="layout">
 				<searchfield adaptive="true"/>

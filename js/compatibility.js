@@ -1,21 +1,21 @@
 // MSIE 8-
 if (!Function.prototype.bind) {
-	Function.prototype.bind = function () {
-	    if (arguments.length < 2 && arguments[0] === undefined) {
-	        return this;
-	    }
-	    var thisObj = this,
-	    args = Array.prototype.slice.call(arguments),
-	    obj = args.shift();
-	    return function () {
-	        return thisObj.apply(obj, args.concat(Array.prototype.slice.call(arguments)));
-	    };
-	};
+  Function.prototype.bind = function () {
+      if (arguments.length < 2 && arguments[0] === undefined) {
+          return this;
+      }
+      var thisObj = this,
+      args = Array.prototype.slice.call(arguments),
+      obj = args.shift();
+      return function () {
+          return thisObj.apply(obj, args.concat(Array.prototype.slice.call(arguments)));
+      };
+  };
 
-	Function.bind = function() {
-	    var args = Array.prototype.slice.call(arguments);
-	    return Function.prototype.bind.apply(args.shift(), args);
-	};
+  Function.bind = function() {
+      var args = Array.prototype.slice.call(arguments);
+      return Function.prototype.bind.apply(args.shift(), args);
+  };
 }
 
 // MSIE 7-
@@ -25,11 +25,11 @@ if (!document.querySelectorAll) {
     var style = document.createElement('style'), elements = [], element;
     document.documentElement.firstChild.appendChild(style);
     document._qsa = [];
- 
+
     style.styleSheet.cssText = selectors + '{x-qsa:expression(document._qsa && document._qsa.push(this))}';
     window.scrollBy(0, 0);
     style.parentNode.removeChild(style);
- 
+
     while (document._qsa.length) {
       element = document._qsa.shift();
       element.style.removeAttribute('x-qsa');
@@ -39,7 +39,7 @@ if (!document.querySelectorAll) {
     return elements;
   };
 }
- 
+
 if (!document.querySelector) {
   document.querySelector = function (selectors) {
     var elements = document.querySelectorAll(selectors);
@@ -52,7 +52,7 @@ if (!document.querySelector) {
 
     var AXOs = ['MSXML2.XMLHTTP.6.0', 'MSXML3.XMLHTTP', 'Microsoft.XMLHTTP', 'MSXML2.XMLHTTP.3.0'];
     var correctAXO = null;
-    
+
     XMLHttpRequest = function() {
       if (correctAXO === null) {
         var xhr;
@@ -147,7 +147,7 @@ if (!Array.prototype.indexOf)
          : Math.floor(from);
     if (from < 0)
       from += len;
- 
+
     for (; from < len; from++)
     {
       if (from in this &&

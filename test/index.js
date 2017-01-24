@@ -1,13 +1,36 @@
 hui.ui.listen({
   $ready : function() {
+    this._loadSchema();
+    this._loadXSL();
+  },
+  _loadXSL : function() {
+    hui.ui.request({
+      url : '../xslt/gui.xsl',
+      $xml : function(doc) {
+        hui.log(doc)
+        var elements = doc.querySelectorAll('stylesheet > template');
+        for (var i = 0; i < elements.length; i++) {
+          var element = elements[i];
+          hui.log(element.getAttribute('match'))
+        }
+      }
+    })
+  },
+  _loadSchema : function() {
     hui.ui.request({
       url : '../xslt/schema.xsd',
       $xml : function(doc) {
-        hui.log(doc)
-        var elements = doc.getElementsByTagName('element');
+        var options = [];
+        var elements = doc.querySelectorAll('schema > element');
         for (var i = 0; i < elements.length; i++) {
-          hui.log(elements[i].getAttribute('name'))
+          var name = elements[i].getAttribute('name');
+          options.push({
+            text : name,
+            value : name,
+            kind : 'component'
+          });
         }
+        componentOptions.$optionsLoaded([{text:'Components',value:'components',icon:'common/folder',children:options}])
       }
     })
   },
