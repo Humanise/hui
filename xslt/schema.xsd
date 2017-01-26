@@ -965,6 +965,8 @@
       <xs:element name="list" type="list"/>
       <xs:element name="div" type="div"/>
       <xs:element name="formula" type="formula"/>
+      <xs:element name="overflow" type="overflow"/>
+      <xs:element name="chart" type="chart"/>
     </xs:choice>
     <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="width" type="xs:positiveInteger"/>
