@@ -959,14 +959,12 @@
 
   <xs:complexType name="tiles_tile">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
-      <xs:any/>
-      <!--
-      <xs:element name="actions" type="tiles_actions" maxOccurs="1"/>
-      <xs:element name="title" type="tiles_title" maxOccurs="1"/>
-      <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:any/>
-      </xs:choice>
-      -->
+      <xs:element name="actions" type="tiles_actions" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="title" type="tiles_title" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="pages" type="pages"/>
+      <xs:element name="list" type="list"/>
+      <xs:element name="div" type="div"/>
+      <xs:element name="formula" type="formula"/>
     </xs:choice>
     <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="width" type="xs:positiveInteger"/>
