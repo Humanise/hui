@@ -258,10 +258,11 @@ hui.ui.Drawing.Arc = function(options) {
   this.node = options.node;
   this.options = hui.override({
     center : {x:100,y:100},
-      startDegrees : 0,
+    startDegrees : 0,
     endDegrees : 0,
-      innerRadius : 0,
+    innerRadius : 0,
     outerRadius : 0,
+    skew: 0,
     fill : '#eee'
   },options);
   this._redraw();
@@ -296,7 +297,6 @@ hui.ui.Drawing.Arc.prototype = {
       closeRadians = (o.endDegrees   || 0) * Math.PI/180,
       r1 = o.innerRadius,
       r2 = o.outerRadius;
-
     var points = [
       [
         cx + r2 * Math.cos(startRadians),
@@ -307,12 +307,12 @@ hui.ui.Drawing.Arc.prototype = {
         cy + r2 * Math.sin(closeRadians)
       ],
       [
-        cx + r1 * Math.cos(closeRadians),
-        cy + r1 * Math.sin(closeRadians)
+        cx + r1 * Math.cos(closeRadians - o.skew),
+        cy + r1 * Math.sin(closeRadians - o.skew)
       ],
       [
-        cx + r1 * Math.cos(startRadians),
-        cy + r1 * Math.sin(startRadians)
+        cx + r1 * Math.cos(startRadians + o.skew),
+        cy + r1 * Math.sin(startRadians + o.skew)
       ]
     ];
 

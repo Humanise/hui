@@ -74,7 +74,7 @@
 
 	<box width="600" title="Dates" variant="textured" padding="10">
 		<formula name="dateForm">
-			<fields labels="above">
+			<fields>
 				<field label="Seconds:">
 					<datetime-input key="date-seconds" return-type="seconds"/>
 				</field>
