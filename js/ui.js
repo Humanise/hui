@@ -162,6 +162,12 @@ hui.ui.destroyDescendants = function(widgetOrElement) {
   }
 };
 
+hui.ui.remove = function(widget) {
+  hui.ui.destroy(widget);
+  hui.ui.destroyDescendants(widget);
+  widget.element && hui.dom.remove(widget.element);
+}
+
 /** Gets all ancestors of a widget
   @param {Widget} widget A widget
   @returns {Array} An array of all ancestors
@@ -789,12 +795,14 @@ hui.ui.callDelegates = function(obj,method,value,event) {
 };
 
 /**
- * Sends a message to parent frames
+ * Sends a message to ancestor frames (will call all the way up)
+ * @param {String} event
+ * @param {Object} value
  */
 hui.ui.tellContainers = function(event,value) {
   if (window.parent!=window) {
     try {
-      window.parent.hui.ui._tellContainers(event,value);
+      return window.parent.hui.ui._tellContainers(event,value);
     } catch (e) {
       //hui.log('Unable to callContainers')
     }
@@ -802,14 +810,15 @@ hui.ui.tellContainers = function(event,value) {
 };
 
 hui.ui._tellContainers = function(event,value) {
-  hui.ui.callSuperDelegates({},event,value);
+  var result = hui.ui.callSuperDelegates({},event,value);
   if (window.parent!=window) {
     try {
-      window.parent.hui.ui._tellContainers(event,value);
+      result = window.parent.hui.ui._tellContainers(event,value);
     } catch (e) {
       //hui.log('Unable to callContainers')
     }
   }
+  return result;
 };
 
 hui.ui.callSuperDelegates = function(obj,method,value,event) {
