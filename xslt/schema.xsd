@@ -47,6 +47,7 @@
       <xs:element name="boundpanel" type="boundpanel"/>
       <xs:element name="menu" type="menu"/>
     </xs:choice>
+    <xs:attribute name="globals" type="xs:boolean"/>
   </xs:complexType>
 
   <xs:element name="options" type="options"/>
@@ -1239,6 +1240,7 @@
       <xs:element name="option" type="segmented_option"/>
     </xs:choice>
     <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="key" type="xs:string"/>
     <xs:attribute name="value" type="xs:string"/>
     <xs:attribute name="allow-null" type="xs:boolean"/>
     <xs:attribute name="variant">
