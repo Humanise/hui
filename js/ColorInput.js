@@ -13,8 +13,12 @@ hui.ui.ColorInput = function(options) {
     element : hui.get.firstByTag(this.element,'input'),
     validator : {
       validate : function(value) {
-        var color = new hui.Color(value);
-        return {valid:true,value:color.toHex()};
+        if (hui.isBlank(value)) {
+          value = '';
+        } else {
+          value = new hui.Color(value).toHex();
+        }
+        return {valid:true,value:value};
       }
     }
   });
@@ -62,7 +66,7 @@ hui.ui.ColorInput.prototype = {
     hui.Color.parse(this.value);
   },
   _onButtonClick : function() {
-    if (hui.window.getViewHeight()<200) {
+    if (hui.window.getViewHeight() < 200) {
       this.fire('clickPicker',this.value)
       return; // TODO: mini picker
     }
@@ -88,7 +92,7 @@ hui.ui.ColorInput.prototype = {
     return this.value;
   },
   setValue : function(value) {
-    this.value = new hui.Color(value).toHex();
+    this.value = hui.isBlank(value) ? value : new hui.Color(value).toHex();
     this._syncInput();
     this._syncColorButton();
   },
