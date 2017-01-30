@@ -38,11 +38,11 @@ class SelectOne extends Component implements Valueable {
   constructor(element: any, options?: [SelectOption]) {
     super({element:element});
   }
-  
+
   setValue(value:any) {
     this.value = value;
   }
-  
+
   getValue() {
     return this.value;
   }

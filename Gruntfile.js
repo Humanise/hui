@@ -107,7 +107,20 @@ module.exports = function(grunt) {
           'bin/minimized.site.css': ['bin/joined.site.css']
         }
       }
-    }
+    },
+    typescript: {
+        base: {
+          src: ['ts/**/*.ts'],
+          dest: 'js/ts',
+          options: {
+            module: 'amd', //or commonjs
+            target: 'es3', //or es3
+            basePath: 'ts',
+            sourceMap: true,
+            declaration: true
+          }
+        }
+      }
   });
 
   // Load plugins.
@@ -123,6 +136,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-jsdoc');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
+  grunt.loadNpmTasks('grunt-typescript');
 
   // Default task(s).
   grunt.registerTask('default', 'Watch', ['watch']);
