@@ -88,7 +88,7 @@ hui.ui.Diagram = function(options) {
 	this.data = {};
 	this.translation = {x:0,y:0};
 	this.element = hui.get(options.element);
-	this.width = this.element.clientWidth;	
+	this.width = this.element.clientWidth;
 	this.height = this.element.clientHeight;
 	this.layout = hui.ui.Diagram[this.options.layout];
 	//this.layout = hui.ui.Diagram.Springy;
@@ -102,9 +102,9 @@ hui.ui.Diagram = function(options) {
 
 hui.ui.Diagram.create = function(options) {
 	options = hui.override({width:null,height:null},options);
-	
+
 	options.element = hui.build('div',{'class':'hui_diagram',parent:options.parent,style:{height:options.height+'px'}});
-	
+
 	return new hui.ui.Diagram(options);
 }
 
@@ -124,7 +124,7 @@ hui.ui.Diagram.prototype = {
 			// Only re-layout if size actually changed
 			return;
 		}
-		this.width = newWidth;	
+		this.width = newWidth;
 		this.height = newHeight;
 		this.background.setSize(this.width,this.height);
 		this.layout.resize();
@@ -149,9 +149,9 @@ hui.ui.Diagram.prototype = {
 		}
 		return to;
 	},
-	
+
 	// Data ...
-	
+
 	/** @private */
 	$objectsLoaded : function(data) {
 		this.setData(data);
@@ -168,7 +168,7 @@ hui.ui.Diagram.prototype = {
 			if (nodes[i].type=='icon') {
 				this.addIcon(nodes[i]);
 			} else {
-				this.addBox(nodes[i]);				
+				this.addBox(nodes[i]);
 			}
 		};
 		for (var i=0; i &lt; lines.length; i++) {
@@ -200,7 +200,7 @@ hui.ui.Diagram.prototype = {
 	/** @private */
 	$visibilityChanged : function() {
 		if (hui.dom.isVisible(this.element)) {
-			this.width = this.element.clientWidth;	
+			this.width = this.element.clientWidth;
 			this.height = this.element.clientHeight;
 			this.background.setSize(this.width,this.height);
 			if (this.options.source) {
@@ -222,12 +222,12 @@ hui.ui.Diagram.prototype = {
 			hui.dom.remove(lines[i]);
 		};
 	},
-	
+
 	addBox : function(options) {
 		var box = hui.ui.Diagram.Box.create(options,this);
 		this.add(box);
 	},
-	
+
 	addIcon : function(options) {
 		var box = hui.ui.Diagram.Icon.create(options,this);
 		this.add(box);
@@ -257,8 +257,8 @@ hui.ui.Diagram.prototype = {
 		//hui.listen(lineNode.node,'click',function() {alert(line)});
 		this.lines.push(line);
 	},
-	
-	
+
+
 	_getCenter : function(widget) {
 		return widget.getCenter();
 		var e = widget.element;
@@ -281,11 +281,11 @@ hui.ui.Diagram.prototype = {
 				}
 			};
 		}
-		return null;		
+		return null;
 	},
-	
+
 	// Drawing...
-	
+
 	_updateLine : function(line) {
 		if (!line.label) {
 			return;
@@ -353,9 +353,9 @@ hui.ui.Diagram.Arbor = {
 				this.loaded = true;
 				this.start();
 			}.bind(this))
-		}.bind(this));		
+		}.bind(this));
 	},
-	
+
 	start : function() {
 		if (!this.loaded) {
 			this._load();
@@ -365,7 +365,7 @@ hui.ui.Diagram.Arbor = {
 			hui.log('Arbor is not available!');
 			return;
 		}
-		
+
 		var repulsion = 50,
 			stiffness = 600,
 			friction = 0.5,
@@ -373,9 +373,9 @@ hui.ui.Diagram.Arbor = {
 			fps = 40,
 			dt = 0.02 //0.02,			// timestep to use for stepping the simulation
 			precision = 0.6;	// accuracy vs. speed in force calculations
-		
+
 		var diagram = this.diagram;
-		
+
 		var renderer = {
   			init:  function(system) {
 				hui.log("starting",system);
@@ -384,7 +384,7 @@ hui.ui.Diagram.Arbor = {
 				var sel = diagram.selection ? diagram.selection.id : null;
 				system.eachNode(function(node,point) {
 					if (node.name!=sel) {
-						node.data.setCenter(point);						
+						node.data.setCenter(point);
 					}
 				});
 				system.eachEdge(function(edge,point1,point2) {
@@ -399,7 +399,7 @@ hui.ui.Diagram.Arbor = {
 						line.setFrom(diagram._getMagnet(point2,point1,edge.source.data));
 					}
 					if (edge.target.name!=sel) {
-						line.setTo(diagram._getMagnet(point1,point2,edge.target.data));						
+						line.setTo(diagram._getMagnet(point1,point2,edge.target.data));
 					}
 					diagram._updateLine(edge.data);
 				}.bind(this));
@@ -409,22 +409,22 @@ hui.ui.Diagram.Arbor = {
 		system.screenSize(diagram.element.clientWidth, diagram.element.clientHeight);
 		system.screenPadding(50,100);
 		system.renderer = renderer
-		
+
 		this.populate();
 	},
 	populate : function() {
 		var system = this.particleSystem,
 			nodes = this.diagram.nodes,
 			lines = this.diagram.lines;
-		
+
 		for (var i=0; i &lt; nodes.length; i++) {
 			system.addNode(nodes[i].id, nodes[i]);
 		};
-		
+
 		hui.each(lines,function(line) {
 			system.addEdge(line.from, line.to, line);
 		})
-		
+
 		window.setTimeout(function() {
 			system.stop();
 		},6000)
@@ -449,13 +449,13 @@ hui.ui.Diagram.D3 = {
 			this.start();
 		}.bind(this))
 	},
-	
+
 	resize : function() {
 		if (this.layout) {
 			this.layout.size([this.diagram.width,this.diagram.height]);
 		}
 	},
-	
+
 	start : function() {
 		if (!this.loaded) {
 			this._load();
@@ -466,12 +466,12 @@ hui.ui.Diagram.D3 = {
 			lines = diagram.lines,
 			width = diagram.element.clientWidth,
 			height = diagram.element.clientHeight;
-		
+
 		for (var i=0; i &lt; lines.length; i++) {
 			lines[i].source = this._findById(nodes,lines[i].from);
 			lines[i].target = this._findById(nodes,lines[i].to);
 		};
-		
+
 		var force = this.layout = d3.layout.force()
             .linkDistance(100)
             .friction(0.9)
@@ -483,7 +483,7 @@ hui.ui.Diagram.D3 = {
 			.nodes(this.diagram.nodes)
 			.links(this.diagram.lines)
 			.size([width, height]);
-		
+
 		var ticker = function() {
 			var sel = diagram.selection ? diagram.selection.id : null;
 			var nodes = force.nodes(),
@@ -519,12 +519,12 @@ hui.ui.Diagram.D3 = {
 			force.tick()
 		};
 		force.gravity(0.1);
-		
+
 		force.on("tick", ticker);
-		
+
 		force.start()
 	},
-	
+
 	resume : function() {
 		if (this.layout) { this.layout.start(); }
 	},
@@ -542,7 +542,7 @@ hui.ui.Diagram.D3 = {
 			this.layout.start();
 		}
 	},
-	
+
 	_findById : function(nodes,id) {
 		for (var i = nodes.length - 1; i >= 0; i--){
 			if (nodes[i].id===id) {
@@ -559,7 +559,7 @@ hui.ui.Diagram.D3 = {
 			link.source = this._findById(nodes,link.from);
 			link.target = this._findById(nodes,link.to);
 		};
-		return data;		
+		return data;
 	},
 	populate : function() {
 		this.start();
@@ -569,7 +569,7 @@ hui.ui.Diagram.D3 = {
 			this.layout.stop();
 		}
 	}
-	
+
 }
 
 
@@ -584,7 +584,7 @@ hui.ui.Diagram.Springy = {
 			this.start();
 		}.bind(this))
 	},
-	
+
 	start : function() {
 		if (!this.loaded) {
 			this._load();
@@ -595,14 +595,14 @@ hui.ui.Diagram.Springy = {
 			lines = diagram.lines,
 			width = diagram.element.clientWidth,
 			height = diagram.element.clientHeight;
-		
+
 		var graph = new Graph();
 		var cachedNodes = {},
 			cachedLines = {};
 		for (var i=0; i &lt; nodes.length; i++) {
 			cachedNodes[nodes[i].id] = graph.newNode(nodes[i]);
 		};
-		
+
 		for (var i=0; i &lt; lines.length; i++) {
 			var edge = graph.newEdge(
 				cachedNodes[lines[i].from],
@@ -610,19 +610,19 @@ hui.ui.Diagram.Springy = {
 			);
 			cachedLines[edge.id] = lines[i];
 		};
-		
+
 		var layout = new Layout.ForceDirected(graph, width, height, 0.4);
-		
+
 		var toScreen = function(p) {
 			  return {
 				  x : (p.x*width/10)+width/2,
 				  y : (p.y*height/10)+height/2
 			  }
 		  }
-		
+
 		var renderer = new Renderer(layout,
 			function clear() {
-			  
+
 			},
 			function drawEdge(edge, p1, p2) {
 				var sel = diagram.selection ? diagram.selection.id : null;
@@ -656,12 +656,12 @@ hui.ui.Diagram.Springy = {
 		return null;
 	},
 	populate : function() {
-		
+
 	},
 	clear : function() {
-		
+
 	}
-	
+
 }
 
 
@@ -672,7 +672,7 @@ hui.ui.Diagram.Box = function(options) {
 	this.options = options;
 	this.id = options.id;
 	this.name = options.name;
-	this.element = hui.get(options.element);	
+	this.element = hui.get(options.element);
 	this.center = {};
 	this.size = null;
 	hui.ui.extend(this);
@@ -731,7 +731,7 @@ hui.ui.Diagram.Box.prototype = {
 
 if (hui.browser.webkit) {
 	hui.ui.Diagram.Box.prototype._updateCenter = function() {
-		this.element.style.WebkitTransform = 'translate3d(' + Math.round(this.center.x - this.size.width/2) + 'px,' + Math.round(this.center.y - this.size.height/2) + 'px,0)';      
+		this.element.style.WebkitTransform = 'translate3d(' + Math.round(this.center.x - this.size.width/2) + 'px,' + Math.round(this.center.y - this.size.height/2) + 'px,0)';
 	}
 }
 
@@ -745,7 +745,7 @@ hui.ui.Diagram.Icon = function(options) {
 	this.options = options;
 	this.id = options.id;
 	this.name = options.name;
-	this.element = hui.get(options.element);	
+	this.element = hui.get(options.element);
 	this.center = {};
 	hui.ui.extend(this);
 	hui.ui.Diagram.util.enableDragging(this)
@@ -887,7 +887,7 @@ hui.ui.Diagram.util = {
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a>
 	
-		on Wed Jan 4th 2017
+		on Fri Jan 27th 2017
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

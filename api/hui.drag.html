@@ -165,146 +165,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id=".listen"><span class="type-signature">&lt;static> </span>listen(options)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        <p>Listen for native drops</p>
-<p><pre><strong>options:</strong> {<br> elements : «Element»,<br> hoverClass : «String»,<br> $drop : function(event),<br> $dropFiles : function(fileArray),<br> $dropURL : function(url),<br> $dropText : function(url)<br>}</p>
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>options</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The options</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="hui.js.html">hui.js</a>,
-				 <a href="hui.js.html#sunlight-1-line-2289">line 2289</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id=".register"><span class="type-signature">&lt;static> </span>register(options)</h4>
+    <h4 class="name" id=".attach"><span class="type-signature">&lt;static> </span>attach(options)</h4>
     
     
 </dt>
@@ -493,7 +354,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id=".start"><span class="type-signature">&lt;static> </span>start(options)</h4>
+    <h4 class="name" id=".listen"><span class="type-signature">&lt;static> </span>listen(options)</h4>
     
     
 </dt>
@@ -501,8 +362,8 @@
 
     
     <div class="description">
-        <p>Start dragging</p>
-<p><pre><strong>options:</strong> {<br> onBeforeMove : function(event), // Called when the cursor moves for the first time<br> onMove : function(event), // Called when the cursor moves<br> onAfterMove : function(event), // Called if the cursor has moved<br> onNotMoved : function(event), // Called if the cursor has not moved<br> onEnd : function(event), // Called when the mouse is released, even if the cursor has not moved<br>}</p>
+        <p>Listen for native drops</p>
+<p><pre><strong>options:</strong> {<br> elements : «Element»,<br> hoverClass : «String»,<br> $drop : function(event),<br> $dropFiles : function(fileArray),<br> $dropURL : function(url),<br> $dropText : function(url)<br>}</p>
     </div>
     
 
@@ -599,7 +460,316 @@
 		<ul class="dummy">
 			<li>
 				<a href="hui.js.html">hui.js</a>,
-				 <a href="hui.js.html#sunlight-1-line-2231">line 2231</a>
+				 <a href="hui.js.html#sunlight-1-line-2299">line 2299</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id=".start"><span class="type-signature">&lt;static> </span>start(options)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Start dragging</p>
+<p><pre><strong>options:</strong> {<br> onBeforeMove ($firstMove) : function(event), // Called when the cursor moves for the first time<br> onMove ($move): function(event), // Called when the cursor moves<br> onAfterMove ($didMove): function(event), // Called if the cursor has moved<br> onNotMoved ($notMoved): function(event), // Called if the cursor has not moved<br> onEnd ($finally) : function(event), // Called when the mouse is released, even if the cursor has not moved<br>}</p>
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The options</p>
+                <h6 class="method-params-label method-subparams-label">Properties</h6>
+                
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>$before</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>When the user starts interacting (mousedown/touchstart)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>$startMove</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>When the user starts moving (before first move - called once)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>$move</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>When the user moves</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>$endMove</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>After a move has finished</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>$notMoved</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>If the user started interacting but did not move (maybe treat as click/tap)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>$finally</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>After everything - moved or not</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hui.js.html">hui.js</a>,
+				 <a href="hui.js.html#sunlight-1-line-2240">line 2240</a>
 			</li>
 		</ul>
 	</dd>
@@ -682,7 +852,7 @@
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a>
 	
-		on Wed Jan 4th 2017
+		on Fri Jan 27th 2017
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
