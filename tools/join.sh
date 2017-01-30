@@ -119,7 +119,8 @@ jsFiles = [
     'js/Split.js',
     'js/NumberValidator.js',
     'js/ObjectInput.js',
-    'js/Rows.js'
+    'js/Rows.js',
+    'js/Pages.js'
 ]
 
 jsFilesSite = [
@@ -203,7 +204,8 @@ cssFiles = [
     'markupeditor',
     'objectinput',
     'rows',
-    'textinput'
+    'textinput',
+    'pages'
 ]
 
 cssFilesSite = [
