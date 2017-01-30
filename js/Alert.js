@@ -19,17 +19,13 @@ hui.ui.Alert = function(options) {
 
 /**
  * Creates a new instance of an alert
- * <pre><strong>options:</strong> {
- *  title : «String»,
- *  text : «String»,
- *  emotion: «'smile' | 'gasp'»,
- *
- *  modal : «true | <strong>false</strong>»,
- *  name : «String»
- * }
- * </pre>
  * @static
  * @param {Object} options The options
+ * @param {String} options.name The component name
+ * @param {Boolean} options.modal If the alert i modal (false)
+ * @param {String} options.emotion The component name
+ * @param {String} options.title The component name
+ * @param {String} options.text The component name
  */
 hui.ui.Alert.create = function(options) {
   options = hui.override({text:'',emotion:null,title:null},options);
@@ -53,7 +49,9 @@ hui.ui.Alert.create = function(options) {
 };
 
 hui.ui.Alert.prototype = {
-  /** Shows the alert */
+  /**
+   * Shows the alert
+   */
   show : function() {
     var zIndex = hui.ui.nextAlertIndex();
     if (this.options.modal) {
@@ -66,13 +64,16 @@ hui.ui.Alert.prototype = {
     hui.animate(this.element,'opacity',1,200);
     hui.animate(this.element,'margin-top','40px',600,{ease:hui.ease.elastic});
   },
-  /** Hides the alert */
+  /**
+   * Hides the alert
+   */
   hide : function() {
     hui.animate(this.element,'opacity',0,100,{hideOnComplete:true});
     hui.animate(this.element,'margin-top','0px',100);
     hui.ui.hideCurtain(this);
   },
-  /** Sets the alert title
+  /**
+   * Sets the alert title
    * @param {String} text The new title
    */
   setTitle : function(text) {
@@ -82,7 +83,8 @@ hui.ui.Alert.prototype = {
     hui.dom.setText(this.title,hui.ui.getTranslated(text));
 
   },
-  /** Sets the alert text
+  /**
+   * Sets the alert text
    * @param {String} text The new text
    */
   setText : function(text) {
@@ -91,7 +93,8 @@ hui.ui.Alert.prototype = {
     }
     hui.dom.setText(this.text,hui.ui.getTranslated(text));
   },
-  /** Sets the alert emotion
+  /**
+   * Sets the alert emotion
    * @param {String} emotion Can be 'smile' or 'gasp'
    */
   setEmotion : function(emotion) {
@@ -101,8 +104,12 @@ hui.ui.Alert.prototype = {
     this.emotion = emotion;
     hui.cls.add(this.body,emotion);
   },
-  /** Updates multiple properties
-   * @param {Object} options {title: «String», text: «String», emotion: «'smile' | 'gasp'»}
+  /**
+   * Updates multiple properties
+   * @param {Object} options
+   * @param {String} options.title
+   * @param {String} options.text
+   * @param {String} options.emotion
    */
   update : function(options) {
     options = options || {};
@@ -110,7 +117,8 @@ hui.ui.Alert.prototype = {
     this.setText(options.text || null);
     this.setEmotion(options.emotion || null);
   },
-  /** Adds a Button to the alert
+  /**
+   * Adds a Button to the alert
    * @param {hui.ui.Button} button The button to add
    */
   addButton : function(button) {

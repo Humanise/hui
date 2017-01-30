@@ -1,12 +1,11 @@
 /**
  * Editing of documents composed of different parts
  *
- * <pre>
- * <strong>Events</strong>
- * $partWasMoved : function(info)
- * $addPart
- * </pre>
  * @constructor
+ * @fires hui.ui.Editor#editPart
+ * @fires hui.ui.Editor#cancelPart
+ * @fires hui.ui.Editor#savePart
+ * @fires hui.ui.Editor#addPart
  */
 hui.ui.Editor = function() {
   this.name = 'huiEditor';
@@ -21,6 +20,10 @@ hui.ui.Editor = function() {
   hui.ui.extend(this);
 }
 
+/**
+ * Get the one and only editor instance
+ * @return {hui.ui.Editor}
+ */
 hui.ui.Editor.get = function() {
   if (!hui.ui.Editor.instance) {
     hui.ui.Editor.instance = new hui.ui.Editor();
