@@ -75,3 +75,4 @@ document.write('<script type="text/javascript" src="'+_context+'/js/Split.js"></
 document.write('<script type="text/javascript" src="'+_context+'/js/NumberValidator.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/js/ObjectInput.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/js/Rows.js"></script>');
+document.write('<script type="text/javascript" src="'+_context+'/js/Pages.js"></script>');

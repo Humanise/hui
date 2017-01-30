@@ -5141,6 +5141,12 @@ hui.ui.destroyDescendants = function(widgetOrElement) {
   }
 };
 
+hui.ui.remove = function(widget) {
+  hui.ui.destroy(widget);
+  hui.ui.destroyDescendants(widget);
+  widget.element && hui.dom.remove(widget.element);
+}
+
 /** Gets all ancestors of a widget
   @param {Widget} widget A widget
   @returns {Array} An array of all ancestors
@@ -5768,12 +5774,14 @@ hui.ui.callDelegates = function(obj,method,value,event) {
 };
 
 /**
- * Sends a message to parent frames
+ * Sends a message to ancestor frames (will call all the way up)
+ * @param {String} event
+ * @param {Object} value
  */
 hui.ui.tellContainers = function(event,value) {
   if (window.parent!=window) {
     try {
-      window.parent.hui.ui._tellContainers(event,value);
+      return window.parent.hui.ui._tellContainers(event,value);
     } catch (e) {
       //hui.log('Unable to callContainers')
     }
@@ -5781,14 +5789,15 @@ hui.ui.tellContainers = function(event,value) {
 };
 
 hui.ui._tellContainers = function(event,value) {
-  hui.ui.callSuperDelegates({},event,value);
+  var result = hui.ui.callSuperDelegates({},event,value);
   if (window.parent!=window) {
     try {
-      window.parent.hui.ui._tellContainers(event,value);
+      result = window.parent.hui.ui._tellContainers(event,value);
     } catch (e) {
       //hui.log('Unable to callContainers')
     }
   }
+  return result;
 };
 
 hui.ui.callSuperDelegates = function(obj,method,value,event) {
@@ -8428,17 +8437,13 @@ hui.ui.Alert = function(options) {
 
 /**
  * Creates a new instance of an alert
- * <pre><strong>options:</strong> {
- *  title : «String»,
- *  text : «String»,
- *  emotion: «'smile' | 'gasp'»,
- *
- *  modal : «true | <strong>false</strong>»,
- *  name : «String»
- * }
- * </pre>
  * @static
  * @param {Object} options The options
+ * @param {String} options.name The component name
+ * @param {Boolean} options.modal If the alert i modal (false)
+ * @param {String} options.emotion The component name
+ * @param {String} options.title The component name
+ * @param {String} options.text The component name
  */
 hui.ui.Alert.create = function(options) {
   options = hui.override({text:'',emotion:null,title:null},options);
@@ -8462,7 +8467,9 @@ hui.ui.Alert.create = function(options) {
 };
 
 hui.ui.Alert.prototype = {
-  /** Shows the alert */
+  /**
+   * Shows the alert
+   */
   show : function() {
     var zIndex = hui.ui.nextAlertIndex();
     if (this.options.modal) {
@@ -8475,13 +8482,16 @@ hui.ui.Alert.prototype = {
     hui.animate(this.element,'opacity',1,200);
     hui.animate(this.element,'margin-top','40px',600,{ease:hui.ease.elastic});
   },
-  /** Hides the alert */
+  /**
+   * Hides the alert
+   */
   hide : function() {
     hui.animate(this.element,'opacity',0,100,{hideOnComplete:true});
     hui.animate(this.element,'margin-top','0px',100);
     hui.ui.hideCurtain(this);
   },
-  /** Sets the alert title
+  /**
+   * Sets the alert title
    * @param {String} text The new title
    */
   setTitle : function(text) {
@@ -8491,7 +8501,8 @@ hui.ui.Alert.prototype = {
     hui.dom.setText(this.title,hui.ui.getTranslated(text));
 
   },
-  /** Sets the alert text
+  /**
+   * Sets the alert text
    * @param {String} text The new text
    */
   setText : function(text) {
@@ -8500,7 +8511,8 @@ hui.ui.Alert.prototype = {
     }
     hui.dom.setText(this.text,hui.ui.getTranslated(text));
   },
-  /** Sets the alert emotion
+  /**
+   * Sets the alert emotion
    * @param {String} emotion Can be 'smile' or 'gasp'
    */
   setEmotion : function(emotion) {
@@ -8510,8 +8522,12 @@ hui.ui.Alert.prototype = {
     this.emotion = emotion;
     hui.cls.add(this.body,emotion);
   },
-  /** Updates multiple properties
-   * @param {Object} options {title: «String», text: «String», emotion: «'smile' | 'gasp'»}
+  /**
+   * Updates multiple properties
+   * @param {Object} options
+   * @param {String} options.title
+   * @param {String} options.text
+   * @param {String} options.emotion
    */
   update : function(options) {
     options = options || {};
@@ -8519,7 +8535,8 @@ hui.ui.Alert.prototype = {
     this.setText(options.text || null);
     this.setEmotion(options.emotion || null);
   },
-  /** Adds a Button to the alert
+  /**
+   * Adds a Button to the alert
    * @param {hui.ui.Button} button The button to add
    */
   addButton : function(button) {
@@ -16802,8 +16819,12 @@ hui.ui.ColorInput = function(options) {
     element : hui.get.firstByTag(this.element,'input'),
     validator : {
       validate : function(value) {
-        var color = new hui.Color(value);
-        return {valid:true,value:color.toHex()};
+        if (hui.isBlank(value)) {
+          value = '';
+        } else {
+          value = new hui.Color(value).toHex();
+        }
+        return {valid:true,value:value};
       }
     }
   });
@@ -16851,7 +16872,7 @@ hui.ui.ColorInput.prototype = {
     hui.Color.parse(this.value);
   },
   _onButtonClick : function() {
-    if (hui.window.getViewHeight()<200) {
+    if (hui.window.getViewHeight() < 200) {
       this.fire('clickPicker',this.value)
       return; // TODO: mini picker
     }
@@ -16877,7 +16898,7 @@ hui.ui.ColorInput.prototype = {
     return this.value;
   },
   setValue : function(value) {
-    this.value = new hui.Color(value).toHex();
+    this.value = hui.isBlank(value) ? value : new hui.Color(value).toHex();
     this._syncInput();
     this._syncColorButton();
   },
@@ -18294,6 +18315,145 @@ hui.ui.NumberValidator.prototype = {
   hui.extend(hui.ui.Rows, _super);
 
 })(hui.ui.Component);
+
+/**
+ * Pages
+ * @constructor
+ */
+hui.ui.Pages = function(options) {
+  this.options = options || {};
+  this.element = hui.get(options.element);
+  this.name = options.name;
+  this.pages = hui.get.children(this.element);
+  this.index = 0;
+  this.fixedHeight = hui.cls.has(this.element,'hui_pages_full');
+  this.expanded = false;
+  hui.ui.extend(this);
+}
+
+hui.ui.Pages.create = function(options) {
+  options = options || {};
+  options.element = hui.build('div',{'class':'hui_pages'});
+  return new hui.ui.Pages(options);
+}
+
+hui.ui.Pages.prototype = {
+  add : function(widgetOrElement) {
+    var element = hui.dom.isElement(widgetOrElement) ? element : widgetOrElement.element;
+    var page = hui.build('div',{'class':'hui_pages_page'});
+    page.appendChild(element);
+    this.element.appendChild(page);
+    if (this.pages.length>0) {
+      page.style.display = 'none';
+    }
+    this.pages = hui.get.children(this.element);
+  },
+  next : function() {
+    if (this.expanded) {return}
+    var current = this.pages[this.index];
+    this.index = this.pages.length <= this.index+1 ? 0 : this.index+1;
+    this._transition({hide:current,show:this.pages[this.index]});
+  },
+  previous : function() {
+    if (this.expanded) {return}
+    var current = this.pages[this.index];
+    this.index = this.index == 0 ? this.pages.length-1 : this.index-1;
+    this._transition({hide:current,show:this.pages[this.index]});
+  },
+  goTo : function(key) {
+    for (var i=0; i < this.pages.length; i++) {
+      if (this.pages[i].getAttribute('data-key')==key && i!=this.index) {
+        var current = this.pages[this.index];
+        this.index = i;
+        this._transition({hide:current,show:this.pages[i]});
+        return;
+      }
+    };
+  },
+  getPageKey : function() {
+    return this.pages[this.index].getAttribute('data-key');
+  },
+  expand : function() {
+    var l = this.pages.length;
+    for (var i=0; i < l; i++) {
+      if (!this.expanded) {
+        hui.style.set(this.pages[i],{
+          width : (100 / l)+'%',
+          display : 'block',
+          'float' : 'left',
+          opacity: 1
+        });
+      } else {
+        hui.style.set(this.pages[i],{
+          width : '',
+          display : i==this.index ? 'block' : 'none',
+          'float' : ''
+        });
+      }
+    };
+    hui.ui.callVisible(this);
+    this.expanded = !this.expanded;
+  },
+  _transition : function(options) {
+    var hide = options.hide,
+      show = options.show,
+      e = this.element,
+            duration = 300;
+    if (this.fixedHeight) {
+      hui.style.set(hide,{
+                position:'absolute',
+                width:e.clientWidth+'px',
+                height:this.element.clientHeight+'px'
+            });
+      hui.style.set(show,{
+                position:'absolute',
+                display:'block',opacity:0,
+                width:e.clientWidth+'px',
+                height:this.element.clientHeight+'px'
+            });
+    } else {
+      hui.style.set(hide,{
+                position:'absolute',width:e.clientWidth+'px'
+            });
+      hui.style.set(show,{
+                position:'absolute',width:e.clientWidth+'px',display:'block',opacity:0
+            });
+      hui.style.set(e,{height:hide.offsetHeight+'px',overflow:'hidden',position:'relative'});
+      hui.animate({
+                node : e,
+                css : {height:show.offsetHeight+'px'},
+                duration : duration,
+                ease : hui.ease.slowFastSlow
+            })
+    }
+    hui.ui.reLayout();
+
+    hui.effect.fadeOut({
+            element : hide,
+            duration : duration,
+            $complete : function() {
+                hui.style.set(hide,{width : '',position:'',height:''});
+                window.setTimeout(function() {
+                    hide.style.display = 'none';
+                })
+            }
+        });
+
+    hui.effect.fadeIn({
+            element : show,
+            duration : duration,
+            $complete : function() {
+            hui.style.set(show,{width : '',position:'',height:''});
+                if (!this.fixedHeight) {
+                    hui.style.set(e,{height:'',overflow:'',position:''});
+                }
+                hui.ui.reLayout();
+                hui.ui.callVisible(this);
+                this.fireSizeChange();
+            }.bind(this)
+        });
+  }
+}
 
 /**
  * A chart (line / column etc.)
@@ -21132,10 +21292,11 @@ hui.ui.Drawing.Arc = function(options) {
   this.node = options.node;
   this.options = hui.override({
     center : {x:100,y:100},
-      startDegrees : 0,
+    startDegrees : 0,
     endDegrees : 0,
-      innerRadius : 0,
+    innerRadius : 0,
     outerRadius : 0,
+    skew: 0,
     fill : '#eee'
   },options);
   this._redraw();
@@ -21170,7 +21331,6 @@ hui.ui.Drawing.Arc.prototype = {
       closeRadians = (o.endDegrees   || 0) * Math.PI/180,
       r1 = o.innerRadius,
       r2 = o.outerRadius;
-
     var points = [
       [
         cx + r2 * Math.cos(startRadians),
@@ -21181,12 +21341,12 @@ hui.ui.Drawing.Arc.prototype = {
         cy + r2 * Math.sin(closeRadians)
       ],
       [
-        cx + r1 * Math.cos(closeRadians),
-        cy + r1 * Math.sin(closeRadians)
+        cx + r1 * Math.cos(closeRadians - o.skew),
+        cy + r1 * Math.sin(closeRadians - o.skew)
       ],
       [
-        cx + r1 * Math.cos(startRadians),
-        cy + r1 * Math.sin(startRadians)
+        cx + r1 * Math.cos(startRadians + o.skew),
+        cy + r1 * Math.sin(startRadians + o.skew)
       ]
     ];
 
@@ -21460,12 +21620,11 @@ hui.geometry = {
 /**
  * Editing of documents composed of different parts
  *
- * <pre>
- * <strong>Events</strong>
- * $partWasMoved : function(info)
- * $addPart
- * </pre>
  * @constructor
+ * @fires hui.ui.Editor#editPart
+ * @fires hui.ui.Editor#cancelPart
+ * @fires hui.ui.Editor#savePart
+ * @fires hui.ui.Editor#addPart
  */
 hui.ui.Editor = function() {
   this.name = 'huiEditor';
@@ -21480,6 +21639,10 @@ hui.ui.Editor = function() {
   hui.ui.extend(this);
 }
 
+/**
+ * Get the one and only editor instance
+ * @return {hui.ui.Editor}
+ */
 hui.ui.Editor.get = function() {
   if (!hui.ui.Editor.instance) {
     hui.ui.Editor.instance = new hui.ui.Editor();
@@ -23218,145 +23381,6 @@ hui.ui.MediaSimulator.prototype = {
 }
 
 hui.extend(hui.ui.MediaSimulator, hui.ui.Component);
-
-/**
- * Pages
- * @constructor
- */
-hui.ui.Pages = function(options) {
-  this.options = options || {};
-  this.element = hui.get(options.element);
-  this.name = options.name;
-  this.pages = hui.get.children(this.element);
-  this.index = 0;
-  this.fixedHeight = hui.cls.has(this.element,'hui_pages_full');
-  this.expanded = false;
-  hui.ui.extend(this);
-}
-
-hui.ui.Pages.create = function(options) {
-  options = options || {};
-  options.element = hui.build('div',{'class':'hui_pages'});
-  return new hui.ui.Pages(options);
-}
-
-hui.ui.Pages.prototype = {
-  add : function(widgetOrElement) {
-    var element = hui.dom.isElement(widgetOrElement) ? element : widgetOrElement.element;
-    var page = hui.build('div',{'class':'hui_pages_page'});
-    page.appendChild(element);
-    this.element.appendChild(page);
-    if (this.pages.length>0) {
-      page.style.display = 'none';
-    }
-    this.pages = hui.get.children(this.element);
-  },
-  next : function() {
-    if (this.expanded) {return}
-    var current = this.pages[this.index];
-    this.index = this.pages.length <= this.index+1 ? 0 : this.index+1;
-    this._transition({hide:current,show:this.pages[this.index]});
-  },
-  previous : function() {
-    if (this.expanded) {return}
-    var current = this.pages[this.index];
-    this.index = this.index == 0 ? this.pages.length-1 : this.index-1;
-    this._transition({hide:current,show:this.pages[this.index]});
-  },
-  goTo : function(key) {
-    for (var i=0; i < this.pages.length; i++) {
-      if (this.pages[i].getAttribute('data-key')==key && i!=this.index) {
-        var current = this.pages[this.index];
-        this.index = i;
-        this._transition({hide:current,show:this.pages[i]});
-        return;
-      }
-    };
-  },
-  getPageKey : function() {
-    return this.pages[this.index].getAttribute('data-key');
-  },
-  expand : function() {
-    var l = this.pages.length;
-    for (var i=0; i < l; i++) {
-      if (!this.expanded) {
-        hui.style.set(this.pages[i],{
-          width : (100 / l)+'%',
-          display : 'block',
-          'float' : 'left',
-          opacity: 1
-        });
-      } else {
-        hui.style.set(this.pages[i],{
-          width : '',
-          display : i==this.index ? 'block' : 'none',
-          'float' : ''
-        });
-      }
-    };
-    hui.ui.callVisible(this);
-    this.expanded = !this.expanded;
-  },
-  _transition : function(options) {
-    var hide = options.hide,
-      show = options.show,
-      e = this.element,
-            duration = 300;
-    if (this.fixedHeight) {
-      hui.style.set(hide,{
-                position:'absolute',
-                width:e.clientWidth+'px',
-                height:this.element.clientHeight+'px'
-            });
-      hui.style.set(show,{
-                position:'absolute',
-                display:'block',opacity:0,
-                width:e.clientWidth+'px',
-                height:this.element.clientHeight+'px'
-            });
-    } else {
-      hui.style.set(hide,{
-                position:'absolute',width:e.clientWidth+'px'
-            });
-      hui.style.set(show,{
-                position:'absolute',width:e.clientWidth+'px',display:'block',opacity:0
-            });
-      hui.style.set(e,{height:hide.offsetHeight+'px',overflow:'hidden',position:'relative'});
-      hui.animate({
-                node : e,
-                css : {height:show.offsetHeight+'px'},
-                duration : duration,
-                ease : hui.ease.slowFastSlow
-            })
-    }
-    hui.ui.reLayout();
-
-    hui.effect.fadeOut({
-            element : hide,
-            duration : duration,
-            $complete : function() {
-                hui.style.set(hide,{width : '',position:'',height:''});
-                window.setTimeout(function() {
-                    hide.style.display = 'none';
-                })
-            }
-        });
-
-    hui.effect.fadeIn({
-            element : show,
-            duration : duration,
-            $complete : function() {
-            hui.style.set(show,{width : '',position:'',height:''});
-                if (!this.fixedHeight) {
-                    hui.style.set(e,{height:'',overflow:'',position:''});
-                }
-                hui.ui.reLayout();
-                hui.ui.callVisible(this);
-                this.fireSizeChange();
-            }.bind(this)
-        });
-  }
-}
 
 /** A progress indictator that shows progress from 0% to 100%
   @constructor
