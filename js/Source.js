@@ -107,7 +107,7 @@ hui.ui.Source.prototype = {
         method : 'post',
         url : this.options.url,
         parameters : prms,
-        $success : this.parse.bind(this),
+        $success : this._parse.bind(this),
         $exception : function(e,t) {
           hui.log('Exception while loading source...')
           hui.log(e)
@@ -133,10 +133,9 @@ hui.ui.Source.prototype = {
       this.refresh();
     }
   },
-  /** @private */
-  parse : function(t) {
+  _parse : function(t) {
     if (hui.request.isXMLResponse(t)) {
-      this.parseXML(t.responseXML);
+      this._parseXML(t.responseXML);
     } else {
       var str = t.responseText.replace(/^\s+|\s+$/g, ''),
         json = null;
@@ -147,16 +146,42 @@ hui.ui.Source.prototype = {
     }
     this._end();
   },
-  /** @private */
-  parseXML : function(doc) {
+  _parseXML : function(doc) {
     var root = doc.documentElement.tagName;
     if (root=='items' || root=='options') {
-      this.data = hui.ui.parseItems(doc);
+      this.data = this._parseItems(doc);
       this.fire('optionsLoaded',this.data);
     } else if (root=='list') {
       this.fire('listLoaded',doc);
     } else if (root=='articles') {
       this.fire('articlesLoaded',doc);
+    }
+  },
+  _parseItems : function(doc) {
+    var root = doc.documentElement;
+    var out = [];
+    this._parseSubItems(root,out);
+    return out;
+  },
+  _parseSubItems : function(parent,array) {
+    var children = parent.childNodes;
+    for (var i=0; i < children.length; i++) {
+      var node = children[i];
+      if (node.nodeType==1 && node.nodeName=='title') {
+        array.push({title:node.getAttribute('title'),type:'title'});
+      } else if (node.nodeType==1 && (node.nodeName=='item' || node.nodeName=='option')) {
+        var sub = [];
+        this._parseSubItems(node,sub);
+        array.push({
+          text : node.getAttribute('text'),
+          title : node.getAttribute('title'),
+          value : node.getAttribute('value'),
+          icon : node.getAttribute('icon'),
+          kind : node.getAttribute('kind'),
+          badge : node.getAttribute('badge'),
+          children : sub
+        });
+      }
     }
   },
   addParameter : function(parm) {

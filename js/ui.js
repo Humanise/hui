@@ -804,7 +804,7 @@ hui.ui.tellContainers = function(event,value) {
     try {
       return window.parent.hui.ui._tellContainers(event,value);
     } catch (e) {
-      //hui.log('Unable to callContainers')
+      window.console && console.error(e);
     }
   }
 };
@@ -813,9 +813,9 @@ hui.ui._tellContainers = function(event,value) {
   var result = hui.ui.callSuperDelegates({},event,value);
   if (window.parent!=window) {
     try {
-      result = window.parent.hui.ui._tellContainers(event,value);
+      result = window.parent.hui.ui._tellContainers(event,value) || result;
     } catch (e) {
-      //hui.log('Unable to callContainers')
+      window.console && console.error(e);
     }
   }
   return result;
@@ -1014,35 +1014,6 @@ hui.ui.request = function(options) {
     hui.ui.msg({text:options.message.start,busy:true,delay:options.message.delay});
   }
   hui.request(options);
-};
-
-hui.ui.parseItems = function(doc) {
-  var root = doc.documentElement;
-  var out = [];
-  hui.ui.parseSubItems(root,out);
-  return out;
-};
-
-hui.ui.parseSubItems = function(parent,array) {
-  var children = parent.childNodes;
-  for (var i=0; i < children.length; i++) {
-    var node = children[i];
-    if (node.nodeType==1 && node.nodeName=='title') {
-      array.push({title:node.getAttribute('title'),type:'title'});
-    } else if (node.nodeType==1 && (node.nodeName=='item' || node.nodeName=='option')) {
-      var sub = [];
-      hui.ui.parseSubItems(node,sub);
-      array.push({
-        text : node.getAttribute('text'),
-        title : node.getAttribute('title'),
-        value : node.getAttribute('value'),
-        icon : node.getAttribute('icon'),
-        kind : node.getAttribute('kind'),
-        badge : node.getAttribute('badge'),
-        children : sub
-      });
-    }
-  }
 };
 
 /**
