@@ -40,6 +40,7 @@ module.exports = function(grunt) {
       local: ['test/unittests/*.html'],
       live : {
         options : {
+          timeout : 15000,
           urls: [
           ]
         }
