@@ -4460,7 +4460,7 @@ hui.ui.tellContainers = function(event,value) {
     try {
       return window.parent.hui.ui._tellContainers(event,value);
     } catch (e) {
-      //hui.log('Unable to callContainers')
+      window.console && console.error(e);
     }
   }
 };
@@ -4469,9 +4469,9 @@ hui.ui._tellContainers = function(event,value) {
   var result = hui.ui.callSuperDelegates({},event,value);
   if (window.parent!=window) {
     try {
-      result = window.parent.hui.ui._tellContainers(event,value);
+      result = window.parent.hui.ui._tellContainers(event,value) || result;
     } catch (e) {
-      //hui.log('Unable to callContainers')
+      window.console && console.error(e);
     }
   }
   return result;

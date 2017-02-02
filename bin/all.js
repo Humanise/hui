@@ -5783,7 +5783,7 @@ hui.ui.tellContainers = function(event,value) {
     try {
       return window.parent.hui.ui._tellContainers(event,value);
     } catch (e) {
-      //hui.log('Unable to callContainers')
+      window.console && console.error(e);
     }
   }
 };
@@ -5792,9 +5792,9 @@ hui.ui._tellContainers = function(event,value) {
   var result = hui.ui.callSuperDelegates({},event,value);
   if (window.parent!=window) {
     try {
-      result = window.parent.hui.ui._tellContainers(event,value);
+      result = window.parent.hui.ui._tellContainers(event,value) || result;
     } catch (e) {
-      //hui.log('Unable to callContainers')
+      window.console && console.error(e);
     }
   }
   return result;
@@ -16209,8 +16209,8 @@ hui.ui.Checkboxes.Items.prototype = {
     this.element.innerHTML='';
     var self = this;
     hui.each(items,function(item) {
-      var node = hui.build('a',{'class':'hui_checkbox',href:'javascript://',html:'<span class="hui_checkbox_button"></span><span class="hui_checkbox_label">'+hui.string.escape(item.text)+'</span>'});
-      var parsed = {title:item.title,element:node,value:hui.intOrString(item.value)}
+      var parsed = {text:item.title || item.text,element:node,value:hui.intOrString(item.value)}
+      var node = hui.build('a',{'class':'hui_checkbox',href:'javascript://',html:'<span class="hui_checkbox_button"></span><span class="hui_checkbox_label">'+hui.string.escape(parsed.text)+'</span>'});
       hui.listen(node,'click',function(e) {
         hui.stop(e);
         node.focus();
@@ -16227,15 +16227,10 @@ hui.ui.Checkboxes.Items.prototype = {
     this.parent.flipValue(item.value);
   },
   _updateUI : function() {
-    try {
     for (var i=0; i < this.checkboxes.length; i++) {
       var item = this.checkboxes[i];
       var index = hui.array.indexOf(this.parent.values,item.value);
       hui.cls.set(item.element,'hui_checkbox_selected',index!=-1);
-    }
-    } catch (e) {
-      alert(typeof(this.parent.values));
-      alert(e);
     }
   },
   _hasValue : function(value) {
