@@ -2799,7 +2799,10 @@ doc title:'Rich text' class:'hui.ui.RichText'
         </xsl:text>
       </xsl:when>
       <xsl:otherwise>
-        <input value="{@value}" id="{generate-id()}">
+        <input id="{generate-id()}">
+          <xsl:if test="@value">
+            <xsl:attribute name="value"><xsl:value-of select="@value"/></xsl:attribute>
+          </xsl:if>
           <xsl:attribute name="class">
             <xsl:text>hui_textinput</xsl:text>
             <xsl:if test="@size='small' or ancestor::gui:cell"> hui_is_small</xsl:if>
@@ -3028,7 +3031,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
     <span class="hui_locationinput" id="{generate-id()}">
       <span class="hui_locationinput_latitude"><span><input/></span></span>
       <span class="hui_locationinput_longitude"><span><input/></span></span>
-      <a class="hui_locationinput_picker" href="javascript://"><xsl:comment/></a>
+      <a href="javascript://" class="hui_locationinput_picker"><xsl:comment/></a>
     </span>
     <script type="text/javascript">
       var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.LocationInput({
