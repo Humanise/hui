@@ -572,7 +572,10 @@ hui.ui.Upload.Flash = function(parent) {
 }
 
 hui.ui.Upload.Flash.support = function() {
-  return {supported:hui.ui.Flash.getMajorVersion()>=10 && window.SWFUpload!==undefined,multiple:true};
+  return {
+    supported : hui.ui.Flash.getMajorVersion() >= 10 && window.SWFUpload !== undefined,
+    multiple : true
+  };
 }
 
 hui.ui.Upload.Flash.prototype = {

@@ -3,6 +3,7 @@ document.write('<script type="text/javascript" src="'+_context+'/js/hui_animatio
 document.write('<script type="text/javascript" src="'+_context+'/js/hui_color.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/js/hui_require.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/js/hui_parallax.js"></script>');
+document.write('<script type="text/javascript" src="'+_context+'/js/hui_preloader.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/js/ui.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/js/ImageViewer.js"></script>');
 document.write('<script type="text/javascript" src="'+_context+'/js/Box.js"></script>');
