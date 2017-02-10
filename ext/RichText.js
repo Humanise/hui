@@ -129,7 +129,7 @@ hui.ui.RichText.prototype = {
 				div.huiRichTextAction = actions[i]
 				div.onclick = div.ondblclick = function(e) {return self.actionWasClicked(this.huiRichTextAction,e);}
 				var img = hui.build('img');
-				img.src=hui.ui.context+'/hui/gfx/trans.png';
+				img.src = hui.ui.getURL('gfx/trans.png');
 				if (actions[i].icon) {
 					div.style.backgroundImage='url('+hui.ui.getIconUrl(actions[i].icon,16)+')';
 				}

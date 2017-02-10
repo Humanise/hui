@@ -87,7 +87,7 @@ hui.ui.Graph.prototype = {
 hui.ui.Graph.Protoviz = {
   init : function(parent) {
     this.parent = parent;
-    hui.require(hui.ui.context+'/hui/lib/protovis-3.2/protovis-r3.2.js',function() {
+    hui.require(hui.ui.getURL('lib/protovis-3.2/protovis-r3.2.js'),function() {
       var w = document.body.clientWidth,
         h = document.body.clientHeight;
 
@@ -156,11 +156,11 @@ hui.ui.Graph.D3 = {
   init : function(parent) {
     this.parent = parent;
     var self = this;
-    hui.require(hui.ui.context+'/hui/lib/d3/d3.js',function() {
+    hui.require(hui.ui.getURL('lib/d3/d3.js'),function() {
       hui.log('d3 loaded');
-      hui.require(hui.ui.context+'/hui/lib/d3/d3.geom.js',function() {
+      hui.require(hui.ui.getURL('lib/d3/d3.geom.js'),function() {
         hui.log('d3.geom loaded');
-        hui.require(hui.ui.context+'/hui/lib/d3/d3.layout.js',function() {
+        hui.require(hui.ui.getURL('lib/d3/d3.layout.js'),function() {
           hui.log('d3.layout loaded');
           self._init();
           parent.implIsReady();
@@ -360,7 +360,7 @@ hui.ui.Graph.D3 = {
 hui.ui.Graph.Raphael = {
   init : function(parent) {
     this.parent = parent;
-    hui.require(hui.ui.context+'/hui/lib/raphael-min.js',function() {
+    hui.require(hui.ui.getURL('lib/raphael-min.js'),function() {
       hui.log('Raphael is loadd');
       this._extend();
       parent.implIsReady()

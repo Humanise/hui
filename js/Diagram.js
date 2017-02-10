@@ -269,8 +269,8 @@ hui.ui.Diagram.Arbor = {
 	diagram : null,
 
 	_load : function() {
-		hui.require(hui.ui.context+'/hui/lib/jquery.min.js',function() {
-			hui.require(hui.ui.context+'/hui/lib/arbor/lib/arbor.js',function() {
+		hui.require(hui.ui.getURL('lib/jquery.min.js'),function() {
+			hui.require(hui.ui.getURL('lib/arbor/lib/arbor.js'),function() {
 				this.loaded = true;
 				this.start();
 			}.bind(this))
@@ -365,7 +365,7 @@ hui.ui.Diagram.D3 = {
 	diagram : null,
 
 	_load : function() {
-		hui.require(hui.ui.context+'/hui/lib/d3.v3/d3.v3.min.js',function() {
+		hui.require(hui.ui.getURL('lib/d3.v3/d3.v3.min.js'),function() {
 			this.loaded = true;
 			this.start();
 		}.bind(this))
@@ -500,7 +500,7 @@ hui.ui.Diagram.Springy = {
 	diagram : null,
 
 	_load : function() {
-		hui.require(hui.ui.context+'/hui/lib/springy-master/springy.js',function() {
+		hui.require(hui.ui.getURL('lib/springy-master/springy.js'),function() {
 			this.loaded = true;
 			this.start();
 		}.bind(this))

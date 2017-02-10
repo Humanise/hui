@@ -463,7 +463,7 @@ hui.ui.Upload.Frame.prototype = {
             'iframe',{
                 name : frameName,
                 id : frameName,
-                src : hui.ui.context+'/hui/html/blank.html',
+                src : hui.ui.getURL('html/blank.html'),
                 style : 'display:none'
             });
     this.parent.element.appendChild(iframe);
@@ -538,7 +538,7 @@ hui.ui.Upload.Frame.prototype = {
         hui.log('Frame: Upload failed!');
       }
     }
-    this.iframe.src = hui.ui.context+'/hui/html/blank.html';
+    this.iframe.src = hui.ui.getURL('html/blank.html');
     this.form.style.display = 'block';
     this.form.reset();
   },
@@ -606,7 +606,7 @@ hui.ui.Upload.Flash.prototype = {
 
     this.loader = new SWFUpload({
       upload_url : url,
-      flash_url : hui.ui.context+"/hui/lib/swfupload/swfupload.swf",
+      flash_url : hui.ui.getURL("lib/swfupload/swfupload.swf"),
       file_size_limit : options.maxSize,
       file_queue_limit : options.maxItems,
       file_post_name : options.fieldName,

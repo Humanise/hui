@@ -46,7 +46,7 @@ hui.ui.ImagePaster.prototype = {
 			this.applet = hui.get.firstByTag(this.element,'object');
 		} else {
 			this.applet = hui.build('applet',{
-				archive : hui.ui.context+"/hui/lib/supa/Supa.jar",
+				archive : hui.ui.getURL("lib/supa/Supa.jar"),
 				code : 'de.christophlinder.supa.SupaApplet',
 				width : 0,
 				height : 0,

@@ -2535,7 +2535,26 @@ if (window.define) {
 hui._onReady(function() {
   hui._ready = true;
   for (var i = 0; i < hui._.length; i++) {
-    hui._[i]();
+    var item = hui._[i];
+    if (typeof(item) === 'function') {
+      item();
+    } else {
+      var func = null,
+        demands = null;
+      for (var j = 0; j < item.length; j++) {
+        if (typeof(item[j]) === 'function') {
+          func = item[j];
+        }
+        else if (hui.isArray(item[j])) {
+          demands = item[j];
+        }
+      }
+      if (demands && func) {
+        hui.demand(demands,func);
+      } else if (func) {
+        func();
+      }
+    }
   }
   delete hui._;
 });

@@ -2535,7 +2535,26 @@ if (window.define) {
 hui._onReady(function() {
   hui._ready = true;
   for (var i = 0; i < hui._.length; i++) {
-    hui._[i]();
+    var item = hui._[i];
+    if (typeof(item) === 'function') {
+      item();
+    } else {
+      var func = null,
+        demands = null;
+      for (var j = 0; j < item.length; j++) {
+        if (typeof(item[j]) === 'function') {
+          func = item[j];
+        }
+        else if (hui.isArray(item[j])) {
+          demands = item[j];
+        }
+      }
+      if (demands && func) {
+        hui.demand(demands,func);
+      } else if (func) {
+        func();
+      }
+    }
   }
   delete hui._;
 });
@@ -3654,7 +3673,7 @@ hui.Preloader.prototype = {
  */
 hui.ui = {
   domReady : false,
-  context : '',
+  context : undefined,
   language : 'en',
 
   objects : {},
@@ -3679,6 +3698,29 @@ hui.ui = {
     access_denied : {en:'Access denied, maybe you are nolonger logged in',da:'Adgang nægtet, du er måske ikke længere logget ind'}
   }
 };
+
+hui.ui.getContext = function() {
+  if (this.context===undefined) {
+    var node = hui.find('*[data-hui-context]');
+    if (node) {
+      this.context = node.getAttribute('data-hui-context');
+    } else {
+      this.context = '/';
+    }
+  }
+  return this.context;
+}
+
+hui.ui.getURL = function(path) {
+  var ctx = hui.ui.getContext();
+  if (path.substring(0,1) === '/') {
+    path = path.substring(1);
+  }
+  if (ctx.substring(ctx.length - 1) === '/') {
+    ctx = ctx.substring(0,ctx.length-1)
+  }
+  return ctx + '/hui/' + path;
+}
 
 /**
  * Get a component by name
@@ -4233,7 +4275,7 @@ hui.ui.isWithin = function(e,element) {
 };
 
 hui.ui.getIconUrl = function(icon,size) {
-  return hui.ui.context+'/hui/icons/'+icon+size+'.png';
+  return hui.ui.getURL('icons/'+icon+size+'.png');
 };
 
 hui.ui.createIcon = function(icon,size,tag) {
@@ -4673,7 +4715,7 @@ hui.ui.request = function(options) {
  */
 hui.ui.require = function(names,func) {
   for (var i = names.length - 1; i >= 0; i--){
-    names[i] = hui.ui.context+'hui/js/'+names[i]+'.js';
+    names[i] = hui.ui.getURL('js/'+names[i]+'.js');
   }
   hui.require(names,func);
 };
@@ -4681,6 +4723,8 @@ hui.ui.require = function(names,func) {
 if (window.define) {
   define('hui.ui',hui.ui);
 }
+
+hui.define('hui.ui',hui.ui);
 
 hui.onReady(function() {
   hui.listen(window,'resize',hui.ui._resize);
@@ -5199,7 +5243,7 @@ hui.ui.ImageViewer.prototype = {
 
   _preload : function() {
     var guiLoader = new hui.Preloader();
-    guiLoader.addImages(hui.ui.context+'/hui/gfx/imageviewer_controls.png');
+    guiLoader.addImages(hui.ui.getURL('gfx/imageviewer_controls.png'));
     var self = this;
     guiLoader.setDelegate({allImagesDidLoad:function() {self._preloadImages()}});
     guiLoader.load();

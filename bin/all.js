@@ -2535,7 +2535,26 @@ if (window.define) {
 hui._onReady(function() {
   hui._ready = true;
   for (var i = 0; i < hui._.length; i++) {
-    hui._[i]();
+    var item = hui._[i];
+    if (typeof(item) === 'function') {
+      item();
+    } else {
+      var func = null,
+        demands = null;
+      for (var j = 0; j < item.length; j++) {
+        if (typeof(item[j]) === 'function') {
+          func = item[j];
+        }
+        else if (hui.isArray(item[j])) {
+          demands = item[j];
+        }
+      }
+      if (demands && func) {
+        hui.demand(demands,func);
+      } else if (func) {
+        func();
+      }
+    }
   }
   delete hui._;
 });
@@ -4157,7 +4176,7 @@ Date.patterns = {
  */
 hui.ui = {
   domReady : false,
-  context : '',
+  context : undefined,
   language : 'en',
 
   objects : {},
@@ -4182,6 +4201,29 @@ hui.ui = {
     access_denied : {en:'Access denied, maybe you are nolonger logged in',da:'Adgang nægtet, du er måske ikke længere logget ind'}
   }
 };
+
+hui.ui.getContext = function() {
+  if (this.context===undefined) {
+    var node = hui.find('*[data-hui-context]');
+    if (node) {
+      this.context = node.getAttribute('data-hui-context');
+    } else {
+      this.context = '/';
+    }
+  }
+  return this.context;
+}
+
+hui.ui.getURL = function(path) {
+  var ctx = hui.ui.getContext();
+  if (path.substring(0,1) === '/') {
+    path = path.substring(1);
+  }
+  if (ctx.substring(ctx.length - 1) === '/') {
+    ctx = ctx.substring(0,ctx.length-1)
+  }
+  return ctx + '/hui/' + path;
+}
 
 /**
  * Get a component by name
@@ -4736,7 +4778,7 @@ hui.ui.isWithin = function(e,element) {
 };
 
 hui.ui.getIconUrl = function(icon,size) {
-  return hui.ui.context+'/hui/icons/'+icon+size+'.png';
+  return hui.ui.getURL('icons/'+icon+size+'.png');
 };
 
 hui.ui.createIcon = function(icon,size,tag) {
@@ -5176,7 +5218,7 @@ hui.ui.request = function(options) {
  */
 hui.ui.require = function(names,func) {
   for (var i = names.length - 1; i >= 0; i--){
-    names[i] = hui.ui.context+'hui/js/'+names[i]+'.js';
+    names[i] = hui.ui.getURL('js/'+names[i]+'.js');
   }
   hui.require(names,func);
 };
@@ -5184,6 +5226,8 @@ hui.ui.require = function(names,func) {
 if (window.define) {
   define('hui.ui',hui.ui);
 }
+
+hui.define('hui.ui',hui.ui);
 
 hui.onReady(function() {
   hui.listen(window,'resize',hui.ui._resize);
@@ -9533,7 +9577,7 @@ hui.ui.ImageViewer.prototype = {
 
   _preload : function() {
     var guiLoader = new hui.Preloader();
-    guiLoader.addImages(hui.ui.context+'/hui/gfx/imageviewer_controls.png');
+    guiLoader.addImages(hui.ui.getURL('gfx/imageviewer_controls.png'));
     var self = this;
     guiLoader.setDelegate({allImagesDidLoad:function() {self._preloadImages()}});
     guiLoader.load();
@@ -10598,7 +10642,7 @@ hui.ui.Upload.Frame.prototype = {
             'iframe',{
                 name : frameName,
                 id : frameName,
-                src : hui.ui.context+'/hui/html/blank.html',
+                src : hui.ui.getURL('html/blank.html'),
                 style : 'display:none'
             });
     this.parent.element.appendChild(iframe);
@@ -10673,7 +10717,7 @@ hui.ui.Upload.Frame.prototype = {
         hui.log('Frame: Upload failed!');
       }
     }
-    this.iframe.src = hui.ui.context+'/hui/html/blank.html';
+    this.iframe.src = hui.ui.getURL('html/blank.html');
     this.form.style.display = 'block';
     this.form.reset();
   },
@@ -10741,7 +10785,7 @@ hui.ui.Upload.Flash.prototype = {
 
     this.loader = new SWFUpload({
       upload_url : url,
-      flash_url : hui.ui.context+"/hui/lib/swfupload/swfupload.swf",
+      flash_url : hui.ui.getURL("lib/swfupload/swfupload.swf"),
       file_size_limit : options.maxSize,
       file_queue_limit : options.maxItems,
       file_post_name : options.fieldName,
@@ -19704,8 +19748,8 @@ hui.ui.Diagram.Arbor = {
 	diagram : null,
 
 	_load : function() {
-		hui.require(hui.ui.context+'/hui/lib/jquery.min.js',function() {
-			hui.require(hui.ui.context+'/hui/lib/arbor/lib/arbor.js',function() {
+		hui.require(hui.ui.getURL('lib/jquery.min.js'),function() {
+			hui.require(hui.ui.getURL('lib/arbor/lib/arbor.js'),function() {
 				this.loaded = true;
 				this.start();
 			}.bind(this))
@@ -19800,7 +19844,7 @@ hui.ui.Diagram.D3 = {
 	diagram : null,
 
 	_load : function() {
-		hui.require(hui.ui.context+'/hui/lib/d3.v3/d3.v3.min.js',function() {
+		hui.require(hui.ui.getURL('lib/d3.v3/d3.v3.min.js'),function() {
 			this.loaded = true;
 			this.start();
 		}.bind(this))
@@ -19935,7 +19979,7 @@ hui.ui.Diagram.Springy = {
 	diagram : null,
 
 	_load : function() {
-		hui.require(hui.ui.context+'/hui/lib/springy-master/springy.js',function() {
+		hui.require(hui.ui.getURL('lib/springy-master/springy.js'),function() {
 			this.loaded = true;
 			this.start();
 		}.bind(this))
@@ -21726,7 +21770,7 @@ hui.ui.Graph.prototype = {
 hui.ui.Graph.Protoviz = {
   init : function(parent) {
     this.parent = parent;
-    hui.require(hui.ui.context+'/hui/lib/protovis-3.2/protovis-r3.2.js',function() {
+    hui.require(hui.ui.getURL('lib/protovis-3.2/protovis-r3.2.js'),function() {
       var w = document.body.clientWidth,
         h = document.body.clientHeight;
 
@@ -21795,11 +21839,11 @@ hui.ui.Graph.D3 = {
   init : function(parent) {
     this.parent = parent;
     var self = this;
-    hui.require(hui.ui.context+'/hui/lib/d3/d3.js',function() {
+    hui.require(hui.ui.getURL('lib/d3/d3.js'),function() {
       hui.log('d3 loaded');
-      hui.require(hui.ui.context+'/hui/lib/d3/d3.geom.js',function() {
+      hui.require(hui.ui.getURL('lib/d3/d3.geom.js'),function() {
         hui.log('d3.geom loaded');
-        hui.require(hui.ui.context+'/hui/lib/d3/d3.layout.js',function() {
+        hui.require(hui.ui.getURL('lib/d3/d3.layout.js'),function() {
           hui.log('d3.layout loaded');
           self._init();
           parent.implIsReady();
@@ -21999,7 +22043,7 @@ hui.ui.Graph.D3 = {
 hui.ui.Graph.Raphael = {
   init : function(parent) {
     this.parent = parent;
-    hui.require(hui.ui.context+'/hui/lib/raphael-min.js',function() {
+    hui.require(hui.ui.getURL('lib/raphael-min.js'),function() {
       hui.log('Raphael is loadd');
       this._extend();
       parent.implIsReady()
@@ -23312,7 +23356,7 @@ hui.ui.ImagePaster.prototype = {
 			this.applet = hui.get.firstByTag(this.element,'object');
 		} else {
 			this.applet = hui.build('applet',{
-				archive : hui.ui.context+"/hui/lib/supa/Supa.jar",
+				archive : hui.ui.getURL("lib/supa/Supa.jar"),
 				code : 'de.christophlinder.supa.SupaApplet',
 				width : 0,
 				height : 0,
@@ -23522,7 +23566,7 @@ hui.ui.RichText.prototype = {
 				div.huiRichTextAction = actions[i]
 				div.onclick = div.ondblclick = function(e) {return self.actionWasClicked(this.huiRichTextAction,e);}
 				var img = hui.build('img');
-				img.src=hui.ui.context+'/hui/gfx/trans.png';
+				img.src = hui.ui.getURL('gfx/trans.png');
 				if (actions[i].icon) {
 					div.style.backgroundImage='url('+hui.ui.getIconUrl(actions[i].icon,16)+')';
 				}
