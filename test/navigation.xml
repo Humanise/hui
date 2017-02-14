@@ -64,7 +64,6 @@
         <option icon="common/page" text="selection" value="html/selection.html"/>
         <option icon="common/page" text="slider" value="html/slider.html"/>
         <option icon="common/page" text="styleeditor" value="html/styleeditor.html"/>
-        <option icon="common/page" text="supa" value="html/supa.html"/>
         <option icon="common/page" text="touch" value="html/touch.html"/>
         <option icon="common/page" text="upload" value="html/upload.html"/>
         <option icon="common/page" text="upload_webkit" value="html/upload_webkit.html"/>
