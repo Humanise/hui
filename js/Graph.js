@@ -8,7 +8,7 @@ hui.ui.Graph = function(options) {
   this.ready = false;
   this.defered = [];
 
-  var impls = {force:hui.ui.Graph.Protoviz,graffle:hui.ui.Graph.Raphael,d3:hui.ui.Graph.D3};
+  var impls = {graffle:hui.ui.Graph.Raphael,d3:hui.ui.Graph.D3};
 
   this.impl = impls[this.options.layout];
 
@@ -84,88 +84,13 @@ hui.ui.Graph.prototype = {
 }
 
 /** @namespace */
-hui.ui.Graph.Protoviz = {
-  init : function(parent) {
-    this.parent = parent;
-    hui.require(hui.ui.getURL('lib/protovis-3.2/protovis-r3.2.js'),function() {
-      var w = document.body.clientWidth,
-        h = document.body.clientHeight;
-
-      this.vis = new pv.Panel()
-        .canvas(this.parent.element)
-          .width(this.parent.element.clientWidth)
-          .height(this.parent.element.clientHeight)
-          .fillStyle("white")
-          .event("mousedown", pv.Behavior.pan())
-          .event("mousewheel", pv.Behavior.zoom());
-      hui.log('Protoviz initialized')
-      parent.implIsReady();
-    }.bind(this))
-  },
-  _convert : function(data) {
-    var result = {nodes:[],links:[]};
-    for (var i=0; i < data.nodes.length; i++) {
-      var node = data.nodes[i];
-      result.nodes.push(node)
-    };
-    for (var i=0; i < data.edges.length; i++) {
-      var edge = data.edges[i];
-      result.links.push({source:this.getIndex(edge.from,data.nodes),target:this.getIndex(edge.to,data.nodes),label:edge.label});
-    };
-    return result;
-  },
-  getIndex : function(id,nodes) {
-    for (var i=0; i < nodes.length; i++) {
-      if (id===nodes[i].id) {
-        return i;
-      }
-    };
-  },
-  setData : function(data) {
-    var colors = pv.Colors.category19();
-    data = this._convert(data);
-
-    var force = this.vis.add(pv.Layout.Force)
-        .nodes(data.nodes)
-        .links(data.links);
-
-
-    force.link.add(pv.Line).lineWidth(2).anchor("center").add(pv.Label).text(function() {this.anchorTarget.label});
-
-    force.node.add(pv.Dot)
-        .size(function(d) {return 40;return (d.linkDegree + 4) * Math.pow(this.scale, -1.5)})
-        .fillStyle(function(d) {return d.fix ? "brown" : colors(d.group)})
-        .strokeStyle(function() {return this.fillStyle().darker()})
-        .lineWidth(1)
-        .title(function(d) {return d.label || ''})
-        .event("mousedown", pv.Behavior.drag())
-        .event("click", function(x) {console.log(data.nodes[x.index])})
-        .event("drag", force);
-
-    force.node.add(pv.Label).text(function(d) {return d.label}).textAlign('center').textBaseline('middle');
-
-    //force.link.add(pv.Label).text(function(d) {return d.label}).textAlign('left').textBaseline('middle');
-
-    this.vis.render();
-  }
-
-}
-
-/** @namespace */
 hui.ui.Graph.D3 = {
   init : function(parent) {
     this.parent = parent;
     var self = this;
-    hui.require(hui.ui.getURL('lib/d3/d3.js'),function() {
-      hui.log('d3 loaded');
-      hui.require(hui.ui.getURL('lib/d3/d3.geom.js'),function() {
-        hui.log('d3.geom loaded');
-        hui.require(hui.ui.getURL('lib/d3/d3.layout.js'),function() {
-          hui.log('d3.layout loaded');
-          self._init();
-          parent.implIsReady();
-        })
-      })
+    hui.require(hui.ui.getURL('lib/d3.v3/d3.v3.js'),function() {
+      self._init();
+      parent.implIsReady();
     });
   },
   resize : function(width,height) {
@@ -418,7 +343,7 @@ hui.ui.Graph.Raphael = {
       } else {
         var color = typeof line == "string" ? line : "#000";
         return {
-          line: this.path(path).attr({stroke: color, fill: "none", "stroke-width": 2, "stroke-opacity": .5}),
+          line: this.path(path).attr({stroke: '#000', fill: "none", "stroke-width": 2, "stroke-opacity": .5}),
           from: obj1,
           to: obj2,
           text : this.text(x1+(x4-x1)/2, y4+(y1-y4)/2,text).attr({fill:'#fff'})

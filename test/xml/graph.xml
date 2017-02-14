@@ -21,7 +21,7 @@
 			<left></left>
 			<center>
 				<overflow>
-          <graph name="graph" layout="d3" source="soirce"/>
+          <graph name="graph" layout="graffle" source="soirce"/>
 				</overflow>
 			</center>
 		</middle>
