@@ -840,9 +840,6 @@ hui.ui.Editor.Html.prototype = {
     }
     callback();
   },
-  richTextDidChange : function() {
-    //this.deactivate();
-  },
   getValue : function() {
     return this.value;
   }

@@ -22,7 +22,6 @@
         <option icon="common/page" text="angular" value="html/angular.html"/>
         <option icon="common/page" text="angular_todo" value="html/angular_todo.html"/>
         <option icon="common/page" text="animation" value="html/animation.html"/>
-        <option icon="common/page" text="arbor" value="html/arbor.html"/>
         <option icon="common/page" text="auto" value="html/auto.html"/>
         <option icon="common/page" text="bar" value="html/bar.html"/>
         <option icon="common/page" text="boundpanel" value="html/boundpanel.html"/>
