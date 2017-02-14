@@ -12,7 +12,6 @@ hui.ui.Diagram = function(options) {
   this.width = this.element.clientWidth;
   this.height = this.element.clientHeight;
   this.layout = hui.ui.Diagram[this.options.layout];
-  //this.layout = hui.ui.Diagram.Springy;
   this.layout.diagram = this;
   hui.ui.extend(this);
   if (options.source) {
