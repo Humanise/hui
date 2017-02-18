@@ -1,15 +1,15 @@
-[	
+[
 	"/icons/application/files32.png",
 	"/icons/application/pages32.png",
 	"/icons/application/statistics32.png",
-	
+
 	"/gfx/progress/spinner_white_16.gif",
 	"/gfx/progress/spinner_white_24.gif",
 	"/gfx/progress/spinner_white_32.gif",
 	"/gfx/progress/spinner_white_48.gif",
 	"/gfx/progress/spinner_grey_24.gif",
 	"/gfx/progress/spinner_grey_32.gif",
-	
+
 	"/icons/common/success32.png",
 	"/icons/common/success24.png",
 
@@ -32,14 +32,14 @@
 	"/icons/common/settings16.png",
 	"/icons/common/info16.png",
 	"/icons/common/page16.png",
-	
+
 	"/icons/overlay/new32.png",
 	"/icons/overlay/download32.png",
 
 	"/icons/file/generic32.png",
 
 	"/gfx/disclosure.png",
-	
+
 	"/gfx/layout.png",
 	"/gfx/layout_middle.png",
 	"/gfx/box_shadow.png",
@@ -47,7 +47,6 @@
 	"/gfx/box_close.png",
 	"/gfx/tabs.png",
 	"/gfx/tabs_small.png",
-	"/gfx/search_field.png",
 	"/gfx/selection_blue.png",
 
 	"/gfx/list_navigation.png",
@@ -56,7 +55,7 @@
 	"/gfx/list_box.png",
 	"/gfx/list_header.png",
 	"/gfx/button_highlighted.png",
-	
+
 	"/gfx/window_dark_middle_right.png",
 	"/gfx/window_dark_middle.png",
 	"/gfx/window_dark_middle2.png",
