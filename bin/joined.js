@@ -15550,7 +15550,7 @@ hui.ui.TextField = function(options) {
   this.multiline = this.input.tagName.toLowerCase() == 'textarea';
   this.placeholder = hui.get.firstByClass(this.element,'hui_field_placeholder');
   this.value = this.input.value;
-    this.modified = false;
+  this.modified = false;
   this._attach();
 }
 
@@ -15687,7 +15687,7 @@ hui.ui.TextField.prototype = {
     this.value = value;
     this.input.value = value;
     this._expand(this.options.animateValueChange);
-        this.modified = false;
+    this.modified = false;
   },
   /** Get the value
    * @returns {String} The value
@@ -15741,16 +15741,14 @@ hui.ui.TextField.prototype = {
     textHeight = Math.max(38,textHeight);
     textHeight = Math.min(textHeight,this.options.maxHeight);
     if (animate) {
-      this._updateOverflow();
-      hui.animate(this.input,'height',textHeight+'px',300,{
-                ease : hui.ease.slowFastSlow,
-                $complete : function() {
-                    this._updateOverflow();
-        }.bind(this)
+      hui.animate({
+        node : this.input,
+        duration : 300,
+        css : {height:textHeight+'px'},
+        ease : hui.ease.slowFastSlow
       });
     } else {
       this.input.style.height = textHeight+'px';
-      this._updateOverflow();
     }
   },
   _getTextAreaHeight : function(input) {
@@ -15768,12 +15766,6 @@ hui.ui.TextField.prototype = {
     t.innerHTML = html;
     t.style.width=(input.clientWidth)+'px';
     return t.clientHeight;
-  },
-  _updateOverflow : function() {
-    if (!this.multiline) {
-      return;
-    }
-    this.input.style.overflowY = this.input.clientHeight >= this.options.maxHeight ? 'auto' : 'hidden';
   }
 }
 
