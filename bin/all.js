@@ -10727,187 +10727,6 @@ hui.ui.Upload.Frame.prototype = {
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-/////////////////////// Flash //////////////////////////
-
-/**
- * @class
- * @constructor
- */
-hui.ui.Upload.Flash = function(parent) {
-  this.parent = parent;
-
-  this.items = [];
-}
-
-hui.ui.Upload.Flash.support = function() {
-  return {
-    supported : hui.ui.Flash.getMajorVersion() >= 10 && window.SWFUpload !== undefined,
-    multiple : true
-  };
-}
-
-hui.ui.Upload.Flash.prototype = {
-  initialize : function() {
-    var options = this.parent.options;
-
-    hui.log('Creating flash verison');
-    var url = this._getAbsoluteUrl(options.url);
-    var javaSession = hui.cookie.get('JSESSIONID');
-    if (javaSession) {
-      url+=';jsessionid='+javaSession;
-    }
-    var phpSession = hui.cookie.get('PHPSESSID');
-    if (phpSession) {
-      url+='?PHPSESSID='+phpSession;
-    }
-    var buttonContainer = hui.build('span',{'class':'hui_upload_button'});
-    var placeholder = hui.build('span',{'class':'hui_upload_button_object',parent:buttonContainer});
-    if (options.widget) {
-      var w = hui.ui.get(options.widget);
-      w.element.parentNode.insertBefore(buttonContainer,w.element);
-      w.element.parentNode.removeChild(w.element);
-      buttonContainer.appendChild(w.element);
-    } else {
-      buttonContainer.innerHTL='<a href="javascript:void(0);" class="hui_button"><span><span>'+options.chooseButton+'</span></span></a>';
-      this.parent.element.appendChild(buttonContainer);
-    }
-
-    this.loader = new SWFUpload({
-      upload_url : url,
-      flash_url : hui.ui.getURL("lib/swfupload/swfupload.swf"),
-      file_size_limit : options.maxSize,
-      file_queue_limit : options.maxItems,
-      file_post_name : options.fieldName,
-      file_upload_limit : options.maxItems,
-      file_types : options.types,
-      debug : !true,
-      post_params : options.parameters,
-      button_placeholder_id : 'x',
-      button_placeholder : placeholder,
-      button_width : '100%',
-      button_height : 30,
-
-      swfupload_loaded_handler : this._onFlashLoaded.bind(this),
-      file_queued_handler : this._onFileQueued.bind(this),
-      file_queue_error_handler : this._onFileQueueError.bind(this),
-      file_dialog_complete_handler : this._onFileDialogComplete.bind(this),
-      upload_start_handler : this._onUploadStart.bind(this),
-      upload_progress_handler : this._onUploadProgress.bind(this),
-      upload_error_handler : this._onUploadError.bind(this),
-      upload_success_handler : this._onUploadSuccess.bind(this),
-      upload_complete_handler : this._onUploadComplete.bind(this)
-    });
-  },
-  setParameter : function(key,value) {
-    hui.log('Flash: Warning: cannot change parameters');
-  },
-  _getAbsoluteUrl : function(relative) {
-    var loc = new String(document.location);
-    var url = loc.slice(0,loc.lastIndexOf('/'));
-    while (relative.indexOf('../')===0) {
-      relative=relative.substring(3);
-      url = url.slice(0,url.lastIndexOf('/'));
-    }
-    url += '/'+relative;
-    return url;
-  },
-
-  ////// Flash listeners /////
-
-  _onFlashLoaded : function() {
-    hui.log('Flash loaded');
-  },
-  _onFileQueued : function(file) {
-    var item = this.parent.$_addItem({name:file.name,size:file.size});
-    item.setWaiting();
-    this.items.push(item);
-  },
-  _onFileQueueError : function(file, error, message) {
-    hui.log('Flash: fileQueueError file:'+hui.string.toJSON(file)+', error:'+error+', message:'+message);
-    if (file!==null) {
-      var item = this.parent.$_addItem({name:file.name,size:file.size});
-      this.items.push(item);
-      this.parent.$_itemFail(item);
-      item.setError(hui.ui.Upload.Flash.errors[error]);
-    } else {
-      hui.ui.showMessage({text:hui.ui.Upload.Flash.errors[error],duration:4000});
-    }
-  },
-  _onFileDialogComplete : function() {
-    hui.log('Flash: fileDialogComplete');
-    this.loader.startUpload();
-  },
-  _onUploadStart : function() {
-
-  },
-  _onUploadProgress : function(file,complete,total) {
-    var item = this.items[file.index];
-    item.updateProgress(complete,total);
-  },
-  _onUploadError : function(file, error, message) {
-    hui.log('Flash: uploadError file:'+file+', error:'+error+', message:'+message);
-    if (file) {
-      var item = this.items[file.index];
-      this.parent.$_itemFail(item);
-      item.setError(hui.ui.Upload.Flash.errors[error]);
-    }
-  },
-  /** @private */
-  _onUploadSuccess : function(file,data) {
-    var item = this.items[file.index];
-    item.updateProgress(file.size,file.size);
-    this.parent.$_itemSuccess(item);
-  },
-  /** @private */
-  _onUploadComplete : function(file) {
-    this.loader.startUpload();
-  }
-}
-
-!(function() {
-  var e = hui.ui.Upload.Flash.errors = {};
-  var s = hui.ui.Upload.Flash.status = {};
-  if (window.SWFUpload) {
-    e[SWFUpload.QUEUE_ERROR.QUEUE_LIMIT_EXCEEDED]     = 'Der er valgt for mange filer';
-    e[SWFUpload.QUEUE_ERROR.FILE_EXCEEDS_SIZE_LIMIT]    = 'Filen er for stor';
-    e[SWFUpload.QUEUE_ERROR.ZERO_BYTE_FILE]         = 'Filen er tom';
-    e[SWFUpload.QUEUE_ERROR.INVALID_FILETYPE]       = 'Filens type er ikke understøttet';
-    e[SWFUpload.UPLOAD_ERROR.HTTP_ERROR]          = 'Der skete en netværksfejl';
-    e[SWFUpload.UPLOAD_ERROR.MISSING_UPLOAD_URL]      = 'Upload-adressen findes ikke';
-    e[SWFUpload.UPLOAD_ERROR.IO_ERROR]            = 'Der skete en IO-fejl';
-    e[SWFUpload.UPLOAD_ERROR.SECURITY_ERROR]        = 'Der skete en sikkerhedsfejl';
-    e[SWFUpload.UPLOAD_ERROR.UPLOAD_LIMIT_EXCEEDED]     = 'Upload-størrelsen er overskredet';
-    e[SWFUpload.UPLOAD_ERROR.UPLOAD_FAILED]         = 'Upload af filen fejlede';
-    e[SWFUpload.UPLOAD_ERROR.SPECIFIED_FILE_ID_NOT_FOUND] = 'Filens id kunne ikke findes';
-    e[SWFUpload.UPLOAD_ERROR.FILE_VALIDATION_FAILED]    = 'Validering af filen fejlede';
-    e[SWFUpload.UPLOAD_ERROR.FILE_CANCELLED]        = 'Filen blev afbrudt';
-    e[SWFUpload.UPLOAD_ERROR.UPLOAD_STOPPED]        = 'Upload af filen blev stoppet';
-    s[SWFUpload.FILE_STATUS.QUEUED]     = 'I kø';
-    s[SWFUpload.FILE_STATUS.IN_PROGRESS]  = 'I gang';
-    s[SWFUpload.FILE_STATUS.ERROR]      = 'Filen gav fejl';
-    s[SWFUpload.FILE_STATUS.COMPLETE]     = 'Færdig';
-    s[SWFUpload.FILE_STATUS.CANCELLED]    = 'Afbrudt';
-  }
-})()
-
-
-
-
-
-
-
-
 //////////////////// HTML5 //////////////////////
 
 
@@ -15731,7 +15550,7 @@ hui.ui.TextField = function(options) {
   this.multiline = this.input.tagName.toLowerCase() == 'textarea';
   this.placeholder = hui.get.firstByClass(this.element,'hui_field_placeholder');
   this.value = this.input.value;
-    this.modified = false;
+  this.modified = false;
   this._attach();
 }
 
@@ -15868,7 +15687,7 @@ hui.ui.TextField.prototype = {
     this.value = value;
     this.input.value = value;
     this._expand(this.options.animateValueChange);
-        this.modified = false;
+    this.modified = false;
   },
   /** Get the value
    * @returns {String} The value
@@ -15922,16 +15741,14 @@ hui.ui.TextField.prototype = {
     textHeight = Math.max(38,textHeight);
     textHeight = Math.min(textHeight,this.options.maxHeight);
     if (animate) {
-      this._updateOverflow();
-      hui.animate(this.input,'height',textHeight+'px',300,{
-                ease : hui.ease.slowFastSlow,
-                $complete : function() {
-                    this._updateOverflow();
-        }.bind(this)
+      hui.animate({
+        node : this.input,
+        duration : 300,
+        css : {height:textHeight+'px'},
+        ease : hui.ease.slowFastSlow
       });
     } else {
       this.input.style.height = textHeight+'px';
-      this._updateOverflow();
     }
   },
   _getTextAreaHeight : function(input) {
@@ -15949,12 +15766,6 @@ hui.ui.TextField.prototype = {
     t.innerHTML = html;
     t.style.width=(input.clientWidth)+'px';
     return t.clientHeight;
-  },
-  _updateOverflow : function() {
-    if (!this.multiline) {
-      return;
-    }
-    this.input.style.overflowY = this.input.clientHeight >= this.options.maxHeight ? 'auto' : 'hidden';
   }
 }
 
@@ -19481,586 +19292,395 @@ if (!Array.prototype.indexOf)
  * @constructor
  */
 hui.ui.Diagram = function(options) {
-	this.options = hui.override({layout:'D3'},options);;
-	this.name = options.name;
-	this.nodes = [];
-	this.lines = [];
-	this.data = {};
-	this.translation = {x:0,y:0};
-	this.element = hui.get(options.element);
-	this.width = this.element.clientWidth;
-	this.height = this.element.clientHeight;
-	this.layout = hui.ui.Diagram[this.options.layout];
-	//this.layout = hui.ui.Diagram.Springy;
-	this.layout.diagram = this;
-	hui.ui.extend(this);
-	if (options.source) {
-		options.source.listen(this);
-	}
-	this._init();
+  this.options = hui.override({layout:'D3'},options);;
+  this.name = options.name;
+  this.nodes = [];
+  this.lines = [];
+  this.data = {};
+  this.translation = {x:0,y:0};
+  this.element = hui.get(options.element);
+  this.width = this.element.clientWidth;
+  this.height = this.element.clientHeight;
+  this.layout = hui.ui.Diagram[this.options.layout];
+  this.layout.diagram = this;
+  hui.ui.extend(this);
+  if (options.source) {
+    options.source.listen(this);
+  }
+  this._init();
 }
 
 hui.ui.Diagram.create = function(options) {
-	options = hui.override({width:null,height:null},options);
+  options = hui.override({width:null,height:null},options);
 
-	options.element = hui.build('div',{'class':'hui_diagram',parent:options.parent,style:{height:options.height+'px'}});
+  options.element = hui.build('div',{'class':'hui_diagram',parent:options.parent,style:{height:options.height+'px'}});
 
-	return new hui.ui.Diagram(options);
+  return new hui.ui.Diagram(options);
 }
 
 hui.ui.Diagram.prototype = {
-	_init : function() {
-		this.background = hui.ui.Drawing.create({
-			width: this.width || 0,
-			height: this.height || 0
-		});
-		this.element.appendChild(this.background.element);
-		this.fire('added');
-	},
-	$$layout : function() {
-		var newWidth = this.element.clientWidth;
-		var newHeight = this.element.clientHeight;
-		if (newWidth === this.width && newHeight === this.height) {
-			// Only re-layout if size actually changed
-			return;
-		}
-		this.width = newWidth;
-		this.height = newHeight;
-		this.background.setSize(this.width,this.height);
-		this.layout.resize();
-		this.layout.resume();
-	},
-	_getMagnet : function(from,to,node) {
-		var margin = 1;
-		var size = node.getSize();
-		var center = node.getCenter();
-		var topLeft = {
-				x : center.x - size.width/2 - margin,
-				y : center.y - size.height/2 - margin
-			},
-			bottomRight = {
-				x : topLeft.x + size.width + margin * 2,
-				y : topLeft.y + size.height + margin * 2
-			};
-		var hits = [];
-		hits = hui.geometry.intersectLineRectangle(from,to,topLeft,bottomRight);
-		if (hits.length>0) {
-			return hits[0];
-		}
-		return to;
-	},
+  _init : function() {
+    this.background = hui.ui.Drawing.create({
+      width: this.width || 0,
+      height: this.height || 0
+    });
+    this.element.appendChild(this.background.element);
+    this.fire('added');
+  },
+  $$layout : function() {
+    var newWidth = this.element.clientWidth;
+    var newHeight = this.element.clientHeight;
+    if (newWidth === this.width && newHeight === this.height) {
+      // Only re-layout if size actually changed
+      return;
+    }
+    this.width = newWidth;
+    this.height = newHeight;
+    this.background.setSize(this.width,this.height);
+    this.layout.resize();
+    this.layout.resume();
+  },
+  _getMagnet : function(from,to,node) {
+    var margin = 1;
+    var size = node.getSize();
+    var center = node.getCenter();
+    var topLeft = {
+        x : center.x - size.width/2 - margin,
+        y : center.y - size.height/2 - margin
+      },
+      bottomRight = {
+        x : topLeft.x + size.width + margin * 2,
+        y : topLeft.y + size.height + margin * 2
+      };
+    var hits = [];
+    hits = hui.geometry.intersectLineRectangle(from,to,topLeft,bottomRight);
+    if (hits.length>0) {
+      return hits[0];
+    }
+    return to;
+  },
 
-	// Data ...
+  // Data ...
 
-	/** @private */
-	$objectsLoaded : function(data) {
-		this.setData(data);
-	},
-	setData : function(data) {
-		this.data = data;
-		this.clear();
-		var nodes = data.nodes,
-			lines = data.lines || data.edges;
-		if (!nodes || !lines) {
-			return;
-		}
-		for (var i=0; i < nodes.length; i++) {
-			if (nodes[i].type=='icon') {
-				this.addIcon(nodes[i]);
-			} else {
-				this.addBox(nodes[i]);
-			}
-		};
-		for (var i=0; i < lines.length; i++) {
-			this.addLine(lines[i]);
-		};
-		if (this.layout.loaded) {
-			this.layout.populate();
-		} else {
-			this.play();
-		}
-	},
-	/** Deprecated */
-	play : function() {
-		this.layout.start();
-	},
-	resume : function() {
-		if (this.layout.resume) { this.layout.resume() }
-	},
-	expand : function() {
-		if (this.layout.expand) { this.layout.expand() }
-	},
-	contract : function() {
-		if (this.layout.contract) { this.layout.contract() }
-	},
-	/** @private */
-	$sourceShouldRefresh : function() {
-		return hui.dom.isVisible(this.element);
-	},
-	/** @private */
-	$visibilityChanged : function() {
-		if (hui.dom.isVisible(this.element)) {
-			this.width = this.element.clientWidth;
-			this.height = this.element.clientHeight;
-			this.background.setSize(this.width,this.height);
-			if (this.options.source) {
-				this.options.source.refreshFirst();
-			}
-		}
-	},
-	clear : function() {
-		this.layout.clear();
-		this.selection = null;
-		this.background.clear();
-		this.lines = [];
-		for (var i = this.nodes.length - 1; i >= 0; i--){
-			hui.dom.remove(this.nodes[i].element);
-		};
-		this.nodes = [];
-		var lines = hui.get.byClass(this.element,'hui_diagram_line_label');
-		for (var i = lines.length - 1; i >= 0; i--){
-			hui.dom.remove(lines[i]);
-		};
-	},
+  /** @private */
+  $objectsLoaded : function(data) {
+    this.setData(data);
+  },
+  setData : function(data) {
+    this.data = data;
+    this.clear();
+    var nodes = data.nodes,
+      lines = data.lines || data.edges;
+    if (!nodes || !lines) {
+      return;
+    }
+    for (var i=0; i < nodes.length; i++) {
+      if (nodes[i].type=='icon') {
+        this.addIcon(nodes[i]);
+      } else {
+        this.addBox(nodes[i]);
+      }
+    };
+    for (var i=0; i < lines.length; i++) {
+      this.addLine(lines[i]);
+    };
+    if (this.layout.loaded) {
+      this.layout.populate();
+    } else {
+      this.play();
+    }
+  },
+  /** Deprecated */
+  play : function() {
+    this.layout.start();
+  },
+  resume : function() {
+    if (this.layout.resume) { this.layout.resume() }
+  },
+  expand : function() {
+    if (this.layout.expand) { this.layout.expand() }
+  },
+  contract : function() {
+    if (this.layout.contract) { this.layout.contract() }
+  },
+  /** @private */
+  $sourceShouldRefresh : function() {
+    return hui.dom.isVisible(this.element);
+  },
+  /** @private */
+  $visibilityChanged : function() {
+    if (hui.dom.isVisible(this.element)) {
+      this.width = this.element.clientWidth;
+      this.height = this.element.clientHeight;
+      this.background.setSize(this.width,this.height);
+      if (this.options.source) {
+        this.options.source.refreshFirst();
+      }
+    }
+  },
+  clear : function() {
+    this.layout.clear();
+    this.selection = null;
+    this.background.clear();
+    this.lines = [];
+    for (var i = this.nodes.length - 1; i >= 0; i--){
+      hui.dom.remove(this.nodes[i].element);
+    };
+    this.nodes = [];
+    var lines = hui.get.byClass(this.element,'hui_diagram_line_label');
+    for (var i = lines.length - 1; i >= 0; i--){
+      hui.dom.remove(lines[i]);
+    };
+  },
 
-	addBox : function(options) {
-		var box = hui.ui.Diagram.Box.create(options,this);
-		this.add(box);
-	},
+  addBox : function(options) {
+    var box = hui.ui.Diagram.Box.create(options,this);
+    this.add(box);
+  },
 
-	addIcon : function(options) {
-		var box = hui.ui.Diagram.Icon.create(options,this);
-		this.add(box);
-	},
-	add : function(widget) {
-		var e = widget.element;
-		this.element.appendChild(e);
-		widget.setCenter({x:this.width/2,y:this.height/2});
-		this.nodes.push(widget);
-	},
-	addLine : function(options) {
-		var from = this.getNode(options.from),
-			to = this.getNode(options.to);
-		if (from==null || to==null) {
-			hui.log('Unable to build line...');
-			hui.log(options);
-			return;
-		}
-		var fromCenter = this._getCenter(from),
-			toCenter = this._getCenter(to);
-		var lineNode = this.background.addLine({ from: fromCenter, to: toCenter, color: options.color || '#999' ,end:{}}),
-			line = { from: options.from, fromNode : from, to: options.to, toNode : to, node: lineNode };
-		if (options.label) {
-			line.label = hui.build('span',{parent:this.element,'class':'hui_diagram_line_label',text:options.label});
-			this._updateLine(line);
-		}
-		//hui.listen(lineNode.node,'click',function() {alert(line)});
-		this.lines.push(line);
-	},
+  addIcon : function(options) {
+    var box = hui.ui.Diagram.Icon.create(options,this);
+    this.add(box);
+  },
+  add : function(widget) {
+    var e = widget.element;
+    this.element.appendChild(e);
+    widget.setCenter({x:this.width/2,y:this.height/2});
+    this.nodes.push(widget);
+  },
+  addLine : function(options) {
+    var from = this.getNode(options.from),
+      to = this.getNode(options.to);
+    if (from==null || to==null) {
+      hui.log('Unable to build line...');
+      hui.log(options);
+      return;
+    }
+    var fromCenter = this._getCenter(from),
+      toCenter = this._getCenter(to);
+    var lineNode = this.background.addLine({ from: fromCenter, to: toCenter, color: options.color || '#999' ,end:{}}),
+      line = { from: options.from, fromNode : from, to: options.to, toNode : to, node: lineNode };
+    if (options.label) {
+      line.label = hui.build('span',{parent:this.element,'class':'hui_diagram_line_label',text:options.label});
+      this._updateLine(line);
+    }
+    //hui.listen(lineNode.node,'click',function() {alert(line)});
+    this.lines.push(line);
+  },
 
 
-	_getCenter : function(widget) {
-		return widget.getCenter();
-		var e = widget.element;
-		return {
-			x : Math.round(parseInt(e.style.left)+e.clientWidth/2),
-			y : Math.round(parseInt(e.style.top)+e.clientHeight/2)
-		};
-	},
-	getNode : function(id) {
-		return this._getNode(id,this.nodes);
-	},
-	getDataNode : function(id) {
-		return this._getNode(id,this.data.nodes);
-	},
-	_getNode : function(id,nodes) {
-		if (nodes) {
-			for (var i=0; i < nodes.length; i++) {
-				if (nodes[i].id == id) {
-					return nodes[i];
-				}
-			};
-		}
-		return null;
-	},
+  _getCenter : function(widget) {
+    return widget.getCenter();
+    var e = widget.element;
+    return {
+      x : Math.round(parseInt(e.style.left)+e.clientWidth/2),
+      y : Math.round(parseInt(e.style.top)+e.clientHeight/2)
+    };
+  },
+  getNode : function(id) {
+    return this._getNode(id,this.nodes);
+  },
+  getDataNode : function(id) {
+    return this._getNode(id,this.data.nodes);
+  },
+  _getNode : function(id,nodes) {
+    if (nodes) {
+      for (var i=0; i < nodes.length; i++) {
+        if (nodes[i].id == id) {
+          return nodes[i];
+        }
+      };
+    }
+    return null;
+  },
 
-	// Drawing...
+  // Drawing...
 
-	_updateLine : function(line) {
-		if (!line.label) {
-			return;
-		}
-		var from = line.node.getFrom(),
-			to = line.node.getTo(),
-			label = line.label;
-		var middle = { x : from.x+(to.x-from.x)/2, y : from.y+(to.y-from.y)/2 };
-		//var deg = Math.atan((from.y-to.y) / (from.x-to.x)) * 180/Math.PI;
-		line.label.style.webkitTransform='rotate('+line.node.getDegree()+'deg)';
-		//line.label.innerHTML = Math.round(hui.geometry.distance(from,to));
-		var width = Math.round(hui.geometry.distance(from,to)-30);
-		// TODO: cache width + height
-		var w = label.huiWidth = label.huiWidth || label.clientWidth;
-		var h = label.huiHeight = label.huiHeight || label.clientHeight;
-		w = Math.min(w,width);
-		hui.style.set(line.label,{
-			left : (middle.x-w/2)+'px',
-			top : (middle.y-h/2)+'px',
-			maxWidth : Math.max(0,width)+'px',
-			visibility : width>10 ? '' : 'hidden'
-		});
-	},
-	__nodeMoved : function(widget) {
-		var center = this._getCenter(widget);
-		for (var i=0; i < this.lines.length; i++) {
-			var line = this.lines[i];
-			if (line.from == widget.id) {
-				var magnet = this._getMagnet(line.node.getTo(),center,widget);
-				line.node.setFrom(magnet);
-				var magnet2 = this._getMagnet(center,this._getCenter(line.toNode),line.toNode);
-				line.node.setTo(magnet2);
-				this._updateLine(line);
-			}
-			else if (line.to == widget.id) {
-				var magnet = this._getMagnet(line.node.getFrom(),center,widget);
-				line.node.setTo(magnet);
-				var magnet2 = this._getMagnet(center,this._getCenter(line.fromNode),line.fromNode);
-				line.node.setFrom(magnet2);
-				this._updateLine(line);
-			}
-		};
-	},
-	__select : function(widget) {
-		if (this.selection) {
-			this.selection.setSelected(false);
-		}
-		this.selection = widget;
-		this.selection.setSelected(true);
-	},
-	__nodeOpen : function(widget) {
-		this.fire('open',this.getDataNode(widget.id));
-	}
+  _updateLine : function(line) {
+    if (!line.label) {
+      return;
+    }
+    var from = line.node.getFrom(),
+      to = line.node.getTo(),
+      label = line.label;
+    var middle = { x : from.x+(to.x-from.x)/2, y : from.y+(to.y-from.y)/2 };
+    //var deg = Math.atan((from.y-to.y) / (from.x-to.x)) * 180/Math.PI;
+    line.label.style.webkitTransform='rotate('+line.node.getDegree()+'deg)';
+    //line.label.innerHTML = Math.round(hui.geometry.distance(from,to));
+    var width = Math.round(hui.geometry.distance(from,to)-30);
+    // TODO: cache width + height
+    var w = label.huiWidth = label.huiWidth || label.clientWidth;
+    var h = label.huiHeight = label.huiHeight || label.clientHeight;
+    w = Math.min(w,width);
+    hui.style.set(line.label,{
+      left : (middle.x-w/2)+'px',
+      top : (middle.y-h/2)+'px',
+      maxWidth : Math.max(0,width)+'px',
+      visibility : width>10 ? '' : 'hidden'
+    });
+  },
+  __nodeMoved : function(widget) {
+    var center = this._getCenter(widget);
+    for (var i=0; i < this.lines.length; i++) {
+      var line = this.lines[i];
+      if (line.from == widget.id) {
+        var magnet = this._getMagnet(line.node.getTo(),center,widget);
+        line.node.setFrom(magnet);
+        var magnet2 = this._getMagnet(center,this._getCenter(line.toNode),line.toNode);
+        line.node.setTo(magnet2);
+        this._updateLine(line);
+      }
+      else if (line.to == widget.id) {
+        var magnet = this._getMagnet(line.node.getFrom(),center,widget);
+        line.node.setTo(magnet);
+        var magnet2 = this._getMagnet(center,this._getCenter(line.fromNode),line.fromNode);
+        line.node.setFrom(magnet2);
+        this._updateLine(line);
+      }
+    };
+  },
+  __select : function(widget) {
+    if (this.selection) {
+      this.selection.setSelected(false);
+    }
+    this.selection = widget;
+    this.selection.setSelected(true);
+  },
+  __nodeOpen : function(widget) {
+    this.fire('open',this.getDataNode(widget.id));
+  }
 }
-
-
-hui.ui.Diagram.Arbor = {
-	running : false,
-	loaded : false,
-	diagram : null,
-
-	_load : function() {
-		hui.require(hui.ui.getURL('lib/jquery.min.js'),function() {
-			hui.require(hui.ui.getURL('lib/arbor/lib/arbor.js'),function() {
-				this.loaded = true;
-				this.start();
-			}.bind(this))
-		}.bind(this));
-	},
-
-	start : function() {
-		if (!this.loaded) {
-			this._load();
-			return;
-		}
-		if (window.arbor==undefined) {
-			hui.log('Arbor is not available!');
-			return;
-		}
-
-		var repulsion = 50,
-			stiffness = 600,
-			friction = 0.5,
-			gravity = true,
-			fps = 40,
-			dt = 0.02 //0.02,			// timestep to use for stepping the simulation
-			precision = 0.6;	// accuracy vs. speed in force calculations
-
-		var diagram = this.diagram;
-
-		var renderer = {
-  			init:  function(system) {
-				hui.log("starting",system);
-			},
-  			redraw : function() {
-				var sel = diagram.selection ? diagram.selection.id : null;
-				system.eachNode(function(node,point) {
-					if (node.name!=sel) {
-						node.data.setCenter(point);
-					}
-				});
-				system.eachEdge(function(edge,point1,point2) {
-					if (edge.target.name==sel) {
-						point2 = diagram._getCenter(diagram.selection)
-					}
-					if (edge.source.name==sel) {
-						point1 = diagram._getCenter(diagram.selection)
-					}
-					var line = edge.data.node;
-					if (edge.source.name!=sel) {
-						line.setFrom(diagram._getMagnet(point2,point1,edge.source.data));
-					}
-					if (edge.target.name!=sel) {
-						line.setTo(diagram._getMagnet(point1,point2,edge.target.data));
-					}
-					diagram._updateLine(edge.data);
-				}.bind(this));
-			}.bind(this)
-		}
-		var system = this.particleSystem = arbor.ParticleSystem(repulsion, stiffness, friction, gravity, fps, dt, precision);
-		system.screenSize(diagram.element.clientWidth, diagram.element.clientHeight);
-		system.screenPadding(50,100);
-		system.renderer = renderer
-
-		this.populate();
-	},
-	populate : function() {
-		var system = this.particleSystem,
-			nodes = this.diagram.nodes,
-			lines = this.diagram.lines;
-
-		for (var i=0; i < nodes.length; i++) {
-			system.addNode(nodes[i].id, nodes[i]);
-		};
-
-		hui.each(lines,function(line) {
-			system.addEdge(line.from, line.to, line);
-		})
-
-		window.setTimeout(function() {
-			system.stop();
-		},6000)
-	},
-	clear : function() {
-		if (this.particleSystem) {
-			this.particleSystem.prune(function() {return true});
-			this.particleSystem.stop();
-		}
-	}
-}
-
-
 
 hui.ui.Diagram.D3 = {
-	loaded : false,
-	diagram : null,
+  loaded : false,
+  diagram : null,
 
-	_load : function() {
-		hui.require(hui.ui.getURL('lib/d3.v3/d3.v3.min.js'),function() {
-			this.loaded = true;
-			this.start();
-		}.bind(this))
-	},
+  _load : function() {
+    hui.require(hui.ui.getURL('lib/d3.v3/d3.v3.min.js'),function() {
+      this.loaded = true;
+      this.start();
+    }.bind(this))
+  },
 
-	resize : function() {
-		if (this.layout) {
-			this.layout.size([this.diagram.width,this.diagram.height]);
-		}
-	},
+  resize : function() {
+    if (this.layout) {
+      this.layout.size([this.diagram.width,this.diagram.height]);
+    }
+  },
 
-	start : function() {
-		if (!this.loaded) {
-			this._load();
-			return;
-		}
-		var diagram = this.diagram,
-			nodes = diagram.nodes,
-			lines = diagram.lines,
-			width = diagram.element.clientWidth,
-			height = diagram.element.clientHeight;
+  start : function() {
+    if (!this.loaded) {
+      this._load();
+      return;
+    }
+    var diagram = this.diagram,
+      nodes = diagram.nodes,
+      lines = diagram.lines,
+      width = diagram.element.clientWidth,
+      height = diagram.element.clientHeight;
 
-		for (var i=0; i < lines.length; i++) {
-			lines[i].source = this._findById(nodes,lines[i].from);
-			lines[i].target = this._findById(nodes,lines[i].to);
-		};
+    for (var i=0; i < lines.length; i++) {
+      lines[i].source = this._findById(nodes,lines[i].from);
+      lines[i].target = this._findById(nodes,lines[i].to);
+    };
 
-		var force = this.layout = d3.layout.force()
+    var force = this.layout = d3.layout.force()
             .linkDistance(100)
             .friction(0.9)
             .gravity(0.1)
             .theta(0.3)
             .linkStrength(0.2)
-			.charge(-1000)
-			.distance(100)
-			.nodes(this.diagram.nodes)
-			.links(this.diagram.lines)
-			.size([width, height]);
+      .charge(-1000)
+      .distance(100)
+      .nodes(this.diagram.nodes)
+      .links(this.diagram.lines)
+      .size([width, height]);
 
-		var ticker = function() {
-			var sel = diagram.selection ? diagram.selection.id : null;
-			var nodes = force.nodes(),
-				links = force.links();
-			for (var i=0; i < nodes.length; i++) {
-				var node = diagram.nodes[nodes[i].index];
-				if (node.id!=sel) {
-					node.setCenter(nodes[i]);
-				}
-			};
-			for (var i=0; i < links.length; i++) {
-				var link = links[i];
-				var source = link.source,
-					sourceCenter = link.source.center;
-				var target = link.target,
-					targetCenter = link.target;
-				if (source==diagram.selection) {
-					sourceCenter = diagram._getCenter(diagram.selection)
-				}
-				if (target==diagram.selection) {
-					targetCenter = diagram._getCenter(diagram.selection)
-				}
-				var from = diagram._getMagnet(sourceCenter,targetCenter,source)
-				var to = diagram._getMagnet(targetCenter,sourceCenter,target)
-				link.node.setFrom(from);
-				link.node.setTo(to);
-				diagram._updateLine(link);
-			};
-		};
-		force.start();
-		force.gravity(0.5);
-		for (var i=0; i < 10000; i++) {
-			force.tick()
-		};
-		force.gravity(0.1);
+    var ticker = function() {
+      var sel = diagram.selection ? diagram.selection.id : null;
+      var nodes = force.nodes(),
+        links = force.links();
+      for (var i=0; i < nodes.length; i++) {
+        var node = diagram.nodes[nodes[i].index];
+        if (node.id!=sel) {
+          node.setCenter(nodes[i]);
+        }
+      };
+      for (var i=0; i < links.length; i++) {
+        var link = links[i];
+        var source = link.source,
+          sourceCenter = link.source.center;
+        var target = link.target,
+          targetCenter = link.target;
+        if (source==diagram.selection) {
+          sourceCenter = diagram._getCenter(diagram.selection)
+        }
+        if (target==diagram.selection) {
+          targetCenter = diagram._getCenter(diagram.selection)
+        }
+        var from = diagram._getMagnet(sourceCenter,targetCenter,source)
+        var to = diagram._getMagnet(targetCenter,sourceCenter,target)
+        link.node.setFrom(from);
+        link.node.setTo(to);
+        diagram._updateLine(link);
+      };
+    };
+    force.start();
+    force.gravity(0.5);
+    for (var i=0; i < 10000; i++) {
+      force.tick()
+    };
+    force.gravity(0.1);
 
-		force.on("tick", ticker);
+    force.on("tick", ticker);
 
-		force.start()
-	},
+    force.start()
+  },
 
-	resume : function() {
-		if (this.layout) { this.layout.start(); }
-	},
-	expand : function() {
-		if (this.layout) {
-			this.layout.linkDistance(this.layout.linkDistance() * 1.3);
-			this.layout.charge(this.layout.charge() * 1.3);
-			this.layout.start();
-		}
-	},
-	contract : function() {
-		if (this.layout) {
-			this.layout.linkDistance(Math.max(0,this.layout.linkDistance() * 0.9));
-			this.layout.charge(Math.min(0,this.layout.charge() * 0.9));
-			this.layout.start();
-		}
-	},
+  resume : function() {
+    if (this.layout) { this.layout.start(); }
+  },
+  expand : function() {
+    if (this.layout) {
+      this.layout.linkDistance(this.layout.linkDistance() * 1.3);
+      this.layout.charge(this.layout.charge() * 1.3);
+      this.layout.start();
+    }
+  },
+  contract : function() {
+    if (this.layout) {
+      this.layout.linkDistance(Math.max(0,this.layout.linkDistance() * 0.9));
+      this.layout.charge(Math.min(0,this.layout.charge() * 0.9));
+      this.layout.start();
+    }
+  },
 
-	_findById : function(nodes,id) {
-		for (var i = nodes.length - 1; i >= 0; i--){
-			if (nodes[i].id===id) {
-				return i;
-			}
-		};
-		return null;
-	},
-	_convert : function(data) {
-		var nodes = data.nodes;
-		data.links = data.edges;
-		for (var i = data.links.length - 1; i >= 0; i--){
-			var link = data.links[i];
-			link.source = this._findById(nodes,link.from);
-			link.target = this._findById(nodes,link.to);
-		};
-		return data;
-	},
-	populate : function() {
-		this.start();
-	},
-	clear : function() {
-		if (this.layout) {
-			this.layout.stop();
-		}
-	}
-
-}
-
-
-
-hui.ui.Diagram.Springy = {
-	loaded : false,
-	diagram : null,
-
-	_load : function() {
-		hui.require(hui.ui.getURL('lib/springy-master/springy.js'),function() {
-			this.loaded = true;
-			this.start();
-		}.bind(this))
-	},
-
-	start : function() {
-		if (!this.loaded) {
-			this._load();
-			return;
-		}
-		var diagram = this.diagram,
-			nodes = diagram.nodes,
-			lines = diagram.lines,
-			width = diagram.element.clientWidth,
-			height = diagram.element.clientHeight;
-
-		var graph = new Graph();
-		var cachedNodes = {},
-			cachedLines = {};
-		for (var i=0; i < nodes.length; i++) {
-			cachedNodes[nodes[i].id] = graph.newNode(nodes[i]);
-		};
-
-		for (var i=0; i < lines.length; i++) {
-			var edge = graph.newEdge(
-				cachedNodes[lines[i].from],
-				cachedNodes[lines[i].to]
-			);
-			cachedLines[edge.id] = lines[i];
-		};
-
-		var layout = new Layout.ForceDirected(graph, width, height, 0.4);
-
-		var toScreen = function(p) {
-			  return {
-				  x : (p.x*width/10)+width/2,
-				  y : (p.y*height/10)+height/2
-			  }
-		  }
-
-		var renderer = new Renderer(layout,
-			function clear() {
-
-			},
-			function drawEdge(edge, p1, p2) {
-				var sel = diagram.selection ? diagram.selection.id : null;
-				p1 = toScreen(p1);
-				p2 = toScreen(p2);
-				var line = cachedLines[edge.id];
-				if (sel!=edge.source.data.id) {
-					var from = diagram._getMagnet(p1,p2,edge.source.data)
-					line.node.setFrom(from);
-				}
-				if (sel!=edge.target.data.id) {
-					var to = diagram._getMagnet(p1,p2,edge.target.data)
-					line.node.setTo(to);
-				}
-				diagram._updateLine(line);
-			},
-			function drawNode(node, p) {
-				var sel = diagram.selection ? diagram.selection.id : null;
-				if (node.data.id==sel) return;
-				node.data.setCenter(toScreen(p));
-			}
-		);
-		renderer.start();
-	},
-	_findById : function(nodes,id) {
-		for (var i = nodes.length - 1; i >= 0; i--){
-			if (nodes[i].id===id) {
-				return nodes[i];
-			}
-		};
-		return null;
-	},
-	populate : function() {
-
-	},
-	clear : function() {
-
-	}
+  _findById : function(nodes,id) {
+    for (var i = nodes.length - 1; i >= 0; i--){
+      if (nodes[i].id===id) {
+        return i;
+      }
+    };
+    return null;
+  },
+  _convert : function(data) {
+    var nodes = data.nodes;
+    data.links = data.edges;
+    for (var i = data.links.length - 1; i >= 0; i--){
+      var link = data.links[i];
+      link.source = this._findById(nodes,link.from);
+      link.target = this._findById(nodes,link.to);
+    };
+    return data;
+  },
+  populate : function() {
+    this.start();
+  },
+  clear : function() {
+    if (this.layout) {
+      this.layout.stop();
+    }
+  }
 
 }
 
@@ -20069,70 +19689,70 @@ hui.ui.Diagram.Springy = {
  * @constructor
  */
 hui.ui.Diagram.Box = function(options) {
-	this.options = options;
-	this.id = options.id;
-	this.name = options.name;
-	this.element = hui.get(options.element);
-	this.center = {};
-	this.size = null;
-	hui.ui.extend(this);
-	hui.ui.Diagram.util.enableDragging(this)
+  this.options = options;
+  this.id = options.id;
+  this.name = options.name;
+  this.element = hui.get(options.element);
+  this.center = {};
+  this.size = null;
+  hui.ui.extend(this);
+  hui.ui.Diagram.util.enableDragging(this)
 }
 
 hui.ui.Diagram.Box.create = function(options,diagram) {
-	options = hui.override({title:'Untitled',diagram:diagram},options);
-	var e = options.element = hui.build('div',{'class':'hui_diagram_box'});
-	hui.build('h1',{text:options.title,parent:e});
-	if (options.properties) {
-		var table = hui.build('table',{parent:e})
-		for (var i=0; i < options.properties.length; i++) {
-			var p = options.properties[i];
-			var tr = hui.build('tr',{parent:table});
-			hui.build('th',{parent:tr,text:p.label});
-			var td = hui.build('td',{parent:tr,text:p.value || ''});
-			if (p.hint) {
-				hui.build('em',{parent:td,text:p.hint});
-			}
-		};
-	}
-	return new hui.ui.Diagram.Box(options);
+  options = hui.override({title:'Untitled',diagram:diagram},options);
+  var e = options.element = hui.build('div',{'class':'hui_diagram_box'});
+  hui.build('h1',{text:options.title,parent:e});
+  if (options.properties) {
+    var table = hui.build('table',{parent:e})
+    for (var i=0; i < options.properties.length; i++) {
+      var p = options.properties[i];
+      var tr = hui.build('tr',{parent:table});
+      hui.build('th',{parent:tr,text:p.label});
+      var td = hui.build('td',{parent:tr,text:p.value || ''});
+      if (p.hint) {
+        hui.build('em',{parent:td,text:p.hint});
+      }
+    };
+  }
+  return new hui.ui.Diagram.Box(options);
 }
 
 hui.ui.Diagram.Box.prototype = {
-	_syncSize : function() {
-		if (this.size) {
-			return;
-		}
-		this.size = {
-			width : this.element.offsetWidth,
-			height : this.element.offsetHeight
-		};
-	},
-	getSize : function() {
-		this._syncSize();
-		return this.size;
-	},
-	getCenter : function() {
-		return this.center;
-	},
-	setCenter : function(point) {
-		this._syncSize();
-		this.center = {x : point.x, y : point.y};
-		this._updateCenter();
-	},
-	_updateCenter : function() {
-		this.element.style.top = Math.round(this.center.y - this.size.height/2)+'px';
-		this.element.style.left = Math.round(this.center.x - this.size.width/2)+'px';
-	},
-	setSelected : function(selected) {
-		hui.cls.set(this.element,'hui_diagram_box_selected',selected);
-	}
+  _syncSize : function() {
+    if (this.size) {
+      return;
+    }
+    this.size = {
+      width : this.element.offsetWidth,
+      height : this.element.offsetHeight
+    };
+  },
+  getSize : function() {
+    this._syncSize();
+    return this.size;
+  },
+  getCenter : function() {
+    return this.center;
+  },
+  setCenter : function(point) {
+    this._syncSize();
+    this.center = {x : point.x, y : point.y};
+    this._updateCenter();
+  },
+  _updateCenter : function() {
+    this.element.style.top = Math.round(this.center.y - this.size.height/2)+'px';
+    this.element.style.left = Math.round(this.center.x - this.size.width/2)+'px';
+  },
+  setSelected : function(selected) {
+    hui.cls.set(this.element,'hui_diagram_box_selected',selected);
+  }
 }
 
 if (hui.browser.webkit) {
-	hui.ui.Diagram.Box.prototype._updateCenter = function() {
-		this.element.style.WebkitTransform = 'translate3d(' + Math.round(this.center.x - this.size.width/2) + 'px,' + Math.round(this.center.y - this.size.height/2) + 'px,0)';
-	}
+  hui.ui.Diagram.Box.prototype._updateCenter = function() {
+    this.element.style.WebkitTransform = 'translate3d(' + Math.round(this.center.x - this.size.width/2) + 'px,' + Math.round(this.center.y - this.size.height/2) + 'px,0)';
+  }
 }
 
 
@@ -20142,106 +19762,106 @@ if (hui.browser.webkit) {
  * @constructor
  */
 hui.ui.Diagram.Icon = function(options) {
-	this.options = options;
-	this.id = options.id;
-	this.name = options.name;
-	this.element = hui.get(options.element);
-	this.center = {};
-	hui.ui.extend(this);
-	hui.ui.Diagram.util.enableDragging(this)
+  this.options = options;
+  this.id = options.id;
+  this.name = options.name;
+  this.element = hui.get(options.element);
+  this.center = {};
+  hui.ui.extend(this);
+  hui.ui.Diagram.util.enableDragging(this)
 }
 
 hui.ui.Diagram.Icon.create = function(options,diagram) {
-	options = hui.override({icon:'common/folder',diagram:diagram},options);
-	var e = options.element = hui.build('div',{'class':'hui_diagram_icon'});
-	e.appendChild(hui.ui.createIcon(options.icon,32));
-	if (options.title) {
-		hui.build('strong',{parent:e,text:options.title})
-	}
-	return new hui.ui.Diagram.Icon(options);
+  options = hui.override({icon:'common/folder',diagram:diagram},options);
+  var e = options.element = hui.build('div',{'class':'hui_diagram_icon'});
+  e.appendChild(hui.ui.createIcon(options.icon,32));
+  if (options.title) {
+    hui.build('strong',{parent:e,text:options.title})
+  }
+  return new hui.ui.Diagram.Icon(options);
 }
 
 hui.ui.Diagram.Icon.prototype = {
-	_syncSize : function() {
-		if (this.size) {
-			return;
-		}
-		this.size = {
-			width : this.element.offsetWidth,
-			height : this.element.offsetHeight
-		};
-	},
-	getSize : function() {
-		this._syncSize();
-		return this.size;
-	},
-	getCenter : function() {
-		return this.center;
-	},
-	setCenter : function(point) {
-		var e = this.element;
-		e.style.top = Math.round(point.y - e.clientHeight/2)+'px';
-		e.style.left = Math.round(point.x - e.clientWidth/2)+'px';
-		this.center = {x : point.x, y : point.y};
-	},
-	setSelected : function(selected) {
-		hui.cls.set(this.element,'hui_diagram_icon_selected',selected);
-	}
+  _syncSize : function() {
+    if (this.size) {
+      return;
+    }
+    this.size = {
+      width : this.element.offsetWidth,
+      height : this.element.offsetHeight
+    };
+  },
+  getSize : function() {
+    this._syncSize();
+    return this.size;
+  },
+  getCenter : function() {
+    return this.center;
+  },
+  setCenter : function(point) {
+    var e = this.element;
+    e.style.top = Math.round(point.y - e.clientHeight/2)+'px';
+    e.style.left = Math.round(point.x - e.clientWidth/2)+'px';
+    this.center = {x : point.x, y : point.y};
+  },
+  setSelected : function(selected) {
+    hui.cls.set(this.element,'hui_diagram_icon_selected',selected);
+  }
 }
 
 /** Utilities **/
 
 hui.ui.Diagram.util = {
-	enableDragging : function(obj) {
-		var diagram = obj.options.diagram;
-		hui.cls.add(obj.element,'hui_diagram_dragable');
-		var dragState = null;
-		hui.drag.register({
-			touch : true,
-			element : obj.element,
-			onStart : function() {
-				hui.cls.add(obj.element,'hui_diagram_dragging');
-				obj.fixed = true;
-			},
-			onNotMoved : function() {
-				diagram.__select(obj);
-				diagram.fire('select',obj.id);
-			},
-			onBeforeMove : function(e) {
-				diagram.__nodeMoved(obj);
-				e = hui.event(e);
-				obj.element.style.zIndex = hui.ui.nextPanelIndex();
+  enableDragging : function(obj) {
+    var diagram = obj.options.diagram;
+    hui.cls.add(obj.element,'hui_diagram_dragable');
+    var dragState = null;
+    hui.drag.register({
+      touch : true,
+      element : obj.element,
+      onStart : function() {
+        hui.cls.add(obj.element,'hui_diagram_dragging');
+        obj.fixed = true;
+      },
+      onNotMoved : function() {
+        diagram.__select(obj);
+        diagram.fire('select',obj.id);
+      },
+      onBeforeMove : function(e) {
+        diagram.__nodeMoved(obj);
+        e = hui.event(e);
+        obj.element.style.zIndex = hui.ui.nextPanelIndex();
                 var pos = obj.getCenter();
-				var size = obj.getSize();
+        var size = obj.getSize();
                 pos = {left:pos.x - size.width/2,top:pos.y - size.height/2};
-				var diagramPosition = hui.position.get(diagram.element);
-				dragState = {
-					left : e.getLeft() - pos.left,
-					top : e.getTop()-pos.top
-				};
-				obj.element.style.right = 'auto';
-			},
- 			onMove : function(e) {
-				var top = (e.getTop()-dragState.top);
-				var left = (e.getLeft()-dragState.left);
-				var size = obj.getSize();
-				top += size.height/2;
-				left += size.width/2;
-				obj.setCenter({x:left,y:top});
-				obj.px = left;
-				obj.py = top;
-				diagram.__nodeMoved(obj);
- 			},
-			onEnd : function() {
-				hui.cls.remove(obj.element,'hui_diagram_dragging');
-				obj.fixed = false;
-				hui.log('end')
-			}
-		});
-		hui.listen(obj.element,'dblclick',function(e) {
-			diagram.__nodeOpen(obj);
-		});
-	}
+        var diagramPosition = hui.position.get(diagram.element);
+        dragState = {
+          left : e.getLeft() - pos.left,
+          top : e.getTop()-pos.top
+        };
+        obj.element.style.right = 'auto';
+      },
+      onMove : function(e) {
+        var top = (e.getTop()-dragState.top);
+        var left = (e.getLeft()-dragState.left);
+        var size = obj.getSize();
+        top += size.height/2;
+        left += size.width/2;
+        obj.setCenter({x:left,y:top});
+        obj.px = left;
+        obj.py = top;
+        diagram.__nodeMoved(obj);
+      },
+      onEnd : function() {
+        hui.cls.remove(obj.element,'hui_diagram_dragging');
+        obj.fixed = false;
+        hui.log('end')
+      }
+    });
+    hui.listen(obj.element,'dblclick',function(e) {
+      diagram.__nodeOpen(obj);
+    });
+  }
 }
 
 /**
@@ -21671,9 +21291,6 @@ hui.ui.Editor.Html.prototype = {
     }
     callback();
   },
-  richTextDidChange : function() {
-    //this.deactivate();
-  },
   getValue : function() {
     return this.value;
   }
@@ -21691,9 +21308,7 @@ hui.ui.Graph = function(options) {
   this.ready = false;
   this.defered = [];
 
-  var impls = {force:hui.ui.Graph.Protoviz,graffle:hui.ui.Graph.Raphael,d3:hui.ui.Graph.D3};
-
-  this.impl = impls[this.options.layout];
+  this.impl = hui.ui.Graph.D3;
 
   hui.ui.extend(this);
   hui.log('Initializing implementation...');
@@ -21767,88 +21382,13 @@ hui.ui.Graph.prototype = {
 }
 
 /** @namespace */
-hui.ui.Graph.Protoviz = {
-  init : function(parent) {
-    this.parent = parent;
-    hui.require(hui.ui.getURL('lib/protovis-3.2/protovis-r3.2.js'),function() {
-      var w = document.body.clientWidth,
-        h = document.body.clientHeight;
-
-      this.vis = new pv.Panel()
-        .canvas(this.parent.element)
-          .width(this.parent.element.clientWidth)
-          .height(this.parent.element.clientHeight)
-          .fillStyle("white")
-          .event("mousedown", pv.Behavior.pan())
-          .event("mousewheel", pv.Behavior.zoom());
-      hui.log('Protoviz initialized')
-      parent.implIsReady();
-    }.bind(this))
-  },
-  _convert : function(data) {
-    var result = {nodes:[],links:[]};
-    for (var i=0; i < data.nodes.length; i++) {
-      var node = data.nodes[i];
-      result.nodes.push(node)
-    };
-    for (var i=0; i < data.edges.length; i++) {
-      var edge = data.edges[i];
-      result.links.push({source:this.getIndex(edge.from,data.nodes),target:this.getIndex(edge.to,data.nodes),label:edge.label});
-    };
-    return result;
-  },
-  getIndex : function(id,nodes) {
-    for (var i=0; i < nodes.length; i++) {
-      if (id===nodes[i].id) {
-        return i;
-      }
-    };
-  },
-  setData : function(data) {
-    var colors = pv.Colors.category19();
-    data = this._convert(data);
-
-    var force = this.vis.add(pv.Layout.Force)
-        .nodes(data.nodes)
-        .links(data.links);
-
-
-    force.link.add(pv.Line).lineWidth(2).anchor("center").add(pv.Label).text(function() {this.anchorTarget.label});
-
-    force.node.add(pv.Dot)
-        .size(function(d) {return 40;return (d.linkDegree + 4) * Math.pow(this.scale, -1.5)})
-        .fillStyle(function(d) {return d.fix ? "brown" : colors(d.group)})
-        .strokeStyle(function() {return this.fillStyle().darker()})
-        .lineWidth(1)
-        .title(function(d) {return d.label || ''})
-        .event("mousedown", pv.Behavior.drag())
-        .event("click", function(x) {console.log(data.nodes[x.index])})
-        .event("drag", force);
-
-    force.node.add(pv.Label).text(function(d) {return d.label}).textAlign('center').textBaseline('middle');
-
-    //force.link.add(pv.Label).text(function(d) {return d.label}).textAlign('left').textBaseline('middle');
-
-    this.vis.render();
-  }
-
-}
-
-/** @namespace */
 hui.ui.Graph.D3 = {
   init : function(parent) {
     this.parent = parent;
     var self = this;
-    hui.require(hui.ui.getURL('lib/d3/d3.js'),function() {
-      hui.log('d3 loaded');
-      hui.require(hui.ui.getURL('lib/d3/d3.geom.js'),function() {
-        hui.log('d3.geom loaded');
-        hui.require(hui.ui.getURL('lib/d3/d3.layout.js'),function() {
-          hui.log('d3.layout loaded');
-          self._init();
-          parent.implIsReady();
-        })
-      })
+    hui.require(hui.ui.getURL('lib/d3.v3/d3.v3.js'),function() {
+      self._init();
+      parent.implIsReady();
     });
   },
   resize : function(width,height) {
@@ -22036,131 +21576,6 @@ hui.ui.Graph.D3 = {
       node.append('svg:polygon').attr('points','-8.182,-10 -0.91,-10 -0.91,-0.909 8.182,-0.909 8.182,10 -8.182,10');
     }
 
-  }
-}
-
-/** @namespace */
-hui.ui.Graph.Raphael = {
-  init : function(parent) {
-    this.parent = parent;
-    hui.require(hui.ui.getURL('lib/raphael-min.js'),function() {
-      hui.log('Raphael is loadd');
-      this._extend();
-      parent.implIsReady()
-    }.bind(this));
-  },
-  _extend : function() {
-    hui.log('Extending Raphael...')
-    Raphael.fn.connection = function (obj1, obj2, line, bg, text) {
-      if (obj1.line && obj1.from && obj1.to) {
-        line = obj1;
-        obj1 = line.from;
-        obj2 = line.to;
-      }
-      var bb1 = obj1.getBBox(),
-        bb2 = obj2.getBBox(),
-        p = [{x: bb1.x + bb1.width / 2, y: bb1.y - 1},
-        {x: bb1.x + bb1.width / 2, y: bb1.y + bb1.height + 1},
-        {x: bb1.x - 1, y: bb1.y + bb1.height / 2},
-        {x: bb1.x + bb1.width + 1, y: bb1.y + bb1.height / 2},
-        {x: bb2.x + bb2.width / 2, y: bb2.y - 1},
-        {x: bb2.x + bb2.width / 2, y: bb2.y + bb2.height + 1},
-        {x: bb2.x - 1, y: bb2.y + bb2.height / 2},
-        {x: bb2.x + bb2.width + 1, y: bb2.y + bb2.height / 2}],
-        d = {}, dis = [];
-      for (var i = 0; i < 4; i++) {
-        for (var j = 4; j < 8; j++) {
-          var dx = Math.abs(p[i].x - p[j].x),
-            dy = Math.abs(p[i].y - p[j].y);
-          if ((i == j - 4) || (((i != 3 && j != 6) || p[i].x < p[j].x) && ((i != 2 && j != 7) || p[i].x > p[j].x) && ((i != 0 && j != 5) || p[i].y > p[j].y) && ((i != 1 && j != 4) || p[i].y < p[j].y))) {
-            dis.push(dx + dy);
-            d[dis[dis.length - 1]] = [i, j];
-          }
-        }
-      }
-      if (dis.length == 0) {
-        var res = [0, 4];
-      } else {
-        res = d[Math.min.apply(Math, dis)];
-      }
-      var x1 = p[res[0]].x,
-        y1 = p[res[0]].y,
-        x4 = p[res[1]].x,
-        y4 = p[res[1]].y;
-      dx = Math.max(Math.abs(x1 - x4) / 2, 10);
-      dy = Math.max(Math.abs(y1 - y4) / 2, 10);
-      var x2 = [x1, x1, x1 - dx, x1 + dx][res[0]].toFixed(3),
-        y2 = [y1 - dy, y1 + dy, y1, y1][res[0]].toFixed(3),
-        x3 = [0, 0, 0, 0, x4, x4, x4 - dx, x4 + dx][res[1]].toFixed(3),
-        y3 = [0, 0, 0, 0, y1 + dy, y1 - dy, y4, y4][res[1]].toFixed(3);
-      var path = ["M", x1.toFixed(3), y1.toFixed(3), "C", x2, y2, x3, y3, x4.toFixed(3), y4.toFixed(3)].join(",");
-      if (line && line.line) {
-        line.bg && line.bg.attr({path: path});
-        line.line.attr({path: path});
-        line.text.attr({x:x1+(x4-x1)/2,y:y4+(y1-y4)/2});
-      } else {
-        var color = typeof line == "string" ? line : "#000";
-        return {
-          line: this.path(path).attr({stroke: color, fill: "none", "stroke-width": 2, "stroke-opacity": .5}),
-          from: obj1,
-          to: obj2,
-          text : this.text(x1+(x4-x1)/2, y4+(y1-y4)/2,text).attr({fill:'#fff'})
-        };
-      }
-    }
-  },
-
-  setData : function (data) {
-    hui.log(data);
-      var dragger = function () {
-          this.ox = this.type == "rect" ? this.attr("x") : this.attr("cx");
-          this.oy = this.type == "rect" ? this.attr("y") : this.attr("cy");
-          this.animate({"fill-opacity": .8}, 500);
-      },
-        move = function (dx, dy) {
-      var x = this.ox + dx,
-        y = this.oy + dy;
-            var att = this.type == "rect" ? {x: x, y: y} : {cx: this.ox + dx, cy: this.oy + dy};
-            this.attr(att);
-            for (var i = connections.length; i--;) {
-                r.connection(connections[i]);
-            }
-      this.text.attr({x:x+(this.getBBox().width/2),y:y+15});
-            r.safari();
-        },
-        up = function () {
-            this.animate({"fill-opacity": .1}, 500);
-        },
-    el = this.parent.element,
-    width = el.clientWidth,
-    height = el.clientHeight,
-        r = Raphael(el, width, height),
-        connections = [],
-    shapes = [],
-    idsToShape = {};
-    for (var i=0; i < data.nodes.length; i++) {
-      var node = data.nodes[i],
-        left = Math.random()*(width-100)+50,
-        top = Math.random()*(height-100)+50,
-        shape = r.rect(left, top, 20, 30, 5),
-        text = r.text(left,top+15,node.label),
-        box = text.getBBox();
-      text.attr({x:left+(box.width+20)/2,fill:'#fff'});
-      shape.attr({width:box.width+20});
-      shape.text = text;
-      shapes.push(shape);
-      idsToShape[node.id] = shape;
-    };
-      for (var i = 0, ii = shapes.length; i < ii; i++) {
-          var color = "#fff";//Raphael.getColor();
-          shapes[i].attr({fill: "#559DFF", stroke: color, "fill-opacity": .1, "stroke-width": 2, cursor: "move"});
-          shapes[i].drag(move, dragger, up);
-      }
-
-    for (var i=0; i < data.edges.length; i++) {
-      var edge = data.edges[i];
-      connections.push(r.connection(idsToShape[edge.from], idsToShape[edge.to], "#fff",null,edge.label));
-    };
   }
 }
 
@@ -23249,36 +22664,6 @@ hui.ui.Debugger = {
 }
 
 /**
- * A dock
- * @constructor
- */
-hui.ui.FlashChart = function(element,name,options) {
-	this.options = N2i.override({},options);
-	this.element = $(element);
-	this.name = name;
-	hui.ui.extend(this);
-}
-
-hui.ui.FlashChart.prototype = {
-	load : function(url) {
-		var self = this;
-		var flash = this.findSWF(this.element.id+'_chart');
-		hui.request({url:url,$success:function(t) {
-			flash.load(t.responseText);
-		}});
-	},
-	findSWF : function(movieName) {
-		if (window[movieName]) {
-			return window[movieName];
-		} else {
-			return document[movieName];
-		}
-	}
-}
-
-/* EOF */
-
-/**
  * Help stuff
  * @namespace
  */
@@ -23434,241 +22819,4 @@ hui.ui.ImagePaster.prototype = {
 		}
 	}
 }
-
-/**
- * @constructor
- */
-hui.ui.RichText = function(options) {
-	this.name = options.name;
-	var e = this.element = hui.get(options.element);
-	this.options = hui.override({debug:false,value:'',autoHideToolbar:true,style:'font-family: sans-serif;'},options);
-	this.textarea = hui.build('textarea');
-	e.appendChild(this.textarea);
-	this.editor = WysiHat.Editor.attach(this.textarea);
-	this.editor.setAttribute('frameborder','0');
-	/* @private */
-	this.toolbar = hui.get.firstByClass(e,'hui_richtext_toolbar');
-	this.toolbarContent = hui.get.firstByClass(e,'hui_richtext_toolbar_content');
-	this.value = this.options.value;
-	this.document = null;
-	this.ignited = false;
-	this.buildToolbar();
-	this.ignite();
-	hui.ui.extend(this);
-}
-
-hui.ui.RichText.actions = [
-	{key:'bold',				cmd:'bold',				value:null,		icon:'edit/text_bold'},
-	{key:'italic',				cmd:'italic',			value:null,		icon:'edit/text_italic'},
-	{key:'underline',			cmd:'underline',		value:null,		icon:'edit/text_underline'},
-	null,
-	{key:'justifyleft',			cmd:'justifyleft',		value:null,		icon:'edit/text_align_left'},
-	{key:'justifycenter',		cmd:'justifycenter',	value:null,		icon:'edit/text_align_center'},
-	{key:'justifyright',		cmd:'justifyright',		value:null,		icon:'edit/text_align_right'},
-	null,
-	{key:'increasefontsize',	cmd:'increasefontsize',	value:null,		icon:'edit/increase_font_size'},
-	{key:'decreasefontsize',	cmd:'decreasefontsize',	value:null,		icon:'edit/decrease_font_size'},
-	{key:'color',				cmd:null,				value:null,		icon:'common/color'}
-	/*,
-	null,
-	{key:'p',				cmd:'formatblock',		value:'p'},
-	{key:'h1',				cmd:'formatblock',		value:'h1'},
-	{key:'h2',				cmd:'formatblock',		value:'h2'},
-	{key:'h3',				cmd:'formatblock',		value:'h3'},
-	{key:'h4',				cmd:'formatblock',		value:'h4'},
-	{key:'h5',				cmd:'formatblock',		value:'h5'},
-	{key:'h6',				cmd:'formatblock',		value:'h6'},
-	{key:'removeformat', 	cmd:'removeformat', 	'value':null}*/
-];
-
-hui.ui.RichText.replaceInput = function(options) {
-	options = options || {};
-	var input = hui.get(options.input);
-	input.style.display='none';
-	options.value = input.value;
-	var obj = hui.ui.RichText.create(options);
-	input.parentNode.insertBefore(obj.element,input);
-	obj.ignite();
-}
-
-hui.ui.RichText.create = function(options) {
-	options = options || {};
-	options.element = hui.build('div',{'class':'hui_richtext',html:'<div class="hui_richtext_toolbar"><div class="hui_richtext_inner_toolbar"><div class="hui_richtext_toolbar_content"></div></div></div>'});
-	return new hui.ui.RichText(options);
-}
-
-hui.ui.RichText.prototype = {
-	isCompatible : function() {
-	    var agt=navigator.userAgent.toLowerCase();
-		return true;
-		return (agt.indexOf('msie 6')>-1 || agt.indexOf('msie 7')>-1 || (agt.indexOf('gecko')>-1 && agt.indexOf('safari')<0));
-	},
-	ignite : function() {
-		var self = this;
-		this.editor.observe("wysihat:loaded", function(event) {
-			if (this.ignited) {
-				return;
-			}
-			this.editor.setStyle(this.options.style);
-			this.editor.setRawContent(this.value);
-			this.document = this.editor.getDocument();
-			if (this.document.body) {
-				this.document.body.style.minHeight='100%';
-				this.document.body.style.margin='0';
-				this.document.documentElement.style.cursor='text';
-				this.document.documentElement.style.minHeight='100%';
-				Element.setStyle(this.document.body,this.options.style);
-			}
-			this.window = this.editor.getWindow();
-			Event.observe(this.window,'focus',function() {self.documentFocused()});
-			Event.observe(this.window,'blur',function() {self.documentBlurred()});
-			this.document.body.focus();
-			this.ignited = true;
-     	}.bind(this));
-		this.editor.observe("wysihat:change", function(event) {
-        	this.documentChanged();
-     	}.bind(this));
-	},
-	setHeight : function(height) {
-		this.editor.style.height=height+'px';
-	},
-	focus : function() {
-		try { // TODO : May only work in gecko
-			var r = this.document.createRange();
-			r.selectNodeContents(this.document.body);
-			this.window.getSelection().addRange(r);
-		} catch (ignore) {}
-		if (this.window)this.window.focus();
-	},
-	setValue : function(value) {
-		this.value = value;
-		this.editor.setRawContent(this.value);
-	},
-	getValue : function() {
-		return this.value;
-	},
-	deactivate : function() {
-		if (this.colorPicker) this.colorPicker.hide();
-		if (this.toolbar) this.toolbar.style.display='none';
-	},
-	
-	buildToolbar : function() {
-		this.toolbar.onmousedown = function() {this.toolbarMouseDown=true}.bind(this);
-		this.toolbar.onmouseup = function() {this.toolbarMouseDown=false}.bind(this);
-		var self = this;
-		var actions = hui.ui.RichText.actions;
-		for (var i=0; i < actions.length; i++) {
-			if (actions[i]==null) {
-				this.toolbarContent.appendChild(hui.build('div',{'class':'hui_richtext_divider'}));
-			} else {
-				var div = hui.build('div',{'class':'action action_'+actions[i].key});
-				div.title=actions[i].key;
-				div.huiRichTextAction = actions[i]
-				div.onclick = div.ondblclick = function(e) {return self.actionWasClicked(this.huiRichTextAction,e);}
-				var img = hui.build('img');
-				img.src = hui.ui.getURL('gfx/trans.png');
-				if (actions[i].icon) {
-					div.style.backgroundImage='url('+hui.ui.getIconUrl(actions[i].icon,16)+')';
-				}
-				div.appendChild(img);
-				this.toolbarContent.appendChild(div);
-				div.onmousedown = hui.ui.RichText.stopEvent;
-			}
-		};
-	},
-	documentFocused : function() {
-		if (hui.browser.msie) {
-			this.toolbar.style.display='block';
-			return;
-		}
-		if (this.toolbar.style.display!='block') {
-			this.toolbar.style.marginTop='-40px';
-			hui.style.setOpacity(this.toolbar,0);
-			this.toolbar.style.display='block';
-			hui.animate(this.toolbar,'opacity',1,300);
-			hui.animate(this.toolbar,'margin-top','-32px',300);
-		}
-	},
-	
-	documentBlurred : function() {
-		if (this.toolbarMouseDown) return;
-		if (this.options.autoHideToolbar) {
-			if (hui.browser.msie) {
-				var self = this;
-				window.setTimeout(function() {
-					self.toolbar.style.display='none';
-				},100);
-				return;
-			}
-			hui.animate(this.toolbar,'opacity',0,300,{hideOnComplete:true});
-			hui.animate(this.toolbar,'margin-top','-40px',300);
-		}
-		this.documentChanged();
-		hui.ui.callDelegates(this,'richTextDidChange');
-	},
-	
-	documentChanged : function() {
-		this.value = this.editor.content();
-		if (this.options.input) {
-			hui.get(this.options.input).value=this.value;
-		}
-	},
-	
-	disabler : function(e) {
-		var evt = e ? e : window.event; 
-		if (evt.returnValue) {
-			evt.returnValue = false;
-		} else if (evt.preventDefault) {
-			evt.preventDefault( );
-		}
-		return false;
-	},
-	actionWasClicked : function(action,e) {
-		hui.ui.RichText.stopEvent(e);
-		if (action.key=='color') {
-			this.showColorPicker();
-		} else {
-			this.execCommand(action);
-		}
-		this.document.body.focus();
-		return false;
-	},
-	execCommand : function(action) {
-		this.editor.execCommand(action.cmd,false,action.value);
-		this.documentChanged();
-	},
-	showColorPicker : function() {
-		if (!this.colorPicker) {
-			var panel = hui.ui.Window.create({variant:'dark'});
-			var picker = hui.ui.ColorPicker.create();
-			picker.listen(this);
-			panel.add(picker);
-			panel.show();
-			this.colorPicker = panel;
-		}
-		this.colorPicker.show();
-	},
-	$colorWasHovered : function(color) {
-		//this.document.execCommand('forecolor',false,color);
-	},
-	$colorWasSelected : function(color) {
-		this.document.execCommand('forecolor',false,color);
-		this.documentChanged();
-	}
-}
-
-
-
-hui.ui.RichText.stopEvent = function(e) {
-  var evt = e ? e : window.event; 
-  if (evt.returnValue) {
-    evt.returnValue = false;
-  } else if (evt.preventDefault) {
-    evt.preventDefault( );
-  } else {
-    return false;
-  }
-}
-
-/* EOF */
 

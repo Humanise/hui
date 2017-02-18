@@ -123,21 +123,6 @@ jsFiles = [
     'js/Pages.js'
 ]
 
-jsFilesSite = [
-    'js/hui.js',
-    'js/hui_animation.js',
-    'js/hui_color.js',
-    'js/hui_require.js',
-    'js/hui_parallax.js',
-    'js/hui_preloader.js',
-    'js/ui.js',
-    'js/ImageViewer.js',
-    'js/Box.js',
-    'js/SearchField.js',
-    'js/Overlay.js',
-    'js/Button.js'
-]
-
 cssFiles = [
     'body',
     'dragproxy',
@@ -209,17 +194,11 @@ cssFiles = [
     'pages'
 ]
 
-cssFilesSite = [
-    'icon', 'curtain', 'imageviewer', 'editor', 'overlay', 'box', 'button', 'formula', 'textinput', 'message', 'searchfield', 'checkbox', 'checkboxes'
-]
-
 print('Joining JavaScript')
 joinScript(jsFiles)
-joinScript(jsFilesSite,'.site')
 
 print('Joining CSS')
 joinStyle(cssFiles)
-joinStyle(cssFilesSite,'.site')
 
 print('Joining all JavaScript')
 allFiles = [];
