@@ -14,13 +14,13 @@ module.exports = function(grunt) {
           spawn: false,
         }
       },
-      css: {
-        files: ['css/**/*.css'],
-        tasks: ['shell:join'],
-        options: {
-          spawn: false,
-        }
-      },
+//      css: {
+//        files: ['css/**/*.css'],
+//        tasks: ['shell:join'],
+//        options: {
+//          spawn: false,
+//        }
+//      },
       js: {
         files: ['js/**/*.js'],
         tasks: ['shell:join','uglify:joined'],
@@ -140,7 +140,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-typescript');
 
   // Default task(s).
-  grunt.registerTask('default', 'Watch', ['watch']);
+  grunt.registerTask('default', 'Watch', ['sass','watch']);
 
   //grunt.registerTask('test', ['qunit']);
   grunt.registerTask('test', 'Run tests', function(testname) {
