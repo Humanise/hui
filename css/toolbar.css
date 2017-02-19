@@ -52,7 +52,11 @@
   .hui_toolbar_icon_selected {
     background: rgba(0, 0, 40, 0.1);
     background: radial-gradient(rgba(0, 0, 40, 0.05) 50%, rgba(0, 0, 40, 0.1) 100%);
-    box-shadow: inset 0 0px 6px rgba(0, 0, 40, 0.2); }
+    box-shadow: inset 0 0px 6px rgba(0, 0, 40, 0.2);
+    padding: 1px 9px;
+    margin: 0 -2px; }
+    .hui_toolbar_icon_selected:focus {
+      padding: 0px 8px; }
   .hui_toolbar_icon_text {
     font-size: 11px;
     color: #345;

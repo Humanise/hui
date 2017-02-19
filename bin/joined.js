@@ -1753,7 +1753,11 @@ hui._onReady = function(delegate) {
  * @returns {XMLHttpRequest} The transport
  */
 hui.request = function(options) {
-  options = hui.override({method:'POST',async:true,headers:{Ajax:true}},options);
+  options = hui.override({
+    method : 'POST',
+    async : true,
+    headers : {Ajax : true}
+  },options);
   var transport = new XMLHttpRequest();
   if (!transport) {return;}
   transport.onreadystatechange = function() {
@@ -1778,14 +1782,21 @@ hui.request = function(options) {
   if (method=='POST' && options.file) {
     if (false) {
       body = options.file;
-          transport.setRequestHeader("Content-type", options.file.type);
-          transport.setRequestHeader("X_FILE_NAME", options.file.name);
+      transport.setRequestHeader("Content-type", options.file.type);
+      transport.setRequestHeader("X_FILE_NAME", options.file.name);
     } else {
       body = new FormData();
       body.append('file', options.file);
       if (options.parameters) {
         for (var param in options.parameters) {
-          body.append(param, options.parameters[param]);
+          var value = options.parameters[param];
+          if (hui.isArray(value)) {
+            for (var i = 0; i < value.length; i++) {
+              body.append(param, value[i]);
+            }
+          } else {
+            body.append(param, value);
+          }
         }
       }
     }
@@ -1850,22 +1861,33 @@ hui.request.isXMLResponse = function(t) {
 hui.request._buildPostBody = function(parameters) {
   if (!parameters) return null;
   var output = '',
-        param;
+    param;
     if (hui.isArray(parameters)) {
-        for (var i = 0; i < parameters.length; i++) {
-            param = parameters[i];
+      for (var i = 0; i < parameters.length; i++) {
+        param = parameters[i];
         if (i > 0) {output += '&';}
         output+=encodeURIComponent(param.name)+'=';
         if (param.value!==undefined && param.value!==null) {
           output+=encodeURIComponent(param.value);
         }
-        }
+      }
     } else {
       for (param in parameters) {
-        if (output.length > 0) {output += '&';}
-        output+=encodeURIComponent(param)+'=';
-        if (parameters[param]!==undefined && parameters[param]!==null) {
-          output+=encodeURIComponent(parameters[param]);
+        var value = parameters[param];
+        if (hui.isArray(value)) {
+          for (var i = 0; i < value.length; i++) {
+            if (output.length > 0) {output += '&';}
+            output += encodeURIComponent(param)+'=';
+            if (value[i]!==undefined && value[i]!==null) {
+              output += encodeURIComponent(value[i]);
+            }
+          }
+        } else {
+          if (output.length > 0) {output += '&';}
+          output += encodeURIComponent(param)+'=';
+          if (value!==undefined && value!==null) {
+            output += encodeURIComponent(value);
+          }
         }
       }
     }
