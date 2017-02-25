@@ -37,6 +37,7 @@
     <xs:attribute name="background" type="xs:string"/>
     <xs:attribute name="title" type="xs:string"/>
     <xs:attribute name="state" type="xs:string"/>
+    <xs:attribute name="adaptive" type="xs:boolean"/>
   </xs:complexType>
 
   <xs:element name="subgui" type="subgui"/>
@@ -179,38 +180,45 @@
     </xs:choice>
   </xs:complexType>
 
-  <!-- Skeleton -->
+  <!-- Foundation -->
 
-  <xs:element name="skeleton" type="skeleton"/>
-  <xs:complexType name="skeleton">
+  <xs:element name="foundation" type="foundation"/>
+  <xs:complexType name="foundation">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="navigation" type="skeleton_navigation"/>
-      <xs:element name="results" type="skeleton_results"/>
-      <xs:element name="actions" type="skeleton_actions"/>
-      <xs:element name="content" type="skeleton_content"/>
+      <xs:element name="navigation" type="foundation_navigation"/>
+      <xs:element name="results" type="foundation_results"/>
+      <xs:element name="actions" type="foundation_actions"/>
+      <xs:element name="content" type="foundation_content"/>
+      <xs:element name="details" type="foundation_details"/>
     </xs:choice>
   </xs:complexType>
 
-  <xs:complexType name="skeleton_navigation">
+  <xs:complexType name="foundation_navigation">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="overflow" type="overflow"/>
     </xs:choice>
   </xs:complexType>
 
-  <xs:complexType name="skeleton_results">
+  <xs:complexType name="foundation_results">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="overflow" type="overflow"/>
       <xs:element name="bar" type="bar"/>
     </xs:choice>
   </xs:complexType>
 
-  <xs:complexType name="skeleton_actions">
+  <xs:complexType name="foundation_actions">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="bar" type="bar"/>
     </xs:choice>
   </xs:complexType>
 
-  <xs:complexType name="skeleton_content">
+  <xs:complexType name="foundation_content">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:any/>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="foundation_details">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:any/>
     </xs:choice>

@@ -6,23 +6,23 @@
    * @augments hui.ui.Component
    * @param {Object} options
    */
-  hui.ui.Skeleton = function(options) {
+  hui.ui.Foundation = function(options) {
     this.nodes = {
-      resizeNavigation : '.hui_skeleton_resize_navigation',
-      resizeResults : '.hui_skeleton_resize_results',
-      navigation : '.hui_skeleton_navigation',
-      results : '.hui_skeleton_results',
-      content : '.hui_skeleton_content',
-      actions : '.hui_skeleton_actions',
-      toggle : '.hui_skeleton_overlay_toggle',
-      details : '.hui_skeleton_details',
-      detailsToggle : '.hui_skeleton_details_toggle'
+      resizeNavigation : '.hui_foundation_resize_navigation',
+      resizeResults : '.hui_foundation_resize_results',
+      navigation : '.hui_foundation_navigation',
+      results : '.hui_foundation_results',
+      content : '.hui_foundation_content',
+      actions : '.hui_foundation_actions',
+      toggle : '.hui_foundation_overlay_toggle',
+      details : '.hui_foundation_details',
+      detailsToggle : '.hui_foundation_details_toggle'
     }
     _super.call(this, options);
     this._attach();
   }
 
-  hui.ui.Skeleton.prototype = {
+  hui.ui.Foundation.prototype = {
     _attach : function() {
       var initial = 0,
         navigation = this.nodes.navigation,
@@ -83,6 +83,6 @@
     }
   }
 
-  hui.extend(hui.ui.Skeleton, _super);
+  hui.extend(hui.ui.Foundation, _super);
 
 })(hui.ui.Component);

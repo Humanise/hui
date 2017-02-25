@@ -69,8 +69,8 @@
       <xsl:if test="//gui:timeline">
         <link rel="stylesheet" href="{$context}/hui/{$pathVersion}css/timeline.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
       </xsl:if>
-      <xsl:if test="//gui:skeleton">
-        <link rel="stylesheet" href="{$context}/hui/{$pathVersion}css/skeleton.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
+      <xsl:if test="//gui:foundation">
+        <link rel="stylesheet" href="{$context}/hui/{$pathVersion}css/foundation.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
       </xsl:if>
       <xsl:if test="//gui:media-simulator">
         <link rel="stylesheet" href="{$context}/hui/{$pathVersion}css/mediasimulator.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
@@ -124,8 +124,8 @@
       <xsl:if test="//gui:tiles">
         <script src="{$context}/hui/{$pathVersion}js/Tiles.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
       </xsl:if>
-      <xsl:if test="//gui:skeleton">
-        <script src="{$context}/hui/{$pathVersion}js/Skeleton.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
+      <xsl:if test="//gui:foundation">
+        <script src="{$context}/hui/{$pathVersion}js/Foundation.js" type="text/javascript" charset="utf-8"><xsl:comment/></script>
       </xsl:if>
       <xsl:if test="//gui:object-input">
         <link rel="stylesheet" href="{$context}/hui/{$pathVersion}css/objectinput.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
@@ -2181,36 +2181,36 @@ doc title:'Rich text' class:'hui.ui.RichText'
   </xsl:template>
 
 
-  <!--doc title:'Skeleton' class:'hui.ui.Skeleton' module:'layout'
+  <!--doc title:'Foundation' class:'hui.ui.Foundation' module:'layout'
   -->
 
-  <xsl:template match="gui:skeleton">
-    <div class="hui_skeleton" id="{generate-id()}">
-      <div class="hui_skeleton_overlay">
-        <div class="hui_skeleton_overlay_toggle"></div>
-        <div class="hui_skeleton_navigation hui_context_sidebar">
-          <div class="hui_skeleton_resize hui_skeleton_resize_navigation"></div>
+  <xsl:template match="gui:foundation">
+    <div class="hui_foundation" id="{generate-id()}">
+      <div class="hui_foundation_overlay">
+        <div class="hui_foundation_overlay_toggle"></div>
+        <div class="hui_foundation_navigation hui_context_sidebar">
+          <div class="hui_foundation_resize hui_foundation_resize_navigation"></div>
           <xsl:apply-templates select="gui:navigation"/>
         </div>
-        <div class="hui_skeleton_results">
-          <div class="hui_skeleton_resize hui_skeleton_resize_results"></div>
+        <div class="hui_foundation_results">
+          <div class="hui_foundation_resize hui_foundation_resize_results"></div>
           <xsl:apply-templates select="gui:results"/>
         </div>
       </div>
-      <div class="hui_skeleton_actions">
+      <div class="hui_foundation_actions">
         <xsl:apply-templates select="gui:actions"/>
       </div>
-      <div class="hui_skeleton_content">
+      <div class="hui_foundation_content">
         <xsl:apply-templates select="gui:content"/>
       </div>
-      <div class="hui_skeleton_details">
-        <div class="hui_skeleton_details_toggle"></div>
+      <div class="hui_foundation_details">
+        <div class="hui_foundation_details_toggle"></div>
         <xsl:apply-templates select="gui:details"/>
       </div>
     </div>
     <script type="text/javascript">
       (function() {
-        var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Skeleton({
+        var <xsl:value-of select="generate-id()"/>_obj = new hui.ui.Foundation({
           element : '<xsl:value-of select="generate-id()"/>'
           <xsl:if test="@name">,name : '<xsl:value-of select="@name"/>'</xsl:if>
         });

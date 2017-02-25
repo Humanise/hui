@@ -2,7 +2,7 @@
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
 <gui xmlns="uri:hui" title="Skeleton" adaptive="true">
 
-	<controller name="controller" url="skeleton.js"/>
+	<controller name="controller" url="foundation.js"/>
 	<source name="itemsSource" url="data/source_items.xml"/>
 
   <style>
@@ -14,13 +14,15 @@
     }
   </style>
 
-	<skeleton name="skeleton">
+	<foundation name="foundation">
 		<navigation>
 			<overflow>
 			<selection value="user" name="selector">
 				<option icon="common/person" text="Brugere" value="user"/>
 				<option icon="common/folder" text="Database" value="database" kind="folder"/>
 				<option icon="common/person" text="Alle objekter" value="object"/>
+				<title>Lorem ipsum</title>
+				<options source="itemsSource"/>
 				<title>Lorem ipsum</title>
 				<options source="itemsSource"/>
 				<title>Lorem ipsum</title>
@@ -73,6 +75,6 @@
         </fields>
       </formula>
     </details>
-	</skeleton>
+	</foundation>
 
 </gui>
