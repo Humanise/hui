@@ -3,7 +3,33 @@
 .hui_skeleton {
   position: relative;
   height: 100%;
+  overflow: hidden;
   @include border-box;
+
+  &_details {
+    position: absolute;
+    top: 0;
+    right: -40%;
+    transition: right .3s;
+    bottom: 0;
+    width: 40%;
+    z-index: 1;
+    background: #fff;
+    border-left: 1px solid $border-color;
+    margin-right: -1px;
+
+    &_toggle {
+      position: absolute;
+      left: -29px;
+      width: 29px;
+      height: 29px;
+      top: 0;
+      background: red;
+    }
+    &.hui-is-open {
+      right: 0;
+    }
+  }
 }
 
 .hui_skeleton_navigation {
@@ -27,7 +53,7 @@
   z-index: 1;
   cursor: col-resize;
   &:hover {
-    background: rgba(0,0,0,.1);    
+    background: rgba(0,0,0,.1);
   }
 }
 
@@ -58,4 +84,53 @@
   right: 0;
   left: 40%;
   bottom: 0;
+}
+
+@media screen and (max-width: 800px) {
+  .hui_skeleton {
+    &_overlay {
+      position: absolute;
+      top: 0;
+      left: -80%;
+      transition: left .3s;
+      bottom: 0;
+      width: 80%;
+      z-index: 1;
+      &_toggle {
+        position: absolute;
+        right: -29px;
+        width: 29px;
+        height: 29px;
+        top: 0;
+        background: red;
+      }
+    }
+    &.hui-is-open {
+      .hui_skeleton_overlay {
+        left: 0;
+      }
+    }
+    &_navigation {
+      width: 50%;
+    }
+    &_results {
+      left: 50%;
+      width: 50%;
+    }
+    &_content {
+      left: 0;
+    }
+    &_actions {
+      left: 29px;
+    }
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .hui_skeleton {
+    &_details {
+      width: 280px;
+      right: -280px;
+    }
+  }
 }

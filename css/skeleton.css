@@ -1,8 +1,29 @@
 .hui_skeleton {
   position: relative;
   height: 100%;
+  overflow: hidden;
   box-sizing: border-box;
   -moz-box-sizing: border-box; }
+  .hui_skeleton_details {
+    position: absolute;
+    top: 0;
+    right: -40%;
+    transition: right .3s;
+    bottom: 0;
+    width: 40%;
+    z-index: 1;
+    background: #fff;
+    border-left: 1px solid #ddd;
+    margin-right: -1px; }
+    .hui_skeleton_details_toggle {
+      position: absolute;
+      left: -29px;
+      width: 29px;
+      height: 29px;
+      top: 0;
+      background: red; }
+    .hui_skeleton_details.hui-is-open {
+      right: 0; }
 
 .hui_skeleton_navigation {
   position: absolute;
@@ -53,3 +74,35 @@
   right: 0;
   left: 40%;
   bottom: 0; }
+
+@media screen and (max-width: 800px) {
+  .hui_skeleton_overlay {
+    position: absolute;
+    top: 0;
+    left: -80%;
+    transition: left .3s;
+    bottom: 0;
+    width: 80%;
+    z-index: 1; }
+    .hui_skeleton_overlay_toggle {
+      position: absolute;
+      right: -29px;
+      width: 29px;
+      height: 29px;
+      top: 0;
+      background: red; }
+  .hui_skeleton.hui-is-open .hui_skeleton_overlay {
+    left: 0; }
+  .hui_skeleton_navigation {
+    width: 50%; }
+  .hui_skeleton_results {
+    left: 50%;
+    width: 50%; }
+  .hui_skeleton_content {
+    left: 0; }
+  .hui_skeleton_actions {
+    left: 29px; } }
+@media screen and (max-width: 500px) {
+  .hui_skeleton_details {
+    width: 280px;
+    right: -280px; } }

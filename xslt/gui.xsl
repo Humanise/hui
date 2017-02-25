@@ -29,6 +29,9 @@
       </xsl:if>
       <title><xsl:value-of select="@title"/></title>
       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <xsl:if test="@adaptive='true'">
+        <meta name="viewport" content="user-scalable=yes, initial-scale = 1, maximum-scale = 10, minimum-scale = 0.2"/>
+      </xsl:if>
       <xsl:choose>
         <xsl:when test="$dev='true'">
           <link rel="stylesheet" href="{$context}/hui/{$pathVersion}bin/development.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
@@ -2183,19 +2186,26 @@ doc title:'Rich text' class:'hui.ui.RichText'
 
   <xsl:template match="gui:skeleton">
     <div class="hui_skeleton" id="{generate-id()}">
-      <div class="hui_skeleton_navigation hui_context_sidebar">
-        <div class="hui_skeleton_resize hui_skeleton_resize_navigation"></div>
-        <xsl:apply-templates select="gui:navigation"/>
-      </div>
-      <div class="hui_skeleton_results">
-        <div class="hui_skeleton_resize hui_skeleton_resize_results"></div>
-        <xsl:apply-templates select="gui:results"/>
+      <div class="hui_skeleton_overlay">
+        <div class="hui_skeleton_overlay_toggle"></div>
+        <div class="hui_skeleton_navigation hui_context_sidebar">
+          <div class="hui_skeleton_resize hui_skeleton_resize_navigation"></div>
+          <xsl:apply-templates select="gui:navigation"/>
+        </div>
+        <div class="hui_skeleton_results">
+          <div class="hui_skeleton_resize hui_skeleton_resize_results"></div>
+          <xsl:apply-templates select="gui:results"/>
+        </div>
       </div>
       <div class="hui_skeleton_actions">
         <xsl:apply-templates select="gui:actions"/>
       </div>
       <div class="hui_skeleton_content">
         <xsl:apply-templates select="gui:content"/>
+      </div>
+      <div class="hui_skeleton_details">
+        <div class="hui_skeleton_details_toggle"></div>
+        <xsl:apply-templates select="gui:details"/>
       </div>
     </div>
     <script type="text/javascript">

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="setup.xsl"?>
-<gui xmlns="uri:hui" title="Skeleton">
+<gui xmlns="uri:hui" title="Skeleton" adaptive="true">
 
 	<controller name="controller" url="skeleton.js"/>
 	<source name="itemsSource" url="data/source_items.xml"/>
@@ -14,7 +14,7 @@
     }
   </style>
 
-	<skeleton>
+	<skeleton name="skeleton">
 		<navigation>
 			<overflow>
 			<selection value="user" name="selector">
@@ -64,6 +64,15 @@
         </div>
       </overflow>
     </content>
+    <details>
+      <formula padding="10">
+        <fields labels="above">
+          <field label="Title">
+            <text-input/>
+          </field>
+        </fields>
+      </formula>
+    </details>
 	</skeleton>
 
 </gui>
