@@ -12267,9 +12267,7 @@ hui.ui.Overflow.prototype = {
       this.$$layout();
     }
   }
-}
-
-/* EOF */
+};
 
 /** @constructor */
 hui.ui.SearchField = function(options) {

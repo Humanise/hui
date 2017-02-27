@@ -1,7 +1,7 @@
 (function (_super) {
 
   /**
-   * A base skeleton
+   * A base foundation
    * @class
    * @augments hui.ui.Component
    * @param {Object} options

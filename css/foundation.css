@@ -73,7 +73,8 @@
   background: #fff;
   right: 0;
   left: 40%;
-  bottom: 0; }
+  bottom: 0;
+  z-index: 1; }
 
 @media screen and (max-width: 800px) {
   .hui_foundation_overlay {
@@ -83,7 +84,7 @@
     transition: left .3s;
     bottom: 0;
     width: 80%;
-    z-index: 1; }
+    z-index: 2; }
     .hui_foundation_overlay_toggle {
       position: absolute;
       right: -29px;

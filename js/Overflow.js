@@ -76,6 +76,4 @@ hui.ui.Overflow.prototype = {
       this.$$layout();
     }
   }
-}
-
-/* EOF */
+};

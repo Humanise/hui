@@ -4755,10 +4755,6 @@ div.hui_tabs_bar_small_below li.hui_tabs_selected a span span
   color: #445566;
   font-weight: bold; }
 
-.hui_bar_layout .hui_segmented {
-  margin-top: 3px;
-  vertical-align: top; }
-
 /******************* Mini variant *****************/
 .hui_bar_mini {
   height: 22px;

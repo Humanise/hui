@@ -24,7 +24,7 @@
       <xs:element name="structure" type="structure"/>
       <xs:element name="columns" type="columns"/>
       <xs:element name="rows" type="rows"/>
-      <xs:element name="skeleton" type="skeleton"/>
+      <xs:element name="foundation" type="foundation"/>
       <xs:element name="boundpanel" type="boundpanel"/>
       <xs:element name="managed" type="managed"/>
       <xs:element name="bar" type="bar"/>
@@ -191,6 +191,7 @@
       <xs:element name="content" type="foundation_content"/>
       <xs:element name="details" type="foundation_details"/>
     </xs:choice>
+    <xs:attribute name="name" type="xs:string"/>
   </xs:complexType>
 
   <xs:complexType name="foundation_navigation">
