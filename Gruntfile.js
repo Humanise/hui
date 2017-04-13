@@ -4,7 +4,12 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     jshint: {
-        all: ['js/*.js']
+        all: {
+          options: {
+              reporterOutput: ''
+          },
+          src: ['js/*.js']
+        }
     },
     watch: {
       scss: {
