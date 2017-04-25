@@ -97,8 +97,7 @@ module.exports = function(grunt) {
       },
       joined : {
         files : {
-          'bin/minimized.js': ['bin/joined.js'],
-          'bin/minimized.site.js': ['bin/joined.site.js'],
+          'bin/minimized.js': ['bin/joined.js']
         }
       }
     },
@@ -109,8 +108,7 @@ module.exports = function(grunt) {
       },
       target: {
         files: {
-          'bin/minimized.css': ['bin/joined.css'],
-          'bin/minimized.site.css': ['bin/joined.site.css']
+          'bin/minimized.css': ['bin/joined.css']
         }
       }
     },
@@ -146,6 +144,8 @@ module.exports = function(grunt) {
 
   // Default task(s).
   grunt.registerTask('default', 'Watch', ['sass','watch']);
+
+  grunt.registerTask('build', 'Build', ['shell:join','uglify:joined','cssmin']);
 
   //grunt.registerTask('test', ['qunit']);
   grunt.registerTask('test', 'Run tests', function(testname) {

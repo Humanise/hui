@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo 'Deprecated'
+exit
+
 DIR=$(dirname $0)
 BIN_PATH=${DIR}"/../bin/"
 
