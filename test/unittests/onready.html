@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>HUI test</title>
+  <link rel="stylesheet" href="lib/qunit.css">
+  <script data-hui-context="../..">
+    hui = {_:[],onReady : function() {hui._.push(arguments)}}
+  </script>
+</head>
+<body>
+  <div id="qunit"></div>
+  <div id="qunit-fixture"></div>
+  <script src="lib/compat.js"></script>
+  <script src="lib/qunit.js"></script>
+  <script src="lib/syn.js"></script>
+
+  <script src="onready.js"></script>
+  <script src="../../js/hui_color.js" async="async"></script>
+  <script src="../../js/hui.js" async="async"></script>
+</body>
+</html>

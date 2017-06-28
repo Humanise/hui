@@ -11,7 +11,7 @@
 		<link rel="stylesheet" type="text/css" href="../../css/msie7.css"> </link>
 	<![endif]-->
   <script data-hui-context="../../..">
-    hui = {_:[],onReady() {hui._.push(arguments)}}
+    hui = {_:[],onReady:function() {hui._.push(arguments)}}
   </script>
 </head>
 
@@ -23,17 +23,17 @@
   <a href="#" class="hui_button"><span><span>This is a button</span></span><noscript data-type="Button">{"confirm":{"text":"It works!"}}</noscript></a>
 
   <a href="#" class="hui_button" data-hui="Button">
-    <span><span>This is a button</span></span>
+    This is a button
     <!--{"name":"myButton","confirm":{"text":"It works!"}}-->
   </a>
 
   <a href="#" class="hui_button">
-    <span><span>This is a button</span></span>
+    This is a button
     <script type="hui" data-type="Button">{"name":"myOtherButton","confirm":{"text":"Sure?"}}</script>
   </a>
 
   <a href="#" class="hui_button" data-hui="Button" data-options='{"name":"someName","confirm":{"text":"Sure?"}}'>
-    <span><span>This is a button</span></span>
+    This is a button
   </a>
 
   <script>
@@ -47,12 +47,17 @@
     })
   </script>
 
-	<script charset="utf-8" type="text/javascript" src="../../js/hui.js"></script>
-	<script charset="utf-8" type="text/javascript" src="../../js/hui_animation.js"></script>
-	<script charset="utf-8" type="text/javascript" src="../../js/hui_auto.js"></script>
-	<script charset="utf-8" type="text/javascript" src="../../js/hui_color.js"></script>
-	<script charset="utf-8" type="text/javascript" src="../../js/ui.js"></script>
-	<script charset="utf-8" type="text/javascript" src="../../js/Button.js"></script>
-	<script charset="utf-8" type="text/javascript" src="../../js/Overlay.js"></script>
+	<script src="../../js/hui.js"></script>
+  <script>
+    hui.onReady(['hui.ui','hui.ui.Overlay','hui.ui.Button'],function() {
+      console.log(hui.ui.Overlay, hui.ui.Button)
+    });
+  </script>
+	<script src="../../js/hui_animation.js"></script>
+	<script src="../../js/hui_auto.js"></script>
+	<script src="../../js/hui_color.js"></script>
+	<script src="../../js/ui.js"></script>
+	<script src="../../js/Button.js"></script>
+	<script src="../../js/Overlay.js"></script>
 </body>
 </html>
