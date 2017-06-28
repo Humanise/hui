@@ -1,0 +1,80 @@
+<!DOCTYPE html">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+  <title>HUI</title>
+  <link charset="utf-8" title="front" media="screen" type="text/css" href="style.css" rel="stylesheet" />
+  <link charset="utf-8" title="front" media="screen" type="text/css" href="../../bin/development.css" rel="stylesheet" />
+  <!--[if lt IE 7]>
+    <link rel="stylesheet" type="text/css" href="../../css/msie6.css"> </link>
+  <![endif]-->
+  <!--[if IE 7]>
+    <link rel="stylesheet" type="text/css" href="../../css/msie7.css"> </link>
+  <![endif]-->
+  <script data-hui-context="../../..">
+    hui = {_:[],onReady:function() {hui._.push(arguments)}}
+  </script>
+</head>
+
+<body>
+  <button class="hui_button" data-hui="Button" data-options='{"name":"getData"}'>Get data</button>
+  <div id="">
+
+  <script src="../../js/hui.js"></script>
+  <script>
+    hui.onReady(['hui.ui'],function() {
+      var readFile = function(file) {
+        var reader = new FileReader();
+        reader.onload = function (event) {
+          hui.build('img',{src:reader.result, parent: document.body})
+          console.info(reader.result)
+        };
+        reader.readAsDataURL(file);
+      }
+
+      hui.on(document, 'paste', function(e) {
+        console.log(e.clipboardData)
+        var items = e.clipboardData.items;
+        if (items) {
+          console.log('items:', items)
+          for (var i = 0; i < items.length; i++) {
+            console.log(items[i]);
+            if (items[i].type == 'file') {
+              readFile(items[i].getAsFile());
+            }
+          }
+        }
+        var files = e.clipboardData.files;
+        console.log('files:', files)
+        if (files) {
+          for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+            readFile(file);
+          }
+        }
+
+        var types = e.clipboardData.types;
+        console.log('types:', types)
+        if (types) {
+          for (var i = 0; i < types.length; i++) {
+            var data = e.clipboardData.getData(types[i], console.log);
+            console.log(data)
+          }
+        }
+        console.log(arguments)
+      });
+      hui.ui.listen({
+        $click$getData : function() {
+          console.log('x')
+          window.clipboardData.getData('Text')
+        }
+      })
+    });
+  </script>
+  <script src="../../js/hui_animation.js"></script>
+  <script src="../../js/hui_auto.js"></script>
+  <script src="../../js/hui_color.js"></script>
+  <script src="../../js/ui.js"></script>
+  <script src="../../js/Button.js"></script>
+  <script src="../../js/Overlay.js"></script>
+</body>
+</html>
