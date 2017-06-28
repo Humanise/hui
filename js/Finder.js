@@ -46,7 +46,9 @@ hui.ui.Finder.prototype = {
     } else {
       // Refresh if re-openede
       // TODO refresh more
-      this.list.refresh();
+      if (this.list) {
+        this.list.refresh();
+      }
     }
     this.window.show();
   },
