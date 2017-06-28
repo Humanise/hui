@@ -1630,11 +1630,11 @@ hui._ = hui._ || [];
 hui._ready = document.readyState == 'complete';// || document.readyState;
 // TODO Maybe interactive is too soon???
 
-hui.onReady = function(func) {
+hui.onReady = function() {
   if (hui._ready) {
-    func();
+    hui._handle(arguments)
   } else {
-    hui._.push(func);
+    hui._.push(arguments);
   }
 };
 
@@ -2558,29 +2558,32 @@ hui._onReady(function() {
   hui._ready = true;
   for (var i = 0; i < hui._.length; i++) {
     var item = hui._[i];
-    if (typeof(item) === 'function') {
-      item();
-    } else {
-      var func = null,
-        demands = null;
-      for (var j = 0; j < item.length; j++) {
-        if (typeof(item[j]) === 'function') {
-          func = item[j];
-        }
-        else if (hui.isArray(item[j])) {
-          demands = item[j];
-        }
-      }
-      if (demands && func) {
-        hui.demand(demands,func);
-      } else if (func) {
-        func();
-      }
-    }
+    hui._handle(item);
   }
   delete hui._;
 });
 
+hui._handle = function(item) {
+  if (typeof(item) === 'function') {
+    item();
+  } else {
+    var func = null,
+      demands = null;
+    for (var j = 0; j < item.length; j++) {
+      if (typeof(item[j]) === 'function') {
+        func = item[j];
+      }
+      else if (hui.isArray(item[j])) {
+        demands = item[j];
+      }
+    }
+    if (demands && func) {
+      hui.demand(demands,func);
+    } else if (func) {
+      func();
+    }
+  }
+}
 
 hui = window.hui || {};
 
@@ -12413,7 +12416,9 @@ hui.ui.Fragment.prototype = {
     hui.ui.callVisible(this);
   },
   setHTML : function(html) {
+    hui.ui.destroyDescendants(this.element);
     this.element.innerHTML = html;
+    hui.dom.runScripts(this.element);
     this.fireSizeChange();
   },
   setContent : function(htmlWidgetOrNode) {
@@ -16074,7 +16079,9 @@ hui.ui.Finder.prototype = {
     } else {
       // Refresh if re-openede
       // TODO refresh more
-      this.list.refresh();
+      if (this.list) {
+        this.list.refresh();
+      }
     }
     this.window.show();
   },
