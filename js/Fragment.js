@@ -20,7 +20,9 @@ hui.ui.Fragment.prototype = {
     hui.ui.callVisible(this);
   },
   setHTML : function(html) {
+    hui.ui.destroyDescendants(this.element);
     this.element.innerHTML = html;
+    hui.dom.runScripts(this.element);
     this.fireSizeChange();
   },
   setContent : function(htmlWidgetOrNode) {
