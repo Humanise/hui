@@ -17,13 +17,13 @@ class SelectOption {
   text: string;
   value: any;
 
-  constructur(value: any, text: string) {
+  constructor(value: any, text: string) {
     this.value = value;
     this.text = text;
   }
 }
 
-interface Valueable {
+interface Valuable {
   value: any;
 
   setValue(value:any);
@@ -31,7 +31,7 @@ interface Valueable {
   getValue(value:any);
 }
 
-class SelectOne extends Component implements Valueable {
+class SelectOne extends Component implements Valuable {
   value : any;
   options : [SelectOption];
 
