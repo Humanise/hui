@@ -1,3 +1,5 @@
+hui = window.hui || {}; hui.ui = hui.ui || {};
+
 /**
  * A push button
  * <pre><strong>options:</strong> {
@@ -223,4 +225,7 @@ hui.ui.Buttons.prototype = {
   }
 };
 
+hui.onReady(['hui.ui'],function() {
+  hui.define('hui.ui.Button',hui.ui.Button);
+})
 /* EOF */

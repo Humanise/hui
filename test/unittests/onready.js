@@ -18,3 +18,27 @@ QUnit.test("color", function(assert) {
   })
 
 })
+
+QUnit.test("hui.ui", function(assert) {
+  var done = assert.async();
+  hui.onReady(['hui.ui'],function() {
+    assert.ok(typeof(hui.ui)=='object');
+    hui.onReady(['hui.ui'],function() {
+      hui.ui.onReady(function() {
+        assert.ok(hui.ui.domReady);
+        done()
+      })
+    })
+  })
+
+})
+
+QUnit.test("Button", function(assert) {
+  var done = assert.async();
+  hui.onReady(['hui.ui.Button'],function() {
+    assert.ok(typeof(hui.ui.Button)=='function');
+    done()
+  })
+  hui.ui.require(['Button']);
+  hui.ui.require(['Button']);
+})
