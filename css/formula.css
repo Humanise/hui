@@ -213,21 +213,9 @@ div.hui_formula_field_compact div.hui_formula_field_body
 
 /************************************** Buttons *********************************/
 
-form.hui_formula .hui_buttons
+.hui_formula .hui_buttons
 {
 	text-align: right;
-}
-
-.hui_formula .hui_button
-{
-	margin-left: 4px;
-	margin-right: 0px;
-}
-
-.hui_formula .hui_button_light
-{
-	margin-left: 4px;
-	margin-right: 2px;
 }
 
 /******************************* Object list **************************/

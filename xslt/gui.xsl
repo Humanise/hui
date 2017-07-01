@@ -3250,10 +3250,13 @@ doc title:'Rich text' class:'hui.ui.RichText'
       <xsl:attribute name="class">
         <xsl:text>hui_buttons</xsl:text>
         <xsl:if test="@align='right'">
-          <xsl:text> hui_buttons_right</xsl:text>
+          <xsl:text> hui_buttons-right</xsl:text>
         </xsl:if>
         <xsl:if test="@align='center'">
-          <xsl:text> hui_buttons_center</xsl:text>
+          <xsl:text> hui_buttons-center</xsl:text>
+        </xsl:if>
+        <xsl:if test="@align='left'">
+          <xsl:text> hui_buttons-center</xsl:text>
         </xsl:if>
       </xsl:attribute>
       <xsl:attribute name="style">
@@ -3263,9 +3266,7 @@ doc title:'Rich text' class:'hui.ui.RichText'
         <xsl:if test="@bottom">padding-bottom:<xsl:value-of select="@bottom"/>px;</xsl:if>
         <xsl:if test="@right">padding-right:<xsl:value-of select="@right"/>px;</xsl:if>
       </xsl:attribute>
-      <div class="hui_buttons_body">
-        <xsl:apply-templates/>
-      </div>
+      <xsl:apply-templates/>
     </div>
   </xsl:template>
 

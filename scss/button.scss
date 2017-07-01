@@ -7,23 +7,18 @@
 	white-space: nowrap;
 
   .hui_button {
-    margin-right: 4px;
+    margin-left: 4px;
+    &:first-child {
+      margin-left: 0;
+    };
   }
 
-  &_right {
+  &-right {
     text-align: right;
-
-    .hui_button {
-      margin: 0px 0px 0px 4px;
-    }
   }
 
-  &_center {
+  &-center {
     text-align: center;
-
-    .hui_button {
-      margin: 0px 2px 0px 2px;
-    }
   }
 }
 

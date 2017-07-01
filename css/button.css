@@ -3,15 +3,13 @@
   line-height: 0;
   white-space: nowrap; }
   .hui_buttons .hui_button {
-    margin-right: 4px; }
-  .hui_buttons_right {
+    margin-left: 4px; }
+    .hui_buttons .hui_button:first-child {
+      margin-left: 0; }
+  .hui_buttons-right {
     text-align: right; }
-    .hui_buttons_right .hui_button {
-      margin: 0px 0px 0px 4px; }
-  .hui_buttons_center {
+  .hui_buttons-center {
     text-align: center; }
-    .hui_buttons_center .hui_button {
-      margin: 0px 2px 0px 2px; }
 
 /**************** Standard button ************/
 .hui_button {
