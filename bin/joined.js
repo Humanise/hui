@@ -4195,37 +4195,39 @@ Date.patterns = {
     YearMonthPattern: "F, Y"};
 
 
+hui = window.hui || {};
+
 /**
   The namespace of the HUI framework
   @namespace
  */
-hui.ui = {
-  domReady : false,
-  context : undefined,
-  language : 'en',
+hui.ui = hui.ui || {};
 
-  objects : {},
-  delegates : [],
+hui.ui.domReady = false;
+hui.ui.context = undefined,
+hui.ui.language = 'en';
 
-  state : 'default',
+hui.ui.objects = {};
+hui.ui.delegates = [];
 
-  latestObjectIndex : 0,
-  latestIndex : 500,
-  latestPanelIndex : 1000,
-  latestAlertIndex : 1500,
-  latestTopIndex : 2000,
-  toolTips : {},
-  confirmOverlays : {},
+hui.ui.state = 'default';
 
-  delayedUntilReady : [],
+hui.ui.latestObjectIndex = 0;
+hui.ui.latestIndex = 500;
+hui.ui.latestPanelIndex = 1000;
+hui.ui.latestAlertIndex = 1500;
+hui.ui.latestTopIndex = 2000;
+hui.ui.toolTips = {};
+hui.ui.confirmOverlays = {};
 
-  texts : {
-    request_error : {en:'An error occurred on the server',da:'Der skete en fejl på serveren'},
-    'continue' : {en:'Continue',da:'Fortsæt'},
-    reload_page : {en:'Reload page',da:'Indæs siden igen'},
-    access_denied : {en:'Access denied, maybe you are nolonger logged in',da:'Adgang nægtet, du er måske ikke længere logget ind'}
-  }
-};
+hui.ui.delayedUntilReady = [];
+
+hui.ui.texts = {
+  request_error : {en:'An error occurred on the server',da:'Der skete en fejl på serveren'},
+  'continue' : {en:'Continue',da:'Fortsæt'},
+  reload_page : {en:'Reload page',da:'Indæs siden igen'},
+  access_denied : {en:'Access denied, maybe you are nolonger logged in',da:'Adgang nægtet, du er måske ikke længere logget ind'}
+}
 
 hui.ui.getContext = function() {
   if (this.context===undefined) {
@@ -5252,8 +5254,6 @@ if (window.define) {
   define('hui.ui',hui.ui);
 }
 
-hui.define('hui.ui',hui.ui);
-
 hui.onReady(function() {
   hui.listen(window,'resize',hui.ui._resize);
   hui.ui.reLayout();
@@ -5266,6 +5266,7 @@ hui.onReady(function() {
   }
   // Call super delegates after delayedUntilReady...
   hui.ui.callSuperDelegates(this,'ready');
+  hui.define('hui.ui',hui.ui);
 });
 
 /* EOF */
@@ -7787,6 +7788,8 @@ hui.ui.Alert.prototype = {
   }
 };
 
+hui = window.hui || {}; hui.ui = hui.ui || {};
+
 /**
  * A push button
  * <pre><strong>options:</strong> {
@@ -8012,6 +8015,9 @@ hui.ui.Buttons.prototype = {
   }
 };
 
+hui.onReady(['hui.ui'],function() {
+  hui.define('hui.ui.Button',hui.ui.Button);
+})
 /* EOF */
 
 /**
