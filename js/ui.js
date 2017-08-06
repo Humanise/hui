@@ -612,7 +612,10 @@ hui.ui.getIconUrl = function(icon,size) {
 };
 
 hui.ui.createIcon = function(icon,size,tag) {
-  return hui.build(tag || 'span',{'class':'hui_icon hui_icon_'+size,style:'background-image: url('+hui.ui.getIconUrl(icon,size)+')'});
+  return hui.build(tag || 'span',{
+    'class' : 'hui_icon hui_icon_' + size,
+    style : 'background-image: url(' + hui.ui.getIconUrl(icon, size) + ')'
+  });
 };
 
 /**
