@@ -80,7 +80,7 @@ hui.ui.Pages.prototype = {
     var hide = options.hide,
       show = options.show,
       e = this.element,
-            duration = 300;
+            duration = 200;
     if (this.fixedHeight) {
       hui.style.set(hide,{
                 position:'absolute',
