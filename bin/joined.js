@@ -1144,8 +1144,7 @@ hui.position = {
     if (options.insideViewPort) {
       var w = hui.window.getViewWidth();
       if (left + src.clientWidth > w) {
-        left = w - src.clientWidth - (options.viewPartMargin || 0);
-        //hui.log(options.viewPartMargin)
+        left = w - src.clientWidth - (options.viewPortMargin || 0);
       }
       if (left < 0) {left=0;}
       if (top < 0) {top=0;}
@@ -2261,7 +2260,8 @@ hui.drag = {
    * @param {function} options.$finally After everything - moved or not
    */
   start : function(options,e) {
-    var target = hui.browser.msie ? document : window;
+    var win = options.window || window;
+    var target = hui.browser.msie ? win.document : win;
     var touch = options.touch && hui.browser.touch;
     options.$before && options.$before();
     options.onStart && options.onStart();
@@ -2285,9 +2285,9 @@ hui.drag = {
       options.onMove && options.onMove(e);
       options.$move && options.$move(e);
     }.bind(this);
-    hui.listen(document.body,touch ? 'touchmove' : 'mousemove',mover);
+    hui.listen(win.document.body,touch ? 'touchmove' : 'mousemove',mover);
     upper = function() {
-      hui.unListen(document.body,touch ? 'touchmove' : 'mousemove',mover);
+      hui.unListen(win.document.body,touch ? 'touchmove' : 'mousemove',mover);
       hui.unListen(target,touch ? 'touchend' : 'mouseup',upper);
       options.onEnd && options.onEnd(); // TODO: deprecated
       if (moved) {
@@ -4809,7 +4809,10 @@ hui.ui.getIconUrl = function(icon,size) {
 };
 
 hui.ui.createIcon = function(icon,size,tag) {
-  return hui.build(tag || 'span',{'class':'hui_icon hui_icon_'+size,style:'background-image: url('+hui.ui.getIconUrl(icon,size)+')'});
+  return hui.build(tag || 'span',{
+    'class' : 'hui_icon hui_icon_' + size,
+    style : 'background-image: url(' + hui.ui.getIconUrl(icon, size) + ')'
+  });
 };
 
 /**
@@ -5722,7 +5725,7 @@ hui.ui.Window.create = function(options) {
   if (options.variant=='dark') {
     cls+=' hui_context_dark';
   }
-  options.element = hui.build('div',{'class':cls,html:html,parent:document.body});
+  options.element = hui.build('div',{'class':cls,html:html,parent: options.parent || document.body});
   if (options.variant=='dark') {
     hui.cls.add(options.element,'hui_context_dark');
   }
@@ -5742,6 +5745,7 @@ hui.ui.Window.prototype = {
     }
     hui.drag.register({
       touch: true,
+      window: this.element.ownerDocument.defaultView,
       element : this.titlebar,
       $before : this._onDragStart.bind(this) ,
       $startMove : this._onBeforeMove.bind(this) ,
@@ -10098,7 +10102,7 @@ hui.ui.Overlay.prototype = {
   addIcon : function(key,icon) {
     var self = this;
     var element = hui.build('div',{className:'hui_overlay_icon'});
-    element.style.backgroundImage='url('+hui.ui.getIconUrl(icon,32)+')';
+    element.setAttribute('style','background-image: url(' + hui.ui.getIconUrl(icon,32) + '); background-image: -webkit-image-set(url('+hui.ui.getIconUrl(icon,32)+') 1x,url('+hui.ui.getIconUrl(icon,'32x2')+') 2x)');
     hui.listen(element,'click',function(e) {
       self._iconWasClicked(key,e);
     });
@@ -10175,7 +10179,7 @@ hui.ui.Overlay.prototype = {
         source : {element:this.element,vertical:0,horizontal:.5},
         target : {element:options.element,vertical:.5,horizontal:.5},
         insideViewPort : true,
-        viewPartMargin : 9
+        viewPortMargin : 9
       });
     }
     if (options.autoHide && options.element) {
@@ -17454,7 +17458,7 @@ hui.ui.Pages.prototype = {
     var hide = options.hide,
       show = options.show,
       e = this.element,
-            duration = 300;
+            duration = 200;
     if (this.fixedHeight) {
       hui.style.set(hide,{
                 position:'absolute',

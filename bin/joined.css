@@ -6113,12 +6113,14 @@ a.hui_fontinput
 	color: #333;
 	text-decoration: none;
 	display: inline-block;
-	width: 20px;
-	height: 20px;
+	width: 24px;
+	height: 24px;
+  line-height: 22px;
 	vertical-align: middle;
 	margin-left: 2px;
 	border-radius: 3px;
 	overflow: hidden;
+  box-sizing: boder-box;
 }
 
 a.hui_fontinput:hover
