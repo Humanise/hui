@@ -41,7 +41,7 @@ hui.ui.Window.create = function(options) {
   if (options.variant=='dark') {
     cls+=' hui_context_dark';
   }
-  options.element = hui.build('div',{'class':cls,html:html,parent:document.body});
+  options.element = hui.build('div',{'class':cls,html:html,parent: options.parent || document.body});
   if (options.variant=='dark') {
     hui.cls.add(options.element,'hui_context_dark');
   }
@@ -61,6 +61,7 @@ hui.ui.Window.prototype = {
     }
     hui.drag.register({
       touch: true,
+      window: this.element.ownerDocument.defaultView,
       element : this.titlebar,
       $before : this._onDragStart.bind(this) ,
       $startMove : this._onBeforeMove.bind(this) ,
