@@ -4809,11 +4809,21 @@ hui.ui.getIconUrl = function(icon,size) {
 };
 
 hui.ui.createIcon = function(icon,size,tag) {
-  return hui.build(tag || 'span',{
+  var node = hui.build(tag || 'span',{
     'class' : 'hui_icon hui_icon_' + size,
     style : 'background-image: url(' + hui.ui.getIconUrl(icon, size) + ')'
   });
+  hui.ui.setIconImage(node,icon,size);
+  return node;
 };
+
+hui.ui.setIconImage = function(node, icon, size) {
+  if (size==32) {
+    node.setAttribute('style', 'background-image: url(' + hui.ui.getIconUrl(icon,size) + '); background-image: -webkit-image-set(url('+hui.ui.getIconUrl(icon,size)+') 1x,url('+hui.ui.getIconUrl(icon,size+'x2')+') 2x); background-size: '+size+'px;');
+  } else {
+    node.setAttribute('style', 'background-image: url(' + hui.ui.getIconUrl(icon,size) + ');');
+  }
+}
 
 /**
  * Add focus class to an element
@@ -10102,7 +10112,7 @@ hui.ui.Overlay.prototype = {
   addIcon : function(key,icon) {
     var self = this;
     var element = hui.build('div',{className:'hui_overlay_icon'});
-    element.setAttribute('style','background-image: url(' + hui.ui.getIconUrl(icon,32) + '); background-image: -webkit-image-set(url('+hui.ui.getIconUrl(icon,32)+') 1x,url('+hui.ui.getIconUrl(icon,'32x2')+') 2x)');
+    hui.ui.setIconImage(element, icon, 32);
     hui.listen(element,'click',function(e) {
       self._iconWasClicked(key,e);
     });
@@ -16502,7 +16512,10 @@ hui.ui.CodeInput = function(options) {
 
 hui.ui.CodeInput.create = function(options) {
   options = options || {};
-  options.element = hui.build('div',{className:'hui_codeinput',html:'<textarea class="hui_codeinput_input" spellcheck="false"></textarea>'});
+  options.element = hui.build('div',{
+    'class' : 'hui_codeinput',
+    html : '<textarea class="hui_codeinput_input" spellcheck="false"></textarea>'
+  });
   if (options.height) {
     options.element.style.height = hui.style.length(options.height);
   }
@@ -16511,8 +16524,8 @@ hui.ui.CodeInput.create = function(options) {
 
 hui.ui.CodeInput.prototype = {
   _addBehavior : function() {
-    hui.listen(this.textarea,'keydown',this._onKeyDown.bind(this));
-    hui.listen(this.textarea,'keyup',this._onKeyUp.bind(this));
+    hui.listen(this.textarea, 'keydown', this._onKeyDown.bind(this));
+    hui.listen(this.textarea, 'keyup', this._onKeyUp.bind(this));
   },
 
   getValue : function() {
