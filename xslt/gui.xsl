@@ -346,6 +346,13 @@
           }})
         })()
       </xsl:when>
+      <xsl:when test="@for">
+        (function() {
+          hui.ui.listen({$<xsl:value-of select="@for"/>:function() {
+          <xsl:value-of select="."/>
+          }})
+        })()
+      </xsl:when>
       <xsl:otherwise>
         hui.ui.listen({
           <xsl:value-of select="."/>

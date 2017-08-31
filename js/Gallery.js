@@ -56,25 +56,17 @@ hui.ui.Gallery.prototype = {
     this.height = size;
     for (var i=0; i < this.nodes.length; i++) {
       var node = this.nodes[i];
-      var obj = this.objects[i];
       node.style.width = size+'px';
       node.style.height = size+'px';
-      var img = hui.get.firstChild(node);
-      if (img.height && img.width) {
-        var rect = this._findSize(obj,size);
-        hui.style.set(img,{width:rect.width+'px',height:rect.height+'px',marginTop:((size-rect.height)/2)+'px'})
-      }
     };
-  },
-  _findSize : function(obj,size) {
-    var rect = {width:size,height:size};
-    if (obj.width>obj.height) {
-      rect.height = obj.height/obj.width * size;
-    }
-    if (obj.width<obj.height) {
-      rect.width = obj.width/obj.height * size;
-    }
-    return rect;
+    this.maxRevealed = 0;
+    clearTimeout(this._timer);
+    this._timer = setTimeout(function() {
+      for (var i = 0; i < this.nodes.length; i++) {
+        this.nodes[i].revealed = false;
+      }
+      this._reveal();
+    }.bind(this),500);
   },
   reRender : function() {
     this._render();
@@ -106,18 +98,16 @@ hui.ui.Gallery.prototype = {
     this.maxRevealed = 0;
     this.body.innerHTML = '';
     hui.each(this.objects,function(object,i) {
-      var url = this._resolveImageUrl(object),
-        top = 0;
-      if (url!==null) {
-        url = url.replace(/&amp;/,'&');
-      }
+      var top = 0;
       if (!this.revealing && object.height < object.width) {
         top = (this.height-(this.height*object.height/object.width))/2;
       }
       var img = hui.build('img',{style:'margin:'+top+'px auto 0px'});
-      img.setAttribute(this.revealing ? 'data-src' : 'src', url );
       var item = hui.build('div',{'class' : 'hui_gallery_item',style:'width:'+this.width+'px; height:'+this.height+'px'});
-      item.appendChild(img);
+      if (!this.revealing) {
+        item.style.backgroundImage = 'url(' + this._resolveImageUrl(object) + ')';
+      }
+      //item.appendChild(img);
       hui.listen(item,'click',function(e) {
         this._itemClicked(i,e);
       }.bind(this));
@@ -149,23 +139,25 @@ hui.ui.Gallery.prototype = {
       var item = this.nodes[i];
       if (item.revealed) {continue}
       if (item.offsetTop < limit) {
-        var img = item.getElementsByTagName('img')[0];
-        item.className = 'hui_gallery_item hui_gallery_item_busy';
-        var self = this;
-        img.onload = function() {
-          hui.defer(function() {
-            this.parentNode.className = 'hui_gallery_item';
-            if (this.height < this.width) {
-              var top = (self.height-(self.height*this.height/this.width))/2;
-              this.style.marginTop = top+'px';
-            }
-          },this);
-        }
-        img.onerror = function() {
-          this.parentNode.className = 'hui_gallery_item hui_gallery_item_error';
-        }
-        img.src = img.getAttribute('data-src');
-        item.revealed = true;
+        hui.cls.add(item,'hui_is_loading');
+        (function(item, object) {
+          var img = new Image();
+          var url = this._resolveImageUrl(object);
+          img.onload = function() {
+            item.className = 'hui_gallery_item';
+            hui.cls.remove(item,'hui_is_pending');
+            hui.cls.remove(item,'hui_is_loading');
+            item.style.backgroundImage = 'url(' + url + ')';
+          }
+          img.onerror = function() {
+            hui.cls.remove(item,'hui_is_loading');
+            hui.cls.add(item,'hui_is_error');
+          }
+          img.src = url;
+          item.revealed = true;
+        }.bind(this))(item, this.objects[i]);
+      } else {
+        hui.cls.add(item,'hui_is_pending');
       }
     };
   },
@@ -176,13 +168,8 @@ hui.ui.Gallery.prototype = {
     };
   },
   _resolveImageUrl : function(img) {
-    return hui.ui.resolveImageUrl(this,img,this.width,this.height);
-    for (var i=0; i < this.delegates.length; i++) {
-      if (this.delegates[i]['$resolveImageUrl']) {
-        return this.delegates[i]['$resolveImageUrl'](img,this.width,this.height);
-      }
-    };
-    return '';
+    var url = hui.ui.callDelegates(this,'buildImageUrl',{item: img, width: this.width, height: this.height});
+    return url || hui.ui.resolveImageUrl(this,img,this.width,this.height);
   },
   _itemClicked : function(index,e) {
     if (this.busy) {
