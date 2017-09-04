@@ -26,10 +26,10 @@ hui.ui.MarkupEditor = function(options) {
     this.impl = hui.ui.MarkupEditor.webkit;
   }
   this.impl.initialize({
-        element : this.element,
-        controller : this,
-        $ready : this._ready.bind(this)
-    });
+    element : this.element,
+    controller : this,
+    $ready : this._ready.bind(this)
+  });
   if (options.value) {
     this.setValue(options.value);
   }
@@ -67,27 +67,27 @@ hui.ui.MarkupEditor.prototype = {
     this._valueChanged();
   },
 
-    implSelectionChanged : function() {
-        if (this.options.linkDelegate) {
-            this.options.linkDelegate.$cancel();
-        }
+  implSelectionChanged : function() {
+    if (this.options.linkDelegate) {
+      this.options.linkDelegate.$cancel();
+    }
     this._highlightNode(null)
     this.temporaryLink = null;
     this._valueChanged();
-        this._refreshInfoWindow();
-        this.bar && this.bar.setBlock(this._getFirstBlock());
-    },
-    _getFirstBlock : function() {
-        var path = this.impl.getPath();
-        var blocks = ['P','DIV','H1','H2','H3','H4','H5','H6','BLOCKQUOTE'];
-        for (var i = path.length - 1; i >= 0; i--) {
-            var tag = path[i].tagName;
-            if (blocks.indexOf(tag)!==-1) {
-                return path[i];
-            }
-        }
-        return null;
-    },
+    this._refreshInfoWindow();
+    this.bar && this.bar.setBlock(this._getFirstBlock());
+  },
+  _getFirstBlock : function() {
+    var path = this.impl.getPath();
+    var blocks = ['P','DIV','H1','H2','H3','H4','H5','H6','BLOCKQUOTE'];
+    for (var i = path.length - 1; i >= 0; i--) {
+      var tag = path[i].tagName;
+      if (blocks.indexOf(tag)!==-1) {
+        return path[i];
+      }
+    }
+    return null;
+  },
 
   /** Remove the widget from the DOM */
   destroy : function() {
@@ -95,12 +95,12 @@ hui.ui.MarkupEditor.prototype = {
     if (this.options.replace) {
       this.options.replace.style.display='';
     }
-        var dest = ['colorPicker','_infoWindow','bar','impl'];
-        for (var i = dest.length - 1; i >= 0; i--) {
-            if (this[dest[i]]) {
-                this[dest[i]].destroy();
-            }
-        }
+    var dest = ['colorPicker','_infoWindow','bar','impl'];
+    for (var i = dest.length - 1; i >= 0; i--) {
+      if (this[dest[i]]) {
+        this[dest[i]].destroy();
+      }
+    }
   },
 
   /** Get the HTML value */
@@ -151,17 +151,17 @@ hui.ui.MarkupEditor.prototype = {
       this.impl.format(info);
     }
     this._valueChanged();
-        this._refreshInfoWindow();
+    this._refreshInfoWindow();
     this.impl.restoreSelection();
     this.impl._selectionChanged();
   },
-    _changeBlock : function(tag) {
-        var block = this._getFirstBlock();
-        if (block) {
-            block = hui.dom.changeTag(block,tag);
+  _changeBlock : function(tag) {
+    var block = this._getFirstBlock();
+    if (block) {
+      block = hui.dom.changeTag(block,tag);
       this.impl.selectNode(block);
-        }
-    },
+    }
+  },
   _showColorPicker : function() {
     if (!this.colorPicker) {
       this.colorPicker = hui.ui.Window.create({title:{en:'Color',da:'Farve'}});
@@ -202,11 +202,11 @@ hui.ui.MarkupEditor.prototype = {
           this.temporaryLink = null;
           this._valueChanged();
         }.bind(this),
-                $remove : function() {
-                    // TODO: Standardise this
-                    this.impl._unWrap(this.temporaryLink);
+        $remove : function() {
+          // TODO: Standardise this
+          this.impl._unWrap(this.temporaryLink);
           this.impl._selectionChanged();
-                }.bind(this)
+        }.bind(this)
       });
     } else if (!this.linkEditor) {
       this.linkEditor = hui.ui.Window.create({padding:5,width:300});
@@ -236,23 +236,23 @@ hui.ui.MarkupEditor.prototype = {
   },
   _valueChanged : function() {
     this.fire('valueChanged',this.impl.getHTML());
-        this._refreshInfoWindow();
+    this._refreshInfoWindow();
   },
 
-    // Info window
+  // Info window
 
-    _toggleInfoWindow : function() {
-        if (!this._infoWindow) {
-            this._infoWindow = new hui.ui.MarkupEditor.Info({editor:this});
-        }
-        this._infoWindow.toggle();
-        this._refreshInfoWindow();
-    },
+  _toggleInfoWindow : function() {
+    if (!this._infoWindow) {
+      this._infoWindow = new hui.ui.MarkupEditor.Info({editor:this});
+    }
+    this._infoWindow.toggle();
+    this._refreshInfoWindow();
+  },
 
-    _refreshInfoWindow : function() {
-        if (!this._infoWindow) {return};
-        this._infoWindow.updatePath(this.impl.getPath());
-    },
+  _refreshInfoWindow : function() {
+    if (!this._infoWindow) {return};
+    this._infoWindow.updatePath(this.impl.getPath());
+  },
 
   /** @private */
   $colorWasSelected : function(color) {
@@ -264,10 +264,10 @@ hui.ui.MarkupEditor.prototype = {
 
   /** @private */
   $$parentMoved : function() {
-        if (this.bar) {
-        this.bar.place(this);
-        }
+    if (this.bar) {
+      this.bar.place(this);
     }
+  }
 }
 
 
@@ -278,13 +278,13 @@ hui.ui.MarkupEditor.prototype = {
 
 
 hui.ui.MarkupEditor.Bar = function(options) {
-    this.options = options;
-    this._initialize();
-    hui.ui.extend(this);
+  this.options = options;
+  this._initialize();
+  hui.ui.extend(this);
 }
 
 hui.ui.MarkupEditor.Bar.prototype = {
-    _initialize : function() {
+  _initialize : function() {
 
     var things = [
       {key:'bold',icon:'edit/text_bold'},
@@ -316,11 +316,11 @@ hui.ui.MarkupEditor.Bar.prototype = {
     ]});
     this.bar.add(drop);
 
-        drop.listen({
-            $valueChanged : function(value) {
-                this.options.$changeBlock(value);
-            }.bind(this)
-        })
+    drop.listen({
+      $valueChanged : function(value) {
+        this.options.$changeBlock(value);
+      }.bind(this)
+    })
 
     hui.each(things,function(info) {
       if (info.divider) {
@@ -334,26 +334,26 @@ hui.ui.MarkupEditor.Bar.prototype = {
       this.bar.add(button);
     }.bind(this));
     this.bar.addToDocument();
-    },
+  },
 
-    show : function(widget) {
+  show : function(widget) {
     this.bar.placeAbove(widget);
     this.bar.show();
-    },
-    place : function(widget) {
+  },
+  place : function(widget) {
     this.bar.placeAbove(widget);
-    },
-    hide : function() {
-        this.bar.hide();
-    },
-    setBlock : function(value) {
-        if (value) {
-            this.blockSelector.setValue(value.tagName.toLowerCase());
-        }
-    },
-    destroy : function() {
-        this.bar.destroy();
+  },
+  hide : function() {
+    this.bar.hide();
+  },
+  setBlock : function(value) {
+    if (value) {
+      this.blockSelector.setValue(value.tagName.toLowerCase());
     }
+  },
+  destroy : function() {
+    this.bar.destroy();
+  }
 }
 
 
@@ -361,39 +361,39 @@ hui.ui.MarkupEditor.Bar.prototype = {
 
 
 hui.ui.MarkupEditor.Info = function(options) {
-    this.options = options;
-    this._initialize();
+  this.options = options;
+  this._initialize();
 }
 
 hui.ui.MarkupEditor.Info.prototype = {
-    _initialize : function() {
-        this._window = hui.ui.Window.create({title:'Info',width:400});
-        this._css = hui.ui.CodeInput.create();
-        this._css.listen({
-            $valueChanged : function(value) {
-                if (!this.tag) {return;}
-                this.tag.setAttribute('style',value);
-            }.bind(this)
-        })
-        this._window.add(this._css);
-        this._path = hui.build('div',{'class':'hui_markupeditor_path'});
-        this._window.add(this._path);
-    },
-    toggle : function() {
-       this._window.toggle({avoid:this.options.editor.element});
-    },
-    updatePath : function(path) {
-        var html = '';
-        for (var i = path.length - 1; i >= 0; i--) {
-            html+='<a data-index="' + i + '" href="javascript://">' + path[i].tagName + '</a> ';
-        }
-        this._path.innerHTML = html;
-        this.tag = path[0];
-        this._css.setValue(this.tag ? this.tag.getAttribute('style') : '');
-    },
-    destroy : function() {
-        this._window.destroy();
+  _initialize : function() {
+    this._window = hui.ui.Window.create({title:'Info',width:400});
+    this._css = hui.ui.CodeInput.create();
+    this._css.listen({
+      $valueChanged : function(value) {
+        if (!this.tag) {return;}
+        this.tag.setAttribute('style',value);
+      }.bind(this)
+    })
+    this._window.add(this._css);
+    this._path = hui.build('div',{'class':'hui_markupeditor_path'});
+    this._window.add(this._path);
+  },
+  toggle : function() {
+   this._window.toggle({avoid:this.options.editor.element});
+  },
+  updatePath : function(path) {
+    var html = '';
+    for (var i = path.length - 1; i >= 0; i--) {
+      html+='<a data-index="' + i + '" href="javascript://">' + path[i].tagName + '</a> ';
     }
+    this._path.innerHTML = html;
+    this.tag = path[0];
+    this._css.setValue(this.tag ? this.tag.getAttribute('style') : '');
+  },
+  destroy : function() {
+    this._window.destroy();
+  }
 }
 
 
@@ -402,11 +402,11 @@ hui.ui.MarkupEditor.Info.prototype = {
 /** @namespace */
 hui.ui.MarkupEditor.webkit = {
 
-    path : [],
+  path : [],
 
   initialize : function(options) {
     this.element = options.element;
-        hui.style.set(this.element,options.controller.options.style);
+    hui.style.set(this.element,options.controller.options.style);
     this.element.style.overflow='auto';
     this.element.contentEditable = true;
     var ctrl = this.controller = options.controller;
@@ -428,8 +428,8 @@ hui.ui.MarkupEditor.webkit = {
   },
   focus : function() {
     this.element.focus();
-        this._selectionChanged();
-        this.controller.implFocused();
+    this._selectionChanged();
+    this.controller.implFocused();
   },
   format : function(info) {
     if (info.key=='strong' || info.key=='em') {
@@ -438,21 +438,21 @@ hui.ui.MarkupEditor.webkit = {
       this._insertHTML('<table><tbody><tr><td>Lorem ipsum dolor</td><td>Lorem ipsum dolor</td></tr></tbody></table>');
     } else {
       document.execCommand(info.key,null,info.value);
-            var node = this._getSelectedNode();
-            if (node.tagName=='B') {
-                node = hui.dom.changeTag(node,'strong');
+      var node = this._getSelectedNode();
+      if (node.tagName=='B') {
+        node = hui.dom.changeTag(node,'strong');
         this.selectNode(node);
-            } else if (node.tagName=='I') {
-                node = hui.dom.changeTag(node,'em');
+      } else if (node.tagName=='I') {
+        node = hui.dom.changeTag(node,'em');
         this.selectNode(node);
-            }
+      }
       this.controller._valueChanged();
     }
-        this._selectionChanged();
+    this._selectionChanged();
   },
   selectNode : function(node) {
     window.getSelection().selectAllChildren(node);
-        this._selectionChanged();
+    this._selectionChanged();
   },
   getOrCreateLink : function() {
     var node = this._getSelectedNode();
@@ -460,7 +460,7 @@ hui.ui.MarkupEditor.webkit = {
       return node;
     }
     document.execCommand('createLink',null,'#');
-        this._selectionChanged();
+    this._selectionChanged();
     return this._getSelectedNode();
   },
   _getSelectedNode : function() {
@@ -474,20 +474,20 @@ hui.ui.MarkupEditor.webkit = {
   },
   colorize : function(color) {
     document.execCommand('forecolor',null,color);
-        var node = this._getSelectedNode();
-        if (node.tagName=='FONT') {
-            node = hui.dom.changeTag(node,'span');
-            node.style.color = color;
-            node.removeAttribute('color');
-        var selection = window.getSelection();
+    var node = this._getSelectedNode();
+    if (node.tagName=='FONT') {
+      node = hui.dom.changeTag(node,'span');
+      node.style.color = color;
+      node.removeAttribute('color');
+      var selection = window.getSelection();
       selection.selectAllChildren(node);
-        }
-        this._selectionChanged();
+    }
+    this._selectionChanged();
   },
   align : function(value) {
     var x = {center:'justifycenter',justify:'justifyfull',left:'justifyleft',right:'justifyright'};
     document.execCommand(x[value],null,null);
-        this._updateInlinePanel();
+    this._updateInlinePanel();
   },
   _change : function() {
     this.controller.implValueChanged();
@@ -508,17 +508,17 @@ hui.ui.MarkupEditor.webkit = {
       range.surroundContents(node);
       selection.selectAllChildren(node);
     }
-        this._selectionChanged();
+    this._selectionChanged();
   },
   _getInlineTag : function() {
     var selection = window.getSelection();
     if (selection.rangeCount<1) {return}
 
   },
-    removeLink : function(node) {
-        this._unWrap(node);
-        this._selectionChanged();
-    },
+  removeLink : function(node) {
+    this._unWrap(node);
+    this._selectionChanged();
+  },
   _unWrap : function(node) {
     var c = node.childNodes;
     for (var i=0; i < c.length; i++) {
@@ -529,57 +529,57 @@ hui.ui.MarkupEditor.webkit = {
   _insertHTML : function(html) {
     document.execCommand('inserthtml',null,html);
   },
-    _getAncestor : function() {
+  _getAncestor : function() {
     var selection = window.getSelection();
     if (selection.rangeCount<1) {
-            return null;
-        }
+      return null;
+    }
     var range = selection.getRangeAt(0);
     var ancestor = range.commonAncestorContainer;
     if (!hui.dom.isElement(ancestor)) {
       ancestor = ancestor.parentNode;
     }
-        return ancestor;
-    },
-  _buildInlinePanel : function() {
-        this._inlinePanel = hui.ui.BoundPanel.create({variant:'light'});
-        var content = hui.build('div',{
-            'class' : 'hui_markupeditor_inlinepanel',
-            html : '<a href="javascript://" data="bold"><strong>Bold</strong></a><a href="javascript://" data="italic"><em>Italic</em></a>'
-        });
-        hui.listen(content,'mousedown',function(e) {
-            e = hui.event(e);
-            e.stop();
-            var a = e.findByTag('a');
-            if (a) {
-                this.saveSelection();
-                this.format({key:a.getAttribute('data')})
-                this.restoreSelection();
-        this._selectionChanged();
-            }
-        }.bind(this))
-        this._inlinePanel.add(content);
+    return ancestor;
   },
-    _updateInlinePanel : function() {
+  _buildInlinePanel : function() {
+    this._inlinePanel = hui.ui.BoundPanel.create({variant:'light'});
+    var content = hui.build('div',{
+      'class' : 'hui_markupeditor_inlinepanel',
+      html : '<a href="javascript://" data="bold"><strong>Bold</strong></a><a href="javascript://" data="italic"><em>Italic</em></a>'
+    });
+    hui.listen(content,'mousedown',function(e) {
+      e = hui.event(e);
+      e.stop();
+      var a = e.findByTag('a');
+      if (a) {
+        this.saveSelection();
+        this.format({key:a.getAttribute('data')})
+        this.restoreSelection();
+        this._selectionChanged();
+      }
+    }.bind(this))
+    this._inlinePanel.add(content);
+  },
+  _updateInlinePanel : function() {
     var selection = window.getSelection();
     this._inlinePanel || this._buildInlinePanel();
     if (selection.rangeCount < 1) {
-            this._inlinePanel.hide();
-            return;
-        }
+      this._inlinePanel.hide();
+      return;
+    }
     var range = selection.getRangeAt(0);
-        if (range.startOffset==range.endOffset) {
-            this._inlinePanel.hide();
-            return;
-        }
-        var rects = range.getClientRects();
-        if (rects.length > 0) {
-            var rect = rects[0];
-            this._inlinePanel.position({rect:rect,position:'vertical'});
-            this._inlinePanel.show();
-        }
+    if (range.startOffset==range.endOffset) {
+      this._inlinePanel.hide();
+      return;
+    }
+    var rects = range.getClientRects();
+    if (rects.length > 0) {
+      var rect = rects[0];
+      this._inlinePanel.position({rect:rect,position:'vertical'});
+      this._inlinePanel.show();
+    }
 
-    },
+  },
   _selectionChanged : function() {
     var sel = window.getSelection();
     var hash = this._hash(sel);
@@ -591,15 +591,15 @@ hui.ui.MarkupEditor.webkit = {
       }
     }
     this._latestSelection = {node:node,hash:hash};
-        var path = [],
-            tag = this._getAncestor();
-        while (tag && tag !== this.element) {
-            path.push(tag);
-            tag = tag.parentNode;
-        }
-        this.path = path;
-        this.controller.implSelectionChanged();
-        this._updateInlinePanel();
+    var path = [],
+      tag = this._getAncestor();
+    while (tag && tag !== this.element) {
+      path.push(tag);
+      tag = tag.parentNode;
+    }
+    this.path = path;
+    this.controller.implSelectionChanged();
+    this._updateInlinePanel();
   },
   _storeSelection : function(selection) {
 
@@ -609,7 +609,7 @@ hui.ui.MarkupEditor.webkit = {
   },
   removeFormat : function() {
     document.execCommand('removeFormat',null,null);
-        this._selectionChanged();
+    this._selectionChanged();
   },
   setHTML : function(html) {
     this.element.innerHTML = html;
@@ -618,14 +618,14 @@ hui.ui.MarkupEditor.webkit = {
     var cleaned = hui.ui.MarkupEditor.util.clean(this.element);
     return cleaned.innerHTML;
   },
-    getPath : function() {
-        return this.path;
-    },
-    destroy : function() {
-        if (this._inlinePanel) {
-            this._inlinePanel.destroy();
-        }
+  getPath : function() {
+    return this.path;
+  },
+  destroy : function() {
+    if (this._inlinePanel) {
+      this._inlinePanel.destroy();
     }
+  }
 }
 
 
@@ -655,9 +655,9 @@ hui.ui.MarkupEditor.MSIE = {
     this.element = options.element;
     this.iframe = hui.build('iframe',{style:'display:block; width: 100%; border: 0;',parent:this.element})
     hui.listen(this.iframe,'load',function() {
-            this._load();
-            options.$ready();
-        }.bind(this));
+      this._load();
+      options.$ready();
+    }.bind(this));
     this.controller = options.controller;
   },
   saveSelection : function() {
@@ -722,12 +722,12 @@ hui.ui.MarkupEditor.MSIE = {
     var cleaned = hui.ui.MarkupEditor.util.clean(this.body);
     return cleaned.innerHTML;
   },
-    getPath : function() {
-        return [];
-    },
-    destroy : function() {
+  getPath : function() {
+    return [];
+  },
+  destroy : function() {
 
-    }
+  }
 }
 
 /** @namespace */
