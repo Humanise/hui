@@ -5,26 +5,26 @@ QUnit.test( "Test", function( assert ) {
 
 QUnit.test( "Test", function( assert ) {
   var done = assert.async();
-	var src = new hui.ui.Source({url:'data/list_data.xml'});
-	var list = hui.ui.List.create({source:src, name: 'myList'});
-	list.listen({
-		$selectionReset : function() {
+  var src = new hui.ui.Source({url:'data/list_data.xml'});
+  var list = hui.ui.List.create({source:src, name: 'myList'});
+  list.listen({
+    $selectionReset : function() {
       assert.ok(true)
-			done();
-		},
-		$select : function() {
+      done();
+    },
+    $select : function() {
       assert.ok(false)
-		}
-	})
-	document.body.appendChild(list.element)
+    }
+  })
+  document.body.appendChild(list.element)
 
 });
 
 QUnit.test( "Test2", function( assert ) {
   var done = assert.async();
-	var src = new hui.ui.Source({url:'data/list_data.xml'});
-	var list = hui.ui.List.create({source:src});
-	document.body.appendChild(list.element)
+  var src = new hui.ui.Source({url:'data/list_data.xml'});
+  var list = hui.ui.List.create({source:src});
+  document.body.appendChild(list.element)
   list.listen({$selectionReset : function() {
 
     assert.ok(list, 'found previous test')

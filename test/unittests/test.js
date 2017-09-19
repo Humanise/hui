@@ -19,13 +19,13 @@ QUnit.test( "Test getting", function( assert ) {
   var cat = hui.get.byClass('cat');
   assert.ok(cat.length === 0);
 
-	var built = hui.build('div',{'class':'hippodippelidoo golbetop dypludido',text:'this is the text',parent:document.body});
-	var found = hui.get.firstByClass(document.body,'hippodippelidoo');
-	assert.equal(built,found)
+  var built = hui.build('div',{'class':'hippodippelidoo golbetop dypludido',text:'this is the text',parent:document.body});
+  var found = hui.get.firstByClass(document.body,'hippodippelidoo');
+  assert.equal(built,found)
 
-	assert.equal('this is the text',hui.dom.getText(built));
-	hui.dom.setText(built,'Fermentum Lorem Parturient Cursus');
-	assert.equal('Fermentum Lorem Parturient Cursus',hui.dom.getText(built));
+  assert.equal('this is the text',hui.dom.getText(built));
+  hui.dom.setText(built,'Fermentum Lorem Parturient Cursus');
+  assert.equal('Fermentum Lorem Parturient Cursus',hui.dom.getText(built));
 })
 
 QUnit.test( "Test finding", function( assert ) {
