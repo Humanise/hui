@@ -17,7 +17,10 @@ hui.ui.CodeInput = function(options) {
 
 hui.ui.CodeInput.create = function(options) {
   options = options || {};
-  options.element = hui.build('div',{className:'hui_codeinput',html:'<textarea class="hui_codeinput_input" spellcheck="false"></textarea>'});
+  options.element = hui.build('div',{
+    'class' : 'hui_codeinput',
+    html : '<textarea class="hui_codeinput_input" spellcheck="false"></textarea>'
+  });
   if (options.height) {
     options.element.style.height = hui.style.length(options.height);
   }
@@ -26,8 +29,8 @@ hui.ui.CodeInput.create = function(options) {
 
 hui.ui.CodeInput.prototype = {
   _addBehavior : function() {
-    hui.listen(this.textarea,'keydown',this._onKeyDown.bind(this));
-    hui.listen(this.textarea,'keyup',this._onKeyUp.bind(this));
+    hui.listen(this.textarea, 'keydown', this._onKeyDown.bind(this));
+    hui.listen(this.textarea, 'keyup', this._onKeyUp.bind(this));
   },
 
   getValue : function() {

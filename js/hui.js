@@ -1144,8 +1144,7 @@ hui.position = {
     if (options.insideViewPort) {
       var w = hui.window.getViewWidth();
       if (left + src.clientWidth > w) {
-        left = w - src.clientWidth - (options.viewPartMargin || 0);
-        //hui.log(options.viewPartMargin)
+        left = w - src.clientWidth - (options.viewPortMargin || 0);
       }
       if (left < 0) {left=0;}
       if (top < 0) {top=0;}
@@ -2261,7 +2260,8 @@ hui.drag = {
    * @param {function} options.$finally After everything - moved or not
    */
   start : function(options,e) {
-    var target = hui.browser.msie ? document : window;
+    var win = options.window || window;
+    var target = hui.browser.msie ? win.document : win;
     var touch = options.touch && hui.browser.touch;
     options.$before && options.$before();
     options.onStart && options.onStart();
@@ -2285,9 +2285,9 @@ hui.drag = {
       options.onMove && options.onMove(e);
       options.$move && options.$move(e);
     }.bind(this);
-    hui.listen(document.body,touch ? 'touchmove' : 'mousemove',mover);
+    hui.listen(win.document.body,touch ? 'touchmove' : 'mousemove',mover);
     upper = function() {
-      hui.unListen(document.body,touch ? 'touchmove' : 'mousemove',mover);
+      hui.unListen(win.document.body,touch ? 'touchmove' : 'mousemove',mover);
       hui.unListen(target,touch ? 'touchend' : 'mouseup',upper);
       options.onEnd && options.onEnd(); // TODO: deprecated
       if (moved) {

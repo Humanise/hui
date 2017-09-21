@@ -277,12 +277,24 @@ hui.ui.Editor.prototype = {
   showPartEditControls : function() {
     if (!this.partEditControls) {
       this.partEditControls = hui.ui.Overlay.create({name:'huiEditorPartEditActions',variant:'light',zIndex:100});
+      this.partEditControls.element.style.zIndex = '99999999';
       this.partEditControls.addIcon('save','common/ok');
-      this.partEditControls.addIcon('cancel','common/stop');
+      this.partEditControls.addIcon('cancel','common/undo');
       this.partEditControls.addIcon('info','common/info');
       this.partEditControls.listen(this);
+      var self = this;
+      hui.on(window,'resize',function() {
+        hui.onDraw(function() {
+          self._positionEditControls();
+        })
+      })
     }
-    this.partEditControls.showAtElement(this.activePart.element,{'horizontal':'right','vertical':'topOutside'});
+    this._positionEditControls();
+  },
+  _positionEditControls : function() {
+    if (this.activePart) {
+      this.partEditControls.showAtElement(this.activePart.element,{'horizontal':'right','vertical':'topOutside'});
+    }
   },
   showPartControls : function() {
     if (!this.partControls) {
@@ -290,7 +302,6 @@ hui.ui.Editor.prototype = {
       this.partControls.addIcon('edit','common/edit');
       this.partControls.addIcon('new','common/new');
       this.partControls.addIcon('delete','common/delete');
-      var self = this;
       hui.listen(this.partControls.getElement(),'mouseout',this._blurControls.bind(this));
       hui.listen(this.partControls.getElement(),'mouseover',this._hoverControls.bind(this));
       this.partControls.listen(this);

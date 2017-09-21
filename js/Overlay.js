@@ -43,7 +43,7 @@ hui.ui.Overlay.prototype = {
   addIcon : function(key,icon) {
     var self = this;
     var element = hui.build('div',{className:'hui_overlay_icon'});
-    element.style.backgroundImage='url('+hui.ui.getIconUrl(icon,32)+')';
+    hui.ui.setIconImage(element, icon, 32);
     hui.listen(element,'click',function(e) {
       self._iconWasClicked(key,e);
     });
@@ -120,7 +120,7 @@ hui.ui.Overlay.prototype = {
         source : {element:this.element,vertical:0,horizontal:.5},
         target : {element:options.element,vertical:.5,horizontal:.5},
         insideViewPort : true,
-        viewPartMargin : 9
+        viewPortMargin : 9
       });
     }
     if (options.autoHide && options.element) {

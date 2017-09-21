@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="setup.xsl"?>
+<gui xmlns="uri:hui" title="Graph" padding="10">
+  <controller url="gallery.js"/>
+  <source url="data/gallery.json" name="gallerySource"/>
+  <structure>
+    <top>
+      <toolbar>
+        <icon icon="common/refresh" text="Test"/>
+        <item label="Size">
+          <slider width="100" name="sizeSlider" value="0.5"/>
+        </item>
+      </toolbar>
+    </top>
+    <middle>
+      <left></left>
+      <center>
+        <overflow>
+          <gallery name="gallery" source="gallerySource"/>
+        </overflow>
+      </center>
+    </middle>
+    <bottom>
+    </bottom>
+  </structure>
+
+  <window width="500" name="myWindow">
+    <gallery name="galleryInWindow" source="gallerySource"/>
+  </window>
+
+  <listen for="ready">
+    myWindow.show();
+  </listen>
+</gui>
